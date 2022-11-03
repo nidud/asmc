@@ -105,10 +105,12 @@ EXCEPTION_GUARD_PAGE		    equ STATUS_GUARD_PAGE_VIOLATION
 EXCEPTION_INVALID_HANDLE	    equ STATUS_INVALID_HANDLE
 CONTROL_C_EXIT			    equ STATUS_CONTROL_C_EXIT
 
-MoveMemory equ <RtlMoveMemory>
-CopyMemory equ <RtlCopyMemory>
-FillMemory equ <RtlFillMemory>
-ZeroMemory equ <RtlZeroMemory>
+ifndef MoveMemory
+define MoveMemory <RtlMoveMemory>
+define CopyMemory <RtlCopyMemory>
+define FillMemory <RtlFillMemory>
+define ZeroMemory <RtlZeroMemory>
+endif
 
 if (_WIN32_WINNT GE 0x0500)
 ifdef _M_ALPHA
@@ -2826,12 +2828,14 @@ SetLocalTime proto WINAPI \
 GetSystemInfo proto WINAPI \
 	  lpSystemInfo: LPSYSTEM_INFO
 
-DEP_SYSTEM_POLICY_TYPE	typedef sdword ; enum _DEP_SYSTEM_POLICY_TYPE {
-DEPPolicyAlwaysOff	equ 0
-DEPPolicyAlwaysOn	equ 1
-DEPPolicyOptIn		equ 2
-DEPPolicyOptOut		equ 3
-DEPTotalPolicyCount	equ 4
+.enum _DEP_SYSTEM_POLICY_TYPE {
+    DEPPolicyAlwaysOff,
+    DEPPolicyAlwaysOn,
+    DEPPolicyOptIn,
+    DEPPolicyOptOut,
+    DEPTotalPolicyCount
+    }
+DEP_SYSTEM_POLICY_TYPE	typedef _DEP_SYSTEM_POLICY_TYPE
 
 ;DEP_SYSTEM_POLICY_TYPE
 GetSystemDEPPolicy proto WINAPI
@@ -8302,8 +8306,24 @@ FileName		dw ?
 FILE_NAME_INFO		ENDS
 PFILE_NAME_INFO		typedef ptr FILE_NAME_INFO
 
+if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS1)
+define FILE_RENAME_FLAG_REPLACE_IF_EXISTS		   0x00000001
+define FILE_RENAME_FLAG_POSIX_SEMANTICS			   0x00000002
+endif
+
+if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS3)
+define FILE_RENAME_FLAG_SUPPRESS_PIN_STATE_INHERITANCE	   0x00000004
+endif
+
 FILE_RENAME_INFO	STRUC
+if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS1)
+union
+ ReplaceIfExists	BOOLEAN ?
+ Flags			DWORD ?
+ends
+else
 ReplaceIfExists		BOOLEAN ?
+endif
 RootDirectory		HANDLE ?
 FileNameLength		dd ?
 FileName		dw ?
@@ -8350,6 +8370,23 @@ DeleteFile		BOOLEAN ?
 FILE_DISPOSITION_INFO	ENDS
 PFILE_DISPOSITION_INFO	typedef ptr FILE_DISPOSITION_INFO
 
+if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS1)
+define FILE_DISPOSITION_FLAG_DO_NOT_DELETE		0x00000000
+define FILE_DISPOSITION_FLAG_DELETE			0x00000001
+define FILE_DISPOSITION_FLAG_POSIX_SEMANTICS		0x00000002
+define FILE_DISPOSITION_FLAG_FORCE_IMAGE_SECTION_CHECK	0x00000004
+define FILE_DISPOSITION_FLAG_ON_CLOSE			0x00000008
+if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS5)
+define FILE_DISPOSITION_FLAG_IGNORE_READONLY_ATTRIBUTE	0x00000010
+endif
+
+_FILE_DISPOSITION_INFO_EX struct
+Flags			DWORD ?
+_FILE_DISPOSITION_INFO_EX ends
+FILE_DISPOSITION_INFO_EX  typedef _FILE_DISPOSITION_INFO_EX
+PFILE_DISPOSITION_INFO_EX typedef ptr _FILE_DISPOSITION_INFO_EX
+endif
+
 FILE_ID_BOTH_DIR_INFO	STRUC
 NextEntryOffset		dd ?
 FileIndex		dd ?
@@ -8369,11 +8406,14 @@ FileName		dw ?
 FILE_ID_BOTH_DIR_INFO	ENDS
 PFILE_ID_BOTH_DIR_INFO	typedef ptr FILE_ID_BOTH_DIR_INFO
 
-PRIORITY_HINT		typedef sdword ;enum _PRIORITY_HINT {
-IoPriorityHintVeryLow	equ 0
-IoPriorityHintLow	equ 1
-IoPriorityHintNormal	equ 2
-MaximumIoPriorityHintType equ 3
+.enum _PRIORITY_HINT {
+    IoPriorityHintVeryLow = 0,
+    IoPriorityHintLow,
+    IoPriorityHintNormal,
+    MaximumIoPriorityHintType
+    }
+PRIORITY_HINT		typedef _PRIORITY_HINT
+
 
 FILE_IO_PRIORITY_HINT_INFO  STRUC
 PriorityHint		PRIORITY_HINT ?
@@ -8416,19 +8456,24 @@ GetFileInformationByHandleEx proto WINAPI \
      lpFileInformation: LPVOID,
 	  dwBufferSize: DWORD
 
-FileIdType		equ 0
-ObjectIdType		equ 1
-MaximumFileIdType	equ 2
-FILE_ID_TYPE		typedef sdword ;enum _FILE_ID_TYPE {
-PFILE_ID_TYPE		typedef ptr FILE_ID_TYPE
-
+.enum _FILE_ID_TYPE {
+    FileIdType,
+    ObjectIdType,
+    ExtendedFileIdType,
+    MaximumFileIdType
+    }
+FILE_ID_TYPE		typedef _FILE_ID_TYPE
+PFILE_ID_TYPE		typedef ptr _FILE_ID_TYPE
 
 FILE_ID_DESCRIPTOR	STRUC
 dwSize			dd ?
 Type			FILE_ID_TYPE ?
-UNION ;DUMMYUNIONNAME
+UNION
  FileId			LARGE_INTEGER <>
  ObjectId		GUID <>
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+ ExtendedFileId		FILE_ID_128 <>
+endif
 ENDS
 FILE_ID_DESCRIPTOR	ENDS
 LPFILE_ID_DESCRIPTOR	typedef ptr FILE_ID_DESCRIPTOR
@@ -8446,10 +8491,9 @@ endif
 
 if (_WIN32_WINNT GE 0x0600)
 
-
-SYMBOLIC_LINK_FLAG_DIRECTORY equ (0x1)
-
-VALID_SYMBOLIC_LINK_FLAGS equ SYMBOLIC_LINK_FAG_DIRECTORY
+define SYMBOLIC_LINK_FLAG_DIRECTORY		       (0x1)
+define SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE    (0x2)
+define VALID_SYMBOLIC_LINK_FLAGS SYMBOLIC_LINK_FAG_DIRECTORY
 
 ;BOOLEAN
 CreateSymbolicLinkA proto WINAPI \
@@ -8538,6 +8582,53 @@ RemoveSecureMemoryCacheCallback proto WINAPI \
 
 endif
 
+if (NTDDI_VERSION ge NTDDI_WIN7SP1)
+
+CopyContext proto WINAPI \
+	   Destination: PCONTEXT,
+	  ContextFlags: DWORD,
+		Source: PCONTEXT
+
+InitializeContext proto WINAPI \
+		Buffer: ptr,
+	  ContextFlags: DWORD,
+	       Context: ptr PCONTEXT,
+	 ContextLength: PDWORD
+
+
+if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
+
+InitializeContext2 proto WINAPI \
+		Buffer: ptr,
+	  ContextFlags: DWORD,
+	       Context: ptr PCONTEXT,
+	 ContextLength: PDWORD,
+  XStateCompactionMask: ULONG64
+
+
+endif
+
+if defined(_AMD64_) or defined(_X86_)
+
+GetEnabledXStateFeatures proto WINAPI
+
+GetXStateFeaturesMask proto WINAPI \
+	       Context: PCONTEXT,
+	   FeatureMask: PDWORD64
+
+LocateXStateFeature proto WINAPI \
+	       Context: PCONTEXT,
+	     FeatureId: DWORD,
+		Length: PDWORD
+
+SetXStateFeaturesMask proto WINAPI \
+	       Context: PCONTEXT,
+	   FeatureMask: DWORD64
+
+endif ; defined(_AMD64_) || defined(_X86_)
+
+endif ; (NTDDI_VERSION >= NTDDI_WIN7SP1)
+
 if (_WIN32_WINNT GE 0x0601)
 
 ;BOOL
@@ -8605,6 +8696,13 @@ ReadThreadProfilingData proto WINAPI \
 
 
 endif ; (_WIN32_WINNT >= 0x0601)
+
+if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
+
+RaiseCustomSystemEventTrigger proto WINAPI \
+CustomSystemEventTriggerConfig: PCUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG
+
+endif
 
 endif
 .pragma list(pop)

@@ -238,7 +238,6 @@ define META_CREATEFONTINDIRECT      0x02FB
 define META_CREATEBRUSHINDIRECT     0x02FC
 define META_CREATEREGION            0x06FF
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 if(WINVER ge 0x0400)
@@ -253,7 +252,6 @@ PDRAWPATRECT            typedef ptr _DRAWPATRECT
 endif
 
 endif
-;.pragma endregion
 
 endif
 
@@ -358,7 +356,6 @@ define SPCLPASSTHROUGH2             4568
 define PSIDENT_GDICENTRIC    0
 define PSIDENT_PSCENTRIC     1
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 _PSINJECTDATA           struct
@@ -370,7 +367,6 @@ PSINJECTDATA            typedef _PSINJECTDATA
 PPSINJECTDATA           typedef ptr _PSINJECTDATA
 
 endif
-;.pragma endregion
 
 define PSINJECT_BEGINSTREAM                1
 define PSINJECT_PSADOBE                    2
@@ -424,7 +420,6 @@ define FEATURESETTING_PRIVATE_BEGIN 0x1000
 define FEATURESETTING_PRIVATE_END   0x1FFF
 endif
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 _PSFEATURE_OUTPUT       struct
@@ -445,7 +440,6 @@ PSFEATURE_CUSTPAPER     typedef _PSFEATURE_CUSTPAPER
 PPSFEATURE_CUSTPAPER    typedef ptr _PSFEATURE_CUSTPAPER
 
 endif
-;.pragma endregion
 
 define PSPROTOCOL_ASCII             0
 define PSPROTOCOL_BCP               1
@@ -492,7 +486,6 @@ define MWT_MAX             MWT_RIGHTMULTIPLY
 
 define _XFORM_
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagXFORM                struct
@@ -687,9 +680,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 LPCIEXYZTRIPLE          typedef ptr
 
 endif
-;.pragma endregion
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagLOGCOLORSPACEA       struct
@@ -729,11 +720,9 @@ LPLOGCOLORSPACE         typedef LPLOGCOLORSPACEA
 endif
 
 endif
-;.pragma endregion
 
 endif
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagBITMAPCOREHEADER     struct
@@ -748,9 +737,7 @@ LPBITMAPCOREHEADER      typedef ptr tagBITMAPCOREHEADER
 PBITMAPCOREHEADER       typedef ptr tagBITMAPCOREHEADER
 
 endif
-;.pragma endregion
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagBITMAPINFOHEADER     struct
@@ -771,11 +758,9 @@ LPBITMAPINFOHEADER      typedef ptr tagBITMAPINFOHEADER
 PBITMAPINFOHEADER       typedef ptr tagBITMAPINFOHEADER
 
 endif
-;.pragma endregion
 
 if(WINVER ge 0x0400)
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 BITMAPV4HEADER          struct
@@ -804,12 +789,10 @@ LPBITMAPV4HEADER        typedef ptr BITMAPV4HEADER
 PBITMAPV4HEADER         typedef ptr BITMAPV4HEADER
 
 endif
-;.pragma endregion
 endif
 
 if (WINVER ge 0x0500)
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 BITMAPV5HEADER          struct
 bV5Size                 DWORD ?
@@ -841,7 +824,6 @@ LPBITMAPV5HEADER        typedef ptr BITMAPV5HEADER
 PBITMAPV5HEADER         typedef ptr BITMAPV5HEADER
 
 endif
-;.pragma endregion
 
 define PROFILE_LINKED          'LINK'
 define PROFILE_EMBEDDED        'MBED'
@@ -856,7 +838,6 @@ define BI_PNG        5
 if (_WIN32_WINNT ge _WIN32_WINNT_NT4)
 endif
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagBITMAPINFO           struct
@@ -868,9 +849,7 @@ LPBITMAPINFO            typedef ptr tagBITMAPINFO
 PBITMAPINFO             typedef ptr tagBITMAPINFO
 
 endif
-;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagBITMAPCOREINFO       struct
@@ -882,11 +861,9 @@ LPBITMAPCOREINFO        typedef ptr tagBITMAPCOREINFO
 PBITMAPCOREINFO         typedef ptr tagBITMAPCOREINFO
 
 endif
-;.pragma endregion
 
 include pshpack2.inc
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagBITMAPFILEHEADER     struct
@@ -901,7 +878,6 @@ LPBITMAPFILEHEADER      typedef ptr tagBITMAPFILEHEADER
 PBITMAPFILEHEADER       typedef ptr tagBITMAPFILEHEADER
 
 endif
-;.pragma endregion
 
 include poppack.inc
 
@@ -912,7 +888,6 @@ MAKEPOINTS macro l
 if(WINVER ge 0x0400)
 ifndef NOFONTSIG
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagFONTSIGNATURE        struct
@@ -934,7 +909,6 @@ NPCHARSETINFO           typedef ptr tagCHARSETINFO
 LPCHARSETINFO           typedef ptr tagCHARSETINFO
 
 endif
-;.pragma endregion
 
 define TCI_SRCCHARSET  1
 define TCI_SRCCODEPAGE 2
@@ -943,7 +917,6 @@ if (_WIN32_WINNT ge _WIN32_WINNT_WINXP)
 define TCI_SRCLOCALE   0x1000
 endif
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagLOCALESIGNATURE      struct
@@ -956,14 +929,12 @@ PLOCALESIGNATURE        typedef ptr tagLOCALESIGNATURE
 LPLOCALESIGNATURE       typedef ptr tagLOCALESIGNATURE
 
 endif
-;.pragma endregion
 
 endif
 endif
 
 ifndef NOMETAFILE
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagHANDLETABLE          struct
@@ -981,20 +952,16 @@ tagMETARECORD           ends
 METARECORD              typedef tagMETARECORD
 
 endif
-;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-PMETARECORD             typedef ptr UNALIGNED
+PMETARECORD             typedef ptr tagMETARECORD
 
 endif
-;.pragma endregion
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-LPMETARECORD            typedef ptr
+LPMETARECORD            typedef ptr tagMETARECORD
 
 tagMETAFILEPICT         struct
 mm                      LONG ?
@@ -1006,11 +973,9 @@ METAFILEPICT            typedef tagMETAFILEPICT
 LPMETAFILEPICT          typedef ptr tagMETAFILEPICT
 
 endif
-;.pragma endregion
 
 include pshpack2.inc
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagMETAHEADER           struct
@@ -1023,15 +988,13 @@ mtMaxRecord             DWORD ?
 mtNoParameters          WORD ?
 tagMETAHEADER           ends
 METAHEADER              typedef tagMETAHEADER
-PMETAHEADER             typedef ptr UNALIGNED
+PMETAHEADER             typedef ptr tagMETAHEADER
 LPMETAHEADER            typedef ptr
 
 endif
-;.pragma endregion
 
 include poppack.inc
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagENHMETARECORD        struct
@@ -1073,7 +1036,6 @@ PENHMETAHEADER          typedef ptr tagENHMETAHEADER
 LPENHMETAHEADER         typedef ptr tagENHMETAHEADER
 
 endif
-;.pragma endregion
 
 endif
 
@@ -1084,7 +1046,6 @@ define TMPF_VECTOR             0x02
 define TMPF_DEVICE             0x08
 define TMPF_TRUETYPE       0x04
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifdef _UNICODE
@@ -1094,13 +1055,11 @@ BCHAR                   typedef BYTE
 endif
 
 endif
-;.pragma endregion
 
 ifndef _TEXTMETRIC_DEFINED
 define _TEXTMETRIC_DEFINED
 include pshpack4.inc
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagTEXTMETRICA          struct
@@ -1168,7 +1127,6 @@ LPTEXTMETRIC            typedef LPTEXTMETRICA
 endif
 
 endif
-;.pragma endregion
 
 include poppack.inc
 endif
@@ -1186,7 +1144,6 @@ define NTM_DSIG            0x00200000
 
 include pshpack4.inc
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagNEWTEXTMETRICA       struct
@@ -1262,13 +1219,11 @@ LPNEWTEXTMETRIC         typedef LPNEWTEXTMETRICA
 endif
 
 endif
-;.pragma endregion
 
 include poppack.inc
 
 if(WINVER ge 0x0400)
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagNEWTEXTMETRICEXA     struct
@@ -1288,12 +1243,10 @@ NEWTEXTMETRICEX         typedef NEWTEXTMETRICEXA
 endif
 
 endif
-;.pragma endregion
 endif
 
 endif
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagPELARRAY             struct
@@ -1309,9 +1262,7 @@ NPPELARRAY              typedef ptr tagPELARRAY
 LPPELARRAY              typedef ptr tagPELARRAY
 
 endif
-;.pragma endregion
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagLOGBRUSH             struct
@@ -1335,9 +1286,7 @@ NPLOGBRUSH32            typedef ptr tagLOGBRUSH32
 LPLOGBRUSH32            typedef ptr tagLOGBRUSH32
 
 endif
-;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 PATTERN                 typedef LOGBRUSH
@@ -1346,9 +1295,7 @@ NPPATTERN               typedef ptr
 LPPATTERN               typedef ptr
 
 endif
-;.pragma endregion
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagLOGPEN               struct
@@ -1362,9 +1309,7 @@ NPLOGPEN                typedef ptr tagLOGPEN
 LPLOGPEN                typedef ptr tagLOGPEN
 
 endif
-;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagEXTLOGPEN            struct
@@ -1382,9 +1327,7 @@ NPEXTLOGPEN             typedef ptr tagEXTLOGPEN
 LPEXTLOGPEN             typedef ptr tagEXTLOGPEN
 
 endif
-;.pragma endregion
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagEXTLOGPEN32          struct
@@ -1482,11 +1425,9 @@ LPLOGFONT               typedef LPLOGFONTA
 endif
 
 endif
-;.pragma endregion
 
 define LF_FULLFACESIZE     64
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagENUMLOGFONTA         struct
@@ -1538,7 +1479,6 @@ endif
 endif
 
 endif
-;.pragma endregion
 
 define OUT_DEFAULT_PRECIS          0
 define OUT_STRING_PRECIS           1
@@ -1662,7 +1602,6 @@ define PAN_XHEIGHT_INDEX           9
 
 define PAN_CULTURE_LATIN           0
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagPANOSE               struct
@@ -1678,7 +1617,7 @@ bMidline                BYTE ?
 bXHeight                BYTE ?
 tagPANOSE               ends
 PANOSE                  typedef tagPANOSE
- LPPANOSE               typedef ptr tagPANOSE
+LPPANOSE                typedef ptr tagPANOSE
 
 define PAN_ANY                         0
 define PAN_NO_FIT                      1
@@ -1833,7 +1772,6 @@ LPEXTLOGFONT            typedef LPEXTLOGFONTA
 endif
 
 endif
-;.pragma endregion
 
 define ELF_VERSION         0
 define ELF_CULTURE_LATIN   0
@@ -2179,7 +2117,6 @@ define CCHDEVICENAME 32
 
 define CCHFORMNAME 32
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 if (_WIN32_WINNT ge ((OSVER(NTDDI_WINXPSP2)) shr 16))
@@ -2321,7 +2258,7 @@ union
   dmPaperLength         sword ?
   dmPaperWidth          sword ?
  ends
- dmPosition             POINTL ?
+ dmPosition             POINTL <>
 ends
 dmScale                 sword ?
 dmCopies                sword ?
@@ -2373,7 +2310,7 @@ union
   dmPaperLength         sword ?
   dmPaperWidth          sword ?
  ends
- dmPosition             POINTL ?
+ dmPosition             POINTL <>
 ends
 dmScale                 sword ?
 dmCopies                sword ?
@@ -2425,7 +2362,6 @@ endif
 endif
 
 endif
-;.pragma endregion
 
 if (WINVER ge 0x0500) or (_WIN32_WINNT ge _WIN32_WINNT_NT4)
 define DM_SPECVERSION 0x0401
@@ -2705,7 +2641,6 @@ define DMDITHER_GRAYSCALE  10
 define DMDITHER_USER     256
 endif
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 _DISPLAY_DEVICEA        struct
@@ -2741,7 +2676,6 @@ LPDISPLAY_DEVICE        typedef LPDISPLAY_DEVICEA
 endif
 
 endif
-;.pragma endregion
 
 define DISPLAY_DEVICE_ATTACHED_TO_DESKTOP      0x00000001
 define DISPLAY_DEVICE_MULTI_DRIVER             0x00000002
@@ -2773,7 +2707,6 @@ if(WINVER ge 0x0601)
 
 define DISPLAYCONFIG_MAXPATH 1024
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 DISPLAYCONFIG_RATIONAL  struct
@@ -2944,9 +2877,7 @@ define DISPLAYCONFIG_PATH_ACTIVE       0x00000001
 }
 
 endif
-;.pragma endregion
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 DISPLAYCONFIG_DEVICE_INFO_HEADER struct
@@ -2959,7 +2890,6 @@ DISPLAYCONFIG_DEVICE_INFO_HEADER ends
 endif
 ;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 DISPLAYCONFIG_SOURCE_DEVICE_NAME struct
@@ -3019,7 +2949,6 @@ ends
 DISPLAYCONFIG_SET_TARGET_PERSISTENCE ends
 
 endif
-;.pragma endregion
 
 define QDC_ALL_PATHS                   0x00000001
 define QDC_ONLY_ACTIVE_PATHS           0x00000002
@@ -3046,7 +2975,6 @@ endif
 
 define RDH_RECTANGLES  1
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 _RGNDATAHEADER          struct
@@ -3069,11 +2997,9 @@ NPRGNDATA               typedef ptr _RGNDATA
 LPRGNDATA               typedef ptr _RGNDATA
 
 endif
-;.pragma endregion
 
 define SYSRGN  4
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 _ABC                    struct
@@ -3097,7 +3023,6 @@ NPABCFLOAT              typedef ptr _ABCFLOAT
 LPABCFLOAT              typedef ptr _ABCFLOAT
 
 endif
-;.pragma endregion
 
 ifndef NOTEXTMETRIC
 
@@ -3105,7 +3030,6 @@ ifdef _MAC
 include pshpack4.inc
 endif
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 _OUTLINETEXTMETRICA     struct
@@ -3197,7 +3121,6 @@ LPOUTLINETEXTMETRIC     typedef LPOUTLINETEXTMETRICA
 endif
 
 endif
-;.pragma endregion
 
 ifdef _MAC
 include poppack.inc
@@ -3205,7 +3128,6 @@ endif
 
 endif
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagPOLYTEXTA            struct
@@ -3247,9 +3169,7 @@ LPPOLYTEXT              typedef LPPOLYTEXTA
 endif
 
 endif
-;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 _FIXED                  struct
@@ -3283,7 +3203,6 @@ GLYPHMETRICS            typedef _GLYPHMETRICS
 LPGLYPHMETRICS          typedef ptr _GLYPHMETRICS
 
 endif
-;.pragma endregion
 
 define GGO_METRICS        0
 define GGO_BITMAP         1
@@ -3307,7 +3226,6 @@ define TT_PRIM_LINE       1
 define TT_PRIM_QSPLINE    2
 define TT_PRIM_CSPLINE    3
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagPOINTFX              struct
@@ -3334,7 +3252,6 @@ TTPOLYGONHEADER         typedef tagTTPOLYGONHEADER
 LPTTPOLYGONHEADER       typedef ptr tagTTPOLYGONHEADER
 
 endif
-;.pragma endregion
 
 if(WINVER ge 0x0400)
 define GCP_DBCS           0x0001
@@ -3376,7 +3293,6 @@ define GCPCLASS_POSTBOUNDRTL        0x10
 define GCPGLYPH_LINKBEFORE          0x8000
 define GCPGLYPH_LINKAFTER           0x4000
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagGCP_RESULTSA         struct
@@ -3414,10 +3330,8 @@ LPGCP_RESULTS           typedef LPGCP_RESULTSA
 endif
 
 endif
-;.pragma endregion
 endif
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 _RASTERIZER_STATUS      struct
@@ -3429,12 +3343,10 @@ RASTERIZER_STATUS       typedef _RASTERIZER_STATUS
 LPRASTERIZER_STATUS     typedef ptr _RASTERIZER_STATUS
 
 endif
-;.pragma endregion
 
 define TT_AVAILABLE    0x0001
 define TT_ENABLED      0x0002
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 tagPIXELFORMATDESCRIPTOR struct
@@ -3470,7 +3382,6 @@ PPIXELFORMATDESCRIPTOR  typedef ptr tagPIXELFORMATDESCRIPTOR
 LPPIXELFORMATDESCRIPTOR typedef ptr tagPIXELFORMATDESCRIPTOR
 
 endif
-;.pragma endregion
 
 define PFD_TYPE_RGBA        0
 define PFD_TYPE_COLORINDEX  1
@@ -3500,7 +3411,6 @@ define PFD_DEPTH_DONTCARE          0x20000000
 define PFD_DOUBLEBUFFER_DONTCARE   0x40000000
 define PFD_STEREO_DONTCARE         0x80000000
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifdef STRICT
@@ -3650,7 +3560,6 @@ CALLBACK(LPFNDEVMODE, :HWND, :HMODULE, :LPDEVMODE, :LPSTR, :LPSTR, :LPDEVMODE, :
 CALLBACK(LPFNDEVCAPS, :LPSTR, :LPSTR, :UINT, :LPSTR, :LPDEVMODE)
 
 endif
-;.pragma endregion
 
 define DM_UPDATE           1
 define DM_COPY             2
@@ -3725,7 +3634,6 @@ define DCBA_FACEDOWNLEFT     0x0102
 define DCBA_FACEDOWNRIGHT    0x0103
 endif
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .pragma comment(lib, winspool)
@@ -3938,11 +3846,9 @@ endif
 endif
 
 endif
-;.pragma endregion
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 tagWCRANGE              struct
@@ -4128,11 +4034,9 @@ endif
 endif
 
 endif
-;.pragma endregion
 
 endif
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 GetViewportExtEx proto WINAPI :HDC, :LPSIZE
@@ -4226,13 +4130,11 @@ SetTextJustification proto WINAPI :HDC, :sdword, :sdword
 UpdateColors proto WINAPI :HDC
 
 endif
-;.pragma endregion
 
 ifdef  COMBOX_SANDBOX
 
 if (_WIN32_WINNT ge 0x0600)
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 CALLBACK(GDIMARSHALLOC, :DWORD, :LPVOID)
@@ -4259,7 +4161,6 @@ GdiMarshal proto WINAPI :DWORD, :HGDIOBJ, :PVOID, :ULONG
 GdiUnmarshal proto WINAPI :PVOID, :ULONG
 
 endif
-;.pragma endregion
 
 endif
 
@@ -4267,7 +4168,6 @@ endif
 
 if (WINVER ge 0x0400)
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 COLOR16                 typedef USHORT
@@ -4285,9 +4185,7 @@ PTRIVERTEX              typedef ptr _TRIVERTEX
 LPTRIVERTEX             typedef ptr _TRIVERTEX
 
 endif
-;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 _GRADIENT_TRIANGLE      struct
@@ -4308,9 +4206,7 @@ PGRADIENT_RECT          typedef ptr _GRADIENT_RECT
 LPGRADIENT_RECT         typedef ptr _GRADIENT_RECT
 
 endif
-;.pragma endregion
 
-;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 _BLENDFUNCTION          struct
@@ -4323,9 +4219,7 @@ BLENDFUNCTION           typedef _BLENDFUNCTION
 PBLENDFUNCTION          typedef ptr _BLENDFUNCTION
 
 endif
-;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 define AC_SRC_OVER                 0x00
@@ -4345,11 +4239,9 @@ define GRADIENT_FILL_OP_FLAG   0x000000ff
 GradientFill proto WINAPI :HDC, :PTRIVERTEX, :ULONG, :PVOID, :ULONG, :ULONG
 
 endif
-;.pragma endregion
 
 endif
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
@@ -5931,7 +5823,6 @@ wglSwapMultipleBuffers proto WINAPI :UINT, :ptr
 endif
 
 endif
-;.pragma endregion
 
 endif
 

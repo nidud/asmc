@@ -97,12 +97,6 @@ ifndef NULL
     NULL equ 0
 endif
 
-ifdef _M_X64
-    _UNALIGNED  equ <> ; __unaligned
-else
-    _UNALIGNED equ <>
-endif
-
 __crt_countof macro _Array
     exitm<(lengthof(_Array))>
     endm

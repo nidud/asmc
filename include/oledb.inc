@@ -90,22 +90,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 ifndef __DBStructureDefinitions_INTERFACE_DEFINED__
 define __DBStructureDefinitions_INTERFACE_DEFINED__
 
-ifndef UNALIGNED
-if defined(_MIPS_) OR defined(_ALPHA_) OR defined(_PPC_)
-UNALIGNED equ <__unaligned>
-else
-UNALIGNED equ <>
-endif
-endif
-
 undef OLEDBDECLSPEC
-if _MSC_VER GE 1100 AND ( NOT defined(SHx) OR (defined(SHx) AND _MSC_VER GE 1200))
-OLEDBDECLSPEC equ <__declspec(selectany)>
-else
-OLEDBDECLSPEC equ <>
-endif
-DBKIND typedef DWORD
 
+DBKIND typedef DWORD
 
 .enum DBKINDENUM {
     DBKIND_GUID_NAME	= 0,

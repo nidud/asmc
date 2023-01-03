@@ -8,7 +8,7 @@ $(lib_dir)\x86\strsafe.lib:
     del *.obj
 
 $(lib_dir)\x64\strsafe.lib:
-    asmc64 -Cs -r x64\*.asm
+    asmc64 -DSTRSAFE_LIB -Cs -r x64\*.asm
     libw -q -b -n -c -fac $@ *.obj
     del *.obj
 

@@ -259,7 +259,25 @@ StringExHandleOtherFlagsW proto \
          pcchRemaining: ptr size_t,
                dwFlags: DWORD
 
+StringCchPrintfA proto \
+               pszDest: STRSAFE_LPSTR,
+               cchDest: size_t,
+             pszFormat: STRSAFE_LPCSTR,
+                argptr: vararg
+
+StringCchPrintfW proto \
+               pszDest: STRSAFE_LPWSTR,
+               cchDest: size_t,
+             pszFormat: STRSAFE_LPCWSTR,
+                argptr: vararg
+
 endif ; !STRSAFE_LIB
+
+ifdef _UNICODE
+define StringCchPrintf <StringCchPrintfW>
+else
+define StringCchPrintf <StringCchPrintfA>
+endif
 
 define __WARNING_CYCLOMATIC_COMPLEXITY 28734
 define __WARNING_USING_UNINIT_VAR 6001
@@ -602,11 +620,7 @@ endif
 ifndef _M_CEE_PURE
 
 ifndef STRSAFE_NO_CCH_FUNCTIONS
-ifdef _UNICODE
-StringCchPrintf equ <StringCchPrintfW>
-else
-StringCchPrintf equ <StringCchPrintfA>
-endif
+
 StringCchPrintfA proto fastcall pDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STRSAFE_LPCSTR, argList:vararg {
   local i
    .new pszDest:STRSAFE_LPSTR = rcx

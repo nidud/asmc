@@ -357,14 +357,16 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new StringOffset:   string_t
    .new buffer:         string_t
    .new q:              string_t
+   .new line_store:     ptr line_item
    .new NewString:      int_t
    .new size:           int_t
-   .new lineflags:      BYTE
-   .new brackets:       BYTE
-   .new Unicode:        BYTE
+   .new brackets:       byte
+   .new Unicode:        byte
+   .new merged:         byte
 
     xor eax,eax
     mov rc,eax
+    mov merged,al
 
     .return .if ( ModuleInfo.strict_masm_compat )
 
@@ -424,21 +426,17 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     add rax,64
     mov b_label,rax
 
+    mov line_store,LineStoreCurr
     mov edi,line_item.line
-    add rdi,LineStoreCurr
+    add rdi,rax
     tstrcpy( b_line, rdi )
 
     .if ( Parse_Pass == PASS_1 )
-
-        mov B[rdi],';'
-        tstrcmp( rax, [rsi].asm_tok.tokpos )
+        tstrcmp( b_line, [rsi].asm_tok.tokpos )
     .else
         xor eax,eax
     .endif
-
     mov equal,eax
-    mov al,ModuleInfo.line_flags
-    mov lineflags,al
 
     .while ( [rbx].asm_tok.token != T_FINAL )
 
@@ -463,8 +461,9 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     dec rsi
                 .endif
             .endif
-            ParseCString( b_label, buffer, rsi, &StringOffset, &Unicode )
-
+            .if ParseCString( b_label, buffer, rsi, &StringOffset, &Unicode )
+                mov eax,1
+            .endif
             mov NewString,eax
             mov rsi,StringOffset
 
@@ -476,10 +475,49 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 sub rcx,rdi
                 mov size,ecx
                 tmemcpy( b_data, rdi, ecx )
-
                 mov ecx,size
                 mov B[rax+rcx],0
-                .if tstrstr( b_line, rax )
+                ;
+                ; if the string is split the compare will fail..
+                ;
+                ; spanning of lines and spaces are already handled
+                ; so the string will be ("1""2""3") --> ("123")
+                ;
+                .if ( !merged )
+
+                    inc merged
+
+                    .if tstrchr(b_line, '"')
+
+                        mov esi,1
+                        lea rdi,[rax+1]
+
+                        .while 1
+
+                            mov al,[rdi]
+                            .break .if !al
+
+                            .if ( al == '"' )
+
+                                .if ( byte ptr [rdi-1] == '\' )
+                                .elseif ( esi == 0 )
+                                    inc esi
+                                .elseif ( byte ptr [rdi-1] == '"' )
+                                    xor esi,esi
+                                .elseif ( byte ptr [rdi+1] == '"' )
+                                    tstrcpy(rdi, &[rdi+2])
+                                    dec rdi
+                                .else
+                                    xor esi,esi
+                                .endif
+                            .endif
+                            inc rdi
+                        .endw
+                        mov rsi,StringOffset
+                    .endif
+                .endif
+
+                .if tstrstr( b_line, b_data )
 
                     mov rdi,rax
                     mov ecx,size
@@ -521,19 +559,25 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     .endif
                     tsprintf(b_data, rcx, b_label)
                 .endif
-            .elseif ( ModuleInfo.list )
-                and ModuleInfo.line_flags,NOT LOF_LISTED
             .endif
 
             mov rax,q
             mov rax,[rax].asm_tok.tokpos
+            mov di,[rax]
             mov B[rax],0
             mov rax,tokenarray
 
             tstrcat( tstrcat( tstrcpy( buffer, [rax].asm_tok.tokpos ), "addr " ), b_label )
+
+            mov rax,q
+            mov rax,[rax].asm_tok.tokpos
+            mov [rax],di
             mov rsi,ltokstart( rsi )
             .if ecx
-                tstrcat( tstrcat( buffer, " " ), rsi )
+                .if ( ecx != ')' )
+                    tstrcat( buffer, " " )
+                .endif
+                tstrcat( buffer, rsi )
             .endif
 
             .if ( NewString )
@@ -571,15 +615,19 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         add rbx,asm_tok
     .endw
 
+    mov rcx,b_line
     .if ( equal == 0 )
-        StoreLine( ModuleInfo.currsource, list_pos, 0 )
-    .else
-        mov ebx,ModuleInfo.GeneratedCode
-        mov ModuleInfo.GeneratedCode,0
-        StoreLine( b_line, list_pos, 0 )
-        mov ModuleInfo.GeneratedCode,ebx
+        mov rcx,ModuleInfo.currsource
     .endif
-    mov ModuleInfo.line_flags,lineflags
+    mov rdx,line_store
+    mov [rdx].line_item.line,0
+    mov bl,ModuleInfo.line_flags
+    mov ModuleInfo.line_flags,0
+    mov edi,ModuleInfo.GeneratedCode
+    mov ModuleInfo.GeneratedCode,0
+    StoreLine( rcx, 0, 0 )
+    mov ModuleInfo.GeneratedCode,edi
+    mov ModuleInfo.line_flags,bl
    .return( rc )
 
 GenerateCString endp

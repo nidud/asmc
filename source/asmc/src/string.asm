@@ -357,12 +357,12 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new StringOffset:   string_t
    .new buffer:         string_t
    .new q:              string_t
-   .new line_store:     ptr line_item
    .new NewString:      int_t
    .new size:           int_t
    .new brackets:       byte
    .new Unicode:        byte
    .new merged:         byte
+   .new lineflags:      byte
 
     xor eax,eax
     mov rc,eax
@@ -426,17 +426,19 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     add rax,64
     mov b_label,rax
 
-    mov line_store,LineStoreCurr
     mov edi,line_item.line
-    add rdi,rax
+    add rdi,LineStoreCurr
     tstrcpy( b_line, rdi )
 
     .if ( Parse_Pass == PASS_1 )
-        tstrcmp( b_line, [rsi].asm_tok.tokpos )
+        
+        mov B[rdi],';'
+        tstrcmp( rax, [rsi].asm_tok.tokpos )
     .else
         xor eax,eax
     .endif
     mov equal,eax
+    mov lineflags,ModuleInfo.line_flags
 
     .while ( [rbx].asm_tok.token != T_FINAL )
 
@@ -615,19 +617,16 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         add rbx,asm_tok
     .endw
 
-    mov rcx,b_line
     .if ( equal == 0 )
+        StoreLine( ModuleInfo.currsource, list_pos, 0 )
+    .else
+        mov ebx,ModuleInfo.GeneratedCode
+        mov ModuleInfo.GeneratedCode,0
+        StoreLine( b_line, list_pos, 0 )
+        mov ModuleInfo.GeneratedCode,ebx
         mov rcx,ModuleInfo.currsource
     .endif
-    mov rdx,line_store
-    mov [rdx].line_item.line,0
-    mov bl,ModuleInfo.line_flags
-    mov ModuleInfo.line_flags,0
-    mov edi,ModuleInfo.GeneratedCode
-    mov ModuleInfo.GeneratedCode,0
-    StoreLine( rcx, 0, 0 )
-    mov ModuleInfo.GeneratedCode,edi
-    mov ModuleInfo.line_flags,bl
+    mov ModuleInfo.line_flags,lineflags
    .return( rc )
 
 GenerateCString endp

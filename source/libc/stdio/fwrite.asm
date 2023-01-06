@@ -73,7 +73,7 @@ fwrite proc uses rsi rdi rbx buf:LPSTR, rsize:int_t, num:int_t, fp:LPFILE
 	    je	error
 
 	    sub edi,eax
-	    add esi,eax
+	    add rsi,rax
 	    cmp eax,nbytes
 	    jb	error
 

@@ -28,53 +28,53 @@ _tmain proc
             mov hr,pNetworkListManager.get_IsConnected(&IsConnected)
 
             .if (SUCCEEDED(hr))
-                printf("get_IsConnected(): %#X\n", IsConnected)
+                _tprintf("get_IsConnected(): %#X\n", IsConnected)
             .endif
             mov hr,pNetworkListManager.get_IsConnectedToInternet(&IsConnected)
 
             .if (SUCCEEDED(hr))
-                printf("get_IsConnectedToInternet(): %#X\n", IsConnected)
+                _tprintf("get_IsConnectedToInternet(): %#X\n", IsConnected)
             .endif
 
            .new Connectivity:NLM_CONNECTIVITY = NLM_CONNECTIVITY_DISCONNECTED
             mov hr,pNetworkListManager.GetConnectivity(&Connectivity)
 
             .if (SUCCEEDED(hr))
-                printf("GetConnectivity(): %#X\n", Connectivity)
+                _tprintf("GetConnectivity(): %#X\n", Connectivity)
 
                 .if ( Connectivity == NLM_CONNECTIVITY_DISCONNECTED )
-                    printf(" NLM_CONNECTIVITY_DISCONNECTED\n")
+                    _tprintf(" NLM_CONNECTIVITY_DISCONNECTED\n")
                 .endif
                 .if ( Connectivity & NLM_CONNECTIVITY_IPV4_NOTRAFFIC )
-                    printf(" NLM_CONNECTIVITY_IPV4_NOTRAFFIC\n")
+                    _tprintf(" NLM_CONNECTIVITY_IPV4_NOTRAFFIC\n")
                 .endif
                 .if ( Connectivity & NLM_CONNECTIVITY_IPV6_NOTRAFFIC )
-                    printf(" NLM_CONNECTIVITY_IPV6_NOTRAFFIC\n")
+                    _tprintf(" NLM_CONNECTIVITY_IPV6_NOTRAFFIC\n")
                 .endif
                 .if ( Connectivity & NLM_CONNECTIVITY_IPV4_SUBNET )
-                    printf(" NLM_CONNECTIVITY_IPV4_SUBNET\n")
+                    _tprintf(" NLM_CONNECTIVITY_IPV4_SUBNET\n")
                 .endif
                 .if ( Connectivity & NLM_CONNECTIVITY_IPV4_LOCALNETWORK )
-                    printf(" NLM_CONNECTIVITY_IPV4_LOCALNETWORK\n")
+                    _tprintf(" NLM_CONNECTIVITY_IPV4_LOCALNETWORK\n")
                 .endif
                 .if ( Connectivity & NLM_CONNECTIVITY_IPV4_INTERNET )
                     printf(" NLM_CONNECTIVITY_IPV4_INTERNET\n")
                 .endif
                 .if ( Connectivity & NLM_CONNECTIVITY_IPV6_SUBNET )
-                    printf(" NLM_CONNECTIVITY_IPV6_SUBNET\n")
+                    _tprintf(" NLM_CONNECTIVITY_IPV6_SUBNET\n")
                 .endif
                 .if ( Connectivity & NLM_CONNECTIVITY_IPV6_LOCALNETWORK )
-                    printf(" NLM_CONNECTIVITY_IPV6_LOCALNETWORK\n")
+                    _tprintf(" NLM_CONNECTIVITY_IPV6_LOCALNETWORK\n")
                 .endif
                 .if ( Connectivity & NLM_CONNECTIVITY_IPV6_INTERNET )
-                    printf(" NLM_CONNECTIVITY_IPV6_INTERNET\n")
+                    _tprintf(" NLM_CONNECTIVITY_IPV6_INTERNET\n")
                 .endif
             .endif
         .else
 
             ; handle the error somehow
 
-            perror("CoCreateInstance()")
+            _tperror("CoCreateInstance()")
         .endif
         CoUninitialize()
     .endif

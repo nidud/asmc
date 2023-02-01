@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ### OPTION CODEPAGE
 
-**OPTION CODEPAGE**:<value>
+**OPTION CODEPAGE**:_value_
 
 This controls Unicode creation. Value is the first argument to MultiByteToWideChar(). The default value is 0.
 

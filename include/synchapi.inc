@@ -1,527 +1,207 @@
 ifndef _SYNCHAPI_H_
 define _SYNCHAPI_H_
 
-include libc.inc
-.pragma(comment(lib, kernel32))
-
 include apiset.inc
 include apisetcconv.inc
 include minwindef.inc
 include minwinbase.inc
 
-ifndef _APISET_MINWIN_VERSION
-_APISET_MINWIN_VERSION equ 0x0101
+define SRWLOCK_INIT RTL_SRWLOCK_INIT
+
+PSRWLOCK typedef ptr SRWLOCK
+
+if (_WIN32_WINNT ge 0x0600)
+InitializeSRWLock proto WINAPI :PSRWLOCK
+ReleaseSRWLockExclusive proto WINAPI :PSRWLOCK
+ReleaseSRWLockShared proto WINAPI :PSRWLOCK
+AcquireSRWLockExclusive proto WINAPI :PSRWLOCK
+AcquireSRWLockShared proto WINAPI :PSRWLOCK
+TryAcquireSRWLockExclusive proto WINAPI :PSRWLOCK
+TryAcquireSRWLockShared proto WINAPI :PSRWLOCK
 endif
-
-ifndef _APISET_SYNCH_VER
-ifdef _APISET_MINWIN_VERSION
-if _APISET_MINWIN_VERSION GT 0x0100
-_APISET_SYNCH_VER equ 0x0200
-elseif _APISET_MINWIN_VERSION LE 0x0100
-_APISET_SYNCH_VER equ 0x0100
-endif
-endif
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-SRWLOCK_INIT            equ RTL_SRWLOCK_INIT
-SRWLOCK                 typedef RTL_SRWLOCK
-PSRWLOCK                typedef ptr RTL_SRWLOCK
-
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-if (_WIN32_WINNT GE 0x0600)
-
-;VOID
-InitializeSRWLock proto WINAPI \
-               SRWLock: PSRWLOCK
-
-;VOID
-ReleaseSRWLockExclusive proto WINAPI \
-               SRWLock: PSRWLOCK
-
-;VOID
-ReleaseSRWLockShared proto WINAPI \
-               SRWLock: PSRWLOCK
-
-;VOID
-AcquireSRWLockExclusive proto WINAPI \
-               SRWLock: PSRWLOCK
-
-;VOID
-AcquireSRWLockShared proto WINAPI \
-               SRWLock: PSRWLOCK
-
-;BOOLEAN
-TryAcquireSRWLockExclusive proto WINAPI \
-               SRWLock: PSRWLOCK
-
-;BOOLEAN
-TryAcquireSRWLockShared proto WINAPI \
-               SRWLock: PSRWLOCK
-
-endif ;; (_WIN32_WINNT GE 0x0600)
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-if (_WIN32_WINNT LT 0x0600)
-;VOID
-InitializeCriticalSection proto WINAPI lpCriticalSection: LPCRITICAL_SECTION
+if (_WIN32_WINNT lt 0x0600)
+InitializeCriticalSection proto WINAPI :LPCRITICAL_SECTION
 else
-InitializeCriticalSection proto WINAPI lpCriticalSection: LPCRITICAL_SECTION
+InitializeCriticalSection proto WINAPI :LPCRITICAL_SECTION
 endif
+EnterCriticalSection proto WINAPI :LPCRITICAL_SECTION
+LeaveCriticalSection proto WINAPI :LPCRITICAL_SECTION
+InitializeCriticalSectionAndSpinCount proto WINAPI :LPCRITICAL_SECTION, :DWORD
+if (_WIN32_WINNT ge 0x0600)
+InitializeCriticalSectionEx proto WINAPI :LPCRITICAL_SECTION, :DWORD, :DWORD
 endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-;VOID
-EnterCriticalSection proto WINAPI lpCriticalSection: LPCRITICAL_SECTION
-LeaveCriticalSection proto WINAPI lpCriticalSection: LPCRITICAL_SECTION
+SetCriticalSectionSpinCount proto WINAPI :LPCRITICAL_SECTION, :DWORD
+if (_WIN32_WINNT ge 0x0400)
+TryEnterCriticalSection proto WINAPI :LPCRITICAL_SECTION
 endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-;BOOL
-InitializeCriticalSectionAndSpinCount proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION,
-           dwSpinCount: DWORD
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-if (_WIN32_WINNT GE 0x0600)
-;BOOL
-InitializeCriticalSectionEx proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION,
-           dwSpinCount: DWORD,
-                 Flags: DWORD
-endif
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-;DWORD
-SetCriticalSectionSpinCount proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION,
-           dwSpinCount: DWORD
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-if (_WIN32_WINNT GE 0x0400)
-;BOOL
-TryEnterCriticalSection proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION
-endif
-;VOID
-DeleteCriticalSection proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION
-
-
+DeleteCriticalSection proto WINAPI :LPCRITICAL_SECTION
 
 INIT_ONCE               typedef RTL_RUN_ONCE
 PINIT_ONCE              typedef PRTL_RUN_ONCE
 LPINIT_ONCE             typedef PRTL_RUN_ONCE
 
-INIT_ONCE_STATIC_INIT   equ RTL_RUN_ONCE_INIT
-INIT_ONCE_CHECK_ONLY    equ RTL_RUN_ONCE_CHECK_ONLY
-INIT_ONCE_ASYNC         equ RTL_RUN_ONCE_ASYNC
-INIT_ONCE_INIT_FAILED   equ RTL_RUN_ONCE_INIT_FAILED
-INIT_ONCE_CTX_RESERVED_BITS equ RTL_RUN_ONCE_CTX_RESERVED_BITS
+define INIT_ONCE_STATIC_INIT    RTL_RUN_ONCE_INIT
+define INIT_ONCE_CHECK_ONLY     RTL_RUN_ONCE_CHECK_ONLY
+define INIT_ONCE_ASYNC          RTL_RUN_ONCE_ASYNC
+define INIT_ONCE_INIT_FAILED    RTL_RUN_ONCE_INIT_FAILED
 
-CALLBACK(PINIT_ONCE_FN, :PINIT_ONCE, :ptr, :ptr)
+define INIT_ONCE_CTX_RESERVED_BITS RTL_RUN_ONCE_CTX_RESERVED_BITS
 
-if (( NOT defined(_CONTRACT_GEN) AND (_WIN32_WINNT GE 0x0600)) OR (_APISET_MINWIN_VERSION GE 0x0101))
+CALLBACK(PINIT_ONCE_FN, :PINIT_ONCE, :PVOID, :ptr)
 
-;VOID
-InitOnceInitialize proto WINAPI \
-              InitOnce: PINIT_ONCE
-
-;BOOL
-InitOnceExecuteOnce proto WINAPI \
-              InitOnce: PINIT_ONCE,
-                InitFn: PINIT_ONCE_FN,
-             Parameter: PVOID,
-               Context: ptr LPVOID
-
-;BOOL
-InitOnceBeginInitialize proto WINAPI \
-            lpInitOnce: LPINIT_ONCE,
-               dwFlags: DWORD,
-              fPending: PBOOL,
-             lpContext: ptr LPVOID
-
-;BOOL
-InitOnceComplete proto WINAPI \
-            lpInitOnce: LPINIT_ONCE,
-               dwFlags: DWORD,
-             lpContext: LPVOID
-
+if (_WIN32_WINNT ge 0x0600)
+InitOnceInitialize proto WINAPI :PINIT_ONCE
+InitOnceExecuteOnce proto WINAPI :PINIT_ONCE, :PINIT_ONCE_FN, :PVOID, :ptr
+InitOnceBeginInitialize proto WINAPI :LPINIT_ONCE, :DWORD, :PBOOL, :ptr
+InitOnceComplete proto WINAPI :LPINIT_ONCE, :DWORD, :LPVOID
 endif
 
-CONDITION_VARIABLE      typedef RTL_CONDITION_VARIABLE
-PCONDITION_VARIABLE     typedef ptr RTL_CONDITION_VARIABLE
+PCONDITION_VARIABLE     typedef ptr CONDITION_VARIABLE
 
-CONDITION_VARIABLE_INIT equ RTL_CONDITION_VARIABLE_INIT
-CONDITION_VARIABLE_LOCKMODE_SHARED equ RTL_CONDITION_VARIABLE_LOCKMODE_SHARED
+define CONDITION_VARIABLE_INIT RTL_CONDITION_VARIABLE_INIT
+define CONDITION_VARIABLE_LOCKMODE_SHARED RTL_CONDITION_VARIABLE_LOCKMODE_SHARED
 
-if (( NOT defined(_CONTRACT_GEN) AND (_WIN32_WINNT GE 0x0600)) OR (_APISET_MINWIN_VERSION GE 0x0101))
-
-;VOID
-InitializeConditionVariable proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE
-;VOID
-WakeConditionVariable proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE
-;VOID
-WakeAllConditionVariable proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE
-;BOOL
-SleepConditionVariableCS proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE,
-       CriticalSection: PCRITICAL_SECTION,
-        dwMilliseconds: DWORD
-;BOOL
-SleepConditionVariableSRW proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE,
-               SRWLock: PSRWLOCK,
-        dwMilliseconds: DWORD,
-                 Flags: ULONG
+if (_WIN32_WINNT ge 0x0600)
+InitializeConditionVariable proto WINAPI :PCONDITION_VARIABLE
+WakeConditionVariable proto WINAPI :PCONDITION_VARIABLE
+WakeAllConditionVariable proto WINAPI :PCONDITION_VARIABLE
+SleepConditionVariableCS proto WINAPI :PCONDITION_VARIABLE, :PCRITICAL_SECTION, :DWORD
+SleepConditionVariableSRW proto WINAPI :PCONDITION_VARIABLE, :PSRWLOCK, :DWORD, :ULONG
 endif
 
-;BOOL
-SetEvent proto WINAPI \
-                hEvent: HANDLE
-;BOOL
-ResetEvent proto WINAPI \
-                hEvent: HANDLE
-;BOOL
-ReleaseSemaphore proto WINAPI \
-            hSemaphore: HANDLE,
-         lReleaseCount: LONG,
-       lpPreviousCount: LPLONG
+SetEvent proto WINAPI :HANDLE
+ResetEvent proto WINAPI :HANDLE
+ReleaseSemaphore proto WINAPI :HANDLE, :LONG, :LPLONG
+ReleaseMutex proto WINAPI :HANDLE
+WaitForSingleObject proto WINAPI :HANDLE, :DWORD
+SleepEx proto WINAPI :DWORD, :BOOL
+WaitForSingleObjectEx proto WINAPI :HANDLE, :DWORD, :BOOL
+WaitForMultipleObjectsEx proto WINAPI :DWORD, :ptr, :BOOL, :DWORD, :BOOL
 
-;BOOL
-ReleaseMutex proto WINAPI \
-                hMutex: HANDLE
-endif
+define MUTEX_MODIFY_STATE  MUTANT_QUERY_STATE
+define MUTEX_ALL_ACCESS    MUTANT_ALL_ACCESS
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;DWORD
-WaitForSingleObject proto WINAPI \
-               hHandle: HANDLE,
-        dwMilliseconds: DWORD
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;DWORD
-SleepEx proto WINAPI \
-        dwMilliseconds: DWORD,
-            bAlertable: BOOL
-;DWORD
-WaitForSingleObjectEx proto WINAPI \
-               hHandle: HANDLE,
-        dwMilliseconds: DWORD,
-            bAlertable: BOOL
-
-;DWORD
-WaitForMultipleObjectsEx proto WINAPI \
-                nCount: DWORD,
-             lpHandles: ptr HANDLE,
-              bWaitAll: BOOL,
-        dwMilliseconds: DWORD,
-            bAlertable: BOOL
-
-MUTEX_MODIFY_STATE      equ MUTANT_QUERY_STATE
-MUTEX_ALL_ACCESS        equ MUTANT_ALL_ACCESS
-
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;HANDLE
-CreateMutexA proto WINAPI \
-     lpMutexAttributes: LPSECURITY_ATTRIBUTES,
-         bInitialOwner: BOOL,
-                lpName: LPCSTR
-;HANDLE
-CreateMutexW proto WINAPI \
-     lpMutexAttributes: LPSECURITY_ATTRIBUTES,
-         bInitialOwner: BOOL,
-                lpName: LPCWSTR
-
+CreateMutexA proto WINAPI :LPSECURITY_ATTRIBUTES, :BOOL, :LPCSTR
+CreateMutexW proto WINAPI :LPSECURITY_ATTRIBUTES, :BOOL, :LPCWSTR
 ifdef _UNICODE
-CreateMutex             equ <CreateMutexW>
+define CreateMutex  <CreateMutexW>
 else
-CreateMutex             equ <CreateMutexA>
+define CreateMutex  <CreateMutexA>
 endif
-endif
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;HANDLE
-OpenMutexW proto WINAPI \
-       dwDesiredAccess: DWORD,
-        bInheritHandle: BOOL,
-                lpName: LPCWSTR
-
+OpenMutexW proto WINAPI :DWORD, :BOOL, :LPCWSTR
 ifdef _UNICODE
-OpenMutex               equ <OpenMutexW>
+define OpenMutex  <OpenMutexW>
 endif
-endif
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;HANDLE
-CreateEventA proto WINAPI \
-     lpEventAttributes: LPSECURITY_ATTRIBUTES,
-          bManualReset: BOOL,
-         bInitialState: BOOL,
-                lpName: LPCSTR
-
-;HANDLE
-CreateEventW proto WINAPI \
-     lpEventAttributes: LPSECURITY_ATTRIBUTES,
-          bManualReset: BOOL,
-         bInitialState: BOOL,
-                lpName: LPCWSTR
-
+CreateEventA proto WINAPI :LPSECURITY_ATTRIBUTES, :BOOL, :BOOL, :LPCSTR
+CreateEventW proto WINAPI :LPSECURITY_ATTRIBUTES, :BOOL, :BOOL, :LPCWSTR
 ifdef _UNICODE
-CreateEvent             equ <CreateEventW>
+define CreateEvent  <CreateEventW>
 else
-CreateEvent             equ <CreateEventA>
+define CreateEvent  <CreateEventA>
 endif
-endif
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;HANDLE
-OpenEventA proto WINAPI \
-       dwDesiredAccess: DWORD,
-        bInheritHandle: BOOL,
-                lpName: LPCSTR
-
-;HANDLE
-OpenEventW proto WINAPI \
-       dwDesiredAccess: DWORD,
-        bInheritHandle: BOOL,
-                lpName: LPCWSTR
-
+OpenEventA proto WINAPI :DWORD, :BOOL, :LPCSTR
+OpenEventW proto WINAPI :DWORD, :BOOL, :LPCWSTR
 ifdef _UNICODE
-OpenEvent               equ <OpenEventW>
+define OpenEvent  <OpenEventW>
 else
-OpenEvent               equ <OpenEventA>
+define OpenEvent  <OpenEventA>
 endif
 
-;HANDLE
-OpenSemaphoreW proto WINAPI \
-       dwDesiredAccess: DWORD,
-        bInheritHandle: BOOL,
-                lpName: LPCWSTR
-
+OpenSemaphoreW proto WINAPI :DWORD, :BOOL, :LPCWSTR
 ifdef _UNICODE
-OpenSemaphore           equ <OpenSemaphoreW>
-endif
+define OpenSemaphore  <OpenSemaphoreW>
 endif
 
-if (_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+if (_WIN32_WINNT ge 0x0400) or (_WIN32_WINDOWS gt 0x0400)
 
 CALLBACK(PTIMERAPCROUTINE, :LPVOID, :DWORD, :DWORD)
 
-;HANDLE
-OpenWaitableTimerW proto WINAPI \
-       dwDesiredAccess: DWORD,
-        bInheritHandle: BOOL,
-           lpTimerName: LPCWSTR
-
+OpenWaitableTimerW proto WINAPI :DWORD, :BOOL, :LPCWSTR
 ifdef _UNICODE
-OpenWaitableTimer       equ <OpenWaitableTimerW>
+define OpenWaitableTimer  <OpenWaitableTimerW>
 endif
 
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
-;BOOL
-SetWaitableTimerEx proto WINAPI \
-                hTimer: HANDLE,
-             lpDueTime: ptr LARGE_INTEGER,
-               lPeriod: LONG,
-  pfnCompletionRoutine: PTIMERAPCROUTINE,
-lpArgToCompletionRoutine: LPVOID,
-           WakeContext: PREASON_CONTEXT,
-        TolerableDelay: ULONG
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
+SetWaitableTimerEx proto WINAPI :HANDLE, :ptr, :LONG, :PTIMERAPCROUTINE, :LPVOID, :PREASON_CONTEXT, :ULONG
 endif
 
-;BOOL
-SetWaitableTimer proto WINAPI \
-                hTimer: HANDLE,
-             lpDueTime: ptr LARGE_INTEGER,
-               lPeriod: LONG,
-  pfnCompletionRoutine: PTIMERAPCROUTINE,
-lpArgToCompletionRoutine: LPVOID,
-               fResume: BOOL
+SetWaitableTimer proto WINAPI :HANDLE, :ptr, :LONG, :PTIMERAPCROUTINE, :LPVOID, :BOOL
+CancelWaitableTimer proto WINAPI :HANDLE
 
-;BOOL
-CancelWaitableTimer proto WINAPI \
-                hTimer: HANDLE
+if (_WIN32_WINNT ge 0x0600)
 
-endif ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+define CREATE_MUTEX_INITIAL_OWNER  0x00000001
 
-
-if (_WIN32_WINNT GE 0x0600)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-CREATE_MUTEX_INITIAL_OWNER equ 0x00000001
-
-;HANDLE
-CreateMutexExA proto WINAPI \
-     lpMutexAttributes: LPSECURITY_ATTRIBUTES,
-                lpName: LPCSTR,
-               dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-
-;HANDLE
-CreateMutexExW proto WINAPI \
-     lpMutexAttributes: LPSECURITY_ATTRIBUTES,
-                lpName: LPCWSTR,
-               dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-
+CreateMutexExA proto WINAPI :LPSECURITY_ATTRIBUTES, :LPCSTR, :DWORD, :DWORD
+CreateMutexExW proto WINAPI :LPSECURITY_ATTRIBUTES, :LPCWSTR, :DWORD, :DWORD
 ifdef _UNICODE
-CreateMutexEx           equ <CreateMutexExW>
+define CreateMutexEx  <CreateMutexExW>
 else
-CreateMutexEx           equ <CreateMutexExA>
+define CreateMutexEx  <CreateMutexExA>
 endif
 
-CREATE_EVENT_MANUAL_RESET equ 0x00000001
-CREATE_EVENT_INITIAL_SET equ 0x00000002
+define CREATE_EVENT_MANUAL_RESET   0x00000001
+define CREATE_EVENT_INITIAL_SET    0x00000002
 
-;HANDLE
-CreateEventExA proto WINAPI \
-     lpEventAttributes: LPSECURITY_ATTRIBUTES,
-                lpName: LPCSTR,
-               dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-
-;HANDLE
-CreateEventExW proto WINAPI \
-     lpEventAttributes: LPSECURITY_ATTRIBUTES,
-                lpName: LPCWSTR,
-               dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-
-
+CreateEventExA proto WINAPI :LPSECURITY_ATTRIBUTES, :LPCSTR, :DWORD, :DWORD
+CreateEventExW proto WINAPI :LPSECURITY_ATTRIBUTES, :LPCWSTR, :DWORD, :DWORD
 ifdef _UNICODE
-CreateEventEx           equ <CreateEventExW>
+define CreateEventEx  <CreateEventExW>
 else
-CreateEventEx           equ <CreateEventExA>
+define CreateEventEx  <CreateEventExA>
 endif
 
-;HANDLE
-CreateSemaphoreExW proto WINAPI \
- lpSemaphoreAttributes: LPSECURITY_ATTRIBUTES,
-         lInitialCount: LONG,
-         lMaximumCount: LONG,
-                lpName: LPCWSTR,
-               dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-
+CreateSemaphoreExW proto WINAPI :LPSECURITY_ATTRIBUTES, :LONG, :LONG, :LPCWSTR, :DWORD, :DWORD
 ifdef _UNICODE
-CreateSemaphoreEx       equ <CreateSemaphoreExW>
+define CreateSemaphoreEx  <CreateSemaphoreExW>
 endif
 
+define CREATE_WAITABLE_TIMER_MANUAL_RESET  0x00000001
+if (_WIN32_WINNT ge _NT_TARGET_VERSION_WIN10_RS4)
+define CREATE_WAITABLE_TIMER_HIGH_RESOLUTION 0x00000002
 endif
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-CREATE_WAITABLE_TIMER_MANUAL_RESET equ 0x00000001
-
-;HANDLE
-CreateWaitableTimerExW proto WINAPI \
-     lpTimerAttributes: LPSECURITY_ATTRIBUTES,
-           lpTimerName: LPCWSTR,
-               dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-
+CreateWaitableTimerExW proto WINAPI :LPSECURITY_ATTRIBUTES, :LPCWSTR, :DWORD, :DWORD
 ifdef _UNICODE
-CreateWaitableTimerEx   equ <CreateWaitableTimerExW>
+define CreateWaitableTimerEx  <CreateWaitableTimerExW>
 endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif
 
-endif ;; (_WIN32_WINNT GE 0x0600)
-
-endif ;; (_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
-
-
-if NOT defined(_CONTRACT_GEN) OR (_APISET_SYNCH_VER GE 0x0101)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif
 
 SYNCHRONIZATION_BARRIER typedef RTL_BARRIER
 PSYNCHRONIZATION_BARRIER typedef PRTL_BARRIER
 LPSYNCHRONIZATION_BARRIER typedef PRTL_BARRIER
 
-SYNCHRONIZATION_BARRIER_FLAGS_SPIN_ONLY equ 0x01
-SYNCHRONIZATION_BARRIER_FLAGS_BLOCK_ONLY equ 0x02
-SYNCHRONIZATION_BARRIER_FLAGS_NO_DELETE equ 0x04
+define SYNCHRONIZATION_BARRIER_FLAGS_SPIN_ONLY  0x01
+define SYNCHRONIZATION_BARRIER_FLAGS_BLOCK_ONLY 0x02
+define SYNCHRONIZATION_BARRIER_FLAGS_NO_DELETE  0x04
 
-;BOOL
-EnterSynchronizationBarrier proto WINAPI \
-             lpBarrier: LPSYNCHRONIZATION_BARRIER,
-               dwFlags: DWORD
-
-;BOOL
-InitializeSynchronizationBarrier proto WINAPI \
-             lpBarrier: LPSYNCHRONIZATION_BARRIER,
-         lTotalThreads: LONG,
-            lSpinCount: LONG
-
-;BOOL
-DeleteSynchronizationBarrier proto WINAPI \
-             lpBarrier: LPSYNCHRONIZATION_BARRIER
-
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;VOID
-Sleep proto WINAPI \
-        dwMilliseconds: DWORD
-
-;BOOL
-WaitOnAddress proto WINAPI \
-               Address: ptr,
-        CompareAddress: PVOID,
-           AddressSize: SIZE_T,
-        dwMilliseconds: DWORD
-
-;VOID
-WakeByAddressSingle proto WINAPI \
-               Address: PVOID
-
-;VOID
-WakeByAddressAll proto WINAPI \
-               Address: PVOID
-
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+EnterSynchronizationBarrier proto WINAPI :LPSYNCHRONIZATION_BARRIER, :DWORD
+InitializeSynchronizationBarrier proto WINAPI :LPSYNCHRONIZATION_BARRIER, :LONG, :LONG
+DeleteSynchronizationBarrier proto WINAPI :LPSYNCHRONIZATION_BARRIER
+Sleep proto WINAPI :DWORD
+WaitOnAddress proto WINAPI :ptr, :PVOID, :SIZE_T, :DWORD
+WakeByAddressSingle proto WINAPI :PVOID
+WakeByAddressAll proto WINAPI :PVOID
 
 ifndef MIDL_PASS
-
-;DWORD
-SignalObjectAndWait proto WINAPI \
-       hObjectToSignal: HANDLE,
-       hObjectToWaitOn: HANDLE,
-        dwMilliseconds: DWORD,
-            bAlertable: BOOL
-
+SignalObjectAndWait proto WINAPI :HANDLE, :HANDLE, :DWORD, :BOOL
 endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif ;; (_APISET_SYNCH_VER GE 0x0101)
+WaitForMultipleObjects proto WINAPI :DWORD, :ptr, :BOOL, :DWORD
+CreateSemaphoreW proto WINAPI :LPSECURITY_ATTRIBUTES, :LONG, :LONG, :LPCWSTR
+ifdef _UNICODE
+define CreateSemaphore  <CreateSemaphoreW>
+endif
 
-endif ;; _SYNCHAPI_H_
+CreateWaitableTimerW proto WINAPI :LPSECURITY_ATTRIBUTES, :BOOL, :LPCWSTR
+ifdef _UNICODE
+define CreateWaitableTimer  <CreateWaitableTimerW>
+endif
+
+endif

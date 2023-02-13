@@ -2,6 +2,8 @@
 ifndef _WINDOWS_
 define _WINDOWS_
 
+define _MSC_EXTENSIONS
+
 .pragma cref(push, 0)
 
 ifndef __LIBC_INC

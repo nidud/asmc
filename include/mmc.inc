@@ -1400,77 +1400,20 @@ MMC_OVERLAY_ITEM_INDEX_FROM_ITEM_STATE macro state
 MMC_ITEM_STATE_MASK	equ ( 0xff )
 endif
 
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-;LPSTR
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
+HBITMAP_UserSize proto WINAPI :ptr, :dword, :ptr
+HBITMAP_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserFree proto WINAPI :ptr, :ptr
 
-;LPSTR
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-HBITMAP_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HBITMAP
-
-;LPSTR
-HBITMAP_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-;LPSTR
-HBITMAP_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-;void
-HBITMAP_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HBITMAP
-
-
-;DWORD
-HICON_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HICON
-
-;LPSTR
-HICON_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HICON
-
-;LPSTR
-HICON_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HICON
-
-;void
-HICON_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HICON
-
+HICON_UserSize proto WINAPI :ptr, :dword, :ptr
+HICON_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HICON_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HICON_UserFree proto WINAPI :ptr, :ptr
 
 ;DWORD
 HPALETTE_UserSize proto WINAPI \
@@ -1496,100 +1439,25 @@ HPALETTE_UserFree proto WINAPI \
 		      : ptr HPALETTE
 
 
-;DWORD
-HWND_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
+HWND_UserSize proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree proto WINAPI :ptr, :ptr
 
-;LPSTR
-HWND_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
-;LPSTR
-HWND_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
+HBITMAP_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HBITMAP_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserFree64 proto WINAPI :ptr, :ptr
 
-;void
-HWND_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
-
-
-;DWORD
-BSTR_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-HBITMAP_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HBITMAP
-
-;LPSTR
-HBITMAP_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-;LPSTR
-HBITMAP_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-;void
-HBITMAP_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HBITMAP
-
-
-;DWORD
-HICON_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HICON
-
-;LPSTR
-HICON_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HICON
-
-;LPSTR
-HICON_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HICON
-
-;void
-HICON_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HICON
+HICON_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HICON_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HICON_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HICON_UserFree64 proto WINAPI :ptr, :ptr
 
 
 ;DWORD
@@ -1616,28 +1484,10 @@ HPALETTE_UserFree64 proto WINAPI \
 		      : ptr HPALETTE
 
 
-;DWORD
-HWND_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
-
-;LPSTR
-HWND_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;LPSTR
-HWND_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;void
-HWND_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
+HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree64 proto WINAPI :ptr, :ptr
 
 endif
 .pragma list(pop)

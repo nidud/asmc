@@ -12,8 +12,8 @@ include ole2.inc
 endif
 include wtypes.inc
 
-ifndef __UNKNWN_INC
-define __UNKNWN_INC
+ifndef __unknwn_h__
+define __unknwn_h__
 
 ifndef __SAFE_RELEASE
 define __SAFE_RELEASE

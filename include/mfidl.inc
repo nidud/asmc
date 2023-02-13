@@ -3068,101 +3068,25 @@ DEFINE_GUID(CLSID_MPEG2ByteStreamPlugin,0x40871c59, 0xab40, 0x471f, 0x8d, 0xc3, 
 DEFINE_GUID( MF_MEDIASOURCE_SERVICE, 0xf09992f7, 0x9fba, 0x4c4a, 0xa3, 0x7f, 0x8c, 0x47, 0xb4, 0xe1, 0xdf, 0xe7 );
 endif
 
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-;LPBYTE
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr BSTR
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
 
-;LPBYTE
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr BSTR
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
-;void
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-LPSAFEARRAY_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
-
-;DWORD
-BSTR_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPBYTE
-BSTR_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr BSTR
-
-;LPBYTE
-BSTR_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-LPSAFEARRAY_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
+LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
 
 IMFSourceResolver_BeginCreateObjectFromURL_Proxy proto __cdecl :ptr, :ptr, :dword, :ptr
 IMFSourceResolver_BeginCreateObjectFromURL_Stub proto __cdecl :ptr, :ptr, :dword, :ptr, :ptr

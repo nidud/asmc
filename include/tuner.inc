@@ -1335,29 +1335,34 @@ endif ;; __TunerLib_LIBRARY_DEFINED__
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-BSTR_UserSize			proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr BSTR
-BSTR_UserUnmarshal		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr BSTR
-BSTR_UserFree			proto WINAPI :ptr DWORD, :ptr BSTR
-LPSAFEARRAY_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserMarshal		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserUnmarshal	proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserFree		proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
-VARIANT_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
-VARIANT_UserMarshal		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr VARIANT
-VARIANT_UserUnmarshal		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr VARIANT
-VARIANT_UserFree		proto WINAPI :ptr DWORD, :ptr VARIANT
-BSTR_UserSize64			proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal64		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr BSTR
-BSTR_UserUnmarshal64		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr BSTR
-BSTR_UserFree64			proto WINAPI :ptr DWORD, :ptr BSTR
-LPSAFEARRAY_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserMarshal64	proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserUnmarshal64	proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserFree64		proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
-VARIANT_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
-VARIANT_UserMarshal64		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr VARIANT
-VARIANT_UserUnmarshal64		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr VARIANT
-VARIANT_UserFree64		proto WINAPI :ptr DWORD, :ptr VARIANT
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
+
+VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree proto WINAPI :ptr, :ptr
+
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
+
+VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

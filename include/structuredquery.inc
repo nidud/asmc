@@ -363,14 +363,15 @@ endif
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-BSTR_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal	proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr BSTR
-BSTR_UserUnmarshal	proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr BSTR
-BSTR_UserFree		proto WINAPI :ptr DWORD, :ptr BSTR
-LPSAFEARRAY_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserFree	proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
 
 endif
 .pragma list(pop)

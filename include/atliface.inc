@@ -331,15 +331,15 @@ DEFINE_IIDX(IAccessibleServer, "52C8FB5E-D779-4e77-AE9F-F611FA7E9D7A")
 endif
 
 
-BSTR_UserSize		proto WINAPI :ptr ULONG, :ULONG, :ptr BSTR
-BSTR_UserMarshal	proto WINAPI :ptr ULONG, :ptr SBYTE, :ptr BSTR
-BSTR_UserUnmarshal	proto WINAPI :ptr ULONG, :ptr SBYTE, :ptr BSTR
-BSTR_UserFree		proto WINAPI :ptr ULONG, :ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-HWND_UserSize		proto WINAPI :ptr ULONG, :ULONG, :ptr HWND
-HWND_UserMarshal	proto WINAPI :ptr ULONG, :ptr SBYTE, :ptr HWND
-HWND_UserUnmarshal	proto WINAPI :ptr ULONG, :ptr SBYTE, :ptr HWND
-HWND_UserFree		proto WINAPI :ptr ULONG, :ptr HWND
+HWND_UserSize proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree proto WINAPI :ptr, :ptr
 
 endif
 

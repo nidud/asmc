@@ -1418,30 +1418,30 @@ DEFINE_IIDX(IWICDdsFrameDecode, "3d4c0c61-18a4-41e4-bd80-481a4fc9f464")
 
 endif
 
-BSTR_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr BSTR
-BSTR_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr BSTR
-BSTR_UserFree proto WINAPI :ptr DWORD, :ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-HBITMAP_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr HBITMAP
-HBITMAP_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HBITMAP
-HBITMAP_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HBITMAP
-HBITMAP_UserFree proto WINAPI :ptr DWORD, :ptr HBITMAP
+HBITMAP_UserSize proto WINAPI :ptr, :dword, :ptr
+HBITMAP_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserFree proto WINAPI :ptr, :ptr
 
-HICON_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr HICON
-HICON_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HICON
-HICON_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HICON
-HICON_UserFree proto WINAPI :ptr DWORD, :ptr HICON
+HICON_UserSize proto WINAPI :ptr, :dword, :ptr
+HICON_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HICON_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HICON_UserFree proto WINAPI :ptr, :ptr
 
 HPALETTE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr HPALETTE
 HPALETTE_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HPALETTE
 HPALETTE_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HPALETTE
 HPALETTE_UserFree proto WINAPI :ptr DWORD, :ptr HPALETTE
 
-LPSAFEARRAY_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserFree proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
 
 WICInProcPointer_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr WICInProcPointer
 WICInProcPointer_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr WICInProcPointer

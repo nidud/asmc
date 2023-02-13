@@ -344,82 +344,24 @@ endif
 
 endif
 
-HBITMAP_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HBITMAP
+HBITMAP_UserSize proto WINAPI :ptr, :dword, :ptr
+HBITMAP_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserFree proto WINAPI :ptr, :ptr
 
-HBITMAP_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
+HWND_UserSize proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree proto WINAPI :ptr, :ptr
 
-HBITMAP_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
+HBITMAP_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HBITMAP_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserFree64 proto WINAPI :ptr, :ptr
 
-HBITMAP_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HBITMAP
-
-
-HWND_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
-
-HWND_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-HWND_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-HWND_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
-
-
-HBITMAP_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HBITMAP
-
-HBITMAP_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-HBITMAP_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-HBITMAP_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HBITMAP
-
-HWND_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
-
-HWND_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-HWND_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-HWND_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
+HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

@@ -838,51 +838,14 @@ endif
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-;LPBYTE
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr BSTR
-
-;LPBYTE
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-BSTR_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPBYTE
-BSTR_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr BSTR
-
-;LPBYTE
-BSTR_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

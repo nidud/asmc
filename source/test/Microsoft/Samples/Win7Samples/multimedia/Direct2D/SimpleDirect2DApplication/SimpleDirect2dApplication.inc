@@ -31,7 +31,7 @@ option dllimport:none
     m_pAnotherBitmap            ptr ID2D1Bitmap ?
 
 
-    DemoApp proc :ptr
+    DemoApp proc
     Release proc
 
     Initialize proc

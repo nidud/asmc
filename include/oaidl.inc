@@ -970,44 +970,47 @@ DEFINE_IIDX(IPropertyBag, "55272A00-42CB-11CE-8135-00AA004BB851")
     LPPROPERTYBAG	typedef ptr IPropertyBag
 endif
 
-BSTR_UserSize		proto WINAPI :LPDWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal	proto WINAPI :LPDWORD, :LPSTR, :ptr BSTR
-BSTR_UserUnmarshal	proto WINAPI :LPDWORD, :LPSTR, :ptr BSTR
-BSTR_UserFree		proto WINAPI :LPDWORD, :ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
 CLEANLOCALSTORAGE_UserSize proto WINAPI :ptr DWORD, :DWORD, : ptr CLEANLOCALSTORAGE
 CLEANLOCALSTORAGE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr CLEANLOCALSTORAGE
 CLEANLOCALSTORAGE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr CLEANLOCALSTORAGE
 CLEANLOCALSTORAGE_UserFree proto WINAPI :ptr DWORD, :ptr CLEANLOCALSTORAGE
 
-VARIANT_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
-VARIANT_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
-VARIANT_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
-VARIANT_UserFree	proto WINAPI :ptr DWORD, :ptr VARIANT
+VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree proto WINAPI :ptr, :ptr
 
-BSTR_UserSize64		proto WINAPI :LPDWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal64	proto WINAPI :LPDWORD, :LPSTR, :ptr BSTR
-BSTR_UserUnmarshal64	proto WINAPI :LPDWORD, :LPSTR, :ptr BSTR
-BSTR_UserFree64		proto WINAPI :LPDWORD, :ptr BSTR
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
 CLEANLOCALSTORAGE_UserSize64		proto WINAPI :ptr DWORD, :DWORD, : ptr CLEANLOCALSTORAGE
 CLEANLOCALSTORAGE_UserMarshal64		proto WINAPI :ptr DWORD, :LPSTR, :ptr CLEANLOCALSTORAGE
 CLEANLOCALSTORAGE_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr CLEANLOCALSTORAGE
 CLEANLOCALSTORAGE_UserFree64		proto WINAPI :ptr DWORD, :ptr CLEANLOCALSTORAGE
 
-VARIANT_UserSize64			proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
-VARIANT_UserMarshal64			proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
-VARIANT_UserUnmarshal64			proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
-VARIANT_UserFree64			proto WINAPI :ptr DWORD, :ptr VARIANT
+VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 IDispatch_Invoke_Proxy			proto WINAPI :ptr, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 IDispatch_Invoke_Stub			proto WINAPI :ptr, :DISPID, :REFIID, :LCID, :DWORD, :ptr, :ptr, :ptr, :ptr, :UINT, :ptr, :ptr
+
 IEnumVARIANT_Next_Proxy			proto WINAPI :ptr, :ULONG, :ptr, :ptr
 IEnumVARIANT_Next_Stub			proto WINAPI :ptr, :ULONG, :ptr, :ptr
+
 ITypeComp_Bind_Proxy			proto WINAPI :ptr, :LPOLESTR, :ULONG, :WORD, :ptr, :ptr, :ptr
 ITypeComp_Bind_Stub			proto WINAPI :ptr, :LPOLESTR, :ULONG, :WORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 ITypeComp_BindType_Proxy		proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr, :ptr
 ITypeComp_BindType_Stub			proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr
+
 ITypeInfo_GetTypeAttr_Proxy		proto WINAPI :ptr, :ptr
 ITypeInfo_GetTypeAttr_Stub		proto WINAPI :ptr, :ptr, :ptr
 ITypeInfo_GetFuncDesc_Proxy		proto WINAPI :ptr, :UINT, :ptr
@@ -1036,8 +1039,10 @@ ITypeInfo_ReleaseFuncDesc_Proxy		proto WINAPI :ptr, :ptr
 ITypeInfo_ReleaseFuncDesc_Stub		proto WINAPI :ptr
 ITypeInfo_ReleaseVarDesc_Proxy		proto WINAPI :ptr, :ptr
 ITypeInfo_ReleaseVarDesc_Stub		proto WINAPI :ptr
+
 ITypeInfo2_GetDocumentation2_Proxy	proto WINAPI :ptr, :MEMBERID, :LCID, :ptr, :ptr, :ptr
 ITypeInfo2_GetDocumentation2_Stub	proto WINAPI :ptr, :MEMBERID, :LCID, :DWORD, :ptr, :ptr, :ptr
+
 ITypeLib_GetTypeInfoCount_Proxy		proto WINAPI :ptr
 ITypeLib_GetTypeInfoCount_Stub		proto WINAPI :ptr, :ptr
 ITypeLib_GetLibAttr_Proxy		proto WINAPI :ptr, :ptr
@@ -1050,10 +1055,12 @@ ITypeLib_FindName_Proxy			proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr, :ptr, :ptr
 ITypeLib_FindName_Stub			proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr, :ptr, :ptr, :ptr
 ITypeLib_ReleaseTLibAttr_Proxy		proto WINAPI :ptr, :ptr
 ITypeLib_ReleaseTLibAttr_Stub		proto WINAPI :ptr
+
 ITypeLib2_GetLibStatistics_Proxy	proto WINAPI :ptr, :ptr, :ptr
 ITypeLib2_GetLibStatistics_Stub		proto WINAPI :ptr, :ptr, :ptr
 ITypeLib2_GetDocumentation2_Proxy	proto WINAPI :ptr, :int_t, :LCID, :ptr, :ptr, :ptr
 ITypeLib2_GetDocumentation2_Stub	proto WINAPI :ptr, :int_t, :LCID, :DWORD, :ptr BSTR, :ptr, :ptr
+
 IPropertyBag_Read_Proxy			proto WINAPI :ptr, :LPCOLESTR, :ptr VARIANT, :ptr IErrorLog
 IPropertyBag_Read_Stub			proto WINAPI :ptr, :LPCOLESTR, :ptr, :ptr, :DWORD, :ptr
 

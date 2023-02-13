@@ -14,58 +14,32 @@ include combaseapi.inc
 include activation.inc
 include hstring.inc
 
-ifndef _APISET_ROAPI_VER
-ifdef _APISET_MINCORE_VERSION
-if _APISET_MINCORE_VERSION ge 0x0100
-define _APISET_ROAPI_VER 0x0100
-endif
-endif
-endif
-
 .enum RO_INIT_TYPE {
-    RO_INIT_SINGLETHREADED = 0,
-    RO_INIT_MULTITHREADED  = 1,
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    RO_INIT_SINGLETHREADED     = 0,
+endif
+    RO_INIT_MULTITHREADED      = 1,
     }
 
-RO_REGISTRATION_COOKIE typedef ptr
+RO_REGISTRATION_COOKIE  typedef ptr _RO_REGISTRATION_COOKIE
 
-CALLBACK(PFNGETACTIVATIONFACTORY, :HSTRING, :ptr ptr IActivationFactory)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
 
 .pragma comment(lib, combase, "api-ms-win-core-winrt-l1-1-0")
 
-RoInitialize proto WINAPI \
-                  : RO_INIT_TYPE
-
+RoInitialize proto WINAPI :RO_INIT_TYPE
 RoUninitialize proto WINAPI
+RoActivateInstance proto WINAPI :HSTRING, :ptr ptr
+RoRegisterActivationFactories proto WINAPI :ptr, :ptr, :UINT32, :ptr
+RoRevokeActivationFactories proto WINAPI :RO_REGISTRATION_COOKIE
+RoGetActivationFactory proto WINAPI :HSTRING, :REFIID, :ptr ptr
 
-RoActivateInstance proto WINAPI \
-                  : HSTRING,
-                  : ptr ptr IInspectable
+DECLARE_HANDLE(APARTMENT_SHUTDOWN_REGISTRATION_COOKIE)
 
-RoRegisterActivationFactories proto WINAPI \
-                  : ptr HSTRING,
-                  : ptr PFNGETACTIVATIONFACTORY,
-                  : UINT32,
-                  : ptr RO_REGISTRATION_COOKIE
+RoRegisterForApartmentShutdown proto WINAPI :ptr, :UINT64, :ptr
+RoUnregisterForApartmentShutdown proto WINAPI :APARTMENT_SHUTDOWN_REGISTRATION_COOKIE
+RoGetApartmentIdentifier proto WINAPI :ptr
 
-RoRevokeActivationFactories proto WINAPI \
-                  : RO_REGISTRATION_COOKIE
-
-RoGetActivationFactory proto WINAPI \
-                  : HSTRING,
-                  : REFIID,
-                  : ptr ptr
-
-RoRegisterForApartmentShutdown proto WINAPI \
-    callbackObject: ptr IApartmentShutdown,
-apartmentIdentifier: UINT64,
-         regCookie: ptr APARTMENT_SHUTDOWN_REGISTRATION_COOKIE
-
-RoUnregisterForApartmentShutdown proto WINAPI \
-         regCookie: APARTMENT_SHUTDOWN_REGISTRATION_COOKIE
-
-
-RoGetApartmentIdentifier proto WINAPI \
-apartmentIdentifier: ptr UINT64
+endif
 
 endif

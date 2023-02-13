@@ -21,9 +21,6 @@ ifndef __unknwnbase_h__
 define __unknwnbase_h__
 
 include wtypesbase.inc
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IUnknown_INTERFACE_DEFINED__
 define __IUnknown_INTERFACE_DEFINED__
@@ -40,10 +37,6 @@ DEFINE_IIDX(IUnknown, "00000000-0000-0000-C000-000000000046")
     LPUNKNOWN typedef ptr IUnknown
 
 endif
-
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __AsyncIUnknown_INTERFACE_DEFINED__
 define __AsyncIUnknown_INTERFACE_DEFINED__
@@ -62,9 +55,6 @@ DEFINE_IIDX(AsyncIUnknown, "000e0000-0000-0000-C000-000000000046")
 
 endif
 
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 ifndef __IClassFactory_INTERFACE_DEFINED__
 define __IClassFactory_INTERFACE_DEFINED__
 
@@ -78,7 +68,6 @@ DEFINE_IIDX(IClassFactory, "00000001-0000-0000-C000-000000000046")
 
     LPCLASSFACTORY typedef ptr IClassFactory
 
-endif
 endif
 
 endif

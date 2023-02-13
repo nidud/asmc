@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## operator <>
 
-**<text>**
+**&lt;text&gt;**
 
 
 Treats _text_ as a single literal element.

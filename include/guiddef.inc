@@ -1,4 +1,7 @@
 .pragma list(push, 0)
+ifndef _GUIDDEF_H_
+define _GUIDDEF_H_
+
 ifndef GUID_DEFINED
 define GUID_DEFINED
 GUID	STRUC
@@ -62,10 +65,8 @@ DEFINE_IIDX macro name, x
 
 endif
 
-ifndef _GUIDDEF_H_
-define _GUIDDEF_H_
 ifndef __PE__
-;includelib uuid.lib
+includelib uuid.lib
 endif
 
 ifndef __LPGUID_DEFINED__

@@ -15,132 +15,66 @@ include rpc.inc
 
 include sdkddkver.inc
 
-if (NTDDI_VERSION GE NTDDI_WIN8)
+if (NTDDI_VERSION ge NTDDI_WIN8)
 
-ifndef _APISET_RO_ERROR_VER
-ifdef _APISET_MINCORE_VERSION
-if _APISET_MINCORE_VERSION GE 0x0101
-_APISET_RO_ERROR_VER	equ 0x0101
-elseif _APISET_MINCORE_VERSION GE 0x0100
-_APISET_RO_ERROR_VER	equ 0x0100
-endif
-endif
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
 
 .enum RO_ERROR_REPORTING_FLAGS {
-    RO_ERROR_REPORTING_NONE		  = 0x00000000,
-    RO_ERROR_REPORTING_SUPPRESSEXCEPTIONS = 0x00000001,
-    RO_ERROR_REPORTING_FORCEEXCEPTIONS	  = 0x00000002,
-    RO_ERROR_REPORTING_USESETERRORINFO	  = 0x00000004,
-    RO_ERROR_REPORTING_SUPPRESSSETERRORINFO = 0x00000008,
-    }
+        RO_ERROR_REPORTING_NONE               = 0x00000000,
+        RO_ERROR_REPORTING_SUPPRESSEXCEPTIONS = 0x00000001,
+        RO_ERROR_REPORTING_FORCEEXCEPTIONS    = 0x00000002,
+        RO_ERROR_REPORTING_USESETERRORINFO    = 0x00000004,
+        RO_ERROR_REPORTING_SUPPRESSSETERRORINFO = 0x00000008,
+}
 
-MAX_ERROR_MESSAGE_CHARS equ 512
+DEFINE_ENUM_FLAG_OPERATORS proto WINAPI :RO_ERROR_REPORTING_FLAGS
 
-RoGetErrorReportingFlags proto WINAPI \
-		pflags: ptr UINT32
+define MAX_ERROR_MESSAGE_CHARS 512
 
-RoSetErrorReportingFlags proto WINAPI \
-		 flags: UINT32
-
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-RoResolveRestrictedErrorInfoReference proto WINAPI \
-	     reference: PCWSTR,
- ppRestrictedErrorInfo: ptr IRestrictedErrorInfo
+RoGetErrorReportingFlags proto WINAPI :ptr
+RoSetErrorReportingFlags proto WINAPI :UINT32
 
 endif
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
-SetRestrictedErrorInfo proto WINAPI \
-  pRestrictedErrorInfo: ptr IRestrictedErrorInfo
-
-GetRestrictedErrorInfo proto WINAPI \
- ppRestrictedErrorInfo: ptr IRestrictedErrorInfo
-
-RoOriginateErrorW proto WINAPI \
-		 error: HRESULT,
-		cchMax: UINT,
-	       message: PCWSTR
-
-RoOriginateError proto WINAPI \
-		 error: HRESULT,
-	       message: HSTRING
-
-RoTransformErrorW proto WINAPI \
-	      oldError: HRESULT,
-	      newError: HRESULT,
-		cchMax: UINT,
-	       message: PCWSTR
-
-RoTransformError proto WINAPI \
-	      oldError: HRESULT,
-	      newError: HRESULT,
-	       message: HSTRING
-
-RoCaptureErrorContext proto WINAPI \
-		    hr: HRESULT
-
-RoFailFastWithErrorContext proto WINAPI \
-	       hrError: HRESULT
-
-EXCEPTION_RO_ORIGINATEERROR equ (((0x1 SHL 30) OR (FACILITY_WINDOWS SHL 16) OR 0x201))
-EXCEPTION_RO_TRANSFORMERROR equ (((0x1 SHL 30) OR (FACILITY_WINDOWS SHL 16) OR 0x202))
+RoResolveRestrictedErrorInfoReference proto WINAPI :PCWSTR, :ptr ptr
 
 endif
 
-if NOT defined(_CONTRACT_GEN) OR (_APISET_RO_ERROR_VER GE 0x0101)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+SetRestrictedErrorInfo proto WINAPI :ptr
+GetRestrictedErrorInfo proto WINAPI :ptr ptr
+RoOriginateErrorW proto WINAPI :HRESULT, :UINT, :PCWSTR
+RoOriginateError proto WINAPI :HRESULT, :HSTRING
+RoTransformErrorW proto WINAPI :HRESULT, :HRESULT, :UINT, :PCWSTR
+RoTransformError proto WINAPI :HRESULT, :HRESULT, :HSTRING
+RoCaptureErrorContext proto WINAPI :HRESULT
+RoFailFastWithErrorContext proto WINAPI :HRESULT
 
-RoOriginateLanguageException proto WINAPI \
-		 error: HRESULT,
-	       message: HSTRING,
-     languageException: ptr IUnknown
+define EXCEPTION_RO_ORIGINATEERROR  (((0x1 shl 30) or (FACILITY_WINDOWS shl 16) or 0x201))
+define EXCEPTION_RO_TRANSFORMERROR  (((0x1 shl 30) or (FACILITY_WINDOWS shl 16) or 0x202))
 
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+
+RoOriginateLanguageException proto WINAPI :HRESULT, :HSTRING, :ptr
 RoClearError proto WINAPI
-
-RoReportUnhandledError proto WINAPI \
-  pRestrictedErrorInfo: ptr IRestrictedErrorInfo
+RoReportUnhandledError proto WINAPI :ptr
 
 endif
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
-CALLBACK(PINSPECT_MEMORY_CALLBACK, :ptr, :UINT_PTR, :UINT32, :ptr BYTE)
+CALLBACK(PINSPECT_MEMORY_CALLBACK, :ptr)
 
-RoInspectThreadErrorInfo proto WINAPI \
-      targetTebAddress: UINT_PTR,
-	       machine: USHORT,
-    readMemoryCallback: PINSPECT_MEMORY_CALLBACK,
-	       context: PVOID,
- targetErrorInfoAddress: ptr UINT_PTR
-
-
-RoInspectCapturedStackBackTrace proto WINAPI \
-targetErrorInfoAddress: UINT_PTR,
-	       machine: USHORT,
-    readMemoryCallback: PINSPECT_MEMORY_CALLBACK,
-	       context: PVOID,
-	    frameCount: ptr UINT32,
- targetBackTraceAddress: ptr UINT_PTR
-
-RoGetMatchingRestrictedErrorInfo proto WINAPI \
-		  hrIn: HRESULT,
- ppRestrictedErrorInfo: ptr IRestrictedErrorInfo
-
-RoReportFailedDelegate proto WINAPI \
-	  punkDelegate: ptr IUnknown,
-  pRestrictedErrorInfo: ptr IRestrictedErrorInfo
-
+RoInspectThreadErrorInfo proto WINAPI :UINT_PTR, :USHORT, :PINSPECT_MEMORY_CALLBACK, :PVOID, :ptr
+RoInspectCapturedStackBackTrace proto WINAPI :UINT_PTR, :USHORT, :PINSPECT_MEMORY_CALLBACK, :PVOID, :ptr, :ptr
+RoGetMatchingRestrictedErrorInfo proto WINAPI :HRESULT, :ptr ptr
+RoReportFailedDelegate proto WINAPI :ptr, :ptr
 IsErrorPropagationEnabled proto WINAPI
-
-endif
 
 endif
 

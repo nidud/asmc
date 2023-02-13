@@ -367,14 +367,14 @@ endif
 
 endif
 
-BSTR_UserSize proto WINAPI :ptr dword, :dword, :ptr BSTR
-BSTR_UserMarshal proto WINAPI :ptr dword, :ptr sbyte, :ptr BSTR
-BSTR_UserUnmarshal proto WINAPI :ptr dword, :ptr sbyte, :ptr BSTR
-BSTR_UserFree proto WINAPI :ptr dword, :ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-BSTR_UserSize64 proto WINAPI :ptr dword, :dword, :ptr BSTR
-BSTR_UserMarshal64 proto WINAPI :ptr dword, :ptr sbyte, :ptr BSTR
-BSTR_UserUnmarshal64 proto WINAPI :ptr dword, :ptr sbyte, :ptr BSTR
-BSTR_UserFree64 proto WINAPI :ptr dword, :ptr BSTR
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

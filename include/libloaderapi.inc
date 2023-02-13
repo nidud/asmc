@@ -7,368 +7,254 @@ include apisetcconv.inc
 include minwindef.inc
 include minwinbase.inc
 
-ifndef _APISET_LIBLOADER_VER
-ifdef _APISET_MINWIN_VERSION
-if _APISET_MINWIN_VERSION GE 0x0102
-_APISET_LIBLOADER_VER	equ 0x0200
-elseif _APISET_MINWIN_VERSION EQ 0x0101
-_APISET_LIBLOADER_VER	equ 0x0101
-elseif _APISET_MINWIN_VERSION LE 0x0100
-_APISET_LIBLOADER_VER	equ 0x0100
-endif
-endif
-endif
+define  FIND_RESOURCE_DIRECTORY_TYPES       (0x0100)
+define  FIND_RESOURCE_DIRECTORY_NAMES       (0x0200)
+define  FIND_RESOURCE_DIRECTORY_LANGUAGES   (0x0400)
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+define  RESOURCE_ENUM_LN               (0x0001)
+define  RESOURCE_ENUM_MUI              (0x0002)
+define  RESOURCE_ENUM_MUI_SYSTEM       (0x0004)
+define  RESOURCE_ENUM_VALIDATE         (0x0008)
+define  RESOURCE_ENUM_MODULE_EXACT     (0x0010)
 
-FIND_RESOURCE_DIRECTORY_TYPES equ (0x0100)
-FIND_RESOURCE_DIRECTORY_NAMES equ (0x0200)
-FIND_RESOURCE_DIRECTORY_LANGUAGES equ (0x0400)
+define SUPPORT_LANG_NUMBER  32
 
-RESOURCE_ENUM_LN	equ (0x0001)
-RESOURCE_ENUM_MUI	equ (0x0002)
-RESOURCE_ENUM_MUI_SYSTEM equ (0x0004)
-RESOURCE_ENUM_VALIDATE	equ (0x0008)
-RESOURCE_ENUM_MODULE_EXACT equ (0x0010)
-
-SUPPORT_LANG_NUMBER	equ 32
-LPLANGID		typedef ptr LANGID
-ENUMUILANG		STRUC
-NumOfEnumUILang		ULONG ? ;; Acutall number of enumerated languages
-SizeOfEnumUIBuffer	ULONG ? ;; Buffer size of pMUIEnumUILanguages
-pEnumUIBuffer		LPLANGID ?
-ENUMUILANG		ENDS
-PENUMUILANG		typedef ptr ENUMUILANG
+tagENUMUILANG           struct
+NumOfEnumUILang         ULONG ?
+SizeOfEnumUIBuffer      ULONG ?
+pEnumUIBuffer           ptr LANGID ?
+tagENUMUILANG           ends
+ENUMUILANG              typedef tagENUMUILANG
+PENUMUILANG             typedef ptr tagENUMUILANG
 
 ifdef STRICT
 
 CALLBACK(ENUMRESLANGPROCA, :HMODULE, :LPCSTR, :LPCSTR, :WORD, :LONG_PTR)
 CALLBACK(ENUMRESLANGPROCW, :HMODULE, :LPCWSTR, :LPCWSTR, :WORD, :LONG_PTR)
 ifdef _UNICODE
-ENUMRESLANGPROC		typedef ENUMRESLANGPROCW
+define ENUMRESLANGPROC  <ENUMRESLANGPROCW>
 else
-ENUMRESLANGPROC		typedef ENUMRESLANGPROCA
+define ENUMRESLANGPROC  <ENUMRESLANGPROCA>
 endif
 
 CALLBACK(ENUMRESNAMEPROCA, :HMODULE, :LPCSTR, :LPSTR, :LONG_PTR)
 CALLBACK(ENUMRESNAMEPROCW, :HMODULE, :LPCWSTR, :LPWSTR, :LONG_PTR)
 ifdef _UNICODE
-ENUMRESNAMEPROC		typedef ENUMRESNAMEPROCW
+define ENUMRESNAMEPROC  <ENUMRESNAMEPROCW>
 else
-ENUMRESNAMEPROC		typedef ENUMRESNAMEPROCA
+define ENUMRESNAMEPROC  <ENUMRESNAMEPROCA>
 endif
 
 CALLBACK(ENUMRESTYPEPROCA, :HMODULE, :LPSTR, :LONG_PTR)
 CALLBACK(ENUMRESTYPEPROCW, :HMODULE, :LPWSTR, :LONG_PTR)
 ifdef _UNICODE
-ENUMRESTYPEPROC		typedef ENUMRESTYPEPROCW
+define ENUMRESTYPEPROC  <ENUMRESTYPEPROCW>
 else
-ENUMRESTYPEPROC		typedef ENUMRESTYPEPROCA
+define ENUMRESTYPEPROC  <ENUMRESTYPEPROCA>
 endif
 
 else
 
-ENUMRESTYPEPROCA	typedef FARPROC
-ENUMRESTYPEPROCW	typedef FARPROC
+ENUMRESTYPEPROCA        typedef FARPROC
+ENUMRESTYPEPROCW        typedef FARPROC
 ifdef _UNICODE
-ENUMRESTYPEPROC		typedef ENUMRESTYPEPROCW
+ENUMRESTYPEPROC         typedef ENUMRESTYPEPROCW
 else
-ENUMRESTYPEPROC		typedef ENUMRESTYPEPROCA
+ENUMRESTYPEPROC         typedef ENUMRESTYPEPROCA
 endif
-ENUMRESNAMEPROCA	typedef FARPROC
-ENUMRESNAMEPROCW	typedef FARPROC
+ENUMRESNAMEPROCA        typedef FARPROC
+ENUMRESNAMEPROCW        typedef FARPROC
 ifdef _UNICODE
-ENUMRESNAMEPROC		typedef ENUMRESNAMEPROCW
+ENUMRESNAMEPROC         typedef ENUMRESNAMEPROCW
 else
-ENUMRESNAMEPROC		typedef ENUMRESNAMEPROCA
+ENUMRESNAMEPROC         typedef ENUMRESNAMEPROCA
 endif
-ENUMRESLANGPROCA	typedef FARPROC
-ENUMRESLANGPROCW	typedef FARPROC
+ENUMRESLANGPROCA        typedef FARPROC
+ENUMRESLANGPROCW        typedef FARPROC
 ifdef _UNICODE
-ENUMRESLANGPROC		typedef ENUMRESLANGPROCW
+ENUMRESLANGPROC         typedef ENUMRESLANGPROCW
 else
-ENUMRESLANGPROC		typedef ENUMRESLANGPROCA
+ENUMRESLANGPROC         typedef ENUMRESLANGPROCA
 endif
 
 endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+DisableThreadLibraryCalls proto WINAPI :HMODULE
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-DisableThreadLibraryCalls proto WINAPI \
-	    hLibModule: HMODULE
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-FindResourceExW proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCWSTR,
-		lpName: LPCWSTR,
-	     wLanguage: DWORD;WORD
-
+FindResourceExW proto WINAPI :HMODULE, :LPCWSTR, :LPCWSTR, :DWORD ; WORD
 ifdef _UNICODE
-FindResourceEx equ <FindResourceExW>
-endif
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
-FindStringOrdinal proto WINAPI \
-dwFindStringOrdinalFlags: DWORD,
-	lpStringSource: LPCWSTR,
-	     cchSource: SINT,
-	 lpStringValue: LPCWSTR,
-	      cchValue: SINT,
-	   bIgnoreCase: BOOL
-endif
-FreeLibrary proto WINAPI \
-	    hLibModule: HMODULE
+define FindResourceEx  <FindResourceExW>
 endif
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
+FindStringOrdinal proto WINAPI :DWORD, :LPCWSTR, :sdword, :LPCWSTR, :sdword, :BOOL
+endif
 
-FreeLibraryAndExitThread proto WINAPI \
-	    hLibModule: HMODULE,
-	    dwExitCode: DWORD
+FreeLibrary proto WINAPI :HMODULE
+FreeLibraryAndExitThread proto WINAPI :HMODULE, :DWORD
 
-FreeResource proto WINAPI \
-	      hResData: HGLOBAL
+FreeResource proto WINAPI :HGLOBAL
 
-GetModuleFileNameA proto WINAPI \
-	       hModule: HMODULE,
-	    lpFilename: LPSTR,
-		 nSize: DWORD
-
-GetModuleFileNameW proto WINAPI \
-	       hModule: HMODULE,
-	    lpFilename: LPWSTR,
-		 nSize: DWORD
-
+GetModuleFileNameA proto WINAPI :HMODULE, :LPSTR, :DWORD
+GetModuleFileNameW proto WINAPI :HMODULE, :LPWSTR, :DWORD
 ifdef _UNICODE
-GetModuleFileName equ <GetModuleFileNameW>
+define GetModuleFileName  <GetModuleFileNameW>
 else
-GetModuleFileName equ <GetModuleFileNameA>
+define GetModuleFileName  <GetModuleFileNameA>
 endif
 
-GetModuleHandleA proto WINAPI \
-	  lpModuleName: LPCSTR
-
-GetModuleHandleW proto WINAPI \
-	  lpModuleName: LPCWSTR
-
+GetModuleHandleA proto WINAPI :LPCSTR
+GetModuleHandleW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-GetModuleHandle equ <GetModuleHandleW>
+define GetModuleHandle  <GetModuleHandleW>
 else
-GetModuleHandle equ <GetModuleHandleA>
+define GetModuleHandle  <GetModuleHandleA>
 endif
 
 ifndef RC_INVOKED
 
-GET_MODULE_HANDLE_EX_FLAG_PIN equ (0x00000001)
-GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT equ (0x00000002)
-GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS equ (0x00000004)
+define GET_MODULE_HANDLE_EX_FLAG_PIN                 (0x00000001)
+define GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT  (0x00000002)
+define GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS        (0x00000004)
 
-CALLBACK(PGET_MODULE_HANDLE_EXA, :DWORD, :LPCSTR, :ptr HMODULE)
-CALLBACK(PGET_MODULE_HANDLE_EXW, :DWORD, :LPCWSTR, :ptr HMODULE)
+CALLBACK(PGET_MODULE_HANDLE_EXA, :DWORD, :LPCSTR, :ptr)
+CALLBACK(PGET_MODULE_HANDLE_EXW, :DWORD, :LPCWSTR, :ptr)
 ifdef _UNICODE
-PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDLE_EXW>
+define PGET_MODULE_HANDLE_EX  <PGET_MODULE_HANDLE_EXW>
 else
-PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDLE_EXA>
+define PGET_MODULE_HANDLE_EX  <PGET_MODULE_HANDLE_EXA>
 endif
 
-GetModuleHandleExA proto WINAPI \
-	       dwFlags: DWORD,
-	  lpModuleName: LPCSTR,
-	      phModule: ptr HMODULE
-
-GetModuleHandleExW proto WINAPI \
-	       dwFlags: DWORD,
-	  lpModuleName: LPCWSTR,
-	      phModule: ptr HMODULE
-
+GetModuleHandleExA proto WINAPI :DWORD, :LPCSTR, :ptr
+GetModuleHandleExW proto WINAPI :DWORD, :LPCWSTR, :ptr
 ifdef _UNICODE
-GetModuleHandleEx equ <GetModuleHandleExW>
+define GetModuleHandleEx  <GetModuleHandleExW>
 else
-GetModuleHandleEx equ <GetModuleHandleExA>
+define GetModuleHandleEx  <GetModuleHandleExA>
 endif
 
 endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+GetProcAddress proto WINAPI :HMODULE, :LPCSTR
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+define CURRENT_IMPORT_REDIRECTION_VERSION      1
 
-GetProcAddress proto WINAPI \
-	       hModule: HMODULE,
-	    lpProcName: LPCSTR
+_REDIRECTION_FUNCTION_DESCRIPTOR struct
+DllName                 PCSTR ?
+FunctionName            PCSTR ?
+RedirectionTarget       PVOID ?
+_REDIRECTION_FUNCTION_DESCRIPTOR ends
+REDIRECTION_FUNCTION_DESCRIPTOR typedef _REDIRECTION_FUNCTION_DESCRIPTOR
+PREDIRECTION_FUNCTION_DESCRIPTOR typedef ptr _REDIRECTION_FUNCTION_DESCRIPTOR
 
+PCREDIRECTION_FUNCTION_DESCRIPTOR typedef ptr REDIRECTION_FUNCTION_DESCRIPTOR
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+_REDIRECTION_DESCRIPTOR struct
+Version                 ULONG ?
+FunctionCount           ULONG ?
+Redirections            PCREDIRECTION_FUNCTION_DESCRIPTOR ?
+_REDIRECTION_DESCRIPTOR ends
+REDIRECTION_DESCRIPTOR  typedef _REDIRECTION_DESCRIPTOR
+PREDIRECTION_DESCRIPTOR typedef ptr _REDIRECTION_DESCRIPTOR
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+PCREDIRECTION_DESCRIPTOR typedef ptr REDIRECTION_DESCRIPTOR
 
-LoadLibraryExA proto WINAPI \
-	 lpLibFileName: LPCSTR,
-		 hFile: HANDLE,
-	       dwFlags: DWORD
-
-LoadLibraryExW proto WINAPI \
-	 lpLibFileName: LPCWSTR,
-		 hFile: HANDLE,
-	       dwFlags: DWORD
-
+LoadLibraryExA proto WINAPI :LPCSTR, :HANDLE, :DWORD
+LoadLibraryExW proto WINAPI :LPCWSTR, :HANDLE, :DWORD
 ifdef _UNICODE
-LoadLibraryEx equ <LoadLibraryExW>
+define LoadLibraryEx  <LoadLibraryExW>
 else
-LoadLibraryEx equ <LoadLibraryExA>
+define LoadLibraryEx  <LoadLibraryExA>
 endif
 
-DONT_RESOLVE_DLL_REFERENCES equ 0x00000001
-LOAD_LIBRARY_AS_DATAFILE equ 0x00000002
-;; reserved for internal LOAD_PACKAGED_LIBRARY: 0x00000004
-LOAD_WITH_ALTERED_SEARCH_PATH equ 0x00000008
-LOAD_IGNORE_CODE_AUTHZ_LEVEL equ 0x00000010
-LOAD_LIBRARY_AS_IMAGE_RESOURCE equ 0x00000020
-LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE equ 0x00000040
-LOAD_LIBRARY_REQUIRE_SIGNED_TARGET equ 0x00000080
-LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR equ 0x00000100
-LOAD_LIBRARY_SEARCH_APPLICATION_DIR equ 0x00000200
-LOAD_LIBRARY_SEARCH_USER_DIRS equ 0x00000400
-LOAD_LIBRARY_SEARCH_SYSTEM32 equ 0x00000800
-LOAD_LIBRARY_SEARCH_DEFAULT_DIRS equ 0x00001000
+define DONT_RESOLVE_DLL_REFERENCES         0x00000001
+define LOAD_LIBRARY_AS_DATAFILE            0x00000002
+define LOAD_WITH_ALTERED_SEARCH_PATH       0x00000008
+define LOAD_IGNORE_CODE_AUTHZ_LEVEL        0x00000010
+define LOAD_LIBRARY_AS_IMAGE_RESOURCE      0x00000020
+define LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE  0x00000040
+define LOAD_LIBRARY_REQUIRE_SIGNED_TARGET  0x00000080
+define LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR    0x00000100
+define LOAD_LIBRARY_SEARCH_APPLICATION_DIR 0x00000200
+define LOAD_LIBRARY_SEARCH_USER_DIRS       0x00000400
+define LOAD_LIBRARY_SEARCH_SYSTEM32        0x00000800
+define LOAD_LIBRARY_SEARCH_DEFAULT_DIRS    0x00001000
 
-LoadResource proto WINAPI \
-	       hModule: HMODULE,
-	      hResInfo: HRSRC
+if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
+define LOAD_LIBRARY_SAFE_CURRENT_DIRS      0x00002000
+define LOAD_LIBRARY_SEARCH_SYSTEM32_NO_FORWARDER   0x00004000
+else
+define LOAD_LIBRARY_SEARCH_SYSTEM32_NO_FORWARDER   LOAD_LIBRARY_SEARCH_SYSTEM32
+endif
 
+if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
+define LOAD_LIBRARY_OS_INTEGRITY_CONTINUITY   0x00008000
+endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+LoadResource proto WINAPI :HMODULE, :HRSRC
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-LoadStringA proto WINAPI \
-	     hInstance: HINSTANCE,
-		   uID: UINT,
-	      lpBuffer: LPSTR,
-	  cchBufferMax: SINT
-
-LoadStringW proto WINAPI \
-	     hInstance: HINSTANCE,
-		   uID: UINT,
-	      lpBuffer: LPWSTR,
-	  cchBufferMax: SINT
-
+LoadStringA proto WINAPI :HINSTANCE, :UINT, :LPSTR, :sdword
+LoadStringW proto WINAPI :HINSTANCE, :UINT, :LPWSTR, :sdword
 ifdef _UNICODE
-LoadString		equ <LoadStringW>
+define LoadString  <LoadStringW>
 else
-LoadString		equ <LoadStringA>
-endif
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-LockResource proto WINAPI \
-	      hResData: HGLOBAL
-
-SizeofResource proto WINAPI \
-	       hModule: HMODULE,
-	      hResInfo: HRSRC
+define LoadString  <LoadStringA>
 endif
 
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+LockResource proto WINAPI :HGLOBAL
+SizeofResource proto WINAPI :HMODULE, :HRSRC
 
-PDLL_DIRECTORY_COOKIE	typedef ptr DLL_DIRECTORY_COOKIE
+PDLL_DIRECTORY_COOKIE   typedef ptr DLL_DIRECTORY_COOKIE
 
-AddDllDirectory proto WINAPI \
-	  NewDirectory: PCWSTR
+AddDllDirectory proto WINAPI :PCWSTR
+RemoveDllDirectory proto WINAPI :DLL_DIRECTORY_COOKIE
+SetDefaultDllDirectories proto WINAPI :DWORD
 
+if (_WIN32_WINNT ge _WIN32_WINNT_VISTA)
 
-RemoveDllDirectory proto WINAPI \
-		Cookie: DLL_DIRECTORY_COOKIE
-
-SetDefaultDllDirectories proto WINAPI \
-	DirectoryFlags: DWORD
-
-endif
-
-if (defined(_CONTRACT_GEN) eq 0) OR (_APISET_LIBLOADER_VER GE 0x0100)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-
-if (_WIN32_WINNT GE _WIN32_WINNT_VISTA)
-
-EnumResourceLanguagesExA proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCSTR,
-		lpName: LPCSTR,
-	    lpEnumFunc: ENUMRESLANGPROCA,
-		lParam: LONG_PTR,
-	       dwFlags: DWORD,
-		LangId: LANGID
-
-EnumResourceLanguagesExW proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCWSTR,
-		lpName: LPCWSTR,
-	    lpEnumFunc: ENUMRESLANGPROCW,
-		lParam: LONG_PTR,
-	       dwFlags: DWORD,
-		LangId: LANGID
-
+EnumResourceLanguagesExA proto WINAPI :HMODULE, :LPCSTR, :LPCSTR, :ENUMRESLANGPROCA, :LONG_PTR, :DWORD, :LANGID
+EnumResourceLanguagesExW proto WINAPI :HMODULE, :LPCWSTR, :LPCWSTR, :ENUMRESLANGPROCW, :LONG_PTR, :DWORD, :LANGID
 ifdef _UNICODE
-EnumResourceLanguagesEx equ <EnumResourceLanguagesExW>
+define EnumResourceLanguagesEx  <EnumResourceLanguagesExW>
 else
-EnumResourceLanguagesEx equ <EnumResourceLanguagesExA>
+define EnumResourceLanguagesEx  <EnumResourceLanguagesExA>
 endif
 
-EnumResourceNamesExA proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCSTR,
-	    lpEnumFunc: ENUMRESNAMEPROCA,
-		lParam: LONG_PTR,
-	       dwFlags: DWORD,
-		LangId: LANGID
-
-EnumResourceNamesExW proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCWSTR,
-	    lpEnumFunc: ENUMRESNAMEPROCW,
-		lParam: LONG_PTR,
-	       dwFlags: DWORD,
-		LangId: LANGID
-
+EnumResourceNamesExA proto WINAPI :HMODULE, :LPCSTR, :ENUMRESNAMEPROCA, :LONG_PTR, :DWORD, :LANGID
+EnumResourceNamesExW proto WINAPI :HMODULE, :LPCWSTR, :ENUMRESNAMEPROCW, :LONG_PTR, :DWORD, :LANGID
 ifdef _UNICODE
-EnumResourceNamesEx	equ <EnumResourceNamesExW>
+define EnumResourceNamesEx  <EnumResourceNamesExW>
 else
-EnumResourceNamesEx	equ <EnumResourceNamesExA>
+define EnumResourceNamesEx  <EnumResourceNamesExA>
 endif
 
-EnumResourceTypesExA proto WINAPI \
-	       hModule: HMODULE,
-	    lpEnumFunc: ENUMRESTYPEPROCA,
-		lParam: LONG_PTR,
-	       dwFlags: DWORD,
-		LangId: LANGID
-
-EnumResourceTypesExW proto WINAPI \
-	       hModule: HMODULE,
-	    lpEnumFunc: ENUMRESTYPEPROCW,
-		lParam: LONG_PTR,
-	       dwFlags: DWORD,
-		LangId: LANGID
-
+EnumResourceTypesExA proto WINAPI :HMODULE, :ENUMRESTYPEPROCA, :LONG_PTR, :DWORD, :LANGID
+EnumResourceTypesExW proto WINAPI :HMODULE, :ENUMRESTYPEPROCW, :LONG_PTR, :DWORD, :LANGID
 ifdef _UNICODE
-EnumResourceTypesEx	equ <EnumResourceTypesExW>
+define EnumResourceTypesEx  <EnumResourceTypesExW>
 else
-EnumResourceTypesEx	equ <EnumResourceTypesExA>
+define EnumResourceTypesEx  <EnumResourceTypesExA>
 endif
 
-endif ;; (_WIN32_WINNT GE _WIN32_WINNT_VISTA)
+endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+FindResourceW proto WINAPI :HMODULE, :LPCWSTR, :LPCWSTR
+ifdef _UNICODE
+define FindResource  <FindResourceW>
+endif
 
-endif ;; NOT defined(_CONTRACT_GEN) OR (_APISET_LIBLOADER_VER GE 0x0100)
+LoadLibraryA proto WINAPI :LPCSTR
+LoadLibraryW proto WINAPI :LPCWSTR
+ifdef _UNICODE
+define LoadLibrary  <LoadLibraryW>
+else
+define LoadLibrary  <LoadLibraryA>
+endif
 
-endif ;; _APISETLIBLOADER_
+EnumResourceNamesW proto WINAPI :HMODULE, :LPCWSTR, :ENUMRESNAMEPROCW, :LONG_PTR
+ifdef _UNICODE
+define EnumResourceNames  <EnumResourceNamesW>
+endif
+
+endif
 .pragma list(pop)

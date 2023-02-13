@@ -1,3 +1,6 @@
+ifndef __OBJIDLBASE_INC
+define __OBJIDLBASE_INC
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
@@ -1162,3 +1165,4 @@ define _OBJIDLBASE_
 endif ;; _OBJIDLBASE_
 
 endif ;; __objidlbase_h__
+endif ;; __OBJIDLBASE_INC

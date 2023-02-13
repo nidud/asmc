@@ -986,100 +986,25 @@ LPQUICKACTIVATE		typedef ptr IQuickActivate
 
 endif
 
-;unsigned
-BSTR_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-;unsigned
-BSTR_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr BSTR
+CLIPFORMAT_UserSize proto WINAPI :ptr, :dword, :ptr
+CLIPFORMAT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+CLIPFORMAT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+CLIPFORMAT_UserFree proto WINAPI :ptr, :ptr
 
-;unsigned
-BSTR_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr BSTR
+HACCEL_UserSize proto WINAPI :ptr, :dword, :ptr
+HACCEL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserFree proto WINAPI :ptr, :ptr
 
-;void
-BSTR_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr BSTR
-
-
-;unsigned
-CLIPFORMAT_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr CLIPFORMAT
-
-;unsigned
-CLIPFORMAT_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr CLIPFORMAT
-
-;unsigned
-CLIPFORMAT_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr CLIPFORMAT
-
-;void
-CLIPFORMAT_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr CLIPFORMAT
-
-
-;unsigned
-HACCEL_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HACCEL
-
-;unsigned
-HACCEL_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;unsigned
-HACCEL_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;void
-HACCEL_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HACCEL
-
-
-;unsigned
-HDC_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : dword,
-		      : ptr HDC
-
-;unsigned
-HDC_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HDC
-
-;unsigned
-HDC_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HDC
-
-;void
-HDC_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HDC
+HDC_UserSize proto WINAPI :ptr, :dword, :ptr
+HDC_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HDC_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HDC_UserFree proto WINAPI :ptr, :ptr
 
 
 ;unsigned
@@ -1154,148 +1079,35 @@ HRGN_UserFree proto WINAPI \
 		      : ptr HRGN
 
 
-;unsigned
-HWND_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HWND
+HWND_UserSize proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree proto WINAPI :ptr, :ptr
 
-;unsigned
-HWND_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HWND
+VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree proto WINAPI :ptr, :ptr
 
-;unsigned
-HWND_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HWND
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
-;void
-HWND_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HWND
+CLIPFORMAT_UserSize64 proto WINAPI :ptr, :dword, :ptr
+CLIPFORMAT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+CLIPFORMAT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+CLIPFORMAT_UserFree64 proto WINAPI :ptr, :ptr
 
+HACCEL_UserSize proto WINAPI :ptr, :dword, :ptr
+HACCEL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserFree proto WINAPI :ptr, :ptr
 
-;unsigned
-VARIANT_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-;unsigned
-VARIANT_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;unsigned
-VARIANT_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;void
-VARIANT_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr VARIANT
-
-
-;unsigned
-BSTR_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;unsigned
-BSTR_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;unsigned
-BSTR_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr BSTR
-
-
-;unsigned
-CLIPFORMAT_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr CLIPFORMAT
-
-;unsigned
-CLIPFORMAT_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr CLIPFORMAT
-
-;unsigned
-CLIPFORMAT_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr CLIPFORMAT
-
-;void
-CLIPFORMAT_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr CLIPFORMAT
-
-
-;unsigned
-HACCEL_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HACCEL
-
-;unsigned
-HACCEL_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;unsigned
-HACCEL_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;void
-HACCEL_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr HACCEL
-
-
-;unsigned
-HDC_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HDC
-
-;unsigned
-HDC_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HDC
-
-;unsigned
-HDC_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HDC
-
-;void
-HDC_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr HDC
+HDC_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HDC_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HDC_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HDC_UserFree64 proto WINAPI :ptr, :ptr
 
 
 ;unsigned
@@ -1367,51 +1179,14 @@ HRGN_UserFree64 proto WINAPI \
 		      : LPDWORD,
 		      : ptr HRGN
 
-;unsigned
-HWND_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HWND
+HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree64 proto WINAPI :ptr, :ptr
 
-;unsigned
-HWND_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;unsigned
-HWND_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;void
-HWND_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr HWND
-
-
-;unsigned
-VARIANT_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-;unsigned
-VARIANT_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;unsigned
-VARIANT_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;void
-VARIANT_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr VARIANT
+VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

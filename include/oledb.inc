@@ -3816,14 +3816,6 @@ endif
 
 endif
 
-if( OLEDBVER GE 0x0150 )
-endif
-if( OLEDBVER GE 0x0200 )
-endif
-if( OLEDBVER GE 0x0210 )
-endif
-if( OLEDBVER GE 0x0260 )
-endif
 endif
 
 .pragma pack(pop)
@@ -3831,149 +3823,35 @@ endif
 
 ifdef OLEDBPROXY
 
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-;LPBYTE
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr BSTR
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
 
-;LPBYTE
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr BSTR
+VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree proto WINAPI :ptr, :ptr
 
-;void
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
+LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
 
-;DWORD
-LPSAFEARRAY_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
-
-;DWORD
-VARIANT_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-;LPBYTE
-VARIANT_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr VARIANT
-
-;LPBYTE
-VARIANT_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr VARIANT
-
-;void
-VARIANT_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr VARIANT
-
-
-;DWORD
-BSTR_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPBYTE
-BSTR_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr BSTR
-
-;LPBYTE
-BSTR_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-LPSAFEARRAY_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
-
-;DWORD
-VARIANT_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-;LPBYTE
-VARIANT_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr VARIANT
-
-;LPBYTE
-VARIANT_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr VARIANT
-
-;void
-VARIANT_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr VARIANT
-
+VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif
 

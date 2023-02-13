@@ -1,527 +1,146 @@
-.pragma list(push, 0)
 ifndef _OLE2_H_
 define _OLE2_H_
-ifndef __LIBC_INC
- include libc.inc
-endif
 
-include pshpack8.inc
+include winapifamily.inc
 
 ;ifndef WIN32
-;WIN32 equ 100
+;define WIN32	 100
 ;endif
 
 include winerror.inc
 include objbase.inc
 include oleauto.inc
+include coml2api.inc
 
 .pragma comment(lib, ole32)
 
-E_DRAW			equ VIEW_E_DRAW
+define E_DRAW		       VIEW_E_DRAW
+define DATA_E_FORMATETC	       DV_E_FORMATETC
 
-DATA_E_FORMATETC	equ DV_E_FORMATETC
+define OLEIVERB_PRIMARY		   (0)
+define OLEIVERB_SHOW		   (-1)
+define OLEIVERB_OPEN		   (-2)
+define OLEIVERB_HIDE		   (-3)
+define OLEIVERB_UIACTIVATE	   (-4)
+define OLEIVERB_INPLACEACTIVATE	   (-5)
+define OLEIVERB_DISCARDUNDOSTATE   (-6)
 
+define EMBDHLP_INPROC_HANDLER	0x0000
+define EMBDHLP_INPROC_SERVER	0x0001
+define EMBDHLP_CREATENOW    0x00000000
+define EMBDHLP_DELAYCREATE  0x00010000
 
-OLEIVERB_PRIMARY	equ (0)
-OLEIVERB_SHOW		equ (-1)
-OLEIVERB_OPEN		equ (-2)
-OLEIVERB_HIDE		equ (-3)
-OLEIVERB_UIACTIVATE	equ (-4)
-OLEIVERB_INPLACEACTIVATE equ (-5)
-OLEIVERB_DISCARDUNDOSTATE equ (-6)
-
-EMBDHLP_INPROC_HANDLER	equ 0x0000
-EMBDHLP_INPROC_SERVER	equ 0x0001
-EMBDHLP_CREATENOW	equ 0x00000000
-EMBDHLP_DELAYCREATE	equ 0x00010000
-
-OLECREATE_LEAVERUNNING	equ 0x00000001
+define OLECREATE_LEAVERUNNING	0x00000001
 
 include oleidl.inc
 
-CreateDataAdviseHolder proto WINAPI \
-	    ppDAHolder: LPDATAADVISEHOLDER
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
+if not defined(ISOLATION_AWARE_ENABLED) or not ISOLATION_AWARE_ENABLED or not defined(_OBJBASE_H_) or not defined(CreateDataAdviseHolder)
+CreateDataAdviseHolder proto WINAPI :ptr
+endif
 
-;DWORD
 OleBuildVersion proto WINAPI
 
-
-ReadClassStg proto WINAPI \
-		  pStg: LPSTORAGE,
-		pclsid: ptr CLSID
-
-WriteClassStg proto WINAPI \
-		  pStg: LPSTORAGE,
-		rclsid: REFCLSID
-
-ReadClassStm proto WINAPI \
-		  pStm: LPSTREAM,
-		pclsid: ptr CLSID
-
-WriteClassStm proto WINAPI \
-		  pStm: LPSTREAM,
-		rclsid: REFCLSID
-
-WriteFmtUserTypeStg proto WINAPI \
-		  pstg: LPSTORAGE,
-		    cf: CLIPFORMAT,
-	  lpszUserType: LPOLESTR
-
-ReadFmtUserTypeStg proto WINAPI \
-		  pstg: LPSTORAGE,
-		   pcf: ptr CLIPFORMAT,
-	lplpszUserType: LPOLESTR
-
-
-
-OleInitialize proto WINAPI \
-	    pvReserved: LPVOID
-;void
-
-
-
-OleQueryLinkFromData proto WINAPI \
-	pSrcDataObject: LPDATAOBJECT
-
-OleQueryCreateFromData proto WINAPI \
-	pSrcDataObject: LPDATAOBJECT
-
-
-
-
-OleCreate proto WINAPI \
-		rclsid: REFCLSID,
-		  riid: REFIID,
-	     renderopt: DWORD,
-	    pFormatEtc: LPFORMATETC,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateEx proto WINAPI \
-		rclsid: REFCLSID,
-		  riid: REFIID,
-	       dwFlags: DWORD,
-	     renderopt: DWORD,
-	      cFormats: ULONG,
-		rgAdvf: LPDWORD,
-	   rgFormatEtc: LPFORMATETC,
-	  lpAdviseSink: ptr IAdviseSink,
-	rgdwConnection: LPDWORD,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateFromData proto WINAPI \
-	   pSrcDataObj: LPDATAOBJECT,
-		  riid: REFIID,
-	     renderopt: DWORD,
-	    pFormatEtc: LPFORMATETC,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateFromDataEx proto WINAPI \
-	   pSrcDataObj: LPDATAOBJECT,
-		  riid: REFIID,
-	       dwFlags: DWORD,
-	     renderopt: DWORD,
-	      cFormats: ULONG,
-		rgAdvf: LPDWORD,
-	   rgFormatEtc: LPFORMATETC,
-	  lpAdviseSink: ptr IAdviseSink,
-	rgdwConnection: LPDWORD,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateLinkFromData proto WINAPI \
-	   pSrcDataObj: LPDATAOBJECT,
-		  riid: REFIID,
-	     renderopt: DWORD,
-	    pFormatEtc: LPFORMATETC,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateLinkFromDataEx proto WINAPI \
-	   pSrcDataObj: LPDATAOBJECT,
-		  riid: REFIID,
-	       dwFlags: DWORD,
-	     renderopt: DWORD,
-	      cFormats: ULONG,
-		rgAdvf: LPDWORD,
-	   rgFormatEtc: LPFORMATETC,
-	  lpAdviseSink: ptr IAdviseSink,
-	rgdwConnection: LPDWORD,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateStaticFromData proto WINAPI \
-	   pSrcDataObj: LPDATAOBJECT,
-		   iid: REFIID,
-	     renderopt: DWORD,
-	    pFormatEtc: LPFORMATETC,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-
-OleCreateLink proto WINAPI \
-	    pmkLinkSrc: LPMONIKER,
-		  riid: REFIID,
-	     renderopt: DWORD,
-	   lpFormatEtc: LPFORMATETC,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateLinkEx proto WINAPI \
-	    pmkLinkSrc: LPMONIKER,
-		  riid: REFIID,
-	       dwFlags: DWORD,
-	     renderopt: DWORD,
-	      cFormats: ULONG,
-		rgAdvf: LPDWORD,
-	   rgFormatEtc: LPFORMATETC,
-	  lpAdviseSink: ptr IAdviseSink,
-	rgdwConnection: LPDWORD,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateLinkToFile proto WINAPI \
-	  lpszFileName: LPCOLESTR,
-		  riid: REFIID,
-	     renderopt: DWORD,
-	   lpFormatEtc: LPFORMATETC,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateLinkToFileEx proto WINAPI \
-	  lpszFileName: LPCOLESTR,
-		  riid: REFIID,
-	       dwFlags: DWORD,
-	     renderopt: DWORD,
-	      cFormats: ULONG,
-		rgAdvf: LPDWORD,
-	   rgFormatEtc: LPFORMATETC,
-	  lpAdviseSink: ptr IAdviseSink,
-	rgdwConnection: LPDWORD,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateFromFile proto WINAPI \
-		rclsid: REFCLSID,
-	  lpszFileName: LPCOLESTR,
-		  riid: REFIID,
-	     renderopt: DWORD,
-	   lpFormatEtc: LPFORMATETC,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleCreateFromFileEx proto WINAPI \
-		rclsid: REFCLSID,
-	  lpszFileName: LPCOLESTR,
-		  riid: REFIID,
-	       dwFlags: DWORD,
-	     renderopt: DWORD,
-	      cFormats: ULONG,
-		rgAdvf: LPDWORD,
-	   rgFormatEtc: LPFORMATETC,
-	  lpAdviseSink: ptr IAdviseSink,
-	rgdwConnection: LPDWORD,
-	   pClientSite: LPOLECLIENTSITE,
-		  pStg: LPSTORAGE,
-		ppvObj: LPVOID
-
-
-OleLoad proto WINAPI \
-		  pStg: LPSTORAGE,
-		  riid: REFIID,
-	   pClientSite: LPOLECLIENTSITE,
-		ppvObj: LPVOID
-
-
-OleSave proto WINAPI \
-		   pPS: LPPERSISTSTORAGE,
-		  pStg: LPSTORAGE,
-	   fSameAsLoad: BOOL
-
-
-OleLoadFromStream proto WINAPI \
-		  pStm: LPSTREAM,
-	  iidInterface: REFIID,
-		ppvObj: LPVOID
-
-OleSaveToStream proto WINAPI \
-		 pPStm: LPPERSISTSTREAM,
-		  pStm: LPSTREAM
-
-
-
-OleSetContainedObject proto WINAPI \
-	      pUnknown: LPUNKNOWN,
-	    fContained: BOOL
-
-OleNoteObjectVisible proto WINAPI \
-	      pUnknown: LPUNKNOWN,
-	      fVisible: BOOL
-
-
-
-
-RegisterDragDrop proto WINAPI \
-		  hwnd: HWND,
-	   pDropTarget: LPDROPTARGET
-
-RevokeDragDrop proto WINAPI \
-		  hwnd: HWND
-
-DoDragDrop proto WINAPI \
-	      pDataObj: LPDATAOBJECT,
-	   pDropSource: LPDROPSOURCE,
-	   dwOKEffects: DWORD,
-	     pdwEffect: LPDWORD
-
-
-
-OleSetClipboard proto WINAPI \
-	      pDataObj: LPDATAOBJECT
-
-OleGetClipboard proto WINAPI \
-	     ppDataObj: LPDATAOBJECT
-
-
-OleIsCurrentClipboard proto WINAPI \
-	      pDataObj: LPDATAOBJECT
-
-
-
-;HOLEMENU
-OleCreateMenuDescriptor proto WINAPI \
-	 hmenuCombined: HMENU,
-	  lpMenuWidths: LPOLEMENUGROUPWIDTHS
-
-OleSetMenuDescriptor proto WINAPI \
-	      holemenu: HOLEMENU,
-	     hwndFrame: HWND,
-      hwndActiveObject: HWND,
-	       lpFrame: LPOLEINPLACEFRAME,
-	   lpActiveObj: LPOLEINPLACEACTIVEOBJECT
-
-OleDestroyMenuDescriptor proto WINAPI \
-	      holemenu: HOLEMENU
-
-
-OleTranslateAccelerator proto WINAPI \
-	       lpFrame: LPOLEINPLACEFRAME,
-	   lpFrameInfo: LPOLEINPLACEFRAMEINFO,
-		 lpmsg: LPMSG
-
-
-;HANDLE
-OleDuplicateData proto WINAPI \
-		  hSrc: HANDLE,
-	      cfFormat: CLIPFORMAT,
-	       uiFlags: UINT
-
-
-OleDraw proto WINAPI \
-	      pUnknown: LPUNKNOWN,
-	      dwAspect: DWORD,
-	       hdcDraw: HDC,
-	    lprcBounds: LPCRECT
-
-
-OleRun proto WINAPI \
-	      pUnknown: LPUNKNOWN
-;BOOL
-OleIsRunning proto WINAPI \
-	       pObject: LPOLEOBJECT
-
-OleLockRunning proto WINAPI \
-	      pUnknown: LPUNKNOWN,
-		 fLock: BOOL,
-     fLastUnlockCloses: BOOL
-
-;void
-CreateOleAdviseHolder proto WINAPI \
-	    ppOAHolder: LPOLEADVISEHOLDER
-
-OleCreateDefaultHandler proto WINAPI \
-		 clsid: REFCLSID,
-	     pUnkOuter: LPUNKNOWN,
-		  riid: REFIID,
-	       lplpObj: LPVOID
-
-
-OleCreateEmbeddingHelper proto WINAPI \
-		 clsid: REFCLSID,
-	     pUnkOuter: LPUNKNOWN,
-		 flags: DWORD,
-		   pCF: LPCLASSFACTORY,
-		  riid: REFIID,
-	       lplpObj: LPVOID
-
-;BOOL
-IsAccelerator proto WINAPI \
-		hAccel: HACCEL,
-	 cAccelEntries: SINT,
-		 lpMsg: LPMSG,
-		lpwCmd: LPWORD
-
-;HGLOBAL
-OleGetIconOfFile proto WINAPI \
-	      lpszPath: LPOLESTR,
-       fUseFileAsLabel: BOOL
-
-;HGLOBAL
-OleGetIconOfClass proto WINAPI \
-		rclsid: REFCLSID,
-	     lpszLabel: LPOLESTR,
-       fUseTypeAsLabel: BOOL
-
-;HGLOBAL
-OleMetafilePictFromIconAndLabel proto WINAPI \
-		 hIcon: HICON,
-	     lpszLabel: LPOLESTR,
-	lpszSourceFile: LPOLESTR,
-	    iIconIndex: UINT
-
-
-
-
-
-OleRegGetUserType proto WINAPI \
-		 clsid: REFCLSID,
-	  dwFormOfType: DWORD,
-	   pszUserType: LPOLESTR
-
-
-OleRegGetMiscStatus proto WINAPI \
-		 clsid: REFCLSID,
-	      dwAspect: DWORD,
-	     pdwStatus: LPDWORD
-
-
-OleRegEnumFormatEtc proto WINAPI \
-		 clsid: REFCLSID,
-	   dwDirection: DWORD,
-		ppenum: LPENUMFORMATETC
-
-
-OleRegEnumVerbs proto WINAPI \
-		 clsid: REFCLSID,
-		ppenum: LPENUMOLEVERB
-
-
-
-LPOLESTREAM	typedef ptr OLESTREAM
-
-CALLBACK(OLESTREAMVTBL_P, :LPOLESTREAM, :PVOID, :DWORD)
-
-OLESTREAMVTBL		STRUC
-Get			OLESTREAMVTBL_P ?
-Put			OLESTREAMVTBL_P ?
-OLESTREAMVTBL		ENDS
-LPOLESTREAMVTBL		typedef	 ptr OLESTREAMVTBL
-
-OLESTREAM		STRUC
+WriteFmtUserTypeStg proto WINAPI :LPSTORAGE, :CLIPFORMAT, :LPOLESTR
+ReadFmtUserTypeStg proto WINAPI :LPSTORAGE, :ptr, :ptr
+
+OleInitialize proto WINAPI :LPVOID
+OleUninitialize proto WINAPI
+OleQueryLinkFromData proto WINAPI :LPDATAOBJECT
+OleQueryCreateFromData proto WINAPI :LPDATAOBJECT
+
+OleCreate proto WINAPI :REFCLSID, :REFIID, :DWORD, :LPFORMATETC, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateEx proto WINAPI :REFCLSID, :REFIID, :DWORD, :DWORD, :ULONG, :ptr, :LPFORMATETC, :ptr, :ptr, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateFromData proto WINAPI :LPDATAOBJECT, :REFIID, :DWORD, :LPFORMATETC, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateFromDataEx proto WINAPI :LPDATAOBJECT, :REFIID, :DWORD, :DWORD, :ULONG, :ptr, :LPFORMATETC, :ptr, :ptr, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateLinkFromData proto WINAPI :LPDATAOBJECT, :REFIID, :DWORD, :LPFORMATETC, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateLinkFromDataEx proto WINAPI :LPDATAOBJECT, :REFIID, :DWORD, :DWORD, :ULONG, :ptr, :LPFORMATETC, :ptr, :ptr, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateStaticFromData proto WINAPI :LPDATAOBJECT, :REFIID, :DWORD, :LPFORMATETC, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateLink proto WINAPI :LPMONIKER, :REFIID, :DWORD, :LPFORMATETC, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateLinkEx proto WINAPI :LPMONIKER, :REFIID, :DWORD, :DWORD, :ULONG, :ptr, :LPFORMATETC, :ptr, :ptr, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateLinkToFile proto WINAPI :LPCOLESTR, :REFIID, :DWORD, :LPFORMATETC, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateLinkToFileEx proto WINAPI :LPCOLESTR, :REFIID, :DWORD, :DWORD, :ULONG, :ptr, :LPFORMATETC, :ptr, :ptr, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateFromFile proto WINAPI :REFCLSID, :LPCOLESTR, :REFIID, :DWORD, :LPFORMATETC, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleCreateFromFileEx proto WINAPI :REFCLSID, :LPCOLESTR, :REFIID, :DWORD, :DWORD, :ULONG, :ptr, :LPFORMATETC, :ptr, :ptr, :LPOLECLIENTSITE, :LPSTORAGE, :ptr
+OleLoad proto WINAPI :LPSTORAGE, :REFIID, :LPOLECLIENTSITE, :ptr
+OleSave proto WINAPI :LPPERSISTSTORAGE, :LPSTORAGE, :BOOL
+
+OleLoadFromStream proto WINAPI :LPSTREAM, :REFIID, :ptr
+OleSaveToStream proto WINAPI :LPPERSISTSTREAM, :LPSTREAM
+
+OleSetContainedObject proto WINAPI :LPUNKNOWN, :BOOL
+OleNoteObjectVisible proto WINAPI :LPUNKNOWN, :BOOL
+
+RegisterDragDrop proto WINAPI :HWND, :LPDROPTARGET
+RevokeDragDrop proto WINAPI :HWND
+DoDragDrop proto WINAPI :LPDATAOBJECT, :LPDROPSOURCE, :DWORD, :LPDWORD
+
+OleSetClipboard proto WINAPI :LPDATAOBJECT
+OleGetClipboard proto WINAPI :ptr
+if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
+OleGetClipboardWithEnterpriseInfo proto WINAPI :ptr ptr, :ptr, :ptr, :ptr, :ptr
+endif
+OleFlushClipboard proto WINAPI
+OleIsCurrentClipboard proto WINAPI :LPDATAOBJECT
+
+OleCreateMenuDescriptor proto WINAPI :HMENU, :LPOLEMENUGROUPWIDTHS
+OleSetMenuDescriptor proto WINAPI :HOLEMENU, :HWND, :HWND, :LPOLEINPLACEFRAME, :LPOLEINPLACEACTIVEOBJECT
+OleDestroyMenuDescriptor proto WINAPI :HOLEMENU
+
+OleTranslateAccelerator proto WINAPI :LPOLEINPLACEFRAME, :LPOLEINPLACEFRAMEINFO, :LPMSG
+OleDuplicateData proto WINAPI :HANDLE, :CLIPFORMAT, :UINT
+OleDraw proto WINAPI :LPUNKNOWN, :DWORD, :HDC, :LPCRECT
+
+OleRun proto WINAPI :LPUNKNOWN
+OleIsRunning proto WINAPI :LPOLEOBJECT
+OleLockRunning proto WINAPI :LPUNKNOWN, :BOOL, :BOOL
+
+ReleaseStgMedium proto WINAPI :LPSTGMEDIUM
+
+CreateOleAdviseHolder proto WINAPI :ptr
+OleCreateDefaultHandler proto WINAPI :REFCLSID, :LPUNKNOWN, :REFIID, :ptr
+OleCreateEmbeddingHelper proto WINAPI :REFCLSID, :LPUNKNOWN, :DWORD, :LPCLASSFACTORY, :REFIID, :ptr
+
+IsAccelerator proto WINAPI :HACCEL, :sdword, :LPMSG, :ptr
+
+OleGetIconOfFile proto WINAPI :LPOLESTR, :BOOL
+OleGetIconOfClass proto WINAPI :REFCLSID, :LPOLESTR, :BOOL
+OleMetafilePictFromIconAndLabel proto WINAPI :HICON, :LPOLESTR, :LPOLESTR, :UINT
+OleRegGetUserType proto WINAPI :REFCLSID, :DWORD, :ptr
+OleRegGetMiscStatus proto WINAPI :REFCLSID, :DWORD, :ptr
+OleRegEnumFormatEtc proto WINAPI :REFCLSID, :DWORD, :ptr
+OleRegEnumVerbs proto WINAPI :REFCLSID, :ptr
+
+.pragma pack(push, size_t)
+
+LPOLESTREAM		typedef ptr
+
+_OLESTREAMVTBL		struct
+Get			proc :LPOLESTREAM, :ptr, :DWORD
+Put			proc :LPOLESTREAM, :ptr, :DWORD
+_OLESTREAMVTBL		ends
+OLESTREAMVTBL		typedef _OLESTREAMVTBL
+LPOLESTREAMVTBL		typedef ptr _OLESTREAMVTBL
+
+_OLESTREAM		struct
 lpstbl			LPOLESTREAMVTBL ?
-OLESTREAM		ENDS
+_OLESTREAM		ends
+OLESTREAM		typedef _OLESTREAM
 
-OleConvertOLESTREAMToIStorage proto WINAPI \
-	   lpolestream: LPOLESTREAM,
-		  pstg: LPSTORAGE,
-		   ptd: ptr DVTARGETDEVICE
+.pragma pack(pop)
 
+OleConvertOLESTREAMToIStorage proto WINAPI :LPOLESTREAM, :LPSTORAGE, :ptr
+OleConvertIStorageToOLESTREAM proto WINAPI :LPSTORAGE, :LPOLESTREAM
+OleDoAutoConvert proto WINAPI :LPSTORAGE, :LPCLSID
+OleGetAutoConvert proto WINAPI :REFCLSID, :LPCLSID
+OleSetAutoConvert proto WINAPI :REFCLSID, :REFCLSID
 
-OleConvertIStorageToOLESTREAM proto WINAPI \
-		  pstg: LPSTORAGE,
-	   lpolestream: LPOLESTREAM
+SetConvertStg proto WINAPI :LPSTORAGE, :BOOL
 
-
-
-GetHGlobalFromILockBytes proto WINAPI \
-		plkbyt: LPLOCKBYTES,
-	      phglobal: ptr HGLOBAL
-
-CreateILockBytesOnHGlobal proto WINAPI \
-	       hGlobal: HGLOBAL,
-      fDeleteOnRelease: BOOL,
-	       pplkbyt: ptr LPLOCKBYTES
-
-
-GetHGlobalFromStream proto WINAPI \
-		  pstm: LPSTREAM,
-	      phglobal: ptr HGLOBAL
-
-CreateStreamOnHGlobal proto WINAPI \
-	       hGlobal: HGLOBAL,
-      fDeleteOnRelease: BOOL,
-		 ppstm: ptr LPSTREAM
-
-
-
-
-OleDoAutoConvert proto WINAPI \
-		  pStg: LPSTORAGE,
-	     pClsidNew: LPCLSID
-
-OleGetAutoConvert proto WINAPI \
-	      clsidOld: REFCLSID,
-	     pClsidNew: LPCLSID
-
-OleSetAutoConvert proto WINAPI \
-	      clsidOld: REFCLSID,
-	      clsidNew: REFCLSID
-
-GetConvertStg proto WINAPI \
-		  pStg: LPSTORAGE
-
-SetConvertStg proto WINAPI \
-		  pStg: LPSTORAGE,
-	      fConvert: BOOL
-
-
-OleConvertIStorageToOLESTREAMEx proto WINAPI \
-		  pstg: LPSTORAGE,
-	      cfFormat: CLIPFORMAT,
-		lWidth: LONG,
-	       lHeight: LONG,
-		dwSize: DWORD,
-	       pmedium: LPSTGMEDIUM,
-	       polestm: LPOLESTREAM
-
-OleConvertOLESTREAMToIStorageEx proto WINAPI \
-	       polestm: LPOLESTREAM,
-		  pstg: LPSTORAGE,
-	     pcfFormat: ptr CLIPFORMAT,
-	      plwWidth: ptr LONG,
-	      plHeight: ptr LONG,
-	       pdwSize: LPDWORD,
-	       pmedium: LPSTGMEDIUM
-
-include poppack.inc
+OleConvertIStorageToOLESTREAMEx proto WINAPI :LPSTORAGE, :CLIPFORMAT, :LONG, :LONG, :DWORD, :LPSTGMEDIUM, :LPOLESTREAM
+OleConvertOLESTREAMToIStorageEx proto WINAPI :LPOLESTREAM, :LPSTORAGE, :ptr, :ptr, :ptr, :ptr, :LPSTGMEDIUM
 
 endif
-.pragma list(pop)
 
+endif

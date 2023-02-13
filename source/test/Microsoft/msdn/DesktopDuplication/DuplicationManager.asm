@@ -107,8 +107,8 @@ DUPLICATIONMANAGER::InitDupl proc uses rsi Device:ptr ID3D11Device, Output:UINT
         .if ( hr == DXGI_ERROR_NOT_CURRENTLY_AVAILABLE )
 
             MessageBoxW(nullptr,
-                    L"There is already the maximum number of applications using"
-                    " the Desktop Duplication API running, please close one of"
+                    L"There is already the maximum number of applications using" \
+                    " the Desktop Duplication API running, please close one of" \
                     " those applications and then try again.",
                     L"Error", MB_OK)
             .return DUPL_RETURN_ERROR_UNEXPECTED
@@ -117,7 +117,6 @@ DUPLICATIONMANAGER::InitDupl proc uses rsi Device:ptr ID3D11Device, Output:UINT
                 L"Failed to get duplicate output in DUPLICATIONMANAGER",
                 L"Error", hr, &CreateDuplicationExpectedErrors)
     .endif
-
     .return DUPL_RETURN_SUCCESS
 
 DUPLICATIONMANAGER::InitDupl endp
@@ -207,12 +206,12 @@ DUPLICATIONMANAGER::GetMouse proc uses rsi rdi rbx \
             mov [rdi].PtrShapeBuffer,nullptr
         .endif
         mov [rdi].PtrShapeBuffer,malloc([rbx].PointerShapeBufferSize)
+
         .if ( !rax )
 
             mov [rdi].BufferSize,eax
             .return ProcessFailure(nullptr,
-                    L"Failed to allocate memory for pointer shape"
-                    " in DUPLICATIONMANAGER",
+                    L"Failed to allocate memory for pointer shape in DUPLICATIONMANAGER",
                     L"Error", E_OUTOFMEMORY, nullptr)
         .endif
 
@@ -239,7 +238,6 @@ DUPLICATIONMANAGER::GetMouse proc uses rsi rdi rbx \
             L"Failed to get frame pointer shape in DUPLICATIONMANAGER",
             L"Error", hr, &FrameInfoExpectedErrors)
     .endif
-
     .return DUPL_RETURN_SUCCESS
 
 DUPLICATIONMANAGER::GetMouse endp
@@ -290,8 +288,7 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
     .if (FAILED(hr))
 
         .return ProcessFailure(nullptr,
-                L"Failed to QI for ID3D11Texture2D from acquired IDXGIResource"
-                " in DUPLICATIONMANAGER",
+                L"Failed to QI for ID3D11Texture2D from acquired IDXGIResource in DUPLICATIONMANAGER",
                 L"Error", hr, nullptr)
     .endif
 
@@ -373,6 +370,7 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
 
     mov [rdi].tFrame,[rsi].m_AcquiredDesktopImage
     mov [rdi].FrameInfo,FrameInfo
+
    .return DUPL_RETURN_SUCCESS
 
 DUPLICATIONMANAGER::GetFrame endp

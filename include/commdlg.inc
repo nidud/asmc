@@ -778,15 +778,14 @@ endif
 
 if(WINVER GE 0x0500)
 
-ifdef __UNKNWN_INC
+ifdef __IUnknown_INTERFACE_DEFINED__
 
 .comdef IPrintDialogCallback : public IUnknown
 
     InitDone		proc
     SelectionChange	proc
     HandleMessage	proc hDlg:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM, pResult:ptr LRESULT
-
-    .ends
+   .ends
 
 
 .comdef IPrintDialogServices : public IUnknown
@@ -794,8 +793,7 @@ ifdef __UNKNWN_INC
     GetCurrentDevMode	proc pDevMode:LPDEVMODE, pcbSize:ptr UINT
     GetCurrentPrinterName proc pPrinterName:LPWSTR, pcchSize:ptr UINT
     GetCurrentPortName	proc pPortName:LPWSTR, pcchSize:ptr UINT
-
-    .ends
+   .ends
 
 
 PRINTPAGERANGE		STRUC

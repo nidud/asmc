@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
@@ -5821,128 +5822,155 @@ endif
 
 endif ;; NTDDI_WINBLUE
 
-;; Additional Prototypes for ALL interfaces
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-BSTR_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR
-BSTR_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR
-BSTR_UserFree		proto WINAPI :ptr DWORD, :ptr BSTR
-HACCEL_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr HACCEL
-HACCEL_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HACCEL
-HACCEL_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HACCEL
-HACCEL_UserFree		proto WINAPI :ptr DWORD, :ptr HACCEL
-HBITMAP_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HBITMAP
-HBITMAP_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HBITMAP
-HBITMAP_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HBITMAP
-HBITMAP_UserFree	proto WINAPI :ptr DWORD, :ptr HBITMAP
-HGLOBAL_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HGLOBAL
-HGLOBAL_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HGLOBAL
-HGLOBAL_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HGLOBAL
-HGLOBAL_UserFree	proto WINAPI :ptr DWORD, :ptr HGLOBAL
-HICON_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr HICON
-HICON_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HICON
-HICON_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HICON
-HICON_UserFree		proto WINAPI :ptr DWORD, :ptr HICON
-HMENU_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr HMENU
-HMENU_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HMENU
-HMENU_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HMENU
-HMENU_UserFree		proto WINAPI :ptr DWORD, :ptr HMENU
-HWND_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr HWND
-HWND_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HWND
-HWND_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HWND
-HWND_UserFree		proto WINAPI :ptr DWORD, :ptr HWND
-LPSAFEARRAY_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserFree	proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
-PCIDLIST_ABSOLUTE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PCIDLIST_ABSOLUTE
-PCIDLIST_ABSOLUTE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCIDLIST_ABSOLUTE
-PCIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCIDLIST_ABSOLUTE
-PCIDLIST_ABSOLUTE_UserFree proto WINAPI :ptr DWORD, :ptr PCIDLIST_ABSOLUTE
-PCUIDLIST_RELATIVE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PCUIDLIST_RELATIVE
-PCUIDLIST_RELATIVE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUIDLIST_RELATIVE
-PCUIDLIST_RELATIVE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUIDLIST_RELATIVE
-PCUIDLIST_RELATIVE_UserFree proto WINAPI :ptr DWORD, :ptr PCUIDLIST_RELATIVE
-PCUITEMID_CHILD_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PCUITEMID_CHILD
-PCUITEMID_CHILD_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUITEMID_CHILD
-PCUITEMID_CHILD_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUITEMID_CHILD
-PCUITEMID_CHILD_UserFree proto WINAPI :ptr DWORD, :ptr PCUITEMID_CHILD
-PIDLIST_ABSOLUTE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PIDLIST_ABSOLUTE
-PIDLIST_ABSOLUTE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_ABSOLUTE
-PIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_ABSOLUTE
-PIDLIST_ABSOLUTE_UserFree proto WINAPI :ptr DWORD, :ptr PIDLIST_ABSOLUTE
-PIDLIST_RELATIVE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PIDLIST_RELATIVE
-PIDLIST_RELATIVE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_RELATIVE
-PIDLIST_RELATIVE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_RELATIVE
-PIDLIST_RELATIVE_UserFree proto WINAPI :ptr DWORD, :ptr PIDLIST_RELATIVE
-PITEMID_CHILD_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr PITEMID_CHILD
-PITEMID_CHILD_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PITEMID_CHILD
-PITEMID_CHILD_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PITEMID_CHILD
-PITEMID_CHILD_UserFree	proto WINAPI :ptr DWORD, :ptr PITEMID_CHILD
-VARIANT_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
-VARIANT_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
-VARIANT_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
-VARIANT_UserFree	proto WINAPI :ptr DWORD, :ptr VARIANT
-BSTR_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR
-BSTR_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR
-BSTR_UserFree64		proto WINAPI :ptr DWORD, :ptr BSTR
-HACCEL_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HACCEL
-HACCEL_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HACCEL
-HACCEL_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HACCEL
-HACCEL_UserFree64	proto WINAPI :ptr DWORD, :ptr HACCEL
-HBITMAP_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HBITMAP
-HBITMAP_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HBITMAP
-HBITMAP_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr HBITMAP
-HBITMAP_UserFree64	proto WINAPI :ptr DWORD, :ptr HBITMAP
-HGLOBAL_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HGLOBAL
-HGLOBAL_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HGLOBAL
-HGLOBAL_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr HGLOBAL
-HGLOBAL_UserFree64	proto WINAPI :ptr DWORD, :ptr HGLOBAL
-HICON_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HICON
-HICON_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HICON
-HICON_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HICON
-HICON_UserFree64	proto WINAPI :ptr DWORD, :ptr HICON
-HMENU_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HMENU
-HMENU_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HMENU
-HMENU_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HMENU
-HMENU_UserFree64	proto WINAPI :ptr DWORD, :ptr HMENU
-HWND_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr HWND
-HWND_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HWND
-HWND_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HWND
-HWND_UserFree64		proto WINAPI :ptr DWORD, :ptr HWND
+HACCEL_UserSize proto WINAPI :ptr, :dword, :ptr
+HACCEL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserFree proto WINAPI :ptr, :ptr
 
-LPSAFEARRAY_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserFree64		proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
-PCIDLIST_ABSOLUTE_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PCIDLIST_ABSOLUTE
-PCIDLIST_ABSOLUTE_UserMarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCIDLIST_ABSOLUTE
-PCIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCIDLIST_ABSOLUTE
-PCIDLIST_ABSOLUTE_UserFree64	proto WINAPI :ptr DWORD, :ptr PCIDLIST_ABSOLUTE
-PCUIDLIST_RELATIVE_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PCUIDLIST_RELATIVE
-PCUIDLIST_RELATIVE_UserMarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUIDLIST_RELATIVE
-PCUIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUIDLIST_RELATIVE
-PCUIDLIST_RELATIVE_UserFree64	proto WINAPI :ptr DWORD, :ptr PCUIDLIST_RELATIVE
-PCUITEMID_CHILD_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PCUITEMID_CHILD
-PCUITEMID_CHILD_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUITEMID_CHILD
-PCUITEMID_CHILD_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUITEMID_CHILD
-PCUITEMID_CHILD_UserFree64	proto WINAPI :ptr DWORD, :ptr PCUITEMID_CHILD
-PIDLIST_ABSOLUTE_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PIDLIST_ABSOLUTE
-PIDLIST_ABSOLUTE_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_ABSOLUTE
-PIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_ABSOLUTE
-PIDLIST_ABSOLUTE_UserFree64	proto WINAPI :ptr DWORD, :ptr PIDLIST_ABSOLUTE
-PIDLIST_RELATIVE_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PIDLIST_RELATIVE
-PIDLIST_RELATIVE_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_RELATIVE
-PIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_RELATIVE
-PIDLIST_RELATIVE_UserFree64	proto WINAPI :ptr DWORD, :ptr PIDLIST_RELATIVE
-PITEMID_CHILD_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PITEMID_CHILD
-PITEMID_CHILD_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PITEMID_CHILD
-PITEMID_CHILD_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PITEMID_CHILD
-PITEMID_CHILD_UserFree64	proto WINAPI :ptr DWORD, :ptr PITEMID_CHILD
-VARIANT_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
-VARIANT_UserMarshal64		proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
-VARIANT_UserUnmarshal64		proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
-VARIANT_UserFree64		proto WINAPI :ptr DWORD, :ptr VARIANT
+HBITMAP_UserSize proto WINAPI :ptr, :dword, :ptr
+HBITMAP_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserFree proto WINAPI :ptr, :ptr
+
+HGLOBAL_UserSize proto WINAPI :ptr, :dword, :ptr
+HGLOBAL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HGLOBAL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HGLOBAL_UserFree proto WINAPI :ptr, :ptr
+
+HICON_UserSize proto WINAPI :ptr, :dword, :ptr
+HICON_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HICON_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HICON_UserFree proto WINAPI :ptr, :ptr
+
+HMENU_UserSize proto WINAPI :ptr, :dword, :ptr
+HMENU_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserFree proto WINAPI :ptr, :ptr
+
+HWND_UserSize proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
+
+PCIDLIST_ABSOLUTE_UserSize proto WINAPI :ptr, :dword, :ptr
+PCIDLIST_ABSOLUTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+PCIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+PCIDLIST_ABSOLUTE_UserFree proto WINAPI :ptr, :ptr
+
+PCUIDLIST_RELATIVE_UserSize proto WINAPI :ptr, :dword, :ptr
+PCUIDLIST_RELATIVE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+PCUIDLIST_RELATIVE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+PCUIDLIST_RELATIVE_UserFree proto WINAPI :ptr, :ptr
+
+PCUITEMID_CHILD_UserSize proto WINAPI :ptr, :dword, :ptr
+PCUITEMID_CHILD_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+PCUITEMID_CHILD_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+PCUITEMID_CHILD_UserFree proto WINAPI :ptr, :ptr
+
+PIDLIST_ABSOLUTE_UserSize proto WINAPI :ptr, :dword, :ptr
+PIDLIST_ABSOLUTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+PIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+PIDLIST_ABSOLUTE_UserFree proto WINAPI :ptr, :ptr, :ptr
+
+PIDLIST_RELATIVE_UserSize proto WINAPI :ptr, :dword, :ptr
+PIDLIST_RELATIVE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+PIDLIST_RELATIVE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+PIDLIST_RELATIVE_UserFree proto WINAPI :ptr, :ptr
+
+PITEMID_CHILD_UserSize	proto WINAPI :ptr, :dword, :ptr
+PITEMID_CHILD_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+PITEMID_CHILD_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+PITEMID_CHILD_UserFree	proto WINAPI :ptr, :ptr
+
+VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree proto WINAPI :ptr, :ptr
+
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
+
+HACCEL_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HACCEL_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserFree64 proto WINAPI :ptr, :ptr
+
+HBITMAP_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HBITMAP_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HBITMAP_UserFree64 proto WINAPI :ptr, :ptr
+
+HGLOBAL_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HGLOBAL_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HGLOBAL_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HGLOBAL_UserFree64 proto WINAPI :ptr, :ptr
+
+HICON_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HICON_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HICON_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HICON_UserFree64 proto WINAPI :ptr, :ptr
+
+HMENU_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HMENU_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserFree64 proto WINAPI :ptr, :ptr
+
+HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree64 proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
+
+PCIDLIST_ABSOLUTE_UserSize64 proto WINAPI :ptr, :dword, :ptr
+PCIDLIST_ABSOLUTE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+PCIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+PCIDLIST_ABSOLUTE_UserFree64 proto WINAPI :ptr, :ptr
+
+PCUIDLIST_RELATIVE_UserSize64 proto WINAPI :ptr, :dword, :ptr
+PCUIDLIST_RELATIVE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+PCUIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+PCUIDLIST_RELATIVE_UserFree64 proto WINAPI :ptr, :ptr
+
+PCUITEMID_CHILD_UserSize64 proto WINAPI :ptr, :dword, :ptr
+PCUITEMID_CHILD_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+PCUITEMID_CHILD_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+PCUITEMID_CHILD_UserFree64 proto WINAPI :ptr, :ptr
+
+PIDLIST_ABSOLUTE_UserSize64 proto WINAPI :ptr, :dword, :ptr
+PIDLIST_ABSOLUTE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+PIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+PIDLIST_ABSOLUTE_UserFree64 proto WINAPI :ptr, :ptr
+
+PIDLIST_RELATIVE_UserSize64 proto WINAPI :ptr, :dword, :ptr
+PIDLIST_RELATIVE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+PIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+PIDLIST_RELATIVE_UserFree64 proto WINAPI :ptr, :ptr
+
+PITEMID_CHILD_UserSize64 proto WINAPI :ptr, :dword, :ptr
+PITEMID_CHILD_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+PITEMID_CHILD_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+PITEMID_CHILD_UserFree64 proto WINAPI :ptr, :ptr
+
+VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif
+.pragma list(pop)

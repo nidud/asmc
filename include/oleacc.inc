@@ -482,103 +482,29 @@ endif
 
 endif
 
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr BSTR
+HMENU_UserSize proto WINAPI :ptr, :dword, :ptr
+HMENU_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserFree proto WINAPI :ptr, :ptr
 
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr BSTR
+HWND_UserSize proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree proto WINAPI :ptr, :ptr
 
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
 
-
-HMENU_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HMENU
-
-HMENU_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HMENU
-
-HMENU_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HMENU
-
-HMENU_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HMENU
-
-
-HWND_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
-
-HWND_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HWND
-
-HWND_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HWND
-
-HWND_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
-
-
-LPSAFEARRAY_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-LPSAFEARRAY_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr LPSAFEARRAY
-
-LPSAFEARRAY_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr LPSAFEARRAY
-
-LPSAFEARRAY_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
-
-VARIANT_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-VARIANT_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr VARIANT
-
-VARIANT_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr VARIANT
-
-VARIANT_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr VARIANT
+VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree proto WINAPI :ptr, :ptr
 
 endif

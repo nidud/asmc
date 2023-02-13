@@ -329,51 +329,14 @@ MFEVRDLL		equ 0
 endif
 endif
 
-;DWORD
-HWND_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
+HWND_UserSize proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree proto WINAPI :ptr, :ptr
 
-;LPBYTE
-HWND_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr HWND
-
-;LPBYTE
-HWND_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr HWND
-
-;void
-HWND_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
-
-
-;DWORD
-HWND_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
-
-;LPBYTE
-HWND_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr HWND
-
-;LPBYTE
-HWND_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr sbyte,
-		      : ptr HWND
-
-;void
-HWND_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
+HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

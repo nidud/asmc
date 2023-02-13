@@ -12,6 +12,8 @@ MIDL_user_allocate proto WINAPI :size_t
 ;void
 MIDL_user_free proto WINAPI :PVOID
 
+.pragma pack(push, size_t)
+
 ifndef __IWinTypes_INTERFACE_DEFINED__
 define __IWinTypes_INTERFACE_DEFINED__
 
@@ -160,6 +162,7 @@ PISECURITY_DESCRIPTOR	typedef ptr SECURITY_DESCRIPTOR
 endif
 
 endif
+
 COAUTHIDENTITY		STRUC
 User			LPWORD ?
 UserLength		ULONG ?
@@ -838,6 +841,8 @@ pTreatAsClsid		LPCLSID ?
 cPackages		dd ?
 pPackageDetail		LPPACKAGEDETAIL ?
 PACKAGEINFO		ENDS
+
+.pragma pack(pop)
 .pragma list(pop)
 endif
 

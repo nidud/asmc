@@ -150,15 +150,15 @@ endif
 
 endif  ;; __ActivAut_h
 
-BSTR_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR	; DWORD
-BSTR_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR	; LPSTR
-BSTR_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR	; LPSTR
-BSTR_UserFree		proto WINAPI :ptr DWORD, :ptr BSTR		; void
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
 
-BSTR_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR	; DWORD
-BSTR_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR	; LPSTR
-BSTR_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR	; LPSTR
-BSTR_UserFree64		proto WINAPI :ptr DWORD, :ptr BSTR		; void
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
 .pragma list(pop)
 endif

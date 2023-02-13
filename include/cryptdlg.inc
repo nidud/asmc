@@ -254,7 +254,7 @@ GetFriendlyNameOfCertW proto WINAPI \
 		  pwch: LPWSTR,
 		  cwch: DWORD
 
-ifdef UNICODE
+ifdef _UNICODE
 GetFriendlyNameOfCert	equ <GetFriendlyNameOfCertW>
 else
 GetFriendlyNameOfCert	equ <GetFriendlyNameOfCertA>

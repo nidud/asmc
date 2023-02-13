@@ -1067,23 +1067,26 @@ PSTORAGE_WRITE_CACHE_PROPERTY typedef ptr STORAGE_WRITE_CACHE_PROPERTY
 
 ifdef _MSC_EXTENSIONS
 
-PERSISTENT_RESERVE_COMMAND  STRUC
+PERSISTENT_RESERVE_COMMAND STRUC
 Version			dd ?
 Size			dd ?
 UNION
  STRUC PR_IN
-  ;ServiceAction : 5	db ?
-  ;Reserved1 : 3	db ?
-  flags			db ?
+  RECORD
+   ServiceAction	db : 5 ?
+   Reserved1		db : 3 ?
+  ENDS
   AllocationLength	dw ?
  ENDS
  STRUC PR_OUT
-  ;ServiceAction : 5	db ?
-  ;Reserved1 : 3	db ?
-  flags1		db ?
-  ;Type : 4		db ?
-  ;Scope : 4		db ?
-  flags2		db ?
+  RECORD
+   ServiceAction	db : 5 ?
+   Reserved1		db : 3 ?
+  ENDS
+  RECORD
+   Type			db : 4 ?
+   Scope		db : 4 ?
+  ENDS
   ParameterList		db 0 dup(?)
  ENDS
 ENDS

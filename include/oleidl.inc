@@ -574,144 +574,34 @@ LPENUMOLEVERB		typedef ptr IEnumOLEVERB
 
 endif
 
-;DWORD
-CLIPFORMAT_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr CLIPFORMAT
+CLIPFORMAT_UserSize proto WINAPI :ptr, :dword, :ptr
+CLIPFORMAT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+CLIPFORMAT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+CLIPFORMAT_UserFree proto WINAPI :ptr, :ptr
 
-;LPBYTE
-CLIPFORMAT_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr CLIPFORMAT
+HACCEL_UserSize proto WINAPI :ptr, :dword, :ptr
+HACCEL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HACCEL_UserFree proto WINAPI :ptr, :ptr
 
-;LPBYTE
-CLIPFORMAT_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr CLIPFORMAT
+HGLOBAL_UserSize proto WINAPI :ptr, :dword, :ptr
+HGLOBAL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HGLOBAL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HGLOBAL_UserFree proto WINAPI :ptr, :ptr
 
-;void
-CLIPFORMAT_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr CLIPFORMAT
+HMENU_UserSize proto WINAPI :ptr, :dword, :ptr
+HMENU_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserFree proto WINAPI :ptr, :ptr
 
+HWND_UserSize proto WINAPI :ptr, :dword, :ptr
+HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HWND_UserFree proto WINAPI :ptr, :ptr
 
-;DWORD
-HACCEL_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HACCEL
-
-;LPBYTE
-HACCEL_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;LPBYTE
-HACCEL_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;void
-HACCEL_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HACCEL
-
-;DWORD
-HGLOBAL_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HGLOBAL
-
-;LPBYTE
-HGLOBAL_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HGLOBAL
-
-;LPBYTE
-HGLOBAL_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HGLOBAL
-
-;void
-HGLOBAL_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HGLOBAL
-
-
-;DWORD
-HMENU_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HMENU
-
-;LPBYTE
-HMENU_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HMENU
-
-;LPBYTE
-HMENU_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HMENU
-
-;void
-HMENU_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HMENU
-
-
-;DWORD
-HWND_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HWND
-
-;LPBYTE
-HWND_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;LPBYTE
-HWND_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;void
-HWND_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HWND
-
-
-;DWORD
-STGMEDIUM_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr STGMEDIUM
-;LPBYTE
-STGMEDIUM_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr STGMEDIUM
-;LPBYTE
-STGMEDIUM_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr STGMEDIUM
-
-;void
-STGMEDIUM_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr STGMEDIUM
+STGMEDIUM_UserSize proto WINAPI :ptr, :dword, :ptr
+STGMEDIUM_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+STGMEDIUM_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+STGMEDIUM_UserFree proto WINAPI :ptr, :ptr
 
 endif

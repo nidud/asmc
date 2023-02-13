@@ -402,11 +402,11 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
             ; we could revert back to using GDI to update the window in this failure case.
 
             .return ProcessFailure([rsi].m_Device,
-                    L"Failed to create DirectX shared texture -"
-                    " we are attempting to create a texture the size of the"
-                    " complete desktop and this may be larger than the maximum"
-                    " texture size of your GPU.  Please try again using the"
-                    " -output command line parameter to duplicate only 1 monitor"
+                    L"Failed to create DirectX shared texture -" \
+                    " we are attempting to create a texture the size of the" \
+                    " complete desktop and this may be larger than the maximum" \
+                    " texture size of your GPU.  Please try again using the" \
+                    " -output command line parameter to duplicate only 1 monitor" \
                     " or configure your computer to a single monitor configuration",
                     L"Error", hr, &SystemTransitionsExpectedErrors)
 

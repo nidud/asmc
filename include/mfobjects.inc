@@ -1096,27 +1096,31 @@ endif
 endif ;; (WINVER GE _WIN32_WINNT_WIN7)
 
 
-BSTR_UserSize			proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr BSTR
-BSTR_UserUnmarshal		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr BSTR
-BSTR_UserFree			proto WINAPI :ptr DWORD, :ptr BSTR
-LPSAFEARRAY_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserMarshal		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserUnmarshal	proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserFree		proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
-BSTR_UserSize64			proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
-BSTR_UserMarshal64		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr BSTR
-BSTR_UserUnmarshal64		proto WINAPI :ptr DWORD, :ptr sbyte, :ptr BSTR
-BSTR_UserFree64			proto WINAPI :ptr DWORD, :ptr BSTR
-LPSAFEARRAY_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserMarshal64	proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserUnmarshal64	proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
-LPSAFEARRAY_UserFree64		proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
+
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
 
 IMFMediaEventGenerator_BeginGetEvent_Proxy	proto __cdecl :ptr, :ptr, :ptr
 IMFMediaEventGenerator_BeginGetEvent_Stub	proto __cdecl :ptr, :ptr
 IMFMediaEventGenerator_EndGetEvent_Proxy	proto __cdecl :ptr, :ptr, :ptr
 IMFMediaEventGenerator_EndGetEvent_Stub		proto __cdecl :ptr, :ptr, :ptr, :ptr
+
 IMFByteStream_BeginRead_Proxy			proto __cdecl :ptr, :ptr, :ULONG, :ptr, :ptr
 IMFByteStream_BeginRead_Stub			proto __cdecl :ptr, :ULONG, :ptr
 IMFByteStream_EndRead_Proxy			proto __cdecl :ptr, :ptr, :ptr

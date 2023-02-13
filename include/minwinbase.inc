@@ -10,106 +10,106 @@ endif
 
 ifndef _SECURITY_ATTRIBUTES_
 define _SECURITY_ATTRIBUTES_
-SECURITY_ATTRIBUTES	STRUC
-nLength			dd ?
-lpSecurityDescriptor	PVOID ?
-bInheritHandle		BOOL ?
-SECURITY_ATTRIBUTES	ENDS
-PSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
-LPSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
+SECURITY_ATTRIBUTES     STRUC
+nLength                 dd ?
+lpSecurityDescriptor    PVOID ?
+bInheritHandle          BOOL ?
+SECURITY_ATTRIBUTES     ENDS
+PSECURITY_ATTRIBUTES    typedef ptr SECURITY_ATTRIBUTES
+LPSECURITY_ATTRIBUTES   typedef ptr SECURITY_ATTRIBUTES
 endif
 
-OVERLAPPED		STRUC
-Internal		ULONG_PTR ?
-InternalHigh		ULONG_PTR ?
+OVERLAPPED              STRUC
+Internal                ULONG_PTR ?
+InternalHigh            ULONG_PTR ?
 UNION
  STRUC
-  _Offset		dd ?
-  OffsetHigh		dd ?
+  _Offset               dd ?
+  OffsetHigh            dd ?
  ENDS
- Pointer		PVOID ?
+ Pointer                PVOID ?
 ENDS
-hEvent			HANDLE ?
-OVERLAPPED		ENDS
-LPOVERLAPPED		typedef ptr OVERLAPPED
+hEvent                  HANDLE ?
+OVERLAPPED              ENDS
+LPOVERLAPPED            typedef ptr OVERLAPPED
 
-OVERLAPPED_ENTRY	STRUC
-lpCompletionKey		ULONG_PTR ?
-lpOverlapped		LPOVERLAPPED ?
-Internal		ULONG_PTR ?
+OVERLAPPED_ENTRY        STRUC
+lpCompletionKey         ULONG_PTR ?
+lpOverlapped            LPOVERLAPPED ?
+Internal                ULONG_PTR ?
 dwNumberOfBytesTransferred dd ?
-OVERLAPPED_ENTRY	ENDS
-LPOVERLAPPED_ENTRY	typedef ptr OVERLAPPED_ENTRY
+OVERLAPPED_ENTRY        ENDS
+LPOVERLAPPED_ENTRY      typedef ptr OVERLAPPED_ENTRY
 
 ifndef _FILETIME_
 define _FILETIME_
-FILETIME		STRUC
-dwLowDateTime		dd ?
-dwHighDateTime		dd ?
-FILETIME		ENDS
-PFILETIME		typedef ptr FILETIME
-LPFILETIME		typedef ptr FILETIME
+FILETIME                STRUC
+dwLowDateTime           dd ?
+dwHighDateTime          dd ?
+FILETIME                ENDS
+PFILETIME               typedef ptr FILETIME
+LPFILETIME              typedef ptr FILETIME
 endif
 
-SYSTEMTIME		STRUC
-wYear			dw ?
-wMonth			dw ?
-wDayOfWeek		dw ?
-wDay			dw ?
-wHour			dw ?
-wMinute			dw ?
-wSecond			dw ?
-wMilliseconds		dw ?
-SYSTEMTIME		ENDS
-PSYSTEMTIME		typedef ptr SYSTEMTIME
-LPSYSTEMTIME		typedef ptr SYSTEMTIME
+SYSTEMTIME              STRUC
+wYear                   dw ?
+wMonth                  dw ?
+wDayOfWeek              dw ?
+wDay                    dw ?
+wHour                   dw ?
+wMinute                 dw ?
+wSecond                 dw ?
+wMilliseconds           dw ?
+SYSTEMTIME              ENDS
+PSYSTEMTIME             typedef ptr SYSTEMTIME
+LPSYSTEMTIME            typedef ptr SYSTEMTIME
 
-WIN32_FIND_DATAA	STRUC
-dwFileAttributes	dd ?
-ftCreationTime		FILETIME <>
-ftLastAccessTime	FILETIME <>
-ftLastWriteTime		FILETIME <>
-nFileSizeHigh		dd ?
-nFileSizeLow		dd ?
-dwReserved0		dd ?
-dwReserved1		dd ?
-cFileName		db 260 dup(?)
-cAlternateFileName	db 14 dup(?)
+WIN32_FIND_DATAA        STRUC
+dwFileAttributes        dd ?
+ftCreationTime          FILETIME <>
+ftLastAccessTime        FILETIME <>
+ftLastWriteTime         FILETIME <>
+nFileSizeHigh           dd ?
+nFileSizeLow            dd ?
+dwReserved0             dd ?
+dwReserved1             dd ?
+cFileName               db 260 dup(?)
+cAlternateFileName      db 14 dup(?)
 ifdef _MAC
-dwFileType		dd ?
-dwCreatorType		dd ?
-wFinderFlags		dw ?
+dwFileType              dd ?
+dwCreatorType           dd ?
+wFinderFlags            dw ?
 endif
-WIN32_FIND_DATAA	ENDS
-PWIN32_FIND_DATAA	typedef ptr WIN32_FIND_DATAA
-LPWIN32_FIND_DATAA	typedef ptr WIN32_FIND_DATAA
-WIN32_FIND_DATAW	STRUC
-dwFileAttributes	dd ?
-ftCreationTime		FILETIME <>
-ftLastAccessTime	FILETIME <>
-ftLastWriteTime		FILETIME <>
-nFileSizeHigh		dd ?
-nFileSizeLow		dd ?
-dwReserved0		dd ?
-dwReserved1		dd ?
-cFileName		WCHAR MAX_PATH dup(?)
-cAlternateFileName	WCHAR 14 dup(?)
+WIN32_FIND_DATAA        ENDS
+PWIN32_FIND_DATAA       typedef ptr WIN32_FIND_DATAA
+LPWIN32_FIND_DATAA      typedef ptr WIN32_FIND_DATAA
+WIN32_FIND_DATAW        STRUC
+dwFileAttributes        dd ?
+ftCreationTime          FILETIME <>
+ftLastAccessTime        FILETIME <>
+ftLastWriteTime         FILETIME <>
+nFileSizeHigh           dd ?
+nFileSizeLow            dd ?
+dwReserved0             dd ?
+dwReserved1             dd ?
+cFileName               WCHAR MAX_PATH dup(?)
+cAlternateFileName      WCHAR 14 dup(?)
 ifdef _MAC
-dwFileType		dd ?
-dwCreatorType		dd ?
-wFinderFlags		dw ?
+dwFileType              dd ?
+dwCreatorType           dd ?
+wFinderFlags            dw ?
 endif
-WIN32_FIND_DATAW	ENDS
-PWIN32_FIND_DATAW	typedef ptr WIN32_FIND_DATAW
-LPWIN32_FIND_DATAW	typedef ptr WIN32_FIND_DATAW
+WIN32_FIND_DATAW        ENDS
+PWIN32_FIND_DATAW       typedef ptr WIN32_FIND_DATAW
+LPWIN32_FIND_DATAW      typedef ptr WIN32_FIND_DATAW
 ifdef _UNICODE
-WIN32_FIND_DATA		typedef WIN32_FIND_DATAW
-PWIN32_FIND_DATA	typedef PWIN32_FIND_DATAW
-LPWIN32_FIND_DATA	typedef LPWIN32_FIND_DATAW
+WIN32_FIND_DATA         typedef WIN32_FIND_DATAW
+PWIN32_FIND_DATA        typedef PWIN32_FIND_DATAW
+LPWIN32_FIND_DATA       typedef LPWIN32_FIND_DATAW
 else
-WIN32_FIND_DATA		typedef WIN32_FIND_DATAA
-PWIN32_FIND_DATA	typedef PWIN32_FIND_DATAA
-LPWIN32_FIND_DATA	typedef LPWIN32_FIND_DATAA
+WIN32_FIND_DATA         typedef WIN32_FIND_DATAA
+PWIN32_FIND_DATA        typedef PWIN32_FIND_DATAA
+LPWIN32_FIND_DATA       typedef LPWIN32_FIND_DATAA
 endif
 
 
@@ -139,10 +139,10 @@ endif
 if (_WIN32_WINNT ge 0x0400)
 if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
 .enum _READ_DIRECTORY_NOTIFY_INFORMATION_CLASS {
-    ReadDirectoryNotifyInformation	   = 1,
+    ReadDirectoryNotifyInformation         = 1,
     ReadDirectoryNotifyExtendedInformation
     }
-READ_DIRECTORY_NOTIFY_INFORMATION_CLASS	 typedef _READ_DIRECTORY_NOTIFY_INFORMATION_CLASS
+READ_DIRECTORY_NOTIFY_INFORMATION_CLASS  typedef _READ_DIRECTORY_NOTIFY_INFORMATION_CLASS
 PREAD_DIRECTORY_NOTIFY_INFORMATION_CLASS typedef ptr _READ_DIRECTORY_NOTIFY_INFORMATION_CLASS
 endif
 endif
@@ -190,11 +190,11 @@ endif
 PFILE_INFO_BY_HANDLE_CLASS typedef ptr FILE_INFO_BY_HANDLE_CLASS
 endif
 
-CRITICAL_SECTION	typedef RTL_CRITICAL_SECTION
-PCRITICAL_SECTION	typedef PRTL_CRITICAL_SECTION
-LPCRITICAL_SECTION	typedef PRTL_CRITICAL_SECTION
+CRITICAL_SECTION        typedef RTL_CRITICAL_SECTION
+PCRITICAL_SECTION       typedef PRTL_CRITICAL_SECTION
+LPCRITICAL_SECTION      typedef PRTL_CRITICAL_SECTION
 
-CRITICAL_SECTION_DEBUG	typedef RTL_CRITICAL_SECTION_DEBUG
+CRITICAL_SECTION_DEBUG  typedef RTL_CRITICAL_SECTION_DEBUG
 PCRITICAL_SECTION_DEBUG typedef PRTL_CRITICAL_SECTION_DEBUG
 LPCRITICAL_SECTION_DEBUG typedef PRTL_CRITICAL_SECTION_DEBUG
 
@@ -203,205 +203,205 @@ CALLBACK(LPOVERLAPPED_COMPLETION_ROUTINE, :DWORD, :DWORD, :LPOVERLAPPED)
 LOCKFILE_FAIL_IMMEDIATELY equ 0x00000001
 LOCKFILE_EXCLUSIVE_LOCK equ 0x00000002
 
-PROCESS_HEAP_ENTRY	STRUC
-lpData			PVOID ?
-cbData			dd ?
-cbOverhead		db ?
-iRegionIndex		db ?
-wFlags			dw ?
+PROCESS_HEAP_ENTRY      STRUC
+lpData                  PVOID ?
+cbData                  dd ?
+cbOverhead              db ?
+iRegionIndex            db ?
+wFlags                  dw ?
 UNION
  STRUC Block
-  hMem			HANDLE ?
-  dwReserved		dd 3 dup(?)
+  hMem                  HANDLE ?
+  dwReserved            dd 3 dup(?)
  ENDS
  STRUC Region
-  dwCommittedSize	dd ?
-  dwUnCommittedSize	dd ?
-  lpFirstBlock		LPVOID ?
-  lpLastBlock		LPVOID ?
+  dwCommittedSize       dd ?
+  dwUnCommittedSize     dd ?
+  lpFirstBlock          LPVOID ?
+  lpLastBlock           LPVOID ?
  ENDS
 ENDS
-PROCESS_HEAP_ENTRY	ENDS
-LPPROCESS_HEAP_ENTRY	typedef ptr PROCESS_HEAP_ENTRY
-PPROCESS_HEAP_ENTRY	typedef ptr PROCESS_HEAP_ENTRY
+PROCESS_HEAP_ENTRY      ENDS
+LPPROCESS_HEAP_ENTRY    typedef ptr PROCESS_HEAP_ENTRY
+PPROCESS_HEAP_ENTRY     typedef ptr PROCESS_HEAP_ENTRY
 
-define PROCESS_HEAP_REGION	       0x0001
+define PROCESS_HEAP_REGION             0x0001
 define PROCESS_HEAP_UNCOMMITTED_RANGE  0x0002
-define PROCESS_HEAP_ENTRY_BUSY	       0x0004
-define PROCESS_HEAP_SEG_ALLOC	       0x0008
+define PROCESS_HEAP_ENTRY_BUSY         0x0004
+define PROCESS_HEAP_SEG_ALLOC          0x0008
 define PROCESS_HEAP_ENTRY_MOVEABLE     0x0010
 define PROCESS_HEAP_ENTRY_DDESHARE     0x0020
 
-REASON_CONTEXT		STRUC
-Version			ULONG ?
-Flags			dd ?
+REASON_CONTEXT          STRUC
+Version                 ULONG ?
+Flags                   dd ?
 UNION Reason
  STRUC
   LocalizedReasonModule HMODULE ?
-  LocalizedReasonId	ULONG ?
-  ReasonStringCount	ULONG ?
-  ReasonStrings		LPWSTR ?
+  LocalizedReasonId     ULONG ?
+  ReasonStringCount     ULONG ?
+  ReasonStrings         LPWSTR ?
  ENDS ;Detailed
- SimpleReasonString	LPWSTR ?
+ SimpleReasonString     LPWSTR ?
 ENDS
-REASON_CONTEXT		ENDS
-PREASON_CONTEXT		typedef ptr REASON_CONTEXT
+REASON_CONTEXT          ENDS
+PREASON_CONTEXT         typedef ptr REASON_CONTEXT
 
-define EXCEPTION_DEBUG_EVENT	   1
+define EXCEPTION_DEBUG_EVENT       1
 define CREATE_THREAD_DEBUG_EVENT   2
 define CREATE_PROCESS_DEBUG_EVENT  3
-define EXIT_THREAD_DEBUG_EVENT	   4
-define EXIT_PROCESS_DEBUG_EVENT	   5
-define LOAD_DLL_DEBUG_EVENT	   6
-define UNLOAD_DLL_DEBUG_EVENT	   7
+define EXIT_THREAD_DEBUG_EVENT     4
+define EXIT_PROCESS_DEBUG_EVENT    5
+define LOAD_DLL_DEBUG_EVENT        6
+define UNLOAD_DLL_DEBUG_EVENT      7
 define OUTPUT_DEBUG_STRING_EVENT   8
-define RIP_EVENT		   9
+define RIP_EVENT                   9
 
 CALLBACK(PTHREAD_START_ROUTINE, :LPVOID)
-LPTHREAD_START_ROUTINE	typedef PTHREAD_START_ROUTINE
+LPTHREAD_START_ROUTINE  typedef PTHREAD_START_ROUTINE
 
 CALLBACK(PENCLAVE_ROUTINE, :LPVOID)
-LPENCLAVE_ROUTINE	typedef PENCLAVE_ROUTINE
+LPENCLAVE_ROUTINE       typedef PENCLAVE_ROUTINE
 
 
-EXCEPTION_DEBUG_INFO	STRUC
-ExceptionRecord		EXCEPTION_RECORD <>
-dwFirstChance		dd ?
-EXCEPTION_DEBUG_INFO	ENDS
-LPEXCEPTION_DEBUG_INFO	typedef ptr EXCEPTION_DEBUG_INFO
+EXCEPTION_DEBUG_INFO    STRUC
+ExceptionRecord         EXCEPTION_RECORD <>
+dwFirstChance           dd ?
+EXCEPTION_DEBUG_INFO    ENDS
+LPEXCEPTION_DEBUG_INFO  typedef ptr EXCEPTION_DEBUG_INFO
 
 CREATE_THREAD_DEBUG_INFO STRUC
-hThread			HANDLE ?
-lpThreadLocalBase	LPVOID ?
-lpStartAddress		PTHREAD_START_ROUTINE ?
+hThread                 HANDLE ?
+lpThreadLocalBase       LPVOID ?
+lpStartAddress          PTHREAD_START_ROUTINE ?
 CREATE_THREAD_DEBUG_INFO ENDS
 LPCREATE_THREAD_DEBUG_INFO typedef ptr CREATE_THREAD_DEBUG_INFO
 
 CREATE_PROCESS_DEBUG_INFO STRUC
-hFile			HANDLE ?
-hProcess		HANDLE ?
-hThread			HANDLE ?
-lpBaseOfImage		PVOID ?
-dwDebugInfoFileOffset	DWORD ?
-nDebugInfoSize		DWORD ?
-lpThreadLocalBase	PVOID ?
-lpStartAddress		PTHREAD_START_ROUTINE ?
-lpImageName		PVOID ?
-fUnicode		WORD ?
+hFile                   HANDLE ?
+hProcess                HANDLE ?
+hThread                 HANDLE ?
+lpBaseOfImage           PVOID ?
+dwDebugInfoFileOffset   DWORD ?
+nDebugInfoSize          DWORD ?
+lpThreadLocalBase       PVOID ?
+lpStartAddress          PTHREAD_START_ROUTINE ?
+lpImageName             PVOID ?
+fUnicode                WORD ?
 CREATE_PROCESS_DEBUG_INFO ENDS
 LPCREATE_PROCESS_DEBUG_INFO typedef ptr CREATE_PROCESS_DEBUG_INFO
 
-EXIT_THREAD_DEBUG_INFO	STRUC
-dwExitCode		dd ?
-EXIT_THREAD_DEBUG_INFO	ENDS
+EXIT_THREAD_DEBUG_INFO  STRUC
+dwExitCode              dd ?
+EXIT_THREAD_DEBUG_INFO  ENDS
 LPEXIT_THREAD_DEBUG_INFO typedef ptr EXIT_THREAD_DEBUG_INFO
 
-EXIT_PROCESS_DEBUG_INFO	 STRUC
-dwExitCode		dd ?
+EXIT_PROCESS_DEBUG_INFO  STRUC
+dwExitCode              dd ?
 EXIT_PROCESS_DEBUG_INFO ENDS
 LPEXIT_PROCESS_DEBUG_INFO typedef ptr EXIT_PROCESS_DEBUG_INFO
 
-LOAD_DLL_DEBUG_INFO	STRUC
-hFile			HANDLE ?
-lpBaseOfDll		LPVOID ?
-dwDebugInfoFileOffset	dd ?
-nDebugInfoSize		dd ?
-lpImageName		LPVOID ?
-fUnicode		dw ?
-LOAD_DLL_DEBUG_INFO	ENDS
-LPLOAD_DLL_DEBUG_INFO	typedef ptr LOAD_DLL_DEBUG_INFO
+LOAD_DLL_DEBUG_INFO     STRUC
+hFile                   HANDLE ?
+lpBaseOfDll             LPVOID ?
+dwDebugInfoFileOffset   dd ?
+nDebugInfoSize          dd ?
+lpImageName             LPVOID ?
+fUnicode                dw ?
+LOAD_DLL_DEBUG_INFO     ENDS
+LPLOAD_DLL_DEBUG_INFO   typedef ptr LOAD_DLL_DEBUG_INFO
 
-UNLOAD_DLL_DEBUG_INFO	STRUC
-lpBaseOfDll		LPVOID ?
-UNLOAD_DLL_DEBUG_INFO	ENDS
+UNLOAD_DLL_DEBUG_INFO   STRUC
+lpBaseOfDll             LPVOID ?
+UNLOAD_DLL_DEBUG_INFO   ENDS
 LPUNLOAD_DLL_DEBUG_INFO typedef ptr UNLOAD_DLL_DEBUG_INFO
 
 OUTPUT_DEBUG_STRING_INFO STRUC
-lpDebugStringData	LPSTR ?
-fUnicode		dw ?
-nDebugStringLength	dw ?
+lpDebugStringData       LPSTR ?
+fUnicode                dw ?
+nDebugStringLength      dw ?
 OUTPUT_DEBUG_STRING_INFO ENDS
 LPOUTPUT_DEBUG_STRING_INFO typedef ptr OUTPUT_DEBUG_STRING_INFO
 
-RIP_INFO		STRUC
-dwError			dd ?
-dwType			dd ?
-RIP_INFO		ENDS
-LPRIP_INFO		typedef ptr RIP_INFO
+RIP_INFO                STRUC
+dwError                 dd ?
+dwType                  dd ?
+RIP_INFO                ENDS
+LPRIP_INFO              typedef ptr RIP_INFO
 
 ifndef DEBUG_EVENT
-DEBUG_EVENT		STRUC
-dwDebugEventCode	dd ?
-dwProcessId		dd ?
-dwThreadId		dd ?
+DEBUG_EVENT             STRUC
+dwDebugEventCode        dd ?
+dwProcessId             dd ?
+dwThreadId              dd ?
 UNION
- Exception		EXCEPTION_DEBUG_INFO <>
- CreateThread		CREATE_THREAD_DEBUG_INFO <>
- CreateProcessInfo	CREATE_PROCESS_DEBUG_INFO <>
- ExitThread		EXIT_THREAD_DEBUG_INFO <>
- ExitProcess		EXIT_PROCESS_DEBUG_INFO <>
- LoadDll		LOAD_DLL_DEBUG_INFO <>
- UnloadDll		UNLOAD_DLL_DEBUG_INFO <>
- DebugString		OUTPUT_DEBUG_STRING_INFO <>
- RipInfo		RIP_INFO <>
+ Exception              EXCEPTION_DEBUG_INFO <>
+ CreateThread           CREATE_THREAD_DEBUG_INFO <>
+ CreateProcessInfo      CREATE_PROCESS_DEBUG_INFO <>
+ ExitThread             EXIT_THREAD_DEBUG_INFO <>
+ ExitProcess            EXIT_PROCESS_DEBUG_INFO <>
+ LoadDll                LOAD_DLL_DEBUG_INFO <>
+ UnloadDll              UNLOAD_DLL_DEBUG_INFO <>
+ DebugString            OUTPUT_DEBUG_STRING_INFO <>
+ RipInfo                RIP_INFO <>
 ENDS
-DEBUG_EVENT		ENDS
-LPDEBUG_EVENT		typedef ptr DEBUG_EVENT
+DEBUG_EVENT             ENDS
+LPDEBUG_EVENT           typedef ptr DEBUG_EVENT
 endif
 
 ifndef MIDL_PASS
-LPCONTEXT		typedef PCONTEXT
+LPCONTEXT               typedef PCONTEXT
 endif
 
-define STILL_ACTIVE			   STATUS_PENDING
-define EXCEPTION_ACCESS_VIOLATION	   STATUS_ACCESS_VIOLATION
-define EXCEPTION_DATATYPE_MISALIGNMENT	   STATUS_DATATYPE_MISALIGNMENT
-define EXCEPTION_BREAKPOINT		   STATUS_BREAKPOINT
-define EXCEPTION_SINGLE_STEP		   STATUS_SINGLE_STEP
-define EXCEPTION_ARRAY_BOUNDS_EXCEEDED	   STATUS_ARRAY_BOUNDS_EXCEEDED
-define EXCEPTION_FLT_DENORMAL_OPERAND	   STATUS_FLOAT_DENORMAL_OPERAND
-define EXCEPTION_FLT_DIVIDE_BY_ZERO	   STATUS_FLOAT_DIVIDE_BY_ZERO
-define EXCEPTION_FLT_INEXACT_RESULT	   STATUS_FLOAT_INEXACT_RESULT
-define EXCEPTION_FLT_INVALID_OPERATION	   STATUS_FLOAT_INVALID_OPERATION
-define EXCEPTION_FLT_OVERFLOW		   STATUS_FLOAT_OVERFLOW
-define EXCEPTION_FLT_STACK_CHECK	   STATUS_FLOAT_STACK_CHECK
-define EXCEPTION_FLT_UNDERFLOW		   STATUS_FLOAT_UNDERFLOW
-define EXCEPTION_INT_DIVIDE_BY_ZERO	   STATUS_INTEGER_DIVIDE_BY_ZERO
-define EXCEPTION_INT_OVERFLOW		   STATUS_INTEGER_OVERFLOW
-define EXCEPTION_PRIV_INSTRUCTION	   STATUS_PRIVILEGED_INSTRUCTION
-define EXCEPTION_IN_PAGE_ERROR		   STATUS_IN_PAGE_ERROR
-define EXCEPTION_ILLEGAL_INSTRUCTION	   STATUS_ILLEGAL_INSTRUCTION
+define STILL_ACTIVE                        STATUS_PENDING
+define EXCEPTION_ACCESS_VIOLATION          STATUS_ACCESS_VIOLATION
+define EXCEPTION_DATATYPE_MISALIGNMENT     STATUS_DATATYPE_MISALIGNMENT
+define EXCEPTION_BREAKPOINT                STATUS_BREAKPOINT
+define EXCEPTION_SINGLE_STEP               STATUS_SINGLE_STEP
+define EXCEPTION_ARRAY_BOUNDS_EXCEEDED     STATUS_ARRAY_BOUNDS_EXCEEDED
+define EXCEPTION_FLT_DENORMAL_OPERAND      STATUS_FLOAT_DENORMAL_OPERAND
+define EXCEPTION_FLT_DIVIDE_BY_ZERO        STATUS_FLOAT_DIVIDE_BY_ZERO
+define EXCEPTION_FLT_INEXACT_RESULT        STATUS_FLOAT_INEXACT_RESULT
+define EXCEPTION_FLT_INVALID_OPERATION     STATUS_FLOAT_INVALID_OPERATION
+define EXCEPTION_FLT_OVERFLOW              STATUS_FLOAT_OVERFLOW
+define EXCEPTION_FLT_STACK_CHECK           STATUS_FLOAT_STACK_CHECK
+define EXCEPTION_FLT_UNDERFLOW             STATUS_FLOAT_UNDERFLOW
+define EXCEPTION_INT_DIVIDE_BY_ZERO        STATUS_INTEGER_DIVIDE_BY_ZERO
+define EXCEPTION_INT_OVERFLOW              STATUS_INTEGER_OVERFLOW
+define EXCEPTION_PRIV_INSTRUCTION          STATUS_PRIVILEGED_INSTRUCTION
+define EXCEPTION_IN_PAGE_ERROR             STATUS_IN_PAGE_ERROR
+define EXCEPTION_ILLEGAL_INSTRUCTION       STATUS_ILLEGAL_INSTRUCTION
 define EXCEPTION_NONCONTINUABLE_EXCEPTION  STATUS_NONCONTINUABLE_EXCEPTION
-define EXCEPTION_STACK_OVERFLOW		   STATUS_STACK_OVERFLOW
-define EXCEPTION_INVALID_DISPOSITION	   STATUS_INVALID_DISPOSITION
-define EXCEPTION_GUARD_PAGE		   STATUS_GUARD_PAGE_VIOLATION
-define EXCEPTION_INVALID_HANDLE		   STATUS_INVALID_HANDLE
-define EXCEPTION_POSSIBLE_DEADLOCK	   STATUS_POSSIBLE_DEADLOCK
-define CONTROL_C_EXIT			   STATUS_CONTROL_C_EXIT
+define EXCEPTION_STACK_OVERFLOW            STATUS_STACK_OVERFLOW
+define EXCEPTION_INVALID_DISPOSITION       STATUS_INVALID_DISPOSITION
+define EXCEPTION_GUARD_PAGE                STATUS_GUARD_PAGE_VIOLATION
+define EXCEPTION_INVALID_HANDLE            STATUS_INVALID_HANDLE
+define EXCEPTION_POSSIBLE_DEADLOCK         STATUS_POSSIBLE_DEADLOCK
+define CONTROL_C_EXIT                      STATUS_CONTROL_C_EXIT
 
-define LMEM_FIXED	   0x0000
-define LMEM_MOVEABLE	   0x0002
-define LMEM_NOCOMPACT	   0x0010
-define LMEM_NODISCARD	   0x0020
-define LMEM_ZEROINIT	   0x0040
-define LMEM_MODIFY	   0x0080
-define LMEM_DISCARDABLE	   0x0F00
-define LMEM_VALID_FLAGS	   0x0F72
+define LMEM_FIXED          0x0000
+define LMEM_MOVEABLE       0x0002
+define LMEM_NOCOMPACT      0x0010
+define LMEM_NODISCARD      0x0020
+define LMEM_ZEROINIT       0x0040
+define LMEM_MODIFY         0x0080
+define LMEM_DISCARDABLE    0x0F00
+define LMEM_VALID_FLAGS    0x0F72
 define LMEM_INVALID_HANDLE 0x8000
 
-define LHND		   (LMEM_MOVEABLE or LMEM_ZEROINIT)
-define LPTR		   (LMEM_FIXED or LMEM_ZEROINIT)
+define LHND                (LMEM_MOVEABLE or LMEM_ZEROINIT)
+define LPTR                (LMEM_FIXED or LMEM_ZEROINIT)
 
-define NONZEROLHND	   (LMEM_MOVEABLE)
-define NONZEROLPTR	   (LMEM_FIXED)
+define NONZEROLHND         (LMEM_MOVEABLE)
+define NONZEROLPTR         (LMEM_FIXED)
 
-define LMEM_DISCARDED	   0x4000
-define LMEM_LOCKCOUNT	   0x00FF
+define LMEM_DISCARDED      0x4000
+define LMEM_LOCKCOUNT      0x00FF
 
 define NUMA_NO_PREFERRED_NODE (-1)
 
 LocalDiscard macro h
-	exitm<LocalReAlloc( (h), 0, LMEM_MOVEABLE )>
-	endm
+        exitm<LocalReAlloc( (h), 0, LMEM_MOVEABLE )>
+        endm
 
 endif ;; _MINWINBASE_

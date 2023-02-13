@@ -2,33 +2,61 @@
 ifndef _WINBASE_
 define _WINBASE_
 ifndef __LIBC_INC
- include libc.inc
-endif
-ifndef _WINERROR_
- include winerror.inc
-endif
-ifndef _WINDEF_
- include windef.inc
+include libc.inc
 endif
 
-ifndef _WIN32_WINDOWS
-define _WIN32_WINDOWS 0x400
+.pragma comment(lib, kernel32)
+ifdef _WIN64
+.pragma pack(push, 8)
 endif
-ifndef _WIN32_WINNT
-define _WIN32_WINNT _WIN32_WINDOWS
-endif
+
+include winapifamily.inc
+
+include apisetcconv.inc
+include minwinbase.inc
+
+include apiquery2.inc
+include processenv.inc
+include fileapifromapp.inc
+include debugapi.inc
+include utilapiset.inc
+include handleapi.inc
+include errhandlingapi.inc
+include fibersapi.inc
+include namedpipeapi.inc
+include profileapi.inc
+include heapapi.inc
+include ioapiset.inc
+include synchapi.inc
+include interlockedapi.inc
+include processthreadsapi.inc
+include sysinfoapi.inc
+include memoryapi.inc
+include enclaveapi.inc
+include threadpoollegacyapiset.inc
+include threadpoolapiset.inc
+include jobapi.inc
+include jobapi2.inc
+include wow64apiset.inc
+include libloaderapi.inc
+include securitybaseapi.inc
+include namespaceapi.inc
+include systemtopologyapi.inc
+include processtopologyapi.inc
+include securityappcontainer.inc
+include realtimeapiset.inc
 
 GetImageBase macro
 ifdef _WIN64
-    mov rax,gs:[0x60]
-    mov rax,[rax+0x10]
-    retm<rax>
+    mov     rax,gs:[0x60]
+    mov     rax,[rax+0x10]
+    retm    <rax>
 else
-    assume fs:nothing
-    mov eax,fs:[0x30]
-    assume fs:error
-    mov eax,[eax+0x08]
-    retm<eax>
+    assume  fs:nothing
+    mov     eax,fs:[0x30]
+    assume  fs:error
+    mov     eax,[eax+0x08]
+    retm    <eax>
 endif
     endm
 
@@ -43,8666 +71,3761 @@ public __ImageBase
 endif
 
 DefineHandleTable macro w
-	exitm<((w),TRUE)>
-	endm
-LimitEmsPages macro w
-	endm
+  exitm<((w),TRUE)>
+  endm
+LimitEmsPages macro dw
+  exitm<>
+  endm
 SetSwapAreaSize macro w
-	exitm<(w)>
-	endm
+  exitm<(w)>
+  endm
 LockSegment macro w
-	exitm<GlobalFix(w)>
-	endm
+  exitm<GlobalFix((w))>
+  endm
 UnlockSegment macro w
-	exitm<GlobalUnfix(w)>
-	endm
-GetCurrentTime	equ <GetTickCount>
+  exitm<GlobalUnfix((w))>
+  endm
 
-Yield	macro
-	endm
+GetCurrentTime macro
+  exitm<GetTickCount()>
+  endm
 
-INVALID_HANDLE_VALUE	equ -1
-INVALID_FILE_SIZE	equ 0xFFFFFFFF
-INVALID_SET_FILE_POINTER equ -1
-INVALID_FILE_ATTRIBUTES equ -1
+Yield macro
+  exitm<>
+  endm
 
-FILE_BEGIN		equ 0
-FILE_CURRENT		equ 1
-FILE_END		equ 2
+define FILE_BEGIN           0
+define FILE_CURRENT         1
+define FILE_END             2
 
-TIME_ZONE_ID_INVALID	equ 0xFFFFFFFF
+define WAIT_FAILED          (0xFFFFFFFF)
+define WAIT_OBJECT_0        ((STATUS_WAIT_0 ) + 0 )
 
-WAIT_FAILED		equ 0xFFFFFFFF
-WAIT_OBJECT_0		equ STATUS_WAIT_0
+define WAIT_ABANDONED       ((STATUS_ABANDONED_WAIT_0 ) + 0 )
+define WAIT_ABANDONED_0     ((STATUS_ABANDONED_WAIT_0 ) + 0 )
 
-WAIT_ABANDONED		equ STATUS_ABANDONED_WAIT_0
-WAIT_ABANDONED_0	equ STATUS_ABANDONED_WAIT_0
+define WAIT_IO_COMPLETION   STATUS_USER_APC
 
-WAIT_TIMEOUT			    equ STATUS_TIMEOUT
-WAIT_IO_COMPLETION		    equ STATUS_USER_APC
-STILL_ACTIVE			    equ STATUS_PENDING
-EXCEPTION_ACCESS_VIOLATION	    equ STATUS_ACCESS_VIOLATION
-EXCEPTION_DATATYPE_MISALIGNMENT	    equ STATUS_DATATYPE_MISALIGNMENT
-EXCEPTION_BREAKPOINT		    equ STATUS_BREAKPOINT
-EXCEPTION_SINGLE_STEP		    equ STATUS_SINGLE_STEP
-EXCEPTION_ARRAY_BOUNDS_EXCEEDED	    equ STATUS_ARRAY_BOUNDS_EXCEEDED
-EXCEPTION_FLT_DENORMAL_OPERAND	    equ STATUS_FLOAT_DENORMAL_OPERAND
-EXCEPTION_FLT_DIVIDE_BY_ZERO	    equ STATUS_FLOAT_DIVIDE_BY_ZERO
-EXCEPTION_FLT_INEXACT_RESULT	    equ STATUS_FLOAT_INEXACT_RESULT
-EXCEPTION_FLT_INVALID_OPERATION	    equ STATUS_FLOAT_INVALID_OPERATION
-EXCEPTION_FLT_OVERFLOW		    equ STATUS_FLOAT_OVERFLOW
-EXCEPTION_FLT_STACK_CHECK	    equ STATUS_FLOAT_STACK_CHECK
-EXCEPTION_FLT_UNDERFLOW		    equ STATUS_FLOAT_UNDERFLOW
-EXCEPTION_INT_DIVIDE_BY_ZERO	    equ STATUS_INTEGER_DIVIDE_BY_ZERO
-EXCEPTION_INT_OVERFLOW		    equ STATUS_INTEGER_OVERFLOW
-EXCEPTION_PRIV_INSTRUCTION	    equ STATUS_PRIVILEGED_INSTRUCTION
-EXCEPTION_IN_PAGE_ERROR		    equ STATUS_IN_PAGE_ERROR
-EXCEPTION_ILLEGAL_INSTRUCTION	    equ STATUS_ILLEGAL_INSTRUCTION
-EXCEPTION_NONCONTINUABLE_EXCEPTION  equ STATUS_NONCONTINUABLE_EXCEPTION
-EXCEPTION_STACK_OVERFLOW	    equ STATUS_STACK_OVERFLOW
-EXCEPTION_INVALID_DISPOSITION	    equ STATUS_INVALID_DISPOSITION
-EXCEPTION_GUARD_PAGE		    equ STATUS_GUARD_PAGE_VIOLATION
-EXCEPTION_INVALID_HANDLE	    equ STATUS_INVALID_HANDLE
-CONTROL_C_EXIT			    equ STATUS_CONTROL_C_EXIT
+define SecureZeroMemory <RtlSecureZeroMemory>
+define CaptureStackBackTrace <RtlCaptureStackBackTrace>
 
-ifndef MoveMemory
-define MoveMemory <RtlMoveMemory>
-define CopyMemory <RtlCopyMemory>
-define FillMemory <RtlFillMemory>
-define ZeroMemory <RtlZeroMemory>
+define FILE_FLAG_WRITE_THROUGH         0x80000000
+define FILE_FLAG_OVERLAPPED            0x40000000
+define FILE_FLAG_NO_BUFFERING          0x20000000
+define FILE_FLAG_RANDOM_ACCESS         0x10000000
+define FILE_FLAG_SEQUENTIAL_SCAN       0x08000000
+define FILE_FLAG_DELETE_ON_CLOSE       0x04000000
+define FILE_FLAG_BACKUP_SEMANTICS      0x02000000
+define FILE_FLAG_POSIX_SEMANTICS       0x01000000
+define FILE_FLAG_SESSION_AWARE         0x00800000
+define FILE_FLAG_OPEN_REPARSE_POINT    0x00200000
+define FILE_FLAG_OPEN_NO_RECALL        0x00100000
+define FILE_FLAG_FIRST_PIPE_INSTANCE   0x00080000
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+define FILE_FLAG_OPEN_REQUIRING_OPLOCK 0x00040000
 endif
 
-if (_WIN32_WINNT GE 0x0500)
-ifdef _M_ALPHA
-MoveMemoryVlm equ <RtlMoveMemory>
-CopyMemoryVlm equ <RtlCopyMemory>
-FillMemoryVlm equ <RtlFillMemory>
-ZeroMemoryVlm equ <RtlZeroMemory>
+if(_WIN32_WINNT ge 0x0400)
+
+define PROGRESS_CONTINUE   0
+define PROGRESS_CANCEL     1
+define PROGRESS_STOP       2
+define PROGRESS_QUIET      3
+
+define CALLBACK_CHUNK_FINISHED         0x00000000
+define CALLBACK_STREAM_SWITCH          0x00000001
+
+define COPY_FILE_FAIL_IF_EXISTS                 0x00000001
+define COPY_FILE_RESTARTABLE                    0x00000002
+define COPY_FILE_OPEN_SOURCE_FOR_WRITE          0x00000004
+define COPY_FILE_ALLOW_DECRYPTED_DESTINATION    0x00000008
+
+if (_WIN32_WINNT ge 0x0600)
+define COPY_FILE_COPY_SYMLINK                   0x00000800
+define COPY_FILE_NO_BUFFERING                   0x00001000
 endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+define COPY_FILE_REQUEST_SECURITY_PRIVILEGES    0x00002000
+define COPY_FILE_RESUME_FROM_PAUSE              0x00004000
+define COPY_FILE_NO_OFFLOAD                     0x00040000
 endif
 
-
-FILE_FLAG_WRITE_THROUGH		equ 0x80000000
-FILE_FLAG_OVERLAPPED		equ 0x40000000
-FILE_FLAG_NO_BUFFERING		equ 0x20000000
-FILE_FLAG_RANDOM_ACCESS		equ 0x10000000
-FILE_FLAG_SEQUENTIAL_SCAN	equ 0x08000000
-FILE_FLAG_DELETE_ON_CLOSE	equ 0x04000000
-FILE_FLAG_BACKUP_SEMANTICS	equ 0x02000000
-FILE_FLAG_POSIX_SEMANTICS	equ 0x01000000
-FILE_FLAG_OPEN_REPARSE_POINT	equ 0x00200000
-FILE_FLAG_OPEN_NO_RECALL	equ 0x00100000
-
-CREATE_NEW	    equ 1
-CREATE_ALWAYS	    equ 2
-OPEN_EXISTING	    equ 3
-OPEN_ALWAYS	    equ 4
-TRUNCATE_EXISTING   equ 5
-
-if (_WIN32_WINNT GE 0x0400)
-PROGRESS_CONTINUE   equ 0
-PROGRESS_CANCEL	    equ 1
-PROGRESS_STOP	    equ 2
-PROGRESS_QUIET	    equ 3
-
-CALLBACK_CHUNK_FINISHED equ 0x00000000
-CALLBACK_STREAM_SWITCH	equ 0x00000001
-
-COPY_FILE_FAIL_IF_EXISTS equ 0x00000001
-COPY_FILE_RESTARTABLE equ 0x00000002
-COPY_FILE_OPEN_SOURCE_FOR_WRITE equ 0x00000004
-COPY_FILE_ALLOW_DECRYPTED_DESTINATION equ 0x00000008
-if (_WIN32_WINNT GE 0x0600)
-COPY_FILE_COPY_SYMLINK equ 0x00000800
-COPY_FILE_NO_BUFFERING equ 0x00001000
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
+define COPY_FILE_IGNORE_EDP_BLOCK               0x00400000
+define COPY_FILE_IGNORE_SOURCE_ENCRYPTION       0x00800000
+define COPY_FILE_DONT_REQUEST_DEST_WRITE_DAC    0x02000000
+define COPY_FILE_REQUEST_COMPRESSED_TRAFFIC     0x10000000
 endif
+
+if (NTDDI_VERSION ge NTDDI_WIN10_VB)
+define COPY_FILE_OPEN_AND_COPY_REPARSE_POINT    0x00200000
+define COPY_FILE_DIRECTORY                      0x00000080
+define COPY_FILE_SKIP_ALTERNATE_STREAMS         0x00008000
+define COPY_FILE_DISABLE_PRE_ALLOCATION         0x04000000
+define COPY_FILE_ENABLE_LOW_FREE_SPACE_MODE     0x08000000
 endif
-if (_WIN32_WINNT GE 0x0500)
-REPLACEFILE_WRITE_THROUGH equ 0x00000001
-REPLACEFILE_IGNORE_MERGE_ERRORS equ 0x00000002
-if (_WIN32_WINNT GE 0x0600)
-REPLACEFILE_IGNORE_ACL_ERRORS equ 0x00000004
+
+endif
+
+if (_WIN32_WINNT ge 0x0500)
+define REPLACEFILE_WRITE_THROUGH       0x00000001
+define REPLACEFILE_IGNORE_MERGE_ERRORS 0x00000002
+if (_WIN32_WINNT ge 0x0600)
+define REPLACEFILE_IGNORE_ACL_ERRORS   0x00000004
 endif
 endif
 
-PIPE_ACCESS_INBOUND	   equ 0x00000001
-PIPE_ACCESS_OUTBOUND	   equ 0x00000002
-PIPE_ACCESS_DUPLEX	   equ 0x00000003
+define PIPE_ACCESS_INBOUND         0x00000001
+define PIPE_ACCESS_OUTBOUND        0x00000002
+define PIPE_ACCESS_DUPLEX          0x00000003
 
-PIPE_CLIENT_END		   equ 0x00000000
-PIPE_SERVER_END		   equ 0x00000001
+define PIPE_CLIENT_END             0x00000000
+define PIPE_SERVER_END             0x00000001
 
-PIPE_WAIT		   equ 0x00000000
-PIPE_NOWAIT		   equ 0x00000001
-PIPE_READMODE_BYTE	   equ 0x00000000
-PIPE_READMODE_MESSAGE	   equ 0x00000002
-PIPE_TYPE_BYTE		   equ 0x00000000
-PIPE_TYPE_MESSAGE	   equ 0x00000004
-PIPE_ACCEPT_REMOTE_CLIENTS equ 0x00000000
-PIPE_REJECT_REMOTE_CLIENTS equ 0x00000008
+define PIPE_WAIT                   0x00000000
+define PIPE_NOWAIT                 0x00000001
+define PIPE_READMODE_BYTE          0x00000000
+define PIPE_READMODE_MESSAGE       0x00000002
+define PIPE_TYPE_BYTE              0x00000000
+define PIPE_TYPE_MESSAGE           0x00000004
+define PIPE_ACCEPT_REMOTE_CLIENTS  0x00000000
+define PIPE_REJECT_REMOTE_CLIENTS  0x00000008
 
-PIPE_UNLIMITED_INSTANCES   equ 255
+define PIPE_UNLIMITED_INSTANCES    255
 
-SECURITY_ANONYMOUS	   equ ( SecurityAnonymous	shl 16 )
-SECURITY_IDENTIFICATION	   equ ( SecurityIdentification shl 16 )
-SECURITY_IMPERSONATION	   equ ( SecurityImpersonation	shl 16 )
-SECURITY_DELEGATION	   equ ( SecurityDelegation	shl 16 )
+define SECURITY_ANONYMOUS          ( SecurityAnonymous shl 16 )
+define SECURITY_IDENTIFICATION     ( SecurityIdentification shl 16 )
+define SECURITY_IMPERSONATION      ( SecurityImpersonation shl 16 )
+define SECURITY_DELEGATION         ( SecurityDelegation shl 16 )
 
-SECURITY_CONTEXT_TRACKING  equ 0x00040000
-SECURITY_EFFECTIVE_ONLY	   equ 0x00080000
+define SECURITY_CONTEXT_TRACKING  0x00040000
+define SECURITY_EFFECTIVE_ONLY    0x00080000
 
-SECURITY_SQOS_PRESENT	   equ 0x00100000
-SECURITY_VALID_SQOS_FLAGS  equ 0x001F0000
+define SECURITY_SQOS_PRESENT      0x00100000
+define SECURITY_VALID_SQOS_FLAGS  0x001F0000
 
+if(_WIN32_WINNT ge 0x0400)
+CALLBACK(PFIBER_START_ROUTINE, :LPVOID)
+LPFIBER_START_ROUTINE   typedef PFIBER_START_ROUTINE
 
-OVERLAPPED		STRUC
-Internal		SIZE_T ?
-InternalHigh		SIZE_T ?
-UNION
- STRUC
-  _Offset		dd ?
-  OffsetHigh		dd ?
- ENDS
- Pointer		PVOID ?
-ENDS
-hEvent			HANDLE ?
-OVERLAPPED		ENDS
-LPOVERLAPPED		TYPEDEF PTR OVERLAPPED
-
-OVERLAPPED_ENTRY	STRUC
-lpCompletionKey		SIZE_T ?
-lpOverlapped		LPOVERLAPPED ?
-Internal		SIZE_T ?
-dwNumberOfBytesTransferred dd ?
-OVERLAPPED_ENTRY	ENDS
-LPOVERLAPPED_ENTRY	typedef ptr OVERLAPPED_ENTRY
-
-ifndef _SECURITY_ATTRIBUTES_
-define _SECURITY_ATTRIBUTES_
-SECURITY_ATTRIBUTES	STRUC
-nLength			dd ?
-lpSecurityDescriptor	PVOID ?
-bInheritHandle		BOOL ?
-SECURITY_ATTRIBUTES	ENDS
-PSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
-LPSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
+CALLBACK(PFIBER_CALLOUT_ROUTINE, :LPVOID)
 endif
 
-PROCESS_INFORMATION	STRUC
-hProcess		HANDLE ?
-hThread			HANDLE ?
-dwProcessId		dd ?
-dwThreadId		dd ?
-PROCESS_INFORMATION	ENDS
-
-PPROCESS_INFORMATION	TYPEDEF PTR PROCESS_INFORMATION
-LPPROCESS_INFORMATION	TYPEDEF PTR PROCESS_INFORMATION
-
-
-ifndef _FILETIME_
-define _FILETIME_
-FILETIME	STRUC
-dwLowDateTime	dd ?
-dwHighDateTime	dd ?
-FILETIME	ENDS
-PFILETIME	typedef ptr FILETIME
-LPFILETIME	typedef ptr FILETIME
-endif
-
-SYSTEMTIME	STRUC
-wYear		dw ?
-wMonth		dw ?
-wDayOfWeek	dw ?
-wDay		dw ?
-wHour		dw ?
-wMinute		dw ?
-wSecond		dw ?
-wMilliseconds	dw ?
-SYSTEMTIME	ENDS
-PSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
-LPSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
-
-CALLBACK(PTHREAD_START_ROUTINE, :LPVOID)
-LPTHREAD_START_ROUTINE	TYPEDEF PTHREAD_START_ROUTINE
-
-if (_WIN32_WINNT GE 0x0400)
-PFIBER_START_ROUTINE	TYPEDEF PTR THREAD_ROUTINE_T
-LPFIBER_START_ROUTINE	TYPEDEF PFIBER_START_ROUTINE
-endif
-
-CRITICAL_SECTION	typedef RTL_CRITICAL_SECTION
-PCRITICAL_SECTION	typedef PRTL_CRITICAL_SECTION
-LPCRITICAL_SECTION	typedef PRTL_CRITICAL_SECTION
-
-CRITICAL_SECTION_DEBUG	typedef RTL_CRITICAL_SECTION_DEBUG
-PCRITICAL_SECTION_DEBUG typedef PRTL_CRITICAL_SECTION_DEBUG
-LPCRITICAL_SECTION_DEBUG typedef PRTL_CRITICAL_SECTION_DEBUG
-
-if (_WIN32_WINNT GE 0x0600)
-
-INIT_ONCE	typedef RTL_RUN_ONCE
-PINIT_ONCE	typedef PRTL_RUN_ONCE
-LPINIT_ONCE	typedef PRTL_RUN_ONCE
-
-INIT_ONCE_STATIC_INIT	equ RTL_RUN_ONCE_INIT
-INIT_ONCE_CHECK_ONLY	equ RTL_RUN_ONCE_CHECK_ONLY
-INIT_ONCE_ASYNC		equ RTL_RUN_ONCE_ASYNC
-INIT_ONCE_INIT_FAILED	equ RTL_RUN_ONCE_INIT_FAILED
-INIT_ONCE_CTX_RESERVED_BITS equ RTL_RUN_ONCE_CTX_RESERVED_BITS
-
-FAIL_FAST_GENERATE_EXCEPTION_ADDRESS equ 0x1
-FAIL_FAST_NO_HARD_ERROR_DLG equ 0x2
-
-SRWLOCK		typedef RTL_SRWLOCK
-PSRWLOCK	typedef ptr RTL_SRWLOCK
-;SRWLOCK_INIT	typedef RTL_SRWLOCK_INIT
-
-;VOID
-InitializeSRWLock proto WINAPI \
-	       SRWLock: PSRWLOCK
-;VOID
-ReleaseSRWLockExclusive proto WINAPI \
-	       SRWLock: PSRWLOCK
-;VOID
-ReleaseSRWLockShared proto WINAPI \
-	       SRWLock: PSRWLOCK
-;VOID
-AcquireSRWLockExclusive proto WINAPI \
-	       SRWLock: PSRWLOCK
-;VOID
-AcquireSRWLockShared proto WINAPI \
-	       SRWLock: PSRWLOCK
-;BOOLEAN
-TryAcquireSRWLockExclusive proto WINAPI \
-	       SRWLock: PSRWLOCK
-;BOOLEAN
-TryAcquireSRWLockShared proto WINAPI \
-	       SRWLock: PSRWLOCK
-
-CONDITION_VARIABLE	typedef RTL_CONDITION_VARIABLE
-PCONDITION_VARIABLE	typedef ptr RTL_CONDITION_VARIABLE
-
-;VOID
-InitializeConditionVariable proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE
-
-;VOID
-WakeConditionVariable proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE
-
-;VOID
-WakeAllConditionVariable proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE
-
-;BOOL
-SleepConditionVariableCS proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE,
-       CriticalSection: PCRITICAL_SECTION,
-	dwMilliseconds: DWORD
-
-;BOOL
-SleepConditionVariableSRW proto WINAPI \
-     ConditionVariable: PCONDITION_VARIABLE,
-	       SRWLock: PSRWLOCK,
-	dwMilliseconds: DWORD,
-		 Flags: ULONG
-
-
-CONDITION_VARIABLE_INIT equ RTL_CONDITION_VARIABLE_INIT
-
-CONDITION_VARIABLE_LOCKMODE_SHARED equ RTL_CONDITION_VARIABLE_LOCKMODE_SHARED
-
-
-;PVOID
-EncodePointer proto WINAPI \
-		  _Ptr: PVOID
-
-;PVOID
-DecodePointer proto WINAPI \
-		  _Ptr: PVOID
-
-;PVOID
-EncodeSystemPointer proto WINAPI \
-		  _Ptr: PVOID
-
-;PVOID
-DecodeSystemPointer proto WINAPI \
-		  _Ptr: PVOID
-
-endif
+define FAIL_FAST_GENERATE_EXCEPTION_ADDRESS    0x1
+define FAIL_FAST_NO_HARD_ERROR_DLG             0x2
 
 ifdef _X86_
-LPLDT_ENTRY	typedef PLDT_ENTRY
+LPLDT_ENTRY typedef PLDT_ENTRY
 else
-LPLDT_ENTRY	typedef PVOID
+LPLDT_ENTRY typedef ptr
 endif
 
-MUTEX_MODIFY_STATE	equ MUTANT_QUERY_STATE
-MUTEX_ALL_ACCESS	equ MUTANT_ALL_ACCESS
 
+define SP_SERIALCOMM    (0x00000001)
 
-SP_SERIALCOMM		equ 0x00000001
+define PST_UNSPECIFIED      (0x00000000)
+define PST_RS232            (0x00000001)
+define PST_PARALLELPORT     (0x00000002)
+define PST_RS422            (0x00000003)
+define PST_RS423            (0x00000004)
+define PST_RS449            (0x00000005)
+define PST_MODEM            (0x00000006)
+define PST_FAX              (0x00000021)
+define PST_SCANNER          (0x00000022)
+define PST_NETWORK_BRIDGE   (0x00000100)
+define PST_LAT              (0x00000101)
+define PST_TCPIP_TELNET     (0x00000102)
+define PST_X25              (0x00000103)
 
+define PCF_DTRDSR        (0x0001)
+define PCF_RTSCTS        (0x0002)
+define PCF_RLSD          (0x0004)
+define PCF_PARITY_CHECK  (0x0008)
+define PCF_XONXOFF       (0x0010)
+define PCF_SETXCHAR      (0x0020)
+define PCF_TOTALTIMEOUTS (0x0040)
+define PCF_INTTIMEOUTS   (0x0080)
+define PCF_SPECIALCHARS  (0x0100)
+define PCF_16BITMODE     (0x0200)
 
-PST_UNSPECIFIED	     equ 0x00000000
-PST_RS232	     equ 0x00000001
-PST_PARALLELPORT     equ 0x00000002
-PST_RS422	     equ 0x00000003
-PST_RS423	     equ 0x00000004
-PST_RS449	     equ 0x00000005
-PST_MODEM	     equ 0x00000006
-PST_FAX		     equ 0x00000021
-PST_SCANNER	     equ 0x00000022
-PST_NETWORK_BRIDGE   equ 0x00000100
-PST_LAT		     equ 0x00000101
-PST_TCPIP_TELNET     equ 0x00000102
-PST_X25		     equ 0x00000103
+define SP_PARITY         (0x0001)
+define SP_BAUD           (0x0002)
+define SP_DATABITS       (0x0004)
+define SP_STOPBITS       (0x0008)
+define SP_HANDSHAKING    (0x0010)
+define SP_PARITY_CHECK   (0x0020)
+define SP_RLSD           (0x0040)
 
+define BAUD_075          (0x00000001)
+define BAUD_110          (0x00000002)
+define BAUD_134_5        (0x00000004)
+define BAUD_150          (0x00000008)
+define BAUD_300          (0x00000010)
+define BAUD_600          (0x00000020)
+define BAUD_1200         (0x00000040)
+define BAUD_1800         (0x00000080)
+define BAUD_2400         (0x00000100)
+define BAUD_4800         (0x00000200)
+define BAUD_7200         (0x00000400)
+define BAUD_9600         (0x00000800)
+define BAUD_14400        (0x00001000)
+define BAUD_19200        (0x00002000)
+define BAUD_38400        (0x00004000)
+define BAUD_56K          (0x00008000)
+define BAUD_128K         (0x00010000)
+define BAUD_115200       (0x00020000)
+define BAUD_57600        (0x00040000)
+define BAUD_USER         (0x10000000)
 
+define DATABITS_5        (0x0001)
+define DATABITS_6        (0x0002)
+define DATABITS_7        (0x0004)
+define DATABITS_8        (0x0008)
+define DATABITS_16       (0x0010)
+define DATABITS_16X      (0x0020)
 
-PCF_DTRDSR	  equ 0x0001
-PCF_RTSCTS	  equ 0x0002
-PCF_RLSD	  equ 0x0004
-PCF_PARITY_CHECK  equ 0x0008
-PCF_XONXOFF	  equ 0x0010
-PCF_SETXCHAR	  equ 0x0020
-PCF_TOTALTIMEOUTS equ 0x0040
-PCF_INTTIMEOUTS	  equ 0x0080
-PCF_SPECIALCHARS  equ 0x0100
-PCF_16BITMODE	  equ 0x0200
+define STOPBITS_10       (0x0001)
+define STOPBITS_15       (0x0002)
+define STOPBITS_20       (0x0004)
+define PARITY_NONE       (0x0100)
+define PARITY_ODD        (0x0200)
+define PARITY_EVEN       (0x0400)
+define PARITY_MARK       (0x0800)
+define PARITY_SPACE      (0x1000)
 
+_COMMPROP               struct
+wPacketLength           WORD ?
+wPacketVersion          WORD ?
+dwServiceMask           DWORD ?
+dwReserved1             DWORD ?
+dwMaxTxQueue            DWORD ?
+dwMaxRxQueue            DWORD ?
+dwMaxBaud               DWORD ?
+dwProvSubType           DWORD ?
+dwProvCapabilities      DWORD ?
+dwSettableParams        DWORD ?
+dwSettableBaud          DWORD ?
+wSettableData           WORD ?
+wSettableStopParity     WORD ?
+dwCurrentTxQueue        DWORD ?
+dwCurrentRxQueue        DWORD ?
+dwProvSpec1             DWORD ?
+dwProvSpec2             DWORD ?
+wcProvChar              WCHAR 1 dup(?)
+_COMMPROP               ends
+COMMPROP                typedef _COMMPROP
+LPCOMMPROP              typedef ptr _COMMPROP
 
-SP_PARITY	equ 0x0001
-SP_BAUD		equ 0x0002
-SP_DATABITS	equ 0x0004
-SP_STOPBITS	equ 0x0008
-SP_HANDSHAKING	equ 0x0010
-SP_PARITY_CHECK equ 0x0020
-SP_RLSD		equ 0x0040
+define COMMPROP_INITIALIZED (0xE73CF52E)
 
-
-BAUD_075	equ 0x00000001
-BAUD_110	equ 0x00000002
-BAUD_134_5	equ 0x00000004
-BAUD_150	equ 0x00000008
-BAUD_300	equ 0x00000010
-BAUD_600	equ 0x00000020
-BAUD_1200	equ 0x00000040
-BAUD_1800	equ 0x00000080
-BAUD_2400	equ 0x00000100
-BAUD_4800	equ 0x00000200
-BAUD_7200	equ 0x00000400
-BAUD_9600	equ 0x00000800
-BAUD_14400	equ 0x00001000
-BAUD_19200	equ 0x00002000
-BAUD_38400	equ 0x00004000
-BAUD_56K	equ 0x00008000
-BAUD_128K	equ 0x00010000
-BAUD_115200	equ 0x00020000
-BAUD_57600	equ 0x00040000
-BAUD_USER	equ 0x10000000
-
-
-DATABITS_5	equ 0x0001
-DATABITS_6	equ 0x0002
-DATABITS_7	equ 0x0004
-DATABITS_8	equ 0x0008
-DATABITS_16	equ 0x0010
-DATABITS_16X	equ 0x0020
-
-
-STOPBITS_10	equ 0x0001
-STOPBITS_15	equ 0x0002
-STOPBITS_20	equ 0x0004
-PARITY_NONE	equ 0x0100
-PARITY_ODD	equ 0x0200
-PARITY_EVEN	equ 0x0400
-PARITY_MARK	equ 0x0800
-PARITY_SPACE	equ 0x1000
-
-COMMPROP	STRUC
-wPacketLength	WORD ?
-wPacketVersion	WORD ?
-dwServiceMask	DWORD ?
-dwReserved1	DWORD ?
-dwMaxTxQueue	DWORD ?
-dwMaxRxQueue	DWORD ?
-dwMaxBaud	DWORD ?
-dwProvSubType	DWORD ?
-dwProvCapabilities DWORD ?
-dwSettableParams DWORD ?
-dwSettableBaud	DWORD ?
-wSettableData	WORD ?
-wSettableStopParity WORD ?
-dwCurrentTxQueue DWORD ?
-dwCurrentRxQueue DWORD ?
-dwProvSpec1	DWORD ?
-dwProvSpec2	DWORD ?
-wcProvChar	WORD ?
-COMMPROP	ENDS
-
-LPCOMMPROP	typedef ptr COMMPROP
-
-COMMPROP_INITIALIZED equ 0xE73CF52E
-
-COMSTAT		STRUC
-RECORD
- fCtsHold	dd :  1 ?
- fDsrHold	dd :  1 ?
- fRlsdHold	dd :  1 ?
- fXoffHold	dd :  1 ?
- fXoffSent	dd :  1 ?
- fEof		dd :  1 ?
- fTxim		dd :  1 ?
- fReserved	dd : 25 ?
-ENDS
-cbInQue		dd ?
-cbOutQue	dd ?
-COMSTAT		ENDS
-LPCOMSTAT	typedef COMSTAT
-
-DTR_CONTROL_DISABLE	equ 0x00
-DTR_CONTROL_ENABLE	equ 0x01
-DTR_CONTROL_HANDSHAKE	equ 0x02
-
-RTS_CONTROL_DISABLE	equ 0x00
-RTS_CONTROL_ENABLE	equ 0x01
-RTS_CONTROL_HANDSHAKE	equ 0x02
-RTS_CONTROL_TOGGLE	equ 0x03
-
-DCB			STRUC
-DCBlength		dd ?	; sizeof(DCB)
-BaudRate		dd ?	; Baudrate at which running
-RECORD
- fBinary		dd : 1 ? ; Binary Mode (skip EOF check)
- fParity		dd : 1 ? ; Enable parity checking
- fOutxCtsFlow		dd : 1 ? ; CTS handshaking on output
- fOutxDsrFlow		dd : 1 ? ; DSR handshaking on output
- fDtrControl		dd : 2 ? ; DTR Flow control
- fDsrSensitivity	dd : 1 ? ; DSR Sensitivity
- fTXContinueOnXoff	dd : 1 ? ; Continue TX when Xoff sent
- fOutX			dd : 1 ? ; Enable output X-ON/X-OFF
- fInX			dd : 1 ? ; Enable input X-ON/X-OFF
- fErrorChar		dd : 1 ? ; Enable Err Replacement
- fNull			dd : 1 ? ; Enable Null stripping
- fRtsControl		dd : 2 ? ; Rts Flow control
- fAbortOnError		dd : 1 ? ; Abort all reads and writes on Error
- fDummy2		dd :17 ? ; Reserved
-ENDS
-wReserved		dw ?	; Not currently used
-XonLim			dw ?	; Transmit X-ON threshold
-XoffLim			dw ?	; Transmit X-OFF threshold
-ByteSize		db ?	; Number of bits/byte, 4-8
-Parity			db ?	; 0-4=None,Odd,Even,Mark,Space
-StopBits		db ?	; 0,1,2 = 1, 1.5, 2
-XonChar			db ?	; Tx and Rx X-ON character
-XoffChar		db ?	; Tx and Rx X-OFF character
-ErrorChar		db ?	; Error replacement char
-EofChar			db ?	; End of Input character
-EvtChar			db ?	; Received Event character
-wReserved1		dw ?	; Fill for now.
-DCB			ENDS
-LPDCB			typedef ptr DCB
-
-COMMTIMEOUTS			STRUC
-ReadIntervalTimeout		dd ? ; Maximum time between read chars.
-ReadTotalTimeoutMultiplier	dd ? ; Multiplier of characters.
-ReadTotalTimeoutConstant	dd ? ; Constant in milliseconds.
-WriteTotalTimeoutMultiplier	dd ? ; Multiplier of characters.
-WriteTotalTimeoutConstant	dd ? ; Constant in milliseconds.
-COMMTIMEOUTS			ENDS
-
-LPCOMMTIMEOUTS typedef ptr COMMTIMEOUTS
-
-COMMCONFIG		STRUC
-dwSize			dd ?	; Size of the entire struct
-wVersion		dw ?	; version of the structure
-wReserved		dw ?	; alignment
-dcb			DCB <>	; device control block
-dwProviderSubType	dd ?	; ordinal value for identifying
-dwProviderOffset	dd ?	; Specifies the offset of provider specific
-dwProviderSize		dd ?	; size of the provider-specific data field
-wcProviderData		dw ?	; provider-specific data
-COMMCONFIG		ENDS
-
-LPCOMMCONFIG typedef ptr COMMCONFIG
-
-SYSTEM_INFO			STRUC
-union
-    dwOemId			dd ?	; Obsolete field...do not use
-    struc
-	wProcessorArchitecture	dw ?
-	wReserved		dw ?
-    ends
+_COMSTAT                struct
+record
+ fCtsHold               DWORD :  1 ?
+ fDsrHold               DWORD :  1 ?
+ fRlsdHold              DWORD :  1 ?
+ fXoffHold              DWORD :  1 ?
+ fXoffSent              DWORD :  1 ?
+ fEof                   DWORD :  1 ?
+ fTxim                  DWORD :  1 ?
+ fReserved              DWORD : 25 ?
 ends
-dwPageSize			dd ?
-lpMinimumApplicationAddress	PVOID ?
-lpMaximumApplicationAddress	PVOID ?
-dwActiveProcessorMask		dd ?
-dwNumberOfProcessors		dd ?
-dwProcessorType			dd ?
-dwAllocationGranularity		dd ?
-wProcessorLevel			dw ?
-wProcessorRevision		dw ?
-SYSTEM_INFO			ENDS
+cbInQue                 DWORD ?
+cbOutQue                DWORD ?
+_COMSTAT                ends
+COMSTAT                 typedef _COMSTAT
+LPCOMSTAT               typedef ptr _COMSTAT
 
-LPSYSTEM_INFO typedef ptr SYSTEM_INFO
+define DTR_CONTROL_DISABLE    0x00
+define DTR_CONTROL_ENABLE     0x01
+define DTR_CONTROL_HANDSHAKE  0x02
+
+define RTS_CONTROL_DISABLE    0x00
+define RTS_CONTROL_ENABLE     0x01
+define RTS_CONTROL_HANDSHAKE  0x02
+define RTS_CONTROL_TOGGLE     0x03
+
+_DCB                    struct
+DCBlength               DWORD ?
+BaudRate                DWORD ?
+record
+ fBinary                DWORD :  1 ?
+ fParity                DWORD :  1 ?
+ fOutxCtsFlow           DWORD :  1 ?
+ fOutxDsrFlow           DWORD :  1 ?
+ fDtrControl            DWORD :  2 ?
+ fDsrSensitivity        DWORD :  1 ?
+ fTXContinueOnXoff      DWORD :  1 ?
+ fOutX                  DWORD :  1 ?
+ fInX                   DWORD :  1 ?
+ fErrorChar             DWORD :  1 ?
+ fNull                  DWORD :  1 ?
+ fRtsControl            DWORD :  2 ?
+ fAbortOnError          DWORD :  1 ?
+ fDummy2                DWORD : 17 ?
+ends
+wReserved               WORD ?
+XonLim                  WORD ?
+XoffLim                 WORD ?
+ByteSize                BYTE ?
+Parity                  BYTE ?
+StopBits                BYTE ?
+XonChar                 sbyte ?
+XoffChar                sbyte ?
+ErrorChar               sbyte ?
+EofChar                 sbyte ?
+EvtChar                 sbyte ?
+wReserved1              WORD ?
+_DCB                    ends
+DCB                     typedef _DCB
+LPDCB                   typedef ptr _DCB
+
+_COMMTIMEOUTS           struct
+ReadIntervalTimeout     DWORD ?
+ReadTotalTimeoutMultiplier DWORD ?
+ReadTotalTimeoutConstant DWORD ?
+WriteTotalTimeoutMultiplier DWORD ?
+WriteTotalTimeoutConstant DWORD ?
+_COMMTIMEOUTS           ends
+COMMTIMEOUTS            typedef _COMMTIMEOUTS
+LPCOMMTIMEOUTS          typedef ptr _COMMTIMEOUTS
+
+_COMMCONFIG             struct
+dwSize                  DWORD ?
+wVersion                WORD ?
+wReserved               WORD ?
+dcb                     DCB <>
+dwProviderSize          DWORD ?
+wcProviderData          WCHAR 1 dup(?)
+_COMMCONFIG             ends
+COMMCONFIG              typedef _COMMCONFIG
+LPCOMMCONFIG            typedef ptr _COMMCONFIG
 
 FreeModule macro hLibModule
-	FreeLibrary(hLibModule)
-	endm
-MakeProcInstance macro lpProc, hInstance
-	mov rax,lpProc
-	exitm<rax>
-	endm
+  exitm<FreeLibrary((hLibModule))>
+  endm
+MakeProcInstance macro lpProc,hInstance
+  exitm<(lpProc)>
+  endm
 FreeProcInstance macro lpProc
-	exitm<>;(lpProc)
-	endm
+  exitm<(lpProc)>
+  endm
 
-GMEM_FIXED		equ 0x0000
-GMEM_MOVEABLE		equ 0x0002
-GMEM_NOCOMPACT		equ 0x0010
-GMEM_NODISCARD		equ 0x0020
-GMEM_ZEROINIT		equ 0x0040
-GMEM_MODIFY		equ 0x0080
-GMEM_DISCARDABLE	equ 0x0100
-GMEM_NOT_BANKED		equ 0x1000
-GMEM_SHARE		equ 0x2000
-GMEM_DDESHARE		equ 0x2000
-GMEM_NOTIFY		equ 0x4000
-GMEM_LOWER		equ GMEM_NOT_BANKED
-GMEM_VALID_FLAGS	equ 0x7F72
-GMEM_INVALID_HANDLE	equ 0x8000
+define GMEM_FIXED          0x0000
+define GMEM_MOVEABLE       0x0002
+define GMEM_NOCOMPACT      0x0010
+define GMEM_NODISCARD      0x0020
+define GMEM_ZEROINIT       0x0040
+define GMEM_MODIFY         0x0080
+define GMEM_DISCARDABLE    0x0100
+define GMEM_NOT_BANKED     0x1000
+define GMEM_SHARE          0x2000
+define GMEM_DDESHARE       0x2000
+define GMEM_NOTIFY         0x4000
+define GMEM_LOWER          GMEM_NOT_BANKED
+define GMEM_VALID_FLAGS    0x7F72
+define GMEM_INVALID_HANDLE 0x8000
 
-GHND	equ GMEM_MOVEABLE or GMEM_ZEROINIT
-GPTR	equ GMEM_FIXED or GMEM_ZEROINIT
+define GHND                (GMEM_MOVEABLE or GMEM_ZEROINIT)
+define GPTR                (GMEM_FIXED or GMEM_ZEROINIT)
 
-GlobalLRUNewest macro h
-	exitm<h>
-	endm
-GlobalLRUOldest macro h
-	exitm<h>
-	endm
-GlobalDiscard macro h
-	exitm<GlobalReAlloc(h, 0, GMEM_MOVEABLE)>
-	endm
+GlobalLRUNewest macro  h
+  exitm<(h)>
+  endm
+GlobalLRUOldest macro  h
+  exitm<(h)>
+  endm
+GlobalDiscard macro  h
+  exitm<GlobalReAlloc( (h), 0, GMEM_MOVEABLE )>
+  endm
 
+define GMEM_DISCARDED      0x4000
+define GMEM_LOCKCOUNT      0x00FF
 
-GMEM_DISCARDED		equ 0x4000
-GMEM_LOCKCOUNT		equ 0x00FF
+_MEMORYSTATUS           struct
+dwLength                DWORD ?
+dwMemoryLoad            DWORD ?
+dwTotalPhys             SIZE_T ?
+dwAvailPhys             SIZE_T ?
+dwTotalPageFile         SIZE_T ?
+dwAvailPageFile         SIZE_T ?
+dwTotalVirtual          SIZE_T ?
+dwAvailVirtual          SIZE_T ?
+_MEMORYSTATUS           ends
+MEMORYSTATUS            typedef _MEMORYSTATUS
+LPMEMORYSTATUS          typedef ptr _MEMORYSTATUS
 
-MEMORYSTATUS		STRUC
-dwLength		dd ?
-dwMemoryLoad		dd ?
-dwTotalPhys		SIZE_T ?
-dwAvailPhys		SIZE_T ?
-dwTotalPageFile		SIZE_T ?
-dwAvailPageFile		SIZE_T ?
-dwTotalVirtual		SIZE_T ?
-dwAvailVirtual		SIZE_T ?
-MEMORYSTATUS		ENDS
-LPMEMORYSTATUS		TYPEDEF PTR MEMORYSTATUS
+define DEBUG_PROCESS                     0x00000001
+define DEBUG_ONLY_THIS_PROCESS           0x00000002
+define CREATE_SUSPENDED                  0x00000004
+define DETACHED_PROCESS                  0x00000008
 
-LMEM_FIXED		equ 0x0000
-LMEM_MOVEABLE		equ 0x0002
-LMEM_NOCOMPACT		equ 0x0010
-LMEM_NODISCARD		equ 0x0020
-LMEM_ZEROINIT		equ 0x0040
-LMEM_MODIFY		equ 0x0080
-LMEM_DISCARDABLE	equ 0x0F00
-LMEM_VALID_FLAGS	equ 0x0F72
-LMEM_INVALID_HANDLE	equ 0x8000
+define CREATE_NEW_CONSOLE                0x00000010
+define NORMAL_PRIORITY_CLASS             0x00000020
+define IDLE_PRIORITY_CLASS               0x00000040
+define HIGH_PRIORITY_CLASS               0x00000080
 
-LHND			equ (LMEM_MOVEABLE or LMEM_ZEROINIT)
-LPTR			equ (LMEM_FIXED or LMEM_ZEROINIT)
+define REALTIME_PRIORITY_CLASS           0x00000100
+define CREATE_NEW_PROCESS_GROUP          0x00000200
+define CREATE_UNICODE_ENVIRONMENT        0x00000400
+define CREATE_SEPARATE_WOW_VDM           0x00000800
 
-NONZEROLHND		equ (LMEM_MOVEABLE)
-NONZEROLPTR		equ (LMEM_FIXED)
+define CREATE_SHARED_WOW_VDM             0x00001000
+define CREATE_FORCEDOS                   0x00002000
+define BELOW_NORMAL_PRIORITY_CLASS       0x00004000
+define ABOVE_NORMAL_PRIORITY_CLASS       0x00008000
 
-LocalDiscard macro h
-	exitm<LocalReAlloc(h, 0, LMEM_MOVEABLE)>
-	endm
+define INHERIT_PARENT_AFFINITY           0x00010000
+define INHERIT_CALLER_PRIORITY           0x00020000
+define CREATE_PROTECTED_PROCESS          0x00040000
+define EXTENDED_STARTUPINFO_PRESENT      0x00080000
 
-LMEM_DISCARDED		equ 0x4000
-LMEM_LOCKCOUNT		equ 0x00FF
+define PROCESS_MODE_BACKGROUND_BEGIN     0x00100000
+define PROCESS_MODE_BACKGROUND_END       0x00200000
+define CREATE_SECURE_PROCESS             0x00400000
 
+define CREATE_BREAKAWAY_FROM_JOB         0x01000000
+define CREATE_PRESERVE_CODE_AUTHZ_LEVEL  0x02000000
+define CREATE_DEFAULT_ERROR_MODE         0x04000000
+define CREATE_NO_WINDOW                  0x08000000
 
-DEBUG_PROCESS		equ 0x00000001
-DEBUG_ONLY_THIS_PROCESS equ 0x00000002
-CREATE_SUSPENDED	equ 0x00000004
-DETACHED_PROCESS	equ 0x00000008
+define PROFILE_USER                      0x10000000
+define PROFILE_KERNEL                    0x20000000
+define PROFILE_SERVER                    0x40000000
+define CREATE_IGNORE_SYSTEM_DEFAULT      0x80000000
 
-CREATE_NEW_CONSOLE	equ 0x00000010
-NORMAL_PRIORITY_CLASS	equ 0x00000020
-IDLE_PRIORITY_CLASS	equ 0x00000040
-HIGH_PRIORITY_CLASS	equ 0x00000080
+define STACK_SIZE_PARAM_IS_A_RESERVATION   0x00010000
 
-REALTIME_PRIORITY_CLASS equ 0x00000100
-CREATE_NEW_PROCESS_GROUP equ 0x00000200
-CREATE_UNICODE_ENVIRONMENT equ 0x00000400
-CREATE_SEPARATE_WOW_VDM equ 0x00000800
+define THREAD_PRIORITY_LOWEST          THREAD_BASE_PRIORITY_MIN
+define THREAD_PRIORITY_BELOW_NORMAL    (THREAD_PRIORITY_LOWEST+1)
+define THREAD_PRIORITY_NORMAL          0
+define THREAD_PRIORITY_HIGHEST         THREAD_BASE_PRIORITY_MAX
+define THREAD_PRIORITY_ABOVE_NORMAL    (THREAD_PRIORITY_HIGHEST-1)
+define THREAD_PRIORITY_ERROR_RETURN    (MAXLONG)
 
-CREATE_SHARED_WOW_VDM	equ 0x00001000
-CREATE_FORCEDOS		equ 0x00002000
-BELOW_NORMAL_PRIORITY_CLASS equ 0x00004000
-ABOVE_NORMAL_PRIORITY_CLASS equ 0x00008000
+define THREAD_PRIORITY_TIME_CRITICAL   THREAD_BASE_PRIORITY_LOWRT
+define THREAD_PRIORITY_IDLE            THREAD_BASE_PRIORITY_IDLE
 
-INHERIT_PARENT_AFFINITY equ 0x00010000
-INHERIT_CALLER_PRIORITY equ 0x00020000
-CREATE_PROTECTED_PROCESS equ 0x00040000
-EXTENDED_STARTUPINFO_PRESENT equ 0x00080000
+define THREAD_MODE_BACKGROUND_BEGIN    0x00010000
+define THREAD_MODE_BACKGROUND_END      0x00020000
 
-PROCESS_MODE_BACKGROUND_BEGIN equ 0x00100000
-PROCESS_MODE_BACKGROUND_END equ 0x00200000
+define VOLUME_NAME_DOS  0x0
+define VOLUME_NAME_GUID 0x1
+define VOLUME_NAME_NT   0x2
+define VOLUME_NAME_NONE 0x4
 
-CREATE_BREAKAWAY_FROM_JOB equ 0x01000000
-CREATE_PRESERVE_CODE_AUTHZ_LEVEL equ 0x02000000
-CREATE_DEFAULT_ERROR_MODE equ 0x04000000
-CREATE_NO_WINDOW	equ 0x08000000
+define FILE_NAME_NORMALIZED 0x0
+define FILE_NAME_OPENED     0x8
 
-PROFILE_USER		equ 0x10000000
-PROFILE_KERNEL		equ 0x20000000
-PROFILE_SERVER		equ 0x40000000
-CREATE_IGNORE_SYSTEM_DEFAULT equ 0x80000000
+_JIT_DEBUG_INFO         struct
+dwSize                  DWORD ?
+dwProcessorArchitecture DWORD ?
+dwThreadID              DWORD ?
+dwReserved0             DWORD ?
+lpExceptionAddress      ULONG64 ?
+lpExceptionRecord       ULONG64 ?
+lpContextRecord         ULONG64 ?
+_JIT_DEBUG_INFO         ends
+JIT_DEBUG_INFO          typedef _JIT_DEBUG_INFO
+LPJIT_DEBUG_INFO        typedef ptr _JIT_DEBUG_INFO
 
-
-
-STACK_SIZE_PARAM_IS_A_RESERVATION equ 0x00010000
-
-THREAD_PRIORITY_LOWEST		equ THREAD_BASE_PRIORITY_MIN
-THREAD_PRIORITY_BELOW_NORMAL	equ THREAD_PRIORITY_LOWEST+1
-THREAD_PRIORITY_NORMAL		equ 0
-THREAD_PRIORITY_HIGHEST		equ THREAD_BASE_PRIORITY_MAX
-THREAD_PRIORITY_ABOVE_NORMAL	equ THREAD_PRIORITY_HIGHEST-1
-THREAD_PRIORITY_ERROR_RETURN	equ MAXLONG
-
-THREAD_PRIORITY_TIME_CRITICAL	equ THREAD_BASE_PRIORITY_LOWRT
-THREAD_PRIORITY_IDLE		equ THREAD_BASE_PRIORITY_IDE
-
-THREAD_MODE_BACKGROUND_BEGIN	equ 0x00010000
-THREAD_MODE_BACKGROUND_END	equ 0x00020000
-
-
-VOLUME_NAME_DOS		equ 0x0
-VOLUME_NAME_GUID	equ 0x1
-VOLUME_NAME_NT		equ 0x2
-VOLUME_NAME_NONE	equ 0x4
-
-FILE_NAME_NORMALIZED	equ 0x0
-FILE_NAME_OPENED	equ 0x8
-
-EXCEPTION_DEBUG_EVENT	    equ 1
-CREATE_THREAD_DEBUG_EVENT   equ 2
-CREATE_PROCESS_DEBUG_EVENT  equ 3
-EXIT_THREAD_DEBUG_EVENT	    equ 4
-EXIT_PROCESS_DEBUG_EVENT    equ 5
-LOAD_DLL_DEBUG_EVENT	    equ 6
-UNLOAD_DLL_DEBUG_EVENT	    equ 7
-OUTPUT_DEBUG_STRING_EVENT   equ 8
-RIP_EVENT		    equ 9
-
-EXCEPTION_DEBUG_INFO	STRUC
-ExceptionRecord		EXCEPTION_RECORD <>
-dwFirstChance		DWORD ?
-EXCEPTION_DEBUG_INFO	ENDS
-LPEXCEPTION_DEBUG_INFO	TYPEDEF PTR EXCEPTION_DEBUG_INFO
-
-CREATE_THREAD_DEBUG_INFO STRUC
-hThread			HANDLE ?
-lpThreadLocalBase	PVOID ?
-lpStartAddress		LPTHREAD_START_ROUTINE ?
-CREATE_THREAD_DEBUG_INFO ENDS
-LPCREATE_THREAD_DEBUG_INFO TYPEDEF PTR CREATE_THREAD_DEBUG_INFO
-
-CREATE_PROCESS_DEBUG_INFO STRUC
-hFile			HANDLE ?
-hProcess		HANDLE ?
-hThread			HANDLE ?
-lpBaseOfImage		PVOID ?
-dwDebugInfoFileOffset	DWORD ?
-nDebugInfoSize		DWORD ?
-lpThreadLocalBase	PVOID ?
-lpStartAddress		PTHREAD_START_ROUTINE ?
-lpImageName		PVOID ?
-fUnicode		WORD ?
-CREATE_PROCESS_DEBUG_INFO ENDS
-LPCREATE_PROCESS_DEBUG_INFO TYPEDEF PTR CREATE_PROCESS_DEBUG_INFO
-
-EXIT_THREAD_DEBUG_INFO	STRUC
-dwExitCode		DWORD ?
-EXIT_THREAD_DEBUG_INFO	ENDS
-LPEXIT_THREAD_DEBUG_INFO TYPEDEF PTR EXIT_THREAD_DEBUG_INFO
-
-EXIT_PROCESS_DEBUG_INFO STRUC
-dwExitCode		DWORD ?
-EXIT_PROCESS_DEBUG_INFO ENDS
-LPEXIT_PROCESS_DEBUG_INFO TYPEDEF PTR EXIT_PROCESS_DEBUG_INFO
-
-LOAD_DLL_DEBUG_INFO	STRUC
-hFile			HANDLE ?
-lpBaseOfDll		PVOID ?
-dwDebugInfoFileOffset	DWORD ?
-nDebugInfoSize		DWORD ?
-lpImageName		PVOID ?
-fUnicode		WORD ?
-LOAD_DLL_DEBUG_INFO	ENDS
-LPLOAD_DLL_DEBUG_INFO	TYPEDEF PTR LOAD_DLL_DEBUG_INFO
-
-UNLOAD_DLL_DEBUG_INFO	STRUC
-lpBaseOfDll		PVOID ?
-UNLOAD_DLL_DEBUG_INFO	ENDS
-LPUNLOAD_DLL_DEBUG_INFO TYPEDEF PTR UNLOAD_DLL_DEBUG_INFO
-
-OUTPUT_DEBUG_STRING_INFO STRUC
-lpDebugStringData	LPSTR ?
-fUnicode		dw ?
-nDebugStringLength	dw ?
-OUTPUT_DEBUG_STRING_INFO ENDS
-LPOUTPUT_DEBUG_STRING_INFO TYPEDEF PTR OUTPUT_DEBUG_STRING_INFO
-
-RIP_INFO		STRUC
-dwError			dd ?
-dwType			dd ?
-RIP_INFO		ENDS
-LPRIP_INFO		TYPEDEF PTR RIP_INFO
-
-
-DEBUG_EVENT		STRUC
-dwDebugEventCode	dd ?
-dwProcessId		dd ?
-dwThreadId		dd ?
-UNION
- Exception		EXCEPTION_DEBUG_INFO <>
- CreateThread		CREATE_THREAD_DEBUG_INFO <>
- CreateProcessInfo	CREATE_PROCESS_DEBUG_INFO <>
- ExitThread		EXIT_THREAD_DEBUG_INFO <>
- ExitProcess		EXIT_PROCESS_DEBUG_INFO <>
- LoadDll		LOAD_DLL_DEBUG_INFO <>
- UnloadDll		UNLOAD_DLL_DEBUG_INFO <>
- DebugString		OUTPUT_DEBUG_STRING_INFO <>
- RipInfo		RIP_INFO <>
-ENDS
-DEBUG_EVENT		ENDS
-LPDEBUG_EVENT		typedef ptr DEBUG_EVENT
-
-
-JIT_DEBUG_INFO		STRUC
-dwSize			dd ?
-dwProcessorArchitecture dd ?
-dwThreadID		dd ?
-dwReserved0		dd ?
-lpExceptionAddress	dq ?
-lpExceptionRecord	dq ?
-lpContextRecord		dq ?
-JIT_DEBUG_INFO		ENDS
-LPJIT_DEBUG_INFO	typedef ptr JIT_DEBUG_INFO
-
-JIT_DEBUG_INFO32	typedef JIT_DEBUG_INFO
-JIT_DEBUG_INFO64	typedef JIT_DEBUG_INFO
-LPJIT_DEBUG_INFO32	typedef ptr JIT_DEBUG_INFO
-LPJIT_DEBUG_INFO64	typedef ptr JIT_DEBUG_INFO
+LPJIT_DEBUG_INFO32      typedef ptr JIT_DEBUG_INFO32
+LPJIT_DEBUG_INFO64      typedef ptr JIT_DEBUG_INFO64
 
 ifndef MIDL_PASS
-LPCONTEXT		TYPEDEF PCONTEXT
-LPEXCEPTION_RECORD	TYPEDEF PEXCEPTION_RECORD
-LPEXCEPTION_POINTERS	TYPEDEF PEXCEPTION_POINTERS
+LPEXCEPTION_RECORD      typedef PEXCEPTION_RECORD
+LPEXCEPTION_POINTERS    typedef PEXCEPTION_POINTERS
 endif
 
-DRIVE_UNKNOWN		equ 0
-DRIVE_NO_ROOT_DIR	equ 1
-DRIVE_REMOVABLE		equ 2
-DRIVE_FIXED		equ 3
-DRIVE_REMOTE		equ 4
-DRIVE_CDROM		equ 5
-DRIVE_RAMDISK		equ 6
+define DRIVE_UNKNOWN     0
+define DRIVE_NO_ROOT_DIR 1
+define DRIVE_REMOVABLE   2
+define DRIVE_FIXED       3
+define DRIVE_REMOTE      4
+define DRIVE_CDROM       5
+define DRIVE_RAMDISK     6
 
+ifndef _MAC
 GetFreeSpace macro w
-	exitm<0x100000>
-	endm
+  exitm<(0x100000)>
+  endm
+else
+GetFreeSpace proto WINAPI :UINT
+endif
 
-FILE_TYPE_UNKNOWN   equ 0x0000
-FILE_TYPE_DISK	    equ 0x0001
-FILE_TYPE_CHAR	    equ 0x0002
-FILE_TYPE_PIPE	    equ 0x0003
-FILE_TYPE_REMOTE    equ 0x8000
+define FILE_TYPE_UNKNOWN   0x0000
+define FILE_TYPE_DISK      0x0001
+define FILE_TYPE_CHAR      0x0002
+define FILE_TYPE_PIPE      0x0003
+define FILE_TYPE_REMOTE    0x8000
 
+define STD_INPUT_HANDLE    (-10)
+define STD_OUTPUT_HANDLE   (-11)
+define STD_ERROR_HANDLE    (-12)
 
-STD_INPUT_HANDLE    equ -10
-STD_OUTPUT_HANDLE   equ -11
-STD_ERROR_HANDLE    equ -12
+define NOPARITY            0
+define ODDPARITY           1
+define EVENPARITY          2
+define MARKPARITY          3
+define SPACEPARITY         4
 
-NOPARITY	    equ 0
-ODDPARITY	    equ 1
-EVENPARITY	    equ 2
-MARKPARITY	    equ 3
-SPACEPARITY	    equ 4
+define ONESTOPBIT          0
+define ONE5STOPBITS        1
+define TWOSTOPBITS         2
 
-ONESTOPBIT	    equ 0
-ONE5STOPBITS	    equ 1
-TWOSTOPBITS	    equ 2
+define IGNORE              0
 
-IGNORE		    equ 0	    ; Ignore signal
-INFINITE	    equ 0xFFFFFFFF ; Infinite timeout
+define INFINITE            0xFFFFFFFF
 
+define CBR_110             110
+define CBR_300             300
+define CBR_600             600
+define CBR_1200            1200
+define CBR_2400            2400
+define CBR_4800            4800
+define CBR_9600            9600
+define CBR_14400           14400
+define CBR_19200           19200
+define CBR_38400           38400
+define CBR_56000           56000
+define CBR_57600           57600
+define CBR_115200          115200
+define CBR_128000          128000
+define CBR_256000          256000
 
-CBR_110		    equ 110
-CBR_300		    equ 300
-CBR_600		    equ 600
-CBR_1200	    equ 1200
-CBR_2400	    equ 2400
-CBR_4800	    equ 4800
-CBR_9600	    equ 9600
-CBR_14400	    equ 14400
-CBR_19200	    equ 19200
-CBR_38400	    equ 38400
-CBR_56000	    equ 56000
-CBR_57600	    equ 57600
-CBR_115200	    equ 115200
-CBR_128000	    equ 128000
-CBR_256000	    equ 256000
+define CE_RXOVER           0x0001
+define CE_OVERRUN          0x0002
+define CE_RXPARITY         0x0004
+define CE_FRAME            0x0008
+define CE_BREAK            0x0010
+define CE_TXFULL           0x0100
+define CE_PTO              0x0200
+define CE_IOE              0x0400
+define CE_DNS              0x0800
+define CE_OOP              0x1000
+define CE_MODE             0x8000
 
+define IE_BADID            (-1)
+define IE_OPEN             (-2)
+define IE_NOPEN            (-3)
+define IE_MEMORY           (-4)
+define IE_DEFAULT          (-5)
+define IE_HARDWARE         (-10)
+define IE_BYTESIZE         (-11)
+define IE_BAUDRATE         (-12)
 
-CE_RXOVER	    equ 0x0001	; Receive Queue overflow
-CE_OVERRUN	    equ 0x0002	; Receive Overrun Error
-CE_RXPARITY	    equ 0x0004	; Receive Parity Error
-CE_FRAME	    equ 0x0008	; Receive Framing error
-CE_BREAK	    equ 0x0010	; Break Detected
-CE_TXFULL	    equ 0x0100	; TX Queue is full
-CE_PTO		    equ 0x0200	; LPTx Timeout
-CE_IOE		    equ 0x0400	; LPTx I/O Error
-CE_DNS		    equ 0x0800	; LPTx Device not selected
-CE_OOP		    equ 0x1000	; LPTx Out-Of-Paper
-CE_MODE		    equ 0x8000	; Requested mode unsupported
+define EV_RXCHAR           0x0001
+define EV_RXFLAG           0x0002
+define EV_TXEMPTY          0x0004
+define EV_CTS              0x0008
+define EV_DSR              0x0010
+define EV_RLSD             0x0020
+define EV_BREAK            0x0040
+define EV_ERR              0x0080
+define EV_RING             0x0100
+define EV_PERR             0x0200
+define EV_RX80FULL         0x0400
+define EV_EVENT1           0x0800
+define EV_EVENT2           0x1000
 
-IE_BADID	    equ (-1)	; Invalid or unsupported id
-IE_OPEN		    equ (-2)	; Device Already Open
-IE_NOPEN	    equ (-3)	; Device Not Open
-IE_MEMORY	    equ (-4)	; Unable to allocate queues
-IE_DEFAULT	    equ (-5)	; Error in default parameters
-IE_HARDWARE	    equ (-10)	; Hardware Not Present
-IE_BYTESIZE	    equ (-11)	; Illegal Byte Size
-IE_BAUDRATE	    equ (-12)	; Unsupported BaudRate
+define SETXOFF             1
+define SETXON              2
+define SETRTS              3
+define CLRRTS              4
+define SETDTR              5
+define CLRDTR              6
+define RESETDEV            7
+define SETBREAK            8
+define CLRBREAK            9
 
+define PURGE_TXABORT       0x0001
+define PURGE_RXABORT       0x0002
+define PURGE_TXCLEAR       0x0004
+define PURGE_RXCLEAR       0x0008
 
-EV_RXCHAR	    equ 0x0001	; Any Character received
-EV_RXFLAG	    equ 0x0002	; Received certain character
-EV_TXEMPTY	    equ 0x0004	; Transmitt Queue Empty
-EV_CTS		    equ 0x0008	; CTS changed state
-EV_DSR		    equ 0x0010	; DSR changed state
-EV_RLSD		    equ 0x0020	; RLSD changed state
-EV_BREAK	    equ 0x0040	; BREAK received
-EV_ERR		    equ 0x0080	; Line status error occurred
-EV_RING		    equ 0x0100	; Ring signal detected
-EV_PERR		    equ 0x0200	; Printer error occured
-EV_RX80FULL	    equ 0x0400	; Receive buffer is 80 percent full
-EV_EVENT1	    equ 0x0800	; Provider specific event 1
-EV_EVENT2	    equ 0x1000	; Provider specific event 2
+define LPTx                0x80
 
+define MS_CTS_ON           (0x0010)
+define MS_DSR_ON           (0x0020)
+define MS_RING_ON          (0x0040)
+define MS_RLSD_ON          (0x0080)
 
-SETXOFF		    equ 1	; Simulate XOFF received
-SETXON		    equ 2	; Simulate XON received
-SETRTS		    equ 3	; Set RTS high
-CLRRTS		    equ 4	; Set RTS low
-SETDTR		    equ 5	; Set DTR high
-CLRDTR		    equ 6	; Set DTR low
-RESETDEV	    equ 7	; Reset device if possible
-SETBREAK	    equ 8	; Set the device break line.
-CLRBREAK	    equ 9	; Clear the device break line.
+define S_QUEUEEMPTY        0
+define S_THRESHOLD         1
+define S_ALLTHRESHOLD      2
 
-PURGE_TXABORT	    equ 0x0001	; Kill the pending/current writes to the comm port.
-PURGE_RXABORT	    equ 0x0002	; Kill the pending/current reads to the comm port.
-PURGE_TXCLEAR	    equ 0x0004	; Kill the transmit queue if there.
-PURGE_RXCLEAR	    equ 0x0008	; Kill the typeahead buffer if there.
+define S_NORMAL      0
+define S_LEGATO      1
+define S_STACCATO    2
 
-LPTx		    equ 0x80	; Set if ID is for LPT device
+define S_PERIOD512   0
+define S_PERIOD1024  1
+define S_PERIOD2048  2
+define S_PERIODVOICE 3
+define S_WHITE512    4
+define S_WHITE1024   5
+define S_WHITE2048   6
+define S_WHITEVOICE  7
 
-MS_CTS_ON	    equ 0x0010
-MS_DSR_ON	    equ 0x0020
-MS_RING_ON	    equ 0x0040
-MS_RLSD_ON	    equ 0x0080
+define S_SERDVNA     (-1)
+define S_SEROFM      (-2)
+define S_SERMACT     (-3)
+define S_SERQFUL     (-4)
+define S_SERBDNT     (-5)
+define S_SERDLN      (-6)
+define S_SERDCC      (-7)
+define S_SERDTP      (-8)
+define S_SERDVL      (-9)
+define S_SERDMD      (-10)
+define S_SERDSH      (-11)
+define S_SERDPT      (-12)
+define S_SERDFQ      (-13)
+define S_SERDDR      (-14)
+define S_SERDSR      (-15)
+define S_SERDST      (-16)
 
+define NMPWAIT_WAIT_FOREVER            0xffffffff
+define NMPWAIT_NOWAIT                  0x00000001
+define NMPWAIT_USE_DEFAULT_WAIT        0x00000000
 
-S_QUEUEEMPTY	    equ 0
-S_THRESHOLD	    equ 1
-S_ALLTHRESHOLD	    equ 2
+define FS_CASE_IS_PRESERVED            FILE_CASE_PRESERVED_NAMES
+define FS_CASE_SENSITIVE               FILE_CASE_SENSITIVE_SEARCH
+define FS_UNICODE_STORED_ON_DISK       FILE_UNICODE_ON_DISK
+define FS_PERSISTENT_ACLS              FILE_PERSISTENT_ACLS
+define FS_VOL_IS_COMPRESSED            FILE_VOLUME_IS_COMPRESSED
+define FS_FILE_COMPRESSION             FILE_FILE_COMPRESSION
+define FS_FILE_ENCRYPTION              FILE_SUPPORTS_ENCRYPTION
 
+define OF_READ             0x00000000
+define OF_WRITE            0x00000001
+define OF_READWRITE        0x00000002
+define OF_SHARE_COMPAT     0x00000000
+define OF_SHARE_EXCLUSIVE  0x00000010
+define OF_SHARE_DENY_WRITE 0x00000020
+define OF_SHARE_DENY_READ  0x00000030
+define OF_SHARE_DENY_NONE  0x00000040
+define OF_PARSE            0x00000100
+define OF_DELETE           0x00000200
+define OF_VERIFY           0x00000400
+define OF_CANCEL           0x00000800
+define OF_CREATE           0x00001000
+define OF_PROMPT           0x00002000
+define OF_EXIST            0x00004000
+define OF_REOPEN           0x00008000
 
-S_NORMAL      equ 0
-S_LEGATO      equ 1
-S_STACCATO    equ 2
+define OFS_MAXPATHNAME 128
+_OFSTRUCT               struct
+cBytes                  BYTE ?
+fFixedDisk              BYTE ?
+nErrCode                WORD ?
+Reserved1               WORD ?
+Reserved2               WORD ?
+szPathName              CHAR OFS_MAXPATHNAME dup(?)
+_OFSTRUCT               ends
+OFSTRUCT                typedef _OFSTRUCT
+LPOFSTRUCT              typedef ptr _OFSTRUCT
+POFSTRUCT               typedef ptr _OFSTRUCT
 
-
-S_PERIOD512   equ 0	    ; Freq = N/512 high pitch, less coarse hiss
-S_PERIOD1024  equ 1	    ; Freq = N/1024
-S_PERIOD2048  equ 2	    ; Freq = N/2048 low pitch, more coarse hiss
-S_PERIODVOICE equ 3	    ; Source is frequency from voice channel (3)
-S_WHITE512    equ 4	    ; Freq = N/512 high pitch, less coarse hiss
-S_WHITE1024   equ 5	    ; Freq = N/1024
-S_WHITE2048   equ 6	    ; Freq = N/2048 low pitch, more coarse hiss
-S_WHITEVOICE  equ 7	    ; Source is frequency from voice channel (3)
-
-S_SERDVNA     equ (-1)	; Device not available
-S_SEROFM      equ (-2)	; Out of memory
-S_SERMACT     equ (-3)	; Music active
-S_SERQFUL     equ (-4)	; Queue full
-S_SERBDNT     equ (-5)	; Invalid note
-S_SERDLN      equ (-6)	; Invalid note length
-S_SERDCC      equ (-7)	; Invalid note count
-S_SERDTP      equ (-8)	; Invalid tempo
-S_SERDVL      equ (-9)	; Invalid volume
-S_SERDMD      equ (-10) ; Invalid mode
-S_SERDSH      equ (-11) ; Invalid shape
-S_SERDPT      equ (-12) ; Invalid pitch
-S_SERDFQ      equ (-13) ; Invalid frequency
-S_SERDDR      equ (-14) ; Invalid duration
-S_SERDSR      equ (-15) ; Invalid source
-S_SERDST      equ (-16) ; Invalid state
-
-NMPWAIT_WAIT_FOREVER	equ 0xffffffff
-NMPWAIT_NOWAIT		equ 0x00000001
-NMPWAIT_USE_DEFAULT_WAIT equ 0x00000000
-
-FS_CASE_IS_PRESERVED	equ FILE_CASE_PRESERVED_NAMES
-FS_CASE_SENSITIVE	equ FILE_CASE_SENSITIVE_SEARCH
-FS_UNICODE_STORED_ON_DISK equ FILE_UNICODE_ON_DISK
-FS_PERSISTENT_ACLS	equ FILE_PERSISTENT_ACLS
-FS_VOL_IS_COMPRESSED	equ FILE_VOLUME_IS_COMPRESSED
-FS_FILE_COMPRESSION	equ FILE_FILE_COMPRESSION
-FS_FILE_ENCRYPTION	equ FILE_SUPPORTS_ENCRYPTION
-
-FILE_MAP_COPY		equ SECTION_QUERY
-FILE_MAP_WRITE		equ SECTION_MAP_WRITE
-FILE_MAP_READ		equ SECTION_MAP_READ
-FILE_MAP_ALL_ACCESS	equ SECTION_ALL_ACCESS
-FILE_MAP_EXECUTE	equ SECTION_MAP_EXECUTE_EXPLICIT
-
-OF_READ			equ 0x00000000
-OF_WRITE		equ 0x00000001
-OF_READWRITE		equ 0x00000002
-OF_SHARE_COMPAT		equ 0x00000000
-OF_SHARE_EXCLUSIVE	equ 0x00000010
-OF_SHARE_DENY_WRITE	equ 0x00000020
-OF_SHARE_DENY_READ	equ 0x00000030
-OF_SHARE_DENY_NONE	equ 0x00000040
-OF_PARSE		equ 0x00000100
-OF_DELETE		equ 0x00000200
-OF_VERIFY		equ 0x00000400
-OF_CANCEL		equ 0x00000800
-OF_CREATE		equ 0x00001000
-OF_PROMPT		equ 0x00002000
-OF_EXIST		equ 0x00004000
-OF_REOPEN		equ 0x00008000
-
-OFS_MAXPATHNAME		equ 128
-
-OFSTRUCT		STRUC
-cBytes			db ?
-fFixedDisk		db ?
-nErrCode		dw ?
-Reserved1		dw ?
-Reserved2		dw ?
-szPathName		SBYTE OFS_MAXPATHNAME dup(?)
-OFSTRUCT		ENDS
-LPOFSTRUCT		TYPEDEF PTR OFSTRUCT
-POFSTRUCT		TYPEDEF PTR OFSTRUCT
-
-
-.pragma(comment(lib, kernel32))
+UnlockResource macro hResData
+  exitm<((hResData), 0)>
+  endm
+define MAXINTATOM 0xC000
+MAKEINTATOM macro i
+  exitm<(i)>
+  endm
+define INVALID_ATOM (0)
 
 if(_WIN32_WINNT GE 0x0500)
 GetConsoleWindow proto WINAPI
-else
-CALLBACK(GetConsoleWindow_T)
-externdef GetConsoleWindow:GetConsoleWindow_T
 endif
-
-ifndef NOWINBASEINTERLOCK
-ifndef _NTOS_
-
-InterlockedOr proto fastcall :ptr, :sdword {
-    mov	    eax,[rcx]
-    lock    or [rcx],edx
-    }
-InterlockedOr8 proto fastcall :ptr, :byte {
-    movzx   eax,byte ptr [rcx]
-    lock    or [rcx],dl
-    }
-InterlockedOr16 proto fastcall :ptr, :word {
-    movzx   eax,word ptr [rcx]
-    lock    or [rcx],dx
-    }
-InterlockedOr64 proto fastcall :ptr, :qword {
-    mov	    rax,[rcx]
-    lock    or [rcx],rdx
-    }
-
-InterlockedXor proto fastcall :ptr, :sdword {
-    mov	    eax,[rcx]
-    lock    or [rcx],edx
-    }
-InterlockedXor8 proto fastcall :ptr, :byte {
-    movzx   eax,byte ptr [rcx]
-    lock    xor [rcx],dl
-    }
-InterlockedXor16 proto fastcall :ptr, :word {
-    movzx   eax,word ptr [rcx]
-    lock    xor [rcx],dx
-    }
-InterlockedXor64 proto fastcall :ptr, :qword {
-    mov	    rax,[rcx]
-    lock    xor [rcx],rdx
-    }
-
-InterlockedAnd proto fastcall :ptr, :sdword {
-    mov	    eax,[rcx]
-    lock    and [rcx],edx
-    }
-InterlockedAnd8 proto fastcall :ptr, :byte {
-    movzx   eax,byte ptr [rcx]
-    lock    and [rcx],dl
-    }
-InterlockedAnd16 proto fastcall :ptr, :word {
-    movzx   eax,word ptr [rcx]
-    lock    and [rcx],dx
-    }
-InterlockedAnd64 proto fastcall :ptr, :qword {
-    mov	    rax,[rcx]
-    lock    and [rcx],rdx
-    }
-
-InterlockedIncrement proto fastcall :ptr {
-    lock    inc dword ptr [rcx]
-    mov	    eax,[rcx]
-    }
-InterlockedIncrement64 proto fastcall :ptr {
-    lock    inc qword ptr [rcx]
-    mov	    rax,[rcx]
-    }
-
-InterlockedDecrement proto fastcall :ptr {
-    lock    dec dword ptr [rcx]
-    mov	    eax,[rcx]
-    }
-InterlockedDecrement64 proto fastcall :ptr {
-    lock dec qword ptr [rcx]
-    mov rax,[rcx]
-    }
-
-InterlockedCompareExchange proto fastcall :ptr, :sdword, :sdword {
-    mov	    eax,r8d
-    push    [rcx]
-    lock    cmpxchg dword ptr [rcx],edx
-    pop	    rax
-    }
-InterlockedCompareExchange64 proto fastcall :ptr, :qword, :qword {
-    mov	    rax,r8
-    push    [rcx]
-    lock    cmpxchg qword ptr [rcx],rdx
-    pop	    rax
-    }
-
-InterlockedExchange proto fastcall :ptr, :ptr {
-    xchg    [rcx],edx
-    mov	    eax,edx
-    }
-InterlockedExchange64 proto fastcall :ptr, :ptr {
-    xchg    [rcx],rdx
-    mov	    rax,rdx
-    }
-InterlockedExchangePointer proto fastcall :ptr, :ptr {
-    xchg    [rcx],rdx
-    mov	    rax,rdx
-    }
-
-InterlockedOrAcquire	equ <InterlockedOr>
-InterlockedOrRelease	equ <InterlockedOr>
-InterlockedOr8Acquire	equ <InterlockedOr8>
-InterlockedOr8Release	equ <InterlockedOr8>
-InterlockedOr16Acquire	equ <InterlockedOr16>
-InterlockedOr16Release	equ <InterlockedOr16>
-InterlockedOr64Acquire	equ <InterlockedOr64>
-InterlockedOr64Release	equ <InterlockedOr64>
-
-InterlockedXorAcquire	equ <InterlockedXor>
-InterlockedXorRelease	equ <InterlockedXor>
-InterlockedXor8Acquire	equ <InterlockedXor8>
-InterlockedXor8Release	equ <InterlockedXor8>
-InterlockedXor16Acquire equ <InterlockedXor16>
-InterlockedXor16Release equ <InterlockedXor16>
-InterlockedXor64Acquire equ <InterlockedXor64>
-InterlockedXor64Release equ <InterlockedXor64>
-
-InterlockedAndAcquire	equ <InterlockedAnd>
-InterlockedAndRelease	equ <InterlockedAnd>
-InterlockedAnd8Acquire	equ <InterlockedAnd8>
-InterlockedAnd8Release	equ <InterlockedAnd8>
-InterlockedAnd16Acquire equ <InterlockedAnd16>
-InterlockedAnd16Release equ <InterlockedAnd16>
-InterlockedAnd64Acquire equ <InterlockedAnd64>
-InterlockedAnd64Release equ <InterlockedAnd64>
-
-InterlockedIncrementAcquire equ <InterlockedIncrement>
-InterlockedDecrementAcquire equ <InterlockedDecrement>
-InterlockedIncrementRelease equ <InterlockedIncrement>
-InterlockedDecrementRelease equ <InterlockedDecrement>
-
-InterlockedExchangeAcquire64 equ <InterlockedExchange64>
-InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
-InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
-InterlockedCompare64ExchangeAcquire128 equ <InterlockedCompare64Exchange128>
-InterlockedCompare64ExchangeRelease128 equ <InterlockedCompare64Exchange128>
-InterlockedCompareExchangeRelease equ <InterlockedCompareExchange>
-InterlockedCompareExchangeAcquire equ <InterlockedCompareExchange>
-InterlockedCompareExchangePointerAcquire equ <InterlockedCompareExchangePointer>
-InterlockedCompareExchangePointerRelease equ <InterlockedCompareExchangePointer>
-
-ifdef _M_IA64
-
-InterlockedExchangeAdd64 proto WINAPI \
-		Addend: ptr LONGLONG,
-		 Value: LONGLONG
-
-InterlockedCompare64Exchange128 proto WINAPI \
-	   Destination: ptr LONG64,
-	  ExChangeHigh: LONG64,
-	   ExChangeLow: LONG64,
-	     Comperand: LONG64
-
-;LONG
-InterlockedExchangeAdd proto WINAPI \
-		Addend: ptr LONG,
-		 Value: LONG
-
-InterlockedCompareExchangePointer proto WINAPI \
-	   Destination: PVOID,
-	      ExChange: PVOID,
-	     Comperand: PVOID
-
-ifndef MIDL_PASS
-ifndef InterlockedBitTestAndSet
-InterlockedBitTestAndSet proto fastcall :ptr, :dword {
-	mov	eax,edx
-	lock	bts [rcx],eax
-	setc	al
-	}
-endif
-ifndef InterlockedBitTestAndReset
-InterlockedBitTestAndReset proto fastcall :ptr, :dword {
-	mov	eax,edx
-	lock	btr [rcx],eax
-	setc	al
-	}
-endif
-ifndef InterlockedBitTestAndComplement
-InterlockedBitTestAndComplement macro Base, Bit
-	endm
-endif
-endif ; ifndef MIDL_PASS
-
-elseifdef _M_AMD64 ; ifdef _M_IA64
-
-if _MSC_FULL_VER GE 140041204
-endif ; _MSC_FULL_VER GE 140041204
-
-else ; ifdef _M_IA64
-
-if (_WIN32_WINNT GE 0x0502)
-endif
-ifndef MIDL_PASS
-if (_WIN32_WINNT GE 0x0502)
-endif
-endif
-
-InterlockedCompareExchangePointer macro Destination, ExChange, Comperand
-	exitm<InterlockedCompareExchange(Destination, ExChange, Comperand)>
-	endm
-
-endif ; ifdef _M_IA64
-
-
-if defined(_SLIST_HEADER_) AND NOT defined(_NTOSP_)
-
-;VOID
-InitializeSListHead proto WINAPI \
-	      ListHead: PSLIST_HEADER
-
-;PSLIST_ENTRY
-InterlockedPopEntrySList proto WINAPI \
-	      ListHead: PSLIST_HEADER
-
-;PSLIST_ENTRY
-InterlockedPushEntrySList proto WINAPI \
-	      ListHead: PSLIST_HEADER,
-	     ListEntry: PSLIST_ENTRY
-
-;PSLIST_ENTRY
-InterlockedFlushSList proto WINAPI \
-	      ListHead: PSLIST_HEADER
-
-;USHORT
-QueryDepthSList proto WINAPI \
-	      ListHead: PSLIST_HEADER
-
-endif ; defined(_SLIST_HEADER_) AND NOT defined(_NTOSP_)
-endif ; ifndef _NTOS_
-endif ; ifndef NOWINBASEINTERLOCK
-;endif
-
-;BOOL
-FreeResource proto WINAPI \
-	      hResData: HGLOBAL
-;LPVOID
-LockResource proto WINAPI \
-	      hResData: HGLOBAL
-
-UnlockResource macro hResData
-	exitm<((hResData), 0)>
-	endm
-MAXINTATOM		equ 0xC000
-MAKEINTATOM macro i
-	exitm<i>
-	endm
-INVALID_ATOM	equ 0
 
 ifdef __PE__
 option dllimport:none
 endif
-
-;int
-;CALLBACK
-WinMain proto WINAPI \
-	     hInstance: HINSTANCE,
-	 hPrevInstance: HINSTANCE,
-	     lpCmdLine: LPSTR,
-	      nShowCmd: SINT
-;int
-;CALLBACK
-wWinMain proto WINAPI \
-	     hInstance: HINSTANCE,
-	 hPrevInstance: HINSTANCE,
-	     lpCmdLine: LPWSTR,
-	      nShowCmd: SINT
-
+WinMain proto WINAPI :HINSTANCE, :HINSTANCE, :LPSTR, :int_t
+wWinMain proto WINAPI :HINSTANCE, :HINSTANCE, :LPWSTR, :int_t
 ifdef __PE__
 .pragma comment(lib, kernel32)
 endif
 
-;BOOL
-FreeLibrary proto WINAPI \
-	    hLibModule: HMODULE
-;VOID
-FreeLibraryAndExitThread proto WINAPI \
-	    hLibModule: HMODULE,
-	    dwExitCode: DWORD
-;BOOL
-DisableThreadLibraryCalls proto WINAPI \
-	    hLibModule: HMODULE
-;FARPROC
-GetProcAddress proto WINAPI \
-	       hModule: HMODULE,
-	    lpProcName: LPCSTR
-;DWORD
-GetVersion proto WINAPI
-
-;HGLOBAL
-GlobalAlloc proto WINAPI \
-		uFlags: UINT,
-	       dwBytes: SIZE_T
-
-GlobalFree proto WINAPI \
-		  hMem: HANDLE
-
-GlobalReAlloc proto WINAPI \
-		  hMem: HANDLE,
-	       dwBytes: SIZE_T,
-		uFlags: UINT
-
-GlobalSize proto WINAPI \
-		  hMem: HANDLE
-
-GlobalFlags proto WINAPI \
-		  hMem: HANDLE
-
-GlobalHandle proto WINAPI \
-		  pMem: PVOID
-
-GlobalLock proto WINAPI \
-		  hMem: HANDLE
-
-GlobalUnlock proto WINAPI \
-		  hMem: HANDLE
-
-GlobalCompact proto WINAPI \
-	     dwMinFree: SIZE_T
-
-GlobalFix proto WINAPI \
-		  hMem: HANDLE
-
-GlobalUnfix proto WINAPI \
-		  hMem: HANDLE
-
-GlobalWire proto WINAPI \
-		  hMem: HANDLE
-
-GlobalUnWire proto WINAPI \
-		  hMem: HANDLE
-
-GlobalMemoryStatus proto WINAPI \
-	      lpBuffer: LPMEMORYSTATUS
-
-MEMORYSTATUSEX		STRUC
-dwLength		dd ?
-dwMemoryLoad		dd ?
-ullTotalPhys		dq ?
-ullAvailPhys		dq ?
-ullTotalPageFile	dq ?
-ullAvailPageFile	dq ?
-ullTotalVirtual		dq ?
-ullAvailVirtual		dq ?
-ullAvailExtendedVirtual dq ?
-MEMORYSTATUSEX		ENDS
-LPMEMORYSTATUSEX	typedef ptr MEMORYSTATUSEX
-
-GlobalMemoryStatusEx proto WINAPI \
-	      lpBuffer: LPMEMORYSTATUSEX
-
-;HLOCAL
-LocalAlloc proto WINAPI \
-		uFlags: UINT,
-		uBytes: SIZE_T
-
-LocalReAlloc proto WINAPI \
-		  hMem: HANDLE,
-		uBytes: SIZE_T,
-		uFlags: UINT
-
-LocalLock proto WINAPI \
-		  hMem: HANDLE
-
-LocalHandle proto WINAPI \
-		  pMem: PVOID
-
-LocalUnlock proto WINAPI \
-		  hMem: HANDLE
-
-LocalSize proto WINAPI \
-		  hMem: HANDLE
-
-LocalFlags proto WINAPI \
-		  hMem: HANDLE
-
-LocalFree proto WINAPI \
-		  hMem: HANDLE
-
-LocalShrink proto WINAPI \
-		  hMem: HANDLE,
-	     cbNewSize: SIZE_T
-
-LocalCompact proto WINAPI \
-	      uMinFree: SIZE_T
-
-;BOOL
-FlushInstructionCache proto WINAPI \
-	      hProcess: HANDLE,
-	 lpBaseAddress: LPCVOID,
-		dwSize: DWORD
-
-if (_WIN32_WINNT GE 0x0600)
-
-;VOID
-FlushProcessWriteBuffers proto WINAPI
-
-;BOOL
-QueryThreadCycleTime proto WINAPI \
-	  ThreadHandle: HANDLE,
-	     CycleTime: PULONG64
-
-;BOOL
-QueryProcessCycleTime proto WINAPI \
-	 ProcessHandle: HANDLE,
-	     CycleTime: PULONG64
-
-;BOOL
-QueryIdleProcessorCycleTime proto WINAPI \
-	  BufferLength: PULONG,
-ProcessorIdleCycleTime: PULONG64
-
-endif
-
-if (_WIN32_WINNT GE 0x0601)
-
-;BOOL
-QueryIdleProcessorCycleTimeEx proto WINAPI \
-		_Group: USHORT,
-	  BufferLength: PULONG,
-ProcessorIdleCycleTime: PULONG64
-
-;BOOL
-QueryUnbiasedInterruptTime proto WINAPI \
-	  UnbiasedTime: PULONGLONG
-
-;BOOL
-GetProcessorSystemCycleTime proto WINAPI \
-		_Group: USHORT,
-		Buffer: PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION,
-	ReturnedLength: PDWORD
-
-endif
-
-;LPVOID
-VirtualAlloc proto WINAPI \
-	     lpAddress: PVOID,
-		dwSize: SIZE_T,
-      flAllocationType: DWORD,
-	     flProtect: DWORD
-
-VirtualFree proto WINAPI \
-	     lpAddress: PVOID,
-		dwSize: SIZE_T,
-	    dwFreeType: DWORD
-
-VirtualProtect proto WINAPI \
-	     lpAddress: PVOID,
-		dwSize: SIZE_T,
-	  flNewProtect: DWORD,
-	lpflOldProtect: PTR DWORD
-
-VirtualQuery proto WINAPI \
-	     lpAddress: PVOID,
-	      lpBuffer: PTR MEMORY_BASIC_INFORMATION,
-	      dwLength: SIZE_T
-
-VirtualAllocEx proto WINAPI \
-	      hProcess: HANDLE,
-	     lpAddress: PVOID,
-		dwSize: SIZE_T,
-      flAllocationType: DWORD,
-	     flProtect: DWORD
-
-if _WIN32_WINNT GE 0x0600
-;LPVOID
-VirtualAllocExNuma proto WINAPI \
-	      hProcess: HANDLE,
-	     lpAddress: LPVOID,
-		dwSize: SIZE_T,
-      flAllocationType: DWORD,
-	     flProtect: DWORD,
-	  nndPreferred: DWORD
-endif
-
-VirtualFreeEx proto WINAPI \
-	      hProcess: HANDLE,
-	     lpAddress: PVOID,
-		dwSize: SIZE_T,
-	    dwFreeType: DWORD
-
-VirtualProtectEx proto WINAPI \
-	      hProcess: HANDLE,
-	     lpAddress: PVOID,
-		dwSize: SIZE_T,
-	  flNewProtect: DWORD,
-	lpflOldProtect: PTR DWORD
-
-VirtualQueryEx proto WINAPI \
-	      hProcess: HANDLE,
-	     lpAddress: PVOID,
-	      lpBuffer: PTR MEMORY_BASIC_INFORMATION,
-	      dwLength: SIZE_T
-
-HeapCreate proto WINAPI \
-	     flOptions: DWORD,
-	 dwInitialSize: SIZE_T,
-	 dwMaximumSize: SIZE_T
-
-HeapDestroy proto WINAPI \
-		 hHeap: HANDLE
-
-HeapAlloc proto WINAPI \
-		 hHeap: HANDLE,
-	       dwFlags: DWORD,
-	       dwBytes: SIZE_T
-
-HeapReAlloc proto WINAPI \
-		 hHeap: HANDLE,
-	       dwFlags: DWORD,
-		 lpMem: PVOID,
-	       dwBytes: SIZE_T
-
-HeapFree proto WINAPI \
-		 hHeap: HANDLE,
-	       dwFlags: DWORD,
-		 lpMem: PVOID
-
-HeapSize proto WINAPI \
-		 hHeap: HANDLE,
-	       dwFlags: DWORD,
-		 lpMem: PVOID
-
-HeapValidate proto WINAPI \
-		 hHeap: HANDLE,
-	       dwFlags: DWORD,
-		 lpMem: PVOID
-
-HeapCompact proto WINAPI \
-		 hHeap: HANDLE,
-	       dwFlags: DWORD
-
-GetProcessHeap proto WINAPI
-
-GetProcessHeaps proto WINAPI \
-	 NumberOfHeaps: DWORD,
-	  ProcessHeaps: PVOID
-
-PROCESS_HEAP_ENTRY	STRUC SIZE_T
-lpData			PVOID ?
-cbData			DWORD ?
-cbOverhead		BYTE ?
-iRegionIndex		BYTE ?
-wFlags			WORD ?
-UNION
-    STRUC ;Block
-	hMem		HANDLE ?
-	dwReserved	DD 3 dup(?)
-    ENDS
-    STRUC ;Region
-	dwCommittedSize DWORD ?
-	dwUnCommittedSize DWORD ?
-	lpFirstBlock	PVOID ?
-	lpLastBlock	PVOID ?
-    ENDS
-ENDS
-PROCESS_HEAP_ENTRY	ENDS
-
-LPPROCESS_HEAP_ENTRY	TYPEDEF PTR PROCESS_HEAP_ENTRY
-PPROCESS_HEAP_ENTRY	TYPEDEF PTR PROCESS_HEAP_ENTRY
-
-PROCESS_HEAP_REGION		equ 0x0001
-PROCESS_HEAP_UNCOMMITTED_RANGE	equ 0x0002
-PROCESS_HEAP_ENTRY_BUSY		equ 0x0004
-PROCESS_HEAP_ENTRY_MOVEABLE	equ 0x0010
-PROCESS_HEAP_ENTRY_DDESHARE	equ 0x0020
-
-HeapLock proto WINAPI hHeap:HANDLE
-HeapUnlock proto WINAPI hHeap:HANDLE
-HeapWalk proto WINAPI \
-		 hHeap: HANDLE,
-	       lpEntry: PTR LPPROCESS_HEAP_ENTRY
-
-HeapSetInformation proto WINAPI \
-	    HeapHandle: HANDLE,
-  HeapInformationClass: HEAP_INFORMATION_CLASS,
-       HeapInformation: PVOID,
- HeapInformationLength: SIZE_T
-
-
-HeapQueryInformation proto WINAPI \
-	    HeapHandle: HANDLE,
-  HeapInformationClass: HEAP_INFORMATION_CLASS,
-       HeapInformation: PVOID,
- HeapInformationLength: SIZE_T,
-	  ReturnLength: PSIZE_T
-
-
-SCS_32BIT_BINARY    equ 0
-SCS_DOS_BINARY	    equ 1
-SCS_WOW_BINARY	    equ 2
-SCS_PIF_BINARY	    equ 3
-SCS_POSIX_BINARY    equ 4
-SCS_OS216_BINARY    equ 5
-SCS_64BIT_BINARY    equ 6
+GlobalAlloc proto WINAPI :UINT, :SIZE_T
+GlobalReAlloc proto WINAPI :HGLOBAL, :SIZE_T, :UINT
+
+GlobalSize proto WINAPI :HGLOBAL
+GlobalUnlock proto WINAPI :HGLOBAL
+GlobalLock proto WINAPI :HGLOBAL
+
+GlobalFlags proto WINAPI :HGLOBAL
+GlobalHandle proto WINAPI :LPCVOID
+
+GlobalFree proto WINAPI :HGLOBAL
+
+GlobalCompact proto WINAPI :DWORD
+GlobalFix proto WINAPI :HGLOBAL
+GlobalUnfix proto WINAPI :HGLOBAL
+GlobalWire proto WINAPI :HGLOBAL
+GlobalUnWire proto WINAPI :HGLOBAL
+GlobalMemoryStatus proto WINAPI :LPMEMORYSTATUS
+
+LocalAlloc proto WINAPI :UINT, :SIZE_T
+LocalReAlloc proto WINAPI :HLOCAL, :SIZE_T, :UINT
+LocalLock proto WINAPI :HLOCAL
+LocalHandle proto WINAPI :LPCVOID
+LocalUnlock proto WINAPI :HLOCAL
+LocalSize proto WINAPI :HLOCAL
+LocalFlags proto WINAPI :HLOCAL
+LocalFree proto WINAPI :HLOCAL
+LocalShrink proto WINAPI :HLOCAL, :UINT
+LocalCompact proto WINAPI :UINT
+
+define SCS_32BIT_BINARY    0
+define SCS_DOS_BINARY      1
+define SCS_WOW_BINARY      2
+define SCS_PIF_BINARY      3
+define SCS_POSIX_BINARY    4
+define SCS_OS216_BINARY    5
+define SCS_64BIT_BINARY    6
 
 ifdef _WIN64
-SCS_THIS_PLATFORM_BINARY equ SCS_64BIT_BINARY
+define SCS_THIS_PLATFORM_BINARY SCS_64BIT_BINARY
 else
-SCS_THIS_PLATFORM_BINARY equ SCS_32BIT_BINARY
+define SCS_THIS_PLATFORM_BINARY SCS_32BIT_BINARY
 endif
 
-;BOOL
-GetBinaryTypeA proto WINAPI \
-     lpApplicationName: LPSTR,
-	  lpBinaryType: LPDWORD
+GetBinaryTypeA proto WINAPI :LPCSTR, :LPDWORD
 GetBinaryTypeW proto WINAPI :LPCWSTR, :LPDWORD
 ifdef _UNICODE
-GetBinaryType equ <GetBinaryTypeW>
+define GetBinaryType  <GetBinaryTypeW>
 else
-GetBinaryType equ <GetBinaryTypeA>
+define GetBinaryType  <GetBinaryTypeA>
 endif
 
-;DWORD
-GetShortPathNameA proto WINAPI \
-	  lpszLongPath: LPCSTR,
-	 lpszShortPath: LPSTR,
-	     cchBuffer: DWORD
-GetShortPathNameW proto WINAPI :LPCWSTR, :LPWSTR, :DWORD
+GetShortPathNameA proto WINAPI :LPCSTR, :LPSTR, :DWORD
+ifndef _UNICODE
+define GetShortPathName  <GetShortPathNameA>
+endif
+
+if _WIN32_WINNT ge 0x0600
+
+GetLongPathNameTransactedA proto WINAPI :LPCSTR, :LPSTR, :DWORD, :HANDLE
+GetLongPathNameTransactedW proto WINAPI :LPCWSTR, :LPWSTR, :DWORD, :HANDLE
 ifdef _UNICODE
-GetShortPathName equ <GetShortPathNameW>
+define GetLongPathNameTransacted  <GetLongPathNameTransactedW>
 else
-GetShortPathName equ <GetShortPathNameA>
+define GetLongPathNameTransacted  <GetLongPathNameTransactedA>
 endif
 
-;DWORD
-GetLongPathNameA proto WINAPI \
-	 lpszShortPath: LPSTR,
-	  lpszLongPath: LPSTR,
-	     cchBuffer: DWORD
-GetLongPathNameW proto WINAPI \
-	 lpszShortPath: LPWSTR,
-	  lpszLongPath: LPWSTR,
-	     cchBuffer: DWORD
-ifdef _UNICODE
-GetLongPathName equ <GetLongPathNameW>
-else
-GetLongPathName equ <GetLongPathNameA>
 endif
 
-if _WIN32_WINNT GE 0x0600
-;DWORD
-GetLongPathNameTransactedA proto WINAPI \
-	 lpszShortPath: LPCSTR,
-	  lpszLongPath: LPSTR,
-	     cchBuffer: DWORD,
-	  hTransaction: HANDLE
-GetLongPathNameTransactedW proto WINAPI \
-	 lpszShortPath: LPCWSTR,
-	  lpszLongPath: LPWSTR,
-	     cchBuffer: DWORD,
-	  hTransaction: HANDLE
-ifdef _UNICODE
-GetLongPathNameTransacted equ <GetLongPathNameTransactedW>
-else
-GetLongPathNameTransacted equ <GetLongPathNameTransactedA>
-endif
+GetProcessAffinityMask proto WINAPI :HANDLE, :PDWORD_PTR, :PDWORD_PTR
+SetProcessAffinityMask proto WINAPI :HANDLE, :DWORD_PTR
+GetProcessIoCounters proto WINAPI :HANDLE, :PIO_COUNTERS
+GetProcessWorkingSetSize proto WINAPI :HANDLE, :PSIZE_T, :PSIZE_T
+SetProcessWorkingSetSize proto WINAPI :HANDLE, :SIZE_T, :SIZE_T
+FatalExit proto WINAPI :sdword
+
+SetEnvironmentStringsA proto WINAPI :LPCH
+ifndef _UNICODE
+define SetEnvironmentStrings  <SetEnvironmentStringsA>
 endif
 
-;BOOL
-GetProcessAffinityMask proto WINAPI \
-	      hProcess: HANDLE,
- lpProcessAffinityMask: LPDWORD,
-  lpSystemAffinityMask: LPDWORD
+if(_WIN32_WINNT ge 0x0400)
 
-SetProcessAffinityMask proto WINAPI \
-	      hProcess: HANDLE,
- lpProcessAffinityMask: LPDWORD
+define FIBER_FLAG_FLOAT_SWITCH 0x1
 
-if _WIN32_WINNT GE 0x0601
-;BOOL
-GetProcessGroupAffinity proto WINAPI \
-	      hProcess: HANDLE,
-	    GroupCount: PUSHORT,
-	    GroupArray: PUSHORT
-endif
+SwitchToFiber proto WINAPI :LPVOID
+DeleteFiber proto WINAPI :LPVOID
 
-if _WIN32_WINNT GE 0x0501
-;BOOL
-GetProcessHandleCount proto WINAPI \
-	      hProcess: HANDLE,
-	pdwHandleCount: PDWORD
-endif
-
-GetProcessTimes proto WINAPI \
-	      hProcess: HANDLE,
-	lpCreationTime: LPFILETIME,
-	    lpExitTime: LPFILETIME,
-	  lpKernelTime: LPFILETIME,
-	    lpUserTime: LPFILETIME
-
-
-GetProcessWorkingSetSize proto WINAPI \
-	      hProcess: HANDLE,
-   lpMinWorkingSetSize: LPDWORD,
-   lpMaxWorkingSetSize: LPDWORD
-
-;BOOL
-GetProcessWorkingSetSizeEx proto WINAPI \
-	      hProcess: HANDLE,
-   lpMinWorkingSetSize: PSIZE_T,
-   lpMaxWorkingSetSize: PSIZE_T,
-		 Flags: PDWORD
-;BOOL
-SetProcessWorkingSetSize proto WINAPI \
-	      hProcess: HANDLE,
-   dwMinWorkingSetSize: DWORD,
-   dwMaxWorkingSetSize: DWORD
-
-;BOOL
-SetProcessWorkingSetSizeEx proto WINAPI \
-	      hProcess: HANDLE,
-   dwMinWorkingSetSize: SIZE_T,
-   dwMaxWorkingSetSize: SIZE_T,
-		 Flags: DWORD
-
-if (_WIN32_WINNT GE 0x0600)
-PROCESS_AFFINITY_ENABLE_AUTO_UPDATE equ 0x00000001
-;BOOL
-SetProcessAffinityUpdateMode proto WINAPI \
-	      hProcess: HANDLE,
-	       dwFlags: DWORD
-;BOOL
-QueryProcessAffinityUpdateMode proto WINAPI \
-	      hProcess: HANDLE,
-	     lpdwFlags: LPDWORD
-endif
-
-;HANDLE
-OpenProcess proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-	   dwProcessId: DWORD
-
-GetCurrentProcess proto WINAPI
-GetCurrentProcessId proto WINAPI
-
-ExitProcess proto WINAPI uExitCode:UINT
-
-;BOOL
-TerminateProcess proto WINAPI \
-	      hProcess: HANDLE,
-	     uExitCode: UINT
-
-GetExitCodeProcess proto WINAPI \
-	      hProcess: HANDLE,
-	    lpExitCode: LPDWORD
-
-FatalExit proto WINAPI ExitCode:UINT
-
-GetEnvironmentStringsA proto WINAPI
-GetEnvironmentStringsW proto WINAPI
-ifdef _UNICODE
-GetEnvironmentStrings equ <GetEnvironmentStringsW>
-else
-GetEnvironmentStrings equ <GetEnvironmentStringsA>
-endif
-
-FreeEnvironmentStringsA proto WINAPI :LPSTR
-FreeEnvironmentStringsW proto WINAPI :LPWSTR
-ifdef _UNICODE
-FreeEnvironmentStrings equ <FreeEnvironmentStringsW>
-else
-FreeEnvironmentStrings equ <FreeEnvironmentStringsA>
-endif
-
-RaiseException proto WINAPI \
-       dwExceptionCode: DWORD,
-      dwExceptionFlags: DWORD,
-    nNumberOfArguments: DWORD,
-	   lpArguments: LPDWORD
-;LONG
-UnhandledExceptionFilter proto WINAPI \
-	 ExceptionInfo: PTR _EXCEPTION_POINTERS
-
-TOP_LEVEL_EXCEPTION_FILTER   TYPEDEF PROTO :_EXCEPTION_POINTERS
-PTOP_LEVEL_EXCEPTION_FILTER  TYPEDEF PTR TOP_LEVEL_EXCEPTION_FILTER
-LPTOP_LEVEL_EXCEPTION_FILTER TYPEDEF PTOP_LEVEL_EXCEPTION_FILTER
-
-;LPTOP_LEVEL_EXCEPTION_FILTER
-SetUnhandledExceptionFilter proto WINAPI \
-lpTopLevelExceptionFilter: LPTOP_LEVEL_EXCEPTION_FILTER
-
-if(_WIN32_WINNT GE 0x0400)
-;LPVOID
-CreateFiber proto WINAPI \
-	   dwStackSize: DWORD,
-	lpStartAddress: LPFIBER_START_ROUTINE,
-	   lpParameter: LPVOID
-
-CreateFiberEx proto WINAPI \
-     dwStackCommitSize: SIZE_T,
-    dwStackReserveSize: SIZE_T,
-	       dwFlags: DWORD,
-	lpStartAddress: LPFIBER_START_ROUTINE,
-	   lpParameter: LPVOID
-
-;VOID
-DeleteFiber proto WINAPI \
-	       lpFiber: LPVOID
-;LPVOID
-ConvertThreadToFiber proto WINAPI \
-	   lpParameter: LPVOID
-
-ConvertThreadToFiberEx proto WINAPI \
-	   lpParameter: LPVOID,
-	       dwFlags: DWORD
-
-if (_WIN32_WINNT GE 0x0501)
-;BOOL
+if (_WIN32_WINNT ge 0x0501)
 ConvertFiberToThread proto WINAPI
 endif
-if (_WIN32_WINNT GE 0x0600)
-;BOOL
-IsThreadAFiber proto WINAPI
-endif
 
-;VOID
-SwitchToFiber proto WINAPI \
-	       lpFiber: LPVOID
+CreateFiberEx proto WINAPI :SIZE_T, :SIZE_T, :DWORD, :LPFIBER_START_ROUTINE, :LPVOID
+ConvertThreadToFiberEx proto WINAPI :LPVOID, :DWORD
 
-;BOOL
-SwitchToThread proto WINAPI
+CreateFiber proto WINAPI :SIZE_T, :LPFIBER_START_ROUTINE, :LPVOID
+ConvertThreadToFiber proto WINAPI :LPVOID
 
+if (_WIN32_WINNT ge 0x0601) and not defined(MIDL_PASS)
 
-if (_WIN32_WINNT GE 0x0601) AND NOT defined(MIDL_PASS)
+define UMS_VERSION RTL_UMS_VERSION
 
-UMS_VERSION		equ RTL_UMS_VERSION
-PUMS_CONTEXT		typedef ptr
-PUMS_COMPLETION_LIST	typedef ptr
+PUMS_CONTEXT            typedef ptr
+PUMS_COMPLETION_LIST    typedef ptr
 
-UMS_THREAD_INFO_CLASS	typedef sdword ; enum _RTL_UMS_THREAD_INFO_CLASS
-PUMS_THREAD_INFO_CLASS	typedef ptr sdword
-UMS_SCHEDULER_REASON	typedef sdword ; enum _RTL_UMS_SCHEDULER_REASON
+.enum _RTL_UMS_THREAD_INFO_CLASS {
+    }
+UMS_THREAD_INFO_CLASS   typedef _RTL_UMS_THREAD_INFO_CLASS
+PUMS_THREAD_INFO_CLASS  typedef ptr _RTL_UMS_THREAD_INFO_CLASS
+
+.enum _RTL_UMS_SCHEDULER_REASON {
+    }
+UMS_SCHEDULER_REASON    typedef _RTL_UMS_SCHEDULER_REASON
+
 PUMS_SCHEDULER_ENTRY_POINT typedef PRTL_UMS_SCHEDULER_ENTRY_POINT
 
-UMS_SCHEDULER_STARTUP_INFO  STRUC
-UmsVersion		ULONG ?
-CompletionList		PUMS_COMPLETION_LIST ?
-SchedulerProc		PUMS_SCHEDULER_ENTRY_POINT ?
-SchedulerParam		PVOID ?
-UMS_SCHEDULER_STARTUP_INFO ENDS
-PUMS_SCHEDULER_STARTUP_INFO typedef ptr UMS_SCHEDULER_STARTUP_INFO
+_UMS_SCHEDULER_STARTUP_INFO struct
+UmsVersion              ULONG ?
+CompletionList          PUMS_COMPLETION_LIST ?
+SchedulerProc           PUMS_SCHEDULER_ENTRY_POINT ?
+SchedulerParam          PVOID ?
+_UMS_SCHEDULER_STARTUP_INFO ends
+UMS_SCHEDULER_STARTUP_INFO typedef _UMS_SCHEDULER_STARTUP_INFO
+PUMS_SCHEDULER_STARTUP_INFO typedef ptr _UMS_SCHEDULER_STARTUP_INFO
 
-;BOOL
-CreateUmsCompletionList proto WINAPI \
-     UmsCompletionList: PUMS_COMPLETION_LIST
+_UMS_SYSTEM_THREAD_INFORMATION struct
+UmsVersion              ULONG ?
+union
+ struct
+  record
+   IsUmsSchedulerThread ULONG :  1 ?
+   IsUmsWorkerThread    ULONG :  1 ?
+  ends
+ ends
+ ThreadUmsFlags         ULONG ?
+ends
+_UMS_SYSTEM_THREAD_INFORMATION ends
+UMS_SYSTEM_THREAD_INFORMATION typedef _UMS_SYSTEM_THREAD_INFORMATION
+PUMS_SYSTEM_THREAD_INFORMATION typedef ptr _UMS_SYSTEM_THREAD_INFORMATION
 
-;BOOL
-DequeueUmsCompletionListItems proto WINAPI \
-     UmsCompletionList: PUMS_COMPLETION_LIST,
-	   WaitTimeOut: DWORD,
-	 UmsThreadList: PUMS_CONTEXT
-
-;BOOL
-GetUmsCompletionListEvent proto WINAPI \
-     UmsCompletionList: PUMS_COMPLETION_LIST,
-    UmsCompletionEvent: PHANDLE
-
-;BOOL
-ExecuteUmsThread proto WINAPI \
-	     UmsThread: PUMS_CONTEXT
-
-;BOOL
-UmsThreadYield proto WINAPI \
-	SchedulerParam: PVOID
-
-;BOOL
-DeleteUmsCompletionList proto WINAPI \
-     UmsCompletionList: PUMS_COMPLETION_LIST
-
-;PUMS_CONTEXT
+CreateUmsCompletionList proto WINAPI :ptr PUMS_COMPLETION_LIST
+DequeueUmsCompletionListItems proto WINAPI :PUMS_COMPLETION_LIST, :DWORD, :ptr PUMS_CONTEXT
+GetUmsCompletionListEvent proto WINAPI :PUMS_COMPLETION_LIST, :PHANDLE
+ExecuteUmsThread proto WINAPI :PUMS_CONTEXT
+UmsThreadYield proto WINAPI :ptr
+DeleteUmsCompletionList proto WINAPI :PUMS_COMPLETION_LIST
 GetCurrentUmsThread proto WINAPI
-
-;PUMS_CONTEXT
-GetNextUmsListItem proto WINAPI \
-	    UmsContext: PUMS_CONTEXT
-
-;BOOL
-QueryUmsThreadInformation proto WINAPI \
-	     UmsThread: PUMS_CONTEXT,
-    UmsThreadInfoClass: UMS_THREAD_INFO_CLASS,
-  UmsThreadInformation: PVOID,
-UmsThreadInformationLength: ULONG,
-	  ReturnLength: PULONG
-
-;BOOL
-SetUmsThreadInformation proto WINAPI \
-	     UmsThread: PUMS_CONTEXT,
-    UmsThreadInfoClass: UMS_THREAD_INFO_CLASS,
-  UmsThreadInformation: PVOID,
-UmsThreadInformationLength: ULONG
-
-;BOOL
-DeleteUmsThreadContext proto WINAPI \
-	     UmsThread: PUMS_CONTEXT
-
-;BOOL
-CreateUmsThreadContext proto WINAPI \
-	   lpUmsThread: ptr PUMS_CONTEXT
-
-;BOOL
-EnterUmsSchedulingMode proto WINAPI \
-  SchedulerStartupInfo: PUMS_SCHEDULER_STARTUP_INFO
-
-endif ; (_WIN32_WINNT GE 0x0601) AND NOT defined(MIDL_PASS)
-endif ; (_WIN32_WINNT GE 0x0400)
-
-;endif
-
-PPROC_THREAD_ATTRIBUTE_LIST	typedef ptr PROC_THREAD_ATTRIBUTE_LIST
-LPPROC_THREAD_ATTRIBUTE_LIST	typedef ptr PROC_THREAD_ATTRIBUTE_LIST
-
-;HANDLE
-CreateThread proto WINAPI \
-    lpThreadAttributes: LPSECURITY_ATTRIBUTES,
-	   dwStackSize: DWORD,
-	lpStartAddress: LPTHREAD_START_ROUTINE,
-	   lpParameter: LPVOID,
-       dwCreationFlags: DWORD,
-	    lpThreadId: LPDWORD
-
-CreateRemoteThread proto WINAPI \
-	      hProcess: HANDLE,
-    lpThreadAttributes: LPSECURITY_ATTRIBUTES,
-	   dwStackSize: DWORD,
-	lpStartAddress: LPTHREAD_START_ROUTINE,
-	   lpParameter: LPVOID,
-       dwCreationFlags: DWORD,
-	    lpThreadId: LPDWORD
-
-GetCurrentThread proto WINAPI
-
-GetCurrentThreadId proto WINAPI
-
-;BOOL
-SetThreadStackGuarantee proto WINAPI \
-      StackSizeInBytes: PULONG
-
-;DWORD
-GetProcessIdOfThread proto WINAPI \
-		Thread: HANDLE
-
-if (_WIN32_WINNT GE 0x0502)
-;DWORD
-GetThreadId proto WINAPI \
-		Thread: HANDLE
-endif
-
-;DWORD
-GetProcessId proto WINAPI \
-	       Process: HANDLE
-
-;DWORD
-GetCurrentProcessorNumber proto WINAPI
-
-if (_WIN32_WINNT GE 0x0601)
-;VOID
-GetCurrentProcessorNumberEx proto WINAPI \
-	    ProcNumber: PPROCESSOR_NUMBER
-endif
-
-if (_WIN32_WINNT GE 0x0601)
-;BOOL
-GetThreadGroupAffinity proto WINAPI \
-	       hThread: HANDLE,
-	 GroupAffinity: PGROUP_AFFINITY
-endif
-
-SetThreadAffinityMask proto WINAPI \
-	       hThread: HANDLE,
-  dwThreadAffinityMask: DWORD
-
-if (_WIN32_WINNT GE 0x0601)
-;BOOL
-SetThreadGroupAffinity proto WINAPI \
-	       hThread: HANDLE,
-	 GroupAffinity: ptr GROUP_AFFINITY,
- PreviousGroupAffinity: PGROUP_AFFINITY
-;BOOL
-SetThreadIdealProcessorEx proto WINAPI \
-	       hThread: HANDLE,
-      lpIdealProcessor: PPROCESSOR_NUMBER,
-lpPreviousIdealProcessor: PPROCESSOR_NUMBER
-;BOOL
-GetThreadIdealProcessorEx proto WINAPI \
-	       hThread: HANDLE,
-      lpIdealProcessor: PPROCESSOR_NUMBER
-endif
-
-if(_WIN32_WINNT GE 0x0400)
-;DWORD
-SetThreadIdealProcessor proto WINAPI \
-	       hThread: HANDLE,
-      dwIdealProcessor: DWORD
-endif
-
-if (_WIN32_WINNT GE 0x0600)
-
-PROCESS_DEP_ENABLE	equ 0x00000001
-PROCESS_DEP_DISABLE_ATL_THUNK_EMULATION equ 0x00000002
-
-;BOOL
-SetProcessDEPPolicy proto WINAPI \
-	       dwFlags: DWORD
-;BOOL
-GetProcessDEPPolicy proto WINAPI \
-	      hProcess: HANDLE,
-	       lpFlags: LPDWORD,
-	   lpPermanent: PBOOL
+GetNextUmsListItem proto WINAPI :PUMS_CONTEXT
+QueryUmsThreadInformation proto WINAPI :PUMS_CONTEXT, :UMS_THREAD_INFO_CLASS, :ptr, :ULONG, :PULONG
+SetUmsThreadInformation proto WINAPI :PUMS_CONTEXT, :UMS_THREAD_INFO_CLASS, :ptr, :ULONG
+DeleteUmsThreadContext proto WINAPI :PUMS_CONTEXT
+CreateUmsThreadContext proto WINAPI :ptr PUMS_CONTEXT
+EnterUmsSchedulingMode proto WINAPI :PUMS_SCHEDULER_STARTUP_INFO
+GetUmsSystemThreadInformation proto WINAPI :HANDLE, :PUMS_SYSTEM_THREAD_INFORMATION
 
 endif
 
-;BOOL
-SetProcessPriorityBoost proto WINAPI \
-	      hProcess: HANDLE,
- bDisablePriorityBoost: BOOL
-
-GetProcessPriorityBoost proto WINAPI \
-	      hProcess: HANDLE,
- bDisablePriorityBoost: BOOL
-
-RequestWakeupLatency proto WINAPI \
-	       latency: LATENCY_TIME
-
-SetThreadPriority proto WINAPI \
-	       hThread: HANDLE,
-	     nPriority: SINT
-
-SetThreadPriorityBoost proto WINAPI \
-	       hThread: HANDLE,
- bDisablePriorityBoost: BOOL
-
-GetThreadPriorityBoost proto WINAPI \
-	       hThread: HANDLE,
- pDisablePriorityBoost: PBOOL
-;int
-GetThreadPriority proto WINAPI \
-	       hThread: HANDLE
-;BOOL
-GetThreadTimes proto WINAPI \
-	       hThread: HANDLE,
-	lpCreationTime: LPFILETIME,
-	    lpExitTime: LPFILETIME,
-	  lpKernelTime: LPFILETIME,
-	    lpUserTime: LPFILETIME
-
-if _WIN32_WINNT GE 0x0501
-;BOOL
-GetThreadIOPendingFlag proto WINAPI \
-	       hThread: HANDLE,
-	 lpIOIsPending: PBOOL
 endif
 
-;VOID
-ExitThread proto WINAPI \
-	    dwExitCode: DWORD
-;BOOL
-TerminateThread proto WINAPI \
-	       hThread: HANDLE,
-	    dwExitCode: DWORD
-;BOOL
-GetExitCodeThread proto WINAPI \
-	       hThread: HANDLE,
-	    lpExitCode: LPDWORD
-;BOOL
-GetThreadSelectorEntry proto WINAPI \
-	       hThread: HANDLE,
-	    dwSelector: DWORD,
-       lpSelectorEntry: LPLDT_ENTRY
-;EXECUTION_STATE
-SetThreadExecutionState proto WINAPI \
-	       esFlags: EXECUTION_STATE
+SetThreadAffinityMask proto WINAPI :HANDLE, :DWORD_PTR
 
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+if (_WIN32_WINNT ge 0x0600)
 
-REASON_CONTEXT		STRUC
-Version			ULONG ?
-Flags			dd ?
-UNION Reason
- STRUC Detailed
-  LocalizedReasonModule HMODULE ?
-  LocalizedReasonId	ULONG ?
-  ReasonStringCount	ULONG ?
-  ReasonStrings		LPWSTR ?
- ENDS
- SimpleReasonString	 LPWSTR ?
-ENDS
-REASON_CONTEXT		ENDS
-PREASON_CONTEXT		typedef ptr REASON_CONTEXT
+define PROCESS_DEP_ENABLE                          0x00000001
+define PROCESS_DEP_DISABLE_ATL_THUNK_EMULATION     0x00000002
 
-POWER_REQUEST_CONTEXT	typedef REASON_CONTEXT
-PPOWER_REQUEST_CONTEXT	typedef ptr REASON_CONTEXT
-LPPOWER_REQUEST_CONTEXT typedef ptr REASON_CONTEXT
+SetProcessDEPPolicy proto WINAPI :DWORD
+GetProcessDEPPolicy proto WINAPI :HANDLE, :LPDWORD, :PBOOL
 
-;HANDLE
-PowerCreateRequest proto WINAPI \
-	       Context: PREASON_CONTEXT
+endif
 
-;BOOL
-PowerSetRequest proto WINAPI \
-	  PowerRequest: HANDLE,
-	   RequestType: POWER_REQUEST_TYPE
+RequestWakeupLatency proto WINAPI :LATENCY_TIME
+IsSystemResumeAutomatic proto WINAPI
+GetThreadSelectorEntry proto WINAPI :HANDLE, :DWORD, :LPLDT_ENTRY
+SetThreadExecutionState proto WINAPI :EXECUTION_STATE
 
-;BOOL
-PowerClearRequest proto WINAPI \
-	  PowerRequest: HANDLE,
-	   RequestType: POWER_REQUEST_TYPE
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
+
+LPPOWER_REQUEST_CONTEXT typedef ptr POWER_REQUEST_CONTEXT
+
+PowerCreateRequest proto WINAPI :PREASON_CONTEXT
+PowerSetRequest proto WINAPI :HANDLE, :POWER_REQUEST_TYPE
+PowerClearRequest proto WINAPI :HANDLE, :POWER_REQUEST_TYPE
 
 endif
 
 ifdef _M_CEE_PURE
-GetLastError		equ <System::Runtime::InteropServices::Marshal::GetLastWin32Error>
-else
-;DWORD
-GetLastError proto WINAPI
+define GetLastError <System::Runtime::InteropServices::Marshal::GetLastWin32Error>
 endif
 
-;VOID
-SetLastError proto WINAPI \
-	     dwErrCode: DWORD
-
+ifndef RC_INVOKED
 ifdef WINBASE_DECLARE_RESTORE_LAST_ERROR
-;VOID
-RestoreLastError proto WINAPI \
-	     dwErrCode: DWORD
+
+RestoreLastError proto WINAPI :DWORD
 
 CALLBACK(PRESTORE_LAST_ERROR, :DWORD)
-RESTORE_LAST_ERROR_NAME equ <"RestoreastError">
+define RESTORE_LAST_ERROR_NAME_A    <"RestoreLastError">
+define RESTORE_LAST_ERROR_NAME_W    <L"RestoreLastError">
+define RESTORE_LAST_ERROR_NAME      <"RestoreLastError">
 
 endif
+endif
 
-;HasOverlappedIoCompleted(lpOverlapped) ((lpOverlapped)->Internal != STATUS_PENDING)
 HasOverlappedIoCompleted macro lpOverlapped
-	endm
+  exitm<(((lpOverlapped).Internal) ne STATUS_PENDING)>
+  endm
 
-;BOOL
-GetOverlappedResult proto WINAPI \
-		 hFile: HANDLE,
-	  lpOverlapped: LPOVERLAPPED,
-lpNumberOfBytesTransferred: LPDWORD,
-		 bWait: BOOL
-;HANDLE
-CreateIoCompletionPort proto WINAPI \
-	    FileHandle: HANDLE,
-ExistingCompletionPort: HANDLE,
-	 CompletionKey: DWORD,
-NumberOfConcurrentThreads: DWORD
-;BOOL
-GetQueuedCompletionStatus proto WINAPI \
-	CompletionPort: HANDLE,
-lpNumberOfBytesTransferred: LPDWORD,
-       lpCompletionKey: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED,
-	dwMilliseconds: DWORD
+if (_WIN32_WINNT ge 0x0600)
 
-if (_WIN32_WINNT GE 0x0600)
-;BOOL
-GetQueuedCompletionStatusEx proto WINAPI \
-	CompletionPort: HANDLE,
-lpCompletionPortEntries: LPOVERLAPPED_ENTRY,
-	       ulCount: ULONG,
-   ulNumEntriesRemoved: PULONG,
-	dwMilliseconds: DWORD,
-	    fAlertable: BOOL
-endif
+define FILE_SKIP_COMPLETION_PORT_ON_SUCCESS    0x1
+define FILE_SKIP_SET_EVENT_ON_HANDLE           0x2
 
-PostQueuedCompletionStatus proto WINAPI \
-	CompletionPort: HANDLE,
-lpNumberOfBytesTransferred: DWORD,
-       lpCompletionKey: DWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-if (_WIN32_WINNT GE 0x0600)
-FILE_SKIP_COMPLETION_PORT_ON_SUCCESS equ 0x1
-FILE_SKIP_SET_EVENT_ON_HANDLE equ 0x2
-
-;BOOL
-SetFileCompletionNotificationModes proto WINAPI \
-	    FileHandle: HANDLE,
-		 Flags: UCHAR
-;BOOL
-SetFileIoOverlappedRange proto WINAPI \
-	    FileHandle: HANDLE,
-  OverlappedRangeStart: PUCHAR,
-		Length: ULONG
-endif
-
-SEM_FAILCRITICALERRORS	    equ 0x0001
-SEM_NOGPFAULTERRORBOX	    equ 0x0002
-SEM_NOALIGNMENTFAULTEXCEPT  equ 0x0004
-SEM_NOOPENFILEERRORBOX	    equ 0x8000
-
-;UINT
-GetErrorMode proto WINAPI
-
-;UINT
-SetErrorMode proto WINAPI \
-		 uMode: UINT
-
-;DWORD
-GetThreadErrorMode proto WINAPI
-
-;BOOL
-SetThreadErrorMode proto WINAPI \
-	     dwNewMode: DWORD,
-	     lpOldMode: LPDWORD
-
-;BOOL
-ReadProcessMemory proto WINAPI \
-	      hProcess: HANDLE,
-	 lpBaseAddress: LPCVOID,
-	      lpBuffer: LPVOID,
-		 nSize: DWORD,
-   lpNumberOfBytesRead: LPDWORD
-
-WriteProcessMemory proto WINAPI \
-	      hProcess: HANDLE,
-	 lpBaseAddress: LPVOID,
-	      lpBuffer: LPVOID,
-		 nSize: DWORD,
-lpNumberOfBytesWritten: LPDWORD
-
-ifndef MIDL_PASS
-GetThreadContext proto WINAPI \
-	       hThread: HANDLE,
-	     lpContext: LPCONTEXT
-
-SetThreadContext proto WINAPI \
-	       hThread: HANDLE,
-	     lpContext: PTR CONTEXT
-;BOOL
-Wow64GetThreadContext proto WINAPI \
-	       hThread: HANDLE,
-	     lpContext: PWOW64_CONTEXT
-
-if(_WIN32_WINNT GE 0x0601)
-;BOOL
-Wow64GetThreadSelectorEntry proto WINAPI \
-	 hThread: HANDLE,
-      dwSelector: DWORD,
- lpSelectorEntry: PWOW64_LDT_ENTRY
-endif
-
-;BOOL
-Wow64SetThreadContext proto WINAPI \
-	 hThread: HANDLE,
-       lpContext: ptr WOW64_CONTEXT
+SetFileCompletionNotificationModes proto WINAPI :HANDLE, :UCHAR
 
 endif
 
-;DWORD
-SuspendThread proto WINAPI \
-	       hThread: HANDLE
+define SEM_FAILCRITICALERRORS      0x0001
+define SEM_NOGPFAULTERRORBOX       0x0002
+define SEM_NOALIGNMENTFAULTEXCEPT  0x0004
+define SEM_NOOPENFILEERRORBOX      0x8000
 
-;DWORD
-Wow64SuspendThread proto WINAPI \
-	       hThread: HANDLE
-
-ResumeThread proto WINAPI \
-	       hThread: HANDLE
-
-if(_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
-
-;VOID
-;CALLBACK(PAPCFUNC, :ULONG_PTR)
-
-QueueUserAPC proto WINAPI \
-		pfnAPC: PAPCFUNC,
-	       hThread: HANDLE,
-		dwData: DWORD
+if not defined(MIDL_PASS)
+if (_WIN32_WINNT ge 0x0601)
+Wow64GetThreadSelectorEntry proto WINAPI :HANDLE, :DWORD, :PWOW64_LDT_ENTRY
+endif
 endif
 
-if (_WIN32_WINNT GE 0x0400) or (_WIN32_WINDOWS GT 0x0400)
-;BOOL
-IsDebuggerPresent proto WINAPI
+DebugSetProcessKillOnExit proto WINAPI :BOOL
+DebugBreakProcess proto WINAPI :HANDLE
+
+if (_WIN32_WINNT ge 0x0403)
+define CRITICAL_SECTION_NO_DEBUG_INFO  RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO
 endif
 
-if _WIN32_WINNT GE 0x0501
-;BOOL
-CheckRemoteDebuggerPresent proto WINAPI \
-	      hProcess: HANDLE,
-     pbDebuggerPresent: PBOOL
-endif
-
-;VOID
-DebugBreak proto WINAPI
-
-;BOOL
-WaitForDebugEvent proto WINAPI \
-	  lpDebugEvent: LPDEBUG_EVENT,
-	dwMilliseconds: DWORD
-
-ContinueDebugEvent proto WINAPI \
-	   dwProcessId: DWORD,
-	    dwThreadId: DWORD,
-      dwContinueStatus: DWORD
-
-DebugActiveProcess proto WINAPI \
-	   dwProcessId: DWORD
-
-;BOOL
-DebugActiveProcessStop proto WINAPI \
-	   dwProcessId: DWORD
-
-;BOOL
-DebugSetProcessKillOnExit proto WINAPI \
-	    KillOnExit: BOOL
-
-;BOOL
-DebugBreakProcess proto WINAPI \
-	   dwProcessId: DWORD
-
-;VOID
-InitializeCriticalSection proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION
-
-EnterCriticalSection proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION
-
-LeaveCriticalSection proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION
-
-if (_WIN32_WINNT GE 0x0403)
-CRITICAL_SECTION_NO_DEBUG_INFO equ RTL_CRITICAL_SECTION_FAG_NO_DEBUG_INFO
-
-;BOOL
-InitializeCriticalSectionAndSpinCount proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION,
-	   dwSpinCount: DWORD
-
-;BOOL
-InitializeCriticalSectionEx proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION,
-	   dwSpinCount: DWORD,
-		 Flags: DWORD
-
-;DWORD
-SetCriticalSectionSpinCount proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION,
-	   dwSpinCount: DWORD
-
-endif
-
-if(_WIN32_WINNT GE 0x0400)
-;BOOL
-TryEnterCriticalSection proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION
-endif
-
-;VOID
-DeleteCriticalSection proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION
-;BOOL
-SetEvent proto WINAPI \
-		hEvent: HANDLE
-
-ResetEvent proto WINAPI \
-		hEvent: HANDLE
-
-PulseEvent proto WINAPI \
-		hEvent: HANDLE
-
-ReleaseSemaphore proto WINAPI \
-	    hSemaphore: HANDLE,
-	 lReleaseCount: LONG,
-       lpPreviousCount: LPLONG
-
-ReleaseMutex proto WINAPI \
-		hMutex: HANDLE
-;DWORD
-WaitForSingleObject proto WINAPI \
-	       hHandle: HANDLE,
-	dwMilliseconds: DWORD
-
-WaitForMultipleObjects proto WINAPI \
-		nCount: DWORD,
-	     lpHandles: PTR HANDLE,
-	      bWaitAll: BOOL,
-	dwMilliseconds: DWORD
-;VOID
-Sleep proto WINAPI \
-	dwMilliseconds: DWORD
-;HGLOBAL
-LoadResource proto WINAPI \
-	       hModule: HMODULE,
-	      hResInfo: HRSRC
-;DWORD
-SizeofResource proto WINAPI \
-	       hModule: HMODULE,
-	      hResInfo: HRSRC
-;ATOM
-GlobalDeleteAtom proto WINAPI \
-		 nAtom: ATOM
-;BOOL
-InitAtomTable proto WINAPI \
-		 nSize: DWORD
-;ATOM
-DeleteAtom proto WINAPI \
-		 nAtom: ATOM
-;UINT
-SetHandleCount proto WINAPI \
-	       uNumber: UINT
-;DWORD
-GetLogicalDrives proto WINAPI
-;BOOL
-LockFile proto WINAPI \
-		 hFile: HANDLE,
-       dwFileOffsetLow: DWORD,
-      dwFileOffsetHigh: DWORD,
-nNumberOfBytesToLockLow: DWORD,
-nNumberOfBytesToLockHigh: DWORD
-
-UnlockFile proto WINAPI \
-		 hFile: HANDLE,
-       dwFileOffsetLow: DWORD,
-      dwFileOffsetHigh: DWORD,
-nNumberOfBytesToLockLow: DWORD,
-nNumberOfBytesToLockHigh: DWORD
-
-LockFileEx proto WINAPI \
-		 hFile: HANDLE,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD,
-nNumberOfBytesToLockLow: DWORD,
-nNumberOfBytesToLockHigh: DWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-LOCKFILE_FAIL_IMMEDIATELY   equ 0x00000001
-LOCKFILE_EXCLUSIVE_LOCK	    equ 0x00000002
-
-UnlockFileEx proto WINAPI \
-		 hFile: HANDLE,
-	    dwReserved: DWORD,
-nNumberOfBytesToUnlockLow: DWORD,
-nNumberOfBytesToUnlockHigh: DWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-BY_HANDLE_FILE_INFORMATION STRUC
-dwFileAttributes	DWORD ?
-ftCreationTime		FILETIME <>
-ftLastAccessTime	FILETIME <>
-ftLastWriteTime		FILETIME <>
-dwVolumeSerialNumber	DWORD ?
-nFileSizeHigh		DWORD ?
-nFileSizeLow		DWORD ?
-nNumberOfLinks		DWORD ?
-nFileIndexHigh		DWORD ?
-nFileIndexLow		DWORD ?
-BY_HANDLE_FILE_INFORMATION ENDS
-
-PBY_HANDLE_FILE_INFORMATION	TYPEDEF PTR BY_HANDLE_FILE_INFORMATION
-LPBY_HANDLE_FILE_INFORMATION	TYPEDEF PTR BY_HANDLE_FILE_INFORMATION
-
-;BOOL
-GetFileInformationByHandle proto WINAPI \
-		 hFile: HANDLE,
-     lpFileInformation: LPBY_HANDLE_FILE_INFORMATION
-;DWORD
-GetFileType proto WINAPI \
-		 hFile: HANDLE
-
-GetFileSize proto WINAPI \
-		 hFile: HANDLE,
-	lpFileSizeHigh: LPDWORD
-
-if (WINVER GE 0x0502)
-;BOOL
-GetFileSizeEx proto WINAPI \
-		 hFile: HANDLE,
-	    lpFileSize: PLARGE_INTEGER
-else
-CALLBACK(GetFileSizeEx_T, hFile:HANDLE, lpFileSize:PLARGE_INTEGER)
-externdef GetFileSizeEx:GetFileSizeEx_T
-endif
-
-;HANDLE
-GetStdHandle proto WINAPI \
-	    nStdHandle: DWORD
-;BOOL
-SetStdHandle proto WINAPI \
-	    nStdHandle: DWORD,
-	       hHandle: HANDLE
-
-if (_WIN32_WINNT GE 0x0600)
-;BOOL
-SetStdHandleEx proto WINAPI \
-	    nStdHandle: DWORD,
-	       hHandle: HANDLE,
-	   phPrevValue: PHANDLE
-endif
-
-WriteFile proto WINAPI \
-		 hFile: HANDLE,
-	      lpBuffer: PVOID,
- nNumberOfBytesToWrite: DWORD,
-lpNumberOfBytesWritten: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-ReadFile proto WINAPI \
-		 hFile: HANDLE,
-	      lpBuffer: PVOID,
-  nNumberOfBytesToRead: DWORD,
-   lpNumberOfBytesRead: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-FlushFileBuffers proto WINAPI \
-		 hFile: HANDLE
-
-DeviceIoControl proto WINAPI \
-	       hDevice: HANDLE,
-       dwIoControlCode: DWORD,
-	    lpInBuffer: PVOID,
-	 nInBufferSize: DWORD,
-	   lpOutBuffer: PVOID,
-	nOutBufferSize: DWORD,
-       lpBytesReturned: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-GetDevicePowerState proto WINAPI \
-		 hFile: HANDLE
-
-SetEndOfFile proto WINAPI \
-		 hFile: HANDLE
-;DWORD
-SetFilePointer proto WINAPI \
-		 hFile: HANDLE,
-       lDistanceToMove: LONG,
-  lpDistanceToMoveHigh: PLONG,
-	  dwMoveMethod: DWORD
-
-if (WINVER GE 0x0502)
-;BOOL
-SetFilePointerEx proto WINAPI \
-		 hFile: HANDLE,
-      liDistanceToMove: LARGE_INTEGER,
-      lpNewFilePointer: PLARGE_INTEGER,
-	  dwMoveMethod: DWORD
-else
-CALLBACK(SetFilePointerEx_T, :HANDLE, :LARGE_INTEGER, :PLARGE_INTEGER, :DWORD)
-externdef SetFilePointerEx:SetFilePointerEx_T
-endif
-
-;BOOL
-FindClose proto WINAPI \
-	     hFindFile: HANDLE
-
-GetFileTime proto WINAPI \
-		 hFile: HANDLE,
-	lpCreationTime: LPFILETIME,
-      lpLastAccessTime: LPFILETIME,
-       lpLastWriteTime: LPFILETIME
-
-SetFileTime proto WINAPI \
-		 hFile: HANDLE,
-	lpCreationTime: LPFILETIME,
-      lpLastAccessTime: LPFILETIME,
-       lpLastWriteTime: LPFILETIME
-
-if _WIN32_WINNT GE 0x0501
-;BOOL
-SetFileValidData proto WINAPI \
-		 hFile: HANDLE,
-       ValidDataLength: LONGLONG
-endif
-;BOOL
-SetFileShortNameA proto WINAPI \
-		 hFile: HANDLE,
-	   lpShortName: LPCSTR
-SetFileShortNameW proto WINAPI \
-		 hFile: HANDLE,
-	   lpShortName: LPCWSTR
+PulseEvent proto WINAPI :HANDLE
+GlobalDeleteAtom proto WINAPI :ATOM
+InitAtomTable proto WINAPI :DWORD
+DeleteAtom proto WINAPI :ATOM
+SetHandleCount proto WINAPI :UINT
+RequestDeviceWakeup proto WINAPI :HANDLE
+CancelDeviceWakeupRequest proto WINAPI :HANDLE
+GetDevicePowerState proto WINAPI :HANDLE, :ptr BOOL
+SetMessageWaitingIndicator proto WINAPI :HANDLE, :ULONG
+SetFileShortNameA proto WINAPI :HANDLE, :LPCSTR
+SetFileShortNameW proto WINAPI :HANDLE, :LPCWSTR
 ifdef _UNICODE
-SetFileShortName	equ <SetFileShortNameW>
+define SetFileShortName  <SetFileShortNameW>
 else
-SetFileShortName	equ <SetFileShortNameA>
+define SetFileShortName  <SetFileShortNameA>
 endif
 
-CloseHandle proto WINAPI \
-	       hObject: HANDLE
+define HANDLE_FLAG_INHERIT             0x00000001
+define HANDLE_FLAG_PROTECT_FROM_CLOSE  0x00000002
 
-DuplicateHandle proto WINAPI \
-  hSourceProcessHandle: HANDLE,
-	 hSourceHandle: HANDLE,
-  hTargetProcessHandle: HANDLE,
-	lpTargetHandle: LPHANDLE,
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-	     dwOptions: DWORD
+define HINSTANCE_ERROR 32
 
-GetHandleInformation proto WINAPI \
-	       hObject: HANDLE,
-	     lpdwFlags: LPDWORD
+LoadModule proto WINAPI :LPCSTR, :LPVOID
+WinExec proto WINAPI :LPCSTR, :UINT
 
-SetHandleInformation proto WINAPI \
-	       hObject: HANDLE,
-		dwMask: DWORD,
-	       dwFlags: DWORD
+ClearCommBreak proto WINAPI :HANDLE
+ClearCommError proto WINAPI :HANDLE, :LPDWORD, :LPCOMSTAT
+SetupComm proto WINAPI :HANDLE, :DWORD, :DWORD
+EscapeCommFunction proto WINAPI :HANDLE, :DWORD
+GetCommConfig proto WINAPI :HANDLE, :LPCOMMCONFIG, :LPDWORD
+GetCommMask proto WINAPI :HANDLE, :LPDWORD
+GetCommProperties proto WINAPI :HANDLE, :LPCOMMPROP
+GetCommModemStatus proto WINAPI :HANDLE, :LPDWORD
+GetCommState proto WINAPI :HANDLE, :LPDCB
+GetCommTimeouts proto WINAPI :HANDLE, :LPCOMMTIMEOUTS
+PurgeComm proto WINAPI :HANDLE, :DWORD
+SetCommBreak proto WINAPI :HANDLE
+SetCommConfig proto WINAPI :HANDLE, :LPCOMMCONFIG, :DWORD
+SetCommMask proto WINAPI :HANDLE, :DWORD
+SetCommState proto WINAPI :HANDLE, :LPDCB
+SetCommTimeouts proto WINAPI :HANDLE, :LPCOMMTIMEOUTS
+TransmitCommChar proto WINAPI :HANDLE, :SBYTE
+WaitCommEvent proto WINAPI :HANDLE, :LPDWORD, :LPOVERLAPPED
 
-HANDLE_FLAG_INHERIT		equ 0x00000001
-HANDLE_FLAG_PROTECT_FROM_CLOSE	equ 0x00000002
+if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
+OpenCommPort proto WINAPI :ULONG, :DWORD, :DWORD
+endif
+if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
+GetCommPorts proto WINAPI :PULONG, :ULONG, :PULONG
+endif
 
-HINSTANCE_ERROR equ 32
+SetTapePosition proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :DWORD, :BOOL
+GetTapePosition proto WINAPI :HANDLE, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+PrepareTape proto WINAPI :HANDLE, :DWORD, :BOOL
+EraseTape proto WINAPI :HANDLE, :DWORD, :BOOL
+CreateTapePartition proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD
+WriteTapemark proto WINAPI :HANDLE, :DWORD, :DWORD, :BOOL
+GetTapeStatus proto WINAPI :HANDLE
+GetTapeParameters proto WINAPI :HANDLE, :DWORD, :LPDWORD, :LPVOID
 
-;DWORD
-LoadModule proto WINAPI \
-	  lpModuleName: LPCSTR,
-      lpParameterBlock: LPVOID
-;UINT
-WinExec proto WINAPI \
-	     lpCmdLine: LPCSTR,
-	      uCmdShow: UINT
-;BOOL
-ClearCommBreak proto WINAPI \
-		 hFile: HANDLE
+define GET_TAPE_MEDIA_INFORMATION 0
+define GET_TAPE_DRIVE_INFORMATION 1
 
-ClearCommError proto WINAPI \
-		 hFile: HANDLE,
-	      lpErrors: LPDWORD,
-		lpStat: LPCOMSTAT
+SetTapeParameters proto WINAPI :HANDLE, :DWORD, :LPVOID
 
-SetupComm proto WINAPI \
-		 hFile: HANDLE,
-	     dwInQueue: DWORD,
-	    dwOutQueue: DWORD
+define SET_TAPE_MEDIA_INFORMATION 0
+define SET_TAPE_DRIVE_INFORMATION 1
 
-EscapeCommFunction proto WINAPI \
-		 hFile: HANDLE,
-		dwFunc: DWORD
+MulDiv proto WINAPI :int_t, :int_t, :int_t
 
-GetCommConfig proto WINAPI \
-	      hCommDev: HANDLE,
-		  lpCC: LPCOMMCONFIG,
-	      lpdwSize: LPDWORD
-
-GetCommMask proto WINAPI \
-		 hFile: HANDLE,
-	     lpEvtMask: LPDWORD
-
-GetCommProperties proto WINAPI \
-		 hFile: HANDLE,
-	    lpCommProp: LPCOMMPROP
-
-GetCommModemStatus proto WINAPI \
-		 hFile: HANDLE,
-	   lpModemStat: LPDWORD
-
-GetCommState proto WINAPI \
-		 hFile: HANDLE,
-		 lpDCB: LPDCB
-
-GetCommTimeouts proto WINAPI \
-		 hFile: HANDLE,
-	lpCommTimeouts: LPCOMMTIMEOUTS
-
-PurgeComm proto WINAPI \
-		 hFile: HANDLE,
-	       dwFlags: DWORD
-
-SetCommBreak proto WINAPI \
-		 hFile: HANDLE
-
-SetCommConfig proto WINAPI \
-	      hCommDev: HANDLE,
-		  lpCC: LPCOMMCONFIG,
-		dwSize: DWORD
-
-SetCommMask proto WINAPI \
-		 hFile: HANDLE,
-	     dwEvtMask: DWORD
-
-SetCommState proto WINAPI \
-		 hFile: HANDLE,
-		 lpDCB: LPDCB
-
-SetCommTimeouts proto WINAPI \
-		 hFile: HANDLE,
-	lpCommTimeouts: LPCOMMTIMEOUTS
-
-TransmitCommChar proto WINAPI \
-		 hFile: HANDLE,
-		 cChar: UINT ; char
-
-WaitCommEvent proto WINAPI \
-		 hFile: HANDLE,
-	     lpEvtMask: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-;DWORD
-SetTapePosition proto WINAPI \
-	       hDevice: HANDLE,
-      dwPositionMethod: DWORD,
-	   dwPartition: DWORD,
-	   dwOffsetLow: DWORD,
-	  dwOffsetHigh: DWORD,
-	    bImmediate: BOOL
-
-GetTapePosition proto WINAPI \
-	       hDevice: HANDLE,
-	dwPositionType: DWORD,
-	 lpdwPartition: LPDWORD,
-	 lpdwOffsetLow: LPDWORD,
-	lpdwOffsetHigh: LPDWORD
-
-PrepareTape proto WINAPI \
-	       hDevice: HANDLE,
-	   dwOperation: DWORD,
-	    bImmediate: BOOL
-
-EraseTape proto WINAPI \
-	       hDevice: HANDLE,
-	   dwEraseType: DWORD,
-	    bImmediate: BOOL
-
-CreateTapePartition proto WINAPI \
-	       hDevice: HANDLE,
-     dwPartitionMethod: DWORD,
-	       dwCount: DWORD,
-		dwSize: DWORD
-
-WriteTapemark proto WINAPI \
-	       hDevice: HANDLE,
-	dwTapemarkType: DWORD,
-       dwTapemarkCount: DWORD,
-	    bImmediate: BOOL
-
-GetTapeStatus proto WINAPI \
-	       hDevice: HANDLE
-
-GetTapeParameters proto WINAPI \
-	       hDevice: HANDLE,
-	   dwOperation: DWORD,
-	      lpdwSize: LPDWORD,
-     lpTapeInformation: LPVOID
-
-GET_TAPE_MEDIA_INFORMATION equ 0
-GET_TAPE_DRIVE_INFORMATION equ 1
-
-SetTapeParameters proto WINAPI \
-	       hDevice: HANDLE,
-	   dwOperation: DWORD,
-     lpTapeInformation: PVOID
-
-SET_TAPE_MEDIA_INFORMATION equ 0
-SET_TAPE_DRIVE_INFORMATION equ 1
-
-;BOOL
-Beep proto WINAPI \
-		dwFreq: DWORD,
-	    dwDuration: DWORD
-;int
-MulDiv proto WINAPI \
-	       nNumber: SINT,
-	    nNumerator: SINT,
-	  nDenominator: SINT
-;VOID
-GetSystemTime proto WINAPI \
-	  lpSystemTime: LPSYSTEMTIME
-
-GetSystemTimeAsFileTime proto WINAPI \
-lpSystemTimeAsFileTime: LPFILETIME
-;BOOL
-SetSystemTime proto WINAPI \
-	  lpSystemTime: LPSYSTEMTIME
-;VOID
-GetLocalTime proto WINAPI \
-	  lpSystemTime: LPSYSTEMTIME
-;BOOL
-SetLocalTime proto WINAPI \
-	  lpSystemTime: LPSYSTEMTIME
-;VOID
-GetSystemInfo proto WINAPI \
-	  lpSystemInfo: LPSYSTEM_INFO
-
-.enum _DEP_SYSTEM_POLICY_TYPE {
-    DEPPolicyAlwaysOff,
+.enum DEP_SYSTEM_POLICY_TYPE {
+    DEPPolicyAlwaysOff = 0,
     DEPPolicyAlwaysOn,
     DEPPolicyOptIn,
     DEPPolicyOptOut,
     DEPTotalPolicyCount
     }
-DEP_SYSTEM_POLICY_TYPE	typedef _DEP_SYSTEM_POLICY_TYPE
 
-;DEP_SYSTEM_POLICY_TYPE
+if (NTDDI_VERSION ge NTDDI_WINXPSP3)
 GetSystemDEPPolicy proto WINAPI
-
-if _WIN32_WINNT GE 0x0502
-FILE_CACHE_FLAGS_DEFINED	equ 1
-FILE_CACHE_MAX_HARD_ENABLE	equ 0x00000001
-FILE_CACHE_MAX_HARD_DISABLE	equ 0x00000002
-FILE_CACHE_MIN_HARD_ENABLE	equ 0x00000004
-FILE_CACHE_MIN_HARD_DISABLE	equ 0x00000008
-
-;BOOL
-SetSystemFileCacheSize proto WINAPI \
-  MinimumFileCacheSize: SIZE_T,
-  MaximumFileCacheSize: SIZE_T,
-		 Flags: DWORD
-;BOOL
-GetSystemFileCacheSize proto WINAPI \
-lpMinimumFileCacheSize: PSIZE_T,
-lpMaximumFileCacheSize: PSIZE_T,
-		 Flags: DWORD
 endif
 
-if _WIN32_WINNT GE 0x0501
-;BOOL
-GetSystemRegistryQuota proto WINAPI \
-       pdwQuotaAllowed: PDWORD,
-	  pdwQuotaUsed: PDWORD
-;BOOL
-GetSystemTimes proto WINAPI \
-	    lpIdleTime: LPFILETIME,
-	  lpKernelTime: LPFILETIME,
-	    lpUserTime: LPFILETIME
+if _WIN32_WINNT ge 0x0501
+GetSystemRegistryQuota proto WINAPI :PDWORD, :PDWORD
 endif
 
-if _WIN32_WINNT GE 0x0501
-;VOID
-GetNativeSystemInfo proto WINAPI \
-	  lpSystemInfo: LPSYSTEM_INFO
-endif
+FileTimeToDosDateTime proto WINAPI :ptr, :LPWORD, :LPWORD
+DosDateTimeToFileTime proto WINAPI :WORD, :WORD, :LPFILETIME
 
-;BOOL
-IsProcessorFeaturePresent proto WINAPI \
-      ProcessorFeature: DWORD
-
-TIME_ZONE_INFORMATION	STRUC
-Bias			dd ?		;LONG
-StandardName		dw 32 dup(?)	;WCHAR[ 32 ];
-StandardDate		SYSTEMTIME <>
-StandardBias		dd ?		;LONG
-DaylightName		dw 32 dup(?)	;WCHAR[ 32 ];
-DaylightDate		SYSTEMTIME <>
-DaylightBias		dd ?		;LONG
-TIME_ZONE_INFORMATION	ENDS
-
-PTIME_ZONE_INFORMATION	TYPEDEF PTR TIME_ZONE_INFORMATION
-LPTIME_ZONE_INFORMATION TYPEDEF PTR TIME_ZONE_INFORMATION
-
-;BOOL
-SystemTimeToTzSpecificLocalTime proto WINAPI \
- lpTimeZoneInformation: LPTIME_ZONE_INFORMATION,
-       lpUniversalTime: LPSYSTEMTIME,
-	   lpLocalTime: LPSYSTEMTIME
-;DWORD
-GetTimeZoneInformation proto WINAPI \
- lpTimeZoneInformation: LPTIME_ZONE_INFORMATION
-;BOOL
-SetTimeZoneInformation proto WINAPI \
- lpTimeZoneInformation: LPTIME_ZONE_INFORMATION
-
-
-SystemTimeToFileTime proto WINAPI \
-	  lpSystemTime: LPSYSTEMTIME,
-	    lpFileTime: LPFILETIME
-
-FileTimeToLocalFileTime proto WINAPI \
-	    lpFileTime: LPFILETIME,
-       lpLocalFileTime: LPFILETIME
-
-LocalFileTimeToFileTime proto WINAPI \
-       lpLocalFileTime: LPFILETIME,
-	    lpFileTime: LPFILETIME
-
-FileTimeToSystemTime proto WINAPI \
-	    lpFileTime: LPFILETIME,
-	  lpSystemTime: LPSYSTEMTIME
-;LONG
-CompareFileTime proto WINAPI \
-	   lpFileTime1: LPFILETIME,
-	   lpFileTime2: LPFILETIME
-;BOOL
-FileTimeToDosDateTime proto WINAPI \
-	    lpFileTime: LPFILETIME,
-	     lpFatDate: LPWORD,
-	     lpFatTime: LPWORD
-
-DosDateTimeToFileTime proto WINAPI \
-	      wFatDate: WORD,
-	      wFatTime: WORD,
-	    lpFileTime: LPFILETIME
-;DWORD
-GetTickCount proto WINAPI
-
-if (_WIN32_WINNT GE 0x0600)
-;ULONGLONG
-GetTickCount64 proto WINAPI
-endif
-
-;BOOL
-SetSystemTimeAdjustment proto WINAPI \
-      dwTimeAdjustment: DWORD,
-bTimeAdjustmentDisabled: BOOL
-
-GetSystemTimeAdjustment proto WINAPI \
-      lpTimeAdjustment: PDWORD,
-       lpTimeIncrement: PDWORD,
-lpTimeAdjustmentDisabled: PBOOL
+define FORMAT_MESSAGE_ALLOCATE_BUFFER 0x00000100
 
 ifndef MIDL_PASS
-;DWORD
-FormatMessageA proto WINAPI \
-	       dwFlags: DWORD,
-	      lpSource: PVOID,
-	   dwMessageId: DWORD,
-	  dwLanguageId: DWORD,
-	      lpBuffer: LPSTR,
-		 nSize: DWORD,
-	     Arguments: PVOID	; va_list *
-FormatMessageW proto WINAPI \
-	       dwFlags: DWORD,
-	      lpSource: PVOID,
-	   dwMessageId: DWORD,
-	  dwLanguageId: DWORD,
-	      lpBuffer: LPWSTR,
-		 nSize: DWORD,
-	     Arguments: PVOID	; va_list *
+FormatMessageA proto WINAPI :DWORD, :LPCVOID, :DWORD, :DWORD, :LPSTR, :DWORD, :ptr
+FormatMessageW proto WINAPI :DWORD, :LPCVOID, :DWORD, :DWORD, :LPWSTR, :DWORD, :ptr
 ifdef _UNICODE
-FormatMessage equ <FormatMessageW>
+define FormatMessage  <FormatMessageW>
 else
-FormatMessage equ <FormatMessageA>
+define FormatMessage  <FormatMessageA>
 endif
 endif
 
-FORMAT_MESSAGE_ALLOCATE_BUFFER equ 0x00000100
-FORMAT_MESSAGE_IGNORE_INSERTS  equ 0x00000200
-FORMAT_MESSAGE_FROM_STRING     equ 0x00000400
-FORMAT_MESSAGE_FROM_HMODULE    equ 0x00000800
-FORMAT_MESSAGE_FROM_SYSTEM     equ 0x00001000
-FORMAT_MESSAGE_ARGUMENT_ARRAY  equ 0x00002000
-FORMAT_MESSAGE_MAX_WIDTH_MASK  equ 0x000000FF
+define FORMAT_MESSAGE_IGNORE_INSERTS  0x00000200
+define FORMAT_MESSAGE_FROM_STRING     0x00000400
+define FORMAT_MESSAGE_FROM_HMODULE    0x00000800
+define FORMAT_MESSAGE_FROM_SYSTEM     0x00001000
+define FORMAT_MESSAGE_ARGUMENT_ARRAY  0x00002000
+define FORMAT_MESSAGE_MAX_WIDTH_MASK  0x000000FF
 
-
-;BOOL
-CreatePipe proto WINAPI \
-	     hReadPipe: PHANDLE,
-	    hWritePipe: PHANDLE,
-      lpPipeAttributes: LPSECURITY_ATTRIBUTES,
-		 nSize: DWORD
-
-ConnectNamedPipe proto WINAPI \
-	    hNamedPipe: HANDLE,
-	  lpOverlapped: LPOVERLAPPED
-
-DisconnectNamedPipe proto WINAPI \
-	    hNamedPipe: HANDLE
-
-SetNamedPipeHandleState proto WINAPI \
-	    hNamedPipe: HANDLE,
-		lpMode: LPDWORD,
-  lpMaxCollectionCount: LPDWORD,
-  lpCollectDataTimeout: LPDWORD
-
-GetNamedPipeInfo proto WINAPI \
-	    hNamedPipe: HANDLE,
-	       lpFlags: LPDWORD,
-       lpOutBufferSize: LPDWORD,
-	lpInBufferSize: LPDWORD,
-	lpMaxInstances: LPDWORD
-
-PeekNamedPipe proto WINAPI \
-	    hNamedPipe: HANDLE,
-	      lpBuffer: PVOID,
-	   nBufferSize: DWORD,
-	   lpBytesRead: LPDWORD,
-     lpTotalBytesAvail: LPDWORD,
-lpBytesLeftThisMessage: LPDWORD
-
-TransactNamedPipe proto WINAPI \
-	    hNamedPipe: HANDLE,
-	    lpInBuffer: PVOID,
-	 nInBufferSize: DWORD,
-	   lpOutBuffer: PVOID,
-	nOutBufferSize: DWORD,
-	   lpBytesRead: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-;HANDLE
-CreateMailslotA proto WINAPI \
-		lpName: LPSTR,
-       nMaxMessageSize: DWORD,
-	  lReadTimeout: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-CreateMailslotW proto WINAPI \
-		lpName: LPWSTR,
-       nMaxMessageSize: DWORD,
-	  lReadTimeout: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
+CreateMailslotA proto WINAPI :LPCSTR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES
+CreateMailslotW proto WINAPI :LPCWSTR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES
 ifdef _UNICODE
-CreateMailslot equ <CreateMailslotW>
+define CreateMailslot  <CreateMailslotW>
 else
-CreateMailslot equ <CreateMailslotA>
+define CreateMailslot  <CreateMailslotA>
 endif
 
-;BOOL
-GetMailslotInfo proto WINAPI \
-	     hMailslot: HANDLE,
-      lpMaxMessageSize: LPDWORD,
-	    lpNextSize: LPDWORD,
-	lpMessageCount: LPDWORD,
-	 lpReadTimeout: LPDWORD
-
-SetMailslotInfo proto WINAPI \
-	     hMailslot: HANDLE,
-	  lReadTimeout: DWORD
-;PVOID
-MapViewOfFile proto WINAPI \
-    hFileMappingObject: HANDLE,
-       dwDesiredAccess: DWORD,
-      dwFileOffsetHigh: DWORD,
-       dwFileOffsetLow: DWORD,
-  dwNumberOfBytesToMap: DWORD
-;PVOID64
-MapViewOfFileVlm proto WINAPI \
-    hFileMappingObject: HANDLE,
-       dwDesiredAccess: DWORD,
-	      ulOffset: DWORDLONG,
-  ulNumberOfBytesToMap: DWORDLONG,
-	 lpBaseAddress: PVOID64
-;BOOL
-FlushViewOfFile proto WINAPI \
-	 lpBaseAddress: LPCVOID,
-dwNumberOfBytesToFlush: DWORD
-
-UnmapViewOfFile proto WINAPI \
-	 lpBaseAddress: LPCVOID
-
-UnmapViewOfFileVlm proto WINAPI \
-	 lpBaseAddress: PVOID64
-
+GetMailslotInfo proto WINAPI :HANDLE, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD
+SetMailslotInfo proto WINAPI :HANDLE, :DWORD
 
 .pragma(comment(lib, advapi32))
 
-EncryptFileA proto WINAPI \
-	    lpFileName: LPCSTR
-EncryptFileW proto WINAPI \
-	    lpFileName: LPCWSTR
+EncryptFileA proto WINAPI :LPCSTR
+EncryptFileW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-EncryptFile equ <EncryptFileW>
+define EncryptFile  <EncryptFileW>
 else
-EncryptFile equ <EncryptFileA>
+define EncryptFile  <EncryptFileA>
 endif
 
-DecryptFileA proto WINAPI \
-	    lpFileName: LPCSTR,
-	    dwReserved: DWORD
-DecryptFileW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	    dwReserved: DWORD
+DecryptFileA proto WINAPI :LPCSTR, :DWORD
+DecryptFileW proto WINAPI :LPCWSTR, :DWORD
 ifdef _UNICODE
-DecryptFile equ <DecryptFileW>
+define DecryptFile  <DecryptFileW>
 else
-DecryptFile equ <DecryptFileA>
+define DecryptFile  <DecryptFileA>
 endif
 
+define FILE_ENCRYPTABLE                0
+define FILE_IS_ENCRYPTED               1
+define FILE_SYSTEM_ATTR                2
+define FILE_ROOT_DIR                   3
+define FILE_SYSTEM_DIR                 4
+define FILE_UNKNOWN                    5
+define FILE_SYSTEM_NOT_SUPPORT         6
+define FILE_USER_DISALLOWED            7
+define FILE_READ_ONLY                  8
+define FILE_DIR_DISALLOWED             9
 
-EFS_USE_RECOVERY_KEYS	equ 1
-
-PFE_EXPORT_T	TYPEDEF PROTO :PTR BYTE, :PVOID, :ULONG
-PFE_EXPORT_FUNC TYPEDEF PTR PFE_EXPORT_T
-PFE_IMPORT_FUNC TYPEDEF PTR PFE_EXPORT_T
-
-
-CREATE_FOR_IMPORT  equ 1
-CREATE_FOR_DIR	   equ 2
-
-;DWORD
-OpenRawA proto WINAPI \
-	    lpFileName: LPCSTR,
-	       ulFlags: ULONG,
-	     pvContext: PTR PVOID
-OpenRawW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	       ulFlags: ULONG,
-	     pvContext: PTR PVOID
+FileEncryptionStatusA proto WINAPI :LPCSTR, :LPDWORD
+FileEncryptionStatusW proto WINAPI :LPCWSTR, :LPDWORD
 ifdef _UNICODE
-OpenRaw equ <OpenRawW>
+define FileEncryptionStatus  <FileEncryptionStatusW>
 else
-OpenRaw equ <OpenRawA>
+define FileEncryptionStatus  <FileEncryptionStatusA>
 endif
 
-ReadRaw proto WINAPI \
-      pfExportCallback: PFE_EXPORT_FUNC,
-     pvCallbackContext: PVOID,
-	     pvContext: PVOID
+define EFS_USE_RECOVERY_KEYS  (0x1)
 
-WriteRaw proto WINAPI \
-      pfImportCallback: PFE_IMPORT_FUNC,
-     pvCallbackContext: PVOID,
-	     pvContext: PVOID
-;VOID
-CloseRaw proto WINAPI \
-	     pvContext: PVOID
+CALLBACK(PFE_EXPORT_FUNC, :PBYTE, :ptr, :ULONG)
+CALLBACK(PFE_IMPORT_FUNC, :ptr, :ptr, :ptr, :PULONG)
 
-RECOVERY_AGENT_INFORMATIONA	STRUC
-NextEntryOffset			dd ?
-AgentNameLength			dd ?
-AgentInformation		db ?
-RECOVERY_AGENT_INFORMATIONA	ENDS
+define CREATE_FOR_IMPORT               (1)
+define CREATE_FOR_DIR                  (2)
+define OVERWRITE_HIDDEN                (4)
+define EFSRPC_SECURE_ONLY              (8)
+define EFS_DROP_ALTERNATE_STREAMS      (0x10)
 
-RECOVERY_AGENT_INFORMATIONW	STRUC
-NextEntryOffset			dd ?
-AgentNameLength			dd ?
-AgentInformation		dw ?
-RECOVERY_AGENT_INFORMATIONW	ENDS
-
-LPRECOVERY_AGENT_INFORMATIONA	TYPEDEF PTR RECOVERY_AGENT_INFORMATIONA
-LPRECOVERY_AGENT_INFORMATIONW	TYPEDEF PTR RECOVERY_AGENT_INFORMATIONW
-
+OpenEncryptedFileRawA proto WINAPI :LPCSTR, :ULONG, :ptr
+OpenEncryptedFileRawW proto WINAPI :LPCWSTR, :ULONG, :ptr
 ifdef _UNICODE
-RECOVERY_AGENT_INFORMATION	typedef RECOVERY_AGENT_INFORMATIONW
-LPRECOVERY_AGENT_INFORMATION	typedef LPRECOVERY_AGENT_INFORMATIONW
+define OpenEncryptedFileRaw  <OpenEncryptedFileRawW>
 else
-RECOVERY_AGENT_INFORMATION	typedef RECOVERY_AGENT_INFORMATIONA
-LPRECOVERY_AGENT_INFORMATION	typedef LPRECOVERY_AGENT_INFORMATIONA
+define OpenEncryptedFileRaw  <OpenEncryptedFileRawA>
 endif
 
-;DWORD
-QueryRecoveryAgentsA proto WINAPI \
-	    lpFileName: LPCSTR,
-	    AgentCount: PDWORD,
-RecoveryAgentInformation: PTR LPRECOVERY_AGENT_INFORMATIONA
-
-QueryRecoveryAgentsW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	    AgentCount: PDWORD,
-RecoveryAgentInformation: PTR LPRECOVERY_AGENT_INFORMATIONW
-ifdef _UNICODE
-QueryRecoveryAgents equ <QueryRecoveryAgentsW>
-else
-QueryRecoveryAgents equ <QueryRecoveryAgentsA>
-endif
+ReadEncryptedFileRaw proto WINAPI :PFE_EXPORT_FUNC, :ptr, :ptr
+WriteEncryptedFileRaw proto WINAPI :PFE_IMPORT_FUNC, :ptr, :ptr
+CloseEncryptedFileRaw proto WINAPI :ptr
 
 ifdef __PE__
 .pragma comment(lib, kernel32)
 endif
 
-lstrcatA	PROTO WINAPI :LPSTR, :LPSTR
-lstrcatW	PROTO WINAPI :LPWSTR, :LPWSTR
-lstrcmpA	PROTO WINAPI :LPSTR, :LPSTR
-lstrcmpW	PROTO WINAPI :LPWSTR, :LPWSTR
-lstrcmpiA	PROTO WINAPI :LPSTR, :LPSTR
-lstrcmpiW	PROTO WINAPI :LPWSTR, :LPWSTR
-lstrcpyA	PROTO WINAPI :LPSTR, :LPSTR
-lstrcpyW	PROTO WINAPI :LPWSTR, :LPWSTR
-lstrcpynA	PROTO WINAPI :LPSTR, :LPSTR, :SIZE_T
-lstrcpynW	PROTO WINAPI :LPWSTR, :LPWSTR, :SIZE_T
-lstrlenA	PROTO WINAPI :LPSTR
-lstrlenW	PROTO WINAPI :LPWSTR
-
-IFDEF _UNICODE
-lstrcat		equ <lstrcatW>
-lstrcmp		equ <lstrcmpW>
-lstrcmpi	equ <lstrcmpiW>
-lstrcpy		equ <lstrcpyW>
-lstrcpyn	equ <lstrcpynW>
-lstrlen		equ <lstrlenW>
-ELSE
-lstrcat		equ <lstrcatA>
-lstrcmp		equ <lstrcmpA>
-lstrcmpi	equ <lstrcmpiA>
-lstrcpy		equ <lstrcpyA>
-lstrcpyn	equ <lstrcpynA>
-lstrlen		equ <lstrlenA>
-ENDIF
-
-
-;HFILE
-OpenFile proto WINAPI \
-	    lpFileName: LPCSTR,
-	  lpReOpenBuff: LPOFSTRUCT,
-		uStyle: UINT
-
-_lopen proto WINAPI \
-	    lpPathName: LPCSTR,
-	    iReadWrite: SINT
-
-_lcreat proto WINAPI \
-	    lpPathName: LPCSTR,
-	    iAttribute: UINT
-;UINT
-_lread proto WINAPI \
-		 hFile: HFILE,
-	      lpBuffer: PVOID,
-		uBytes: UINT
-
-_lwrite proto WINAPI \
-		 hFile: HFILE,
-	      lpBuffer: PVOID,
-		uBytes: UINT
-;long
-_hread proto WINAPI \
-		 hFile: HFILE,
-	      lpBuffer: PVOID,
-		lBytes: LONG
-
-_hwrite proto WINAPI \
-		 hFile: HFILE,
-	      lpBuffer: PVOID,
-		lBytes: LONG
-;HFILE
-_lclose proto WINAPI \
-		 hFile: HFILE
-;LONG
-_llseek proto WINAPI \
-		 hFile: HFILE,
-	       lOffset: LONG,
-	       iOrigin: SINT
-;BOOL
-IsTextUnicode proto WINAPI \
-	      lpBuffer: PVOID,
-		    cb: SINT,
-		   lpi: LPINT
-;DWORD
-TlsAlloc proto WINAPI
-
-FLS_OUT_OF_INDEXES equ 0xFFFFFFFF
-
-;LPVOID
-TlsGetValue proto WINAPI \
-	    dwTlsIndex: DWORD
-;BOOL
-TlsSetValue proto WINAPI \
-	    dwTlsIndex: DWORD,
-	    lpTlsValue: PVOID
-
-TlsFree proto WINAPI \
-	    dwTlsIndex: DWORD
-
-CALLBACK(LPOVERLAPPED_COMPLETION_ROUTINE, :DWORD, :DWORD, :LPOVERLAPPED)
-
-;DWORD
-SleepEx proto WINAPI \
-	dwMilliseconds: DWORD,
-	    bAlertable: BOOL
-
-WaitForSingleObjectEx proto WINAPI \
-	       hHandle: HANDLE,
-	dwMilliseconds: DWORD,
-	    bAlertable: BOOL
-
-WaitForMultipleObjectsEx proto WINAPI \
-		nCount: DWORD,
-	     lpHandles: LPHANDLE,
-	      bWaitAll: BOOL,
-	dwMilliseconds: DWORD,
-	    bAlertable: BOOL
-
-if(_WIN32_WINNT GE 0x0400)
-
-SignalObjectAndWait proto WINAPI \
-       hObjectToSignal: HANDLE,
-       hObjectToWaitOn: HANDLE,
-	dwMilliseconds: DWORD,
-	    bAlertable: BOOL
-endif
-
-;BOOL
-ReadFileEx proto WINAPI \
-		 hFile: HANDLE,
-	      lpBuffer: PVOID,
-  nNumberOfBytesToRead: DWORD,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPOVERLAPPED_COMPLETION_ROUTINE
-
-WriteFileEx proto WINAPI \
-		 hFile: HANDLE,
-	      lpBuffer: PVOID,
- nNumberOfBytesToWrite: DWORD,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPOVERLAPPED_COMPLETION_ROUTINE
-
-BackupRead proto WINAPI \
-		 hFile: HANDLE,
-	      lpBuffer: LPBYTE,
-  nNumberOfBytesToRead: DWORD,
-   lpNumberOfBytesRead: LPDWORD,
-		bAbort: BOOL,
-      bProcessSecurity: BOOL,
-	     lpContext: PTR PVOID
-
-BackupSeek proto WINAPI \
-		 hFile: HANDLE,
-      dwLowBytesToSeek: DWORD,
-     dwHighBytesToSeek: DWORD,
-     lpdwLowByteSeeked: LPDWORD,
-    lpdwHighByteSeeked: LPDWORD,
-	     lpContext: PTR PVOID
-
-BackupWrite proto WINAPI \
-		 hFile: HANDLE,
-	      lpBuffer: LPBYTE,
- nNumberOfBytesToWrite: DWORD,
-lpNumberOfBytesWritten: LPDWORD,
-		bAbort: BOOL,
-      bProcessSecurity: BOOL,
-	     lpContext: PTR PVOID
-
-WIN32_STREAM_ID		STRUC
-dwStreamId		dd ?
-dwStreamAttributes	dd ?
-Size			LARGE_INTEGER <>
-dwStreamNameSize	dd ?
-cStreamName		dw ANYSIZE_ARRAY dup(?)
-WIN32_STREAM_ID		ENDS
-
-LPWIN32_STREAM_ID typedef ptr WIN32_STREAM_ID
-
-
-BACKUP_INVALID		equ 0x00000000
-BACKUP_DATA		equ 0x00000001
-BACKUP_EA_DATA		equ 0x00000002
-BACKUP_SECURITY_DATA	equ 0x00000003
-BACKUP_ALTERNATE_DATA	equ 0x00000004
-BACKUP_LINK		equ 0x00000005
-BACKUP_PROPERTY_DATA	equ 0x00000006
-BACKUP_OBJECT_ID	equ 0x00000007
-BACKUP_REPARSE_DATA	equ 0x00000008
-BACKUP_SPARSE_BLOCK	equ 0x00000009
-BACKUP_TXFS_DATA	equ 0x0000000a
-
-
-STREAM_NORMAL_ATTRIBUTE		equ 0x00000000
-STREAM_MODIFIED_WHEN_READ	equ 0x00000001
-STREAM_CONTAINS_SECURITY	equ 0x00000002
-STREAM_CONTAINS_PROPERTIES	equ 0x00000004
-STREAM_SPARSE_ATTRIBUTE		equ 0x00000008
-
-;BOOL
-ReadFileScatter proto WINAPI \
-		 hFile: HANDLE,
-	 aSegmentArray: FILE_SEGMENT_ELEMENT,
-  nNumberOfBytesToRead: DWORD,
-	    lpReserved: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-WriteFileGather proto WINAPI \
-		 hFile: HANDLE,
-	 aSegmentArray: FILE_SEGMENT_ELEMENT,
- nNumberOfBytesToWrite: DWORD,
-	    lpReserved: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-
-STARTF_USESHOWWINDOW	equ 0x00000001
-STARTF_USESIZE		equ 0x00000002
-STARTF_USEPOSITION	equ 0x00000004
-STARTF_USECOUNTCHARS	equ 0x00000008
-STARTF_USEFILLATTRIBUTE equ 0x00000010
-STARTF_RUNFULLSCREEN	equ 0x00000020	; ignored for non-x86 platforms
-STARTF_FORCEONFEEDBACK	equ 0x00000040
-STARTF_FORCEOFFFEEDBACK equ 0x00000080
-STARTF_USESTDHANDLES	equ 0x00000100
-if(WINVER GE 0x0400)
-STARTF_USEHOTKEY	equ 0x00000200
-STARTF_TITLEISLINKNAME	equ 0x00000800
-STARTF_TITLEISAPPID	equ 0x00001000
-STARTF_PREVENTPINNING	equ 0x00002000
-endif
-
-STARTUPINFOA	STRUC
-cb		dd ?
-lpReserved	LPSTR ?
-lpDesktop	LPSTR ?
-lpTitle		LPSTR ?
-dwX		dd ?
-dwY		dd ?
-dwXSize		dd ?
-dwYSize		dd ?
-dwXCountChars	dd ?
-dwYCountChars	dd ?
-dwFillAttribute dd ?
-dwFlags		dd ?
-wShowWindow	dw ?
-cbReserved2	dw ?
-lpReserved2	LPBYTE ?
-hStdInput	HANDLE ?
-hStdOutput	HANDLE ?
-hStdError	HANDLE ?
-STARTUPINFOA	ENDS
-LPSTARTUPINFOA	TYPEDEF PTR STARTUPINFOA
-
-STARTUPINFOW	STRUC
-cb		dd ?
-lpReserved	LPWSTR ?
-lpDesktop	LPWSTR ?
-lpTitle		LPWSTR ?
-dwX		dd ?
-dwY		dd ?
-dwXSize		dd ?
-dwYSize		dd ?
-dwXCountChars	dd ?
-dwYCountChars	dd ?
-dwFillAttribute dd ?
-dwFlags		dd ?
-wShowWindow	dw ?
-cbReserved2	dw ?
-lpReserved2	LPBYTE ?
-hStdInput	HANDLE ?
-hStdOutput	HANDLE ?
-hStdError	HANDLE ?
-STARTUPINFOW	ENDS
-LPSTARTUPINFOW	TYPEDEF PTR STARTUPINFOW
-
+lstrcmpA proto WINAPI :LPCSTR, :LPCSTR
+lstrcmpW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-STARTUPINFO	typedef STARTUPINFOW
-LPSTARTUPINFO	typedef LPSTARTUPINFOW
+define lstrcmp  <lstrcmpW>
 else
-STARTUPINFO	typedef STARTUPINFOA
-LPSTARTUPINFO	typedef LPSTARTUPINFOA
+define lstrcmp  <lstrcmpA>
 endif
 
-if (_WIN32_WINNT GE 0x0600)
-STARTUPINFOEXA		STRUC
-StartupInfo		STARTUPINFOA <>
-lpAttributeList		LPPROC_THREAD_ATTRIBUTE_LIST ?
-STARTUPINFOEXA		ENDS
-LPSTARTUPINFOEXA	typedef ptr STARTUPINFOEXA
-STARTUPINFOEXW		STRUC
-StartupInfo		STARTUPINFOW <>
-lpAttributeList		LPPROC_THREAD_ATTRIBUTE_LIST ?
-STARTUPINFOEXW		ENDS
-LPSTARTUPINFOEXW	typedef ptr STARTUPINFOEXW
+lstrcmpiA proto WINAPI :LPCSTR, :LPCSTR
+lstrcmpiW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-STARTUPINFOEX		typedef STARTUPINFOEXW
-LPSTARTUPINFOEX		typedef LPSTARTUPINFOEXW
+define lstrcmpi  <lstrcmpiW>
 else
-STARTUPINFOEX		typedef STARTUPINFOEXA
-LPSTARTUPINFOEX		typedef LPSTARTUPINFOEXA
-endif
+define lstrcmpi  <lstrcmpiA>
 endif
 
-SHUTDOWN_NORETRY	equ 0x00000001
-
-WIN32_FIND_DATAA	STRUC
-dwFileAttributes	dd ?
-ftCreationTime		FILETIME <>
-ftLastAccessTime	FILETIME <>
-ftLastWriteTime		FILETIME <>
-nFileSizeHigh		dd ?
-nFileSizeLow		dd ?
-dwReserved0		dd ?
-dwReserved1		dd ?
-cFileName		SBYTE 260 dup(?)
-cAlternateFileName	SBYTE 14 dup(?)
-WIN32_FIND_DATAA	ENDS
-
-WIN32_FIND_DATAW	STRUC
-dwFileAttributes	dd ?
-ftCreationTime		FILETIME <>
-ftLastAccessTime	FILETIME <>
-ftLastWriteTime		FILETIME <>
-nFileSizeHigh		dd ?
-nFileSizeLow		dd ?
-dwReserved0		dd ?
-dwReserved1		dd ?
-cFileName		WORD 260 dup(?)
-cAlternateFileName	WORD 14 dup(?)
-WIN32_FIND_DATAW	ENDS
-
-PWIN32_FIND_DATAA	TYPEDEF PTR WIN32_FIND_DATAA
-PWIN32_FIND_DATAW	TYPEDEF PTR WIN32_FIND_DATAW
-LPWIN32_FIND_DATAA	TYPEDEF PTR WIN32_FIND_DATAA
-LPWIN32_FIND_DATAW	TYPEDEF PTR WIN32_FIND_DATAW
-
+lstrcpynA proto WINAPI :LPSTR, :LPCSTR, :sdword
+lstrcpynW proto WINAPI :LPWSTR, :LPCWSTR, :sdword
 ifdef _UNICODE
-WIN32_FIND_DATA		typedef WIN32_FIND_DATAW
-PWIN32_FIND_DATA	typedef PWIN32_FIND_DATAW
-LPWIN32_FIND_DATA	typedef LPWIN32_FIND_DATAW
+define lstrcpyn  <lstrcpynW>
 else
-WIN32_FIND_DATA		typedef WIN32_FIND_DATAA
-PWIN32_FIND_DATA	typedef PWIN32_FIND_DATAA
-LPWIN32_FIND_DATA	typedef LPWIN32_FIND_DATAA
+define lstrcpyn  <lstrcpynA>
 endif
 
-WIN32_FILE_ATTRIBUTE_DATA STRUC
-dwFileAttributes	dd ?
-ftCreationTime		FILETIME <>
-ftLastAccessTime	FILETIME <>
-ftLastWriteTime		FILETIME <>
-nFileSizeHigh		dd ?
-nFileSizeLow		dd ?
-WIN32_FILE_ATTRIBUTE_DATA ENDS
-LPWIN32_FILE_ATTRIBUTE_DATA	TYPEDEF PTR WIN32_FILE_ATTRIBUTE_DATA
-
-;HANDLE
-CreateMutexA proto WINAPI \
-     lpMutexAttributes: LPSECURITY_ATTRIBUTES,
-	 bInitialOwner: BOOL,
-		lpName: LPCSTR
-CreateMutexW proto WINAPI \
-     lpMutexAttributes: LPSECURITY_ATTRIBUTES,
-	 bInitialOwner: BOOL,
-		lpName: LPCWSTR
+lstrcpyA proto WINAPI :LPSTR, :LPCSTR
+lstrcpyW proto WINAPI :LPWSTR, :LPCWSTR
 ifdef _UNICODE
-CreateMutex equ <CreateMutexW>
+define lstrcpy  <lstrcpyW>
 else
-CreateMutex equ <CreateMutexA>
+define lstrcpy  <lstrcpyA>
 endif
 
-OpenMutexA proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCSTR
-OpenMutexW proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCWSTR
+lstrcatA proto WINAPI :LPSTR, :LPCSTR
+lstrcatW proto WINAPI :LPWSTR, :LPCWSTR
 ifdef _UNICODE
-OpenMutex equ <OpenMutexW>
+define lstrcat  <lstrcatW>
 else
-OpenMutex equ <OpenMutexA>
+define lstrcat  <lstrcatA>
 endif
 
-CreateEventA proto WINAPI \
-     lpEventAttributes: LPSECURITY_ATTRIBUTES,
-	  bManualReset: BOOL,
-	 bInitialState: BOOL,
-		lpName: LPCSTR
-CreateEventW proto WINAPI \
-     lpEventAttributes: LPSECURITY_ATTRIBUTES,
-	  bManualReset: BOOL,
-	 bInitialState: BOOL,
-		lpName: LPCWSTR
+lstrlenA proto WINAPI :LPCSTR
+lstrlenW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-CreateEvent equ <CreateEventW>
+define lstrlen  <lstrlenW>
 else
-CreateEvent equ <CreateEventA>
+define lstrlen  <lstrlenA>
 endif
 
-OpenEventA proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCSTR
-OpenEventW proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCWSTR
+OpenFile proto WINAPI :LPCSTR, :LPOFSTRUCT, :UINT
+
+_lopen proto WINAPI :LPCSTR, :sdword
+_lcreat proto WINAPI :LPCSTR, :sdword
+_lread proto WINAPI :HFILE, :LPVOID, :UINT
+_lwrite proto WINAPI :HFILE, :LPCCH, :UINT
+_hread proto WINAPI :HFILE, :LPVOID, :sdword
+_hwrite proto WINAPI :HFILE, :LPCCH, :sdword
+_lclose proto WINAPI :HFILE
+_llseek proto WINAPI :HFILE, :LONG, :sdword
+
+IsTextUnicode proto WINAPI :ptr, :sdword, :LPINT
+
+if(_WIN32_WINNT ge 0x0400)
+SignalObjectAndWait proto WINAPI :HANDLE, :HANDLE, :DWORD, :BOOL
+endif
+
+BackupRead proto WINAPI :HANDLE, :LPBYTE, :DWORD, :LPDWORD, :BOOL, :BOOL, :ptr
+BackupSeek proto WINAPI :HANDLE, :DWORD, :DWORD, :LPDWORD, :LPDWORD, :ptr
+BackupWrite proto WINAPI :HANDLE, :LPBYTE, :DWORD, :LPDWORD, :BOOL, :BOOL, :ptr
+
+_WIN32_STREAM_ID        struct
+dwStreamId              DWORD ?
+dwStreamAttributes      DWORD ?
+Size                    LARGE_INTEGER <>
+dwStreamNameSize        DWORD ?
+cStreamName             WCHAR ANYSIZE_ARRAY dup(?)
+_WIN32_STREAM_ID        ends
+WIN32_STREAM_ID         typedef _WIN32_STREAM_ID
+LPWIN32_STREAM_ID       typedef ptr _WIN32_STREAM_ID
+
+define BACKUP_INVALID          0x00000000
+define BACKUP_DATA             0x00000001
+define BACKUP_EA_DATA          0x00000002
+define BACKUP_SECURITY_DATA    0x00000003
+define BACKUP_ALTERNATE_DATA   0x00000004
+define BACKUP_LINK             0x00000005
+define BACKUP_PROPERTY_DATA    0x00000006
+define BACKUP_OBJECT_ID        0x00000007
+define BACKUP_REPARSE_DATA     0x00000008
+define BACKUP_SPARSE_BLOCK     0x00000009
+define BACKUP_TXFS_DATA        0x0000000a
+define BACKUP_GHOSTED_FILE_EXTENTS 0x0000000b
+
+define STREAM_NORMAL_ATTRIBUTE         0x00000000
+define STREAM_MODIFIED_WHEN_READ       0x00000001
+define STREAM_CONTAINS_SECURITY        0x00000002
+define STREAM_CONTAINS_PROPERTIES      0x00000004
+define STREAM_SPARSE_ATTRIBUTE         0x00000008
+define STREAM_CONTAINS_GHOSTED_FILE_EXTENTS 0x00000010
+
+define STARTF_USESHOWWINDOW       0x00000001
+define STARTF_USESIZE             0x00000002
+define STARTF_USEPOSITION         0x00000004
+define STARTF_USECOUNTCHARS       0x00000008
+define STARTF_USEFILLATTRIBUTE    0x00000010
+define STARTF_RUNFULLSCREEN       0x00000020
+define STARTF_FORCEONFEEDBACK     0x00000040
+define STARTF_FORCEOFFFEEDBACK    0x00000080
+define STARTF_USESTDHANDLES       0x00000100
+
+if (WINVER ge 0x0400)
+define STARTF_USEHOTKEY           0x00000200
+define STARTF_TITLEISLINKNAME     0x00000800
+define STARTF_TITLEISAPPID        0x00001000
+define STARTF_PREVENTPINNING      0x00002000
+endif
+
+if (WINVER ge 0x0600)
+define STARTF_UNTRUSTEDSOURCE     0x00008000
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+
+_STARTUPINFOEXA         struct
+StartupInfo             STARTUPINFOA <>
+lpAttributeList         LPPROC_THREAD_ATTRIBUTE_LIST ?
+_STARTUPINFOEXA         ends
+STARTUPINFOEXA          typedef _STARTUPINFOEXA
+LPSTARTUPINFOEXA        typedef ptr _STARTUPINFOEXA
+_STARTUPINFOEXW         struct
+StartupInfo             STARTUPINFOW <>
+lpAttributeList         LPPROC_THREAD_ATTRIBUTE_LIST ?
+_STARTUPINFOEXW         ends
+STARTUPINFOEXW          typedef _STARTUPINFOEXW
+LPSTARTUPINFOEXW        typedef ptr _STARTUPINFOEXW
 ifdef _UNICODE
-OpenEvent equ <OpenEventW>
+STARTUPINFOEX           typedef STARTUPINFOEXW
+LPSTARTUPINFOEX         typedef LPSTARTUPINFOEXW
 else
-OpenEvent equ <OpenEventA>
+STARTUPINFOEX           typedef STARTUPINFOEXA
+LPSTARTUPINFOEX         typedef LPSTARTUPINFOEXA
 endif
 
-CreateSemaphoreA proto WINAPI \
- lpSemaphoreAttributes: LPSECURITY_ATTRIBUTES,
-	 lInitialCount: LONG,
-	 lMaximumCount: LONG,
-		lpName: LPCSTR
-CreateSemaphoreW proto WINAPI \
- lpSemaphoreAttributes: LPSECURITY_ATTRIBUTES,
-	 lInitialCount: LONG,
-	 lMaximumCount: LONG,
-		lpName: LPCWSTR
+endif
+
+define SHUTDOWN_NORETRY                0x00000001
+
+OpenMutexA proto WINAPI :DWORD, :BOOL, :LPCSTR
+ifndef _UNICODE
+define OpenMutex  <OpenMutexA>
+endif
+
+CreateSemaphoreA proto WINAPI :LPSECURITY_ATTRIBUTES, :LONG, :LONG, :LPCSTR
+ifndef _UNICODE
+define CreateSemaphore  <CreateSemaphoreA>
+endif
+
+OpenSemaphoreA proto WINAPI :DWORD, :BOOL, :LPCSTR
+ifndef _UNICODE
+define OpenSemaphore  <OpenSemaphoreA>
+endif
+
+if (_WIN32_WINNT ge 0x0400) or (_WIN32_WINDOWS gt 0x0400)
+
+CreateWaitableTimerA proto WINAPI :LPSECURITY_ATTRIBUTES, :BOOL, :LPCSTR
+ifndef _UNICODE
+define CreateWaitableTimer  <CreateWaitableTimerA>
+endif
+
+OpenWaitableTimerA proto WINAPI :DWORD, :BOOL, :LPCSTR
+ifndef _UNICODE
+define OpenWaitableTimer  <OpenWaitableTimerA>
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+
+CreateSemaphoreExA proto WINAPI :LPSECURITY_ATTRIBUTES, :LONG, :LONG, :LPCSTR, :DWORD, :DWORD
+ifndef _UNICODE
+define CreateSemaphoreEx  <CreateSemaphoreExA>
+endif
+
+CreateWaitableTimerExA proto WINAPI :LPSECURITY_ATTRIBUTES, :LPCSTR, :DWORD, :DWORD
+ifndef _UNICODE
+define CreateWaitableTimerEx  <CreateWaitableTimerExA>
+endif
+
+endif
+endif
+
+CreateFileMappingA proto WINAPI :HANDLE, :LPSECURITY_ATTRIBUTES, :DWORD, :DWORD, :DWORD, :LPCSTR
+ifndef _UNICODE
+define CreateFileMapping  <CreateFileMappingA>
+endif
+
+if _WIN32_WINNT ge 0x0600
+
+CreateFileMappingNumaA proto WINAPI :HANDLE, :LPSECURITY_ATTRIBUTES, :DWORD, :DWORD, :DWORD, :LPCSTR, :DWORD
+ifndef _UNICODE
+define CreateFileMappingNuma  <CreateFileMappingNumaA>
+endif
+
+endif
+
+OpenFileMappingA proto WINAPI :DWORD, :BOOL, :LPCSTR
+ifndef _UNICODE
+define OpenFileMapping  <OpenFileMappingA>
+endif
+
+GetLogicalDriveStringsA proto WINAPI :DWORD, :LPSTR
+ifndef _UNICODE
+define GetLogicalDriveStrings  <GetLogicalDriveStringsA>
+endif
+
+if (_WIN32_WINNT ge 0x0602)
+LoadPackagedLibrary proto WINAPI :LPCWSTR, :DWORD
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+
+define PROTECTION_LEVEL_WINTCB_LIGHT       0x00000000
+define PROTECTION_LEVEL_WINDOWS            0x00000001
+define PROTECTION_LEVEL_WINDOWS_LIGHT      0x00000002
+define PROTECTION_LEVEL_ANTIMALWARE_LIGHT  0x00000003
+define PROTECTION_LEVEL_LSA_LIGHT          0x00000004
+define PROTECTION_LEVEL_WINTCB             0x00000005
+define PROTECTION_LEVEL_CODEGEN_LIGHT      0x00000006
+define PROTECTION_LEVEL_AUTHENTICODE       0x00000007
+define PROTECTION_LEVEL_PPL_APP            0x00000008
+define PROTECTION_LEVEL_SAME               0xFFFFFFFF
+define PROTECTION_LEVEL_NONE               0xFFFFFFFE
+
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+
+define PROCESS_NAME_NATIVE     0x00000001
+
+QueryFullProcessImageNameA proto WINAPI :HANDLE, :DWORD, :LPSTR, :PDWORD
+QueryFullProcessImageNameW proto WINAPI :HANDLE, :DWORD, :LPWSTR, :PDWORD
 ifdef _UNICODE
-CreateSemaphore equ <CreateSemaphoreW>
+define QueryFullProcessImageName  <QueryFullProcessImageNameW>
 else
-CreateSemaphore equ <CreateSemaphoreA>
-endif
-
-OpenSemaphoreA proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCSTR
-OpenSemaphoreW proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCWSTR
-ifdef _UNICODE
-OpenSemaphore equ <OpenSemaphoreW>
-else
-OpenSemaphore equ <OpenSemaphoreA>
-endif
-
-if (_WIN32_WINNT GE 0x0400) or (_WIN32_WINDOWS GT 0x0400)
-
-TIMERAPCROUTINE_T TYPEDEF PROTO :PVOID, :DWORD, :DWORD
-PTIMERAPCROUTINE  TYPEDEF PTR TIMERAPCROUTINE_T
-
-
-CreateWaitableTimerA proto WINAPI \
-     lpTimerAttributes: LPSECURITY_ATTRIBUTES,
-	  bManualReset: BOOL,
-	   lpTimerName: LPCSTR
-CreateWaitableTimerW proto WINAPI \
-     lpTimerAttributes: LPSECURITY_ATTRIBUTES,
-	  bManualReset: BOOL,
-	   lpTimerName: LPCWSTR
-ifdef _UNICODE
-CreateWaitableTimer equ <CreateWaitableTimerW>
-else
-CreateWaitableTimer equ <CreateWaitableTimerA>
-endif
-
-OpenWaitableTimerA proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-	   lpTimerName: LPCSTR
-OpenWaitableTimerW proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-	   lpTimerName: LPCWSTR
-ifdef _UNICODE
-OpenWaitableTimer equ <OpenWaitableTimerW>
-else
-OpenWaitableTimer equ <OpenWaitableTimerA>
-endif
-
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
-;BOOL
-SetWaitableTimerEx proto WINAPI \
-		hTimer: HANDLE,
-	     lpDueTime: ptr LARGE_INTEGER,
-	       lPeriod: LONG,
-  pfnCompletionRoutine: PTIMERAPCROUTINE,
-lpArgToCompletionRoutine: LPVOID,
-	   WakeContext: PREASON_CONTEXT,
-	TolerableDelay: ULONG
-endif
-
-;BOOL
-SetWaitableTimer proto WINAPI \
-		hTimer: HANDLE,
-	     lpDueTime: PTR LARGE_INTEGER,
-	       lPeriod: LONG,
-  pfnCompletionRoutine: PTIMERAPCROUTINE,
-lpArgToCompletionRoutine: PVOID,
-	       fResume: BOOL
-
-CancelWaitableTimer proto WINAPI \
-		hTimer: HANDLE
-
-if (_WIN32_WINNT GE 0x0600)
-
-CREATE_MUTEX_INITIAL_OWNER equ 0x00000001
-
-;HANDLE
-CreateMutexExA proto WINAPI \
- lpMutexAttributes: LPSECURITY_ATTRIBUTES,
-	  lpName: LPCSTR,
-	  dwFlags: DWORD,
-  dwDesiredAccess: DWORD
-;HANDLE
-CreateMutexExW proto WINAPI \
- lpMutexAttributes: LPSECURITY_ATTRIBUTES,
-	  lpName: LPCWSTR,
-	  dwFlags: DWORD,
-  dwDesiredAccess: DWORD
-ifdef _UNICODE
-CreateMutexEx		equ <CreateMutexExW>
-else
-CreateMutexEx		equ <CreateMutexExA>
-endif
-
-CREATE_EVENT_MANUAL_RESET equ 0x00000001
-CREATE_EVENT_INITIAL_SET equ 0x00000002
-
-;HANDLE
-CreateEventExA proto WINAPI \
- lpEventAttributes: LPSECURITY_ATTRIBUTES,
-	  lpName: LPCSTR,
-	  dwFlags: DWORD,
-  dwDesiredAccess: DWORD
-CreateEventExW proto WINAPI \
- lpEventAttributes: LPSECURITY_ATTRIBUTES,
-	  lpName: LPCWSTR,
-	  dwFlags: DWORD,
-  dwDesiredAccess: DWORD
-ifdef _UNICODE
-CreateEventEx		equ <CreateEventExW>
-else
-CreateEventEx		equ <CreateEventExA>
-endif
-
-;HANDLE
-CreateSemaphoreExA proto WINAPI \
- lpSemaphoreAttributes: LPSECURITY_ATTRIBUTES,
-	 lInitialCount: LONG,
-	 lMaximumCount: LONG,
-		lpName: LPCSTR,
-	       dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-CreateSemaphoreExW proto WINAPI \
- lpSemaphoreAttributes: LPSECURITY_ATTRIBUTES,
-	 lInitialCount: LONG,
-	 lMaximumCount: LONG,
-		lpName: LPCWSTR,
-	       dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-ifdef _UNICODE
-CreateSemaphoreEx	equ <CreateSemaphoreExW>
-else
-CreateSemaphoreEx	equ <CreateSemaphoreExA>
-endif
-
-CREATE_WAITABLE_TIMER_MANUAL_RESET equ 0x00000001
-
-;HANDLE
-CreateWaitableTimerExA proto WINAPI \
-     lpTimerAttributes: LPSECURITY_ATTRIBUTES,
-	   lpTimerName: LPCSTR,
-	       dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-CreateWaitableTimerExW proto WINAPI \
-     lpTimerAttributes: LPSECURITY_ATTRIBUTES,
-	   lpTimerName: LPCWSTR,
-	       dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-ifdef _UNICODE
-CreateWaitableTimerEx	equ <CreateWaitableTimerExW>
-else
-CreateWaitableTimerEx	equ <CreateWaitableTimerExA>
-endif
+define QueryFullProcessImageName  <QueryFullProcessImageNameA>
 endif
 
 endif
 
-;HANDLE
-CreateFileMappingA proto WINAPI \
-		 hFile: HANDLE,
-lpFileMappingAttributes: LPSECURITY_ATTRIBUTES,
-	     flProtect: DWORD,
-     dwMaximumSizeHigh: DWORD,
-      dwMaximumSizeLow: DWORD,
-		lpName: LPCSTR
-CreateFileMappingW proto WINAPI \
-		 hFile: HANDLE,
-lpFileMappingAttributes: LPSECURITY_ATTRIBUTES,
-	     flProtect: DWORD,
-     dwMaximumSizeHigh: DWORD,
-      dwMaximumSizeLow: DWORD,
-		lpName: LPCWSTR
-ifdef _UNICODE
-CreateFileMapping equ <CreateFileMappingW>
-else
-CreateFileMapping equ <CreateFileMappingA>
+if (_WIN32_WINNT ge 0x0600)
+
+define PROC_THREAD_ATTRIBUTE_NUMBER    0x0000FFFF
+define PROC_THREAD_ATTRIBUTE_THREAD    0x00010000
+define PROC_THREAD_ATTRIBUTE_INPUT     0x00020000
+define PROC_THREAD_ATTRIBUTE_ADDITIVE  0x00040000
+
+ifndef _USE_FULL_PROC_THREAD_ATTRIBUTE
+.enum PROC_THREAD_ATTRIBUTE_NUM {
+    ProcThreadAttributeParentProcess                = 0,
+    ProcThreadAttributeHandleList                   = 2,
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
+    ProcThreadAttributeGroupAffinity                = 3,
+    ProcThreadAttributePreferredNode                = 4,
+    ProcThreadAttributeIdealProcessor               = 5,
+    ProcThreadAttributeUmsThread                    = 6,
+    ProcThreadAttributeMitigationPolicy             = 7,
+endif
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+    ProcThreadAttributeSecurityCapabilities         = 9,
+endif
+    ProcThreadAttributeProtectionLevel              = 11,
+if (_WIN32_WINNT ge _WIN32_WINNT_WINBLUE)
+endif
+if (_WIN32_WINNT ge _WIN32_WINNT_WINTHRESHOLD)
+    ProcThreadAttributeJobList                      = 13,
+    ProcThreadAttributeChildProcessPolicy           = 14,
+    ProcThreadAttributeAllApplicationPackagesPolicy = 15,
+    ProcThreadAttributeWin32kFilter                 = 16,
+endif
+if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
+    ProcThreadAttributeSafeOpenPromptOriginClaim    = 17,
+endif
+if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
+    ProcThreadAttributeDesktopAppPolicy             = 18,
+endif
+if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
+    ProcThreadAttributePseudoConsole                = 22,
+endif
+if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
+endif
+if (NTDDI_VERSION ge NTDDI_WIN10_MN)
+    ProcThreadAttributeMitigationAuditPolicy        = 24,
+endif
+}
 endif
 
-if _WIN32_WINNT GE 0x0600
-;HANDLE
-CreateFileMappingNumaA proto WINAPI \
-		 hFile: HANDLE,
-lpFileMappingAttributes: LPSECURITY_ATTRIBUTES,
-	     flProtect: DWORD,
-     dwMaximumSizeHigh: DWORD,
-      dwMaximumSizeLow: DWORD,
-		lpName: LPCSTR,
-	  nndPreferred: DWORD
-CreateFileMappingNumaW proto WINAPI \
-		 hFile: HANDLE,
-lpFileMappingAttributes: LPSECURITY_ATTRIBUTES,
-	     flProtect: DWORD,
-     dwMaximumSizeHigh: DWORD,
-      dwMaximumSizeLow: DWORD,
-		lpName: LPCWSTR,
-		 hFile: HANDLE,
-	  nndPreferred: DWORD
-ifdef _UNICODE
-CreateFileMappingNuma	equ <CreateFileMappingNumaW>
-else
-CreateFileMappingNuma	equ <CreateFileMappingNumaA>
-endif
-endif
-
-OpenFileMappingA proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCSTR
-OpenFileMappingW proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCWSTR
-ifdef _UNICODE
-OpenFileMapping equ <OpenFileMappingW>
-else
-OpenFileMapping equ <OpenFileMappingA>
-endif
-
-;DWORD
-GetLogicalDriveStringsA proto WINAPI \
-	 nBufferLength: DWORD,
-	      lpBuffer: LPSTR
-GetLogicalDriveStringsW proto WINAPI \
-	 nBufferLength: DWORD,
-	      lpBuffer: LPWSTR
-ifdef _UNICODE
-GetLogicalDriveStrings equ <GetLogicalDriveStringsW>
-else
-GetLogicalDriveStrings equ <GetLogicalDriveStringsA>
-endif
-
-if _WIN32_WINNT GE 0x0501
-MEMORY_RESOURCE_NOTIFICATION_TYPE typedef sdword ; enum _MEMORY_RESOURCE_NOTIFICATION_TYPE {
-LowMemoryResourceNotification	equ 0
-HighMemoryResourceNotification	equ 1
-
-;HANDLE
-CreateMemoryResourceNotification proto WINAPI \
-      NotificationType: MEMORY_RESOURCE_NOTIFICATION_TYPE
-
-;BOOL
-QueryMemoryResourceNotification proto WINAPI \
-ResourceNotificationHandle: HANDLE,
-	 ResourceState: PBOOL
-endif
-
-;HMODULE
-LoadLibraryA proto WINAPI \
-	 lpLibFileName: LPCSTR	; address of filename of executable module
-LoadLibraryW proto WINAPI \
-	 lpLibFileName: LPCWSTR
-ifdef _UNICODE
-LoadLibrary equ <LoadLibraryW>
-else
-LoadLibrary equ <LoadLibraryA>
-endif
-
-LoadLibraryExA proto WINAPI \
-	 lpLibFileName: LPCSTR,
-		 hFile: HANDLE,
-	       dwFlags: DWORD
-LoadLibraryExW proto WINAPI \
-	 lpLibFileName: LPCWSTR,
-		 hFile: HANDLE,
-	       dwFlags: DWORD
-ifdef _UNICODE
-LoadLibraryEx equ <LoadLibraryExW>
-else
-LoadLibraryEx equ <LoadLibraryExA>
-endif
-
-
-DONT_RESOLVE_DLL_REFERENCES	equ 0x00000001
-LOAD_LIBRARY_AS_DATAFILE	equ 0x00000002
-LOAD_WITH_ALTERED_SEARCH_PATH	equ 0x00000008
-
-
-;DWORD
-GetModuleFileNameA proto WINAPI \
-	       hModule: HMODULE,
-	    lpFilename: LPSTR,
-		 nSize: DWORD
-GetModuleFileNameW proto WINAPI \
-	       hModule: HMODULE,
-	    lpFilename: LPWSTR,
-		 nSize: DWORD
-ifdef _UNICODE
-GetModuleFileName equ <GetModuleFileNameW>
-else
-GetModuleFileName equ <GetModuleFileNameA>
-endif
-
-;HMODULE
-GetModuleHandleA proto WINAPI \
-	  lpModuleName: LPCSTR
-GetModuleHandleW proto WINAPI \
-	  lpModuleName: LPCWSTR
-ifdef _UNICODE
-GetModuleHandle equ <GetModuleHandleW>
-else
-GetModuleHandle equ <GetModuleHandleA>
-endif
-
-if _WIN32_WINNT GT 0x0500 OR \
-   defined(WINBASE_DECLARE_GET_MODULE_HANDLE_EX) OR \
-   defined(ISOLATION_AWARE_ENABLED)
-
-GET_MODULE_HANDLE_EX_FLAG_PIN			equ 0x00000001
-GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT	equ 0x00000002
-GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS		equ 0x00000004
-
-;BOOL
-CALLBACK(PGET_MODULE_HANDLE_EXA, dwFlags:DWORD, lpModuleName:LPCSTR, phModule:ptr HMODULE)
-CALLBACK(PGET_MODULE_HANDLE_EXW, dwFlags:DWORD, lpModuleName:LPCWSTR, phModule:ptr HMODULE)
-ifdef _UNICODE
-PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDE_EXW>
-else
-PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDE_EXA>
-endif
-
-;BOOL
-GetModuleHandleExA proto WINAPI \
-	       dwFlags: DWORD,
-	  lpModuleName: LPCSTR,
-	      phModule: ptr HMODULE
-GetModuleHandleExW proto WINAPI \
-	       dwFlags: DWORD,
-	  lpModuleName: LPCWSTR,
-	      phModule: ptr HMODULE
-ifdef _UNICODE
-GetModuleHandleEx	equ <GetModuleHandleExW>
-else
-GetModuleHandleEx	equ <GetModuleHandleExA>
-endif
-
-endif
-
-
-if _WIN32_WINNT GE 0x0502
-;BOOL
-NeedCurrentDirectoryForExePathA proto WINAPI \
-	       ExeName: LPCSTR
-NeedCurrentDirectoryForExePathW proto WINAPI \
-	       ExeName: LPCWSTR
-ifdef _UNICODE
-NeedCurrentDirectoryForExePath equ <NeedCurrentDirectoryForExePathW>
-else
-NeedCurrentDirectoryForExePath equ <NeedCurrentDirectoryForExePathA>
-endif
-endif
-
-if _WIN32_WINNT GE 0x0600
-PROCESS_NAME_NATIVE	equ 0x00000001
-;BOOL
-QueryFullProcessImageNameA proto WINAPI \
-	      hProcess: HANDLE,
-	       dwFlags: DWORD,
-	     lpExeName: LPSTR,
-	      lpdwSize: PDWORD
-QueryFullProcessImageNameW proto WINAPI \
-	      hProcess: HANDLE,
-	       dwFlags: DWORD,
-	     lpExeName: LPWSTR,
-	      lpdwSize: PDWORD
-ifdef _UNICODE
-QueryFullProcessImageName equ <QueryFullProcessImageNameW>
-else
-QueryFullProcessImageName equ <QueryFullProcessImageNameA>
-endif
-endif
-
-if (_WIN32_WINNT GE 0x0600)
-
-
-PROC_THREAD_ATTRIBUTE_NUMBER	equ 0x0000FFFF
-PROC_THREAD_ATTRIBUTE_THREAD	equ 0x00010000
-PROC_THREAD_ATTRIBUTE_INPUT	equ 0x00020000
-PROC_THREAD_ATTRIBUTE_ADDITIVE	equ 0x00040000
-
-PROC_THREAD_ATTRIBUTE_NUM	typedef sdword ; enum _PROC_THREAD_ATTRIBUTE_NUM {
-ProcThreadAttributeParentProcess	equ 0
-ProcThreadAttributeExtendedFlags	equ 1
-ProcThreadAttributeHandleList		equ 2
-ProcThreadAttributeGroupAffinity	equ 3
-ProcThreadAttributePreferredNode	equ 4
-ProcThreadAttributeIdealProcessor	equ 5
-ProcThreadAttributeUmsThread		equ 6
-ProcThreadAttributeMitigationPolicy	equ 7
-ProcThreadAttributeMax			equ 8
-
+if 0
 ProcThreadAttributeValue macro Number, Thread, Input, Additive
-	local result
-	result = (Number and PROC_THREAD_ATTRIBUTE_NUMBER)
-	if Thread
-	   result = (result and PROC_THREAD_ATTRIBUTE_THREAD)
-	endif
-	if Input
-	   result = (result and PROC_THREAD_ATTRIBUTE_INPUT)
-	endif
-	if Additive
-	   result = (result and PROC_THREAD_ATTRIBUTE_ADDITIVE)
-	endif
-	exitm<result>
-	endm
+    if Thread
+     if Input
+      if Additive
+       exitm<(Number or PROC_THREAD_ATTRIBUTE_THREAD or PROC_THREAD_ATTRIBUTE_INPUT or PROC_THREAD_ATTRIBUTE_ADDITIVE)>
+      else
+       exitm<(Number or PROC_THREAD_ATTRIBUTE_THREAD or PROC_THREAD_ATTRIBUTE_INPUT)>
+      endif
+     elseif Additive
+      exitm<(Number or PROC_THREAD_ATTRIBUTE_THREAD or PROC_THREAD_ATTRIBUTE_ADDITIVE)>
+     else
+      exitm<(Number or PROC_THREAD_ATTRIBUTE_THREAD)>
+     endif
+    elseif Input
+     if Additive
+      exitm<(Number or PROC_THREAD_ATTRIBUTE_INPUT or PROC_THREAD_ATTRIBUTE_ADDITIVE)>
+     else
+      exitm<(Number or PROC_THREAD_ATTRIBUTE_INPUT)>
+     endif
+    elseif Additive
+     exitm<(Number or PROC_THREAD_ATTRIBUTE_ADDITIVE)>
+    endif
+    exitm<(Number)>
+    endm
+endif
 
-PROC_THREAD_ATTRIBUTE_PARENT_PROCESS	equ ProcThreadAttributeValue(ProcThreadAttributeParentProcess,FALSE,TRUE,FALSE)
-PROC_THREAD_ATTRIBUTE_EXTENDED_FLAGS	equ ProcThreadAttributeValue(ProcThreadAttributeExtendedFlags,FALSE,TRUE,TRUE)
-PROC_THREAD_ATTRIBUTE_HANDLE_LIST	equ ProcThreadAttributeValue(ProcThreadAttributeHandleList,FALSE,TRUE,FALSE)
-PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY	equ ProcThreadAttributeValue(ProcThreadAttributeGroupAffinity,TRUE,TRUE,FALSE)
-PROC_THREAD_ATTRIBUTE_PREFERRED_NODE	equ ProcThreadAttributeValue(ProcThreadAttributePreferredNode,FALSE,TRUE,FALSE)
-PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR	equ ProcThreadAttributeValue(ProcThreadAttributeIdealProcessor,TRUE,TRUE,FALSE)
-PROC_THREAD_ATTRIBUTE_UMS_THREAD	equ ProcThreadAttributeValue(ProcThreadAttributeUmsThread,TRUE,TRUE,FALSE)
-PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY equ ProcThreadAttributeValue(ProcThreadAttributeMitigationPolicy,FALSE,TRUE,FALSE)
-
-PROCESS_CREATION_MITIGATION_POLICY_DEP_ENABLE		equ 0x01
-PROCESS_CREATION_MITIGATION_POLICY_DEP_ATL_THUNK_ENABLE equ 0x02
-PROCESS_CREATION_MITIGATION_POLICY_SEHOP_ENABLE		equ 0x04
-
-;BOOL
-InitializeProcThreadAttributeList proto WINAPI \
-       lpAttributeList: LPPROC_THREAD_ATTRIBUTE_LIST,
-      dwAttributeCount: DWORD,
-	       dwFlags: DWORD,
-		lpSize: PSIZE_T
-
-;VOID
-DeleteProcThreadAttributeList proto WINAPI \
-       lpAttributeList: LPPROC_THREAD_ATTRIBUTE_LIST
-
-PROC_THREAD_ATTRIBUTE_REPLACE_VALUE equ 0x00000001
-
-;BOOL
-UpdateProcThreadAttribute proto WINAPI \
-       lpAttributeList: LPPROC_THREAD_ATTRIBUTE_LIST,
-	       dwFlags: DWORD,
-	     Attribute: DWORD_PTR,
-	       lpValue: PVOID,
-		cbSize: SIZE_T,
-       lpPreviousValue: PVOID,
-	  lpReturnSize: PSIZE_T
+define PROC_THREAD_ATTRIBUTE_PARENT_PROCESS (ProcThreadAttributeParentProcess or PROC_THREAD_ATTRIBUTE_INPUT)
+define PROC_THREAD_ATTRIBUTE_HANDLE_LIST (ProcThreadAttributeHandleList or PROC_THREAD_ATTRIBUTE_INPUT)
 
 endif
 
-;BOOL
-CreateProcessA proto WINAPI \
-     lpApplicationName: LPCSTR,
-	 lpCommandLine: LPSTR,
-   lpProcessAttributes: LPSECURITY_ATTRIBUTES,
-    lpThreadAttributes: LPSECURITY_ATTRIBUTES,
-       bInheritHandles: BOOL,
-       dwCreationFlags: DWORD,
-	 lpEnvironment: PVOID,
-    lpCurrentDirectory: LPCSTR,
-	 lpStartupInfo: LPSTARTUPINFOA,
-  lpProcessInformation: LPPROCESS_INFORMATION
-CreateProcessW proto WINAPI \
-     lpApplicationName: LPCWSTR,
-	 lpCommandLine: LPWSTR,
-   lpProcessAttributes: LPSECURITY_ATTRIBUTES,
-    lpThreadAttributes: LPSECURITY_ATTRIBUTES,
-       bInheritHandles: BOOL,
-       dwCreationFlags: DWORD,
-	 lpEnvironment: PVOID,
-    lpCurrentDirectory: LPCSTR,
-	 lpStartupInfo: LPSTARTUPINFOA,
-  lpProcessInformation: LPPROCESS_INFORMATION
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
+define PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY (ProcThreadAttributeGroupAffinity or PROC_THREAD_ATTRIBUTE_THREAD or PROC_THREAD_ATTRIBUTE_INPUT)
+define PROC_THREAD_ATTRIBUTE_PREFERRED_NODE (ProcThreadAttributePreferredNode or PROC_THREAD_ATTRIBUTE_INPUT)
+define PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR (ProcThreadAttributeIdealProcessor or PROC_THREAD_ATTRIBUTE_THREAD or PROC_THREAD_ATTRIBUTE_INPUT)
+define PROC_THREAD_ATTRIBUTE_UMS_THREAD (ProcThreadAttributeUmsThread or PROC_THREAD_ATTRIBUTE_THREAD or PROC_THREAD_ATTRIBUTE_INPUT)
+define PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY (ProcThreadAttributeMitigationPolicy or PROC_THREAD_ATTRIBUTE_INPUT)
+endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+define PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES (ProcThreadAttributeSecurityCapabilities or PROC_THREAD_ATTRIBUTE_INPUT)
+endif
+
+define PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL (ProcThreadAttributeProtectionLevel or PROC_THREAD_ATTRIBUTE_INPUT)
+
+if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
+define PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE (ProcThreadAttributePseudoConsole or PROC_THREAD_ATTRIBUTE_INPUT)
+endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
+define PROCESS_CREATION_MITIGATION_POLICY_DEP_ENABLE            0x01
+define PROCESS_CREATION_MITIGATION_POLICY_DEP_ATL_THUNK_ENABLE  0x02
+define PROCESS_CREATION_MITIGATION_POLICY_SEHOP_ENABLE          0x04
+endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+
+define PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_MASK                     (0x00000003 shl 8)
+define PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_DEFER                    (0x00000000 shl 8)
+define PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_ON                (0x00000001 shl 8)
+define PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_OFF               (0x00000002 shl 8)
+define PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_ON_REQ_RELOCS     (0x00000003 shl 8)
+
+define PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_MASK                            (0x00000003 shl 12)
+define PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_DEFER                           (0x00000000 shl 12)
+define PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_ON                       (0x00000001 shl 12)
+define PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_OFF                      (0x00000002 shl 12)
+define PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_RESERVED                        (0x00000003 shl 12)
+
+define PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_MASK                            (0x00000003 shl 16)
+define PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_DEFER                           (0x00000000 shl 16)
+define PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_ON                       (0x00000001 shl 16)
+define PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_OFF                      (0x00000002 shl 16)
+define PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_RESERVED                        (0x00000003 shl 16)
+
+define PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_MASK                         (0x00000003 shl 20)
+define PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_DEFER                        (0x00000000 shl 20)
+define PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_ON                    (0x00000001 shl 20)
+define PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_OFF                   (0x00000002 shl 20)
+define PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_RESERVED                     (0x00000003 shl 20)
+
+define PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_MASK                      (0x00000003 shl 24)
+define PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_DEFER                     (0x00000000 shl 24)
+define PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_ON                 (0x00000001 shl 24)
+define PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_OFF                (0x00000002 shl 24)
+define PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_RESERVED                  (0x00000003 shl 24)
+
+define PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_MASK                (0x00000003 shl 28)
+define PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_DEFER               (0x00000000 shl 28)
+define PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_ON           (0x00000001 shl 28)
+define PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_OFF          (0x00000002 shl 28)
+define PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_RESERVED            (0x00000003 shl 28)
+
+define PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_MASK                   (0x00000003 shl 32)
+define PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_DEFER                  (0x00000000 shl 32)
+define PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_ON              (0x00000001 shl 32)
+define PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_OFF             (0x00000002 shl 32)
+define PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_RESERVED               (0x00000003 shl 32)
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WINBLUE)
+
+define PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_MASK                     (0x00000003 shl 36)
+define PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_DEFER                    (0x00000000 shl 36)
+define PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_ON                (0x00000001 shl 36)
+define PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_OFF               (0x00000002 shl 36)
+define PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_ON_ALLOW_OPT_OUT  (0x00000003 shl 36)
+
+define PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_MASK                        (0x00000003 shl 40)
+define PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_DEFER                       (0x00000000 shl 40)
+define PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_ON                   (0x00000001 shl 40)
+define PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_OFF                  (0x00000002 shl 40)
+define PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_EXPORT_SUPPRESSION          (0x00000003 shl 40)
+
+define PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_MASK              (0x00000003 shl 44)
+define PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_DEFER             (0x00000000 shl 44)
+define PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON         (0x00000001 shl 44)
+define PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_OFF        (0x00000002 shl 44)
+define PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALLOW_STORE       (0x00000003 shl 44)
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WINTHRESHOLD)
+
+define PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_MASK                              (0x00000003 shl 48)
+define PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_DEFER                             (0x00000000 shl 48)
+define PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_ON                         (0x00000001 shl 48)
+define PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_OFF                        (0x00000002 shl 48)
+define PROCESS_CREATION_MITIGATION_POLICY_AUDIT_NONSYSTEM_FONTS                          (0x00000003 shl 48)
+
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_MASK                      (0x00000003 shl 52)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_DEFER                     (0x00000000 shl 52)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_ON                 (0x00000001 shl 52)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_OFF                (0x00000002 shl 52)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_RESERVED                  (0x00000003 shl 52)
+
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_MASK                   (0x00000003 shl 56)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_DEFER                  (0x00000000 shl 56)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_ON              (0x00000001 shl 56)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_OFF             (0x00000002 shl 56)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_RESERVED               (0x00000003 shl 56)
+
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_MASK                (0x00000003 shl 60)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_DEFER               (0x00000000 shl 60)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_ON           (0x00000001 shl 60)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_OFF          (0x00000002 shl 60)
+define PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_RESERVED            (0x00000003 shl 60)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_MASK              (0x00000003 shl 4)
+define PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_DEFER             (0x00000000 shl 4)
+define PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_ON         (0x00000001 shl 4)
+define PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_OFF        (0x00000002 shl 4)
+define PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_AUDIT             (0x00000003 shl 4)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_MASK                (0x00000003 shl 8)
+define PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_DEFER               (0x00000000 shl 8)
+define PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_ON           (0x00000001 shl 8)
+define PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_OFF          (0x00000002 shl 8)
+define PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_RESERVED            (0x00000003 shl 8)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_MASK              (0x00000003 shl 12)
+define PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_DEFER             (0x00000000 shl 12)
+define PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_ON         (0x00000001 shl 12)
+define PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_OFF        (0x00000002 shl 12)
+define PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_NOINHERIT         (0x00000003 shl 12)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_MASK        (0x00000003 shl 16)
+define PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_DEFER       (0x00000000 shl 16)
+define PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_ON   (0x00000001 shl 16)
+define PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_OFF  (0x00000002 shl 16)
+define PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_RESERVED    (0x00000003 shl 16)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_MASK       (0x00000003 shl 20)
+define PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_DEFER      (0x00000000 shl 20)
+define PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_ON  (0x00000001 shl 20)
+define PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_OFF (0x00000002 shl 20)
+define PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_RESERVED   (0x00000003 shl 20)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_MASK          (0x00000003 shl 24)
+define PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_DEFER         (0x00000000 shl 24)
+define PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_ON     (0x00000001 shl 24)
+define PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_OFF    (0x00000002 shl 24)
+define PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_RESERVED      (0x00000003 shl 24)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_MASK                    (0x00000003 shl 28)
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_DEFER                   (0x00000000 shl 28)
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_ON               (0x00000001 shl 28)
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_OFF              (0x00000002 shl 28)
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_STRICT_MODE             (0x00000003 shl 28)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK         (0x00000003 shl 32)
+define PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_DEFER        (0x00000000 shl 32)
+define PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_ON    (0x00000001 shl 32)
+define PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_OFF   (0x00000002 shl 32)
+define PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE (0x00000003 shl 32)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK                    (0x00000003 shl 36)
+define PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_DEFER                   (0x00000000 shl 36)
+define PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_ON               (0x00000001 shl 36)
+define PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_OFF              (0x00000002 shl 36)
+define PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_NON_EHCONT              (0x00000003 shl 36)
+
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK         (0x00000003 shl 48)
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_DEFER        (0x00000000 shl 48)
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_ON    (0x00000001 shl 48)
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_OFF   (0x00000002 shl 48)
+define PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_RESERVED     (0x00000003 shl 48)
+
+endif
+endif
+endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WINTHRESHOLD)
+define PROC_THREAD_ATTRIBUTE_JOB_LIST (ProcThreadAttributeJobList or PROC_THREAD_ATTRIBUTE_INPUT)
+define PROCESS_CREATION_CHILD_PROCESS_RESTRICTED                                         0x01
+define PROCESS_CREATION_CHILD_PROCESS_OVERRIDE                                           0x02
+define PROCESS_CREATION_CHILD_PROCESS_RESTRICTED_UNLESS_SECURE                           0x04
+define PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY (ProcThreadAttributeChildProcessPolicy or PROC_THREAD_ATTRIBUTE_INPUT)
+define PROCESS_CREATION_ALL_APPLICATION_PACKAGES_OPT_OUT                                 0x01
+define PROC_THREAD_ATTRIBUTE_ALL_APPLICATION_PACKAGES_POLICY (ProcThreadAttributeAllApplicationPackagesPolicy or PROC_THREAD_ATTRIBUTE_INPUT)
+define PROC_THREAD_ATTRIBUTE_WIN32K_FILTER (ProcThreadAttributeWin32kFilter or PROC_THREAD_ATTRIBUTE_INPUT)
+endif
+
+if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
+define PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_ENABLE_PROCESS_TREE                        0x01
+define PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_DISABLE_PROCESS_TREE                       0x02
+define PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_OVERRIDE                                   0x04
+define PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY (ProcThreadAttributeDesktopAppPolicy or PROC_THREAD_ATTRIBUTE_INPUT)
+endif
+
+if (NTDDI_VERSION ge NTDDI_WIN10_MN)
+
+define PROC_THREAD_ATTRIBUTE_MITIGATION_AUDIT_POLICY (ProcThreadAttributeMitigationAuditPolicy or PROC_THREAD_ATTRIBUTE_INPUT)
+
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_MASK                    (0x00000003 shl 28)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_DEFER                   (0x00000000 shl 28)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_ON               (0x00000001 shl 28)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_OFF              (0x00000002 shl 28)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_RESERVED                (0x00000003 shl 28)
+
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK        (0x00000003 shl 32)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_DEFER       (0x00000000 shl 32)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_ON   (0x00000001 shl 32)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_OFF  (0x00000002 shl 32)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_RESERVED    (0x00000003 shl 32)
+
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_MASK                    (0x00000003 shl 36)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_DEFER                   (0x00000000 shl 36)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_ON               (0x00000001 shl 36)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_OFF              (0x00000002 shl 36)
+define PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_RESERVED                (0x00000003 shl 36)
+
+endif
+
+GetStartupInfoA proto WINAPI :LPSTARTUPINFOA
+ifndef _UNICODE
+define GetStartupInfo  <GetStartupInfoA>
+endif
+
+GetFirmwareEnvironmentVariableA proto WINAPI :LPCSTR, :LPCSTR, :PVOID, :DWORD
+GetFirmwareEnvironmentVariableW proto WINAPI :LPCWSTR, :LPCWSTR, :PVOID, :DWORD
 ifdef _UNICODE
-CreateProcess equ <CreateProcessW>
+define GetFirmwareEnvironmentVariable  <GetFirmwareEnvironmentVariableW>
 else
-CreateProcess equ <CreateProcessA>
+define GetFirmwareEnvironmentVariable  <GetFirmwareEnvironmentVariableA>
 endif
 
-SetProcessShutdownParameters proto WINAPI \
-	       dwLevel: DWORD,
-	       dwFlags: DWORD
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
 
-GetProcessShutdownParameters proto WINAPI \
-	     lpdwLevel: LPDWORD,
-	     lpdwFlags: LPDWORD
-
-;DWORD
-GetProcessVersion proto WINAPI \
-	     ProcessId: DWORD
-
-;VOID
-FatalAppExitA proto WINAPI \
-	       uAction: UINT,
-	 lpMessageText: LPCSTR
-FatalAppExitW proto WINAPI \
-	       uAction: UINT,
-	 lpMessageText: LPCWSTR
+GetFirmwareEnvironmentVariableExA proto WINAPI :LPCSTR, :LPCSTR, :PVOID, :DWORD, :PDWORD
+GetFirmwareEnvironmentVariableExW proto WINAPI :LPCWSTR, :LPCWSTR, :PVOID, :DWORD, :PDWORD
 ifdef _UNICODE
-FatalAppExit equ <FatalAppExitW>
+define GetFirmwareEnvironmentVariableEx  <GetFirmwareEnvironmentVariableExW>
 else
-FatalAppExit equ <FatalAppExitA>
+define GetFirmwareEnvironmentVariableEx  <GetFirmwareEnvironmentVariableExA>
 endif
 
-;VOID
-GetStartupInfoA proto WINAPI \
-	 lpStartupInfo: LPSTARTUPINFOA
-GetStartupInfoW proto WINAPI \
-	 lpStartupInfo: LPSTARTUPINFOW
+endif
+
+SetFirmwareEnvironmentVariableA proto WINAPI :LPCSTR, :LPCSTR, :PVOID, :DWORD
+SetFirmwareEnvironmentVariableW proto WINAPI :LPCWSTR, :LPCWSTR, :PVOID, :DWORD
 ifdef _UNICODE
-GetStartupInfo equ <GetStartupInfoW>
+define SetFirmwareEnvironmentVariable  <SetFirmwareEnvironmentVariableW>
 else
-GetStartupInfo equ <GetStartupInfoA>
+define SetFirmwareEnvironmentVariable  <SetFirmwareEnvironmentVariableA>
 endif
 
-;LPSTR
-GetCommandLineA proto WINAPI
-;LPWSTR
-GetCommandLineW proto WINAPI
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+
+SetFirmwareEnvironmentVariableExA proto WINAPI :LPCSTR, :LPCSTR, :PVOID, :DWORD, :DWORD
+SetFirmwareEnvironmentVariableExW proto WINAPI :LPCWSTR, :LPCWSTR, :PVOID, :DWORD, :DWORD
 ifdef _UNICODE
-GetCommandLine equ <GetCommandLineW>
+define SetFirmwareEnvironmentVariableEx  <SetFirmwareEnvironmentVariableExW>
 else
-GetCommandLine equ <GetCommandLineA>
+define SetFirmwareEnvironmentVariableEx  <SetFirmwareEnvironmentVariableExA>
 endif
 
-;DWORD
-GetEnvironmentVariableA proto WINAPI \
-		lpName: LPCSTR,
-	      lpBuffer: LPSTR,
-		 nSize: DWORD
-GetEnvironmentVariableW proto WINAPI \
-		lpName: LPCWSTR,
-	      lpBuffer: LPWSTR,
-		 nSize: DWORD
+endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+GetFirmwareType proto WINAPI :PFIRMWARE_TYPE
+IsNativeVhdBoot proto WINAPI :PBOOL
+endif
+
+FindResourceA proto WINAPI :HMODULE, :LPCSTR, :LPCSTR
+ifndef _UNICODE
+define FindResource  <FindResourceA>
+endif
+
+FindResourceExA proto WINAPI :HMODULE, :LPCSTR, :LPCSTR, :WORD
+ifndef _UNICODE
+define FindResourceEx  <FindResourceExA>
+endif
+
+EnumResourceTypesA proto WINAPI :HMODULE, :ENUMRESTYPEPROCA, :LONG_PTR
+EnumResourceTypesW proto WINAPI :HMODULE, :ENUMRESTYPEPROCW, :LONG_PTR
 ifdef _UNICODE
-GetEnvironmentVariable equ <GetEnvironmentVariableW>
+define EnumResourceTypes  <EnumResourceTypesW>
 else
-GetEnvironmentVariable equ <GetEnvironmentVariableA>
+define EnumResourceTypes  <EnumResourceTypesA>
 endif
 
-;BOOL
-SetEnvironmentVariableA proto WINAPI \
-		lpName: LPCSTR,
-	       lpValue: LPCSTR
-SetEnvironmentVariableW proto WINAPI \
-		lpName: LPCWSTR,
-	       lpValue: LPCWSTR
+EnumResourceNamesA proto WINAPI :HMODULE, :LPCSTR, :ENUMRESNAMEPROCA, :LONG_PTR
+ifndef _UNICODE
+define EnumResourceNames  <EnumResourceNamesA>
+endif
+
+EnumResourceLanguagesA proto WINAPI :HMODULE, :LPCSTR, :LPCSTR, :ENUMRESLANGPROCA, :LONG_PTR
+EnumResourceLanguagesW proto WINAPI :HMODULE, :LPCWSTR, :LPCWSTR, :ENUMRESLANGPROCW, :LONG_PTR
 ifdef _UNICODE
-SetEnvironmentVariable equ <SetEnvironmentVariableW>
+define EnumResourceLanguages  <EnumResourceLanguagesW>
 else
-SetEnvironmentVariable equ <SetEnvironmentVariableA>
+define EnumResourceLanguages  <EnumResourceLanguagesA>
 endif
 
-;DWORD
-ExpandEnvironmentStringsA proto WINAPI \
-		 lpSrc: LPCSTR,
-		 lpDst: LPSTR,
-		 nSize: DWORD
-ExpandEnvironmentStringsW proto WINAPI \
-		 lpSrc: LPCWSTR,
-		 lpDst: LPWSTR,
-		 nSize: DWORD
+BeginUpdateResourceA proto WINAPI :LPCSTR, :BOOL
+BeginUpdateResourceW proto WINAPI :LPCWSTR, :BOOL
 ifdef _UNICODE
-ExpandEnvironmentStrings equ <ExpandEnvironmentStringsW>
+define BeginUpdateResource  <BeginUpdateResourceW>
 else
-ExpandEnvironmentStrings equ <ExpandEnvironmentStringsA>
+define BeginUpdateResource  <BeginUpdateResourceA>
 endif
 
-;VOID
-OutputDebugStringA proto WINAPI \
-	lpOutputString: LPCSTR
-OutputDebugStringW proto WINAPI \
-	lpOutputString: LPCWSTR
+UpdateResourceA proto WINAPI :HANDLE, :LPCSTR, :LPCSTR, :WORD, :LPVOID, :DWORD
+UpdateResourceW proto WINAPI :HANDLE, :LPCWSTR, :LPCWSTR, :WORD, :LPVOID, :DWORD
 ifdef _UNICODE
-OutputDebugString equ <OutputDebugStringW>
+define UpdateResource  <UpdateResourceW>
 else
-OutputDebugString equ <OutputDebugStringA>
+define UpdateResource  <UpdateResourceA>
 endif
 
-;HRSRC
-FindResourceA proto WINAPI \
-	       hModule: HMODULE,
-		lpName: LPCSTR,
-		lpType: LPCSTR
-FindResourceW proto WINAPI \
-	       hModule: HMODULE,
-		lpName: LPCWSTR,
-		lpType: LPCWSTR
+EndUpdateResourceA proto WINAPI :HANDLE, :BOOL
+EndUpdateResourceW proto WINAPI :HANDLE, :BOOL
 ifdef _UNICODE
-FindResource equ <FindResourceW>
+define EndUpdateResource  <EndUpdateResourceW>
 else
-FindResource equ <FindResourceA>
+define EndUpdateResource  <EndUpdateResourceA>
 endif
 
-FindResourceExA proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCSTR,
-		lpName: LPCSTR,
-	     wLanguage: DWORD	;WORD
-FindResourceExW proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCWSTR,
-		lpName: LPCWSTR,
-	     wLanguage: DWORD	;WORD
+define ATOM_FLAG_GLOBAL 0x2
+
+GlobalAddAtomA proto WINAPI :LPCSTR
+GlobalAddAtomW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-FindResourceEx equ <FindResourceExW>
+define GlobalAddAtom  <GlobalAddAtomW>
 else
-FindResourceEx equ <FindResourceExA>
+define GlobalAddAtom  <GlobalAddAtomA>
 endif
 
-ifdef STRICT
-
-CALLBACK(ENUMRESLANGPROCA, :HMODULE, :LPCSTR, :LPCSTR, :WORD, :LONG_PTR)
-CALLBACK(ENUMRESLANGPROCW, :HMODULE, :LPCWSTR, :LPCWSTR, :WORD, :LONG_PTR)
+GlobalAddAtomExA proto WINAPI :LPCSTR, :DWORD
+GlobalAddAtomExW proto WINAPI :LPCWSTR, :DWORD
 ifdef _UNICODE
-ENUMRESLANGPROC		typedef ENUMRESLANGPROCW
+define GlobalAddAtomEx  <GlobalAddAtomExW>
 else
-ENUMRESLANGPROC		typedef ENUMRESLANGPROCA
+define GlobalAddAtomEx  <GlobalAddAtomExA>
 endif
 
-CALLBACK(ENUMRESNAMEPROCA, :HMODULE, :LPCSTR, :LPSTR, :LONG_PTR)
-CALLBACK(ENUMRESNAMEPROCW, :HMODULE, :LPCWSTR, :LPWSTR, :LONG_PTR)
+GlobalFindAtomA proto WINAPI :LPCSTR
+GlobalFindAtomW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-ENUMRESNAMEPROC		typedef ENUMRESNAMEPROCW
+define GlobalFindAtom  <GlobalFindAtomW>
 else
-ENUMRESNAMEPROC		typedef ENUMRESNAMEPROCA
+define GlobalFindAtom  <GlobalFindAtomA>
 endif
 
-CALLBACK(ENUMRESTYPEPROCA, :HMODULE, :LPSTR, :LONG_PTR)
-CALLBACK(ENUMRESTYPEPROCW, :HMODULE, :LPWSTR, :LONG_PTR)
+GlobalGetAtomNameA proto WINAPI :ATOM, :LPSTR, :sdword
+GlobalGetAtomNameW proto WINAPI :ATOM, :LPWSTR, :sdword
 ifdef _UNICODE
-ENUMRESTYPEPROC		typedef ENUMRESTYPEPROCW
+define GlobalGetAtomName  <GlobalGetAtomNameW>
 else
-ENUMRESTYPEPROC		typedef ENUMRESTYPEPROCA
+define GlobalGetAtomName  <GlobalGetAtomNameA>
 endif
 
-else
-ENUMRESTYPEPROCA	typedef FARPROC
-ENUMRESTYPEPROCW	typedef FARPROC
+AddAtomA proto WINAPI :LPCSTR
+AddAtomW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-ENUMRESTYPEPROC		typedef ENUMRESTYPEPROCW
+define AddAtom  <AddAtomW>
 else
-ENUMRESTYPEPROC		typedef ENUMRESTYPEPROCA
+define AddAtom  <AddAtomA>
 endif
-ENUMRESNAMEPROCA	typedef FARPROC
-ENUMRESNAMEPROCW	typedef FARPROC
+
+FindAtomA proto WINAPI :LPCSTR
+FindAtomW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-ENUMRESNAMEPROC		typedef ENUMRESNAMEPROCW
+define FindAtom  <FindAtomW>
 else
-ENUMRESNAMEPROC		typedef ENUMRESNAMEPROCA
+define FindAtom  <FindAtomA>
 endif
-ENUMRESLANGPROCA	typedef FARPROC
-ENUMRESLANGPROCW	typedef FARPROC
+
+GetAtomNameA proto WINAPI :ATOM, :LPSTR, :sdword
+GetAtomNameW proto WINAPI :ATOM, :LPWSTR, :sdword
 ifdef _UNICODE
-ENUMRESLANGPROC		typedef ENUMRESLANGPROCW
+define GetAtomName  <GetAtomNameW>
 else
-ENUMRESLANGPROC		typedef ENUMRESLANGPROCA
-endif
+define GetAtomName  <GetAtomNameA>
 endif
 
-;BOOL
-EnumResourceTypesA proto WINAPI \
-	       hModule: HMODULE,
-	    lpEnumFunc: ENUMRESTYPEPROC,
-		lParam: LONG
-EnumResourceTypesW proto WINAPI \
-	       hModule: HMODULE,
-	    lpEnumFunc: ENUMRESTYPEPROC,
-		lParam: LONG
+GetProfileIntA proto WINAPI :LPCSTR, :LPCSTR, :sdword
+GetProfileIntW proto WINAPI :LPCWSTR, :LPCWSTR, :sdword
 ifdef _UNICODE
-EnumResourceTypes equ <EnumResourceTypesW>
+define GetProfileInt  <GetProfileIntW>
 else
-EnumResourceTypes equ <EnumResourceTypesA>
+define GetProfileInt  <GetProfileIntA>
 endif
 
-EnumResourceNamesA proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCSTR,
-	    lpEnumFunc: ENUMRESNAMEPROC,
-		lParam: LONG
-EnumResourceNamesW proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCWSTR,
-	    lpEnumFunc: ENUMRESNAMEPROC,
-		lParam: LONG
+GetProfileStringA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :LPSTR, :DWORD
+GetProfileStringW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPWSTR, :DWORD
 ifdef _UNICODE
-EnumResourceNames equ <EnumResourceNamesW>
+define GetProfileString  <GetProfileStringW>
 else
-EnumResourceNames equ <EnumResourceNamesA>
+define GetProfileString  <GetProfileStringA>
 endif
 
-EnumResourceLanguagesA proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCSTR,
-		lpName: LPCSTR,
-	    lpEnumFunc: ENUMRESLANGPROC,
-		lParam: LONG
-EnumResourceLanguagesW proto WINAPI \
-	       hModule: HMODULE,
-		lpType: LPCSTR,
-		lpName: LPCSTR,
-	    lpEnumFunc: ENUMRESLANGPROC,
-		lParam: LONG
+WriteProfileStringA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR
+WriteProfileStringW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-EnumResourceLanguages equ <EnumResourceLanguagesW>
+define WriteProfileString  <WriteProfileStringW>
 else
-EnumResourceLanguages equ <EnumResourceLanguagesA>
+define WriteProfileString  <WriteProfileStringA>
 endif
 
-;HANDLE
-BeginUpdateResourceA proto WINAPI \
-	     pFileName: LPCSTR,
-bDeleteExistingResources: BOOL
-BeginUpdateResourceW proto WINAPI \
-	     pFileName: LPCWSTR,
-bDeleteExistingResources: BOOL
+GetProfileSectionA proto WINAPI :LPCSTR, :LPSTR, :DWORD
+GetProfileSectionW proto WINAPI :LPCWSTR, :LPWSTR, :DWORD
 ifdef _UNICODE
-BeginUpdateResource equ <BeginUpdateResourceW>
+define GetProfileSection  <GetProfileSectionW>
 else
-BeginUpdateResource equ <BeginUpdateResourceA>
+define GetProfileSection  <GetProfileSectionA>
 endif
 
-;BOOL
-UpdateResourceA proto WINAPI \
-	       hUpdate: HANDLE,
-		lpType: LPCSTR,
-		lpName: LPCSTR,
-	     wLanguage: WORD,
-		lpData: PVOID,
-		cbData: DWORD
-UpdateResourceW proto WINAPI \
-	       hUpdate: HANDLE,
-		lpType: LPCWSTR,
-		lpName: LPCWSTR,
-	     wLanguage: DWORD,
-		lpData: PVOID,
-		cbData: DWORD
+WriteProfileSectionA proto WINAPI :LPCSTR, :LPCSTR
+WriteProfileSectionW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-UpdateResource equ <UpdateResourceW>
+define WriteProfileSection  <WriteProfileSectionW>
 else
-UpdateResource equ <UpdateResourceA>
+define WriteProfileSection  <WriteProfileSectionA>
 endif
 
-;BOOL
-EndUpdateResourceA proto WINAPI \
-	       hUpdate: HANDLE,
-	      fDiscard: BOOL
-EndUpdateResourceW proto WINAPI \
-	       hUpdate: HANDLE,
-	      fDiscard: BOOL
+GetPrivateProfileIntA proto WINAPI :LPCSTR, :LPCSTR, :sdword, :LPCSTR
+GetPrivateProfileIntW proto WINAPI :LPCWSTR, :LPCWSTR, :sdword, :LPCWSTR
 ifdef _UNICODE
-EndUpdateResource equ <EndUpdateResourceW>
+define GetPrivateProfileInt  <GetPrivateProfileIntW>
 else
-EndUpdateResource equ <EndUpdateResourceA>
+define GetPrivateProfileInt  <GetPrivateProfileIntA>
 endif
 
-;ATOM
-GlobalAddAtomA proto WINAPI \
-	      lpString: LPCSTR
-GlobalAddAtomW proto WINAPI \
-	      lpString: LPCWSTR
+GetPrivateProfileStringA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :LPSTR, :DWORD, :LPCSTR
+GetPrivateProfileStringW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPWSTR, :DWORD, :LPCWSTR
 ifdef _UNICODE
-GlobalAddAtom equ <GlobalAddAtomW>
+define GetPrivateProfileString  <GetPrivateProfileStringW>
 else
-GlobalAddAtom equ <GlobalAddAtomA>
+define GetPrivateProfileString  <GetPrivateProfileStringA>
 endif
 
-;ATOM
-GlobalFindAtomA proto WINAPI \
-	      lpString: LPCSTR
-GlobalFindAtomW proto WINAPI \
-	      lpString: LPCWSTR
+WritePrivateProfileStringA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :LPCSTR
+WritePrivateProfileStringW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-GlobalFindAtom equ <GlobalFindAtomW>
+define WritePrivateProfileString  <WritePrivateProfileStringW>
 else
-GlobalFindAtom equ <GlobalFindAtomA>
+define WritePrivateProfileString  <WritePrivateProfileStringA>
 endif
 
-;UINT
-GlobalGetAtomNameA proto WINAPI \
-		 nAtom: ATOM,
-	      lpBuffer: LPSTR,
-		 nSize: SINT
-GlobalGetAtomNameW proto WINAPI \
-		 nAtom: ATOM,
-	      lpBuffer: LPWSTR,
-		 nSize: SINT
+GetPrivateProfileSectionA proto WINAPI :LPCSTR, :LPSTR, :DWORD, :LPCSTR
+GetPrivateProfileSectionW proto WINAPI :LPCWSTR, :LPWSTR, :DWORD, :LPCWSTR
 ifdef _UNICODE
-GlobalGetAtomName equ <GlobalGetAtomNameW>
+define GetPrivateProfileSection  <GetPrivateProfileSectionW>
 else
-GlobalGetAtomName equ <GlobalGetAtomNameA>
+define GetPrivateProfileSection  <GetPrivateProfileSectionA>
 endif
 
-;ATOM
-AddAtomA proto WINAPI lpString:LPCSTR
-AddAtomW proto WINAPI lpString:LPCWSTR
+WritePrivateProfileSectionA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR
+WritePrivateProfileSectionW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-AddAtom equ <AddAtomW>
+define WritePrivateProfileSection  <WritePrivateProfileSectionW>
 else
-AddAtom equ <AddAtomA>
+define WritePrivateProfileSection  <WritePrivateProfileSectionA>
 endif
 
-FindAtomA proto WINAPI lpString:LPCSTR
-FindAtomW proto WINAPI lpString:LPCWSTR
+GetPrivateProfileSectionNamesA proto WINAPI :LPSTR, :DWORD, :LPCSTR
+GetPrivateProfileSectionNamesW proto WINAPI :LPWSTR, :DWORD, :LPCWSTR
 ifdef _UNICODE
-FindAtom equ <FindAtomW>
+define GetPrivateProfileSectionNames  <GetPrivateProfileSectionNamesW>
 else
-FindAtom equ <FindAtomA>
+define GetPrivateProfileSectionNames  <GetPrivateProfileSectionNamesA>
 endif
 
-;UINT
-GetAtomNameA proto WINAPI \
-		 nAtom: ATOM,
-	      lpBuffer: LPSTR,
-		 nSize: SINT
-GetAtomNameW proto WINAPI \
-		 nAtom: ATOM,
-	      lpBuffer: LPWSTR,
-		 nSize: SINT
+GetPrivateProfileStructA proto WINAPI :LPCSTR, :LPCSTR, :LPVOID, :UINT, :LPCSTR
+GetPrivateProfileStructW proto WINAPI :LPCWSTR, :LPCWSTR, :LPVOID, :UINT, :LPCWSTR
 ifdef _UNICODE
-GetAtomName equ <GetAtomNameW>
+define GetPrivateProfileStruct  <GetPrivateProfileStructW>
 else
-GetAtomName equ <GetAtomNameA>
+define GetPrivateProfileStruct  <GetPrivateProfileStructA>
 endif
 
-GetProfileIntA proto WINAPI \
-	     lpAppName: LPCSTR,
-	     lpKeyName: LPCSTR,
-	      nDefault: SINT
-GetProfileIntW proto WINAPI \
-	     lpAppName: LPCWSTR,
-	     lpKeyName: LPCWSTR,
-	      nDefault: SINT
+WritePrivateProfileStructA proto WINAPI :LPCSTR, :LPCSTR, :LPVOID, :UINT, :LPCSTR
+WritePrivateProfileStructW proto WINAPI :LPCWSTR, :LPCWSTR, :LPVOID, :UINT, :LPCWSTR
 ifdef _UNICODE
-GetProfileInt equ <GetProfileIntW>
+define WritePrivateProfileStruct  <WritePrivateProfileStructW>
 else
-GetProfileInt equ <GetProfileIntA>
+define WritePrivateProfileStruct  <WritePrivateProfileStructA>
 endif
 
-;DWORD
-GetProfileStringA proto WINAPI \
-	     lpAppName: LPCSTR,
-	     lpKeyName: LPCSTR,
-	     lpDefault: LPCSTR,
-      lpReturnedString: LPSTR,
-		 nSize: DWORD
-GetProfileStringW proto WINAPI \
-	     lpAppName: LPCWSTR,
-	     lpKeyName: LPCWSTR,
-	     lpDefault: LPCWSTR,
-      lpReturnedString: LPWSTR,
-		 nSize: DWORD
-ifdef _UNICODE
-GetProfileString equ <GetProfileStringW>
-else
-GetProfileString equ <GetProfileStringA>
-endif
+ifndef RC_INVOKED
+if _WIN32_WINNT ge 0x0501 or defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
 
-;BOOL
-WriteProfileStringA proto WINAPI \
-	     lpAppName: LPCSTR,
-	     lpKeyName: LPCSTR,
-	      lpString: LPCSTR
-WriteProfileStringW proto WINAPI \
-	     lpAppName: LPCWSTR,
-	     lpKeyName: LPCWSTR,
-	      lpString: LPCWSTR
-ifdef _UNICODE
-WriteProfileString equ <WriteProfileStringW>
-else
-WriteProfileString equ <WriteProfileStringA>
-endif
+Wow64EnableWow64FsRedirection proto WINAPI :BOOLEAN
 
-;DWORD
-GetProfileSectionA proto WINAPI \
-	     lpAppName: LPCSTR,
-      lpReturnedString: LPSTR,
-		 nSize: DWORD
-GetProfileSectionW proto WINAPI \
-	     lpAppName: LPCWSTR,
-      lpReturnedString: LPSTR,
-		 nSize: DWORD
-ifdef _UNICODE
-GetProfileSection equ <GetProfileSectionW>
-else
-GetProfileSection equ <GetProfileSectionA>
-endif
+CALLBACK(PGET_SYSTEM_WOW64_DIRECTORY_A, :LPSTR, :UINT)
+CALLBACK(PGET_SYSTEM_WOW64_DIRECTORY_W, :LPWSTR, :UINT)
 
-;BOOL
-WriteProfileSectionA proto WINAPI \
-	     lpAppName: LPCSTR,
-	      lpString: LPCSTR
-WriteProfileSectionW proto WINAPI \
-	     lpAppName: LPCWSTR,
-	      lpString: LPCWSTR
-ifdef _UNICODE
-WriteProfileSection equ <WriteProfileSectionW>
-else
-WriteProfileSection equ <WriteProfileSectionA>
-endif
-
-;UINT
-GetPrivateProfileIntA proto WINAPI \
-	     lpAppName: LPCSTR,
-	     lpKeyName: LPCSTR,
-	      nDefault: SINT,
-	    lpFileName: LPCSTR
-GetPrivateProfileIntW proto WINAPI \
-	     lpAppName: LPCWSTR,
-	     lpKeyName: LPCWSTR,
-	      nDefault: SINT,
-	    lpFileName: LPCWSTR
-ifdef _UNICODE
-GetPrivateProfileInt equ <GetPrivateProfileIntW>
-else
-GetPrivateProfileInt equ <GetPrivateProfileIntA>
-endif
-
-;DWORD
-GetPrivateProfileStringA proto WINAPI \
-	     lpAppName: LPCSTR,
-	     lpKeyName: LPCSTR,
-	     lpDefault: LPCSTR,
-      lpReturnedString: LPSTR,
-		 nSize: DWORD,
-	    lpFileName: LPCSTR
-GetPrivateProfileStringW proto WINAPI \
-	     lpAppName: LPCWSTR,
-	     lpKeyName: LPCWSTR,
-	     lpDefault: LPCWSTR,
-      lpReturnedString: LPWSTR,
-		 nSize: DWORD,
-	    lpFileName: LPCWSTR
-ifdef _UNICODE
-GetPrivateProfileString equ <GetPrivateProfileStringW>
-else
-GetPrivateProfileString equ <GetPrivateProfileStringA>
-endif
-
-;BOOL
-WritePrivateProfileStringA proto WINAPI \
-	     lpAppName: LPCSTR,
-	     lpKeyName: LPCSTR,
-	      lpString: LPCSTR,
-	    lpFileName: LPCSTR
-WritePrivateProfileStringW proto WINAPI \
-	     lpAppName: LPCWSTR,
-	     lpKeyName: LPCWSTR,
-	      lpString: LPCWSTR,
-	    lpFileName: LPCWSTR
-ifdef _UNICODE
-WritePrivateProfileString equ <WritePrivateProfileStringW>
-else
-WritePrivateProfileString equ <WritePrivateProfileStringA>
-endif
-
-GetPrivateProfileSectionA proto WINAPI \
-	     lpAppName: LPCSTR,
-      lpReturnedString: LPSTR,
-		 nSize: DWORD,
-	    lpFileName: LPCSTR
-GetPrivateProfileSectionW proto WINAPI \
-	     lpAppName: LPCWSTR,
-      lpReturnedString: LPWSTR,
-		 nSize: DWORD,
-	    lpFileName: LPCWSTR
-ifdef _UNICODE
-GetPrivateProfileSection equ <GetPrivateProfileSectionW>
-else
-GetPrivateProfileSection equ <GetPrivateProfileSectionA>
-endif
-
-WritePrivateProfileSectionA proto WINAPI \
-	     lpAppName: LPCSTR,
-	      lpString: LPCSTR,
-	    lpFileName: LPCSTR
-WritePrivateProfileSectionW proto WINAPI \
-	     lpAppName: LPCWSTR,
-	      lpString: LPCWSTR,
-	    lpFileName: LPCWSTR
-ifdef _UNICODE
-WritePrivateProfileSection equ <WritePrivateProfileSectionW>
-else
-WritePrivateProfileSection equ <WritePrivateProfileSectionA>
-endif
-
-;DWORD
-GetPrivateProfileSectionNamesA proto WINAPI \
-      lpszReturnBuffer: LPSTR,
-		 nSize: DWORD,
-	    lpFileName: LPCSTR
-GetPrivateProfileSectionNamesW proto WINAPI \
-      lpszReturnBuffer: LPWSTR,
-		 nSize: DWORD,
-	    lpFileName: LPCWSTR
-ifdef _UNICODE
-GetPrivateProfileSectionNames equ <GetPrivateProfileSectionNamesW>
-else
-GetPrivateProfileSectionNames equ <GetPrivateProfileSectionNamesA>
-endif
-
-;BOOL
-GetPrivateProfileStructA proto WINAPI \
-	   lpszSection: LPCSTR,
-	       lpszKey: LPCSTR,
-	      lpStruct: LPVOID,
-	   uSizeStruct: UINT,
-		szFile: LPCSTR
-GetPrivateProfileStructW proto WINAPI \
-	   lpszSection: LPCWSTR,
-	       lpszKey: LPCWSTR,
-	      lpStruct: LPVOID,
-	   uSizeStruct: UINT,
-		szFile: LPCWSTR
-ifdef _UNICODE
-GetPrivateProfileStruct equ <GetPrivateProfileStructW>
-else
-GetPrivateProfileStruct equ <GetPrivateProfileStructA>
-endif
-
-WritePrivateProfileStructA proto WINAPI \
-	   lpszSection: LPCSTR,
-	       lpszKey: LPCSTR,
-	      lpStruct: LPVOID,
-	   uSizeStruct: UINT,
-		szFile: LPCSTR
-WritePrivateProfileStructW proto WINAPI \
-	   lpszSection: LPCWSTR,
-	       lpszKey: LPCWSTR,
-	      lpStruct: LPVOID,
-	   uSizeStruct: UINT,
-		szFile: LPCWSTR
-ifdef _UNICODE
-WritePrivateProfileStruct equ <WritePrivateProfileStructW>
-else
-WritePrivateProfileStruct equ <WritePrivateProfileStructA>
-endif
-
-
-;UINT
-GetDriveTypeA proto WINAPI \
-	lpRootPathName: LPCSTR
-GetDriveTypeW proto WINAPI \
-	lpRootPathName: LPCWSTR
-ifdef _UNICODE
-GetDriveType equ <GetDriveTypeW>
-else
-GetDriveType equ <GetDriveTypeA>
-endif
-
-GetSystemDirectoryA proto WINAPI \
-	      lpBuffer: LPSTR,
-		 uSize: UINT
-GetSystemDirectoryW proto WINAPI \
-	      lpBuffer: LPWSTR,
-		 uSize: UINT
-ifdef _UNICODE
-GetSystemDirectory equ <GetSystemDirectoryW>
-else
-GetSystemDirectory equ <GetSystemDirectoryA>
-endif
-
-;DWORD
-GetTempPathA proto WINAPI \
-	 nBufferLength: DWORD,
-	      lpBuffer: LPSTR
-GetTempPathW proto WINAPI \
-	 nBufferLength: DWORD,
-	      lpBuffer: LPWSTR
-ifdef _UNICODE
-GetTempPath equ <GetTempPathW>
-else
-GetTempPath equ <GetTempPathA>
-endif
-
-;UINT
-GetTempFileNameA proto WINAPI \
-	    lpPathName: LPCSTR,
-	lpPrefixString: LPCSTR,
-	       uUnique: UINT,
-	lpTempFileName: LPSTR
-GetTempFileNameW proto WINAPI \
-	    lpPathName: LPCWSTR,
-	lpPrefixString: LPCWSTR,
-	       uUnique: UINT,
-	lpTempFileName: LPWSTR
-ifdef _UNICODE
-GetTempFileName equ <GetTempFileNameW>
-else
-GetTempFileName equ <GetTempFileNameA>
-endif
-
-GetWindowsDirectoryA proto WINAPI \
-	      lpBuffer: LPSTR,
-		 uSize: UINT
-GetWindowsDirectoryW proto WINAPI \
-	      lpBuffer: LPWSTR,
-		 uSize: UINT
-ifdef _UNICODE
-GetWindowsDirectory equ <GetWindowsDirectoryW>
-else
-GetWindowsDirectory equ <GetWindowsDirectoryA>
-endif
-
-;UINT
-GetSystemWindowsDirectoryA proto WINAPI \
-	      lpBuffer: LPSTR,
-		 uSize: UINT
-GetSystemWindowsDirectoryW proto WINAPI \
-	      lpBuffer: LPWSTR,
-		 uSize: UINT
-ifdef _UNICODE
-GetSystemWindowsDirectory equ <GetSystemWindowsDirectoryW>
-else
-GetSystemWindowsDirectory equ <GetSystemWindowsDirectoryA>
-endif
-
-if (_WIN32_WINNT GE 0x0501) OR defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
-;UINT
-GetSystemWow64DirectoryA proto WINAPI \
-	      lpBuffer: LPSTR,
-		 uSize: UINT
-GetSystemWow64DirectoryW proto WINAPI \
-	      lpBuffer: LPWSTR,
-		 uSize: UINT
-ifdef _UNICODE
-GetSystemWow64Directory equ <GetSystemWow64DirectoryW>
-else
-GetSystemWow64Directory equ <GetSystemWow64DirectoryA>
-endif
-
-;BOOLEAN
-Wow64EnableWow64FsRedirection proto WINAPI \
-Wow64FsEnableRedirection: BOOLEAN
-
-;BOOL
-Wow64DisableWow64FsRedirection proto WINAPI \
-	      OldValue: PVOID
-
-;BOOL
-Wow64RevertWow64FsRedirection proto WINAPI \
-	       OlValue: PVOID
-
-;UINT
-CALLBACK(PGET_SYSTEM_WOW64_DIRECTORY_A, lpBuffer:LPSTR, uSize:UINT)
-CALLBACK(PGET_SYSTEM_WOW64_DIRECTORY_W, lpBuffer:LPWSTR, uSize:UINT)
-
-GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A equ <"GetSystemWow64DirectoryA">
-GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W equ <L"GetSystemWow64DirectoryA">
-GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T equ <"GetSystemWow64DirectoryA">
-GET_SYSTEM_WOW64_DIRECTORY_NAME_W_A equ <"GetSystemWow64DirectoryW">
-GET_SYSTEM_WOW64_DIRECTORY_NAME_W_W equ <L"GetSystemWow64DirectoryW">
-GET_SYSTEM_WOW64_DIRECTORY_NAME_W_T equ <"GetSystemWow64DirectoryW">
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A  <"GetSystemWow64DirectoryA">
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W  <L"GetSystemWow64DirectoryA">
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T  <"GetSystemWow64DirectoryA">
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_W_A  <"GetSystemWow64DirectoryW">
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_W_W  <L"GetSystemWow64DirectoryW">
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_W_T  <"GetSystemWow64DirectoryW">
 
 ifdef _UNICODE
-GET_SYSTEM_WOW64_DIRECTORY_NAME_T_A equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_A>
-GET_SYSTEM_WOW64_DIRECTORY_NAME_T_W equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_W>
-GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_T>
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_T_A <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_A>
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_T_W <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_W>
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_T>
 else
-GET_SYSTEM_WOW64_DIRECTORY_NAME_T_A equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A>
-GET_SYSTEM_WOW64_DIRECTORY_NAME_T_W equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W>
-GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T>
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_T_A <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A>
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_T_W <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W>
+define GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T>
 endif
 
 endif
+endif
 
-;BOOL
-SetCurrentDirectoryA proto WINAPI \
-	    lpPathName: LPCSTR
-SetCurrentDirectoryW proto WINAPI \
-	    lpPathName: LPCWSTR
+if _WIN32_WINNT ge 0x0502
+
+SetDllDirectoryA proto WINAPI :LPCSTR
+SetDllDirectoryW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-SetCurrentDirectory equ <SetCurrentDirectoryW>
+define SetDllDirectory  <SetDllDirectoryW>
 else
-SetCurrentDirectory equ <SetCurrentDirectoryA>
+define SetDllDirectory  <SetDllDirectoryA>
+endif
 endif
 
-;DWORD
-GetCurrentDirectoryA proto WINAPI \
-	 nBufferLength: DWORD,
-	      lpBuffer: LPSTR
-GetCurrentDirectoryW proto WINAPI \
-	 nBufferLength: DWORD,
-	      lpBuffer: LPWSTR
-ifdef _UNICODE
-GetCurrentDirectory equ <GetCurrentDirectoryW>
-else
-GetCurrentDirectory equ <GetCurrentDirectoryA>
-endif
-
-if _WIN32_WINNT GE 0x0502
-;BOOL
-SetDllDirectoryA proto WINAPI \
-	    lpPathName: LPCSTR
-SetDllDirectoryW proto WINAPI \
-	    lpPathName: LPCWSTR
-
-ifdef _UNICODE
-SetDllDirectory	 equ <SetDllDirectoryW>
-else
-SetDllDirectory	 equ <SetDllDirectoryA>
-endif
-
+if _WIN32_WINNT ge 0x0502
 GetDllDirectoryA proto WINAPI :DWORD, :LPSTR
 GetDllDirectoryW proto WINAPI :DWORD, :LPWSTR
 ifdef _UNICODE
-GetDllDirectory	 equ <GetDllDirectoryW>
+define GetDllDirectory  <GetDllDirectoryW>
 else
-GetDllDirectory	 equ <GetDllDirectoryA>
-endif
+define GetDllDirectory  <GetDllDirectoryA>
 endif
 
-BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE equ 0x1
-BASE_SEARCH_PATH_DISABLE_SAFE_SEARCHMODE equ 0x10000
-BASE_SEARCH_PATH_PERMANENT equ 0x8000
-BASE_SEARCH_PATH_INVALID_FLAGS equ not 0x18001
+endif
+
+define BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE 0x1
+define BASE_SEARCH_PATH_DISABLE_SAFE_SEARCHMODE 0x10000
+define BASE_SEARCH_PATH_PERMANENT 0x8000
+define BASE_SEARCH_PATH_INVALID_FLAGS not 0x18001
 
 SetSearchPathMode proto WINAPI :DWORD
 
-;BOOL
-GetDiskFreeSpaceA proto WINAPI \
-	lpRootPathName: LPCSTR,
-   lpSectorsPerCluster: LPDWORD,
-      lpBytesPerSector: LPDWORD,
-lpNumberOfFreeClusters: LPDWORD,
-lpTotalNumberOfClusters: LPDWORD
-GetDiskFreeSpaceW proto WINAPI \
-	lpRootPathName: LPCWSTR,
-   lpSectorsPerCluster: LPDWORD,
-      lpBytesPerSector: LPDWORD,
-lpNumberOfFreeClusters: LPDWORD,
-lpTotalNumberOfClusters: LPDWORD
+CreateDirectoryExA proto WINAPI :LPCSTR, :LPCSTR, :LPSECURITY_ATTRIBUTES
+CreateDirectoryExW proto WINAPI :LPCWSTR, :LPCWSTR, :LPSECURITY_ATTRIBUTES
 ifdef _UNICODE
-GetDiskFreeSpace equ <GetDiskFreeSpaceW>
+define CreateDirectoryEx  <CreateDirectoryExW>
 else
-GetDiskFreeSpace equ <GetDiskFreeSpaceA>
+define CreateDirectoryEx  <CreateDirectoryExA>
 endif
 
-GetDiskFreeSpaceExA proto WINAPI \
-       lpDirectoryName: LPCSTR,
-lpFreeBytesAvailableToCaller: PULARGE_INTEGER,
-  lpTotalNumberOfBytes: PULARGE_INTEGER,
-lpTotalNumberOfFreeBytes: PULARGE_INTEGER
-GetDiskFreeSpaceExW proto WINAPI \
-       lpDirectoryName: LPCWSTR,
-lpFreeBytesAvailableToCaller: PULARGE_INTEGER,
-  lpTotalNumberOfBytes: PULARGE_INTEGER,
-lpTotalNumberOfFreeBytes: PULARGE_INTEGER
+if _WIN32_WINNT ge 0x0600
+
+CreateDirectoryTransactedA proto WINAPI :LPCSTR, :LPCSTR, :LPSECURITY_ATTRIBUTES, :HANDLE
+CreateDirectoryTransactedW proto WINAPI :LPCWSTR, :LPCWSTR, :LPSECURITY_ATTRIBUTES, :HANDLE
 ifdef _UNICODE
-GetDiskFreeSpaceEx equ <GetDiskFreeSpaceExW>
+define CreateDirectoryTransacted  <CreateDirectoryTransactedW>
 else
-GetDiskFreeSpaceEx equ <GetDiskFreeSpaceExA>
+define CreateDirectoryTransacted  <CreateDirectoryTransactedA>
 endif
 
-CreateDirectoryA proto WINAPI \
-	    lpPathName: LPCSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-CreateDirectoryW proto WINAPI \
-	    lpPathName: LPCWSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
+RemoveDirectoryTransactedA proto WINAPI :LPCSTR, :HANDLE
+RemoveDirectoryTransactedW proto WINAPI :LPCWSTR, :HANDLE
 ifdef _UNICODE
-CreateDirectory equ <CreateDirectoryW>
+define RemoveDirectoryTransacted  <RemoveDirectoryTransactedW>
 else
-CreateDirectory equ <CreateDirectoryA>
+define RemoveDirectoryTransacted  <RemoveDirectoryTransactedA>
 endif
 
-CreateDirectoryExA proto WINAPI \
-   lpTemplateDirectory: LPCSTR,
-	lpNewDirectory: LPCSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-CreateDirectoryExW proto WINAPI \
-   lpTemplateDirectory: LPCWSTR,
-	lpNewDirectory: LPCWSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
+GetFullPathNameTransactedA proto WINAPI :LPCSTR, :DWORD, :LPSTR, :ptr, :HANDLE
+GetFullPathNameTransactedW proto WINAPI :LPCWSTR, :DWORD, :LPWSTR, :ptr, :HANDLE
 ifdef _UNICODE
-CreateDirectoryEx equ <CreateDirectoryExW>
+define GetFullPathNameTransacted  <GetFullPathNameTransactedW>
 else
-CreateDirectoryEx equ <CreateDirectoryExA>
+define GetFullPathNameTransacted  <GetFullPathNameTransactedA>
 endif
 
-if _WIN32_WINNT GE 0x0600
-;BOOL
-CreateDirectoryTransactedA proto WINAPI \
-   lpTemplateDirectory: LPCSTR,
-	lpNewDirectory: LPCSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-	  hTransaction: HANDLE
-CreateDirectoryTransactedW proto WINAPI \
-   lpTemplateDirectory: LPCWSTR,
-	lpNewDirectory: LPCWSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-	  hTransaction: HANDLE
+endif
+
+define DDD_RAW_TARGET_PATH         0x00000001
+define DDD_REMOVE_DEFINITION       0x00000002
+define DDD_EXACT_MATCH_ON_REMOVE   0x00000004
+define DDD_NO_BROADCAST_SYSTEM     0x00000008
+define DDD_LUID_BROADCAST_DRIVE    0x00000010
+
+DefineDosDeviceA proto WINAPI :DWORD, :LPCSTR, :LPCSTR
+ifndef _UNICODE
+define DefineDosDevice  <DefineDosDeviceA>
+endif
+
+QueryDosDeviceA proto WINAPI :LPCSTR, :LPSTR, :DWORD
+ifndef _UNICODE
+define QueryDosDevice  <QueryDosDeviceA>
+endif
+
+define EXPAND_LOCAL_DRIVES
+
+if _WIN32_WINNT ge 0x0600
+
+CreateFileTransactedA proto WINAPI :LPCSTR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES, :DWORD, :DWORD, :HANDLE, :HANDLE, :PUSHORT, :PVOID
+CreateFileTransactedW proto WINAPI :LPCWSTR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES, :DWORD, :DWORD, :HANDLE, :HANDLE, :PUSHORT, :PVOID
 ifdef _UNICODE
-CreateDirectoryTransacted equ <CreateDirectoryTransactedW>
+define CreateFileTransacted  <CreateFileTransactedW>
 else
-CreateDirectoryTransacted equ <CreateDirectoryTransactedA>
-endif
+define CreateFileTransacted  <CreateFileTransactedA>
 endif
 
-;BOOL
-RemoveDirectoryA proto WINAPI \
-	    lpPathName: LPCSTR
-RemoveDirectoryW proto WINAPI \
-	    lpPathName: LPCWSTR
+endif
+
+if _WIN32_WINNT ge 0x0502
+ReOpenFile proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD
+endif
+
+if _WIN32_WINNT ge 0x0600
+
+SetFileAttributesTransactedA proto WINAPI :LPCSTR, :DWORD, :HANDLE
+SetFileAttributesTransactedW proto WINAPI :LPCWSTR, :DWORD, :HANDLE
 ifdef _UNICODE
-RemoveDirectory equ <RemoveDirectoryW>
+define SetFileAttributesTransacted  <SetFileAttributesTransactedW>
 else
-RemoveDirectory equ <RemoveDirectoryA>
+define SetFileAttributesTransacted  <SetFileAttributesTransactedA>
 endif
 
-if _WIN32_WINNT GE 0x0600
-;BOOL
-RemoveDirectoryTransactedA proto WINAPI \
-	    lpPathName: LPCSTR,
-	  hTransaction: HANDLE
-RemoveDirectoryTransactedW proto WINAPI \
-	    lpPathName: LPCWSTR,
-	  hTransaction: HANDLE
+GetFileAttributesTransactedA proto WINAPI :LPCSTR, :GET_FILEEX_INFO_LEVELS, :LPVOID, :HANDLE
+GetFileAttributesTransactedW proto WINAPI :LPCWSTR, :GET_FILEEX_INFO_LEVELS, :LPVOID, :HANDLE
 ifdef _UNICODE
-RemoveDirectoryTransacted equ <RemoveDirectoryTransactedW>
+define GetFileAttributesTransacted  <GetFileAttributesTransactedW>
 else
-RemoveDirectoryTransacted equ <RemoveDirectoryTransactedA>
-endif
+define GetFileAttributesTransacted  <GetFileAttributesTransactedA>
 endif
 
-;DWORD
-GetFullPathNameA proto WINAPI \
-	    lpFileName: LPCSTR,
-	 nBufferLength: DWORD,
-	      lpBuffer: LPSTR,
-	    lpFilePart: PTR LPSTR
-GetFullPathNameW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	 nBufferLength: DWORD,
-	      lpBuffer: LPWSTR,
-	    lpFilePart: PTR LPWSTR
+GetCompressedFileSizeTransactedA proto WINAPI :LPCSTR, :LPDWORD, :HANDLE
+GetCompressedFileSizeTransactedW proto WINAPI :LPCWSTR, :LPDWORD, :HANDLE
 ifdef _UNICODE
-GetFullPathName equ <GetFullPathNameW>
+define GetCompressedFileSizeTransacted  <GetCompressedFileSizeTransactedW>
 else
-GetFullPathName equ <GetFullPathNameA>
+define GetCompressedFileSizeTransacted  <GetCompressedFileSizeTransactedA>
 endif
 
-if _WIN32_WINNT GE 0x0600
-;DWORD
-GetFullPathNameTransactedA proto WINAPI \
-	    lpFileName: LPCSTR,
-	 nBufferLength: DWORD,
-	      lpBuffer: LPSTR,
-	    lpFilePart: LPSTR,
-	  hTransaction: HANDLE
-GetFullPathNameTransactedW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	 nBufferLength: DWORD,
-	      lpBuffer: LPWSTR,
-	    lpFilePart: LPWSTR,
-	  hTransaction: HANDLE
+DeleteFileTransactedA proto WINAPI :LPCSTR, :HANDLE
+DeleteFileTransactedW proto WINAPI :LPCWSTR, :HANDLE
 ifdef _UNICODE
-GetFullPathNameTransacted equ <GetFullPathNameTransactedW>
+define DeleteFileTransacted  <DeleteFileTransactedW>
 else
-GetFullPathNameTransacted equ <GetFullPathNameTransactedA>
-endif
+define DeleteFileTransacted  <DeleteFileTransactedA>
 endif
 
-DDD_RAW_TARGET_PATH	    equ 0x00000001
-DDD_REMOVE_DEFINITION	    equ 0x00000002
-DDD_EXACT_MATCH_ON_REMOVE   equ 0x00000004
-DDD_NO_BROADCAST_SYSTEM	    equ 0x00000008
+endif
 
-;BOOL
-DefineDosDeviceA proto WINAPI \
-	       dwFlags: DWORD,
-	  lpDeviceName: LPCSTR,
-	  lpTargetPath: LPCSTR
-DefineDosDeviceW proto WINAPI \
-	       dwFlags: DWORD,
-	  lpDeviceName: LPCWSTR,
-	  lpTargetPath: LPCWSTR
+if _WIN32_WINNT ge 0x0501
+CheckNameLegalDOS8Dot3A proto WINAPI :LPCSTR, :LPSTR, :DWORD, :PBOOL, :PBOOL
+CheckNameLegalDOS8Dot3W proto WINAPI :LPCWSTR, :LPSTR, :DWORD, :PBOOL, :PBOOL
 ifdef _UNICODE
-DefineDosDevice equ <DefineDosDeviceW>
+define CheckNameLegalDOS8Dot3  <CheckNameLegalDOS8Dot3W>
 else
-DefineDosDevice equ <DefineDosDeviceA>
+define CheckNameLegalDOS8Dot3  <CheckNameLegalDOS8Dot3A>
+endif
 endif
 
-;DWORD
-QueryDosDeviceA proto WINAPI \
-	  lpDeviceName: LPCSTR,
-	  lpTargetPath: LPSTR,
-	       ucchMax: DWORD
-QueryDosDeviceW proto WINAPI \
-	  lpDeviceName: LPCWSTR,
-	  lpTargetPath: LPWSTR,
-	       ucchMax: DWORD
+if(_WIN32_WINNT ge 0x0400)
+if _WIN32_WINNT ge 0x0600
+FindFirstFileTransactedA proto WINAPI :LPCSTR, :FINDEX_INFO_LEVELS, :LPVOID, :FINDEX_SEARCH_OPS, :LPVOID, :DWORD, :HANDLE
+FindFirstFileTransactedW proto WINAPI :LPCWSTR, :FINDEX_INFO_LEVELS, :LPVOID, :FINDEX_SEARCH_OPS, :LPVOID, :DWORD, :HANDLE
 ifdef _UNICODE
-QueryDosDevice equ <QueryDosDeviceW>
+define FindFirstFileTransacted  <FindFirstFileTransactedW>
 else
-QueryDosDevice equ <QueryDosDeviceA>
+define FindFirstFileTransacted  <FindFirstFileTransactedA>
+endif
+endif
 endif
 
-EXPAND_LOCAL_DRIVES equ 1
-
-;HANDLE
-CreateFileA proto WINAPI \
-	    lpFileName: LPSTR,
-       dwDesiredAccess: DWORD,
-	   dwShareMode: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
- dwCreationDisposition: DWORD,
-  dwFlagsAndAttributes: DWORD,
-	 hTemplateFile: HANDLE
-CreateFileW proto WINAPI \
-	    lpFileName: LPWSTR,
-       dwDesiredAccess: DWORD,
-	   dwShareMode: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
- dwCreationDisposition: DWORD,
-  dwFlagsAndAttributes: DWORD,
-	 hTemplateFile: HANDLE
+CopyFileA proto WINAPI :LPCSTR, :LPCSTR, :BOOL
+CopyFileW proto WINAPI :LPCWSTR, :LPCWSTR, :BOOL
 ifdef _UNICODE
-CreateFile equ <CreateFileW>
+define CopyFile  <CopyFileW>
 else
-CreateFile equ <CreateFileA>
+define CopyFile  <CopyFileA>
 endif
 
-if _WIN32_WINNT GE 0x0600
-;HANDLE
-CreateFileTransactedA proto WINAPI \
-	    lpFileName: LPSTR,
-       dwDesiredAccess: DWORD,
-	   dwShareMode: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
- dwCreationDisposition: DWORD,
-  dwFlagsAndAttributes: DWORD,
-	 hTemplateFile: HANDLE,
-	  hTransaction: HANDLE,
-	pusMiniVersion: PUSHORT,
-   lpExtendedParameter: PVOID
-CreateFileTransactedW proto WINAPI \
-	    lpFileName: LPWSTR,
-       dwDesiredAccess: DWORD,
-	   dwShareMode: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
- dwCreationDisposition: DWORD,
-  dwFlagsAndAttributes: DWORD,
-	 hTemplateFile: HANDLE,
-	  hTransaction: HANDLE,
-	pusMiniVersion: PUSHORT,
-   lpExtendedParameter: PVOID
+if(_WIN32_WINNT ge 0x0400)
+CALLBACK(LPPROGRESS_ROUTINE, :LARGE_INTEGER, :LARGE_INTEGER, :LARGE_INTEGER, :LARGE_INTEGER, :DWORD, :DWORD, :HANDLE, :HANDLE, :LPVOID)
+CopyFileExA proto WINAPI :LPCSTR, :LPCSTR, :LPPROGRESS_ROUTINE, :LPVOID, :LPBOOL, :DWORD
+CopyFileExW proto WINAPI :LPCWSTR, :LPCWSTR, :LPPROGRESS_ROUTINE, :LPVOID, :LPBOOL, :DWORD
 ifdef _UNICODE
-CreateFileTransacted	equ <CreateFileTransactedW>
+define CopyFileEx  <CopyFileExW>
 else
-CreateFileTransacted	equ <CreateFileTransactedA>
-endif
-endif
-
-if _WIN32_WINNT GE 0x0502
-;HANDLE
-ReOpenFile proto WINAPI \
-	  hOriginalFile: HANDLE,
-	dwDesiredAccess: DWORD,
-	    dwShareMode: DWORD,
-   dwFlagsAndAttributes: DWORD
+define CopyFileEx  <CopyFileExA>
 endif
 
-;BOOL
-SetFileAttributesA proto WINAPI \
-	    lpFileName: LPSTR,	; pointer to filename
-      dwFileAttributes: DWORD	; attributes to set
-SetFileAttributesW proto WINAPI \
-	    lpFileName: LPWSTR,
-      dwFileAttributes: DWORD
+if _WIN32_WINNT ge 0x0600
+CopyFileTransactedA proto WINAPI :LPCSTR, :LPCSTR, :LPPROGRESS_ROUTINE, :LPVOID, :LPBOOL, :DWORD, :HANDLE
+CopyFileTransactedW proto WINAPI :LPCWSTR, :LPCWSTR, :LPPROGRESS_ROUTINE, :LPVOID, :LPBOOL, :DWORD, :HANDLE
 ifdef _UNICODE
-SetFileAttributes equ <SetFileAttributesW>
+define CopyFileTransacted  <CopyFileTransactedW>
 else
-SetFileAttributes equ <SetFileAttributesA>
+define CopyFileTransacted  <CopyFileTransactedA>
+endif
 endif
 
-;DWORD
-GetFileAttributesA proto WINAPI \
-	    lpFileName: LPSTR	; pointer to the name of a file or directory
-GetFileAttributesW proto WINAPI \
-	    lpFileName: LPWSTR
+if _WIN32_WINNT ge 0x0601
+
+.enum COPYFILE2_MESSAGE_TYPE {
+     COPYFILE2_CALLBACK_NONE = 0,
+     COPYFILE2_CALLBACK_CHUNK_STARTED,
+     COPYFILE2_CALLBACK_CHUNK_FINISHED,
+     COPYFILE2_CALLBACK_STREAM_STARTED,
+     COPYFILE2_CALLBACK_STREAM_FINISHED,
+     COPYFILE2_CALLBACK_POLL_CONTINUE,
+     COPYFILE2_CALLBACK_ERROR,
+     COPYFILE2_CALLBACK_MAX,
+    }
+
+.enum COPYFILE2_MESSAGE_ACTION {
+    COPYFILE2_PROGRESS_CONTINUE = 0,
+    COPYFILE2_PROGRESS_CANCEL,
+    COPYFILE2_PROGRESS_STOP,
+    COPYFILE2_PROGRESS_QUIET,
+    COPYFILE2_PROGRESS_PAUSE,
+    }
+
+.enum COPYFILE2_COPY_PHASE {
+    COPYFILE2_PHASE_NONE = 0,
+    COPYFILE2_PHASE_PREPARE_SOURCE,
+    COPYFILE2_PHASE_PREPARE_DEST,
+    COPYFILE2_PHASE_READ_SOURCE,
+    COPYFILE2_PHASE_WRITE_DESTINATION,
+    COPYFILE2_PHASE_SERVER_COPY,
+    COPYFILE2_PHASE_NAMEGRAFT_COPY,
+    COPYFILE2_PHASE_MAX,
+    }
+
+define COPYFILE2_MESSAGE_COPY_OFFLOAD     (0x00000001)
+
+COPYFILE2_MESSAGE       struct
+Type                    COPYFILE2_MESSAGE_TYPE ?
+dwPadding               DWORD ?
+union Info
+ struct ChunkStarted
+  dwStreamNumber        DWORD ?
+  dwReserved            DWORD ?
+  hSourceFile           HANDLE ?
+  hDestinationFile      HANDLE ?
+  uliChunkNumber        ULARGE_INTEGER <>
+  uliChunkSize          ULARGE_INTEGER <>
+  uliStreamSize         ULARGE_INTEGER <>
+  uliTotalFileSize      ULARGE_INTEGER <>
+ ends
+ struct ChunkFinished
+  dwStreamNumber        DWORD ?
+  dwFlags               DWORD ?
+  hSourceFile           HANDLE ?
+  hDestinationFile      HANDLE ?
+  uliChunkNumber        ULARGE_INTEGER <>
+  uliChunkSize          ULARGE_INTEGER <>
+  uliStreamSize         ULARGE_INTEGER <>
+  uliStreamBytesTransferred ULARGE_INTEGER <>
+  uliTotalFileSize      ULARGE_INTEGER <>
+  uliTotalBytesTransferred ULARGE_INTEGER <>
+ ends
+ struct StreamStarted
+  dwStreamNumber        DWORD ?
+  dwReserved            DWORD ?
+  hSourceFile           HANDLE ?
+  hDestinationFile      HANDLE ?
+  uliStreamSize         ULARGE_INTEGER <>
+  uliTotalFileSize      ULARGE_INTEGER <>
+ ends
+ struct StreamFinished
+  dwStreamNumber        DWORD ?
+  dwReserved            DWORD ?
+  hSourceFile           HANDLE ?
+  hDestinationFile      HANDLE ?
+  uliStreamSize         ULARGE_INTEGER <>
+  uliStreamBytesTransferred ULARGE_INTEGER <>
+  uliTotalFileSize      ULARGE_INTEGER <>
+  uliTotalBytesTransferred ULARGE_INTEGER <>
+ ends
+ struct PollContinue
+  dwReserved            DWORD ?
+ ends
+ struct Error
+  CopyPhase             COPYFILE2_COPY_PHASE ?
+  dwStreamNumber        DWORD ?
+  hrFailure             HRESULT ?
+  dwReserved            DWORD ?
+  uliChunkNumber        ULARGE_INTEGER <>
+  uliStreamSize         ULARGE_INTEGER <>
+  uliStreamBytesTransferred ULARGE_INTEGER <>
+  uliTotalFileSize      ULARGE_INTEGER <>
+  uliTotalBytesTransferred ULARGE_INTEGER <>
+ ends
+ends
+COPYFILE2_MESSAGE       ends
+
+CALLBACK(PCOPYFILE2_PROGRESS_ROUTINE, :ptr, :PVOID)
+
+COPYFILE2_EXTENDED_PARAMETERS struct
+dwSize                  DWORD ?
+dwCopyFlags             DWORD ?
+pfCancel                ptr BOOL ?
+pProgressRoutine        PCOPYFILE2_PROGRESS_ROUTINE ?
+pvCallbackContext       PVOID ?
+COPYFILE2_EXTENDED_PARAMETERS ends
+
+CopyFile2 proto WINAPI :PCWSTR, :PCWSTR, :ptr
+
+endif
+
+endif
+
+MoveFileA proto WINAPI :LPCSTR, :LPCSTR
+MoveFileW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-GetFileAttributes equ <GetFileAttributesW>
+define MoveFile  <MoveFileW>
 else
-GetFileAttributes equ <GetFileAttributesA>
+define MoveFile  <MoveFileA>
 endif
 
-if _WIN32_WINNT GE 0x0600
-;BOOL
-SetFileAttributesTransactedA proto WINAPI \
-	    lpFileName: LPCSTR,
-      dwFileAttributes: DWORD,
-	  hTransaction: HANDLE
-SetFileAttributesTransactedW proto WINAPI \
-	    lpFileName: LPCWSTR,
-      dwFileAttributes: DWORD,
-	  hTransaction: HANDLE
+MoveFileExA proto WINAPI :LPCSTR, :LPCSTR, :DWORD
+MoveFileExW proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD
 ifdef _UNICODE
-SetFileAttributesTransacted equ <SetFileAttributesTransactedW>
+define MoveFileEx  <MoveFileExW>
 else
-SetFileAttributesTransacted equ <SetFileAttributesTransactedA>
-endif
+define MoveFileEx  <MoveFileExA>
 endif
 
-GetFileExInfoStandard	equ 0
-GetFileExMaxInfoLevel	equ 1
-GET_FILEEX_INFO_LEVELS	typedef sdword
 
-;BOOL
-GetFileAttributesExA proto WINAPI \
-	    lpFileName: LPCSTR,
-	  fInfoLevelId: GET_FILEEX_INFO_LEVELS,
-     lpFileInformation: LPVOID
-GetFileAttributesExW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	  fInfoLevelId: GET_FILEEX_INFO_LEVELS,
-     lpFileInformation: LPVOID
+if (_WIN32_WINNT ge 0x0500)
+MoveFileWithProgressA proto WINAPI :LPCSTR, :LPCSTR, :LPPROGRESS_ROUTINE, :LPVOID, :DWORD
+MoveFileWithProgressW proto WINAPI :LPCWSTR, :LPCWSTR, :LPPROGRESS_ROUTINE, :LPVOID, :DWORD
 ifdef _UNICODE
-GetFileAttributesEx equ <GetFileAttributesExW>
+define MoveFileWithProgress  <MoveFileWithProgressW>
 else
-GetFileAttributesEx equ <GetFileAttributesExA>
+define MoveFileWithProgress  <MoveFileWithProgressA>
+endif
 endif
 
-;DWORD
-GetCompressedFileSizeA proto WINAPI \
-	    lpFileName: LPCSTR,
-	lpFileSizeHigh: LPDWORD
-GetCompressedFileSizeW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	lpFileSizeHigh: LPDWORD
+if (_WIN32_WINNT ge 0x0600)
+MoveFileTransactedA proto WINAPI :LPCSTR, :LPCSTR, :LPPROGRESS_ROUTINE, :LPVOID, :DWORD, :HANDLE
+MoveFileTransactedW proto WINAPI :LPCWSTR, :LPCWSTR, :LPPROGRESS_ROUTINE, :LPVOID, :DWORD, :HANDLE
 ifdef _UNICODE
-GetCompressedFileSize equ <GetCompressedFileSizeW>
+define MoveFileTransacted  <MoveFileTransactedW>
 else
-GetCompressedFileSize equ <GetCompressedFileSizeA>
+define MoveFileTransacted  <MoveFileTransactedA>
+endif
 endif
 
-if _WIN32_WINNT GE 0x0600
-;DWORD
-GetCompressedFileSizeTransactedA proto WINAPI \
-	    lpFileName: LPCSTR,
-	lpFileSizeHigh: LPDWORD,
-	  hTransaction: HANDLE
-GetCompressedFileSizeTransactedW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	lpFileSizeHigh: LPDWORD,
-	  hTransaction: HANDLE
+define MOVEFILE_REPLACE_EXISTING       0x00000001
+define MOVEFILE_COPY_ALLOWED           0x00000002
+define MOVEFILE_DELAY_UNTIL_REBOOT     0x00000004
+define MOVEFILE_WRITE_THROUGH          0x00000008
+if (_WIN32_WINNT ge 0x0500)
+define MOVEFILE_CREATE_HARDLINK        0x00000010
+define MOVEFILE_FAIL_IF_NOT_TRACKABLE  0x00000020
+endif
+
+if (_WIN32_WINNT ge 0x0500)
+
+ReplaceFileA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :DWORD, :LPVOID, :LPVOID
+ReplaceFileW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD, :LPVOID, :LPVOID
 ifdef _UNICODE
-GetCompressedFileSizeTransacted equ <GetCompressedFileSizeTransactedW>
+define ReplaceFile  <ReplaceFileW>
 else
-GetCompressedFileSizeTransacted equ <GetCompressedFileSizeTransactedA>
+define ReplaceFile  <ReplaceFileA>
 endif
 endif
 
-;BOOL
-DeleteFileA proto WINAPI \
-	    lpFileName: LPCSTR
-DeleteFileW proto WINAPI \
-	    lpFileName: LPCWSTR
+if (_WIN32_WINNT ge 0x0500)
+
+CreateHardLinkA proto WINAPI :LPCSTR, :LPCSTR, :LPSECURITY_ATTRIBUTES
+CreateHardLinkW proto WINAPI :LPCWSTR, :LPCWSTR, :LPSECURITY_ATTRIBUTES
 ifdef _UNICODE
-DeleteFile equ <DeleteFileW>
+define CreateHardLink  <CreateHardLinkW>
 else
-DeleteFile equ <DeleteFileA>
+define CreateHardLink  <CreateHardLinkA>
 endif
 
-if _WIN32_WINNT GE 0x0600
-;BOOL
-DeleteFileTransactedA proto WINAPI \
-	    lpFileName: LPCSTR,
-	  hTransaction: HANDLE
-DeleteFileTransactedW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	  hTransaction: HANDLE
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+
+CreateHardLinkTransactedA proto WINAPI :LPCSTR, :LPCSTR, :LPSECURITY_ATTRIBUTES, :HANDLE
+CreateHardLinkTransactedW proto WINAPI :LPCWSTR, :LPCWSTR, :LPSECURITY_ATTRIBUTES, :HANDLE
 ifdef _UNICODE
-DeleteFileTransacted	equ <DeleteFileTransactedW>
+define CreateHardLinkTransacted  <CreateHardLinkTransactedW>
 else
-DeleteFileTransacted	equ <DeleteFileTransactedA>
-endif
+define CreateHardLinkTransacted  <CreateHardLinkTransactedA>
 endif
 
-if _WIN32_WINNT GE 0x0501
-;BOOL
-CheckNameLegalDOS8Dot3A proto WINAPI \
-		lpName: LPCSTR,
-	     lpOemName: LPSTR,
-	   OemNameSize: DWORD,
-  pbNameContainsSpaces: PBOOL,
-	   pbNameLegal: PBOOL
-CheckNameLegalDOS8Dot3W proto WINAPI \
-		lpName: LPCWSTR,
-	     lpOemName: LPSTR,
-	   OemNameSize: DWORD,
-  pbNameContainsSpaces: PBOOL,
-	   pbNameLegal: PBOOL
+endif
+
+if _WIN32_WINNT ge 0x0600
+FindFirstStreamTransactedW proto WINAPI :LPCWSTR, :STREAM_INFO_LEVELS, :LPVOID, :DWORD, :HANDLE
+FindFirstFileNameTransactedW proto WINAPI :LPCWSTR, :DWORD, :LPDWORD, :PWSTR, :HANDLE
+endif
+
+CreateNamedPipeA proto WINAPI :LPCSTR, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES
+ifndef _UNICODE
+define CreateNamedPipe  <CreateNamedPipeA>
+endif
+
+GetNamedPipeHandleStateA proto WINAPI :HANDLE, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPSTR, :DWORD
+ifndef _UNICODE
+define GetNamedPipeHandleState  <GetNamedPipeHandleStateA>
+endif
+
+CallNamedPipeA proto WINAPI :LPCSTR, :LPVOID, :DWORD, :LPVOID, :DWORD, :LPDWORD, :DWORD
+
+ifndef _UNICODE
+define CallNamedPipe  <CallNamedPipeA>
+endif
+
+WaitNamedPipeA proto WINAPI :LPCSTR, :DWORD
+ifndef _UNICODE
+define WaitNamedPipe  <WaitNamedPipeA>
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+
+GetNamedPipeClientComputerNameA proto WINAPI :HANDLE, :LPSTR, :ULONG
+
+ifndef _UNICODE
+define GetNamedPipeClientComputerName  <GetNamedPipeClientComputerNameA>
+endif
+
+GetNamedPipeClientProcessId proto WINAPI :HANDLE, :PULONG
+GetNamedPipeClientSessionId proto WINAPI :HANDLE, :PULONG
+GetNamedPipeServerProcessId proto WINAPI :HANDLE, :PULONG
+GetNamedPipeServerSessionId proto WINAPI :HANDLE, :PULONG
+
+endif
+
+SetVolumeLabelA proto WINAPI :LPCSTR, :LPCSTR
+SetVolumeLabelW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-CheckNameLegalDOS8Dot3	equ <CheckNameegalDOS8Dot3W>
+define SetVolumeLabel  <SetVolumeLabelW>
 else
-CheckNameLegalDOS8Dot3	equ <CheckNameegalDOS8Dot3A>
+define SetVolumeLabel  <SetVolumeLabelA>
 endif
-endif
-
-if(_WIN32_WINNT GE 0x0400)
-
-FINDEX_INFO_LEVELS	typedef SDWORD
-FindExInfoStandard	equ 0
-FindExInfoBasic		equ 1
-FindExInfoMaxInfoLevel	equ 2
-
-FindExSearchNameMatch		equ 0
-FindExSearchLimitToDirectories	equ 1
-FindExSearchLimitToDevices	equ 2
-FindExSearchMaxSearchOp		equ 3
-FINDEX_SEARCH_OPS		typedef sdword
-
-FIND_FIRST_EX_CASE_SENSITIVE   equ 0x00000001
-
-;HANDLE
-FindFirstFileExA proto WINAPI \
-	    lpFileName: LPCSTR,
-	  fInfoLevelId: FINDEX_INFO_LEVELS,
-	lpFindFileData: LPVOID,
-	     fSearchOp: FINDEX_SEARCH_OPS,
-	lpSearchFilter: LPVOID,
-     dwAdditionalFlags: DWORD
-FindFirstFileExW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	  fInfoLevelId: FINDEX_INFO_LEVELS,
-	lpFindFileData: LPVOID,
-	     fSearchOp: FINDEX_SEARCH_OPS,
-	lpSearchFilter: LPVOID,
-     dwAdditionalFlags: DWORD
-ifdef _UNICODE
-FindFirstFileEx equ <FindFirstFileExW>
-else
-FindFirstFileEx equ <FindFirstFileExA>
-endif
-endif
-
-if _WIN32_WINNT GE 0x0600
-;HANDLE
-FindFirstFileTransactedA proto WINAPI \
-	    lpFileName: LPCSTR,
-	  fInfoLevelId: FINDEX_INFO_LEVELS,
-	lpFindFileData: LPVOID,
-	     fSearchOp: FINDEX_SEARCH_OPS,
-	lpSearchFilter: LPVOID,
-     dwAdditionalFlags: DWORD,
-	  hTransaction: HANDLE
-FindFirstFileTransactedW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	  fInfoLevelId: FINDEX_INFO_LEVELS,
-	lpFindFileData: LPVOID,
-	     fSearchOp: FINDEX_SEARCH_OPS,
-	lpSearchFilter: LPVOID,
-     dwAdditionalFlags: DWORD,
-	  hTransaction: HANDLE
-ifdef _UNICODE
-FindFirstFileTransacted equ <FindFirstFileTransactedW>
-else
-FindFirstFileTransacted equ <FindFirstFileTransactedA>
-endif
-endif
-
-FindFirstFileA proto WINAPI \
-	    lpFileName: LPCSTR,
-	lpFindFileData: LPWIN32_FIND_DATAA
-FindFirstFileW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	lpFindFileData: LPWIN32_FIND_DATAW
-ifdef _UNICODE
-FindFirstFile equ <FindFirstFileW>
-else
-FindFirstFile equ <FindFirstFileA>
-endif
-
-;BOOL
-FindNextFileA proto WINAPI \
-	     hFindFile: HANDLE,
-	lpFindFileData: LPWIN32_FIND_DATAA
-FindNextFileW proto WINAPI \
-	     hFindFile: HANDLE,
-	lpFindFileData: LPWIN32_FIND_DATAW
-ifdef _UNICODE
-FindNextFile equ <FindNextFileW>
-else
-FindNextFile equ <FindNextFileA>
-endif
-
-;DWORD
-SearchPathA proto WINAPI \
-	lpPath:		LPSTR,	; pointer to search path
-	lpFileName:	LPSTR,	; pointer to filename
-	lpExtension:	LPSTR,	; pointer to extension
-	nBufferLength:	DWORD,	; size, in characters, of buffer
-	lpBuffer:	LPSTR,	; pointer to buffer for found filename
-	lpFilePart:	LPSTR	; pointer to pointer to file component
-SearchPathW proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD, :LPWSTR, :LPWSTR
-ifdef _UNICODE
-SearchPath equ <SearchPathW>
-else
-SearchPath equ <SearchPathA>
-endif
-
-;BOOL
-CopyFileA proto WINAPI \
-    lpExistingFileName: LPCSTR,
-	 lpNewFileName: LPCSTR,
-	 bFailIfExists: BOOL
-CopyFileW proto WINAPI \
-    lpExistingFileName: LPCWSTR,
-	 lpNewFileName: LPCWSTR,
-	 bFailIfExists: BOOL
-ifdef _UNICODE
-CopyFile equ <CopyFileW>
-else
-CopyFile equ <CopyFileA>
-endif
-
-if(_WIN32_WINNT GE 0x0400)
-
-PROGRESS_ROUTINE_T TYPEDEF PROTO :LARGE_INTEGER,
-	:LARGE_INTEGER, :LARGE_INTEGER, :LARGE_INTEGER,
-	:DWORD, :DWORD, :HANDLE, :HANDLE, :LPVOID
-LPPROGRESS_ROUTINE TYPEDEF PTR PROGRESS_ROUTINE_T
-;BOOL
-CopyFileExA proto WINAPI \
-    lpExistingFileName: LPCSTR,
-	 lpNewFileName: LPCSTR,
-     lpProgressRoutine: LPPROGRESS_ROUTINE,; OPTIONAL,
-		lpData: LPVOID,; OPTIONAL,
-	      pbCancel: LPBOOL,; OPTIONAL,
-	   dwCopyFlags: DWORD
-CopyFileExW proto WINAPI \
-    lpExistingFileName: LPCWSTR,
-	 lpNewFileName: LPCWSTR,
-     lpProgressRoutine: LPPROGRESS_ROUTINE,
-		lpData: LPVOID,
-	      pbCancel: LPBOOL,
-	   dwCopyFlags: DWORD
-ifdef _UNICODE
-CopyFileEx equ <CopyFileExW>
-else
-CopyFileEx equ <CopyFileExA>
-endif
-
-if _WIN32_WINNT GE 0x0600
-;BOOL
-CopyFileTransactedA proto WINAPI \
-    lpExistingFileName: LPCSTR,
-	 lpNewFileName: LPCSTR,
-     lpProgressRoutine: LPPROGRESS_ROUTINE,
-		lpData: LPVOID,
-	      pbCancel: LPBOOL,
-	   dwCopyFlags: DWORD,
-	  hTransaction: HANDLE
-CopyFileTransactedW proto WINAPI \
-    lpExistingFileName: LPCWSTR,
-	 lpNewFileName: LPCWSTR,
-     lpProgressRoutine: LPPROGRESS_ROUTINE,
-		lpData: LPVOID,
-	      pbCancel: LPBOOL,
-	   dwCopyFlags: DWORD,
-	  hTransaction: HANDLE
-ifdef _UNICODE
-CopyFileTransacted	equ <CopyFileTransactedW>
-else
-CopyFileTransacted	equ <CopyFileTransactedA>
-endif
-endif
-endif
-
-MoveFileA proto WINAPI \
-    lpExistingFileName: LPCSTR,
-	 lpNewFileName: LPCSTR
-MoveFileW proto WINAPI \
-    lpExistingFileName: LPCWSTR,
-	 lpNewFileName: LPCWSTR
-ifdef _UNICODE
-MoveFile equ <MoveFileW>
-else
-MoveFile equ <MoveFileA>
-endif
-
-MoveFileExA proto WINAPI \
-    lpExistingFileName: LPCSTR,
-	 lpNewFileName: LPCSTR,
-	       dwFlags: DWORD
-MoveFileExW proto WINAPI \
-    lpExistingFileName: LPCWSTR,
-	 lpNewFileName: LPCWSTR,
-	       dwFlags: DWORD
-ifdef _UNICODE
-MoveFileEx equ <MoveFileExW>
-else
-MoveFileEx equ <MoveFileExA>
-endif
-
-if (_WIN32_WINNT GE 0x0500)
-
-MoveFileWithProgressA proto WINAPI \
-    lpExistingFileName: LPCSTR,
-	 lpNewFileName: LPCSTR,
-     lpProgressRoutine: LPPROGRESS_ROUTINE,
-		lpData: LPVOID,
-	       dwFlags: DWORD
-MoveFileWithProgressW proto WINAPI \
-    lpExistingFileName: LPCWSTR,
-	 lpNewFileName: LPCWSTR,
-     lpProgressRoutine: LPPROGRESS_ROUTINE,
-		lpData: LPVOID,
-	       dwFlags: DWORD
-ifdef _UNICODE
-MoveFileWithProgress equ <MoveFileWithProgressW>
-else
-MoveFileWithProgress equ <MoveFileWithProgressA>
-endif ; !UNICODE
-endif ; (_WIN32_WINNT >= equ 0x0500)
-
-if (_WIN32_WINNT GE 0x0600)
-;BOOL
-MoveFileTransactedA proto WINAPI \
-    lpExistingFileName: LPCSTR,
-	 lpNewFileName: LPCSTR,
-     lpProgressRoutine: LPPROGRESS_ROUTINE,
-		lpData: LPVOID,
-	       dwFlags: DWORD,
-	  hTransaction: HANDLE
-MoveFileTransactedW proto WINAPI \
-    lpExistingFileName: LPCWSTR,
-	 lpNewFileName: LPCWSTR,
-     lpProgressRoutine: LPPROGRESS_ROUTINE,
-		lpData: LPVOID,
-	       dwFlags: DWORD,
-	  hTransaction: HANDLE
-ifdef _UNICODE
-MoveFileTransacted	equ <MoveFileTransactedW>
-else
-MoveFileTransacted	equ <MoveFileTransactedA>
-endif
-endif
-
-MOVEFILE_REPLACE_EXISTING	equ 0x00000001
-MOVEFILE_COPY_ALLOWED		equ 0x00000002
-MOVEFILE_DELAY_UNTIL_REBOOT	equ 0x00000004
-MOVEFILE_WRITE_THROUGH		equ 0x00000008
-if (_WIN32_WINNT GE 0x0500)
-MOVEFILE_CREATE_HARDLINK	equ 0x00000010
-MOVEFILE_FAIL_IF_NOT_TRACKABLE	equ 0x00000020
-endif
-
-
-if (_WIN32_WINNT GE 0x0500)
-
-;BOOL
-CreateHardLinkA proto WINAPI \
-	    lpFileName: LPCSTR,
-    lpExistingFileName: LPCSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-CreateHardLinkW proto WINAPI \
-	    lpFileName: LPCWSTR,
-    lpExistingFileName: LPCWSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-ifdef _UNICODE
-CreateHardLink equ <CreateHardLinkW>
-else
-CreateHardLink equ <CreateHardLinkA>
-endif
-
-endif ; (_WIN32_WINNT >= equ 0x0500)
-
-if (_WIN32_WINNT GE 0x0600)
-;BOOL
-CreateHardLinkTransactedA proto WINAPI \
-	    lpFileName: LPCSTR,
-    lpExistingFileName: LPCSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-	  hTransaction: HANDLE
-CreateHardLinkTransactedW proto WINAPI \
-	    lpFileName: LPCWSTR,
-    lpExistingFileName: LPCWSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-	  hTransaction: HANDLE
-ifdef _UNICODE
-CreateHardLinkTransacted equ <CreateHardinkTransactedW>
-else
-CreateHardLinkTransacted equ <CreateHardinkTransactedA>
-endif
-endif
-
-if (_WIN32_WINNT GE 0x0501)
-STREAM_INFO_LEVELS	typedef sdword ; enum _STREAM_INFO_LEVELS {
-FindStreamInfoStandard	equ 0
-FindStreamInfoMaxInfoLevel equ 1
-
-WIN32_FIND_STREAM_DATA	STRUC
-StreamSize		LARGE_INTEGER <>
-cStreamName		dw MAX_PATH + 36 dup(?)
-WIN32_FIND_STREAM_DATA	ENDS
-PWIN32_FIND_STREAM_DATA typedef ptr WIN32_FIND_STREAM_DATA
-
-;HANDLE
-FindFirstStreamW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	     InfoLevel: STREAM_INFO_LEVELS,
-      lpFindStreamData: LPVOID,
-	       dwFlags: DWORD
-
-if _WIN32_WINNT GE 0x0600
-;HANDLE
-FindFirstStreamTransactedW proto WINAPI \
-	    lpFileName: LPCWSTR,
-	     InfoLevel: STREAM_INFO_LEVELS,
-      lpFindStreamData: LPVOID,
-	       dwFlags: DWORD,
-	  hTransaction: HANDLE
-endif
-
-;BOOL
-FindNextStreamW proto WINAPI \
-	   hFindStream: HANDLE,
-      lpFindStreamData: LPVOID
-
-endif
-
-if _WIN32_WINNT GE 0x0600
-;HANDLE
-FindFirstFileNameW proto WINAPI \
-	   lpFileName: LPCWSTR,
-	      dwFlags: DWORD,
-	 StringLength: LPDWORD,
-	     LinkName: PWCHAR
-;BOOL
-FindNextFileNameW proto WINAPI \
-	  hFindStream: HANDLE,
-	 StringLength: LPDWORD,
-	     LinkName: PWCHAR
-;HANDLE
-FindFirstFileNameTransactedW proto WINAPI \
-	   lpFileName: LPCWSTR,
-	      dwFlags: DWORD,
-	 StringLength: LPDWORD,
-	     LinkName: PWCHAR,
-	 hTransaction: HANDLE
-endif
-
-;HANDLE
-CreateNamedPipeA proto WINAPI \
-		lpName: LPCSTR,
-	    dwOpenMode: DWORD,
-	    dwPipeMode: DWORD,
-	 nMaxInstances: DWORD,
-	nOutBufferSize: DWORD,
-	 nInBufferSize: DWORD,
-       nDefaultTimeOut: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-CreateNamedPipeW proto WINAPI \
-		lpName: LPCWSTR,
-	    dwOpenMode: DWORD,
-	    dwPipeMode: DWORD,
-	 nMaxInstances: DWORD,
-	nOutBufferSize: DWORD,
-	 nInBufferSize: DWORD,
-       nDefaultTimeOut: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-ifdef _UNICODE
-CreateNamedPipe equ <CreateNamedPipeW>
-else
-CreateNamedPipe equ <CreateNamedPipeA>
-endif
-
-;BOOL
-GetNamedPipeHandleStateA proto WINAPI \
-	    hNamedPipe: HANDLE,
-	       lpState: LPDWORD,
-	lpCurInstances: LPDWORD,
-  lpMaxCollectionCount: LPDWORD,
-  lpCollectDataTimeout: LPDWORD,
-	    lpUserName: LPSTR,
-      nMaxUserNameSize: DWORD
-GetNamedPipeHandleStateW proto WINAPI \
-	    hNamedPipe: HANDLE,
-	       lpState: LPDWORD,
-	lpCurInstances: LPDWORD,
-  lpMaxCollectionCount: LPDWORD,
-  lpCollectDataTimeout: LPDWORD,
-	    lpUserName: LPWSTR,
-      nMaxUserNameSize: DWORD
-ifdef _UNICODE
-GetNamedPipeHandleState equ <GetNamedPipeHandleStateW>
-else
-GetNamedPipeHandleState equ <GetNamedPipeHandleStateA>
-endif
-
-CallNamedPipeA proto WINAPI \
-       lpNamedPipeName: LPCSTR,
-	    lpInBuffer: LPVOID,
-	 nInBufferSize: DWORD,
-	   lpOutBuffer: LPVOID,
-	nOutBufferSize: DWORD,
-	   lpBytesRead: LPDWORD,
-	      nTimeOut: DWORD
-CallNamedPipeW proto WINAPI \
-       lpNamedPipeName: LPCWSTR,
-	    lpInBuffer: LPVOID,
-	 nInBufferSize: DWORD,
-	   lpOutBuffer: LPVOID,
-	nOutBufferSize: DWORD,
-	   lpBytesRead: LPDWORD,
-	      nTimeOut: DWORD
-ifdef _UNICODE
-CallNamedPipe equ <CallNamedPipeW>
-else
-CallNamedPipe equ <CallNamedPipeA>
-endif
-
-WaitNamedPipeA proto WINAPI \
-       lpNamedPipeName: LPCSTR,
-	      nTimeOut: DWORD
-WaitNamedPipeW proto WINAPI \
-       lpNamedPipeName: LPCWSTR,
-	      nTimeOut: DWORD
-ifdef _UNICODE
-WaitNamedPipe equ <WaitNamedPipeW>
-else
-WaitNamedPipe equ <WaitNamedPipeA>
-endif
-
-SetVolumeLabelA proto WINAPI \
-	lpRootPathName: LPCSTR,
-	  lpVolumeName: LPCSTR
-SetVolumeLabelW proto WINAPI \
-	lpRootPathName: LPCWSTR,
-	  lpVolumeName: LPCWSTR
-ifdef _UNICODE
-SetVolumeLabel equ <SetVolumeLabelW>
-else
-SetVolumeLabel equ <SetVolumeLabelA>
-endif
-
-SetFileApisToOEM  proto WINAPI
-SetFileApisToANSI proto WINAPI
-AreFileApisANSI	  proto WINAPI
-
-GetVolumeInformationA proto WINAPI \
-	lpRootPathName: LPSTR,	; address of root directory of the file system
-    lpVolumeNameBuffer: LPSTR,	; address of name of the volume
-       nVolumeNameSize: DWORD,	; length of lpVolumeNameBuffer
-  lpVolumeSerialNumber: LPDWORD,; address of volume serial number,
-lpMaximumComponentLength: LPDWORD,; address of system's maximum filename length
-     lpFileSystemFlags: LPDWORD,; address of file system flags
-lpFileSystemNameBuffer: LPSTR,	; address of name of file system
-   nFileSystemNameSize: DWORD	; length of lpFileSystemNameBuffer
-GetVolumeInformationW proto WINAPI \
-	lpRootPathName: LPWSTR,
-    lpVolumeNameBuffer: LPWSTR,
-       nVolumeNameSize: DWORD,
-  lpVolumeSerialNumber: LPDWORD,
-lpMaximumComponentLength: LPDWORD,
-     lpFileSystemFlags: LPDWORD,
-lpFileSystemNameBuffer: LPWSTR,
-   nFileSystemNameSize: DWORD
-ifdef _UNICODE
-GetVolumeInformation equ <GetVolumeInformationW>
-else
-GetVolumeInformation equ <GetVolumeInformationA>
-endif
-
-if(_WIN32_WINNT GE 0x0600)
-;BOOL
-GetVolumeInformationByHandleW proto WINAPI \
-		 hFile: HANDLE,
-    lpVolumeNameBuffer: LPWSTR,
-       nVolumeNameSize: DWORD,
-  lpVolumeSerialNumber: LPDWORD,
-lpMaximumComponentLength: LPDWORD,
-     lpFileSystemFlags: LPDWORD,
-lpFileSystemNameBuffer: LPWSTR,
-   nFileSystemNameSize: DWORD
-endif
-
-;BOOL
-CancelIo proto WINAPI \
-		 hFile: HANDLE
 
 .pragma comment(lib, advapi32)
 
-ClearEventLogA proto WINAPI \
-	     hEventLog: HANDLE,
-      lpBackupFileName: LPCSTR
+if (_WIN32_WINNT ge 0x0600)
+SetFileBandwidthReservation proto WINAPI :HANDLE, :DWORD, :DWORD, :BOOL, :LPDWORD, :LPDWORD
+GetFileBandwidthReservation proto WINAPI :HANDLE, :LPDWORD, :LPDWORD, :LPBOOL, :LPDWORD, :LPDWORD
+endif
 
-ClearEventLogW proto WINAPI \
-	     hEventLog: HANDLE,
-      lpBackupFileName: LPCWSTR
+ClearEventLogA proto WINAPI :HANDLE, :LPCSTR
+ClearEventLogW proto WINAPI :HANDLE, :LPCWSTR
 ifdef _UNICODE
-ClearEventLog equ <ClearEventLogW>
+define ClearEventLog  <ClearEventLogW>
 else
-ClearEventLog equ <ClearEventLogA>
+define ClearEventLog  <ClearEventLogA>
 endif
 
-BackupEventLogA proto WINAPI \
-	     hEventLog: HANDLE,
-      lpBackupFileName: LPCSTR
-BackupEventLogW proto WINAPI \
-	     hEventLog: HANDLE,
-      lpBackupFileName: LPCWSTR
+BackupEventLogA proto WINAPI :HANDLE, :LPCSTR
+BackupEventLogW proto WINAPI :HANDLE, :LPCWSTR
 ifdef _UNICODE
-BackupEventLog equ <BackupEventLogW>
+define BackupEventLog  <BackupEventLogW>
 else
-BackupEventLog equ <BackupEventLogA>
+define BackupEventLog  <BackupEventLogA>
 endif
 
-CloseEventLog proto WINAPI \
-	     hEventLog: HANDLE
+CloseEventLog proto WINAPI :HANDLE
 
-DeregisterEventSource proto WINAPI \
-	     hEventLog: HANDLE
+DeregisterEventSource proto WINAPI :HANDLE
 
-NotifyChangeEventLog proto WINAPI \
-	     hEventLog: HANDLE,
-		hEvent: HANDLE
-
-GetNumberOfEventLogRecords proto WINAPI \
-	     hEventLog: HANDLE,
-       NumberOfRecords: PDWORD
-
-GetOldestEventLogRecord proto WINAPI \
-	     hEventLog: HANDLE,
-	  OldestRecord: PDWORD
-;HANDLE
-OpenEventLogA proto WINAPI \
-       lpUNCServerName: LPCSTR,
-	  lpSourceName: LPCSTR
-OpenEventLogW proto WINAPI \
-       lpUNCServerName: LPCWSTR,
-	  lpSourceName: LPCWSTR
+NotifyChangeEventLog proto WINAPI :HANDLE, :HANDLE
+GetNumberOfEventLogRecords proto WINAPI :HANDLE, :PDWORD
+GetOldestEventLogRecord proto WINAPI :HANDLE, :PDWORD
+OpenEventLogA proto WINAPI :LPCSTR, :LPCSTR
+OpenEventLogW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-OpenEventLog equ <OpenEventLogW>
+define OpenEventLog  <OpenEventLogW>
 else
-OpenEventLog equ <OpenEventLogA>
+define OpenEventLog  <OpenEventLogA>
 endif
 
-RegisterEventSourceA proto WINAPI \
-       lpUNCServerName: LPCSTR,
-	  lpSourceName: LPCSTR
-RegisterEventSourceW proto WINAPI \
-       lpUNCServerName: LPCWSTR,
-	  lpSourceName: LPCWSTR
+RegisterEventSourceA proto WINAPI :LPCSTR, :LPCSTR
+RegisterEventSourceW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-RegisterEventSource equ <RegisterEventSourceW>
+define RegisterEventSource  <RegisterEventSourceW>
 else
-RegisterEventSource equ <RegisterEventSourceA>
+define RegisterEventSource  <RegisterEventSourceA>
 endif
 
-OpenBackupEventLogA proto WINAPI \
-       lpUNCServerName: LPCSTR,
-	    lpFileName: LPCSTR
-OpenBackupEventLogW proto WINAPI \
-       lpUNCServerName: LPCWSTR,
-	    lpFileName: LPCWSTR
+OpenBackupEventLogA proto WINAPI :LPCSTR, :LPCSTR
+OpenBackupEventLogW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-OpenBackupEventLog equ <OpenBackupEventLogW>
+define OpenBackupEventLog  <OpenBackupEventLogW>
 else
-OpenBackupEventLog equ <OpenBackupEventLogA>
+define OpenBackupEventLog  <OpenBackupEventLogA>
 endif
 
-;BOOL
-ReadEventLogA proto WINAPI \
-	     hEventLog: HANDLE,
-	   dwReadFlags: DWORD,
-	dwRecordOffset: DWORD,
-	      lpBuffer: PVOID,
-  nNumberOfBytesToRead: DWORD,
-	   pnBytesRead: PTR DWORD,
-pnMinNumberOfBytesNeeded: PTR DWORD
-ReadEventLogW proto WINAPI \
-	     hEventLog: HANDLE,
-	   dwReadFlags: DWORD,
-	dwRecordOffset: DWORD,
-	      lpBuffer: PVOID,
-  nNumberOfBytesToRead: DWORD,
-	   pnBytesRead: PTR DWORD,
-pnMinNumberOfBytesNeeded: PTR DWORD
+ReadEventLogA proto WINAPI :HANDLE, :DWORD, :DWORD, :LPVOID, :DWORD, :ptr, :ptr
+ReadEventLogW proto WINAPI :HANDLE, :DWORD, :DWORD, :LPVOID, :DWORD, :ptr, :ptr
 ifdef _UNICODE
-ReadEventLog equ <ReadEventLogW>
+define ReadEventLog  <ReadEventLogW>
 else
-ReadEventLog equ <ReadEventLogA>
+define ReadEventLog  <ReadEventLogA>
 endif
 
-ReportEventA proto WINAPI \
-	     hEventLog: HANDLE,
-		 wType: WORD,
-	     wCategory: WORD,
-	     dwEventID: DWORD,
-	     lpUserSid: PSID,
-	   wNumStrings: WORD,
-	    dwDataSize: DWORD,
-	     lpStrings: PTR LPCSTR,
-	     lpRawData: LPVOID
-ReportEventW proto WINAPI \
-	     hEventLog: HANDLE,
-		 wType: WORD,
-	     wCategory: WORD,
-	     dwEventID: DWORD,
-	     lpUserSid: PSID,
-	   wNumStrings: WORD,
-	    dwDataSize: DWORD,
-	     lpStrings: PTR LPCWSTR,
-	     lpRawData: LPVOID
+ReportEventA proto WINAPI :HANDLE, :WORD, :WORD, :DWORD, :PSID, :WORD, :DWORD, :ptr, :LPVOID
+ReportEventW proto WINAPI :HANDLE, :WORD, :WORD, :DWORD, :PSID, :WORD, :DWORD, :ptr, :LPVOID
 ifdef _UNICODE
-ReportEvent equ <ReportEventW>
+define ReportEvent  <ReportEventW>
 else
-ReportEvent equ <ReportEventA>
+define ReportEvent  <ReportEventA>
 endif
 
+define EVENTLOG_FULL_INFO      0
 
-;BOOL
-DuplicateToken proto WINAPI \
-   ExistingTokenHandle: HANDLE,
-    ImpersonationLevel: SECURITY_IMPERSONATION_LEVEL,
-  DuplicateTokenHandle: PHANDLE
+_EVENTLOG_FULL_INFORMATION struct
+dwFull                  DWORD ?
+_EVENTLOG_FULL_INFORMATION ends
+EVENTLOG_FULL_INFORMATION typedef _EVENTLOG_FULL_INFORMATION
+LPEVENTLOG_FULL_INFORMATION typedef ptr _EVENTLOG_FULL_INFORMATION
 
-GetKernelObjectSecurity proto WINAPI \
-		Handle: HANDLE,
-  RequestedInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	       nLength: DWORD,
-       lpnLengthNeeded: LPDWORD
+GetEventLogInformation proto WINAPI :HANDLE, :DWORD, :LPVOID, :DWORD, :LPDWORD
 
-ImpersonateNamedPipeClient proto WINAPI \
-	    hNamedPipe: HANDLE
+if (_WIN32_WINNT ge 0x0602)
 
-ImpersonateSelf proto WINAPI \
-    ImpersonationLevel: SECURITY_IMPERSONATION_LEVEL
+define OPERATION_API_VERSION                   1
+OPERATION_ID            typedef ULONG
 
-RevertToSelf proto WINAPI
+_OPERATION_START_PARAMETERS struct
+Version                 ULONG ?
+OperationId             OPERATION_ID ?
+Flags                   ULONG ?
+_OPERATION_START_PARAMETERS ends
+OPERATION_START_PARAMETERS typedef _OPERATION_START_PARAMETERS
+POPERATION_START_PARAMETERS typedef ptr _OPERATION_START_PARAMETERS
 
-SetThreadToken proto WINAPI \
-		Thread: PHANDLE,
-		 Token: HANDLE
+define OPERATION_START_TRACE_CURRENT_THREAD    0x1
 
-AccessCheck proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	   ClientToken: HANDLE,
-	 DesiredAccess: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	  PrivilegeSet: PPRIVILEGE_SET,
-    PrivilegeSetLength: LPDWORD,
-	 GrantedAccess: LPDWORD,
-	  AccessStatus: LPBOOL
-if(_WIN32_WINNT GE 0x0500)
+_OPERATION_END_PARAMETERS struct
+Version                 ULONG ?
+OperationId             OPERATION_ID ?
+Flags                   ULONG ?
+_OPERATION_END_PARAMETERS ends
+OPERATION_END_PARAMETERS typedef _OPERATION_END_PARAMETERS
+POPERATION_END_PARAMETERS typedef ptr _OPERATION_END_PARAMETERS
 
-AccessCheckByType proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-      PrincipalSelfSid: PSID,
-	   ClientToken: HANDLE,
-	 DesiredAccess: DWORD,
-	ObjectTypeList: POBJECT_TYPE_LIST,
-  ObjectTypeListLength: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	  PrivilegeSet: PPRIVILEGE_SET,
-    PrivilegeSetLength: LPDWORD,
-	 GrantedAccess: LPDWORD,
-	  AccessStatus: LPBOOL
+define OPERATION_END_DISCARD                   0x1
 
-AccessCheckByTypeResultList proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-      PrincipalSelfSid: PSID,
-	   ClientToken: HANDLE,
-	 DesiredAccess: DWORD,
-	ObjectTypeList: POBJECT_TYPE_LIST,
-  ObjectTypeListLength: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	  PrivilegeSet: PPRIVILEGE_SET,
-    PrivilegeSetLength: LPDWORD,
-     GrantedAccessList: LPDWORD,
-      AccessStatusList: LPDWORD
+OperationStart proto WINAPI :ptr
+OperationEnd proto WINAPI :ptr
+
 endif
 
-
-OpenProcessToken proto WINAPI \
-	 ProcessHandle: HANDLE,
-	 DesiredAccess: DWORD,
-	   TokenHandle: PHANDLE
-
-OpenThreadToken proto WINAPI \
-	  ThreadHandle: HANDLE,
-	 DesiredAccess: DWORD,
-	    OpenAsSelf: BOOL,
-	   TokenHandle: PHANDLE
-
-GetTokenInformation proto WINAPI \
-	   TokenHandle: HANDLE,
- TokenInformationClass: TOKEN_INFORMATION_CLASS,
-      TokenInformation: LPVOID,
-TokenInformationLength: DWORD,
-	  ReturnLength: PDWORD
-
-SetTokenInformation proto WINAPI \
-	   TokenHandle: HANDLE,
- TokenInformationClass: TOKEN_INFORMATION_CLASS,
-      TokenInformation: LPVOID,
-TokenInformationLength: DWORD
-
-AdjustTokenPrivileges proto WINAPI \
-	   TokenHandle: HANDLE,
-  DisableAllPrivileges: BOOL,
-	      NewState: PTOKEN_PRIVILEGES,
-	  BufferLength: DWORD,
-	 PreviousState: PTOKEN_PRIVILEGES,
-	  ReturnLength: PDWORD
-
-AdjustTokenGroups proto WINAPI \
-	   TokenHandle: HANDLE,
-	ResetToDefault: BOOL,
-	      NewState: PTOKEN_GROUPS,
-	  BufferLength: DWORD,
-	 PreviousState: PTOKEN_GROUPS,
-	  ReturnLength: PDWORD
-
-PrivilegeCheck proto WINAPI \
-	   ClientToken: HANDLE,
-    RequiredPrivileges: PPRIVILEGE_SET,
-	      pfResult: LPBOOL
-
-AccessCheckAndAuditAlarmA proto WINAPI \
-	 SubsystemName: LPCSTR,
-	      HandleId: LPVOID,
-	ObjectTypeName: LPSTR,
-	    ObjectName: LPSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-	 DesiredAccess: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	ObjectCreation: BOOL,
-	 GrantedAccess: LPDWORD,
-	  AccessStatus: LPBOOL,
-     pfGenerateOnClose: LPBOOL
-
-AccessCheckAndAuditAlarmW proto WINAPI \
-	 SubsystemName: LPCWSTR,
-	      HandleId: LPVOID,
-	ObjectTypeName: LPWSTR,
-	    ObjectName: LPWSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-	 DesiredAccess: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	ObjectCreation: BOOL,
-	 GrantedAccess: LPDWORD,
-	  AccessStatus: LPBOOL,
-     pfGenerateOnClose: LPBOOL
-ifdef _UNICODE
-AccessCheckAndAuditAlarm equ <AccessCheckAndAuditAlarmW>
-else
-AccessCheckAndAuditAlarm equ <AccessCheckAndAuditAlarmA>
+AccessCheckAndAuditAlarmA proto WINAPI :LPCSTR, :LPVOID, :LPSTR, :LPSTR, :PSECURITY_DESCRIPTOR, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPBOOL, :LPBOOL
+ifndef _UNICODE
+define AccessCheckAndAuditAlarm  <AccessCheckAndAuditAlarmA>
 endif
 
-if(_WIN32_WINNT GE 0x0500)
+if(_WIN32_WINNT ge 0x0500)
 
-AccessCheckByTypeAndAuditAlarmA proto WINAPI \
-	 SubsystemName: LPCSTR,
-	      HandleId: LPVOID,
-	ObjectTypeName: LPCSTR,
-	    ObjectName: LPCSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-      PrincipalSelfSid: PSID,
-	 DesiredAccess: DWORD,
-	     AuditType: AUDIT_EVENT_TYPE,
-		 Flags: DWORD,
-	ObjectTypeList: POBJECT_TYPE_LIST,
-  ObjectTypeListLength: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	ObjectCreation: BOOL,
-	 GrantedAccess: LPDWORD,
-	  AccessStatus: LPBOOL,
-     pfGenerateOnClose: LPBOOL
-AccessCheckByTypeAndAuditAlarmW proto WINAPI \
-	 SubsystemName: LPCWSTR,
-	      HandleId: LPVOID,
-	ObjectTypeName: LPCWSTR,
-	    ObjectName: LPCWSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-      PrincipalSelfSid: PSID,
-	 DesiredAccess: DWORD,
-	     AuditType: AUDIT_EVENT_TYPE,
-		 Flags: DWORD,
-	ObjectTypeList: POBJECT_TYPE_LIST,
-  ObjectTypeListLength: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	ObjectCreation: BOOL,
-	 GrantedAccess: LPDWORD,
-	  AccessStatus: LPBOOL,
-     pfGenerateOnClose: LPBOOL
-ifdef _UNICODE
-AccessCheckByTypeAndAuditAlarm equ <AccessCheckByTypeAndAuditAlarmW>
-else
-AccessCheckByTypeAndAuditAlarm equ <AccessCheckByTypeAndAuditAlarmA>
+AccessCheckByTypeAndAuditAlarmA proto WINAPI :LPCSTR, :LPVOID, :LPCSTR, :LPCSTR, :PSECURITY_DESCRIPTOR, :PSID, :DWORD, :AUDIT_EVENT_TYPE, :DWORD, :POBJECT_TYPE_LIST, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPBOOL, :LPBOOL
+ifndef _UNICODE
+define AccessCheckByTypeAndAuditAlarm  <AccessCheckByTypeAndAuditAlarmA>
 endif
 
-AccessCheckByTypeResultListAndAuditAlarmA proto WINAPI \
-	 SubsystemName: LPCSTR,
-	      HandleId: LPVOID,
-	ObjectTypeName: LPCSTR,
-	    ObjectName: LPCSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-      PrincipalSelfSid: PSID,
-	 DesiredAccess: DWORD,
-	     AuditType: AUDIT_EVENT_TYPE,
-		 Flags: DWORD,
-	ObjectTypeList: POBJECT_TYPE_LIST,
-  ObjectTypeListLength: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	ObjectCreation: BOOL,
-	 GrantedAccess: LPDWORD,
-      AccessStatusList: LPDWORD,
-     pfGenerateOnClose: LPBOOL
-AccessCheckByTypeResultListAndAuditAlarmW proto WINAPI \
-	 SubsystemName: LPCWSTR,
-	      HandleId: LPVOID,
-	ObjectTypeName: LPCWSTR,
-	    ObjectName: LPCWSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-      PrincipalSelfSid: PSID,
-	 DesiredAccess: DWORD,
-	     AuditType: AUDIT_EVENT_TYPE,
-		 Flags: DWORD,
-	ObjectTypeList: POBJECT_TYPE_LIST,
-  ObjectTypeListLength: DWORD,
-	GenericMapping: PGENERIC_MAPPING,
-	ObjectCreation: BOOL,
-	 GrantedAccess: LPDWORD,
-      AccessStatusList: LPDWORD,
-     pfGenerateOnClose: LPBOOL
-ifdef _UNICODE
-AccessCheckByTypeResultListAndAuditAlarm equ <AccessCheckByTypeResultListAndAuditAlarmW>
-else
-AccessCheckByTypeResultListAndAuditAlarm equ <AccessCheckByTypeResultListAndAuditAlarmA>
+AccessCheckByTypeResultListAndAuditAlarmA proto WINAPI :LPCSTR, :LPVOID, :LPCSTR, :LPCSTR, :PSECURITY_DESCRIPTOR, :PSID, :DWORD, :AUDIT_EVENT_TYPE, :DWORD, :POBJECT_TYPE_LIST, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPDWORD, :LPBOOL
+ifndef _UNICODE
+define AccessCheckByTypeResultListAndAuditAlarm  <AccessCheckByTypeResultListAndAuditAlarmA>
 endif
 
-endif ;(_WIN32_WINNT >= 0x0500)
-
-ObjectOpenAuditAlarmA proto WINAPI \
-	 SubsystemName: LPCSTR,
-	      HandleId: LPVOID,
-	ObjectTypeName: LPSTR,
-	    ObjectName: LPSTR,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	   ClientToken: HANDLE,
-	 DesiredAccess: DWORD,
-	 GrantedAccess: DWORD,
-	    Privileges: PPRIVILEGE_SET,
-	ObjectCreation: BOOL,
-	 AccessGranted: BOOL,
-       GenerateOnClose: LPBOOL
-ObjectOpenAuditAlarmW proto WINAPI \
-	 SubsystemName: LPCWSTR,
-	      HandleId: LPVOID,
-	ObjectTypeName: LPWSTR,
-	    ObjectName: LPWSTR,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	   ClientToken: HANDLE,
-	 DesiredAccess: DWORD,
-	 GrantedAccess: DWORD,
-	    Privileges: PPRIVILEGE_SET,
-	ObjectCreation: BOOL,
-	 AccessGranted: BOOL,
-       GenerateOnClose: LPBOOL
-ifdef _UNICODE
-ObjectOpenAuditAlarm equ <ObjectOpenAuditAlarmW>
-else
-ObjectOpenAuditAlarm equ <ObjectOpenAuditAlarmA>
+AccessCheckByTypeResultListAndAuditAlarmByHandleA proto WINAPI :LPCSTR, :LPVOID, :HANDLE, :LPCSTR, :LPCSTR, :PSECURITY_DESCRIPTOR, :PSID, :DWORD, :AUDIT_EVENT_TYPE, :DWORD, :POBJECT_TYPE_LIST, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPDWORD, :LPBOOL
+ifndef _UNICODE
+define AccessCheckByTypeResultListAndAuditAlarmByHandle  <AccessCheckByTypeResultListAndAuditAlarmByHandleA>
+endif
 endif
 
-ObjectPrivilegeAuditAlarmA proto WINAPI \
-	 SubsystemName: LPCSTR,
-	      HandleId: LPVOID,
-	   ClientToken: HANDLE,
-	 DesiredAccess: DWORD,
-	    Privileges: PPRIVILEGE_SET,
-	 AccessGranted: BOOL
-ObjectPrivilegeAuditAlarmW proto WINAPI \
-	 SubsystemName: LPCWSTR,
-	      HandleId: LPVOID,
-	   ClientToken: HANDLE,
-	 DesiredAccess: DWORD,
-	    Privileges: PPRIVILEGE_SET,
-	 AccessGranted: BOOL
-ifdef _UNICODE
-ObjectPrivilegeAuditAlarm equ <ObjectPrivilegeAuditAlarmW>
-else
-ObjectPrivilegeAuditAlarm equ <ObjectPrivilegeAuditAlarmA>
+ObjectOpenAuditAlarmA proto WINAPI :LPCSTR, :LPVOID, :LPSTR, :LPSTR, :PSECURITY_DESCRIPTOR, :HANDLE, :DWORD, :DWORD, :PPRIVILEGE_SET, :BOOL, :BOOL, :LPBOOL
+ifndef _UNICODE
+define ObjectOpenAuditAlarm  <ObjectOpenAuditAlarmA>
 endif
 
-ObjectCloseAuditAlarmA proto WINAPI \
-	 SubsystemName: LPCSTR,
-	      HandleId: LPVOID,
-       GenerateOnClose: BOOL
-ObjectCloseAuditAlarmW proto WINAPI \
-	 SubsystemName: LPCWSTR,
-	      HandleId: LPVOID,
-       GenerateOnClose: BOOL
-ifdef _UNICODE
-ObjectCloseAuditAlarm equ <ObjectCloseAuditAlarmW>
-else
-ObjectCloseAuditAlarm equ <ObjectCloseAuditAlarmA>
+ObjectPrivilegeAuditAlarmA proto WINAPI :LPCSTR, :LPVOID, :HANDLE, :DWORD, :PPRIVILEGE_SET, :BOOL
+ifndef _UNICODE
+define ObjectPrivilegeAuditAlarm  <ObjectPrivilegeAuditAlarmA>
 endif
 
-ObjectDeleteAuditAlarmA proto WINAPI \
-	 SubsystemName: LPCSTR,
-	      HandleId: LPVOID,
-       GenerateOnClose: BOOL
-ObjectDeleteAuditAlarmW proto WINAPI \
-	 SubsystemName: LPCWSTR,
-	      HandleId: LPVOID,
-       GenerateOnClose: BOOL
-ifdef _UNICODE
-ObjectDeleteAuditAlarm equ <ObjectDeleteAuditAlarmW>
-else
-ObjectDeleteAuditAlarm equ <ObjectDeleteAuditAlarmA>
+ObjectCloseAuditAlarmA proto WINAPI :LPCSTR, :LPVOID, :BOOL
+ifndef _UNICODE
+define ObjectCloseAuditAlarm  <ObjectCloseAuditAlarmA>
 endif
 
-PrivilegedServiceAuditAlarmA proto WINAPI \
-	 SubsystemName: LPCSTR,
-	   ServiceName: LPCSTR,
-	   ClientToken: HANDLE,
-	    Privileges: PPRIVILEGE_SET,
-	 AccessGranted: BOOL
-PrivilegedServiceAuditAlarmW proto WINAPI \
-	 SubsystemName: LPCWSTR,
-	   ServiceName: LPCWSTR,
-	   ClientToken: HANDLE,
-	    Privileges: PPRIVILEGE_SET,
-	 AccessGranted: BOOL
-ifdef _UNICODE
-PrivilegedServiceAuditAlarm equ <PrivilegedServiceAuditAlarmW>
-else
-PrivilegedServiceAuditAlarm equ <PrivilegedServiceAuditAlarmA>
+ObjectDeleteAuditAlarmA proto WINAPI :LPCSTR, :LPVOID, :BOOL
+ifndef _UNICODE
+define ObjectDeleteAuditAlarm  <ObjectDeleteAuditAlarmA>
 endif
 
-if(_WIN32_WINNT GE 0x0501)
-;BOOL
-IsWellKnownSid proto WINAPI \
-		  pSid: PSID,
-      WellKnownSidType: WELL_KNOWN_SID_TYPE
-;BOOL
-CreateWellKnownSid proto WINAPI \
-      WellKnownSidType: WELL_KNOWN_SID_TYPE,
-	     DomainSid: PSID,
-		  pSid: PSID,
-		 cbSid: LPDWORD
-;BOOL
-EqualDomainSid proto WINAPI \
-		 pSid1: PSID,
-		 pSid2: PSID,
-	       pfEqual: ptr BOOL
-;BOOL
-GetWindowsAccountDomainSid proto WINAPI \
-		  pSid: PSID,
-	    pDomainSid: PSID,
-	   cbDomainSid: LPDWORD
+PrivilegedServiceAuditAlarmA proto WINAPI :LPCSTR, :LPCSTR, :HANDLE, :PPRIVILEGE_SET, :BOOL
+ifndef _UNICODE
+define PrivilegedServiceAuditAlarm  <PrivilegedServiceAuditAlarmA>
 endif
 
-IsValidSid proto WINAPI \
-		  pSid: PSID
-
-EqualSid proto WINAPI \
-		 pSid1: PSID,
-		 pSid2: PSID
-
-EqualPrefixSid proto WINAPI \
-		 pSid1: PSID,
-		 pSid2: PSID
-;DWORD
-GetSidLengthRequired proto WINAPI \
-    nSubAuthorityCount: DWORD;UCHAR
-;BOOL
-AllocateAndInitializeSid proto WINAPI \
-  pIdentifierAuthority: PSID_IDENTIFIER_AUTHORITY,
-    nSubAuthorityCount: BYTE,
-	nSubAuthority0: DWORD,
-	nSubAuthority1: DWORD,
-	nSubAuthority2: DWORD,
-	nSubAuthority3: DWORD,
-	nSubAuthority4: DWORD,
-	nSubAuthority5: DWORD,
-	nSubAuthority6: DWORD,
-	nSubAuthority7: DWORD,
-		  pSid: PTR PSID
-;PVOID
-FreeSid proto WINAPI \
-		  pSid: PSID
-;BOOL
-InitializeSid proto WINAPI \
-		   Sid: PSID,
-  pIdentifierAuthority: PSID_IDENTIFIER_AUTHORITY,
-    nSubAuthorityCount: DWORD;BYTE
-;PSID_IDENTIFIER_AUTHORITY
-GetSidIdentifierAuthority proto WINAPI \
-		  pSid: PSID
-;PDWORD
-GetSidSubAuthority proto WINAPI \
-		  pSid: PSID,
-	 nSubAuthority: DWORD
-;PUCHAR
-GetSidSubAuthorityCount proto WINAPI \
-		  pSid: PSID
-;DWORD
-GetLengthSid proto WINAPI \
-		  pSid: PSID
-;BOOL
-CopySid proto WINAPI \
- nDestinationSidLength: DWORD,
-       pDestinationSid: PSID,
-	    pSourceSid: PSID
-
-AreAllAccessesGranted proto WINAPI \
-	 GrantedAccess: DWORD,
-	 DesiredAccess: DWORD
-
-AreAnyAccessesGranted proto WINAPI \
-	 GrantedAccess: DWORD,
-	 DesiredAccess: DWORD
-;VOID
-MapGenericMask proto WINAPI \
-	    AccessMask: PDWORD,
-	GenericMapping: PGENERIC_MAPPING
-;BOOL
-IsValidAcl proto WINAPI \
-		  pAcl: PACL
-
-InitializeAcl proto WINAPI \
-		  pAcl: PACL,
-	    nAclLength: DWORD,
-	 dwAclRevision: DWORD
-
-GetAclInformation proto WINAPI \
-		  pAcl: PACL,
-       pAclInformation: LPVOID,
- nAclInformationLength: DWORD,
- dwAclInformationClass: ACL_INFORMATION_CLASS
-
-SetAclInformation proto WINAPI \
-		  pAcl: PACL,
-       pAclInformation: LPVOID,
- nAclInformationLength: DWORD,
- dwAclInformationClass: ACL_INFORMATION_CLASS
-
-AddAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-    dwStartingAceIndex: DWORD,
-	      pAceList: LPVOID,
-	nAceListLength: DWORD
-
-DeleteAce proto WINAPI \
-		  pAcl: PACL,
-	    dwAceIndex: DWORD
-
-GetAce proto WINAPI \
-		  pAcl: PACL,
-	    dwAceIndex: DWORD,
-		  pAce: PTR LPVOID
-
-AddAccessAllowedAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	    AccessMask: DWORD,
-		  pSid: PSID
-
-if(_WIN32_WINNT GE 0x0500)
-AddAccessAllowedAceEx proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	      AceFlags: DWORD,
-	    AccessMask: DWORD,
-		  pSid: PSID
+if(_WIN32_WINNT ge 0x0601)
+AddConditionalAce proto WINAPI :PACL, :DWORD, :DWORD, :UCHAR, :DWORD, :PSID, :PWCHAR, :ptr
 endif
 
-if(_WIN32_WINNT GE 0x0600)
-;BOOL
-AddMandatoryAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	      AceFlags: DWORD,
-       MandatoryPolicy: DWORD,
-	     pLabelSid: PSID
+SetFileSecurityA proto WINAPI :LPCSTR, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR
+ifndef _UNICODE
+define SetFileSecurity  <SetFileSecurityA>
 endif
 
-if(_WIN32_WINNT GE 0x0601)
-;BOOL
-AddConditionalAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	      AceFlags: DWORD,
-	       AceType: UCHAR,
-	    AccessMask: DWORD,
-		  pSid: PSID,
-	  ConditionStr: PWCHAR,
-	  ReturnLength: LPDWORD
+GetFileSecurityA proto WINAPI :LPCSTR, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR, :DWORD, :LPDWORD
+ifndef _UNICODE
+define GetFileSecurity  <GetFileSecurityA>
 endif
 
-AddAccessDeniedAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	    AccessMask: DWORD,
-		  pSid: PSID
+if(_WIN32_WINNT ge 0x0400)
+ReadDirectoryChangesW proto WINAPI :HANDLE, :LPVOID, :DWORD, :BOOL, :DWORD, :LPDWORD, :LPOVERLAPPED, :LPOVERLAPPED_COMPLETION_ROUTINE
 
-if (_WIN32_WINNT GE 0x0500)
-
-AddAccessDeniedAceEx proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	      AceFlags: DWORD,
-	    AccessMask: DWORD,
-		  pSid: PSID
+if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
+ReadDirectoryChangesExW proto WINAPI :HANDLE, :LPVOID, :DWORD, :BOOL, :DWORD, :LPDWORD, :LPOVERLAPPED, :LPOVERLAPPED_COMPLETION_ROUTINE, :READ_DIRECTORY_NOTIFY_INFORMATION_CLASS
+endif
 endif
 
-AddAuditAccessAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	  dwAccessMask: DWORD,
-		  pSid: PSID,
-	 bAuditSuccess: BOOL,
-	 bAuditFailure: BOOL
-
-if (_WIN32_WINNT GE 0x0500)
-
-AddAuditAccessAceEx proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	      AceFlags: DWORD,
-	  dwAccessMask: DWORD,
-		  pSid: PSID,
-	 bAuditSuccess: BOOL,
-	 bAuditFailure: BOOL
-
-AddAccessAllowedObjectAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	      AceFlags: DWORD,
-	    AccessMask: DWORD,
-	ObjectTypeGuid: PTR GUID,
-InheritedObjectTypeGuid: PTR GUID,
-		  pSid: PSID
-
-AddAccessDeniedObjectAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	      AceFlags: DWORD,
-	    AccessMask: DWORD,
-	ObjectTypeGuid: PTR GUID,
-InheritedObjectTypeGuid: PTR GUID,
-		  pSid: PSID
-
-AddAuditAccessObjectAce proto WINAPI \
-		  pAcl: PACL,
-	 dwAceRevision: DWORD,
-	      AceFlags: DWORD,
-	    AccessMask: DWORD,
-	ObjectTypeGuid: PTR GUID,
-InheritedObjectTypeGuid: PTR GUID,
-		  pSid: PSID,
-	 bAuditSuccess: BOOL,
-	 bAuditFailure: BOOL
-endif
-
-
-FindFirstFreeAce proto WINAPI \
-		  pAcl: PACL,
-		  pAce: PTR LPVOID
-
-InitializeSecurityDescriptor proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	    dwRevision: DWORD
-
-IsValidSecurityDescriptor proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR
-;DWORD
-GetSecurityDescriptorLength proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR
-;BOOL
-GetSecurityDescriptorControl proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	      pControl: PSECURITY_DESCRIPTOR_CONTROL,
-	  lpdwRevision: LPDWORD
-
-if (_WIN32_WINNT GE 0x0500)
-
-SetSecurityDescriptorControl proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
- ControlBitsOfInterest: SECURITY_DESCRIPTOR_CONTROL,
-      ControlBitsToSet: SECURITY_DESCRIPTOR_CONTROL
-endif
-
-SetSecurityDescriptorDacl proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	  bDaclPresent: BOOL,
-		 pDacl: PACL,
-	bDaclDefaulted: BOOL
-
-GetSecurityDescriptorDacl proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	lpbDaclPresent: LPBOOL,
-		 pDacl: PTR PACL,
-      lpbDaclDefaulted: LPBOOL
-
-SetSecurityDescriptorSacl proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	  bSaclPresent: BOOL,
-		 pSacl: PACL,
-	bSaclDefaulted: BOOL
-
-GetSecurityDescriptorSacl proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	lpbSaclPresent: LPBOOL,
-		 pSacl: PTR PACL,
-      lpbSaclDefaulted: LPBOOL
-
-SetSecurityDescriptorOwner proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-		pOwner: PSID,
-       bOwnerDefaulted: BOOL
-
-GetSecurityDescriptorOwner proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-		pOwner: PTR PSID,
-     lpbOwnerDefaulted: LPBOOL
-
-SetSecurityDescriptorGroup proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-		pGroup: PSID,
-       bGroupDefaulted: BOOL
-
-GetSecurityDescriptorGroup proto WINAPI \
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-		pGroup: PTR PSID,
-     lpbGroupDefaulted: LPBOOL
-
-CreatePrivateObjectSecurity proto WINAPI \
-      ParentDescriptor: PSECURITY_DESCRIPTOR,
-     CreatorDescriptor: PSECURITY_DESCRIPTOR,
-	 NewDescriptor: PTR PSECURITY_DESCRIPTOR,
-     IsDirectoryObject: BOOL,
-		 Token: HANDLE,
-	GenericMapping: PGENERIC_MAPPING
-
-if (_WIN32_WINNT GE 0x0500)
-
-ConvertToAutoInheritPrivateObjectSecurity proto WINAPI \
-      ParentDescriptor: PSECURITY_DESCRIPTOR,
-CurrentSecurityDescriptor: PSECURITY_DESCRIPTOR,
- NewSecurityDescriptor: PTR PSECURITY_DESCRIPTOR,
-	    ObjectType: PTR GUID,
-     IsDirectoryObject: BOOLEAN,
-	GenericMapping: PGENERIC_MAPPING
-
-CreatePrivateObjectSecurityEx proto WINAPI \
-      ParentDescriptor: PSECURITY_DESCRIPTOR,
-     CreatorDescriptor: PSECURITY_DESCRIPTOR,
-	 NewDescriptor: PTR PSECURITY_DESCRIPTOR,
-	    ObjectType: PTR GUID,
-     IsContainerObject: BOOL,
-      AutoInheritFlags: ULONG,
-		 Token: HANDLE,
-	GenericMapping: PGENERIC_MAPPING
-
-endif ; _WIN32_WINNT >=	 0x0500
-
-SetPrivateObjectSecurity proto WINAPI \
-   SecurityInformation: SECURITY_INFORMATION,
-ModificationDescriptor: PSECURITY_DESCRIPTOR,
-ObjectsSecurityDescriptor: PTR PSECURITY_DESCRIPTOR,
-	GenericMapping: PGENERIC_MAPPING,
-		 Token: HANDLE
-
-if (_WIN32_WINNT GE 0x0500)
-
-SetPrivateObjectSecurityEx proto WINAPI \
-   SecurityInformation: SECURITY_INFORMATION,
-ModificationDescriptor: PSECURITY_DESCRIPTOR,
-ObjectsSecurityDescriptor: PTR PSECURITY_DESCRIPTOR,
-      AutoInheritFlags: ULONG,
-	GenericMapping: PGENERIC_MAPPING,
-		 Token: HANDLE ;OPTIONAL
-endif ; _WIN32_WINNT >=	 equ 0x0500
-
-
-GetPrivateObjectSecurity proto WINAPI \
-      ObjectDescriptor: PSECURITY_DESCRIPTOR,
-   SecurityInformation: SECURITY_INFORMATION,
-   ResultantDescriptor: PSECURITY_DESCRIPTOR,
-      DescriptorLength: DWORD,
-	  ReturnLength: PDWORD
-
-DestroyPrivateObjectSecurity proto WINAPI \
-      ObjectDescriptor: PTR PSECURITY_DESCRIPTOR
-
-MakeSelfRelativeSD proto WINAPI \
-pAbsoluteSecurityDescriptor: PSECURITY_DESCRIPTOR,
-pSelfRelativeSecurityDescriptor: PSECURITY_DESCRIPTOR,
-      lpdwBufferLength: LPDWORD
-
-MakeAbsoluteSD proto WINAPI \
-pSelfRelativeSecurityDescriptor: PSECURITY_DESCRIPTOR,
-pAbsoluteSecurityDescriptor: PSECURITY_DESCRIPTOR,
-lpdwAbsoluteSecurityDescriptorSize: LPDWORD,
-		 pDacl: PACL,
-	  lpdwDaclSize: LPDWORD,
-		 pSacl: PACL,
-	  lpdwSaclSize: LPDWORD,
-		pOwner: PSID,
-	 lpdwOwnerSize: LPDWORD,
-	 pPrimaryGroup: PSID,
-  lpdwPrimaryGroupSize: LPDWORD
-
-SetFileSecurityA proto WINAPI \
-	    lpFileName: LPCSTR,
-   SecurityInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR
-SetFileSecurityW proto WINAPI \
-	    lpFileName: LPCWSTR,
-   SecurityInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR
-ifdef _UNICODE
-SetFileSecurity equ <SetFileSecurityW>
-else
-SetFileSecurity equ <SetFileSecurityA>
-endif
-
-
-GetFileSecurityA proto WINAPI \
-	    lpFileName: LPCSTR,
-  RequestedInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	       nLength: DWORD,
-       lpnLengthNeeded: LPDWORD
-GetFileSecurityW proto WINAPI \
-	    lpFileName: LPCWSTR,
-  RequestedInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-	       nLength: DWORD,
-       lpnLengthNeeded: LPDWORD
-ifdef _UNICODE
-GetFileSecurity equ <GetFileSecurityW>
-else
-GetFileSecurity equ <GetFileSecurityA>
-endif
-
-
-SetKernelObjectSecurity proto WINAPI \
-		Handle: HANDLE,
-   SecurityInformation: SECURITY_INFORMATION,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR
-;HANDLE
-FindFirstChangeNotificationA proto WINAPI \
-	    lpPathName: LPCSTR,
-	 bWatchSubtree: BOOL,
-	dwNotifyFilter: DWORD
-FindFirstChangeNotificationW proto WINAPI \
-	    lpPathName: LPCWSTR,
-	 bWatchSubtree: BOOL,
-	dwNotifyFilter: DWORD
-ifdef _UNICODE
-FindFirstChangeNotification equ <FindFirstChangeNotificationW>
-else
-FindFirstChangeNotification equ <FindFirstChangeNotificationA>
-endif
-
-;BOOL
-FindNextChangeNotification proto WINAPI \
-	 hChangeHandle: HANDLE
-
-FindCloseChangeNotification proto WINAPI \
-	 hChangeHandle: HANDLE
-
-if (_WIN32_WINNT GE 0x0400)
-
-ReadDirectoryChangesW proto WINAPI \
-	    hDirectory: HANDLE,
-	      lpBuffer: LPVOID,
-	 nBufferLength: DWORD,
-	 bWatchSubtree: BOOL,
-	dwNotifyFilter: DWORD,
-       lpBytesReturned: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPOVERLAPPED_COMPLETION_ROUTINE
-
-endif	; _WIN32_WINNT >= equ 0x0400
-
-VirtualLock proto WINAPI \
-	     lpAddress: LPVOID,
-		dwSize: DWORD
-
-VirtualUnlock proto WINAPI \
-	     lpAddress: LPVOID,
-		dwSize: DWORD
-;LPVOID
-MapViewOfFileEx proto WINAPI \
-    hFileMappingObject: HANDLE,
-       dwDesiredAccess: DWORD,
-      dwFileOffsetHigh: DWORD,
-       dwFileOffsetLow: DWORD,
-  dwNumberOfBytesToMap: DWORD,
-	 lpBaseAddress: LPVOID
-
-if _WIN32_WINNT GE 0x0600
-;LPVOID
-MapViewOfFileExNuma proto WINAPI \
-    hFileMappingObject: HANDLE,
-       dwDesiredAccess: DWORD,
-      dwFileOffsetHigh: DWORD,
-       dwFileOffsetLow: DWORD,
-  dwNumberOfBytesToMap: SIZE_T,
-	 lpBaseAddress: LPVOID,
-	  nndPreferred: DWORD
+if _WIN32_WINNT ge 0x0600
+MapViewOfFileExNuma proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :SIZE_T, :LPVOID, :DWORD
 endif
 
 .pragma comment(lib, kernel32)
 
-;BOOL
-SetPriorityClass proto WINAPI \
-	      hProcess: HANDLE,
-       dwPriorityClass: DWORD
-;DWORD
-GetPriorityClass proto WINAPI \
-	      hProcess: HANDLE
-;BOOL
-IsBadReadPtr proto WINAPI \
-		    lp: LPVOID,
-		   ucb: UINT
-
-IsBadWritePtr proto WINAPI \
-		    lp: LPVOID,
-		   ucb: UINT
-
-IsBadHugeReadPtr proto WINAPI \
-		    lp: LPVOID,
-		   ucb: UINT
-
-IsBadHugeWritePtr proto WINAPI \
-		    lp: LPVOID,
-		   ucb: UINT
-
-IsBadCodePtr proto WINAPI \
-		  lpfn: FARPROC
-
-IsBadStringPtrA proto WINAPI \
-		  lpsz: LPCSTR,
-	       ucchMax: UINT
-IsBadStringPtrW proto WINAPI \
-		  lpsz: LPCWSTR,
-	       ucchMax: UINT
+IsBadReadPtr proto WINAPI :ptr, :UINT_PTR
+IsBadWritePtr proto WINAPI :LPVOID, :UINT_PTR
+IsBadHugeReadPtr proto WINAPI :ptr, :UINT_PTR
+IsBadHugeWritePtr proto WINAPI :LPVOID, :UINT_PTR
+IsBadCodePtr proto WINAPI :FARPROC
+IsBadStringPtrA proto WINAPI :LPCSTR, :UINT_PTR
+IsBadStringPtrW proto WINAPI :LPCWSTR, :UINT_PTR
 ifdef _UNICODE
-IsBadStringPtr equ <IsBadStringPtrW>
+define IsBadStringPtr  <IsBadStringPtrW>
 else
-IsBadStringPtr equ <IsBadStringPtrA>
+define IsBadStringPtr  <IsBadStringPtrA>
 endif
+
 
 .pragma comment(lib, Advapi32)
 
-LookupAccountSidA proto WINAPI \
-	  lpSystemName: LPCSTR,
-		   Sid: PSID,
-		  Name: LPSTR,
-		cbName: LPDWORD,
-  ReferencedDomainName: LPSTR,
-cbReferencedDomainName: LPDWORD,
-		 peUse: PSID_NAME_USE
-
-LookupAccountSidW proto WINAPI \
-	  lpSystemName: LPCWSTR,
-		   Sid: PSID,
-		  Name: LPWSTR,
-		cbName: LPDWORD,
-  ReferencedDomainName: LPWSTR,
-cbReferencedDomainName: LPDWORD,
-		 peUse: PSID_NAME_USE
+LookupAccountSidA proto WINAPI :LPCSTR, :PSID, :LPSTR, :LPDWORD, :LPSTR, :LPDWORD, :PSID_NAME_USE
+LookupAccountSidW proto WINAPI :LPCWSTR, :PSID, :LPWSTR, :LPDWORD, :LPWSTR, :LPDWORD, :PSID_NAME_USE
 ifdef _UNICODE
-LookupAccountSid equ <LookupAccountSidW>
+define LookupAccountSid  <LookupAccountSidW>
 else
-LookupAccountSid equ <LookupAccountSidA>
+define LookupAccountSid  <LookupAccountSidA>
 endif
 
-LookupAccountNameA proto WINAPI \
-	  lpSystemName: LPCSTR,
-	 lpAccountName: LPCSTR,
-		   Sid: PSID,
-		 cbSid: LPDWORD,
-  ReferencedDomainName: LPSTR,
-cbReferencedDomainName: LPDWORD,
-		 peUse: PSID_NAME_USE
-
-LookupAccountNameW proto WINAPI \
-	  lpSystemName: LPCWSTR,
-	 lpAccountName: LPCWSTR,
-		   Sid: PSID,
-		 cbSid: LPDWORD,
-  ReferencedDomainName: LPWSTR,
-cbReferencedDomainName: LPDWORD,
-		 peUse: PSID_NAME_USE
+LookupAccountNameA proto WINAPI :LPCSTR, :LPCSTR, :PSID, :LPDWORD, :LPSTR, :LPDWORD, :PSID_NAME_USE
+LookupAccountNameW proto WINAPI :LPCWSTR, :LPCWSTR, :PSID, :LPDWORD, :LPWSTR, :LPDWORD, :PSID_NAME_USE
 ifdef _UNICODE
-LookupAccountName equ <LookupAccountNameW>
+define LookupAccountName  <LookupAccountNameW>
 else
-LookupAccountName equ <LookupAccountNameA>
+define LookupAccountName  <LookupAccountNameA>
 endif
 
-LookupPrivilegeValueA proto WINAPI \
-	  lpSystemName: LPCSTR,
-		lpName: LPCSTR,
-		lpLuid: PLUID
-LookupPrivilegeValueW proto WINAPI \
-	  lpSystemName: LPCWSTR,
-		lpName: LPCWSTR,
-		lpLuid: PLUID
+if _WIN32_WINNT ge 0x0601
+
+LookupAccountNameLocalA proto WINAPI :LPCSTR, :PSID, :LPDWORD, :LPSTR, :LPDWORD, :PSID_NAME_USE
+LookupAccountNameLocalW proto WINAPI :LPCWSTR, :PSID, :LPDWORD, :LPWSTR, :LPDWORD, :PSID_NAME_USE
 ifdef _UNICODE
-LookupPrivilegeValue equ <LookupPrivilegeValueW>
+define LookupAccountNameLocal  <LookupAccountNameLocalW>
 else
-LookupPrivilegeValue equ <LookupPrivilegeValueA>
+define LookupAccountNameLocal  <LookupAccountNameLocalA>
 endif
 
-LookupPrivilegeNameA proto WINAPI \
-	  lpSystemName: LPCSTR,
-		lpLuid: PLUID,
-		lpName: LPSTR,
-		cbName: LPDWORD
-LookupPrivilegeNameW proto WINAPI \
-	  lpSystemName: LPCWSTR,
-		lpLuid: PLUID,
-		lpName: LPWSTR,
-		cbName: LPDWORD
+LookupAccountSidLocalA proto WINAPI :PSID, :LPSTR, :LPDWORD, :LPSTR, :LPDWORD, :PSID_NAME_USE
+LookupAccountSidLocalW proto WINAPI :PSID, :LPWSTR, :LPDWORD, :LPWSTR, :LPDWORD, :PSID_NAME_USE
 ifdef _UNICODE
-LookupPrivilegeName equ <LookupPrivilegeNameW>
+define LookupAccountSidLocal  <LookupAccountSidLocalW>
 else
-LookupPrivilegeName equ <LookupPrivilegeNameA>
+define LookupAccountSidLocal  <LookupAccountSidLocalA>
 endif
 
-LookupPrivilegeDisplayNameA proto WINAPI \
-	  lpSystemName: LPCSTR,
-		lpName: LPCSTR,
-	 lpDisplayName: LPSTR,
-	 cbDisplayName: LPDWORD,
-	  lpLanguageId: LPDWORD
-LookupPrivilegeDisplayNameW proto WINAPI \
-	  lpSystemName: LPCWSTR,
-		lpName: LPCWSTR,
-	 lpDisplayName: LPWSTR,
-	 cbDisplayName: LPDWORD,
-	  lpLanguageId: LPDWORD
-ifdef _UNICODE
-LookupPrivilegeDisplayName equ <LookupPrivilegeDisplayNameW>
 else
-LookupPrivilegeDisplayName equ <LookupPrivilegeDisplayNameA>
+
+LookupAccountNameLocalA macro n, s, cs, d, cd, u
+  exitm<LookupAccountNameA(NULL, n, s, cs, d, cd, u)>
+  endm
+LookupAccountNameLocalW macro n, s, cs, d, cd, u
+  exitm<LookupAccountNameW(NULL, n, s, cs, d, cd, u)>
+  endm
+ifdef _UNICODE
+define LookupAccountNameLocal  <LookupAccountNameLocalW>
+else
+define LookupAccountNameLocal  <LookupAccountNameLocalA>
 endif
 
-AllocateLocallyUniqueId proto WINAPI \
-		  Luid: PLUID
+LookupAccountSidLocalA macro s, n, cn, d, cd, u
+  exitm<LookupAccountSidA(NULL, s, n, cn, d, cd, u)>
+  endm
+LookupAccountSidLocalW macro s, n, cn, d, cd, u
+  exitm<LookupAccountSidW(NULL, s, n, cn, d, cd, u)>
+  endm
+ifdef _UNICODE
+define LookupAccountSidLocal  <LookupAccountSidLocalW>
+else
+define LookupAccountSidLocal  <LookupAccountSidLocalA>
+endif
+
+endif
+
+LookupPrivilegeValueA proto WINAPI :LPCSTR, :LPCSTR, :PLUID
+LookupPrivilegeValueW proto WINAPI :LPCWSTR, :LPCWSTR, :PLUID
+ifdef _UNICODE
+define LookupPrivilegeValue  <LookupPrivilegeValueW>
+else
+define LookupPrivilegeValue  <LookupPrivilegeValueA>
+endif
+
+LookupPrivilegeNameA proto WINAPI :LPCSTR, :PLUID, :LPSTR, :LPDWORD
+LookupPrivilegeNameW proto WINAPI :LPCWSTR, :PLUID, :LPWSTR, :LPDWORD
+ifdef _UNICODE
+define LookupPrivilegeName  <LookupPrivilegeNameW>
+else
+define LookupPrivilegeName  <LookupPrivilegeNameA>
+endif
+
+LookupPrivilegeDisplayNameA proto WINAPI :LPCSTR, :LPCSTR, :LPSTR, :LPDWORD, :LPDWORD
+LookupPrivilegeDisplayNameW proto WINAPI :LPCWSTR, :LPCWSTR, :LPWSTR, :LPDWORD, :LPDWORD
+ifdef _UNICODE
+define LookupPrivilegeDisplayName  <LookupPrivilegeDisplayNameW>
+else
+define LookupPrivilegeDisplayName  <LookupPrivilegeDisplayNameA>
+endif
 
 .pragma comment(lib, kernel32)
 
-BuildCommDCBA proto WINAPI \
-		 lpDef: LPCSTR,
-		 lpDCB: LPDCB
-BuildCommDCBW proto WINAPI lpDef:LPCWSTR, lpDCB:LPDCB
+BuildCommDCBA proto WINAPI :LPCSTR, :LPDCB
+BuildCommDCBW proto WINAPI :LPCWSTR, :LPDCB
 ifdef _UNICODE
-BuildCommDCB equ <BuildCommDCBW>
+define BuildCommDCB  <BuildCommDCBW>
 else
-BuildCommDCB equ <BuildCommDCBA>
+define BuildCommDCB  <BuildCommDCBA>
 endif
 
-BuildCommDCBAndTimeoutsA proto WINAPI \
-		 lpDef: LPCSTR,
-		 lpDCB: LPDCB,
-	lpCommTimeouts: LPCOMMTIMEOUTS
-BuildCommDCBAndTimeoutsW proto WINAPI \
-		 lpDef: LPCWSTR,
-		 lpDCB: LPDCB,
-	lpCommTimeouts: LPCOMMTIMEOUTS
+BuildCommDCBAndTimeoutsA proto WINAPI :LPCSTR, :LPDCB, :LPCOMMTIMEOUTS
+BuildCommDCBAndTimeoutsW proto WINAPI :LPCWSTR, :LPDCB, :LPCOMMTIMEOUTS
 ifdef _UNICODE
-BuildCommDCBAndTimeouts equ <BuildCommDCBAndTimeoutsW>
+define BuildCommDCBAndTimeouts  <BuildCommDCBAndTimeoutsW>
 else
-BuildCommDCBAndTimeouts equ <BuildCommDCBAndTimeoutsA>
+define BuildCommDCBAndTimeouts  <BuildCommDCBAndTimeoutsA>
 endif
 
-CommConfigDialogA proto WINAPI \
-	      lpszName: LPCSTR,
-		  hWnd: HWND,
-		  lpCC: LPCOMMCONFIG
-CommConfigDialogW proto WINAPI \
-	      lpszName: LPCWSTR,
-		  hWnd: HWND,
-		  lpCC: LPCOMMCONFIG
+CommConfigDialogA proto WINAPI :LPCSTR, :HWND, :LPCOMMCONFIG
+CommConfigDialogW proto WINAPI :LPCWSTR, :HWND, :LPCOMMCONFIG
 ifdef _UNICODE
-CommConfigDialog equ <CommConfigDialogW>
+define CommConfigDialog  <CommConfigDialogW>
 else
-CommConfigDialog equ <CommConfigDialogA>
+define CommConfigDialog  <CommConfigDialogA>
 endif
 
-GetDefaultCommConfigA proto WINAPI \
-	      lpszName: LPCSTR,
-		  lpCC: LPCOMMCONFIG,
-	      lpdwSize: LPDWORD
-GetDefaultCommConfigW proto WINAPI \
-	      lpszName: LPCWSTR,
-		  lpCC: LPCOMMCONFIG,
-	      lpdwSize: LPDWORD
+GetDefaultCommConfigA proto WINAPI :LPCSTR, :LPCOMMCONFIG, :LPDWORD
+GetDefaultCommConfigW proto WINAPI :LPCWSTR, :LPCOMMCONFIG, :LPDWORD
 ifdef _UNICODE
-GetDefaultCommConfig equ <GetDefaultCommConfigW>
+define GetDefaultCommConfig  <GetDefaultCommConfigW>
 else
-GetDefaultCommConfig equ <GetDefaultCommConfigA>
+define GetDefaultCommConfig  <GetDefaultCommConfigA>
 endif
 
-SetDefaultCommConfigA proto WINAPI \
-	      lpszName: LPCSTR,
-		  lpCC: LPCOMMCONFIG,
-		dwSize: DWORD
-SetDefaultCommConfigW proto WINAPI \
-	      lpszName: LPCWSTR,
-		  lpCC: LPCOMMCONFIG,
-		dwSize: DWORD
+SetDefaultCommConfigA proto WINAPI :LPCSTR, :LPCOMMCONFIG, :DWORD
+SetDefaultCommConfigW proto WINAPI :LPCWSTR, :LPCOMMCONFIG, :DWORD
 ifdef _UNICODE
-SetDefaultCommConfig equ <SetDefaultCommConfigW>
+define SetDefaultCommConfig  <SetDefaultCommConfigW>
 else
-SetDefaultCommConfig equ <SetDefaultCommConfigA>
+define SetDefaultCommConfig  <SetDefaultCommConfigA>
 endif
 
-MAX_COMPUTERNAME_LENGTH equ 15
+ifndef _MAC
+define MAX_COMPUTERNAME_LENGTH 15
+else
+define MAX_COMPUTERNAME_LENGTH 31
+endif
 
-GetComputerNameA proto WINAPI \
-	      lpBuffer: LPSTR,
-		 nSize: LPDWORD
-GetComputerNameW proto WINAPI \
-	      lpBuffer: LPWSTR,
-		 nSize: LPDWORD
+GetComputerNameA proto WINAPI :LPSTR, :LPDWORD
+GetComputerNameW proto WINAPI :LPWSTR, :LPDWORD
 ifdef _UNICODE
-GetComputerName equ <GetComputerNameW>
+define GetComputerName  <GetComputerNameW>
 else
-GetComputerName equ <GetComputerNameA>
+define GetComputerName  <GetComputerNameA>
 endif
 
-SetComputerNameA proto WINAPI \
-	lpComputerName: LPCSTR
-SetComputerNameW proto WINAPI \
-	lpComputerName: LPCWSTR
+if (_WIN32_WINNT ge 0x0500)
+
+DnsHostnameToComputerNameA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD
+DnsHostnameToComputerNameW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD
 ifdef _UNICODE
-SetComputerName equ <SetComputerNameW>
+define DnsHostnameToComputerName  <DnsHostnameToComputerNameW>
 else
-SetComputerName equ <SetComputerNameA>
+define DnsHostnameToComputerName  <DnsHostnameToComputerNameA>
 endif
 
-GetUserNameA proto WINAPI \
-	      lpBuffer: LPSTR,
-		 nSize: LPDWORD
-GetUserNameW proto WINAPI \
-	      lpBuffer: LPWSTR,
-		 nSize: LPDWORD
+endif
+
+GetUserNameA proto WINAPI :LPSTR, :LPDWORD
+GetUserNameW proto WINAPI :LPWSTR, :LPDWORD
 ifdef _UNICODE
-GetUserName equ <GetUserNameW>
+define GetUserName  <GetUserNameW>
 else
-GetUserName equ <GetUserNameA>
+define GetUserName  <GetUserNameA>
 endif
 
-
-LOGON32_LOGON_INTERACTIVE   equ 2
-LOGON32_LOGON_NETWORK	    equ 3
-LOGON32_LOGON_BATCH	    equ 4
-LOGON32_LOGON_SERVICE	    equ 5
-
-LOGON32_PROVIDER_DEFAULT    equ 0
-LOGON32_PROVIDER_WINNT35    equ 1
-if(_WIN32_WINNT GE 0x0400)
-LOGON32_PROVIDER_WINNT40    equ 2
-endif
-if(_WIN32_WINNT GE 0x0500)
-LOGON32_PROVIDER_WINNT50    equ 3
-endif
-if(_WIN32_WINNT GE 0x0600)
-LOGON32_PROVIDER_VIRTUAL    equ 4
+define LOGON32_LOGON_INTERACTIVE       2
+define LOGON32_LOGON_NETWORK           3
+define LOGON32_LOGON_BATCH             4
+define LOGON32_LOGON_SERVICE           5
+define LOGON32_LOGON_UNLOCK            7
+if(_WIN32_WINNT ge 0x0500)
+define LOGON32_LOGON_NETWORK_CLEARTEXT 8
+define LOGON32_LOGON_NEW_CREDENTIALS   9
 endif
 
-LogonUserA proto WINAPI \
-	  lpszUsername: LPSTR,
-	    lpszDomain: LPSTR,
-	  lpszPassword: LPSTR,
-	   dwLogonType: DWORD,
-       dwLogonProvider: DWORD,
-	       phToken: PHANDLE
-LogonUserW proto WINAPI \
-	  lpszUsername: LPWSTR,
-	    lpszDomain: LPWSTR,
-	  lpszPassword: LPWSTR,
-	   dwLogonType: DWORD,
-       dwLogonProvider: DWORD,
-	       phToken: PHANDLE
+define LOGON32_PROVIDER_DEFAULT    0
+define LOGON32_PROVIDER_WINNT35    1
+if(_WIN32_WINNT ge 0x0400)
+define LOGON32_PROVIDER_WINNT40    2
+endif
+if(_WIN32_WINNT ge 0x0500)
+define LOGON32_PROVIDER_WINNT50    3
+endif
+if(_WIN32_WINNT ge 0x0600)
+define LOGON32_PROVIDER_VIRTUAL    4
+endif
+
+LogonUserA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :DWORD, :DWORD, :PHANDLE
+LogonUserW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :PHANDLE
 ifdef _UNICODE
-LogonUser equ <LogonUserW>
+define LogonUser  <LogonUserW>
 else
-LogonUser equ <LogonUserA>
+define LogonUser  <LogonUserA>
 endif
 
-ImpersonateLoggedOnUser proto WINAPI \
-		hToken: HANDLE
-
-CreateProcessAsUserA proto WINAPI \
-		hToken: HANDLE,
-     lpApplicationName: LPCSTR,
-	 lpCommandLine: LPSTR,
-   lpProcessAttributes: LPSECURITY_ATTRIBUTES,
-    lpThreadAttributes: LPSECURITY_ATTRIBUTES,
-       bInheritHandles: BOOL,
-       dwCreationFlags: DWORD,
-	 lpEnvironment: LPVOID,
-    lpCurrentDirectory: LPCSTR,
-	 lpStartupInfo: LPSTARTUPINFOA,
-  lpProcessInformation: LPPROCESS_INFORMATION
-CreateProcessAsUserW proto WINAPI \
-		hToken: HANDLE,
-     lpApplicationName: LPCWSTR,
-	 lpCommandLine: LPWSTR,
-   lpProcessAttributes: LPSECURITY_ATTRIBUTES,
-    lpThreadAttributes: LPSECURITY_ATTRIBUTES,
-       bInheritHandles: BOOL,
-       dwCreationFlags: DWORD,
-	 lpEnvironment: LPVOID,
-    lpCurrentDirectory: LPCWSTR,
-	 lpStartupInfo: LPSTARTUPINFOA,
-  lpProcessInformation: LPPROCESS_INFORMATION
+LogonUserExA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :DWORD, :DWORD, :PHANDLE, :ptr, :ptr, :LPDWORD, :PQUOTA_LIMITS
+LogonUserExW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :PHANDLE, :ptr, :ptr, :LPDWORD, :PQUOTA_LIMITS
 ifdef _UNICODE
-CreateProcessAsUser equ <CreateProcessAsUserW>
+define LogonUserEx  <LogonUserExW>
 else
-PreateProcessAsUser equ <CreateProcessAsUserA>
+define LogonUserEx  <LogonUserExA>
 endif
 
-if(_WIN32_WINNT GE 0x0500)
-LOGON_WITH_PROFILE	equ 0x00000001
-LOGON_NETCREDENTIALS_ONLY equ 0x00000002
-LOGON_ZERO_PASSWORD_BUFFER equ 0x80000000
+if(_WIN32_WINNT ge 0x0500)
 
-;BOOL
-CreateProcessWithLogonW proto WINAPI \
-	    lpUsername: LPCWSTR,
-	      lpDomain: LPCWSTR,
-	    lpPassword: LPCWSTR,
-	  dwLogonFlags: DWORD,
-     lpApplicationName: LPCWSTR,
-	 lpCommandLine: LPWSTR,
-       dwCreationFlags: DWORD,
-	 lpEnvironment: LPVOID,
-    lpCurrentDirectory: LPCWSTR,
-	 lpStartupInfo: LPSTARTUPINFOW,
-  lpProcessInformation: LPPROCESS_INFORMATION
-;BOOL
-CreateProcessWithTokenW proto WINAPI \
-		hToken: HANDLE,
-	  dwLogonFlags: DWORD,
-     lpApplicationName: LPCWSTR,
-	 lpCommandLine: LPWSTR,
-       dwCreationFlags: DWORD,
-	 lpEnvironment: LPVOID,
-    lpCurrentDirectory: LPCWSTR,
-	 lpStartupInfo: LPSTARTUPINFOW,
-  lpProcessInformation: LPPROCESS_INFORMATION
+define LOGON_WITH_PROFILE              0x00000001
+define LOGON_NETCREDENTIALS_ONLY       0x00000002
+define LOGON_ZERO_PASSWORD_BUFFER      0x80000000
+
+CreateProcessWithLogonW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD, :LPCWSTR, :LPWSTR, :DWORD, :LPVOID, :LPCWSTR, :LPSTARTUPINFOW, :LPPROCESS_INFORMATION
+CreateProcessWithTokenW proto WINAPI :HANDLE, :DWORD, :LPCWSTR, :LPWSTR, :DWORD, :LPVOID, :LPCWSTR, :LPSTARTUPINFOW, :LPPROCESS_INFORMATION
+
 endif
 
-;BOOL
-uplicateTokenEx proto WINAPI \
-	hExistingToken: HANDLE,
-       dwDesiredAccess: DWORD,
-     lpTokenAttributes: LPSECURITY_ATTRIBUTES,
-    ImpersonationLevel: SECURITY_IMPERSONATION_LEVEL,
-	     TokenType: TOKEN_TYPE,
-	    phNewToken: PHANDLE
-
-CreateRestrictedToken proto WINAPI \
-   ExistingTokenHandle: HANDLE,
-		 Flags: DWORD,
-       DisableSidCount: DWORD,
-	 SidsToDisable: PSID_AND_ATTRIBUTES,
-  DeletePrivilegeCount: DWORD,
-    PrivilegesToDelete: PLUID_AND_ATTRIBUTES,
-    RestrictedSidCount: DWORD,
-	SidsToRestrict: PSID_AND_ATTRIBUTES,
-	NewTokenHandle: PHANDLE
-
-IsTokenRestricted proto WINAPI \
-	   TokenHandle: HANDLE
-
-IsTokenUntrusted proto WINAPI \
-	   TokenHandle: HANDLE
-
-;BOOL
-CheckTokenMembership proto WINAPI \
-	   TokenHandle: HANDLE,
-	    SidToCheck: PSID,
-	      IsMember: PBOOL
-
-
-if (_WIN32_WINNT GE 0x0500)
-
-WAITORTIMERCALLBACK	typedef WAITORTIMERCALLBACKFUNC
+IsTokenUntrusted proto WINAPI :HANDLE
 
 ifdef __PE__
 .pragma comment(lib, kernel32)
 endif
 
-;BOOL
-RegisterWaitForSingleObject proto WINAPI \
-       phNewWaitObject: PHANDLE,
-	       hObject: HANDLE,
-	      Callback: WAITORTIMERCALLBACK,
-	       Context: PVOID,
-	dwMilliseconds: ULONG,
-	       dwFlags: ULONG
+if (_WIN32_WINNT ge 0x0500)
 
-;HANDLE
-RegisterWaitForSingleObjectEx proto WINAPI \
-	       hObject: HANDLE,
-	      Callback: WAITORTIMERCALLBACK,
-	       Context: PVOID,
-	dwMilliseconds: ULONG,
-	       dwFlags: ULONG
+RegisterWaitForSingleObject proto WINAPI :PHANDLE, :HANDLE, :WAITORTIMERCALLBACK, :PVOID, :ULONG, :ULONG
+UnregisterWait proto WINAPI :HANDLE
+BindIoCompletionCallback proto WINAPI :HANDLE, :LPOVERLAPPED_COMPLETION_ROUTINE, :ULONG
+SetTimerQueueTimer proto WINAPI :HANDLE, :WAITORTIMERCALLBACK, :PVOID, :DWORD, :DWORD, :BOOL
+CancelTimerQueueTimer proto WINAPI :HANDLE, :HANDLE
+DeleteTimerQueue proto WINAPI :HANDLE
 
-;BOOL
-UnregisterWait proto WINAPI \
-	    WaitHandle: HANDLE
+endif
 
-;BOOL
-UnregisterWaitEx proto WINAPI \
-	    WaitHandle: HANDLE,
-       CompletionEvent: HANDLE
-
-;BOOL
-QueueUserWorkItem proto WINAPI \
-	      Function: LPTHREAD_START_ROUTINE,
-	       Context: PVOID,
-		 Flags: ULONG
-
-;BOOL
-BindIoCompletionCallback proto WINAPI \
-	    FileHandle: HANDLE,
-	      Function: LPOVERLAPPED_COMPLETION_ROUTINE,
-		 Flags: ULONG
-
-
-;HANDLE
-CreateTimerQueue proto WINAPI
-
-;BOOL
-CreateTimerQueueTimer proto WINAPI \
-	    phNewTimer: PHANDLE,
-	    TimerQueue: HANDLE,
-	      Callback: WAITORTIMERCALLBACK,
-	     Parameter: PVOID,
-	       DueTime: DWORD,
-		Period: DWORD,
-		 Flags: ULONG
-
-;BOOL
-ChangeTimerQueueTimer proto WINAPI \
-	    TimerQueue: HANDLE,
-		 Timer: HANDLE,
-	       DueTime: ULONG,
-		Period: ULONG
-
-;BOOL
-DeleteTimerQueueTimer proto WINAPI \
-	    TimerQueue: HANDLE,
-		 Timer: HANDLE,
-       CompletionEvent: HANDLE
-
-;BOOL
-DeleteTimerQueueEx proto WINAPI \
-	    TimerQueue: HANDLE,
-       CompletionEvent: HANDLE
-
-;HANDLE
-SetTimerQueueTimer proto WINAPI \
-	    TimerQueue: HANDLE,
-	      Callback: WAITORTIMERCALLBACK,
-	     Parameter: PVOID,
-	       DueTime: DWORD,
-		Period: DWORD,
-	      PreferIo: BOOL
-
-;BOOL
-CancelTimerQueueTimer proto WINAPI \
-	    TimerQueue: HANDLE,
-		 Timer: HANDLE
-
-;BOOL
-DeleteTimerQueue proto WINAPI \
-	    TimerQueue: HANDLE
-
-
-if (_WIN32_WINNT GE 0x0600)
-
-CALLBACK(PTP_WIN32_IO_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, \
-	Overlapped:PVOID, IoResult:ULONG, NumberOfBytesTransferred:LPDWORD, Io:PTP_IO)
-
-;PTP_POOL
-CreateThreadpool proto WINAPI \
-	    __reserved: PVOID
-
-;VOID
-SetThreadpoolThreadMaximum proto WINAPI \
-		  ptpp: PTP_POOL,
-	     cthrdMost: DWORD
-
-;BOOL
-SetThreadpoolThreadMinimum proto WINAPI \
-		  ptpp: PTP_POOL,
-	      cthrdMic: DWORD
-
-;BOOL
-SetThreadpoolStackInformation proto WINAPI \
-		  ptpp: PTP_POOL,
-		 ptpsi: PTP_POOL_STACK_INFORMATION
-
-QueryThreadpoolStackInformation proto WINAPI \
-		  ptpp: PTP_POOL,
-		 ptpsi: PTP_POOL_STACK_INFORMATION
-
-;VOID
-CloseThreadpool proto WINAPI \
-		  ptpp: PTP_POOL
-
-;PTP_CLEANUP_GROUP
-CreateThreadpoolCleanupGroup proto WINAPI
-
-;VOID
-CloseThreadpoolCleanupGroupMembers proto WINAPI \
-		 ptpcg: PTP_CLEANUP_GROUP,
-fCancelPendingCallbacks: BOOL,
-      pvCleanupContext: PVOID
-
-
-;VOID
-CloseThreadpoolCleanupGroup proto WINAPI \
-		 ptpcg: PTP_CLEANUP_GROUP
-
-
+if (_WIN32_WINNT ge 0x0500)
+if (_WIN32_WINNT ge 0x0600)
 ifndef MIDL_PASS
-;FORCEINLINE
-;VOID
+
 InitializeThreadpoolEnvironment macro pcbe
-	TpInitializeCallbackEnviron(pcbe)
-	endm
-;VOID
+    TpInitializeCallbackEnviron(pcbe)
+    endm
 SetThreadpoolCallbackPool macro pcbe, ptpp
-	TpSetCallbackThreadpool(pcbe, ptpp)
-	endm
-;VOID
+    TpSetCallbackThreadpool(pcbe, ptpp)
+    endm
 SetThreadpoolCallbackCleanupGroup macro pcbe, ptpcg, pfng
-	TpSetCallbackCleanupGroup(pcbe, ptpcg, pfng)
-	endm
-;VOID
+    TpSetCallbackCleanupGroup(pcbe, ptpcg, pfng)
+    endm
 SetThreadpoolCallbackRunsLong macro pcbe
-	TpSetCallbackLongFunction(pcbe)
-	endm
-;VOID
+    TpSetCallbackLongFunction(pcbe)
+    endm
 SetThreadpoolCallbackLibrary macro pcbe, _mod
-	TpSetCallbackRaceWithDll(pcbe, _mod)
-	endm
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
-;VOID
+    TpSetCallbackRaceWithDll(pcbe, _mod)
+    endm
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
+
 SetThreadpoolCallbackPriority macro pcbe, Priority
-	TpSetCallbackPriority(pcbe, Priority)
-	endm
+    TpSetCallbackPriority(pcbe, Priority)
+    endm
+
 endif
 
-;VOID
 SetThreadpoolCallbackPersistent macro pcbe
-	TpSetCallbackPersistent(pcbe)
-	endm
-
-;VOID
-DestroyThreadpoolEnvironment macro pcbe
-	TpDestroyCallbackEnviron(pcbe)
-	endm
+    TpSetCallbackPersistent(pcbe)
+    endm
 
 endif
+endif
+endif
 
-;VOID
-SetEventWhenCallbackReturns proto WINAPI \
-		   pci: PTP_CALLBACK_INSTANCE,
-		   evt: HANDLE
-;VOID
-ReleaseSemaphoreWhenCallbackReturns proto WINAPI \
-		   pci: PTP_CALLBACK_INSTANCE,
-		   sem: HANDLE,
-		  crel: DWORD
-;VOID
-ReleaseMutexWhenCallbackReturns proto WINAPI \
-		   pci: PTP_CALLBACK_INSTANCE,
-		   mut: HANDLE
-;VOID
-LeaveCriticalSectionWhenCallbackReturns proto WINAPI \
-		   pci: PTP_CALLBACK_INSTANCE,
-		   pcs: PCRITICAL_SECTION
-;VOID
-FreeLibraryWhenCallbackReturns proto WINAPI \
-		   pci: PTP_CALLBACK_INSTANCE,
-		  _mod: HMODULE
-;BOOL
-CallbackMayRunLong proto WINAPI \
-		   pci: PTP_CALLBACK_INSTANCE
-;VOID
-DisassociateCurrentThreadFromCallback proto WINAPI \
-		   pci: PTP_CALLBACK_INSTANCE
-;BOOL
-TrySubmitThreadpoolCallback proto WINAPI \
-		  pfns: PTP_SIMPLE_CALLBACK,
-		    pv: PVOID,
-		  pcbe: PTP_CALLBACK_ENVIRON
+if (_WIN32_WINNT ge 0x0600)
+ifndef MIDL_PASS
 
-;PTP_WORK
-CreateThreadpoolWork proto WINAPI \
-		 pfnwk: PTP_WORK_CALLBACK,
-		    pv: PVOID,
-		  pcbe: PTP_CALLBACK_ENVIRON
+SetThreadpoolCallbackPersistent macro pcbe
+    TpSetCallbackPersistent(pcbe)
+    endm
 
-;VOID
-SubmitThreadpoolWork proto WINAPI \
-		   pwk: PTP_WORK
+endif
+endif
 
-;VOID
-WaitForThreadpoolWorkCallbacks proto WINAPI \
-		   pwk: PTP_WORK,
-fCancelPendingCallbacks: BOOL
-
-;VOID
-CloseThreadpoolWork proto WINAPI \
-		   pwk: PTP_WORK
-
-;PTP_TIMER
-CreateThreadpoolTimer proto WINAPI \
-		 pfnti: PTP_TIMER_CALLBACK,
-		    pv: PVOID,
-		  pcbe: PTP_CALLBACK_ENVIRON
-
-;VOID
-SetThreadpoolTimer proto WINAPI \
-		   pti: PTP_TIMER,
-	    pftDueTime: PFILETIME,
-	      msPeriod: DWORD,
-	msWindowLength: DWORD
-
-;BOOL
-IsThreadpoolTimerSet proto WINAPI \
-		   pti: PTP_TIMER
-
-;VOID
-WaitForThreadpoolTimerCallbacks proto WINAPI \
-		   pti: PTP_TIMER,
-fCancelPendingCallbacks: BOOL
-
-;VOID
-CloseThreadpoolTimer proto WINAPI \
-		   pti: PTP_TIMER
-
-;PTP_WAIT
-CreateThreadpoolWait proto WINAPI \
-		 pfnwa: PTP_WAIT_CALLBACK,
-		    pv: PVOID,
-		  pcbe: PTP_CALLBACK_ENVIRON
-
-;VOID
-SetThreadpoolWait proto WINAPI \
-		   pwa: PTP_WAIT,
-		     h: HANDLE,
-	    pftTimeout: PFILETIME
-
-;VOID
-WaitForThreadpoolWaitCallbacks proto WINAPI \
-		   pwa: PTP_WAIT,
-fCancelPendingCallbacks: BOOL
-
-;VOID
-CloseThreadpoolWait proto WINAPI \
-		   pwa: PTP_WAIT
-
-;PTP_IO
-CreateThreadpoolIo proto WINAPI \
-		    fl: HANDLE,
-		 pfnio: PTP_WIN32_IO_CALLBACK,
-		    pv: PVOID,
-		  pcbe: PTP_CALLBACK_ENVIRON
-
-;VOID
-StartThreadpoolIo proto WINAPI \
-		   pio: PTP_IO
-
-;VOID
-CancelThreadpoolIo proto WINAPI \
-		   pio: PTP_IO
-
-;VOID
-WaitForThreadpoolIoCallbacks proto WINAPI \
-		   pio: PTP_IO,
-fCancelPendingCallbacks: BOOL
-
-;VOID
-CloseThreadpoolIo proto WINAPI \
-		   pio: PTP_IO
-
-;HANDLE
-CreatePrivateNamespaceA proto WINAPI \
-lpPrivateNamespaceAttributes: LPSECURITY_ATTRIBUTES,
-  lpBoundaryDescriptor: LPVOID,
-	 lpAliasPrefix: LPCSTR
-
-;HANDLE
-CreatePrivateNamespaceW proto WINAPI \
-lpPrivateNamespaceAttributes: LPSECURITY_ATTRIBUTES,
-  lpBoundaryDescriptor: LPVOID,
-	 lpAliasPrefix: LPCWSTR
-ifdef _UNICODE
-CreatePrivateNamespace	equ <CreatePrivateNamespaceW>
+CreatePrivateNamespaceA proto WINAPI :LPSECURITY_ATTRIBUTES, :LPVOID, :LPCSTR
+ifndef _UNICODE
+define CreatePrivateNamespace <CreatePrivateNamespaceA>
 else
-CreatePrivateNamespace	equ <CreatePrivateNamespaceA>
+define CreatePrivateNamespace <CreatePrivateNamespaceW>
 endif
 
-;HANDLE
-OpenPrivateNamespaceA proto WINAPI \
-  lpBoundaryDescriptor: LPVOID,
-	 lpAliasPrefix: LPCSTR
-OpenPrivateNamespaceW proto WINAPI \
-  lpBoundaryDescriptor: LPVOID,
-	 lpAliasPrefix: LPCWSTR
-ifdef _UNICODE
-OpenPrivateNamespace	equ <OpenPrivateNamespaceW>
+OpenPrivateNamespaceA proto WINAPI :LPVOID, :LPCSTR
+ifndef _UNICODE
+define OpenPrivateNamespace <OpenPrivateNamespaceA>
 else
-OpenPrivateNamespace	equ <OpenPrivateNamespaceA>
+define OpenPrivateNamespace <OpenPrivateNamespaceW>
 endif
 
-PRIVATE_NAMESPACE_FLAG_DESTROY equ 0x00000001
-
-;BOOLEAN
-ClosePrivateNamespace proto WINAPI \
-		Handle: HANDLE,
-		 Flags: ULONG
-
-
-;HANDLE
-CreateBoundaryDescriptorA proto WINAPI \
-		  Name: LPCSTR,
-		 Flags: ULONG
-
-;HANDLE
-CreateBoundaryDescriptorW proto WINAPI \
-		  Name: LPCWSTR,
-		 Flags: ULONG
-
-ifdef _UNICODE
-CreateBoundaryDescriptor equ <CreateBoundaryDescriptorW>
+CreateBoundaryDescriptorA proto WINAPI :LPCSTR, :ULONG
+ifndef _UNICODE
+define CreateBoundaryDescriptor <CreateBoundaryDescriptorA>
 else
-CreateBoundaryDescriptor equ <CreateBoundaryDescriptorA>
+define CreateBoundaryDescriptor <CreateBoundaryDescriptorW>
 endif
 
-;BOOL
-AddSIDToBoundaryDescriptor proto WINAPI \
-   BoundaryDescriptor: ptr HANDLE,
-	  RequiredSid: PSID
+AddIntegrityLabelToBoundaryDescriptor proto WINAPI :ptr, :PSID
 
-;BOOL
-AddIntegrityLabelToBoundaryDescriptor proto WINAPI \
-   BoundaryDescriptor: ptr HANDLE,
-       IntegrityLabel: PSID
+if(_WIN32_WINNT ge 0x0400)
 
-;VOID
-DeleteBoundaryDescriptor proto WINAPI \
-    BoundaryDescriptor: HANDLE
+define HW_PROFILE_GUIDLEN         39
+define MAX_PROFILE_LEN            80
 
-endif
-endif
+define DOCKINFO_UNDOCKED          (0x1)
+define DOCKINFO_DOCKED            (0x2)
+define DOCKINFO_USER_SUPPLIED     (0x4)
+define DOCKINFO_USER_UNDOCKED     (DOCKINFO_USER_SUPPLIED or DOCKINFO_UNDOCKED)
+define DOCKINFO_USER_DOCKED       (DOCKINFO_USER_SUPPLIED or DOCKINFO_DOCKED)
 
-if(_WIN32_WINNT GE 0x0400)
-
-HW_PROFILE_GUIDLEN	   equ 39	   ; 36-characters plus NULL terminator
-MAX_PROFILE_LEN		   equ 80
-
-DOCKINFO_UNDOCKED	   equ 0x1
-DOCKINFO_DOCKED		   equ 0x2
-DOCKINFO_USER_SUPPLIED	   equ 0x4
-DOCKINFO_USER_UNDOCKED	   equ (DOCKINFO_USER_SUPPLIED or DOCKINFO_UNDOCKED)
-DOCKINFO_USER_DOCKED	   equ (DOCKINFO_USER_SUPPLIED or DOCKINFO_DOCKED)
-
-HW_PROFILE_INFOA	STRUC
-dwDockInfo		dd ?
-szHwProfileGuid		db HW_PROFILE_GUIDLEN dup(?)
-szHwProfileName		db MAX_PROFILE_LEN dup(?)
-HW_PROFILE_INFOA	ENDS
-
-HW_PROFILE_INFOW	STRUC
-dwDockInfo		dd ?
-szHwProfileGuid		dw HW_PROFILE_GUIDLEN dup(?)
-szHwProfileName		dw MAX_PROFILE_LEN dup(?)
-HW_PROFILE_INFOW	ENDS
-
-LPHW_PROFILE_INFOA	typedef ptr HW_PROFILE_INFOA
-LPHW_PROFILE_INFOW	typedef ptr HW_PROFILE_INFOW
-
+tagHW_PROFILE_INFOA     struct
+dwDockInfo              DWORD ?
+szHwProfileGuid         CHAR HW_PROFILE_GUIDLEN dup(?)
+szHwProfileName         CHAR MAX_PROFILE_LEN dup(?)
+tagHW_PROFILE_INFOA     ends
+HW_PROFILE_INFOA        typedef tagHW_PROFILE_INFOA
+LPHW_PROFILE_INFOA      typedef ptr tagHW_PROFILE_INFOA
+tagHW_PROFILE_INFOW     struct
+dwDockInfo              DWORD ?
+szHwProfileGuid         WCHAR HW_PROFILE_GUIDLEN dup(?)
+szHwProfileName         WCHAR MAX_PROFILE_LEN dup(?)
+tagHW_PROFILE_INFOW     ends
+HW_PROFILE_INFOW        typedef tagHW_PROFILE_INFOW
+LPHW_PROFILE_INFOW      typedef ptr tagHW_PROFILE_INFOW
 ifdef _UNICODE
-HW_PROFILE_INFO		typedef HW_PROFILE_INFOW
-LPHW_PROFILE_INFO	typedef LPHW_PROFILE_INFOW
+HW_PROFILE_INFO         typedef HW_PROFILE_INFOW
+LPHW_PROFILE_INFO       typedef LPHW_PROFILE_INFOW
 else
-HW_PROFILE_INFO		typedef HW_PROFILE_INFOA
-LPHW_PROFILE_INFO	typedef LPHW_PROFILE_INFOA
+HW_PROFILE_INFO         typedef HW_PROFILE_INFOA
+LPHW_PROFILE_INFO       typedef LPHW_PROFILE_INFOA
 endif
 
-;BOOL
-GetCurrentHwProfileA proto WINAPI \
-       lpHwProfileInfo: LPHW_PROFILE_INFOA
-GetCurrentHwProfileW proto WINAPI \
-       lpHwProfileInfo: LPHW_PROFILE_INFOW
+GetCurrentHwProfileA proto WINAPI :LPHW_PROFILE_INFOA
+GetCurrentHwProfileW proto WINAPI :LPHW_PROFILE_INFOW
 ifdef _UNICODE
-GetCurrentHwProfile equ <GetCurrentHwProfileW>
+define GetCurrentHwProfile  <GetCurrentHwProfileW>
 else
-GetCurrentHwProfile equ <GetCurrentHwProfileA>
+define GetCurrentHwProfile  <GetCurrentHwProfileA>
 endif
 endif
 
-
-;BOOL
-QueryPerformanceCounter proto WINAPI \
-    lpPerformanceCount: PTR LARGE_INTEGER
-
-QueryPerformanceFrequency proto WINAPI \
-	   lpFrequency: PTR LARGE_INTEGER
-
-
-OSVERSIONINFOA		STRUC
-dwOSVersionInfoSize	dd ?
-dwMajorVersion		dd ?
-dwMinorVersion		dd ?
-dwBuildNumber		dd ?
-dwPlatformId		dd ?
-szCSDVersion		db 128 dup(?) ; Maintenance string for PSS usage
-OSVERSIONINFOA		ENDS
-
-POSVERSIONINFOA		TYPEDEF PTR OSVERSIONINFOA
-LPOSVERSIONINFOA	TYPEDEF PTR OSVERSIONINFOA
-
-OSVERSIONINFOW		STRUC
-dwOSVersionInfoSize	dd ?
-dwMajorVersion		dd ?
-dwMinorVersion		dd ?
-dwBuildNumber		dd ?
-dwPlatformId		dd ?
-szCSDVersion		dw 128 dup(?) ; Maintenance string for PSS usage
-OSVERSIONINFOW		ENDS
-
-POSVERSIONINFOW		TYPEDEF PTR OSVERSIONINFOW
-LPOSVERSIONINFOW	TYPEDEF PTR OSVERSIONINFOW
-
+VerifyVersionInfoA proto WINAPI :LPOSVERSIONINFOEXA, :DWORD, :DWORDLONG
+VerifyVersionInfoW proto WINAPI :LPOSVERSIONINFOEXW, :DWORD, :DWORDLONG
 ifdef _UNICODE
-OSVERSIONINFO	typedef OSVERSIONINFOW
-POSVERSIONINFO	typedef POSVERSIONINFOW
-LPOSVERSIONINFO typedef LPOSVERSIONINFOW
+define VerifyVersionInfo  <VerifyVersionInfoW>
 else
-OSVERSIONINFO	typedef OSVERSIONINFOA
-POSVERSIONINFO	typedef POSVERSIONINFOA
-LPOSVERSIONINFO typedef LPOSVERSIONINFOA
+define VerifyVersionInfo  <VerifyVersionInfoA>
 endif
 
-OSVERSIONINFOEXA	STRUC
-dwOSVersionInfoSize	dd ?
-dwMajorVersion		dd ?
-dwMinorVersion		dd ?
-dwBuildNumber		dd ?
-dwPlatformId		dd ?
-szCSDVersion		db 128 dup(?)	; Maintenance string for PSS usage
-wServicePackMajor	dw ?
-wServicePackMinor	dw ?
-wReserved		dw 2 dup(?)
-OSVERSIONINFOEXA	ENDS
+include winerror.inc
+include timezoneapi.inc
 
-POSVERSIONINFOEXA	typedef PTR OSVERSIONINFOEXA
-LPOSVERSIONINFOEXA	typedef PTR OSVERSIONINFOEXA
+define TC_NORMAL       0
+define TC_HARDERR      1
+define TC_GP_TRAP      2
+define TC_SIGNAL       3
 
-OSVERSIONINFOEXW	STRUC
-dwOSVersionInfoSize	dd ?
-dwMajorVersion		dd ?
-dwMinorVersion		dd ?
-dwBuildNumber		dd ?
-dwPlatformId		dd ?
-szCSDVersion		dw 128 dup(?)	; Maintenance string for PSS usage
-wServicePackMajor	dw ?
-wServicePackMinor	dw ?
-wReserved		dw 2 dup(?)
-OSVERSIONINFOEXW	ENDS
+if(WINVER ge 0x0400)
+SetSystemPowerState proto WINAPI :BOOL, :BOOL
+endif
 
-POSVERSIONINFOEXW	typedef PTR OSVERSIONINFOEXW
-LPOSVERSIONINFOEXW	typedef PTR OSVERSIONINFOEXW
+if(WINVER ge 0x0400)
 
+define AC_LINE_OFFLINE                 0x00
+define AC_LINE_ONLINE                  0x01
+define AC_LINE_BACKUP_POWER            0x02
+define AC_LINE_UNKNOWN                 0xFF
+
+define BATTERY_FLAG_HIGH               0x01
+define BATTERY_FLAG_LOW                0x02
+define BATTERY_FLAG_CRITICAL           0x04
+define BATTERY_FLAG_CHARGING           0x08
+define BATTERY_FLAG_NO_BATTERY         0x80
+define BATTERY_FLAG_UNKNOWN            0xFF
+
+define BATTERY_PERCENTAGE_UNKNOWN      0xFF
+
+define SYSTEM_STATUS_FLAG_POWER_SAVING_ON      0x01
+
+define BATTERY_LIFE_UNKNOWN        0xFFFFFFFF
+
+_SYSTEM_POWER_STATUS    struct
+ACLineStatus            BYTE ?
+BatteryFlag             BYTE ?
+BatteryLifePercent      BYTE ?
+SystemStatusFlag        BYTE ?
+BatteryLifeTime         DWORD ?
+BatteryFullLifeTime     DWORD ?
+_SYSTEM_POWER_STATUS    ends
+SYSTEM_POWER_STATUS     typedef _SYSTEM_POWER_STATUS
+LPSYSTEM_POWER_STATUS   typedef ptr _SYSTEM_POWER_STATUS
+
+GetSystemPowerStatus proto WINAPI :LPSYSTEM_POWER_STATUS
+
+endif
+
+if (_WIN32_WINNT ge 0x0500)
+
+MapUserPhysicalPagesScatter proto WINAPI :ptr, :ULONG_PTR, :PULONG_PTR
+
+CreateJobObjectA proto WINAPI :LPSECURITY_ATTRIBUTES, :LPCSTR
 ifdef _UNICODE
-OSVERSIONINFOEX		typedef OSVERSIONINFOEXW
-POSVERSIONINFOEX	typedef POSVERSIONINFOEXW
-LPOSVERSIONINFOEX	typedef LPOSVERSIONINFOEXW
+define CreateJobObject  <CreateJobObjectW>
 else
-OSVERSIONINFOEX		typedef OSVERSIONINFOEXA
-POSVERSIONINFOEX	typedef POSVERSIONINFOEXA
-LPOSVERSIONINFOEX	typedef LPOSVERSIONINFOEXA
+define CreateJobObject  <CreateJobObjectA>
 endif
 
-
-VER_PLATFORM_WIN32s		equ 0
-VER_PLATFORM_WIN32_WINDOWS	equ 1
-VER_PLATFORM_WIN32_NT		equ 2
-
-
-;BOOL
-GetVersionExA proto WINAPI \
-  lpVersionInformation: LPOSVERSIONINFOA
-GetVersionExW proto WINAPI \
-  lpVersionInformation: LPOSVERSIONINFOW
+OpenJobObjectA proto WINAPI :DWORD, :BOOL, :LPCSTR
 ifdef _UNICODE
-GetVersionEx equ <GetVersionExW>
+define OpenJobObject  <OpenJobObjectW>
 else
-GetVersionEx equ <GetVersionExA>
+define OpenJobObject  <OpenJobObjectA>
 endif
 
-;BOOL
-VerifyVersionInfoA proto WINAPI \
-  lpVersionInformation: LPOSVERSIONINFOEXA,
-	    dwTypeMask: DWORD,
-      dwlConditionMask: DWORDLONG
-VerifyVersionInfoW proto WINAPI \
-  lpVersionInformation: LPOSVERSIONINFOEXW,
-	    dwTypeMask: DWORD,
-      dwlConditionMask: DWORDLONG
+CreateJobSet proto WINAPI :ULONG, :PJOB_SET_ARRAY, :ULONG
+
+FindFirstVolumeA proto WINAPI :LPSTR, :DWORD
+ifndef _UNICODE
+define FindFirstVolume <FindFirstVolumeA>
+endif
+
+FindNextVolumeA proto WINAPI :HANDLE, :LPSTR, :DWORD
+ifndef _UNICODE
+define FindNextVolume <FindNextVolumeA>
+endif
+
+FindFirstVolumeMountPointA proto WINAPI :LPCSTR, :LPSTR, :DWORD
+FindFirstVolumeMountPointW proto WINAPI :LPCWSTR, :LPWSTR, :DWORD
 ifdef _UNICODE
-VerifyVersionInfo	equ <VerifyVersionInfoW>
+define FindFirstVolumeMountPoint <FindFirstVolumeMountPointW>
 else
-VerifyVersionInfo	equ <VerifyVersionInfoA>
+define FindFirstVolumeMountPoint <FindFirstVolumeMountPointA>
 endif
 
-if (_WIN32_WINNT GE 0x0600)
-;BOOL
-GetProductInfo proto WINAPI \
-      dwOSMajorVersion: DWORD,
-      dwOSMinorVersion: DWORD,
-      dwSpMajorVersion: DWORD,
-      dwSpMinorVersion: DWORD,
-pdwReturnedProductType: PDWORD
-endif
-
-
-;include winerror.inc
-
-
-
-TC_NORMAL	equ 0
-TC_HARDERR	equ 1
-TC_GP_TRAP	equ 2
-TC_SIGNAL	equ 3
-
-if (WINVER GE 0x0400)
-
-AC_LINE_OFFLINE			equ 0x00
-AC_LINE_ONLINE			equ 0x01
-AC_LINE_BACKUP_POWER		equ 0x02
-AC_LINE_UNKNOWN			equ 0xFF
-
-BATTERY_FLAG_HIGH		equ 0x01
-BATTERY_FLAG_LOW		equ 0x02
-BATTERY_FLAG_CRITICAL		equ 0x04
-BATTERY_FLAG_CHARGING		equ 0x08
-BATTERY_FLAG_NO_BATTERY		equ 0x80
-BATTERY_FLAG_UNKNOWN		equ 0xFF
-
-BATTERY_PERCENTAGE_UNKNOWN	equ 0xFF
-
-BATTERY_LIFE_UNKNOWN	equ 0xFFFFFFFF
-
-SYSTEM_POWER_STATUS	STRUC
-ACLineStatus		BYTE ?
-BatteryFlag		BYTE ?
-BatteryLifePercent	BYTE ?
-Reserved1		BYTE ?
-BatteryLifeTime		DWORD ?
-BatteryFullLifeTime	DWORD ?
-SYSTEM_POWER_STATUS	ENDS
-
-LPSYSTEM_POWER_STATUS	TYPEDEF PTR SYSTEM_POWER_STATUS
-
-;BOOL
-GetSystemPowerStatus proto WINAPI \
-   lpSystemPowerStatus: LPSYSTEM_POWER_STATUS
-
-;BOOL
-SetSystemPowerState proto WINAPI \
-	      fSuspend: BOOL,
-		fForce: BOOL
-
-endif
-
-if (_WIN32_WINNT GE 0x0500)
-
-;BOOL
-AllocateUserPhysicalPages proto WINAPI \
-	      hProcess: HANDLE,
-	 NumberOfPages: PULONG_PTR,
-	     PageArray: PULONG_PTR
-
-if _WIN32_WINNT GE 0x0600
-;BOOL
-AllocateUserPhysicalPagesNuma proto WINAPI \
-	     hProcess: HANDLE,
-	NumberOfPages: PULONG_PTR,
-	    PageArray: PULONG_PTR,
-	 nndPreferred: DWORD
-endif
-
-;BOOL
-FreeUserPhysicalPages proto WINAPI \
-	      hProcess: HANDLE,
-	 NumberOfPages: PULONG_PTR,
-	     PageArray: PULONG_PTR
-
-;BOOL
-MapUserPhysicalPages proto WINAPI \
-	VirtualAddress: PVOID,
-	 NumberOfPages: ULONG_PTR,
-	     PageArray: PULONG_PTR
-
-;BOOL
-MapUserPhysicalPagesScatter proto WINAPI \
-      VirtualAddresses: PVOID,
-	 NumberOfPages: ULONG_PTR,
-	     PageArray: PULONG_PTR
-
-;HANDLE
-CreateJobObjectA proto WINAPI \
-       lpJobAttributes: LPSECURITY_ATTRIBUTES,
-		lpName: LPCSTR
-CreateJobObjectW proto WINAPI \
-       lpJobAttributes: LPSECURITY_ATTRIBUTES,
-		lpName: LPCWSTR
+FindNextVolumeMountPointA proto WINAPI :HANDLE, :LPSTR, :DWORD
+FindNextVolumeMountPointW proto WINAPI :HANDLE, :LPWSTR, :DWORD
 ifdef _UNICODE
-CreateJobObject		equ <CreateJobObjectW>
+define FindNextVolumeMountPoint <FindNextVolumeMountPointW>
 else
-CreateJobObject		equ <CreateJobObjectA>
+define FindNextVolumeMountPoint <FindNextVolumeMountPointA>
 endif
 
-;HANDLE
-OpenJobObjectA proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCSTR
-OpenJobObjectW proto WINAPI \
-       dwDesiredAccess: DWORD,
-	bInheritHandle: BOOL,
-		lpName: LPCWSTR
+FindVolumeMountPointClose proto WINAPI :HANDLE
+
+SetVolumeMountPointA proto WINAPI :LPCSTR, :LPCSTR
+SetVolumeMountPointW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-OpenJobObject		equ <OpenJobObjectW>
+define SetVolumeMountPoint  <SetVolumeMountPointW>
 else
-OpenJobObject		equ <OpenJobObjectA>
+define SetVolumeMountPoint  <SetVolumeMountPointA>
 endif
 
-;BOOL
-AssignProcessToJobObject proto WINAPI \
-		  hJob: HANDLE,
-	      hProcess: HANDLE
+DeleteVolumeMountPointA proto WINAPI :LPCSTR
+ifndef _UNICODE
+define DeleteVolumeMountPoint  <DeleteVolumeMountPointA>
+endif
 
-;BOOL
-TerminateJobObject proto WINAPI \
-		  hJob: HANDLE,
-	     uExitCode: UINT
+ifndef _UNICODE
+define GetVolumeNameForVolumeMountPoint  <GetVolumeNameForVolumeMountPointA>
+endif
 
-;BOOL
-QueryInformationJobObject proto WINAPI \
-		  hJob: HANDLE,
-JobObjectInformationClass: JOBOBJECTINFOCLASS,
-lpJobObjectInformation: LPVOID,
-cbJobObjectInformationLength: DWORD,
-	lpReturnLength: LPDWORD
+GetVolumeNameForVolumeMountPointA proto WINAPI :LPCSTR, :LPSTR, :DWORD
 
-;BOOL
-SetInformationJobObject proto WINAPI \
-		  hJob: HANDLE,
-JobObjectInformationClass: JOBOBJECTINFOCLASS,
-lpJobObjectInformation: LPVOID,
-cbJobObjectInformationLength: DWORD
-
-if (_WIN32_WINNT GE 0x0501)
-
-;BOOL
-IsProcessInJob proto WINAPI \
-	 ProcessHandle: HANDLE,
-	     JobHandle: HANDLE,
-		Result: PBOOL
-
+GetVolumePathNameA proto WINAPI :LPCSTR, :LPSTR, :DWORD
+ifndef _UNICODE
+define GetVolumePathName  <GetVolumePathNameA>
+endif
 
 endif
 
-;BOOL
-CreateJobSet proto WINAPI \
-		NumJob: ULONG,
-	    UserJobSet: PJOB_SET_ARRAY,
-		 Flags: ULONG
+if(_WIN32_WINNT ge 0x0501)
+GetVolumePathNamesForVolumeNameA proto WINAPI :LPCSTR, :LPCH, :DWORD, :PDWORD
+ifndef _UNICODE
+define GetVolumePathNamesForVolumeName  <GetVolumePathNamesForVolumeNameA>
+endif
+endif
 
-;PVOID
-AddVectoredExceptionHandler proto WINAPI \
-		 First: ULONG,
-	       Handler: PVECTORED_EXCEPTION_HANDLER
+if (_WIN32_WINNT ge 0x0500) or (_WIN32_FUSION ge 0x0100) ;or ISOLATION_AWARE_ENABLED
 
-;ULONG
-RemoveVectoredExceptionHandler proto WINAPI \
-		Handle: PVOID
+define ACTCTX_FLAG_PROCESSOR_ARCHITECTURE_VALID    (0x00000001)
+define ACTCTX_FLAG_LANGID_VALID                    (0x00000002)
+define ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID        (0x00000004)
+define ACTCTX_FLAG_RESOURCE_NAME_VALID             (0x00000008)
+define ACTCTX_FLAG_SET_PROCESS_DEFAULT             (0x00000010)
+define ACTCTX_FLAG_APPLICATION_NAME_VALID          (0x00000020)
+define ACTCTX_FLAG_SOURCE_IS_ASSEMBLYREF           (0x00000040)
+define ACTCTX_FLAG_HMODULE_VALID                   (0x00000080)
 
-;PVOID
-AddVectoredContinueHandler proto WINAPI \
-		 First: ULONG,
-	       Handler: PVECTORED_EXCEPTION_HANDLER
-
-;ULONG
-RemoveVectoredContinueHandler proto WINAPI \
-		Handle: PVOID
-
-
-;HANDLE
-FindFirstVolumeA proto WINAPI \
-	lpszVolumeName: LPSTR,
-       cchBufferLength: DWORD
-FindFirstVolumeW proto WINAPI \
-	lpszVolumeName: LPWSTR,
-       cchBufferLength: DWORD
+tagACTCTXA              struct
+cbSize                  ULONG ?
+dwFlags                 DWORD ?
+lpSource                LPCSTR ?
+wProcessorArchitecture  USHORT ?
+wLangId                 LANGID ?
+lpAssemblyDirectory     LPCSTR ?
+lpResourceName          LPCSTR ?
+lpApplicationName       LPCSTR ?
+hModule                 HMODULE ?
+tagACTCTXA              ends
+ACTCTXA                 typedef tagACTCTXA
+PACTCTXA                typedef ptr tagACTCTXA
+tagACTCTXW              struct
+cbSize                  ULONG ?
+dwFlags                 DWORD ?
+lpSource                LPCWSTR ?
+wProcessorArchitecture  USHORT ?
+wLangId                 LANGID ?
+lpAssemblyDirectory     LPCWSTR ?
+lpResourceName          LPCWSTR ?
+lpApplicationName       LPCWSTR ?
+hModule                 HMODULE ?
+tagACTCTXW              ends
+ACTCTXW                 typedef tagACTCTXW
+PACTCTXW                typedef ptr tagACTCTXW
 ifdef _UNICODE
-FindFirstVolume		equ <FindFirstVolumeW>
+ACTCTX                  typedef ACTCTXW
+PACTCTX                 typedef PACTCTXW
 else
-FindFirstVolume		equ <FindFirstVolumeA>
+ACTCTX                  typedef ACTCTXA
+PACTCTX                 typedef PACTCTXA
 endif
 
-;BOOL
-FindNextVolumeA proto WINAPI \
-	   hFindVolume: HANDLE,
-	lpszVolumeName: LPSTR,
-       cchBufferLength: DWORD
-FindNextVolumeW proto WINAPI \
-	   hFindVolume: HANDLE,
-	lpszVolumeName: LPWSTR,
-       cchBufferLength: DWORD
+PCACTCTXA               typedef ptr ACTCTXA
+PCACTCTXW               typedef ptr ACTCTXW
 ifdef _UNICODE
-FindNextVolume		equ <FindNextVolumeW>
+PCACTCTX                typedef PCACTCTXW
 else
-FindNextVolume		equ <FindNextVolumeA>
+PCACTCTX                typedef PCACTCTXA
 endif
 
-;BOOL
-FindVolumeClose proto WINAPI \
-	   hFindVolume: HANDLE
-
-;HANDLE
-FindFirstVolumeMountPointA proto WINAPI \
-      lpszRootPathName: LPCSTR,
-  lpszVolumeMountPoint: LPSTR,
-       cchBufferLength: DWORD
-FindFirstVolumeMountPointW proto WINAPI \
-      lpszRootPathName: LPCWSTR,
-  lpszVolumeMountPoint: LPWSTR,
-       cchBufferLength: DWORD
+CreateActCtxA proto WINAPI :PCACTCTXA
+CreateActCtxW proto WINAPI :PCACTCTXW
 ifdef _UNICODE
-FindFirstVolumeMountPoint equ <FindFirstVolumeMountPointW>
+define CreateActCtx  <CreateActCtxW>
 else
-FindFirstVolumeMountPoint equ <FindFirstVolumeMountPointA>
+define CreateActCtx  <CreateActCtxA>
 endif
 
-;BOOL
-FindNextVolumeMountPointA proto WINAPI \
- hFindVolumeMountPoint: HANDLE,
-  lpszVolumeMountPoint: LPSTR,
-       cchBufferLength: DWORD
-FindNextVolumeMountPointW proto WINAPI \
- hFindVolumeMountPoint: HANDLE,
-  lpszVolumeMountPoint: LPWSTR,
-       cchBufferLength: DWORD
-ifdef _UNICODE
-FindNextVolumeMountPoint equ <FindNextVolumeMountPointW>
-else
-FindNextVolumeMountPoint equ <FindNextVolumeMountPointA>
-endif
+AddRefActCtx proto WINAPI :HANDLE
+ReleaseActCtx proto WINAPI :HANDLE
+ZombifyActCtx proto WINAPI :HANDLE
+ActivateActCtx proto WINAPI :HANDLE, :ptr
 
-;BOOL
-FindVolumeMountPointClose proto WINAPI \
- hFindVolumeMountPoint: HANDLE
+define DEACTIVATE_ACTCTX_FLAG_FORCE_EARLY_DEACTIVATION (0x00000001)
 
-;BOOL
-SetVolumeMountPointA proto WINAPI \
-  lpszVolumeMountPoint: LPCSTR,
-	lpszVolumeName: LPSTR
-SetVolumeMountPointW proto WINAPI \
-  lpszVolumeMountPoint: LPCWSTR,
-	lpszVolumeName: LPWSTR
-ifdef _UNICODE
-SetVolumeMountPoint	equ <SetVolumeMountPointW>
-else
-SetVolumeMountPoint	equ <SetVolumeMountPointA>
-endif
+DeactivateActCtx proto WINAPI :DWORD, :ULONG_PTR
+GetCurrentActCtx proto WINAPI :ptr
 
-;BOOL
-DeleteVolumeMountPointA proto WINAPI \
-  lpszVolumeMountPoint: LPCSTR
-DeleteVolumeMountPointW proto WINAPI \
-  lpszVolumeMountPoint: LPCWSTR
-ifdef _UNICODE
-DeleteVolumeMountPoint	equ <DeleteVolumeMountPointW>
-else
-DeleteVolumeMountPoint	equ <DeleteVolumeMountPointA>
-endif
-
-;BOOL
-GetVolumeNameForVolumeMountPointA proto WINAPI \
-  lpszVolumeMountPoint: LPCSTR,
-	lpszVolumeName: LPSTR,
-      cchBufferLength: DWORD
-GetVolumeNameForVolumeMountPointW proto WINAPI \
-  lpszVolumeMountPoint: LPCWSTR,
-	lpszVolumeName: LPWSTR,
-      cchBufferLength: DWORD
-ifdef _UNICODE
-GetVolumeNameForVolumeMountPoint equ <GetVolumeNameForVolumeMountPointW>
-else
-GetVolumeNameForVolumeMountPoint equ <GetVolumeNameForVolumeMountPointA>
-endif
-
-;BOOL
-GetVolumePathNameA proto WINAPI \
-	  lpszFileName: LPCSTR,
-    lpszVolumePathName: LPSTR,
-       cchBufferLength: DWORD
-GetVolumePathNameW proto WINAPI \
-	  lpszFileName: LPCWSTR,
-    lpszVolumePathName: LPWSTR,
-       cchBufferLength: DWORD
-ifdef _UNICODE
-GetVolumePathName	equ <GetVolumePathNameW>
-else
-GetVolumePathName	equ <GetVolumePathNameA>
-endif
-
-endif
-
-if(_WIN32_WINNT GE 0x0501)
-
-;BOOL
-GetVolumePathNamesForVolumeNameA proto WINAPI \
-	 lpszVolumeName: LPCSTR,
-    lpszVolumePathNames: LPCH,
-	cchBufferLength: DWORD,
-      lpcchReturnLength: PDWORD
-GetVolumePathNamesForVolumeNameW proto WINAPI \
-	 lpszVolumeName: LPCWSTR,
-    lpszVolumePathNames: LPWCH,
-	cchBufferLength: DWORD,
-      lpcchReturnLength: PDWORD
-ifdef _UNICODE
-GetVolumePathNamesForVolumeName equ <GetVolumePathNamesForVolumeNameW>
-else
-GetVolumePathNamesForVolumeName equ <GetVolumePathNamesForVolumeNameA>
-endif
-
-endif
-
-if (_WIN32_WINNT GE 0x0500) OR (_WIN32_FUSION GE 0x0100) ;OR ISOLATION_AWARE_ENABLED
-
-ACTCTX_FLAG_PROCESSOR_ARCHITECTURE_VALID equ 0x00000001
-ACTCTX_FLAG_LANGID_VALID		equ 0x00000002
-ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID	equ 0x00000004
-ACTCTX_FLAG_RESOURCE_NAME_VALID		equ 0x00000008
-ACTCTX_FLAG_SET_PROCESS_DEFAULT		equ 0x00000010
-ACTCTX_FLAG_APPLICATION_NAME_VALID	equ 0x00000020
-ACTCTX_FLAG_SOURCE_IS_ASSEMBLYREF	equ 0x00000040
-ACTCTX_FLAG_HMODULE_VALID		equ 0x00000080
-
-ACTCTXA			STRUC
-cbSize			ULONG ?
-dwFlags			dd ?
-lpSource		LPCSTR ?
-wProcessorArchitecture	USHORT ?
-wLangId			LANGID ?
-lpAssemblyDirectory	LPCSTR ?
-lpResourceName		LPCSTR ?
-lpApplicationName	LPCSTR ?
-hModule			HMODULE ?
-ACTCTXA			ENDS
-PACTCTXA		typedef ptr ACTCTXA
-ACTCTXW			STRUC
-cbSize			ULONG ?
-dwFlags			dd ?
-lpSource		LPCWSTR ?
-wProcessorArchitecture	USHORT ?
-wLangId			LANGID ?
-lpAssemblyDirectory	LPCWSTR ?
-lpResourceName		LPCWSTR ?
-lpApplicationName	LPCWSTR ?
-hModule			HMODULE ?
-ACTCTXW			ENDS
-PACTCTXW		typedef ptr ACTCTXW
-ifdef _UNICODE
-ACTCTX			typedef ACTCTXW
-PACTCTX			typedef PACTCTXW
-else
-ACTCTX			typedef ACTCTXA
-PACTCTX			typedef PACTCTXA
-endif
-
-PCACTCTXA		typedef ptr ACTCTXA
-PCACTCTXW		typedef ptr ACTCTXW
-ifdef _UNICODE
-PCACTCTX		typedef PCACTCTXW
-else
-PCACTCTX		typedef PCACTCTXA
-endif
-
-
-
-;HANDLE
-CreateActCtxA proto WINAPI \
-	       pActCtx: PCACTCTXA
-
-;HANDLE
-CreateActCtxW proto WINAPI \
-	       pActCtx: PCACTCTXW
-
-ifdef _UNICODE
-CreateActCtx		equ <CreateActCtxW>
-else
-CreateActCtx		equ <CreateActCtxA>
-endif
-
-;VOID
-AddRefActCtx proto WINAPI \
-	       hActCtx: HANDLE
-
-;VOID
-ReleaseActCtx proto WINAPI \
-	       hActCtx: HANDLE
-
-;BOOL
-ZombifyActCtx proto WINAPI \
-	       hActCtx: HANDLE
-
-;BOOL
-ActivateActCtx proto WINAPI \
-	       hActCtx: HANDLE,
-	      lpCookie: ptr ULONG_PTR
-
-
-
-DEACTIVATE_ACTCTX_FLAG_FORCE_EARLY_DEACTIVATION equ 0x00000001
-
-;BOOL
-DeactivateActCtx proto WINAPI \
-	       dwFlags: DWORD,
-	      ulCookie: ULONG_PTR
-
-
-;BOOL
-GetCurrentActCtx proto WINAPI \
-	     lphActCtx: LPHANDLE
-
-
-
-ACTCTX_SECTION_KEYED_DATA_2600 STRUC
-cbSize			dd ?
-ulDataFormatVersion	dd ?
-lpData			PVOID ?
-ulLength		dd ?
-lpSectionGlobalData	PVOID ?
-ulSectionGlobalDataLength dd ?
-lpSectionBase		PVOID ?
-ulSectionTotalLength	dd ?
-hActCtx			HANDLE ?
-ulAssemblyRosterIndex	dd ?
-ACTCTX_SECTION_KEYED_DATA_2600 ENDS
-
-PACTCTX_SECTION_KEYED_DATA_2600 typedef ptr ACTCTX_SECTION_KEYED_DATA_2600
+tagACTCTX_SECTION_KEYED_DATA_2600 struct
+cbSize                  ULONG ?
+ulDataFormatVersion     ULONG ?
+lpData                  PVOID ?
+ulLength                ULONG ?
+lpSectionGlobalData     PVOID ?
+ulSectionGlobalDataLength ULONG ?
+lpSectionBase           PVOID ?
+ulSectionTotalLength    ULONG ?
+hActCtx                 HANDLE ?
+ulAssemblyRosterIndex   ULONG ?
+tagACTCTX_SECTION_KEYED_DATA_2600 ends
+ACTCTX_SECTION_KEYED_DATA_2600 typedef tagACTCTX_SECTION_KEYED_DATA_2600
+PACTCTX_SECTION_KEYED_DATA_2600 typedef ptr tagACTCTX_SECTION_KEYED_DATA_2600
 PCACTCTX_SECTION_KEYED_DATA_2600 typedef ptr ACTCTX_SECTION_KEYED_DATA_2600
 
-ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA  STRUC
-lpInformation		PVOID ?
-lpSectionBase		PVOID ?
-ulSectionLength		dd ?
+tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA struct
+lpInformation           PVOID ?
+lpSectionBase           PVOID ?
+ulSectionLength         ULONG ?
 lpSectionGlobalDataBase PVOID ?
-ulSectionGlobalDataLength dd ?
-ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA ENDS
-PACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
+ulSectionGlobalDataLength ULONG ?
+tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA ends
+ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
+PACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
 PCACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
 
-ACTCTX_SECTION_KEYED_DATA  STRUC
-cbSize			dd ?
-ulDataFormatVersion	dd ?
-lpData			PVOID ?
-ulLength		dd ?
-lpSectionGlobalData	PVOID ?
-ulSectionGlobalDataLength dd ?
-lpSectionBase		PVOID ?
-ulSectionTotalLength	dd ?
-hActCtx			HANDLE ?
-ulAssemblyRosterIndex	dd ?
-ulFlags			dd ?
-AssemblyMetadata	ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA <>
-ACTCTX_SECTION_KEYED_DATA ENDS
-PACTCTX_SECTION_KEYED_DATA typedef ptr ACTCTX_SECTION_KEYED_DATA
+tagACTCTX_SECTION_KEYED_DATA struct
+cbSize                  ULONG ?
+ulDataFormatVersion     ULONG ?
+lpData                  PVOID ?
+ulLength                ULONG ?
+lpSectionGlobalData     PVOID ?
+ulSectionGlobalDataLength ULONG ?
+lpSectionBase           PVOID ?
+ulSectionTotalLength    ULONG ?
+hActCtx                 HANDLE ?
+ulAssemblyRosterIndex   ULONG ?
+ulFlags                 ULONG ?
+AssemblyMetadata        ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA <>
+tagACTCTX_SECTION_KEYED_DATA ends
+ACTCTX_SECTION_KEYED_DATA typedef tagACTCTX_SECTION_KEYED_DATA
+PACTCTX_SECTION_KEYED_DATA typedef ptr tagACTCTX_SECTION_KEYED_DATA
 PCACTCTX_SECTION_KEYED_DATA typedef ptr ACTCTX_SECTION_KEYED_DATA
 
-FIND_ACTCTX_SECTION_KEY_RETURN_HACTCTX		 equ 0x00000001
-FIND_ACTCTX_SECTION_KEY_RETURN_FLAGS		 equ 0x00000002
-FIND_ACTCTX_SECTION_KEY_RETURN_ASSEMBLY_METADATA equ 0x00000004
+define FIND_ACTCTX_SECTION_KEY_RETURN_HACTCTX (0x00000001)
+define FIND_ACTCTX_SECTION_KEY_RETURN_FLAGS   (0x00000002)
+define FIND_ACTCTX_SECTION_KEY_RETURN_ASSEMBLY_METADATA (0x00000004)
 
-
-;BOOL
-FindActCtxSectionStringA proto WINAPI \
-	       dwFlags: DWORD,
-       lpExtensionGuid: ptr GUID,
-	   ulSectionId: ULONG,
-	lpStringToFind: LPCSTR,
-	  ReturnedData: PACTCTX_SECTION_KEYED_DATA
-FindActCtxSectionStringW proto WINAPI \
-	       dwFlags: DWORD,
-       lpExtensionGuid: ptr GUID,
-	   ulSectionId: ULONG,
-	lpStringToFind: LPCWSTR,
-	  ReturnedData: PACTCTX_SECTION_KEYED_DATA
+FindActCtxSectionStringA proto WINAPI :DWORD, :ptr, :ULONG, :LPCSTR, :PACTCTX_SECTION_KEYED_DATA
+FindActCtxSectionStringW proto WINAPI :DWORD, :ptr, :ULONG, :LPCWSTR, :PACTCTX_SECTION_KEYED_DATA
 ifdef _UNICODE
-FindActCtxSectionString equ <FindActCtxSectionStringW>
+define FindActCtxSectionString  <FindActCtxSectionStringW>
 else
-FindActCtxSectionString equ <FindActCtxSectionStringA>
+define FindActCtxSectionString  <FindActCtxSectionStringA>
 endif
 
-;BOOL
-FindActCtxSectionGuid proto WINAPI \
-	       dwFlags: DWORD,
-       lpExtensionGuid: ptr GUID,
-	   ulSectionId: ULONG,
-	  lpGuidToFind: ptr GUID,
-	  ReturnedData: PACTCTX_SECTION_KEYED_DATA
+FindActCtxSectionGuid proto WINAPI :DWORD, :ptr, :ULONG, :ptr, :PACTCTX_SECTION_KEYED_DATA
 
-ifndef ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED
+if not defined(RC_INVOKED)
+if not defined(ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED)
 
-ACTIVATION_CONTEXT_BASIC_INFORMATION  STRUC
-hActCtx			HANDLE ?
-dwFlags			dd ?
-ACTIVATION_CONTEXT_BASIC_INFORMATION ENDS
-PACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr ACTIVATION_CONTEXT_BASIC_INFORMATION
-PCACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr ACTIVATION_CONTEXT_BASIC_INFORMATION
+_ACTIVATION_CONTEXT_BASIC_INFORMATION struct
+hActCtx                 HANDLE ?
+dwFlags                 DWORD ?
+_ACTIVATION_CONTEXT_BASIC_INFORMATION ends
+ACTIVATION_CONTEXT_BASIC_INFORMATION typedef _ACTIVATION_CONTEXT_BASIC_INFORMATION
+PACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr _ACTIVATION_CONTEXT_BASIC_INFORMATION
 
-ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED equ 1
+PCACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr _ACTIVATION_CONTEXT_BASIC_INFORMATION
+
+define ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED 1
 
 endif
+endif
 
+define QUERY_ACTCTX_FLAG_USE_ACTIVE_ACTCTX (0x00000004)
+define QUERY_ACTCTX_FLAG_ACTCTX_IS_HMODULE (0x00000008)
+define QUERY_ACTCTX_FLAG_ACTCTX_IS_ADDRESS (0x00000010)
+define QUERY_ACTCTX_FLAG_NO_ADDREF         (0x80000000)
 
-QUERY_ACTCTX_FLAG_USE_ACTIVE_ACTCTX equ (0x00000004)
-QUERY_ACTCTX_FLAG_ACTCTX_IS_HMODULE equ (0x00000008)
-QUERY_ACTCTX_FLAG_ACTCTX_IS_ADDRESS equ (0x00000010)
-QUERY_ACTCTX_FLAG_NO_ADDREF equ (0x80000000)
-
-;BOOL
-QueryActCtxW proto WINAPI \
-	       dwFlags: DWORD,
-	       hActCtx: HANDLE,
-	 pvSubInstance: PVOID,
-	   ulInfoClass: ULONG,
-	      pvBuffer: PVOID,
-	      cbBuffer: SIZE_T,
-  pcbWrittenOrRequired: ptr SIZE_T
-
+QueryActCtxW proto WINAPI :DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :SIZE_T, :ptr
 CALLBACK(PQUERYACTCTXW_FUNC, :DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :SIZE_T, :ptr SIZE_T)
 
 endif
 
-;BOOL
-ProcessIdToSessionId proto WINAPI \
-	   dwProcessId: DWORD,
-	    pSessionId: LPDWORD
-
-if _WIN32_WINNT GE 0x0501
-
-;DWORD
+if _WIN32_WINNT ge 0x0501
 WTSGetActiveConsoleSessionId proto WINAPI
-
-;BOOL
-IsWow64Process proto WINAPI \
-	      hProcess: HANDLE,
-	  Wow64Process: PBOOL
-
 endif
 
-;BOOL
-GetLogicalProcessorInformation proto WINAPI \
-		Buffer: PSYSTEM_LOGICAL_PROCESSOR_INFORMATION,
-	ReturnedLength: PDWORD
+if (_WIN32_WINNT ge _WIN32_WINNT_WINTHRESHOLD)
+WTSGetServiceSessionId proto WINAPI
+WTSIsServerContainer proto WINAPI
+endif
 
-if _WIN32_WINNT GE 0x0601
-
-;BOOL
-GetLogicalProcessorInformationEx proto WINAPI \
-      RelationshipType: LOGICAL_PROCESSOR_RELATIONSHIP,
-		Buffer: PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX,
-	ReturnedLength: PDWORD
-
-;WORD
+if _WIN32_WINNT ge 0x0601
 GetActiveProcessorGroupCount proto WINAPI
-
-;WORD
 GetMaximumProcessorGroupCount proto WINAPI
-
-;DWORD
-GetActiveProcessorCount proto WINAPI \
-	   GroupNumber: WORD
-
-;DWORD
-GetMaximumProcessorCount proto WINAPI \
-	   GroupNumber: WORD
-
+GetActiveProcessorCount proto WINAPI :WORD
+GetMaximumProcessorCount proto WINAPI :WORD
 endif
 
+GetNumaProcessorNode proto WINAPI :UCHAR, :PUCHAR
 
-;BOOL
-GetNumaHighestNodeNumber proto WINAPI \
-     HighestNodeNumber: PULONG
-
-;BOOL
-GetNumaProcessorNode proto WINAPI \
-	     Processor: UCHAR,
-	    NodeNumber: PUCHAR
-
-if _WIN32_WINNT GE 0x0601
-
-;BOOL
-GetNumaNodeNumberFromHandle proto WINAPI \
-		 hFile: HANDLE,
-	    NodeNumber: PUSHORT
-
+if _WIN32_WINNT ge 0x0601
+GetNumaNodeNumberFromHandle proto WINAPI :HANDLE, :PUSHORT
 endif
 
-if _WIN32_WINNT GE 0x0601
-
-;BOOL
-GetNumaProcessorNodeEx proto WINAPI \
-	     Processor: PPROCESSOR_NUMBER,
-	    NodeNumber: PUSHORT
-
+if _WIN32_WINNT ge 0x0601
+GetNumaProcessorNodeEx proto WINAPI :PPROCESSOR_NUMBER, :PUSHORT
 endif
 
-;BOOL
-GetNumaNodeProcessorMask proto WINAPI \
-		  Node: UCHAR,
-	 ProcessorMask: PULONGLONG
+GetNumaNodeProcessorMask proto WINAPI :UCHAR, :PULONGLONG
+GetNumaAvailableMemoryNode proto WINAPI :UCHAR, :PULONGLONG
 
-if _WIN32_WINNT GE 0x0601
-
-;BOOL
-GetNumaNodeProcessorMaskEx proto WINAPI \
-		  Node: USHORT,
-	 ProcessorMask: PGROUP_AFFINITY
-
+if _WIN32_WINNT ge 0x0601
+GetNumaAvailableMemoryNodeEx proto WINAPI :USHORT, :PULONGLONG
 endif
 
-;BOOL
-GetNumaAvailableMemoryNode proto WINAPI \
-		  Node: USHORT,
-	AvailableBytes: PULONGLONG
-
-if _WIN32_WINNT GE 0x0601
-
-;BOOL
-GetNumaAvailableMemoryNodeEx proto WINAPI \
-		  Node: USHORT,
-	AvailableBytes: PULONGLONG
-
+if (_WIN32_WINNT ge 0x0600)
+GetNumaProximityNode proto WINAPI :ULONG, :PUCHAR
 endif
 
-if (_WIN32_WINNT GE 0x0600)
+CALLBACK(APPLICATION_RECOVERY_CALLBACK, :PVOID)
 
-;BOOL
-GetNumaProximityNode proto WINAPI \
-	   ProximityId: ULONG,
-	    NodeNumber: PUCHAR
+define RESTART_MAX_CMD_LINE    1024
+define RESTART_NO_CRASH        1
+define RESTART_NO_HANG         2
+define RESTART_NO_PATCH        4
+define RESTART_NO_REBOOT       8
 
-endif
+define RECOVERY_DEFAULT_PING_INTERVAL  5000
+define RECOVERY_MAX_PING_INTERVAL      (5 * 60 * 1000)
 
-if _WIN32_WINNT GE 0x0601
-
-;BOOL
-GetNumaProximityNodeEx proto WINAPI \
-	   ProximityId: ULONG,
-	    NodeNumber: PUCHAR
-
-endif
-
-CALLBACK(APPLICATION_RECOVERY_CALLBACK, pvParameter:PVOID)
-
-RESTART_MAX_CMD_LINE	equ 1024
-RESTART_NO_CRASH	equ 1
-RESTART_NO_HANG		equ 2
-RESTART_NO_PATCH	equ 4
-RESTART_NO_REBOOT	equ 8
-
-;HRESULT
-RegisterApplicationRecoveryCallback proto WINAPI \
-      pRecoveyCallback: APPLICATION_RECOVERY_CALLBACK,
-	   pvParameter: PVOID,
-	dwPingInterval: DWORD,
-	       dwFlags: DWORD
-
-;HRESULT
+if (_WIN32_WINNT ge 0x0600)
+RegisterApplicationRecoveryCallback proto WINAPI :APPLICATION_RECOVERY_CALLBACK, :PVOID, :DWORD, :DWORD
 UnregisterApplicationRecoveryCallback proto WINAPI
-
-;HRESULT
-RegisterApplicationRestart proto WINAPI \
-	pwzCommandline: PCWSTR,
-	       dwFlags: DWORD
-
-;HRESULT
+RegisterApplicationRestart proto WINAPI :PCWSTR, :DWORD
 UnregisterApplicationRestart proto WINAPI
-
-RECOVERY_DEFAULT_PING_INTERVAL	equ 5000
-RECOVERY_MAX_PING_INTERVAL	equ (5 * 60 * 1000)
-
-;HRESULT
-GetApplicationRecoveryCallback proto WINAPI \
-	      hProcess: HANDLE,
-     pRecoveryCallback: ptr APPLICATION_RECOVERY_CALLBACK,
-	  ppvParameter: PVOID,
-       pdwPingInterval: PDWORD,
-	      pdwFlags: PDWORD
-
-;HRESULT
-GetApplicationRestartSettings proto WINAPI \
-	      hProcess: HANDLE,
-	pwzCommandline: PWSTR,
-	      pcchSize: PDWORD,
-	      pdwFlags: PDWORD
-
-;HRESULT
-ApplicationRecoveryInProgress proto WINAPI \
-	   pbCancelled: PBOOL
-
-
-;VOID
-ApplicationRecoveryFinished proto WINAPI \
-	      bSuccess: BOOL
-
-
-if (_WIN32_WINNT GE 0x0600)
-
-if (_WIN32_WINNT GE _WIN32_WINNT_LONGHORN)
-.enum FILE_INFO_BY_HANDLE_CLASS {
-    FileBasicInfo,
-    FileStandardInfo,
-    FileNameInfo,
-    FileRenameInfo,
-    FileDispositionInfo,
-    FileAllocationInfo,
-    FileEndOfFileInfo,
-    FileStreamInfo,
-    FileCompressionInfo,
-    FileAttributeTagInfo,
-    FileIdBothDirectoryInfo,
-    FileIdBothDirectoryRestartInfo,
-    FileIoPriorityHintInfo,
-    FileRemoteProtocolInfo,
-    FileFullDirectoryInfo,
-    FileFullDirectoryRestartInfo,
-if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
-    FileStorageInfo,
-    FileAlignmentInfo,
-    FileIdInfo,
-    FileIdExtdDirectoryInfo,
-    FileIdExtdDirectoryRestartInfo,
-endif
-    MaximumFileInfoByHandleClass
-    }
-PFILE_INFO_BY_HANDLE_CLASS typedef ptr FILE_INFO_BY_HANDLE_CLASS
 endif
 
-
-FILE_BASIC_INFO		STRUC
-CreationTime		LARGE_INTEGER <>
-LastAccessTime		LARGE_INTEGER <>
-LastWriteTime		LARGE_INTEGER <>
-ChangeTime		LARGE_INTEGER <>
-FileAttributes		dd ?
-FILE_BASIC_INFO		ENDS
-PFILE_BASIC_INFO	typedef ptr FILE_BASIC_INFO
-
-FILE_STANDARD_INFO	STRUC
-AllocationSize		LARGE_INTEGER <>
-EndOfFile		LARGE_INTEGER <>
-NumberOfLinks		dd ?
-DeletePending		BOOLEAN ?
-Directory		BOOLEAN ?
-FILE_STANDARD_INFO	ENDS
-PFILE_STANDARD_INFO	typedef ptr FILE_STANDARD_INFO
-
-FILE_NAME_INFO		STRUC
-FileNameLength		dd ?
-FileName		dw ?
-FILE_NAME_INFO		ENDS
-PFILE_NAME_INFO		typedef ptr FILE_NAME_INFO
-
-if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS1)
-define FILE_RENAME_FLAG_REPLACE_IF_EXISTS		   0x00000001
-define FILE_RENAME_FLAG_POSIX_SEMANTICS			   0x00000002
+if (_WIN32_WINNT ge 0x0600)
+GetApplicationRecoveryCallback proto WINAPI :HANDLE, :ptr, :ptr, :PDWORD, :PDWORD
+GetApplicationRestartSettings proto WINAPI :HANDLE, :PWSTR, :PDWORD, :PDWORD
 endif
 
-if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS3)
-define FILE_RENAME_FLAG_SUPPRESS_PIN_STATE_INHERITANCE	   0x00000004
+if (_WIN32_WINNT ge 0x0600)
+ApplicationRecoveryInProgress proto WINAPI :PBOOL
+ApplicationRecoveryFinished proto WINAPI :BOOL
 endif
 
-FILE_RENAME_INFO	STRUC
-if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS1)
+if (_WIN32_WINNT ge 0x0600)
+
+_FILE_BASIC_INFO        struct
+CreationTime            LARGE_INTEGER <>
+LastAccessTime          LARGE_INTEGER <>
+LastWriteTime           LARGE_INTEGER <>
+ChangeTime              LARGE_INTEGER <>
+FileAttributes          DWORD ?
+_FILE_BASIC_INFO        ends
+FILE_BASIC_INFO         typedef _FILE_BASIC_INFO
+PFILE_BASIC_INFO        typedef ptr _FILE_BASIC_INFO
+
+_FILE_STANDARD_INFO     struct
+AllocationSize          LARGE_INTEGER <>
+EndOfFile               LARGE_INTEGER <>
+NumberOfLinks           DWORD ?
+DeletePending           BOOLEAN ?
+Directory               BOOLEAN ?
+_FILE_STANDARD_INFO     ends
+FILE_STANDARD_INFO      typedef _FILE_STANDARD_INFO
+PFILE_STANDARD_INFO     typedef ptr _FILE_STANDARD_INFO
+
+_FILE_NAME_INFO         struct
+FileNameLength          DWORD ?
+FileName                WCHAR 1 dup(?)
+_FILE_NAME_INFO         ends
+FILE_NAME_INFO          typedef _FILE_NAME_INFO
+PFILE_NAME_INFO         typedef ptr _FILE_NAME_INFO
+
+_FILE_CASE_SENSITIVE_INFO struct
+Flags                   ULONG ?
+_FILE_CASE_SENSITIVE_INFO ends
+FILE_CASE_SENSITIVE_INFO typedef _FILE_CASE_SENSITIVE_INFO
+PFILE_CASE_SENSITIVE_INFO typedef ptr _FILE_CASE_SENSITIVE_INFO
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS1)
+define FILE_RENAME_FLAG_REPLACE_IF_EXISTS                  0x00000001
+define FILE_RENAME_FLAG_POSIX_SEMANTICS                    0x00000002
+endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS3)
+define FILE_RENAME_FLAG_SUPPRESS_PIN_STATE_INHERITANCE     0x00000004
+endif
+
+_FILE_RENAME_INFO       struct
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS1)
 union
- ReplaceIfExists	BOOLEAN ?
- Flags			DWORD ?
+ ReplaceIfExists        BOOLEAN ?
+ Flags                  DWORD ?
 ends
 else
-ReplaceIfExists		BOOLEAN ?
+ReplaceIfExists         BOOLEAN ?
 endif
-RootDirectory		HANDLE ?
-FileNameLength		dd ?
-FileName		dw ?
-FILE_RENAME_INFO	ENDS
-PFILE_RENAME_INFO	typedef ptr FILE_RENAME_INFO
+RootDirectory           HANDLE ?
+FileNameLength          DWORD ?
+FileName                WCHAR 1 dup(?)
+_FILE_RENAME_INFO       ends
+FILE_RENAME_INFO        typedef _FILE_RENAME_INFO
+PFILE_RENAME_INFO       typedef ptr _FILE_RENAME_INFO
 
-FILE_ALLOCATION_INFO	STRUC
-AllocationSize		LARGE_INTEGER <>
-FILE_ALLOCATION_INFO	ENDS
-PFILE_ALLOCATION_INFO	typedef ptr FILE_ALLOCATION_INFO
+_FILE_ALLOCATION_INFO   struct
+AllocationSize          LARGE_INTEGER <>
+_FILE_ALLOCATION_INFO   ends
+FILE_ALLOCATION_INFO    typedef _FILE_ALLOCATION_INFO
+PFILE_ALLOCATION_INFO   typedef ptr _FILE_ALLOCATION_INFO
 
-FILE_END_OF_FILE_INFO	STRUC
-EndOfFile		LARGE_INTEGER <>
-FILE_END_OF_FILE_INFO	ENDS
-PFILE_END_OF_FILE_INFO	typedef ptr FILE_END_OF_FILE_INFO
+_FILE_END_OF_FILE_INFO  struct
+EndOfFile               LARGE_INTEGER <>
+_FILE_END_OF_FILE_INFO  ends
+FILE_END_OF_FILE_INFO   typedef _FILE_END_OF_FILE_INFO
+PFILE_END_OF_FILE_INFO  typedef ptr _FILE_END_OF_FILE_INFO
 
-FILE_STREAM_INFO	STRUC
-NextEntryOffset		dd ?
-StreamNameLength	dd ?
-StreamSize		LARGE_INTEGER <>
-StreamAllocationSize	LARGE_INTEGER <>
-StreamName		dw ?
-FILE_STREAM_INFO	ENDS
-PFILE_STREAM_INFO	typedef ptr FILE_STREAM_INFO
+_FILE_STREAM_INFO       struct
+NextEntryOffset         DWORD ?
+StreamNameLength        DWORD ?
+StreamSize              LARGE_INTEGER <>
+StreamAllocationSize    LARGE_INTEGER <>
+StreamName              WCHAR 1 dup(?)
+_FILE_STREAM_INFO       ends
+FILE_STREAM_INFO        typedef _FILE_STREAM_INFO
+PFILE_STREAM_INFO       typedef ptr _FILE_STREAM_INFO
 
-FILE_COMPRESSION_INFO	STRUC
-CompressedFileSize	LARGE_INTEGER <>
-CompressionFormat	dw ?
-CompressionUnitShift	db ?
-ChunkShift		db ?
-ClusterShift		db ?
-Reserved		db 3 dup(?)
-FILE_COMPRESSION_INFO	ENDS
-PFILE_COMPRESSION_INFO	typedef ptr FILE_COMPRESSION_INFO
+_FILE_COMPRESSION_INFO  struct
+CompressedFileSize      LARGE_INTEGER <>
+CompressionFormat       WORD ?
+CompressionUnitShift    UCHAR ?
+ChunkShift              UCHAR ?
+ClusterShift            UCHAR ?
+Reserved                UCHAR 3 dup(?)
+_FILE_COMPRESSION_INFO  ends
+FILE_COMPRESSION_INFO   typedef _FILE_COMPRESSION_INFO
+PFILE_COMPRESSION_INFO  typedef ptr _FILE_COMPRESSION_INFO
 
-FILE_ATTRIBUTE_TAG_INFO	 STRUC
-FileAttributes		dd ?
-ReparseTag		dd ?
-FILE_ATTRIBUTE_TAG_INFO ENDS
-PFILE_ATTRIBUTE_TAG_INFO typedef ptr FILE_ATTRIBUTE_TAG_INFO
+_FILE_ATTRIBUTE_TAG_INFO struct
+FileAttributes          DWORD ?
+ReparseTag              DWORD ?
+_FILE_ATTRIBUTE_TAG_INFO ends
+FILE_ATTRIBUTE_TAG_INFO typedef _FILE_ATTRIBUTE_TAG_INFO
+PFILE_ATTRIBUTE_TAG_INFO typedef ptr _FILE_ATTRIBUTE_TAG_INFO
 
-FILE_DISPOSITION_INFO	STRUC
-DeleteFile		BOOLEAN ?
-FILE_DISPOSITION_INFO	ENDS
-PFILE_DISPOSITION_INFO	typedef ptr FILE_DISPOSITION_INFO
+_FILE_DISPOSITION_INFO  struct
+DeleteFile              BOOLEAN ?
+_FILE_DISPOSITION_INFO  ends
+FILE_DISPOSITION_INFO   typedef _FILE_DISPOSITION_INFO
+PFILE_DISPOSITION_INFO  typedef ptr _FILE_DISPOSITION_INFO
 
-if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS1)
-define FILE_DISPOSITION_FLAG_DO_NOT_DELETE		0x00000000
-define FILE_DISPOSITION_FLAG_DELETE			0x00000001
-define FILE_DISPOSITION_FLAG_POSIX_SEMANTICS		0x00000002
-define FILE_DISPOSITION_FLAG_FORCE_IMAGE_SECTION_CHECK	0x00000004
-define FILE_DISPOSITION_FLAG_ON_CLOSE			0x00000008
-if (WDK_NTDDI_VERSION ge NTDDI_WIN10_RS5)
-define FILE_DISPOSITION_FLAG_IGNORE_READONLY_ATTRIBUTE	0x00000010
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS1)
+define FILE_DISPOSITION_FLAG_DO_NOT_DELETE              0x00000000
+define FILE_DISPOSITION_FLAG_DELETE                     0x00000001
+define FILE_DISPOSITION_FLAG_POSIX_SEMANTICS            0x00000002
+define FILE_DISPOSITION_FLAG_FORCE_IMAGE_SECTION_CHECK  0x00000004
+define FILE_DISPOSITION_FLAG_ON_CLOSE                   0x00000008
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS5)
+define FILE_DISPOSITION_FLAG_IGNORE_READONLY_ATTRIBUTE  0x00000010
 endif
 
 _FILE_DISPOSITION_INFO_EX struct
-Flags			DWORD ?
+Flags                   DWORD ?
 _FILE_DISPOSITION_INFO_EX ends
-FILE_DISPOSITION_INFO_EX  typedef _FILE_DISPOSITION_INFO_EX
+FILE_DISPOSITION_INFO_EX typedef _FILE_DISPOSITION_INFO_EX
 PFILE_DISPOSITION_INFO_EX typedef ptr _FILE_DISPOSITION_INFO_EX
 endif
 
-FILE_ID_BOTH_DIR_INFO	STRUC
-NextEntryOffset		dd ?
-FileIndex		dd ?
-CreationTime		LARGE_INTEGER <>
-LastAccessTime		LARGE_INTEGER <>
-LastWriteTime		LARGE_INTEGER <>
-ChangeTime		LARGE_INTEGER <>
-EndOfFile		LARGE_INTEGER <>
-AllocationSize		LARGE_INTEGER <>
-FileAttributes		dd ?
-FileNameLength		dd ?
-EaSize			dd ?
-ShortNameLength		CCHAR ?
-ShortName		dw 12 dup(?)
-FileId			LARGE_INTEGER <>
-FileName		dw ?
-FILE_ID_BOTH_DIR_INFO	ENDS
-PFILE_ID_BOTH_DIR_INFO	typedef ptr FILE_ID_BOTH_DIR_INFO
+_FILE_ID_BOTH_DIR_INFO  struct
+NextEntryOffset         DWORD ?
+FileIndex               DWORD ?
+CreationTime            LARGE_INTEGER <>
+LastAccessTime          LARGE_INTEGER <>
+LastWriteTime           LARGE_INTEGER <>
+ChangeTime              LARGE_INTEGER <>
+EndOfFile               LARGE_INTEGER <>
+AllocationSize          LARGE_INTEGER <>
+FileAttributes          DWORD ?
+FileNameLength          DWORD ?
+EaSize                  DWORD ?
+ShortNameLength         CCHAR ?
+ShortName               WCHAR 12 dup(?)
+FileId                  LARGE_INTEGER <>
+FileName                WCHAR 1 dup(?)
+_FILE_ID_BOTH_DIR_INFO  ends
+FILE_ID_BOTH_DIR_INFO   typedef _FILE_ID_BOTH_DIR_INFO
+PFILE_ID_BOTH_DIR_INFO  typedef ptr _FILE_ID_BOTH_DIR_INFO
 
-.enum _PRIORITY_HINT {
+_FILE_FULL_DIR_INFO     struct
+NextEntryOffset         ULONG ?
+FileIndex               ULONG ?
+CreationTime            LARGE_INTEGER <>
+LastAccessTime          LARGE_INTEGER <>
+LastWriteTime           LARGE_INTEGER <>
+ChangeTime              LARGE_INTEGER <>
+EndOfFile               LARGE_INTEGER <>
+AllocationSize          LARGE_INTEGER <>
+FileAttributes          ULONG ?
+FileNameLength          ULONG ?
+EaSize                  ULONG ?
+FileName                WCHAR 1 dup(?)
+_FILE_FULL_DIR_INFO     ends
+FILE_FULL_DIR_INFO      typedef _FILE_FULL_DIR_INFO
+PFILE_FULL_DIR_INFO     typedef ptr _FILE_FULL_DIR_INFO
+
+.enum PRIORITY_HINT {
     IoPriorityHintVeryLow = 0,
     IoPriorityHintLow,
     IoPriorityHintNormal,
     MaximumIoPriorityHintType
     }
-PRIORITY_HINT		typedef _PRIORITY_HINT
 
+_FILE_IO_PRIORITY_HINT_INFO struct
+PriorityHint            PRIORITY_HINT ?
+_FILE_IO_PRIORITY_HINT_INFO ends
+FILE_IO_PRIORITY_HINT_INFO typedef _FILE_IO_PRIORITY_HINT_INFO
+PFILE_IO_PRIORITY_HINT_INFO typedef ptr _FILE_IO_PRIORITY_HINT_INFO
 
-FILE_IO_PRIORITY_HINT_INFO  STRUC
-PriorityHint		PRIORITY_HINT ?
-FILE_IO_PRIORITY_HINT_INFO ENDS
-PFILE_IO_PRIORITY_HINT_INFO typedef ptr FILE_IO_PRIORITY_HINT_INFO
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
 
+_FILE_ALIGNMENT_INFO    struct
+AlignmentRequirement    ULONG ?
+_FILE_ALIGNMENT_INFO    ends
+FILE_ALIGNMENT_INFO     typedef _FILE_ALIGNMENT_INFO
+PFILE_ALIGNMENT_INFO    typedef ptr _FILE_ALIGNMENT_INFO
 
-REMOTE_PROTOCOL_INFO_FLAG_LOOPBACK equ 0x00000001
-REMOTE_PROTOCOL_INFO_FLAG_OFFLINE equ 0x00000002
+define STORAGE_INFO_FLAGS_ALIGNED_DEVICE                 0x00000001
+define STORAGE_INFO_FLAGS_PARTITION_ALIGNED_ON_DEVICE    0x00000002
+define STORAGE_INFO_OFFSET_UNKNOWN (0xffffffff)
 
-FILE_REMOTE_PROTOCOL_INFO STRUC
-StructureVersion	dw ?
-StructureSize		dw ?
-Protocol		dd ?
-ProtocolMajorVersion	dw ?
-ProtocolMinorVersion	dw ?
-ProtocolRevision	dw ?
-Reserved		dw ?
-Flags			dd ?
-STRUC GenericReserved
- Reserved		dd 8 dup(?)
-ENDS
-STRUC ProtocolSpecificReserved
- Reserved		dd 16 dup(?)
-ENDS
-FILE_REMOTE_PROTOCOL_INFO ENDS
-PFILE_REMOTE_PROTOCOL_INFO typedef ptr FILE_REMOTE_PROTOCOL_INFO
+_FILE_STORAGE_INFO      struct
+LogicalBytesPerSector   ULONG ?
+PhysicalBytesPerSectorForAtomicity ULONG ?
+PhysicalBytesPerSectorForPerformance ULONG ?
+FileSystemEffectivePhysicalBytesPerSectorForAtomicity ULONG ?
+Flags                   ULONG ?
+ByteOffsetForSectorAlignment ULONG ?
+ByteOffsetForPartitionAlignment ULONG ?
+_FILE_STORAGE_INFO      ends
+FILE_STORAGE_INFO       typedef _FILE_STORAGE_INFO
+PFILE_STORAGE_INFO      typedef ptr _FILE_STORAGE_INFO
 
-;BOOL
-SetFileInformationByHandle proto WINAPI \
-		 hFile: HANDLE,
-  FileInformationClass: FILE_INFO_BY_HANDLE_CLASS,
-     lpFileInformation: LPVOID,
-	  dwBufferSize: DWORD
+_FILE_ID_INFO           struct
+VolumeSerialNumber      ULONGLONG ?
+FileId                  FILE_ID_128 <>
+_FILE_ID_INFO           ends
+FILE_ID_INFO            typedef _FILE_ID_INFO
+PFILE_ID_INFO           typedef ptr _FILE_ID_INFO
 
-;BOOL
-GetFileInformationByHandleEx proto WINAPI \
-		 hFile: HANDLE,
-  FileInformationClass: FILE_INFO_BY_HANDLE_CLASS,
-     lpFileInformation: LPVOID,
-	  dwBufferSize: DWORD
+_FILE_ID_EXTD_DIR_INFO  struct
+NextEntryOffset         ULONG ?
+FileIndex               ULONG ?
+CreationTime            LARGE_INTEGER <>
+LastAccessTime          LARGE_INTEGER <>
+LastWriteTime           LARGE_INTEGER <>
+ChangeTime              LARGE_INTEGER <>
+EndOfFile               LARGE_INTEGER <>
+AllocationSize          LARGE_INTEGER <>
+FileAttributes          ULONG ?
+FileNameLength          ULONG ?
+EaSize                  ULONG ?
+ReparsePointTag         ULONG ?
+FileId                  FILE_ID_128 <>
+FileName                WCHAR 1 dup(?)
+_FILE_ID_EXTD_DIR_INFO  ends
+FILE_ID_EXTD_DIR_INFO   typedef _FILE_ID_EXTD_DIR_INFO
+PFILE_ID_EXTD_DIR_INFO  typedef ptr _FILE_ID_EXTD_DIR_INFO
 
-.enum _FILE_ID_TYPE {
+endif
+
+define REMOTE_PROTOCOL_INFO_FLAG_LOOPBACK              0x00000001
+define REMOTE_PROTOCOL_INFO_FLAG_OFFLINE               0x00000002
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+define REMOTE_PROTOCOL_INFO_FLAG_PERSISTENT_HANDLE     0x00000004
+endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+define RPI_FLAG_SMB2_SHARECAP_TIMEWARP                0x00000002
+define RPI_FLAG_SMB2_SHARECAP_DFS                     0x00000008
+define RPI_FLAG_SMB2_SHARECAP_CONTINUOUS_AVAILABILITY 0x00000010
+define RPI_FLAG_SMB2_SHARECAP_SCALEOUT                0x00000020
+define RPI_FLAG_SMB2_SHARECAP_CLUSTER                 0x00000040
+endif
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+define RPI_SMB2_FLAG_SERVERCAP_DFS                    0x00000001
+define RPI_SMB2_FLAG_SERVERCAP_LEASING                0x00000002
+define RPI_SMB2_FLAG_SERVERCAP_LARGEMTU               0x00000004
+define RPI_SMB2_FLAG_SERVERCAP_MULTICHANNEL           0x00000008
+define RPI_SMB2_FLAG_SERVERCAP_PERSISTENT_HANDLES     0x00000010
+define RPI_SMB2_FLAG_SERVERCAP_DIRECTORY_LEASING      0x00000020
+endif
+
+_FILE_REMOTE_PROTOCOL_INFO struct
+StructureVersion        USHORT ?
+StructureSize           USHORT ?
+Protocol                ULONG ?
+ProtocolMajorVersion    USHORT ?
+ProtocolMinorVersion    USHORT ?
+ProtocolRevision        USHORT ?
+Reserved                USHORT ?
+Flags                   ULONG ?
+struct GenericReserved
+ Reserved               ULONG 8 dup(?)
+ends
+if (_WIN32_WINNT lt _WIN32_WINNT_WIN8)
+struct ProtocolSpecificReserved
+ Reserved               ULONG 16 dup(?)
+ends
+endif
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+union ProtocolSpecific
+ struct Smb2
+  struct Server
+   Capabilities         ULONG ?
+  ends
+  struct Share
+   Capabilities         ULONG ?
+   CachingFlags         ULONG ?
+  ends
+ ends
+ Reserved               ULONG 16 dup(?)
+ends
+endif
+_FILE_REMOTE_PROTOCOL_INFO ends
+FILE_REMOTE_PROTOCOL_INFO typedef _FILE_REMOTE_PROTOCOL_INFO
+PFILE_REMOTE_PROTOCOL_INFO typedef ptr _FILE_REMOTE_PROTOCOL_INFO
+
+GetFileInformationByHandleEx proto WINAPI :HANDLE, :FILE_INFO_BY_HANDLE_CLASS, :LPVOID, :DWORD
+
+.enum FILE_ID_TYPE {
     FileIdType,
     ObjectIdType,
     ExtendedFileIdType,
     MaximumFileIdType
     }
-FILE_ID_TYPE		typedef _FILE_ID_TYPE
-PFILE_ID_TYPE		typedef ptr _FILE_ID_TYPE
 
-FILE_ID_DESCRIPTOR	STRUC
-dwSize			dd ?
-Type			FILE_ID_TYPE ?
-UNION
- FileId			LARGE_INTEGER <>
- ObjectId		GUID <>
+FILE_ID_DESCRIPTOR      struct
+dwSize                  DWORD ?
+Type                    FILE_ID_TYPE ?
+union
+ FileId                 LARGE_INTEGER <>
+ ObjectId               GUID <>
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
- ExtendedFileId		FILE_ID_128 <>
+ ExtendedFileId         FILE_ID_128 <>
 endif
-ENDS
-FILE_ID_DESCRIPTOR	ENDS
-LPFILE_ID_DESCRIPTOR	typedef ptr FILE_ID_DESCRIPTOR
+ends
+FILE_ID_DESCRIPTOR      ends
+LPFILE_ID_DESCRIPTOR    typedef ptr FILE_ID_DESCRIPTOR
 
-;HANDLE
-OpenFileById proto WINAPI \
-	   hVolumeHint: HANDLE,
-	      lpFileId: LPFILE_ID_DESCRIPTOR,
-       dwDesiredAccess: DWORD,
-	   dwShareMode: DWORD,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-  dwFlagsAndAttributes: DWORD
+OpenFileById proto WINAPI :HANDLE, :LPFILE_ID_DESCRIPTOR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES, :DWORD
 
-endif
+endif ; (_WIN32_WINNT ge 0x0600)
 
-if (_WIN32_WINNT GE 0x0600)
 
-define SYMBOLIC_LINK_FLAG_DIRECTORY		       (0x1)
+if (_WIN32_WINNT ge 0x0600)
+
+define SYMBOLIC_LINK_FLAG_DIRECTORY                    (0x1)
 define SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE    (0x2)
-define VALID_SYMBOLIC_LINK_FLAGS SYMBOLIC_LINK_FAG_DIRECTORY
 
-;BOOLEAN
-CreateSymbolicLinkA proto WINAPI \
-      lpSymlinkFileName: LPCSTR,
-       lpTargetFileName: LPCSTR,
-		dwFlags: DWORD
-CreateSymbolicLinkW proto WINAPI \
-      lpSymlinkFileName: LPCWSTR,
-       lpTargetFileName: LPCWSTR,
-		dwFlags: DWORD
+CreateSymbolicLinkA proto WINAPI :LPCSTR, :LPCSTR, :DWORD
+CreateSymbolicLinkW proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD
 ifdef _UNICODE
-CreateSymbolicLink equ <CreateSymbolicLinkW>
+define CreateSymbolicLink  <CreateSymbolicLinkW>
 else
-CreateSymbolicLink equ <CreateSymbolicLinkA>
+define CreateSymbolicLink  <CreateSymbolicLinkA>
 endif
 
-;BOOLEAN
-CreateSymbolicLinkTransactedA proto WINAPI \
-      lpSymlinkFileName: LPCSTR,
-       lpTargetFileName: LPCSTR,
-		dwFlags: DWORD,
-	   hTransaction: HANDLE
-CreateSymbolicLinkTransactedW proto WINAPI \
-      lpSymlinkFileName: LPCWSTR,
-       lpTargetFileName: LPCWSTR,
-		dwFlags: DWORD,
-	   hTransaction: HANDLE
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+QueryActCtxSettingsW proto WINAPI :DWORD, :HANDLE, :PCWSTR, :PCWSTR, :PWSTR, :SIZE_T, :ptr
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+CreateSymbolicLinkTransactedA proto WINAPI :LPCSTR, :LPCSTR, :DWORD, :HANDLE
+CreateSymbolicLinkTransactedW proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :HANDLE
 ifdef _UNICODE
-CreateSymbolicLinkTransacted equ <CreateSymbolicLinkTransactedW>
+define CreateSymbolicLinkTransacted  <CreateSymbolicLinkTransactedW>
 else
-CreateSymbolicLinkTransacted equ <CreateSymbolicLinkTransactedA>
+define CreateSymbolicLinkTransacted  <CreateSymbolicLinkTransactedA>
+endif
 endif
 
-;DWORD
-GetFinalPathNameByHandleA proto WINAPI \
-		  hFile: HANDLE,
-	   lpszFilePath: LPSTR,
-	    cchFilePath: DWORD,
-		dwFlags: DWORD
-GetFinalPathNameByHandleW proto WINAPI \
-		  hFile: HANDLE,
-	   lpszFilePath: LPWSTR,
-	    cchFilePath: DWORD,
-		dwFlags: DWORD
-ifdef _UNICODE
-GetFinalPathNameByHandle equ <GetFinalPathNameByHandleW>
-else
-GetFinalPathNameByHandle equ <GetFinalPathNameByHandleA>
+if (_WIN32_WINNT ge 0x0600)
+ReplacePartitionUnit proto WINAPI :PWSTR, :PWSTR, :ULONG
 endif
 
-endif ; _WIN32_WINNT >= 0x0600
-
-if (_WIN32_WINNT GE 0x0600)
-
-;BOOL
-QueryActCtxSettingsW proto WINAPI \
-	       dwFlags: DWORD,
-	       hActCtx: HANDLE,
-     settingsNameSpace: PCWSTR,
-	   settingName: PCWSTR,
-	      pvBuffer: PWSTR,
-	      dwBuffer: SIZE_T,
-  pdwWrittenOrRequired: ptr SIZE_T
-endif
-
-if (_WIN32_WINNT GE 0x0600)
-
-;BOOL
-ReplacePartitionUnit proto WINAPI \
-       TargetPartition: PWSTR,
-	SparePartition: PWSTR,
-		 Flags: ULONG
-
-endif
-
-
-if (_WIN32_WINNT GE 0x0600)
-
-;BOOL
-AddSecureMemoryCacheCallback proto WINAPI \
-	   pfnCallBack: PSECURE_MEMORY_CACHE_CALLBACK
-
-;BOOL
-RemoveSecureMemoryCacheCallback proto WINAPI \
-	   pfnCallBack: PSECURE_MEMORY_CACHE_CALLBACK
-
+if (_WIN32_WINNT ge 0x0600)
+AddSecureMemoryCacheCallback proto WINAPI :PSECURE_MEMORY_CACHE_CALLBACK
+RemoveSecureMemoryCacheCallback proto WINAPI :PSECURE_MEMORY_CACHE_CALLBACK
 endif
 
 if (NTDDI_VERSION ge NTDDI_WIN7SP1)
 
-CopyContext proto WINAPI \
-	   Destination: PCONTEXT,
-	  ContextFlags: DWORD,
-		Source: PCONTEXT
+CopyContext proto WINAPI :PCONTEXT, :DWORD, :PCONTEXT
 
-InitializeContext proto WINAPI \
-		Buffer: ptr,
-	  ContextFlags: DWORD,
-	       Context: ptr PCONTEXT,
-	 ContextLength: PDWORD
-
+InitializeContext proto WINAPI :PVOID, :DWORD, :ptr, :PDWORD
 
 if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-
-InitializeContext2 proto WINAPI \
-		Buffer: ptr,
-	  ContextFlags: DWORD,
-	       Context: ptr PCONTEXT,
-	 ContextLength: PDWORD,
-  XStateCompactionMask: ULONG64
-
-
+InitializeContext2 proto WINAPI :PVOID, :DWORD, :ptr, :PDWORD, :ULONG64
 endif
 
 if defined(_AMD64_) or defined(_X86_)
-
 GetEnabledXStateFeatures proto WINAPI
+GetXStateFeaturesMask proto WINAPI :PCONTEXT, :PDWORD64
+LocateXStateFeature proto WINAPI :PCONTEXT, :DWORD, :PDWORD
+SetXStateFeaturesMask proto WINAPI :PCONTEXT, :DWORD64
+endif
 
-GetXStateFeaturesMask proto WINAPI \
-	       Context: PCONTEXT,
-	   FeatureMask: PDWORD64
+endif ; (NTDDI_VERSION ge NTDDI_WIN7SP1)
 
-LocateXStateFeature proto WINAPI \
-	       Context: PCONTEXT,
-	     FeatureId: DWORD,
-		Length: PDWORD
-
-SetXStateFeaturesMask proto WINAPI \
-	       Context: PCONTEXT,
-	   FeatureMask: DWORD64
-
-endif ; defined(_AMD64_) || defined(_X86_)
-
-endif ; (NTDDI_VERSION >= NTDDI_WIN7SP1)
-
-if (_WIN32_WINNT GE 0x0601)
-
-;BOOL
-CopyExtendedContext proto WINAPI \
-	   Destination: PCONTEXT_EX,
-	  ContextFlags: DWORD,
-		Source: PCONTEXT_EX
-
-;BOOL
-InitializeExtendedContext proto WINAPI \
-	       Context: PVOID,
-	  ContextFlags: DWORD,
-	     ContextEx: ptr PCONTEXT_EX
-
-;DWORD64
-GetEnabledExtendedFeatures proto WINAPI \
-	   FeatureMask: DWORD64
-
-;BOOL
-GetExtendedContextLength proto WINAPI \
-	  ContextFlags: DWORD,
-	 ContextLength: PDWORD
-
-;DWORD64
-GetExtendedFeaturesMask proto WINAPI \
-	     ContextEx: PCONTEXT_EX
-
-;PVOID
-LocateExtendedFeature proto WINAPI \
-	     ContextEx: PCONTEXT_EX,
-	     FeatureId: DWORD,
-		Length: PDWORD
-
-;PCONTEXT
-LocateLegacyContext proto WINAPI \
-	     ContextEx: PCONTEXT_EX,
-		Length: PDWORD
-
-;VOID
-SetExtendedFeaturesMask proto WINAPI \
-	     ContextEx: PCONTEXT_EX,
-	   FeatureMask: DWORD64
-
-;DWORD
-EnableThreadProfiling proto WINAPI \
-	  ThreadHandle: HANDLE,
-		 Flags: DWORD,
-      HardwareCounters: DWORD64,
- PerformanceDataHandle: ptr HANDLE
-
-;DWORD
-DisableThreadProfiling proto WINAPI \
- PerformanceDataHandle: HANDLE
-
-;DWORD
-QueryThreadProfiling proto WINAPI \
-	  ThreadHandle: HANDLE,
-	       Enabled: PBOOLEAN
-
-;DWORD
-ReadThreadProfilingData proto WINAPI \
-      PerformanceDataHandle: HANDLE,
-		 Flags: DWORD,
-       PerformanceData: PPERFORMANCE_DATA
-
-
-endif ; (_WIN32_WINNT >= 0x0601)
+if (_WIN32_WINNT ge 0x0601)
+EnableThreadProfiling proto WINAPI :HANDLE, :DWORD, :DWORD64, :ptr
+DisableThreadProfiling proto WINAPI :HANDLE
+QueryThreadProfiling proto WINAPI :HANDLE, :PBOOLEAN
+ReadThreadProfilingData proto WINAPI :HANDLE, :DWORD, :PPERFORMANCE_DATA
+endif
 
 if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
-
-RaiseCustomSystemEventTrigger proto WINAPI \
-CustomSystemEventTriggerConfig: PCUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG
-
+RaiseCustomSystemEventTrigger proto WINAPI :PCUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG
 endif
 
+ifndef RC_INVOKED
+if defined(ISOLATION_AWARE_ENABLED) and (ISOLATION_AWARE_ENABLED ne 0)
+include winbase.inl
 endif
+endif
+
+ifdef _WIN64
+.pragma pack(pop)
+endif
+endif ; _WINBASE_
+
+
+ifndef RC_INVOKED
+ifndef NOWINBASEINTERLOCK
+ifndef _NTOS_
+
+ifndef RC_INVOKED
+
+ifndef MICROSOFT_WINDOWS_WINBASE_INTERLOCKED_CPLUSPLUS_H_INCLUDED
+define MICROSOFT_WINDOWS_WINBASE_INTERLOCKED_CPLUSPLUS_H_INCLUDED
+
+ifndef MIDL_PASS
+
+ifndef MICROSOFT_WINDOWS_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS
+define MICROSOFT_WINDOWS_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS (_WIN32_WINNT ge 0x0501 or not defined(_WINBASE_))
+endif
+
+if MICROSOFT_WINDOWS_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS
+
+;ifdef __cplusplus
+
+InterlockedIncrement proto fastcall :ptr {
+    lock    inc dword ptr [rcx]
+    mov     eax,[rcx]
+    }
+
+if (defined(_WIN64) and not defined(_ARM64_)) or ((_WIN32_WINNT ge 0x0502) and defined(_WINBASE_) and not defined(_MANAGED))
+InterlockedIncrement64 proto fastcall :ptr {
+    lock    inc qword ptr [rcx]
+    mov     rax,[rcx]
+    }
+endif
+
+InterlockedDecrement proto fastcall :ptr {
+    lock    dec dword ptr [rcx]
+    mov     eax,[rcx]
+    }
+
+if (defined(_WIN64) and not defined(_ARM64_)) or ((_WIN32_WINNT ge 0x0502) and defined(_WINBASE_) and not defined(_MANAGED))
+InterlockedDecrement64 proto fastcall :ptr {
+    lock dec qword ptr [rcx]
+    mov rax,[rcx]
+    }
+endif
+
+ifndef _M_CEE_PURE
+
+InterlockedExchange proto fastcall :ptr, :ptr {
+    xchg    [rcx],edx
+    mov     eax,edx
+    }
+
+if defined(_WIN64) or ((_WIN32_WINNT ge 0x0502) and defined(_WINBASE_) and not defined(_MANAGED))
+InterlockedExchange64 proto fastcall :ptr, :ptr {
+    xchg    [rcx],rdx
+    mov     rax,rdx
+    }
+endif
+
+InterlockedExchangeAdd proto WINAPI :ptr LONG, :LONG
+
+if defined(_WIN64) or ((_WIN32_WINNT ge 0x0502) and defined(_WINBASE_) and not defined(_MANAGED))
+InterlockedExchangeAdd64 proto WINAPI :ptr LONGLONG, :LONGLONG
+endif
+
+InterlockedCompareExchange proto fastcall :ptr, :sdword, :sdword {
+    mov     eax,r8d
+    push    [rcx]
+    lock    cmpxchg dword ptr [rcx],edx
+    pop     rax
+    }
+
+if defined(_WIN64) or ((_WIN32_WINNT ge 0x0502) and defined(_WINBASE_) and not defined(_MANAGED))
+InterlockedCompareExchange64 proto fastcall :ptr, :qword, :qword {
+    mov     rax,r8
+    push    [rcx]
+    lock    cmpxchg qword ptr [rcx],rdx
+    pop     rax
+    }
+InterlockedAnd64 proto fastcall :ptr, :qword {
+    mov     rax,[rcx]
+    lock    and [rcx],rdx
+    }
+InterlockedOr64 proto fastcall :ptr, :qword {
+    mov     rax,[rcx]
+    lock    or [rcx],rdx
+    }
+InterlockedXor64 proto fastcall :ptr, :qword {
+    mov     rax,[rcx]
+    lock    xor [rcx],rdx
+    }
+endif
+
+endif ; !_M_CEE_PURE
+;endif ; __cplusplus
+endif ; MICROSOFT_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS
+
+undef MICROSOFT_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS
+define MICROSOFT_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS 0
+
+endif ; MIDL_PASS
+endif ; MICROSOFT_WINDOWS_WINBASE_INTERLOCKED_CPLUSPLUS_H_INCLUDED
+endif ; RC_INVOKED
+endif ; _NTOS_
+endif ; NOWINBASEINTERLOCK
+endif ; RC_INVOKED
+
 .pragma list(pop)
+

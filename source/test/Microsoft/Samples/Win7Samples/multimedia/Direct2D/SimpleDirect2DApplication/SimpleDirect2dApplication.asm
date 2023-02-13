@@ -274,7 +274,7 @@ GetSampleFile proc
     mov hr,S_OK
 
     .if InternetOpenUrl(hINet,
-            "https://raw.githubusercontent.com/microsoft/Windows-classic-samples/"
+            "https://raw.githubusercontent.com/microsoft/Windows-classic-samples/" \
             "main/Samples/Win7Samples/multimedia/Direct2D/SimpleDirect2DApplication/sampleImage.jpg",
             NULL, 0, 0, 0 )
 

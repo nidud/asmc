@@ -503,100 +503,25 @@ DEFINE_IIDX(IProtectedModeMenuServices, "73c105ee-9dff-4a07-b83c-7eff290c266e")
 endif
 endif
 
-;DWORD
-HMENU_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HMENU
+HMENU_UserSize proto WINAPI :ptr, :dword, :ptr
+HMENU_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserFree proto WINAPI :ptr, :ptr
 
-;LPSTR
-HMENU_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HMENU
+VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree proto WINAPI :ptr, :ptr
 
-;LPSTR
-HMENU_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HMENU
+HMENU_UserSize64 proto WINAPI :ptr, :dword, :ptr
+HMENU_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HMENU_UserFree64 proto WINAPI :ptr, :ptr
 
-;void
-HMENU_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HMENU
-
-
-;DWORD
-VARIANT_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-;LPSTR
-VARIANT_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;LPSTR
-VARIANT_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;void
-VARIANT_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr VARIANT
-
-
-;DWORD
-HMENU_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HMENU
-
-;LPSTR
-HMENU_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HMENU
-
-;LPSTR
-HMENU_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HMENU
-
-;void
-HMENU_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HMENU
-
-
-;DWORD
-VARIANT_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-;LPSTR
-VARIANT_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;LPSTR
-VARIANT_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;void
-VARIANT_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr VARIANT
+VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
+VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif
 .pragma list(pop)

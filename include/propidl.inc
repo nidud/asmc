@@ -1,15 +1,16 @@
-.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
+
 ifndef __REQUIRED_RPCSAL_H_VERSION__
 define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
 include rpcndr.inc
+
 ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
+.err <this stub requires an updated version of rpcndr.h>
 endif
 
 ifndef COM_NO_WINDOWS_H
@@ -23,19 +24,27 @@ define __propidl_h__
 include objidl.inc
 include oaidl.inc
 
-VERSIONEDSTREAM		STRUC
+if ( _MSC_VER ge 800 )
+
+include winapifamily.inc
+
+ifndef _PROPIDLBASE_
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+
+tagVersionedStream	struct
 guidVersion		GUID <>
 pStream			LPSTREAM ?
-VERSIONEDSTREAM		ENDS
+tagVersionedStream	ends
+VERSIONEDSTREAM		typedef tagVersionedStream
+LPVERSIONEDSTREAM	typedef ptr tagVersionedStream
 
-LPVERSIONEDSTREAM	typedef ptr VersionedStream
-
-PROPSETFLAG_DEFAULT	equ 0
-PROPSETFLAG_NONSIMPLE	equ 1
-PROPSETFLAG_ANSI	equ 2
-PROPSETFLAG_UNBUFFERED	equ 4
-PROPSETFLAG_CASE_SENSITIVE equ 8
-PROPSET_BEHAVIOR_CASE_SENSITIVE equ 1
+define	PROPSETFLAG_DEFAULT	( 0 )
+define	PROPSETFLAG_NONSIMPLE	( 1 )
+define	PROPSETFLAG_ANSI	( 2 )
+define	PROPSETFLAG_UNBUFFERED	( 4 )
+define	PROPSETFLAG_CASE_SENSITIVE	( 8 )
+define	PROPSET_BEHAVIOR_CASE_SENSITIVE ( 1 )
 
 LPCHAR			typedef ptr sbyte
 LPUCHAR			typedef ptr byte
@@ -45,348 +54,292 @@ LPULONG			typedef ptr dword
 
 .pragma pack(push, size_t)
 
-CAC			STRUC
-cElems			ULONG ?
+tagCAC			struct
+cElems			DD ?
 pElems			LPCHAR ?
-CAC			ENDS
+tagCAC			ends
+CAC			typedef tagCAC
 
-CAUB			STRUC
-cElems			ULONG ?
+tagCAUB			struct
+cElems			DD ?
 pElems			LPUCHAR ?
-CAUB			ENDS
+tagCAUB			ends
+CAUB			typedef tagCAUB
 
-CAI			STRUC
-cElems			ULONG ?
+tagCAI			struct
+cElems			DD ?
 pElems			LPSHORT ?
-CAI			ENDS
+tagCAI			ends
+CAI			typedef tagCAI
 
-CAUI			STRUC
-cElems			ULONG ?
+tagCAUI			struct
+cElems			DD ?
 pElems			LPUSHORT ?
-CAUI			ENDS
+tagCAUI			ends
+CAUI			typedef tagCAUI
 
-CAL			STRUC
-cElems			ULONG ?
+tagCAL			struct
+cElems			DD ?
 pElems			LPLONG ?
-CAL			ENDS
+tagCAL			ends
+CAL			typedef tagCAL
 
-CAUL			STRUC
-cElems			ULONG ?
+tagCAUL			struct
+cElems			DD ?
 pElems			LPULONG ?
-CAUL			ENDS
+tagCAUL			ends
+CAUL			typedef tagCAUL
 
-CAFLT			STRUC
-cElems			ULONG ?
+tagCAFLT		struct
+cElems			DD ?
 pElems			LPFLOAT ?
-CAFLT			ENDS
+tagCAFLT		ends
+CAFLT			typedef tagCAFLT
 
-CADBL			STRUC
-cElems			ULONG ?
+tagCADBL		struct
+cElems			DD ?
 pElems			LPDOUBLE ?
-CADBL			ENDS
+tagCADBL		ends
+CADBL			typedef tagCADBL
 
-CACY			STRUC
-cElems			ULONG ?
+tagCACY			struct
+cElems			DD ?
 pElems			LPCY ?
-CACY			ENDS
+tagCACY			ends
+CACY			typedef tagCACY
 
-CADATE			STRUC
-cElems			ULONG ?
+tagCADATE		struct
+cElems			DD ?
 pElems			LPDATE ?
-CADATE			ENDS
+tagCADATE		ends
+CADATE			typedef tagCADATE
 
-CABSTR			STRUC
-cElems			ULONG ?
+tagCABSTR		struct
+cElems			DD ?
 pElems			LPBSTR ?
-CABSTR			ENDS
+tagCABSTR		ends
+CABSTR			typedef tagCABSTR
 
-CABSTRBLOB		STRUC
-cElems			ULONG ?
+tagCABSTRBLOB		struct
+cElems			DD ?
 pElems			LPBSTRBLOB ?
-CABSTRBLOB		ENDS
+tagCABSTRBLOB		ends
+CABSTRBLOB		typedef tagCABSTRBLOB
 
-CABOOL			STRUC
-cElems			ULONG ?
+tagCABOOL		struct
+cElems			DD ?
 pElems			LPVARIANT_BOOL ?
-CABOOL			ENDS
+tagCABOOL		ends
+CABOOL			typedef tagCABOOL
 
-CASCODE			STRUC
-cElems			ULONG ?
+tagCASCODE		struct
+cElems			DD ?
 pElems			LPSCODE ?
-CASCODE			ENDS
+tagCASCODE		ends
+CASCODE			typedef tagCASCODE
 
-CAPROPVARIANT		STRUC
-cElems			ULONG ?
+tagCAPROPVARIANT	struct
+cElems			DD ?
 pElems			PVOID ? ; LPPROPVARIANT
-CAPROPVARIANT		ENDS
+tagCAPROPVARIANT	ends
+CAPROPVARIANT		typedef tagCAPROPVARIANT
 
-CAH			STRUC
-cElems			ULONG ?
+tagCAH			struct
+cElems			DD ?
 pElems			PLARGE_INTEGER ?
-CAH			ENDS
+tagCAH			ends
+CAH			typedef tagCAH
 
-CAUH			STRUC
-cElems			ULONG ?
+tagCAUH			struct
+cElems			DD ?
 pElems			PULARGE_INTEGER ?
-CAUH			ENDS
+tagCAUH			ends
+CAUH			typedef tagCAUH
 
-CALPSTR			STRUC
-cElems			ULONG ?
+tagCALPSTR		struct
+cElems			DD ?
 pElems			LPSTR ?
-CALPSTR			ENDS
+tagCALPSTR		ends
+CALPSTR			typedef tagCALPSTR
 
-CALPWSTR		STRUC
-cElems			ULONG ?
+tagCALPWSTR		struct
+cElems			DD ?
 pElems			LPWSTR ?
-CALPWSTR		ENDS
+tagCALPWSTR		ends
+CALPWSTR		typedef tagCALPWSTR
 
-CAFILETIME		STRUC
-cElems			ULONG ?
+tagCAFILETIME		struct
+cElems			DD ?
 pElems			LPFILETIME ?
-CAFILETIME		ENDS
+tagCAFILETIME		ends
+CAFILETIME		typedef tagCAFILETIME
 
-CACLIPDATA		STRUC
-cElems			ULONG ?
+tagCACLIPDATA		struct
+cElems			DD ?
 pElems			LPCLIPDATA ?
-CACLIPDATA		ENDS
+tagCACLIPDATA		ends
+CACLIPDATA		typedef tagCACLIPDATA
 
-CACLSID			STRUC
-cElems			ULONG ?
+tagCACLSID		struct
+cElems			DD ?
 pElems			LPCLSID ?
-CACLSID			ENDS
-
-ifdef MIDL_PASS
-PROPVAR_PAD1		typedef BYTE
-PROPVAR_PAD2		typedef BYTE
-PROPVAR_PAD3		typedef ULONG
-else
-PROPVAR_PAD1		typedef WORD
-PROPVAR_PAD2		typedef WORD
-PROPVAR_PAD3		typedef WORD
-tag_inner_PROPVARIANT equ 1
-endif
+tagCACLSID		ends
+CACLSID			typedef tagCACLSID
 
 ifdef _MSC_EXTENSIONS
-else
-PROPVARIANT		STRUC
-ifndef MIDL_PASS
-UNION
-STRUC
-endif
-vt			VARTYPE ?
-wReserved1		PROPVAR_PAD1 ?
-wReserved2		PROPVAR_PAD2 ?
-wReserved3		PROPVAR_PAD3 ?
-UNION
-cVal			CHAR ?
-bVal			UCHAR ?
-iVal			SWORD ?
-uiVal			USHORT ?
-lVal			LONG ?
-ulVal			ULONG ?
-intVal			SINT ?
-uintVal			UINT ?
-hVal			LARGE_INTEGER <>
-uhVal			ULARGE_INTEGER <>
-fltVal			FLOAT ?
-dblVal			DOUBLE ?
-boolVal			VARIANT_BOOL ?
-bool			VARIANT_BOOL ?
-scode			SCODE ?
-cyVal			CY <>
-date			DATE ?
-filetime		FILETIME <>
-puuid			LPCLSID ?
-pclipdata		LPCLIPDATA ?
-bstrVal			BSTR ?
-bstrblobVal		BSTRBLOB <>
-blob			BLOB <>
-pszVal			LPSTR ?
-pwszVal			LPWSTR ?
-punkVal			LPUNKNOWN ?
-pdispVal		LPDISPATCH ?
-pStream			LPSTREAM ?
-pStorage		LPSTORAGE ?
-pVersionedStream	LPVERSIONEDSTREAM ?
-parray			LPSAFEARRAY ?
-cac			CAC <>
-caub			CAUB <>
-cai			CAI <>
-caui			CAUI <>
-cal			CAL <>
-caul			CAUL <>
-cah			CAH <>
-cauh			CAUH <>
-caflt			CAFLT <>
-cadbl			CADBL <>
-cabool			CABOOL <>
-cascode			CASCODE <>
-cacy			CACY <>
-cadate			CADATE <>
-cafiletime		CAFILETIME <>
-cauuid			CACLSID <>
-caclipdata		CACLIPDATA <>
-cabstr			CABSTR <>
-cabstrblob		CABSTRBLOB <>
-calpstr			CALPSTR <>
-calpwstr		CALPWSTR <>
-capropvar		CAPROPVARIANT <>
-pcVal			LPSTR ?
-pbVal			LPUCHAR ?
-piVal			LPSHORT ?
-puiVal			LPUSHORT ?
-plVal			LPLONG ?
-pulVal			LPULONG ?
-pintVal			LPINT ?
-puintVal		LPUINT ?
-pfltVal			LPFLOAT ?
-pdblVal			LPDOUBLE ?
-pboolVal		LPVARIANT_BOOL ?
-pdecVal			LPDECIMAL ?
-pscode			LPSCODE ?
-pcyVal			LPCY ?
-pdate			LPDATE ?
-pbstrVal		LPBSTR ?
-ppunkVal		LPUNKNOWN ?
-ppdispVal		LPDISPATCH ?
-pparray			LPSAFEARRAY ?
-pvarVal			PVOID ?
-ENDS
-ifndef MIDL_PASS
-ENDS
+
+tagPROPVARIANT		struct
+union
+ struct
+  vt			WORD ?
+  wReserved1		WORD ?
+  wReserved2		WORD ?
+  wReserved3		WORD ?
+  union
+   bVal			BYTE ?
+   iVal			SWORD ?
+   uiVal		WORD ?
+   lVal			SDWORD ?
+   ulVal		DWORD ?
+   intVal		SDWORD ?
+   uintVal		DWORD ?
+   hVal			SQWORD ?
+   uhVal		QWORD ?
+   fltVal		REAL4 ?
+   dblVal		REAL8 ?
+   boolVal		SWORD ?
+   scode		SCODE ?
+   cyVal		CY <>
+   date			DATE ?
+   filetime		FILETIME <>
+   puuid		LPCLSID ?
+   pclipdata		LPCLIPDATA ?
+   bstrVal		BSTR ?
+   bstrblobVal		BSTRBLOB <>
+   blob			BLOB <>
+   pszVal		LPSTR ?
+   pwszVal		LPWSTR ?
+   punkVal		LPUNKNOWN ?
+   pdispVal		LPDISPATCH ?
+   pStream		LPSTREAM ?
+   pStorage		LPSTORAGE ?
+   pVersionedStream	LPVERSIONEDSTREAM ?
+   parray		LPSAFEARRAY ?
+   cac			CAC <>
+   caub			CAUB <>
+   cai			CAI <>
+   caui			CAUI <>
+   cal			CAL <>
+   caul			CAUL <>
+   cah			CAH <>
+   cauh			CAUH <>
+   caflt		CAFLT <>
+   cadbl		CADBL <>
+   cabool		CABOOL <>
+   cascode		CASCODE <>
+   cacy			CACY <>
+   cadate		CADATE <>
+   cafiletime		CAFILETIME <>
+   cauuid		CACLSID <>
+   caclipdata		CACLIPDATA <>
+   cabstr		CABSTR <>
+   cabstrblob		CABSTRBLOB <>
+   calpstr		CALPSTR <>
+   calpwstr		CALPWSTR <>
+   capropvar		CAPROPVARIANT <>
+   pcVal		LPSTR ?
+   pbVal		LPUCHAR ?
+   piVal		LPSHORT ?
+   puiVal		LPUSHORT ?
+   plVal		LPLONG ?
+   pulVal		LPULONG ?
+   pintVal		LPINT ?
+   puintVal		LPUINT ?
+   pfltVal		LPFLOAT ?
+   pdblVal		LPDOUBLE ?
+   pboolVal		LPVARIANT_BOOL ?
+   pdecVal		LPDECIMAL ?
+   pscode		LPSCODE ?
+   pcyVal		LPCY ?
+   pdate		LPDATE ?
+   pbstrVal		LPBSTR ?
+   ppunkVal		LPUNKNOWN ?
+   ppdispVal		LPDISPATCH ?
+   pparray		LPSAFEARRAY ?
+   pvarVal		LPPROPVARIANT ?
+  ends
+ ends
+ends
 decVal			DECIMAL <>
-ENDS
-PROPVARIANT		ENDS
-endif
+tagPROPVARIANT		ends
+PROPVARIANT		typedef tagPROPVARIANT
+
 endif
 
-ifdef MIDL_PASS
-LPPROPVARIANT		typedef ptr PROPVARIANT
-REFPROPVARIANT		typedef ptr PROPVARIANT
-else
-LPPROPVARIANT		typedef ptr PROPVARIANT
+.pragma pack(pop)
+
+LPPROPVARIANT		typedef ptr tagPROPVARIANT
+
 ifndef _REFPROPVARIANT_DEFINED
-_REFPROPVARIANT_DEFINED equ 1
+define _REFPROPVARIANT_DEFINED
 REFPROPVARIANT		typedef ptr PROPVARIANT
 endif
 
 endif
 
-PID_DICTIONARY		equ 0
-PID_CODEPAGE		equ 0x1
-PID_FIRST_USABLE	equ 0x2
-PID_FIRST_NAME_DEFAULT	equ 0xfff
-PID_LOCALE		equ 0x80000000
-PID_MODIFY_TIME		equ 0x80000001
-PID_SECURITY		equ 0x80000002
-PID_BEHAVIOR		equ 0x80000003
-PID_ILLEGAL		equ 0xffffffff
+define	PID_DICTIONARY	( 0 )
+define	PID_CODEPAGE	( 0x1 )
+define	PID_FIRST_USABLE	( 0x2 )
+define	PID_FIRST_NAME_DEFAULT	( 0xfff )
+define	PID_LOCALE	( 0x80000000 )
+define	PID_MODIFY_TIME ( 0x80000001 )
+define	PID_SECURITY	( 0x80000002 )
+define	PID_BEHAVIOR	( 0x80000003 )
+define	PID_ILLEGAL	( 0xffffffff )
+define	PID_MIN_READONLY	( 0x80000000 )
+define	PID_MAX_READONLY	( 0xbfffffff )
+define	PRSPEC_INVALID	( 0xffffffff )
+define	PRSPEC_LPWSTR	( 0 )
+define	PRSPEC_PROPID	( 1 )
 
-PID_MIN_READONLY	equ 0x80000000
-PID_MAX_READONLY	equ 0xbfffffff
-
-
-PIDDI_THUMBNAIL		equ 0x00000002
-
-
-PIDSI_TITLE		equ 0x00000002
-PIDSI_SUBJECT		equ 0x00000003
-PIDSI_AUTHOR		equ 0x00000004
-PIDSI_KEYWORDS		equ 0x00000005
-PIDSI_COMMENTS		equ 0x00000006
-PIDSI_TEMPLATE		equ 0x00000007
-PIDSI_LASTAUTHOR	equ 0x00000008
-PIDSI_REVNUMBER		equ 0x00000009
-PIDSI_EDITTIME		equ 0x0000000a
-PIDSI_LASTPRINTED	equ 0x0000000b
-PIDSI_CREATE_DTM	equ 0x0000000c
-PIDSI_LASTSAVE_DTM	equ 0x0000000d
-PIDSI_PAGECOUNT		equ 0x0000000e
-PIDSI_WORDCOUNT		equ 0x0000000f
-PIDSI_CHARCOUNT		equ 0x00000010
-PIDSI_THUMBNAIL		equ 0x00000011
-PIDSI_APPNAME		equ 0x00000012
-PIDSI_DOC_SECURITY	equ 0x00000013
-
-
-PIDDSI_CATEGORY		equ 0x00000002
-PIDDSI_PRESFORMAT	equ 0x00000003
-PIDDSI_BYTECOUNT	equ 0x00000004
-PIDDSI_LINECOUNT	equ 0x00000005
-PIDDSI_PARCOUNT		equ 0x00000006
-PIDDSI_SLIDECOUNT	equ 0x00000007
-PIDDSI_NOTECOUNT	equ 0x00000008
-PIDDSI_HIDDENCOUNT	equ 0x00000009
-PIDDSI_MMCLIPCOUNT	equ 0x0000000A
-PIDDSI_SCALE		equ 0x0000000B
-PIDDSI_HEADINGPAIR	equ 0x0000000C
-PIDDSI_DOCPARTS		equ 0x0000000D
-PIDDSI_MANAGER		equ 0x0000000E
-PIDDSI_COMPANY		equ 0x0000000F
-PIDDSI_LINKSDIRTY	equ 0x00000010
-
-PIDMSI_EDITOR		equ 0x00000002
-PIDMSI_SUPPLIER		equ 0x00000003
-PIDMSI_SOURCE		equ 0x00000004
-PIDMSI_SEQUENCE_NO	equ 0x00000005
-PIDMSI_PROJECT		equ 0x00000006
-PIDMSI_STATUS		equ 0x00000007
-PIDMSI_OWNER		equ 0x00000008
-PIDMSI_RATING		equ 0x00000009
-PIDMSI_PRODUCTION	equ 0x0000000A
-PIDMSI_COPYRIGHT	equ 0x0000000B
-
-.enum PIDMSI_STATUS_VALUE {
-    PIDMSI_STATUS_NORMAL = 0,
-    PIDMSI_STATUS_NEW	= ( PIDMSI_STATUS_NORMAL + 1 ),
-    PIDMSI_STATUS_PRELIM = ( PIDMSI_STATUS_NEW + 1 ),
-    PIDMSI_STATUS_DRAFT = ( PIDMSI_STATUS_PRELIM + 1 ),
-    PIDMSI_STATUS_INPROGRESS	= ( PIDMSI_STATUS_DRAFT + 1 ),
-    PIDMSI_STATUS_EDIT	= ( PIDMSI_STATUS_INPROGRESS + 1 ),
-    PIDMSI_STATUS_REVIEW = ( PIDMSI_STATUS_EDIT + 1 ),
-    PIDMSI_STATUS_PROOF = ( PIDMSI_STATUS_REVIEW + 1 ),
-    PIDMSI_STATUS_FINAL = ( PIDMSI_STATUS_PROOF + 1 ),
-    PIDMSI_STATUS_OTHER = 0x7fff
-}
-
-PRSPEC_INVALID		equ 0xffffffff
-
-PRSPEC_LPWSTR		equ 0
-PRSPEC_PROPID		equ 1
-
-PROPSPEC		STRUC
+tagPROPSPEC		struct
 ulKind			ULONG ?
-UNION
+union
  propid			PROPID ?
  lpwstr			LPOLESTR ?
-ENDS
-PROPSPEC		ENDS
+ends
+tagPROPSPEC		ends
+PROPSPEC		typedef tagPROPSPEC
 
-STATPROPSTG		STRUC
+tagSTATPROPSTG		struct
 lpwstrName		LPOLESTR ?
 propid			PROPID ?
 vt			VARTYPE ?
-STATPROPSTG		ENDS
+tagSTATPROPSTG		ends
+STATPROPSTG		typedef tagSTATPROPSTG
 
 PROPSETHDR_OSVER_KIND macro dwOSVer
-	exitm<HIWORD( (dwOSVer) )>
-	endm
+  exitm<HIWORD( (dwOSVer) )>
+  endm
 PROPSETHDR_OSVER_MAJOR macro dwOSVer
-	exitm<LOBYTE(LOWORD( (dwOSVer) ))>
-	endm
+  exitm<LOBYTE(LOWORD( (dwOSVer) ))>
+  endm
 PROPSETHDR_OSVER_MINOR macro dwOSVer
-	exitm<HIBYTE(LOWORD( (dwOSVer) ))>
-	endm
-PROPSETHDR_OSVERSION_UNKNOWN equ 0xFFFFFFFF
-STATPROPSETSTG		STRUC
+  exitm<HIBYTE(LOWORD( (dwOSVer) ))>
+  endm
+
+define PROPSETHDR_OSVERSION_UNKNOWN	   0xFFFFFFFF
+
+tagSTATPROPSETSTG	struct
 fmtid			FMTID <>
 clsid			CLSID <>
-grfFlags		dd ?
+grfFlags		DWORD ?
 mtime			FILETIME <>
 ctime			FILETIME <>
 atime			FILETIME <>
-dwOSVersion		dd ?
-STATPROPSETSTG		ENDS
+dwOSVersion		DWORD ?
+tagSTATPROPSETSTG	ends
+STATPROPSETSTG		typedef tagSTATPROPSETSTG
 
 ifndef __IPropertyStorage_INTERFACE_DEFINED__
 define __IPropertyStorage_INTERFACE_DEFINED__
@@ -403,7 +356,7 @@ DEFINE_IIDX(IPropertyStorage, "00000138-0000-0000-C000-000000000046")
     DeletePropertyNames proc :ULONG, :PROPID
     Commit		proc :DWORD
     Revert		proc
-    Enum		proc :ptr
+    Enum		proc :ptr ptr
     SetTimes		proc :ptr, :ptr, :ptr
     SetClass		proc :REFCLSID
     Stat		proc :ptr
@@ -418,10 +371,10 @@ DEFINE_IIDX(IPropertySetStorage, "0000013A-0000-0000-C000-000000000046")
 
 .comdef IPropertySetStorage : public IUnknown
 
-    Create		proc :REFFMTID, :ptr, :DWORD, :DWORD, :ptr
-    Open		proc :REFFMTID, :DWORD, :ptr
+    Create		proc :REFFMTID, :ptr, :DWORD, :DWORD, :ptr ptr
+    Open		proc :REFFMTID, :DWORD, :ptr ptr
     Delete		proc :REFFMTID
-    Enum		proc :ptr
+    Enum		proc :ptr ptr
    .ends
 
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
@@ -438,10 +391,13 @@ DEFINE_IIDX(IEnumSTATPROPSTG, "00000139-0000-0000-C000-000000000046")
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr
+    Clone		proc :ptr ptr
    .ends
 
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
+
+IEnumSTATPROPSTG_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
+IEnumSTATPROPSTG_RemoteNext_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -455,191 +411,149 @@ DEFINE_IIDX(IEnumSTATPROPSETSTG, "0000013B-0000-0000-C000-000000000046")
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr
+    Clone		proc :ptr ptr
    .ends
 
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
+
+IEnumSTATPROPSETSTG_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
+IEnumSTATPROPSETSTG_RemoteNext_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
 LPPROPERTYSTORAGE	typedef ptr IPropertyStorage
 
-;WINOLEAPI
-PropVariantCopy proto WINAPI \
-	      pvarDest: ptr PROPVARIANT,
-	       pvarSrc: ptr PROPVARIANT
-;WINOLEAPI
-PropVariantClear proto WINAPI \
-	       pvar: ptr PROPVARIANT
-;WINOLEAPI
-FreePropVariantArray proto WINAPI \
-	  cVariants: ULONG,
-	     rgvars: ptr PROPVARIANT
+endif
 
+define _PROPIDLBASE_
+endif
 
-;ifdef _MSC_EXTENSIONS
-_PROPVARIANTINIT_DEFINED_ equ 1
+include coml2api.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+
+define PIDDI_THUMBNAIL		0x00000002
+
+define PIDSI_TITLE		0x00000002
+define PIDSI_SUBJECT		0x00000003
+define PIDSI_AUTHOR		0x00000004
+define PIDSI_KEYWORDS		0x00000005
+define PIDSI_COMMENTS		0x00000006
+define PIDSI_TEMPLATE		0x00000007
+define PIDSI_LASTAUTHOR		0x00000008
+define PIDSI_REVNUMBER		0x00000009
+define PIDSI_EDITTIME		0x0000000a
+define PIDSI_LASTPRINTED	0x0000000b
+define PIDSI_CREATE_DTM		0x0000000c
+define PIDSI_LASTSAVE_DTM	0x0000000d
+define PIDSI_PAGECOUNT		0x0000000e
+define PIDSI_WORDCOUNT		0x0000000f
+define PIDSI_CHARCOUNT		0x00000010
+define PIDSI_THUMBNAIL		0x00000011
+define PIDSI_APPNAME		0x00000012
+define PIDSI_DOC_SECURITY	0x00000013
+
+define PIDDSI_CATEGORY		0x00000002
+define PIDDSI_PRESFORMAT	0x00000003
+define PIDDSI_BYTECOUNT		0x00000004
+define PIDDSI_LINECOUNT		0x00000005
+define PIDDSI_PARCOUNT		0x00000006
+define PIDDSI_SLIDECOUNT	0x00000007
+define PIDDSI_NOTECOUNT		0x00000008
+define PIDDSI_HIDDENCOUNT	0x00000009
+define PIDDSI_MMCLIPCOUNT	0x0000000A
+define PIDDSI_SCALE		0x0000000B
+define PIDDSI_HEADINGPAIR	0x0000000C
+define PIDDSI_DOCPARTS		0x0000000D
+define PIDDSI_MANAGER		0x0000000E
+define PIDDSI_COMPANY		0x0000000F
+define PIDDSI_LINKSDIRTY	0x00000010
+
+define PIDMSI_EDITOR		0x00000002
+define PIDMSI_SUPPLIER		0x00000003
+define PIDMSI_SOURCE		0x00000004
+define PIDMSI_SEQUENCE_NO	0x00000005
+define PIDMSI_PROJECT		0x00000006
+define PIDMSI_STATUS		0x00000007
+define PIDMSI_OWNER		0x00000008
+define PIDMSI_RATING		0x00000009
+define PIDMSI_PRODUCTION	0x0000000A
+define PIDMSI_COPYRIGHT		0x0000000B
+
+.enum PIDMSI_STATUS_VALUE {
+    PIDMSI_STATUS_NORMAL	= 0,
+    PIDMSI_STATUS_NEW		= ( PIDMSI_STATUS_NORMAL + 1 ),
+    PIDMSI_STATUS_PRELIM	= ( PIDMSI_STATUS_NEW + 1 ),
+    PIDMSI_STATUS_DRAFT		= ( PIDMSI_STATUS_PRELIM + 1 ),
+    PIDMSI_STATUS_INPROGRESS	= ( PIDMSI_STATUS_DRAFT + 1 ) ,
+    PIDMSI_STATUS_EDIT		= ( PIDMSI_STATUS_INPROGRESS + 1 ),
+    PIDMSI_STATUS_REVIEW	= ( PIDMSI_STATUS_EDIT + 1 ),
+    PIDMSI_STATUS_PROOF		= ( PIDMSI_STATUS_REVIEW + 1 ),
+    PIDMSI_STATUS_FINAL		= ( PIDMSI_STATUS_PROOF + 1 ),
+    PIDMSI_STATUS_OTHER		= 0x7fff
+    }
+endif
+
+.pragma comment(lib, ole32)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+
+PropVariantCopy proto WINAPI :ptr, :ptr
+PropVariantClear proto WINAPI :ptr
+FreePropVariantArray proto WINAPI :ULONG, :ptr
+
+ifdef _MSC_EXTENSIONS
+define _PROPVARIANTINIT_DEFINED_
+
 PropVariantInit proto fastcall pvar:ptr {
-	exitm<memset(pvar, 0, PROPVARIANT)>
-	}
-;endif
-
-
-ifndef _STGCREATEPROPSTG_DEFINED_
-
-;WINOLEAPI
-StgCreatePropStg proto WINAPI \
-	       pUnk: ptr IUnknown,
-	      fmtid: REFFMTID,
-	     pclsid: ptr CLSID,
-	   grfFlags: DWORD,
-	 dwReserved: DWORD,
-	  ppPropStg: ptr IPropertyStorage
-
-;WINOLEAPI
-StgOpenPropStg proto WINAPI \
-	       pUnk: ptr IUnknown,
-	      fmtid: REFFMTID,
-	   grfFlags: DWORD,
-	 dwReserved: DWORD,
-	  ppPropStg: ptr IPropertyStorage
-
-;WINOLEAPI
-StgCreatePropSetStg proto WINAPI \
-	   pStorage: ptr IStorage,
-	 dwReserved: DWORD,
-       ppPropSetStg: ptr IPropertySetStorage
-
-CCH_MAX_PROPSTG_NAME	equ 31
-
-;WINOLEAPI
-FmtIdToPropStgName proto WINAPI \
-	     pfmtid: ptr FMTID,
-	    oszName: LPOLESTR
-
-;WINOLEAPI
-PropStgNameToFmtId proto WINAPI \
-	    oszName: LPOLESTR,
-	     pfmtid: ptr FMTID
+  memset(pvar, 0, sizeof(PROPVARIANT) )
+  }
+endif
 
 endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef _SERIALIZEDPROPERTYVALUE_DEFINED_
 define _SERIALIZEDPROPERTYVALUE_DEFINED_
-SERIALIZEDPROPERTYVALUE STRUC
-dwType			dd ?
-rgb			db 1 dup(?)
-SERIALIZEDPROPERTYVALUE ENDS
+tagSERIALIZEDPROPERTYVALUE struct
+dwType			DWORD ?
+rgb			BYTE 1 dup(?)
+tagSERIALIZEDPROPERTYVALUE ends
+SERIALIZEDPROPERTYVALUE typedef tagSERIALIZEDPROPERTYVALUE
 endif
 
-.pragma pack(pop)
+StgConvertVariantToProperty proto WINAPI :ptr, :USHORT, :ptr, :ptr, :PROPID, :BOOLEAN, :ptr
 
-;DWORD
-StgConvertVariantToProperty proto WINAPI \
-		  pvar: ptr PROPVARIANT,
-	      CodePage: USHORT,
-		 pprop: ptr SERIALIZEDPROPERTYVALUE,
-		   pcb: ptr ULONG,
-		   pid: PROPID,
-	     fReserved: BOOLEAN,
-	    pcIndirect: ptr ULONG
-
-
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-LPSAFEARRAY_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPSTR
-LPSAFEARRAY_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr LPSAFEARRAY
-
-;LPSTR
-LPSAFEARRAY_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
-
-;DWORD
-BSTR_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-LPSAFEARRAY_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPSTR
-LPSAFEARRAY_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr LPSAFEARRAY
-
-;LPSTR
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
+ifdef __cplusplus
+StgConvertPropertyToVariant proto WINAPI :ptr, :USHORT, :ptr, :ptr
+endif
 
 endif
 
-.pragma list(pop)
+BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
+
+BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
+BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+BSTR_UserFree64 proto WINAPI :ptr, :ptr
+
+LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
+LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
+
+IEnumSTATPROPSTG_Next_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
+IEnumSTATPROPSTG_Next_Stub proto WINAPI :ptr, :ULONG, :ptr, :ptr
+IEnumSTATPROPSETSTG_Next_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
+IEnumSTATPROPSETSTG_Next_Stub proto WINAPI :ptr, :ULONG, :ptr, :ptr
+
+endif

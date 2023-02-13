@@ -2235,17 +2235,17 @@ CALLBACK(PFNKSPINFRAMERETURN, :PKSPIN, :PVOID, :ULONG, :PMDL, :PVOID, :NTSTATUS)
 ;void
 CALLBACK(PFNKSPINIRPCOMPLETION, :PKSPIN, :PIRP)
 
-if defined(__UNKNOWN_INC) OR defined(__IUnknown_INTERFACE_DEFINED__)
+ifdef __IUnknown_INTERFACE_DEFINED__
+
 ifndef _IKsControl_
-_IKsControl_ equ 1
+define _IKsControl_
 
 .comdef IKsControl : public IUnknown
 
 	KsProperty	proc :ULONG, :PVOID, :ULONG, :ptr ULONG
 	KsMethod	proc :ULONG, :PVOID, :ULONG, :ptr ULONG
 	KsEvent		proc :ULONG, :PVOID, :ULONG, :ptr ULONG
-
-	.ends
+       .ends
 
 .comdef IKsReferenceClock : public IUnknown
 
@@ -2255,8 +2255,7 @@ _IKsControl_ equ 1
 	GetCorrelatedPhysicalTime proc :PLONGLONG
 	GetResolution	proc :PKSRESOLUTION
 	GetState	proc :PKSSTATE
-
-	.ends
+       .ends
 
 if (NTDDI_VERSION GE NTDDI_WS03SP1)
 
@@ -2275,7 +2274,7 @@ DEFINE_GUID(IID_IKsDeviceFunctions,0xe234f2e2,0xbd69,0x4f8c,0xb3,0xf2,0x7c,0xd7,
 endif
 
 endif ;; _IKsControl_
-endif ;; defined(__UNKNOWN_INC) || defined(__IUnknown_INTERFACE_DEFINED__)
+endif ;; __IUnknown_INTERFACE_DEFINED__
 
 endif ;; defined(_NTDDK_)
 endif ;; (NTDDI_VERSION >= NTDDI_WINXP)
@@ -3505,12 +3504,12 @@ KsPinGetConnectedFilterInterface proto WINAPI \
 	     Interface: PVOID
 
 
-if defined(__UNKNOWN_INC) OR defined(__IUnknown_INTERFACE_DEFINED__)
+ifdef __IUnknown_INTERFACE_DEFINED__
 
 ;NTAPI
 KsPinGetReferenceClockInterface proto WINAPI \
 		   Pin: PKSPIN,
-	     Interface: PIKSREFERENCECLOCK*
+	     Interface: ptr PIKSREFERENCECLOCK
 
 
 endif
@@ -3570,7 +3569,7 @@ KsPinRegisterPowerCallbacks proto WINAPI \
 		  Wake: PFNKSPINPOWER
 
 
-if defined(__UNKNOWN_INC) OR defined(__IUnknown_INTERFACE_DEFINED__)
+ifdef __IUnknown_INTERFACE_DEFINED__
 
 ;NTAPI
 KsRegisterAggregatedClientUnknown proto WINAPI \

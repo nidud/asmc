@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; Handles the unary indirection operator (.) accesses a value
+; indirectly through a pointer.
+;
 include asmc.inc
 include memalloc.inc
 include parser.inc

@@ -862,11 +862,9 @@ PBITMAPCOREINFO         typedef ptr tagBITMAPCOREINFO
 
 endif
 
-include pshpack2.inc
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagBITMAPFILEHEADER     struct
+tagBITMAPFILEHEADER     struct 2
 bfType                  WORD ?
 bfSize                  DWORD ?
 bfReserved1             WORD ?
@@ -878,8 +876,6 @@ LPBITMAPFILEHEADER      typedef ptr tagBITMAPFILEHEADER
 PBITMAPFILEHEADER       typedef ptr tagBITMAPFILEHEADER
 
 endif
-
-include poppack.inc
 
 MAKEPOINTS macro l
   exitm<[l]>
@@ -974,11 +970,9 @@ LPMETAFILEPICT          typedef ptr tagMETAFILEPICT
 
 endif
 
-include pshpack2.inc
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagMETAHEADER           struct
+tagMETAHEADER           struct 2
 mtType                  WORD ?
 mtHeaderSize            WORD ?
 mtVersion               WORD ?
@@ -992,8 +986,6 @@ PMETAHEADER             typedef ptr tagMETAHEADER
 LPMETAHEADER            typedef ptr
 
 endif
-
-include poppack.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
@@ -1058,11 +1050,10 @@ endif
 
 ifndef _TEXTMETRIC_DEFINED
 define _TEXTMETRIC_DEFINED
-include pshpack4.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagTEXTMETRICA          struct
+tagTEXTMETRICA          struct 4
 tmHeight                LONG ?
 tmAscent                LONG ?
 tmDescent               LONG ?
@@ -1128,7 +1119,6 @@ endif
 
 endif
 
-include poppack.inc
 endif
 
 define NTM_REGULAR     0x00000040
@@ -1142,11 +1132,9 @@ define NTM_MULTIPLEMASTER  0x00080000
 define NTM_TYPE1           0x00100000
 define NTM_DSIG            0x00200000
 
-include pshpack4.inc
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagNEWTEXTMETRICA       struct
+tagNEWTEXTMETRICA       struct 4
 tmHeight                LONG ?
 tmAscent                LONG ?
 tmDescent               LONG ?
@@ -1219,8 +1207,6 @@ LPNEWTEXTMETRIC         typedef LPNEWTEXTMETRICA
 endif
 
 endif
-
-include poppack.inc
 
 if(WINVER ge 0x0400)
 
@@ -3027,7 +3013,7 @@ endif
 ifndef NOTEXTMETRIC
 
 ifdef _MAC
-include pshpack4.inc
+.pragma pack(push, 4)
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -3123,7 +3109,7 @@ endif
 endif
 
 ifdef _MAC
-include poppack.inc
+.pragma pack(pop)
 endif
 
 endif

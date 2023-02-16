@@ -183,9 +183,7 @@ MMC_CONSOLE_VERB	typedef SDWORD
 MMC_VERB__dummy_	equ 0
 endif
 
-include pshpack8.inc
-
-MMCBUTTON		STRUC
+MMCBUTTON		STRUC 8
 nBitmap			SINT ?
 idCommand		SINT ?
 fsState			db ?
@@ -193,8 +191,6 @@ fsType			db ?
 lpButtonText		LPOLESTR ?
 lpTooltipText		LPOLESTR ?
 MMCBUTTON		ENDS
-
-include poppack.inc
 
 LPMMCBUTTON		typedef ptr MMCBUTTON
 

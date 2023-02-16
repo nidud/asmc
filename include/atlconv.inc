@@ -26,25 +26,20 @@ include windef.inc
 include winbase.inc
 include winnls.inc
 
-if not defined(OLE2ANSI)
-
+ifndef OLE2ANSI
 OLECHAR		typedef WCHAR
 LPOLESTR	typedef ptr OLECHAR
 LPCOLESTR	typedef ptr OLECHAR
-
 OLESTR macro s
 exitm<L&s>
 endm
-
 else
-
 OLECHAR		typedef SBYTE
 LPOLESTR	typedef LPSTR
 LPCOLESTR	typedef LPCSTR
 OLESTR macro s
 exitm<s>
 endm
-
 endif
 endif
 

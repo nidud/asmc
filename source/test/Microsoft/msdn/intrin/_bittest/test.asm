@@ -16,7 +16,8 @@ main proc
 
     .for (rcx=&num, ebx = 0: ebx < 31: ebx++)
 
-        mov bits[rbx],_bittest(rcx, ebx)
+        _bittest(rcx, ebx)
+        mov bits[rbx],al
     .endf
 
     printf("Binary representation:\n")

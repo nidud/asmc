@@ -74,8 +74,6 @@ ifdef __cplusplus
 IsEqualDevPropKey macro a, b
 	exitm<(((a).pid EQ (b).pid) AND IsEqualGUID((a).fmtid, (b).fmtid))>
 	endm
-ifdef _SYS_GUID_OPERATOR_EQ_
-endif
 else
 IsEqualDevPropKey macro a, b
 	exitm<(((a).pid EQ (b).pid) AND IsEqualGUID( AND (a).fmtid, AND (b).fmtid))>
@@ -108,11 +106,6 @@ ifndef IsEqualDevPropCompKey
 IsEqualDevPropCompKey macro a, b
 	exitm<(IsEqualDevPropKey((a).Key, (b).Key) AND ((a).Store EQ (b).Store) AND IsEqualLocaleName((a).LocaleName, (b).LocaleName))>
 	endm
-ifdef __cplusplus
-ifdef _SYS_GUID_OPERATOR_EQ_
-
-endif
-endif
 endif
 
 DEVPROPERTY		STRUC
@@ -131,10 +124,7 @@ DEVPROPID_FIRST_USABLE	equ 2
 
 endif
 
-ifdef DEFINE_DEVPROPKEY
-undef DEFINE_DEVPROPKEY
-endif
-
+ifndef DEFINE_DEVPROPKEY
 DEFINE_DEVPROPKEY macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid
 if defined(__PE__) or defined(__GUID__)
 _&name& equ <{{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}>
@@ -145,5 +135,6 @@ externdef name:DEVPROPKEY
 endif
     exitm<>
     endm
+endif
 
 endif

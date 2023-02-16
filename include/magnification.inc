@@ -42,7 +42,7 @@ PMAGTRANSFORM		typedef ptr MAGTRANSFORM
 MAGIMAGEHEADER		STRUC
 width			UINT ?
 height			UINT ?
-format			WICPixelFormatGUID <>
+format			GUID <> ; WICPixelFormatGUID <>
 stride			UINT ?
 offs			UINT ?
 cbSize			SIZE_T ?

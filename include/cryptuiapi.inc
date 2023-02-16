@@ -9,7 +9,7 @@ include wintrust.inc
 include wincrypt.inc
 include prsht.inc
 
-include pshpack8.inc
+.pragma pack(push, 8)
 
 CERT_CREDENTIAL_PROVIDER_ID equ -509
 
@@ -388,7 +388,7 @@ CryptUIWizImport proto WINAPI \
 	    pImportSrc: PCCRYPTUI_WIZ_IMPORT_SRC_INFO,
 	hDestCertStore: HCERTSTORE
 
-include poppack.inc
+.pragma pack(pop)
 
 endif
 

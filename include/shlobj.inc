@@ -3554,8 +3554,7 @@ SHCreateFileExtractIcon equ <SHCreateFileExtractIconW>
 else
 SHCreateFileExtractIcon equ <SHCreateFileExtractIconA>
 endif
-;include pshpack8.inc
-;include poppack.inc
+
 ;SHSTDAPI
 SHLimitInputEdit proto WINAPI \
 	      hwndEdit: HWND,
@@ -3613,9 +3612,7 @@ PickIconDlg proto WINAPI \
 	   piIconIndex: ptr SINT
 
 
-.pragma pack(push, 8)
-
-AASHELLMENUFILENAME	STRUC
+AASHELLMENUFILENAME	STRUC 8
 cbTotal			SWORD ?
 rgbReserved		db 12 dup(?)
 szFileName		WCHAR 1 dup(?)
@@ -3630,9 +3627,6 @@ lpName			LPAASHELLMENUFILENAME ?
 psz			LPWSTR ?
 AASHELLMENUITEM		ENDS
 LPAASHELLMENUITEM	typedef ptr AASHELLMENUITEM
-
-.pragma pack(pop)
-
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
 ;STDAPI

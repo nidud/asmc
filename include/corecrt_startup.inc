@@ -38,14 +38,14 @@ ifdef _CRT_DECLARE_GLOBAL_VARIABLES_DIRECTLY
     externdef _acmdln:ptr char_t
     externdef _wcmdln:ptr wchar_t
 else
-    _acmdln equ [__p__acmdln()]
-    _wcmdln equ [__p__wcmdln()]
+    _acmdln equ <[__p__acmdln()]>
+    _wcmdln equ <[__p__wcmdln()]>
 endif
 
 
 CALLBACKC(_PVFV)
 CALLBACKC(_PIFV)
-CALLBACKC(_PVFI :int_t)
+CALLBACKC(_PVFI, :int_t)
 
 ifndef _M_CEE
 _initterm   proto __cdecl :ptr _PVFV, :ptr _PVFV
@@ -54,11 +54,10 @@ endif
 
 ifndef _CRT_ONEXIT_T_DEFINED
 define _CRT_ONEXIT_T_DEFINED
-
-    CALLBACK(_onexit_t)
-    ifdef _M_CEE
-        CALLBACK(_onexit_m_t)
-    endif
+CALLBACK(_onexit_t)
+ifdef _M_CEE
+CALLBACK(_onexit_m_t)
+endif
 endif
 
 _onexit_table_t struct
@@ -74,6 +73,7 @@ _execute_onexit_table       proto __cdecl :ptr _onexit_table_t
 _crt_atexit                 proto __cdecl :_PVFV
 _crt_at_quick_exit          proto __cdecl :_PVFV
 
+ifdef _CRT_FUNCTIONS_REQUIRED
 if _CRT_FUNCTIONS_REQUIRED
 
 __acrt_initialize           proto __cdecl
@@ -82,4 +82,5 @@ __acrt_uninitialize_critical proto __cdecl :__crt_bool
 __acrt_thread_attach        proto __cdecl
 __acrt_thread_detach        proto __cdecl
 
+endif
 endif

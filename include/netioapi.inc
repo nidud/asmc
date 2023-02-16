@@ -15,8 +15,7 @@ define NETIO_STATUS DWORD
 NETIO_SUCCESS macro x
   exitm<((x) eq NO_ERROR)>
   endm
-define NETIOAPI_API_ WINAPI
-define _NETIOAPI_SUCCESS_ _Success_(return eq NO_ERROR)
+
 else
 
 include ws2def.inc
@@ -28,17 +27,9 @@ define NETIO_STATUS NTSTATUS
 NETIO_SUCCESS macro x
   exitm<NT_SUCCESS(x)>
   endm
-define NETIOAPI_API_ NTAPI
 define _NETIOAPI_SUCCESS_
 
-ifdef IPHLPAPI_DLL_LINKAGE
-undef IPHLPAPI_DLL_LINKAGE
-endif
-define IPHLPAPI_DLL_LINKAGE
-
 endif ; __IPHLPAPI_H__
-
-define NETIOAPI_API NETIOAPI_API_
 
 .enum MIB_NOTIFICATION_TYPE {
     MibParameterNotification,
@@ -58,10 +49,10 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WI
 include ntddndis.inc
 
 _MIB_IF_ROW2            struct
-InterfaceLuid           NET_LUID ?
+InterfaceLuid           NET_LUID <>
 InterfaceIndex          NET_IFINDEX ?
 InterfaceGuid           GUID <>
-Alias                   WCHAR IF_MAX_STRING_SIZE + 1 dup(?)
+_Alias                  WCHAR IF_MAX_STRING_SIZE + 1 dup(?)
 Description             WCHAR IF_MAX_STRING_SIZE + 1 dup(?)
 PhysicalAddressLength   ULONG ?
 PhysicalAddress         UCHAR IF_MAX_PHYS_ADDRESS_LENGTH dup(?)
@@ -88,7 +79,7 @@ ends
 OperStatus              IF_OPER_STATUS ?
 AdminStatus             NET_IF_ADMIN_STATUS ?
 MediaConnectState       NET_IF_MEDIA_CONNECT_STATE ?
-NetworkGuid             NET_IF_NETWORK_GUID ?
+NetworkGuid             NET_IF_NETWORK_GUID <>
 ConnectionType          NET_IF_CONNECTION_TYPE ?
 TransmitLinkSpeed       ULONG64 ?
 ReceiveLinkSpeed        ULONG64 ?
@@ -116,7 +107,7 @@ PMIB_IF_ROW2            typedef ptr _MIB_IF_ROW2
 
 _MIB_IF_TABLE2          struct
 NumEntries              ULONG ?
-Table                   MIB_IF_ROW2 ANY_SIZE dup(?)
+Table                   MIB_IF_ROW2 ANY_SIZE dup(<?>)
 _MIB_IF_TABLE2          ends
 MIB_IF_TABLE2           typedef _MIB_IF_TABLE2
 PMIB_IF_TABLE2          typedef ptr _MIB_IF_TABLE2
@@ -152,7 +143,7 @@ GetIfTable2Ex proto :MIB_IF_TABLE_LEVEL, :ptr
 
 _MIB_IPINTERFACE_ROW    struct
 Family                  ADDRESS_FAMILY ?
-InterfaceLuid           NET_LUID ?
+InterfaceLuid           NET_LUID <>
 InterfaceIndex          NET_IFINDEX ?
 MaxReassemblySize       ULONG ?
 InterfaceIdentifier     ULONG64 ?
@@ -183,8 +174,8 @@ SupportsWakeUpPatterns  BOOLEAN ?
 SupportsNeighborDiscovery BOOLEAN ?
 SupportsRouterDiscovery BOOLEAN ?
 ReachableTime           ULONG ?
-TransmitOffload         NL_INTERFACE_OFFLOAD_ROD ?
-ReceiveOffload          NL_INTERFACE_OFFLOAD_ROD ?
+TransmitOffload         NL_INTERFACE_OFFLOAD_ROD <>
+ReceiveOffload          NL_INTERFACE_OFFLOAD_ROD <>
 DisableDefaultRoutes    BOOLEAN ?
 _MIB_IPINTERFACE_ROW    ends
 MIB_IPINTERFACE_ROW     typedef _MIB_IPINTERFACE_ROW
@@ -192,7 +183,7 @@ PMIB_IPINTERFACE_ROW    typedef ptr _MIB_IPINTERFACE_ROW
 
 _MIB_IPINTERFACE_TABLE  struct
 NumEntries              ULONG ?
-Table                   MIB_IPINTERFACE_ROW ANY_SIZE dup(?)
+Table                   MIB_IPINTERFACE_ROW ANY_SIZE dup(<?>)
 _MIB_IPINTERFACE_TABLE  ends
 MIB_IPINTERFACE_TABLE   typedef _MIB_IPINTERFACE_TABLE
 PMIB_IPINTERFACE_TABLE  typedef ptr _MIB_IPINTERFACE_TABLE
@@ -213,23 +204,23 @@ PMIB_INVERTEDIFSTACK_ROW typedef ptr _MIB_INVERTEDIFSTACK_ROW
 
 _MIB_IFSTACK_TABLE      struct
 NumEntries              ULONG ?
-Table                   MIB_IFSTACK_ROW ANY_SIZE dup(?)
+Table                   MIB_IFSTACK_ROW ANY_SIZE dup(<?>)
 _MIB_IFSTACK_TABLE      ends
 MIB_IFSTACK_TABLE       typedef _MIB_IFSTACK_TABLE
 PMIB_IFSTACK_TABLE      typedef ptr _MIB_IFSTACK_TABLE
 
 _MIB_INVERTEDIFSTACK_TABLE struct
 NumEntries              ULONG ?
-Table                   MIB_INVERTEDIFSTACK_ROW ANY_SIZE dup(?)
+Table                   MIB_INVERTEDIFSTACK_ROW ANY_SIZE dup(<?>)
 _MIB_INVERTEDIFSTACK_TABLE ends
 MIB_INVERTEDIFSTACK_TABLE typedef _MIB_INVERTEDIFSTACK_TABLE
 PMIB_INVERTEDIFSTACK_TABLE typedef ptr _MIB_INVERTEDIFSTACK_TABLE
 
-CALLBACK(PIPINTERFACE_CHANGE_CALLBACK, :PVOID, :Row, :MIB_NOTIFICATION_TYPE)
+CALLBACK(PIPINTERFACE_CHANGE_CALLBACK, :PVOID, :PMIB_IPINTERFACE_ROW, :MIB_NOTIFICATION_TYPE)
 
 _MIB_IP_NETWORK_CONNECTION_BANDWIDTH_ESTIMATES struct
-InboundBandwidthInformation NL_BANDWIDTH_INFORMATION ?
-OutboundBandwidthInformation NL_BANDWIDTH_INFORMATION ?
+InboundBandwidthInformation NL_BANDWIDTH_INFORMATION <>
+OutboundBandwidthInformation NL_BANDWIDTH_INFORMATION <>
 _MIB_IP_NETWORK_CONNECTION_BANDWIDTH_ESTIMATES ends
 MIB_IP_NETWORK_CONNECTION_BANDWIDTH_ESTIMATES typedef _MIB_IP_NETWORK_CONNECTION_BANDWIDTH_ESTIMATES
 PMIB_IP_NETWORK_CONNECTION_BANDWIDTH_ESTIMATES typedef ptr _MIB_IP_NETWORK_CONNECTION_BANDWIDTH_ESTIMATES
@@ -248,8 +239,8 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
 _MIB_UNICASTIPADDRESS_ROW struct
-Address                 SOCKADDR_INET ?
-InterfaceLuid           NET_LUID ?
+Address                 SOCKADDR_INET <>
+InterfaceLuid           NET_LUID <>
 InterfaceIndex          NET_IFINDEX ?
 PrefixOrigin            NL_PREFIX_ORIGIN ?
 SuffixOrigin            NL_SUFFIX_ORIGIN ?
@@ -258,7 +249,7 @@ PreferredLifetime       ULONG ?
 OnLinkPrefixLength      UINT8 ?
 SkipAsSource            BOOLEAN ?
 DadState                NL_DAD_STATE ?
-ScopeId                 SCOPE_ID ?
+ScopeId                 SCOPE_ID <>
 CreationTimeStamp       LARGE_INTEGER <>
 _MIB_UNICASTIPADDRESS_ROW ends
 MIB_UNICASTIPADDRESS_ROW typedef _MIB_UNICASTIPADDRESS_ROW
@@ -266,7 +257,7 @@ PMIB_UNICASTIPADDRESS_ROW typedef ptr _MIB_UNICASTIPADDRESS_ROW
 
 _MIB_UNICASTIPADDRESS_TABLE struct
 NumEntries              ULONG ?
-Table                   MIB_UNICASTIPADDRESS_ROW ANY_SIZE dup(?)
+Table                   MIB_UNICASTIPADDRESS_ROW ANY_SIZE dup(<?>)
 _MIB_UNICASTIPADDRESS_TABLE ends
 MIB_UNICASTIPADDRESS_TABLE typedef _MIB_UNICASTIPADDRESS_TABLE
 PMIB_UNICASTIPADDRESS_TABLE typedef ptr _MIB_UNICASTIPADDRESS_TABLE
@@ -310,17 +301,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM o
 SetUnicastIpAddressEntry proto :ptr
 
 _MIB_ANYCASTIPADDRESS_ROW struct
-Address                 SOCKADDR_INET ?
-InterfaceLuid           NET_LUID ?
+Address                 SOCKADDR_INET <>
+InterfaceLuid           NET_LUID <>
 InterfaceIndex          NET_IFINDEX ?
-ScopeId                 SCOPE_ID ?
+ScopeId                 SCOPE_ID <>
 _MIB_ANYCASTIPADDRESS_ROW ends
 MIB_ANYCASTIPADDRESS_ROW typedef _MIB_ANYCASTIPADDRESS_ROW
 PMIB_ANYCASTIPADDRESS_ROW typedef ptr _MIB_ANYCASTIPADDRESS_ROW
 
 _MIB_ANYCASTIPADDRESS_TABLE struct
 NumEntries              ULONG ?
-Table                   MIB_ANYCASTIPADDRESS_ROW ANY_SIZE dup(?)
+Table                   MIB_ANYCASTIPADDRESS_ROW ANY_SIZE dup(<?>)
 _MIB_ANYCASTIPADDRESS_TABLE ends
 MIB_ANYCASTIPADDRESS_TABLE typedef _MIB_ANYCASTIPADDRESS_TABLE
 PMIB_ANYCASTIPADDRESS_TABLE typedef ptr _MIB_ANYCASTIPADDRESS_TABLE
@@ -331,17 +322,17 @@ GetAnycastIpAddressEntry proto :PMIB_ANYCASTIPADDRESS_ROW
 GetAnycastIpAddressTable proto :ADDRESS_FAMILY, :ptr
 
 _MIB_MULTICASTIPADDRESS_ROW struct
-Address                 SOCKADDR_INET ?
+Address                 SOCKADDR_INET <>
 InterfaceIndex          NET_IFINDEX ?
-InterfaceLuid           NET_LUID ?
-ScopeId                 SCOPE_ID ?
+InterfaceLuid           NET_LUID <>
+ScopeId                 SCOPE_ID <>
 _MIB_MULTICASTIPADDRESS_ROW ends
 MIB_MULTICASTIPADDRESS_ROW typedef _MIB_MULTICASTIPADDRESS_ROW
 PMIB_MULTICASTIPADDRESS_ROW typedef ptr _MIB_MULTICASTIPADDRESS_ROW
 
 _MIB_MULTICASTIPADDRESS_TABLE struct
 NumEntries              ULONG ?
-Table                   MIB_MULTICASTIPADDRESS_ROW ANY_SIZE dup(?)
+Table                   MIB_MULTICASTIPADDRESS_ROW ANY_SIZE dup(<?>)
 _MIB_MULTICASTIPADDRESS_TABLE ends
 MIB_MULTICASTIPADDRESS_TABLE typedef _MIB_MULTICASTIPADDRESS_TABLE
 PMIB_MULTICASTIPADDRESS_TABLE typedef ptr _MIB_MULTICASTIPADDRESS_TABLE
@@ -354,17 +345,17 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
 _IP_ADDRESS_PREFIX      struct
-Prefix                  SOCKADDR_INET ?
+Prefix                  SOCKADDR_INET <>
 PrefixLength            UINT8 ?
 _IP_ADDRESS_PREFIX      ends
 IP_ADDRESS_PREFIX       typedef _IP_ADDRESS_PREFIX
 PIP_ADDRESS_PREFIX      typedef ptr _IP_ADDRESS_PREFIX
 
 _MIB_IPFORWARD_ROW2     struct
-InterfaceLuid           NET_LUID ?
+InterfaceLuid           NET_LUID <>
 InterfaceIndex          NET_IFINDEX ?
-DestinationPrefix       IP_ADDRESS_PREFIX ?
-NextHop                 SOCKADDR_INET ?
+DestinationPrefix       IP_ADDRESS_PREFIX <>
+NextHop                 SOCKADDR_INET <>
 SitePrefixLength        UCHAR ?
 ValidLifetime           ULONG ?
 PreferredLifetime       ULONG ?
@@ -382,7 +373,7 @@ PMIB_IPFORWARD_ROW2     typedef ptr _MIB_IPFORWARD_ROW2
 
 _MIB_IPFORWARD_TABLE2   struct
 NumEntries              ULONG ?
-Table                   MIB_IPFORWARD_ROW2 ANY_SIZE dup(?)
+Table                   MIB_IPFORWARD_ROW2 ANY_SIZE dup(<?>)
 _MIB_IPFORWARD_TABLE2   ends
 MIB_IPFORWARD_TABLE2    typedef _MIB_IPFORWARD_TABLE2
 PMIB_IPFORWARD_TABLE2   typedef ptr _MIB_IPFORWARD_TABLE2
@@ -423,11 +414,11 @@ NotifyRouteChange2 proto :ADDRESS_FAMILY, :PIPFORWARD_CHANGE_CALLBACK, :PVOID, :
 SetIpForwardEntry2 proto :ptr
 
 _MIB_IPPATH_ROW         struct
-Source                  SOCKADDR_INET ?
-Destination             SOCKADDR_INET ?
-InterfaceLuid           NET_LUID ?
+Source                  SOCKADDR_INET <>
+Destination             SOCKADDR_INET <>
+InterfaceLuid           NET_LUID <>
 InterfaceIndex          NET_IFINDEX ?
-CurrentNextHop          SOCKADDR_INET ?
+CurrentNextHop          SOCKADDR_INET <>
 PathMtu                 ULONG ?
 RttMean                 ULONG ?
 RttDeviation            ULONG ?
@@ -444,7 +435,7 @@ PMIB_IPPATH_ROW         typedef ptr _MIB_IPPATH_ROW
 
 _MIB_IPPATH_TABLE       struct
 NumEntries              ULONG ?
-Table                   MIB_IPPATH_ROW ANY_SIZE dup(?)
+Table                   MIB_IPPATH_ROW ANY_SIZE dup(<?>)
 _MIB_IPPATH_TABLE       ends
 MIB_IPPATH_TABLE        typedef _MIB_IPPATH_TABLE
 PMIB_IPPATH_TABLE       typedef ptr _MIB_IPPATH_TABLE
@@ -454,16 +445,18 @@ GetIpPathEntry proto :PMIB_IPPATH_ROW
 GetIpPathTable proto :ADDRESS_FAMILY, :ptr
 
 _MIB_IPNET_ROW2         struct
-Address                 SOCKADDR_INET ?
+Address                 SOCKADDR_INET <>
 InterfaceIndex          NET_IFINDEX ?
-InterfaceLuid           NET_LUID ?
+InterfaceLuid           NET_LUID <>
 PhysicalAddress         UCHAR IF_MAX_PHYS_ADDRESS_LENGTH dup(?)
 PhysicalAddressLength   ULONG ?
 State                   NL_NEIGHBOR_STATE ?
 union
  struct
-  IsRouter              BOOLEAN :  1 ?
-  IsUnreachable         BOOLEAN :  1 ?
+  record
+   IsRouter             BOOLEAN :  1 ?
+   IsUnreachable        BOOLEAN :  1 ?
+  ends
  ends
  Flags                  UCHAR ?
 ends
@@ -477,7 +470,7 @@ PMIB_IPNET_ROW2         typedef ptr _MIB_IPNET_ROW2
 
 _MIB_IPNET_TABLE2       struct
 NumEntries              ULONG ?
-Table                   MIB_IPNET_ROW2 ANY_SIZE dup(?)
+Table                   MIB_IPNET_ROW2 ANY_SIZE dup(<?>)
 _MIB_IPNET_TABLE2       ends
 MIB_IPNET_TABLE2        typedef _MIB_IPNET_TABLE2
 PMIB_IPNET_TABLE2       typedef ptr _MIB_IPNET_TABLE2

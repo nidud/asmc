@@ -1,533 +1,496 @@
 ifndef _WINTERNL_
 define _WINTERNL_
-.pragma list(push, 0)
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
 if (_WIN32_WINNT ge 0x0500)
+
 include windef.inc
 
-.pragma pack(push, 8)
+NTSTATUS                typedef LONG
+PCSZ                    typedef ptr sbyte
 
-;typedef __success(return >= 0) LONG NTSTATUS;
+STRING                  struct
+Length                  USHORT ?
+MaximumLength           USHORT ?
+Buffer                  PCHAR ?
+STRING                  ends
+PSTRING                 typedef ptr STRING
 
-NTSTATUS	typedef sdword
-PCSZ		typedef ptr sbyte
+ANSI_STRING             typedef STRING
+PANSI_STRING            typedef PSTRING
+PCANSI_STRING           typedef PSTRING
 
-STRING		STRUC
-Length		USHORT ?
-MaximumLength	USHORT ?
-Buffer		PCHAR ?
-STRING		ENDS
-PSTRING		typedef ptr STRING
+OEM_STRING              typedef STRING
+POEM_STRING             typedef PSTRING
+PCOEM_STRING            typedef ptr STRING
 
-ANSI_STRING	typedef STRING
-PANSI_STRING	typedef PSTRING
-PCANSI_STRING	typedef PSTRING
+UNICODE_STRING          struct
+Length                  USHORT ?
+MaximumLength           USHORT ?
+Buffer                  PWSTR ?
+UNICODE_STRING          ends
+PUNICODE_STRING         typedef ptr UNICODE_STRING
+PCUNICODE_STRING        typedef ptr UNICODE_STRING
 
-OEM_STRING	typedef STRING
-POEM_STRING	typedef PSTRING
-PCOEM_STRING	typedef ptr STRING
+KPRIORITY               typedef LONG
 
-UNICODE_STRING	STRUC
-Length		USHORT ?
-MaximumLength	USHORT ?
-Buffer		PWSTR ?
-UNICODE_STRING	ENDS
-PUNICODE_STRING typedef ptr UNICODE_STRING
-PCUNICODE_STRING typedef ptr UNICODE_STRING
+CLIENT_ID               struct
+UniqueProcess           HANDLE ?
+UniqueThread            HANDLE ?
+CLIENT_ID               ends
 
-
-PEB_LDR_DATA		STRUC
-Reserved1		BYTE 8 dup(?)
-Reserved2		PVOID 3 dup(?)
+PEB_LDR_DATA            struct
+Reserved1               BYTE 8 dup(?)
+Reserved2               PVOID 3 dup(?)
 InMemoryOrderModuleList LIST_ENTRY <>
-PEB_LDR_DATA		ENDS
-PPEB_LDR_DATA		typedef ptr PEB_LDR_DATA
+PEB_LDR_DATA            ends
+PPEB_LDR_DATA           typedef ptr PEB_LDR_DATA
 
-LDR_DATA_TABLE_ENTRY	STRUC
-Reserved1		PVOID 2 dup(?)
-InMemoryOrderLinks	LIST_ENTRY <>
-Reserved2		PVOID 2 dup(?)
-DllBase			PVOID ?
-Reserved3		PVOID 2 dup(?)
-FullDllName		UNICODE_STRING <>
-Reserved4		BYTE 8 dup(?)
-Reserved5		PVOID 3 dup(?)
-UNION ;DUMMYUNIONNAME
- CheckSum		ULONG ?
- Reserved6		PVOID ?
-ENDS
-TimeDateStamp		ULONG ?
-LDR_DATA_TABLE_ENTRY	ENDS
-PLDR_DATA_TABLE_ENTRY	typedef ptr LDR_DATA_TABLE_ENTRY
+LDR_DATA_TABLE_ENTRY    struct
+Reserved1               PVOID 2 dup(?)
+InMemoryOrderLinks      LIST_ENTRY <>
+Reserved2               PVOID 2 dup(?)
+DllBase                 PVOID ?
+Reserved3               PVOID 2 dup(?)
+FullDllName             UNICODE_STRING <>
+Reserved4               BYTE 8 dup(?)
+Reserved5               PVOID 3 dup(?)
+union
+ CheckSum               ULONG ?
+ Reserved6              PVOID ?
+ends
+TimeDateStamp           ULONG ?
+LDR_DATA_TABLE_ENTRY    ends
+PLDR_DATA_TABLE_ENTRY   typedef ptr LDR_DATA_TABLE_ENTRY
 
-RTL_USER_PROCESS_PARAMETERS STRUC
-Reserved1		BYTE 16 dup(?)
-Reserved2		PVOID 10 dup(?)
-ImagePathName		UNICODE_STRING <>
-CommandLine		UNICODE_STRING <>
-RTL_USER_PROCESS_PARAMETERS ENDS
+RTL_USER_PROCESS_PARAMETERS struct
+Reserved1               BYTE 16 dup(?)
+Reserved2               PVOID 10 dup(?)
+ImagePathName           UNICODE_STRING <>
+CommandLine             UNICODE_STRING <>
+RTL_USER_PROCESS_PARAMETERS ends
 PRTL_USER_PROCESS_PARAMETERS typedef ptr RTL_USER_PROCESS_PARAMETERS
 
-CALLBACK(PPS_POST_PROCESS_INIT_ROUTINE)
+CALLBACK(PPS_POST_PROCESS_INIT_ROUTINE,)
 
-PEB			STRUC
-Reserved1		BYTE 2 dup(?)
-BeingDebugged		BYTE ?
-Reserved2		BYTE 1 dup(?)
-Reserved3		PVOID 2 dup(?)
-Ldr			PPEB_LDR_DATA ?
-ProcessParameters	PRTL_USER_PROCESS_PARAMETERS ?
-Reserved4		BYTE 104 dup(?)
-Reserved5		PVOID 52 dup(?)
-PostProcessInitRoutine	PPS_POST_PROCESS_INIT_ROUTINE ?
-Reserved6		BYTE 128 dup(?)
-Reserved7		PVOID 1 dup(?)
-SessionId		ULONG ?
-PEB			ENDS
-PPEB			typedef ptr PEB
+PEB                     struct
+Reserved1               BYTE 2 dup(?)
+BeingDebugged           BYTE ?
+Reserved2               BYTE 1 dup(?)
+Reserved3               PVOID 2 dup(?)
+Ldr                     PPEB_LDR_DATA ?
+ProcessParameters       PRTL_USER_PROCESS_PARAMETERS ?
+Reserved4               PVOID 3 dup(?)
+AtlThunkSListPtr        PVOID ?
+Reserved5               PVOID ?
+Reserved6               ULONG ?
+Reserved7               PVOID ?
+Reserved8               ULONG ?
+AtlThunkSListPtr32      ULONG ?
+Reserved9               PVOID 45 dup(?)
+Reserved10              BYTE 96 dup(?)
+PostProcessInitRoutine  PPS_POST_PROCESS_INIT_ROUTINE ?
+Reserved11              BYTE 128 dup(?)
+Reserved12              PVOID 1 dup(?)
+SessionId               ULONG ?
+PEB                     ends
+PPEB                    typedef ptr PEB
 
-TEB			STRUC
-Reserved1		BYTE 1952 dup(?)
-Reserved2		PVOID 412 dup(?)
-TlsSlots		PVOID 64 dup(?)
-Reserved3		BYTE 8 dup(?)
-Reserved4		PVOID 26 dup(?)
-ReservedForOle		PVOID ?
-Reserved5		PVOID 4 dup(?)
-TlsExpansionSlots	PVOID ?
-TEB			ENDS
-PTEB			typedef ptr TEB
+TEB                     struct
+Reserved1               PVOID 12 dup(?)
+ProcessEnvironmentBlock PPEB ?
+Reserved2               PVOID 399 dup(?)
+Reserved3               BYTE 1952 dup(?)
+TlsSlots                PVOID 64 dup(?)
+Reserved4               BYTE 8 dup(?)
+Reserved5               PVOID 26 dup(?)
+ReservedForOle          PVOID ?
+Reserved6               PVOID 4 dup(?)
+TlsExpansionSlots       PVOID ?
+TEB                     ends
+PTEB                    typedef ptr TEB
 
-OBJECT_ATTRIBUTES	STRUC
-Length			ULONG ?
-RootDirectory		HANDLE ?
-ObjectName		PUNICODE_STRING ?
-Attributes		ULONG ?
-SecurityDescriptor	PVOID ?
+OBJECT_ATTRIBUTES       struct
+Length                  ULONG ?
+RootDirectory           HANDLE ?
+ObjectName              PUNICODE_STRING ?
+Attributes              ULONG ?
+SecurityDescriptor      PVOID ?
 SecurityQualityOfService PVOID ?
-OBJECT_ATTRIBUTES	ENDS
-POBJECT_ATTRIBUTES	typedef ptr OBJECT_ATTRIBUTES
+OBJECT_ATTRIBUTES       ends
+POBJECT_ATTRIBUTES      typedef ptr OBJECT_ATTRIBUTES
 
-IO_STATUS_BLOCK		STRUC
-UNION
- Status			NTSTATUS ?
- Pointer		PVOID ?
-ENDS
-Information		ULONG_PTR ?
-IO_STATUS_BLOCK		ENDS
-PIO_STATUS_BLOCK	typedef ptr IO_STATUS_BLOCK
+IO_STATUS_BLOCK         struct
+union
+ Status                 NTSTATUS ?
+ Pointer                PVOID ?
+ends
+Information             ULONG_PTR ?
+IO_STATUS_BLOCK         ends
+PIO_STATUS_BLOCK        typedef ptr _IO_STATUS_BLOCK
 
 CALLBACK(PIO_APC_ROUTINE, :PVOID, :PIO_STATUS_BLOCK, :ULONG)
 
-PROCESS_BASIC_INFORMATION STRUC
-Reserved1		PVOID ?
-PebBaseAddress		PPEB ?
-Reserved2		PVOID 2 dup(?)
-UniqueProcessId		ULONG_PTR ?
-Reserved3		PVOID ?
-PROCESS_BASIC_INFORMATION ENDS
+PROCESS_BASIC_INFORMATION struct
+Reserved1               PVOID ?
+PebBaseAddress          PPEB ?
+Reserved2               PVOID 2 dup(?)
+UniqueProcessId         ULONG_PTR ?
+Reserved3               PVOID ?
+PROCESS_BASIC_INFORMATION ends
 PPROCESS_BASIC_INFORMATION typedef ptr PROCESS_BASIC_INFORMATION
 
-SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION STRUC
-IdleTime		LARGE_INTEGER <>
-KernelTime		LARGE_INTEGER <>
-UserTime		LARGE_INTEGER <>
-Reserved1		LARGE_INTEGER 2 dup(<>)
-Reserved2		ULONG ?
-SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION ENDS
+SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION struct
+IdleTime                LARGE_INTEGER <>
+KernelTime              LARGE_INTEGER <>
+UserTime                LARGE_INTEGER <>
+Reserved1               LARGE_INTEGER 2 dup(<>)
+Reserved2               ULONG ?
+SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION ends
 PSYSTEM_PROCESSOR_PERFORMANCE_INFORMATION typedef ptr SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION
 
-SYSTEM_PROCESS_INFORMATION STRUC
-NextEntryOffset		ULONG ?
-Reserved1		BYTE 52 dup(?)
-Reserved2		PVOID 3 dup(?)
-UniqueProcessId		HANDLE ?
-Reserved3		PVOID ?
-HandleCount		ULONG ?
-Reserved4		BYTE 4 dup(?)
-Reserved5		PVOID 11 dup(?)
-PeakPagefileUsage	SIZE_T ?
-PrivatePageCount	SIZE_T ?
-Reserved6		LARGE_INTEGER 6 dup(<>)
-SYSTEM_PROCESS_INFORMATION ENDS
+SYSTEM_PROCESS_INFORMATION struct
+NextEntryOffset         ULONG ?
+NumberOfThreads         ULONG ?
+Reserved1               BYTE 48 dup(?)
+ImageName               UNICODE_STRING <>
+BasePriority            KPRIORITY ?
+UniqueProcessId         HANDLE ?
+Reserved2               PVOID ?
+HandleCount             ULONG ?
+SessionId               ULONG ?
+Reserved3               PVOID ?
+PeakVirtualSize         SIZE_T ?
+VirtualSize             SIZE_T ?
+Reserved4               ULONG ?
+PeakWorkingSetSize      SIZE_T ?
+WorkingSetSize          SIZE_T ?
+Reserved5               PVOID ?
+QuotaPagedPoolUsage     SIZE_T ?
+Reserved6               PVOID ?
+QuotaNonPagedPoolUsage  SIZE_T ?
+PagefileUsage           SIZE_T ?
+PeakPagefileUsage       SIZE_T ?
+PrivatePageCount        SIZE_T ?
+Reserved7               LARGE_INTEGER 6 dup(<>)
+SYSTEM_PROCESS_INFORMATION ends
 PSYSTEM_PROCESS_INFORMATION typedef ptr SYSTEM_PROCESS_INFORMATION
 
-SYSTEM_REGISTRY_QUOTA_INFORMATION STRUC
-RegistryQuotaAllowed	ULONG ?
-RegistryQuotaUsed	ULONG ?
-Reserved1		PVOID ?
-SYSTEM_REGISTRY_QUOTA_INFORMATION ENDS
+SYSTEM_THREAD_INFORMATION struct
+Reserved1               LARGE_INTEGER 3 dup(<>)
+Reserved2               ULONG ?
+StartAddress            PVOID ?
+ClientId                CLIENT_ID <>
+Priority                KPRIORITY ?
+BasePriority            LONG ?
+Reserved3               ULONG ?
+ThreadState             ULONG ?
+WaitReason              ULONG ?
+SYSTEM_THREAD_INFORMATION ends
+PSYSTEM_THREAD_INFORMATION typedef ptr SYSTEM_THREAD_INFORMATION
+
+SYSTEM_REGISTRY_QUOTA_INFORMATION struct
+RegistryQuotaAllowed    ULONG ?
+RegistryQuotaUsed       ULONG ?
+Reserved1               PVOID ?
+SYSTEM_REGISTRY_QUOTA_INFORMATION ends
 PSYSTEM_REGISTRY_QUOTA_INFORMATION typedef ptr SYSTEM_REGISTRY_QUOTA_INFORMATION
 
-SYSTEM_BASIC_INFORMATION STRUC
-Reserved1		BYTE 24 dup(?)
-Reserved2		PVOID 4 dup(?)
-NumberOfProcessors	sbyte ?
-SYSTEM_BASIC_INFORMATION ENDS
+SYSTEM_BASIC_INFORMATION struct
+Reserved1               BYTE 24 dup(?)
+Reserved2               PVOID 4 dup(?)
+NumberOfProcessors      CCHAR ?
+SYSTEM_BASIC_INFORMATION ends
 PSYSTEM_BASIC_INFORMATION typedef ptr SYSTEM_BASIC_INFORMATION
 
-SYSTEM_TIMEOFDAY_INFORMATION STRUC
-Reserved1		BYTE 48 dup(?)
-SYSTEM_TIMEOFDAY_INFORMATION ENDS
+SYSTEM_TIMEOFDAY_INFORMATION struct
+Reserved1               BYTE 48 dup(?)
+SYSTEM_TIMEOFDAY_INFORMATION ends
 PSYSTEM_TIMEOFDAY_INFORMATION typedef ptr SYSTEM_TIMEOFDAY_INFORMATION
 
-SYSTEM_PERFORMANCE_INFORMATION STRUC
-Reserved1		BYTE 312 dup(?)
-SYSTEM_PERFORMANCE_INFORMATION ENDS
+SYSTEM_PERFORMANCE_INFORMATION struct
+Reserved1               BYTE 312 dup(?)
+SYSTEM_PERFORMANCE_INFORMATION ends
 PSYSTEM_PERFORMANCE_INFORMATION typedef ptr SYSTEM_PERFORMANCE_INFORMATION
 
-SYSTEM_EXCEPTION_INFORMATION STRUC
-Reserved1		BYTE 16 dup(?)
-SYSTEM_EXCEPTION_INFORMATION ENDS
+SYSTEM_EXCEPTION_INFORMATION struct
+Reserved1               BYTE 16 dup(?)
+SYSTEM_EXCEPTION_INFORMATION ends
 PSYSTEM_EXCEPTION_INFORMATION typedef ptr SYSTEM_EXCEPTION_INFORMATION
 
-SYSTEM_LOOKASIDE_INFORMATION STRUC
-Reserved1		BYTE 32 dup(?)
-SYSTEM_LOOKASIDE_INFORMATION ENDS
+SYSTEM_LOOKASIDE_INFORMATION struct
+Reserved1               BYTE 32 dup(?)
+SYSTEM_LOOKASIDE_INFORMATION ends
 PSYSTEM_LOOKASIDE_INFORMATION typedef ptr SYSTEM_LOOKASIDE_INFORMATION
 
-SYSTEM_INTERRUPT_INFORMATION STRUC
-Reserved1		BYTE 24 dup(?)
-SYSTEM_INTERRUPT_INFORMATION ENDS
+SYSTEM_INTERRUPT_INFORMATION struct
+Reserved1               BYTE 24 dup(?)
+SYSTEM_INTERRUPT_INFORMATION ends
 PSYSTEM_INTERRUPT_INFORMATION typedef ptr SYSTEM_INTERRUPT_INFORMATION
 
-FILE_INFORMATION_CLASS		typedef sdword
-FileDirectoryInformation	equ 1
+SYSTEM_POLICY_INFORMATION struct
+Reserved1               PVOID 2 dup(?)
+Reserved2               ULONG 3 dup(?)
+SYSTEM_POLICY_INFORMATION ends
+PSYSTEM_POLICY_INFORMATION typedef ptr SYSTEM_POLICY_INFORMATION
 
-PROCESSINFOCLASS		typedef sdword
-ProcessBasicInformation		equ 0
-ProcessWow64Information		equ 26
+.enum FILE_INFORMATION_CLASS {
+    FileDirectoryInformation = 1
+    }
 
-THREADINFOCLASS			typedef sdword
-ThreadIsIoPending		equ 16
+.enum PROCESSINFOCLASS {
+    ProcessBasicInformation = 0,
+    ProcessDebugPort = 7,
+    ProcessWow64Information = 26,
+    ProcessImageFileName = 27,
+    ProcessBreakOnTermination = 29
+    }
 
-SYSTEM_INFORMATION_CLASS	typedef sdword
-SystemBasicInformation		equ 0
-SystemPerformanceInformation	equ 2
-SystemTimeOfDayInformation	equ 3
-SystemProcessInformation	equ 5
-SystemProcessorPerformanceInformation equ 8
-SystemInterruptInformation	equ 23
-SystemExceptionInformation	equ 33
-SystemRegistryQuotaInformation	equ 37
-SystemLookasideInformation	equ 45
+.enum THREADINFOCLASS {
+    ThreadIsIoPending = 16
+    }
 
+define CODEINTEGRITY_OPTION_ENABLED                        0x01
+define CODEINTEGRITY_OPTION_TESTSIGN                       0x02
+define CODEINTEGRITY_OPTION_UMCI_ENABLED                   0x04
+define CODEINTEGRITY_OPTION_UMCI_AUDITMODE_ENABLED         0x08
+define CODEINTEGRITY_OPTION_UMCI_EXCLUSIONPATHS_ENABLED    0x10
+define CODEINTEGRITY_OPTION_TEST_BUILD                     0x20
+define CODEINTEGRITY_OPTION_PREPRODUCTION_BUILD            0x40
+define CODEINTEGRITY_OPTION_DEBUGMODE_ENABLED              0x80
+define CODEINTEGRITY_OPTION_FLIGHT_BUILD                   0x100
+define CODEINTEGRITY_OPTION_FLIGHTING_ENABLED              0x200
+define CODEINTEGRITY_OPTION_HVCI_KMCI_ENABLED              0x400
+define CODEINTEGRITY_OPTION_HVCI_KMCI_AUDITMODE_ENABLED    0x800
+define CODEINTEGRITY_OPTION_HVCI_KMCI_STRICTMODE_ENABLED   0x1000
+define CODEINTEGRITY_OPTION_HVCI_IUM_ENABLED               0x2000
 
-OBJECT_INFORMATION_CLASS	typedef sdword
-ObjectBasicInformation		equ 0
-ObjectTypeInformation		equ 2
+SYSTEM_CODEINTEGRITY_INFORMATION struct
+Length                  ULONG ?
+CodeIntegrityOptions    ULONG ?
+SYSTEM_CODEINTEGRITY_INFORMATION ends
+PSYSTEM_CODEINTEGRITY_INFORMATION typedef ptr SYSTEM_CODEINTEGRITY_INFORMATION
 
+.enum SYSTEM_INFORMATION_CLASS {
+    SystemBasicInformation = 0,
+    SystemPerformanceInformation = 2,
+    SystemTimeOfDayInformation = 3,
+    SystemProcessInformation = 5,
+    SystemProcessorPerformanceInformation = 8,
+    SystemInterruptInformation = 23,
+    SystemExceptionInformation = 33,
+    SystemRegistryQuotaInformation = 37,
+    SystemLookasideInformation = 45,
+    SystemCodeIntegrityInformation = 103,
+    SystemPolicyInformation = 134,
+    }
 
-PUBLIC_OBJECT_BASIC_INFORMATION STRUC
-Attributes		ULONG ?
-GrantedAccess		ACCESS_MASK ?
-HandleCount		ULONG ?
-PointerCount		ULONG ?
-Reserved		ULONG 10 dup(?)
-PUBLIC_OBJECT_BASIC_INFORMATION ENDS
+.enum OBJECT_INFORMATION_CLASS {
+    ObjectBasicInformation = 0,
+    ObjectTypeInformation = 2
+    }
+
+PUBLIC_OBJECT_BASIC_INFORMATION struct
+Attributes              ULONG ?
+GrantedAccess           ACCESS_MASK ?
+HandleCount             ULONG ?
+PointerCount            ULONG ?
+Reserved                ULONG 10 dup(?)
+PUBLIC_OBJECT_BASIC_INFORMATION ends
 PPUBLIC_OBJECT_BASIC_INFORMATION typedef ptr PUBLIC_OBJECT_BASIC_INFORMATION
 
-PUBLIC_OBJECT_TYPE_INFORMATION	STRUC
-TypeName		UNICODE_STRING <>
-Reserved		ULONG 22 dup(?)
-PUBLIC_OBJECT_TYPE_INFORMATION	ENDS
+PUBLIC_OBJECT_TYPE_INFORMATION struct
+TypeName                UNICODE_STRING <>
+Reserved                ULONG 22 dup(?)
+PUBLIC_OBJECT_TYPE_INFORMATION ends
 PPUBLIC_OBJECT_TYPE_INFORMATION typedef ptr PUBLIC_OBJECT_TYPE_INFORMATION
 
 if (_WIN32_WINNT ge 0x0501)
 ;INTERNAL_TS_ACTIVE_CONSOLE_ID equ <dword ptr [0x7ffe02d8]>
 endif
 
-
 RtlMoveMemory equ <memmove>
-RtlFillMemory macro Destination, Length, Fill
-	exitm<memset(Destination, Fill, Length)>
-	endm
-RtlZeroMemory macro Destination, Length
-	exitm<memset(Destination, 0, Length)>
-	endm
+RtlFillMemory macro Destination,Length,Fill
+  exitm<memset((Destination),(Fill),(Length))>
+  endm
+RtlZeroMemory macro Destination,Length
+  exitm<memset((Destination),0,(Length))>
+  endm
 
-;NTSTATUS NTAPI
-NtClose proto WINAPI Handle:HANDLE
+NtClose proto WINAPI :HANDLE
+NtCreateFile proto WINAPI :PHANDLE, :ACCESS_MASK, :POBJECT_ATTRIBUTES, :PIO_STATUS_BLOCK, :PLARGE_INTEGER, :ULONG, :ULONG, :ULONG, :ULONG, :ptr, :ULONG
+NtOpenFile proto WINAPI :PHANDLE, :ACCESS_MASK, :POBJECT_ATTRIBUTES, :PIO_STATUS_BLOCK, :ULONG, :ULONG
+NtRenameKey proto WINAPI :HANDLE, :PUNICODE_STRING
+NtNotifyChangeMultipleKeys proto WINAPI :HANDLE, :ULONG, :OBJECT_ATTRIBUTES, :HANDLE, :PIO_APC_ROUTINE, :PVOID, :PIO_STATUS_BLOCK, :ULONG, :BOOLEAN, :PVOID, :ULONG, :BOOLEAN
 
-;NTSTATUS NTAPI
-NtCreateFile proto WINAPI \
-	    FileHandle: PHANDLE,
-	 DesiredAccess: ACCESS_MASK,
-      ObjectAttributes: POBJECT_ATTRIBUTES,
-	 IoStatusBlock: PIO_STATUS_BLOCK,
-	AllocationSize: PLARGE_INTEGER,
-	FileAttributes: ULONG,
-	   ShareAccess: ULONG,
-     CreateDisposition: ULONG,
-	 CreateOptions: ULONG,
-	      EaBuffer: PVOID,
-	      EaLength: ULONG
+KEY_VALUE_ENTRY         struct
+ValueName               PUNICODE_STRING ?
+DataLength              ULONG ?
+DataOffset              ULONG ?
+Type                    ULONG ?
+KEY_VALUE_ENTRY         ends
+PKEY_VALUE_ENTRY        typedef ptr KEY_VALUE_ENTRY
 
-;NTSTATUS NTAPI
-NtOpenFile proto WINAPI \
-	    FileHandle: PHANDLE,
-	 DesiredAccess: ACCESS_MASK,
-      ObjectAttributes: POBJECT_ATTRIBUTES,
-	 IoStatusBlock: PIO_STATUS_BLOCK,
-	   ShareAccess: ULONG,
-	   OpenOptions: ULONG
+NtQueryMultipleValueKey proto WINAPI :HANDLE, :PKEY_VALUE_ENTRY, :ULONG, :PVOID, :PULONG, :PULONG
 
-;NTSTATUS NTAPI
-NtDeviceIoControlFile proto WINAPI \
-	    FileHandle: HANDLE,
-		 Event: HANDLE,
-	    ApcRoutine: PIO_APC_ROUTINE,
-	    ApcContext: PVOID,
-	 IoStatusBlock: PIO_STATUS_BLOCK,
-	 IoControlCode: ULONG,
-	   InputBuffer: PVOID,
-     InputBufferLength: ULONG,
-	  OutputBuffer: PVOID,
-    OutputBufferLength: ULONG
+.enum KEY_SET_INFORMATION_CLASS {
+    KeyWriteTimeInformation,
+    KeyWow64FlagsInformation,
+    KeyControlFlagsInformation,
+    KeySetVirtualizationInformation,
+    KeySetDebugInformation,
+    KeySetHandleTagsInformation,
+    MaxKeySetInfoClass
+    }
 
-;NTSTATUS NTAPI
-NtWaitForSingleObject proto WINAPI \
-		Handle: HANDLE,
-	     Alertable: BOOLEAN,
-	       Timeout: PLARGE_INTEGER
+NtSetInformationKey proto WINAPI :HANDLE, :KEY_SET_INFORMATION_CLASS, :PVOID, :ULONG
+NtDeviceIoControlFile proto WINAPI :HANDLE, :HANDLE, :PIO_APC_ROUTINE, :ptr, :PIO_STATUS_BLOCK, :ULONG, :ptr, :ULONG, :ptr, :ULONG
+NtWaitForSingleObject proto WINAPI :HANDLE, :BOOLEAN, :PLARGE_INTEGER
+RtlIsNameLegalDOS8Dot3 proto WINAPI :PUNICODE_STRING, :POEM_STRING, :PBOOLEAN
+RtlNtStatusToDosError proto WINAPI :NTSTATUS
+NtQueryInformationProcess proto WINAPI :HANDLE, :PROCESSINFOCLASS, :PVOID, :ULONG, :PULONG
+NtQueryInformationThread proto WINAPI :HANDLE, :THREADINFOCLASS, :PVOID, :ULONG, :PULONG
+NtQueryObject proto WINAPI :HANDLE, :OBJECT_INFORMATION_CLASS, :PVOID, :ULONG, :PULONG
+NtQuerySystemInformation proto WINAPI :SYSTEM_INFORMATION_CLASS, :PVOID, :ULONG, :PULONG
+NtQuerySystemTime proto WINAPI :PLARGE_INTEGER
+RtlLocalTimeToSystemTime proto WINAPI :PLARGE_INTEGER, :PLARGE_INTEGER
+RtlTimeToSecondsSince1970 proto WINAPI :PLARGE_INTEGER, :PULONG
+RtlFreeAnsiString proto WINAPI :PANSI_STRING
+RtlFreeUnicodeString proto WINAPI :PUNICODE_STRING
+RtlFreeOemString proto WINAPI :POEM_STRING
+RtlInitString proto WINAPI :PSTRING, :PCSZ
+RtlInitStringEx proto WINAPI :PSTRING, :PCSZ
+RtlInitAnsiString proto WINAPI :PANSI_STRING, :PCSZ
+RtlInitAnsiStringEx proto WINAPI :PANSI_STRING, :PCSZ
+RtlInitUnicodeString proto WINAPI :PUNICODE_STRING, :PCWSTR
+RtlAnsiStringToUnicodeString proto WINAPI :PUNICODE_STRING, :PCANSI_STRING, :BOOLEAN
+RtlUnicodeStringToAnsiString proto WINAPI :PANSI_STRING, :PCUNICODE_STRING, :BOOLEAN
+RtlUnicodeStringToOemString proto WINAPI :POEM_STRING, :PCUNICODE_STRING, :BOOLEAN
+RtlUnicodeToMultiByteSize proto WINAPI :PULONG, :PWCH, :ULONG
+RtlCharToInteger proto WINAPI :PCSZ, :ULONG, :PULONG
+RtlConvertSidToUnicodeString proto WINAPI :PUNICODE_STRING, :PSID, :BOOLEAN
+RtlUniform proto WINAPI :PULONG
 
-;BOOLEAN NTAPI
-RtlIsNameLegalDOS8Dot3 proto WINAPI \
-		 _Name: PUNICODE_STRING,
-	       OemName: POEM_STRING,
-    NameContainsSpaces: PBOOLEAN
+define LOGONID_CURRENT     (-1)
+define SERVERNAME_CURRENT  (NULL)
 
-;ULONG NTAPI
-RtlNtStatusToDosError proto WINAPI Status:NTSTATUS
+.enum WINSTATIONINFOCLASS {
+    WinStationInformation = 8
+    }
 
-;__kernel_entry NTSTATUS NTAPI
-NtQueryInformationProcess proto WINAPI \
-	 ProcessHandle: HANDLE,
-ProcessInformationClass: PROCESSINFOCLASS,
-    ProcessInformation: PVOID,
-ProcessInformationLength: ULONG,
-	  ReturnLength: PULONG
-
-;__kernel_entry NTSTATUS NTAPI
-NtQueryInformationThread proto WINAPI \
-	  ThreadHandle: HANDLE,
-ThreadInformationClass: THREADINFOCLASS,
-     ThreadInformation: PVOID,
-ThreadInformationLength: ULONG,
-	  ReturnLength: PULONG
-
-
-;__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
-NtQueryObject proto WINAPI \
-		Handle: HANDLE,
-ObjectInformationClass: OBJECT_INFORMATION_CLASS,
-     ObjectInformation: PVOID,
-ObjectInformationLength: ULONG,
-	  ReturnLength: PULONG
-
-
-;__kernel_entry NTSTATUS NTAPI
-NtQuerySystemInformation proto WINAPI \
-SystemInformationClass: SYSTEM_INFORMATION_CLASS,
-     SystemInformation: PVOID,
-SystemInformationLength: ULONG,
-	  ReturnLength: PULONG
-
-;__kernel_entry NTSTATUS NTAPI
-NtQuerySystemTime proto WINAPI SystemTime:PLARGE_INTEGER
-
-;NTSTATUS NTAPI
-RtlLocalTimeToSystemTime proto WINAPI \
-	     LocalTime: PLARGE_INTEGER,
-	    SystemTime: PLARGE_INTEGER
-
-;BOOLEAN NTAPI
-RtlTimeToSecondsSince1970 proto WINAPI \
-		  Time: PLARGE_INTEGER,
-	ElapsedSeconds: PULONG
-
-;VOID NTAPI
-RtlFreeAnsiString proto WINAPI AnsiString:PANSI_STRING
-
-;VOID NTAPI
-RtlFreeUnicodeString proto WINAPI UnicodeString:PUNICODE_STRING
-
-;VOID NTAPI
-RtlFreeOemString proto WINAPI OemString:POEM_STRING
-
-;VOID NTAPI
-RtlInitString proto WINAPI DestinationString:PSTRING, SourceString:PCSZ
-
-;VOID NTAPI
-RtlInitAnsiString proto WINAPI DestinationString:PANSI_STRING, SourceString:PCSZ
-
-;VOID NTAPI
-RtlInitUnicodeString proto WINAPI DestinationString:PUNICODE_STRING, SourceString:PCWSTR
-
-;NTSTATUS NTAPI
-RtlAnsiStringToUnicodeString proto WINAPI \
-     DestinationString: PUNICODE_STRING,
-	  SourceString: PCANSI_STRING,
-AllocateDestinationString: BOOLEAN
-
-;NTSTATUS NTAPI
-RtlUnicodeStringToAnsiString proto WINAPI \
-     DestinationString: PANSI_STRING,
-	  SourceString: PCUNICODE_STRING,
-AllocateDestinationString: BOOLEAN
-
-;NTSTATUS NTAPI
-RtlUnicodeStringToOemString proto WINAPI \
-     DestinationString: POEM_STRING,
-	  SourceString: PCUNICODE_STRING,
-AllocateDestinationString: BOOLEAN
-
-;NTSTATUS NTAPI
-RtlUnicodeToMultiByteSize proto WINAPI \
-BytesInMultiByteString: PULONG,
-	 UnicodeString: PWCH,
-  BytesInUnicodeString: ULONG
-
-;NTSTATUS NTAPI
-RtlCharToInteger proto WINAPI String:PCSZ, Base:ULONG, Value:PULONG
-
-;NTSTATUS
-;NTAPI
-RtlConvertSidToUnicodeString proto WINAPI \
-	 UnicodeString: PUNICODE_STRING,
-		   Sid: PSID,
-AllocateDestinationString: BOOLEAN
-
-;ULONG
-;NTAPI
-RtlUniform proto WINAPI Seed:PULONG
-
-LOGONID_CURRENT		equ -1
-SERVERNAME_CURRENT	equ 0
-
-WINSTATIONINFOCLASS	typedef SDWORD
-WinStationInformation	equ 8
-
-
-WINSTATIONINFORMATIONW	STRUC
-Reserved2		BYTE 70 dup(?)
-LogonId			ULONG ?
-Reserved3		BYTE 1140 dup(?)
-WINSTATIONINFORMATIONW	ENDS
-PWINSTATIONINFORMATIONW typedef ptr WINSTATIONINFORMATIONW
+WINSTATIONINFORMATIONW  struct
+Reserved2               BYTE 70 dup(?)
+LogonId                 ULONG ?
+Reserved3               BYTE 1140 dup(?)
+WINSTATIONINFORMATIONW  ends
+PWINSTATIONINFORMATIONW typedef ptr _WINSTATIONINFORMATIONW
 
 CALLBACK(PWINSTATIONQUERYINFORMATIONW, :HANDLE, :ULONG, :WINSTATIONINFOCLASS, :PVOID, :ULONG, :PULONG)
 
-
 ifndef NT_SUCCESS
 NT_SUCCESS macro Status
-	shr eax,30
-	exitm<eax == 0>
-	endm
+  exitm<((Status) !>= 0)>
+  endm
 endif
-
 
 ifndef NT_INFORMATION
-NT_INFORMATION macro Status
-	shr eax,30
-	exitm<eax == 1>
-	endm
+NT_INFORMATION proto watcall Status:NTSTATUS {
+    shr     eax,30
+    retm    <(eax == 1)>
+    }
 endif
-
 
 ifndef NT_WARNING
-NT_WARNING macro Status
-	shr eax,30
-	exitm<eax == 2>
-	endm
+NT_WARNING proto watcall Status:NTSTATUS {
+    shr     eax,30
+    retm    <(eax == 2)>
+    }
 endif
-
 
 ifndef NT_ERROR
-NT_ERROR macro Status
-	shr eax,30
-	exitm<eax == 3>
-	endm
+NT_ERROR proto watcall Status:NTSTATUS {
+    shr     eax,30
+    retm    <(eax == 3)>
+    }
 endif
 
-
 ifndef InitializeObjectAttributes
-InitializeObjectAttributes macro p, n, a, r, s
+InitializeObjectAttributes macro  p, n, a, r, s
     mov p.OBJECT_ATTRIBUTES.Length,OBJECT_ATTRIBUTES
     mov p.OBJECT_ATTRIBUTES.RootDirectory,r
     mov p.OBJECT_ATTRIBUTES.Attributes,a
     mov p.OBJECT_ATTRIBUTES.ObjectName,n
     mov p.OBJECT_ATTRIBUTES.SecurityDescriptor,s
     mov p.OBJECT_ATTRIBUTES.SecurityQualityOfService,NULL
+    exitm<>
     endm
 endif
 
+define OBJ_INHERIT                         0x00000002
+define OBJ_PERMANENT                       0x00000010
+define OBJ_EXCLUSIVE                       0x00000020
+define OBJ_CASE_INSENSITIVE                0x00000040
+define OBJ_OPENIF                          0x00000080
+define OBJ_OPENLINK                        0x00000100
+define OBJ_KERNEL_HANDLE                   0x00000200
+define OBJ_FORCE_ACCESS_CHECK              0x00000400
+define OBJ_IGNORE_IMPERSONATED_DEVICEMAP   0x00000800
+define OBJ_DONT_REPARSE                    0x00001000
+define OBJ_VALID_ATTRIBUTES                0x00001FF2
 
-OBJ_INHERIT		equ 0x00000002
-OBJ_PERMANENT		equ 0x00000010
-OBJ_EXCLUSIVE		equ 0x00000020
-OBJ_CASE_INSENSITIVE	equ 0x00000040
-OBJ_OPENIF		equ 0x00000080
-OBJ_OPENLINK		equ 0x00000100
-OBJ_KERNEL_HANDLE	equ 0x00000200
-OBJ_FORCE_ACCESS_CHECK	equ 0x00000400
-OBJ_VALID_ATTRIBUTES	equ 0x000007F2
+define FILE_SUPERSEDE                  0x00000000
+define FILE_OPEN                       0x00000001
+define FILE_CREATE                     0x00000002
+define FILE_OPEN_IF                    0x00000003
+define FILE_OVERWRITE                  0x00000004
+define FILE_OVERWRITE_IF               0x00000005
+define FILE_MAXIMUM_DISPOSITION        0x00000005
 
+define FILE_DIRECTORY_FILE                     0x00000001
+define FILE_WRITE_THROUGH                      0x00000002
+define FILE_SEQUENTIAL_ONLY                    0x00000004
+define FILE_NO_INTERMEDIATE_BUFFERING          0x00000008
 
-FILE_SUPERSEDE			equ 0x00000000
-FILE_OPEN			equ 0x00000001
-FILE_CREATE			equ 0x00000002
-FILE_OPEN_IF			equ 0x00000003
-FILE_OVERWRITE			equ 0x00000004
-FILE_OVERWRITE_IF		equ 0x00000005
-FILE_MAXIMUM_DISPOSITION	equ 0x00000005
+define FILE_SYNCHRONOUS_IO_ALERT               0x00000010
+define FILE_SYNCHRONOUS_IO_NONALERT            0x00000020
+define FILE_NON_DIRECTORY_FILE                 0x00000040
+define FILE_CREATE_TREE_CONNECTION             0x00000080
 
+define FILE_COMPLETE_IF_OPLOCKED               0x00000100
+define FILE_NO_EA_KNOWLEDGE                    0x00000200
+define FILE_OPEN_REMOTE_INSTANCE               0x00000400
+define FILE_RANDOM_ACCESS                      0x00000800
 
-FILE_DIRECTORY_FILE		equ 0x00000001
-FILE_WRITE_THROUGH		equ 0x00000002
-FILE_SEQUENTIAL_ONLY		equ 0x00000004
-FILE_NO_INTERMEDIATE_BUFFERING	equ 0x00000008
-
-FILE_SYNCHRONOUS_IO_ALERT	equ 0x00000010
-FILE_SYNCHRONOUS_IO_NONALERT	equ 0x00000020
-FILE_NON_DIRECTORY_FILE		equ 0x00000040
-FILE_CREATE_TREE_CONNECTION	equ 0x00000080
-
-FILE_COMPLETE_IF_OPLOCKED	equ 0x00000100
-FILE_NO_EA_KNOWLEDGE		equ 0x00000200
-FILE_OPEN_REMOTE_INSTANCE	equ 0x00000400
-FILE_RANDOM_ACCESS		equ 0x00000800
-
-FILE_DELETE_ON_CLOSE		equ 0x00001000
-FILE_OPEN_BY_FILE_ID		equ 0x00002000
-FILE_OPEN_FOR_BACKUP_INTENT	equ 0x00004000
-FILE_NO_COMPRESSION		equ 0x00008000
+define FILE_DELETE_ON_CLOSE                    0x00001000
+define FILE_OPEN_BY_FILE_ID                    0x00002000
+define FILE_OPEN_FOR_BACKUP_INTENT             0x00004000
+define FILE_NO_COMPRESSION                     0x00008000
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
-FILE_OPEN_REQUIRING_OPLOCK		equ 0x00010000
+define FILE_OPEN_REQUIRING_OPLOCK              0x00010000
 endif
 
-FILE_RESERVE_OPFILTER			equ 0x00100000
-FILE_OPEN_REPARSE_POINT			equ 0x00200000
-FILE_OPEN_NO_RECALL			equ 0x00400000
-FILE_OPEN_FOR_FREE_SPACE_QUERY		equ 0x00800000
+define FILE_RESERVE_OPFILTER                   0x00100000
+define FILE_OPEN_REPARSE_POINT                 0x00200000
+define FILE_OPEN_NO_RECALL                     0x00400000
+define FILE_OPEN_FOR_FREE_SPACE_QUERY          0x00800000
 
-FILE_VALID_OPTION_FLAGS			equ 0x00ffffff
-FILE_VALID_PIPE_OPTION_FLAGS		equ 0x00000032
-FILE_VALID_MAILSLOT_OPTION_FLAGS	equ 0x00000032
-FILE_VALID_SET_FLAGS			equ 0x00000036
+define FILE_VALID_OPTION_FLAGS                 0x00ffffff
+define FILE_VALID_PIPE_OPTION_FLAGS            0x00000032
+define FILE_VALID_MAILSLOT_OPTION_FLAGS        0x00000032
+define FILE_VALID_SET_FLAGS                    0x00000036
 
+define FILE_SUPERSEDED                 0x00000000
+define FILE_OPENED                     0x00000001
+define FILE_CREATED                    0x00000002
+define FILE_OVERWRITTEN                0x00000003
+define FILE_EXISTS                     0x00000004
+define FILE_DOES_NOT_EXIST             0x00000005
 
-FILE_SUPERSEDED		equ 0x00000000
-FILE_OPENED		equ 0x00000001
-FILE_CREATED		equ 0x00000002
-FILE_OVERWRITTEN	equ 0x00000003
-FILE_EXISTS		equ 0x00000004
-FILE_DOES_NOT_EXIST	equ 0x00000005
+endif
 
-.pragma pack(pop)
+endif
 
-endif ; (_WIN32_WINNT >= 0x0500)
-
-.pragma list(pop)
 endif

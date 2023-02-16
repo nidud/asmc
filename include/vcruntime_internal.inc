@@ -3,7 +3,9 @@ if not defined(_VCRT_BUILD) and not defined(_VCRT_ALLOW_INTERNALS)
     .err <ERROR: Use of C Runtime library internal header file.>
 endif
 
+ifndef _WIN32_FUSION
 _WIN32_FUSION equ 0x0100
+endif
 
 include malloc.inc
 include vcruntime.inc

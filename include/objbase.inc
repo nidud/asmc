@@ -1,6 +1,3 @@
-ifndef __OBJBASE_INC
-define __OBJBASE_INC
-
 include winapifamily.inc
 
 include rpc.inc
@@ -153,5 +150,4 @@ endif
 
 .pragma pack(pop)
 
-endif
 endif

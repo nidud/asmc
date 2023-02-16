@@ -7405,10 +7405,6 @@ endif
 ifndef NOTASKDIALOG
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-ifdef _WIN32
-;include pshpack1.inc
-endif
-
 CALLBACK(PFTASKDIALOGCALLBACK, hwnd:HWND, msg:UINT, wParam:WPARAM, lParam:LPARAM, lpRefData:LPLONG)
 
 TDF_ENABLE_HYPERLINKS		equ 0x0001

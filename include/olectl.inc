@@ -7,25 +7,11 @@ if NOT defined(__MKTYPLIB__) AND NOT defined(__midl)
 ifdef _MAC
 include macocidl.inc
 else
-if NOT defined(RC_INVOKED)
-include pshpack8.inc
-endif
+.pragma pack(push, 8)
 include ocidl.inc
 endif
 
 .pragma comment(lib, oleaut32)
-
-ifdef _OLEAUT32_
-WINOLECTLAPI  equ STDAPI
-WINOLECTLAPI_ macro t
-	exitm<STDAPI_(t)>
-	endm
-else
-WINOLECTLAPI  equ EXTERN_C DECLSPEC_IMPORT HRESULT STDAPICALLTYPE
-WINOLECTLAPI_ macro type
-	exitm<EXTERN_C DECLSPEC_IMPORT type STDAPICALLTYPE>
-	endm
-endif
 
 ifndef INITGUID
 
@@ -385,9 +371,7 @@ LP_MONOCHROME		equ 0x01
 LP_VGACOLOR		equ 0x02
 LP_COLOR		equ 0x04
 
-if NOT defined(_MAC) AND NOT defined(RC_INVOKED)
-include poppack.inc
-endif
+.pragma pack(pop)
 
 endif ;; NOT (defined(__MKTYPLIB__) AND NOT defined(__midl))
 

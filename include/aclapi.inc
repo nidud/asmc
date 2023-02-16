@@ -1,468 +1,223 @@
 ifndef __ACCESS_CONTROL_API__
 define __ACCESS_CONTROL_API__
+
+include winapifamily.inc
+
 include windows.inc
 include accctrl.inc
-.pragma list(push, 0)
+
 .pragma comment(lib, advapi32)
 
-;VOID
-CALLBACK(FN_PROGRESS, :LPWSTR, :DWORD, :PPROG_INVOKE_SETTING, :PVOID, :BOOL)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
 
-;DWORD
-SetEntriesInAclA proto WINAPI \
-cCountOfExplicitEntries: ULONG,
-pListOfExplicitEntries: PEXPLICIT_ACCESS_A,
-                OldAcl: PACL,
-                NewAcl: ptr PACL
-SetEntriesInAclW proto WINAPI \
-cCountOfExplicitEntries: ULONG,
-pListOfExplicitEntries: PEXPLICIT_ACCESS_W,
-                OldAcl: PACL,
-                NewAcl: ptr PACL
+CALLBACK(FN_PROGRESS, :LPWSTR, :DWORD, :ptr, :ptr, :BOOL)
+
+SetEntriesInAclA proto WINAPI :ULONG, :PEXPLICIT_ACCESS_A, :PACL, :ptr
+SetEntriesInAclW proto WINAPI :ULONG, :PEXPLICIT_ACCESS_W, :PACL, :ptr
 ifdef _UNICODE
-SetEntriesInAcl         equ <SetEntriesInAclW>
+define SetEntriesInAcl  <SetEntriesInAclW>
 else
-SetEntriesInAcl         equ <SetEntriesInAclA>
+define SetEntriesInAcl  <SetEntriesInAclA>
 endif
 
-;DWORD
-GetExplicitEntriesFromAclA proto WINAPI \
-                  pacl: PACL,
-pcCountOfExplicitEntries: PULONG,
-pListOfExplicitEntries: ptr PEXPLICIT_ACCESS_A
-GetExplicitEntriesFromAclW proto WINAPI \
-                  pacl: PACL,
-pcCountOfExplicitEntries: PULONG,
-pListOfExplicitEntries: ptr PEXPLICIT_ACCESS_W
+GetExplicitEntriesFromAclA proto WINAPI :PACL, :PULONG, :ptr
+GetExplicitEntriesFromAclW proto WINAPI :PACL, :PULONG, :ptr
 ifdef _UNICODE
-GetExplicitEntriesFromAcl equ <GetExplicitEntriesFromAclW>
+define GetExplicitEntriesFromAcl  <GetExplicitEntriesFromAclW>
 else
-GetExplicitEntriesFromAcl equ <GetExplicitEntriesFromAclA>
+define GetExplicitEntriesFromAcl  <GetExplicitEntriesFromAclA>
 endif
 
-;DWORD
-GetEffectiveRightsFromAclA proto WINAPI \
-                  pacl: PACL,
-              pTrustee: PTRUSTEE_A,
-         pAccessRights: PACCESS_MASK
-GetEffectiveRightsFromAclW proto WINAPI \
-                  pacl: PACL,
-              pTrustee: PTRUSTEE_W,
-         pAccessRights: PACCESS_MASK
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+GetEffectiveRightsFromAclA proto WINAPI :PACL, :PTRUSTEE_A, :PACCESS_MASK
+GetEffectiveRightsFromAclW proto WINAPI :PACL, :PTRUSTEE_W, :PACCESS_MASK
 ifdef _UNICODE
-GetEffectiveRightsFromAcl equ <GetEffectiveRightsFromAclW>
+define GetEffectiveRightsFromAcl  <GetEffectiveRightsFromAclW>
 else
-GetEffectiveRightsFromAcl equ <GetEffectiveRightsFromAclA>
+define GetEffectiveRightsFromAcl  <GetEffectiveRightsFromAclA>
 endif
 
-;DWORD
-GetAuditedPermissionsFromAclA proto WINAPI \
-                  pacl: PACL,
-              pTrustee: PTRUSTEE_A,
-pSuccessfulAuditedRights: PACCESS_MASK,
-    pFailedAuditRights: PACCESS_MASK
-GetAuditedPermissionsFromAclW proto WINAPI \
-                  pacl: PACL,
-              pTrustee: PTRUSTEE_W,
-pSuccessfulAuditedRights: PACCESS_MASK,
-    pFailedAuditRights: PACCESS_MASK
+GetAuditedPermissionsFromAclA proto WINAPI :PACL, :PTRUSTEE_A, :PACCESS_MASK, :PACCESS_MASK
+GetAuditedPermissionsFromAclW proto WINAPI :PACL, :PTRUSTEE_W, :PACCESS_MASK, :PACCESS_MASK
 ifdef _UNICODE
-GetAuditedPermissionsFromAcl equ <GetAuditedPermissionsFromAclW>
+define GetAuditedPermissionsFromAcl  <GetAuditedPermissionsFromAclW>
 else
-GetAuditedPermissionsFromAcl equ <GetAuditedPermissionsFromAclA>
+define GetAuditedPermissionsFromAcl  <GetAuditedPermissionsFromAclA>
 endif
 
-;DWORD
-GetNamedSecurityInfoA proto WINAPI \
-           pObjectName: LPCSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-            ppsidOwner: ptr PSID,
-            ppsidGroup: ptr PSID,
-                ppDacl: ptr PACL,
-                ppSacl: ptr PACL,
-  ppSecurityDescriptor: ptr PSECURITY_DESCRIPTOR
-GetNamedSecurityInfoW proto WINAPI \
-           pObjectName: LPCWSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-            ppsidOwner: ptr PSID,
-            ppsidGroup: ptr PSID,
-                ppDacl: ptr PACL,
-                ppSacl: ptr PACL,
-  ppSecurityDescriptor: ptr PSECURITY_DESCRIPTOR
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+
+GetNamedSecurityInfoA proto WINAPI :LPCSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :ptr, :ptr, :ptr, :ptr, :ptr
+GetNamedSecurityInfoW proto WINAPI :LPCWSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :ptr, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
-GetNamedSecurityInfo    equ <GetNamedSecurityInfoW>
+define GetNamedSecurityInfo  <GetNamedSecurityInfoW>
 else
-GetNamedSecurityInfo    equ <GetNamedSecurityInfoA>
+define GetNamedSecurityInfo  <GetNamedSecurityInfoA>
 endif
 
-;DWORD
-GetSecurityInfo proto WINAPI \
-                handle: HANDLE,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-            ppsidOwner: ptr PSID,
-            ppsidGroup: ptr PSID,
-                ppDacl: ptr PACL,
-                ppSacl: ptr PACL,
-  ppSecurityDescriptor: ptr PSECURITY_DESCRIPTOR
+GetSecurityInfo proto WINAPI :HANDLE, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :ptr, :ptr, :ptr, :ptr, :ptr
 
-
-;DWORD
-SetNamedSecurityInfoA proto WINAPI \
-           pObjectName: LPSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-             psidOwner: PSID,
-             psidGroup: PSID,
-                 pDacl: PACL,
-                 pSacl: PACL
-SetNamedSecurityInfoW proto WINAPI \
-           pObjectName: LPWSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-             psidOwner: PSID,
-             psidGroup: PSID,
-                 pDacl: PACL,
-                 pSacl: PACL
+SetNamedSecurityInfoA proto WINAPI :LPSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :PSID, :PSID, :PACL, :PACL
+SetNamedSecurityInfoW proto WINAPI :LPWSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :PSID, :PSID, :PACL, :PACL
 ifdef _UNICODE
-SetNamedSecurityInfo    equ <SetNamedSecurityInfoW>
+define SetNamedSecurityInfo  <SetNamedSecurityInfoW>
 else
-SetNamedSecurityInfo    equ <SetNamedSecurityInfoA>
+define SetNamedSecurityInfo  <SetNamedSecurityInfoA>
 endif
 
-;DWORD
-SetSecurityInfo proto WINAPI \
-                handle: HANDLE,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-             psidOwner: PSID,
-             psidGroup: PSID,
-                 pDacl: PACL,
-                 pSacl: PACL
+SetSecurityInfo proto WINAPI :HANDLE, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :PSID, :PSID, :PACL, :PACL
 
+endif
 
-;DWORD
-GetInheritanceSourceA proto WINAPI \
-           pObjectName: LPSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-             Container: BOOL,
-     pObjectClassGuids: ptr GUID,
-             GuidCount: DWORD,
-                  pAcl: PACL,
-              pfnArray: PFN_OBJECT_MGR_FUNCTS,
-       pGenericMapping: PGENERIC_MAPPING,
-         pInheritArray: PINHERITED_FROMA
-GetInheritanceSourceW proto WINAPI \
-           pObjectName: LPWSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-             Container: BOOL,
-     pObjectClassGuids: ptr GUID,
-             GuidCount: DWORD,
-                  pAcl: PACL,
-              pfnArray: PFN_OBJECT_MGR_FUNCTS,
-       pGenericMapping: PGENERIC_MAPPING,
-         pInheritArray: PINHERITED_FROMW
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+GetInheritanceSourceA proto WINAPI :LPSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :BOOL, :ptr ptr, :DWORD, :PACL, :PFN_OBJECT_MGR_FUNCTS, :PGENERIC_MAPPING, :PINHERITED_FROMA
+GetInheritanceSourceW proto WINAPI :LPWSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :BOOL, :ptr ptr, :DWORD, :PACL, :PFN_OBJECT_MGR_FUNCTS, :PGENERIC_MAPPING, :PINHERITED_FROMW
 ifdef _UNICODE
-GetInheritanceSource    equ <GetInheritanceSourceW>
+define GetInheritanceSource  <GetInheritanceSourceW>
 else
-GetInheritanceSource    equ <GetInheritanceSourceA>
+define GetInheritanceSource  <GetInheritanceSourceA>
 endif
 
-;DWORD
-FreeInheritedFromArray proto WINAPI \
-         pInheritArray: PINHERITED_FROMW,
-                AceCnt: USHORT,
-              pfnArray: PFN_OBJECT_MGR_FUNCTS
+FreeInheritedFromArray proto WINAPI :PINHERITED_FROMW, :USHORT, :PFN_OBJECT_MGR_FUNCTS
 
-
-;DWORD
-TreeResetNamedSecurityInfoA proto WINAPI \
-           pObjectName: LPSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-                pOwner: PSID,
-                pGroup: PSID,
-                 pDacl: PACL,
-                 pSacl: PACL,
-          KeepExplicit: BOOL,
-            fnProgress: FN_PROGRESS,
- ProgressInvokeSetting: PROG_INVOKE_SETTING,
-                  Args: PVOID
-TreeResetNamedSecurityInfoW proto WINAPI \
-           pObjectName: LPWSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-                pOwner: PSID,
-                pGroup: PSID,
-                 pDacl: PACL,
-                 pSacl: PACL,
-          KeepExplicit: BOOL,
-            fnProgress: FN_PROGRESS,
- ProgressInvokeSetting: PROG_INVOKE_SETTING,
-                  Args: PVOID
+TreeResetNamedSecurityInfoA proto WINAPI :LPSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :PSID, :PSID, :PACL, :PACL, :BOOL, :FN_PROGRESS, :PROG_INVOKE_SETTING, :PVOID
+TreeResetNamedSecurityInfoW proto WINAPI :LPWSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :PSID, :PSID, :PACL, :PACL, :BOOL, :FN_PROGRESS, :PROG_INVOKE_SETTING, :PVOID
 ifdef _UNICODE
-TreeResetNamedSecurityInfo equ <TreeResetNamedSecurityInfoW>
+define TreeResetNamedSecurityInfo  <TreeResetNamedSecurityInfoW>
 else
-TreeResetNamedSecurityInfo equ <TreeResetNamedSecurityInfoA>
+define TreeResetNamedSecurityInfo  <TreeResetNamedSecurityInfoA>
 endif
 
-if (NTDDI_VERSION GE NTDDI_VISTA)
-;DWORD
-TreeSetNamedSecurityInfoA proto WINAPI \
-           pObjectName: LPSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-                pOwner: PSID,
-                pGroup: PSID,
-                 pDacl: PACL,
-                 pSacl: PACL,
-              dwAction: DWORD,
-            fnProgress: FN_PROGRESS,
- ProgressInvokeSetting: PROG_INVOKE_SETTING,
-                  Args: PVOID
-TreeSetNamedSecurityInfoW proto WINAPI \
-           pObjectName: LPWSTR,
-            ObjectType: SE_OBJECT_TYPE,
-          SecurityInfo: SECURITY_INFORMATION,
-                pOwner: PSID,
-                pGroup: PSID,
-                 pDacl: PACL,
-                 pSacl: PACL,
-              dwAction: DWORD,
-            fnProgress: FN_PROGRESS,
- ProgressInvokeSetting: PROG_INVOKE_SETTING,
-                  Args: PVOID
+if (NTDDI_VERSION ge NTDDI_VISTA)
+TreeSetNamedSecurityInfoA proto WINAPI :LPSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :PSID, :PSID, :PACL, :PACL, :DWORD, :FN_PROGRESS, :PROG_INVOKE_SETTING, :PVOID
+TreeSetNamedSecurityInfoW proto WINAPI :LPWSTR, :SE_OBJECT_TYPE, :SECURITY_INFORMATION, :PSID, :PSID, :PACL, :PACL, :DWORD, :FN_PROGRESS, :PROG_INVOKE_SETTING, :PVOID
 ifdef _UNICODE
-TreeSetNamedSecurityInfo equ <TreeSetNamedSecurityInfoW>
+define TreeSetNamedSecurityInfo  <TreeSetNamedSecurityInfoW>
 else
-TreeSetNamedSecurityInfo equ <TreeSetNamedSecurityInfoA>
+define TreeSetNamedSecurityInfo  <TreeSetNamedSecurityInfoA>
 endif
 
-endif ;; (NTDDI_VERSION GE NTDDI_VISTA)
+endif
 
-;DWORD
-BuildSecurityDescriptorA proto WINAPI \
-                pOwner: PTRUSTEE_A,
-                pGroup: PTRUSTEE_A,
- cCountOfAccessEntries: ULONG,
-  pListOfAccessEntries: PEXPLICIT_ACCESS_A,
-  cCountOfAuditEntries: ULONG,
-   pListOfAuditEntries: PEXPLICIT_ACCESS_A,
-                pOldSD: PSECURITY_DESCRIPTOR,
-            pSizeNewSD: PULONG,
-                pNewSD: PSECURITY_DESCRIPTOR
-BuildSecurityDescriptorW proto WINAPI \
-                pOwner: PTRUSTEE_W,
-                pGroup: PTRUSTEE_W,
- cCountOfAccessEntries: ULONG,
-  pListOfAccessEntries: PEXPLICIT_ACCESS_W,
-  cCountOfAuditEntries: ULONG,
-   pListOfAuditEntries: PEXPLICIT_ACCESS_W,
-                pOldSD: PSECURITY_DESCRIPTOR,
-            pSizeNewSD: PULONG,
-                pNewSD: PSECURITY_DESCRIPTOR
+BuildSecurityDescriptorA proto WINAPI :PTRUSTEE_A, :PTRUSTEE_A, :ULONG, :PEXPLICIT_ACCESS_A, :ULONG, :PEXPLICIT_ACCESS_A, :PSECURITY_DESCRIPTOR, :PULONG, :ptr
+BuildSecurityDescriptorW proto WINAPI :PTRUSTEE_W, :PTRUSTEE_W, :ULONG, :PEXPLICIT_ACCESS_W, :ULONG, :PEXPLICIT_ACCESS_W, :PSECURITY_DESCRIPTOR, :PULONG, :ptr
 ifdef _UNICODE
-BuildSecurityDescriptor equ <BuildSecurityDescriptorW>
+define BuildSecurityDescriptor  <BuildSecurityDescriptorW>
 else
-BuildSecurityDescriptor equ <BuildSecurityDescriptorA>
+define BuildSecurityDescriptor  <BuildSecurityDescriptorA>
 endif
 
-;DWORD
-LookupSecurityDescriptorPartsA proto WINAPI \
-               ppOwner: ptr PTRUSTEE_A,
-               ppGroup: ptr PTRUSTEE_A,
-pcCountOfAccessEntries: PULONG,
- ppListOfAccessEntries: ptr PEXPLICIT_ACCESS_A,
- pcCountOfAuditEntries: PULONG,
-  ppListOfAuditEntries: ptr PEXPLICIT_ACCESS_A,
-                   pSD: PSECURITY_DESCRIPTOR
-LookupSecurityDescriptorPartsW proto WINAPI \
-               ppOwner: ptr PTRUSTEE_W,
-               ppGroup: ptr PTRUSTEE_W,
-pcCountOfAccessEntries: PULONG,
- ppListOfAccessEntries: ptr PEXPLICIT_ACCESS_W,
- pcCountOfAuditEntries: PULONG,
-  ppListOfAuditEntries: ptr PEXPLICIT_ACCESS_W,
-                   pSD: PSECURITY_DESCRIPTOR
+LookupSecurityDescriptorPartsA proto WINAPI :ptr, :ptr, :PULONG, :ptr, :PULONG, :ptr, :PSECURITY_DESCRIPTOR
+LookupSecurityDescriptorPartsW proto WINAPI :ptr, :ptr, :PULONG, :ptr, :PULONG, :ptr, :PSECURITY_DESCRIPTOR
 ifdef _UNICODE
-LookupSecurityDescriptorParts equ <LookupSecurityDescriptorPartsW>
+define LookupSecurityDescriptorParts  <LookupSecurityDescriptorPartsW>
 else
-LookupSecurityDescriptorParts equ <LookupSecurityDescriptorPartsA>
+define LookupSecurityDescriptorParts  <LookupSecurityDescriptorPartsA>
 endif
 
-;VOID
-BuildExplicitAccessWithNameA proto WINAPI \
-       pExplicitAccess: PEXPLICIT_ACCESS_A,
-          pTrusteeName: LPSTR,
-     AccessPermissions: DWORD,
-            AccessMode: ACCESS_MODE,
-           Inheritance: DWORD
-BuildExplicitAccessWithNameW proto WINAPI \
-       pExplicitAccess: PEXPLICIT_ACCESS_W,
-          pTrusteeName: LPWSTR,
-     AccessPermissions: DWORD,
-            AccessMode: ACCESS_MODE,
-           Inheritance: DWORD
+BuildExplicitAccessWithNameA proto WINAPI :PEXPLICIT_ACCESS_A, :LPSTR, :DWORD, :ACCESS_MODE, :DWORD
+BuildExplicitAccessWithNameW proto WINAPI :PEXPLICIT_ACCESS_W, :LPWSTR, :DWORD, :ACCESS_MODE, :DWORD
 ifdef _UNICODE
-BuildExplicitAccessWithName equ <BuildExplicitAccessWithNameW>
+define BuildExplicitAccessWithName  <BuildExplicitAccessWithNameW>
 else
-BuildExplicitAccessWithName equ <BuildExplicitAccessWithNameA>
+define BuildExplicitAccessWithName  <BuildExplicitAccessWithNameA>
 endif
 
-;VOID
-BuildImpersonateExplicitAccessWithNameA proto WINAPI \
-       pExplicitAccess: PEXPLICIT_ACCESS_A,
-          pTrusteeName: LPSTR,
-              pTrustee: PTRUSTEE_A,
-     AccessPermissions: DWORD,
-            AccessMode: ACCESS_MODE,
-           Inheritance: DWORD
-BuildImpersonateExplicitAccessWithNameW proto WINAPI \
-       pExplicitAccess: PEXPLICIT_ACCESS_W,
-          pTrusteeName: LPWSTR,
-              pTrustee: PTRUSTEE_W,
-     AccessPermissions: DWORD,
-            AccessMode: ACCESS_MODE,
-           Inheritance: DWORD
+BuildImpersonateExplicitAccessWithNameA proto WINAPI :PEXPLICIT_ACCESS_A, :LPSTR, :PTRUSTEE_A, :DWORD, :ACCESS_MODE, :DWORD
+BuildImpersonateExplicitAccessWithNameW proto WINAPI :PEXPLICIT_ACCESS_W, :LPWSTR, :PTRUSTEE_W, :DWORD, :ACCESS_MODE, :DWORD
 ifdef _UNICODE
-BuildImpersonateExplicitAccessWithName equ <BuildImpersonateExplicitAccessWithNameW>
+define BuildImpersonateExplicitAccessWithName  <BuildImpersonateExplicitAccessWithNameW>
 else
-BuildImpersonateExplicitAccessWithName equ <BuildImpersonateExplicitAccessWithNameA>
+define BuildImpersonateExplicitAccessWithName  <BuildImpersonateExplicitAccessWithNameA>
 endif
 
-;VOID
-BuildTrusteeWithNameA proto WINAPI \
-              pTrustee: PTRUSTEE_A,
-                 pName: LPSTR
-BuildTrusteeWithNameW proto WINAPI \
-              pTrustee: PTRUSTEE_W,
-                 pName: LPWSTR
+BuildTrusteeWithNameA proto WINAPI :PTRUSTEE_A, :LPSTR
+BuildTrusteeWithNameW proto WINAPI :PTRUSTEE_W, :LPWSTR
 ifdef _UNICODE
-BuildTrusteeWithName    equ <BuildTrusteeWithNameW>
+define BuildTrusteeWithName  <BuildTrusteeWithNameW>
 else
-BuildTrusteeWithName    equ <BuildTrusteeWithNameA>
+define BuildTrusteeWithName  <BuildTrusteeWithNameA>
 endif
 
-;VOID
-BuildImpersonateTrusteeA proto WINAPI \
-              pTrustee: PTRUSTEE_A,
-   pImpersonateTrustee: PTRUSTEE_A
-BuildImpersonateTrusteeW proto WINAPI \
-              pTrustee: PTRUSTEE_W,
-   pImpersonateTrustee: PTRUSTEE_W
+BuildImpersonateTrusteeA proto WINAPI :PTRUSTEE_A, :PTRUSTEE_A
+BuildImpersonateTrusteeW proto WINAPI :PTRUSTEE_W, :PTRUSTEE_W
 ifdef _UNICODE
-BuildImpersonateTrustee equ <BuildImpersonateTrusteeW>
+define BuildImpersonateTrustee  <BuildImpersonateTrusteeW>
 else
-BuildImpersonateTrustee equ <BuildImpersonateTrusteeA>
+define BuildImpersonateTrustee  <BuildImpersonateTrusteeA>
 endif
 
-;VOID
-BuildTrusteeWithSidA proto WINAPI \
-              pTrustee: PTRUSTEE_A,
-                  pSid: PSID
-BuildTrusteeWithSidW proto WINAPI \
-              pTrustee: PTRUSTEE_W,
-                  pSid: PSID
+BuildTrusteeWithSidA proto WINAPI :PTRUSTEE_A, :PSID
+BuildTrusteeWithSidW proto WINAPI :PTRUSTEE_W, :PSID
 ifdef _UNICODE
-BuildTrusteeWithSid     equ <BuildTrusteeWithSidW>
+define BuildTrusteeWithSid  <BuildTrusteeWithSidW>
 else
-BuildTrusteeWithSid     equ <BuildTrusteeWithSidA>
+define BuildTrusteeWithSid  <BuildTrusteeWithSidA>
 endif
 
-;VOID
-BuildTrusteeWithObjectsAndSidA proto WINAPI \
-              pTrustee: PTRUSTEE_A,
-               pObjSid: POBJECTS_AND_SID,
-           pObjectGuid: ptr GUID,
-  pInheritedObjectGuid: ptr GUID,
-                  pSid: PSID
-BuildTrusteeWithObjectsAndSidW proto WINAPI \
-              pTrustee: PTRUSTEE_W,
-               pObjSid: POBJECTS_AND_SID,
-           pObjectGuid: ptr GUID,
-  pInheritedObjectGuid: ptr GUID,
-                  pSid: PSID
+BuildTrusteeWithObjectsAndSidA proto WINAPI :PTRUSTEE_A, :POBJECTS_AND_SID, :ptr, :ptr, :PSID
+BuildTrusteeWithObjectsAndSidW proto WINAPI :PTRUSTEE_W, :POBJECTS_AND_SID, :ptr, :ptr, :PSID
 ifdef _UNICODE
-BuildTrusteeWithObjectsAndSid equ <BuildTrusteeWithObjectsAndSidW>
+define BuildTrusteeWithObjectsAndSid  <BuildTrusteeWithObjectsAndSidW>
 else
-BuildTrusteeWithObjectsAndSid equ <BuildTrusteeWithObjectsAndSidA>
+define BuildTrusteeWithObjectsAndSid  <BuildTrusteeWithObjectsAndSidA>
 endif
 
-;VOID
-BuildTrusteeWithObjectsAndNameA proto WINAPI \
-              pTrustee: PTRUSTEE_A,
-              pObjName: POBJECTS_AND_NAME_A,
-            ObjectType: SE_OBJECT_TYPE,
-        ObjectTypeName: LPSTR,
-InheritedObjectTypeName: LPSTR,
-                  Name: LPSTR
-BuildTrusteeWithObjectsAndNameW proto WINAPI \
-              pTrustee: PTRUSTEE_W,
-              pObjName: POBJECTS_AND_NAME_W,
-            ObjectType: SE_OBJECT_TYPE,
-        ObjectTypeName: LPWSTR,
-InheritedObjectTypeName: LPWSTR,
-                  Name: LPWSTR
+BuildTrusteeWithObjectsAndNameA proto WINAPI :PTRUSTEE_A, :POBJECTS_AND_NAME_A, :SE_OBJECT_TYPE, :LPSTR, :LPSTR, :LPSTR
+BuildTrusteeWithObjectsAndNameW proto WINAPI :PTRUSTEE_W, :POBJECTS_AND_NAME_W, :SE_OBJECT_TYPE, :LPWSTR, :LPWSTR, :LPWSTR
 ifdef _UNICODE
-BuildTrusteeWithObjectsAndName equ <BuildTrusteeWithObjectsAndNameW>
+define BuildTrusteeWithObjectsAndName  <BuildTrusteeWithObjectsAndNameW>
 else
-BuildTrusteeWithObjectsAndName equ <BuildTrusteeWithObjectsAndNameA>
+define BuildTrusteeWithObjectsAndName  <BuildTrusteeWithObjectsAndNameA>
 endif
 
-;LPSTR
-GetTrusteeNameA proto WINAPI \
-              pTrustee: PTRUSTEE_A
-GetTrusteeNameW proto WINAPI \
-              pTrustee: PTRUSTEE_W
+GetTrusteeNameA proto WINAPI :PTRUSTEE_A
+GetTrusteeNameW proto WINAPI :PTRUSTEE_W
 ifdef _UNICODE
-GetTrusteeName          equ <GetTrusteeNameW>
+define GetTrusteeName  <GetTrusteeNameW>
 else
-GetTrusteeName          equ <GetTrusteeNameA>
+define GetTrusteeName  <GetTrusteeNameA>
 endif
 
-GetTrusteeTypeA proto WINAPI \
-              pTrustee: PTRUSTEE_A
-GetTrusteeTypeW proto WINAPI \
-              pTrustee: PTRUSTEE_W
+GetTrusteeTypeA proto WINAPI :PTRUSTEE_A
+GetTrusteeTypeW proto WINAPI :PTRUSTEE_W
 ifdef _UNICODE
-GetTrusteeType          equ <GetTrusteeTypeW>
+define GetTrusteeType  <GetTrusteeTypeW>
 else
-GetTrusteeType          equ <GetTrusteeTypeA>
+define GetTrusteeType  <GetTrusteeTypeA>
 endif
 
-GetTrusteeFormA proto WINAPI \
-              pTrustee: PTRUSTEE_A
-GetTrusteeFormW proto WINAPI \
-              pTrustee: PTRUSTEE_W
+GetTrusteeFormA proto WINAPI :PTRUSTEE_A
+GetTrusteeFormW proto WINAPI :PTRUSTEE_W
 ifdef _UNICODE
-GetTrusteeForm          equ <GetTrusteeFormW>
+define GetTrusteeForm  <GetTrusteeFormW>
 else
-GetTrusteeForm          equ <GetTrusteeFormA>
+define GetTrusteeForm  <GetTrusteeFormA>
 endif
 
-GetMultipleTrusteeOperationA proto WINAPI \
-              pTrustee: PTRUSTEE_A
-GetMultipleTrusteeOperationW proto WINAPI \
-              pTrustee: PTRUSTEE_W
+GetMultipleTrusteeOperationA proto WINAPI :PTRUSTEE_A
+GetMultipleTrusteeOperationW proto WINAPI :PTRUSTEE_W
 ifdef _UNICODE
-GetMultipleTrusteeOperation equ <GetMultipleTrusteeOperationW>
+define GetMultipleTrusteeOperation  <GetMultipleTrusteeOperationW>
 else
-GetMultipleTrusteeOperation equ <GetMultipleTrusteeOperationA>
+define GetMultipleTrusteeOperation  <GetMultipleTrusteeOperationA>
 endif
 
-GetMultipleTrusteeA proto WINAPI \
-              pTrustee: PTRUSTEE_A
-GetMultipleTrusteeW proto WINAPI \
-              pTrustee: PTRUSTEE_W
+GetMultipleTrusteeA proto WINAPI :PTRUSTEE_A
+GetMultipleTrusteeW proto WINAPI :PTRUSTEE_W
 ifdef _UNICODE
-GetMultipleTrustee      equ <GetMultipleTrusteeW>
+define GetMultipleTrustee  <GetMultipleTrusteeW>
 else
-GetMultipleTrustee      equ <GetMultipleTrusteeA>
+define GetMultipleTrustee  <GetMultipleTrusteeA>
 endif
 
-.pragma list(pop)
 endif
+
+endif
+

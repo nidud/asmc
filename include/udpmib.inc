@@ -80,7 +80,7 @@ SIZEOF_UDPTABLE_OWNER_MODULE macro X
 ifdef _WS2IPDEF_
 
 _MIB_UDP6ROW            struct
-dwLocalAddr             IN6_ADDR ?
+dwLocalAddr             IN6_ADDR <>
 dwLocalScopeId          DWORD ?
 dwLocalPort             DWORD ?
 _MIB_UDP6ROW            ends
@@ -89,7 +89,7 @@ PMIB_UDP6ROW            typedef ptr _MIB_UDP6ROW
 
 _MIB_UDP6TABLE          struct
 dwNumEntries            DWORD ?
-table                   MIB_UDP6ROW ANY_SIZE dup(?)
+table                   MIB_UDP6ROW ANY_SIZE dup(<?>)
 _MIB_UDP6TABLE          ends
 MIB_UDP6TABLE           typedef _MIB_UDP6TABLE
 PMIB_UDP6TABLE          typedef ptr _MIB_UDP6TABLE
@@ -109,7 +109,7 @@ PMIB_UDP6ROW_OWNER_PID  typedef ptr _MIB_UDP6ROW_OWNER_PID
 
 _MIB_UDP6TABLE_OWNER_PID struct
 dwNumEntries            DWORD ?
-table                   MIB_UDP6ROW_OWNER_PID ANY_SIZE dup(?)
+table                   MIB_UDP6ROW_OWNER_PID ANY_SIZE dup(<?>)
 _MIB_UDP6TABLE_OWNER_PID ends
 MIB_UDP6TABLE_OWNER_PID typedef _MIB_UDP6TABLE_OWNER_PID
 PMIB_UDP6TABLE_OWNER_PID typedef ptr _MIB_UDP6TABLE_OWNER_PID
@@ -126,7 +126,9 @@ dwOwningPid             DWORD ?
 liCreateTimestamp       LARGE_INTEGER <>
 union
  struct
-  SpecificPortBind      sdword :  1 ?
+  record
+   SpecificPortBind     sdword :  1 ?
+  ends
  ends
  dwFlags                sdword ?
 ends
@@ -137,7 +139,7 @@ PMIB_UDP6ROW_OWNER_MODULE typedef ptr _MIB_UDP6ROW_OWNER_MODULE
 
 _MIB_UDP6TABLE_OWNER_MODULE struct
 dwNumEntries            DWORD ?
-table                   MIB_UDP6ROW_OWNER_MODULE ANY_SIZE dup(?)
+table                   MIB_UDP6ROW_OWNER_MODULE ANY_SIZE dup(<?>)
 _MIB_UDP6TABLE_OWNER_MODULE ends
 MIB_UDP6TABLE_OWNER_MODULE typedef _MIB_UDP6TABLE_OWNER_MODULE
 PMIB_UDP6TABLE_OWNER_MODULE typedef ptr _MIB_UDP6TABLE_OWNER_MODULE

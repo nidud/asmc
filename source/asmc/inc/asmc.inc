@@ -75,7 +75,7 @@ define MAX_TOKEN            MAX_LINE_LEN / 4    ; max tokens in one line
 define MAX_STRUCT_ALIGN     32
 define MAX_SEGMENT_ALIGN    4096
 
-define MAX_IF_NESTING       20   ; IFxx block nesting. Must be <=32, see condasm.asm
+define MAX_IF_NESTING       30   ; IFxx block nesting. Must be <=32, see condasm.asm
 define MAX_SEG_NESTING      20   ; limit for segment nesting
 define MAX_MACRO_NESTING    100  ; macro call nesting
 define MAX_STRUCT_NESTING   32   ; limit for "anonymous structs" only

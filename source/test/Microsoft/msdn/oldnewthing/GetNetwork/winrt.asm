@@ -3,6 +3,7 @@
 ; https://devblogs.microsoft.com/oldnewthing/20221013-00/?p=107285
 ;
 
+include windows.inc
 include roapi.inc
 include stdio.inc
 include winrt/Windows.Networking.Connectivity.inc
@@ -17,20 +18,19 @@ include tchar.inc
 
 _tmain proc
 
+
    .new hr:HRESULT = CoInitializeEx(nullptr, COINIT_MULTITHREADED)
 
     .if (SUCCEEDED(hr))
 
        .new interfaceName:HString(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation)
        .new classFactory:ptr IActivationFactory = NULL
-
         mov hr,RoGetActivationFactory(interfaceName, &IID_IActivationFactory, &classFactory)
         interfaceName.Release()
 
         .if (SUCCEEDED(hr))
 
            .new netStatics:ptr Windows::Networking::Connectivity::INetworkInformationStatics = NULL
-
             mov hr,classFactory.QueryInterface(&IID_INetworkInformationStatics, &netStatics)
 
             .if (SUCCEEDED(hr))
@@ -58,7 +58,7 @@ _tmain proc
                         cost.get_OverDataLimit(&overDataLimit)
                         cost.get_ApproachingDataLimit(&approachingDataLimit)
 
-                         wprintf(
+                         _tprintf(
                             " ConnectivityLevel:     %d\n"
                             " ConnectivityCost:      %d\n"
                             " ApproachingDataLimit:  %d\n"
@@ -70,9 +70,13 @@ _tmain proc
                             overDataLimit,
                             roaming)
 
+                        cost.Release()
                     .endif
+                    connection.Release()
                 .endif
+                netStatics.Release()
             .endif
+            classFactory.Release()
         .endif
         CoUninitialize()
     .endif

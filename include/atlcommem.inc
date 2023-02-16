@@ -11,9 +11,8 @@ include atlcomcli.inc
 
 ifdef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
 
-.class CComHeap : public IAtlMemMgr
-
-	.ENDS
+;.class CComHeap : public IAtlMemMgr
+;	.ENDS
 endif
 
 AtlAllocTaskWideStringW proto :LPCWSTR { int 3 }

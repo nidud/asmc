@@ -19,57 +19,31 @@ define MAX_NATURAL_ALIGNMENT	   4
 define MEMORY_ALLOCATION_ALIGNMENT 8
 endif
 
-ifdef __cplusplus
-if _MSC_VER GE 1300
 TYPE_ALIGNMENT macro t
-	exitm<__alignof(t)>
-	endm
-endif
-else
-TYPE_ALIGNMENT macro t
-	local S1
-	S1 STRUC
-	l1 db ?
-	l2 t ?
-	S1 ENDS
-	exitm<S1.l2>
-	endm
-endif
+  local S1
+  S1 STRUC
+  l1 db ?
+  l2 t ?
+  S1 ENDS
+  exitm<S1.l2>
+  endm
 
-if defined(_AMD64_) OR defined(_X86_)
-PROBE_ALIGNMENT macro _s
-	exitm<TYPE_ALIGNMENT( ULONG )>
-	endm
-elseif defined(_IA64_) OR defined(_ARM_)
-PROBE_ALIGNMENT macro _s
-if TYPE_ALIGNMENT(_s) GT TYPE_ALIGNMENT(DWORD)
-	exitm<TYPE_ALIGNMENT( _s )>
-else
-	exitm<TYPE_ALIGNMENT( ULONG )>
-endif
-	endm
-elseif NOT defined(RC_INVOKED)
-.err <"No Target Architecture">
-endif
-
-if defined(_WIN64)
-PROBE_ALIGNMENT32 macro _s
-	exitm<TYPE_ALIGNMENT( ULONG )>
-	endm
-endif
+PROBE_ALIGNMENT32 macro	 _s
+  exitm<TYPE_ALIGNMENT( ULONG )>
+  endm
 
 ifndef SORTPP_PASS
 C_ASSERT macro e
-	if e
-	    exitm<>
-	else
-	    .err<e>
-	endif
-	endm
+if e
+  exitm<>
+else
+  .err<e>
+endif
+  endm
 else
 C_ASSERT macro e
-	exitm<>
-	endm
+  exitm<>
+  endm
 endif
 
 include basetsd.inc
@@ -82,43 +56,11 @@ define SYSTEM_CACHE_ALIGNMENT_SIZE 128
 endif
 endif
 
+PVOID			typedef ptr
+PVOID64			typedef ptr
 
-ifdef DEPRECATE_DDK_FUNCTIONS
-ifdef _NTDDK_
-DECLSPEC_DEPRECATED_DDK equ DECLSPEC_DEPRECATED
-ifdef DEPRECATE_SUPPORTED
-PRAGMA_DEPRECATED_DDK	equ 1
-endif
-else
-DECLSPEC_DEPRECATED_DDK equ 1
-PRAGMA_DEPRECATED_DDK	equ 1
-endif
-else
-DECLSPEC_DEPRECATED_DDK equ 1
-PRAGMA_DEPRECATED_DDK	equ 0
-endif
-
-PVOID	typedef ptr
-PVOID64 typedef ptr
-
-if (_MSC_VER GE 800) OR defined(_STDCALL_SUPPORTED)
-NTAPI equ <stdcall>
-else
-_cdecl	equ <>
-__cdecl equ <>
-NTAPI	equ <>
-endif
-
-
-ifndef VOID
-VOID  equ <>
-CHAR  typedef sbyte
-;SHORT typedef sword
-LONG  typedef sdword
-if NOT defined(MIDL_PASS)
-SINT  typedef sdword
-endif
-endif
+CHAR			typedef sbyte
+LONG			typedef sdword
 
 PWCH			typedef ptr WCHAR
 PCWCH			typedef ptr WCHAR
@@ -178,12 +120,12 @@ PNZCH			typedef ptr CHAR
 PCNZCH			typedef ptr CHAR
 
 ifdef  _UNICODE
+
 ifndef _TCHAR_DEFINED
-_TCHAR_DEFINED equ <>
-;TBYTE			typedef WCHAR
-TCHAR			typedef WCHAR
-PTCHAR			typedef ptr WCHAR
-PTBYTE			typedef ptr WCHAR
+define _TCHAR_DEFINED
+TCHAR			typedef word
+PTCHAR			typedef ptr word
+PTBYTE			typedef ptr word
 endif
 
 PTCH			typedef LPWCH
@@ -198,7 +140,6 @@ LPUTSTR			typedef LPUWSTR
 PUTSTR			typedef LPUWSTR
 PCUTSTR			typedef LPCUWSTR
 LPCUTSTR		typedef LPCUWSTR
-;LP			 typedef LPWSTR
 
 PZZTSTR			typedef PZZWSTR
 PCZZTSTR		typedef PCZZWSTR
@@ -216,11 +157,10 @@ __TEXT macro quote
 else
 
 ifndef _TCHAR_DEFINED
-_TCHAR_DEFINED equ <>
-;TBYTE			typedef CHAR
-TCHAR			typedef CHAR
-PTCHAR			typedef ptr CHAR
-PTBYTE			typedef ptr CHAR
+define _TCHAR_DEFINED
+TCHAR			typedef sbyte
+PTCHAR			typedef ptr sbyte
+PTBYTE			typedef ptr sbyte
 endif
 
 PTCH			typedef LPCH
@@ -344,12 +284,10 @@ LANGID			typedef USHORT
 
 ifndef __COMPARTMENT_ID_DEFINED__
 define __COMPARTMENT_ID_DEFINED__
-
-.enum {
+.enum COMPARTMENT_ID {
     UNSPECIFIED_COMPARTMENT_ID = 0,
     DEFAULT_COMPARTMENT_ID
     }
-
 endif
 
 LOGICAL			typedef ULONG
@@ -363,38 +301,30 @@ PCNTSTATUS		typedef ptr NTSTATUS
 endif
 
 NT_SUCCESS macro Status
-	exitm<((Status) GE 0)>
+	exitm<((Status) !>= 0)>
 	endm
 
-ifdef _PREFAST_
-NT_INFORMATION macro Status
-	exitm<((Status) GE 0x40000000)>
-	endm
-else
-NT_INFORMATION macro Status
-	exitm<(((Status) SHR 30) EQ 1)>
-	endm
+ifndef NT_INFORMATION
+NT_INFORMATION proto watcall Status:NTSTATUS {
+    shr	    eax,30
+    retm    <(eax == 1)>
+    }
 endif
 
-ifdef _PREFAST_
-NT_WARNING macro Status
-	exitm<(((Status) LT 0xc0000000))>
-	endm
-else
-NT_WARNING macro Status
-	exitm<(((Status) SHR 30) EQ 2)>
-	endm
+ifndef NT_WARNING
+NT_WARNING proto watcall Status:NTSTATUS {
+    shr	    eax,30
+    retm    <(eax == 2)>
+    }
 endif
 
-ifdef _PREFAST_
-NT_ERROR macro Status
-	exitm<((Status) GE 0xc0000000)>
-	endm
-else
-NT_ERROR macro Status
-	exitm<(((Status) SHR 30) EQ 3)>
-	endm
+ifndef NT_ERROR
+NT_ERROR proto watcall Status:NTSTATUS {
+    shr	    eax,30
+    retm    <(eax == 3)>
+    }
 endif
+
 
 APPLICATION_ERROR_MASK	equ 0x20000000
 ERROR_SEVERITY_SUCCESS	equ 0x00000000
@@ -407,17 +337,6 @@ define __SECSTATUS_DEFINED__
 SECURITY_STATUS typedef LONG
 endif
 
-if 0
-TIME			equ LARGE_INTEGER
-_TIME			equ _LARGE_INTEGER
-PTIME			equ PLARGE_INTEGER
-LowTime			equ LowPart
-HighTime		equ HighPart
-endif
-
-if defined(_M_IA64) AND NOT defined(MIDL_PASS)
-;__declspec(align(16))
-endif
 FLOAT128		STRUC
 LowPart			int64_t ?
 HighPart		int64_t ?
@@ -426,29 +345,14 @@ FLOAT128		ENDS
 PFLOAT128		typedef ptr FLOAT128
 
 define _ULONGLONG_
-if ( NOT defined (_MAC) AND ( NOT defined(MIDL_PASS) OR defined(__midl)) AND ( NOT defined(_M_IX86) OR (defined(_INTEGRAL_MAX_BITS) AND _INTEGRAL_MAX_BITS GE 64)))
 LONGLONG		typedef SQWORD
 ULONGLONG		typedef QWORD
 MAXLONGLONG		equ (0x7fffffffffffffff)
-else
-if defined(_MAC) AND defined(_MAC_INT_64)
-LONGLONG		typedef SQWORD
-ULONGLONG		typedef QWORD
-MAXLONGLONG		equ (0x7fffffffffffffff)
-else
-LONGLONG		typedef double
-ULONGLONG		typedef double
-endif
-
-endif
 
 PLONGLONG		typedef ptr LONGLONG
 PULONGLONG		typedef ptr ULONGLONG
 USN			typedef LONGLONG
 
-ifdef MIDL_PASS
-LARGE_INTEGER	STRUC
-else
 LARGE_INTEGER	UNION
     STRUC
       LowPart	dd ?
@@ -458,14 +362,10 @@ LARGE_INTEGER	UNION
       LowPart	dd ?
       HighPart	LONG ?
     ENDS
-endif
     QuadPart	LONGLONG ?
 LARGE_INTEGER	ENDS
 PLARGE_INTEGER	typedef PTR LARGE_INTEGER
 
-ifdef MIDL_PASS
-ULARGE_INTEGER	STRUC
-else
 ULARGE_INTEGER	UNION
     STRUC
       LowPart	dd ?
@@ -475,7 +375,6 @@ ULARGE_INTEGER	UNION
       LowPart	dd ?
       HighPart	dd ?
     ENDS
-endif
     QuadPart	ULONGLONG ?
 ULARGE_INTEGER	ENDS
 PULARGE_INTEGER typedef PTR ULARGE_INTEGER
@@ -498,7 +397,6 @@ PHYSICAL_ADDRESS	typedef LARGE_INTEGER
 PPHYSICAL_ADDRESS	typedef ptr LARGE_INTEGER
 
 if defined(MIDL_PASS)	OR \
-   defined(RC_INVOKED)	OR \
    defined(_M_CEE_PURE) OR \
    defined(_68K_)	OR \
    defined(_MPPC_)	OR \
@@ -507,8 +405,8 @@ if defined(MIDL_PASS)	OR \
    defined(_M_ARM)
 
 Int32x32To64 proto fastcall :int_t, :int_t {
-	movsx	rax, ecx
-	movsx	rdx, edx
+	movsxd	rax, ecx
+	movsxd	rdx, edx
 	imul	rax, rdx
 	}
 UInt32x32To64 proto fastcall :ULONG, :ULONG {
@@ -551,47 +449,22 @@ Int64ShrlMod32 proto watcall :ULONGLONG, :ULONG {
 	shrd	eax, edx, cl
 	shr	edx, cl
 	}
-
-
-if _MSC_VER GE 1200
-endif
-
-if _MSC_VER GE 1200
 else
-endif
-
-else
-
 .err <Must define a target architecture.>
-
 endif
 
 ifdef _M_AMD64
-
 RotateLeft8		equ <_rotl8>
 RotateLeft16		equ <_rotl16>
 RotateRight8		equ <_rotr8>
 RotateRight16		equ <_rotr16>
-
-_rotl8			proto __cdecl :uchar_t,	 :uchar_t
-_rotl16			proto __cdecl :ushort_t, :uchar_t
-_rotr8			proto __cdecl :uchar_t,	 :uchar_t
-_rotr16			proto __cdecl :ushort_t, :uchar_t
-
 endif
 
 if _MSC_VER GE 1300
-
 RotateLeft32		equ <_rotl>
 RotateLeft64		equ <_rotl64>
 RotateRight32		equ <_rotr>
 RotateRight64		equ <_rotr64>
-
-_rotl			proto __cdecl :dword, :int_t
-_rotl64			proto __cdecl :qword, :int_t
-_rotr			proto __cdecl :dword, :int_t
-_rotr64			proto __cdecl :qword, :int_t
-
 endif
 
 .enum EVENT_TYPE {
@@ -767,15 +640,17 @@ PUNICODE_STRING64	typedef ptr UNICODE_STRING64
 ANSI_STRING64		typedef STRING64
 PANSI_STRING64		typedef ptr ANSI_STRING64
 
-OBJ_INHERIT		equ 0x00000002
-OBJ_PERMANENT		equ 0x00000010
-OBJ_EXCLUSIVE		equ 0x00000020
-OBJ_CASE_INSENSITIVE	equ 0x00000040
-OBJ_OPENIF		equ 0x00000080
-OBJ_OPENLINK		equ 0x00000100
-OBJ_KERNEL_HANDLE	equ 0x00000200
-OBJ_FORCE_ACCESS_CHECK	equ 0x00000400
-OBJ_VALID_ATTRIBUTES	equ 0x000007F2
+define OBJ_INHERIT			   0x00000002
+define OBJ_PERMANENT			   0x00000010
+define OBJ_EXCLUSIVE			   0x00000020
+define OBJ_CASE_INSENSITIVE		   0x00000040
+define OBJ_OPENIF			   0x00000080
+define OBJ_OPENLINK			   0x00000100
+define OBJ_KERNEL_HANDLE		   0x00000200
+define OBJ_FORCE_ACCESS_CHECK		   0x00000400
+define OBJ_IGNORE_IMPERSONATED_DEVICEMAP   0x00000800
+define OBJ_DONT_REPARSE			   0x00001000
+define OBJ_VALID_ATTRIBUTES		   0x00001FF2
 
 OBJECT_ATTRIBUTES64	STRUC
 Length			ULONG ?

@@ -1,5 +1,5 @@
 ifndef __HTTP_H__
-__HTTP_H__ equ 1
+define __HTTP_H__
 
 include winapifamily.inc
 
@@ -1017,10 +1017,6 @@ ParamDesc		HTTP_SERVICE_CONFIG_CACHE_PARAM ?
 HTTP_SERVICE_CONFIG_CACHE_SET ENDS
 PHTTP_SERVICE_CONFIG_CACHE_SET typedef ptr HTTP_SERVICE_CONFIG_CACHE_SET
 
-
-if NOT defined(HTTPAPI_LINKAGE)
-HTTPAPI_LINKAGE		equ <DECLSPEC_IMPORT>
-endif
 
 .pragma pack(pop)
 

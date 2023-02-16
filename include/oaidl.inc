@@ -22,9 +22,6 @@ define __oaidl_h__
 
 include objidl.inc
 
-MIDL_user_allocate proto WINAPI :size_t
-MIDL_user_free proto WINAPI :ptr
-
 ifndef __IOleAutomationTypes_INTERFACE_DEFINED__
 define __IOleAutomationTypes_INTERFACE_DEFINED__
 
@@ -173,7 +170,7 @@ UNION
    pdblVal		LPDOUBLE ?
    pboolVal		LPVARIANT_BOOL ?
    pbool		LPVARIANT_BOOL ?
-   pscode		LPSCODE ?
+   pscode		PSCODE ?
    pcyVal		LPCY ?
    pdate		LPDATE ?
    pbstrVal		LPBSTR ?
@@ -248,7 +245,7 @@ UNION
  pfltVal		LPFLOAT ?
  pdblVal		LPDOUBLE ?
  pboolVal		LPVARIANT_BOOL ?
- pscode			LPSCODE ?
+ pscode			PSCODE ?
  pcyVal			LPCY ?
  pdate			LPDATE ?
  pbstrVal		PVOID ?;LPwireBSTR ?
@@ -423,7 +420,7 @@ LPEXCEPINFO		typedef ptr EXCEPINFO
 
 FUNCDESC		STRUC
 memid			MEMBERID ?
-lprgscode		LPSCODE ?
+lprgscode		PSCODE ?
 lprgelemdescParam	LPELEMDESC ?
 funckind		FUNCKIND ?
 invkind			INVOKEKIND ?

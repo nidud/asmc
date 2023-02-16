@@ -1,217 +1,214 @@
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
 ifndef _WININET_
-.pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
-endif
-include specstrings.inc
+include SpecStrings.inc
 define _WININET_
 
-ifdef _WIN64
-_WININET_ALIGN equ 8
-else
-_WININET_ALIGN equ 4
-endif
+.pragma pack(push, size_t)
+
 .pragma comment(lib, wininet)
 
-;BOOLAPI		equ INTERNETAPI_(BOOL)
+HINTERNET               typedef ptr
+LPHINTERNET             typedef ptr HINTERNET
 
-HINTERNET		typedef ptr
-LPHINTERNET		typedef ptr HINTERNET
+INTERNET_PORT           typedef WORD
+LPINTERNET_PORT         typedef ptr INTERNET_PORT
 
-INTERNET_PORT		typedef WORD
-LPINTERNET_PORT		typedef ptr INTERNET_PORT
+define INTERNET_INVALID_PORT_NUMBER    0
 
-INTERNET_INVALID_PORT_NUMBER	equ 0
+define INTERNET_DEFAULT_FTP_PORT       21
+define INTERNET_DEFAULT_GOPHER_PORT    70
+define INTERNET_DEFAULT_HTTP_PORT      80
+define INTERNET_DEFAULT_HTTPS_PORT     443
+define INTERNET_DEFAULT_SOCKS_PORT     1080
 
-INTERNET_DEFAULT_FTP_PORT	equ 21
-INTERNET_DEFAULT_GOPHER_PORT	equ 70
-INTERNET_DEFAULT_HTTP_PORT	equ 80
-INTERNET_DEFAULT_HTTPS_PORT	equ 443
-INTERNET_DEFAULT_SOCKS_PORT	equ 1080
+define INTERNET_MAX_HOST_NAME_LENGTH   256
+define INTERNET_MAX_USER_NAME_LENGTH   128
+define INTERNET_MAX_PASSWORD_LENGTH    128
+define INTERNET_MAX_PORT_NUMBER_LENGTH 5
+define INTERNET_MAX_PORT_NUMBER_VALUE  65535
+define INTERNET_MAX_PATH_LENGTH        2048
+define INTERNET_MAX_SCHEME_LENGTH      32
+define INTERNET_MAX_URL_LENGTH         (INTERNET_MAX_SCHEME_LENGTH + TCHAR*3 + INTERNET_MAX_PATH_LENGTH)
 
-INTERNET_MAX_HOST_NAME_LENGTH	equ 256
-INTERNET_MAX_USER_NAME_LENGTH	equ 128
-INTERNET_MAX_PASSWORD_LENGTH	equ 128
-INTERNET_MAX_PORT_NUMBER_LENGTH equ 5
-INTERNET_MAX_PORT_NUMBER_VALUE	equ 65535
-INTERNET_MAX_PATH_LENGTH	equ 2048
-INTERNET_MAX_SCHEME_LENGTH	equ 32
-INTERNET_MAX_URL_LENGTH		equ (INTERNET_MAX_SCHEME_LENGTH + TCHAR*3 + INTERNET_MAX_PATH_LENGTH)
+define INTERNET_KEEP_ALIVE_UNKNOWN     (-1)
+define INTERNET_KEEP_ALIVE_ENABLED     1
+define INTERNET_KEEP_ALIVE_DISABLED    0
 
+define INTERNET_REQFLAG_FROM_CACHE     0x00000001
+define INTERNET_REQFLAG_ASYNC          0x00000002
+define INTERNET_REQFLAG_VIA_PROXY      0x00000004
+define INTERNET_REQFLAG_NO_HEADERS     0x00000008
+define INTERNET_REQFLAG_PASSIVE        0x00000010
+define INTERNET_REQFLAG_CACHE_WRITE_DISABLED 0x00000040
+define INTERNET_REQFLAG_NET_TIMEOUT    0x00000080
 
-INTERNET_KEEP_ALIVE_UNKNOWN	equ (-1)
-INTERNET_KEEP_ALIVE_ENABLED	equ 1
-INTERNET_KEEP_ALIVE_DISABLED	equ 0
+define INTERNET_FLAG_IDN_DIRECT        0x00000001
+define INTERNET_FLAG_IDN_PROXY         0x00000002
 
-INTERNET_REQFLAG_FROM_CACHE	equ 0x00000001
-INTERNET_REQFLAG_ASYNC		equ 0x00000002
-INTERNET_REQFLAG_VIA_PROXY	equ 0x00000004
-INTERNET_REQFLAG_NO_HEADERS	equ 0x00000008
-INTERNET_REQFLAG_PASSIVE	equ 0x00000010
-INTERNET_REQFLAG_CACHE_WRITE_DISABLED equ 0x00000040
-INTERNET_REQFLAG_NET_TIMEOUT	equ 0x00000080
+define INTERNET_FLAG_RELOAD            0x80000000
 
-INTERNET_FLAG_IDN_DIRECT	equ 0x00000001
-INTERNET_FLAG_IDN_PROXY		equ 0x00000002
-INTERNET_FLAG_RELOAD		equ 0x80000000
-INTERNET_FLAG_RAW_DATA		equ 0x40000000
-INTERNET_FLAG_EXISTING_CONNECT	equ 0x20000000
-INTERNET_FLAG_ASYNC		equ 0x10000000
-INTERNET_FLAG_PASSIVE		equ 0x08000000
-INTERNET_FLAG_NO_CACHE_WRITE	equ 0x04000000
-INTERNET_FLAG_DONT_CACHE	equ INTERNET_FAG_NO_CACHE_WRITE
-INTERNET_FLAG_MAKE_PERSISTENT	equ 0x02000000
-INTERNET_FLAG_FROM_CACHE	equ 0x01000000
-INTERNET_FLAG_OFFLINE		equ INTERNET_FAG_FROM_CACHE
+define INTERNET_FLAG_RAW_DATA          0x40000000
+define INTERNET_FLAG_EXISTING_CONNECT  0x20000000
 
-INTERNET_FLAG_SECURE		equ 0x00800000
-INTERNET_FLAG_KEEP_CONNECTION	equ 0x00400000
-INTERNET_FLAG_NO_AUTO_REDIRECT	equ 0x00200000
-INTERNET_FLAG_READ_PREFETCH	equ 0x00100000
-INTERNET_FLAG_NO_COOKIES	equ 0x00080000
-INTERNET_FLAG_NO_AUTH		equ 0x00040000
-INTERNET_FLAG_RESTRICTED_ZONE	equ 0x00020000
-INTERNET_FLAG_CACHE_IF_NET_FAIL equ 0x00010000
+define INTERNET_FLAG_ASYNC             0x10000000
 
+define INTERNET_FLAG_PASSIVE           0x08000000
 
-INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP equ 0x00008000
-INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS equ 0x00004000
-INTERNET_FLAG_IGNORE_CERT_DATE_INVALID equ 0x00002000
-INTERNET_FLAG_IGNORE_CERT_CN_INVALID equ 0x00001000
+define INTERNET_FLAG_NO_CACHE_WRITE    0x04000000
+define INTERNET_FLAG_DONT_CACHE        INTERNET_FLAG_NO_CACHE_WRITE
+define INTERNET_FLAG_MAKE_PERSISTENT   0x02000000
+define INTERNET_FLAG_FROM_CACHE        0x01000000
+define INTERNET_FLAG_OFFLINE           INTERNET_FLAG_FROM_CACHE
 
+define INTERNET_FLAG_SECURE            0x00800000
+define INTERNET_FLAG_KEEP_CONNECTION   0x00400000
+define INTERNET_FLAG_NO_AUTO_REDIRECT  0x00200000
+define INTERNET_FLAG_READ_PREFETCH     0x00100000
+define INTERNET_FLAG_NO_COOKIES        0x00080000
+define INTERNET_FLAG_NO_AUTH           0x00040000
+define INTERNET_FLAG_RESTRICTED_ZONE   0x00020000
+define INTERNET_FLAG_CACHE_IF_NET_FAIL 0x00010000
 
-INTERNET_FLAG_RESYNCHRONIZE	equ 0x00000800
-INTERNET_FLAG_HYPERLINK		equ 0x00000400
-INTERNET_FLAG_NO_UI		equ 0x00000200
-INTERNET_FLAG_PRAGMA_NOCACHE	equ 0x00000100
-INTERNET_FLAG_CACHE_ASYNC	equ 0x00000080
-INTERNET_FLAG_FORMS_SUBMIT	equ 0x00000040
-INTERNET_FLAG_FWD_BACK		equ 0x00000020
-INTERNET_FLAG_NEED_FILE		equ 0x00000010
-INTERNET_FLAG_MUST_CACHE_REQUEST equ INTERNET_FLAG_NEED_FILE
+define INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP   0x00008000
+define INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS  0x00004000
+define INTERNET_FLAG_IGNORE_CERT_DATE_INVALID  0x00002000
+define INTERNET_FLAG_IGNORE_CERT_CN_INVALID    0x00001000
 
-INTERNET_FLAG_TRANSFER_ASCII	equ FTP_TRANSFER_TYPE_ASCII
-INTERNET_FLAG_TRANSFER_BINARY	equ FTP_TRANSFER_TYPE_BINARY
+define INTERNET_FLAG_RESYNCHRONIZE     0x00000800
+define INTERNET_FLAG_HYPERLINK         0x00000400
+define INTERNET_FLAG_NO_UI             0x00000200
+define INTERNET_FLAG_PRAGMA_NOCACHE    0x00000100
+define INTERNET_FLAG_CACHE_ASYNC       0x00000080
+define INTERNET_FLAG_FORMS_SUBMIT      0x00000040
+define INTERNET_FLAG_FWD_BACK          0x00000020
+define INTERNET_FLAG_NEED_FILE         0x00000010
+define INTERNET_FLAG_MUST_CACHE_REQUEST INTERNET_FLAG_NEED_FILE
 
+define INTERNET_FLAG_TRANSFER_ASCII    FTP_TRANSFER_TYPE_ASCII
+define INTERNET_FLAG_TRANSFER_BINARY   FTP_TRANSFER_TYPE_BINARY
 
-SECURITY_INTERNET_MASK equ \
-	INTERNET_FLAG_IGNORE_CERT_CN_INVAID OR \
-	INTERNET_FLAG_IGNORE_CERT_DATE_INVALID OR \
-	INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS OR \
-	INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP
+define SECURITY_INTERNET_MASK  (INTERNET_FLAG_IGNORE_CERT_CN_INVALID    or \
+                                INTERNET_FLAG_IGNORE_CERT_DATE_INVALID  or \
+                                INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS  or \
+                                INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP   )
 
-SECURITY_IGNORE_ERROR_MASK equ \
-	INTERNET_FLAG_IGNORE_CERT_CN_INVAID OR \
-	INTERNET_FLAG_IGNORE_CERT_DATE_INVALID OR \
-	SECURITY_FLAG_IGNORE_UNKNOWN_CA OR \
-	SECURITY_FLAG_IGNORE_REVOCATION
+define SECURITY_IGNORE_ERROR_MASK  (INTERNET_FLAG_IGNORE_CERT_CN_INVALID    or \
+                                     INTERNET_FLAG_IGNORE_CERT_DATE_INVALID or \
+                                     SECURITY_FLAG_IGNORE_UNKNOWN_CA        or \
+                                     SECURITY_FLAG_IGNORE_REVOCATION        or \
+                                     SECURITY_FLAG_IGNORE_WEAK_SIGNATURE)
 
-INTERNET_FLAGS_MASK equ \
-	INTERNET_FLAG_REOAD		  OR \
-	INTERNET_FLAG_RAW_DATA		  OR \
-	INTERNET_FLAG_EXISTING_CONNECT	  OR \
-	INTERNET_FLAG_ASYNC		  OR \
-	INTERNET_FLAG_PASSIVE		  OR \
-	INTERNET_FLAG_NO_CACHE_WRITE	  OR \
-	INTERNET_FLAG_MAKE_PERSISTENT	  OR \
-	INTERNET_FLAG_FROM_CACHE	  OR \
-	INTERNET_FLAG_SECURE		  OR \
-	INTERNET_FLAG_KEEP_CONNECTION	  OR \
-	INTERNET_FLAG_NO_AUTO_REDIRECT	  OR \
-	INTERNET_FLAG_READ_PREFETCH	  OR \
-	INTERNET_FLAG_NO_COOKIES	  OR \
-	INTERNET_FLAG_NO_AUTH		  OR \
-	INTERNET_FLAG_CACHE_IF_NET_FAIL	  OR \
-	SECURITY_INTERNET_MASK		  OR \
-	INTERNET_FLAG_RESYNCHRONIZE	  OR \
-	INTERNET_FLAG_HYPERLINK		  OR \
-	INTERNET_FLAG_NO_UI		  OR \
-	INTERNET_FLAG_PRAGMA_NOCACHE	  OR \
-	INTERNET_FLAG_CACHE_ASYNC	  OR \
-	INTERNET_FLAG_FORMS_SUBMIT	  OR \
-	INTERNET_FLAG_NEED_FILE		  OR \
-	INTERNET_FLAG_RESTRICTED_ZONE	  OR \
-	INTERNET_FLAG_TRANSFER_BINARY	  OR \
-	INTERNET_FLAG_TRANSFER_ASCII	  OR \
-	INTERNET_FLAG_FWD_BACK		  OR \
-	INTERNET_FLAG_BGUPDATE
+define INTERNET_FLAGS_MASK     (INTERNET_FLAG_RELOAD              or \
+                                INTERNET_FLAG_RAW_DATA            or \
+                                INTERNET_FLAG_EXISTING_CONNECT    or \
+                                INTERNET_FLAG_ASYNC               or \
+                                INTERNET_FLAG_PASSIVE             or \
+                                INTERNET_FLAG_NO_CACHE_WRITE      or \
+                                INTERNET_FLAG_MAKE_PERSISTENT     or \
+                                INTERNET_FLAG_FROM_CACHE          or \
+                                INTERNET_FLAG_SECURE              or \
+                                INTERNET_FLAG_KEEP_CONNECTION     or \
+                                INTERNET_FLAG_NO_AUTO_REDIRECT    or \
+                                INTERNET_FLAG_READ_PREFETCH       or \
+                                INTERNET_FLAG_NO_COOKIES          or \
+                                INTERNET_FLAG_NO_AUTH             or \
+                                INTERNET_FLAG_CACHE_IF_NET_FAIL   or \
+                                SECURITY_INTERNET_MASK            or \
+                                INTERNET_FLAG_RESYNCHRONIZE       or \
+                                INTERNET_FLAG_HYPERLINK           or \
+                                INTERNET_FLAG_NO_UI               or \
+                                INTERNET_FLAG_PRAGMA_NOCACHE      or \
+                                INTERNET_FLAG_CACHE_ASYNC         or \
+                                INTERNET_FLAG_FORMS_SUBMIT        or \
+                                INTERNET_FLAG_NEED_FILE           or \
+                                INTERNET_FLAG_RESTRICTED_ZONE     or \
+                                INTERNET_FLAG_TRANSFER_BINARY     or \
+                                INTERNET_FLAG_TRANSFER_ASCII      or \
+                                INTERNET_FLAG_FWD_BACK            or \
+                                INTERNET_FLAG_BGUPDATE            or \
+                                )
 
 
 
-INTERNET_ERROR_MASK_INSERT_CDROM equ 0x1
-INTERNET_ERROR_MASK_COMBINED_SEC_CERT equ 0x2
-INTERNET_ERROR_MASK_NEED_MSN_SSPI_PKG equ 0X4
-INTERNET_ERROR_MASK_LOGIN_FAILURE_DISPLAY_ENTITY_BODY equ 0x8
+define INTERNET_ERROR_MASK_INSERT_CDROM                    0x1
+define INTERNET_ERROR_MASK_COMBINED_SEC_CERT               0x2
+define INTERNET_ERROR_MASK_NEED_MSN_SSPI_PKG               0X4
+define INTERNET_ERROR_MASK_LOGIN_FAILURE_DISPLAY_ENTITY_BODY 0x8
 
-INTERNET_OPTIONS_MASK	equ (NOT INTERNET_FAGS_MASK)
+define INTERNET_OPTIONS_MASK   (not INTERNET_FLAGS_MASK)
 
-WININET_API_FLAG_ASYNC	equ 0x00000001
-WININET_API_FLAG_SYNC	equ 0x00000004
-WININET_API_FLAG_USE_CONTEXT equ 0x00000008
+define WININET_API_FLAG_ASYNC          0x00000001
+define WININET_API_FLAG_SYNC           0x00000004
+define WININET_API_FLAG_USE_CONTEXT    0x00000008
 
-INTERNET_NO_CALLBACK	equ 0
+define INTERNET_NO_CALLBACK            0
 
-INTERNET_SCHEME		typedef SDWORD
-INTERNET_SCHEME_PARTIAL equ -2
-INTERNET_SCHEME_UNKNOWN equ -1
-INTERNET_SCHEME_DEFAULT equ 0
-INTERNET_SCHEME_FTP	equ 3
-INTERNET_SCHEME_GOPHER	equ 4
-INTERNET_SCHEME_HTTP	equ 5
-INTERNET_SCHEME_HTTPS	equ 6
-INTERNET_SCHEME_FILE	equ 7
-INTERNET_SCHEME_NEWS	equ 8
-INTERNET_SCHEME_MAILTO	equ 9
-INTERNET_SCHEME_SOCKS	equ 10
-INTERNET_SCHEME_JAVASCRIPT equ 11
-INTERNET_SCHEME_VBSCRIPT equ 12
-INTERNET_SCHEME_RES	equ 13
-INTERNET_SCHEME_FIRST	equ INTERNET_SCHEME_FTP
-INTERNET_SCHEME_LAST	equ INTERNET_SCHEME_RES
+.enum INTERNET_SCHEME {
+    INTERNET_SCHEME_PARTIAL = -2,
+    INTERNET_SCHEME_UNKNOWN = -1,
+    INTERNET_SCHEME_DEFAULT = 0,
+    INTERNET_SCHEME_FTP,
+    INTERNET_SCHEME_GOPHER,
+    INTERNET_SCHEME_HTTP,
+    INTERNET_SCHEME_HTTPS,
+    INTERNET_SCHEME_FILE,
+    INTERNET_SCHEME_NEWS,
+    INTERNET_SCHEME_MAILTO,
+    INTERNET_SCHEME_SOCKS,
+    INTERNET_SCHEME_JAVASCRIPT,
+    INTERNET_SCHEME_VBSCRIPT,
+    INTERNET_SCHEME_RES,
+    INTERNET_SCHEME_FIRST = INTERNET_SCHEME_FTP,
+    INTERNET_SCHEME_LAST = INTERNET_SCHEME_RES
+    }
+LPINTERNET_SCHEME typedef ptr INTERNET_SCHEME
 
-INTERNET_ASYNC_RESULT	STRUC
-dwResult		dd ?
-dwError			dd ?
-INTERNET_ASYNC_RESULT	ENDS
+INTERNET_ASYNC_RESULT   struct
+dwResult                DWORD_PTR ?
+dwError                 DWORD ?
+INTERNET_ASYNC_RESULT   ends
 LPINTERNET_ASYNC_RESULT typedef ptr INTERNET_ASYNC_RESULT
 
-INTERNET_DIAGNOSTIC_SOCKET_INFO STRUC
-Socket			dd ?
-SourcePort		dd ?
-DestPort		dd ?
-Flags			dd ?
-INTERNET_DIAGNOSTIC_SOCKET_INFO ENDS
+INTERNET_DIAGNOSTIC_SOCKET_INFO struct
+Socket                  DWORD_PTR ?
+SourcePort              DWORD ?
+DestPort                DWORD ?
+Flags                   DWORD ?
+INTERNET_DIAGNOSTIC_SOCKET_INFO ends
 LPINTERNET_DIAGNOSTIC_SOCKET_INFO typedef ptr INTERNET_DIAGNOSTIC_SOCKET_INFO
 
-IDSI_FLAG_KEEP_ALIVE	equ 0x00000001
-IDSI_FLAG_SECURE	equ 0x00000002
-IDSI_FLAG_PROXY		equ 0x00000004
-IDSI_FLAG_TUNNEL	equ 0x00000008
+define IDSI_FLAG_KEEP_ALIVE    0x00000001
+define IDSI_FLAG_SECURE        0x00000002
+define IDSI_FLAG_PROXY         0x00000004
+define IDSI_FLAG_TUNNEL        0x00000008
 
-INTERNET_PROXY_INFO	STRUC
-dwAccessType		dd ?
-lpszProxy		LPCTSTR ?
-lpszProxyBypass		LPCTSTR ?
-INTERNET_PROXY_INFO	ENDS
-LPINTERNET_PROXY_INFO	typedef ptr INTERNET_PROXY_INFO
+INTERNET_PROXY_INFO     struct
+dwAccessType            DWORD ?
+lpszProxy               LPCTSTR ?
+lpszProxyBypass         LPCTSTR ?
+INTERNET_PROXY_INFO     ends
+LPINTERNET_PROXY_INFO   typedef ptr INTERNET_PROXY_INFO
 
-INTERNET_PER_CONN_OPTIONA STRUC
-dwOption		dd ?
-UNION ; {
- dwValue		dd ?
- pszValue		LPSTR ?
- ftValue		FILETIME <>
-ENDS ;Value
-INTERNET_PER_CONN_OPTIONA ENDS
+INTERNET_PER_CONN_OPTIONA struct
+dwOption                DWORD ?
+union Value
+ dwValue                DWORD ?
+ pszValue               LPSTR ?
+ ftValue                FILETIME <>
+ends
+INTERNET_PER_CONN_OPTIONA ends
 LPINTERNET_PER_CONN_OPTIONA typedef ptr INTERNET_PER_CONN_OPTIONA
-INTERNET_PER_CONN_OPTIONW STRUC
-dwOption		dd ?
-UNION ; {
- dwValue		dd ?
- pszValue		LPWSTR ?
- ftValue		FILETIME <>
-ENDS ;Value
-INTERNET_PER_CONN_OPTIONW ENDS
+INTERNET_PER_CONN_OPTIONW struct
+dwOption                DWORD ?
+union Value
+ dwValue                DWORD ?
+ pszValue               LPWSTR ?
+ ftValue                FILETIME <>
+ends
+INTERNET_PER_CONN_OPTIONW ends
 LPINTERNET_PER_CONN_OPTIONW typedef ptr INTERNET_PER_CONN_OPTIONW
 ifdef _UNICODE
 INTERNET_PER_CONN_OPTION typedef INTERNET_PER_CONN_OPTIONW
@@ -221,21 +218,21 @@ INTERNET_PER_CONN_OPTION typedef INTERNET_PER_CONN_OPTIONA
 LPINTERNET_PER_CONN_OPTION typedef LPINTERNET_PER_CONN_OPTIONA
 endif
 
-INTERNET_PER_CONN_OPTION_LISTA STRUC
-dwSize			dd ?
-pszConnection		LPSTR ?
-dwOptionCount		dd ?
-dwOptionError		dd ?
-pOptions		LPINTERNET_PER_CONN_OPTIONA ?
-INTERNET_PER_CONN_OPTION_LISTA ENDS
+INTERNET_PER_CONN_OPTION_LISTA struct
+dwSize                  DWORD ?
+pszConnection           LPSTR ?
+dwOptionCount           DWORD ?
+dwOptionError           DWORD ?
+pOptions                LPINTERNET_PER_CONN_OPTIONA ?
+INTERNET_PER_CONN_OPTION_LISTA ends
 LPINTERNET_PER_CONN_OPTION_LISTA typedef ptr INTERNET_PER_CONN_OPTION_LISTA
-INTERNET_PER_CONN_OPTION_LISTW STRUC
-dwSize			dd ?
-pszConnection		LPWSTR ?
-dwOptionCount		dd ?
-dwOptionError		dd ?
-pOptions		LPINTERNET_PER_CONN_OPTIONW ?
-INTERNET_PER_CONN_OPTION_LISTW ENDS
+INTERNET_PER_CONN_OPTION_LISTW struct
+dwSize                  DWORD ?
+pszConnection           LPWSTR ?
+dwOptionCount           DWORD ?
+dwOptionError           DWORD ?
+pOptions                LPINTERNET_PER_CONN_OPTIONW ?
+INTERNET_PER_CONN_OPTION_LISTW ends
 LPINTERNET_PER_CONN_OPTION_LISTW typedef ptr INTERNET_PER_CONN_OPTION_LISTW
 ifdef _UNICODE
 INTERNET_PER_CONN_OPTION_LIST typedef INTERNET_PER_CONN_OPTION_LISTW
@@ -245,2932 +242,1301 @@ INTERNET_PER_CONN_OPTION_LIST typedef INTERNET_PER_CONN_OPTION_LISTA
 LPINTERNET_PER_CONN_OPTION_LIST typedef LPINTERNET_PER_CONN_OPTION_LISTA
 endif
 
-INTERNET_PER_CONN_FLAGS equ 1
-INTERNET_PER_CONN_PROXY_SERVER equ 2
-INTERNET_PER_CONN_PROXY_BYPASS equ 3
-INTERNET_PER_CONN_AUTOCONFIG_URL equ 4
-INTERNET_PER_CONN_AUTODISCOVERY_FLAGS equ 5
-INTERNET_PER_CONN_AUTOCONFIG_SECONDARY_URL equ 6
-INTERNET_PER_CONN_AUTOCONFIG_RELOAD_DELAY_MINS equ 7
-INTERNET_PER_CONN_AUTOCONFIG_LAST_DETECT_TIME equ 8
-INTERNET_PER_CONN_AUTOCONFIG_LAST_DETECT_URL equ 9
-INTERNET_PER_CONN_FLAGS_UI equ 10
+define INTERNET_PER_CONN_FLAGS                         1
+define INTERNET_PER_CONN_PROXY_SERVER                  2
+define INTERNET_PER_CONN_PROXY_BYPASS                  3
+define INTERNET_PER_CONN_AUTOCONFIG_URL                4
+define INTERNET_PER_CONN_AUTODISCOVERY_FLAGS           5
+define INTERNET_PER_CONN_AUTOCONFIG_SECONDARY_URL      6
+define INTERNET_PER_CONN_AUTOCONFIG_RELOAD_DELAY_MINS  7
+define INTERNET_PER_CONN_AUTOCONFIG_LAST_DETECT_TIME   8
+define INTERNET_PER_CONN_AUTOCONFIG_LAST_DETECT_URL    9
+define INTERNET_PER_CONN_FLAGS_UI                      10
 
-PROXY_TYPE_DIRECT	equ 0x00000001
-PROXY_TYPE_PROXY	equ 0x00000002
-PROXY_TYPE_AUTO_PROXY_URL equ 0x00000004
-PROXY_TYPE_AUTO_DETECT	equ 0x00000008
+define PROXY_TYPE_DIRECT                               0x00000001
+define PROXY_TYPE_PROXY                                0x00000002
+define PROXY_TYPE_AUTO_PROXY_URL                       0x00000004
+define PROXY_TYPE_AUTO_DETECT                          0x00000008
 
-AUTO_PROXY_FLAG_USER_SET equ 0x00000001
-AUTO_PROXY_FLAG_ALWAYS_DETECT equ 0x00000002
-AUTO_PROXY_FLAG_DETECTION_RUN equ 0x00000004
-AUTO_PROXY_FLAG_MIGRATED equ 0x00000008
-AUTO_PROXY_FLAG_DONT_CACHE_PROXY_RESULT equ 0x00000010
-AUTO_PROXY_FLAG_CACHE_INIT_RUN equ 0x00000020
-AUTO_PROXY_FLAG_DETECTION_SUSPECT equ 0x00000040
+define AUTO_PROXY_FLAG_USER_SET                        0x00000001
+define AUTO_PROXY_FLAG_ALWAYS_DETECT                   0x00000002
+define AUTO_PROXY_FLAG_DETECTION_RUN                   0x00000004
+define AUTO_PROXY_FLAG_MIGRATED                        0x00000008
+define AUTO_PROXY_FLAG_DONT_CACHE_PROXY_RESULT         0x00000010
+define AUTO_PROXY_FLAG_CACHE_INIT_RUN                  0x00000020
+define AUTO_PROXY_FLAG_DETECTION_SUSPECT               0x00000040
 
-
-INTERNET_VERSION_INFO	STRUC
-dwMajorVersion		dd ?
-dwMinorVersion		dd ?
-INTERNET_VERSION_INFO	ENDS
+INTERNET_VERSION_INFO   struct
+dwMajorVersion          DWORD ?
+dwMinorVersion          DWORD ?
+INTERNET_VERSION_INFO   ends
 LPINTERNET_VERSION_INFO typedef ptr INTERNET_VERSION_INFO
 
-HTTP_VERSION_INFO	STRUC
-dwMajorVersion		dd ?
-dwMinorVersion		dd ?
-HTTP_VERSION_INFO	ENDS
-LPHTTP_VERSION_INFO	typedef ptr HTTP_VERSION_INFO
+HTTP_VERSION_INFO       struct
+dwMajorVersion          DWORD ?
+dwMinorVersion          DWORD ?
+HTTP_VERSION_INFO       ends
+LPHTTP_VERSION_INFO     typedef ptr HTTP_VERSION_INFO
 
-INTERNET_CONNECTED_INFO STRUC
-dwConnectedState	dd ?
-dwFlags			dd ?
-INTERNET_CONNECTED_INFO ENDS
+INTERNET_CONNECTED_INFO struct
+dwConnectedState        DWORD ?
+dwFlags                 DWORD ?
+INTERNET_CONNECTED_INFO ends
 LPINTERNET_CONNECTED_INFO typedef ptr INTERNET_CONNECTED_INFO
 
-ISO_FORCE_DISCONNECTED	equ 0x00000001
+define ISO_FORCE_DISCONNECTED  0x00000001
 
-URL_COMPONENTSA		STRUC
-dwStructSize		dd ?
-lpszScheme		LPSTR ?
-dwSchemeLength		dd ?
-nScheme			INTERNET_SCHEME ?
-lpszHostName		LPSTR ?
-dwHostNameLength	dd ?
-nPort			INTERNET_PORT ?
-lpszUserName		LPSTR ?
-dwUserNameLength	dd ?
-lpszPassword		LPSTR ?
-dwPasswordLength	dd ?
-lpszUrlPath		LPSTR ?
-dwUrlPathLength		dd ?
-lpszExtraInfo		LPSTR ?
-dwExtraInfoLength	dd ?
-URL_COMPONENTSA		ENDS
-LPURL_COMPONENTSA	typedef ptr URL_COMPONENTSA
-URL_COMPONENTSW		STRUC
-dwStructSize		dd ?
-lpszScheme		LPWSTR ?
-dwSchemeLength		dd ?
-nScheme			INTERNET_SCHEME ?
-lpszHostName		LPWSTR ?
-dwHostNameLength	dd ?
-nPort			INTERNET_PORT ?
-lpszUserName		LPWSTR ?
-dwUserNameLength	dd ?
-lpszPassword		LPWSTR ?
-dwPasswordLength	dd ?
-lpszUrlPath		LPWSTR ?
-dwUrlPathLength		dd ?
-lpszExtraInfo		LPWSTR ?
-dwExtraInfoLength	dd ?
-URL_COMPONENTSW		ENDS
-LPURL_COMPONENTSW	typedef ptr URL_COMPONENTSW
+URL_COMPONENTSA         struct
+dwStructSize            DWORD ?
+lpszScheme              LPSTR ?
+dwSchemeLength          DWORD ?
+nScheme                 INTERNET_SCHEME ?
+lpszHostName            LPSTR ?
+dwHostNameLength        DWORD ?
+nPort                   INTERNET_PORT ?
+lpszUserName            LPSTR ?
+dwUserNameLength        DWORD ?
+lpszPassword            LPSTR ?
+dwPasswordLength        DWORD ?
+lpszUrlPath             LPSTR ?
+dwUrlPathLength         DWORD ?
+lpszExtraInfo           LPSTR ?
+dwExtraInfoLength       DWORD ?
+URL_COMPONENTSA         ends
+LPURL_COMPONENTSA       typedef ptr URL_COMPONENTSA
+URL_COMPONENTSW         struct
+dwStructSize            DWORD ?
+lpszScheme              LPWSTR ?
+dwSchemeLength          DWORD ?
+nScheme                 INTERNET_SCHEME ?
+lpszHostName            LPWSTR ?
+dwHostNameLength        DWORD ?
+nPort                   INTERNET_PORT ?
+lpszUserName            LPWSTR ?
+dwUserNameLength        DWORD ?
+lpszPassword            LPWSTR ?
+dwPasswordLength        DWORD ?
+lpszUrlPath             LPWSTR ?
+dwUrlPathLength         DWORD ?
+lpszExtraInfo           LPWSTR ?
+dwExtraInfoLength       DWORD ?
+URL_COMPONENTSW         ends
+LPURL_COMPONENTSW       typedef ptr URL_COMPONENTSW
 ifdef _UNICODE
-URL_COMPONENTS		typedef URL_COMPONENTSW
-LPURL_COMPONENTS	typedef LPURL_COMPONENTSW
+URL_COMPONENTS          typedef URL_COMPONENTSW
+LPURL_COMPONENTS        typedef LPURL_COMPONENTSW
 else
-URL_COMPONENTS		typedef URL_COMPONENTSA
-LPURL_COMPONENTS	typedef LPURL_COMPONENTSA
+URL_COMPONENTS          typedef URL_COMPONENTSA
+LPURL_COMPONENTS        typedef LPURL_COMPONENTSA
 endif
 
-INTERNET_CERTIFICATE_INFO STRUC
-ftExpiry		FILETIME <>
-ftStart			FILETIME <>
-lpszSubjectInfo		LPTSTR ?
-lpszIssuerInfo		LPTSTR ?
-lpszProtocolName	LPTSTR ?
-lpszSignatureAlgName	LPTSTR ?
-lpszEncryptionAlgName	LPTSTR ?
-dwKeySize		dd ?
-INTERNET_CERTIFICATE_INFO ENDS
+INTERNET_CERTIFICATE_INFO struct
+ftExpiry                FILETIME <>
+ftStart                 FILETIME <>
+lpszSubjectInfo         LPTSTR ?
+lpszIssuerInfo          LPTSTR ?
+lpszProtocolName        LPTSTR ?
+lpszSignatureAlgName    LPTSTR ?
+lpszEncryptionAlgName   LPTSTR ?
+dwKeySize               DWORD ?
+INTERNET_CERTIFICATE_INFO ends
 LPINTERNET_CERTIFICATE_INFO typedef ptr INTERNET_CERTIFICATE_INFO
 
-
-INTERNET_BUFFERSA	STRUC
-dwStructSize		dd ?
-Next			PVOID ?
-lpcszHeader		LPCSTR ?
-dwHeadersLength		dd ?
-dwHeadersTotal		dd ?
-lpvBuffer		PVOID ?
-dwBufferLength		dd ?
-dwBufferTotal		dd ?
-dwOffsetLow		dd ?
-dwOffsetHigh		dd ?
-INTERNET_BUFFERSA	ENDS
-LPINTERNET_BUFFERSA	typedef ptr INTERNET_BUFFERSA
-INTERNET_BUFFERSW	STRUC
-dwStructSize		dd ?
-Next			PVOID ?
-lpcszHeader		LPCWSTR ?
-dwHeadersLength		dd ?
-dwHeadersTotal		dd ?
-lpvBuffer		PVOID ?
-dwBufferLength		dd ?
-dwBufferTotal		dd ?
-dwOffsetLow		dd ?
-dwOffsetHigh		dd ?
-INTERNET_BUFFERSW	ENDS
- LPINTERNET_BUFFERSW	typedef ptr INTERNET_BUFFERSW
+INTERNET_BUFFERSA       struct
+dwStructSize            DWORD ?
+Next                    ptr INTERNET_BUFFERSA ?
+lpcszHeader             LPCSTR ?
+dwHeadersLength         DWORD ?
+dwHeadersTotal          DWORD ?
+lpvBuffer               LPVOID ?
+dwBufferLength          DWORD ?
+dwBufferTotal           DWORD ?
+dwOffsetLow             DWORD ?
+dwOffsetHigh            DWORD ?
+INTERNET_BUFFERSA       ends
+LPINTERNET_BUFFERSA     typedef ptr INTERNET_BUFFERSA
+INTERNET_BUFFERSW       struct
+dwStructSize            DWORD ?
+Next                    ptr INTERNET_BUFFERSW ?
+lpcszHeader             LPCWSTR ?
+dwHeadersLength         DWORD ?
+dwHeadersTotal          DWORD ?
+lpvBuffer               LPVOID ?
+dwBufferLength          DWORD ?
+dwBufferTotal           DWORD ?
+dwOffsetLow             DWORD ?
+dwOffsetHigh            DWORD ?
+INTERNET_BUFFERSW       ends
+LPINTERNET_BUFFERSW     typedef ptr INTERNET_BUFFERSW
 ifdef _UNICODE
-INTERNET_BUFFERS	typedef INTERNET_BUFFERSW
-LPINTERNET_BUFFERS	typedef LPINTERNET_BUFFERSW
+INTERNET_BUFFERS        typedef INTERNET_BUFFERSW
+LPINTERNET_BUFFERS      typedef LPINTERNET_BUFFERSW
 else
-INTERNET_BUFFERS	typedef INTERNET_BUFFERSA
-LPINTERNET_BUFFERS	typedef LPINTERNET_BUFFERSA
+INTERNET_BUFFERS        typedef INTERNET_BUFFERSA
+LPINTERNET_BUFFERS      typedef LPINTERNET_BUFFERSA
 endif
 
-;BOOLAPI
-InternetTimeFromSystemTimeA proto WINAPI \
-		   pst: ptr SYSTEMTIME,
-		 dwRFC: DWORD,
-	      lpszTime: LPSTR,
-		cbTime: DWORD
-InternetTimeFromSystemTimeW proto WINAPI \
-		   pst: ptr SYSTEMTIME,
-		 dwRFC: DWORD,
-	      lpszTime: LPWSTR,
-		cbTime: DWORD
+InternetTimeFromSystemTimeA proto WINAPI :ptr, :DWORD, :LPSTR, :DWORD
+InternetTimeFromSystemTimeW proto WINAPI :ptr, :DWORD, :LPWSTR, :DWORD
 ifdef _UNICODE
-InternetTimeFromSystemTime equ <InternetTimeFromSystemTimeW>
+define InternetTimeFromSystemTime  <InternetTimeFromSystemTimeW>
 else
 ifdef _WINX32_
-InternetTimeFromSystemTime equ <InternetTimeFromSystemTimeA>
+define InternetTimeFromSystemTime  <InternetTimeFromSystemTimeA>
 else
-;BOOLAPI
-InternetTimeFromSystemTime proto WINAPI \
-		   pst: ptr SYSTEMTIME,
-		 dwRFC: DWORD,
-	      lpszTime: LPSTR,
-		cbTime: DWORD
+InternetTimeFromSystemTime proto WINAPI :ptr, :DWORD, :LPSTR, :DWORD
 endif
 endif
 
-INTERNET_RFC1123_FORMAT equ 0
-INTERNET_RFC1123_BUFSIZE equ 30
+define INTERNET_RFC1123_FORMAT     0
+define INTERNET_RFC1123_BUFSIZE   30
 
-;BOOLAPI
-InternetTimeToSystemTimeA proto WINAPI \
-	      lpszTime: LPCSTR,
-		   pst: ptr SYSTEMTIME,
-	    dwReserved: DWORD
-
-;BOOLAPI
-InternetTimeToSystemTimeW proto WINAPI \
-	      lpszTime: LPCWSTR,
-		   pst: ptr SYSTEMTIME,
-	    dwReserved: DWORD
-
+InternetTimeToSystemTimeA proto WINAPI :LPCSTR, :ptr, :DWORD
+InternetTimeToSystemTimeW proto WINAPI :LPCWSTR, :ptr, :DWORD
 ifdef _UNICODE
-InternetTimeToSystemTime equ <InternetTimeToSystemTimeW>
+define InternetTimeToSystemTime  <InternetTimeToSystemTimeW>
 else
 ifdef _WINX32_
-InternetTimeToSystemTime equ <InternetTimeToSystemTimeA>
+define InternetTimeToSystemTime  <InternetTimeToSystemTimeA>
 else
-;BOOLAPI
-InternetTimeToSystemTime proto WINAPI \
-	      lpszTime: LPCSTR,
-		   pst: ptr SYSTEMTIME,
-	    dwReserved: DWORD
+InternetTimeToSystemTime proto WINAPI :LPCSTR, :ptr, :DWORD
 endif
 endif
 
-;BOOLAPI
-InternetCrackUrlA proto WINAPI \
-	       lpszUrl: LPCSTR,
-	   dwUrlLength: DWORD,
-	       dwFlags: DWORD,
-       lpUrlComponents: LPURL_COMPONENTSA
-InternetCrackUrlW proto WINAPI \
-	       lpszUrl: LPCWSTR,
-	   dwUrlLength: DWORD,
-	       dwFlags: DWORD,
-       lpUrlComponents: LPURL_COMPONENTSW
+InternetCrackUrlA proto WINAPI :LPCSTR, :DWORD, :DWORD, :LPURL_COMPONENTSA
+InternetCrackUrlW proto WINAPI :LPCWSTR, :DWORD, :DWORD, :LPURL_COMPONENTSW
 ifdef _UNICODE
-InternetCrackUrl	equ <InternetCrackUrlW>
+define InternetCrackUrl  <InternetCrackUrlW>
 else
-InternetCrackUrl	equ <InternetCrackUrlA>
+define InternetCrackUrl  <InternetCrackUrlA>
 endif
 
-;BOOLAPI
-InternetCreateUrlA proto WINAPI \
-       lpUrlComponents: LPURL_COMPONENTSA,
-	       dwFlags: DWORD,
-	       lpszUrl: LPSTR,
-	 lpdwUrlLength: LPDWORD
-InternetCreateUrlW proto WINAPI \
-       lpUrlComponents: LPURL_COMPONENTSW,
-	       dwFlags: DWORD,
-	       lpszUrl: LPWSTR,
-	 lpdwUrlLength: LPDWORD
+InternetCreateUrlA proto WINAPI :LPURL_COMPONENTSA, :DWORD, :LPSTR, :LPDWORD
+InternetCreateUrlW proto WINAPI :LPURL_COMPONENTSW, :DWORD, :LPWSTR, :LPDWORD
 ifdef _UNICODE
-InternetCreateUrl	equ <InternetCreateUrlW>
+define InternetCreateUrl  <InternetCreateUrlW>
 else
-InternetCreateUrl	equ <InternetCreateUrlA>
+define InternetCreateUrl  <InternetCreateUrlA>
 endif
 
-;BOOLAPI
-InternetCanonicalizeUrlA proto WINAPI \
-	       lpszUrl: LPCSTR,
-	    lpszBuffer: LPSTR,
-      lpdwBufferLength: LPDWORD,
-	       dwFlags: DWORD
-InternetCanonicalizeUrlW proto WINAPI \
-	       lpszUrl: LPCWSTR,
-	    lpszBuffer: LPWSTR,
-      lpdwBufferLength: LPDWORD,
-	       dwFlags: DWORD
+InternetCanonicalizeUrlA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD, :DWORD
+InternetCanonicalizeUrlW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD, :DWORD
 ifdef _UNICODE
-InternetCanonicalizeUrl equ <InternetCanonicalizeUrlW>
+define InternetCanonicalizeUrl  <InternetCanonicalizeUrlW>
 else
-InternetCanonicalizeUrl equ <InternetCanonicalizeUrlA>
+define InternetCanonicalizeUrl  <InternetCanonicalizeUrlA>
 endif
 
-;BOOLAPI
-InternetCombineUrlA proto WINAPI \
-	   lpszBaseUrl: LPCSTR,
-       lpszRelativeUrl: LPCSTR,
-	    lpszBuffer: LPSTR,
-      lpdwBufferLength: LPDWORD,
-	       dwFlags: DWORD
-InternetCombineUrlW proto WINAPI \
-	   lpszBaseUrl: LPCWSTR,
-       lpszRelativeUrl: LPCWSTR,
-	    lpszBuffer: LPWSTR,
-      lpdwBufferLength: LPDWORD,
-	       dwFlags: DWORD
+InternetCombineUrlA proto WINAPI :LPCSTR, :LPCSTR, :LPSTR, :LPDWORD, :DWORD
+InternetCombineUrlW proto WINAPI :LPCWSTR, :LPCWSTR, :LPWSTR, :LPDWORD, :DWORD
 ifdef _UNICODE
-InternetCombineUrl	equ <InternetCombineUrlW>
+define InternetCombineUrl  <InternetCombineUrlW>
 else
-InternetCombineUrl	equ <InternetCombineUrlA>
+define InternetCombineUrl  <InternetCombineUrlA>
 endif
 
+define ICU_ESCAPE      0x80000000
+define ICU_USERNAME    0x40000000
 
-ICU_ESCAPE		equ 0x80000000
-ICU_USERNAME		equ 0x40000000
+define ICU_NO_ENCODE   0x20000000
+define ICU_DECODE      0x10000000
+define ICU_NO_META     0x08000000
+define ICU_ENCODE_SPACES_ONLY 0x04000000
+define ICU_BROWSER_MODE 0x02000000
+define ICU_ENCODE_PERCENT      0x00001000
 
-ICU_NO_ENCODE		equ 0x20000000
-ICU_DECODE		equ 0x10000000
-ICU_NO_META		equ 0x08000000
-ICU_ENCODE_SPACES_ONLY	equ 0x04000000
-ICU_BROWSER_MODE	equ 0x02000000
-ICU_ENCODE_PERCENT	equ 0x00001000
-
-;INTERNETAPI
-InternetOpenA proto WINAPI \
-	     lpszAgent: LPCSTR,
-	  dwAccessType: DWORD,
-	     lpszProxy: LPCSTR,
-       lpszProxyBypass: LPCSTR,
-	       dwFlags: DWORD
-
-;INTERNETAPI
-InternetOpenW proto WINAPI \
-	     lpszAgent: LPCWSTR,
-	  dwAccessType: DWORD,
-	     lpszProxy: LPCWSTR,
-       lpszProxyBypass: LPCWSTR,
-	       dwFlags: DWORD
-
+InternetOpenA proto WINAPI :LPCSTR, :DWORD, :LPCSTR, :LPCSTR, :DWORD
+InternetOpenW proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD
 ifdef _UNICODE
-InternetOpen		equ <InternetOpenW>
+define InternetOpen  <InternetOpenW>
 else
-InternetOpen		equ <InternetOpenA>
+define InternetOpen  <InternetOpenA>
 endif
 
-INTERNET_OPEN_TYPE_PRECONFIG equ 0
-INTERNET_OPEN_TYPE_DIRECT equ 1
-INTERNET_OPEN_TYPE_PROXY equ 3
-INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY equ 4
+define INTERNET_OPEN_TYPE_PRECONFIG                    0
+define INTERNET_OPEN_TYPE_DIRECT                       1
+define INTERNET_OPEN_TYPE_PROXY                        3
+define INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY  4
 
-PRE_CONFIG_INTERNET_ACCESS equ INTERNET_OPEN_TYPE_PRECONFIG
-LOCAL_INTERNET_ACCESS	equ INTERNET_OPEN_TYPE_DIRECT
-CERN_PROXY_INTERNET_ACCESS equ INTERNET_OPEN_TYPE_PROXY
+define PRE_CONFIG_INTERNET_ACCESS  INTERNET_OPEN_TYPE_PRECONFIG
+define LOCAL_INTERNET_ACCESS       INTERNET_OPEN_TYPE_DIRECT
+define CERN_PROXY_INTERNET_ACCESS  INTERNET_OPEN_TYPE_PROXY
 
-;BOOLAPI
-InternetCloseHandle proto WINAPI \
-	     hInternet: HINTERNET
+InternetCloseHandle proto WINAPI :HINTERNET
 
-;INTERNETAPI
-InternetConnectA proto WINAPI \
-	     hInternet: HINTERNET,
-	lpszServerName: LPCSTR,
-	   nServerPort: INTERNET_PORT,
-	  lpszUserName: LPCSTR,
-	  lpszPassword: LPCSTR,
-	     dwService: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;INTERNETAPI
-InternetConnectW proto WINAPI \
-	     hInternet: HINTERNET,
-	lpszServerName: LPCWSTR,
-	   nServerPort: INTERNET_PORT,
-	  lpszUserName: LPCWSTR,
-	  lpszPassword: LPCWSTR,
-	     dwService: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
+InternetConnectA proto WINAPI :HINTERNET, :LPCSTR, :INTERNET_PORT, :LPCSTR, :LPCSTR, :DWORD, :DWORD, :DWORD_PTR
+InternetConnectW proto WINAPI :HINTERNET, :LPCWSTR, :INTERNET_PORT, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-InternetConnect		equ <InternetConnectW>
+define InternetConnect  <InternetConnectW>
 else
-InternetConnect		equ <InternetConnectA>
+define InternetConnect  <InternetConnectA>
 endif
 
-INTERNET_SERVICE_FTP	equ 1
-INTERNET_SERVICE_GOPHER equ 2
-INTERNET_SERVICE_HTTP	equ 3
+define INTERNET_SERVICE_FTP    1
+define INTERNET_SERVICE_GOPHER 2
+define INTERNET_SERVICE_HTTP   3
 
-;INTERNETAPI
-InternetOpenUrlA proto WINAPI \
-	     hInternet: HINTERNET,
-	       lpszUrl: LPCSTR,
-	   lpszHeaders: LPCSTR,
-       dwHeadersLength: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-InternetOpenUrlW proto WINAPI \
-	     hInternet: HINTERNET,
-	       lpszUrl: LPCWSTR,
-	   lpszHeaders: LPCWSTR,
-       dwHeadersLength: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
+InternetOpenUrlA proto WINAPI :HINTERNET, :LPCSTR, :LPCSTR, :DWORD, :DWORD, :DWORD_PTR
+InternetOpenUrlW proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-InternetOpenUrl		equ <InternetOpenUrlW>
+define InternetOpenUrl  <InternetOpenUrlW>
 else
-InternetOpenUrl		equ <InternetOpenUrlA>
+define InternetOpenUrl  <InternetOpenUrlA>
 endif
 
-;BOOLAPI
-InternetReadFile proto WINAPI \
-		 hFile: HINTERNET,
-	      lpBuffer: LPVOID,
- dwNumberOfBytesToRead: DWORD,
- lpdwNumberOfBytesRead: LPDWORD
+InternetReadFile proto WINAPI :HINTERNET, :LPVOID, :DWORD, :LPDWORD
 
-;INTERNETAPI
-InternetReadFileExA proto WINAPI \
-		 hFile: HINTERNET,
-	  lpBuffersOut: LPINTERNET_BUFFERSA,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;INTERNETAPI
-InternetReadFileExW proto WINAPI \
-		 hFile: HINTERNET,
-	  lpBuffersOut: LPINTERNET_BUFFERSW,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
+InternetReadFileExA proto WINAPI :HINTERNET, :LPINTERNET_BUFFERSA, :DWORD, :DWORD_PTR
+InternetReadFileExW proto WINAPI :HINTERNET, :LPINTERNET_BUFFERSW, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-InternetReadFileEx	equ <InternetReadFileExW>
+define InternetReadFileEx  <InternetReadFileExW>
 else
-InternetReadFileEx	equ <InternetReadFileExA>
+define InternetReadFileEx  <InternetReadFileExA>
 endif
 
-IRF_ASYNC		equ WININET_API_FAG_ASYNC
-IRF_SYNC		equ WININET_API_FAG_SYNC
-IRF_USE_CONTEXT		equ WININET_API_FAG_USE_CONTEXT
-IRF_NO_WAIT		equ 0x00000008
+define IRF_ASYNC       WININET_API_FLAG_ASYNC
+define IRF_SYNC        WININET_API_FLAG_SYNC
+define IRF_USE_CONTEXT WININET_API_FLAG_USE_CONTEXT
+define IRF_NO_WAIT     0x00000008
 
-;INTERNETAPI
-InternetSetFilePointer proto WINAPI \
-		 hFile: HINTERNET,
-       lDistanceToMove: LONG,
-  lpDistanceToMoveHigh: PLONG,
-	  dwMoveMethod: DWORD,
-	     dwContext: DWORD_PTR
+InternetSetFilePointer proto WINAPI :HINTERNET, :LONG, :PLONG, :DWORD, :DWORD_PTR
 
+InternetWriteFile proto WINAPI :HINTERNET, :LPCVOID, :DWORD, :LPDWORD
 
-;BOOLAPI
-InternetWriteFile proto WINAPI \
-		 hFile: HINTERNET,
-	      lpBuffer: LPCVOID,
-dwNumberOfBytesToWrite: DWORD,
-lpdwNumberOfBytesWritten: LPDWORD
+InternetQueryDataAvailable proto WINAPI :HINTERNET, :LPDWORD, :DWORD, :DWORD_PTR
 
-
-;BOOLAPI
-InternetQueryDataAvailable proto WINAPI \
-		 hFile: HINTERNET,
-lpdwNumberOfBytesAvailable: LPDWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-
-;BOOLAPI
-InternetFindNextFileA proto WINAPI \
-		 hFind: HINTERNET,
-	   lpvFindData: LPVOID
-
-;BOOLAPI
-InternetFindNextFileW proto WINAPI \
-		 hFind: HINTERNET,
-	   lpvFindData: LPVOID
-
+InternetFindNextFileA proto WINAPI :HINTERNET, :LPVOID
+InternetFindNextFileW proto WINAPI :HINTERNET, :LPVOID
 ifdef _UNICODE
-InternetFindNextFile	equ <InternetFindNextFileW>
+define InternetFindNextFile  <InternetFindNextFileW>
 else
-InternetFindNextFile	equ <InternetFindNextFileA>
+define InternetFindNextFile  <InternetFindNextFileA>
 endif
 
-;BOOLAPI
-InternetQueryOptionA proto WINAPI \
-	     hInternet: HINTERNET,
-	      dwOption: DWORD,
-	      lpBuffer: LPVOID,
-      lpdwBufferLength: LPDWORD
-InternetQueryOptionW proto WINAPI \
-	     hInternet: HINTERNET,
-	      dwOption: DWORD,
-	      lpBuffer: LPVOID,
-      lpdwBufferLength: LPDWORD
+InternetQueryOptionA proto WINAPI :HINTERNET, :DWORD, :LPVOID, :LPDWORD
+InternetQueryOptionW proto WINAPI :HINTERNET, :DWORD, :LPVOID, :LPDWORD
 ifdef _UNICODE
-InternetQueryOption	equ <InternetQueryOptionW>
+define InternetQueryOption  <InternetQueryOptionW>
 else
-InternetQueryOption	equ <InternetQueryOptionA>
+define InternetQueryOption  <InternetQueryOptionA>
 endif
 
-;BOOLAPI
-InternetSetOptionA proto WINAPI \
-	     hInternet: HINTERNET,
-	      dwOption: DWORD,
-	      lpBuffer: LPVOID,
-	dwBufferLength: DWORD
-
-;BOOLAPI
-InternetSetOptionW proto WINAPI \
-	     hInternet: HINTERNET,
-	      dwOption: DWORD,
-	      lpBuffer: LPVOID,
-	dwBufferLength: DWORD
-
+InternetSetOptionA proto WINAPI :HINTERNET, :DWORD, :LPVOID, :DWORD
+InternetSetOptionW proto WINAPI :HINTERNET, :DWORD, :LPVOID, :DWORD
 ifdef _UNICODE
-InternetSetOption	equ <InternetSetOptionW>
+define InternetSetOption  <InternetSetOptionW>
 else
-InternetSetOption	equ <InternetSetOptionA>
+define InternetSetOption  <InternetSetOptionA>
 endif
 
-;BOOLAPI
-InternetSetOptionExA proto WINAPI \
-	     hInternet: HINTERNET,
-	      dwOption: DWORD,
-	      lpBuffer: LPVOID,
-	dwBufferLength: DWORD,
-	       dwFlags: DWORD
-
-;BOOLAPI
-InternetSetOptionExW proto WINAPI \
-	     hInternet: HINTERNET,
-	      dwOption: DWORD,
-	      lpBuffer: LPVOID,
-	dwBufferLength: DWORD,
-	       dwFlags: DWORD
-
+InternetSetOptionExA proto WINAPI :HINTERNET, :DWORD, :LPVOID, :DWORD, :DWORD
+InternetSetOptionExW proto WINAPI :HINTERNET, :DWORD, :LPVOID, :DWORD, :DWORD
 ifdef _UNICODE
-InternetSetOptionEx	equ <InternetSetOptionExW>
+define InternetSetOptionEx  <InternetSetOptionExW>
 else
-InternetSetOptionEx	equ <InternetSetOptionExA>
+define InternetSetOptionEx  <InternetSetOptionExA>
 endif
 
-;BOOLAPI
-InternetLockRequestFile proto WINAPI \
-	     hInternet: HINTERNET,
-    lphLockRequestInfo: ptr HANDLE
+InternetLockRequestFile proto WINAPI :HINTERNET, :ptr
 
-;BOOLAPI
-InternetUnlockRequestFile proto WINAPI \
-      hLockRequestInfo: HANDLE
+InternetUnlockRequestFile proto WINAPI :HANDLE
 
-ISO_GLOBAL		equ 0x00000001
-ISO_REGISTRY		equ 0x00000002
-ISO_VALID_FLAGS		equ (ISO_GLOBA OR ISO_REGISTRY)
+define ISO_GLOBAL      0x00000001
+define ISO_REGISTRY    0x00000002
 
-INTERNET_OPTION_CALLBACK equ 1
-INTERNET_OPTION_CONNECT_TIMEOUT equ 2
-INTERNET_OPTION_CONNECT_RETRIES equ 3
-INTERNET_OPTION_CONNECT_BACKOFF equ 4
-INTERNET_OPTION_SEND_TIMEOUT equ 5
-INTERNET_OPTION_CONTROL_SEND_TIMEOUT equ INTERNET_OPTION_SEND_TIMEOUT
-INTERNET_OPTION_RECEIVE_TIMEOUT equ 6
-INTERNET_OPTION_CONTROL_RECEIVE_TIMEOUT equ INTERNET_OPTION_RECEIVE_TIMEOUT
-INTERNET_OPTION_DATA_SEND_TIMEOUT equ 7
-INTERNET_OPTION_DATA_RECEIVE_TIMEOUT equ 8
-INTERNET_OPTION_HANDLE_TYPE equ 9
-INTERNET_OPTION_LISTEN_TIMEOUT equ 11
-INTERNET_OPTION_READ_BUFFER_SIZE equ 12
-INTERNET_OPTION_WRITE_BUFFER_SIZE equ 13
+define ISO_VALID_FLAGS (ISO_GLOBAL or ISO_REGISTRY)
 
-INTERNET_OPTION_ASYNC_ID equ 15
-INTERNET_OPTION_ASYNC_PRIORITY equ 16
+define INTERNET_OPTION_CALLBACK                1
+define INTERNET_OPTION_CONNECT_TIMEOUT         2
+define INTERNET_OPTION_CONNECT_RETRIES         3
+define INTERNET_OPTION_CONNECT_BACKOFF         4
+define INTERNET_OPTION_SEND_TIMEOUT            5
+define INTERNET_OPTION_CONTROL_SEND_TIMEOUT    INTERNET_OPTION_SEND_TIMEOUT
+define INTERNET_OPTION_RECEIVE_TIMEOUT         6
+define INTERNET_OPTION_CONTROL_RECEIVE_TIMEOUT INTERNET_OPTION_RECEIVE_TIMEOUT
+define INTERNET_OPTION_DATA_SEND_TIMEOUT       7
+define INTERNET_OPTION_DATA_RECEIVE_TIMEOUT    8
+define INTERNET_OPTION_HANDLE_TYPE             9
+define INTERNET_OPTION_LISTEN_TIMEOUT          11
+define INTERNET_OPTION_READ_BUFFER_SIZE        12
+define INTERNET_OPTION_WRITE_BUFFER_SIZE       13
 
-INTERNET_OPTION_PARENT_HANDLE equ 21
-INTERNET_OPTION_KEEP_CONNECTION equ 22
-INTERNET_OPTION_REQUEST_FLAGS equ 23
-INTERNET_OPTION_EXTENDED_ERROR equ 24
+define INTERNET_OPTION_ASYNC_ID                15
+define INTERNET_OPTION_ASYNC_PRIORITY          16
 
-INTERNET_OPTION_OFFLINE_MODE equ 26
-INTERNET_OPTION_CACHE_STREAM_HANDLE equ 27
-INTERNET_OPTION_USERNAME equ 28
-INTERNET_OPTION_PASSWORD equ 29
-INTERNET_OPTION_ASYNC	equ 30
-INTERNET_OPTION_SECURITY_FLAGS equ 31
-INTERNET_OPTION_SECURITY_CERTIFICATE_STRUCT equ 32
-INTERNET_OPTION_DATAFILE_NAME equ 33
-INTERNET_OPTION_URL	equ 34
-INTERNET_OPTION_SECURITY_CERTIFICATE equ 35
-INTERNET_OPTION_SECURITY_KEY_BITNESS equ 36
-INTERNET_OPTION_REFRESH equ 37
-INTERNET_OPTION_PROXY	equ 38
-INTERNET_OPTION_SETTINGS_CHANGED equ 39
-INTERNET_OPTION_VERSION equ 40
-INTERNET_OPTION_USER_AGENT equ 41
-INTERNET_OPTION_END_BROWSER_SESSION equ 42
-INTERNET_OPTION_PROXY_USERNAME equ 43
-INTERNET_OPTION_PROXY_PASSWORD equ 44
-INTERNET_OPTION_CONTEXT_VALUE equ 45
-INTERNET_OPTION_CONNECT_LIMIT equ 46
-INTERNET_OPTION_SECURITY_SELECT_CLIENT_CERT equ 47
-INTERNET_OPTION_POLICY	equ 48
-INTERNET_OPTION_DISCONNECTED_TIMEOUT equ 49
-INTERNET_OPTION_CONNECTED_STATE equ 50
-INTERNET_OPTION_IDLE_STATE equ 51
-INTERNET_OPTION_OFFLINE_SEMANTICS equ 52
-INTERNET_OPTION_SECONDARY_CACHE_KEY equ 53
-INTERNET_OPTION_CALLBACK_FILTER equ 54
-INTERNET_OPTION_CONNECT_TIME equ 55
-INTERNET_OPTION_SEND_THROUGHPUT equ 56
-INTERNET_OPTION_RECEIVE_THROUGHPUT equ 57
-INTERNET_OPTION_REQUEST_PRIORITY equ 58
-INTERNET_OPTION_HTTP_VERSION equ 59
-INTERNET_OPTION_RESET_URLCACHE_SESSION equ 60
-INTERNET_OPTION_ERROR_MASK equ 62
-INTERNET_OPTION_FROM_CACHE_TIMEOUT equ 63
-INTERNET_OPTION_BYPASS_EDITED_ENTRY equ 64
+define INTERNET_OPTION_PARENT_HANDLE           21
+define INTERNET_OPTION_KEEP_CONNECTION         22
+define INTERNET_OPTION_REQUEST_FLAGS           23
+define INTERNET_OPTION_EXTENDED_ERROR          24
 
-INTERNET_OPTION_HTTP_DECODING equ 65
+define INTERNET_OPTION_OFFLINE_MODE            26
+define INTERNET_OPTION_CACHE_STREAM_HANDLE     27
+define INTERNET_OPTION_USERNAME                28
+define INTERNET_OPTION_PASSWORD                29
+define INTERNET_OPTION_ASYNC                   30
+define INTERNET_OPTION_SECURITY_FLAGS          31
+define INTERNET_OPTION_SECURITY_CERTIFICATE_STRUCT 32
+define INTERNET_OPTION_DATAFILE_NAME           33
+define INTERNET_OPTION_URL                     34
+define INTERNET_OPTION_SECURITY_CERTIFICATE    35
+define INTERNET_OPTION_SECURITY_KEY_BITNESS    36
+define INTERNET_OPTION_REFRESH                 37
+define INTERNET_OPTION_PROXY                   38
+define INTERNET_OPTION_SETTINGS_CHANGED        39
+define INTERNET_OPTION_VERSION                 40
+define INTERNET_OPTION_USER_AGENT              41
+define INTERNET_OPTION_END_BROWSER_SESSION     42
+define INTERNET_OPTION_PROXY_USERNAME          43
+define INTERNET_OPTION_PROXY_PASSWORD          44
+define INTERNET_OPTION_CONTEXT_VALUE           45
+define INTERNET_OPTION_CONNECT_LIMIT           46
+define INTERNET_OPTION_SECURITY_SELECT_CLIENT_CERT 47
+define INTERNET_OPTION_POLICY                  48
+define INTERNET_OPTION_DISCONNECTED_TIMEOUT    49
+define INTERNET_OPTION_CONNECTED_STATE         50
+define INTERNET_OPTION_IDLE_STATE              51
+define INTERNET_OPTION_OFFLINE_SEMANTICS       52
+define INTERNET_OPTION_SECONDARY_CACHE_KEY     53
+define INTERNET_OPTION_CALLBACK_FILTER         54
+define INTERNET_OPTION_CONNECT_TIME            55
+define INTERNET_OPTION_SEND_THROUGHPUT         56
+define INTERNET_OPTION_RECEIVE_THROUGHPUT      57
+define INTERNET_OPTION_REQUEST_PRIORITY        58
+define INTERNET_OPTION_HTTP_VERSION            59
+define INTERNET_OPTION_RESET_URLCACHE_SESSION  60
+define INTERNET_OPTION_ERROR_MASK              62
+define INTERNET_OPTION_FROM_CACHE_TIMEOUT      63
+define INTERNET_OPTION_BYPASS_EDITED_ENTRY     64
 
-INTERNET_OPTION_DIAGNOSTIC_SOCKET_INFO equ 67
-INTERNET_OPTION_CODEPAGE equ 68
-INTERNET_OPTION_CACHE_TIMESTAMPS equ 69
-INTERNET_OPTION_DISABLE_AUTODIAL equ 70
-INTERNET_OPTION_MAX_CONNS_PER_SERVER equ 73
-INTERNET_OPTION_MAX_CONNS_PER_1_0_SERVER equ 74
-INTERNET_OPTION_PER_CONNECTION_OPTION equ 75
-INTERNET_OPTION_DIGEST_AUTH_UNLOAD equ 76
-INTERNET_OPTION_IGNORE_OFFLINE equ 77
-INTERNET_OPTION_IDENTITY equ 78
-INTERNET_OPTION_REMOVE_IDENTITY equ 79
-INTERNET_OPTION_ALTER_IDENTITY equ 80
-INTERNET_OPTION_SUPPRESS_BEHAVIOR equ 81
-INTERNET_OPTION_AUTODIAL_MODE equ 82
-INTERNET_OPTION_AUTODIAL_CONNECTION equ 83
-INTERNET_OPTION_CLIENT_CERT_CONTEXT equ 84
-INTERNET_OPTION_AUTH_FLAGS equ 85
-INTERNET_OPTION_COOKIES_3RD_PARTY equ 86
-INTERNET_OPTION_DISABLE_PASSPORT_AUTH equ 87
-INTERNET_OPTION_SEND_UTF8_SERVERNAME_TO_PROXY equ 88
-INTERNET_OPTION_EXEMPT_CONNECTION_LIMIT equ 89
-INTERNET_OPTION_ENABLE_PASSPORT_AUTH equ 90
+define INTERNET_OPTION_HTTP_DECODING           65
 
-INTERNET_OPTION_HIBERNATE_INACTIVE_WORKER_THREADS equ 91
-INTERNET_OPTION_ACTIVATE_WORKER_THREADS equ 92
-INTERNET_OPTION_RESTORE_WORKER_THREAD_DEFAULTS equ 93
-INTERNET_OPTION_SOCKET_SEND_BUFFER_LENGTH equ 94
-INTERNET_OPTION_PROXY_SETTINGS_CHANGED equ 95
-INTERNET_OPTION_DATAFILE_EXT equ 96
-INTERNET_OPTION_CODEPAGE_PATH equ 100
-INTERNET_OPTION_CODEPAGE_EXTRA equ 101
-INTERNET_OPTION_IDN	equ 102
-INTERNET_OPTION_MAX_CONNS_PER_PROXY equ 103
-INTERNET_OPTION_SUPPRESS_SERVER_AUTH equ 104
-INTERNET_OPTION_SERVER_CERT_CHAIN_CONTEXT equ 105
+define INTERNET_OPTION_DIAGNOSTIC_SOCKET_INFO  67
+define INTERNET_OPTION_CODEPAGE                68
+define INTERNET_OPTION_CACHE_TIMESTAMPS        69
+define INTERNET_OPTION_DISABLE_AUTODIAL        70
+define INTERNET_OPTION_MAX_CONNS_PER_SERVER     73
+define INTERNET_OPTION_MAX_CONNS_PER_1_0_SERVER 74
+define INTERNET_OPTION_PER_CONNECTION_OPTION   75
+define INTERNET_OPTION_DIGEST_AUTH_UNLOAD             76
+define INTERNET_OPTION_IGNORE_OFFLINE           77
+define INTERNET_OPTION_IDENTITY                 78
+define INTERNET_OPTION_REMOVE_IDENTITY          79
+define INTERNET_OPTION_ALTER_IDENTITY           80
+define INTERNET_OPTION_SUPPRESS_BEHAVIOR        81
+define INTERNET_OPTION_AUTODIAL_MODE            82
+define INTERNET_OPTION_AUTODIAL_CONNECTION      83
+define INTERNET_OPTION_CLIENT_CERT_CONTEXT      84
+define INTERNET_OPTION_AUTH_FLAGS               85
+define INTERNET_OPTION_COOKIES_3RD_PARTY        86
+define INTERNET_OPTION_DISABLE_PASSPORT_AUTH    87
+define INTERNET_OPTION_SEND_UTF8_SERVERNAME_TO_PROXY         88
+define INTERNET_OPTION_EXEMPT_CONNECTION_LIMIT  89
+define INTERNET_OPTION_ENABLE_PASSPORT_AUTH     90
 
-INTERNET_FIRST_OPTION	equ INTERNET_OPTION_CALLBACK
-INTERNET_LAST_OPTION	equ INTERNET_OPTION_SERVER_CERT_CHAIN_CONTEXT
+define INTERNET_OPTION_HIBERNATE_INACTIVE_WORKER_THREADS       91
+define INTERNET_OPTION_ACTIVATE_WORKER_THREADS                 92
+define INTERNET_OPTION_RESTORE_WORKER_THREAD_DEFAULTS          93
+define INTERNET_OPTION_SOCKET_SEND_BUFFER_LENGTH               94
+define INTERNET_OPTION_PROXY_SETTINGS_CHANGED                  95
+define INTERNET_OPTION_DATAFILE_EXT                            96
 
-INTERNET_PRIORITY_FOREGROUND equ 1000
+define INTERNET_OPTION_CODEPAGE_PATH                100
+define INTERNET_OPTION_CODEPAGE_EXTRA               101
+define INTERNET_OPTION_IDN                          102
+define INTERNET_OPTION_MAX_CONNS_PER_PROXY          103
+define INTERNET_OPTION_SUPPRESS_SERVER_AUTH         104
+define INTERNET_OPTION_SERVER_CERT_CHAIN_CONTEXT    105
+define INTERNET_OPTION_ENABLE_REDIRECT_CACHE_READ   122
+define INTERNET_OPTION_COMPRESSED_CONTENT_LENGTH    147
+define INTERNET_OPTION_ENABLE_HTTP_PROTOCOL         148
+define INTERNET_OPTION_HTTP_PROTOCOL_USED           149
+define INTERNET_OPTION_ENCODE_EXTRA                 155
+define INTERNET_OPTION_HSTS                         157
+define INTERNET_OPTION_ENTERPRISE_CONTEXT           159
+define INTERNET_OPTION_CONNECTION_FILTER            162
+define INTERNET_OPTION_REFERER_TOKEN_BINDING_HOSTNAME          163
+define INTERNET_OPTION_TOKEN_BINDING_PUBLIC_KEY     181
+define INTERNET_OPTION_COOKIES_SAME_SITE_LEVEL      187
 
-INTERNET_HANDLE_TYPE_INTERNET equ 1
-INTERNET_HANDLE_TYPE_CONNECT_FTP equ 2
-INTERNET_HANDLE_TYPE_CONNECT_GOPHER equ 3
-INTERNET_HANDLE_TYPE_CONNECT_HTTP equ 4
-INTERNET_HANDLE_TYPE_FTP_FIND equ 5
-INTERNET_HANDLE_TYPE_FTP_FIND_HTML equ 6
-INTERNET_HANDLE_TYPE_FTP_FILE equ 7
-INTERNET_HANDLE_TYPE_FTP_FILE_HTML equ 8
-INTERNET_HANDLE_TYPE_GOPHER_FIND equ 9
-INTERNET_HANDLE_TYPE_GOPHER_FIND_HTML equ 10
-INTERNET_HANDLE_TYPE_GOPHER_FILE equ 11
-INTERNET_HANDLE_TYPE_GOPHER_FILE_HTML equ 12
-INTERNET_HANDLE_TYPE_HTTP_REQUEST equ 13
-INTERNET_HANDLE_TYPE_FILE_REQUEST equ 14
+define INTERNET_FIRST_OPTION                   INTERNET_OPTION_CALLBACK
+define INTERNET_LAST_OPTION                    INTERNET_OPTION_COOKIES_SAME_SITE_LEVEL
+define INTERNET_PRIORITY_FOREGROUND            1000
 
-AUTH_FLAG_DISABLE_NEGOTIATE equ 0x00000001
-AUTH_FLAG_ENABLE_NEGOTIATE equ 0x00000002
-AUTH_FLAG_DISABLE_BASIC_CLEARCHANNEL equ 0x00000004
+define HTTP_COOKIES_SAME_SITE_LEVEL_UNKNOWN        0x0
+define HTTP_COOKIES_SAME_SITE_LEVEL_SAME_SITE      0x1
+define HTTP_COOKIES_SAME_SITE_LEVEL_CROSS_SITE_LAX 0x2
+define HTTP_COOKIES_SAME_SITE_LEVEL_CROSS_SITE     0x3
 
-SECURITY_FLAG_SECURE	equ 0x00000001
-SECURITY_FLAG_STRENGTH_WEAK equ 0x10000000
-SECURITY_FLAG_STRENGTH_MEDIUM equ 0x40000000
-SECURITY_FLAG_STRENGTH_STRONG equ 0x20000000
-SECURITY_FLAG_UNKNOWNBIT equ 0x80000000
-SECURITY_FLAG_FORTEZZA	equ 0x08000000
-SECURITY_FLAG_NORMALBITNESS equ SECURITY_FAG_STRENGTH_WEAK
+define HTTP_COOKIES_SAME_SITE_LEVEL_MAX HTTP_COOKIES_SAME_SITE_LEVEL_CROSS_SITE
 
-SECURITY_FLAG_SSL	equ 0x00000002
-SECURITY_FLAG_SSL3	equ 0x00000004
-SECURITY_FLAG_PCT	equ 0x00000008
-SECURITY_FLAG_PCT4	equ 0x00000010
-SECURITY_FLAG_IETFSSL4	equ 0x00000020
+define HTTP_PROTOCOL_FLAG_HTTP2 0x2
+define HTTP_PROTOCOL_MASK (HTTP_PROTOCOL_FLAG_HTTP2)
 
-SECURITY_FLAG_40BIT	equ SECURITY_FAG_STRENGTH_WEAK
-SECURITY_FLAG_128BIT	equ SECURITY_FAG_STRENGTH_STRONG
-SECURITY_FLAG_56BIT	equ SECURITY_FAG_STRENGTH_MEDIUM
+define INTERNET_HANDLE_TYPE_INTERNET           1
+define INTERNET_HANDLE_TYPE_CONNECT_FTP        2
+define INTERNET_HANDLE_TYPE_CONNECT_GOPHER     3
+define INTERNET_HANDLE_TYPE_CONNECT_HTTP       4
+define INTERNET_HANDLE_TYPE_FTP_FIND           5
+define INTERNET_HANDLE_TYPE_FTP_FIND_HTML      6
+define INTERNET_HANDLE_TYPE_FTP_FILE           7
+define INTERNET_HANDLE_TYPE_FTP_FILE_HTML      8
+define INTERNET_HANDLE_TYPE_GOPHER_FIND        9
+define INTERNET_HANDLE_TYPE_GOPHER_FIND_HTML   10
+define INTERNET_HANDLE_TYPE_GOPHER_FILE        11
+define INTERNET_HANDLE_TYPE_GOPHER_FILE_HTML   12
+define INTERNET_HANDLE_TYPE_HTTP_REQUEST       13
+define INTERNET_HANDLE_TYPE_FILE_REQUEST       14
 
-SECURITY_FLAG_IGNORE_REVOCATION equ 0x00000080
-SECURITY_FLAG_IGNORE_UNKNOWN_CA equ 0x00000100
-SECURITY_FLAG_IGNORE_WRONG_USAGE equ 0x00000200
-SECURITY_FLAG_IGNORE_CERT_CN_INVALID equ INTERNET_FLAG_IGNORE_CERT_CN_INVAID
-SECURITY_FLAG_IGNORE_CERT_DATE_INVALID equ INTERNET_FLAG_IGNORE_CERT_DATE_INVAID
-SECURITY_FLAG_IGNORE_REDIRECT_TO_HTTPS equ INTERNET_FAG_IGNORE_REDIRECT_TO_HTTPS
-SECURITY_FLAG_IGNORE_REDIRECT_TO_HTTP equ INTERNET_FAG_IGNORE_REDIRECT_TO_HTTP
+define AUTH_FLAG_DISABLE_NEGOTIATE             0x00000001
+define AUTH_FLAG_ENABLE_NEGOTIATE              0x00000002
+define AUTH_FLAG_DISABLE_BASIC_CLEARCHANNEL    0x00000004
+define AUTH_FLAG_DISABLE_SERVER_AUTH           0x00000008
 
-SECURITY_SET_MASK equ \
-	SECURITY_FAG_IGNORE_REVOCATION OR \
-	SECURITY_FLAG_IGNORE_UNKNOWN_CA OR \
-	SECURITY_FLAG_IGNORE_CERT_CN_INVALID OR \
-	SECURITY_FLAG_IGNORE_CERT_DATE_INVALID
+define SECURITY_FLAG_SECURE                    0x00000001
+define SECURITY_FLAG_STRENGTH_WEAK             0x10000000
+define SECURITY_FLAG_STRENGTH_MEDIUM           0x40000000
+define SECURITY_FLAG_STRENGTH_STRONG           0x20000000
+define SECURITY_FLAG_UNKNOWNBIT                0x80000000
+define SECURITY_FLAG_FORTEZZA                  0x08000000
+define SECURITY_FLAG_NORMALBITNESS             SECURITY_FLAG_STRENGTH_WEAK
 
-AUTODIAL_MODE_NEVER	equ 1
-AUTODIAL_MODE_ALWAYS	equ 2
-AUTODIAL_MODE_NO_NETWORK_PRESENT equ 4
+define SECURITY_FLAG_SSL                       0x00000002
+define SECURITY_FLAG_SSL3                      0x00000004
+define SECURITY_FLAG_PCT                       0x00000008
+define SECURITY_FLAG_PCT4                      0x00000010
+define SECURITY_FLAG_IETFSSL4                  0x00000020
 
-;BOOLAPI
-InternetGetLastResponseInfoA proto WINAPI \
-	     lpdwError: LPDWORD,
-	    lpszBuffer: LPSTR,
-      lpdwBufferLength: LPDWORD
-InternetGetLastResponseInfoW proto WINAPI \
-	     lpdwError: LPDWORD,
-	    lpszBuffer: LPWSTR,
-      lpdwBufferLength: LPDWORD
+define SECURITY_FLAG_40BIT                     SECURITY_FLAG_STRENGTH_WEAK
+define SECURITY_FLAG_128BIT                    SECURITY_FLAG_STRENGTH_STRONG
+define SECURITY_FLAG_56BIT                     SECURITY_FLAG_STRENGTH_MEDIUM
+
+define SECURITY_FLAG_IGNORE_REVOCATION         0x00000080
+define SECURITY_FLAG_IGNORE_UNKNOWN_CA         0x00000100
+define SECURITY_FLAG_IGNORE_WRONG_USAGE        0x00000200
+define SECURITY_FLAG_IGNORE_WEAK_SIGNATURE     0x00010000
+
+define SECURITY_FLAG_IGNORE_CERT_CN_INVALID    INTERNET_FLAG_IGNORE_CERT_CN_INVALID
+define SECURITY_FLAG_IGNORE_CERT_DATE_INVALID  INTERNET_FLAG_IGNORE_CERT_DATE_INVALID
+
+define SECURITY_FLAG_IGNORE_REDIRECT_TO_HTTPS  INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS
+define SECURITY_FLAG_IGNORE_REDIRECT_TO_HTTP   INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP
+
+define SECURITY_SET_MASK       (SECURITY_FLAG_IGNORE_REVOCATION or SECURITY_FLAG_IGNORE_UNKNOWN_CA or SECURITY_FLAG_IGNORE_CERT_CN_INVALID or SECURITY_FLAG_IGNORE_CERT_DATE_INVALID or SECURITY_FLAG_IGNORE_WRONG_USAGE or SECURITY_FLAG_IGNORE_WEAK_SIGNATURE)
+
+define SECURITY_FLAG_OPT_IN_WEAK_SIGNATURE     0x00020000
+
+define AUTODIAL_MODE_NEVER                     1
+define AUTODIAL_MODE_ALWAYS                    2
+define AUTODIAL_MODE_NO_NETWORK_PRESENT        4
+
+InternetGetLastResponseInfoA proto WINAPI :LPDWORD, :LPSTR, :LPDWORD
+InternetGetLastResponseInfoW proto WINAPI :LPDWORD, :LPWSTR, :LPDWORD
 ifdef _UNICODE
-InternetGetLastResponseInfo equ <InternetGetLastResponseInfoW>
+define InternetGetLastResponseInfo  <InternetGetLastResponseInfoW>
 else
-InternetGetLastResponseInfo equ <InternetGetLastResponseInfoA>
+define InternetGetLastResponseInfo  <InternetGetLastResponseInfoA>
 endif
 
-CALLBACK(INTERNET_STATUS_CALLBACK, :HINTERNET, :DWORD_PTR, :DWORD, :PVOID, :DWORD)
+CALLBACK(INTERNET_STATUS_CALLBACK, :HINTERNET, :DWORD_PTR, :DWORD, :LPVOID, :DWORD)
 LPINTERNET_STATUS_CALLBACK typedef ptr INTERNET_STATUS_CALLBACK
 
-InternetSetStatusCallbackA proto WINAPI \
-	     hInternet: HINTERNET,
-  lpfnInternetCallback: INTERNET_STATUS_CALLBACK
-InternetSetStatusCallbackW proto WINAPI \
-	     hInternet: HINTERNET,
-  lpfnInternetCallback: INTERNET_STATUS_CALLBACK
+InternetSetStatusCallbackA proto WINAPI :HINTERNET, :INTERNET_STATUS_CALLBACK
+InternetSetStatusCallbackW proto WINAPI :HINTERNET, :INTERNET_STATUS_CALLBACK
 
 ifdef _UNICODE
-InternetSetStatusCallback equ <InternetSetStatusCallbackW>
+define InternetSetStatusCallback  <InternetSetStatusCallbackW>
 else
 ifdef _WINX32_
-InternetSetStatusCallback equ <InternetSetStatusCallbackA>
+define InternetSetStatusCallback  <InternetSetStatusCallbackA>
 else
-InternetSetStatusCallback proto WINAPI \
-	     hInternet: HINTERNET,
-  lpfnInternetCallback: INTERNET_STATUS_CALLBACK
+InternetSetStatusCallback proto WINAPI :HINTERNET, :INTERNET_STATUS_CALLBACK
 endif
 endif
 
+define INTERNET_STATUS_RESOLVING_NAME          10
+define INTERNET_STATUS_NAME_RESOLVED           11
+define INTERNET_STATUS_CONNECTING_TO_SERVER    20
+define INTERNET_STATUS_CONNECTED_TO_SERVER     21
+define INTERNET_STATUS_SENDING_REQUEST         30
+define INTERNET_STATUS_REQUEST_SENT            31
+define INTERNET_STATUS_RECEIVING_RESPONSE      40
+define INTERNET_STATUS_RESPONSE_RECEIVED       41
+define INTERNET_STATUS_CTL_RESPONSE_RECEIVED   42
+define INTERNET_STATUS_PREFETCH                43
+define INTERNET_STATUS_CLOSING_CONNECTION      50
+define INTERNET_STATUS_CONNECTION_CLOSED       51
+define INTERNET_STATUS_HANDLE_CREATED          60
+define INTERNET_STATUS_HANDLE_CLOSING          70
+define INTERNET_STATUS_DETECTING_PROXY         80
+define INTERNET_STATUS_REQUEST_COMPLETE        100
+define INTERNET_STATUS_REDIRECT                110
+define INTERNET_STATUS_INTERMEDIATE_RESPONSE   120
+define INTERNET_STATUS_USER_INPUT_REQUIRED     140
+define INTERNET_STATUS_STATE_CHANGE            200
+define INTERNET_STATUS_COOKIE_SENT             320
+define INTERNET_STATUS_COOKIE_RECEIVED         321
+define INTERNET_STATUS_PRIVACY_IMPACTED        324
+define INTERNET_STATUS_P3P_HEADER              325
+define INTERNET_STATUS_P3P_POLICYREF           326
+define INTERNET_STATUS_COOKIE_HISTORY          327
 
-INTERNET_STATUS_RESOLVING_NAME equ 10
-INTERNET_STATUS_NAME_RESOLVED equ 11
-INTERNET_STATUS_CONNECTING_TO_SERVER equ 20
-INTERNET_STATUS_CONNECTED_TO_SERVER equ 21
-INTERNET_STATUS_SENDING_REQUEST equ 30
-INTERNET_STATUS_REQUEST_SENT equ 31
-INTERNET_STATUS_RECEIVING_RESPONSE equ 40
-INTERNET_STATUS_RESPONSE_RECEIVED equ 41
-INTERNET_STATUS_CTL_RESPONSE_RECEIVED equ 42
-INTERNET_STATUS_PREFETCH equ 43
-INTERNET_STATUS_CLOSING_CONNECTION equ 50
-INTERNET_STATUS_CONNECTION_CLOSED equ 51
-INTERNET_STATUS_HANDLE_CREATED equ 60
-INTERNET_STATUS_HANDLE_CLOSING equ 70
-INTERNET_STATUS_DETECTING_PROXY equ 80
-INTERNET_STATUS_REQUEST_COMPLETE equ 100
-INTERNET_STATUS_REDIRECT equ 110
-INTERNET_STATUS_INTERMEDIATE_RESPONSE equ 120
-INTERNET_STATUS_USER_INPUT_REQUIRED equ 140
-INTERNET_STATUS_STATE_CHANGE equ 200
-INTERNET_STATUS_COOKIE_SENT equ 320
-INTERNET_STATUS_COOKIE_RECEIVED equ 321
-INTERNET_STATUS_PRIVACY_IMPACTED equ 324
-INTERNET_STATUS_P3P_HEADER equ 325
-INTERNET_STATUS_P3P_POLICYREF equ 326
-INTERNET_STATUS_COOKIE_HISTORY equ 327
+define INTERNET_STATE_CONNECTED                0x00000001
+define INTERNET_STATE_DISCONNECTED             0x00000002
+define INTERNET_STATE_DISCONNECTED_BY_USER     0x00000010
+define INTERNET_STATE_IDLE                     0x00000100
+define INTERNET_STATE_BUSY                     0x00000200
 
-INTERNET_STATE_CONNECTED equ 0x00000001
-INTERNET_STATE_DISCONNECTED equ 0x00000002
-INTERNET_STATE_DISCONNECTED_BY_USER equ 0x00000010
-INTERNET_STATE_IDLE	equ 0x00000100
-INTERNET_STATE_BUSY	equ 0x00000200
+.enum InternetCookieState {
+    COOKIE_STATE_UNKNOWN        = 0x0,
+    COOKIE_STATE_ACCEPT         = 0x1,
+    COOKIE_STATE_PROMPT         = 0x2,
+    COOKIE_STATE_LEASH          = 0x3,
+    COOKIE_STATE_DOWNGRADE      = 0x4,
+    COOKIE_STATE_REJECT         = 0x5,
+    COOKIE_STATE_MAX            = COOKIE_STATE_REJECT,
+    }
 
-;			typedef SDWORD
-COOKIE_STATE_UNKNOWN	equ 0x0
-COOKIE_STATE_ACCEPT	equ 0x1
-COOKIE_STATE_PROMPT	equ 0x2
-COOKIE_STATE_LEASH	equ 0x3
-COOKIE_STATE_DOWNGRADE	equ 0x4
-COOKIE_STATE_REJECT	equ 0x5
-COOKIE_STATE_MAX	equ COOKIE_STATE_REJECT
-;InternetCookieState;
+IncomingCookieState     struct
+cSession                sdword ?
+cPersistent             sdword ?
+cAccepted               sdword ?
+cLeashed                sdword ?
+cDowngraded             sdword ?
+cBlocked                sdword ?
+pszLocation             string_t ?
+IncomingCookieState     ends
 
-FTP_TRANSFER_TYPE_UNKNOWN equ 0x00000000
-FTP_TRANSFER_TYPE_ASCII equ 0x00000001
-FTP_TRANSFER_TYPE_BINARY equ 0x00000002
-FTP_TRANSFER_TYPE_MASK	equ (FTP_TRANSFER_TYPE_ASCII OR FTP_TRANSFER_TYPE_BINARY)
+OutgoingCookieState     struct
+cSent                   sdword ?
+cSuppressed             sdword ?
+pszLocation             string_t ?
+OutgoingCookieState     ends
 
-;INTERNETAPI
-FtpFindFirstFileA proto WINAPI \
-	      hConnect: HINTERNET,
-	lpszSearchFile: LPCSTR,
-	lpFindFileData: LPWIN32_FIND_DATAA,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
+InternetCookieHistory   struct
+fAccepted               BOOL ?
+fLeashed                BOOL ?
+fDowngraded             BOOL ?
+fRejected               BOOL ?
+InternetCookieHistory   ends
 
-;INTERNETAPI
-FtpFindFirstFileW proto WINAPI \
-	      hConnect: HINTERNET,
-	lpszSearchFile: LPCWSTR,
-	lpFindFileData: LPWIN32_FIND_DATAW,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
+CookieDecision          struct
+dwCookieState           DWORD ?
+fAllowSession           BOOL ?
+CookieDecision          ends
 
+define INTERNET_INVALID_STATUS_CALLBACK        (-1)
+
+define FTP_TRANSFER_TYPE_UNKNOWN   0x00000000
+define FTP_TRANSFER_TYPE_ASCII     0x00000001
+define FTP_TRANSFER_TYPE_BINARY    0x00000002
+
+define FTP_TRANSFER_TYPE_MASK      (FTP_TRANSFER_TYPE_ASCII or FTP_TRANSFER_TYPE_BINARY)
+
+FtpFindFirstFileA proto WINAPI :HINTERNET, :LPCSTR, :LPWIN32_FIND_DATAA, :DWORD, :DWORD_PTR
+FtpFindFirstFileW proto WINAPI :HINTERNET, :LPCWSTR, :LPWIN32_FIND_DATAW, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-FtpFindFirstFile	equ <FtpFindFirstFileW>
+define FtpFindFirstFile  <FtpFindFirstFileW>
 else
-FtpFindFirstFile	equ <FtpFindFirstFileA>
+define FtpFindFirstFile  <FtpFindFirstFileA>
 endif
 
-;BOOLAPI
-FtpGetFileA proto WINAPI \
-	      hConnect: HINTERNET,
-	lpszRemoteFile: LPCSTR,
-	   lpszNewFile: LPCSTR,
-	 fFailIfExists: BOOL,
-  dwFlagsAndAttributes: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;BOOLAPI
-FtpGetFileW proto WINAPI \
-	      hConnect: HINTERNET,
-	lpszRemoteFile: LPCWSTR,
-	   lpszNewFile: LPCWSTR,
-	 fFailIfExists: BOOL,
-  dwFlagsAndAttributes: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
+FtpGetFileA proto WINAPI :HINTERNET, :LPCSTR, :LPCSTR, :BOOL, :DWORD, :DWORD, :DWORD_PTR
+FtpGetFileW proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR, :BOOL, :DWORD, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-FtpGetFile		equ <FtpGetFileW>
+define FtpGetFile  <FtpGetFileW>
 else
-FtpGetFile		equ <FtpGetFileA>
+define FtpGetFile  <FtpGetFileA>
 endif
 
-;BOOLAPI
-FtpPutFileA proto WINAPI \
-	      hConnect: HINTERNET,
-	 lpszLocalFile: LPCSTR,
-     lpszNewRemoteFile: LPCSTR,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;BOOLAPI
-FtpPutFileW proto WINAPI \
-	      hConnect: HINTERNET,
-	 lpszLocalFile: LPCWSTR,
-     lpszNewRemoteFile: LPCWSTR,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
+FtpPutFileA proto WINAPI :HINTERNET, :LPCSTR, :LPCSTR, :DWORD, :DWORD_PTR
+FtpPutFileW proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-FtpPutFile		equ <FtpPutFileW>
+define FtpPutFile  <FtpPutFileW>
 else
-FtpPutFile		equ <FtpPutFileA>
+define FtpPutFile  <FtpPutFileA>
 endif
 
-;BOOLAPI
-FtpGetFileEx proto WINAPI \
-	   hFtpSession: HINTERNET,
-	lpszRemoteFile: LPCSTR,
-	   lpszNewFile: LPCWSTR,
-	 fFailIfExists: BOOL,
-  dwFlagsAndAttributes: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
+FtpGetFileEx proto WINAPI :HINTERNET, :LPCSTR, :LPCWSTR, :BOOL, :DWORD, :DWORD, :DWORD_PTR
 
+FtpPutFileEx proto WINAPI :HINTERNET, :LPCWSTR, :LPCSTR, :DWORD, :DWORD_PTR
 
-;BOOLAPI
-FtpPutFileEx proto WINAPI \
-	   hFtpSession: HINTERNET,
-	 lpszLocalFile: LPCWSTR,
-     lpszNewRemoteFile: LPCSTR,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-
-;BOOLAPI
-FtpDeleteFileA proto WINAPI \
-	      hConnect: HINTERNET,
-	  lpszFileName: LPCSTR
-
-;BOOLAPI
-FtpDeleteFileW proto WINAPI \
-	      hConnect: HINTERNET,
-	  lpszFileName: LPCWSTR
-
+FtpDeleteFileA proto WINAPI :HINTERNET, :LPCSTR
+FtpDeleteFileW proto WINAPI :HINTERNET, :LPCWSTR
 ifdef _UNICODE
-FtpDeleteFile		equ <FtpDeleteFileW>
+define FtpDeleteFile  <FtpDeleteFileW>
 else
-FtpDeleteFile		equ <FtpDeleteFileA>
+define FtpDeleteFile  <FtpDeleteFileA>
 endif
 
-;BOOLAPI
-FtpRenameFileA proto WINAPI \
-	      hConnect: HINTERNET,
-	  lpszExisting: LPCSTR,
-	       lpszNew: LPCSTR
-
-;BOOLAPI
-FtpRenameFileW proto WINAPI \
-	      hConnect: HINTERNET,
-	  lpszExisting: LPCWSTR,
-	       lpszNew: LPCWSTR
-
+FtpRenameFileA proto WINAPI :HINTERNET, :LPCSTR, :LPCSTR
+FtpRenameFileW proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-FtpRenameFile		equ <FtpRenameFileW>
+define FtpRenameFile  <FtpRenameFileW>
 else
-FtpRenameFile		equ <FtpRenameFileA>
+define FtpRenameFile  <FtpRenameFileA>
 endif
 
-;INTERNETAPI
-FtpOpenFileA proto WINAPI \
-	      hConnect: HINTERNET,
-	  lpszFileName: LPCSTR,
-	      dwAccess: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;INTERNETAPI
-FtpOpenFileW proto WINAPI \
-	      hConnect: HINTERNET,
-	  lpszFileName: LPCWSTR,
-	      dwAccess: DWORD,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
+FtpOpenFileA proto WINAPI :HINTERNET, :LPCSTR, :DWORD, :DWORD, :DWORD_PTR
+FtpOpenFileW proto WINAPI :HINTERNET, :LPCWSTR, :DWORD, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-FtpOpenFile		equ <FtpOpenFileW>
+define FtpOpenFile  <FtpOpenFileW>
 else
-FtpOpenFile		equ <FtpOpenFileA>
+define FtpOpenFile  <FtpOpenFileA>
 endif
 
-;BOOLAPI
-FtpCreateDirectoryA proto WINAPI \
-	      hConnect: HINTERNET,
-	 lpszDirectory: LPCSTR
-
-;BOOLAPI
-FtpCreateDirectoryW proto WINAPI \
-	      hConnect: HINTERNET,
-	 lpszDirectory: LPCWSTR
-
+FtpCreateDirectoryA proto WINAPI :HINTERNET, :LPCSTR
+FtpCreateDirectoryW proto WINAPI :HINTERNET, :LPCWSTR
 ifdef _UNICODE
-FtpCreateDirectory	equ <FtpCreateDirectoryW>
+define FtpCreateDirectory  <FtpCreateDirectoryW>
 else
-FtpCreateDirectory	equ <FtpCreateDirectoryA>
+define FtpCreateDirectory  <FtpCreateDirectoryA>
 endif
 
-;BOOLAPI
-FtpRemoveDirectoryA proto WINAPI \
-	      hConnect: HINTERNET,
-	 lpszDirectory: LPCSTR
-
-;BOOLAPI
-FtpRemoveDirectoryW proto WINAPI \
-	      hConnect: HINTERNET,
-	 lpszDirectory: LPCWSTR
-
+FtpRemoveDirectoryA proto WINAPI :HINTERNET, :LPCSTR
+FtpRemoveDirectoryW proto WINAPI :HINTERNET, :LPCWSTR
 ifdef _UNICODE
-FtpRemoveDirectory	equ <FtpRemoveDirectoryW>
+define FtpRemoveDirectory  <FtpRemoveDirectoryW>
 else
-FtpRemoveDirectory	equ <FtpRemoveDirectoryA>
+define FtpRemoveDirectory  <FtpRemoveDirectoryA>
 endif
 
-;BOOLAPI
-FtpSetCurrentDirectoryA proto WINAPI \
-	      hConnect: HINTERNET,
-	 lpszDirectory: LPCSTR
-
-;BOOLAPI
-FtpSetCurrentDirectoryW proto WINAPI \
-	      hConnect: HINTERNET,
-	 lpszDirectory: LPCWSTR
-
+FtpSetCurrentDirectoryA proto WINAPI :HINTERNET, :LPCSTR
+FtpSetCurrentDirectoryW proto WINAPI :HINTERNET, :LPCWSTR
 ifdef _UNICODE
-FtpSetCurrentDirectory	equ <FtpSetCurrentDirectoryW>
+define FtpSetCurrentDirectory  <FtpSetCurrentDirectoryW>
 else
-FtpSetCurrentDirectory	equ <FtpSetCurrentDirectoryA>
+define FtpSetCurrentDirectory  <FtpSetCurrentDirectoryA>
 endif
 
-;BOOLAPI
-FtpGetCurrentDirectoryA proto WINAPI \
-	      hConnect: HINTERNET,
-  lpszCurrentDirectory: LPSTR,
-  lpdwCurrentDirectory: LPDWORD
-FtpGetCurrentDirectoryW proto WINAPI \
-	      hConnect: HINTERNET,
-  lpszCurrentDirectory: LPWSTR,
-  lpdwCurrentDirectory: LPDWORD
+FtpGetCurrentDirectoryA proto WINAPI :HINTERNET, :LPSTR, :LPDWORD
+FtpGetCurrentDirectoryW proto WINAPI :HINTERNET, :LPWSTR, :LPDWORD
 ifdef _UNICODE
-FtpGetCurrentDirectory	equ <FtpGetCurrentDirectoryW>
+define FtpGetCurrentDirectory  <FtpGetCurrentDirectoryW>
 else
-FtpGetCurrentDirectory	equ <FtpGetCurrentDirectoryA>
+define FtpGetCurrentDirectory  <FtpGetCurrentDirectoryA>
 endif
 
-;BOOLAPI
-FtpCommandA proto WINAPI \
-	      hConnect: HINTERNET,
-       fExpectResponse: BOOL,
-	       dwFlags: DWORD,
-	   lpszCommand: LPCSTR,
-	     dwContext: DWORD_PTR,
-	  phFtpCommand: ptr HINTERNET
-
-;BOOLAPI
-FtpCommandW proto WINAPI \
-	      hConnect: HINTERNET,
-       fExpectResponse: BOOL,
-	       dwFlags: DWORD,
-	   lpszCommand: LPCWSTR,
-	     dwContext: DWORD_PTR,
-	  phFtpCommand: ptr HINTERNET
-
+FtpCommandA proto WINAPI :HINTERNET, :BOOL, :DWORD, :LPCSTR, :DWORD_PTR, :ptr
+FtpCommandW proto WINAPI :HINTERNET, :BOOL, :DWORD, :LPCWSTR, :DWORD_PTR, :ptr
 ifdef _UNICODE
-FtpCommand		equ <FtpCommandW>
+define FtpCommand  <FtpCommandW>
 else
-FtpCommand		equ <FtpCommandA>
+define FtpCommand  <FtpCommandA>
 endif
 
-;INTERNETAPI
-FtpGetFileSize proto WINAPI \
-		 hFile: HINTERNET,
-      lpdwFileSizeHigh: LPDWORD
+FtpGetFileSize proto WINAPI :HINTERNET, :LPDWORD
 
+define MAX_GOPHER_DISPLAY_TEXT     128
+define MAX_GOPHER_SELECTOR_TEXT    256
+define MAX_GOPHER_HOST_NAME        INTERNET_MAX_HOST_NAME_LENGTH
+define MAX_GOPHER_LOCATOR_LENGTH   (1 + MAX_GOPHER_DISPLAY_TEXT + 1 + MAX_GOPHER_SELECTOR_TEXT + 1 + MAX_GOPHER_HOST_NAME + 1 + INTERNET_MAX_PORT_NUMBER_LENGTH + 1 + 1 + 2 )
 
-MAX_GOPHER_DISPLAY_TEXT equ 128
-MAX_GOPHER_SELECTOR_TEXT equ 256
-MAX_GOPHER_HOST_NAME	equ INTERNET_MAX_HOST_NAME_LENGTH
-MAX_GOPHER_LOCATOR_LENGTH equ ( 1 \
-				+ MAX_GOPHER_DISPLAY_TEXT	    \
-				+ 1				    \
-				+ MAX_GOPHER_SELECTOR_TEXT	    \
-				+ 1				    \
-				+ MAX_GOPHER_HOST_NAME		    \
-				+ 1				    \
-				+ INTERNET_MAX_PORT_NUMBER_LENGTH   \
-				+ 1				    \
-				+ 1				    \
-				+ 2 )
-
-GOPHER_FIND_DATAA	STRUC
-DisplayString		CHAR MAX_GOPHER_DISPLAY_TEXT + 1 dup(?)
-GopherType		dd ?
-SizeLow			dd ?
-SizeHigh		dd ?
-LastModificationTime	FILETIME <>
-Locator			CHAR MAX_GOPHER_LOCATOR_LENGTH + 1 dup(?)
-GOPHER_FIND_DATAA	ENDS
-LPGOPHER_FIND_DATAA	typedef ptr GOPHER_FIND_DATAA
-GOPHER_FIND_DATAW	STRUC
-DisplayString		WCHAR MAX_GOPHER_DISPLAY_TEXT + 1 dup(?)
-GopherType		dd ?
-SizeLow			dd ?
-SizeHigh		dd ?
-LastModificationTime	FILETIME <>
-Locator			WCHAR MAX_GOPHER_LOCATOR_LENGTH + 1 dup(?)
-GOPHER_FIND_DATAW	ENDS
-LPGOPHER_FIND_DATAW	typedef ptr GOPHER_FIND_DATAW
+GOPHER_FIND_DATAA       struct
+DisplayString           CHAR MAX_GOPHER_DISPLAY_TEXT + 1 dup(?)
+GopherType              DWORD ?
+SizeLow                 DWORD ?
+SizeHigh                DWORD ?
+LastModificationTime    FILETIME <>
+Locator                 CHAR MAX_GOPHER_LOCATOR_LENGTH + 1 dup(?)
+GOPHER_FIND_DATAA       ends
+LPGOPHER_FIND_DATAA     typedef ptr GOPHER_FIND_DATAA
+GOPHER_FIND_DATAW       struct
+DisplayString           WCHAR MAX_GOPHER_DISPLAY_TEXT + 1 dup(?)
+GopherType              DWORD ?
+SizeLow                 DWORD ?
+SizeHigh                DWORD ?
+LastModificationTime    FILETIME <>
+Locator                 WCHAR MAX_GOPHER_LOCATOR_LENGTH + 1 dup(?)
+GOPHER_FIND_DATAW       ends
+LPGOPHER_FIND_DATAW     typedef ptr GOPHER_FIND_DATAW
 ifdef _UNICODE
-GOPHER_FIND_DATA	typedef GOPHER_FIND_DATAW
-LPGOPHER_FIND_DATA	typedef LPGOPHER_FIND_DATAW
+GOPHER_FIND_DATA        typedef GOPHER_FIND_DATAW
+LPGOPHER_FIND_DATA      typedef LPGOPHER_FIND_DATAW
 else
-GOPHER_FIND_DATA	typedef GOPHER_FIND_DATAA
-LPGOPHER_FIND_DATA	typedef LPGOPHER_FIND_DATAA
+GOPHER_FIND_DATA        typedef GOPHER_FIND_DATAA
+LPGOPHER_FIND_DATA      typedef LPGOPHER_FIND_DATAA
 endif
 
-
-GOPHER_TYPE_TEXT_FILE	equ 0x00000001
-GOPHER_TYPE_DIRECTORY	equ 0x00000002
-GOPHER_TYPE_CSO		equ 0x00000004
-GOPHER_TYPE_ERROR	equ 0x00000008
-GOPHER_TYPE_MAC_BINHEX	equ 0x00000010
-GOPHER_TYPE_DOS_ARCHIVE equ 0x00000020
-GOPHER_TYPE_UNIX_UUENCODED equ 0x00000040
-GOPHER_TYPE_INDEX_SERVER equ 0x00000080
-GOPHER_TYPE_TELNET	equ 0x00000100
-GOPHER_TYPE_BINARY	equ 0x00000200
-GOPHER_TYPE_REDUNDANT	equ 0x00000400
-GOPHER_TYPE_TN3270	equ 0x00000800
-GOPHER_TYPE_GIF		equ 0x00001000
-GOPHER_TYPE_IMAGE	equ 0x00002000
-GOPHER_TYPE_BITMAP	equ 0x00004000
-GOPHER_TYPE_MOVIE	equ 0x00008000
-GOPHER_TYPE_SOUND	equ 0x00010000
-GOPHER_TYPE_HTML	equ 0x00020000
-GOPHER_TYPE_PDF		equ 0x00040000
-GOPHER_TYPE_CALENDAR	equ 0x00080000
-GOPHER_TYPE_INLINE	equ 0x00100000
-GOPHER_TYPE_UNKNOWN	equ 0x20000000
-GOPHER_TYPE_ASK		equ 0x40000000
-GOPHER_TYPE_GOPHER_PLUS equ 0x80000000
-
+define GOPHER_TYPE_TEXT_FILE       0x00000001
+define GOPHER_TYPE_DIRECTORY       0x00000002
+define GOPHER_TYPE_CSO             0x00000004
+define GOPHER_TYPE_ERROR           0x00000008
+define GOPHER_TYPE_MAC_BINHEX      0x00000010
+define GOPHER_TYPE_DOS_ARCHIVE     0x00000020
+define GOPHER_TYPE_UNIX_UUENCODED  0x00000040
+define GOPHER_TYPE_INDEX_SERVER    0x00000080
+define GOPHER_TYPE_TELNET          0x00000100
+define GOPHER_TYPE_BINARY          0x00000200
+define GOPHER_TYPE_REDUNDANT       0x00000400
+define GOPHER_TYPE_TN3270          0x00000800
+define GOPHER_TYPE_GIF             0x00001000
+define GOPHER_TYPE_IMAGE           0x00002000
+define GOPHER_TYPE_BITMAP          0x00004000
+define GOPHER_TYPE_MOVIE           0x00008000
+define GOPHER_TYPE_SOUND           0x00010000
+define GOPHER_TYPE_HTML            0x00020000
+define GOPHER_TYPE_PDF             0x00040000
+define GOPHER_TYPE_CALENDAR        0x00080000
+define GOPHER_TYPE_INLINE          0x00100000
+define GOPHER_TYPE_UNKNOWN         0x20000000
+define GOPHER_TYPE_ASK             0x40000000
+define GOPHER_TYPE_GOPHER_PLUS     0x80000000
 
 IS_GOPHER_FILE macro type
-	exitm<(((type) AND GOPHER_TYPE_FILE_MASK) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_FILE_MASK) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_DIRECTORY macro type
-	exitm<(((type) AND GOPHER_TYPE_DIRECTORY) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_DIRECTORY) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_PHONE_SERVER macro type
-	exitm<(((type) AND GOPHER_TYPE_CSO) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_CSO) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_ERROR macro type
-	exitm<(((type) AND GOPHER_TYPE_ERROR) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_ERROR) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_INDEX_SERVER macro type
-	exitm<(((type) AND GOPHER_TYPE_INDEX_SERVER) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_INDEX_SERVER) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_TELNET_SESSION macro type
-	exitm<(((type) AND GOPHER_TYPE_TELNET) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_TELNET) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_BACKUP_SERVER macro type
-	exitm<(((type) AND GOPHER_TYPE_REDUNDANT) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_REDUNDANT) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_TN3270_SESSION macro type
-	exitm<(((type) AND GOPHER_TYPE_TN3270) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_TN3270) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_ASK macro type
-	exitm<(((type) AND GOPHER_TYPE_ASK) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_ASK) ? TRUE : FALSE)>
+  endm
 IS_GOPHER_PLUS macro type
-	exitm<(((type) AND GOPHER_TYPE_GOPHER_PLUS) ? TRUE : FASE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_GOPHER_PLUS) ? TRUE : FALSE)>
+  endm
 
 IS_GOPHER_TYPE_KNOWN macro type
-	exitm<(((type) AND GOPHER_TYPE_UNKNOWN) ? FASE : TRUE)>
-	endm
+  exitm<(BOOL)(((type) and GOPHER_TYPE_UNKNOWN) ? FALSE : TRUE)>
+  endm
 
+define GOPHER_TYPE_FILE_MASK (GOPHER_TYPE_TEXT_FILE or \
+                              GOPHER_TYPE_MAC_BINHEX or \
+                              GOPHER_TYPE_DOS_ARCHIVE or \
+                              GOPHER_TYPE_UNIX_UUENCODED or \
+                              GOPHER_TYPE_BINARY or \
+                              GOPHER_TYPE_GIF or \
+                              GOPHER_TYPE_IMAGE or \
+                              GOPHER_TYPE_BITMAP or \
+                              GOPHER_TYPE_MOVIE or \
+                              GOPHER_TYPE_SOUND or \
+                              GOPHER_TYPE_HTML or \
+                              GOPHER_TYPE_PDF or \
+                              GOPHER_TYPE_CALENDAR or \
+                              GOPHER_TYPE_INLINE)
 
-GOPHER_TYPE_FILE_MASK equ \
-	GOPHER_TYPE_TEXT_FILE	      OR \
-	GOPHER_TYPE_MAC_BINHEX	      OR \
-	GOPHER_TYPE_DOS_ARCHIVE	      OR \
-	GOPHER_TYPE_UNIX_UUENCODED    OR \
-	GOPHER_TYPE_BINARY	      OR \
-	GOPHER_TYPE_GIF		      OR \
-	GOPHER_TYPE_IMAGE	      OR \
-	GOPHER_TYPE_BITMAP	      OR \
-	GOPHER_TYPE_MOVIE	      OR \
-	GOPHER_TYPE_SOUND	      OR \
-	GOPHER_TYPE_HTML	      OR \
-	GOPHER_TYPE_PDF		      OR \
-	GOPHER_TYPE_CALENDAR	      OR \
-	GOPHER_TYPE_INLINE
-
-
-GOPHER_ADMIN_ATTRIBUTE_TYPE STRUC
-_Comment		LPCTSTR ?
-EmailAddress		LPCTSTR ?
-GOPHER_ADMIN_ATTRIBUTE_TYPE ENDS
+GOPHER_ADMIN_ATTRIBUTE_TYPE struct
+_Comment                LPCTSTR ?
+EmailAddress            LPCTSTR ?
+GOPHER_ADMIN_ATTRIBUTE_TYPE ends
 LPGOPHER_ADMIN_ATTRIBUTE_TYPE typedef ptr GOPHER_ADMIN_ATTRIBUTE_TYPE
 
-GOPHER_MOD_DATE_ATTRIBUTE_TYPE STRUC
-DateAndTime		FILETIME <>
-GOPHER_MOD_DATE_ATTRIBUTE_TYPE ENDS
+GOPHER_MOD_DATE_ATTRIBUTE_TYPE struct
+DateAndTime             FILETIME <>
+GOPHER_MOD_DATE_ATTRIBUTE_TYPE ends
 LPGOPHER_MOD_DATE_ATTRIBUTE_TYPE typedef ptr GOPHER_MOD_DATE_ATTRIBUTE_TYPE
 
-GOPHER_TTL_ATTRIBUTE_TYPE STRUC
-Ttl			dd ?
-GOPHER_TTL_ATTRIBUTE_TYPE ENDS
+GOPHER_TTL_ATTRIBUTE_TYPE struct
+Ttl                     DWORD ?
+GOPHER_TTL_ATTRIBUTE_TYPE ends
 LPGOPHER_TTL_ATTRIBUTE_TYPE typedef ptr GOPHER_TTL_ATTRIBUTE_TYPE
 
-GOPHER_SCORE_ATTRIBUTE_TYPE STRUC
-Score			SINT ?
-GOPHER_SCORE_ATTRIBUTE_TYPE ENDS
+GOPHER_SCORE_ATTRIBUTE_TYPE struct
+Score                   sdword ?
+GOPHER_SCORE_ATTRIBUTE_TYPE ends
 LPGOPHER_SCORE_ATTRIBUTE_TYPE typedef ptr GOPHER_SCORE_ATTRIBUTE_TYPE
 
-GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE STRUC
-LowerBound		SINT ?
-UpperBound		SINT ?
-GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE ENDS
+GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE struct
+LowerBound              sdword ?
+UpperBound              sdword ?
+GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE ends
 LPGOPHER_SCORE_RANGE_ATTRIBUTE_TYPE typedef ptr GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE
 
-GOPHER_SITE_ATTRIBUTE_TYPE STRUC
-Site			LPCTSTR ?
-GOPHER_SITE_ATTRIBUTE_TYPE ENDS
+GOPHER_SITE_ATTRIBUTE_TYPE struct
+Site                    LPCTSTR ?
+GOPHER_SITE_ATTRIBUTE_TYPE ends
 LPGOPHER_SITE_ATTRIBUTE_TYPE typedef ptr GOPHER_SITE_ATTRIBUTE_TYPE
 
-GOPHER_ORGANIZATION_ATTRIBUTE_TYPE STRUC
-Organization		LPCTSTR ?
-GOPHER_ORGANIZATION_ATTRIBUTE_TYPE ENDS
+GOPHER_ORGANIZATION_ATTRIBUTE_TYPE struct
+Organization            LPCTSTR ?
+GOPHER_ORGANIZATION_ATTRIBUTE_TYPE ends
 LPGOPHER_ORGANIZATION_ATTRIBUTE_TYPE typedef ptr GOPHER_ORGANIZATION_ATTRIBUTE_TYPE
 
-GOPHER_LOCATION_ATTRIBUTE_TYPE STRUC
-Location		LPCTSTR ?
-GOPHER_LOCATION_ATTRIBUTE_TYPE ENDS
+GOPHER_LOCATION_ATTRIBUTE_TYPE struct
+Location                LPCTSTR ?
+GOPHER_LOCATION_ATTRIBUTE_TYPE ends
 LPGOPHER_LOCATION_ATTRIBUTE_TYPE typedef ptr GOPHER_LOCATION_ATTRIBUTE_TYPE
 
-GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE STRUC
-DegreesNorth		SINT ?
-MinutesNorth		SINT ?
-SecondsNorth		SINT ?
-DegreesEast		SINT ?
-MinutesEast		SINT ?
-SecondsEast		SINT ?
-GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE ENDS
+GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE struct
+DegreesNorth            sdword ?
+MinutesNorth            sdword ?
+SecondsNorth            sdword ?
+DegreesEast             sdword ?
+MinutesEast             sdword ?
+SecondsEast             sdword ?
+GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE ends
 LPGOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE typedef ptr GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE
 
-GOPHER_TIMEZONE_ATTRIBUTE_TYPE STRUC
-Zone			SINT ?
-GOPHER_TIMEZONE_ATTRIBUTE_TYPE ENDS
+GOPHER_TIMEZONE_ATTRIBUTE_TYPE struct
+Zone                    sdword ?
+GOPHER_TIMEZONE_ATTRIBUTE_TYPE ends
 LPGOPHER_TIMEZONE_ATTRIBUTE_TYPE typedef ptr GOPHER_TIMEZONE_ATTRIBUTE_TYPE
 
-GOPHER_PROVIDER_ATTRIBUTE_TYPE STRUC
-Provider		LPCTSTR ?
-GOPHER_PROVIDER_ATTRIBUTE_TYPE ENDS
+GOPHER_PROVIDER_ATTRIBUTE_TYPE struct
+Provider                LPCTSTR ?
+GOPHER_PROVIDER_ATTRIBUTE_TYPE ends
 LPGOPHER_PROVIDER_ATTRIBUTE_TYPE typedef ptr GOPHER_PROVIDER_ATTRIBUTE_TYPE
 
-GOPHER_VERSION_ATTRIBUTE_TYPE STRUC
-Version			LPCTSTR ?
-GOPHER_VERSION_ATTRIBUTE_TYPE ENDS
+GOPHER_VERSION_ATTRIBUTE_TYPE struct
+Version                 LPCTSTR ?
+GOPHER_VERSION_ATTRIBUTE_TYPE ends
 LPGOPHER_VERSION_ATTRIBUTE_TYPE typedef ptr GOPHER_VERSION_ATTRIBUTE_TYPE
 
-GOPHER_ABSTRACT_ATTRIBUTE_TYPE STRUC
-ShortAbstract		LPCTSTR ?
-AbstractFile		LPCTSTR ?
-GOPHER_ABSTRACT_ATTRIBUTE_TYPE ENDS
+GOPHER_ABSTRACT_ATTRIBUTE_TYPE struct
+ShortAbstract           LPCTSTR ?
+AbstractFile            LPCTSTR ?
+GOPHER_ABSTRACT_ATTRIBUTE_TYPE ends
 LPGOPHER_ABSTRACT_ATTRIBUTE_TYPE typedef ptr GOPHER_ABSTRACT_ATTRIBUTE_TYPE
 
-GOPHER_VIEW_ATTRIBUTE_TYPE STRUC
-ContentType		LPCTSTR ?
-Language		LPCTSTR ?
-Size			dd ?
-GOPHER_VIEW_ATTRIBUTE_TYPE ENDS
+GOPHER_VIEW_ATTRIBUTE_TYPE struct
+ContentType             LPCTSTR ?
+Language                LPCTSTR ?
+Size                    DWORD ?
+GOPHER_VIEW_ATTRIBUTE_TYPE ends
 LPGOPHER_VIEW_ATTRIBUTE_TYPE typedef ptr GOPHER_VIEW_ATTRIBUTE_TYPE
 
-GOPHER_VERONICA_ATTRIBUTE_TYPE STRUC
-TreeWalk		BOOL ?
-GOPHER_VERONICA_ATTRIBUTE_TYPE ENDS
+GOPHER_VERONICA_ATTRIBUTE_TYPE struct
+TreeWalk                BOOL ?
+GOPHER_VERONICA_ATTRIBUTE_TYPE ends
 LPGOPHER_VERONICA_ATTRIBUTE_TYPE typedef ptr GOPHER_VERONICA_ATTRIBUTE_TYPE
 
-GOPHER_ASK_ATTRIBUTE_TYPE STRUC
-QuestionType		LPCTSTR ?
-QuestionText		LPCTSTR ?
-GOPHER_ASK_ATTRIBUTE_TYPE ENDS
+GOPHER_ASK_ATTRIBUTE_TYPE struct
+QuestionType            LPCTSTR ?
+QuestionText            LPCTSTR ?
+GOPHER_ASK_ATTRIBUTE_TYPE ends
 LPGOPHER_ASK_ATTRIBUTE_TYPE typedef ptr GOPHER_ASK_ATTRIBUTE_TYPE
 
-
-GOPHER_UNKNOWN_ATTRIBUTE_TYPE STRUC
-Text			LPCTSTR ?
-GOPHER_UNKNOWN_ATTRIBUTE_TYPE ENDS
+GOPHER_UNKNOWN_ATTRIBUTE_TYPE struct
+Text                    LPCTSTR ?
+GOPHER_UNKNOWN_ATTRIBUTE_TYPE ends
 LPGOPHER_UNKNOWN_ATTRIBUTE_TYPE typedef ptr GOPHER_UNKNOWN_ATTRIBUTE_TYPE
 
-
-GOPHER_ATTRIBUTE_TYPE	STRUC
-CategoryId		dd ?
-AttributeId		dd ?
-UNION AttributeType
- Admin			GOPHER_ADMIN_ATTRIBUTE_TYPE <>
- ModDate		GOPHER_MOD_DATE_ATTRIBUTE_TYPE <>
- Ttl			GOPHER_TTL_ATTRIBUTE_TYPE <>
- Score			GOPHER_SCORE_ATTRIBUTE_TYPE <>
- ScoreRange		GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE <>
- Site			GOPHER_SITE_ATTRIBUTE_TYPE <>
- Organization		GOPHER_ORGANIZATION_ATTRIBUTE_TYPE <>
- Location		GOPHER_LOCATION_ATTRIBUTE_TYPE <>
- GeographicalLocation	GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE <>
- TimeZone		GOPHER_TIMEZONE_ATTRIBUTE_TYPE <>
- Provider		GOPHER_PROVIDER_ATTRIBUTE_TYPE <>
- Version		GOPHER_VERSION_ATTRIBUTE_TYPE <>
- Abstract		GOPHER_ABSTRACT_ATTRIBUTE_TYPE <>
- View			GOPHER_VIEW_ATTRIBUTE_TYPE <>
- Veronica		GOPHER_VERONICA_ATTRIBUTE_TYPE <>
- Ask			GOPHER_ASK_ATTRIBUTE_TYPE <>
- Unknown		GOPHER_UNKNOWN_ATTRIBUTE_TYPE <>
-ENDS
-GOPHER_ATTRIBUTE_TYPE	ENDS
+GOPHER_ATTRIBUTE_TYPE   struct
+CategoryId              DWORD ?
+AttributeId             DWORD ?
+union AttributeType
+ Admin                  GOPHER_ADMIN_ATTRIBUTE_TYPE <>
+ ModDate                GOPHER_MOD_DATE_ATTRIBUTE_TYPE <>
+ Ttl                    GOPHER_TTL_ATTRIBUTE_TYPE <>
+ Score                  GOPHER_SCORE_ATTRIBUTE_TYPE <>
+ ScoreRange             GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE <>
+ Site                   GOPHER_SITE_ATTRIBUTE_TYPE <>
+ Organization           GOPHER_ORGANIZATION_ATTRIBUTE_TYPE <>
+ Location               GOPHER_LOCATION_ATTRIBUTE_TYPE <>
+ GeographicalLocation   GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE <>
+ TimeZone               GOPHER_TIMEZONE_ATTRIBUTE_TYPE <>
+ Provider               GOPHER_PROVIDER_ATTRIBUTE_TYPE <>
+ Version                GOPHER_VERSION_ATTRIBUTE_TYPE <>
+ Abstract               GOPHER_ABSTRACT_ATTRIBUTE_TYPE <>
+ View                   GOPHER_VIEW_ATTRIBUTE_TYPE <>
+ Veronica               GOPHER_VERONICA_ATTRIBUTE_TYPE <>
+ Ask                    GOPHER_ASK_ATTRIBUTE_TYPE <>
+ Unknown                GOPHER_UNKNOWN_ATTRIBUTE_TYPE <>
+ends
+GOPHER_ATTRIBUTE_TYPE   ends
 LPGOPHER_ATTRIBUTE_TYPE typedef ptr GOPHER_ATTRIBUTE_TYPE
 
-MAX_GOPHER_CATEGORY_NAME equ 128
-MAX_GOPHER_ATTRIBUTE_NAME equ 128
-MIN_GOPHER_ATTRIBUTE_LENGTH equ 256
+define MAX_GOPHER_CATEGORY_NAME    128
+define MAX_GOPHER_ATTRIBUTE_NAME   128
+define MIN_GOPHER_ATTRIBUTE_LENGTH 256
 
+define GOPHER_INFO_CATEGORY        <"+INFO">
+define GOPHER_ADMIN_CATEGORY       <"+ADMIN">
+define GOPHER_VIEWS_CATEGORY       <"+VIEWS">
+define GOPHER_ABSTRACT_CATEGORY    <"+ABSTRACT">
+define GOPHER_VERONICA_CATEGORY    <"+VERONICA">
 
-GOPHER_INFO_CATEGORY	equ TEXT("+INFO")
-GOPHER_ADMIN_CATEGORY	equ TEXT("+ADMIN")
-GOPHER_VIEWS_CATEGORY	equ TEXT("+VIEWS")
-GOPHER_ABSTRACT_CATEGORY equ TEXT("+ABSTRACT")
-GOPHER_VERONICA_CATEGORY equ TEXT("+VERONICA")
+define GOPHER_ADMIN_ATTRIBUTE      <"Admin">
+define GOPHER_MOD_DATE_ATTRIBUTE   <"Mod-Date">
+define GOPHER_TTL_ATTRIBUTE        <"TTL">
+define GOPHER_SCORE_ATTRIBUTE      <"Score">
+define GOPHER_RANGE_ATTRIBUTE      <"Score-range">
+define GOPHER_SITE_ATTRIBUTE       <"Site">
+define GOPHER_ORG_ATTRIBUTE        <"Org">
+define GOPHER_LOCATION_ATTRIBUTE   <"Loc">
+define GOPHER_GEOG_ATTRIBUTE       <"Geog">
+define GOPHER_TIMEZONE_ATTRIBUTE   <"TZ">
+define GOPHER_PROVIDER_ATTRIBUTE   <"Provider">
+define GOPHER_VERSION_ATTRIBUTE    <"Version">
+define GOPHER_ABSTRACT_ATTRIBUTE   <"Abstract">
+define GOPHER_VIEW_ATTRIBUTE       <"View">
+define GOPHER_TREEWALK_ATTRIBUTE   <"treewalk">
 
+define GOPHER_ATTRIBUTE_ID_BASE        0xabcccc00
 
-GOPHER_ADMIN_ATTRIBUTE	equ TEXT("Admin")
-GOPHER_MOD_DATE_ATTRIBUTE equ TEXT("Mod-Date")
-GOPHER_TTL_ATTRIBUTE	equ TEXT("TTL")
-GOPHER_SCORE_ATTRIBUTE	equ TEXT("Score")
-GOPHER_RANGE_ATTRIBUTE	equ TEXT("Score-range")
-GOPHER_SITE_ATTRIBUTE	equ TEXT("Site")
-GOPHER_ORG_ATTRIBUTE	equ TEXT("Org")
-GOPHER_LOCATION_ATTRIBUTE equ TEXT("Loc")
-GOPHER_GEOG_ATTRIBUTE	equ TEXT("Geog")
-GOPHER_TIMEZONE_ATTRIBUTE equ TEXT("TZ")
-GOPHER_PROVIDER_ATTRIBUTE equ TEXT("Provider")
-GOPHER_VERSION_ATTRIBUTE equ TEXT("Version")
-GOPHER_ABSTRACT_ATTRIBUTE equ TEXT("Abstract")
-GOPHER_VIEW_ATTRIBUTE	equ TEXT("View")
-GOPHER_TREEWALK_ATTRIBUTE equ TEXT("treewalk")
+define GOPHER_CATEGORY_ID_ALL          (GOPHER_ATTRIBUTE_ID_BASE + 1)
 
+define GOPHER_CATEGORY_ID_INFO         (GOPHER_ATTRIBUTE_ID_BASE + 2)
+define GOPHER_CATEGORY_ID_ADMIN        (GOPHER_ATTRIBUTE_ID_BASE + 3)
+define GOPHER_CATEGORY_ID_VIEWS        (GOPHER_ATTRIBUTE_ID_BASE + 4)
+define GOPHER_CATEGORY_ID_ABSTRACT     (GOPHER_ATTRIBUTE_ID_BASE + 5)
+define GOPHER_CATEGORY_ID_VERONICA     (GOPHER_ATTRIBUTE_ID_BASE + 6)
+define GOPHER_CATEGORY_ID_ASK          (GOPHER_ATTRIBUTE_ID_BASE + 7)
 
-GOPHER_ATTRIBUTE_ID_BASE equ 0xabcccc00
+define GOPHER_CATEGORY_ID_UNKNOWN      (GOPHER_ATTRIBUTE_ID_BASE + 8)
+define GOPHER_ATTRIBUTE_ID_ALL         (GOPHER_ATTRIBUTE_ID_BASE + 9)
 
-GOPHER_CATEGORY_ID_ALL	equ (GOPHER_ATTRIBUTE_ID_BASE + 1)
+define GOPHER_ATTRIBUTE_ID_ADMIN       (GOPHER_ATTRIBUTE_ID_BASE + 10)
+define GOPHER_ATTRIBUTE_ID_MOD_DATE    (GOPHER_ATTRIBUTE_ID_BASE + 11)
+define GOPHER_ATTRIBUTE_ID_TTL         (GOPHER_ATTRIBUTE_ID_BASE + 12)
+define GOPHER_ATTRIBUTE_ID_SCORE       (GOPHER_ATTRIBUTE_ID_BASE + 13)
+define GOPHER_ATTRIBUTE_ID_RANGE       (GOPHER_ATTRIBUTE_ID_BASE + 14)
+define GOPHER_ATTRIBUTE_ID_SITE        (GOPHER_ATTRIBUTE_ID_BASE + 15)
+define GOPHER_ATTRIBUTE_ID_ORG         (GOPHER_ATTRIBUTE_ID_BASE + 16)
+define GOPHER_ATTRIBUTE_ID_LOCATION    (GOPHER_ATTRIBUTE_ID_BASE + 17)
+define GOPHER_ATTRIBUTE_ID_GEOG        (GOPHER_ATTRIBUTE_ID_BASE + 18)
+define GOPHER_ATTRIBUTE_ID_TIMEZONE    (GOPHER_ATTRIBUTE_ID_BASE + 19)
+define GOPHER_ATTRIBUTE_ID_PROVIDER    (GOPHER_ATTRIBUTE_ID_BASE + 20)
+define GOPHER_ATTRIBUTE_ID_VERSION     (GOPHER_ATTRIBUTE_ID_BASE + 21)
+define GOPHER_ATTRIBUTE_ID_ABSTRACT    (GOPHER_ATTRIBUTE_ID_BASE + 22)
+define GOPHER_ATTRIBUTE_ID_VIEW        (GOPHER_ATTRIBUTE_ID_BASE + 23)
+define GOPHER_ATTRIBUTE_ID_TREEWALK    (GOPHER_ATTRIBUTE_ID_BASE + 24)
 
-GOPHER_CATEGORY_ID_INFO equ (GOPHER_ATTRIBUTE_ID_BASE + 2)
-GOPHER_CATEGORY_ID_ADMIN equ (GOPHER_ATTRIBUTE_ID_BASE + 3)
-GOPHER_CATEGORY_ID_VIEWS equ (GOPHER_ATTRIBUTE_ID_BASE + 4)
-GOPHER_CATEGORY_ID_ABSTRACT equ (GOPHER_ATTRIBUTE_ID_BASE + 5)
-GOPHER_CATEGORY_ID_VERONICA equ (GOPHER_ATTRIBUTE_ID_BASE + 6)
-GOPHER_CATEGORY_ID_ASK	equ (GOPHER_ATTRIBUTE_ID_BASE + 7)
+define GOPHER_ATTRIBUTE_ID_UNKNOWN     (GOPHER_ATTRIBUTE_ID_BASE + 25)
 
-GOPHER_CATEGORY_ID_UNKNOWN equ (GOPHER_ATTRIBUTE_ID_BASE + 8)
-
-GOPHER_ATTRIBUTE_ID_ALL equ (GOPHER_ATTRIBUTE_ID_BASE + 9)
-
-GOPHER_ATTRIBUTE_ID_ADMIN equ (GOPHER_ATTRIBUTE_ID_BASE + 10)
-GOPHER_ATTRIBUTE_ID_MOD_DATE equ (GOPHER_ATTRIBUTE_ID_BASE + 11)
-GOPHER_ATTRIBUTE_ID_TTL equ (GOPHER_ATTRIBUTE_ID_BASE + 12)
-GOPHER_ATTRIBUTE_ID_SCORE equ (GOPHER_ATTRIBUTE_ID_BASE + 13)
-GOPHER_ATTRIBUTE_ID_RANGE equ (GOPHER_ATTRIBUTE_ID_BASE + 14)
-GOPHER_ATTRIBUTE_ID_SITE equ (GOPHER_ATTRIBUTE_ID_BASE + 15)
-GOPHER_ATTRIBUTE_ID_ORG equ (GOPHER_ATTRIBUTE_ID_BASE + 16)
-GOPHER_ATTRIBUTE_ID_LOCATION equ (GOPHER_ATTRIBUTE_ID_BASE + 17)
-GOPHER_ATTRIBUTE_ID_GEOG equ (GOPHER_ATTRIBUTE_ID_BASE + 18)
-GOPHER_ATTRIBUTE_ID_TIMEZONE equ (GOPHER_ATTRIBUTE_ID_BASE + 19)
-GOPHER_ATTRIBUTE_ID_PROVIDER equ (GOPHER_ATTRIBUTE_ID_BASE + 20)
-GOPHER_ATTRIBUTE_ID_VERSION equ (GOPHER_ATTRIBUTE_ID_BASE + 21)
-GOPHER_ATTRIBUTE_ID_ABSTRACT equ (GOPHER_ATTRIBUTE_ID_BASE + 22)
-GOPHER_ATTRIBUTE_ID_VIEW equ (GOPHER_ATTRIBUTE_ID_BASE + 23)
-GOPHER_ATTRIBUTE_ID_TREEWALK equ (GOPHER_ATTRIBUTE_ID_BASE + 24)
-
-GOPHER_ATTRIBUTE_ID_UNKNOWN equ (GOPHER_ATTRIBUTE_ID_BASE + 25)
-
-
-;BOOLAPI
-GopherCreateLocatorA proto WINAPI \
-	      lpszHost: LPCSTR,
-	   nServerPort: INTERNET_PORT,
-     lpszDisplayString: LPCSTR,
-    lpszSelectorString: LPCSTR,
-	  dwGopherType: DWORD,
-	   lpszLocator: LPSTR,
-      lpdwBufferLength: LPDWORD
-GopherCreateLocatorW proto WINAPI \
-	      lpszHost: LPCWSTR,
-	   nServerPort: INTERNET_PORT,
-     lpszDisplayString: LPCWSTR,
-    lpszSelectorString: LPCWSTR,
-	  dwGopherType: DWORD,
-	   lpszLocator: LPWSTR,
-      lpdwBufferLength: LPDWORD
+GopherCreateLocatorA proto WINAPI :LPCSTR, :INTERNET_PORT, :LPCSTR, :LPCSTR, :DWORD, :LPSTR, :LPDWORD
+GopherCreateLocatorW proto WINAPI :LPCWSTR, :INTERNET_PORT, :LPCWSTR, :LPCWSTR, :DWORD, :LPWSTR, :LPDWORD
 ifdef _UNICODE
-GopherCreateLocator	equ <GopherCreateocatorW>
+define GopherCreateLocator  <GopherCreateLocatorW>
 else
-GopherCreateLocator	equ <GopherCreateocatorA>
+define GopherCreateLocator  <GopherCreateLocatorA>
 endif
 
-;BOOLAPI
-GopherGetLocatorTypeA proto WINAPI \
-	   lpszLocator: LPCSTR,
-	lpdwGopherType: LPDWORD
-
-;BOOLAPI
-GopherGetLocatorTypeW proto WINAPI \
-	   lpszLocator: LPCWSTR,
-	lpdwGopherType: LPDWORD
-
+GopherGetLocatorTypeA proto WINAPI :LPCSTR, :LPDWORD
+GopherGetLocatorTypeW proto WINAPI :LPCWSTR, :LPDWORD
 ifdef _UNICODE
-GopherGetLocatorType	equ <GopherGetLocatorTypeW>
+define GopherGetLocatorType  <GopherGetLocatorTypeW>
 else
-GopherGetLocatorType	equ <GopherGetLocatorTypeA>
+define GopherGetLocatorType  <GopherGetLocatorTypeA>
 endif
 
-;INTERNETAPI
-GopherFindFirstFileA proto WINAPI \
-	      hConnect: HINTERNET,
-	   lpszLocator: LPCSTR,
-      lpszSearchString: LPCSTR,
-	    lpFindData: LPGOPHER_FIND_DATAA,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;INTERNETAPI
-GopherFindFirstFileW proto WINAPI \
-	      hConnect: HINTERNET,
-	   lpszLocator: LPCWSTR,
-      lpszSearchString: LPCWSTR,
-	    lpFindData: LPGOPHER_FIND_DATAW,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
+GopherFindFirstFileA proto WINAPI :HINTERNET, :LPCSTR, :LPCSTR, :LPGOPHER_FIND_DATAA, :DWORD, :DWORD_PTR
+GopherFindFirstFileW proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR, :LPGOPHER_FIND_DATAW, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-GopherFindFirstFile	equ <GopherFindFirstFileW>
+define GopherFindFirstFile  <GopherFindFirstFileW>
 else
-GopherFindFirstFile	equ <GopherFindFirstFileA>
+define GopherFindFirstFile  <GopherFindFirstFileA>
 endif
 
-;INTERNETAPI
-GopherOpenFileA proto WINAPI \
-	      hConnect: HINTERNET,
-	   lpszLocator: LPCSTR,
-	      lpszView: LPCSTR,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;INTERNETAPI
-GopherOpenFileW proto WINAPI \
-	      hConnect: HINTERNET,
-	   lpszLocator: LPCWSTR,
-	      lpszView: LPCWSTR,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
+GopherOpenFileA proto WINAPI :HINTERNET, :LPCSTR, :LPCSTR, :DWORD, :DWORD_PTR
+GopherOpenFileW proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-GopherOpenFile		equ <GopherOpenFileW>
+define GopherOpenFile  <GopherOpenFileW>
 else
-GopherOpenFile		equ <GopherOpenFileA>
+define GopherOpenFile  <GopherOpenFileA>
 endif
 
 CALLBACK(GOPHER_ATTRIBUTE_ENUMERATOR, :LPGOPHER_ATTRIBUTE_TYPE, :DWORD)
 
-;BOOLAPI
-GopherGetAttributeA proto WINAPI \
-	      hConnect: HINTERNET,
-	   lpszLocator: LPCSTR,
-     lpszAttributeName: LPCSTR,
-	      lpBuffer: LPBYTE,
-	dwBufferLength: DWORD,
-lpdwCharactersReturned: LPDWORD,
-	lpfnEnumerator: GOPHER_ATTRIBUTE_ENUMERATOR,
-	     dwContext: DWORD_PTR
-GopherGetAttributeW proto WINAPI \
-	      hConnect: HINTERNET,
-	   lpszLocator: LPCWSTR,
-     lpszAttributeName: LPCWSTR,
-	      lpBuffer: LPBYTE,
-	dwBufferLength: DWORD,
-lpdwCharactersReturned: LPDWORD,
-	lpfnEnumerator: GOPHER_ATTRIBUTE_ENUMERATOR,
-	     dwContext: DWORD_PTR
+GopherGetAttributeA proto WINAPI :HINTERNET, :LPCSTR, :LPCSTR, :LPBYTE, :DWORD, :LPDWORD, :GOPHER_ATTRIBUTE_ENUMERATOR, :DWORD_PTR
+GopherGetAttributeW proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR, :LPBYTE, :DWORD, :LPDWORD, :GOPHER_ATTRIBUTE_ENUMERATOR, :DWORD_PTR
 ifdef _UNICODE
-GopherGetAttribute	equ <GopherGetAttributeW>
+define GopherGetAttribute  <GopherGetAttributeW>
 else
-GopherGetAttribute	equ <GopherGetAttributeA>
+define GopherGetAttribute  <GopherGetAttributeA>
 endif
 
+define HTTP_MAJOR_VERSION      1
+define HTTP_MINOR_VERSION      0
 
-HTTP_MAJOR_VERSION	equ 1
-HTTP_MINOR_VERSION	equ 0
-
-HTTP_VERSIONA		equ <"HTTP/1.0">
-HTTP_VERSIONW		equ <L"HTTP/1.0">
-ifdef _UNICODE
-HTTP_VERSION		equ <HTTP_VERSIONW>
-else
-HTTP_VERSION		equ <HTTP_VERSIONA>
-endif
-
-HTTP_QUERY_MIME_VERSION equ 0
-HTTP_QUERY_CONTENT_TYPE equ 1
-HTTP_QUERY_CONTENT_TRANSFER_ENCODING equ 2
-HTTP_QUERY_CONTENT_ID	equ 3
-HTTP_QUERY_CONTENT_DESCRIPTION equ 4
-HTTP_QUERY_CONTENT_LENGTH equ 5
-HTTP_QUERY_CONTENT_LANGUAGE equ 6
-HTTP_QUERY_ALLOW	equ 7
-HTTP_QUERY_PUBLIC	equ 8
-HTTP_QUERY_DATE		equ 9
-HTTP_QUERY_EXPIRES	equ 10
-HTTP_QUERY_LAST_MODIFIED equ 11
-HTTP_QUERY_MESSAGE_ID	equ 12
-HTTP_QUERY_URI		equ 13
-HTTP_QUERY_DERIVED_FROM equ 14
-HTTP_QUERY_COST		equ 15
-HTTP_QUERY_LINK		equ 16
-HTTP_QUERY_PRAGMA	equ 17
-HTTP_QUERY_VERSION	equ 18
-HTTP_QUERY_STATUS_CODE	equ 19
-HTTP_QUERY_STATUS_TEXT	equ 20
-HTTP_QUERY_RAW_HEADERS	equ 21
-HTTP_QUERY_RAW_HEADERS_CRLF equ 22
-HTTP_QUERY_CONNECTION	equ 23
-HTTP_QUERY_ACCEPT	equ 24
-HTTP_QUERY_ACCEPT_CHARSET equ 25
-HTTP_QUERY_ACCEPT_ENCODING equ 26
-HTTP_QUERY_ACCEPT_LANGUAGE equ 27
-HTTP_QUERY_AUTHORIZATION equ 28
-HTTP_QUERY_CONTENT_ENCODING equ 29
-HTTP_QUERY_FORWARDED	equ 30
-HTTP_QUERY_FROM		equ 31
-HTTP_QUERY_IF_MODIFIED_SINCE equ 32
-HTTP_QUERY_LOCATION	equ 33
-HTTP_QUERY_ORIG_URI	equ 34
-HTTP_QUERY_REFERER	equ 35
-HTTP_QUERY_RETRY_AFTER	equ 36
-HTTP_QUERY_SERVER	equ 37
-HTTP_QUERY_TITLE	equ 38
-HTTP_QUERY_USER_AGENT	equ 39
-HTTP_QUERY_WWW_AUTHENTICATE equ 40
-HTTP_QUERY_PROXY_AUTHENTICATE equ 41
-HTTP_QUERY_ACCEPT_RANGES equ 42
-HTTP_QUERY_SET_COOKIE	equ 43
-HTTP_QUERY_COOKIE	equ 44
-HTTP_QUERY_REQUEST_METHOD equ 45
-HTTP_QUERY_REFRESH	equ 46
-HTTP_QUERY_CONTENT_DISPOSITION equ 47
-
-
-HTTP_QUERY_AGE		equ 48
-HTTP_QUERY_CACHE_CONTROL equ 49
-HTTP_QUERY_CONTENT_BASE equ 50
-HTTP_QUERY_CONTENT_LOCATION equ 51
-HTTP_QUERY_CONTENT_MD5	equ 52
-HTTP_QUERY_CONTENT_RANGE equ 53
-HTTP_QUERY_ETAG		equ 54
-HTTP_QUERY_HOST		equ 55
-HTTP_QUERY_IF_MATCH	equ 56
-HTTP_QUERY_IF_NONE_MATCH equ 57
-HTTP_QUERY_IF_RANGE	equ 58
-HTTP_QUERY_IF_UNMODIFIED_SINCE equ 59
-HTTP_QUERY_MAX_FORWARDS equ 60
-HTTP_QUERY_PROXY_AUTHORIZATION equ 61
-HTTP_QUERY_RANGE	equ 62
-HTTP_QUERY_TRANSFER_ENCODING equ 63
-HTTP_QUERY_UPGRADE	equ 64
-HTTP_QUERY_VARY		equ 65
-HTTP_QUERY_VIA		equ 66
-HTTP_QUERY_WARNING	equ 67
-HTTP_QUERY_EXPECT	equ 68
-HTTP_QUERY_PROXY_CONNECTION equ 69
-HTTP_QUERY_UNLESS_MODIFIED_SINCE equ 70
-
-
-HTTP_QUERY_ECHO_REQUEST equ 71
-HTTP_QUERY_ECHO_REPLY	equ 72
-
-HTTP_QUERY_ECHO_HEADERS equ 73
-HTTP_QUERY_ECHO_HEADERS_CRLF equ 74
-
-HTTP_QUERY_PROXY_SUPPORT equ 75
-HTTP_QUERY_AUTHENTICATION_INFO equ 76
-HTTP_QUERY_PASSPORT_URLS equ 77
-HTTP_QUERY_PASSPORT_CONFIG equ 78
-
-HTTP_QUERY_MAX		equ 78
-
-HTTP_QUERY_CUSTOM	equ 65535
-
-HTTP_QUERY_FLAG_REQUEST_HEADERS equ 0x80000000
-HTTP_QUERY_FLAG_SYSTEMTIME equ 0x40000000
-HTTP_QUERY_FLAG_NUMBER	equ 0x20000000
-HTTP_QUERY_FLAG_COALESCE equ 0x10000000
-HTTP_QUERY_FLAG_NUMBER64 equ 0x08000000
-HTTP_QUERY_MODIFIER_FLAGS_MASK equ \
-	HTTP_QUERY_FAG_REQUEST_HEADERS	  OR \
-	HTTP_QUERY_FLAG_SYSTEMTIME	  OR \
-	HTTP_QUERY_FLAG_NUMBER		  OR \
-	HTTP_QUERY_FLAG_COALESCE	  OR \
-	HTTP_QUERY_FLAG_NUMBER64
-
-HTTP_QUERY_HEADER_MASK	equ (NOT HTTP_QUERY_MODIFIER_FAGS_MASK)
-
-HTTP_STATUS_CONTINUE	equ 100
-HTTP_STATUS_SWITCH_PROTOCOLS equ 101
-
-HTTP_STATUS_OK		equ 200
-HTTP_STATUS_CREATED	equ 201
-HTTP_STATUS_ACCEPTED	equ 202
-HTTP_STATUS_PARTIAL	equ 203
-HTTP_STATUS_NO_CONTENT	equ 204
-HTTP_STATUS_RESET_CONTENT equ 205
-HTTP_STATUS_PARTIAL_CONTENT equ 206
-
-HTTP_STATUS_AMBIGUOUS	equ 300
-HTTP_STATUS_MOVED	equ 301
-HTTP_STATUS_REDIRECT	equ 302
-HTTP_STATUS_REDIRECT_METHOD equ 303
-HTTP_STATUS_NOT_MODIFIED equ 304
-HTTP_STATUS_USE_PROXY	equ 305
-HTTP_STATUS_REDIRECT_KEEP_VERB equ 307
-
-HTTP_STATUS_BAD_REQUEST equ 400
-HTTP_STATUS_DENIED	equ 401
-HTTP_STATUS_PAYMENT_REQ equ 402
-HTTP_STATUS_FORBIDDEN	equ 403
-HTTP_STATUS_NOT_FOUND	equ 404
-HTTP_STATUS_BAD_METHOD	equ 405
-HTTP_STATUS_NONE_ACCEPTABLE equ 406
-HTTP_STATUS_PROXY_AUTH_REQ equ 407
-HTTP_STATUS_REQUEST_TIMEOUT equ 408
-HTTP_STATUS_CONFLICT	equ 409
-HTTP_STATUS_GONE	equ 410
-HTTP_STATUS_LENGTH_REQUIRED equ 411
-HTTP_STATUS_PRECOND_FAILED equ 412
-HTTP_STATUS_REQUEST_TOO_LARGE equ 413
-HTTP_STATUS_URI_TOO_LONG equ 414
-HTTP_STATUS_UNSUPPORTED_MEDIA equ 415
-HTTP_STATUS_RETRY_WITH	equ 449
-
-HTTP_STATUS_SERVER_ERROR equ 500
-HTTP_STATUS_NOT_SUPPORTED equ 501
-HTTP_STATUS_BAD_GATEWAY equ 502
-HTTP_STATUS_SERVICE_UNAVAIL equ 503
-HTTP_STATUS_GATEWAY_TIMEOUT equ 504
-HTTP_STATUS_VERSION_NOT_SUP equ 505
-
-HTTP_STATUS_FIRST	equ HTTP_STATUS_CONTINUE
-HTTP_STATUS_LAST	equ HTTP_STATUS_VERSION_NOT_SUP
-
-;INTERNETAPI
-HttpOpenRequestA proto WINAPI \
-	      hConnect: HINTERNET,
-	      lpszVerb: LPCSTR,
-	lpszObjectName: LPCSTR,
-	   lpszVersion: LPCSTR,
-	  lpszReferrer: LPCSTR,
-     lplpszAcceptTypes: ptr LPCSTR,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;INTERNETAPI
-HttpOpenRequestW proto WINAPI \
-	      hConnect: HINTERNET,
-	      lpszVerb: LPCWSTR,
-	lpszObjectName: LPCWSTR,
-	   lpszVersion: LPCWSTR,
-	  lpszReferrer: LPCWSTR,
-     lplpszAcceptTypes: ptr LPCWSTR,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
+define HTTP_VERSIONA           <"HTTP/1.0">
+define HTTP_VERSIONW           <L"HTTP/1.0">
 
 ifdef _UNICODE
-HttpOpenRequest		equ <HttpOpenRequestW>
+define HTTP_VERSION            HTTP_VERSIONW
 else
-HttpOpenRequest		equ <HttpOpenRequestA>
+define HTTP_VERSION            HTTP_VERSIONA
 endif
 
-;BOOLAPI
-HttpAddRequestHeadersA proto WINAPI \
-	      hRequest: HINTERNET,
-	   lpszHeaders: LPCSTR,
-       dwHeadersLength: DWORD,
-	   dwModifiers: DWORD
+define HTTP_QUERY_MIME_VERSION                 0
+define HTTP_QUERY_CONTENT_TYPE                 1
+define HTTP_QUERY_CONTENT_TRANSFER_ENCODING    2
+define HTTP_QUERY_CONTENT_ID                   3
+define HTTP_QUERY_CONTENT_DESCRIPTION          4
+define HTTP_QUERY_CONTENT_LENGTH               5
+define HTTP_QUERY_CONTENT_LANGUAGE             6
+define HTTP_QUERY_ALLOW                        7
+define HTTP_QUERY_PUBLIC                       8
+define HTTP_QUERY_DATE                         9
+define HTTP_QUERY_EXPIRES                      10
+define HTTP_QUERY_LAST_MODIFIED                11
+define HTTP_QUERY_MESSAGE_ID                   12
+define HTTP_QUERY_URI                          13
+define HTTP_QUERY_DERIVED_FROM                 14
+define HTTP_QUERY_COST                         15
+define HTTP_QUERY_LINK                         16
+define HTTP_QUERY_PRAGMA                       17
+define HTTP_QUERY_VERSION                      18
+define HTTP_QUERY_STATUS_CODE                  19
+define HTTP_QUERY_STATUS_TEXT                  20
+define HTTP_QUERY_RAW_HEADERS                  21
+define HTTP_QUERY_RAW_HEADERS_CRLF             22
+define HTTP_QUERY_CONNECTION                   23
+define HTTP_QUERY_ACCEPT                       24
+define HTTP_QUERY_ACCEPT_CHARSET               25
+define HTTP_QUERY_ACCEPT_ENCODING              26
+define HTTP_QUERY_ACCEPT_LANGUAGE              27
+define HTTP_QUERY_AUTHORIZATION                28
+define HTTP_QUERY_CONTENT_ENCODING             29
+define HTTP_QUERY_FORWARDED                    30
+define HTTP_QUERY_FROM                         31
+define HTTP_QUERY_IF_MODIFIED_SINCE            32
+define HTTP_QUERY_LOCATION                     33
+define HTTP_QUERY_ORIG_URI                     34
+define HTTP_QUERY_REFERER                      35
+define HTTP_QUERY_RETRY_AFTER                  36
+define HTTP_QUERY_SERVER                       37
+define HTTP_QUERY_TITLE                        38
+define HTTP_QUERY_USER_AGENT                   39
+define HTTP_QUERY_WWW_AUTHENTICATE             40
+define HTTP_QUERY_PROXY_AUTHENTICATE           41
+define HTTP_QUERY_ACCEPT_RANGES                42
+define HTTP_QUERY_SET_COOKIE                   43
+define HTTP_QUERY_COOKIE                       44
+define HTTP_QUERY_REQUEST_METHOD               45
+define HTTP_QUERY_REFRESH                      46
+define HTTP_QUERY_CONTENT_DISPOSITION          47
 
-;BOOLAPI
-HttpAddRequestHeadersW proto WINAPI \
-	      hRequest: HINTERNET,
-	   lpszHeaders: LPCWSTR,
-       dwHeadersLength: DWORD,
-	   dwModifiers: DWORD
+define HTTP_QUERY_AGE                          48
+define HTTP_QUERY_CACHE_CONTROL                49
+define HTTP_QUERY_CONTENT_BASE                 50
+define HTTP_QUERY_CONTENT_LOCATION             51
+define HTTP_QUERY_CONTENT_MD5                  52
+define HTTP_QUERY_CONTENT_RANGE                53
+define HTTP_QUERY_ETAG                         54
+define HTTP_QUERY_HOST                         55
+define HTTP_QUERY_IF_MATCH                     56
+define HTTP_QUERY_IF_NONE_MATCH                57
+define HTTP_QUERY_IF_RANGE                     58
+define HTTP_QUERY_IF_UNMODIFIED_SINCE          59
+define HTTP_QUERY_MAX_FORWARDS                 60
+define HTTP_QUERY_PROXY_AUTHORIZATION          61
+define HTTP_QUERY_RANGE                        62
+define HTTP_QUERY_TRANSFER_ENCODING            63
+define HTTP_QUERY_UPGRADE                      64
+define HTTP_QUERY_VARY                         65
+define HTTP_QUERY_VIA                          66
+define HTTP_QUERY_WARNING                      67
+define HTTP_QUERY_EXPECT                       68
+define HTTP_QUERY_PROXY_CONNECTION             69
+define HTTP_QUERY_UNLESS_MODIFIED_SINCE        70
 
+define HTTP_QUERY_ECHO_REQUEST                 71
+define HTTP_QUERY_ECHO_REPLY                   72
+
+define HTTP_QUERY_ECHO_HEADERS                 73
+define HTTP_QUERY_ECHO_HEADERS_CRLF            74
+
+define HTTP_QUERY_PROXY_SUPPORT                75
+define HTTP_QUERY_AUTHENTICATION_INFO          76
+define HTTP_QUERY_PASSPORT_URLS                77
+define HTTP_QUERY_PASSPORT_CONFIG              78
+
+define HTTP_QUERY_X_CONTENT_TYPE_OPTIONS       79
+define HTTP_QUERY_P3P                          80
+define HTTP_QUERY_X_P2P_PEERDIST               81
+define HTTP_QUERY_TRANSLATE                    82
+define HTTP_QUERY_X_UA_COMPATIBLE              83
+define HTTP_QUERY_DEFAULT_STYLE                84
+define HTTP_QUERY_X_FRAME_OPTIONS              85
+define HTTP_QUERY_X_XSS_PROTECTION             86
+
+define HTTP_QUERY_SET_COOKIE2                  87
+define HTTP_QUERY_DO_NOT_TRACK                 88
+define HTTP_QUERY_KEEP_ALIVE                   89
+define HTTP_QUERY_HTTP2_SETTINGS               90
+define HTTP_QUERY_STRICT_TRANSPORT_SECURITY    91
+define HTTP_QUERY_TOKEN_BINDING                92
+define HTTP_QUERY_INCLUDE_REFERRED_TOKEN_BINDING_ID  93
+define HTTP_QUERY_INCLUDE_REFERER_TOKEN_BINDING_ID   HTTP_QUERY_INCLUDE_REFERRED_TOKEN_BINDING_ID
+
+define HTTP_QUERY_PUBLIC_KEY_PINS              94
+define HTTP_QUERY_PUBLIC_KEY_PINS_REPORT_ONLY  95
+define HTTP_QUERY_MAX                          95
+define HTTP_QUERY_CUSTOM                       65535
+define HTTP_QUERY_FLAG_REQUEST_HEADERS         0x80000000
+define HTTP_QUERY_FLAG_SYSTEMTIME              0x40000000
+define HTTP_QUERY_FLAG_NUMBER                  0x20000000
+define HTTP_QUERY_FLAG_COALESCE                0x10000000
+define HTTP_QUERY_FLAG_NUMBER64                0x08000000
+define HTTP_QUERY_FLAG_COALESCE_WITH_COMMA     0x04000000
+define HTTP_QUERY_MODIFIER_FLAGS_MASK          (HTTP_QUERY_FLAG_REQUEST_HEADERS or HTTP_QUERY_FLAG_SYSTEMTIME or HTTP_QUERY_FLAG_NUMBER or HTTP_QUERY_FLAG_COALESCE or HTTP_QUERY_FLAG_NUMBER64 or HTTP_QUERY_FLAG_COALESCE_WITH_COMMA )
+define HTTP_QUERY_HEADER_MASK                  ( not HTTP_QUERY_MODIFIER_FLAGS_MASK)
+
+define HTTP_STATUS_CONTINUE            100
+define HTTP_STATUS_SWITCH_PROTOCOLS    101
+
+define HTTP_STATUS_OK                  200
+define HTTP_STATUS_CREATED             201
+define HTTP_STATUS_ACCEPTED            202
+define HTTP_STATUS_PARTIAL             203
+define HTTP_STATUS_NO_CONTENT          204
+define HTTP_STATUS_RESET_CONTENT       205
+define HTTP_STATUS_PARTIAL_CONTENT     206
+
+define HTTP_STATUS_AMBIGUOUS           300
+define HTTP_STATUS_MOVED               301
+define HTTP_STATUS_REDIRECT            302
+define HTTP_STATUS_REDIRECT_METHOD     303
+define HTTP_STATUS_NOT_MODIFIED        304
+define HTTP_STATUS_USE_PROXY           305
+define HTTP_STATUS_REDIRECT_KEEP_VERB  307
+define HTTP_STATUS_PERMANENT_REDIRECT  308
+
+define HTTP_STATUS_BAD_REQUEST         400
+define HTTP_STATUS_DENIED              401
+define HTTP_STATUS_PAYMENT_REQ         402
+define HTTP_STATUS_FORBIDDEN           403
+define HTTP_STATUS_NOT_FOUND           404
+define HTTP_STATUS_BAD_METHOD          405
+define HTTP_STATUS_NONE_ACCEPTABLE     406
+define HTTP_STATUS_PROXY_AUTH_REQ      407
+define HTTP_STATUS_REQUEST_TIMEOUT     408
+define HTTP_STATUS_CONFLICT            409
+define HTTP_STATUS_GONE                410
+define HTTP_STATUS_LENGTH_REQUIRED     411
+define HTTP_STATUS_PRECOND_FAILED      412
+define HTTP_STATUS_REQUEST_TOO_LARGE   413
+define HTTP_STATUS_URI_TOO_LONG        414
+define HTTP_STATUS_UNSUPPORTED_MEDIA   415
+define HTTP_STATUS_MISDIRECTED_REQUEST 421
+define HTTP_STATUS_RETRY_WITH          449
+
+define HTTP_STATUS_SERVER_ERROR        500
+define HTTP_STATUS_NOT_SUPPORTED       501
+define HTTP_STATUS_BAD_GATEWAY         502
+define HTTP_STATUS_SERVICE_UNAVAIL     503
+define HTTP_STATUS_GATEWAY_TIMEOUT     504
+define HTTP_STATUS_VERSION_NOT_SUP     505
+
+define HTTP_STATUS_FIRST               HTTP_STATUS_CONTINUE
+define HTTP_STATUS_LAST                HTTP_STATUS_VERSION_NOT_SUP
+
+HttpOpenRequestA proto WINAPI :HINTERNET, :LPCSTR, :LPCSTR, :LPCSTR, :LPCSTR, :ptr, :DWORD, :DWORD_PTR
+HttpOpenRequestW proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr, :DWORD, :DWORD_PTR
 ifdef _UNICODE
-HttpAddRequestHeaders	equ <HttpAddRequestHeadersW>
+define HttpOpenRequest  <HttpOpenRequestW>
 else
-HttpAddRequestHeaders	equ <HttpAddRequestHeadersA>
+define HttpOpenRequest  <HttpOpenRequestA>
 endif
 
-
-HTTP_ADDREQ_INDEX_MASK	equ 0x0000FFFF
-HTTP_ADDREQ_FLAGS_MASK	equ 0xFFFF0000
-HTTP_ADDREQ_FLAG_ADD_IF_NEW equ 0x10000000
-HTTP_ADDREQ_FLAG_ADD	equ 0x20000000
-HTTP_ADDREQ_FLAG_COALESCE_WITH_COMMA equ 0x40000000
-HTTP_ADDREQ_FLAG_COALESCE_WITH_SEMICOLON equ 0x01000000
-HTTP_ADDREQ_FLAG_COALESCE equ HTTP_ADDREQ_FLAG_COAESCE_WITH_COMMA
-HTTP_ADDREQ_FLAG_REPLACE equ 0x80000000
-
-;BOOLAPI
-HttpSendRequestA proto WINAPI \
-	      hRequest: HINTERNET,
-	   lpszHeaders: LPCSTR,
-       dwHeadersLength: DWORD,
-	    lpOptional: LPVOID,
-      dwOptionalLength: DWORD
-
-;BOOLAPI
-HttpSendRequestW proto WINAPI \
-	      hRequest: HINTERNET,
-	   lpszHeaders: LPCWSTR,
-       dwHeadersLength: DWORD,
-	    lpOptional: LPVOID,
-      dwOptionalLength: DWORD
-
+HttpAddRequestHeadersA proto WINAPI :HINTERNET, :LPCSTR, :DWORD, :DWORD
+HttpAddRequestHeadersW proto WINAPI :HINTERNET, :LPCWSTR, :DWORD, :DWORD
 ifdef _UNICODE
-HttpSendRequest		equ <HttpSendRequestW>
+define HttpAddRequestHeaders  <HttpAddRequestHeadersW>
 else
-HttpSendRequest		equ <HttpSendRequestA>
+define HttpAddRequestHeaders  <HttpAddRequestHeadersA>
 endif
 
-;INTERNETAPI
-HttpSendRequestExA proto WINAPI \
-	      hRequest: HINTERNET,
-	   lpBuffersIn: LPINTERNET_BUFFERSA,
-	  lpBuffersOut: LPINTERNET_BUFFERSA,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;INTERNETAPI
-HttpSendRequestExW proto WINAPI \
-	      hRequest: HINTERNET,
-	   lpBuffersIn: LPINTERNET_BUFFERSW,
-	  lpBuffersOut: LPINTERNET_BUFFERSW,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-ifdef _UNICODE
-HttpSendRequestEx	equ <HttpSendRequestExW>
-else
-HttpSendRequestEx	equ <HttpSendRequestExA>
-endif
-
-
-HSR_ASYNC		equ WININET_API_FAG_ASYNC
-HSR_SYNC		equ WININET_API_FAG_SYNC
-HSR_USE_CONTEXT		equ WININET_API_FAG_USE_CONTEXT
-HSR_INITIATE		equ 0x00000008
-HSR_DOWNLOAD		equ 0x00000010
-HSR_CHUNKED		equ 0x00000020
-
-;INTERNETAPI
-HttpEndRequestA proto WINAPI \
-	      hRequest: HINTERNET,
-	  lpBuffersOut: LPINTERNET_BUFFERSA,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-;INTERNETAPI
-HttpEndRequestW proto WINAPI \
-	      hRequest: HINTERNET,
-	  lpBuffersOut: LPINTERNET_BUFFERSW,
-	       dwFlags: DWORD,
-	     dwContext: DWORD_PTR
-
-ifdef _UNICODE
-HttpEndRequest		equ <HttpEndRequestW>
-else
-HttpEndRequest		equ <HttpEndRequestA>
-endif
-
-;BOOLAPI
-HttpQueryInfoA proto WINAPI \
-	      hRequest: HINTERNET,
-	   dwInfoLevel: DWORD,
-	      lpBuffer: LPVOID,
-      lpdwBufferLength: LPDWORD,
-	     lpdwIndex: LPDWORD
-
-;BOOLAPI
-HttpQueryInfoW proto WINAPI \
-	      hRequest: HINTERNET,
-	   dwInfoLevel: DWORD,
-	      lpBuffer: LPVOID,
-      lpdwBufferLength: LPDWORD,
-	     lpdwIndex: LPDWORD
-
-ifdef _UNICODE
-HttpQueryInfo		equ <HttpQueryInfoW>
-else
-HttpQueryInfo		equ <HttpQueryInfoA>
-endif
-
-INTERNET_COOKIE_IS_SECURE equ 0x01
-INTERNET_COOKIE_IS_SESSION equ 0x02
-INTERNET_COOKIE_THIRD_PARTY equ 0x10
-INTERNET_COOKIE_PROMPT_REQUIRED equ 0x20
-INTERNET_COOKIE_EVALUATE_P3P equ 0x40
-INTERNET_COOKIE_APPLY_P3P equ 0x80
-INTERNET_COOKIE_P3P_ENABLED equ 0x100
-INTERNET_COOKIE_IS_RESTRICTED equ 0x200
-INTERNET_COOKIE_IE6	equ 0x400
-INTERNET_COOKIE_IS_LEGACY equ 0x800
-INTERNET_COOKIE_NON_SCRIPT equ 0x00001000
-INTERNET_COOKIE_HTTPONLY equ 0x00002000
-
-;BOOLAPI
-InternetSetCookieA proto WINAPI \
-	       lpszUrl: LPCSTR,
-	lpszCookieName: LPCSTR,
-	lpszCookieData: LPCSTR
-
-;BOOLAPI
-InternetSetCookieW proto WINAPI \
-	       lpszUrl: LPCWSTR,
-	lpszCookieName: LPCWSTR,
-	lpszCookieData: LPCWSTR
-
-ifdef _UNICODE
-InternetSetCookie	equ <InternetSetCookieW>
-else
-InternetSetCookie	equ <InternetSetCookieA>
-endif
-
-;BOOLAPI
-InternetGetCookieA proto WINAPI \
-	       lpszUrl: LPCSTR,
-	lpszCookieName: LPCSTR,
-	lpszCookieData: LPSTR,
-	      lpdwSize: LPDWORD
-
-;BOOLAPI
-InternetGetCookieW proto WINAPI \
-	       lpszUrl: LPCWSTR,
-	lpszCookieName: LPCWSTR,
-	lpszCookieData: LPWSTR,
-	      lpdwSize: LPDWORD
-
-ifdef _UNICODE
-InternetGetCookie	equ <InternetGetCookieW>
-else
-InternetGetCookie	equ <InternetGetCookieA>
-endif
-
-;INTERNETAPI
-InternetSetCookieExA proto WINAPI \
-	       lpszUrl: LPCSTR,
-	lpszCookieName: LPCSTR,
-	lpszCookieData: LPCSTR,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD_PTR
-
-;INTERNETAPI
-InternetSetCookieExW proto WINAPI \
-	       lpszUrl: LPCWSTR,
-	lpszCookieName: LPCWSTR,
-	lpszCookieData: LPCWSTR,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD_PTR
-
-ifdef _UNICODE
-InternetSetCookieEx	equ <InternetSetCookieExW>
-else
-InternetSetCookieEx	equ <InternetSetCookieExA>
-endif
-
-;BOOLAPI
-InternetGetCookieExA proto WINAPI \
-	       lpszUrl: LPCSTR,
-	lpszCookieName: LPCSTR,
-	lpszCookieData: LPSTR,
-	      lpdwSize: LPDWORD,
-	       dwFlags: DWORD,
-	    lpReserved: LPVOID
-
-;BOOLAPI
-InternetGetCookieExW proto WINAPI \
-	       lpszUrl: LPCWSTR,
-	lpszCookieName: LPCWSTR,
-	lpszCookieData: LPWSTR,
-	      lpdwSize: LPDWORD,
-	       dwFlags: DWORD,
-	    lpReserved: LPVOID
-
-ifdef _UNICODE
-InternetGetCookieEx	equ <InternetGetCookieExW>
-else
-InternetGetCookieEx	equ <InternetGetCookieExA>
-endif
-
-;INTERNETAPI
-InternetAttemptConnect proto WINAPI \
-	    dwReserved: DWORD
-
-;BOOLAPI
-InternetCheckConnectionA proto WINAPI \
-	       lpszUrl: LPCSTR,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD
-
-;BOOLAPI
-InternetCheckConnectionW proto WINAPI \
-	       lpszUrl: LPCWSTR,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD
-
-ifdef _UNICODE
-InternetCheckConnection equ <InternetCheckConnectionW>
-else
-InternetCheckConnection equ <InternetCheckConnectionA>
-endif
-
-
-FLAG_ICC_FORCE_CONNECTION equ 0x00000001
-
-FLAGS_ERROR_UI_FILTER_FOR_ERRORS equ 0x01
-FLAGS_ERROR_UI_FLAGS_CHANGE_OPTIONS equ 0x02
-FLAGS_ERROR_UI_FLAGS_GENERATE_DATA equ 0x04
-FLAGS_ERROR_UI_FLAGS_NO_UI equ 0x08
-FLAGS_ERROR_UI_SERIALIZE_DIALOGS equ 0x10
-
-;DWORD
-InternetAuthNotifyCallback proto WINAPI \
-	     dwContext: DWORD_PTR,
-	      dwReturn: DWORD,
-	    lpReserved: LPVOID
-
-CALLBACK(PFN_AUTH_NOTIFY, :DWORD_PTR, :DWORD, :LPVOID)
-
-INTERNET_AUTH_NOTIFY_DATA STRUC
-cbStruct		dd ?
-dwOptions		dd ?
-pfnNotify		PFN_AUTH_NOTIFY ?
-dwContext		dd ?
-INTERNET_AUTH_NOTIFY_DATA ENDS
-
-;INTERNETAPI
-ResumeSuspendedDownload proto WINAPI \
-	      hRequest: HINTERNET,
-	  dwResultCode: DWORD
-
-;INTERNETAPI
-InternetErrorDlg proto WINAPI \
-		  hWnd: HWND,
-	      hRequest: HINTERNET,
-	       dwError: DWORD,
-	       dwFlags: DWORD,
-	      lppvData: ptr LPVOID
-
-;INTERNETAPI
-InternetConfirmZoneCrossingA proto WINAPI \
-		  hWnd: HWND,
-	     szUrlPrev: LPSTR,
-	      szUrlNew: LPSTR,
-		 bPost: BOOL
-
-;INTERNETAPI
-InternetConfirmZoneCrossingW proto WINAPI \
-		  hWnd: HWND,
-	     szUrlPrev: LPWSTR,
-	      szUrlNew: LPWSTR,
-		 bPost: BOOL
-
-ifdef _UNICODE
-InternetConfirmZoneCrossing equ <InternetConfirmZoneCrossingW>
-else
-ifdef _WINX32_
-InternetConfirmZoneCrossing equ <InternetConfirmZoneCrossingA>
-else
-;INTERNETAPI
-InternetConfirmZoneCrossing proto WINAPI \
-		  hWnd: HWND,
-	     szUrlPrev: LPSTR,
-	      szUrlNew: LPSTR,
-		 bPost: BOOL
-
-endif
-endif
-
-INTERNET_ERROR_BASE	equ 12000
-
-ERROR_INTERNET_OUT_OF_HANDLES equ (INTERNET_ERROR_BASE + 1)
-ERROR_INTERNET_TIMEOUT	equ (INTERNET_ERROR_BASE + 2)
-ERROR_INTERNET_EXTENDED_ERROR equ (INTERNET_ERROR_BASE + 3)
-ERROR_INTERNET_INTERNAL_ERROR equ (INTERNET_ERROR_BASE + 4)
-ERROR_INTERNET_INVALID_URL equ (INTERNET_ERROR_BASE + 5)
-ERROR_INTERNET_UNRECOGNIZED_SCHEME equ (INTERNET_ERROR_BASE + 6)
-ERROR_INTERNET_NAME_NOT_RESOLVED equ (INTERNET_ERROR_BASE + 7)
-ERROR_INTERNET_PROTOCOL_NOT_FOUND equ (INTERNET_ERROR_BASE + 8)
-ERROR_INTERNET_INVALID_OPTION equ (INTERNET_ERROR_BASE + 9)
-ERROR_INTERNET_BAD_OPTION_LENGTH equ (INTERNET_ERROR_BASE + 10)
-ERROR_INTERNET_OPTION_NOT_SETTABLE equ (INTERNET_ERROR_BASE + 11)
-ERROR_INTERNET_SHUTDOWN equ (INTERNET_ERROR_BASE + 12)
-ERROR_INTERNET_INCORRECT_USER_NAME equ (INTERNET_ERROR_BASE + 13)
-ERROR_INTERNET_INCORRECT_PASSWORD equ (INTERNET_ERROR_BASE + 14)
-ERROR_INTERNET_LOGIN_FAILURE equ (INTERNET_ERROR_BASE + 15)
-ERROR_INTERNET_INVALID_OPERATION equ (INTERNET_ERROR_BASE + 16)
-ERROR_INTERNET_OPERATION_CANCELLED equ (INTERNET_ERROR_BASE + 17)
-ERROR_INTERNET_INCORRECT_HANDLE_TYPE equ (INTERNET_ERROR_BASE + 18)
-ERROR_INTERNET_INCORRECT_HANDLE_STATE equ (INTERNET_ERROR_BASE + 19)
-ERROR_INTERNET_NOT_PROXY_REQUEST equ (INTERNET_ERROR_BASE + 20)
-ERROR_INTERNET_REGISTRY_VALUE_NOT_FOUND equ (INTERNET_ERROR_BASE + 21)
-ERROR_INTERNET_BAD_REGISTRY_PARAMETER equ (INTERNET_ERROR_BASE + 22)
-ERROR_INTERNET_NO_DIRECT_ACCESS equ (INTERNET_ERROR_BASE + 23)
-ERROR_INTERNET_NO_CONTEXT equ (INTERNET_ERROR_BASE + 24)
-ERROR_INTERNET_NO_CALLBACK equ (INTERNET_ERROR_BASE + 25)
-ERROR_INTERNET_REQUEST_PENDING equ (INTERNET_ERROR_BASE + 26)
-ERROR_INTERNET_INCORRECT_FORMAT equ (INTERNET_ERROR_BASE + 27)
-ERROR_INTERNET_ITEM_NOT_FOUND equ (INTERNET_ERROR_BASE + 28)
-ERROR_INTERNET_CANNOT_CONNECT equ (INTERNET_ERROR_BASE + 29)
-ERROR_INTERNET_CONNECTION_ABORTED equ (INTERNET_ERROR_BASE + 30)
-ERROR_INTERNET_CONNECTION_RESET equ (INTERNET_ERROR_BASE + 31)
-ERROR_INTERNET_FORCE_RETRY equ (INTERNET_ERROR_BASE + 32)
-ERROR_INTERNET_INVALID_PROXY_REQUEST equ (INTERNET_ERROR_BASE + 33)
-ERROR_INTERNET_NEED_UI	equ (INTERNET_ERROR_BASE + 34)
-
-ERROR_INTERNET_HANDLE_EXISTS equ (INTERNET_ERROR_BASE + 36)
-ERROR_INTERNET_SEC_CERT_DATE_INVALID equ (INTERNET_ERROR_BASE + 37)
-ERROR_INTERNET_SEC_CERT_CN_INVALID equ (INTERNET_ERROR_BASE + 38)
-ERROR_INTERNET_HTTP_TO_HTTPS_ON_REDIR equ (INTERNET_ERROR_BASE + 39)
-ERROR_INTERNET_HTTPS_TO_HTTP_ON_REDIR equ (INTERNET_ERROR_BASE + 40)
-ERROR_INTERNET_MIXED_SECURITY equ (INTERNET_ERROR_BASE + 41)
-ERROR_INTERNET_CHG_POST_IS_NON_SECURE equ (INTERNET_ERROR_BASE + 42)
-ERROR_INTERNET_POST_IS_NON_SECURE equ (INTERNET_ERROR_BASE + 43)
-ERROR_INTERNET_CLIENT_AUTH_CERT_NEEDED equ (INTERNET_ERROR_BASE + 44)
-ERROR_INTERNET_INVALID_CA equ (INTERNET_ERROR_BASE + 45)
-ERROR_INTERNET_CLIENT_AUTH_NOT_SETUP equ (INTERNET_ERROR_BASE + 46)
-ERROR_INTERNET_ASYNC_THREAD_FAILED equ (INTERNET_ERROR_BASE + 47)
-ERROR_INTERNET_REDIRECT_SCHEME_CHANGE equ (INTERNET_ERROR_BASE + 48)
-ERROR_INTERNET_DIALOG_PENDING equ (INTERNET_ERROR_BASE + 49)
-ERROR_INTERNET_RETRY_DIALOG equ (INTERNET_ERROR_BASE + 50)
-ERROR_INTERNET_HTTPS_HTTP_SUBMIT_REDIR equ (INTERNET_ERROR_BASE + 52)
-ERROR_INTERNET_INSERT_CDROM equ (INTERNET_ERROR_BASE + 53)
-ERROR_INTERNET_FORTEZZA_LOGIN_NEEDED equ (INTERNET_ERROR_BASE + 54)
-ERROR_INTERNET_SEC_CERT_ERRORS equ (INTERNET_ERROR_BASE + 55)
-ERROR_INTERNET_SEC_CERT_NO_REV equ (INTERNET_ERROR_BASE + 56)
-ERROR_INTERNET_SEC_CERT_REV_FAILED equ (INTERNET_ERROR_BASE + 57)
-
-ERROR_FTP_TRANSFER_IN_PROGRESS equ (INTERNET_ERROR_BASE + 110)
-ERROR_FTP_DROPPED	equ (INTERNET_ERROR_BASE + 111)
-ERROR_FTP_NO_PASSIVE_MODE equ (INTERNET_ERROR_BASE + 112)
-
-ERROR_GOPHER_PROTOCOL_ERROR equ (INTERNET_ERROR_BASE + 130)
-ERROR_GOPHER_NOT_FILE	equ (INTERNET_ERROR_BASE + 131)
-ERROR_GOPHER_DATA_ERROR equ (INTERNET_ERROR_BASE + 132)
-ERROR_GOPHER_END_OF_DATA equ (INTERNET_ERROR_BASE + 133)
-ERROR_GOPHER_INVALID_LOCATOR equ (INTERNET_ERROR_BASE + 134)
-ERROR_GOPHER_INCORRECT_LOCATOR_TYPE equ (INTERNET_ERROR_BASE + 135)
-ERROR_GOPHER_NOT_GOPHER_PLUS equ (INTERNET_ERROR_BASE + 136)
-ERROR_GOPHER_ATTRIBUTE_NOT_FOUND equ (INTERNET_ERROR_BASE + 137)
-ERROR_GOPHER_UNKNOWN_LOCATOR equ (INTERNET_ERROR_BASE + 138)
-
-ERROR_HTTP_HEADER_NOT_FOUND equ (INTERNET_ERROR_BASE + 150)
-ERROR_HTTP_DOWNLEVEL_SERVER equ (INTERNET_ERROR_BASE + 151)
-ERROR_HTTP_INVALID_SERVER_RESPONSE equ (INTERNET_ERROR_BASE + 152)
-ERROR_HTTP_INVALID_HEADER equ (INTERNET_ERROR_BASE + 153)
-ERROR_HTTP_INVALID_QUERY_REQUEST equ (INTERNET_ERROR_BASE + 154)
-ERROR_HTTP_HEADER_ALREADY_EXISTS equ (INTERNET_ERROR_BASE + 155)
-ERROR_HTTP_REDIRECT_FAILED equ (INTERNET_ERROR_BASE + 156)
-ERROR_HTTP_NOT_REDIRECTED equ (INTERNET_ERROR_BASE + 160)
-ERROR_HTTP_COOKIE_NEEDS_CONFIRMATION equ (INTERNET_ERROR_BASE + 161)
-ERROR_HTTP_COOKIE_DECLINED equ (INTERNET_ERROR_BASE + 162)
-ERROR_HTTP_REDIRECT_NEEDS_CONFIRMATION equ (INTERNET_ERROR_BASE + 168)
-
-ERROR_INTERNET_SECURITY_CHANNEL_ERROR equ (INTERNET_ERROR_BASE + 157)
-ERROR_INTERNET_UNABLE_TO_CACHE_FILE equ (INTERNET_ERROR_BASE + 158)
-ERROR_INTERNET_TCPIP_NOT_INSTALLED equ (INTERNET_ERROR_BASE + 159)
-ERROR_INTERNET_DISCONNECTED equ (INTERNET_ERROR_BASE + 163)
-ERROR_INTERNET_SERVER_UNREACHABLE equ (INTERNET_ERROR_BASE + 164)
-ERROR_INTERNET_PROXY_SERVER_UNREACHABLE equ (INTERNET_ERROR_BASE + 165)
-
-ERROR_INTERNET_BAD_AUTO_PROXY_SCRIPT equ (INTERNET_ERROR_BASE + 166)
-ERROR_INTERNET_UNABLE_TO_DOWNLOAD_SCRIPT equ (INTERNET_ERROR_BASE + 167)
-ERROR_INTERNET_SEC_INVALID_CERT equ (INTERNET_ERROR_BASE + 169)
-ERROR_INTERNET_SEC_CERT_REVOKED equ (INTERNET_ERROR_BASE + 170)
-
-ERROR_INTERNET_FAILED_DUETOSECURITYCHECK equ (INTERNET_ERROR_BASE + 171)
-ERROR_INTERNET_NOT_INITIALIZED equ (INTERNET_ERROR_BASE + 172)
-ERROR_INTERNET_NEED_MSN_SSPI_PKG equ (INTERNET_ERROR_BASE + 173)
-ERROR_INTERNET_LOGIN_FAILURE_DISPLAY_ENTITY_BODY equ (INTERNET_ERROR_BASE + 174)
-
-ERROR_INTERNET_DECODING_FAILED equ (INTERNET_ERROR_BASE + 175)
-
-INTERNET_ERROR_LAST	equ ERROR_INTERNET_DECODING_FAILED
-
-NORMAL_CACHE_ENTRY	equ 0x00000001
-STICKY_CACHE_ENTRY	equ 0x00000004
-EDITED_CACHE_ENTRY	equ 0x00000008
-TRACK_OFFLINE_CACHE_ENTRY equ 0x00000010
-TRACK_ONLINE_CACHE_ENTRY equ 0x00000020
-SPARSE_CACHE_ENTRY	equ 0x00010000
-COOKIE_CACHE_ENTRY	equ 0x00100000
-URLHISTORY_CACHE_ENTRY	equ 0x00200000
-
-URLCACHE_FIND_DEFAULT_FILTER equ \
-	NORMA_CACHE_ENTRY	       OR \
-	COOKIE_CACHE_ENTRY	       OR \
-	URLHISTORY_CACHE_ENTRY	       OR \
-	TRACK_OFFLINE_CACHE_ENTRY      OR \
-	TRACK_ONLINE_CACHE_ENTRY       OR \
-	STICKY_CACHE_ENTRY
-
-INTERNET_CACHE_ENTRY_INFOA  STRUC
-dwStructSize		dd ?
-lpszSourceUrlName	LPSTR ?
-lpszLocalFileName	LPSTR ?
-CacheEntryType		dd ?
-dwUseCount		dd ?
-dwHitRate		dd ?
-dwSizeLow		dd ?
-dwSizeHigh		dd ?
-LastModifiedTime	FILETIME <>
-ExpireTime		FILETIME <>
-LastAccessTime		FILETIME <>
-LastSyncTime		FILETIME <>
-lpHeaderInfo		LPSTR ?
-dwHeaderInfoSize	dd ?
-lpszFileExtension	LPSTR ?
-UNION
- dwReserved		dd ?
- dwExemptDelta		dd ?
-ENDS
-INTERNET_CACHE_ENTRY_INFOA ENDS
-LPINTERNET_CACHE_ENTRY_INFOA typedef ptr INTERNET_CACHE_ENTRY_INFOA
-INTERNET_CACHE_ENTRY_INFOW  STRUC
-dwStructSize		dd ?
-lpszSourceUrlName	LPWSTR ?
-lpszLocalFileName	LPWSTR ?
-CacheEntryType		dd ?
-dwUseCount		dd ?
-dwHitRate		dd ?
-dwSizeLow		dd ?
-dwSizeHigh		dd ?
-LastModifiedTime	FILETIME <>
-ExpireTime		FILETIME <>
-LastAccessTime		FILETIME <>
-LastSyncTime		FILETIME <>
-lpHeaderInfo		LPWSTR ?
-dwHeaderInfoSize	dd ?
-lpszFileExtension	LPWSTR ?
-UNION
- dwReserved		dd ?
- dwExemptDelta		dd ?
-ENDS
-INTERNET_CACHE_ENTRY_INFOW ENDS
- LPINTERNET_CACHE_ENTRY_INFOW typedef ptr INTERNET_CACHE_ENTRY_INFOW
-ifdef _UNICODE
-INTERNET_CACHE_ENTRY_INFO typedef INTERNET_CACHE_ENTRY_INFOW
-LPINTERNET_CACHE_ENTRY_INFO typedef LPINTERNET_CACHE_ENTRY_INFOW
-else
-INTERNET_CACHE_ENTRY_INFO typedef INTERNET_CACHE_ENTRY_INFOA
-LPINTERNET_CACHE_ENTRY_INFO typedef LPINTERNET_CACHE_ENTRY_INFOA
-endif
-
-INTERNET_CACHE_TIMESTAMPS  STRUC
-ftExpires		FILETIME <>
-ftLastModified		FILETIME <>
-INTERNET_CACHE_TIMESTAMPS ENDS
-LPINTERNET_CACHE_TIMESTAMPS typedef ptr INTERNET_CACHE_TIMESTAMPS
-
-GROUPID			typedef LONGLONG
-
-CACHEGROUP_ATTRIBUTE_GET_ALL equ 0xffffffff
-CACHEGROUP_ATTRIBUTE_BASIC equ 0x00000001
-CACHEGROUP_ATTRIBUTE_FLAG equ 0x00000002
-CACHEGROUP_ATTRIBUTE_TYPE equ 0x00000004
-CACHEGROUP_ATTRIBUTE_QUOTA equ 0x00000008
-CACHEGROUP_ATTRIBUTE_GROUPNAME equ 0x00000010
-CACHEGROUP_ATTRIBUTE_STORAGE equ 0x00000020
-CACHEGROUP_FLAG_NONPURGEABLE equ 0x00000001
-CACHEGROUP_FLAG_GIDONLY equ 0x00000004
-CACHEGROUP_FLAG_FLUSHURL_ONDELETE equ 0x00000002
-CACHEGROUP_SEARCH_ALL	equ 0x00000000
-CACHEGROUP_SEARCH_BYURL equ 0x00000001
-CACHEGROUP_TYPE_INVALID equ 0x00000001
-
-CACHEGROUP_READWRITE_MASK equ \
-	CACHEGROUP_ATTRIBUTE_TYPE	OR \
-	CACHEGROUP_ATTRIBUTE_QUOTA	OR \
-	CACHEGROUP_ATTRIBUTE_GROUPNAME	OR \
-	CACHEGROUP_ATTRIBUTE_STORAGE
-
-
-GROUPNAME_MAX_LENGTH	equ 120
-GROUP_OWNER_STORAGE_SIZE equ 4
-INTERNET_CACHE_GROUP_INFOA STRUC
-dwGroupSize		dd ?
-dwGroupFlags		dd ?
-dwGroupType		dd ?
-dwDiskUsage		dd ?
-dwDiskQuota		dd ?
-dwOwnerStorage		dd GROUP_OWNER_STORAGE_SIZE dup(?)
-szGroupName		CHAR GROUPNAME_MAX_LENGTH dup(?)
-INTERNET_CACHE_GROUP_INFOA ENDS
- LPINTERNET_CACHE_GROUP_INFOA typedef ptr INTERNET_CACHE_GROUP_INFOA
-INTERNET_CACHE_GROUP_INFOW STRUC
-dwGroupSize		dd ?
-dwGroupFlags		dd ?
-dwGroupType		dd ?
-dwDiskUsage		dd ?
-dwDiskQuota		dd ?
-dwOwnerStorage		dd GROUP_OWNER_STORAGE_SIZE dup(?)
-szGroupName		WCHAR GROUPNAME_MAX_LENGTH dup(?)
-INTERNET_CACHE_GROUP_INFOW ENDS
- LPINTERNET_CACHE_GROUP_INFOW typedef ptr INTERNET_CACHE_GROUP_INFOW
-ifdef _UNICODE
-INTERNET_CACHE_GROUP_INFO typedef INTERNET_CACHE_GROUP_INFOW
-LPINTERNET_CACHE_GROUP_INFO typedef LPINTERNET_CACHE_GROUP_INFOW
-else
-INTERNET_CACHE_GROUP_INFO typedef INTERNET_CACHE_GROUP_INFOA
-LPINTERNET_CACHE_GROUP_INFO typedef LPINTERNET_CACHE_GROUP_INFOA
-endif
-
-;BOOLAPI
-CreateUrlCacheEntryA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-    dwExpectedFileSize: DWORD,
-     lpszFileExtension: LPCSTR,
-	  lpszFileName: LPSTR,
-	    dwReserved: DWORD
-
-;BOOLAPI
-CreateUrlCacheEntryW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-    dwExpectedFileSize: DWORD,
-     lpszFileExtension: LPCWSTR,
-	  lpszFileName: LPWSTR,
-	    dwReserved: DWORD
-
-ifdef _UNICODE
-CreateUrlCacheEntry	equ <CreateUrlCacheEntryW>
-else
-CreateUrlCacheEntry	equ <CreateUrlCacheEntryA>
-endif
-
-ifndef USE_FIXED_COMMIT_URL_CACHE_ENTRY
-
-;BOOLAPI
-CommitUrlCacheEntryA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-     lpszLocalFileName: LPCSTR,
-	    ExpireTime: FILETIME,
-      LastModifiedTime: FILETIME,
-	CacheEntryType: DWORD,
-	  lpHeaderInfo: LPBYTE,
-	  dwHeaderSize: DWORD,
-     lpszFileExtension: LPCSTR,
-       lpszOriginalUrl: LPCSTR
-
-;BOOLAPI
-CommitUrlCacheEntryW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-     lpszLocalFileName: LPCWSTR,
-	    ExpireTime: FILETIME,
-      LastModifiedTime: FILETIME,
-	CacheEntryType: DWORD,
-	lpszHeaderInfo: LPWSTR,
-	     dwHeaders: DWORD,
-     lpszFileExtension: LPCWSTR,
-       lpszOriginalUrl: LPCWSTR
-
-ifdef _UNICODE
-CommitUrlCacheEntry	equ <CommitUrlCacheEntryW>
-else
-CommitUrlCacheEntry	equ <CommitUrlCacheEntryA>
-endif
-
-else ; USE_FIXED_COMMIT_URL_CACHE_ENTRY
-
-CommitUrlCacheEntryA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-     lpszLocalFileName: LPCSTR,
-	    ExpireTime: FILETIME,
-      LastModifiedTime: FILETIME,
-	CacheEntryType: DWORD,
-	  lpHeaderInfo: LPBYTE,
-	  dwHeaderSize: DWORD,
-     lpszFileExtension: LPCSTR,
-       lpszOriginalUrl: LPCSTR
-CommitUrlCacheEntryW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-     lpszLocalFileName: LPCWSTR,
-	    ExpireTime: FILETIME,
-      LastModifiedTime: FILETIME,
-	CacheEntryType: DWORD,
-	lpszHeaderInfo: LPWSTR,
-	     dwHeaders: DWORD,
-     lpszFileExtension: LPCWSTR,
-       lpszOriginalUrl: LPCWSTR
-ifdef _UNICODE
-CommitUrlCacheEntry	equ <CommitUrlCacheEntryW>
-else
-CommitUrlCacheEntry	equ <CommitUrlCacheEntryA>
-endif
-endif ; USE_FIXED_COMMIT_URL_CACHE_ENTRY
-
-;BOOLAPI
-RetrieveUrlCacheEntryFileA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-    lpcbCacheEntryInfo: LPDWORD,
-	    dwReserved: DWORD
-
-;BOOLAPI
-RetrieveUrlCacheEntryFileW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-    lpcbCacheEntryInfo: LPDWORD,
-	    dwReserved: DWORD
-
-ifdef _UNICODE
-RetrieveUrlCacheEntryFile equ <RetrieveUrlCacheEntryFileW>
-else
-RetrieveUrlCacheEntryFile equ <RetrieveUrlCacheEntryFileA>
-endif
-
-;BOOLAPI
-UnlockUrlCacheEntryFileA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-	    dwReserved: DWORD
-
-;BOOLAPI
-UnlockUrlCacheEntryFileW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-	    dwReserved: DWORD
-
-ifdef _UNICODE
-UnlockUrlCacheEntryFile equ <UnlockUrlCacheEntryFileW>
-else
-ifdef _WINX32_
-UnlockUrlCacheEntryFile equ <UnlockUrlCacheEntryFileA>
-else
-;BOOLAPI
-UnlockUrlCacheEntryFile proto WINAPI \
-	   lpszUrlName: LPCSTR,
-	    dwReserved: DWORD
-endif
-endif
-
-;INTERNETAPI
-RetrieveUrlCacheEntryStreamA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-    lpcbCacheEntryInfo: LPDWORD,
-	   fRandomRead: BOOL,
-	    dwReserved: DWORD
-
-;INTERNETAPI
-RetrieveUrlCacheEntryStreamW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-    lpcbCacheEntryInfo: LPDWORD,
-	   fRandomRead: BOOL,
-	    dwReserved: DWORD
-
-ifdef _UNICODE
-RetrieveUrlCacheEntryStream equ <RetrieveUrlCacheEntryStreamW>
-else
-RetrieveUrlCacheEntryStream equ <RetrieveUrlCacheEntryStreamA>
-endif
-
-;BOOLAPI
-ReadUrlCacheEntryStream proto WINAPI \
-       hUrlCacheStream: HANDLE,
-	    dwLocation: DWORD,
-	      lpBuffer: LPVOID,
-	       lpdwLen: LPDWORD,
-	      Reserved: DWORD
-
-;BOOLAPI
-ReadUrlCacheEntryStreamEx proto WINAPI \
-       hUrlCacheStream: HANDLE,
-	    qwLocation: DWORDLONG,
-	      lpBuffer: LPVOID,
-	       lpdwLen: LPDWORD
-
-;BOOLAPI
-UnlockUrlCacheEntryStream proto WINAPI \
-       hUrlCacheStream: HANDLE,
-	      Reserved: DWORD
-
-;URLCACHEAPI
-GetUrlCacheEntryInfoA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-    lpcbCacheEntryInfo: LPDWORD
-
-;URLCACHEAPI
-GetUrlCacheEntryInfoW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-    lpcbCacheEntryInfo: LPDWORD
-
-ifdef _UNICODE
-GetUrlCacheEntryInfo	equ <GetUrlCacheEntryInfoW>
-else
-GetUrlCacheEntryInfo	equ <GetUrlCacheEntryInfoA>
-endif
-
-;URLCACHEAPI
-FindFirstUrlCacheGroup proto WINAPI \
-	       dwFlags: DWORD,
-	      dwFilter: DWORD,
-     lpSearchCondition: LPVOID,
-     dwSearchCondition: DWORD,
-	     lpGroupId: ptr GROUPID,
-	    lpReserved: LPVOID
-
-;URLCACHEAPI
-FindNextUrlCacheGroup proto WINAPI \
-		 hFind: HANDLE,
-	     lpGroupId: ptr GROUPID,
-	    lpReserved: LPVOID
-
-;URLCACHEAPI
-GetUrlCacheGroupAttributeA proto WINAPI \
-		   gid: GROUPID,
-	       dwFlags: DWORD,
-	  dwAttributes: DWORD,
-	   lpGroupInfo: LPINTERNET_CACHE_GROUP_INFOA,
-	 lpdwGroupInfo: LPDWORD,
-	    lpReserved: LPVOID
-
-;URLCACHEAPI
-GetUrlCacheGroupAttributeW proto WINAPI \
-		   gid: GROUPID,
-	       dwFlags: DWORD,
-	  dwAttributes: DWORD,
-	   lpGroupInfo: LPINTERNET_CACHE_GROUP_INFOW,
-	 lpdwGroupInfo: LPDWORD,
-	    lpReserved: LPVOID
-
-ifdef _UNICODE
-GetUrlCacheGroupAttribute equ <GetUrlCacheGroupAttributeW>
-else
-GetUrlCacheGroupAttribute equ <GetUrlCacheGroupAttributeA>
-endif
-
-;URLCACHEAPI
-SetUrlCacheGroupAttributeA proto WINAPI \
-		   gid: GROUPID,
-	       dwFlags: DWORD,
-	  dwAttributes: DWORD,
-	   lpGroupInfo: LPINTERNET_CACHE_GROUP_INFOA,
-	    lpReserved: LPVOID
-
-;URLCACHEAPI
-SetUrlCacheGroupAttributeW proto WINAPI \
-		   gid: GROUPID,
-	       dwFlags: DWORD,
-	  dwAttributes: DWORD,
-	   lpGroupInfo: LPINTERNET_CACHE_GROUP_INFOW,
-	    lpReserved: LPVOID
-
-ifdef _UNICODE
-SetUrlCacheGroupAttribute equ <SetUrlCacheGroupAttributeW>
-else
-SetUrlCacheGroupAttribute equ <SetUrlCacheGroupAttributeA>
-endif
-
-;BOOLAPI
-GetUrlCacheEntryInfoExA proto WINAPI \
-	       lpszUrl: LPCSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-    lpcbCacheEntryInfo: LPDWORD,
-       lpszRedirectUrl: LPSTR,
-       lpcbRedirectUrl: LPDWORD,
-	    lpReserved: LPVOID,
-	       dwFlags: DWORD
-
-;BOOLAPI
-GetUrlCacheEntryInfoExW proto WINAPI \
-	       lpszUrl: LPCWSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-    lpcbCacheEntryInfo: LPDWORD,
-       lpszRedirectUrl: LPWSTR,
-       lpcbRedirectUrl: LPDWORD,
-	    lpReserved: LPVOID,
-	       dwFlags: DWORD
-
-ifdef _UNICODE
-GetUrlCacheEntryInfoEx	equ <GetUrlCacheEntryInfoExW>
-else
-GetUrlCacheEntryInfoEx	equ <GetUrlCacheEntryInfoExA>
-endif
-
-CACHE_ENTRY_ATTRIBUTE_FC equ 0x00000004
-CACHE_ENTRY_HITRATE_FC	equ 0x00000010
-CACHE_ENTRY_MODTIME_FC	equ 0x00000040
-CACHE_ENTRY_EXPTIME_FC	equ 0x00000080
-CACHE_ENTRY_ACCTIME_FC	equ 0x00000100
-CACHE_ENTRY_SYNCTIME_FC equ 0x00000200
-CACHE_ENTRY_HEADERINFO_FC equ 0x00000400
-CACHE_ENTRY_EXEMPT_DELTA_FC equ 0x00000800
-
-;BOOLAPI
-SetUrlCacheEntryInfoA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-	dwFieldControl: DWORD
-
-;BOOLAPI
-SetUrlCacheEntryInfoW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-      lpCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-	dwFieldControl: DWORD
-
-ifdef _UNICODE
-SetUrlCacheEntryInfo	equ <SetUrlCacheEntryInfoW>
-else
-SetUrlCacheEntryInfo	equ <SetUrlCacheEntryInfoA>
-endif
-
-;INTERNETAPI_(GROUPID)
-CreateUrlCacheGroup proto WINAPI \
-	       dwFlags: DWORD,
-	    lpReserved: LPVOID
-
-;BOOLAPI
-DeleteUrlCacheGroup proto WINAPI \
-	       GroupId: GROUPID,
-	       dwFlags: DWORD,
-	    lpReserved: LPVOID
-
-INTERNET_CACHE_GROUP_ADD equ 0
-INTERNET_CACHE_GROUP_REMOVE equ 1
-
-;BOOLAPI
-SetUrlCacheEntryGroupA proto WINAPI \
-	   lpszUrlName: LPCSTR,
-	       dwFlags: DWORD,
-	       GroupId: GROUPID,
-     pbGroupAttributes: LPBYTE,
-     cbGroupAttributes: DWORD,
-	    lpReserved: LPVOID
-
-;BOOLAPI
-SetUrlCacheEntryGroupW proto WINAPI \
-	   lpszUrlName: LPCWSTR,
-	       dwFlags: DWORD,
-	       GroupId: GROUPID,
-     pbGroupAttributes: LPBYTE,
-     cbGroupAttributes: DWORD,
-	    lpReserved: LPVOID
-
-ifdef _UNICODE
-SetUrlCacheEntryGroup	equ <SetUrlCacheEntryGroupW>
-else
-ifdef _WINX32_
-SetUrlCacheEntryGroup	equ <SetUrlCacheEntryGroupA>
-else
-;BOOLAPI
-SetUrlCacheEntryGroup proto WINAPI \
-	   lpszUrlName: LPCSTR,
-	       dwFlags: DWORD,
-	       GroupId: GROUPID,
-     pbGroupAttributes: LPBYTE,
-     cbGroupAttributes: DWORD,
-	    lpReserved: LPVOID
-endif
-endif
-
-;INTERNETAPI
-FindFirstUrlCacheEntryExA proto WINAPI \
-  lpszUrlSearchPattern: LPCSTR,
-	       dwFlags: DWORD,
-	      dwFilter: DWORD,
-	       GroupId: GROUPID,
- lpFirstCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-	 lpcbEntryInfo: LPDWORD,
-     lpGroupAttributes: LPVOID,
-   lpcbGroupAttributes: LPDWORD,
-	    lpReserved: LPVOID
-
-;INTERNETAPI
-FindFirstUrlCacheEntryExW proto WINAPI \
-  lpszUrlSearchPattern: LPCWSTR,
-	       dwFlags: DWORD,
-	      dwFilter: DWORD,
-	       GroupId: GROUPID,
- lpFirstCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-	 lpcbEntryInfo: LPDWORD,
-     lpGroupAttributes: LPVOID,
-   lpcbGroupAttributes: LPDWORD,
-	    lpReserved: LPVOID
-
-ifdef _UNICODE
-FindFirstUrlCacheEntryEx equ <FindFirstUrlCacheEntryExW>
-else
-FindFirstUrlCacheEntryEx equ <FindFirstUrlCacheEntryExA>
-endif
-
-;BOOLAPI
-FindNextUrlCacheEntryExA proto WINAPI \
-	   hEnumHandle: HANDLE,
-  lpNextCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-	 lpcbEntryInfo: LPDWORD,
-     lpGroupAttributes: LPVOID,
-   lpcbGroupAttributes: LPDWORD,
-	    lpReserved: LPVOID
-
-;BOOLAPI
-FindNextUrlCacheEntryExW proto WINAPI \
-	   hEnumHandle: HANDLE,
-  lpNextCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-	 lpcbEntryInfo: LPDWORD,
-     lpGroupAttributes: LPVOID,
-   lpcbGroupAttributes: LPDWORD,
-	    lpReserved: LPVOID
-
-ifdef _UNICODE
-FindNextUrlCacheEntryEx equ <FindNextUrlCacheEntryExW>
-else
-FindNextUrlCacheEntryEx equ <FindNextUrlCacheEntryExA>
-endif
-
-;INTERNETAPI
-FindFirstUrlCacheEntryA proto WINAPI \
-  lpszUrlSearchPattern: LPCSTR,
- lpFirstCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-    lpcbCacheEntryInfo: LPDWORD
-
-;INTERNETAPI
-FindFirstUrlCacheEntryW proto WINAPI \
-  lpszUrlSearchPattern: LPCWSTR,
- lpFirstCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-    lpcbCacheEntryInfo: LPDWORD
-
-ifdef _UNICODE
-FindFirstUrlCacheEntry	equ <FindFirstUrlCacheEntryW>
-else
-FindFirstUrlCacheEntry	equ <FindFirstUrlCacheEntryA>
-endif
-
-;BOOLAPI
-FindNextUrlCacheEntryA proto WINAPI \
-	   hEnumHandle: HANDLE,
-  lpNextCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOA,
-    lpcbCacheEntryInfo: LPDWORD
-
-;BOOLAPI
-FindNextUrlCacheEntryW proto WINAPI \
-	   hEnumHandle: HANDLE,
-  lpNextCacheEntryInfo: LPINTERNET_CACHE_ENTRY_INFOW,
-    lpcbCacheEntryInfo: LPDWORD
-
-ifdef _UNICODE
-FindNextUrlCacheEntry	equ <FindNextUrlCacheEntryW>
-else
-FindNextUrlCacheEntry	equ <FindNextUrlCacheEntryA>
-endif
-
-;BOOLAPI
-FindCloseUrlCache proto WINAPI \
-	   hEnumHandle: HANDLE
-
-;BOOLAPI
-DeleteUrlCacheEntryA proto WINAPI \
-	   lpszUrlName: LPCSTR
-
-;BOOLAPI
-DeleteUrlCacheEntryW proto WINAPI \
-	   lpszUrlName: LPCWSTR
-
-ifdef _UNICODE
-DeleteUrlCacheEntry	equ <DeleteUrlCacheEntryW>
-else
-ifdef _WINX32_
-DeleteUrlCacheEntry	equ <DeleteUrlCacheEntryA>
-else
-;BOOLAPI
-DeleteUrlCacheEntry proto WINAPI \
-	   lpszUrlName: LPCSTR
-
-endif
-endif
-
-;INTERNETAPI
-InternetDialA proto WINAPI \
-	    hwndParent: HWND,
-	lpszConnectoid: LPSTR,
-	       dwFlags: DWORD,
-	lpdwConnection: ptr DWORD_PTR,
-	    dwReserved: DWORD
-
-;INTERNETAPI
-InternetDialW proto WINAPI \
-	    hwndParent: HWND,
-	lpszConnectoid: LPWSTR,
-	       dwFlags: DWORD,
-	lpdwConnection: ptr DWORD_PTR,
-	    dwReserved: DWORD
-
-ifdef _UNICODE
-InternetDial		equ <InternetDialW>
-else
-ifdef _WINX32_
-InternetDial		equ <InternetDialA>
-else
-;INTERNETAPI
-InternetDial proto WINAPI \
-	    hwndParent: HWND,
-	lpszConnectoid: LPSTR,
-	       dwFlags: DWORD,
-	lpdwConnection: LPDWORD,
-	    dwReserved: DWORD
-
-endif
-endif
-
-INTERNET_DIAL_FORCE_PROMPT equ 0x2000
-INTERNET_DIAL_SHOW_OFFLINE equ 0x4000
-INTERNET_DIAL_UNATTENDED equ 0x8000
-
-;INTERNETAPI
-InternetHangUp proto WINAPI \
-	  dwConnection: DWORD_PTR,
-	    dwReserved: DWORD
-
-INTERENT_GOONLINE_REFRESH equ 0x00000001
-INTERENT_GOONLINE_MASK	equ 0x00000001
-
-;INTERNETAPI
-InternetGoOnlineA proto WINAPI \
-	       lpszURL: LPCSTR,
-	    hwndParent: HWND,
-	       dwFlags: DWORD
-
-;INTERNETAPI
-InternetGoOnlineW proto WINAPI \
-	       lpszURL: LPCWSTR,
-	    hwndParent: HWND,
-	       dwFlags: DWORD
-
-ifdef _UNICODE
-InternetGoOnline	equ <InternetGoOnlineW>
-else
-ifdef _WINX32_
-InternetGoOnline	equ <InternetGoOnlineA>
-else
-;INTERNETAPI
-InternetGoOnline proto WINAPI \
-	       lpszURL: LPSTR,
-	    hwndParent: HWND,
-	       dwFlags: DWORD
-endif
-endif
-
-;INTERNETAPI
-InternetAutodial proto WINAPI \
-	       dwFlags: DWORD,
-	    hwndParent: HWND
-
-INTERNET_AUTODIAL_FORCE_ONLINE equ 1
-INTERNET_AUTODIAL_FORCE_UNATTENDED equ 2
-INTERNET_AUTODIAL_FAILIFSECURITYCHECK equ 4
-INTERNET_AUTODIAL_OVERRIDE_NET_PRESENT equ 8
-
-INTERNET_AUTODIAL_FLAGS_MASK equ (INTERNET_AUTODIAL_FORCE_ONLINE OR INTERNET_AUTODIAL_FORCE_UNATTENDED OR INTERNET_AUTODIAL_FAILIFSECURITYCHECK OR INTERNET_AUTODIA_OVERRIDE_NET_PRESENT)
-;INTERNETAPI
-InternetAutodialHangup proto WINAPI \
-	    dwReserved: DWORD
-
-;INTERNETAPI
-InternetGetConnectedState proto WINAPI \
-	     lpdwFlags: LPDWORD,
-	    dwReserved: DWORD
-
-;INTERNETAPI
-InternetGetConnectedStateExA proto WINAPI \
-	     lpdwFlags: LPDWORD,
-    lpszConnectionName: LPSTR,
-	      dwBufLen: DWORD,
-	    dwReserved: DWORD
-
-;INTERNETAPI
-InternetGetConnectedStateExW proto WINAPI \
-	     lpdwFlags: LPDWORD,
-    lpszConnectionName: LPWSTR,
-	      dwBufLen: DWORD,
-	    dwReserved: DWORD
-
-PROXY_AUTO_DETECT_TYPE_DHCP equ 1
-PROXY_AUTO_DETECT_TYPE_DNS_A equ 2
-
-;			typedef AutoProxyHelperFunctions
-
-.comdef AutoProxyHelper
-    IsResolvable	proc :LPSTR
-    GetIPAddress	proc :LPSTR, :LPDWORD
-    ResolveHostName	proc :LPSTR, :LPSTR, :LPDWORD
-    IsInNet		proc :LPSTR, :LPSTR, :LPSTR
-    IsResolvableEx	proc :LPSTR
-    GetIPAddressEx	proc :LPSTR, :LPDWORD
-    ResolveHostNameEx	proc :LPSTR, :LPSTR, :LPDWORD
-    IsInNetEx		proc :LPSTR, :LPSTR
-    SortIpList		proc :LPSTR, :LPSTR, :LPDWORD
-    .ends
-
-AUTO_PROXY_SCRIPT_BUFFER STRUC
-dwStructSize		dd ?
-lpszScriptBuffer	LPSTR ?
-dwScriptBufferSize	dd ?
-AUTO_PROXY_SCRIPT_BUFFER ENDS
-LPAUTO_PROXY_SCRIPT_BUFFER typedef ptr AUTO_PROXY_SCRIPT_BUFFER
-
-AutoProxyHelperFunctions typedef AutoProxyHelper
-
-CALLBACK(fnInternetDeInitializeAutoProxyDll, :LPSTR, :DWORD)
-CALLBACK(fnInternetGetProxyInfo, :LPCSTR, :DWORD, :LPSTR, :DWORD, :LPSTR, :LPDWORD)
-
-WPAD_CACHE_DELETE	typedef SDWORD
-WPAD_CACHE_DELETE_CURRENT equ 0x0
-WPAD_CACHE_DELETE_ALL	equ 0x1
-
-;INTERNETAPI
-DeleteWpadCacheForNetworks proto WINAPI \
-		      : WPAD_CACHE_DELETE
-
-;INTERNETAPI
-InternetInitializeAutoProxyDll proto WINAPI \
-	    dwReserved: DWORD
-
-;INTERNETAPI
-DetectAutoProxyUrl proto WINAPI \
-      lpszAutoProxyUrl: LPSTR,
-  dwAutoProxyUrlLength: DWORD,
-	 dwDetectFlags: DWORD
-
-;INTERNETAPI
-CreateMD5SSOHash proto WINAPI \
-      pszChallengeInfo: PWSTR,
-	     pwszRealm: PWSTR,
-	    pwszTarget: PWSTR,
-	     pbHexHash: PBYTE
-
-ifdef _UNICODE
-InternetGetConnectedStateEx equ <InternetGetConnectedStateExW>
-else
-ifdef _WINX32_
-InternetGetConnectedStateEx equ <InternetGetConnectedStateExA>
-else
-;INTERNETAPI
-InternetGetConnectedStateEx proto WINAPI \
-	     lpdwFlags: LPDWORD,
-    lpszConnectionName: LPSTR,
-	     dwNameLen: DWORD,
-	    dwReserved: DWORD
-
-endif
-endif
-
-INTERNET_CONNECTION_MODEM equ 0x01
-INTERNET_CONNECTION_LAN equ 0x02
-INTERNET_CONNECTION_PROXY equ 0x04
-INTERNET_CONNECTION_MODEM_BUSY equ 0x08
-INTERNET_RAS_INSTALLED	equ 0x10
-INTERNET_CONNECTION_OFFLINE equ 0x20
-INTERNET_CONNECTION_CONFIGURED equ 0x40
+define HTTP_ADDREQ_INDEX_MASK      0x0000FFFF
+define HTTP_ADDREQ_FLAGS_MASK      0xFFFF0000
+define HTTP_ADDREQ_FLAG_ADD_IF_NEW 0x10000000
+define HTTP_ADDREQ_FLAG_ADD        0x20000000
+
+define INTERNET_RAS_INSTALLED              0x10
+define INTERNET_CONNECTION_OFFLINE         0x20
+define INTERNET_CONNECTION_CONFIGURED      0x40
 
 CALLBACK(PFN_DIAL_HANDLER, :HWND, :LPCSTR, :DWORD, :LPDWORD)
 
-INTERNET_CUSTOMDIAL_CONNECT equ 0
-INTERNET_CUSTOMDIAL_UNATTENDED equ 1
-INTERNET_CUSTOMDIAL_DISCONNECT equ 2
-INTERNET_CUSTOMDIAL_SHOWOFFLINE equ 4
+define INTERNET_CUSTOMDIAL_CONNECT         0
+define INTERNET_CUSTOMDIAL_UNATTENDED      1
+define INTERNET_CUSTOMDIAL_DISCONNECT      2
+define INTERNET_CUSTOMDIAL_SHOWOFFLINE     4
 
-INTERNET_CUSTOMDIAL_SAFE_FOR_UNATTENDED equ 1
-INTERNET_CUSTOMDIAL_WILL_SUPPLY_STATE equ 2
-INTERNET_CUSTOMDIAL_CAN_HANGUP equ 4
+define INTERNET_CUSTOMDIAL_SAFE_FOR_UNATTENDED 1
+define INTERNET_CUSTOMDIAL_WILL_SUPPLY_STATE   2
+define INTERNET_CUSTOMDIAL_CAN_HANGUP          4
 
-;INTERNETAPI
-InternetSetDialStateA proto WINAPI \
-	lpszConnectoid: LPCSTR,
-	       dwState: DWORD,
-	    dwReserved: DWORD
+InternetSetDialStateA proto WINAPI :LPCSTR, :DWORD, :DWORD
 
-;INTERNETAPI
-InternetSetDialStateW proto WINAPI \
-	lpszConnectoid: LPCWSTR,
-	       dwState: DWORD,
-	    dwReserved: DWORD
+InternetSetDialStateW proto WINAPI :LPCWSTR, :DWORD, :DWORD
 
 ifdef _UNICODE
-InternetSetDialState	equ <InternetSetDialStateW>
+define InternetSetDialState  <InternetSetDialStateW>
 else
 ifdef _WINX32_
-InternetSetDialState	equ <InternetSetDialStateA>
+define InternetSetDialState  <InternetSetDialStateA>
 else
-;INTERNETAPI
-InternetSetDialState proto WINAPI \
-	lpszConnectoid: LPCSTR,
-	       dwState: DWORD,
-	    dwReserved: DWORD
-
+InternetSetDialState proto WINAPI :LPCSTR, :DWORD, :DWORD
 endif
 endif
 
-INTERNET_DIALSTATE_DISCONNECTED equ 1
+define INTERNET_DIALSTATE_DISCONNECTED     1
 
-;INTERNETAPI
-InternetSetPerSiteCookieDecisionA proto WINAPI \
-	   pchHostName: LPCSTR,
-	    dwDecision: DWORD
-
-;INTERNETAPI
-InternetSetPerSiteCookieDecisionW proto WINAPI \
-	   pchHostName: LPCWSTR,
-	    dwDecision: DWORD
-
+InternetSetPerSiteCookieDecisionA proto WINAPI :LPCSTR, :DWORD
+InternetSetPerSiteCookieDecisionW proto WINAPI :LPCWSTR, :DWORD
 ifdef _UNICODE
-InternetSetPerSiteCookieDecision equ <InternetSetPerSiteCookieDecisionW>
+define InternetSetPerSiteCookieDecision  <InternetSetPerSiteCookieDecisionW>
 else
-InternetSetPerSiteCookieDecision equ <InternetSetPerSiteCookieDecisionA>
+define InternetSetPerSiteCookieDecision  <InternetSetPerSiteCookieDecisionA>
 endif
-;INTERNETAPI
-InternetGetPerSiteCookieDecisionA proto WINAPI \
-	   pchHostName: LPCSTR,
-	       pResult: ptr DWORD
 
-;INTERNETAPI
-InternetGetPerSiteCookieDecisionW proto WINAPI \
-	   pchHostName: LPCWSTR,
-	       pResult: ptr DWORD
-
+InternetGetPerSiteCookieDecisionA proto WINAPI :LPCSTR, :ptr
+InternetGetPerSiteCookieDecisionW proto WINAPI :LPCWSTR, :ptr
 ifdef _UNICODE
-InternetGetPerSiteCookieDecision equ <InternetGetPerSiteCookieDecisionW>
+define InternetGetPerSiteCookieDecision  <InternetGetPerSiteCookieDecisionW>
 else
-InternetGetPerSiteCookieDecision equ <InternetGetPerSiteCookieDecisionA>
+define InternetGetPerSiteCookieDecision  <InternetGetPerSiteCookieDecisionA>
 endif
 
-;INTERNETAPI
 InternetClearAllPerSiteCookieDecisions proto WINAPI
-
-;INTERNETAPI
-InternetEnumPerSiteCookieDecisionA proto WINAPI \
-	   pszSiteName: LPSTR,
-	pcSiteNameSize: ptr DWORD,
-	   pdwDecision: ptr DWORD,
-	       dwIndex: DWORD
-
-;INTERNETAPI
-InternetEnumPerSiteCookieDecisionW proto WINAPI \
-	   pszSiteName: LPWSTR,
-	pcSiteNameSize: ptr DWORD,
-	   pdwDecision: ptr DWORD,
-	       dwIndex: DWORD
-
+InternetEnumPerSiteCookieDecisionA proto WINAPI :LPSTR, :ptr, :ptr, :sdword
+InternetEnumPerSiteCookieDecisionW proto WINAPI :LPWSTR, :ptr, :ptr, :sdword
 ifdef _UNICODE
-InternetEnumPerSiteCookieDecision equ <InternetEnumPerSiteCookieDecisionW>
+define InternetEnumPerSiteCookieDecision  <InternetEnumPerSiteCookieDecisionW>
 else
-InternetEnumPerSiteCookieDecision equ <InternetEnumPerSiteCookieDecisionA>
+define InternetEnumPerSiteCookieDecision  <InternetEnumPerSiteCookieDecisionA>
 endif
 
-INTERNET_IDENTITY_FLAG_PRIVATE_CACHE equ 0x01
-INTERNET_IDENTITY_FLAG_SHARED_CACHE equ 0x02
-INTERNET_IDENTITY_FLAG_CLEAR_DATA equ 0x04
-INTERNET_IDENTITY_FLAG_CLEAR_COOKIES equ 0x08
-INTERNET_IDENTITY_FLAG_CLEAR_HISTORY equ 0x10
-INTERNET_IDENTITY_FLAG_CLEAR_CONTENT equ 0x20
+define INTERNET_IDENTITY_FLAG_PRIVATE_CACHE        0x01
+define INTERNET_IDENTITY_FLAG_SHARED_CACHE         0x02
+define INTERNET_IDENTITY_FLAG_CLEAR_DATA           0x04
+define INTERNET_IDENTITY_FLAG_CLEAR_COOKIES        0x08
+define INTERNET_IDENTITY_FLAG_CLEAR_HISTORY        0x10
+define INTERNET_IDENTITY_FLAG_CLEAR_CONTENT        0x20
 
-INTERNET_SUPPRESS_RESET_ALL equ 0x00
-INTERNET_SUPPRESS_COOKIE_POLICY equ 0x01
-INTERNET_SUPPRESS_COOKIE_POLICY_RESET equ 0x02
+define INTERNET_SUPPRESS_RESET_ALL                 0x00
+define INTERNET_SUPPRESS_COOKIE_POLICY             0x01
+define INTERNET_SUPPRESS_COOKIE_POLICY_RESET       0x02
 
-PRIVACY_TEMPLATE_NO_COOKIES equ 0
-PRIVACY_TEMPLATE_HIGH	equ 1
-PRIVACY_TEMPLATE_MEDIUM_HIGH equ 2
-PRIVACY_TEMPLATE_MEDIUM equ 3
-PRIVACY_TEMPLATE_MEDIUM_LOW equ 4
-PRIVACY_TEMPLATE_LOW	equ 5
-PRIVACY_TEMPLATE_CUSTOM equ 100
-PRIVACY_TEMPLATE_ADVANCED equ 101
+define PRIVACY_TEMPLATE_NO_COOKIES     0
+define PRIVACY_TEMPLATE_HIGH           1
+define PRIVACY_TEMPLATE_MEDIUM_HIGH    2
+define PRIVACY_TEMPLATE_MEDIUM         3
+define PRIVACY_TEMPLATE_MEDIUM_LOW     4
+define PRIVACY_TEMPLATE_LOW            5
+define PRIVACY_TEMPLATE_CUSTOM         100
+define PRIVACY_TEMPLATE_ADVANCED       101
 
-PRIVACY_TEMPLATE_MAX	equ PRIVACY_TEMPLATE_LOW
+define PRIVACY_TEMPLATE_MAX            PRIVACY_TEMPLATE_LOW
 
-PRIVACY_TYPE_FIRST_PARTY equ 0
-PRIVACY_TYPE_THIRD_PARTY equ 1
+define PRIVACY_TYPE_FIRST_PARTY        0
+define PRIVACY_TYPE_THIRD_PARTY        1
 
-;INTERNETAPI
-PrivacySetZonePreferenceW proto WINAPI \
-		dwZone: DWORD,
-		dwType: DWORD,
-	    dwTemplate: DWORD,
-	 pszPreference: LPCWSTR
+PrivacySetZonePreferenceW proto WINAPI :DWORD, :DWORD, :DWORD, :LPCWSTR
+PrivacyGetZonePreferenceW proto WINAPI :DWORD, :DWORD, :LPDWORD, :LPWSTR, :LPDWORD
+HttpIsHostHstsEnabled proto WINAPI :PCWSTR, :PBOOL
 
-;INTERNETAPI
-PrivacyGetZonePreferenceW proto WINAPI \
-		dwZone: DWORD,
-		dwType: DWORD,
-	   pdwTemplate: LPDWORD,
-	     pszBuffer: LPWSTR,
-       pdwBufferLength: LPDWORD
+.pragma pack(pop)
 
-;include <poppack.h>
+endif
 
-.pragma list(pop)
 endif

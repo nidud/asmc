@@ -6,6 +6,8 @@ include apisetcconv.inc
 include minwindef.inc
 include minwinbase.inc
 
+.pragma comment(lib, advapi32)
+
 AccessCheck proto WINAPI :PSECURITY_DESCRIPTOR, :HANDLE, :DWORD, :PGENERIC_MAPPING, :PPRIVILEGE_SET, :LPDWORD, :LPDWORD, :LPBOOL
 AccessCheckAndAuditAlarmW proto WINAPI :LPCWSTR, :LPVOID, :LPWSTR, :LPWSTR, :PSECURITY_DESCRIPTOR, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPBOOL, :LPBOOL
 ifdef _UNICODE

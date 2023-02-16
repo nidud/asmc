@@ -15,7 +15,7 @@ bytes_per_sector        dd ?
 _diskfree_t             ends
 endif
 
-_A_NORMAL               equ 0x00
+_A_NORMAL               equ 0x80;0x00
 _A_RDONLY               equ 0x01
 _A_HIDDEN               equ 0x02
 _A_SYSTEM               equ 0x04

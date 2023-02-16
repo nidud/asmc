@@ -132,7 +132,7 @@ CABOOL			typedef tagCABOOL
 
 tagCASCODE		struct
 cElems			DD ?
-pElems			LPSCODE ?
+pElems			PSCODE ?
 tagCASCODE		ends
 CASCODE			typedef tagCASCODE
 
@@ -259,7 +259,7 @@ union
    pdblVal		LPDOUBLE ?
    pboolVal		LPVARIANT_BOOL ?
    pdecVal		LPDECIMAL ?
-   pscode		LPSCODE ?
+   pscode		PSCODE ?
    pcyVal		LPCY ?
    pdate		LPDATE ?
    pbstrVal		LPBSTR ?

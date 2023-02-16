@@ -6,7 +6,7 @@ define __D3DX10CORE_H__
 D3DX10_DLL_W		equ <L"d3dx10_43.dll">
 D3DX10_DLL_A		equ <"d3dx10_43.dll">
 
-ifdef UNICODE
+ifdef _UNICODE
 D3DX10_DLL		equ <D3DX10_DLL_W>
 else
 D3DX10_DLL		equ <D3DX10_DLL_A>

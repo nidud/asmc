@@ -75,7 +75,7 @@ DEFINE_DEVPROPKEY(DEVPKEY_Device_SignalStrength, 0x80d81ea6, 0x7473, 0x4b0c, 0x8
 DEFINE_DEVPROPKEY(DEVPKEY_Device_IsAssociateableByUserAction, 0x80d81ea6, 0x7473, 0x4b0c, 0x82, 0x16, 0xef, 0xc1, 0x1a, 0x2c, 0x4c, 0x8b, 7)
 DEFINE_DEVPROPKEY(DEVPKEY_Device_ShowInUninstallUI, 0x80d81ea6, 0x7473, 0x4b0c, 0x82, 0x16, 0xef, 0xc1, 0x1a, 0x2c, 0x4c, 0x8b, 8)
 
-define DEVPKEY_Numa_Proximity_Domain  <DEVPKEY_Device_Numa_Proximity_Domain>
+;define DEVPKEY_Numa_Proximity_Domain  <DEVPKEY_Device_Numa_Proximity_Domain>
 DEFINE_DEVPROPKEY(DEVPKEY_Device_Numa_Proximity_Domain, 0x540b947e, 0x8b40, 0x45bc, 0xa8, 0xa2, 0x6a, 0x0b, 0x89, 0x4c, 0xbd, 0xa2, 1)
 DEFINE_DEVPROPKEY(DEVPKEY_Device_DHP_Rebalance_Policy, 0x540b947e, 0x8b40, 0x45bc, 0xa8, 0xa2, 0x6a, 0x0b, 0x89, 0x4c, 0xbd, 0xa2, 2)
 DEFINE_DEVPROPKEY(DEVPKEY_Device_Numa_Node, 0x540b947e, 0x8b40, 0x45bc, 0xa8, 0xa2, 0x6a, 0x0b, 0x89, 0x4c, 0xbd, 0xa2, 3)
@@ -224,7 +224,7 @@ DEFINE_DEVPROPKEY(DEVPKEY_DeviceContainer_ModelName, 0x656A3BB3, 0xECC0, 0x43FD,
 DEFINE_DEVPROPKEY(DEVPKEY_DeviceContainer_ModelNumber, 0x656A3BB3, 0xECC0, 0x43FD, 0x84, 0x77, 0x4A, 0xE0, 0x40, 0x4A, 0x96, 0xCD, 8195)
 
 DEFINE_DEVPROPKEY(DEVPKEY_DeviceContainer_InstallInProgress, 0x83da6326, 0x97a6, 0x4088, 0x94, 0x53, 0xa1, 0x92, 0x3f, 0x57, 0x3b, 0x29, 9)
-
+if 0
 define DEVPKEY_DeviceDisplay_DiscoveryMethod                <DEVPKEY_DeviceContainer_DiscoveryMethod>
 define DEVPKEY_DeviceDisplay_IsShowInDisconnectedState      <DEVPKEY_DeviceContainer_IsShowInDisconnectedState>
 define DEVPKEY_DeviceDisplay_IsNotInterestingForDisplay     <DEVPKEY_DeviceContainer_IsNotInterestingForDisplay>
@@ -233,7 +233,7 @@ define DEVPKEY_DeviceDisplay_Category                       <DEVPKEY_DeviceConta
 define DEVPKEY_DeviceDisplay_UnpairUninstall                <DEVPKEY_DeviceContainer_UnpairUninstall>
 define DEVPKEY_DeviceDisplay_RequiresUninstallElevation     <DEVPKEY_DeviceContainer_RequiresUninstallElevation>
 define DEVPKEY_DeviceDisplay_AlwaysShowDeviceAsConnected    <DEVPKEY_DeviceContainer_AlwaysShowDeviceAsConnected>
-
+endif
 DEFINE_DEVPROPKEY(DEVPKEY_DevQuery_ObjectType, 0x13673f42, 0xa3d6, 0x49f6, 0xb4, 0xda, 0xae, 0x46, 0xe0, 0xc5, 0x23, 0x7c, 2)
 
 endif

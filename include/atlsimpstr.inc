@@ -22,7 +22,7 @@ include intrin.inc
 
 .template CStringData
 
-	pStringMgr	LPIATLSTRINGMGR ?
+	pStringMgr	ptr IAtlStringMgr ?
 	nDataLength	int_t ?
 	nAllocLength	int_t ?
 	nRefs		LONG ?

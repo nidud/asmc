@@ -26,8 +26,9 @@ DbgPrint	proto _CDecl :ptr sbyte, :vararg
 endif
 
 NOMINMAX equ 1
-
+ifndef _WIN32_FUSION
 _WIN32_FUSION equ 0x0100
+endif
 include windows.inc
 
 ifndef NULL

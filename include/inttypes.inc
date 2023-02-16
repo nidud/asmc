@@ -37,9 +37,9 @@ define PRIdFAST32   PRId32
 define PRIdFAST64   PRId64
 define PRIdMAX      PRId64
 ifdef _WIN64
-define PRIdPTR  PRId64
+define PRIdPTR  <PRId64>
 else
-define PRIdPTR  PRId32
+define PRIdPTR  <PRId32>
 endif
 
 define PRIi8        <"hhi">
@@ -56,9 +56,9 @@ define PRIiFAST32   PRIi32
 define PRIiFAST64   PRIi64
 define PRIiMAX      PRIi64
 ifdef _WIN64
-define PRIiPTR  PRIi64
+define PRIiPTR  <PRIi64>
 else
-define PRIiPTR  PRIi32
+define PRIiPTR  <PRIi32>
 endif
 
 define PRIo8        <"hho">
@@ -75,9 +75,9 @@ define PRIoFAST32   PRIo32
 define PRIoFAST64   PRIo64
 define PRIoMAX      PRIo64
 ifdef _WIN64
-define PRIoPTR  PRIo64
+define PRIoPTR  <PRIo64>
 else
-define PRIoPTR  PRIo32
+define PRIoPTR  <PRIo32>
 endif
 
 define PRIu8        <"hhu">
@@ -94,9 +94,9 @@ define PRIuFAST32   PRIu32
 define PRIuFAST64   PRIu64
 define PRIuMAX      PRIu64
 ifdef _WIN64
-define PRIuPTR  PRIu64
+define PRIuPTR  <PRIu64>
 else
-define PRIuPTR  PRIu32
+define PRIuPTR  <PRIu32>
 endif
 
 define PRIx8        <"hhx">
@@ -113,9 +113,9 @@ define PRIxFAST32   PRIx32
 define PRIxFAST64   PRIx64
 define PRIxMAX      PRIx64
 ifdef _WIN64
-define PRIxPTR  PRIx64
+define PRIxPTR  <PRIx64>
 else
-define PRIxPTR  PRIx32
+define PRIxPTR  <PRIx32>
 endif
 
 define PRIX8        <"hhX">
@@ -132,9 +132,9 @@ define PRIXFAST32   PRIX32
 define PRIXFAST64   PRIX64
 define PRIXMAX      PRIX64
 ifdef _WIN64
-define PRIXPTR  PRIX64
+define PRIXPTR  <PRIX64>
 else
-define PRIXPTR  PRIX32
+define PRIXPTR  <PRIX32>
 endif
 
 define SCNd8        <"hhd">
@@ -151,9 +151,9 @@ define SCNdFAST32   SCNd32
 define SCNdFAST64   SCNd64
 define SCNdMAX      SCNd64
 ifdef _WIN64
-define SCNdPTR  SCNd64
+define SCNdPTR  <SCNd64>
 else
-define SCNdPTR  SCNd32
+define SCNdPTR  <SCNd32>
 endif
 
 define SCNi8        <"hhi">
@@ -170,9 +170,9 @@ define SCNiFAST32   SCNi32
 define SCNiFAST64   SCNi64
 define SCNiMAX      SCNi64
 ifdef _WIN64
-define SCNiPTR  SCNi64
+define SCNiPTR  <SCNi64>
 else
-define SCNiPTR  SCNi32
+define SCNiPTR  <SCNi32>
 endif
 
 define SCNo8        <"hho">
@@ -189,9 +189,9 @@ define SCNoFAST32   SCNo32
 define SCNoFAST64   SCNo64
 define SCNoMAX      SCNo64
 ifdef _WIN64
-define SCNoPTR  SCNo64
+define SCNoPTR  <SCNo64>
 else
-define SCNoPTR  SCNo32
+define SCNoPTR  <SCNo32>
 endif
 
 define SCNu8        <"hhu">
@@ -208,9 +208,9 @@ define SCNuFAST32   SCNu32
 define SCNuFAST64   SCNu64
 define SCNuMAX      SCNu64
 ifdef _WIN64
-define SCNuPTR  SCNu64
+define SCNuPTR  <SCNu64>
 else
-define SCNuPTR  SCNu32
+define SCNuPTR  <SCNu32>
 endif
 
 define SCNx8        <"hhx">
@@ -227,8 +227,9 @@ define SCNxFAST32   SCNx32
 define SCNxFAST64   SCNx64
 define SCNxMAX      SCNx64
 ifdef _WIN64
-define SCNxPTR  SCNx64
+define SCNxPTR  <SCNx64>
 else
-define SCNxPTR  SCNx32
+define SCNxPTR  <SCNx32>
 endif
 
+endif

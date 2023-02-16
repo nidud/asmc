@@ -45,7 +45,7 @@ IP6Dword		dd 4 dup(?)
 IP6Word			dw 8 dup(?)
 IP6Byte			db 16 dup(?)
 ifdef  IN6_ADDR
-In6			IN6_ADDR ?
+In6			IN6_ADDR <>
 endif
 IP6_ADDRESS		ENDS
 PIP6_ADDRESS		typedef ptr IP6_ADDRESS
@@ -1526,7 +1526,7 @@ DNS_VALSVR_ERROR_UNKNOWN equ 0xFF
 ;; Winsock2.h must be included before windns.h to use the validate server function
 ifdef _WS2DEF_
 
-DNS_STATUS
+;DNS_STATUS
 DnsValidateServerStatus proto WINAPI \
 		server: PSOCKADDR,
 	     queryName: PCWSTR,

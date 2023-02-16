@@ -72,7 +72,7 @@ endif
 
 ifndef _CRT_SWAB_DEFINED
 define _CRT_SWAB_DEFINED
-swab proto __cdecl :ptr, :ptr, :sdword
+swab proto __cdecl :ptr sbyte, :ptr sbyte, :sdword
 endif
 
 ifndef _CRT_GETPID_DEFINED

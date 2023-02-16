@@ -2,8 +2,8 @@
 
 NAMESPACE_CLASS_NAME    equ <"Namespace">
 COUNTRY_CLASS_NAME      equ <"Country">
-LOCALITY_CLASS_NAME     equ <"Locality"> >
-ORGANIZATION_CLASS_NAME equ <"Organization">          >
+LOCALITY_CLASS_NAME     equ <"Locality">
+ORGANIZATION_CLASS_NAME equ <"Organization">
 ORGANIZATIONUNIT_CLASS_NAME equ <"Organizational Unit">
 DOMAIN_CLASS_NAME       equ <"Domain">
 COMPUTER_CLASS_NAME     equ <"Computer">

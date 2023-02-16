@@ -17,8 +17,8 @@ AtlHresultFromWin32 proto watcall :sdword {
     }
 
 
-AtlComPtrAssign proto :ptr ptr IUnknown, :ptr IUnknown
-AtlComQIPtrAssign proto :ptr ptr IUnknown, :ptr IUnknown, :REFIID
+AtlComPtrAssign proto WINAPI :ptr ptr IUnknown, :ptr IUnknown
+AtlComQIPtrAssign proto WINAPI :ptr ptr IUnknown, :ptr IUnknown, :REFIID
 
 
 ClassesAllowedInStream	union
@@ -32,6 +32,7 @@ AtlInternalOleLoadFromStream proto :ptr IStream, :REFIID, :ptr ptr, :ClassesAllo
 
 endif
 
+if 0
 AtlComPtrAssign proto :ptr ptr IUnknown, :ptr IUnknown {
 	int 3
 }
@@ -39,6 +40,7 @@ AtlComPtrAssign proto :ptr ptr IUnknown, :ptr IUnknown {
 AtlComQIPtrAssign proto :ptr ptr IUnknown, :ptr IUnknown, :REFIID {
 	int 3
 }
+endif
 
 .class _NoAddRefReleaseOnCComPtr ;: public T
 	AddRef		proc
@@ -61,15 +63,7 @@ endif
 
 	.ENDS
 
-.class CComPtr : public CComPtrBase
-
-	.ENDS
-
 .class CComQIPtr : public CComPtr
-
-	.ENDS
-
-.class CComQIPtr :  public CComPtr
 
 	.ENDS
 
@@ -82,7 +76,6 @@ endif
 .class CComBSTR
 
 	.ENDS
-
 
 .class CAdapt
 

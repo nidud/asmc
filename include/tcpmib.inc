@@ -153,10 +153,10 @@ ifdef _WS2IPDEF_
 
 _MIB_TCP6ROW            struct
 State                   MIB_TCP_STATE ?
-LocalAddr               IN6_ADDR ?
+LocalAddr               IN6_ADDR <>
 dwLocalScopeId          DWORD ?
 dwLocalPort             DWORD ?
-RemoteAddr              IN6_ADDR ?
+RemoteAddr              IN6_ADDR <>
 dwRemoteScopeId         DWORD ?
 dwRemotePort            DWORD ?
 _MIB_TCP6ROW            ends
@@ -165,7 +165,7 @@ PMIB_TCP6ROW            typedef ptr _MIB_TCP6ROW
 
 _MIB_TCP6TABLE          struct
 dwNumEntries            DWORD ?
-table                   MIB_TCP6ROW ANY_SIZE dup(?)
+table                   MIB_TCP6ROW ANY_SIZE dup(<?>)
 _MIB_TCP6TABLE          ends
 MIB_TCP6TABLE           typedef _MIB_TCP6TABLE
 PMIB_TCP6TABLE          typedef ptr _MIB_TCP6TABLE
@@ -175,10 +175,10 @@ SIZEOF_TCP6TABLE macro X
   endm
 
 _MIB_TCP6ROW2           struct
-LocalAddr               IN6_ADDR ?
+LocalAddr               IN6_ADDR <>
 dwLocalScopeId          DWORD ?
 dwLocalPort             DWORD ?
-RemoteAddr              IN6_ADDR ?
+RemoteAddr              IN6_ADDR <>
 dwRemoteScopeId         DWORD ?
 dwRemotePort            DWORD ?
 State                   MIB_TCP_STATE ?
@@ -190,7 +190,7 @@ PMIB_TCP6ROW2           typedef ptr _MIB_TCP6ROW2
 
 _MIB_TCP6TABLE2         struct
 dwNumEntries            DWORD ?
-table                   MIB_TCP6ROW2 ANY_SIZE dup(?)
+table                   MIB_TCP6ROW2 ANY_SIZE dup(<?>)
 _MIB_TCP6TABLE2         ends
 MIB_TCP6TABLE2          typedef _MIB_TCP6TABLE2
 PMIB_TCP6TABLE2         typedef ptr _MIB_TCP6TABLE2
@@ -214,7 +214,7 @@ PMIB_TCP6ROW_OWNER_PID  typedef ptr _MIB_TCP6ROW_OWNER_PID
 
 _MIB_TCP6TABLE_OWNER_PID struct
 dwNumEntries            DWORD ?
-table                   MIB_TCP6ROW_OWNER_PID ANY_SIZE dup(?)
+table                   MIB_TCP6ROW_OWNER_PID ANY_SIZE dup(<?>)
 _MIB_TCP6TABLE_OWNER_PID ends
 MIB_TCP6TABLE_OWNER_PID typedef _MIB_TCP6TABLE_OWNER_PID
 PMIB_TCP6TABLE_OWNER_PID typedef ptr _MIB_TCP6TABLE_OWNER_PID
@@ -240,7 +240,7 @@ PMIB_TCP6ROW_OWNER_MODULE typedef ptr _MIB_TCP6ROW_OWNER_MODULE
 
 _MIB_TCP6TABLE_OWNER_MODULE struct
 dwNumEntries            DWORD ?
-table                   MIB_TCP6ROW_OWNER_MODULE ANY_SIZE dup(?)
+table                   MIB_TCP6ROW_OWNER_MODULE ANY_SIZE dup(<?>)
 _MIB_TCP6TABLE_OWNER_MODULE ends
 MIB_TCP6TABLE_OWNER_MODULE typedef _MIB_TCP6TABLE_OWNER_MODULE
 PMIB_TCP6TABLE_OWNER_MODULE typedef ptr _MIB_TCP6TABLE_OWNER_MODULE

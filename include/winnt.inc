@@ -380,77 +380,66 @@ DWORDLONG	typedef ULONGLONG
 PDWORDLONG	typedef PTR DWORDLONG
 
 
-if defined(MIDL_PASS) OR defined(RC_INVOKED) OR defined(_M_CEE_PURE) \
-   OR defined(_68K_) OR defined(_MPPC_) \
-   OR defined(_M_IA64) OR defined(_M_AMD64)
-
-Int32x32To64 macro a, b
-	endm
-UInt32x32To64 macro a, b
-	endm
-Int64ShllMod32 macro a, b
-	endm
-Int64ShraMod32 macro a, b
-	endm
-Int64ShrlMod32 macro a, b
-	endm
-
+if defined(MIDL_PASS) OR defined(_M_CEE_PURE) OR defined(_68K_) OR defined(_MPPC_) OR defined(_M_IA64) OR defined(_M_AMD64)
+Int32x32To64 proto fastcall :int_t, :int_t {
+	movsxd	rax, ecx
+	movsxd	rdx, edx
+	imul	rax, rdx
+	}
+UInt32x32To64 proto fastcall :ULONG, :ULONG {
+	mov	eax, ecx
+	imul	rax, rdx
+	}
+Int64ShllMod32 proto fastcall :ULONGLONG, :ULONG {
+	mov	rax, rcx
+	mov	ecx, edx
+	shl	rax, cl
+	}
+Int64ShraMod32 proto fastcall :LONGLONG, :ULONG {
+	mov	rax, rcx
+	mov	ecx, edx
+	sar	rax, cl
+	}
+Int64ShrlMod32 proto fastcall :ULONGLONG, :ULONG {
+	mov	rax, rcx
+	mov	ecx, edx
+	shr	rax, cl
+	}
 elseifdef _M_IX86
-
-Int32x32To64 proto WINAPI \
-    Multiplier: LONG,
-  Multiplicand: LONG
-
-UInt32x32To64 proto WINAPI \
-    Multiplier: DWORD,
-  Multiplicand: DWORD
-
-Int64ShllMod32 macro Value, ShiftCount
-	mov	ecx, ShiftCount
-	mov	eax, dword ptr [Value]
-	mov	edx, dword ptr [Value+4]
+Int32x32To64 proto watcall :LONG, :LONG {
+	imul	edx
+	}
+UInt32x32To64 proto watcall :ULONG, :ULONG {
+	mul	edx
+	}
+Int64ShllMod32 proto watcall :ULONGLONG, :ULONG {
 	shld	edx, eax, cl
 	shl	eax, cl
-	endm
-
-Int64ShraMod32 macro Value, ShiftCount
-	mov	ecx, ShiftCount
-	mov	eax, dword ptr [Value]
-	mov	edx, dword ptr [Value+4]
+	}
+Int64ShraMod32 proto watcall :LONGLONG, :ULONG {
 	shrd	eax, edx, cl
 	sar	edx, cl
-	endm
-
-Int64ShrlMod32 macro Value, ShiftCount
-	mov	ecx, ShiftCount
-	mov	eax, dword ptr [Value]
-	mov	edx, dword ptr [Value+4]
+	}
+Int64ShrlMod32 proto watcall :ULONGLONG, :ULONG {
 	shrd	eax, edx, cl
 	shr	edx, cl
-	endm
-
+	}
 else
-
 .err <Must define a target architecture.>
-
 endif
 
 ifdef _M_AMD64
-
 RotateLeft8		equ <_rotl8>
 RotateLeft16		equ <_rotl16>
 RotateRight8		equ <_rotr8>
 RotateRight16		equ <_rotr16>
-
 endif
 
 if _MSC_VER GE 1300
-
 RotateLeft32		equ <_rotl>
 RotateLeft64		equ <_rotl64>
 RotateRight32		equ <_rotr>
 RotateRight64		equ <_rotr64>
-
 endif
 
 ANSI_NULL	equ 0
@@ -3168,18 +3157,19 @@ RtlUnwindEx proto WINAPI \
 	  HistoryTable: PUNWIND_HISTORY_TABLE
 endif
 
-PACCESS_TOKEN		typedef PVOID
-PSECURITY_DESCRIPTOR	typedef PVOID
-PSID			typedef PVOID
+PACCESS_TOKEN		typedef ptr
+PSECURITY_DESCRIPTOR	typedef ptr
+PSID			typedef ptr
+PCLAIMS_BLOB		typedef ptr
 
-ACCESS_MASK	typedef DWORD
-PACCESS_MASK	typedef PTR ACCESS_MASK
+ACCESS_MASK		typedef DWORD
+PACCESS_MASK		typedef PTR ACCESS_MASK
 
-DELETE		equ 0x00010000
-READ_CONTROL	equ 0x00020000
-WRITE_DAC	equ 0x00040000
-WRITE_OWNER	equ 0x00080000
-SYNCHRONIZE	equ 0x00100000
+DELETE			equ 0x00010000
+READ_CONTROL		equ 0x00020000
+WRITE_DAC		equ 0x00040000
+WRITE_OWNER		equ 0x00080000
+SYNCHRONIZE		equ 0x00100000
 
 STANDARD_RIGHTS_REQUIRED equ 0x000F0000
 

@@ -246,8 +246,8 @@ pForwardCompat		SINT ?
 pCatchableTypeArray	SINT ?
 else
 pForwardCompat		PVOID ?
-endif
 pCatchableTypeArray	LPCatchableTypeArray ?
+endif
 ThrowInfo		ENDS
 endif
 

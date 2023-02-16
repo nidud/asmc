@@ -104,20 +104,20 @@ C_ASSERT macro e
     endm
 endif
 
-if defined(MIDL_PASS) OR defined(RC_INVOKED) OR defined(_M_CEE_PURE) OR defined(_68K_) OR defined(_MPPC_) OR defined(_M_IA64) OR defined(_M_AMD64)
-UInt32x32To64 macro a, b
-	mov eax,a
-	imul eax,b
-	retm<eax>
-	endm
+ifndef UInt32x32To64
+if defined(MIDL_PASS) OR defined(_M_CEE_PURE) OR defined(_68K_) OR defined(_MPPC_) OR defined(_M_IA64) OR defined(_M_AMD64)
+Int32x32To64 proto fastcall :int_t, :int_t {
+	movsxd	rax,ecx
+	movsxd	rdx,edx
+	imul	rax,rdx
+	}
 elseif defined(_M_IX86)
-UInt32x32To64 macro a, b
-	mov eax,a
-	imul eax,b
-	retm<eax>
-	endm
+Int32x32To64 proto watcall :LONG, :LONG {
+	imul	edx
+	}
 else
 .err <Must define a target architecture.>
+endif
 endif
 
 INT8_MIN		equ (-127i8 - 1)

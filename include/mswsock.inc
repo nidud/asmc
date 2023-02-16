@@ -5,18 +5,6 @@ ifndef __LIBC_INC
 endif
 
 include winapifamily.inc
-
-ifndef _WINSOCK_DEPRECATED_BY
-if ((defined(_WINSOCK_DEPRECATED_NO_WARNINGS) or defined(BUILD_WINDOWS)) and not defined(_WINSOCK_DEPRECATE_WARNINGS)) or defined(MIDL_PASS)
-_WINSOCK_DEPRECATED_BY macro replacement
-	endm
-else
-_WINSOCK_DEPRECATED_BY macro replacement
-	exitm<"Use &replacement& instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings">
-	endm
-endif
-endif
-
 include mswsockdef.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -107,15 +95,12 @@ GetAcceptExSockaddrs proto WINAPI \
   RemoteSockaddrLength: LPINT
 
 
-;BOOL
 CALLBACK(LPFN_TRANSMITFILE, :SOCKET, :HANDLE, :DWORD, :DWORD, :LPOVERLAPPED, :LPTRANSMIT_FILE_BUFFERS, :DWORD)
-WSAID_TRANSMITFILE	equ <{0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
-;BOOL
+define WSAID_TRANSMITFILE <{0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
 CALLBACK(LPFN_ACCEPTEX, :SOCKET, :SOCKET, :PVOID, :DWORD, :DWORD, :DWORD, :LPDWORD, :LPOVERLAPPED)
-WSAID_ACCEPTEX		equ <{0xb5367df1,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
-;VOID
+define WSAID_ACCEPTEX <{0xb5367df1,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
 CALLBACK(LPFN_GETACCEPTEXSOCKADDRS, :PVOID, :DWORD, :DWORD, :DWORD, :ptr, :LPINT, :ptr, :LPINT)
-WSAID_GETACCEPTEXSOCKADDRS equ <{0xb5367df2,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
+define WSAID_GETACCEPTEXSOCKADDRS <{0xb5367df2,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
 
 endif
 

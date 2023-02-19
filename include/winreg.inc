@@ -1,904 +1,603 @@
 ifndef _WINREG_
 define _WINREG_
-.pragma list(push, 0)
+
+include winapifamily.inc
+
+include apiset.inc
+include apisetcconv.inc
+include minwindef.inc
+include minwinbase.inc
 
 ifdef _MAC
 include macwin32.inc
 endif
 
-.pragma comment(lib, advapi32)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
 ifndef WINVER
-WINVER equ 0x0500
+define WINVER 0x0500
 endif
 
-RRF_RT_REG_NONE		equ 0x00000001
-RRF_RT_REG_SZ		equ 0x00000002
-RRF_RT_REG_EXPAND_SZ	equ 0x00000004
-RRF_RT_REG_BINARY	equ 0x00000008
-RRF_RT_REG_DWORD	equ 0x00000010
-RRF_RT_REG_MULTI_SZ	equ 0x00000020
-RRF_RT_REG_QWORD	equ 0x00000040
+endif
 
-RRF_RT_DWORD		equ (RRF_RT_REG_BINARY OR RRF_RT_REG_DWORD)
-RRF_RT_QWORD		equ (RRF_RT_REG_BINARY OR RRF_RT_REG_QWORD)
-RRF_RT_ANY		equ 0x0000ffff
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+LSTATUS typedef LONG
+endif
 
-RRF_NOEXPAND		equ 0x10000000
-RRF_ZEROONFAILURE	equ 0x20000000
-REG_PROCESS_APPKEY	equ 0x00000001
-REG_MUI_STRING_TRUNCATE equ 0x00000001
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
-REGSAM			typedef ACCESS_MASK
-;HKEY			typedef HANDLE
+define RRF_RT_REG_NONE        0x00000001
+define RRF_RT_REG_SZ          0x00000002
+define RRF_RT_REG_EXPAND_SZ   0x00000004
+define RRF_RT_REG_BINARY      0x00000008
+define RRF_RT_REG_DWORD       0x00000010
+define RRF_RT_REG_MULTI_SZ    0x00000020
+define RRF_RT_REG_QWORD       0x00000040
 
-HKEY_CLASSES_ROOT	equ 0x80000000
-HKEY_CURRENT_USER	equ 0x80000001
-HKEY_LOCAL_MACHINE	equ 0x80000002
-HKEY_USERS		equ 0x80000003
-HKEY_PERFORMANCE_DATA	equ 0x80000004
-HKEY_PERFORMANCE_TEXT	equ 0x80000050
-HKEY_PERFORMANCE_NLSTEXT equ 0x80000060
-if(WINVER GE 0x0400)
-HKEY_CURRENT_CONFIG	equ 0x80000005
-HKEY_DYN_DATA		equ 0x80000006
-HKEY_CURRENT_USER_LOCAL_SETTINGS equ 0x80000007
+define RRF_RT_DWORD           (RRF_RT_REG_BINARY or RRF_RT_REG_DWORD)
+define RRF_RT_QWORD           (RRF_RT_REG_BINARY or RRF_RT_REG_QWORD)
+define RRF_RT_ANY             0x0000ffff
 
-REG_SECURE_CONNECTION	equ 1
+if (_WIN32_WINNT ge _WIN32_WINNT_WINTHRESHOLD)
+define RRF_SUBKEY_WOW6464KEY  0x00010000
+define RRF_SUBKEY_WOW6432KEY  0x00020000
+define RRF_WOW64_MASK         0x00030000
+endif
+
+define RRF_NOEXPAND           0x10000000
+define RRF_ZEROONFAILURE      0x20000000
+
+define REG_PROCESS_APPKEY     0x00000001
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+
+REGSAM typedef ACCESS_MASK
+
+define HKEY_CLASSES_ROOT                   0x80000000
+define HKEY_CURRENT_USER                   0x80000001
+define HKEY_LOCAL_MACHINE                  0x80000002
+define HKEY_USERS                          0x80000003
+define HKEY_PERFORMANCE_DATA               0x80000004
+define HKEY_PERFORMANCE_TEXT               0x80000050
+define HKEY_PERFORMANCE_NLSTEXT            0x80000060
+if(WINVER ge 0x0400)
+define HKEY_CURRENT_CONFIG                 0x80000005
+define HKEY_DYN_DATA                       0x80000006
+define HKEY_CURRENT_USER_LOCAL_SETTINGS    0x80000007
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
 ifndef _PROVIDER_STRUCTS_DEFINED
 define _PROVIDER_STRUCTS_DEFINED
 
-PROVIDER_KEEPS_VALUE_LENGTH equ 0x1
-val_context		STRUC
-valuelen		SINT ?
-value_context		PVOID ?
-val_buff_ptr		PVOID ?
-val_context		ENDS
+define PROVIDER_KEEPS_VALUE_LENGTH 0x1
+val_context             struct
+valuelen                sdword ?
+value_context           LPVOID ?
+val_buff_ptr            LPVOID ?
+val_context             ends
+PVALCONTEXT             typedef ptr val_context
 
-PVALCONTEXT		typedef ptr val_context
-
-PVALUEA			STRUC
-pv_valuename		LPSTR ?
-pv_valuelen		SINT ?
-pv_value_context	PVOID ?
-pv_type			dd ?
-PVALUEA			ENDS
-PPVALUEA		typedef ptr PVALUEA
-PVALUEW			STRUC
-pv_valuename		LPWSTR ?	;; The value name pointer
-pv_valuelen		SINT ?
-pv_value_context	PVOID ?
-pv_type			dd ?
-PVALUEW			ENDS
-PPVALUEW		typedef ptr PVALUEW
+pvalueA                 struct
+pv_valuename            LPSTR ?
+pv_valuelen             sdword ?
+pv_value_context        LPVOID ?
+pv_type                 DWORD ?
+pvalueA                 ends
+PVALUEA                 typedef pvalueA
+PPVALUEA                typedef ptr pvalueA
+pvalueW                 struct
+pv_valuename            LPWSTR ?
+pv_valuelen             sdword ?
+pv_value_context        LPVOID ?
+pv_type                 DWORD ?
+pvalueW                 ends
+PVALUEW                 typedef pvalueW
+PPVALUEW                typedef ptr pvalueW
 ifdef _UNICODE
-PVALUE			typedef PVALUEW
-PPVALUE			typedef PPVALUEW
+PVALUE                  typedef PVALUEW
+PPVALUE                 typedef PPVALUEW
 else
-PVALUE			typedef PVALUEA
-PPVALUE			typedef PPVALUEA
+PVALUE                  typedef PVALUEA
+PPVALUE                 typedef PPVALUEA
 endif
 
-CALLBACK(PQUERYHANDLER, :PVOID, :PVALCONTEXT, :DWORD, :PVOID, :DWORD)
+CALLBACKC(QUERYHANDLER, :ptr, :PVALCONTEXT, :DWORD, :ptr, :ptr, :DWORD)
 
-REG_PROVIDER		STRUC
-pi_R0_1val		PQUERYHANDLER ?
-pi_R0_allvals		PQUERYHANDLER ?
-pi_R3_1val		PQUERYHANDLER ?
-pi_R3_allvals		PQUERYHANDLER ?
-pi_flags		dd ?
-pi_key_context		PVOID ?
-REG_PROVIDER		ENDS
-PPROVIDER		typedef ptr REG_PROVIDER
+PQUERYHANDLER           typedef ptr QUERYHANDLER
 
-VALENTA			STRUC
-ve_valuename		LPSTR ?
-ve_valuelen		dd ?
-ve_valueptr		dd ?
-ve_type			dd ?
-VALENTA			ENDS
-PVALENTA		typedef ptr VALENTA
-VALENTW			STRUC
-ve_valuename		LPWSTR ?
-ve_valuelen		dd ?
-ve_valueptr		dd ?
-ve_type			dd ?
-VALENTW			ENDS
-PVALENTW		typedef ptr VALENTW
+provider_info           struct
+pi_R0_1val              PQUERYHANDLER ?
+pi_R0_allvals           PQUERYHANDLER ?
+pi_R3_1val              PQUERYHANDLER ?
+pi_R3_allvals           PQUERYHANDLER ?
+pi_flags                DWORD ?
+pi_key_context          LPVOID ?
+provider_info           ends
+REG_PROVIDER            typedef provider_info
+PPROVIDER               typedef ptr provider_info
+
+value_entA              struct
+ve_valuename            LPSTR ?
+ve_valuelen             DWORD ?
+ve_valueptr             DWORD_PTR ?
+ve_type                 DWORD ?
+value_entA              ends
+VALENTA                 typedef value_entA
+PVALENTA                typedef ptr value_entA
+value_entW              struct
+ve_valuename            LPWSTR ?
+ve_valuelen             DWORD ?
+ve_valueptr             DWORD_PTR ?
+ve_type                 DWORD ?
+value_entW              ends
+VALENTW                 typedef value_entW
+PVALENTW                typedef ptr value_entW
 ifdef _UNICODE
-VALENT			typedef VALENTW
-PVALENT			typedef PVALENTW
+VALENT                  typedef VALENTW
+PVALENT                 typedef PVALENTW
 else
-VALENT			typedef VALENTA
-PVALENT			typedef PVALENTA
-endif ;; _UNICODE
-endif ;; not(_PROVIDER_STRUCTS_DEFINED)
-endif ;; WINVER GE 0x0400
+VALENT                  typedef VALENTA
+PVALENT                 typedef PVALENTA
+endif
 
-WIN31_CLASS		equ NULL
+endif
 
-;WINADVAPI
-;LSTATUS		equ __success(return==ERROR_SUCCESS)
-;APIENTRY
-PHKEY			typedef ptr HKEY
+endif
 
-RegCloseKey proto WINAPI \
-		  hKey: HKEY
+define WIN31_CLASS NULL
 
-RegOverridePredefKey proto WINAPI \
-		  hKey: HKEY,
-	      hNewHKey: HKEY
+endif
 
-RegOpenUserClassesRoot proto WINAPI \
-		hToken: HANDLE,
-	     dwOptions: DWORD,
-	    samDesired: REGSAM,
-	     phkResult: PHKEY
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
-RegOpenCurrentUser proto WINAPI \
-	    samDesired: REGSAM,
-	     phkResult: PHKEY
+define REG_MUI_STRING_TRUNCATE 0x00000001
 
+if(WINVER ge 0x0400)
+define REG_SECURE_CONNECTION 1
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+RegCloseKey proto WINAPI :HKEY
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+
+RegOverridePredefKey proto WINAPI :HKEY, :HKEY
+RegOpenUserClassesRoot proto WINAPI :HANDLE, :DWORD, :REGSAM, :PHKEY
+RegOpenCurrentUser proto WINAPI :REGSAM, :PHKEY
 RegDisablePredefinedCache proto WINAPI
 RegDisablePredefinedCacheEx proto WINAPI
 
-RegConnectRegistryA proto WINAPI \
-	 lpMachineName: LPCSTR,
-		  hKey: HKEY,
-	     phkResult: PHKEY
-RegConnectRegistryW proto WINAPI \
-	 lpMachineName: LPCWSTR,
-		  hKey: HKEY,
-	     phkResult: PHKEY
+RegConnectRegistryA proto WINAPI :LPCSTR, :HKEY, :PHKEY
+RegConnectRegistryW proto WINAPI :LPCWSTR, :HKEY, :PHKEY
 ifdef _UNICODE
-RegConnectRegistry	equ <RegConnectRegistryW>
+define RegConnectRegistry  <RegConnectRegistryW>
 else
-RegConnectRegistry	equ <RegConnectRegistryA>
+define RegConnectRegistry  <RegConnectRegistryA>
 endif
 
-RegConnectRegistryExA proto WINAPI \
-	 lpMachineName: LPCSTR,
-		  hKey: HKEY,
-		 Flags: ULONG,
-	     phkResult: PHKEY
-RegConnectRegistryExW proto WINAPI \
-	 lpMachineName: LPCWSTR,
-		  hKey: HKEY,
-		 Flags: ULONG,
-	     phkResult: PHKEY
+RegConnectRegistryExA proto WINAPI :LPCSTR, :HKEY, :ULONG, :PHKEY
+RegConnectRegistryExW proto WINAPI :LPCWSTR, :HKEY, :ULONG, :PHKEY
 ifdef _UNICODE
-RegConnectRegistryEx	equ <RegConnectRegistryExW>
+define RegConnectRegistryEx  <RegConnectRegistryExW>
 else
-RegConnectRegistryEx	equ <RegConnectRegistryExA>
+define RegConnectRegistryEx  <RegConnectRegistryExA>
 endif
 
-RegCreateKeyA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	     phkResult: PHKEY
-RegCreateKeyW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	     phkResult: PHKEY
-ifdef _UNICODE
-RegCreateKey		equ <RegCreateKeyW>
-else
-RegCreateKey		equ <RegCreateKeyA>
 endif
 
-RegCreateKeyExA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	      Reserved: DWORD,
-	       lpClass: LPSTR,
-	     dwOptions: DWORD,
-	    samDesired: REGSAM,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-	     phkResult: PHKEY,
-       lpdwDisposition: LPDWORD
-RegCreateKeyExW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	      Reserved: DWORD,
-	       lpClass: LPWSTR,
-	     dwOptions: DWORD,
-	    samDesired: REGSAM,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-	     phkResult: PHKEY,
-       lpdwDisposition: LPDWORD
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+
+RegCreateKeyA proto WINAPI :HKEY, :LPCSTR, :PHKEY
+RegCreateKeyW proto WINAPI :HKEY, :LPCWSTR, :PHKEY
 ifdef _UNICODE
-RegCreateKeyEx		equ <RegCreateKeyExW>
+define RegCreateKey  <RegCreateKeyW>
 else
-RegCreateKeyEx		equ <RegCreateKeyExA>
+define RegCreateKey  <RegCreateKeyA>
 endif
 
-RegCreateKeyTransactedA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	      Reserved: DWORD,
-	       lpClass: LPSTR,
-	     dwOptions: DWORD,
-	    samDesired: REGSAM,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-	     phkResult: PHKEY,
-       lpdwDisposition: LPDWORD,
-	  hTransaction: HANDLE,
-    pExtendedParemeter: PVOID
-RegCreateKeyTransactedW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	      Reserved: DWORD,
-	       lpClass: LPWSTR,
-	     dwOptions: DWORD,
-	    samDesired: REGSAM,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-	     phkResult: PHKEY,
-       lpdwDisposition: LPDWORD,
-	  hTransaction: HANDLE,
-    pExtendedParemeter: PVOID
+RegCreateKeyExA proto WINAPI :HKEY, :LPCSTR, :DWORD, :LPSTR, :DWORD, :REGSAM, :LPSECURITY_ATTRIBUTES, :PHKEY, :LPDWORD
+RegCreateKeyExW proto WINAPI :HKEY, :LPCWSTR, :DWORD, :LPWSTR, :DWORD, :REGSAM, :LPSECURITY_ATTRIBUTES, :PHKEY, :LPDWORD
 ifdef _UNICODE
-RegCreateKeyTransacted	equ <RegCreateKeyTransactedW>
+define RegCreateKeyEx  <RegCreateKeyExW>
 else
-RegCreateKeyTransacted	equ <RegCreateKeyTransactedA>
+define RegCreateKeyEx  <RegCreateKeyExA>
 endif
 
-RegDeleteKeyA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR
-RegDeleteKeyW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR
-ifdef _UNICODE
-RegDeleteKey		equ <RegDeleteKeyW>
-else
-RegDeleteKey		equ <RegDeleteKeyA>
 endif
 
-RegDeleteKeyExA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	    samDesired: REGSAM,
-	      Reserved: DWORD
-RegDeleteKeyExW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	    samDesired: REGSAM,
-	      Reserved: DWORD
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+
+RegCreateKeyTransactedA proto WINAPI :HKEY, :LPCSTR, :DWORD, :LPSTR, :DWORD, :REGSAM, :LPSECURITY_ATTRIBUTES, :PHKEY, :LPDWORD, :HANDLE, :PVOID
+RegCreateKeyTransactedW proto WINAPI :HKEY, :LPCWSTR, :DWORD, :LPWSTR, :DWORD, :REGSAM, :LPSECURITY_ATTRIBUTES, :PHKEY, :LPDWORD, :HANDLE, :PVOID
 ifdef _UNICODE
-RegDeleteKeyEx		equ <RegDeleteKeyExW>
+define RegCreateKeyTransacted  <RegCreateKeyTransactedW>
 else
-RegDeleteKeyEx		equ <RegDeleteKeyExA>
+define RegCreateKeyTransacted  <RegCreateKeyTransactedA>
 endif
 
-RegDeleteKeyTransactedA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	    samDesired: REGSAM,
-	      Reserved: DWORD,
-	  hTransaction: HANDLE,
-    pExtendedParameter: PVOID
-RegDeleteKeyTransactedW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	    samDesired: REGSAM,
-	      Reserved: DWORD,
-	  hTransaction: HANDLE,
-    pExtendedParameter: PVOID
-ifdef _UNICODE
-RegDeleteKeyTransacted	equ <RegDeleteKeyTransactedW>
-else
-RegDeleteKeyTransacted	equ <RegDeleteKeyTransactedA>
 endif
 
-RegDisableReflectionKey proto WINAPI \
-		 hBase: HKEY
-RegEnableReflectionKey proto WINAPI \
-		 hBase: HKEY
-RegQueryReflectionKey proto WINAPI \
-		 hBase: HKEY,
- bIsReflectionDisabled: ptr BOOL
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
-
-RegDeleteValueA proto WINAPI \
-		  hKey: HKEY,
-	   lpValueName: LPCSTR
-RegDeleteValueW proto WINAPI \
-		  hKey: HKEY,
-	   lpValueName: LPCWSTR
+RegDeleteKeyA proto WINAPI :HKEY, :LPCSTR
+RegDeleteKeyW proto WINAPI :HKEY, :LPCWSTR
 ifdef _UNICODE
-RegDeleteValue		equ <RegDeleteValueW>
+define RegDeleteKey  <RegDeleteKeyW>
 else
-RegDeleteValue		equ <RegDeleteValueA>
+define RegDeleteKey  <RegDeleteKeyA>
 endif
 
-RegEnumKeyA proto WINAPI \
-		  hKey: HKEY,
-	       dwIndex: DWORD,
-		lpName: LPSTR,
-	       cchName: DWORD
-RegEnumKeyW proto WINAPI \
-		  hKey: HKEY,
-	       dwIndex: DWORD,
-		lpName: LPWSTR,
-	       cchName: DWORD
+RegDeleteKeyExA proto WINAPI :HKEY, :LPCSTR, :REGSAM, :DWORD
+RegDeleteKeyExW proto WINAPI :HKEY, :LPCWSTR, :REGSAM, :DWORD
 ifdef _UNICODE
-RegEnumKey		equ <RegEnumKeyW>
+define RegDeleteKeyEx  <RegDeleteKeyExW>
 else
-RegEnumKey		equ <RegEnumKeyA>
+define RegDeleteKeyEx  <RegDeleteKeyExA>
 endif
 
-RegEnumKeyExA proto WINAPI \
-		  hKey: HKEY,
-	       dwIndex: DWORD,
-		lpName: LPSTR,
-	     lpcchName: LPDWORD,
-	    lpReserved: LPDWORD,
-	       lpClass: LPSTR,
-	    lpcchClass: LPDWORD,
-     lpftLastWriteTime: PFILETIME
-RegEnumKeyExW proto WINAPI \
-		  hKey: HKEY,
-	       dwIndex: DWORD,
-		lpName: LPWSTR,
-	     lpcchName: LPDWORD,
-	    lpReserved: LPDWORD,
-	       lpClass: LPWSTR,
-	    lpcchClass: LPDWORD,
-     lpftLastWriteTime: PFILETIME
-ifdef _UNICODE
-RegEnumKeyEx		equ <RegEnumKeyExW>
-else
-RegEnumKeyEx		equ <RegEnumKeyExA>
 endif
 
-RegEnumValueA proto WINAPI \
-		  hKey: HKEY,
-	       dwIndex: DWORD,
-	   lpValueName: LPSTR,
-	lpcchValueName: LPDWORD,
-	    lpReserved: LPDWORD,
-		lpType: LPDWORD,
-		lpData: LPBYTE,
-	      lpcbData: LPDWORD
-RegEnumValueW proto WINAPI \
-		  hKey: HKEY,
-	       dwIndex: DWORD,
-	   lpValueName: LPWSTR,
-	lpcchValueName: LPDWORD,
-	    lpReserved: LPDWORD,
-		lpType: LPDWORD,
-		lpData: LPBYTE,
-	      lpcbData: LPDWORD
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+
+RegDeleteKeyTransactedA proto WINAPI :HKEY, :LPCSTR, :REGSAM, :DWORD, :HANDLE, :PVOID
+RegDeleteKeyTransactedW proto WINAPI :HKEY, :LPCWSTR, :REGSAM, :DWORD, :HANDLE, :PVOID
 ifdef _UNICODE
-RegEnumValue		equ <RegEnumValueW>
+define RegDeleteKeyTransacted  <RegDeleteKeyTransactedW>
 else
-RegEnumValue		equ <RegEnumValueA>
+define RegDeleteKeyTransacted  <RegDeleteKeyTransactedA>
 endif
 
-RegFlushKey proto WINAPI  \
-		  hKey: HKEY
+RegDisableReflectionKey proto WINAPI :HKEY
+RegEnableReflectionKey proto WINAPI :HKEY
+RegQueryReflectionKey proto WINAPI :HKEY, :ptr
 
-RegGetKeySecurity proto WINAPI \
-		  hKey: HKEY,
-   SecurityInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR,
-lpcbSecurityDescriptor: LPDWORD
-
-RegLoadKeyA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-		lpFile: LPCSTR
-RegLoadKeyW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-		lpFile: LPCWSTR
-ifdef _UNICODE
-RegLoadKey		equ <RegLoadKeyW>
-else
-RegLoadKey		equ <RegLoadKeyA>
 endif
 
-RegNotifyChangeKeyValue proto WINAPI \
-		  hKey: HKEY,
-	 bWatchSubtree: BOOL,
-	dwNotifyFilter: DWORD,
-		hEvent: HANDLE,
-	 fAsynchronous: BOOL
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
-RegOpenKeyA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	     phkResult: PHKEY
-RegOpenKeyW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	     phkResult: PHKEY
+RegDeleteValueA proto WINAPI :HKEY, :LPCSTR
+RegDeleteValueW proto WINAPI :HKEY, :LPCWSTR
 ifdef _UNICODE
-RegOpenKey		equ <RegOpenKeyW>
+define RegDeleteValue  <RegDeleteValueW>
 else
-RegOpenKey		equ <RegOpenKeyA>
+define RegDeleteValue  <RegDeleteValueA>
 endif
 
-RegOpenKeyExA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	     ulOptions: DWORD,
-	    samDesired: REGSAM,
-	     phkResult: PHKEY
-RegOpenKeyExW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	     ulOptions: DWORD,
-	    samDesired: REGSAM,
-	     phkResult: PHKEY
+RegEnumKeyA proto WINAPI :HKEY, :DWORD, :LPSTR, :DWORD
+RegEnumKeyW proto WINAPI :HKEY, :DWORD, :LPWSTR, :DWORD
 ifdef _UNICODE
-RegOpenKeyEx		equ <RegOpenKeyExW>
+define RegEnumKey  <RegEnumKeyW>
 else
-RegOpenKeyEx		equ <RegOpenKeyExA>
+define RegEnumKey  <RegEnumKeyA>
 endif
 
-RegOpenKeyTransactedA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	     ulOptions: DWORD,
-	    samDesired: REGSAM,
-	     phkResult: PHKEY,
-	  hTransaction: HANDLE,
-    pExtendedParemeter: PVOID
-RegOpenKeyTransactedW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	     ulOptions: DWORD,
-	    samDesired: REGSAM,
-	     phkResult: PHKEY,
-	  hTransaction: HANDLE,
-    pExtendedParemeter: PVOID
+RegEnumKeyExA proto WINAPI :HKEY, :DWORD, :LPSTR, :LPDWORD, :LPDWORD, :LPSTR, :LPDWORD, :PFILETIME
+RegEnumKeyExW proto WINAPI :HKEY, :DWORD, :LPWSTR, :LPDWORD, :LPDWORD, :LPWSTR, :LPDWORD, :PFILETIME
 ifdef _UNICODE
-RegOpenKeyTransacted	equ <RegOpenKeyTransactedW>
+define RegEnumKeyEx  <RegEnumKeyExW>
 else
-RegOpenKeyTransacted	equ <RegOpenKeyTransactedA>
+define RegEnumKeyEx  <RegEnumKeyExA>
 endif
 
-RegQueryInfoKeyA proto WINAPI \
-		  hKey: HKEY,
-	       lpClass: LPSTR,
-	    lpcchClass: LPDWORD,
-	    lpReserved: LPDWORD,
-	    lpcSubKeys: LPDWORD,
-      lpcbMaxSubKeyLen: LPDWORD,
-       lpcbMaxClassLen: LPDWORD,
-	     lpcValues: LPDWORD,
-   lpcbMaxValueNameLen: LPDWORD,
-       lpcbMaxValueLen: LPDWORD,
-lpcbSecurityDescriptor: LPDWORD,
-     lpftLastWriteTime: PFILETIME
-RegQueryInfoKeyW proto WINAPI \
-		  hKey: HKEY,
-	       lpClass: LPWSTR,
-	    lpcchClass: LPDWORD,
-	    lpReserved: LPDWORD,
-	    lpcSubKeys: LPDWORD,
-      lpcbMaxSubKeyLen: LPDWORD,
-       lpcbMaxClassLen: LPDWORD,
-	     lpcValues: LPDWORD,
-   lpcbMaxValueNameLen: LPDWORD,
-       lpcbMaxValueLen: LPDWORD,
-lpcbSecurityDescriptor: LPDWORD,
-     lpftLastWriteTime: PFILETIME
+RegEnumValueA proto WINAPI :HKEY, :DWORD, :LPSTR, :LPDWORD, :LPDWORD, :LPDWORD, :LPBYTE, :LPDWORD
+RegEnumValueW proto WINAPI :HKEY, :DWORD, :LPWSTR, :LPDWORD, :LPDWORD, :LPDWORD, :LPBYTE, :LPDWORD
 ifdef _UNICODE
-RegQueryInfoKey		equ <RegQueryInfoKeyW>
+define RegEnumValue  <RegEnumValueW>
 else
-RegQueryInfoKey		equ <RegQueryInfoKeyA>
+define RegEnumValue  <RegEnumValueA>
 endif
 
-RegQueryValueA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-		lpData: LPSTR,
-	      lpcbData: PLONG
-RegQueryValueW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-		lpData: LPWSTR,
-	      lpcbData: PLONG
-ifdef _UNICODE
-RegQueryValue		equ <RegQueryValueW>
-else
-RegQueryValue		equ <RegQueryValueA>
 endif
 
-if(WINVER GE 0x0400)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
-RegQueryMultipleValuesA proto WINAPI \
-		  hKey: HKEY,
-	      val_list: PVALENTA,
-	      num_vals: DWORD,
-	    lpValueBuf: LPSTR,
-	    ldwTotsize: LPDWORD
-RegQueryMultipleValuesW proto WINAPI \
-		  hKey: HKEY,
-	      val_list: PVALENTA,
-	      num_vals: DWORD,
-	    lpValueBuf: LPWSTR,
-	    ldwTotsize: LPDWORD
+RegFlushKey proto WINAPI :HKEY
+RegGetKeySecurity proto WINAPI :HKEY, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR, :LPDWORD
+RegLoadKeyA proto WINAPI :HKEY, :LPCSTR, :LPCSTR
+RegLoadKeyW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-RegQueryMultipleValues	equ <RegQueryMultipleValuesW>
+define RegLoadKey  <RegLoadKeyW>
 else
-RegQueryMultipleValues	equ <RegQueryMultipleValuesA>
+define RegLoadKey  <RegLoadKeyA>
 endif
 
-endif ;; WINVER GE 0x0400
+RegNotifyChangeKeyValue proto WINAPI :HKEY, :BOOL, :DWORD, :HANDLE, :BOOL
 
-RegQueryValueExA proto WINAPI \
-		  hKey: HKEY,
-	   lpValueName: LPCSTR,
-	    lpReserved: LPDWORD,
-		lpType: LPDWORD,
-		lpData: LPBYTE,
-	      lpcbData: LPDWORD
-RegQueryValueExW proto WINAPI \
-		  hKey: HKEY,
-	   lpValueName: LPCWSTR,
-	    lpReserved: LPDWORD,
-		lpType: LPDWORD,
-		lpData: LPBYTE,
-	      lpcbData: LPDWORD
-ifdef _UNICODE
-RegQueryValueEx		equ <RegQueryValueExW>
-else
-RegQueryValueEx		equ <RegQueryValueExA>
 endif
 
-RegReplaceKeyA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	     lpNewFile: LPCSTR,
-	     lpOldFile: LPCSTR
-RegReplaceKeyW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	     lpNewFile: LPCWSTR,
-	     lpOldFile: LPCWSTR
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+
+RegOpenKeyA proto WINAPI :HKEY, :LPCSTR, :PHKEY
+RegOpenKeyW proto WINAPI :HKEY, :LPCWSTR, :PHKEY
 ifdef _UNICODE
-RegReplaceKey		equ <RegReplaceKeyW>
+define RegOpenKey  <RegOpenKeyW>
 else
-RegReplaceKey		equ <RegReplaceKeyA>
+define RegOpenKey  <RegOpenKeyA>
 endif
 
-RegRestoreKeyA proto WINAPI \
-		  hKey: HKEY,
-		lpFile: LPCSTR,
-	       dwFlags: DWORD
-RegRestoreKeyW proto WINAPI \
-		  hKey: HKEY,
-		lpFile: LPCWSTR,
-	       dwFlags: DWORD
+RegOpenKeyExA proto WINAPI :HKEY, :LPCSTR, :DWORD, :REGSAM, :PHKEY
+RegOpenKeyExW proto WINAPI :HKEY, :LPCWSTR, :DWORD, :REGSAM, :PHKEY
 ifdef _UNICODE
-RegRestoreKey		equ <RegRestoreKeyW>
+define RegOpenKeyEx  <RegOpenKeyExW>
 else
-RegRestoreKey		equ <RegRestoreKeyA>
+define RegOpenKeyEx  <RegOpenKeyExA>
 endif
 
-if(WINVER GE 0x0600)
-
-RegRenameKey proto WINAPI \
-		  hKey: HKEY,
-	  lpSubKeyName: LPCWSTR,
-	  lpNewKeyName: LPCWSTR
-
-endif ;; WINVER GE 0x0600
-
-RegSaveKeyA proto WINAPI \
-		  hKey: HKEY,
-		lpFile: LPCSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-RegSaveKeyW proto WINAPI \
-		  hKey: HKEY,
-		lpFile: LPCWSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES
-ifdef _UNICODE
-RegSaveKey		equ <RegSaveKeyW>
-else
-RegSaveKey		equ <RegSaveKeyA>
 endif
 
-RegSetKeySecurity proto WINAPI \
-		  hKey: HKEY,
-   SecurityInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
-RegSetValueA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-		dwType: DWORD,
-		lpData: LPCSTR,
-		cbData: DWORD
-RegSetValueW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-		dwType: DWORD,
-		lpData: LPCWSTR,
-		cbData: DWORD
+RegOpenKeyTransactedA proto WINAPI :HKEY, :LPCSTR, :DWORD, :REGSAM, :PHKEY, :HANDLE, :PVOID
+RegOpenKeyTransactedW proto WINAPI :HKEY, :LPCWSTR, :DWORD, :REGSAM, :PHKEY, :HANDLE, :PVOID
 ifdef _UNICODE
-RegSetValue		equ <RegSetValueW>
+define RegOpenKeyTransacted  <RegOpenKeyTransactedW>
 else
-RegSetValue		equ <RegSetValueA>
+define RegOpenKeyTransacted  <RegOpenKeyTransactedA>
 endif
 
-
-RegSetValueExA proto WINAPI \
-		  hKey: HKEY,
-	   lpValueName: LPCSTR,
-	      Reserved: DWORD,
-		dwType: DWORD,
-		lpData: LPBYTE,
-		cbData: DWORD
-RegSetValueExW proto WINAPI \
-		  hKey: HKEY,
-	   lpValueName: LPCWSTR,
-	      Reserved: DWORD,
-		dwType: DWORD,
-		lpData: LPBYTE,
-		cbData: DWORD
-ifdef _UNICODE
-RegSetValueEx		equ <RegSetValueExW>
-else
-RegSetValueEx		equ <RegSetValueExA>
 endif
 
-RegUnLoadKeyA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR
-RegUnLoadKeyW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+
+RegQueryInfoKeyA proto WINAPI :HKEY, :LPSTR, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :PFILETIME
+RegQueryInfoKeyW proto WINAPI :HKEY, :LPWSTR, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :PFILETIME
 ifdef _UNICODE
-RegUnLoadKey		equ <RegUnLoadKeyW>
+define RegQueryInfoKey  <RegQueryInfoKeyW>
 else
-RegUnLoadKey		equ <RegUnLoadKeyA>
+define RegQueryInfoKey  <RegQueryInfoKeyA>
 endif
 
-if _WIN32_WINNT GE 0x0600
-
-RegDeleteKeyValueA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	   lpValueName: LPCSTR
-RegDeleteKeyValueW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	   lpValueName: LPCWSTR
-ifdef _UNICODE
-RegDeleteKeyValue	equ <RegDeleteKeyValueW>
-else
-RegDeleteKeyValue	equ <RegDeleteKeyValueA>
 endif
 
-RegSetKeyValueA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	   lpValueName: LPCSTR,
-		dwType: DWORD,
-		lpData: LPCVOID,
-		cbData: DWORD
-RegSetKeyValueW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	   lpValueName: LPCWSTR,
-		dwType: DWORD,
-		lpData: LPCVOID,
-		cbData: DWORD
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+
+RegQueryValueA proto WINAPI :HKEY, :LPCSTR, :LPSTR, :PLONG
+RegQueryValueW proto WINAPI :HKEY, :LPCWSTR, :LPWSTR, :PLONG
 ifdef _UNICODE
-RegSetKeyValue		equ <RegSetKeyValueW>
+define RegQueryValue  <RegQueryValueW>
 else
-RegSetKeyValue		equ <RegSetKeyValueA>
+define RegQueryValue  <RegQueryValueA>
 endif
 
-RegDeleteTreeA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR
-RegDeleteTreeW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR
+if(WINVER ge 0x0400)
+
+RegQueryMultipleValuesA proto WINAPI :HKEY, :PVALENTA, :DWORD, :LPSTR, :LPDWORD
+RegQueryMultipleValuesW proto WINAPI :HKEY, :PVALENTW, :DWORD, :LPWSTR, :LPDWORD
 ifdef _UNICODE
-RegDeleteTree		equ <RegDeleteTreeW>
+define RegQueryMultipleValues  <RegQueryMultipleValuesW>
 else
-RegDeleteTree		equ <RegDeleteTreeA>
+define RegQueryMultipleValues  <RegQueryMultipleValuesA>
 endif
 
-RegCopyTreeA proto WINAPI \
-	       hKeySrc: HKEY,
-	      lpSubKey: LPCSTR,
-	      hKeyDest: HKEY
-RegCopyTreeW proto WINAPI \
-	       hKeySrc: HKEY,
-	      lpSubKey: LPCWSTR,
-	      hKeyDest: HKEY
-ifdef _UNICODE
-RegCopyTree		equ <RegCopyTreeW>
-else
-RegCopyTree		equ <RegCopyTreeA>
 endif
 
-RegGetValueA proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCSTR,
-	       lpValue: LPCSTR,
-	       dwFlags: DWORD,
-	       pdwType: LPDWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD
-RegGetValueW proto WINAPI \
-		  hKey: HKEY,
-	      lpSubKey: LPCWSTR,
-	       lpValue: LPCWSTR,
-	       dwFlags: DWORD,
-	       pdwType: LPDWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD
-ifdef _UNICODE
-RegGetValue		equ <RegGetValueW>
-else
-RegGetValue		equ <RegGetValueA>
 endif
 
-RegLoadMUIStringA proto WINAPI \
-		  hKey: HKEY,
-	      pszValue: LPCSTR,
-	     pszOutBuf: LPSTR,
-	      cbOutBuf: DWORD,
-	       pcbData: LPDWORD,
-		 Flags: DWORD,
-	  pszDirectory: LPCSTR
-RegLoadMUIStringW proto WINAPI \
-		  hKey: HKEY,
-	      pszValue: LPCWSTR,
-	     pszOutBuf: LPWSTR,
-	      cbOutBuf: DWORD,
-	       pcbData: LPDWORD,
-		 Flags: DWORD,
-	  pszDirectory: LPCWSTR
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+
+RegQueryValueExA proto WINAPI :HKEY, :LPCSTR, :LPDWORD, :LPDWORD, :LPBYTE, :LPDWORD
+RegQueryValueExW proto WINAPI :HKEY, :LPCWSTR, :LPDWORD, :LPDWORD, :LPBYTE, :LPDWORD
 ifdef _UNICODE
-RegLoadMUIString	equ <RegLoadMUIStringW>
+define RegQueryValueEx  <RegQueryValueExW>
 else
-RegLoadMUIString	equ <RegLoadMUIStringA>
+define RegQueryValueEx  <RegQueryValueExA>
 endif
 
-
-RegLoadAppKeyA proto WINAPI \
-		lpFile: LPCSTR,
-	     phkResult: PHKEY,
-	    samDesired: REGSAM,
-	     dwOptions: DWORD,
-	      Reserved: DWORD
-RegLoadAppKeyW proto WINAPI \
-		lpFile: LPCWSTR,
-	     phkResult: PHKEY,
-	    samDesired: REGSAM,
-	     dwOptions: DWORD,
-	      Reserved: DWORD
-ifdef _UNICODE
-RegLoadAppKey		equ <RegLoadAppKeyW>
-else
-RegLoadAppKey		equ <RegLoadAppKeyA>
 endif
 
-endif ;; _WIN32_WINNT GE 0x0600
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
-;BOOL
-InitiateSystemShutdownA proto WINAPI \
-	 lpMachineName: LPSTR,
-	     lpMessage: LPSTR,
-	     dwTimeout: DWORD,
-      bForceAppsClosed: BOOL,
-  bRebootAfterShutdown: BOOL
-InitiateSystemShutdownW proto WINAPI \
-	 lpMachineName: LPWSTR,
-	     lpMessage: LPWSTR,
-	     dwTimeout: DWORD,
-      bForceAppsClosed: BOOL,
-  bRebootAfterShutdown: BOOL
-
+RegReplaceKeyA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :LPCSTR
+RegReplaceKeyW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-InitiateSystemShutdown	equ <InitiateSystemShutdownW>
+define RegReplaceKey  <RegReplaceKeyW>
 else
-InitiateSystemShutdown	equ <InitiateSystemShutdownA>
+define RegReplaceKey  <RegReplaceKeyA>
 endif
 
-AbortSystemShutdownA proto WINAPI \
-	 lpMachineName: LPSTR
-
-AbortSystemShutdownW proto WINAPI \
-	 lpMachineName: LPWSTR
-
+RegRestoreKeyA proto WINAPI :HKEY, :LPCSTR, :DWORD
+RegRestoreKeyW proto WINAPI :HKEY, :LPCWSTR, :DWORD
 ifdef _UNICODE
-AbortSystemShutdown	equ <AbortSystemShutdownW>
+define RegRestoreKey  <RegRestoreKeyW>
 else
-AbortSystemShutdown	equ <AbortSystemShutdownA>
+define RegRestoreKey  <RegRestoreKeyA>
+endif
+
+if(WINVER ge 0x0600)
+RegRenameKey proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR
+endif
+
+RegSaveKeyA proto WINAPI :HKEY, :LPCSTR, :LPSECURITY_ATTRIBUTES
+RegSaveKeyW proto WINAPI :HKEY, :LPCWSTR, :LPSECURITY_ATTRIBUTES
+ifdef _UNICODE
+define RegSaveKey  <RegSaveKeyW>
+else
+define RegSaveKey  <RegSaveKeyA>
+endif
+
+RegSetKeySecurity proto WINAPI :HKEY, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR
+
+RegSetValueA proto WINAPI :HKEY, :LPCSTR, :DWORD, :LPCSTR, :DWORD
+RegSetValueW proto WINAPI :HKEY, :LPCWSTR, :DWORD, :LPCWSTR, :DWORD
+ifdef _UNICODE
+define RegSetValue  <RegSetValueW>
+else
+define RegSetValue  <RegSetValueA>
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+
+RegSetValueExA proto WINAPI :HKEY, :LPCSTR, :DWORD, :DWORD, :ptr, :DWORD
+RegSetValueExW proto WINAPI :HKEY, :LPCWSTR, :DWORD, :DWORD, :ptr, :DWORD
+ifdef _UNICODE
+define RegSetValueEx  <RegSetValueExW>
+else
+define RegSetValueEx  <RegSetValueExA>
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+
+RegUnLoadKeyA proto WINAPI :HKEY, :LPCSTR
+RegUnLoadKeyW proto WINAPI :HKEY, :LPCWSTR
+ifdef _UNICODE
+define RegUnLoadKey  <RegUnLoadKeyW>
+else
+define RegUnLoadKey  <RegUnLoadKeyA>
+endif
+
+if _WIN32_WINNT ge 0x0600
+
+RegDeleteKeyValueA proto WINAPI :HKEY, :LPCSTR, :LPCSTR
+RegDeleteKeyValueW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR
+ifdef _UNICODE
+define RegDeleteKeyValue  <RegDeleteKeyValueW>
+else
+define RegDeleteKeyValue  <RegDeleteKeyValueA>
+endif
+
+RegSetKeyValueA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :DWORD, :LPCVOID, :DWORD
+RegSetKeyValueW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :DWORD, :LPCVOID, :DWORD
+ifdef _UNICODE
+define RegSetKeyValue  <RegSetKeyValueW>
+else
+define RegSetKeyValue  <RegSetKeyValueA>
+endif
+
+RegDeleteTreeA proto WINAPI :HKEY, :LPCSTR
+RegDeleteTreeW proto WINAPI :HKEY, :LPCWSTR
+ifdef _UNICODE
+define RegDeleteTree  <RegDeleteTreeW>
+else
+define RegDeleteTree  <RegDeleteTreeA>
+endif
+
+RegCopyTreeA proto WINAPI :HKEY, :LPCSTR, :HKEY
+ifndef _UNICODE
+define RegCopyTree  <RegCopyTreeA>
+endif
+
+endif
+
+if (_WIN32_WINNT ge 0x0502)
+
+RegGetValueA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :DWORD, :LPDWORD, :PVOID, :LPDWORD
+RegGetValueW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :DWORD, :LPDWORD, :PVOID, :LPDWORD
+ifdef _UNICODE
+define RegGetValue  <RegGetValueW>
+else
+define RegGetValue  <RegGetValueA>
+endif
+
+endif
+
+if (_WIN32_WINNT ge 0x0600)
+
+RegCopyTreeW proto WINAPI :HKEY, :LPCWSTR, :HKEY
+ifdef _UNICODE
+define RegCopyTree  <RegCopyTreeW>
+endif
+
+RegLoadMUIStringA proto WINAPI :HKEY, :LPCSTR, :LPSTR, :DWORD, :LPDWORD, :DWORD, :LPCSTR
+RegLoadMUIStringW proto WINAPI :HKEY, :LPCWSTR, :LPWSTR, :DWORD, :LPDWORD, :DWORD, :LPCWSTR
+ifdef _UNICODE
+define RegLoadMUIString  <RegLoadMUIStringW>
+else
+define RegLoadMUIString  <RegLoadMUIStringA>
+endif
+
+RegLoadAppKeyA proto WINAPI :LPCSTR, :PHKEY, :REGSAM, :DWORD, :DWORD
+RegLoadAppKeyW proto WINAPI :LPCWSTR, :PHKEY, :REGSAM, :DWORD, :DWORD
+ifdef _UNICODE
+define RegLoadAppKey  <RegLoadAppKeyW>
+else
+define RegLoadAppKey  <RegLoadAppKeyA>
+endif
+
+endif
+
+InitiateSystemShutdownA proto WINAPI :LPSTR, :LPSTR, :DWORD, :BOOL, :BOOL
+InitiateSystemShutdownW proto WINAPI :LPWSTR, :LPWSTR, :DWORD, :BOOL, :BOOL
+ifdef _UNICODE
+define InitiateSystemShutdown  <InitiateSystemShutdownW>
+else
+define InitiateSystemShutdown  <InitiateSystemShutdownA>
+endif
+
+AbortSystemShutdownA proto WINAPI :LPSTR
+AbortSystemShutdownW proto WINAPI :LPWSTR
+ifdef _UNICODE
+define AbortSystemShutdown  <AbortSystemShutdownW>
+else
+define AbortSystemShutdown  <AbortSystemShutdownA>
 endif
 
 include reason.inc
 
-REASON_SWINSTALL	equ (SHTDN_REASON_MAJOR_SOFTWARE OR SHTDN_REASON_MINOR_INSTALLATION)
-REASON_HWINSTALL	equ (SHTDN_REASON_MAJOR_HARDWARE OR SHTDN_REASON_MINOR_INSTALLATION)
-REASON_SERVICEHANG	equ (SHTDN_REASON_MAJOR_SOFTWARE OR SHTDN_REASON_MINOR_HUNG)
-REASON_UNSTABLE		equ (SHTDN_REASON_MAJOR_SYSTEM OR SHTDN_REASON_MINOR_UNSTABLE)
-REASON_SWHWRECONF	equ (SHTDN_REASON_MAJOR_SOFTWARE OR SHTDN_REASON_MINOR_RECONFIG)
-REASON_OTHER		equ (SHTDN_REASON_MAJOR_OTHER OR SHTDN_REASON_MINOR_OTHER)
-REASON_UNKNOWN		equ SHTDN_REASON_UNKNOWN
-REASON_LEGACY_API	equ SHTDN_REASON_LEGACY_API
-REASON_PLANNED_FLAG	equ SHTDN_REASON_FLAG_PLANNED
+define REASON_SWINSTALL    (SHTDN_REASON_MAJOR_SOFTWARE or SHTDN_REASON_MINOR_INSTALLATION)
+define REASON_HWINSTALL    (SHTDN_REASON_MAJOR_HARDWARE or SHTDN_REASON_MINOR_INSTALLATION)
+define REASON_SERVICEHANG  (SHTDN_REASON_MAJOR_SOFTWARE or SHTDN_REASON_MINOR_HUNG)
+define REASON_UNSTABLE     (SHTDN_REASON_MAJOR_SYSTEM or SHTDN_REASON_MINOR_UNSTABLE)
+define REASON_SWHWRECONF   (SHTDN_REASON_MAJOR_SOFTWARE or SHTDN_REASON_MINOR_RECONFIG)
+define REASON_OTHER        (SHTDN_REASON_MAJOR_OTHER or SHTDN_REASON_MINOR_OTHER)
+define REASON_UNKNOWN      SHTDN_REASON_UNKNOWN
+define REASON_LEGACY_API   SHTDN_REASON_LEGACY_API
+define REASON_PLANNED_FLAG SHTDN_REASON_FLAG_PLANNED
 
-MAX_SHUTDOWN_TIMEOUT	equ (10*365*24*60*60)
+define MAX_SHUTDOWN_TIMEOUT (10*365*24*60*60)
 
-;BOOL
-InitiateSystemShutdownExA proto WINAPI \
-	 lpMachineName: LPSTR,
-	     lpMessage: LPSTR,
-	     dwTimeout: DWORD,
-      bForceAppsClosed: BOOL,
-  bRebootAfterShutdown: BOOL,
-	      dwReason: DWORD
-InitiateSystemShutdownExW proto WINAPI \
-	 lpMachineName: LPWSTR,
-	     lpMessage: LPWSTR,
-	     dwTimeout: DWORD,
-      bForceAppsClosed: BOOL,
-  bRebootAfterShutdown: BOOL,
-	      dwReason: DWORD
+InitiateSystemShutdownExA proto WINAPI :LPSTR, :LPSTR, :DWORD, :BOOL, :BOOL, :DWORD
+InitiateSystemShutdownExW proto WINAPI :LPWSTR, :LPWSTR, :DWORD, :BOOL, :BOOL, :DWORD
 ifdef _UNICODE
-InitiateSystemShutdownEx equ <InitiateSystemShutdownExW>
+define InitiateSystemShutdownEx  <InitiateSystemShutdownExW>
 else
-InitiateSystemShutdownEx equ <InitiateSystemShutdownExA>
+define InitiateSystemShutdownEx  <InitiateSystemShutdownExA>
 endif
 
+define SHUTDOWN_FORCE_OTHERS           0x00000001
+define SHUTDOWN_FORCE_SELF             0x00000002
+define SHUTDOWN_RESTART                0x00000004
+define SHUTDOWN_POWEROFF               0x00000008
+define SHUTDOWN_NOREBOOT               0x00000010
+define SHUTDOWN_GRACE_OVERRIDE         0x00000020
+define SHUTDOWN_INSTALL_UPDATES        0x00000040
+define SHUTDOWN_RESTARTAPPS            0x00000080
+define SHUTDOWN_SKIP_SVC_PRESHUTDOWN   0x00000100
+define SHUTDOWN_HYBRID                 0x00000200
+define SHUTDOWN_RESTART_BOOTOPTIONS    0x00000400
+define SHUTDOWN_SOFT_REBOOT            0x00000800
+define SHUTDOWN_MOBILE_UI              0x00001000
+define SHUTDOWN_ARSO                   0x00002000
 
-SHUTDOWN_FORCE_OTHERS	equ 0x00000001
-SHUTDOWN_FORCE_SELF	equ 0x00000002
-SHUTDOWN_RESTART	equ 0x00000004
-SHUTDOWN_POWEROFF	equ 0x00000008
-SHUTDOWN_NOREBOOT	equ 0x00000010
-SHUTDOWN_GRACE_OVERRIDE equ 0x00000020
-SHUTDOWN_INSTALL_UPDATES equ 0x00000040
-SHUTDOWN_RESTARTAPPS	equ 0x00000080
-SHUTDOWN_SKIP_SVC_PRESHUTDOWN equ 0x00000100
-
-
-;DWORD
-InitiateShutdownA proto WINAPI \
-	 lpMachineName: LPSTR,
-	     lpMessage: LPSTR,
-	 dwGracePeriod: DWORD,
-       dwShutdownFlags: DWORD,
-	      dwReason: DWORD
-InitiateShutdownW proto WINAPI \
-	 lpMachineName: LPWSTR,
-	     lpMessage: LPWSTR,
-	 dwGracePeriod: DWORD,
-       dwShutdownFlags: DWORD,
-	      dwReason: DWORD
+InitiateShutdownA proto WINAPI :LPSTR, :LPSTR, :DWORD, :DWORD, :DWORD
+InitiateShutdownW proto WINAPI :LPWSTR, :LPWSTR, :DWORD, :DWORD, :DWORD
 ifdef _UNICODE
-InitiateShutdown	equ <InitiateShutdownW>
+define InitiateShutdown  <InitiateShutdownW>
 else
-InitiateShutdown	equ <InitiateShutdownA>
+define InitiateShutdown  <InitiateShutdownA>
 endif
 
-RegSaveKeyExA proto WINAPI \
-		  hKey: HKEY,
-		lpFile: LPCSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-		 Flags: DWORD
-RegSaveKeyExW proto WINAPI \
-		  hKey: HKEY,
-		lpFile: LPCWSTR,
-  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-		 Flags: DWORD
+CheckForHiberboot proto WINAPI :PBOOLEAN, :BOOLEAN
+
+RegSaveKeyExA proto WINAPI :HKEY, :LPCSTR, :LPSECURITY_ATTRIBUTES, :DWORD
+RegSaveKeyExW proto WINAPI :HKEY, :LPCWSTR, :LPSECURITY_ATTRIBUTES, :DWORD
 ifdef _UNICODE
-RegSaveKeyEx		equ <RegSaveKeyExW>
+define RegSaveKeyEx  <RegSaveKeyExW>
 else
-RegSaveKeyEx		equ <RegSaveKeyExA>
+define RegSaveKeyEx  <RegSaveKeyExA>
 endif
 
-.pragma list(pop)
+endif
+
 endif

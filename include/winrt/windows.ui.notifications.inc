@@ -119,7 +119,7 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotifica
 
 .comdef __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable : public IUnknown
 
-    _Invoke		proc :ptr, :ptr
+    IInvoke		proc :ptr, :ptr
     .ends
 
 endif
@@ -131,7 +131,7 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotifica
 
 .comdef __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs : public IUnknown
 
-    _Invoke		proc :ptr, :ptr
+    IInvoke		proc :ptr, :ptr
     .ends
 
 endif
@@ -143,7 +143,7 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotifica
 
 .comdef __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs : public IUnknown
 
-    _Invoke		proc :ptr, :ptr
+    IInvoke		proc :ptr, :ptr
     .ends
 
 endif

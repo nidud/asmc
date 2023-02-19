@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DesktopToastsSample", "DesktopToastsSample.vcxproj", "{4A7D8FF8-5261-4A2C-988F-7DA9547B1B08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A7D8FF8-5261-4A2C-988F-7DA9547B1B08}.Debug|x64.ActiveCfg = Debug|x64
+		{4A7D8FF8-5261-4A2C-988F-7DA9547B1B08}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00155D60-B18D-498A-B38E-15F0F9D305FD}
+	EndGlobalSection
+EndGlobal

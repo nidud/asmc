@@ -28,7 +28,7 @@ _tmain proc
             DeleteFileW(&shortcutPath)
         .endif
     .endif
-    RegDeleteKey(HKEY_CURRENT_USER, "SOFTWARE\\Classes\\CLSID\\{23A5B06E-20BB-4E7E-A0AC-6982ED6A6041}")
+    RegDeleteTree(HKEY_CURRENT_USER, "SOFTWARE\\Classes\\CLSID\\{23A5B06E-20BB-4E7E-A0AC-6982ED6A6041}")
    .return(0)
 
 _tmain endp

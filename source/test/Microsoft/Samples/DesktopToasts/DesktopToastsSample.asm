@@ -99,8 +99,11 @@ define HM_TEXTBUTTON 1
 
 CLSID_NotificationActivator             GUID {0x23A5B06E,0x20BB,0x4E7E,{0xA0,0xAC,0x69,0x82,0xED,0x6A,0x60,0x41}}
 PKEY_AppUserModel_ToastActivatorCLSID   PROPERTYKEY {{0x9F4C2855, 0x9F79,0x4B39,{0xA8,0xD0,0xE1,0xD4,0x2D,0xE1,0xD5,0xF3}},26}
-ifdef __PE__
 align 8
+IID_IToastEventArgs                     GUID {0xab54de2d,0x97d9,0x5528,{0xb6,0xad,0x10,0x5a,0xfe,0x15,0x65,0x30}}
+IID_IToastDismissedEventArgs            GUID {0x61c2402f,0x0ed0,0x5a18,{0xab,0x69,0x59,0xf4,0xaa,0x99,0xa3,0x68}}
+IID_IToastFailedEventArgs               GUID {0x95e3e803,0xc969,0x5e3a,{0x97,0x53,0xea,0x2a,0xd2,0x2a,0x9a,0x33}}
+ifdef __PE__
 PKEY_AppUserModel_ID                    PROPERTYKEY {{0x9F4C2855,0x9F79,0x4B39,{0xA8,0xD0,0xE1,0xD4,0x2D,0xE1,0xD5,0xF3}},5}
 align 8
 FOLDERID_RoamingAppData                 GUID {0x3EB685DB,0x65F9,0x4CF6,{0xA0,0x3A,0xE3,0xEF,0x65,0x72,0x9F,0x3D}}
@@ -116,6 +119,40 @@ endif
     .code
 
 ; ToastNotification
+
+ToastNotification::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
+
+    UNREFERENCED_PARAMETER(riid)
+
+    mov rax,[rdx]
+    .if ( rax == qword ptr IID_IToastEventArgs )
+
+        mov [r8],rcx
+        this.AddRef()
+       .return( S_OK )
+    .endif
+    .return( E_NOINTERFACE )
+
+ToastNotification::QueryInterface endp
+
+ToastNotification::AddRef proc
+
+    UNREFERENCED_PARAMETER(this)
+
+    .return InterlockedIncrement(&[rcx].ToastNotification.m_refCount)
+
+ToastNotification::AddRef endp
+
+ToastNotification::Release proc
+
+    .if ( InterlockedDecrement(&[rcx].ToastFailed.m_refCount) == 0 )
+
+        free(this)
+        xor eax,eax
+    .endif
+    ret
+
+ToastNotification::Release endp
 
 ToastNotification::IInvoke proc sender:ptr Windows::UI::Notifications::IToastNotification, args:ptr IInspectable
 
@@ -142,6 +179,39 @@ ToastNotification::ToastNotification endp
 
 ; ToastDismissed
 
+ToastDismissed::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
+
+    UNREFERENCED_PARAMETER(riid)
+
+    mov rax,[rdx]
+    .if ( rax == qword ptr IID_IToastDismissedEventArgs )
+
+        mov [r8],rcx
+        this.AddRef()
+        .return S_OK
+    .endif
+    .return E_NOINTERFACE
+
+ToastDismissed::QueryInterface endp
+
+ToastDismissed::AddRef proc
+
+    UNREFERENCED_PARAMETER(this)
+
+    .return InterlockedIncrement(&[rcx].ToastDismissed.m_refCount)
+
+ToastDismissed::AddRef endp
+
+ToastDismissed::Release proc
+
+    .if ( InterlockedDecrement(&[rcx].ToastFailed.m_refCount) == 0 )
+
+        free(this)
+        xor eax,eax
+    .endif
+    ret
+
+ToastDismissed::Release endp
 
 ToastDismissed::IInvoke proc sender:ptr Windows::UI::Notifications::IToastNotification,
                              e:ptr Windows::UI::Notifications::IToastDismissedEventArgs
@@ -181,15 +251,35 @@ ToastDismissed::ToastDismissed endp
 
 ; ToastFailed
 
-ToastNotification_Release:
-ToastDismissed_Release:
+ToastFailed::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
+
+    UNREFERENCED_PARAMETER(riid)
+
+    mov rax,[rdx]
+    .if ( rax == qword ptr IID_IToastFailedEventArgs )
+
+        mov [r8],rcx
+        this.AddRef()
+       .return( S_OK )
+    .endif
+    .return( E_NOINTERFACE )
+
+ToastFailed::QueryInterface endp
+
+ToastFailed::AddRef proc
+
+    UNREFERENCED_PARAMETER(this)
+
+    .return InterlockedIncrement(&[rcx].ToastFailed.m_refCount)
+
+ToastFailed::AddRef endp
 
 ToastFailed::Release proc
 
     .if ( InterlockedDecrement(&[rcx].ToastFailed.m_refCount) == 0 )
 
-        ;free(this)
-        ;xor eax,eax
+        free(this)
+        xor eax,eax
     .endif
     ret
 
@@ -213,11 +303,7 @@ ToastFailed::ToastFailed proc app:ptr DesktopToastsApp
 ToastFailed::ToastFailed endp
 
 
-; NotificationActivator
-
-ToastNotification_QueryInterface:
-ToastDismissed_QueryInterface:
-ToastFailed_QueryInterface:
+; DesktopToastsApp
 
 DesktopToastsApp::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
 
@@ -228,11 +314,6 @@ DesktopToastsApp::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
     .return E_NOINTERFACE
 
 DesktopToastsApp::QueryInterface endp
-
-
-ToastNotification_AddRef:
-ToastDismissed_AddRef:
-ToastFailed_AddRef:
 
 DesktopToastsApp::AddRef proc
 
@@ -528,7 +609,7 @@ DesktopToastsApp::DisplayToast proc
     .new string:HSTRING = NULL
     .new toastStatics:ptr Windows::UI::Notifications::IToastNotificationManagerStatics
     .new hr:HRESULT = WindowsCreateString(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager,
-            wcslen(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager), &string)
+            lengthof(@CStr(-1))-1, &string)
     .if (SUCCEEDED(hr))
 
         mov hr,RoGetActivationFactory(string, &IID_IToastNotificationManagerStatics, &toastStatics)
@@ -551,7 +632,9 @@ DesktopToastsApp::DisplayToast endp
 
 ; Create the toast XML from a template
 
-DesktopToastsApp::CreateToastXml proc toastManager:ptr Windows::UI::Notifications::IToastNotificationManagerStatics, inputXml:ptr ptr IXmlDocument
+DesktopToastsApp::CreateToastXml proc \
+        toastManager:ptr Windows::UI::Notifications::IToastNotificationManagerStatics,
+        inputXml:ptr ptr IXmlDocument
 
     xor eax,eax
     mov rcx,inputXml
@@ -646,7 +729,8 @@ DesktopToastsApp::SetImageSrc endp
 
 ; Set the values of each of the text nodes
 
-DesktopToastsApp::SetTextValues proc uses rsi rdi textValues:ptr PCWSTR, textValuesCount:UINT32, toastXml:ptr Windows::Data::Xml::Dom::IXmlDocument
+DesktopToastsApp::SetTextValues proc uses rsi rdi textValues:ptr PCWSTR,
+        textValuesCount:UINT32, toastXml:ptr Windows::Data::Xml::Dom::IXmlDocument
 
     .new string:HSTRING
     .new nodeList:ptr Windows::Data::Xml::Dom::IXmlNodeList
@@ -721,11 +805,13 @@ DesktopToastsApp::SetNodeValueString endp
 
 ; Create and display the toast
 
-DesktopToastsApp::CreateToast proc toastManager:ptr Windows::UI::Notifications::IToastNotificationManagerStatics, xml:ptr IXmlDocument
+DesktopToastsApp::CreateToast proc \
+        toastManager:ptr Windows::UI::Notifications::IToastNotificationManagerStatics,
+        xml:ptr IXmlDocument
 
     .new string:HSTRING
     .new notifier:ptr Windows::UI::Notifications::IToastNotifier = NULL
-    .new hr:HRESULT = WindowsCreateString(AppId, wcslen(AppId), &string)
+    .new hr:HRESULT = WindowsCreateString(AppId, lengthof(@CStr(-1))-1, &string)
 
     .if (SUCCEEDED(hr))
 
@@ -738,7 +824,7 @@ DesktopToastsApp::CreateToast proc toastManager:ptr Windows::UI::Notifications::
        .new factory:ptr Windows::UI::Notifications::IToastNotificationFactory
 
        mov hr,WindowsCreateString(RuntimeClass_Windows_UI_Notifications_ToastNotification,
-                wcslen(RuntimeClass_Windows_UI_Notifications_ToastNotification), &string)
+                lengthof(@CStr(-1))-1, &string)
 
         .if (SUCCEEDED(hr))
 
@@ -759,9 +845,9 @@ DesktopToastsApp::CreateToast proc toastManager:ptr Windows::UI::Notifications::
                 ; the fact that these events could be raised after the app object has already
                 ; been decontructed.
 
-                .new activatedToken:EventRegistrationToken = 0
-                .new dismissedToken:EventRegistrationToken = 0
-                .new failedToken:EventRegistrationToken = 0
+                .new activatedToken:EventRegistrationToken
+                .new dismissedToken:EventRegistrationToken
+                .new failedToken:EventRegistrationToken
                 .new toastNotification:ptr ToastNotification(this)
 
                 mov hr,toast.add_Activated(toastNotification, &activatedToken)

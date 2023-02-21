@@ -1,92 +1,7 @@
-
-define WINVER       0x0A00
-define _WIN32_WINNT 0x0A00
-
-include Windows.inc
-include winreg.inc
-include Psapi.inc
-include strsafe.inc
-include Shlobj.inc
-include Pathcch.inc
-include propvarutil.inc
-include propkey.inc
-include wrl.inc
-include windows.ui.notifications.inc
-include NotificationActivationCallback.inc
-include tchar.inc
-
-option dllimport:none
-
-.pragma comment(linker,
-    "/manifestdependency:\""
-    "type='win32' "
-    "name='Microsoft.Windows.Common-Controls' "
-    "version='6.0.0.0' "
-    "processorArchitecture='*' "
-    "publicKeyToken='6595b64144ccf1df' "
-    "language='*'"
-    "\""
-    )
-
-define AppId <L"Microsoft.Samples.DesktopToasts">
-define HM_TEXTBUTTON 1
-
-.class DesktopToastsApp : public INotificationActivationCallback
-
-    m_refCount  LONG ?
-    m_hwnd      HWND ?
-    m_hEdit     HWND ?
-    m_cookie    DWORD ?
-
-    DesktopToastsApp proc
-    Initialize proc :HINSTANCE
-    RunMessageLoop proc
-
-    SetMessage proc :PCWSTR
-
-    RegisterAppForNotificationSupport proc
-    InstallShortcut proc :PCWSTR, :PCWSTR
-    RegisterComServer proc :PCWSTR
-
-    RegisterActivator proc
-    UnregisterActivator proc
-
-    WndProc proto :HWND, :UINT, :WPARAM, :LPARAM
-    DisplayToast proc
-
-    CreateToastXml proc :ptr Windows::UI::Notifications::IToastNotificationManagerStatics, :ptr ptr IXmlDocument
-
-    CreateToast proc :ptr Windows::UI::Notifications::IToastNotificationManagerStatics, :ptr IXmlDocument
-
-    SetImageSrc proc :PCWSTR, :ptr IXmlDocument
-    SetTextValues proc :ptr PCWSTR, :UINT32, :ptr IXmlDocument
-    SetNodeValueString proc :HSTRING, :ptr IXmlNode, :ptr IXmlDocument
-   .ends
-
-
-.class ToastNotification : public __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable
-
-    m_refCount  LONG ?
-    m_app       ptr DesktopToastsApp ?
-
-    ToastNotification proc :ptr DesktopToastsApp
-   .ends
-
-.class ToastDismissed : public __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs
-
-    m_refCount LONG ?
-    m_app       ptr DesktopToastsApp ?
-
-    ToastDismissed proc :ptr DesktopToastsApp
-   .ends
-
-.class ToastFailed : public __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs
-
-    m_refCount  LONG ?
-    m_app       ptr DesktopToastsApp ?
-
-    ToastFailed proc :ptr DesktopToastsApp
-   .ends
+;
+; https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/DesktopToasts/CPP
+;
+include DesktopToastsSample.inc
 
 
 .data
@@ -103,10 +18,11 @@ align 8
 IID_IToastEventArgs                     GUID {0xab54de2d,0x97d9,0x5528,{0xb6,0xad,0x10,0x5a,0xfe,0x15,0x65,0x30}}
 IID_IToastDismissedEventArgs            GUID {0x61c2402f,0x0ed0,0x5a18,{0xab,0x69,0x59,0xf4,0xaa,0x99,0xa3,0x68}}
 IID_IToastFailedEventArgs               GUID {0x95e3e803,0xc969,0x5e3a,{0x97,0x53,0xea,0x2a,0xd2,0x2a,0x9a,0x33}}
-ifdef __PE__
 PKEY_AppUserModel_ID                    PROPERTYKEY {{0x9F4C2855,0x9F79,0x4B39,{0xA8,0xD0,0xE1,0xD4,0x2D,0xE1,0xD5,0xF3}},5}
 align 8
 FOLDERID_RoamingAppData                 GUID {0x3EB685DB,0x65F9,0x4CF6,{0xA0,0x3A,0xE3,0xEF,0x65,0x72,0x9F,0x3D}}
+IID_IUnknown                            GUID {0x00000000,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
+IID_IClassFactory                       GUID {0x00000001,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
 IID_IShellLinkW                         GUID {0x000214F9,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
 CLSID_ShellLink                         GUID {0x00021401,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
 IID_IPropertyStore                      GUID {0x886d8eeb,0x8cf2,0x4446,{0x8d,0x02,0xcd,0xba,0x1d,0xbd,0xcf,0x99}}
@@ -114,15 +30,108 @@ IID_IPersistFile                        GUID {0x0000010b,0x0000,0x0000,{0xC0,0x0
 IID_IToastNotificationManagerStatics    GUID {0x50AC103F,0xD235,0x4598,{0xBB,0xEF,0x98,0xFE,0x4D,0x1A,0x3A,0xD4}}
 IID_IXmlNode                            GUID {0x1C741D59,0x2122,0x47D5,{0xA8,0x56,0x83,0xF3,0xD4,0x21,0x48,0x75}}
 IID_IToastNotificationFactory           GUID {0x04124B20,0x82C6,0x4229,{0xB1,0x09,0xFD,0x9E,0xD4,0x66,0x2B,0x53}}
-endif
+IID_INotificationActivationCallback     GUID {0x53E31837,0x6600,0x4A81,{0x93,0x95,0x75,0xCF,0xFE,0x74,0x6F,0x94}}
 
-    .code
 
-; ToastNotification
+.code
+
+DEFINE_CLASS(NotificationActivationCallback, INotificationActivationCallback)
+
+NotificationActivationCallback::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
+
+    UNREFERENCED_PARAMETER(riid)
+
+    xor eax,eax
+    mov [r9],rax
+
+    mov rax,[rdx]
+    mov rdx,[rdx+8]
+
+    .if ( ( rax == qword ptr IID_IUnknown && rdx == qword ptr IID_IUnknown[8] ) ||
+          ( rax == qword ptr IID_INotificationActivationCallback &&
+            rdx == qword ptr IID_INotificationActivationCallback[8] ) )
+
+        mov [r9],rcx
+        this.AddRef()
+       .return( S_OK )
+    .endif
+    .return( E_NOINTERFACE )
+
+NotificationActivationCallback::QueryInterface endp
+
+NotificationActivationCallback::Activate proc appUserModelId:LPCWSTR, invokedArgs:LPCWSTR,
+        data:ptr NOTIFICATION_USER_INPUT_DATA, dataCount:ULONG
+
+    UNREFERENCED_PARAMETER(appUserModelId)
+    UNREFERENCED_PARAMETER(invokedArgs)
+    UNREFERENCED_PARAMETER(data)
+    UNREFERENCED_PARAMETER(dataCount)
+
+    this.m_app.SetMessage(L"NotificationActivator - The user clicked on the toast.")
+    ret
+
+NotificationActivationCallback::Activate endp
+
+
+DEFINE_CLASS(ClassFactory, IClassFactory)
+
+ClassFactory::QueryInterface proc riid:REFIID, ppv:ptr ptr
+
+    UNREFERENCED_PARAMETER(riid)
+
+    xor eax,eax
+    mov [r8],rax
+
+    mov rax,[rdx]
+    mov rdx,[rdx+8]
+
+    .if ( rax == qword ptr IID_IClassFactory && rdx == qword ptr IID_IClassFactory[8] )
+
+        mov [r8],rcx
+        this.AddRef()
+       .return( S_OK )
+    .endif
+    .return( E_NOINTERFACE )
+
+ClassFactory::QueryInterface endp
+
+ClassFactory::CreateInstance proc punkOuter:LPUNKNOWN, riid:REFIID, ppv:ptr ptr
+
+    UNREFERENCED_PARAMETER(this)
+
+    xor eax,eax
+    mov [r9],rax
+
+    .if ( rdx )
+
+        .return CLASS_E_NOAGGREGATION
+    .endif
+
+    mov rdx,[rcx].ClassFactory.m_app
+   .new p:ptr NotificationActivationCallback(rdx)
+    p.QueryInterface(riid, ppv)
+    p.Release()
+   .return( S_OK )
+
+ClassFactory::CreateInstance endp
+
+ClassFactory::LockServer proc fLock:BOOL
+
+    UNREFERENCED_PARAMETER(this)
+
+    .return S_OK
+
+ClassFactory::LockServer endp
+
+
+DEFINE_CLASS(ToastNotification, __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable)
 
 ToastNotification::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
 
     UNREFERENCED_PARAMETER(riid)
+
+    xor eax,eax
+    mov [r8],rax
 
     mov rax,[rdx]
     .if ( rax == qword ptr IID_IToastEventArgs )
@@ -134,25 +143,6 @@ ToastNotification::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
     .return( E_NOINTERFACE )
 
 ToastNotification::QueryInterface endp
-
-ToastNotification::AddRef proc
-
-    UNREFERENCED_PARAMETER(this)
-
-    .return InterlockedIncrement(&[rcx].ToastNotification.m_refCount)
-
-ToastNotification::AddRef endp
-
-ToastNotification::Release proc
-
-    .if ( InterlockedDecrement(&[rcx].ToastFailed.m_refCount) == 0 )
-
-        free(this)
-        xor eax,eax
-    .endif
-    ret
-
-ToastNotification::Release endp
 
 ToastNotification::IInvoke proc sender:ptr Windows::UI::Notifications::IToastNotification, args:ptr IInspectable
 
@@ -167,21 +157,15 @@ ToastNotification::IInvoke proc sender:ptr Windows::UI::Notifications::IToastNot
 
 ToastNotification::IInvoke endp
 
-ToastNotification::ToastNotification proc app:ptr DesktopToastsApp
 
-    @ComAlloc(ToastNotification)
-    mov rcx,app
-    mov [rax].ToastNotification.m_app,rcx
-    ret
-
-ToastNotification::ToastNotification endp
-
-
-; ToastDismissed
+DEFINE_CLASS(ToastDismissed, __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs)
 
 ToastDismissed::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
 
     UNREFERENCED_PARAMETER(riid)
+
+    xor eax,eax
+    mov [r8],rax
 
     mov rax,[rdx]
     .if ( rax == qword ptr IID_IToastDismissedEventArgs )
@@ -193,25 +177,6 @@ ToastDismissed::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
     .return E_NOINTERFACE
 
 ToastDismissed::QueryInterface endp
-
-ToastDismissed::AddRef proc
-
-    UNREFERENCED_PARAMETER(this)
-
-    .return InterlockedIncrement(&[rcx].ToastDismissed.m_refCount)
-
-ToastDismissed::AddRef endp
-
-ToastDismissed::Release proc
-
-    .if ( InterlockedDecrement(&[rcx].ToastFailed.m_refCount) == 0 )
-
-        free(this)
-        xor eax,eax
-    .endif
-    ret
-
-ToastDismissed::Release endp
 
 ToastDismissed::IInvoke proc sender:ptr Windows::UI::Notifications::IToastNotification,
                              e:ptr Windows::UI::Notifications::IToastDismissedEventArgs
@@ -239,21 +204,15 @@ ToastDismissed::IInvoke proc sender:ptr Windows::UI::Notifications::IToastNotifi
 
 ToastDismissed::IInvoke endp
 
-ToastDismissed::ToastDismissed proc app:ptr DesktopToastsApp
 
-    @ComAlloc(ToastDismissed)
-    mov rcx,app
-    mov [rax].ToastDismissed.m_app,rcx
-    ret
-
-ToastDismissed::ToastDismissed endp
-
-
-; ToastFailed
+DEFINE_CLASS(ToastFailed, __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs)
 
 ToastFailed::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
 
     UNREFERENCED_PARAMETER(riid)
+
+    xor eax,eax
+    mov [r8],rax
 
     mov rax,[rdx]
     .if ( rax == qword ptr IID_IToastFailedEventArgs )
@@ -266,25 +225,6 @@ ToastFailed::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
 
 ToastFailed::QueryInterface endp
 
-ToastFailed::AddRef proc
-
-    UNREFERENCED_PARAMETER(this)
-
-    .return InterlockedIncrement(&[rcx].ToastFailed.m_refCount)
-
-ToastFailed::AddRef endp
-
-ToastFailed::Release proc
-
-    .if ( InterlockedDecrement(&[rcx].ToastFailed.m_refCount) == 0 )
-
-        free(this)
-        xor eax,eax
-    .endif
-    ret
-
-ToastFailed::Release endp
-
 ToastFailed::IInvoke proc sender:ptr Windows::UI::Notifications::IToastNotification,
                           args:ptr Windows::UI::Notifications::IToastFailedEventArgs
 
@@ -293,61 +233,16 @@ ToastFailed::IInvoke proc sender:ptr Windows::UI::Notifications::IToastNotificat
 
 ToastFailed::IInvoke endp
 
-ToastFailed::ToastFailed proc app:ptr DesktopToastsApp
-
-    @ComAlloc(ToastFailed)
-    mov rcx,app
-    mov [rax].ToastFailed.m_app,rcx
-    ret
-
-ToastFailed::ToastFailed endp
-
 
 ; DesktopToastsApp
 
-DesktopToastsApp::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
-
-    UNREFERENCED_PARAMETER(this)
-    UNREFERENCED_PARAMETER(riid)
-    UNREFERENCED_PARAMETER(ppInterface)
-
-    .return E_NOINTERFACE
-
-DesktopToastsApp::QueryInterface endp
-
-DesktopToastsApp::AddRef proc
-
-    UNREFERENCED_PARAMETER(this)
-
-    .return InterlockedIncrement(&[rcx].DesktopToastsApp.m_refCount)
-
-DesktopToastsApp::AddRef endp
-
-
-DesktopToastsApp::Activate proc appUserModelId:LPCWSTR, invokedArgs:LPCWSTR,
-        data:ptr NOTIFICATION_USER_INPUT_DATA, dataCount:ULONG
-
-    UNREFERENCED_PARAMETER(appUserModelId)
-    UNREFERENCED_PARAMETER(invokedArgs)
-    UNREFERENCED_PARAMETER(data)
-    UNREFERENCED_PARAMETER(dataCount)
-
-    this.SetMessage(L"NotificationActivator - The user clicked on the toast.")
-    ret
-
-DesktopToastsApp::Activate endp
-
-
 DesktopToastsApp::Release proc
 
-    .if ( InterlockedDecrement(&[rcx].DesktopToastsApp.m_refCount) == 0 )
-
-        this.UnregisterActivator()
-    .endif
+    this.UnregisterActivator()
+    free(this)
     ret
 
 DesktopToastsApp::Release endp
-
 
 ; In order to display toasts, a desktop application must have a shortcut on the Start menu.
 ; Also, an AppUserModelID must be set on that shortcut.
@@ -401,14 +296,14 @@ DesktopToastsApp::RegisterAppForNotificationSupport proc
             .endif
         .endif
     .endif
-    .return hr
+    .return( hr )
 
 DesktopToastsApp::RegisterAppForNotificationSupport endp
 
 
 DesktopToastsApp::InstallShortcut proc shortcutPath:PCWSTR, exePath:PCWSTR
 
-    .new shellLink:ptr IShellLink
+    .new shellLink:ptr IShellLink = NULL
     .new hr:HRESULT = CoCreateInstance(&CLSID_ShellLink, NULL,
             CLSCTX_INPROC_SERVER, &IID_IShellLink, &shellLink)
 
@@ -417,8 +312,7 @@ DesktopToastsApp::InstallShortcut proc shortcutPath:PCWSTR, exePath:PCWSTR
         mov hr,shellLink.SetPath(exePath)
         .if (SUCCEEDED(hr))
 
-            .new propertyStore:ptr IPropertyStore
-
+           .new propertyStore:ptr IPropertyStore
             mov hr,shellLink.QueryInterface(&IID_IPropertyStore, &propertyStore)
 
             .if (SUCCEEDED(hr))
@@ -437,18 +331,21 @@ DesktopToastsApp::InstallShortcut proc shortcutPath:PCWSTR, exePath:PCWSTR
                         mov hr,propertyStore.Commit()
                         .if (SUCCEEDED(hr))
 
-                            .new persistFile:ptr IPersistFile
+                           .new persistFile:ptr IPersistFile = NULL
                             mov hr,shellLink.QueryInterface(&IID_IPersistFile, &persistFile)
 
                             .if (SUCCEEDED(hr))
 
                                 mov hr,persistFile.Save(shortcutPath, TRUE)
+                                persistFile.Release()
                             .endif
                         .endif
                     .endif
                 .endif
+                propertyStore.Release()
             .endif
         .endif
+        shellLink.Release()
     .endif
     .return hr
 
@@ -485,16 +382,18 @@ DesktopToastsApp::RegisterActivator proc
     ; Module<OutOfProc> needs a callback registered before it can be used.
     ; Since we don't care about when it shuts down, we'll pass an empty lambda here.
 
+    .new factory:ptr ClassFactory(rcx)
+
     ; If a local server process only hosts the COM object then COM expects
     ; the COM server host to shutdown when the references drop to zero.
     ; Since the user might still be using the program after activating the notification,
     ; we don't want to shutdown immediately.  Incrementing the object count tells COM that
     ; we aren't done yet.
 
-    CoRegisterClassObject(&CLSID_NotificationActivator, rcx,
-        CLSCTX_LOCAL_SERVER, REGCLS_SUSPENDED, &[rcx].DesktopToastsApp.m_cookie)
-
-   .return( S_OK )
+    mov rcx,this
+    CoRegisterClassObject(&CLSID_NotificationActivator, factory, CLSCTX_LOCAL_SERVER,
+            REGCLS_MULTIPLEUSE or REGCLS_SUSPENDED, &[rcx].DesktopToastsApp.m_cookie)
+    ret
 
 DesktopToastsApp::RegisterActivator endp
 
@@ -516,6 +415,7 @@ DesktopToastsApp::UnregisterActivator endp
 DesktopToastsApp::Initialize proc uses rsi rdi hInstance:HINSTANCE
 
     .new hr:HRESULT = this.RegisterAppForNotificationSupport()
+
     .if (SUCCEEDED(hr))
 
         .new wc:WNDCLASSEX = {
@@ -606,24 +506,31 @@ DesktopToastsApp::SetMessage endp
 
 DesktopToastsApp::DisplayToast proc
 
-    .new string:HSTRING = NULL
-    .new toastStatics:ptr Windows::UI::Notifications::IToastNotificationManagerStatics
-    .new hr:HRESULT = WindowsCreateString(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager,
-            lengthof(@CStr(-1))-1, &string)
+    .new hshManager:HSTRING_HEADER
+    .new hsManager:HSTRING = NULL
+    .new toastStatics:ptr Windows::UI::Notifications::IToastNotificationManagerStatics = NULL
+    .new hr:HRESULT = WindowsCreateStringReference(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager,
+            lengthof(@CStr(-1))-1, &hshManager, &hsManager)
+
     .if (SUCCEEDED(hr))
 
-        mov hr,RoGetActivationFactory(string, &IID_IToastNotificationManagerStatics, &toastStatics)
-        WindowsDeleteString(string)
+        mov hr,RoGetActivationFactory(hsManager, &IID_IToastNotificationManagerStatics, &toastStatics)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        .new toastXml:ptr IXmlDocument = NULL
+       .new toastXml:ptr Windows::Data::Xml::Dom::IXmlDocument = NULL
         mov hr,this.CreateToastXml(toastStatics, &toastXml)
         .if (SUCCEEDED(hr))
 
             mov hr,this.CreateToast(toastStatics, toastXml)
+            toastXml.Release()
         .endif
+        toastStatics.Release()
+    .endif
+    .if ( hsManager )
+
+        WindowsDeleteString(hsManager)
     .endif
     .return hr
 
@@ -678,51 +585,70 @@ DesktopToastsApp::SetImageSrc proc imagePath:PCWSTR, toastXml:ptr Windows::Data:
 
     .new imageSrcUri[MAX_PATH]:wchar_t
     .new size:DWORD = ARRAYSIZE(imageSrcUri)
-
     .new hr:HRESULT = UrlCreateFromPath(imagePath, &imageSrcUri, &size, 0)
+
     .if (SUCCEEDED(hr))
 
-        .new nodeList:ptr Windows::Data::Xml::Dom::IXmlNodeList
-        .new string:HSTRING
-        mov hr,WindowsCreateString("image", 5, &string)
+        .new hshImage:HSTRING_HEADER
+        .new hsImage:HSTRING = NULL
+        .new nodeList:ptr Windows::Data::Xml::Dom::IXmlNodeList = NULL
+        .new hr:HRESULT = WindowsCreateStringReference("image", 5, &hshImage, &hsImage)
+
         .if (SUCCEEDED(hr))
 
-            mov hr,toastXml.GetElementsByTagName(string, &nodeList)
-            WindowsDeleteString(string)
+            mov hr,toastXml.GetElementsByTagName(hsImage, &nodeList)
         .endif
 
         .if (SUCCEEDED(hr))
 
-            .new imageNode:ptr Windows::Data::Xml::Dom::IXmlNode = NULL
+           .new imageNode:ptr Windows::Data::Xml::Dom::IXmlNode = NULL
             mov hr,nodeList.Item(0, &imageNode)
+
             .if (SUCCEEDED(hr))
 
-               .new attributes:ptr Windows::Data::Xml::Dom::IXmlNamedNodeMap
+               .new attributes:ptr Windows::Data::Xml::Dom::IXmlNamedNodeMap = NULL
                 mov hr,imageNode.get_Attributes(&attributes)
+
                 .if (SUCCEEDED(hr))
 
-                    .new srcAttribute:ptr IXmlNode
-                    mov hr,WindowsCreateString("src", 3, &string)
+                   .new srcAttribute:ptr Windows::Data::Xml::Dom::IXmlNode = NULL
+                   .new hshSrc:HSTRING_HEADER
+                   .new hsSrc:HSTRING = NULL
+                    mov hr,WindowsCreateStringReference("src", 3, &hshSrc, &hsSrc)
+
                     .if (SUCCEEDED(hr))
 
-                        mov hr,attributes.GetNamedItem(string, &srcAttribute)
-                        WindowsDeleteString(string)
+                        mov hr,attributes.GetNamedItem(hsSrc, &srcAttribute)
                     .endif
 
                     .if (SUCCEEDED(hr))
 
-                        mov hr,WindowsCreateString(&imageSrcUri, wcslen(&imageSrcUri), &string)
+                       .new hshUri:HSTRING_HEADER
+                       .new hsUri:HSTRING = NULL
+                        mov hr,WindowsCreateStringReference(&imageSrcUri, wcslen(&imageSrcUri), &hshUri, &hsUri)
                         .if (SUCCEEDED(hr))
 
-                            mov hr,this.SetNodeValueString(string, srcAttribute, toastXml)
-                            WindowsDeleteString(string)
+                            mov hr,this.SetNodeValueString(hsUri, srcAttribute, toastXml)
+                            WindowsDeleteString(hsUri)
                         .endif
+                        srcAttribute.Release()
+                    .endif
+                    attributes.Release()
+                    .if ( hsSrc )
+
+                        WindowsDeleteString(hsSrc)
                     .endif
                 .endif
+                imageNode.Release()
             .endif
+            nodeList.Release()
+        .endif
+        .if ( hsImage )
+
+            WindowsDeleteString(hsImage)
         .endif
     .endif
-    .return hr
+    .return( hr )
 
 DesktopToastsApp::SetImageSrc endp
 
@@ -732,49 +658,61 @@ DesktopToastsApp::SetImageSrc endp
 DesktopToastsApp::SetTextValues proc uses rsi rdi textValues:ptr PCWSTR,
         textValuesCount:UINT32, toastXml:ptr Windows::Data::Xml::Dom::IXmlDocument
 
-    .new string:HSTRING
-    .new nodeList:ptr Windows::Data::Xml::Dom::IXmlNodeList
-    .new hr:HRESULT = WindowsCreateString("text", 4, &string)
+    .new hshText:HSTRING_HEADER
+    .new hsText:HSTRING = NULL
+    .new hr:HRESULT = WindowsCreateStringReference("text", 4, &hshText, &hsText)
+    .new nodeList:ptr Windows::Data::Xml::Dom::IXmlNodeList = NULL
 
     .if (SUCCEEDED(hr))
 
-        mov hr,toastXml.GetElementsByTagName(string, &nodeList)
-        WindowsDeleteString(string)
+        mov hr,toastXml.GetElementsByTagName(hsText, &nodeList)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        .new nodeListLength:UINT32
+       .new nodeListLength:UINT32
         mov hr,nodeList.get_Length(&nodeListLength)
+
         .if (SUCCEEDED(hr))
 
-            ; If a template was chosen with fewer text elements, also change the amount of strings
-            ; passed to this method.
+            ; If a template was chosen with fewer text elements, also change
+            ; the amount of strings passed to this method.
 
             mov hr,E_INVALIDARG
-            .if textValuesCount <= nodeListLength
+            .if ( textValuesCount <= nodeListLength )
+
                 mov hr,S_OK
             .endif
+
             .if (SUCCEEDED(hr))
+
+                .new textNode:ptr Windows::Data::Xml::Dom::IXmlNode
+                .new hshString:HSTRING_HEADER
+                .new hsString:HSTRING
 
                 .for ( esi = 0: esi < textValuesCount: esi++ )
 
-                    .new textNode:ptr IXmlNode
                     mov hr,nodeList.Item(esi, &textNode)
                     .if (SUCCEEDED(hr))
 
                         mov rax,textValues
                         mov rdi,[rax+rsi*8]
-                        mov hr,WindowsCreateString(rdi, wcslen(rdi), &string)
+                        mov hr,WindowsCreateStringReference(rdi, wcslen(rdi), &hshString, &hsString)
+
                         .if (SUCCEEDED(hr))
 
-                            mov hr,this.SetNodeValueString(string, textNode, toastXml)
-                            WindowsDeleteString(string)
+                            mov hr,this.SetNodeValueString(hsString, textNode, toastXml)
+                            WindowsDeleteString(hsString)
                         .endif
+                        textNode.Release()
                     .endif
                 .endf
             .endif
         .endif
+    .endif
+    .if ( hsText )
+
+        WindowsDeleteString(hsText)
     .endif
     .return( hr )
 
@@ -784,18 +722,22 @@ DesktopToastsApp::SetTextValues endp
 DesktopToastsApp::SetNodeValueString proc inputString:HSTRING,
         node:ptr Windows::Data::Xml::Dom::IXmlNode, xml:ptr Windows::Data::Xml::Dom::IXmlDocument
 
-    .new inputText:ptr Windows::Data::Xml::Dom::IXmlText
+    .new inputText:ptr Windows::Data::Xml::Dom::IXmlText = NULL
     .new hr:HRESULT = xml.CreateTextNode(inputString, &inputText)
     .if (SUCCEEDED(hr))
 
-        .new inputTextNode:ptr Windows::Data::Xml::Dom::IXmlNode
-
+       .new inputTextNode:ptr Windows::Data::Xml::Dom::IXmlNode = NULL
         mov hr,inputText.QueryInterface(&IID_IXmlNode, &inputTextNode)
         .if (SUCCEEDED(hr))
 
-            .new appendedChild:ptr Windows::Data::Xml::Dom::IXmlNode
+           .new appendedChild:ptr Windows::Data::Xml::Dom::IXmlNode = NULL
             mov hr,node.AppendChild(inputTextNode, &appendedChild)
+            .if (SUCCEEDED(hr))
+                ; ...
+            .endif
+            inputTextNode.Release()
         .endif
+        inputText.Release()
     .endif
 
     .return hr
@@ -809,27 +751,28 @@ DesktopToastsApp::CreateToast proc \
         toastManager:ptr Windows::UI::Notifications::IToastNotificationManagerStatics,
         xml:ptr IXmlDocument
 
-    .new string:HSTRING
+    .new hshAppId:HSTRING_HEADER
+    .new hsAppId:HSTRING = NULL
     .new notifier:ptr Windows::UI::Notifications::IToastNotifier = NULL
-    .new hr:HRESULT = WindowsCreateString(AppId, lengthof(@CStr(-1))-1, &string)
+    .new hr:HRESULT = WindowsCreateStringReference(AppId, wcslen(AppId), &hshAppId, &hsAppId)
 
     .if (SUCCEEDED(hr))
 
-        mov hr,toastManager.CreateToastNotifierWithId(string, &notifier)
-        WindowsDeleteString(string)
+        mov hr,toastManager.CreateToastNotifierWithId(hsAppId, &notifier)
     .endif
 
     .if (SUCCEEDED(hr))
 
-       .new factory:ptr Windows::UI::Notifications::IToastNotificationFactory
+        .new hshToastNotification:HSTRING_HEADER
+        .new hsToastNotification:HSTRING = NULL
+        .new factory:ptr Windows::UI::Notifications::IToastNotificationFactory = NULL
 
-       mov hr,WindowsCreateString(RuntimeClass_Windows_UI_Notifications_ToastNotification,
-                lengthof(@CStr(-1))-1, &string)
+        mov hr,WindowsCreateStringReference(RuntimeClass_Windows_UI_Notifications_ToastNotification,
+                lengthof(@CStr(-1))-1, &hshToastNotification, &hsToastNotification)
 
         .if (SUCCEEDED(hr))
 
-            mov hr,RoGetActivationFactory(string, &IID_IToastNotificationFactory, &factory)
-            WindowsDeleteString(string)
+            mov hr,RoGetActivationFactory(hsToastNotification, &IID_IToastNotificationFactory, &factory)
         .endif
 
         .if (SUCCEEDED(hr))
@@ -868,8 +811,19 @@ DesktopToastsApp::CreateToast proc \
                         .endif
                     .endif
                 .endif
+                toast.Release()
             .endif
+            factory.Release()
+            notifier.Release()
         .endif
+        .if ( hsToastNotification )
+
+            WindowsDeleteString(hsToastNotification)
+        .endif
+    .endif
+    .if ( hsAppId )
+
+        WindowsDeleteString(hsAppId)
     .endif
     .return( hr )
 
@@ -879,7 +833,6 @@ DesktopToastsApp::CreateToast endp
 DesktopToastsApp::DesktopToastsApp proc
 
     @ComAlloc(DesktopToastsApp)
-    mov [rax].DesktopToastsApp.m_refCount,1
     ret
 
 DesktopToastsApp::DesktopToastsApp endp
@@ -900,7 +853,7 @@ WndProc proc hwnd:HWND, message:UINT32, wParam:WPARAM, lParam:LPARAM
 
     .new app:ptr DesktopToastsApp = GetWindowLongPtr(hwnd, GWLP_USERDATA)
 
-    .if( app )
+    .if ( app )
 
         .switch message
         .case WM_COMMAND
@@ -927,7 +880,12 @@ WndProc endp
 
 wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, inCmdShow:int_t
 
-    .new hr:HRESULT = RoInitialize(RO_INIT_MULTITHREADED)
+    .new hr:HRESULT = CoInitializeEx(NULL, COINIT_MULTITHREADED)
+
+    .if (SUCCEEDED(hr))
+        mov hr,RoInitialize(RO_INIT_MULTITHREADED)
+    .endif
+
     .if (SUCCEEDED(hr))
 
        .new app:ptr DesktopToastsApp()
@@ -938,6 +896,7 @@ wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPW
         .endif
         app.Release()
         RoUninitialize()
+        CoUninitialize()
     .endif
     .return(hr)
 

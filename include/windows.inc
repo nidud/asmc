@@ -1,4 +1,4 @@
-;.pragma list(push, 0)
+.pragma list(push, 0)
 ifndef _WINDOWS_
 define _WINDOWS_
 
@@ -521,5 +521,5 @@ endif ; _INC_WINDOWS
 
 .pragma cref(pop)
 endif
-;.pragma list(pop)
+.pragma list(pop)
 

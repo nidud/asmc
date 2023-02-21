@@ -14,7 +14,7 @@ include tchar.inc
 
 .data
 UncompressedData label byte
-incbin <..\..\..\..\bin\asmc64.exe>
+incbin <..\..\..\..\..\bin\asmc64.exe>
 UncompressedDataSize equ $ - UncompressedData
 .code
 

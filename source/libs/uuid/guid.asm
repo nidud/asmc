@@ -67,6 +67,7 @@ include WbemIdl.inc
 include dcomp.inc
 include windows.ui.notifications.inc
 include Mshtmlc.inc
+include xmllite.inc
 
 include inc/ahadmin_i.inc
 include inc/CDOSys_I.inc

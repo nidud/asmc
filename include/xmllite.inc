@@ -236,13 +236,13 @@ DEFINE_IIDX(IXmlReader, "7279FC81-709D-4095-B63D-69FE4B0D9030")
     MoveToNextAttribute proc
     MoveToAttributeByName proc :LPCWSTR, :LPCWSTR
     MoveToElement	proc
-    GetQualifiedName	proc
-    GetNamespaceUri	proc
-    GetLocalName	proc
-    GetPrefix		proc
-    GetValue		proc
+    GetQualifiedName	proc :LPCWSTR, :ptr UINT
+    GetNamespaceUri	proc :LPCWSTR, :ptr UINT
+    GetLocalName	proc :LPCWSTR, :ptr UINT
+    GetPrefix		proc :LPCWSTR, :ptr UINT
+    GetValue		proc :LPCWSTR, :ptr UINT
     ReadValueChunk	proc :ptr, :UINT, :ptr
-    GetBaseUri		proc
+    GetBaseUri		proc :LPCWSTR, :ptr UINT
     IsDefault		proc
     IsEmptyElement	proc
     GetLineNumber	proc :ptr

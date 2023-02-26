@@ -9,18 +9,18 @@ include tchar.inc
 
 .code
 
-main proc
+_tmain proc
 
     .new connectivityHint:NL_NETWORK_CONNECTIVITY_HINT = {0}
     .if ( GetNetworkConnectivityHint(&connectivityHint) )
 
         ; handle the error somehow
 
-        perror("GetNetworkConnectivityHint()")
+        _tperror("GetNetworkConnectivityHint()")
        .return(1)
     .endif
 
-     printf(
+     _tprintf(
         "NL_NETWORK_CONNECTIVITY_HINT:\n"
         " ConnectivityLevel:     %d\n"
         " ConnectivityCost:      %d\n"
@@ -35,6 +35,6 @@ main proc
 
     .return(0)
 
-main endp
+_tmain endp
 
     end _tstart

@@ -1811,23 +1811,23 @@ DEFINE_IIDX(IUriRuntimeClass, "9E365E57-48B2-4160-956F-C7385120BBFC")
 
 .comdef IUriRuntimeClass : public IInspectable
 
-    get_AbsoluteUri	proc :ptr
-    get_DisplayUri	proc :ptr
-    get_Domain		proc :ptr
-    get_Extension	proc :ptr
-    get_Fragment	proc :ptr
-    get_Host		proc :ptr
-    get_Password	proc :ptr
-    get_Path		proc :ptr
-    get_Query		proc :ptr
-    get_QueryParsed	proc :ptr
-    get_RawUri		proc :ptr
-    get_SchemeName	proc :ptr
-    get_UserName	proc :ptr
-    get_Port		proc :ptr
-    get_Suspicious	proc :ptr
+    get_AbsoluteUri	proc :ptr HSTRING
+    get_DisplayUri	proc :ptr HSTRING
+    get_Domain		proc :ptr HSTRING
+    get_Extension	proc :ptr HSTRING
+    get_Fragment	proc :ptr HSTRING
+    get_Host		proc :ptr HSTRING
+    get_Password	proc :ptr HSTRING
+    get_Path		proc :ptr HSTRING
+    get_Query		proc :ptr HSTRING
+    get_QueryParsed	proc :ptr ptr
+    get_RawUri		proc :ptr HSTRING
+    get_SchemeName	proc :ptr HSTRING
+    get_UserName	proc :ptr HSTRING
+    get_Port		proc :ptr INT32
+    get_Suspicious	proc :ptr boolean
     Equals		proc :ptr, :ptr
-    CombineUri		proc :HSTRING, :ptr
+    CombineUri		proc :HSTRING, :ptr ptr
    .ends
 
 endif
@@ -1868,8 +1868,8 @@ DEFINE_IIDX(IUriRuntimeClassFactory, "44A9796F-723E-4FDF-A218-033E75B0C084")
 
 .comdef IUriRuntimeClassFactory : public IInspectable
 
-    CreateUri		proc :HSTRING, :ptr
-    CreateWithRelativeUri proc :HSTRING, :HSTRING, :ptr
+    CreateUri		proc :HSTRING, :ptr ptr
+    CreateWithRelativeUri proc :HSTRING, :HSTRING, :ptr ptr
    .ends
 
 endif

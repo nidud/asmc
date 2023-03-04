@@ -15,8 +15,7 @@ main proc
     wprintf(L"TIME_ZONE_INFORMATION:\n .StandardName: %s\n", &TimeZoneInformation.StandardName)
     wprintf(L" .DaylightName: %s\n\n", &TimeZoneInformation.DaylightName)
 
-    FindFirstFileA("test.asm", &FindFileData)
-    FindClose(rax)
+    FindClose(FindFirstFileA(__FILE__, &FindFileData))
 
     .new dateStringW[MAX_PATH]:wchar_t
     .new dateStringA[MAX_PATH]:char_t

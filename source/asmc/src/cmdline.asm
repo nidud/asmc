@@ -77,7 +77,8 @@ Options global_options {
         1,                      ; .floatdigits
         4,                      ; .flt_size
         0,                      ; .pic
-        0 }                     ; .endbr
+        0,                      ; .endbr
+        0 }                     ; .dotname
 
     align size_t
 
@@ -557,6 +558,9 @@ endif
     .case 'xC'              ; -Cx
         mov Options.case_sensitive,0
         mov Options.convert_uppercase,0
+        .return
+    .case 'ntod'            ; -dotname
+        mov Options.dotname,TRUE
         .return
     .case 'bdne'            ; -endbr
         mov Options.endbr,1

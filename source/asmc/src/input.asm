@@ -721,9 +721,9 @@ GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
         ; update value of @FileCur variable
 
         .for ( rbx = ModuleInfo.src_stack: [rbx].type != SIT_FILE: rbx = [rbx].next )
-
-            UpdateFileCur( GetFName( [rbx].srcfile ) )
         .endf
+        UpdateFileCur( GetFName( [rbx].srcfile ) )
+
 if FILESEQ
         .if ( Options.line_numbers && Parse_Pass == PASS_1 )
             AddFileSeq( [rbx].srcfile )

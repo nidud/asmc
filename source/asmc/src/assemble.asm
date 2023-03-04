@@ -637,6 +637,7 @@ endif
     mov ModuleInfo.flt_size,Options.flt_size
     mov ModuleInfo.pic,Options.pic
     mov ModuleInfo.endbr,Options.endbr
+    mov ModuleInfo.dotname,Options.dotname
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags

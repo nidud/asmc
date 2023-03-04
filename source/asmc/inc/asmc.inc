@@ -550,6 +550,7 @@ define SIT_MACRO       1
     flt_size                db ?    ; option float:<4|8>
     pic                     db ?    ; -fpic | -fno-pic
     endbr                   db ?    ; -endbr
+    dotname                 db ?    ; -dotname : option dotname
    .ends
 
 .template module_vars

@@ -369,8 +369,8 @@ DEFINE_IIDX(__FIVectorView_1_HSTRING, "2f13c006-a03a-5f69-b090-75a43e33423e")
 
 .comdef __FIVectorView_1_HSTRING : public IInspectable
 
-    GetAt		proc :SINT, :ptr
-    get_Size		proc :dword
+    GetAt		proc :UINT32, :ptr HSTRING
+    get_Size		proc :ptr UINT32
     IndexOf		proc :HSTRING, :dword, :ptr
     GetMany		proc :SINT, :SINT, :ptr, :dword
    .ends
@@ -384,9 +384,9 @@ DEFINE_IIDX(__FIVector_1_HSTRING, "98b9acc1-4b56-532e-ac73-03d5291cca90")
 
 .comdef __FIVector_1_HSTRING : public IInspectable
 
-    GetAt		proc :SINT, :ptr
-    get_Size		proc :dword
-    GetView		proc :ptr
+    GetAt		proc :UINT32, :ptr HSTRING
+    get_Size		proc :ptr UINT32
+    GetView		proc :ptr ptr __FIVectorView_1_HSTRING
     IndexOf		proc :HSTRING, :dword, :ptr
     SetAt		proc :SINT, :HSTRING
     InsertAt		proc :SINT, :HSTRING

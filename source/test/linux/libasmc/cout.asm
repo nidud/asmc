@@ -1,9 +1,3 @@
-; COUT.ASM--
-;
-; Copyright (c) The Asmc Contributors. All rights reserved.
-; Consult your license regarding permissions and restrictions.
-;
-
 include iostream
 
     .code
@@ -33,7 +27,8 @@ main proc
     cout << "unsigned int   (-1): " << ebx          << endl
     cout << "unsigned int64 (-1): " << rbx          << endl
     cout << endl
-    ret
+
+   .return(0)
 
 main endp
 

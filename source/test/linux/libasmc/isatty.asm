@@ -1,8 +1,3 @@
-; ISATTY.ASM--
-;
-; Copyright (c) The Asmc Contributors. All rights reserved.
-; Consult your license regarding permissions and restrictions.
-;
 
 include io.inc
 include fcntl.inc
@@ -12,8 +7,9 @@ include stdio.inc
 
 main proc
 
+   .new fd:int_t = open(__FILE__, O_RDONLY)
+
     printf( "isatty(1): %d\n", isatty(1))
-   .new fd:int_t = open("isatty.asm", O_RDONLY)
     printf( "handle: %d\n", fd )
     .if ( fd > 0 )
         printf( "isatty(fd): %d\n", isatty(fd))
@@ -21,7 +17,7 @@ main proc
     .else
         perror("open(\"isatty.asm\", O_RDONLY)")
     .endif
-    ret
+    .return(0)
 
 main endp
 

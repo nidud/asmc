@@ -22,6 +22,7 @@ define __windows2Eweb2Ehttp_h__
 include inspectable.inc
 include AsyncInfo.inc
 include EventToken.inc
+include windowscontracts.inc
 include Windows.Foundation.inc
 include Windows.Networking.Sockets.inc
 
@@ -29,10 +30,32 @@ include Windows.Networking.Sockets.inc
 .namespace Web
 .namespace Http
 
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x10000
+
 .enum HttpVersion {
-    HttpVersion_None	= 0,
-    HttpVersion_Http10	= 1,
-    HttpVersion_Http11	= 2
+    HttpVersion_None = 0,
+    HttpVersion_Http10 = 1,
+    HttpVersion_Http11 = 2,
+    HttpVersion_Http20 = 3,
+    }
+
+.enum HttpProgressStage {
+    HttpProgressStage_None		= 0,
+    HttpProgressStage_DetectingProxy	= 10,
+    HttpProgressStage_ResolvingName	= 20,
+    HttpProgressStage_ConnectingToServer = 30,
+    HttpProgressStage_NegotiatingSsl	= 40,
+    HttpProgressStage_SendingHeaders	= 50,
+    HttpProgressStage_SendingContent	= 60,
+    HttpProgressStage_WaitingForResponse = 70,
+    HttpProgressStage_ReceivingHeaders	= 80,
+    HttpProgressStage_ReceivingContent	= 90,
+    }
+
+.enum HttpResponseMessageSource {
+    HttpResponseMessageSource_None = 0,
+    HttpResponseMessageSource_Cache = 1,
+    HttpResponseMessageSource_Network = 2,
     }
 
 .enum HttpCompletionOption {
@@ -100,25 +123,8 @@ include Windows.Networking.Sockets.inc
     HttpStatusCode_NotExtended	= 510,
     HttpStatusCode_NetworkAuthenticationRequired	= 511
     }
+endif
 
-.enum HttpProgressStage {
-    HttpProgressStage_None	= 0,
-    HttpProgressStage_DetectingProxy	= 10,
-    HttpProgressStage_ResolvingName	= 20,
-    HttpProgressStage_ConnectingToServer	= 30,
-    HttpProgressStage_NegotiatingSsl	= 40,
-    HttpProgressStage_SendingHeaders	= 50,
-    HttpProgressStage_SendingContent	= 60,
-    HttpProgressStage_WaitingForResponse	= 70,
-    HttpProgressStage_ReceivingHeaders	= 80,
-    HttpProgressStage_ReceivingContent	= 90
-    }
-
-.enum HttpResponseMessageSource {
-    HttpResponseMessageSource_None	= 0,
-    HttpResponseMessageSource_Cache	= 1,
-    HttpResponseMessageSource_Network	= 2
-    }
 
 .template HttpProgress
     Stage			Windows::Web::Http::HttpProgressStage ?
@@ -132,6 +138,9 @@ include Windows.Networking.Sockets.inc
 .endn
 .endn
 .endn
+
+include Windows.Security.Cryptography.Certificates.inc
+include Windows.Storage.Streams.inc
 
 include Windows.Web.Http.Filters.inc
 include Windows.Web.Http.Headers.inc
@@ -268,7 +277,7 @@ DEFINE_IIDX(__FIAsyncOperationProgressHandler_2_HSTRING_Windows__CWeb__CHttp__CH
 
 .comdef __FIAsyncOperationProgressHandler_2_HSTRING_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    _Invoke		proc :ptr, :Windows::Web::Http::HttpProgress
+    IInvoke		proc :ptr, :Windows::Web::Http::HttpProgress
    .ends
 
 endif
@@ -279,7 +288,7 @@ DEFINE_IIDX(__FIAsyncOperationWithProgressCompletedHandler_2_HSTRING_Windows__CW
 
 .comdef __FIAsyncOperationWithProgressCompletedHandler_2_HSTRING_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    _Invoke		proc :ptr, :AsyncStatus
+    IInvoke		proc :ptr, :AsyncStatus
    .ends
 
 endif
@@ -305,7 +314,7 @@ DEFINE_IIDX(__FIAsyncOperationProgressHandler_2_Windows__CStorage__CStreams__CIB
 
 .comdef __FIAsyncOperationProgressHandler_2_Windows__CStorage__CStreams__CIBuffer_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    _Invoke		proc :ptr, :Windows::Web::Http::HttpProgress
+    IInvoke		proc :ptr, :Windows::Web::Http::HttpProgress
    .ends
 
 endif
@@ -316,7 +325,7 @@ DEFINE_IIDX(__FIAsyncOperationWithProgressCompletedHandler_2_Windows__CStorage__
 
 .comdef __FIAsyncOperationWithProgressCompletedHandler_2_Windows__CStorage__CStreams__CIBuffer_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    _Invoke		proc :ptr, :AsyncStatus
+    IInvoke		proc :ptr, :AsyncStatus
    .ends
 
 endif
@@ -342,7 +351,7 @@ DEFINE_IIDX(__FIAsyncOperationProgressHandler_2_Windows__CStorage__CStreams__CII
 
 .comdef __FIAsyncOperationProgressHandler_2_Windows__CStorage__CStreams__CIInputStream_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    _Invoke		proc :ptr, :Windows::Web::Http::HttpProgress
+    IInvoke		proc :ptr, :Windows::Web::Http::HttpProgress
    .ends
 
 endif
@@ -353,7 +362,7 @@ DEFINE_IIDX(__FIAsyncOperationWithProgressCompletedHandler_2_Windows__CStorage__
 
 .comdef __FIAsyncOperationWithProgressCompletedHandler_2_Windows__CStorage__CStreams__CIInputStream_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    _Invoke		proc :ptr, :AsyncStatus
+    IInvoke		proc :ptr, :AsyncStatus
    .ends
 
 endif
@@ -379,7 +388,7 @@ DEFINE_IIDX(__FIAsyncOperationProgressHandler_2_Windows__CWeb__CHttp__CHttpRespo
 
 .comdef __FIAsyncOperationProgressHandler_2_Windows__CWeb__CHttp__CHttpResponseMessage_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    _Invoke		proc :ptr, :Windows::Web::Http::HttpProgress
+    IInvoke		proc :ptr, :ptr Windows::Web::Http::HttpProgress
    .ends
 
 endif
@@ -390,7 +399,7 @@ DEFINE_IIDX(__FIAsyncOperationWithProgressCompletedHandler_2_Windows__CWeb__CHtt
 
 .comdef __FIAsyncOperationWithProgressCompletedHandler_2_Windows__CWeb__CHttp__CHttpResponseMessage_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    _Invoke		proc :ptr, :AsyncStatus
+    IInvoke		proc :ptr, :AsyncStatus
    .ends
 
 endif
@@ -405,13 +414,11 @@ DEFINE_IIDX(__FIAsyncOperationWithProgress_2_Windows__CWeb__CHttp__CHttpResponse
     get_Progress	proc :ptr
     put_Completed	proc :ptr
     get_Completed	proc :ptr
-    GetResults		proc :ptr
+    GetResults		proc :ptr ptr Windows::Web::Http::IHttpResponseMessage
    .ends
 
 endif
 
-
-define InterfaceName_Windows_Web_Http_IHttpClientFactory <L"Windows.Web.Http.IHttpClientFactory">
 
 .namespace Windows
 .namespace Web
@@ -419,6 +426,7 @@ define InterfaceName_Windows_Web_Http_IHttpClientFactory <L"Windows.Web.Http.IHt
 
 ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpClientFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CWeb_CHttp_CIHttpClientFactory_INTERFACE_DEFINED__
+define InterfaceName_Windows_Web_Http_IHttpClientFactory <L"Windows.Web.Http.IHttpClientFactory">
 DEFINE_IIDX(IHttpClientFactory, "C30C4ECA-E3FA-4F99-AFB4-63CC65009462")
 
 .comdef IHttpClientFactory : public IInspectable
@@ -448,6 +456,27 @@ DEFINE_IIDX(IHttpClient, "7FDA1151-3574-4880-A8BA-E6B1E0061F3D")
     get_DefaultRequestHeaders proc :ptr
    .ends
 
+endif
+
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x80000
+ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpClient2_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CWeb_CHttp_CIHttpClient2_INTERFACE_DEFINED__
+define InterfaceName_Windows_Web_Http_IHttpClient2 <"Windows.Web.Http.IHttpClient2">
+DEFINE_IIDX(IHttpClient2, "cdd83348-e8b7-4cec-b1b0-dc455fe72c92")
+
+.comdef IHttpClient2 : public IInspectable
+    TryDeleteAsync	proc :ptr, :ptr ptr
+    TryGetAsync		proc :ptr, :ptr ptr
+    TryGetAsync2	proc :ptr, :Windows::Web::Http::HttpCompletionOption, :ptr ptr
+    TryGetBufferAsync	proc :ptr, :ptr ptr
+    TryGetInputStreamAsync proc :ptr, :ptr ptr
+    TryGetStringAsync	proc :ptr, :ptr ptr
+    TryPostAsync	proc :ptr, :ptr, :ptr ptr
+    TryPutAsync		proc :ptr, :ptr, :ptr ptr
+    TrySendRequestAsync proc :ptr, :ptr ptr
+    TrySendRequestAsync2 proc :ptr, :Windows::Web::Http::HttpCompletionOption, :ptr ptr
+   .ends
+endif
 endif
 
 ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpContent_INTERFACE_DEFINED__
@@ -618,6 +647,21 @@ DEFINE_IIDX(IHttpResponseMessageFactory, "52A8AF99-F095-43DA-B60F-7CFC2BC7EA2F")
 
 endif
 
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x80000
+ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpRequestResult_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CWeb_CHttp_CIHttpRequestResult_INTERFACE_DEFINED__
+define InterfaceName_Windows_Web_Http_IHttpRequestResult <"Windows.Web.Http.IHttpRequestResult">
+DEFINE_IIDX(IHttpRequestResult, "6acf4da8-b5eb-4a35-a902-4217fbe820c5")
+
+.comdef IHttpRequestResult : public IInspectable
+    get_ExtendedError	proc :ptr
+    get_RequestMessage	proc :ptr ptr
+    get_ResponseMessage proc :ptr ptr
+    get_Succeeded	proc :ptr
+   .ends
+endif
+endif
+
 ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpResponseMessage_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CWeb_CHttp_CIHttpResponseMessage_INTERFACE_DEFINED__
 define InterfaceName_Windows_Web_Http_IHttpResponseMessage <L"Windows.Web.Http.IHttpResponseMessage">
@@ -695,6 +739,54 @@ DEFINE_IIDX(IHttpFormUrlEncodedContentFactory, "43F0138C-2F73-4302-B5F3-EAE9238A
 
 endif
 
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x80000
+ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpGetBufferResult_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CWeb_CHttp_CIHttpGetBufferResult_INTERFACE_DEFINED__
+define InterfaceName_Windows_Web_Http_IHttpGetBufferResult <"Windows.Web.Http.IHttpGetBufferResult">
+DEFINE_IIDX(IHttpGetBufferResult, "53d08e7c-e209-404e-9a49-742d8236fd3a")
+
+.comdef IHttpGetBufferResult : public IInspectable
+    get_ExtendedError	proc :ptr
+    get_RequestMessage	proc :ptr ptr
+    get_ResponseMessage proc :ptr ptr
+    get_Succeeded	proc :ptr
+    get_Value		proc :ptr ptr
+   .ends
+endif
+endif
+
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x80000
+ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpGetInputStreamResult_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CWeb_CHttp_CIHttpGetInputStreamResult_INTERFACE_DEFINED__
+define InterfaceName_Windows_Web_Http_IHttpGetInputStreamResult <"Windows.Web.Http.IHttpGetInputStreamResult">
+DEFINE_IIDX(IHttpGetInputStreamResult, "d5d63463-13aa-4ee0-be95-a0c39fe91203")
+
+.comdef IHttpGetInputStreamResult : public IInspectable
+    get_ExtendedError	proc :ptr
+    get_RequestMessage	proc :ptr ptr
+    get_ResponseMessage proc :ptr ptr
+    get_Succeeded	proc :ptr
+    get_Value		proc :ptr ptr
+   .ends
+endif
+endif
+
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x80000
+ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpGetStringResult_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CWeb_CHttp_CIHttpGetStringResult_INTERFACE_DEFINED__
+define InterfaceName_Windows_Web_Http_IHttpGetStringResult <"Windows.Web.Http.IHttpGetStringResult">
+DEFINE_IIDX(IHttpGetStringResult, "9bac466d-8509-4775-b16d-8953f47a7f5f")
+
+.comdef IHttpGetStringResult : public IInspectable
+    get_ExtendedError	proc :ptr
+    get_RequestMessage	proc :ptr ptr
+    get_ResponseMessage proc :ptr ptr
+    get_Succeeded	proc :ptr
+    get_Value		proc :ptr
+   .ends
+endif
+endif
+
 ifndef ____x_ABI_CWindows_CWeb_CHttp_CIHttpMultipartContentFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CWeb_CHttp_CIHttpMultipartContentFactory_INTERFACE_DEFINED__
 define InterfaceName_Windows_Web_Http_IHttpMultipartContentFactory <L"Windows.Web.Http.IHttpMultipartContentFactory">
@@ -750,61 +842,109 @@ endif
 .endn
 .endn
 
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpRequestMessage_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpRequestMessage_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpRequestMessage <L"Windows.Web.Http.HttpRequestMessage">
-endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpResponseMessage_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpResponseMessage_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpResponseMessage <L"Windows.Web.Http.HttpResponseMessage">
-endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpClient_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpClient_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpClient <L"Windows.Web.Http.HttpClient">
-endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpCookie_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpCookie_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpCookie <L"Windows.Web.Http.HttpCookie">
-endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpCookieCollection_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpCookieCollection_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpCookieCollection <L"Windows.Web.Http.HttpCookieCollection">
-endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpMethod_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpMethod_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpMethod <L"Windows.Web.Http.HttpMethod">
-endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpTransportInformation_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpTransportInformation_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpTransportInformation <L"Windows.Web.Http.HttpTransportInformation">
-endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpStringContent_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpStringContent_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpStringContent <L"Windows.Web.Http.HttpStringContent">
-endif
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x10000
+
 ifndef RUNTIMECLASS_Windows_Web_Http_HttpBufferContent_DEFINED
 define RUNTIMECLASS_Windows_Web_Http_HttpBufferContent_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpBufferContent <L"Windows.Web.Http.HttpBufferContent">
+define RuntimeClass_Windows_Web_Http_HttpBufferContent <"Windows.Web.Http.HttpBufferContent">
 endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpStreamContent_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpStreamContent_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpStreamContent <L"Windows.Web.Http.HttpStreamContent">
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpClient_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpClient_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpClient <"Windows.Web.Http.HttpClient">
 endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpFormUrlEncodedContent_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpFormUrlEncodedContent_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpFormUrlEncodedContent <L"Windows.Web.Http.HttpFormUrlEncodedContent">
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpCookie_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpCookie_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpCookie <"Windows.Web.Http.HttpCookie">
 endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpMultipartContent_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpMultipartContent_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpMultipartContent <L"Windows.Web.Http.HttpMultipartContent">
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpCookieCollection_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpCookieCollection_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpCookieCollection <"Windows.Web.Http.HttpCookieCollection">
 endif
-ifndef RUNTIMECLASS_Windows_Web_Http_HttpMultipartFormDataContent_DEFINED
-define RUNTIMECLASS_Windows_Web_Http_HttpMultipartFormDataContent_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpMultipartFormDataContent <L"Windows.Web.Http.HttpMultipartFormDataContent">
-endif
+
 ifndef RUNTIMECLASS_Windows_Web_Http_HttpCookieManager_DEFINED
 define RUNTIMECLASS_Windows_Web_Http_HttpCookieManager_DEFINED
-define RuntimeClass_Windows_Web_Http_HttpCookieManager <L"Windows.Web.Http.HttpCookieManager">
+define RuntimeClass_Windows_Web_Http_HttpCookieManager <"Windows.Web.Http.HttpCookieManager">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpFormUrlEncodedContent_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpFormUrlEncodedContent_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpFormUrlEncodedContent <"Windows.Web.Http.HttpFormUrlEncodedContent">
+endif
+endif
+
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x80000
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpGetBufferResult_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpGetBufferResult_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpGetBufferResult <"Windows.Web.Http.HttpGetBufferResult">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpGetInputStreamResult_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpGetInputStreamResult_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpGetInputStreamResult <"Windows.Web.Http.HttpGetInputStreamResult">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpGetStringResult_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpGetStringResult_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpGetStringResult <"Windows.Web.Http.HttpGetStringResult">
+endif
+endif
+
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x10000
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpMethod_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpMethod_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpMethod <"Windows.Web.Http.HttpMethod">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpMultipartContent_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpMultipartContent_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpMultipartContent <"Windows.Web.Http.HttpMultipartContent">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpMultipartFormDataContent_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpMultipartFormDataContent_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpMultipartFormDataContent <"Windows.Web.Http.HttpMultipartFormDataContent">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpRequestMessage_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpRequestMessage_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpRequestMessage <"Windows.Web.Http.HttpRequestMessage">
+endif
+endif
+
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x80000
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpRequestResult_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpRequestResult_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpRequestResult <"Windows.Web.Http.HttpRequestResult">
+endif
+
+endif
+
+if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x10000
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpResponseMessage_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpResponseMessage_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpResponseMessage <"Windows.Web.Http.HttpResponseMessage">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpStreamContent_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpStreamContent_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpStreamContent <"Windows.Web.Http.HttpStreamContent">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpStringContent_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpStringContent_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpStringContent <"Windows.Web.Http.HttpStringContent">
+endif
+
+ifndef RUNTIMECLASS_Windows_Web_Http_HttpTransportInformation_DEFINED
+define RUNTIMECLASS_Windows_Web_Http_HttpTransportInformation_DEFINED
+define RuntimeClass_Windows_Web_Http_HttpTransportInformation <"Windows.Web.Http.HttpTransportInformation">
+endif
+
 endif
 
 endif

@@ -1,14 +1,12 @@
 
-include io.inc
 include stdio.inc
-include string.inc
 
 .code
 
 main proc
 
     printf( "Hello Linux!\n" )
-    ret
+   .return( 0 )
 
 main endp
 

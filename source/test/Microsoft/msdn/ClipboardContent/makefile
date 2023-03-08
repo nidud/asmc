@@ -1,4 +1,4 @@
 ClipboardContent.exe:
-    asmc64 -pe -ws -Fl -Sg $*.asm
+    asmc64 -pe -ws $*.asm
     $@
     pause

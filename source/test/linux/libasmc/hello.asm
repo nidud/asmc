@@ -5,7 +5,7 @@ include stdio.inc
 main proc
 
     printf("Hello libasmc!\n")
-    ret
+   .return(0)
 
 main endp
 

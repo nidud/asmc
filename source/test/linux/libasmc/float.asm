@@ -6,9 +6,9 @@ pi equ <3.141592653589793238462643383279502884197169399375105820974945>
 
 main proc
 
-   .new q:real16 = pi
-   .new l:real10 = pi
-   .new d:real8 = pi
+   .new q:real16 = pi ; __float128  - 'll'
+   .new l:real10 = pi ; long double - 'L'
+   .new d:real8  = pi ; double
 
     printf("%.34llf - %%.34llf\n", q)
     printf("%g - %%g\n", d)

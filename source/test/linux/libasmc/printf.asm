@@ -1,8 +1,3 @@
-; PRINTF.ASM--
-;
-; Copyright (c) The Asmc Contributors. All rights reserved.
-; Consult your license regarding permissions and restrictions.
-;
 
 include stdio.inc
 
@@ -31,7 +26,7 @@ main proc
     printf( "unsigned short (-1): %u\n", bx )
     printf( "unsigned int   (-1): %u\n", ebx )
     printf( "unsigned int64 (-1): %llu\n\n", rbx )
-    ret
+   .return( 0 )
 
 main endp
 

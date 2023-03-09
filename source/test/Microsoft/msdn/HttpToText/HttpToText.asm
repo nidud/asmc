@@ -16,6 +16,7 @@ include winrt/windows.management.deployment.inc
 include winrt/windows.Data.Html.inc
 include winrt/windows.web.http.inc
 include stdio.inc
+include stringapiset.inc
 include tchar.inc
 
 option dllimport:none
@@ -99,7 +100,67 @@ CreateHttp proc instance:ptr ptr Windows::Web::Http::IHttpClient
 CreateHttp endp
 
 
-HttpToText proc url:wstring_t
+CreateFiles proc h_html:HSTRING, h_text:HSTRING, name:wstring_t
+
+   .new wlen:size_t
+   .new blen:UINT32
+   .new h:HANDLE
+   .new file[256]:wchar_t
+   .new h_len:UINT32 = 0
+   .new t_len:UINT32 = 0
+   .new html:wstring_t = WindowsGetStringRawBuffer(h_html, &h_len)
+   .new text:wstring_t = WindowsGetStringRawBuffer(h_text, &t_len)
+    imul eax,h_len,2
+   .new size:UINT32 = eax
+   .new buff:string_t = HeapAlloc(GetProcessHeap(), 0, size)
+   .new hr:HRESULT = S_OK
+
+    .if ( buff == NULL )
+
+        mov hr,E_OUTOFMEMORY
+    .endif
+
+    .if (SUCCEEDED(hr))
+
+        mov blen,WideCharToMultiByte(CP_ACP, 0, html, h_len, buff, size, nullptr, nullptr)
+        mov h,CreateFile(wcscat(wcscpy(&file, name), ".htm"), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0)
+
+        .if ( h == INVALID_HANDLE_VALUE )
+
+            mov hr,E_HANDLE
+        .else
+
+            wprintf("Writing file %s (%d)\n", &file, blen)
+            WriteFile(h, buff, blen, &wlen, 0)
+            CloseHandle(h)
+        .endif
+    .endif
+
+    .if (SUCCEEDED(hr))
+
+        mov blen,WideCharToMultiByte(CP_ACP, 0, text, t_len, buff, size, nullptr, nullptr)
+        mov h,CreateFile(wcscat(wcscpy(&file, name), ".txt"), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0)
+
+        .if ( h == INVALID_HANDLE_VALUE )
+
+            mov hr,E_HANDLE
+        .else
+
+            wprintf("Writing file %s (%d)\n", &file, blen)
+            WriteFile(h, buff, blen, &wlen, 0)
+            CloseHandle(h)
+        .endif
+    .endif
+    .if ( buff )
+
+        HeapFree(GetProcessHeap(), 0, buff)
+    .endif
+    .return(hr)
+
+CreateFiles endp
+
+
+HttpToText proc url:wstring_t, file:wstring_t
 
     .new html:ptr Windows::Data::Html::IHtmlUtilities = nullptr
     .new http:ptr ptr Windows::Web::Http::IHttpClient = nullptr
@@ -145,9 +206,7 @@ HttpToText proc url:wstring_t
 
                             .if (SUCCEEDED(hr))
 
-                               .new length:UINT32
-                               .new text:wstring_t = WindowsGetStringRawBuffer(string, &length)
-                                wprintf(text)
+                                mov hr,CreateFiles(res, string, file)
                             .endif
                         .endif
                     .endif
@@ -166,18 +225,22 @@ HttpToText endp
 
 wmain proc argc:int_t, argv:ptr wstring_t
 
+    .new file:ptr wchar_t = "url"
     .new hr:HRESULT = E_INVALIDARG
     .if ( ecx < 2 )
 
-        wprintf("Usage: %s url\n", [rdx])
+        wprintf("Usage: %s <url> [[file_name]]\n", [rdx])
     .else
+        .if ( ecx == 3 )
+            mov file,[rcx+16]
+        .endif
         mov hr,RoInitialize(RO_INIT_MULTITHREADED)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        mov rdx,argv
-        mov hr,HttpToText([rdx+8])
+        mov rcx,argv
+        mov hr,HttpToText([rcx+8], file)
         RoUninitialize()
     .endif
 

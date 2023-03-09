@@ -3,6 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+; Change history:
+; 2023-03-08 - added namespace and interface for Windows 10
+;
 
 include stdio.inc
 include stdlib.inc
@@ -17,7 +20,7 @@ include tchar.inc
 
     option dllimport:none
 
-define __H2INC__    106
+define __H2INC__    107
 
 define MAXLINE      512
 define MAXBUF       0x100000
@@ -46,7 +49,9 @@ define FL_TYPEDEF   0x08
     T_UNDEF,
     T_ERROR,
     T_PRAGMA,
+    T_NAMESPACE,
     T_INTERFACE,
+    T_MIDL_INTERFACE, ; Windows 10
     T_EXTERN,
     T_INLINE,
     T_DEFINE_GUID
@@ -999,6 +1004,13 @@ tokenize proc uses rsi rdi string:string_t
                .return(T_INLINE)
             .endif
             .endc
+        .case 9
+            .if !memcmp(rdi, "namespace", 9)
+                mov csize,9
+                mov ctoken,T_NAMESPACE
+               .return(T_NAMESPACE)
+            .endif
+            .endc
         .case 11
             .if !memcmp(rdi, "DEFINE_GUID", 11)
                 mov csize,11
@@ -1011,6 +1023,11 @@ tokenize proc uses rsi rdi string:string_t
                 mov csize,14
                 mov ctoken,T_DEFINE_GUID
                .return(T_DEFINE_GUID)
+            .endif
+            .if !memcmp(rdi, "MIDL_INTERFACE", 14)
+                mov csize,14
+                mov ctoken,T_MIDL_INTERFACE
+               .return(T_MIDL_INTERFACE)
             .endif
             .endc
         .endsw
@@ -2100,6 +2117,53 @@ parse_typedef proc uses rsi rdi rbx
 parse_typedef endp
 
 
+parse_midl_interface proc uses rsi rdi rbx
+
+    .new iid[64]:char_t
+
+    ; MIDL_INTERFACE("...");
+
+    mov rdi,tokpos
+    .if strrchr(rdi, ';')
+        mov [rax],0
+    .endif
+    .return .if !strchr(rdi, '"')
+    strcpy(&iid, rax)
+
+    .if !strchr(strcpy(tempbuf, ltokstart(getline(rdi))), ':')
+        .return error(rdi)
+    .endif
+    mov [rax-1],0
+    oprintf("DEFINE_IIDX(%s, %s\n\n", tempbuf, &iid)
+    oprintf(".comdef %s\n", ltokstart(rdi))
+
+    getline(rdi) ; {
+    getline(rdi) ; public:
+
+    .while 1
+
+        mov rbx,ltokstart(getline(rdi))
+        .break .if ( cl ==  '}' )
+        .continue .if ( cl ==  0 )
+
+        .break .if !strchr(concat_line(rdi), '(')
+
+        lea rbx,[rax+1]
+        mov rsi,prevtokz(rax, rdi)
+        oprintf("    %-19s proc", rsi)
+        parse_protoargs(ltokstart(rbx), 0)
+        oprintf("\n")
+    .endw
+    oprintf("   .ends\n")
+    .while memcmp(rdi, "#endif", 6)
+        getline(rdi)
+    .endw
+    oprintf("endif\n")
+    ret
+
+parse_midl_interface endp
+
+
 parse_interface proc uses rsi rdi rbx
 
     mov rdi,tokpos
@@ -2108,12 +2172,33 @@ parse_interface proc uses rsi rdi rbx
     mov [rax],0
     strcpy(tempbuf, &[prevtokz(rax, rdi)+4])
     getline(rdi)
+
+    .if !memcmp(rdi, "#endif", 6)
+        ;
+        ; Windows 10:
+        ;
+        ; EXTERN_C const IID IID...
+        ; #endif /* !defined(...
+        ;
+        oprintf("endif\n")
+        .return(0)
+    .endif
+    ;
+    ; Windows 8:
+    ;
+    ; EXTERN_C const IID IID...
+    ;
+    ; #if defined(__cplusplus) && !defined(CINTERFACE)
+    ;
+    ;     MIDL_INTERFACE(...
+    ;
     getline(rdi)
     .if memcmp(rdi, "#if defined(__cplusplus) && !defined(CINTERFACE)", 49)
         .return error(rdi)
     .endif
     getline(rdi)
     getline(rdi)
+
     .if !strrchr(rdi, '(')
         .return error(rdi)
     .endif
@@ -2154,8 +2239,29 @@ parse_interface endp
 parse_extern proc uses rsi rdi rbx
 
     mov rdi,tokpos
+    .if !memcmp(rdi, "extern const __declspec(selectany) _Null_terminated_ WCHAR", 58)
+
+        mov rbx,ltokstart(&[rdi+58])
+        .if !strchr(rbx, '[')
+            .return error(rdi)
+        .endif
+        mov [rax],0
+        lea rsi,[rax+1]
+        .if !strchr(rsi, '"')
+            .return error(rbx)
+        .endif
+        mov rsi,rax
+        .if strchr(rsi, ';')
+            mov [rax],0
+        .endif
+        oprintf("define %s <%s>\n", rbx, rsi)
+       .return
+    .endif
+
     mov eax,csize
+
     mov rbx,ltokstart(&[rdi+rax])
+
     .if ( ecx == 0 )
         concat(rdi)
         mov rbx,ltokstart(rbx)
@@ -2224,6 +2330,17 @@ parse_inline proc uses rdi
 
 parse_inline endp
 
+parse_namespace proc uses rdi rsi
+
+    mov rdi,tokpos
+    .if !strchr(rdi, '{')
+        .return error(rdi)
+    .endif
+    mov [rax],0
+    oprintf(".%s\n", ltokstart(rdi))
+    ret
+
+parse_namespace endp
 
 parseline proc
 
@@ -2258,12 +2375,16 @@ parseline proc
         .return parse_define()
     .case T_INTERFACE
         .return parse_interface()
+    .case T_MIDL_INTERFACE
+        .return parse_midl_interface()
     .case T_EXTERN
         .return parse_extern()
     .case T_DEFINE_GUID
         .return parse_define_guide()
     .case T_INLINE
         .return parse_inline()
+    .case T_NAMESPACE
+        .return parse_namespace()
     .endsw
     ret
 parseline endp

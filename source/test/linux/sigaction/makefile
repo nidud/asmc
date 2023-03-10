@@ -1,5 +1,5 @@
 test:
-	asmc64 -fpic -I../../../../include test.asm
+	asmc64 -fpic test.asm
 	gcc -o test test.o
 	./test
 	asmc64 -bin diasm.asm

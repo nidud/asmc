@@ -1,5 +1,5 @@
 test:
-	asmc64 -I../../../../include *.asm
+	asmc64 *.asm
 	gcc -nostdlib -o hello hello.o /lib/libasmc.a
 	gcc -nostdlib -o cout cout.o /lib/libasmc.a
 	gcc -nostdlib -o printf printf.o /lib/libasmc.a

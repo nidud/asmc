@@ -2705,7 +2705,7 @@ GetPSize proc __ccall private uses rdi address:int_t, param:asym_t, opnd:expr_t
         xor eax,eax
         .if ( address || [rdi].expr.inst == T_OFFSET )
             mov eax,8
-        .elseif ( [rdi].expr.kind == EXPR_REG )
+        .elseif ( [rdi].expr.kind == EXPR_REG )                  
             .if !( [rdi].expr.flags & E_INDIRECT )
                 mov rax,[rdi].expr.base_reg
                 SizeFromRegister([rax].asm_tok.tokval)
@@ -2716,6 +2716,8 @@ GetPSize proc __ccall private uses rdi address:int_t, param:asym_t, opnd:expr_t
 
         .elseif ( [rdi].expr.mem_type != MT_EMPTY )
             SizeFromMemtype( [rdi].expr.mem_type, USE64, [rdi].expr.type )
+        .elseif ( [rdi].expr.kind == EXPR_ADDR && [rdi].expr.flags & E_INDIRECT ) 
+            mov eax,8
         .endif
         .if eax < 4
             mov eax,4

@@ -2,12 +2,18 @@ include stdio.inc
 
     .code
 
-main proc uses rbx r12 argc:int_t, argv:array_t
+main proc argc:int_t, argv:array_t
 
     .new arg_count:int_t = argc
-    .for ( r12 = argv, ebx = 0 : ebx < arg_count : ebx++ )
-        mov rdx,[r12+rbx*8]
-        printf("[%d]: %s\n", ebx, rdx)
+    .new arg_array:ptr_t = argv
+    .new i:int_t
+
+    .for ( i = 0 : i < arg_count : i++ )
+
+        mov eax,i
+        mov rcx,arg_array
+
+        printf("[%d]: %s\n", i, [rcx+rax*ptr_t])
     .endf
     .return( 0 )
 

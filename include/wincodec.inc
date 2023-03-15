@@ -24,9 +24,9 @@ define __wincodec_h__
 include wtypes.inc
 include propidl.inc
 include ocidl.inc
-include dxgiformat.inc
+include DirectX/dxgiformat.inc
 include intsafe.inc
-include dcommon.inc
+include DirectX/dcommon.inc
 
 WINCODEC_SDK_VERSION1	equ 0x0236
 WINCODEC_SDK_VERSION2	equ 0x0237

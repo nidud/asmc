@@ -295,7 +295,7 @@ define PARITY_EVEN       (0x0400)
 define PARITY_MARK       (0x0800)
 define PARITY_SPACE      (0x1000)
 
-_COMMPROP               struct
+COMMPROP                struct
 wPacketLength           WORD ?
 wPacketVersion          WORD ?
 dwServiceMask           DWORD ?
@@ -314,13 +314,12 @@ dwCurrentRxQueue        DWORD ?
 dwProvSpec1             DWORD ?
 dwProvSpec2             DWORD ?
 wcProvChar              WCHAR 1 dup(?)
-_COMMPROP               ends
-COMMPROP                typedef _COMMPROP
-LPCOMMPROP              typedef ptr _COMMPROP
+COMMPROP                ends
+LPCOMMPROP              typedef ptr COMMPROP
 
 define COMMPROP_INITIALIZED (0xE73CF52E)
 
-_COMSTAT                struct
+COMSTAT                 struct
 record
  fCtsHold               DWORD :  1 ?
  fDsrHold               DWORD :  1 ?
@@ -333,9 +332,8 @@ record
 ends
 cbInQue                 DWORD ?
 cbOutQue                DWORD ?
-_COMSTAT                ends
-COMSTAT                 typedef _COMSTAT
-LPCOMSTAT               typedef ptr _COMSTAT
+COMSTAT                 ends
+LPCOMSTAT               typedef ptr COMSTAT
 
 define DTR_CONTROL_DISABLE    0x00
 define DTR_CONTROL_ENABLE     0x01
@@ -346,7 +344,7 @@ define RTS_CONTROL_ENABLE     0x01
 define RTS_CONTROL_HANDSHAKE  0x02
 define RTS_CONTROL_TOGGLE     0x03
 
-_DCB                    struct
+DCB                     struct
 DCBlength               DWORD ?
 BaudRate                DWORD ?
 record
@@ -377,30 +375,27 @@ ErrorChar               sbyte ?
 EofChar                 sbyte ?
 EvtChar                 sbyte ?
 wReserved1              WORD ?
-_DCB                    ends
-DCB                     typedef _DCB
-LPDCB                   typedef ptr _DCB
+DCB                     ends
+LPDCB                   typedef ptr DCB
 
-_COMMTIMEOUTS           struct
+COMMTIMEOUTS            struct
 ReadIntervalTimeout     DWORD ?
 ReadTotalTimeoutMultiplier DWORD ?
 ReadTotalTimeoutConstant DWORD ?
 WriteTotalTimeoutMultiplier DWORD ?
 WriteTotalTimeoutConstant DWORD ?
-_COMMTIMEOUTS           ends
-COMMTIMEOUTS            typedef _COMMTIMEOUTS
-LPCOMMTIMEOUTS          typedef ptr _COMMTIMEOUTS
+COMMTIMEOUTS            ends
+LPCOMMTIMEOUTS          typedef ptr COMMTIMEOUTS
 
-_COMMCONFIG             struct
+COMMCONFIG              struct
 dwSize                  DWORD ?
 wVersion                WORD ?
 wReserved               WORD ?
 dcb                     DCB <>
 dwProviderSize          DWORD ?
 wcProviderData          WCHAR 1 dup(?)
-_COMMCONFIG             ends
-COMMCONFIG              typedef _COMMCONFIG
-LPCOMMCONFIG            typedef ptr _COMMCONFIG
+COMMCONFIG              ends
+LPCOMMCONFIG            typedef ptr COMMCONFIG
 
 FreeModule macro hLibModule
   exitm<FreeLibrary((hLibModule))>
@@ -443,7 +438,7 @@ GlobalDiscard macro  h
 define GMEM_DISCARDED      0x4000
 define GMEM_LOCKCOUNT      0x00FF
 
-_MEMORYSTATUS           struct
+MEMORYSTATUS            struct
 dwLength                DWORD ?
 dwMemoryLoad            DWORD ?
 dwTotalPhys             SIZE_T ?
@@ -452,9 +447,8 @@ dwTotalPageFile         SIZE_T ?
 dwAvailPageFile         SIZE_T ?
 dwTotalVirtual          SIZE_T ?
 dwAvailVirtual          SIZE_T ?
-_MEMORYSTATUS           ends
-MEMORYSTATUS            typedef _MEMORYSTATUS
-LPMEMORYSTATUS          typedef ptr _MEMORYSTATUS
+MEMORYSTATUS            ends
+LPMEMORYSTATUS          typedef ptr MEMORYSTATUS
 
 define DEBUG_PROCESS                     0x00000001
 define DEBUG_ONLY_THIS_PROCESS           0x00000002
@@ -518,7 +512,7 @@ define VOLUME_NAME_NONE 0x4
 define FILE_NAME_NORMALIZED 0x0
 define FILE_NAME_OPENED     0x8
 
-_JIT_DEBUG_INFO         struct
+JIT_DEBUG_INFO          struct
 dwSize                  DWORD ?
 dwProcessorArchitecture DWORD ?
 dwThreadID              DWORD ?
@@ -526,9 +520,8 @@ dwReserved0             DWORD ?
 lpExceptionAddress      ULONG64 ?
 lpExceptionRecord       ULONG64 ?
 lpContextRecord         ULONG64 ?
-_JIT_DEBUG_INFO         ends
-JIT_DEBUG_INFO          typedef _JIT_DEBUG_INFO
-LPJIT_DEBUG_INFO        typedef ptr _JIT_DEBUG_INFO
+JIT_DEBUG_INFO          ends
+LPJIT_DEBUG_INFO        typedef ptr JIT_DEBUG_INFO
 
 LPJIT_DEBUG_INFO32      typedef ptr JIT_DEBUG_INFO32
 LPJIT_DEBUG_INFO64      typedef ptr JIT_DEBUG_INFO64
@@ -715,17 +708,16 @@ define OF_EXIST            0x00004000
 define OF_REOPEN           0x00008000
 
 define OFS_MAXPATHNAME 128
-_OFSTRUCT               struct
+OFSTRUCT                struct
 cBytes                  BYTE ?
 fFixedDisk              BYTE ?
 nErrCode                WORD ?
 Reserved1               WORD ?
 Reserved2               WORD ?
 szPathName              CHAR OFS_MAXPATHNAME dup(?)
-_OFSTRUCT               ends
-OFSTRUCT                typedef _OFSTRUCT
-LPOFSTRUCT              typedef ptr _OFSTRUCT
-POFSTRUCT               typedef ptr _OFSTRUCT
+OFSTRUCT                ends
+LPOFSTRUCT              typedef ptr OFSTRUCT
+POFSTRUCT               typedef ptr OFSTRUCT
 
 UnlockResource macro hResData
   exitm<((hResData), 0)>
@@ -865,16 +857,15 @@ UMS_SCHEDULER_REASON    typedef _RTL_UMS_SCHEDULER_REASON
 
 PUMS_SCHEDULER_ENTRY_POINT typedef PRTL_UMS_SCHEDULER_ENTRY_POINT
 
-_UMS_SCHEDULER_STARTUP_INFO struct
+UMS_SCHEDULER_STARTUP_INFO struct
 UmsVersion              ULONG ?
 CompletionList          PUMS_COMPLETION_LIST ?
 SchedulerProc           PUMS_SCHEDULER_ENTRY_POINT ?
 SchedulerParam          PVOID ?
-_UMS_SCHEDULER_STARTUP_INFO ends
-UMS_SCHEDULER_STARTUP_INFO typedef _UMS_SCHEDULER_STARTUP_INFO
-PUMS_SCHEDULER_STARTUP_INFO typedef ptr _UMS_SCHEDULER_STARTUP_INFO
+UMS_SCHEDULER_STARTUP_INFO ends
+PUMS_SCHEDULER_STARTUP_INFO typedef ptr UMS_SCHEDULER_STARTUP_INFO
 
-_UMS_SYSTEM_THREAD_INFORMATION struct
+UMS_SYSTEM_THREAD_INFORMATION struct
 UmsVersion              ULONG ?
 union
  struct
@@ -885,9 +876,8 @@ union
  ends
  ThreadUmsFlags         ULONG ?
 ends
-_UMS_SYSTEM_THREAD_INFORMATION ends
-UMS_SYSTEM_THREAD_INFORMATION typedef _UMS_SYSTEM_THREAD_INFORMATION
-PUMS_SYSTEM_THREAD_INFORMATION typedef ptr _UMS_SYSTEM_THREAD_INFORMATION
+UMS_SYSTEM_THREAD_INFORMATION ends
+PUMS_SYSTEM_THREAD_INFORMATION typedef ptr UMS_SYSTEM_THREAD_INFORMATION
 
 CreateUmsCompletionList proto WINAPI :ptr PUMS_COMPLETION_LIST
 DequeueUmsCompletionListItems proto WINAPI :PUMS_COMPLETION_LIST, :DWORD, :ptr PUMS_CONTEXT
@@ -1235,15 +1225,14 @@ BackupRead proto WINAPI :HANDLE, :LPBYTE, :DWORD, :LPDWORD, :BOOL, :BOOL, :ptr
 BackupSeek proto WINAPI :HANDLE, :DWORD, :DWORD, :LPDWORD, :LPDWORD, :ptr
 BackupWrite proto WINAPI :HANDLE, :LPBYTE, :DWORD, :LPDWORD, :BOOL, :BOOL, :ptr
 
-_WIN32_STREAM_ID        struct
+WIN32_STREAM_ID         struct
 dwStreamId              DWORD ?
 dwStreamAttributes      DWORD ?
 Size                    LARGE_INTEGER <>
 dwStreamNameSize        DWORD ?
 cStreamName             WCHAR ANYSIZE_ARRAY dup(?)
-_WIN32_STREAM_ID        ends
-WIN32_STREAM_ID         typedef _WIN32_STREAM_ID
-LPWIN32_STREAM_ID       typedef ptr _WIN32_STREAM_ID
+WIN32_STREAM_ID         ends
+LPWIN32_STREAM_ID       typedef ptr WIN32_STREAM_ID
 
 define BACKUP_INVALID          0x00000000
 define BACKUP_DATA             0x00000001
@@ -1288,18 +1277,16 @@ endif
 
 if (_WIN32_WINNT ge 0x0600)
 
-_STARTUPINFOEXA         struct
+STARTUPINFOEXA          struct
 StartupInfo             STARTUPINFOA <>
 lpAttributeList         LPPROC_THREAD_ATTRIBUTE_LIST ?
-_STARTUPINFOEXA         ends
-STARTUPINFOEXA          typedef _STARTUPINFOEXA
-LPSTARTUPINFOEXA        typedef ptr _STARTUPINFOEXA
-_STARTUPINFOEXW         struct
+STARTUPINFOEXA          ends
+LPSTARTUPINFOEXA        typedef ptr STARTUPINFOEXA
+STARTUPINFOEXW          struct
 StartupInfo             STARTUPINFOW <>
 lpAttributeList         LPPROC_THREAD_ATTRIBUTE_LIST ?
-_STARTUPINFOEXW         ends
-STARTUPINFOEXW          typedef _STARTUPINFOEXW
-LPSTARTUPINFOEXW        typedef ptr _STARTUPINFOEXW
+STARTUPINFOEXW          ends
+LPSTARTUPINFOEXW        typedef ptr STARTUPINFOEXW
 ifdef _UNICODE
 STARTUPINFOEX           typedef STARTUPINFOEXW
 LPSTARTUPINFOEX         typedef LPSTARTUPINFOEXW
@@ -2504,11 +2491,10 @@ endif
 
 define EVENTLOG_FULL_INFO      0
 
-_EVENTLOG_FULL_INFORMATION struct
+EVENTLOG_FULL_INFORMATION struct
 dwFull                  DWORD ?
-_EVENTLOG_FULL_INFORMATION ends
-EVENTLOG_FULL_INFORMATION typedef _EVENTLOG_FULL_INFORMATION
-LPEVENTLOG_FULL_INFORMATION typedef ptr _EVENTLOG_FULL_INFORMATION
+EVENTLOG_FULL_INFORMATION ends
+LPEVENTLOG_FULL_INFORMATION typedef ptr EVENTLOG_FULL_INFORMATION
 
 GetEventLogInformation proto WINAPI :HANDLE, :DWORD, :LPVOID, :DWORD, :LPDWORD
 
@@ -2517,23 +2503,21 @@ if (_WIN32_WINNT ge 0x0602)
 define OPERATION_API_VERSION                   1
 OPERATION_ID            typedef ULONG
 
-_OPERATION_START_PARAMETERS struct
+OPERATION_START_PARAMETERS struct
 Version                 ULONG ?
 OperationId             OPERATION_ID ?
 Flags                   ULONG ?
-_OPERATION_START_PARAMETERS ends
-OPERATION_START_PARAMETERS typedef _OPERATION_START_PARAMETERS
-POPERATION_START_PARAMETERS typedef ptr _OPERATION_START_PARAMETERS
+OPERATION_START_PARAMETERS ends
+POPERATION_START_PARAMETERS typedef ptr OPERATION_START_PARAMETERS
 
 define OPERATION_START_TRACE_CURRENT_THREAD    0x1
 
-_OPERATION_END_PARAMETERS struct
+OPERATION_END_PARAMETERS struct
 Version                 ULONG ?
 OperationId             OPERATION_ID ?
 Flags                   ULONG ?
-_OPERATION_END_PARAMETERS ends
-OPERATION_END_PARAMETERS typedef _OPERATION_END_PARAMETERS
-POPERATION_END_PARAMETERS typedef ptr _OPERATION_END_PARAMETERS
+OPERATION_END_PARAMETERS ends
+POPERATION_END_PARAMETERS typedef ptr OPERATION_END_PARAMETERS
 
 define OPERATION_END_DISCARD                   0x1
 
@@ -2942,20 +2926,18 @@ define DOCKINFO_USER_SUPPLIED     (0x4)
 define DOCKINFO_USER_UNDOCKED     (DOCKINFO_USER_SUPPLIED or DOCKINFO_UNDOCKED)
 define DOCKINFO_USER_DOCKED       (DOCKINFO_USER_SUPPLIED or DOCKINFO_DOCKED)
 
-tagHW_PROFILE_INFOA     struct
+HW_PROFILE_INFOA        struct
 dwDockInfo              DWORD ?
 szHwProfileGuid         CHAR HW_PROFILE_GUIDLEN dup(?)
 szHwProfileName         CHAR MAX_PROFILE_LEN dup(?)
-tagHW_PROFILE_INFOA     ends
-HW_PROFILE_INFOA        typedef tagHW_PROFILE_INFOA
-LPHW_PROFILE_INFOA      typedef ptr tagHW_PROFILE_INFOA
-tagHW_PROFILE_INFOW     struct
+HW_PROFILE_INFOA        ends
+LPHW_PROFILE_INFOA      typedef ptr HW_PROFILE_INFOA
+HW_PROFILE_INFOW        struct
 dwDockInfo              DWORD ?
 szHwProfileGuid         WCHAR HW_PROFILE_GUIDLEN dup(?)
 szHwProfileName         WCHAR MAX_PROFILE_LEN dup(?)
-tagHW_PROFILE_INFOW     ends
-HW_PROFILE_INFOW        typedef tagHW_PROFILE_INFOW
-LPHW_PROFILE_INFOW      typedef ptr tagHW_PROFILE_INFOW
+HW_PROFILE_INFOW        ends
+LPHW_PROFILE_INFOW      typedef ptr HW_PROFILE_INFOW
 ifdef _UNICODE
 HW_PROFILE_INFO         typedef HW_PROFILE_INFOW
 LPHW_PROFILE_INFO       typedef LPHW_PROFILE_INFOW
@@ -3013,16 +2995,15 @@ define SYSTEM_STATUS_FLAG_POWER_SAVING_ON      0x01
 
 define BATTERY_LIFE_UNKNOWN        0xFFFFFFFF
 
-_SYSTEM_POWER_STATUS    struct
+SYSTEM_POWER_STATUS     struct
 ACLineStatus            BYTE ?
 BatteryFlag             BYTE ?
 BatteryLifePercent      BYTE ?
 SystemStatusFlag        BYTE ?
 BatteryLifeTime         DWORD ?
 BatteryFullLifeTime     DWORD ?
-_SYSTEM_POWER_STATUS    ends
-SYSTEM_POWER_STATUS     typedef _SYSTEM_POWER_STATUS
-LPSYSTEM_POWER_STATUS   typedef ptr _SYSTEM_POWER_STATUS
+SYSTEM_POWER_STATUS     ends
+LPSYSTEM_POWER_STATUS   typedef ptr SYSTEM_POWER_STATUS
 
 GetSystemPowerStatus proto WINAPI :LPSYSTEM_POWER_STATUS
 
@@ -3120,7 +3101,7 @@ define ACTCTX_FLAG_APPLICATION_NAME_VALID          (0x00000020)
 define ACTCTX_FLAG_SOURCE_IS_ASSEMBLYREF           (0x00000040)
 define ACTCTX_FLAG_HMODULE_VALID                   (0x00000080)
 
-tagACTCTXA              struct
+ACTCTXA                 struct
 cbSize                  ULONG ?
 dwFlags                 DWORD ?
 lpSource                LPCSTR ?
@@ -3130,10 +3111,9 @@ lpAssemblyDirectory     LPCSTR ?
 lpResourceName          LPCSTR ?
 lpApplicationName       LPCSTR ?
 hModule                 HMODULE ?
-tagACTCTXA              ends
-ACTCTXA                 typedef tagACTCTXA
-PACTCTXA                typedef ptr tagACTCTXA
-tagACTCTXW              struct
+ACTCTXA                 ends
+PACTCTXA                typedef ptr ACTCTXA
+ACTCTXW                 struct
 cbSize                  ULONG ?
 dwFlags                 DWORD ?
 lpSource                LPCWSTR ?
@@ -3143,9 +3123,8 @@ lpAssemblyDirectory     LPCWSTR ?
 lpResourceName          LPCWSTR ?
 lpApplicationName       LPCWSTR ?
 hModule                 HMODULE ?
-tagACTCTXW              ends
-ACTCTXW                 typedef tagACTCTXW
-PACTCTXW                typedef ptr tagACTCTXW
+ACTCTXW                 ends
+PACTCTXW                typedef ptr ACTCTXW
 ifdef _UNICODE
 ACTCTX                  typedef ACTCTXW
 PACTCTX                 typedef PACTCTXW
@@ -3180,7 +3159,7 @@ define DEACTIVATE_ACTCTX_FLAG_FORCE_EARLY_DEACTIVATION (0x00000001)
 DeactivateActCtx proto WINAPI :DWORD, :ULONG_PTR
 GetCurrentActCtx proto WINAPI :ptr
 
-tagACTCTX_SECTION_KEYED_DATA_2600 struct
+ACTCTX_SECTION_KEYED_DATA_2600 struct
 cbSize                  ULONG ?
 ulDataFormatVersion     ULONG ?
 lpData                  PVOID ?
@@ -3191,23 +3170,21 @@ lpSectionBase           PVOID ?
 ulSectionTotalLength    ULONG ?
 hActCtx                 HANDLE ?
 ulAssemblyRosterIndex   ULONG ?
-tagACTCTX_SECTION_KEYED_DATA_2600 ends
-ACTCTX_SECTION_KEYED_DATA_2600 typedef tagACTCTX_SECTION_KEYED_DATA_2600
-PACTCTX_SECTION_KEYED_DATA_2600 typedef ptr tagACTCTX_SECTION_KEYED_DATA_2600
+ACTCTX_SECTION_KEYED_DATA_2600 ends
+PACTCTX_SECTION_KEYED_DATA_2600 typedef ptr ACTCTX_SECTION_KEYED_DATA_2600
 PCACTCTX_SECTION_KEYED_DATA_2600 typedef ptr ACTCTX_SECTION_KEYED_DATA_2600
 
-tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA struct
+ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA struct
 lpInformation           PVOID ?
 lpSectionBase           PVOID ?
 ulSectionLength         ULONG ?
 lpSectionGlobalDataBase PVOID ?
 ulSectionGlobalDataLength ULONG ?
-tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA ends
-ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
-PACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
+ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA ends
+PACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
 PCACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
 
-tagACTCTX_SECTION_KEYED_DATA struct
+ACTCTX_SECTION_KEYED_DATA struct
 cbSize                  ULONG ?
 ulDataFormatVersion     ULONG ?
 lpData                  PVOID ?
@@ -3220,9 +3197,8 @@ hActCtx                 HANDLE ?
 ulAssemblyRosterIndex   ULONG ?
 ulFlags                 ULONG ?
 AssemblyMetadata        ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA <>
-tagACTCTX_SECTION_KEYED_DATA ends
-ACTCTX_SECTION_KEYED_DATA typedef tagACTCTX_SECTION_KEYED_DATA
-PACTCTX_SECTION_KEYED_DATA typedef ptr tagACTCTX_SECTION_KEYED_DATA
+ACTCTX_SECTION_KEYED_DATA ends
+PACTCTX_SECTION_KEYED_DATA typedef ptr ACTCTX_SECTION_KEYED_DATA
 PCACTCTX_SECTION_KEYED_DATA typedef ptr ACTCTX_SECTION_KEYED_DATA
 
 define FIND_ACTCTX_SECTION_KEY_RETURN_HACTCTX (0x00000001)
@@ -3242,14 +3218,12 @@ FindActCtxSectionGuid proto WINAPI :DWORD, :ptr, :ULONG, :ptr, :PACTCTX_SECTION_
 if not defined(RC_INVOKED)
 if not defined(ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED)
 
-_ACTIVATION_CONTEXT_BASIC_INFORMATION struct
+ACTIVATION_CONTEXT_BASIC_INFORMATION struct
 hActCtx                 HANDLE ?
 dwFlags                 DWORD ?
-_ACTIVATION_CONTEXT_BASIC_INFORMATION ends
-ACTIVATION_CONTEXT_BASIC_INFORMATION typedef _ACTIVATION_CONTEXT_BASIC_INFORMATION
-PACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr _ACTIVATION_CONTEXT_BASIC_INFORMATION
-
-PCACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr _ACTIVATION_CONTEXT_BASIC_INFORMATION
+ACTIVATION_CONTEXT_BASIC_INFORMATION ends
+PACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr ACTIVATION_CONTEXT_BASIC_INFORMATION
+PCACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr ACTIVATION_CONTEXT_BASIC_INFORMATION
 
 define ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED 1
 
@@ -3333,38 +3307,34 @@ endif
 
 if (_WIN32_WINNT ge 0x0600)
 
-_FILE_BASIC_INFO        struct
+FILE_BASIC_INFO         struct
 CreationTime            LARGE_INTEGER <>
 LastAccessTime          LARGE_INTEGER <>
 LastWriteTime           LARGE_INTEGER <>
 ChangeTime              LARGE_INTEGER <>
 FileAttributes          DWORD ?
-_FILE_BASIC_INFO        ends
-FILE_BASIC_INFO         typedef _FILE_BASIC_INFO
-PFILE_BASIC_INFO        typedef ptr _FILE_BASIC_INFO
+FILE_BASIC_INFO         ends
+PFILE_BASIC_INFO        typedef ptr FILE_BASIC_INFO
 
-_FILE_STANDARD_INFO     struct
+FILE_STANDARD_INFO      struct
 AllocationSize          LARGE_INTEGER <>
 EndOfFile               LARGE_INTEGER <>
 NumberOfLinks           DWORD ?
 DeletePending           BOOLEAN ?
 Directory               BOOLEAN ?
-_FILE_STANDARD_INFO     ends
-FILE_STANDARD_INFO      typedef _FILE_STANDARD_INFO
-PFILE_STANDARD_INFO     typedef ptr _FILE_STANDARD_INFO
+FILE_STANDARD_INFO      ends
+PFILE_STANDARD_INFO     typedef ptr FILE_STANDARD_INFO
 
-_FILE_NAME_INFO         struct
+FILE_NAME_INFO          struct
 FileNameLength          DWORD ?
 FileName                WCHAR 1 dup(?)
-_FILE_NAME_INFO         ends
-FILE_NAME_INFO          typedef _FILE_NAME_INFO
-PFILE_NAME_INFO         typedef ptr _FILE_NAME_INFO
+FILE_NAME_INFO          ends
+PFILE_NAME_INFO         typedef ptr FILE_NAME_INFO
 
-_FILE_CASE_SENSITIVE_INFO struct
+FILE_CASE_SENSITIVE_INFO struct
 Flags                   ULONG ?
-_FILE_CASE_SENSITIVE_INFO ends
-FILE_CASE_SENSITIVE_INFO typedef _FILE_CASE_SENSITIVE_INFO
-PFILE_CASE_SENSITIVE_INFO typedef ptr _FILE_CASE_SENSITIVE_INFO
+FILE_CASE_SENSITIVE_INFO ends
+PFILE_CASE_SENSITIVE_INFO typedef ptr FILE_CASE_SENSITIVE_INFO
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS1)
 define FILE_RENAME_FLAG_REPLACE_IF_EXISTS                  0x00000001
@@ -3375,7 +3345,7 @@ if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS3)
 define FILE_RENAME_FLAG_SUPPRESS_PIN_STATE_INHERITANCE     0x00000004
 endif
 
-_FILE_RENAME_INFO       struct
+FILE_RENAME_INFO        struct
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS1)
 union
  ReplaceIfExists        BOOLEAN ?
@@ -3387,55 +3357,48 @@ endif
 RootDirectory           HANDLE ?
 FileNameLength          DWORD ?
 FileName                WCHAR 1 dup(?)
-_FILE_RENAME_INFO       ends
-FILE_RENAME_INFO        typedef _FILE_RENAME_INFO
-PFILE_RENAME_INFO       typedef ptr _FILE_RENAME_INFO
+FILE_RENAME_INFO        ends
+PFILE_RENAME_INFO       typedef ptr FILE_RENAME_INFO
 
-_FILE_ALLOCATION_INFO   struct
+FILE_ALLOCATION_INFO    struct
 AllocationSize          LARGE_INTEGER <>
-_FILE_ALLOCATION_INFO   ends
-FILE_ALLOCATION_INFO    typedef _FILE_ALLOCATION_INFO
-PFILE_ALLOCATION_INFO   typedef ptr _FILE_ALLOCATION_INFO
+FILE_ALLOCATION_INFO    ends
+PFILE_ALLOCATION_INFO   typedef ptr FILE_ALLOCATION_INFO
 
-_FILE_END_OF_FILE_INFO  struct
+FILE_END_OF_FILE_INFO   struct
 EndOfFile               LARGE_INTEGER <>
-_FILE_END_OF_FILE_INFO  ends
-FILE_END_OF_FILE_INFO   typedef _FILE_END_OF_FILE_INFO
-PFILE_END_OF_FILE_INFO  typedef ptr _FILE_END_OF_FILE_INFO
+FILE_END_OF_FILE_INFO   ends
+PFILE_END_OF_FILE_INFO  typedef ptr FILE_END_OF_FILE_INFO
 
-_FILE_STREAM_INFO       struct
+FILE_STREAM_INFO        struct
 NextEntryOffset         DWORD ?
 StreamNameLength        DWORD ?
 StreamSize              LARGE_INTEGER <>
 StreamAllocationSize    LARGE_INTEGER <>
 StreamName              WCHAR 1 dup(?)
-_FILE_STREAM_INFO       ends
-FILE_STREAM_INFO        typedef _FILE_STREAM_INFO
-PFILE_STREAM_INFO       typedef ptr _FILE_STREAM_INFO
+FILE_STREAM_INFO        ends
+PFILE_STREAM_INFO       typedef ptr FILE_STREAM_INFO
 
-_FILE_COMPRESSION_INFO  struct
+FILE_COMPRESSION_INFO   struct
 CompressedFileSize      LARGE_INTEGER <>
 CompressionFormat       WORD ?
 CompressionUnitShift    UCHAR ?
 ChunkShift              UCHAR ?
 ClusterShift            UCHAR ?
 Reserved                UCHAR 3 dup(?)
-_FILE_COMPRESSION_INFO  ends
-FILE_COMPRESSION_INFO   typedef _FILE_COMPRESSION_INFO
-PFILE_COMPRESSION_INFO  typedef ptr _FILE_COMPRESSION_INFO
+FILE_COMPRESSION_INFO   ends
+PFILE_COMPRESSION_INFO  typedef ptr FILE_COMPRESSION_INFO
 
-_FILE_ATTRIBUTE_TAG_INFO struct
+FILE_ATTRIBUTE_TAG_INFO struct
 FileAttributes          DWORD ?
 ReparseTag              DWORD ?
-_FILE_ATTRIBUTE_TAG_INFO ends
-FILE_ATTRIBUTE_TAG_INFO typedef _FILE_ATTRIBUTE_TAG_INFO
-PFILE_ATTRIBUTE_TAG_INFO typedef ptr _FILE_ATTRIBUTE_TAG_INFO
+FILE_ATTRIBUTE_TAG_INFO ends
+PFILE_ATTRIBUTE_TAG_INFO typedef ptr FILE_ATTRIBUTE_TAG_INFO
 
-_FILE_DISPOSITION_INFO  struct
+FILE_DISPOSITION_INFO   struct
 DeleteFile              BOOLEAN ?
-_FILE_DISPOSITION_INFO  ends
-FILE_DISPOSITION_INFO   typedef _FILE_DISPOSITION_INFO
-PFILE_DISPOSITION_INFO  typedef ptr _FILE_DISPOSITION_INFO
+FILE_DISPOSITION_INFO   ends
+PFILE_DISPOSITION_INFO  typedef ptr FILE_DISPOSITION_INFO
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS1)
 define FILE_DISPOSITION_FLAG_DO_NOT_DELETE              0x00000000
@@ -3447,14 +3410,13 @@ if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS5)
 define FILE_DISPOSITION_FLAG_IGNORE_READONLY_ATTRIBUTE  0x00000010
 endif
 
-_FILE_DISPOSITION_INFO_EX struct
+FILE_DISPOSITION_INFO_EX struct
 Flags                   DWORD ?
-_FILE_DISPOSITION_INFO_EX ends
-FILE_DISPOSITION_INFO_EX typedef _FILE_DISPOSITION_INFO_EX
-PFILE_DISPOSITION_INFO_EX typedef ptr _FILE_DISPOSITION_INFO_EX
+FILE_DISPOSITION_INFO_EX ends
+PFILE_DISPOSITION_INFO_EX typedef ptr FILE_DISPOSITION_INFO_EX
 endif
 
-_FILE_ID_BOTH_DIR_INFO  struct
+FILE_ID_BOTH_DIR_INFO   struct
 NextEntryOffset         DWORD ?
 FileIndex               DWORD ?
 CreationTime            LARGE_INTEGER <>
@@ -3470,11 +3432,10 @@ ShortNameLength         CCHAR ?
 ShortName               WCHAR 12 dup(?)
 FileId                  LARGE_INTEGER <>
 FileName                WCHAR 1 dup(?)
-_FILE_ID_BOTH_DIR_INFO  ends
-FILE_ID_BOTH_DIR_INFO   typedef _FILE_ID_BOTH_DIR_INFO
-PFILE_ID_BOTH_DIR_INFO  typedef ptr _FILE_ID_BOTH_DIR_INFO
+FILE_ID_BOTH_DIR_INFO   ends
+PFILE_ID_BOTH_DIR_INFO  typedef ptr FILE_ID_BOTH_DIR_INFO
 
-_FILE_FULL_DIR_INFO     struct
+FILE_FULL_DIR_INFO      struct
 NextEntryOffset         ULONG ?
 FileIndex               ULONG ?
 CreationTime            LARGE_INTEGER <>
@@ -3487,9 +3448,8 @@ FileAttributes          ULONG ?
 FileNameLength          ULONG ?
 EaSize                  ULONG ?
 FileName                WCHAR 1 dup(?)
-_FILE_FULL_DIR_INFO     ends
-FILE_FULL_DIR_INFO      typedef _FILE_FULL_DIR_INFO
-PFILE_FULL_DIR_INFO     typedef ptr _FILE_FULL_DIR_INFO
+FILE_FULL_DIR_INFO      ends
+PFILE_FULL_DIR_INFO     typedef ptr FILE_FULL_DIR_INFO
 
 .enum PRIORITY_HINT {
     IoPriorityHintVeryLow = 0,
@@ -3498,25 +3458,23 @@ PFILE_FULL_DIR_INFO     typedef ptr _FILE_FULL_DIR_INFO
     MaximumIoPriorityHintType
     }
 
-_FILE_IO_PRIORITY_HINT_INFO struct
+FILE_IO_PRIORITY_HINT_INFO struct
 PriorityHint            PRIORITY_HINT ?
-_FILE_IO_PRIORITY_HINT_INFO ends
-FILE_IO_PRIORITY_HINT_INFO typedef _FILE_IO_PRIORITY_HINT_INFO
-PFILE_IO_PRIORITY_HINT_INFO typedef ptr _FILE_IO_PRIORITY_HINT_INFO
+FILE_IO_PRIORITY_HINT_INFO ends
+PFILE_IO_PRIORITY_HINT_INFO typedef ptr FILE_IO_PRIORITY_HINT_INFO
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
 
-_FILE_ALIGNMENT_INFO    struct
+FILE_ALIGNMENT_INFO     struct
 AlignmentRequirement    ULONG ?
-_FILE_ALIGNMENT_INFO    ends
-FILE_ALIGNMENT_INFO     typedef _FILE_ALIGNMENT_INFO
-PFILE_ALIGNMENT_INFO    typedef ptr _FILE_ALIGNMENT_INFO
+FILE_ALIGNMENT_INFO     ends
+PFILE_ALIGNMENT_INFO    typedef ptr FILE_ALIGNMENT_INFO
 
 define STORAGE_INFO_FLAGS_ALIGNED_DEVICE                 0x00000001
 define STORAGE_INFO_FLAGS_PARTITION_ALIGNED_ON_DEVICE    0x00000002
 define STORAGE_INFO_OFFSET_UNKNOWN (0xffffffff)
 
-_FILE_STORAGE_INFO      struct
+FILE_STORAGE_INFO       struct
 LogicalBytesPerSector   ULONG ?
 PhysicalBytesPerSectorForAtomicity ULONG ?
 PhysicalBytesPerSectorForPerformance ULONG ?
@@ -3524,18 +3482,16 @@ FileSystemEffectivePhysicalBytesPerSectorForAtomicity ULONG ?
 Flags                   ULONG ?
 ByteOffsetForSectorAlignment ULONG ?
 ByteOffsetForPartitionAlignment ULONG ?
-_FILE_STORAGE_INFO      ends
-FILE_STORAGE_INFO       typedef _FILE_STORAGE_INFO
-PFILE_STORAGE_INFO      typedef ptr _FILE_STORAGE_INFO
+FILE_STORAGE_INFO       ends
+PFILE_STORAGE_INFO      typedef ptr FILE_STORAGE_INFO
 
-_FILE_ID_INFO           struct
+FILE_ID_INFO            struct
 VolumeSerialNumber      ULONGLONG ?
 FileId                  FILE_ID_128 <>
-_FILE_ID_INFO           ends
-FILE_ID_INFO            typedef _FILE_ID_INFO
-PFILE_ID_INFO           typedef ptr _FILE_ID_INFO
+FILE_ID_INFO            ends
+PFILE_ID_INFO           typedef ptr FILE_ID_INFO
 
-_FILE_ID_EXTD_DIR_INFO  struct
+FILE_ID_EXTD_DIR_INFO   struct
 NextEntryOffset         ULONG ?
 FileIndex               ULONG ?
 CreationTime            LARGE_INTEGER <>
@@ -3550,9 +3506,8 @@ EaSize                  ULONG ?
 ReparsePointTag         ULONG ?
 FileId                  FILE_ID_128 <>
 FileName                WCHAR 1 dup(?)
-_FILE_ID_EXTD_DIR_INFO  ends
-FILE_ID_EXTD_DIR_INFO   typedef _FILE_ID_EXTD_DIR_INFO
-PFILE_ID_EXTD_DIR_INFO  typedef ptr _FILE_ID_EXTD_DIR_INFO
+FILE_ID_EXTD_DIR_INFO   ends
+PFILE_ID_EXTD_DIR_INFO  typedef ptr FILE_ID_EXTD_DIR_INFO
 
 endif
 
@@ -3580,7 +3535,7 @@ define RPI_SMB2_FLAG_SERVERCAP_PERSISTENT_HANDLES     0x00000010
 define RPI_SMB2_FLAG_SERVERCAP_DIRECTORY_LEASING      0x00000020
 endif
 
-_FILE_REMOTE_PROTOCOL_INFO struct
+FILE_REMOTE_PROTOCOL_INFO struct
 StructureVersion        USHORT ?
 StructureSize           USHORT ?
 Protocol                ULONG ?
@@ -3611,9 +3566,8 @@ union ProtocolSpecific
  Reserved               ULONG 16 dup(?)
 ends
 endif
-_FILE_REMOTE_PROTOCOL_INFO ends
-FILE_REMOTE_PROTOCOL_INFO typedef _FILE_REMOTE_PROTOCOL_INFO
-PFILE_REMOTE_PROTOCOL_INFO typedef ptr _FILE_REMOTE_PROTOCOL_INFO
+FILE_REMOTE_PROTOCOL_INFO ends
+PFILE_REMOTE_PROTOCOL_INFO typedef ptr FILE_REMOTE_PROTOCOL_INFO
 
 GetFileInformationByHandleEx proto WINAPI :HANDLE, :FILE_INFO_BY_HANDLE_CLASS, :LPVOID, :DWORD
 

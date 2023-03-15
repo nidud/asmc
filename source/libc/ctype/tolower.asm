@@ -4,34 +4,20 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 include ctype.inc
-include winnls.inc
+
+externdef _pclmap:string_t
 
     .code
 
 tolower proc c:int_t
-
 ifdef _WIN64
-    mov eax,ecx
+    movzx ecx,cl
 else
-    mov eax,c
+    movzx ecx,byte ptr c
 endif
-
-    .return .if ( al < 'A' )
-
-    .if ( al <= 'Z' )
-
-        add al,'a'-'A'
-       .return
-    .endif
-
-    .return .if ( al >= 'a' && al <= 'z' )
-
-if WINVER GE 0x0600
-    LCMapStringEx( LOCALE_NAME_USER_DEFAULT, LCMAP_LOWERCASE, &c, 1, &c, 1, 0, 0, 0 )
-    mov eax,c
-endif
+    mov rax,_pclmap
+    movzx eax,byte ptr [rax+rcx]
     ret
-
 tolower endp
 
     end

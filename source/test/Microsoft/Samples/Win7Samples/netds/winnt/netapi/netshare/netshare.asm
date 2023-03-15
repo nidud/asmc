@@ -178,7 +178,7 @@ wmain proc argc:SINT, argv:ptr wchar_t
             .break .if !InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION)
 
             .if !SetSecurityDescriptorDacl(&sd, TRUE, pDacl, FALSE)
-                fprintf(&stderr, "SetSecurityDescriptorDacl error! (rc=%lu)\n", GetLastError())
+                fprintf(stderr, "SetSecurityDescriptorDacl error! (rc=%lu)\n", GetLastError())
                 .break
             .endif
 

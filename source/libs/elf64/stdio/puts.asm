@@ -17,7 +17,7 @@ puts proc string:string_t
     repz scasb
     not ecx
     dec ecx
-    _write(stdout._file, rsi, ecx)
+    _write(1, rsi, ecx)
     ret
 
 puts endp

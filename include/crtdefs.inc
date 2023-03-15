@@ -16,7 +16,6 @@ endif
 include sal.inc
 
 define _CRT_PACKING size_t
-.pragma pack(push, _CRT_PACKING)
 
 include vadefs.inc
 
@@ -113,53 +112,10 @@ time_t typedef sdword
 endif
 endif
 
-ifndef _THREADLOCALEINFO
-define _THREADLOCALEINFO
-ifndef LPSHORT
-LPINT	typedef ptr sdword
-LPSHORT typedef ptr sword
-endif
-.template locrefcount
-    locale		LPSTR ?
-    wlocale		LPWSTR ?
-    refcount		LPINT ?
-    wrefcount		LPINT ?
-   .ends
-.template threadlocinfo
-    refcount		SINT ?
-    lc_codepage		UINT ?
-    lc_collate_cp	UINT ?
-    lc_time_cp		UINT ?
-    lc_category		locrefcount 6 dup(<>)
-    lc_clike		SINT ?
-    mb_cur_max		SINT ?
-    lconv_intl_refcount LPINT ?
-    lconv_num_refcount	LPINT ?
-    lconv_mon_refcount	LPINT ?
-    lconvp		PVOID ?
-    ctype1_refcount	LPINT ?
-    ctype1		LPSHORT ?
-    pctype		LPSHORT ?
-    pclmap		LPSTR ?
-    pcumap		LPSTR ?
-    lc_time_curr	ptr __lc_time_data ?
-    locale_name		LPWSTR 6 dup(?)
-   .ends
-    pthreadlocinfo	typedef ptr threadlocinfo
-endif
-pthreadmbcinfo		typedef ptr threadmbcinfo
-ifndef _locale_t
-.template _locale_tstruct
-    locinfo		pthreadlocinfo ?
-    mbcinfo		pthreadmbcinfo ?
-   .ends
-   _locale_t		typedef ptr _locale_tstruct
-endif
-
-.pragma pack(pop)
+include threadlocinfo.inc
 
 ifndef _TRUNCATE
-_TRUNCATE equ (-1)
+define _TRUNCATE (-1)
 endif
 
 ifndef _CRT_WIDE

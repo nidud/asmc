@@ -9,18 +9,16 @@ include ctype.inc
     .code
 
 isleadbyte proc wc:int_t
-
-ifdef _WIN64
-    lea     rax,_ctype
-    test    wchar_t ptr [rax+rcx*2+2],_LEADBYTE
+ifndef _WIN64
+    movzx   ecx,byte ptr wc
 else
-    mov     eax,wc
-    test    _ctype[eax*2+2],_LEADBYTE
+    movzx   ecx,cl
 endif
-    mov     eax,0
+    mov     rax,_pctype
+    test    word ptr [rax+rcx*2],_LEADBYTE
     setnz   al
+    movzx   eax,al
     ret
-
 isleadbyte endp
 
     end

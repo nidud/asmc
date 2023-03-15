@@ -51,10 +51,7 @@ _flsbuf proc uses rbx r12 r13 c:int_t, fp:ptr FILE
 
         isatty(ebx)
 
-        lea r8,stdout
-        lea r9,stderr
-
-        .if ( !( ( r12 == r8 || r12 == r9 ) && eax ) )
+        .if ( !( ( r12 == stdout || r12 == stderr ) && eax ) )
 
             _getbuf(r12)
         .endif

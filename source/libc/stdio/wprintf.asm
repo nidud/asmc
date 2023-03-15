@@ -10,10 +10,10 @@ include stdio.inc
 
 wprintf proc uses rsi format:LPWSTR, argptr:VARARG
 
-    mov  rsi,_stbuf(&stdout)
-    xchg rsi,_woutput(&stdout, format, &argptr)
-    _ftbuf(eax, &stdout)
-    mov rax,rsi
+    mov  esi,_stbuf(stdout)
+    xchg rsi,_woutput(stdout, format, &argptr)
+    _ftbuf(eax, stdout)
+    mov eax,esi
     ret
 
 wprintf endp

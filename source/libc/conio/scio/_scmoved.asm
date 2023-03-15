@@ -18,9 +18,9 @@ _scmoved proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
    .new ci:CONSOLE_SCREEN_BUFFER_INFO
 
     mov edi,25
-    .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
+    .if GetConsoleScreenBufferInfo(_confh, &ci)
 
-        movzx edi,ci.dwSize.y
+        movzx edi,ci.dwSize.Y
     .endif
 
     movzx eax,rc.y

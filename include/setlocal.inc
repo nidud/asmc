@@ -89,57 +89,7 @@ _setloc_downlevel_struct ENDS
 _psetloc_downlevel_struct typedef ptr _setloc_downlevel_struct
 endif
 
-ifndef _THREADLOCALEINFO
-define _THREADLOCALEINFO
-
-ifndef LPSHORT
-LPINT			typedef ptr sdword
-LPSHORT			typedef ptr sword
-endif
-locrefcount		STRUC
-locale			LPSTR ?
-wlocale			LPWSTR ?
-refcount		LPINT ?
-wrefcount		LPINT ?
-locrefcount		ENDS
-
-threadlocinfo		STRUC
-refcount		SINT ?
-lc_codepage		dd ?
-lc_collate_cp		dd ?
-lc_time_cp		dd ?
-lc_category		locrefcount 6 dup(<>)
-lc_clike		SINT ?
-mb_cur_max		SINT ?
-lconv_intl_refcount	LPINT ?
-lconv_num_refcount	LPINT ?
-lconv_mon_refcount	LPINT ?
-lconvp			PVOID ?
-ctype1_refcount		LPINT ?
-ctype1			LPSHORT ?
-pctype			LPSHORT ?
-pclmap			LPSTR ?
-pcumap			LPSTR ?
-lc_time_curr		ptr_t ?
-locale_name		LPWSTR 6 dup(?)
-threadlocinfo		ENDS
-pthreadlocinfo		typedef ptr threadlocinfo
-endif
-
-ifndef _THREADMBCINFO
-define _THREADMBCINFO
-
-threadmbcinfo		STRUC
-refcount		int_t ?
-mbcodepage		int_t ?
-ismbcodepage		int_t ?
-mbulinfo		dw 6 dup(?)
-mbctype			db 257 dup(?)
-mbcasemap		db 256 dup(?)
-mblocalename		wstring_t ?
-threadmbcinfo		ENDS
-pthreadmbcinfo		typedef ptr threadmbcinfo
-endif
+include threadlocinfo.inc
 
 LC_STRINGS		STRUCT
 szLanguage		wchar_t MAX_LANG_LEN dup(?)
@@ -195,7 +145,6 @@ __init_dummy		proto __cdecl :ptr threadlocinfo
     updated	BOOL ?
 
     GetLocaleT	proc
-
-    .ends
+   .ends
 
 .pragma list(pop)

@@ -14,8 +14,8 @@ _wherex proc
 
     .if GetConsoleScreenBufferInfo( _confh, &ci )
 
-        movzx eax,ci.dwCursorPosition.x
-        movzx edx,ci.dwCursorPosition.y
+        movzx eax,ci.dwCursorPosition.X
+        movzx edx,ci.dwCursorPosition.Y
     .endif
     ret
 

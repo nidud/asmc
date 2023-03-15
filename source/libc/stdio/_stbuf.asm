@@ -27,8 +27,8 @@ endif
         xor eax,eax
         xor esi,esi
 
-        lea rcx,stdout
-        lea rdx,stderr
+        mov rcx,stdout
+        mov rdx,stderr
 
         .if ( rbx != rcx )
 

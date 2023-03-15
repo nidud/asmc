@@ -10,7 +10,7 @@ include stdio.inc
 
 _getst proc uses rsi rdi
 
-    .for ( rsi = &_iob,
+    .for ( rsi = stdin,
            rdi = &[rsi+(_NSTREAM_ * sizeof(_iobuf))],
            eax = 0 : rsi < rdi : rsi += sizeof(_iobuf) )
 

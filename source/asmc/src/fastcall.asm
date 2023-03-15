@@ -1404,14 +1404,14 @@ endif
     mov rdx,[rdi].expr.sym
     .switch
     .case ( ecx == EXPR_REG ) ; register argument
-        mov eax,8
+        mov eax,psize
         .if !( [rdi].expr.flags & E_INDIRECT )
             mov rax,[rdi].expr.base_reg
             mov eax,[rax].asm_tok.tokval
             mov reg,eax
             SizeFromRegister(eax)
         .elseif ( int128_arg )
-            add eax,8
+            mov eax,16
         .endif
         .endc
     .case ( ecx == EXPR_CONST )
@@ -1947,7 +1947,7 @@ elf64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:
 
         .if ( ecx == EXPR_REG ) ; register argument
 
-            mov eax,8
+            mov eax,psize
             .if !( [rdi].flags & E_INDIRECT )
 
                 mov rax,[rdi].base_reg
@@ -2705,18 +2705,18 @@ GetPSize proc __ccall private uses rdi address:int_t, param:asym_t, opnd:expr_t
         xor eax,eax
         .if ( address || [rdi].expr.inst == T_OFFSET )
             mov eax,8
-        .elseif ( [rdi].expr.kind == EXPR_REG )                  
+        .elseif ( [rdi].expr.kind == EXPR_REG )
             .if !( [rdi].expr.flags & E_INDIRECT )
                 mov rax,[rdi].expr.base_reg
                 SizeFromRegister([rax].asm_tok.tokval)
-            .else
+            .elseif !SizeFromMemtype( [rdi].expr.mem_type, USE64, [rdi].expr.type )
                 mov eax,8
             .endif
         .elseif ( [rdi].expr.kind == EXPR_FLOAT && [rdi].expr.mem_type == MT_REAL16 )
 
         .elseif ( [rdi].expr.mem_type != MT_EMPTY )
             SizeFromMemtype( [rdi].expr.mem_type, USE64, [rdi].expr.type )
-        .elseif ( [rdi].expr.kind == EXPR_ADDR && [rdi].expr.flags & E_INDIRECT ) 
+        .elseif ( [rdi].expr.kind == EXPR_ADDR && [rdi].expr.flags & E_INDIRECT )
             mov eax,8
         .endif
         .if eax < 4

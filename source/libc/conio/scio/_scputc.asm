@@ -12,13 +12,14 @@ _scputc proc x:int_t, y:int_t, l:int_t, char:char_t
 
   local NumberOfCharsWritten:int_t
 
-    mov   eax,y
-    movzx edx,char
-    movzx ecx,al
+    movzx ecx,byte ptr y
     shl   ecx,16
     mov   cl,byte ptr x
 
-    FillConsoleOutputCharacter( hStdOutput, edx, l, ecx, &NumberOfCharsWritten )
+    .if FillConsoleOutputCharacter( _confh, char, l, ecx, &NumberOfCharsWritten )
+
+        mov eax,NumberOfCharsWritten
+    .endif
     ret
 
 _scputc endp

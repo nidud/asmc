@@ -45,10 +45,10 @@ else
 externdef	_doserrno:errno_t
 externdef	_sys_errlist:array_t
 externdef	_sys_nerr:int_t
-osmaperr	proto __cdecl
 endif
 __sys_nerr	proto __cdecl
 _dosmaperr	proto __cdecl :ulong_t
+osmaperr	proto __cdecl
 
 ENOERR		equ 0
 EPERM		equ 1

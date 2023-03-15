@@ -14,7 +14,7 @@ include conio.inc
 __initconout proc
 
     CreateFileW(L"CONOUT$",
-	GENERIC_WRITE,
+	GENERIC_READ or GENERIC_WRITE,
 	FILE_SHARE_READ or FILE_SHARE_WRITE,
 	NULL,
 	OPEN_EXISTING,

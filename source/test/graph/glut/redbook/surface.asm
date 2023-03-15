@@ -51,7 +51,7 @@ nurbsError proc errorCode:GLenum
    local estring:ptr GLubyte
 
    mov estring,gluErrorString(errorCode)
-   fprintf(&stderr, "Nurbs Error: %s\n", estring)
+   fprintf(stderr, "Nurbs Error: %s\n", estring)
    exit(0)
 nurbsError endp
 

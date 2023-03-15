@@ -20,6 +20,8 @@ __isexec        proto __cdecl :string_t
 __setenvp       proto __cdecl :string_t
 __wsetenvp      proto __cdecl :wstring_t
 __coreleft      proto __cdecl
+__xtoi          proto __cdecl :string_t
+__xtoi64        proto __cdecl :string_t
 
 strfn           proto __cdecl :string_t
 strext          proto __cdecl :string_t

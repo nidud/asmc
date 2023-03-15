@@ -7,13 +7,16 @@
 include errno.inc
 
     .data
-    ErrnoNoMem int_t ENOMEM
+ifndef _WIN64
+     errno label errno_t
+endif
+     ErrorNoMem errno_t ENOMEM
 
     .code
 
 _errno proc
 
-    lea rax,ErrnoNoMem
+    lea rax,ErrorNoMem
     ret
 
 _errno endp
@@ -22,7 +25,7 @@ _set_errno proc value:int_t
 ifndef _WIN64
     mov ecx,value
 endif
-    mov ErrnoNoMem,ecx
+    mov ErrorNoMem,ecx
     ret
 
 _set_errno endp
@@ -31,7 +34,7 @@ _get_errno proc pValue:ptr int_t
 ifndef _WIN64
     mov ecx,pValue
 endif
-    mov eax,ErrnoNoMem
+    mov eax,ErrorNoMem
     .if rcx
         mov [rcx],eax
     .endif

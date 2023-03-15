@@ -8,10 +8,6 @@ include io.inc
 include crtl.inc
 include winbase.inc
 
-public  hStdInput
-public  hStdOutput
-public  hStdError
-
     .data
 
     _nfile  dd _NFILE_
@@ -31,10 +27,10 @@ public  hStdError
 
 _ioinit proc
 
-    mov hStdInput,  GetStdHandle( STD_INPUT_HANDLE )
-    mov hStdOutput, GetStdHandle( STD_OUTPUT_HANDLE )
-    mov hStdError,  GetStdHandle( STD_ERROR_HANDLE )
-    mov OldErrorMode,SetErrorMode( SEM_FAILCRITICALERRORS )
+    mov hStdInput,    GetStdHandle( STD_INPUT_HANDLE )
+    mov hStdOutput,   GetStdHandle( STD_OUTPUT_HANDLE )
+    mov hStdError,    GetStdHandle( STD_ERROR_HANDLE )
+    mov OldErrorMode, SetErrorMode( SEM_FAILCRITICALERRORS )
     ret
 
 _ioinit endp

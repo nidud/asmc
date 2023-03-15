@@ -6,31 +6,27 @@
 include ctype.inc
 include winnls.inc
 
+externdef _pcumap:string_t
+
     .code
 
 towupper proc wc:wchar_t
-
 ifdef _WIN64
-    movzx eax,cx
+    movzx ecx,cx
 else
-    movzx eax,wc
+    movzx ecx,wc
 endif
+    .if ( ecx < 256 )
 
-    .if ( ax <= 'Z' )
-        .return
-    .endif
-    .if ( ax >= 'a' && ax <= 'z' )
-
-        sub ax,'a'-'A'
+        mov rax,_pcumap
+        movzx eax,byte ptr [rax+rcx]
        .return
     .endif
-
 if WINVER GE 0x0600
     LCMapStringEx( LOCALE_NAME_USER_DEFAULT, LCMAP_UPPERCASE, &wc, 1, &wc, 1, 0, 0, 0 )
-    movzx eax,wc
 endif
+    movzx eax,wc
     ret
-
 towupper endp
 
     end

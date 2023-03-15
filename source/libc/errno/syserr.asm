@@ -51,6 +51,10 @@ sys_errlist string_t \
     T("Illegal byte sequence"),                 ; 42 EILSEQ
     T("Unknown error")
 
+ifndef _WIN64
+_sys_errlist array_t sys_errlist
+_sys_nerr label int_t
+endif
 sys_nerr int_t lengthof(sys_errlist) - 1
 
     .code

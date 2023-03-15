@@ -59,24 +59,21 @@ LPFILE		typedef ptr _iobuf
 endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-externdef	_bufin:BYTE
 externdef	_iob:_iobuf
-externdef	stdout:_iobuf
-externdef	stderr:_iobuf
+externdef	_bufin:BYTE
 externdef	_osfhnd:HANDLE
-externdef	hStdInput:HANDLE
-externdef	hStdOutput:HANDLE
-externdef	hStdError:HANDLE
+externdef	stdin:ptr _iobuf
+externdef	stdout:ptr _iobuf
+externdef	stderr:ptr _iobuf
 elseifdef _LIBCMT
-_iob		equ <[__acrt_iob_func(0)]>
-stdout		equ <[__acrt_iob_func(1)]>
-stderr		equ <[__acrt_iob_func(2)]>
+stdin		equ <__acrt_iob_func(0)>
+stdout		equ <&[__acrt_iob_func(1)]>
+stderr		equ <&[__acrt_iob_func(2)]>
 else
-_iob		equ <[__iob_func()]>
-stdout		equ <[__iob_func()+sizeof(_iobuf)]>
-stderr		equ <[__iob_func()+sizeof(_iobuf)*2]>
+stdin		equ <__iob_func()>
+stdout		equ <&[__iob_func()+sizeof(_iobuf)]>
+stderr		equ <&[__iob_func()+sizeof(_iobuf)*2]>
 endif
-stdin		equ <_iob>
 
 ifdef __UNIX__
 _fileno		equ <fileno>
@@ -85,7 +82,7 @@ _fileno		proto __cdecl :LPFILE
 
 _output		proto __cdecl :LPFILE, :LPSTR, :PVOID
 sprintf		proto _CDecl :LPSTR, :LPSTR, :VARARG
-ftobufin	proto _CDecl :LPSTR, :VARARG
+ftobufin	proto _CDecl :LPSTR, :ptr
 printf		proto _CDecl :LPSTR, :VARARG
 fprintf		proto _CDecl :LPFILE, :LPSTR, :VARARG
 scanf		proto _CDecl :LPSTR, :VARARG
@@ -95,6 +92,7 @@ fopen		proto __cdecl :LPSTR, :LPSTR
 fopen_s		proto __cdecl :ptr ptr FILE, :LPSTR, :LPSTR
 fclose		proto __cdecl :LPFILE
 fgetc		proto __cdecl :LPFILE
+getchar		proto __cdecl
 vsprintf	proto __cdecl :LPSTR, :LPSTR, :PVOID
 _vsnprintf	proto __cdecl :LPSTR, :size_t, :LPSTR, :PVOID
 vfprintf	proto __cdecl :LPFILE,:LPSTR, :PVOID
@@ -125,9 +123,9 @@ _openfile	proto __cdecl :LPSTR, :LPSTR, :SINT, :LPFILE
 ifdef _MSVCRT
 __getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+endif
 __iob_func	proto __cdecl
 __acrt_iob_func proto __cdecl :dword
-endif
 
 ifndef _WSTDIO_DEFINED
 define _WSTDIO_DEFINED

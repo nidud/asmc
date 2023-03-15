@@ -81,7 +81,7 @@ PostNewReceive proc pServerContext:PSERVER_CONTEXT, Io:PTP_IO
 
         CancelThreadpoolIo(Io)
 
-        fprintf(&stderr, "HttpReceiveHttpRequest failed, error 0x%lx\n", Result)
+        fprintf(stderr, "HttpReceiveHttpRequest failed, error 0x%lx\n", Result)
 
         .if (Result == ERROR_MORE_DATA)
 
@@ -386,7 +386,7 @@ ProcessReceiveAndPostResponse proc uses rsi rdi rbx \
 
         CancelThreadpoolIo(Io)
 
-        fprintf(&stderr, "HttpSendHttpResponse failed, error 0x%lx\n", Result)
+        fprintf(stderr, "HttpSendHttpResponse failed, error 0x%lx\n", Result)
 
         CleanupHttpIoResponse(pIoResponse)
     .endif

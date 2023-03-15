@@ -9,18 +9,16 @@ include ctype.inc
     .code
 
 isxdigit proc c:int_t
-
-ifdef _WIN64
-    lea     rax,_ctype
-    test    byte ptr [rax+rcx*2+2],_HEX
+ifndef _WIN64
+    movzx   ecx,byte ptr c
 else
-    mov     eax,c
-    test    _ctype[eax*2+2],_HEX
+    movzx   ecx,cl
 endif
-    mov     eax,0
+    mov     rax,_pctype
+    test    byte ptr [rax+rcx*2],_HEX
     setnz   al
+    movzx   eax,al
     ret
-
 isxdigit endp
 
     end

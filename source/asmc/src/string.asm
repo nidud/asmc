@@ -53,6 +53,7 @@ flt_item    ends
 ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_t, string:string_t,
         pStringOffset:string_t, pUnicode:ptr byte
 
+   .new hex_count:char_t
    .new Unicode:char_t
     mov rsi,string
 
@@ -87,36 +88,48 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
 
             ; escape char \\
 
-            add rsi,1
-            mov al,[rsi]
-            sub al,'A'
-            cmp al,'Z' - 'A' + 1
-            sbb ah,ah
-            and ah,'a' - 'A'
-            add al,ah
-            add al,'A'
-            movzx eax,al
-
+            inc rsi
+            movzx eax,B[rsi]
             .switch eax
-              .case 'a'
-                mov B[rdx],7
+              .case 'a'             ; Alert (Beep, Bell)
+                mov B[rdx],0x07
                 mov eax,20372C22h   ; <",7 >
                 jmp case_format
-              .case 'b'
-                mov B[rdx],8
+              .case 'b'             ; Backspace
+                mov B[rdx],0x08
                 mov eax,20382C22h   ; <",8 >
                 jmp case_format
-              .case 'f'
-                mov B[rdx],12
+              .case 'e'             ; Escape character
+                mov B[rdx],0x1B
+                mov eax,37322C22h   ; <",27>
+                jmp case_format
+              .case 'f'             ; Formfeed Page Break
+                mov B[rdx],0x0C
                 mov eax,32312C22h   ; <",12>
                 jmp case_format
-              .case 'n'
-                mov B[rdx],10
+              .case 'n'             ; Newline (Line Feed)
+                mov B[rdx],0x0A
                 mov eax,30312C22h   ; <",10>
                 jmp case_format
-              .case 't'
-                mov B[rdx],9
+              .case 'r'             ; Carriage Return
+                mov B[rdx],0x0D
+                mov eax,33312C22h   ; <",13>
+                jmp case_format
+              .case 't'             ; Horizontal Tab
+                mov B[rdx],0x09
                 mov eax,20392C22h   ; <",9 >
+                jmp case_format
+              .case 'v'             ; Vertical Tab
+                mov B[rdx],0x0B
+                mov eax,31312C22h   ; <",11>
+                jmp case_format
+              .case 27h             ; Apostrophe or single quotation mark
+                mov B[rdx],0x27
+                mov eax,39332C22h   ; <",39>
+                jmp case_format
+              .case '?'             ; Question mark (used to avoid trigraphs)
+                mov B[rdx],0x3F
+                mov eax,33362C22h   ; <",63>
 
                case_format:
 
@@ -140,34 +153,21 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                 mov [rdi],ah
                .endc
 
-              .case 'r'
-                mov B[rdx],13
-                mov eax,33312C22h   ; <",13>
-                jmp case_format
-              .case 'v'
-                mov B[rdx],11
-                mov eax,31312C22h   ; <",11>
-                jmp case_format
-              .case 27h
-                mov B[rdx],39
-                mov eax,39332C22h   ; <",39>
-                jmp case_format
-
+              .case 'U'
+                mov hex_count,8 ; takes 8 hexadecimal digits
+                jmp common_hex
+              .case 'u'
+                mov hex_count,4
+                jmp common_hex
               .case 'x'
-
+                mov hex_count,2
+                common_hex:
                 .if ( islxdigit( [rsi+1] ) )
 
-                    mov     ecx,eax
-                    add     rsi,1
-                    and     ecx,not 30h
-                    bt      ecx,6
-                    sbb     eax,eax
-                    and     eax,55
-                    sub     ecx,eax
+                    xor ecx,ecx
+                    .while ( islxdigit( [rsi+1] ) && hex_count )
 
-                    .if ( islxdigit( [rsi+1] ) )
-
-                        add rsi,1
+                        inc rsi
                         shl ecx,4
                         and eax,not 30h
                         bt  eax,6
@@ -175,11 +175,18 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                         and ebx,55
                         sub eax,ebx
                         add ecx,eax
-                    .endif
-
-                    mov al,cl
-                    mov [rdi],al
-                    mov [rdx],al
+                        dec hex_count
+                    .endw
+                    mov [rdi],cl
+                    mov [rdx],cl
+                    shr ecx,8
+                    .while ecx ; zero allowed..?
+                        inc rdi
+                        inc rdx
+                        mov [rdi],cl
+                        mov [rdx],cl
+                        shr ecx,8
+                    .endw
                 .else
                     mov B[rdi],'x'
                     mov B[rdx],'x'
@@ -187,18 +194,57 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                 .endc
 
               .case '0'
-                lea rax,[rdi-1]
-                .if rax == buffer
-                    dec rdi
-                    mov eax,',0'
-                    stosw
-                .else
-                    mov eax,',0,"'
-                    stosd
+
+                .if ( !isldigit( [rsi+1] ) )
+
+                    lea rax,[rdi-1]
+                    .if rax == buffer
+                        dec rdi
+                        mov eax,',0'
+                        stosw
+                    .else
+                        mov eax,',0,"'
+                        stosd
+                    .endif
+                    mov B[rdi],'"'
+                    mov B[rdx],0
+                    .endc
                 .endif
-                mov B[rdi],'"'
-                mov B[rdx],0
-                .endc
+                mov eax,'0'
+
+                ; added v2.34.25 -- Octal escape sequence
+
+              .case '1'
+              .case '2'
+              .case '3'
+              .case '4'
+              .case '5'
+              .case '6'
+              .case '7'
+              .case '8'
+              .case '9'
+
+                sub eax,'0'
+                mov ecx,eax
+
+                .if ( isldigit( [rsi+1] ) )
+
+                    inc  rsi
+                    sub  eax,'0'
+                    imul ecx,ecx,8
+                    add  ecx,eax
+
+                    .if ( isldigit( [rsi+1] ) )
+
+                        inc  rsi
+                        sub  eax,'0'
+                        imul ecx,ecx,8
+                        add  ecx,eax
+                    .endif
+                .endif
+                mov [rdi],cl
+                mov [rdx],cl
+               .endc
 
               .case '"'         ; <",'"',">
                 mov ah,','
@@ -431,7 +477,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     tstrcpy( b_line, rdi )
 
     .if ( Parse_Pass == PASS_1 )
-        
+
         mov B[rdi],';'
         tstrcmp( rax, [rsi].asm_tok.tokpos )
     .else

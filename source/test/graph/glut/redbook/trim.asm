@@ -46,7 +46,7 @@ nurbsError proc errorCode:GLenum
    local estring:string_t
 
    mov estring,gluErrorString(errorCode)
-   fprintf(&stderr, "Nurbs Error: %s\n", estring)
+   fprintf(stderr, "Nurbs Error: %s\n", estring)
    exit(0)
 nurbsError endp
 
@@ -62,16 +62,16 @@ init proc
    glMaterialfv(GL_FRONT, GL_SPECULAR, &mat_specular)
    glMaterialfv(GL_FRONT, GL_SHININESS, &mat_shininess)
 
-   glEnable(GL_LIGHTING);
-   glEnable(GL_LIGHT0);
-   glEnable(GL_DEPTH_TEST);
-   glEnable(GL_AUTO_NORMAL);
-   glEnable(GL_NORMALIZE);
+   glEnable(GL_LIGHTING)
+   glEnable(GL_LIGHT0)
+   glEnable(GL_DEPTH_TEST)
+   glEnable(GL_AUTO_NORMAL)
+   glEnable(GL_NORMALIZE)
 
    init_surface();
 
    mov theNurb,gluNewNurbsRenderer()
-   gluNurbsProperty(theNurb, GLU_SAMPLING_TOLERANCE, 25.0);
+   gluNurbsProperty(theNurb, GLU_SAMPLING_TOLERANCE, 25.0)
    gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, 100012.0);GLU_FILL)
    gluNurbsCallback(theNurb, GLU_ERROR, &nurbsError)
    ret

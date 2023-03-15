@@ -187,7 +187,7 @@ errorCallback proc errorCode:GLenum
    local estring:ptr_t ;GLubyte *
 
    mov estring,gluErrorString(errorCode)
-   fprintf(&stderr, "Tessellation Error: %s\n", estring)
+   fprintf(stderr, "Tessellation Error: %s\n", estring)
    exit(0);
 errorCallback endp
 

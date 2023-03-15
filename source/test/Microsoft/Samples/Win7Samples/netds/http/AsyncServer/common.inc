@@ -21,8 +21,8 @@ endif
 include stdio.inc
 include conio.inc
 include stdlib.inc
-include http.inc
 include strsafe.inc
+include http.inc
 
 ;;
 ;; Global defines

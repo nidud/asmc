@@ -18,7 +18,7 @@ _scputa proc x:int_t, y:int_t, l:int_t, a:uchar_t
     shl   ecx,16
     mov   cl,byte ptr x
 
-    FillConsoleOutputAttribute( hStdOutput, dx, l, ecx, &NumberOfAttrsWritten )
+    FillConsoleOutputAttribute( _confh, dx, l, ecx, &NumberOfAttrsWritten )
     ret
 
 _scputa endp

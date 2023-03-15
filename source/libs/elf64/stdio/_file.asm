@@ -7,20 +7,21 @@
 include stdio.inc
 include crtl.inc
 
-public	_iob
-public	stdout
-public	stderr
-public	_bufin
 public	__lookuptable
 
     .data
 
 _bufin	db _INTIOBUF dup(0)
 _iob	_iobuf <_bufin,0,_bufin,_IOREAD or _IOYOURBUF,0,_INTIOBUF,0>
-stdout	_iobuf <0,0,0,_IOWRT,1,0,0>    ; stdout
-stderr	_iobuf <0,0,0,_IOWRT,2,0,0>    ; stderr
+_stdout _iobuf <0,0,0,_IOWRT,1,0,0>    ; stdout
+_stderr _iobuf <0,0,0,_IOWRT,2,0,0>    ; stderr
 _first	_iobuf _NSTREAM_ - 4 dup(<0,0,0,0,-1,0,0>)
 _last	_iobuf <0,0,0,0,-1,0,0>
+
+align	size_t
+stdin	LPFILE _iob
+stdout	LPFILE _stdout
+stderr	LPFILE _stderr
 
 __lookuptable label byte
     db 06h, 00h, 00h, 06h, 00h, 01h, 00h, 00h ;	 !"#$%&' 20 00

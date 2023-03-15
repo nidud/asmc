@@ -19,25 +19,25 @@ _kbhit PROC USES rbx rdi rsi
     xor edi,edi
     lea rbx,Event
 
-    .if GetNumberOfConsoleInputEvents(hStdInput, &Count)
+    .if GetNumberOfConsoleInputEvents(_coninpfh, &Count)
 
         mov rcx,Count
         .if rcx > MAXINPUTRECORDS
             mov rcx,MAXINPUTRECORDS
         .endif
 
-        PeekConsoleInput( hStdInput, rbx, ecx, &Count )
+        PeekConsoleInput( _coninpfh, rbx, ecx, &Count )
         mov rsi,Count
 
         .while esi
 
-            .if ( [rbx].EventType == KEY_EVENT && [rbx].KeyEvent.bKeyDown )
+            .if ( [rbx].EventType == KEY_EVENT && [rbx].Event.KeyEvent.bKeyDown )
 
-                movzx edi,[rbx].KeyEvent.AsciiChar
+                movzx edi,[rbx].Event.KeyEvent.uChar.AsciiChar
                 .break .if edi
             .endif
 
-            ReadConsoleInput( hStdInput, rbx, 1, &Count )
+            ReadConsoleInput( _coninpfh, rbx, 1, &Count )
             add rbx,INPUT_RECORD
             dec esi
         .endw

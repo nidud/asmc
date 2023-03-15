@@ -23,12 +23,10 @@ _stbuf proc uses rbx r12 r13 fp:ptr _iobuf
 
         xor eax,eax
         xor r12,r12
-        lea r10,stdout
-        lea r11,stderr
 
-        .if ( rbx != r10 )
+        .if ( rbx != stdout )
 
-            .return .if ( rbx != r11 )
+            .return .if ( rbx != stderr )
             inc r12
         .endif
 

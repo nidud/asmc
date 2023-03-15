@@ -165,9 +165,9 @@ main endp
 
 else
 main proc argc:int_t, argv:array_t
-    fprintf(&stderr, "This program demonstrates a feature which is not in OpenGL Version 1.0.\n");
-    fprintf(&stderr, "If your implementation of OpenGL Version 1.0 has the right extensions,\n");
-    fprintf(&stderr, "you may be able to modify this program to make it run.\n");
+    fprintf(stderr, "This program demonstrates a feature which is not in OpenGL Version 1.0.\n");
+    fprintf(stderr, "If your implementation of OpenGL Version 1.0 has the right extensions,\n");
+    fprintf(stderr, "you may be able to modify this program to make it run.\n");
    xor eax,eax
    ret
 main endp

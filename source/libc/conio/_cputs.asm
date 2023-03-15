@@ -15,12 +15,12 @@ _cputs proc string:string_t
     ;
     ; write string to console file handle
     ;
-    strlen( string )
+    mov ecx,strlen( string )
     .if WriteConsoleA( _confh, string, ecx, &num_written, NULL )
 
-        mov rax,-1
+        .return(-1)
     .endif
-    ret
+    .return(num_written)
 
 _cputs endp
 

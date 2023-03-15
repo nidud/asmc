@@ -9,18 +9,16 @@ include ctype.inc
     .code
 
 isdigit proc c:int_t
-
-ifdef _WIN64
-    lea     rax,_ctype
-    test    word ptr [rax+rcx*2+2],_DIGIT
+ifndef _WIN64
+    movzx   ecx,byte ptr c
 else
-    mov     eax,c
-    test    _ctype[eax*2+2],_DIGIT
+    movzx   ecx,cl
 endif
-    mov     eax,0
+    mov     rax,_pctype
+    test    byte ptr [rax+rcx*2],_DIGIT
     setnz   al
+    movzx   eax,al
     ret
-
 isdigit endp
 
     end

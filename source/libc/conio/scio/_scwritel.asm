@@ -35,7 +35,7 @@ _scwritel proc x:int_t, y:int_t, l:int_t, p:PCHAR_INFO
     mov rc.Right,ax
     mov rc.Bottom,dx
 
-    WriteConsoleOutput( hStdOutput, p, ecx, 0, &rc )
+    WriteConsoleOutput( _confh, p, ecx, 0, &rc )
     free( p )
     ret
 

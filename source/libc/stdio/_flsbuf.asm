@@ -53,8 +53,8 @@ endif
 
         _isatty( ebx )
 
-        lea rcx,stdout
-        lea rdx,stderr
+        mov rcx,stdout
+        mov rdx,stderr
         .if ( !( ( rsi == rcx || rsi == rdx ) && rax ) )
 
             _getbuf( rsi )

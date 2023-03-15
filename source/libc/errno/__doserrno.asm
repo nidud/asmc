@@ -7,7 +7,10 @@
 include errno.inc
 
     .data
-    DoserrorNoMem ulong_t ERROR_NOT_ENOUGH_MEMORY
+ifndef _WIN64
+    _doserrno label errno_t
+endif
+    DoserrorNoMem errno_t ERROR_NOT_ENOUGH_MEMORY
 
     .code
 

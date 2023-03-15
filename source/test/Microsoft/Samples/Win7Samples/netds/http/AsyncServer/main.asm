@@ -331,7 +331,7 @@ InitializeHttpServer proc \
 
     .if (FAILED(hResult))
 
-        fprintf(&stderr, "Invalid command line arguments. Application stopped.\n")
+        fprintf(stderr, "Invalid command line arguments. Application stopped.\n")
         .return FALSE
     .endif
 
@@ -342,7 +342,7 @@ InitializeHttpServer proc \
 
     .if (ulResult != NO_ERROR)
 
-        fprintf(&stderr, "HttpInitialized failed\n");
+        fprintf(stderr, "HttpInitialized failed\n");
         .return FALSE
     .endif
 
@@ -355,7 +355,7 @@ InitializeHttpServer proc \
 
     .if (ulResult != NO_ERROR)
 
-        fprintf(&stderr, "HttpCreateServerSession failed\n");
+        fprintf(stderr, "HttpCreateServerSession failed\n");
         .return FALSE
     .endif
 
@@ -366,7 +366,7 @@ InitializeHttpServer proc \
 
     .if (ulResult != NO_ERROR)
 
-        fprintf(&stderr, "HttpCreateUrlGroup failed\n")
+        fprintf(stderr, "HttpCreateUrlGroup failed\n")
         .return FALSE
     .endif
 
@@ -378,7 +378,7 @@ InitializeHttpServer proc \
 
     .if (ulResult != NO_ERROR)
 
-        fwprintf(&stderr, L"HttpAddUrlToUrlGroup failed with code 0x%x for url %s\n",
+        fwprintf(stderr, L"HttpAddUrlToUrlGroup failed with code 0x%x for url %s\n",
             ulResult, pwszUrlPathToListenFor)
         .return FALSE
     .endif
@@ -423,7 +423,7 @@ InitializeServerIo proc uses rbx pServerContext:PSERVER_CONTEXT
 
     .if (Result != NO_ERROR)
 
-        fprintf(&stderr, "HttpCreateRequestQueue failed\n")
+        fprintf(stderr, "HttpCreateRequestQueue failed\n")
         .return FALSE
     .endif
 
@@ -438,7 +438,7 @@ InitializeServerIo proc uses rbx pServerContext:PSERVER_CONTEXT
 
     .if (Result != NO_ERROR)
 
-        fprintf(&stderr, "HttpSetUrlGroupProperty(...HttpServerBindingProperty...) failed\n")
+        fprintf(stderr, "HttpSetUrlGroupProperty(...HttpServerBindingProperty...) failed\n")
         .return FALSE
     .endif
 
@@ -450,7 +450,7 @@ InitializeServerIo proc uses rbx pServerContext:PSERVER_CONTEXT
 
     .if ([rbx].Io == NULL)
 
-        fprintf(&stderr, "Creating a new I/O completion object failed\n")
+        fprintf(stderr, "Creating a new I/O completion object failed\n")
         .return FALSE
     .endif
 
@@ -503,7 +503,7 @@ StartServer proc uses rbx rdi pServerContext:PSERVER_CONTEXT
     .else
 
 
-        fprintf(&stderr,
+        fprintf(stderr,
                 "We could not calculate the number of processor's, "
                 "the server will continue with the default number = %d\n",
                 OUTSTANDING_REQUESTS)
@@ -522,7 +522,7 @@ StartServer proc uses rbx rdi pServerContext:PSERVER_CONTEXT
 
         .if (pIoRequest == NULL)
 
-            fprintf(&stderr, "AllocateHttpIoRequest failed for context %d\n", wRequestsCounter)
+            fprintf(stderr, "AllocateHttpIoRequest failed for context %d\n", wRequestsCounter)
             .return FALSE
         .endif
 
@@ -550,7 +550,7 @@ StartServer proc uses rbx rdi pServerContext:PSERVER_CONTEXT
 
             CleanupHttpIoRequest(pIoRequest)
 
-            fprintf(&stderr, "HttpReceiveHttpRequest failed, error 0x%lx\n", Result)
+            fprintf(stderr, "HttpReceiveHttpRequest failed, error 0x%lx\n", Result)
 
             .return FALSE
         .endif

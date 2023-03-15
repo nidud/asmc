@@ -9,18 +9,16 @@ include ctype.inc
     .code
 
 isupper proc c:int_t
-
-ifdef _WIN64
-    lea     rax,_ctype
-    test    byte ptr [rax+rcx*2+2],_UPPER
+ifndef _WIN64
+    movzx   ecx,byte ptr c
 else
-    mov     eax,c
-    test    _ctype[eax*2+2],_UPPER
+    movzx   ecx,cl
 endif
-    mov     eax,0
+    mov     rax,_pctype
+    test    byte ptr [rax+rcx*2],_UPPER
     setnz   al
+    movzx   eax,al
     ret
-
 isupper endp
 
     end

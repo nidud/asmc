@@ -1392,7 +1392,9 @@ endif
         .case FIX_RELOFF32
             mov ebx,R_X86_64_PC32
             .if ( ModuleInfo.pic && [rcx].asym.state == SYM_EXTERNAL )
-                mov ebx,R_X86_64_PLT32
+                .if ( [rcx].asym.flag1 & S_ISPROC ) ; added v2.34.25
+                    mov ebx,R_X86_64_PLT32
+                .endif
             .endif
            .endc
         .case FIX_OFF64        : mov ebx,R_X86_64_64        : .endc

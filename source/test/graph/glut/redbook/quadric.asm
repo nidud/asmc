@@ -19,7 +19,7 @@ errorCallback proc errorCode:GLenum
    local estring:ptr GLubyte
 
    mov estring,gluErrorString(errorCode)
-   fprintf(&stderr, "Quadric Error: %s\n", estring)
+   fprintf(stderr, "Quadric Error: %s\n", estring)
    exit(0)
    ret
 

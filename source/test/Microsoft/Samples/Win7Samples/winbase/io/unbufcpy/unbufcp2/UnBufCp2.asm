@@ -120,7 +120,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
         SystemInfo      : SYSTEM_INFO,
         BufferedHandle  : HANDLE
 
-    mov ferr,&stderr
+    mov ferr,stderr
 
     .if (argc != 3)
 

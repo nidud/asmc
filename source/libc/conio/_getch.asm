@@ -16,7 +16,7 @@ _getch proc uses rbx rdi rsi
     xor edi,edi
     .while !edi
 
-        .if GetNumberOfConsoleInputEvents( hStdInput, &Count )
+        .if GetNumberOfConsoleInputEvents( _coninpfh, &Count )
 
             mov rcx,Count
             .if ecx > MAXINPUTRECORDS
@@ -24,16 +24,16 @@ _getch proc uses rbx rdi rsi
             .endif
 
             lea rbx,Event
-            ReadConsoleInput( hStdInput, rbx, ecx, &Count )
+            ReadConsoleInput( _coninpfh, rbx, ecx, &Count )
 
             mov rsi,Count
             .while esi
 
                 .if ( [rbx].INPUT_RECORD.EventType == KEY_EVENT &&
-                      [rbx].INPUT_RECORD.KeyEvent.bKeyDown )
+                      [rbx].INPUT_RECORD.Event.KeyEvent.bKeyDown )
 
-                    movzx edi,[rbx].INPUT_RECORD.KeyEvent.AsciiChar
-                    .break .if edi
+                    movzx edi,[rbx].INPUT_RECORD.Event.KeyEvent.uChar.AsciiChar
+                   .break .if edi
                 .endif
                 add rbx,INPUT_RECORD
                 dec esi

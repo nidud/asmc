@@ -1,6 +1,7 @@
 ifndef _WINGDI_
 define _WINGDI_
 .pragma list(push, 0)
+.pragma pack(push, size_t)
 
 include winapifamily.inc
 
@@ -5812,6 +5813,7 @@ endif
 
 endif
 
+.pragma pack(pop)
 .pragma list(pop)
 endif
 

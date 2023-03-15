@@ -18,9 +18,9 @@ _scmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
    .new ci:CONSOLE_SCREEN_BUFFER_INFO
 
     mov edi,80
-    .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
+    .if GetConsoleScreenBufferInfo(_confh, &ci)
 
-        movzx edi,ci.dwSize.x
+        movzx edi,ci.dwSize.X
     .endif
 
     movzx   ecx,rc.x

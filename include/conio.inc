@@ -102,13 +102,14 @@ endif
 endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-externdef hStdInput:  HANDLE
-externdef hStdOutput: HANDLE
-externdef hStdError:  HANDLE
 
-__initconout proto
-__termconout proto
+__initconin  proto __cdecl
+__termconin  proto __cdecl
+__initconout proto __cdecl
+__termconout proto __cdecl
+
 externdef _confh:intptr_t
+externdef _coninpfh:intptr_t
 
 ifndef TRECT
 

@@ -43,7 +43,7 @@ _screadl proc uses rbx x:int_t, y:int_t, l:int_t
 
         mov ecx,ebx
         mov rbx,rax
-        ReadConsoleOutput( hStdOutput, rbx, ecx, 0, &rc )
+        ReadConsoleOutput( _coninpfh, rbx, ecx, 0, &rc )
         mov rax,rbx
     .endif
     ret

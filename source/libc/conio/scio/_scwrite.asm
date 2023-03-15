@@ -17,30 +17,30 @@ _scwrite proc uses rsi rbx rect:TRECT, buffer:PCHAR_INFO
     movzx eax,rect.col
     movzx ecx,rect.x
 
-    mov co.x,ax
+    mov co.X,ax
     mov rc.Left,cx
     lea eax,[rax+rcx-1]
     mov rc.Right,ax
     mov al,rect.row
     mov cl,rect.y
-    mov co.y,ax
+    mov co.Y,ax
     mov rc.Top,cx
     lea eax,[rax+rcx-1]
     mov rc.Bottom,ax
 
-    .ifd WriteConsoleOutput( hStdOutput, rsi, co, 0, &rc )
+    .ifd WriteConsoleOutput( _confh, rsi, co, 0, &rc )
         .return
     .endif
 
-    movzx ebx,co.y
+    movzx ebx,co.Y
     mov rc.Bottom,rc.Top
-    mov co.y,1
+    mov co.Y,1
 
     .for ( : ebx : ebx--, rc.Bottom++, rc.Top++ )
 
-        .break .ifd !WriteConsoleOutput( hStdOutput, rsi, co, 0, &rc )
+        .break .ifd !WriteConsoleOutput( _confh, rsi, co, 0, &rc )
 
-        movzx eax,co.x
+        movzx eax,co.X
         shl eax,2
         add rsi,rax
     .endf

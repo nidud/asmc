@@ -12,7 +12,7 @@ include string.inc
 
 puts proc string:LPSTR
 
-    _write( stdout._file, string, strlen( string ) )
+    _write( 1, string, strlen( string ) )
     ret
 
 puts endp

@@ -8,14 +8,13 @@ include stdio.inc
 
     .code
 
-printf proc uses rbx r12 r13 r14 format:string_t, argptr:vararg
+printf proc uses rbx r12 r13 format:string_t, argptr:vararg
 
-    mov r14,rax
+    mov r12,rax
     mov r13,rdi
-    lea r12,stdout
-    mov rbx,_stbuf(r12)
-    mov r13,_output(r12, r13, r14)
-    _ftbuf(ebx, r12)
+    mov rbx,_stbuf(stdout)
+    mov r13,_output(stdout, r13, r12)
+    _ftbuf(ebx, stdout)
     .return(r13)
 
 printf endp

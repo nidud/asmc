@@ -21,7 +21,7 @@ CCHOF equ <lengthof>
 
 _com_issue_error proc hr:HRESULT
 
-    fwprintf(&stderr, L"ERROR: _com_issue_error called with HRESULT 0x%X\n", hr)
+    fwprintf(stderr, L"ERROR: _com_issue_error called with HRESULT 0x%X\n", hr)
 
     ;; _exit terminates the process immediately, without calling any C++
     ;; destructors.
@@ -468,14 +468,14 @@ wmain proc argc:int_t, argv:ptr ptr wchar_t
     mov hr,CoInitializeEx(0, COINIT_MULTITHREADED)
     .if (FAILED(hr))
 
-        fwprintf(&stderr, L"ERROR: CoInitializeEx failed with HRESULT 0x%X\n", hr)
+        fwprintf(stderr, L"ERROR: CoInitializeEx failed with HRESULT 0x%X\n", hr)
         .return 1
     .endif
 
     mov hr,GetXpsFactory(&pXpsFactory)
     .if (!SUCCEEDED(hr))
 
-        fwprintf(&stderr, L"ERROR: Could not create XPS OM Object Factory.\n")
+        fwprintf(stderr, L"ERROR: Could not create XPS OM Object Factory.\n")
 
     .else
 
@@ -486,7 +486,7 @@ wmain proc argc:int_t, argv:ptr ptr wchar_t
 
     .if ( !SUCCEEDED(hr) )
 
-        fwprintf(&stderr, L"ERROR: Could not load xps package.\n")
+        fwprintf(stderr, L"ERROR: Could not load xps package.\n")
 
     .else
 

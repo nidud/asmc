@@ -10,6 +10,7 @@ Changes in 2.35 - xx xxx 2022
 - added sqrt operator
 - fixed bug in __FILE__ macro
 - added switch -dotn[name]
+- added Octal escape sequence
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

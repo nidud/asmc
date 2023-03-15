@@ -14,7 +14,7 @@ _getxyc proc x:int_t, y:int_t
     shl ecx,16
     mov cl,byte ptr x
 
-    .ifd ReadConsoleOutputCharacter( hStdOutput, &x, 1, ecx, &y )
+    .ifd ReadConsoleOutputCharacter( _coninpfh, &x, 1, ecx, &y )
 
         mov eax,x
         and eax,0xFF

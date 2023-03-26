@@ -9,7 +9,7 @@ LFLAGS = -q -b -n -c -fac
 all: $(LIB32) $(LIB64)
 
 $(LIB32):
-    asmc $(AFLAGS) -coff -r $(src_dir)\libc\*.asm
+    asmc $(AFLAGS) -6 -coff -r $(src_dir)\libc\*.asm
     libw $(LFLAGS) $@ *.obj
     del *.obj
 

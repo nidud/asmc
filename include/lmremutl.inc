@@ -21,7 +21,7 @@ NetRemoteComputerSupports proto WINAPI \
       OptionsSupported: LPDWORD
 
 ;NET_API_STATUS
-RxRemoteApi proto _CDecl \
+RxRemoteApi proto __Cdecl \
 	     ApiNumber: DWORD,
 	 UncServerName: LPCWSTR,
 	ParmDescString: LPDESC,

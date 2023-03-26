@@ -9,6 +9,7 @@ define _O_CREAT		0x0100
 define _O_EXCL		0x0400
 define _O_APPEND	0x0008
 endif
+define	O_NONBLOCK	0x0004
 
 define _O_RDONLY	0
 define _O_WRONLY	1
@@ -45,5 +46,12 @@ define O_EXCL		_O_EXCL
 define O_SHORT_LIVED	_O_SHORT_LIVED
 define O_TEXT		_O_TEXT
 define O_BINARY		_O_BINARY
+
+ifdef __UNIX__
+
+define F_SETFL 4
+
+fcntl proto __cdecl __fd:int_t, __cmd:int_t, :vararg
+endif
 
 .pragma list(pop)

@@ -8,15 +8,16 @@ include conio.inc
 
     .code
 
-_scputc proc x:int_t, y:int_t, l:int_t, char:char_t
+_scputc proc x:BYTE, y:BYTE, l:BYTE, char:wchar_t
 
   local NumberOfCharsWritten:int_t
 
-    movzx ecx,byte ptr y
+    movzx edx,l
+    movzx ecx,y
     shl   ecx,16
-    mov   cl,byte ptr x
+    mov   cl,x
 
-    .if FillConsoleOutputCharacter( _confh, char, l, ecx, &NumberOfCharsWritten )
+    .if FillConsoleOutputCharacterW( _confh, char, edx, ecx, &NumberOfCharsWritten )
 
         mov eax,NumberOfCharsWritten
     .endif
@@ -24,4 +25,4 @@ _scputc proc x:int_t, y:int_t, l:int_t, char:char_t
 
 _scputc endp
 
-    END
+    end

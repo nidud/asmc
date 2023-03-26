@@ -21,7 +21,7 @@ endif
 if defined (_DEBUG) AND defined (_WIN32)
 
 DbgBreakPoint	proto WINAPI
-DbgPrint	proto _CDecl :ptr sbyte, :vararg
+DbgPrint	proto __Cdecl :ptr sbyte, :vararg
 
 endif
 

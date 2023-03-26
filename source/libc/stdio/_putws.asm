@@ -17,8 +17,8 @@ ifndef _WIN64
 endif
     .for ( rsi = rcx, edi = 0 : word ptr [rsi] : rsi += 2, edi++ )
 
-        movzx eax,word ptr [rsi]
-        .if ( _putwch( eax ) == WEOF )
+        movzx ecx,word ptr [rsi]
+        .if ( _putwch( cx ) == WEOF )
 
             movsx edi,ax
            .break

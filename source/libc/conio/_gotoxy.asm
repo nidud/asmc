@@ -8,16 +8,15 @@ include conio.inc
 
     .code
 
-_gotoxy proc x:UINT, y:UINT
+_gotoxy proc x:BYTE, y:BYTE
 
 ifndef _WIN64
-    mov ecx,x
-    mov edx,y
+    mov cl,x
+    mov dl,y
 endif
-
+    and edx,0xFF
     shl edx,16
-    or  edx,ecx
-
+    mov dl,cl
     SetConsoleCursorPosition( _confh, edx )
     ret
 

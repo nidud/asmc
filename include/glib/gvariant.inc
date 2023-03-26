@@ -121,7 +121,7 @@ g_variant_new_take_string proto __cdecl \
 	string: ptr gchar
 
 ;GVariant
-g_variant_new_printf proto _CDecl \
+g_variant_new_printf proto __Cdecl \
      format_string: ptr gchar,
 		  : vararg
 
@@ -296,7 +296,7 @@ g_variant_n_children proto __cdecl \
 	 value: ptr GVariant
 
 ;void
-g_variant_get_child proto _CDecl \
+g_variant_get_child proto __Cdecl \
 	 value: ptr GVariant,
 	index_: gsize,
      format_string: ptr gchar,
@@ -308,7 +308,7 @@ g_variant_get_child_value proto __cdecl \
 	index_: gsize
 
 ;gboolean
-g_variant_lookup proto _CDecl \
+g_variant_lookup proto __Cdecl \
 	dictionary: ptr GVariant,
 	   key: ptr gchar,
      format_string: ptr gchar,
@@ -426,13 +426,13 @@ g_variant_iter_next_value proto __cdecl \
 	  iter: ptr GVariantIter
 
 ;gboolean
-g_variant_iter_next proto _CDecl \
+g_variant_iter_next proto __Cdecl \
 	  iter: ptr GVariantIter,
      format_string: ptr gchar,
 	      : vararg
 
 ;gboolean
-g_variant_iter_loop proto _CDecl \
+g_variant_iter_loop proto __Cdecl \
 	  iter: ptr GVariantIter,
      format_string: ptr gchar,
 	      : vararg
@@ -524,25 +524,25 @@ g_variant_builder_add_value proto __cdecl \
 	 value: ptr GVariant
 
 ;void
-g_variant_builder_add proto _CDecl \
+g_variant_builder_add proto __Cdecl \
 	   builder: ptr GVariantBuilder,
      format_string: ptr gchar,
 	      : vararg
 
 ;void
-g_variant_builder_add_parsed proto _CDecl \
+g_variant_builder_add_parsed proto __Cdecl \
 	   builder: ptr GVariantBuilder,
 	format: ptr gchar,
 	      : vararg
 
 
 ;GVariant
-g_variant_new proto _CDecl \
+g_variant_new proto __Cdecl \
      format_string: ptr gchar,
 	      : vararg
 
 ;void
-g_variant_get proto _CDecl \
+g_variant_get proto __Cdecl \
 	 value: ptr GVariant,
      format_string: ptr gchar,
 	      : vararg
@@ -576,7 +576,7 @@ g_variant_parse proto __cdecl \
 	 error: ptr GError
 
 ;GVariant
-g_variant_new_parsed proto _CDecl \
+g_variant_new_parsed proto __Cdecl \
 	format: ptr gchar,
 	      : vararg
 
@@ -625,7 +625,7 @@ g_variant_dict_init proto __cdecl \
 
 
 ;gboolean
-g_variant_dict_lookup proto _CDecl \
+g_variant_dict_lookup proto __Cdecl \
 	  dict: ptr GVariantDict,
 	   key: ptr gchar,
      format_string: ptr gchar,
@@ -643,7 +643,7 @@ g_variant_dict_contains proto __cdecl \
 	   key: ptr gchar
 
 ;void
-g_variant_dict_insert proto _CDecl \
+g_variant_dict_insert proto __Cdecl \
 	  dict: ptr GVariantDict,
 	   key: ptr gchar,
      format_string: ptr gchar,

@@ -10,8 +10,6 @@ include ctype.inc
 
 strupr::
 
-if WINVER GE 0x0600
-
 _strupr proc uses rsi string:string_t
 
     .for ( rsi = string : byte ptr [rsi] : rsi++ )
@@ -20,35 +18,8 @@ _strupr proc uses rsi string:string_t
         toupper(ecx)
         mov [rsi],al
     .endf
-
-    mov rax,string
-
-else
-
-    option dotname
-
-_strupr proc string:string_t
-
-ifndef _WIN64
-    mov     ecx,string
-endif
-    mov     rax,rcx
-.0:
-    mov     dl,[rcx]
-    test    dl,dl
-    jz      .1
-    sub     dl,'a'
-    cmp     dl,'Z' - 'A' + 1
-    sbb     dl,dl
-    and     dl,'a' - 'A'
-    xor     [rcx],dl
-    inc     rcx
-    jmp     .0
-.1:
-
-endif
-    ret
+    .return(string)
 
 _strupr endp
 
-    END
+    end

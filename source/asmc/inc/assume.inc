@@ -56,5 +56,6 @@ SetSegAssumeTable proto fastcall :ptr
 GetSegAssumeTable proto fastcall :ptr
 SetStdAssumeTable proto fastcall :ptr, :ptr stdassume_typeinfo
 GetStdAssumeTable proto fastcall :ptr, :ptr stdassume_typeinfo
+GetLastAssumedReg proto
 
 endif

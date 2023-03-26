@@ -111,7 +111,7 @@ g_markup_escape_text proto __cdecl \
 
 
 ;gchar
-g_markup_printf_escaped proto _CDecl \
+g_markup_printf_escaped proto __Cdecl \
 		format: ptr char_t,
 		      : vararg
 
@@ -132,7 +132,7 @@ g_markup_vprintf_escaped proto __cdecl \
 
 
 ;gboolean
-g_markup_collect_attributes proto _CDecl \
+g_markup_collect_attributes proto __Cdecl \
 	  element_name: ptr gchar,
        attribute_names: ptr gchar,
       attribute_values: ptr gchar,

@@ -312,6 +312,10 @@ sys_munmap proto syscall :ptr, :size_t {
     mov eax,SYS_MUNMAP
     syscall
     }
+sys_fcntl proto :int_t, :int_t, :int_t {
+    mov eax,SYS_FCNTL
+    syscall
+    }
 sys_access proto :string_t, :int_t {
     mov eax,SYS_ACCESS
     syscall

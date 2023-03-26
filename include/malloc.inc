@@ -75,6 +75,12 @@ alloca proto watcall :uint_t {
 else
 alloca proto __cdecl :uint_t
 endif
+_freea proto fastcall :abs {
+    }
+_calloca proto watcall :uint_t, :uint_t {
+    mul edx
+    alloca(eax)
+    }
 
 ;;;;;;;;;;;;;;; kernel32
 

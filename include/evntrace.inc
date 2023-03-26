@@ -1173,7 +1173,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ;ULONG
-TraceMessage proto _CDecl \
+TraceMessage proto __Cdecl \
 	  LoggerHandle: TRACEHANDLE,
 	  MessageFlags: ULONG,
 	   MessageGuid: LPCGUID,

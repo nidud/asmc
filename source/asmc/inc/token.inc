@@ -34,13 +34,13 @@ T_DOT               equ '.'
 T_QUESTION_MARK     equ '?'
 T_PERCENT           equ '%'
 
-T_HLL_DELAY         equ 0x01    ; [0]: ELSEIF/WHILE/CASE
-T_HLL_MACRO         equ 0x02    ; -- macro(args)
-T_HLL_PROC          equ 0x04    ; -- proc(args)
-T_HLL_DELAYED       equ 0x08    ; [0]: delayed
+T_HLLCODE           equ 0x01    ; [0]: ELSEIF/WHILE/CASE
+T_DELAYED           equ 0x02    ; [0]: delayed expansion
+T_ISFUNC            equ 0x04    ; -- macro(args)
+T_ISPROC            equ 0x08    ; -- proc(args)
 T_EVEX_OPT          equ 0x10    ; {T_STRING} -- {k1}{z}..
-T_HLL_DBLCOLON      equ 0x20
-T_EXPR              equ 0x40
+T_EXPR              equ 0x20    ; .operator exression --> count << "string"
+T_EXPAND            equ 0x40    ; class (:: --> _), proc()
 
 .template asm_tok watcall
     token               uchar_t ?
@@ -53,8 +53,7 @@ T_EXPR              equ 0x40
      numbase            char_t ?    ; T_NUM: number base
      specval            char_t ?    ; 1-byte special tokens: flags
     ends
-    hll_flags           uchar_t ?   ; xx( if xx == macro/proc/label()
-    hll_index           uchar_t ?
+    flags               uchar_t ?   ; HLL flags
     union
      tokval             uint_t ?    ; index if token is a reserved word
      stringlen          uint_t ?    ; T_STRING: size

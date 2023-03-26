@@ -3441,9 +3441,9 @@ externdef       CurrEnum:asym_t
 EnumDirective   proto __ccall :int_t, :token_t
 SizeFromExpression proto __ccall :ptr expr
 
-    assume rbx:token_t
-    assume rsi:token_t
     assume rdi:nothing
+    assume rsi:token_t
+    assume rbx:token_t
 
 ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
@@ -3462,16 +3462,14 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         .return EnumDirective( 0, rbx )
     .endif
     mov buffer,NULL ; v2.32 - may not be used..
-
-continue:
-
     mov i,0
 
     .if ( Token_Count > 2 && [rbx].token == T_ID &&
           ( [rbx+asm_tok].token == T_COLON ||
             [rbx+asm_tok].token == T_DBL_COLON ) )
 
-        .if ( buffer == NULL )
+        mov rdi,buffer
+        .if ( rdi == NULL )
 
             mov buffer,alloca(ModuleInfo.max_line_len)
             mov rdi,rax
@@ -3735,7 +3733,7 @@ continue:
                 ;
                 ; v2.31.25: Type() -- constructor
                 ;
-                .endc .if [rsi].hll_flags & T_HLL_PROC
+                .endc .if [rsi].flags & T_ISPROC
                 .return data_dir( i, rbx, rax )
             .endif
             .endc
@@ -3751,26 +3749,7 @@ continue:
             sub rsi,asm_tok
         .endif
 
-        .if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) && ( [rbx].hll_flags & T_HLL_PROC ) )
-
-            .if ( buffer == NULL )
-
-                mov buffer,alloca(ModuleInfo.max_line_len)
-                mov rdi,rax
-            .endif
-            ;
-            ; invoke handle import, call do not..
-            ;
-            lea rsi,@CStr( ".new " )
-            .if !IsType( [rbx].string_ptr ) ; added 2.31.44
-                lea rsi,@CStr( "invoke " )
-            .endif
-
-            tstrcat( tstrcpy( rdi, rsi ), [rbx].tokpos )
-            mov Token_Count,Tokenize( tstrcpy( CurrSource, rdi ), 0, rbx, TOK_DEFAULT )
-            jmp continue
-
-        .elseif ( i != 0 || [rbx].dirtype != '{' )
+        .if ( i || [rbx].dirtype != '{' )
 
             .if ( CurrEnum && [rbx].token == T_STRING )
                 .return EnumDirective( 0, rbx )
@@ -3864,7 +3843,7 @@ continue:
                 or ProcStatus,PRST_INSIDE_EPILOGUE
                 RetInstr( i, tokenarray, Token_Count )
                 and ProcStatus,not PRST_INSIDE_EPILOGUE
-                .return
+               .return
             .endif
             ;
             ; default translation: just RET to RETF if proc is far
@@ -3880,12 +3859,12 @@ continue:
         .endsw
     .endif
 
-    .if ( ModuleInfo.strict_masm_compat == 0 )
+    .if ( [rbx].flags & T_EXPAND )
 
         lea rsi,[rbx+asm_tok]
         .for ( j = 1 : [rsi].token != T_FINAL : j++, rsi += asm_tok )
 
-            .if ( [rsi].hll_flags & T_HLL_PROC )
+            .if ( [rsi].flags & T_ISPROC )
 
                 .if ( buffer == NULL )
 
@@ -3897,9 +3876,10 @@ continue:
                 ; v2.27 - mov reg,class.proc(...)
                 ;
                 .return .ifd ExpandHllProcEx( buffer, j, rbx ) == ERROR
-                .if eax == STRING_EXPANDED
+                .if ( eax == STRING_EXPANDED )
+
                     FStoreLine(0)
-                    .return NOT_ERROR
+                   .return( NOT_ERROR )
                 .endif
                 .break
             .endif
@@ -3956,7 +3936,7 @@ continue:
         imul esi,i,asm_tok
         add rsi,tokenarray
 
-        .if ( [rsi-asm_tok].hll_flags & T_EVEX_OPT )
+        .if ( [rsi-asm_tok].flags & T_EVEX_OPT )
 
             mov CodeInfo.evex,1
             lea rbx,[rsi-asm_tok] ; get transform modifiers
@@ -3966,7 +3946,7 @@ continue:
                     .return asmerr( 2008, [rbx].string_ptr )
                 .endif
                 sub rbx,asm_tok
-            .until !( [rbx].hll_flags & T_EVEX_OPT )
+            .until !( [rbx].flags & T_EVEX_OPT )
 
             .if ( opndx[rdi].kind == EXPR_EMPTY )
 

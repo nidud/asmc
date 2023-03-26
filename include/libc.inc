@@ -11,6 +11,8 @@ if ( __ASMC__ LT __LIBC__ )
 .err <incorrect version. Use the header that matches with the Asmc Assembler.>
 endif
 endif
+option casemap:none
+
 ;
 ; Architecture kinds:
 ;     _WIN64 (#define symbols)
@@ -37,12 +39,12 @@ define _M_IX86	600
 endif
 
 ifdef _LINUX
-define _CType	<syscall>
-define _CDecl	<syscall>
+define __Ctype	<syscall>
+define __Cdecl	<syscall>
 define __cdecl	<syscall>
 elseifdef _STDCALL_SUPPORTED
-define _CDecl	<c>
-define _CType	<stdcall>
+define __Cdecl	<c>
+define __Ctype	<stdcall>
 define __cdecl	<stdcall>
 define WINAPI	<stdcall>
 endif
@@ -53,11 +55,11 @@ define _MSVCRT
 endif
 endif
 
-ifndef _CDecl	; vararg (...) type
+ifndef __Cdecl	; vararg (...) type
 ifdef _WIN64
-define _CDecl	<fastcall>
+define __Cdecl	<fastcall>
 else
-define _CDecl	<c>
+define __Cdecl	<c>
 endif
 endif
 
@@ -69,11 +71,11 @@ define __cdecl	<c>
 endif
 endif
 
-ifndef _CType	; default (user) type
+ifndef __Ctype	; default (user) type
 ifdef _WIN64
-define _CType	<fastcall>
+define __Ctype	<fastcall>
 else
-define _CType	<c>
+define __Ctype	<c>
 endif
 endif
 ;
@@ -118,13 +120,17 @@ else
 ifdef __SSE__
 .686
 .xmm
+elseifdef __P686__
+.686
+elseifdef __P586__
+.586
 else
 .486
 endif
 ifdef _AMD64
 .x64
 endif
-.model	flat, _CType
+.model	flat, __Ctype
 SIZE_T	typedef dword
 endif
 
@@ -263,7 +269,6 @@ define TRUE	1
 define FALSE	0
 define NULL	0
 
-option casemap:none
 size_t typedef SIZE_T
 
 bool	typedef sdword

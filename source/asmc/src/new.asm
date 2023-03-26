@@ -622,7 +622,7 @@ if 0
     .endif
 endif
 
-    mov flag,[rbx].hll_flags
+    mov flag,[rbx].flags
     mov l2,0
 
     .if ( [rbx].token == T_STRING && [rbx].bytval == '{' )
@@ -682,7 +682,7 @@ endif
 
         mov rdx,[rbx].string_ptr
 
-        .if ( eax == 8 && [rsi].Ofssize == USE32 && flag & T_HLL_PROC &&
+        .if ( eax == 8 && [rsi].Ofssize == USE32 && flag & T_ISPROC &&
               ( [rsi].mem_type == MT_QWORD || [rsi].mem_type == MT_SQWORD ) )
 
             tstrcat( rdi, "dword ptr " )
@@ -690,7 +690,7 @@ endif
             tstrcat( tstrcat( rax, name ), "[4], edx" )
 
         .elseif ( eax == 8 && [rsi].Ofssize == USE64 &&
-                  ( flag & T_HLL_PROC || word ptr [rdx] == '&' ) )
+                  ( flag & T_ISPROC || word ptr [rdx] == '&' ) )
 
         .elseifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
 

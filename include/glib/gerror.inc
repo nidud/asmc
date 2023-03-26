@@ -15,7 +15,7 @@ message ptr_t ?
 GError	ENDS
 
 ;GError*
-g_error_new proto _CDecl \
+g_error_new proto __Cdecl \
 		domain: GQuark,
 		  code: gint,
 		format: ptr gchar,
@@ -50,7 +50,7 @@ g_error_matches proto __cdecl \
 		domain: GQuark,
 		  code: gint
 
-g_set_error proto _CDecl \
+g_set_error proto __Cdecl \
 		   err: ptr GError,
 		domain: GQuark,
 		  code: gint,
@@ -73,13 +73,13 @@ g_clear_error proto __cdecl \
 		   err: ptr GError
 
 
-g_prefix_error proto _CDecl \
+g_prefix_error proto __Cdecl \
 		   err: ptr GError,
 		format: ptr gchar,
 		      : vararg
 
 
-g_propagate_prefixed_error proto _CDecl \
+g_propagate_prefixed_error proto __Cdecl \
 		  dest: ptr GError,
 		   src: ptr GError,
 		format: ptr gchar,

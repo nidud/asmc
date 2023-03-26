@@ -8,17 +8,16 @@ include conio.inc
 
     .code
 
-_scputa proc x:int_t, y:int_t, l:int_t, a:uchar_t
+_scputa proc x:BYTE, y:BYTE, l:BYTE, a:WORD
 
   local NumberOfAttrsWritten:dword
 
-    mov   eax,y
-    movzx edx,a
-    movzx ecx,al
+    movzx edx,l
+    movzx ecx,y
     shl   ecx,16
-    mov   cl,byte ptr x
+    mov   cl,x
 
-    FillConsoleOutputAttribute( _confh, dx, l, ecx, &NumberOfAttrsWritten )
+    FillConsoleOutputAttribute( _confh, a, edx, ecx, &NumberOfAttrsWritten )
     ret
 
 _scputa endp

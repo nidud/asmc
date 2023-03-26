@@ -211,7 +211,7 @@ define gdk_pixbuf_save <gdk_pixbuf_save_utf8>
 endif
 endif
 
-gdk_pixbuf_save proto _CDecl \
+gdk_pixbuf_save proto __Cdecl \
 		pixbuf: ptr GdkPixbuf,
 	      filename: ptr char_t,
 		  type: ptr char_t,
@@ -242,7 +242,7 @@ endif
 
 CALLBACKC(GdkPixbufSaveFunc, :ptr gchar, :gsize, :ptr ptr GError, :gpointer)
 
-gdk_pixbuf_save_to_callback proto _CDecl \
+gdk_pixbuf_save_to_callback proto __Cdecl \
 		pixbuf: ptr GdkPixbuf,
 	     save_func: GdkPixbufSaveFunc,
 	     user_data: gpointer,
@@ -259,7 +259,7 @@ gdk_pixbuf_save_to_callbackv proto __cdecl \
 	 option_values: ptr char_t,
 		 error: ptr GError
 
-gdk_pixbuf_save_to_buffer proto _CDecl \
+gdk_pixbuf_save_to_buffer proto __Cdecl \
 		pixbuf: ptr GdkPixbuf,
 		buffer: ptr gchar,
 	   buffer_size: ptr gsize,
@@ -308,7 +308,7 @@ gdk_pixbuf_new_from_stream_at_scale_async proto __cdecl \
 	      callback: GAsyncReadyCallback,
 	     user_data: gpointer
 
-gdk_pixbuf_save_to_stream proto _CDecl \
+gdk_pixbuf_save_to_stream proto __Cdecl \
 		pixbuf: ptr GdkPixbuf,
 		stream: ptr GOutputStream,
 		  type: ptr char_t,
@@ -316,7 +316,7 @@ gdk_pixbuf_save_to_stream proto _CDecl \
 		 error: ptr GError,
 		      : vararg
 
-gdk_pixbuf_save_to_stream_async proto _CDecl \
+gdk_pixbuf_save_to_stream_async proto __Cdecl \
 		pixbuf: ptr GdkPixbuf,
 		stream: ptr GOutputStream,
 		  type: ptr gchar,

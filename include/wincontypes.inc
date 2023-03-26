@@ -86,7 +86,7 @@ bSetFocus               BOOL ?
 FOCUS_EVENT_RECORD      ends
 PFOCUS_EVENT_RECORD     typedef ptr FOCUS_EVENT_RECORD
 
-INPUT_RECORD            struct
+INPUT_RECORD            struct 4
 EventType               WORD ?
 union Event
  KeyEvent               KEY_EVENT_RECORD <>

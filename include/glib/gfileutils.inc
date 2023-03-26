@@ -130,7 +130,7 @@ g_dir_make_tmp proto __cdecl \
 
 
 ;gchar
-g_build_path proto _CDecl \
+g_build_path proto __Cdecl \
 	     separator: ptr gchar,
 	 first_element: ptr gchar,
 		      : vararg
@@ -142,7 +142,7 @@ g_build_pathv proto __cdecl \
 
 
 ;gchar
-g_build_filename proto _CDecl \
+g_build_filename proto __Cdecl \
 	 first_element: ptr gchar,
 		      : vararg
 

@@ -8,16 +8,16 @@ include conio.inc
 
     .code
 
-_scputfg proc x:int_t, y:int_t, l:int_t, a:uchar_t
+_scputfg proc x:BYTE, y:BYTE, l:BYTE, a:BYTE
 
     .for ( : l : l--, x++ )
 
-        _getxya( x, y )
+        _scgeta( x, y )
 
-        and al,0xF0
+        and eax,0xF0
         or  al,a
 
-        _scputa( x, y, 1, al )
+        _scputa( x, y, 1, ax )
     .endf
     ret
 

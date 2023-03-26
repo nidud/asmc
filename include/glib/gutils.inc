@@ -64,7 +64,7 @@ g_parse_debug_string proto __cdecl \
 
 
 ;gint
-g_snprintf proto _CDecl \
+g_snprintf proto __Cdecl \
 		string: ptr gchar,
 		     n: gulong,
 		format: ptr,

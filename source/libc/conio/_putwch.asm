@@ -9,14 +9,9 @@ include wchar.inc
 
     .code
 
-_putwch_nolock proc wc:UINT
+_putwch_nolock proc wc:wchar_t
 
   local cchWritten:DWORD
-
-    .if ( _confh == -2 )
-
-        __initconout()
-    .endif
 
     .if ( _confh == -1 )
 
@@ -27,7 +22,7 @@ _putwch_nolock proc wc:UINT
         ;
         .if WriteConsoleW( _confh, &wc, 1, &cchWritten, NULL )
 
-            mov eax,wc
+            movzx eax,wc
         .else
             mov eax,WEOF
         .endif
@@ -36,7 +31,7 @@ _putwch_nolock proc wc:UINT
 
 _putwch_nolock endp
 
-_putwch proc wc:UINT
+_putwch proc wc:wchar_t
 
     _putwch_nolock( wc )
     ret

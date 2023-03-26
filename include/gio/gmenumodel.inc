@@ -72,7 +72,7 @@ g_menu_model_get_item_attribute_value proto __cdecl \
 	 expected_type: ptr GVariantType
 
 ;gboolean
-g_menu_model_get_item_attribute proto _CDecl \
+g_menu_model_get_item_attribute proto __Cdecl \
 		 model: ptr GMenuModel,
 	    item_index: gint,
 	     attribute: ptr gchar,

@@ -964,7 +964,7 @@ SetEvexOpt proc fastcall tok:token_t
             .endif
         .endif
     .endif
-    or  [rcx].asm_tok.hll_flags,T_EVEX_OPT
+    or  [rcx].asm_tok.flags,T_EVEX_OPT
    .return( true )
 
 SetEvexOpt endp

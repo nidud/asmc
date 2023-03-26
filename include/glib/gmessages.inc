@@ -65,7 +65,7 @@ g_log_set_default_handler proto __cdecl \
 	     user_data: gpointer
 
 ;void
-g_log proto _CDecl \
+g_log proto __Cdecl \
 	    log_domain: ptr gchar,
 	     log_level: GLogLevelFlags,
 		format: ptr gchar,
@@ -102,7 +102,7 @@ GLogField		ENDS
 CALLBACKC(GLogWriterFunc, :GLogLevelFlags, :ptr GLogField, :gsize, :gpointer)
 
 ;void
-g_log_structured proto _CDecl \
+g_log_structured proto __Cdecl \
 	    log_domain: ptr gchar,
 	     log_level: GLogLevelFlags,
 		      : vararg
@@ -216,7 +216,7 @@ g_assert_warning proto __cdecl \
 	    expression: ptr char_t
 
 
-g_log_structured_standard proto _CDecl \
+g_log_structured_standard proto __Cdecl \
 	    log_domain: ptr gchar,
 	     log_level: GLogLevelFlags,
 		  file: ptr gchar,
@@ -251,9 +251,9 @@ g_debug macro args:vararg
 
 CALLBACKC(GPrintFunc, :ptr gchar)
 
-g_print proto _CDecl :ptr gchar, :vararg
+g_print proto __Cdecl :ptr gchar, :vararg
 g_set_print_handler proto __cdecl :GPrintFunc
-g_printerr proto _CDecl :ptr gchar, :vararg
+g_printerr proto __Cdecl :ptr gchar, :vararg
 g_set_printerr_handler proto __cdecl :GPrintFunc
 
 g_warn_if_reached macro

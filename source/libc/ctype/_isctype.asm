@@ -8,7 +8,7 @@ include ctype.inc
 include locale.inc
 include winnls.inc
 
-__GetStringTypeA proto _CType \
+__GetStringTypeA proto \
     dwInfoType: DWORD,
     lpSrcStr:   LPTSTR,
     cchSrc:     SINT,

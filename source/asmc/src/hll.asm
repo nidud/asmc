@@ -956,13 +956,16 @@ GenerateFloat proto __ccall :int_t, :ptr asm_tok
     assume rbx:ptr asm_tok
 
 ExpandCStrings proc __ccall public uses rdi rbx tokenarray:ptr asm_tok
-
+ifndef _WIN64
+    mov ecx,tokenarray
+endif
     xor eax,eax
+    .return .if ( !( [rcx].asm_tok.flags & T_EXPAND ) )
     .return .if ( ModuleInfo.strict_masm_compat == 1 )
 
-    .for ( edi = 0, rbx = tokenarray: [rbx].token != T_FINAL: rbx += asm_tok, edi++ )
+    .for ( edi = 0, rbx = rcx: [rbx].token != T_FINAL: rbx += asm_tok, edi++ )
 
-        .if ( [rbx].hll_flags & T_HLL_PROC )
+        .if ( [rbx].flags & T_ISPROC )
 
             .return .if GenerateCString( edi, tokenarray )
 
@@ -1267,7 +1270,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:p
     .for ( rdi = &b, rbx = tokenarray, edx = 0 : edx < i : edx++, rbx += asm_tok )
 
         .if ( edx )
-            .if ( [rbx].hll_flags & T_HLL_PROC )
+            .if ( [rbx].flags & T_ISPROC )
                 mov proc_id,rbx
                 mov parg_id,0
             .endif
@@ -1563,7 +1566,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
 
             .for ( sqcount++, rbx+=asm_tok, j++ : sqcount && [rbx].token != T_FINAL : rbx+=asm_tok, j++ )
 
-                .if ( [rbx].hll_flags & T_HLL_PROC )
+                .if ( [rbx].flags & T_ISPROC )
                     .return .ifd LKRenderHllProc( dst, j, tokenarray ) == ERROR
                 .elseif ( [rbx].token == T_OP_BRACKET )
                     inc brcount
@@ -1911,7 +1914,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
 
     .for ( brcount = 1 : [rbx].token != T_FINAL : )
 
-        .if ( [rbx].hll_flags & T_HLL_PROC )
+        .if ( [rbx].flags & T_ISPROC )
             .return .ifd LKRenderHllProc(dst, j, tokenarray) == ERROR
         .endif
 
@@ -2039,26 +2042,23 @@ RenderHllProc endp
 
 ExpandHllProc proc __ccall public uses rsi rdi dst:string_t, i:int_t, tokenarray:ptr asm_tok
 
-  local rc:int_t
-
-    mov rc,NOT_ERROR
+   .new rc:int_t = NOT_ERROR
     mov rax,dst
     mov B[rax],0
 
     .if ( ModuleInfo.strict_masm_compat == 0 )
 
-        mov esi,i
-        mov edi,esi
+        mov  esi,i
+        mov  edi,esi
         imul edi,edi,asm_tok
-        add rdi,tokenarray
+        add  rdi,tokenarray
 
-        .while esi < ModuleInfo.token_count
+        .while ( esi < ModuleInfo.token_count )
 
-            .if [rdi].asm_tok.hll_flags & T_HLL_PROC
+            .if ( [rdi].asm_tok.flags & T_ISPROC )
 
                 ExpandCStrings( tokenarray )
                 mov rc,RenderHllProc( dst, esi, tokenarray )
-                ;.break
             .endif
             add rdi,asm_tok
             add esi,1
@@ -2115,19 +2115,19 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
     mov eax,[rdx].hll_item.flags
     and eax,HLLF_EXPRESSION
 
-    .if ( ( ModuleInfo.strict_masm_compat == 0 ) && !eax && [rbx].asm_tok.hll_flags & T_HLL_DELAY )
+    .if ( ( ModuleInfo.strict_masm_compat == 0 ) && !eax && [rbx].asm_tok.flags & T_HLLCODE )
 
         mov edi,[rsi]
         .while ( edi < ModuleInfo.token_count )
 
             imul eax,edi,asm_tok
-            .if ( [rbx+rax].asm_tok.hll_flags & T_HLL_MACRO )
+            .if ( [rbx+rax].asm_tok.flags & T_ISFUNC )
 
                 tstrcpy( buffer, [rbx].asm_tok.tokpos )
                 mov rax,hll
                 or  [rax].hll_item.flags,HLLF_EXPRESSION
 
-                .if ( [rbx].asm_tok.hll_flags & T_HLL_DELAYED )
+                .if ( [rbx].asm_tok.flags & T_DELAYED )
 
                     or [rax].hll_item.flags,HLLF_DELAYED
                 .endif
@@ -2714,6 +2714,10 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     .endc
                 .endsw
                 mov [rsi].flags,ecx
+
+                .if ([rbx].flags & T_EXPAND && [rbx].flags & T_HLLCODE )
+                    or [rbx+asm_tok].flags,T_ISFUNC
+                .endif
                 EvaluateHllExpression( rsi, &i, rbx, LSTART, 1, rdi )
                 mov rc,eax
 
@@ -3230,6 +3234,9 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; create new labels[LTEST] label
             ;
             mov [rsi].labels[LTEST*4],GetHllLabel()
+            .if ([rbx].flags & T_EXPAND && [rbx].flags & T_HLLCODE )
+                or [rbx+asm_tok].flags,T_ISFUNC
+            .endif
             EvaluateHllExpression( rsi, &i, tokenarray, LTEST, 0, rdi )
             mov rc,eax
 

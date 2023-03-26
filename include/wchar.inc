@@ -175,8 +175,8 @@ _wfindfirst	proto __cdecl :ptr wchar_t, :ptr _wfinddata_t
 _wfindnext	proto __cdecl :LONG, :ptr _wfinddata_t
 _wunlink	proto __cdecl :ptr wchar_t
 _wrename	proto __cdecl :ptr wchar_t, :ptr wchar_t
-_wopen		proto _CDecl :ptr wchar_t, :SINT, :VARARG
-_wsopen		proto _CDecl :ptr wchar_t, :SINT, :SINT, :VARARG
+_wopen		proto __Cdecl :ptr wchar_t, :SINT, :VARARG
+_wsopen		proto __Cdecl :ptr wchar_t, :SINT, :SINT, :VARARG
 _wmktemp	proto __cdecl :ptr wchar_t
 if _INTEGRAL_MAX_BITS GE 64
 _wfindfirsti64	proto __cdecl :ptr wchar_t, :ptr _wfinddatai64_t
@@ -192,18 +192,18 @@ endif
 ifndef _WPROCESS_DEFINED
 define _WPROCESS_DEFINED
 
-_wexecl		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
-_wexecle	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
-_wexeclp	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
-_wexeclpe	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
+_wexecl		proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
+_wexecle	proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
+_wexeclp	proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
+_wexeclpe	proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
 _wexecv		proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wexecve	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 _wexecvp	proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wexecvpe	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
-_wspawnl	proto _CDecl :SINT, :ptr wchar_t, :ptr wchar_t, :VARARG
-_wspawnle	proto _CDecl :SINT, :ptr wchar_t, :ptr wchar_t, :VARARG
-_wspawnlp	proto _CDecl :SINT, :ptr wchar_t, :ptr wchar_t, :VARARG
-_wspawnlpe	proto _CDecl :SINT, :ptr wchar_t, :ptr wchar_t, :VARARG
+_wspawnl	proto __Cdecl :SINT, :ptr wchar_t, :ptr wchar_t, :VARARG
+_wspawnle	proto __Cdecl :SINT, :ptr wchar_t, :ptr wchar_t, :VARARG
+_wspawnlp	proto __Cdecl :SINT, :ptr wchar_t, :ptr wchar_t, :VARARG
+_wspawnlpe	proto __Cdecl :SINT, :ptr wchar_t, :ptr wchar_t, :VARARG
 _wspawnv	proto __cdecl :SINT, :ptr wchar_t, :ptr wchar_t
 _wspawnve	proto __cdecl :SINT, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 _wspawnvp	proto __cdecl :SINT, :ptr wchar_t, :ptr wchar_t
@@ -374,17 +374,17 @@ fgetws		proto __cdecl :ptr wchar_t, :SINT, :ptr FILE
 fputws		proto __cdecl :ptr wchar_t, :ptr FILE
 _getws		proto __cdecl :ptr wchar_t
 _putws		proto __cdecl :ptr wchar_t
-fwprintf	proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
-wprintf		proto _CDecl :ptr wchar_t, :VARARG
-_snwprintf	proto _CDecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
-swprintf	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
+fwprintf	proto __Cdecl :ptr FILE, :ptr wchar_t, :VARARG
+wprintf		proto __Cdecl :ptr wchar_t, :VARARG
+_snwprintf	proto __Cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
+swprintf	proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
 vfwprintf	proto __cdecl :ptr FILE, :ptr wchar_t, :PVOID
 vwprintf	proto __cdecl :ptr wchar_t, :PVOID
 _vsnwprintf	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :PVOID
 vswprintf	proto __cdecl :ptr wchar_t, :ptr wchar_t, :PVOID
-fwscanf		proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
-swscanf		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
-wscanf		proto _CDecl :ptr wchar_t, :VARARG
+fwscanf		proto __Cdecl :ptr FILE, :ptr wchar_t, :VARARG
+swscanf		proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
+wscanf		proto __Cdecl :ptr wchar_t, :VARARG
 if 0
 getwchar macro
 	exitm<fgetwc(stdin)>

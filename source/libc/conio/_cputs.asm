@@ -9,18 +9,19 @@ include string.inc
 
     .code
 
-_cputs proc string:string_t
+_cputs proc uses rbx string:string_t
 
-  local num_written:ulong_t
-    ;
-    ; write string to console file handle
-    ;
-    mov ecx,strlen( string )
-    .if WriteConsoleA( _confh, string, ecx, &num_written, NULL )
+ifndef _WIN64
+    mov ecx,string
+endif
+    .for ( rbx = rcx : byte ptr [rbx] : rbx++ )
 
-        .return(-1)
-    .endif
-    .return(num_written)
+        movzx ecx,char_t ptr [rbx]
+        .if ( _putch_nolock( ecx ) == WEOF )
+            .return
+        .endif
+    .endf
+    .return( 0 )
 
 _cputs endp
 

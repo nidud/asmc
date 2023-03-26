@@ -1272,14 +1272,14 @@ LWSTDAPIV_ macro x
 endif
 
 ;LWSTDAPIV_(int)
-ShellMessageBoxA proto _CDecl \
+ShellMessageBoxA proto __Cdecl \
 	      hAppInst: HINSTANCE,
 		  hWnd: HWND,
 	       lpcText: LPCSTR,
 	      lpcTitle: LPCSTR,
 	       fuStyle: UINT,
 		      : VARARG
-ShellMessageBoxW proto _CDecl \
+ShellMessageBoxW proto __Cdecl \
 	      hAppInst: HINSTANCE,
 		  hWnd: HWND,
 	       lpcText: LPCWSTR,

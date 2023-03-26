@@ -5,6 +5,8 @@ define _WINCON_
 include winapifamily.inc
 include wincontypes.inc
 
+.pragma pack(push, size_t)
+
 ifndef NOGDI
 include wingdi.inc
 endif
@@ -15,6 +17,8 @@ include consoleapi.inc
 include consoleapi2.inc
 include consoleapi3.inc
 endif
+
+.pragma pack(pop)
 
 define CONSOLE_REAL_OUTPUT_HANDLE (-2)
 define CONSOLE_REAL_INPUT_HANDLE  (-3)

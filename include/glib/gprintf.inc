@@ -6,18 +6,18 @@ include stdio.inc
 include stdarg.inc
 
 ;gint
-g_printf proto _CDecl \
+g_printf proto __Cdecl \
                 format: ptr gchar,
                   args: vararg
 
 ;gint
-g_fprintf proto _CDecl \
+g_fprintf proto __Cdecl \
                   file: ptr FILE,
                 format: ptr gchar,
                   args: vararg
 
 ;gint
-g_sprintf proto _CDecl \
+g_sprintf proto __Cdecl \
                 string: ptr gchar,
                 format: ptr gchar,
                   args: vararg

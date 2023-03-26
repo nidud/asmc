@@ -29,6 +29,7 @@ include listing.inc
 include qfloat.inc
 include lqueue.inc
 include types.inc
+include assume.inc
 
 public MacroLocals
 
@@ -1879,6 +1880,19 @@ ExpandLiterals proc __ccall uses rbx i:int_t, tokenarray:token_t
 ExpandLiterals endp
 
 
+ExpandProc proc private string:string_t, buffer:string_t
+
+    lea rsi,@CStr( "invoke " )
+    SymSearch( [rbx].string_ptr )
+    .if ( rax && [rax].asym.state == SYM_TYPE )
+        lea rsi,@CStr( ".new " )
+    .endif
+    tstrcat( tstrcpy( buffer, rsi ), [rbx].tokpos )
+    mov Token_Count,Tokenize( tstrcpy( string, buffer ), 0, rbx, TOK_DEFAULT )
+    ret
+
+ExpandProc endp
+
 ; scan current line for (text) macros and expand them.
 ; this is only called when the % operator is not the first item.
 
@@ -2080,7 +2094,12 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
         .endif
 
         mov rbx,tokenarray
-        .if ( Token_Count > 2 && [rbx].hll_flags & T_HLL_DBLCOLON )
+        .if ( Token_Count > 2 && [rbx].flags & T_EXPAND )
+
+            .if ( [rbx].flags & T_ISPROC )
+
+                ExpandProc(string, buffer)
+            .endif
 
             .for ( : [rbx].token != T_FINAL : rbx += asm_tok )
 
@@ -2190,6 +2209,40 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
                         mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
                         sub rbx,asm_tok
+                    .endif
+
+                .elseif ( [rbx].token == T_DOT && [rbx+asm_tok].token == T_ID )
+
+                    xor eax,eax
+                    .if ( rbx != tokenarray )
+                        mov al,[rbx-asm_tok].token
+                    .endif
+                    .if ( al == 0 ||                ; .winproc(...)
+                          al == '&' ||              ; address (&.x)
+                          al == T_INSTRUCTION ||    ; mov .x
+                          al == T_DIRECTIVE ||      ; .if .x
+                          al == T_STRING ||         ; == .x
+                          al == T_OP_BRACKET ||     ; (.x ==
+                          al == T_COMMA )           ; ,.x
+
+                        .continue .if ( !GetLastAssumedReg() )
+
+                        mov edi,ecx
+                        mov rsi,rax
+
+                        .continue .if ( [rsi].asym.state != SYM_TYPE )
+                        .continue .if ( !SearchNameInStruct( rsi, [rbx+asm_tok].string_ptr, 0, 0 ) )
+
+                        tstrcpy ( buffer, [rbx].tokpos )
+                        tsprintf( [rbx].tokpos, "[%r]", edi )
+                        tstrcat ( [rbx].tokpos, buffer )
+
+                        mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
+                        .if ( [rbx].flags & T_ISPROC && rbx == tokenarray )
+
+                            ExpandProc(string, buffer)
+                        .endif
+                        add rbx,asm_tok*4
                     .endif
                 .endif
             .endf

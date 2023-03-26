@@ -1437,7 +1437,7 @@ SwitchStart proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov rdi,rsi
         rep stosb
     .endif
-    ExpandCStrings( rbx )
+    ExpandCStrings( tokenarray )
 
     lea rdi,buffer
     mov [rsi].cmd,HLL_SWITCH

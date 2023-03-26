@@ -175,12 +175,12 @@ wvsprintf		equ <wvsprintfA>
 endif
 
 ;int
-wsprintfA proto _CDecl \
+wsprintfA proto __Cdecl \
 		      : LPSTR,
 		      : LPCSTR,
 		      : VARARG
 ;int
-wsprintfW proto _CDecl \
+wsprintfW proto __Cdecl \
 		      : LPWSTR,
 		      : LPCWSTR,
 		      : VARARG

@@ -5,13 +5,23 @@
 ;
 
 include conio.inc
-include io.inc
 
-    .code
+.code
 
-_putch proc char:UINT
+_putch_nolock proc c:int_t
 
-    _write( 2, &char, 1 )
+    .if ( _putwch_nolock(wchar_t ptr c) == WEOF )
+
+        mov c,-1
+    .endif
+    .return( c )
+
+_putch_nolock endp
+
+
+_putch proc c:int_t
+
+    _putch_nolock( c )
     ret
 
 _putch endp

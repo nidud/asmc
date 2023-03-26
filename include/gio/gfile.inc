@@ -158,7 +158,7 @@ g_file_parse_name proto __cdecl \
 	    parse_name: ptr char_t
 
 ;GFile
-g_file_new_build_filename proto _CDecl \
+g_file_new_build_filename proto __Cdecl \
 	 first_element: ptr gchar,
 		      : vararg
 

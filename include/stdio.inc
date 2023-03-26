@@ -81,11 +81,11 @@ endif
 _fileno		proto __cdecl :LPFILE
 
 _output		proto __cdecl :LPFILE, :LPSTR, :PVOID
-sprintf		proto _CDecl :LPSTR, :LPSTR, :VARARG
-ftobufin	proto _CDecl :LPSTR, :ptr
-printf		proto _CDecl :LPSTR, :VARARG
-fprintf		proto _CDecl :LPFILE, :LPSTR, :VARARG
-scanf		proto _CDecl :LPSTR, :VARARG
+sprintf		proto __Cdecl :LPSTR, :LPSTR, :VARARG
+ftobufin	proto __Cdecl :LPSTR, :ptr
+printf		proto __Cdecl :LPSTR, :VARARG
+fprintf		proto __Cdecl :LPFILE, :LPSTR, :VARARG
+scanf		proto __Cdecl :LPSTR, :VARARG
 puts		proto __cdecl :LPSTR
 getc		proto __cdecl :LPFILE
 fopen		proto __cdecl :LPSTR, :LPSTR
@@ -160,19 +160,19 @@ fgetws		proto __cdecl :ptr wchar_t, :SINT, :ptr FILE
 fputws		proto __cdecl :ptr wchar_t, :ptr FILE
 _getws		proto __cdecl :ptr wchar_t
 _putws		proto __cdecl :ptr wchar_t
-fwprintf	proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
-wprintf		proto _CDecl :ptr wchar_t, :VARARG
-_snwprintf	proto _CDecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
-swprintf	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
-swprintf_s	proto _CDecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
+fwprintf	proto __Cdecl :ptr FILE, :ptr wchar_t, :VARARG
+wprintf		proto __Cdecl :ptr wchar_t, :VARARG
+_snwprintf	proto __Cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
+swprintf	proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
+swprintf_s	proto __Cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
 vfwprintf	proto __cdecl :ptr FILE, :ptr wchar_t, :PVOID
 vwprintf	proto __cdecl :ptr wchar_t, :PVOID
 _vsnwprintf	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :PVOID
 vswprintf	proto __cdecl :ptr wchar_t, :ptr wchar_t, :PVOID
-fwscanf		proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
-swscanf		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
-swscanf_s	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
-wscanf		proto _CDecl :ptr wchar_t, :VARARG
+fwscanf		proto __Cdecl :ptr FILE, :ptr wchar_t, :VARARG
+swscanf		proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
+swscanf_s	proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
+wscanf		proto __Cdecl :ptr wchar_t, :VARARG
 _wfdopen	proto __cdecl :SINT, :ptr wchar_t
 _wfopen		proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wfreopen	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr FILE

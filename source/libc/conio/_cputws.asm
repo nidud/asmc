@@ -12,15 +12,15 @@ include wchar.inc
 _cputws proc uses rsi string:LPWSTR
 
 ifndef _WIN64
-    mov rcx,string
+    mov ecx,string
 endif
 
     .for ( rsi = rcx : : rsi += 2 )
 
-        movzx eax,WORD PTR [rsi]
+        movzx ecx,wchar_t ptr [rsi]
 
-        .break .if ( eax == 0 )
-        .break .if ( _putwch_nolock( eax ) == WEOF )
+        .break .if ( ecx == 0 )
+        .break .if ( _putwch_nolock( cx ) == WEOF )
     .endf
     ret
 

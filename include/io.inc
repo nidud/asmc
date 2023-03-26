@@ -124,8 +124,8 @@ define _creat	<creat>
 define _isatty	<isatty>
 endif
 
-_open		proto _CDecl :LPSTR, :SINT, :VARARG
-_sopen		proto _CDecl :LPSTR, :SINT, :SINT, :VARARG
+_open		proto __Cdecl :LPSTR, :SINT, :VARARG
+_sopen		proto __Cdecl :LPSTR, :SINT, :SINT, :VARARG
 _read		proto __cdecl :SINT, :PVOID, :SIZE_T
 _creat		proto __cdecl :LPSTR, :SINT
 _close		proto __cdecl :SINT
@@ -153,8 +153,8 @@ _wfindfirst	proto __cdecl :ptr wchar_t, :ptr _wfinddata_t
 _wfindnext	proto __cdecl :intptr_t, :ptr _wfinddata_t
 _wunlink	proto __cdecl :ptr wchar_t
 _wrename	proto __cdecl :ptr wchar_t, :ptr wchar_t
-_wopen		proto _CDecl :ptr wchar_t, :SINT, :VARARG
-_wsopen		proto _CDecl :ptr wchar_t, :SINT, :SINT, :VARARG
+_wopen		proto __Cdecl :ptr wchar_t, :SINT, :VARARG
+_wsopen		proto __Cdecl :ptr wchar_t, :SINT, :SINT, :VARARG
 _wmktemp	proto __cdecl :ptr wchar_t
 if 0
 if _INTEGRAL_MAX_BITS GE 64

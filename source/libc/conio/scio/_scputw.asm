@@ -8,15 +8,12 @@ include conio.inc
 
     .code
 
-_scputw proc x:int_t, y:int_t, l:int_t, w:ushort_t
+_scputw proc x:BYTE, y:BYTE, l:BYTE, ci:CHAR_INFO
 
-    movzx ecx,w
-    shr ecx,8
-    .ifnz
-        _scputa( x, y, l, cl )
+    .if ( ci.Attributes )
+        _scputa( x, y, l, ci.Attributes )
     .endif
-    movzx ecx,byte ptr w
-    _scputc( x, y, l, cl )
+    _scputc( x, y, l, ci.Char.UnicodeChar )
     ret
 
 _scputw endp

@@ -408,14 +408,14 @@ wvnsprintfW proto WINAPI \
 	       arglist: va_list
 
 ;LWSTDAPIV
-wnsprintfA proto _CDecl \
+wnsprintfA proto __Cdecl \
 	       pszDest: LPSTR,
 	       cchDest: SINT,
 		pszFmt: LPCSTR,
 		      : VARARG
 
 ;LWSTDAPIV
-wnsprintfW proto _CDecl \
+wnsprintfW proto __Cdecl \
 	       pszDest: LPWSTR,
 	       cchDest: SINT,
 		pszFmt: LPCWSTR,

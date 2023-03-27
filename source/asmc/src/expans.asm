@@ -2210,40 +2210,6 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                         mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
                         sub rbx,asm_tok
                     .endif
-
-                .elseif ( [rbx].token == T_DOT && [rbx+asm_tok].token == T_ID )
-
-                    xor eax,eax
-                    .if ( rbx != tokenarray )
-                        mov al,[rbx-asm_tok].token
-                    .endif
-                    .if ( al == 0 ||                ; .winproc(...)
-                          al == '&' ||              ; address (&.x)
-                          al == T_INSTRUCTION ||    ; mov .x
-                          al == T_DIRECTIVE ||      ; .if .x
-                          al == T_STRING ||         ; == .x
-                          al == T_OP_BRACKET ||     ; (.x ==
-                          al == T_COMMA )           ; ,.x
-
-                        .continue .if ( !GetLastAssumedReg() )
-
-                        mov edi,ecx
-                        mov rsi,rax
-
-                        .continue .if ( [rsi].asym.state != SYM_TYPE )
-                        .continue .if ( !SearchNameInStruct( rsi, [rbx+asm_tok].string_ptr, 0, 0 ) )
-
-                        tstrcpy ( buffer, [rbx].tokpos )
-                        tsprintf( [rbx].tokpos, "[%r]", edi )
-                        tstrcat ( [rbx].tokpos, buffer )
-
-                        mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-                        .if ( [rbx].flags & T_ISPROC && rbx == tokenarray )
-
-                            ExpandProc(string, buffer)
-                        .endif
-                        add rbx,asm_tok*4
-                    .endif
                 .endif
             .endf
         .endif

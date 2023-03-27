@@ -43,47 +43,47 @@ _dlopen proc uses rsi rdi rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     add     rax,rbx
     cmp     size,ecx
     cmovz   rax,rcx
-    mov     .context.buffer,rax
+    mov     [rbx].context.buffer,rax
 
     mov     eax,dsize
     add     rax,rbx
-    mov     .window,rax
+    mov     [rbx].window,rax
     lea     rax,[rbx+TCLASS]
     cmp     count,ecx
     cmovz   rax,rcx
-    mov     .object,rax
+    mov     [rbx].object,rax
     mov     eax,O_CHILD
     cmovz   eax,ecx
     or      eax,flags
-    mov     .flags,eax
-    or      .flags,W_ISOPEN
-    mov     .rc,rc
-    mov     .count,count
+    mov     [rbx].flags,eax
+    or      [rbx].flags,W_ISOPEN
+    mov     [rbx].rc,rc
+    mov     [rbx].count,count
 
-    _getcursor(&.cursor)
+    _getcursor(&[rbx].cursor)
 
     .if ( flags & W_TRANSPARENT )
-        _rcread(rc, .window)
-        _rcclear(rc, .window, 0x00080000)
+        _rcread(rc, [rbx].window)
+        _rcclear(rc, [rbx].window, 0x00080000)
     .elseif ( flags & W_COLOR )
-        _rcclear(rc, .window, _getattrib(FG_DIALOG, BG_DIALOG))
+        _rcclear(rc, [rbx].window, _getattrib(FG_DIALOG, BG_DIALOG))
     .endif
 
-    mov     rdx,.window
-    assume  rsi:THWND
+    mov rdx,[rbx].window
+    assume rsi:THWND
 
     .for ( rsi = [rbx].object, ecx = 0 : ecx < count : ecx++, rsi += TCLASS )
 
-        mov .flags,  W_CHILD
-        mov .prev,   rbx
-        mov .window, rdx
-        mov .index,  cl
+        mov [rsi].flags,  W_CHILD
+        mov [rsi].prev,   rbx
+        mov [rsi].window, rdx
+        mov [rsi].index,  cl
 
         lea eax,[rcx+1]
         .if ( eax < count )
 
             lea rax,[rsi+TCLASS]
-            mov .next,rax
+            mov [rsi].next,rax
         .endif
     .endf
     .return( _conslink(hwnd) )

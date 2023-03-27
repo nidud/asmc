@@ -7,6 +7,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
     <RootNamespace>csmcmd</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{807764B1-7067-49EC-BA6B-CEF2436C0356}</ProjectGuid>
@@ -19,7 +20,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.props" />
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -34,8 +35,8 @@
     <OutDir>$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>%ASMCDIR%\include;$(IncludePath)</IncludePath>
-    <LibraryPath>%ASMCDIR%\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(AsmcDir)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(AsmcDir)\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ASMC>
@@ -62,6 +63,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
   </ImportGroup>
 </Project>

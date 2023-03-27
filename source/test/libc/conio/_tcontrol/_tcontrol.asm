@@ -24,7 +24,7 @@ WndProc proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
     mov rbx,hwnd
     .switch uiMsg
     .case WM_CREATE
-        _tcontrol(.object, 128, "string to edit")
+        _tcontrol([rbx].object, 128, "string to edit")
         _dlshow(rbx)
         _dlsetfocus(rbx, 0)
         .return( 0 )

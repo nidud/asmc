@@ -21,14 +21,14 @@ _getcursor proc uses rbx cursor:PCURSOR
     mov rbx,cursor
     .if GetConsoleScreenBufferInfo(_confh, &bi)
 
-        mov .x,bi.dwCursorPosition.X
-        mov .y,bi.dwCursorPosition.Y
+        mov [rbx].x,bi.dwCursorPosition.X
+        mov [rbx].y,bi.dwCursorPosition.Y
     .endif
 
     .if GetConsoleCursorInfo(_confh, &ci)
 
-        mov .csize,ci.dwSize
-        mov .visible,ci.bVisible
+        mov [rbx].csize,ci.dwSize
+        mov [rbx].visible,ci.bVisible
     .endif
     ret
 

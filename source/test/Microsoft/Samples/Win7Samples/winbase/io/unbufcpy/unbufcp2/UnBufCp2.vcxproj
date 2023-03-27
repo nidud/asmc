@@ -7,6 +7,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>UnBufCp2</RootNamespace>
@@ -22,7 +23,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.props" />
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -41,7 +42,7 @@
       <WarningLevel>2</WarningLevel>
       <IgnoreINCLUDELIB>true</IgnoreINCLUDELIB>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>\Asmc\include</IncludePaths>
+      <IncludePaths>$(AsmcDir)\include</IncludePaths>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -49,6 +50,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
   </ImportGroup>
 </Project>

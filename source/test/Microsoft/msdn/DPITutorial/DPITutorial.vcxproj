@@ -7,13 +7,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
     <RootNamespace>DPITutorial</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{2ECBAC03-7D79-4D31-AB04-EA7B1D07DDDB}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.props" />
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -63,13 +64,13 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalOptions>/LIBPATH:\asmc\lib\x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/LIBPATH:$(AsmcDir)\lib\x64 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
       <IgnoreINCLUDELIB>false</IgnoreINCLUDELIB>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>\Asmc\include</IncludePaths>
+      <IncludePaths>$(AsmcDir)\include</IncludePaths>
       <AdditionalOptions>-Zp8 %(AdditionalOptions)</AdditionalOptions>
       <WCharacterSet>Unicode</WCharacterSet>
     </ASMC>
@@ -85,6 +86,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
   </ImportGroup>
 </Project>

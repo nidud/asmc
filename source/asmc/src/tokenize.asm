@@ -1278,25 +1278,6 @@ get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
             lea rax,stokstr1[('.' - '(') * 2]
             mov [rbx].string_ptr,rax
             inc [rdx].input
-
-            .if ( !ModuleInfo.strict_masm_compat )
-
-                mov eax,[rdx].index
-                .if ( eax )
-                    mov al,[rbx-asm_tok].token
-                .endif
-                .if ( al == 0 ||
-                      al == '&' ||              ; address (&.x)
-                      al == T_INSTRUCTION ||    ; mov .x
-                      al == T_DIRECTIVE ||      ; .if .x
-                      al == T_STRING ||         ; == .x
-                      al == T_OP_BRACKET ||     ; (.x ==
-                      al == T_COMMA )           ; ,.x
-
-                    mov rbx,[rdx].tokenarray
-                    or  [rbx].flags,T_EXPAND
-                .endif
-            .endif
            .return
         .endif
         mov [rdx].input,rsi

@@ -2714,10 +2714,6 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     .endc
                 .endsw
                 mov [rsi].flags,ecx
-
-                .if ([rbx].flags & T_EXPAND && [rbx].flags & T_HLLCODE )
-                    or [rbx+asm_tok].flags,T_ISFUNC
-                .endif
                 EvaluateHllExpression( rsi, &i, rbx, LSTART, 1, rdi )
                 mov rc,eax
 
@@ -3234,9 +3230,6 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; create new labels[LTEST] label
             ;
             mov [rsi].labels[LTEST*4],GetHllLabel()
-            .if ([rbx].flags & T_EXPAND && [rbx].flags & T_HLLCODE )
-                or [rbx+asm_tok].flags,T_ISFUNC
-            .endif
             EvaluateHllExpression( rsi, &i, tokenarray, LTEST, 0, rdi )
             mov rc,eax
 

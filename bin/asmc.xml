@@ -1,0 +1,458 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions xmlns="http://schemas.microsoft.com/build/2009/properties" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <Rule
+    Name="ASMC"
+    PageTemplate="tool"
+    DisplayName="Asmc Macro Assembler"
+    Order="200">
+    <Rule.DataSource>
+      <DataSource
+        Persistence="ProjectFile"
+        ItemType="ASMC" />
+    </Rule.DataSource>
+    <Rule.Categories>
+      <Category
+        Name="General">
+        <Category.DisplayName>
+          <sys:String>General</sys:String>
+        </Category.DisplayName>
+      </Category>
+      <Category
+        Name="Command Line"
+        Subtype="CommandLine">
+        <Category.DisplayName>
+          <sys:String>Command Line</sys:String>
+        </Category.DisplayName>
+      </Category>
+    </Rule.Categories>
+    <StringProperty
+      Name="Inputs"
+      Category="Command Line"
+      IsRequired="true">
+      <StringProperty.DataSource>
+        <DataSource
+          Persistence="ProjectFile"
+          ItemType="ASMC"
+          SourceType="Item" />
+      </StringProperty.DataSource>
+    </StringProperty>
+    <BoolProperty
+      Name="NoLogo"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Suppress Startup Banner"
+      Description="Suppress the display of the startup banner and information messages."
+      Switch="/nologo" />
+    <BoolProperty
+      Name="GeneratePreprocessedSourceListing"
+      Category="Listing File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Generate Preprocessed Source Listing"
+      Description="Generates a preprocessed source listing to the Output Window."
+      Switch="/EP" />
+    <BoolProperty
+      Name="ListAllAvailableInformation"
+      Category="Listing File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="List All Available Information"
+      Description="Turns on listing of all available information."
+      Switch="/Sa" />
+    <BoolProperty
+      Name="UseSafeExceptionHandlers"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Use Safe Exception Handlers"
+      Description="Marks the object as either containing no exception handlers or containing exception handlers that are all declared with .SAFESEH.     (/safeseh)"
+      Switch="/safeseh" />
+    <BoolProperty
+      Name="GenerateUnwindInformation"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Generate unwind information"
+      Description="Auto adds frame directive for all procedures."
+      Switch="/frame" />
+    <BoolProperty
+      Name="GenerateCStackFrame"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Generate C-stack frame"
+      Description="Pushes USES register before the stack frame is created. Use this for dynamic stack allocation.    (/Cs)"
+      Switch="/Cs" />
+    <BoolProperty
+      Name="ObjectFileTypeCOFF"
+      Category="Object File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Common Object File Format"
+      Description="Specifies the type of the output object file."
+      Switch="/coff" />
+    <BoolProperty
+      Name="ObjectFileTypeOMF"
+      Category="Object File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Object Module Format"
+      Description="Specifies the type of the output object file."
+      Switch="/omf" />
+    <BoolProperty
+      Name="AddFirstPassListing"
+      Category="Listing File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Add First Pass Listing"
+      Description="Adds first-pass listing to listing file."
+      Switch="/Sf" />
+    <BoolProperty
+      Name="EnableAssemblyGeneratedCodeListing"
+      Category="Listing File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Enable Assembly Generated Code Listing"
+      Description="Turns on listing of assembly-generated code."
+      Switch="/Sg" />
+    <BoolProperty
+      Name="DisableSymbolTable"
+      Category="Listing File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Disable Symbol Table"
+      Description="Turns off symbol table when producing a listing."
+      Switch="/Sn" />
+    <BoolProperty
+      Name="EnableFalseConditionalsInListing"
+      Category="Listing File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Enable False Conditionals In Listing"
+      Description="Turns on false conditionals in listing."
+      Switch="/Sx" />
+    <BoolProperty
+      Name="TreatWarningsAsErrors"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Treat Warnings As Errors"
+      Description="Returns an error code if warnings are generated."
+      Switch="/WX" />
+    <BoolProperty
+      Name="MakeAllSymbolsPublic"
+      Category="Object File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Make All Symbols Public"
+      Description="Makes all symbols public."
+      Switch="/Zf" />
+    <EnumProperty
+      Name="GenerateDebugInformation"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/Zi.md"
+      DisplayName="Generate Debug Information"
+      Description="Generates Debug Information.">
+      <EnumValue
+        Name="true"
+        DisplayName="Default"
+        Switch="/Zi" />
+      <EnumValue
+        Name="0"
+        DisplayName="Globals"
+        Switch="/Zi0" />
+      <EnumValue
+        Name="1"
+        DisplayName="Globals and locals"
+        Switch="/Zi1" />
+      <EnumValue
+        Name="2"
+        DisplayName="Globals, locals and types"
+        Switch="/Zi2" />
+      <EnumValue
+        Name="3"
+        DisplayName="Globals, locals, types and constants"
+        Switch="/Zi3" />
+      <EnumValue
+        Name="5"
+        DisplayName="CV5 - C11 (vc5.x) 32-bit types"
+        Switch="/Zi5" />
+      <EnumValue
+        Name="8"
+        DisplayName="CV8 - C13 (vc7.x) zero terminated names"
+        Switch="/Zi8" />
+      <EnumValue
+        Name="38"
+        DisplayName="CV8 - Globals, locals, types and constants"
+        Switch="/Zi38" />
+    </EnumProperty>
+    <BoolProperty
+      Name="EnableMASM51Compatibility"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Enable MASM 5.1 Compatibility"
+      Description="Enables M510 option for maximum compatibility with MASM 5.1."
+      Switch="/Zm" />
+    <BoolProperty
+      Name="PerformSyntaxCheckOnly"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Perform Syntax Check Only"
+      Description="Performs a syntax check only."
+      Switch="/Zs" />
+    <BoolProperty
+      Name="IgnoreINCLUDELIB"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Ignore INCLUDELIB directive"
+      Description="Ignores INCLUDELIB directives."
+      Switch="/nolib" />
+    <EnumProperty
+      Name="WCharacterSet"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/directive/opt_wstring.md"
+      DisplayName="Character Set"
+      Description="Tells the assembler to use the specified character set.">
+      <EnumValue
+        Name="NotSet"
+        DisplayName="Not Set" />
+      <EnumValue
+        Name="Unicode"
+        DisplayName="Use Unicode Character Set"
+        Switch="/ws" />
+    </EnumProperty>
+    <StringProperty
+      Name="ObjectFileName"
+      Category="Object File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Object File Name"
+      Description="Specifies the name of the output object file."
+      Switch="/Fo &quot;[value]&quot;" />
+    <StringListProperty
+      Name="PreprocessorDefinitions"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Preprocessor Definitions"
+      Description="Defines a text macro with the given name."
+      Switch="/D&quot;[value]&quot;" />
+    <StringProperty
+      Name="ForseIncludeFile"
+      Category="Included File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Included File"
+      Description="Force file to be included."
+      Switch="/Fi&quot;[value]&quot;" />
+    <StringProperty
+      Name="AssembledCodeListingFile"
+      Category="Listing File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Assembled Code Listing File"
+      Description="Generates an assembled code listing file."
+      Switch="/Fl&quot;[value]&quot;" />
+    <StringListProperty
+      Name="IncludePaths"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Include Paths"
+      Description="Sets path for include file. A maximum of 10 /I options is allowed."
+      Switch="/I&quot;[value]&quot;" />
+    <StringListProperty
+      Name="AdditionalIncludeDirectories"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Additional Include Directories"
+      Description="Sets path for include file. A maximum of 10 /I options is allowed."
+      Switch="/I&quot;[value]&quot;" />
+    <StringListProperty
+      Name="BrowseFile"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Generate Browse Information File"
+      Description="Specifies whether to generate browse information file and its optional name or location of the browse information file.     (/FR[name])"
+      Switch="/FR&quot;[value]&quot;" />
+    <EnumProperty
+      Name="PreserveIdentifierCase"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Preserve Identifier Case"
+      Description="Specifies preservation of case of user identifiers.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="1"
+        DisplayName="Preserves Identifier Case"
+        Switch="/Cp" />
+      <EnumValue
+        Name="2"
+        DisplayName="Maps all identifiers to upper case."
+        Switch="/Cu" />
+      <EnumValue
+        Name="3"
+        DisplayName="Preserves case in public and extern symbols."
+        Switch="/Cx" />
+    </EnumProperty>
+    <EnumProperty
+      Name="WarningLevel"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Warning Level"
+      Description="Sets the warning level, where level = 0, 1, 2, or 3.">
+      <EnumValue
+        Name="0"
+        DisplayName="Warning Level 0"
+        Switch="/W0" />
+      <EnumValue
+        Name="1"
+        DisplayName="Warning Level 1"
+        Switch="/W1" />
+      <EnumValue
+        Name="2"
+        DisplayName="Warning Level 2"
+        Switch="/W2" />
+      <EnumValue
+        Name="3"
+        DisplayName="Warning Level 3"
+        Switch="/W3" />
+    </EnumProperty>
+    <EnumProperty
+      Name="PackAlignmentBoundary"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Pack Alignment Boundary"
+      Description="Packs structures on the specified byte boundary. The alignment can be 1, 2, 4, 8 or 16.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="1"
+        DisplayName="One Byte Boundary"
+        Switch="/Zp1" />
+      <EnumValue
+        Name="2"
+        DisplayName="Two Byte Boundary"
+        Switch="/Zp2" />
+      <EnumValue
+        Name="3"
+        DisplayName="Four Byte Boundary"
+        Switch="/Zp4" />
+      <EnumValue
+        Name="4"
+        DisplayName="Eight Byte Boundary"
+        Switch="/Zp8" />
+      <EnumValue
+        Name="5"
+        DisplayName="Sixteen Byte Boundary"
+        Switch="/Zp16" />
+    </EnumProperty>
+    <EnumProperty
+      Name="CallingConvention"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Calling Convention"
+      Description="Selects calling convention for your application.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="1"
+        DisplayName="Use C Calling Convention"
+        Switch="/Gd" />
+      <EnumValue
+        Name="2"
+        DisplayName="Use STDCALL Calling Convention"
+        Switch="/Gz" />
+      <EnumValue
+        Name="3"
+        DisplayName="Use PASCAL Calling Convention"
+        Switch="/Gc" />
+      <EnumValue
+        Name="4"
+        DisplayName="Use VECTORCALL Calling Convention"
+        Switch="/Gv" />
+      <EnumValue
+        Name="5"
+        DisplayName="Use SYSCALL Calling Convention"
+        Switch="/Gs" />
+    </EnumProperty>
+    <EnumProperty
+      Name="ErrorReporting"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Error Reporting (not implemented)"
+      Description="Masm switch to report internal assembler errors to Microsoft. These options have no effect.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="1"
+        DisplayName="Prompt to send report immediately (/errorReport:prompt)" />
+      <EnumValue
+        Name="2"
+        DisplayName="Prompt to send report at the next logon (/errorReport:queue)" />
+      <EnumValue
+        Name="3"
+        DisplayName="Automatically send report (/errorReport:send)" />
+      <EnumValue
+        Name="4"
+        DisplayName="Do not send report (/errorReport:none)" />
+    </EnumProperty>
+    <StringProperty
+      Name="CommandLineTemplate"
+      DisplayName="Command Line"
+      Visible="False"
+      IncludeInCommandLine="False" />
+    <DynamicEnumProperty
+     Name="ASMCBeforeTargets"
+     Category="General"
+     EnumProvider="Targets"
+     IncludeInCommandLine="False">
+      <DynamicEnumProperty.DisplayName>
+        <sys:String>Execute Before</sys:String>
+      </DynamicEnumProperty.DisplayName>
+      <DynamicEnumProperty.Description>
+        <sys:String>Specifies the targets for the build customization to run before.</sys:String>
+      </DynamicEnumProperty.Description>
+      <DynamicEnumProperty.ProviderSettings>
+        <NameValuePair
+          Name="Exclude"
+          Value="^ASMCBeforeTargets|^Compute" />
+      </DynamicEnumProperty.ProviderSettings>
+      <DynamicEnumProperty.DataSource>
+        <DataSource
+          Persistence="ProjectFile"
+          ItemType=""
+          HasConfigurationCondition="true" />
+      </DynamicEnumProperty.DataSource>
+    </DynamicEnumProperty>
+    <DynamicEnumProperty
+      Name="ASMCAfterTargets"
+      Category="General"
+      EnumProvider="Targets"
+      IncludeInCommandLine="False">
+      <DynamicEnumProperty.DisplayName>
+        <sys:String>Execute After</sys:String>
+      </DynamicEnumProperty.DisplayName>
+      <DynamicEnumProperty.Description>
+        <sys:String>Specifies the targets for the build customization to run after.</sys:String>
+      </DynamicEnumProperty.Description>
+      <DynamicEnumProperty.ProviderSettings>
+        <NameValuePair
+          Name="Exclude"
+          Value="^ASMCAfterTargets|^Compute" />
+      </DynamicEnumProperty.ProviderSettings>
+      <DynamicEnumProperty.DataSource>
+        <DataSource
+          Persistence="ProjectFile"
+          ItemType=""
+          HasConfigurationCondition="true" />
+      </DynamicEnumProperty.DataSource>
+    </DynamicEnumProperty>
+    <StringProperty
+      Name="ExecutionDescription"
+      DisplayName="Execution Description"
+      IncludeInCommandLine="False"
+      Visible="False" />
+    <StringListProperty
+      Name="AdditionalDependencies"
+      DisplayName="Additional Dependencies"
+      IncludeInCommandLine="False"
+      Visible="False" />
+    <StringProperty
+      Subtype="AdditionalOptions"
+      Name="AdditionalOptions"
+      Category="Command Line">
+      <StringProperty.DisplayName>
+        <sys:String>Additional Options</sys:String>
+      </StringProperty.DisplayName>
+      <StringProperty.Description>
+        <sys:String>Additional Options</sys:String>
+      </StringProperty.Description>
+    </StringProperty>
+  </Rule>
+  <ItemType
+    Name="ASMC"
+    DisplayName="Asmc Macro Assembler" />
+  <FileExtension
+    Name="*.asm"
+    ContentType="ASMC" />
+  <ContentType
+    Name="ASMC"
+    DisplayName="Asmc Macro Assembler"
+    ItemType="ASMC" />
+</ProjectSchemaDefinitions>

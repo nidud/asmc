@@ -73,7 +73,7 @@ endif
 DefineHandleTable macro w
   exitm<((w),TRUE)>
   endm
-LimitEmsPages macro dw
+LimitEmsPages macro w
   exitm<>
   endm
 SetSwapAreaSize macro w

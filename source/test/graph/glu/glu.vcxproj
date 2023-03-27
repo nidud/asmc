@@ -1,61 +1,75 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|x64">
+    <ProjectConfiguration Include="Debug|X64">
       <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
+      <Platform>X64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|win32">
+      <Configuration>Debug</Configuration>
+      <Platform>win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
     <RootNamespace>glu</RootNamespace>
+    <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{B0120D4F-7A16-4E11-9321-1734F5B0AE79}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.props" />
+  <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
-  <ImportGroup Label="ExtensionSettings">
+  <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>%ASMCDIR%\include;$(IncludePath)</IncludePath>
-    <LibraryPath>%ASMCDIR%\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ASMC>
-      <EnableAssemblyGeneratedCodeListing>true</EnableAssemblyGeneratedCodeListing>
-      <AssembledCodeListingFile>$(IntDir)\%(filename).lst</AssembledCodeListingFile>
-    </ASMC>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ShowProgress>NotSet</ShowProgress>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
-      <EntryPointSymbol>WinStart</EntryPointSymbol>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\X64</AdditionalLibraryDirectories>
     </Link>
+    <ASMC>
+      <WCharacterSet>Unicode</WCharacterSet>
+      <GenerateUnwindInformation>true</GenerateUnwindInformation>
+      <GenerateCStackFrame>true</GenerateCStackFrame>
+      <PackAlignmentBoundary>4</PackAlignmentBoundary>
+    </ASMC>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
+    </Link>
+    <ASMC>
+      <WCharacterSet>Unicode</WCharacterSet>
+      <GenerateCStackFrame>true</GenerateCStackFrame>
+      <PackAlignmentBoundary>3</PackAlignmentBoundary>
+      <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
+    </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ASMC Include="glu.asm">
-    </ASMC>
+    <ASMC Include="glu.asm" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
   </ImportGroup>
 </Project>

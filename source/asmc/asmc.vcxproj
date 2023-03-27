@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>asmc</RootNamespace>
@@ -18,33 +19,22 @@
     <ProjectGuid>{0040DBA9-EC22-43D3-B298-73504F3072B3}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="asmc.props" />
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -53,7 +43,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>\Asmc\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\x64</AdditionalLibraryDirectories>
       <Profile>false</Profile>
       <StackCommitSize>0x200000</StackCommitSize>
       <StackReserveSize>0x300000</StackReserveSize>
@@ -65,7 +55,7 @@
     <ASMC>
       <WarningLevel>2</WarningLevel>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>inc;\asmc\include</IncludePaths>
+      <IncludePaths>inc;$(AsmcDir)\include</IncludePaths>
       <GenerateUnwindInformation>true</GenerateUnwindInformation>
       <PackAlignmentBoundary>4</PackAlignmentBoundary>
       <GenerateCStackFrame>true</GenerateCStackFrame>
@@ -76,7 +66,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
-      <AdditionalLibraryDirectories>\Asmc\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
       <Profile>false</Profile>
       <StackCommitSize>0x200000</StackCommitSize>
       <StackReserveSize>0x300000</StackReserveSize>
@@ -88,7 +78,7 @@
     <ASMC>
       <WarningLevel>2</WarningLevel>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>inc;\asmc\include</IncludePaths>
+      <IncludePaths>inc;$(AsmcDir)\include</IncludePaths>
       <PackAlignmentBoundary>3</PackAlignmentBoundary>
       <GenerateCStackFrame>true</GenerateCStackFrame>
       <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
@@ -169,6 +159,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
   </ImportGroup>
 </Project>

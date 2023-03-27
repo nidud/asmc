@@ -118,7 +118,7 @@ CreateProject endp
 
 CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t
 
-   .new W:char_t = ' '
+   .new W:string_t = ""
    .new ws:string_t = ""
    .new gui:string_t = ""
    .new sys:string_t = "con"
@@ -135,12 +135,12 @@ CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t
 
     .if ( Unicode )
 
-        mov W,'W'
-        mov ws,&@CStr("-ws")
+        mov W,&@CStr("W")
+        mov ws,&@CStr("-ws ")
     .endif
     .if ( Windows )
 
-        mov gui,&@CStr("-gui")
+        mov gui,&@CStr("-gui ")
         mov sys,&@CStr("gui")
     .endif
 
@@ -149,10 +149,10 @@ CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t
         "\n"
         "%s.exe:\n"
         "!if $(static)\n"
-        "    asmc64 %s $*.asm\n"
-        "    linkw system %s_64%c file $*.obj\n"
+        "    asmc64 %s$*.asm\n"
+        "    linkw system %s_64%s file $*.obj\n"
         "!else\n"
-        "    asmc64 -pe %s %s $*.asm\n"
+        "    asmc64 -pe %s%s$*.asm\n"
         "!endif\n"
         "    $@\n"
         "    pause\n", Static, name, ws, sys, W, ws, gui)

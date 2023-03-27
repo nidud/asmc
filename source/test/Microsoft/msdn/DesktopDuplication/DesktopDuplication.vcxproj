@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DesktopDuplication</RootNamespace>
@@ -32,7 +33,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.props" />
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -61,12 +62,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalOptions>/LIBPATH:\Asmc\lib\x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/LIBPATH:$(AsmcDir)\lib\x64 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>\Asmc\include</IncludePaths>
+      <IncludePaths>$(AsmcDir)\include</IncludePaths>
       <AdditionalOptions>-frame -Zp8 %(AdditionalOptions)</AdditionalOptions>
     </ASMC>
   </ItemDefinitionGroup>
@@ -83,12 +84,13 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalOptions>/LIBPATH:\Asmc\lib\x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/LIBPATH:$(AsmcDir)\lib\x64 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
-      <IncludePaths>\Asmc\include</IncludePaths>
-      <AdditionalOptions>-frame -Zp8 %(AdditionalOptions)</AdditionalOptions>
+      <IncludePaths>$(AsmcDir)\include</IncludePaths>
+      <PackAlignmentBoundary>4</PackAlignmentBoundary>
+      <GenerateUnwindInformation>true</GenerateUnwindInformation>
     </ASMC>
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
@@ -108,6 +110,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
   </ImportGroup>
 </Project>

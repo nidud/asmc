@@ -56,8 +56,6 @@ saved_StdTypeInfo stdassume_typeinfo NUM_STDREGS dup(<>)
 
 searchtab int_t ASSUME_DS, ASSUME_SS, ASSUME_ES, ASSUME_FS, ASSUME_GS, ASSUME_CS
 
-regassume label uchar_t
-_regtable dd 0
 szError   char_t "ERROR",0
 szNothing char_t "NOTHING",0
 szDgroup  char_t "DGROUP",0
@@ -174,7 +172,6 @@ AssumeInit proc fastcall uses rbx pass:int_t ;; pass may be -1 here!
 
     mov ebx,ecx
     xor eax,eax
-    mov _regtable,eax
 
     .for ( rdx = &SegAssumeTable,
            ecx = 0 : ecx < NUM_SEGREGS : ecx++, rdx += assume_info )
@@ -293,22 +290,6 @@ GetStdAssume proc fastcall reg:int_t
 GetStdAssume endp
 
 
-; v2.34.26: get last assumed register
-; return register in ecx
-
-GetLastAssumedReg proc
-
-    movzx eax,regassume
-    .if ( eax )
-
-        GetStdAssume(GetRegNo(eax))
-        movzx ecx,regassume
-    .endif
-    ret
-
-GetLastAssumedReg endp
-
-
 ; v2.05: new, used by
 ; expression evaluator if a register is used for indirect addressing
 
@@ -419,7 +400,6 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     mov eax,RH_ERROR
                 .endif
                 or [rdi].error,al
-                shr _regtable,8
             .endif
             mov [rdi].symbol,NULL
             inc i
@@ -437,7 +417,6 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov cl,[rdi].error
                 and al,cl
                 mov [rdi].error,al
-                shr _regtable,8
             .endif
             mov [rdi].symbol,NULL
             inc i
@@ -499,8 +478,6 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov [rsi].target_type,ti.symtype
             .endif
             mov [rdi].symbol,rsi
-            shl _regtable,8
-            mov regassume,reg
 
         .else ; segment register
 

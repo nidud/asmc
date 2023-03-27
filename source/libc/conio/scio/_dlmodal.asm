@@ -34,20 +34,20 @@ set macro reg,arg
 _sendmessage proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
     mov    rbx,hwnd
-    test   .flags,O_CHILD
-    cmovnz rbx,.object
+    test   [rbx].flags,O_CHILD
+    cmovnz rbx,[rbx].object
 
     .for ( eax = 1 : rbx : )
 
-        .if ( .flags & W_WNDPROC )
-            .break .ifd ( .winproc(rbx, uiMsg, wParam, lParam) != 1 )
+        .if ( [rbx].flags & W_WNDPROC )
+            .break .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) != 1 )
         .endif
-        .if ( .flags & O_CHILD && .flags & W_CHILD )
-            mov rbx,.object
-        .elseif ( .flags & W_CHILD && .next )
-            mov rbx,.next
+        .if ( [rbx].flags & O_CHILD && [rbx].flags & W_CHILD )
+            mov rbx,[rbx].object
+        .elseif ( [rbx].flags & W_CHILD && [rbx].next )
+            mov rbx,[rbx].next
         .else
-            mov rbx,.prev
+            mov rbx,[rbx].prev
         .endif
     .endf
     ret
@@ -62,15 +62,15 @@ _postmessage proc hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
         mov rdx,rax
 
-        mov .Next,    0
-        mov .Message, uiMsg
-        mov .wParam,  wParam
-        mov .lParam,  lParam
+        mov [rdx].Next,    0
+        mov [rdx].Message, uiMsg
+        mov [rdx].wParam,  wParam
+        mov [rdx].lParam,  lParam
 
-        .for ( rax = rdx, rdx = _msg : rdx && .Next : rdx = .Next )
+        .for ( rax = rdx, rdx = _msg : rdx && [rdx].Next : rdx = [rdx].Next )
         .endf
         .if rdx
-            mov .Next,rax
+            mov [rdx].Next,rax
         .else
             mov _msg,rax
         .endif
@@ -88,11 +88,11 @@ _dispatch proc fastcall private msg:PMESSAGE
     .if ( rdx == rcx )
         mov _msg,rax
     .elseif rdx
-        .while ( rdx && rcx != .Next )
-            mov rdx,.Next
+        .while ( rdx && rcx != [rdx].Next )
+            mov rdx,[rdx].Next
         .endw
-        .if ( rdx && rcx == .Next )
-            mov .Next,rax
+        .if ( rdx && rcx == [rdx].Next )
+            mov [rdx].Next,rax
         .endif
     .endif
     free(rcx)
@@ -130,8 +130,8 @@ _translate endp
 
 _postquitmsg proc fastcall hwnd:THWND, retval:UINT
 
-    test   .flags,W_CHILD
-    cmovnz rcx,.prev
+    test   [rcx].flags,W_CHILD
+    cmovnz rcx,[rcx].prev
 
     _postmessage(rcx, WM_QUIT, edx, 0)
     .return(0)
@@ -145,12 +145,12 @@ _dlsetfocus proc uses rbx hwnd:THWND, index:BYTE
     mov rbx,hwnd
     _sendmessage(rbx, WM_KILLFOCUS, 0, 0)
 
-    test    .flags,W_CHILD
-    cmovnz  rbx,.prev
-    mov     .index,index
+    test    [rbx].flags,W_CHILD
+    cmovnz  rbx,[rbx].prev
+    mov     [rbx].index,index
     movzx   eax,al
     imul    ecx,eax,TCLASS
-    add     rcx,.object
+    add     rcx,[rbx].object
 
     _sendmessage(rcx, WM_SETFOCUS, 0, 0)
     ret
@@ -166,11 +166,11 @@ _dlmodal proc uses rsi rdi rbx hwnd:THWND, wndp:TPROC
 
     mov rbx,hwnd
 
-    mov .winproc,wndp
-    or  .flags,W_WNDPROC
+    mov [rbx].winproc,wndp
+    or  [rbx].flags,W_WNDPROC
     mov IdleCount,0
 
-    .winproc(rbx, WM_CREATE, 0, 0)
+    [rbx].winproc(rbx, WM_CREATE, 0, 0)
 
     .while 1
 
@@ -387,14 +387,14 @@ ContextRect proto fastcall :THWND {
 _getfocus proc fastcall private hwnd:THWND
 
     xor     eax,eax
-    test    .flags,W_CHILD
-    cmovnz  rcx,.prev
-    test    .flags,O_CHILD
+    test    [rcx].flags,W_CHILD
+    cmovnz  rcx,[rcx].prev
+    test    [rcx].flags,O_CHILD
     jz      O
     movzx   edx,word ptr [rcx].rc
-    movzx   eax,.index
+    movzx   eax,[rcx].index
     imul    eax,eax,TCLASS
-    add     rax,.object
+    add     rax,[rcx].object
     add     edx,[rax].TCLASS.rc
 O:
     ret
@@ -407,14 +407,14 @@ _getfocus endp
 _dlnextitem proc fastcall private uses rbx hwnd:THWND
 
     mov     rbx,rcx
-    test    .flags,W_CHILD
-    cmovnz  rbx,.prev
+    test    [rbx].flags,W_CHILD
+    cmovnz  rbx,[rbx].prev
 
-    movzx   eax,.count
-    movzx   ecx,.index
+    movzx   eax,[rbx].count
+    movzx   ecx,[rbx].index
     lea     edx,[rcx+1]
     imul    edx,edx,TCLASS
-    add     rdx,.object
+    add     rdx,[rbx].object
     add     ecx,2
 
     .while ( ecx <= eax )
@@ -429,8 +429,8 @@ _dlnextitem proc fastcall private uses rbx hwnd:THWND
         add rdx,TCLASS
     .endw
 
-    mov     rdx,.object
-    movzx   eax,.index
+    mov     rdx,[rbx].object
+    movzx   eax,[rbx].index
     inc     eax
     mov     ecx,1
 
@@ -453,13 +453,13 @@ _dlnextitem endp
 _dlprevitem proc fastcall private uses rbx hwnd:THWND
 
     mov     rbx,rcx
-    test    .flags,W_CHILD
-    cmovnz  rbx,.prev
+    test    [rbx].flags,W_CHILD
+    cmovnz  rbx,[rbx].prev
 
-    movzx   eax,.count
-    movzx   ecx,.index
+    movzx   eax,[rbx].count
+    movzx   ecx,[rbx].index
     imul    edx,ecx,TCLASS
-    add     rdx,.object
+    add     rdx,[rbx].object
 
     .if ecx
 
@@ -477,13 +477,13 @@ _dlprevitem proc fastcall private uses rbx hwnd:THWND
         xor ecx,ecx
     .endif
 
-    add cl,.count
+    add cl,[rbx].count
     .ifnz
 
-        movzx   eax,.index
+        movzx   eax,[rbx].index
         lea     edx,[rcx-1]
         imul    edx,ecx,TCLASS
-        add     rdx,.object
+        add     rdx,[rbx].object
 
         .repeat
 
@@ -505,21 +505,21 @@ _dlprevitem endp
 _dlitemright proc fastcall private uses rbx hwnd:THWND
 
     mov     rbx,rcx
-    test    .flags,W_CHILD
-    cmovnz  rbx,.prev
+    test    [rbx].flags,W_CHILD
+    cmovnz  rbx,[rbx].prev
 
-    .if ( .ttype == T_MENUITEM || !.count )
+    .if ( [rbx].ttype == T_MENUITEM || ![rbx].count )
 
         .return( 1 )
     .endif
 
-    movzx   ecx,.index
+    movzx   ecx,[rbx].index
     inc     ecx
     imul    edx,ecx,TCLASS
-    add     rdx,.object
+    add     rdx,[rbx].object
     mov     eax,[rdx-TCLASS].TCLASS.rc
 
-    .while ( cl < .count )
+    .while ( cl < [rbx].count )
 
         .if ( ah == [rdx].TCLASS.rc.y && al < [rdx].TCLASS.rc.x )
 
@@ -540,18 +540,18 @@ _dlitemright endp
 _dlitemleft proc fastcall uses rbx hwnd:THWND
 
     mov     rbx,rcx
-    test    .flags,W_CHILD
-    cmovnz  rbx,.prev
+    test    [rbx].flags,W_CHILD
+    cmovnz  rbx,[rbx].prev
 
-    .if ( .ttype == T_MENUITEM || !.count|| !.index )
+    .if ( [rbx].ttype == T_MENUITEM || ![rbx].count|| ![rbx].index )
 
         .return( 1 )
     .endif
 
-    movzx   ecx,.index
+    movzx   ecx,[rbx].index
     dec     ecx
     imul    edx,ecx,TCLASS
-    add     rdx,.object
+    add     rdx,[rbx].object
     mov     eax,[rdx+TCLASS].TCLASS.rc
     inc     ecx
 
@@ -576,10 +576,10 @@ _dlinside proc fastcall hwnd:THWND, pos:COORD
 
   local rc:TRECT
 
-    mov eax,.rc
-    .if ( .flags & W_CHILD )
+    mov eax,[rcx].TCLASS.rc
+    .if ( [rcx].TCLASS.flags & W_CHILD )
 
-        mov rcx,.prev
+        mov rcx,[rcx].TCLASS.prev
         add ax,word ptr [rcx].TCLASS.rc
     .endif
 

@@ -190,7 +190,7 @@ _msgboxW proc uses rsi rdi rbx flags:UINT, title:LPWSTR, format:LPWSTR, argptr:v
     and eax,0x00000070
     .if ( eax == MB_ICONERROR || eax == MB_ICONWARNING )
 
-        _rcclear(.rc, .window, _getattrib(FG_DESKTOP, BG_ERROR))
+        _rcclear([rbx].rc, [rbx].window, _getattrib(FG_DESKTOP, BG_ERROR))
     .endif
 
     _dltitleW(rbx, rdi)

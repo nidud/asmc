@@ -23,14 +23,14 @@ _dlinitA proc uses rsi rdi rbx hwnd:THWND, index:UINT, rc:TRECT, flags:UINT, typ
     imul    esi,index,TCLASS
     add     rsi,[rbx].object
 
-    mov     .rc,     rc
-    mov     .index,  id
-    mov     .ttype,  type
-    mov     eax,     W_CHILD or W_WNDPROC
-    or      eax,     flags
-    or      .flags,  eax
-    mov     .winproc,&_defwinproc
-    mov     .window, _rcbprc([rbx].rc, rc, [rbx].window)
+    mov     [rsi].rc,rc
+    mov     [rsi].index,id
+    mov     [rsi].ttype,type
+    mov     eax,W_CHILD or W_WNDPROC
+    or      eax,flags
+    or      [rsi].flags,eax
+    mov     [rsi].winproc,&_defwinproc
+    mov     [rsi].window,_rcbprc([rbx].rc, rc, [rbx].window)
 
     mov     rdi,rax
     xchg    rsi,rbx

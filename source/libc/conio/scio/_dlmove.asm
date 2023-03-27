@@ -26,8 +26,8 @@ _dlmove proc uses rsi rdi rbx hwnd:THWND, direction:SINT
    .new retval:int_t = FALSE
 
     mov     rbx,hwnd
-    mov     p,.window
-    mov     rc,.rc
+    mov     p,[rbx].window
+    mov     rc,[rbx].rc
     movzx   eax,rc.col
     mul     rc.row
     shl     eax,2
@@ -214,12 +214,12 @@ _dlmove proc uses rsi rdi rbx hwnd:THWND, direction:SINT
 
     mov rbx,hwnd
     mov eax,rc
-    .if ( eax != .rc )
+    .if ( eax != [rbx].rc )
 
-        mov .rc,eax
+        mov [rbx].rc,eax
         inc retval
 
-        .if ( .flags & W_TRANSPARENT )
+        .if ( [rbx].flags & W_TRANSPARENT )
 
             mov rdi,p
             mov rsi,w

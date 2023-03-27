@@ -7,6 +7,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>compressapi</RootNamespace>
@@ -22,7 +23,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.props" />
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -45,12 +46,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>\Asmc\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\x64</AdditionalLibraryDirectories>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>\Asmc\include;\Asmc\include\winrt</IncludePaths>
+      <IncludePaths>$(AsmcDir)\include;$(AsmcDir)\include\winrt</IncludePaths>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
       <WCharacterSet>
       </WCharacterSet>
@@ -61,6 +62,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
   </ImportGroup>
 </Project>

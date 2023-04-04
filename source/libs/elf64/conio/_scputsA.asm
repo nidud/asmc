@@ -6,19 +6,33 @@
 
 include conio.inc
 
+_conpaint proto
+
     .code
 
-_scputsA proc uses rbx _x:BYTE, _y:BYTE, string:LPSTR
+_scputsA proc uses rbx x:BYTE, y:BYTE, string:LPSTR
 
-   .new x:BYTE = _x
-   .new y:BYTE = _y
-   .new retval:int_t = 0
+    mov     r10,_console
+    movzx   eax,[r10].TCONSOLE.rc.col
+    mov     ecx,eax
+    mul     sil
+    and     edi,0xFF
+    sub     ecx,edi
+    add     edi,eax
+    shl     edi,2
+    add     rdi,[r10].TCONSOLE.buffer
+    xor     eax,eax
 
-    .for ( rbx=string : byte ptr [rbx] : rbx++, x++, retval++ )
+    .for ( rbx = rdx : ecx && byte ptr [rbx] : ecx--, rbx++, rdi+=4 )
 
-        _scputc(x, y, 1, [rbx])
+        mov al,[rbx]
+        mov [rdi],ax
     .endf
-    .return( retval )
+    sub rbx,rdx
+    .if ( [r10].TCONSOLE.paint > 0 )
+        _conpaint()
+    .endif
+    .return( rbx )
 
 _scputsA endp
 

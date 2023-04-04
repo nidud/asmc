@@ -4,6 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
 include conio.inc
 include crtl.inc
 include malloc.inc
@@ -64,21 +65,20 @@ _writeline proc private uses rbx _x:BYTE, _y:BYTE, _l:BYTE, p:PCHAR_INFO
    .new bg:int_t = 0
    .new fg:int_t = 0
    .new c:int_t
-   .new count:int_t
 
     mov rbx,p
     _cout("\e7") ; push cursor
+
     _cursoroff()
     _gotoxy(x, y)
 
     .for ( : l : l--, rbx+=4 )
 
-        mov eax,[rbx]
-        shr eax,16
-        mov cl,ah
+        movzx eax,byte ptr [rbx+2]
+        mov ecx,eax
         and eax,0x0F
         shr ecx,4
-        and ecx,0x0F
+
         lea rsi,colorid
         mov al,[rsi+rax]
         mov cl,[rsi+rcx]
@@ -87,68 +87,60 @@ _writeline proc private uses rbx _x:BYTE, _y:BYTE, _l:BYTE, p:PCHAR_INFO
 
             mov fg,eax
             mov bg,ecx
-            _cout("\e[38;5;%dm\e[48;5;%dm", fg, bg)
+
+            lea rsi,@CStr("\e[38;5;7m\e[48;5;0m")
+            add al,'0'
+            add cl,'0'
+            mov [rsi+7],al
+            mov [rsi+16],cl
+            write(_confh, rsi, sizeof(@CStr("\e[38;5;7m\e[48;5;0m")))
         .endif
 
         mov c,_wtoutf([rbx])
-        mov count,ecx
-
-        .for ( : count : count-- )
-
-            _cout("%c", c)
-            shr c,8
-        .endf
+        write(_confh, &c, ecx)
     .endf
-    _cout(CSI "38;5;7m" CSI "48;5;0m" ESC "8") ; pop cursor
+    _cout(CSI "m" ESC "8") ; pop cursor
     ret
 
 _writeline endp
 
 
-_conpaint proc uses rbx
+_conpaint proc uses rbx r12 r13
 
    .new rc:TRECT
    .new dc:SMALL_RECT
 
     mov rcx,_console
-    mov rsi,[rcx].TCONSOLE.buffer
-    mov rdi,[rcx].TCONSOLE.window
+    mov r12,[rcx].TCONSOLE.buffer
+    mov r13,[rcx].TCONSOLE.window
     mov rc,[rcx].TCONSOLE.rc
 
     .for ( bl = 0 : bl < rc.row : bl++ )
 
-        .for ( ecx = 0, bh = 0 : bh < rc.col : bh++, rsi += 4, rdi += 4 )
+        .for ( edx = 0, bh = 0 : bh < rc.col : bh++, r12+=4, r13+=4 )
 
-            mov eax,[rsi]
-            .if ( eax != [rdi] )
+            mov eax,[r12]
+            .if ( eax != [r13] )
 
-                mov   [rdi],eax
-                test  ecx,ecx
-                cmovz rdx,rsi
-                inc   ecx
+                mov   [r13],eax
+                test  edx,edx
+                cmovz rcx,r12
+                inc   edx
 
-            .elseif ( ecx )
+            .elseif ( edx )
 
-                push rsi
-                push rdi
-                xchg rdx,rcx
                 mov al,bh
+                sub al,dl
                 _writeline(al, bl, dl, rcx)
-                xor ecx,ecx
-                pop rdi
-                pop rsi
+                xor edx,edx
             .endif
         .endf
-        .if ( ecx )
+        .if ( edx )
 
-            push rsi
-            push rdi
-            xchg rdx,rcx
             mov al,bh
+            sub al,dl
             _writeline(al, bl, dl, rcx)
-            xor ecx,ecx
-            pop rdi
-            pop rsi
+            xor edx,edx
         .endif
     .endf
     ret
@@ -168,38 +160,39 @@ _cendpaint proc
 
 _cendpaint endp
 
+    assume r10:PCONSOLE
 
-_rcread proc uses rbx _rc:TRECT, _p:PCHAR_INFO
+_rcread proc uses rbx _rc:TRECT, p:PCHAR_INFO
 
-   .new     dc:TRECT
    .new     rc:TRECT = _rc
-   .new     p:PCHAR_INFO = _p
 
-    mov     rcx,_console
-    mov     dc,[rcx].TCONSOLE.rc
-    movzx   eax,dc.col
+    mov     r11,rsi
+    mov     r10,_console
+    movzx   eax,[r10].rc.col
+    mov     r8b,al
     mul     rc.y
     movzx   edx,rc.x
     add     eax,edx
     shl     eax,2
-    add     rax,[rcx].TCONSOLE.buffer
-    mov     rdi,p
+    add     rax,[r10].buffer
+    mov     rdi,r11
     mov     rsi,rax
     movzx   ebx,word ptr rc[2]
 
     add dl,bl
-    .if ( dl > dc.col )
+    .if ( dl > r8b )
 
-        mov bl,dc.col
+        mov bl,r8b
         sub bl,rc.x
     .endif
 
     mov al,bh
     add al,rc.y
-    .if ( al > dc.row )
+    .if ( al > [r10].rc.row )
 
-        mov bh,dc.row
-        sub bh,rc.y
+        mov al,[r10].rc.row
+        sub al,rc.y
+        mov bh,al
     .endif
 
     .for ( edx = 0 : dl < bh : dl++ )
@@ -207,45 +200,42 @@ _rcread proc uses rbx _rc:TRECT, _p:PCHAR_INFO
         mov   rax,rsi
         movzx ecx,bl
         rep   movsd
-        mov   cl,dc.col
+        mov   cl,r8b
         lea   rsi,[rax+rcx*4]
     .endf
-    .return( p )
+    .return( r11 )
 
 _rcread endp
 
 
-_rcwrite proc uses rbx _rc:TRECT, _p:PCHAR_INFO
+_rcwrite proc uses rbx _rc:TRECT, p:PCHAR_INFO
 
-   .new     dc:TRECT
    .new     rc:TRECT = _rc
-   .new     p:PCHAR_INFO = _p
-
-    mov     rcx,_console
-    mov     dc,[rcx].TCONSOLE.rc
-    movzx   eax,dc.col
+    mov     r11,rsi
+    mov     r10,_console
+    movzx   eax,[r10].rc.col
     mul     rc.y
     movzx   edx,rc.x
     add     eax,edx
     shl     eax,2
-    add     rax,[rcx].TCONSOLE.buffer
-    mov     rsi,p
+    add     rax,[r10].buffer
     mov     rdi,rax
     movzx   ebx,word ptr rc[2]
 
     add dl,bl
-    .if ( dl > dc.col )
+    .if ( dl > [r10].rc.col )
 
-        mov bl,dc.col
+        mov bl,[r10].rc.col
         sub bl,rc.x
     .endif
 
     mov al,bh
     add al,rc.y
-    .if ( al > dc.row )
+    .if ( al > [r10].rc.row )
 
-        mov bh,dc.row
-        sub bh,rc.y
+        mov al,[r10].rc.row
+        sub al,rc.y
+        mov bh,al
     .endif
 
     .for ( edx = 0 : dl < bh : dl++ )
@@ -253,50 +243,49 @@ _rcwrite proc uses rbx _rc:TRECT, _p:PCHAR_INFO
         mov   rax,rdi
         movzx ecx,bl
         rep   movsd
-        mov   cl,dc.col
+        mov   cl,[r10].rc.col
         lea   rdi,[rax+rcx*4]
     .endf
 
-    mov rax,_console
-    .if ( [rax].TCONSOLE.paint > 0 )
+    .if ( [r10].paint > 0 )
 
         _conpaint()
     .endif
-    .return( p )
+    .return( r11 )
 
 _rcwrite endp
 
 
-_scputa proc x:BYTE, y:BYTE, _l:BYTE, _a:WORD
+_scgetp proc x:BYTE, y:BYTE, l:BYTE
 
-   .new     rc:TRECT
-   .new     l:BYTE = _l
-   .new     a:WORD = _a
+    mov     r10,_console
+    movzx   eax,[r10].TCONSOLE.rc.col
+    mov     r8d,eax
+    mul     sil
+    add     eax,edi
+    shl     eax,2
+    add     rax,[r10].TCONSOLE.buffer
+    mov     rsi,rax
+    mov     al,dil
+    add     al,dl
 
-    mov     rcx,_console
-    mov     rc,[rcx].TCONSOLE.rc
-    movzx   eax,rc.col
-    mul     y
-    movzx   edx,x
-    add     edx,eax
-    shl     edx,2
-    add     edx,2
-    add     rdx,[rcx].TCONSOLE.buffer
-    movzx   ecx,l
-    mov     al,x
-    add     al,cl
+    .if ( al > r8b )
 
-    .if ( al > rc.col )
-        mov cl,rc.col
-        sub cl,x
+        mov dl,r8b
+        sub dl,dil
     .endif
-    .for ( ax = a : ecx : ecx--, rdx += 4 )
+    ret
 
-        mov [rdx],ax
+_scgetp endp
+
+
+_scputa proc x:BYTE, y:BYTE, l:BYTE, a:WORD
+
+    _scgetp(x, y, l)
+    .for ( : dl : dl--, rsi+=4 )
+        mov [rsi+2],cx
     .endf
-    mov rax,_console
-    .if ( [rax].TCONSOLE.paint > 0 )
-
+    .if ( [r10].paint > 0 )
         _conpaint()
     .endif
     ret
@@ -304,35 +293,49 @@ _scputa proc x:BYTE, y:BYTE, _l:BYTE, _a:WORD
 _scputa endp
 
 
-_scputc proc x:BYTE, y:BYTE, _l:BYTE, _a:WORD
+_scputbg proc x:BYTE, y:BYTE, l:BYTE, a:BYTE
 
-   .new     rc:TRECT
-   .new     l:BYTE = _l
-   .new     a:WORD = _a
+    _scgetp(x, y, l)
+    .for ( : dl : dl--, rsi+=4 )
 
-    mov     rcx,_console
-    mov     rc,[rcx].TCONSOLE.rc
-    movzx   eax,rc.col
-    mul     y
-    movzx   edx,x
-    add     edx,eax
-    shl     edx,2
-    add     rdx,[rcx].TCONSOLE.buffer
-    movzx   ecx,l
-    mov     al,x
-    add     al,cl
-
-    .if ( al > rc.col )
-        mov cl,rc.col
-        sub cl,x
-    .endif
-    .for ( ax = a : ecx : ecx--, rdx += 4 )
-
-        mov [rdx],ax
+        mov al,[rsi+2]
+        and eax,0x0F
+        or  al,cl
+        mov [rsi+2],ax
     .endf
-    mov rax,_console
-    .if ( [rax].TCONSOLE.paint > 0 )
+    .if ( [r10].paint > 0 )
+        _conpaint()
+    .endif
+    ret
 
+_scputbg endp
+
+_scputfg proc x:BYTE, y:BYTE, l:BYTE, a:BYTE
+
+    _scgetp(x, y, l)
+
+    .for ( : dl : dl--, rsi+=4 )
+
+        mov al,[rsi+2]
+        and eax,0xF0
+        or  al,cl
+        mov [rsi+2],ax
+    .endf
+    .if ( [r10].paint > 0 )
+        _conpaint()
+    .endif
+    ret
+
+_scputfg endp
+
+
+_scputc proc x:BYTE, y:BYTE, l:BYTE, a:WORD
+
+    _scgetp(x, y, l)
+    .for ( : dl : dl--, rsi+=4 )
+        mov [rsi],cx
+    .endf
+    .if ( [r10].paint > 0 )
         _conpaint()
     .endif
     ret
@@ -340,19 +343,25 @@ _scputc proc x:BYTE, y:BYTE, _l:BYTE, _a:WORD
 _scputc endp
 
 
-_scputw proc _x:BYTE, _y:BYTE, _l:BYTE, _ci:CHAR_INFO
+_scputw proc x:BYTE, y:BYTE, l:BYTE, ci:CHAR_INFO
 
-   .new x:BYTE = _x
-   .new y:BYTE = _y
-   .new l:BYTE = _l
-   .new ci:CHAR_INFO = _ci
+    _scgetp(x, y, l)
 
-    _cbeginpaint()
-    .if ( ci.Attributes )
-        _scputa( x, y, l, ci.Attributes )
+    mov eax,ecx
+    mov rdi,rsi
+    mov ecx,edx
+    .if ( eax & 0xFFFF0000 )
+        rep stosd
+    .else
+        .for ( : ecx : ecx--, rdi+=4 )
+            mov [rdi],ax
+        .endf
     .endif
-    _scputc( x, y, l, ci.Char.UnicodeChar )
-    _cendpaint()
+
+    .if ( [r10].paint > 0 )
+
+        _conpaint()
+    .endif
     ret
 
 _scputw endp
@@ -479,7 +488,9 @@ __inticonsole proc uses rbx
     mov [rbx].color,rsi
     mov [rbx].conmax.X,rc.col
     mov [rbx].conmax.Y,rc.row
+
     _cout(CSI "?1049h" ) ; push screen
+    _gotoxy(0, 0)
     ret
 
 __inticonsole endp

@@ -8,20 +8,32 @@ include conio.inc
 
     .code
 
-_rcputsA proc uses rbx r12 r13 _rc:TRECT, p:PCHAR_INFO, _x:BYTE, _y:BYTE, _at:WORD, string:LPSTR
+_rcputsA proc rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, at:WORD, string:LPSTR
 
-    .new rc:TRECT    = _rc
-    .new attrib:WORD = _at
-    .new pos:TRECT   = { dl, cl, 1, 1 }
+    mov     eax,edi
+    shr     eax,16
+    movzx   eax,al
+    mov     r10d,eax
+    mul     cl
+    movzx   edx,dl
+    add     eax,edx
+    shl     eax,2
+    add     rsi,rax
+    sub     r10d,edx
 
-    .for ( r13=p, ebx=0, r12=string : char_t ptr [r12] : r12++, pos.x++, ebx++ )
+    .for ( rax = r9 : r10d && byte ptr [rax] : r10d--, rax++, rsi+=4 )
 
-        _rcputc(rc, pos, r13, [r12])
-        .if ( attrib )
-            _rcputa(rc, pos, r13, attrib)
+        mov edx,r8d
+        shl edx,16
+        mov dl,[rax]
+        .ifz
+            mov [rsi],dx
+        .else
+            mov [rsi],edx
         .endif
     .endf
-    .return( ebx )
+    sub rax,r9
+    ret
 
 _rcputsA endp
 

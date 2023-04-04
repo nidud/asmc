@@ -7,7 +7,7 @@
 include conio.inc
 
     .data
-     cursor CURSOR { 0, 0, CURSOR_DEFAULT, 1 }
+     cursor CURSOR { -1, -1, CURSOR_DEFAULT, 1 }
 
     .code
 
@@ -37,45 +37,30 @@ _cursoroff proc
 _cursoroff endp
 
 
-_cursorxy proc uses rbx r12 xp:ptr int_t, yp:ptr int_t
-
-    mov rbx,xp
-    mov r12,yp
-
-    _cout("\e[6n")
-    _getcsi2(rbx, r12)
-    ret
-
-_cursorxy endp
-
-
 _gotoxy proc _x:int_t, _y:int_t
 
-    mov eax,_x
-    mov edx,_y
+    .if ( cursor.x != dil ||
+          cursor.y != sil )
 
-    .if ( cursor.x != al ||
-          cursor.y != dl )
+        mov cursor.x,dil
+        mov cursor.y,sil
 
-        mov cursor.x,al
-        mov cursor.y,dl
-
-        inc eax ; zero based..
-        inc edx
-        _cout("\e[%d;%dH", eax, edx)
+        inc edi ; zero based..
+        inc esi
+        _cout("\e[%d;%dH", esi, edi)
     .endif
     ret
 
 _gotoxy endp
 
+
 _cursortype proc _type:int_t
 
-    mov eax,_type
-    .if ( cursor.type != al )
+    .if ( cursor.type != dil )
 
-        mov cursor.type,al
+        mov cursor.type,dil
 
-        _cout(ESC "[%d q", eax)
+        _cout(ESC "[%d q", edi)
     .endif
     ret
 

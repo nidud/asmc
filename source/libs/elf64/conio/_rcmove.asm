@@ -147,10 +147,7 @@ _rcmovel proc uses rbx r12 r13 _rc:TRECT, _p:PCHAR_INFO
    .new rc:TRECT = _rc
    .new p:PCHAR_INFO = _p
 
-ifndef _WIN64
     mov ecx,rc
-endif
-
     mov eax,ecx
     .if ( al == 0 )
         .return

@@ -88,12 +88,7 @@ _writeline proc private uses rbx _x:BYTE, _y:BYTE, _l:BYTE, p:PCHAR_INFO
             mov fg,eax
             mov bg,ecx
 
-            lea rsi,@CStr("\e[38;5;7m\e[48;5;0m")
-            add al,'0'
-            add cl,'0'
-            mov [rsi+7],al
-            mov [rsi+16],cl
-            write(_confh, rsi, sizeof(@CStr("\e[38;5;7m\e[48;5;0m")))
+            _cout("\e[38;5;%dm\e[48;5;%dm", eax, ecx)
         .endif
 
         mov c,_wtoutf([rbx])

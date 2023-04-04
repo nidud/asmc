@@ -85,13 +85,11 @@ main proc
 
     mov rcx,_console
     mov cr,[rcx].TCLASS.rc
-    _cout(CSI "7m")
-    _scputa(0, 0, cr.col, 0x0F)
+    _scputa(0, 0, cr.col, 0xF0)
     mov dil,cr.col
     shr dil,1
     sub dil,12
     _scputs(dil, 0, "Virtual Terminal Sample")
-    _cout(CSI "0m")
 
 
     .while 1

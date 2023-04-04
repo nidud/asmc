@@ -352,3 +352,23 @@ sys_exit proto :int_t {
     mov eax,SYS_EXIT
     syscall
     }
+sys_unlink proto :string_t {
+    mov eax,SYS_UNLINK
+    syscall
+    }
+sys_rename proto :string_t, :string_t {
+    mov eax,SYS_RENAME
+    syscall
+    }
+sys_time proto :ptr {
+    mov eax,SYS_TIME
+    syscall
+    }
+sys_gettimeofday proto :ptr, :ptr {
+    mov eax,SYS_GETTIMEOFDAY
+    syscall
+    }
+sys_settimeofday proto :ptr, :ptr {
+    mov eax,SYS_SETTIMEOFDAY
+    syscall
+    }

@@ -53,6 +53,6 @@ _stdioexit proc uses rbx
 
 _stdioexit endp
 
-.pragma(exit(_stdioexit, 1))
+.pragma(exit(_stdioexit, 102))
 
     END

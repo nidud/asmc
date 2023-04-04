@@ -4,12 +4,15 @@ ifdef __UNIX__
 define _O_CREAT		0x0040
 define _O_EXCL		0x0080
 define _O_APPEND	0x0400
+define	O_NOCTTY	0x0100
+define	O_NONBLOCK	0x0800
 else
 define _O_CREAT		0x0100
 define _O_EXCL		0x0400
 define _O_APPEND	0x0008
-endif
+define	O_NOCTTY	0x0800
 define	O_NONBLOCK	0x0004
+endif
 
 define _O_RDONLY	0
 define _O_WRONLY	1

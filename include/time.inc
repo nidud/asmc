@@ -115,7 +115,11 @@ strtime		proto __cdecl :ptr sbyte
 difftime	proto __cdecl :time_t, :time_t
 
 gmtime		proto __cdecl :ptr time_t
+ifdef __LIBASMC__
+define localtime <gmtime>
+else
 localtime	proto __cdecl :ptr time_t
+endif
 mktime		proto __cdecl :ptr tm
 _mkgmtime	proto __cdecl :ptr tm
 strftime	proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
@@ -139,7 +143,28 @@ _wstrdate	proto __cdecl :ptr wchar_t
 _wstrtime	proto __cdecl :ptr wchar_t
 endif
 
-ifndef __UNIX__
+ifdef __UNIX__
+
+timeval		struct
+tv_sec		size_t ? ; Seconds
+tv_usec		size_t ? ; Microseconds
+timeval		ends
+
+itimerval	struct
+it_interval	timeval <>
+it_value	timeval <>
+itimerval	ends
+
+timezone	struct
+tz_minuteswest	int_t ? ; Minutes west of GMT.
+tz_dsttime	int_t ? ; Nonzero if DST is ever in effect.
+timezone	ends
+
+gettimeofday	proto __cdecl :ptr timeval, :ptr timezone
+settimeofday	proto __cdecl :ptr timeval, :ptr timezone
+
+endif
+
 if not defined(_MSVCRT) or defined(_CRTBLD)
 
 externdef	_days:DWORD
@@ -189,8 +214,6 @@ define SystemDateToString <SystemDateToStringA>
 define SystemTimeToString <SystemTimeToStringA>
 define FileTimeToString	  <FileTimeToStringA>
 define FileDateToString	  <FileDateToStringA>
-endif
-
 endif
 
 endif

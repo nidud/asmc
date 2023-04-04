@@ -9,9 +9,13 @@ include string.inc
 
     .code
 
-getenv proc uses rsi rdi enval:string_t
+getenv proc uses rbx enval:string_t
 
-    .return .ifd !strlen(rcx)
+    mov rbx,enval
+    .ifd !strlen(enval)
+
+	.return
+    .endif
 
     mov edi,eax
     mov rsi,_environ
@@ -19,12 +23,14 @@ getenv proc uses rsi rdi enval:string_t
 
     .while rax
 
-	.ifd !_strnicmp(rax, enval, edi)
+	.ifd !_strnicmp(rax, rbx, edi)
 
 	    mov rax,[rsi-8]
 	    add rax,rdi
 
-	    .return( &[rax+1] ) .if byte ptr [rax] == '='
+	    .if ( byte ptr [rax] == '=' )
+		.return( &[rax+1] )
+	    .endif
 	.endif
 	lodsq
     .endw
@@ -32,4 +38,4 @@ getenv proc uses rsi rdi enval:string_t
 
 getenv endp
 
-    END
+    end

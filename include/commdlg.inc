@@ -407,7 +407,7 @@ lStructSize		dd ?
 hwndOwner		HWND ?
 hInstance		HWND ?
 rgbResult		COLORREF ?
-lpCustColors		COLORREF* ?
+lpCustColors		LPCOLORREF ?
 Flags			dd ?
 lCustData		LPARAM ?
 lpfnHook		LPCCHOOKPROC ?
@@ -420,7 +420,7 @@ lStructSize		dd ?
 hwndOwner		HWND ?
 hInstance		HWND ?
 rgbResult		COLORREF ?
-lpCustColors		COLORREF* ?
+lpCustColors		LPCOLORREF ?
 Flags			dd ?
 lCustData		LPARAM ?
 lpfnHook		LPCCHOOKPROC ?

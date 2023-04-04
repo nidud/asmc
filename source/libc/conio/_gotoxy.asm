@@ -8,11 +8,11 @@ include conio.inc
 
     .code
 
-_gotoxy proc x:BYTE, y:BYTE
+_gotoxy proc x:int_t, y:int_t
 
 ifndef _WIN64
-    mov cl,x
-    mov dl,y
+    mov ecx,x
+    mov edx,y
 endif
     and edx,0xFF
     shl edx,16

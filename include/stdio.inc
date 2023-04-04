@@ -39,7 +39,7 @@ EOF		equ (-1)
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
 _iobuf		STRUC SIZE_T
-_ptr		LPSTR ?
+_ptr		LPTSTR ?
 _cnt		SINT ?
 _base		LPSTR ?
 _flag		SINT ?
@@ -51,7 +51,7 @@ _bufsiz		SINT ?
 if defined(__UNIX__) and not defined(_WIN64)
 _ungotten	dw ?
 else
-_tmpfname	LPSTR ?
+_tmpfname	LPTSTR ?
 endif
 _iobuf		ENDS
 FILE		typedef _iobuf

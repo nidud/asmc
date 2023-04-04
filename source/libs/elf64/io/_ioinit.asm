@@ -31,6 +31,6 @@ _ioexit proc uses rbx r12
 
 _ioexit endp
 
-.pragma(exit(_ioexit, 2))
+.pragma(exit(_ioexit, 100))
 
     end

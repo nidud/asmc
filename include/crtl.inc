@@ -28,6 +28,8 @@ strext          proto __cdecl :string_t
 strfcat         proto __cdecl :string_t, :string_t, :string_t
 memxchg         proto __cdecl :string_t, :string_t, :size_t
 
+_wtoutf         proto watcall :wchar_t
+
 __copy_path_to_wide_string proto __cdecl :ptr char_t, :ptr ptr wchar_t
 
 ; GCC

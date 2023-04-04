@@ -38,6 +38,7 @@ _wtoutf proc watcall wc:wchar_t
     inc     edi
     lea     ecx,[rcx+rdx+1]
     shr     edx,1
+    jmp     .0
 .1:
     mov     al,cl
     or      al,sil

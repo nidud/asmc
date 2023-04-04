@@ -29,7 +29,6 @@ include listing.inc
 include qfloat.inc
 include lqueue.inc
 include types.inc
-include assume.inc
 
 public MacroLocals
 
@@ -1880,7 +1879,7 @@ ExpandLiterals proc __ccall uses rbx i:int_t, tokenarray:token_t
 ExpandLiterals endp
 
 
-ExpandProc proc private string:string_t, buffer:string_t
+ExpandProc proc __ccall private string:string_t, buffer:string_t
 
     lea rsi,@CStr( "invoke " )
     SymSearch( [rbx].string_ptr )

@@ -25,8 +25,7 @@ _rccenterW proc wc:TRECT, p:PCHAR_INFO, rc:TRECT, attrib:WORD, string:LPWSTR
         shr ecx,1
         add edx,ecx
     .endif
-    movzx ecx,rc.y
-    _rcputsW(wc, p, edx, ecx, attrib, string)
+    _rcputsW(wc, p, dl, rc.y, attrib, string)
     ret
 
 _rccenterW endp

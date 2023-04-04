@@ -8,10 +8,6 @@ include stdio.inc
 include malloc.inc
 include ctype.inc
 
-define U_UPPER_HALF_BLOCK   0x2580
-define U_LOWER_HALF_BLOCK   0x2584
-define U_MIDDLE_DOT         0x00B7
-
     .code
 
     assume rbx:THWND
@@ -25,7 +21,7 @@ _dlinitA proc uses rsi rdi rbx hwnd:THWND, index:UINT, rc:TRECT, flags:UINT, typ
 
     mov     [rsi].rc,rc
     mov     [rsi].index,id
-    mov     [rsi].ttype,type
+    mov     [rsi].type,type
     mov     eax,W_CHILD or W_WNDPROC
     or      eax,flags
     or      [rsi].flags,eax
@@ -38,15 +34,12 @@ _dlinitA proc uses rsi rdi rbx hwnd:THWND, index:UINT, rc:TRECT, flags:UINT, typ
 
     .switch pascal type
     .case T_PUSHBUTTON ;  [ > Selectable text < ] + shade
-
-        _getattrib(FG_TITLE, BG_PUSHBUTTON)
-
+        mov     eax,_getattrib(BG_PUSHBUTTON, FG_PUSHBUTTON)
         movzx   ecx,rc.col
         mov     rdx,rdi
         rep     stosd
         mov     al,[rdi+2]
         and     eax,0xF0
-        or      al,at_foreground[FG_PBSHADE]
         shl     eax,16
         mov     ax,U_LOWER_HALF_BLOCK
         mov     [rdi],eax
@@ -56,48 +49,39 @@ _dlinitA proc uses rsi rdi rbx hwnd:THWND, index:UINT, rc:TRECT, flags:UINT, typ
         mov     ax,U_UPPER_HALF_BLOCK
         rep     stosd
         lea     rdi,[rdx+8]
-        movzx   eax,at_background[BG_PUSHBUTTON]
-        mov     cl,al
-        or      al,at_foreground[FG_TITLE]
-        or      cl,at_foreground[FG_TITLEKEY]
-        shl     eax,16
+        mov     eax,_getattrib(BG_PUSHBUTTON, FG_PUSHBUTTON)
+        mov     ecx,_getat(BG_PUSHBUTTON, FG_PBUTTONKEY)
         mov     rdx,name
-
     .case T_RADIOBUTTON ;  (*)
-        _getattrib(FG_DIALOG, BG_DIALOG)
         mov     wchar_t ptr [rdi],'('
         mov     wchar_t ptr [rdi+8],')'
         add     rdi,4*4
-        mov     cl,at_background[FG_DIALOG]
-        or      cl,at_foreground[FG_DIALOGKEY]
+        mov     eax,_getattrib(BG_MENU, FG_MENU)
+        mov     ecx,_getat(BG_MENU, FG_MENUKEY)
         mov     rdx,name
-
     .case T_CHECKBOX            ;  [x]
-        _getattrib(FG_DIALOG, BG_DIALOG)
+        mov     eax,_getattrib(BG_MENU, FG_MENU)
         mov     wchar_t ptr [rdi],'['
         mov     wchar_t ptr [rdi+8],']'
         add     rdi,4*4
-        mov     cl,at_background[FG_DIALOG]
-        or      cl,at_foreground[FG_DIALOGKEY]
+        mov     ecx,_getat(BG_MENU, FG_MENUKEY)
         mov     rdx,name
     .case T_XCELL               ;  [ Selectable text ]
     .case T_TEXTBUTTON          ;  [>Selectable text<]
     .case T_MENUITEM            ;  XCELL + Stausline info
-        _getattrib(FG_DIALOG, BG_DIALOG)
         add     rdi,4
-        mov     cl,at_background[FG_DIALOG]
-        or      cl,at_foreground[FG_DIALOGKEY]
+        mov     eax,_getattrib(BG_MENU, FG_MENU)
+        mov     ecx,_getat(BG_MENU, FG_MENUKEY)
         mov     rdx,name
     .case T_EDIT                ;  [Text input]
-        _getattrib(FG_TEXTEDIT, BG_TEXTEDIT)
+        mov     eax,_getattrib(FG_EDIT, BG_EDIT)
         mov     ax,U_MIDDLE_DOT
         movzx   ecx,rc.col
         rep     stosd
     .case T_TEXTAREA            ;  [Selectable text]
     .case T_MOUSERECT           ;  Clickable area -- no focus
-        _getattrib(FG_DIALOG, BG_DIALOG)
-        mov     cl,at_background[FG_DIALOG]
-        or      cl,at_foreground[FG_DIALOGKEY]
+        mov     eax,_getattrib(BG_MENU, FG_MENU)
+        mov     ecx,_getat(BG_MENU, FG_MENUKEY)
         mov     rdx,name
     .endsw
 

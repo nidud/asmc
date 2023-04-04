@@ -10,8 +10,6 @@ include malloc.inc
 include ltype.inc
 include tchar.inc
 
-define U_MIDDLE_DOT 0x00B7
-
     .code
 
     option proc:private
@@ -607,7 +605,7 @@ PrintString proc fastcall uses rsi rdi rbx ti:PTEDIT
 
             lea rdi,ci
             lea rdi,[rdi+rax*4+2]
-            mov al,at_background[BG_INVERSE]
+            mov al,BG_INVERSE shl 4
             .repeat
                 mov [rdi],al
                 add rdi,4
@@ -634,6 +632,7 @@ wm_char proc uses rsi rdi rbx hwnd:THWND, wParam:UINT, lParam:UINT
 
    .new clip_clear:char_t = true
    .new clip_delete:char_t = false
+   .new add_char:char_t = false
 
     mov rsi,hwnd
     mov rbx,[rsi].context.object
@@ -653,117 +652,134 @@ wm_char proc uses rsi rdi rbx hwnd:THWND, wParam:UINT, lParam:UINT
     xor edi,edi
     mov ecx,lParam
     mov eax,wParam
-    .if ( ecx & KEY_SHIFT )
+    .if ( ecx & SHIFTKEY_DOWN )
         mov edi,VK_SHIFT
-    .elseif ( ecx & KEY_CONTROL )
+    .elseif ( ecx & CTRLKEY_DOWN )
         mov edi,VK_CONTROL
     .endif
 
-    .switch eax
-    .case VK_UP
-    .case VK_DOWN
-    .case VK_ESCAPE
-    .case VK_RETURN
-        ClipSet(rbx)
-       .return( 1 ) ; return current event
+    .if ( ecx & KEY_EXTENDED )
 
-    .case VK_DELETE
-        .if ( edi == VK_SHIFT )
-            ClipCopy(rbx, 1)
-           .endc
-        .endif
-        .endc .ifd ClipDelete(rbx)
-         event_delete(rbx)
-        .endc
+        .switch eax
+        .case VK_UP
+        .case VK_DOWN
+            ClipSet(rbx)
+           .return( 1 ) ; return current event
 
-    .case VK_INSERT
-        .if ( edi == VK_CONTROL )
-            ClipCopy(rbx, 0)
-           .endc
-        .endif
-        .if ( edi == VK_SHIFT )
-            ClipPaste(rbx)
-           .endc
-        .endif
-        .gotosw(VK_UP)
-
-    .case VK_SETCLIP
-        .if ( eax && edi == VK_SHIFT )
-
-            mov clip_clear,false
-            mov eax,[rbx].boffs
-            add eax,[rbx].xoffs
-
-            .if ( eax >= [rbx].clip_so )
-
-                mov [rbx].clip_eo,eax
+        .case <vk_delete> VK_DELETE
+            .if ( edi == VK_SHIFT )
+                ClipCopy(rbx, 1)
                .endc
             .endif
-            mov [rbx].clip_so,eax
-        .endif
-       .endc
+            .endc .ifd ClipDelete(rbx)
+             event_delete(rbx)
+            .endc
 
-    .case VK_LEFT
-        .if ( edi == VK_CONTROL )
-            event_prevword(rbx)
-           .endc
-        .endif
-        .gotosw(VK_UP) .ifd !event_left(rbx)
-        .gotosw(VK_SETCLIP)
-
-    .case VK_RIGHT
-        .if ( edi == VK_CONTROL )
-            event_nextword(rbx)
-           .endc
-        .endif
-        .gotosw(VK_UP) .ifd !event_right(rbx)
-
-        .if ( edi == VK_SHIFT )
-
-            mov clip_clear,false
-            mov eax,[rbx].boffs
-            add eax,[rbx].xoffs
-
-            .if ( eax >= [rbx].clip_so )
-
-                mov edx,eax
-                dec edx
-                .if ( edx == [rbx].clip_so )
-                    .if ( edx != [rbx].clip_eo )
-                        mov [rbx].clip_so,eax
-                       .endc
-                    .endif
-                .endif
-                mov [rbx].clip_eo,eax
+        .case <vk_insert> VK_INSERT
+            .if ( edi == VK_CONTROL )
+                ClipCopy(rbx, 0)
                .endc
             .endif
-            mov [rbx].clip_so,eax
-        .endif
-        .endc
-
-    .case VK_HOME
-        event_home(rbx)
-       .gotosw(VK_SETCLIP)
-    .case VK_END
-        event_toend(rbx)
-       .gotosw(VK_SETCLIP)
-    .case VK_BACK
-        event_back(rbx)
-       .endc
-    .case VK_TAB
-        .gotosw(VK_UP) .if !( [rbx].flags & O_CONTROL )
-    .default
-        .if ( edi == VK_CONTROL )
-
-            .gotosw(VK_INSERT) .if ( cx == 'C' ) ; Copy
-             mov edi,VK_SHIFT
-            .gotosw(VK_INSERT) .if ( cx == 'V' ) ; Paste
-            .gotosw(VK_DELETE) .if ( cx == 'X' ) ; Cut
+            .if ( edi == VK_SHIFT )
+                ClipPaste(rbx)
+               .endc
+            .endif
             .gotosw(VK_UP)
-        .endif
-        event_add(rbx, ax)
-       .endc
-    .endsw
+
+        .case VK_SETCLIP
+            .if ( eax && edi == VK_SHIFT )
+
+                mov clip_clear,false
+                mov eax,[rbx].boffs
+                add eax,[rbx].xoffs
+
+                .if ( eax >= [rbx].clip_so )
+
+                    mov [rbx].clip_eo,eax
+                   .endc
+                .endif
+                mov [rbx].clip_so,eax
+            .endif
+           .endc
+
+        .case VK_LEFT
+            .if ( edi == VK_CONTROL )
+                event_prevword(rbx)
+               .endc
+            .endif
+            .gotosw(VK_UP) .ifd !event_left(rbx)
+            .gotosw(VK_SETCLIP)
+
+        .case VK_RIGHT
+            .if ( edi == VK_CONTROL )
+                event_nextword(rbx)
+               .endc
+            .endif
+            .gotosw(VK_UP) .ifd !event_right(rbx)
+
+            .if ( edi == VK_SHIFT )
+
+                mov clip_clear,false
+                mov eax,[rbx].boffs
+                add eax,[rbx].xoffs
+
+                .if ( eax >= [rbx].clip_so )
+
+                    mov edx,eax
+                    dec edx
+                    .if ( edx == [rbx].clip_so )
+                        .if ( edx != [rbx].clip_eo )
+                            mov [rbx].clip_so,eax
+                           .endc
+                        .endif
+                    .endif
+                    mov [rbx].clip_eo,eax
+                   .endc
+                .endif
+                mov [rbx].clip_so,eax
+            .endif
+            .endc
+
+        .case VK_HOME
+            event_home(rbx)
+           .gotosw(VK_SETCLIP)
+        .case VK_END
+            event_toend(rbx)
+           .gotosw(VK_SETCLIP)
+        .endsw
+
+    .else
+
+        .switch eax
+        .case VK_ESCAPE
+        .case VK_RETURN
+            ClipSet(rbx)
+           .return( 1 )
+        .case VK_BACK
+            event_back(rbx)
+           .endc
+        .case VK_TAB
+            .gotosw(VK_RETURN) .if !( [rbx].flags & O_CONTROL )
+        .default
+            .if ( edi == VK_CONTROL )
+
+                .if ( cx == 'C' ) ; Copy
+                    jmp vk_insert
+                .endif
+                 mov edi,VK_SHIFT
+                .if ( cx == 'V' ) ; Paste
+                    jmp vk_insert
+                .endif
+                .if ( cx == 'X' ) ; Cut
+                    jmp vk_delete
+                .endif
+                .gotosw(VK_RETURN)
+            .endif
+            mov add_char,true
+            mov clip_delete,true
+           .endc
+        .endsw
+    .endif
 
     .if ( clip_delete )
         ClipDelete(rbx)
@@ -771,10 +787,15 @@ wm_char proc uses rsi rdi rbx hwnd:THWND, wParam:UINT, lParam:UINT
         ClipSet(rbx)
     .endif
 
+    .if ( add_char )
+
+        mov eax,wParam
+        event_add(rbx, ax)
+    .endif
+
     mov ecx,[rbx].xpos
     add ecx,[rbx].xoffs
-    _gotoxy(cl, byte ptr [rbx].ypos)
-
+    _gotoxy(ecx, [rbx].ypos)
    .return(PrintString(rbx))
 
 wm_char endp
@@ -803,7 +824,7 @@ wndproc proc uses rsi rdi rbx hwnd:THWND, uiMsg:UINT, wParam:UINT, lParam:UINT
         add cl,[rdx].TCLASS.rc.x
         mov [rbx].xpos,ecx
         add ecx,[rbx].xoffs
-        _gotoxy(cl, al)
+        _gotoxy(ecx, eax)
         _cursoron()
         .if ( [rbx].flags & O_SELECT )
             mov [rbx].clip_eo,wcslen([rbx].base)
@@ -835,7 +856,6 @@ wndproc proc uses rsi rdi rbx hwnd:THWND, uiMsg:UINT, wParam:UINT, lParam:UINT
         .switch edx
         .case VK_UP
         .case VK_DOWN
-        .case VK_RETURN
         .case VK_INSERT
         .case VK_DELETE
         .case VK_HOME
@@ -852,7 +872,7 @@ wndproc endp
 
     assume rcx:THWND
 
-_tcontrolW proc public uses rsi rdi rbx hwnd:THWND, count:UINT, string:LPWSTR
+_tcontrolW proc public uses rsi rdi rbx hwnd:THWND, count:UINT, char:WORD, string:LPWSTR
 
     mov rsi,hwnd
     mov rbx,[rsi].context.object
@@ -860,14 +880,14 @@ _tcontrolW proc public uses rsi rdi rbx hwnd:THWND, count:UINT, string:LPWSTR
 
     .if ( !rbx )
 
-        mov rbx,[rcx].context.buffer
+        mov rbx,[rcx].buffer
         mov [rsi].context.object,rbx
-        add [rcx].context.buffer,TEDIT
-        mov [rsi].context.buffer,[rcx].context.buffer
+        add [rcx].buffer,TEDIT
+        mov [rsi].buffer,[rcx].buffer
         mov [rbx].base,rax
         mov [rbx].bcols,count
         add eax,eax
-        add [rcx].context.buffer,rax
+        add [rcx].buffer,rax
         shr eax,4
         mov [rsi].count,al
     .endif
@@ -875,15 +895,29 @@ _tcontrolW proc public uses rsi rdi rbx hwnd:THWND, count:UINT, string:LPWSTR
     mov [rsi].winproc,&wndproc
     mov [rbx].flags,[rsi].flags
     mov [rbx].scols,[rsi].rc.col
-    _getattrib(FG_TEXTEDIT, BG_TEXTEDIT)
-    mov ax,U_MIDDLE_DOT
+    mov eax,_getattrib(BG_EDIT, FG_EDIT)
+    mov ax,char
+    .if ( ax == 0 )
+        mov ax,U_MIDDLE_DOT
+    .endif
     mov [rbx].clrattrib,eax
+
+    mov rcx,[rsi].prev
+    mov al,[rsi].rc.y
+    add al,[rcx].rc.y
+    mov [rbx].ypos,eax
+    mov al,[rsi].rc.x
+    add al,[rcx].rc.x
+    mov [rbx].xpos,eax
     mov rdx,string
     .if ( rdx )
-
         wcsncpy([rbx].base, rdx, [rbx].bcols)
     .endif
-    ret
+    mov rcx,[rsi].prev
+    .if ( [rcx].flags & W_VISIBLE )
+        PrintString(rbx)
+    .endif
+    .return(rbx)
 
 _tcontrolW endp
 

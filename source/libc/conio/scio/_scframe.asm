@@ -1,4 +1,4 @@
-; _RCFRAME.ASM--
+; _SCFRAME.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -17,11 +17,14 @@ include conio.inc
 
 .code
 
-_rcframe proc uses rsi rdi rbx wz:TRECT, rc:TRECT, wp:PCHAR_INFO, type:int_t, attrib:uchar_t
+_scframe proc uses rsi rdi rbx rc:TRECT, type:SINT, attrib:WORD
 
    .new ft:BoxChars
    .new cols:byte
    .new rows:byte
+   .new ci:CHAR_INFO = {0}
+
+    mov ci.Attributes,attrib
 
     ; BOX_SINGLE
 
@@ -63,95 +66,44 @@ _rcframe proc uses rsi rdi rbx wz:TRECT, rc:TRECT, wp:PCHAR_INFO, type:int_t, at
         mov ft.BottomRight, U_LIGHT_UP_AND_LEFT
     .endsw
 
-    movzx   eax,wz.col
-    mul     rc.y
-    mov     edi,eax
-    movzx   eax,rc.x
-    add     edi,eax
-    shl     edi,2
-    add     rdi,wp
+    mov ci.Char.UnicodeChar,ft.TopLeft
+    _scputw(rc.x, rc.y, 1, ci)
+    mov ci.Char.UnicodeChar,ft.Horizontal
+    mov cl,rc.x
+    mov dl,rc.col
+    sub dl,2
+    inc cl
+    _scputw(cl, rc.y, dl, ci)
+    mov ci.Char.UnicodeChar,ft.TopRight
+    mov cl,rc.x
+    add cl,rc.col
+    dec cl
+    _scputw(cl, rc.y, 1, ci)
+    mov ci.Char.UnicodeChar,ft.Vertical
+    sub rc.row,2
+    .for ( rc.y++  : rc.row : rc.row--, rc.y++ )
 
-    mov     al,rc.col
-    sub     al,2
-    mov     cols,al
-    mov     al,rc.row
-    sub     al,2
-    mov     rows,al
-
-    movzx   eax,attrib
-    movzx   edx,wz.col
-    shl     edx,2
-    lea     rbx,[rdi+rdx]
-    shl     eax,16
-    mov     ax,ft.TopLeft
-
-    .ifnz
-
-        stosd
-        mov     ax,ft.Horizontal
-        movzx   ecx,cols
-        rep     stosd
-        mov     ax,ft.TopRight
-        stosd
-        mov     ax,ft.Vertical
-        movzx   ecx,cols
-
-        .for (  : rows : rows-- )
-
-            mov     rdi,rbx
-            add     rbx,rdx
-            stosd
-            mov     [rdi+rcx*4],eax
-        .endf
-
-        mov     rdi,rbx
-        mov     ax,ft.BottomLeft
-        stosd
-        mov     ax,ft.Horizontal
-        movzx   ecx,cols
-        rep     stosd
-        mov     ax,ft.BottomRight
-        stosd
-
-    .else
-
-        mov     [rdi],ax
-        mov     ax,ft.Horizontal
-        add     rdi,4
-
-        .for ( cl = 0 : cl < cols : cl++, rdi += 4 )
-
-            mov [rdi],ax
-        .endf
-
-        mov     ax,ft.TopRight
-        mov     [rdi],ax
-        mov     ax,ft.Vertical
-        movzx   ecx,cols
-
-        .for ( : rows : rows-- )
-
-            mov rdi,rbx
-            add rbx,rdx
-            mov [rdi],ax
-            mov [rdi+rcx*4+4],ax
-        .endf
-
-        mov     rdi,rbx
-        mov     ax,ft.BottomLeft
-        mov     [rdi],ax
-        add     rdi,4
-        mov     ax,ft.Horizontal
-
-        .for ( cl = 0 : cl < cols : cl++, rdi += 4 )
-
-            mov [rdi],ax
-        .endf
-        mov     ax,ft.BottomRight
-        mov     [rdi],ax
-    .endif
+        _scputw(rc.x, rc.y, 1, ci)
+        mov cl,rc.x
+        add cl,rc.col
+        dec cl
+        _scputw(cl, rc.y, 1, ci)
+    .endf
+    mov ci.Char.UnicodeChar,ft.BottomLeft
+    _scputw(rc.x, rc.y, 1, ci)
+    mov ci.Char.UnicodeChar,ft.Horizontal
+    mov cl,rc.x
+    mov dl,rc.col
+    sub dl,2
+    inc cl
+    _scputw(cl, rc.y, dl, ci)
+    mov ci.Char.UnicodeChar,ft.BottomRight
+    mov cl,rc.x
+    add cl,rc.col
+    dec cl
+    _scputw(cl, rc.y, 1, ci)
     ret
 
-_rcframe endp
+_scframe endp
 
     end

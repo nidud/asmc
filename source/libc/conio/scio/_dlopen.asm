@@ -43,7 +43,7 @@ _dlopen proc uses rsi rdi rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     add     rax,rbx
     cmp     size,ecx
     cmovz   rax,rcx
-    mov     [rbx].context.buffer,rax
+    mov     [rbx].buffer,rax
 
     mov     eax,dsize
     add     rax,rbx
@@ -60,13 +60,15 @@ _dlopen proc uses rsi rdi rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     mov     [rbx].rc,rc
     mov     [rbx].count,count
 
-    _getcursor(&[rbx].cursor)
+    .if ( [rbx].flags & O_CURSOR )
+        _getcursor(&[rbx].cursor)
+    .endif
 
     .if ( flags & W_TRANSPARENT )
         _rcread(rc, [rbx].window)
         _rcclear(rc, [rbx].window, 0x00080000)
-    .elseif ( flags & W_COLOR )
-        _rcclear(rc, [rbx].window, _getattrib(FG_DIALOG, BG_DIALOG))
+    .else
+        _rcclear(rc, [rbx].window, _getattrib(BG_MENU, FG_MENU))
     .endif
 
     mov rdx,[rbx].window

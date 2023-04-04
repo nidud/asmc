@@ -493,7 +493,12 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             add rbx,asm_tok
         .endif
         .if ModuleInfo.Ofssize == USE64
-            AddLineQueueX(" dd %r %s, %s", T_IMAGEREL, rdx, [rbx].string_ptr)
+            .if Options.output_format == OFORMAT_ELF
+                AddLineQueueX(" dq %r %s", T_IMAGEREL, rdx)
+                AddLineQueueX(" dq %s", [rbx].string_ptr)
+            .else
+                AddLineQueueX(" dd %r %s, %s", T_IMAGEREL, rdx, [rbx].string_ptr)
+            .endif
         .else
             AddLineQueueX(" dd %s, %s", rdx, [rbx].string_ptr)
         .endif

@@ -31,10 +31,58 @@ set macro reg,arg
 
     assume rbx:THWND
 
+_dlgetid proc uses rbx hwnd:THWND, id:UINT
+
+    mov     rbx,hwnd
+    test    [rbx].flags,W_CHILD
+    cmovnz  rbx,[rbx].prev
+    xor     eax,eax
+
+    .if ( [rbx].flags & O_CHILD )
+
+        imul  eax,id,TCLASS
+        add   rax,[rbx].object
+    .endif
+    ret
+
+_dlgetid endp
+
+
+_dlgetfocus proc uses rbx hwnd:THWND
+
+    mov     rbx,hwnd
+    test    [rbx].flags,W_CHILD
+    cmovnz  rbx,[rbx].prev
+    xor     eax,eax
+
+    .if ( [rbx].flags & O_CHILD )
+
+        movzx   edx,word ptr [rbx].rc
+        movzx   eax,[rbx].index
+        imul    eax,eax,TCLASS
+        add     rax,[rbx].object
+        add     edx,[rax].TCLASS.rc
+    .endif
+    ret
+
+_dlgetfocus endp
+
+
 _sendmessage proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    mov    rbx,hwnd
-    test   [rbx].flags,O_CHILD
+    mov rbx,hwnd
+    .if ( [rbx].flags & W_WNDPROC && [rbx].flags & W_CHILD )
+        .return .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
+    .endif
+    .if _dlgetfocus(rbx)
+        mov rbx,rax
+        .if ( [rbx].flags & W_WNDPROC )
+            .return .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
+        .endif
+        mov rbx,[rbx].prev
+    .endif
+
+    test [rbx].flags,O_CHILD
     cmovnz rbx,[rbx].object
 
     .for ( eax = 1 : rbx : )
@@ -143,7 +191,9 @@ _postquitmsg endp
 _dlsetfocus proc uses rbx hwnd:THWND, index:BYTE
 
     mov rbx,hwnd
-    _sendmessage(rbx, WM_KILLFOCUS, 0, 0)
+    .if _dlgetfocus(rbx)
+        _sendmessage(rax, WM_KILLFOCUS, 0, 0)
+    .endif
 
     test    [rbx].flags,W_CHILD
     cmovnz  rbx,[rbx].prev
@@ -165,12 +215,12 @@ _dlmodal proc uses rsi rdi rbx hwnd:THWND, wndp:TPROC
   local cNumRead:dword
 
     mov rbx,hwnd
-
     mov [rbx].winproc,wndp
     or  [rbx].flags,W_WNDPROC
     mov IdleCount,0
 
     [rbx].winproc(rbx, WM_CREATE, 0, 0)
+    _dlsetfocus(rbx, [rbx].index)
 
     .while 1
 
@@ -203,15 +253,15 @@ _dlmodal proc uses rsi rdi rbx hwnd:THWND, wndp:TPROC
                 mov     ecx,KEY_EXTENDED
                 cmovz   ecx,edi
                 test    edx,LEFT_CTRL_PRESSED or RIGHT_CTRL_PRESSED
-                mov     eax,KEY_CONTROL
+                mov     eax,CTRLKEY_DOWN
                 cmovz   eax,edi
                 or      ecx,eax
                 test    edx,SHIFT_PRESSED
-                mov     eax,KEY_SHIFT
+                mov     eax,SHIFTKEY_DOWN
                 cmovz   eax,edi
                 or      ecx,eax
                 test    edx,RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED
-                mov     eax,KEY_ALTDOWN
+                mov     eax,ALTKEY_DOWN
                 cmovz   eax,edi
                 or      ecx,eax
                 movzx   eax,Input.Event.KeyEvent.wVirtualScanCode
@@ -382,28 +432,6 @@ ContextRect proto fastcall :THWND {
     }
 
 
-    assume rcx:THWND
-
-_getfocus proc fastcall private hwnd:THWND
-
-    xor     eax,eax
-    test    [rcx].flags,W_CHILD
-    cmovnz  rcx,[rcx].prev
-    test    [rcx].flags,O_CHILD
-    jz      O
-    movzx   edx,word ptr [rcx].rc
-    movzx   eax,[rcx].index
-    imul    eax,eax,TCLASS
-    add     rax,[rcx].object
-    add     edx,[rax].TCLASS.rc
-O:
-    ret
-
-_getfocus endp
-
-    assume rcx:nothing
-
-
 _dlnextitem proc fastcall private uses rbx hwnd:THWND
 
     mov     rbx,rcx
@@ -419,7 +447,7 @@ _dlnextitem proc fastcall private uses rbx hwnd:THWND
 
     .while ( ecx <= eax )
 
-        .if !( [rdx].TCLASS.flags & O_DEACT )
+        .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
             dec ecx
             _dlsetfocus(rbx, cl)
@@ -436,7 +464,7 @@ _dlnextitem proc fastcall private uses rbx hwnd:THWND
 
     .while ( ecx <= eax )
 
-        .if !( [rdx].TCLASS.flags & O_DEACT )
+        .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
             dec ecx
             _dlsetfocus(rbx, cl)
@@ -466,7 +494,7 @@ _dlprevitem proc fastcall private uses rbx hwnd:THWND
         sub rdx,TCLASS
         .repeat
 
-            .if !( [rdx].TCLASS.flags & O_DEACT )
+            .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
                 dec ecx
                 _dlsetfocus(rbx, cl)
@@ -488,7 +516,7 @@ _dlprevitem proc fastcall private uses rbx hwnd:THWND
         .repeat
 
             .break .if eax > ecx
-            .if !( [rdx].TCLASS.flags & O_DEACT )
+            .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
                 dec ecx
                 _dlsetfocus(rbx, cl)
@@ -508,7 +536,7 @@ _dlitemright proc fastcall private uses rbx hwnd:THWND
     test    [rbx].flags,W_CHILD
     cmovnz  rbx,[rbx].prev
 
-    .if ( [rbx].ttype == T_MENUITEM || ![rbx].count )
+    .if ( [rbx].type == T_MENUITEM || ![rbx].count )
 
         .return( 1 )
     .endif
@@ -523,7 +551,7 @@ _dlitemright proc fastcall private uses rbx hwnd:THWND
 
         .if ( ah == [rdx].TCLASS.rc.y && al < [rdx].TCLASS.rc.x )
 
-            .if !( [rdx].TCLASS.flags & O_DEACT )
+            .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
                 _dlsetfocus(rbx, cl)
                 .return(0)
@@ -543,7 +571,7 @@ _dlitemleft proc fastcall uses rbx hwnd:THWND
     test    [rbx].flags,W_CHILD
     cmovnz  rbx,[rbx].prev
 
-    .if ( [rbx].ttype == T_MENUITEM || ![rbx].count|| ![rbx].index )
+    .if ( [rbx].type == T_MENUITEM || ![rbx].count|| ![rbx].index )
 
         .return( 1 )
     .endif
@@ -558,7 +586,7 @@ _dlitemleft proc fastcall uses rbx hwnd:THWND
     .repeat
         .if ( ah == [rdx].TCLASS.rc.y && al > [rdx].TCLASS.rc.x )
 
-            .if !( [rdx].TCLASS.flags & O_DEACT )
+            .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
                 dec ecx
                 _dlsetfocus(rbx, cl)
@@ -625,7 +653,7 @@ wm_lbbuttondown proc uses rsi rdi rbx hwnd:THWND, lParam:COORD
         .return TRUE
     .endif
 
-    .if ( [rbx].ttype == T_WINDOW )
+    .if ( [rbx].type == T_WINDOW )
 
         mov ecx,[rbx].flags
         and ecx,W_ISOPEN or W_VISIBLE or W_MOVEABLE
@@ -646,7 +674,7 @@ wm_lbbuttondown proc uses rsi rdi rbx hwnd:THWND, lParam:COORD
         .return( 0 )
     .endif
 
-    .switch [rbx].ttype
+    .switch [rbx].type
     .case T_PUSHBUTTON
         mov [rbx].context.state,1
         mov rc,ecx
@@ -669,6 +697,14 @@ wm_lbbuttondown proc uses rsi rdi rbx hwnd:THWND, lParam:COORD
         .endf
         _dlsetfocus([rbx].prev, dl)
        .endc
+    .case T_MOUSERECT
+        .if ( [rbx].context.state == 0 )
+
+            mov [rbx].context.state,1
+            movzx edx,[rbx].index
+            _postmessage([rbx].prev, WM_COMMAND, rdx, rcx)
+        .endif
+        .endc
     .case T_EDIT
         ;mov rax,[rsi]
         ;[rax].TEdit.OnLBDown(rcx)
@@ -679,15 +715,12 @@ wm_lbbuttondown proc uses rsi rdi rbx hwnd:THWND, lParam:COORD
 wm_lbbuttondown endp
 
 
-define U_UPPER_HALF_BLOCK 0x2580
-define U_LOWER_HALF_BLOCK 0x2584
-
 wm_lbuttonup proc fastcall uses rsi rdi rbx hwnd:THWND
 
    .new rc:TRECT
     mov rbx,rcx
 
-    .switch [rbx].ttype
+    .switch [rbx].type
     .case T_WINDOW
         .if ( [rbx].context.state == 0 )
             .return( 1 )
@@ -720,8 +753,12 @@ wm_lbuttonup proc fastcall uses rsi rdi rbx hwnd:THWND
         .return _postmessage([rbx].prev, WM_COMMAND, rdx, 0)
     .case T_RADIOBUTTON
         .return 1 .if ( [rbx].context.state == 0 )
-        mov [rbx].context.state,0
+         mov [rbx].context.state,0
         .endc
+    .case T_MOUSERECT
+       .return 1 .if ( [rbx].context.state == 0 )
+        mov [rbx].context.state,0
+       .endc
     .case T_CHECKBOX
     .case T_XCELL
         ;[rcx].SetFocus( [rcx].Index )
@@ -771,17 +808,13 @@ wm_mousemove proc uses rsi rbx hwnd:THWND, lParam:COORD
 wm_mousemove endp
 
 
-define U_BLACK_RIGHT_POINTER 0x25BA
-define U_BLACK_LEFT_POINTER  0x25C4
-define U_BULLET_OPERATOR     0x2219
-
 wm_setfocus proc uses rbx hwnd:THWND
 
-    .return .if !_getfocus(hwnd)
+    .return .if !_dlgetfocus(hwnd)
     .new rc:TRECT = edx
      mov rbx,rax
     _getcursor(&[rbx].cursor)
-    mov al,[rbx].ttype
+    mov al,[rbx].type
     .switch al
     .case T_PUSHBUTTON
         _cursoroff()
@@ -814,12 +847,11 @@ wm_setfocus proc uses rbx hwnd:THWND
         _gotoxy(rc.x, rc.y)
         .endc
     .case T_XCELL
+        mov [rbx].context.state,1
         _cursoroff()
         _scgeta(rc.x, rc.y)
         mov [rbx].context.flags,al
-        and eax,0xF0
-        or  al,at_background[BG_INVERSE]
-        _scputbg(rc.x, rc.y, rc.col, al)
+        _scputbg(rc.x, rc.y, rc.col, BG_INVERSE)
         .endc
     .case T_EDIT
         mov rax,[rbx].context.object
@@ -834,11 +866,11 @@ wm_setfocus endp
 
 wm_killfocus proc uses rbx hwnd:THWND
 
-    .return .if !_getfocus(hwnd)
+    .return .if !_dlgetfocus(hwnd)
     .new rc:TRECT = edx
      mov rbx,rax
     _setcursor(&[rbx].cursor)
-    mov al,[rbx].ttype
+    mov al,[rbx].type
     .switch al
     .case T_PUSHBUTTON
         _scputc(rc.x, rc.y, 1, ' ')
@@ -858,6 +890,8 @@ wm_killfocus proc uses rbx hwnd:THWND
         _scputc(rc.x, rc.y, 1, ' ')
        .endc
     .case T_XCELL
+       .return 1 .if ( [rbx].context.state == 0 )
+        mov [rbx].context.state,0
         movzx eax,[rbx].context.flags
         shr eax,4
         _scputbg(rc.x, rc.y, rc.col, al)
@@ -899,7 +933,7 @@ wm_syschar endp
 wm_char proc uses rbx hwnd:THWND, wParam:UINT
 
     .new rc:TRECT
-    .if !_getfocus(hwnd)
+    .if !_dlgetfocus(hwnd)
 
         .return( 1 )
     .endif
@@ -921,7 +955,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
         .return _postquitmsg(rbx, 0)
     .endif
 
-    .switch [rbx].ttype
+    .switch [rbx].type
     .case T_EDIT
         mov rax,[rbx].context.object
        .return 0;[rax].TEdit.OnChar(rcx, r8)
@@ -966,20 +1000,17 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
 
 wm_char endp
 
+
 wm_keydown proc hwnd:THWND, wParam:UINT, lParam:UINT
 
     .if ( lParam & KEY_EXTENDED )
 
         mov rcx,hwnd
         .switch wParam
-        .case VK_UP
-            .return _dlprevitem(rcx)
-        .case VK_DOWN
-            .return _dlnextitem(rcx)
-        .case VK_LEFT
-            .return _dlitemleft(rcx)
-        .case VK_RIGHT
-            .return _dlitemright(rcx)
+        .case VK_UP:    .return _dlprevitem(rcx)
+        .case VK_DOWN:  .return _dlnextitem(rcx)
+        .case VK_LEFT:  .return _dlitemleft(rcx)
+        .case VK_RIGHT: .return _dlitemright(rcx)
         .endsw
     .endif
     .return( 1 )
@@ -987,9 +1018,7 @@ wm_keydown proc hwnd:THWND, wParam:UINT, lParam:UINT
 wm_keydown endp
 
 
-    option proc:public
-
-_defwinproc proc hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
+_defwinproc proc public hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
 
     mov rcx,hwnd
     mov rdx,wParam
@@ -999,22 +1028,14 @@ _defwinproc proc hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
     .case WM_ENTERIDLE
         Sleep(4)
        .return(0)
-    .case WM_SETFOCUS
-        .return wm_setfocus(rcx)
-    .case WM_KILLFOCUS
-        .return wm_killfocus(rcx)
-    .case WM_LBUTTONDOWN
-        .return wm_lbbuttondown(rcx, eax)
-    .case WM_LBUTTONUP
-        .return wm_lbuttonup(rcx)
-    .case WM_MOUSEMOVE
-        .return wm_mousemove(rcx, eax)
-    .case WM_KEYDOWN
-        .return wm_keydown(rcx, edx, eax)
-    .case WM_SYSCHAR
-        .return wm_syschar(rcx, edx)
-    .case WM_CHAR
-        .return wm_char(rcx, edx)
+    .case WM_SETFOCUS:      .return wm_setfocus(rcx)
+    .case WM_KILLFOCUS:     .return wm_killfocus(rcx)
+    .case WM_LBUTTONDOWN:   .return wm_lbbuttondown(rcx, eax)
+    .case WM_LBUTTONUP:     .return wm_lbuttonup(rcx)
+    .case WM_MOUSEMOVE:     .return wm_mousemove(rcx, eax)
+    .case WM_KEYDOWN:       .return wm_keydown(rcx, edx, eax)
+    .case WM_SYSCHAR:       .return wm_syschar(rcx, edx)
+    .case WM_CHAR:          .return wm_char(rcx, edx)
     .endsw
     .return( 1 )
 

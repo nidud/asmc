@@ -16,6 +16,10 @@ _rcmoveu proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
    .new l:int_t
    .new z:int_t
    .new b:PCHAR_INFO
+   .new cz:TRECT
+
+    mov rbx,_console
+    mov cz,[rbx].TCLASS.rc
 
     movzx eax,rc.y
     .if ( eax > 1 )
@@ -34,7 +38,8 @@ _rcmoveu proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
         .if malloc( eax )
 
             mov rbx,rax
-            _rcread( rc, rax )
+            _cbeginpaint()
+            _rcread( rc, rbx )
             mov b,_scgetl( x, edi, l )
             dec rc.y
             _rcwrite( rc, rbx )
@@ -63,6 +68,7 @@ _rcmoveu proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
                 sub b,rbx
                 dec esi
             .endw
+            _cendpaint()
         .endif
     .endif
     .return( rc )
@@ -75,8 +81,11 @@ _rcmoved proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
    .new x:int_t
    .new l:int_t
    .new b:PCHAR_INFO
+   .new cz:TRECT
 
-    movzx edi,_consize.Y
+    mov rbx,_console
+    mov cz,[rbx].TCLASS.rc
+    movzx edi,cz.row
     movzx eax,rc.y
     movzx edx,rc.row
     mov esi,eax
@@ -95,7 +104,8 @@ _rcmoved proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
         .if malloc( eax )
 
             mov rbx,rax
-            _rcread(rc, rax)
+            _cbeginpaint()
+            _rcread(rc, rbx)
             mov b,_scgetl( x, edi, l )
             inc rc.y
             _rcwrite( rc, rbx )
@@ -115,6 +125,7 @@ _rcmoved proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
                 add rdi,rbx
                 dec esi
             .endw
+            _cendpaint()
         .endif
     .endif
     .return( rc )
@@ -155,7 +166,8 @@ endif
     .if malloc( eax )
 
         mov rbx,rax
-        _rcread(rc, rax)
+        _cbeginpaint()
+        _rcread(rc, rbx)
         mov b,_scgetl( edi, y, l )
         dec rc.x
         _rcwrite( rc, rbx )
@@ -194,6 +206,7 @@ endif
         dec ecx
 
         _scputl( ecx, y, l, b )
+        _cendpaint()
     .endif
     .return( rc )
 
@@ -206,8 +219,11 @@ _rcmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
    .new y:int_t
    .new l:int_t
    .new b:PCHAR_INFO
+   .new cz:TRECT
 
-    movzx   edi,_consize.X
+    mov     rbx,_console
+    mov     cz,[rbx].TCLASS.rc
+    movzx   edi,cz.col
     movzx   ecx,rc.x
     movzx   edx,rc.col
     mov     esi,ecx
@@ -233,7 +249,8 @@ _rcmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
     .if malloc( eax )
 
         mov rbx,rax
-        _rcread( rc, rax )
+        _cbeginpaint()
+        _rcread( rc, rbx )
         mov b,_scgetl( edi, y, l )
         inc rc.x
         _rcwrite( rc, rbx )
@@ -262,6 +279,7 @@ _rcmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
         .untilz
 
         _scputl( x, y, l, b )
+        _cendpaint()
     .endif
     .return( rc )
 

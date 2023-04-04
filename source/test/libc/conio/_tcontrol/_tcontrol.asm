@@ -24,9 +24,8 @@ WndProc proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
     mov rbx,hwnd
     .switch uiMsg
     .case WM_CREATE
-        _tcontrol([rbx].object, 128, "string to edit")
+        _tcontrol([rbx].object, 128, ' ', "string to edit......")
         _dlshow(rbx)
-        _dlsetfocus(rbx, 0)
         .return( 0 )
     .case WM_CLOSE
         _dlclose(rbx)
@@ -39,10 +38,15 @@ WndProc endp
 _tmain proc argc:int_t, argv:array_t
 
    .new rc:TRECT = { 10, 8, 50, 8 }
-   .new ec:TRECT = { 15, 3, 20, 1 }
+   .new f1:TRECT = { 16, 0, 18, 3 }
+   .new f2:TRECT = { 14, 4, 22, 3 }
+   .new ec:TRECT = { 15, 5, 20, 1 }
 
     mov rbx,_dlopen(rc, 1, W_MOVEABLE or W_TRANSPARENT or W_SHADE, 128*TCHAR+TEDIT)
-    _dltitle(rbx, "Text Control")
+    _rcframe(rc, f1, [rbx].window, BOX_SINGLE_ARC, 0x0F)
+    _rcframe(rc, f2, [rbx].window, BOX_SINGLE_ARC, 0x06)
+    _rcputs(rc, [rbx].window, 17, 1, 0x0F, "  Text Control  ")
+
     _dlinit (rbx, 0, ec, O_DEXIT or O_USEBEEP or O_SELECT, T_EDIT, 1, 0)
     _dlmodal(rbx, &WndProc)
     ret

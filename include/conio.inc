@@ -108,8 +108,14 @@ endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
 
-if defined(__UNIX__) or defined(VIRTUAL_TERMINAL)
-define __TTY__
+ifndef __VT__
+ifdef  __UNIX__
+define __VT__
+endif
+endif
+ifdef __VT__
+define ESC <"\e">
+define CSI <"\e[">
 endif
 
 define MAXSCRLINE	256	; max screen size
@@ -457,11 +463,7 @@ _defwinproc	proto __cdecl :THWND, :UINT, :WPARAM, :LPARAM
 _rsopen		proto __cdecl :PTRES
 _rssave		proto __cdecl :THWND, :LPWSTR
 
-ifdef __TTY__
-
-define ESC <"\e">
-define CSI <"\e[">
-
+ifdef __VT__
 _kbflush	proto __cdecl
 _getcsi2	proto __cdecl :ptr int_t, :ptr int_t
 endif

@@ -23,8 +23,7 @@ _rccenterA proc wc:TRECT, p:PCHAR_INFO, rc:TRECT, attrib:WORD, string:LPSTR
         shr ecx,1
         add edx,ecx
     .endif
-    movzx ecx,rc.y
-    _rcputsA(wc, p, edx, ecx, attrib, string)
+    _rcputsA(wc, p, dl, rc.y, attrib, string)
     ret
 
 _rccenterA endp

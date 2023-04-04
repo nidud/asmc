@@ -7,12 +7,12 @@
 include io.inc
 include share.inc
 include stdio.inc
+include stdlib.inc
 include fcntl.inc
 include sys/stat.inc
 include errno.inc
 include winbase.inc
 
-externdef _fmode:uint_t
 externdef _umaskval:uint_t
 
 .code

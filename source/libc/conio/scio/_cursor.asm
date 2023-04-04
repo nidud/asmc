@@ -11,42 +11,6 @@ include conio.inc
 
     .code
 
-    assume rbx:PCURSOR
-
-_getcursor proc uses rbx cursor:PCURSOR
-
-  local ci:CONSOLE_CURSOR_INFO
-  local bi:CONSOLE_SCREEN_BUFFER_INFO
-
-    mov rbx,cursor
-    .if GetConsoleScreenBufferInfo(_confh, &bi)
-
-        mov [rbx].x,bi.dwCursorPosition.X
-        mov [rbx].y,bi.dwCursorPosition.Y
-    .endif
-
-    .if GetConsoleCursorInfo(_confh, &ci)
-
-        mov [rbx].csize,ci.dwSize
-        mov [rbx].visible,ci.bVisible
-    .endif
-    ret
-
-_getcursor endp
-
-
-_setcursor proc uses rbx cursor:PCURSOR
-
-    mov rbx,cursor
-    mov edx,[rbx+8]
-
-    SetConsoleCursorPosition(_confh, edx)
-    SetConsoleCursorInfo(_confh, rbx)
-    ret
-
-_setcursor endp
-
-
 _cursoron proc
 
    .new ci:CONSOLE_CURSOR_INFO = { cursorsize, 1 }
@@ -67,18 +31,51 @@ _cursoroff proc
 _cursoroff endp
 
 
-_cursorsize proc size:uint_t
+    assume rcx:PCURSOR
 
-  local ci:CONSOLE_CURSOR_INFO
+_setcursor proc cursor:PCURSOR
 
-    mov cursorsize,size
+   .new ci:CONSOLE_CURSOR_INFO
+
+ifndef _WIN64
+    mov     ecx,cursor
+endif
+    movzx   eax,[rcx].visible
+    mov     ci.bVisible,eax
+    mov     al,[rcx].type
+    mov     ci.dwSize,eax
+    movzx   edx,[rcx].y
+    shl     edx,16
+    mov     dl,[rcx].x
+
+    SetConsoleCursorPosition(_confh, edx)
+    SetConsoleCursorInfo(_confh, &ci)
+    ret
+
+_setcursor endp
+
+    assume rbx:PCURSOR
+
+_getcursor proc uses rbx cursor:PCURSOR
+
+   .new ci:CONSOLE_CURSOR_INFO
+   .new bi:CONSOLE_SCREEN_BUFFER_INFO
+
+    mov rbx,cursor
+
+    .if GetConsoleScreenBufferInfo(_confh, &bi)
+
+        mov [rbx].x,bi.dwCursorPosition.X
+        mov [rbx].y,bi.dwCursorPosition.Y
+    .endif
+
     .if GetConsoleCursorInfo(_confh, &ci)
 
-        mov ci.dwSize,cursorsize
-        SetConsoleCursorInfo(_confh, &ci)
+        mov [rbx].type,ci.dwSize
+        mov [rbx].visible,ci.bVisible
     .endif
     ret
 
-_cursorsize endp
+_getcursor endp
 
     end

@@ -8,13 +8,13 @@ include stdlib.inc
 
 externdef __ImageBase:size_t
 
-MAXENTRIES equ 256
+MAXENTRIES equ 128
 
     .code
 
 _initterm proc uses rbx r12 pfbegin:ptr, pfend:ptr
 
-  local entries[MAXENTRIES]:uint64_t
+  local entries[MAXENTRIES*2]:uint64_t
 
     mov rax,pfend
     sub rax,pfbegin
@@ -31,11 +31,15 @@ _initterm proc uses rbx r12 pfbegin:ptr, pfend:ptr
                edx = 0,
                rcx = rsi,
                rcx += rax : rsi < rcx && edx < MAXENTRIES : )
+
             lodsq
             .if eax
                 stosq
+                mov rax,[rsi]
+                stosq
                 inc edx
             .endif
+            add rsi,8
         .endf
 
         .for ( r12 = &entries, ebx = edx :: )
@@ -44,18 +48,18 @@ _initterm proc uses rbx r12 pfbegin:ptr, pfend:ptr
                    ecx = MAXENTRIES,
                    rsi = r12,
                    edx = 0,
-                   edi = ebx : edi : edi--, rsi+=8 )
+                   edi = ebx : edi : edi--, rsi+=16 )
 
-                .if ( eax != [rsi] && ecx >= [rsi+4] )
+                .if ( rax != [rsi] && ecx >= [rsi+8] )
 
-                    mov ecx,[rsi+4]
+                    mov ecx,[rsi+8]
                     mov rdx,rsi
                 .endif
             .endf
             .break .if !rdx
 
-            mov  ecx,[rdx]
-            mov  [rdx],eax
+            mov  rcx,[rdx]
+            mov  [rdx],rax
             add  rcx,__ImageBase
             call rcx
         .endf

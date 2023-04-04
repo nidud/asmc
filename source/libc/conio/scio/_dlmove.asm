@@ -11,206 +11,222 @@ include crtl.inc
 
     .code
 
-    assume rbx:THWND
+    assume rbx:PCONSOLE
 
 _dlmove proc uses rsi rdi rbx hwnd:THWND, direction:SINT
 
-   .new x:int_t
-   .new y:int_t
-   .new l:int_t
-   .new z:int_t
    .new rc:TRECT
-   .new w:PCHAR_INFO
-   .new b:PCHAR_INFO
-   .new p:PCHAR_INFO
+   .new wc:TRECT
    .new retval:int_t = FALSE
+   .new line[MAXSCRLINE]:CHAR_INFO
 
-    mov     rbx,hwnd
-    mov     p,[rbx].window
-    mov     rc,[rbx].rc
-    movzx   eax,rc.col
-    mul     rc.row
-    shl     eax,2
-    mov     w,malloc(eax)
+    mov rbx,_console
+    mov wc,[rbx].rc
+    mov rdi,[rbx].buffer
+    dec [rbx].paint
+    mov rbx,hwnd
+    mov rsi,[rbx].window
+    mov rc,[rbx].rc
 
-    _rcread(rc, rax)
-
-    .switch direction
+    .switch pascal direction
     .case TW_MOVELEFT
 
-        mov     ecx,rc
-        mov     eax,ecx
+        .if ( rc.x == 0 )
+            .endc
+        .endif
 
-        .endc   .if ( al == 0 )
-
-        movzx   eax,al
-        lea     rdi,[rax-1]
-        mov     x,eax
-        mov     al,ch
-        mov     y,eax
-        mov     al,rc.row
-        mov     esi,eax
-        not     eax
-        mov     l,eax
-        mov     b,_scgetl( edi, y, l )
         dec     rc.x
-        movzx   ebx,rc.col
-        lea     rax,[rbx-1]
-        mov     z,eax
-        shl     ebx,3
-        mov     edx,esi
+        movzx   eax,wc.col
+        movzx   ecx,rc.x
+        mul     rc.y
+        add     eax,ecx
         shl     eax,2
-        mov     rsi,p
-        add     rsi,rax
-        mov     rdi,b
-        std
+        add     rdi,rax
 
-        .repeat
-            mov     ecx,[rsi]
-            mov     eax,[rdi]
-            mov     [rdi],ecx
-            push    rdi
-            mov     rdi,rsi
-            sub     rsi,4
-            mov     ecx,z
-            rep     movsd
-            pop     rdi
-            mov     [rsi+4],eax
-            add     rsi,rbx
-            add     rdi,4
-            dec     edx
-        .until !edx
-
-        cld
-        movzx   ecx,rc.col
-        add     ecx,x
-        dec     ecx
-        _scputl(ecx, y, l, b)
-        .endc
+        .for ( bl = 0 : bl < rc.row : bl++ )
+            mov eax,[rdi]
+            .for ( bh = 0 : bh < rc.col : bh++, rsi += 4 )
+                mov ecx,[rsi]
+                mov [rsi],eax
+                mov eax,ecx
+            .endf
+            .for ( rdx = rdi, bh = 0 : bh < rc.col : bh++, rdi += 4 )
+                mov ecx,[rdi+4]
+                mov [rdi],ecx
+            .endf
+            mov [rdi],eax
+            movzx eax,wc.col
+            lea rdi,[rdx+rax*4]
+        .endf
 
     .case TW_MOVERIGHT
 
-        movzx   edi,_consize.X
-        movzx   ecx,rc.x
-        movzx   edx,rc.col
-        mov     esi,ecx
-        add     ecx,edx
-        mov     eax,rc
+        movzx eax,wc.col
+        movzx ecx,rc.x
+        movzx edx,rc.col
+        add   ecx,edx
+        .if ( eax <= ecx )
+            .endc
+        .endif
 
-        .endc .if ( edi <= ecx )
-
-        mov     edi,ecx
-        mov     x,esi
-        mov     cl,rc.y
-        mov     y,ecx
-        mov     cl,rc.row
-        mov     eax,ecx
-        not     ecx
-        mov     l,ecx
-        mov     b,_scgetl( edi, y, l )
         inc     rc.x
+        movzx   ecx,rc.x
+        mul     rc.y
+        add     eax,ecx
+        shl     eax,2
+        add     rdi,rax
 
-        movzx   ebx,rc.col
-        dec     ebx
-        movzx   edx,rc.row
-        mov     rsi,p
-        mov     rdi,b
+        movzx   edx,rc.col
+        dec     edx
+        shl     edx,2
+        add     rdi,rdx
+        add     rsi,rdx
+        add     rdx,4
 
-        .repeat
-            mov ecx,[rsi]
+        .for ( bl = 0 : bl < rc.row : bl++ )
+
             mov eax,[rdi]
-            mov [rdi],ecx
-            push rdi
-            mov rdi,rsi
-            add rsi,4
-            mov ecx,ebx
-            rep movsd
-            pop rdi
-            mov [rsi-4],eax
-            add rdi,4
-            dec edx
-        .untilz
-        _scputl(x, y, l, b)
-        .endc
+
+            .for ( bh = 0 : bh < rc.col : bh++, rsi -= 4 )
+
+                mov ecx,[rsi]
+                mov [rsi],eax
+                mov eax,ecx
+            .endf
+
+            .for ( bh = 0 : bh < rc.col : bh++, rdi -= 4 )
+
+                mov ecx,[rdi-4]
+                mov [rdi],ecx
+            .endf
+            mov   [rdi],eax
+            movzx eax,wc.col
+            lea   rdi,[rdi+rax*4]
+            lea   rsi,[rsi+rdx*2]
+            add   rdi,rdx
+        .endf
 
     .case TW_MOVEUP
 
-        movzx   eax,rc.y
+        .if ( rc.y == 0 )
+            .endc
+        .endif
 
-        .endc   .if ( eax < 1 )
-
-        movzx   esi,rc.row
-        dec     eax
-        add     esi,eax
-        mov     edi,eax
-        mov     al,rc.x
-        mov     x,eax
-        mov     al,rc.col
-        mov     l,eax
-        mov     b,_scgetl( x, edi, l )
         dec     rc.y
-
-        mov     ebx,l
-        shl     ebx,2
-        movzx   eax,rc.row
-        dec     eax
-        mov     z,eax
-        mul     ebx
-        mov     rdi,p
+        movzx   eax,wc.col
+        movzx   ecx,rc.x
+        mul     rc.y
+        add     eax,ecx
+        shl     eax,2
         add     rdi,rax
 
-        memxchg( b, rdi, rbx )
-        _scputl( x, esi, l, b )
+        push    rsi
+        push    rdi
+        mov     cl,rc.col
+        mov     eax,ecx
+        mov     rsi,rdi
+        lea     rdi,line
+        rep     movsd
+        pop     rdi
+        movzx   edx,wc.col
+        shl     edx,2
+        shl     eax,2
+        lea     rsi,[rdi+rdx]
+        sub     rdx,rax
 
-        mov     b,rdi
-        sub     b,rbx
-        mov     esi,z
+        .for ( bl = 0 : bl < rc.row : bl++ )
 
-        .while esi
+            mov cl,rc.col
+            rep movsd
+            add rdi,rdx
+            add rsi,rdx
+        .endf
 
-            memxchg( b, rdi, rbx )
-            sub rdi,rbx
-            sub b,rbx
-            dec esi
-        .endw
-        .endc
+        pop     rsi
+        movzx   eax,rc.row
+        dec     eax
+        mul     rc.col
+        lea     rsi,[rsi+rax*4]
+        mov     cl,rc.col
+        rep     movsd
+        sub     rsi,8
+        mov     rdi,rsi
+        mov     cl,rc.col
+        shl     ecx,2
+        sub     rsi,rcx
+        mov     ecx,eax
+        std
+        rep     movsd
+        cld
+        lea     rdi,[rsi+8]
+        lea     rsi,line
+        mov     cl,rc.col
+        rep     movsd
 
     .case TW_MOVEDOWN
 
-        movzx   edi,_consize.Y
+        movzx   ecx,wc.row
         movzx   eax,rc.y
         movzx   edx,rc.row
-        mov     esi,eax
         add     eax,edx
-
-        .endc   .if ( edi <= eax )
-
-        mov     edi,eax
-        mov     al,rc.x
-        mov     x,eax
-        mov     al,rc.col
-        mov     l,eax
-        mov     b,_scgetl( x, edi, l )
+        .if ( ecx <= eax )
+            .endc
+        .endif
         inc     rc.y
 
-        mov     ebx,l
-        shl     ebx,2
+        movzx   eax,wc.col
+        movzx   ecx,rc.x
+        movzx   ebx,rc.y
+        dec     ebx
+        add     ebx,edx
+        mul     ebx
+        add     eax,ecx
+        lea     rdi,[rdi+rax*4]
 
-        memxchg( b, p, rbx )
-        _scputl( x, esi, l, rax )
+        push    rsi
+        push    rdi
 
-        movzx   esi,rc.row
-        dec     esi
-        mov     rdi,p
+        mov     cl,rc.col
+        mov     rsi,rdi
+        lea     rdi,line
+        rep     movsd
+        pop     rdi
+        mov     rsi,rdi
+        movzx   edx,wc.col
+        shl     edx,2
+        sub     rsi,rdx
+        movzx   eax,rc.col
+        shl     eax,2
+        lea     rsi,[rsi+rax-4]
+        lea     rdi,[rdi+rax-4]
+        sub     rdx,rax
+        std
+        .for ( bl = 0 : bl < rc.row : bl++ )
 
-        .while esi
-
-            memxchg( rdi, &[rdi+rbx], rbx )
-            add rdi,rbx
-            dec esi
-        .endw
-        .endc
+            mov cl,rc.col
+            rep movsd
+            sub rdi,rdx
+            sub rsi,rdx
+        .endf
+        cld
+        pop     rsi
+        mov     cl,rc.col
+        lea     eax,[rcx*4-4]
+        sub     rdi,rax
+        rep     movsd
+        mov     rdi,rsi
+        sub     rdi,rax
+        sub     rdi,4
+        movzx   eax,rc.row
+        dec     eax
+        mul     rc.col
+        mov     ecx,eax
+        rep     movsd
+        lea     rsi,line
+        mov     cl,rc.col
+        rep     movsd
     .endsw
+
 
     mov rbx,hwnd
     mov eax,rc
@@ -221,23 +237,36 @@ _dlmove proc uses rsi rdi rbx hwnd:THWND, direction:SINT
 
         .if ( [rbx].flags & W_TRANSPARENT )
 
-            mov rdi,p
-            mov rsi,w
-            movzx eax,rc.col
-            mul rc.row
+            mov     rdi,[rbx].window
+            mov     rbx,_console
+            mov     rsi,[rbx].buffer
+            movzx   eax,wc.col
+            mov     edx,eax
+            movzx   ecx,rc.x
+            mul     rc.y
+            add     eax,ecx
+            shl     eax,2
+            add     rsi,rax
+            sub     dl,rc.col
+            shl     edx,2
 
-            .for ( ecx = eax, edx = 0 : edx < ecx : edx++ )
+            .for ( : rc.row : rc.row--, rsi+=rdx )
 
-                .if ( byte ptr [rsi+rdx*4+2] == DARKGRAY )
+                .for ( ebx = 0 : bl < rc.col : ebx++, rsi+=4, rdi+=4 )
 
-                    mov ax,[rdi+rdx*4]
-                    mov [rsi+rdx*4],ax
-                .endif
+                    .if ( byte ptr [rsi+2] == DARKGRAY )
+
+                        mov ax,[rdi]
+                        mov [rsi],ax
+                    .endif
+                .endf
             .endf
         .endif
-        _rcwrite(rc, w)
+        _cendpaint()
+    .else
+        mov rbx,_console
+        inc [rbx].paint
     .endif
-    free(w)
    .return(retval)
 
 _dlmove endp

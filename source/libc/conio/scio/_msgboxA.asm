@@ -94,10 +94,13 @@ _msgboxA proc uses rsi rdi rbx flags:UINT, title:LPSTR, format:LPSTR, argptr:var
 
    .new width:int_t
    .new line:int_t
-   .new size:TRECT = { 0, 0, _consize.X, _consize.Y }
+   .new size:TRECT
    .new rc:TRECT
    .new info:ptr PBINFO
    .new attrib:word = 0
+
+    mov rbx,_console
+    mov size,[rbx].rc
 
     mov ecx,flags
     and ecx,0x00000007
@@ -171,15 +174,15 @@ _msgboxA proc uses rsi rdi rbx flags:UINT, title:LPSTR, format:LPSTR, argptr:var
         mov rc.y,1
     .endif
 
-    movzx ecx,at_foreground[FG_DIALOG]
-    or cl, at_background[BG_DIALOG]
-    mov eax,W_MOVEABLE or W_COLOR or W_SHADE
+    mov ecx,_getat(0, 7)
+    mov eax,W_MOVEABLE or W_SHADE
     .if ( flags & MB_USERICON )
-        mov eax,W_MOVEABLE or W_COLOR or W_TRANSPARENT
+        mov eax,W_MOVEABLE or W_TRANSPARENT
         mov attrib,cx
     .endif
     mov rsi,info
     movzx edx,[rsi].count
+    or  eax,O_CURSOR
     mov rbx,_dlopen(rc, edx, eax, 0)
     .return .if !rax
 
@@ -187,7 +190,7 @@ _msgboxA proc uses rsi rdi rbx flags:UINT, title:LPSTR, format:LPSTR, argptr:var
     and eax,0x00000070
     .if ( eax == MB_ICONERROR || eax == MB_ICONWARNING )
 
-        _rcclear([rbx].rc, [rbx].window, _getattrib(FG_DESKTOP, BG_ERROR))
+        _rcclear([rbx].rc, [rbx].window, _getattrib(FG_MENU, BG_ERROR))
     .endif
 
     _dltitleA(rbx, rdi)

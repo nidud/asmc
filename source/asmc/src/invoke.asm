@@ -311,7 +311,7 @@ ifndef ASMC64
                         ( [rdi].asym.is_far || Ofssize == USE16 ) ) ; v2.11: added
                     AddLineQueueX( " pushw offset %s", &fullparam )
                 .else
-                    .if ( !( [rsi].asym.flag2 & S_ISINLINE && [rdi].asym.sflags & S_ISVARARG ) )
+                    .if ( !( [rsi].asym.flags & S_ISINLINE && [rdi].asym.sflags & S_ISVARARG ) )
                         AddLineQueueX( " push offset %s", &fullparam )
                         ; v2.04: a 32bit offset pushed in 16-bit code
                         .if ( [rdi].asym.sflags & S_ISVARARG && CurrWordSize == 2 && opnd.Ofssize > USE16 )
@@ -1432,8 +1432,8 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
     mov rdx,[rsi].type
     mov rcx,[rsi].target_type
-    .if ( [rsi].flag1 & S_ISPROC ) ;; the most simple case: symbol is a PROC
-    .elseif ( [rsi].mem_type == MT_PTR && rcx && [rcx].asym.flag1 & S_ISPROC )
+    .if ( [rsi].flags & S_ISPROC ) ;; the most simple case: symbol is a PROC
+    .elseif ( [rsi].mem_type == MT_PTR && rcx && [rcx].asym.flags & S_ISPROC )
         mov sym,rcx
     .elseif ( [rsi].mem_type == MT_PTR && rcx && [rcx].asym.mem_type == MT_PROC )
         mov pproc,rcx
@@ -1484,13 +1484,13 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                   [rbx+3*asm_tok].token == T_DOT && opnd.mbr )
 
             mov rdi,opnd.mbr
-            .if ( [rdi].asym.flag1 & S_METHOD )
+            .if ( [rdi].asym.flags & S_METHOD )
 
                 mov pclass,SymSearch( [rbx+4*asm_tok].string_ptr )
 
-                .if ( rax && [rax].asym.flag2 & S_ISVTABLE )
+                .if ( rax && [rax].asym.flags & S_ISVTABLE )
 
-                    .if ( [rdi].asym.flag2 & S_VMACRO )
+                    .if ( [rdi].asym.flags & S_VMACRO )
 
                         mov pmacro,[rdi].asym.vmacro
                         tstrcpy( &buffer, [rax].asym.name )
@@ -1510,9 +1510,9 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 .endif
 
-                .if ( [rdi].asym.flag2 & S_VPARRAY )
+                .if ( [rdi].asym.flags & S_VPARRAY )
 
-                    and [rdi].asym.flag2,not S_VPARRAY
+                    and [rdi].asym.flags,not S_VPARRAY
 
                     mov  ecx,Token_Count
                     dec  ecx
@@ -1534,11 +1534,11 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
 
-            or [rsi].flag1,S_METHOD
+            or [rsi].flags,S_METHOD
             .if ( pmacro )
-                or [rsi].flag2,S_ISINLINE
-                .if ( [rax].asym.flag2 & S_ISSTATIC )
-                    or [rsi].flag2,S_ISSTATIC
+                or [rsi].flags,S_ISINLINE
+                .if ( [rax].asym.flags & S_ISSTATIC )
+                    or [rsi].flags,S_ISSTATIC
                 .endif
             .endif
         .endif
@@ -1550,7 +1550,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endf
 
     mov j,i
-    .if ( [rsi].flag2 & S_ISSTATIC )
+    .if ( [rsi].flags & S_ISSTATIC )
         inc i
         imul ebx,i,asm_tok
         add rbx,tokenarray
@@ -1714,7 +1714,7 @@ endif
     mov rcx,pproc
     mov rdx,opnd.base_reg
     .if ( opnd.base_reg != NULL && Parse_Pass == PASS_1 && \
-        (r0flags & R0_USED ) && [rdx].asm_tok.bytval == 0 && !( [rcx].asym.flag1 & S_METHOD ) )
+        (r0flags & R0_USED ) && [rdx].asm_tok.bytval == 0 && !( [rcx].asym.flags & S_METHOD ) )
         asmerr( 7002 )
     .endif
 
@@ -1747,7 +1747,7 @@ endif
     add rbx,tokenarray
     mov rcx,opnd.mbr
     .if ( pmacro || ( [rbx].token == T_OP_SQ_BRACKET &&
-          [rbx+3*asm_tok].token == T_DOT && rcx && [rcx].asym.flag1 & S_METHOD ) )
+          [rbx+3*asm_tok].token == T_DOT && rcx && [rcx].asym.flags & S_METHOD ) )
 
         .if ( pmacro )
 
@@ -1858,7 +1858,7 @@ endif
 
                 .if ( [rbx].token != T_FINAL )
 
-                    .if ( [rdi].flag2 & S_ISSTATIC )
+                    .if ( [rdi].flags & S_ISSTATIC )
                         tstrcat( p, [rbx+asm_tok*2].tokpos )
                     .else
                         tstrcat( p, [rbx+asm_tok].tokpos )
@@ -1867,14 +1867,14 @@ endif
 
             .elseif ( [rdx].proc_info.flags & PROC_HAS_VARARG )
 
-                .if ( [rbx+asm_tok].tokval == T_ADDR && [rdi].flag1 & S_METHOD )
+                .if ( [rbx+asm_tok].tokval == T_ADDR && [rdi].flags & S_METHOD )
                     tstrcat( p, [rbx+asm_tok*2].tokpos )
                 .else
                     tstrcat( p, [rbx+asm_tok].tokpos )
                 .endif
            .else
                 mov esi,1
-                .if ( [rdi].flag2 & S_ISSTATIC )
+                .if ( [rdi].flags & S_ISSTATIC )
                     tstrcat( p, [rbx+asm_tok*2].string_ptr )
                     mov esi,0
                 .else
@@ -1985,17 +1985,9 @@ endif
             mov ecx,[rdi].parasize
             add ecx,size_vararg
 
-            .if ( ModuleInfo.epilogueflags )
-                AddLineQueueX( " lea %r, [%r+%u]", eax, eax, ecx )
-            .else
-                AddLineQueueX( " add %r, %u", eax, ecx )
-            .endif
+            AddLineQueueX( " add %r, %u", eax, ecx )
         .else
-            .if ( ModuleInfo.epilogueflags )
-                AddLineQueueX( " lea %r, [%r+%u]", eax, eax, [rdi].parasize )
-            .else
-                AddLineQueueX( " add %r, %u", eax, [rdi].parasize )
-            .endif
+            AddLineQueueX( " add %r, %u", eax, [rdi].parasize )
         .endif
 
     .elseif ( fastcall_id )

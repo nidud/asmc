@@ -40,7 +40,7 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
 
     mov [rcx].state,SYM_INTERNAL
     or  [rcx].flags,S_ISEQUATE or S_ISDEFINED
-    and [rcx].flag1,not S_ISPROC
+    and [rcx].flags,not S_ISPROC
 
     .if ( [rdx].kind == EXPR_CONST ||
          ( [rdx].kind == EXPR_FLOAT && [rdx].float_tok == NULL ) )
@@ -59,9 +59,9 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
     ; for a PROC alias, copy the procinfo extension!
 
     mov rdi,[rdx].sym
-    .if [rdi].flag1 & S_ISPROC
+    .if [rdi].flags & S_ISPROC
 
-        or  [rcx].flag1,S_ISPROC
+        or  [rcx].flags,S_ISPROC
         ; v2.12: must be copied as well, or INVOKE won't work correctly
         mov [rcx].langtype,[rdi].langtype
         assume rcx:dsym_t
@@ -96,7 +96,7 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
     add eax,[rdx].value
     .if [rcx].flags & S_VARIABLE
         mov [rcx].offs,eax
-        .if Parse_Pass == PASS_2 && ( [rcx].flag1 & S_FWDREF )
+        .if Parse_Pass == PASS_2 && ( [rcx].flags & S_FWDREF )
             mov ModuleInfo.PhaseError,TRUE
         .endif
     .else
@@ -244,17 +244,17 @@ check_float:
             mov rdi,SymCreate(name)
         .else
             sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], rdi)
-            or [rdi].flag1,S_FWDREF
+            or [rdi].flags,S_FWDREF
         .endif
-        and [rdi].flag1,not S_ISSAVED
+        and [rdi].flags,not S_ISSAVED
         .if StoreState
-            or [rdi].flag1,S_ISSAVED
+            or [rdi].flags,S_ISSAVED
         .endif
     .elseif ( [rdi].state == SYM_EXTERNAL && [rdi].sflags & S_WEAK && [rdi].mem_type == MT_EMPTY )
         sym_ext2int(rdi)
-        and [rdi].flag1,not S_ISSAVED
+        and [rdi].flags,not S_ISSAVED
         .if StoreState
-            or [rdi].flag1,S_ISSAVED
+            or [rdi].flags,S_ISSAVED
         .endif
     .else
         .if ( [rdi].state != SYM_INTERNAL || ( !( [rdi].flags & S_VARIABLE ) &&
@@ -268,7 +268,7 @@ check_float:
         ; v2.10: store state only when variable is changed and has been
         ; defined BEFORE SaveState() has been called.
 
-        .if ( StoreState && !( [rdi].flag1 & S_ISSAVED ) )
+        .if ( StoreState && !( [rdi].flags & S_ISSAVED ) )
             SaveVariableState(rdi)
         .endif
     .endif
@@ -315,16 +315,16 @@ CreateVariable proc __ccall uses rdi name:string_t, value:int_t
     mov rdi,SymSearch(name)
     .if rdi == NULL
         mov rdi,SymCreate(name)
-        and [rdi].flag1,not S_ISSAVED
+        and [rdi].flags,not S_ISSAVED
         .if StoreState
-            or [rdi].flag1,S_ISSAVED
+            or [rdi].flags,S_ISSAVED
         .endif
     .elseif [rdi].state == SYM_UNDEFINED
         sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rdi)
-        or  [rdi].flag1,S_FWDREF
-        and [rdi].flag1,not S_ISSAVED
+        or  [rdi].flags,S_FWDREF
+        and [rdi].flags,not S_ISSAVED
         .if StoreState
-            or [rdi].flag1,S_ISSAVED
+            or [rdi].flags,S_ISSAVED
         .endif
     .else
         .if !( [rdi].flags & S_ISEQUATE )
@@ -337,7 +337,7 @@ CreateVariable proc __ccall uses rdi name:string_t, value:int_t
         ; v2.10: store state only when variable is changed and has been
         ; defined BEFORE SaveState() has been called.
 
-        .if StoreState && !( [rdi].flag1 & S_ISSAVED )
+        .if StoreState && !( [rdi].flags & S_ISSAVED )
             SaveVariableState(rdi)
         .endif
     .endif
@@ -409,7 +409,7 @@ endif
         .endc
     .case ( [rdi].state == SYM_UNDEFINED )
     .case ( [rdi].state == SYM_EXTERNAL &&
-           ( [rdi].sflags & S_WEAK ) && !( [rdi].flag1 & S_ISPROC ) )
+           ( [rdi].sflags & S_WEAK ) && !( [rdi].flags & S_ISPROC ) )
         ;
         ; It's a "new" equate.
         ; wait with definition until type of equate is clear
@@ -579,7 +579,7 @@ endif
             .endc
         .case [rdi].state == SYM_UNDEFINED
             sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], rdi)
-            or [rdi].flag1,S_FWDREF
+            or [rdi].flags,S_FWDREF
             .endc
         .case [rdi].state == SYM_EXTERNAL
             sym_ext2int(rdi)

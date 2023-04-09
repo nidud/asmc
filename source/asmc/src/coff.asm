@@ -342,7 +342,7 @@ CoffGetType proc fastcall sym:ptr asym
 
     UNREFERENCED_PARAMETER(sym)
 
-    .return( 0x20 ) .if ( [rcx].flag1 & S_ISPROC )
+    .return( 0x20 ) .if ( [rcx].flags & S_ISPROC )
     .return( IMAGE_SYM_TYPE_NULL )
 
 CoffGetType endp
@@ -364,7 +364,7 @@ CoffGetClass proc fastcall sym:ptr asym
         .return( IMAGE_SYM_CLASS_EXTERNAL )
 
     ; v2.09: don't declare private procs as label
-    .elseif ( [rcx].mem_type == MT_NEAR && !( [rcx].flag1 & S_ISPROC ) )
+    .elseif ( [rcx].mem_type == MT_NEAR && !( [rcx].flags & S_ISPROC ) )
         .return( IMAGE_SYM_CLASS_LABEL )
     .endif
     .return( IMAGE_SYM_CLASS_STATIC )
@@ -708,7 +708,7 @@ endif
         mov rcx,[rsi].asym.debuginfo
 
         .if ( Options.line_numbers && Options.debug_symbols != 4 &&
-              [rsi].asym.flag1 & S_ISPROC &&
+              [rsi].asym.flags & S_ISPROC &&
               [rcx].debug_info.file != lastfile )
 
             mov lastfile,[rcx].debug_info.file
@@ -736,7 +736,7 @@ endif
             mov section,IMAGE_SYM_UNDEFINED
         .endif
         mov aux,0
-        .if ( Options.line_numbers && [rsi].asym.flag1 & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [rsi].asym.flags & S_ISPROC && Options.debug_symbols != 4 )
             inc aux
         .endif
         mov ecx,ebx
@@ -752,7 +752,7 @@ endif
         coff_write_symbol( p, strpos, value, section, ebx, ecx, aux )
         inc cntSymbols
 
-        .if ( Options.line_numbers && [rsi].asym.flag1 & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [rsi].asym.flags & S_ISPROC && Options.debug_symbols != 4 )
 
             ; write:
             ; 1.   the aux for the proc
@@ -971,9 +971,9 @@ if STATIC_PROCS
 
             .if ( [rdi].asym.state == SYM_INTERNAL &&
                   !( [rdi].asym.flags & S_ISPUBLIC ) &&
-                  !( [rdi].asym.flag1 & S_INCLUDED ) )
+                  !( [rdi].asym.flags & S_INCLUDED ) )
 
-                or [rdi].asym.flag1,S_INCLUDED
+                or [rdi].asym.flags,S_INCLUDED
                 AddPublicData( rdi )
             .endif
         .endf
@@ -989,7 +989,7 @@ endif
 
         ; if line numbers are on, co, add 6 entries for procs
 
-        .if ( Options.line_numbers && [rsi].asym.flag1 & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [rsi].asym.flags & S_ISPROC && Options.debug_symbols != 4 )
 
             mov rdx,[rsi].asym.debuginfo
             mov rbx,cm
@@ -1151,14 +1151,14 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
 
         .elseif ( ( [rcx].asym.state == SYM_INTERNAL ) &&
                    !( [rcx].asym.flags & S_ISPUBLIC ) &&
-                   !( [rcx].asym.flag1 & S_INCLUDED ) )
+                   !( [rcx].asym.flags & S_INCLUDED ) )
 
-            or [rcx].asym.flag1,S_INCLUDED
+            or [rcx].asym.flags,S_INCLUDED
             AddPublicData( rcx )
             mov rcx,[rbx].sym
             mov [rcx].asym.ext_idx,esi
             inc esi
-            .if ( Options.line_numbers && [rcx].asym.flag1 & S_ISPROC && Options.debug_symbols != 4 )
+            .if ( Options.line_numbers && [rcx].asym.flags & S_ISPROC && Options.debug_symbols != 4 )
                 add esi,6
             .endif
         .endif
@@ -1401,7 +1401,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:pt
 
         .for ( rdi = ExtTable: rdi: rdi = [rdi].dsym.next )
 
-            .if ( [rdi].asym.flag1 & S_ISPROC &&
+            .if ( [rdi].asym.flags & S_ISPROC &&
                  ( !( [rdi].asym.sflags & S_WEAK ) || [rdi].asym.flags & S_IAT_USED ) )
 
                 mov rdx,[rdi].asym.dll
@@ -1479,7 +1479,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:pt
 
             .for ( rdi = imp: rdi: rdi = [rdi].dsym.next )
 
-                .if ( [rdi].asym.flag1 & S_ISPROC &&
+                .if ( [rdi].asym.flags & S_ISPROC &&
                      ( !( [rdi].asym.sflags & S_WEAK ) || [rdi].asym.flags & S_IAT_USED ) &&
                       [rdi].asym.dll )
 
@@ -1555,7 +1555,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:pt
 
             .for ( rdi = imp: rdi: rdi = [rdi].dsym.next )
 
-                .if ( [rdi].asym.flag1 & S_ISPROC &&
+                .if ( [rdi].asym.flags & S_ISPROC &&
                      ( !( [rdi].asym.sflags & S_WEAK ) || [rdi].asym.flags & S_IAT_USED ) &&
                       [rdi].asym.dll )
 

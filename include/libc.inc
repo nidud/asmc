@@ -114,7 +114,11 @@ endif
 
 ifdef _WIN64
 option	win64:3
+ifdef __UNIX__
+option	cstack:on
+else
 option	frame:auto
+endif
 SIZE_T	typedef QWORD
 else
 ifdef __SSE__

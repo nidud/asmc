@@ -273,7 +273,7 @@ ms32_fcstart endp
 ms32_fcend proc __ccall private pp:dsym_t, numparams:int_t, value:int_t
 
     mov rcx,pp
-    .if ( value && [rcx].asym.flag2 & S_ISINLINE )
+    .if ( value && [rcx].asym.flags & S_ISINLINE )
         AddLineQueueX( " add esp, %u", value )
     .endif
     ret
@@ -464,7 +464,7 @@ watc_fcstart proc __ccall private pp: dsym_t, numparams:int_t, start:int_t,
 
     ; v2.33.25: add *this to fcscratch
 
-    .if ( [rcx].asym.flag2 & S_ISINLINE && [rcx].asym.flag2 & S_ISSTATIC )
+    .if ( [rcx].asym.flags & S_ISINLINE && [rcx].asym.flags & S_ISSTATIC )
 
         movzx eax,ModuleInfo.wordsize
         add fcscratch,eax
@@ -999,7 +999,7 @@ ms64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
     .endif
 
     ; v2.31.24: skip stack alloc if inline
-    .if ( ecx == esi && [rbx].asym.flag2 & S_ISINLINE )
+    .if ( ecx == esi && [rbx].asym.flags & S_ISINLINE )
         xor eax,eax
     .endif
     mov rdx,value
@@ -1036,14 +1036,11 @@ ms64_fcend proc __ccall private pp:dsym_t, numparams:int_t, value:int_t
     .if !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
         .if value
-            .if ( ModuleInfo.epilogueflags )
-                AddLineQueueX( " lea rsp, [rsp+%d]", value )
-            .else
-                AddLineQueueX( " add rsp, %d", value )
-            .endif
+            AddLineQueueX( " add rsp, %d", value )
         .endif
     .endif
     ret
+
 ms64_fcend endp
 
 
@@ -1628,7 +1625,7 @@ endif
             mov rcx,[rdi].expr.sym
 
             .if ( rcx && index == 0 && [rdi].expr.mbr && [rdi].expr.kind == EXPR_ADDR &&
-                  [rdi].expr.flags == E_INDIRECT && [rcx].asym.is_ptr && [rdx].asym.flag1 & S_METHOD )
+                  [rdi].expr.flags == E_INDIRECT && [rcx].asym.is_ptr && [rdx].asym.flags & S_METHOD )
 
                 mov rbx,rcx
                 AddLineQueueX( " mov rax, %s", [rcx].asym.name )
@@ -1698,8 +1695,9 @@ elf64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, 
 
     mov rdi,pp
     mov rdx,[rdi].dsym.procinfo
-    xor eax,eax
-    xor esi,esi
+
+    xor eax,eax ; float count
+    xor esi,esi ; reg count
 
     .if ( [rdx].proc_info.flags & PROC_HAS_VARARG )
 
@@ -1737,11 +1735,15 @@ elf64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, 
     .else
 
         .for ( rdi = [rdx].proc_info.paralist : rdi : rdi = [rdi].dsym.prev )
+
             mov dl,[rdi].asym.mem_type
+
             .if ( dl == MT_TYPE )
+
                 mov rdx,[rdi].asym.type
                 mov dl,[rdx].asym.mem_type
             .endif
+
             .if ( dl & MT_FLOAT || dl == MT_YWORD )
                 inc eax
             .else
@@ -1753,16 +1755,18 @@ elf64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, 
     mov rdx,value
     xor ecx,ecx
     .if esi > 6
-        lea ecx,[rcx+rsi-6]
+        lea ecx,[rsi-6]
     .endif
     .if eax > 8
         lea ecx,[rcx+rax-8]
         mov eax,8
     .endif
+    mov [rdx],ecx
+
     .if ( ecx & 1 && ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+
         mov elf64_valptr,rdx
     .endif
-    mov [rdx],ecx
     ret
 
 elf64_fcstart endp
@@ -1799,10 +1803,17 @@ elf64_const proc __ccall private reg:uint_t, pos:uint_t, val:qword, paramvalue:s
 
 elf64_const endp
 
-
-; parameter for elf64 SYSCALL.
-; the first 6 parameters are hold in registers: rdi, rsi, rdx, rcx, r8, r9
-; for non-float arguments, xmm0..xmm31 for float arguments.
+;
+; Parameter for elf64 SYSCALL
+;
+; Registers [rdi, rsi, rdx, rcx, r8, r9] and [xmm0..xmm31]
+;
+; As there is no fixed location (as in fastcall)
+; elf64_pcheck() sets:
+;
+;   param->regist[0] = register
+;   param->regist[1] = index
+;
 
     assume rdx:asym_t
     assume rdi:expr_t
@@ -1868,7 +1879,7 @@ elf64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:
     .endif
 
     mov rcx,pp
-    .if ( [rdx].sflags & S_ISVARARG && [rcx].asym.flag2 & S_ISINLINE )
+    .if ( [rdx].sflags & S_ISVARARG && [rcx].asym.flags & S_ISINLINE )
         .return 1
     .endif
 
@@ -2245,36 +2256,36 @@ elf64_param endp
 
 elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:ptr int_t
 
-  local regname[32]:sbyte
-  local reg:int_t
+    UNREFERENCED_PARAMETER(pProc)
 
-    mov rbx,used
+    mov rdi,used
     mov rsi,paranode
-    SizeFromMemtype( [rsi].mem_type, [rsi].Ofssize, [rsi].type )
-    mov ecx,[rbx]
+    mov ebx,SizeFromMemtype( [rsi].mem_type, [rsi].Ofssize, [rsi].type )
+    mov ecx,[rdi]
     mov dl,[rsi].mem_type
     .if ( [rsi].mem_type == MT_TYPE )
+
         mov rdx,[rsi].type
         mov dl,[rdx].asym.mem_type
     .endif
 
     .switch
-      .case ( [rsi].sflags & S_ISVARARG )
-        xor eax,eax
-        mov [rsi].string_ptr,rax
-       .return
+    .case ( [rsi].sflags & S_ISVARARG )
+        .return 0
 
-      .case ( dl & MT_FLOAT || dl == MT_YWORD )
+    .case ( dl & MT_FLOAT || dl == MT_YWORD )
+
         movzx ecx,ch
-        inc byte ptr [rbx+1]
+        inc byte ptr [rdi+1]
+
         .if ( ecx > 7 )
+
             mov [rsi].regist[2],cx
             add ecx,(T_XMM8 - T_XMM7 - 1)
             mov [rsi].regist[0],cx
-            xor eax,eax
-            mov [rsi].string_ptr,rax
-            .return
+           .return 0
         .endif
+
         .if eax == 64
             lea eax,[rcx+T_ZMM0]
         .elseif eax == 32
@@ -2284,49 +2295,51 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
         .endif
         .endc
 
-      .case ( al > 16 )
-        xor eax,eax
-        mov [rsi].string_ptr,rax
-       .return
+    .case ( al > 16 )
+        .return 0
 
-      .case ( al == 16 || dl == MT_OWORD )
+    .case ( al == 16 || dl == MT_OWORD )
         .if ( cl < 5 )
-            movzx ecx,cl
-            lea rdx,elf64_regs
-            movzx eax,byte ptr [rdx+rcx+3*6]
-            add byte ptr [rbx],2
+
+            movzx   ecx,cl
+            lea     rdx,elf64_regs
+            movzx   eax,byte ptr [rdx+rcx+3*6]
+            add     byte ptr [rdi],2
            .endc
         .endif
 
-      .case ( cl > 5 )
-        movzx ecx,cl
-        mov [rsi].regist[0],T_RAX
-        mov [rsi].regist[2],cx
-        inc byte ptr [rbx]
-        xor eax,eax
-        mov [rsi].string_ptr,rax
-       .return
+    .case ( cl > 5 )
+        movzx   ecx,cl
+        mov     [rsi].regist[0],T_RAX
+        mov     [rsi].regist[2],cx
+        inc     byte ptr [rdi]
+       .return 0
 
-      .default
-        movzx ecx,cl
-        shr eax,1
-        cmp eax,4
+    .default
+        movzx   ecx,cl
+        shr     eax,1
+        cmp     eax,4
         cmc
-        sbb eax,0
-        imul eax,eax,6
-        lea rdx,elf64_regs
-        add rdx,rax
-        movzx eax,byte ptr [rcx+rdx]
-        inc byte ptr [rbx]
+        sbb     eax,0
+        imul    eax,eax,6
+        lea     rdx,elf64_regs
+        add     rdx,rax
+        movzx   eax,byte ptr [rcx+rdx]
+        inc     byte ptr [rdi]
        .endc
     .endsw
-
-    lea rdi,regname
-    mov [rsi].state,SYM_TMACRO
     mov [rsi].regist[0],ax
     mov [rsi].regist[2],cx
-    mov [rsi].string_ptr,LclDup( GetResWName(eax, rdi) )
-   .return TRUE
+    mov [rsi].sys_size,bl
+    or  [rsi].flags,S_REGPARAM
+    mov rsi,pProc
+    mov eax,[rdi]
+    mov [rsi].sys_rcnt,al
+    mov [rsi].sys_xcnt,ah
+    .if ( bl > [rsi].sys_size )
+        mov [rsi].sys_size,bl
+    .endif
+    .return( 0 )
 
 elf64_pcheck endp
 
@@ -2585,13 +2598,13 @@ abs_param proc __ccall private uses rbx pp:dsym_t, index:int_t, param:dsym_t, pa
 
     mov rcx,pp
     mov rbx,param
-    .if ( [rbx].asym.sflags & S_ISVARARG && [rcx].asym.flag2 & S_ISINLINE )
+    .if ( [rbx].asym.sflags & S_ISVARARG && [rcx].asym.flags & S_ISINLINE )
         .return( 1 )
     .endif
 
     ; skip loading class pointer if :vararg and inline
 
-    .if ( [rcx].asym.flag2 & S_ISINLINE && [rcx].asym.flag1 & S_METHOD && !index )
+    .if ( [rcx].asym.flags & S_ISINLINE && [rcx].asym.flags & S_METHOD && !index )
         mov rdx,[rcx].dsym.procinfo
         .if ( [rdx].proc_info.flags & PROC_HAS_VARARG )
             .return( 1 )

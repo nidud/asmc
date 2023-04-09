@@ -248,7 +248,7 @@ SymAlloc proc __ccall uses rsi rdi name:string_t
     mov [rax].asym.name,rdx
 
     .if ( ModuleInfo.cref )
-        or [rax].asym.flag1,S_LIST
+        or [rax].asym.flags,S_LIST
     .endif
 
     .if edi
@@ -750,13 +750,13 @@ SymFree proc __ccall sym:asym_t
 
     .switch eax
     .case SYM_INTERNAL
-        .if ( [rcx].asym.flag1 & S_ISPROC )
+        .if ( [rcx].asym.flags & S_ISPROC )
             DeleteProc( rcx )
         .endif
         .endc
     .case SYM_EXTERNAL
 
-        .if ( [rcx].asym.flag1 & S_ISPROC )
+        .if ( [rcx].asym.flags & S_ISPROC )
             DeleteProc( rcx )
         .endif
 
@@ -922,7 +922,7 @@ SymMakeAllSymbolsPublic proc __ccall uses rsi rdi
                 ;
                 mov al,[rcx+1]
                 .if ( !( [rdi].asym.flags & S_ISEQUATE or S_PREDEFINED or S_ISPUBLIC ) &&
-                      !( [rdi].asym.flag1 & S_INCLUDED ) && al != '&' )
+                      !( [rdi].asym.flags & S_INCLUDED ) && al != '&' )
 
                     or [rdi].asym.flags,S_ISPUBLIC
                     AddPublicData( rdi )
@@ -1011,7 +1011,7 @@ endif
     ;
     ; @WordSize should not be listed
     ;
-    and [rax].asym.flag1,not S_LIST
+    and [rax].asym.flags,not S_LIST
 
     xor esi,esi
     .while ( esi < dyneqcount )
@@ -1036,10 +1036,10 @@ endif
     ; $ is an address (usually). Also, don't add it to the list
     ;
     mov rax,symPC
-    and [rax].asym.flag1,not S_LIST
+    and [rax].asym.flags,not S_LIST
     or  [rax].asym.flags,S_VARIABLE
     mov rax,LineCur
-    and [rax].asym.flag1,not S_LIST
+    and [rax].asym.flags,not S_LIST
     ret
 
 SymInit endp

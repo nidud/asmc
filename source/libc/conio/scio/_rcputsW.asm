@@ -8,7 +8,7 @@ include conio.inc
 
     .code
 
-_rcputsW proc uses rsi rdi rc:TRECT, p:PCHAR_INFO, x:SINT, y:SINT, attrib:WORD, string:LPWSTR
+_rcputsW proc uses rsi rdi rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, string:LPWSTR
 
     .new pos:TRECT = { x, y, 1, 1 }
     .for ( edi = 0, rsi = string : wchar_t ptr [rsi] : rsi += 2, pos.x++, edi++ )

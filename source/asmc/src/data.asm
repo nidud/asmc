@@ -326,7 +326,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
                 inc i
             .endif
 
-        .elseif ( [rdi].flag1 & S_ISARRAY &&
+        .elseif ( [rdi].flags & S_ISARRAY &&
                   [rbx].token != T_FINAL && [rbx].token != T_COMMA )
 
             .ifd ( InitializeArray( rdi, &i, tokenarray ) == ERROR )
@@ -692,7 +692,7 @@ next_item:
 
             mov rax,sym
             .if ( rax )
-                or [rax].asym.flag1,S_ISARRAY
+                or [rax].asym.flags,S_ISARRAY
             .endif
 
             .if ( opndx.value == 0 )
@@ -831,7 +831,7 @@ next_item:
                         ; v2.07: don't modify string_len! Instead
                         ; mark field as array!
 
-                        or [rdi].asym.flag1,S_ISARRAY
+                        or [rdi].asym.flags,S_ISARRAY
                     .else
                         .return( asmerr( 2047 ) ) ;; MASM doesn't like ""
                     .endif
@@ -868,7 +868,7 @@ next_item:
                     .if ecx
                         dec eax
                         add total,eax
-                        or [rdi].asym.flag1,S_ISARRAY ; v2.07: added
+                        or [rdi].asym.flags,S_ISARRAY ; v2.07: added
                         .if ( first )
                             mov [rdi].asym.first_length,1
                             mov [rdi].asym.first_size,ecx
@@ -1283,7 +1283,7 @@ item_done:
             .if ( [rbx].token != T_FINAL && [rbx].token != T_CL_BRACKET )
                 mov first,FALSE
                 .if ( rcx )
-                    or [rcx].asym.flag1,S_ISARRAY
+                    or [rcx].asym.flags,S_ISARRAY
                 .endif
                 jmp next_item
             .endif
@@ -1491,7 +1491,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
                 FStoreLine(0)
             .endif
             mov currofs,[rsi].asym.offs
-            or [rsi].asym.flag1,S_ISDATA ; 'first_size' is valid
+            or [rsi].asym.flags,S_ISDATA ; 'first_size' is valid
 
         .else ; v2.04: else branch added
 
@@ -1530,7 +1530,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
 
                 .if ( [rsi].asym.state == SYM_EXTERNAL &&
                       [rsi].asym.sflags & S_WEAK &&
-                      !( [rsi].asym.flag1 & S_ISPROC ) ) ;; EXTERNDEF?
+                      !( [rsi].asym.flags & S_ISPROC ) ) ;; EXTERNDEF?
                     checktypes( rsi, mem_type, type_sym )
                     sym_ext2int( rsi )
                     mov [rsi].asym.total_size,0
@@ -1594,8 +1594,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
             .if( Parse_Pass != PASS_1 && [rsi].asym.offs != old_offset )
                 mov ModuleInfo.PhaseError,TRUE
             .endif
-            or  [rsi].asym.flags,S_ISDEFINED
-            or  [rsi].asym.flag1,S_ISDATA
+            or  [rsi].asym.flags,S_ISDEFINED or S_ISDATA
             mov [rsi].asym.mem_type,mem_type
             mov [rsi].asym.type,type_sym
 

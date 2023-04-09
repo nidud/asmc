@@ -64,7 +64,6 @@ Options global_options {
         0,                      ; .xflag
         0,                      ; .loopalign
         0,                      ; .casealign
-        0,                      ; .epilogueflags
         4,                      ; .segmentalign
         0,                      ; .pe_subsystem
         0,                      ; .win64_flags
@@ -708,9 +707,6 @@ ifndef ASMC64
         mov Options.sub_format,SFORMAT_NONE
         .return
 endif
-    .case 'fp'              ; -pf
-        mov Options.epilogueflags,1
-        .return
     .case 'ep'              ; -pe
         .if ( Options.sub_format != SFORMAT_64BIT )
             mov Options.sub_format,SFORMAT_PE
@@ -738,35 +734,20 @@ endif
     .case 'xS'              ; -Sx
         mov Options.listif,1
         .return
-    .case 'pws'         ; -swp
-        or Options.xflag,OPT_PASCAL
-        .return
-    .case 'cws'         ; -swc
-        and Options.xflag,not OPT_PASCAL
-        .return
-    .case 'rws'         ; -swr
-        or Options.xflag,OPT_REGAX
-        .return
-    .case 'nws'         ; -swn
-        or Options.xflag,OPT_NOTABLE
-        .return
-    .case 'tws'         ; -swt
-        and Options.xflag,not OPT_NOTABLE
-        .return
-    .case 'efas'        ; -safeseh
+    .case 'efas'            ; -safeseh
         mov Options.safeseh,1
         .return
-    .case 'w'           ; -w
+    .case 'w'               ; -w
         mov Options.warning_level,0
         .return
-    .case 'sw'          ; -ws
+    .case 'sw'              ; -ws
         or Options.xflag,OPT_WSTRING
         define_name( "_UNICODE", "1" )
         .return
-    .case 'XW'          ; -WX
+    .case 'XW'              ; -WX
         mov Options.warning_error,1
         .return
-    .case '6niw'        ; -win64
+    .case '6niw'            ; -win64
 ifndef ASMC64
         set_cpu( CPU_64, 1 )
         .if ( Options.output_format != OFORMAT_BIN )
@@ -782,92 +763,92 @@ ifndef ASMC64
         or  Options.xflag,OPT_REGAX
 endif
         .return
-    .case 'X'           ; -X
+    .case 'X'               ; -X
         mov Options.ignore_include,1
         .return
 ifndef ASMC64
-    .case 'mcz'         ; -zcm
+    .case 'mcz'             ; -zcm
         mov Options.no_cdecl_decoration,0
         .return
-    .case 'wcz'         ; -zcw
+    .case 'wcz'             ; -zcw
         mov Options.no_cdecl_decoration,1
         .return
 endif
-    .case 'fZ'          ; -Zf
+    .case 'fZ'              ; -Zf
         mov Options.all_symbols_public,1
         .return
 ifndef ASMC64
-    .case '0fz'         ; -zf0
+    .case '0fz'             ; -zf0
         mov Options.fctype,FCT_MSC
         .return
 endif
-    .case '1fz'         ; -zf1
+    .case '1fz'             ; -zf1
         mov Options.fctype,FCT_WATCOMC
         .return
-    .case 'gZ'          ; -Zg
+    .case 'gZ'              ; -Zg
         mov Options.masm_compat_gencode,1
         .return
-    .case 'dZ'          ; -Zd
+    .case 'dZ'              ; -Zd
         mov Options.line_numbers,1
         .return
-    .case 'clz'         ; -zlc
+    .case 'clz'             ; -zlc
         mov Options.no_comment_in_code_rec,1
         .return
-    .case 'dlz'         ; -zld
+    .case 'dlz'             ; -zld
         mov Options.no_opt_farcall,1
         .return
-    .case 'flz'         ; -zlf
+    .case 'flz'             ; -zlf
         mov Options.no_file_entry,1
         .return
-    .case 'plz'         ; -zlp
+    .case 'plz'             ; -zlp
         mov Options.no_static_procs,1
         .return
-    .case 'slz'         ; -zls
+    .case 'slz'             ; -zls
         mov Options.no_section_aux_entry,1
         .return
 ifndef ASMC64
-    .case 'mZ'          ; -Zm
+    .case 'mZ'              ; -Zm
         mov Options.masm51_compat,1
 endif
-    .case 'enZ'         ; -Zne
+    .case 'enZ'             ; -Zne
         mov Options.strict_masm_compat,1
         .return
-    .case 'knZ'         ; -Znk
+    .case 'knZ'             ; -Znk
         mov Options.masm_keywords,1
         .return
-    .case 'sZ'          ; -Zs
+    .case 'sZ'              ; -Zs
         mov Options.syntax_check_only,1
         .return
 ifndef ASMC64
-    .case '0tz'         ; -zt0
+    .case '0tz'             ; -zt0
         mov Options.stdcall_decoration,0
         .return
-    .case '1tz'         ; -zt1
+    .case '1tz'             ; -zt1
         mov Options.stdcall_decoration,1
         .return
-    .case '2tz'         ; -zt2
+    .case '2tz'             ; -zt2
         mov Options.stdcall_decoration,2
         .return
-    .case '8vZ'         ; -Zv8
+    .case '8vZ'             ; -Zv8
         mov Options.masm8_proc_visibility,1
         .return
 endif
-    .case 'ezz'         ; -zze
+    .case 'ezz'             ; -zze
         mov Options.no_export_decoration,1
         .return
-    .case 'szz'         ; -zzs
+    .case 'szz'             ; -zzs
         mov Options.entry_decorated,1
         .return
     .endsw
 
     mov [rsi],rbx
     mov eax,[rbx]
-    .if al == 'e'       ; -e<number>
+    .if al == 'e'           ; -e<number>
         mov [rsi],GetNumber(&[rbx+1])
         mov Options.error_limit,OptValue
         .return
     .endif
-    .if al == 'W'       ; -W<number>
+    .if al == 'W'           ; -W<number>
         mov [rsi],GetNumber(&[rbx+1])
         .if OptValue < 0
             asmerr(8000, rbx)

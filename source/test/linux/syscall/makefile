@@ -1,4 +1,4 @@
-test:
-	asmc64 test.asm
-	gcc -o test test.o
+syscall:
+	asmc64 syscall.asm
+	gcc -o syscall syscall.o
 

@@ -600,10 +600,10 @@ set_symtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
                 mov rcx,[rdi].sym
                 .if ( [rcx].asym.flags & S_VARIABLE )
                     mov [rdi].sym,[rdi].segment_var
-                .elseif ( [rcx].asym.state == SYM_INTERNAL && \
-                        !( [rcx].asym.flag1 & S_INCLUDED ) && !( [rcx].asym.flags & S_ISPUBLIC ) )
+                .elseif ( [rcx].asym.state == SYM_INTERNAL &&
+                        !( [rcx].asym.flags & ( S_INCLUDED or S_ISPUBLIC ) ) )
 
-                    or [rcx].asym.flag1,S_INCLUDED
+                    or [rcx].asym.flags,S_INCLUDED
                     LclAlloc( sizeof( localname ) )
                     mov [rax].localname.next,NULL
                     mov rcx,[rdi].sym
@@ -1392,7 +1392,7 @@ endif
         .case FIX_RELOFF32
             mov ebx,R_X86_64_PC32
             .if ( ModuleInfo.pic && [rcx].asym.state == SYM_EXTERNAL )
-                .if ( [rcx].asym.flag1 & S_ISPROC ) ; added v2.34.25
+                .if ( [rcx].asym.flags & S_ISPROC ) ; added v2.34.25
                     mov ebx,R_X86_64_PLT32
                 .endif
             .endif

@@ -439,13 +439,13 @@ endif
             mov eax,[rsi]
             .if ( al == 0 )
                 mov [rbx].sym,rdi
-                or  [rdi].asym.flag2,S_CLASS
+                or  [rdi].asym.flags,S_CLASS
             .elseif ( eax == 'lbtV' && byte ptr [rsi+4] == 0 )
                 mov rcx,[rbx].sym
-                or  [rcx].asym.flag2,S_VTABLE
+                or  [rcx].asym.flags,S_VTABLE
                 mov [rcx].asym.vtable,rdi
                 mov [rdi].asym.class,rcx
-                or  [rdi].asym.flag2,S_ISVTABLE
+                or  [rdi].asym.flags,S_ISVTABLE
             .endif
         .endif
         assume rbx:ptr asm_tok
@@ -790,7 +790,7 @@ endif
     .endif
     mov [rdi].state,SYM_STRUCT_FIELD
     .if ( ModuleInfo.cref )
-        or [rdi].flag1,S_LIST
+        or [rdi].flags,S_LIST
     .endif
     or  [rdi].flags,S_ISDEFINED
     mov [rdi].mem_type,mem_type
@@ -1590,8 +1590,10 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             mov [rdi].name_size,len
             mov [rdi].name,LclDup( rsi )
-            and [rdi].flag1,not S_LIST
-            or  [rdi].flag1,ModuleInfo.cref
+            and [rdi].flags,not S_LIST
+            .if ( ModuleInfo.cref )
+                or [rdi].flags,S_LIST
+            .endif
             mov [rdi].state,SYM_STRUCT_FIELD
             mov [rdi].mem_type,MT_BITS
             mov [rdi].total_size,opndx.value

@@ -433,7 +433,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .endif
         .switch oper
         .case T_DOT_LENGTH
-            .if ( [rbx].flag1 & S_ISDATA )
+            .if ( [rbx].flags & S_ISDATA )
                 mov [rsi].value,[rbx].first_length
             .else
                 mov [rsi].value,1
@@ -461,7 +461,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 .else
                     mov [rsi].value,[rdi].value
                 .endif
-            .case ( [rbx].flag1 & S_ISDATA )
+            .case ( [rbx].flags & S_ISDATA )
                 mov [rsi].value,[rbx].first_size
             .case ( [rbx].state == SYM_STACK )
                 GetSizeValue(rbx)

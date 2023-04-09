@@ -93,7 +93,7 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     .if ( SymFind( rax ) == NULL )
         .return ERROR
     .endif
-    .if ( !( [rax].asym.flag2 & S_VTABLE ) )
+    .if ( !( [rax].asym.flags & S_VTABLE ) )
         .return 0
     .endif
     mov rsi,rax

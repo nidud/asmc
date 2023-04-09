@@ -12,7 +12,9 @@ operator macro vector, type
 .namespace type
 
     .template <vector, type> t
+
         __v type ?
+
         .operator + :&type&_t {
             mov vector,this
             add vector,_1
@@ -53,9 +55,9 @@ foo endp
 
 _tmain proc
 
-   .new r:int_t = foo(1, 2, 3, 4)
+   .new i:int_t = foo(1, 2, 3, 4)
 
-    cout << "(1 + 2 * 4 - 3) / 2 = " << r << endl
+    cout << "(1 + 2 * 4 - 3) / 2 = " << i << endl
     ret
 
 _tmain endp

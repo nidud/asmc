@@ -9,7 +9,7 @@ include stdio.inc
 
     .code
 
-_rcputfW proc rc:TRECT, p:PCHAR_INFO, x:SINT, y:SINT, attrib:WORD, format:LPWSTR, argptr:vararg
+_rcputfW proc rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, format:LPWSTR, argptr:vararg
 
     vswprintf( &_bufin, format, &argptr )
     _rcputsW( rc, p, x, y, attrib, &_bufin )

@@ -13,6 +13,7 @@ Enables and disables features of the assembler. Available options include:
 - [CSTACK](opt_cstack.md)
 - [DLLIMPORT](opt_dllimport.md)
 - [DOTNAME](opt_dotname.md)
+- [DOTNAMEX](opt_dotnamex.md)
 - [ELF](opt_elf.md)
 - [EMULATOR](opt_emulator.md)
 - [EPILOGUE](opt_epilogue.md)

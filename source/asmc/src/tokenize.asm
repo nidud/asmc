@@ -731,7 +731,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                     .endc .if ( ![rax].asym.string_ptr )
                     .endc .if ( SymFind( [rax].asym.string_ptr ) == NULL )
                      xor ecx,ecx
-                    .endc .if !( [rax].asym.flag1 & S_ISPROC )
+                    .endc .if !( [rax].asym.flags & S_ISPROC )
                      mov ecx,T_ISPROC
                      inc [rsi].cstring
                     .endc
@@ -776,7 +776,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                 .case ( edx == SYM_STACK )
                 .case ( edx == SYM_INTERNAL )
                 .case ( edx == SYM_EXTERNAL )
-                .case ( [rax].asym.flag1 & S_ISPROC )
+                .case ( [rax].asym.flags & S_ISPROC )
                     mov ecx,T_ISPROC
                     inc [rsi].cstring
                    .endc
@@ -1234,10 +1234,36 @@ get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
        .return get_string( rbx, rdx )
     .endif
 
+continue_scan:
+
     .repeat
         stosb
         inc rsi
     .until !islabel( [rsi] )
+    ;
+    ; if the name starts with a dot then accept dots
+    ; within the name (though not as last char). OPTION DOTNAMEX
+    ; must be on.
+    ;
+    .if ( al == '.' && ModuleInfo.dotnamex )
+
+        mov rcx,[rdx].output
+        .if ( al == [rcx] )
+            ;
+            ; allow .name..
+            ; allow .name.00100
+            ;
+            .if ( al == B[rsi+1] || ( B[rsi+1] >= '0' && B[rsi+1] <= '9') )
+
+                jmp continue_scan
+            .endif
+            .if ( islabel( [rsi+1] ) )
+
+                mov al,'.'
+                jmp continue_scan
+            .endif
+        .endif
+    .endif
 
     mov rcx,rdi
     sub rcx,[rdx].output

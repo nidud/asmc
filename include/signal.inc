@@ -66,7 +66,7 @@ ifdef __UNIX__
 
 define _NSIG		64
 ifdef _AMD64_
-define _NSIG_WORDS	16
+define _NSIG_WORDS	1;6
 else
 define _NSIG_WORDS	2
 endif
@@ -133,7 +133,7 @@ sigaction_t		ends
 ifdef _AMD64_
 sys_rt_sigaction proto syscall :int_t, :ptr sigaction_t, :ptr sigaction_t {
     mov eax,13
-    mov r10,_NSIG / 8
+    mov r10,sigset_t
     syscall
     }
 endif

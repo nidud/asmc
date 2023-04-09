@@ -1044,7 +1044,7 @@ GetProcVtbl proc fastcall private sym:ptr asym, name:ptr sbyte
           ( [rcx].asym.mem_type == MT_PTR || [rcx].asym.ptr_memtype == MT_TYPE ) )
         mov rcx,[rcx].asym.target_type
     .endif
-    .if ( [rcx].asym.flag2 & S_VTABLE )
+    .if ( [rcx].asym.flags & S_VTABLE )
         SearchNameInStruct( [rcx].asym.vtable, rdx, 0, 0 )
     .endif
     ret
@@ -1075,7 +1075,7 @@ GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, o
         SymFind([rbx].string_ptr)
     .endif
     .return .if !rax
-    .return .if [rax].asym.flag1 & S_ISPROC
+    .return .if [rax].asym.flags & S_ISPROC
 
     .if ( [rbx].token == T_ID && [rbx+asm_tok].token == T_DOT &&
           [rbx+asm_tok*2].token == T_ID )
@@ -1085,7 +1085,7 @@ GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, o
 
     mov rcx,[rax].asym.target_type
     mov dl,[rax].asym.mem_type
-    .if ( dl == MT_PTR && rcx && [rcx].asym.flag1 & S_ISPROC )
+    .if ( dl == MT_PTR && rcx && [rcx].asym.flags & S_ISPROC )
         .return rcx
     .endif
 
@@ -1205,7 +1205,7 @@ GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:ptr asm_tok
             .return .if !SymSearch( [rax].asym.string_ptr )
         .endif
 
-        or  [rsi].asym.flag2,S_VMACRO
+        or  [rsi].asym.flags,S_VMACRO
         mov [rsi].asym.vmacro,rax ; vtable method is inline - sym->vmacro set
         mov rcx,rax
         xor eax,eax
@@ -1718,7 +1718,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
                     mov sym,rax
                     mov rcx,rax
                     xor eax,eax
-                    .if ( [rcx].asym.flag2 & S_VTABLE )
+                    .if ( [rcx].asym.flags & S_VTABLE )
                         SearchNameInStruct([rcx].asym.vtable, rdi, 0, 0)
                     .endif
                     .if ( rax == NULL )
@@ -1754,7 +1754,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
         .if SearchNameInStruct( rsi, name, 0, 0 )
             mov method,rax
         .endif
-        .if ( [rsi].asym.flag2 & S_VTABLE )
+        .if ( [rsi].asym.flags & S_VTABLE )
 
             .if SearchNameInStruct( [rsi].asym.vtable, name, 0, 0 )
                 inc vtable
@@ -1770,7 +1770,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
             .endif
         .elseif ( vparray )
             mov rax,method
-            or [rax].asym.flag2,S_VPARRAY
+            or [rax].asym.flags,S_VPARRAY
         .endif
     .endif
 
@@ -1854,9 +1854,9 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
         mov comptr,rax
         mov rax,method
         .if rax
-            or [rax].asym.flag1,S_METHOD
+            or [rax].asym.flags,S_METHOD
             .if ( !vtable )
-                or [rax].asym.flag2,S_VPARRAY
+                or [rax].asym.flags,S_VPARRAY
             .endif
         .endif
     .endif
@@ -1977,7 +1977,7 @@ done:
 
                     mov rax,rcx
 
-                .elseif ( [rcx].asym.flag2 & S_ISINLINE )
+                .elseif ( [rcx].asym.flags & S_ISINLINE )
 
                     mov rcx,[rcx].asym.target_type
                     .if ( rcx && [rcx].asym.state == SYM_MACRO )

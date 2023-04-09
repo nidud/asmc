@@ -48,7 +48,7 @@ if 0
 MSymSearch proc name:string_t
     .if SymSearch( rcx )
         .if ( [rax].asym.state == SYM_EXTERNAL &&
-              [rax].asym.flag2 & S_ISINLINE )
+              [rax].asym.flags & S_ISINLINE )
             mov rcx,[rax].asym.target_type
             .if ( rcx && [rcx].asym.state == SYM_MACRO )
                 mov rax,rcx
@@ -2112,7 +2112,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
                         inc edi
                         .if ( SymSearch( [rbx].string_ptr ) )
-                            .if ( [rax].asym.flag2 & S_CLASS )
+                            .if ( [rax].asym.flags & S_CLASS )
 
                                 ; - add 'this:ptr class' as first argument
 

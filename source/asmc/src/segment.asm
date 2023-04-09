@@ -295,7 +295,7 @@ CreateGroup proc fastcall private uses rsi rdi name:string_t
         mov [rax].grp_info.numseg,0
         sym_add_table( &SymTables[TAB_GRP*symbol_queue], rdi )
 
-        or  [rdi].asym.flag1,S_LIST
+        or  [rdi].asym.flags,S_LIST
         mov rcx,[rdi].dsym.grpinfo
         inc grpdefidx
         mov [rcx].grp_info.grp_idx,grpdefidx
@@ -976,7 +976,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; segment is not defined (yet)
 
         mov sym,CreateSegment( sym, name, TRUE )
-        or  [rax].asym.flag1,S_LIST ; always list segments
+        or  [rax].asym.flags,S_LIST ; always list segments
         mov dir,rax
 
     .elseif ( [rax].asym.state == SYM_SEG ) ; segment already defined?

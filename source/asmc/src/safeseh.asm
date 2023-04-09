@@ -48,7 +48,7 @@ SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( Parse_Pass != PASS_1 )
             .return( asmerr( 2006, [rbx].string_ptr ) )
         .endif
-    .elseif ( !( [rsi].asym.flag1 & S_ISPROC ) )
+    .elseif ( !( [rsi].asym.flags & S_ISPROC ) )
         .return( asmerr( 3017, [rbx].string_ptr ) )
     .endif
 

@@ -123,7 +123,7 @@ SizeFromExpression proc fastcall private opnd:ptr expr
 
             mov eax,[rcx].asym.total_size
 
-            .if [rcx].asym.flag1 & S_ISARRAY
+            .if [rcx].asym.flags & S_ISARRAY
 
                 mov ecx,[rcx].asym.total_length
                 xor edx,edx

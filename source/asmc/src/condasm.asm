@@ -157,7 +157,7 @@ check_defd proc fastcall private name:string_t
     .if ( byte ptr [rcx] )
 
         .if SymSearch( rcx )
-            movzx eax,[rax].asym.flags
+            mov eax,[rax].asym.flags
             and eax,S_ISDEFINED
         .endif
     .endif

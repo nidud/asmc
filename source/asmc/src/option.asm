@@ -265,18 +265,14 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( [rbx].token != T_ID )
                 .return( asmerr( 2008, [rbx].tokpos ) )
             .endif
-            .ifd ( !tstricmp( rsi, "FLAGS" ) )
-                mov ModuleInfo.epilogueflags,1
+            mov ModuleInfo.proc_epilogue,NULL
+            .ifd ( !tstricmp( rsi, "NONE" ) )
+                mov ModuleInfo.epiloguemode,PEM_NONE
+            .elseifd ( !tstricmp( rsi, "EPILOGUEDEF" ) )
+                mov ModuleInfo.epiloguemode,PEM_DEFAULT
             .else
-                mov ModuleInfo.proc_epilogue,NULL
-                .ifd ( !tstricmp( rsi, "NONE" ) )
-                    mov ModuleInfo.epiloguemode,PEM_NONE
-                .elseifd ( !tstricmp( rsi, "EPILOGUEDEF" ) )
-                    mov ModuleInfo.epiloguemode,PEM_DEFAULT
-                .else
-                    mov ModuleInfo.epiloguemode,PEM_MACRO
-                    mov ModuleInfo.proc_epilogue,LclDup( rsi )
-                .endif
+                mov ModuleInfo.epiloguemode,PEM_MACRO
+                mov ModuleInfo.proc_epilogue,LclDup( rsi )
             .endif
             inc i
         .case OP_LANGUAGE
@@ -607,6 +603,15 @@ endif
                 or  ModuleInfo.xflag,OPT_CSTACK
             .elseifd ( !tstricmp( rsi, "OFF" ) )
                 and ModuleInfo.xflag,not OPT_CSTACK
+            .else
+                .break
+            .endif
+            inc i
+        .case OP_DOTNAMEX ;; ON | OFF
+            .ifd ( !tstricmp( rsi, "ON" ) )
+                mov ModuleInfo.dotnamex,1
+            .elseifd ( !tstricmp( rsi, "OFF" ) )
+                mov ModuleInfo.dotnamex,0
             .else
                 .break
             .endif

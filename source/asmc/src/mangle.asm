@@ -65,7 +65,7 @@ UScoreMangler endp
 
 StdcallMangler proc fastcall sym:asym_t, buffer:string_t
 
-    .if ( Options.stdcall_decoration == STDCALL_FULL && [rcx].flag1 & S_ISPROC )
+    .if ( Options.stdcall_decoration == STDCALL_FULL && [rcx].flags & S_ISPROC )
 
         mov rax,rdx
         mov rdx,[rcx].dsym.procinfo
@@ -108,7 +108,7 @@ ms32_decorate endp
 ow_decorate proc fastcall sym:asym_t, buffer:string_t
 
     mov eax,NORMAL
-    .if [rcx].flag1 & S_ISPROC
+    .if [rcx].flags & S_ISPROC
         or eax,USCORE_BACK
     .else
         .switch [rcx].mem_type
@@ -159,7 +159,7 @@ vect_decorate proc fastcall sym:asym_t, buffer:string_t
     mov rdi,rdx
     mov rsi,rcx
     mov eax,1
-    .if !( [rcx].flag1 & S_ISPROC )
+    .if !( [rcx].flags & S_ISPROC )
         xor eax,eax
     .else
         tstricmp( [rcx].name, "main" )

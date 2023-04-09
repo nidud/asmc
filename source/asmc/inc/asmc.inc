@@ -536,7 +536,6 @@ define SIT_MACRO       1
     xflag                   db ?    ; extended option
     loopalign               db ?    ; OPTION:LOOPALIGN setting
     casealign               db ?    ; OPTION:CASEALIGN setting
-    epilogueflags           db ?    ; OPTION EPILOGUE: FLAGS
     segmentalign            db ?    ; -Sp[n] Set segment alignment
     pe_subsystem            db ?    ; -cui, -gui
     win64_flags             db ?    ; -homeparams, -autostack, -stackalign
@@ -551,6 +550,7 @@ define SIT_MACRO       1
     pic                     db ?    ; -fpic | -fno-pic
     endbr                   db ?    ; -endbr
     dotname                 db ?    ; -dotname : option dotname
+    dotnamex                db ?    ; -dotnamex : option dotnamex:<on:off>
    .ends
 
 .template module_vars
@@ -677,7 +677,6 @@ define SIT_MACRO       1
     xflag                   db ?            ; extended option
     loopalign               db ?            ; OPTION:LOOPALIGN setting
     casealign               db ?            ; OPTION:CASEALIGN setting
-    epilogueflags           db ?            ; OPTION EPILOGUE: FLAGS
     assert_proc             string_t ?      ; .assert:<proc/macro name>
     codepage                uint_t ?
     class_label             uint_t ?
@@ -686,6 +685,7 @@ define SIT_MACRO       1
     flt_size                db ?            ; option float:<4|8>
     pic                     db ?            ; -fpic | -fno-pic
     endbr                   db ?            ; -endbr
+    dotnamex                db ?            ; -dotnamex : option dotnamex:<on:off>
    .ends
 
 Token_Count             equ <ModuleInfo.token_count>

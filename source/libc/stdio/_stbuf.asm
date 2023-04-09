@@ -54,7 +54,7 @@ endif
         mov rax,[rsi]
         .if ( rax == NULL )
 
-            mov [rsi],malloc( rcx )
+            mov [rsi],malloc( _INTIOBUF )
         .endif
 
         mov ecx,_INTIOBUF

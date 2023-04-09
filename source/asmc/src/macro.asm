@@ -869,7 +869,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 mov rbx,rdx ; address of symbol from SymSearch()
                 mov [rsi].target_type,SymAlloc(rdi)
-                or  [rsi].flag2,S_ISINLINE
+                or  [rsi].flags,S_ISINLINE
                 mov rsi,rax
                 mov [rsi].altname,rbx
                 and [rsi].mac_flag,not ( M_ISVARARG or M_ISFUNC )

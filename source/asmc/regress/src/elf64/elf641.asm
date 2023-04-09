@@ -3,6 +3,8 @@
 ;
     .code
 
+    option win64:2
+
 p1  proc a1:byte, a2:byte, a3:byte, a4:byte, a5:byte, a6:byte
     mov al,a1
     mov al,a2
@@ -44,12 +46,12 @@ p8  proc a1:qword, a2:qword, a3:qword, a4:qword, a5:qword, a6:qword
 p8  endp
 
 pf  proc a1:REAL8, a2:REAL8, a3:REAL8, a4:REAL8, a5:REAL8, a6:REAL8
-    movups xmm0,a1
-    movups xmm1,a2
-    movups xmm2,a3
-    movups xmm3,a4
-    movups xmm4,a5
-    movups xmm5,a6
+    movsd xmm0,a1
+    movsd xmm1,a2
+    movsd xmm2,a3
+    movsd xmm3,a4
+    movsd xmm4,a5
+    movsd xmm5,a6
     ret
 pf  endp
 

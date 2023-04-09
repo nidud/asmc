@@ -362,6 +362,7 @@ externdef	_confh:intptr_t
 externdef	_coninpfh:intptr_t
 endif
 externdef	_console:PCONSOLE
+externdef	_terminalcolorid:byte
 
 __initconin	proto __cdecl
 __termconin	proto __cdecl
@@ -532,7 +533,6 @@ define U_BLACK_RIGHT_POINTER		0x25BA	; >
 define U_BLACK_LEFT_POINTER		0x25C4	; <
 
 define U_FULL_BLOCK			0x2588
-define U_LIGHT_SHADE			0x2591
 define U_LIGHT_SHADE			0x2591
 define U_FULL_BLOCK			0x2588
 

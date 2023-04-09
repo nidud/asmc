@@ -2370,7 +2370,7 @@ bin_check_external proc fastcall modinfo:ptr module_info
 
     .for ( rdx = SymTables[TAB_EXT*symbol_queue].head : rdx : rdx = [rdx].dsym.next )
         .if ( !( [rdx].asym.sflags & S_WEAK ) || [rdx].asym.flags & S_USED )
-            .if ( !( [rdx].asym.flag2 & S_ISINLINE ) )
+            .if ( !( [rdx].asym.flags & S_ISINLINE ) )
                 .return( asmerr( 2014, [rdx].asym.name ) )
             .endif
         .endif

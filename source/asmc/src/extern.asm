@@ -114,14 +114,14 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_to
 
     .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED ||
           ( [rsi].asym.state == SYM_EXTERNAL && ( [rsi].asym.sflags & S_WEAK ) &&
-            !( [rsi].asym.flag1 & S_ISPROC ) ) )
+            !( [rsi].asym.flags & S_ISPROC ) ) )
 
         .if ( CreateProc( rsi, name, SYM_EXTERNAL ) == NULL )
             .return ; name was probably invalid
         .endif
         mov rsi,rax
 
-    .elseif ( !( [rsi].asym.flag1 & S_ISPROC ) )
+    .elseif ( !( [rsi].asym.flags & S_ISPROC ) )
         asmerr( 2005, [rsi].asym.name )
         .return( NULL )
     .endif
@@ -266,7 +266,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             ; v2.05: added to accept type prototypes
 
-            .if ( ti.is_ptr == 0 && rdi && [rdi].asym.flag1 & S_ISPROC )
+            .if ( ti.is_ptr == 0 && rdi && [rdi].asym.flags & S_ISPROC )
 
                 CreateProc( rsi, NULL, SYM_EXTERNAL )
                 CopyPrototype( rsi, rdi )
@@ -326,7 +326,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             ; v2.05: added to accept type prototypes
 
-            .if ( ti.is_ptr == 0 && rdi && [rdi].asym.flag1 & S_ISPROC )
+            .if ( ti.is_ptr == 0 && rdi && [rdi].asym.flags & S_ISPROC )
 
                 mov ti.mem_type,[rdi].asym.mem_type
                 mov ti.symtype,NULL
@@ -638,7 +638,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             mov rsi,ti.symtype
 
-            .if ( ti.is_ptr == 0 && rsi && [rsi].asym.flag1 & S_ISPROC )
+            .if ( ti.is_ptr == 0 && rsi && [rsi].asym.flags & S_ISPROC )
 
                 CreateProc( rdi, NULL, SYM_EXTERNAL )
 
@@ -669,7 +669,7 @@ endif
             ; v2.05: added to accept type prototypes
 
             mov rsi,ti.symtype
-            .if ( ti.is_ptr == 0 && rsi && [rsi].asym.flag1 & S_ISPROC )
+            .if ( ti.is_ptr == 0 && rsi && [rsi].asym.flags & S_ISPROC )
 
                 mov ti.mem_type,[rsi].asym.mem_type
                 mov ti.symtype,NULL

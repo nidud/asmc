@@ -12,7 +12,7 @@ foo proto :ptr S1
 
 foo proc a:ptr S1
 
-    mov eax,[a].S1.l1
+    mov eax,[rdi].S1.l1
     ret
 foo endp
 

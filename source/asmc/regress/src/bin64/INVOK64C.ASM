@@ -27,14 +27,14 @@ f2  proc a1:oword, a2:oword
 f2  endp
 
 s1  proc syscall a1:oword, a2:oword, a3:oword
-    mov rax,a1
-    mov rax,a2
-    mov rax,a3
+    mov rax,rdi
+    mov rax,rdx
+    mov rax,r8
     ret
 s1  endp
 
 s2  proc syscall a1:oword, a2:oword, a3:oword
-    s1(a1, a2, a3)                      ; no params set
+    s1(rdi, rdx, r8)                    ; no params set
     s1(rsi::rdi, rcx::rdx, r9::r8)      ; no params set
     s1(rsi::rdi, rcx::rax, r9::r8)      ; rdx
     s1(rax::rax, rax::rax, rax::rax)    ; all

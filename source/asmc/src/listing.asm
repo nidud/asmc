@@ -727,7 +727,7 @@ log_struct proc __ccall uses rsi rdi rbx sym:ptr asym, name:string_t, ofs:int_32
                 LstPrintf( "%s %s        %8X   ", [rbx].name, pdots, ecx )
                 LstPrintf( "%s", GetMemtypeString( rbx, NULL ) )
 
-                .if ( [rbx].flag1 & S_ISARRAY )
+                .if ( [rbx].flags & S_ISARRAY )
                     LstPrintf( "[%u]", [rbx].total_length )
                 .endif
                 LstNL()
@@ -1148,7 +1148,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
             .endif
             mov pdots,rcx
 
-            .if ( [rdi].asym.flag1 & S_ISARRAY )
+            .if ( [rdi].asym.flags & S_ISARRAY )
                 tsprintf( &buffer, "%s[%u]", GetMemtypeString( rdi, NULL), [rdi].asym.total_length )
             .else
                 tstrcpy( &buffer, GetMemtypeString( rdi, NULL ) )
@@ -1221,7 +1221,7 @@ log_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
     .case SYM_EXTERNAL
         LstPrintf( "%s %s        ", [rdi].asym.name, pdots )
 
-        .if ( [rdi].asym.flag1 & S_ISARRAY )
+        .if ( [rdi].asym.flags & S_ISARRAY )
 
             mov ebx,tsprintf( StringBufferEnd, "%s[%u]", GetMemtypeString( rdi, NULL ), [rdi].asym.total_length )
             LstPrintf( "%-10s ", StringBufferEnd )
@@ -1385,7 +1385,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
         mov rcx,syms
         mov rdi,[rcx+rbx*asym_t]
 
-        .continue .if !( [rdi].asym.flag1 & S_LIST )
+        .continue .if !( [rdi].asym.flags & S_LIST )
 
         .switch ( [rdi].asym.state )
         .case SYM_TYPE
@@ -1419,7 +1419,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
             .endc
         .case SYM_INTERNAL
         .case SYM_EXTERNAL ; v2.04: added, since PROTOs are now externals
-            .if ( [rdi].asym.flag1 & S_ISPROC )
+            .if ( [rdi].asym.flags & S_ISPROC )
                 mov ecx,LQ_PROCS
                 .endc
             .endif
@@ -1496,7 +1496,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
         mov rcx,syms
         mov rdi,[rcx+rbx*size_t]
 
-        .if ( [rdi].asym.flag1 & S_LIST && !( [rdi].asym.flag1 & S_ISPROC ) )
+        .if ( [rdi].asym.flags & S_LIST && !( [rdi].asym.flags & S_ISPROC ) )
             log_symbol( rdi )
         .endif
     .endf
@@ -1558,7 +1558,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
             SymLookup( [rbx].string_ptr )
 
-            and [rax].asym.flag1,not S_LIST
+            and [rax].asym.flags,not S_LIST
             inc esi
             add rbx,asm_tok
 

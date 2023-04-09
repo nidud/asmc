@@ -409,7 +409,7 @@ done:
         tstrcat( rax, "_" )
         tstrcat( rax, rdi )
         .if SymFind( rax )
-            or [rax].asym.flag1,S_METHOD
+            or [rax].asym.flags,S_METHOD
         .endif
     .endif
     mov eax,retval
@@ -735,22 +735,22 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if constructor
             .if SymFind( &token )
                 .if ( cmd != T_DOT_STATIC )
-                    or [rax].asym.flag1,S_METHOD
+                    or [rax].asym.flags,S_METHOD
                 .endif
                 .if ( cmd == T_DOT_STATIC && is_vararg == 0 )
-                    or [rax].asym.flag2,S_ISSTATIC
+                    or [rax].asym.flags,S_ISSTATIC
                 .endif
             .endif
         .elseif ( cmd == T_DOT_OPERATOR )
             mov rax,[rsi].com_item.sym
             .if ( rax )
-                or [rax].asym.flag2,S_OPERATOR
+                or [rax].asym.flags,S_OPERATOR
             .endif
         .endif
         MacroInline( &token, args, [rbx].tokpos , context, is_vararg )
         .if !constructor && ( cmd == T_DOT_STATIC && is_vararg == 0 )
             .if SymFind( &token )
-                or [rax].asym.flag2,S_ISSTATIC
+                or [rax].asym.flags,S_ISSTATIC
             .endif
         .endif
         .return rc

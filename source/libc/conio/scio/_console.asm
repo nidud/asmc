@@ -137,6 +137,7 @@ _rcread endp
 _rcwrite proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
 
    .new     dc:TRECT
+
     mov     rcx,_console
     mov     dc,[rcx].TCONSOLE.rc
     movzx   eax,dc.col

@@ -194,13 +194,13 @@ sym_ext2int proc __ccall sym:asym_t
     ; v2.07: GlobalQueue has been removed
 
     mov rcx,sym
-    .if ( !( [rcx].flag1 & S_ISPROC ) && !( [rcx].flags & S_ISPUBLIC ) )
+    .if ( !( [rcx].flags & S_ISPROC ) && !( [rcx].flags & S_ISPUBLIC ) )
         or [rcx].flags,S_ISPUBLIC
         AddPublicData( rcx )
     .endif
     sym_remove_table( &SymTables[TAB_EXT*symbol_queue], sym )
     mov rcx,sym
-    .if !( [rcx].flag1 & S_ISPROC ) ;; v2.01: don't clear flags for PROTO
+    .if !( [rcx].flags & S_ISPROC ) ;; v2.01: don't clear flags for PROTO
         mov [rcx].first_size,0
     .endif
     mov [rcx].state,SYM_INTERNAL
@@ -1566,7 +1566,7 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
                 or [rsi].flags,CI_ISFAR
             .endif
         .else
-            .if ( [rdx].asym.flag1 & S_ISARRAY )
+            .if ( [rdx].asym.flags & S_ISARRAY )
 
                 mov ecx,[rdx].asym.total_length
                 mov eax,[rdx].asym.total_size
@@ -4293,7 +4293,8 @@ ifdef USE_INDIRECTION
 
             mov rdx,[rax].asym.target_type
 
-            .if ( [rax].asym.mem_type == MT_PTR &&
+            .if ( rdx &&
+                  [rax].asym.mem_type == MT_PTR &&
                   [rax].asym.is_ptr &&
                   [rdx].asym.state == SYM_TYPE &&
                   [rbx].token == T_ID &&

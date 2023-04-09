@@ -469,12 +469,20 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .if Options.output_format == OFORMAT_ELF
 
-            ; Note: this will only work with libasmc.a!!
+            inc i
+            .if ( [rbx+asm_tok].token == T_COMMA )
+                inc i
+            .endif
+            .endc .ifd EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
 
+            AddLineQueueX(" %r dotnamex:on", T_OPTION)
             lea rsi,@CStr(".fini_array")
             .if edi == "init"
                 lea rsi,@CStr(".init_array")
             .endif
+            tsprintf(&stdlib, "%s.%05d", rsi, opndx.uvalue)
+            lea rsi,stdlib
+
         .else
             lea rsi,@CStr(".CRT$XTA")
             .if edi == "init"
@@ -495,7 +503,6 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ModuleInfo.Ofssize == USE64
             .if Options.output_format == OFORMAT_ELF
                 AddLineQueueX(" dq %r %s", T_IMAGEREL, rdx)
-                AddLineQueueX(" dq %s", [rbx].string_ptr)
             .else
                 AddLineQueueX(" dd %r %s, %s", T_IMAGEREL, rdx, [rbx].string_ptr)
             .endif

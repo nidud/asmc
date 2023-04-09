@@ -20,7 +20,7 @@ include iostream
 
 ;; Derived class
 
-.class Rectangle : public Shape
+.class rectangle : public Shape
 
     .inline getArea {
         mov eax,[this].Shape.width
@@ -32,7 +32,7 @@ include iostream
 
 main proc
 
-   .new Rect:Rectangle
+   .new Rect:rectangle
 
     Rect.setWidth(5)
     Rect.setHeight(7)

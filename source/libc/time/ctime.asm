@@ -11,7 +11,7 @@ include time.inc
 ctime proc timp:ptr time_t
 
 ifndef _WIN64
-    mov ecx,time
+    mov ecx,timp
 endif
     .if localtime(rcx)
         asctime(rax)

@@ -62,7 +62,6 @@ The options listed in the following table.
 | **-nologo** | Suppresses messages for successful assembly. |
 | **-omf** | Generates object module file format (OMF) type of object module. |
 | **-pe** | Generate PE binary file, 32/64-bit. |
-| **-pf** | Preserve Flags (Epilogue/Invoke). |
 | **-q** | Suppress copyright message. |
 | **-r** | Recurse subdirectories with use of wild args. |
 | **-Sa** | Turns on listing of all available information. |
@@ -72,11 +71,6 @@ The options listed in the following table.
 | **-Sn** | Turns off symbol table when producing a listing. |
 | **-Sp**[n] | Set segment alignment. |
 | **-stackalign** | Align stack variables to 16-byte. |
-| [**-swc**](../directive/dot_switch.md) | Specifies use of C-style .SWITCH convention (default). |
-| [**-swn**](../directive/dot_switch.md) | No jump-table creation in .SWITCH. |
-| [**-swp**](../directive/dot_switch.md) | Specifies use of Pascal-style .SWITCH convention (auto break). |
-| [**-swr**](../directive/dot_switch.md) | Allows use of register [E]AX or r11 in .SWITCH code. |
-| [**-swt**](../directive/dot_switch.md) | Allows use of jump-table creation in .SWITCH code (default). |
 | **-Sx** | Turns on false conditionals in listing. |
 | **-w** | Same as /W0. |
 | **-W**_level_ | Sets the warning level, where _level_ = 0, 1, 2, or 3.|

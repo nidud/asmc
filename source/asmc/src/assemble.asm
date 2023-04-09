@@ -341,7 +341,7 @@ WriteModule proc __ccall private uses rsi rdi rbx modinfo:ptr module_info
             .while rbx
 
                 mov rcx,[rbx].asym.dll
-                .if ( [rbx].asym.flag1 & S_ISPROC && rcx && [rcx].dll_desc.name &&
+                .if ( [rbx].asym.flags & S_ISPROC && rcx && [rcx].dll_desc.name &&
                       ( !( [rbx].asym.sflags & S_WEAK) || [rbx].asym.flags & S_IAT_USED ) )
 
                     Mangle(rbx, ModuleInfo.stringbufferend)
@@ -628,7 +628,6 @@ endif
     mov ModuleInfo.loopalign,Options.loopalign
     mov ModuleInfo.casealign,Options.casealign
     mov ModuleInfo.codepage,Options.codepage
-    mov ModuleInfo.epilogueflags,Options.epilogueflags
     mov ModuleInfo.win64_flags,Options.win64_flags
     mov ModuleInfo.strict_masm_compat,Options.strict_masm_compat
     mov ModuleInfo.frame_auto,Options.frame_auto
@@ -638,6 +637,7 @@ endif
     mov ModuleInfo.pic,Options.pic
     mov ModuleInfo.endbr,Options.endbr
     mov ModuleInfo.dotname,Options.dotname
+    mov ModuleInfo.dotnamex,Options.dotnamex
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
@@ -729,7 +729,7 @@ PassOneChecks proc __ccall private uses rsi rdi
     ;
     mov rax,ModuleInfo.SafeSEHQueue.head
     .while rax
-        .if [rax].asym.state != SYM_INTERNAL || !( [rax].asym.flag1 & S_ISPROC )
+        .if [rax].asym.state != SYM_INTERNAL || !( [rax].asym.flags & S_ISPROC )
 
             mov UseSavedState,0
             jmp aliases

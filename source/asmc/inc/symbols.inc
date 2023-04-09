@@ -96,32 +96,31 @@ IS_SIGNED proto watcall :byte {
     debug_t         typedef ptr debug_info
 
 
-S_USED          equ 0x01 ; flags
-S_ISDEFINED     equ 0x02
-S_SCOPED        equ 0x04
-S_IAT_USED      equ 0x08
-S_ISEQUATE      equ 0x10
-S_PREDEFINED    equ 0x20
-S_VARIABLE      equ 0x40
-S_ISPUBLIC      equ 0x80
-
-S_LIST          equ 0x01 ; flag1
-S_ISARRAY       equ 0x02
-S_ISDATA        equ 0x04
-S_ISPROC        equ 0x08
-S_ISSAVED       equ 0x10
-S_FWDREF        equ 0x20
-S_INCLUDED      equ 0x40
-S_METHOD        equ 0x80
-
-S_CLASS         equ 0x01 ; flag2
-S_VTABLE        equ 0x02 ; base class - first member = lpVtbl
-S_ISVTABLE      equ 0x04 ; vtable struct - classVtbl
-S_VMACRO        equ 0x08 ; vtable method is inline - sym->vmacro set
-S_ISINLINE      equ 0x10 ; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
-S_ISSTATIC      equ 0x20 ; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
-S_VPARRAY       equ 0x40 ; p.p.proc() -- nested function call
-S_OPERATOR      equ 0x80
+S_USED          equ 0x00000001 ; flags
+S_ISDEFINED     equ 0x00000002
+S_SCOPED        equ 0x00000004
+S_IAT_USED      equ 0x00000008
+S_ISEQUATE      equ 0x00000010
+S_PREDEFINED    equ 0x00000020
+S_VARIABLE      equ 0x00000040
+S_ISPUBLIC      equ 0x00000080
+S_LIST          equ 0x00000100
+S_ISARRAY       equ 0x00000200
+S_ISDATA        equ 0x00000400
+S_ISPROC        equ 0x00000800
+S_ISSAVED       equ 0x00001000
+S_FWDREF        equ 0x00002000
+S_INCLUDED      equ 0x00004000
+S_METHOD        equ 0x00008000
+S_CLASS         equ 0x00010000 ;
+S_VTABLE        equ 0x00020000 ; base class - first member = lpVtbl
+S_ISVTABLE      equ 0x00040000 ; vtable struct - classVtbl
+S_VMACRO        equ 0x00080000 ; vtable method is inline - sym->vmacro set
+S_ISINLINE      equ 0x00100000 ; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
+S_ISSTATIC      equ 0x00200000 ; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
+S_VPARRAY       equ 0x00400000 ; p.p.proc() -- nested function call
+S_OPERATOR      equ 0x00800000
+S_REGPARAM      equ 0x01000000 ; syscall: regist[0] = reg, 1 = index
 
 S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02
@@ -141,14 +140,15 @@ M_PURGED        equ 0x10
     nextitem        ptr asym ?      ; next symbol in hash line
     name            string_t ?      ; symbol name
     name_size       int_t ?
+    flags           uint_t ?        ; bitfield
     state           uchar_t ?
     mem_type        uchar_t ?
     langtype        uchar_t ?
-    flags           uchar_t ?       ; bitfield
-    flag1           uchar_t ?
-    flag2           uchar_t ?
     segoffsize      uchar_t ?
     is_far          uchar_t ?
+    sys_rcnt        uchar_t ?       ; syscall: register count
+    sys_xcnt        uchar_t ?       ; syscall: SIMD registers
+    sys_size        uchar_t ?       ; syscall: max size 8/16/32/64
     type            ptr asym ?      ; set if memtype is MT_TYPE
 
     union

@@ -243,7 +243,7 @@ GetStructLen proc fastcall sym:ptr asym, Ofssize:byte
         .if ( [rcx].asym.state == SYM_TYPE )
             .return( sizeof( UDTSYM_16t ) - 1 )
         .endif
-        .if ( [rcx].asym.flag1 & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+        .if ( [rcx].asym.flags & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
             .if ( dl == USE16 )
                 .return sizeof( PROCSYM16 ) - 1
             .endif
@@ -269,7 +269,7 @@ endif
     .if ( [rcx].asym.state == SYM_TYPE )
         .return( sizeof( UDTSYM ) - 1 )
     .endif
-    .if ( [rcx].asym.flag1 & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+    .if ( [rcx].asym.flags & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
         .return sizeof( PROCSYM32 ) - 1
     .endif
     .if ( [rcx].asym.mem_type == MT_NEAR || [rcx].asym.mem_type == MT_FAR )
@@ -586,7 +586,7 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr
     .elseif ( [rdi].asym.mem_type == MT_BITS && [rdi].asym.cvtyperef == 0 )
         [rbx].write_bitfield( type, rdi )
     .endif
-    .if ( [rdi].asym.flag1 & S_ISARRAY )
+    .if ( [rdi].asym.flags & S_ISARRAY )
 
         ; temporarily (mis)use ext_idx1 member to store the type;
         ; this field usually isn't used by struct fields
@@ -643,7 +643,7 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:
     mov [rdi].CV_MEMBER_16t.leaf,ax
 
     mov rsi,mbr
-    .if ( [rsi].asym.flag1 & S_ISARRAY )
+    .if ( [rsi].asym.flags & S_ISARRAY )
 
         movzx eax,[rsi].asym.ext_idx1
         mov [rsi].asym.ext_idx1,0 ; reset the temporarily used field
@@ -1239,7 +1239,7 @@ endif
     ;   - simple labels
     ; - data labels, memtype != MT_NEAR | MT_FAR
 
-    .if ( [rsi].asym.flag1 & S_ISPROC && Options.debug_ext >= CVEX_REDUCED ) ;; v2.10: no locals for -Zi0
+    .if ( [rsi].asym.flags & S_ISPROC && Options.debug_ext >= CVEX_REDUCED ) ;; v2.10: no locals for -Zi0
 
         mov rdx,[rsi].dsym.procinfo
         mov pproc,rdx
@@ -1280,7 +1280,7 @@ endif
                     mov typeref,ax
                 .endif
 
-                .if ( [rsi].asym.flag1 & S_ISARRAY )
+                .if ( [rsi].asym.flags & S_ISARRAY )
 
                     [rbx].write_array_type( rsi, typeref, Ofssize )
                     mov eax,[rbx].currtype
@@ -1430,7 +1430,7 @@ endif
 
         ; v2.10: set S_GDATA[16|32] if symbol is public
 
-        .if ( [rsi].asym.flag1 & S_ISARRAY )
+        .if ( [rsi].asym.flags & S_ISARRAY )
             [rbx].write_array_type( rsi, 0, Ofssize )
             mov eax,[rbx].currtype
             dec eax
@@ -1552,7 +1552,7 @@ endif
 
     ; v2.10: no locals for -Zi0
 
-    .if ( [rsi].asym.flag1 & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+    .if ( [rsi].asym.flags & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
 
         ; scan local symbols again
 
@@ -2638,7 +2638,7 @@ endif
             ;; v2.10: no UDTs for -Zi0 and -Zi1
             .break .if ( Options.debug_ext < CVEX_NORMAL )
         .case SYM_INTERNAL
-            movzx eax,[rsi].asym.flags
+            mov eax,[rsi].asym.flags
             mov edx,eax
             and edx,S_PREDEFINED
 if EQUATESYMS

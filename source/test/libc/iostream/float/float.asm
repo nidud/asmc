@@ -28,13 +28,9 @@ include tchar.inc
         }
     .ends
 
-float_sub_oword proto this:abs, vector:abs {
-    float_sub_float(this, vector)
-    }
+define float_sub_oword <float_sub_float> ; xmm3 - xmm2
+define float_mul_oword <float_mul_float> ; b * xmm3
 
-float::mul_oword macro this, vector
-    exitm<float::mul_float(this, vector)>
-    endm
 
     .code
 

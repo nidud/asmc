@@ -9,7 +9,7 @@ include stdio.inc
 
     .code
 
-_rcputfA proc rc:TRECT, p:PCHAR_INFO, x:SINT, y:SINT, attrib:WORD, format:LPSTR, argptr:vararg
+_rcputfA proc rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, format:LPSTR, argptr:vararg
 
     vsprintf( &_bufin, format, &argptr )
     _rcputsA( rc, p, x, y, attrib, &_bufin )

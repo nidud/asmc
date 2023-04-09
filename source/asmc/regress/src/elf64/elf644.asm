@@ -13,9 +13,9 @@
 
 p1  proc a1:__int128, a2:__int128, a3:__int128
 
-    mov rax,a1 ; RDI: high64 in RSI
-    mov rax,a2 ; RDX: high64 in RCX
-    mov rax,a3 ; R8:  high64 in R9
+    mov rax,rdi ; RDI: high64 in RSI
+    mov rax,rdx ; RDX: high64 in RCX
+    mov rax,r8  ; R8:  high64 in R9
     ret
 p1  endp
 

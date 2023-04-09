@@ -379,7 +379,7 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
 
                         mov rcx,[rax].asym.string_ptr
 
-                        .if ( byte ptr [rcx] == '{' && !array && [rbx].sfield.flag1 & S_ISARRAY )
+                        .if ( byte ptr [rcx] == '{' && !array && [rbx].sfield.flags & S_ISARRAY )
 
                             mov     rdx,rax
                             xor     eax,eax
@@ -486,7 +486,7 @@ AssignId proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, type:a
     .endif
 
     mov rdi,sym
-    .if !( [rdi].asym.flag1 & S_ISARRAY )
+    .if !( [rdi].asym.flags & S_ISARRAY )
 
         .return AssignStruct( name, type, string )
     .endif
@@ -613,7 +613,7 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
 
 if 0
     mov rax,[rsi].symtype
-    .if ( rax && [rax].asym.flag2 & S_OPERATOR )
+    .if ( rax && [rax].asym.flags & S_OPERATOR )
 
         AddLineQueueX( " %s %s", name, [rbx-asm_tok].tokpos )
         imul eax,Token_Count,asm_tok
@@ -912,7 +912,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             mov rcx,sym
             mov [rcx].asym.total_length,opndx.value
-            or  [rcx].asym.flag1,S_ISARRAY
+            or  [rcx].asym.flags,S_ISARRAY
 
             .if ( [rbx].token == T_CL_SQ_BRACKET )
 

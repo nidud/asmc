@@ -1099,12 +1099,12 @@ GetExt proc fastcall private r:ptr readext
             .continue .if ( [rdx].asym.sflags & S_ISCOM )
 
             mov rax,[rdx].asym.altname
-            .if ( rax && !( [rax].asym.flag1 & S_INCLUDED ) )
+            .if ( rax && !( [rax].asym.flags & S_INCLUDED ) )
 
                 mov dx,[rcx].readext.index
                 inc [rcx].readext.index
                 mov [rax].asym.ext_idx2,dx
-                or  [rax].asym.flag1,S_INCLUDED
+                or  [rax].asym.flags,S_INCLUDED
                .return
             .endif
         .endf

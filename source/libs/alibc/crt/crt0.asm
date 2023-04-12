@@ -3,7 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-; Startup module for LIBASMC
+; Startup module for ALIBC
 ;
 include stdlib.inc
 

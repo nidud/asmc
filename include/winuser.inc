@@ -279,12 +279,19 @@ if(_WIN32_WINNT GE 0x0500)
 VK_XBUTTON1		equ 0x05
 VK_XBUTTON2		equ 0x06
 endif
-
+ifdef __UNIX__
+VK_BACK			equ 0x7F
+else
 VK_BACK			equ 0x08
+endif
 VK_TAB			equ 0x09
 
 VK_CLEAR		equ 0x0C
+ifdef __UNIX__
+VK_RETURN		equ 0x0A
+else
 VK_RETURN		equ 0x0D
+endif
 
 VK_SHIFT		equ 0x10
 VK_CONTROL		equ 0x11

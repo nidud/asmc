@@ -13,7 +13,7 @@ include ctype.inc
     assume rbx:THWND
     assume r12:THWND
 
-_dlinitA proc uses rbx r12 r13 r14 r15 hwnd:THWND,
+_dlinitA proc uses rbx r12 hwnd:THWND,
         index:UINT, rc:TRECT, flags:UINT, type:BYTE, id:BYTE, name:LPSTR
 
     mov     rbx,rdi

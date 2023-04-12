@@ -9,6 +9,8 @@ include malloc.inc
 
     .code
 
+    assume  rbx:THWND
+
 _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
 
    .new hwnd:THWND
@@ -16,19 +18,17 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
    .new dsize:int_t
    .new tsize:int_t
 
+    lea     eax,[rsi+1]
+    imul    eax,eax,TCLASS
+    mov     dsize,eax
     test    edx,W_SHADE
     mov     edx,0
     setnz   dl
-    mov     rsize,_rcmemsize(rc, edx)
-    mov     eax,esi
-    inc     eax
-    imul    eax,eax,TCLASS
-    mov     dsize,eax
-    mov     edi,size
-    add     edi,rsize
-    add     edi,eax
-    mov     tsize,edi
-    mov     hwnd,malloc(edi)
+    mov     rsize,_rcmemsize(edi, edx)
+    add     eax,size
+    add     eax,dsize
+    mov     tsize,eax
+    mov     hwnd,malloc(eax)
 
     .return .if !( rax )
 
@@ -38,22 +38,22 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     xor     eax,eax
     rep     stosb
 
-    assume  rbx:THWND
-
     mov     eax,dsize
     add     eax,rsize
     add     rax,rbx
-    cmp     size,ecx
+    cmp     ecx,size
     cmovz   rax,rcx
     mov     [rbx].buffer,rax
 
     mov     eax,dsize
     add     rax,rbx
     mov     [rbx].window,rax
+
     lea     rax,[rbx+TCLASS]
-    cmp     count,ecx
+    cmp     ecx,count
     cmovz   rax,rcx
     mov     [rbx].object,rax
+
     mov     eax,O_CHILD
     cmovz   eax,ecx
     or      eax,flags
@@ -63,7 +63,6 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     mov     [rbx].count,count
 
     _getcursor(&[rbx].cursor)
-
     .if ( flags & W_TRANSPARENT )
         _rcread(rc, [rbx].window)
         _rcclear(rc, [rbx].window, 0x00080000)
@@ -74,15 +73,14 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     mov rdx,[rbx].window
 
     assume rsi:THWND
+    .for ( rsi=[rbx].object, ecx=0 : ecx < count : ecx++, rsi+=TCLASS )
 
-    .for ( rsi = [rbx].object, ecx = 0 : ecx < count : ecx++, rsi += TCLASS )
-
+        lea eax,[rcx+1]
         mov [rsi].flags,  W_CHILD
         mov [rsi].prev,   rbx
         mov [rsi].window, rdx
-        mov [rsi].index,  cl
+        mov [rsi].index,  al
 
-        lea eax,[rcx+1]
         .if ( eax < count )
 
             lea rax,[rsi+TCLASS]

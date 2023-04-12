@@ -294,6 +294,7 @@ _scputa endp
 _scputbg proc x:BYTE, y:BYTE, l:BYTE, a:BYTE
 
     _scgetp(dil, sil, dl)
+    shl cl,4
     .for ( : dl : dl--, rsi+=4 )
 
         mov al,[rsi+2]

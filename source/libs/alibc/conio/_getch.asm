@@ -48,7 +48,7 @@ _getch proc
 
     dec count
     mov rcx,inbuf
-    mov al,cl
+    movzx eax,cl
     shr rcx,8
     mov inbuf,rcx
     ret
@@ -84,6 +84,15 @@ _kbhit endp
 
 _kbflush proc
 
+    xor eax,eax     ; return content in RCX
+    mov ecx,count   ; and char count in EAX
+    dec rax
+    shl ecx,3
+    shl rax,cl
+    shr ecx,3
+    not rax
+    or  rax,inbuf
+    xchg rax,rcx
     mov count,0
     ret
 

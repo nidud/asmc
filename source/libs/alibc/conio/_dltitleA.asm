@@ -12,9 +12,13 @@ include conio.inc
 
 _dltitleA proc uses rbx hwnd:THWND, string:LPSTR
 
+   .new rc:TRECT = { 0, 0, 1, 1 }
+
     mov rbx,rdi
-   .new rc:TRECT = { 0, 0, [rbx].rc.col, 1}
+    mov rc.col,[rbx].rc.col
+
     _rcclear(rc, [rbx].window, _getattrib(BG_TITLE, FG_TITLE))
+
     _rccenterA([rbx].rc, [rbx].window, rc, 0, string)
     ret
 

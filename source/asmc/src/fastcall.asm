@@ -2256,6 +2256,8 @@ elf64_param endp
 
 elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:ptr int_t
 
+  local regname[32]:sbyte
+
     UNREFERENCED_PARAMETER(pProc)
 
     mov rdi,used
@@ -2271,19 +2273,21 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
 
     .switch
     .case ( [rsi].sflags & S_ISVARARG )
-        .return 0
+        xor eax,eax
+        mov [rsi].string_ptr,rax
+       .return
 
     .case ( dl & MT_FLOAT || dl == MT_YWORD )
 
         movzx ecx,ch
         inc byte ptr [rdi+1]
-
         .if ( ecx > 7 )
-
             mov [rsi].regist[2],cx
             add ecx,(T_XMM8 - T_XMM7 - 1)
             mov [rsi].regist[0],cx
-           .return 0
+            xor eax,eax
+            mov [rsi].string_ptr,rax
+            .return
         .endif
 
         .if eax == 64
@@ -2296,24 +2300,26 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
         .endc
 
     .case ( al > 16 )
-        .return 0
+        xor eax,eax
+        mov [rsi].string_ptr,rax
+       .return
 
     .case ( al == 16 || dl == MT_OWORD )
         .if ( cl < 5 )
-
-            movzx   ecx,cl
-            lea     rdx,elf64_regs
-            movzx   eax,byte ptr [rdx+rcx+3*6]
-            add     byte ptr [rdi],2
+            movzx ecx,cl
+            lea   rdx,elf64_regs
+            movzx eax,byte ptr [rdx+rcx+3*6]
+            add   byte ptr [rdi],2
            .endc
         .endif
-
     .case ( cl > 5 )
-        movzx   ecx,cl
-        mov     [rsi].regist[0],T_RAX
-        mov     [rsi].regist[2],cx
-        inc     byte ptr [rdi]
-       .return 0
+        movzx ecx,cl
+        mov [rsi].regist[0],T_RAX
+        mov [rsi].regist[2],cx
+        inc byte ptr [rdi]
+        xor eax,eax
+        mov [rsi].string_ptr,rax
+       .return
 
     .default
         movzx   ecx,cl
@@ -2332,14 +2338,22 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
     mov [rsi].regist[2],cx
     mov [rsi].sys_size,bl
     or  [rsi].flags,S_REGPARAM
+    .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+        xor eax,eax
+    .else
+        mov [rsi].state,SYM_TMACRO
+        lea rdx,regname
+        mov [rsi].string_ptr,LclDup( GetResWName(eax, rdx) )
+        mov eax,1
+    .endif
     mov rsi,pProc
-    mov eax,[rdi]
-    mov [rsi].sys_rcnt,al
-    mov [rsi].sys_xcnt,ah
+    mov edx,[rdi]
+    mov [rsi].sys_rcnt,dl
+    mov [rsi].sys_xcnt,dh
     .if ( bl > [rsi].sys_size )
         mov [rsi].sys_size,bl
     .endif
-    .return( 0 )
+    ret
 
 elf64_pcheck endp
 

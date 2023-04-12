@@ -151,7 +151,7 @@ _dlmove proc uses rbx r12 r13 r14 hwnd:THWND, direction:SINT
         lea     rsi,[rsi+rax*4]
         mov     cl,rc.col
         rep     movsd
-        sub     rsi,8
+        sub     rsi,4
         mov     rdi,rsi
         mov     cl,rc.col
         shl     ecx,2
@@ -160,7 +160,7 @@ _dlmove proc uses rbx r12 r13 r14 hwnd:THWND, direction:SINT
         std
         rep     movsd
         cld
-        lea     rdi,[rsi+8]
+        lea     rdi,[rsi+4]
         lea     rsi,line
         mov     cl,rc.col
         rep     movsd

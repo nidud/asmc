@@ -853,11 +853,6 @@ wm_setfocus proc uses rbx hwnd:THWND
         mov [rbx].context.flags,al
         _scputbg(rc.x, rc.y, rc.col, BG_INVERSE)
         .endc
-    .case T_EDIT
-        mov rax,[rbx].context.object
-        ;[rax].TEdit.OnSetFocus(rcx)
-        ;_gotoxy(eax, r8d)
-       .endc
     .endsw
     .return(0)
 

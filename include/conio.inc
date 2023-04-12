@@ -113,10 +113,6 @@ ifdef  __UNIX__
 define __VT__
 endif
 endif
-ifdef __VT__
-define ESC <"\e">
-define CSI <"\e[">
-endif
 
 define MAXSCRLINE	256	; max screen size
 define CURSOR_NORMAL	16	; default cursor size (0..100)
@@ -465,8 +461,45 @@ _rsopen		proto __cdecl :PTRES
 _rssave		proto __cdecl :THWND, :LPWSTR
 
 ifdef __VT__
+
+.template CINPUT
+    union
+     q	    dq ?
+     b	    db 8 dup(?)
+    ends
+    count   dd ?
+   .ends
+
 _kbflush	proto __cdecl
 _getcsi2	proto __cdecl :ptr int_t, :ptr int_t
+
+define ESC <"\e">
+define CSI <"\e[">
+
+define SET_X10_MOUSE		   <CSI "?9h">
+define SET_VT200_MOUSE		   <CSI "?1001h">
+define SET_VT200_HIGHLIGHT_MOUSE   <CSI "?1001h">
+define SET_BTN_EVENT_MOUSE	   <CSI "?1002h">
+define SET_ANY_EVENT_MOUSE	   <CSI "?1003h">
+define SET_FOCUS_EVENT_MOUSE	   <CSI "?1004h">
+define SET_ALTERNATE_SCROLL	   <CSI "?1007h">
+define SET_EXT_MODE_MOUSE	   <CSI "?1005h">
+define SET_SGR_EXT_MODE_MOUSE	   <CSI "?1006h">
+define SET_URXVT_EXT_MODE_MOUSE	   <CSI "?1015h">
+define SET_PIXEL_POSITION_MOUSE	   <CSI "?1016h">
+
+define RST_X10_MOUSE		   <CSI "?9l">
+define RST_VT200_MOUSE		   <CSI "?1001l">
+define RST_VT200_HIGHLIGHT_MOUSE   <CSI "?1001l">
+define RST_BTN_EVENT_MOUSE	   <CSI "?1002l">
+define RST_ANY_EVENT_MOUSE	   <CSI "?1003l">
+define RST_FOCUS_EVENT_MOUSE	   <CSI "?1004l">
+define RST_ALTERNATE_SCROLL	   <CSI "?1007l">
+define RST_EXT_MODE_MOUSE	   <CSI "?1005l">
+define RST_SGR_EXT_MODE_MOUSE	   <CSI "?1006l">
+define RST_URXVT_EXT_MODE_MOUSE	   <CSI "?1015l">
+define RST_PIXEL_POSITION_MOUSE	   <CSI "?1016l">
+
 endif
 
 ifdef _UNICODE

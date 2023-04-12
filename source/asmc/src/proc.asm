@@ -628,7 +628,9 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
 
             mov rdi,paracurr
 
-            .if ( fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 )
+            .if ( fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
+                 ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) && fastcall_id == FCT_ELF64 + 1 ) )
+
                 mov [rdi].asym.target_type,NULL
                 .if ( !ModuleInfo.strict_masm_compat )
                     mov fast_type,1 ; v2.27 added
@@ -2933,27 +2935,29 @@ endif
                 ;
                 add [rcx].asym.value,208
             .endif
-            ;
-            ; reserve space for stack params used..
-            ;
-            mov al,[rdi].asym.sys_rcnt
-            add al,[rdi].asym.sys_xcnt
-            .if ( eax )
-                .for ( ebx = 8, eax = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
-                    .if ( [rdx].asym.flags & S_USED && [rdx].asym.flags & S_REGPARAM )
-
-                        inc eax
-                        .if ( bl < [rdx].asym.sys_size )
-                            mov bl,[rdx].asym.sys_size
-                        .endif
-                    .endif
-                .endf
+            .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+                ;
+                ; reserve space for stack params used..
+                ;
+                mov al,[rdi].asym.sys_rcnt
+                add al,[rdi].asym.sys_xcnt
                 .if ( eax )
+                    .for ( ebx = 8, eax = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+                        .if ( [rdx].asym.flags & S_USED && [rdx].asym.flags & S_REGPARAM )
 
-                    mov [rdi].asym.sys_size,bl
-                    mul bl
-                    add [rcx].asym.value,ROUND_UP( eax, 16 )
-                    mov argstack,eax
+                            inc eax
+                            .if ( bl < [rdx].asym.sys_size )
+                                mov bl,[rdx].asym.sys_size
+                            .endif
+                        .endif
+                    .endf
+                    .if ( eax )
+
+                        mov [rdi].asym.sys_size,bl
+                        mul bl
+                        add [rcx].asym.value,ROUND_UP( eax, 16 )
+                        mov argstack,eax
+                    .endif
                 .endif
             .endif
         .endif
@@ -3186,6 +3190,7 @@ runqueue:
                             mov edx,T_MOVSD
                         .endif
                     .endif
+                    mov [rdi].asym.state,SYM_STACK
                     mov [rdi].asym.offs,ebx
                     movzx eax,[rsi].basereg
                     movzx ecx,[rdi].dsym.regist
@@ -3598,6 +3603,18 @@ write_prologue proc __ccall uses rsi rdi tokenarray:ptr asm_tok
                 mov [rcx].asym.value,6 * 16
             .elseif ( edx == LANG_SYSCALL )
                 mov [rcx].asym.value,0
+                .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+                    .for ( ecx = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+                        .if ( [rdx].asym.flags & S_REGPARAM )
+                            add ecx,8
+                        .endif
+                    .endf
+                    .for ( rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+                        .if !( [rdx].asym.flags & S_REGPARAM )
+                            sub [rdx].asym.offs,ecx
+                        .endif
+                    .endf
+                .endif
             .endif
         .else
             mov [rcx].asym.value,[rsi].ReservedStack

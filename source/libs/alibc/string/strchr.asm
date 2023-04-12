@@ -12,10 +12,10 @@ strchr proc string:string_t, chr:int_t
 
     xor	    eax,eax
 @@:
-    mov	    dh,[rdi]
-    test    dh,dh
+    mov	    dl,[rdi]
+    test    dl,dl
     jz	    @F
-    cmp	    dh,dl
+    cmp	    dl,sil
     cmovz   rax,rdi
     lea	    rdi,[rdi+1]
     jnz	    @B

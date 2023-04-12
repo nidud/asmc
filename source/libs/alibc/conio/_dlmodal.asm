@@ -222,8 +222,8 @@ _dlmodal proc uses rbx r12 r13 hwnd:THWND, wndp:TPROC
    .new Input:INPUT_RECORD
    .new IdleCount:dword
    .new cNumRead:dword
-   .new term:termios
-   .new told:termios
+   .new keys:CINPUT
+
    .new cursor_keys[8]:byte = {
         VK_UP,      ; A
         VK_DOWN,    ; B
@@ -231,7 +231,7 @@ _dlmodal proc uses rbx r12 r13 hwnd:THWND, wndp:TPROC
         VK_LEFT,    ; D
         0,
         VK_END,     ; F
-        0,
+        VK_NUMPAD5, ; G
         VK_HOME     ; H
         }
    .new modifiers[7]:byte = {
@@ -244,6 +244,19 @@ _dlmodal proc uses rbx r12 r13 hwnd:THWND, wndp:TPROC
         LEFT_ALT_PRESSED or LEFT_CTRL_PRESSED or SHIFT_PRESSED
         }
 
+   .new fx_keys[10]:byte = {
+        VK_F5,
+        0,
+        VK_F6,
+        VK_F7,
+        VK_F8,
+        VK_F9,
+        VK_F10,
+        0,
+        VK_F11,
+        VK_F12
+        }
+
     mov rbx,rdi
     mov [rbx].winproc,rsi
     or  [rbx].flags,W_WNDPROC
@@ -252,18 +265,7 @@ _dlmodal proc uses rbx r12 r13 hwnd:THWND, wndp:TPROC
     [rbx].winproc(rbx, WM_CREATE, 0, 0)
     _dlsetfocus(rbx, [rbx].index)
 
-    ; Switch to raw mode (no line input, no echo input)
-
-    tcgetattr(_coninpfh, &term)
-    memcpy(&told, &term, termios)
-
-    and term.c_lflag,not (ICANON or _ECHO)
-    mov term.c_cc[VMIN],1
-    mov term.c_cc[VTIME],0
-
-    tcsetattr(_coninpfh, TCSANOW, &term)
-
-    _cout("\e[?1003h")
+    _cout(SET_ANY_EVENT_MOUSE)
 
     .while 1
 
@@ -282,17 +284,20 @@ _dlmodal proc uses rbx r12 r13 hwnd:THWND, wndp:TPROC
                 mov Input.Event.KeyEvent.uChar.UnicodeChar,ax
                .break
 
-            .elseif ( _kbhit() == 0 )
+            .elseif ( _kbflush() == 0 )
 
                 mov Input.Event.KeyEvent.uChar.UnicodeChar,VK_ESCAPE
                .break
             .endif
 
-            .switch _getch()
+            mov     keys.q,rcx
+            mov     keys.count,eax
+            xchg    rax,rcx
+            .switch al
 
             .case 'O'
                  mov Input.Event.KeyEvent.dwControlKeyState,ENHANCED_KEY
-                .switch _getch()
+                .switch ah
                 .case 'P'
                     mov Input.Event.KeyEvent.wVirtualKeyCode,VK_F1
                    .break
@@ -309,126 +314,295 @@ _dlmodal proc uses rbx r12 r13 hwnd:THWND, wndp:TPROC
                 .endc
 
             .case '['
+                ;
+                ; [1;2P     Shift F1
+                ; [15;2~    Shift F5
+                ;
+                mov Input.Event.KeyEvent.dwControlKeyState,ENHANCED_KEY
 
-                .switch _getch()
+                .if ( ah != 'M' )
 
-                .case 'A'
-                .case 'B'
-                .case 'C'
-                .case 'D'
-                .case 'F'
-                .case 'H'
+                    .for ( esi = 1 : esi < ecx : esi++ )
+
+                        .if ( keys.b[rsi] == ';' )
+
+                            movzx edx,keys.b[rsi+1]
+
+                            .switch dl
+
+                            .case '2' ; Shift
+                            .case '3' ; Alt
+                            .case '4' ; Shift + Alt
+                            .case '5' ; Control
+                            .case '6' ; Shift + Control
+                            .case '7' ; Alt + Control
+                            .case '8' ; Shift + Alt + Control
+
+                                mov dl,modifiers[rdx-'2']
+                                or  Input.Event.KeyEvent.dwControlKeyState,edx
+                            .endsw
+                        .endif
+                    .endf
+                .endif
+
+                shr rax,8
+                dec ecx
+
+                .switch al
+                .case 'A' ; Up Arrow
+                .case 'B' ; Down Arrow
+                .case 'C' ; Right Arrow
+                .case 'D' ; Left Arrow
+                .case 'F' ; End
+                .case 'G' ; Keypad 5
+                .case 'H' ; Home
+                    movzx eax,al
                     sub eax,'A'
                     mov al,cursor_keys[rax]
                     mov Input.Event.KeyEvent.wVirtualKeyCode,ax
-                    mov Input.Event.KeyEvent.dwControlKeyState,ENHANCED_KEY
                    .break
 
-                .case 1
-
-                    .endc .if ( _kbhit() == 0 )
-                     mov Input.Event.KeyEvent.dwControlKeyState,ENHANCED_KEY
-                    .switch _getch()
+                .case '1'
+                    .endc .ifs ( ecx <= 0 )
+                    shr rax,8
+                    dec ecx
+                    .switch al
+                    .case ';'
+                        shr rax,8
+                        .while ( al >= '0' && al <= '9' )
+                            shr rax,8
+                        .endw
+                        .if ( al >= 'A' && al <= 'H' )
+                            .gotosw(1: 'A')
+                        .endif
                     .case '~'
                         .break
-                    .case ';'
-                        .switch _getch()
-                        .case '~'
-                            .break
-                        .case 2
-                        .case 3
-                        .case 4
-                        .case 5
-                        .case 6
-                        .case 7
-                        .case 8
-                            mov al,modifiers[rax-2]
-                            mov Input.Event.KeyEvent.dwControlKeyState,eax
-                            .switch _kbhit()
-                            .case 'P'
-                            .case 'Q'
-                            .case 'R'
-                            .case 'S'
-                                .gotosw(4:'O')
-                            .case '~'
-                                .gotosw(2:';')
-                            .endsw
-                        .endsw
-                        .endc
-                    .case 1
-                    .case 2
-                    .case 3
-                    .case 4
-                    .case 5
-                        lea eax,[rax-1+VK_F1]
-                        mov Input.Event.KeyEvent.wVirtualKeyCode,ax
-                       .gotosw(1:1)
-                    .case 7
-                    .case 8
-                    .case 9
-                        lea eax,[rax-7+VK_F6]
-                        mov Input.Event.KeyEvent.wVirtualKeyCode,ax
-                       .gotosw(1:1)
+                    .case 'P' ; F1 1P
+                    .case 'Q' ; F1 1Q
+                    .case 'R' ; F1 1R
+                    .case 'S' ; F1 1S
+                        shl eax,8
+                       .gotosw(2:'O')
+                    .case '1' ; F1 11~
+                    .case '2' ; F2 12~
+                    .case '3' ; F3 13~
+                    .case '4' ; F4 14~
+                    .case '5' ; F5 15~
+                        movzx edx,al
+                        lea edx,[rdx+VK_F1-'1']
+                        mov Input.Event.KeyEvent.wVirtualKeyCode,dx
+                       .gotosw(1:'1')
+                    .case '7' ; F6 17~
+                    .case '8' ; F7 18~
+                    .case '9' ; F8 19~
+                        movzx edx,al
+                        lea edx,[rdx+VK_F6-'7']
+                        mov Input.Event.KeyEvent.wVirtualKeyCode,dx
+                       .gotosw(1:'1')
                     .endsw
                     .endc
 
-                .case 2
-
-                    .endc .if ( _kbhit() == 0 )
-                     mov Input.Event.KeyEvent.dwControlKeyState,ENHANCED_KEY
-                    .switch _getch()
-                    .case 0
-                    .case 1
-                    .case 3
-                    .case 4
-                        add eax,VK_F9
+                .case '2'
+                     movzx eax,ah
+                    .switch al
+                    .case '~' ; 2~  Insert
+                        mov Input.Event.KeyEvent.wVirtualKeyCode,VK_INSERT
+                       .break
+                    .case '0' ; 20~ F9
+                    .case '1' ; 21~ F10
+                        lea eax,[rax+VK_F9-'0']
                         mov Input.Event.KeyEvent.wVirtualKeyCode,ax
-                        _getch()
+                       .break
+                    .case '3' ; 23~ F11
+                    .case '4' ; 24~ F12
+                        lea eax,[rax+VK_F11-'3']
+                        mov Input.Event.KeyEvent.wVirtualKeyCode,ax
                        .break
                     .endsw
                     .endc
 
+                .case '3' ; 3~ Delete
+                     mov Input.Event.KeyEvent.wVirtualKeyCode,VK_DELETE
+                    .break
+                .case '5' ; 5~ Page Up
+                    mov Input.Event.KeyEvent.wVirtualKeyCode,VK_PRIOR
+                   .break
+                .case '6' ; 6~ Page Down
+                    mov Input.Event.KeyEvent.wVirtualKeyCode,VK_NEXT
+                   .break
+
                 .case 'M'
 
                     mov Input.EventType,MOUSE_EVENT
-                    mov Input.Event.MouseEvent.dwMousePosition,0
-                    mov Input.Event.MouseEvent.dwButtonState,0
-                    mov Input.Event.MouseEvent.dwControlKeyState,0
-                    mov Input.Event.MouseEvent.dwEventFlags,0
+                    xor ecx,ecx
+                    xor edx,edx
+                    xor edi,edi
+                    shr eax,8
+                    .switch al
 
-                    .switch _getch()
-                    .case 32
-                        mov Input.Event.MouseEvent.dwEventFlags,MOUSE_BUTTON_DOWN
-                        mov Input.Event.MouseEvent.dwButtonState,FROM_LEFT_1ST_BUTTON_PRESSED
+                    ; Left Button Down
+
+                    .case '8'
+                        mov edx,LEFT_CTRL_PRESSED
+                    .case '('
+                        or  edx,LEFT_ALT_PRESSED
+                    .case ' '
+                        mov ecx,MOUSE_BUTTON_DOWN
+                        mov edi,FROM_LEFT_1ST_BUTTON_PRESSED
                        .endc
-                    .case 33
-                        mov Input.Event.MouseEvent.dwEventFlags,MOUSE_BUTTON_DOWN
-                        mov Input.Event.MouseEvent.dwButtonState,FROM_LEFT_2ND_BUTTON_PRESSED
+                    .case '0'
+                        mov edx,LEFT_CTRL_PRESSED
+                       .gotosw(' ')
+
+                    ; Middle Button Down
+
+                    .case '9'
+                        mov edx,LEFT_CTRL_PRESSED
+                    .case ')'
+                        or  edx,LEFT_ALT_PRESSED
+                    .case '!'
+                        mov ecx,MOUSE_BUTTON_DOWN
+                        mov edi,FROM_LEFT_2ND_BUTTON_PRESSED
                        .endc
-                    .case 34
-                        mov Input.Event.MouseEvent.dwEventFlags,MOUSE_BUTTON_DOWN
-                        mov Input.Event.MouseEvent.dwButtonState,RIGHTMOST_BUTTON_PRESSED
+                    .case '1'
+                        mov edx,LEFT_CTRL_PRESSED
+                       .gotosw('!')
+
+                    ; Right Button Down
+
+                    .case ':'
+                        mov edx,LEFT_CTRL_PRESSED
+                    .case '*'
+                        or  edx,LEFT_ALT_PRESSED
+                    .case '"'
+                        mov ecx,MOUSE_BUTTON_DOWN
+                        mov edi,RIGHTMOST_BUTTON_PRESSED
                        .endc
-                    .case 35
-                        mov Input.Event.MouseEvent.dwEventFlags,MOUSE_BUTTON_UP
+                    .case '6'
+                        mov edx,LEFT_CTRL_PRESSED
+                       .gotosw('"')
+
+                    ; Button Up
+
+                    .case ';'
+                        or  edx,LEFT_CTRL_PRESSED
+                    .case '+'
+                        or  edx,LEFT_ALT_PRESSED
+                    .case '#'
+                        mov ecx,MOUSE_BUTTON_UP
                        .endc
-                    .case 67
-                        mov Input.Event.MouseEvent.dwEventFlags,MOUSE_MOVED
+                    .case '3'
+                        mov edx,LEFT_CTRL_PRESSED
+                       .gotosw('#')
+
+                    ; Mouse Moved
+
+                    .case '[' ; Ctrl + Alt
+                        or  edx,LEFT_CTRL_PRESSED
+                    .case 'K' ; Alt
+                        or  edx,LEFT_ALT_PRESSED
+                    .case 'C' ; Move
+                        mov ecx,MOUSE_MOVED
                        .endc
+                    .case 'S' ; Ctrl
+                        mov edx,LEFT_CTRL_PRESSED
+                       .gotosw('C')
+                    .case 'G' ; Shift
+                        or  edx,SHIFT_PRESSED
+                       .gotosw('C')
+
+                    ; Move + Left Button Down
+
+                    .case 'T' ; Move + Ctrl + Shift + Left Button Down
+                        mov edx,LEFT_CTRL_PRESSED
+                    .case 'D' ; Move + Shift + Left Button Down
+                        or  edx,SHIFT_PRESSED
+                    .case '@' ; Move + Left Button Down
+                        mov edi,FROM_LEFT_1ST_BUTTON_PRESSED
+                       .gotosw('C')
+                    .case 'H' ; Move + Alt + Left Button Down
+                        or  edx,LEFT_ALT_PRESSED
+                       .gotosw('@')
+                    .case 'X' ; Move + Ctrl + Alt + Left Button Down
+                        or  edx,LEFT_ALT_PRESSED
+                    .case 'P' ; Move + Ctrl + Left Button Down
+                        or  edx,LEFT_CTRL_PRESSED
+                       .gotosw('@')
+
+                    ; Move + Right Button Down
+
+                    .case 'V' ; Move + Ctrl + Shift + Right Button Down
+                        mov edx,LEFT_CTRL_PRESSED
+                    .case 'F' ; Move + Shift + Right Button Down
+                        or  edx,SHIFT_PRESSED
+                    .case 'B' ; Move + Right Button Down
+                        mov edi,RIGHTMOST_BUTTON_PRESSED
+                       .gotosw('C')
+                    .case 'J' ; Move + Alt + Right Button Down
+                        or  edx,LEFT_ALT_PRESSED
+                       .gotosw('B')
+                    .case 'Z' ; Move + Ctrl + Alt + Right Button Down
+                        or  edx,LEFT_ALT_PRESSED
+                    .case 'R' ; Move + Ctrl + Right Button Down
+                        or  edx,LEFT_CTRL_PRESSED
+                       .gotosw('B')
+
+                    ; Move + Middle Button Down
+
+                    .case 'U' ; Move + Ctrl + Shift + Middle Button Down
+                        mov edx,LEFT_CTRL_PRESSED
+                    .case 'E' ; Move + Shift + Middle Button Down
+                        or  edx,SHIFT_PRESSED
+                    .case 'A' ; Move + Middle Button Down
+                        mov edi,FROM_LEFT_2ND_BUTTON_PRESSED
+                       .gotosw('C')
+                    .case 'I' ; Move + Alt + Middle Button Down
+                        or  edx,LEFT_ALT_PRESSED
+                       .gotosw('A')
+                    .case 'Y' ; Move + Ctrl + Alt + Middle Button Down
+                        or  edx,LEFT_ALT_PRESSED
+                    .case 'Q' ; Move + Ctrl + Middle Button Down
+                        or  edx,LEFT_CTRL_PRESSED
+                       .gotosw('A')
+
+
+                    ; Mouse Wheeled (Down)
+
+                    .case 't'
+                        or  edx,SHIFT_PRESSED
+                    .case 'p'
+                        or  edx,LEFT_CTRL_PRESSED
                     .case 96
-                        mov Input.Event.MouseEvent.dwEventFlags,MOUSE_WHEELED
+                        mov ecx,MOUSE_WHEELED
                        .endc
-                    .case 97
-                        mov Input.Event.MouseEvent.dwEventFlags,MOUSE_WHEELED
-                        mov Input.Event.MouseEvent.dwButtonState,0x80000000
+                    .case 'd'
+                        mov edx,SHIFT_PRESSED
+                       .gotosw(96)
+
+                    ; Mouse Wheeled (Up)
+
+                    .case 'u'
+                        or  edx,SHIFT_PRESSED
+                    .case 'q'
+                        or  edx,LEFT_CTRL_PRESSED
+                    .case 'a'
+                        mov ecx,MOUSE_WHEELED
+                        mov edi,0x80000000
                        .endc
+                    .case 'e'
+                        mov edx,SHIFT_PRESSED
+                       .gotosw('a')
                     .endsw
-                    _getch()
-                    sub eax,33
+
+                    mov Input.Event.MouseEvent.dwEventFlags,ecx
+                    mov Input.Event.MouseEvent.dwButtonState,edi
+                    mov Input.Event.MouseEvent.dwControlKeyState,edx
+                    shr eax,8
+                    sub eax,0x2121
+                    movzx ecx,ah
+                    movzx eax,al
                     mov Input.Event.MouseEvent.dwMousePosition.Y,ax
-                    _getch()
-                    sub eax,33
-                    mov Input.Event.MouseEvent.dwMousePosition.X,ax
+                    mov Input.Event.MouseEvent.dwMousePosition.X,cx
                    .break
                 .endsw
                 .endc
@@ -613,42 +787,38 @@ _dlmodal proc uses rbx r12 r13 hwnd:THWND, wndp:TPROC
 
     ; Restore previous console mode.
 
-    _cout("\e[?1003l")
-    tcsetattr(_coninpfh, TCSANOW, &told)
+    _cout(RST_ANY_EVENT_MOUSE)
 
     mov r13,[r12].MESSAGE.wParam
     _dispatch(r12)
     _sendmessage(rbx, WM_CLOSE, r13, 0)
-   .return(rbx)
+   .return(r13)
 
 _dlmodal endp
 
 
     option proc:private
 
-GetItemRect proto fastcall :THWND {
-    mov     rax,[_1].TCLASS.prev
+    assume rdi:THWND
+
+GetItemRect proto :THWND {
+    mov     rax,[rdi].prev
     movzx   eax,word ptr [rax].TCLASS.rc
-    add     eax,[_1].TCLASS.rc
+    add     eax,[rdi].rc
     retm    <eax>
     }
 
-ContextRect proto fastcall :THWND {
-    mov     [_1].TCLASS.context.rc,GetItemRect(_1)
-    }
 
+_dlnextitem proc private hwnd:THWND
 
-_dlnextitem proc fastcall private uses rbx hwnd:THWND
+    test    [rdi].flags,W_CHILD
+    cmovnz  rdi,[rdi].prev
 
-    mov     rbx,rcx
-    test    [rbx].flags,W_CHILD
-    cmovnz  rbx,[rbx].prev
-
-    movzx   eax,[rbx].count
-    movzx   ecx,[rbx].index
+    movzx   eax,[rdi].count
+    movzx   ecx,[rdi].index
     lea     edx,[rcx+1]
     imul    edx,edx,TCLASS
-    add     rdx,[rbx].object
+    add     rdx,[rdi].object
     add     ecx,2
 
     .while ( ecx <= eax )
@@ -656,15 +826,15 @@ _dlnextitem proc fastcall private uses rbx hwnd:THWND
         .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
             dec ecx
-            _dlsetfocus(rbx, cl)
+            _dlsetfocus(rdi, cl)
             .return(0)
         .endif
         inc ecx
         add rdx,TCLASS
     .endw
 
-    mov     rdx,[rbx].object
-    movzx   eax,[rbx].index
+    mov     rdx,[rdi].object
+    movzx   eax,[rdi].index
     inc     eax
     mov     ecx,1
 
@@ -673,7 +843,7 @@ _dlnextitem proc fastcall private uses rbx hwnd:THWND
         .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
             dec ecx
-            _dlsetfocus(rbx, cl)
+            _dlsetfocus(rdi, cl)
             .return(0)
         .endif
         inc ecx
@@ -684,16 +854,15 @@ _dlnextitem proc fastcall private uses rbx hwnd:THWND
 _dlnextitem endp
 
 
-_dlprevitem proc fastcall private uses rbx hwnd:THWND
+_dlprevitem proc private hwnd:THWND
 
-    mov     rbx,rcx
-    test    [rbx].flags,W_CHILD
-    cmovnz  rbx,[rbx].prev
+    test    [rdi].flags,W_CHILD
+    cmovnz  rdi,[rdi].prev
 
-    movzx   eax,[rbx].count
-    movzx   ecx,[rbx].index
+    movzx   eax,[rdi].count
+    movzx   ecx,[rdi].index
     imul    edx,ecx,TCLASS
-    add     rdx,[rbx].object
+    add     rdx,[rdi].object
 
     .if ecx
 
@@ -703,7 +872,7 @@ _dlprevitem proc fastcall private uses rbx hwnd:THWND
             .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
                 dec ecx
-                _dlsetfocus(rbx, cl)
+                _dlsetfocus(rdi, cl)
                 .return(0)
             .endif
             sub rdx,TCLASS
@@ -711,13 +880,13 @@ _dlprevitem proc fastcall private uses rbx hwnd:THWND
         xor ecx,ecx
     .endif
 
-    add cl,[rbx].count
+    add cl,[rdi].count
     .ifnz
 
-        movzx   eax,[rbx].index
+        movzx   eax,[rdi].index
         lea     edx,[rcx-1]
         imul    edx,ecx,TCLASS
-        add     rdx,[rbx].object
+        add     rdx,[rdi].object
 
         .repeat
 
@@ -725,7 +894,7 @@ _dlprevitem proc fastcall private uses rbx hwnd:THWND
             .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
                 dec ecx
-                _dlsetfocus(rbx, cl)
+                _dlsetfocus(rdi, cl)
                 .return(0)
             .endif
             sub rdx,TCLASS
@@ -736,30 +905,29 @@ _dlprevitem proc fastcall private uses rbx hwnd:THWND
 _dlprevitem endp
 
 
-_dlitemright proc fastcall private uses rbx hwnd:THWND
+_dlitemright proc private hwnd:THWND
 
-    mov     rbx,rcx
-    test    [rbx].flags,W_CHILD
-    cmovnz  rbx,[rbx].prev
+    test    [rdi].flags,W_CHILD
+    cmovnz  rdi,[rdi].prev
 
-    .if ( [rbx].type == T_MENUITEM || ![rbx].count )
+    .if ( [rdi].type == T_MENUITEM || ![rdi].count )
 
         .return( 1 )
     .endif
 
-    movzx   ecx,[rbx].index
+    movzx   ecx,[rdi].index
     inc     ecx
     imul    edx,ecx,TCLASS
-    add     rdx,[rbx].object
+    add     rdx,[rdi].object
     mov     eax,[rdx-TCLASS].TCLASS.rc
 
-    .while ( cl < [rbx].count )
+    .while ( cl < [rdi].count )
 
         .if ( ah == [rdx].TCLASS.rc.y && al < [rdx].TCLASS.rc.x )
 
             .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
-                _dlsetfocus(rbx, cl)
+                _dlsetfocus(rdi, cl)
                 .return(0)
             .endif
         .endif
@@ -771,21 +939,20 @@ _dlitemright proc fastcall private uses rbx hwnd:THWND
 _dlitemright endp
 
 
-_dlitemleft proc fastcall uses rbx hwnd:THWND
+_dlitemleft proc private hwnd:THWND
 
-    mov     rbx,rcx
-    test    [rbx].flags,W_CHILD
-    cmovnz  rbx,[rbx].prev
+    test    [rdi].flags,W_CHILD
+    cmovnz  rdi,[rdi].prev
 
-    .if ( [rbx].type == T_MENUITEM || ![rbx].count|| ![rbx].index )
+    .if ( [rdi].type == T_MENUITEM || ![rdi].count|| ![rdi].index )
 
         .return( 1 )
     .endif
 
-    movzx   ecx,[rbx].index
+    movzx   ecx,[rdi].index
     dec     ecx
     imul    edx,ecx,TCLASS
-    add     rdx,[rbx].object
+    add     rdx,[rdi].object
     mov     eax,[rdx+TCLASS].TCLASS.rc
     inc     ecx
 
@@ -795,8 +962,8 @@ _dlitemleft proc fastcall uses rbx hwnd:THWND
             .if ( !( [rdx].TCLASS.flags & O_DEACT ) && [rdx].TCLASS.type < T_MOUSERECT )
 
                 dec ecx
-                _dlsetfocus(rbx, cl)
-                .return(0)
+                _dlsetfocus(rdi, cl)
+                .return( 0 )
             .endif
         .endif
         sub rdx,TCLASS
@@ -806,18 +973,19 @@ _dlitemleft proc fastcall uses rbx hwnd:THWND
 _dlitemleft endp
 
 
-_dlinside proc fastcall hwnd:THWND, pos:COORD
+_dlinside proc hwnd:THWND, pos:COORD
 
   local rc:TRECT
 
-    mov eax,[rcx].TCLASS.rc
-    .if ( [rcx].TCLASS.flags & W_CHILD )
+    mov eax,[rdi].rc
+    .if ( [rdi].flags & W_CHILD )
 
-        mov rcx,[rcx].TCLASS.prev
-        add ax,word ptr [rcx].TCLASS.rc
+        mov rdi,[rdi].prev
+        add ax,word ptr [rdi].rc
     .endif
 
     mov rc,eax
+    mov edx,esi
     mov ecx,eax
     xor eax,eax
     mov dh,cl
@@ -846,7 +1014,7 @@ _dlinside proc fastcall hwnd:THWND, pos:COORD
 _dlinside endp
 
 
-wm_lbbuttondown proc uses rsi rdi rbx hwnd:THWND, lParam:COORD
+wm_lbbuttondown proc uses rbx hwnd:THWND, lParam:COORD
 
    .new rc:TRECT
     mov rbx,rdi
@@ -925,10 +1093,10 @@ wm_lbbuttondown proc uses rsi rdi rbx hwnd:THWND, lParam:COORD
 wm_lbbuttondown endp
 
 
-wm_lbuttonup proc fastcall uses rsi rdi rbx hwnd:THWND
+wm_lbuttonup proc uses rbx hwnd:THWND
 
    .new rc:TRECT
-    mov rbx,rcx
+    mov rbx,rdi
 
     .switch [rbx].type
     .case T_WINDOW
@@ -981,7 +1149,7 @@ wm_lbuttonup proc fastcall uses rsi rdi rbx hwnd:THWND
 wm_lbuttonup endp
 
 
-wm_mousemove proc uses rsi rbx hwnd:THWND, lParam:COORD
+wm_mousemove proc uses rbx hwnd:THWND, lParam:COORD
 
     mov rbx,rdi
     mov eax,[rbx].flags
@@ -1006,7 +1174,9 @@ wm_mousemove proc uses rsi rbx hwnd:THWND, lParam:COORD
     .elseif ( CARRY? && [rbx].rc.y )
         add esi,_dlmove(rbx, TW_MOVEUP)
     .endif
+
     .if ( esi )
+
         mov edx,[rbx].rc
         mov al,[rbx].context.rc.y
         add al,dh
@@ -1066,11 +1236,6 @@ wm_setfocus proc uses rbx hwnd:THWND
         mov [rbx].context.flags,al
         _scputbg(rc.x, rc.y, rc.col, BG_INVERSE)
         .endc
-    .case T_EDIT
-        mov rax,[rbx].context.object
-        ;[rax].TEdit.OnSetFocus(rcx)
-        ;_gotoxy(eax, r8d)
-       .endc
     .endsw
     .return(0)
 

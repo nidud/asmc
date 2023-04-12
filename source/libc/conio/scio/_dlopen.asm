@@ -56,14 +56,11 @@ _dlopen proc uses rsi rdi rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     cmovz   eax,ecx
     or      eax,flags
     mov     [rbx].flags,eax
-    or      [rbx].flags,W_ISOPEN
+    or      [rbx].flags,W_ISOPEN or O_CURSOR
     mov     [rbx].rc,rc
     mov     [rbx].count,count
 
-    .if ( [rbx].flags & O_CURSOR )
-        _getcursor(&[rbx].cursor)
-    .endif
-
+    _getcursor(&[rbx].cursor)
     .if ( flags & W_TRANSPARENT )
         _rcread(rc, [rbx].window)
         _rcclear(rc, [rbx].window, 0x00080000)
@@ -74,14 +71,14 @@ _dlopen proc uses rsi rdi rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     mov rdx,[rbx].window
     assume rsi:THWND
 
-    .for ( rsi = [rbx].object, ecx = 0 : ecx < count : ecx++, rsi += TCLASS )
+    .for ( rsi=[rbx].object, ecx=0 : ecx < count : ecx++, rsi+=TCLASS )
 
+        lea eax,[rcx+1]
         mov [rsi].flags,  W_CHILD
         mov [rsi].prev,   rbx
         mov [rsi].window, rdx
-        mov [rsi].index,  cl
+        mov [rsi].index,  al
 
-        lea eax,[rcx+1]
         .if ( eax < count )
 
             lea rax,[rsi+TCLASS]

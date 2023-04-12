@@ -24,7 +24,7 @@ paint proc uses rbx
     _scputs(dil, 0, "Virtual Terminal Sample")
 
     mov sil,rc.row
-    sub sil,10
+    sub sil,9
     mov fc.y,sil
     dec sil
     _scputs(fc.x, sil, "Color Table for Windows Console")
@@ -40,7 +40,7 @@ paint proc uses rbx
         _scputw(bl, sil, 2, eax)
     .endf
 
-    add fc.y,5
+    add fc.y,4
     mov sil,fc.y
     dec sil
     _scputs(fc.x, sil, "Color Table for Terminal")
@@ -57,7 +57,7 @@ paint proc uses rbx
         _scputw(bl, sil, 2, eax)
     .endf
     dec rc.row
-    _scputs(1, rc.row, "./terminal:")
+    _scputs(1, rc.row, "./terminal$")
     _cendpaint()
     _gotoxy(13, rc.row)
     ret
@@ -75,6 +75,7 @@ main proc
    .new c:int_t = 0
    .new y:byte = 0
    .new n:string_t = 0
+   .new keys:CINPUT
 
     paint()
 
@@ -169,8 +170,26 @@ main proc
             .endsw
         .endw
     .endif
-    _getch()
-   .return(0)
+
+    mov rcx,_console
+    mov al,[rcx].TCLASS.rc.row
+    dec al
+    mov y,al
+
+    .whiled ( _getch() != -1 )
+
+        .if ( eax != VK_ESCAPE )
+
+           .break .if ( eax == VK_RETURN )
+            mov keys.q,rax
+        .elseif ( _kbflush() == 0 )
+           .break
+        .else
+            mov keys.q,rcx
+        .endif
+        _scputf(13, y, "%-8s", &keys.b)
+    .endw
+    .return(0)
 
 main endp
 

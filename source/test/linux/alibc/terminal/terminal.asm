@@ -106,7 +106,8 @@ main proc
             .break
         .endif
 
-        .switch c
+        mov eax,c
+        .switch eax
         .case '2'
             setn("VT220")
            .endc
@@ -116,15 +117,18 @@ main proc
         .case '4'
             setn("VT420")
            .endc
+        .case '5'
+            setn("VT520")
+           .endc
         .default
             setn("VT102")
            .break
         .endsw
-        mov y,4
+        mov y,5
     .until 1
 
     _scputf(2, 2, "Terminal type: %s", n)
-    _scputs(2, 3, "Supported features:")
+    _scputs(3, 4, "Supported features:")
 
     .if ( y )
 

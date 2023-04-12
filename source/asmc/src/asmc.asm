@@ -411,13 +411,7 @@ endif
 GeneralFailure endp
 
 
-ifdef _LIN64
-main proc _argc:int_t, _argv:array_t, environ:array_t
-   .new argc:int_t   = _argc
-   .new argv:array_t = _argv
-else
 main proc argc:int_t, argv:array_t, environ:array_t
-endif
 
    .new rc:int_t = 0
    .new numArgs:int_t = 0

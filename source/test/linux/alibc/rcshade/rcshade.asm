@@ -156,6 +156,6 @@ main proc
     .endw
     _rcxchg(rc, p)
     .return(0)
-_tmain endp
+main endp
 
     end

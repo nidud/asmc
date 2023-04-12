@@ -13,6 +13,7 @@ include stdio.inc
 _coutA proc format:string_t, argptr:vararg
 
     .new stream:_iobuf
+    .new buffer[1024]:char_t
 
     .if ( _confh < 0 )
 
@@ -23,7 +24,7 @@ _coutA proc format:string_t, argptr:vararg
         ;
         mov stream._flag,_IOWRT or _IOSTRG
         mov stream._cnt,_INTIOBUF
-        lea rcx,_bufin
+        lea rcx,buffer
         mov stream._ptr,rcx
         mov stream._base,rcx
         write(_confh, stream._base, _output(&stream, rdi, rax))

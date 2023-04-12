@@ -84,16 +84,16 @@ _kbhit endp
 
 _kbflush proc
 
-    xor eax,eax     ; return content in RCX
-    mov ecx,count   ; and char count in EAX
-    dec rax
-    shl ecx,3
-    shl rax,cl
-    shr ecx,3
-    not rax
-    or  rax,inbuf
-    xchg rax,rcx
-    mov count,0
+    xor     eax,eax     ; return content in RCX
+    mov     ecx,count   ; and char count in EAX
+    mov     count,eax
+    dec     rax
+    shl     ecx,3
+    shl     rax,cl
+    shr     ecx,3
+    not     rax
+    and     rax,inbuf
+    xchg    rax,rcx
     ret
 
 _kbflush endp

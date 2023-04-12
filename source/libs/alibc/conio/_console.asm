@@ -11,6 +11,8 @@ include malloc.inc
 
   .data
    _console PCONSOLE 0
+   _cursor  CURSOR { -1, -1, CURSOR_DEFAULT, 1 }
+
    UbuntuColorTable COLORREF \
     0x00211417,
     0x008B4812,
@@ -49,25 +51,78 @@ include malloc.inc
 
     .code
 
-_cbeginpaint proc
+_cursoron proc
 
-    mov rax,_console
-    dec [rax].TCONSOLE.paint
+    mov _cursor.visible,1
+    _cout(ESC "[?25h")
     ret
 
-_cbeginpaint endp
+_cursoron endp
+
+
+_cursoroff proc
+
+    mov _cursor.visible,0
+    _cout(ESC "[?25l")
+    ret
+
+_cursoroff endp
+
+
+_gotoxy proc x:uint_t, y:uint_t
+
+    mov _cursor.x,dil
+    mov _cursor.y,sil
+    inc edi ; zero based..
+    inc esi
+    _cout("\e[%d;%dH", esi, edi)
+    ret
+
+_gotoxy endp
+
+
+_cursortype proc type:int_t
+
+    .if ( _cursor.type != dil )
+
+        mov _cursor.type,dil
+
+        _cout(ESC "[%d q", edi)
+    .endif
+    ret
+
+_cursortype endp
+
+
+_getcursor proc uses rbx p:PCURSOR
+
+    mov rbx,rdi
+    mov eax,_cursor
+    mov [rdi],eax
+
+    _cursorxy()
+    movzx ecx,ax
+    shr eax,16
+    mov _cursor.x,cl
+    mov _cursor.y,al
+    mov [rbx].CURSOR.x,cl
+    mov [rbx].CURSOR.y,al
+    ret
+
+_getcursor endp
 
 
 _writeline proc private uses rbx x:BYTE, y:BYTE, l:BYTE, p:PCHAR_INFO
 
    .new c:int_t
    .new a:int_t = 0
-   .new f:byte = -1
-   .new b:byte = -1
+   .new f:byte = 0
+   .new b:byte = 0
 
     mov rbx,rcx
-
-    _gotoxy(dil, sil)
+    inc edi ; zero based..
+    inc esi
+    _cout("\e[%d;%dH", sil, dil)
 
     .for ( : l : l--, rbx+=4 )
 
@@ -88,7 +143,6 @@ _writeline proc private uses rbx x:BYTE, y:BYTE, l:BYTE, p:PCHAR_INFO
 
             _cout("\e[38;5;%dm\e[48;5;%dm", eax, ecx)
         .endif
-
         mov c,_wtoutf([rbx])
         write(_confh, &c, ecx)
     .endf
@@ -103,11 +157,8 @@ _writeline endp
 _conpaint proc uses rbx r12 r13
 
    .new rc:TRECT
-   .new dc:SMALL_RECT
-   .new cursor:CURSOR
 
-    _getcursor(&cursor)
-    _cursoroff()
+    _cout("\e7\e[?25l")
 
     mov rcx,_console
     mov r12,[rcx].TCONSOLE.buffer
@@ -142,10 +193,22 @@ _conpaint proc uses rbx r12 r13
             xor edx,edx
         .endif
     .endf
-    _setcursor(&cursor)
+    _cout("\e8")
+    .if ( _cursor.visible )
+        _cout("\e[?25h")
+    .endif
     ret
 
 _conpaint endp
+
+
+_cbeginpaint proc
+
+    mov rax,_console
+    dec [rax].TCONSOLE.paint
+    ret
+
+_cbeginpaint endp
 
 
 _cendpaint proc
@@ -259,7 +322,7 @@ _scgetp proc x:BYTE, y:BYTE, l:BYTE
     movzx   eax,[r10].rc.col
     mov     r8d,eax
     mul     sil
-    and     edi,0xFF
+    movzx   edi,dil
     add     eax,edi
     shl     eax,2
     add     rax,[r10].buffer
@@ -437,11 +500,14 @@ __inticonsole proc uses rbx
    .new w:int_t
    .new h:int_t
 
-    _cout(
-        ESC "7"
-        CSI "500;500H"
-        CSI "6n" )
-    _getcsi2(&h, &w)
+    _cout(ESC "7")  ; push cursor
+    _cout(CSI "256;256H")
+    _cursorxy()
+    add eax,0x00010001
+    movzx ecx,ax
+    shr eax,16
+    mov w,ecx
+    mov h,eax
     _cout(ESC "8" ) ; pop cursor
 
     mov rc.col,w
@@ -481,17 +547,17 @@ __inticonsole proc uses rbx
     mov eax,0x00070020
     rep stosd
 
-    lea rsi,UbuntuColorTable
-    mov [rbx].color,rsi
-    mov [rbx].conmax.X,rc.col
-    mov [rbx].conmax.Y,rc.row
-
     _cout(
         "\e]4;0;rgb:00/00/00\e\\"
         "\e]4;7;rgb:AA/AA/AA\e\\"
         )
     _cout("\e[48;5;0m")
     _cout("\e[38;5;7m")
+
+    lea rsi,UbuntuColorTable
+    mov [rbx].color,rsi
+    mov [rbx].conmax.X,rc.col
+    mov [rbx].conmax.Y,rc.row
 
     _cout(CSI "?1049h" ) ; push screen
     _gotoxy(0, 0)

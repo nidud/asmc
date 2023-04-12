@@ -30,7 +30,7 @@ __termconout proc
 
 __termconout endp
 
-.pragma(init(__initconout, 10))
+.pragma(init(__initconout, 21))
 .pragma(exit(__termconout, 20))
 
     end

@@ -1,3 +1,3 @@
 rcshade:
-	asmc64 -Cs rcshade.asm
+	asmc64 rcshade.asm
 	gcc -nostdlib -o rcshade rcshade.o /lib/alibc.a

@@ -10,11 +10,9 @@ include conio.inc
 
 _wherex proc
 
-   .new x:int_t
-   .new y:int_t
-    _cout("\e[6n")
-    _getcsi2(&x, &y)
-   .return( x )
+   _cursorxy()
+   movzx eax,ax
+   ret
 
 _wherex endp
 

@@ -393,8 +393,8 @@ _setcursor	proto __cdecl :PCURSOR
 _cursoron	proto __cdecl
 _cursoroff	proto __cdecl
 _cursortype	proto __cdecl :int_t
-_cursorxy	proto __cdecl :ptr int_t, :ptr int_t
-_gotoxy		proto __cdecl :int_t, :int_t
+_cursorxy	proto __cdecl ; COORD
+_gotoxy		proto __cdecl :uint_t, :uint_t
 
 _rcframe	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :SINT, :BYTE
 _rcmemsize	proto __cdecl :TRECT, :SINT
@@ -471,7 +471,6 @@ ifdef __VT__
    .ends
 
 _kbflush	proto __cdecl
-_getcsi2	proto __cdecl :ptr int_t, :ptr int_t
 
 define ESC <"\e">
 define CSI <"\e[">

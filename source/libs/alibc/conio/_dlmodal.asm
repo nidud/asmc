@@ -599,8 +599,8 @@ _dlmodal proc uses rbx r12 r13 hwnd:THWND, wndp:TPROC
                     mov Input.Event.MouseEvent.dwControlKeyState,edx
                     shr eax,8
                     sub eax,0x2121
-                    movzx ecx,ah
-                    movzx eax,al
+                    movzx ecx,al
+                    movzx eax,ah
                     mov Input.Event.MouseEvent.dwMousePosition.Y,ax
                     mov Input.Event.MouseEvent.dwMousePosition.X,cx
                    .break
@@ -801,19 +801,10 @@ _dlmodal endp
 
     assume rdi:THWND
 
-GetItemRect proto :THWND {
-    mov     rax,[rdi].prev
-    movzx   eax,word ptr [rax].TCLASS.rc
-    add     eax,[rdi].rc
-    retm    <eax>
-    }
-
-
 _dlnextitem proc private hwnd:THWND
 
     test    [rdi].flags,W_CHILD
     cmovnz  rdi,[rdi].prev
-
     movzx   eax,[rdi].count
     movzx   ecx,[rdi].index
     lea     edx,[rcx+1]
@@ -858,7 +849,6 @@ _dlprevitem proc private hwnd:THWND
 
     test    [rdi].flags,W_CHILD
     cmovnz  rdi,[rdi].prev
-
     movzx   eax,[rdi].count
     movzx   ecx,[rdi].index
     imul    edx,ecx,TCLASS
@@ -1345,11 +1335,14 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
 
                 .if ( [rcx].flags & O_RADIO )
 
-                    and [rcx].flags,not O_RADIO
-                    GetItemRect(rcx)
-                    inc al
-                    mov esi,eax
-                    shr esi,8
+                    and     [rcx].flags,not O_RADIO
+                    mov     rax,[rcx].prev
+                    movzx   eax,word ptr [rax].TCLASS.rc
+                    add     eax,[rcx].rc
+                    inc     al
+                    mov     esi,eax
+                    shr     esi,8
+
                     _scputc(al, sil, 1, ' ')
                     .break
                 .endif

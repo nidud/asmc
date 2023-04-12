@@ -14,6 +14,7 @@ _coutW proc format:wstring_t, argptr:vararg
 
   local cchWritten:ulong_t
   local stream:_iobuf
+  local buffer[1024]:wchar_t
 
     .if ( _confh == -1 )
 
@@ -24,7 +25,7 @@ _coutW proc format:wstring_t, argptr:vararg
         ;
         mov stream._flag,_IOWRT or _IOSTRG
         mov stream._cnt,_INTIOBUF
-        lea rax,_bufin
+        lea rax,buffer
         mov stream._ptr,rax
         mov stream._base,rax
         mov ecx,_woutput(&stream, format, &argptr)

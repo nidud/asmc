@@ -3811,7 +3811,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
     lea rdx,stackreg
     mov sreg,[rdx+rcx*4]
 
-    .if ( [rsi].flags & PROC_ISFRAME )
+    .if ( [rsi].flags & PROC_ISFRAME && [rdi].asym.langtype == LANG_FASTCALL )
 
         .if ( ModuleInfo.frame_auto & 1 )
 

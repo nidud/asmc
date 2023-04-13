@@ -2730,7 +2730,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
     .endif
 
     .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( ebx == LANG_FASTCALL || ebx == LANG_VECTORCALL ) && Parse_Pass > PASS_1 )
+          ( bl == LANG_WATCALL || bl == LANG_FASTCALL || bl == LANG_VECTORCALL ) && Parse_Pass > PASS_1 )
         .if ( !( [rdi].asym.sflags & S_STKUSED ) && ![rsi].locallist )
             inc leaf
             .if ( !( [rdi].asym.sflags & ( S_ARGUSED or S_LOCALGPR ) ) &&
@@ -3427,7 +3427,11 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
 
         ; in case there's no frame register, adjust start offset.
 
-        .if ( ( [rsi].flags & PROC_FPO || ( [rsi].parasize == 0 && [rsi].locallist == NULL ) ) )
+        .if ( [rsi].flags & PROC_FPO ||
+              ( [rdi].asym.langtype == LANG_WATCALL &&
+                [rsi].parasize <= 8*4 &&
+                [rsi].locallist == NULL ) ||
+              ( [rsi].parasize == 0 && [rsi].locallist == NULL ) )
             mov start,CurrWordSize
         .endif
 
@@ -3758,7 +3762,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
     .endif
 
     .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( ecx == LANG_FASTCALL || ecx == LANG_VECTORCALL ) )
+          ( ecx == LANG_WATCALL || ecx == LANG_FASTCALL || ecx == LANG_VECTORCALL ) )
         ;
         ; Reserved stack is used if a 64-bit fastcall or vectocall is invoked
         ; - see fastcall.asm: ms64_fcstart(), hll.asm: LKRenderHllProc()

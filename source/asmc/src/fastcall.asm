@@ -2273,9 +2273,9 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
 
     .switch
     .case ( [rsi].sflags & S_ISVARARG )
-        mov [rsi].state,SYM_TMACRO
-        mov [rsi].string_ptr,LclDup("[rax]")
-       .return 1
+        xor eax,eax
+        mov [rsi].string_ptr,rax
+       .return 
 
     .case ( dl & MT_FLOAT || dl == MT_YWORD )
 

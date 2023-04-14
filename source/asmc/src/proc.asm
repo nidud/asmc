@@ -1161,6 +1161,8 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
 
     imul ebx,i,asm_tok
     add rbx,tokenarray
+    mov rdi,p
+    mov cl,[rdi].asym.langtype
 
     .if ( ModuleInfo.Ofssize == USE64 && IsPROC )
 
@@ -1209,7 +1211,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
             .endif
 
             or [rsi].flags,PROC_ISFRAME
-        .elseif ( ModuleInfo.frame_auto == 3 )
+        .elseif ( ModuleInfo.frame_auto == 3 && ( cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) )
             or [rsi].flags,PROC_ISFRAME
         .endif
     .endif
@@ -2672,7 +2674,37 @@ push_user_registers proc __ccall private uses rsi rdi rbx list:string_t, usefram
 
 push_user_registers endp
 
-;
+
+; Use the same logic for prologue/epilogue..
+
+use_cstack proc private
+
+    xor eax,eax
+    .if ( ModuleInfo.xflag & OPT_CSTACK &&
+          ( ModuleInfo.Ofssize == USE64 ||
+            ( ModuleInfo.Ofssize == USE32 &&
+              ( cl == LANG_STDCALL || cl == LANG_C || cl == LANG_SYSCALL )
+            ) ) )
+        inc eax
+    .endif
+    ret
+
+use_cstack endp
+
+use_sysstack proc private
+
+    xor eax,eax
+    .if ( ModuleInfo.Ofssize == USE64 &&
+          cl == LANG_SYSCALL &&
+          [rsi].paralist &&
+          ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+        inc eax
+    .endif
+    ret
+
+use_sysstack endp
+
+
 ; write PROC prologue
 ; this is to be done after the LOCAL directives
 ; and *before* any real instruction
@@ -2707,34 +2739,31 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
    .new cntxmm:int_t = 0
    .new cnt:int_t
    .new offs:int_t
-   .new sysstack:int_t = 0
+   .new sysstack:int_t
    .new resstack:int_t = 0
-   .new cstack:int_t = 0
+   .new cstack:int_t
    .new leaf:int_t = 0
    .new usestack:int_t = 1
    .new argstack:int_t = 0
 
     mov rdi,CurrProc
-    movzx ebx,[rdi].asym.langtype
-
-    .if ( ( ModuleInfo.xflag & OPT_CSTACK ) && ( ModuleInfo.Ofssize == USE64 ||
-          ( ModuleInfo.Ofssize == USE32 && ( ebx == LANG_STDCALL || ebx == LANG_C || ebx == LANG_SYSCALL ) ) ) )
-        mov cstack,1
-    .endif
-
     mov rsi,[rdi].dsym.procinfo
     mov info,rsi
-    .if ( ModuleInfo.Ofssize == USE64 && [rsi].paralist && ebx == LANG_SYSCALL &&
-          ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
-        mov sysstack,1
-    .endif
+    mov cl,[rdi].asym.langtype
+    mov cstack,use_cstack()
+    mov sysstack,use_sysstack()
+
 
     .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( bl == LANG_WATCALL || bl == LANG_FASTCALL || bl == LANG_VECTORCALL ) && Parse_Pass > PASS_1 )
+          ( cl == LANG_WATCALL || cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) && Parse_Pass > PASS_1 )
+
         .if ( !( [rdi].asym.sflags & S_STKUSED ) && ![rsi].locallist )
+
             inc leaf
+
             .if ( !( [rdi].asym.sflags & ( S_ARGUSED or S_LOCALGPR ) ) &&
                   [rsi].localsize == 0 && [rsi].regslist == NULL )
+
                 mov usestack,0
             .endif
         .endif
@@ -2919,8 +2948,10 @@ endif
     .endif
 
     mov rsi,info
-    .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.fctype == FCT_WIN64 ||
-          ModuleInfo.fctype == FCT_VEC64 || ModuleInfo.fctype == FCT_ELF64 ) &&
+    .if ( ModuleInfo.Ofssize == USE64 &&
+          ( ModuleInfo.fctype == FCT_WIN64 ||
+            ModuleInfo.fctype == FCT_VEC64 ||
+            ModuleInfo.fctype == FCT_ELF64 ) &&
           ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
 
         mov rdi,CurrProc ; added v2.33.26
@@ -3239,6 +3270,7 @@ runqueue:
 
             mov rdi,[rsi].paralist
             .if ( rdi )
+                mov [rdi].dsym.offs,ebx
                 mov rdi,[rdi].dsym.nextparam
             .endif
 
@@ -3603,9 +3635,9 @@ write_prologue proc __ccall uses rsi rdi tokenarray:ptr asm_tok
         movzx edx,[rdi].asym.langtype
         .if ( Parse_Pass == PASS_1 )
             mov [rcx].asym.value,4 * sizeof( uint_64 )
-            .if ( edx == LANG_VECTORCALL )
+            .if ( dl == LANG_VECTORCALL )
                 mov [rcx].asym.value,6 * 16
-            .elseif ( edx == LANG_SYSCALL )
+            .elseif ( dl == LANG_SYSCALL )
                 mov [rcx].asym.value,0
                 .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
                     .for ( ecx = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
@@ -3739,30 +3771,24 @@ pop_register endp
 write_default_epilogue proc __ccall private uses rsi rdi rbx
 
    .new info:ptr proc_info
-   .new sysstack:int_t = 0
+   .new sysstack:int_t
    .new leav:int_t = 0
    .new resstack:int_t = 0
-   .new cstack:int_t = 0
+   .new cstack:int_t
    .new sreg:int_t
    .new usestack:int_t = 1
 
     mov rdi,CurrProc
-    movzx ecx,[rdi].asym.langtype
-
-    .if ( ( ModuleInfo.xflag & OPT_CSTACK ) && ( ModuleInfo.Ofssize == USE64 ||
-          ( ModuleInfo.Ofssize == USE32 && ( ecx == LANG_STDCALL || ecx == LANG_C || ecx == LANG_SYSCALL ) ) ) )
-        mov cstack,1
-    .endif
-
     mov rsi,[rdi].dsym.procinfo
     mov info,rsi
-    .if ( ModuleInfo.Ofssize == USE64 && [rsi].paralist && ecx == LANG_SYSCALL &&
-          ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
-        inc sysstack
-    .endif
+    mov cl,[rdi].asym.langtype
+    mov cstack,use_cstack()
+    mov sysstack,use_sysstack()
+
 
     .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( ecx == LANG_WATCALL || ecx == LANG_FASTCALL || ecx == LANG_VECTORCALL ) )
+          ( cl == LANG_WATCALL || cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) )
+
         ;
         ; Reserved stack is used if a 64-bit fastcall or vectocall is invoked
         ; - see fastcall.asm: ms64_fcstart(), hll.asm: LKRenderHllProc()
@@ -3811,7 +3837,8 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
     lea rdx,stackreg
     mov sreg,[rdx+rcx*4]
 
-    .if ( [rsi].flags & PROC_ISFRAME && [rdi].asym.langtype == LANG_FASTCALL )
+    .if ( [rsi].flags & PROC_ISFRAME )
+
 
         .if ( ModuleInfo.frame_auto & 1 )
 

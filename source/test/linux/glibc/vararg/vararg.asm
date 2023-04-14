@@ -4,7 +4,7 @@ include stdio.inc
 
 xsprintf proc buffer:string_t, format:string_t, argptr:vararg
 
-    vsprintf(buffer, format, rax)
+    vsprintf(buffer, format, &argptr)
     ret
 
 xsprintf endp

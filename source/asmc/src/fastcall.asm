@@ -1664,14 +1664,101 @@ ms64_param endp
 ; [rsp+16] for param 2,... The parameter names refer to those stack
 ; locations, not to the register names.
 
-ms64_pcheck proc __ccall private p:ptr dsym, paranode:ptr dsym, used:ptr int_t
+    assume rsi:asym_t
+
+ms64_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym, used:ptr int_t
 
     ; since the parameter names refer the stack-backup locations,
     ; there's nothing to do here!
     ; That is, if a parameter's size is > 8, it has to be changed
     ; to a pointer. This is to be done yet.
 
+   .new float_regs:byte = 4
+
+    mov rsi,p
+    .if ( [rsi].langtype == LANG_VECTORCALL )
+        mov float_regs,6
+    .endif
+
+    mov rdi,used
+    mov rsi,paranode
+    mov ebx,SizeFromMemtype( [rsi].mem_type, [rsi].Ofssize, [rsi].type )
+    mov ecx,[rdi]
+    mov dl,[rsi].mem_type
+    .if ( [rsi].mem_type == MT_TYPE )
+
+        mov rdx,[rsi].type
+        mov dl,[rdx].asym.mem_type
+    .endif
+
+    .switch
+    .case ( [rsi].sflags & S_ISVARARG )
+       .return( 0 )
+
+    .case ( dl & MT_FLOAT || dl == MT_YWORD )
+
+        movzx ecx,ch
+        inc byte ptr [rdi+1]
+        .if ( cl >= float_regs )
+            mov [rsi].regist[2],cx
+            add ecx,T_XMM0
+            mov [rsi].regist[0],cx
+           .return( 0 )
+        .endif
+
+        .if eax == 64
+            lea eax,[rcx+T_ZMM0]
+        .elseif eax == 32
+            lea eax,[rcx+T_YMM0]
+        .else
+            lea eax,[rcx+T_XMM0]
+        .endif
+        .endc
+
+    .case ( al > 16 )
+       .return( 0 )
+
+    .case ( al == 16 || dl == MT_OWORD )
+        .if ( cl < 3 )
+            movzx ecx,cl
+            lea   rdx,ms64_regs
+            movzx eax,byte ptr [rdx+rcx+3*4]
+            add   byte ptr [rdi],2
+           .endc
+        .endif
+    .case ( cl > 3 )
+        movzx ecx,cl
+        mov [rsi].regist[0],T_RAX
+        mov [rsi].regist[2],cx
+        inc byte ptr [rdi]
+       .return( 0 )
+
+    .default
+        movzx   ecx,cl
+        shr     eax,1
+        cmp     eax,4
+        cmc
+        sbb     eax,0
+        imul    eax,eax,4
+        lea     rdx,ms64_regs
+        add     rdx,rax
+        movzx   eax,byte ptr [rcx+rdx]
+        inc     byte ptr [rdi]
+       .endc
+    .endsw
+    mov [rsi].regist[0],ax
+    mov [rsi].regist[2],cx
+    mov [rsi].sys_size,bl
+    or  [rsi].flags,S_REGPARAM
+    mov rsi,p
+    mov edx,[rdi]
+    mov [rsi].sys_rcnt,dl
+    mov [rsi].sys_xcnt,dh
+    .if ( bl > [rsi].sys_size )
+        mov [rsi].sys_size,bl
+    .endif
     .return( 0 )
+
 ms64_pcheck endp
 
 
@@ -2258,8 +2345,6 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
 
   local regname[32]:sbyte
 
-    UNREFERENCED_PARAMETER(pProc)
-
     mov rdi,used
     mov rsi,paranode
     mov ebx,SizeFromMemtype( [rsi].mem_type, [rsi].Ofssize, [rsi].type )
@@ -2275,7 +2360,7 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
     .case ( [rsi].sflags & S_ISVARARG )
         xor eax,eax
         mov [rsi].string_ptr,rax
-       .return 
+       .return
 
     .case ( dl & MT_FLOAT || dl == MT_YWORD )
 

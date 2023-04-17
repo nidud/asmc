@@ -189,6 +189,7 @@ res(DOT_DEFAULT,    .default,	 DF_CGEN or DF_CEXPR, DRT_SWITCH, 0, P_86, 0)
 res(DOT_ENDSW,	    .endsw,	 DF_CGEN, DRT_SWITCH, 0, P_86, 0)
 res(DOT_RETURN,	    .return,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_RETURN, 0, P_86, 0)
 res(DOT_PRAGMA,	    .pragma,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_PRAGMA, 0, P_86, 0)
+res(LDR,	    ldr,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_LDR, 0, P_86, 0)
 
 ifndef ASMC64
 

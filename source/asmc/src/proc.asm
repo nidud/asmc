@@ -3806,7 +3806,9 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
         .if ( !( [rdi].asym.sflags & S_STKUSED ) && ![rsi].locallist )
 
             mov rdx,sym_ReservedStack
-            mov [rdx].asym.value,0 ; leaf: no reserved stack needed..
+            .if ( rdx )
+                mov [rdx].asym.value,0 ; leaf: no reserved stack needed..
+            .endif
 
             .if ( !( [rdi].asym.sflags & S_LOCALGPR ) && [rsi].localsize == 8 )
 

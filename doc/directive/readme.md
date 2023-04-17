@@ -186,6 +186,7 @@ Can also be used as a type specifier anywhere a type is legal.
 - [INVOKE](invoke.md)
 - [PROC](proc.md)
 - [PROTO](proto.md)
+- [LDR](ldr.md)
 
 ### Processor
 

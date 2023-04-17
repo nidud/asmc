@@ -14,6 +14,7 @@ Changes in 2.35 - xx xxx 2022
 - added option dotnamex:<on|off>
 - added stack params for 64-bit SYSCALL
 - removed switches -pf, -swc, -swn, -swr, -swt
+- added directive LDR - Load Register param
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

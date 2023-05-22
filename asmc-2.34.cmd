@@ -25,7 +25,7 @@ if not exist %~dp0lib\x64\user32.lib (
     if not errorlevel 2 call :ImportLibraries64
 )
 
-echo.
+cls
 if exist %AsmcDir%\bin\dz.ini (
 dz -nologo
 ) else (

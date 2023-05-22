@@ -16,35 +16,27 @@ intptr_t typedef sdword
 endif
 endif
 
-_NFILE_		equ 20
+define _NFILE_		20
 
-_A_RDONLY	equ 01h
-_A_HIDDEN	equ 02h
-_A_SYSTEM	equ 04h
-_A_VOLID	equ 08h
-_A_SUBDIR	equ 10h
-_A_ARCH		equ 20h
-_A_NORMAL	equ 80h
-_A_TEMPORARY	equ 0100h
-_A_SPARSE_FILE	equ 0200h
-_A_REPARSEPOINT equ 0400h
-_A_COMPRESSED	equ 0800h
-_A_OFFLINE	equ 1000h
-_A_NOT_INDEXED	equ 2000h
-_A_ENCRYPTED	equ 4000h
+define _A_NORMAL	0x00
+define _A_RDONLY	0x01
+define _A_HIDDEN	0x02
+define _A_SYSTEM	0x04
+define _A_SUBDIR	0x10
+define _A_ARCH		0x20
 
-FH_OPEN		equ 01h
-FH_EOF		equ 02h
-FH_CRLF		equ 04h
-FH_PIPE		equ 08h
-FH_NOINHERIT	equ 10h
-FH_APPEND	equ 20h
-FH_DEVICE	equ 40h
-FH_TEXT		equ 80h
+define FOPEN		0x01
+define FEOFLAG		0x02
+define FCRLF		0x04
+define FPIPE		0x08
+define FNOINHERIT	0x10
+define FAPPEND		0x20
+define FDEV		0x40
+define FTEXT		0x80
 
-SEEK_SET	equ 0
-SEEK_CUR	equ 1
-SEEK_END	equ 2
+define SEEK_SET		0
+define SEEK_CUR		1
+define SEEK_END		2
 
 ifndef LPFILETIME
 FILETIME	STRUC
@@ -102,6 +94,13 @@ externdef	_nfile:DWORD
 externdef	_osfile:BYTE
 externdef	_osfhnd:HANDLE
 
+
+define __IOINFO_TM_ANSI	   0
+define __IOINFO_TM_UTF8	   1
+define __IOINFO_TM_UTF16LE 2
+
+externdef	_textmode:BYTE
+
 A_CREATE	equ 1 ; fails if exists
 A_CREATETRUNC	equ 2 ; trunc if exists
 A_OPEN		equ 3 ; fails if not exists
@@ -156,12 +155,14 @@ _wrename	proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wopen		proto __Cdecl :ptr wchar_t, :SINT, :VARARG
 _wsopen		proto __Cdecl :ptr wchar_t, :SINT, :SINT, :VARARG
 _wmktemp	proto __cdecl :ptr wchar_t
+
 if 0
 if _INTEGRAL_MAX_BITS GE 64
 _wfindfirsti64	proto __cdecl :ptr wchar_t, :ptr _wfinddatai64_t
 _wfindnexti64	proto __cdecl :LONG, :ptr _wfinddatai64_t
 endif
 endif
+
 endif ; _WIO_DEFINED
 
 __lock_fhandle	proto __cdecl :int_t
@@ -196,7 +197,6 @@ _get_osfhandle	proto __cdecl :int_t
 _open_osfhandle proto __cdecl :intptr_t, :int_t
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-getosfhnd	proto __cdecl :SINT
 osmaperr	proto __cdecl
 getfattr	proto __cdecl :LPSTR
 _wgetfattr	proto __cdecl :LPWSTR

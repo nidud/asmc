@@ -13,10 +13,9 @@ include intrin.inc
 
 __cmpq proc __ccall A:ptr qfloat_t, B:ptr qfloat_t
 
-ifndef _WIN64
-    mov ecx,A
-    mov edx,B
-endif
+    ldr rcx,A
+    ldr rdx,B
+
     assume rcx:ptr __m128i
     assume rdx:ptr __m128i
 

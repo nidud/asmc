@@ -12,10 +12,8 @@ include string.inc
 
 strrchr proc string:string_t, chr:int_t
 
-ifndef _WIN64
-    mov     ecx,string
-    mov     edx,chr
-endif
+    ldr     rcx,string
+    ldr     edx,chr
     dec     rcx
     xor     eax,eax
 .0:

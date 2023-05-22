@@ -9,7 +9,6 @@
     <ASMC>
       <IncludePaths>$(AsmcDir)\include</IncludePaths>
       <NoLogo>true</NoLogo>
-      <GenerateDebugInformation>8</GenerateDebugInformation>
       <ObjectFileName>$(IntDir)%(FileName).obj</ObjectFileName>
       <WarningLevel>2</WarningLevel>
       <CommandLineTemplate Condition="'$(Platform)' == 'win32'">asmc.exe [AllOptions] [AdditionalOptions] [Inputs]</CommandLineTemplate>

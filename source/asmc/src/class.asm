@@ -32,7 +32,7 @@ ClassProto proc __ccall uses rsi rdi class:string_t, langtype:int_t, args:string
   local pargs[1024]:char_t
 
     lea rdi,pargs ; default args :abs=<val>
-    mov rsi,args
+    ldr rsi,args
     lea rcx,[rdi+1023]
     mov al,1
 
@@ -69,7 +69,7 @@ ClassProto2 proc __ccall uses rsi rdi rbx class:string_t, method:string_t,
   local this[256]:char_t
   local buffer[512]:char_t
 
-    mov rsi,item
+    ldr rsi,item
     mov rdi,args
     mov rbx,this_ptr
 
@@ -99,8 +99,8 @@ AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:ptr asym
 
   local q[512]:char_t
 
-    mov rsi,this
-    mov rbx,sym
+    ldr rsi,this
+    ldr rbx,sym
 
     .if ( [rbx].asym.total_size && Parse_Pass == 0 )
 
@@ -140,7 +140,7 @@ OpenVtbl proc __ccall uses rsi rbx this:ptr com_item
 
   local q[512]:char_t
 
-    mov rsi,this
+    ldr rsi,this
     AddLineQueueX( "%sVtbl struct", [rsi].class )
 
     ; v2.30.32 - : public class
@@ -171,8 +171,8 @@ get_param_name proc __ccall uses rsi rdi rbx tokenarray:token_t, token:string_t,
 
    .new operator:byte = 0
 
-    mov rdi,token
-    mov rbx,tokenarray
+    ldr rdi,token
+    ldr rbx,tokenarray
     mov rsi,[rbx].tokpos
     xor eax,eax
     mov rcx,context
@@ -579,7 +579,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
    .new this[256]       : char_t
    .new this_ptr        : string_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     lea rdi,class
 
     imul edx,i,asm_tok

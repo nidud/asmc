@@ -214,7 +214,7 @@ OutputBytes proc __ccall uses rsi rdi rbx pbytes:ptr byte, len:int_t, fxptr:ptr 
 
         mov ebx,[rdi].seg_info.current_loc
         sub ebx,[rdi].seg_info.start_loc
-        mov edx,len
+        ldr edx,len
         add edx,ebx
 
         .if Options.output_format == OFORMAT_OMF && edx >= MAX_LEDATA_THRESHOLD
@@ -262,9 +262,9 @@ OutputBytes endp
 ;
 SetCurrOffset proc __ccall uses rsi rdi rbx dseg:dsym_t, value:uint_t, relative:int_t, select_data:int_t
 
-    mov ebx,value
-    mov rsi,dseg
-    mov eax,relative
+    ldr ebx,value
+    ldr rsi,dseg
+    ldr eax,relative
     mov ecx,write_to_file
     mov rdi,[rsi].dsym.seginfo
 
@@ -478,7 +478,7 @@ WritePreprocessedLine proc __ccall string:string_t
 
     .if ( ModuleInfo.token_count > 0 )
 
-        mov rcx,string
+        ldr rcx,string
         .while islspace( [rcx] )
             inc rcx
         .endw
@@ -503,7 +503,7 @@ WritePreprocessedLine endp
 
 SetMasm510 proc __ccall value:int_t
 
-    mov eax,value
+    ldr eax,value
     mov ModuleInfo.m510,al
     mov ModuleInfo.oldstructs,al
     mov ModuleInfo.dotname,al

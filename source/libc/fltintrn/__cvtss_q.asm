@@ -10,12 +10,8 @@ include errno.inc
 
 __cvtss_q proc __ccall q:ptr qfloat_t, f:ptr float_t
 
-ifdef _WIN64
-    mov rax,rcx
-else
-    mov eax,q
-    mov edx,f
-endif
+    ldr rax,q
+    ldr rdx,f
 
     mov edx,[rdx]
     mov ecx,edx     ; get exponent and sign

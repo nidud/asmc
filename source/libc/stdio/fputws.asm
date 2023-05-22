@@ -11,13 +11,10 @@ include string.inc
 
 fputws proc uses rsi rdi rbx string:LPWSTR, fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,string
-    mov edx,fp
-endif
-    mov rsi,rcx
-    mov rdi,rdx
-    mov ebx,wcslen(rcx)
+    ldr rsi,string
+    ldr rdi,fp
+
+    mov ebx,wcslen(rsi)
 
     .new retval:int_t = 0
     .new stb:int_t = _stbuf(rdi)

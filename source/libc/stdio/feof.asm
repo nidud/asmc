@@ -10,9 +10,7 @@ include stdio.inc
 
 feof proc stream:LPFILE
 
-ifndef _WIN64
-    mov ecx,stream
-endif
+    ldr rcx,stream
     mov eax,[rcx]._iobuf._flag
     and eax,_IOEOF
     ret

@@ -58,7 +58,7 @@ ifndef _WIN64
 endif
     .if ( [rdx]._iobuf._file == 1 || [rdx]._iobuf._file == 2 )
 
-        .if ( _putwch_nolock( wc ) == WEOF )
+        .if ( _putwch( wc ) == WEOF )
             movsx eax,ax
         .endif
     .else

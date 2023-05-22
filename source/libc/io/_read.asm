@@ -24,7 +24,7 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
   local dosretval:ulong_t       ; o.s. return value
   local peekchr:char_t          ; peek-ahead character
 
-    mov rax,cnt                 ; cnt
+    ldr rax,cnt                 ; cnt
     .return .if !rax            ; nothing to read
 
     .if ( fh >= _NFILE_ )       ; validate handle
@@ -35,16 +35,16 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
     .endif
 
     mov bytes_read,0            ; nothing read yet
-    mov rdi,buf
-    mov ebx,fh
+    ldr rdi,buf
+    ldr ebx,fh
 
     lea rdx,_osfile
     mov dl,[rdx+rbx]
-    .if ( dl & FH_EOF )         ; at EOF ?
+    .if ( dl & FEOFLAG )        ; at EOF ?
         .return( 0 )
     .endif
 
-    .if ( dl & FH_PIPE or FH_DEVICE )
+    .if ( dl & FPIPE or FDEV )
 
         lea rcx,_pipech
         mov al,[rcx+rbx]
@@ -95,15 +95,15 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
     lea rdx,_osfile
     mov al,[rdx+rbx]
 
-    .if ( al & FH_TEXT )
+    .if ( al & FTEXT )
 
         ; now must translate CR-LFs to LFs in the buffer
 
         ; set CRLF flag to indicate LF at beginning of buffer
 
-        and al,not FH_CRLF
+        and al,not FCRLF
         .if ( byte ptr [rdi] == LF )
-            or al,FH_CRLF
+            or al,FCRLF
         .endif
         mov [rdx+rbx],al
 
@@ -123,9 +123,9 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
                 ; if fh is not a device, set ctrl-z flag
 
                 lea rdx,_osfile
-                .break .if ( byte ptr [rbx+rdx] & FH_DEVICE )
+                .break .if ( byte ptr [rbx+rdx] & FDEV )
 
-                or byte ptr [rbx+rdx],FH_EOF
+                or byte ptr [rbx+rdx],FEOFLAG
                 .break ; stop translating
 
             .elseif ( al != CR )
@@ -185,7 +185,7 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
                 ;     char in pipe lookahead buffer.
 
                 lea rdx,_osfile
-                .if ( byte ptr [rbx+rdx] & FH_DEVICE or FH_PIPE )
+                .if ( byte ptr [rbx+rdx] & FDEV or FPIPE )
 
                     ; non-seekable device
 
@@ -210,7 +210,6 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
 
                         _lseek( ebx, -1, SEEK_CUR )
                         .continue(0) .if ( peekchr == LF )
-
                         mov al,CR
                     .endif
                 .endif

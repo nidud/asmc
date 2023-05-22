@@ -55,7 +55,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
 
    .new hex_count:char_t
    .new Unicode:char_t
-    mov rsi,string
+    ldr rsi,string
 
     ; "binary" string
    .new sbuf:string_t = alloca(ModuleInfo.max_line_len)
@@ -419,7 +419,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ;
     ; need "quote"
     ;
-    mov  rsi,tokenarray
+    ldr  rsi,tokenarray
     imul ebx,i,asm_tok
     add  rbx,rsi
     mov  brackets,al
@@ -689,7 +689,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
    .new retval:         int_t
    .new Unicode:        byte
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     mov edi,ModuleInfo.max_line_len
     lea eax,[rdi*2+32]
     mov cursrc,alloca(eax)
@@ -886,7 +886,7 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
   local segm[64]:char_t
   local opc:expr
 
-    mov rbx,opnd
+    ldr rbx,opnd
     mov opc.llvalue,[rbx].llvalue
     mov opc.hlvalue,[rbx].hlvalue
     .switch size
@@ -993,7 +993,7 @@ CreateFloat ENDP
 
 TextItemError proc __ccall uses rbx item:ptr asm_tok
 
-    mov rbx,item
+    ldr rbx,item
     mov rax,[rbx].string_ptr
 
     .if ( [rbx].token == T_STRING && B[rax] == '<' )
@@ -1024,10 +1024,12 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local sym:ptr asym
 
-    mov  edi,i
+    ldr  edi,i
+    ldr  rdx,tokenarray
+
     inc  edi   ; go past CATSTR/TEXTEQU
     imul ebx,edi,asm_tok
-    add  rbx,tokenarray
+    add  rbx,rdx
 
     ; v2.08: don't copy to temp buffer
     ; check correct syntax and length of items
@@ -1120,7 +1122,7 @@ CatStrDir endp
 
 SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok, sym:ptr asym, name:string_t, value:string_t
 
-    mov rdi,sym
+    ldr rdi,sym
     .if ( rdi == NULL )
         mov rdi,SymCreate( name )
     .elseif ( [rdi].asym.state == SYM_UNDEFINED )
@@ -1228,7 +1230,7 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; 0  1      2      3 4    5   6
     ; ID SUBSTR SRC_ID , POS [, LENGTH]
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     mov name,[rbx].string_ptr
 
     inc i ; go past SUBSTR
@@ -1363,12 +1365,16 @@ SubStrDir endp
 
 SizeStrDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
-    .if ( i != 1 )
-        imul ebx,i,asm_tok
-        add  rbx,tokenarray
+    ldr ecx,i
+    ldr rdx,tokenarray
+
+    .if ( ecx != 1 )
+
+        imul ebx,ecx,asm_tok
+        add  rbx,rdx
        .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
-    mov rbx,tokenarray
+    mov rbx,rdx
     .if ( [rbx+2*asm_tok].token != T_STRING || [rbx+2*asm_tok].string_delim != '<' )
         .return( TextItemError( &[rbx+2*asm_tok] ) )
     .endif
@@ -1396,12 +1402,15 @@ InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local opndx:expr
   local start:int_t
 
+    ldr ecx,i
+    ldr rdx,tokenarray
+
     mov start,1
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    imul ebx,ecx,asm_tok
+    add rbx,rdx
 
-    .if ( i != 1 )
+    .if ( ecx != 1 )
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
 
@@ -1494,7 +1503,7 @@ InStrDir endp
 
 CatStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
 
-    mov rdi,mi
+    ldr rdi,mi
     .for ( rsi = [rdi].macro_instance.parm_array,
            rsi = [rsi]: [rdi].macro_instance.parmcnt: [rdi].macro_instance.parmcnt-- )
 
@@ -1599,8 +1608,8 @@ InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
 
     ; init buffer with "0"
 
-    mov rcx,mi
-    mov rdi,buffer
+    ldr rcx,mi
+    ldr rdi,buffer
     mov eax,'0'
     mov [rdi],ax
     mov rsi,[rcx].macro_instance.parm_array
@@ -1653,7 +1662,7 @@ InStrFunc endp
 
 SizeStrFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
 
-    mov rcx,mi
+    ldr rcx,mi
     mov rdx,[rcx].macro_instance.parm_array
     mov rcx,[rdx]
 
@@ -1685,7 +1694,7 @@ SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
   local pos:int_t
   local size:int_t
 
-    mov rcx,mi
+    ldr rcx,mi
     mov rsi,[rcx].macro_instance.parm_array
     mov rdi,[rsi]
 

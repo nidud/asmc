@@ -12,15 +12,10 @@ include string.inc
 
 wcsncat proc uses rdi rbx dst:LPWSTR, src:LPWSTR, max:SIZE_T
 
-ifdef _WIN64
+    ldr     rcx,dst
+    ldr     rdx,src
+    ldr     rbx,max
     mov     rax,rcx
-    mov     rbx,r8
-else
-    mov     ecx,dst
-    mov     edx,src
-    mov     ebx,max
-    mov     eax,ecx
-endif
     xor     edi,edi
 .0:
     cmp     di,[rcx]

@@ -115,9 +115,9 @@ IsMultiLine endp
 
 ConcatLine proc __ccall uses rsi rdi rbx src:string_t, cnt:int_t, o:string_t, ls:ptr line_status
 
-    mov rsi,src
-    mov rdi,o
-    mov rbx,ls
+    ldr rsi,src
+    ldr rdi,o
+    ldr rbx,ls
 
     tstrstart( &[rsi+1] )
 
@@ -214,8 +214,11 @@ get_string proc fastcall uses rsi rdi rbx buf:ptr asm_tok, _p:ptr line_status
 
               .case ( ax == '""' && [rdx].cstring ) ; case \" ?
 
-                .if ( B[rsi-1] == '\' && B[rsi-2] != '\' ) ; case \\"
+                .if ( B[rsi-1] == '\' && ( word ptr [rsi-3] == '\\' || B[rsi-2] != '\' ) )
 
+                    ; case \\"
+                    ; case \\\"
+                    
                     stosb
                     inc rsi
                     inc ecx
@@ -566,8 +569,8 @@ get_string endp
 
 get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
-    mov rbx,buf
-    mov rsi,p
+    ldr rbx,buf
+    ldr rsi,p
     mov rdi,[rsi].input
     mov eax,[rdi]
     mov [rbx].tokval,0
@@ -951,8 +954,8 @@ get_special_symbol endp
 
 get_number proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
-    mov rbx,buf
-    mov rsi,p
+    ldr rbx,buf
+    ldr rsi,p
     mov rdx,[rsi].input
     xor edi,edi
 
@@ -1186,8 +1189,8 @@ get_number endp
 
 get_id_in_backquotes proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
-    mov rdx,p
-    mov rbx,buf
+    ldr rdx,p
+    ldr rbx,buf
     inc [rdx].input
     mov rsi,[rdx].input
     mov rdi,[rdx].output
@@ -1219,8 +1222,8 @@ get_id_in_backquotes endp
 
 get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
-    mov rbx,buf
-    mov rdx,p
+    ldr rbx,buf
+    ldr rdx,p
     mov rsi,[rdx].input
     mov rdi,[rdx].output
     mov [rbx].bytval,0 ; added v2.27

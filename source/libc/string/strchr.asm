@@ -12,14 +12,9 @@ include string.inc
 
 strchr proc string:string_t, chr:int_t
 
-ifdef _WIN64
-    mov     rax,rcx
-    movzx   ecx,dl
-else
-    mov     eax,string
-    movzx   ecx,byte ptr chr
-endif
-
+    ldr     rax,string
+    ldr     ecx,chr
+    movzx   ecx,cl
 .3:
     cmp     cl,[rax]
     je      .0

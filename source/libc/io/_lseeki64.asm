@@ -16,7 +16,7 @@ _lseeki64 proc handle:SINT, offs:QWORD, pos:UINT
 
   local lpNewFilePointer:QWORD
 
-    .ifd ( getosfhnd( handle ) != -1 )
+    .ifd ( _get_osfhandle( handle ) != -1 )
 
         mov rcx,rax
         .ifd !SetFilePointerEx( rcx, offs, &lpNewFilePointer, pos )

@@ -12,14 +12,12 @@ include string.inc
 
 wcsncpy proc uses rdi dst:wstring_t, src:wstring_t, count:size_t
 
+    ldr     rdi,dst
+    ldr     rdx,src
+    ldr     rcx,count
+
 ifdef _WIN64
-    mov     rdi,rcx
     mov     r11,rcx
-    mov     ecx,r8d
-else
-    mov     edi,dst
-    mov     edx,src
-    mov     ecx,count
 endif
 .0:
     test    ecx,ecx

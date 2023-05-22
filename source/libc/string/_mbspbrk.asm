@@ -9,13 +9,10 @@ include string.inc
     .code
 
 _mbspbrk proc uses rsi rdi rbx s1:string_t, s2:string_t
-ifdef _WIN64
-    mov     rsi,rcx
-    mov     rdi,rdx
-else
-    mov     esi,s1
-    mov     edi,s2
-endif
+
+    ldr     rsi,s1
+    ldr     rdi,s2
+
     or      ecx,-1
     xor     eax,eax
     repnz   scasb

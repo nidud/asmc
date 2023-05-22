@@ -8,89 +8,89 @@ else
 endif
 
 _FUNC_PROLOGUE
-_FUNC_NAME proc uses rsi rdi rbx _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR, _COUNT:size_t
+_FUNC_NAME proc uses rsi rbx _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR, _COUNT:size_t
 ifdef _WIN64
-    mov rsi,r8
-    mov rdi,rcx
-    mov rbx,rdx
+ ifdef __UNIX__
+    mov rbx,rdi
+    mov rax,rcx
+    mov rcx,rsi
+ else
+    mov rbx,rcx
+    mov rcx,rdx
+    mov rdx,r8
+    mov rax,r9
+ endif
 else
-    mov esi,_SRC
-    mov edi,_DEST
-    mov ebx,_SIZE
+    mov edx,_SRC
+    mov ebx,_DEST
+    mov ecx,_SIZE
+    mov eax,_COUNT
 endif
-    .repeat
 
-        .if ( _COUNT == 0 && rdi == NULL && rbx == 0 )
+    .if ( rax == 0 && rbx == NULL && rcx == 0 )
+        .return
+    .endif
 
-            ; this case is allowed; nothing to do
-            _RETURN_NO_ERROR()
+    _VALIDATE_STRING( rbx, rcx )
+
+    .if ( rax == 0 )
+
+        ; notice that the source string pointer can be NULL in this case
+
+        mov [rbx],reg
+       .return
+    .endif
+
+    _VALIDATE_POINTER_RESET_STRING( rdx, rbx, rcx )
+
+    mov rsi,rax
+    .if ( rax == _TRUNCATE )
+
+        .fors ( --rcx : rcx > 0 : rcx--, rbx+=_CHAR, rdx+=_CHAR )
+
+            mov reg,[rdx]
+            mov [rbx],reg
+            .break .if !reg
+        .endf
+
+    .else
+
+        .fors ( --rsi, --rcx : rcx > 0 && rsi >  0 : rcx--, rsi--, rbx+=_CHAR, rdx+=_CHAR )
+
+            mov reg,[rdx]
+            mov [rbx],reg
+            .break .if !reg
+        .endf
+
+        .if ( rsi == 0 )
+
+            xor reg,reg
+            mov [rbx],reg
         .endif
+    .endif
 
-        ; validation section
-        _VALIDATE_STRING( rdi, rbx )
-        .if ( _COUNT == 0 )
+    mov rbx,_DEST
+    mov rdx,_SIZE
 
-            ; notice that the source string pointer can be NULL in this case
-            _RESET_STRING( rdi, rbx )
-            _RETURN_NO_ERROR()
+    .if ( rcx == 0 )
+
+        .if ( rsi == _TRUNCATE )
+
+            xor reg,reg
+            mov [rbx+rdx-_CHAR],reg
+            _RETURN_TRUNCATE()
         .endif
-        _VALIDATE_POINTER_RESET_STRING( rsi, rdi, rbx )
-
-        ;p = _DEST;
-        ;available = _SIZE;
-        .if ( _COUNT == _TRUNCATE )
-
-            .fors ( --rbx : rbx > 0 : rbx--, rdi += _CHAR, rsi += _CHAR )
-
-                mov reg,[rsi]
-                mov [rdi],reg
-                .break .if !reg
-            .endf
-
-        .else
-
-            .ASSERT((!_CrtGetCheckCount() || _COUNT < _SIZE), L"Buffer is too small")
-
-            .fors( --_COUNT, --rbx : rbx > 0 && _COUNT >  0 : rbx--, _COUNT--, rdi += _CHAR, rsi += _CHAR )
-
-                mov reg,[rsi]
-                mov [rdi],reg
-                .break .if !reg
-
-            .endf
-
-            .if ( _COUNT == 0 )
-
-                xor reg,reg
-                mov [rdi],reg
-            .endif
-        .endif
-
-        mov rdi,_DEST
-        mov rsi,_SIZE
-
-        .if ( rbx == 0 )
-
-            .if ( _COUNT == _TRUNCATE )
-
-                xor reg,reg
-                mov [rdi+rsi-_CHAR],reg
-                _RETURN_TRUNCATE()
-            .endif
-            _RESET_STRING( rdi, rsi )
-            _RETURN_BUFFER_TOO_SMALL( rdi, rsi )
-        .endif
+        _RESET_STRING( rbx, rdx )
+        _RETURN_BUFFER_TOO_SMALL( rbx, rdx )
+    .endif
 
 if _SECURECRT_FILL_BUFFER
-        mov rcx,rsi
-        sub rcx,rbx
-        inc rcx
-        _FILL_STRING( rdi, rsi, rcx )
+    mov rax,rdx
+    sub rax,rcx
+    inc rax
+    _FILL_STRING( rbx, rdx, rax )
 endif
-        ;_RETURN_NO_ERROR()
-        xor eax,eax
-
-    .until 1
+    xor eax,eax
     ret
 
 _FUNC_NAME endp

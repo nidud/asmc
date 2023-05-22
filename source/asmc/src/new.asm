@@ -220,7 +220,7 @@ AssignString proc __ccall private uses rsi rdi rbx name:string_t, fp:ptr sfield,
   local i:int_t
   local opndx:expr
 
-    mov rdx,fp
+    ldr rdx,fp
     mov ebx,[rdx].sfield.total_size
     mov rdi,[rdx].sfield.name
 
@@ -277,8 +277,8 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
    .new array:int_t = 0
    .new brackets:byte
 
-    mov rdx,sym
-    mov rax,string
+    ldr rdx,sym
+    ldr rax,string
     lea rsi,[rax+1]
 
     .if ( rdx )
@@ -529,7 +529,7 @@ AssignId endp
 
 ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
 
-    mov rsi,sym
+    ldr rsi,sym
 
     AddLineQueue( " xor eax, eax" )
 
@@ -609,7 +609,7 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
     inc  i
     imul ebx,i,asm_tok
     add  rbx,tokenarray
-    mov  rsi,ti
+    ldr  rsi,ti
 
 if 0
     mov rax,[rsi].symtype

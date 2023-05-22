@@ -15,6 +15,9 @@ Changes in 2.35 - xx xxx 2022
 - added stack params for 64-bit SYSCALL
 - removed switches -pf, -swc, -swn, -swr, -swt
 - added directive LDR - Load Register param
+- added switch -Z7 - Add full symbolic debug info (-Zi38)
+- fixed bug(s) in debug info - struct members > 0x8000 failed
+- fixed bug in string input - "\\\"" failed
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

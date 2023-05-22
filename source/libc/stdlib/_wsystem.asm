@@ -25,13 +25,11 @@ _wsystem proc uses rdi rsi rbx string:wstring_t
         cmd[_MAX_PATH]  : wchar_t,
         delim           : wchar_t
 
+    ldr rdi,string
 ifdef _WIN64
-    mov rdi,rcx
     mov eax,0x10000
     _chkstk proto
     _chkstk()
-else
-    mov rdi,string
 endif
     mov rbx,wcscpy( alloca( 0x8000*2 ), L"cmd.exe" )
 
@@ -91,7 +89,7 @@ endif
     lea rdi,StartUpInfo
     mov StartUpInfo.cb,STARTUPINFOW
 
-    SetErrorMode(OldErrorMode)
+    SetErrorMode(_ermode)
     mov rbx,GetStdHandle(STD_INPUT_HANDLE)
     GetConsoleMode(rbx, &ConsoleMode)
 

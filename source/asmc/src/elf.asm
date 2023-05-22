@@ -150,7 +150,7 @@ cst conv_section \
 
 ElfConvertSectionName proc __ccall private uses rsi rdi rbx sym:ptr asym, buffer:string_t
 
-    mov rcx,sym
+    ldr rcx,sym
     mov rsi,[rcx].asym.name
     .for ( rdi = &cst, ebx = 0: ebx < lengthof(cst): ebx++, rdi += conv_section )
         .if ( tmemcmp( rsi, [rdi].src, [rdi].len ) == 0 )
@@ -199,7 +199,7 @@ set_symtab32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, entries:uint_t
    .new p32:ptr Elf32_Sym
    .new buffer[MAX_ID_LEN+MANGLE_BYTES+1]:char_t
 
-    mov rbx,em
+    ldr rbx,em
     imul esi,entries,sizeof( Elf32_Sym )
     mov [rbx].internal_segs[OSYMTAB_IDX].size,esi
     mov [rbx].internal_segs[OSYMTAB_IDX].data,LclAlloc( esi )
@@ -380,7 +380,7 @@ set_symtab64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, entries:uint_t
    .new strsize:uint_32 = 1
    .new buffer[MAX_ID_LEN+MANGLE_BYTES+1]:char_t
 
-    mov rbx,em
+    ldr rbx,em
     imul esi,entries,sizeof( Elf64_Sym )
     mov [rbx].internal_segs[OSYMTAB_IDX].size,esi
     mov [rbx].internal_segs[OSYMTAB_IDX].data,LclAlloc( esi )
@@ -572,7 +572,7 @@ set_symtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
     ; - n entries for local symbols
     ; - m entries for global symbols
 
-    mov rbx,em
+    ldr rbx,em
 
     ; symbol table starts with 1 NULL entry + 1 file entry
 
@@ -1310,8 +1310,8 @@ write_relocs32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, curr:ptr dsy
    .new elftype:byte
    .new reloc32:Elf32_Rel
 
-    mov rbx,em
-    mov rdx,curr
+    ldr rbx,em
+    ldr rdx,curr
     mov rcx,[rdx].dsym.seginfo
 
     .for ( rsi = [rcx].seg_info.head: rsi: rsi = [rsi].nextrlc )
@@ -1366,7 +1366,7 @@ write_relocs64 proc __ccall private uses rsi rdi rbx curr:ptr dsym
 
    .new reloc64:Elf64_Rela ; v2.05: changed to Rela
 
-    mov rdx,curr
+    ldr rdx,curr
     mov rcx,[rdx].dsym.seginfo
 
     .for ( rsi = [rcx].seg_info.head : rsi : rsi = [rsi].nextrlc )

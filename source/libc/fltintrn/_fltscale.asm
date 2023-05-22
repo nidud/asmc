@@ -12,7 +12,7 @@ define MAX_EXP_INDEX 13
 
 _fltscale proc __ccall uses rsi rdi rbx fp:ptr STRFLT
 
-    mov rbx,fp
+    ldr rbx,fp
     mov edi,[rbx].STRFLT.exponent
     lea rsi,_fltpowtable
     .ifs ( edi < 0 )

@@ -32,9 +32,8 @@ raise proc index:int_t
 
   local sigp:sigfunc_t
 
-ifndef _WIN64
-    mov ecx,index
-endif
+    ldr ecx,index
+
     lea rax,sig_table
     mov rax,[rax+rcx*size_t]
     .if rax
@@ -48,10 +47,9 @@ raise endp
 
 signal proc uses rbx index:int_t, func:sigfunc_t
 
-ifndef _WIN64
-    mov ecx,index
-    mov edx,func
-endif
+    ldr ecx,index
+    ldr rdx,func
+
     lea rbx,sig_table
     mov rax,[rbx+rcx*size_t]
     mov [rbx+rcx*size_t],rdx

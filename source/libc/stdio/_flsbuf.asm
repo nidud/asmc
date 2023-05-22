@@ -14,13 +14,11 @@ include winbase.inc
 
 _flsbuf proc uses rsi rdi rbx char:int_t, fp:LPFILE
 
-ifndef _WIN64
-    mov edx,fp
-endif
-    mov rsi,rdx
-    xor eax,eax
+    ldr rsi,fp
 
+    xor eax,eax
     mov edi,[rsi]._flag
+
     .if ( !( edi & _IOREAD or _IOWRT or _IORW ) || edi & _IOSTRG )
 
         or  [rsi]._flag,_IOERR
@@ -86,7 +84,7 @@ endif
             lea rcx,_osfile
             mov dl,[rcx+rbx]
 
-            .ifs ( ebx > eax && dl & FH_APPEND )
+            .ifs ( ebx > eax && dl & FAPPEND )
 
                 lea rcx,_osfhnd
                 mov rcx,[rcx+rbx*size_t]

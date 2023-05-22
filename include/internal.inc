@@ -7,6 +7,10 @@ include limits.inc
 include windows.inc
 include mtdll.inc
 
+define __IOINFO_TM_ANSI    0
+define __IOINFO_TM_UTF8    1
+define __IOINFO_TM_UTF16LE 2
+
 externdef _exitflag:char_t
 
 __crtExitProcess proto WINAPI :SINT
@@ -57,7 +61,7 @@ endif
 
 ifdef _DEBUG
 _CALL_INVALID_PARAMETER macro expr
-    exitm<_invalid_parameter(expr, "", __FILEW__, @Line, 0)>
+    exitm<_invalid_parameter(expr, __func__, __FILE__, __LINE__, 0)>
     endm
 else
 _CALL_INVALID_PARAMETER macro expr
@@ -75,19 +79,17 @@ _VALIDATE_RETURN macro expr, errorcode, retexpr
 
     .if !( expr )
 
-        mov errno,errorcode
+        _set_errno(errorcode)
         _INVALID_PARAMETER(_CRT_WIDE(expr))
-        mov eax,retexpr
-        .break
+        .return(retexpr)
     .endif
     exitm<>
     endm
 
 _VALIDATE_RETURN_NOEXC macro expr, errorcode, retexpr
     .if ( !(expr) )
-        mov errno,errorcode
-        mov eax,retexpr
-        .break
+        _set_errno(errorcode)
+        .return(retexpr)
     .endif
     exitm<>
     endm

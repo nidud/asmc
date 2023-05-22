@@ -135,7 +135,7 @@ pushitem endp
 
 popitem proc __ccall private stk:ptr
 
-    mov rdx,stk
+    ldr rdx,stk
     mov rcx,[rdx]
     mov [rdx],[rcx].qnode.next
     mov rax,[rcx].qnode.elmt
@@ -407,7 +407,7 @@ ParseInline proc __ccall private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, to
 
     .if ( Parse_Pass == PASS_1 )
 
-        mov rcx,sym
+        ldr rcx,sym
         or [rcx].asym.flags,S_ISINLINE
 
         xor esi,esi
@@ -468,7 +468,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
    .new curr:int_t
    .new ParamReverse:int_t = 0 ; Reverse direction
 
-    mov rcx,p
+    ldr rcx,p
     mov rsi,[rcx].dsym.procinfo
     movzx edi,[rcx].asym.langtype
    .new fastcall_id:int_t = GetFastcallId( edi )
@@ -907,7 +907,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
   .new oldpublic:int_t
   .new Ofssize:byte
 
-    mov rdi,p
+    ldr rdi,p
     mov rsi,[rdi].dsym.procinfo
     mov eax,[rdi].asym.flags
     and eax,S_ISPUBLIC
@@ -1361,7 +1361,7 @@ ParseProc endp
 
 CreateProc proc __ccall uses rsi rdi sym:ptr asym, name:string_t, state:sym_state
 
-    mov rax,sym
+    ldr rax,sym
     .if ( rax == NULL )
         mov rdi,name
         .if ( B[rdi] )
@@ -1433,7 +1433,7 @@ CreateProc endp
 
 DeleteProc proc __ccall uses rsi rdi p:ptr dsym
 
-    mov rdi,p
+    ldr rdi,p
     .if ( [rdi].asym.state == SYM_INTERNAL )
 
         mov rsi,[rdi].dsym.procinfo
@@ -1463,8 +1463,8 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local is_global:int_t
   local p:ptr proc_info
 
-    mov rbx,tokenarray
-    mov ecx,i
+    ldr rbx,tokenarray
+    ldr ecx,i
 
     .if ( ecx != 1 )
         imul ecx,ecx,asm_tok
@@ -1707,7 +1707,7 @@ ProcDir endp
 
 CopyPrototype proc __ccall uses rsi rdi p:ptr dsym, src:ptr dsym
 
-    mov rdi,p
+    ldr rdi,p
     mov rsi,[rdi].dsym.procinfo
     mov rcx,src
     .if ( !( [rcx].asym.flags & S_ISPROC ) )
@@ -1759,7 +1759,7 @@ WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
    .new segnamebuff[12]:char_t
    .new buffer[128]:char_t
 
-    mov rdi,p
+    ldr rdi,p
     .if ( endprolog_found == FALSE )
         asmerr( 3007, [rdi].asym.name )
     .endif
@@ -1879,7 +1879,7 @@ ProcFini proc __ccall private uses rsi rdi p:ptr dsym
     ; v2.06: emit an error if current segment isn't equal to
     ; the one of the matching PROC directive. Close the proc anyway!
     ;
-    mov rdi,p
+    ldr rdi,p
     mov rax,[rdi].asym.segm
 
     .if ( CurrSeg == rax )
@@ -1981,7 +1981,7 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
   local buffer[128]:char_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     .if ( i != 1 || [rbx+2*asm_tok].token != T_FINAL )
         imul ecx,i,asm_tok
         .return( asmerr( 2008, [rbx+rcx].tokpos ) )
@@ -2518,8 +2518,8 @@ win64_MoveRegParam endp
 
 win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size:ptr inr_t, param:ptr dsym
 
-    mov rsi,size
-    mov rdi,param
+    ldr rsi,size
+    ldr rdi,param
     mov rcx,CurrProc
     mov cl,[rcx].asym.langtype
 
@@ -2566,7 +2566,7 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:ptr proc_info
    .new index:int_t
    .new maxregs:int_t = 4
 
-    mov rsi,info
+    ldr rsi,info
     mov rdi,CurrProc
     .if ( [rdi].asym.langtype == LANG_VECTORCALL )
         mov maxregs,6
@@ -2637,7 +2637,7 @@ win64_SaveRegParams endp
 push_user_registers proc __ccall private uses rsi rdi rbx list:string_t, useframe:int_t, offs:ptr int_t
 
    .new cntxmm:int_t = 0
-    mov rsi,list
+    ldr rsi,list
     .if ( rsi )
 
         lodsw
@@ -3692,7 +3692,7 @@ pop_register proc __ccall private uses rsi rdi regist:ptr word
 
     ; Pop the register when a procedure ends
 
-    mov rsi,regist
+    ldr rsi,regist
     .return .if ( rsi == NULL )
 
     movzx edi,word ptr [rsi]
@@ -4169,8 +4169,11 @@ RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:in
    .new p:string_t
    .new buffer[MAX_LINE_LEN]:char_t ; stores modified RETN/RETF/IRET instruction
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    ldr ecx,i
+    ldr rdx,tokenarray
+
+    imul ebx,ecx,asm_tok
+    add rbx,rdx
     .if ( [rbx].tokval == T_IRET || [rbx].tokval == T_IRETD || [rbx].tokval == T_IRETQ )
         mov is_iret,TRUE
     .elseif ( [rbx].tokval == T_RET && ModuleInfo.RetStack )

@@ -11,7 +11,8 @@ include string.inc
 
 getenv proc uses rsi rdi enval:string_t
 
-    .ifd ( strlen( enval ) == 0 )
+    ldr rcx,enval
+    .ifd ( strlen( rcx ) == 0 )
 	.return
     .endif
 

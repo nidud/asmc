@@ -502,7 +502,7 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
    .new format[512]:char_t
 
     lea rdi,format
-    mov ebx,value
+    ldr ebx,value
 
     .repeat
 
@@ -650,7 +650,7 @@ PrintNote proc __ccall value:int_t, args:vararg
 
    .new erbuf[512]:byte
 
-    mov ecx,value
+    ldr ecx,value
     lea rdx,NOTE
    .return( print_err( &erbuf, [rdx+rcx*string_t], &args ) )
 

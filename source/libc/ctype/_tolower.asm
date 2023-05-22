@@ -10,7 +10,7 @@ include ctype.inc
 
 _tolower proc c:int_t
 
-    mov eax,c
+    ldr eax,c
     sub al,'A'
     add al,'a'
     ret

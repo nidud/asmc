@@ -14,9 +14,8 @@ _wperror proc message:wstring_t
 
   local buffer[512]:char_t
 
-ifndef _WIN64
-    mov ecx,message
-endif
+    ldr rcx,message
+
     .if ( rcx )
 
         xor edx,edx

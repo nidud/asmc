@@ -12,15 +12,9 @@ include string.inc
 
 strncpy proc uses rdi dst:string_t, src:string_t, count:size_t
 
-ifdef _WIN64
-    mov     rdi,rcx
-    mov     r11,rcx
-    mov     ecx,r8d
-else
-    mov     edi,dst
-    mov     edx,src
-    mov     ecx,count
-endif
+    ldr     rdi,dst
+    ldr     rdx,src
+    ldr     rcx,count
 .0:
     test    ecx,ecx
     jz      .1
@@ -33,11 +27,7 @@ endif
     jnz     .0
     rep     stosb
 .1:
-ifdef _WIN64
-    mov     rax,r11
-else
-    mov     eax,dst
-endif
+    mov     rax,dst
     ret
 
 strncpy endp

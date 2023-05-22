@@ -16,10 +16,9 @@ _fptostr proc __ccall buf:string_t, digits:int_t, pflt:ptr STRFLT
     ; digit is used to handle overflow on rounding (e.g. 9.9999...
     ; becomes 10.000...) which requires a carry into the first digit.
 
-ifndef _WIN64
-    mov ecx,buf
-    mov edx,pflt
-endif
+    ldr rcx,buf
+    ldr rdx,pflt
+
     mov byte ptr [rcx],'0'
     inc rcx
 

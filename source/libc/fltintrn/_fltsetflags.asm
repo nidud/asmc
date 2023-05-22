@@ -12,15 +12,10 @@ include fltintrn.inc
 
 _fltsetflags proc __ccall uses rsi rdi fp:ptr STRFLT, string:string_t, flags:uint_t
 
-ifdef _WIN64
-    mov rdi,rcx
-    mov rsi,rdx
-    mov ecx,r8d
-else
-    mov rdi,fp
-    mov rsi,string
-    mov ecx,flags
-endif
+    ldr rdi,fp
+    ldr rsi,string
+    ldr ecx,flags
+
     xor eax,eax
 ifdef _WIN64
     mov [rdi].mantissa.l,rax

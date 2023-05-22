@@ -13,9 +13,7 @@ include stdlib.inc
 
 srand proc seed:uint_t
 
-ifndef _WIN64
-    mov ecx,seed
-endif
+    ldr ecx,seed
     mov holdrand,ecx
     ret
 

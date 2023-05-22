@@ -78,12 +78,13 @@ The options listed in the following table.
 | [**-ws**](../directive/opt_wstring.md)[_CodePage_] | Store quoted strings as Unicode. Defines _UNICODE. |
 | **-WX** | Returns an error code if warnings are generated. |
 | **-X** | Ignore INCLUDE environment path. |
+| **-Z7** | Add full symbolic debugging information. |
 | **-zcw** | No decoration for C symbols. |
 | **-Zd** | Generates line-number information in object file. |
 | **-Zf** | Make all symbols public. |
 | **-zf**[01] | Set FASTCALL type: MS/OW. |
 | **-Zg** | Generate code to match Masm. |
-| [**-Zi**](Zi.md) | Add symbolic debug info. |
+| [**-Zi**](Zi.md) | Add symbolic debugging information. |
 | **-zlc** | No OMF records of data in code. |
 | **-zld** | No OMF records of far call. |
 | **-zlf** | Suppress items in COFF: No file entry. |

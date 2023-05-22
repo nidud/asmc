@@ -4,7 +4,9 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include internal.inc
+include stdlib.inc
+
+public _exitflag
 
     .data
     _exitflag sbyte 0

@@ -5,8 +5,8 @@ define _INC_INTERNAL_SECURECRT
 include internal.inc
 
 ;; string resetting
-_FILL_STRING    equ _SECURECRT__FILL_STRING
-_FILL_BYTE      equ _SECURECRT__FILL_BYTE
+_FILL_STRING    equ <_SECURECRT__FILL_STRING>
+_FILL_BYTE      equ <_SECURECRT__FILL_BYTE>
 
 _RESET_STRING macro _String, _Size
     mov _CHAR ptr [_String],0
@@ -77,23 +77,20 @@ _RETURN_ERROR macro _Msg, _Ret
 
 ;; returns without calling _invalid_parameter
 _RETURN_NO_ERROR macro
-    xor eax,eax
-    exitm<.break>
+    exitm<.return(0)>
     endm
 
 ;; Note that _RETURN_TRUNCATE does not set errno
 _RETURN_TRUNCATE macro
-    mov eax,STRUNCATE
-    exitm<.break>
+    exitm<.return(STRUNCATE)>
     endm
 
 _SET_MBCS_ERROR macro
-    exitm<mov errno,EILSEQ>
+    exitm<_set_errno(EILSEQ)>
     endm
 
 _RETURN_MBCS_ERROR macro
-    mov eax,_SET_MBCS_ERROR
-    exitm<.break>
+    exitm<.return(_SET_MBCS_ERROR)>
     endm
 
 ;; locale dependent

@@ -17,10 +17,10 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
   local count:UINT          ; num bytes left to read
   local bufsize:UINT        ; size of stream buffer
 
-    mov rdi,buffer
-    mov rbx,fp
+    ldr rdi,buffer
+    ldr rbx,fp
 
-    mov eax,size
+    ldr eax,size
     mul num
     .return .if !eax
 

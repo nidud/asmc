@@ -320,8 +320,8 @@ endif
 
 my_fgets proc __ccall private uses rsi rdi buffer:string_t, max:int_t, fp:LPFILE
 
-    mov rdi,buffer
-    mov edx,max
+    ldr rdi,buffer
+    ldr edx,max
     lea rsi,[rdi+rdx]
 
     my_fgetc( fp )
@@ -820,7 +820,7 @@ SIZE_STRINGBUFFER equ ( MAX_LINE_LEN * MAX_MACRO_NESTING )
 
 PushInputStatus proc __ccall uses rsi oldstat:ptr input_status
 
-    mov rsi,oldstat
+    ldr rsi,oldstat
 
     mov [rsi].token_stringbuf,token_stringbuf
     mov [rsi].token_count,Token_Count
@@ -856,7 +856,7 @@ PushInputStatus endp
 
 PopInputStatus proc __ccall uses rsi newstat:ptr input_status
 
-    mov rsi,newstat
+    ldr rsi,newstat
     mov ModuleInfo.stringbufferend,token_stringbuf
     mov token_stringbuf,[rsi].token_stringbuf
     mov Token_Count,[rsi].token_count
@@ -969,7 +969,7 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
     mov oldstrings,token_stringbuf
     mov oldsrcline,srclinebuffer
 
-    mov rsi,p
+    ldr rsi,p
     .if ( [rsi].start != rax )
 
         mov rbx,LclAlloc( ModuleInfo.max_line_len )

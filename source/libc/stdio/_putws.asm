@@ -12,10 +12,9 @@ include wchar.inc
 
 _putws proc uses rsi rdi string:LPWSTR
 
-ifndef _WIN64
-    mov ecx,string
-endif
-    .for ( rsi = rcx, edi = 0 : word ptr [rsi] : rsi += 2, edi++ )
+    ldr rsi,string
+
+    .for ( edi = 0 : word ptr [rsi] : rsi += 2, edi++ )
 
         movzx ecx,word ptr [rsi]
         .if ( _putwch( cx ) == WEOF )

@@ -10,9 +10,10 @@ include stdio.inc
 
 fputwc proc wc:wint_t, fp:LPFILE
 
+    ldr cx,wc
+    ldr rdx,fp
 ifndef _WIN64
-    movzx ecx,wc
-    mov edx,fp
+    movzx ecx,cx
 endif
     sub [rdx]._iobuf._cnt,2
     .ifl

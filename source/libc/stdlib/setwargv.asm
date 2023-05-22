@@ -22,11 +22,9 @@ setwargv proc uses rsi rdi rbx argc:ptr int_t, cmdline:ptr wchar_t
   local buffer:string_t
   local i:int_t
 
-ifndef _WIN64
-    mov ecx,argc
-    mov edx,cmdline
-endif
-    mov rsi,rdx
+    ldr rcx,argc
+    ldr rsi,cmdline
+
     mov dword ptr [rcx],0
     mov buffer,malloc(MAXARGSIZE*2)
     mov rdi,rax

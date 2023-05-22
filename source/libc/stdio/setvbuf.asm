@@ -14,9 +14,9 @@ include limits.inc
 
 setvbuf proc uses rsi rdi rbx fp:LPFILE, buf:LPSTR, tp:size_t, bsize:size_t
 
-    mov rbx,fp
-    mov rsi,tp
-    mov rdi,bsize
+    ldr rbx,fp
+    ldr rsi,tp
+    ldr rdi,bsize
 
     .if ( esi != _IONBF && ( edi < 2 || edi > INT_MAX || ( esi != _IOFBF && esi != _IOLBF ) ) )
         .return( -1 )

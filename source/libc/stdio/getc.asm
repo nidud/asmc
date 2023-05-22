@@ -10,9 +10,8 @@ include stdio.inc
 
 getc proc fp:ptr FILE
 
-ifndef _WIN64
-    mov ecx,fp
-endif
+    ldr rcx,fp
+
     dec [rcx]._iobuf._cnt
     .ifl
         _filbuf(rcx)

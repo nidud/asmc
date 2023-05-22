@@ -10,8 +10,8 @@ include crtl.inc
 
 strfcat proc uses rsi rdi buffer:string_t, path:string_t, file:string_t
 
-    mov rdx,buffer
-    mov rsi,path
+    ldr rsi,path
+    ldr rdx,buffer
 
     xor eax,eax
     mov ecx,-1

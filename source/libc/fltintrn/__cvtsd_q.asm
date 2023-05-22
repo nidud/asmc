@@ -9,12 +9,9 @@ include fltintrn.inc
 
 __cvtsd_q proc __ccall uses rbx q:ptr qfloat_t, d:ptr double_t
 
-ifdef _WIN64
-    mov     rbx,rcx
-else
-    mov     ebx,q
-    mov     edx,d
-endif
+    ldr     rbx,q
+    ldr     rdx,d
+
     mov     eax,[rdx]
     mov     edx,[rdx+4]
     mov     ecx,edx

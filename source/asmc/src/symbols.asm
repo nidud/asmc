@@ -172,7 +172,7 @@ SymClearLocal endp
 
 SymGetLocal proc __ccall uses rbx psym:asym_t
 
-    mov rcx,psym
+    ldr rcx,psym
     mov rdx,[rcx].dsym.procinfo
     lea rdx,[rdx].proc_info.labellist
     xor ecx,ecx
@@ -204,7 +204,7 @@ define FNVBASE  0x811c9dc5
 SymSetLocal proc __ccall uses rsi rdi psym:asym_t
 
     xor eax,eax
-    mov rsi,psym
+    ldr rsi,psym
     lea rdx,lsym_table
     mov rdi,rdx
     mov ecx,sizeof(lsym_table) / size_t
@@ -237,7 +237,7 @@ SymSetLocal endp
 
 SymAlloc proc __ccall uses rsi rdi name:string_t
 
-    mov rsi,name
+    ldr rsi,name
     mov edi,tstrlen( rsi )
     LclAlloc( &[rdi+dsym+1] )
 
@@ -745,7 +745,7 @@ SymLookupLocal endp
 
 SymFree proc __ccall sym:asym_t
 
-    mov rcx,sym
+    ldr rcx,sym
     movzx eax,[rcx].asym.state
 
     .switch eax
@@ -785,8 +785,8 @@ SymFree endp
 
 SymAddLocal proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t
 
-    mov rbx,sym
-    mov rsi,name
+    ldr rbx,sym
+    ldr rsi,name
 
     .if SymFind( rsi )
 
@@ -825,7 +825,7 @@ SymAddLocal endp
 
 SymAddGlobal proc __ccall sym:asym_t
 
-    mov rcx,sym
+    ldr rcx,sym
     .if SymFind( [rcx].asym.name )
 
         mov rcx,sym
@@ -1086,7 +1086,7 @@ SymPassInit endp
 
 SymGetAll proc __ccall syms:asym_t
 
-    mov rdx,syms
+    ldr rdx,syms
     xor ecx,ecx
     ;
     ; copy symbols to table
@@ -1114,8 +1114,8 @@ SymGetAll endp
 SymEnum proc __ccall uses rbx sym:asym_t, pi:ptr int_t
 
     lea rbx,gsym_table
-    mov rax,sym
-    mov rdx,pi
+    ldr rax,sym
+    ldr rdx,pi
 
     .if ( rax )
 

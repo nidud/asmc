@@ -12,9 +12,7 @@ include string.inc
 
 strlen proc string:string_t
 
-ifndef _WIN64
-    mov         ecx,string
-endif
+    ldr         rcx,string
 
 ifdef __AVX__
 

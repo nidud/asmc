@@ -183,7 +183,7 @@ fastcall_init endp
 GetSegmentPart proc __ccall uses rsi rdi rbx opnd:ptr expr, buffer:string_t, fullparam:string_t
 
     mov esi,T_NULL
-    mov rdi,opnd
+    ldr rdi,opnd
     mov rax,[rdi].expr.sym
     mov rdx,[rdi].expr.override
 
@@ -247,7 +247,7 @@ ifndef ASMC64
 ms32_fcstart proc __ccall private uses rbx pp:dsym_t, numparams:int_t, start:int_t,
     tokenarray:token_t, value:ptr int_t
 
-    mov rbx,pp
+    ldr rbx,pp
 
     .if ( GetSymOfssize( rbx ) == USE16 )
         .return 0
@@ -272,7 +272,7 @@ ms32_fcstart endp
 
 ms32_fcend proc __ccall private pp:dsym_t, numparams:int_t, value:int_t
 
-    mov rcx,pp
+    ldr rcx,pp
     .if ( value && [rcx].asym.flags & S_ISINLINE )
         AddLineQueueX( " add esp, %u", value )
     .endif
@@ -286,7 +286,7 @@ ms32_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
   local size:int_t
 
-    mov rsi,param
+    ldr rsi,param
 
     .if abs_param( pp, index, rsi, paramvalue )
 
@@ -403,8 +403,8 @@ ms32_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
 
   local regname[32]:char_t
 
-    mov rsi,paranode
-    mov rdi,used
+    ldr rsi,paranode
+    ldr rdi,used
     mov ebx,SizeFromMemtype( [rsi].asym.mem_type, [rsi].asym.Ofssize, [rsi].asym.type )
 
     ; v2.07: 16-bit has 3 register params (AX,DX,BX)
@@ -460,7 +460,7 @@ endif
 watc_fcstart proc __ccall private pp: dsym_t, numparams:int_t, start:int_t,
         tokenarray: token_t, value: ptr int_t
 
-    mov rcx,pp
+    ldr rcx,pp
 
     ; v2.33.25: add *this to fcscratch
 
@@ -476,7 +476,7 @@ watc_fcstart endp
 
 watc_fcend proc __ccall private pp:dsym_t, numparams:int_t, value:int_t
 
-    mov     rax,pp
+    ldr     rax,pp
     movzx   edx,ModuleInfo.Ofssize
     lea     rcx,stackreg
     mov     ecx,[rcx+rdx*4]
@@ -501,7 +501,7 @@ watc_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     ; get the register for parms 0 to 3,
     ; using the watcom register parm passing conventions ( A D B C )
 
-    mov rbx,param
+    ldr rbx,param
 
     .if abs_param( pp, index, rbx, paramvalue )
 
@@ -786,8 +786,8 @@ watc_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
   .new firstreg:int_t
   .new Ofssize:byte
 
-    mov rdi,p
-    mov rsi,paranode
+    ldr rdi,p
+    ldr rsi,paranode
     mov ebx,SizeFromMemtype( [rsi].asym.mem_type, [rsi].asym.Ofssize, [rsi].asym.type )
     .if ( ebx == 0 && [rsi].asym.mem_type == MT_ABS )
         mov ebx,4
@@ -928,8 +928,8 @@ ms64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
     ; v2.29: reg::reg id to fcscratch
     ; v2.34: changed to paralist
 
-    mov rbx,pp
-    mov eax,numparams
+    ldr rbx,pp
+    ldr eax,numparams
     mov esi,4
     mov edi,8
     .if ( [rbx].asym.langtype == LANG_VECTORCALL )
@@ -1675,13 +1675,13 @@ ms64_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
 
    .new float_regs:byte = 4
 
-    mov rsi,p
+    ldr rsi,p
     .if ( [rsi].langtype == LANG_VECTORCALL )
         mov float_regs,6
     .endif
 
-    mov rdi,used
-    mov rsi,paranode
+    ldr rdi,used
+    ldr rsi,paranode
     mov ebx,SizeFromMemtype( [rsi].mem_type, [rsi].Ofssize, [rsi].type )
     mov ecx,[rdi]
     mov dl,[rsi].mem_type
@@ -1780,7 +1780,7 @@ elf64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, 
 
     ; v2.28: xmm id to fcscratch
 
-    mov rdi,pp
+    ldr rdi,pp
     mov rdx,[rdi].dsym.procinfo
 
     xor eax,eax ; float count
@@ -2345,8 +2345,8 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
 
   local regname[32]:sbyte
 
-    mov rdi,used
-    mov rsi,paranode
+    ldr rdi,used
+    ldr rsi,paranode
     mov ebx,SizeFromMemtype( [rsi].mem_type, [rsi].Ofssize, [rsi].type )
     mov ecx,[rdi]
     mov dl,[rsi].mem_type
@@ -2452,7 +2452,7 @@ elf64_pcheck endp
 vc32_fcstart proc __ccall private pp:dsym_t, numparams:int_t, start:int_t,
     tokenarray:token_t, value:ptr int_t
 
-    mov rcx,pp
+    ldr rcx,pp
     .for ( edx = 0, rax = [rcx].dsym.procinfo,
            rax = [rax].proc_info.paralist : rax : rax = [rax].dsym.nextparam )
 
@@ -2477,7 +2477,7 @@ vc32_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
    .new size:int_t
    .new value[64]:char_t
 
-    mov rsi,param
+    ldr rsi,param
     xor eax,eax
 
     mov cl,[rsi].asym.state
@@ -2630,8 +2630,8 @@ vc32_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
 
    .new regname[32]:char_t
 
-    mov rdi,used
-    mov rsi,paranode
+    ldr rdi,used
+    ldr rsi,paranode
     mov ebx,SizeFromMemtype( [rsi].asym.mem_type, [rsi].asym.Ofssize, [rsi].asym.type )
 
     .if ( [rsi].asym.mem_type & MT_FLOAT )
@@ -2667,7 +2667,7 @@ vc32_pcheck endp
 
 vc32_return proc __ccall private uses rdi rbx p:ptr dsym, buffer:string_t
 
-    mov rcx,p
+    ldr rcx,p
     mov rdx,[rcx].dsym.procinfo
     xor ebx,ebx
     .for ( rdi = [rdx].proc_info.paralist: rdi: rdi = [rdi].dsym.nextparam )
@@ -2695,8 +2695,8 @@ abs_param proc __ccall private uses rbx pp:dsym_t, index:int_t, param:dsym_t, pa
 
     ; skip arg if :vararg and inline
 
-    mov rcx,pp
-    mov rbx,param
+    ldr rcx,pp
+    ldr rbx,param
     .if ( [rbx].asym.sflags & S_ISVARARG && [rcx].asym.flags & S_ISINLINE )
         .return( 1 )
     .endif
@@ -2729,7 +2729,7 @@ abs_param endp
 checkregoverwrite proc __ccall private uses rsi rdi rbx opnd:ptr expr,
         regs_used:ptr byte, reg:ptr dword, destroyed:ptr byte, rmask:dword
 
-    mov rdi,opnd
+    ldr rdi,opnd
     xor esi,esi
 
     .if ( [rdi].expr.base_reg )
@@ -2807,8 +2807,8 @@ checkregoverwrite endp
 
 GetPSize proc __ccall private uses rdi address:int_t, param:asym_t, opnd:expr_t
 
-    mov rdx,param
-    mov rdi,opnd
+    ldr rdx,param
+    ldr rdi,opnd
 
     ; v2.11: default size is 32-bit, not 64-bit
 

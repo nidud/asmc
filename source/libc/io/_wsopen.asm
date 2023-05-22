@@ -21,12 +21,11 @@ _wsopen proc uses rsi rdi rbx path:wstring_t, oflag:int_t, shflag:int_t, args:va
 
    .new SecurityAttributes:SECURITY_ATTRIBUTES = { SECURITY_ATTRIBUTES, NULL, 0 }
 
-ifndef _WIN64
-    mov edx,oflag
-endif
+    ldr edx,oflag
+
     xor ebx,ebx
     .if ( edx & O_NOINHERIT )
-        mov bl,FH_NOINHERIT
+        mov bl,FNOINHERIT
     .else
         inc SecurityAttributes.bInheritHandle
     .endif
@@ -35,9 +34,9 @@ endif
     ;
     .if !( edx & O_BINARY )
         .if ( edx & O_TEXT )
-            or bl,FH_TEXT
+            or bl,FTEXT
         .elseif ( _fmode != O_BINARY ) ; check default mode
-            or bl,FH_TEXT
+            or bl,FTEXT
         .endif
     .endif
 
@@ -157,7 +156,7 @@ endif
 
     xor esi,esi
     lea rcx,_osfile
-    .while ( byte ptr [rcx+rsi] & FH_OPEN )
+    .while ( byte ptr [rcx+rsi] & FOPEN )
 
         inc esi
         .if ( esi == _nfile  )
@@ -197,21 +196,21 @@ endif
     lea rcx,_osfhnd
     mov [rcx+rsi*size_t],rax
     lea rcx,_osfile
-    or  byte ptr [rcx+rsi],FH_OPEN
+    or  byte ptr [rcx+rsi],FOPEN
 
     .while 1
 
         .break .ifd ( GetFileType( rax ) == FILE_TYPE_UNKNOWN )
 
         .if ( eax == FILE_TYPE_CHAR )
-            or bl,FH_DEVICE
+            or bl,FDEV
         .elseif ( eax == FILE_TYPE_PIPE )
-            or bl,FH_PIPE
+            or bl,FPIPE
         .endif
         lea rax,_osfile
         or  [rax+rsi],bl
 
-        .if ( !( bl & FH_DEVICE or FH_PIPE ) && bl & FH_TEXT && edi & O_RDWR )
+        .if ( !( bl & FDEV or FPIPE ) && bl & FTEXT && edi & O_RDWR )
 
             .ifd ( _lseek( esi, -1, SEEK_END ) != -1 )
 
@@ -235,8 +234,8 @@ endif
 
         lea rax,_osfile
         add rax,rsi
-        .if ( !( byte ptr [rax] & FH_DEVICE or FH_PIPE ) && edi & O_APPEND )
-            or byte ptr [rax],FH_APPEND
+        .if ( !( byte ptr [rax] & FDEV or FPIPE ) && edi & O_APPEND )
+            or byte ptr [rax],FAPPEND
         .endif
         .return esi
     .endw

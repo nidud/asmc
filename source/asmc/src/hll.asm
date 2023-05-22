@@ -162,8 +162,8 @@ RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:string_t, start1:ui
    .new reg:int_t = 0
    .new b:byte
 
-    mov rdi,dst
-    mov rbx,tokenarray
+    ldr rdi,dst
+    ldr rbx,tokenarray
 
     ; v2.30 - test if second operand starts with '&'
 
@@ -254,7 +254,7 @@ RenderJcc proc __ccall uses rdi dst:string_t, cc:int_t, _neg:int_t, _label:int_t
     ;
     ; create the jump opcode: j[n]cc
     ;
-    mov rdi,dst
+    ldr rdi,dst
 
     mov eax,'j'
     stosb
@@ -289,7 +289,7 @@ LGetToken proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, t
     ; because the ASM evaluator may report an error if such a thing
     ; is found ( CARRY?, ZERO? and alikes will be regarded as - not yet defined - labels )
     ;
-    mov rsi,i
+    ldr rsi,i
     mov edi,[rsi]
 
     imul ebx,edi,asm_tok
@@ -341,7 +341,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         buffer:     string_t,
         hllop:      ptr hll_opnd
 
-    mov  rsi,i
+    ldr  rsi,i
     mov  edi,[rsi]
     imul ebx,edi,asm_tok
     add  rbx,tokenarray
@@ -743,7 +743,7 @@ ReplaceLabel proc __ccall private uses rsi rdi rbx p:ptr, olabel:dword, nlabel:d
 
   local oldlbl[16]:char_t, newlbl[16]:char_t
 
-    mov rbx,p
+    ldr rbx,p
     lea rsi,oldlbl
     lea rdi,newlbl
 
@@ -956,9 +956,9 @@ GenerateFloat proto __ccall :int_t, :ptr asm_tok
     assume rbx:ptr asm_tok
 
 ExpandCStrings proc __ccall public uses rdi rbx tokenarray:ptr asm_tok
-ifndef _WIN64
-    mov ecx,tokenarray
-endif
+
+    ldr rcx,tokenarray
+
     xor eax,eax
     .return .if ( !( [rcx].asm_tok.flags & T_EXPAND ) )
     .return .if ( ModuleInfo.strict_masm_compat == 1 )
@@ -2105,13 +2105,13 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
 
   local hllop:hll_opnd, b[MAX_LINE_LEN]:char_t
 
-    mov rsi,i
-    mov rbx,tokenarray
+    ldr rsi,i
+    ldr rbx,tokenarray
 
     mov hllop.lastjmp,NULL
     mov hllop.lasttruelabel,0
 
-    mov rdx,hll
+    ldr rdx,hll
     mov eax,[rdx].hll_item.flags
     and eax,HLLF_EXPRESSION
 
@@ -2285,8 +2285,8 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, i:ptr
    .new oldstat:input_status
    .new delayed:byte = 0
 
-    mov rsi,hll
-    mov rbx,tokenarray
+    ldr rsi,hll
+    ldr rbx,tokenarray
     mov rdi,buffer
 
     PushInputStatus( &oldstat )
@@ -2441,7 +2441,7 @@ RenderUntilXX proc __ccall private uses rdi hll:ptr hll_item, cmd:uint_t
 
   local buffer[32]:char_t
 
-    mov eax,cmd
+    ldr eax,cmd
     mov ecx,T_CX - T_AX
 ifndef ASMC64
     .if ( ModuleInfo.Ofssize == USE16 )
@@ -2469,7 +2469,7 @@ GetJumpString proc __ccall private cmd:uint_t
 
     option switch:table
 
-    mov eax,cmd
+    ldr eax,cmd
     xor ecx,ecx
     .switch eax
 
@@ -2583,7 +2583,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   .new buffer[MAX_LINE_LEN]:char_t
   .new token:uint_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     lea rdi,buffer
 
     imul eax,i,asm_tok

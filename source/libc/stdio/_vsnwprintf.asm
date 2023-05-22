@@ -12,10 +12,9 @@ _vsnwprintf proc string:LPWSTR, count:size_t, format:LPWSTR, args:ptr
 
   local o:_iobuf
 
-ifndef _WIN64
-    mov ecx,string
-    mov edx,count
-endif
+    ldr rcx,string
+    ldr rdx,count
+
     mov o._flag,_IOWRT or _IOSTRG
     mov o._cnt,edx
     mov o._ptr,rcx

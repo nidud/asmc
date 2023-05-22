@@ -398,7 +398,7 @@ ExterndefDirective endp
 
 ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     .if ( Parse_Pass != PASS_1 )
 
         ; v2.04: set the "defined" flag

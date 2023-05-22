@@ -23,9 +23,9 @@ include hllext.inc
 
 RenderCase proc __ccall uses rsi rdi rbx hll:ptr hll_item, case:ptr hll_item, buffer:string_t
 
-    mov rsi,hll
-    mov rbx,case
-    mov rdi,buffer
+    ldr rsi,hll
+    ldr rbx,case
+    ldr rdi,buffer
     mov rcx,[rbx].hll_item.condlines
 
     .if ( rcx == NULL )
@@ -63,8 +63,8 @@ RenderCase endp
 
 RenderCCMP proc __ccall uses rsi rdi rbx hll:ptr hll_item, buffer:string_t
 
-    mov rsi,hll
-    mov rdi,buffer
+    ldr rsi,hll
+    ldr rdi,buffer
     AddLineQueueX( "%s%s", rdi, LABELQUAL )
     mov rbx,[rsi].caselist
     .while rbx
@@ -113,7 +113,7 @@ GetHighCount endp
 
 SetLowCount proc fastcall uses rbx hll:ptr hll_item, count:ptr int_t, min:intptr_t, dist:intptr_t
 
-    mov rbx,min
+    ldr rbx,min
     add rbx,dist
     xor eax,eax
     mov rcx,[rcx].caselist
@@ -134,7 +134,7 @@ SetLowCount endp
 
 SetHighCount proc fastcall uses rbx hll:ptr hll_item, count:ptr int_t, max:intptr_t, dist:intptr_t
 
-    mov rbx,max
+    ldr rbx,max
     sub rbx,dist
     xor eax,eax
     mov rcx,[rcx].caselist
@@ -192,7 +192,7 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
     xor edi,edi ; dynamic count
     xor ebx,ebx ; static count
 
-    mov rdx,tokenarray
+    ldr rdx,tokenarray
     mov oldtok,[rdx].asm_tok.tokpos
     mov rsi,hll
     mov eax,[rsi].flags
@@ -300,7 +300,7 @@ GetCaseValue endp
 GetMaxCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item,
         min:ptr intptr_t, max:ptr intptr_t, min_table:ptr int_t, max_table:ptr int_t
 
-    mov rsi,hll
+    ldr rsi,hll
     xor edi,edi
 ifdef _WIN64
     mov rax,_I64_MIN
@@ -385,7 +385,7 @@ GetMaxCaseValue endp
 
 IsCaseColon proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
 
-    mov rsi,tokenarray
+    ldr rsi,tokenarray
     xor edi,edi
     xor edx,edx
 
@@ -421,7 +421,7 @@ RenderMultiCase proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, buf
 
   local result:int_t, colon:token_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     add rbx,asm_tok
     mov rax,rbx
     mov rsi,rbx
@@ -641,8 +641,8 @@ RenderSwitch proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
    .new start_addr:string_t = &l_start
    .new base_addr:string_t = exit_addr
 
-    mov rsi,hll
-    mov rdi,buffer ; - switch.labels[LSTART]
+    ldr rsi,hll
+    ldr rdi,buffer ; - switch.labels[LSTART]
 
     ; get static case-count
 
@@ -1297,7 +1297,7 @@ RenderJTable proc __ccall uses rsi rdi rbx hll:ptr hll_item
 
   local l_exit[16]:sbyte, l_jtab[16]:sbyte  ; jump table address
 
-    mov rsi,hll
+    ldr rsi,hll
     lea rdi,l_jtab
 
     .if [rsi].labels[LEXIT*4] == 0

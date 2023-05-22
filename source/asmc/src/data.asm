@@ -79,7 +79,7 @@ InitializeArray proc __ccall uses rsi rdi rbx f:ptr sfield, pi:ptr int_t, tokena
   local bArray:char_t
   local rc:int_t
 
-    mov rdx,pi
+    ldr rdx,pi
     mov i,[rdx]
     imul ebx,eax,asm_tok
     add rbx,tokenarray
@@ -502,7 +502,7 @@ output_float proc __ccall uses rsi opnd:ptr expr, size:dword
   local buffer[32]:char_t
 
     assume rsi:ptr expr
-    mov rsi,opnd
+    ldr rsi,opnd
 
     .if ( [rsi].mem_type != MT_REAL16 )
 
@@ -1309,7 +1309,7 @@ checktypes proc __ccall sym:ptr asym, mem_type:byte, type_sym:ptr asym
 
     ; for EXTERNDEF, check type changes
 
-    mov rcx,sym
+    ldr rcx,sym
     mov al,[rcx].asym.mem_type
     .if ( al != MT_EMPTY )
 

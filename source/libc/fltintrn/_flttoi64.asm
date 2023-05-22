@@ -12,9 +12,8 @@ include errno.inc
 
 _flttoi64 proc __ccall p:ptr STRFLT
 
-ifndef _WIN64
-    mov ecx,p
-endif
+    ldr rcx,p
+
     mov dx,[rcx+16]
     mov eax,edx
     and eax,Q_EXPMASK

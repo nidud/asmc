@@ -10,12 +10,9 @@ include stdio.inc
 
 fgetc proc fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,fp
-endif
+    ldr rcx,fp
     dec [rcx]._iobuf._cnt
     .ifl
-
         _filbuf( rcx )
     .else
 

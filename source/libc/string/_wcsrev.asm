@@ -10,9 +10,7 @@ include string.inc
 
 _wcsrev proc uses rbx string:wstring_t
 
-ifndef _WIN64
-    mov ecx,string
-endif
+    ldr rcx,string
 
     .for ( rdx = rcx : word ptr [rdx] : rdx += 2 )
     .endf

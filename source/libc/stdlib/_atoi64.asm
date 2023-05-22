@@ -10,9 +10,7 @@ include stdlib.inc
 
 _atoi64 proc string:string_t
 
-ifndef _WIN64
-    mov ecx,string
-endif
+    ldr rcx,string
     xor eax,eax
     xor edx,edx
 

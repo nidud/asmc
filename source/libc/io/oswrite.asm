@@ -13,7 +13,7 @@ include winbase.inc
 oswrite proc handle:int_t, buffer:ptr, size:uint_t
 
    .new NumberOfBytesWritten:uint_t = 0
-   .new hFile:HANDLE = getosfhnd( handle )
+   .new hFile:HANDLE = _get_osfhandle( handle )
 
     .if ( WriteFile( hFile, buffer, size, &NumberOfBytesWritten, 0 ) == 0 )
 

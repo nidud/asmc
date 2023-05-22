@@ -13,7 +13,7 @@ _chdrive proc drive:int_t
 
    .new newdrive[4]:char_t
 
-    mov eax,drive
+    ldr eax,drive
     .if ( eax < 1 || eax > 31 )
 
         _set_doserrno( ERROR_INVALID_DRIVE )

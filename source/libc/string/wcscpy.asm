@@ -10,10 +10,9 @@ include string.inc
 
 wcscpy proc uses rbx dst:wstring_t, src:wstring_t
 
-ifndef _WIN64
-    mov ecx,dst
-    mov edx,src
-endif
+    ldr rcx,dst
+    ldr rdx,src
+
     mov rax,rcx
     xor ecx,ecx
     .repeat

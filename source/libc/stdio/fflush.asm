@@ -13,10 +13,7 @@ include io.inc
 
 fflush proc uses rbx rdi rsi fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,fp
-endif
-    mov rbx,rcx
+    ldr rbx,fp
     xor esi,esi
     mov eax,[rbx]._flag
     and eax,_IOREAD or _IOWRT

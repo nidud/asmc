@@ -12,9 +12,8 @@ include io.inc
 
 perror proc message:string_t
 
-ifndef _WIN64
-    mov ecx,message
-endif
+    ldr rcx,message
+
     .if ( rcx )
         .if ( byte ptr [rcx] )
 

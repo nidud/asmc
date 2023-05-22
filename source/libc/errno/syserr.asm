@@ -75,7 +75,7 @@ __sys_errlist endp
 
 _sys_err_msg proc m:int_t
 
-    mov ecx,m
+    ldr ecx,m
     .ifs ( ecx < 0 || ecx > sys_nerr )
 
         mov ecx,sys_nerr

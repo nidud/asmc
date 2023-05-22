@@ -35,7 +35,7 @@ externdef directive_tab: fpDirective
 
 WriteCodeLabel proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
 
     .if ( [rbx].token != T_ID )
         .return asmerr( 2008, [rbx].string_ptr )

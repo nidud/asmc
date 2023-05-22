@@ -1,6 +1,8 @@
 ifndef _TERMIOS_H
 define _TERMIOS_H
 
+; c_iflag
+
 define	IGNBRK		0x0001
 define	BRKINT		0x0002
 define	IGNPAR		0x0004
@@ -15,39 +17,41 @@ define	IXON		0x0400
 define	IXANY		0x0800
 define	IXOFF		0x1000
 define	IMAXBEL		0x2000
+define	IUTF8		0x4000
 
-define	OPOST		0x0001
-define	ONLCR		0x0004
-define	OCRNL		0x0008
-define	ONOCR		0x0010
-define	ONLRET		0x0020
+; c_oflag
 
-define	NLDLY		0x0100
+define	OPOST		0x0001 ; Enable implementation-defined output processing.
+define	OLCUC		0x0002 ; (not POSIX) Map lowercase characters to uppercase on output.
+define	ONLCR		0x0004 ; (XSI) Map NL to CR-NL on output.
+define	OCRNL		0x0008 ; Map CR to NL on output.
+define	ONOCR		0x0010 ; Don't output CR at column 0.
+define	ONLRET		0x0020 ; Don't output CR.
+define	OFILL		0x0040 ; Send fill characters for a delay, rather than using a timed delay
+define	OFDEL		0x0080 ; Fill character is ASCII DEL (0177).  If unset, fill
+			       ; character is ASCII NUL ('\0'). (Not implemented on Linux.)
+define	NLDLY		0x0100 ; Newline delay mask.
 define	NL0		0x0000
 define	NL1		0x0100
-define	TABDLY		0x1800
-define	TAB0		0x0000
-define	TAB1		0x0800
-define	TAB2		0x1000
-define	TAB3		0x1800
-define	CRDLY		0x0600
+define	CRDLY		0x0600 ; Carriage return delay mask.
 define	_CR0		0x0000
 define	_CR1		0x0200
 define	_CR2		0x0400
 define	_CR3		0x0600
-define	FFDLY		0x8000
-define	FF0		0x0000
-define	FF1		0x8000
-define	BSDLY		0x2000
+define	TABDLY		0x1800 ; Horizontal tab delay mask.
+define	TAB0		0x0000
+define	TAB1		0x0800
+define	TAB2		0x1000
+define	TAB3		0x1800
+define	BSDLY		0x2000 ; Backspace delay mask.
 define	BS0		0x0000
 define	BS1		0x2000
-define	VTDLY		0x4000
+define	VTDLY		0x4000 ; Vertical tab delay mask.
 define	VT0		0x0000
 define	VT1		0x4000
-
-define	OLCUC		0x0002
-define	OFILL		0x0040
-define	OFDEL		0x0080
+define	FFDLY		0x8000 ; Form feed delay mask.
+define	FF0		0x0000
+define	FF1		0x8000
 
 define	CSIZE		0x0030
 define	CS5		0x0000

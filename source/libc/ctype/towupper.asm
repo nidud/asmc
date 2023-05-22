@@ -11,11 +11,10 @@ externdef _pcumap:string_t
     .code
 
 towupper proc wc:wchar_t
-ifdef _WIN64
+
+    ldr cx,wc
+
     movzx ecx,cx
-else
-    movzx ecx,wc
-endif
     .if ( ecx < 256 )
 
         mov rax,_pcumap

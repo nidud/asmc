@@ -413,7 +413,7 @@ ModelDirective endp
 
 SetCPU proc __ccall newcpu:cpu_info
 
-    mov edx,newcpu
+    ldr edx,newcpu
     mov ecx,ModuleInfo.curr_cpu
 
     .if ( edx == P_86 || ( edx & P_CPU_MASK ) )
@@ -560,7 +560,7 @@ AddPredefinedConstant endp
 
 SetCPU proc __ccall newcpu:cpu_info
 
-    mov edx,newcpu
+    ldr edx,newcpu
     mov ecx,ModuleInfo.curr_cpu
 
     .if ( edx == P_86 || ( edx & P_CPU_MASK ) )

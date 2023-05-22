@@ -12,14 +12,8 @@ include string.inc
 
 wcschr proc string:ptr wchar_t, wc:wchar_t
 
-ifdef _WIN64
-    mov     rax,rcx
-    movzx   ecx,dx
-else
-    mov     eax,string
-    movzx   ecx,wc
-endif
-
+    ldr     rax,string
+    ldr     cx,wc
 .3:
     cmp     cx,[rax]
     je      .0

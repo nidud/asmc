@@ -13,13 +13,8 @@ include string.inc
 
 wcstok proc uses rsi rdi s1:wstring_t, s2:wstring_t
 
-ifdef _WIN64
-    mov rsi,rcx
-    mov rdi,rdx
-else
-    mov rsi,s1
-    mov rdi,s2
-endif
+    ldr rsi,s1
+    ldr rdi,s2
 
     .if ( rsi )
         mov s0,rsi

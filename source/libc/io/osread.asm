@@ -13,7 +13,7 @@ include winbase.inc
 osread proc handle:int_t, buffer:ptr, size:uint_t
 
     .new NumberOfBytesRead:DWORD = 0
-    .new hFile:HANDLE = getosfhnd( handle )
+    .new hFile:HANDLE = _get_osfhandle( handle )
 
     .ifd ( ReadFile( hFile, buffer, size, &NumberOfBytesRead, 0 ) == 0 )
 

@@ -49,7 +49,7 @@ AddFloatingPointEmulationFixup proc __ccall uses rsi rdi rbx CodeInfo:ptr code_i
     mov name[0],"R__F"
     mov name[4],"QQ"
 
-    mov rcx,CodeInfo
+    ldr rcx,CodeInfo
     .if( [rcx].code_info.token == T_FWAIT )
         mov edi,FPP_WAIT
     .elseif ( [rcx].code_info.RegOverride == EMPTY )

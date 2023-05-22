@@ -369,7 +369,7 @@ dbgcv::alignps endp
 
 dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:ptr dsym, sym:ptr asym
 
-    mov rbx,this
+    ldr rbx,this
     mov esi,CV_BITFIELD
     .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
         mov esi,CV_BITFIELD_16t
@@ -406,8 +406,8 @@ dbgcv::write_bitfield endp
 
 dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:ptr asym, elemtype:dword, Ofssize:byte
 
-    mov rbx,this
-    mov rdi,sym
+    ldr rbx,this
+    ldr rdi,sym
 
     .if ( elemtype == 0 )
         mov elemtype,GetTyperef( rdi, Ofssize )
@@ -457,7 +457,6 @@ dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:ptr asym, elemtype:dwo
     mov byte ptr [rdx],0 ; the array type name is empty
     inc rdx
     [rbx].padbytes(rdx)
-    inc [rbx].currtype
     ret
 
 dbgcv::write_array_type endp
@@ -468,8 +467,8 @@ dbgcv::write_array_type endp
 
 dbgcv::write_ptr_type proc __ccall uses rsi rdi rbx sym:ptr asym
 
-    mov rbx,this
-    mov rsi,sym
+    ldr rbx,this
+    ldr rsi,sym
 
     .if ( ( [rsi].asym.ptr_memtype == MT_EMPTY && [rsi].asym.target_type == NULL ) ||
           [rsi].asym.ptr_memtype == MT_PROC )
@@ -554,9 +553,9 @@ dbgcv::write_ptr_type endp
 
 dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr counters
 
-    mov rbx,this
-    mov rdi,mbr
-    mov rsi,cc
+    ldr rbx,this
+    ldr rdi,mbr
+    ldr rsi,cc
 
     inc [rsi].counters.cnt
     mov eax,sizeof( CV_MEMBER )
@@ -572,9 +571,13 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr
     .if ( edx >= LF_NUMERIC )
         add edx,DWORD
     .endif
+
     mov ecx,[rdi].asym.name_size
     lea rax,[rcx+rax+2+1+3]
     and eax,not 3
+    .if ( [rdi].asym.total_size >= LF_NUMERIC )
+        add eax,DWORD
+    .endif
     add [rsi].counters.size,eax
 
     ; field cvtyperef can only be queried from SYM_TYPE items!
@@ -592,6 +595,7 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr
         ; this field usually isn't used by struct fields
 
         mov [rdi].asym.ext_idx1,[rbx].currtype
+        inc [rbx].currtype
         [rbx].write_array_type( rdi, 0, USE16 )
     .endif
     ret
@@ -607,10 +611,10 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:
    .new offs:int_t
    .new typelen:int_t
 
-    mov rbx,this
-    mov rsi,cc
-    mov rdi,mbr
-    mov rcx,type
+    ldr rbx,this
+    ldr rsi,cc
+    ldr rdi,mbr
+    ldr rcx,type
 
     xor eax,eax
     xor edx,edx
@@ -690,7 +694,7 @@ dbgcv::memberproc endp
 
 dbgcv::enum_fields proc __ccall uses rsi rdi rbx symb:ptr dsym, enumfunc:cv_enum_func, cc:ptr counters
 
-    mov rsi,symb
+    ldr rsi,symb
     mov rcx,[rsi].dsym.structinfo
 
     .for ( rdi = [rcx].struct_info.head, ebx = 0: rdi: rdi = [rdi].sfield.next )
@@ -735,7 +739,7 @@ dbgcv::enum_fields endp
 
 dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:ptr asym, cnt:int_t
 
-    mov rbx,this
+    ldr rbx,this
     mov esi,sizeof( CV_PROCEDURE )
     .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
         mov esi,sizeof( CV_PROCEDURE_16t )
@@ -816,6 +820,7 @@ dbgcv::write_type_procedure endp
 
 dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
 
+  local name:LPSTR
   local namesize:dword
   local typelen:dword
   local size:dword
@@ -823,8 +828,8 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
   local property:CV_prop_t
   local count:counters
 
-    mov rbx,this
-    mov rsi,sym
+    ldr rbx,this
+    ldr rsi,sym
 
     ; v2.10: handle typedefs. when the types are enumerated,
     ; typedefs are ignored.
@@ -862,6 +867,8 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
         .return
     .endif
 
+    ; v2.34.34 - change the write order
+
     xor eax,eax
     mov property,ax
     .if ( [rsi].asym.total_size >= LF_NUMERIC )
@@ -871,6 +878,55 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
     .if ( [rbx].level )
         mov property,CV_prop_isnested
     .endif
+    lea rax,@CStr("__unnamed")
+    .if ( [rsi].asym.name_size )
+        mov rax,[rsi].asym.name
+    .endif
+    mov name,rax
+    mov eax,9
+    .if ( [rsi].asym.name_size )
+        mov eax,[rsi].asym.name_size ; 9 is sizeof("__unnamed")
+    .endif
+    mov namesize,eax
+
+    movzx eax,[rsi].asym.typekind
+    .switch eax
+    .case TYPE_UNION
+        mov eax,sizeof( CV_UNION )
+        mov leaf,LF_UNION
+        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            mov eax,sizeof( CV_UNION_16t )
+            mov leaf,LF_UNION_16t
+        .elseif ( Options.debug_symbols == CV_SIGNATURE_C11 )
+            mov eax,sizeof( CV_UNION_16t )
+            mov leaf,LF_UNION_ST
+        .endif
+        add eax,typelen
+        add eax,namesize
+        add eax,2+1+3
+        and eax,not 3
+        mov size,eax
+       .endc
+    .case TYPE_RECORD
+        or property,CV_prop_packed ; is "packed"
+        ; no break
+    .case TYPE_STRUCT
+        mov eax,sizeof( CV_STRUCT )
+        mov leaf,LF_STRUCTURE
+        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            mov eax,sizeof( CV_STRUCT_16t )
+            mov leaf,LF_STRUCTURE_16t
+        .elseif ( Options.debug_symbols == CV_SIGNATURE_C11 )
+            mov eax,sizeof( CV_STRUCT_16t )
+            mov leaf,LF_STRUCTURE_ST
+        .endif
+        add eax,typelen
+        add eax,namesize
+        add eax,2+1+3
+        and eax,not 3
+        mov size,eax
+       .endc
+    .endsw
 
     ; Count the member fields. If a member's type is unknown, create it!
 
@@ -881,104 +937,8 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
     mov rcx,[rbx]
     [rbx].enum_fields( rsi, [rcx].dbgcvVtbl.cntproc, &count )
 
-    ; WinDbg wants embedded structs to have a name - else it won't allow to "open" it.
-
-    mov eax,9
-    .if ( [rsi].asym.name_size )
-        mov eax,[rsi].asym.name_size ; 9 is sizeof("__unnamed")
-    .endif
-    mov namesize,eax
-
-    mov [rsi].asym.cvtyperef,[rbx].currtype
-    inc [rbx].currtype
-
-    movzx eax,[rsi].asym.typekind
-    .switch eax
-    .case TYPE_UNION
-        mov esi,sizeof( CV_UNION )
-        mov leaf,LF_UNION
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-            mov esi,sizeof( CV_UNION_16t )
-            mov leaf,LF_UNION_16t
-        .endif
-        add esi,typelen
-        add esi,namesize
-        add esi,2+1+3
-        and esi,not 3
-        mov size,esi
-        mov rdi,[rbx].flushpt(esi)
-        sub esi,sizeof( uint_16 )
-        mov [rdi].CV_UNION_16t.size,si
-        mov [rdi].CV_UNION_16t.leaf,leaf
-        mov [rdi].CV_UNION_16t.count,count.cnt
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-            mov [rdi].CV_UNION_16t.field,[rbx].currtype
-            mov [rdi].CV_UNION_16t.property,property
-            lea rsi,[rdi].CV_UNION_16t.data
-        .else
-            mov [rdi].CV_UNION.field,[rbx].currtype
-            mov [rdi].CV_UNION.property,property
-            lea rsi,[rdi].CV_UNION.data
-        .endif
-        inc [rbx].currtype
-        .endc
-    .case TYPE_RECORD
-        or property,CV_prop_packed ; is "packed"
-        ; no break
-    .case TYPE_STRUCT
-        mov esi,sizeof( CV_STRUCT )
-        mov leaf,LF_STRUCTURE
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-            mov esi,sizeof( CV_STRUCT_16t )
-            mov leaf,LF_STRUCTURE_16t
-        .endif
-        add esi,typelen
-        add esi,namesize
-        add esi,2+1+3
-        and esi,not 3
-        mov size,esi
-        mov rdi,[rbx].flushpt(esi)
-        sub esi,sizeof( uint_16 )
-        mov [rdi].CV_STRUCT_16t.size,si
-        mov [rdi].CV_STRUCT_16t.leaf,leaf
-        mov [rdi].CV_STRUCT_16t.count,count.cnt
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-            mov [rdi].CV_STRUCT_16t.field,[rbx].currtype
-            mov [rdi].CV_STRUCT_16t.property,property
-            mov [rdi].CV_STRUCT_16t.derived,0
-            mov [rdi].CV_STRUCT_16t.vshape,0
-            lea rsi,[rdi].CV_STRUCT_16t.data
-        .else
-            mov [rdi].CV_STRUCT.field,[rbx].currtype
-            mov [rdi].CV_STRUCT.property,property
-            mov [rdi].CV_STRUCT.derived,0
-            mov [rdi].CV_STRUCT.vshape,0
-            lea rsi,[rdi].CV_STRUCT.data
-        .endif
-        inc [rbx].currtype
-        .endc
-    .endsw
-
-    mov rcx,sym
-    mov eax,[rcx].asym.total_size
-    .if ( typelen == 0 )
-        mov [rsi],ax
-        add rsi,2
-    .else
-        mov word ptr [rsi],LF_ULONG
-        mov [rsi+2],eax
-        add rsi,6
-    .endif
-    lea rax,@CStr("__unnamed")
-    .if ( [rcx].asym.name_size )
-        mov rax,[rcx].asym.name
-    .endif
-    SetPrefixName( rsi, rax, namesize )
-    [rbx].padbytes(rax)
-    mov eax,size
-    add [rbx].pt,rax
-
     ; write the fieldlist record
+
     mov rdi,[rbx].flushpt(CV_FIELDLIST)
     add [rbx].pt,CV_FIELDLIST
 
@@ -992,9 +952,71 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
     mov [rdi].CV_FIELDLIST.leaf,ax
 
     ; add the struct's members to the fieldlist.
+
     mov count.ofs,0
     mov rcx,[rbx]
-    [rbx].enum_fields( sym, [rcx].dbgcvVtbl.memberproc, &count )
+    [rbx].enum_fields( rsi, [rcx].dbgcvVtbl.memberproc, &count )
+
+    mov rdi,[rbx].flushpt(size)
+    mov eax,size
+    sub eax,sizeof( uint_16 )
+    mov [rdi].CV_STRUCT.size,ax
+    mov [rdi].CV_STRUCT.leaf,leaf
+    mov [rdi].CV_STRUCT.count,count.cnt
+
+    movzx eax,[rsi].asym.typekind
+    .switch eax
+    .case TYPE_UNION
+        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            mov [rdi].CV_UNION_16t.field,[rbx].currtype
+            mov [rdi].CV_UNION_16t.property,property
+            lea rcx,[rdi].CV_UNION_16t.data
+        .else
+            mov [rdi].CV_UNION.field,[rbx].currtype
+            mov [rdi].CV_UNION.property,property
+            lea rcx,[rdi].CV_UNION.data
+        .endif
+        inc [rbx].currtype
+       .endc
+    .case TYPE_RECORD
+    .case TYPE_STRUCT
+        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+
+            mov [rdi].CV_STRUCT_16t.field,[rbx].currtype
+            mov [rdi].CV_STRUCT_16t.property,property
+            mov [rdi].CV_STRUCT_16t.derived,0
+            mov [rdi].CV_STRUCT_16t.vshape,0
+            lea rcx,[rdi].CV_STRUCT_16t.data
+        .else
+            mov [rdi].CV_STRUCT.field,[rbx].currtype
+            mov [rdi].CV_STRUCT.property,property
+            mov [rdi].CV_STRUCT.derived,0
+            mov [rdi].CV_STRUCT.vshape,0
+            lea rcx,[rdi].CV_STRUCT.data
+        .endif
+        inc [rbx].currtype
+       .endc
+    .endsw
+
+    mov rdx,sym
+    mov eax,[rdx].asym.total_size
+    .if ( typelen == 0 )
+        mov [rcx],ax
+        add rcx,2
+    .else
+        mov word ptr [rcx],LF_ULONG
+        mov [rcx+2],eax
+        add rcx,6
+    .endif
+    SetPrefixName( rcx, name, namesize )
+    [rbx].padbytes(rax)
+    mov eax,size
+    add [rbx].pt,rax
+
+    ; WinDbg wants embedded structs to have a name - else it won't allow to "open" it.
+
+    mov [rsi].asym.cvtyperef,[rbx].currtype
+    inc [rbx].currtype
     ret
 
 dbgcv::write_type endp
@@ -1077,8 +1099,8 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
   local leaf:word
   local typeref:uint_16
 
-    mov rsi,sym
-    mov rbx,this
+    ldr rsi,sym
+    ldr rbx,this
 
     mov Ofssize,GetSymOfssize( rsi )
     mov len,GetStructLen( rsi, al )
@@ -1284,7 +1306,7 @@ endif
 
                     [rbx].write_array_type( rsi, typeref, Ofssize )
                     mov eax,[rbx].currtype
-                    dec eax
+                    inc [rbx].currtype
                     mov typeref,ax
                 .endif
 
@@ -1433,7 +1455,7 @@ endif
         .if ( [rsi].asym.flags & S_ISARRAY )
             [rbx].write_array_type( rsi, 0, Ofssize )
             mov eax,[rbx].currtype
-            dec eax
+            inc [rbx].currtype
         .else
             GetTyperef( rsi, Ofssize )
         .endif
@@ -1744,7 +1766,7 @@ dbgcv::write_symbol endp
 
 dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
 
-    mov rbx,this
+    ldr rbx,this
     mov rdi,[rbx].symbols
     mov rsi,[rbx].ps
     mov rcx,[rdi].dsym.seginfo
@@ -2178,7 +2200,7 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:ptr dsym, types:ptr 
   local lineTable:int_t
 
     mov cv.lpVtbl,&vtable
-    mov rsi,symbols
+    ldr rsi,symbols
     mov cv.symbols,rsi
     mov rcx,[rsi].dsym.seginfo
     mov rsi,[rcx].seg_info.CodeBuffer

@@ -138,37 +138,36 @@
       DisplayName="Generate Debug Information"
       Description="Generates Debug Information.">
       <EnumValue
-        Name="true"
-        DisplayName="Default"
-        Switch="/Zi" />
+        Name="NoDebug"
+        DisplayName="No Debug Information" />
       <EnumValue
         Name="0"
-        DisplayName="Globals"
-        Switch="/Zi0" />
+        DisplayName="Line numbers only"
+        Switch="/Zd" />
       <EnumValue
         Name="1"
-        DisplayName="Globals and locals"
-        Switch="/Zi1" />
+        DisplayName="Line numbers and Globals"
+        Switch="/Zi08" />
       <EnumValue
         Name="2"
-        DisplayName="Globals, locals and types"
-        Switch="/Zi2" />
+        DisplayName="Line numbers, Globals and locals"
+        Switch="/Zi18" />
       <EnumValue
         Name="3"
-        DisplayName="Globals, locals, types and constants"
-        Switch="/Zi3" />
-      <EnumValue
-        Name="5"
-        DisplayName="CV5 - C11 (vc5.x) 32-bit types"
-        Switch="/Zi5" />
-      <EnumValue
-        Name="8"
-        DisplayName="CV8 - C13 (vc7.x) zero terminated names"
+        DisplayName="Line numbers, Globals, locals and types"
         Switch="/Zi8" />
       <EnumValue
-        Name="38"
-        DisplayName="CV8 - Globals, locals, types and constants"
+        Name="4"
+        DisplayName="Line numbers, Globals, locals, types and constants"
         Switch="/Zi38" />
+      <EnumValue
+        Name="CV5"
+        DisplayName="C11 (Visual C++ 5.x) 32-bit types"
+        Switch="/Zi5" />
+      <EnumValue
+        Name="CodeView"
+        DisplayName="CodeView (Masm 5.1)"
+        Switch="/Zi" />
     </EnumProperty>
     <BoolProperty
       Name="EnableMASM51Compatibility"

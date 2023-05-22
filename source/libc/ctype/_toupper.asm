@@ -10,7 +10,7 @@ include ctype.inc
 
 _toupper proc c:int_t
 
-    mov eax,c
+    ldr eax,c
     sub al,'a'-'A'
     ret
 

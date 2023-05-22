@@ -12,14 +12,10 @@ include string.inc
 
 _wcsnicmp proc uses rsi a:wstring_t, b:wstring_t, count:size_t
 
-ifdef _WIN64
-    mov     rsi,rcx
-    mov     rcx,r8
-else
-    mov     esi,a
-    mov     edx,b
-    mov     ecx,count
-endif
+    ldr     rsi,a
+    ldr     rdx,b
+    ldr     rcx,count
+
     sub     rsi,2
     sub     rdx,2
     mov     eax,1

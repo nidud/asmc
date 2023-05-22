@@ -12,10 +12,9 @@ include string.inc
 
 _wcsicmp proc a:wstring_t, b:wstring_t
 
-ifndef _WIN64
-    mov     ecx,a
-    mov     edx,b
-endif
+    ldr     rcx,a
+    ldr     rdx,b
+
     sub     rcx,2
     sub     rdx,2
     mov     eax,1

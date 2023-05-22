@@ -18,7 +18,7 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, 
 
    .new q[256]:char_t
 
-    mov rsi,sym
+    ldr rsi,sym
 
     .if ( [rsi].asym.total_size )
 
@@ -72,7 +72,7 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 
    .new adr[16]:sbyte
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     mov edi,tstricmp( [rbx].string_ptr, "@ComAlloc" )
     .if edi
         .while [rbx].token != T_FINAL

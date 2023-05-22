@@ -92,7 +92,7 @@ CreateFixup endp
 
 FreeFixup proc __ccall uses rbx fixp:ptr fixup
 
-    mov rbx,fixp
+    ldr rbx,fixp
 
     .if ( Parse_Pass == PASS_1 )
 
@@ -125,7 +125,7 @@ FreeFixup endp
 
 SetFixupFrame proc __ccall uses rsi rdi sym:ptr asym, ign_grp:char_t
 
-    mov rsi,sym
+    ldr rsi,sym
     .if ( rsi )
 
         .switch [rsi].asym.state
@@ -166,8 +166,8 @@ SetFixupFrame endp
 
 store_fixup proc __ccall uses rsi rbx fixp:ptr fixup, s:ptr dsym, pdata:ptr int_t
 
-    mov rbx,fixp
-    mov rsi,pdata
+    ldr rbx,fixp
+    ldr rsi,pdata
 
     mov [rbx].offs,[rsi]
     mov [rbx].nextrlc,NULL

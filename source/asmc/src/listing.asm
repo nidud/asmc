@@ -456,7 +456,7 @@ LstSetPosition endp
 
 get_seg_align proc __ccall s:ptr seg_info, buffer:string_t
 
-    mov   rcx,s
+    ldr   rcx,s
     movzx ecx,[rcx].seg_info.alignment
     lea   rdx,strings
 
@@ -497,7 +497,7 @@ get_seg_combine endp
 
 log_macro proc __ccall uses rbx sym:ptr asym
 
-    mov rcx,sym
+    ldr rcx,sym
     lea rax,strings
     mov rdx,[rax+LS_PROC]
     .if ( [rcx].asym.mac_flag &  M_ISFUNC )
@@ -551,7 +551,7 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:ptr asym, buffer:string_t
   local i:int_t
   local mem_type:byte
 
-    mov rsi,sym
+    ldr rsi,sym
 
     .if ( !( [rsi].asym.mem_type & MT_SPECIAL) )
         .return( SimpleTypeString( [rsi].asym.mem_type ) )
@@ -661,7 +661,7 @@ log_struct proc __ccall uses rsi rdi rbx sym:ptr asym, name:string_t, ofs:int_32
      prefix int_t 0
     .code
 
-    mov rdi,sym
+    ldr rdi,sym
     mov rsi,[rdi].dsym.structinfo
 
     .if ( !name )
@@ -745,7 +745,7 @@ log_record proc __ccall uses rsi rdi rbx sym:ptr asym
   local mask:qword
   local pdots:string_t
 
-    mov rdi,sym
+    ldr rdi,sym
     lea rdx,dots
     lea rax,[rdx+1]
 
@@ -819,7 +819,7 @@ log_typedef proc __ccall uses rsi rdi rbx sym:ptr asym
 
   local pdots:string_t
 
-    mov rsi,sym
+    ldr rsi,sym
     mov ecx,[rsi].asym.name_size
     lea rdx,dots
     lea rax,[rdx+rcx+1]
@@ -875,7 +875,7 @@ log_segment proc __ccall uses rsi rdi rbx sym:ptr asym, grp:ptr asym
 
   local buffer[32]:sbyte
 
-    mov rsi,sym
+    ldr rsi,sym
     mov rdi,[rsi].dsym.seginfo
 
     .if ( [rdi].seg_info.sgroup == grp )
@@ -914,7 +914,7 @@ log_segment endp
 
 log_group proc __ccall uses rsi rdi grp:ptr asym, segs:ptr dsym
 
-    mov rsi,grp
+    ldr rsi,grp
     mov eax,[rsi].asym.name_size
 
     lea rcx,dots
@@ -996,7 +996,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
   local pdots:string_t
   local buffer[MAX_ID_LEN+1]:char_t
 
-    mov rsi,sym
+    ldr rsi,sym
     mov Ofssize,GetSymOfssize( rsi )
 
     mov eax,[rsi].asym.name_size
@@ -1206,7 +1206,7 @@ log_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
 
   local pdots:string_t
 
-    mov rdi,sym
+    ldr rdi,sym
     mov eax,[rdi].asym.name_size
     lea rdx,dots
     lea rcx,[rdx+rax+1]
@@ -1518,7 +1518,7 @@ LstWriteCRef endp
 
 ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
-    mov  esi,i
+    ldr  esi,i
     imul ebx,esi,asm_tok
     add  rbx,tokenarray
     mov  eax,[rbx].tokval

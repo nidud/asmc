@@ -12,15 +12,9 @@ include stdio.inc
 
 fgets proc uses rsi rdi rbx buf:LPSTR, count:SINT, fp:LPFILE
 
-ifdef _WIN64
-    mov rdi,rcx
-    mov esi,edx
-    mov rbx,r8
-else
-    mov edi,buf
-    mov esi,count
-    mov ebx,fp
-endif
+    ldr rdi,buf
+    ldr esi,count
+    ldr rbx,fp
 
     .ifs ( esi <= 0 )
         .return( NULL )

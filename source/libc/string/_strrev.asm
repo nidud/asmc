@@ -10,9 +10,8 @@ include string.inc
 
 _strrev proc string:string_t
 
-ifndef _WIN64
-    mov ecx,string
-endif
+    ldr rcx,string
+
     .for ( rdx = rcx : byte ptr [rdx] : rdx++ )
     .endf
 

@@ -68,8 +68,8 @@ szdrectve equ <".drectve">
 Coff_AllocString proc __ccall uses rsi rdi rbx cm:ptr coffmod, string:string_t, len:int_t
 
 
-    mov rsi,string
-    mov rbx,cm
+    ldr rsi,string
+    ldr rbx,cm
     mov edi,[rbx].size
 
     mov ecx,len
@@ -125,7 +125,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
 
     ; calculated file offset for section data, relocs and linenumber info
 
-    mov  rsi,modinfo
+    ldr  rsi,modinfo
     imul esi,[rsi].num_segs,sizeof( IMAGE_SECTION_HEADER )
     add  esi,sizeof( IMAGE_FILE_HEADER )
 
@@ -490,7 +490,7 @@ GetStartLabel proc __ccall uses rsi rdi modinfo:ptr module_info, buffer:string_t
 
   local mangle[MAX_ID_LEN + MANGLE_BYTES + 1]:char_t
 
-    mov rsi,modinfo
+    ldr rsi,modinfo
     lea rdi,mangle
     xor eax,eax
 
@@ -839,11 +839,11 @@ coff_write_symbols endp
 
 coff_flushfunc proc __ccall uses rsi rdi rbx s:ptr dsym, curr:ptr uint_8, size:dword, pv:ptr
 
-    mov rdi,s
+    ldr rdi,s
     mov rsi,[rdi].dsym.seginfo
-    mov rbx,curr
+    ldr rbx,curr
     sub rbx,[rsi].CodeBuffer
-    mov eax,size
+    ldr eax,size
     add eax,ebx
 
     .if ( eax > SIZE_CV_SEGBUF )
@@ -901,7 +901,7 @@ SetSymbolIndices proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:ptr c
   local lastfile:dword
 
     xor esi,esi
-    mov rbx,cm
+    ldr rbx,cm
 
     mov lastfile,esi
     mov [rbx].lastproc,rsi
@@ -1044,12 +1044,12 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
    .new offs:uint_32
    .new type:uint_16
 
-    mov rdx,poffset
+    ldr rdx,poffset
     mov eax,[rdx]
     mov offs,eax
-    mov rdx,pindex
+    ldr rdx,pindex
     mov esi,[rdx]
-    mov rcx,section
+    ldr rcx,section
     mov rdi,[rcx].dsym.seginfo
 
     ; v2.10: handle the reloc-overflow-case

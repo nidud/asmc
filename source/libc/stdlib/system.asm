@@ -21,16 +21,15 @@ system proc uses rdi rsi rbx string:string_t
         StartUpInfo     : STARTUPINFO,
         lpCommand       : string_t,
         ConsoleMode     : uint_t,
+        ErrorMode       : uint_t,
         cmd[_MAX_PATH]  : char_t,
         delim           : char_t
 
+    ldr rdi,string
 ifdef _WIN64
-    mov rdi,rcx
     mov eax,0x8000
     _chkstk proto
     _chkstk()
-else
-    mov rdi,string
 endif
     mov rbx,strcpy( alloca( 0x8000 ), "cmd.exe" )
 
@@ -89,7 +88,7 @@ endif
     lea rdi,StartUpInfo
     mov StartUpInfo.cb,STARTUPINFO
 
-    SetErrorMode(OldErrorMode)
+    SetErrorMode(_ermode)
     mov rbx,GetStdHandle(STD_INPUT_HANDLE)
     GetConsoleMode(rbx, &ConsoleMode)
 

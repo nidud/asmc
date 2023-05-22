@@ -19,13 +19,8 @@ u128 ends
 
 __saro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
 
-ifdef _WIN64
-    mov rsi,rcx
-    mov ecx,edx
-else
-    mov esi,val
-    mov ecx,count
-endif
+    ldr rsi,val
+    ldr ecx,count
 
     mov eax,[rsi].l64_l
     mov edx,[rsi].l64_h

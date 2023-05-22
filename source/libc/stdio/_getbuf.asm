@@ -13,12 +13,7 @@ include malloc.inc
 
 _getbuf proc uses rbx fp:LPFILE
 
-ifdef _WIN64
-    mov rbx,rcx
-else
-    mov ebx,fp
-endif
-
+    ldr rbx,fp
     .if malloc( _INTIOBUF )
 
         or  [rbx]._flag,_IOMYBUF

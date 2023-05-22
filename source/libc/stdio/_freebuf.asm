@@ -11,17 +11,14 @@ include malloc.inc
 
 _freebuf proc uses rbx fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,fp
-endif
-    mov eax,[rcx]._iobuf._flag
+    ldr rbx,fp
+    mov eax,[rbx]._iobuf._flag
 
     .if ( eax & _IOREAD or _IOWRT or _IORW )
 
 	.if ( eax & _IOMYBUF )
 
-	    mov rbx,rcx
-	    free( [rcx]._iobuf._base )
+	    free( [rbx]._iobuf._base )
 
 	    xor eax,eax
 	    mov [rbx]._iobuf._ptr,rax

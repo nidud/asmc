@@ -13,9 +13,7 @@ vswprintf proc string:LPWSTR, format:LPWSTR, vargs:ptr
 
   local o:_iobuf
 
-ifndef _WIN64
-    mov ecx,string
-endif
+    ldr rcx,string
     mov o._flag,_IOWRT or _IOSTRG
     mov o._cnt,INT_MAX
     mov o._ptr,rcx

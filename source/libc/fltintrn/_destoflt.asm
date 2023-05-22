@@ -15,8 +15,8 @@ _destoflt proc __ccall uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
    .new digits:int_t = 0
    .new sigdig:int_t = 0
 
-    mov rbx,fp
-    mov rdi,buffer
+    ldr rbx,fp
+    ldr rdi,buffer
     mov rsi,[rbx].STRFLT.string
     mov ecx,[rbx].STRFLT.flags
     xor eax,eax

@@ -25,9 +25,7 @@ CreateHeap proto private :size_t
 ;
 malloc proc byte_count:size_t
 
-ifndef _WIN64
-    mov rcx,byte_count
-endif
+    ldr rcx,byte_count
     mov rdx,_heap_free
     add rcx,HEAP+_GRANULARITY-1
     and cl,-(_GRANULARITY)
@@ -109,9 +107,7 @@ malloc endp
 ;
 free proc memblock:ptr
 
-ifndef _WIN64
-    mov rcx,memblock
-endif
+    ldr rcx,memblock
     sub rcx,HEAP
     .ifns
         ;
@@ -181,9 +177,8 @@ free endp
 
 CreateHeap proc private uses rbx size:size_t
 
-ifndef _WIN64
-    mov ecx,size
-endif
+    ldr rcx,size
+
     mov ebx,_amblksiz
     sub ebx,HEAP
     .if ( rbx < rcx )

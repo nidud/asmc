@@ -10,9 +10,8 @@ include string.inc
 
 wcslen proc uses rdi string:wstring_t
 
-ifndef _WIN64
-    mov     ecx,string
-endif
+    ldr     rcx,string
+
     mov     rdi,rcx
     mov     ecx,-1
     xor     eax,eax

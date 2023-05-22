@@ -9,9 +9,8 @@ include ctype.inc
     .code
 
 isprint proc c:int_t
-ifndef _WIN64
-    mov ecx,c
-endif
+
+    ldr ecx,c
     mov eax,1
     .if ( cl < 0x20 || cl >= 0x7F )
         xor eax,eax

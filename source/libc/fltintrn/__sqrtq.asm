@@ -13,9 +13,8 @@ __sqrtq proc __ccall p:ptr qfloat_t
   local y:U128
   local t:U128
 
-ifndef _WIN64
-    mov ecx,p
-endif
+    ldr rcx,p
+
     assume rcx:ptr U128
 
 ifdef _WIN64

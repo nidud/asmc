@@ -22,18 +22,16 @@ __doserrno proc
 __doserrno endp
 
 _set_doserrno proc value:ulong_t
-ifndef _WIN64
-    mov ecx,value
-endif
+
+    ldr ecx,value
     mov DoserrorNoMem,ecx
     ret
 
 _set_doserrno endp
 
 _get_doserrno proc pValue:ptr ulong_t
-ifndef _WIN64
-    mov ecx,pValue
-endif
+
+    ldr rcx,pValue
     mov eax,DoserrorNoMem
     .if rcx
         mov [rcx],eax

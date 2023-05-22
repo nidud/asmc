@@ -12,9 +12,8 @@ include stdlib.inc
 
 atol proc string:string_t
 
-ifndef _WIN64
-    mov     ecx,string
-endif
+    ldr     rcx,string
+
     xor     edx,edx
     xor     eax,eax
 .0:

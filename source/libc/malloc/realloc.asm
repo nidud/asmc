@@ -10,10 +10,9 @@ include malloc.inc
 
 realloc proc uses rsi rdi pblck:ptr, newsize:size_t
 
-ifndef _WIN64
-    mov ecx,pblck
-    mov edx,newsize
-endif
+    ldr rcx,pblck
+    ldr rdx,newsize
+
     ;
     ; special cases, handling mandated by ANSI
     ;

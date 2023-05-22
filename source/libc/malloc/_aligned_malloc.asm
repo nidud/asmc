@@ -10,13 +10,10 @@ include malloc.inc
 
 _aligned_malloc proc uses rdi dwSize:size_t, Alignment:size_t
 
-ifdef _WIN64
-    mov rdi,rdx
-else
-    mov edi,Alignment
-    mov ecx,dwSize
-endif
-    lea rcx,[rcx+rdx+HEAP]
+    ldr rdi,Alignment
+    ldr rcx,dwSize
+
+    lea rcx,[rcx+rdi+HEAP]
 
     .if malloc( rcx )
 

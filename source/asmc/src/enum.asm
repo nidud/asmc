@@ -35,7 +35,7 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .return NOT_ERROR .if ( Parse_Pass > PASS_1 )
 
     mov rc,NOT_ERROR
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     mov rsi,CurrEnum
     mov eax,[rbx].tokval
 

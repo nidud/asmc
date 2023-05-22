@@ -20,7 +20,7 @@ ftell proc uses rdi rbx fp:LPFILE
   local rdcnt:UINT
   local osfile:BYTE
 
-    mov rbx,fp
+    ldr rbx,fp
     .if ( [rbx]._cnt < 0 )
         mov [rbx]._cnt,0
     .endif
@@ -51,7 +51,7 @@ ftell proc uses rdi rbx fp:LPFILE
 
     .if ( ecx & _IOWRT or _IOREAD )
 
-        .if ( osfile & FH_TEXT )
+        .if ( osfile & FTEXT )
 
             mov rax,[rbx]._base
             .while ( rax < [rbx]._ptr )
@@ -85,7 +85,7 @@ ftell proc uses rdi rbx fp:LPFILE
             sub rax,[rbx]._base
             mov rdcnt,eax
 
-            .if ( osfile & FH_TEXT )
+            .if ( osfile & FTEXT )
 
                 .ifd ( SetFilePointer( fd, 0, 0, SEEK_END ) == filepos )
 
@@ -118,7 +118,7 @@ ftell proc uses rdi rbx fp:LPFILE
                         mov rdcnt,eax
                     .endif
 
-                    .if ( osfile & FH_CRLF )
+                    .if ( osfile & FCRLF )
 
                         inc rdcnt
                     .endif

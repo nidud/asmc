@@ -112,7 +112,7 @@ TranslateLogref proc __ccall private uses rsi rdi rbx lr:ptr logref, buf:ptr byt
     ; cannot just arbitrarily write fixups without a displacment if their
     ; displacement field is 0. So we use the is_secondary field.
 
-    mov rsi,lr
+    ldr rsi,lr
     mov bl,[rsi].target
 
     .if ( [rsi].target_offset == 0 && [rsi].is_secondary )
@@ -166,7 +166,7 @@ ifndef ASMC64
 
   local lr:logref
 
-    mov rbx,fixp
+    ldr rbx,fixp
     mov rdi,[rbx].sym
 
     mov lr.is_secondary,FALSE
@@ -214,8 +214,8 @@ ifndef ASMC64
 
 omf_fill_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr logref
 
-    mov rsi,lr
-    mov rbx,fixp
+    ldr rsi,lr
+    ldr rbx,fixp
     mov rdi,[rbx].sym ; may be NULL!
 
     ;------------------------------------
@@ -341,7 +341,7 @@ endif
 ; - WORD/DWORD, Target Displacement
 
 
-OmfFixGenFix proc __ccall uses rsi rdi rbx fixp:ptr fixup, 
+OmfFixGenFix proc __ccall uses rsi rdi rbx fixp:ptr fixup,
     start_loc:dword, buf:ptr byte, type:fixgen_types
 
 ifndef ASMC64
@@ -353,7 +353,7 @@ ifndef ASMC64
 
     mov lr.is_secondary,TRUE
     mov lr.target_offset,0
-    mov rbx,fixp
+    ldr rbx,fixp
 
     .switch( [rbx].type )
     .case FIX_RELOFF8

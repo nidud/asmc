@@ -46,7 +46,7 @@ elseoccured uint_32 0   ; 2.06: bit field, magnitude must be >= MAX_IF_NESTING
 CondPrepare proc __ccall directive:int_t
 
     option switch:REGAX
-    mov eax,directive
+    ldr eax,directive
     .switch eax
 
     .case T_IF

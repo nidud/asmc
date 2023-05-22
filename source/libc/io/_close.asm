@@ -13,12 +13,10 @@ include winbase.inc
 
 _close proc handle:int_t
 
-ifndef _WIN64
-    mov ecx,handle
-endif
+    ldr ecx,handle
     lea rax,_osfile
 
-    .if ( ecx < 3 || ecx >= _nfile || !( byte ptr [rax+rcx] & FH_OPEN ) )
+    .if ( ecx < 3 || ecx >= _nfile || !( byte ptr [rax+rcx] & FOPEN ) )
 
         _set_errno( EBADF )
         _set_doserrno( 0 )

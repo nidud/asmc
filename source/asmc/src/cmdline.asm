@@ -250,8 +250,8 @@ get_fname proc __ccall uses rsi rdi rbx type:int_t, token:string_t
 
    .new name[_MAX_PATH]:char_t
 
-    mov rsi,token
-    mov ebx,type
+    ldr rsi,token
+    ldr ebx,type
 
     .if ( byte ptr [rsi] == '=' )
         inc rsi
@@ -357,8 +357,8 @@ GetNameToken proc __ccall uses rsi rdi rbx dst:string_t, string:string_t, max:in
 
    .new equatefound:int_t = FALSE
 
-    mov rsi,string
-    mov rdi,dst
+    ldr rsi,string
+    ldr rdi,dst
 
 is_quote:
 
@@ -429,8 +429,8 @@ ProcessOption proc __ccall uses rsi rdi rbx cmdline:ptr string_t, buffer:string_
    .new j:int_t
    .new p:string_t
 
-    mov rsi,cmdline
-    mov rdi,buffer
+    ldr rsi,cmdline
+    ldr rdi,buffer
     mov rbx,[rsi]
     mov eax,[rbx]
 
@@ -763,6 +763,13 @@ ifndef ASMC64
         or  Options.xflag,OPT_REGAX
 endif
         .return
+    .case '7Z'          ; -Z7
+        define_name( "__DEBUG__", "1" )
+        mov Options.line_numbers,1
+        mov Options.debug_symbols,4
+        mov Options.no_file_entry,1
+        mov Options.debug_ext,CVEX_MAX
+       .return
     .case 'X'               ; -X
         mov Options.ignore_include,1
         .return
@@ -894,7 +901,7 @@ endif
         .until ( eax == OptValue )
         dec ecx
         mov Options.fieldalign,cl
-        .return
+       .return
     .case 'iZ'          ; -Zi[0|1|2|3]
         define_name( "__DEBUG__", "1" )
         mov Options.line_numbers,1
@@ -977,8 +984,8 @@ ParseCmdline proc __ccall uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int
 
    .new paramfile[_MAX_PATH]:char_t
 
-    mov rsi,cmdline
-    mov rdi,numargs
+    ldr rsi,cmdline
+    ldr rdi,numargs
 
     .for ( ebx = 0 : ebx < NUM_FILE_TYPES : ebx++ )
 

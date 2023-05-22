@@ -10,7 +10,8 @@ include ctype.inc
 
 _strlwr proc uses rsi string:string_t
 
-    .for ( rsi = string : byte ptr [rsi] : rsi++ )
+    ldr rsi,string
+    .for ( : byte ptr [rsi] : rsi++ )
 
         movzx ecx,byte ptr [rsi]
         tolower(ecx)

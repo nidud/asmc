@@ -15,13 +15,8 @@ HFLT_MIN equ 0x0001
 
 __cvtq_h proc __ccall uses rsi rdi rbx h:ptr half_t, q:ptr qfloat_t
 
-ifdef _WIN64
-    mov rsi,rdx
-    mov rdi,rcx
-else
-    mov esi,q
-    mov edi,h
-endif
+    ldr rsi,q
+    ldr rdi,h
 
     mov eax,[rsi+10]    ; get top part
     mov cx,[rsi+14]     ; get exponent and sign

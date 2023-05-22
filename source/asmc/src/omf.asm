@@ -245,18 +245,20 @@ PutData endp
 
 PutName proc __ccall private objr:ptr omf_rec, name:string_t, len:int_t
 
+    ldr eax,len
+    ldr rcx,objr
+
 if MAX_ID_LEN gt MAX_ID_LEN_OMF
 
-    .if ( len > MAX_ID_LEN_OMF )
+    .if ( eax > MAX_ID_LEN_OMF )
 
         asmerr( 2043 )
-        mov len,MAX_ID_LEN_OMF
+        mov eax,MAX_ID_LEN_OMF
+        mov rcx,objr
     .endif
 
 endif
 
-    mov eax,len
-    mov rcx,objr
     mov edx,[rcx].curoff
     add rdx,[rcx].pdata
     inc [rcx].curoff
@@ -1727,7 +1729,7 @@ omf_write_modend endp
 
 omf_cv_flushfunc proc __ccall private uses rsi rdi rbx segm:ptr dsym, curr:ptr uint_8, size:dword, pv:ptr
 
-    mov rcx,segm
+    ldr rcx,segm
     mov rcx,[rcx].dsym.seginfo
     mov rdi,[rcx].seg_info.CodeBuffer
 

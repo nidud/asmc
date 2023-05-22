@@ -9,9 +9,9 @@ include math.inc
     .code
 
 labs proc x:int_t
-ifndef _WIN64
-    mov     ecx,x
-endif
+
+    ldr     ecx,x
+
     mov     eax,ecx
     neg     eax
     test    ecx,ecx

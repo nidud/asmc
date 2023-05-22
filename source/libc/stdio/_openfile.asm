@@ -16,12 +16,8 @@ define CMASK 644 ; rw-r--r--
 
 _openfile proc uses rsi rdi rbx filename:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
 
-ifdef _WIN64
-    mov rsi,r9
-else
-    mov esi,stream
-    mov edx,mode
-endif
+    ldr rsi,stream
+    ldr rdx,mode
 
     mov al,[rdx]
     .switch al

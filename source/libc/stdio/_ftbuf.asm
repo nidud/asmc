@@ -10,11 +10,9 @@ include stdio.inc
 
 _ftbuf proc uses rsi rdi flag:int_t, fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,flag
-    mov edx,fp
-endif
-    mov rsi,rdx
+    ldr ecx,flag
+    ldr rsi,fp
+
     mov edi,[rsi]._iobuf._flag
 
     .if ( ecx )

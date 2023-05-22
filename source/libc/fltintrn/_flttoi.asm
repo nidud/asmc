@@ -12,11 +12,7 @@ include errno.inc
 
 _flttoi proc __ccall uses rbx p:ptr STRFLT
 
-ifdef _WIN64
-    mov rbx,rcx
-else
-    mov ebx,p
-endif
+    ldr rbx,p
 
     mov cx,[rbx+16]
     mov eax,ecx

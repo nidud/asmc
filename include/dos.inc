@@ -15,12 +15,12 @@ bytes_per_sector        dd ?
 _diskfree_t             ends
 endif
 
-_A_NORMAL               equ 0x80;0x00
-_A_RDONLY               equ 0x01
-_A_HIDDEN               equ 0x02
-_A_SYSTEM               equ 0x04
-_A_SUBDIR               equ 0x10
-_A_ARCH                 equ 0x20
+define _A_NORMAL    0x00
+define _A_RDONLY    0x01
+define _A_HIDDEN    0x02
+define _A_SYSTEM    0x04
+define _A_SUBDIR    0x10
+define _A_ARCH      0x20
 
 ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
 

@@ -33,7 +33,7 @@ externdef _umaskval:dword
 
 _wfopen proc uses rsi rdi rbx file:LPWSTR, mode:LPWSTR
 
-    mov rbx,mode
+    ldr rbx,mode
     movzx eax,word ptr [rbx]
     add rbx,2
 

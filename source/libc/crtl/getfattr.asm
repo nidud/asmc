@@ -15,7 +15,7 @@ getfattr proc uses rsi rdi lpFilename:string_t
 
    .new wpath:wstring_t
 
-    mov rdi,lpFilename
+    ldr rdi,lpFilename
 
     .ifd ( GetFileAttributesA( rdi ) == -1 )
 

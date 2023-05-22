@@ -10,9 +10,8 @@ include stdio.inc
 
 _fileno proc fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,fp
-endif
+    ldr rcx,fp
+
    .return( [rcx].FILE._file )
 
 _fileno endp

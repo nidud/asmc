@@ -15,9 +15,9 @@ include winbase.inc
 
 fseek proc uses rsi rdi rbx fp:LPFILE, offs:size_t, whence:size_t
 
-    mov rbx,fp
-    mov rsi,offs
-    mov rdi,whence
+    ldr rbx,fp
+    ldr rsi,offs
+    ldr rdi,whence
 
     mov eax,[rbx]._flag
     .if ( edi != SEEK_SET && edi != SEEK_CUR && edi != SEEK_END &&

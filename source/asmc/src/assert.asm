@@ -31,7 +31,7 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
    .new cmd:uint_t
 
     mov rc,NOT_ERROR
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     lea rdi,buffer
     imul eax,i,asm_tok
     mov eax,[rbx+rax].tokval

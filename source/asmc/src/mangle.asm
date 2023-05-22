@@ -183,7 +183,7 @@ vect_decorate endp
 
 Mangle proc __ccall uses rsi rdi sym:asym_t, buffer:string_t
 
-    mov rcx,sym
+    ldr rcx,sym
     mov al,[rcx].langtype
     and eax,0x0F
     lea rsi,VoidMangler
@@ -233,10 +233,10 @@ Mangle endp
 
 SetMangler proc __ccall sym:asym_t, langtype:int_t, mangle_type:string_t
 
-    mov edx,langtype
+    ldr edx,langtype
     .if ( edx != LANG_NONE )
 
-        mov rcx,sym
+        ldr rcx,sym
         mov [rcx].langtype,dl
     .endif
     ret

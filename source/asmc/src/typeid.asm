@@ -17,18 +17,18 @@ include lqueue.inc
 GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         string:string_t, is_addr:int_t
 
-    mov rdi,buffer
-    mov rbx,opnd
+    ldr rdi,buffer
+    ldr rbx,opnd
+    ldr rdx,string
 
-    .if ( string )
-        .if ( rdi != string )
-            tstrcpy( rdi, string )
+    .if ( rdx )
+        .if ( rdi != rdx )
+            tstrcpy( rdi, rdx )
         .endif
         add rdi,tstrlen(rdi)
     .else
         mov byte ptr [rdi],0
     .endif
-
 
     mov eax,[rbx].kind
     .if ( eax == EXPR_CONST || eax == EXPR_FLOAT )
@@ -199,7 +199,7 @@ GetTypeId proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
   local opnd:expr
   local id[256]:char_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
 
     ; find first instance of macro in line
 

@@ -193,7 +193,7 @@ sym_ext2int proc __ccall sym:asym_t
 
     ; v2.07: GlobalQueue has been removed
 
-    mov rcx,sym
+    ldr rcx,sym
     .if ( !( [rcx].flags & S_ISPROC ) && !( [rcx].flags & S_ISPUBLIC ) )
         or [rcx].flags,S_ISPUBLIC
         AddPublicData( rcx )
@@ -213,8 +213,8 @@ sym_ext2int endp
 
 GetLangType proc __ccall i:ptr int_t, tokenarray:token_t, plang:ptr byte
 
-    mov  rdx,tokenarray
-    mov  rcx,i
+    ldr  rdx,tokenarray
+    ldr  rcx,i
     imul eax,[rcx],asm_tok
     add  rdx,rax
     mov  rax,[rdx].string_ptr
@@ -459,7 +459,7 @@ check_assume proc __ccall CodeInfo:ptr code_info, sym:asym_t, default_reg:int_t
   local reg:int_t
   local assum:asym_t
 
-    mov rdx,sym
+    ldr rdx,sym
     .if ( rdx && [rdx].state == SYM_UNDEFINED )
         .return
     .endif
@@ -920,7 +920,7 @@ segm_override proc __ccall public uses rsi rdi rbx opndx:expr_t, CodeInfo:ptr co
     UNREFERENCED_PARAMETER(opndx)
     UNREFERENCED_PARAMETER(CodeInfo)
 
-    mov rcx,opndx
+    ldr rcx,opndx
     mov rsi,CodeInfo
     mov rdi,[rcx].expr.override
 
@@ -981,8 +981,8 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
    .new value:int_t
    .new size:int_t = 0
 
-    mov rsi,CodeInfo
-    mov rdi,opndx
+    ldr rsi,CodeInfo
+    ldr rdi,opndx
     imul ebx,CurrOpnd,opnd_item
 
     ; jmp/call/jxx/loop/jcxz/jecxz?
@@ -1179,8 +1179,8 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
     mov fixup_option,OPTJ_NONE
 
-    mov rsi,CodeInfo
-    mov rdi,opndx
+    ldr rsi,CodeInfo
+    ldr rdi,opndx
     imul ebx,CurrOpnd,opnd_item
 
     ; jmp/call/jcc/loopcc/jxcxz?
@@ -1512,8 +1512,9 @@ idata_fixup endp
 SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
 
    .new sym:asym_t
-    mov rsi,CodeInfo
-    mov rdi,opndx
+
+    ldr rsi,CodeInfo
+    ldr rdi,opndx
     xor ebx,ebx
     mov rdx,[rdi].sym
 
@@ -1607,7 +1608,7 @@ SetPtrMemtype endp
 
 Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_type:uchar_t
 
-    mov rsi,CodeInfo
+    ldr rsi,CodeInfo
 
     .if ( [rsi].token == T_LEA )
         .return
@@ -1760,8 +1761,8 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
    .new mem_type:byte
    .new scale_factor:uchar_t = SCALE_FACTOR_1
 
-    mov rsi,CodeInfo
-    mov rdi,opndx
+    ldr rsi,CodeInfo
+    ldr rdi,opndx
     imul ebx,CurrOpnd,opnd_item
 
     ; v211: use full 64-bit value
@@ -2130,9 +2131,9 @@ process_address proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
     ; CurrOpnd is 0 for first operand, 1 for second, ...
     ; valid return values: NOT_ERROR, ERROR
 
-    mov rsi,CodeInfo
-    mov rdi,opndx
-    mov ebx,CurrOpnd
+    ldr rsi,CodeInfo
+    ldr rdi,opndx
+    ldr ebx,CurrOpnd
 
     mov rcx,[rdi].sym
     .if [rdi].flags & E_INDIRECT ;; indirect register operand or stack var
@@ -2304,7 +2305,7 @@ process_const proc fastcall uses rbx CodeInfo:ptr code_info, CurrOpnd:uint_t, op
 
     ; v2.11: don't accept an empty string
 
-    mov rbx,opndx
+    ldr rbx,opndx
     .if ( [rbx].expr.mem_type & MT_FLOAT )
         mov [rbx].expr.float_tok,NULL
     .endif
@@ -2345,8 +2346,8 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
   local regno:int_t
   local flags:uint_t
 
-    mov rsi,CodeInfo
-    mov rdi,opndx
+    ldr rsi,CodeInfo
+    ldr rdi,opndx
 
     imul ebx,CurrOpnd,opnd_item
     imul eax,CurrOpnd,expr
@@ -2595,8 +2596,8 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
   local op_size:int_t
 
     mov opndidx,OPND1
-    mov rsi,CodeInfo
-    mov rdi,opndx
+    ldr rsi,CodeInfo
+    ldr rdi,opndx
 
     movzx eax,[rsi].token
     .switch eax
@@ -2810,8 +2811,8 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
   local op1_size:int_t
   local op2_size:int_t
 
-    mov rsi,CodeInfo
-    mov rdi,opndx
+    ldr rsi,CodeInfo
+    ldr rdi,opndx
 
     mov ecx,[rsi].opnd[OPND1].type
     mov edx,[rsi].opnd[OPNI2].type
@@ -3457,7 +3458,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
   local opndx[MAX_OPND+1]:expr
   local buffer:ptr char_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     .if ( CurrEnum && [rbx].token == T_ID )
         .return EnumDirective( 0, rbx )
     .endif

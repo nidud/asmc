@@ -11,11 +11,11 @@ include fltintrn.inc
 
 _wtof proc string:wstring_t
 
-    .new buf[256]:char_t
-    .new i:int_t = 0
-ifndef _WIN64
-    mov ecx,string
-endif
+   .new buf[256]:char_t
+   .new i:int_t = 0
+
+    ldr rcx,string
+
     .for ( al = -1, rdx = &buf: al && i < lengthof(buf) : i++, rdx++, rcx += 2 )
 
         mov al,[rcx]

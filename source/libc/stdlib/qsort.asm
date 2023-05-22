@@ -13,10 +13,9 @@ qsort proc uses rsi rdi rbx p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
 
    .new level:int_t = 0
 
-ifndef _WIN64
-    mov ecx,p
-    mov edx,n
-endif
+    ldr rcx,p
+    ldr rdx,n
+
     .if ( edx > 1 )
 
         lea eax,[rdx-1]

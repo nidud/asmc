@@ -1051,7 +1051,7 @@ RunMacro endp
 
 AddTokens proc __ccall private uses rbx tokenarray:token_t, start:int_t, count:int_t, _end:int_t
 
-    mov     rbx,tokenarray
+    ldr     rbx,tokenarray
 ifdef _WIN64
     movsxd  rax,count
 else
@@ -1499,7 +1499,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
     local rc:int_t
     local old_tokencount:int_t
 
-    mov rdx,pi
+    ldr rdx,pi
     mov i,[rdx]
     mov addbrackets,bracket_flags
     mov evaluate,FALSE
@@ -1849,7 +1849,7 @@ ExpandLineItems endp
 ExpandLiterals proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     xor eax,eax
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
 
     ; count non-empty literals
     .for ( : ecx < Token_Count: ecx++ )

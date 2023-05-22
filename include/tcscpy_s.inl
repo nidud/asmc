@@ -7,45 +7,63 @@ else
     reg equ <al>
 endif
 
-_FUNC_PROLOGUE
-_FUNC_NAME proc uses rsi rdi rbx _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR
-
-ifdef _WIN64
-    mov rsi,r8
-    mov rdi,rcx
-    mov rbx,rdx
+_LOAD_DEST_SIZE macro
+if defined(_WIN64) and defined(__UNIX__)
+    mov rbx,rdi
+ifdef _DEBUG
+    mov rcx,rsi
+endif
 else
-    mov esi,_SRC
-    mov edi,_DEST
-    mov ebx,_SIZE
+    mov rbx,_DEST
+ifdef _DEBUG
+    mov rcx,_SIZE
+endif
+endif
+exitm<>
+endm
+
+_FUNC_PROLOGUE
+_FUNC_NAME proc uses rbx _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR
+ifdef _WIN64
+ ifdef __UNIX__
+    mov rbx,rdi
+    mov rcx,rsi
+ else
+    mov rbx,rcx
+    mov rcx,rdx
+    mov rdx,r8
+ endif
+else
+    mov edx,_SRC
+    mov ebx,_DEST
+    mov ecx,_SIZE
 endif
 
-    .repeat
+    _VALIDATE_STRING( rbx, rcx )
+    _VALIDATE_POINTER_RESET_STRING( rdx, rbx, rcx )
 
-        _VALIDATE_STRING( rdi, rbx )
-        _VALIDATE_POINTER_RESET_STRING( rsi, rdi, rbx )
+    .fors ( --rcx : rcx > 0 : rcx--, rbx+=_CHAR, rdx+=_CHAR )
 
-        .fors ( --rbx : rbx > 0 : rbx--, rdi+=_CHAR, rsi+=_CHAR )
+        mov reg,[rdx]
+        mov [rbx],reg
+        .break .if !reg
+    .endf
 
-            mov reg,[rsi]
-            mov [rdi],reg
-            .break .if !reg
-        .endf
+    .if ( rcx == 0 )
 
-        .if ( rbx == 0 )
-
-            _RESET_STRING(_DEST, _SIZE)
-            _RETURN_BUFFER_TOO_SMALL(_DEST, _SIZE)
-        .endif
+        _LOAD_DEST_SIZE()
+        _RESET_STRING(rbx, rcx)
+        _RETURN_BUFFER_TOO_SMALL(rbx, rcx)
+    .endif
 if _SECURECRT_FILL_BUFFER
-        mov rcx,_SIZE
-        sub rcx,rbx
-        inc rcx
-        _FILL_STRING(_DEST, _SIZE, rcx)
+    mov rdx,rcx
+    _LOAD_DEST_SIZE()
+    mov rax,rcx
+    sub rax,rdx
+    inc rax
+    _FILL_STRING(rbx, rcx, rax)
 endif
-        xor eax,eax
-
-    .until 1
+    xor eax,eax
     ret
 
 _FUNC_NAME endp

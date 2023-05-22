@@ -14,9 +14,7 @@ include crtl.inc
 
 strfn proc path:string_t
 
-ifndef _WIN64
-    mov ecx,path
-endif
+    ldr rcx,path
     .for ( rax = rcx, dl=[rcx] : dl : rcx++, dl=[rcx] )
 
         .if ( dl == '\' || dl == '/' )

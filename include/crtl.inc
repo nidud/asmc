@@ -14,7 +14,7 @@ define _EXEC_COM 2
 define _EXEC_EXE 3
 define _EXEC_CMD 4
 
-externdef       OldErrorMode:dword
+externdef       _ermode:uint_t
 
 __isexec        proto __cdecl :string_t
 __setenvp       proto __cdecl :string_t

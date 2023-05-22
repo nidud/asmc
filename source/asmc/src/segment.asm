@@ -93,7 +93,7 @@ min_cpu         dw P_86, P_386, P_64
 
 FindToken proc __ccall private uses rsi rdi token:string_t, table:ptr, size:int_t
 
-    mov rsi,table
+    ldr rsi,table
     .for ( edi = 0 : edi < size : edi++ )
 
         .lodsd
@@ -372,7 +372,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     ; GROUP directive must be at pos 1, needs a name at pos 0
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     .if ( i != 1 )
 
         imul ecx,i,asm_tok
@@ -842,7 +842,7 @@ CreateIntSegment endp
 
 EndsDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     .if ( CurrStruct != NULL )
         .return( EndstructDirective( i, rbx ) )
     .endif
@@ -953,7 +953,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new sym:ptr asym
    .new opndx:expr
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     .if ( Parse_Pass != PASS_1 )
         .return( SetCurrSeg( i, rbx ) )
     .endif

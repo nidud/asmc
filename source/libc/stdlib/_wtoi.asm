@@ -10,11 +10,8 @@ include stdlib.inc
 
 _wtoi proc string:LPWSTR
 
-ifdef _WIN64
+    ldr rcx,string
     .return( _wtol( rcx ) )
-else
-    .return( _wtol( string ) )
-endif
 
 _wtoi endp
 

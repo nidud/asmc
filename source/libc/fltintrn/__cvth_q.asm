@@ -10,11 +10,9 @@ include errno.inc
 
 __cvth_q proc __ccall q:ptr qfloat_t, h:ptr half_t
 
-ifndef _WIN64
-    mov     ecx,q
-    mov     edx,h
-endif
-    mov     rax,rcx
+    ldr     rax,q
+    ldr     rdx,h
+
     movsx   edx,word ptr [rdx]
     mov     ecx,edx             ; get exponent and sign
     shl     edx,H_EXPBITS+16    ; shift fraction into place

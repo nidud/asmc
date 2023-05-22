@@ -10,10 +10,7 @@ include stdlib.inc
 
 _wtol proc string:LPWSTR
 
-ifndef _WIN64
-    mov ecx,string
-endif
-
+    ldr rcx,string
     .repeat
         movzx eax,word ptr [rcx]
         add rcx,2

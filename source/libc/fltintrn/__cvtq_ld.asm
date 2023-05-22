@@ -9,13 +9,9 @@ include fltintrn.inc
 
 __cvtq_ld proc __ccall uses rsi rdi rbx ld:ptr ldouble_t, q:ptr qfloat_t
 
-ifdef _WIN64
-    mov     rax,rcx
-    mov     rdi,rdx
-else
-    mov     eax,ld
-    mov     edi,q
-endif
+    ldr     rax,ld
+    ldr     rdi,q
+
     xor     ecx,ecx
     mov     ebx,[rdi+6]
     mov     edx,[rdi+10]

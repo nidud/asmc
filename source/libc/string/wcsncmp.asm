@@ -11,10 +11,12 @@ include string.inc
     option dotname
 
 wcsncmp proc a:wstring_t, b:wstring_t, count:size_t
+
+    ldr     rcx,a
+    ldr     rdx,b
+
 ifndef _WIN64
     push    ebx
-    mov     ecx,a
-    mov     edx,b
     mov     ebx,count
 endif
     mov     eax,1

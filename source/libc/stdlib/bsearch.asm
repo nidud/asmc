@@ -13,10 +13,14 @@ bsearch proc uses rsi rdi rbx key:ptr, base:ptr, num:size_t, width:size_t, compa
 
    .new mid:size_t
 
+    ldr rsi,base
+    ldr rax,num
+    ldr rcx,width
+
     ; validation section
 
-    mov rax,compare
-    .if ( rax == NULL || ( base == NULL && num != 0 ) || width == 0 )
+    mov rdx,compare
+    .if ( rdx == NULL || ( rsi == NULL && rax != 0 ) || rcx == 0 )
 
         _set_errno(EINVAL)
         .return( 0 )
@@ -26,10 +30,8 @@ bsearch proc uses rsi rdi rbx key:ptr, base:ptr, num:size_t, width:size_t, compa
     ; because we do not dereference this ourselves so we can't be sure that
     ; it's a problem for the comparison function
 
-    mov rsi,base
-    mov rax,num
     dec rax
-    mul width
+    mul rcx
     lea rdi,[rax+rsi]
 
     .while ( rsi <= rdi )

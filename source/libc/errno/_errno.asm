@@ -22,18 +22,17 @@ _errno proc
 _errno endp
 
 _set_errno proc value:int_t
-ifndef _WIN64
-    mov ecx,value
-endif
+
+    ldr ecx,value
+
     mov ErrorNoMem,ecx
     ret
 
 _set_errno endp
 
 _get_errno proc pValue:ptr int_t
-ifndef _WIN64
-    mov ecx,pValue
-endif
+
+    ldr rcx,pValue
     mov eax,ErrorNoMem
     .if rcx
         mov [rcx],eax

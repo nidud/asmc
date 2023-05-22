@@ -10,10 +10,9 @@ include fltintrn.inc
 
 __addo proc __ccall a:ptr uint128_t, b:ptr uint128_t
 
-ifndef _WIN64
-    mov     ecx,a
-    mov     edx,b
-endif
+    ldr     rcx,a
+    ldr     rdx,b
+
     mov     rax,[rdx]
     add     [rcx],rax
     mov     rax,[rdx+size_t]

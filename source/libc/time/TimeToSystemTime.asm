@@ -10,10 +10,9 @@ include time.inc
 
 TimeToSystemTime proc Time:time_t, lpSystemTime:ptr SYSTEMTIME
 
-ifndef _WIN64
-    mov     ecx,Time
-    mov     edx,lpSystemTime
-endif
+    ldr     rcx,Time
+    ldr     rdx,lpSystemTime
+
     mov     [rdx].SYSTEMTIME.wDayOfWeek,0
     mov     [rdx].SYSTEMTIME.wMilliseconds,0
     mov     eax,ecx

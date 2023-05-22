@@ -10,6 +10,7 @@ include stdlib.inc
 
 atoi proc string:string_t
 
+    ldr rcx,string
     atol(rcx)
     ret
 

@@ -568,8 +568,8 @@ AssumeDirective endp
 
 search_assume proc __ccall uses rsi rdi rbx sym:asym_t, def:int_t, search_grps:int_t
 
-    mov rdi,sym
-    mov ebx,def
+    ldr rdi,sym
+    ldr ebx,def
 
     .if ( rdi == NULL )
         .return( ASSUME_NOTHING )

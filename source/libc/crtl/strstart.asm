@@ -10,7 +10,7 @@ include string.inc
 
 strstart proc string:string_t
 
-    mov rax,string
+    ldr rax,string
     .repeat
 
         add rax,1

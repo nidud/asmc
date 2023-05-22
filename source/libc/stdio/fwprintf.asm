@@ -10,9 +10,7 @@ include stdio.inc
 
 fwprintf proc uses rsi file:LPFILE, format:LPWSTR, argptr:VARARG
 
-ifndef _WIN64
-    mov ecx,file
-endif
+    ldr rcx,file
     mov  rsi,_stbuf( rcx )
     xchg rsi,_woutput( file, format, &argptr )
 

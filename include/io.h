@@ -17,7 +17,7 @@
 #define _A_VOLID	0x08
 #define _A_SUBDIR	0x10
 #define _A_ARCH		0x20
-#define _A_NORMAL	0x80
+#define _A_NORMAL	0x00
 
 #define _A_TEMPORARY	0x0100
 #define _A_SPARSE_FILE	0x0200

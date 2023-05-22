@@ -32,10 +32,9 @@ memxchg endp
 
 tqsort proc __ccall uses rsi rdi rbx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
 
-ifndef _WIN64
-    mov ecx,p
-    mov edx,n
-endif
+    ldr rcx,p
+    ldr edx,n
+
     .if ( edx > 1 )
 
         lea eax,[rdx-1]

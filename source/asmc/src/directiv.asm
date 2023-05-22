@@ -168,7 +168,7 @@ IncludeLibDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     mov eax,NOT_ERROR
 
-    .return .if ( Options.nolib ) ; slip directive
+    .return .if ( Options.nolib ) ; skip directive
     .return .if ( Parse_Pass != PASS_1 ) ; do all work in pass 1
 
     inc  i ; skip the directive

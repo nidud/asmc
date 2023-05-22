@@ -149,8 +149,8 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
    .new isfloat     : char_t = 0
    .new isptr       : char_t = 0
 
-    mov ebx,op1
-    mov edi,op2
+    ldr ebx,op1
+    ldr edi,op2
 
     .if ( !( ebx & OP_M_ANY ) || !( edi & OP_M_ANY ) ||
           ModuleInfo.strict_masm_compat == 1 )
@@ -431,9 +431,9 @@ imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t
   local i:int_t
   local opnd2:expr
 
-    mov rdi,tokenarray
+    ldr rdi,tokenarray
     mov esi,[rdi].tokval
-    mov rcx,opnd
+    ldr rcx,opnd
     mov edx,4
 
     .if ( [rcx].expr.mem_type == MT_REAL8 )

@@ -12,11 +12,7 @@ include errno.inc
 
 __cvtq_sd proc __ccall uses rsi rdi rbx d:ptr double_t, q:ptr qfloat_t
 
-ifdef _WIN64
-    mov     rax,rdx
-else
-    mov     eax,q
-endif
+    ldr     rax,q
 
     movzx   ecx,word ptr [rax+14]
     mov     edx,[rax+10]

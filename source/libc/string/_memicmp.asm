@@ -11,10 +11,12 @@ include string.inc
     option dotname
 
 _memicmp proc a:ptr, b:ptr, size:size_t
+
+    ldr     rcx,a
+    ldr     rdx,b
+
 ifndef _WIN64
     push    ebx
-    mov     ecx,a
-    mov     edx,b
     mov     ebx,size
 endif
     dec     rcx

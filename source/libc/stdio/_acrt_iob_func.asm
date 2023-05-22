@@ -10,9 +10,7 @@ include stdio.inc
 
 __acrt_iob_func proc id:dword
 
-ifndef _WIN64
-    mov ecx,id
-endif
+    ldr ecx,id
     imul eax,ecx,_iobuf
     add  rax,stdin
     ret

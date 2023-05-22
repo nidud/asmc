@@ -11,9 +11,9 @@ _get_errno_from_oserr proto oserrno:ulong_t
     .code
 
 _dosmaperr proc oserrno:ulong_t
-ifndef _WIN64
-    mov ecx,oserrno
-endif
+
+    ldr ecx,oserrno
+
     _set_doserrno( ecx )
     _set_errno( _get_errno_from_oserr( oserrno ) )
     .return( -1 )

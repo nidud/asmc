@@ -12,30 +12,27 @@ include errno.inc
 memcpy_s proc dst:ptr, sizeInBytes:size_t, src:ptr, count:size_t
 
     .if ( count == 0 )
-
-        ; nothing to do
         .return( 0 )
     .endif
 
-    ; validation section
     .if ( dst == NULL )
 
+        _set_errno(EINVAL)
         .return( EINVAL )
     .endif
 
     .if ( src == NULL || sizeInBytes < count )
 
-        ; zeroes the destination buffer
-
         memset( dst, 0, sizeInBytes )
-
         .if ( src != NULL )
+            _set_errno(EINVAL)
             .return( EINVAL )
         .endif
         .if ( sizeInBytes >= count )
+            _set_errno(ERANGE)
             .return( ERANGE )
         .endif
-        ; useless, but prefast is confused
+        _set_errno(EINVAL)
         .return( EINVAL )
     .endif
     memcpy( dst, src, count )

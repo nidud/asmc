@@ -1800,7 +1800,7 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
 
   local evex:byte
 
-    mov rsi,CodeInfo
+    ldr rsi,CodeInfo
     mov evex,[rsi].evex
     mov rdi,[rsi].pinstr
     ;;

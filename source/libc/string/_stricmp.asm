@@ -11,36 +11,40 @@ include string.inc
     option dotname
 
 _stricmp proc a:string_t, b:string_t
-ifndef _WIN64
-    mov     ecx,a
-    mov     edx,b
-endif
+
+    ldr     rcx,a
+    ldr     rdx,b
+
     dec     rcx
     dec     rdx
     mov     eax,1
 .0:
     test    eax,eax
-    jz      .2
+    jz      .3
     inc     rcx
     inc     rdx
     mov     al,[rcx]
     cmp     al,[rdx]
     je      .0
-    xor     al,0x20
     cmp     al,'A'
     jb      .1
-    cmp     al,'z'
+    cmp     al,'Z'
     ja      .1
-    cmp     al,0x60
-    je      .1
-    cmp     al,[rdx]
-    je      .0
+    or      al,0x20
 .1:
-    xor     al,0x20
-    cmp     al,[rdx]
+    mov     ah,[rdx]
+    cmp     ah,'A'
+    jb      .2
+    cmp     ah,'Z'
+    ja      .2
+    or      ah,0x20
+.2:
+    cmp     al,ah
+    mov     ah,0
+    je      .0
     sbb     rax,rax
     sbb     rax,-1
-.2:
+.3:
     ret
 
 _stricmp endp

@@ -8,31 +8,17 @@ include string.inc
 
     .code
 
-memcmp proc a:ptr, b:ptr, count:size_t
+memcmp proc uses rsi rdi a:ptr, b:ptr, count:size_t
 
-ifdef _WIN64
-    xchg    rsi,rdx
-    xchg    rdi,rcx
-    xchg    rcx,r8
-else
-    mov     edx,esi
-    push    edi
-    mov     edi,a
-    mov     esi,b
-    mov     ecx,count
-endif
+    ldr     rdi,a
+    ldr     rsi,b
+    ldr     rcx,count
     xor     eax,eax
     repe    cmpsb
     jz      @F
     sbb     rax,rax
     sbb     rax,-1
 @@:
-ifdef _WIN64
-    mov     rdi,r8
-else
-    pop     edi
-endif
-    mov     rsi,rdx
     ret
 
 memcmp endp

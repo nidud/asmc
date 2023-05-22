@@ -10,13 +10,8 @@ include string.inc
 
 wcsstr proc uses rsi rdi rbx dst:wstring_t, src:wstring_t
 
-ifdef _WIN64
-    mov rdi,rcx
-    mov rbx,rdx
-else
-    mov edi,dst
-    mov ebx,src
-endif
+    ldr rdi,dst
+    ldr rbx,src
 
     .if wcslen(rbx)
 

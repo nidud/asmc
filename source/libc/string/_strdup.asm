@@ -11,10 +11,10 @@ include string.inc
 
 _strdup proc string:LPSTR
 
-    .if strlen(string)
+    ldr rax,string
+    .if rax
 
-        inc rax
-        .if malloc(rax)
+        .if malloc(&[strlen(rax)+1])
 
             strcpy(rax, string)
         .endif

@@ -14,7 +14,7 @@ _filelength proc handle:SINT
 
   local FileSize:QWORD
 
-    mov ecx,handle
+    ldr ecx,handle
     lea rax,_osfhnd
     mov rcx,[rax+rcx*size_t]
 

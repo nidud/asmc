@@ -24,7 +24,7 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
   local lfbuf[BUF_SIZE]:char_t  ; lf translation buffer
   local file:char_t
 
-    mov eax,cnt
+    ldr eax,cnt
     .return .if !eax            ; nothing to do
 
     .if ( fh >= _NFILE_ )       ; validate handle
@@ -34,14 +34,14 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
         .return -1
     .endif
 
-    mov ecx,fh
+    ldr ecx,fh
     lea rdx,_osfhnd
     mov rbx,[rdx+rcx*size_t]
     lea rdx,_osfile
     mov al,[rdx+rcx]
     mov file,al
 
-    .if ( al & FH_APPEND )      ; appending - seek to end of file; ignore error, because maybe
+    .if ( al & FAPPEND )      ; appending - seek to end of file; ignore error, because maybe
                                 ; file doesn't allow seeking
         _lseek( fh, 0, SEEK_END )
     .endif
@@ -51,7 +51,7 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
 
     ; check for text mode with LF's in the buffer
 
-    .if ( file & FH_TEXT )
+    .if ( file & FTEXT )
 
         mov rsi,buf             ; start at beginning of buffer
         mov dosretval,0         ; no OS error yet
@@ -139,7 +139,7 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
             .endif
             .return -1
 
-        .elseif ( file & FH_DEVICE && byte ptr [rdx] == CTRLZ )
+        .elseif ( file & FDEV && byte ptr [rdx] == CTRLZ )
 
             .return 0
         .endif

@@ -14,7 +14,7 @@ include stdlib.inc
 
 __xtol proc string:LPSTR
 
-    mov rdx,string
+    ldr rdx,string
     xor eax,eax
     xor ecx,ecx
 

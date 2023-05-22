@@ -17,11 +17,12 @@ include parser.inc
 
 UndefDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
-    mov  esi,i
-    inc  esi ;; skip directive
+    ldr  esi,i
+    ldr  rbx,tokenarray
 
-    imul ebx,esi,asm_tok
-    add  rbx,tokenarray
+    inc  esi ;; skip directive
+    imul eax,esi,asm_tok
+    add  rbx,rax
 
     .repeat
 

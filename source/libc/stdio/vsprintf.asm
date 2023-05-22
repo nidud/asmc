@@ -13,10 +13,9 @@ vsprintf proc string:string_t, format:string_t, argptr:ptr
 
   local o:_iobuf
 
-ifndef _WIN64
-    mov ecx,string
-    mov edx,format
-endif
+    ldr rcx,string
+    ldr rdx,format
+
     mov o._flag,_IOWRT or _IOSTRG
     mov o._cnt,INT_MAX
     mov o._ptr,rcx

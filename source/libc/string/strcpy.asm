@@ -131,69 +131,17 @@ tail:
 else
 
 strcpy proc uses rsi rdi dst:string_t, src:string_t
-ifndef _WIN64
-    mov     ecx,dst
-    mov     edx,src
-endif
-    mov     rax,rcx
-    mov     rsi,rdx
-    and     rsi,-4
-    and     edx,3
-    lea     ecx,[rdx*8]
-    mov     edi,-1
-    shl     edi,cl
-    not     edi
-    or      edi,[rsi]
 
-    lea     ecx,[rdi-0x01010101]
-    not     edi
-    and     ecx,edi
-    and     ecx,0x80808080
-    jnz     .0
-
-    mov     ecx,[rsi+rdx]
-    mov     [rax],ecx
-    sub     edx,4
-    neg     edx
-    add     rdx,rax
-    jmp     .2
-
-.0:
-    add     rdx,rsi
-    mov     cl,[rdx]
-    mov     [rax],cl
-    test    cl,cl
-    jz      .7
-    mov     cl,[rdx+1]
-    mov     [rax+1],cl
-    test    cl,cl
-    jz      .7
-    mov     cl,[rdx+2]
-    mov     [rax+2],cl
-    test    cl,cl
-    jz      .7
-    mov     cl,[rdx+3]
-    mov     [rax+3],cl
-    jmp     .7
-
-    align   8
-.1:
-    mov     ecx,[rsi]
-    mov     [rdx],ecx
-    add     rdx,4
-.2:
-    add     rsi,4
-    mov     ecx,[rsi]
-    lea     edi,[rcx-0x01010101]
-    not     ecx
-    and     edi,ecx
-    and     edi,0x80808080
-    jz      .1
-    bsf     edi,edi
-    shr     rdi,3
-    mov     ecx,[rsi+rdi-3]
-    mov     [rdx+rdi-3],ecx
-.7:
+    ldr     rdi,src
+    ldr     rdx,dst
+    mov     rsi,rdi
+    xor     eax,eax
+    mov     rcx,-1
+    repne   scasb
+    not     rcx
+    mov     rax,rdx
+    mov     rdi,rdx
+    rep     movsb
     ret
 
 endif

@@ -50,7 +50,7 @@ NameSpace endp
 
 NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     mov rsi,ModuleInfo.NspStack
 
     .if ( [rbx].tokval == T_DOT_ENDN )

@@ -10,10 +10,9 @@ include string.inc
 
 wcspbrk proc uses rsi rdi rbx s1:LPWSTR, s2:LPWSTR
 
-ifndef _WIN64
-    mov     ecx,s1
-    mov     edx,s2
-endif
+    ldr     rcx,s1
+    ldr     rdx,s2
+
     mov     rbx,rcx
     xor     eax,eax
     mov     rdi,rdx

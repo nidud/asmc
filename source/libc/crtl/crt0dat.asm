@@ -17,25 +17,16 @@ __copy_path_to_wide_string proc path:ptr char_t, outPath:ptr ptr wchar_t
     .new len:int_t
     .new codePage:UINT = CP_ACP
 
-    ; validation section
-    .if ( path == NULL || outPath == NULL )
+    ldr rcx,path
+    ldr rdx,outPath
+    .if ( rcx == NULL || rdx == NULL )
         _set_errno( EINVAL )
         .return( FALSE )
     .endif
 
-ifndef _CORESYS
-    .if ( !__crtIsPackagedApp() )
-        .if ( !AreFileApisANSI() )
-            mov codePage,CP_OEMCP
-        .endif
-    .endif
-endif
-
     xor eax,eax
-    mov rcx,outPath
-    mov [rcx],rax
+    mov [rdx],rax
 
-    ; get the buffer size needed for conversion
     mov len,MultiByteToWideChar( codePage, 0, path, -1, 0, 0 )
 
     .if  ( len == 0 )
@@ -44,18 +35,15 @@ endif
         .return( FALSE )
     .endif
 
-    ; allocate enough space for path wide char
     imul ecx,len,wchar_t
     .if ( malloc( rcx ) == NULL )
 
-        ; malloc should set the errno
         .return( FALSE )
     .endif
     mov rcx,rax
     mov rax,outPath
     mov [rax],rcx
 
-    ; now do the conversion
     .if ( MultiByteToWideChar( codePage, 0, path, -1, rcx, len ) == 0 )
 
         _dosmaperr( GetLastError() )

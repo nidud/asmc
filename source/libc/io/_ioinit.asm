@@ -6,50 +6,54 @@
 
 include io.inc
 include crtl.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 
     .data
-
     _nfile  dd _NFILE_
-    _osfile db FH_OPEN or FH_DEVICE or FH_TEXT
-            db FH_OPEN or FH_DEVICE or FH_TEXT
-            db FH_OPEN or FH_DEVICE or FH_TEXT
+    _osfile db 3 dup(FOPEN or FDEV or FTEXT)
             db _NFILE_ - 3 dup(0)
-
-    _osfhnd label   HANDLE
-    hStdInput       HANDLE -1
-    hStdOutput      HANDLE -1
-    hStdError       HANDLE -1
-                    HANDLE _NFILE_ - 3 dup(-1)
-    OldErrorMode    dd 5
+ifndef __UNIX__
+    _osfhnd HANDLE _NFILE_ dup(-1)
+    _ermode dd 5
 
     .code
 
-_ioinit proc
+_ioinit proc private
 
-    mov hStdInput,    GetStdHandle( STD_INPUT_HANDLE )
-    mov hStdOutput,   GetStdHandle( STD_OUTPUT_HANDLE )
-    mov hStdError,    GetStdHandle( STD_ERROR_HANDLE )
-    mov OldErrorMode, SetErrorMode( SEM_FAILCRITICALERRORS )
+    mov _osfhnd[0*HANDLE],GetStdHandle(STD_INPUT_HANDLE)
+    mov _osfhnd[1*HANDLE],GetStdHandle(STD_OUTPUT_HANDLE)
+    mov _osfhnd[2*HANDLE],GetStdHandle(STD_ERROR_HANDLE)
+    mov _ermode,SetErrorMode(SEM_FAILCRITICALERRORS)
     ret
 
 _ioinit endp
 
+else
+    .code
+endif
 
-_ioexit proc uses rsi rdi
+_ioexit proc private uses rbx
 
-    .for ( esi = 3, rdi = &_osfile : esi < _NFILE_ : esi++ )
+    .for ( ebx = 3 : ebx < _NFILE_ : ebx++ )
 
-        .if ( BYTE PTR [rdi+rsi] & FH_OPEN )
+        lea rdx,_osfile
+        .if ( BYTE PTR [rdx+rbx] & FOPEN )
 
-            _close( esi )
+            _close( ebx )
         .endif
     .endf
+ifndef __UNIX__
+    SetErrorMode( _ermode )
+endif
     ret
 
 _ioexit endp
 
-.pragma(init(_ioinit, 1))
-.pragma(exit(_ioexit, 2))
+ifndef __UNIX__
+.pragma init(_ioinit, 1)
+endif
+.pragma exit(_ioexit, 100)
 
     end

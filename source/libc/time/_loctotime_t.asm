@@ -13,10 +13,9 @@ _loctotime_t proc uses rsi rdi rbx year:int_t, month:int_t, day:int_t, hour:int_
 
   local tb:tm
 
-ifndef _WIN64
-    mov ecx,year
-    mov edx,month
-endif
+    ldr ecx,year
+    ldr edx,month
+
     or  eax,-1
     lea ebx,[rcx-1900]
 

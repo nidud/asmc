@@ -10,17 +10,10 @@ include string.inc
 
 memset proc uses rdi dst:ptr, chr:int_t, size:size_t
 
-ifdef _WIN64
-    mov     eax,edx
-    mov     rdx,rcx
-    mov     rdi,rcx
-    mov     rcx,r8
-else
-    mov     edi,dst
-    mov     eax,chr
-    mov     ecx,size
-    mov     edx,edi
-endif
+    ldr     rdi,dst
+    ldr     eax,chr
+    ldr     rcx,size
+    mov     rdx,rdi
     rep     stosb
     mov     rax,rdx
     ret

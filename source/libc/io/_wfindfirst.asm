@@ -16,10 +16,11 @@ _wfindnext proc uses rsi rdi handle:intptr_t, ff:ptr _wfinddata_t
 
   local wf:WIN32_FIND_DATAW
 
-    mov rdi,ff
+    ldr rcx,handle
+    ldr rdi,ff
     lea rsi,wf
 
-    .if FindNextFileW( handle, rsi )
+    .if FindNextFileW( rcx, rsi )
         copyblock()
     .else
         _dosmaperr( GetLastError() )
@@ -33,10 +34,11 @@ _wfindfirst proc uses rsi rdi rbx lpFileName:LPWSTR, ff:PTR _wfinddata_t
 
   local FindFileData:WIN32_FIND_DATAW
 
-    mov rdi,ff
+    ldr rcx,lpFileName
+    ldr rdi,ff
     lea rsi,FindFileData
 
-    .ifd ( FindFirstFileW( lpFileName, rsi ) != -1 )
+    .ifd ( FindFirstFileW( rcx, rsi ) != -1 )
 
         mov rbx,rax
         copyblock()

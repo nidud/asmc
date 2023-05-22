@@ -14,10 +14,9 @@ _initterm proc uses rsi rdi rbx pfbegin:ptr, pfend:ptr
 
    .new entries[MAXENTRIES]:uint64_t
 
-ifndef _WIN64
-    mov ecx,pfbegin
-    mov edx,pfend
-endif
+    ldr rcx,pfbegin
+    ldr rdx,pfend
+
     mov rax,rdx
     sub rax,rcx
 

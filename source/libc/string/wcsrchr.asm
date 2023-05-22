@@ -10,12 +10,9 @@ include string.inc
 
 wcsrchr proc uses rdi s1:ptr wchar_t, wc:wchar_t
 
-ifdef _WIN64
-    mov     rdi,rcx
-else
-    mov     edi,s1
-    mov     dx,wc
-endif
+    ldr     rdi,s1
+    ldr     dx,wc
+
     xor     eax,eax
     mov     ecx,-1
     repne   scasw

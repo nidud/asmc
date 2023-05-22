@@ -50,9 +50,10 @@ _flttostr proc __ccall uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, fl
   local stkbuf[STK_BUF_SIZE]:char_t
   local endbuf :ptr
 
-    mov rbx,cvt
+    ldr rbx,cvt
+    ldr rcx,buf
     mov eax,[rbx].bufsize
-    add rax,buf
+    add rax,rcx
     dec rax
     mov endbuf,rax
 

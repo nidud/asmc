@@ -106,7 +106,7 @@ cmpwarg endp
 
 ReadFiles proc __ccall uses rsi rdi rbx directory:string_t, wild:string_t, files:ptr SourceFile
 
-    mov rbx,directory
+    ldr rbx,directory
     .if ( byte ptr [rbx] == 0 )
         mov word ptr [rbx],'.'
     .endif
@@ -203,8 +203,8 @@ else
 
 strfcat proc __ccall private uses rsi rdi buffer:string_t, path:string_t, file:string_t
 
-    mov rdx,buffer
-    mov rsi,path
+    ldr rdx,buffer
+    ldr rsi,path
 
     xor eax,eax
     mov ecx,-1

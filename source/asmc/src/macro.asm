@@ -70,7 +70,7 @@ mname_list ends
 fill_placeholders proc __ccall uses rsi rdi rbx dst:string_t, src:string_t, argc:uint_t,
         localstart:uint_t, argv:array_t
 
-    mov rdi,dst
+    ldr rdi,dst
 
     ; scan the string, replace the placeholders #nn
 
@@ -853,7 +853,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local store_data:int_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     mov rdi,[rbx].string_ptr
     mov rsi,SymSearch(rdi)
 
@@ -1077,8 +1077,8 @@ PurgeDirective endp
 
 EnvironFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
-    mov rcx,mi
-    mov rbx,buffer
+    ldr rcx,mi
+    ldr rbx,buffer
     mov rax,[rcx].macro_instance.parm_array
     mov rcx,[rax]
     mov rsi,tgetenv(rcx)

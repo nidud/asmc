@@ -119,8 +119,8 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
   local vreg:int_t
   local vtable:byte
 
-    mov rbx,tok
-    mov rsi,sym
+    ldr rbx,tok
+    ldr rsi,sym
 
     .if ( rsi == NULL )
         .if ( [rbx].token == T_REG )
@@ -235,7 +235,7 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm
   local dest:uint_t
   local buffer[128]:sbyte
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     .if ( pos )
         mov inst,[rbx-asm_tok].tokval    ; cmp p.p.p, expr
     .else

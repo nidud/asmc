@@ -15,11 +15,7 @@ DDFLT_MIN equ 0x00800000
 
 __cvtq_ss proc __ccall uses rbx s:ptr float_t, q:ptr qfloat_t
 
-ifdef _WIN64
-    mov     rbx,rdx
-else
-    mov     ebx,q
-endif
+    ldr rbx,q
 
     mov edx,0xFFFFFF00  ; get mask of bits to keep
     mov eax,[rbx+10]    ; get top part

@@ -10,9 +10,7 @@ include stdio.inc
 
 vfprintf proc uses rsi file:LPFILE, format:LPSTR, args:PVOID
 
-ifndef _WIN64
-    mov ecx,file
-endif
+    ldr rcx,file
     mov rsi,_stbuf(rcx)
     _output(file, format, args)
     mov rcx,rsi

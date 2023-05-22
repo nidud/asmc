@@ -10,17 +10,12 @@ include string.inc
 
     option dotname
 
-memmove proc uses rsi rdi dst:ptr, src:ptr, z:size_t
+memmove proc uses rsi rdi dst:ptr, src:ptr, count:size_t
 
-ifdef _WIN64
-    mov     rax,rcx
-    mov     rsi,rdx
-    mov     ecx,r8d
-else
-    mov     eax,dst
-    mov     esi,src
-    mov     ecx,z
-endif
+    ldr     rax,dst
+    ldr     rsi,src
+    ldr     rcx,count
+
     mov     rdi,rax
     cmp     rax,rsi
     ja      .0

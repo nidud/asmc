@@ -11,7 +11,8 @@ include string.inc
 
 _wgetenv proc uses rsi rdi enval:wstring_t
 
-    .ifd ( wcslen( enval ) == 0 )
+    ldr rcx,enval
+    .ifd ( wcslen( rcx ) == 0 )
 	.return
     .endif
 

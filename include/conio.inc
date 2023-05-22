@@ -1,14 +1,12 @@
 .pragma list(push, 0)
+
 ifndef __INC_CONIO
 define __INC_CONIO
-ifndef __LIBC_INC
-include libc.inc
-endif
-ifndef _WINCON_
+
 include wincon.inc
-endif
-ifndef _WINUSER_
 include winuser.inc
+ifdef __UNIX__
+include termios.inc
 endif
 
 .pragma comment(lib, libc, msvcrt)
@@ -107,12 +105,6 @@ endif
 endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-
-ifndef __VT__
-ifdef  __UNIX__
-define __VT__
-endif
-endif
 
 define MAXSCRLINE	256	; max screen size
 define CURSOR_NORMAL	16	; default cursor size (0..100)
@@ -254,7 +246,6 @@ _getattrib macro B, F
 
 .pragma pack(push, size_t)
 
-
 .template CURSOR
     x		db ?
     y		db ?
@@ -348,45 +339,73 @@ CALLBACKC(TPROC, :THWND, :UINT, :WPARAM, :LPARAM)
    .ends
     PCONSOLE	typedef ptr TCONSOLE
 
+.template MESSAGE
+    next	ptr MESSAGE ?
+    hwnd	THWND ?
+    message	UINT ?
+    wParam	WPARAM ?
+    lParam	LPARAM ?
+   .ends
+    PMESSAGE	typedef ptr MESSAGE
+
+.template CINPUT
+    union
+     q	    intptr_t ?
+     b	    db 8 dup(?)
+    ends
+    count   dd ?
+   .ends
+
 .pragma pack(pop)
 
 ifdef __UNIX__
-externdef	_confh:int_t
-externdef	_coninpfh:int_t
+define CONIN	<"/dev/tty">
+define CONOUT	<"/dev/tty">
 else
+define CONIN	<"CONIN$">
+define CONOUT	<"CONOUT$">
 externdef	_confh:intptr_t
 externdef	_coninpfh:intptr_t
 endif
+externdef	_conin:int_t
+externdef	_conout:int_t
 externdef	_console:PCONSOLE
+externdef	_rgbcolortable:COLORREF
 externdef	_terminalcolorid:byte
 
-__initconin	proto __cdecl
-__termconin	proto __cdecl
-__initconout	proto __cdecl
-__termconout	proto __cdecl
+_cread		proto __cdecl :string_t, :int_t
+_cwriteA	proto __Cdecl :string_t, :vararg
+_cwriteW	proto __Cdecl :wstring_t, :vararg
 
-_coutA		proto __Cdecl :LPSTR, :vararg
-_coutW		proto __Cdecl :LPWSTR, :vararg
+_readinput	proto __cdecl :PINPUT_RECORD
 
-_scgeta		proto __cdecl :BYTE, :BYTE
-_scgetc		proto __cdecl :BYTE, :BYTE
-_scgetw		proto __cdecl :BYTE, :BYTE
-_scputa		proto __cdecl :BYTE, :BYTE, :BYTE, :WORD
-_scputfg	proto __cdecl :BYTE, :BYTE, :BYTE, :BYTE
-_scputbg	proto __cdecl :BYTE, :BYTE, :BYTE, :BYTE
-_scputc		proto __cdecl :BYTE, :BYTE, :BYTE, :wchar_t
-_scputw		proto __cdecl :BYTE, :BYTE, :BYTE, :CHAR_INFO
-_scgetl		proto __cdecl :SINT, :SINT, :SINT
-_scputl		proto __cdecl :SINT, :SINT, :SINT, :PCHAR_INFO
-_scputsA	proto __cdecl :BYTE, :BYTE, :LPSTR
-_scputsW	proto __cdecl :BYTE, :BYTE, :LPWSTR
-_scputfA	proto __Cdecl :BYTE, :BYTE, :LPSTR, :vararg
-_scputfW	proto __Cdecl :BYTE, :BYTE, :LPWSTR, :vararg
-_scpathA	proto __cdecl :BYTE, :BYTE, :BYTE, :LPSTR
-_scpathW	proto __cdecl :BYTE, :BYTE, :BYTE, :LPWSTR
-_sccenterA	proto __cdecl :BYTE, :BYTE, :BYTE, :LPSTR
-_sccenterW	proto __cdecl :BYTE, :BYTE, :BYTE, :LPWSTR
-_scframe	proto __cdecl :TRECT, :SINT, :WORD
+define ENABLE_IUTF8_INPUT 0x4000
+define CONSOLE_INPUT   ( ENABLE_WINDOW_INPUT or ENABLE_VIRTUAL_TERMINAL_INPUT )
+define TERMINAL_INPUT  ( CONSOLE_INPUT or ENABLE_MOUSE_INPUT or ENABLE_IUTF8_INPUT )
+define TERMINAL_OUTPUT ( ENABLE_IUTF8_INPUT or ENABLE_PROCESSED_OUTPUT or ENABLE_VIRTUAL_TERMINAL_PROCESSING )
+
+_consetmode	proto __cdecl :int_t, :uint_t
+_congetmode	proto __cdecl :int_t, :ptr uint_t
+
+_scgeta		proto __cdecl :uchar_t, :uchar_t
+_scgetc		proto __cdecl :uchar_t, :uchar_t
+_scgetw		proto __cdecl :uchar_t, :uchar_t
+_scputa		proto __cdecl :uchar_t, :uchar_t, :uchar_t, :ushort_t
+_scputfg	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :uchar_t
+_scputbg	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :uchar_t
+_scputc		proto __cdecl :uchar_t, :uchar_t, :uchar_t, :wchar_t
+_scputw		proto __cdecl :uchar_t, :uchar_t, :uchar_t, :CHAR_INFO
+_scgetl		proto __cdecl :int_t, :int_t, :int_t
+_scputl		proto __cdecl :int_t, :int_t, :int_t, :PCHAR_INFO
+_scputsA	proto __cdecl :uchar_t, :uchar_t, :string_t
+_scputsW	proto __cdecl :uchar_t, :uchar_t, :wstring_t
+_scputfA	proto __Cdecl :uchar_t, :uchar_t, :string_t, :vararg
+_scputfW	proto __Cdecl :uchar_t, :uchar_t, :wstring_t, :vararg
+_scpathA	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :string_t
+_scpathW	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :wstring_t
+_sccenterA	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :string_t
+_sccenterW	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :wstring_t
+_scframe	proto __cdecl :TRECT, :int_t, :ushort_t
 
 _getcursor	proto __cdecl :PCURSOR
 _setcursor	proto __cdecl :PCURSOR
@@ -396,9 +415,9 @@ _cursortype	proto __cdecl :int_t
 _cursorxy	proto __cdecl ; COORD
 _gotoxy		proto __cdecl :uint_t, :uint_t
 
-_rcframe	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :SINT, :BYTE
-_rcmemsize	proto __cdecl :TRECT, :SINT
-_rcalloc	proto __cdecl :TRECT, :SINT
+_rcframe	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :int_t, :uchar_t
+_rcmemsize	proto __cdecl :TRECT, :int_t
+_rcalloc	proto __cdecl :TRECT, :int_t
 _rcread		proto __cdecl :TRECT, :PCHAR_INFO
 _rcwrite	proto __cdecl :TRECT, :PCHAR_INFO
 _rcxchg		proto __cdecl :TRECT, :PCHAR_INFO
@@ -409,68 +428,89 @@ _rcmoved	proto __cdecl :TRECT, :PCHAR_INFO
 _rczip		proto __cdecl :TRECT, :ptr, :PCHAR_INFO
 _rcunzip	proto __cdecl :TRECT, :PCHAR_INFO, :ptr
 _rcbprc		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO
-_rcgetw		proto __cdecl :TRECT, :PCHAR_INFO, :BYTE, :BYTE
+_rcgetw		proto __cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t
 _rcputc		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :wchar_t
-_rcputa		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :WORD
-_rcputfg	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :BYTE
-_rcputbg	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :BYTE
-_rcshade	proto __cdecl :TRECT, :PCHAR_INFO, :SINT
+_rcputa		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :ushort_t
+_rcputfg	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :uchar_t
+_rcputbg	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :uchar_t
+_rcshade	proto __cdecl :TRECT, :PCHAR_INFO, :int_t
 _rcclear	proto __cdecl :TRECT, :PCHAR_INFO, :CHAR_INFO
-_rccenterA	proto __cdecl :TRECT, :PCHAR_INFO, :TRECT, :WORD, :LPSTR
-_rccenterW	proto __cdecl :TRECT, :PCHAR_INFO, :TRECT, :WORD, :LPWSTR
-_rcputsA	proto __cdecl :TRECT, :PCHAR_INFO, :BYTE, :BYTE, :WORD, :LPSTR
-_rcputsW	proto __cdecl :TRECT, :PCHAR_INFO, :BYTE, :BYTE, :WORD, :LPWSTR
-_rcputfA	proto __Cdecl :TRECT, :PCHAR_INFO, :BYTE, :BYTE, :WORD, :LPSTR, :vararg
-_rcputfW	proto __Cdecl :TRECT, :PCHAR_INFO, :BYTE, :BYTE, :WORD, :LPWSTR, :vararg
+_rccenterA	proto __cdecl :TRECT, :PCHAR_INFO, :TRECT, :ushort_t, :string_t
+_rccenterW	proto __cdecl :TRECT, :PCHAR_INFO, :TRECT, :ushort_t, :wstring_t
+_rcputsA	proto __cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t, :ushort_t, :string_t
+_rcputsW	proto __cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t, :ushort_t, :wstring_t
+_rcputfA	proto __Cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t, :ushort_t, :string_t, :vararg
+_rcputfW	proto __Cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t, :ushort_t, :wstring_t, :vararg
 
-_clipsetA	proto __cdecl :LPSTR, :UINT
-_clipsetW	proto __cdecl :LPWSTR, :UINT
+_clipsetA	proto __cdecl :string_t, :uint_t
+_clipsetW	proto __cdecl :wstring_t, :uint_t
 _clipgetA	proto __cdecl
 _clipgetW	proto __cdecl
 
-_msgboxA	proto __Cdecl :UINT, :LPSTR, :LPSTR, :vararg
-_msgboxW	proto __Cdecl :UINT, :LPWSTR, :LPWSTR, :vararg
+_msgboxA	proto __Cdecl :uint_t, :string_t, :string_t, :vararg
+_msgboxW	proto __Cdecl :uint_t, :wstring_t, :wstring_t, :vararg
 
-_dlopen		proto __cdecl :TRECT, :UINT, :UINT, :UINT
-_dlinitA	proto __cdecl :THWND, :UINT, :TRECT, :UINT, :BYTE, :BYTE, :LPSTR
-_dlinitW	proto __cdecl :THWND, :UINT, :TRECT, :UINT, :BYTE, :BYTE, :LPWSTR
+_dlopen		proto __cdecl :TRECT, :uint_t, :uint_t, :uint_t
+_dlinitA	proto __cdecl :THWND, :string_t
+_dlinitW	proto __cdecl :THWND, :wstring_t
 _dlclose	proto __cdecl :THWND
 _dlmodal	proto __cdecl :THWND, :TPROC
 _dlhide		proto __cdecl :THWND
 _dlshow		proto __cdecl :THWND
-_dlsetfocus	proto __cdecl :THWND, :BYTE
-_dlgetfocus	proto __cdecl :THWND
-_dlgetid	proto __cdecl :THWND, :UINT
-_dlmove		proto __cdecl :THWND, :SINT
-_dltitleA	proto __cdecl :THWND, :LPSTR
-_dltitleW	proto __cdecl :THWND, :LPWSTR
+_dlsetfocus	proto __cdecl :THWND, :uchar_t
+_dlgetfocus	proto watcall :THWND
+_dlgetid	proto watcall :THWND, :uint_t
+_dlmove		proto __cdecl :THWND, :int_t
+_dltitleA	proto __cdecl :THWND, :string_t
+_dltitleW	proto __cdecl :THWND, :wstring_t
 
-_tcontrolA	proto __cdecl :THWND, :UINT, :WORD, :LPSTR
-_tcontrolW	proto __cdecl :THWND, :UINT, :WORD, :LPWSTR
+_tcontrolA	proto __cdecl :THWND, :uint_t, :ushort_t, :string_t
+_tcontrolW	proto __cdecl :THWND, :uint_t, :ushort_t, :wstring_t
 _conslink	proto __cdecl :THWND
 _consunlink	proto __cdecl :THWND
 _cbeginpaint	proto __cdecl
 _cendpaint	proto __cdecl
 
-_sendmessage	proto __cdecl :THWND, :UINT, :WPARAM, :LPARAM
-_postmessage	proto __cdecl :THWND, :UINT, :WPARAM, :LPARAM
-_postquitmsg	proto fastcall :THWND, :UINT
-_defwinproc	proto __cdecl :THWND, :UINT, :WPARAM, :LPARAM
+_sendmessage	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
+_postmessage	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
+_getmessage	proto __cdecl :PMESSAGE, :THWND
+_dispatchmsg	proto __cdecl :PMESSAGE
+_translatemsg	proto __cdecl :PMESSAGE
+_postquitmsg	proto fastcall :THWND, :uint_t
+_defwinproc	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 
 _rsopen		proto __cdecl :PTRES
-_rssave		proto __cdecl :THWND, :LPWSTR
+_rssave		proto __cdecl :THWND, :string_t
+_wtoutf		proto watcall :wchar_t
 
-ifdef __VT__
+_getkey		proto __cdecl
 
-.template CINPUT
-    union
-     q	    dq ?
-     b	    db 8 dup(?)
-    ends
-    count   dd ?
-   .ends
+define KEY_ESC		VK_ESCAPE
+define KEY_SPACE	VK_SPACE
+define KEY_PGUP		(VK_PRIOR  shl 8)
+define KEY_PGDN		(VK_NEXT   shl 8)
+define KEY_END		(VK_END	   shl 8)
+define KEY_HOME		(VK_HOME   shl 8)
+define KEY_LEFT		(VK_LEFT   shl 8)
+define KEY_UP		(VK_UP	   shl 8)
+define KEY_RIGHT	(VK_RIGHT  shl 8)
+define KEY_DOWN		(VK_DOWN   shl 8)
+define KEY_INSERT	(VK_INSERT shl 8)
+define KEY_DELETE	(VK_DELETE shl 8)
 
-_kbflush	proto __cdecl
+define KEY_F1		(VK_F1	   shl 8)
+define KEY_F2		(VK_F2	   shl 8)
+define KEY_F3		(VK_F3	   shl 8)
+define KEY_F4		(VK_F4	   shl 8)
+define KEY_F5		(VK_F5	   shl 8)
+define KEY_F6		(VK_F6	   shl 8)
+define KEY_F7		(VK_F7	   shl 8)
+define KEY_F8		(VK_F8	   shl 8)
+define KEY_F9		(VK_F9	   shl 8)
+define KEY_F10		(VK_F10	   shl 8)
+define KEY_F11		(VK_F11	   shl 8)
+define KEY_F12		(VK_F12	   shl 8)
+
 
 define ESC <"\e">
 define CSI <"\e[">
@@ -499,10 +539,8 @@ define RST_SGR_EXT_MODE_MOUSE	   <CSI "?1006l">
 define RST_URXVT_EXT_MODE_MOUSE	   <CSI "?1015l">
 define RST_PIXEL_POSITION_MOUSE	   <CSI "?1016l">
 
-endif
-
 ifdef _UNICODE
-define _cout		<_coutW>
+define _cwrite		<_cwriteW>
 define _scputs		<_scputsW>
 define _scputf		<_scputfW>
 define _scpath		<_scpathW>
@@ -517,7 +555,7 @@ define _msgbox		<_msgboxW>
 define _clipget		<_clipgetW>
 define _clipset		<_clipsetW>
 else
-define _cout		<_coutA>
+define _cwrite		<_cwriteA>
 define _scputs		<_scputsA>
 define _scputf		<_scputfA>
 define _scpath		<_scpathA>

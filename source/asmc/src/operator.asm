@@ -18,7 +18,7 @@ include fastpass.inc
 
 GetOperator proc __ccall token:token_t
 
-    mov rdx,token
+    ldr rdx,token
     mov ecx,asm_tok
     mov rax,[rdx].asm_tok.tokpos
     mov eax,[rax]
@@ -60,7 +60,7 @@ GetOperator endp
 
 GetOpType proc __ccall uses rbx oper:token_t, string:string_t
 
-    mov rbx,oper
+    ldr rbx,oper
     .if ( GetOperator(rbx) == 0 )
         .return ERROR
     .endif
@@ -81,7 +81,7 @@ GetOpType endp
 
 OperatorParam proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok, param:string_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     mov rdi,tstrcat( param, "_" )
     add rdi,tstrlen(rdi)
 
@@ -177,7 +177,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
    .new vector:int_t = 0
    .new type:int_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
 
     .if StoreState == FALSE
         .return NOT_ERROR
@@ -463,7 +463,7 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
    .new vector:int_t
    .new type:int_t
 
-    mov rbx,op
+    ldr rbx,op
     .while ( [rbx].next )
         mov rbx,[rbx].next
     .endw

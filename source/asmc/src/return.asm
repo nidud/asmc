@@ -26,10 +26,11 @@ GetValue proc __ccall private uses rsi rdi rbx \
         directive   : ptr int_t,
         retval      : ptr int_t
 
-    mov rcx,i
+    ldr  rcx,i
+    ldr  rdx,tokenarray
     imul ebx,[rcx],asm_tok
-    add rbx,tokenarray
-    mov rcx,type
+    add  rbx,rdx
+    ldr  rcx,type
 
     xor esi,esi     ; directive
     xor edi,edi     ; retval
@@ -114,9 +115,11 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr as
   local buffer[256] : char_t
   local address     : char_t ; v2.30.24 -- .return &address
 
-    mov     rsi,i
+    ldr     rsi,i
+    ldr     rdx,tokenarray
+
     imul    ebx,[rsi],asm_tok
-    add     rbx,tokenarray
+    add     rbx,rdx
     lea     rdi,buffer
 
     movzx   ecx,ModuleInfo.Ofssize

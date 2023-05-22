@@ -16,10 +16,8 @@ _filwbuf proc uses rsi rdi fp:LPFILE
    .new is_split_character:int_t = 0
    .new leftover_low_order_byte:byte = 0
 
-ifndef _WIN64
-    mov ecx,fp
-endif
-    mov rsi,rcx
+    ldr rsi,fp
+
     mov edi,[rsi]._flag
     xor eax,eax
     dec rax
@@ -70,9 +68,9 @@ endif
         lea rcx,_osfile
         mov eax,[rsi]._file
         mov al,[rcx+rax]
-        and al,FH_TEXT or FH_EOF
+        and al,FTEXT or FEOFLAG
 
-        .if ( al == FH_TEXT or FH_EOF)
+        .if ( al == FTEXT or FEOFLAG)
             or [rsi]._flag,_IOCTRLZ
         .endif
     .endif

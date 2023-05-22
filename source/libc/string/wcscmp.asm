@@ -12,11 +12,8 @@ include string.inc
 
 wcscmp proc a:wstring_t, b:wstring_t
 
-ifndef _WIN64
-    mov     ecx,a
-    mov     edx,b
-endif
-
+    ldr     rcx,a
+    ldr     rdx,b
     xor     eax,eax
 .0:
     xor     ax,[rcx]

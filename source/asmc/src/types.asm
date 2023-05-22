@@ -51,7 +51,7 @@ TypesInit endp
 
 CreateTypeSymbol proc __ccall uses rsi rdi sym:ptr asym, name:string_t, global:int_t
 
-    mov rsi,sym
+    ldr rsi,sym
     .if ( rsi )
         sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
     .else
@@ -150,8 +150,8 @@ SearchNameInStruct endp
 
 AreStructsEqual proc __ccall private uses rdi rbx newstr:ptr dsym, oldstr:ptr dsym
 
-    mov rcx,newstr
-    mov rdx,oldstr
+    ldr rcx,newstr
+    ldr rdx,oldstr
 
     mov rax,[rdx].dsym.structinfo
     mov rbx,[rax].struct_info.head
@@ -206,9 +206,10 @@ StructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; for embedded structs, the directive must be at pos 0,
     ; an identifier is optional then.
 
-    mov rbx,tokenarray
+    ldr ecx,i
+    ldr rbx,tokenarray
     mov rsi,[rbx].string_ptr
-    imul ecx,i,asm_tok
+    imul ecx,ecx,asm_tok
     add rbx,rcx
 
     mov al,TYPE_STRUCT
@@ -993,12 +994,14 @@ GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:ptr asm_
    .new distance:int_t = FALSE
    .new i:int_t
 
-    mov rcx,pi
+    ldr rcx,pi
+    ldr rdx,tokenarray
+
     mov eax,[rcx]
     mov i,eax
 
     imul ebx,eax,asm_tok
-    add  rbx,tokenarray
+    add  rbx,rdx
     mov  rdx,rbx
 
     ; convert PROC token to a type qualifier
@@ -1394,13 +1397,14 @@ CreateType endp
 
 TypedefDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
 
-    mov rcx,tokenarray
-    .if( i != 1 )
-        imul eax,i,asm_tok
-        .return( asmerr( 2008, [rcx+rax].asm_tok.string_ptr ) )
+    ldr ecx,i
+    ldr rdx,tokenarray
+    .if( ecx != 1 )
+        imul eax,ecx,asm_tok
+        .return( asmerr( 2008, [rdx+rax].asm_tok.string_ptr ) )
     .endif
-    inc i
-   .return( CreateType( i, rcx, [rcx].asm_tok.string_ptr, NULL ) )
+    inc ecx
+   .return( CreateType( ecx, rdx, [rdx].asm_tok.string_ptr, NULL ) )
 
 TypedefDirective endp
 
@@ -1424,9 +1428,10 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new opndx:expr
    .new offs:uint_t
 
-    mov rbx,tokenarray
+    ldr ecx,i
+    ldr rbx,tokenarray
     mov name,[rbx].string_ptr
-    imul ecx,i,asm_tok
+    imul ecx,ecx,asm_tok
     add rbx,rcx
 
     .if ( i != 1 )

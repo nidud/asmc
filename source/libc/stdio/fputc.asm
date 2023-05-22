@@ -10,10 +10,9 @@ include stdio.inc
 
 fputc proc c:int_t, fp: LPFILE
 
-ifndef _WIN64
-    mov ecx,c
-    mov edx,fp
-endif
+    ldr ecx,c
+    ldr rdx,fp
+
     dec [rdx]._iobuf._cnt
     .ifl
 

@@ -122,7 +122,7 @@ CreateAssemblyTimeVariable proc __ccall private uses rsi rdi rbx tokenarray:toke
     local opn2:expr
 
     mov i,2
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     mov name,[rbx].string_ptr
     add rbx,2*asm_tok
 
@@ -290,7 +290,7 @@ CreateAssemblyTimeVariable endp
 
 EqualSgnDirective proc __ccall i:int_t, tokenarray:token_t
 
-    mov rdx,tokenarray
+    ldr rdx,tokenarray
     .if [rdx].token != T_ID
         .return asmerr( 2008, [rdx].string_ptr )
     .endif
@@ -372,7 +372,7 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
     local opnd:         expr
     local argbuffer[MAX_LINE_LEN]:char_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     .if ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_DEFINE )
         mov rax,[rbx+asm_tok].string_ptr
     .else
@@ -625,7 +625,7 @@ CreateConstant endp
 
 EquDirective proc __ccall i:int_t, tokenarray:token_t
 
-    mov rcx,tokenarray
+    ldr rcx,tokenarray
     mov al,[rcx].token
     .if ( [rcx].token == T_DIRECTIVE && [rcx].tokval == T_DEFINE )
         mov al,[rcx+asm_tok].token

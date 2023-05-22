@@ -17,10 +17,7 @@ externdef _stdbuf:string_t
 
 _stbuf proc uses rsi rbx fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,fp
-endif
-    mov rbx,rcx
+    ldr rbx,fp
 
     .if ( _isatty( [rbx]._file) )
 

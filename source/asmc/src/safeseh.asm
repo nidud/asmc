@@ -21,8 +21,11 @@ include parser.inc
 
 SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    ldr ecx,i
+    ldr rdx,tokenarray
+
+    imul ebx,ecx,asm_tok
+    add rbx,rdx
 
     .if ( Options.output_format != OFORMAT_COFF )
         .if ( Parse_Pass == PASS_1)

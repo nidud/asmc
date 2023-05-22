@@ -14,7 +14,7 @@ include crtl.inc
 
 __xtoi64 proc uses rbx string:LPSTR
 
-    mov rbx,string
+    ldr rbx,string
     xor eax,eax
     xor ecx,ecx
 ifndef _WIN64

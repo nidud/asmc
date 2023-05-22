@@ -220,9 +220,9 @@ tofloat endp
 unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         opnd1:expr_t, opnd2:expr_t, sym:asym_t, oper:int_t, name:string_t
 
-    mov rsi,opnd1
-    mov rdi,opnd2
-    mov eax,uot
+    ldr rsi,opnd1
+    ldr rdi,opnd2
+    ldr eax,uot
 
     .switch eax
     .case UOT_DOT_LOW
@@ -983,11 +983,11 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
 
     UNREFERENCED_PARAMETER(opnd)
 
-    mov  rdx,idx
+    ldr  rdx,idx
     mov  eax,[rdx]
     mov  i,eax
-    mov  rdi,opnd
-    mov  rbx,tokenarray
+    ldr  rdi,opnd
+    ldr  rbx,tokenarray
     imul eax,eax,asm_tok
     add  rbx,rax
     mov  al,[rbx].token
@@ -2433,9 +2433,9 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
   local sym:asym_t
   local opnd:expr
 
-    mov rsi,opnd1
-    mov rdi,opnd2
-    mov rbx,oper
+    ldr rsi,opnd1
+    ldr rdi,opnd2
+    ldr rbx,oper
 
     mov [rsi].quoted_string,NULL
 
@@ -3189,8 +3189,8 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
    .new exp_token   : int_t
    .new last        : ptr asm_tok
 
-    mov  rdi,opnd1
-    mov  rdx,i
+    ldr  rdi,opnd1
+    ldr  rdx,i
     imul ebx,[rdx],asm_tok
     add  rbx,tokenarray
     imul eax,_end,asm_tok
@@ -3382,7 +3382,7 @@ evaluate endp
 EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, end_tok:int_t,
         result:expr_t, flags:byte
 
-    mov  rcx,start_tok
+    ldr  rcx,start_tok
     mov  ebx,[rcx]
     mov  esi,ebx
     imul ebx,ebx,asm_tok

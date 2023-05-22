@@ -19,9 +19,9 @@ fwrite proc uses rsi rdi rbx buf:LPSTR, rsize:int_t, num:int_t, fp:LPFILE
    .new bufsize:int_t
    .new nbytes:int_t
 
-    mov rsi,buf
-    mov rbx,fp
-    mov eax,rsize
+    ldr rsi,buf
+    ldr rbx,fp
+    ldr eax,rsize
     mul num
     mov edi,eax
     mov total,eax

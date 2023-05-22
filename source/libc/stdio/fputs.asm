@@ -11,11 +11,9 @@ include string.inc
 
 fputs proc uses rsi rdi rbx string:LPSTR, fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,string
-    mov edx,fp
-endif
-    mov rbx,rcx
+    ldr rbx,string
+    ldr rdx,fp
+
     mov edi,_stbuf( rdx )
     mov esi,strlen( rbx )
     mov ebx,fwrite( rbx, 1, eax, fp )

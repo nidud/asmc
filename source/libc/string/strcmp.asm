@@ -12,11 +12,8 @@ include string.inc
 
 strcmp proc a:string_t, b:string_t
 
-ifndef _WIN64
-    mov     ecx,a
-    mov     edx,b
-endif
-
+    ldr     rcx,a
+    ldr     rdx,b
     xor     eax,eax
 .0:
     xor     al,[rcx]

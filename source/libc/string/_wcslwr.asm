@@ -22,9 +22,7 @@ else
 
 _wcslwr proc string:ptr wchar_t
 
-ifndef _WIN64
-    mov     ecx,string
-endif
+    ldr     rcx,string
     mov     rax,rcx
 .0:
     mov     dx,[rcx]

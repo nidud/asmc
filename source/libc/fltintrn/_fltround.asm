@@ -15,10 +15,10 @@ include fltintrn.inc
 
 _fltround proc __ccall fp:ptr STRFLT
 
+    ldr rcx,fp
 ifdef _WIN64
     mov rax,[rcx].mantissa.l
 else
-    mov ecx,fp
     mov eax,dword ptr [ecx].mantissa.l[0]
 endif
 

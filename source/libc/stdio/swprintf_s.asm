@@ -14,10 +14,9 @@ swprintf_s proc string:wstring_t, sizeInWords:size_t, format:wstring_t, argptr:v
 
   local o:_iobuf
 
-ifndef _WIN64
-    mov ecx,string
-    mov edx,sizeInWords
-endif
+    ldr rcx,string
+    ldr rdx,sizeInWords
+
     .if ( !( rcx != NULL || rdx == 0 ) || format == NULL )
 
         _set_errno(EINVAL)

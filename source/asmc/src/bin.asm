@@ -479,7 +479,7 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
    .new value:uint_32
    .new value64:uint_64
 
-    mov rsi,curr
+    ldr rsi,curr
     mov rdi,[rsi].dsym.seginfo
 
     .if ( [rdi].segtype == SEGTYPE_ABS )

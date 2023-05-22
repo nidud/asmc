@@ -14,7 +14,8 @@ include winbase.inc
 
 _wgetdcwd proc uses rdi drive:int_t, buffer:ptr wchar_t, maxlen:int_t
 
-    imul ecx,maxlen,wchar_t
+    ldr eax,maxlen
+    imul ecx,eax,wchar_t
     mov rdi,malloc( ecx )
     ;
     ; GetCurrentDirectory only works for the default drive

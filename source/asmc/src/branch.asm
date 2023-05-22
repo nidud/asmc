@@ -136,8 +136,8 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
   local symseg:ptr dsym
   local opidx:dword
 
-    mov rsi,CodeInfo
-    mov rbx,opndx
+    ldr rsi,CodeInfo
+    ldr rbx,opndx
 
     movzx eax,[rsi].token
     movzx eax,IndexFromToken(eax)

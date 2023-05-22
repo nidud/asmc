@@ -14,9 +14,8 @@ include fcntl.inc
 
 _get_fmode proc p:ptr int_t
 
-ifndef _WIN64
-    mov ecx,p
-endif
+    ldr rcx,p
+
     mov eax,_fmode
     mov [rcx],eax
     xor eax,eax
@@ -27,9 +26,8 @@ _get_fmode endp
 
 _set_fmode proc mode:int_t
 
-ifndef _WIN64
-    mov ecx,mode
-endif
+    ldr ecx,mode
+
     mov _fmode,ecx
     xor eax,eax
     ret

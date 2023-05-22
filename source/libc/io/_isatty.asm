@@ -10,12 +10,10 @@ include io.inc
 
 _isatty proc handle:SINT
 
-ifndef _WIN64
-    mov ecx,handle
-endif
+    ldr ecx,handle
     lea rax,_osfile
     mov al,[rax+rcx]
-    and eax,FH_DEVICE
+    and eax,FDEV
     ret
 
 _isatty endp

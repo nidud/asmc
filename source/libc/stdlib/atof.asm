@@ -11,7 +11,8 @@ include fltintrn.inc
 
 atof proc string:string_t
 
-    _strtoflt( string )
+    ldr rcx,string
+    _strtoflt( rcx )
     __cvtq_sd( rax, rax )
 ifdef __SSE__
     movsd xmm0,[rax]

@@ -13,9 +13,7 @@ doexit proto :int_t, :int_t, :int_t
 
 exit proc retval:int_t
 
-ifndef _WIN64
-    mov ecx,retval
-endif
+    ldr ecx,retval
     doexit( ecx, 0, 0 ) ; full term, kill process
 
 exit endp

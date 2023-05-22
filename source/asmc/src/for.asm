@@ -90,7 +90,7 @@ GetCondition ENDP
 
 Assignopc proc __ccall private uses rdi buffer:string_t, opc1:string_t, opc2:string_t, string:string_t
 
-    mov rdi,buffer
+    ldr rdi,buffer
     .if ( opc1 )
         tstrcat( rdi, opc1 )
         strtrim( rdi )
@@ -120,8 +120,8 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
 
   local bracket:byte ; assign value: [rdx+8]=rax - @v2.28.15
 
-    mov rdi,buffer
-    mov rbx,tokenarray
+    ldr rdi,buffer
+    ldr rbx,tokenarray
 
     assume rbx:ptr asm_tok
     assume rsi:ptr asm_tok
@@ -312,7 +312,7 @@ RenderAssignment proc __ccall private uses rsi rdi rbx dest:ptr sbyte,
   local buffer[MAX_LINE_LEN]:char_t
   local tokbuf[MAX_LINE_LEN]:char_t
 
-    mov rdi,source
+    ldr rdi,source
     lea rsi,buffer
     ;
     ; <expression1>, <expression2>, ..., [: | 0]
@@ -357,7 +357,7 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new cmdstr[MAX_LINE_LEN]:char_t
    .new tokbuf[MAX_LINE_LEN]:char_t
 
-    mov rbx,tokenarray
+    ldr rbx,tokenarray
     lea rdi,buffer
 
     imul eax,i,asm_tok

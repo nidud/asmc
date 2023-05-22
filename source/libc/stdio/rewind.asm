@@ -24,7 +24,7 @@ rewind proc fp:LPFILE
 
     mov eax,[rcx]._iobuf._file
     lea rcx,_osfile
-    and byte ptr [rcx+rax],not FH_EOF
+    and byte ptr [rcx+rax],not FEOFLAG
 
     lea rcx,_osfhnd
     mov rcx,[rcx+rax*size_t]

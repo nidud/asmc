@@ -11,9 +11,7 @@ include io.inc
 
 fclose proc uses rsi rbx fp:LPFILE
 
-ifndef _WIN64
-    mov ecx,fp
-endif
+    ldr rcx,fp
     mov eax,[rcx]._iobuf._flag
     and eax,_IOREAD or _IOWRT or _IORW
     .ifz

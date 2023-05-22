@@ -10,13 +10,8 @@ include conio.inc
 
 _wherex proc
 
-  local ci:CONSOLE_SCREEN_BUFFER_INFO
-
-    .if GetConsoleScreenBufferInfo( _confh, &ci )
-
-        movzx eax,ci.dwCursorPosition.X
-        movzx edx,ci.dwCursorPosition.Y
-    .endif
+    _cursorxy()
+    movzx eax,ax
     ret
 
 _wherex endp

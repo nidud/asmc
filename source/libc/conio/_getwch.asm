@@ -4,19 +4,24 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
 include conio.inc
 
     .code
 
 _getwch proc uses rbx rdi rsi
 
-  local Count:intptr_t
-  local Event[MAXINPUTRECORDS]:INPUT_RECORD
+ifdef __UNIX__
+    .return( -1 )
+else
+   .new Count:intptr_t
+   .new Event[MAXINPUTRECORDS]:INPUT_RECORD
+   .new h:HANDLE = _get_osfhandle(_conin)
 
     xor edi,edi
     .while !edi
 
-        .if GetNumberOfConsoleInputEvents( _coninpfh, &Count )
+        .if GetNumberOfConsoleInputEvents( h, &Count )
 
             mov rcx,Count
             .if ecx > MAXINPUTRECORDS
@@ -24,7 +29,7 @@ _getwch proc uses rbx rdi rsi
             .endif
 
             lea rbx,Event
-            ReadConsoleInputW( _coninpfh, rbx, ecx, &Count )
+            ReadConsoleInputW( h, rbx, ecx, &Count )
 
             mov rsi,Count
             .while esi
@@ -40,6 +45,7 @@ _getwch proc uses rbx rdi rsi
         .endif
     .endw
     .return( edi )
+endif
 
 _getwch endp
 

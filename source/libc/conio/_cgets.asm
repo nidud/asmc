@@ -6,56 +6,56 @@
 
 include conio.inc
 
-.code
+    .code
 
-_cgets proc uses rsi rdi rbx string:LPSTR
-ifndef _WIN64
-    mov rcx,string
-endif
-    .if ( rcx == NULL )
-        .return
+    assume rbx:string_t
+
+_cgets proc uses rbx string:LPSTR
+
+   .new len:byte = 0
+   .new maxlen:byte
+
+    ldr rbx,string
+    .if ( rbx == NULL )
+        .return( NULL )
     .endif
 
-    xor   esi,esi               ; len
-    movzx ebx,byte ptr [rcx]    ; maxlen
-    lea   rdi,[rcx+2]
-    dec   ebx
+    mov al,[rbx]
+    mov maxlen,al
+    lea rbx,[rbx+2]
+    dec maxlen
 
-    .while ( esi < ebx )
+    .while ( len < maxlen )
 
         _getch()
 
-        .if ( al == 8 ) ; '\b'
-
-            .ifs ( esi > 0 )
-
+        movzx ecx,len
+        .switch
+        .case al == 8 ; '\b'
+            .ifs ( len > 0 )
                 _cputs( "\b \b" ) ; go back, clear char on screen with space
-                dec esi
-                mov byte ptr [rdi+rsi],0
+                dec len
+                mov [rbx+rcx-1],0
             .endif
-
-        .elseif ( al == 13 ) ; '\r'
-
-            mov byte ptr [rdi+rsi],0
-            .break
-
-        .elseif ( al == 0 )
-
-            mov byte ptr [rdi+rsi],0
+            .endc
+        .case al == 13 ; '\r'
+            mov [rbx+rcx],0
+           .break
+        .case al == 0
+            mov [rbx+rcx],0
             _ungetch(0)
-            .break
-
-        .else
-
-            mov [rdi+rsi],al
-            inc esi
+           .break
+        .default
+            mov [rbx+rcx],al
+            inc len
             _putch( eax )
-        .endif
+        .endsw
     .endw
 
-    mov byte ptr [rdi+rbx],0
-    mov rax,rdi
-    mov ecx,esi
+    movzx ecx,maxlen
+    mov [rbx+rcx],0
+    mov rax,rbx
+    mov cl,len
     mov [rax-1],cl
     ret
 

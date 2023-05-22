@@ -5,19 +5,15 @@
 ;
 
 include conio.inc
-include string.inc
 
     .code
 
 _cputs proc uses rbx string:string_t
 
-ifndef _WIN64
-    mov ecx,string
-endif
-    .for ( rbx = rcx : byte ptr [rbx] : rbx++ )
+    .for ( rbx = string : byte ptr [rbx] : rbx++ )
 
         movzx ecx,char_t ptr [rbx]
-        .if ( _putch_nolock( ecx ) == WEOF )
+        .if ( _putch( ecx ) == WEOF )
             .return
         .endif
     .endf

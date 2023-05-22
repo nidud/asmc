@@ -9,18 +9,13 @@ include wchar.inc
 
     .code
 
-_cputws proc uses rsi string:LPWSTR
+_cputws proc uses rbx string:LPWSTR
 
-ifndef _WIN64
-    mov ecx,string
-endif
+    .for ( rbx = string : : rbx+=2 )
 
-    .for ( rsi = rcx : : rsi += 2 )
-
-        movzx ecx,wchar_t ptr [rsi]
-
+        movzx ecx,wchar_t ptr [rbx]
         .break .if ( ecx == 0 )
-        .break .if ( _putwch_nolock( cx ) == WEOF )
+        .break .if ( _putwch( cx ) == WEOF )
     .endf
     ret
 

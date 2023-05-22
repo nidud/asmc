@@ -4,10 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
 include conio.inc
 include malloc.inc
 
 define EOF (-1)
+
+_getextendedkeycode proto private :ptr KEY_EVENT_RECORD
 
 .template CharPair
     LeadChar    db ?
@@ -35,18 +38,18 @@ define EOF (-1)
 ; Table of key values for enhanced keys
 ;
 EnhancedKeys EnhKeyVals \
-        { 28, {  13,   0 }, {  13,   0 }, {  10,   0 }, {   0, 166 } },
-        { 53, {  47,   0 }, {  63,   0 }, {   0, 149 }, {   0, 164 } },
-        { 71, { 224,  71 }, { 224,  71 }, { 224, 119 }, {   0, 151 } },
-        { 72, { 224,  72 }, { 224,  72 }, { 224, 141 }, {   0, 152 } },
-        { 73, { 224,  73 }, { 224,  73 }, { 224, 134 }, {   0, 153 } },
-        { 75, { 224,  75 }, { 224,  75 }, { 224, 115 }, {   0, 155 } },
-        { 77, { 224,  77 }, { 224,  77 }, { 224, 116 }, {   0, 157 } },
-        { 79, { 224,  79 }, { 224,  79 }, { 224, 117 }, {   0, 159 } },
-        { 80, { 224,  80 }, { 224,  80 }, { 224, 145 }, {   0, 160 } },
-        { 81, { 224,  81 }, { 224,  81 }, { 224, 118 }, {   0, 161 } },
-        { 82, { 224,  82 }, { 224,  82 }, { 224, 146 }, {   0, 162 } },
-        { 83, { 224,  83 }, { 224,  83 }, { 224, 147 }, {   0, 163 } }
+        { 28, {  13,   0 }, {  13,   0 }, {  10,   0 }, {   0, 166 } }, ; Enter
+        { 53, {  47,   0 }, {  63,   0 }, {   0, 149 }, {   0, 164 } }, ; /
+        { 71, { 224,  71 }, { 224,  71 }, { 224, 119 }, {   0, 151 } }, ; Home
+        { 72, { 224,  72 }, { 224,  72 }, { 224, 141 }, {   0, 152 } }, ; Up
+        { 73, { 224,  73 }, { 224,  73 }, { 224, 134 }, {   0, 153 } }, ; PgUp
+        { 75, { 224,  75 }, { 224,  75 }, { 224, 115 }, {   0, 155 } }, ; Left
+        { 77, { 224,  77 }, { 224,  77 }, { 224, 116 }, {   0, 157 } }, ; Right
+        { 79, { 224,  79 }, { 224,  79 }, { 224, 117 }, {   0, 159 } }, ; End
+        { 80, { 224,  80 }, { 224,  80 }, { 224, 145 }, {   0, 160 } }, ; Down
+        { 81, { 224,  81 }, { 224,  81 }, { 224, 118 }, {   0, 161 } }, ; PgDn
+        { 82, { 224,  82 }, { 224,  82 }, { 224, 146 }, {   0, 162 } }, ; Ins
+        { 83, { 224,  83 }, { 224,  83 }, { 224, 147 }, {   0, 163 } }  ; Del
 
 ;
 ; macro for the number of elements of in EnhancedKeys[]
@@ -100,7 +103,7 @@ NormalKeys NormKeyVals \
         {  {  59,   0 }, {  58,   0 }, {   0,   0 }, {   0,  39 } },
         {  {  39,   0 }, {  34,   0 }, {   0,   0 }, {   0,  40 } },    ; 40
         {  {  96,   0 }, { 126,   0 }, {   0,   0 }, {   0,  41 } },
-        {  {    0,  0 }, {   0,   0 }, {   0,   0 }, {   0,   0 } },    ; Padding
+        {  {   0,   0 }, {   0,   0 }, {   0,   0 }, {   0,   0 } },    ; Padding
         {  {  92,   0 }, { 124,   0 }, {  28,   0 }, {   0,   0 } },
         {  { 122,   0 }, {  90,   0 }, {  26,   0 }, {   0,  44 } },
         {  { 120,   0 }, {  88,   0 }, {  24,   0 }, {   0,  45 } },
@@ -127,8 +130,8 @@ NormalKeys NormKeyVals \
         {  {   0,  66 }, {   0,  91 }, {   0, 101 }, {   0, 111 } },
         {  {   0,  67 }, {   0,  92 }, {   0, 102 }, {   0, 112 } },
         {  {   0,  68 }, {   0,  93 }, {   0, 103 }, {   0, 113 } },
-        {  {    0,  0 }, {   0,   0 }, {   0,   0 }, {   0,   0 } },    ; Padding
-        {  {    0,  0 }, {   0,   0 }, {   0,   0 }, {   0,   0 } },    ; 70
+        {  {   0,   0 }, {   0,   0 }, {   0,   0 }, {   0,   0 } },    ; Padding
+        {  {   0,   0 }, {   0,   0 }, {   0,   0 }, {   0,   0 } },    ; 70
         {  {   0,  71 }, {  55,   0 }, {   0, 119 }, {   0,   0 } },
         {  {   0,  72 }, {  56,   0 }, {   0, 141 }, {   0,   0 } },
         {  {   0,  73 }, {  57,   0 }, {   0, 132 }, {   0,   0 } },
@@ -149,92 +152,45 @@ NormalKeys NormKeyVals \
         {  { 224, 134 }, { 224, 136 }, { 224, 138 }, { 224, 140 } }     ; 88
 
 
-;
-; This is the one character push-back buffer used by _getch(), _getche()
-; and _ungetch().
-;
-chbuf int_t EOF
+ ;
+ ; This is the one character push-back buffer used by _getch(), _getche()
+ ; and _ungetch().
+ ;
+ chbuf int_t EOF
 
 .code
 
-_getextendedkeycode proto private :ptr KEY_EVENT_RECORD
-
-
-_getch proc
-
-   .new c:int_t
-
-;   _mlock(_CONIO_LOCK)
-
-    mov c,_getch_nolock()
-
-;   _munlock(_CONIO_LOCK)
-   .return( c )
-
-_getch endp
-
-
-_getche proc
-
-   .new c:int_t
-
-;   _mlock(_CONIO_LOCK)
-
-    mov c,_getche_nolock()
-
-;   _munlock(_CONIO_LOCK)
-   .return( c )
-
-_getche endp
-
-
-_getch_nolock proc uses rbx rdi rsi
+_getch proc uses rbx
 
     .new ConInpRec:INPUT_RECORD
-    .new NumRead:DWORD
-    .new c:int_t = 0    ; single character buffer
+    .new c:int_t = 0
     .new oldstate:DWORD
 
-    ; check pushback buffer (chbuf) a for character
-
     .if ( chbuf != EOF )
-
-        ; something there, clear buffer and return the character.
 
         movzx eax,byte ptr chbuf
         mov chbuf,EOF
        .return
     .endif
 
-    ; _coninpfh, the handle to the console input, is created the first
-    ; time that either _getch() or _cgets() or _kbhit() is called.
-
-    .if ( _coninpfh == -1 )
+    .if ( _conin == -1 )
         .return EOF
     .endif
 
     ; Switch to raw mode (no line input, no echo input)
 
-    GetConsoleMode( _coninpfh, &oldstate )
-    SetConsoleMode( _coninpfh, 0 )
+    _congetmode( _conin, &oldstate )
+    _consetmode( _conin, CONSOLE_INPUT )
 
     .for ( : : )
 
-        ; Get a console input event.
-
-        ReadConsoleInput( _coninpfh, &ConInpRec, 1, &NumRead )
-
-        .if ( !eax || ( NumRead == 0 ) )
+        .if ( !_readinput( &ConInpRec ) )
 
             mov c,EOF
-            .break
+           .break
         .endif
 
-        ; Look for, and decipher, key events.
-
         .if ( ( ConInpRec.EventType == KEY_EVENT ) && ConInpRec.Event.KeyEvent.bKeyDown )
-
-            ; Easy case: if uChar.AsciiChar is non-zero, just stuff it into ch and quit.
 
             movzx eax,ConInpRec.Event.KeyEvent.uChar.AsciiChar
             .if ( eax )
@@ -243,73 +199,62 @@ _getch_nolock proc uses rbx rdi rsi
                .break
             .endif
 
-            ; Hard case: either an extended code or an event which should
-            ; not be recognized. let _getextendedkeycode() do the work...
-
             .if _getextendedkeycode( &ConInpRec.Event.KeyEvent )
 
                 movzx ecx,[rax].CharPair.LeadChar
                 movzx eax,[rax].CharPair.SecondChar
                 mov chbuf,eax
+                mov c,ecx
                .break
             .endif
         .endif
     .endf
+    _consetmode( _conin, oldstate )
+    .return( c )
 
-    ; Restore previous console mode.
-
-    SetConsoleMode( _coninpfh, oldstate )
-   .return( c )
-
-_getch_nolock endp
+_getch endp
 
 
-_getche_nolock proc
+_getche proc
 
-    .new c:int_t ; character read
-
-    ; check pushback buffer (chbuf) a for character. if found, return
-    ; it without echoing.
+    .new c:int_t
 
     .if ( chbuf != EOF )
-
-        ; something there, clear buffer and return the character.
 
         movzx eax,byte ptr chbuf
         mov chbuf,EOF
        .return
     .endif
 
-    mov c,_getch_nolock() ; read character
+    mov c,_getch()
 
     .if ( c != EOF )
-        .if ( _putch_nolock(c) != EOF )
-            .return( c ) ; if no error, return char
+        .if ( _putch(c) != EOF )
+            .return( c )
         .endif
     .endif
-    .return EOF ; get or put failed, return EOF
+    .return EOF
 
-_getche_nolock endp
+_getche endp
 
 
 _kbhit proc uses rbx
-
+ifdef __UNIX__
+    .return( FALSE )
+else
     .new NumPending:DWORD
     .new NumPeeked:DWORD
     .new retval:int_t = FALSE
     .new pIRBuf:PINPUT_RECORD = NULL
-
-    ; if a character has been pushed back, return TRUE
+    .new h:HANDLE = _get_osfhandle(_conin)
 
     .if ( chbuf != -1 )
         .return TRUE
     .endif
 
-    ; Peek all pending console events
+    GetNumberOfConsoleInputEvents( h, &NumPending )
 
-    GetNumberOfConsoleInputEvents( _coninpfh, &NumPending )
-
-    .if ( ( _coninpfh == -1 ) || !eax || ( NumPending == 0 ) )
+    .if ( ( h == -1 ) || !eax || ( NumPending == 0 ) )
 
         .return FALSE
     .endif
@@ -321,20 +266,14 @@ _kbhit proc uses rbx
         .return FALSE
     .endif
 
-    mov ecx,PeekConsoleInput( _coninpfh, pIRBuf, NumPending, &NumPeeked )
+    mov ecx,PeekConsoleInput( h, pIRBuf, NumPending, &NumPeeked )
 
     .if ( ecx && ( NumPeeked != 0 ) && ( NumPeeked <= NumPending ) )
-
-        ; Scan all of the peeked events to determine if any is a key event
-        ; which should be recognized.
 
         assume rbx:PINPUT_RECORD
         .for ( rbx = pIRBuf : NumPeeked > 0 : NumPeeked--, rbx += INPUT_RECORD )
 
             .if ( [rbx].EventType == KEY_EVENT && [rbx].Event.KeyEvent.bKeyDown )
-
-                ; Key event corresponding to an ASCII character or an
-                ; extended code. In either case, success!
 
                 .if ( [rbx].Event.KeyEvent.uChar.AsciiChar )
                     mov retval,TRUE
@@ -346,18 +285,13 @@ _kbhit proc uses rbx
     .endif
     _freea( pIRBuf )
     .return retval
-
+endif
 _kbhit endp
 
 
 _ungetch proc c:int_t
 
-ifndef _WIN64
-    mov ecx,c
-endif
-
-    ; Fail if the char is EOF or the pushback buffer is non-empty
-
+    ldr ecx,c
     .if ( ( ecx == EOF ) || ( chbuf != EOF ) )
         .return EOF
     .endif
@@ -368,86 +302,69 @@ endif
 _ungetch endp
 
 
-_getextendedkeycode proc private uses rsi rdi rbx pKE:ptr KEY_EVENT_RECORD
+_getextendedkeycode proc private pKE:ptr KEY_EVENT_RECORD
 
-    .new CKS:DWORD          ; hold dwControlKeyState value
-    .new pCP:ptr CharPair   ; pointer to CharPair containing extended code
-    .new i:int_t
-
-ifndef _WIN64
-    mov ecx,pKE
-endif
+   .new i:int_t
+    ldr rcx,pKE
 
     assume rcx:ptr KEY_EVENT_RECORD
-    mov edi,[rcx].dwControlKeyState
 
-    .if ( edi & ENHANCED_KEY )
-
-        ; Find the appropriate entry in EnhancedKeys[]
+    .if ( [rcx].dwControlKeyState & ENHANCED_KEY )
 
         assume rdx:ptr EnhKeyVals
         lea rdx,EnhancedKeys
 
-        .for ( rsi = NULL, ebx = 0 : ebx < NUM_EKA_ELTS : ebx++, rdx += EnhKeyVals )
+        .for ( i = 0 : i < NUM_EKA_ELTS : i++, rdx += EnhKeyVals )
 
             .if ( [rdx].ScanCode == [rcx].wVirtualScanCode )
 
-                .if ( edi & ( LEFT_ALT_PRESSED or RIGHT_ALT_PRESSED ) )
-
-                    lea rsi,[rdx].AltChars
-
-                .elseif ( edi & ( LEFT_CTRL_PRESSED or RIGHT_CTRL_PRESSED ) )
-
-                    lea rsi,[rdx].CtrlChars
-
-                .elseif ( CKS & SHIFT_PRESSED)
-
-                    lea rsi,[rdx].ShiftChars
-                .else
-                    lea rsi,[rdx].RegChars
-                .endif
+                mov eax,[rcx].dwControlKeyState
+                .switch
+                .case ( eax & ( LEFT_ALT_PRESSED or RIGHT_ALT_PRESSED ) )
+                    lea rax,[rdx].AltChars
+                   .endc
+                .case ( eax & ( LEFT_CTRL_PRESSED or RIGHT_CTRL_PRESSED ) )
+                    lea rax,[rdx].CtrlChars
+                   .endc
+                .case ( eax & SHIFT_PRESSED )
+                    lea rax,[rdx].ShiftChars
+                   .endc
+                .default
+                    lea rax,[rdx].RegChars
+                .endsw
                 .break
             .endif
+            xor eax,eax
         .endf
 
     .else
 
-        ; Regular key or a keyboard event which shouldn't be recognized.
-        ; Determine which by getting the proper field of the proper
-        ; entry in NormalKeys[], and examining the extended code.
+        mov     edx,[rcx].dwControlKeyState
+        movzx   ecx,[rcx].wVirtualScanCode
+        imul    eax,ecx,NormKeyVals
+        lea     rcx,NormalKeys
+        add     rcx,rax
+        assume  rcx:ptr NormKeyVals
 
-        movzx ecx,[rcx].wVirtualScanCode
-        imul eax,ecx,NormKeyVals
-        lea rcx,NormalKeys
-        add rcx,rax
-
-        assume rcx:ptr NormKeyVals
-
-        .if ( edi & ( LEFT_ALT_PRESSED or RIGHT_ALT_PRESSED ) )
-
-            lea rsi,[rcx].AltChars
-
-        .elseif ( edi & (LEFT_CTRL_PRESSED or RIGHT_CTRL_PRESSED) )
-
-            lea rsi,[rcx].CtrlChars
-
-        .elseif ( edi & SHIFT_PRESSED )
-
-            lea rsi,[rcx].ShiftChars
-        .else
-            lea rsi,[rcx].RegChars
-        .endif
-
-        .if ( ( [rsi].CharPair.LeadChar != 0 && [rsi].CharPair.LeadChar != 224 ) ||
-                [rsi].CharPair.SecondChar == 0 )
-
-            ; Must be a keyboard event which should not be recognized
-            ; (e.g., shift key was pressed)
-
-            xor esi,esi
+        .switch
+        .case ( edx & ( LEFT_ALT_PRESSED or RIGHT_ALT_PRESSED ) )
+            lea rax,[rcx].AltChars
+           .endc
+        .case ( edx & (LEFT_CTRL_PRESSED or RIGHT_CTRL_PRESSED) )
+            lea rax,[rcx].CtrlChars
+           .endc
+        .case ( edx & SHIFT_PRESSED )
+            lea rax,[rcx].ShiftChars
+           .endc
+        .default
+            lea rax,[rcx].RegChars
+        .endsw
+        .if ( ( [rax].CharPair.LeadChar != 0 && [rax].CharPair.LeadChar != 224 ) ||
+                [rax].CharPair.SecondChar == 0 )
+            xor eax,eax
         .endif
     .endif
-    .return(rsi)
+    ret
 
 _getextendedkeycode endp
 

@@ -10,25 +10,25 @@ include string.inc
 
     option dotname
 
-_strnicmp proc uses rsi a:string_t, b:string_t, size:size_t
+_strnicmp proc uses rbx a:string_t, b:string_t, size:size_t
 
-    ldr     rsi,a
-    ldr     rdx,b
+    ldr     rbx,a
     ldr     rcx,size
+    ldr     rdx,b
 
-    dec     rsi
+    dec     rbx
     dec     rdx
     mov     eax,1
 .0:
     test    eax,eax
     jz      .3
-    inc     rsi
+    inc     rbx
     inc     rdx
     xor     eax,eax
     test    ecx,ecx
     jz      .2
     dec     ecx
-    mov     al,[rsi]
+    mov     al,[rbx]
     cmp     al,[rdx]
     je      .0
 

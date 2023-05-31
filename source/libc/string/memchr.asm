@@ -11,6 +11,9 @@ include string.inc
 memchr proc p:ptr, c:int_t, count:size_t
 
 ifdef _WIN64
+    ldr     rcx,p
+    ldr     r8,count
+    ldr     edx,c
     xchg    rcx,rdi
     xchg    rcx,r8
     mov     eax,edx

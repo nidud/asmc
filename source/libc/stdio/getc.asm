@@ -11,7 +11,6 @@ include stdio.inc
 getc proc fp:ptr FILE
 
     ldr rcx,fp
-
     dec [rcx]._iobuf._cnt
     .ifl
         _filbuf(rcx)

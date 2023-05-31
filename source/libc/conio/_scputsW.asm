@@ -8,14 +8,16 @@ include conio.inc
 
     .code
 
-_scputsW proc uses rsi rdi x:BYTE, y:BYTE, string:LPWSTR
+_scputsW proc uses rbx x:BYTE, y:BYTE, string:LPWSTR
 
-    .for ( edi = 0, rsi = string : wchar_t ptr [rsi] : rsi += 2, x++, edi++ )
+    .new retval:int_t = 0
+     ldr rbx,string
+    .for ( : wchar_t ptr [rbx] : rbx += 2, x++, retval++ )
 
-        movzx ecx,wchar_t ptr [rsi]
+        movzx ecx,wchar_t ptr [rbx]
         _scputc(x, y, 1, cx)
     .endf
-    .return( edi )
+    .return( retval )
 
 _scputsW endp
 

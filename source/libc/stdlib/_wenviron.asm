@@ -5,18 +5,19 @@
 ;
 
 include stdlib.inc
-include crtl.inc
 
     .data
     _wenviron warray_t 0
 
     .code
 
+ifndef __UNIX__
+
 Install proc private
-    __wsetenvp( addr _wenviron )
+    __wsetenvp( &_wenviron )
     ret
 Install endp
 
-.pragma(init(Install, 5))
-
+.pragma init(Install, 5)
+endif
     end

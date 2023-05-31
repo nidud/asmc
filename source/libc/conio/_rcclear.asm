@@ -19,9 +19,9 @@ _rcclear proc uses rdi rc:TRECT, p:PCHAR_INFO, c:CHAR_INFO
         mov   eax,c
         rep   stosd
     .else
-        mov edx,rc
-        mov dx,0
-        _rcputa(rc, edx, p, c.Attributes )
+        mov eax,rc
+        mov ax,0
+        _rcputa(rc, eax, p, c.Attributes )
     .endif
     ret
 

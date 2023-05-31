@@ -8,33 +8,34 @@ include string.inc
 
     .code
 
-wcsstr proc uses rsi rdi rbx dst:wstring_t, src:wstring_t
+wcsstr proc uses rdi rbx dst:wstring_t, src:wstring_t
 
-    ldr rdi,dst
+   .new len:size_t
+
     ldr rbx,src
-
     .if wcslen(rbx)
 
-        mov rsi,rax
-        .if wcslen(rdi)
+        mov len,rax
+        .if wcslen(dst)
 
             mov rcx,rax
             xor eax,eax
-            dec rsi
+            dec len
+            mov rdi,dst
 
             .repeat
 
-                mov     ax,[rbx]
-                repne   scasw
-                mov     ax,0
+                mov ax,[rbx]
+                repne scasw
+                mov ax,0
 
                 .break .ifnz
 
-                .if rsi
+                .if len
 
-                    .break .if ( rcx < rsi )
+                    .break .if ( rcx < len )
 
-                    mov rdx,rsi
+                    mov rdx,len
                     .repeat
 
                         mov ax,[rbx+rdx*2]

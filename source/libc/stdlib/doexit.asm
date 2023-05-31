@@ -5,12 +5,15 @@
 ;
 
 include stdlib.inc
+ifdef __UNIX__
+include linux/kernel.inc
+externdef __fini_array_start:ptr
+externdef __fini_array_end:ptr
+else
 include winbase.inc
-
-_initterm proto __cdecl :ptr, :ptr
-
 externdef __xt_a:ptr
 externdef __xt_z:ptr
+endif
 externdef _exitflag:char_t
 
     .data
@@ -27,14 +30,21 @@ doexit proc code:int_t, quick:int_t, retcaller:int_t
 
         ldr eax,retcaller
         mov _exitflag,al
-
-        _initterm( &__xt_a, &__xt_z )
+ifdef __UNIX__
+        _initterm(&__fini_array_start, &__fini_array_end)
+else
+        _initterm(&__xt_a, &__xt_z)
+endif
     .endif
 
     .if ( !retcaller )
 
         mov _C_Exit_Done,TRUE
+ifdef __UNIX__
+        sys_exit(code)
+else
         ExitProcess(code)
+endif
     .endif
     ret
 

@@ -8,15 +8,15 @@ include stdio.inc
 
     .code
 
-vfprintf proc uses rsi file:LPFILE, format:LPSTR, args:PVOID
+vfprintf proc uses rbx file:LPFILE, format:LPSTR, args:ptr
 
     ldr rcx,file
-    mov rsi,_stbuf(rcx)
+    mov rbx,_stbuf(rcx)
     _output(file, format, args)
-    mov rcx,rsi
-    mov rsi,rax
+    mov rcx,rbx
+    mov rbx,rax
     _ftbuf(ecx, file)
-    mov rax,rsi
+    mov rax,rbx
     ret
 
 vfprintf endp

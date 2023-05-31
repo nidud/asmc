@@ -31,16 +31,19 @@ externdef _umaskval:dword
 
     option switch:pascal
 
-_wfopen proc uses rsi rdi rbx file:LPWSTR, mode:LPWSTR
+_wfopen proc uses rbx file:LPWSTR, mode:LPWSTR
+
+   .new oflag:int_t
+   .new fileflag:int_t
 
     ldr rbx,mode
     movzx eax,word ptr [rbx]
     add rbx,2
 
     .switch eax
-    .case 'r': mov esi,_IOREAD : mov edi,O_RDONLY
-    .case 'w': mov esi,_IOWRT  : mov edi,O_WRONLY or O_CREAT or O_TRUNC
-    .case 'a': mov esi,_IOWRT  : mov edi,O_WRONLY or O_CREAT or O_APPEND
+    .case 'r': mov ecx,_IOREAD : mov edx,O_RDONLY
+    .case 'w': mov ecx,_IOWRT  : mov edx,O_WRONLY or O_CREAT or O_TRUNC
+    .case 'a': mov ecx,_IOWRT  : mov edx,O_WRONLY or O_CREAT or O_APPEND
     .default
         _set_errno(EINVAL)
         .return 0
@@ -51,43 +54,43 @@ _wfopen proc uses rsi rdi rbx file:LPWSTR, mode:LPWSTR
 
         .switch eax
         .case '+'
-            or  edi,O_RDWR
-            and edi,not (O_RDONLY or O_WRONLY)
-            or  esi,_IORW
-            and esi,not (_IOREAD or _IOWRT)
+            or  edx,O_RDWR
+            and edx,not (O_RDONLY or O_WRONLY)
+            or  ecx,_IORW
+            and ecx,not (_IOREAD or _IOWRT)
 
-        .case 't': or  edi,O_TEXT
-        .case 'b': or  edi,O_BINARY
-        .case 'c': or  esi,_IOCOMMIT
-        .case 'n': and esi,not _IOCOMMIT
-        .case 'S': or  edi,O_SEQUENTIAL
-        .case 'R': or  edi,O_RANDOM
-        .case 'T': or  edi,O_SHORT_LIVED
-        .case 'D': or  edi,O_TEMPORARY
+        .case 't': or  edx,O_TEXT
+        .case 'b': or  edx,O_BINARY
+        .case 'c': or  ecx,_IOCOMMIT
+        .case 'n': and ecx,not _IOCOMMIT
+        .case 'S': or  edx,O_SEQUENTIAL
+        .case 'R': or  edx,O_RANDOM
+        .case 'T': or  edx,O_SHORT_LIVED
+        .case 'D': or  edx,O_TEMPORARY
         .default
             .break
         .endsw
-
         add rbx,2
         mov ax,[rbx]
     .endw
 
+    mov oflag,edx
+    mov fileflag,ecx
+
     .if ( _getst() == NULL )
         .return
     .endif
-
     mov rbx,rax
 
-    .if ( _wsopen( file, edi, SH_DENYNO, 0284h ) != -1 )
+    .if ( _wsopen( file, oflag, SH_DENYNO, 0284h ) != -1 )
 
         mov [rbx]._iobuf._file,eax
         xor eax,eax
         mov [rbx]._iobuf._cnt,eax
         mov [rbx]._iobuf._ptr,rax
         mov [rbx]._iobuf._base,rax
-        mov [rbx]._iobuf._flag,esi
-        or  rax,rbx
-
+        mov [rbx]._iobuf._flag,fileflag
+        mov rax,rbx
     .else
         xor eax,eax
     .endif

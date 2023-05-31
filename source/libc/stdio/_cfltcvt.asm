@@ -9,12 +9,12 @@ include fltintrn.inc
 
     .code
 
-_cfltcvt proc d:ptr real8, buffer:string_t, ch_type:int_t, precision:int_t, flags:int_t
+_cfltcvt proc uses rbx d:ptr real8, buffer:string_t, ch_type:int_t, precision:int_t, flags:int_t
 
    .new q:REAL16
 
-    mov rcx,__cvtsd_q( &q, d )
-    _cqcvt( rcx, buffer, ch_type, precision, flags )
+    mov rbx,__cvtsd_q( &q, d )
+    _cqcvt( rbx, buffer, ch_type, precision, flags )
     ret
 
 _cfltcvt endp

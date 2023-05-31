@@ -6,11 +6,35 @@
 
 include io.inc
 include errno.inc
+ifdef __UNIX__
+include linux/kernel.inc
+else
 include winbase.inc
+endif
 
 .code
 
-oswrite proc handle:int_t, buffer:ptr, size:uint_t
+oswrite proc uses rbx handle:int_t, buffer:ptr, size:uint_t
+ifdef __UNIX__
+
+    ldr ecx,handle
+    ldr rax,buffer
+    ldr ebx,size
+
+    .ifs ( sys_write(ecx, rax, rbx) < 0 )
+
+        neg eax
+        _set_errno( eax )
+        xor eax,eax
+    .endif
+
+    .if ( rax != rbx )
+
+        _set_errno( ENOSPC )
+       .return( 0 )
+    .endif
+
+else
 
    .new NumberOfBytesWritten:uint_t = 0
    .new hFile:HANDLE = _get_osfhandle( handle )
@@ -23,9 +47,10 @@ oswrite proc handle:int_t, buffer:ptr, size:uint_t
 
     .if ( size != NumberOfBytesWritten )
 
-        _set_errno( ERROR_DISK_FULL )
+        _dosmaperr( ERROR_DISK_FULL )
        .return( 0 )
     .endif
+endif
     ret
 
 oswrite endp

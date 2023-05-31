@@ -4,9 +4,18 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include stdio.inc
+include errno.inc
 include stdlib.inc
 include signal.inc
+ifdef __UNIX__
+define __USE_GNU
+include ucontext.inc
+else
 include winbase.inc
+endif
+
+define MAXSIG   7
 
 define EH_NONCONTINUABLE    0x01
 define EH_UNWINDING         0x02
@@ -15,9 +24,12 @@ define EH_STACK_INVALID     0x08
 define EH_NESTED_CALL       0x10
 
     .data
-     __crtCurrentException PEXCEPTION_POINTERS 0
+
+     __crtCurrentException PVOID 0
+ifndef __UNIX__
      __crtExceptionReg PEXCEPTION_REGISTRATION 0
-     sig_table sigfunc_t NSIG dup(0)
+endif
+     sig_table sigfunc_t MAXSIG dup(0)
 
     .code
 
@@ -33,9 +45,23 @@ raise proc index:int_t
   local sigp:sigfunc_t
 
     ldr ecx,index
+    mov rax,-1
+    .switch ecx
+    .case SIGABRT   : inc eax
+    .case SIGBREAK  : inc eax
+    .case SIGTERM   : inc eax
+    .case SIGSEGV   : inc eax
+    .case SIGFPE    : inc eax
+    .case SIGILL    : inc eax
+    .case SIGINT    : inc eax
+    .endsw
+    .if ( eax == -1 )
 
-    lea rax,sig_table
-    mov rax,[rax+rcx*size_t]
+        _set_errno(EINVAL)
+        .return(SIG_ERR)
+    .endif
+    lea rdx,sig_table
+    mov rax,[rdx+rax*size_t]
     .if rax
         mov sigp,rax
         sigp( ecx )
@@ -44,19 +70,98 @@ raise proc index:int_t
 
 raise endp
 
+if defined(__UNIX__) and defined(_AMD64_)
 
-signal proc uses rbx index:int_t, func:sigfunc_t
+sig_restore::
+    assume rbx:ptr mcontext_t
+    lea rbx,[rdx+ucontext_t.uc_mcontext]
+    mov rax,[rbx].gregs[REG_RAX*8]
+    mov rcx,[rbx].gregs[REG_RCX*8]
+    mov rdx,[rbx].gregs[REG_RDX*8]
+    mov rsi,[rbx].gregs[REG_RSI*8]
+    mov rdi,[rbx].gregs[REG_RDI*8]
+    mov rbp,[rbx].gregs[REG_RBP*8]
+    mov r8, [rbx].gregs[REG_R8*8]
+    mov r9, [rbx].gregs[REG_R9*8]
+    mov r10,[rbx].gregs[REG_R10*8]
+    mov r11,[rbx].gregs[REG_R11*8]
+    mov r12,[rbx].gregs[REG_R12*8]
+    mov r13,[rbx].gregs[REG_R13*8]
+    mov r14,[rbx].gregs[REG_R14*8]
+    mov r15,[rbx].gregs[REG_R15*8]
+    mov rsp,[rbx].gregs[REG_RSP*8]
+    push [rbx].gregs[REG_RIP*8]
+    mov rbx,[rbx].gregs[REG_RBX*8]
+    assume rbx:nothing
+    ret
 
-    ldr ecx,index
+sig_handler proc sig:int_t, siginfo:ptr siginfo_t, context:ptr ucontext_t
+
+    mov __crtCurrentException,rdx
+    raise(edi)
+    mov rdx,__crtCurrentException
+    xor eax,eax
+    ret
+
+sig_handler endp
+
+endif
+
+signal proc uses rbx sig:int_t, func:sigfunc_t
+
+if defined(__UNIX__) and defined(_AMD64_)
+   .new ac:compat_sigaction = {0}
+endif
+
+    ldr ecx,sig
     ldr rdx,func
 
+    mov rax,-1
+    .switch ecx
+    .case SIGABRT   : inc eax   ; abnormal termination triggered by abort call
+    .case SIGBREAK  : inc eax   ; Ctrl-Break sequence
+    .case SIGTERM   : inc eax   ; Software termination signal from kill
+    .case SIGSEGV   : inc eax   ; segment violation
+    .case SIGFPE    : inc eax   ; floating point exception
+    .case SIGILL    : inc eax   ; illegal instruction - invalid function image
+    .case SIGINT    : inc eax   ; interrupt
+    .endsw
+
+    .if ( eax == -1 )
+
+        _set_errno(EINVAL)
+        .return(SIG_ERR)
+    .endif
+
+    mov ecx,eax
     lea rbx,sig_table
     mov rax,[rbx+rcx*size_t]
     mov [rbx+rcx*size_t],rdx
+
+if defined(__UNIX__) and defined(_AMD64_)
+
+    mov rbx,rax
+    mov ac.sa_handler,&sig_handler
+    mov ac.sa_restorer,&sig_restore
+    mov ac.sa_flags,SA_SIGINFO or SA_RESTORER
+
+    .ifsd ( sys_rt_sigaction(sig, &ac, 0) < 0 )
+
+        neg eax
+        _set_errno(eax)
+
+        lea rcx,sig_table
+        mov edx,sig
+        mov [rcx+rdx*size_t],rbx
+       .return(SIG_ERR)
+    .endif
+    mov rax,rbx
+endif
     ret
 
 signal endp
 
+ifndef __UNIX__
 
 __crtExceptionHandler proc \
     ExceptionRecord   : PEXCEPTION_RECORD,
@@ -123,10 +228,14 @@ __crtExceptionHandler endp
 
 
 Install proc private
+
 ifdef _WIN64
+
     AddVectoredExceptionHandler( 1, &__crtExceptionHandler )
     mov __crtExceptionReg,rax
+
 else
+
     ; 8 bytes on the stack for EXCEPTION_REGISTRATION
     ; is allocate in mainCRTStartup
 
@@ -140,6 +249,7 @@ else
     assume  fs:ERROR
 endif
     ret
+
 Install endp
 
 
@@ -159,4 +269,5 @@ Remove endp
 .pragma init( Install,  1 )
 .pragma exit( Remove, 200 )
 
+endif
     end

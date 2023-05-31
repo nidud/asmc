@@ -9,8 +9,10 @@ include stdio.inc
 .code
 
 __iob_func proc
+
     mov rax,stdin
     ret
+
 __iob_func endp
 
     end

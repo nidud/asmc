@@ -8,14 +8,14 @@ include ctype.inc
 
     .code
 
-_strlwr proc uses rsi string:string_t
+_strlwr proc uses rbx string:string_t
 
-    ldr rsi,string
-    .for ( : byte ptr [rsi] : rsi++ )
+    ldr rbx,string
+    .for ( : byte ptr [rbx] : rbx++ )
 
-        movzx ecx,byte ptr [rsi]
+        movzx ecx,byte ptr [rbx]
         tolower(ecx)
-        mov [rsi],al
+        mov [rbx],al
     .endf
     .return(string)
 

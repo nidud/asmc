@@ -9,14 +9,13 @@ include ctype.inc
     .code
 
 isascii proc c:int_t
-ifdef _WIN64
+
+    ldr     ecx,c
     test    cl,0x80
-else
-    test    byte ptr c,0x80
-endif
     setz    al
     movzx   eax,al
     ret
+
 isascii endp
 
     end

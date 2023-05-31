@@ -5,12 +5,13 @@
 ;
 
 include stdlib.inc
-IFDEF	_UNICODE
-extern	__wargv:warray_t
-ELSE
-extern	__argv:array_t
-ENDIF
-	.data
-	__argc int_t 0
 
-	END
+ifdef   _UNICODE
+extern  __wargv:warray_t
+else
+extern  __argv:array_t
+endif
+    .data
+    __argc int_t 0
+
+    end

@@ -24,16 +24,23 @@ WndProc proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
     mov rbx,hwnd
     .switch uiMsg
     .case WM_CREATE
-        _tcontrol([rbx].object, 128, ' ', "string to edit......")
         _dlshow(rbx)
+        _tcontrol([rbx].object, 128, ' ', "string to edit......")
         .return( 0 )
     .case WM_CLOSE
         _dlclose(rbx)
         .return( 0 )
+    .default
+        mov rbx,[rbx].object
+        .if ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
+            .return
+        .endif
     .endsw
     .return(_defwinproc(hwnd, uiMsg, wParam, lParam))
 
 WndProc endp
+
+    assume rcx:THWND
 
 _tmain proc argc:int_t, argv:array_t
 
@@ -47,7 +54,19 @@ _tmain proc argc:int_t, argv:array_t
     _rcframe(rc, f2, [rbx].window, BOX_SINGLE_ARC, 0x06)
     _rcputs(rc, [rbx].window, 17, 1, 0x0F, "  Text Control  ")
 
-    _dlinit (rbx, 0, ec, O_DEXIT or O_USEBEEP or O_SELECT, T_EDIT, 1, 0)
+    mov     rcx,[rbx].object
+    mov     [rcx].rc,ec
+    mov     [rcx].type,T_EDIT
+    or      [rcx].flags,W_WNDPROC or O_DEXIT or O_USEBEEP or O_SELECT
+    movzx   eax,[rbx].rc.col
+    mul     [rcx].rc.y
+    movzx   edx,[rcx].rc.x
+    add     eax,edx
+    shl     eax,2
+    add     rax,[rbx].window
+    mov     [rcx].window,rax
+
+    _dlinit(rcx, 0)
     _dlmodal(rbx, &WndProc)
     ret
 

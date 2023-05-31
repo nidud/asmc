@@ -5,11 +5,16 @@
 ;
 
 include errno.inc
+ifndef __UNIX__
 include winbase.inc
-
+endif
     .code
 
 _getdrive proc
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    xor eax,eax
+else
 
   local directory[1024]:char_t
 
@@ -27,6 +32,7 @@ _getdrive proc
     .else
         _dosmaperr( GetLastError() )
     .endif
+endif
     ret
 
 _getdrive endp

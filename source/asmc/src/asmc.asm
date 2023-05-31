@@ -203,8 +203,8 @@ else
 
 strfcat proc __ccall private uses rsi rdi buffer:string_t, path:string_t, file:string_t
 
-    ldr rdx,buffer
     ldr rsi,path
+    ldr rdx,buffer
 
     xor eax,eax
     mov ecx,-1

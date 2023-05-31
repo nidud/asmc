@@ -9,7 +9,9 @@ include io.inc
     .code
 
 _get_osfhandle proc handle:int_t
-
+ifdef __UNIX__
+    ldr eax,handle
+else
     ldr ecx,handle
     mov rax,-1
 
@@ -22,6 +24,7 @@ _get_osfhandle proc handle:int_t
             mov rax,[rax+rcx*size_t]
         .endif
     .endif
+endif
     ret
 
 _get_osfhandle endp

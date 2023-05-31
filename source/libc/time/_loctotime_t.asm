@@ -10,7 +10,9 @@ include winbase.inc
     .code
 
 _loctotime_t proc uses rsi rdi rbx year:int_t, month:int_t, day:int_t, hour:int_t, minute:int_t, second:int_t
-
+ifdef __UNIX__
+    int 3
+else
   local tb:tm
 
     ldr ecx,year
@@ -67,6 +69,7 @@ _loctotime_t proc uses rsi rdi rbx year:int_t, month:int_t, day:int_t, hour:int_
         .endif
         mov eax,edi
     .until 1
+endif
     ret
 
 _loctotime_t endp

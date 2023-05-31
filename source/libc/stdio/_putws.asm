@@ -10,20 +10,20 @@ include wchar.inc
 
     .code
 
-_putws proc uses rsi rdi string:LPWSTR
+_putws proc uses rbx string:LPWSTR
 
-    ldr rsi,string
+   .new retval:int_t = 0
 
-    .for ( edi = 0 : word ptr [rsi] : rsi += 2, edi++ )
+    ldr rbx,string
+    .for ( : word ptr [rbx] : rbx += 2, retval++ )
 
-        movzx ecx,word ptr [rsi]
+        movzx ecx,word ptr [rbx]
         .if ( _putwch( cx ) == WEOF )
 
-            movsx edi,ax
-           .break
+           .return
         .endif
     .endf
-    .return( edi )
+    .return( retval )
 
 _putws endp
 

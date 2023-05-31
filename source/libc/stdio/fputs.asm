@@ -9,20 +9,18 @@ include string.inc
 
     .code
 
-fputs proc uses rsi rdi rbx string:LPSTR, fp:LPFILE
+fputs proc uses rbx string:LPSTR, fp:LPFILE
+
+   .new buf:int_t
+   .new len:int_t
 
     ldr rbx,string
-    ldr rdx,fp
-
-    mov edi,_stbuf( rdx )
-    mov esi,strlen( rbx )
+    mov buf,_stbuf( fp )
+    mov len,strlen( rbx )
     mov ebx,fwrite( rbx, 1, eax, fp )
-
-    _ftbuf(edi, fp)
-
-    mov ecx,esi
+    _ftbuf(buf, fp)
+    mov ecx,len
     xor eax,eax
-
     .if ( ebx )
 	dec rax
     .endif

@@ -53,6 +53,7 @@ _mbccpy_s	proto __cdecl :string_t, :size_t, :ptr int_t, :string_t
 
 
 ifndef _WSTRING_DEFINED
+define _WSTRING_DEFINED
 
 wcscat		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcschr		proto __cdecl :ptr wchar_t, :wchar_t
@@ -99,6 +100,7 @@ wcswcs		equ <wcsstr>
 ifndef __STDC__
 
 ;; prototypes for oldnames.lib functions
+
 wcsdup		proto __cdecl :ptr wchar_t
 wcsicmp		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcsnicmp	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
@@ -109,9 +111,19 @@ wcslwr		proto __cdecl :ptr wchar_t
 wcsupr		proto __cdecl :ptr wchar_t
 wcsicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t
 
-endif  ;; NOT __STDC__
-
-_WSTRING_DEFINED equ 1
+endif ;; NOT __STDC__
 endif
+
+ifndef _MSVCRT
+
+strfn		proto __cdecl :string_t
+strext		proto __cdecl :string_t
+strtrim		proto __cdecl :string_t
+strstart	proto __cdecl :string_t
+strfcat		proto __cdecl :string_t, :string_t, :string_t
+memxchg		proto __cdecl :string_t, :string_t, :size_t
+
+endif
+
 endif
 .pragma list(pop)

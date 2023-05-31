@@ -7,7 +7,7 @@ include float.inc
 
 .code
 
-_finite proc __cdecl d:double
+_finite proc d:double
 ifdef __SSE__
     local x:double
     movsd x,xmm0

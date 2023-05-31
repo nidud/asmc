@@ -16,12 +16,18 @@ _fpreset proc __cdecl
 
     fninit
     fldcw cw
-
+ifdef __UNIX__
+ifdef _WIN64
+    mov cw,0x1F80
+    fldcw cw
+endif
+else
     .if IsProcessorFeaturePresent( PF_XMMI64_INSTRUCTIONS_AVAILABLE )
 
         mov cw,0x1F80
         fldcw cw
     .endif
+endif
     ret
 
 _fpreset endp

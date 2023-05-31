@@ -256,6 +256,7 @@ _msgboxA proc uses rbx flags:UINT, title:LPSTR, format:LPSTR, argptr:vararg
     .elseif ( eax == MB_DEFBUTTON2 )
         mov ecx,1
     .endif
+    mov rbx,hwnd
     mov [rbx].index,cl
 
     mov rc,[rbx].rc

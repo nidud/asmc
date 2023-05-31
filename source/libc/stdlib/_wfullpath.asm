@@ -14,6 +14,9 @@ include winbase.inc
 
 _wfullpath proc uses rsi rdi rbx buf:LPWSTR, path:LPWSTR, maxlen:UINT
 
+ifdef __UNIX__
+    int 3
+else
   local drive:byte
   local dchar:byte
 
@@ -247,6 +250,7 @@ _wfullpath proc uses rsi rdi rbx buf:LPWSTR, path:LPWSTR, maxlen:UINT
         .endif
         xor eax,eax
     .endif
+endif
     ret
 
 _wfullpath endp

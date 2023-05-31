@@ -6,6 +6,13 @@
 
 include malloc.inc
 include errno.inc
+ifdef __UNIX__
+include linux/kernel.inc
+
+CALL_MMAP macro s
+    exitm<sys_mmap(0, (s), MMAP_PROT, MMAP_FLAGS, -1, 0)>
+    endm
+endif
 
 public  _crtheap
 
@@ -162,9 +169,17 @@ free proc memblock:ptr
                             mov _heap_base,rax
                         .endif
                         mov _heap_free,rax
-                        mov memblock,rcx
+ifdef __UNIX__
+                        .if ( rcx )
 
+                            mov rdx,[rcx].HEAP.size
+                            add rdx,HEAP
+                            sys_munmap(rcx, rdx)
+                        .endif
+else
+                        mov memblock,rcx
                         HeapFree( GetProcessHeap(), 0, memblock )
+endif
                     .endif
                 .endif
             .endif
@@ -185,11 +200,13 @@ CreateHeap proc private uses rbx size:size_t
         mov rbx,rcx
     .endif
     add rbx,HEAP
-
+ifdef __UNIX__
+    .if ( CALL_MMAP(rbx) == MAP_FAILED )
+else
     .if ( HeapAlloc( GetProcessHeap(), 0, rbx ) == NULL )
-
+endif
         _set_errno( ENOMEM )
-       .return
+       .return( NULL )
     .endif
 
     lea rdx,[rbx-HEAP]
@@ -218,11 +235,11 @@ CreateHeap proc private uses rbx size:size_t
     mov rcx,size
     mov rdx,rax
     mov rax,[rdx].HEAP.size
-    .if ( rax >= rcx )
-        .return
+    .if ( rax < rcx )
+        _set_errno( ENOMEM )
+        xor eax,eax
     .endif
-    _set_errno( ENOMEM )
-    .return( 0 )
+    ret
 
 CreateHeap endp
 

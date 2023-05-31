@@ -8,20 +8,17 @@ include winnls.inc
 
     .code
 
-if WINVER GE 0x0600
+    option dotname
 
 _wcslwr proc string:ptr wchar_t
+
+if ( WINVER GE 0x0600 ) and not defined(__UNIX__)
 
     mov ecx,wcslen( string )
     LCMapStringEx( LOCALE_NAME_USER_DEFAULT, LCMAP_LOWERCASE, string, ecx, string, ecx, 0, 0, 0 )
     mov rax,string
 
 else
-
-    option dotname
-
-_wcslwr proc string:ptr wchar_t
-
     ldr     rcx,string
     mov     rax,rcx
 .0:
@@ -37,7 +34,6 @@ _wcslwr proc string:ptr wchar_t
     mov     [rcx],dx
     add     rcx,2
 .2:
-
 endif
     ret
 

@@ -32,9 +32,7 @@ _make_time_t proc private uses rsi rdi rbx tb:ptr tm, ultflag:int_t
   local tmptm1:long_t, tmptm2:long_t, tmptm3:long_t
   local tbtemp:ptr tm
 
-ifndef _WIN64
-    mov ecx,tb
-endif
+    ldr rcx,tb
     mov rdi,rcx
     mov eax,[rdi].tm.tm_year
 
@@ -134,7 +132,7 @@ endif
         jmp err_mktime
     .endif
 
-    .if  ( ultflag )
+    .if ( ultflag )
 
         _tzset()
         add tmptm1,_timezone
@@ -169,18 +167,14 @@ _make_time_t endp
 
 mktime proc tb:ptr tm
 
-ifndef _WIN64
-    mov ecx,tb
-endif
-    .return( _make_time_t( rcx, 1 ) )
+    ldr rcx,tb
+   .return( _make_time_t( rcx, 1 ) )
 mktime endp
 
 _mkgmtime proc tb:ptr tm
 
-ifndef _WIN64
-    mov ecx,tb
-endif
-    .return( _make_time_t( rcx, 0 ) )
+    ldr rcx,tb
+   .return( _make_time_t( rcx, 0 ) )
 _mkgmtime endp
 
     end

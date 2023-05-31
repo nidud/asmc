@@ -8,14 +8,16 @@ include conio.inc
 
     .code
 
-_scputsA proc uses rsi rdi x:BYTE, y:BYTE, string:LPSTR
+_scputsA proc uses rbx x:BYTE, y:BYTE, string:LPSTR
 
-    .for ( edi = 0, rsi = string : byte ptr [rsi] : rsi++, x++, edi++ )
+    .new retval:int_t = 0
+     ldr rbx,string
+    .for ( : byte ptr [rbx] : rbx++, x++, retval++ )
 
-        movzx ecx,byte ptr [rsi]
+        movzx ecx,byte ptr [rbx]
         _scputc(x, y, 1, cx)
     .endf
-    .return( edi )
+    .return( retval )
 
 _scputsA endp
 

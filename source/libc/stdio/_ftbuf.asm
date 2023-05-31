@@ -8,32 +8,30 @@ include stdio.inc
 
     .code
 
-_ftbuf proc uses rsi rdi flag:int_t, fp:LPFILE
+    assume rbx:LPFILE
+
+_ftbuf proc uses rbx flag:int_t, fp:LPFILE
 
     ldr ecx,flag
-    ldr rsi,fp
-
-    mov edi,[rsi]._iobuf._flag
+    ldr rbx,fp
+    mov edx,[rbx]._flag
 
     .if ( ecx )
 
-	.if ( edi & _IOFLRTN )
+	.if ( edx & _IOFLRTN )
 
-	    fflush( rsi )
+	    fflush( rbx )
 
-	    and edi,not (_IOYOURBUF or _IOFLRTN)
-	    mov [rsi]._iobuf._flag,edi
+	    and [rbx]._flag,not (_IOYOURBUF or _IOFLRTN)
 	    xor eax,eax
-	    mov [rsi]._iobuf._ptr,rax
-	    mov [rsi]._iobuf._base,rax
-	    mov [rsi]._iobuf._bufsiz,eax
+	    mov [rbx]._ptr,rax
+	    mov [rbx]._base,rax
+	    mov [rbx]._bufsiz,eax
 	.endif
-
     .else
-
-	and edi,_IOFLRTN
+	and edx,_IOFLRTN
 	.ifnz
-	    fflush( rsi )
+	    fflush( rbx )
 	.endif
     .endif
     ret

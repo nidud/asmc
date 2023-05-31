@@ -10,25 +10,23 @@ include winbase.inc
 
     .code
 
-rewind proc fp:LPFILE
+    assume rbx:LPFILE
 
-    fflush( fp )
+rewind proc uses rbx fp:LPFILE
 
-    mov rcx,fp
-    mov eax,[rcx]._iobuf._flag
+    ldr rbx,fp
+    fflush( rbx )
+
+    mov eax,[rbx]._flag
     and eax,not (_IOERR or _IOEOF)
     .if ( eax & _IORW )
 	and eax,not (_IOREAD or _IOWRT)
     .endif
-    mov [rcx]._iobuf._flag,eax
-
-    mov eax,[rcx]._iobuf._file
-    lea rcx,_osfile
+    mov [rbx]._flag,eax
+    mov ecx,[rbx]._file
+    lea rax,_osfile
     and byte ptr [rcx+rax],not FEOFLAG
-
-    lea rcx,_osfhnd
-    mov rcx,[rcx+rax*size_t]
-    SetFilePointer( rcx, 0, 0, SEEK_SET )
+    _lseek( ecx, 0, SEEK_SET )
     ret
 
 rewind endp

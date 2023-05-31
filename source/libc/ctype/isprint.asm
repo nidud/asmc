@@ -16,6 +16,7 @@ isprint proc c:int_t
         xor eax,eax
     .endif
     ret
+
 isprint endp
 
     end

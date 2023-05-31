@@ -4,35 +4,56 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
+include fcntl.inc
 include conio.inc
 
     .data
-    _confh intptr_t -2
+ifndef __UNIX__
+    _confh      HANDLE -1
+ ifdef __TTY__
+    _conoutcp   int_t 0
+    _modeout    int_t -1
+ endif
+endif
+    _confd      int_t -1
 
     .code
 
-ifndef __UNIX__
-
 __initconout proc private
 
-    mov _confh,CreateFileW(L"CONOUT$", GENERIC_READ or GENERIC_WRITE, FILE_SHARE_READ or FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL)
+    mov _confd,_open(CONOUT, O_BINARY or O_RDWR or O_NOCTTY)
+ifndef __UNIX__
+    .ifs ( eax > 0 )
+        mov _confh,_get_osfhandle(eax)
+    .endif
+ ifdef __TTY__
+    .ifs ( eax > 0 )
+        .ifd GetConsoleMode(_confh, &_modeout)
+            SetConsoleMode(_confh, ENABLE_PROCESSED_OUTPUT or ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+        .endif
+    .endif
+    mov _conoutcp,GetConsoleOutputCP()
+    SetConsoleOutputCP(65001)
+ endif
+endif
     ret
 
 __initconout endp
 
-__termconout proc private
+if not defined(__UNIX__) and defined(__TTY__)
+__exitconout proc private
 
     .if ( _confh > 0 )
-
-	CloseHandle(_confh)
+        SetConsoleMode(_confh, _modeout)
     .endif
+    SetConsoleOutputCP(_conoutcp)
     ret
 
-__termconout endp
+__exitconout endp
 
-.pragma init(__initconout, 21)
-.pragma exit(__termconout, 100)
-
+.pragma exit(__exitconout, 10)
 endif
+.pragma init(__initconout, 21)
 
     end

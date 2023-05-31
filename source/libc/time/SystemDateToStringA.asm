@@ -11,7 +11,10 @@ include winnls.inc
     .code
 
 SystemDateToStringA proc string:ptr char_t, date:ptr SYSTEMTIME
-
+ifdef __UNIX__
+    int 3
+    ret
+else
    .new dateString[64]:wchar_t
 
     GetDateFormatEx(NULL, DATE_SHORTDATE, date, NULL, &dateString, lengthof(dateString), NULL)
@@ -21,10 +24,9 @@ SystemDateToStringA proc string:ptr char_t, date:ptr SYSTEMTIME
         mov al,byte ptr dateString[rcx*2]
         mov [rdx+rcx],al
     .endf
-
     mov byte ptr [rdx+rcx],0
    .return( string )
-
+endif
 SystemDateToStringA endp
 
     END

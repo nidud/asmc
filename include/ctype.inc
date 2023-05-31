@@ -69,6 +69,8 @@ _ALPHA		equ 0x0100 or _UPPER or _LOWER
 externdef	_ctype:WORD	; Character type array
 externdef	_pctype:LPWORD
 externdef	_pwctype:LPWORD
+externdef	_pcumap:string_t
+externdef	_pclmap:string_t
 
 isspace		proto __cdecl :SINT ; space, tab, carriage return, new line, vertical tab,
 			    ; or formfeed (0x09 to 0x0D, 0x20)

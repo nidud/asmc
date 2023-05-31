@@ -5,14 +5,20 @@
 ;
 
 include direct.inc
-include string.inc
 include errno.inc
+ifndef __UNIX__
 include malloc.inc
+include string.inc
 include winbase.inc
+endif
 
     .code
 
 _wgetdcwd proc uses rdi drive:int_t, buffer:ptr wchar_t, maxlen:int_t
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    xor eax,eax
+else
 
     ldr eax,maxlen
     imul ecx,eax,wchar_t
@@ -71,6 +77,7 @@ _wgetdcwd proc uses rdi drive:int_t, buffer:ptr wchar_t, maxlen:int_t
             mov rax,buffer
         .endif
     .endif
+endif
     ret
 
 _wgetdcwd endp

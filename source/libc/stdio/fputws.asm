@@ -3,40 +3,38 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
 include stdio.inc
 include string.inc
 
     .code
 
-fputws proc uses rsi rdi rbx string:LPWSTR, fp:LPFILE
+fputws proc uses rbx string:LPWSTR, fp:LPFILE
 
-    ldr rsi,string
-    ldr rdi,fp
+    ldr rbx,fp
 
-    mov ebx,wcslen(rsi)
+    .new len:int_t = wcslen(string)
+    .new retval:size_t = 0
+    .new stb:int_t = _stbuf(rbx)
 
-    .new retval:int_t = 0
-    .new stb:int_t = _stbuf(rdi)
+    .while len
 
-    .while ebx
-
-        movzx eax,word ptr [rsi]
-        mov rcx,[rdi]._iobuf._ptr
-        sub [rdi]._iobuf._cnt,2
+        mov rdx,string
+        movzx eax,word ptr [rdx]
+        mov rcx,[rbx]._iobuf._ptr
+        sub [rbx]._iobuf._cnt,2
         .ifl
-            .ifd ( _flswbuf(eax, rdi) == -1 )
-                mov retval,eax
+            .ifd ( _flswbuf(eax, rbx) == -1 )
+                mov retval,rax
                .break
             .endif
         .else
-            add [rdi]._iobuf._ptr,2
+            add [rbx]._iobuf._ptr,2
             mov [rcx],ax
         .endif
-        dec ebx
-        add rsi,2
+        dec len
+        add string,2
     .endw
-    _ftbuf(stb, rdi)
+    _ftbuf(stb, rbx)
     .return( retval )
 
 fputws endp

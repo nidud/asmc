@@ -6,11 +6,17 @@
 
 include io.inc
 include errno.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 
     .code
 
 _filelength proc handle:SINT
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    xor eax,eax
+else
 
   local FileSize:QWORD
 
@@ -29,6 +35,7 @@ endif
         _dosmaperr( GetLastError() )
         xor eax,eax
     .endif
+endif
     ret
 
 _filelength endp

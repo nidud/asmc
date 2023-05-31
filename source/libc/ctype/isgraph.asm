@@ -16,6 +16,7 @@ isgraph proc c:int_t
         xor eax,eax
     .endif
     ret
+
 isgraph endp
 
     end

@@ -4,16 +4,20 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include crtl.inc
 include io.inc
 include errno.inc
 include time.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 
     .code
 
 _findnext proc uses rsi rdi handle:intptr_t, ff:ptr _finddata_t
-
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    mov rax,-1
+else
   local wf:WIN32_FIND_DATAA
 
     ldr rcx,handle
@@ -25,13 +29,17 @@ _findnext proc uses rsi rdi handle:intptr_t, ff:ptr _finddata_t
     .else
         _dosmaperr( GetLastError() )
     .endif
+endif
     ret
 
 _findnext endp
 
 
 _findfirst proc uses rsi rdi rbx lpFileName:LPSTR, ff:PTR _finddata_t
-
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    mov rax,-1
+else
   local FindFileData:WIN32_FIND_DATAA
 
     ldr rcx,lpFileName
@@ -46,9 +54,12 @@ _findfirst proc uses rsi rdi rbx lpFileName:LPSTR, ff:PTR _finddata_t
     .else
         _dosmaperr( GetLastError() )
     .endif
+endif
     ret
 
 _findfirst endp
+
+ifndef __UNIX__
 
     ASSUME  rsi:ptr WIN32_FIND_DATAA
     ASSUME  rdi:ptr _finddata_t
@@ -77,5 +88,6 @@ copyblock proc private
     ret
 
 copyblock endp
+endif
 
     end

@@ -19,12 +19,12 @@ XMVectorLog2 proc XM_CALLCONV V:FXMVECTOR
     ;; Compute exponent and significand for subnormals.
 
     _mm_and_si128(_mm_store_ps(xmm7, g_XMQNaNTest), xmm0)
-    XMVECTOR::GetLeadingBit(xmm7)
+    XMVECTOR_GetLeadingBit(xmm7)
 
     _mm_sub_epi32(_mm_store_ps(xmm1, g_XMNumTrailing), xmm0)
     _mm_sub_epi32(_mm_store_ps(xmm0, g_XMSubnormalExponent), xmm1)
     _mm_store_ps(exponentSub, xmm0)
-    XMVECTOR::multi_sll_epi32(xmm7, xmm1)
+    XMVECTOR_multi_sll_epi32(xmm7, xmm1)
     _mm_and_si128(xmm0, g_XMQNaNTest)
 
     _mm_and_si128(_mm_store_ps(xmm1, xmm6), g_XMInfinity)

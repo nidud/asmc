@@ -9,14 +9,15 @@ include string.inc
 include malloc.inc
 include winbase.inc
 include wincon.inc
-include crtl.inc
 
 externdef errorlevel:int_t
 
     .code
 
 system proc uses rdi rsi rbx string:string_t
-
+ifdef __UNIX__
+    int 3
+else
   local ProcessInfo     : PROCESS_INFORMATION,
         StartUpInfo     : STARTUPINFO,
         lpCommand       : string_t,
@@ -109,6 +110,7 @@ endif
     SetConsoleMode( rbx, ConsoleMode )
     SetErrorMode( SEM_FAILCRITICALERRORS )
     mov eax,edi
+endif
     ret
 
 system endp

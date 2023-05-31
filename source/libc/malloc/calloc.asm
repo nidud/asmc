@@ -10,13 +10,9 @@ include malloc.inc
 
 calloc proc n:size_t, nsize:size_t
 
-ifdef _WIN64
-    mov rax,rcx
-    mul rdx
-else
-    mov eax,n
-    mul nsize
-endif
+    ldr rcx,n
+    ldr rax,nsize
+    mul rcx
     malloc( rax )
     ret
 

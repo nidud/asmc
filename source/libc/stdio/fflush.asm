@@ -3,41 +3,40 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
-include stdio.inc
 include io.inc
+include stdio.inc
 
     .code
 
     assume rbx:LPFILE
 
-fflush proc uses rbx rdi rsi fp:LPFILE
+fflush proc uses rbx fp:LPFILE
+
+   .new size:uint_t = 0
+   .new retval:size_t = 0
 
     ldr rbx,fp
-    xor esi,esi
     mov eax,[rbx]._flag
     and eax,_IOREAD or _IOWRT
-
     .if ( eax == _IOWRT && [rbx]._flag & _IOMYBUF or _IOYOURBUF )
 
-        mov rdi,[rbx]._ptr
-        sub rdi,[rbx]._base
+        mov rax,[rbx]._ptr
+        sub rax,[rbx]._base
+        mov size,eax
         .ifg
-            .ifd ( _write( [rbx]._file, [rbx]._base, edi ) == edi )
+            .ifd ( _write( [rbx]._file, [rbx]._base, eax ) == size )
                 .if ( [rbx]._flag & _IORW )
                     and [rbx]._flag,not _IOWRT
                 .endif
             .else
                 or [rbx]._flag,_IOERR
-                mov rsi,-1
+                mov retval,-1
             .endif
         .endif
     .endif
-
-    mov rax,[rbx]._base
-    mov [rbx]._ptr,rax
+    mov [rbx]._ptr,[rbx]._base
     mov [rbx]._cnt,0
-   .return( rsi )
+   .return( retval )
 
 fflush endp
 

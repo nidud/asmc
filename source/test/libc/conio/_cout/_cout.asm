@@ -7,15 +7,15 @@ include conio.inc
 include ctype.inc
 include tchar.inc
 
-define ESC <"\e">
-define CSI <"\e[">
-
 .code
 
 _tmain proc argc:int_t, argv:array_t
 
    .new w:int_t = 0
    .new h:int_t = 0
+
+    SetConsoleMode(_confh, ENABLE_PROCESSED_OUTPUT or ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+    SetConsoleMode(_coninpfh, ENABLE_VIRTUAL_TERMINAL_INPUT or ENABLE_WINDOW_INPUT or ENABLE_MOUSE_INPUT)
 
     _cout(ESC "7" )         ; push cursor
     _cout(CSI "500;500H" )  ; goto x;y (to big)

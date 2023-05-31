@@ -20,6 +20,12 @@ _xtoa_s proc val:qword, buf:string_t , sizeInTChars:size_t, radix:uint_t, is_neg
   local convbuf[256]:char_t
 
 ifdef _WIN64
+
+    ldr r9d,radix
+    ldr r8,sizeInTChars
+    ldr rdx,buf
+    ldr rcx,val
+
     mov rax,rcx
 
     ; validation section

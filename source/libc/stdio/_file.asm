@@ -5,7 +5,6 @@
 ;
 
 include stdio.inc
-include crtl.inc
 
 .data
 _iob    _iobuf <_bufin, 0, _bufin, _IOREAD or _IOYOURBUF, 0, 0, _INTIOBUF, NULL>
@@ -21,20 +20,20 @@ stderr  LPFILE _stderr
 
 .code
 
-_stdioexit proc uses rsi
+_stdioexit proc uses rbx
 
-    lea rsi,_first
+    lea rbx,_first
     .repeat
-        .if ( [rsi]._iobuf._file != -1 )
-            fclose(rsi)
+        .if ( [rbx]._iobuf._file != -1 )
+            fclose(rbx)
         .endif
-        add rsi,sizeof(_iobuf)
+        add rbx,sizeof(_iobuf)
         lea rax,_last
-    .until ( rsi > rax )
+    .until ( rbx > rax )
     ret
 
 _stdioexit endp
 
-.pragma(exit(_stdioexit, 98))
+.pragma exit(_stdioexit, 98)
 
     end

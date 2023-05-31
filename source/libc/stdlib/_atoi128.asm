@@ -12,7 +12,7 @@ _atoi128 proc string:string_t, retval:ptr int128_t
 
 ifdef _WIN64
 
-    mov r10,rcx
+    ldr r10,string
     xor ecx,ecx
     .repeat
 

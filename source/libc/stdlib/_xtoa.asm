@@ -14,6 +14,11 @@ _xtoa proc val:qword, buffer:string_t, radix:int_t, is_neg:int_t
 
    .new convbuf[256]:char_t
 
+    ldr r8d,radix
+    ldr r9d,is_neg
+    ldr rcx,val
+    ldr rdx,buffer
+
     mov r10,rdx
     mov rax,rcx
 

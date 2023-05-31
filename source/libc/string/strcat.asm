@@ -11,6 +11,8 @@ include string.inc
 strcat proc dst:string_t, src:string_t
 
 ifdef _WIN64
+    ldr     rcx,dst
+    ldr     rdx,src
     mov     rax,rcx
     xor     r8d,r8d
 @@:

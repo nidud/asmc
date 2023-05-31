@@ -10,6 +10,10 @@ include errno.inc
     .code
 
 _chsize proc uses rdi rsi handle:int_t, new_size:size_t
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    mov eax,-1
+else
 
   local buffer[512]:char_t
   local current_offset:intptr_t
@@ -71,6 +75,7 @@ _chsize proc uses rdi rsi handle:int_t, new_size:size_t
     .if ( _lseek( handle, current_offset, SEEK_SET ) != -1 )
         xor eax,eax
     .endif
+endif
     ret
 
 _chsize endp

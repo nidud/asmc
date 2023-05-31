@@ -3,7 +3,6 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
 include stdio.inc
 include limits.inc
 
@@ -15,7 +14,6 @@ _vsnprintf proc string:LPSTR, count:size_t, format:LPSTR, args:ptr
 
     ldr rcx,string
     ldr rdx,count
-
     mov o._flag,_IOWRT or _IOSTRG
     mov o._cnt,edx
     mov o._ptr,rcx

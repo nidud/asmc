@@ -18,7 +18,9 @@ externdef _umaskval:uint_t
 .code
 
 _wsopen proc uses rsi rdi rbx path:wstring_t, oflag:int_t, shflag:int_t, args:vararg
-
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+else
    .new SecurityAttributes:SECURITY_ATTRIBUTES = { SECURITY_ATTRIBUTES, NULL, 0 }
 
     ldr edx,oflag
@@ -240,6 +242,7 @@ _wsopen proc uses rsi rdi rbx path:wstring_t, oflag:int_t, shflag:int_t, args:va
         .return esi
     .endw
     _close( esi )
+endif
     .return( -1 )
 
 _wsopen endp

@@ -12,12 +12,27 @@ include sys/stat.inc
 include string.inc
 include stdlib.inc
 include malloc.inc
-include crtl.inc
 include winbase.inc
 
 A_D equ 10h
 
     .code
+
+ifdef __UNIX__
+
+ifdef _WIN64
+stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat64
+else
+stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat32
+endif
+
+    _set_errno( ENOSYS )
+    mov rax,-1
+    ret
+
+stat endp
+
+else
 
 _lk_getltime proc private ft:PVOID
 
@@ -41,6 +56,7 @@ _lk_getltime proc private ft:PVOID
 _lk_getltime endp
 
 _stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
+
 
   local path:LPSTR, drive, ff:WIN32_FIND_DATA, pathbuf[_MAX_PATH]:byte
 
@@ -128,7 +144,7 @@ _stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
         .endif
 
         or  ebx,ecx
-        .if __isexec( rsi )
+        .if _isexec( rsi )
             or ebx,_S_IEXEC
         .endif
 
@@ -166,5 +182,6 @@ _stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
     .return( -1 )
 
 _stat endp
+endif
 
     end

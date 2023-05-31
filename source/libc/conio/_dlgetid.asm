@@ -19,6 +19,8 @@ _dlgetid proc watcall hwnd:THWND, id:UINT
     test    [rax].flags,O_CHILD
     jz      .2
     mov     rax,[rax].object
+    test    edx,edx
+    jz      .1
 .0:
     test    rax,rax
     jz      .1

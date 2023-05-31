@@ -6,7 +6,11 @@
 
 include io.inc
 include errno.inc
+ifdef __UNIX__
+include linux/kernel.inc
+else
 include winbase.inc
+endif
 
 LF          equ 10
 CR          equ 13
@@ -24,33 +28,41 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
   local lfbuf[BUF_SIZE]:char_t  ; lf translation buffer
   local file:char_t
 
+    ldr ecx,fh
     ldr eax,cnt
     .return .if !eax            ; nothing to do
 
-    .if ( fh >= _NFILE_ )       ; validate handle
+    .if ( ecx >= _NFILE_ )      ; validate handle
                                 ; out of range -- return error
+ifndef __UNIX__
         _set_doserrno(0)        ; not o.s. error
+endif
         _set_errno(EBADF)
         .return -1
     .endif
 
-    ldr ecx,fh
+ifdef __UNIX__
+    ldr rbx,buf
+else
     lea rdx,_osfhnd
     mov rbx,[rdx+rcx*size_t]
+endif
     lea rdx,_osfile
     mov al,[rdx+rcx]
     mov file,al
 
-    .if ( al & FAPPEND )      ; appending - seek to end of file; ignore error, because maybe
+    .if ( al & FAPPEND )        ; appending - seek to end of file; ignore error, because maybe
                                 ; file doesn't allow seeking
-        _lseek( fh, 0, SEEK_END )
+        _lseek( ecx, 0, SEEK_END )
     .endif
 
-    mov lfcount,0
     mov charcount,0
 
     ; check for text mode with LF's in the buffer
 
+ifndef __UNIX__
+
+    mov lfcount,0
     .if ( file & FTEXT )
 
         mov rsi,buf             ; start at beginning of buffer
@@ -117,6 +129,17 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
         .endif
     .endif
 
+else
+    .ifs ( sys_write(fh, rbx, cnt) < 0 )
+
+        neg eax
+        _set_errno(eax)
+        .return( -1 )
+    .else
+        mov charcount,eax
+    .endif
+endif
+
     .if ( charcount == 0 )
 
         ; If nothing was written, first check if an o.s. error,
@@ -124,6 +147,7 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
         ; unless a device and first char was CTRL-Z
 
         mov rdx,buf
+ifndef __UNIX__
         .if ( dosretval != 0 )
 
             ; o.s. error happened, map error
@@ -140,19 +164,26 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
             .return -1
 
         .elseif ( file & FDEV && byte ptr [rdx] == CTRLZ )
+else
+        .if ( file & FDEV && byte ptr [rdx] == CTRLZ )
+endif
 
             .return 0
         .endif
 
         _set_errno(ENOSPC)
+ifndef __UNIX__
         _set_doserrno(0)
+endif
         .return -1
     .endif
 
     ; return adjusted bytes written
 
     mov eax,charcount
+ifndef __UNIX__
     sub eax,lfcount
+endif
     ret
 
 _write endp

@@ -13,7 +13,9 @@ include sys/timeb.inc
     assume rdi:ptr _timeb
 
 _ftime proc uses rdi tp:ptr _timeb
-
+ifdef __UNIX__
+    int 3
+else
   local t:tm
   local d:SYSTEMTIME
 
@@ -51,6 +53,7 @@ _ftime proc uses rdi tp:ptr _timeb
     mov [rdi].time,mktime(&t)
     mov eax,t.tm_isdst
     mov [rdi].dstflag,ax
+endif
     ret
 
 _ftime endp

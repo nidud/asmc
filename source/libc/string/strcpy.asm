@@ -14,6 +14,8 @@ if defined(__AVX__) and defined(_WIN64)
 
 strcpy proc dst:ptr sbyte, src:ptr sbyte
 
+    ldr         rcx,dst
+    ldr         rdx,src
     mov         rax,rcx
     mov         r8,rdx
 

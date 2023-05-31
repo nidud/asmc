@@ -7,8 +7,8 @@ errno_t typedef sdword
 endif
 else
 include crtdefs.inc
-include winerror.inc
 endif
+include winerror.inc
 .pragma comment(lib, libc, msvcrt)
 
 ;; Declare reference to errno

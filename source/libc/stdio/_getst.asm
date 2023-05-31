@@ -8,21 +8,23 @@ include stdio.inc
 
     .code
 
-_getst proc uses rsi rdi
+    assume rcx:LPFILE
 
-    .for ( rsi = stdin,
-           rdi = &[rsi+(_NSTREAM_ * sizeof(_iobuf))],
-           eax = 0 : rsi < rdi : rsi += sizeof(_iobuf) )
+_getst proc
 
-        .if ( !( [rsi]._iobuf._flag & _IOREAD or _IOWRT or _IORW ) )
+    .for ( rcx = stdin,
+           rdx = &[rcx+(_NSTREAM_ * sizeof(_iobuf))],
+           eax = 0 : rcx < rdx : rcx += sizeof(_iobuf) )
 
-            mov [rsi]._iobuf._cnt,eax
-            mov [rsi]._iobuf._flag,eax
-            mov [rsi]._iobuf._ptr,rax
-            mov [rsi]._iobuf._base,rax
+        .if ( !( [rcx]._flag & _IOREAD or _IOWRT or _IORW ) )
+
+            mov [rcx]._cnt,eax
+            mov [rcx]._flag,eax
+            mov [rcx]._ptr,rax
+            mov [rcx]._base,rax
             dec eax
-            mov [rsi]._iobuf._file,eax
-            mov rax,rsi
+            mov [rcx]._file,eax
+            mov rax,rcx
            .break
         .endif
     .endf

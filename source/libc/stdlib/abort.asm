@@ -5,7 +5,6 @@
 ;
 
 include stdlib.inc
-include crtl.inc
 include setjmp.inc
 
     .data
@@ -15,14 +14,14 @@ include setjmp.inc
 
 abort proc
 
-    longjmp(addr jmp_exit, 1)
+    longjmp(&jmp_exit, 1)
     ret
 
 abort endp
 
 Install proc private
 
-    .if _setjmp(addr jmp_exit)
+    .if _setjmp(&jmp_exit)
 
         exit(eax)
     .endif
@@ -30,6 +29,6 @@ Install proc private
 
 Install endp
 
-.pragma(init(Install, 1))
+.pragma init(Install, 1)
 
     end

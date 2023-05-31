@@ -10,6 +10,99 @@ include malloc.inc
 
 define EOF (-1)
 
+ifdef __TTY__
+
+.data
+ inbuf size_t 0
+ count uint_t 0
+
+;
+; This is the one character push-back buffer used by _getch(), _getche()
+; and _ungetch().
+;
+chbuf int_t EOF
+
+.code
+
+_getch proc
+
+    .if ( chbuf != EOF )
+
+        movzx eax,byte ptr chbuf
+        mov chbuf,EOF
+       .return
+    .endif
+
+    .if ( count == 0 )
+
+        .if ( _coninpfd == -1 )
+
+            .return( EOF )
+        .endif
+
+        mov count,_read(_coninpfd, &inbuf, sizeof(inbuf))
+
+        .if ( eax == 0 )
+
+            .return( EOF )
+        .endif
+    .endif
+
+    dec count
+    mov rcx,inbuf
+    movzx eax,cl
+    shr rcx,8
+    mov inbuf,rcx
+    ret
+
+_getch endp
+
+
+_ungetch proc c:int_t
+
+    ldr eax,c
+
+    ; Fail if the char is EOF or the pushback buffer is non-empty
+
+    .if ( ( eax == EOF ) || ( chbuf != EOF ) )
+        .return EOF
+    .endif
+    mov chbuf,eax
+    ret
+
+_ungetch endp
+
+
+_kbhit proc
+
+    ; Fail if the buffer is empty
+
+    mov eax,count
+    .if ( eax )
+        mov al,byte ptr inbuf
+    .endif
+    ret
+
+_kbhit endp
+
+_kbflush proc
+
+    xor     eax,eax     ; return content in RCX
+    mov     ecx,count   ; and char count in EAX
+    mov     count,eax
+    dec     rax
+    shl     ecx,3
+    shl     rax,cl
+    shr     ecx,3
+    not     rax
+    and     rax,inbuf
+    xchg    rax,rcx
+    ret
+
+_kbflush endp
+
+else
+
 _getextendedkeycode proto private :ptr KEY_EVENT_RECORD
 
 .template CharPair
@@ -173,14 +266,14 @@ _getch proc uses rbx
        .return
     .endif
 
-    .if ( _conin == -1 )
+    .if ( _coninpfd == -1 )
         .return EOF
     .endif
 
     ; Switch to raw mode (no line input, no echo input)
 
-    _congetmode( _conin, &oldstate )
-    _consetmode( _conin, CONSOLE_INPUT )
+    GetConsoleMode(_coninpfh, &oldstate)
+    SetConsoleMode(_coninpfh, 0)
 
     .for ( : : )
 
@@ -209,8 +302,8 @@ _getch proc uses rbx
             .endif
         .endif
     .endf
-    _consetmode( _conin, oldstate )
-    .return( c )
+    SetConsoleMode(_coninpfh, oldstate)
+   .return( c )
 
 _getch endp
 
@@ -246,15 +339,14 @@ else
     .new NumPeeked:DWORD
     .new retval:int_t = FALSE
     .new pIRBuf:PINPUT_RECORD = NULL
-    .new h:HANDLE = _get_osfhandle(_conin)
 
     .if ( chbuf != -1 )
         .return TRUE
     .endif
 
-    GetNumberOfConsoleInputEvents( h, &NumPending )
+    GetNumberOfConsoleInputEvents( _coninpfh, &NumPending )
 
-    .if ( ( h == -1 ) || !eax || ( NumPending == 0 ) )
+    .if ( ( _coninpfh == -1 ) || !eax || ( NumPending == 0 ) )
 
         .return FALSE
     .endif
@@ -266,7 +358,7 @@ else
         .return FALSE
     .endif
 
-    mov ecx,PeekConsoleInput( h, pIRBuf, NumPending, &NumPeeked )
+    mov ecx,PeekConsoleInput( _coninpfh, pIRBuf, NumPending, &NumPeeked )
 
     .if ( ecx && ( NumPeeked != 0 ) && ( NumPeeked <= NumPending ) )
 
@@ -367,5 +459,7 @@ _getextendedkeycode proc private pKE:ptr KEY_EVENT_RECORD
     ret
 
 _getextendedkeycode endp
+
+endif
 
     end

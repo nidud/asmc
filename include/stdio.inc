@@ -38,7 +38,7 @@ EOF		equ (-1)
 
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
-_iobuf		STRUC SIZE_T
+_iobuf		struct size_t
 _ptr		LPTSTR ?
 _cnt		SINT ?
 _base		LPSTR ?
@@ -53,7 +53,7 @@ _ungotten	dw ?
 else
 _tmpfname	LPTSTR ?
 endif
-_iobuf		ENDS
+_iobuf		ends
 FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
 endif
@@ -116,7 +116,7 @@ _getst		proto __cdecl
 _ftbuf		proto __cdecl :SINT, :LPFILE
 _stbuf		proto __cdecl :LPFILE
 _getbuf		proto __cdecl :LPFILE
-setvbuf		proto __cdecl :LPFILE, :LPSTR, :SIZE_T, :SIZE_T
+setvbuf		proto __cdecl :LPFILE, :LPSTR, :int_t, :size_t
 setbuf		proto __cdecl :LPFILE, :LPSTR
 ungetc		proto __cdecl :SINT, :LPFILE
 _openfile	proto __cdecl :LPSTR, :LPSTR, :SINT, :LPFILE

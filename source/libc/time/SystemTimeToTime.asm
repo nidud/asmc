@@ -17,9 +17,8 @@ include time.inc
 
 SystemTimeToTime proc uses rbx lpSystemTime:ptr SYSTEMTIME
 
-ifndef _WIN64
-    mov     ecx,lpSystemTime
-endif
+    ldr     rcx,lpSystemTime
+
     movzx   eax,[rcx].SYSTEMTIME.wYear
     sub     eax,DT_BASEYEAR
     shl     eax,9

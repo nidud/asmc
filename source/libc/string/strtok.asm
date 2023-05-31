@@ -11,61 +11,61 @@ include string.inc
 
     .code
 
-strtok proc uses rsi rdi s1:string_t, s2:string_t
+strtok proc uses rbx s1:string_t, s2:string_t
 
-    ldr rsi,s1
-    ldr rdi,s2
+    ldr rbx,s1
+    ldr rdx,s2
 
-    .if ( rsi )
-        mov s0,rsi
+    .if ( rbx )
+        mov s0,rbx
     .else
-        mov rsi,s0
+        mov rbx,s0
     .endif
 
-    .while ( byte ptr [rsi] )
+    .while ( byte ptr [rbx] )
 
-        mov rcx,rdi
+        mov rcx,rdx
         mov al,[rcx]
 
         .while ( al )
 
-            .break .if ( al == [rsi] )
+            .break .if ( al == [rbx] )
 
             inc rcx
             mov al,[rcx]
         .endw
         .break .if ( !al )
-        inc rsi
+        inc rbx
     .endw
 
     .repeat
 
         xor eax,eax
-        .break .if ( al == [rsi] )
+        .break .if ( al == [rbx] )
 
-        mov rdx,rsi
-        .while ( byte ptr [rsi] )
+        push rbx
+        .while ( byte ptr [rbx] )
 
-            mov rcx,rdi
+            mov rcx,rdx
             mov al,[rcx]
 
             .while ( al )
 
-                .if ( al == [rsi] )
+                .if ( al == [rbx] )
 
-                    mov [rsi],ah
-                    inc rsi
+                    mov [rbx],ah
+                    inc rbx
                    .break( 1 )
                 .endif
 
                 inc rcx
                 mov al,[rcx]
             .endw
-            inc rsi
+            inc rbx
         .endw
-        mov rax,rdx
+        pop rax
     .until 1
-    mov s0,rsi
+    mov s0,rbx
     ret
 
 strtok endp

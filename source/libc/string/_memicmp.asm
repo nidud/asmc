@@ -10,56 +10,42 @@ include string.inc
 
     option dotname
 
-_memicmp proc a:ptr, b:ptr, size:size_t
+_memicmp proc uses rbx a:ptr, b:ptr, size:size_t
 
+    ldr     rbx,size
     ldr     rcx,a
     ldr     rdx,b
-
-ifndef _WIN64
-    push    ebx
-    mov     ebx,size
-endif
     dec     rcx
     dec     rdx
 .0:
-ifdef _WIN64
-    test    r8d,r8d
-    jz      .2
-    dec     r8d
-else
-    test    ebx,ebx
-    jz      .2
-    dec     ebx
-endif
+    test    rbx,rbx
+    jz      .3
+    dec     rbx
     inc     rdx
     inc     rcx
     mov     al,[rcx]
     cmp     al,[rdx]
     je      .0
-    xor     al,0x20
     cmp     al,'A'
     jb      .1
-    cmp     al,'z'
+    cmp     al,'Z'
     ja      .1
-    cmp     al,0x60
-    je      .1
-    cmp     al,[rdx]
-    je      .0
+    or      al,0x20
 .1:
-    xor     al,0x20
-    cmp     al,[rdx]
-ifdef _WIN64
-    sbb     r8,r8
-    sbb     r8,-1
+    mov     ah,[rdx]
+    cmp     ah,'A'
+    jb      .2
+    cmp     ah,'Z'
+    ja      .2
+    or      ah,0x20
 .2:
-    mov     rax,r8
-else
-    sbb     ebx,ebx
-    sbb     ebx,-1
-.2:
-    mov     eax,ebx
-    pop     ebx
-endif
+    cmp     al,ah
+    mov     ah,0
+    je      .0
+    sbb     rbx,rbx
+    sbb     rbx,-1
+.3:
+    mov     rax,rbx
     ret
 
 _memicmp endp

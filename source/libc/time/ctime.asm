@@ -10,9 +10,7 @@ include time.inc
 
 ctime proc timp:ptr time_t
 
-ifndef _WIN64
-    mov ecx,timp
-endif
+    ldr rcx,timp
     .if localtime(rcx)
         asctime(rax)
     .endif

@@ -10,95 +10,91 @@ include winbase.inc
 
     .code
 
-    assume rsi:LPFILE
+    assume rbx:LPFILE
 
-_flswbuf proc uses rsi rdi rbx char:int_t, fp:LPFILE
+_flswbuf proc uses rbx char:int_t, fp:LPFILE
 
-    ldr rsi,fp
+   .new charcount:int_t = 0
+   .new written:int_t = 0
 
+    ldr rbx,fp
     xor eax,eax
-    mov edi,[rsi]._flag
+    mov edx,[rbx]._flag
+    .if ( !( edx & _IOREAD or _IOWRT or _IORW ) || edx & _IOSTRG )
 
-    .if ( !( edi & _IOREAD or _IOWRT or _IORW ) || edi & _IOSTRG )
-
-        or [rsi]._flag,_IOERR
+        or [rbx]._flag,_IOERR
         dec rax
        .return
     .endif
 
+    .if ( edx & _IOREAD )
 
-    .if ( edi & _IOREAD )
-
-        mov [rsi]._cnt,eax
-        .if ( !( edi & _IOEOF ) )
+        mov [rbx]._cnt,eax
+        .if ( !( edx & _IOEOF ) )
 
             dec rax
-            or [rsi]._flag,_IOERR
+            or [rbx]._flag,_IOERR
            .return
         .endif
 
-        mov [rsi]._ptr,[rsi]._base
-        and edi,not _IOREAD
+        mov [rbx]._ptr,[rbx]._base
+        and edx,not _IOREAD
     .endif
 
-    or  edi,_IOWRT
-    and edi,not _IOEOF
-    mov [rsi]._flag,edi
-    mov [rsi]._cnt,0
-    mov ebx,[rsi]._file
+    or  edx,_IOWRT
+    and edx,not _IOEOF
+    mov [rbx]._flag,edx
+    mov [rbx]._cnt,0
 
-    .if ( !( edi & _IOMYBUF or _IONBF or _IOYOURBUF ) )
+    .if ( !( edx & _IOMYBUF or _IONBF or _IOYOURBUF ) )
 
-        _isatty( ebx )
-
-        mov rcx,stdout
-        mov rdx,stderr
-        .if ( !( ( rsi == rcx || rsi == rdx ) && rax ) )
-            _getbuf( rsi )
+        _isatty( [rbx]._file )
+        .if ( !( ( rbx == stdout || rbx == stderr ) && eax ) )
+            _getbuf( rbx )
         .endif
     .endif
 
-    mov eax,[rsi]._flag
-    xor edi,edi
-    mov [rsi]._cnt,edi
+    mov eax,[rbx]._flag
+    mov [rbx]._cnt,0
 
     .if ( eax & _IOMYBUF or _IOYOURBUF )
 
-        mov rax,[rsi]._base
-        mov rdi,[rsi]._ptr
-        sub rdi,rax
+        mov rax,[rbx]._base
+        mov rdx,[rbx]._ptr
+        sub rdx,rax
         add rax,2
-        mov [rsi]._ptr,rax
-        mov eax,[rsi]._bufsiz
+        mov [rbx]._ptr,rax
+        mov eax,[rbx]._bufsiz
         sub eax,2
-        mov [rsi]._cnt,eax
-        xor eax,eax
+        mov [rbx]._cnt,eax
+        mov charcount,edx
 
-        .ifs ( edi > eax )
-            _write( ebx, [rsi]._base, edi )
+        .ifs ( edx > 0 )
+            mov written,_write( [rbx]._file, [rbx]._base, edx )
         .else
-            lea rcx,_osfile
-            mov dl,[rcx+rbx]
-            .ifs ( ebx > eax && dl & FAPPEND )
 
-                lea rcx,_osfhnd
-                mov rcx,[rcx+rbx*size_t]
-                SetFilePointer( rcx, eax, rax, SEEK_END )
-                xor eax,eax
+            lea rdx,_osfile
+            mov ecx,[rbx]._file
+            .if ( byte ptr [rcx+rdx] & FAPPEND )
+
+                .if ( _lseeki64( ecx, 0, SEEK_END ) == -1 )
+
+                    or [rbx]._flag,_IOERR
+                   .return
+                .endif
             .endif
         .endif
-
         mov edx,char
-        mov rbx,[rsi]._base
-        mov [rbx],dx
+        mov rcx,[rbx]._base
+        mov [rcx],dx
     .else
-        add edi,2
-        _write( ebx, &char, edi )
+        mov charcount,2
+        mov written,_write( [rbx]._file, &char, 2 )
     .endif
-
-    .if ( eax != edi )
-        or [rsi]._flag,_IOERR
-        or eax,-1
+    mov eax,written
+    .if ( eax != charcount )
+        or [rbx]._flag,_IOERR
+        or rax,-1
     .else
         movzx eax,word ptr char
     .endif

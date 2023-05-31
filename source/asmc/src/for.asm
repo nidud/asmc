@@ -15,10 +15,10 @@ include hllext.inc
 
     .code
 
-strtrim proc fastcall private uses rbx string:string_t
+strtrim proc uses rbx string:string_t
 
-    mov rbx,rcx
-    .if tstrlen( rcx )
+    ldr rbx,string
+    .if tstrlen( rbx )
 
         mov ecx,eax
         add rcx,rbx

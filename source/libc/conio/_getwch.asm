@@ -16,12 +16,11 @@ ifdef __UNIX__
 else
    .new Count:intptr_t
    .new Event[MAXINPUTRECORDS]:INPUT_RECORD
-   .new h:HANDLE = _get_osfhandle(_conin)
 
     xor edi,edi
     .while !edi
 
-        .if GetNumberOfConsoleInputEvents( h, &Count )
+        .if GetNumberOfConsoleInputEvents( _coninpfh, &Count )
 
             mov rcx,Count
             .if ecx > MAXINPUTRECORDS
@@ -29,7 +28,7 @@ else
             .endif
 
             lea rbx,Event
-            ReadConsoleInputW( h, rbx, ecx, &Count )
+            ReadConsoleInputW( _coninpfh, rbx, ecx, &Count )
 
             mov rsi,Count
             .while esi

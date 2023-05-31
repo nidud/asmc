@@ -11,7 +11,11 @@ include stdlib.inc
 _ui64toa proc val:uint64_t, buffer:string_t, radix:int_t
 
 ifdef _WIN64
+ ifdef __UNIX__
+    .return ( _xtoa( rdi, rsi, edx, 0 ) )
+ else
     .return ( _xtoa( rcx, rdx, r8d, 0 ) )
+ endif
 else
     .return ( _xtoa( val, buffer, radix, 0 ) )
 endif

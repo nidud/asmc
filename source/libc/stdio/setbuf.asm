@@ -10,9 +10,7 @@ include stdio.inc
 
 setbuf proc fp:LPFILE, buf:LPSTR
 
-    ldr rcx,fp
-    ldr rax,buf
-    setvbuf( rax, rcx, _IOFBF, _MINIOBUF )
+    setvbuf( buf, fp, _IOFBF, _MINIOBUF )
     ret
 
 setbuf endp

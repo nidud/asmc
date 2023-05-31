@@ -8,12 +8,12 @@ include stdio.inc
 
     .code
 
-printf proc uses rdi rbx format:LPSTR, argptr:VARARG
+printf proc uses rbx format:LPSTR, argptr:VARARG
 
     mov ebx,_stbuf( stdout )
-    mov edi,_output( stdout, format, &argptr )
-    _ftbuf( ebx, stdout )
-    mov eax,edi
+    xchg ebx,_output( stdout, format, &argptr )
+    _ftbuf( eax, stdout )
+    mov eax,ebx
     ret
 
 printf endp

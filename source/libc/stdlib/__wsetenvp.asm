@@ -13,6 +13,8 @@ define MAXCOUNT 256
 
     .code
 
+ifndef __UNIX__
+
 __wsetenvp proc uses rsi rdi rbx envp:wstring_t
 
     .new offs[MAXCOUNT]:int_t
@@ -58,5 +60,5 @@ __wsetenvp proc uses rsi rdi rbx envp:wstring_t
    .return( rdi )
 
 __wsetenvp endp
-
+endif
     end

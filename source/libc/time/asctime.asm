@@ -13,14 +13,10 @@ define _ASCBUFSIZE 26
 
     .code
 
-store_dt proc private uses rbx p:string_t, val:int_t
+store_dt proc fastcall private uses rbx p:string_t, val:int_t
 
-ifndef _WIN64
-    mov ecx,p
-    mov edx,val
-endif
-    mov ebx,10
     mov eax,edx
+    mov ebx,10
     xor edx,edx
     div ebx
     mov ah,dl
@@ -37,9 +33,8 @@ asctime proc uses rsi rdi rbx tb:ptr tm
 
     ; copy day and month names into the buffer
 
-ifndef _WIN64
-    mov ecx,tb
-endif
+    ldr rcx,tb
+
     lea rdi,buf
     mov rsi,rcx
 

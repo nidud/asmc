@@ -11,7 +11,7 @@ include asmc.inc
 
     .code
 
-memxchg proc fastcall a:ptr, b:ptr, size:int_t
+exchange proc fastcall a:ptr, b:ptr, size:int_t
     mov     rax,[rcx]
     xchg    rax,[rdx]
     mov     [rcx],rax
@@ -27,7 +27,7 @@ endif
 .0:
     ret
 
-memxchg endp
+exchange endp
 
 
 tqsort proc __ccall uses rsi rdi rbx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
@@ -62,13 +62,13 @@ endif
             lea rbx,[rsi+rax]
 
             .ifsd compare(rsi, rbx) > 0
-                memxchg(rsi, rbx, w)
+                exchange(rsi, rbx, w)
             .endif
             .ifsd compare(rsi, rdi) > 0
-                memxchg(rsi, rdi, w)
+                exchange(rsi, rdi, w)
             .endif
             .ifsd compare(rbx, rdi) > 0
-                memxchg(rbx, rdi, w)
+                exchange(rbx, rdi, w)
             .endif
 
             .new _si:ptr = rsi
@@ -95,7 +95,7 @@ endif
                 mov rcx,_di
                 mov rax,_si
                 .break .if rcx < rax
-                memxchg(rcx, rax, w)
+                exchange(rcx, rax, w)
 
                 .if rbx == _di
 

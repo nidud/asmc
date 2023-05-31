@@ -8,9 +8,10 @@ include string.inc
 
     .code
 
-_strrev proc string:string_t
+_strrev proc uses rbx string:string_t
 
     ldr rcx,string
+    mov rbx,rcx
 
     .for ( rdx = rcx : byte ptr [rdx] : rdx++ )
     .endf
@@ -22,7 +23,7 @@ _strrev proc string:string_t
         mov [rcx],ah
         mov [rdx],al
     .endf
-    .return( string )
+    .return( rbx )
 
 _strrev endp
 

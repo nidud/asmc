@@ -9,52 +9,52 @@ include stdlib.inc
 
     .code
 
-    assume rdi:ptr SYSTEMTIME
+    assume rbx:ptr SYSTEMTIME
 
-StringToSystemDateW proc uses rsi rdi rbx string:ptr wchar_t, lpSystemTime:ptr SYSTEMTIME
+StringToSystemDateW proc uses rbx string:ptr wchar_t, lpSystemTime:ptr SYSTEMTIME
 
-  local separator:word
+   .new v0:int_t
+   .new v1:int_t
+   .new wc:wchar_t
+   .new yc:wchar_t
 
-    mov rdi,lpSystemTime
-    mov rsi,string
-    mov rcx,rsi
-
-    .repeat
-        lodsw
-    .until ( ax > '9' || ax < '0' )
-
-    mov separator,ax
-    mov ebx,_wtol(rcx)
-    mov ecx,_wtol(rsi)
-
-    .repeat
-        lodsw
-    .until ( ax > '9' || ax < '0' )
-
-    xchg rcx,rsi
-    mov ecx,_wtol(rcx)
-    mov rdx,string
+    ldr rbx,lpSystemTime
+    ldr rcx,string
     mov ax,[rdx+4]
+    mov yc,ax
+    mov rdx,rcx
+    .repeat
+       mov ax,[rdx]
+       add rdx,2
+    .until ( ax > '9' || ax < '0' )
+    mov wc,ax
+    mov string,rdx
+    mov v0,_wtol(rcx)
+    mov v1,_wtol(string)
+    mov rcx,string
+    .repeat
+       mov ax,[rcx]
+       add rcx,2
+    .until ( ax > '9' || ax < '0' )
+    _wtol(rcx)
+    mov ecx,v0
+    mov edx,v1
 
-    .if ( ax <= '9' && ax >= '0' )  ; YMD
-
-        mov [rdi].wYear,bx
-        mov [rdi].wMonth,si
-        mov [rdi].wDay,cx
-
-    .elseif ( separator == '/' )    ; MDY
-
-        mov [rdi].wYear,cx
-        mov [rdi].wMonth,bx
-        mov [rdi].wDay,si
+    .if ( yc <= '9' && yc >= '0' )  ; YMD
+        mov [rbx].wYear,cx
+        mov [rbx].wMonth,dx
+        mov [rbx].wDay,ax
+    .elseif ( wc == '/' )           ; MDY
+        mov [rbx].wYear,ax
+        mov [rbx].wMonth,cx
+        mov [rbx].wDay,dx
     .else
-
-        mov [rdi].wYear,cx          ; DMY
-        mov [rdi].wMonth,si
-        mov [rdi].wDay,bx
+        mov [rbx].wYear,ax          ; DMY
+        mov [rbx].wMonth,dx
+        mov [rbx].wDay,cx
     .endif
-    mov [rdi].wDayOfWeek,0
-    mov rax,rdi
+    mov [rbx].wDayOfWeek,0
+    mov rax,rbx
     ret
 
 StringToSystemDateW endp

@@ -9,18 +9,20 @@ include errno.inc
 
     .code
 
-bsearch proc uses rsi rdi rbx key:ptr, base:ptr, num:size_t, width:size_t, compare:_PtFuncCompare
+bsearch proc uses rbx key:ptr, base:ptr, num:size_t, width:size_t, compare:_PtFuncCompare
 
    .new mid:size_t
+   .new lo:string_t
+   .new hi:string_t
 
-    ldr rsi,base
+    ldr rbx,base
     ldr rax,num
     ldr rcx,width
 
     ; validation section
 
     mov rdx,compare
-    .if ( rdx == NULL || ( rsi == NULL && rax != 0 ) || rcx == 0 )
+    .if ( rdx == NULL || ( rbx == NULL && rax != 0 ) || rcx == 0 )
 
         _set_errno(EINVAL)
         .return( 0 )
@@ -32,16 +34,18 @@ bsearch proc uses rsi rdi rbx key:ptr, base:ptr, num:size_t, width:size_t, compa
 
     dec rax
     mul rcx
-    lea rdi,[rax+rsi]
+    lea rdx,[rax+rbx]
+    mov lo,rbx
+    mov hi,rdx
 
-    .while ( rsi <= rdi )
+    .while ( lo <= hi )
 
         mov rbx,num
         shr rbx,1
 
         .if rbx
 
-            mov mid,rsi
+            mov mid,lo
             mov rax,rbx
             .if !( byte ptr num & 1 )
                 dec rax
@@ -56,8 +60,8 @@ bsearch proc uses rsi rdi rbx key:ptr, base:ptr, num:size_t, width:size_t, compa
 
             .elseifs ( eax < 0 )
 
-                mov rdi,mid
-                sub rdi,width
+                mov hi,mid
+                sub hi,width
                 mov rax,num
 
                 .if ( al & 1 )
@@ -69,18 +73,16 @@ bsearch proc uses rsi rdi rbx key:ptr, base:ptr, num:size_t, width:size_t, compa
 
             .else
 
-                mov rsi,mid
-                add rsi,width
+                mov lo,mid
+                add lo,width
                 mov num,rbx
             .endif
 
         .elseif num
 
-            .break .ifd compare(key, rsi)
-            .return( rsi )
-
+            .break .ifd compare(key, lo)
+            .return( lo )
         .else
-
             .break
         .endif
     .endw

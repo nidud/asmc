@@ -6,16 +6,30 @@
 
 include direct.inc
 include errno.inc
+ifdef __UNIX__
+include linux/kernel.inc
+else
 include winbase.inc
-
+endif
     .code
 
 _chdir proc directory:LPSTR
 
+    ldr rcx,directory
+
+ifdef __UNIX__
+
+    .ifsd ( sys_chdir(rcx) < 0 )
+
+        neg eax
+        _set_errno(eax)
+        .return(-1)
+    .endif
+else
     .new abspath[_MAX_PATH]:char_t
     .new result[4]:char_t
 
-    .ifd SetCurrentDirectoryA( directory )
+    .ifd SetCurrentDirectoryA( rcx )
 
         .ifd GetCurrentDirectoryA( _MAX_PATH, &abspath )
 
@@ -38,6 +52,7 @@ _chdir proc directory:LPSTR
         .endif
     .endif
     _dosmaperr( GetLastError() )
+endif
     ret
 
 _chdir endp

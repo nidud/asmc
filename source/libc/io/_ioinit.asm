@@ -5,7 +5,7 @@
 ;
 
 include io.inc
-include crtl.inc
+include stdlib.inc
 ifndef __UNIX__
 include winbase.inc
 endif

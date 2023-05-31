@@ -8,12 +8,12 @@ include stdio.inc
 
     .code
 
-wprintf proc uses rsi format:LPWSTR, argptr:VARARG
+wprintf proc uses rbx format:LPWSTR, argptr:VARARG
 
-    mov  esi,_stbuf(stdout)
-    xchg rsi,_woutput(stdout, format, &argptr)
+    mov  ebx,_stbuf(stdout)
+    xchg rbx,_woutput(stdout, format, &argptr)
     _ftbuf(eax, stdout)
-    mov eax,esi
+    mov eax,ebx
     ret
 
 wprintf endp

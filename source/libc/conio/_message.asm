@@ -72,8 +72,8 @@ _postmessage endp
 _postquitmsg proc fastcall hwnd:THWND, retval:UINT
 
     test [rcx].TCLASS.flags,W_CHILD
-    cmovnz rcx,[rcx].TCLASS.prev
-    _postmessage(rcx, WM_QUIT, edx, 0)
+    cmovnz rax,[rcx].TCLASS.prev
+    _postmessage(rax, WM_QUIT, edx, 0)
     .return( 0 )
 
 _postquitmsg endp
@@ -101,6 +101,8 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
             mov [rbx].message,[rdx].message
 
             .if ( eax == WM_QUIT )
+
+                _dispatchmsg(rbx)
                 .return( 0 )
             .endif
             .return( 1 )
@@ -232,9 +234,9 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
             cmovz   eax,edx
             or      ecx,eax
             xor     esi,esi
-            mov     edx,ecx
+            mov     eax,Input.Event.MouseEvent.dwEventFlags
 
-            .switch pascal Input.Event.MouseEvent.dwEventFlags
+            .switch pascal eax
             .case MOUSE_MOVED
                 mov esi,WM_MOUSEMOVE
             .case MOUSE_HWHEELED
@@ -249,6 +251,7 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
                 .else
                     mov esi,WM_XBUTTONDBLCLK
                 .endif
+ifdef __TTY__
             .case MOUSE_BUTTON_UP
                 mov eax,_msbuttons
                 mov _msbuttons,0
@@ -268,9 +271,36 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
                 .elseif ( ecx & MK_MBUTTON )
                     mov esi,WM_MBUTTONDOWN
                 .endif
+else
+            .default
+                mov eax,_msbuttons
+                mov _msbuttons,edi
+                .if ( eax != edi )
+                    .if ( ( eax & FROM_LEFT_1ST_BUTTON_PRESSED ) && !( edi & FROM_LEFT_1ST_BUTTON_PRESSED ) )
+                        mov esi,WM_LBUTTONUP
+                    .elseif ( !( eax & FROM_LEFT_1ST_BUTTON_PRESSED ) && ( edi & FROM_LEFT_1ST_BUTTON_PRESSED ) )
+                        mov esi,WM_LBUTTONDOWN
+                    .elseif ( ( eax & FROM_LEFT_2ND_BUTTON_PRESSED ) && !( edi & FROM_LEFT_2ND_BUTTON_PRESSED ) )
+                        mov esi,WM_MBUTTONUP
+                    .elseif ( !( eax & FROM_LEFT_2ND_BUTTON_PRESSED ) && ( edi & FROM_LEFT_2ND_BUTTON_PRESSED ) )
+                        mov esi,WM_MBUTTONDOWN
+                    .elseif ( ( eax & RIGHTMOST_BUTTON_PRESSED ) && !( edi & RIGHTMOST_BUTTON_PRESSED ) )
+                        mov esi,WM_RBUTTONUP
+                    .elseif ( !( eax & RIGHTMOST_BUTTON_PRESSED ) && ( edi & RIGHTMOST_BUTTON_PRESSED ) )
+                        mov esi,WM_RBUTTONDOWN
+                    .endif
+                .elseif ( ecx & MK_LBUTTON )
+                    mov esi,WM_LBUTTONDOWN
+                .elseif ( ecx & MK_RBUTTON )
+                    mov esi,WM_RBUTTONDOWN
+                .elseif ( ecx & MK_MBUTTON )
+                    mov esi,WM_MBUTTONDOWN
+                .endif
+endif
             .endsw
             .if ( esi )
-                _postmessage(rbx, esi, rdx, Input.Event.MouseEvent.dwMousePosition)
+                mov rdi,rcx
+                _postmessage(rbx, esi, rdi, Input.Event.MouseEvent.dwMousePosition)
             .endif
         .case WINDOW_BUFFER_SIZE_EVENT
             _postmessage(rbx, WM_SIZE, 0, 0)
@@ -336,12 +366,24 @@ _sendmessage proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
         .return( [rbx].winproc(rbx, uiMsg, wParam, lParam) )
     .endif
+    .if ( [rbx].flags & O_CHILD )
 
-    .if _dlgetfocus(rbx)
+        .if _dlgetfocus(rbx)
 
-        mov rbx,rax
+            mov rbx,rax
+            .if ( [rbx].flags & W_WNDPROC )
+                .return .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
+            .endif
+            mov rbx,hwnd
+        .endif
+        .for ( rbx = [rbx].object : rbx : )
+            .if ( [rbx].flags & W_WNDPROC )
+                .return .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
+            .endif
+            mov rbx,[rbx].next
+        .endf
+        mov rbx,hwnd
     .endif
-
     .for ( eax = 1 : rbx : )
 
         .if ( [rbx].flags & W_WNDPROC )

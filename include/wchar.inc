@@ -55,20 +55,25 @@ endif
 
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
-_iobuf		STRUC
-_ptr		LPSTR ?
+_iobuf		struct size_t
+_ptr		LPTSTR ?
 _cnt		SINT ?
 _base		LPSTR ?
 _flag		SINT ?
 _file		SINT ?
+if defined(_WIN64) or not defined(__UNIX__)
 _charbuf	SINT ?
+endif
 _bufsiz		SINT ?
-_tmpfname	LPSTR ?
-_iobuf		ENDS
+if defined(__UNIX__) and not defined(_WIN64)
+_ungotten	dw ?
+else
+_tmpfname	LPTSTR ?
+endif
+_iobuf		ends
 FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
 endif
-
 
 ifndef _STDIO_DEFINED
 ifdef _LIBCMT

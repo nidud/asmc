@@ -10,7 +10,9 @@ include string.inc
     .code
 
 _wgetenv proc uses rsi rdi enval:wstring_t
-
+ifdef __UNIX__
+    int 3
+else
     ldr rcx,enval
     .ifd ( wcslen( rcx ) == 0 )
 	.return
@@ -41,6 +43,7 @@ else
 	lodsd
 endif
     .endw
+endif
     ret
 
 _wgetenv endp

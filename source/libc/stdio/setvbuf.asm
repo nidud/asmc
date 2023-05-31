@@ -12,13 +12,13 @@ include limits.inc
 
     assume rbx:LPFILE
 
-setvbuf proc uses rsi rdi rbx fp:LPFILE, buf:LPSTR, tp:size_t, bsize:size_t
+setvbuf proc uses rbx fp:LPFILE, buf:LPSTR, type:int_t, bsize:size_t
 
     ldr rbx,fp
-    ldr rsi,tp
-    ldr rdi,bsize
+    ldr edx,type
+    ldr rcx,bsize
 
-    .if ( esi != _IONBF && ( edi < 2 || edi > INT_MAX || ( esi != _IOFBF && esi != _IOLBF ) ) )
+    .if ( edx != _IONBF && ( rcx < 2 || rcx > INT_MAX || ( edx != _IOFBF && edx != _IOLBF ) ) )
         .return( -1 )
     .endif
 
@@ -27,28 +27,30 @@ setvbuf proc uses rsi rdi rbx fp:LPFILE, buf:LPSTR, tp:size_t, bsize:size_t
 
     mov edx,_IOYOURBUF or _IOSETVBUF
     mov rax,buf
+    mov rcx,bsize
 
-    .if ( esi & _IONBF )
+    .if ( type & _IONBF )
 
         mov edx,_IONBF
         lea rax,[rbx]._charbuf
-        mov edi,4
+        mov ecx,4
 
     .elseif ( rax == NULL )
 
-        .if ( malloc( rdi ) == NULL )
+        .if ( malloc( rcx ) == NULL )
 
             dec rax
-            .return
+           .return
         .endif
         mov edx,_IOMYBUF or _IOSETVBUF
+        mov rcx,bsize
     .endif
 
-    and [rbx]._flag,not (_IOMYBUF or _IOYOURBUF or _IONBF or _IOSETVBUF or _IOFEOF or _IOFLRTN or _IOCTRLZ)
-    or  [rbx]._flag,edx
-    mov [rbx]._bufsiz,edi
     mov [rbx]._ptr,rax
     mov [rbx]._base,rax
+    and [rbx]._flag,not (_IOMYBUF or _IOYOURBUF or _IONBF or _IOSETVBUF or _IOFEOF or _IOFLRTN or _IOCTRLZ)
+    or  [rbx]._flag,edx
+    mov [rbx]._bufsiz,ecx
     xor eax,eax
     mov [rbx]._cnt,eax
     ret

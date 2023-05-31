@@ -11,7 +11,12 @@ include share.inc
 
 _wopen proc path:LPWSTR, oflag:SINT, args:VARARG
 
-    _wsopen( path, oflag, SH_DENYNO, &args )
+ifdef __UNIX__
+    mov ecx,[rax+4]
+    _wsopen( path, oflag, SH_DENYNO, ecx )
+else
+    _wsopen( path, oflag, SH_DENYNO, args )
+endif
     ret
 
 _wopen endp

@@ -9,19 +9,22 @@ include fltintrn.inc
 
     .code
 
-_cropzeros proc buffer:LPSTR
+_cropzeros proc uses rbx buffer:LPSTR
 
-    add strlen( buffer ),buffer
+    ldr rbx,buffer
+    mov rcx,strlen(rbx)
+    mov rax,rbx
+    add rbx,rcx
 
-    .while ( byte ptr [rax-1] == '0' )
+    .while ( byte ptr [rbx-1] == '0' )
 
-        dec rax
-        mov byte ptr [rax],0
+        dec rbx
+        mov byte ptr [rbx],0
     .endw
 
-    .if ( byte ptr [rax-1] == '.' )
+    .if ( byte ptr [rbx-1] == '.' )
 
-        mov byte ptr [rax-1],0
+        mov byte ptr [rbx-1],0
     .endif
     ret
 

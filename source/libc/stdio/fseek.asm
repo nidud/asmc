@@ -13,14 +13,13 @@ include winbase.inc
 
     assume rbx:LPFILE
 
-fseek proc uses rsi rdi rbx fp:LPFILE, offs:size_t, whence:size_t
+fseek proc uses rbx fp:LPFILE, offs:size_t, whence:size_t
 
     ldr rbx,fp
-    ldr rsi,offs
-    ldr rdi,whence
+    ldr rdx,whence
 
     mov eax,[rbx]._flag
-    .if ( edi != SEEK_SET && edi != SEEK_CUR && edi != SEEK_END &&
+    .if ( edx != SEEK_SET && edx != SEEK_CUR && edx != SEEK_END &&
           !( eax & _IOREAD or _IOWRT or _IORW ) )
 
         _set_errno( EINVAL )
@@ -30,34 +29,26 @@ fseek proc uses rsi rdi rbx fp:LPFILE, offs:size_t, whence:size_t
     and eax,not _IOEOF
     mov [rbx]._flag,eax
 
-    .if ( edi == SEEK_CUR )
+    .if ( edx == SEEK_CUR )
 
-        add rsi,ftell( rbx )
-        mov edi,SEEK_SET
+        add offs,ftell( rbx )
+        mov whence,SEEK_SET
     .endif
 
     fflush( rbx )
-
     mov eax,[rbx]._flag
     .if ( eax & _IORW )
 
         and eax,not (_IOWRT or _IOREAD)
         mov [rbx]._flag,eax
-
     .elseif ( eax & _IOREAD && eax & _IOMYBUF && !( eax & _IOSETVBUF ) )
-
         mov [rbx]._bufsiz,_MINIOBUF
     .endif
-
-    mov eax,[rbx]._file
-    lea rcx,_osfhnd
-    mov rcx,[rcx+rax*size_t]
-
-    .ifd ( SetFilePointer( rcx, esi, 0, edi ) == -1 )
-
-        .return _dosmaperr( GetLastError() )
+    mov rcx,whence
+    .ifd ( _lseek( [rbx]._file, offs, ecx ) != -1 )
+        xor eax,eax
     .endif
-    .return( 0 )
+    ret
 
 fseek endp
 

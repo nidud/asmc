@@ -9,24 +9,22 @@ include limits.inc
 
     .code
 
-localtime proc uses rsi rdi ptime: LPTIME
+localtime proc uses rbx rdi ptime: LPTIME
 
   local ptm:ptr tm, ltime:time_t
 
-ifndef _WIN64
-    mov ecx,ptime
-endif
-    mov esi,[rcx]
+    ldr rcx,ptime
+    mov ebx,[rcx]
 
-    .return 0 .ifs ( esi < 0 )
+    .return 0 .ifs ( ebx < 0 )
 
     _tzset()
 
     .repeat
 
-        .if ( esi > 3 * _DAY_SEC && esi < LONG_MAX - 3 * _DAY_SEC )
+        .if ( ebx > 3 * _DAY_SEC && ebx < LONG_MAX - 3 * _DAY_SEC )
 
-            mov eax,esi
+            mov eax,ebx
             sub eax,_timezone
             mov ltime,rax
             mov ptm,gmtime( &ltime )
@@ -42,7 +40,7 @@ endif
         .endif
 
         mov ptm,gmtime( ptime )
-        mov rsi,rax
+        mov rbx,rax
         mov eax,[rax].tm.tm_sec
         sub eax,_timezone
         mov edi,eax
@@ -56,11 +54,11 @@ endif
             sub edi,ecx
         .endif
 
-        mov  [rsi].tm.tm_sec,edx
+        mov  [rbx].tm.tm_sec,edx
         mov  eax,edi
         xor  edx,edx
         idiv ecx
-        add  eax,[rsi].tm.tm_min
+        add  eax,[rbx].tm.tm_min
         mov  edi,eax
         xor  edx,edx
         idiv ecx
@@ -71,11 +69,11 @@ endif
             sub edi,ecx
         .endif
 
-        mov  [rsi].tm.tm_min,edx
+        mov  [rbx].tm.tm_min,edx
         mov  eax,edi
         xor  edx,edx
         idiv ecx
-        add  eax,[rsi].tm.tm_hour
+        add  eax,[rbx].tm.tm_hour
         mov  edi,eax
         xor  edx,edx
         mov  ecx,24
@@ -87,7 +85,7 @@ endif
             sub edi,ecx
         .endif
 
-        mov  [rsi].tm.tm_hour,edx
+        mov  [rbx].tm.tm_hour,edx
         mov  eax,edi
         xor  edx,edx
         idiv ecx
@@ -95,36 +93,36 @@ endif
 
         .ifs ( eax > 0 )
 
-            mov  eax,[rsi].tm.tm_wday
+            mov  eax,[rbx].tm.tm_wday
             add  eax,edi
             mov  ecx,7
             xor  edx,edx
             idiv ecx
-            mov  [rsi].tm.tm_wday,edx
-            add  [rsi].tm.tm_mday,edi
-            add  [rsi].tm.tm_yday,edi
+            mov  [rbx].tm.tm_wday,edx
+            add  [rbx].tm.tm_mday,edi
+            add  [rbx].tm.tm_yday,edi
            .break
         .endif
         .break .ifnl
 
-        mov  eax,[rsi].tm.tm_wday
+        mov  eax,[rbx].tm.tm_wday
         add  eax,edi
         mov  ecx,7
         add  eax,ecx
         xor  edx,edx
         idiv ecx
-        mov  [rsi].tm.tm_wday,edx
-        add  [rsi].tm.tm_mday,edi
+        mov  [rbx].tm.tm_wday,edx
+        add  [rbx].tm.tm_mday,edi
 
-        mov eax,[rsi].tm.tm_mday
+        mov eax,[rbx].tm.tm_mday
         .ifs ( eax <= 0 )
 
-            add [rsi].tm.tm_mday,32
-            mov [rsi].tm.tm_yday,365
-            mov [rsi].tm.tm_mon,11
-            dec [rsi].tm.tm_year
+            add [rbx].tm.tm_mday,32
+            mov [rbx].tm.tm_yday,365
+            mov [rbx].tm.tm_mon,11
+            dec [rbx].tm.tm_year
         .else
-            add [rsi].tm.tm_yday,edi
+            add [rbx].tm.tm_yday,edi
         .endif
     .until 1
     .return( ptm )

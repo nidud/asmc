@@ -10,7 +10,7 @@ include signal.inc
 
 .pragma pack(push, size_t)
 
-stack_t     struct
+stack_t     struct ; 24
 ss_sp       ptr_t ?
 ss_flags    int_t ?
 ss_size     size_t ?
@@ -64,7 +64,7 @@ _libc_xmmreg        struct
   element           dd 4 dup(?)
 _libc_xmmreg        ends
 
-_libc_fpstate       struct
+_libc_fpstate       struct ; 512
   _cwd              dw ?
   swd               dw ?
   ftw               dw ?
@@ -78,13 +78,13 @@ _libc_fpstate       struct
   __glibc_reserved1 dd 24 dup(?)
 _libc_fpstate       ends
 
-mcontext_t          struct
+mcontext_t          struct ; 256
   gregs             greg_t __NGREG dup(?)
   fpregs            ptr _libc_fpstate ?
   __reserved1       dq 8 dup(?)
 mcontext_t          ends
 
-ucontext_t          struct
+ucontext_t          struct ; 968
   uc_flags          dd ?
   uc_link           ptr ucontext_t ?
   uc_stack          stack_t <>

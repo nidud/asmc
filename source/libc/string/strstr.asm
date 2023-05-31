@@ -8,19 +8,21 @@ include string.inc
 
     .code
 
-strstr proc uses rsi rdi rbx dst:LPSTR, src:LPSTR
+strstr proc uses rdi rbx dst:LPSTR, src:LPSTR
 
-    ldr rdi,dst
+   .new len:size_t
+
     ldr rbx,src
 
     .if strlen(rbx)
 
-        mov rsi,rax
-        .if strlen(rdi)
+        mov len,rax
+        .if strlen(dst)
 
             mov rcx,rax
             xor eax,eax
-            dec rsi
+            dec len
+            mov rdi,dst
 
             .repeat
 
@@ -29,10 +31,10 @@ strstr proc uses rsi rdi rbx dst:LPSTR, src:LPSTR
                 mov al,0
 
                 .break .ifnz
-                .if rsi
+                .if len
 
-                    .break .if ( rcx < rsi )
-                     mov rdx,rsi
+                    .break .if ( rcx < len )
+                     mov rdx,len
                     .repeat
                         mov al,[rbx+rdx]
                         .continue(01) .if ( al != [rdi+rdx-1] )

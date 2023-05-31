@@ -5,12 +5,17 @@
 ;
 
 include errno.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 
     .code
 
 _chdrive proc drive:int_t
-
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    mov eax,-1
+else
    .new newdrive[4]:char_t
 
     ldr eax,drive
@@ -31,6 +36,7 @@ _chdrive proc drive:int_t
     .else
         _dosmaperr( GetLastError() )
     .endif
+endif
     ret
 
 _chdrive endp

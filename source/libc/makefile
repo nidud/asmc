@@ -1,19 +1,18 @@
 !include srcpath
 
-LIB32 = $(lib_dir)\x86\libc.lib
-LIB64 = $(lib_dir)\x64\libc.lib
+L32 = $(lib_dir)\x86\libc.lib
+L64 = $(lib_dir)\x64\libc.lib
 
-AFLAGS = -D_CRTBLD -Cs -Zi8 -I$(inc_dir)
-LFLAGS = -q -b -n -c -fac
+flags = -D_CRTBLD -Cs -Zi8 -I$(inc_dir)
 
-all: $(LIB32) $(LIB64)
+all: $(L32) $(L64)
 
-$(LIB32):
-    asmc $(AFLAGS) -6 -coff -r $(src_dir)\libc\*.asm
-    libw $(LFLAGS) $@ *.obj
-    del *.obj
+$(L32):
+	asmc $(flags) -6 -coff -r $(src_dir)\libc\*.asm
+	libw -q -b -n -c -fac $@ *.obj
+	del *.obj
 
-$(LIB64):
-    asmc -win64 $(AFLAGS) -frame -Zp8 -r $(src_dir)\libc\*.asm
-    libw $(LFLAGS) $@ *.obj
-    del *.obj
+$(L64):
+	asmc -win64 $(flags) -frame -Zp8 -r $(src_dir)\libc\*.asm
+	libw -q -b -n -c -fac $@ *.obj
+	del *.obj

@@ -9,46 +9,42 @@ include io.inc
 
     .code
 
-    assume rsi:LPFILE
+    assume rbx:LPFILE
 
-_filwbuf proc uses rsi rdi fp:LPFILE
+_filwbuf proc uses rbx fp:LPFILE
 
    .new is_split_character:int_t = 0
    .new leftover_low_order_byte:byte = 0
 
-    ldr rsi,fp
+    ldr rbx,fp
 
-    mov edi,[rsi]._flag
+    mov edx,[rbx]._flag
     xor eax,eax
     dec rax
 
-    .if ( !( edi & _IOREAD or _IOWRT or _IORW ) || edi & _IOSTRG )
+    .if ( !( edx & _IOREAD or _IOWRT or _IORW ) || edx & _IOSTRG )
         .return
     .endif
-    .if ( edi & _IOWRT )
-        or [rsi]._flag,_IOERR
-        .return
+    .if ( edx & _IOWRT )
+        or [rbx]._flag,_IOERR
+       .return
     .endif
-
-    or  edi,_IOREAD
-    mov [rsi]._flag,edi
-
-    .if ( !( edi & _IOMYBUF or _IONBF or _IOYOURBUF ) )
-
-        _getbuf(rsi)
-        mov edi,[rsi]._flag
+    or  edx,_IOREAD
+    mov [rbx]._flag,edx
+    .if ( !( edx & _IOMYBUF or _IONBF or _IOYOURBUF ) )
+        _getbuf(rbx)
     .else
-        mov rcx,[rsi]._base
-        .if ( [rsi]._cnt == 1 )
+        mov rcx,[rbx]._base
+        .if ( [rbx]._cnt == 1 )
             mov is_split_character,1
             mov al,[rcx]
             mov leftover_low_order_byte,al
         .endif
-        mov [rsi]._ptr,rcx
+        mov [rbx]._ptr,rcx
     .endif
 
-    _read([rsi]._file, [rsi]._base, [rsi]._bufsiz)
-    mov [rsi]._cnt,eax
+    _read([rbx]._file, [rbx]._base, [rbx]._bufsiz)
+    mov [rbx]._cnt,eax
 
     .ifs ( eax < 2 )
         .if ( eax )
@@ -56,31 +52,31 @@ _filwbuf proc uses rsi rdi fp:LPFILE
         .else
             mov eax,_IOEOF
         .endif
-        or  [rsi]._flag,eax
+        or  [rbx]._flag,eax
         xor eax,eax
-        mov [rsi]._cnt,eax
+        mov [rbx]._cnt,eax
         dec rax
        .return
     .endif
 
-    .if ( !( edi & _IOWRT or _IORW ) )
+    mov edx,[rbx]._flag
+    .if ( !( edx & _IOWRT or _IORW ) )
 
         lea rcx,_osfile
-        mov eax,[rsi]._file
+        mov eax,[rbx]._file
         mov al,[rcx+rax]
         and al,FTEXT or FEOFLAG
-
         .if ( al == FTEXT or FEOFLAG)
-            or [rsi]._flag,_IOCTRLZ
+            or [rbx]._flag,_IOCTRLZ
         .endif
     .endif
 
-    mov eax,[rsi]._bufsiz
-    .if ( eax == _MINIOBUF && edi & _IOMYBUF && !( edi & _IOSETVBUF ) )
-        mov [rsi]._bufsiz,_INTIOBUF
+    mov eax,[rbx]._bufsiz
+    .if ( eax == _MINIOBUF && edx & _IOMYBUF && !( edx & _IOSETVBUF ) )
+        mov [rbx]._bufsiz,_INTIOBUF
     .endif
 
-    mov rcx,[rsi]._ptr
+    mov rcx,[rbx]._ptr
     .if ( is_split_character )
 
         ; If the character was split across buffers, we read only one byte
@@ -89,13 +85,13 @@ _filwbuf proc uses rsi rdi fp:LPFILE
 
         movzx eax,leftover_low_order_byte
         mov ah,[rcx]
-        dec [rsi]._cnt
-        inc [rsi]._ptr
+        dec [rbx]._cnt
+        inc [rbx]._ptr
 
     .else
 
-        sub [rsi]._cnt,2
-        add [rsi]._ptr,2
+        sub [rbx]._cnt,2
+        add [rbx]._ptr,2
         movzx eax,word ptr [rcx]
     .endif
     ret

@@ -12,6 +12,8 @@ ifdef _WIN64
 
 _wtoi64 proc string:wstring_t
 
+    ldr rcx,string
+
     .repeat
         movzx eax,word ptr [rcx]
         add rcx,2

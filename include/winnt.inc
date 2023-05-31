@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef _WINNT_
 define _WINNT_
 
@@ -9374,4 +9376,4 @@ endif
 
 .pragma pack(pop)
 endif
-
+.pragma list(pop)

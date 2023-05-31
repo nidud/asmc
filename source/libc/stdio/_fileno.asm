@@ -11,7 +11,6 @@ include stdio.inc
 _fileno proc fp:LPFILE
 
     ldr rcx,fp
-
    .return( [rcx].FILE._file )
 
 _fileno endp

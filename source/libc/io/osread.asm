@@ -6,12 +6,29 @@
 
 include io.inc
 include errno.inc
+ifdef __UNIX__
+include linux/kernel.inc
+else
 include winbase.inc
+endif
 
     .code
 
 osread proc handle:int_t, buffer:ptr, size:uint_t
+ifdef __UNIX__
 
+    ldr ecx,handle
+    ldr rax,buffer
+    ldr edx,size
+
+    .ifs ( sys_read(ecx, rax, rdx) < 0 )
+
+        neg eax
+        _set_errno( eax )
+        xor eax,eax
+    .endif
+
+else
     .new NumberOfBytesRead:DWORD = 0
     .new hFile:HANDLE = _get_osfhandle( handle )
 
@@ -21,6 +38,7 @@ osread proc handle:int_t, buffer:ptr, size:uint_t
         .return( 0 )
     .endif
     .return( NumberOfBytesRead )
+endif
 
 osread endp
 

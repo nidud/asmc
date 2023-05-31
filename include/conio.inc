@@ -6,6 +6,9 @@ define __INC_CONIO
 include wincon.inc
 include winuser.inc
 ifdef __UNIX__
+ifndef __TTY__
+define __TTY__
+endif
 include termios.inc
 endif
 
@@ -106,7 +109,12 @@ endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
 
-define MAXSCRLINE	256	; max screen size
+define MAXCOLS		240	; max/min screen size
+define MAXROWS		240
+define MINCOLS		80
+define MINROWS		25
+define MAXSCRLINE	MAXCOLS
+
 define CURSOR_NORMAL	16	; default cursor size (0..100)
 
 ;
@@ -364,29 +372,22 @@ define CONOUT	<"/dev/tty">
 else
 define CONIN	<"CONIN$">
 define CONOUT	<"CONOUT$">
-externdef	_confh:intptr_t
-externdef	_coninpfh:intptr_t
+externdef	_confh:HANDLE
+externdef	_coninpfh:HANDLE
 endif
-externdef	_conin:int_t
-externdef	_conout:int_t
+
+externdef	_confd:int_t
+externdef	_coninpfd:int_t
 externdef	_console:PCONSOLE
 externdef	_rgbcolortable:COLORREF
 externdef	_terminalcolorid:byte
 
-_cread		proto __cdecl :string_t, :int_t
-_cwriteA	proto __Cdecl :string_t, :vararg
-_cwriteW	proto __Cdecl :wstring_t, :vararg
-
+_coutA		proto __Cdecl :string_t, :vararg
+_coutW		proto __Cdecl :wstring_t, :vararg
 _readinput	proto __cdecl :PINPUT_RECORD
+_kbflush	proto __cdecl
 
-define ENABLE_IUTF8_INPUT 0x4000
-define CONSOLE_INPUT   ( ENABLE_WINDOW_INPUT or ENABLE_VIRTUAL_TERMINAL_INPUT )
-define TERMINAL_INPUT  ( CONSOLE_INPUT or ENABLE_MOUSE_INPUT or ENABLE_IUTF8_INPUT )
-define TERMINAL_OUTPUT ( ENABLE_IUTF8_INPUT or ENABLE_PROCESSED_OUTPUT or ENABLE_VIRTUAL_TERMINAL_PROCESSING )
-
-_consetmode	proto __cdecl :int_t, :uint_t
-_congetmode	proto __cdecl :int_t, :ptr uint_t
-
+_scgetp		proto __cdecl :uchar_t, :uchar_t, :uchar_t
 _scgeta		proto __cdecl :uchar_t, :uchar_t
 _scgetc		proto __cdecl :uchar_t, :uchar_t
 _scgetw		proto __cdecl :uchar_t, :uchar_t
@@ -414,7 +415,9 @@ _cursoroff	proto __cdecl
 _cursortype	proto __cdecl :int_t
 _cursorxy	proto __cdecl ; COORD
 _gotoxy		proto __cdecl :uint_t, :uint_t
-
+ifdef __TTY__
+externdef	_cursor:CURSOR
+endif
 _rcframe	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :int_t, :uchar_t
 _rcmemsize	proto __cdecl :TRECT, :int_t
 _rcalloc	proto __cdecl :TRECT, :int_t
@@ -468,6 +471,7 @@ _tcontrolA	proto __cdecl :THWND, :uint_t, :ushort_t, :string_t
 _tcontrolW	proto __cdecl :THWND, :uint_t, :ushort_t, :wstring_t
 _conslink	proto __cdecl :THWND
 _consunlink	proto __cdecl :THWND
+_conpaint	proto __cdecl
 _cbeginpaint	proto __cdecl
 _cendpaint	proto __cdecl
 
@@ -481,7 +485,6 @@ _defwinproc	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 
 _rsopen		proto __cdecl :PTRES
 _rssave		proto __cdecl :THWND, :string_t
-_wtoutf		proto watcall :wchar_t
 
 _getkey		proto __cdecl
 
@@ -540,7 +543,7 @@ define RST_URXVT_EXT_MODE_MOUSE	   <CSI "?1015l">
 define RST_PIXEL_POSITION_MOUSE	   <CSI "?1016l">
 
 ifdef _UNICODE
-define _cwrite		<_cwriteW>
+define _cout		<_coutW>
 define _scputs		<_scputsW>
 define _scputf		<_scputfW>
 define _scpath		<_scpathW>
@@ -555,7 +558,7 @@ define _msgbox		<_msgboxW>
 define _clipget		<_clipgetW>
 define _clipset		<_clipsetW>
 else
-define _cwrite		<_cwriteA>
+define _cout		<_coutA>
 define _scputs		<_scputsA>
 define _scputf		<_scputfA>
 define _scpath		<_scpathA>

@@ -14,13 +14,12 @@ vsprintf proc string:string_t, format:string_t, argptr:ptr
   local o:_iobuf
 
     ldr rcx,string
-    ldr rdx,format
-
+    ldr rax,format
     mov o._flag,_IOWRT or _IOSTRG
     mov o._cnt,INT_MAX
     mov o._ptr,rcx
     mov o._base,rcx
-    _output(addr o, rdx, argptr)
+    _output(&o, rax, argptr)
     mov rcx,o._ptr
     mov byte ptr [rcx],0
     ret

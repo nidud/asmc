@@ -10,25 +10,25 @@ include string.inc
 
     option dotname
 
-_wcsnicmp proc uses rsi a:wstring_t, b:wstring_t, count:size_t
+_wcsnicmp proc uses rbx a:wstring_t, b:wstring_t, count:size_t
 
-    ldr     rsi,a
-    ldr     rdx,b
+    ldr     rbx,a
     ldr     rcx,count
+    ldr     rdx,b
 
-    sub     rsi,2
+    sub     rbx,2
     sub     rdx,2
     mov     eax,1
 .0:
     test    eax,eax
     jz      .2
-    add     rsi,2
+    add     rbx,2
     add     rdx,2
     xor     eax,eax
     test    ecx,ecx
     jz      .2
     dec     ecx
-    mov     ax,[rsi]
+    mov     ax,[rbx]
     cmp     ax,[rdx]
     je      .0
     xor     al,0x20

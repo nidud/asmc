@@ -21,6 +21,8 @@ __GetStringTypeA proto \
 
 _isctype proc char:SINT, cmask:SINT
 
+ifndef __UNIX__
+
   local chartype:WORD
   local buffer[3]:BYTE
 
@@ -55,6 +57,7 @@ _isctype proc char:SINT, cmask:SINT
         movzx eax,chartype
         and   eax,cmask
     .endif
+endif
     ret
 
 _isctype endp

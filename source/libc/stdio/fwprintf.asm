@@ -8,14 +8,14 @@ include stdio.inc
 
     .code
 
-fwprintf proc uses rsi file:LPFILE, format:LPWSTR, argptr:VARARG
+fwprintf proc uses rbx file:LPFILE, format:LPWSTR, argptr:VARARG
 
     ldr rcx,file
-    mov  rsi,_stbuf( rcx )
-    xchg rsi,_woutput( file, format, &argptr )
+    mov  rbx,_stbuf( rcx )
+    xchg rbx,_woutput( file, format, &argptr )
 
     _ftbuf( eax, file )
-    .return( esi )
+    .return( ebx )
 
 fwprintf endp
 

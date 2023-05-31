@@ -2,11 +2,11 @@ include stdlib.inc
 
     .code
 
-rand_s proc _RandomValue:ptr uint_t
+rand_s proc uses rbx _RandomValue:ptr uint_t
 
+    ldr rbx,_RandomValue
     rand()
-    mov rcx,_RandomValue
-    mov [rcx],eax
+    mov [rbx],eax
     mov eax,1
     ret
 

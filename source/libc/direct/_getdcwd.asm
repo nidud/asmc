@@ -5,22 +5,27 @@
 ;
 
 include direct.inc
-include string.inc
 include errno.inc
+ifndef __UNIX__
+include string.inc
 include malloc.inc
 include winbase.inc
-
+endif
     .code
 
-_getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
+_getdcwd proc uses rbx drive:SINT, buffer:LPSTR, maxlen:SINT
 
-    mov rdi,malloc( maxlen )
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    xor eax,eax
+else
+    mov rbx,malloc( maxlen )
     ;
     ; GetCurrentDirectory only works for the default drive
     ;
     .if ( drive == 0 ) ; 0 = default, 1 = 'a:', 2 = 'b:', etc.
 
-        GetCurrentDirectoryA( maxlen, rdi )
+        GetCurrentDirectoryA( maxlen, rbx )
     .else
         ;
         ; Not the default drive - make sure it's valid.
@@ -30,7 +35,7 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
         shr eax,cl
         .ifnc
 
-            free( rdi )
+            free( rbx )
             _set_doserrno(ERROR_INVALID_DRIVE)
             _set_errno(EACCES)
            .return 0
@@ -46,29 +51,30 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
         mov path[2],'.'
         mov path[3],0
 
-        GetFullPathNameA( &path, maxlen, rdi, 0 )
+        GetFullPathNameA( &path, maxlen, rbx, 0 )
     .endif
     ;
     ; API call failed, or buffer not large enough
     ;
     .if ( eax > maxlen )
 
-        free( rdi )
+        free( rbx )
         _set_errno( ERANGE )
         .return 0
 
     .elseif ( eax )
 
-        mov rax,rdi
+        mov rax,rbx
         mov rcx,buffer
 
         .if ( rcx )
 
-            strcpy( rcx, rdi )
-            free( rdi )
+            strcpy( rcx, rbx )
+            free( rbx )
             mov rax,buffer
         .endif
     .endif
+endif
     ret
 
 _getdcwd endp

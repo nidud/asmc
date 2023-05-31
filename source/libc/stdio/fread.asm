@@ -3,9 +3,8 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
-include stdio.inc
 include io.inc
+include stdio.inc
 
     .code
 
@@ -13,9 +12,10 @@ include io.inc
 
 fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
 
-  local total:UINT          ; total bytes to read
-  local count:UINT          ; num bytes left to read
-  local bufsize:UINT        ; size of stream buffer
+  local total:UINT   ; total bytes to read
+  local count:UINT   ; num bytes left to read
+  local bufsize:UINT ; size of stream buffer
+  local p:LPSTR
 
     ldr rdi,buffer
     ldr rbx,fp
@@ -50,6 +50,7 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
             sub [rbx]._cnt,ecx
             add [rbx]._ptr,rcx
             rep movsb
+            mov p,rdi
 
         .elseif ( eax >= bufsize )
 
@@ -67,7 +68,7 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
                 mov eax,count
                 sub eax,edx
             .endif
-
+            mov p,rdi
             .ifsd ( _read( [rbx]._file, rdi, rax ) <= 0 )
 
                 or [rbx]._flag,_IOEOF
@@ -78,11 +79,13 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
                .return
             .endif
 
+            mov rdi,p
             sub count,eax
             add rdi,rax
 
         .else
 
+            mov p,rdi
             .ifd ( _filbuf( rbx ) == -1 )
 
                 mov eax,total
@@ -91,6 +94,7 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
                 div size
                .return
             .endif
+            mov rdi,p
             stosb
             dec count
             mov eax,[rbx]._bufsiz

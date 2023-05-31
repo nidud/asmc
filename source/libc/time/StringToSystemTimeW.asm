@@ -9,34 +9,31 @@ include stdlib.inc
 
     .code
 
-    assume rdi:ptr SYSTEMTIME
+    assume rbx:ptr SYSTEMTIME
 
-StringToSystemTimeW proc uses rsi rdi string:ptr wchar_t, lpSystemTime:ptr SYSTEMTIME
+StringToSystemTimeW proc uses rbx string:ptr wchar_t, lpSystemTime:ptr SYSTEMTIME
 
-ifndef _WIN64
-    mov ecx,string
-    mov edx,lpSystemTime
-endif
-    mov rsi,rcx
-    mov rdi,rdx
-
+    ldr rcx,string
+    ldr rbx,lpSystemTime
+    mov rdx,rcx
     .repeat
-        lodsw
+        mov ax,[rdx]
+        add rdx,2
     .until ( ax > '9' || ax < '0' )
-
+    mov string,rdx
     _wtol(rcx)
-    mov [rdi].wHour,ax
-    _wtol(rsi)
-    mov [rdi].wMinute,ax
-
+    mov [rbx].wHour,ax
+    _wtol(string)
+    mov [rbx].wMinute,ax
+    mov rcx,string
     .repeat
-        lodsw
+        mov ax,[rcx]
+        add rcx,2
     .until ( ax > '9' || ax < '0' )
-
-    _wtol(rsi)
-    mov [rdi].wSecond,ax
-    mov [rdi].wMilliseconds,0
-    mov rax,rdi
+    _wtol(rcx)
+    mov [rbx].wSecond,ax
+    mov [rbx].wMilliseconds,0
+    mov rax,rbx
     ret
 
 StringToSystemTimeW endp

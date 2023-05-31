@@ -11,12 +11,21 @@ include stdlib.inc
 _ltoa proc val:long_t, buffer:string_t, radix:int_t
 
 ifdef _WIN64
+ ifdef __UNIX__
+    xor ecx,ecx
+    .ifs ( edx == 10 && edi < 0 )
+        inc ecx
+        movsxd rdi,edi
+    .endif
+    .return ( _xtoa( rdi, rsi, edx, ecx ) )
+ else
     xor r9d,r9d
     .ifs ( r8d == 10 && ecx < 0 )
         inc r9d
         movsxd rcx,ecx
     .endif
     .return ( _xtoa( rcx, rdx, r8d, r9d ) )
+ endif
 else
     xor ecx,ecx
     mov eax,val

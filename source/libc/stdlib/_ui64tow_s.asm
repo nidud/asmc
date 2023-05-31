@@ -11,7 +11,11 @@ include stdlib.inc
 _ui64tow_s proc val:uint64_t, buffer:wstring_t, sizeInTChars:size_t, radix:int_t
 
 ifdef _WIN64
+ ifdef __UNIX__
+    .return ( _xtow_s( rdi, rsi, edx, ecx, 0 ) )
+ else
     .return ( _xtow_s( rcx, rdx, r8d, r9d, 0 ) )
+ endif
 else
     .return ( _xtow_s( val, buffer, sizeInTChars, radix, 0 ) )
 endif

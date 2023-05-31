@@ -3,36 +3,32 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
 include stdio.inc
 include io.inc
 include malloc.inc
-include crtl.inc
 
-externdef _stdbuf:string_t
+    .data
+    _stdbuf string_t 2 dup(0) ; buffer for stdout and stderr
 
     .code
 
     assume rbx:ptr _iobuf
 
-_stbuf proc uses rsi rbx fp:LPFILE
+_stbuf proc uses rbx fp:LPFILE
+
+   .new p:string_t = &_stdbuf
 
     ldr rbx,fp
 
-    .if ( _isatty( [rbx]._file) )
+    .if _isatty([rbx]._file)
 
         xor eax,eax
-        xor esi,esi
+        .if ( rbx != stdout )
 
-        mov rcx,stdout
-        mov rdx,stderr
-
-        .if ( rbx != rcx )
-
-            .if ( rbx != rdx )
+            .if ( rbx != stderr )
                 .return
             .endif
-            inc esi
+            add p,string_t
         .endif
 
         mov ecx,[rbx]._flag
@@ -40,18 +36,16 @@ _stbuf proc uses rsi rbx fp:LPFILE
         .ifnz
             .return
         .endif
-
         or  ecx,_IOWRT or _IOYOURBUF or _IOFLRTN
         mov [rbx]._flag,ecx
 
-        imul esi,esi,size_t
-        lea rcx,_stdbuf
-        add rsi,rcx
-
-        mov rax,[rsi]
+        mov rcx,p
+        mov rax,[rcx]
         .if ( rax == NULL )
 
-            mov [rsi],malloc( _INTIOBUF )
+            malloc( _INTIOBUF )
+            mov rcx,p
+            mov [rcx],rax
         .endif
 
         mov ecx,_INTIOBUF

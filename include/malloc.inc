@@ -82,6 +82,10 @@ _calloca proto watcall :uint_t, :uint_t {
     alloca(eax)
     }
 
+if not defined(_MSVCRT) or defined(_CRTBLD)
+_coreleft       proto __cdecl
+endif
+
 ;;;;;;;;;;;;;;; kernel32
 
 .pragma comment(lib, kernel32)

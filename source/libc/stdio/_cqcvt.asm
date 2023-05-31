@@ -10,10 +10,11 @@ include fltintrn.inc
 
     .code
 
-_cqcvt proc q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags:int_t
+_cqcvt proc uses rbx q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags:int_t
 
   local cvt:FLTINFO
 
+    ldr rbx,buffer
     mov cvt.bufsize,512
 
     mov eax,'e'
@@ -40,12 +41,10 @@ _cqcvt proc q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags
 
     ; make space for '-' sign
 
-    mov rdx,buffer
-    inc rdx
+    inc rbx
+    _flttostr( q, &cvt, rbx, flags )
+    lea rax,[rbx-1]
 
-    _flttostr( q, &cvt, rdx, flags )
-
-    mov rax,buffer
     .if ( cvt.sign == -1 )
 
         ; add sign

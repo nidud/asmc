@@ -32,7 +32,7 @@ _cursorxy proc uses rbx
 
    .new keys:CINPUT = {0}
 
-    _cwrite(CSI "6n") ; get cursor
+    _cout(CSI "6n") ; get cursor
 
     xor ebx,ebx ; COORD
     .repeat
@@ -40,7 +40,7 @@ _cursorxy proc uses rbx
         ; ESC [ <r> ; <c> R
         ;
 
-        mov keys.count,_read(_conin, &keys.b, 8)
+        mov keys.count,_read(_coninpfd, &keys.b, 8)
         mov rcx,keys.q
 
         .break .if ( cl != VK_ESCAPE )

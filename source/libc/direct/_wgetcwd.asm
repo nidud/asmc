@@ -5,12 +5,22 @@
 ;
 
 include direct.inc
-
+ifdef __UNIX__
+include errno.inc
+endif
     .code
 
 _wgetcwd proc buffer:LPWSTR, maxlen:SINT
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    xor eax,eax
+else
 
-    _wgetdcwd( 0, buffer, maxlen )
+    ldr rcx,buffer
+    ldr edx,maxlen
+
+    _wgetdcwd( 0, rcx, edx )
+endif
     ret
 
 _wgetcwd endp

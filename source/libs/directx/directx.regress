@@ -1,3 +1,4 @@
+include assert.inc
 include DirectXPackedVector.inc
 
 .assert:on

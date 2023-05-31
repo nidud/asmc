@@ -51,11 +51,15 @@ externdef __lookuptable:byte
 
     .code
 
+ifdef __UNIX__
+
+    int 3
+
+else
+
 write_char proc private wc:wchar_t, fp:LPFILE, pNumWritten:ptr int_t
 
-ifndef _WIN64
-    mov edx,fp
-endif
+    ldr rdx,fp
     .if ( [rdx]._iobuf._file == 1 || [rdx]._iobuf._file == 2 )
 
         .if ( _putwch( wc ) == WEOF )
@@ -78,13 +82,8 @@ write_char endp
 
 write_string proc private uses rsi rdi string:LPWSTR, len:uint_t, fp:LPFILE, pNumwritten:ptr int_t
 
-ifdef _WIN64
-    mov rsi,rcx
-    mov edi,edx
-else
-    mov esi,string
-    mov edi,len
-endif
+    ldr rsi,string
+    ldr edi,len
 
     .fors ( : edi > 0 : edi-- )
 
@@ -777,5 +776,5 @@ endif
     .return( charsout ) ; return value = number of characters written
 
 _woutput endp
-
+endif
     end

@@ -9,12 +9,12 @@ include fltintrn.inc
 
     .code
 
-_cldcvt proc ld:ptr real10, buffer:string_t, ch_type:int_t, precision:int_t, flags:int_t
+_cldcvt proc uses rbx ld:ptr real10, buffer:string_t, ch_type:int_t, precision:int_t, flags:int_t
 
    .new q:REAL16
 
-    mov rcx,__cvtld_q( &q, ld )
-    _cqcvt( rcx, buffer, ch_type, precision, flags )
+    mov rbx,__cvtld_q( &q, ld )
+    _cqcvt( rbx, buffer, ch_type, precision, flags )
     ret
 
 _cldcvt endp

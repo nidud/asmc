@@ -4,12 +4,14 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdio.inc
 include io.inc
+include stdio.inc
 
     .code
 
-fclose proc uses rsi rbx fp:LPFILE
+fclose proc uses rbx fp:LPFILE
+
+   .new retval:size_t
 
     ldr rcx,fp
     mov eax,[rcx]._iobuf._flag
@@ -20,7 +22,7 @@ fclose proc uses rsi rbx fp:LPFILE
     .endif
 
     mov rbx,rcx
-    mov rsi,fflush( rcx )
+    mov retval,fflush( rcx )
     _freebuf( rbx )
 
     xor eax,eax
@@ -31,7 +33,7 @@ fclose proc uses rsi rbx fp:LPFILE
 
     .if ( _close( ecx ) == 0 )
 
-        mov rax,rsi
+        mov rax,retval
     .endif
     ret
 

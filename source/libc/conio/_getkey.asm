@@ -17,8 +17,10 @@ _getkey proc
 
     ; Switch to raw mode (no line input, no echo input)
 
-    _congetmode( _conin, &oldstate )
-    _consetmode( _conin, CONSOLE_INPUT )
+ifndef __TTY__
+    GetConsoleMode(_coninpfh, &oldstate)
+    SetConsoleMode(_coninpfh, 0)
+endif
 
     .for ( :: )
 
@@ -41,7 +43,9 @@ _getkey proc
            .break
         .endif
     .endf
-    _consetmode( _conin, oldstate )
+ifndef __TTY__
+    SetConsoleMode(_coninpfh, oldstate)
+endif
     .return( c )
 
 _getkey endp

@@ -5,13 +5,17 @@
 ;
 
 include stdlib.inc
-include crtl.inc
+include string.inc
 
     .code
 
-qsort proc uses rsi rdi rbx p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
+qsort proc uses rbx p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
 
    .new level:int_t = 0
+   .new a:ptr
+   .new b:ptr
+   .new x:ptr
+   .new y:ptr
 
     ldr rcx,p
     ldr rdx,n
@@ -20,14 +24,16 @@ qsort proc uses rsi rdi rbx p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
 
         lea eax,[rdx-1]
         mul w
-        mov rsi,rcx
-        lea rdi,[rsi+rax]
+        mov a,rcx
+        lea rax,[rcx+rax]
+        mov b,rax
 
         .while 1
 
             mov rcx,w
-            lea rax,[rdi+rcx] ; middle from (hi - lo) / 2
-            sub rax,rsi
+            mov rax,b
+            add rax,rcx ; middle from (hi - lo) / 2
+            sub rax,a
             .ifnz
                 xor rdx,rdx
                 div rcx
@@ -37,100 +43,101 @@ qsort proc uses rsi rdi rbx p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
 ifdef _WIN64
             sub rsp,0x20
 endif
-            lea rbx,[rsi+rax]
+            mov rbx,a
+            add rbx,rax
 
-            .ifsd compare(rsi, rbx) > 0
-                memxchg(rsi, rbx, w)
+            .ifsd compare(a, rbx) > 0
+                memxchg(a, rbx, w)
             .endif
-            .ifsd compare(rsi, rdi) > 0
-                memxchg(rsi, rdi, w)
+            .ifsd compare(a, b) > 0
+                memxchg(a, b, w)
             .endif
-            .ifsd compare(rbx, rdi) > 0
-                memxchg(rbx, rdi, w)
+            .ifsd compare(rbx, b) > 0
+                memxchg(rbx, b, w)
             .endif
 
-            .new _si:ptr = rsi
-            .new _di:ptr = rdi
+            mov x,a
+            mov y,b
 
             .while 1
 
                 mov rcx,w
-                add _si,rcx
-                .if _si < rdi
+                add x,rcx
+                .if x < b
 
-                    .continue .ifsd compare(_si, rbx) <= 0
+                    .continue .ifsd compare(x, rbx) <= 0
                 .endif
 
                 .while 1
 
                     mov rcx,w
-                    sub _di,rcx
+                    sub y,rcx
 
-                    .break .if _di <= rbx
-                    .break .ifsd compare(_di, rbx) <= 0
+                    .break .if y <= rbx
+                    .break .ifsd compare(y, rbx) <= 0
                 .endw
 
-                mov rcx,_di
-                mov rax,_si
+                mov rcx,y
+                mov rax,x
                 .break .if rcx < rax
                 memxchg(rcx, rax, w)
 
-                .if rbx == _di
+                .if rbx == y
 
-                    mov rbx,_si
+                    mov rbx,x
                 .endif
             .endw
 
             mov rcx,w
-            add _di,rcx
+            add y,rcx
 
             .while 1
 
                 mov rcx,w
-                sub _di,rcx
+                sub y,rcx
 
-                .break .if _di <= rsi
-                .break .ifd compare(_di, rbx)
+                .break .if y <= a
+                .break .ifd compare(y, rbx)
             .endw
 
 ifdef _WIN64
             add rsp,0x20
 endif
-            mov rdx,_si
-            mov rax,_di
-            sub rax,rsi
-            mov rcx,rdi
+            mov rdx,x
+            mov rax,y
+            sub rax,a
+            mov rcx,b
             sub rcx,rdx
 
             .ifs rax < rcx
 
-                mov rcx,_di
+                mov rcx,y
 
-                .if rdx < rdi
+                .if rdx < b
 
                     push rdx
-                    push rdi
+                    push b
                     inc level
                 .endif
 
-                .if rsi < rcx
+                .if a < rcx
 
-                    mov rdi,rcx
+                    mov b,rcx
                     .continue
                 .endif
             .else
-                mov rcx,_di
+                mov rcx,y
 
-                .if rsi < rcx
+                .if a < rcx
 
-                    push rsi
+                    push a
                     push rcx
                     inc level
                 .endif
 
-                .if rdx < rdi
+                .if rdx < b
 
-                    mov rsi,rdx
+                    mov a,rdx
                     .continue
                 .endif
             .endif
@@ -138,8 +145,8 @@ endif
             .break .if !level
 
             dec level
-            pop rdi
-            pop rsi
+            pop b
+            pop a
         .endw
     .endif
     ret

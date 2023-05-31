@@ -6,6 +6,9 @@
 
 include io.inc
 include errno.inc
+ifdef __UNIX__
+include linux/kernel.inc
+else
 include winbase.inc
 
     LF      equ 10
@@ -14,29 +17,30 @@ include winbase.inc
 
     .data
     _pipech db _NFILE_ dup(10)
+endif
 
     .code
 
 _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
-
+ifndef __UNIX__
   local bytes_read:int_t        ; number of bytes read
   local os_read:int_t           ; bytes read on OS call
   local dosretval:ulong_t       ; o.s. return value
   local peekchr:char_t          ; peek-ahead character
-
+endif
+    ldr rsi,buf
+    ldr ebx,fh
     ldr rax,cnt                 ; cnt
     .return .if !rax            ; nothing to read
 
-    .if ( fh >= _NFILE_ )       ; validate handle
+    .if ( ebx >= _NFILE_ )      ; validate handle
                                 ; out of range -- return error
+ifndef __UNIX__
         _set_doserrno( 0 )      ; not o.s. error
+endif
         _set_errno( EBADF )
        .return( -1 )
     .endif
-
-    mov bytes_read,0            ; nothing read yet
-    ldr rdi,buf
-    ldr ebx,fh
 
     lea rdx,_osfile
     mov dl,[rdx+rbx]
@@ -44,6 +48,19 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
         .return( 0 )
     .endif
 
+ifdef __UNIX__
+
+    .ifs ( sys_read(ebx, rsi, rax) < 0 )
+
+        neg eax
+        _set_errno( eax )
+        mov rax,-1
+    .endif
+
+else
+
+    mov bytes_read,0            ; nothing read yet
+    mov rdi,rsi
     .if ( dl & FPIPE or FDEV )
 
         lea rcx,_pipech
@@ -92,6 +109,7 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
     .endif
 
     add bytes_read,os_read     ; update bytes read
+
     lea rdx,_osfile
     mov al,[rdx+rbx]
 
@@ -225,6 +243,7 @@ _read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
     .else
         mov eax,bytes_read
     .endif
+endif
     ret
 
 _read endp

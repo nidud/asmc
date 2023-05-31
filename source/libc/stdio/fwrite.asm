@@ -18,12 +18,12 @@ fwrite proc uses rsi rdi rbx buf:LPSTR, rsize:int_t, num:int_t, fp:LPFILE
    .new total:int_t
    .new bufsize:int_t
    .new nbytes:int_t
+   .new count:size_t
 
-    ldr rsi,buf
     ldr rbx,fp
     ldr eax,rsize
     mul num
-    mov edi,eax
+    mov count,rax
     mov total,eax
 
     mov bufsize,_MAXIOBUF
@@ -31,23 +31,25 @@ fwrite proc uses rsi rdi rbx buf:LPSTR, rsize:int_t, num:int_t, fp:LPFILE
 	mov bufsize,[rbx]._bufsiz
     .endif
 
-    .while edi
+    .while count
 
+	mov rax,count
 	mov ecx,[rbx]._cnt
+
 	.if ( ecx && [rbx]._flag & _IOMYBUF or _IOYOURBUF )
 
-	    .if ( edi < ecx )
-		mov ecx,edi
+	    .if ( count < rcx )
+		mov rcx,count
 	    .endif
-	    sub edi,ecx
+	    sub count,rcx
 	    sub [rbx]._cnt,ecx
-	    mov edx,edi
 	    mov rdi,[rbx]._ptr
+	    mov rsi,buf
 	    rep movsb
 	    mov [rbx]._ptr,rdi
-	    mov edi,edx
+	    mov buf,rsi
 
-	.elseif ( edi >= bufsize )
+	.elseif ( eax >= bufsize )
 
 	    .if ( [rbx]._flag & _IOMYBUF or _IOYOURBUF )
 
@@ -56,36 +58,37 @@ fwrite proc uses rsi rdi rbx buf:LPSTR, rsize:int_t, num:int_t, fp:LPFILE
 		jnz break
 	    .endif
 
-	    mov eax,edi
+	    mov rax,count
 	    mov ecx,bufsize
 
 	    .if ecx
 
 		xor edx,edx
 		div ecx
-		mov eax,edi
+		mov rax,count
 		sub eax,edx
 	    .endif
 	    mov nbytes,eax
 
-	    _write( [rbx]._file, rsi, eax )
+	    _write( [rbx]._file, buf, eax )
 	    cmp eax,-1
 	    je	error
 
-	    sub edi,eax
-	    add rsi,rax
+	    sub count,rax
+	    add buf,rax
 	    cmp eax,nbytes
 	    jb	error
 
 	.else
 
-	    movzx eax,byte ptr [rsi]
+	    mov rcx,buf
+	    movzx eax,byte ptr [rcx]
 	    _flsbuf( eax, rbx )
 	    cmp eax,-1
 	    je	break
 
-	    inc rsi
-	    dec rdi
+	    inc buf
+	    dec count
 	    mov eax,[rbx]._bufsiz
 	    .if ( !eax )
 		mov eax,1
@@ -103,7 +106,7 @@ error:
 
 break:
     mov eax,total
-    sub eax,edi
+    sub rax,count
     xor edx,edx
     div dword ptr rsize
     jmp toend

@@ -7,7 +7,7 @@ include float.inc
 
 .code
 
-_logb proc __cdecl x:double
+_logb proc x:double
 ifdef __SSE__
     local   d:double
     movsd   d,xmm0

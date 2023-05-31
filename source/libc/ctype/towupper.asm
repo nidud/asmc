@@ -21,8 +21,10 @@ towupper proc wc:wchar_t
         movzx eax,byte ptr [rax+rcx]
        .return
     .endif
+ifndef __UNIX__
 if WINVER GE 0x0600
     LCMapStringEx( LOCALE_NAME_USER_DEFAULT, LCMAP_UPPERCASE, &wc, 1, &wc, 1, 0, 0, 0 )
+endif
 endif
     movzx eax,wc
     ret

@@ -6,17 +6,24 @@
 
 include direct.inc
 include errno.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 
     .code
 
 _wrmdir proc directory:LPWSTR
-
-    .if RemoveDirectoryW( directory )
+    ldr rcx,directory
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    mov eax,-1
+else
+    .if RemoveDirectoryW( rcx )
         xor eax,eax
     .else
         _dosmaperr( GetLastError() )
     .endif
+endif
     ret
 
 _wrmdir endp

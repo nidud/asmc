@@ -7,12 +7,29 @@
 include io.inc
 include errno.inc
 include stdlib.inc
-include crtl.inc
+ifdef __UNIX__
+include linux/kernel.inc
+else
 include winbase.inc
+endif
 
     .code
 
 _lseeki64 proc handle:SINT, offs:QWORD, pos:UINT
+
+ifdef __UNIX__
+
+    ldr ecx,handle
+    ldr rax,offs
+    ldr edx,pos
+
+    .ifs ( sys_lseek(ecx, rax, edx) < 0 )
+
+        neg eax
+        _set_errno(eax)
+        mov rax,-1
+    .endif
+else
 
   local lpNewFilePointer:QWORD
 
@@ -33,6 +50,7 @@ else
 endif
         .endif
     .endif
+endif
     ret
 
 _lseeki64 endp

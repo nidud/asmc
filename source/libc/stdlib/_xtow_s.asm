@@ -14,6 +14,12 @@ _xtow_s proc val:qword, buf:wstring_t , sizeInTChars:size_t, radix:uint_t, is_ne
   local convbuf[256]:wchar_t
 
 ifdef _WIN64
+
+    ldr r9d,radix
+    ldr r8,sizeInTChars
+    ldr rdx,buf
+    ldr rcx,val
+
     mov rax,rcx
 
     ; validation section

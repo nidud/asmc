@@ -6,16 +6,21 @@
 
 include direct.inc
 include errno.inc
+ifndef __UNIX__
 include winbase.inc
-
+endif
     .code
 
 _wchdir proc directory:LPWSTR
-
+ifdef __UNIX__
+    _set_errno( ENOSYS )
+    mov eax,-1
+else
     .new abspath[_MAX_PATH]:wchar_t
     .new result[4]:wchar_t
 
-    .ifd SetCurrentDirectoryW( directory )
+    ldr rcx,directory
+    .ifd SetCurrentDirectoryW( rcx )
 
         .ifd GetCurrentDirectoryW( _MAX_PATH, &abspath )
 
@@ -38,6 +43,7 @@ _wchdir proc directory:LPWSTR
         .endif
     .endif
     _dosmaperr( GetLastError() )
+endif
     ret
 
 _wchdir endp

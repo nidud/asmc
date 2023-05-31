@@ -10,9 +10,12 @@ include fcntl.inc
 
     .code
 
-_creat proc path:string_t, pmode:int_t
+_creat proc path:string_t, mode:int_t
 
-    _sopen( path, O_RDWR or O_CREAT or O_TRUNC, SH_DENYNO, pmode )
+    ldr rax,path
+    ldr edx,mode
+
+    _sopen( rax, O_RDWR or O_CREAT or O_TRUNC, SH_DENYNO, edx )
     ret
 
 _creat endp

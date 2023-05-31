@@ -14,6 +14,11 @@ _xtow proc val:qword, buffer:wstring_t, radix:int_t, is_neg:int_t
 
    .new convbuf[256]:wchar_t
 
+    ldr r9d,is_neg
+    ldr r8d,radix
+    ldr rdx,buffer
+    ldr rcx,val
+
     mov r10,rdx
     mov rax,rcx
 

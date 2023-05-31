@@ -139,40 +139,5 @@ _ctype word 0,          ; -1 EOF
     _CONTROL,           ; 7F (DEL)
     128 dup(0)          ; and the rest are 0...
 
-
-_pctype  LPWORD _ctype+2 ; pointer to table for char's
-_pwctype LPWORD _ctype+2 ; pointer to table for wchar_t's
-
-
-externdef _pcumap:string_t
-externdef _pclmap:string_t
-
-.code
-
-__init_ctype proc private uses rsi rdi
-
-    .for ( rdx = _pctype,
-           rsi = _pcumap,
-           rdi = _pclmap,
-           ecx = 0 : ecx < 256 : ecx++ )
-
-        mov al,[rdx+rcx*2]
-        and al,not (_LOWER or _UPPER)
-
-        .if ( cl != [rsi+rcx] )
-
-            or al,_LOWER
-        .elseif ( cl != [rdi+rcx] )
-
-            or al,_UPPER
-        .endif
-        mov [rdx+rcx*2],al
-    .endf
-    ret
-
-__init_ctype endp
-
-.pragma(init(__init_ctype, 50))
-
     end
 

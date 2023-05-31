@@ -12,6 +12,8 @@ include conio.inc
      define MOUSE_WHEEL_UP    0x0040
      define MOUSE_WHEEL_DOWN  0x0080
 
+ifdef __TTY__
+
     .data
 
 _scancode_c byte \
@@ -66,7 +68,7 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
     .while 1
 
         mov keys.q,0
-        mov keys.count,_read(_conin, &keys.b, 8)
+        mov keys.count,_read(_coninpfd, &keys.b, 8)
 
         .if ( eax == 0 )
 
@@ -439,5 +441,29 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
     .return( 1 )
 
 _readinput endp
+
+else
+
+    .code
+
+_readinput proc Input:PINPUT_RECORD
+
+    .new Count:dword
+    .new NumberOfEventsRead:dword
+
+    .while 1
+
+        .break .ifd !GetNumberOfConsoleInputEvents(_coninpfh, &Count)
+        .if ( Count )
+
+            .break .ifd !ReadConsoleInput(_coninpfh, Input, 1, &NumberOfEventsRead)
+            .return( NumberOfEventsRead )
+        .endif
+    .endw
+    ret
+
+_readinput endp
+
+endif
 
     end

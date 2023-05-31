@@ -7,7 +7,7 @@ include float.inc
 
 .code
 
-_statusfp proc __cdecl
+_statusfp proc
 
   local cw:word
 

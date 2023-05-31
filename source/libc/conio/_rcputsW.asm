@@ -8,18 +8,19 @@ include conio.inc
 
     .code
 
-_rcputsW proc uses rsi rdi rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, string:LPWSTR
+_rcputsW proc uses rbx rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, string:LPWSTR
 
+    .new retval:int_t = 0
     .new pos:TRECT = { x, y, 1, 1 }
-    .for ( edi = 0, rsi = string : wchar_t ptr [rsi] : rsi += 2, pos.x++, edi++ )
+    .for ( rbx = string : wchar_t ptr [rbx] : rbx += 2, pos.x++, retval++ )
 
-        movzx ecx,wchar_t ptr [rsi]
+        movzx ecx,wchar_t ptr [rbx]
         _rcputc(rc, pos, p, cx)
         .if ( attrib )
             _rcputa(rc, pos, p, attrib)
         .endif
     .endf
-    .return( edi )
+    .return( retval )
 
 _rcputsW endp
 

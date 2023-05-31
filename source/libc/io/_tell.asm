@@ -10,7 +10,9 @@ include io.inc
 
 _tell proc handle:SINT
 
-    _lseek( handle, 0, SEEK_CUR )
+    ldr ecx,handle
+
+    _lseek( ecx, 0, SEEK_CUR )
     ret
 
 _tell endp

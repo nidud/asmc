@@ -10,40 +10,41 @@ include stdio.inc
 
     assume rbx:ptr _iobuf
 
-fgets proc uses rsi rdi rbx buf:LPSTR, count:SINT, fp:LPFILE
+fgets proc uses rbx buf:LPSTR, count:SINT, fp:LPFILE
 
-    ldr rdi,buf
-    ldr esi,count
+   .new pointer:string_t
+
     ldr rbx,fp
-
-    .ifs ( esi <= 0 )
+    ldr rcx,buf
+    .if ( count <= 0 )
         .return( NULL )
     .endif
 
-    dec esi
+    dec count
     .ifnz
         .repeat
             dec [rbx]._cnt
             .ifl
+                mov pointer,rcx
+                _filbuf(rbx)
+                mov rcx,pointer
+                .if ( eax  == -1 )
 
-                .ifd ( _filbuf( rbx)  == -1 )
-
-                    .break .if ( rdi != buf )
+                    .break .if ( rcx != buf )
                     .return( NULL )
                 .endif
-
             .else
-
-                mov rcx,[rbx]._ptr
+                mov rdx,[rbx]._ptr
                 inc [rbx]._ptr
-                mov al,[rcx]
+                mov al,[rdx]
             .endif
-            stosb
+            mov [rcx],al
+            inc rcx
             .break .if ( al == 10 )
-            dec esi
+            dec count
         .untilz
     .endif
-    mov byte ptr [rdi],0
+    mov byte ptr [rcx],0
    .return( buf )
 
 fgets endp

@@ -10,9 +10,12 @@ include fcntl.inc
 
     .code
 
-_wcreat proc path:LPWSTR, pmode:SINT
+_wcreat proc path:LPWSTR, mode:SINT
 
-    _wsopen( path, O_CREAT or O_TRUNC or O_RDWR, SH_DENYNO, pmode )
+    ldr rax,path
+    ldr edx,mode
+
+    _wsopen( rax, O_CREAT or O_TRUNC or O_RDWR, SH_DENYNO, edx )
     ret
 
 _wcreat endp

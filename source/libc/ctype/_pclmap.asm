@@ -4,11 +4,10 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include ctype.inc
 include stdio.inc
 include malloc.inc
 include winnls.inc
-
-public _pclmap
 
 .data
 _pclmap string_t NULL
@@ -17,22 +16,22 @@ _pclmap string_t NULL
 
 _init_pclmap proc private
 
-   .new lcid:LCID = GetUserDefaultLCID()
     .if malloc(256)
 
         mov _pclmap,rax
-        .for ( edx = 0: edx < 256 : edx++ )
-            mov [rax+rdx],dl
+        .for ( ecx = 0 : ecx < 256 : ecx++ )
+
+            mov dl,cl
+            .if ( cl >= 'A' && cl <= 'Z' )
+                or dl,0x20
+            .endif
+            mov [rax+rcx],dl
         .endf
-        .if !LCMapString(lcid, LCMAP_LOWERCASE, _pclmap, 255, _pclmap, 255)
 
-            .for ( rdx = _pclmap, al = 0x20, ecx = 0: ecx < 256 : ecx++, rdx++ )
-                .if ( cl >= 'A' && cl <= 'Z' )
-
-                    or [rdx],al
-                .endif
-            .endf
-        .endif
+ifndef __UNIX__
+       .new lcid:LCID = GetUserDefaultLCID()
+        LCMapString(lcid, LCMAP_LOWERCASE, _pclmap, 255, _pclmap, 255)
+endif
     .endif
     ret
 

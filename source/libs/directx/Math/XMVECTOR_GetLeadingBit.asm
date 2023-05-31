@@ -16,14 +16,14 @@ XMVECTOR_GetLeadingBit proc vectorcall this:XMVECTOR
     _mm_srli_epi32(xmm1, 31)
     _mm_slli_epi32(xmm1, 4)
     _mm_store_ps(r, xmm1)
-    XMVECTOR::multi_srl_epi32(xmm0, xmm1)
+    XMVECTOR_multi_srl_epi32(xmm0, xmm1)
 
     _mm_store_ps(xmm1, xmm0)
     _mm_cmpgt_epi32(xmm1, _mm_get_epi32(0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF))
     _mm_srli_epi32(xmm1, 31)
     _mm_slli_epi32(xmm1, 3)
     _mm_store_ps(s, xmm1)
-    XMVECTOR::multi_srl_epi32(xmm0, xmm1)
+    XMVECTOR_multi_srl_epi32(xmm0, xmm1)
 
     _mm_store_ps(xmm1, r)
     _mm_or_si128(xmm1, s)
@@ -34,7 +34,7 @@ XMVECTOR_GetLeadingBit proc vectorcall this:XMVECTOR
     _mm_srli_epi32(xmm1, 31)
     _mm_slli_epi32(xmm1, 2)
     _mm_store_ps(s, xmm1)
-    XMVECTOR::multi_srl_epi32(xmm0, xmm1)
+    XMVECTOR_multi_srl_epi32(xmm0, xmm1)
 
     _mm_store_ps(xmm1, r)
     _mm_or_si128(xmm1, s)
@@ -45,7 +45,7 @@ XMVECTOR_GetLeadingBit proc vectorcall this:XMVECTOR
     _mm_srli_epi32(xmm1, 31)
     _mm_slli_epi32(xmm1, 1)
     _mm_store_ps(s, xmm1)
-    XMVECTOR::multi_srl_epi32(xmm0, xmm1)
+    XMVECTOR_multi_srl_epi32(xmm0, xmm1)
 
     _mm_store_ps(xmm1, xmm0)
     _mm_store_ps(xmm0, r)
@@ -55,6 +55,6 @@ XMVECTOR_GetLeadingBit proc vectorcall this:XMVECTOR
     _mm_or_si128(xmm0, xmm1)
     ret
 
-XMVECTOR::GetLeadingBit endp
+XMVECTOR_GetLeadingBit endp
 
     end

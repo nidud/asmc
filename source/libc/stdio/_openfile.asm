@@ -8,22 +8,26 @@ include stdio.inc
 include io.inc
 include fcntl.inc
 
-define CMASK 644 ; rw-r--r--
+define CMASK 0x1A4 ; rw-r--r--
 
     .code
 
+    assume rbx:LPFILE
     option switch:pascal
 
 _openfile proc uses rsi rdi rbx filename:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
 
-    ldr rsi,stream
+    ldr rbx,stream
     ldr rdx,mode
+    .while ( byte ptr [rdx] == ' ' )
+        inc rdx
+    .endw
 
     mov al,[rdx]
     .switch al
-    .case 'r' : mov edi,_IOREAD : mov ebx,O_RDONLY
-    .case 'w' : mov edi,_IOWRT  : mov ebx,O_WRONLY or O_CREAT or O_TRUNC
-    .case 'a' : mov edi,_IOWRT  : mov ebx,O_WRONLY or O_CREAT or O_APPEND
+    .case 'r' : mov edi,_IOREAD : mov esi,O_RDONLY
+    .case 'w' : mov edi,_IOWRT  : mov esi,O_WRONLY or O_CREAT or O_TRUNC
+    .case 'a' : mov edi,_IOWRT  : mov esi,O_WRONLY or O_CREAT or O_APPEND
     .default
         .return 0
     .endsw
@@ -34,51 +38,50 @@ _openfile proc uses rsi rdi rbx filename:LPSTR, mode:LPSTR, shflag:SINT, stream:
 
     .while al
         .switch al
-          .case '+'
-            .break .if ebx & O_RDWR
-            or  ebx,O_RDWR
-            and ebx,not (O_RDONLY or O_WRONLY)
+        .case '+'
+            .break .if esi & O_RDWR
+            or  esi,O_RDWR
+            and esi,not (O_RDONLY or O_WRONLY)
             or  edi,_IORW
             and edi,not (_IOREAD or _IOWRT)
-          .case 't'
-            .break .if ebx & (O_TEXT or O_BINARY)
-            or  ebx,O_TEXT
-          .case 'b'
-            .break .if ebx & (O_TEXT or O_BINARY)
-            or  ebx,O_BINARY
-          .case 'c'
+        .case 't'
+            .break .if esi & (O_TEXT or O_BINARY)
+            or  esi,O_TEXT
+        .case 'b'
+            .break .if esi & (O_TEXT or O_BINARY)
+            or  esi,O_BINARY
+        .case 'c'
             .break .if ecx
             or  edi,_IOCOMMIT
             inc ecx
-          .case 'n'
+        .case 'n'
             .break .if ecx
             and edi,not _IOCOMMIT
             inc ecx
-          .case 'S': or ebx,O_SEQUENTIAL
-          .case 'R': or ebx,O_RANDOM
-          .case 'T': or ebx,O_SHORT_LIVED
-          .case 'D': or ebx,O_TEMPORARY
-          .default
+        .case 'S': or esi,O_SEQUENTIAL
+        .case 'R': or esi,O_RANDOM
+        .case 'T': or esi,O_SHORT_LIVED
+        .case 'D': or esi,O_TEMPORARY
+        .default
             .break
         .endsw
         inc rdx
         mov al,[rdx]
     .endw
 
-    mov [rsi]._iobuf._flag,edi
+    mov [rbx]._flag,edi
+    .ifd ( _sopen( filename, esi, shflag, CMASK ) != -1 )
 
-    .ifd ( _sopen( filename, ebx, shflag, CMASK ) != -1 )
-
-        mov [rsi]._iobuf._file,eax
+        mov [rbx]._file,eax
         xor eax,eax
-        mov [rsi]._iobuf._cnt,eax
-        mov [rsi]._iobuf._ptr,rax
-        mov [rsi]._iobuf._base,rax
-        mov [rsi]._iobuf._tmpfname,rax
-        mov rax,rsi
+        mov [rbx]._cnt,eax
+        mov [rbx]._ptr,rax
+        mov [rbx]._base,rax
+        mov [rbx]._tmpfname,rax
+        mov rax,rbx
     .else
         xor eax,eax
-        mov [rsi]._iobuf._flag,eax
+        mov [rbx]._flag,eax
     .endif
     ret
 

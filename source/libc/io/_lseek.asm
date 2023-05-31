@@ -11,19 +11,24 @@ include errno.inc
 
 _lseek proc handle:SINT, offs:size_t, pos:UINT
 
+    ldr ecx,handle
+    ldr rax,offs
+    ldr edx,pos
+
 ifdef _WIN64
-    .if ( r8d == SEEK_SET )
-        mov edx,edx
+    .if ( edx == SEEK_SET )
+        mov eax,eax
     .endif
-    .return( _lseeki64( ecx, rdx, r8d ) )
+    _lseeki64( ecx, rax, edx )
 else
-    mov eax,offs
+    cmp edx,SEEK_SET
     cdq
-    .if ( pos == SEEK_SET )
+    .ifz
         xor edx,edx
     .endif
-    .return( _lseeki64( handle, edx::eax, pos ) )
+    _lseeki64( ecx, edx::eax, pos )
 endif
+    ret
 
 _lseek endp
 

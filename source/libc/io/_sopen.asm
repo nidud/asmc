@@ -11,13 +11,126 @@ include stdlib.inc
 include fcntl.inc
 include sys/stat.inc
 include errno.inc
+ifdef __UNIX__
+include linux/kernel.inc
+else
 include winbase.inc
+endif
 
 externdef _umaskval:uint_t
 
 .code
 
+ifdef __UNIX__
+    option win64:noauto ; skip the vararg stack
+endif
+
 _sopen proc uses rsi rdi rbx path:string_t, oflag:int_t, shflag:int_t, args:vararg
+
+ifdef __UNIX__
+
+   .new mode:uint_t
+   .new share:uint_t
+   .new fh:uint_t
+
+    ldr rdi,path
+    ldr esi,oflag
+    ldr edx,shflag
+ifndef _WIN64
+    mov ecx,args
+endif
+
+    mov eax,esi
+    and eax,O_RDONLY or O_WRONLY or O_RDWR
+
+    .switch pascal eax
+    .case O_RDONLY  ; read access
+        mov eax,S_IRUSR
+    .case O_WRONLY  ; write access
+        mov eax,S_IWUSR
+        .if ( ( esi & O_APPEND ) && ( esi & ( _O_WTEXT or _O_U16TEXT or _O_U8TEXT ) ) )
+            or eax,S_IRUSR
+        .endif
+    .case O_RDWR    ; read and write access
+        mov eax,S_IRUSR or S_IWUSR
+    .default
+        _set_errno(EINVAL)
+        .return -1
+    .endsw
+    .new access:uint_t = eax
+
+    ; decode sharing flags
+
+    .switch edx
+    .case SH_SECURE ; share read access only if read-only
+        .if ( eax == S_IRUSR )
+            mov eax,S_IROTH
+        .else
+            xor eax,eax
+        .endif
+        .endc
+    .case SH_DENYNO         ; share read and write access
+        mov eax,S_IROTH or S_IWOTH
+       .endc
+    .case SH_DENYWR
+        mov eax,S_IROTH     ; share read access
+       .endc
+    .case SH_DENYRD
+        mov eax,S_IWOTH     ; share write access
+       .endc
+    .case SH_DENYRW
+        xor eax,eax         ; exclusive access
+       .endc
+    .default
+        _set_errno(EINVAL)
+        .return -1
+    .endsw
+    or access,eax
+
+    mov eax,FOPEN
+
+    ; figure out binary/text mode
+
+    .if !( esi & O_BINARY )
+        .if ( esi & O_TEXT )
+            or eax,FTEXT
+        .elseif ( _fmode != O_BINARY ) ; check default mode
+            or eax,FTEXT
+        .endif
+    .endif
+    .if ( esi & O_APPEND )
+        or eax,FAPPEND
+    .endif
+    mov fh,eax
+
+    mov edx,access
+    .if ( esi & O_CREAT )
+
+        or edx,ecx
+        .if ( esi & O_APPEND )
+            mov rbx,rdi
+            mov access,edx
+            .ifsd ( sys_open(rdi, esi, edx) < 0 )
+                sys_creat(rbx, access)
+            .endif
+        .else
+            sys_creat(rdi, edx)
+        .endif
+    .else
+        sys_open(rdi, esi, edx)
+    .endif
+    .ifs ( eax < 0 )
+
+        neg eax
+        _set_errno(eax)
+        .return -1
+    .endif
+    mov edx,fh
+    lea rcx,_osfile
+    mov [rax+rcx],dl
+    ret
+
+else
 
    .new SecurityAttributes:SECURITY_ATTRIBUTES = { SECURITY_ATTRIBUTES, NULL, 0 }
 
@@ -29,9 +142,9 @@ _sopen proc uses rsi rdi rbx path:string_t, oflag:int_t, shflag:int_t, args:vara
     .else
         inc SecurityAttributes.bInheritHandle
     .endif
-    ;
+
     ; figure out binary/text mode
-    ;
+
     .if !( edx & O_BINARY )
         .if ( edx & O_TEXT )
             or bl,FTEXT
@@ -40,9 +153,9 @@ _sopen proc uses rsi rdi rbx path:string_t, oflag:int_t, shflag:int_t, args:vara
         .endif
     .endif
 
-    ;
+
     ; decode the access flags
-    ;
+
     mov eax,edx
     and eax,O_RDONLY or O_WRONLY or O_RDWR
     .switch pascal eax
@@ -241,7 +354,7 @@ _sopen proc uses rsi rdi rbx path:string_t, oflag:int_t, shflag:int_t, args:vara
     .endw
     _close( esi )
     .return( -1 )
-
+endif
 _sopen endp
 
     end

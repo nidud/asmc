@@ -12,11 +12,19 @@ _itoa_s proc val:int_t, buffer:string_t, sizeInTChars:size_t, radix:int_t
 
 ifdef _WIN64
     xor eax,eax
+ ifdef __UNIX__
+    .ifs ( ecx == 10 && edi < 0 )
+        inc eax
+        movsxd rdi,edi
+    .endif
+    .return ( _xtoa_s( rdi, rsi, edx, ecx, eax ) )
+ else
     .ifs ( r9d == 10 && ecx < 0 )
         inc eax
         movsxd rcx,ecx
     .endif
     .return ( _xtoa_s( rcx, rdx, r8d, r9d, eax ) )
+ endif
 else
     xor ecx,ecx
     mov eax,val

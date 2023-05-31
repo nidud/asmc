@@ -5,7 +5,6 @@
 ;
 
 include stdlib.inc
-include crtl.inc
 include winbase.inc
 
 .data
@@ -13,6 +12,8 @@ include winbase.inc
  _pgmptr string_t 0
 
 .code
+
+ifndef __UNIX__
 
 Install proc private
 
@@ -52,6 +53,7 @@ Install proc private
 
 Install endp
 
+endif
 
 __p___argv proc
 
@@ -63,12 +65,14 @@ __p___argv endp
 
 _get_pgmptr proc array:array_t
 
+    ldr rcx,array
     mov rax,_pgmptr
     mov [rcx],rax
     ret
 
 _get_pgmptr endp
 
-.pragma(init(Install, 4))
-
+ifndef __UNIX__
+.pragma init(Install, 4)
+endif
     end

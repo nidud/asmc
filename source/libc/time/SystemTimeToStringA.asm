@@ -9,7 +9,10 @@ include winnls.inc
     .code
 
 SystemTimeToStringA proc string:ptr char_t, stime:ptr SYSTEMTIME
-
+ifdef __UNIX__
+    int 3
+    ret
+else
    .new timeString[64]:wchar_t
 
     GetTimeFormatEx(NULL, TIME_FORCE24HOURFORMAT, stime, NULL, &timeString, lengthof(timeString))
@@ -19,9 +22,8 @@ SystemTimeToStringA proc string:ptr char_t, stime:ptr SYSTEMTIME
         mov [rdx+rcx],al
     .endf
     mov byte ptr [rdx+rcx],0
-
    .return( string )
-
+endif
 SystemTimeToStringA endp
 
     END

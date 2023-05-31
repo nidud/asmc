@@ -9,37 +9,33 @@ include string.inc
 
     .code
 
-getenv proc uses rsi rdi enval:string_t
+getenv proc uses rbx enval:string_t
+
+   .new len:int_t
 
     ldr rcx,enval
     .ifd ( strlen( rcx ) == 0 )
 	.return
     .endif
 
-    mov edi,eax
-    mov rsi,_environ
-ifdef _WIN64
-    lodsq
-else
-    lodsd
-endif
+    mov len,eax
+    mov rbx,_environ
+    mov rax,[rbx]
+    add rbx,string_t
 
     .while( rax )
 
-	.ifd ( _strnicmp( rax, enval, edi ) == 0 )
+	.ifd ( _strnicmp( rax, enval, len ) == 0 )
 
-	    mov rax,[rsi-string_t]
-	    add rax,rdi
+	    mov eax,len
+	    add rax,[rbx-string_t]
 
 	    .if ( byte ptr [rax] == '=' )
 		.return( &[rax+1] )
 	    .endif
 	.endif
-ifdef _WIN64
-	lodsq
-else
-	lodsd
-endif
+	mov rax,[rbx]
+	add rbx,string_t
     .endw
     ret
 

@@ -3,7 +3,6 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
 include stdio.inc
 
     .code
@@ -12,9 +11,7 @@ fputwc proc wc:wint_t, fp:LPFILE
 
     ldr cx,wc
     ldr rdx,fp
-ifndef _WIN64
     movzx ecx,cx
-endif
     sub [rdx]._iobuf._cnt,2
     .ifl
 	_flswbuf( ecx, rdx )
@@ -27,4 +24,4 @@ endif
 
 fputwc endp
 
-    END
+    end

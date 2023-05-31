@@ -10,7 +10,10 @@ include winbase.inc
     .code
 
 GetDayCount proc uses rsi rdi rbx y:uint_t, m:uint_t, d:uint_t
-
+ifdef __UNIX__
+    int 3
+    ret
+else
   local t:SYSTEMTIME,
         cur_y:uint_t,
         cur_m:uint_t,
@@ -66,6 +69,7 @@ GetDayCount proc uses rsi rdi rbx y:uint_t, m:uint_t, d:uint_t
         .endif
     .endw
     .return( result )
+endif
 
 GetDayCount endp
 

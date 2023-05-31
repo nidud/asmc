@@ -12,10 +12,17 @@ _i64toa_s proc val:int64_t, buffer:string_t, sizeInTChars:size_t, radix:int_t
 
 ifdef _WIN64
     xor eax,eax
+ifdef __UNIX__
+    .ifs ( ecx == 10 && rdi < 0 )
+        inc eax
+    .endif
+    .return ( _xtoa_s( rdi, rsi, edx, ecx, eax ) )
+else
     .ifs ( r9d == 10 && rcx < 0 )
         inc eax
     .endif
     .return ( _xtoa_s( rcx, rdx, r8d, r9d, eax ) )
+endif
 else
     xor ecx,ecx
     mov eax,dword ptr val[0]

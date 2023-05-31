@@ -14,9 +14,7 @@ fopen_s proc pFile:ptr ptr FILE, filename:ptr sbyte, mode:ptr sbyte
     .if ( fopen( filename, mode ) == NULL )
 
         _get_errno( 0 )
-
     .else
-
         mov rcx,pFile
         mov [rcx],rax
         xor eax,eax

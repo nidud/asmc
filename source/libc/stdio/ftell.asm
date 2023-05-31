@@ -13,12 +13,12 @@ include winbase.inc
 
     assume rbx:ptr _iobuf
 
-ftell proc uses rdi rbx fp:LPFILE
+ftell proc uses rbx fp:LPFILE
 
   local filepos:SINT
-  local fd:HANDLE
   local rdcnt:UINT
   local osfile:BYTE
+  local offs:UINT
 
     ldr rbx,fp
     .if ( [rbx]._cnt < 0 )
@@ -28,14 +28,10 @@ ftell proc uses rdi rbx fp:LPFILE
     mov edx,[rbx]._file
     lea rcx,_osfile
     mov al,[rcx+rdx]
-    lea rcx,_osfhnd
-    mov rcx,[rcx+rdx*size_t]
-    mov fd,rcx
     mov osfile,al
 
-    .ifsd ( SetFilePointer( rcx, 0, 0, SEEK_CUR ) < 0 )
-
-        .return _dosmaperr( GetLastError() )
+    .ifs ( _lseek( [rbx]._file, 0, SEEK_CUR ) < 0 )
+        .return( -1 )
     .endif
 
     mov ecx,[rbx]._flag
@@ -46,8 +42,8 @@ ftell proc uses rdi rbx fp:LPFILE
     .endif
 
     mov filepos,eax
-    mov rdi,[rbx]._ptr
-    sub rdi,[rbx]._base
+    mov rdx,[rbx]._ptr
+    sub rdx,[rbx]._base
 
     .if ( ecx & _IOWRT or _IOREAD )
 
@@ -55,10 +51,8 @@ ftell proc uses rdi rbx fp:LPFILE
 
             mov rax,[rbx]._base
             .while ( rax < [rbx]._ptr )
-
                 .if ( byte ptr [rax] == 10 )
-
-                    inc rdi
+                    inc rdx
                 .endif
                 inc rax
             .endw
@@ -70,7 +64,7 @@ ftell proc uses rdi rbx fp:LPFILE
        .return -1
     .endif
 
-    mov rax,rdi
+    mov rax,rdx
     .return .if !rax
 
     .if ( ecx & _IOREAD )
@@ -78,16 +72,17 @@ ftell proc uses rdi rbx fp:LPFILE
         mov eax,[rbx]._cnt
         .if ( !eax )
 
-            mov rdi,rax
+            mov rdx,rax
         .else
 
             add rax,[rbx]._ptr
             sub rax,[rbx]._base
             mov rdcnt,eax
+            mov offs,edx
 
             .if ( osfile & FTEXT )
 
-                .ifd ( SetFilePointer( fd, 0, 0, SEEK_END ) == filepos )
+                .ifd ( _lseek( [rbx]._file, 0, SEEK_END ) == filepos )
 
                     mov eax,rdcnt
                     mov rcx,[rbx]._base
@@ -107,7 +102,7 @@ ftell proc uses rdi rbx fp:LPFILE
                     .endif
                 .else
 
-                    SetFilePointer( fd, filepos, 0, SEEK_SET )
+                    _lseek( [rbx]._file, filepos, SEEK_SET )
                     mov eax,[rbx]._flag
 
                     .if ( rdcnt <= 512 && (eax & _IOMYBUF) && !( eax & _IOSETVBUF ) )
@@ -124,12 +119,13 @@ ftell proc uses rdi rbx fp:LPFILE
                     .endif
                 .endif
             .endif
+            mov edx,offs
             mov eax,rdcnt
             sub filepos,eax
         .endif
     .endif
-     add edi,filepos
-    .return( edi )
+     add edx,filepos
+    .return( edx )
 
 ftell endp
 

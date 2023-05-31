@@ -5,7 +5,6 @@
 ;
 
 include stdlib.inc
-include crtl.inc
 include winbase.inc
 
 .data
@@ -13,6 +12,8 @@ __wargv	 warray_t 0
 _wpgmptr wstring_t 0
 
 .code
+
+ifndef __UNIX__
 
 Install proc private
 
@@ -52,6 +53,6 @@ Install proc private
 
 Install endp
 
-.pragma(init(Install, 4))
-
+.pragma init(Install, 4)
+endif
     end

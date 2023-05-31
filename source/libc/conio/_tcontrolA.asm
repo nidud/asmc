@@ -57,7 +57,7 @@ tinocando proc fastcall ti:PTEDIT
 
     .if ( [rcx].flags & O_USEBEEP )
 ifdef __UNIX__
-        _cwrite("\x7")
+        _cout("\x7")
 else
         MessageBeep(MB_ICONERROR)
 endif

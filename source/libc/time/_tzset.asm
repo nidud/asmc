@@ -10,7 +10,9 @@ include winbase.inc
     .code
 
 _tzset proc uses rsi
-
+ifdef __UNIX__
+    int 3
+else
   local tz:TIME_ZONE_INFORMATION
 
     .ifd ( GetTimeZoneInformation( &tz ) != -1 )
@@ -41,6 +43,7 @@ _tzset proc uses rsi
         mov rcx,[rdx+size_t]
         mov [rcx],al
     .endif
+endif
     ret
 
 _tzset endp
@@ -48,7 +51,7 @@ _tzset endp
 
 _isindst proc uses rsi rdi rbx tb:ptr tm
 
-    mov rsi,tb
+    ldr rsi,tb
     xor eax,eax
     mov ecx,[rsi].tm.tm_mon
     mov edx,[rsi].tm.tm_year

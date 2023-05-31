@@ -64,17 +64,13 @@ ifdef __UNIX__
 
 .pragma pack(push, size_t)
 
-define _NSIG		64
-ifdef _AMD64_
-define _NSIG_WORDS	1;6
-else
-define _NSIG_WORDS	2
-endif
+define _NSIG		65
+define _NSIG_WORDS	((_NSIG - 1) / 2)
 
 ifndef ____sigset_t_defined
 define ____sigset_t_defined
-sigset_t		struct
-sig			intptr_t _NSIG_WORDS dup(?)
+sigset_t		struct ; 128
+sig			dd _NSIG_WORDS dup(?)
 sigset_t		ends
 endif
 sighandler_t		typedef sigfunc_t
@@ -116,11 +112,11 @@ si_uid			uid_t ?
 si_addr			ptr_t ?
 si_status		int_t ?
 si_band			long_t ?
-si_value		sigval_t <>
+si_value		sigval <>
 siginfo_t		ends
 endif
 
-sigaction_t		struct
+sigaction_t		struct ; 152
 union
  sa_handler		sighandler_t ?
  sa_sigaction		proc :int_t, :ptr siginfo_t, :ptr
@@ -131,9 +127,38 @@ sa_mask			sigset_t <>
 sigaction_t		ends
 
 ifdef _AMD64_
-sys_rt_sigaction proto syscall :int_t, :ptr sigaction_t, :ptr sigaction_t {
+
+define __ARCH_HAS_SA_RESTORER
+define _COMPAT_NSIG	(_NSIG - 1)
+define _COMPAT_NSIG_BPW 32
+define _COMPAT_NSIG_WORDS (_COMPAT_NSIG / _COMPAT_NSIG_BPW)
+
+compat_uptr_t		typedef ptr
+compat_ulong_t		typedef qword
+compat_uint_t		typedef dword
+compat_sigset_word	typedef dword
+
+compat_sigset_t		struct
+sig			compat_sigset_word _COMPAT_NSIG_WORDS dup(?)
+compat_sigset_t		ends
+
+compat_sigaction	struct
+ifndef __ARCH_HAS_IRIX_SIGACTION
+sa_handler		compat_uptr_t ?
+sa_flags		compat_ulong_t ?
+else
+sa_flags		compat_uint_t ?
+sa_handler		compat_uptr_t ?
+endif
+ifdef __ARCH_HAS_SA_RESTORER
+sa_restorer		compat_uptr_t ?
+endif
+sa_mask			compat_sigset_t <>
+compat_sigaction	ends
+
+sys_rt_sigaction proto syscall :int_t, :ptr compat_sigaction, :ptr compat_sigaction {
     mov eax,13
-    mov r10,sigset_t
+    mov r10,compat_sigset_t
     syscall
     }
 endif
@@ -150,3 +175,4 @@ endif
 
 endif
 .pragma list(pop)
+

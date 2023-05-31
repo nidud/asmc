@@ -17,7 +17,9 @@ MAXARGSIZE  equ 0x8000  ; Max argument size: 32K
     .code
 
 setwargv proc uses rsi rdi rbx argc:ptr int_t, cmdline:ptr wchar_t
-
+ifdef __UNIX__
+    int 3
+else
   local argv[MAXARGCOUNT]:string_t
   local buffer:string_t
   local i:int_t
@@ -98,6 +100,7 @@ setwargv proc uses rsi rdi rbx argc:ptr int_t, cmdline:ptr wchar_t
     mov rsi,malloc(rbx)
     free(buffer)
     memcpy(rsi, rdi, rbx)
+endif
     ret
 
 setwargv endp

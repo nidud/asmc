@@ -11,7 +11,11 @@ include stdlib.inc
 _ultoa_s proc val:ulong_t, buffer:string_t, sizeInTChars:size_t, radix:int_t
 
 ifdef _WIN64
+ ifdef __UNIX__
+    .return ( _xtoa_s( rdi, rsi, edx, ecx, 0 ) )
+ else
     .return ( _xtoa_s( rcx, rdx, r8d, r9d, 0 ) )
+ endif
 else
     mov eax,val
     xor edx,edx

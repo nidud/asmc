@@ -22,17 +22,19 @@ _alloca_probe::
 ifdef _WIN64
     push    rax
     lea     rcx,[rsp+24]
+    xchg    rcx,rsp
     cmp     eax,_PAGESIZE_
     jb      done
 next:
     sub     rax,_PAGESIZE_
-    sub     rcx,_PAGESIZE_
-    test    [rcx],rcx
+    sub     rsp,_PAGESIZE_
+    test    [rsp],rcx
     cmp     eax,_PAGESIZE_
     ja      next
 done:
-    sub     rcx,rax
-    test    [rcx],rcx
+    sub     rsp,rax
+    test    [rsp],rcx
+    mov     rsp,rcx
     pop     rax
     pop     rcx
 else

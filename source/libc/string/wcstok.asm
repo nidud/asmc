@@ -11,60 +11,60 @@ include string.inc
 
     .code
 
-wcstok proc uses rsi rdi s1:wstring_t, s2:wstring_t
+wcstok proc uses rbx s1:wstring_t, s2:wstring_t
 
-    ldr rsi,s1
-    ldr rdi,s2
+    ldr rbx,s1
+    ldr rdx,s2
 
-    .if ( rsi )
-        mov s0,rsi
+    .if ( rbx )
+        mov s0,rbx
     .else
-        mov rsi,s0
+        mov rbx,s0
     .endif
 
-    .while ( wchar_t ptr [rsi] )
+    .while ( wchar_t ptr [rbx] )
 
-        mov rcx,rdi
+        mov rcx,rdx
         mov ax,[rcx]
 
         .while ( ax )
 
-            .break .if ( ax == [rsi] )
+            .break .if ( ax == [rbx] )
 
             add rcx,wchar_t
             mov ax,[rcx]
         .endw
         .break .if ( !ax )
-        add rsi,wchar_t
+        add rbx,wchar_t
     .endw
 
     .repeat
 
         xor eax,eax
-        .break .if ( ax == [rsi] )
+        .break .if ( ax == [rbx] )
 
-        mov rdx,rsi
-        .while ( wchar_t ptr [rsi] )
+        push rbx
+        .while ( wchar_t ptr [rbx] )
 
-            mov rcx,rdi
+            mov rcx,rdx
             mov ax,[rcx]
 
             .while ( ax )
 
-                .if ( ax == [rsi] )
+                .if ( ax == [rbx] )
 
-                    mov wchar_t ptr [rsi],0
-                    add rsi,wchar_t
+                    mov wchar_t ptr [rbx],0
+                    add rbx,wchar_t
                    .break( 1 )
                 .endif
                 add rcx,wchar_t
                 mov ax,[rcx]
             .endw
-            add rsi,wchar_t
+            add rbx,wchar_t
         .endw
-        mov rax,rdx
+        pop rax
     .until 1
-    mov s0,rsi
+    mov s0,rbx
     ret
 
 wcstok endp

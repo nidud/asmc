@@ -8,14 +8,14 @@ include string.inc
 include fltintrn.inc
 
     .code
-    ;
+
     ; '#' and precision == 0 means force a decimal point
-    ;
-_forcdecpt proc buffer:string_t
 
-    .if !strchr( buffer, '.' )
+_forcdecpt proc uses rbx buffer:string_t
 
-        strcat( buffer, ".0" )
+    ldr rbx,buffer
+    .if !strchr( rbx, '.' )
+        strcat( rbx, ".0" )
     .endif
     ret
 

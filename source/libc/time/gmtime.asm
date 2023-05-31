@@ -11,11 +11,10 @@ include time.inc
 
     .code
 
-gmtime proc uses rsi rdi rbx timp: LPTIME
+gmtime proc uses rsi rdi rbx timp:LPTIME
 
-ifndef _WIN64
-    mov ecx,timp
-endif
+    ldr rcx,timp
+
     xor ebx,ebx
     mov eax,[rcx]
 

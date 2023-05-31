@@ -8,10 +8,14 @@ include string.inc
 
     .code
 
+if defined(_WIN64) and defined(__UNIX__)
+_mbspbrk proc uses rbx s1:string_t, s2:string_t
+    xchg    rsi,rdi
+else
 _mbspbrk proc uses rsi rdi rbx s1:string_t, s2:string_t
-
     ldr     rsi,s1
     ldr     rdi,s2
+endif
 
     or      ecx,-1
     xor     eax,eax

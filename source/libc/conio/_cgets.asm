@@ -38,7 +38,11 @@ _cgets proc uses rbx string:LPSTR
                 mov [rbx+rcx-1],0
             .endif
             .endc
+ifdef __UNIX__
+        .case al == 10 ; '\n'
+else
         .case al == 13 ; '\r'
+endif
             mov [rbx+rcx],0
            .break
         .case al == 0

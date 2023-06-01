@@ -10,11 +10,12 @@ include string.inc
 
     option dotname
 
-strncpy proc uses rdi dst:string_t, src:string_t, count:size_t
+strncpy proc uses rdi rbx dst:string_t, src:string_t, count:size_t
 
     ldr     rdi,dst
-    ldr     rdx,src
     ldr     rcx,count
+    ldr     rdx,src
+    mov     rbx,rdi
 .0:
     test    ecx,ecx
     jz      .1
@@ -27,7 +28,7 @@ strncpy proc uses rdi dst:string_t, src:string_t, count:size_t
     jnz     .0
     rep     stosb
 .1:
-    mov     rax,dst
+    mov     rax,rbx
     ret
 
 strncpy endp

@@ -25,7 +25,7 @@ WndProc proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
     .switch uiMsg
     .case WM_CREATE
         _dlshow(rbx)
-        _tcontrol([rbx].object, 128, ' ', "string to edit......")
+        _tcontrol([rbx].object, 128, ' ', "string to edit...")
         .return( 0 )
     .case WM_CLOSE
         _dlclose(rbx)
@@ -40,9 +40,7 @@ WndProc proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
 WndProc endp
 
-    assume rcx:THWND
-
-_tmain proc argc:int_t, argv:array_t
+_tmain proc
 
    .new rc:TRECT = { 10, 8, 50, 8 }
    .new f1:TRECT = { 16, 0, 18, 3 }
@@ -53,6 +51,8 @@ _tmain proc argc:int_t, argv:array_t
     _rcframe(rc, f1, [rbx].window, BOX_SINGLE_ARC, 0x0F)
     _rcframe(rc, f2, [rbx].window, BOX_SINGLE_ARC, 0x06)
     _rcputs(rc, [rbx].window, 17, 1, 0x0F, "  Text Control  ")
+
+    assume rcx:THWND
 
     mov     rcx,[rbx].object
     mov     [rcx].rc,ec

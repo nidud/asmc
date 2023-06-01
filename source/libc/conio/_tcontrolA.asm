@@ -443,22 +443,22 @@ event_prevword proc fastcall uses rsi rbx ti:PTEDIT
 event_prevword endp
 
 
-ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
+ClipDelete proc fastcall uses rbx rdi ti:PTEDIT
 
     .if ClipIsSelected(rcx)
 
         mov edi,[rcx].clip_so
-        mov esi,[rcx].xoffs
-        add esi,[rcx].boffs
+        mov ebx,[rcx].xoffs
+        add ebx,[rcx].boffs
 
-        .if ( esi < edi )
+        .if ( ebx < edi )
 
             .repeat
                .break .ifd !IncreaseX(rcx)
-                inc esi
-            .until ( edi == esi )
+                inc ebx
+            .until ( edi == ebx )
 
-        .elseif ( esi > edi )
+        .elseif ( ebx > edi )
 
             .repeat
                 .if [rcx].xoffs
@@ -468,8 +468,8 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
                 .else
                     .break
                 .endif
-                dec esi
-            .until ( edi == esi )
+                dec ebx
+            .until ( edi == ebx )
         .endif
 
         or  [rcx].flags,O_MODIFIED
@@ -478,10 +478,10 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
         mov edx,[rcx].clip_eo
         lea rax,[rdi+rax]
         lea rdx,[rdi+rdx]
-        mov rsi,rcx
+        mov rbx,rcx
 
         strcpy(rax, rdx)
-        getline(rsi)
+        getline(rbx)
         ClipSet(rcx)
         mov eax,1
     .endif
@@ -882,7 +882,7 @@ wndproc endp
 
 _tcontrolA proc public uses rbx hwnd:THWND, count:UINT, char:WORD, string:LPSTR
 
-    mov rdx,hwnd
+    ldr rdx,hwnd
     mov rbx,[rdx].context.object
     mov rcx,[rdx].prev
 

@@ -1,7 +1,4 @@
 isatty:
-	asmc64 isatty.asm
-	gcc -nostdlib -o isatty isatty.o /lib/alibc.a
+	asmc64 ../../../libc/$@/$@.asm
+	gcc -nostdlib -o $@ $@.o /lib/alibc.a
 
-clean:
-	rm isatty.o
-	rm isatty

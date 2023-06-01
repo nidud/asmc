@@ -1,4 +1,3 @@
 argv:
-	asmc64 ../../glibc/argv/argv.asm
-	gcc -nostdlib -o argv argv.o /lib/alibc.a
-
+	asmc64 ../../../libc/stdlib/$@/$@.asm
+	gcc -nostdlib -o $@ $@.o /lib/alibc.a

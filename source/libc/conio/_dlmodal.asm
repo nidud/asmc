@@ -17,7 +17,9 @@ _dlmodal proc uses rbx hwnd:THWND, wndp:TPROC
 
     [rbx].winproc(rbx, WM_CREATE, 0, 0)
     _dlsetfocus(rbx, [rbx].index)
-
+ifdef __TTY__
+    _cout(SET_ANY_EVENT_MOUSE)
+endif
     .new msg:MESSAGE
     .while _getmessage(&msg, NULL)
 
@@ -26,7 +28,9 @@ _dlmodal proc uses rbx hwnd:THWND, wndp:TPROC
         _translatemsg(&msg)
         _dispatchmsg(&msg)
     .endw
-
+ifdef __TTY__
+    _cout(RST_ANY_EVENT_MOUSE)
+endif
     _sendmessage(rbx, WM_CLOSE, msg.wParam, msg.lParam)
     .return( msg.wParam )
 

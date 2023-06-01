@@ -30,21 +30,21 @@ paint proc uses rbx
     _scputs(fc.x, al, "Color Table for Windows Console")
     _scframe(fc, BOX_SINGLE_ARC, 0)
 
+    inc fc.y
     .for ( ebx = 4 : bh < 16 : bh++, bl+=3 )
 
-        mov dl,fc.y
-        inc dl
         movzx eax,bh
         shl eax,16
         mov ax,U_FULL_BLOCK
-        _scputw(bl, dl, 2, eax)
+        _scputw(bl, fc.y, 2, eax)
     .endf
 
-    add fc.y,4
-    mov dl,fc.y
-    dec dl
-    _scputs(fc.x, dl, "Color Table for Terminal")
+    add fc.y,3
+    mov cl,fc.y
+    dec cl
+    _scputs(fc.x, cl, "Color Table for Terminal")
     _scframe(fc, BOX_SINGLE_ARC, 0)
+    inc fc.y
     .for ( ebx = 4 : bh < 16 : bh++, bl+=3 )
 
         movzx eax,bh
@@ -52,9 +52,7 @@ paint proc uses rbx
         mov al,[rdx+rax]
         shl eax,16
         mov ax,U_FULL_BLOCK
-        mov dl,fc.y
-        inc dl
-        _scputw(bl, dl, 2, eax)
+        _scputw(bl, fc.y, 2, eax)
     .endf
     dec rc.row
     _scputs(1, rc.row, "./terminal$")

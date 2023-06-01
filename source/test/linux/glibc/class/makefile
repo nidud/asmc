@@ -1,4 +1,4 @@
 class:
-	asmc64 -auto -fpic class.asm
-	gcc -o class class.o
+	asmc64 -fpic ../../../libc/$@/$@.asm
+	gcc -o $@ $@.o
 

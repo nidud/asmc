@@ -100,7 +100,37 @@ write_multi_char proc private uses rbx c:SINT, num:SINT, fp:LPFILE, pNumWritten:
 write_multi_char endp
 
 
-_output proc uses rsi rdi rbx fp:LPFILE, format:string_t, arglist:ptr
+_va_arg macro ap
+if defined(__UNIX__) and defined(_AMD64_)
+    dec argcnt
+    .ifz
+        mov ap,r13
+    .endif
+endif
+    mov rax,ap
+    add ap,size_t
+    retm<[rax]>
+    endm
+
+ifdef _WIN64
+ifdef __UNIX__
+_output proc uses rbx r12 r13 r14 r15 fp:LPFILE, format:string_t, argptr:ptr
+define flags        <r14d>
+define precision    <r15d>
+define arglist      <r12>
+   .new argxmm      : ptr
+   .new argcnt      : int_t     ; regargs + 1
+else
+_output proc uses rsi rdi rbx r12 fp:LPFILE, format:string_t, argptr:ptr
+define flags        <edi>
+define precision    <esi>
+define arglist      <r12>
+endif
+else
+_output proc uses esi edi ebx fp:LPFILE, format:string_t, arglist:ptr
+define flags        <edi>
+define precision    <esi>
+endif
 
    .new charsout            : int_t = 0
    .new hexoff              : uint_t
@@ -113,22 +143,27 @@ _output proc uses rsi rdi rbx fp:LPFILE, format:string_t, arglist:ptr
    .new fldwidth            : uint_t
    .new bufferiswide        : uint_t = 0
    .new padding             : uint_t
-   .new flags               : uint_t
-   .new precision           : int_t
    .new text                : string_t
    .new mbuf[MB_LEN_MAX+1]  : wint_t
    .new buffer[BUFFERSIZE]  : char_t
 
-if defined(__UNIX__) and defined(_AMD64_)
-   .new argxmm              : ptr
-   .new argptr              : ptr
+ifdef _WIN64
+ifdef __UNIX__
     mov eax,[rdx]
     mov ecx,[rdx+4]
     add rax,[rdx+16]
     add rcx,[rdx+16]
-    mov argxmm,rcx
-    mov argptr,rdx
     mov arglist,rax
+    mov argxmm,rcx
+    mov r13,[rdx+8]
+    mov ecx,7
+    mov eax,[rdx]
+    shr eax,3
+    sub ecx,eax
+    mov argcnt,ecx
+else
+    mov arglist,r8
+endif
 endif
 
     .while 1
@@ -199,9 +234,7 @@ endif
             .case ST_WIDTH
                 .if ( dl == '*' )
 
-                    mov rax,arglist
-                    add arglist,size_t
-                    mov eax,[rax]
+                    mov eax,_va_arg(arglist)
                     .ifs ( eax < 0 )
                         or  flags,FL_LEFT
                         neg eax
@@ -226,9 +259,7 @@ endif
                 mov ecx,precision
                 .if ( dl == '*' )
 
-                    mov rax,arglist
-                    add arglist,size_t
-                    mov ecx,[rax]
+                    mov ecx,_va_arg(arglist)
                     .ifs ( ecx < 0 )
                         mov ecx,-1
                     .endif
@@ -305,9 +336,7 @@ endif
                 .switch eax
 
                 .case 'b'
-                    mov rax,arglist
-                    add arglist,size_t
-                    mov edx,[rax]
+                    mov edx,_va_arg(arglist)
                     xor ecx,ecx
                     bsr ecx,edx
                     inc ecx
@@ -334,8 +363,8 @@ endif
                     ;
                     ; print a single character specified by int argument
                     ;
-                    mov rcx,arglist
-                    add arglist,size_t
+                    _va_arg(arglist)
+                    mov rcx,rax
                     lea rax,buffer
                     mov textlen,1 ; print just a single character
                     mov text,rax
@@ -368,9 +397,7 @@ endif
                     ;   min(precision, length) if precision given.
                     ; prints '(null)' if a null string is passed
 
-                    mov rcx,arglist
-                    add arglist,size_t
-                    mov rax,[rcx]
+                    mov rax,_va_arg(arglist)
                     mov ecx,precision
                     .if ( ecx == -1 )
                         mov ecx,INT_MAX
@@ -398,8 +425,7 @@ endif
                     .endc
 
                 .case 'n'
-                    mov rax,arglist
-                    add arglist,size_t
+                    _va_arg(arglist)
                     mov rdx,[rax-size_t]
                     mov eax,charsout
                     mov [rdx],eax
@@ -432,7 +458,7 @@ ifndef _STDCALL_SUPPORTED
                     ;
                     ; compute the precision value
                     ;
-                    .if ( precision < 0 )
+                    .ifs ( precision < 0 )
                         mov precision,6       ; default precision: 6
                     .elseif ( !precision && dl == 'g' )
                         mov precision,1       ; ANSI specified
@@ -579,25 +605,25 @@ endif
                     ; correct radix, setting text and textlen
                     ; appropriately.
                     ;
+                    _va_arg(arglist)
                     xor edx,edx
-                    mov rcx,arglist
+                    mov rcx,rax
                     mov eax,[rcx]
                     .if ( flags & ( FL_I64 or FL_LONGLONG ) )
 
                         mov edx,[rcx+4]
 ifndef _WIN64
-                        add ecx,size_t
+                        add arglist,size_t
 endif
                     .endif
-                    add rcx,size_t
-                    mov arglist,rcx
 
                     .if ( flags & FL_SHORT )
 
                         .if ( flags & FL_SIGNED )
                             ; sign extend
                             movsx eax,ax
-                        .else   ; zero-extend
+                        .else
+                            ; zero-extend
                             movzx eax,ax
                         .endif
 
@@ -620,7 +646,7 @@ endif
                     ; check precision value for default; non-default
                     ; turns off 0 flag, according to ANSI.
                     ;
-                    .if ( precision < 0 )
+                    .ifs ( precision < 0 )
                         mov precision,1 ; default precision
                     .else
                         and flags,NOT FL_LEADZERO
@@ -653,7 +679,7 @@ ifdef _WIN64
                     shl rdx,32
                     or  rax,rdx
 
-                    .for ( : rax || precision > 0 : precision-- )
+                    .fors ( : rax || precision > 0 : precision-- )
 
                         xor edx,edx
                         div r9
@@ -667,7 +693,7 @@ ifdef _WIN64
 
 else
 
-                    .for ( : eax || edx || precision > 0 : precision-- )
+                    .fors ( : eax || edx || precision > 0 : precision-- )
 
                         .if ( !edx || !curadix )
 
@@ -676,6 +702,9 @@ else
                             xor edx,edx
 
                         .else
+
+                            push esi
+                            push edi
 
                             .for ( ecx = 64, esi = 0, edi = 0 : ecx : ecx-- )
 
@@ -692,6 +721,8 @@ else
                                 .endif
                             .endf
                             mov ecx,esi
+                            pop edi
+                            pop esi
                         .endif
 
                         add ecx,'0'
@@ -781,8 +812,7 @@ endif
 ifdef __UNIX__
                     write_string( text, textlen, fp, &charsout )
 else
-                    mov edi,textlen
-                    .if ( bufferiswide && edi )
+                    .if ( bufferiswide && textlen )
 
                         mov rbx,text
                         .while textlen
@@ -797,7 +827,7 @@ else
                            .break .ifs
                         .endw
                     .else
-                        write_string( text, edi, fp, &charsout )
+                        write_string( text, textlen, fp, &charsout )
                     .endif
 endif
 

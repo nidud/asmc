@@ -1,4 +1,4 @@
-test.exe:
+argv.exe:
     asmc -q $*.asm
     linkw system con_32 name A32$@ file $*
     A32$@ "4" 5 -7"quote" ""8" 9" "test".asm

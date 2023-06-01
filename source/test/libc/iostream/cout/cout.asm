@@ -23,7 +23,9 @@ main proc
     mov signed_int64,   rbx
 
     cout << "Ascii string"    << endl
+ifndef __UNIX__
     cout << L"Unicode string" << endl
+endif
     cout << endl
 
     cout << "signed char    (-1): " << signed_char  << endl
@@ -35,6 +37,8 @@ main proc
     cout << "unsigned int   (-1): " << ebx          << endl
     cout << "unsigned int64 (-1): " << rbx          << endl
     cout << endl
+
+    xor eax,eax
     ret
 
 main endp

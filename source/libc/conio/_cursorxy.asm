@@ -30,53 +30,42 @@ else
 
 _cursorxy proc uses rbx
 
-   .new keys:CINPUT = {0}
+    .new val:int_t = 0
 
+    xor ebx,ebx
     _cout(CSI "6n") ; get cursor
 
-    xor ebx,ebx ; COORD
-    .repeat
+    .whiled _getch() != -1
         ;
         ; ESC [ <r> ; <c> R
         ;
-
-        mov keys.count,_read(_coninpfd, &keys.b, 8)
-        mov rcx,keys.q
-
-        .break .if ( cl != VK_ESCAPE )
-        .break .if ( eax == 0 )
-
-         shr rcx,16
-        .while ( cl >= '0' && cl <= '9' )
-
-            imul    ebx,ebx,10
-            movzx   eax,cl
-            sub     eax,'0'
-            add     ebx,eax
-            shr     rcx,8
-        .endw
-         .if ( ebx )
-           dec ebx
-         .endif
-         shl ebx,16
-        .break .if ( cl != ';' )
-
-         shr rcx,8
-         xor eax,eax
-        .while ( cl >= '0' && cl <= '9' )
-
-            imul    eax,eax,10
-            movzx   edx,cl
-            sub     edx,'0'
-            add     eax,edx
-            shr     rcx,8
-        .endw
-         .if ( eax )
-           dec eax
-         .endif
-        mov bx,ax
-    .until 1
-    .return( ebx )
+        .switch
+        .case eax == VK_ESCAPE
+        .case eax == '['
+            .continue
+        .case eax == ';'
+            mov val,ebx
+            xor ebx,ebx
+           .endc
+        .case eax >= '0' && eax <= '9'
+            imul ebx,ebx,10
+            sub eax,'0'
+            add ebx,eax
+           .endc
+        .default
+            .break
+        .endsw
+    .endw
+    mov eax,val
+    .if eax
+        dec eax
+    .endif
+    .if ebx
+        dec ebx
+    .endif
+    shl eax,16
+    mov ax,bx
+    ret
 
 _cursorxy endp
 

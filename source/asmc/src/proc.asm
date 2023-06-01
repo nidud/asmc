@@ -2745,6 +2745,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
    .new leaf:int_t = 0
    .new usestack:int_t = 1
    .new argstack:int_t = 0
+   .new argoffs:int_t = 0
 
     mov rdi,CurrProc
     mov rsi,[rdi].dsym.procinfo
@@ -3036,6 +3037,7 @@ endif
         mov offs,0
         push_user_registers( regist, 0, &offs )
         mov regist,NULL
+        add argoffs,offs
 
         .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam )
             .break .if ( ![rdi].dsym.nextparam )
@@ -3316,12 +3318,16 @@ runqueue:
                     "assume fs:error\n"
                     "mov [%r+0x18][%d],rax", edi, offs )
             .endif
+            mov ecx,argoffs
+            .if ( edi == T_RSP )
+                add ecx,offs
+            .endif
             AddLineQueueX(
-                "lea rax,[%r+0xE0][%d]\n"
+                "lea rax,[%r+0x10][%d]\n"
                 "mov [%r+0x08][%d],rax\n"
                 "lea rax,[%r+0x20][%d]\n"
                 "mov [%r+0x10][%d],rax\n"
-                "lea rax,[%r][%d]", edi, offs, edi, offs, edi, offs, edi, offs, edi, offs  )
+                "lea rax,[%r][%d]", edi, ecx, edi, offs, edi, offs, edi, offs, edi, offs  )
 
         .endif
     .endif

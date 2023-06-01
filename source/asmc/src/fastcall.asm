@@ -2258,6 +2258,20 @@ elf64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:
                 AddLineQueueX(
                     " mov %r, %s\n"
                     " push rax", eax, rcx )
+
+            .elseif ( size < 8 && [rdi].expr.kind == EXPR_ADDR )
+
+                mov rax,regs_used
+                or  byte ptr [rax],R0_USED
+                mov eax,T_EAX
+                .if ( size == 2 )
+                    mov eax,T_AX
+                .elseif ( size == 1 )
+                    mov eax,T_AL
+                .endif
+                AddLineQueueX(
+                    " mov %r, %s\n"
+                    " push rax", eax, rcx )
             .else
                 AddLineQueueX(" push %s", rcx )
             .endif

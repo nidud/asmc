@@ -132,11 +132,16 @@ tail:
 
 else
 
+if defined(__UNIX__) and defined(_WIN64)
+strcpy proc dst:string_t, src:string_t
+else
 strcpy proc uses rsi rdi dst:string_t, src:string_t
+endif
 
-    ldr     rdi,src
-    ldr     rdx,dst
-    mov     rsi,rdi
+    ldr     rcx,dst
+    ldr     rsi,src
+    mov     rdi,rsi
+    mov     rdx,rcx
     xor     eax,eax
     mov     rcx,-1
     repne   scasb

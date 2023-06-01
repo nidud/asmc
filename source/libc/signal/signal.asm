@@ -61,9 +61,10 @@ raise proc index:int_t
         .return(SIG_ERR)
     .endif
     lea rdx,sig_table
-    mov rax,[rdx+rax*size_t]
-    .if rax
-        mov sigp,rax
+    mov rdx,[rdx+rax*size_t]
+    mov eax,ExceptionContinueSearch
+    .if rdx
+        mov sigp,rdx
         sigp( ecx )
     .endif
     ret
@@ -100,7 +101,6 @@ sig_handler proc sig:int_t, siginfo:ptr siginfo_t, context:ptr ucontext_t
     mov __crtCurrentException,rdx
     raise(edi)
     mov rdx,__crtCurrentException
-    xor eax,eax
     ret
 
 sig_handler endp
@@ -176,22 +176,22 @@ ifndef _WIN64
     lea ecx,CurrentException
 endif
     mov __crtCurrentException,rcx
-
     mov rcx,[rcx].EXCEPTION_POINTERS.ExceptionRecord
-    mov eax,[rcx].EXCEPTION_RECORD.ExceptionFlags
+    mov edx,[rcx].EXCEPTION_RECORD.ExceptionFlags
+    mov eax,ExceptionContinueSearch
 
     .switch
-    .case ( eax & ( EH_UNWINDING or EH_EXIT_UNWIND ) )
+    .case ( edx & ( EH_UNWINDING or EH_EXIT_UNWIND ) )
         raise( SIGTERM )
        .endc
-    .case ( eax & ( EH_STACK_INVALID or EH_NONCONTINUABLE ) )
+    .case ( edx & ( EH_STACK_INVALID or EH_NONCONTINUABLE ) )
         raise( SIGSEGV )
        .endc
-    .case ( eax & EH_NESTED_CALL )
+    .case ( edx & EH_NESTED_CALL )
         exit( 1 )
     .default
-        mov eax,[rcx].EXCEPTION_RECORD.ExceptionCode
-        .switch eax
+        mov edx,[rcx].EXCEPTION_RECORD.ExceptionCode
+        .switch edx
         .case EXCEPTION_ACCESS_VIOLATION
         .case EXCEPTION_ARRAY_BOUNDS_EXCEEDED
         .case EXCEPTION_DATATYPE_MISALIGNMENT
@@ -222,7 +222,42 @@ endif
            .endc
         .endsw
     .endsw
-    .return( ExceptionContinueSearch )
+    .if ( eax == ExceptionContinueExecution )
+
+        mov rcx,__crtCurrentException
+        mov rbx,[rcx].EXCEPTION_POINTERS.ContextRecord
+ifdef _WIN64
+        mov rax,[rbx].CONTEXT._Rax
+        mov rcx,[rbx].CONTEXT._Rcx
+        mov rdx,[rbx].CONTEXT._Rdx
+        mov rsi,[rbx].CONTEXT._Rsi
+        mov rdi,[rbx].CONTEXT._Rdi
+        mov rbp,[rbx].CONTEXT._Rbp
+        mov r8, [rbx].CONTEXT._R8
+        mov r9, [rbx].CONTEXT._R9
+        mov r10,[rbx].CONTEXT._R10
+        mov r11,[rbx].CONTEXT._R11
+        mov r12,[rbx].CONTEXT._R12
+        mov r13,[rbx].CONTEXT._R13
+        mov r14,[rbx].CONTEXT._R14
+        mov r15,[rbx].CONTEXT._R15
+        mov rsp,[rbx].CONTEXT._Rsp
+        push [rbx].CONTEXT._Rip
+        mov rbx,[rbx].CONTEXT._Rbx
+else
+        mov eax,[ebx].CONTEXT._Eax
+        mov ecx,[ebx].CONTEXT._Ecx
+        mov edx,[ebx].CONTEXT._Edx
+        mov esi,[ebx].CONTEXT._Esi
+        mov edi,[ebx].CONTEXT._Edi
+        mov ebp,[ebx].CONTEXT._Ebp
+        mov esp,[ebx].CONTEXT._Esp
+        push [ebx].CONTEXT._Eip
+        mov ebx,[ebx].CONTEXT._Ebx
+endif
+        retn
+    .endif
+    ret
 
 __crtExceptionHandler endp
 

@@ -100,6 +100,7 @@ _msgboxA proc uses rbx flags:UINT, title:LPSTR, format:LPSTR, argptr:vararg
    .new hwnd:THWND
    .new pb:PBINFO
    .new p:LPSTR
+   .new q:LPSTR
    .new attrib:word = 0
 
     mov rbx,_console
@@ -263,26 +264,22 @@ _msgboxA proc uses rbx flags:UINT, title:LPSTR, format:LPSTR, argptr:vararg
     mov rc.y,2
     mov rc.x,2
     sub rc.col,4
-
-    lea rbx,_bufin
-    mov p,rbx
+    mov p,&_bufin
 
     .repeat
 
-        .break .if !char_t ptr [rbx]
+        .break .if !char_t ptr [rax]
+        .if strchr(rax, 10)
 
-        mov rbx,strchr(p, 10)
-        .if ( rax != NULL )
-
-            mov char_t ptr [rbx],0
-            inc rbx
+            mov char_t ptr [rax],0
+            inc rax
         .endif
-        mov rcx,hwnd
-        _rccenterA([rcx].rc, [rcx].window, rc, attrib, p)
-        mov p,rbx
+        mov q,rax
+        _rccenterA([rbx].rc, [rbx].window, rc, attrib, p)
         inc rc.y
-    .until ( p == NULL || rc.y == 17+2 )
-    .return _dlmodal(hwnd, &WndProc)
+        mov p,q
+    .until ( rax == NULL || rc.y == 17+2 )
+    .return _dlmodal(rbx, &WndProc)
 
 _msgboxA endp
 

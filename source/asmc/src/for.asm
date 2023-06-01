@@ -15,10 +15,10 @@ include hllext.inc
 
     .code
 
-strtrim proc uses rbx string:string_t
+tstrtrim proc fastcall private uses rbx string:string_t
 
-    ldr rbx,string
-    .if tstrlen( rbx )
+    mov rbx,rcx
+    .if tstrlen( rcx )
 
         mov ecx,eax
         add rcx,rbx
@@ -32,7 +32,7 @@ strtrim proc uses rbx string:string_t
     .endif
     ret
 
-strtrim endp
+tstrtrim endp
 
 
 GetCondition proc fastcall private uses rbx string:ptr sbyte
@@ -93,12 +93,12 @@ Assignopc proc __ccall private uses rdi buffer:string_t, opc1:string_t, opc2:str
     ldr rdi,buffer
     .if ( opc1 )
         tstrcat( rdi, opc1 )
-        strtrim( rdi )
+        tstrtrim( rdi )
         tstrcat( rdi, " " )
     .endif
     .if ( opc2 )
         tstrcat( rdi, opc2 )
-        strtrim( rdi );
+        tstrtrim( rdi );
         .if ( opc1 && string )
             tstrcat( rdi, "," )
         .endif
@@ -108,7 +108,7 @@ Assignopc proc __ccall private uses rdi buffer:string_t, opc1:string_t, opc2:str
     .endif
     .if ( string )
         tstrcat( rdi, string )
-        strtrim( rdi )
+        tstrtrim( rdi )
     .endif
     tstrcat( rdi, "\n" )
    .return( 1 )
@@ -455,17 +455,17 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov BYTE PTR [rax],0
         inc rax
         mov q,tstrstart( rax )
-        strtrim( rax )
+        tstrtrim( rax )
         mov rdi,tstrstart( rdi )
-        strtrim( rdi )
-        strtrim( p )
+        tstrtrim( rdi )
+        tstrtrim( p )
 
         .if ( [rbx-asm_tok].token == T_OP_BRACKET )
 
             .if tstrrchr( q, ')' )
 
                 mov BYTE PTR [rax],0
-                strtrim(q)
+                tstrtrim(q)
             .endif
         .endif
 

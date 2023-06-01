@@ -1,4 +1,4 @@
-test.exe:
+quadmath.exe:
     asmc -q $*.asm
     linkw sys con_32 name A32$@ file $*
     A32$@

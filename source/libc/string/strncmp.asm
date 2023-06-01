@@ -13,8 +13,8 @@ include string.inc
 strncmp proc uses rbx a:string_t, b:string_t, count:size_t
 
     ldr     rcx,a
-    ldr     rdx,b
     ldr     rbx,count
+    ldr     rdx,b
     mov     eax,1
     dec     rcx
     dec     rdx

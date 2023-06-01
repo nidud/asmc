@@ -1,4 +1,4 @@
-
 vararg:
-	asmc64 -fpic vararg.asm
-	gcc -o vararg vararg.o
+	asmc64 -fpic ../../../libc/$@/$@.asm
+	gcc -o $@ $@.o
+

@@ -179,6 +179,7 @@ PSTAT64 typedef ptr _stati64
 
 ifdef __UNIX__
 define _stat <stat>
+define _stat64 <stat64>
 endif
 
 _stat   proto __cdecl :string_t, :PSTAT

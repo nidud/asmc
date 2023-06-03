@@ -16,7 +16,7 @@ ifdef _WIN64
 
    .new q:_stati64
 
-    .if _stat64("stat.asm", &q)
+    .if _stat64("makefile", &q)
 
         perror("_stat64()")
        .return( 1 )
@@ -89,7 +89,7 @@ endif
 else
     .new p:_stat32
 
-    .if _stat("stat.asm", &p)
+    .if _stat("makefile", &p)
 
         perror("_stat()")
        .return( 1 )

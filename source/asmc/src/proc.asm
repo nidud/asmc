@@ -3215,7 +3215,14 @@ runqueue:
                 .if ( [rdi].asym.flags & S_REGPARAM && [rdi].asym.flags & S_USED )
 
                     mov edx,T_MOV
-                    .if ( [rdi].asym.mem_type & MT_FLOAT )
+                    mov al,[rdi].asym.mem_type
+                    .if ( al == MT_TYPE )
+                        
+                        mov rcx,[rdi].asym.type
+                        mov al,[rcx].asym.mem_type
+                    .endif
+
+                    .if ( al & MT_FLOAT )
                         mov edx,T_MOVAPS
                         .if ( [rdi].asym.sys_size == 4 )
                             mov edx,T_MOVSS

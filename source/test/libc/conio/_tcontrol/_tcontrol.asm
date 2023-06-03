@@ -68,6 +68,7 @@ _tmain proc
 
     _dlinit(rcx, 0)
     _dlmodal(rbx, &WndProc)
+    xor eax,eax
     ret
 
 _tmain endp

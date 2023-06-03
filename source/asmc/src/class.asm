@@ -876,6 +876,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov [rsi].asym.regist[0],ax
             mov [rsi].asym.regist[2],cx
             or  [rsi].asym.sflags,S_ISVECTOR
+            mov [rsi].asym.mem_type,GetMemtypeSp(ecx)
         .endif
     .endif
     .if close_directive

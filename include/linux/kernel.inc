@@ -296,6 +296,14 @@ sys_close proto :int_t {
     mov eax,SYS_CLOSE
     syscall
     }
+sys_newstat proto :string_t, :ptr {
+    mov eax,SYS_STAT
+    syscall
+    }
+sys_newfstat proto :int_t, :ptr {
+    mov eax,SYS_FSTAT
+    syscall
+    }
 sys_lseek proto :int_t, :size_t, :uint_t {
     mov eax,SYS_LSEEK
     syscall

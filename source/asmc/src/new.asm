@@ -865,6 +865,8 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov [rax].asym.state,SYM_STACK
             or  [rax].asym.flags,S_ISDEFINED
             mov [rax].asym.total_length,1
+        .elseif ( [rax].asym.state != SYM_STACK && !( [rax].asym.flags & S_CLASS ) )
+            .return( asmerr( 2005, [rax].asym.name ) )
         .endif
 
         .if ti.Ofssize == USE16

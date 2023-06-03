@@ -12,27 +12,51 @@ include sys/stat.inc
 include string.inc
 include stdlib.inc
 include malloc.inc
+ifdef __UNIX__
+include linux/kernel.inc
+else
 include winbase.inc
-
-A_D equ 10h
+endif
 
     .code
 
 ifdef __UNIX__
 
+stat proc file:string_t, buf:PSTAT
 ifdef _WIN64
-stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat64
-else
-stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat32
-endif
+    .ifs ( sys_newstat(rdi, rsi) < 0 )
 
+        neg eax
+        _set_errno( eax )
+        .return( -1 )
+    .endif
+else
     _set_errno( ENOSYS )
-    mov rax,-1
+    mov eax,-1
+endif
     ret
 
 stat endp
 
+stat64 proc file:string_t, buf:PSTAT64
+ifdef _WIN64
+    .ifs ( sys_newstat(rdi, rsi) < 0 )
+
+        neg eax
+        _set_errno( eax )
+        .return( -1 )
+    .endif
 else
+    _set_errno( ENOSYS )
+    mov eax,-1
+endif
+    ret
+
+stat64 endp
+
+else
+
+define A_D 0x10
 
 _lk_getltime proc private ft:PVOID
 
@@ -55,13 +79,18 @@ _lk_getltime proc private ft:PVOID
 
 _lk_getltime endp
 
-_stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
+_lk_stat proc private file:string_t, buf:PSTAT, b64:int_t
 
+   .new path:LPSTR
+   .new drive:int_t
+   .new ff:WIN32_FIND_DATA
+   .new pathbuf[_MAX_PATH]:char_t
+   .new m_time:uint_t
+   .new a_time:uint_t
+   .new c_time:uint_t
 
-  local path:LPSTR, drive, ff:WIN32_FIND_DATA, pathbuf[_MAX_PATH]:byte
-
-    mov rsi,fname
-    mov rdi,buf
+    ldr rsi,file
+    ldr rdi,buf
 
     .repeat
 
@@ -73,7 +102,7 @@ _stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
 
             .break .if !( eax & 0x00FF0000 )
 
-            or  al,20h
+            or  al,0x20
             sub al,'a' - 1
             movzx eax,al
         .else
@@ -95,16 +124,14 @@ _stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
             .break .ifd ( strlen( rax ) != 3 )
             .break .if ( GetDriveType( path ) < 2 )
 
-            xor eax,eax
             mov ff.dwFileAttributes,A_D
-            mov ff.nFileSizeHigh,eax
-            mov ff.nFileSizeLow,eax
+            mov ff.nFileSizeLow,0
             mov ff.cFileName,0
 
             _loctotime_t( 80, 1, 1, 0, 0, 0 )
-            mov [rdi].stat.st_mtime,eax
-            mov [rdi].stat.st_atime,eax
-            mov [rdi].stat.st_ctime,eax
+            mov m_time,eax
+            mov a_time,eax
+            mov c_time,eax
 
         .else
 
@@ -112,15 +139,15 @@ _stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
             .ifd !_lk_getltime( &ff.ftLastWriteTime )
                 .return _dosmaperr( GetLastError() )
             .endif
-            mov [rdi].stat.st_mtime,eax
+            mov m_time,eax
             .ifd !_lk_getltime( &ff.ftLastAccessTime )
-                mov eax,[rdi].stat.st_mtime
+                mov eax,m_time
             .endif
-            mov [rdi].stat.st_atime,eax
+            mov a_time,eax
             .ifd !_lk_getltime( &ff.ftCreationTime )
-                mov eax,[rdi].stat.st_mtime
+                mov eax,m_time
             .endif
-            mov [rdi].stat.st_ctime,eax
+            mov c_time,eax
         .endif
 
         mov eax,[rsi]
@@ -149,31 +176,37 @@ _stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
         .endif
 
         mov ecx,ebx
-        and ecx,01C0h
+        and ecx,0x01C0
         mov eax,ecx
         shr ecx,3
         or  ebx,ecx
         shr eax,6
         or  eax,ebx
-        mov [rdi].stat.st_mode,ax
-
-        mov [rdi].stat.st_nlink,1
-        mov eax,ff.nFileSizeLow
-        mov edx,ff.nFileSizeHigh
-        shl rdx,32
-        or  rax,rdx
-        mov [rdi].stat.st_size,rax
-
-        xor eax,eax
-        mov [rdi].stat.st_uid,ax
-        mov [rdi].stat.st_ino,ax
-        mov [rdi].stat.st_gid,ax
-
+        mov [rdi]._stat32.st_mode,ax
         mov eax,drive
         dec eax
-        mov [rdi].stat.st_dev,eax
-        mov [rdi].stat.st_rdev,eax
+        mov [rdi]._stat32.st_dev,eax
+        mov [rdi]._stat32.st_rdev,eax
+        mov [rdi]._stat32.st_nlink,1
 
+        mov eax,ff.nFileSizeLow
+ifdef _WIN64
+        .if ( b64 == 0 )
+endif
+            mov [rdi]._stat32.st_size,eax
+            mov [rdi]._stat32.st_atime,a_time
+            mov [rdi]._stat32.st_mtime,m_time
+            mov [rdi]._stat32.st_ctime,c_time
+ifdef _WIN64
+        .else
+            mov edx,ff.nFileSizeHigh
+            mov dword ptr [rdi]._stati64.st_size,eax
+            mov dword ptr [rdi]._stati64.st_size[4],edx
+            mov dword ptr [rdi]._stati64.st_atime,a_time
+            mov dword ptr [rdi]._stati64.st_mtime,m_time
+            mov dword ptr [rdi]._stati64.st_ctime,c_time
+        .endif
+endif
        .return( 0 )
     .until 1
 
@@ -181,7 +214,40 @@ _stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
     _set_doserrno( ERROR_PATH_NOT_FOUND )
     .return( -1 )
 
-_stat endp
-endif
+_lk_stat endp
 
+_stat proc uses rsi rdi rbx file:string_t, buf:PSTAT
+
+    ldr rcx,file
+    ldr rdx,buf
+    mov rbx,rcx
+    mov rsi,rdx
+    mov rdi,rdx
+    xor eax,eax
+    mov ecx,_stat32
+    rep stosb
+    _lk_stat(rbx, rsi, 0)
+    ret
+
+_stat endp
+
+ifdef _WIN64
+
+_stat64 proc uses rsi rdi rbx file:string_t, buf:PSTAT64
+
+    ldr rcx,file
+    ldr rdx,buf
+    mov rbx,rcx
+    mov rsi,rdx
+    mov rdi,rdx
+    xor eax,eax
+    mov ecx,_stati64
+    rep stosb
+    _lk_stat(rbx, rsi, 1)
+    ret
+
+_stat64 endp
+
+endif
+endif
     end

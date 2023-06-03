@@ -1422,7 +1422,7 @@ GetFileTimeStamp proc __ccall private uses rsi rdi filename:string_t
     .if ( stat( filename, &statbuf ) != 0 )
 else
 GetFileTimeStamp proc __ccall private filename:string_t
-  local statbuf:stat
+  local statbuf:_stat32
     .if ( _stat( filename, &statbuf ) != 0 )
 endif
         .return( 0 )

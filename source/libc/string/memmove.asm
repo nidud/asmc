@@ -8,6 +8,8 @@ include string.inc
 
     .code
 
+if defined(_AMD64_) and defined(__AVX__)
+else
     option dotname
 
 memmove proc uses rsi rdi dst:ptr, src:ptr, count:size_t
@@ -31,5 +33,5 @@ memmove proc uses rsi rdi dst:ptr, src:ptr, count:size_t
     ret
 
 memmove endp
-
+endif
     end

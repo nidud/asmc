@@ -3,6 +3,7 @@
 ifndef __INC_CONIO
 define __INC_CONIO
 
+define NOGDI
 include wincon.inc
 include winuser.inc
 ifdef __UNIX__

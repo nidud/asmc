@@ -1,18 +1,68 @@
 !include srcpath
 
-L32 = $(lib_dir)\x86\libc.lib
-L64 = $(lib_dir)\x64\libc.lib
+path = $(lib_dir)\x64
+!ifdef x86
+path = $(lib_dir)\x86
+!endif
+name = libc.lib
+type = obj
+lcfg = -fac
+flag = -win64 -frame -Zp8 -Zi8
+!ifdef tty
+flag += -D__TTY__
+!endif
+!ifdef avx
+flag += -arch:AVX
+!endif
+!ifdef linux
+name = libc.a
+type = o
+flag = -elf64 -Zp8
+lcfg = -fag
+!else
+!ifdef x86
+flag = -6 -coff -Zp4 -Zi8
+!endif
+!endif
 
-flags = -D_CRTBLD -Cs -Zi8 -I$(inc_dir)
+$(path)\$(name):
+	asmc $(flag) -D_CRTBLD -Cs -I$(inc_dir) -r $(src_dir)\libc\*.asm
+	libw -q -b -n -c $(lcfg) $@ *.$(type)
+	del *.$(type)
 
-all: $(L32) $(L64)
+linux:
+	make linux=1
 
-$(L32):
-	asmc $(flags) -6 -coff -r $(src_dir)\libc\*.asm
-	libw -q -b -n -c -fac $@ *.obj
-	del *.obj
+win32:
+	make x86=1
 
-$(L64):
-	asmc -win64 $(flags) -frame -Zp8 -r $(src_dir)\libc\*.asm
-	libw -q -b -n -c -fac $@ *.obj
-	del *.obj
+winavx:
+	make avx=1
+
+regress:
+	make -s regress32
+	make -s regress64
+
+regress32:
+	if exist *.obj del *.obj
+	asmc -q -coff -Zi -assert -r *.regress
+	for %%f in (*.obj) do call :test_32 %%f
+	exit
+	:test_32
+	linkw sys con_32 file %~n1.obj
+	if not exist %~n1.exe exit
+	%~n1.exe
+	if errorlevel 1 exit
+	cmd /C del %~n1.obj %~n1.exe
+
+regress64:
+	if exist *.obj del *.obj
+	asmc64 -q -assert -r *.regress
+	for %%f in (*.obj) do call :test_64 %%f
+	exit
+	:test_64
+	linkw op q sys con_64 f %~n1
+	if not exist %~n1.exe exit
+	%~n1.exe
+	if errorlevel 1 exit
+	cmd /C del %~n1.obj %~n1.exe

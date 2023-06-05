@@ -306,7 +306,7 @@ wm_lbuttonup endp
 
 wm_mousemove proc uses rbx hwnd:THWND, lParam:COORD
 
-   .new moved:int_t = 0
+   .new moved:int_t
 
     mov rbx,hwnd
     mov eax,[rbx].flags
@@ -317,19 +317,23 @@ wm_mousemove proc uses rbx hwnd:THWND, lParam:COORD
         .return( 1 )
     .endif
 
-    mov ax,lParam.X
-    .if ( al > [rbx].context.x )
-        mov moved,_dlmove(rbx, TW_MOVERIGHT)
-    .elseif ( CARRY? && [rbx].rc.x )
-        mov moved,_dlmove(rbx, TW_MOVELEFT)
-    .endif
-    mov ax,lParam.Y
-    .if ( al > [rbx].context.y )
-        add moved,_dlmove(rbx, TW_MOVEDOWN)
-    .elseif ( CARRY? && [rbx].rc.y )
-        add moved,_dlmove(rbx, TW_MOVEUP)
-    .endif
-    .if ( moved )
+    .while 1
+
+        mov moved,0
+        mov ax,lParam.X
+        .if ( al > [rbx].context.x )
+            mov moved,_dlmove(rbx, TW_MOVERIGHT)
+        .elseif ( CARRY? && [rbx].rc.x )
+            mov moved,_dlmove(rbx, TW_MOVELEFT)
+        .endif
+        mov ax,lParam.Y
+        .if ( al > [rbx].context.y )
+            add moved,_dlmove(rbx, TW_MOVEDOWN)
+        .elseif ( CARRY? && [rbx].rc.y )
+            add moved,_dlmove(rbx, TW_MOVEUP)
+        .endif
+        .break .if ( moved == 0 )
+
         mov edx,[rbx].rc
         mov al,[rbx].context.rc.y
         add al,dh
@@ -337,7 +341,7 @@ wm_mousemove proc uses rbx hwnd:THWND, lParam:COORD
         mov al,[rbx].context.rc.x
         add al,dl
         mov [rbx].context.x,al
-    .endif
+    .endw
     .return( 0 )
 
 wm_mousemove endp

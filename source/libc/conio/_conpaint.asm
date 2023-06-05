@@ -12,7 +12,7 @@ include stdlib.inc
 
 _writeline proc private uses rbx x:BYTE, y:BYTE, l:BYTE, p:PCHAR_INFO
 
-ifdef __TTY__
+ifdef __UNIX__
 
    .new c:int_t
    .new a:int_t = 0
@@ -55,7 +55,6 @@ ifdef __TTY__
 else
 
    .new rc:SMALL_RECT
-
     movzx eax,x
     movzx edx,y
     mov rc.Top,dx
@@ -81,7 +80,7 @@ _conpaint proc uses rbx
    .new c:byte
    .new k:byte
 
-ifdef __TTY__
+ifdef __UNIX__
     _cout("\e7\e[?25l")
 endif
     mov rcx,_console
@@ -123,7 +122,7 @@ endif
             mov c,0
         .endif
     .endf
-ifdef __TTY__
+ifdef __UNIX__
     _cout("\e8")
     .if ( _cursor.visible )
         _cout("\e[?25h")

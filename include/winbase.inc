@@ -5,12 +5,13 @@ ifndef __LIBC_INC
 include libc.inc
 endif
 
-.pragma comment(lib, kernel32)
 ifdef _WIN64
 .pragma pack(push, 8)
 endif
 
 include winapifamily.inc
+
+.pragma comment(lib, kernel32)
 
 include apisetcconv.inc
 include minwinbase.inc

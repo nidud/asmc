@@ -128,6 +128,7 @@ targets = \
 	odbc32.lib	\
 	odbcbcp.lib	\
 	odbccp32.lib	\
+	oldnames.lib	\
 	ole32.lib	\
 	oleacc.lib	\
 	oleaut32.lib	\

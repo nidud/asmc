@@ -1,10 +1,6 @@
 #
 # Makefile for Asmc
 #
-# Libraries used:
-#  ../libs/import/ - kernel32.lib
-#  ../libs/lib32/  - libc.lib
-#
 
 NAME = asmc
 LIBD = x86

@@ -1,10 +1,10 @@
 DZ.TXT--
-Copyright (C) 2022 Doszip Developers.
+Copyright (C) 2023 Doszip Developers.
 
 DOSZIP COMMANDER
-Version 3.63
+Version 3.66
 
-Welcome to Doszip Commander Version 3.63!
+Welcome to Doszip Commander Version 3.66!
 =========================================
 
 
@@ -599,7 +599,6 @@ Welcome to Doszip Commander Version 3.63!
     Ctrl-E		Sort current panel by Type
     Ctrl-F		Confirmation
     Ctrl-G		Activates the Calendar (Mouse-click upper right: Date)
-     - Navigate:	Home, (Pg)Up, (Pg)Down, Left, Right, Ctrl-PgUp, Ctrl-PgDn
     Ctrl-H		Toggle Show Hidden in current Panel
     Ctrl-I		Directory information
     Ctrl-J		Compress Options
@@ -674,11 +673,11 @@ Welcome to Doszip Commander Version 3.63!
 
       Startup
 	[x] Restore Screen Mode
-	    - restore screen size (80x25 / full screen)
+	    - restore screen size (min / full screen)
 
       Exit
 	[ ] Auto Delete History
-	    - delete configuration file (dz.cfg) on exit
+	    - delete history on exit
 
       Keyboard
 	[x] Esc for user screen

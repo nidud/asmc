@@ -3,7 +3,7 @@
 ; https://win32assembly.programminghorizon.com/tut35.html
 ;
 ifndef _WIN64
-_CType equ <stdcall>
+define _STDCALL_SUPPORTED
 endif
 include lang/ru.txt
 include windows.inc

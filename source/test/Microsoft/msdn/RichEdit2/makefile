@@ -1,4 +1,4 @@
-win64   = 0
+win64   = 1
 static  = 0
 unicode = 0
 test.exe:

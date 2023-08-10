@@ -1,7 +1,7 @@
 ; RichEdit Control
 ; Unicode with Syntax Highlighting and Font Menu
 ;
-_CType equ <stdcall>
+define _STDCALL_SUPPORTED
 include lang/en.txt
 include windows.inc
 include richedit.inc

@@ -121,6 +121,7 @@
     <ASMC Include="src\input.asm" />
     <ASMC Include="src\invoke.asm" />
     <ASMC Include="src\label.asm" />
+    <ASMC Include="src\ldr.asm" />
     <ASMC Include="src\linnum.asm" />
     <ASMC Include="src\listing.asm" />
     <ASMC Include="src\logo.asm" />

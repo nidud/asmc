@@ -52,6 +52,7 @@ OBJS =  asmc.obj        \
         input.obj       \
         invoke.obj      \
         label.obj       \
+        ldr.obj         \
         linnum.obj      \
         listing.obj     \
         logo.obj        \

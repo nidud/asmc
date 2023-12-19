@@ -8,40 +8,86 @@ include tchar.inc
 
 main proc argc:SINT, argv:ptr
 
-    .if ecx == 2
+    .new fp:ptr FILE
+    .new def[128]:char_t
 
-	mov rdi,[rdx+8]
+    .if ( argc == 2 )
 
-	.if LoadLibrary(rdi)
+        mov rdx,argv
+        mov rsi,[rdx+size_t]
 
-	    mov r12,rax
-	    mov rbx,strcpy(strrchr(rdi, '.'), ".def")
-	    .if fopen(rdi,"wt")
+        .if LoadLibrary(rsi)
 
-		mov r13,rax
-		mov byte ptr [rbx],0
-		fprintf(r13, "LIBRARY %s\nEXPORTS\n", rdi)
-		mov eax,[r12+0x3C]
-		mov eax,[r12+rax].IMAGE_NT_HEADERS.OptionalHeader.DataDirectory.VirtualAddress
-		mov ebx,[r12+rax+0x18]
-		mov esi,[r12+rax+0x20]
-		add rsi,r12
+            mov rdi,rax
+            strcpy(strrchr(strcpy(&def, rsi), '.'), ".def")
 
-		.while ebx
+            .if fopen(&def,"wt")
 
-		    lodsd
-		    fprintf(r13, "\"%s\"\n", addr [rax+r12])
-		    dec ebx
-		.endw
-		fclose(r13)
-	    .endif
-	    FreeLibrary(r12)
-	.endif
+                mov fp,rax
+                fprintf(fp, "LIBRARY %s\nEXPORTS\n", rsi)
+
+                mov eax,[rdi].IMAGE_DOS_HEADER.e_lfanew
+                mov eax,[rdi+rax].IMAGE_NT_HEADERS.OptionalHeader.DataDirectory.VirtualAddress
+                mov ebx,[rdi+rax].IMAGE_EXPORT_DIRECTORY.NumberOfNames
+                mov esi,[rdi+rax].IMAGE_EXPORT_DIRECTORY.AddressOfNames
+                add rsi,rdi
+
+                .while ebx
+
+                    lodsd
+ifdef _WIN64
+                    fprintf(fp, "\"%s\"\n", addr [rax+rdi])
+else
+                   .new name:string_t
+                   .new args:int_t
+
+                    mov args,0
+                    add eax,edi
+                    mov name,eax
+                    push edi
+
+                    .repeat
+
+                        .if ( GetProcAddress(edi, name) )
+
+                            mov edx,eax
+                            mov ecx,[edi].IMAGE_DOS_HEADER.e_lfanew
+                            mov ecx,[edi+ecx].IMAGE_NT_HEADERS.OptionalHeader.SizeOfImage
+                            sub eax,edi
+                           .break .ifs
+                            sub ecx,eax
+                           .break .ifs
+                            mov edi,edx
+                            mov eax,0xC2 ; ret
+
+                            .while 1
+
+                                repnz scasb
+                                .break .ifnz
+
+                                mov edx,[edi]
+                                .continue .if ( dh || ( dl & 3 ) )
+
+                                movzx ecx,byte ptr [edi]
+                                mov args,ecx
+                               .break
+                            .endw
+                        .endif
+                    .until 1
+                    pop edi
+                    fprintf( fp, "%s@%d\n", name, args )
+endif
+                    dec ebx
+                .endw
+                fclose(fp)
+            .endif
+            FreeLibrary(rdi)
+        .endif
     .else
-	printf("\nUsage: DLLDEF <dllname>.dll\n\n")
+        printf("\nUsage: DLLDEF <dllname>.dll\n\n")
     .endif
-    xor eax,eax
-    ret
+    .return(0)
+
 main endp
 
     end _tstart

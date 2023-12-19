@@ -1,13 +1,17 @@
 ifndef __HTMLHELP_H__
 define __HTMLHELP_H__
-
+ifndef _WINUSER_
+include winuser.inc
+endif
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
+.pragma comment(lib, htmlhelp, hhctrl.ocx)
+
 if _MSC_VER LT 1200
 ifndef _WIN64
-define DWORD_PTR DWORD
+DWORD_PTR typedef DWORD
 endif
 endif
 

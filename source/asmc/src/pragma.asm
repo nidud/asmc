@@ -345,6 +345,14 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov rsi,[rbx].string_ptr
                 tstrcpy(&dynlib, rsi)
 
+                .while ( [rbx+asm_tok].token == T_DOT )
+
+                    tstrcat(&dynlib, [rbx+asm_tok].string_ptr)
+                    tstrcat(&dynlib, [rbx+asm_tok*2].string_ptr)
+                    add i,2
+                    add rbx,asm_tok*2
+                .endw
+
                 .if ( byte ptr [rsi] == '"' )
 
                     inc rsi
@@ -360,7 +368,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( tstrrchr(rsi, '.') )
 
                 mov ecx,[rax+1]
-                or  ecx,0xFFFFFF
+                and ecx,0xFFFFFF
                 .if ( ecx == 'bil' || ecx == 'lld' )
                     mov byte ptr [rax],0
                 .endif
@@ -368,7 +376,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( tstrrchr(rdi, '.') )
 
                 mov ecx,[rax+1]
-                or  ecx,0xFFFFFF
+                and ecx,0xFFFFFF
                 .if ( ecx == 'bil' || ecx == 'lld' )
                     mov byte ptr [rax],0
                 .endif
@@ -393,6 +401,9 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .while ( tstrchr( rax, '-' ) )
                     mov byte ptr [rax],'_'
                 .endw
+                .if ( tstrchr( &u, '.' ) )
+                    mov byte ptr [rax],0
+                .endif
 
                 AddLineQueueX(
                     "ifdef _%s\n"

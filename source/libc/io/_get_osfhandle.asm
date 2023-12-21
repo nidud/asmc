@@ -13,15 +13,14 @@ ifdef __UNIX__
     ldr eax,handle
 else
     ldr ecx,handle
+    mov rdx,_pioinfo(ecx)
     mov rax,-1
 
     .if ( ecx < _nfile )
 
-        lea rdx,_osfile
-        .if ( byte ptr [rdx+rcx] & FOPEN )
+        .if ( [rdx].ioinfo.osfile & FOPEN )
 
-            lea rax,_osfhnd
-            mov rax,[rax+rcx*size_t]
+            mov rax,[rdx].ioinfo.osfhnd
         .endif
     .endif
 endif

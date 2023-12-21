@@ -15,12 +15,15 @@ endif
 
     .code
 
+    assume rax:pioinfo
+
 _close proc handle:int_t
 
     ldr ecx,handle
-    lea rax,_osfile
 
-    .if ( ecx < 3 || ecx >= _nfile || !( byte ptr [rax+rcx] & FOPEN ) )
+    _pioinfo(ecx)
+
+    .if ( ecx < 3 || ecx >= _nfile || !( [rax].osfile & FOPEN ) )
 
         _set_errno( EBADF )
 ifndef __UNIX__
@@ -30,7 +33,8 @@ endif
 
     .else
 
-        mov byte ptr [rax+rcx],0
+        mov [rax].osfile,0
+        mov [rax].textmode,__IOINFO_TM_ANSI
 ifdef __UNIX__
         .ifsd ( sys_close(ecx) < 0 )
 
@@ -38,9 +42,7 @@ ifdef __UNIX__
             _set_errno( eax )
             mov rax,-1
 else
-        lea rax,_osfhnd
-        mov rcx,[rax+rcx*size_t]
-        .ifd !CloseHandle( rcx )
+        .ifd !CloseHandle( [rax].osfhnd )
 
             _dosmaperr( GetLastError() )
 endif

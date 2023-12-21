@@ -71,17 +71,13 @@ _flswbuf proc uses rbx char:int_t, fp:LPFILE
 
         .ifs ( edx > 0 )
             mov written,_write( [rbx]._file, [rbx]._base, edx )
-        .else
 
-            lea rdx,_osfile
-            mov ecx,[rbx]._file
-            .if ( byte ptr [rcx+rdx] & FAPPEND )
+        .elseif ( _osfile([rbx]._file) & FAPPEND )
 
-                .if ( _lseeki64( ecx, 0, SEEK_END ) == -1 )
+            .if ( _lseeki64( ecx, 0, SEEK_END ) == -1 )
 
-                    or [rbx]._flag,_IOERR
-                   .return
-                .endif
+                or [rbx]._flag,_IOERR
+               .return
             .endif
         .endif
         mov edx,char

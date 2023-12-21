@@ -110,11 +110,11 @@ endif
     test_f 10,L"4294967295",L"%u",0xFFFFFFFF
 
     .assert _wtol(L"247") == 247
-    .assert _wfopen(L"test.fil",L"w")
+    .assert _wfopen(L"test.fil",L"w,ccs=UTF-16LE")
     mov rsi,rax
     .assert fwprintf(rax,L"%03u",3) == 3
     .assert !fclose(rsi)
-    .assert _wfopen(L"test.fil",L"rt") == rsi
+    .assert _wfopen(L"test.fil",L"rt,ccs=UTF-16LE") == rsi
     .assert fread(rdi,3,2,rsi) == 2
     .assert !fclose(rsi)
     .assert !wcsncmp(rdi,L"003",3)

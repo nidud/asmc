@@ -61,7 +61,6 @@ endif
 if not defined(_MSVCRT) or defined(_CRTBLD)
 externdef	_iob:_iobuf
 externdef	_bufin:BYTE
-externdef	_osfhnd:HANDLE
 externdef	stdin:ptr _iobuf
 externdef	stdout:ptr _iobuf
 externdef	stderr:ptr _iobuf
@@ -185,6 +184,7 @@ _wtmpnam	proto __cdecl :ptr wchar_t
 _flswbuf	proto __cdecl :SINT, :LPFILE
 _filwbuf	proto __cdecl :LPFILE
 _woutput	proto __cdecl :LPFILE, :LPWSTR, :PVOID
+_wopenfile	proto __cdecl :LPWSTR, :LPWSTR, :SINT, :LPFILE
 
 endif ; _WSTDIO_DEFINED
 

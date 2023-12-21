@@ -8,7 +8,7 @@ include winnls.inc
 
     .code
 
-SystemTimeToStringA proc string:ptr char_t, stime:ptr SYSTEMTIME
+SystemTimeToStringA proc string:string_t, stime:LPSYSTEMTIME
 ifdef __UNIX__
     int 3
     ret

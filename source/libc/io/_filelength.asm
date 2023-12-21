@@ -21,8 +21,7 @@ else
   local FileSize:QWORD
 
     ldr ecx,handle
-    lea rax,_osfhnd
-    mov rcx,[rax+rcx*size_t]
+    mov rcx,_osfhnd(ecx)
 
     .if GetFileSizeEx( rcx, &FileSize )
 ifdef _WIN64

@@ -23,10 +23,8 @@ rewind proc uses rbx fp:LPFILE
 	and eax,not (_IOREAD or _IOWRT)
     .endif
     mov [rbx]._flag,eax
-    mov ecx,[rbx]._file
-    lea rax,_osfile
-    and byte ptr [rcx+rax],not FEOFLAG
-    _lseek( ecx, 0, SEEK_SET )
+    and _osfile([rbx]._file),not FEOFLAG
+    _lseek( [rbx]._file, 0, SEEK_SET )
     ret
 
 rewind endp

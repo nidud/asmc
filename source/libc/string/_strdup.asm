@@ -9,14 +9,15 @@ include string.inc
 
     .code
 
-_strdup proc string:LPSTR
+_strdup proc uses rbx string:LPSTR
 
     ldr rax,string
     .if rax
 
+        mov rbx,rax
         .if malloc(&[strlen(rax)+1])
 
-            strcpy(rax, string)
+            strcpy(rax, rbx)
         .endif
     .endif
     ret

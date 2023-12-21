@@ -52,9 +52,7 @@ _filbuf proc uses rbx fp:LPFILE
     mov edx,[rbx]._flag
     .if ( !( edx & _IOWRT or _IORW ) )
 
-        lea rcx,_osfile
-        mov eax,[rbx]._file
-        mov al,[rcx+rax]
+        mov al,_osfile([rbx]._file)
         and al,FTEXT or FEOFLAG
         .if ( al == FTEXT or FEOFLAG )
             or [rbx]._flag,_IOCTRLZ

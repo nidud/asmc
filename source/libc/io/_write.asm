@@ -10,6 +10,7 @@ ifdef __UNIX__
 include linux/kernel.inc
 else
 include winbase.inc
+include winnls.inc
 endif
 
 LF          equ 10
@@ -25,8 +26,11 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
   local charcount:int_t         ; count of chars written so far
   local dosretval:ulong_t       ; o.s. return value
   local written:int_t           ; count of chars written on this write
+  local bytes_written:int_t
+  local bytes_converted:int_t
   local lfbuf[BUF_SIZE]:char_t  ; lf translation buffer
-  local file:char_t
+  local utf8_buf[(BUF_SIZE*2)/3]:char_t
+  local utf16_buf[BUF_SIZE/6]:wchar_t
 
     ldr ecx,fh
     ldr eax,cnt
@@ -41,86 +45,196 @@ endif
         .return -1
     .endif
 
-ifdef __UNIX__
-    ldr rbx,buf
-else
-    lea rdx,_osfhnd
-    mov rbx,[rdx+rcx*size_t]
-endif
-    lea rdx,_osfile
-    mov al,[rdx+rcx]
-    mov file,al
+    assume rbx:pioinfo
 
-    .if ( al & FAPPEND )        ; appending - seek to end of file; ignore error, because maybe
-                                ; file doesn't allow seeking
-        _lseek( ecx, 0, SEEK_END )
+    mov edx,eax
+    mov rbx,_pioinfo(ecx)
+
+ifndef __UNIX__
+
+    .if ( [rbx].textmode == __IOINFO_TM_UTF16LE && edx & 1 )
+
+        ; For a UTF-16 file, the count must always be an even number
+
+        _set_errno(EINVAL)
+        .return -1
+    .endif
+endif
+
+    .if ( [rbx].osfile & FAPPEND )
+
+        ; appending - seek to end of file; ignore error, because maybe
+        ; file doesn't allow seeking
+
+        _lseeki64( ecx, 0, SEEK_END )
     .endif
 
     mov charcount,0
 
-    ; check for text mode with LF's in the buffer
-
 ifndef __UNIX__
 
+    ; check for text mode with LF's in the buffer
+
     mov lfcount,0
-    .if ( file & FTEXT )
+    .if ( [rbx].osfile & FTEXT )
 
-        mov rsi,buf             ; start at beginning of buffer
-        mov dosretval,0         ; no OS error yet
+        mov rsi,buf     ; start at beginning of buffer
+        mov dosretval,0 ; no OS error yet
 
-        .while 1
+        .if ( [rbx].textmode != __IOINFO_TM_UTF8 )
 
-            mov rax,rsi
-            sub rax,buf
-            .break .if ( eax >= cnt )
-
-            lea rdi,lfbuf       ; start at beginning of lfbuf
-            mov rdx,rdi
-
-            .while 1            ; fill the lf buf, except maybe last char
-
-                mov rax,rdi
-                sub rax,rdx
-                .break .if ( eax >= BUF_SIZE - 1 )
+            .while 1
 
                 mov rax,rsi
                 sub rax,buf
                 .break .if ( eax >= cnt )
 
-                lodsb
-                .if ( al == LF )
-                    inc lfcount
-                    mov byte ptr [rdi],CR
-                    inc rdi
-                .endif
-                stosb
+                lea rdi,lfbuf ; start at beginning of lfbuf
+                mov rdx,rdi
 
+                .if ( [rbx].textmode == __IOINFO_TM_UTF16LE )
+
+                    .while 1 ; fill the lf buf, except maybe last char
+
+                        mov rax,rdi
+                        sub rax,rdx
+
+                       .break .if ( eax >= BUF_SIZE - 2 )
+
+                        mov rax,rsi
+                        sub rax,buf
+
+                       .break .if ( eax >= cnt )
+
+                        lodsw
+                        .if ( ax == LF )
+
+                            add lfcount,2
+                            mov word ptr [rdi],CR
+                            add rdi,2
+                        .endif
+                        stosw
+                    .endw
+
+                .else
+
+                    .while 1
+
+                        mov rax,rdi
+                        sub rax,rdx
+
+                       .break .if ( eax >= BUF_SIZE - 1 )
+
+                        mov rax,rsi
+                        sub rax,buf
+
+                       .break .if ( eax >= cnt )
+
+                        lodsb
+                        .if ( al == LF )
+
+                            inc lfcount
+                            mov byte ptr [rdi],CR
+                            inc rdi
+                        .endif
+                        stosb
+                    .endw
+                .endif
+
+                mov rcx,rdi
+                sub rcx,rdx
+
+                .if WriteFile( [rbx].osfhnd, rdx, ecx, &written, NULL )
+
+                    add charcount,written
+
+                    lea rcx,lfbuf
+                    mov rdx,rdi
+                    sub rdx,rcx
+
+                   .break .if ( eax < edx )
+
+                .else
+
+                    mov dosretval,GetLastError()
+                   .break
+                .endif
             .endw
 
-            mov rcx,rdi
-            sub rcx,rdx
+        .else ; __IOINFO_TM_UTF8
 
-            .if WriteFile( rbx, rdx, ecx, &written, NULL )
+            .while 1
 
-                add charcount,written
+                mov rax,rsi
+                sub rax,buf
+               .break .if ( eax >= cnt )
 
-                lea rcx,lfbuf
+                lea rdi,utf16_buf
                 mov rdx,rdi
-                sub rdx,rcx
-                .break .if ( eax < edx )
 
-            .else
+                .while 1
 
-                mov dosretval,GetLastError()
-                .break
-            .endif
-        .endw
+                    mov rax,rdi
+                    sub rax,rdx
+                    .break .if ( eax >= sizeof(utf16_buf) - 2 )
+                    mov rax,rsi
+                    sub rax,buf
+                    .break .if ( eax >= cnt )
+                    lodsw
+                    .if ( ax == LF )
+                        mov word ptr [rdi],CR
+                        add rdi,2
+                    .endif
+                    stosw
+                .endw
+
+                mov rcx,rdi
+                sub rcx,rdx
+                shr ecx,1
+                WideCharToMultiByte(CP_UTF8, 0, rdx, ecx, &utf8_buf, sizeof(utf8_buf), NULL, NULL)
+
+                .if ( eax == 0 )
+
+                    mov dosretval,GetLastError()
+                   .break
+                .else
+
+                    mov bytes_converted,eax
+                    mov bytes_written,0
+
+                    .repeat
+
+                        mov eax,bytes_written
+                        lea rdx,utf8_buf
+                        add rdx,rax
+                        mov ecx,bytes_converted
+                        sub ecx,bytes_written
+
+                        .if ( WriteFile([rbx].osfhnd, rdx, ecx, &written, NULL) )
+                            add bytes_written,written
+                        .else
+                            mov dosretval,GetLastError()
+                           .break
+                        .endif
+
+                    .until ( bytes_converted <= bytes_written )
+
+                    .if ( bytes_converted > bytes_written )
+                        .break
+                    .endif
+
+                    mov rax,rsi
+                    sub rax,buf
+                    mov charcount,eax
+                .endif
+            .endw
+        .endif
 
     .else
 
         ; binary mode, no translation
 
-        .if WriteFile( rbx, buf, cnt, &written, NULL )
+        .if WriteFile( [rbx].osfhnd, buf, cnt, &written, NULL )
 
             mov dosretval,0
             mov charcount,written
@@ -130,7 +244,7 @@ ifndef __UNIX__
     .endif
 
 else
-    .ifs ( sys_write(fh, rbx, cnt) < 0 )
+    .ifs ( sys_write(fh, buf, cnt) < 0 )
 
         neg eax
         _set_errno(eax)
@@ -163,9 +277,9 @@ ifndef __UNIX__
             .endif
             .return -1
 
-        .elseif ( file & FDEV && byte ptr [rdx] == CTRLZ )
+        .elseif ( [rbx].osfile & FDEV && byte ptr [rdx] == CTRLZ )
 else
-        .if ( file & FDEV && byte ptr [rdx] == CTRLZ )
+        .if ( [rbx].osfile & FDEV && byte ptr [rdx] == CTRLZ )
 endif
 
             .return 0

@@ -25,9 +25,7 @@ ftell proc uses rbx fp:LPFILE
         mov [rbx]._cnt,0
     .endif
 
-    mov edx,[rbx]._file
-    lea rcx,_osfile
-    mov al,[rcx+rdx]
+    mov al,_osfile([rbx]._file)
     mov osfile,al
 
     .ifs ( _lseek( [rbx]._file, 0, SEEK_CUR ) < 0 )

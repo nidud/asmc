@@ -1,9 +1,8 @@
-; _OPENFILE.ASM--
+; _WOPENFILE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
 include stdio.inc
 include share.inc
 include io.inc
@@ -12,21 +11,24 @@ include errno.inc
 
 define CMASK 0644O
 
+externdef _fmode:dword
+externdef _umaskval:dword
+
     .code
 
-_openfile proc uses rbx file:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
+_wopenfile proc uses rbx file:LPWSTR, mode:LPWSTR, shflag:SINT, stream:LPFILE
 
    .new oflag:int_t
    .new fileflag:int_t
 
     ldr rbx,mode
-    .while ( byte ptr [rbx] == ' ' )
-        inc rbx
+    .while ( word ptr [rbx] == ' ' )
+        add rbx,2
     .endw
-    mov al,[rbx]
-    inc rbx
+    movzx eax,word ptr [rbx]
+    add rbx,2
 
-    .switch pascal al
+    .switch pascal eax
     .case 'r': mov ecx,_IOREAD : mov edx,O_RDONLY
     .case 'w': mov ecx,_IOWRT  : mov edx,O_WRONLY or O_CREAT or O_TRUNC
     .case 'a': mov ecx,_IOWRT  : mov edx,O_WRONLY or O_CREAT or O_APPEND
@@ -35,10 +37,10 @@ _openfile proc uses rbx file:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
         .return(NULL)
     .endsw
 
-    mov al,[rbx]
-    .while al
+    mov ax,[rbx]
+    .while eax
 
-        .switch pascal al
+        .switch pascal eax
         .case ' '
         .case '+'
             or  edx,O_RDWR
@@ -55,17 +57,16 @@ _openfile proc uses rbx file:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
         .case 'T': or  edx,O_SHORT_LIVED
         .case 'D': or  edx,O_TEMPORARY
         .default
-            _set_errno(EINVAL)
-            .return(NULL)
+            .break
         .endsw
-        inc rbx
-        mov al,[rbx]
+        add rbx,2
+        mov ax,[rbx]
     .endw
     mov fileflag,ecx
 
     xor ecx,ecx
-    .while al
-        .switch al
+    .while eax
+        .switch eax
         .case ','   ; ", ccs=UNICODE"   _O_WTEXT
         .case 'c'   ; ", ccs=UTF-16LE"  _O_U16TEXT
         .case 's'   ; ", ccs=UTF-8"     _O_U8TEXT
@@ -76,16 +77,19 @@ _openfile proc uses rbx file:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
         .default
             .break
         .endsw
-        inc rbx
-        mov al,[rbx]
+        add rbx,2
+        mov ax,[rbx]
     .endw
-    .if ( ecx == 5 && al == 'U' )
-        mov eax,[rbx+1]
-        .if ( eax == 'OCIN' )
+
+    .if ( ecx == 5 && eax == 'U' )
+
+        mov ax,[rbx+2]
+        mov cx,[rbx+8]
+        .if ( eax == 'N' && ecx == 'O' )
             or edx,_O_WTEXT
-        .elseif ( eax == '1-FT' )
+        .elseif ( eax == 'T' && ecx == '1' )
             or edx,_O_U16TEXT
-        .elseif ( eax == '8-FT' )
+        .elseif ( eax == 'T' && ecx == '8' )
             or edx,_O_U8TEXT
         .else
             _set_errno(EINVAL)
@@ -95,7 +99,7 @@ _openfile proc uses rbx file:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
     mov oflag,edx
 
     mov rbx,stream
-    .if ( _sopen(file, oflag, shflag, CMASK) != -1 )
+    .if ( _wsopen(file, oflag, shflag, CMASK) != -1 )
 
         mov [rbx]._iobuf._file,eax
         xor eax,eax
@@ -109,6 +113,6 @@ _openfile proc uses rbx file:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
     .endif
     ret
 
-_openfile endp
+_wopenfile endp
 
     end

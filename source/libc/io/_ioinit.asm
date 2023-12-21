@@ -11,49 +11,76 @@ include winbase.inc
 endif
 
     .data
-    _nfile  dd _NFILE_
-    _osfile db 3 dup(FOPEN or FDEV or FTEXT)
-            db _NFILE_ - 3 dup(0)
-ifndef __UNIX__
-    _osfhnd HANDLE _NFILE_ dup(-1)
-    _ermode dd 5
+     _nfile     dd _NFILE_
+     _ermode    dd 5
+     __pioinfo  pioinfo 0
 
     .code
 
-_ioinit proc private
+    assume rbx:pioinfo
 
-    mov _osfhnd[0*HANDLE],GetStdHandle(STD_INPUT_HANDLE)
-    mov _osfhnd[1*HANDLE],GetStdHandle(STD_OUTPUT_HANDLE)
-    mov _osfhnd[2*HANDLE],GetStdHandle(STD_ERROR_HANDLE)
-    mov _ermode,SetErrorMode(SEM_FAILCRITICALERRORS)
+_ioinit proc uses rbx
+
+    .if malloc(_NFILE_ * ioinfo)
+
+        mov __pioinfo,rax
+        mov rbx,rax
+
+        mov ecx,_NFILE_ * ioinfo
+        mov rdx,rdi
+        mov rdi,rbx
+        xor eax,eax
+        rep stosb
+        mov rdi,rdx
+
+ifndef __UNIX__
+        .for ( rdx = rbx, ecx = 0: ecx < _NFILE_: ecx++, rbx += ioinfo )
+
+            mov [rbx].pipech,10         ; linefeed/newline char
+            mov [rbx].pipech2[0],10
+            mov [rbx].pipech2[1],10
+            dec [rbx].osfhnd
+        .endf
+        mov rbx,rdx
+endif
+        mov [rbx].osfile,FOPEN or FDEV or FTEXT
+ifndef __UNIX__
+        mov [rbx].osfhnd,GetStdHandle(STD_INPUT_HANDLE)
+endif
+        mov [rbx+ioinfo].osfile,FOPEN or FDEV or FTEXT
+ifndef __UNIX__
+        mov [rbx+ioinfo].osfhnd,GetStdHandle(STD_OUTPUT_HANDLE)
+endif
+        mov [rbx+ioinfo*2].osfile,FOPEN or FDEV or FTEXT
+ifndef __UNIX__
+        mov [rbx+ioinfo*2].osfhnd,GetStdHandle(STD_ERROR_HANDLE)
+        mov _ermode,SetErrorMode(SEM_FAILCRITICALERRORS)
+endif
+    .endif
     ret
 
 _ioinit endp
 
-else
-    .code
-endif
+_ioexit proc uses rbx
 
-_ioexit proc private uses rbx
+    .if ( __pioinfo  )
 
-    .for ( ebx = 3 : ebx < _NFILE_ : ebx++ )
-
-        lea rdx,_osfile
-        .if ( BYTE PTR [rdx+rbx] & FOPEN )
-
-            _close( ebx )
-        .endif
-    .endf
+        .for ( ebx = 3 : ebx < _NFILE_ : ebx++ )
+            .if ( _osfile(ebx) & FOPEN )
+                _close( ebx )
+            .endif
+        .endf
+        free(__pioinfo)
+        mov __pioinfo,0
 ifndef __UNIX__
-    SetErrorMode( _ermode )
+        SetErrorMode( _ermode )
 endif
+    .endif
     ret
 
 _ioexit endp
 
-ifndef __UNIX__
 .pragma init(_ioinit, 1)
-endif
 .pragma exit(_ioexit, 100)
 
     end

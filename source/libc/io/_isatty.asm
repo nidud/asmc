@@ -41,8 +41,7 @@ ifdef __UNIX__
         xor eax,eax
     .endif
 else
-    lea rax,_osfile
-    mov al,[rax+rcx]
+    mov al,_osfile(ecx)
     and eax,FDEV
 endif
     ret

@@ -9,13 +9,14 @@ include string.inc
 
     .code
 
-_wcsdup proc string:LPWSTR
+_wcsdup proc uses rbx string:LPWSTR
 
-    .if wcslen(string)
+    ldr rbx,string
+    .if wcslen(rbx)
 
         .if malloc(&[rax*2+2])
 
-            wcscpy(rax, string)
+            wcscpy(rax, rbx)
         .endif
     .endif
     ret

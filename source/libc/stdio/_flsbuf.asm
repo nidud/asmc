@@ -76,9 +76,7 @@ _flsbuf proc uses rbx char:int_t, fp:LPFILE
             mov written,_write( [rbx]._file, [rbx]._base, edx )
         .else
 
-            lea rdx,_osfile
-            mov ecx,[rbx]._file
-            .if ( byte ptr [rcx+rdx] & FAPPEND )
+            .if ( _osfile([rbx]._file) & FAPPEND )
 
                 .if ( _lseeki64( ecx, 0, SEEK_END ) == -1 )
 

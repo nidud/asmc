@@ -9,9 +9,9 @@ include stdlib.inc
 
     .code
 
-    assume rbx:ptr SYSTEMTIME
+    assume rbx:LPSYSTEMTIME
 
-StringToSystemTimeA proc uses rbx string:ptr char_t, lpSystemTime:ptr SYSTEMTIME
+StringToSystemTimeA proc uses rbx string:string_t, lpSystemTime:LPSYSTEMTIME
 
     ldr rcx,string
     ldr rbx,lpSystemTime

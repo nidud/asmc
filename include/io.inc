@@ -16,6 +16,76 @@ intptr_t typedef sdword
 endif
 endif
 
+ifdef _CRTBLD
+
+ioinfo		STRUC
+ifndef __UNIX__
+osfhnd		intptr_t ?	; underlying OS file HANDLE
+endif
+osfile		char_t ?	; attibutes of file (e.g., open in text mode?)
+pipech		char_t ?	; one char buffer for handles opened on pipes
+textmode	char_t ?	; __IOINFO_TM_ANSI or __IOINFO_TM_UTF8 or __IOINFO_TM_UTF16LE
+ifndef __UNIX__
+unicode		char_t ?	; Was the file opened as unicode?
+pipech2		char_t 2 dup(?) ; 2 more peak ahead chars for UNICODE mode
+dbcsBuffer	char_t ?	; Buffer for the lead byte of dbcs when converting from dbcs to unicode
+startpos	int64_t ?	; File position that matches buffer start
+utf8translations int_t ?	; Buffer contains translations other than CRLF
+dbcsBufferUsed	int_t ?		; Bool for the lead byte buffer is used or not
+endif
+ioinfo		ENDS
+pioinfo		typedef ptr ioinfo
+
+externdef	__pioinfo:pioinfo
+
+_pioinfo proto fastcall fh:abs {
+    imul eax,fh,ioinfo
+    add	 rax,__pioinfo
+    }
+_osfile proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.osfile>
+    }
+_textmode proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.textmode>
+    }
+
+_osfhnd proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.osfhnd>
+    }
+_pipech proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.pipech>
+    }
+_pipech2 proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.pipech2>
+    }
+_tm_unicode proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.unicode>
+    }
+_startpos proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.startpos>
+    }
+_utf8translations proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.utf8translations>
+    }
+_dbcsBuffer proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.dbcsBuffer>
+    }
+_dbcsBufferUsed proto fastcall fh:abs {
+    _pioinfo(fh)
+    retm <[rax].ioinfo.dbcsBufferUsed>
+    }
+
+endif
+
 define _NFILE_		20
 
 define _A_NORMAL	0x00
@@ -91,15 +161,11 @@ endif
 .pragma pack(pop)
 
 externdef	_nfile:DWORD
-externdef	_osfile:BYTE
-externdef	_osfhnd:HANDLE
 
 
 define __IOINFO_TM_ANSI	   0
 define __IOINFO_TM_UTF8	   1
 define __IOINFO_TM_UTF16LE 2
-
-externdef	_textmode:BYTE
 
 A_CREATE	equ 1 ; fails if exists
 A_CREATETRUNC	equ 2 ; trunc if exists
@@ -195,6 +261,7 @@ endif ;; _CRTBLD
 
 _get_osfhandle	proto __cdecl :int_t
 _open_osfhandle proto __cdecl :intptr_t, :int_t
+_alloc_osfhnd	proto __cdecl
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
 osmaperr	proto __cdecl

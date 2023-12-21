@@ -10,7 +10,7 @@ include winnls.inc
 
     .code
 
-SystemDateToStringA proc string:ptr char_t, date:ptr SYSTEMTIME
+SystemDateToStringA proc string:string_t, date:LPSYSTEMTIME
 ifdef __UNIX__
     int 3
     ret
@@ -29,4 +29,4 @@ else
 endif
 SystemDateToStringA endp
 
-    END
+    end

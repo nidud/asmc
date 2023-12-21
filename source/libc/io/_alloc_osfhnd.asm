@@ -21,8 +21,9 @@ _alloc_osfhnd proc
         .endif
     .endf
 
-    mov [rcx].osfhnd,-1
     mov [rcx].osfile,0
+ifndef __UNIX__
+    mov [rcx].osfhnd,-1
     mov [rcx].pipech,10
     mov [rcx].textmode,0
     mov [rcx].unicode,0
@@ -32,6 +33,7 @@ _alloc_osfhnd proc
     mov [rcx].startpos,0
     mov [rcx].utf8translations,0
     mov [rcx].dbcsBufferUsed,0
+endif
     ret
 
 _alloc_osfhnd endp

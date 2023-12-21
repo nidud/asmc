@@ -58,7 +58,7 @@ endif
 ifndef __UNIX__
     mov inputsize,eax
 endif
-    mov edi,eax
+    mov rdi,rax
 
     .if ( ecx >= _NFILE_ )      ; validate handle
                                 ; out of range -- return error
@@ -79,7 +79,7 @@ endif
 
 ifdef __UNIX__
 
-    .ifs ( sys_read(ecx, rsi, rax) < 0 )
+    .ifs ( sys_read(ecx, rsi, rdi) < 0 )
 
         neg eax
         _set_errno( eax )

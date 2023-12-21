@@ -9,13 +9,20 @@ include tchar.inc
 main proc argc:SINT, argv:ptr
 
     .new fp:ptr FILE
+    .new dll:string_t
     .new def[128]:char_t
+    .new ms:char_t = 0
 
-    .if ( argc == 2 )
+    .if ( argc >= 2 )
 
         mov rdx,argv
         mov rsi,[rdx+size_t]
-
+        mov eax,[rsi]
+        .if eax == 'sm-'
+            inc ms
+            mov rsi,[rdx+size_t*2]
+        .endif
+        mov dll,rsi
         .if LoadLibrary(rsi)
 
             mov rdi,rax
@@ -24,8 +31,9 @@ main proc argc:SINT, argv:ptr
             .if fopen(&def,"wt")
 
                 mov fp,rax
-                fprintf(fp, "LIBRARY %s\nEXPORTS\n", rsi)
-
+                .if ( ms )
+                    fprintf(fp, "LIBRARY %s\nEXPORTS\n", rsi)
+                .endif
                 mov eax,[rdi].IMAGE_DOS_HEADER.e_lfanew
                 mov eax,[rdi+rax].IMAGE_NT_HEADERS.OptionalHeader.DataDirectory.VirtualAddress
                 mov ebx,[rdi+rax].IMAGE_EXPORT_DIRECTORY.NumberOfNames
@@ -36,7 +44,11 @@ main proc argc:SINT, argv:ptr
 
                     lodsd
 ifdef _WIN64
-                    fprintf(fp, "\"%s\"\n", addr [rax+rdi])
+                    .if ( ms )
+                        fprintf(fp, "%s\n", addr [rax+rdi])
+                    .else
+                        fprintf(fp, "++%s.'%s'\n", addr [rax+rdi], dll)
+                    .endif
 else
                    .new name:string_t
                    .new args:int_t
@@ -75,7 +87,11 @@ else
                         .endif
                     .until 1
                     pop edi
-                    fprintf( fp, "%s@%d\n", name, args )
+                    .if ( ms )
+                        fprintf( fp, "%s@%d\n", name, args )
+                    .else
+                        fprintf( fp, "++_%s@%d.'%s'\n", name, args, dll )
+                    .endif
 endif
                     dec ebx
                 .endw
@@ -84,7 +100,7 @@ endif
             FreeLibrary(rdi)
         .endif
     .else
-        printf("\nUsage: DLLDEF <dllname>.dll\n\n")
+        printf("\nUsage: DLLDEF [-ms] <dll_name>\n\n")
     .endif
     .return(0)
 

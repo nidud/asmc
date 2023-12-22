@@ -46,11 +46,11 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         P.Release()
         G.Release()
         EndPaint(hWnd, &ps)
-        .endc
+       .endc
 
     .case WM_DESTROY
         PostQuitMessage(0)
-        .endc
+       .endc
     .case WM_CHAR
         .gotosw(WM_DESTROY) .if r8d == VK_ESCAPE
         .endc
@@ -64,35 +64,33 @@ WndProc endp
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
-  local wc:WNDCLASSEX, msg:MSG, hwnd:HANDLE
-
-    xor eax,eax
-    mov wc.cbSize,          WNDCLASSEX
-    mov wc.style,           CS_HREDRAW or CS_VREDRAW
-    mov wc.cbClsExtra,      eax
-    mov wc.cbWndExtra,      eax
-    mov wc.hbrBackground,   COLOR_WINDOW+1
-    mov wc.lpszMenuName,    rax
-    mov wc.hInstance,       hInstance
-    mov wc.lpfnWndProc,     &WndProc
-    mov wc.lpszClassName,   &@CStr("Sphere")
-    mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
-    mov wc.hIconSm,         rax
-    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
+    .new wc:WNDCLASSEX = {
+        WNDCLASSEX,                     ; .cbSize
+        CS_HREDRAW or CS_VREDRAW,       ; .style
+        &WndProc,                       ; .lpfnWndProc
+        0,                              ; .cbClsExtra
+        0,                              ; .cbWndExtra
+        hInstance,                      ; .hInstance
+        LoadIcon(NULL, IDI_APPLICATION),; .hIcon
+        LoadCursor(NULL, IDC_ARROW),    ; .hCursor
+        GetStockObject(BLACK_BRUSH),    ; .hbrBackground
+        NULL,                           ; .lpszMenuName
+        "Sphere",                       ; .lpszClassName
+        wc.hIcon                        ; .hIconSm
+        }
 
     .ifd RegisterClassEx(&wc)
 
         .if CreateWindowEx(0, "Sphere", "gdiplus.Graphics(Sphere)", WS_OVERLAPPEDWINDOW,
                 CW_USEDEFAULT, CW_USEDEFAULT, 600, 400, NULL, NULL, hInstance, 0)
 
-            mov hwnd,rax
-
-            ;; Initialize GDI+.
-           .new gdiplus:GdiPlus()
+           .new hwnd:HANDLE = rax
+           .new gdiplus:GdiPlus() ; Initialize GDI+.
 
             ShowWindow(hwnd, SW_SHOWNORMAL)
             UpdateWindow(hwnd)
 
+            .new msg:MSG
             .while GetMessage(&msg,0,0,0)
                 TranslateMessage(&msg)
                 DispatchMessage(&msg)
@@ -105,11 +103,10 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nS
 
 wWinMain endp
 
-wWinStart proc frame uses rbx
+wWinMainCRTStartup proc
 
-    mov rbx,GetModuleHandle(0)
-    ExitProcess(wWinMain(rbx, 0, GetCommandLineW(), SW_SHOWDEFAULT))
+    ExitProcess(wWinMain(GetModuleHandle(0), 0, 0, SW_SHOWDEFAULT))
 
-wWinStart endp
+wWinMainCRTStartup endp
 
-    end wWinStart
+    end

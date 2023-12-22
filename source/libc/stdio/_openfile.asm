@@ -55,8 +55,7 @@ _openfile proc uses rbx file:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
         .case 'T': or  edx,O_SHORT_LIVED
         .case 'D': or  edx,O_TEMPORARY
         .default
-            _set_errno(EINVAL)
-            .return(NULL)
+            .break
         .endsw
         inc rbx
         mov al,[rbx]

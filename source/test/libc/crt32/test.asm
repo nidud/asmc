@@ -2,7 +2,7 @@
 ; v2.31.35: WATCALL
 
 include stdio.inc
-include crtl.inc
+include stdlib.inc
 
 return equ <.return>
 

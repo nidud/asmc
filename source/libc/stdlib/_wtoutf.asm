@@ -5,7 +5,7 @@
 ;
 ; Convert Wide char to UTF-8
 ;
-; Return EAX 1..4 bytes, ECX byte count
+; Return EAX 1..3 bytes, ECX byte count
 ;
 include stdlib.inc
 

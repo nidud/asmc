@@ -42,47 +42,36 @@ _pioinfo proto fastcall fh:abs {
     imul eax,fh,ioinfo
     add	 rax,__pioinfo
     }
-_osfile proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.osfile>
-    }
-_textmode proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.textmode>
-    }
-
-_osfhnd proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.osfhnd>
-    }
-_pipech proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.pipech>
-    }
-_pipech2 proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.pipech2>
-    }
-_tm_unicode proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.unicode>
-    }
-_startpos proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.startpos>
-    }
-_utf8translations proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.utf8translations>
-    }
-_dbcsBuffer proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.dbcsBuffer>
-    }
-_dbcsBufferUsed proto fastcall fh:abs {
-    _pioinfo(fh)
-    retm <[rax].ioinfo.dbcsBufferUsed>
-    }
+_osfile macro fh
+    exitm <[_pioinfo(fh)].ioinfo.osfile>
+    endm
+_textmode macro fh
+    exitm <[_pioinfo(fh)].ioinfo.textmode>
+    endm
+_osfhnd macro fh
+    exitm <[_pioinfo(fh)].ioinfo.osfhnd>
+    endm
+_pipech macro fh
+    exitm <[_pioinfo(fh)].ioinfo.pipech>
+    endm
+_pipech2 macro fh
+    exitm <[_pioinfo(fh)].ioinfo.pipech2>
+    endm
+_tm_unicode macro fh
+    exitm <[_pioinfo(fh)].ioinfo.unicode>
+    endm
+_startpos macro fh
+    exitm <[_pioinfo(fh)].ioinfo.startpos>
+    endm
+_utf8translations macro fh
+    exitm <[_pioinfo(fh)].ioinfo.utf8translations>
+    endm
+_dbcsBuffer macro fh
+    exitm <[_pioinfo(fh)].ioinfo.dbcsBuffer>
+    endm
+_dbcsBufferUsed macro fh
+    exitm <[_pioinfo(fh)].ioinfo.dbcsBufferUsed>
+    endm
 
 endif
 

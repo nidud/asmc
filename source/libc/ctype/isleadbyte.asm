@@ -28,7 +28,8 @@ _initlead proc private
 
     .new cpInfo:CPINFOEX
 
-    .if GetCPInfoEx(GetACP(), 0, &cpInfo) ; GetConsoleCP()
+     mov ecx,GetACP() ; GetConsoleCP()
+    .if GetCPInfoEx(ecx, 0, &cpInfo)
 
         .if ( cpInfo.MaxCharSize > 1 )
 

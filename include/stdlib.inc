@@ -631,6 +631,7 @@ _xtow_s		proto __cdecl :qword, :wstring_t, :size_t, :uint_t, :int_t
 _xtol		proto __cdecl :string_t
 _xtoi64		proto __cdecl :string_t
 _wtoutf		proto __cdecl :wchar_t
+_utftow		proto __cdecl :string_t
 _pathtow	proto __cdecl :string_t, :ptr wstring_t
 _isexec		proto __cdecl :string_t
 

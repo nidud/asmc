@@ -13,12 +13,10 @@ include macro.inc
 include input.inc
 include lqueue.inc
 include tokenize.inc
+include malloc.inc
 
 public FileCur
 public LineCur
-
-public token_stringbuf
-public commentbuffer
 
 externdef strFILE:sbyte
 
@@ -33,7 +31,6 @@ FILESEQ     equ 0
 
 .data
 
-commentbuffer string_t 0
 FileCur     asym_t 0 ;; @FileCur symbol, created in SymInit()
 LineCur     asym_t 0 ;; @Line symbol, created in SymInit()
 
@@ -66,12 +63,11 @@ endif
 ; the buffer must be a multiple of MAX_LINE_LEN
 
 srclinebuffer string_t 0
+StringBuffer  string_t 0
+CommentBuffer string_t 0
 
 ; string buffer - token strings and other stuff are stored here.
 ; must be a multiple of MAX_LINE_LEN since it is used for string expansion.
-
-token_stringbuf string_t 0 ;; start token string buffer
-
 
 ifdef __UNIX__
 
@@ -701,7 +697,7 @@ GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
 
     .if ( [rbx].type == SIT_FILE )
 
-        .if my_fgets( buffer, ModuleInfo.max_line_len, [rbx].file )
+        .if my_fgets( buffer, MaxLineLength, [rbx].file )
 
             inc [rbx].line_num
            .return( buffer )
@@ -813,104 +809,151 @@ SIZE_STRINGBUFFER equ ( MAX_LINE_LEN * MAX_MACRO_NESTING )
 ; - the source line ( including the comment )
 ; - the token buffer
 ; - the string buffer (used to store token strings)
-; - field Token_Count
+; - field TokenCount
 ; - field line_flags
 
-    assume rsi:ptr input_status
+    assume rbx:ptr input_status
 
-PushInputStatus proc __ccall uses rsi oldstat:ptr input_status
+GetInputState proc __ccall uses rbx p:ptr InputState
 
-    ldr rsi,oldstat
+    ldr     rbx,p
+    mov     eax,MaxLineLength
+    imul    ecx,eax,MAX_MACRO_NESTING + 1  ; SIZE_SRCLINES
+    shr     eax,2                          ; SIZE_TOKENARRAY
+    imul    edx,eax,asm_tok*MAX_MACRO_NESTING
+    add     edx,ecx
+    mov     rax,CurrSource
+    sub     rax,srclinebuffer
+    mov     [rbx].scr_pos,eax
+    mov     rax,StringBufferEnd
+    sub     rax,StringBuffer
+    mov     [rbx].end_off,eax
+    mov     rax,TokenArray
+    sub     rax,srclinebuffer
+    sub     eax,ecx
+    mov     [rbx].arr_pos,eax
+    mov     rax,StringBuffer
+    sub     rax,srclinebuffer
+    sub     eax,edx
+    mov     [rbx].str_pos,eax
+    mov     rax,rbx
+    ret
 
-    mov [rsi].token_stringbuf,token_stringbuf
-    mov [rsi].token_count,Token_Count
-    mov [rsi].currsource,CurrSource
+GetInputState endp
+
+SetInputState proc __ccall p:ptr InputState
+
+    ldr     rbx,p
+    mov     eax,[rbx].scr_pos
+    add     rax,srclinebuffer
+    mov     CurrSource,rax
+    mov     edx,MaxLineLength
+    imul    ecx,edx,MAX_MACRO_NESTING+1
+    mov     eax,[rbx].arr_pos
+    add     eax,ecx
+    add     rax,srclinebuffer
+    mov     TokenArray,rax
+    shr     edx,2
+    imul    eax,edx,asm_tok*MAX_MACRO_NESTING
+    add     eax,ecx
+    add     eax,[rbx].str_pos
+    add     rax,srclinebuffer
+    mov     StringBuffer,rax
+    mov     ecx,[rbx].end_off
+    add     rax,rcx
+    mov     StringBufferEnd,rax
+    mov     rax,rbx
+    ret
+
+SetInputState endp
+
+PushInputStatus proc __ccall uses rbx oldstat:ptr input_status
+
+    ldr rbx,oldstat
+    GetInputState(rbx)
+    mov [rbx].flags,ModuleInfo.line_flags
+    mov [rbx].tok_cnt,TokenCount
 
     ; if there's a comment, attach it to current source
 
-    .if ( ModuleInfo.CurrComment )
+    .if ( CurrComment )
 
         tstrlen( CurrSource )
         add rax,CurrSource
-        mov [rsi].CurrComment,rax
-        tstrcpy( rax, ModuleInfo.CurrComment )
+        mov [rbx].currcomment,rax
+        tstrcpy( rax, CurrComment )
     .else
-        mov [rsi].CurrComment,NULL
+        mov [rbx].currcomment,NULL
     .endif
 
-    mov [rsi].line_flags,ModuleInfo.line_flags ;; v2.08
-    mov token_stringbuf,ModuleInfo.stringbufferend
-
-    mov  eax,Token_Count
+    mov StringBuffer,StringBufferEnd
+    mov  eax,TokenCount
     inc  eax
     imul eax,eax,asm_tok
-    add  ModuleInfo.tokenarray,rax
-
+    add  TokenArray,rax
     tstrlen( CurrSource )
     mov CurrSource,GetAlignedPointer( CurrSource, eax )
-
-   .return( ModuleInfo.tokenarray )
+   .return( TokenArray )
 
 PushInputStatus endp
 
+PopInputStatus proc __ccall uses rbx newstat:ptr input_status
 
-PopInputStatus proc __ccall uses rsi newstat:ptr input_status
+    ldr rbx,newstat
+    SetInputState(rbx)
+    mov ModuleInfo.line_flags,[rbx].flags ; v2.08
+    mov TokenCount,[rbx].tok_cnt
 
-    ldr rsi,newstat
-    mov ModuleInfo.stringbufferend,token_stringbuf
-    mov token_stringbuf,[rsi].token_stringbuf
-    mov Token_Count,[rsi].token_count
-    mov CurrSource,[rsi].currsource
+    .if ( [rbx].currcomment )
 
-    .if ( [rsi].CurrComment )
-
-        mov ModuleInfo.CurrComment,commentbuffer
-        tstrcpy(rax, [rsi].CurrComment)
-        mov rax,[rsi].CurrComment
+        mov CurrComment,CommentBuffer
+        tstrcpy(rax, [rbx].currcomment)
+        mov rax,[rbx].currcomment
         mov byte ptr [rax],0
     .else
-        mov ModuleInfo.CurrComment,NULL
+        mov CurrComment,NULL
     .endif
-
-    mov  eax,Token_Count
-    inc  eax
-    imul eax,eax,asm_tok
-    sub  ModuleInfo.tokenarray,rax
-
-    mov ModuleInfo.line_flags,[rsi].line_flags ; v2.08
     ret
 
 PopInputStatus endp
 
+;
+; Input:
+;   srcline     [MAX_MACRO_NESTING*MAX_LINE_LEN]
+;   comment     [MAX_LINE_LEN]
+;   tokenarray  [asm_tok*(MAX_LINE_LEN/4)*MAX_MACRO_NESTING]
+;   stringbuff  [MAX_MACRO_NESTING*MAX_LINE_LEN]
+;
 
 AllocInput proc __ccall private uses rsi rdi
 
-    mov  eax,ModuleInfo.max_line_len
-    imul esi,eax,MAX_MACRO_NESTING + 1  ; SIZE_SRCLINES
-    imul edx,eax,MAX_MACRO_NESTING      ; SIZE_STRINGBUFFER
-    shr  eax,2                          ; SIZE_TOKENARRAY
-    imul edi,eax,asm_tok * MAX_MACRO_NESTING
-    lea  eax,[rdi+rdx]
-    add  eax,esi
-    mov  srclinebuffer,LclAlloc( eax )
+    mov  eax,MaxLineLength
+    imul rsi,rax,MAX_MACRO_NESTING + 1  ; SIZE_SRCLINES
+    imul rdx,rax,MAX_MACRO_NESTING      ; SIZE_STRINGBUFFER
+
+    shr  rax,2                          ; SIZE_TOKENARRAY
+    imul rdi,rax,asm_tok * MAX_MACRO_NESTING
+    add  rdx,rdi
+    add  rdx,rsi
+    shl  rax,2
+    add  rax,rdx
+    mov  srclinebuffer,MemAlloc( eax )
 
     ; the comment buffer is at the end of the source line buffer
 
     lea rcx,[rax+rsi]
-    mov edx,ModuleInfo.max_line_len
+    mov edx,MaxLineLength
     sub rcx,rdx
-    mov commentbuffer,rcx
+    mov CommentBuffer,rcx
 
     ; behind the comment buffer is the token buffer
 
     lea rcx,[rax+rsi]
-    mov ModuleInfo.tokenarray,rcx
-
-    lea rax,[rcx+rdi]
-    mov rcx,token_stringbuf
-    mov token_stringbuf,rax
-    sub ModuleInfo.stringbufferend,rcx
-    add ModuleInfo.stringbufferend,rax
+    mov TokenArray,rcx
+    add rdi,rcx
+    mov StringBuffer,rdi
+    mov StringBufferEnd,rdi
+    mov StringBufferEnd,rdi
     ret
 
 AllocInput endp
@@ -926,7 +969,7 @@ InputInit proc __ccall uses rsi
 if FILESEQ
     mov FileSeq.head,NULL
 endif
-    mov ModuleInfo.max_line_len,MAX_LINE_LEN
+    mov MaxLineLength,MAX_LINE_LEN
 
     AllocInput()
 
@@ -949,7 +992,7 @@ InputPassInit proc __ccall
     mov [rax].src_item.line_num,0
     mov CurrSource,srclinebuffer
     mov byte ptr [rax],0
-    mov ModuleInfo.stringbufferend,token_stringbuf
+    mov StringBufferEnd,StringBuffer
     ret
 
 InputPassInit endp
@@ -960,19 +1003,22 @@ InputPassInit endp
 InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
 
   .new index:int_t
-  .new oldsrcline:ptr
-  .new oldstrings:ptr
-  .new oldtok:token_t = ModuleInfo.tokenarray
-  .new oldsize:uint_t = ModuleInfo.max_line_len
+  .new oldsrcline:ptr = srclinebuffer
+  .new oldstrings:ptr = StringBuffer
+  .new oldend:ptr     = StringBufferEnd
+  .new oldtok:token_t = TokenArray
+  .new oldsize:uint_t = MaxLineLength
 
-    add ModuleInfo.max_line_len,eax
-    mov oldstrings,token_stringbuf
-    mov oldsrcline,srclinebuffer
+    .if ( eax > _HEAP_GROWSIZE )
+        mov eax,_HEAP_GROWSIZE
+    .endif
+    add MaxLineLength,eax
 
+    mov rax,srclinebuffer
     ldr rsi,p
     .if ( [rsi].start != rax )
 
-        mov rbx,LclAlloc( ModuleInfo.max_line_len )
+        mov rbx,LclAlloc( MaxLineLength )
         mov rdx,[rsi].start
         sub [rsi].input,rdx
         add [rsi].input,rbx
@@ -995,12 +1041,15 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
 
     imul ecx,ebx,MAX_MACRO_NESTING + 1
     rep  movsb
-    mov  rdi,ModuleInfo.tokenarray
+    mov  rdi,TokenArray
     mov  eax,ebx
     shr  eax,2
     imul ecx,eax,asm_tok * MAX_MACRO_NESTING
     rep  movsb
-    mov  rdi,token_stringbuf
+    mov  rdi,StringBuffer
+    mov  rax,oldend
+    sub  rax,oldstrings
+    add  StringBufferEnd,rax
     imul ecx,ebx,MAX_MACRO_NESTING
     rep  movsb
 
@@ -1008,7 +1057,7 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
     mov rax,[rsi].outbuf
     .if ( rax == oldstrings )
         sub [rsi].output,rax
-        mov [rsi].outbuf,token_stringbuf
+        mov [rsi].outbuf,StringBuffer
         add [rsi].output,rax
     .endif
 
@@ -1021,14 +1070,15 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
 
     .if ( oldtok == [rsi].tokenarray )
 
-        mov rdx,ModuleInfo.tokenarray
+        mov rdx,TokenArray
         mov [rsi].tokenarray,rdx
         mov index,[rsi].index
         mov rdi,srclinebuffer
         sub rdi,oldsrcline
-        mov rsi,token_stringbuf
+        mov rsi,StringBuffer
         mov rax,oldstrings
         sub rsi,rax
+        imul ebx,ebx,MAX_MACRO_NESTING+1
         add rbx,rax
 
         assume rdx:ptr asm_tok
@@ -1040,6 +1090,7 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
                 add [rdx].string_ptr,rsi
             .endif
         .endf
+        MemFree( oldsrcline )
     .endif
     .return( TRUE )
 
@@ -1054,11 +1105,16 @@ InputFini proc __ccall
 
         MemFree( ModuleInfo.IncludePath )
     .endif
+    .if srclinebuffer
+
+        MemFree( srclinebuffer )
+        mov srclinebuffer,NULL
+    .endif
 
     ; free items in ModuleInfo.g.FNames ( and FreeFile, if FASTMEM==0 )
 
     FreeFiles()
-    mov ModuleInfo.tokenarray,NULL
+    mov TokenArray,NULL
     ret
 
 InputFini endp

@@ -24,7 +24,6 @@ define MAX_CASE_ALIGN 16
 ifndef ASMC64
 extern sym_Interface:ptr asym
 endif
-extern token_stringbuf:ptr
 
 UpdateStackBase  proto fastcall :ptr asym, :ptr
 UpdateProcStatus proto fastcall :ptr asym, :ptr
@@ -80,7 +79,7 @@ SetAlignment proc __ccall private i:ptr int_t, tokenarray:ptr asm_tok, max:int_t
 
   local opnd:expr
 
-    .ifd ( EvalOperand( i, tokenarray, Token_Count, &opnd, EXPF_NOUNDEF ) == ERROR )
+    .ifd ( EvalOperand( i, tokenarray, TokenCount, &opnd, EXPF_NOUNDEF ) == ERROR )
         .return
     .endif
     .if ( opnd.kind != EXPR_CONST )
@@ -457,7 +456,7 @@ endif
             .endif
             inc i
         .case OP_ELF
-            .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value > 0xFF )
                     .return( EmitConstError( &opnd ) )
@@ -499,7 +498,7 @@ endif
                 .endc
             .endif
             .if ( [rbx].token == T_NUM )
-                .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+                .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
                 .if ( opnd.kind == EXPR_CONST )
                     .if ( opnd.uvalue & ( not W64F_ALL ) )
                         .return( EmitConstError( &opnd ) )
@@ -585,7 +584,7 @@ endif
             .endif
             inc i
         .case OP_CODEVIEW
-            .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 mov ModuleInfo.cv_opt,opnd.value
             .else
@@ -647,7 +646,7 @@ endif
             .endif
             inc i
         .case OP_CODEPAGE ;; <value>
-            .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value > 0xFFFF )
                     .return( EmitConstError( &opnd ) )
@@ -670,7 +669,7 @@ endif
             .endif
             inc i
         .case OP_FLOAT ; : <value>
-            .return .if ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .return .if ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value != 4 && opnd.value != 8 )
                     .return( EmitConstError( &opnd ) )
@@ -680,7 +679,7 @@ endif
                 .return( asmerr( 2026 ) )
             .endif
         .case OP_FLOATDIGITS ; : <value>
-            .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value > 0xFF )
                     .return( EmitConstError( &opnd ) )
@@ -690,26 +689,26 @@ endif
                 .return( asmerr( 2026 ) )
             .endif
         .case OP_LINESIZE ; : <value>
-            .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value > 0xFFFF )
                     .return( EmitConstError( &opnd ) )
                 .endif
-                mov p.input,ModuleInfo.currsource
+                mov p.input,CurrSource
                 mov p.start,rax
-                mov p.tokenarray,ModuleInfo.tokenarray
-                mov p.outbuf,token_stringbuf
+                mov p.tokenarray,TokenArray
+                mov p.outbuf,StringBuffer
                 mov p.output,rax
                 mov p.index,0
-                mov esi,ModuleInfo.max_line_len
+                mov esi,MaxLineLength
                 .while ( esi < opnd.value )
                     .ifd ( InputExtend( &p ) == 0 )
                         .return( asmerr( 1009 ) )
                     .endif
-                    .if ( esi == ModuleInfo.max_line_len )
+                    .if ( esi == MaxLineLength )
                         .return( asmerr( 1901 ) )
                     .endif
-                    mov esi,ModuleInfo.max_line_len
+                    mov esi,MaxLineLength
                 .endw
             .else
                 .return( asmerr( 2026 ) )

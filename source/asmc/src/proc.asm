@@ -257,7 +257,7 @@ LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; but will prevent the expression evaluator from emitting
             ; confusing error messages.
 
-            .for ( ecx = i, rdx = rbx: ecx < Token_Count: ecx++, rdx += asm_tok )
+            .for ( ecx = i, rdx = rbx: ecx < TokenCount: ecx++, rdx += asm_tok )
                 .break .if ( [rdx].asm_tok.token == T_COMMA || [rdx].asm_tok.token == T_COLON )
             .endf
             .return .ifd ( EvalOperand( &i, tokenarray, ecx, &opndx, 0 ) == ERROR )
@@ -321,7 +321,7 @@ LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( [rbx].token == T_COMMA )
                 mov eax,i
                 inc eax
-                .if ( eax < Token_Count )
+                .if ( eax < TokenCount )
                     inc i
                     add rbx,asm_tok
                 .endif
@@ -329,7 +329,7 @@ LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .return( asmerr( 2065, "," ) )
             .endif
         .endif
-    .until ( i >= Token_Count )
+    .until ( i >= TokenCount )
     .return( NOT_ERROR )
 
 LocalDir endp
@@ -1097,7 +1097,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
 
     .if ( IsPROC && [rbx].token == T_STRING && [rbx].string_delim == '<' )
 
-        mov edi,Token_Count
+        mov edi,TokenCount
         inc edi
 
         .new max:int_t
@@ -1304,7 +1304,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
     .endif
 
     mov rdi,p
-    .if ( i >= Token_Count || ( [rbx].token == T_STRING && [rbx].string_delim == '{' ) )
+    .if ( i >= TokenCount || ( [rbx].token == T_STRING && [rbx].string_delim == '{' ) )
 
         ; procedure has no parameters at all
 
@@ -1321,7 +1321,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
 
         ; v2.05: set PROC's vararg flag BEFORE params are scanned!
 
-        mov ebx,Token_Count ; v2.31: proto :vararg {
+        mov ebx,TokenCount ; v2.31: proto :vararg {
         dec ebx
         mov rbx,tokenarray.tokptr(ebx)
 
@@ -2072,7 +2072,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .switch ( token )
     .case T_DOT_ALLOCSTACK ; syntax: .ALLOCSTACK size
-        .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
+        .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
 
         mov rbx,tokenarray.tokptr(i)
         mov rcx,opndx.sym
@@ -2201,7 +2201,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .return( asmerr(2008, [rbx].string_ptr ) )
         .endif
         inc i
-        .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
+        .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
 
         mov rbx,tokenarray.tokptr(i)
         mov rcx,opndx.sym
@@ -2403,13 +2403,13 @@ write_userdef_prologue proc __ccall private uses rsi rdi rbx tokenarray:ptr asm_
     tsprintf( &buffer," (%s, 0%XH, 0%XH, 0%XH, <<%s>>, <%s>)",
              [rdi].asym.name, flags, [rsi].parasize, [rsi].localsize, &reglst, rcx )
 
-    mov ebx,Token_Count
+    mov ebx,TokenCount
     inc ebx
-    mov Token_Count,Tokenize( &buffer, ebx, tokenarray, TOK_RESCAN )
+    mov TokenCount,Tokenize( &buffer, ebx, tokenarray, TOK_RESCAN )
 
     RunMacro( dir, ebx, tokenarray, &buffer, 0, &is_exitm )
     dec ebx
-    mov Token_Count,ebx
+    mov TokenCount,ebx
 
     .if ( Parse_Pass == PASS_1 )
 
@@ -3217,7 +3217,7 @@ runqueue:
                     mov edx,T_MOV
                     mov al,[rdi].asym.mem_type
                     .if ( al == MT_TYPE )
-                        
+
                         mov rcx,[rdi].asym.type
                         mov al,[rcx].asym.mem_type
                     .endif
@@ -4149,7 +4149,7 @@ write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, to
     tsprintf( &buffer,"%s, 0%XH, 0%XH, 0%XH, <<%s>>, <%s>",
             [rdi].asym.name, flags, [rsi].parasize, [rsi].localsize, &reglst, rcx )
 
-    mov ecx,Token_Count
+    mov ecx,TokenCount
     inc ecx
     mov i,ecx
     Tokenize( &buffer, i, tokenarray, TOK_RESCAN )
@@ -4163,7 +4163,7 @@ write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, to
     RunMacro( dir, i, tokenarray, NULL, 0, &is_exitm )
     mov eax,i
     dec eax
-    mov Token_Count,eax
+    mov TokenCount,eax
    .return( NOT_ERROR )
 
 write_userdef_epilogue endp
@@ -4171,7 +4171,7 @@ write_userdef_epilogue endp
 
 ;
 ; a RET <nnnn> or IRET/IRETD has occured inside a PROC.
-; count = number of tokens in buffer (=Token_Count)
+; count = number of tokens in buffer (=TokenCount)
 ; it's ensured already that ModuleInfo.proc_epilogue isn't NULL.
 ;
 

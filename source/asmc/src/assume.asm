@@ -335,7 +335,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     imul ebx,i,asm_tok
     add rbx,tokenarray
 
-    .for ( : i < Token_Count : i++, rbx += asm_tok )
+    .for ( : i < TokenCount : i++, rbx += asm_tok )
 
         .if ( [rbx].token == T_ID )
             .ifd !tstricmp( [rbx].string_ptr, &szNothing )
@@ -483,7 +483,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
 
             ; v2.08: read expression with standard evaluator
-            .return .ifd EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR
+            .return .ifd EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR
             mov rsi,opnd.sym
 
             .switch ( opnd.kind )
@@ -539,10 +539,10 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         imul ebx,i,asm_tok
         add rbx,tokenarray
 
-        .break .if ( i < Token_Count && [rbx].token != T_COMMA )
+        .break .if ( i < TokenCount && [rbx].token != T_COMMA )
     .endf
 
-    .if ( i < Token_Count )
+    .if ( i < TokenCount )
 
         imul ebx,i,asm_tok
         add rbx,tokenarray

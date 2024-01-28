@@ -354,7 +354,7 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
     ;
     ; first argument has to be class::operator
     ;
-    mov rdx,ModuleInfo.tokenarray
+    mov rdx,TokenArray
     .if ( [rdx].asm_tok.token != T_ID ||
           [rdx+asm_tok].asm_tok.token != T_DIRECTIVE ||
           [rdx+asm_tok].asm_tok.tokval != T_EQU )

@@ -377,7 +377,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( [rbx].token == T_COMMA )
                 mov eax,i
                 inc eax
-                .if ( eax < Token_Count )
+                .if ( eax < TokenCount )
                     inc i
                     add rbx,asm_tok
                 .endif
@@ -385,7 +385,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .return( asmerr( 2008, [rbx].tokpos ) )
             .endif
         .endif
-    .until ( i >= Token_Count )
+    .until ( i >= TokenCount )
 
     .return( NOT_ERROR )
 
@@ -722,14 +722,14 @@ endif
         .if ( [rbx].token != T_FINAL )
             mov ecx,i
             inc ecx
-            .if ( [rbx].token == T_COMMA &&  ( ecx < Token_Count ) )
+            .if ( [rbx].token == T_COMMA &&  ( ecx < TokenCount ) )
                 inc i
             .else
                 .return( asmerr( 2008, [rbx].string_ptr ) )
             .endif
         .endif
 
-     .until ( i >= Token_Count )
+     .until ( i >= TokenCount )
 
     .return( NOT_ERROR )
 
@@ -790,7 +790,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     inc i ; skip COMM token
 
-    .for ( : i < Token_Count: i++ )
+    .for ( : i < TokenCount: i++ )
 
         ; get the symbol language type if present
 
@@ -850,7 +850,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; the evaluator cannot handle a ':' so scan for one first
 
-        .for ( ecx = i, rdx = rbx: ecx < Token_Count: ecx++, rdx += asm_tok )
+        .for ( ecx = i, rdx = rbx: ecx < TokenCount: ecx++, rdx += asm_tok )
             .break .if ( [rdx].asm_tok.token == T_COLON )
         .endf
 
@@ -889,7 +889,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; get optional count argument
             ; v2.10: expression evaluator isn't to accept forward references
 
-            .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR )
+            .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
                 .return( ERROR )
             .endif
 
@@ -1024,7 +1024,7 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( [rbx].token == T_COMMA )
                 mov ecx,i
                 inc ecx
-                .if ( ecx < Token_Count )
+                .if ( ecx < TokenCount )
                     inc i
                 .endif
             .else
@@ -1032,7 +1032,7 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
 
-    .until ( i >= Token_Count )
+    .until ( i >= TokenCount )
     .return( NOT_ERROR )
 
 PublicDirective endp

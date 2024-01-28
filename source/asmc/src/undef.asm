@@ -41,7 +41,7 @@ UndefDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
         inc esi
         add rbx,asm_tok
 
-        .if ( esi < Token_Count )
+        .if ( esi < TokenCount )
 
             .if ( [rbx].token != T_COMMA || [rbx+asm_tok].token == T_FINAL )
 
@@ -52,7 +52,7 @@ UndefDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
             add rbx,asm_tok
 
         .endif
-    .until ( esi >= Token_Count )
+    .until ( esi >= TokenCount )
     .return( NOT_ERROR )
 
 UndefDirective endp

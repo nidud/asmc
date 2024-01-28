@@ -20,8 +20,6 @@ include fastpass.inc
 
 define B <byte ptr>
 
-externdef token_stringbuf:ptr
-externdef commentbuffer:ptr
 externdef CurrEnum:asym_t
 
 .data
@@ -141,14 +139,14 @@ ConcatLine proc __ccall uses rsi rdi rbx src:string_t, cnt:int_t, o:string_t, ls
     sub rcx,[rbx].start
     add ecx,eax
 
-    .if ( ecx >= ModuleInfo.max_line_len  )
+    .if ( ecx >= MaxLineLength  )
 
         asmerr( 2039 )
 
         mov rcx,rsi
         sub rcx,[rbx].start
         inc ecx
-        mov eax,ModuleInfo.max_line_len
+        mov eax,MaxLineLength
         sub eax,ecx
         mov byte ptr [rdi+rax],0
     .endif
@@ -190,7 +188,7 @@ get_string proc fastcall uses rsi rdi rbx buf:ptr asm_tok, _p:ptr line_status
       .case '"'
       .case 27h
 
-        mov ecx,ModuleInfo.max_line_len
+        mov ecx,MaxLineLength
         sub ecx,32
         mov maxlen,ecx
         xor ecx,ecx
@@ -218,7 +216,7 @@ get_string proc fastcall uses rsi rdi rbx buf:ptr asm_tok, _p:ptr line_status
 
                     ; case \\"
                     ; case \\\"
-                    
+
                     stosb
                     inc rsi
                     inc ecx
@@ -280,7 +278,7 @@ get_string proc fastcall uses rsi rdi rbx buf:ptr asm_tok, _p:ptr line_status
 
 continue:
 
-        mov eax,ModuleInfo.max_line_len
+        mov eax,MaxLineLength
         sub eax,32
         mov maxlen,eax
         dec eax
@@ -433,7 +431,7 @@ continue:
 
                             tstrlen(rdi)
                             add eax,tcount
-                            .if ( eax >= ModuleInfo.max_line_len )
+                            .if ( eax >= MaxLineLength )
 
                                 mov rdx,p
                                 sub rsi,[rdx].input
@@ -481,7 +479,7 @@ continue:
       .default
        default:
 
-        mov eax,ModuleInfo.max_line_len
+        mov eax,MaxLineLength
         sub eax,32
         mov maxlen,eax
         dec eax
@@ -1548,7 +1546,7 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
     mov p.input,line
     mov p.start,rax
     mov p.tokenarray,tokenarray
-    mov p.outbuf,token_stringbuf
+    mov p.outbuf,StringBuffer
     mov p.flags,flags
     mov p.index,start
     mov p.flags2,0
@@ -1560,7 +1558,7 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
 
         .if ( start == 0 )
 
-            mov p.output,token_stringbuf
+            mov p.output,StringBuffer
             .if ( ModuleInfo.inside_comment )
 
                 .if tstrchr( p.start, ModuleInfo.inside_comment )
@@ -1571,7 +1569,7 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
             .endif
         .else
 
-            mov p.output,ModuleInfo.stringbufferend
+            mov p.output,StringBufferEnd
         .endif
 
         .while 1
@@ -1591,7 +1589,7 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
                 .endw
 
                 mov p.input,rsi
-                mov ModuleInfo.CurrComment,tstrcpy( commentbuffer, rsi )
+                mov CurrComment,tstrcpy( CommentBuffer, rsi )
                 mov B[rsi],0
             .endif
 
@@ -1619,8 +1617,10 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
 
                                 tstrcpy( p.input, rdi )
                                 tstrlen( p.start )
+                                mov ecx,MaxLineLength
+                                sub ecx,32
 
-                                .if ( eax >= ModuleInfo.max_line_len )
+                                .if ( eax >= ecx )
 
                                     .if ( InputExtend( &p ) == 0 )
 
@@ -1637,6 +1637,8 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
                 .break
             .endif
 
+            imul ebx,p.index,asm_tok
+            add rbx,p.tokenarray
             mov [rbx].string_ptr,p.output
             mov rc,GetToken( rbx, &p )
 
@@ -1747,10 +1749,10 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
             .endif
 
             inc p.index
-            mov eax,ModuleInfo.max_line_len
+            mov eax,MaxLineLength
             shr eax,2
 
-            .if ( p.index >= eax ) ; MAX_TOKEN
+            .ifs ( p.index >= eax ) ; MAX_TOKEN
 
                 dec p.index
                 .if ( InputExtend( &p ) == FALSE )
@@ -1763,20 +1765,20 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
             .endif
 
             mov rax,p.output
-            sub rax,token_stringbuf
+            sub rax,StringBuffer
             add rax,size_t
             and rax,-size_t
-            add rax,token_stringbuf
+            add rax,StringBuffer
             mov p.output,rax
         .endw
 
         mov rax,p.output
-        sub rax,token_stringbuf
+        sub rax,StringBuffer
         add rax,size_t
         and rax,-size_t
-        add rax,token_stringbuf
+        add rax,StringBuffer
         mov p.output,rax
-        mov ModuleInfo.stringbufferend,rax
+        mov StringBufferEnd,rax
 
         .break .if ( !p.brachets )
         .break .if ( flags == TOK_RESCAN )

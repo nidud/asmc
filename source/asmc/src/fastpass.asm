@@ -20,10 +20,9 @@ include string.inc
 include malloc.inc
 
 include asmc.inc
-include fastpass.inc
 include memalloc.inc
 include listing.inc
-include input.inc
+include fastpass.inc
 include segment.inc
 
 ;
@@ -60,6 +59,7 @@ SaveState proc __ccall private uses rsi rdi
     lea rsi,ModuleInfo.proc_prologue
     lea rdi,modstate.modinfo
     rep movsb
+    GetInputState(&modstate.state)
     SegmentSaveState()
     AssumeSaveState()
     ContextSaveState()  ; save pushcontext/popcontext stack
@@ -82,8 +82,8 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t, flags:int_t, lst_positio
         .endif
         mov ebx,tstrlen(sline)
         xor eax,eax
-        .if ( flags == 1 && ModuleInfo.CurrComment != rax )
-            tstrlen( ModuleInfo.CurrComment )
+        .if ( flags == 1 && CurrComment != rax )
+            tstrlen( CurrComment )
         .endif
         mov edi,eax
         LclAlloc( &[rax+rbx+line_item] )
@@ -107,7 +107,7 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t, flags:int_t, lst_positio
             tmemcpy( &[rsi].line_item.line, sline, ebx )
             inc edi
             add rax,rbx
-            tmemcpy( rax, ModuleInfo.CurrComment, edi )
+            tmemcpy( rax, CurrComment, edi )
         .else
             inc ebx
             tmemcpy( &[rsi].line_item.line, sline, ebx )
@@ -226,6 +226,7 @@ RestoreState proc
         and     al,OPT_LSTRING
         or      ModuleInfo.xflag,al
 
+        SetInputState(&modstate.state)
         SetOfssize()
         SymSetCmpFunc()
     .endif

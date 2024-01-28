@@ -142,22 +142,22 @@ InitializeArray proc __ccall uses rsi rdi rbx f:ptr sfield, pi:ptr int_t, tokena
 
         mov rcx,pi
         inc dword ptr [rcx]
-        mov old_tokencount,Token_Count
+        mov old_tokencount,TokenCount
         inc eax
         mov j,eax
 
         ; if the string is empty, use the default initializer
 
         .if ( [rbx].stringlen == 0 )
-            mov Token_Count,Tokenize( &[rdi].ivalue, j, tokenarray, TOK_RESCAN )
+            mov TokenCount,Tokenize( &[rdi].ivalue, j, tokenarray, TOK_RESCAN )
         .else
-            mov Token_Count,Tokenize( [rbx].string_ptr, j, tokenarray, TOK_RESCAN )
+            mov TokenCount,Tokenize( [rbx].string_ptr, j, tokenarray, TOK_RESCAN )
         .endif
         movzx ecx,[rdi].mem_type
         and ecx,MT_FLOAT
         mov rc,data_item( &j, tokenarray, NULL, no_of_bytes, [rdi].type, 1,
-                FALSE, ecx, FALSE, Token_Count )
-        mov Token_Count,old_tokencount
+                FALSE, ecx, FALSE, TokenCount )
+        mov TokenCount,old_tokencount
     .endif
 
     ; get size of array items
@@ -211,7 +211,7 @@ InitializeArray endp
 ; since v2.09, it calls data_item() directly.
 ;
 ; Since this function may be reentered, it's necessary to save/restore
-; global variable Token_Count.
+; global variable TokenCount.
 
 InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_tok,
         symtype:ptr dsym, embedded:ptr asym
@@ -220,11 +220,15 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
    .new i:int_t
    .new j:int_t
    .new no_of_bytes:int_t
-   .new old_tokencount:int_t = Token_Count
-   .new old_stringbufferend:string_t = StringBufferEnd
+   .new oldcnt:int_t = TokenCount
+   .new oldend:string_t
    .new dwRecInit:uint_64
    .new is_record_set:int_t
    .new opndx:expr
+
+    mov rax,StringBufferEnd
+    sub rax,StringBuffer
+    mov oldend,rax
 
     imul ebx,index,asm_tok
     add rbx,tokenarray
@@ -237,17 +241,17 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
         .if ( [rbx].string_delim != '<' && [rbx].string_delim != '{' )
             .return( asmerr( 2045 ) )
         .endif
-        mov eax,Token_Count
+        mov eax,TokenCount
         inc eax
         mov i,eax
 
-        mov Token_Count,Tokenize( [rbx].string_ptr, i, tokenarray, TOK_RESCAN )
+        mov TokenCount,Tokenize( [rbx].string_ptr, i, tokenarray, TOK_RESCAN )
 
-        ; once Token_Count has been modified, don't exit without
+        ; once TokenCount has been modified, don't exit without
         ; restoring this value!
 
     .elseif ( rsi && ( [rbx].token == T_COMMA || [rbx].token == T_FINAL ) )
-        mov i,Token_Count
+        mov i,TokenCount
     .else
         .return( AsmerrSymName( 2181, rsi ) )
     .endif
@@ -272,7 +276,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
         .if ( [rdi].mem_type == MT_BITS )
             .if ( [rbx].token == T_COMMA || [rbx].token == T_FINAL )
                 .if ( [rdi].ivalue[0] && [rdi].ivalue[0] != ':' )
-                    mov j,Token_Count
+                    mov j,TokenCount
                     inc j
                     mov ecx,Tokenize( &[rdi].ivalue, j, tokenarray, TOK_RESCAN )
                     EvalOperand( &j, tokenarray, ecx, &opndx, 0 )
@@ -283,7 +287,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
                     mov opndx.quoted_string,NULL
                 .endif
             .else
-                EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 )
+                EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 )
                 mov is_record_set,TRUE
             .endif
             .if ( opndx.kind != EXPR_CONST || opndx.quoted_string != NULL )
@@ -351,15 +355,15 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
 
             .if ( [rbx].token == T_FINAL || [rbx].token == T_COMMA )
 
-               .new token:int_t = Token_Count
+               .new token:int_t = TokenCount
                 inc eax
                 mov j,eax
-                mov Token_Count,Tokenize( &[rdi].ivalue, eax, tokenarray, TOK_RESCAN )
+                mov TokenCount,Tokenize( &[rdi].ivalue, eax, tokenarray, TOK_RESCAN )
                 mov cl,[rdi].mem_type
                 and ecx,MT_FLOAT
                 data_item( &j, tokenarray, NULL, no_of_bytes, [rdi].type, 1,
-                    FALSE, ecx, FALSE, Token_Count )
-                mov Token_Count,token
+                    FALSE, ecx, FALSE, TokenCount )
+                mov TokenCount,token
 
             .else
 
@@ -460,8 +464,10 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
 
     ; restore token status
 
-    mov Token_Count,old_tokencount
-    mov StringBufferEnd,old_stringbufferend
+    mov TokenCount,oldcnt
+    mov rax,oldend
+    add rax,StringBuffer
+    mov StringBufferEnd,rax
    .return( NOT_ERROR )
 
 InitStructuredVar endp
@@ -1622,7 +1628,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
     cmp rcx,CurrStruct
     setnz cl
     .ifd ( data_item( &i, tokenarray, rsi, no_of_bytes, type_sym, 1, ecx,
-            is_float, TRUE, Token_Count ) == ERROR )
+            is_float, TRUE, TokenCount ) == ERROR )
         .return
     .endif
 

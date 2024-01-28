@@ -194,7 +194,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
 
         ; v2.06: don't handle forward refs if -Zne is set
 
-        .ifd ( EvalOperand( &j, tokenarray, Token_Count, &opnd, ModuleInfo.invoke_exprparm ) == ERROR )
+        .ifd ( EvalOperand( &j, tokenarray, TokenCount, &opnd, ModuleInfo.invoke_exprparm ) == ERROR )
             .return
         .endif
 
@@ -403,7 +403,7 @@ endif
 
         .else
 
-            .return .ifd EvalOperand( &j, tokenarray, Token_Count, &opnd,
+            .return .ifd EvalOperand( &j, tokenarray, TokenCount, &opnd,
                             ModuleInfo.invoke_exprparm ) == ERROR
 
             imul ebx,j,asm_tok
@@ -1372,7 +1372,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             QueueTestLines( &buffer )
             RunLineQueue()
             mov rbx,tokenarray
-            .if ( [rbx].tokval == T_INVOKE && [rbx+asm_tok].token == T_REG && Token_Count == 2 )
+            .if ( [rbx].tokval == T_INVOKE && [rbx+asm_tok].token == T_REG && TokenCount == 2 )
                 .return NOT_ERROR
             .endif
         .endw
@@ -1388,7 +1388,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .if ( [rbx].token != T_ID || ( [rbx+asm_tok].token != T_COMMA && [rbx+asm_tok].token != T_FINAL ) )
 
-        .return .ifd EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR
+        .return .ifd EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR
 
         mov rsi,opnd.type
         .if ( rsi != NULL && [rsi].state == SYM_TYPE )
@@ -1514,7 +1514,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                     and [rdi].asym.flags,not S_VPARRAY
 
-                    mov  ecx,Token_Count
+                    mov  ecx,TokenCount
                     dec  ecx
                     imul edx,ecx,asm_tok
                     add  rdx,tokenarray
@@ -1529,7 +1529,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                         lea rax,[rdx+asm_tok]
                         mov struct_ptr,rax
                         mov [rdx].asm_tok.token,T_FINAL
-                        mov Token_Count,ecx
+                        mov TokenCount,ecx
                     .endif
                 .endif
             .endif
@@ -1591,7 +1591,7 @@ endif
     .else
 
        .new k:int_t
-        mov eax,Token_Count
+        mov eax,TokenCount
         sub eax,i
         shr eax,1
         mov k,eax

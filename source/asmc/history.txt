@@ -18,6 +18,7 @@ Changes in 2.35 - xx xxx 2022
 - added switch -Z7 - Add full symbolic debug info (-Zi38)
 - fixed bug(s) in debug info - struct members > 0x8000 failed
 - fixed bug in string input - "\\\"" failed
+- fixed bug in dynamic line size extension
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

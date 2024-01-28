@@ -150,7 +150,7 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
            .break
         .endsw
 
-        .for ( eax = 0, ecx = 1: ecx < Token_Count: ecx++ )
+        .for ( eax = 0, ecx = 1: ecx < TokenCount: ecx++ )
 
             imul esi,ecx,asm_tok
             add rsi,rbx
@@ -322,7 +322,7 @@ RenderAssignment proc __ccall private uses rsi rdi rbx dest:ptr sbyte,
         mov rbx,rcx ; next expression
         mov rdi,rdx ; this expression
         Tokenize( tstrcpy( &tokbuf, rdi ), 0, tokenarray, TOK_DEFAULT )
-        mov Token_Count,eax
+        mov TokenCount,eax
 
         .break .ifd ExpandHllProc( rsi, 0, tokenarray ) == ERROR
 
@@ -491,7 +491,7 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov q,rcx
             mov rdi,rdx
             Tokenize( tstrcat( tstrcpy(&tokbuf, ".if " ), rdi ), 0, tokenarray, TOK_DEFAULT )
-            mov ModuleInfo.token_count,eax
+            mov TokenCount,eax
 
             mov i,1
             EvaluateHllExpression( rsi, &i, tokenarray, LEXIT, 0, rbx )

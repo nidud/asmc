@@ -264,7 +264,7 @@ if LABELARRAY
        .new opnd:expr
         inc i
 
-        .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+        .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .return
         .endif
 

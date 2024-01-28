@@ -188,11 +188,11 @@ if USELSLINE
             ; (see assemble.asm, OnePass())
 
             mov pSrcline,&[rcx].line_item.line
-            .if ( ModuleInfo.CurrComment ) ; if comment was removed, readd it!
+            .if ( CurrComment ) ; if comment was removed, readd it!
 
                 mov rbx,rax
                 mov byte ptr [rbx+tstrlen(rax)],';'
-                mov ModuleInfo.CurrComment,NULL
+                mov CurrComment,NULL
             .endif
 endif
         .endif
@@ -347,7 +347,7 @@ endif
     .default ; LSTTYPE_MACRO
         mov rcx,pSrcline
         mov dl,[rcx]
-        .if ( dl == 0 && ModuleInfo.CurrComment == NULL && srcfile == ModuleInfo.srcfile )
+        .if ( dl == 0 && CurrComment == NULL && srcfile == ModuleInfo.srcfile )
             fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
             add list_pos,NLSIZ
             .return
@@ -370,8 +370,8 @@ endif
 
     mov len,tstrlen( pSrcline )
     mov len2,0
-    .if ( ModuleInfo.CurrComment )
-        mov len2,tstrlen( ModuleInfo.CurrComment )
+    .if ( CurrComment )
+        mov len2,tstrlen( CurrComment )
     .endif
     mov eax,len2
     add eax,len
@@ -383,7 +383,7 @@ endif
         fwrite( pSrcline, 1, len, CurrFile[LST*size_t] )
     .endif
     .if ( len2 )
-        fwrite( ModuleInfo.CurrComment, 1, len2, CurrFile[LST*size_t] )
+        fwrite( CurrComment, 1, len2, CurrFile[LST*size_t] )
     .endif
     fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
 
@@ -1541,7 +1541,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
     .case T_DOT_NOCREF
     .case T_DOT_XCREF
 
-        .if ( esi == Token_Count )
+        .if ( esi == TokenCount )
             mov ModuleInfo.cref,FALSE
             .endc
         .endif
@@ -1562,7 +1562,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
             inc esi
             add rbx,asm_tok
 
-            .if ( esi < Token_Count )
+            .if ( esi < TokenCount )
 
                 .if ( [rbx].token != T_COMMA )
                     .return( asmerr( 2008, [rbx].tokpos ) )
@@ -1570,7 +1570,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
                 ; if there's nothing after the comma, don't increment
 
-                mov ecx,Token_Count
+                mov ecx,TokenCount
                 dec ecx
                 .if ( esi < ecx )
 
@@ -1579,7 +1579,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
 
-        .until !( esi < Token_Count )
+        .until !( esi < TokenCount )
         .endc
 
     .case T_DOT_LISTALL ; list false conditionals and generated code

@@ -357,8 +357,6 @@ store_placeholders endp
     assume rdi:ptr macro_info
     assume rbx:token_t
 
-externdef token_stringbuf:ptr
-
 StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t, store_data:int_t
 
    .new info:ptr macro_info
@@ -375,15 +373,15 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
    .new final:token_t
 
     mov ls.tokenarray,tokenarray
-    mov ls.outbuf,token_stringbuf
-    mov ls.start,alloca( ModuleInfo.max_line_len )
+    mov ls.outbuf,StringBuffer
+    mov ls.start,MemAlloc( MaxLineLength )
 
     mov  rsi,mac
     mov  rdi,[rsi].macroinfo
     mov  info,rdi
     imul ebx,i,asm_tok
     add  rbx,tokenarray
-    imul eax,Token_Count,asm_tok
+    imul eax,TokenCount,asm_tok
     add  rax,tokenarray
     mov  final,rax
 
@@ -793,6 +791,7 @@ endif
     mov rdx,mac
     or  [rdx].asym.flags,S_ISDEFINED
     and [rdx].asym.mac_flag,not M_PURGED
+    MemFree(ls.start)
    .return( NOT_ERROR )
 
 StoreMacro endp
@@ -1060,13 +1059,13 @@ else
 endif
         inc i
         add rbx,asm_tok
-        .if i < Token_Count
+        .if i < TokenCount
             .if [rbx].token != T_COMMA || [rbx+asm_tok].token == T_FINAL
                 .return asmerr(2008, [rbx].tokpos )
             .endif
             inc i
         .endif
-    .until i >= Token_Count
+    .until i >= TokenCount
     .return( NOT_ERROR )
 
 PurgeDirective endp

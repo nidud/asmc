@@ -314,7 +314,7 @@ SizeFromMemtype proc fastcall mem_type:uchar_t, _Ofssize:int_t, type:asym_t
     .case MT_PROC
         mov eax,edx
         mov rcx,type
-        .if [rcx].is_far
+        .if ( rcx && [rcx].is_far )
             add eax,2
         .endif
         .endc
@@ -332,7 +332,7 @@ SizeFromMemtype proc fastcall mem_type:uchar_t, _Ofssize:int_t, type:asym_t
         mov rcx,type
         .if rcx
             mov eax,[rcx].total_size
-            .endc
+           .endc
         .endif
     .default
         xor eax,eax
@@ -3451,30 +3451,25 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
   local i:int_t
   local j:int_t
   local q:int_t
+  local rc:int_t
   local dirflags:uint_t
   local sym:asym_t
   local oldofs:uint_t
   local CodeInfo:code_info
   local opndx[MAX_OPND+1]:expr
-  local buffer:ptr char_t
 
     ldr rbx,tokenarray
     .if ( CurrEnum && [rbx].token == T_ID )
         .return EnumDirective( 0, rbx )
     .endif
-    mov buffer,NULL ; v2.32 - may not be used..
     mov i,0
 
-    .if ( Token_Count > 2 && [rbx].token == T_ID &&
+    .if ( TokenCount > 2 && [rbx].token == T_ID &&
           ( [rbx+asm_tok].token == T_COLON ||
             [rbx+asm_tok].token == T_DBL_COLON ) )
 
-        mov rdi,buffer
-        .if ( rdi == NULL )
 
-            mov buffer,alloca(ModuleInfo.max_line_len)
-            mov rdi,rax
-        .endif
+        mov rdi,MemAlloc(MaxLineLength)
 
         ; break label: macro/hll lines
 
@@ -3482,9 +3477,13 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         tstrcpy( CurrSource, [rbx].string_ptr )
         tstrcat( CurrSource, [rbx+asm_tok].string_ptr )
 
-        mov Token_Count,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
+        mov TokenCount,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
 
-        .return .ifd ParseLine( rbx ) == ERROR
+        .ifd ( ParseLine( rbx ) == ERROR )
+
+            MemFree(rdi)
+           .return(ERROR)
+        .endif
 
         .if ModuleInfo.list ; v2.26 -- missing line from list file (wiesl)
             and ModuleInfo.line_flags,not LOF_LISTED
@@ -3493,13 +3492,13 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         ; parse macro or hll function
 
         tstrcpy(CurrSource, rdi)
-        mov Token_Count,Tokenize(CurrSource, 0, rbx, TOK_DEFAULT)
-
+        MemFree(rdi)
+        mov TokenCount,Tokenize(CurrSource, 0, rbx, TOK_DEFAULT)
         ExpandLine(CurrSource, rbx)
+        .if ( eax == EMPTY || eax == ERROR )
 
-        .return .if eax == EMPTY
-        .return .if eax == ERROR
-
+           .return
+        .endif
         mov i,0
 
         ; label:
@@ -3520,6 +3519,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             inc eax
         .endif
         .if CreateLabel( [rbx].string_ptr, MT_NEAR, NULL, eax ) == NULL
+
             .return ERROR
         .endif
         ;
@@ -3528,7 +3528,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         .if ( [rbx+asm_tok].token == T_DBL_COLON && ModuleInfo.scoped && !CurrProc )
 
             mov [rbx+asm_tok].token,T_FINAL
-            mov Token_Count,1
+            mov TokenCount,1
             PublicDirective( -1, tokenarray )
         .endif
 
@@ -3636,7 +3636,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                     .return( asmerr( 2037 ) )
                 .endif
                 .if StoreState
-                    .if ( ( dirflags & DF_CGEN ) && ModuleInfo.CurrComment && ModuleInfo.list_generated_code )
+                    .if ( ( dirflags & DF_CGEN ) && CurrComment && ModuleInfo.list_generated_code )
                         FStoreLine(1)
                     .else
                         FStoreLine(0)
@@ -3671,7 +3671,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                 ; if a listing (with -Sg) is to be written and
                 ; the directive will generate lines
 
-                .if ( ( dirflags & DF_CGEN ) && ModuleInfo.CurrComment && ModuleInfo.list_generated_code )
+                .if ( ( dirflags & DF_CGEN ) && CurrComment && ModuleInfo.list_generated_code )
                     FStoreLine(1)
                 .else
                     FStoreLine(0)
@@ -3755,7 +3755,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             .if ( CurrEnum && [rbx].token == T_STRING )
                 .return EnumDirective( 0, rbx )
             .endif
-            .if ( i == 0 && Token_Count > 1 )
+            .if ( i == 0 && TokenCount > 1 )
                 .if ( GetOperator( &[rbx+asm_tok] ) )
                     .return ProcessOperator( tokenarray )
                 .endif
@@ -3837,12 +3837,12 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                 ; v2.07: special handling for RET/IRET
                 ;
                 xor eax,eax
-                .if ( ModuleInfo.CurrComment && ModuleInfo.list_generated_code )
+                .if ( CurrComment && ModuleInfo.list_generated_code )
                     inc eax
                 .endif
                 FStoreLine( eax )
                 or ProcStatus,PRST_INSIDE_EPILOGUE
-                RetInstr( i, tokenarray, Token_Count )
+                RetInstr( i, tokenarray, TokenCount )
                 and ProcStatus,not PRST_INSIDE_EPILOGUE
                .return
             .endif
@@ -3867,17 +3867,18 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
             .if ( [rsi].flags & T_ISPROC )
 
-                .if ( buffer == NULL )
-
-                    mov buffer,alloca(ModuleInfo.max_line_len)
-                    mov rdi,rax
-                .endif
+                mov rdi,MemAlloc(MaxLineLength)
                 ;
                 ; v2.21 - mov reg,proc(...)
                 ; v2.27 - mov reg,class.proc(...)
                 ;
-                .return .ifd ExpandHllProcEx( buffer, j, rbx ) == ERROR
-                .if ( eax == STRING_EXPANDED )
+                mov rc,ExpandHllProcEx( rdi, j, rbx )
+                MemFree(rdi)
+
+                .if ( rc == ERROR )
+                   .return(ERROR)
+                .endif
+                .if ( rc == STRING_EXPANDED )
 
                     FStoreLine(0)
                    .return( NOT_ERROR )
@@ -3930,7 +3931,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         imul edi,j,expr
         lea rcx,opndx[rdi]
 
-        .ifd ( EvalOperand( &i, tokenarray, Token_Count, rcx, 0 ) == ERROR )
+        .ifd ( EvalOperand( &i, tokenarray, TokenCount, rcx, 0 ) == ERROR )
             .return
         .endif
 
@@ -4021,39 +4022,31 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             ;
             .if ( i > 1 && [rsi].token == T_DIRECTIVE && [rsi].tokval == T_DOT_NEW )
 
-                .if ( buffer == NULL )
 
-                    mov buffer,alloca(ModuleInfo.max_line_len)
-                .endif
-
-                mov  rax,tokenarray
-                mov  rax,[rax].asm_tok.tokpos
-                mov  rcx,[rsi].tokpos
-                sub  rcx,rax
-                mov  rdx,rdi
-                mov  rdi,buffer
-                xchg rsi,rax
-                rep  movsb
-                mov  rsi,rax
-
+                mov rbx,MemAlloc(MaxLineLength)
+                mov rax,tokenarray
+                mov rax,[rax].asm_tok.tokpos
+                mov rcx,[rsi].tokpos
+                sub rcx,rax
+                mov rsi,rax
+                mov rdi,rbx
+                rep movsb
                 .if ( ModuleInfo.Ofssize == USE64 )
                     mov eax,"xar"
                 .else
                     mov eax,"xae"
                 .endif
-
                 stosd
-                mov rdi,rdx
-
                 NewDirective(i, tokenarray)
-
                 .if ( Parse_Pass > PASS_1 )
-                    mov Token_Count,Tokenize( tstrcpy( CurrSource, buffer ), 0, tokenarray, TOK_DEFAULT )
+                    mov TokenCount,Tokenize( tstrcpy( CurrSource, rbx ), 0, tokenarray, TOK_DEFAULT )
+                    MemFree(rbx)
                    .return ParseLine( tokenarray )
                 .endif
-                .return NOT_ERROR
+                MemFree(rbx)
+               .return NOT_ERROR
             .endif
-            .if ( i == Token_Count )
+            .if ( i == TokenCount )
                 sub rsi,asm_tok ; v2.08: if there was a terminating comma, display it
             .endif
             ;
@@ -4580,8 +4573,8 @@ ProcessFile proc __ccall tokenarray:ptr asm_tok
             tstrcpy(rcx, rax)
         .endif
         .repeat
-            .if PreprocessLine( ModuleInfo.tokenarray )
-                ParseLine( ModuleInfo.tokenarray )
+            .if PreprocessLine( TokenArray )
+                ParseLine( TokenArray )
                 .if ( Options.preprocessor_stdout == TRUE && Parse_Pass == PASS_1 )
                     WritePreprocessedLine( CurrSource )
                 .endif

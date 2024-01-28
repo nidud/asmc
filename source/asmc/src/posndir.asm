@@ -67,7 +67,7 @@ OrgDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
     .if ( ModuleInfo.strict_masm_compat )
         mov ecx,EXPF_NOUNDEF
     .endif
-    .return .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, cl ) == ERROR )
+    .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, cl ) == ERROR )
 
     imul ecx,i,asm_tok
     add rcx,tokenarray
@@ -186,7 +186,7 @@ AlignDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
     .switch( [rcx].asm_tok.tokval )
     .case T_ALIGN
         inc i
-        .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR )
+        .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
             .return
         .endif
         .if ( opndx.kind == EXPR_CONST )

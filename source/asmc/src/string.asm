@@ -58,9 +58,9 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     ldr rsi,string
 
     ; "binary" string
-   .new sbuf:string_t = alloca(ModuleInfo.max_line_len)
+   .new sbuf:string_t = MemAlloc(MaxLineLength)
     mov rdi,buffer
-    mov rdx,sbuf
+    mov rdx,rax
     xor ebx,ebx
     mov [rdx],rbx
 
@@ -346,6 +346,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                 .else
                     tsprintf( lbuf, "DS%04X", eax )
                 .endif
+                 MemFree(sbuf)
                 .return 0
             .endif
         .endif
@@ -364,7 +365,8 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     lea rcx,[rax+str_item]
     mov [rax].str_item.string,rcx
     tmemcpy(rcx, sbuf, &[rbx+1])
-    ret
+    MemFree(sbuf)
+   .return 1
 
 ParseCString endp
 
@@ -460,9 +462,9 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     inc eax
     mov rc,eax
 
-    mov edi,ModuleInfo.max_line_len
+    mov edi,MaxLineLength
     lea eax,[rdi+rdi*2+64*2]
-    mov buffer,alloca(eax)
+    mov buffer,MemAlloc(eax)
     add rax,rdi
     mov b_data,rax
     add rax,rdi
@@ -638,12 +640,12 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 InsertLineQueue()
             .endif
 
-            tstrcpy( ModuleInfo.currsource, buffer )
-            Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
+            tstrcpy( CurrSource, buffer )
+            Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
 
-            mov ModuleInfo.token_count,eax
+            mov TokenCount,eax
 
-            mov rcx,ModuleInfo.tokenarray
+            mov rcx,TokenArray
             sub rbx,tokenarray
             add rbx,rcx
             mov tokenarray,rcx
@@ -664,15 +666,16 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endw
 
     .if ( equal == 0 )
-        StoreLine( ModuleInfo.currsource, list_pos, 0 )
+        StoreLine( CurrSource, list_pos, 0 )
     .else
         mov ebx,ModuleInfo.GeneratedCode
         mov ModuleInfo.GeneratedCode,0
         StoreLine( b_line, list_pos, 0 )
         mov ModuleInfo.GeneratedCode,ebx
-        mov rcx,ModuleInfo.currsource
+        mov rcx,CurrSource
     .endif
     mov ModuleInfo.line_flags,lineflags
+    MemFree(buffer)
    .return( rc )
 
 GenerateCString endp
@@ -690,9 +693,9 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
    .new Unicode:        byte
 
     ldr rbx,tokenarray
-    mov edi,ModuleInfo.max_line_len
+    mov edi,MaxLineLength
     lea eax,[rdi*2+32]
-    mov cursrc,alloca(eax)
+    mov cursrc,MemAlloc(eax)
     lea rcx,[rax+rdi]
     lea rdx,[rax+rdi*2]
     mov string,rcx
@@ -731,6 +734,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
 
 
         ; return label[-value]
+        MemFree(cursrc)
 
         .new opnd:expr
 
@@ -870,9 +874,11 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                 .endif
                 InsertLineQueue()
             .endif
+             MemFree(cursrc)
             .return 1
         .endif
     .endf
+     MemFree(cursrc)
     .return( 0 )
 
 CString endp
@@ -1034,7 +1040,7 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; v2.08: don't copy to temp buffer
     ; check correct syntax and length of items
 
-    .for ( esi = 0 : edi < Token_Count : )
+    .for ( esi = 0 : edi < TokenCount : )
 
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
             .return( TextItemError( rbx ) )
@@ -1099,7 +1105,7 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     mov sym,rdi
     add rbx,2*asm_tok
-    .for ( edx = 2, rdi = [rdi].asym.string_ptr: edx < Token_Count: edx += 2, rbx += 2*asm_tok )
+    .for ( edx = 2, rdi = [rdi].asym.string_ptr: edx < TokenCount: edx += 2, rbx += 2*asm_tok )
 
         mov ecx,[rbx].stringlen
         mov rsi,[rbx].string_ptr
@@ -1256,7 +1262,7 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; get pos, must be a numeric value and > 0
     ; v2.11: flag NOUNDEF added - no forward ref possible
 
-    .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR )
+    .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
         .return( ERROR )
     .endif
 
@@ -1279,7 +1285,7 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .return( asmerr( 2008, [rbx].tokpos ) )
         .endif
         inc i
-        .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR )
+        .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
             .return( ERROR )
         .endif
         .if ( opndx.kind != EXPR_CONST )
@@ -1378,7 +1384,7 @@ SizeStrDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
     .if ( [rbx+2*asm_tok].token != T_STRING || [rbx+2*asm_tok].string_delim != '<' )
         .return( TextItemError( &[rbx+2*asm_tok] ) )
     .endif
-    .if ( Token_Count > 3 )
+    .if ( TokenCount > 3 )
         .return( asmerr(2008, [rbx+3*asm_tok].string_ptr ) )
     .endif
 
@@ -1421,7 +1427,7 @@ InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; v2.11: flag NOUNDEF added - no forward reference accepted
 
-        .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR )
+        .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
             .return( ERROR )
         .endif
         .if ( opndx.kind != EXPR_CONST )
@@ -1576,7 +1582,7 @@ GetNumber proc __ccall private string:string_t, pi:ptr int_t, tokenarray:ptr asm
   local opndx:expr
   local i:int_t
 
-    mov eax,Token_Count
+    mov eax,TokenCount
     inc eax
     mov i,eax
 

@@ -116,7 +116,7 @@ IncludeDirective proc __ccall i:int_t, tokenarray:token_t
         ; after INCLUDE - and remove trailing white spaces.
         ;
         mov  rcx,[rax].asm_tok.tokpos
-        imul eax,Token_Count,asm_tok
+        imul eax,TokenCount,asm_tok
         add  rax,tokenarray
 
         .for ( rdx = [rax].asm_tok.tokpos, rdx--: rdx > rcx: rdx-- )
@@ -194,7 +194,7 @@ IncludeLibDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
         ; regard "everything" behind INCLUDELIB as the library name
         mov rcx,[rbx].tokpos
         ; remove trailing white spaces
-        imul ebx,Token_Count,asm_tok
+        imul ebx,TokenCount,asm_tok
         add rbx,tokenarray
         .for ( rdx = [rbx].tokpos, rdx--: rdx > rcx: rdx-- )
             .break .if !islspace( [rdx] )
@@ -254,7 +254,7 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( [rbx].token == T_COMMA )
 
         inc i
-        .return .ifd EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR
+        .return .ifd EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR
 
         .if ( opndx.kind == EXPR_CONST )
             mov esi,opndx.value
@@ -265,7 +265,7 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         add rbx,tokenarray
         .if ( [rbx].token == T_COMMA )
             inc i
-            .return .ifd EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR
+            .return .ifd EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR
             .if ( opndx.kind == EXPR_CONST )
                 mov edi,opndx.value
             .elseif ( opndx.kind != EXPR_EMPTY )
@@ -476,7 +476,7 @@ RadixDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ; v2.11: flag NOUNDEF added - no forward ref possible
 
-    .ifd EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
+    .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
         .return
     .endif
     .if ( opndx.kind != EXPR_CONST )

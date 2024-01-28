@@ -232,11 +232,11 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; no forward reference allowed, symbol must be defined
 
-        .ifd ( ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR ) )
+        .ifd ( ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR ) )
 
             mov opndx.kind,EXPR_CONST
             mov opndx.value,0
-            mov i,Token_Count
+            mov i,TokenCount
         .endif
 
         imul ebx,i,asm_tok
@@ -503,7 +503,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .case CC_NUMARG ; .ERR[E|NZ]
 
-        .return .ifd ( ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR ) )
+        .return .ifd ( ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR ) )
 
         mov rdx,opndx.sym
         .if ( opndx.kind == EXPR_CONST )

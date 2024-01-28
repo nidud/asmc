@@ -214,7 +214,7 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
 
             or [rsi].flags,HLLF_TABLE
             Tokenize( [rsi].condlines, 0, tokenarray, TOK_DEFAULT )
-            mov ModuleInfo.token_count,eax
+            mov TokenCount,eax
             mov i,0
             mov ecx,eax
             EvalOperand( &i, tokenarray, ecx, &opnd, EXPF_NOERRMSG )
@@ -262,7 +262,7 @@ endif
     .endw
 
     Tokenize( oldtok, 0, tokenarray, TOK_DEFAULT )
-    mov ModuleInfo.token_count,eax
+    mov TokenCount,eax
 
     mov rax,dcount
     mov [rax],edi
@@ -1551,7 +1551,7 @@ endif
         .default
            .new j:int_t = i
             or [rsi].flags,HLLF_ARGMEM
-            EvalOperand(&j, tokenarray, ModuleInfo.token_count, &opnd, EXPF_NOERRMSG)
+            EvalOperand(&j, tokenarray, TokenCount, &opnd, EXPF_NOERRMSG)
 
             .if ( eax != ERROR )
                 mov eax,8
@@ -1575,7 +1575,7 @@ endif
             .endif
         .endsw
 
-        imul ecx,Token_Count,asm_tok
+        imul ecx,TokenCount,asm_tok
         add rcx,tokenarray
         .while ( brackets && [rcx-asm_tok].asm_tok.token == T_CL_BRACKET )
             sub rcx,asm_tok
@@ -1858,7 +1858,7 @@ endif
                 mov ecx,asm_tok
                 xor edx,edx
                 div ecx
-                mov ModuleInfo.token_count,eax
+                mov TokenCount,eax
             .endif
         .endf
 
@@ -1975,7 +1975,7 @@ endif
 
             .else
 
-                imul eax,ModuleInfo.token_count,asm_tok
+                imul eax,TokenCount,asm_tok
                 add rax,tokenarray
                 mov rax,[rax].asm_tok.tokpos
                 sub rax,[rbx].tokpos
@@ -1986,7 +1986,7 @@ endif
             mov [rsi].condlines,LclDup( rdi )
         .endif
 
-        mov eax,ModuleInfo.token_count
+        mov eax,TokenCount
         mov i,eax
         .endc
 

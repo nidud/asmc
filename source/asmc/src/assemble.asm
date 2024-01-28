@@ -344,16 +344,16 @@ WriteModule proc __ccall private uses rsi rdi rbx modinfo:ptr module_info
                 .if ( [rbx].asym.flags & S_ISPROC && rcx && [rcx].dll_desc.name &&
                       ( !( [rbx].asym.sflags & S_WEAK) || [rbx].asym.flags & S_IAT_USED ) )
 
-                    Mangle(rbx, ModuleInfo.stringbufferend)
+                    Mangle(rbx, StringBufferEnd)
 
                     mov rcx,[rbx].asym.dll
-                    tsprintf(ModuleInfo.currsource, "import '%s'  %s.%s\n",
-                        ModuleInfo.stringbufferend,
+                    tsprintf(CurrSource, "import '%s'  %s.%s\n",
+                        StringBufferEnd,
                         &[rcx].dll_desc.name, [rbx].asym.name)
 
                     .new len:uint_t = eax
 
-                    fwrite( ModuleInfo.currsource, 1, len, fp )
+                    fwrite( CurrSource, 1, len, fp )
 
                     .if ( len != eax )
 
@@ -476,7 +476,7 @@ CmdlParamsInit endp
 
 WritePreprocessedLine proc __ccall string:string_t
 
-    .if ( ModuleInfo.token_count > 0 )
+    .if ( TokenCount > 0 )
 
         ldr rcx,string
         .while islspace( [rcx] )
@@ -886,14 +886,14 @@ endif
             set_curr_srcfile([rsi].line_item.srcfile, [rsi].line_item.lineno)
             mov ModuleInfo.line_flags,0
             mov MacroLevel,[rsi].line_item.macro_level
-            mov ModuleInfo.CurrComment,0
+            mov CurrComment,0
 if USELSLINE
-            .ifd ( Tokenize( &[rsi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT ) )
+            .ifd ( Tokenize( &[rsi].line_item.line, 0, TokenArray, TOK_DEFAULT ) )
 else
-            .ifd ( Tokenize( CurrSource, 0, ModuleInfo.tokenarray, TOK_DEFAULT ) )
+            .ifd ( Tokenize( CurrSource, 0, TokenArray, TOK_DEFAULT ) )
 endif
-                mov Token_Count,eax
-                ParseLine(ModuleInfo.tokenarray)
+                mov TokenCount,eax
+                ParseLine(TokenArray)
             .endif
             mov rsi,[rsi].line_item.next
             mov LineStoreCurr,rsi
@@ -907,10 +907,10 @@ endif
             mov rsi,[rsi].qitem.next
             .if SearchFile(rax, 1)
 
-                ProcessFile(ModuleInfo.tokenarray)
+                ProcessFile(TokenArray)
             .endif
         .endw
-        ProcessFile(ModuleInfo.tokenarray)
+        ProcessFile(TokenArray)
     .endif
 
     LinnumFini()

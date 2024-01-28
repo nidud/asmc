@@ -70,7 +70,7 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .if ( byte ptr [rax] == '{' && byte ptr [rax+1] )
                     inc rax
                     Tokenize( rax, 0, rbx, TOK_DEFAULT )
-                    add Token_Count,eax
+                    add TokenCount,eax
                 .endif
 
             .else
@@ -118,7 +118,7 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .if ( byte ptr [rax] == '{' && byte ptr [rax+1] )
                     inc rax
                     Tokenize( rax, 0, rbx, TOK_DEFAULT )
-                    add Token_Count,eax
+                    add TokenCount,eax
                 .endif
             .endif
         .endif
@@ -147,7 +147,7 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             add rbx,asm_tok
             inc i
 
-            .for ( ecx = i, rdx = rbx : ecx < Token_Count : ecx++, rdx += asm_tok )
+            .for ( ecx = i, rdx = rbx : ecx < TokenCount : ecx++, rdx += asm_tok )
                 .break .if [rdx].asm_tok.token == T_COMMA
                 .break .if [rdx].asm_tok.token == T_FINAL
                 .if [rdx].asm_tok.token == T_STRING

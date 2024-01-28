@@ -403,11 +403,11 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
     .endif
 
     Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
-    mov ModuleInfo.token_count,eax
+    mov TokenCount,eax
 
     .for ( i = 0, rdi = result : count : count--, i++ )
 
-        .break .ifd EvalOperand( &i, tokenarray, ModuleInfo.token_count, &opnd, 0 ) == ERROR
+        .break .ifd EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR
         .if opnd.mem_type & MT_FLOAT
             quad_resize(&opnd, size)
         .endif
@@ -418,7 +418,7 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
 
     tstrcpy( CurrSource, &oldtok )
     Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
-    mov ModuleInfo.token_count,eax
+    mov TokenCount,eax
 
    .return( 16 )
 
@@ -449,7 +449,7 @@ imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t
     .else
         mov rbx,[rdi+asm_tok].tokpos
         mov i,1
-        EvalOperand( &i, tokenarray, ModuleInfo.token_count, &opnd2, 0 )
+        EvalOperand( &i, tokenarray, TokenCount, &opnd2, 0 )
         imul edi,i,asm_tok
         add rdi,tokenarray
         mov rdi,[rdi].tokpos

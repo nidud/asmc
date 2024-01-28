@@ -241,7 +241,7 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
   local constructor:int_t
   local buffer:string_t
 
-    mov buffer,alloca(ModuleInfo.max_line_len)
+    mov buffer,MemAlloc(MaxLineLength)
 
     imul ebx,i,asm_tok
     add rbx,tokenarray
@@ -282,7 +282,7 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     .elseif rsi
 
-        .if ( Token_Count > 2 && [rbx+asm_tok].tokval == T_LOCAL )
+        .if ( TokenCount > 2 && [rbx+asm_tok].tokval == T_LOCAL )
 
             add rbx,asm_tok
 
@@ -412,6 +412,7 @@ done:
             or [rax].asym.flags,S_METHOD
         .endif
     .endif
+    MemFree(buffer)
     mov eax,retval
     ret
 

@@ -6,6 +6,8 @@
 ifndef __FASTPASS_INC
 define __FASTPASS_INC
 
+include input.inc
+
 .template equ_item
     next            ptr equ_item ?
     sym             ptr asym ?
@@ -34,6 +36,7 @@ externdef NoLineStore:int_t
     init        int_t ?         ; is this struct initialized?
     head        ptr equ_item ?  ; the list of modified assembly time variables
     tail        ptr equ_item ?
+    state       InputState <>
     modinfo     uchar_t sizeof(module_info) - sizeof(module_vars) dup(?)
    .ends
 

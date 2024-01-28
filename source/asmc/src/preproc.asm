@@ -57,8 +57,8 @@ WriteCodeLabel proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t
     mov bl,[rdi]
     mov bh,cl
     mov byte ptr [rdi],0
-    mov esi,ModuleInfo.token_count
-    mov ModuleInfo.token_count,2
+    mov esi,TokenCount
+    mov TokenCount,2
 
     ParseLine( tokenarray )
     .if ( Options.preprocessor_stdout )
@@ -66,7 +66,7 @@ WriteCodeLabel proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t
     .endif
 
     mov [rdi],bl
-    mov ModuleInfo.token_count,esi
+    mov TokenCount,esi
     mov [rbx+2*asm_tok].asm_tok.token,bh
 
    .return( NOT_ERROR )
@@ -89,7 +89,7 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
     .repeat
 
         .repeat
-            .ifs ( eax >= ModuleInfo.token_count )
+            .ifs ( eax >= TokenCount )
                 or [rcx].flags,T_DELAYED
                .return 1
             .endif
@@ -102,7 +102,7 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
         mov edx,1   ; one open bracket found
         .while 1
 
-            .ifs ( eax >= ModuleInfo.token_count )
+            .ifs ( eax >= TokenCount )
                 or [rcx].flags,T_DELAYED
                 .return 1
             .endif
@@ -144,7 +144,7 @@ DelayExpand endp
 
 
 ; PreprocessLine() is the "preprocessor".
-; 1. the line is tokenized with Tokenize(), Token_Count set
+; 1. the line is tokenized with Tokenize(), TokenCount set
 ; 2. (text) macros are expanded by ExpandLine()
 ; 3. "preprocessor" directives are executed
 
@@ -154,28 +154,28 @@ PreprocessLine proc __ccall uses rsi rbx tokenarray:token_t
     ; v2.11: GetTextLine() removed - this is now done in ProcessFile()
     ; v2.08: moved here from GetTextLine()
     ;
-    mov ModuleInfo.CurrComment,NULL
+    mov CurrComment,NULL
     ;
     ; v2.06: moved here from Tokenize()
     ;
     mov ModuleInfo.line_flags,0
     ;
-    ; Token_Count is the number of tokens scanned
+    ; TokenCount is the number of tokens scanned
     ;
-    mov Token_Count,Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
-    mov rbx,ModuleInfo.tokenarray
+    mov TokenCount,Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
+    mov rbx,TokenArray
 
 if REMOVECOMENT eq 0
-    .if ( ( Token_Count == 0 ) && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif ) )
+    .if ( ( TokenCount == 0 ) && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif ) )
 
         LstWriteSrcLine()
     .endif
 endif
 
-    mov eax,ModuleInfo.token_count
+    mov eax,TokenCount
     .return .if ( eax == 0 )
     ;
-    ; CurrIfState != BLOCK_ACTIVE && Token_Count == 1 | 3 may happen
+    ; CurrIfState != BLOCK_ACTIVE && TokenCount == 1 | 3 may happen
     ; if a conditional assembly directive has been detected by Tokenize().
     ; However, it's important NOT to expand then
     ;
@@ -202,9 +202,9 @@ endif
         .return 0 .ifs ( esi < NOT_ERROR )
     .endif
 
-    mov rbx,ModuleInfo.tokenarray
+    mov rbx,TokenArray
     xor esi,esi
-    .if ( ModuleInfo.token_count > 2 &&
+    .if ( TokenCount > 2 &&
          ( [rbx+asm_tok].asm_tok.token == T_COLON || [rbx+asm_tok].asm_tok.token == T_DBL_COLON ) )
 
         mov esi,2*asm_tok
@@ -239,7 +239,7 @@ endif
         mov rax,[rcx+rbx*size_t]
 
         assume rax:fpDirective
-        rax( esi, ModuleInfo.tokenarray )
+        rax( esi, TokenArray )
         assume rax:nothing
        .return 0
     .endif
@@ -247,7 +247,7 @@ endif
     ;
     ; handle preprocessor directives which need a label
     ;
-    mov rbx,ModuleInfo.tokenarray
+    mov rbx,TokenArray
     xor eax,eax
     .if ( [rbx].token == T_ID && [rbx+asm_tok].token == T_DIRECTIVE )
         movzx eax,[rbx+asm_tok].dirtype
@@ -275,7 +275,7 @@ endif
                 mov rsi,rax
                 .if [rax].asym.state != SYM_TMACRO
                     .if StoreState && Parse_Pass == PASS_1
-                        StoreLine( ModuleInfo.currsource, 0, 0 )
+                        StoreLine( CurrSource, 0, 0 )
                     .endif
                     .if Options.preprocessor_stdout
                         WritePreprocessedLine( CurrSource )
@@ -305,7 +305,7 @@ endif
            .return 0
         .endsw
     .endif
-    .return( ModuleInfo.token_count )
+    .return( TokenCount )
 
 PreprocessLine endp
 

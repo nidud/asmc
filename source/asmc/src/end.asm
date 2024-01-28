@@ -155,10 +155,10 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_t
 
             .if ( ModuleInfo.ostype == OPSYS_OS2 )
                 AddLineQueueX( "mov ax,%s", [rbx].tokpos )
-                imul ebx,Token_Count,asm_tok
+                imul ebx,TokenCount,asm_tok
             .else
                 inc i
-                .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
+                .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
                     .return( ERROR )
                 .endif
                 .if ( opndx.kind == EXPR_CONST && opndx.value < 0x100 )
@@ -212,7 +212,7 @@ EndDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 ifndef ASMC64
     .if ( ModuleInfo.StartupDirectiveFound )
         ; start label behind END ignored if .STARTUP has been found
-        mov esi,Token_Count
+        mov esi,TokenCount
         .if ( i < esi && Parse_Pass == PASS_1 )
             asmerr( 4003 )
         .endif
@@ -225,11 +225,11 @@ ifndef ASMC64
         mov [rbx+asm_tok].token,T_FINAL
         mov [rbx+asm_tok].string_ptr,&T("")
         inc esi
-        mov Token_Count,esi
+        mov TokenCount,esi
     .endif
 endif
     ; v2.11: flag EXPF_NOUNDEF added - will return ERROR if start label isn't defined
-    .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR )
+    .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
         .return( ERROR )
     .endif
     imul ebx,i,asm_tok

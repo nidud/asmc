@@ -295,7 +295,7 @@ LGetToken proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, t
     imul ebx,edi,asm_tok
     add rbx,tokenarray
 
-    .for ( : edi < ModuleInfo.token_count, GetCOp( rbx ) == COP_NONE : edi++ )
+    .for ( : edi < TokenCount, GetCOp( rbx ) == COP_NONE : edi++ )
         add rbx,asm_tok
     .endf
 
@@ -462,7 +462,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         ; v2.27.30: ZERO? || CARRY? --> LE
 
         lea eax,[rdi+1]
-        .if ( eax < ModuleInfo.token_count && ( op == COP_ZERO || op == COP_CARRY ) )
+        .if ( eax < TokenCount && ( op == COP_ZERO || op == COP_CARRY ) )
 
             imul eax,eax,asm_tok
             add rax,rbx
@@ -1523,9 +1523,8 @@ macro_args:
         tstrcat( rsi, [rbx+rdi].tokpos )
     .endif
 
-    tstrcpy(ModuleInfo.currsource, rsi)
-    Tokenize(rax, 0, rdi, TOK_DEFAULT)
-    mov ModuleInfo.token_count,eax
+    Tokenize(tstrcpy(LclAlloc( &[tstrlen(rsi)+1] ), rsi), 0, rdi, TOK_DEFAULT)
+    mov TokenCount,eax
    .return( STRING_EXPANDED )
 
 StripSource endp
@@ -2021,21 +2020,16 @@ done:
 
 LKRenderHllProc endp
 
-
     assume rbx: NOTHING
 
-RenderHllProc proc __ccall private uses rsi rdi dst:string_t, i:uint_t, tokenarray:ptr asm_tok
+RenderHllProc proc __ccall private dst:string_t, i:uint_t, tokenarray:ptr asm_tok
 
-  local oldstat:input_status
+   .new lineflags:byte = ModuleInfo.line_flags
 
-    PushInputStatus( &oldstat )
-    mov rsi,LKRenderHllProc( dst, i, tokenarray )
-    mov rdi,LclAlloc( MAX_LINE_LEN )
-    tstrcpy( rax, ModuleInfo.currsource )
-    PopInputStatus( &oldstat )
-    Tokenize( rdi, 0, tokenarray, TOK_DEFAULT )
-    mov ModuleInfo.token_count,eax
-   .return( rsi )
+    LKRenderHllProc( dst, i, tokenarray )
+    mov cl,lineflags
+    mov ModuleInfo.line_flags,cl
+    ret
 
 RenderHllProc endp
 
@@ -2053,7 +2047,7 @@ ExpandHllProc proc __ccall public uses rsi rdi dst:string_t, i:int_t, tokenarray
         imul edi,edi,asm_tok
         add  rdi,tokenarray
 
-        .while ( esi < ModuleInfo.token_count )
+        .while ( esi < TokenCount )
 
             .if ( [rdi].asm_tok.flags & T_ISPROC )
 
@@ -2118,7 +2112,7 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
     .if ( ( ModuleInfo.strict_masm_compat == 0 ) && !eax && [rbx].asm_tok.flags & T_HLLCODE )
 
         mov edi,[rsi]
-        .while ( edi < ModuleInfo.token_count )
+        .while ( edi < TokenCount )
 
             imul eax,edi,asm_tok
             .if ( [rbx+rax].asm_tok.flags & T_ISFUNC )
@@ -2278,18 +2272,20 @@ endif
 EvaluateHllExpression endp
 
 
-ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
+ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr int_t, tokenarray:ptr asm_tok,
         ilabel:int_t, is_true:int_t, buffer:string_t
 
    .new rc:int_t = NOT_ERROR
    .new oldstat:input_status
    .new delayed:byte = 0
+   .new i:int_t = TokenCount
 
     ldr rsi,hll
     ldr rbx,tokenarray
     mov rdi,buffer
 
-    PushInputStatus( &oldstat )
+    UNREFERENCED_PARAMETER(hll)
+    UNREFERENCED_PARAMETER(tokenarray)
 
     .if ( [rsi].hll_item.flags & HLLF_WHILE )
 
@@ -2299,7 +2295,7 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, i:ptr
         inc delayed
     .else
 
-        mov rcx,i
+        mov rcx,p
         imul edx,[rcx],asm_tok
 
         .if ( [rbx+rdx-asm_tok].asm_tok.token == T_DIRECTIVE &&
@@ -2308,9 +2304,11 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, i:ptr
         .endif
     .endif
 
-    tstrcpy( ModuleInfo.currsource, rdi )
-    Tokenize( ModuleInfo.currsource, 0, rbx, TOK_DEFAULT )
-    mov ModuleInfo.token_count,eax
+    mov rbx,PushInputStatus( &oldstat )
+
+    tstrcpy( CurrSource, rdi )
+    Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
+    mov TokenCount,eax
 
     .if ( Parse_Pass == PASS_1 )
 
@@ -2319,13 +2317,13 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, i:ptr
         .endif
         .if ( delayed )
             mov NoLineStore,1
-            ExpandLine( ModuleInfo.currsource, rbx )
+            ExpandLine( CurrSource, rbx )
             mov NoLineStore,0
            .return .if ( eax != NOT_ERROR )
         .endif
 
         and [rsi].hll_item.flags,not HLLF_WHILE
-        EvaluateHllExpression( hll, i, rbx, ilabel, is_true, buffer )
+        EvaluateHllExpression( hll, p, rbx, ilabel, is_true, buffer )
         mov rc,eax
         QueueTestLines( buffer )
 
@@ -2335,7 +2333,7 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, i:ptr
         .endif
 
         RunLineQueue()
-        ExpandLine( ModuleInfo.currsource, rbx )
+        ExpandLine( CurrSource, rbx )
         mov rc,eax
 
         .if ( eax == NOT_ERROR )
@@ -2343,15 +2341,15 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, i:ptr
             .if ( [rsi].hll_item.flags & HLLF_WHILE )
                 and [rsi].hll_item.flags,not HLLF_WHILE
             .endif
-            EvaluateHllExpression( rsi, i, rbx, ilabel, is_true, buffer )
+            EvaluateHllExpression( rsi, p, rbx, ilabel, is_true, buffer )
             mov rc,eax
             QueueTestLines( buffer )
         .endif
     .endif
 
     PopInputStatus( &oldstat )
-    Tokenize( ModuleInfo.currsource, 0, rbx, TOK_DEFAULT )
-    mov ModuleInfo.token_count,eax
+    Tokenize( [rbx].asm_tok.tokpos, 0, tokenarray, TOK_DEFAULT )
+    mov TokenCount,eax
     mov rax,hll
     and [rax].hll_item.flags,not HLLF_EXPRESSION
    .return( rc )
@@ -3238,7 +3236,7 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .if ( [rsi].flags & HLLF_EXPRESSION )
 
                     ExpandHllExpression( rsi, &i, tokenarray, LTEST, 0, rdi )
-                    mov eax,ModuleInfo.token_count
+                    mov eax,TokenCount
                     mov i,eax
                 .else
                     QueueTestLines( rdi )

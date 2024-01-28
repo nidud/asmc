@@ -259,7 +259,7 @@ endif
         ; get the optional alignment parameter.
         ; forward references aren't accepted, but EXPF_NOUNDEF isn't used here!
 
-        .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
+        .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) != ERROR )
 
             ; an empty expression is accepted
 
@@ -1507,7 +1507,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; get width
 
-        .break .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
+        .break .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
 
         .if ( opndx.kind != EXPR_CONST )
 
@@ -1636,7 +1636,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
 
-        .if ( i < Token_Count )
+        .if ( i < TokenCount )
 
             .if ( [rbx].token != T_COMMA || [rbx+asm_tok].token == T_FINAL )
                 asmerr(2008, [rbx].tokpos )
@@ -1647,7 +1647,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             add rbx,asm_tok
         .endif
 
-    .until ( i >= Token_Count )
+    .until ( i >= TokenCount )
 
     ; now calc size in bytes and set the bit positions
 

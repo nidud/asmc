@@ -18,7 +18,7 @@ MF_IGNARGS		equ 0x04 ; ignore additional arguments (for FOR directive)
 
 GetLiteralValue		proto __ccall :string_t, :string_t
 RunMacro		proto __ccall :ptr dsym, :int_t, :ptr asm_tok, :string_t, :int_t, :ptr int_t
-ExpandText		proto __ccall :string_t, :ptr asm_tok, :uint_t
+ExpandText		proto __ccall :string_t, :token_t, :uint_t
 ExpandLineItems		proto __ccall :string_t, :int_t, :ptr asm_tok, :int_t, :int_t
 ExpandLine		proto __ccall :string_t, :ptr asm_tok
 ExpandLiterals		proto __ccall :int_t, :ptr asm_tok

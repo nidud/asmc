@@ -256,7 +256,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov  esi,GetSflagsSp( [rbx-asm_tok].tokval )
 
     .if ( esi == SIM_STACK )
-        .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
+        .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
             .return( ERROR )
         .endif
         .if( opndx.kind == EXPR_EMPTY )

@@ -172,7 +172,7 @@ endif
         ; E1 = E1 or 1
         ; must NOT create E1.
 
-        .return .ifd EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR
+        .return .ifd EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR
 
         imul ebx,i,asm_tok
         add rbx,tokenarray
@@ -430,7 +430,7 @@ endif
 
     ; try to evaluate the expression
 
-    .if ( [rsi].token == T_NUM && Token_Count == 3 )
+    .if ( [rsi].token == T_NUM && TokenCount == 3 )
 
         mov p,[rsi].string_ptr
 
@@ -531,11 +531,11 @@ endif
                 lea rax,argbuffer
                 mov p,rax ;; ensure that p points to unexpanded source
             .endif
-            .if [rsi].token == T_NUM && Token_Count == 3
+            .if [rsi].token == T_NUM && TokenCount == 3
                 jmp do_single_number
             .endif
         .endif
-        mov rc,EvalOperand( &i, rbx, Token_Count, &opnd, EXPF_NOERRMSG or EXPF_NOUNDEF )
+        mov rc,EvalOperand( &i, rbx, TokenCount, &opnd, EXPF_NOERRMSG or EXPF_NOUNDEF )
 
         ; v2.08: if it's a quoted string, handle it like a plain number
         ; v2.10: quoted_string field is != 0 if kind == EXPR_FLOAT,

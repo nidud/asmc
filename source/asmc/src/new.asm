@@ -228,16 +228,16 @@ AssignString proc __ccall private uses rsi rdi rbx name:string_t, fp:ptr sfield,
 
         .break .if ebx <= 4
 
-        mov esi,Token_Count
+        mov esi,TokenCount
         add esi,1
         mov i,esi
-        mov edx,Tokenize( string, esi, ModuleInfo.tokenarray, TOK_DEFAULT )
+        mov edx,Tokenize( string, esi, TokenArray, TOK_DEFAULT )
 
         imul eax,esi,asm_tok
-        add rax,ModuleInfo.tokenarray
+        add rax,TokenArray
 
         .break .if [rax].asm_tok.token != T_NUM && [rax].asm_tok.token != T_FLOAT
-        .break .ifd EvalOperand( &i, ModuleInfo.tokenarray, edx, &opndx, 0 ) == ERROR
+        .break .ifd EvalOperand( &i, TokenArray, edx, &opndx, 0 ) == ERROR
 
         .if ( opndx.kind == EXPR_FLOAT )
 
@@ -616,7 +616,7 @@ if 0
     .if ( rax && [rax].asym.flags & S_OPERATOR )
 
         AddLineQueueX( " %s %s", name, [rbx-asm_tok].tokpos )
-        imul eax,Token_Count,asm_tok
+        imul eax,TokenCount,asm_tok
         add rax,tokenarray
         .return
     .endif
@@ -692,7 +692,7 @@ endif
         .elseif ( eax == 8 && [rsi].Ofssize == USE64 &&
                   ( flag & T_ISPROC || word ptr [rdx] == '&' ) )
 
-        .elseifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
+        .elseifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) != ERROR )
 
             mov eax,[rsi].size
             .if ( eax == 8 && opndx.kind == EXPR_CONST )
@@ -897,7 +897,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov edi,eax
             mov i,edi
 
-            .for ( rsi = rbx : edi < Token_Count: edi++, rbx += asm_tok )
+            .for ( rsi = rbx : edi < TokenCount: edi++, rbx += asm_tok )
                 .break .if [rbx].token == T_COMMA || [rbx].token == T_COLON
             .endf
 
@@ -997,7 +997,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov ecx,asm_tok
                 div ecx
                 inc eax
-                .if eax < Token_Count
+                .if eax < TokenCount
                     add rbx,asm_tok
                 .endif
 
@@ -1038,7 +1038,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
         xor edx,edx
         mov ecx,asm_tok
         div ecx
-       .break .if eax >= Token_Count
+       .break .if eax >= TokenCount
     .endw
 
     .if ( creat && Parse_Pass == PASS_1 )

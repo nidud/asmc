@@ -161,7 +161,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( [rbx+asm_tok].token == T_OP_BRACKET || [rbx+asm_tok].token == T_COMMA )
             inc i
         .endif
-        .endc .ifd EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
+        .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
 
         imul ebx,i,asm_tok
         add rbx,tokenarray
@@ -258,7 +258,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endc .if ( [rbx+asm_tok].token != T_COLON )
 
         add i,2
-        .endc .ifd EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
+        .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
 
         imul ebx,i,asm_tok
         add rbx,tokenarray
@@ -484,7 +484,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( [rbx+asm_tok].token == T_COMMA )
                 inc i
             .endif
-            .endc .ifd EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
+            .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
 
             AddLineQueueX(" %r dotnamex:on", T_OPTION)
             lea rsi,@CStr(".fini_array")
@@ -617,7 +617,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             inc i
         .endif
-        .endc .ifd EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
+        .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
 
         imul ebx,i,asm_tok
         add rbx,tokenarray

@@ -57,7 +57,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; the expression is "critical", that is, no forward
         ; referenced symbols may be used here!
 
-        EvalOperand( &i, tokenarray, Token_Count, &opnd, EXPF_NOUNDEF )
+        EvalOperand( &i, tokenarray, TokenCount, &opnd, EXPF_NOUNDEF )
 
         imul ebx,i,asm_tok
         add rbx,tokenarray
@@ -65,7 +65,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( eax == ERROR )
 
             mov opnd.value,0
-            mov i,Token_Count
+            mov i,TokenCount
             imul ebx,i,asm_tok
             add rbx,tokenarray
 
@@ -207,7 +207,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         dec i
         sub rbx,asm_tok
         mov [rbx].token,T_FINAL
-        mov Token_Count,i
+        mov TokenCount,i
         mov i,arg_loc
     .endsw
 
@@ -255,10 +255,10 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .for ( : [rdi].asym.value < opnd.value : [rdi].asym.value++ )
 
-                ; v2.10: Token_Count becomes volatile if MF_NOSAVE is set
+                ; v2.10: TokenCount becomes volatile if MF_NOSAVE is set
 
                 mov [rbx].token,T_FINAL
-                mov Token_Count,0
+                mov TokenCount,0
                 RunMacro( rdi, 0, rbx, NULL, MF_NOSAVE, &is_exitm )
                .endc .if ( is_exitm )
             .endf
@@ -268,12 +268,12 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .while ( opnd.kind == EXPR_CONST && opnd.value != 0 )
 
-                RunMacro( rdi, Token_Count, rbx, NULL, 0, &is_exitm )
+                RunMacro( rdi, TokenCount, rbx, NULL, 0, &is_exitm )
                .endc .if ( is_exitm )
 
                 mov i,arg_loc
 
-               .endc .ifd ( EvalOperand( &i, rbx, Token_Count, &opnd, 0 ) == ERROR )
+               .endc .ifd ( EvalOperand( &i, rbx, TokenCount, &opnd, 0 ) == ERROR )
                 inc [rdi].asym.value
             .endw
             .endc
@@ -289,7 +289,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov [rbx].tokpos,rax;&buffer
                 mov [rbx+asm_tok].token,T_FINAL
                 mov buffer[2],NULLC
-                mov Token_Count,1
+                mov TokenCount,1
 
                 .if ( B[rsi] == '!' )
 
@@ -324,9 +324,9 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .default ; T_FOR, T_IRP
 
-            mov esi,Token_Count
+            mov esi,TokenCount
             inc esi
-            mov Token_Count,Tokenize( parmstring, esi, tokenarray, TOK_RESCAN or TOK_NOCURLBRACES )
+            mov TokenCount,Tokenize( parmstring, esi, tokenarray, TOK_RESCAN or TOK_NOCURLBRACES )
 
             imul ebx,eax,asm_tok
             add rbx,tokenarray
@@ -334,7 +334,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; v2.09: if a trailing comma is followed by white space(s), add a blank token
 
             mov rdx,[rbx-asm_tok].tokpos
-            .if ( esi != Token_Count && [rbx-asm_tok].token == T_COMMA && ( B[rdx+1] ) )
+            .if ( esi != TokenCount && [rbx-asm_tok].token == T_COMMA && ( B[rdx+1] ) )
 
                 mov [rbx].token,T_STRING
                 mov [rbx].string_delim,NULLC
@@ -343,7 +343,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 add rcx,[rbx].tokpos
                 add rbx,asm_tok
                 mov [rbx].tokpos,rcx
-                inc Token_Count
+                inc TokenCount
                 mov [rbx].token,T_FINAL
             .endif
 
@@ -360,7 +360,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; parse the full argument and trigger macro expansion if necessary.
             ; No need anymore to count commas here.
 
-            .for ( : esi < Token_Count : esi++, [rdi].asym.value++ )
+            .for ( : esi < TokenCount : esi++, [rdi].asym.value++ )
                 mov esi,RunMacro( rdi, esi, tokenarray, NULL, MF_IGNARGS, &is_exitm )
                 .break .ifs ( esi < 0 || is_exitm )
             .endf

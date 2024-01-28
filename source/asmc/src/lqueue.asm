@@ -332,10 +332,11 @@ AddLineQueue endp
 
 AddLineQueueX proc __ccall fmt:string_t, argptr:vararg
 
-   .new buffer:ptr char_t = alloca(ModuleInfo.max_line_len)
+   .new buffer:ptr char_t = MemAlloc(MaxLineLength)
 
     tvsprintf( buffer, fmt, &argptr )
     AddLineQueue(buffer)
+    MemFree(buffer)
     ret
 
 AddLineQueueX endp

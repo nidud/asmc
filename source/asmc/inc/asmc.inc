@@ -594,7 +594,10 @@ define SIT_MACRO       1
     EndDirHook              proc local fastcall :ptr module_info
     Pass1Checks             proc local fastcall :ptr module_info
     pe_flags                uint_t ?
-    max_line_len            uint_t ?
+    maxlinelen              uint_t ?
+    currsource              string_t ?      ; current source line
+    tokenarray              ptr asm_tok ?   ; start token buffer
+    stringbufferend         string_t ?      ; start free space in string buffer
    .ends
 
 .template module_info : public module_vars
@@ -667,10 +670,7 @@ define SIT_MACRO       1
     flat_grp                ptr dsym ?      ; magic FLAT group - dsym *
     pCodeBuff               ptr byte ?
     GeneratedCode           uint_t ?        ; nesting level generated code
-    currsource              string_t ?      ; current source line
-    CurrComment             string_t ?      ; current comment
-    tokenarray              ptr asm_tok ?   ; start token buffer
-    stringbufferend         string_t ?      ; start free space in string buffer
+    currcomment             string_t ?      ; current comment
     token_count             int_t ?         ; number of tokens in curr line
     basereg                 uint_t 3 dup(?) ; stack base register (16-, 32-, 64-bit
     name                    db 260 dup(?)   ; name of module
@@ -688,14 +688,19 @@ define SIT_MACRO       1
     dotnamex                db ?            ; -dotnamex : option dotnamex:<on:off>
    .ends
 
-Token_Count             equ <ModuleInfo.token_count>
+TokenCount              equ <ModuleInfo.token_count>
+TokenArray              equ <ModuleInfo.tokenarray>
 CurrSource              equ <ModuleInfo.currsource>
 CurrWordSize            equ <ModuleInfo.wordsize>
 CurrFile                equ <ModuleInfo.curr_file>
 CurrSeg                 equ <ModuleInfo.currseg>
 CurrFName               equ <ModuleInfo.curr_fname>
 StringBufferEnd         equ <ModuleInfo.stringbufferend>
+CurrComment             equ <ModuleInfo.currcomment>
+MaxLineLength           equ <ModuleInfo.maxlinelen>
 
+externdef               StringBuffer    : string_t
+externdef               CommentBuffer   : string_t
 externdef               Parse_Pass      : uint_t
 externdef               ModuleInfo      : module_info
 externdef               Options         : global_options

@@ -29,6 +29,7 @@ UpdateStructSize	proto fastcall :ptr asym
 SetStructCurrentOffset	proto fastcall :int_t
 AlignInStruct		proto fastcall :int_t
 TypesInit		proto
+StructDirective		proto __ccall :int_t, :ptr asm_tok
 EndstructDirective	proto __ccall :int_t, :ptr asm_tok
 
 DeleteType macro t

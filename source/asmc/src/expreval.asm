@@ -1165,7 +1165,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                 mov edx,i
                 add edx,3
 
-                .for ( ecx = 0: edx < Token_Count: edx++, rbx += asm_tok )
+                .for ( ecx = 0: edx < TokenCount: edx++, rbx += asm_tok )
 
                     .if ( [rbx].token == T_CL_BRACKET )
 

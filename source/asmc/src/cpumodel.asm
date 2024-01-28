@@ -315,7 +315,7 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .while ( [rbx].token == T_COMMA )
 
-        .break .if edi >= Token_Count
+        .break .if edi >= TokenCount
 
         inc edi
         add rbx,asm_tok

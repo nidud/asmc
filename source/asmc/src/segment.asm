@@ -488,7 +488,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
 
-        .if ( i < Token_Count )
+        .if ( i < TokenCount )
 
             .if ( [rbx].token != T_COMMA || [rbx+asm_tok].token == T_FINAL )
                 .return( asmerr( 2008, [rbx].tokpos ) )
@@ -496,7 +496,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             inc i
             add rbx,asm_tok
         .endif
-    .until ( i >= Token_Count )
+    .until ( i >= TokenCount )
     .return( NOT_ERROR )
 
 GrpDir endp
@@ -1019,7 +1019,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     inc i ; go past SEGMENT
 
-    .for ( : i < Token_Count: i++ )
+    .for ( : i < TokenCount: i++ )
 
         imul ebx,i,asm_tok
         add rbx,tokenarray
@@ -1088,7 +1088,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .case INIT_ALIGN_PARAM
             .if ( Options.output_format == OFORMAT_OMF )
                 asmerr( 3006, [rbx].string_ptr )
-                mov i,Token_Count ; stop further parsing of this line
+                mov i,TokenCount ; stop further parsing of this line
                .endc
             .endif
             inc i
@@ -1098,7 +1098,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                .endc
             .endif
             inc i
-            .endc .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
+            .endc .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
 
             imul ebx,i,asm_tok
             add rbx,tokenarray
@@ -1136,7 +1136,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov [rdi].seg_info.alignment,MAX_SEGALIGNMENT
             inc i
 
-            .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
+            .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) != ERROR )
                 .if ( opndx.kind == EXPR_CONST )
                     mov [rdi].seg_info.abs_frame,opndx.value
                     mov [rdi].seg_info.abs_offset,0
@@ -1149,7 +1149,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( Options.output_format != OFORMAT_COFF && Options.output_format != OFORMAT_OMF )
 
                 asmerr( 3006, [rbx].string_ptr )
-                mov i,Token_Count ; stop further parsing of this line
+                mov i,TokenCount ; stop further parsing of this line
                .endc
             .endif
             inc i
@@ -1160,7 +1160,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                .endc
             .endif
             inc i
-            .endc .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
+            .endc .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
 
             imul ebx,i,asm_tok
             add rbx,tokenarray
@@ -1168,7 +1168,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( opndx.kind != EXPR_CONST )
 
                 asmerr( 2026 )
-                mov i,Token_Count ; stop further parsing of this line
+                mov i,TokenCount ; stop further parsing of this line
                .endc
             .endif
 
@@ -1186,7 +1186,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     .if ( [rbx].token != T_COMMA )
 
                         asmerr( 2008, [rbx].tokpos )
-                        mov i,Token_Count ; stop further parsing of this line
+                        mov i,TokenCount ; stop further parsing of this line
                        .endc
                     .endif
                     inc i
@@ -1194,7 +1194,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     .if ( [rbx].token != T_ID )
 
                         asmerr(2008, [rbx].string_ptr )
-                        mov i,Token_Count ; stop further parsing of this line
+                        mov i,TokenCount ; stop further parsing of this line
                        .endc
                     .endif
 
@@ -1265,7 +1265,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( Options.output_format == OFORMAT_OMF || ( Options.output_format == OFORMAT_BIN &&
                 ( ModuleInfo.sub_format != SFORMAT_PE && ModuleInfo.sub_format != SFORMAT_64BIT ) ) )
                 asmerr( 3006, [rbx].string_ptr )
-                mov i,Token_Count ; stop further parsing of this line
+                mov i,TokenCount ; stop further parsing of this line
                .endc
             .endif
             inc i
@@ -1280,7 +1280,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( [rbx].token != T_STRING || ( [rbx].string_delim != '"' && [rbx].string_delim != "'" ) )
 
                 asmerr(2008, token )
-                mov i,Token_Count ; stop further parsing of this line
+                mov i,TokenCount ; stop further parsing of this line
                .endc
             .endif
             mov rsi,rbx

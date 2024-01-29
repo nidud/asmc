@@ -1,7 +1,11 @@
 ; MAKE.ASM--
-; Copyright (c) 2016 GNU General Public License www.gnu.org/licenses
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; Change history:
+; 2024-01-29 - allow if/else syntax without the ! prefix
+;            - added $(error text...)
 ; 2022-03-16 - removed _get_pgmptr() -- Windows XP (xrayer@)
 ; 2019-11-28 - added %ASMCDIR% if not set
 ; 2017-04-20 - added line-break '\' for targets
@@ -16,7 +20,7 @@ include stdlib.inc
 include io.inc
 include tchar.inc
 
-__MAKE__        equ 112
+__MAKE__        equ 200
 
 LINEBREAKCH     equ 0x5E ; '^'
 
@@ -707,9 +711,19 @@ expandsymbol proc uses esi edi ebx string:string_t
             lea edi,[eax+1]
             .continue(0) .if byte ptr [edi] != '('
 
+            mov ebx,eax
+
+            .if ( memcmp(edi, "(error ", 7) == 0 )
+                .if strrchr(edi, ')')
+                    mov byte ptr [eax],0
+                .endif
+                perror( &[edi+7] )
+                exit(1)
+            .endif
+
             mov edx,symbol_macro
             mov ecx,symbol_name
-            mov ebx,eax
+
             mov ax,[ebx]
             mov [edx],ax
             add ebx,2
@@ -758,6 +772,58 @@ expandsymbol endp
 ; Read makefile
 ;-------------------------------------------------------------------------------
 
+; return
+;  1 if[n]def/ifeq
+;  2 else
+;  3 endif
+;  4 include
+;
+gnumake proc string:string_t
+
+    mov eax,string
+    mov ecx,[eax]
+    mov edx,[eax+4]
+    or  edx,0x20202020
+    or  ecx,0x20202020
+    xor eax,eax
+
+    .switch
+    .case ecx == 'qefi'
+    .case ecx == 'esle'
+        .if ( dl <= ' ' )
+            inc eax
+            .if ( cl == 'e' )
+                inc eax
+            .endif
+        .endif
+        .endc
+    .case ecx == 'edfi'
+    .case ecx == 'idne'
+        .if ( dl == 'f' && dh <= ' ' )
+            inc eax
+            .if ( cl == 'e' )
+                mov eax,3
+            .endif
+        .endif
+        .endc
+    .case ecx == 'dnfi'
+        .if ( dx == 'fe' )
+            inc eax
+        .endif
+        .endc
+    .case ecx == 'lcni'
+        .if ( dx == 'du' )
+            shr edx,16
+            .if ( dl == 'e' && dh <= ' ' )
+                mov eax,4
+            .endif
+        .endif
+        .endc
+    .endsw
+    ret
+
+gnumake endp
+
 skipiftag proc uses esi edi
 
     lea esi,line_buf
@@ -775,9 +841,16 @@ skipiftag proc uses esi edi
         strstart(esi)
         mov edi,eax
         mov eax,[eax]
-        .continue(0) .if al != '!'
 
-        inc edi
+        .if ( al != '!' )
+
+            gnumake(edi)
+            .if ( !eax || eax == 4 )
+                .continue(0)
+            .endif
+        .else
+            inc edi
+        .endif
         strstart(edi)
 
         mov eax,[eax]
@@ -864,8 +937,11 @@ readline proc uses esi edi ebx
 
         .if al != '!'
 
-            mov eax,edi
-            .break
+            .if ( gnumake(edi) == 0 )
+                mov eax,edi
+               .break
+            .endif
+            dec edi
         .endif
 
         mov edi,expandsymbol(&[edi+1])

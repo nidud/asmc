@@ -611,8 +611,8 @@ endif
 
                         test edx,edx
                         .ifs
-                            neg eax
                             neg edx
+                            neg eax
                             sbb edx,0
                             or  esi,FL_NEGATIVE
                         .endif

@@ -665,8 +665,8 @@ endif
 
                         test edx,edx
                         .ifs
-                            neg eax
                             neg edx
+                            neg eax
                             sbb edx,0
                             or  flags,FL_NEGATIVE
                         .endif

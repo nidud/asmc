@@ -633,39 +633,14 @@ _utftow		proto __cdecl :string_t
 _pathtow	proto __cdecl :string_t, :ptr wstring_t
 _isexec		proto __cdecl :string_t
 
-; Microsoft
-;
-; EDX:EAX, CL, C decoration
-
-_allshr		proto __cdecl ; edx:eax >> cl
-_aullshr	proto __cdecl ; edx:eax >> cl
-__ullshr	proto __cdecl ; edx:eax >> cl
-_allshl		proto __cdecl ; edx:eax << cl
-__llshl		proto __cdecl ; edx:eax << cl
-
-; STDCALL calling convention, C decoration
-
-__lldiv		proto __cdecl ; :int64_t,  :int64_t
-_alldiv		proto __cdecl ; :int64_t,  :int64_t
-__llmul		proto __cdecl ; :int64_t,  :int64_t
-_allmul		proto __cdecl ; :int64_t,  :int64_t
-_allrem		proto __cdecl ; :int64_t,  :int64_t
-_aulldiv	proto __cdecl ; :uint64_t, :uint64_t
-__ullmod	proto __cdecl ; :uint64_t, :uint64_t
-_aullrem	proto __cdecl ; :uint64_t, :uint64_t
-
-; Watcom
-;
-; WATCALL calling convention, C decoration
-
-_I8D		proto __cdecl ; :int64_t,  :int64_t
-_U8D		proto __cdecl ; :uint64_t, :uint64_t ; edx:eax / ecx:ebx --> edx:eax.ecx
-_U8M		proto __cdecl ; :uint64_t, :uint64_t ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
-_I8M		proto __cdecl ; :int64_t,  :int64_t  ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
-_I8LS		proto __cdecl ; :int64_t,  :int_t    ; edx:eax << bl
-_U8LS		proto __cdecl ; :uint64_t, :int_t    ; edx:eax << bl
-_I8RS		proto __cdecl ; :int64_t,  :int_t    ; edx:eax >> bl
-_U8RS		proto __cdecl ; :uint64_t, :int_t    ; edx:eax >> bl
+alldiv		proto watcall :int64_t, :int64_t
+aulldiv		proto watcall :uint64_t, :uint64_t
+allmul		proto watcall :int64_t, :int64_t
+allshr		proto watcall :int64_t, :int_t
+aullshr		proto watcall :uint64_t, :int_t
+allshl		proto watcall :int64_t, :int_t
+allrem		proto watcall :int64_t, :int64_t
+aullrem		proto watcall :uint64_t, :uint64_t
 
 ; GCC
 
@@ -676,37 +651,6 @@ __udivti3	proto __cdecl :uint128_t, :uint128_t
 __modti3	proto __cdecl :int128_t, :int128_t
 __umodti3	proto __cdecl :uint128_t, :uint128_t
 
-endif
-
-ifndef _WIN64
-alldiv proto watcall :int64_t, :int64_t {
-    call    _I8D
-    }
-aulldiv proto watcall :uint64_t, :uint64_t {
-    call    _U8D
-    }
-allmul proto watcall :int64_t, :int64_t {
-    call    _I8M
-    }
-allshr proto watcall :int64_t, :int_t {
-    call    _I8RS
-    }
-aullshr proto watcall :uint64_t, :int_t {
-    call    _U8RS
-    }
-allshl proto watcall :int64_t, :int_t {
-    call    _U8LS
-    }
-allrem proto watcall :int64_t, :int64_t {
-    call    _I8D
-    mov	    eax,ebx
-    mov	    edx,ecx
-    }
-aullrem proto watcall :uint64_t, :uint64_t {
-    call    _U8D
-    mov	    eax,ebx
-    mov	    edx,ecx
-    }
 endif
 
 endif

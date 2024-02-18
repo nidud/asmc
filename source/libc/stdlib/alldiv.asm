@@ -1,19 +1,24 @@
-; _I8D.ASM--
+; ALLDIV.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
 include stdlib.inc
+
+    option dotname
 
     .code
 
 ifndef _WIN64
+_I8D::
+endif
 
-    option dotname
-
-_I8D proc ; watcall dividend:int64_t, divisor:int64_t
-
+alldiv proc watcall dividend:int64_t, divisor:int64_t
+ifdef _WIN64
+    mov     rcx,rdx
+    cdq
+    idiv    rcx
+else
     ;
     ; edx:eax / ecx:ebx --> edx:eax.ecx
     ;
@@ -21,13 +26,13 @@ _I8D proc ; watcall dividend:int64_t, divisor:int64_t
     js      .1          ; signed ?
     test    ecx,ecx     ; hi word of divisor
     js      .0          ; signed ?
-    call    _U8D
+    call    aulldiv
     jmp     .3
 .0:
     neg     ecx
     neg     ebx
     sbb     ecx,0
-    call    _U8D
+    call    aulldiv
     neg     edx
     neg     eax
     sbb     edx,0
@@ -41,13 +46,13 @@ _I8D proc ; watcall dividend:int64_t, divisor:int64_t
     neg     ecx
     neg     ebx
     sbb     ecx,0
-    call    _U8D
+    call    aulldiv
     neg     ecx
     neg     ebx
     sbb     ecx,0
     jmp     .3
 .2:
-    call    _U8D
+    call    aulldiv
     neg     ecx
     neg     ebx
     sbb     ecx,0
@@ -55,12 +60,26 @@ _I8D proc ; watcall dividend:int64_t, divisor:int64_t
     neg     eax
     sbb     edx,0
 .3:
+endif
     ret
 
-_I8D endp
+alldiv endp
 
-else
-    int     3
+ifndef _WIN64
+
+__lldiv::
+_alldiv::
+
+    push    ebx
+    mov     eax,4[esp+4]
+    mov     edx,4[esp+8]
+    mov     ebx,4[esp+12]
+    mov     ecx,4[esp+16]
+    call    alldiv
+    pop     ebx
+    ret     16
+
 endif
+
     end
 

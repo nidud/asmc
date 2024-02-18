@@ -1,24 +1,29 @@
-; _U8D.ASM--
+; AULLDIV.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; Unsigned binary division of [RAX|EDX:EAX] by [RDX|ECX:EBX]
+;
+;  dividend / divisor = [quotient.remainder](dividend.divisor)
+;
 include stdlib.inc
+
+    option dotname
 
     .code
 
 ifndef _WIN64
+_U8D::
+endif
 
-    option dotname
-
-    ; Unsigned binary division of EDX:EAX by ECX:EBX
-    ;
-    ;  dividend / divisor = [quotient.remainder](dividend.divisor)
-    ;
-
-_U8D proc ; watcall dividend:qword, divisor:qword
-
+aulldiv proc watcall dividend:qword, divisor:qword
+ifdef _WIN64
+    mov     rcx,rdx
+    xor     edx,edx
+    div     rcx
+    ret
+else
     test    ecx,ecx
     jnz     .2
     dec     ebx
@@ -113,10 +118,19 @@ _U8D proc ; watcall dividend:qword, divisor:qword
     pop     esi
     pop     ebp
     jmp     .1
-
-_U8D endp
-
-else
-    int     3
 endif
+aulldiv endp
+
+ifndef _WIN64
+_aulldiv::
+    push    ebx
+    mov     eax,4[esp+4]
+    mov     edx,4[esp+8]
+    mov     ebx,4[esp+12]
+    mov     ecx,4[esp+16]
+    call    aulldiv
+    pop     ebx
+    ret     16
+endif
+
     end

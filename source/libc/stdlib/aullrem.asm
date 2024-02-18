@@ -1,31 +1,36 @@
-; _AULLDIV.ASM--
+; AULLREM.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-ifndef _WIN64
+include stdlib.inc
 
-    .486
-    .model flat, c
-
-_U8D proto
-
-endif
     .code
 
+aullrem proc watcall a:uint64_t, b:uint64_t
+
+    call    aulldiv
+ifdef _WIN64
+    mov     rax,rdx
+else
+    mov     eax,ebx
+    mov     edx,ecx
+endif
+    ret
+
+aullrem endp
+
 ifndef _WIN64
-
-_aulldiv::
-
+__ullmod::
+_aullrem::
     push    ebx
     mov     eax,4[esp+4]
     mov     edx,4[esp+8]
     mov     ebx,4[esp+12]
     mov     ecx,4[esp+16]
-    call    _U8D
+    call    aullrem
     pop     ebx
     ret     16
-else
-    int     3
 endif
+
     end

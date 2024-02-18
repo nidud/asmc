@@ -3,31 +3,33 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-ifndef _WIN64
+include stdlib.inc
 
-    .486
-    .model flat, c
-
-_I8D proto
-
-endif
     .code
 
+allrem proc watcall a:int64_t, b:int64_t
+
+    call    alldiv
+ifdef _WIN64
+    mov     rax,rdx
+else
+    mov     eax,ebx
+    mov     edx,ecx
+endif
+    ret
+
+allrem endp
+
 ifndef _WIN64
-
 _allrem::
-
     push    ebx
     mov     eax,4[esp+4]
     mov     edx,4[esp+8]
     mov     ebx,4[esp+12]
     mov     ecx,4[esp+16]
-    call    _I8D
-    mov     eax,ebx
-    mov     edx,ecx
+    call    allrem
     pop     ebx
     ret     16
-else
-    int     3
 endif
+
     end

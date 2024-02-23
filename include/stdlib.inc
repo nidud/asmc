@@ -364,7 +364,7 @@ _strtoi64_l	proto __cdecl :string_t, :array_t, :int_t, :_locale_t
 _strtoui64	proto __cdecl :string_t, :array_t, :int_t
 _strtoui64_l	proto __cdecl :string_t, :array_t, :int_t, :_locale_t
 ldiv		proto __cdecl :long_t, :long_t
-lldiv		proto __cdecl :int64_t, :int64_t
+lldiv		proto __cdecl :ptr _lldiv_t, :int64_t, :int64_t
 
 _ltoa_s		proto __cdecl :long_t, :string_t, :size_t, :int_t
 
@@ -404,12 +404,6 @@ strtold		proto __cdecl :string_t, :array_t
 _strtold_l	proto __cdecl :string_t, :array_t, :_locale_t
 strtof		proto __cdecl :string_t, :array_t
 _strtof_l	proto __cdecl :string_t, :array_t, :_locale_t
-
-ifndef _MSVCRT
-_strtold	proto __cdecl :string_t, :string_t
-_strtoq		proto __cdecl :ptr, :string_t, :string_t
-strtoqd		proto __cdecl :string_t, :string_t
-endif
 
 ifndef _CRT_SYSTEM_DEFINED
 define _CRT_SYSTEM_DEFINED
@@ -463,20 +457,20 @@ _ltow		proto __cdecl :int_t, :wstring_t, :int_t
 _ltow_s		proto __cdecl :long_t, :wstring_t, :size_t,:int_t
 _ultow		proto __cdecl :ulong_t, :wstring_t, :int_t
 _ultow_s	proto __cdecl :ulong_t, :wstring_t, :size_t, :int_t
-wcstod		proto __cdecl :wstring_t, :wstring_t
-_wcstod_l	proto __cdecl :wstring_t, :wstring_t, :_locale_t
-wcstol		proto __cdecl :wstring_t, :wstring_t, :int_t
-_wcstol_l	proto __cdecl :wstring_t, :wstring_t, :int_t, :_locale_t
-wcstoll		proto __cdecl :wstring_t, :wstring_t, :int_t
-_wcstoll_l	proto __cdecl :wstring_t, :wstring_t, :int_t, :_locale_t
-wcstoul		proto __cdecl :wstring_t, :wstring_t, :int_t
-_wcstoul_l	proto __cdecl :wstring_t, :wstring_t, :int_t, :_locale_t
-wcstoull	proto __cdecl :wstring_t, :wstring_t, :int_t
-_wcstoull_l	proto __cdecl :wstring_t, :wstring_t, :int_t, :_locale_t
-wcstold		proto __cdecl :wstring_t, :wstring_t
-_wcstold_l	proto __cdecl :wstring_t, :wstring_t, :_locale_t
-wcstof		proto __cdecl :wstring_t, :wstring_t
-_wcstof_l	proto __cdecl :wstring_t, :wstring_t, :_locale_t
+wcstod		proto __cdecl :wstring_t, :warray_t
+_wcstod_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
+wcstol		proto __cdecl :wstring_t, :warray_t, :int_t
+_wcstol_l	proto __cdecl :wstring_t, :warray_t, :int_t, :_locale_t
+wcstoll		proto __cdecl :wstring_t, :warray_t, :int_t
+_wcstoll_l	proto __cdecl :wstring_t, :warray_t, :int_t, :_locale_t
+wcstoul		proto __cdecl :wstring_t, :warray_t, :int_t
+_wcstoul_l	proto __cdecl :wstring_t, :warray_t, :int_t, :_locale_t
+wcstoull	proto __cdecl :wstring_t, :warray_t, :int_t
+_wcstoull_l	proto __cdecl :wstring_t, :warray_t, :int_t, :_locale_t
+wcstold		proto __cdecl :wstring_t, :warray_t
+_wcstold_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
+wcstof		proto __cdecl :wstring_t, :warray_t
+_wcstof_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
 
 _wgetenv	proto __cdecl :wstring_t
 _wgetenv_s	proto __cdecl :ptr size_t, :wstring_t, :size_t, :wstring_t
@@ -521,14 +515,22 @@ _fcvt		proto __cdecl :real8, :int_t, :ptr int_t, :ptr int_t
 _gcvt_s		proto __cdecl :string_t, :size_t, :real8, :int_t
 _gcvt		proto __cdecl :real8, :int_t, :string_t
 
-_atodbl		proto __cdecl :ptr _CRT_DOUBLE, :string_t
-_atoldbl	proto __cdecl :ptr _LDOUBLE, :string_t
-_atoflt		proto __cdecl :ptr _CRT_FLOAT, :string_t
-_atodbl_l	proto __cdecl :ptr _CRT_DOUBLE, :string_t, :_locale_t
-_atoldbl_l	proto __cdecl :ptr _LDOUBLE, :string_t, :_locale_t
-_atoflt_l	proto __cdecl :ptr _CRT_FLOAT, :string_t, :_locale_t
-;_lrotl		proto __cdecl :ulong_t, :int_t
-;_lrotr		proto __cdecl :ulong_t, :int_t
+_atodbl		proto __cdecl :ptr real8, :string_t
+_atoldbl	proto __cdecl :ptr real10, :string_t
+_atoflt		proto __cdecl :ptr real4, :string_t
+_atodbl_l	proto __cdecl :ptr real8, :string_t, :_locale_t
+_atoldbl_l	proto __cdecl :ptr real10, :string_t, :_locale_t
+_atoflt_l	proto __cdecl :ptr real4, :string_t, :_locale_t
+if not defined(_MSVCRT) or defined(_CRTBLD)
+_atoqf		proto __cdecl :ptr real16, :string_t
+endif
+_lrotl proto watcall :long_t, :abs {
+    rol	    eax,_2
+    }
+_lrotr proto watcall :long_t, :abs {
+    ror	    eax,_2
+    }
+
 _makepath_s	proto __cdecl :string_t, :size_t, :string_t, :string_t, :string_t, :string_t
 _makepath	proto __cdecl :string_t, :string_t, :string_t, :string_t, :string_t
 
@@ -616,6 +618,7 @@ define _EXEC_EXE 3
 define _EXEC_CMD 4
 
 externdef	_ermode:uint_t
+externdef	_cvtbuf:string_t
 
 __setenvp	proto __cdecl :string_t
 __wsetenvp	proto __cdecl :wstring_t
@@ -658,7 +661,7 @@ endif
 ifdef _WIN64
 alldiv proto watcall :int64_t, :int64_t {
     mov	    rcx,rdx
-    cdq
+    cqo
     idiv    rcx
     }
 aulldiv proto watcall :uint64_t, :uint64_t {

@@ -329,7 +329,7 @@ InstructionSet::InstructionSet proc uses rsi rdi
         lea rax,InstructionSet_vtable
         mov [rsi],rax
 
-        InstructionSet_Internal::InstructionSet_Internal(&[rsi].InstructionSet.CPU_Rep)
+        InstructionSet_Internal_InstructionSet_Internal(&[rsi].InstructionSet.CPU_Rep)
         mov rax,rsi
         mov rdx,this
         .if rdx
@@ -439,7 +439,7 @@ __declge2 3DNOW,        f_81_EDX_, 31, isAMD_
 ;;
 main proc
 
-    InstructionSet::InstructionSet(&cpu)
+    InstructionSet_InstructionSet(&cpu)
     support_message macro isa_feature, is_supported
         printf( "%-15s", isa_feature )
         .if is_supported

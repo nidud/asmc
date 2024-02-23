@@ -203,56 +203,47 @@ _enable macro
     retm<>
     endm
 
-_mm_rotl macro reg, val, cnt
-    _mm_loadreg(reg, val)
-    rol reg,cnt
-    retm<reg>
-    endm
+_rotl proto watcall :uint_t, :abs {
+    rol     eax,_2
+    }
+_rotr proto watcall :uint_t, :abs {
+    ror     eax,_2
+    }
+_lrotl proto watcall :long_t, :abs {
+    rol     eax,_2
+    }
+_lrotr proto watcall :long_t, :abs {
+    ror     eax,_2
+    }
 
-_mm_rotr macro reg, val, cnt
-    _mm_loadreg(reg, val)
-    ror reg,cnt
-    retm<reg>
-    endm
-
-_rotl macro val, cnt
-    exitm<_mm_rotl(eax, val, cnt)>
-    endm
-_rotr macro val, cnt
-    exitm<_mm_rotr(eax, val, cnt)>
-    endm
-_lrotl  equ <_rotl>
-_lrotr  equ <_rotr>
-_rotl16 macro val, cnt
-    exitm<_mm_rotl(ax, val, cnt)>
-    endm
-_rotl64 macro val, cnt
-    exitm<_mm_rotl(rax, val, cnt)>
-    endm
-_rotl8 macro val, cnt
-    exitm<_mm_rotl(al, val, cnt)>
-    endm
-_rotr16 macro val, cnt
-    exitm<_mm_rotr(ax, val, cnt)>
-    endm
-_rotr64 macro val, cnt
-    exitm<_mm_rotr(rax, val, cnt)>
-    endm
-_rotr8 macro val, cnt
-    exitm<_mm_rotr(al, val, cnt)>
-    endm
+_rotl8 proto watcall :uchar_t, :abs {
+    rol     al,_2
+    }
+_rotl16 proto watcall :ushort_t, :abs {
+    rol     ax,_2
+    }
+_rotl64 proto watcall :uint64_t, :abs {
+    rol     rax,_2
+    }
+_rotr8 proto watcall :uchar_t, :abs {
+    ror     al,_2
+    }
+_rotr16 proto watcall :ushort_t, :abs {
+    ror     ax,_2
+    }
+_rotr64 proto watcall :uint64_t, :abs {
+    ror     rax,_2
+    }
 
 ifdef __MACHINEX86
 
-_InterlockedAddLargeStatistic macro lpAddend, dwValue
-    _mm_loadreg(ecx, lpAddend)
-    _mm_loadreg(eax, dwValue)
-    lock add [ecx],eax
+_InterlockedAddLargeStatistic proto fastcall :ptr, :uint_t {
+    lock add [ecx],edx
     .ifc
         lock add [ecx+4],0
     .endif
-    retm<eax>
-    endm
+    mov eax,edx
+    }
 
 endif
 

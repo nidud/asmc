@@ -1690,6 +1690,11 @@ ms64_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
         mov rdx,[rsi].type
         mov dl,[rdx].asym.mem_type
     .endif
+    ;
+    ; v2.34.40 - float and regs was added separately (as syscall)
+    ;
+    add cl,ch
+    movzx ecx,cl
 
     .switch
     .case ( [rsi].sflags & S_ISVARARG )
@@ -1697,7 +1702,6 @@ ms64_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
 
     .case ( dl & MT_FLOAT || dl == MT_YWORD )
 
-        movzx ecx,ch
         inc byte ptr [rdi+1]
         .if ( cl >= float_regs )
             mov [rsi].regist[2],cx
@@ -1720,21 +1724,18 @@ ms64_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
 
     .case ( al == 16 || dl == MT_OWORD )
         .if ( cl < 3 )
-            movzx ecx,cl
             lea   rdx,ms64_regs
             movzx eax,byte ptr [rdx+rcx+3*4]
             add   byte ptr [rdi],2
            .endc
         .endif
     .case ( cl > 3 )
-        movzx ecx,cl
         mov [rsi].regist[0],T_RAX
         mov [rsi].regist[2],cx
         inc byte ptr [rdi]
        .return( 0 )
 
     .default
-        movzx   ecx,cl
         shr     eax,1
         cmp     eax,4
         cmc

@@ -188,6 +188,7 @@ endif
             .case 'X'
 
                 movzx eax,bl
+                mov radix,eax
                 shr ebx,8
 ifdef _WIN64
                 mov ebx,myltoa( rcx, &numbuf, eax, ebx, FALSE )
@@ -219,7 +220,7 @@ endif
 
                 ; v2.07: add a 't' suffix if radix is != 10
 
-               .endc .if ( ModuleInfo.radix == 10 )
+               .endc .if ( radix == 10 )
                .endc .if ( al != 'd' && al != 'u' )
                 mov al,'t'
                 stosb

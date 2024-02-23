@@ -425,7 +425,7 @@ endif
     mov i,0
     mov eax,[rbx].flags
 
-    .ifs ( eax & _ST_F || ( eax & _ST_G && ( ( ecx >= -4 && ecx < [rbx].ndigits ) || eax & _ST_CVT ) ) )
+    .ifs ( eax & _ST_F || ( eax & _ST_G && ( ( ecx >= -1 && ecx < [rbx].ndigits ) || eax & _ST_CVT ) ) )
 
         mov rdi,buf
         inc ecx
@@ -779,7 +779,7 @@ endif
                 mov  ecx,1000
                 div  ecx
                 mov  edx,eax
-                imul eax,ecx,1000
+                imul eax,eax,1000
                 sub  edi,eax
                 mov  ecx,[rbx].expwidth
             .endif
@@ -793,14 +793,13 @@ endif
          .if ( ecx >= 3 )
 
             xor edx,edx
-            xor eax,eax
-
             .ifs ( edi >= 100 )
 
+                mov  eax,edi
                 mov  ecx,100
                 div  ecx
                 mov  edx,eax
-                imul eax,ecx,100
+                imul eax,eax,100
                 sub  edi,eax
                 mov  ecx,[rbx].expwidth
             .endif
@@ -814,14 +813,13 @@ endif
          .if ( ecx >= 2 )
 
             xor edx,edx
-            xor eax,eax
-
             .ifs ( edi >= 10 )
 
+                mov  eax,edi
                 mov  ecx,10
                 div  ecx
                 mov  edx,eax
-                imul eax,ecx,10
+                imul eax,eax,10
                 sub  edi,eax
                 mov  ecx,[rbx].expwidth
             .endif

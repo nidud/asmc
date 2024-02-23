@@ -20,7 +20,7 @@ ifdef _WIN64
     idiv    rcx
 else
     ;
-    ; edx:eax / ecx:ebx --> edx:eax.ecx
+    ; edx:eax / ecx:ebx --> edx:eax.ecx:ebx
     ;
     test    edx,edx     ; hi word of dividend
     js      .1          ; signed ?

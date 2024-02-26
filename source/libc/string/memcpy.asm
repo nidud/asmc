@@ -4,22 +4,19 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include libc.inc
+include string.inc
+include tmacro.inc
 
     .code
 
-    option dotname
+memcpy proc dst:ptr, src:ptr, size:size_t
 
 if defined(_AMD64_) and defined(__AVX__)
 
-memmove::
-memcpy::
+    ldr     r8,size
+    ldr     rcx,dst
+    ldr     rdx,src
 
-ifdef __UNIX__
-    mov     r8,rdx
-    mov     rcx,rdi
-    mov     rdx,rsi
-endif
     mov     rax,rcx
     cmp     r8,64
     ja      .64
@@ -35,42 +32,42 @@ endif
     jnz     .02
     test    r8b,0x01
     jnz     .01
-    ret
+    jmp     .3
 .01:
     mov     cl,[rdx]
     mov     [rax],cl
-    ret
+    jmp     .3
 .02:
     mov     cx,[rdx]
     mov     dx,[rdx+r8-2]
     mov     [rax+r8-2],dx
     mov     [rax],cx
-    ret
+    jmp     .3
 .04:
     mov     ecx,[rdx]
     mov     edx,[rdx+r8-4]
     mov     [rax+r8-4],edx
     mov     [rax],ecx
-    ret
+    jmp     .3
 .08:
     mov     rcx,[rdx]
     mov     rdx,[rdx+r8-8]
     mov     [rax],rcx
     mov     [rax+r8-8],rdx
-    ret
+    jmp     .3
 .16:
     movups  xmm0,[rdx]
     movups  xmm1,[rdx+r8-16]
     movups  [rax],xmm0
     movups  [rax+r8-16],xmm1
-    ret
+    jmp     .3
 .32:
     vmovups ymm0,[rdx]
     vmovups ymm1,[rdx+r8-32]
     vmovups [rax],ymm0
     vmovups [rax+r8-32],ymm1
     vzeroupper
-    ret
+    jmp     .3
 .64:
     vmovups ymm2,[rdx]
     vmovups ymm3,[rdx+32]
@@ -106,26 +103,54 @@ endif
     vmovups [rax+r8-32],ymm4
     vmovups [rax+r8-64],ymm5
     vzeroupper
-    ret
+.3:
 
 else
 
-if defined(_AMD64_) and defined(__UNIX__)
-memcpy proc dst:ptr, src:ptr, size:size_t
-    mov rax,rdi
-    mov rcx,rdx
+ifdef _WIN64
+ifdef __UNIX__
+    mov     rax,rdi
+    mov     rcx,rdx
 else
-memcpy proc uses rsi rdi dst:ptr, src:ptr, size:size_t
-    ldr rax,dst
-    ldr rsi,src
-    ldr rcx,size
-    mov rdi,rax
+    mov     r9,rdi
+    mov     rax,rcx
+    mov     rdi,rcx
+    mov     rcx,r8
+    xchg    rsi,rdx
 endif
-    rep movsb
+else
+    push    esi
+    mov     edx,edi
+    mov     eax,dst
+    mov     esi,src
+    mov     ecx,size
+    mov     edi,eax
+endif
+
+    cmp     rax,rsi
+    ja      .0
+    rep     movsb
+    jmp     .1
+.0:
+    lea     rsi,[rsi+rcx-1]
+    lea     rdi,[rdi+rcx-1]
+    std
+    rep     movsb
+    cld
+.1:
+ifdef _WIN64
+ifndef __UNIX__
+    mov     rsi,rdx
+    mov     rdi,r9
+endif
+else
+    mov     edi,edx
+    pop     esi
+endif
+
+endif
     ret
 
 memcpy endp
-
-endif
 
     end

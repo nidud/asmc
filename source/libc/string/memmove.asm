@@ -8,17 +8,30 @@ include string.inc
 
     .code
 
-if defined(_AMD64_) and defined(__AVX__)
-else
     option dotname
 
-memmove proc uses rsi rdi dst:ptr, src:ptr, count:size_t
+memmove proc dst:ptr, src:ptr, count:size_t
 
-    ldr     rax,dst
-    ldr     rsi,src
-    ldr     rcx,count
+ifdef _WIN64
+ifdef __UNIX__
+    mov     rax,rdi
+    mov     rcx,rdx
+else
+    mov     r9,rdi
+    mov     rax,rcx
+    mov     rdi,rcx
+    mov     rcx,r8
+    xchg    rsi,rdx
+endif
+else
+    push    esi
+    mov     edx,edi
+    mov     eax,dst
+    mov     esi,src
+    mov     ecx,count
+    mov     edi,eax
+endif
 
-    mov     rdi,rax
     cmp     rax,rsi
     ja      .0
     rep     movsb
@@ -30,8 +43,17 @@ memmove proc uses rsi rdi dst:ptr, src:ptr, count:size_t
     rep     movsb
     cld
 .1:
+ifdef _WIN64
+ifndef __UNIX__
+    mov     rsi,rdx
+    mov     rdi,r9
+endif
+else
+    mov     edi,edx
+    pop     esi
+endif
     ret
 
 memmove endp
-endif
+
     end

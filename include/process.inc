@@ -136,7 +136,7 @@ ifdef _DECL_DLLMAIN
 ;;
 ifdef _WINDOWS_
 
-if defined (MRTDLL) && defined(_CRTBLD)
+if defined (MRTDLL) and defined(_CRTBLD)
 DllMain     proto __clrcall :HANDLE, :DWORD, :PVOID
 _CRT_INIT   proto :HANDLE, :DWORD, :PVOID
 else
@@ -192,8 +192,6 @@ spawnv      proto __cdecl :int_t, :string_t, :ptr string_t
 spawnve     proto __cdecl :int_t, :string_t, :string_t, :ptr string_t
 spawnvp     proto __cdecl :int_t, :string_t, :string_t
 spawnvpe    proto __cdecl :int_t, :string_t, :string_t, :ptr string_t
-
-getpid      proto __cdecl
 
 endif
 endif

@@ -1,32 +1,46 @@
-!include srcpath
+#
+# Makefile for [A]LIBC
+#
+ifdef YACC
+
+alibc.a:
+	asmc64 -Zp8 -D_CRTBLD -Cs -r *.asm
+	ar rcs $@ *.o
+	rm *.o
+	sudo cp alibc.a /lib
+
+else
+
+include srcpath
 
 path = $(lib_dir)\x64
-!ifdef x86
+ifdef x86
 path = $(lib_dir)\x86
-!endif
+endif
 name = libc.lib
 type = obj
 lcfg = -fac
 flag = -win64 -frame -Zp8 -Zi8
-!ifdef tty
+ifdef tty
 flag += -D__TTY__
-!endif
-!ifdef avx
+endif
+ifdef avx
 flag += -arch:AVX
-!endif
-!ifdef linux
+endif
+ifdef linux
 name = libc.a
 type = o
 flag = -elf64 -Zp8
 lcfg = -fag
-!else
-!ifdef x86
+else
+ifdef x86
 flag = -6 -coff -Zp4 -Zi8
-!endif
-!endif
+endif
+endif
 
 $(path)\$(name):
 	asmc $(flag) -D_CRTBLD -Cs -I$(inc_dir) -r $(src_dir)\libc\*.asm
+	asmc $(flag) -D_CRTBLD -Cs -I$(inc_dir) -Fo w* -r -ws $(src_dir)\libc\_t*.asm
 	libw -q -b -n -c $(lcfg) $@ *.$(type)
 	del *.$(type)
 
@@ -66,3 +80,4 @@ regress64:
 	%~n1.exe
 	if errorlevel 1 exit
 	cmd /C del %~n1.obj %~n1.exe
+endif

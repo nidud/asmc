@@ -35,6 +35,11 @@ endif
             movzx   eax,ConInpRec.Event.KeyEvent.wVirtualKeyCode
             shl     eax,8
             mov     al,ConInpRec.Event.KeyEvent.uChar.AsciiChar
+ifndef __TTY__
+            movzx   edx,al
+            cmp     al,ah
+            cmovz   eax,edx
+endif
             mov     edx,ConInpRec.Event.KeyEvent.dwControlKeyState
             and     edx,LEFT_ALT_PRESSED or SHIFT_PRESSED or LEFT_CTRL_PRESSED
             shl     edx,16

@@ -47,12 +47,12 @@ PCG32_INITSEQ       equ 0xda3e39cb94b95bdb
 
 PCG32_INITIALIZER   equ <{ PCG32_INITSTATE, PCG32_INITSEQ }>
 
-pcg32_srandom       proto initstate:uint64_t, initseq:uint64_t
-pcg32_srandom_r     proto rng:ptr pcg32_random_t, initstate:uint64_t, initseq:uint64_t
-pcg32_random        proto
-pcg32_random_r      proto rng:ptr pcg32_random_t
-pcg32_boundedrand   proto _bound:uint32_t
-pcg32_boundedrand_r proto rng:ptr pcg32_random_t, _bound:uint32_t
+pcg32_srandom       proto __cdecl initstate:uint64_t, initseq:uint64_t
+pcg32_srandom_r     proto __cdecl rng:ptr pcg32_random_t, initstate:uint64_t, initseq:uint64_t
+pcg32_random        proto __cdecl
+pcg32_random_r      proto __cdecl rng:ptr pcg32_random_t
+pcg32_boundedrand   proto __cdecl _bound:uint32_t
+pcg32_boundedrand_r proto __cdecl rng:ptr pcg32_random_t, _bound:uint32_t
 
 ifdef _WIN64
 

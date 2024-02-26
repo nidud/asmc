@@ -68,34 +68,16 @@ _wherex		proto __cdecl
 _wherey		proto __cdecl
 
 _cputws		proto __cdecl :LPWSTR
-_putwch		proto __cdecl :wchar_t
+_putwch		proto __cdecl :int_t
 _putwch_nolock	proto __cdecl :wchar_t
 _getwch		proto __cdecl
 _getwche	proto __cdecl
-_cgetws		proto __cdecl :LPWSTR, :SIZE_T, :PVOID
+_cgetws		proto __cdecl :LPWSTR
 _ungetwch	proto __cdecl :UINT
 _cputws		proto __cdecl :LPWSTR
 _cwprintf	proto __Cdecl :LPWSTR, :VARARG
 _cwscanf	proto __Cdecl :LPWSTR, :VARARG
 _vcwprintf	proto __cdecl :LPWSTR, :PVOID
-
-ifdef _UNICODE
-_tcgets		equ <_cgetws>
-_tcprintf	equ <_cwprintf>
-_tcputs		equ <_cputws>
-_tcscanf	equ <_cwscanf>
-_tgetch		equ <_getwch>
-_tgetche	equ <_getwche>
-_tputch		equ <_putwch>
-else
-_tcgets		equ <_cgets>
-_tcprintf	equ <_cprintf>
-_tcputs		equ <_cputs>
-_tcscanf	equ <_cscanf>
-_tgetch		equ <_getch>
-_tgetche	equ <_getche>
-_tputch		equ <_putch>
-endif
 
 ;;;;;;;;;;;;;;; crtl
 
@@ -385,7 +367,8 @@ externdef	_terminalcolorid:byte
 
 _coutA		proto __Cdecl :string_t, :vararg
 _coutW		proto __Cdecl :wstring_t, :vararg
-_readinput	proto __cdecl :PINPUT_RECORD
+_readinputA	proto __cdecl :PINPUT_RECORD
+_readinputW	proto __cdecl :PINPUT_RECORD
 _kbflush	proto __cdecl
 
 _scgetp		proto __cdecl :uchar_t, :uchar_t, :uchar_t
@@ -558,6 +541,7 @@ define _tcontrol	<_tcontrolW>
 define _msgbox		<_msgboxW>
 define _clipget		<_clipgetW>
 define _clipset		<_clipsetW>
+define _readinput	<_readinputW>
 else
 define _cout		<_coutA>
 define _scputs		<_scputsA>
@@ -573,6 +557,7 @@ define _tcontrol	<_tcontrolA>
 define _msgbox		<_msgboxA>
 define _clipget		<_clipgetA>
 define _clipset		<_clipsetA>
+define _readinput	<_readinputA>
 endif
 
 ; Unicode box charcters -- https://www.compart.com/en/unicode/U+2500

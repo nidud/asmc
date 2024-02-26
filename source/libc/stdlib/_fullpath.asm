@@ -18,40 +18,46 @@ include winbase.inc
 
 .code
 
-_fullpath proc uses rsi rdi rbx buf:LPSTR, path:LPSTR, maxlen:UINT
 ifdef __UNIX__
+
+_fullpath proc buf:LPSTR, path:LPSTR, maxlen:UINT
+
     xor eax,eax
+    ret
+
 else
-  local drive:byte
-  local dchar:byte
+
+_fullpath proc uses rsi rdi rbx buf:LPSTR, path:LPSTR, maxlen:UINT
+
+    .new drive:byte
+    .new dchar:byte
+
+    ldr rdi,buf
+    ldr rsi,path
+
+    .if ( !rsi || byte ptr [rsi] == 0 )
+
+       .return( _getcwd(rdi, maxlen) )
+    .endif
+
+    .if ( !rdi )
+
+        .if !malloc( _MAX_PATH )
+
+            _set_errno(ENOMEM)
+            .return( 0 )
+        .endif
+
+        mov rdi,rax
+        mov maxlen,_MAX_PATH
+
+    .elseif ( maxlen < _MAX_DRIVE+1 )
+
+        _set_errno(ERANGE)
+        .return( 0 )
+    .endif
 
     .repeat
-
-        mov rsi,path
-        .if !rsi || byte ptr [rsi] == 0
-
-            _getcwd(buf, maxlen)
-            .break
-        .endif
-
-        mov rdi,buf
-        .if !rdi
-
-            .if !malloc( _MAX_PATH )
-
-                mov errno,ENOMEM
-                .break
-            .endif
-
-            mov rdi,rax
-            mov maxlen,_MAX_PATH
-
-        .elseif ( maxlen < _MAX_DRIVE+1 )
-
-            mov errno,ERANGE
-            xor eax,eax
-           .break
-        .endif
 
         mov rbx,rdi
         mov edx,'\/'
@@ -72,7 +78,7 @@ else
 
                 .if ( rdi >= rcx )
 
-                    mov errno,ERANGE
+                    _set_errno(ERANGE)
                     xor eax,eax
                    .break
                 .endif
@@ -85,7 +91,7 @@ else
                     .if ( ( ah == 2 && byte ptr [rsi] == 0) ||
                           ( ah >= 3 && byte ptr [rdi-1] == '\' ) )
 
-                        mov errno,EINVAL
+                        _set_errno(EINVAL)
                         xor eax,eax
                        .break
                     .endif
@@ -121,8 +127,9 @@ else
                 and eax,1
 
                 .ifz
-                    mov errno,EACCES
-                    mov _doserrno,ERROR_INVALID_DRIVE
+                    _set_errno(EACCES)
+                    _set_doserrno(ERROR_INVALID_DRIVE)
+                    xor eax,eax
                    .break
                 .endif
             .endif
@@ -186,9 +193,9 @@ else
 
                 .if ( rdi < rcx )
 
-                    mov errno,EACCES
+                    _set_errno(EACCES)
                     xor eax,eax
-                    .break(1)
+                   .break( 1 )
                 .endif
 
                 add rsi,2
@@ -218,16 +225,16 @@ else
 
                 .if ( rdi >= rcx )
 
-                    mov errno,ERANGE
+                    _set_errno(ERANGE)
                     xor eax,eax
                    .break
                 .endif
 
                 .if ( rdi == rdx )
 
-                    mov errno,EINVAL
+                    _set_errno(EINVAL)
                     xor eax,eax
-                   .break(1)
+                   .break( 1 )
                 .endif
 
                 inc rdi
@@ -256,8 +263,9 @@ else
         .endif
         xor eax,eax
     .endif
-endif
     ret
+
+endif
 
 _fullpath endp
 

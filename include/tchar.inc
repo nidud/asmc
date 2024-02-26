@@ -92,7 +92,6 @@ __T	macro x
 	endm
 endif
 
-
 _tmain			equ <wmain>
 _tWinMain		equ <wWinMain>
 _tenviron		equ <_wenviron>
@@ -101,6 +100,13 @@ _tgetmainargs		equ <__wgetmainargs>
 
 
 ;; Formatted i/o
+
+_toutput		equ <_woutput>
+_tfilbuf		equ <_filwbuf>
+_tflsbuf		equ <_flswbuf>
+_topenfile		equ <_wopenfile>
+_tsetargv		equ <setwargv>
+_tgetfattr		equ <_wgetfattr>
 
 _tprintf		equ <wprintf>
 _tprintf_l		equ <_wprintf_l>
@@ -693,6 +699,13 @@ __targv			equ <__argv>
 _tgetmainargs		equ <__getmainargs>
 
 ;; Formatted i/o
+
+_toutput		equ <_output>
+_tfilbuf		equ <_filbuf>
+_tflsbuf		equ <_flsbuf>
+_topenfile		equ <_openfile>
+_tsetargv		equ <setargv>
+_tgetfattr		equ <getfattr>
 
 _tprintf		equ <printf>
 _tprintf_l		equ <_printf_l>

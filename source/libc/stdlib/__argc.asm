@@ -7,9 +7,9 @@
 include stdlib.inc
 
 ifdef   _UNICODE
-extern  __wargv:warray_t
+extern  __wargv:LPWSTR
 else
-extern  __argv:array_t
+extern  __argv:LPSTR
 endif
     .data
     __argc int_t 0

@@ -32,6 +32,57 @@ my_environ array_t 0
 
 .code
 
+;
+; v2.34.41 - set OBJ name -Fo _*_
+;
+setoname proc __ccall uses rsi rdi rbx file:string_t, newo:string_t
+
+   .new optr:string_t = NULL
+   .new name[_MAX_PATH]:char_t
+
+    mov rbx,Options.global_options.names[OBJ*string_t]
+    .if ( rbx )
+
+        .if ( tstrchr( rbx, '*' ) )
+
+            .if ( tstrrchr( tstrcpy(&name, file), '.' ) )
+                mov byte ptr [rax],0
+            .endif
+
+            mov optr,rbx
+            mov rdx,newo
+            mov Options.global_options.names[OBJ*string_t],rdx
+
+            .while 1
+
+                mov al,[rbx]
+                .if ( al == '*' )
+
+                    lea rcx,name
+                    .while 1
+
+                        mov al,[rcx]
+                        .break .if ( al == 0 )
+
+                        mov [rdx],al
+                        inc rcx
+                        inc rdx
+                    .endw
+
+                .else
+
+                    mov [rdx],al
+                    inc rdx
+                   .break .if ( al == 0 )
+                .endif
+                inc rbx
+            .endw
+        .endif
+    .endif
+    .return( optr )
+
+setoname endp
+
 ifdef __UNIX__
 
 cmpwarg proc fastcall uses rsi rdi wild:string_t, path:string_t
@@ -180,14 +231,21 @@ ReadFiles endp
 
 AssembleSubdir proc uses rbx directory:string_t, wild:string_t
 
+    .new optr:string_t
+    .new newo[_MAX_PATH]:char_t
     .new rc:int_t = 0
     .new files:SourceFile = {0}
     .new cnt:int_t = ReadFiles( directory, wild, &files )
 
     .for ( rbx = files.next : rbx : )
 
+        mov optr,setoname(&[rbx].SourceFile.file, &newo)
         .if AssembleModule( &[rbx].SourceFile.file )
             mov rc,eax
+        .endif
+        mov rax,optr
+        .if ( rax )
+            mov Options.global_options.names[OBJ*string_t],rax
         .endif
         mov rcx,rbx
         mov rbx,[rbx].SourceFile.next
@@ -245,6 +303,8 @@ strfcat endp
 
 AssembleSubdir proc private uses rsi rdi rbx directory:string_t, wild:string_t
 
+   .new optr:string_t
+   .new newo[_MAX_PATH]:char_t
    .new path[_MAX_PATH]:char_t
    .new ff:WIN32_FIND_DATA
    .new rc:int_t = 0
@@ -257,15 +317,17 @@ AssembleSubdir proc private uses rsi rdi rbx directory:string_t, wild:string_t
     .if ( FindFirstFile( strfcat( rsi, directory, wild ), rdi ) != -1 )
 
         mov h,rax
-
         .repeat
-
             .if !( byte ptr ff.dwFileAttributes & _A_SUBDIR )
 
+                mov optr,setoname(rbx, &newo)
                 mov rc,AssembleModule( strfcat( rsi, directory, rbx ) )
+                mov rax,optr
+                .if ( rax )
+                    mov Options.global_options.names[OBJ*string_t],rax
+                .endif
             .endif
         .until !FindNextFile( h, rdi )
-
         FindClose( h )
     .endif
 
@@ -534,4 +596,3 @@ tgetenv proc fastcall uses rsi rdi rbx enval:string_t
 tgetenv endp
 
     end
-

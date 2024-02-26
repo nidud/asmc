@@ -222,8 +222,8 @@ endif ;; defined (_DLL) && defined (_M_IX86)
 
 ifndef _M_CEE_PURE
 externdef	__argc:int_t
-externdef	__argv:array_t
-externdef	__wargv:warray_t
+externdef	__argv:LPSTR
+externdef	__wargv:LPWSTR
 else
 __p___argc	proto __cdecl
 __p___argv	proto __cdecl
@@ -339,12 +339,18 @@ endif
 qsort		proto __cdecl :ptr, :size_t, :size_t, :LPQSORTCMD
 endif
 
-if 0
-_byteswap_ushort proto __cdecl :ushort_t
-_byteswap_ulong	 proto __cdecl :ulong_t
-_byteswap_uint64 proto __cdecl :uint64_t
-;div		 proto __cdecl :int_t, :int_t
-endif
+_byteswap_ushort proto fastcall :word {
+    mov	    ax,cx
+    ror	    ax,8
+    }
+_byteswap_ulong proto fastcall :dword {
+    mov	    eax,ecx
+    bswap   eax
+    }
+_byteswap_uint64 proto fastcall :qword {
+    mov	    rax,rcx
+    bswap   rax
+    }
 
 getenv		proto __cdecl :string_t
 if __STDC_WANT_SECURE_LIB__
@@ -550,12 +556,18 @@ endif
 _putenv		proto __cdecl :string_t
 _putenv_s	proto __cdecl :string_t, :string_t
 
-if 0 ; use intrin.inc
-_rotl		proto __cdecl :int_t, :int_t
-_rotl64		proto __cdecl :uint64_t, :int_t
-_rotr		proto __cdecl :uint_t, :int_t
-_rotr64		proto __cdecl :uint64_t, :int_t
-endif
+_rotl proto watcall :uint_t, :abs {
+    rol	    eax,_2
+    }
+_rotl64 proto watcall :uint64_t, :abs {
+    rol	    rax,_2
+    }
+_rotr proto watcall :uint_t, :abs {
+    ror	    eax,_2
+    }
+_rotr64 proto watcall :uint64_t, :abs {
+    ror	    rax,_2
+    }
 
 _searchenv_s	proto __cdecl :string_t, :string_t, :string_t, :size_t
 _splitpath	proto __cdecl :string_t, :string_t, :string_t, :string_t, :string_t
@@ -623,6 +635,7 @@ externdef	_cvtbuf:string_t
 __setenvp	proto __cdecl :string_t
 __wsetenvp	proto __cdecl :wstring_t
 _initterm	proto __cdecl :ptr, :ptr
+_cenvarg	proto __cdecl :array_t, :array_t, :array_t, :array_t, :string_t
 
 setargv		proto __cdecl :ptr int_t, :string_t
 setwargv	proto __cdecl :ptr int_t, :ptr wchar_t

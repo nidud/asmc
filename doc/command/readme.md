@@ -34,7 +34,7 @@ The options listed in the following table.
 | **-Fd**[_file_] | Write import definition file. |
 | **-Fi**_file_ | Force _file_ to be included. |
 | **-Fl**[[_filename_]] | Generates an assembled code listing. See /Sf. |
-| **-Fo**_filename_ | Names an object file. |
+| **-Fo**_filename_ | Names an object file. In case of wildcard '*' may be used for current file. |
 | **-fpc** | Disallow floating-point instructions. |
 | **-FPi** | Generates emulator fix-ups for floating-point arithmetic (mixed language only). |
 | **-FPi87** | 80x87 instructions (default). |

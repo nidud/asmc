@@ -66,6 +66,9 @@ srclinebuffer string_t 0
 StringBuffer  string_t 0
 CommentBuffer string_t 0
 
+token_buffer  string_t 0
+string_buffer string_t 0
+
 ; string buffer - token strings and other stuff are stored here.
 ; must be a multiple of MAX_LINE_LEN since it is used for string expansion.
 
@@ -816,75 +819,75 @@ SIZE_STRINGBUFFER equ ( MAX_LINE_LEN * MAX_MACRO_NESTING )
 
 GetInputState proc __ccall uses rbx p:ptr InputState
 
-    ldr     rbx,p
-    mov     eax,MaxLineLength
-    imul    ecx,eax,MAX_MACRO_NESTING + 1  ; SIZE_SRCLINES
-    shr     eax,2                          ; SIZE_TOKENARRAY
-    imul    edx,eax,asm_tok*MAX_MACRO_NESTING
-    add     edx,ecx
-    mov     rax,CurrSource
-    sub     rax,srclinebuffer
-    mov     [rbx].scr_pos,eax
-    mov     rax,StringBufferEnd
-    sub     rax,StringBuffer
-    mov     [rbx].end_off,eax
-    mov     rax,TokenArray
-    sub     rax,srclinebuffer
-    sub     eax,ecx
-    mov     [rbx].arr_pos,eax
-    mov     rax,StringBuffer
-    sub     rax,srclinebuffer
-    sub     eax,edx
-    mov     [rbx].str_pos,eax
-    mov     rax,rbx
+    ldr rbx,p
+    mov rax,CurrSource
+    sub rax,srclinebuffer
+    mov [rbx].scr_pos,eax
+    mov rax,StringBufferEnd
+    sub rax,StringBuffer
+    mov [rbx].end_off,eax
+    mov rax,TokenArray
+    sub rax,token_buffer
+    mov [rbx].arr_pos,eax
+    mov rax,StringBuffer
+    sub rax,string_buffer
+    mov [rbx].str_pos,eax
+    mov rax,rbx
     ret
 
 GetInputState endp
 
 SetInputState proc __ccall p:ptr InputState
 
-    ldr     rbx,p
-    mov     eax,[rbx].scr_pos
-    add     rax,srclinebuffer
-    mov     CurrSource,rax
-    mov     edx,MaxLineLength
-    imul    ecx,edx,MAX_MACRO_NESTING+1
-    mov     eax,[rbx].arr_pos
-    add     eax,ecx
-    add     rax,srclinebuffer
-    mov     TokenArray,rax
-    shr     edx,2
-    imul    eax,edx,asm_tok*MAX_MACRO_NESTING
-    add     eax,ecx
-    add     eax,[rbx].str_pos
-    add     rax,srclinebuffer
-    mov     StringBuffer,rax
-    mov     ecx,[rbx].end_off
-    add     rax,rcx
-    mov     StringBufferEnd,rax
-    mov     rax,rbx
+    ldr rbx,p
+    mov eax,[rbx].scr_pos
+    add rax,srclinebuffer
+    mov CurrSource,rax
+    mov eax,[rbx].arr_pos
+    add rax,token_buffer
+    mov TokenArray,rax
+    mov eax,[rbx].str_pos
+    add rax,string_buffer
+    mov StringBuffer,rax
+    mov ecx,[rbx].end_off
+    add rax,rcx
+    mov StringBufferEnd,rax
+    mov rax,rbx
     ret
 
 SetInputState endp
 
 PushInputStatus proc __ccall uses rbx oldstat:ptr input_status
 
+    UNREFERENCED_PARAMETER(oldstat)
+
     ldr rbx,oldstat
-    GetInputState(rbx)
+
     mov [rbx].flags,ModuleInfo.line_flags
     mov [rbx].tok_cnt,TokenCount
+    mov rax,CurrSource
+    sub rax,srclinebuffer
+    mov [rbx].scr_pos,eax
+    mov rax,StringBufferEnd
+    sub rax,StringBuffer
+    mov [rbx].end_off,eax
+    mov rax,TokenArray
+    sub rax,token_buffer
+    mov [rbx].arr_pos,eax
+    mov rax,StringBuffer
+    sub rax,string_buffer
+    mov [rbx].str_pos,eax
 
     ; if there's a comment, attach it to current source
 
-    .if ( CurrComment )
+    mov rax,CurrComment
+    .if ( rax )
 
         tstrlen( CurrSource )
         add rax,CurrSource
-        mov [rbx].currcomment,rax
         tstrcpy( rax, CurrComment )
-    .else
-        mov [rbx].currcomment,NULL
     .endif
+    mov [rbx].currcomment,rax
 
     mov StringBuffer,StringBufferEnd
     mov  eax,TokenCount
@@ -900,9 +903,22 @@ PushInputStatus endp
 PopInputStatus proc __ccall uses rbx newstat:ptr input_status
 
     ldr rbx,newstat
-    SetInputState(rbx)
+
     mov ModuleInfo.line_flags,[rbx].flags ; v2.08
     mov TokenCount,[rbx].tok_cnt
+
+    mov eax,[rbx].scr_pos
+    add rax,srclinebuffer
+    mov CurrSource,rax
+    mov eax,[rbx].arr_pos
+    add rax,token_buffer
+    mov TokenArray,rax
+    mov eax,[rbx].str_pos
+    add rax,string_buffer
+    mov StringBuffer,rax
+    mov ecx,[rbx].end_off
+    add rax,rcx
+    mov StringBufferEnd,rax
 
     .if ( [rbx].currcomment )
 
@@ -927,33 +943,30 @@ PopInputStatus endp
 
 AllocInput proc __ccall private uses rsi rdi
 
-    mov  eax,MaxLineLength
-    imul rsi,rax,MAX_MACRO_NESTING + 1  ; SIZE_SRCLINES
-    imul rdx,rax,MAX_MACRO_NESTING      ; SIZE_STRINGBUFFER
-
-    shr  rax,2                          ; SIZE_TOKENARRAY
-    imul rdi,rax,asm_tok * MAX_MACRO_NESTING
-    add  rdx,rdi
-    add  rdx,rsi
-    shl  rax,2
-    add  rax,rdx
-    mov  srclinebuffer,MemAlloc( eax )
+    mov     eax,MaxLineLength
+    imul    rsi,rax,MAX_MACRO_NESTING + 1  ; SIZE_SRCLINES
+    imul    rdx,rax,MAX_MACRO_NESTING      ; SIZE_STRINGBUFFER
+    shr     rax,2                          ; SIZE_TOKENARRAY
+    imul    rdi,rax,asm_tok * MAX_MACRO_NESTING
+    add     rdx,rdi
+    add     rdx,rsi
+    shl     rax,2
+    add     rax,rdx
+    mov     srclinebuffer,MemAlloc( eax )
 
     ; the comment buffer is at the end of the source line buffer
-
-    lea rcx,[rax+rsi]
-    mov edx,MaxLineLength
-    sub rcx,rdx
-    mov CommentBuffer,rcx
-
     ; behind the comment buffer is the token buffer
 
-    lea rcx,[rax+rsi]
-    mov TokenArray,rcx
-    add rdi,rcx
-    mov StringBuffer,rdi
-    mov StringBufferEnd,rdi
-    mov StringBufferEnd,rdi
+    lea     rcx,[rax+rsi]
+    mov     TokenArray,rcx
+    mov     token_buffer,rcx
+    add     rdi,rcx
+    mov     string_buffer,rdi
+    mov     StringBuffer,rdi
+    mov     StringBufferEnd,rdi
+    mov     edx,MaxLineLength
+    sub     rcx,rdx
+    mov     CommentBuffer,rcx
     ret
 
 AllocInput endp

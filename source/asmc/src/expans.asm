@@ -32,6 +32,25 @@ include types.inc
 
 public MacroLocals
 
+alloc_line macro
+   .new mem_alloc:uchar_t = 0
+    mov ecx,MaxLineLength
+    .if ( ecx > MAX_LINE_LEN )
+        mov mem_alloc,1
+        MemAlloc( ecx )
+    .else
+        alloca( ecx )
+    .endif
+    exitm<rax>
+    endm
+
+free_line macro p
+    .if ( mem_alloc )
+        MemFree( p )
+    .endif
+    exitm<>
+    endm
+
 ; TEVALUE_UNSIGNED
 ; 1 = the % operator used in an TEXTEQU expression is supposed to
 ;     return an UNSIGNED value ( Masm-compatible ).
@@ -42,22 +61,8 @@ MAX_TEXTMACRO_NESTING equ 20
 .data
  MacroLocals int_t 0     ; counter for LOCAL names
  MacroLevel  dd 0        ; current macro nesting level
-.code
 
-if 0
-MSymSearch proc name:string_t
-    .if SymSearch( rcx )
-        .if ( [rax].asym.state == SYM_EXTERNAL &&
-              [rax].asym.flags & S_ISINLINE )
-            mov rcx,[rax].asym.target_type
-            .if ( rcx && [rcx].asym.state == SYM_MACRO )
-                mov rax,rcx
-            .endif
-        .endif
-    .endif
-    ret
-MSymSearch endp
-endif
+.code
 
 ; C ltoa() isn't fully compatible since hex digits are lower case.
 ; for JWasm, it's ensured that 2 <= radix <= 16.
@@ -174,9 +179,7 @@ myltoa endp
 
 SkipMacro proc __ccall private tokenarray:token_t
 
-    local buffer:ptr char_t
-
-    mov buffer,MemAlloc( MaxLineLength )
+   .new buffer:string_t = alloc_line()
 
     ; The queue isn't just thrown away, because any
     ; coditional assembly directives found in the source
@@ -185,7 +188,7 @@ SkipMacro proc __ccall private tokenarray:token_t
     .while GetTextLine( buffer )
         Tokenize( buffer, 0, tokenarray, TOK_DEFAULT )
     .endw
-    MemFree(buffer)
+    free_line(buffer)
     ret
 
 SkipMacro endp
@@ -234,9 +237,8 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
     local cnt_opnum         :int_t
     local is_exitm2         :int_t
     local len               :int_t
+    local mem_alloc         :int_t
     local cvt               :FLTINFO
-
-    mov mi.parm_array,NULL
 
     mov rax,StringBufferEnd
     sub rax,StringBuffer
@@ -252,6 +254,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
         .return asmerr( 2123 )
     .endif
 
+    mov  mem_alloc,0
     mov  mi.parm_array,NULL
     mov  rsi,mac
     mov  rdi,[rsi].macroinfo
@@ -263,19 +266,26 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
     mov parm_end_delim,T_FINAL
     .if ( [rsi].mac_flag & M_ISFUNC )
+
         .if ( [rbx].token == T_OP_BRACKET ) ; should be always true
+
             inc idx
             add rbx,asm_tok
             mov parm_end_delim,T_CL_BRACKET
             mov bracket_level,1
         .endif
-        mov rax,_out ;; v2.08: init return value buffer
+        mov rax,_out ; v2.08: init return value buffer
         mov byte ptr [rax],0
     .endif
-    ;; v2.08: if macro is purged, return "void"
+
+    ; v2.08: if macro is purged, return "void"
+
     .if ( [rsi].mac_flag & M_PURGED )
+
         .if ( bracket_level > 0 )
+
             .for ( : bracket_level && [rbx].token != T_FINAL: idx++, rbx += asm_tok )
+
                 .if [rbx].token == T_OP_BRACKET
                     inc bracket_level
                 .elseif [rbx].token == T_CL_BRACKET
@@ -288,28 +298,40 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
         .return idx
     .endif
 
-    .if [rdi].parmcnt
+    .if ( [rdi].parmcnt )
 
+        movzx   eax,[rdi].parmcnt
+        mov     ecx,MaxLineLength
+        mov     edx,ecx
+        add     ecx,ecx
+        lea     ecx,[rcx+rax*size_t]
+
+        .if ( edx == MAX_LINE_LEN )
+            alloca( ecx )
+        .else
+            mov mem_alloc,1
+            MemAlloc( ecx )
+        .endif
+
+        mov     mi.parm_array,rax
         movzx   ecx,[rdi].parmcnt
-        mov     eax,MaxLineLength
-        add     eax,eax
         lea     rax,[rax+rcx*size_t]
-        mov     mi.parm_array,MemAlloc(eax)
-        movzx   ecx,[rdi].parmcnt
-        lea     rax,[rax+rcx*size_t]
-        mov     parmstrings,rax ;; init the macro arguments pointer
+        mov     parmstrings,rax ; init the macro arguments pointer
         mov     currparm,rax
     .endif
 
     ; now get all the parameters from the original src line.
     ; macro parameters are expanded if
-    ; - it is a macro function call            or
+    ; - it is a macro function call or
     ; - the expansion operator (%) is found
 
     mov rbx,tokenarray
     mov parmidx,0
+
     .if ( [rsi].mac_flag & M_LABEL )
+
         .if ( mflags & MF_LABEL )
+
             mov i,tstrlen( [rbx].string_ptr )
             mov ecx,parmidx
             mov rdx,mi.parm_array
@@ -328,10 +350,12 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
         .endif
         inc parmidx
     .endif
+
     mov rax,is_exitm
     mov dword ptr [rax],FALSE
 
-    ;; v2.08: allow T_FINAL to be chained, lastidx==0 is true final
+    ; v2.08: allow T_FINAL to be chained, lastidx==0 is true final
+
     imul eax,TokenCount,asm_tok
     mov  [rbx+rax].lastidx,0
     imul eax,idx,asm_tok
@@ -339,9 +363,9 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
     .for ( varargcnt = 0, skipcomma = 0 : : parmidx++ )
 
-        ;; v2.09: don't skip comma if it was the last argument.
-        ;; this will a) make a trailing comma trigger warning 'too many arguments...'
-        ;; and b), argument handling of FOR loop is significantly simplified.
+        ; v2.09: don't skip comma if it was the last argument.
+        ; this will a) make a trailing comma trigger warning 'too many arguments...'
+        ; and b), argument handling of FOR loop is significantly simplified.
 
         mov rsi,mac
         mov rdi,info
@@ -362,17 +386,20 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
              ( [rbx].token == T_COMMA &&
               ( !( [rsi].mac_flag & M_ISVARARG ) || parmidx != ecx ) ) )
 
-            ;; it's a blank parm
+            ; it's a blank parm
+
             imul eax,parmidx,mparm_list
             mov rcx,[rdi].parmlist
             add rcx,rax
-            .if [rcx].mparm_list.required
-                .if ( mi.parm_array )
-                    MemFree(mi.parm_array)
-                .endif
-                .return asmerr( 2125 )
+
+            .if ( [rcx].mparm_list.required )
+
+                mov idx,asmerr( 2125 )
+                jmp toend
             .endif
-            .if varargcnt == 0
+
+            .if ( varargcnt == 0 )
+
                 imul edx,parmidx,ptr_t
                 add rdx,mi.parm_array
                 mov [rdx],[rcx].mparm_list.deflt
@@ -392,7 +419,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                 add  rbx,tokenarray
                 .break .if ( [rbx].token == T_FINAL || [rbx].token == T_COMMA ) && !inside_literal
 
-                ;; if were're inside a literal, go up one level and continue scanning the argument
+                ; if were're inside a literal, go up one level and continue scanning the argument
 
                 .if [rbx].token == T_FINAL
 
@@ -428,9 +455,14 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                     mov cnt_opnum,1
                     .if [rbx].token == T_ID
                         mov sym,SymSearch( [rbx].string_ptr )
-                        .if ( rax && [rax].asym.flags & S_ISDEFINED && ( [rax].asym.state == SYM_TMACRO ||
-                             ( [rax].asym.state == SYM_MACRO && ( [rax].asym.mac_flag & M_ISFUNC ) &&
-                               [rbx+asm_tok].token == T_OP_BRACKET ) ) )
+
+                        .if ( rax &&
+                              [rax].asym.flags & S_ISDEFINED &&
+                              ( [rax].asym.state == SYM_TMACRO ||
+                                ( [rax].asym.state == SYM_MACRO &&
+                                  [rax].asym.mac_flag & M_ISFUNC &&
+                                  [rbx+asm_tok].token == T_OP_BRACKET ) ) )
+
                             mov cnt_opnum,0
                         .endif
                     .endif
@@ -459,7 +491,9 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                             .endif
                             .continue
                         .endif
-                        ;; count brackets
+
+                        ; count brackets
+
                         .if parm_end_delim == T_CL_BRACKET
                             .if [rbx].token == T_OP_BRACKET
                                 inc cnt
@@ -469,18 +503,21 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                             .endif
                         .endif
 
-                        ;; stop if undelimited string occurs (need to scan for '!')
+                        ; stop if undelimited string occurs (need to scan for '!')
+
                         .break .if ( [rbx].token == T_STRING && [rbx].string_delim == 0 )
 
-                        ;; names dot and amp are ok
+                        ; names dot and amp are ok
+
                         .if !( [rbx].token == T_DOT || [rbx].token == '&' || [rbx].token == '%' )
-                            inc cnt_opnum ;; anything else will trigger numeric evaluation
+                            inc cnt_opnum ; anything else will trigger numeric evaluation
                         .endif
                     .endf
 
-                    .if i == idx ;; no items except %?
+                    .if i == idx ; no items except %?
+
                         dec idx
-                        .continue
+                       .continue
                     .endif
 
                     mov   rcx,[rbx].tokpos
@@ -498,14 +535,13 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
                     .ifd ExpandText( p, tokenarray, FALSE ) == ERROR
 
+                        mov idx,eax
                         mov rax,savedStringBuffer
                         add rax,StringBuffer
                         mov StringBufferEnd,rax
-                        .if ( mi.parm_array )
-                            MemFree(mi.parm_array)
-                        .endif
-                        .return(ERROR)
+                        jmp toend
                     .endif
+
                     mov idx,i
                     dec idx
                     .if cnt_opnum
@@ -530,13 +566,18 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                             mov opndx.value,0
                             mov opndx.hvalue,0
                         .endif
-                        ;; v2.08: accept constant and copy any stuff that's following
+
+                        ; v2.08: accept constant and copy any stuff that's following
+
                         .if opndx.kind == EXPR_CONST
+
                             xor eax,eax
                             cmp opndx.hvalue,0
                             setl al
                             myltoa( opndx.llvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
+
                         .elseif ( opndx.kind == EXPR_FLOAT && opndx.mem_type == MT_REAL16 )
+
                             .if ( ( opndx.value == 16 && opndx.h64_h == 0 ) )
                                 tstrcpy( StringBufferEnd, "16" )
                             .elseif ( ModuleInfo.floatformat == 'x' )
@@ -568,6 +609,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                                 .endif
                             .endif
                         .endif
+
                         .if ( i != max )
                             ;
                             ; the evaluator was unable to evaluate the full expression. the rest
@@ -580,7 +622,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                         tstrcpy( p, StringBufferEnd )
                     .endif
                     add p,tstrlen( p )
-                    .continue
+                   .continue
                 .endif
 
                 imul ebx,idx,asm_tok
@@ -590,33 +632,37 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
                     mov rcx,[rbx].string_ptr
                     mov ebx,idx
-                    mov rax,p ;; copy the '{'
+                    mov rax,p ; copy the '{'
                     inc p
                     mov byte ptr [rax],'{'
+
                     ; the string must be tokenized
+
                     inc inside_literal
                     mov idx,TokenCount
                     mov TokenCount,Tokenize( rcx, &[rax+1], tokenarray, TOK_RESCAN or TOK_NOCURLBRACES )
                     imul eax,eax,asm_tok
                     add rax,tokenarray
                     mov [rax].asm_tok.lastidx,ebx
-                    .continue
+                   .continue
                 .endif
 
                 .if inside_angle_brackets == 0
-                    ;; track brackets for macro functions; exit if one more ')' than '(' is found
+
+                    ; track brackets for macro functions; exit if one more ')' than '(' is found
+
                     .if bracket_level > 0
                         .if [rbx].token == T_OP_BRACKET
                             inc bracket_level
                         .elseif [rbx].token == T_CL_BRACKET
                             dec bracket_level
-                            .break .ifz ;; ( bracket_level == 0 )
+                            .break .ifz ; ( bracket_level == 0 )
                         .endif
                     .endif
 
-                    ;; if there's a literal enclosed in <>, remove the delimiters and
-                    ;; tokenize the item (TokenCount must be adjusted, since RunMacro()
-                    ;; might be called later!)
+                    ; if there's a literal enclosed in <>, remove the delimiters and
+                    ; tokenize the item (TokenCount must be adjusted, since RunMacro()
+                    ; might be called later!)
 
                     .if ( [rbx].token == T_STRING && [rbx].string_delim == '<' && inside_angle_brackets == 0 )
 
@@ -633,7 +679,9 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                         .endw
                         mov byte ptr [rdi+rdx-1],0
                         mov StringBufferEnd,GetAlignedPointer( rdi, edx )
-                        ;; the string must be tokenized
+
+                        ; the string must be tokenized
+
                         inc inside_literal
                         mov inside_angle_brackets,1
 
@@ -645,6 +693,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                         mov [rax].asm_tok.lastidx,ebx
 
                         ; copy spaces located before the first token
+
                         imul ebx,idx,asm_tok
                         add rbx,tokenarray
                         mov rcx,[rbx+asm_tok].tokpos
@@ -660,26 +709,35 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                     ; text macros are expanded only selectively
 
                     .if ( [rbx].token == T_ID )
+
                         .if SymSearch( [rbx].string_ptr )
+
                             mov sym,rax
-                            .if ( [rax].asym.state == SYM_MACRO && [rax].asym.flags & S_ISDEFINED &&
-                                [rax].asym.mac_flag & M_ISFUNC && [rbx+asm_tok].token == T_OP_BRACKET )
+                            .if ( [rax].asym.state == SYM_MACRO &&
+                                  [rax].asym.flags & S_ISDEFINED &&
+                                  [rax].asym.mac_flag & M_ISFUNC &&
+                                  [rbx+asm_tok].token == T_OP_BRACKET )
+
                                 inc idx
                                 mov idx,RunMacro( sym, idx, tokenarray, p, 0, &is_exitm2 )
+
                                 .if idx < 0
+
                                     mov rax,savedStringBuffer
                                     add rax,StringBuffer
                                     mov StringBufferEnd,rax
-                                    .if ( mi.parm_array )
-                                        MemFree(mi.parm_array)
-                                    .endif
-                                    .return idx
+                                    jmp toend
                                 .endif
+
                                 add p,tstrlen(p)
-                                ;; copy spaces behind macro function call
+
+                                ; copy spaces behind macro function call
+
                                 imul ebx,idx,asm_tok
                                 add  rbx,tokenarray
-                                .if [rbx].token != T_FINAL && [rbx].token != T_COMMA
+
+                                .if ( [rbx].token != T_FINAL && [rbx].token != T_COMMA )
+
                                     mov rsi,[rbx-asm_tok].tokpos
                                     inc rsi
                                     mov rcx,[rbx].tokpos
@@ -688,7 +746,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                                     rep movsb
                                     mov p,rdi
                                 .endif
-                                dec idx ;; adjust token index
+                                dec idx ; adjust token index
                                 sub rbx,asm_tok
                                .continue
 
@@ -705,7 +763,8 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                                     ExpandTMacro( p, tokenarray, FALSE, 0 )
                                     add p,tstrlen( p )
 
-                                    ;; copy spaces behind text macro
+                                    ; copy spaces behind text macro
+
                                     .if ( [rbx+asm_tok].token != T_FINAL && [rbx+asm_tok].token != T_COMMA )
 
                                         mov rdx,sym
@@ -724,7 +783,8 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                     .endif
                 .endif
 
-                ;; get length of item
+                ; get length of item
+
                 mov rcx,[rbx+asm_tok].tokpos
                 sub rcx,[rbx].tokpos
                 .if ( !inside_literal &&
@@ -736,7 +796,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                     .endw
                 .endif
 
-                ;; the literal character operator ! is valid for macro arguments
+                ; the literal character operator ! is valid for macro arguments
 
                 mov rdi,p
                 mov rsi,[rbx].tokpos
@@ -758,9 +818,8 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
             mov rax,p
             mov byte ptr [rax],0
 
-            ;
             ; restore input status values
-            ;
+
             mov TokenCount,old_tokencount
             mov rax,savedStringBuffer
             add rax,StringBuffer
@@ -769,27 +828,30 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
             mov rdi,info
             mov rsi,mac
 
-            ;
             ; store the macro argument in the parameter array
-            ;
+
             movzx eax,[rdi].parmcnt
             dec eax
             mov rdx,currparm
 
             .if ( [rsi].mac_flag & M_ISVARARG && parmidx == eax )
+
                 .if ( varargcnt == 0 )
+
                     mov rax,mi.parm_array
                     mov ecx,parmidx
                     mov [rax+rcx*size_t],rdx
                 .endif
+
                 mov rax,p
                 .if ( [rsi].flags & S_PREDEFINED )
+
                     sub rax,currparm
                     GetAlignedPointer( currparm, eax )
                 .endif
                 mov currparm,rax
 
-                ;; v2.08: Masm swallows the last trailing comma
+                ; v2.08: Masm swallows the last trailing comma
 
                 .if ( [rbx].token == T_COMMA )
 
@@ -829,37 +891,44 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
     .endf
 
     ; for macro functions, check for the terminating ')'
+
     .if ( bracket_level >= 0 )
+
         .if ( [rbx].token != T_CL_BRACKET )
+
             .for ( i = idx: idx < TokenCount && [rbx].token != T_CL_BRACKET: idx++, rbx += asm_tok )
             .endf
+
             .if ( idx == TokenCount )
 
-                .if ( mi.parm_array )
-                    MemFree(mi.parm_array)
-                .endif
-                asmerr( 2157 )
-               .return( -1 )
+                mov idx,asmerr( 2157 )
+                jmp toend
+
             .else
-                ;; v2.09: changed to a warning only (Masm-compatible)
+
+                ; v2.09: changed to a warning only (Masm-compatible)
+
                 imul eax,i,asm_tok
                 add rax,tokenarray
                 asmerr( 4006, [rsi].name, [rax].asm_tok.tokpos )
             .endif
         .endif
+
         inc idx
         add rbx,asm_tok
+
     .elseif ( [rbx].token != T_FINAL )
-        ;; v2.05: changed to a warning. That's what Masm does
-        ;; v2.09: don't emit a warning if it's a FOR directive
-        ;; (in this case, the caller knows better what to do ).
+
+        ; v2.05: changed to a warning. That's what Masm does
+        ; v2.09: don't emit a warning if it's a FOR directive
+        ; (in this case, the caller knows better what to do ).
 
         .if ( !( mflags & MF_IGNARGS ) )
             asmerr( 4006, [rsi].name, [rbx].tokpos )
         .endif
     .endif
 
-    ;; a predefined macro func with a function address?
+    ; a predefined macro func with a function address?
 
     assume rsi:asym_t
 
@@ -869,18 +938,15 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
         [rsi].func_ptr( &mi, _out, tokenarray )
         mov rax,is_exitm
         mov dword ptr [rax],TRUE
-        .if ( mi.parm_array )
-            MemFree(mi.parm_array)
-        .endif
-        .return idx
+        jmp toend
     .endif
 
     mov mi.localstart,MacroLocals
-    add MacroLocals,[rdi].localcnt ;; adjust global variable MacroLocals
+    add MacroLocals,[rdi].localcnt ; adjust global variable MacroLocals
 
-    ;; avoid to use values stored in struct macro_info directly. A macro
-    ;; may be redefined within the macro! Hence copy all values that are
-    ;; needed later in the while loop to macro_instance!
+    ; avoid to use values stored in struct macro_info directly. A macro
+    ; may be redefined within the macro! Hence copy all values that are
+    ; needed later in the while loop to macro_instance!
 
     mov mi.startline,[rdi].lines
     mov mi.currline,NULL
@@ -896,8 +962,8 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
             mov tokenarray,PushInputStatus( &oldstat )
         .endif
 
-        ;; move the macro instance onto the file stack!
-        ;; Also reset the current linenumber!
+        ; move the macro instance onto the file stack!
+        ; Also reset the current linenumber!
 
         mov mi._macro,rsi
         PushMacro( &mi )
@@ -905,21 +971,24 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
         mov oldifnesting,GetIfNestLevel() ;; v2.10
         mov cntgoto,0 ;; v2.10
 
-        ;; Run the assembler until we hit EXITM or ENDM.
-        ;; Also handle GOTO and macro label lines!
-        ;; v2.08 no need anymore to check the queue level
-        ;; v2.11 GetPreprocessedLine() replaced by GetTextLine()
-        ;; and PreprocessLine().
-
+        ; Run the assembler until we hit EXITM or ENDM.
+        ; Also handle GOTO and macro label lines!
+        ; v2.08 no need anymore to check the queue level
+        ; v2.11 GetPreprocessedLine() replaced by GetTextLine()
+        ; and PreprocessLine().
 
         .while ( GetTextLine( CurrSource ) )
+
             .continue .if ( PreprocessLine( tokenarray ) == 0 )
 
             mov rbx,tokenarray
 
-            ;; skip macro label lines
+            ; skip macro label lines
+
             .if ( [rbx].token == T_COLON )
-                ;; v2.05: emit the error msg here, not in StoreMacro()
+
+                ; v2.05: emit the error msg here, not in StoreMacro()
+
                 .if ( [rbx+asm_tok].token != T_ID )
                     asmerr( 2008, [rbx].tokpos )
                 .elseif ( [rbx+asm_tok*2].token != T_FINAL )
@@ -929,29 +998,32 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
             .endif
 
             .if ( [rbx].token == T_DIRECTIVE )
+
                 .if ( [rbx].tokval == T_EXITM || [rbx].tokval == T_RETM )
+
                     .if ( ModuleInfo.list && ModuleInfo.list_macro == LM_LISTMACROALL )
                         LstWriteSrcLine()
                     .endif
+
                     .if ( [rbx+asm_tok].token != T_FINAL )
-                        ;
+
                         ; v2.05: display error if there's more than 1 argument or
                         ; the argument isn't a text item
-                        ;
+
                         .if ( [rbx+asm_tok].token != T_STRING || [rbx+asm_tok].string_delim != '<' )
                             TextItemError( &[rbx+asm_tok] )
                         .elseif ( TokenCount > 2 )
                             asmerr( 2008, [rbx+asm_tok*2].tokpos )
                         .elseif ( _out ) ; return value buffer may be NULL ( loop directives )
-                            ;
+
                             ; v2.08a: the <>-literal behind EXITM is handled specifically,
                             ; macro operator '!' within the literal is only handled
                             ; if it contains a placeholder (macro argument, macro local ).
-                            ;
+
                             ; v2.09: handle '!' inside literal if ANY expansion occurred.
                             ; To determine text macro or macro function expansion,
                             ; check if there's a literal in the original line.
-                            ;
+
                             mov rdi,_out
                             mov rdx,mi.currline
                             mov rax,[rbx+asm_tok].tokpos
@@ -971,11 +1043,11 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                                 rep movsb
 
                             .else
-                                ;
+
                                 ; since the string_ptr member has the !-operator stripped, it
                                 ; cannot be used. To get the original value of the literal,
                                 ; use tokpos.
-                                ;
+
                                 mov rsi,[rbx+asm_tok].tokpos
                                 inc rsi
                                 mov rcx,[rbx+asm_tok*2].tokpos
@@ -994,6 +1066,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                     ; the "if"-nesting level is ok.
 
                     .if cntgoto
+
                         mov mi.currline,NULL
                         SetLineNumber( 0 )
                         SetIfNestLevel( oldifnesting )
@@ -1010,32 +1083,46 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
                         mov len,tstrlen( [rbx+asm_tok].string_ptr )
 
-                        ;; search for the destination line
+                        ; search for the destination line
+
                         assume rdi:srcline_t
 
                         .for ( i = 1, rdi = mi.startline: rdi != NULL: rdi = [rdi].next, i++ )
+
                             lea rsi,[rdi].line
+
                             .if ( byte ptr [rsi] == ':' )
+
                                 .if ( [rdi].ph_count )
+
                                     fill_placeholders( StringBufferEnd, rsi, mi.parmcnt,
                                         mi.localstart, mi.parm_array )
                                     mov rsi,StringBufferEnd
                                 .endif
+
                                 inc rsi
                                 .while islspace( [rsi] )
                                     inc rsi
                                 .endw
+
                                 .ifd !tmemicmp( rsi, [rbx+asm_tok].string_ptr, len )
+
                                     mov ecx,len ; label found!
                                    .break .if !islabel( [rsi+rcx] )
                                 .endif
                             .endif
                         .endf
+
                         .if !rdi
+
                             ; v2.05: display error msg BEFORE SkipMacro()!
+
                             asmerr( 2147, [rbx+asm_tok].string_ptr )
+
                         .else
+
                             ; v2.10: rewritten, "if"-nesting-level handling added
+
                             mov mi.currline,rdi
                             SetLineNumber(i)
                             SetIfNestLevel( oldifnesting )
@@ -1049,6 +1136,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                    .break
                 .endif
             .endif
+
             ParseLine(tokenarray)
             .if ( Options.preprocessor_stdout == TRUE )
                 WritePreprocessedLine(CurrSource)
@@ -1058,7 +1146,6 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
             ; v2.08: this doesn't mean the macro is to be cancelled.
             ; Masm continues to run it and the assembly is stopped
             ; when the top source level is reached again.
-
         .endw
 
         dec MacroLevel
@@ -1069,7 +1156,10 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
         ; don't use tokenarray from here on, it's invalid after PopInputStatus()
 
     .endif
-    .if ( mi.parm_array )
+
+toend:
+
+    .if ( mem_alloc )
         MemFree(mi.parm_array)
     .endif
     .return( idx )
@@ -1213,9 +1303,9 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
                         .while islspace( [rcx] )
                             inc rcx
                         .endw
-                        ;
+
                         ; no macro function invokation if the '(' is missing!
-                        ;
+
                         .if ( al == '(' )
 
                             mov i,TokenCount
@@ -1357,21 +1447,18 @@ ExpandText endp
 ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
         tokenarray:token_t, equmode:int_t, level:int_t
 
-    local old_tokencount:int_t
-    local i:int_t
-    local len:int_t
-    local is_exitm:int_t
-    local sym:asym_t
-    local buffer:ptr char_t
-    local expanded:char_t
-
-    mov buffer,MemAlloc(MaxLineLength)
-    mov old_tokencount,TokenCount
-    mov expanded,TRUE
+    .new old_tokencount:int_t = TokenCount
+    .new i:int_t
+    .new len:int_t
+    .new is_exitm:int_t
+    .new sym:asym_t
+    .new rc:int_t = NOT_ERROR
+    .new expanded:char_t = TRUE
 
     .if ( level >= MAX_TEXTMACRO_NESTING )
         .return( asmerr( 2123 ) )
     .endif
+    .new buffer:string_t = alloc_line()
 
     .while ( expanded == TRUE )
 
@@ -1384,14 +1471,19 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
 
             imul ebx,i,asm_tok
             add  rbx,tokenarray
-            .if [rbx].token == T_ID
+
+            .if ( [rbx].token == T_ID )
+
                 mov sym,SymSearch( [rbx].string_ptr )
 
                 ; expand macro functions
 
-                .if ( rax && [rax].asym.state == SYM_MACRO &&
-                      [rax].asym.flags & S_ISDEFINED && [rax].asym.mac_flag & M_ISFUNC &&
-                      [rbx+asm_tok].token == T_OP_BRACKET && equmode == FALSE )
+                .if ( rax &&
+                      [rax].asym.state == SYM_MACRO &&
+                      [rax].asym.flags & S_ISDEFINED &&
+                      [rax].asym.mac_flag & M_ISFUNC &&
+                      [rbx+asm_tok].token == T_OP_BRACKET &&
+                      equmode == FALSE )
 
                     mov rcx,[rbx].tokpos
                     sub rcx,outbuf
@@ -1402,9 +1494,9 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
                     inc edx
                     mov i,RunMacro( sym, edx, tokenarray, rdi, 0, &is_exitm )
                     .if i < 0
-                        mov TokenCount,old_tokencount
-                        MemFree(buffer)
-                       .return ERROR
+
+                        mov rc,ERROR
+                       .break(1)
                     .endif
                     imul ebx,i,asm_tok
                     add  rbx,tokenarray
@@ -1413,6 +1505,7 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
                     mov expanded,TRUE
                     ; is i to be decremented here?
                    .break
+
                 .elseif ( rax && [rax].asym.state == SYM_TMACRO && [rax].asym.flags & S_ISDEFINED )
 
                     mov rsi,outbuf
@@ -1424,9 +1517,8 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
                     mov ecx,level
                     inc ecx
                     .ifd ExpandTMacro( rdi, tokenarray, equmode, ecx ) == ERROR
-                        mov TokenCount,old_tokencount
-                        MemFree(buffer)
-                       .return( ERROR )
+                        mov rc,eax
+                       .break(1)
                     .endif
                     mov rax,sym
                     mov edx,[rax].asym.name_size
@@ -1439,9 +1531,9 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
             .endif
         .endf
     .endw
-    MemFree(buffer)
+    free_line(buffer)
     mov TokenCount,old_tokencount
-   .return( NOT_ERROR )
+   .return( rc )
 
 ExpandTMacro endp
 
@@ -1457,13 +1549,13 @@ ExpandTMacro endp
 RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
         tokenarray:token_t, oldlen:uint_t, pos_line:uint_t, addbrackets:int_t
 
-    local dest:string_t
-    local src:string_t
-    local newlen:uint_t
-    local rest:uint_t
-    local buffer:ptr char_t
+   .new dest:string_t
+   .new src:string_t
+   .new newlen:uint_t
+   .new rest:uint_t
+   .new rc:int_t = NOT_ERROR
+   .new buffer:string_t = alloc_line()
 
-    mov buffer,MemAlloc(MaxLineLength)
     imul ebx,i,asm_tok
     add rbx,tokenarray
 
@@ -1498,8 +1590,8 @@ RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
         add eax,rest
         .if ( eax >= MaxLineLength )
 
-            MemFree(buffer)
-           .return asmerr( 2039 )
+            mov rc,asmerr( 2039 )
+            jmp toend
         .endif
     .endif
 
@@ -1540,8 +1632,11 @@ RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
         sub [rbx].tokpos,rax
         add [rbx].tokpos,rdx
     .endf
-     MemFree(buffer)
-    .return( NOT_ERROR )
+
+toend:
+
+     free_line(buffer)
+    .return( rc )
 
 RebuildLine endp
 
@@ -1722,7 +1817,6 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                         ; v2.34.01 - Name conflict with register param and stuct members
                         ;
                         ; This apply to SYSCALL-64, WATCALL-32, and FASTCALL-32
-                        ;
 
                         mov ecx,i
                         sub ecx,2
@@ -1867,10 +1961,8 @@ ExpandToken endp
 ExpandLineItems proc __ccall uses rsi rdi line:string_t, i:int_t, tokenarray:token_t,
         addbrackets:int_t, equmode:int_t
 
-  local k:int_t
-  local buffer:string_t
-
-    mov buffer,MemAlloc(MaxLineLength)
+   .new k:int_t
+   .new buffer:string_t = alloc_line()
 
     .for ( esi = 0 :: esi++ )
 
@@ -1888,20 +1980,20 @@ ExpandLineItems proc __ccall uses rsi rdi line:string_t, i:int_t, tokenarray:tok
                 inc k
             .endif
         .endf
-        .break .if edi == NOT_ERROR
+        .break .if ( edi == NOT_ERROR )
 
         ; expansion happened, re-tokenize and continue!
 
         mov TokenCount,Tokenize( line, i, tokenarray, TOK_RESCAN )
 
-        .if esi == MAX_TEXTMACRO_NESTING
+        .if ( esi == MAX_TEXTMACRO_NESTING )
 
             asmerr( 2123 )
            .break
         .endif
     .endf
-     MemFree(buffer)
-    .return esi
+     free_line(buffer)
+    .return( esi )
 
 ExpandLineItems endp
 
@@ -1912,13 +2004,13 @@ ExpandLineItems endp
 ; This improves Masm-compatibility, but OTOH requires to expand
 ; the literals explicitly.
 
-
 ExpandLiterals proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     xor eax,eax
     ldr rbx,tokenarray
 
     ; count non-empty literals
+
     .for ( : ecx < TokenCount: ecx++ )
 
         imul edx,ecx,asm_tok
@@ -1951,21 +2043,18 @@ ExpandLiterals endp
 
 ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
-  local count         : int_t
-  local bracket_flags : uint_t
-  local flags         : int_t
-  local lvl           : int_t
-  local rc            : int_t
-  local addbrackets   : int_t
-  local buffer        : string_t
+   .new count         : int_t
+   .new bracket_flags : uint_t
+   .new flags         : int_t
+   .new lvl           : int_t
+   .new rc            : int_t
+   .new addbrackets   : int_t
+   .new buffer        : string_t = alloc_line()
 
-    mov buffer,MemAlloc(MaxLineLength)
-
-    ;
     ; filter certain conditions.
     ; bracket_flags: for (preprocessor) directives that expect a literal
     ; parameter, the expanded argument has to be enclosed in '<>' again.
-    ;
+
     .for ( lvl = 0: lvl < MAX_TEXTMACRO_NESTING: lvl++ )
 
         xor esi,esi
@@ -1984,14 +2073,13 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                       [rbx+asm_tok].token == T_COLON ||
                       [rbx+asm_tok*2].token != T_ID )
 
-                    MemFree(buffer)
-                   .return 0
+                   .break
                 .endif
 
                 .if ( SymFind( [rbx+asm_tok*2].string_ptr ) )
                     .if ( [rax].asym.state == SYM_MACRO )
-                        MemFree(buffer)
-                       .return 0
+
+                       .break
                     .endif
                 .endif
                 .if ( [rbx+asm_tok*2].token == T_DIRECTIVE )
@@ -2032,8 +2120,9 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                 ; [ELSE]IF[N]DEF, ECHO, FOR[C]
                 ; .[NO|X]CREF, INCLUDE
                 ; don't expand arguments
-                MemFree(buffer)
-               .return NOT_ERROR
+
+                mov rc,NOT_ERROR
+               .break
             .endif
 
         .elseif TokenCount > 1 && [rdx+asm_tok].asm_tok.token == T_DIRECTIVE
@@ -2043,18 +2132,18 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
             .case DRT_CATSTR
                 mov bracket_flags,-1
                 mov count,2
-                .endc
+               .endc
             .case DRT_SUBSTR
                 ; syntax: name SUBSTR <literal>, pos [, size]
                 mov bracket_flags,0x1
                 mov count,2
-                .endc
+               .endc
             .case DRT_SIZESTR
                 ; syntax: label SIZESTR literal
                 mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                 mov bracket_flags,0x1
                 mov count,2
-                .endc
+               .endc
             .case DRT_INSTR
                 ; syntax: label INSTR [number,] literal, literal
                 mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
@@ -2076,7 +2165,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                 .endif
                 mov bracket_flags,eax
                 mov count,2
-                .endc
+               .endc
             .case DRT_MACRO
                 SymSearch( [rdx].asm_tok.string_ptr )
                 ; don't expand macro DEFINITIONs!
@@ -2086,15 +2175,15 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                     mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                 .endif
                 mov count,TokenCount ; stop further expansion
-                .endc
+               .endc
             .case DRT_EQU
                 ; EQU is a special case. If the - expanded - expression is
                 ; a number, then the value for EQU is numeric. Else the
                 ; expression isn't expanded at all. This effectively makes it
                 ; impossible to expand EQU lines here.
 
-                MemFree(buffer)
-               .return NOT_ERROR
+                mov rc,NOT_ERROR
+               .break
             .endsw
         .else
             ; v2.08: expand the very first token and then ...
@@ -2102,8 +2191,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
             .if ( eax == ERROR || eax == EMPTY )
 
-                MemFree(buffer)
-               .return(rc)
+               .break
             .endif
 
             .if ( rc == STRING_EXPANDED )
@@ -2119,12 +2207,12 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                 mov rc,ExpandToken( string, &count, tokenarray, 2, FALSE, FALSE, buffer )
                 .if ( eax == ERROR || eax == EMPTY )
 
-                    MemFree(buffer)
-                   .return(rc)
+                   .break
                 .endif
-                .if rc == STRING_EXPANDED
+                .if ( rc == STRING_EXPANDED )
+
                     mov TokenCount,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-                    .continue
+                   .continue
                 .endif
             .endif
         .endif
@@ -2150,8 +2238,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
             .ifs ( eax < NOT_ERROR ) ; ERROR or EMPTY?
 
                 mov rc,eax
-                MemFree(buffer)
-               .return(rc)
+               .break( 1 )
             .endif
 
             .if eax == STRING_EXPANDED
@@ -2164,7 +2251,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
             .endif
         .endw
 
-        .if rc == STRING_EXPANDED
+        .if ( rc == STRING_EXPANDED )
             mov TokenCount,Tokenize( string, 0, tokenarray, TOK_RESCAN or TOK_LINE )
         .endif
 
@@ -2296,12 +2383,12 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
         .endif
         .break .if ( rc != STRING_EXPANDED )
     .endf
-    MemFree(buffer)
 
+    free_line(buffer)
     .if ( lvl == MAX_TEXTMACRO_NESTING )
         .return asmerr( 2123 )
     .endif
-    .return rc
+    .return( rc )
 
 ExpandLine endp
 

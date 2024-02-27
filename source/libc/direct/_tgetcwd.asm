@@ -18,10 +18,6 @@ _tgetcwd proc uses rbx buffer:LPTSTR, maxlen:SINT
     ldr rbx,buffer
     ldr edx,maxlen
 ifdef __UNIX__
-ifdef _UNICODE
-    _set_errno( ENOSYS )
-    xor eax,eax
-else
     .ifsd ( sys_getcwd(rbx, edx) < 0 )
 
         neg eax
@@ -29,9 +25,8 @@ else
         .return(NULL)
     .endif
     mov rax,rbx
-endif
 else
-    _wgetdcwd( 0, rbx, edx )
+    _tgetdcwd( 0, rbx, edx )
 endif
     ret
 

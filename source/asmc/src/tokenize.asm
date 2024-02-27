@@ -1637,8 +1637,6 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
                 .break
             .endif
 
-            imul ebx,p.index,asm_tok
-            add rbx,p.tokenarray
             mov [rbx].string_ptr,p.output
             mov rc,GetToken( rbx, &p )
 

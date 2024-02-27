@@ -9,7 +9,7 @@ include strsafe.inc
 .code
 
 StringCchPrintfEx proc uses rsi rdi rbx pszDest:LPTSTR, cchDest:size_t, ppszDestEnd:ptr LPTSTR,
-    pcchRemaining:ptr size_t, dwFlags:DWORD, pszFormat:LPTSTR, args:vararg
+    pcchRemaining:ptr size_t, dwFlags:DWORD, pszFormat:LPTSTR, argptr:vararg
 
     local hr:HRESULT
 
@@ -55,7 +55,7 @@ StringCchPrintfEx proc uses rsi rdi rbx pszDest:LPTSTR, cchDest:size_t, ppszDest
 
                .new cchNewDestLength:size_t = 0
 
-                mov hr,StringVPrintfWorker(pszDest, cchDest, &cchNewDestLength, pszFormat, args)
+                mov hr,StringVPrintfWorker(pszDest, cchDest, &cchNewDestLength, pszFormat, &argptr)
 
                 mov rax,pszDest
                 add rax,cchNewDestLength

@@ -101,6 +101,7 @@ _msgbox proc uses rbx flags:UINT, title:LPTSTR, format:LPTSTR, argptr:vararg
    .new hwnd:THWND
    .new pb:PBINFO
    .new p:LPTSTR
+   .new q:LPTSTR
    .new attrib:word = 0
 
     mov rbx,_console
@@ -138,7 +139,9 @@ _msgbox proc uses rbx flags:UINT, title:LPTSTR, format:LPTSTR, argptr:vararg
             .break .if !_tcschr(rbx, 10)
             mov rdx,rax
             sub rdx,rbx
-            shr edx,TCHAR-1
+ifdef _UNICODE
+            shr edx,1
+endif
             lea rbx,[rax+TCHAR]
             .if edx >= width
                 mov width,edx
@@ -265,26 +268,22 @@ _msgbox proc uses rbx flags:UINT, title:LPTSTR, format:LPTSTR, argptr:vararg
     mov rc.y,2
     mov rc.x,2
     sub rc.col,4
-
-    lea rbx,_bufin
-    mov p,rbx
+    mov p,&_bufin
 
     .repeat
 
-        .break .if !TCHAR ptr [rbx]
+        .break .if !TCHAR ptr [rax]
+        .if ( _tcschr(rax, 10) != NULL )
 
-        mov rbx,_tcschr(p, 10)
-        .if ( rax != NULL )
-
-            mov TCHAR ptr [rbx],0
-            add rbx,TCHAR
+            mov TCHAR ptr [rax],0
+            add rax,TCHAR
         .endif
-        mov rcx,hwnd
-        _rccenter([rcx].rc, [rcx].window, rc, attrib, p)
-        mov p,rbx
+        mov q,rax
+        _rccenter([rbx].rc, [rbx].window, rc, attrib, p)
         inc rc.y
-    .until ( rbx == NULL || rc.y == 17+2 )
-    .return _dlmodal(hwnd, &WndProc)
+        mov p,q
+    .until ( rax == NULL || rc.y == 17+2 )
+    .return _dlmodal(rbx, &WndProc)
 
 _msgbox endp
 

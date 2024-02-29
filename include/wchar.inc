@@ -441,7 +441,7 @@ ifndef _POSIX_
 
 ifndef _WSTDLIBP_DEFINED
 
-_wfullpath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+_wfullpath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :int_t
 _wmakepath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 _wperror	proto __cdecl :ptr wchar_t
 _wputenv	proto __cdecl :ptr wchar_t

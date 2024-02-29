@@ -512,7 +512,7 @@ endif ; _WSTDLIB_DEFINED
 
 _CVTBUFSIZE	equ (309+40) ;; # of digits in max. dp value + slop
 
-_fullpath	proto __cdecl :string_t, :string_t, :size_t
+_fullpath	proto __cdecl :string_t, :string_t, :int_t
 
 _ecvt_s		proto __cdecl :string_t, :size_t, :real8, :int_t, :ptr int_t, :ptr int_t
 _ecvt		proto __cdecl :real8, :int_t, :ptr int_t, :ptr int_t
@@ -527,9 +527,7 @@ _atoflt		proto __cdecl :ptr real4, :string_t
 _atodbl_l	proto __cdecl :ptr real8, :string_t, :_locale_t
 _atoldbl_l	proto __cdecl :ptr real10, :string_t, :_locale_t
 _atoflt_l	proto __cdecl :ptr real4, :string_t, :_locale_t
-if not defined(_MSVCRT) or defined(_CRTBLD)
-_atoqf		proto __cdecl :ptr real16, :string_t
-endif
+
 _lrotl proto watcall :long_t, :abs {
     rol	    eax,_2
     }
@@ -577,7 +575,7 @@ _swab		proto __cdecl :string_t, :string_t, :int_t
 ifndef _WSTDLIBP_DEFINED
 define _WSTDLIBP_DEFINED
 
-_wfullpath	proto __cdecl :wstring_t, :wstring_t, :size_t
+_wfullpath	proto __cdecl :wstring_t, :wstring_t, :int_t
 _wmakepath_s	proto __cdecl :wstring_t, :size_t, :wstring_t, :wstring_t, :wstring_t, :wstring_t
 ifndef _CRT_WPERROR_DEFINED
 define _CRT_WPERROR_DEFINED
@@ -631,15 +629,19 @@ define _EXEC_CMD 4
 
 externdef	_ermode:uint_t
 externdef	_cvtbuf:string_t
+externdef	_aenvptr:string_t
+externdef	_wenvptr:wstring_t
 
-__setenvp	proto __cdecl :string_t
-__wsetenvp	proto __cdecl :wstring_t
+_agetenvs	proto __cdecl
+_wgetenvs	proto __cdecl
+_asetenvp	proto __cdecl :array_t
+_wsetenvp	proto __cdecl :warray_t
+_asetargv	proto __cdecl :ptr int_t, :string_t
+_wsetargv	proto __cdecl :ptr int_t, :wstring_t
 _initterm	proto __cdecl :ptr, :ptr
 _cenvarg	proto __cdecl :array_t, :array_t, :array_t, :array_t, :string_t
-
-setargv		proto __cdecl :ptr int_t, :string_t
-setwargv	proto __cdecl :ptr int_t, :ptr wchar_t
 _atoi128	proto __cdecl :string_t, :ptr int128_t
+_wtoi128	proto __cdecl :wstring_t, :ptr int128_t
 _xtoa		proto __cdecl :qword, :string_t, :int_t, :int_t
 _xtow		proto __cdecl :qword, :wstring_t, :int_t, :int_t
 _xtoa_s		proto __cdecl :qword, :string_t, :size_t, :uint_t, :int_t
@@ -647,7 +649,33 @@ _xtow_s		proto __cdecl :qword, :wstring_t, :size_t, :uint_t, :int_t
 _wtoutf		proto __cdecl :wchar_t
 _utftow		proto __cdecl :string_t
 _pathtow	proto __cdecl :string_t, :ptr wstring_t
-_isexec		proto __cdecl :string_t
+_aisexec	proto __cdecl :string_t
+_wisexec	proto __cdecl :wstring_t
+
+_atoqf		proto __cdecl :ptr real16, :string_t
+_wtoqf		proto __cdecl :ptr real16, :wstring_t
+
+ifdef _UNICODE
+define _tenvptr	 <_wenvptr>
+define _tsetargv <_wsetargv>
+define _tgetenvs <_wgetenvs>
+define _tsetenvp <_wsetenvp>
+define _txtoa	 <_xtow>
+define _txtoa_s	 <_xtow_s>
+define _tisexec	 <_wisexec>
+define _ttoqf	 <_wtoqf>
+define _ttoi128	 <_wtoi128>
+else
+define _tenvptr	 <_aenvptr>
+define _tsetargv <_asetargv>
+define _tgetenvs <_agetenvs>
+define _tsetenvp <_asetenvp>
+define _txtoa	 <_xtoa>
+define _txtoa_s	 <_xtoa_s>
+define _tisexec	 <_aisexec>
+define _ttoqf	 <_atoqf>
+define _ttoi128	 <_atoi128>
+endif
 
 alldiv		proto watcall :int64_t, :int64_t
 aulldiv		proto watcall :uint64_t, :uint64_t

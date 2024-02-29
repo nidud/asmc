@@ -69,11 +69,12 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
         mov charcount,edx
 
         .ifs ( edx > 0 )
+
             mov written,_write( [rbx]._file, [rbx]._base, edx )
 
         .elseif ( _osfile([rbx]._file) & FAPPEND )
 
-            .if ( _lseeki64( ecx, 0, SEEK_END ) == -1 )
+            .if ( _lseeki64( [rbx]._file, 0, SEEK_END ) == -1 )
 
                 or [rbx]._flag,_IOERR
                .return

@@ -97,6 +97,8 @@ _tWinMain		equ <wWinMain>
 _tenviron		equ <_wenviron>
 __targv			equ <__wargv>
 _tgetmainargs		equ <__wgetmainargs>
+_tmainCRTStartup	equ <wmainCRTStartup>
+_tWinMainCRTStartup	equ <wWinMainCRTStartup>
 
 
 ;; Formatted i/o
@@ -105,7 +107,6 @@ _toutput		equ <_woutput>
 _tfilbuf		equ <_filwbuf>
 _tflsbuf		equ <_flswbuf>
 _topenfile		equ <_wopenfile>
-_tsetargv		equ <setwargv>
 _tgetfattr		equ <_wgetfattr>
 
 _tprintf		equ <wprintf>
@@ -697,6 +698,8 @@ _tenviron		equ <_environ>
 endif
 __targv			equ <__argv>
 _tgetmainargs		equ <__getmainargs>
+_tmainCRTStartup	equ <mainCRTStartup>
+_tWinMainCRTStartup	equ <WinMainCRTStartup>
 
 ;; Formatted i/o
 
@@ -704,7 +707,6 @@ _toutput		equ <_output>
 _tfilbuf		equ <_filbuf>
 _tflsbuf		equ <_flsbuf>
 _topenfile		equ <_openfile>
-_tsetargv		equ <setargv>
 _tgetfattr		equ <getfattr>
 
 _tprintf		equ <printf>

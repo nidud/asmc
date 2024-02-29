@@ -10,7 +10,7 @@ include string.inc
 
     option dotname
 
-memxchg proc uses rsi rbx dst:string_t, src:string_t, count:size_t
+memxchg proc uses rsi rbx dst:ptr, src:ptr, count:size_t
 
     ldr     rbx,count
     ldr     rcx,dst

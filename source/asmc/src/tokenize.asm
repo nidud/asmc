@@ -694,6 +694,9 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
                 lea rdi,[rbx-asm_tok]
                 SymFind( [rbx-asm_tok].string_ptr )
+                .if ( rax && [rax].asym.state == SYM_TMACRO )
+                    SymFind( [rax].asym.string_ptr )
+                .endif
                 xor edx,edx
             .endif
             xor ecx,ecx

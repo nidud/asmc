@@ -16,7 +16,7 @@ _tpgmptr LPTSTR 0
 
 ifndef __UNIX__
 
-Install proc private
+init_argv proc private
 
   local pgname[260]:TCHAR
 
@@ -51,8 +51,9 @@ Install proc private
     mov _tpgmptr,rax
     ret
 
-Install endp
+init_argv endp
 
-.pragma init(Install, 4)
+.pragma init(init_argv, 4)
+
 endif
     end

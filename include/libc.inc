@@ -247,6 +247,13 @@ else
 array_t		typedef ptr ptr sbyte
 warray_t	typedef ptr ptr word
 endif
+ifdef _UNICODE
+tarray_t	typedef warray_t
+tstring_t	typedef ptr word
+else
+tarray_t	typedef array_t
+tstring_t	typedef ptr sbyte
+endif
 
 ifndef _INTPTR_T_DEFINED
 define _INTPTR_T_DEFINED

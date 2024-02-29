@@ -3,26 +3,17 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-; char **setargv( int *argc, char *command_line );
+; TCHAR **_tsetargv( int *argc, TCHAR *command_line );
 ;
 ; Note: The main array (__argv) is allocated in _targv.asm
 ;
 include stdlib.inc
 include string.inc
 include malloc.inc
-include tchar.inc
+include tmacro.inc
 
 define MAXARGCOUNT 256
 define MAXARGSIZE  0x8000  ; Max argument size: 32K
-
-option dotname
-ifdef _UNICODE
-define .lodsb <lodsw>
-define .stosb <stosw>
-else
-define .lodsb <lodsb>
-define .stosb <stosb>
-endif
 
     .code
 

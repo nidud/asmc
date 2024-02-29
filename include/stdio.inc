@@ -154,7 +154,7 @@ getwc		proto __cdecl :ptr FILE
 getwchar	proto __cdecl
 putwc		proto __cdecl :wint_t, :ptr FILE
 putwchar	proto __cdecl :wint_t
-ungetwc		proto __cdecl :wint_t, :ptr FILE
+ungetwc		proto __cdecl :int_t, :ptr FILE
 fgetws		proto __cdecl :ptr wchar_t, :SINT, :ptr FILE
 fputws		proto __cdecl :ptr wchar_t, :ptr FILE
 _getws		proto __cdecl :ptr wchar_t

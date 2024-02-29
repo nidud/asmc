@@ -117,12 +117,32 @@ endif
 
 ifndef _MSVCRT
 
+memxchg		proto __cdecl :ptr, :ptr, :size_t
 strfn		proto __cdecl :LPSTR
 strext		proto __cdecl :LPSTR
 strtrim		proto __cdecl :LPSTR
 strstart	proto __cdecl :LPSTR
 strfcat		proto __cdecl :LPSTR, :LPSTR, :LPSTR
-memxchg		proto __cdecl :LPSTR, :LPSTR, :size_t
+
+_wstrfn		proto __cdecl :LPWSTR
+_wstrext	proto __cdecl :LPWSTR
+_wstrtrim	proto __cdecl :LPWSTR
+_wstrstart	proto __cdecl :LPWSTR
+_wstrfcat	proto __cdecl :LPWSTR, :LPWSTR, :LPWSTR
+
+ifdef _UNICODE
+define _tstrfn		<_wstrfn>
+define _tstrext		<_wstrext>
+define _tstrtrim	<_wstrtrim>
+define _tstrstart	<_wstrstart>
+define _tstrfcat	<_wstrfcat>
+else
+define _tstrfn		<strfn>
+define _tstrext		<strext>
+define _tstrtrim	<strtrim>
+define _tstrstart	<strstart>
+define _tstrfcat	<strfcat>
+endif
 
 endif
 

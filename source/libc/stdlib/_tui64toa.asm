@@ -1,25 +1,27 @@
-; _UI64TOW.ASM--
+; _TUI64TOA.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
 include stdlib.inc
+include tchar.inc
 
     .code
 
-_ui64tow proc val:uint64_t, buffer:wstring_t, radix:int_t
+_ui64tot proc val:uint64_t, buffer:tstring_t, radix:int_t
 
 ifdef _WIN64
  ifdef __UNIX__
-    .return ( _xtow( rdi, rsi, edx, 0 ) )
+    _txtoa( rdi, rsi, edx, 0 )
  else
-    .return ( _xtow( rcx, rdx, r8d, 0 ) )
+    _txtoa( rcx, rdx, r8d, 0 )
  endif
 else
-    .return ( _xtow( val, buffer, radix, 0 ) )
+    _txtoa( val, buffer, radix, 0 )
 endif
+    ret
 
-_ui64tow endp
+_ui64tot endp
 
     end

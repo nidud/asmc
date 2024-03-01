@@ -634,6 +634,9 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 GetCurrentSegment( b_seg )
                 AddLineQueue( ".data" )
+                .if Unicode
+                    AddLineQueue( "align 2" )
+                .endif
                 AddLineQueue( b_data )
                 AddLineQueue( "_DATA ends" )
                 AddLineQueue( b_seg )
@@ -861,7 +864,9 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                     mov esi,2
                     AddLineQueue( ".const" )
                 .endif
-
+                .if Unicode
+                    AddLineQueue( "align 2" )
+                .endif
                 AddLineQueue( cursrc )
                 .if esi
                     .ifd !tstricmp( [rbx].name, "CONST" )

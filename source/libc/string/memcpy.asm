@@ -11,26 +11,56 @@ include tmacro.inc
 
 memcpy proc dst:ptr, src:ptr, size:size_t
 
-if defined(_AMD64_) and defined(__AVX__)
+ifdef __SSE__
 
-    ldr     r8,size
+ifdef _WIN64
+
+    define reg <r8>
+    define rdb <r8b>
+    define rd1 <r9>
+    define rd2 <r10>
+
+else
+
+    push esi
+    push edi
+    push ebx
+
+    define reg <esi>
+    define rdb <esi>
+    define rd1 <edi>
+    define rd2 <ebx>
+
+endif
+
+    ldr     reg,size
     ldr     rcx,dst
     ldr     rdx,src
-
     mov     rax,rcx
-    cmp     r8,64
+
+ifdef __AVX__
+
+    cmp     reg,64
     ja      .64
-    test    r8b,0x60
+    test    rdb,0x60
     jnz     .32
-    test    r8b,0x10
+
+else
+
+    cmp     reg,32
+    ja      .32
+
+endif
+
+    test    rdb,0x30
     jnz     .16
-    test    r8b,0x08
+    test    rdb,0x08
     jnz     .08
-    test    r8b,0x04
+    test    rdb,0x04
     jnz     .04
-    test    r8b,0x02
+    test    rdb,0x02
     jnz     .02
-    test    r8b,0x01
+    test    rdb,0x01
     jnz     .01
     jmp     .3
 .01:
@@ -39,71 +69,119 @@ if defined(_AMD64_) and defined(__AVX__)
     jmp     .3
 .02:
     mov     cx,[rdx]
-    mov     dx,[rdx+r8-2]
-    mov     [rax+r8-2],dx
+    mov     dx,[rdx+reg-2]
+    mov     [rax+reg-2],dx
     mov     [rax],cx
     jmp     .3
 .04:
     mov     ecx,[rdx]
-    mov     edx,[rdx+r8-4]
-    mov     [rax+r8-4],edx
+    mov     edx,[rdx+reg-4]
+    mov     [rax+reg-4],edx
     mov     [rax],ecx
     jmp     .3
 .08:
     mov     rcx,[rdx]
-    mov     rdx,[rdx+r8-8]
+    mov     rdx,[rdx+reg-8]
     mov     [rax],rcx
-    mov     [rax+r8-8],rdx
+    mov     [rax+reg-8],rdx
     jmp     .3
 .16:
     movups  xmm0,[rdx]
-    movups  xmm1,[rdx+r8-16]
+    movups  xmm1,[rdx+reg-16]
     movups  [rax],xmm0
-    movups  [rax+r8-16],xmm1
+    movups  [rax+reg-16],xmm1
     jmp     .3
 .32:
+
+ifdef __AVX__
+
     vmovups ymm0,[rdx]
-    vmovups ymm1,[rdx+r8-32]
+    vmovups ymm1,[rdx+reg-32]
     vmovups [rax],ymm0
-    vmovups [rax+r8-32],ymm1
+    vmovups [rax+reg-32],ymm1
     vzeroupper
     jmp     .3
 .64:
     vmovups ymm2,[rdx]
     vmovups ymm3,[rdx+32]
-    vmovups ymm4,[rdx+r8-32]
-    vmovups ymm5,[rdx+r8-64]
-    cmp     r8,128
+    vmovups ymm4,[rdx+reg-32]
+    vmovups ymm5,[rdx+reg-64]
+    cmp     reg,128
     jbe     .2
-    mov     r10,-64
+    mov     rd2,-64
     mov     ecx,eax
     neg     ecx
     and     ecx,64-1
     add     rdx,rcx
-    mov     r9,r8
-    sub     r9,rcx
+    mov     rd1,reg
+    sub     rd1,rcx
     add     rcx,rax
-    and     r9b,r10b
+    and     rd1,rd2
     cmp     rcx,rdx
     ja     .1
-    lea     rcx,[rcx+r9-64]
-    lea     rdx,[rdx+r9-64]
-    neg     r10
-    neg     r9
+    lea     rcx,[rcx+rd1-64]
+    lea     rdx,[rdx+rd1-64]
+    neg     rd2
+    neg     rd1
 .1:
-    add     r9,r10
-    vmovups ymm0,[rdx+r9]
-    vmovups ymm1,[rdx+r9+32]
-    vmovaps [rcx+r9],ymm0
-    vmovaps [rcx+r9+32],ymm1
+    add     rd1,rd2
+    vmovups ymm0,[rdx+rd1]
+    vmovups ymm1,[rdx+rd1+32]
+    vmovaps [rcx+rd1],ymm0
+    vmovaps [rcx+rd1+32],ymm1
     jnz     .1
 .2:
     vmovups [rax],ymm2
     vmovups [rax+32],ymm3
-    vmovups [rax+r8-32],ymm4
-    vmovups [rax+r8-64],ymm5
+    vmovups [rax+reg-32],ymm4
+    vmovups [rax+reg-64],ymm5
     vzeroupper
+
+else
+
+    movups xmm2,[rdx]
+    movups xmm3,[rdx+16]
+    movups xmm4,[rdx+reg-16]
+    movups xmm5,[rdx+reg-32]
+    cmp     reg,64
+    jbe     .2
+    mov     rd2,-32
+    movzx   ecx,al
+    neg     ecx
+    and     ecx,32-1
+    add     rdx,rcx
+    mov     rd1,reg
+    sub     rd1,rcx
+    add     rcx,rax
+    and     rd1,rd2
+    cmp     rcx,rdx
+    ja     .1
+    lea     rcx,[rcx+rd1-32]
+    lea     rdx,[rdx+rd1-32]
+    neg     rd2
+    neg     rd1
+.1:
+    add     rd1,rd2
+    movups xmm0,[rdx+rd1]
+    movups xmm1,[rdx+rd1+16]
+    movaps [rcx+rd1],xmm0
+    movaps [rcx+rd1+16],xmm1
+    jnz     .1
+.2:
+    movups [rax],xmm2
+    movups [rax+16],xmm3
+    movups [rax+reg-16],xmm4
+    movups [rax+reg-32],xmm5
+
+endif
+
 .3:
+ifndef _WIN64
+    pop     ebx
+    pop     edi
+    pop     esi
+endif
+    ret
 
 else
 
@@ -147,9 +225,9 @@ else
     mov     edi,edx
     pop     esi
 endif
+    ret
 
 endif
-    ret
 
 memcpy endp
 

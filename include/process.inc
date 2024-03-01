@@ -195,5 +195,18 @@ spawnvpe    proto __cdecl :int_t, :string_t, :string_t, :ptr string_t
 
 endif
 endif
+
+if not defined(_MSVCRT) or defined(_CRTBLD)
+
+_dospawn    proto __cdecl :int_t, :string_t, :string_t, :string_t
+_wdospawn   proto __cdecl :int_t, :wstring_t, :wstring_t, :wstring_t
+
+ifdef _UNICODE
+define _tdospawn  <_wdospawn>
+else
+define _tdospawn  <_dospawn>
+endif
+endif
+
 endif
 .pragma list(pop)

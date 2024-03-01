@@ -100,7 +100,7 @@ _topenfile proc uses rbx file:LPTSTR, mode:LPTSTR, shflag:SINT, stream:LPFILE
     mov oflag,edx
 
     mov rbx,stream
-    .if ( _tsopen(file, oflag, shflag, CMASK) != -1 )
+    .ifd ( _tsopen(file, oflag, shflag, CMASK) != -1 )
 
         mov [rbx]._iobuf._file,eax
         xor eax,eax

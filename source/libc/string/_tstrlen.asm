@@ -13,24 +13,36 @@ _tcslen proc string:LPTSTR
 
     ldr         rcx,string
 
-if defined(__AVX__) and not defined(_UNICODE)
+ifdef __AVX__
 
+ifdef _UNICODE
+    test        cl,1            ; Unicode strings needs to be aligned..
+    jnz         .3
+endif
 ifdef _WIN64
     mov         r8,rcx
 endif
-    mov         rax,rcx
+    mov         rax,rcx         ; align back to avoid reading ahead
     and         rax,-32
     and         ecx,32-1
-    mov         edx,-1
+    mov         edx,-1          ; mask string part
     shl         edx,cl
     vxorps      ymm0,ymm0,ymm0
+ifdef _UNICODE
+    vpcmpeqw    ymm1,ymm0,[rax]
+else
     vpcmpeqb    ymm1,ymm0,[rax]
+endif
     add         rax,32
     vpmovmskb   ecx,ymm1
     and         ecx,edx
     jnz         .1
 .0:
+ifdef _UNICODE
+    vpcmpeqw    ymm1,ymm0,[rax]
+else
     vpcmpeqb    ymm1,ymm0,[rax]
+endif
     vpmovmskb   ecx,ymm1
     add         rax,32
     test        ecx,ecx
@@ -43,8 +55,18 @@ ifdef _WIN64
 else
     sub         eax,string
 endif
+ifdef _UNICODE
+    shr         eax,1
+.2:
+endif
+    ret
 
-elseif defined(__SSE__) and not defined(_UNICODE)
+elseifdef __SSE__
+
+ifdef _UNICODE
+    test        cl,1
+    jnz         .3
+endif
 
 ifdef _WIN64
     mov         r8,rcx
@@ -55,7 +77,11 @@ endif
     or          edx,-1
     shl         edx,cl
     xorps       xmm0,xmm0
+ifdef _UNICODE
+    pcmpeqw     xmm0,[rax]
+else
     pcmpeqb     xmm0,[rax]
+endif
     add         rax,16
     pmovmskb    ecx,xmm0
     xorps       xmm0,xmm0
@@ -63,7 +89,11 @@ endif
     jnz         .1
 .0:
     movaps      xmm1,[rax]
+ifdef _UNICODE
+    pcmpeqw     xmm1,xmm0
+else
     pcmpeqb     xmm1,xmm0
+endif
     pmovmskb    ecx,xmm1
     add         rax,16
     test        ecx,ecx
@@ -76,6 +106,11 @@ ifdef _WIN64
 else
     sub         eax,string
 endif
+ifdef _UNICODE
+    shr         eax,1
+.2:
+endif
+    ret
 
 else
 
@@ -88,9 +123,23 @@ else
     mov         rdi,rdx
     not         rax
     dec         rax
+    ret
 
 endif
-    ret
+
+if defined(_UNICODE) and ( defined(__AVX__) or defined(__SSE__) )
+.3:
+    mov         rdx,rdi
+    mov         rdi,rcx
+    mov         rcx,-1
+    xor         eax,eax
+    repnz       scasw
+    mov         rax,rcx
+    mov         rdi,rdx
+    not         rax
+    dec         rax
+    jmp         .2
+endif
 
 _tcslen endp
 

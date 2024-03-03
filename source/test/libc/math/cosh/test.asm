@@ -4,12 +4,20 @@ include tchar.inc
 
     .code
 
-main proc
+_tmain proc
+
+  local x:real8
 
     cosh(1.0)
-    printf("%f\n", xmm0)
+ifdef __SSE__
+    movsd x,xmm0
+else
+    fstp x
+endif
+    printf("%f\n", x)
+    xor eax,eax
     ret
 
-main endp
+_tmain endp
 
     end _tstart

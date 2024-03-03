@@ -10,15 +10,7 @@ include limits.inc
 include wchar.inc
 include fltintrn.inc
 include winnls.inc
-
-ifdef _UNICODE
-include conio.inc
-define _toutput <_woutput>
-define _al <ax>
-else
-define _toutput <_output>
-define _al <al>
-endif
+include tchar.inc
 
 define BUFFERSIZE      512     ; ANSI-specified minimum is 509
 
@@ -56,50 +48,46 @@ externdef __lookuptable:byte
 
     .code
 
-write_char proc private c:int_t, fp:LPFILE, pNumWritten:LPWORD
+write_char proc private uses rbx c:int_t, fp:LPFILE, pnumwritten:ptr int_t
 
-    ldr ecx,c
+    ldr rbx,pnumwritten
     ldr rdx,fp
-ifdef _UNICODE
-    .if ( [rdx]._iobuf._file == 1 || [rdx]._iobuf._file == 2 )
+    ldr ecx,c
 
-        .if ( _putwch( ecx ) == WEOF )
-            movsx eax,ax
-        .endif
+    .if ( ( [rdx]._iobuf._flag & _IOSTRG ) && [rdx]._iobuf._base == NULL )
+
+        mov eax,1
+        add [rbx],eax
+
+    .elseifd ( _fputtc( ecx, rdx ) == -1 )
+
+        mov [rbx],eax
     .else
-        fputwc( cx, rdx )
-    .endif
-else
-    fputc( ecx, rdx )
-endif
-    mov rcx,pNumWritten
-    .if ( eax == -1 )
-        mov [rcx],eax
-    .else
-        inc dword ptr [rcx]
+        inc int_t ptr [rbx]
     .endif
     ret
 
 write_char endp
 
-write_string proc private uses rbx string:LPTSTR, len:SINT, fp:LPFILE, pNumwritten:ptr
+write_string proc private uses rbx string:LPTSTR, len:SINT, fp:LPFILE, pnumwritten:ptr int_t
 
-    .for ( rbx = string : len > 0 : len-- )
+    ldr rbx,string
+    .for ( : len > 0 : len-- )
 
         movzx ecx,TCHAR ptr [rbx]
         add rbx,TCHAR
 
-       .break .ifd ( write_char( ecx, fp, pNumwritten ) == -1 )
+       .break .ifd ( write_char( ecx, fp, pnumwritten ) == -1 )
     .endf
     ret
 
 write_string endp
 
-write_multi_char proc private c:SINT, num:SINT, fp:LPFILE, pNumWritten:ptr
+write_multi_char proc private c:SINT, num:SINT, fp:LPFILE, pnumwritten:ptr int_t
 
     .for ( : num > 0 : num-- )
 
-       .break .ifd ( write_char( c, fp, pNumWritten ) == -1 )
+       .break .ifd ( write_char( c, fp, pnumwritten ) == -1 )
     .endf
     ret
 
@@ -346,7 +334,7 @@ endif
                         xor eax,eax
                         shr edx,1
                         adc al,'0'
-                        mov [rbx+rcx*TCHAR-TCHAR],_al
+                        mov [rbx+rcx*TCHAR-TCHAR],_tal
                     .untilcxz
                     mov text,rbx
                     .endc
@@ -378,8 +366,8 @@ if not defined(__UNIX__) and not defined(_UNICODE)
                         WideCharToMultiByte( 0, 0, rdx, 1, rdx, 1, 0, 0 )
                     .else
 endif
-                        mov _al,[rcx]
-                        mov [rdx],_al
+                        mov _tal,[rcx]
+                        mov [rdx],_tal
 if not defined(__UNIX__) and not defined(_UNICODE)
                     .endif
 endif
@@ -611,7 +599,7 @@ endif
                         mov eax,'x' - 'a' + '9' + 1
                         add eax,hexoff
                         mov prefix,'0'
-                        mov prefix[TCHAR],_al
+                        mov prefix[TCHAR],_tal
                         mov prefixlen,2
                     .endif
                     jmp COMMON_INT

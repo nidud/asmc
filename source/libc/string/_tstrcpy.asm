@@ -5,9 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
+
+    option dotname
 
 _tcscpy proc dst:LPTSTR, src:LPTSTR
 
@@ -213,11 +215,11 @@ else
 endif
 
 .0:
-    mov     __a,[rdx]
-    mov     [rcx],__a
+    mov     _tal,[rdx]
+    mov     [rcx],_tal
     add     rdx,TCHAR
     add     rcx,TCHAR
-    test    __a,__a
+    test    _tal,_tal
     jnz     .0
 
 ifdef _WIN64

@@ -14,7 +14,8 @@ ifdef __SSE__
 else
     fstp x
 endif
-    printf("%.16f\n", x)
+    printf("%f\n", x)
+    xor eax,eax
     ret
 
 _tmain endp

@@ -12,21 +12,20 @@ include tchar.inc
 
 ifdef _UNICODE
 
-_fputtc proc uses rbx wc:wint_t, fp:LPFILE
+_fputtc proc uses rbx c:int_t, fp:LPFILE
 
-    ldr cx,wc
 else
 
 _fputtc proc c:int_t, fp: LPFILE
 
-    ldr ecx,c
 endif
 
     ldr rdx,fp
+    ldr ecx,c
 
 ifdef _UNICODE
 
-    .if ( !([rdx]._iobuf._flag & _IOSTRG) )
+    .if ( !( [rdx]._iobuf._flag & _IOSTRG ) )
 
         .if ( _textmode([rdx]._iobuf._file) == __IOINFO_TM_ANSI )
 
@@ -37,7 +36,7 @@ ifdef _UNICODE
 
                 ; text (multi-byte) mode
 
-                .ifd WideCharToMultiByte(CP_ACP, 0, &wc, 1, &mbc, sizeof(mbc), NULL, NULL)
+                .ifd WideCharToMultiByte(CP_ACP, 0, &c, 1, &mbc, sizeof(mbc), NULL, NULL)
 
                     .for ( size = eax, ebx = 0: ebx < size: ebx++ )
 
@@ -47,7 +46,7 @@ ifdef _UNICODE
                             .return
                         .endif
                     .endf
-                    movzx eax,wc
+                    movzx eax,word ptr c
                    .return
                 .endif
                 dec rax
@@ -65,11 +64,7 @@ endif
         mov eax,ecx
         mov rcx,[rdx]._iobuf._ptr
         add [rdx]._iobuf._ptr,TCHAR
-ifdef _UNICODE
-        mov [rcx],ax
-else
-        mov [rcx],al
-endif
+        mov [rcx],_tal
     .endif
     ret
 

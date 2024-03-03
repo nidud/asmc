@@ -5,9 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
+
+    option dotname
 
 _tcschr proc string:LPTSTR, chr:int_t
 
@@ -60,15 +62,15 @@ if defined(__AVX__) and defined(_WIN64) and not defined(_UNICODE)
 else
 
 .3:
-    cmp     __d,[rax]
+    cmp     _tdl,[rax]
     je      .0
     cmp     TCHAR ptr [rax],0
     je      .4
-    cmp     __d,[rax+TCHAR]
+    cmp     _tdl,[rax+TCHAR]
     je      .1
     cmp     TCHAR ptr [rax+TCHAR],0
     je      .4
-    cmp     __d,[rax+2*TCHAR]
+    cmp     _tdl,[rax+2*TCHAR]
     je      .2
     cmp     TCHAR ptr [rax+2*TCHAR],0
     je      .4

@@ -14,6 +14,7 @@ else
     fstp x
 endif
     printf("%f\n", x)
+    xor eax,eax
     ret
 
 main endp

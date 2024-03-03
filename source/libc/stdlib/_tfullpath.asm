@@ -9,7 +9,7 @@ include malloc.inc
 include string.inc
 include errno.inc
 include winbase.inc
-include tmacro.inc
+include tchar.inc
 
 .code
 
@@ -55,8 +55,8 @@ else
         mov edx,'\'
         mov eax,'/'
 
-        .if ( ( [rdi] == __d || [rdi] == __a ) &&
-              ( [rdi+TCHAR] == __d || [rdi+TCHAR] == __a ) )
+        .if ( ( [rdi] == _tdl || [rdi] == _tal ) &&
+              ( [rdi+TCHAR] == _tdl || [rdi+TCHAR] == _tal ) )
 
             mov eax,maxlen
             lea rcx,[rbx+rax*TCHAR-TCHAR]
@@ -65,9 +65,9 @@ else
 
             .repeat
 
-               .lodsb
-                mov [rdi],__a
-                .break .if !__a
+                _tlodsb
+                mov [rdi],_tal
+                .break .if !_tal
 
                 .if ( rdi >= rcx )
 
@@ -76,7 +76,7 @@ else
                    .break
                 .endif
 
-                .if ( __a == '\' || __a == '/' )
+                .if ( _tal == '\' || _tal == '/' )
 
                     mov TCHAR ptr [rdi],'\'
                     inc edx
@@ -99,13 +99,13 @@ else
         .else
 
             mov drive,0
-            mov __c,[rsi]
+            mov _tcl,[rsi]
             or  cl,0x20
 
-            .if ( __c >= 'a' && __c <= 'z' && TCHAR ptr [rsi+TCHAR] == ':' )
+            .if ( _tcl >= 'a' && _tcl <= 'z' && TCHAR ptr [rsi+TCHAR] == ':' )
 
-               .movsb
-               .movsb
+                _tmovsb
+                _tmovsb
                 sub cl,'a' + 1
                 and cl,1Fh
                 mov drive,cl
@@ -126,16 +126,16 @@ else
                 .endif
             .endif
 
-            mov __a,[rsi]
-            .if ( __a == '\' || __a == '/' )
+            mov _tal,[rsi]
+            .if ( _tal == '\' || _tal == '/' )
 
                 .if ( drive == 0 )
 
                     _getdrive()
                     add al,'A'- 1
-                   .stosb
+                    _tstosb
                     mov al,':'
-                   .stosb
+                    _tstosb
                 .endif
                 add rsi,TCHAR
 
@@ -157,11 +157,11 @@ else
                 .if ( drive )
 
                     mov al,dchar
-                    mov [rbx],__a
+                    mov [rbx],_tal
                 .endif
 
-                mov __a,[rdi-TCHAR]
-                .if ( __a == '\' || __a == '/' )
+                mov _tal,[rdi-TCHAR]
+                .if ( _tal == '\' || _tal == '/' )
 
                     sub rdi,TCHAR
                 .endif
@@ -173,15 +173,15 @@ else
 
         .while TCHAR ptr [rsi] != 0
 
-            mov __a,[rsi+2*TCHAR]
-            mov __d,[rsi+TCHAR]
+            mov _tal,[rsi+2*TCHAR]
+            mov _tdl,[rsi+TCHAR]
 
-            .if ( TCHAR ptr [rsi] == '.' && __d == '.' && ( !__a || __a == '\' || __a == '/' ) )
+            .if ( TCHAR ptr [rsi] == '.' && _tdl == '.' && ( !_tal || _tal == '\' || _tal == '/' ) )
 
                 .repeat
                     sub rdi,TCHAR
-                    mov __a,[rdi]
-                .until ( __a == '\' || __a == '/' || rdi <= rcx )
+                    mov _tal,[rdi]
+                .until ( _tal == '\' || _tal == '/' || rdi <= rcx )
 
                 .if rdi < rcx
 
@@ -196,7 +196,7 @@ else
                     add rsi,TCHAR
                 .endif
 
-            .elseif ( TCHAR ptr [rsi] == '.' && ( ( __d == '\' || __d == '/' ) || !__d ) )
+            .elseif ( TCHAR ptr [rsi] == '.' && ( ( _tdl == '\' || _tdl == '/' ) || !_tdl ) )
 
                 add rsi,TCHAR
                 .if TCHAR ptr [rsi] != 0
@@ -206,13 +206,13 @@ else
             .else
 
                 mov rdx,rdi
-                mov __a,[rsi]
+                mov _tal,[rsi]
 
-                .while ( __a && !( __a == '\' || __a == '/' ) && rdi < rcx )
+                .while ( _tal && !( _tal == '\' || _tal == '/' ) && rdi < rcx )
 
-                   .lodsb
+                    _tlodsb
                     add rdi,TCHAR
-                    mov [rdi],__a
+                    mov [rdi],_tal
                 .endw
 
                 .if ( rdi >= rcx )
@@ -231,8 +231,8 @@ else
 
                 add rdi,TCHAR
                 mov TCHAR ptr [rdi],'\'
-                mov __a,[rsi]
-                .if __a == '\' || __a == '/'
+                mov _tal,[rsi]
+                .if _tal == '\' || _tal == '/'
 
                     add rsi,TCHAR
                 .endif

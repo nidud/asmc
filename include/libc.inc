@@ -248,9 +248,11 @@ array_t		typedef ptr ptr sbyte
 warray_t	typedef ptr ptr word
 endif
 ifdef _UNICODE
+tchar_t		typedef word
 tarray_t	typedef warray_t
 tstring_t	typedef ptr word
 else
+tchar_t		typedef sbyte
 tarray_t	typedef array_t
 tstring_t	typedef ptr sbyte
 endif

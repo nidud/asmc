@@ -5,7 +5,7 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -18,10 +18,10 @@ _tcsrev proc uses rbx string:LPTSTR
 
     .for ( rdx-=TCHAR : rdx > rcx : rdx-=TCHAR, rcx+=TCHAR )
 
-        mov __a,[rcx]
-        mov __b,[rdx]
-        mov [rcx],__b
-        mov [rdx],__a
+        mov _tal,[rcx]
+        mov _tbl,[rdx]
+        mov [rcx],_tbl
+        mov [rdx],_tal
     .endf
     .return( string )
 

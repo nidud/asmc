@@ -5,7 +5,7 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -27,9 +27,9 @@ _tcsstr proc uses rdi rbx dst:LPTSTR, src:LPTSTR
 
             .repeat
 
-                mov __a,[rbx]
-                repne .scasb
-                mov __a,0
+                mov _tal,[rbx]
+                repne _tscasb
+                mov _tal,0
 
                 .break .ifnz
                 .if len
@@ -37,8 +37,8 @@ _tcsstr proc uses rdi rbx dst:LPTSTR, src:LPTSTR
                     .break .if ( rcx < len )
                      mov rdx,len
                     .repeat
-                        mov __a,[rbx+rdx*TCHAR]
-                        .continue(01) .if ( __a != [rdi+rdx*TCHAR-TCHAR] )
+                        mov _tal,[rbx+rdx*TCHAR]
+                        .continue(01) .if ( _tal != [rdi+rdx*TCHAR-TCHAR] )
                         dec rdx
                     .untilz
                 .endif

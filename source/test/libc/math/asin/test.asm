@@ -9,12 +9,13 @@ main proc
   local x:real8
 
     asin(1.0)
-ifdef _WIN64
+ifdef __SSE__
     movsd x,xmm0
 else
     fstp x
 endif
     printf("%f\n", x)
+    xor eax,eax
     ret
 
 main endp

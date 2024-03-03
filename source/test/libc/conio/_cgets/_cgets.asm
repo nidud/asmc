@@ -1,39 +1,42 @@
 ;
 ; https://docs.microsoft.com/en-us/cpp/c-runtime-library/cgets-cgetws?view=vs-2019
 ;
-;; This program creates a buffer and initializes
-;; the first byte to the size of the buffer. Next, the
-;; program accepts an input string using _cgets and displays
-;; the size and text of that string.
-
+; This program creates a buffer and initializes
+; the first byte to the size of the buffer. Next, the
+; program accepts an input string using _cgets and displays
+; the size and text of that string.
+;
 include conio.inc
 include stdio.inc
 include errno.inc
+include tchar.inc
 
 .code
 
-main proc
+_tmain proc
 
-   local buffer[83]:char_t
-   local result:string_t
+   local buffer[83]:tchar_t
+   local result:tstring_t
 
-   mov buffer,80 ;; Maximum characters in 1st byte
+   mov buffer,80 ; Maximum characters in 1st byte
 
-   printf( "Input line of text, followed by carriage return:\n")
+   _tprintf( "Input line of text, followed by carriage return:\n" )
 
-   ;; Input a line of text:
-   mov result,_cgets( &buffer ) ;; C4996
+   ; Input a line of text:
 
-   ;; Note: _cgets is deprecated; consider using _cgets_s
-   .if (!result)
+   mov result,_cgetts( &buffer ) ;; C4996
 
-      printf( "An error occurred reading from the console:"
-              " error code %d\n", _get_errno(NULL))
+   ; Note: _cgets is deprecated; consider using _cgets_s
+
+   .if ( !result )
+
+      _tprintf( "An error occurred reading from the console:"
+                " error code %d\n", _get_errno(NULL) )
    .else
-      printf( "\nLine length = %d\nText = %s\n", buffer[1], result )
+      _tprintf( "\nLine length = %d\nText = %s\n", buffer[tchar_t], result )
    .endif
    ret
 
-main endp
+_tmain endp
 
-    end
+    end _tstart

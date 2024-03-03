@@ -12,7 +12,7 @@ include malloc.inc
 include winbase.inc
 include wincon.inc
 endif
-include tmacro.inc
+include tchar.inc
 
 externdef errorlevel:int_t
 
@@ -48,7 +48,7 @@ endif
         add rdi,TCHAR
         mov dl,'"'
     .endif
-    mov delim,__d
+    mov delim,_tdl
 
     mov rsi,_tcschr( rdi, edx )
     .if rax
@@ -58,7 +58,7 @@ endif
 
     .if rsi
         mov [rsi],delim
-        .if __a == '"'
+        .if _tal == '"'
             inc rsi
         .endif
     .else

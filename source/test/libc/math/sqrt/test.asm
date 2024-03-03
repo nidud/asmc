@@ -8,13 +8,14 @@ _tmain proc
 
   local x:real8
 
-    sqrt(10.5)
+    sqrt(3.14159265358979323846264338327950288419716939937511)
 ifdef __SSE__
     movsd x,xmm0
 else
     fstp x
 endif
-    printf("%.16f\n", x)
+    printf("%f\n", x)
+    xor eax,eax
     ret
 
 _tmain endp

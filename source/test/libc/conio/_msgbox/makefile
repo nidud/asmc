@@ -1,12 +1,22 @@
-Unicode = 0
-
+ifdef YACC
+_msgbox:
+	asmc64 $@.asm
+	gcc -nostdlib -o $@ $@.o /lib/alibc.a
+	./$@
+	echo Press enter to continue; read dummy;
+	rm -f $@.o
+	rm -f $@
+else
 _msgbox.exe:
-!if $(Unicode)
-    asmc64 -ws $*.asm
-    linkw system con_64W file $*.obj
-!else
-    asmc64 $*.asm
-    linkw system con_64 file $*.obj
-!endif
-    $@
-    pause
+	asmc -q $*.asm
+	linkw system con_32 name A32$@ file $*
+	asmc -q -ws $*.asm
+	linkw system con_32W name W32$@ file $*
+	asmc64 -q $*.asm
+	linkw system con_64 name A64$@ file $*
+	asmc64 -q -ws $*.asm
+	linkw system con_64W name W64$@ file $*
+	W64$@
+	del *.obj
+	pause
+endif

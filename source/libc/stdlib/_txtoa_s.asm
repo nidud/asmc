@@ -6,7 +6,7 @@
 
 include stdlib.inc
 include errno.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -98,7 +98,7 @@ ifdef _WIN64
             add dl,('A' - '9' - 1)
         .endif
         sub ecx,TCHAR
-        mov convbuf[rcx],__d
+        mov convbuf[rcx],_tdl
     .endw
 
     .for ( rdx = r10, eax = 1 : eax && r8 : r8--, ecx+=TCHAR, rdx+=TCHAR )
@@ -149,7 +149,7 @@ else
             add bl,('A' - '9' - 1)
         .endif
         sub ecx,TCHAR
-        mov convbuf[ecx],__b
+        mov convbuf[ecx],_tbl
     .endf
 
     pop ebx
@@ -158,12 +158,12 @@ else
     pop edx
 
     .repeat
-        mov __a,convbuf[ecx]
+        mov _tal,convbuf[ecx]
         add ecx,TCHAR
-        mov [edx],__a
+        mov [edx],_tal
         add edx,TCHAR
         dec sizeInTChars
-    .until ( __a == 0 || sizeInTChars == 0 )
+    .until ( _tal == 0 || sizeInTChars == 0 )
 
 endif
 

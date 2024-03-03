@@ -6,10 +6,11 @@
 
 include string.inc
 include errno.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
+    option dotname
     assume rcx:ptr TCHAR
 
 _tcscat_s proc uses rbx dst:LPTSTR, cnt:size_t, src:LPTSTR
@@ -28,7 +29,7 @@ ifdef _WIN64
     mov     r8,rcx
 endif
 .0:
-    cmp     __a,[rcx]
+    cmp     _tal,[rcx]
     je      .1
     add     rcx,TCHAR
     dec     rbx
@@ -65,7 +66,7 @@ ifdef _WIN64
 else
     mov     rcx,dst
 endif
-    mov     [rcx],__b
+    mov     [rcx],_tbl
     invoke  _set_errno,ERANGE
     mov     eax,ERANGE
     jmp     .3

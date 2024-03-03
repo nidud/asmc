@@ -1,9 +1,12 @@
 include stdio.inc
 include malloc.inc
+include tchar.inc
 
 .class Class
-    string      string_t ?
-    Class       proc :string_t
+
+    string      tstring_t ?
+
+    Class       proc :tstring_t
     Release     proc
     Print       proc
    .ends
@@ -12,7 +15,7 @@ include malloc.inc
 
 Class::Release proc
 
-    free(rdi)
+    free(this)
     ret
 
 Class::Release endp
@@ -20,23 +23,26 @@ Class::Release endp
 
 Class::Print proc
 
-    printf("%s\n", [rdi].Class.string)
+    ldr rcx,this
+
+    _tprintf("%s\n", [rcx].Class.string)
     ret
 
 Class::Print endp
 
 
-Class::Class proc string:string_t
+Class::Class proc string:tstring_t
 
-    mov rdi,@ComAlloc(Class)
+    @ComAlloc(Class)
+
     mov rcx,string
-    mov [rdi].Class.string,rcx
+    mov [rax].Class.string,rcx
     ret
 
 Class::Class endp
 
 
-main proc
+_tmain proc
 
    .new p:ptr Class("Hello Class!")
 
@@ -44,6 +50,6 @@ main proc
     p.Release()
     ret
 
-main endp
+_tmain endp
 
     end

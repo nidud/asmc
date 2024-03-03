@@ -8,13 +8,14 @@ main proc
 
   local x:real8
 
-    pow(2.5, 3.4)
-ifdef _WIN64
+    pow(2.4, 3.999)
+ifdef __SSE__
     movsd x,xmm0
 else
     fstp x
 endif
     printf("%f\n", x)
+    xor eax,eax
     ret
 
 main endp

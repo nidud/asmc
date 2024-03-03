@@ -6,7 +6,7 @@
 
 include string.inc
 include ctype.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -17,7 +17,7 @@ _tcsupr proc uses rbx string:LPTSTR
 
         movzx ecx,TCHAR ptr [rbx]
         _totupper(ecx)
-        mov [rbx],__a
+        mov [rbx],_tal
     .endf
     .return( string )
 

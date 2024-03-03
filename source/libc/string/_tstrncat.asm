@@ -5,9 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
+
+    option dotname
 
 _tcsncat proc uses rdi rbx dst:LPTSTR, src:LPTSTR, cnt:size_t
 
@@ -17,7 +19,7 @@ _tcsncat proc uses rdi rbx dst:LPTSTR, src:LPTSTR, cnt:size_t
     mov     rdi,rcx
     xor     eax,eax
 .0:
-    cmp     __a,[rcx]
+    cmp     _tal,[rcx]
     je      .1
     add     rcx,TCHAR
     jmp     .0
@@ -25,8 +27,8 @@ _tcsncat proc uses rdi rbx dst:LPTSTR, src:LPTSTR, cnt:size_t
     test    ebx,ebx
     jz      .2
     dec     ebx
-    mov     __a,[rdx]
-    mov     [rcx],__a
+    mov     _tal,[rdx]
+    mov     [rcx],_tal
     add     rcx,TCHAR
     add     rdx,TCHAR
     test    eax,eax
@@ -34,7 +36,7 @@ _tcsncat proc uses rdi rbx dst:LPTSTR, src:LPTSTR, cnt:size_t
     mov     ebx,eax
     sub     rcx,TCHAR
 .2:
-    mov     [rcx],__b
+    mov     [rcx],_tbl
     mov     rax,rdi
     ret
 

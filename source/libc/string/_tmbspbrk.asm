@@ -5,7 +5,7 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -17,16 +17,16 @@ _tcspbrk proc uses rsi rdi rbx s1:LPTSTR, s2:LPTSTR
     xor     eax,eax
     mov     rdi,rdx
     mov     ecx,-1
-    repnz  .scasb
+    repnz   _tscasb
     not     ecx
     dec     ecx
    .return .ifz
 
-    .for ( esi = ecx, __a = [rbx] : eax : rbx += TCHAR, __a = [rbx] )
+    .for ( esi = ecx, _tal = [rbx] : eax : rbx += TCHAR, _tal = [rbx] )
 
         mov rdi,rdx
         mov ecx,esi
-        repnz .scasb
+        repnz _tscasb
         .ifz
             .return( rbx )
         .endif

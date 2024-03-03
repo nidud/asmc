@@ -5,6 +5,7 @@
 ;
 
 include conio.inc
+include tchar.inc
 
 .code
 
@@ -63,11 +64,11 @@ paint proc uses rbx
 paint endp
 
 
-setn proto :string_t {
+setn proto :tstring_t {
     mov n,_1
     }
 
-main proc
+_tmain proc
 
    .new p:int_t = 0
    .new c:int_t = 0
@@ -192,6 +193,6 @@ main proc
     _cout(RST_ANY_EVENT_MOUSE)
     .return(0)
 
-main endp
+_tmain endp
 
     end

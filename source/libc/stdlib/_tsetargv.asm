@@ -10,7 +10,7 @@
 include stdlib.inc
 include string.inc
 include malloc.inc
-include tmacro.inc
+include tchar.inc
 
 define MAXARGCOUNT 256
 define MAXARGSIZE  0x8000  ; Max argument size: 32K
@@ -41,16 +41,16 @@ else
         mov [rdi],cx
 
         .for ( : eax == ' ' || ( eax >= 9 && eax <= 13 ) : )
-            .lodsb
+             _tlodsb
         .endf
         .break .if !eax ; end of command string
 
         .if eax == '"'
-            .lodsb
+            _tlodsb
             inc edx
         .endif
         .while eax == '"' ; ""A" B"
-            .lodsb
+            _tlodsb
             inc ecx
         .endw
 
@@ -70,9 +70,9 @@ else
                     inc ecx
                 .endif
             .else
-                .stosb
+                _tstosb
             .endif
-            .lodsb
+            _tlodsb
         .endw
 
         xor ecx,ecx

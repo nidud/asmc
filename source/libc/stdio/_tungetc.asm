@@ -10,7 +10,7 @@ include io.inc
 include winnls.inc
 include limits.inc
 endif
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -106,7 +106,7 @@ endif
 
         sub [rbx]._ptr,TCHAR
         mov rcx,[rbx]._ptr
-        .if ( __a != [rcx] )
+        .if ( _tal != [rcx] )
 
             add [rbx]._ptr,TCHAR
            .return( -1 )
@@ -115,7 +115,7 @@ endif
 
         sub [rbx]._ptr,TCHAR
         mov rcx,[rbx]._ptr
-        mov [rcx],__a
+        mov [rcx],_tal
     .endif
     add [rbx]._cnt,TCHAR
 

@@ -5,9 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
+
+    option dotname
 
 _tcslen proc string:LPTSTR
 
@@ -118,7 +120,7 @@ else
     mov         rdi,rcx
     mov         rcx,-1
     xor         eax,eax
-    repnz      .scasb
+    repnz       _tscasb
     mov         rax,rcx
     mov         rdi,rdx
     not         rax

@@ -5,7 +5,7 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -21,13 +21,13 @@ _tstrfcat proc uses rbx rsi rdi buffer:LPTSTR, path:LPTSTR, file:LPTSTR
     .if ( rsi )
 
         mov   rdi,rsi ; overwrite buffer
-        repne .scasb
+        repne _tscasb
         mov   rdi,rdx
         not   ecx
-        rep   .movsb
+        rep   _tmovsb
     .else
         mov   rdi,rdx ; length of buffer
-        repne .scasb
+        repne _tscasb
     .endif
     sub rdi,TCHAR
 
@@ -43,14 +43,14 @@ else
 
             mov eax,'\'
 endif
-           .stosb
+           _tstosb
         .endif
     .endif
 
     mov rsi,rbx ; add file name
     .repeat
-       .lodsb
-       .stosb
+       _tlodsb
+       _tstosb
     .until !eax
     .return(rdx)
 

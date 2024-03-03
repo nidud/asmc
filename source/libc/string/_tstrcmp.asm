@@ -5,9 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
+
+    option dotname
 
 _tcscmp proc a:LPTSTR, b:LPTSTR
 
@@ -15,21 +17,21 @@ _tcscmp proc a:LPTSTR, b:LPTSTR
     ldr     rdx,b
     xor     eax,eax
 .0:
-    xor     __a,[rcx]
+    xor     _tal,[rcx]
     jz      .5
-    sub     __a,[rdx]
+    sub     _tal,[rdx]
     jnz     .1
-    xor     __a,[rcx+1*TCHAR]
+    xor     _tal,[rcx+1*TCHAR]
     jz      .4
-    sub     __a,[rdx+1*TCHAR]
+    sub     _tal,[rdx+1*TCHAR]
     jnz     .1
-    xor     __a,[rcx+2*TCHAR]
+    xor     _tal,[rcx+2*TCHAR]
     jz      .3
-    sub     __a,[rdx+2*TCHAR]
+    sub     _tal,[rdx+2*TCHAR]
     jnz     .1
-    xor     __a,[rcx+3*TCHAR]
+    xor     _tal,[rcx+3*TCHAR]
     jz      .2
-    sub     __a,[rdx+3*TCHAR]
+    sub     _tal,[rdx+3*TCHAR]
     jnz     .1
     add     rcx,4*TCHAR
     add     rdx,4*TCHAR
@@ -45,7 +47,7 @@ _tcscmp proc a:LPTSTR, b:LPTSTR
 .4:
     add     rdx,TCHAR
 .5:
-    sub     __a,[rdx]
+    sub     _tal,[rdx]
     jnz     .1
 .6:
     ret

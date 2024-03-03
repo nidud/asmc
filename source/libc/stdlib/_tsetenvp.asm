@@ -9,7 +9,7 @@ ifndef __UNIX__
 include string.inc
 include malloc.inc
 include winbase.inc
-include tmacro.inc
+include tchar.inc
 endif
 
 define MAXCOUNT 256
@@ -35,7 +35,7 @@ _tsetenvp proc uses rsi rdi rbx envp:tarray_t
             mov  offs[rbx*int_t],edx
             inc  rbx
         .endif
-        repnz .scasb
+        repnz _tscasb
     .endf
 
     inc rbx

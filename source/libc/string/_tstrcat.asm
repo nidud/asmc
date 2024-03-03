@@ -5,10 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
+    option dotname
     assume rdx:ptr TCHAR
 
 _tcscat proc dst:LPTSTR, src:LPTSTR
@@ -20,7 +21,7 @@ ifdef _WIN64
 endif
     xor     eax,eax
 .0:
-    cmp     __a,[rcx]
+    cmp     _tal,[rcx]
     je      .1
     add     rcx,TCHAR
     jmp     .0

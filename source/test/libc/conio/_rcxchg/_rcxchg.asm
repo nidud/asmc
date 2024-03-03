@@ -30,10 +30,10 @@ _tmain proc argc:int_t, argv:array_t
     _rcframe(rc, b3, p, BOX_SINGLE_ARC, 0)
     _rcframe(rc, b4, p, BOX_SINGLE_HORIZONTAL, 0)
     _rcxchg(rc, p)
-    _getch()
+    _gettch()
 
     _rcxchg(rc, p)
-    _getch()
+    _gettch()
     ret
 
 _tmain endp

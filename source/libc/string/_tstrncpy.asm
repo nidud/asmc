@@ -5,9 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
+
+    option dotname
 
 _tcsncpy proc uses rdi rbx dst:LPTSTR, src:LPTSTR, count:size_t
 
@@ -19,13 +21,13 @@ _tcsncpy proc uses rdi rbx dst:LPTSTR, src:LPTSTR, count:size_t
     test    ecx,ecx
     jz      .1
     dec     ecx
-    mov     __a,[rdx]
-    mov     [rdi],__a
+    mov     _tal,[rdx]
+    mov     [rdi],_tal
     add     rdx,TCHAR
     add     rdi,TCHAR
-    test    __a,__a
+    test    _tal,_tal
     jnz     .0
-    rep     stosb
+    rep     _tstosb
 .1:
     mov     rax,rbx
     ret

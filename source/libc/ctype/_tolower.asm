@@ -7,14 +7,14 @@ include ctype.inc
 ifdef _UNICODE
 include winnls.inc
 endif
-include tmacro.inc
+include tchar.inc
 
     .code
 
 _totlower proc c:int_t
 
     ldr     ecx,c
-    movzx   ecx,__c
+    movzx   ecx,_tcl
 
 ifdef _UNICODE
     .if ( ecx < 256 )

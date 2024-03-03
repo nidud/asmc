@@ -300,48 +300,84 @@ endif
 ifndef _STAT_DEFINED
 define _STAT_DEFINED
 
-.pragma pack(push, 4)
+.pragma pack(push, size_t)
 
-.template _STAT
-    st_dev	_dev_t ?
-    st_ino	_ino_t ?
-    st_mode	word ?
-    st_nlink	sword ?
-    st_uid	sword ?
-    st_gid	sword ?
-    st_rdev	_dev_t ?
-    st_size	_off_t ?
-    st_atime	time_t ?
-    st_mtime	time_t ?
-    st_ctime	time_t ?
-   .ends
-
-.template stat
-    st_dev	_dev_t ?
-    st_ino	_ino_t ?
-    st_mode	word ?
-    st_nlink	sword ?
-    st_uid	sword ?
-    st_gid	sword ?
-    st_rdev	_dev_t ?
-    st_size	_off_t ?
-    st_atime	__time32_t ?
-    st_mtime	__time32_t ?
-    st_ctime	__time32_t ?
+.template _stat32
+ifdef __UNIX__
+    st_dev	dq ?	    ; 0
+    st_ino	size_t ?    ; 8
+ ifdef _WIN64
+    st_nlink	dq ?	    ; 16
+    st_mode	dd ?	    ; 24
+ else
+    st_mode	dd ?	    ; 16
+    st_nlink	dd ?	    ; 20
+ endif
+    st_uid	dd ?	    ; 24/28
+    st_gid	dd ?	    ; 28/32
+    st_rdev	dq ?	    ; 32/40
+    st_size	size_t ?    ; 44/48
+    st_blksize	size_t ?    ; 48/56
+    st_blocks	size_t ?    ; 52/64
+    st_atime	size_t ?    ; 56/72
+    st_atimesec size_t ?    ; 60/80
+    st_mtime	size_t ?    ; 64/88
+    st_mtimesec size_t ?    ; 68/96
+    st_ctime	size_t ?    ; 72/104
+    st_ctimesec size_t ?    ; 76/112
+ ifdef _WIN64
+    st_reserved db 8 dup(?) ; 88
+ else
+    st_reserved db 24 dup(?); 144
+ endif
+else
+    st_dev	dd ?	    ; 0
+    st_ino	dw ?	    ; 4
+    st_mode	dw ?	    ; 6
+    st_nlink	sword ?	    ; 8
+    st_uid	sword ?	    ; 10
+    st_gid	sword ?	    ; 12
+    st_rdev	dd ?	    ; 16
+    st_size	dd ?	    ; 20
+    st_atime	size_t ?    ; 24
+    st_mtime	size_t ?    ; 28/32
+    st_ctime	size_t ?    ; 32/40
+endif
    .ends
 
 .template _stati64
-    st_dev	_dev_t ?
-    st_ino	_ino_t ?
-    st_mode	word ?
-    st_nlink	sword ?
-    st_uid	sword ?
-    st_gid	sword ?
-    st_rdev	_dev_t ?
-    st_size	dq ?
-    st_atime	time_t ?
-    st_mtime	time_t ?
-    st_ctime	time_t ?
+ifdef __UNIX__
+    st_dev	dq ?	    ; 0
+    st_ino	dq ?	    ; 8
+    st_nlink	dq ?	    ; 16
+    st_mode	dd ?	    ; 24
+    st_uid	dd ?	    ; 28
+    st_gid	dd ?	    ; 32
+    st_pad	dd ?	    ; 36
+    st_rdev	dq ?	    ; 40
+    st_size	dq ?	    ; 48
+    st_blksize	dq ?	    ; 56
+    st_blocks	dq ?	    ; 64
+    st_atime	dq ?	    ; 72
+    st_atimesec dq ?	    ; 80
+    st_mtime	dq ?	    ; 88
+    st_mtimesec dq ?	    ; 96
+    st_ctime	dq ?	    ; 104
+    st_ctimesec dq ?	    ; 112
+    st_reserved db 24 dup(?)
+else
+    st_dev	dd ?	    ; 0
+    st_ino	dw ?	    ; 4
+    st_mode	dw ?	    ; 6
+    st_nlink	sword ?	    ; 8
+    st_uid	sword ?	    ; 10
+    st_gid	sword ?	    ; 12
+    st_rdev	dd ?	    ; 16
+    st_size	dq ?	    ; 24
+    st_atime	dq ?	    ; 32
+    st_mtime	dq ?	    ; 40
+    st_ctime	dq ?	    ; 48
+endif
    .ends
 
 .pragma pack(pop)
@@ -350,9 +386,9 @@ endif
 
 ifndef _WSTAT_DEFINED
 define _WSTAT_DEFINED
-_wstatproto	proto __cdecl :ptr wchar_t, :ptr _STAT
+_wstat		proto __cdecl :ptr wchar_t, :ptr _stat32
 if _INTEGRAL_MAX_BITS GE 64
-_wstati64	proto __cdecl :ptr wchar_t, :ptr _stati64
+_wstat64	proto __cdecl :ptr wchar_t, :ptr _stati64
 endif
 endif
 

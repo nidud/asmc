@@ -253,12 +253,20 @@ _open_osfhandle proto __cdecl :intptr_t, :int_t
 _alloc_osfhnd	proto __cdecl
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
+
 osmaperr	proto __cdecl
-getfattr	proto __cdecl :LPSTR
-_wgetfattr	proto __cdecl :LPWSTR
 osread		proto __cdecl :int_t, :ptr, :uint_t
 oswrite		proto __cdecl :int_t, :ptr, :uint_t
+getfattr	proto __cdecl :LPSTR
+_wgetfattr	proto __cdecl :LPWSTR
+ifdef _UNICODE
+define _tgetfattr <_wgetfattr>
+else
+define _tgetfattr <getfattr>
+endif
+
 endif ; _MSVCRT
+
 
 endif
 .pragma list(pop)

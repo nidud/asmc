@@ -5,7 +5,7 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .data
      s0 LPTSTR ?
@@ -28,33 +28,33 @@ _tcstok proc uses rbx s1:LPTSTR, s2:LPTSTR
     .while ( TCHAR ptr [rbx] )
 
         mov rcx,rdx
-        mov __a,[rcx]
+        mov _tal,[rcx]
 
-        .while ( __a )
+        .while ( _tal )
 
-            .break .if ( __a == [rbx] )
+            .break .if ( _tal == [rbx] )
 
             add rcx,TCHAR
-            mov __a,[rcx]
+            mov _tal,[rcx]
         .endw
-        .break .if ( !__a )
+        .break .if ( !_tal )
         add rbx,TCHAR
     .endw
 
     .repeat
 
         xor eax,eax
-        .break .if ( __a == [rbx] )
+        .break .if ( _tal == [rbx] )
 
         mov p,rbx
         .while ( TCHAR ptr [rbx] )
 
             mov rcx,rdx
-            mov __a,[rcx]
+            mov _tal,[rcx]
 
-            .while ( __a )
+            .while ( _tal )
 
-                .if ( __a == [rbx] )
+                .if ( _tal == [rbx] )
 
                     mov TCHAR ptr [rbx],0
                     add rbx,TCHAR
@@ -62,7 +62,7 @@ _tcstok proc uses rbx s1:LPTSTR, s2:LPTSTR
                 .endif
 
                 add rcx,TCHAR
-                mov __a,[rcx]
+                mov _tal,[rcx]
             .endw
             add rbx,TCHAR
         .endw

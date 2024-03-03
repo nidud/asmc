@@ -17,18 +17,18 @@ _tmain proc argc:int_t, argv:array_t
    local isNonzero:byte
 
    mov dwMask,0x1000
-   _cputs( "Enter a positive integer as the mask: " )
+   _cputts( "Enter a positive integer as the mask: " )
 
    xor edi,edi
    .while 1
 
-        _getch()
+        _gettch()
 
         .break .if al < '0'
         .break .if al > '9'
 
         movzx ebx,al
-        _putch( eax )
+        _puttch( eax )
 
         lea rcx,[rdi*8]
         lea rdi,[rcx+rdi*2]
@@ -39,9 +39,9 @@ _tmain proc argc:int_t, argv:array_t
    mov dwMask,edi
    mov isNonzero,_BitScanForward(&index, dwMask)
    .if (isNonzero)
-      _cprintf( "\r\nMask: %d Index: %d\r\n", dwMask, index )
+      _tcprintf( "\r\nMask: %d Index: %d\r\n", dwMask, index )
    .else
-      _cprintf( "\r\nNo set bits found.  Mask is zero.\r\n" )
+      _tcprintf( "\r\nNo set bits found.  Mask is zero.\r\n" )
    .endif
    ret
 

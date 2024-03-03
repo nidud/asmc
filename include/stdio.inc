@@ -40,14 +40,14 @@ ifndef _FILE_DEFINED
 define _FILE_DEFINED
 _iobuf		struct size_t
 _ptr		LPTSTR ?
-_cnt		SINT ?
-_base		LPSTR ?
-_flag		SINT ?
-_file		SINT ?
+_cnt		int_t ?
+_base		string_t ?
+_flag		int_t ?
+_file		int_t ?
 if defined(_WIN64) or not defined(__UNIX__)
-_charbuf	SINT ?
+_charbuf	int_t ?
 endif
-_bufsiz		SINT ?
+_bufsiz		int_t ?
 if defined(__UNIX__) and not defined(_WIN64)
 _ungotten	dw ?
 else
@@ -79,50 +79,49 @@ _fileno		equ <fileno>
 endif
 _fileno		proto __cdecl :LPFILE
 
-_output		proto __cdecl :LPFILE, :LPSTR, :PVOID
-sprintf		proto __Cdecl :LPSTR, :LPSTR, :VARARG
-ftobufin	proto __Cdecl :LPSTR, :ptr
-printf		proto __Cdecl :LPSTR, :VARARG
-fprintf		proto __Cdecl :LPFILE, :LPSTR, :VARARG
-scanf		proto __Cdecl :LPSTR, :VARARG
-puts		proto __cdecl :LPSTR
+_output		proto __cdecl :LPFILE, :string_t, :ptr
+sprintf		proto __Cdecl :string_t, :string_t, :vararg
+_scprintf	proto __Cdecl :string_t, :vararg
+ftobufin	proto __Cdecl :string_t, :ptr
+printf		proto __Cdecl :string_t, :vararg
+fprintf		proto __Cdecl :LPFILE, :string_t, :vararg
+scanf		proto __Cdecl :string_t, :vararg
+puts		proto __cdecl :string_t
 getc		proto __cdecl :LPFILE
-fopen		proto __cdecl :LPSTR, :LPSTR
-fopen_s		proto __cdecl :ptr ptr FILE, :LPSTR, :LPSTR
+fopen		proto __cdecl :string_t, :string_t
+fopen_s		proto __cdecl :ptr LPFILE, :string_t, :string_t
 fclose		proto __cdecl :LPFILE
 fgetc		proto __cdecl :LPFILE
 getchar		proto __cdecl
-vsprintf	proto __cdecl :LPSTR, :LPSTR, :PVOID
-_vsnprintf	proto __cdecl :LPSTR, :size_t, :LPSTR, :PVOID
-vfprintf	proto __cdecl :LPFILE,:LPSTR, :PVOID
-fread		proto __cdecl :LPSTR, :SINT, :SINT, :LPFILE
-fwrite		proto __cdecl :LPSTR, :SINT, :SINT, :LPFILE
+vsprintf	proto __cdecl :string_t, :string_t, :ptr
+_vsnprintf	proto __cdecl :string_t, :size_t, :string_t, :ptr
+_vscprintf	proto __cdecl :string_t, :ptr
+vfprintf	proto __cdecl :LPFILE,:string_t, :ptr
+fread		proto __cdecl :string_t, :int_t, :int_t, :LPFILE
+fwrite		proto __cdecl :string_t, :int_t, :int_t, :LPFILE
 fseek		proto __cdecl :LPFILE,:SIZE_T, :SIZE_T
-fgets		proto __cdecl :LPSTR, :SINT, :LPFILE
-fputs		proto __cdecl :LPSTR, :LPFILE
-_fputchar	proto __cdecl :SINT
-fputc		proto __cdecl :SINT, :LPFILE
+fgets		proto __cdecl :string_t, :int_t, :LPFILE
+fputs		proto __cdecl :string_t, :LPFILE
+_fputchar	proto __cdecl :int_t
+fputc		proto __cdecl :int_t, :LPFILE
 feof		proto __cdecl :LPFILE
 ftell		proto __cdecl :LPFILE
-perror		proto __cdecl :LPSTR
+perror		proto __cdecl :string_t
 fflush		proto __cdecl :LPFILE
 rewind		proto __cdecl :LPFILE
-_flsbuf		proto __cdecl :SINT, :LPFILE
+_flsbuf		proto __cdecl :int_t, :LPFILE
 _flushall	proto __cdecl
 _freebuf	proto __cdecl :LPFILE
 _filbuf		proto __cdecl :LPFILE
 _getst		proto __cdecl
-_ftbuf		proto __cdecl :SINT, :LPFILE
+_ftbuf		proto __cdecl :int_t, :LPFILE
 _stbuf		proto __cdecl :LPFILE
 _getbuf		proto __cdecl :LPFILE
-setvbuf		proto __cdecl :LPFILE, :LPSTR, :int_t, :size_t
-setbuf		proto __cdecl :LPFILE, :LPSTR
-ungetc		proto __cdecl :SINT, :LPFILE
-_openfile	proto __cdecl :LPSTR, :LPSTR, :SINT, :LPFILE
-ifdef _MSVCRT
-__getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
-__wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
-endif
+setvbuf		proto __cdecl :LPFILE, :string_t, :int_t, :size_t
+setbuf		proto __cdecl :LPFILE, :string_t
+ungetc		proto __cdecl :int_t, :LPFILE
+_openfile	proto __cdecl :string_t, :string_t, :int_t, :LPFILE
+
 __iob_func	proto __cdecl
 __acrt_iob_func proto __cdecl :dword
 
@@ -141,52 +140,66 @@ wctype_t	typedef wchar_t
 endif
 
 ifdef  _POSIX_
-_wfsopenproto	proto __cdecl :ptr wchar_t, :ptr wchar_t
+_wfsopenproto	proto __cdecl :wstring_t, :wstring_t
 else
-_wfsopenproto	proto __cdecl :ptr wchar_t, :ptr wchar_t, :SINT
+_wfsopenproto	proto __cdecl :wstring_t, :wstring_t, :int_t
 endif
 
-fgetwc		proto __cdecl :ptr FILE
+fgetwc		proto __cdecl :LPFILE
 _fgetwchar	proto __cdecl
-fputwc		proto __cdecl :wint_t, :ptr FILE
+fputwc		proto __cdecl :int_t, :LPFILE
 _fputwchar	proto __cdecl :wint_t
-getwc		proto __cdecl :ptr FILE
+getwc		proto __cdecl :LPFILE
 getwchar	proto __cdecl
-putwc		proto __cdecl :wint_t, :ptr FILE
+putwc		proto __cdecl :wint_t, :LPFILE
 putwchar	proto __cdecl :wint_t
-ungetwc		proto __cdecl :int_t, :ptr FILE
-fgetws		proto __cdecl :ptr wchar_t, :SINT, :ptr FILE
-fputws		proto __cdecl :ptr wchar_t, :ptr FILE
-_getws		proto __cdecl :ptr wchar_t
-_putws		proto __cdecl :ptr wchar_t
-fwprintf	proto __Cdecl :ptr FILE, :ptr wchar_t, :VARARG
-wprintf		proto __Cdecl :ptr wchar_t, :VARARG
-_snwprintf	proto __Cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
-swprintf	proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
-swprintf_s	proto __Cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
-vfwprintf	proto __cdecl :ptr FILE, :ptr wchar_t, :PVOID
-vwprintf	proto __cdecl :ptr wchar_t, :PVOID
-_vsnwprintf	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :PVOID
-vswprintf	proto __cdecl :ptr wchar_t, :ptr wchar_t, :PVOID
-fwscanf		proto __Cdecl :ptr FILE, :ptr wchar_t, :VARARG
-swscanf		proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
-swscanf_s	proto __Cdecl :ptr wchar_t, :ptr wchar_t, :VARARG
-wscanf		proto __Cdecl :ptr wchar_t, :VARARG
-_wfdopen	proto __cdecl :SINT, :ptr wchar_t
-_wfopen		proto __cdecl :ptr wchar_t, :ptr wchar_t
-_wfreopen	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr FILE
-_wperror	proto __cdecl :ptr wchar_t
-_wpopen		proto __cdecl :ptr wchar_t, :ptr wchar_t
-_wremove	proto __cdecl :ptr wchar_t
-_wtempnam	proto __cdecl :ptr wchar_t, :ptr wchar_t
-_wtmpnam	proto __cdecl :ptr wchar_t
+ungetwc		proto __cdecl :int_t, :LPFILE
+fgetws		proto __cdecl :wstring_t, :int_t, :LPFILE
+fputws		proto __cdecl :wstring_t, :LPFILE
+_getws		proto __cdecl :wstring_t
+_putws		proto __cdecl :wstring_t
+fwprintf	proto __Cdecl :LPFILE, :wstring_t, :vararg
+wprintf		proto __Cdecl :wstring_t, :vararg
+_snwprintf	proto __Cdecl :wstring_t, :size_t, :wstring_t, :vararg
+swprintf	proto __Cdecl :wstring_t, :wstring_t, :vararg
+_scwprintf	proto __Cdecl :wstring_t, :vararg
+swprintf_s	proto __Cdecl :wstring_t, :size_t, :wstring_t, :vararg
+vfwprintf	proto __cdecl :LPFILE, :wstring_t, :ptr
+vwprintf	proto __cdecl :wstring_t, :ptr
+_vsnwprintf	proto __cdecl :wstring_t, :size_t, :wstring_t, :ptr
+_vscwprintf	proto __cdecl :wstring_t, :ptr
+vswprintf	proto __cdecl :wstring_t, :wstring_t, :ptr
+fwscanf		proto __Cdecl :LPFILE, :wstring_t, :vararg
+swscanf		proto __Cdecl :wstring_t, :wstring_t, :vararg
+swscanf_s	proto __Cdecl :wstring_t, :wstring_t, :vararg
+wscanf		proto __Cdecl :wstring_t, :vararg
+_wfdopen	proto __cdecl :int_t, :wstring_t
+_wfopen		proto __cdecl :wstring_t, :wstring_t
+_wfreopen	proto __cdecl :wstring_t, :wstring_t, :LPFILE
+_wperror	proto __cdecl :wstring_t
+_wpopen		proto __cdecl :wstring_t, :wstring_t
+_wremove	proto __cdecl :wstring_t
+_wtempnam	proto __cdecl :wstring_t, :wstring_t
+_wtmpnam	proto __cdecl :wstring_t
 
-_flswbuf	proto __cdecl :SINT, :LPFILE
+_flswbuf	proto __cdecl :int_t, :LPFILE
 _filwbuf	proto __cdecl :LPFILE
-_woutput	proto __cdecl :LPFILE, :LPWSTR, :PVOID
-_wopenfile	proto __cdecl :LPWSTR, :LPWSTR, :SINT, :LPFILE
+_woutput	proto __cdecl :LPFILE, :wstring_t, :ptr
+_wopenfile	proto __cdecl :wstring_t, :wstring_t, :int_t, :LPFILE
 
 endif ; _WSTDIO_DEFINED
+
+ifdef _UNICODE
+define _toutput		<_woutput>
+define _tfilbuf		<_filwbuf>
+define _tflsbuf		<_flswbuf>
+define _topenfile	<_wopenfile>
+else
+define _toutput		<_output>
+define _tfilbuf		<_filbuf>
+define _tflsbuf		<_flsbuf>
+define _topenfile	<_openfile>
+endif
 
 .pragma list(pop)
 endif

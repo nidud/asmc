@@ -5,9 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
+
+    option dotname
 
 _tcsrchr proc string:LPTSTR, chr:int_t
 
@@ -19,7 +21,7 @@ _tcsrchr proc string:LPTSTR, chr:int_t
     add     rcx,TCHAR
     cmp     TCHAR ptr [rcx],0
     jz      .1
-    cmp     __d,[rcx]
+    cmp     _tdl,[rcx]
     jnz     .0
     mov     rax,rcx
     jmp     .0

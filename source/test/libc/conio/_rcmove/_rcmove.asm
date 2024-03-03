@@ -6,6 +6,7 @@
 
 define _CONIO_RETRO_COLORS
 include conio.inc
+include tchar.inc
 
 define AT ((BLUE shl 4) or WHITE)
 
@@ -73,7 +74,7 @@ paint proc uses rbx
 paint endp
 
 
-main proc
+_tmain proc
 
    .new rc:TRECT = { 10, 5, 60, 14 }
    .new cr:TRECT = {  0, 0, 60, 14 }
@@ -112,6 +113,7 @@ main proc
     .endw
     _rcxchg(rc, p)
     .return(0)
-main endp
+
+_tmain endp
 
     end

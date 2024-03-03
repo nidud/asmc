@@ -1,3 +1,12 @@
+ifdef YACC
+_atodbl:
+	asmc64 $@.asm
+	gcc -nostdlib -o $@ $@.o /lib/alibc.a
+	./$@
+	echo Press enter to continue; read dummy;
+	rm -f $@.o
+	rm -f $@
+else
 _atodbl.exe:
 	asmc64 -q $*.asm
 	linkw system con_64 name A64$@ file $*
@@ -10,3 +19,4 @@ _atodbl.exe:
 	pause
 	del *.obj
 	del *.exe
+endif

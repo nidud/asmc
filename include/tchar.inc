@@ -85,6 +85,15 @@ TCHAR		typedef wchar_t
 endif
 endif
 
+define _tal	<ax>
+define _tbl	<bx>
+define _tcl	<cx>
+define _tdl	<dx>
+define _tlodsb	<lodsw>
+define _tstosb	<stosw>
+define _tscasb	<scasw>
+define _tmovsb	<movsw>
+
 _TEOF		equ WEOF
 if 0
 __T	macro x
@@ -102,12 +111,6 @@ _tWinMainCRTStartup	equ <wWinMainCRTStartup>
 
 
 ;; Formatted i/o
-
-_toutput		equ <_woutput>
-_tfilbuf		equ <_filwbuf>
-_tflsbuf		equ <_flswbuf>
-_topenfile		equ <_wopenfile>
-_tgetfattr		equ <_wgetfattr>
 
 _tprintf		equ <wprintf>
 _tprintf_l		equ <_wprintf_l>
@@ -685,6 +688,15 @@ else
 
 include string.inc
 
+define _tal	<al>
+define _tbl	<bl>
+define _tcl	<cl>
+define _tdl	<dl>
+define _tlodsb	<lodsb>
+define _tstosb	<stosb>
+define _tscasb	<scasb>
+define _tmovsb	<movsb>
+
 _TEOF			equ EOF
 
 ;__T	macro x
@@ -702,12 +714,6 @@ _tmainCRTStartup	equ <mainCRTStartup>
 _tWinMainCRTStartup	equ <WinMainCRTStartup>
 
 ;; Formatted i/o
-
-_toutput		equ <_output>
-_tfilbuf		equ <_filbuf>
-_tflsbuf		equ <_flsbuf>
-_topenfile		equ <_openfile>
-_tgetfattr		equ <getfattr>
 
 _tprintf		equ <printf>
 _tprintf_l		equ <_printf_l>
@@ -1724,9 +1730,9 @@ ifdef __GUI__
 
 	.code
 
-    org -0x1000
-    __ImageBase label IMAGE_DOS_HEADER
-    org 0
+	org -0x1000
+	__ImageBase label IMAGE_DOS_HEADER
+	org 0
 
 mainCRTStartup proc
 
@@ -1740,15 +1746,11 @@ include stdlib.inc
 endif
 
 	.data
-	_startup  db 128 dup(0)
-	__argc	  int_t 0,0
-  ifdef _UNICODE
-	__targv	  warray_t 0
-	_tenviron warray_t 0
-  else
-	__targv	  array_t 0
-	_tenviron array_t 0
-  endif
+	 _startup	_startupinfo { 0 }
+	 __argc		int_t 0,0
+	 __targv	tarray_t 0
+	 _tenviron	tarray_t 0
+
 	.code
 
 mainCRTStartup proc

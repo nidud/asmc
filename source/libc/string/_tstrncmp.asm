@@ -5,9 +5,11 @@
 ;
 
 include string.inc
-include tmacro.inc
+include tchar.inc
 
     .code
+
+    option dotname
 
 _tcsnccmp proc uses rbx a:LPTSTR, b:LPTSTR, count:size_t
 
@@ -25,8 +27,8 @@ _tcsnccmp proc uses rbx a:LPTSTR, b:LPTSTR, count:size_t
     dec     rbx
     add     rcx,TCHAR
     add     rdx,TCHAR
-    mov     __a,[rcx]
-    cmp     __a,[rdx]
+    mov     _tal,[rcx]
+    cmp     _tal,[rdx]
     je      .0
     sbb     rbx,rbx
     sbb     rbx,-1

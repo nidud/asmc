@@ -616,8 +616,15 @@ onexit		proto __cdecl :onexit_t
 
 ;;---
 
-__getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
-__wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+ifndef _STARTUP_INFO_DEFINED
+define _STARTUP_INFO_DEFINED
+_startupinfo	struct
+newmode		int_t ?
+_startupinfo	ends
+endif
+
+__getmainargs	proto __cdecl :ptr, :ptr, :ptr, :int_t, :ptr _startupinfo
+__wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :int_t, :ptr _startupinfo
 __iob_func	proto __cdecl
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
@@ -627,6 +634,7 @@ define _EXEC_COM 2
 define _EXEC_EXE 3
 define _EXEC_CMD 4
 
+externdef	_newmode:int_t
 externdef	_ermode:uint_t
 externdef	_cvtbuf:string_t
 externdef	_aenvptr:string_t

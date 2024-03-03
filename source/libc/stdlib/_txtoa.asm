@@ -5,7 +5,7 @@
 ;
 
 include stdlib.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -49,15 +49,15 @@ _txtoa proc val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
             add dl,('A' - '9' - 1)
         .endif
         sub ecx,TCHAR
-        mov convbuf[rcx],__d
+        mov convbuf[rcx],_tdl
     .endf
 
     .repeat
-        mov __a,convbuf[rcx]
+        mov _tal,convbuf[rcx]
         add ecx,TCHAR
-        mov [r9],__a
+        mov [r9],_tal
         add r9,TCHAR
-    .until ( __a == 0 )
+    .until ( _tal == 0 )
     .return( r10 )
 
 _txtoa endp
@@ -127,16 +127,16 @@ _txtoa proc uses esi edi ebx val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
             add bl,('A' - '9' - 1)
         .endif
         sub ecx,TCHAR
-        mov convbuf[ecx],__b
+        mov convbuf[ecx],_tbl
     .endf
     pop edi
 
     .repeat
-        mov __a,convbuf[ecx]
+        mov _tal,convbuf[ecx]
         add ecx,TCHAR
-        mov [edi],__a
+        mov [edi],_tal
         add edi,TCHAR
-    .until ( __a == 0 )
+    .until ( _tal == 0 )
     .return( buffer )
 
 _txtoa endp

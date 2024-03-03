@@ -14,17 +14,17 @@ _tmain proc
 
 ifdef _WIN64
 
-   .new q:_stati64
+   .new q:_tstati64
 
-    .if _stat64("makefile", &q)
+    .if _tstat64("makefile", &q)
 
-        perror("_stat64()")
+        _tperror("_stat64()")
        .return( 1 )
     .endif
 
 ifdef __UNIX__
     printf(
-        "_stat164:\n"
+        "_stati64:\n"
         " .st_dev      %p\n"
         " .st_ino      %p\n"
         " .st_nlink    %p\n"
@@ -60,7 +60,7 @@ ifdef __UNIX__
         q.st_ctime,
         q.st_ctimesec)
 else
-    printf(
+    _tprintf(
         "_stati64:\n"
         " .st_dev      %d\n"
         " .st_ino      %d\n"
@@ -87,11 +87,11 @@ else
 endif
 
 else
-    .new p:_stat32
+    .new p:_tstat32
 
-    .if _stat("makefile", &p)
+    .if _tstat("makefile", &p)
 
-        perror("_stat()")
+        _tperror("_stat()")
        .return( 1 )
     .endif
 
@@ -133,7 +133,7 @@ ifdef __UNIX__
         p.st_ctime,
         p.st_ctimesec)
 else
-    printf(
+    _tprintf(
         "_stat32:\n"
         " .st_dev      %d\n"
         " .st_ino      %d\n"

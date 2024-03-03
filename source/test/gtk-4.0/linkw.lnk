@@ -1,0 +1,24 @@
+
+# gtk-4.0 gui Win64 application using libc
+
+system begin gtk_libc
+    option  quiet
+    libpath %ASMCDIR%\lib\x64
+    libpath \gtk-4.0\lib
+    library libc,kernel32,user32,gtk-4.lib,gio-2.0.lib,gobject-2.0.lib,glib-2.0.lib,cairo
+    symt    cstart
+    format  windows pe ^
+    runtime windows=4.0
+end
+
+# gtk-4.0 gui Win64 application using msvcrt
+
+system begin gtk_msvcrt
+    option  quiet
+    libpath %ASMCDIR%\lib\x64
+    libpath \gtk-4.0\lib
+    library msvcrt,kernel32,user32,gtk-4.lib,gio-2.0.lib,gobject-2.0.lib,glib-2.0.lib,cairo
+    format  windows pe ^
+    runtime windows=4.0
+end
+

@@ -12,22 +12,24 @@ include fltintrn.inc
 include winnls.inc
 include tchar.inc
 
-define BUFFERSIZE      512     ; ANSI-specified minimum is 509
+define BUFFERSIZE       512     ; ANSI-specified minimum is 509
 
-define FL_SIGN         0x0001  ; put plus or minus in front
-define FL_SIGNSP       0x0002  ; put space or minus in front
-define FL_LEFT         0x0004  ; left justify
-define FL_LEADZERO     0x0008  ; pad with leading zeros
-define FL_LONG         0x0010  ; long value given
-define FL_SHORT        0x0020  ; short value given
-define FL_SIGNED       0x0040  ; signed data given
-define FL_ALTERNATE    0x0080  ; alternate form requested
-define FL_NEGATIVE     0x0100  ; value is negative
-define FL_FORCEOCTAL   0x0200  ; force leading '0' for octals
-define FL_LONGDOUBLE   0x0400  ; long double
-define FL_WIDECHAR     0x0800
-define FL_LONGLONG     0x1000  ; long long or REAL16 value given
-define FL_I64          0x8000  ; 64-bit value given
+define FL_SIGN          0x0001  ; put plus or minus in front
+define FL_SIGNSP        0x0002  ; put space or minus in front
+define FL_LEFT          0x0004  ; left justify
+define FL_LEADZERO      0x0008  ; pad with leading zeros
+define FL_LONG          0x0010  ; long value given
+define FL_SHORT         0x0020  ; short value given
+define FL_SIGNED        0x0040  ; signed data given
+define FL_ALTERNATE     0x0080  ; alternate form requested
+define FL_NEGATIVE      0x0100  ; value is negative
+define FL_FORCEOCTAL    0x0200  ; force leading '0' for octals
+define FL_LONGDOUBLE    0x0400  ; long double
+define FL_WIDECHAR      0x0800
+define FL_LONGLONG      0x1000  ; long long or REAL16 value given
+define FL_I64           0x8000  ; 64-bit value given
+define FL_PTRSIZE       0x10000 ; platform dependent number
+define FL_CHAR          0x20000 ; hh - int-size arg from char
 
 define ST_NORMAL       0       ; normal state; outputting literal chars
 define ST_PERCENT      1       ; just read '%'
@@ -285,6 +287,9 @@ endif
                    .endc
 
                 .case 'I'
+ifdef _WIN64
+                    or  flags,FL_I64 ; 'I' => __int64 on WIN64 systems
+endif
                     mov rax,format
                     movzx ecx,TCHAR ptr [rax]
                     .switch ecx
@@ -305,22 +310,28 @@ endif
                         mov format,rax
                        .endc
                     .case 'd','i','o','u','x','X'
-                        .endc
+                        or flags,FL_PTRSIZE
+                       .endc
                     .default
-                        .gotosw(2:ST_NORMAL)
+                        .gotosw(1:'z')
                     .endsw
                     .endc
                 .case 'h'
+                    .if ( flags & FL_SHORT )
+                        or flags,FL_CHAR
+                    .endif
                     or flags,FL_SHORT
                    .endc
                 .case 'w'
                     or flags,FL_WIDECHAR  ; 'w' => wide character
                    .endc
+                .case 't' ; ptrdiff_t
                 .case 'z' ; size_t
 ifndef _WIN64
                    .endc
 endif
                 .case 'j' ; [u]intmax_t
+                .case 'q' ; quad qord
                     and flags,NOT FL_LONG
                     or  flags,FL_LONGLONG or FL_I64
                    .endc
@@ -350,10 +361,11 @@ endif
 
                 .case 'C' ; ISO wide character
                     .if ( !( flags & ( FL_SHORT or FL_LONG or FL_WIDECHAR ) ) )
-                        ;
-                        ; CONSIDER: non-standard
-                        ;
+ifdef _UNICODE
+                        or flags,FL_SHORT
+else
                         or flags,FL_WIDECHAR ; ISO std.
+endif
                     .endif
 
                 .case 'c'
@@ -646,15 +658,22 @@ endif
 
                     .if ( flags & FL_SHORT )
 
-                        .if ( flags & FL_SIGNED )
-                            ; sign extend
-                            movsx eax,ax
+                        .if ( flags & FL_CHAR )
+                            .if ( flags & FL_SIGNED )
+                                movsx eax,al ; sign extend
+                            .else
+                                movzx eax,al ; zero-extend
+                            .endif
                         .else
-                            ; zero-extend
-                            movzx eax,ax
+                            .if ( flags & FL_SIGNED )
+                                movsx eax,ax ; sign extend
+                            .else
+                                movzx eax,ax ; zero-extend
+                            .endif
                         .endif
+                    .endif
 
-                    .elseif ( flags & FL_SIGNED )
+                    .if ( flags & FL_SIGNED )
 
                         .if ( !( flags & ( FL_I64 or FL_LONGLONG ) ) )
 

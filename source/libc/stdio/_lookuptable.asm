@@ -21,7 +21,7 @@ __lookuptable label byte
     db 08h, 60h, 68h, 60h, 60h, 60h, 60h, 00h ; XYZ[\]^_ 58 38
     db 00h, 78h, 78h, 78h, 78h, 78h, 78h, 08h ; `abcdefg 60 40
     db 07h, 08h, 07h, 00h, 07h, 00h, 08h, 08h ; hijklmno 68 48
-    db 08h, 00h, 00h, 08h, 00h, 08h, 00h, 07h ; pqrstuvw 70 50
+    db 08h, 07h, 00h, 08h, 07h, 08h, 00h, 07h ; pqrstuvw 70 50
     db 08h, 00h, 07h                          ; xyz{|}~  78 58
 
     end

@@ -37,9 +37,10 @@ dirent		ends
 .pragma pack(pop)
 
 DIR		typedef byte
+LPDIR		typedef ptr DIR
 opendir		proto __cdecl :LPSTR
-readdir		proto __cdecl :ptr DIR
-closedir	proto __cdecl :ptr DIR
+readdir		proto __cdecl :LPDIR
+closedir	proto __cdecl :LPDIR
 fchdir		proto __cdecl :int_t
 
 define _rmdir	<rmdir>

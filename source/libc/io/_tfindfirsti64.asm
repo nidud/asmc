@@ -19,69 +19,53 @@ include tchar.inc
 
 ifdef __UNIX__
 
-PNODE typedef ptr DNODE
-.template DNODE
-    next PNODE ?
-    file char_t 1 dup(?)
+.template FFDATA
+    dirp LPDIR ?
+    mask string_t ?
+    path char_t 3 dup(?)
    .ends
 
    .code
 
-copyblock proc private uses rbx path:string_t, ff:ptr _tfinddatai64_t
-
-ifdef _WIN64
-
-   .new q:_tstati64
-    mov rbx,rsi
-
-    .if _tstat64(rdi, &q)
-
-       .return
-    .endif
-    strcpy(&[rbx]._tfinddatai64_t.name, _tstrfn(path))
-    mov [rbx]._tfinddatai64_t.attrib,q.st_mode
-    mov [rbx]._tfinddatai64_t.time_create,q.st_ctime
-    mov [rbx]._tfinddatai64_t.time_access,q.st_atime
-    mov [rbx]._tfinddatai64_t.time_write,q.st_mtime
-    mov [rbx]._tfinddatai64_t.size,q.st_size
-    xor eax,eax
-
-else
-    mov eax,-1
-endif
-    ret
-
-copyblock endp
-
+    assume rbx:ptr FFDATA
 
 _tfindnexti64 proc uses rbx handle:ptr, ff:ptr _tfinddatai64_t
 
-ifdef _WIN64
+   .new file:string_t
+   .new q:_tstati64
+   .new path[1024]:char_t
 
-    mov rax,[rdi].DNODE.next
-    .if ( rax )
+    ldr rbx,handle
 
-        mov rbx,rax
-        mov rcx,[rax].DNODE.next
-        mov [rdi].DNODE.next,rcx
-        copyblock(&[rax].DNODE.file, rsi)
+    .while 1
 
-        mov rdi,rbx
-        mov rbx,rax
-        free(rdi)
-        mov rax,rbx
+        .if ( !readdir( [rbx].dirp ) )
 
-    .elseif ( [rdi].DNODE.file )
+            dec rax
+           .return
+        .endif
 
-        mov rbx,rdi
-        copyblock(&[rax].DNODE.file, rsi)
-        mov [rbx].DNODE.file,0
-    .else
-        dec rax
-    .endif
-else
-    mov eax,-1
-endif
+        mov file,&[rax].dirent.d_name
+
+        .ifd ( _twildcard([rbx].mask, file) )
+
+            strcat( strcat( strcpy(&path, &[rbx].path), "/" ), file )
+
+            .ifd ( _tstat64(rax, &q) == 0 )
+
+                assume rbx:ptr _tfinddatai64_t
+                mov rbx,ff
+                strcpy(&[rbx].name, file)
+                mov [rbx].attrib,q.st_mode
+                mov [rbx].time_create,q.st_ctime
+                mov [rbx].time_access,q.st_atime
+                mov [rbx].time_write,q.st_mtime
+                mov [rbx].size,q.st_size
+                assume rbx:ptr FFDATA
+               .return( 0 )
+            .endif
+        .endif
+    .endw
     ret
 
 _tfindnexti64 endp
@@ -90,76 +74,42 @@ _tfindnexti64 endp
 _tfindfirsti64 proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddatai64_t
 
    .new dir:ptr DIR
-   .new directory[512]:char_t
-   .new mask:string_t
-   .new file:string_t
-   .new base:PNODE = NULL
-   .new next:PNODE
-
-    mov directory[0],'.'
-    mov directory[1],0
 
     ldr rbx,lpFileName
-    mov mask,_tstrfn(rbx)
 
-    .if ( rax > rbx )
-
-        mov byte ptr [rax-1],0
-        strcpy(&directory, rbx)
-        mov rax,mask
-        mov byte ptr [rax-1],'/'
-    .endif
-
-    lea rbx,directory
-    mov file,&[rbx+strlen(rbx)]
-
-    .if ( opendir( rbx ) != NULL )
-
-        mov dir,rax
-
-        .while ( readdir( dir ) )
-
-            mov rbx,rax
-            .if ( _twildcard( mask, &[rbx].dirent.d_name ) )
-
-                mov rcx,file
-                mov eax,'/'
-                mov [rcx],ax
-                strcat( rcx, &[rbx].dirent.d_name )
-                add strlen( &directory ),DNODE
-
-                .if malloc( eax )
-
-                    .if ( base )
-                        mov rcx,next
-                        mov [rcx].DNODE.next,rax
-                    .else
-                        mov base,rax
-                    .endif
-                    mov next,rax
-                    mov [rax].DNODE.next,NULL
-                    strcpy( &[rax].DNODE.file, &directory )
-                .endif
-                mov rcx,file
-                mov byte ptr [rcx],0
-            .endif
-        .endw
-        closedir( dir )
-    .endif
-
-    mov rax,base
-    .if ( rax == NULL )
+    .if ( malloc( &[strlen(rbx)+FFDATA] ) == NULL )
 
         dec rax
        .return
     .endif
+    mov dir,rax
 
-    .ifd ( _tfindnext(rax, ff) == -1 )
+    .if ( _tstrfn(rbx) == rbx )
 
-        _findclose( base )
+        mov rcx,dir
+        strcpy(&[rcx].FFDATA.path, "./")
+        strcat(rax, rbx)
+    .else
+        mov rcx,dir
+        strcpy(&[rcx].FFDATA.path, rbx)
+    .endif
+    mov rbx,dir
+    mov [rbx].mask,_tstrfn(rax)
+    mov byte ptr [rax-1],0
+    mov [rbx].dirp,opendir(&[rbx].path)
+
+    .if ( rax == NULL )
+
+        free(rbx)
+       .return( -1 )
+    .endif
+
+    .ifd ( _tfindnext(rbx, ff) == -1 )
+
+        _findclose( rbx )
         .return( -1 )
     .endif
-    mov rax,base
+    mov rax,rbx
     ret
 
 _tfindfirsti64 endp

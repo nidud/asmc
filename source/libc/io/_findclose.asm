@@ -6,6 +6,7 @@
 
 include io.inc
 ifdef __UNIX__
+include direct.inc
 include malloc.inc
 else
 include errno.inc
@@ -18,17 +19,11 @@ ifdef __UNIX__
 
 _findclose proc uses rbx handle:ptr
 
-ifdef _WIN64
-    mov rbx,rdi
-    .while rbx
-        mov rdi,rbx
-        mov rbx,[rbx] ; .DNODE.next
-        free(rdi)
-    .endw
-    mov rax,rbx
-else
-    mov eax,-1
-endif
+    ldr rbx,handle
+
+    closedir( [rbx] )
+    free(rbx)
+    xor eax,eax
     ret
 
 _findclose endp

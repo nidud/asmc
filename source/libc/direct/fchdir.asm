@@ -7,7 +7,7 @@
 include direct.inc
 include errno.inc
 ifdef __UNIX__
-include linux/kernel.inc
+include sys/syscall.inc
 endif
     .code
 

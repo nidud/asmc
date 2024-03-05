@@ -170,7 +170,7 @@ endif
 
         .break .if ( !eax || charsout > INT_MAX )
 
-        .if ( eax >= ' ' && eax <= 'x' )
+        .if ( eax >= ' ' && eax <= 'z' )
 
             mov al,[rcx+rax-32]
             and eax,15
@@ -315,6 +315,15 @@ endif
                    .endc
                 .case 'w'
                     or flags,FL_WIDECHAR  ; 'w' => wide character
+                   .endc
+                .case 'z' ; size_t
+ifndef _WIN64
+                   .endc
+endif
+                .case 'j' ; [u]intmax_t
+                    and flags,NOT FL_LONG
+                    or  flags,FL_LONGLONG or FL_I64
+                   .endc
                 .endsw
                 .endc
 

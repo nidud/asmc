@@ -32,25 +32,6 @@ include types.inc
 
 public MacroLocals
 
-alloc_line macro
-   .new mem_alloc:uchar_t = 0
-    mov ecx,MaxLineLength
-    .if ( ecx > MAX_LINE_LEN )
-        mov mem_alloc,1
-        MemAlloc( ecx )
-    .else
-        alloca( ecx )
-    .endif
-    exitm<rax>
-    endm
-
-free_line macro p
-    .if ( mem_alloc )
-        MemFree( p )
-    .endif
-    exitm<>
-    endm
-
 ; TEVALUE_UNSIGNED
 ; 1 = the % operator used in an TEXTEQU expression is supposed to
 ;     return an UNSIGNED value ( Masm-compatible ).

@@ -24,13 +24,17 @@ ifdef __UNIX__
     DT_WHT	= 14
     }
 
+.pragma pack(push, size_t)
+
 dirent		struct
 d_ino		size_t ?
 d_off		size_t ?
-d_reclen	dw ?
-d_type		db ?
-d_name		sbyte 1 dup(?)
+d_reclen	ushort_t ?
+d_type		char_t ?
+d_name		char_t 1 dup(?)
 dirent		ends
+
+.pragma pack(pop)
 
 DIR		typedef byte
 opendir		proto __cdecl :LPSTR

@@ -7,7 +7,7 @@
 include malloc.inc
 include errno.inc
 ifdef __UNIX__
-include linux/kernel.inc
+include sys/syscall.inc
 
 CALL_MMAP macro s
     exitm<sys_mmap(0, (s), MMAP_PROT, MMAP_FLAGS, -1, 0)>

@@ -114,34 +114,43 @@ time_t		typedef sdword
 endif
 endif
 
-.pragma pack(push, 4)
+.pragma pack(push, size_t)
 
 _finddata_t	STRUC
-attrib		dd ?
+attrib		uint_t ?
 time_create	time_t ?	; File creation time
 time_access	time_t ?	; Last access time
 time_write	time_t ?	; Last modification time
-size		size_t ?
+size		uint_t ?
 name		char_t 260 dup(?)
 _finddata_t	ENDS
+
+_finddatai64_t	STRUC
+attrib		uint_t ?
+time_create	time_t ?	; File creation time
+time_access	time_t ?	; Last access time
+time_write	time_t ?	; Last modification time
+size		uint64_t ?
+name		char_t 260 dup(?)
+_finddatai64_t	ENDS
 
 ifndef _WFINDDATA_T_DEFINED
 define _WFINDDATA_T_DEFINED
 _wfinddata_t	STRUC
-attrib		dd ?
+attrib		uint_t ?
 time_create	time_t ?	;; -1 for FAT file systems
 time_access	time_t ?	;; -1 for FAT file systems
 time_write	time_t ?
-size		size_t ?
+size		uint_t ?
 name		wchar_t 260 dup(?)
 _wfinddata_t	ENDS
 if _INTEGRAL_MAX_BITS GE 64
 _wfinddatai64_t STRUC
-attrib		dd ?
-time_create	dq ?
-time_access	dq ?
-time_write	dq ?
-size		dq ?
+attrib		uint_t ?
+time_create	time_t ?
+time_access	time_t ?
+time_write	time_t ?
+size		uint64_t ?
 name		wchar_t 260 dup(?)
 _wfinddatai64_t ENDS
 endif
@@ -178,46 +187,46 @@ define _creat	<creat>
 define _isatty	<isatty>
 endif
 
-_open		proto __Cdecl :LPSTR, :SINT, :VARARG
-_sopen		proto __Cdecl :LPSTR, :SINT, :SINT, :VARARG
-_read		proto __cdecl :SINT, :PVOID, :SIZE_T
-_creat		proto __cdecl :LPSTR, :SINT
-_close		proto __cdecl :SINT
-_lseek		proto __cdecl :SINT, :SIZE_T, :UINT
-_write		proto __cdecl :SINT, :PVOID, :UINT
-_access		proto __cdecl :LPSTR, :SINT
-_isatty		proto __cdecl :SINT
-_eof		proto __cdecl :SINT
-_chsize		proto __cdecl :SINT, :SIZE_T
-_filelength	proto __cdecl :SINT
-_findfirst	proto __cdecl :LPSTR, :PTR _finddata_t
-_findnext	proto __cdecl :intptr_t, :PTR _finddata_t
-_findclose	proto __cdecl :intptr_t
-_tell		proto __cdecl :SINT
-_lseeki64	proto __cdecl :SINT, :QWORD, :UINT
-remove		proto __cdecl :LPSTR
-rename		proto __cdecl :LPSTR, :LPSTR
+_open		proto __Cdecl :string_t, :int_t, :vararg
+_sopen		proto __Cdecl :string_t, :int_t, :int_t, :vararg
+_read		proto __cdecl :int_t, :ptr, :size_t
+_creat		proto __cdecl :string_t, :int_t
+_close		proto __cdecl :int_t
+_lseek		proto __cdecl :int_t, :size_t, :uint_t
+_write		proto __cdecl :int_t, :ptr, :uint_t
+_access		proto __cdecl :string_t, :int_t
+_isatty		proto __cdecl :int_t
+_eof		proto __cdecl :int_t
+_chsize		proto __cdecl :int_t, :size_t
+_filelength	proto __cdecl :int_t
+_findfirst	proto __cdecl :string_t, :ptr _finddata_t
+_findnext	proto __cdecl :ptr, :ptr _finddata_t
+_findclose	proto __cdecl :ptr
+_tell		proto __cdecl :int_t
+remove		proto __cdecl :string_t
+rename		proto __cdecl :string_t, :string_t
+_lseeki64	proto __cdecl :int_t, :uint64_t, :uint_t
+_telli64	proto __cdecl :int_t
+_filelengthi64	proto __cdecl :int_t
+_findfirsti64	proto __cdecl :string_t, :ptr _finddatai64_t
+_findnexti64	proto __cdecl :ptr, :ptr _finddatai64_t
 
 ifndef _WIO_DEFINED
 define _WIO_DEFINED
-_waccess	proto __cdecl :ptr wchar_t, :SINT
-_wchmod		proto __cdecl :ptr wchar_t, :SINT
-_wcreat		proto __cdecl :ptr wchar_t, :SINT
-_wfindfirst	proto __cdecl :ptr wchar_t, :ptr _wfinddata_t
-_wfindnext	proto __cdecl :intptr_t, :ptr _wfinddata_t
-_wunlink	proto __cdecl :ptr wchar_t
-_wrename	proto __cdecl :ptr wchar_t, :ptr wchar_t
-_wopen		proto __Cdecl :ptr wchar_t, :SINT, :VARARG
-_wsopen		proto __Cdecl :ptr wchar_t, :SINT, :SINT, :VARARG
-_wmktemp	proto __cdecl :ptr wchar_t
-
-if 0
+_waccess	proto __cdecl :wstring_t, :int_t
+_wchmod		proto __cdecl :wstring_t, :int_t
+_wcreat		proto __cdecl :wstring_t, :int_t
+_wfindfirst	proto __cdecl :wstring_t, :ptr _wfinddata_t
+_wfindnext	proto __cdecl :ptr, :ptr _wfinddata_t
+_wunlink	proto __cdecl :wstring_t
+_wrename	proto __cdecl :wstring_t, :wstring_t
+_wopen		proto __Cdecl :wstring_t, :int_t, :vararg
+_wsopen		proto __Cdecl :wstring_t, :int_t, :int_t, :vararg
+_wmktemp	proto __cdecl :wstring_t
 if _INTEGRAL_MAX_BITS GE 64
-_wfindfirsti64	proto __cdecl :ptr wchar_t, :ptr _wfinddatai64_t
-_wfindnexti64	proto __cdecl :LONG, :ptr _wfinddatai64_t
+_wfindfirsti64	proto __cdecl :wstring_t, :ptr _wfinddatai64_t
+_wfindnexti64	proto __cdecl :ptr, :ptr _wfinddatai64_t
 endif
-endif
-
 endif ; _WIO_DEFINED
 
 __lock_fhandle	proto __cdecl :int_t
@@ -257,7 +266,7 @@ if not defined(_MSVCRT) or defined(_CRTBLD)
 osmaperr	proto __cdecl
 osread		proto __cdecl :int_t, :ptr, :uint_t
 oswrite		proto __cdecl :int_t, :ptr, :uint_t
-getfattr	proto __cdecl :LPSTR
+getfattr	proto __cdecl :string_t
 _wgetfattr	proto __cdecl :LPWSTR
 ifdef _UNICODE
 define _tgetfattr <_wgetfattr>

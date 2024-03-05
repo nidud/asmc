@@ -123,12 +123,14 @@ strext		proto __cdecl :LPSTR
 strtrim		proto __cdecl :LPSTR
 strstart	proto __cdecl :LPSTR
 strfcat		proto __cdecl :LPSTR, :LPSTR, :LPSTR
+_awildcard	proto __cdecl :LPSTR, :LPSTR
 
 _wstrfn		proto __cdecl :LPWSTR
 _wstrext	proto __cdecl :LPWSTR
 _wstrtrim	proto __cdecl :LPWSTR
 _wstrstart	proto __cdecl :LPWSTR
 _wstrfcat	proto __cdecl :LPWSTR, :LPWSTR, :LPWSTR
+_wwildcard	proto __cdecl :LPTSTR, :LPTSTR
 
 ifdef _UNICODE
 define _tstrfn		<_wstrfn>
@@ -136,12 +138,14 @@ define _tstrext		<_wstrext>
 define _tstrtrim	<_wstrtrim>
 define _tstrstart	<_wstrstart>
 define _tstrfcat	<_wstrfcat>
+define _twildcard	<_wwildcard>
 else
 define _tstrfn		<strfn>
 define _tstrext		<strext>
 define _tstrtrim	<strtrim>
 define _tstrstart	<strstart>
 define _tstrfcat	<strfcat>
+define _twildcard	<_awildcard>
 endif
 
 endif

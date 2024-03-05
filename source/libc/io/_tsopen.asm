@@ -12,7 +12,7 @@ include fcntl.inc
 include sys/stat.inc
 include errno.inc
 ifdef __UNIX__
-include linux/kernel.inc
+include sys/syscall.inc
 option win64:noauto ; skip the vararg stack
 else
 include winbase.inc

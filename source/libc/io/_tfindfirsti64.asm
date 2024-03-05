@@ -1,4 +1,4 @@
-; _TFINDFIRST.ASM--
+; _TFINDFIRSTI64.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -27,7 +27,7 @@ PNODE typedef ptr DNODE
 
    .code
 
-copyblock proc private uses rbx path:string_t, ff:ptr _tfinddata_t
+copyblock proc private uses rbx path:string_t, ff:ptr _tfinddatai64_t
 
 ifdef _WIN64
 
@@ -38,12 +38,12 @@ ifdef _WIN64
 
        .return
     .endif
-    strcpy(&[rbx]._tfinddata_t.name, _tstrfn(path))
-    mov [rbx]._tfinddata_t.attrib,q.st_mode
-    mov [rbx]._tfinddata_t.time_create,q.st_ctime
-    mov [rbx]._tfinddata_t.time_access,q.st_atime
-    mov [rbx]._tfinddata_t.time_write,q.st_mtime
-    mov [rbx]._tfinddata_t.size,q.st_size
+    strcpy(&[rbx]._tfinddatai64_t.name, _tstrfn(path))
+    mov [rbx]._tfinddatai64_t.attrib,q.st_mode
+    mov [rbx]._tfinddatai64_t.time_create,q.st_ctime
+    mov [rbx]._tfinddatai64_t.time_access,q.st_atime
+    mov [rbx]._tfinddatai64_t.time_write,q.st_mtime
+    mov [rbx]._tfinddatai64_t.size,q.st_size
     xor eax,eax
 
 else
@@ -54,7 +54,7 @@ endif
 copyblock endp
 
 
-_tfindnext proc uses rbx handle:ptr, ff:ptr _tfinddata_t
+_tfindnexti64 proc uses rbx handle:ptr, ff:ptr _tfinddatai64_t
 
 ifdef _WIN64
 
@@ -84,10 +84,10 @@ else
 endif
     ret
 
-_tfindnext endp
+_tfindnexti64 endp
 
 
-_tfindfirst proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
+_tfindfirsti64 proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddatai64_t
 
    .new dir:ptr DIR
    .new directory[512]:char_t
@@ -162,7 +162,7 @@ _tfindfirst proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
     mov rax,base
     ret
 
-_tfindfirst endp
+_tfindfirsti64 endp
 
 
 else
@@ -170,7 +170,7 @@ else
    .code
 
     ASSUME  rsi:ptr WIN32_FIND_DATA
-    ASSUME  rdi:ptr _tfinddata_t
+    ASSUME  rdi:ptr _tfinddatai64_t
 
 copyblock proc private
 
@@ -179,7 +179,10 @@ copyblock proc private
         xor eax,eax
     .endif
     mov [rdi].attrib,eax
-    mov [rdi].size,[rsi].nFileSizeLow
+    mov eax,[rsi].nFileSizeLow
+    mov dword ptr [rdi].size,eax
+    mov eax,[rsi].nFileSizeHigh
+    mov dword ptr [rdi].size[4],eax
 
     __timet_from_ft( addr [rsi].ftCreationTime )
     mov [rdi].time_create,rax
@@ -198,7 +201,7 @@ copyblock proc private
 copyblock endp
 
 
-_tfindnext proc uses rsi rdi handle:ptr, ff:ptr _tfinddata_t
+_tfindnexti64 proc uses rsi rdi handle:ptr, ff:ptr _tfinddatai64_t
 
   local wf:WIN32_FIND_DATA
 
@@ -213,10 +216,10 @@ _tfindnext proc uses rsi rdi handle:ptr, ff:ptr _tfinddata_t
     .endif
     ret
 
-_tfindnext endp
+_tfindnexti64 endp
 
 
-_tfindfirst proc uses rsi rdi rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
+_tfindfirsti64 proc uses rsi rdi rbx lpFileName:LPTSTR, ff:ptr _tfinddatai64_t
 
   local FindFileData:WIN32_FIND_DATA
 
@@ -234,7 +237,7 @@ _tfindfirst proc uses rsi rdi rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
     .endif
     ret
 
-_tfindfirst endp
+_tfindfirsti64 endp
 
 endif ; __UNIX__
 

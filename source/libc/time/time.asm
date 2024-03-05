@@ -6,7 +6,7 @@
 
 include time.inc
 ifdef __UNIX__
-include linux/kernel.inc
+include sys/syscall.inc
 else
 include winbase.inc
 endif

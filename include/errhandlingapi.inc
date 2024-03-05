@@ -5,6 +5,8 @@ include apiset.inc
 include apisetcconv.inc
 include minwindef.inc
 
+.pragma comment(lib, kernel32)
+
 CALLBACK(PTOP_LEVEL_EXCEPTION_FILTER, :ptr)
 LPTOP_LEVEL_EXCEPTION_FILTER typedef PTOP_LEVEL_EXCEPTION_FILTER
 RaiseException proto WINAPI :DWORD, :DWORD, :DWORD, :ptr

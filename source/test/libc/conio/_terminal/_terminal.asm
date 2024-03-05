@@ -64,7 +64,7 @@ paint proc uses rbx
 paint endp
 
 
-setn proto :tstring_t {
+setn proto fastcall :tstring_t {
     mov n,_1
     }
 

@@ -6,7 +6,7 @@
 include errno.inc
 ifdef __UNIX__
 include termios.inc
-include linux/kernel.inc
+include sys/syscall.inc
 endif
 
     .code

@@ -6,6 +6,7 @@ define _O_EXCL		0x0080
 define _O_APPEND	0x0400
 define	O_NOCTTY	0x0100
 define	O_NONBLOCK	0x0800
+define	O_DIRECTORY	0x10000
 else
 define _O_CREAT		0x0100
 define _O_EXCL		0x0400

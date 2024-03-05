@@ -15,4 +15,23 @@ MemFini     proto
 LclDup      proto fastcall :string_t
 MemDup      proto fastcall :string_t
 
+alloc_line macro
+   .new mem_alloc:uchar_t = 0
+    mov ecx,MaxLineLength
+    .if ( ecx > MAX_LINE_LEN )
+        mov mem_alloc,1
+        MemAlloc( ecx )
+    .else
+        alloca( ecx )
+    .endif
+    exitm<rax>
+    endm
+
+free_line macro p
+    .if ( mem_alloc )
+        MemFree( p )
+    .endif
+    exitm<>
+    endm
+
 endif

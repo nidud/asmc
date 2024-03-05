@@ -185,4 +185,12 @@ endif
 _stat   proto __cdecl :string_t, :PSTAT
 _stat64 proto __cdecl :string_t, :PSTAT64
 
+ifndef _WSTAT_DEFINED
+define _WSTAT_DEFINED
+_wstat32    typedef _stat32
+_wstati64   typedef _stati64
+_wstat      proto __cdecl :wstring_t, :PSTAT
+_wstat64    proto __cdecl :wstring_t, :PSTAT64
+endif
+
 .pragma list(pop)

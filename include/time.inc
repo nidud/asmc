@@ -181,6 +181,7 @@ GetDayCount		proto __cdecl :uint_t, :uint_t, :uint_t
 GetWeekDay		proto __cdecl :uint_t, :uint_t, :uint_t
 
 FileTimeToTime		proto __cdecl :ptr FILETIME
+__timet_from_ft		proto __cdecl :ptr FILETIME
 SystemTimeToTime	proto __cdecl :ptr SYSTEMTIME
 TimeToFileTime		proto __cdecl :time_t, :ptr FILETIME
 TimeToSystemTime	proto __cdecl :time_t, :ptr SYSTEMTIME

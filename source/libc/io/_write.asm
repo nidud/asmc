@@ -7,7 +7,7 @@
 include io.inc
 include errno.inc
 ifdef __UNIX__
-include linux/kernel.inc
+include sys/syscall.inc
 else
 include winbase.inc
 include winnls.inc

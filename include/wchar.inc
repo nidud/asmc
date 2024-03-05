@@ -161,31 +161,29 @@ _WCTYPE_DEFINED equ 1
 endif
 
 ifndef _WDIRECT_DEFINED
-
-_wchdir		proto __cdecl :ptr wchar_t
-_wgetcwd	proto __cdecl :ptr wchar_t, :SINT
-_wgetdcwd	proto __cdecl :SINT, :ptr wchar_t, :SINT
-_wmkdir		proto __cdecl :ptr wchar_t
-_wrmdir		proto __cdecl :ptr wchar_t
-
-_WDIRECT_DEFINED equ 1
+define _WDIRECT_DEFINED
+_wchdir		proto __cdecl :wstring_t
+_wgetcwd	proto __cdecl :wstring_t, :int_t
+_wgetdcwd	proto __cdecl :int_t, :wstring_t, :int_t
+_wmkdir		proto __cdecl :wstring_t
+_wrmdir		proto __cdecl :wstring_t
 endif
 
 ifndef _WIO_DEFINED
 define _WIO_DEFINED
-_waccess	proto __cdecl :ptr wchar_t, :SINT
-_wchmod		proto __cdecl :ptr wchar_t, :SINT
-_wcreat		proto __cdecl :ptr wchar_t, :SINT
-_wfindfirst	proto __cdecl :ptr wchar_t, :ptr _wfinddata_t
-_wfindnext	proto __cdecl :LONG, :ptr _wfinddata_t
-_wunlink	proto __cdecl :ptr wchar_t
-_wrename	proto __cdecl :ptr wchar_t, :ptr wchar_t
-_wopen		proto __Cdecl :ptr wchar_t, :SINT, :VARARG
-_wsopen		proto __Cdecl :ptr wchar_t, :SINT, :SINT, :VARARG
-_wmktemp	proto __cdecl :ptr wchar_t
+_waccess	proto __cdecl :wstring_t, :int_t
+_wchmod		proto __cdecl :wstring_t, :int_t
+_wcreat		proto __cdecl :wstring_t, :int_t
+_wfindfirst	proto __cdecl :wstring_t, :ptr _wfinddata_t
+_wfindnext	proto __cdecl :ptr, :ptr _wfinddata_t
+_wunlink	proto __cdecl :wstring_t
+_wrename	proto __cdecl :wstring_t, :wstring_t
+_wopen		proto __Cdecl :wstring_t, :int_t, :vararg
+_wsopen		proto __Cdecl :wstring_t, :int_t, :int_t, :vararg
+_wmktemp	proto __cdecl :wstring_t
 if _INTEGRAL_MAX_BITS GE 64
-_wfindfirsti64	proto __cdecl :ptr wchar_t, :ptr _wfinddatai64_t
-_wfindnexti64	proto __cdecl :LONG, :ptr _wfinddatai64_t
+_wfindfirsti64	proto __cdecl :wstring_t, :ptr _wfinddatai64_t
+_wfindnexti64	proto __cdecl :ptr, :ptr _wfinddatai64_t
 endif
 endif
 

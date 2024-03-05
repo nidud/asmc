@@ -1,4 +1,4 @@
-; KERNEL.INC--
+; SYSCALL.INC--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -378,5 +378,13 @@ sys_gettimeofday proto :ptr, :ptr {
     }
 sys_settimeofday proto :ptr, :ptr {
     mov eax,SYS_SETTIMEOFDAY
+    syscall
+    }
+sys_getdents proto :int_t, :ptr, :uint_t {
+    mov eax,SYS_GETDENTS
+    syscall
+    }
+sys_getdents64 proto :int_t, :ptr, :uint_t {
+    mov eax,SYS_GETDENTS64
     syscall
     }

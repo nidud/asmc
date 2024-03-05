@@ -23,7 +23,7 @@ _tsetenvp proc uses rsi rdi rbx envp:tarray_t
     .new offs[MAXCOUNT]:int_t
 
     .for ( rdi = _tenvptr,
-           rsi = rax,
+           rsi = rdi,
            eax = 0,
            ebx = 0,
            ecx = -1 : TCHAR ptr [rdi] && ebx < MAXCOUNT : )

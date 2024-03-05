@@ -58,7 +58,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     ldr rsi,string
 
     ; "binary" string
-   .new sbuf:string_t = MemAlloc(MaxLineLength)
+   .new sbuf:string_t = alloc_line()
     mov rdi,buffer
     mov rdx,rax
     xor ebx,ebx
@@ -346,7 +346,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                 .else
                     tsprintf( lbuf, "DS%04X", eax )
                 .endif
-                 MemFree(sbuf)
+                 free_line(sbuf)
                 .return 0
             .endif
         .endif
@@ -365,7 +365,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     lea rcx,[rax+str_item]
     mov [rax].str_item.string,rcx
     tmemcpy(rcx, sbuf, &[rbx+1])
-    MemFree(sbuf)
+    free_line(sbuf)
    .return 1
 
 ParseCString endp
@@ -411,6 +411,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new Unicode:        byte
    .new merged:         byte
    .new lineflags:      byte
+   .new mem_alloc:      uchar_t = 0
 
     xor eax,eax
     mov rc,eax
@@ -464,7 +465,14 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     mov edi,MaxLineLength
     lea eax,[rdi+rdi*2+64*2]
-    mov buffer,MemAlloc(eax)
+
+    .if ( edi > MAX_LINE_LEN )
+        inc mem_alloc
+        MemAlloc(eax)
+    .else
+        alloca(eax)
+    .endif
+    mov buffer,rax
     add rax,rdi
     mov b_data,rax
     add rax,rdi
@@ -678,7 +686,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov rcx,CurrSource
     .endif
     mov ModuleInfo.line_flags,lineflags
-    MemFree(buffer)
+    free_line(buffer)
    .return( rc )
 
 GenerateCString endp
@@ -694,11 +702,18 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
    .new StringOffset:   string_t
    .new retval:         int_t
    .new Unicode:        byte
+   .new mem_alloc:      uchar_t = 0
 
     ldr rbx,tokenarray
     mov edi,MaxLineLength
     lea eax,[rdi*2+32]
-    mov cursrc,MemAlloc(eax)
+    .if ( edi > MAX_LINE_LEN )
+        inc mem_alloc
+        MemAlloc(eax)
+    .else
+        alloca(eax)
+    .endif
+    mov cursrc,rax
     lea rcx,[rax+rdi]
     lea rdx,[rax+rdi*2]
     mov string,rcx
@@ -737,7 +752,8 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
 
 
         ; return label[-value]
-        MemFree(cursrc)
+
+        free_line(cursrc)
 
         .new opnd:expr
 
@@ -879,11 +895,11 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                 .endif
                 InsertLineQueue()
             .endif
-             MemFree(cursrc)
-            .return 1
+             free_line(cursrc)
+            .return( 1 )
         .endif
     .endf
-     MemFree(cursrc)
+     free_line(cursrc)
     .return( 0 )
 
 CString endp

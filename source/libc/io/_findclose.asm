@@ -5,27 +5,48 @@
 ;
 
 include io.inc
+ifdef __UNIX__
+include malloc.inc
+else
 include errno.inc
-ifndef __UNIX__
 include winbase.inc
 endif
 
-    .code
+.code
 
-_findclose proc handle:intptr_t
 ifdef __UNIX__
-    _set_errno( ENOSYS )
-    mov rax,-1
+
+_findclose proc uses rbx handle:ptr
+
+ifdef _WIN64
+    mov rbx,rdi
+    .while rbx
+        mov rdi,rbx
+        mov rbx,[rbx] ; .DNODE.next
+        free(rdi)
+    .endw
+    mov rax,rbx
 else
+    mov eax,-1
+endif
+    ret
+
+_findclose endp
+
+else
+
+_findclose proc handle:ptr
+
     .if !FindClose( handle )
 
         _dosmaperr( GetLastError() )
     .else
         xor eax,eax
     .endif
-endif
     ret
 
 _findclose endp
+
+endif
 
     end

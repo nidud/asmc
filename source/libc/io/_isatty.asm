@@ -6,7 +6,7 @@
 
 include io.inc
 ifdef __UNIX__
-include linux/kernel.inc
+include sys/syscall.inc
 
 cc_t        typedef uchar_t
 speed_t     typedef uint_t

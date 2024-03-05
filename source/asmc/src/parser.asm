@@ -3867,13 +3867,13 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
             .if ( [rsi].flags & T_ISPROC )
 
-                mov rdi,MemAlloc(MaxLineLength)
+                mov rdi,alloc_line()
                 ;
                 ; v2.21 - mov reg,proc(...)
                 ; v2.27 - mov reg,class.proc(...)
                 ;
                 mov rc,ExpandHllProcEx( rdi, j, rbx )
-                MemFree(rdi)
+                free_line(rdi)
 
                 .if ( rc == ERROR )
                    .return(ERROR)
@@ -4023,7 +4023,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             .if ( i > 1 && [rsi].token == T_DIRECTIVE && [rsi].tokval == T_DOT_NEW )
 
 
-                mov rbx,MemAlloc(MaxLineLength)
+                mov rbx,alloc_line()
                 mov rax,tokenarray
                 mov rax,[rax].asm_tok.tokpos
                 mov rcx,[rsi].tokpos
@@ -4043,7 +4043,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                     MemFree(rbx)
                    .return ParseLine( tokenarray )
                 .endif
-                MemFree(rbx)
+                free_line(rbx)
                .return NOT_ERROR
             .endif
             .if ( i == TokenCount )

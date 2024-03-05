@@ -6,7 +6,7 @@
 
 include stdlib.inc
 ifdef __UNIX__
-include linux/kernel.inc
+include sys/syscall.inc
 externdef __fini_array_start:ptr
 externdef __fini_array_end:ptr
 else

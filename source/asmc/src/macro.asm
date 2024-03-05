@@ -374,7 +374,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
 
     mov ls.tokenarray,tokenarray
     mov ls.outbuf,StringBuffer
-    mov ls.start,MemAlloc( MaxLineLength )
+    mov ls.start,alloc_line()
 
     mov  rsi,mac
     mov  rdi,[rsi].macroinfo
@@ -586,7 +586,8 @@ endif
 
         .ifd ( GetToken( &tok[0], &ls ) == ERROR )
 
-            .return
+            free_line(ls.start)
+           .return( ERROR )
         .endif
 
         ; v2.05: GetTextLine() doesn't concat lines anymore.
@@ -791,7 +792,7 @@ endif
     mov rdx,mac
     or  [rdx].asym.flags,S_ISDEFINED
     and [rdx].asym.mac_flag,not M_PURGED
-    MemFree(ls.start)
+    free_line(ls.start)
    .return( NOT_ERROR )
 
 StoreMacro endp

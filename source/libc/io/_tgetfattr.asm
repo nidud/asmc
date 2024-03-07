@@ -4,6 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
 include stdlib.inc
 include winbase.inc
 include errno.inc

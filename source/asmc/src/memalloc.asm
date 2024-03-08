@@ -8,8 +8,6 @@ include malloc.inc
 include string.inc
 ifndef __UNIX__
 include winbase.inc
-elseifdef _WIN64
-include linux/kernel.inc
 endif
 include asmc.inc
 ;
@@ -73,41 +71,20 @@ endif
 
 MemInit endp
 
-ifdef _LIN64
+ifdef __UNIX__
 
 MemAlloc proc fastcall uses rsi rdi rbx len:uint_t
 
-    add ecx,(_GRANULARITY*2)-1
-    and ecx,-_GRANULARITY
     mov ebx,ecx
-
-    sys_mmap(0, rbx, MMAP_PROT, MMAP_FLAGS, -1, 0)
-
-    xor ecx,ecx
-    cmp rax,MAP_FAILED
-    cmove rax,rcx
-
-    .if ( rax )
-
-        mov [rax],rbx
-        add rax,_GRANULARITY
-
-    .else
-
-elseifdef __UNIX__
-
-MemAlloc proc fastcall uses edi len:uint_t
-
-    mov edi,ecx
 
     .if malloc( ecx )
 
-        mov ecx,edi
-        mov edx,eax
-        mov edi,eax
+        mov ecx,ebx
+        mov rdx,rax
+        mov rdi,rax
         xor eax,eax
         rep stosb
-        mov eax,edx
+        mov rax,rdx
 
     .else
 
@@ -128,28 +105,14 @@ MemAlloc endp
 
 
 ifdef _LIN64
-
 MemFree proc fastcall uses rsi rdi p:ptr
-
-    .if ( rcx )
-
-        lea rdi,[rcx-_GRANULARITY]
-        mov rsi,[rdi]
-
-        sys_munmap(rdi, rsi)
-
-    .endif
-
 else
-
 MemFree proc fastcall p:ptr
-
+endif
 ifdef __UNIX__
-    free( ecx )
+    free( rcx )
 else
     HeapFree( ProcessHeap, 0, rcx )
-endif
-
 endif
     ret
 

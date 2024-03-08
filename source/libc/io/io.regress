@@ -44,8 +44,12 @@ main proc
     .until  ebx == 8192
     .assert _read(esi,addr buf,1) == 1
     .assert buf == '!'
-    .assert _close(esi) == 0
-    .assert remove("test.fil") == 0
+    .assertd _close(esi) == 0
+    .assertd getfattr("test.fil") != -1
+    .assertd _wgetfattr(L"test.fil") != -1
+    .assertd remove("test.fil") == 0
+    .assertd getfattr("test.fil") == -1
+    .assertd _wgetfattr(L"test.fil") == -1
 
     .assert _findfirst("makefile", &ff) != -1
     .assert !_findclose(rax)

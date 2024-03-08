@@ -42,20 +42,14 @@ ifndef __UNIX__
             dec [rbx].osfhnd
         .endf
         mov rbx,rdx
-endif
-        mov [rbx].osfile,FOPEN or FDEV or FTEXT
-ifndef __UNIX__
         mov [rbx].osfhnd,GetStdHandle(STD_INPUT_HANDLE)
-endif
-        mov [rbx+ioinfo].osfile,FOPEN or FDEV or FTEXT
-ifndef __UNIX__
         mov [rbx+ioinfo].osfhnd,GetStdHandle(STD_OUTPUT_HANDLE)
-endif
-        mov [rbx+ioinfo*2].osfile,FOPEN or FDEV or FTEXT
-ifndef __UNIX__
         mov [rbx+ioinfo*2].osfhnd,GetStdHandle(STD_ERROR_HANDLE)
         mov _ermode,SetErrorMode(SEM_FAILCRITICALERRORS)
 endif
+        mov [rbx].osfile,FOPEN or FDEV or FTEXT
+        mov [rbx+ioinfo].osfile,FOPEN or FDEV or FTEXT
+        mov [rbx+ioinfo*2].osfile,FOPEN or FDEV or FTEXT
     .endif
     ret
 

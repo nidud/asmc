@@ -29,9 +29,9 @@ ifndef __UNIX__
 if WINVER GE 0x0600
         LCMapStringEx( LOCALE_NAME_USER_DEFAULT, LCMAP_UPPERCASE, &c, 1, &c, 1, 0, 0, 0 )
         mov eax,c
+endif
+endif
     .endif
-endif
-endif
 endif
     ret
 

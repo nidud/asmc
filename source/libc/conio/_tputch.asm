@@ -23,7 +23,7 @@ _puttch proc character:int_t
     ldr ecx,character
     mov c,ecx
 if defined(_UNICODE) and defined(__UNIX__)
-    mov n,_wtoutf(ecx)
+    mov n,_wtoutf(cx)
     _write( _confd, &n, ecx )
 elseifndef _UNICODE
     _write( _confd, &c, 1 )

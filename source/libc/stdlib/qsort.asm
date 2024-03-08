@@ -7,15 +7,34 @@
 include stdlib.inc
 include string.inc
 
+define STKSIZ   (8*size_t - 2)
+define swap     <memxchg>
+
     .code
+
+ifdef _WIN64
+
+qsort proc uses rbx r12 r13 r14 r15 p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
+
+    define lo    <r12>
+    define hi    <r13>
+    define loguy <r14>
+    define higuy <r15>
+
+else
 
 qsort proc uses rbx p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
 
-   .new level:int_t = 0
-   .new a:ptr
-   .new b:ptr
-   .new x:ptr
-   .new y:ptr
+   .new lo:ptr
+   .new hi:ptr
+   .new loguy:ptr
+   .new higuy:ptr
+
+endif
+
+   .new stkptr:int_t = 0
+   .new lostk[STKSIZ]:ptr
+   .new histk[STKSIZ]:ptr
 
     ldr rcx,p
     ldr rdx,n
@@ -24,129 +43,136 @@ qsort proc uses rbx p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
 
         lea eax,[rdx-1]
         mul w
-        mov a,rcx
+        mov lo,rcx
         lea rax,[rcx+rax]
-        mov b,rax
+        mov hi,rax
 
         .while 1
 
             mov rcx,w
-            mov rax,b
+            mov rax,hi
             add rax,rcx ; middle from (hi - lo) / 2
-            sub rax,a
+            sub rax,lo
             .ifnz
                 xor rdx,rdx
                 div rcx
                 shr rax,1
                 mul rcx
             .endif
-ifdef _WIN64
-            sub rsp,0x20
-endif
-            mov rbx,a
+            mov rbx,lo
             add rbx,rax
 
-            .ifsd compare(a, rbx) > 0
-                memxchg(a, rbx, w)
+            .ifsd compare(lo, rbx) > 0
+                swap(lo, rbx, w)
             .endif
-            .ifsd compare(a, b) > 0
-                memxchg(a, b, w)
+            .ifsd compare(lo, hi) > 0
+                swap(lo, hi, w)
             .endif
-            .ifsd compare(rbx, b) > 0
-                memxchg(rbx, b, w)
+            .ifsd compare(rbx, hi) > 0
+                swap(rbx, hi, w)
             .endif
 
-            mov x,a
-            mov y,b
+            mov loguy,lo
+            mov higuy,hi
 
             .while 1
 
                 mov rcx,w
-                add x,rcx
-                .if x < b
+                add loguy,rcx
+                .if loguy < hi
 
-                    .continue .ifsd compare(x, rbx) <= 0
+                    .continue .ifsd compare(loguy, rbx) <= 0
                 .endif
 
                 .while 1
 
                     mov rcx,w
-                    sub y,rcx
+                    sub higuy,rcx
 
-                    .break .if y <= rbx
-                    .break .ifsd compare(y, rbx) <= 0
+                    .break .if higuy <= rbx
+                    .break .ifsd compare(higuy, rbx) <= 0
                 .endw
 
-                mov rcx,y
-                mov rax,x
-                .break .if rcx < rax
-                memxchg(rcx, rax, w)
-
-                .if rbx == y
-
-                    mov rbx,x
+                mov rcx,higuy
+                mov rax,loguy
+                .if rcx < rax
+                    .break
                 .endif
+                .if rbx == rcx
+                    mov rbx,rax
+                .endif
+                swap(rcx, rax, w)
             .endw
 
-            mov rcx,w
-            add y,rcx
+            add higuy,w
 
-            .while 1
+            .if ( rbx < higuy )
 
-                mov rcx,w
-                sub y,rcx
+                .while 1
 
-                .break .if y <= a
-                .break .ifd compare(y, rbx)
-            .endw
+                    sub higuy,w
 
-ifdef _WIN64
-            add rsp,0x20
-endif
-            mov rdx,x
-            mov rax,y
-            sub rax,a
-            mov rcx,b
-            sub rcx,rdx
-
-            .ifs rax < rcx
-
-                mov rcx,y
-
-                .if rdx < b
-
-                    push rdx
-                    push b
-                    inc level
-                .endif
-
-                .if a < rcx
-
-                    mov b,rcx
-                    .continue
-                .endif
-            .else
-                mov rcx,y
-
-                .if a < rcx
-
-                    push a
-                    push rcx
-                    inc level
-                .endif
-
-                .if rdx < b
-
-                    mov a,rdx
-                    .continue
-                .endif
+                    .break .if higuy <= rbx
+                    .break .ifd compare(higuy, rbx)
+                .endw
             .endif
 
-            .break .if !level
+            .if ( rbx >= higuy )
 
-            dec level
-            pop b
-            pop a
+                .while 1
+
+                    sub higuy,w
+
+                    .break .if higuy <= lo
+                    .break .ifd compare(higuy, rbx)
+                .endw
+            .endif
+
+            mov rdx,loguy
+            mov rax,higuy
+            sub rax,lo
+            mov rcx,hi
+            sub rcx,rdx
+
+            .if rax < rcx
+
+                .if rdx < hi
+
+                    mov ecx,stkptr
+                    mov lostk[rcx*size_t],rdx
+                    mov histk[rcx*size_t],hi
+                    inc stkptr
+                .endif
+
+                mov rax,higuy
+                .if lo < rax
+
+                    mov hi,rax
+                   .continue
+                .endif
+            .else
+
+                mov rax,higuy
+                .if lo < rax
+
+                    mov ecx,stkptr
+                    mov histk[rcx*size_t],rax
+                    mov lostk[rcx*size_t],lo
+                    inc stkptr
+                .endif
+
+                .if rdx < hi
+
+                    mov lo,rdx
+                   .continue
+                .endif
+            .endif
+            .break .if !stkptr
+
+            dec stkptr
+            mov ecx,stkptr
+            mov lo,lostk[rcx*size_t]
+            mov hi,histk[rcx*size_t]
         .endw
     .endif
     ret

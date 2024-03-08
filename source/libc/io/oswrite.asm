@@ -15,6 +15,7 @@ endif
 .code
 
 oswrite proc uses rbx handle:int_t, buffer:ptr, size:uint_t
+
 ifdef __UNIX__
 
     ldr ecx,handle
@@ -31,7 +32,7 @@ ifdef __UNIX__
     .if ( rax != rbx )
 
         _set_errno( ENOSPC )
-       .return( 0 )
+        xor eax,eax
     .endif
 
 else
@@ -42,13 +43,12 @@ else
     .if ( WriteFile( hFile, buffer, size, &NumberOfBytesWritten, 0 ) == 0 )
 
         _dosmaperr( GetLastError() )
-        .return( 0 )
-    .endif
+        xor eax,eax
 
-    .if ( size != NumberOfBytesWritten )
+    .elseif ( size != NumberOfBytesWritten )
 
         _dosmaperr( ERROR_DISK_FULL )
-       .return( 0 )
+        xor eax,eax
     .endif
 endif
     ret

@@ -337,7 +337,6 @@ endif
     exitm<db "&string&">
     endm
 include instruct.inc
-    db "syscall_" ; replacement for "syscall" language type in 64-bit
 undef insx
 undef insv
 undef insm

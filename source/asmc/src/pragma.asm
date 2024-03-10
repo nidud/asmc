@@ -99,6 +99,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
   local stdlib[256]:char_t
   local dynlib[256]:char_t
   local q:ptr qitem
+  local quote_s:char_t
 
 
     mov rc,NOT_ERROR
@@ -302,6 +303,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             add rbx,asm_tok*2
             mov stdlib,0
             mov dynlib,0
+            mov quote_s,0
 
             ;
             ; .pragma comment(lib, "libc.lib", "msvcrt.lib")
@@ -331,6 +333,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( byte ptr [rsi] == '"' )
 
                 inc rsi
+                inc quote_s
                 .if tstrchr(tstrcpy(&stdlib, rsi), '"')
 
                     mov byte ptr [rax],0
@@ -391,7 +394,11 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .elseif !( byte ptr [rsi] )
 
-                AddLineQueueX("includelib %s.lib", rdi)
+                .if ( quote_s )
+                    AddLineQueueX("includelib \"%s.lib\"", rdi)
+                .else
+                    AddLineQueueX("includelib %s.lib", rdi)
+                .endif
 
             .else
 

@@ -5,6 +5,7 @@
 ;
 ; Startup module for LIBC
 ;
+
 include stdlib.inc
 include tchar.inc
 
@@ -17,19 +18,27 @@ define entry <>
 externdef __init_array_start:ptr
 externdef __init_array_end:ptr
 
-.data
- __argv         array_t NULL
- _environ       array_t NULL
- __ImageBase    size_t 0
- __argc         int_t 0
- public         __ImageBase
+    .data
+     __argv         array_t NULL
+     _environ       array_t NULL
+     __ImageBase    size_t 0
+     __argc         int_t 0
+     public         __ImageBase
 
 else
 
 define entry <_tmainCRTStartup>
 
+ifdef _MSVCRT
+    .data
+     __targv    tarray_t 0
+     _tenviron  tarray_t 0
+     _startup   _startupinfo { 0 }
+     __argc     int_t 0
+else
 externdef __xi_a:ptr ; pointers to initialization sections
 externdef __xi_z:ptr
+endif
 
 endif
 
@@ -55,26 +64,37 @@ _start proc
     and spl,-16
 
     _initterm( &__init_array_start, &__init_array_end )
-    exit( main( __argc, __argv, _environ ) )
+    xor eax,eax
+    exit( _tmain( __argc, __argv, _environ ) )
 
 _start endp
 
 else
 
+ifdef _WIN64
+ifdef _UNICODE
+_wcstart::
+else
+_cstart::
+endif
+else
 ifdef _UNICODE
 wcstart::
 else
 cstart::
-_cstart::
+endif
 endif
 
 _tmainCRTStartup proc
 
+ifdef _MSVCRT
+    _tgetmainargs( addr __argc, addr __targv, addr _tenviron, 0, addr _startup )
+else
 ifndef _WIN64
   local _exception_registration[2]:dword
 endif
-
     _initterm( &__xi_a, &__xi_z )
+endif
     exit( _tmain( __argc, __targv, _tenviron ) )
 
 _tmainCRTStartup endp

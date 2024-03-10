@@ -1264,13 +1264,15 @@ insn(STOSQ, 1,          OpCls( M64,      NONE,       NONE ), F_48,   0,  no_RM, 
 insx(PEXTRQ, pextrq,    OpCls( R64_M64,  XMM,        I8_U ), F_660F3A,0, no_WDS, 0x16, 0x00, P_64 or P_SSE4,0, 0xE0, RWF_X64)
 insx(PINSRQ, pinsrq,    OpCls( XMM,      R64_M64,    I8_U ), F_660F3A,1, no_WDS, 0x22, 0x00, P_64 or P_SSE4,0, 0xE0, RWF_X64)
 insx(SWAPGS, swapgs,    OpCls( NONE,     NONE,       NONE ), F_0F,   0,  0,      0x01, 0xF8, P_64,     0,0, RWF_X64)
-insx(SYSCALL_, syscall, OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x05, 0x00, P_64,     0,0, RWF_X64)
+insx(SYSCALL_, syscall_,OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x05, 0x00, P_64,     0,0, RWF_X64)
 insx(SYSRET, sysret,    OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x07, 0x00, P_64,     0,0, RWF_X64)
 
 ; Terminate an Indirect Branch in 64-bit Mode
 
 insx(ENDBR64, endbr64,  OpCls( NONE,     NONE,       NONE ), F_F30F, 0,  0,      0x1E, 0xFA, P_64,     0,0, RWF_X64)
 insa(ENDBR32, endbr32,  OpCls( NONE,     NONE,       NONE ), F_F30F, 0,  0,      0x1E, 0xFB, P_686,    0,0)
+
+;insa(SYSCALL_, syscall_,OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x05, 0x00, P_586,    0,0)
 
 ; SSE4.1
 

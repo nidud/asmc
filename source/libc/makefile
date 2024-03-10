@@ -13,6 +13,10 @@ else
 
 include srcpath
 
+ifndef linux
+all: libc msvcrt0
+endif
+
 path = $(lib_dir)\x64
 ifdef x86
 path = $(lib_dir)\x86
@@ -38,11 +42,19 @@ flag = -6 -coff -Zp4 -Zi8
 endif
 endif
 
-$(path)\$(name):
+libc:
 	asmc $(flag) -D_CRTBLD -Cs -I$(inc_dir) -r $(src_dir)\libc\*.asm
 	asmc $(flag) -D_CRTBLD -Cs -I$(inc_dir) -Fo w* -r -ws $(src_dir)\libc\_t*.asm
-	libw -q -b -n -c $(lcfg) $@ *.$(type)
+	libw -q -b -n -c $(lcfg) $(path)\$(name) *.$(type)
 	del *.$(type)
+
+msvcrt0:
+	asmc $(flag) -nologo -D_CRTBLD -Cs -I$(inc_dir) -D_MSVCRT -Fo msvcrt0 $(src_dir)\libc\crt\_tcrt0.asm
+	asmc $(flag) -nologo -D_CRTBLD -Cs -I$(inc_dir) -D_MSVCRT -Fo wmsvcrt0 -ws $(src_dir)\libc\crt\_tcrt0.asm
+	asmc $(flag) -nologo -D_CRTBLD -Cs -I$(inc_dir) -D_MSVCRT -Fo msvcrtWin $(src_dir)\libc\crt\_tWinStart.asm
+	asmc $(flag) -nologo -D_CRTBLD -Cs -I$(inc_dir) -D_MSVCRT -Fo wmsvcrtWin -ws $(src_dir)\libc\crt\_tWinStart.asm
+	libw -q -b -n -c $(lcfg) $(path)\$@.lib *.$(type)
+	del *.obj
 
 linux:
 	make linux=1

@@ -106,9 +106,13 @@ _tWinMain		equ <wWinMain>
 _tenviron		equ <_wenviron>
 __targv			equ <__wargv>
 _tgetmainargs		equ <__wgetmainargs>
+ifdef _MSVCRT
+_tmainCRTStartup	equ <wmainMSVCRTStartup>
+_tWinMainCRTStartup	equ <wWinMainMSVCRTStartup>
+else
 _tmainCRTStartup	equ <wmainCRTStartup>
 _tWinMainCRTStartup	equ <wWinMainCRTStartup>
-
+endif
 
 ;; Formatted i/o
 
@@ -710,8 +714,13 @@ _tenviron		equ <_environ>
 endif
 __targv			equ <__argv>
 _tgetmainargs		equ <__getmainargs>
+ifdef _MSVCRT
+_tmainCRTStartup	equ <mainMSVCRTStartup>
+_tWinMainCRTStartup	equ <WinMainMSVCRTStartup>
+else
 _tmainCRTStartup	equ <mainCRTStartup>
 _tWinMainCRTStartup	equ <WinMainCRTStartup>
+endif
 
 ;; Formatted i/o
 

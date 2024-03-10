@@ -48,7 +48,6 @@ msvcrt = 1
 flags = -Zp8 -Cs
 !if $(msvcrt)
 lib = msvcrt
-flags += -nolib -D__PE__
 !else
 lib = libc
 !endif

@@ -5,6 +5,12 @@
 ;
 
 .enum {
+
+ifdef _WIN64
+
+define __scall <syscall>
+define int_80h <syscall>
+
     SYS_READ                    = 0,    ; sys_read()
     SYS_WRITE                   = 1,    ; sys_write()
     SYS_OPEN                    = 2,    ; sys_open()
@@ -264,6 +270,41 @@
     SYS_PROCESS_VM_WRITEV       = 311,  ; sys_process_vm_writev()
     SYS_KCMP                    = 312,  ; sys_kcmp()
     SYS_FINIT_MODULE            = 313,  ; sys_finit_module()
+
+else
+
+define __scall <watcall>
+define int_80h <int 0x80>
+
+    SYS_READ                    = 3,
+    SYS_WRITE                   = 4,
+    SYS_OPEN                    = 5,
+    SYS_CREAT                   = 8,
+    SYS_CLOSE                   = 6,
+    SYS_STAT                    = 106,
+    SYS_STAT64                  = 195,
+    SYS_FSTAT                   = 108,
+    SYS_LSEEK                   = 19,
+    SYS_MMAP                    = 90,
+    SYS_MUNMAP                  = 91,
+    SYS_FCNTL                   = 55,
+    SYS_ACCESS                  = 33,
+    SYS_IOCTL                   = 54,
+    SYS_GETCWD                  = 183,
+    SYS_CHDIR                   = 12,
+    SYS_CHROOT                  = 61,
+    SYS_FCHDIR                  = 133,
+    SYS_MKDIR                   = 39,
+    SYS_RMDIR                   = 40,
+    SYS_EXIT                    = 1,
+    SYS_UNLINK                  = 10,
+    SYS_RENAME                  = 38,
+    SYS_TIME                    = 13,
+    SYS_GETTIMEOFDAY            = 78,
+    SYS_SETTIMEOFDAY            = 79,
+    SYS_GETDENTS                = 141,
+    SYS_GETDENTS64              = 220,
+endif
     }
 
 
@@ -276,115 +317,182 @@ define MMAP_FLAGS       (MAP_PRIVATE or MAP_ANONYMOUS)
 define MMAP_PROT        (PROT_READ or PROT_WRITE)
 define MAP_FAILED       (-1)
 
-sys_read proto :int_t, :ptr, :size_t {
+sysreg1 macro
+ifndef _WIN64
+    mov ebx,eax
+endif
+    endm
+sysreg2 macro
+ifndef _WIN64
+    mov ebx,eax
+    mov ecx,edx
+endif
+    endm
+sysreg3 macro
+ifndef _WIN64
+    mov ecx,edx
+    mov edx,ebx
+    mov ebx,eax
+endif
+    endm
+
+sys_read proto __scall :int_t, :ptr, :size_t {
+    sysreg3
     mov eax,SYS_READ
-    syscall
+    int_80h
     }
-sys_write proto :int_t, :ptr, :size_t {
+sys_write proto __scall :int_t, :ptr, :size_t {
+    sysreg3
     mov eax,SYS_WRITE
-    syscall
+    int_80h
     }
-sys_open proto :string_t, :int_t, :int_t {
+sys_open proto __scall :string_t, :int_t, :int_t {
+    sysreg3
     mov eax,SYS_OPEN
-    syscall
+    int_80h
     }
-sys_creat proto :string_t, :uint_t {
+sys_creat proto __scall :string_t, :uint_t {
+    sysreg2
     mov eax,SYS_CREAT
-    syscall
+    int_80h
     }
-sys_close proto :int_t {
+sys_close proto __scall :int_t {
+    sysreg1
     mov eax,SYS_CLOSE
-    syscall
+    int_80h
     }
-sys_newstat proto :string_t, :ptr {
+sys_newstat proto __scall :string_t, :ptr {
+    sysreg2
     mov eax,SYS_STAT
-    syscall
+    int_80h
     }
-sys_newfstat proto :int_t, :ptr {
+sys_newfstat proto __scall :int_t, :ptr {
+    sysreg2
     mov eax,SYS_FSTAT
-    syscall
+    int_80h
     }
-sys_lseek proto :int_t, :size_t, :uint_t {
+sys_lseek proto __scall :int_t, :size_t, :uint_t {
+    sysreg3
     mov eax,SYS_LSEEK
-    syscall
+    int_80h
     }
-sys_mmap proto syscall :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
+
+ifdef _WIN64
+
+sys_mmap proto __scall :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
     add rsi,_GRANULARITY-1
     and sil,-(_GRANULARITY)
     mov r10,rcx
     mov rcx,rsi
     mov eax,SYS_MMAP
-    syscall
+    int_80h
     }
-sys_munmap proto syscall :ptr, :size_t {
+
+else
+
+.template mmap_arg_struct
+    m_addr   dd ? ; Address where pages will be mapped (0)
+    m_len    dd ?
+    m_prot   dd ? ; PROT_EXEC, PROT_READ, PROT_WRITE
+    m_flags  dd ?
+    m_fd     dd ?
+    m_offset dd ? ; ignored if MAP_ANON
+   .ends
+
+sys_mmap proto __scall :ptr {
+    mov ebx,eax
+    mov eax,SYS_MMAP
+    int_80h
+    }
+
+endif
+sys_munmap proto __scall :ptr, :size_t {
+    sysreg2
     mov eax,SYS_MUNMAP
-    syscall
+    int_80h
     }
-sys_fcntl proto :int_t, :int_t, :int_t {
+sys_fcntl proto __scall :int_t, :int_t, :int_t {
+    sysreg3
     mov eax,SYS_FCNTL
-    syscall
+    int_80h
     }
-sys_access proto :string_t, :int_t {
+sys_access proto __scall :string_t, :int_t {
+    sysreg2
     mov eax,SYS_ACCESS
-    syscall
+    int_80h
     }
-sys_ioctl proto :int_t, :int_t, :ptr {
+sys_ioctl proto __scall :int_t, :int_t, :ptr {
+    sysreg3
     mov eax,SYS_IOCTL
-    syscall
+    int_80h
     }
-sys_getcwd proto :string_t, :int_t {
+sys_getcwd proto __scall :string_t, :int_t {
+    sysreg2
     mov eax,SYS_GETCWD
-    syscall
+    int_80h
     }
-sys_chdir proto :string_t {
+sys_chdir proto __scall :string_t {
+    sysreg1
     mov eax,SYS_CHDIR
-    syscall
+    int_80h
     }
-sys_chroot proto :string_t {
+sys_chroot proto __scall :string_t {
+    sysreg1
     mov eax,SYS_CHROOT
-    syscall
+    int_80h
     }
-sys_fchdir proto :int_t {
+sys_fchdir proto __scall :int_t {
+    sysreg1
     mov eax,SYS_FCHDIR
-    syscall
+    int_80h
     }
-sys_mkdir proto :string_t {
+sys_mkdir proto __scall :string_t {
+    sysreg1
     mov eax,SYS_MKDIR
-    syscall
+    int_80h
     }
-sys_rmdir proto :string_t {
+sys_rmdir proto __scall :string_t {
+    sysreg1
     mov eax,SYS_RMDIR
-    syscall
+    int_80h
     }
-sys_exit proto :int_t {
+sys_exit proto __scall :int_t {
+    sysreg1
     mov eax,SYS_EXIT
-    syscall
+    int_80h
     }
-sys_unlink proto :string_t {
+sys_unlink proto __scall :string_t {
+    sysreg1
     mov eax,SYS_UNLINK
-    syscall
+    int_80h
     }
-sys_rename proto :string_t, :string_t {
+sys_rename proto __scall :string_t, :string_t {
+    sysreg2
     mov eax,SYS_RENAME
-    syscall
+    int_80h
     }
-sys_time proto :ptr {
+sys_time proto __scall :ptr {
+    sysreg1
     mov eax,SYS_TIME
-    syscall
+    int_80h
     }
-sys_gettimeofday proto :ptr, :ptr {
+sys_gettimeofday proto __scall :ptr, :ptr {
+    sysreg2
     mov eax,SYS_GETTIMEOFDAY
-    syscall
+    int_80h
     }
-sys_settimeofday proto :ptr, :ptr {
+sys_settimeofday proto __scall :ptr, :ptr {
+    sysreg2
     mov eax,SYS_SETTIMEOFDAY
-    syscall
+    int_80h
     }
-sys_getdents proto :int_t, :ptr, :uint_t {
+sys_getdents proto __scall :int_t, :ptr, :uint_t {
+    sysreg2
     mov eax,SYS_GETDENTS
-    syscall
+    int_80h
     }
-sys_getdents64 proto :int_t, :ptr, :uint_t {
+sys_getdents64 proto __scall :int_t, :ptr, :uint_t {
+    sysreg2
     mov eax,SYS_GETDENTS64
-    syscall
+    int_80h
     }

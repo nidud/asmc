@@ -3,7 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-; Startup module for LIBC Windows Unicode
+; Startup module for LIBC Windows
 ;
 include stdlib.inc
 
@@ -19,24 +19,21 @@ include tchar.inc
 
 define entry <_tWinMainCRTStartup>
 
+ifndef _MSVCRT
 externdef __xi_a:ptr
 externdef __xi_z:ptr
+endif
 
     .code
 
-ifdef _UNICODE
-wWinStart::
-else
-WinStart::
-endif
-
 _tWinMainCRTStartup proc uses rbx
 
+ifndef _MSVCRT
 ifndef _WIN64
   local _exception_registration[2]:dword
 endif
-
     _initterm( &__xi_a, &__xi_z )
+endif
     mov rbx,GetModuleHandle( 0 )
     ExitProcess( _tWinMain( rbx, 0, GetCommandLine(), SW_SHOWDEFAULT ) )
 

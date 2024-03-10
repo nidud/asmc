@@ -1,6 +1,6 @@
 
-test.:
-    asmc -elf -Fo $*.o $*.asm
-    linkw name $@ format ELF runtime linux file $*.o
-    pause
+test:
+	asmc -elf $@.asm
+	linkw name $@. sys linux file $@.o
+	pause
 

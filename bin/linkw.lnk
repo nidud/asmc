@@ -1,159 +1,178 @@
 # generic linkw.lnk file
 
-# default if no format is defined and 16-bit module is found
+# default if no format is defined and 16/32/64-bit module is found
 system begin 286
-    format dos
-end
-
-# default if no format is defined and 32-bit module is found
+    option  quiet
+    libpath %AsmCDir%\lib\dos
+    format  dos
+    end
 system begin 386
     option  osname='Windows NT character-mode'
-    option  map
+    option  quiet
     libpath %AsmCDir%\lib\x86
-    library libc,kernel32,user32
     format  windows nt
     runtime console=4.0
-end
+    end
+system begin x64
+    option  osname='Windows NT character-mode'
+    option  quiet
+    libpath %AsmCDir%\lib\x64
+    format  windows nt
+    runtime console=4.0
+    end
 
-# Win32 console application
+# console application
+
 system begin con_32
-    option  quiet
-    libpath %ASMCDIR%\lib\x86
-    library libc,kernel32,user32
-    symt    _cstart
-    format  windows pe ^
-    runtime console=4.0
-end
-
-# using msvcrt
+    system  386
+    symt    _mainCRTStartup
+    end
+system begin con_32W
+    system  386
+    symt    _wmainCRTStartup
+    end
+system begin con_64
+    system  x64
+    symt    mainCRTStartup
+    end
+system begin con_64W
+    system  x64
+    symt    wmainCRTStartup
+    end
 system begin dcon_32
-    option  quiet
-    libpath %ASMCDIR%\lib\x86
-    library msvcrt,kernel32,user32
-    format  windows pe ^
-    runtime console=4.0
-end
+    system  386
+    library msvcrt0,msvcrt
+    symt    _mainMSVCRTStartup
+    end
+system begin dcon_32W
+    system  386
+    library msvcrt0,msvcrt
+    symt    _wmainMSVCRTStartup
+    end
+system begin dcon_64
+    system  x64
+    library msvcrt0,msvcrt
+    symt    mainMSVCRTStartup
+    end
+system begin dcon_64W
+    system  x64
+    library msvcrt0,msvcrt
+    symt    wmainMSVCRTStartup
+    end
 
-# Win32 console debug application
 system begin con_32D
     option  cvp
-    libpath %ASMCDIR%\lib\x86
-    library libc,kernel32,user32
-    symt    _cstart
+    symt    _mainCRTStartup
     format  windows pe ru con debug Codeview All ^
-    runtime console=4.0
-end
+    end
 
-# Win32 console application Open Watcom
 system begin watcom_c
-    option  quiet
-    libpath %ASMCDIR%\lib\x86
-    library libc,kernel32,user32
     symt    _cstart_
-    format  windows pe ^
-    runtime console=4.0
-end
-
-# Win32 console Unicode application
-system begin con_32W
-    option  quiet
-    libpath %ASMCDIR%\lib\x86
-    library libc,kernel32,user32
-    symt    _wcstart
-    format  windows pe ^
-    runtime console=4.0
-end
-
-# Win64 console application
-system begin con_64
-    option  quiet
-    libpath %ASMCDIR%\lib\x64
-    library libc,kernel32,user32
-    symt    cstart
-    format  windows pe ^
-    runtime console=4.0
-end
-
-# using msvcrt
-system begin dcon_64
-    option  quiet
-    libpath %ASMCDIR%\lib\x64
-    library msvcrt,kernel32,user32
-    format  windows pe ^
-    runtime console=4.0
-end
-
-# Win64 console Unicode application
-system begin con_64W
-    option  quiet
-    libpath %ASMCDIR%\lib\x64
-    library libc,kernel32,user32
-    symt    wcstart
-    format  windows pe ^
-    runtime console=4.0
-end
+    end
 
 # Win32 gui application
+
+system begin win_32
+    option  quiet
+    libpath %AsmCDir%\lib\x86
+    format  windows pe ru win ^
+    runtime windows=4.0
+    end
+system begin win_64
+    option  quiet
+    libpath %AsmCDir%\lib\x64
+    format  windows pe ru win ^
+    runtime windows=4.0
+    end
+
 system begin gui_32
-    option  quiet
-    libpath %ASMCDIR%\lib\x86
-    library libc,kernel32,user32,gdi32
-    symt    _WinStart
-    format  windows pe ru win ^
-    runtime windows=4.0
-end
-
-# Win32 gui Unicode application
+    system  win_32
+    symt    _WinMainCRTStartup
+    end
 system begin gui_32W
-    option  quiet
-    libpath %ASMCDIR%\lib\x86
-    library libc,kernel32,user32,gdi32
-    symt    _wWinStart
-    format  windows pe ru win ^
-    runtime windows=4.0
-end
-
-# Win64 gui application
+    system  win_32
+    symt    _wWinMainCRTStartup
+    end
 system begin gui_64
-    option  quiet
-    libpath %ASMCDIR%\lib\x64
-    library libc,kernel32,user32,gdi32
-    symt    WinStart
-    format  windows pe ru win ^
-    runtime windows=4.0
-end
-
-# Win64 gui Unicode application
+    system  win_64
+    symt    WinMainCRTStartup
+    end
 system begin gui_64W
-    option  quiet
-    libpath %ASMCDIR%\lib\x64
-    library libc,kernel32,user32,gdi32
-    symt    wWinStart
-    format  windows pe ru win ^
-    runtime windows=4.0
-end
+    system  win_64
+    symt    wWinMainCRTStartup
+    end
+
+system begin dgui_32
+    system  win_32
+    library msvcrt0
+    symt    _WinMainMSVCRTStartup
+    end
+system begin dgui_32W
+    system  win_32
+    library msvcrt0
+    symt    _wWinMainMSVCRTStartup
+    end
+system begin dgui_64
+    system  win_64
+    library msvcrt0
+    symt    WinMainMSVCRTStartup
+    end
+system begin dgui_64W
+    system  win_64
+    library msvcrt0
+    symt    wWinMainMSVCRTStartup
+    end
 
 system begin dll_32
     libpath %ASMCDIR%\lib\x86
     format windows pe dll ^
     library libc,kernel32,user32,gdi32
     runtime windows=4.0
-end
+    end
 
 system begin ddll_32
     libpath %ASMCDIR%\lib\x86
     format windows pe dll ^
     library msvcrt,kernel32,user32,gdi32
     runtime windows=4.0
-end
+    end
 
 system begin dll_64
     libpath %ASMCDIR%\lib\x64
     format windows pe dll ^
     runtime windows=4.0
-end
+    end
+
+system begin linux
+    option osname='Linux x86'
+    libpath '%ASMCDIR%/x86'
+    format elf
+    runtime linux
+    op exportall
+    op norelocs
+    end
+
+# gtk-4.0 gui Win64 application
+
+system begin gtk
+    option  quiet
+    libpath %ASMCDIR%\lib\x64
+    libpath \gtk-4.0\lib
+    format  windows pe ^
+    runtime windows=4.0
+    end
+
+system begin gtk_libc
+    system  gtk
+    symt    mainCRTStartup
+    end
+
+system begin gtk_msvcrt
+    system  gtk
+    library msvcrt0
+    symt    mainMSVCRTStartup
+    end
 
 system begin dos
-    libpath %AsmCDir%\lib\dos
-    format  dos ^
-end
+    system  286
+    end

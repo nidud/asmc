@@ -37,7 +37,7 @@ goto end
 
 :BuildCRT
 cd %AsmcDir%\source\libc
-make win32
+make x86=1
 make
 cd %AsmcDir%
 echo.

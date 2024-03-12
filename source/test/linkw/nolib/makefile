@@ -1,6 +1,6 @@
 test.exe:
 	asmc64 -q -nolib $*.asm
-	linkw op map lib msvcrt file $*
+	linkw op map lib %ASMCDIR%/lib/x64/msvcrt file $*
 	$@
 	pause
 clean:

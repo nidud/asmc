@@ -8,7 +8,8 @@ include stdio.inc
 include errno.inc
 include stdlib.inc
 
-if defined(__UNIX__) and defined(_AMD64_)
+ifdef __UNIX__
+ifdef _AMD64_
 
 define __USE_GNU
 include ucontext.inc
@@ -59,5 +60,6 @@ sigaction proc sig:int_t, act:ptr sigaction_t, oact:ptr sigaction_t
 
 sigaction endp
 
+endif
 endif
     end

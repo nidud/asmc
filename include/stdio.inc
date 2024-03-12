@@ -59,7 +59,6 @@ LPFILE		typedef ptr _iobuf
 endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-externdef	_iob:_iobuf
 externdef	_bufin:BYTE
 externdef	stdin:ptr _iobuf
 externdef	stdout:ptr _iobuf

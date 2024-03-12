@@ -3,8 +3,8 @@
 #
 ifdef YACC
 argv:
-	asmc64 $@.asm
-	gcc -nostdlib -o $@ $@.o /lib/alibc.a
+	asmc64 -fpic $@.asm
+	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@ "4" 5 -7"quote" ""8" 9" "argv".asm
 	echo Press enter to continue; read dummy;
 	rm $@.o

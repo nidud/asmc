@@ -5,7 +5,7 @@ include sys/syscall.inc
 
 _start proc
 
-    sys_write(1, "Hello world!\n", sizeof(DS0000))
+    sys_write(1, "Hello world!\n", sizeof(DS0000)-1)
     sys_exit(0)
 
 _start endp

@@ -31,12 +31,18 @@ setvbuf proc uses rbx fp:LPFILE, buf:LPSTR, type:int_t, bsize:size_t
 
     .if ( type & _IONBF )
 
+if defined(_WIN64) or not defined(__UNIX__)
+
         mov edx,_IONBF
         lea rax,[rbx]._charbuf
         mov ecx,4
 
     .elseif ( rax == NULL )
-
+else
+        xor eax,eax
+    .endif
+    .if ( rax == NULL )
+endif
         .if ( malloc( rcx ) == NULL )
 
             dec rax

@@ -23,37 +23,33 @@ include tchar.inc
 
 ifdef __UNIX__
 
-stat proc file:string_t, buf:PSTAT
+_stat proc file:string_t, buf:PSTAT
 ifdef _WIN64
     .ifs ( sys_newstat(rdi, rsi) < 0 )
-
+else
+    .ifs ( sys_newstat(file, buf) < 0 )
+endif
         neg eax
         _set_errno( eax )
-        .return( -1 )
+        mov rax,-1
     .endif
-else
-    _set_errno( ENOSYS )
-    mov eax,-1
-endif
     ret
 
-stat endp
+_stat endp
 
-stat64 proc file:string_t, buf:PSTAT64
+_stat64 proc file:string_t, buf:PSTAT64
 ifdef _WIN64
     .ifs ( sys_newstat(rdi, rsi) < 0 )
-
+else
+    .ifs ( sys_newstat64(file, buf) < 0 )
+endif
         neg eax
         _set_errno( eax )
-        .return( -1 )
+        mov rax,-1
     .endif
-else
-    _set_errno( ENOSYS )
-    mov eax,-1
-endif
     ret
 
-stat64 endp
+_stat64 endp
 
 else
 

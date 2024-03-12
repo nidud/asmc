@@ -61,24 +61,31 @@ clean:
 	rm *.o
 
 install:
-	sudo install ./asmc /usr/local/bin
-	sudo install ./asmc64 /usr/local/bin
-	sudo rm -f -R /usr/include/asmc-2.34
-	sudo cp -R ../../include /usr/include/asmc-2.34
-	sudo rm -f /usr/include/asmc-2.34/*.h
-	sudo rm -f /usr/include/asmc-2.34/sys/*.h
-	echo export INCLUDE=/usr/include/asmc-2.34 > ./include-path.sh
-	sudo cp ./include-path.sh /etc/profile.d
+	sudo install ./asmc /usr/bin
+	sudo install ./asmc64 /usr/bin
+	sudo rm -f -R /usr/lib/asmc
+	sudo mkdir /usr/lib/asmc
+	sudo cp -R ../../include /usr/lib/asmc/include
+	sudo rm -f /usr/lib/asmc/include/*.h
+	sudo rm -f /usr/lib/asmc/include/*.rh
+	sudo rm -f /usr/lib/asmc/include/sys/*.h
+	sudo cp ./asmc-profile.sh /etc/profile.d
 	rm ./asmc
 	rm ./asmc64
-	rm ./include-path.sh
 	@echo -------------------------------------------
 	@echo Note: These changes needs a reboot, or run:
-	@echo export INCLUDE=/usr/include/asmc-2.34
+	@echo export INCLUDE=/usr/lib/asmc/include
 	@echo -------------------------------------------
 
 uninstall:
+	sudo rm -f /usr/bin/asmc
+	sudo rm -f /usr/bin/asmc64
+	sudo rm -f -R /usr/lib/asmc
+	sudo rm -f /etc/profile.d/asmc-profile.sh
+
+clean_old:
 	sudo rm -f /usr/local/bin/asmc
 	sudo rm -f /usr/local/bin/asmc64
+	sudo rm -f -R /usr/lib/asmc-2.34
 	sudo rm -f -R /usr/include/asmc-2.34
 	sudo rm -f /etc/profile.d/include-path.sh

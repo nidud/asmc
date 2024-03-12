@@ -18,10 +18,12 @@ _getbuf proc uses rbx fp:LPFILE
 
         or  [rbx]._flag,_IOMYBUF
         mov [rbx]._bufsiz,_INTIOBUF
+if defined(_WIN64) or not defined(__UNIX__)
     .else
         or  [rbx]._flag,_IONBF
         mov [rbx]._bufsiz,4
         lea rax,[rbx]._charbuf
+endif
     .endif
     mov [rbx]._ptr,rax
     mov [rbx]._base,rax

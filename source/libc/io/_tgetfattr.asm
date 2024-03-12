@@ -6,37 +6,36 @@
 
 include io.inc
 include stdlib.inc
+ifdef __UNIX__
+include sys/stat.inc
+else
 include winbase.inc
+endif
 include errno.inc
 include tchar.inc
 
     .code
 
-ifdef _UNICODE
+if defined(_UNICODE) or defined(__UNIX__)
 _tgetfattr proc lpFilename:LPTSTR
-else
-_tgetfattr proc uses rbx lpFilename:LPTSTR
-endif
-
-ifdef __UNIX__
-
-    _set_errno( ENOSYS )
-    mov rax,-1
-
-elseifdef _UNICODE
-
     ldr rcx,lpFilename
+ifdef __UNIX__
+    .new s:_stat32
+    .ifd ( _stat(rcx, &s) == 0 )
 
+        mov eax,s.st_mode
+    .endif
+else
     .ifd ( GetFileAttributes( rcx ) == -1 )
 
         _dosmaperr( GetLastError() )
     .endif
-
+endif
 else
-
-   .new wpath:wstring_t
+_tgetfattr proc uses rbx lpFilename:LPTSTR
     ldr rbx,lpFilename
 
+    .new wpath:wstring_t
     .ifd ( GetFileAttributes( rbx ) == -1 )
 
         .ifd ( _pathtow( rbx, &wpath ) == true )

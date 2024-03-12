@@ -15,9 +15,9 @@ endif
 
     .code
 
-_lseeki64 proc handle:SINT, offs:QWORD, pos:UINT
+_lseeki64 proc handle:int_t, offs:uint64_t, pos:uint_t
 
-ifdef __UNIX__
+if defined(__UNIX__) and defined(_WIN64)
 
     ldr ecx,handle
     ldr rax,offs
@@ -29,27 +29,40 @@ ifdef __UNIX__
         _set_errno(eax)
         mov rax,-1
     .endif
+
 else
 
-  local lpNewFilePointer:QWORD
+    .new new_offs:uint64_t
 
+ifdef __UNIX__
+
+    lea eax,new_offs
+    .ifs ( sys_llseek(handle, uint_t ptr offs, uint_t ptr offs[4], eax, pos) < 0 )
+
+        neg eax
+        _set_errno(eax)
+        mov eax,-1
+    .endif
+
+else
     .ifd ( _get_osfhandle( handle ) != -1 )
 
         mov rcx,rax
-        .ifd !SetFilePointerEx( rcx, offs, &lpNewFilePointer, pos )
+        .ifd !SetFilePointerEx( rcx, offs, &new_offs, pos )
 
             _dosmaperr( GetLastError() )
 ifdef _WIN64
         .else
-            mov rax,lpNewFilePointer
+            mov rax,new_offs
 else
             cdq
         .else
-            mov eax,DWORD PTR lpNewFilePointer
-            mov edx,DWORD PTR lpNewFilePointer[4]
+            mov eax,uint_t ptr new_offs
+            mov edx,uint_t ptr new_offs[4]
 endif
         .endif
     .endif
+endif
 endif
     ret
 

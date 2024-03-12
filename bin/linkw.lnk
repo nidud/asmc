@@ -143,13 +143,24 @@ system begin dll_64
     runtime windows=4.0
     end
 
-system begin linux
-    option osname='Linux x86'
-    libpath '%ASMCDIR%/x86'
-    format elf
+system begin elf
+    libpath %ASMCDIR%\lib\x86
+    library libc.a
+    symt    _start
+    format  elf
     runtime linux
-    op exportall
-    op norelocs
+    option  exportall
+    option  norelocs
+    end
+
+system begin elf64
+    libpath %ASMCDIR%\lib\x64
+    library libc.a
+    symt    _start
+    format  elf
+    runtime linux
+    option  exportall
+    option  norelocs
     end
 
 # gtk-4.0 gui Win64 application

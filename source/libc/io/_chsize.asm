@@ -9,20 +9,15 @@ include errno.inc
 
     .code
 
-_chsize proc uses rdi rsi handle:int_t, new_size:size_t
-ifdef __UNIX__
-    _set_errno( ENOSYS )
-    mov eax,-1
-else
+_chsize proc uses rbx handle:int_t, new_size:size_t
 
   local buffer[512]:char_t
-  local current_offset:intptr_t
-  local NumberOfBytesWritten:intptr_t
+  local current_offset:size_t
+  local extend:size_t
 
     .if ( _lseek( handle, 0, SEEK_CUR ) == -1 )
         .return
     .endif
-
     mov current_offset,rax
 
     .repeat
@@ -45,37 +40,36 @@ else
         .endif
         .break .ifz ; All done..
 
+        mov rbx,rdi
         mov rdx,rax
         lea rdi,buffer
         xor eax,eax
         mov ecx,512/4
         rep stosd
+        mov rdi,rbx
 
-        mov rdi,new_size
-        sub rdi,rdx
+        mov rbx,new_size
+        sub rbx,rdx
 
         .repeat
 
-            mov esi,512
-            .if ( rdi < rsi )
+            mov extend,512
+            .if ( rbx < extend )
 
-                mov rsi,rdi
-                .break( 1 ) .if !rdi
+                mov extend,rbx
+                .break( 1 ) .if !rbx
             .endif
 
-            sub rdi,rsi
-            oswrite( handle, &buffer, esi )
-
-        .until ( rax != rsi )
+            sub rbx,extend
+            oswrite( handle, &buffer, dword ptr extend )
+        .until ( rax != extend )
 
         _set_errno( ERROR_DISK_FULL )
         .return -1
     .until 1
-
     .if ( _lseek( handle, current_offset, SEEK_SET ) != -1 )
         xor eax,eax
     .endif
-endif
     ret
 
 _chsize endp

@@ -1,7 +1,7 @@
 ifdef YACC
 _atodbl:
-	asmc64 $@.asm
-	gcc -nostdlib -o $@ $@.o /lib/alibc.a
+	asmc64 -fpic $@.asm
+	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	echo Press enter to continue; read dummy;
 	rm -f $@.o

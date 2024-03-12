@@ -7,11 +7,19 @@
 include stdio.inc
 
 .data
+if defined(_WIN64) or not defined(__UNIX__)
 _iob    _iobuf <_bufin, 0, _bufin, _IOREAD or _IOYOURBUF, 0, 0, _INTIOBUF, NULL>
 _stdout _iobuf <0, 0, 0, _IOWRT, 1, 0, 0, NULL>
 _stderr _iobuf <0, 0, 0, _IOWRT, 2, 0, 0, NULL>
 _first  _iobuf _NSTREAM_ - 4 dup(<NULL, 0, NULL, 0, -1, 0, 0, NULL>)
 _last   _iobuf <NULL, 0, NULL, 0, -1, 0, 0, NULL>
+else
+_iob    _iobuf <_bufin, 0, _bufin, _IOREAD or _IOYOURBUF, 0, _INTIOBUF, NULL>
+_stdout _iobuf <0, 0, 0, _IOWRT, 1, 0, NULL>
+_stderr _iobuf <0, 0, 0, _IOWRT, 2, 0, NULL>
+_first  _iobuf _NSTREAM_ - 4 dup(<NULL, 0, NULL, 0, -1, 0, NULL>)
+_last   _iobuf <NULL, 0, NULL, 0, -1, 0, NULL>
+endif
 
 align   size_t
 stdin   LPFILE _iob

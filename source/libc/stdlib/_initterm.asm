@@ -11,20 +11,24 @@ externdef __ImageBase:size_t
 
     .code
 
-_initterm proc uses rbx r12 pfbegin:ptr, pfend:ptr
+_initterm proc uses rbx pfbegin:ptr, pfend:ptr
 
-    mov rbx,rdi
-    mov r12,rsi
-    sub r12,rbx
-    shr r12,3
+   .new count:int_t
+
+    ldr rbx,pfbegin
+    ldr rax,pfend
+    sub rax,rbx
+    shr rax,3
     .ifnz
 
-        .for ( : r12 : r12--, rbx+=8 )
+        .for ( count = eax : count : count--, rbx+=8 )
 
             mov rax,[rbx]
             .break .if !rax
 
+ifdef _WIN64
             add  rax,__ImageBase
+endif
             call rax
         .endf
     .endif
@@ -33,6 +37,7 @@ _initterm proc uses rbx r12 pfbegin:ptr, pfend:ptr
 _initterm endp
 
 else
+
 include winbase.inc
 
 MAXENTRIES equ 256

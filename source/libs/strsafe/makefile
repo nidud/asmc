@@ -1,13 +1,13 @@
 #
-# Makefile for [A]STRSAFE
+# Makefile for STRSAFE
 #
 ifdef YACC
 
-astrsafe.a:
-	asmc64 -Cs src/*.asm
+strsafe.a:
+	asmc64 -fpic -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
-	sudo cp astrsafe.a /lib
+	sudo cp $@ $(ASMCDIR)
 
 else
 

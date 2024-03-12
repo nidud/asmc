@@ -7,6 +7,9 @@
 include io.inc
 include errno.inc
 include tchar.inc
+ifdef __UNIX__
+include sys/syscall.inc
+endif
 
 .code
 
@@ -14,9 +17,15 @@ _taccess proc uses rbx file:LPTSTR, mode:SINT
 
     ldr rcx,file
     ldr ebx,mode
+
 ifdef __UNIX__
-    _set_errno( ENOSYS )
-    mov eax,-1
+
+    .ifsd ( sys_access(rcx, ebx) < 0 )
+
+        neg eax
+        _set_errno( eax )
+        mov eax,-1
+    .endif
 else
 
     .ifd ( _tgetfattr( rcx ) != -1 )

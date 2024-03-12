@@ -1,7 +1,7 @@
 ifdef YACC
 _cgets:
-	asmc64 $@.asm
-	gcc -nostdlib -o $@ $@.o /lib/alibc.a
+	asmc64 -fpic $@.asm
+	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	rm -f $@.o
 	rm -f $@

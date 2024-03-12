@@ -4,10 +4,10 @@
 ifdef YACC
 
 apcg32.a:
-	asmc64 -Cs x64/*.asm
+	asmc64 -fpic -Cs x64/*.asm
 	ar rcs $@ *.o
 	rm *.o
-	sudo cp apcg32.a /lib
+	sudo cp $@ $(ASMCDIR)
 
 else
 

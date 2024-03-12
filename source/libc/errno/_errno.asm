@@ -8,7 +8,9 @@ include errno.inc
 
     .data
 ifndef _WIN64
+ifndef __UNIX__
      errno label errno_t
+endif
 endif
      ErrorNoMem errno_t ENOMEM
 

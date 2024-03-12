@@ -18,6 +18,13 @@ endif
 include tchar.inc
 
 ifdef __UNIX__
+ifdef _WIN64
+define _xstat <_stat64>
+define _sstat <_stati64>
+else
+define _xstat <_stat>
+define _sstat <_stat32>
+endif
 
 .template FFDATA
     dirp LPDIR ?
@@ -32,7 +39,7 @@ ifdef __UNIX__
 _tfindnext proc uses rbx handle:ptr, ff:ptr _tfinddata_t
 
    .new file:string_t
-   .new q:_tstati64
+   .new q:_sstat
    .new path[1024]:char_t
 
     ldr rbx,handle
@@ -51,7 +58,8 @@ _tfindnext proc uses rbx handle:ptr, ff:ptr _tfinddata_t
 
             strcat( strcat( strcpy(&path, &[rbx].path), "/" ), file )
 
-            .ifd ( _tstat64(rax, &q) == 0 )
+            mov rcx,rax
+            .ifd ( _xstat(rcx, &q) == 0 )
 
                 assume rbx:ptr _tfinddata_t
                 mov rbx,ff

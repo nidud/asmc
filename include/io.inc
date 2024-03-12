@@ -15,6 +15,10 @@ else
 intptr_t typedef sdword
 endif
 endif
+ifndef _TIME64_T_DEFINED
+define _TIME64_T_DEFINED
+__time64_t typedef sqword
+endif
 
 ifdef _CRTBLD
 

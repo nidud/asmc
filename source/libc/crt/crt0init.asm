@@ -6,14 +6,14 @@
 
 include stdlib.inc
 
+option dotname
+
 ifndef __UNIX__
 
 public __xi_a ; init
 public __xi_z
 public __xt_a ; terminators
 public __xt_z
-
-option dotname
 
 .CRT$XI0 SEGMENT ALIGN(8) 'CONST'
 __xi_a dq 0

@@ -53,16 +53,16 @@ _start proc
     xor ebp,ebp
 
     mov __argc,[rsp]
-    mov _environ,&[rsp+rax*8+16]
-    mov __argv,&[rsp+8]
+    mov _environ,&[rsp+rax*size_t+size_t*2]
+    mov __argv,&[rsp+size_t]
 
+ifdef _WIN64
     lea rax,_start
     mov rcx,imagerel _start
     sub rax,rcx
     mov __ImageBase,rax
-
     and spl,-16
-
+endif
     _initterm( &__init_array_start, &__init_array_end )
     xor eax,eax
     exit( _tmain( __argc, __argv, _environ ) )

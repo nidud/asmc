@@ -35,7 +35,8 @@ _isatty proc handle:SINT
     ldr ecx,handle
 ifdef __UNIX__
     .new termios:__kernel_termios
-    .ifd ( sys_ioctl(ecx, TCGETS, &termios ) == 0 )
+    lea rax,termios
+    .ifd ( sys_ioctl(ecx, TCGETS, rax) == 0 )
         mov eax,1
     .else
         xor eax,eax

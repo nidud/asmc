@@ -1,7 +1,7 @@
 ifdef YACC
 _aligned_malloc:
-	asmc64 -Fitchar.inc $@.asm
-	gcc -nostdlib -o $@ $@.o /lib/alibc.a
+	asmc64 -fpic -Fitchar.inc $@.asm
+	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	echo Press enter to continue; read dummy;
 	rm -f $@.o

@@ -10,7 +10,7 @@
 ;
 include stdio.inc
 include signal.inc
-if defined(__UNIX__) and defined(_AMD64_)
+ifdef __UNIX__
 define __USE_GNU
 include ucontext.inc
 endif
@@ -20,7 +20,7 @@ endif
 __crtPrintContext proc uses rsi rdi rbx
 
     mov rcx,__pxcptinfoptrs()
-if defined(__UNIX__) and defined(_AMD64_)
+ifdef __UNIX__
     assume rbx:ptr mcontext_t
     lea rbx,[rcx+ucontext_t.uc_mcontext]
 else
@@ -69,8 +69,8 @@ else
             "\t     r n oditsz a p c\n\n" )
 endif
 
-if defined(__UNIX__) and defined(_AMD64_)
-    mov rax,[rbx].gregs[REG_EFL*8]
+ifdef __UNIX__
+    mov rax,[rbx].gregs[REG_EFL*size_t]
 else
     mov eax,[rbx].CONTEXT.EFlags
 endif
@@ -99,6 +99,20 @@ if defined(__UNIX__) and defined(_AMD64_)
             [rbx].gregs[REG_RBP*8], [rbx].gregs[REG_R14*8],
             [rbx].gregs[REG_RSP*8], [rbx].gregs[REG_R15*8],
             rcx, rdx, r10, r11 )
+
+elseifdef __UNIX__
+
+    mov edx,[ebx].gregs[REG_EIP*4]
+    mov ecx,[edx]
+    xor esi,esi
+
+    printf( edi,
+            esi, esi,
+            [ebx].gregs[REG_EAX*4], [ebx].gregs[REG_EDX*4],
+            [ebx].gregs[REG_EBX*4], [ebx].gregs[REG_ECX*4],
+            [ebx].gregs[REG_ESI*4], [ebx].gregs[REG_EDI*4],
+            [ebx].gregs[REG_ESP*4], [ebx].gregs[REG_EBP*4],
+            edx, [edx+4], ecx )
 
 elseifdef _WIN64
 

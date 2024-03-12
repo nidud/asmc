@@ -49,17 +49,26 @@ _tfindnexti64 proc uses rbx handle:ptr, ff:ptr _tfinddatai64_t
 
         .ifd ( _twildcard([rbx].mask, file) )
 
-            strcat( strcat( strcpy(&path, &[rbx].path), "/" ), file )
+            mov rcx,strcat( strcat( strcpy(&path, &[rbx].path), "/" ), file )
 
-            .ifd ( _tstat64(rax, &q) == 0 )
+            .ifd ( _tstat64(rcx, &q) == 0 )
 
                 assume rbx:ptr _tfinddatai64_t
                 mov rbx,ff
                 strcpy(&[rbx].name, file)
                 mov [rbx].attrib,q.st_mode
+ifdef _WIN64
                 mov [rbx].time_create,q.st_ctime
                 mov [rbx].time_access,q.st_atime
                 mov [rbx].time_write,q.st_mtime
+else
+                mov eax,dword ptr q.st_ctime
+                mov [rbx].time_create,eax
+                mov eax,dword ptr q.st_atime
+                mov [rbx].time_access,eax
+                mov eax,dword ptr q.st_mtime
+                mov [rbx].time_write,eax
+endif
                 mov [rbx].size,q.st_size
                 assume rbx:ptr FFDATA
                .return( 0 )

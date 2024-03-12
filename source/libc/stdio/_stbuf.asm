@@ -49,11 +49,13 @@ _stbuf proc uses rbx fp:LPFILE
         .endif
 
         mov ecx,_INTIOBUF
+if defined(_WIN64) or not defined(__UNIX__)
         .if ( rax == NULL )
 
             lea rax,[rbx]._charbuf
             mov ecx,4
         .endif
+endif
         mov [rbx]._ptr,rax
         mov [rbx]._base,rax
         mov [rbx]._bufsiz,ecx

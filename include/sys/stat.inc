@@ -115,7 +115,7 @@ ifdef __UNIX__
     st_mtimesec size_t ?    ; 68/96
     st_ctime    size_t ?    ; 72/104
     st_ctimesec size_t ?    ; 76/112
- ifdef _WIN64
+ ifndef _WIN64
     st_reserved db 8 dup(?) ; 88
  else
     st_reserved db 24 dup(?); 144

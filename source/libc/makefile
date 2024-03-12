@@ -1,69 +1,45 @@
 #
-# Makefile for [A]LIBC
+# Makefile for LIBC
 #
 ifdef YACC
 
-alibc.a:
-	asmc64 -Zp8 -D_CRTBLD -Cs -r *.asm
+libasmc.a:
+	asmc64 -fpic -Zp8 -D_CRTBLD -Cs -r *.asm
 	ar rcs $@ *.o
 	rm *.o
-	sudo cp alibc.a /lib
+	sudo cp $@ /usr/lib/asmc
 
 else
 
 include srcpath
 
-ifndef linux
-all: libc msvcrt0
-endif
-
-path = $(lib_dir)\x64
 ifdef x86
 path = $(lib_dir)\x86
+name = $(lib_dir)\x86\libc.lib
+flag = -6 -coff -Zp4 -Zi8 -D_CRTBLD -Cs -I$(inc_dir)
+else
+path = $(lib_dir)\x64
+name = $(lib_dir)\x64\libc.lib
+flag = -win64 -frame -Zp8 -Zi8 -D_CRTBLD -Cs -I$(inc_dir)
 endif
-name = libc.lib
-type = obj
-lcfg = -fac
-flag = -win64 -frame -Zp8 -Zi8
 ifdef tty
 flag += -D__TTY__
 endif
 ifdef avx
 flag += -arch:AVX
 endif
-ifdef linux
-name = libc.a
-type = o
-flag = -elf64 -Zp8
-lcfg = -fag
-else
-ifdef x86
-flag = -6 -coff -Zp4 -Zi8
-endif
-endif
 
-libc:
-	asmc $(flag) -D_CRTBLD -Cs -I$(inc_dir) -r $(src_dir)\libc\*.asm
-	asmc $(flag) -D_CRTBLD -Cs -I$(inc_dir) -Fo w* -r -ws $(src_dir)\libc\_t*.asm
-	libw -q -b -n -c $(lcfg) $(path)\$(name) *.$(type)
-	del *.$(type)
-
-msvcrt0:
-	asmc $(flag) -nologo -D_CRTBLD -Cs -I$(inc_dir) -D_MSVCRT -Fo msvcrt0 $(src_dir)\libc\crt\_tcrt0.asm
-	asmc $(flag) -nologo -D_CRTBLD -Cs -I$(inc_dir) -D_MSVCRT -Fo wmsvcrt0 -ws $(src_dir)\libc\crt\_tcrt0.asm
-	asmc $(flag) -nologo -D_CRTBLD -Cs -I$(inc_dir) -D_MSVCRT -Fo msvcrtWin $(src_dir)\libc\crt\_tWinStart.asm
-	asmc $(flag) -nologo -D_CRTBLD -Cs -I$(inc_dir) -D_MSVCRT -Fo wmsvcrtWin -ws $(src_dir)\libc\crt\_tWinStart.asm
-	libw -q -b -n -c $(lcfg) $(path)\$@.lib *.$(type)
+$(name):
+	asmc $(flag) -r $(src_dir)\libc\*.asm
+	asmc $(flag) -Fo w* -r -ws $(src_dir)\libc\_t*.asm
+	libw -q -b -n -c -fac $@ *.obj
 	del *.obj
-
-linux:
-	make linux=1
-
-win32:
-	make x86=1
-
-winavx:
-	make avx=1
+	asmc $(flag) -nologo -D_MSVCRT -Fo msvcrt0 $(src_dir)\libc\crt\_tcrt0.asm
+	asmc $(flag) -nologo -D_MSVCRT -Fo wmsvcrt0 -ws $(src_dir)\libc\crt\_tcrt0.asm
+	asmc $(flag) -nologo -D_MSVCRT -Fo msvcrtWin $(src_dir)\libc\crt\_tWinStart.asm
+	asmc $(flag) -nologo -D_MSVCRT -Fo wmsvcrtWin -ws $(src_dir)\libc\crt\_tWinStart.asm
+	libw -q -b -n -c -fac $(path)\msvcrt0.lib *.obj
+	del *.obj
 
 regress:
 	make -s regress32

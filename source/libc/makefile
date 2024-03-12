@@ -8,6 +8,10 @@ libasmc.a:
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
+	asmc -6 -elf -fpic -Zp4 -D_CRTBLD -Cs -r *.asm
+	ar rcs $@ *.o
+	rm *.o
+	sudo cp $@ /usr/lib/asmc/x86
 
 else
 

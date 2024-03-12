@@ -8,6 +8,10 @@ strsafe.a:
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)
+	asmc -elf -fpic -Cs src/*.asm
+	ar rcs $@ *.o
+	rm *.o
+	sudo cp $@ $(ASMCDIR)/x86
 
 else
 

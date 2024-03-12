@@ -65,6 +65,7 @@ install:
 	sudo install ./asmc64 /usr/bin
 	sudo rm -f -R /usr/lib/asmc
 	sudo mkdir /usr/lib/asmc
+	sudo mkdir /usr/lib/asmc/x86
 	sudo cp -R ../../include /usr/lib/asmc/include
 	sudo rm -f /usr/lib/asmc/include/*.h
 	sudo rm -f /usr/lib/asmc/include/*.rh

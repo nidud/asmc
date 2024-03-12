@@ -1319,8 +1319,16 @@ write_relocs32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, curr:ptr dsy
         mov reloc32.r_offset,[rsi].locofs
 
         .switch ( [rsi].type )
+        .case FIX_RELOFF32
+            mov elftype,R_386_PC32
+            mov rcx,[rsi].sym
+            .if ( ModuleInfo.pic && [rcx].asym.state == SYM_EXTERNAL )
+                .if ( [rcx].asym.flags & S_ISPROC ) ; added v2.34.25
+                    mov elftype,R_386_PLT32
+                .endif
+            .endif
+            .endc
         .case FIX_OFF32        : mov elftype,R_386_32       : .endc
-        .case FIX_RELOFF32     : mov elftype,R_386_PC32     : .endc
         .case FIX_OFF32_IMGREL : mov elftype,R_386_RELATIVE : .endc
 if GNURELOCS
         .case FIX_OFF16    : mov [rbx].extused,TRUE : mov elftype,R_386_16   : .endc

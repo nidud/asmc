@@ -59,7 +59,7 @@ _gettch proc
 _gettch endp
 
 
-_ungetch proc c:int_t
+_ungettch proc c:int_t
 
     ldr eax,c
 
@@ -71,7 +71,7 @@ _ungetch proc c:int_t
     mov chbuf,eax
     ret
 
-_ungetch endp
+_ungettch endp
 
 
 _kbhit proc
@@ -381,7 +381,7 @@ endif
 _kbhit endp
 
 
-_ungetch proc c:int_t
+_ungettch proc c:int_t
 
     ldr ecx,c
     .if ( ( ecx == EOF ) || ( chbuf != EOF ) )
@@ -391,7 +391,7 @@ _ungetch proc c:int_t
     mov chbuf,eax
     ret
 
-_ungetch endp
+_ungettch endp
 
 
 _kbflush proc

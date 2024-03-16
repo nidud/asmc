@@ -5,57 +5,65 @@
 ;
 
 include string.inc
+include ctype.inc
 include tchar.inc
+
+ifdef _WIN64
+define rgd <r8d>
+define rgq <r8>
+define reg <r9>
+define rga <r10>
+define use_regs <>
+else
+define rgd <edi>
+define rgq <edi>
+define reg <esi>
+define rga <ebx>
+define use_regs <uses esi edi ebx>
+endif
 
     .code
 
     option dotname
 
-_tcsncicmp proc uses rbx a:LPTSTR, b:LPTSTR, size:size_t
+_tcsncicmp proc use_regs a:LPTSTR, b:LPTSTR, size:size_t
 
-    ldr     rbx,a
+    ldr     rga,a
     ldr     rcx,size
     ldr     rdx,b
-
-    sub     rbx,TCHAR
-    sub     rdx,TCHAR
+    mov     reg,_pclmap
     mov     eax,1
 .0:
     test    eax,eax
-    jz      .3
-    add     rbx,TCHAR
-    add     rdx,TCHAR
+    jz      .2
     xor     eax,eax
     test    ecx,ecx
-    jz      .3
+    jz      .2
     dec     ecx
-    mov     _tal,[rbx]
-    cmp     _tal,[rdx]
+    movzx   eax,TCHAR ptr [rga]
+    movzx   rgd,TCHAR ptr [rdx]
+    add     rga,TCHAR
+    add     rdx,TCHAR
+ifdef _UNICODE
+    cmp     eax,255
+    ja      .3
+    cmp     rgd,255
+    ja      .3
+endif
+    mov     al,[reg+rax]
+    cmp     al,[reg+rgq]
     je      .0
-    cmp     _tal,'A'
-    jb      .1
-    cmp     _tal,'Z'
-    ja      .1
-    or      al,0x20
-    cmp     _tal,[rdx]
-    je      .0
-    jmp     .2
 .1:
-    mov     _tal,[rdx]
-    cmp     _tal,'A'
-    jb      .2
-    cmp     _tal,'Z'
-    ja      .2
-    or      al,0x20
-    cmp     _tal,[rbx]
-    je      .0
-.2:
-    mov     _tal,[rbx]
-    cmp     _tal,[rdx]
     sbb     rax,rax
     sbb     rax,-1
-.3:
+.2:
     ret
+ifdef _UNICODE
+.3:
+    cmp     eax,rgd
+    je      .0
+    jmp     .1
+endif
 
 _tcsncicmp endp
 

@@ -145,17 +145,24 @@ CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t
     .endif
 
     fprintf(fp,
-        "static = %d\n"
+        "ifdef YACC\n"
+        "\n"
+        "%s:\n"
+        "\tasmc64 -fpic $@.asm\n"
+        "\tgcc -nostdlib -o $@ $@.o -l:libasmc.a\n"
+        "\n"
+        "else\n"
         "\n"
         "%s.exe:\n"
-        "!if $(static)\n"
-        "    asmc64 %s$*.asm\n"
-        "    linkw system %s_64%s file $*.obj\n"
-        "!else\n"
-        "    asmc64 -pe %s%s$*.asm\n"
-        "!endif\n"
-        "    $@\n"
-        "    pause\n", Static, name, ws, sys, W, ws, gui)
+        "ifdef msvcrt\n"
+        "\tasmc64 -pe %s%s$*.asm\n"
+        "else\n"
+        "\tasmc64 %s$*.asm\n"
+        "\tlinkw system %s_64%s file $*.obj\n"
+        "endif\n"
+        "\t$@\n"
+        "\tpause\n"
+        "endif\n", name, name, ws, gui, ws, sys, W)
 
     ret
 

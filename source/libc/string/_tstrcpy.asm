@@ -131,7 +131,7 @@ elseif defined(_WIN64) and not defined(_UNICODE)
     jz          .4
     bsf         ecx,r9d
     inc         ecx
-    test        cl,00001000B
+    test        cl,00011000B
     jnz         .2
     test        cl,00000100B
     jnz         .1

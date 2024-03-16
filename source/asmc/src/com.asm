@@ -71,6 +71,7 @@ ClearStruct proto __ccall :string_t, :asym_t
 ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 
    .new adr[16]:sbyte
+   .new name:string_t
 
     ldr rbx,tokenarray
     mov edi,tstricmp( [rbx].string_ptr, "@ComAlloc" )
@@ -89,14 +90,25 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     .if ( [rbx-asm_tok].token != T_OP_BRACKET )
         .return 0
     .endif
-    .new name:string_t = [rbx].string_ptr
-    .if ( SymFind( rax ) == NULL )
+
+    SymFind( [rbx].string_ptr )
+    .if ( rax && [rax].asym.state == SYM_TMACRO )
+        SymFind( [rax].asym.string_ptr )
+    .endif
+    .if ( rax == NULL )
         .return ERROR
     .endif
+    .if ( [rax].asym.state == SYM_TYPE )
+        .while ( [rax].asym.type )
+            mov rax,[rax].asym.type
+        .endw
+    .endif
+
     .if ( !( [rax].asym.flags & S_VTABLE ) )
         .return 0
     .endif
     mov rsi,rax
+    mov name,[rsi].asym.name
 
     .new table:string_t = NULL
     .if ( [rbx+asm_tok].token == T_COMMA && [rbx+asm_tok*3].token == T_CL_BRACKET )

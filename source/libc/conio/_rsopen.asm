@@ -43,6 +43,7 @@ _rsopen proc uses rsi rdi rbx rs:PTRES
         add eax,edx
     .endf
 
+    mov     rs,rdi
     mov     xsize,eax
     add     eax,rsize
     add     eax,dsize

@@ -99,24 +99,15 @@ getline proc fastcall uses rdi rbx ti:PTEDIT
         mov     edx,[rcx].bcols     ; terminate line
         xor     eax,eax             ; set length of line
         mov     ecx,-1
-ifdef _UNICODE
-        mov     [rdi+rdx*TCHAR-TCHAR],ax
-        repne   scasw
-else
-        mov     [rdi+rdx-TCHAR],al
-        repne   scasb
-endif
+        mov     [rdi+rdx*TCHAR-TCHAR],_tal
+        repne   _tscasb
         not     ecx
         dec     ecx
         sub     rdi,TCHAR
         mov     [rbx].bcount,ecx
         sub     ecx,[rbx].bcols     ; clear rest of line
         neg     ecx
-ifdef _UNICODE
-        rep     stosw
-else
-        rep     stosb
-endif
+        rep     _tstosb
         mov     rcx,rbx
         mov     edx,[rcx].bcount
         mov     rax,[rcx].base
@@ -328,23 +319,14 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
                 mov     edx,esi
                 mov     ecx,-1
                 xor     eax,eax
-ifdef _UNICODE
-                repnz   scasw
-else
-                repnz   scasb
-endif
+                repnz   _tscasb
                 not     ecx
                 inc     ecx
                 mov     rsi,rdi
-                add     rdi,2
+                add     rdi,TCHAR
                 std
-ifdef _UNICODE
-                rep     movsw
-                mov     [rdi],dx
-else
-                rep     movsb
-                mov     [rdi],dl
-endif
+                rep     _tmovsb
+                mov     [rdi],_tdl
                 cld
 
                .return( 1 )

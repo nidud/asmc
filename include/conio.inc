@@ -53,7 +53,17 @@ _inp		proto __cdecl :UINT
 _inpw		proto __cdecl :UINT
 _inpd		proto __cdecl :UINT
 endif
+ifdef _MSVCRT
 _kbhit		proto __cdecl
+else
+_kbhitA		proto __cdecl
+_kbhitW		proto __cdecl
+ifdef _UNICODE
+define _kbhit <_kbhitW>
+else
+define _kbhit <_kbhitA>
+endif
+endif
 ifdef _M_IX86
 _outp		proto __cdecl :UINT, :UINT
 _outpw		proto __cdecl :UINT, :UINT
@@ -73,7 +83,7 @@ _putwch_nolock	proto __cdecl :wchar_t
 _getwch		proto __cdecl
 _getwche	proto __cdecl
 _cgetws		proto __cdecl :LPWSTR
-_ungetwch	proto __cdecl :UINT
+_ungetwch	proto __cdecl :int_t
 _cputws		proto __cdecl :LPWSTR
 _cwprintf	proto __Cdecl :LPWSTR, :VARARG
 _cwscanf	proto __Cdecl :LPWSTR, :VARARG
@@ -369,7 +379,8 @@ _coutA		proto __Cdecl :string_t, :vararg
 _coutW		proto __Cdecl :wstring_t, :vararg
 _readinputA	proto __cdecl :PINPUT_RECORD
 _readinputW	proto __cdecl :PINPUT_RECORD
-_kbflush	proto __cdecl
+_kbflushA	proto __cdecl
+_kbflushW	proto __cdecl
 
 _scgetp		proto __cdecl :uchar_t, :uchar_t, :uchar_t
 _scgeta		proto __cdecl :uchar_t, :uchar_t
@@ -436,6 +447,8 @@ _clipgetW	proto __cdecl
 
 _msgboxA	proto __Cdecl :uint_t, :string_t, :string_t, :vararg
 _msgboxW	proto __Cdecl :uint_t, :wstring_t, :wstring_t, :vararg
+_syserrA	proto __cdecl :uint_t, :string_t
+_syserrW	proto __cdecl :uint_t, :wstring_t
 
 _dlopen		proto __cdecl :TRECT, :uint_t, :uint_t, :uint_t
 _dlinitA	proto __cdecl :THWND, :string_t
@@ -539,9 +552,11 @@ define _dlinit		<_dlinitW>
 define _dltitle		<_dltitleW>
 define _tcontrol	<_tcontrolW>
 define _msgbox		<_msgboxW>
+define _syserr		<_syserrW>
 define _clipget		<_clipgetW>
 define _clipset		<_clipsetW>
 define _readinput	<_readinputW>
+define _kbflush		<_kbflushW>
 else
 define _cout		<_coutA>
 define _scputs		<_scputsA>
@@ -555,9 +570,11 @@ define _dlinit		<_dlinitA>
 define _dltitle		<_dltitleA>
 define _tcontrol	<_tcontrolA>
 define _msgbox		<_msgboxA>
+define _syserr		<_syserrA>
 define _clipget		<_clipgetA>
 define _clipset		<_clipsetA>
 define _readinput	<_readinputA>
+define _kbflush		<_kbflushA>
 endif
 
 ; Unicode box charcters -- https://www.compart.com/en/unicode/U+2500

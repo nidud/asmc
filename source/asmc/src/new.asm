@@ -1022,6 +1022,15 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 add rbx,asm_tok ; go past ')'
                 mov endtok,rbx
+
+                .if ( SymSearch( rsi ) )
+                    .if ( [rax].asym.state == SYM_TYPE )
+                        .while ( [rax].asym.type )
+                            mov rax,[rax].asym.type
+                        .endw
+                    .endif
+                    mov rsi,[rax].asym.name
+                .endif
                 ConstructorCall( name, &endtok, rdi, rsi, type )
                 mov rbx,endtok
 

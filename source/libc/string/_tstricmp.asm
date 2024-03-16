@@ -5,52 +5,58 @@
 ;
 
 include string.inc
+include ctype.inc
 include tchar.inc
+
+ifdef _WIN64
+define rgd <r8d>
+define rgq <r8>
+define reg <r9>
+define use_regs <>
+else
+define rgd <edi>
+define rgq <edi>
+define reg <esi>
+define use_regs <uses esi edi>
+endif
 
     .code
 
     option dotname
 
-_tcsicmp proc a:LPTSTR, b:LPTSTR
+_tcsicmp proc use_regs a:LPTSTR, b:LPTSTR
 
     ldr     rcx,a
     ldr     rdx,b
-
-    sub     rcx,TCHAR
-    sub     rdx,TCHAR
+    mov     reg,_pclmap
     mov     eax,1
 .0:
     test    eax,eax
-    jz      .3
+    jz      .2
+    movzx   eax,TCHAR ptr [rcx]
+    movzx   rgd,TCHAR ptr [rdx]
     add     rcx,TCHAR
     add     rdx,TCHAR
-    mov     _tal,[rcx]
-    cmp     _tal,[rdx]
+ifdef _UNICODE
+    cmp     eax,255
+    ja      .3
+    cmp     rgd,255
+    ja      .3
+endif
+    mov     al,[reg+rax]
+    cmp     al,[reg+rgq]
     je      .0
-    cmp     _tal,'A'
-    jb      .1
-    cmp     _tal,'Z'
-    ja      .1
-    or      al,0x20
-    cmp     _tal,[rdx]
-    je      .0
-    jmp     .2
 .1:
-    mov     _tal,[rdx]
-    cmp     _tal,'A'
-    jb      .2
-    cmp     _tal,'Z'
-    ja      .2
-    or      al,0x20
-    cmp     _tal,[rcx]
-    je      .0
-.2:
-    mov     _tal,[rcx]
-    cmp     _tal,[rdx]
     sbb     rax,rax
     sbb     rax,-1
-.3:
+.2:
     ret
+ifdef _UNICODE
+.3:
+    cmp     eax,rgd
+    je      .0
+    jmp     .1
+endif
 
 _tcsicmp endp
 

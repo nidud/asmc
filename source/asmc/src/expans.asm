@@ -2030,6 +2030,8 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
    .new lvl           : int_t
    .new rc            : int_t
    .new addbrackets   : int_t
+   .new tmp           : int_t
+   .new class         : string_t
    .new buffer        : string_t = alloc_line()
 
     ; filter certain conditions.
@@ -2254,63 +2256,99 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
                 .if ( [rbx+asm_tok].token == T_DBL_COLON )
 
+                    mov class,[rbx].string_ptr
+                    .if ( SymSearch( rax ) )
+                        .if ( [rax].asym.state == SYM_TYPE )
+                            .while ( [rax].asym.type )
+                                mov rax,[rax].asym.type
+                            .endw
+                        .endif
+                        mov rcx,[rax].asym.name
+                        mov class,rcx
+                    .endif
+
                     xor edi,edi
+                    mov ecx,[rbx+3*asm_tok].tokval
                     .if ( [rbx+3*asm_tok].token == T_DIRECTIVE &&
-                        ( [rbx+3*asm_tok].tokval == T_PROC || [rbx+3*asm_tok].tokval == T_PROTO ) )
+                        ( ecx == T_PROC || ecx == T_PROTO ) )
 
                         ; if 'class::name proto|proc'
 
                         inc edi
-                        .if ( SymSearch( [rbx].string_ptr ) )
-                            .if ( [rax].asym.flags & S_CLASS )
+                        .if ( rax && [rax].asym.flags & S_CLASS )
 
-                                ; - add 'this:ptr class' as first argument
+                            ; - add 'this:ptr class' as first argument
 
-                                inc edi
-                            .endif
+                            inc edi
                         .endif
 
                     .else
 
+                        ; class::name(..
+                        ; class::name endp
+
                         mov al,[rbx].token
                         mov ah,[rbx+asm_tok*2].token
                         .if ( ( al != T_REG && [rbx+3*asm_tok].token == T_OP_BRACKET ) ||
-                              ( al < T_STRING && al > T_REG &&
-                                ah < T_STRING && ah > T_REG ) )
+                              ( al < T_STRING && al > T_REG && ah < T_STRING && ah > T_REG ) )
+
+                            ; T_DIRECTIVE
+                            ; T_UNARY_OPERATOR
+                            ; T_BINARY_OPERATOR
+                            ; T_STYPE
+                            ; T_RES_ID
+                            ; T_ID
+
                             inc edi
                         .endif
 
                     .endif
+                    mov tmp,edi
 
-                    .if ( edi == 1 )
-
-                        mov rdi,[rbx+asm_tok].tokpos
-                        .while ( byte ptr [rdi-1] <= ' ' )
-                            dec rdi
-                        .endw
-                        mov rsi,[rbx+asm_tok*2].tokpos
-                        mov al,'_'
-                        stosb
-                        mov ecx,tstrlen(rsi)
-                        inc ecx
-                        rep movsb
-
-                    .elseif ( edi > 1 )
+                    .if ( edi )
 
                         mov rdi,buffer
                         mov rdx,tokenarray
                         mov rsi,[rdx].asm_tok.tokpos
-                        mov rcx,[rbx+asm_tok].tokpos
+                        mov rcx,[rbx].tokpos
                         sub rcx,rsi
                         rep movsb
-                        mov al,'_'
-                        stosb
-                        mov rsi,[rbx+asm_tok*2].tokpos
+                        mov rsi,class
+                        .repeat
+                            lodsb
+                            stosb
+                        .until !al
+                        mov byte ptr [rdi-1],'_'
+
+                        .if !tstrcmp( [rbx].string_ptr, [rbx+asm_tok*2].string_ptr )
+
+                            mov rsi,class
+                            .repeat
+                                lodsb
+                                stosb
+                            .until !al
+                            mov byte ptr [rdi-1],' '
+                            mov rsi,[rbx+asm_tok*3].tokpos
+                            mov edx,4*asm_tok
+                        .else
+                            mov rsi,[rbx+asm_tok*2].tokpos
+                            mov edx,3*asm_tok
+                        .endif
+
+                    .endif
+
+                    .if ( tmp == 1 )
+
+                        mov ecx,tstrlen(rsi)
+                        inc ecx
+                        rep movsb
+
+                    .elseif ( tmp > 1 )
 
                         ;
                         ; class::name proc syscall private uses regs name:dword,..
                         ;
-                        .for ( edx = 3*asm_tok : [rbx+rdx].token != T_FINAL : rdx+=asm_tok )
+                        .for ( : [rbx+rdx].token != T_FINAL : rdx+=asm_tok )
                             .break .if ( [rbx+rdx].token == T_COLON )
                             .break .if ( [rbx+rdx].token == T_STRING )
                         .endf
@@ -2336,7 +2374,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                         stosd
                         mov ax,' r'
                         stosw
-                        mov rcx,[rbx].string_ptr
+                        mov rcx,class
                         mov al,[rcx]
                         .while al
                             stosb
@@ -2351,12 +2389,18 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                         mov ecx,tstrlen(rsi)
                         inc ecx
                         rep movsb
-                        tstrcpy(string, buffer)
                     .endif
 
                     .if ( edi )
 
+                        tstrcpy(string, buffer)
                         mov TokenCount,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
+                        .if ( eax > 2 && rbx == tokenarray && [rbx].flags & T_ISPROC && 
+                              [rbx+asm_tok].token == T_OP_BRACKET )
+
+                            tstrcat( tstrcpy( buffer, "invoke " ), [rbx].tokpos )
+                            mov TokenCount,Tokenize( tstrcpy( string, buffer ), 0, rbx, TOK_DEFAULT )
+                        .endif
                         sub rbx,asm_tok
                     .endif
                 .endif

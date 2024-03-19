@@ -188,8 +188,8 @@ wm_lbbuttondown proc uses rbx hwnd:THWND, lParam:COORD
         .return TRUE
     .endif
 
-    .if ( [rbx].type == T_WINDOW )
-
+    .switch [rbx].type
+    .case T_WINDOW
         mov ecx,[rbx].flags
         and ecx,W_ISOPEN or W_VISIBLE or W_MOVEABLE
         .if ( eax != 1 || ecx != W_ISOPEN or W_VISIBLE or W_MOVEABLE )
@@ -206,10 +206,7 @@ wm_lbbuttondown proc uses rbx hwnd:THWND, lParam:COORD
         .if ( [rbx].flags & W_SHADE )
             _rcshade([rbx].rc, [rbx].window, 0)
         .endif
-        .return( 0 )
-    .endif
-
-    .switch [rbx].type
+        .endc
     .case T_PUSHBUTTON
         mov [rbx].context.state,1
         mov rc,ecx
@@ -241,6 +238,9 @@ wm_lbbuttondown proc uses rbx hwnd:THWND, lParam:COORD
             _postmessage([rbx].prev, WM_COMMAND, rdx, rcx)
         .endif
         .endc
+    .case T_SCROLLUP
+    .case T_SCROLLDOWN
+        .return 1
     .endsw
     .return( 0 )
 
@@ -284,7 +284,7 @@ wm_lbuttonup proc fastcall uses rbx hwnd:THWND
         .if ( [rbx].flags & O_DEXIT )
             .return _postquitmsg(rbx, edx)
         .endif
-        .return _postmessage([rbx].prev, WM_COMMAND, rdx, 0)
+        .return _postmessage([rbx].prev, WM_COMMAND, rdx, VK_RETURN)
     .case T_RADIOBUTTON
         .return 1 .if ( [rbx].context.state == 0 )
          mov [rbx].context.state,0
@@ -297,6 +297,8 @@ wm_lbuttonup proc fastcall uses rbx hwnd:THWND
     .case T_XCELL
         ;[rcx].SetFocus( [rcx].Index )
         ;.endc
+    .case T_SCROLLUP
+    .case T_SCROLLDOWN
         .return 1
     .endsw
     .return( 0 )
@@ -396,6 +398,13 @@ wm_setfocus proc uses rbx hwnd:THWND
         _scgeta(rc.x, rc.y)
         mov [rbx].context.flags,al
         _scputbg(rc.x, rc.y, rc.col, BG_INVERSE)
+        .if ( [rbx].flags & O_LIST )
+            movzx eax,[rbx].index
+            mov rbx,[rbx].prev
+            mov rdx,[rbx].context.llist
+            sub eax,[rdx].TLIST.dlgoff
+            mov [rdx].TLIST.celoff,eax
+        .endif
        .endc
     .endsw
     .return( 0 )
@@ -495,7 +504,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
         .if ( [rbx].flags & O_DEXIT )
             .return _postquitmsg(rbx, edx)
         .endif
-        .return _postmessage([rbx].prev, WM_COMMAND, rdx, 0)
+        .return _postmessage([rbx].prev, WM_COMMAND, rdx, rax)
     .elseif ( eax == VK_TAB )
         .return _dlnextitem(rbx)
     .elseif ( eax == VK_ESCAPE )

@@ -1,27 +1,27 @@
-; _TWSREAD.ASM--
+; _TDREAD.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include wsub.inc
+include direct.inc
 include string.inc
 include malloc.inc
 include tchar.inc
 
     .code
 
-    assume rbx:PWSUB
+    assume rbx:PDIRENT
 
-_wsread proc uses rbx wp:PWSUB
+_dread proc uses rbx d:PDIRENT
 
    .new h:intptr_t
    .new fp:tstring_t
    .new ff:_tfinddatai64_t
 
-    ldr rbx,wp
+    ldr rbx,d
 
-    _wsfree(rbx)
+    _dfree(rbx)
     _tcslen([rbx].path)
     add rax,[rbx].path
     mov fp,rax
@@ -52,7 +52,7 @@ _wsread proc uses rbx wp:PWSUB
 
         mov rcx,rax
         mov [rcx].FBLK.name,NULL
-        mov [rcx].FBLK.attr,ff.attrib
+        mov [rcx].FBLK.attrib,ff.attrib
         mov [rcx].FBLK.size,ff.size
 
         mov rax,[rbx].fcb
@@ -89,8 +89,8 @@ _wsread proc uses rbx wp:PWSUB
             mov [rcx].FBLK.name,rax
         .endf
         mov [rdx],rbx
-        mov rbx,wp
-        mov eax,[rbx].WSUB.count
+        mov rbx,d
+        mov eax,[rbx].DIRENT.count
 
     .else
 
@@ -104,6 +104,6 @@ _wsread proc uses rbx wp:PWSUB
     .endif
     ret
 
-_wsread endp
+_dread endp
 
     end

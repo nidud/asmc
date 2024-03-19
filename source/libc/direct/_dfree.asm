@@ -1,19 +1,19 @@
-; _WSFREE.ASM--
+; _DFREE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include wsub.inc
+include direct.inc
 include malloc.inc
 
 .code
 
-    assume rbx:PWSUB
+    assume rbx:PDIRENT
 
-_wsfree proc uses rbx wp:PWSUB
+_dfree proc uses rbx d:PDIRENT
 
-    ldr rbx,wp
+    ldr rbx,d
 
     .while ( [rbx].count )
 
@@ -22,10 +22,13 @@ _wsfree proc uses rbx wp:PWSUB
         mov rdx,[rbx].fcb
         free([rdx+rcx*size_t])
     .endw
-    free([rbx].fcb)
+    mov rcx,[rbx].fcb
     mov [rbx].fcb,NULL
+    .if ( rcx )
+        free(rcx)
+    .endif
     ret
 
-_wsfree endp
+_dfree endp
 
     end

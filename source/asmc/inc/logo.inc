@@ -26,7 +26,11 @@ ifdef ASMC64
  char_t "64"
 endif
  char_t " [ options ] filelist",10
+ifdef __UNIX__
+ char_t "Use option -h for more info" ,10
+else
  char_t "Use option -? for more info" ,10
+endif
  char_t 0
 
 cp_options \

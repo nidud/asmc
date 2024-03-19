@@ -1,4 +1,4 @@
-; _TWSSORT.ASM--
+; _TDSORT.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -6,11 +6,11 @@
 
 include string.inc
 include stdlib.inc
-include wsub.inc
+include direct.inc
 include tchar.inc
 
     .data
-     wsortflag dd 0
+     sortflag dd 0
 
     .code
 
@@ -23,13 +23,13 @@ compare proc private uses rsi rdi rbx a:PFBLK, b:PFBLK
 
     ldr rax,b
     mov rsi,[rax]
-    mov edx,[rsi].FBLK.attr
+    mov edx,[rsi].FBLK.attrib
     mov rbx,[rsi].FBLK.name
     mov name_b,rbx
 
     ldr rax,a
     mov rdi,[rax]
-    mov ecx,[rdi].FBLK.attr
+    mov ecx,[rdi].FBLK.attrib
     mov rbx,[rdi].FBLK.name
     mov name_a,rbx
     test ecx,_F_SUBDIR
@@ -46,29 +46,29 @@ compare proc private uses rsi rdi rbx a:PFBLK, b:PFBLK
     mov eax,ecx
     and edx,_F_SUBDIR
     and eax,_F_SUBDIR
-    mov ecx,wsortflag
+    mov ecx,sortflag
     jz  .1
     test edx,edx
     jz  .1
-    test ecx,_W_SORTSUB
+    test ecx,_D_SORTSUB
     jnz .2
-    mov ecx,_W_SORTNAME
+    mov ecx,_D_SORTNAME
     jmp .3
 .1:
     or  eax,edx
     jz  .2
-    mov ecx,_W_SORTSUB
+    mov ecx,_D_SORTSUB
     jmp .3
 .2:
-    and ecx,_W_SORTSIZE or _W_SORTTYPE or _W_SORTDATE
+    and ecx,_D_SORTSIZE or _D_SORTTYPE or _D_SORTDATE
 .3:
-    cmp ecx,_W_SORTTYPE
+    cmp ecx,_D_SORTTYPE
     je  .4
-    cmp ecx,_W_SORTDATE
+    cmp ecx,_D_SORTDATE
     je  .6
-    cmp ecx,_W_SORTSIZE
+    cmp ecx,_D_SORTSIZE
     je  .7
-    cmp ecx,_W_SORTSUB
+    cmp ecx,_D_SORTSUB
     je  .8
     jmp .N
 .4:
@@ -110,7 +110,7 @@ endif
     ja  .9
     jmp .N
 .8:
-    test [rsi].FBLK.attr,_F_SUBDIR
+    test [rsi].FBLK.attrib,_F_SUBDIR
     jnz .A
 .9:
     mov eax,-1
@@ -129,14 +129,14 @@ endif
 
 compare endp
 
-_wssort proc uses rbx wp:PWSUB
+_dsort proc uses rbx d:PDIRENT
 
-    ldr rbx,wp
+    ldr rbx,d
 
-    mov wsortflag,[rbx].WSUB.flags
-    qsort([rbx].WSUB.fcb, [rbx].WSUB.count, size_t, &compare)
+    mov sortflag,[rbx].DIRENT.flags
+    qsort([rbx].DIRENT.fcb, [rbx].DIRENT.count, size_t, &compare)
     ret
 
-_wssort endp
+_dsort endp
 
     end

@@ -3,16 +3,20 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char *strpbrk(const char *str, const char *strCharSet);
+; wchar_t *wcspbrk(wchar_t *str, const wchar_t *strCharSet);
+;
+; Scans strings for characters in specified character sets.
+;
 include string.inc
 include tchar.inc
 
     .code
 
-_tcspbrk proc uses rsi rdi rbx s1:LPTSTR, s2:LPTSTR
+_tcspbrk proc uses rsi rdi rbx string:LPTSTR, CharSet:LPTSTR
 
-    ldr     rcx,s1
-    ldr     rdx,s2
+    ldr     rcx,string
+    ldr     rdx,CharSet
     mov     rbx,rcx
     xor     eax,eax
     mov     rdi,rdx

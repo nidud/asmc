@@ -1,22 +1,22 @@
-; _WSCLOSE.ASM--
+; _DCLOSE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include wsub.inc
+include direct.inc
 include malloc.inc
 
-.code
+    .code
 
-    assume rbx:PWSUB
+    assume rbx:PDIRENT
 
-_wsclose proc uses rbx wp:PWSUB
+_dclose proc uses rbx d:PDIRENT
 
-    ldr rbx,wp
+    ldr rbx,d
 
-    _wsfree(rbx)
-    .if ( [rbx].flags & _W_MALLOC )
+    _dfree(rbx)
+    .if ( [rbx].flags & _D_MALLOC )
 
         free(rbx)
     .else
@@ -26,6 +26,6 @@ _wsclose proc uses rbx wp:PWSUB
     xor eax,eax
     ret
 
-_wsclose endp
+_dclose endp
 
     end

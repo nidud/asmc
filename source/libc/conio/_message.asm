@@ -63,6 +63,7 @@ _postmessage proc hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
         .else
             mov _msgptr,rax
         .endif
+        xor eax,eax
     .endif
     ret
 
@@ -99,6 +100,7 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
             mov [rbx].wParam,[rdx].wParam
             mov [rbx].lParam,[rdx].lParam
             mov [rbx].message,[rdx].message
+            mov [rdx].message,WM_NULL
 
             .if ( eax == WM_QUIT )
 
@@ -331,6 +333,13 @@ _getmessage endp
 _translatemsg proc uses rbx msg:PMESSAGE
 
     ldr rbx,msg
+
+    mov eax,[rbx].message
+    .if ( eax == WM_NULL )
+
+        .return
+    .endif
+
     mov rcx,[rbx].hwnd
     .if ( rcx == NULL )
 
@@ -339,7 +348,10 @@ _translatemsg proc uses rbx msg:PMESSAGE
         .endf
         mov [rbx].hwnd,rcx
     .endif
-    .return .if ( !_sendmessage([rbx].hwnd, [rbx].message, [rbx].wParam, [rbx].lParam) )
+
+    _sendmessage([rbx].hwnd, [rbx].message, [rbx].wParam, [rbx].lParam)
+
+    .return .if ( !eax )
     .return .if ( [rbx].message != WM_KEYDOWN )
 
     mov rcx,[rbx].lParam

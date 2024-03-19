@@ -399,8 +399,11 @@ is_quote:
             .break .if ( ( al == ' ' || al == 9 ) && ( type != '@' ) )
 
             .if type == 0
-
+ifdef __UNIX__
+                .break .if ( al == '-' && eax != 'leh-' )
+else
                 .break .if ( al == '-' || al == '/' )
+endif
             .endif
 
             .if ( al == '=' && type == '$' && equatefound == FALSE )
@@ -653,7 +656,11 @@ endif
         mov Options.pe_subsystem,1
         define_name( "__GUI__", "1" )
         .return
+ifdef __UNIX__
+    .case 'leh-'            ; --help
+else
     .case '?'
+endif
     .case 'h'
         write_options()
         exit(1)

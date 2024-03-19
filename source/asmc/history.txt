@@ -23,6 +23,7 @@ Changes in 2.35 - xx xxx 2022
 - added alignment for Unicode strings
 - added "quotes" to .pragma comment(lib, "lib-2.0")
   - if "lib-name" is quoted: transfer quotes to directive
+- removed -? from Linux and added --help (@piglu)
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

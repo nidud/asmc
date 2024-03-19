@@ -279,7 +279,7 @@ if(_WIN32_WINNT GE 0x0500)
 VK_XBUTTON1		equ 0x05
 VK_XBUTTON2		equ 0x06
 endif
-ifdef __UNIX__
+if defined(__UNIX__) or defined(__TTY__)
 VK_BACK			equ 0x7F
 else
 VK_BACK			equ 0x08

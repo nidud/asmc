@@ -232,7 +232,8 @@ _getattrib macro B, F
     O_MODIFIED		= 0x00200000,	; dialog text
     O_OVERWRITE		= 0x00400000,	; selected text on paste
     O_USEBEEP		= 0x00800000,
-    O_CURSOR		= 0x01000000
+    O_CURSOR		= 0x01000000,
+    O_MYBUF		= 0x02000000,	; T_EDIT -- no alloc
     }
 
 .enum CURSOR_TYPE {
@@ -271,6 +272,7 @@ _getattrib macro B, F
     index	dd ?		; index in list buffer
     list	array_t ?	; pointer to list buffer
    .ends
+    PTLIST	typedef ptr TLIST
 
 .template TOBJ
     flags	dd ?
@@ -311,8 +313,9 @@ _getattrib macro B, F
       y		db ?
       rc	TRECT <>
      ends
-     object	ptr_t ?
+     tedit	PTEDIT ?
     ends
+    llist	PTLIST ?
    .ends
 
 
@@ -395,6 +398,8 @@ _scgetl		proto __cdecl :int_t, :int_t, :int_t
 _scputl		proto __cdecl :int_t, :int_t, :int_t, :PCHAR_INFO
 _scputsA	proto __cdecl :uchar_t, :uchar_t, :string_t
 _scputsW	proto __cdecl :uchar_t, :uchar_t, :wstring_t
+_scnputsA	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :string_t
+_scnputsW	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :wstring_t
 _scputfA	proto __Cdecl :uchar_t, :uchar_t, :string_t, :vararg
 _scputfW	proto __Cdecl :uchar_t, :uchar_t, :wstring_t, :vararg
 _scpathA	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :string_t
@@ -466,6 +471,11 @@ _dltitleW	proto __cdecl :THWND, :wstring_t
 
 _tcontrolA	proto __cdecl :THWND, :uint_t, :ushort_t, :string_t
 _tcontrolW	proto __cdecl :THWND, :uint_t, :ushort_t, :wstring_t
+_tiputsA	proto fastcall :PTEDIT
+_tiputsW	proto fastcall :PTEDIT
+_tiprocA	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
+_tiprocW	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
+
 _conslink	proto __cdecl :THWND
 _consunlink	proto __cdecl :THWND
 _conpaint	proto __cdecl
@@ -480,7 +490,8 @@ _translatemsg	proto __cdecl :PMESSAGE
 _postquitmsg	proto fastcall :THWND, :uint_t
 _defwinproc	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 
-_rsopen		proto __cdecl :PTRES
+_rsopenA	proto __cdecl :PTRES
+_rsopenW	proto __cdecl :PTRES
 _rssave		proto __cdecl :THWND, :string_t
 
 _getkey		proto __cdecl
@@ -542,6 +553,7 @@ define RST_PIXEL_POSITION_MOUSE	   <CSI "?1016l">
 ifdef _UNICODE
 define _cout		<_coutW>
 define _scputs		<_scputsW>
+define _scnputs		<_scnputsW>
 define _scputf		<_scputfW>
 define _scpath		<_scpathW>
 define _sccenter	<_sccenterW>
@@ -550,7 +562,10 @@ define _rcputs		<_rcputsW>
 define _rcputf		<_rcputfW>
 define _dlinit		<_dlinitW>
 define _dltitle		<_dltitleW>
+define _rsopen		<_rsopenW>
 define _tcontrol	<_tcontrolW>
+define _tiputs		<_tiputsW>
+define _tiproc		<_tiprocW>
 define _msgbox		<_msgboxW>
 define _syserr		<_syserrW>
 define _clipget		<_clipgetW>
@@ -560,6 +575,7 @@ define _kbflush		<_kbflushW>
 else
 define _cout		<_coutA>
 define _scputs		<_scputsA>
+define _scnputs		<_scnputsA>
 define _scputf		<_scputfA>
 define _scpath		<_scpathA>
 define _sccenter	<_sccenterA>
@@ -568,7 +584,10 @@ define _rcputs		<_rcputsA>
 define _rcputf		<_rcputfA>
 define _dlinit		<_dlinitA>
 define _dltitle		<_dltitleA>
+define _rsopen		<_rsopenA>
 define _tcontrol	<_tcontrolA>
+define _tiputs		<_tiputsA>
+define _tiproc		<_tiprocA>
 define _msgbox		<_msgboxA>
 define _syserr		<_syserrA>
 define _clipget		<_clipgetA>

@@ -51,7 +51,7 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     add     rax,rbx
     mov     [rbx].window,rax
     lea     rax,[rbx+TCLASS]
-    cmp     count,ecx
+    cmp     ecx,count
     cmovz   rax,rcx
     mov     [rbx].object,rax
     mov     eax,O_CHILD

@@ -1,11 +1,15 @@
 ifdef YACC
 
 getenv:
-	asmc64 -fpic $@.asm
+	asmc -fpic -elf64 $@.asm
 	gcc -nostdlib -o $@64 $@.o -l:libasmc.a -Wl,-Map $@64.map
 	asmc -fpic -elf $@.asm
-	gcc -nostdlib -m32 -o $@32 $@.o -l:x86/libasmc.a -Wl,-Map $@32.map
-
+	gcc -static -m32 -nostdlib -o $@32 $@.o -l:x86/libasmc.a -Wl,-Map $@32.map
+clean:
+	rm *.o
+	rm *.map
+	rm ./getenv32
+	rm ./getenv64
 else
 
 getenv.exe:

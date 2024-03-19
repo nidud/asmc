@@ -9,7 +9,7 @@ include tchar.inc
 
 .code
 
-_tmain proc argc:int_t, argv:array_t
+_tmain proc
 
    .new w:int_t
    .new h:int_t
@@ -21,14 +21,16 @@ endif
     _cout(CSI "500;500H" )  ; goto x;y (to big)
     _cout(CSI "6n" )        ; read position
     _cursorxy()
-    movzx ecx,ax
-    shr eax,16
-    mov h,eax
-    mov w,ecx
+
+    movzx   ecx,ax
+    shr     eax,16
+    mov     h,eax
+    mov     w,ecx
+
     _cout(ESC "8" ) ; pop cursor
     _cout("The size of the console is \e[7m%d:%d\e[0m\n\n", w, h)
    .return(0)
 
 _tmain endp
 
-    end _tstart
+    end

@@ -262,7 +262,7 @@ _gettch proc uses rbx
 
     .if ( chbuf != EOF )
 
-        movzx eax,byte ptr chbuf
+        movzx eax,TCHAR ptr chbuf
         mov chbuf,EOF
        .return
     .endif
@@ -309,13 +309,13 @@ _gettch proc uses rbx
 _gettch endp
 
 
-_getche proc
+_gettche proc
 
     .new c:int_t
 
     .if ( chbuf != EOF )
 
-        movzx eax,byte ptr chbuf
+        mov eax,chbuf
         mov chbuf,EOF
        .return
     .endif
@@ -328,7 +328,7 @@ _getche proc
     .endif
     .return EOF
 
-_getche endp
+_gettche endp
 
 
 _kbhit proc uses rbx

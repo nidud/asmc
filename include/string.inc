@@ -40,6 +40,7 @@ _mbspbrk	proto __cdecl :LPSTR, :LPSTR
 _strset		proto __cdecl :LPSTR, :SINT
 _strnset	proto __cdecl :LPSTR, :SINT, :size_t
 strtok		proto __cdecl :LPSTR, :LPSTR
+strpbrk		proto __cdecl :LPSTR, :LPSTR
 
 strcpy_s	proto __cdecl :LPSTR, :size_t, :LPSTR
 strcat_s	proto __cdecl :LPSTR, :size_t, :LPSTR

@@ -6,6 +6,7 @@
 include conio.inc
 include stdio.inc
 include malloc.inc
+include tchar.inc
 
     .code
 
@@ -88,23 +89,14 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
 
         .for ( rsi=rdx, edx=0 : dl < [rbx].rc.col : edx++ )
 
-ifdef _UNICODE
-            lodsw
-            .break .if !ax
-else
-            lodsb
-            .break .if !al
-endif
+            _tlodsb
+            .break .if !_tal
 
-            .if ( ax == '&' && [rbx].type != T_EDIT )
+            .if ( _tal == '&' && [rbx].type != T_EDIT )
 
-ifdef _UNICODE
-                lodsw
-                .break .if !ax
-else
-                lodsb
-                .break .if !al
-endif
+                _tlodsb
+                .break .if !_tal
+
                 mov [rdi],ax
                 mov [rdi+2],cx
                 add rdi,4

@@ -3,6 +3,8 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+ifndef __SYSCALL_INC
+define __SYSCALL_INC
 
 .enum {
 
@@ -589,4 +591,5 @@ sys_getdents64 proto fastcall :int_t, :ptr, :abs {
     syscall_2(_1, _2, SYS_GETDENTS64)
     }
 
+endif
 endif

@@ -1,3 +1,5 @@
+ifndef __STAT_INC
+define __STAT_INC
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
@@ -194,3 +196,4 @@ _wstat64    proto __cdecl :wstring_t, :PSTAT64
 endif
 
 .pragma list(pop)
+endif

@@ -13,8 +13,8 @@ include string.inc
 memxchg proc uses rbx rdi dst:ptr, src:ptr, count:size_t
 
     ldr     rax,dst
-    ldr     rdx,src
     ldr     rcx,count
+    ldr     rdx,src
     jmp     .2
 .1:
     sub     rcx,size_t

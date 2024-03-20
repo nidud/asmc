@@ -113,7 +113,7 @@ _tfindfirsti64 proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddatai64_t
        .return( -1 )
     .endif
 
-    .ifd ( _tfindnext(rbx, ff) == -1 )
+    .ifd ( _tfindnexi64(rbx, ff) == -1 )
 
         _findclose( rbx )
         .return( -1 )

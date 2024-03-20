@@ -14,15 +14,19 @@ include malloc.inc
     assume rdi:PTRES
     assume rsi:THWND
 
-_rsopen proc uses rsi rdi rbx rs:PTRES
-
+if defined(_WIN64) and defined(__UNIX__)
+_rsopen proc uses rbx res:PTRES
+else
+_rsopen proc uses rsi rdi rbx res:PTRES
+endif
    .new hwnd:THWND
    .new rsize:int_t
    .new dsize:int_t
    .new tsize:int_t
    .new xsize:int_t
+   .new rdata:string_t
 
-    ldr     rbx,rs
+    ldr     rbx,res
     xor     edx,edx
     test    [rbx].flags,W_SHADE
     setnz   dl
@@ -50,7 +54,7 @@ _rsopen proc uses rsi rdi rbx rs:PTRES
         add eax,edx
     .endf
 
-    mov     rs,rdi
+    mov     rdata,rdi
     mov     xsize,eax
     add     eax,rsize
     add     eax,dsize
@@ -70,10 +74,10 @@ _rsopen proc uses rsi rdi rbx rs:PTRES
     add     rax,rsi
     cmp     ecx,xsize
     cmovz   rax,rcx
-    lea     rcx,[rax+TLIST]
+    lea     rdx,[rax+TLIST]
     mov     [rsi].context.llist,rax
     test    [rbx].flags,O_LIST
-    cmovnz  rax,rcx
+    cmovnz  rax,rdx
     mov     [rsi].buffer,rax
 
     mov     eax,dsize
@@ -137,8 +141,7 @@ _rsopen proc uses rsi rdi rbx rs:PTRES
                 lea     rax,[rcx+TEDIT]
                 mov     [rcx].base,rax
                 mov     [rdi].buffer,rax
-                mov     eax,_getattrib(BG_EDIT, FG_EDIT)
-                mov     ax,U_MIDDLE_DOT
+                mov     eax,_getattrib(BG_EDIT, FG_EDIT, U_MIDDLE_DOT)
                 mov     [rcx].clrattrib,eax
                 movzx   eax,[rbx].rc.y
                 add     al,[rdi].rc.y
@@ -166,8 +169,9 @@ _rsopen proc uses rsi rdi rbx rs:PTRES
     .if ( [rbx].flags & O_CURSOR )
         _getcursor(&[rbx].cursor)
     .endif
-    _rcunzip([rbx].rc, [rbx].window, rs)
-    .return( _conslink(rbx) )
+    _rcunzip([rbx].rc, [rbx].window, rdata)
+    _conslink(rbx)
+    ret
 
 _rsopen endp
 

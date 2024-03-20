@@ -168,8 +168,8 @@ define FG_EDIT		7	; GRAY
 _getat macro B, F
     exitm<( F or ( B shl 4 ) )>
     endm
-_getattrib macro B, F
-    exitm<( ( ( F or ( B shl 4 ) ) shl 16 ) or ' ' )>
+_getattrib macro B, F, C:=<' '>
+    exitm<( ( ( F or ( B shl 4 ) ) shl 16 ) or C )>
     endm
 
 

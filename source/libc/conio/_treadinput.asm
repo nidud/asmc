@@ -420,6 +420,15 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
                .break
             .endsw
             .endc
+        .default
+            .if ( ecx == 1 )
+
+                movzx eax,al
+                mov [rbx].Event.KeyEvent.uChar.UnicodeChar,ax
+                mov [rbx].Event.KeyEvent.dwControlKeyState,LEFT_ALT_PRESSED
+               .break
+            .endif
+            .endc
         .endsw
     .endw
     .if ( [rbx].EventType == KEY_EVENT )

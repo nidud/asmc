@@ -24,114 +24,7 @@ _setfocus proc fastcall hwnd:THWND
 
 _setfocus endp
 
-
-_dlnextitem proc fastcall hwnd:THWND
-
-    .if ( _dlgetfocus(rcx) == NULL )
-        .return( 1 )
-    .endif
-    .for ( rcx = [rax].TCLASS.next : rcx : rcx = [rcx].next )
-        .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
-            .return( _setfocus(rcx) )
-        .endif
-    .endf
-     mov rcx,[rax].TCLASS.prev
-    .for ( rcx = [rcx].object : rcx : rcx = [rcx].next )
-        .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
-            .return( _setfocus(rcx) )
-        .endif
-    .endf
-    .return( 1 )
-
-_dlnextitem endp
-
-
     assume rbx:THWND
-
-_dlprevitem proc fastcall uses rbx hwnd:THWND
-
-    test    [rcx].flags,W_CHILD
-    cmovnz  rcx,[rcx].prev
-    mov     rbx,rcx
-    movzx   ecx,[rbx].index
-
-    .while ( ecx )
-        dec ecx
-        .if ( _dlgetid(rbx, ecx) )
-
-            .if ( !( [rax].TCLASS.flags & O_DEACT ) && [rax].TCLASS.type < T_MOUSERECT )
-
-                _dlsetfocus(rbx, cl)
-                .return( 0 )
-            .endif
-        .endif
-    .endw
-    mov cl,[rbx].index
-    inc ecx
-    .while ( cl < [rbx].count )
-        .if ( _dlgetid(rbx, ecx) )
-
-            .if ( !( [rax].TCLASS.flags & O_DEACT ) && [rax].TCLASS.type < T_MOUSERECT )
-
-                _dlsetfocus(rbx, cl)
-                .return( 0 )
-            .endif
-        .endif
-        inc ecx
-    .endw
-    .return( 1 )
-
-_dlprevitem endp
-
-
-_dlitemright proc fastcall hwnd:THWND
-
-    .if ( _dlgetfocus(rcx) == NULL )
-        .return( 1 )
-    .endif
-    mov rcx,[rax].TCLASS.next
-    mov eax,[rax].TCLASS.rc
-    .for ( : rcx : rcx = [rcx].next )
-        .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
-            .if ( ah == [rcx].rc.y && al < [rcx].rc.x )
-                .return( _setfocus(rcx) )
-            .endif
-        .endif
-    .endf
-    .return( 1 )
-
-_dlitemright endp
-
-
-_dlitemleft proc uses rbx hwnd:THWND
-
-    .if ( _dlgetfocus(hwnd) == NULL )
-        .return( 1 )
-    .endif
-    mov rcx,[rax].TCLASS.prev
-    .if ( [rax].TCLASS.type == T_MENUITEM || ![rcx].count || ![rcx].index )
-
-        .return( 1 )
-    .endif
-    movzx ecx,[rcx].index
-    mov ebx,[rax].TCLASS.rc
-    .while ( ecx )
-        dec ecx
-        .if ( _dlgetid(hwnd, ecx) )
-
-            .if ( !( [rax].TCLASS.flags & O_DEACT ) && [rax].TCLASS.type < T_MOUSERECT )
-
-                .if ( bh == [rax].TCLASS.rc.y && bl > [rax].TCLASS.rc.x )
-                    _dlsetfocus(hwnd, cl)
-                    .return( 0 )
-                .endif
-            .endif
-        .endif
-    .endw
-    .return( 1 )
-
-_dlitemleft endp
-
 
 _dlinside proc fastcall hwnd:THWND, pos:COORD
 
@@ -393,12 +286,14 @@ wm_setfocus proc uses rbx hwnd:THWND
         _gotoxy(rc.x, rc.y)
        .endc
     .case T_XCELL
-        mov [rbx].context.state,1
         _cursoroff()
         _scgeta(rc.x, rc.y)
         mov [rbx].context.flags,al
+        mov [rbx].context.state,1
         _scputbg(rc.x, rc.y, rc.col, BG_INVERSE)
+
         .if ( [rbx].flags & O_LIST )
+
             movzx eax,[rbx].index
             mov rbx,[rbx].prev
             mov rdx,[rbx].context.llist
@@ -506,7 +401,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
         .endif
         .return _postmessage([rbx].prev, WM_COMMAND, rdx, rax)
     .elseif ( eax == VK_TAB )
-        .return _dlnextitem(rbx)
+        .return _postmessage([rbx].prev, WM_KEYDOWN, VK_DOWN, KEY_EXTENDED)
     .elseif ( eax == VK_ESCAPE )
         .return _postquitmsg(rbx, 0)
     .endif
@@ -557,17 +452,79 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
 wm_char endp
 
 
-wm_keydown proc hwnd:THWND, wParam:UINT, lParam:UINT
+wm_keydown proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
 
-    .if ( lParam & KEY_EXTENDED )
+    ldr eax,lParam
+    .if ( eax & KEY_EXTENDED )
 
-        mov rcx,hwnd
-        .switch wParam
-        .case VK_UP:    .return _dlprevitem(rcx)
-        .case VK_DOWN:  .return _dlnextitem(rcx)
-        .case VK_LEFT:  .return _dlitemleft(rcx)
-        .case VK_RIGHT: .return _dlitemright(rcx)
-        .endsw
+        ldr rcx,hwnd
+        ldr ebx,wParam
+
+        .if ( _dlgetfocus(rcx) )
+
+            xchg rax,rbx
+            mov  rcx,[rbx].prev
+
+            .switch eax
+            .case VK_UP
+
+                .for ( eax = 0, rcx = [rcx].object : rcx != rbx : rcx = [rcx].next )
+
+                    .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
+
+                        mov rax,rcx
+                    .endif
+                .endf
+                .if ( rax )
+                    .return( _setfocus(rax) )
+                .endif
+                .endc
+
+            .case VK_DOWN
+
+                .for ( rcx = [rbx].next : rcx : rcx = [rcx].next )
+
+                    .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
+
+                        .return( _setfocus(rcx) )
+                    .endif
+                .endf
+                .endc
+
+            .case VK_LEFT
+
+                .endc .if ( [rbx].type == T_MENUITEM )
+
+                .for ( edx = [rbx].rc, eax = 0, rcx = [rcx].object : rcx != rbx : rcx = [rcx].next )
+
+                    .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
+
+                        .if ( dh == [rcx].rc.y && dl > [rcx].rc.x )
+
+                            mov rax,rcx
+                        .endif
+                    .endif
+                .endf
+                .if ( rax )
+                    .return( _setfocus(rax) )
+                .endif
+                .endc
+
+            .case VK_RIGHT
+
+                .for ( rcx = [rbx].next, eax = [rbx].rc : rcx : rcx = [rcx].next )
+
+                    .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
+
+                        .if ( ah == [rcx].rc.y && al < [rcx].rc.x )
+
+                            .return( _setfocus(rcx) )
+                        .endif
+                    .endif
+                .endf
+                .endc
+            .endsw
+        .endif
     .endif
     .return( 1 )
 
@@ -576,9 +533,9 @@ wm_keydown endp
 
 _defwinproc proc public hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
 
-    mov rcx,hwnd
-    mov rax,wParam
-    mov rdx,lParam
+    ldr rax,wParam
+    ldr rdx,lParam
+    ldr rcx,hwnd
 
     .switch pascal uiMsg
     .case WM_ENTERIDLE

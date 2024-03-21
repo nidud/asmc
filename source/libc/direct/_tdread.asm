@@ -23,6 +23,9 @@ _dread proc uses rbx d:PDIRENT
 
     _dfree(rbx)
     _tcslen([rbx].path)
+ifdef _UNICODE
+    add eax,eax
+endif
     add rax,[rbx].path
     mov fp,rax
 

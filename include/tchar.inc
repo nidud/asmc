@@ -618,10 +618,17 @@ _istupper_l		equ <_iswupper_l>
 _istxdigit		equ <iswxdigit>
 _istxdigit_l		equ <_iswxdigit_l>
 
+_istcsym		equ <__iswcsym>
+_istcsymf		equ <__iswcsymf>
+
+_ttoupper		equ <_towupper>
+_ttolower		equ <_towlower>
+
 _totupper		equ <towupper>
 _totupper_l		equ <_towupper_l>
 _totlower		equ <towlower>
 _totlower_l		equ <_towlower_l>
+_totascii		equ <towascii>
 
 _istlegal macro _c
 	exitm<1>
@@ -1655,10 +1662,17 @@ _istspace_l		equ <_isspace_l>
 _istupper		equ <isupper>
 _istupper_l		equ <_isupper_l>
 
+_istcsym		equ <__iscsym>
+_istcsymf		equ <__iscsymf>
+
+_ttoupper		equ <_toupper>
+_ttolower		equ <_tolower>
+
 _totupper		equ <toupper>
 _totupper_l		equ <_toupper_l>
 _totlower		equ <tolower>
 _totlower_l		equ <_tolower_l>
+_totascii		equ <toascii>
 
 _istlegal macro _c
 	exitm<(1)>

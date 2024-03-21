@@ -1,22 +1,21 @@
-; ISASCII.ASM--
+; _TOASCII.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
 include ctype.inc
+include tchar.inc
 
     .code
 
-isascii proc c:int_t
+_totascii proc c:int_t
 
-    ldr     ecx,c
-    test    cl,0x80
-    setz    al
-    movzx   eax,al
+    ldr eax,c
+    and eax,0x7F
     ret
 
-isascii endp
+_totascii endp
 
     end
 

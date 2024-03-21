@@ -5,18 +5,20 @@
 ;
 
 include ctype.inc
+include tchar.inc
 
     .code
 
-isgraph proc c:int_t
+_istgraph proc c:int_t
 
-    ldr ecx,c
-    mov eax,1
-    .if ( cl < 0x21 || cl >= 0x7F )
+    ldr eax,c
+    .if ( eax < 0x21 || eax >= 0x7F )
         xor eax,eax
+    .else
+        mov eax,1
     .endif
     ret
 
-isgraph endp
+_istgraph endp
 
     end

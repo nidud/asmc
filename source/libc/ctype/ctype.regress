@@ -27,9 +27,9 @@ main proc
     .assert isalpha('z') == true
     .assert isalpha('0') == false
 
-    .assert isascii('9') == true
-    .assert isascii('_') == true
-    .assert isascii(128) == false
+    .assert __isascii('9') == true
+    .assert __isascii('_') == true
+    .assert __isascii(128) == false
 
     .assert iscntrl(0)	 == true
     .assert iscntrl(1Fh) == true

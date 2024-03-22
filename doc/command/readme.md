@@ -13,7 +13,7 @@ The options listed in the following table.
 | Option | Meaning |
 | ------ |:------- |
 | **-[0..10]**[p] | Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486, 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64\. [p] allows privileged instructions. |
-| **-arch**:AVX[[2][512]] | Specifies the architecture for code generation on x64.  |
+| **-arch**:_option_ | Specifies the architecture for code generation. Valid options are: IA32, SSE, SSE2, AVX, AVX2, and AVX512. |
 | [**-assert**](../directive/dot_assert.md) | Generate .assert(code). |
 | **-autostack** | Calculate required stack space for arguments. |
 | **-bin** | Generate plain binary file. |

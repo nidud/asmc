@@ -551,6 +551,7 @@ define SIT_MACRO       1
     endbr                   db ?    ; -endbr
     dotname                 db ?    ; -dotname : option dotname
     dotnamex                db ?    ; -dotnamex : option dotnamex:<on:off>
+    sysvregs                db ?    ; -sysvregs : skip RDI and RSI in USES
    .ends
 
 .template module_vars
@@ -686,6 +687,7 @@ define SIT_MACRO       1
     pic                     db ?            ; -fpic | -fno-pic
     endbr                   db ?            ; -endbr
     dotnamex                db ?            ; -dotnamex : option dotnamex:<on:off>
+    sysvregs                db ?            ; -sysvregs : skip RDI and RSI in USES
    .ends
 
 TokenCount              equ <ModuleInfo.token_count>

@@ -14,7 +14,6 @@ endif
 _chdrive proc drive:int_t
 ifdef __UNIX__
     _set_errno( ENOSYS )
-    mov eax,-1
 else
    .new newdrive[4]:char_t
 
@@ -22,8 +21,7 @@ else
     .if ( eax < 1 || eax > 31 )
 
         _set_doserrno( ERROR_INVALID_DRIVE )
-        _set_errno( EACCES )
-        .return( -1 )
+        .return( _set_errno( EACCES ) )
     .endif
 
     add al,'A' - 1

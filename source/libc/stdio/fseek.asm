@@ -22,8 +22,7 @@ fseek proc uses rbx fp:LPFILE, offs:size_t, whence:size_t
     .if ( edx != SEEK_SET && edx != SEEK_CUR && edx != SEEK_END &&
           !( eax & _IOREAD or _IOWRT or _IORW ) )
 
-        _set_errno( EINVAL )
-        .return( -1 )
+        .return( _set_errno( EINVAL ) )
     .endif
 
     and eax,not _IOEOF

@@ -28,7 +28,7 @@ The macros listed in the following table.
 | **\_\_HUGE\_\_** | Defined as 1 when the /mh option is set. Otherwise, undefined. |
 | **\_\_JWASM\_\_** | Defined as an integer literal value 212 that represents the compatible version of JWasm. This macro is always defined. |
 | **\_\_LARGE\_\_** | Defined as 1 when the /ml option is set. Otherwise, undefined. |
-| **\_M\_IX86\_FP | Defined as 1 when the /arch:IA32 option is set. Otherwise, undefined. |
+| **\_M\_IX86\_FP** | Defined as 1 when the /arch:IA32 option is set. Otherwise, undefined. |
 | **\_LINUX** | Defined as 1 when the /elf option is set and 2 when the /elf64 option is set. Otherwise, undefined. |
 | **\_\_MEDIUM\_\_** | Defined as 1 when the /mm option is set. Otherwise, undefined. |
 | **\_MSVCRT** | Defined as 1 when the /nolib option is set. Otherwise, undefined. |

@@ -20,8 +20,7 @@ _vsctprintf proc format:tstring_t, argptr:ptr
 
     .if ( rcx == NULL )
 
-        _set_errno(EINVAL)
-        .return( -1 )
+        .return( _set_errno( EINVAL ) )
     .endif
     xor eax,eax
     mov o._flag,_IOWRT or _IOSTRG

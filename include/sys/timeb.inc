@@ -1,14 +1,13 @@
 ifndef _INC_TIMEB
 define _INC_TIMEB
-ifdef _CRTBLD
-ifndef _INTERNAL_IFSTRIP_
-include cruntime.inc
-endif
-endif
 
 ifndef _TIME_T_DEFINED
 define _TIME_T_DEFINED
-time_t typedef sdword
+ifdef _WIN64
+time_t typedef int64_t
+else
+time_t typedef long_t
+endif
 endif
 
 ifndef _TIMEB_DEFINED

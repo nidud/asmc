@@ -277,9 +277,11 @@ else
     SYS_OPEN                    = 5,
     SYS_CREAT                   = 8,
     SYS_CLOSE                   = 6,
+    SYS_CHMOD                   = 15,
     SYS_STAT                    = 106,
     SYS_STAT64                  = 195,
     SYS_FSTAT                   = 108,
+    SYS_FSTAT64                 = 197,
     SYS_LSEEK                   = 19,
     SYS_LLSEEK                  = 140,
     SYS_MMAP                    = 90,
@@ -297,10 +299,12 @@ else
     SYS_UNLINK                  = 10,
     SYS_RENAME                  = 38,
     SYS_TIME                    = 13,
+    SYS_TIMES                   = 43,
     SYS_GETTIMEOFDAY            = 78,
     SYS_SETTIMEOFDAY            = 79,
     SYS_GETDENTS                = 141,
     SYS_GETDENTS64              = 220,
+    SYS_NANOSLEEP               = 162,
 endif
     }
 
@@ -340,6 +344,10 @@ sys_close proto :int_t {
     mov eax,SYS_CLOSE
     syscall
     }
+sys_chmod proto :string_t, :int_t {
+    mov eax,SYS_CHMOD
+    syscall
+    }
 sys_newstat proto :string_t, :ptr {
     mov eax,SYS_STAT
     syscall
@@ -350,6 +358,10 @@ sys_newfstat proto :int_t, :ptr {
     }
 sys_lseek proto :int_t, :size_t, :uint_t {
     mov eax,SYS_LSEEK
+    syscall
+    }
+sys_nanosleep proto :ptr, :ptr {
+    mov eax,SYS_NANOSLEEP
     syscall
     }
 
@@ -418,6 +430,10 @@ sys_time proto :ptr {
     mov eax,SYS_TIME
     syscall
     }
+sys_times proto :ptr {
+    mov eax,SYS_TIMES
+    syscall
+    }
 sys_gettimeofday proto :ptr, :ptr {
     mov eax,SYS_GETTIMEOFDAY
     syscall
@@ -482,6 +498,9 @@ sys_creat proto fastcall :string_t, :uint_t {
 sys_close proto fastcall :int_t {
     syscall_1(_1, SYS_CLOSE)
     }
+sys_chmod proto fastcall :string_t, :int_t {
+    syscall_2(_1, _2, SYS_CHMOD)
+    }
 sys_newstat proto fastcall :string_t, :ptr {
     syscall_2(_1, _2, SYS_STAT)
     }
@@ -490,6 +509,9 @@ sys_newstat64 proto fastcall :string_t, :ptr {
     }
 sys_newfstat proto fastcall :int_t, :ptr {
     syscall_2(_1, _2, SYS_FSTAT)
+    }
+sys_newfstat64 proto fastcall :int_t, :ptr {
+    syscall_2(_1, _2, SYS_FSTAT64)
     }
 sys_lseek proto fastcall :int_t, :size_t, :abs {
     syscall_3(_1, _2, _3, SYS_LSEEK)
@@ -577,6 +599,12 @@ sys_rename proto fastcall :string_t, :string_t {
     }
 sys_time proto fastcall :ptr {
     syscall_1(_1, SYS_TIME)
+    }
+sys_times proto fastcall :ptr {
+    syscall_1(_1, SYS_TIMES)
+    }
+sys_nanosleep proto fastcall :ptr, :ptr {
+    syscall_2(_1, _2, SYS_NANOSLEEP)
     }
 sys_gettimeofday proto fastcall :ptr, :ptr {
     syscall_2(_1, _2, SYS_GETTIMEOFDAY)

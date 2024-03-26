@@ -33,18 +33,19 @@ __initpctype proc private uses rsi rdi
 ifndef __UNIX__
     .new lcid:LCID
 endif
-    .if ( malloc(2+2*256+256+256) == NULL )
+    .if ( malloc(16+2*256+256+256) == NULL )
 
         .return
     .endif
 
     mov rdi,rax
+    mov ecx,16/4
     xor eax,eax
-    stosw
+    rep stosd
     mov _pctype,rdi
     lea rcx,[rdi+512]
     mov _pcumap,rcx
-    lea rcx,[rcx+256]
+    add rcx,256
     mov _pclmap,rcx
 
     mov eax,_CONTROL
@@ -88,8 +89,8 @@ endif
     mov eax,_CONTROL
     stosw
     xor eax,eax
-    mov ecx,128
-    rep stosw
+    mov ecx,128/2
+    rep stosd
 
     .for ( rax = _pclmap, ecx = 0 : ecx < 256 : ecx++ )
 
@@ -140,7 +141,7 @@ __exitpctype proc
     mov rcx,_pctype
     .if ( rcx )
 
-        free(&[rcx-2])
+        free(&[rcx-16])
     .endif
     ret
 

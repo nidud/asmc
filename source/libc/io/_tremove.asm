@@ -23,15 +23,13 @@ ifdef __UNIX__
 
     .if ( !rcx )
 
-        _set_errno(EINVAL)
-        .return( -1 )
+        .return( _set_errno( EINVAL ) )
     .endif
 
     .ifs ( sys_unlink(rcx) < 0 )
 
         neg eax
-        _set_errno(eax)
-        .return( -1 )
+        .return( _set_errno(eax) )
     .endif
     xor eax,eax
 else

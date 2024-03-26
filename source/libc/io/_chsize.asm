@@ -63,9 +63,7 @@ _chsize proc uses rbx handle:int_t, new_size:size_t
             sub rbx,extend
             oswrite( handle, &buffer, dword ptr extend )
         .until ( rax != extend )
-
-        _set_errno( ERROR_DISK_FULL )
-        .return -1
+        .return( _set_errno( ERROR_DISK_FULL ) )
     .until 1
     .if ( _lseek( handle, current_offset, SEEK_SET ) != -1 )
         xor eax,eax

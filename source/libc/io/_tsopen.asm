@@ -62,8 +62,7 @@ endif
     .case O_RDWR    ; read and write access
         mov eax,S_IRUSR or S_IWUSR
     .default
-        _set_errno(EINVAL)
-        .return -1
+       .return( _set_errno( EINVAL ) )
     .endsw
     mov access,eax
 
@@ -90,8 +89,7 @@ endif
         xor eax,eax         ; exclusive access
        .endc
     .default
-        _set_errno(EINVAL)
-        .return -1
+       .return( _set_errno( EINVAL ) )
     .endsw
     or access,eax
 
@@ -130,8 +128,7 @@ endif
     .ifs ( eax < 0 )
 
         neg eax
-        _set_errno(eax)
-        .return -1
+       .return( _set_errno( eax ) )
     .endif
     mov ecx,eax
     mov edx,fh
@@ -191,8 +188,7 @@ else
     .case O_RDWR    ; read and write access
         mov ecx,GENERIC_READ or GENERIC_WRITE
     .default
-        _set_errno(EINVAL)
-        .return(-1)
+       .return( _set_errno( EINVAL ) )
     .endsw
     mov fileaccess,ecx
 
@@ -221,8 +217,7 @@ else
         xor ecx,ecx                 ; exclusive access
        .endc
     .default
-        _set_errno(EINVAL)
-        .return(-1)
+       .return( _set_errno( EINVAL ) )
     .endsw
     mov fileshare,ecx
 
@@ -245,8 +240,7 @@ else
     .case O_TRUNC or O_EXCL
         mov ecx,TRUNCATE_EXISTING
     .default
-        _set_errno(EINVAL)
-        .return(-1)
+       .return( _set_errno( EINVAL ) )
     .endsw
     mov filecreate,ecx
 
@@ -287,8 +281,7 @@ else
 
     .ifd ( _alloc_osfhnd() == -1 )
 
-        _set_errno(EMFILE)
-        .return(-1)
+        .return( _set_errno( EMFILE ) )
     .endif
 
     mov fh,eax
@@ -317,12 +310,10 @@ else
             .ifd ( CreateFile( path, fileaccess, fileshare, &SecurityAttributes,
                     filecreate, fileattrib, NULL ) == -1 )
 
-                _dosmaperr( GetLastError() )
-                .return(-1)
+                .return( _dosmaperr( GetLastError() ) )
             .endif
         .else
-            _dosmaperr( GetLastError() )
-            .return(-1)
+            .return( _dosmaperr( GetLastError() ) )
         .endif
     .endif
 
@@ -331,8 +322,8 @@ else
     .ifd ( GetFileType( rax ) == FILE_TYPE_UNKNOWN )
 
         mov dwLastError,GetLastError()
-        _dosmaperr(dwLastError)
         CloseHandle(osfh)
+        _dosmaperr(dwLastError)
         .if ( dwLastError == ERROR_SUCCESS )
 
             ;
@@ -343,7 +334,7 @@ else
             ;
             _set_errno(EACCES)
         .endif
-        .return(-1)
+        .return
     .endif
 
     .if ( eax == FILE_TYPE_CHAR )
@@ -623,7 +614,7 @@ else
             _dosmaperr(GetLastError())
 
             mov [rsi].osfile,0
-           .return(-1)
+           .return
         .else
 
             ; We were able to open the file successfully, set the file

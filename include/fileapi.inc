@@ -229,16 +229,15 @@ else
 define GetDriveType  <GetDriveTypeA>
 endif
 
-_WIN32_FILE_ATTRIBUTE_DATA struct
+WIN32_FILE_ATTRIBUTE_DATA struct
 dwFileAttributes        DWORD ?
 ftCreationTime          FILETIME <>
 ftLastAccessTime        FILETIME <>
 ftLastWriteTime         FILETIME <>
 nFileSizeHigh           DWORD ?
 nFileSizeLow            DWORD ?
-_WIN32_FILE_ATTRIBUTE_DATA ends
-WIN32_FILE_ATTRIBUTE_DATA typedef _WIN32_FILE_ATTRIBUTE_DATA
-LPWIN32_FILE_ATTRIBUTE_DATA typedef ptr _WIN32_FILE_ATTRIBUTE_DATA
+WIN32_FILE_ATTRIBUTE_DATA ends
+LPWIN32_FILE_ATTRIBUTE_DATA typedef ptr WIN32_FILE_ATTRIBUTE_DATA
 
 GetFileAttributesA proto WINAPI :LPCSTR
 GetFileAttributesW proto WINAPI :LPCWSTR
@@ -258,7 +257,7 @@ else
 define GetFileAttributesEx  <GetFileAttributesExA>
 endif
 
-_BY_HANDLE_FILE_INFORMATION struct
+BY_HANDLE_FILE_INFORMATION struct
 dwFileAttributes        DWORD ?
 ftCreationTime          FILETIME <>
 ftLastAccessTime        FILETIME <>
@@ -269,10 +268,9 @@ nFileSizeLow            DWORD ?
 nNumberOfLinks          DWORD ?
 nFileIndexHigh          DWORD ?
 nFileIndexLow           DWORD ?
-_BY_HANDLE_FILE_INFORMATION ends
-BY_HANDLE_FILE_INFORMATION typedef _BY_HANDLE_FILE_INFORMATION
-PBY_HANDLE_FILE_INFORMATION typedef ptr _BY_HANDLE_FILE_INFORMATION
-LPBY_HANDLE_FILE_INFORMATION typedef ptr _BY_HANDLE_FILE_INFORMATION
+BY_HANDLE_FILE_INFORMATION ends
+PBY_HANDLE_FILE_INFORMATION typedef ptr BY_HANDLE_FILE_INFORMATION
+LPBY_HANDLE_FILE_INFORMATION typedef ptr BY_HANDLE_FILE_INFORMATION
 
 GetFileInformationByHandle proto WINAPI :HANDLE, :LPBY_HANDLE_FILE_INFORMATION
 

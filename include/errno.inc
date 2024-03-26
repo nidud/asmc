@@ -48,7 +48,6 @@ externdef	_sys_nerr:int_t
 endif
 __sys_nerr	proto __cdecl
 _dosmaperr	proto __cdecl :ulong_t
-osmaperr	proto __cdecl
 
 ENOERR		equ 0
 EPERM		equ 1

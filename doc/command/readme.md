@@ -71,6 +71,7 @@ The options listed in the following table.
 | **-Sn** | Turns off symbol table when producing a listing. |
 | **-Sp**[n] | Set segment alignment. |
 | **-stackalign** | Align stack variables to 16-byte. |
+| **-sysvregs** | Ignore RDI and RSI in USES for Linux64. |
 | **-Sx** | Turns on false conditionals in listing. |
 | **-w** | Same as /W0. |
 | **-W**_level_ | Sets the warning level, where _level_ = 0, 1, 2, or 3.|

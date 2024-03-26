@@ -27,7 +27,6 @@ if defined(__UNIX__) and defined(_WIN64)
 
         neg eax
         _set_errno(eax)
-        mov rax,-1
     .endif
 
 else
@@ -41,7 +40,6 @@ ifdef __UNIX__
 
         neg eax
         _set_errno(eax)
-        mov eax,-1
     .endif
 
 else

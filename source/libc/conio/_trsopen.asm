@@ -14,11 +14,8 @@ include malloc.inc
     assume rdi:PTRES
     assume rsi:THWND
 
-if defined(_WIN64) and defined(__UNIX__)
-_rsopen proc uses rbx res:PTRES
-else
 _rsopen proc uses rsi rdi rbx res:PTRES
-endif
+
    .new hwnd:THWND
    .new rsize:int_t
    .new dsize:int_t

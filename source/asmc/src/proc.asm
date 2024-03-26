@@ -1230,6 +1230,13 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
             .new j:int_t
             .new index:int_t
             .new sym:ptr asym
+            .new sysv:int_t = 0 ; @v2.34.49 "uses rsi rdi rbx" --> "uses rbx" in Linux64
+
+            .if ( langtype == LANG_SYSCALL &&
+                  ModuleInfo.Ofssize == USE64 &&
+                  ModuleInfo.sysvregs )
+                inc sysv
+            .endif
 
             .if ( !IsPROC ) ; not for PROTO!
                 asmerr( 2008, [rbx].string_ptr )
@@ -1241,6 +1248,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
 
             .for ( cnt = 0 : : cnt++, rbx += asm_tok )
 
+
                 .if ( [rbx].token != T_REG )
 
                     ; the register may be a text macro here
@@ -1249,22 +1257,42 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
                     .break .if ( ( SymSearch( [rbx].string_ptr ) ) == NULL )
 
                     .break .if ( [rax].asym.state != SYM_TMACRO )
-                    mov rdi,rax
-                    mov ecx,FindResWord( [rdi].asym.string_ptr, [rdi].asym.name_size )
-                    imul eax,ecx,special_item
-                    lea rdx,SpecialTable
+                     mov rdi,rax
+                     mov ecx,FindResWord( [rdi].asym.string_ptr, [rdi].asym.name_size )
+                     imul eax,ecx,special_item
+                     lea rdx,SpecialTable
                     .break .if ( [rdx+rax].special_item.type != RWT_REG )
 
-                    mov [rbx].token,T_REG
-                    mov [rbx].tokval,ecx
-                    mov [rbx].string_ptr,[rdi].asym.string_ptr
+                     mov [rbx].token,T_REG
+                     mov [rbx].tokval,ecx
+                     mov [rbx].string_ptr,[rdi].asym.string_ptr
+
+                    .if ( sysv && ( ecx == T_RSI || ecx == T_RDI ) )
+
+                        dec cnt
+                        inc sysv
+                    .endif
+
+                .elseif ( sysv && ( [rbx].tokval == T_RSI || [rbx].tokval == T_RDI ) )
+
+                    dec cnt
+                    inc sysv
                 .endif
             .endf
             mov rbx,tokenarray.tokptr(i)
 
             .if ( cnt == 0 )
 
-                asmerr( 2008, [rbx-asm_tok].tokpos )
+                .if ( sysv )
+
+                    mov  eax,sysv
+                    dec  eax
+                    add  i,eax
+                    imul eax,eax,asm_tok
+                    add  rbx,rax
+                .else
+                    asmerr( 2008, [rbx-asm_tok].tokpos )
+                .endif
 
             .else
 
@@ -1280,11 +1308,15 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
 
                 .for ( : [rbx].token == T_REG: i++, rbx += asm_tok )
 
-                    .if ( SizeFromRegister( [rbx].tokval ) == 1 )
-                        asmerr( 2032 )
+                    .if !( sysv && ( [rbx].tokval == T_RSI || [rbx].tokval == T_RDI ) )
+
+                        .if ( SizeFromRegister( [rbx].tokval ) == 1 )
+
+                            asmerr( 2032 )
+                        .endif
+                        mov eax,[rbx].tokval
+                        stosw
                     .endif
-                    mov eax,[rbx].tokval
-                    stosw
                 .endf
             .endif
         .endif

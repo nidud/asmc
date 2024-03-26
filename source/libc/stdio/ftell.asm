@@ -58,8 +58,7 @@ ftell proc uses rbx fp:LPFILE
 
     .elseif ( !( ecx & _IORW ) )
 
-        _set_errno( EINVAL )
-       .return -1
+       .return( _set_errno( EINVAL ) )
     .endif
 
     mov rax,rdx

@@ -5,18 +5,19 @@
 ;
 
 include stdlib.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 include tchar.inc
 
 .data
-__targv	 LPTSTR 0
-_tpgmptr LPTSTR 0
+ __targv LPTSTR 0
 
 .code
 
 ifndef __UNIX__
 
-init_argv proc private
+__initargv proc private
 
   local pgname[260]:TCHAR
 
@@ -48,12 +49,11 @@ init_argv proc private
 	    mov rax,[rcx]
 	.endif
     .endif
-    mov _tpgmptr,rax
     ret
 
-init_argv endp
+__initargv endp
 
-.pragma init(init_argv, 4)
+.pragma init(__initargv, 4)
 
 endif
     end

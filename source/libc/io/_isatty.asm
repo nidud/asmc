@@ -5,6 +5,8 @@
 ;
 
 include io.inc
+include errno.inc
+
 ifdef __UNIX__
 include sys/syscall.inc
 
@@ -33,18 +35,33 @@ endif
 _isatty proc handle:SINT
 
     ldr ecx,handle
+
+    .ifs ( ecx < 0 || ecx >= _nfile )
+
+        _set_errno( EINVAL )
+        .return( 0 )
+    .endif
+
 ifdef __UNIX__
-    .new termios:__kernel_termios
-    lea rax,termios
-    .ifd ( sys_ioctl(ecx, TCGETS, rax) == 0 )
+
+   .new termios:__kernel_termios
+
+    .ifsd ( sys_ioctl(ecx, TCGETS, &termios) < 0 )
+
+        neg eax
+        _set_errno( eax )
+        .return( 0 )
+    .endif
+
+    .if ( eax == 0 )
+else
+    .if ( _osfile(ecx) & FDEV )
+endif
+
         mov eax,1
     .else
         xor eax,eax
     .endif
-else
-    mov al,_osfile(ecx)
-    and eax,FDEV
-endif
     ret
 
 _isatty endp

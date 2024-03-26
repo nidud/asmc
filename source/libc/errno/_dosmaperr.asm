@@ -16,7 +16,7 @@ _dosmaperr proc oserrno:ulong_t
 
     _set_doserrno( ecx )
     _set_errno( _get_errno_from_oserr( oserrno ) )
-    .return( -1 )
+    ret
 
 _dosmaperr endp
 

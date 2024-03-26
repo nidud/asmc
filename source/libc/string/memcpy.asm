@@ -5,7 +5,6 @@
 ;
 
 include string.inc
-include tchar.inc
 
     .code
 

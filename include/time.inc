@@ -25,7 +25,7 @@ __time64_t typedef int64_t	;; 64-bit time value
 endif
 
 ifndef _TIME_T_DEFINED
-define _TIME_T_DEFINED		;; avoid multiple def's of time_t
+define _TIME_T_DEFINED
 ifdef _WIN64
 time_t typedef int64_t
 else
@@ -115,6 +115,9 @@ strtime		proto __cdecl :ptr sbyte
 difftime	proto __cdecl :time_t, :time_t
 
 gmtime		proto __cdecl :ptr time_t
+_gmtime		proto __cdecl :ptr time_t, :ptr tm
+_sleep		proto __cdecl :ulong_t
+
 ifdef __LIBASMC__
 define localtime <gmtime>
 else
@@ -127,6 +130,7 @@ strdate		proto __cdecl :ptr sbyte
 strtime		proto __cdecl :ptr sbyte
 _tzset		proto __cdecl
 time		proto __cdecl :ptr time_t
+_time64		proto __cdecl :ptr time_t
 _isindst	proto __cdecl :ptr tm
 _loctotime_t	proto __cdecl y:SINT, m:SINT, d:SINT, h:SINT, m:SINT, s:SINT
 
@@ -143,7 +147,32 @@ _wstrdate	proto __cdecl :ptr wchar_t
 _wstrtime	proto __cdecl :ptr wchar_t
 endif
 
+
 ifdef __UNIX__
+
+define CLOCK_REALTIME		0
+define CLOCK_MONOTONIC		1
+define CLOCK_PROCESS_CPUTIME_ID 2
+define CLOCK_THREAD_CPUTIME_ID	3
+define CLOCK_MONOTONIC_RAW	4
+define CLOCK_REALTIME_COARSE	5
+define CLOCK_MONOTONIC_COARSE	6
+define CLOCK_BOOTTIME		7
+define CLOCK_REALTIME_ALARM	8
+define CLOCK_BOOTTIME_ALARM	9
+define CLOCK_TAI		11
+
+tms		struct
+tms_utime	clock_t ? ; user time
+tms_stime	clock_t ? ; system time
+tms_cutime	clock_t ? ; user time of children
+tms_cstime	clock_t ? ; system time of children
+tms		ends
+
+timespec	struct
+tv_sec		long_t ?
+tv_nsec		long_t ?
+timespec	ends
 
 timeval		struct
 tv_sec		size_t ? ; Seconds
@@ -160,6 +189,8 @@ tz_minuteswest	int_t ? ; Minutes west of GMT.
 tz_dsttime	int_t ? ; Nonzero if DST is ever in effect.
 timezone	ends
 
+times		proto __cdecl :ptr tms
+nanosleep	proto __cdecl :ptr timespec, :ptr timespec
 gettimeofday	proto __cdecl :ptr timeval, :ptr timezone
 settimeofday	proto __cdecl :ptr timeval, :ptr timezone
 

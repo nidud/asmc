@@ -1,28 +1,35 @@
-; FCHDIR.ASM--
+; TIMES.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include direct.inc
+include time.inc
+ifdef __UNIX__
 include errno.inc
-ifdef __UNIX__
 include sys/syscall.inc
+else
+include winbase.inc
 endif
-    .code
 
-fchdir proc fd:int_t
+.code
+
+times proc pt:ptr tms
+
 ifdef __UNIX__
-    ldr ecx,fd
-    .ifsd ( sys_fchdir(ecx) < 0 )
+
+    ldr rcx,pt
+
+    .ifsd ( sys_times(rcx) < 0 )
 
         neg eax
-        _set_errno(eax)
-        .return(-1)
+        _set_errno( eax )
     .endif
+else
+    GetTickCount()
 endif
     ret
 
-fchdir endp
+times endp
 
     end

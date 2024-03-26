@@ -10,11 +10,7 @@ include tchar.inc
 
 .code
 
-ifdef __UNIX__
-_twildcard proc uses rbx wild:tstring_t, path:tstring_t
-else
 _twildcard proc uses rsi rdi rbx wild:tstring_t, path:tstring_t
-endif
 
     ldr rdi,wild
     ldr rsi,path

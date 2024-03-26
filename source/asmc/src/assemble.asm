@@ -638,6 +638,7 @@ endif
     mov ModuleInfo.endbr,Options.endbr
     mov ModuleInfo.dotname,Options.dotname
     mov ModuleInfo.dotnamex,Options.dotnamex
+    mov ModuleInfo.sysvregs,Options.sysvregs
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags

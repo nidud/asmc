@@ -23,7 +23,6 @@ _set_error_mode proc em:int_t
        .endc
     .default
         _set_errno(EINVAL)
-        mov eax,-1
     .endsw
     ret
 

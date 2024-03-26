@@ -40,7 +40,6 @@ ifdef __UNIX__
 
             neg eax
             _set_errno( eax )
-            mov rax,-1
 else
         .ifd !CloseHandle( [rax].osfhnd )
 

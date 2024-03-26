@@ -180,12 +180,17 @@ PSTAT   typedef ptr _stat32
 PSTAT64 typedef ptr _stati64
 
 ifdef __UNIX__
-define _stat <stat>
-define _stat64 <stat64>
+define _stat    <stat>
+define _fstat   <fstat>
+define _stat64  <stat64>
+define _fstat64 <fstat64>
+chmod       proto __cdecl :string_t, :int_t
 endif
 
-_stat   proto __cdecl :string_t, :PSTAT
-_stat64 proto __cdecl :string_t, :PSTAT64
+_stat       proto __cdecl :string_t, :PSTAT
+_fstat      proto __cdecl :int_t, :PSTAT
+_stat64     proto __cdecl :string_t, :PSTAT64
+_fstat64    proto __cdecl :int_t, :PSTAT64
 
 ifndef _WSTAT_DEFINED
 define _WSTAT_DEFINED

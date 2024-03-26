@@ -77,7 +77,8 @@ Options global_options {
         4,                      ; .flt_size
         0,                      ; .pic
         0,                      ; .endbr
-        0 }                     ; .dotname
+        0,                      ; .dotname
+        0 }                     ; .sysvregs
 
     align size_t
 
@@ -737,6 +738,9 @@ endif
         .return
     .case 'cats'            ; -stackalign
         or Options.win64_flags,W64F_STACKALIGN16
+        .return
+    .case 'vsys'            ; -sysvregs
+        mov Options.sysvregs,1
         .return
     .case 'xS'              ; -Sx
         mov Options.listif,1

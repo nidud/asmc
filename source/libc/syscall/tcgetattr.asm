@@ -16,19 +16,16 @@ tcgetattr proc fd:int_t, termios_p:ptr termios
 
     .ifs ( edi < 0 )
 
-        _set_errno(EBADF)
-        .return( -1 )
+        .return( _set_errno( EBADF ) )
     .endif
     .if ( rsi == NULL )
 
-        _set_errno(EINVAL)
-        .return( -1 )
+        .return( _set_errno( EINVAL ) )
     .endif
     .ifsd ( sys_ioctl(edi, TCGETS, rsi) < 0 )
 
         neg eax
         _set_errno(eax)
-        mov rax,-1
     .endif
     ret
 

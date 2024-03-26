@@ -1,32 +1,48 @@
 ifndef __ICONFIG_INC
 define __ICONFIG_INC
 
-include crtdefs.inc
+.enum { C_BASE, C_SECTION, C_ENTRY }
 
-C_BASE          equ 0x01
-C_SECTION       equ 0x02
-C_ENTRY         equ 0x04
-C_COMMENT       equ 0x08
-
-config_t        typedef ptr IConfig
+config_t typedef ptr IConfig
 
 .class IConfig
 
-    name        string_t ?
-    next        config_t ?
-    list        intptr_t ?
     type        uint_t ?
+    next        config_t ?
+    prev        config_t ?
+    name        string_t ?
+    union
+     entry      config_t ?
+     value      string_t ?
+    ends
 
-    IConfig     proc
+    IConfig     proc :string_t
+
     Release     proc
-    Read        proc :string_t
-    Write       proc :string_t
+    Read        proc
+    ReadFile    proc :string_t
+    Write       proc
     Find        proc :string_t
-    GetEntry    proc :string_t, :string_t
-    Create      proc :string_t, :vararg
-    Delete      proc :string_t
-    Unlink      proc :config_t
+    FindID      proc :int_t
+    Append      proc :string_t, :vararg
+    Remove      proc :string_t
+    Clear       proc
+    Update      proc
+    Unlink      proc
+   .ends
 
-    .ends
+
+IConfig::IConfig    proto __cdecl :string_t
+IConfig::Release    proto __cdecl
+IConfig::Read       proto __cdecl
+IConfig::ReadFile   proto __cdecl :string_t
+IConfig::Write      proto __cdecl
+IConfig::Find       proto __cdecl :string_t
+IConfig::FindID     proto __cdecl :int_t
+IConfig::Append     proto __cdecl :string_t, :vararg
+IConfig::Remove     proto __cdecl :string_t
+IConfig::Clear      proto __cdecl
+IConfig::Update     proto __cdecl
+IConfig::Unlink     proto __cdecl
 
 endif

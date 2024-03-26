@@ -41,8 +41,7 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
 ifndef __UNIX__
         _set_doserrno(0)        ; not o.s. error
 endif
-        _set_errno(EBADF)
-        .return -1
+        .return( _set_errno( EBADF ) )
     .endif
 
     assume rbx:pioinfo
@@ -56,8 +55,7 @@ ifndef __UNIX__
 
         ; For a UTF-16 file, the count must always be an even number
 
-        _set_errno(EINVAL)
-        .return -1
+        .return( _set_errno( EINVAL ) )
     .endif
 endif
 
@@ -247,11 +245,9 @@ else
     .ifs ( sys_write(fh, buf, cnt) < 0 )
 
         neg eax
-        _set_errno(eax)
-        .return( -1 )
-    .else
-        mov charcount,eax
+       .return( _set_errno( eax ) )
     .endif
+    mov charcount,eax
 endif
 
     .if ( charcount == 0 )
@@ -270,12 +266,12 @@ ifndef __UNIX__
 
                 ; wrong read/write mode should return EBADF, not EACCES
 
-                _set_errno(EBADF)
                 _set_doserrno(dosretval)
+                _set_errno(EBADF)
             .else
                 _dosmaperr(dosretval)
             .endif
-            .return -1
+            .return
 
         .elseif ( [rbx].osfile & FDEV && byte ptr [rdx] == CTRLZ )
 else
@@ -285,11 +281,11 @@ endif
             .return 0
         .endif
 
-        _set_errno(ENOSPC)
 ifndef __UNIX__
         _set_doserrno(0)
 endif
-        .return -1
+        _set_errno(ENOSPC)
+        .return
     .endif
 
     ; return adjusted bytes written

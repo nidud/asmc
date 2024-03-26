@@ -24,14 +24,12 @@ ifdef __UNIX__
 
     .if ( !rcx || !rdx )
 
-        _set_errno(EINVAL)
-        .return( -1 )
+        .return( _set_errno( EINVAL ) )
     .endif
     .ifs ( sys_rename(rcx, rdx) < 0 )
 
         neg eax
-        _set_errno(eax)
-        .return( -1 )
+        .return( _set_errno( eax ) )
     .endif
     xor eax,eax
 else

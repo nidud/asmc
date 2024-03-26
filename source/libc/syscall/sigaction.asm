@@ -35,8 +35,7 @@ sigaction proc sig:int_t, act:ptr sigaction_t, oact:ptr sigaction_t
 
     .if ( rsi == 0 || eax == -1 )
 
-        _set_errno(EINVAL)
-        .return -1
+        .return( _set_errno( EINVAL ) )
     .endif
 
     mov a.sa_handler,   [rsi].sigaction_t.sa_handler
@@ -54,7 +53,6 @@ sigaction proc sig:int_t, act:ptr sigaction_t, oact:ptr sigaction_t
 
         neg eax
         _set_errno(eax)
-        mov rax,-1
     .endif
     ret
 

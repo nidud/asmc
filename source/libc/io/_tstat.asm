@@ -31,7 +31,6 @@ else
 endif
         neg eax
         _set_errno( eax )
-        mov rax,-1
     .endif
     ret
 
@@ -45,7 +44,6 @@ else
 endif
         neg eax
         _set_errno( eax )
-        mov rax,-1
     .endif
     ret
 

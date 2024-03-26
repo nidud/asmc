@@ -20,8 +20,7 @@ _stprintf_s proc string:LPTSTR, sizeInWords:size_t, format:LPTSTR, argptr:vararg
 
     .if ( !( rcx != NULL || rdx == 0 ) || format == NULL )
 
-        _set_errno(EINVAL)
-        .return -1
+        .return( _set_errno( EINVAL ) )
     .endif
 
     mov o._flag,_IOWRT or _IOSTRG

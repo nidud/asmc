@@ -51,8 +51,7 @@ endif
 ifndef __UNIX__
         _set_doserrno( 0 )      ; not o.s. error
 endif
-        _set_errno( EBADF )
-       .return( -1 )
+       .return( _set_errno( EBADF ) )
     .endif
 
     assume rbx:pioinfo
@@ -69,7 +68,6 @@ ifdef __UNIX__
 
         neg eax
         _set_errno( eax )
-        mov rax,-1
     .endif
 
 else
@@ -85,8 +83,7 @@ else
 
         .if ( rdi & 1 )
 
-            _set_errno(EINVAL)
-           .return(-1)
+           .return( _set_errno( EINVAL ) )
         .endif
         shr rdi,1
         .if ( rdi < 4 )
@@ -96,8 +93,7 @@ else
         mov rsi,malloc(rdi)
         .if ( rax == NULL )
 
-            _set_errno(ENOMEM)
-           .return(-1)
+           .return( _set_errno( ENOMEM ) )
         .endif
         _lseeki64(fh, 0, SEEK_CUR)
 ifdef _WIN64
@@ -114,8 +110,7 @@ endif
 
         .if ( rdi & 1 )
 
-            _set_errno(EINVAL)
-           .return(-1)
+           .return( _set_errno( EINVAL ) )
         .endif
 
         ; Fall Through to default
@@ -170,8 +165,7 @@ endif
         .if ( !ReadConsoleW( [rbx].osfhnd, rdi, ecx, &os_read, NULL) )
 
             mov dosretval,GetLastError()
-            _dosmaperr(dosretval)
-            mov retval,-1
+            mov retval,_dosmaperr(dosretval)
             jmp error_return
         .endif
 
@@ -199,8 +193,7 @@ endif
                ; wrong read/write mode should return EBADF, not EACCES
 
                 _set_doserrno( eax )
-                _set_errno(EBADF)
-                mov retval,-1
+                mov retval,_set_errno( EBADF )
                 jmp error_return
 
             .elseif ( eax == ERROR_BROKEN_PIPE )
@@ -209,8 +202,7 @@ endif
                 jmp error_return
 
             .else
-                _dosmaperr( eax )
-                mov retval,-1
+                mov retval,_dosmaperr( eax )
                 jmp error_return
             .endif
         .endif
@@ -390,8 +382,7 @@ endif
                         ; Should have exited the while by finding a lead
                         ; byte else, the file has incorrect UTF-8 chars
                         ;
-                        _set_errno(EILSEQ)
-                        mov retval,-1
+                        mov retval,_set_errno( EILSEQ )
                         jmp error_return
                     .endif
 
@@ -453,8 +444,7 @@ endif
 
                 .ifd ( !MultiByteToWideChar(CP_UTF8, 0, buf, edx, inputbuf, ecx) )
 
-                    _dosmaperr(GetLastError())
-                    mov retval,-1
+                    mov retval,_dosmaperr(GetLastError())
                     jmp error_return
                 .endif
 

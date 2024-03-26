@@ -5,37 +5,33 @@
 ;
 
 include time.inc
-include sys/timeb.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 
     .data
-     __itimeb _timeb { 0, 0, 0, 0 }
+     __stime uint_t 0
 
     .code
 
 clock proc
-
-  local now:_timeb
-
-    ; Calculate the difference between the initial time and now.
-
-    _ftime(&now)
-    mov rax,now.time
-    sub rax,__itimeb.time
-    imul rax,rax,CLOCKS_PER_SEC
-    movzx ecx,now.millitm
-    movzx edx,__itimeb.millitm
-    sub ecx,edx
-    add rax,rcx
+ifdef __UNIX__
+    times(NULL)
+else
+    GetTickCount()
+endif
+    sub eax,__stime
     ret
-
 clock endp
 
 __inittime proc
-
-    _ftime(&__itimeb)
+ifdef __UNIX__
+    times(NULL)
+else
+    GetTickCount()
+endif
+    mov __stime,eax
     ret
-
 __inittime endp
 
 .pragma init(__inittime, 20)

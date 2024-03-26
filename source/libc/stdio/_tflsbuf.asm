@@ -6,7 +6,7 @@
 
 include stdio.inc
 include io.inc
-include winbase.inc
+include malloc.inc
 include tchar.inc
 
     .code
@@ -70,7 +70,32 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
 
         .ifs ( edx > 0 )
 
-            mov written,_write( [rbx]._file, [rbx]._base, edx )
+            .if ( [rbx]._flag & _IOMEMBUF )
+
+                mov [rbx]._ptr,rdx
+                .if ( realloc([rbx]._base, &[rax+TCHAR+_INTIOBUF]) == NULL )
+
+                    dec rax
+                    or [rbx]._flag,_IOERR
+                   .return
+                .endif
+                mov [rbx]._base,rax
+                add [rbx]._bufsiz,_INTIOBUF
+                mov edx,[rbx]._bufsiz
+                mov rcx,[rbx]._ptr
+                sub edx,ecx
+                sub edx,TCHAR
+                mov [rbx]._cnt,edx
+                lea rcx,[rax+rcx+TCHAR]
+                mov [rbx]._ptr,rcx
+                movzx eax,TCHAR ptr char
+                mov [rcx-TCHAR],_tal
+               .return
+
+            .else
+
+                mov written,_write( [rbx]._file, [rbx]._base, edx )
+            .endif
 
         .elseif ( _osfile([rbx]._file) & FAPPEND )
 
@@ -82,11 +107,7 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
         .endif
         mov eax,char
         mov rcx,[rbx]._base
-ifdef _UNICODE
-        mov [rcx],ax
-else
-        mov [rcx],al
-endif
+        mov [rcx],_tal
     .else
         mov charcount,TCHAR
         mov written,_write( [rbx]._file, &char, TCHAR )

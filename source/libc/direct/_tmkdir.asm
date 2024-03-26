@@ -22,13 +22,11 @@ _tmkdir proc directory:LPTSTR
 ifdef __UNIX__
 ifdef _UNICODE
     _set_errno( ENOSYS )
-    mov eax,-1
 else
     .ifsd ( sys_mkdir(rcx) < 0 )
 
         neg eax
         _set_errno(eax)
-        mov rax,-1
     .endif
 endif
 else

@@ -21,14 +21,12 @@ _setmode proc uses rbx fd:int_t, mode:int_t
            edx == _O_U8TEXT ||
            edx == _O_U16TEXT )
 
-        _set_errno(EINVAL)
-        .return(-1)
+        .return( _set_errno( EINVAL ) )
     .endif
 
     .if ( ecx >= _NFILE_ )
 
-        _set_errno(EBADF)
-        .return(-1)
+        .return( _set_errno( EBADF ) )
     .endif
 
     assume rbx:pioinfo

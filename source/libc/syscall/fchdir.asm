@@ -1,35 +1,27 @@
-; _TGETCWD.ASM--
+; FCHDIR.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
 include direct.inc
-ifdef __UNIX__
 include errno.inc
+ifdef __UNIX__
 include sys/syscall.inc
 endif
-include tchar.inc
-
     .code
 
-_tgetcwd proc uses rbx buffer:LPTSTR, maxlen:SINT
-
-    ldr rbx,buffer
-    ldr edx,maxlen
+fchdir proc fd:int_t
 ifdef __UNIX__
-    .ifsd ( sys_getcwd(rbx, edx) < 0 )
+    ldr ecx,fd
+    .ifsd ( sys_fchdir(ecx) < 0 )
 
         neg eax
         _set_errno(eax)
-        xor ebx,ebx
     .endif
-    mov rax,rbx
-else
-    _tgetdcwd( 0, rbx, edx )
 endif
     ret
 
-_tgetcwd endp
+fchdir endp
 
     end

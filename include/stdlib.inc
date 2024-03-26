@@ -347,10 +347,12 @@ _byteswap_ulong proto fastcall :dword {
     mov	    eax,ecx
     bswap   eax
     }
+ifdef _WIN64
 _byteswap_uint64 proto fastcall :qword {
     mov	    rax,rcx
     bswap   rax
     }
+endif
 
 getenv		proto __cdecl :string_t
 if __STDC_WANT_SECURE_LIB__
@@ -557,15 +559,17 @@ _putenv_s	proto __cdecl :string_t, :string_t
 _rotl proto watcall :uint_t, :abs {
     rol	    eax,_2
     }
-_rotl64 proto watcall :uint64_t, :abs {
-    rol	    rax,_2
-    }
 _rotr proto watcall :uint_t, :abs {
     ror	    eax,_2
+    }
+ifdef _WIN64
+_rotl64 proto watcall :uint64_t, :abs {
+    rol	    rax,_2
     }
 _rotr64 proto watcall :uint64_t, :abs {
     ror	    rax,_2
     }
+endif
 
 _searchenv_s	proto __cdecl :string_t, :string_t, :string_t, :size_t
 _splitpath	proto __cdecl :string_t, :string_t, :string_t, :string_t, :string_t

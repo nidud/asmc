@@ -121,16 +121,20 @@ ifndef _MSVCRT
 memxchg		proto __cdecl :ptr, :ptr, :size_t
 strfn		proto __cdecl :LPSTR
 strext		proto __cdecl :LPSTR
+setfext		proto __cdecl :LPSTR, :LPSTR
 strtrim		proto __cdecl :LPSTR
 strstart	proto __cdecl :LPSTR
+strtrunc	proto __cdecl :LPSTR
 strfcat		proto __cdecl :LPSTR, :LPSTR, :LPSTR
 strshr		proto __cdecl :LPSTR, :int_t
 _awildcard	proto __cdecl :LPSTR, :LPSTR
 
 _wstrfn		proto __cdecl :LPWSTR
 _wstrext	proto __cdecl :LPWSTR
+_wsetfext	proto __cdecl :LPWSTR, :LPWSTR
 _wstrtrim	proto __cdecl :LPWSTR
 _wstrstart	proto __cdecl :LPWSTR
+_wstrtrunc	proto __cdecl :LPWSTR
 _wstrfcat	proto __cdecl :LPWSTR, :LPWSTR, :LPWSTR
 _wstrshr	proto __cdecl :LPWSTR, :int_t
 _wwildcard	proto __cdecl :LPTSTR, :LPTSTR
@@ -138,16 +142,20 @@ _wwildcard	proto __cdecl :LPTSTR, :LPTSTR
 ifdef _UNICODE
 define _tstrfn		<_wstrfn>
 define _tstrext		<_wstrext>
+define _tsetfext	<_wsetfext>
 define _tstrtrim	<_wstrtrim>
 define _tstrstart	<_wstrstart>
+define _tstrtrunc	<_wstrtrunc>
 define _tstrfcat	<_wstrfcat>
 define _tstrshr		<_wstrshr>
 define _twildcard	<_wwildcard>
 else
 define _tstrfn		<strfn>
 define _tstrext		<strext>
+define _tsetfext	<setfext>
 define _tstrtrim	<strtrim>
 define _tstrstart	<strstart>
+define _tstrtrunc	<strtrunc>
 define _tstrfcat	<strfcat>
 define _tstrshr		<strshr>
 define _twildcard	<_awildcard>

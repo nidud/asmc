@@ -40,11 +40,13 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         endtok  : ptr ptr asm_tok,  ; past ')' of call
         argtok  : ptr asm_tok,      ; past '(' of call
         class   : string_t,         ; class name
-        type    : string_t          ; name:<type>
+        type    : string_t,         ; name:<type>
+        sym     : ptr asym
 
   local acc     : int_t,
         reg     : int_t,
         cltype  : ClType,
+        callid  : int_t,
         cc[256] : char_t            ; class_class
 
     mov rsi,tstrcat( tstrcat( tstrcpy( &cc, class ), "_" ), class )
@@ -90,13 +92,18 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
 
     mov edx,ClNew
     .if ( [rbx-asm_tok].token == T_COLON )
-        mov edx,ClMem
+        mov rdx,sym
+        .if ( rdx && [rdx].asym.mem_type == MT_PTR )
+            mov edx,ClPtr
+        .else
+            mov edx,ClMem
+        .endif
     .elseif ( type )
         mov edx,ClPtr
     .endif
     mov cltype,edx
 
-    .if ( [rbx-asm_tok].token != T_COLON )
+    .if ( [rbx-asm_tok].token != T_COLON || edx == ClPtr )
 
         inc eax
         .if ( type == NULL )
@@ -119,7 +126,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
     mov rdx,name
 
     .if rcx
-        .new _eax:int_t = eax
+        mov callid,eax
         .switch eax
         .case 0, 3
             AddLineQueueX( " lea %r, %s", reg, rdx )
@@ -129,7 +136,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         .endsw
         mov rdx,name
         mov ecx,reg
-        mov eax,_eax
+        mov eax,callid
         .switch pascal eax
         .case 0 : AddLineQueueX( " %s(%r)",          rsi, ecx )
         .case 1 : AddLineQueueX( " mov %s,%s(%r)",   rdx, rsi, ecx )
@@ -1024,14 +1031,19 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov endtok,rbx
 
                 .if ( SymSearch( rsi ) )
-                    .if ( [rax].asym.state == SYM_TYPE )
-                        .while ( [rax].asym.type )
-                            mov rax,[rax].asym.type
+                    mov rcx,rax
+                    .if ( [rcx].asym.state == SYM_TYPE )
+                        .while ( [rcx].asym.type )
+                            mov rcx,[rcx].asym.type
                         .endw
+                        .if ( [rcx].asym.target_type &&
+                            ( [rcx].asym.mem_type == MT_PTR || [rcx].asym.ptr_memtype == MT_TYPE ) )
+                            mov rcx,[rcx].asym.target_type
+                        .endif
                     .endif
-                    mov rsi,[rax].asym.name
+                    mov rsi,[rcx].asym.name
                 .endif
-                ConstructorCall( name, &endtok, rdi, rsi, type )
+                ConstructorCall( name, &endtok, rdi, rsi, type, rax )
                 mov rbx,endtok
 
             .elseif ( [rbx].token == T_DIRECTIVE && [rbx].dirtype == DRT_EQUALSGN )

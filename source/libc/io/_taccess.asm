@@ -24,7 +24,6 @@ ifdef __UNIX__
 
         neg eax
         _set_errno( eax )
-        mov eax,-1
     .endif
 else
 

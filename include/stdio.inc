@@ -6,35 +6,38 @@ ifndef __LIBC_INC
 endif
 .pragma comment(lib, libc, msvcrt)
 
-FILENAME_MAX	equ 260
+define FILENAME_MAX	260
 
-SEEK_CUR	equ 1
-SEEK_END	equ 2
-SEEK_SET	equ 0
+define SEEK_CUR		1
+define SEEK_END		2
+define SEEK_SET		0
 
-_NSTREAM_	equ 20
-_MAXIOBUF	equ 0x4000
-_INTIOBUF	equ 0x1000
-_MINIOBUF	equ 0x0200
+define _NSTREAM_	20
+define _MAXIOBUF	0x4000
+define _INTIOBUF	0x1000
+define _MINIOBUF	0x0200
 
-_IOFBF		equ 0x0000
-_IOREAD		equ 0x0001
-_IOWRT		equ 0x0002
-_IONBF		equ 0x0004
-_IOMYBUF	equ 0x0008
-_IOEOF		equ 0x0010
-_IOERR		equ 0x0020
-_IOSTRG		equ 0x0040
-_IOLBF		equ 0x0040
-_IORW		equ 0x0080
-_IOYOURBUF	equ 0x0100
-_IOSETVBUF	equ 0x0400
-_IOFEOF		equ 0x0800
-_IOFLRTN	equ 0x1000
-_IOCTRLZ	equ 0x2000
-_IOCOMMIT	equ 0x4000
+define _IOFBF		0x0000
+define _IOREAD		0x0001
+define _IOWRT		0x0002
+define _IONBF		0x0004
+define _IOMYBUF		0x0008
+define _IOEOF		0x0010
+define _IOERR		0x0020
+define _IOSTRG		0x0040
+define _IOLBF		0x0040
+define _IORW		0x0080
+define _IOYOURBUF	0x0100
+define _IOSETVBUF	0x0400
+define _IOFEOF		0x0800
+define _IOFLRTN		0x1000
+define _IOCTRLZ		0x2000
+define _IOCOMMIT	0x4000
+define _IOLOCKED	0x8000
 
-EOF		equ (-1)
+define _IOMEMBUF	0x10000
+
+define EOF		(-1)
 
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
@@ -187,6 +190,8 @@ _woutput	proto __cdecl :LPFILE, :wstring_t, :ptr
 _wopenfile	proto __cdecl :wstring_t, :wstring_t, :int_t, :LPFILE
 
 endif ; _WSTDIO_DEFINED
+
+_fopent		proto __cdecl
 
 ifdef _UNICODE
 define _toutput		<_woutput>

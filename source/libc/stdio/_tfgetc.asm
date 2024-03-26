@@ -69,9 +69,7 @@ ifdef _UNICODE
 
                 .return(wc)
             .endif
-
-            _set_errno(EILSEQ)
-            .return(-1)
+            .return( _set_errno( EILSEQ ) )
         .endif
     .endif
 

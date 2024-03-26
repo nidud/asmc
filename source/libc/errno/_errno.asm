@@ -28,6 +28,7 @@ _set_errno proc value:int_t
     ldr ecx,value
 
     mov ErrorNoMem,ecx
+    mov rax,-1
     ret
 
 _set_errno endp

@@ -2,8 +2,12 @@ ifndef _INC_TYPES
 define _INC_TYPES
 
 ifndef _TIME_T_DEFINED
-time_t typedef sdword
 define _TIME_T_DEFINED
+ifdef _WIN64
+time_t typedef int64_t
+else
+time_t typedef long_t
+endif
 endif
 
 ifndef _INO_T_DEFINED

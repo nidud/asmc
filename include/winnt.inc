@@ -567,7 +567,7 @@ RTL_BITS_OF_FIELD macro x, field
 	endm
 
 
-.inline CONTAINING_RECORD fastcall address:ptr, type:abs, field:abs {
+CONTAINING_RECORD proto fastcall :ptr, type:abs, field:abs {
 	lea rax,[rcx-type.field]
 	}
 
@@ -575,7 +575,7 @@ ifndef __EXCPT_INC
  include excpt.inc
 endif
 
-EXCEPTION_MAXIMUM_PARAMETERS	equ 15	; maximum number of exception parameters
+define EXCEPTION_MAXIMUM_PARAMETERS 15 ; maximum number of exception parameters
 
 
 EXCEPTION_RECORD	STRUC SIZE_T

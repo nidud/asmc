@@ -7,11 +7,11 @@ include sselevel.inc
 main proc
 
     support_message macro isa_feature, flags
-        mov ecx,'x'
-        mov edx,' '
+        mov edx,'x'
+        mov ecx,' '
         test sselevel,flags
-        cmovne edx,ecx
-        printf( "[%c] %s\n", edx, isa_feature )
+        cmovne ecx,edx
+        printf( "[%c] %s\n", ecx, isa_feature )
         retm<>
         endm
 
@@ -46,6 +46,7 @@ main proc
     support_message("AVX512VL",     SSE_AVX512VL)
     support_message("AVX512VBMI",   SSE_AVX512VBMI)
     support_message("AVX512BW",     SSE_AVX512BW)
+    xor eax,eax
     ret
 
 main endp

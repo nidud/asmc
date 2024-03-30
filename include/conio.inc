@@ -134,7 +134,7 @@ define ALTKEY_DOWN	( KF_ALTDOWN  shl 16 )
 define BG_MENU		3	; CYAN
 define BG_ERROR		4	; RED
 define BG_TITLE		15	; WHITE
-define BG_INVERSE	11	; LIGHTCYAN
+define BG_INVERSE	1	; LIGHTCYAN
 define BG_PUSHBUTTON	2	; GREEN
 define BG_EDIT		0	; BLACK
 
@@ -148,20 +148,20 @@ define FG_EDIT		7	; GRAY
 
 .enum VTI_COLOR { ; Virtual Terminal Color Index
     TC_BLACK,
-    TC_RED,
-    TC_GREEN,
-    TC_BROWN,
     TC_BLUE,
-    TC_MAGENTA,
+    TC_GREEN,
     TC_CYAN,
+    TC_RED,
+    TC_MAGENTA,
+    TC_BROWN,
     TC_LIGHTGRAY,
     TC_DARKGRAY,
-    TC_LIGHTRED,
-    TC_LIGHTGREEN,
-    TC_YELLOW,
     TC_LIGHTBLUE,
-    TC_LIGHTMAGENTA,
+    TC_LIGHTGREEN,
     TC_LIGHTCYAN,
+    TC_LIGHTRED,
+    TC_LIGHTMAGENTA,
+    TC_YELLOW,
     TC_WHITE
     }
 
@@ -622,14 +622,21 @@ define U_LIGHT_ARC_DOWN_AND_LEFT	0x256E	;
 define U_LIGHT_ARC_UP_AND_LEFT		0x256F	;
 define U_LIGHT_ARC_UP_AND_RIGHT		0x2570	;
 
-define U_UPPER_HALF_BLOCK		0x2580	; Push Button
+define U_UPPER_HALF_BLOCK		0x2580	; Push Button shade
 define U_LOWER_HALF_BLOCK		0x2584
-define U_BLACK_RIGHT_POINTER		0x25BA	; >
-define U_BLACK_LEFT_POINTER		0x25C4	; <
+
+define U_BLACK_POINTER_RIGHT		0x25BA	; > small
+define U_BLACK_POINTER_LEFT		0x25C4	; <
+
+define U_BLACK_TRIANGLE_RIGHT		0x25B6	; > big
+define U_BLACK_TRIANGLE_LEFT		0x25C0	; <
+define U_BLACK_TRIANGLE_UP		0x25B2	;
+define U_BLACK_TRIANGLE_DOWN		0x25BC	;
 
 define U_FULL_BLOCK			0x2588
 define U_LIGHT_SHADE			0x2591
-define U_FULL_BLOCK			0x2588
+define U_MEDIOM_SHADE			0x2592
+define U_DARK_SHADE			0x2593
 
 define U_MIDDLE_DOT			0x00B7	; Text input
 define U_BULLET_OPERATOR		0x2219	; (*) Radio

@@ -797,11 +797,15 @@ endif
 
         tstrcat(rdi, [rbx].string_ptr)
 
-        .if ( ( [rbx].token == T_INSTRUCTION ) ||
-              ( [rbx].token == T_RES_ID && [rbx].tokval == T_ADDR ) )
-
+        mov al,[rbx].token
+        .switch al
+        .case T_RES_ID
+            .endc .if [rbx].tokval != T_ADDR
+        .case T_BINARY_OPERATOR
+        .case T_INSTRUCTION
+        .case T_NUM
             tstrcat(rdi, " ")
-        .endif
+        .endsw
         add rbx,asm_tok
     .endw
     .if esi

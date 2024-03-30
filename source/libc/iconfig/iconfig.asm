@@ -153,7 +153,25 @@ IConfig::Find proc uses rbx string:string_t
 IConfig::Find endp
 
 
-IConfig::FindID proc uses rbx id:int_t
+IConfig::GetEntry proc entry:string_t
+
+    ldr rcx,this
+    ldr rdx,entry
+
+    mov rax,[rcx].entry
+    .if ( rax )
+
+        .if ( IConfig::Find(rax, rdx) )
+
+            mov rax,[rax].IConfig.value
+        .endif
+    .endif
+    ret
+
+IConfig::GetEntry endp
+
+
+IConfig::GetID proc uses rbx id:int_t
 
    .new name[32]:char_t
 
@@ -161,10 +179,10 @@ IConfig::FindID proc uses rbx id:int_t
     ldr ecx,id
 
     sprintf(&name, "%d", ecx)
-    IConfig::Find(rbx, &name)
+    IConfig::GetEntry(rbx, &name)
     ret
 
-IConfig::FindID endp
+IConfig::GetID endp
 
 
 IConfig::Append proc uses rbx format:string_t, argptr:vararg

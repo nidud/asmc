@@ -19,6 +19,8 @@ include stdio.inc
 include stdlib.inc
 include io.inc
 include tchar.inc
+define LTYPE_INLINE
+include ltype.inc
 
 __MAKE__        equ 200
 
@@ -105,29 +107,6 @@ ctemp           db '.',0
                 align 4
 envtemp         dd ctemp
 errorlevel      dd 0
-
-_LABEL          equ 0x40 ; _UPPER + _LOWER + '@' + '_' + '$' + '?'
-_ltype          db 0
-                db 9 dup(_CONTROL)
-                db 5 dup(_SPACE+_CONTROL)
-                db 18 dup(_CONTROL)
-                db _SPACE
-                db 3 dup(_PUNCT)
-                db _PUNCT+_LABEL
-                db 11 dup(_PUNCT)
-                db 10 dup(_DIGIT+_HEX)
-                db 5 dup(_PUNCT)
-                db 2 dup(_PUNCT+_LABEL)
-                db 6 dup(_UPPER+_LABEL+_HEX)
-                db 20 dup(_UPPER+_LABEL)
-                db 4 dup(_PUNCT)
-                db _PUNCT+_LABEL
-                db _PUNCT
-                db 6 dup(_LOWER+_LABEL+_HEX)
-                db 20 dup(_LOWER+_LABEL)
-                db 4 dup(_PUNCT)
-                db _CONTROL     ; 7F (DEL)
-                db 257 - ($ - offset _ltype) dup(0)
 
 curr_token      string_t 0
 
@@ -356,7 +335,7 @@ strtoken proc string:string_t
 
         mov al,[ecx]
         inc ecx
-    .until !(_ltype[eax+1] & _SPACE)
+    .until !(_ltype[eax] & _SPACE)
 
     .repeat
 
@@ -369,7 +348,7 @@ strtoken proc string:string_t
                 mov al,[ecx]
                 inc ecx
                 .break(1) .if !al
-            .until _ltype[eax+1] & _SPACE
+            .until _ltype[eax] & _SPACE
             mov [ecx-1],ah
             inc ecx
         .until 1
@@ -567,7 +546,7 @@ ltoken proc uses esi edi string:string_t
             mov token,esi
             .break
 
-        .case _ltype[eax+1] & _SPACE
+        .case _ltype[eax] & _SPACE
             mov eax,token
             mov token,esi
             .break
@@ -601,7 +580,7 @@ istarget proc uses edi ebx line:string_t
     movzx eax,byte ptr [eax+1]
     .return( &[eax+1] ) .if !eax
 
-    mov al,_ltype[eax+1]
+    mov al,_ltype[eax]
     and al,_SPACE
     ret
 
@@ -811,6 +790,12 @@ gnumake proc string:string_t
             inc eax
         .endif
         .endc
+    .case cx == 'fi'
+        shr ecx,16
+        .if ( cl <= ' ' )
+            inc eax
+        .endif
+        .endc
     .case ecx == 'lcni'
         .if ( dx == 'du' )
             shr edx,16
@@ -871,7 +856,7 @@ skipiftag proc uses esi edi
             mov if_state[eax],0
             inc if_level
             skipiftag()
-            .continue(0)
+           .continue(0)
         .endif
     .until 1
     ret

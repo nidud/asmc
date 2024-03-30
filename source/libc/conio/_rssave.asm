@@ -18,11 +18,13 @@ include string.inc
 
 _rssave proc uses rbx hwnd:THWND, file:LPSTR
 
+    .new size:dword
     .new d:TOBJ
+    .new wp:ptr
     .new h:int_t = _sopen(file, O_BINARY or O_CREAT or O_TRUNC or O_WRONLY, SH_DENYNO, _S_IWRITE)
     .return .if ( h == -1 )
 
-    ldr rbx,hwnd
+    mov rbx,hwnd
     memcpy(&d, rbx, TOBJ)
     and d.flags,not (W_ISOPEN or W_VISIBLE)
     _write(h, &d, TOBJ)
@@ -30,8 +32,6 @@ _rssave proc uses rbx hwnd:THWND, file:LPSTR
         _write(h, rbx, TOBJ)
     .endf
 
-   .new size:dword
-   .new wp:ptr
     mov     rbx,hwnd
     movzx   eax,[rbx].rc.col
     mul     [rbx].rc.row
@@ -40,10 +40,8 @@ _rssave proc uses rbx hwnd:THWND, file:LPSTR
     mov     size,_rczip([rbx].rc, rax, [rbx].window)
 
     _write(h, wp, size)
-    _close(h)
-
     free(wp)
-
+    _close(h)
    .return( 1 )
 
 _rssave endp

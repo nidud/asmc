@@ -47,6 +47,10 @@ define _rmdir	<rmdir>
 define _mkdir	<mkdir>
 define _chdir	<chdir>
 define _getcwd	<getcwd>
+
+define _F_SUBDIR	_S_IFDIR
+else
+define _F_SUBDIR	_A_SUBDIR
 endif
 
 _getdrive	proto __cdecl
@@ -76,12 +80,6 @@ define _D_SORTDATE	0x0040
 define _D_SORTSIZE	0x0080
 define _D_SORTSUB	0x0100
 define _D_DOSORT	0x00F0
-
-ifdef __UNIX__
-define _F_SUBDIR	_S_IFDIR
-else
-define _F_SUBDIR	_A_SUBDIR
-endif
 
 .template FBLKA
     attrib	uint_t ?

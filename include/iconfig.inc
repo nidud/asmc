@@ -23,7 +23,8 @@ config_t typedef ptr IConfig
     ReadFile    proc :string_t
     Write       proc
     Find        proc :string_t
-    FindID      proc :int_t
+    GetID       proc :int_t
+    GetEntry    proc :string_t
     Append      proc :string_t, :vararg
     Remove      proc :string_t
     Clear       proc

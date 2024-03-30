@@ -258,7 +258,7 @@ wm_setfocus proc uses rbx hwnd:THWND
         _cursoroff()
         mov eax,' '
         .if ( [rbx].context.state == 0 )
-            mov eax,U_BLACK_RIGHT_POINTER
+            mov eax,U_BLACK_TRIANGLE_RIGHT
         .endif
         _scputc(rc.x, rc.y, 1, ax)
         mov al,rc.x
@@ -266,7 +266,7 @@ wm_setfocus proc uses rbx hwnd:THWND
         dec al
         mov ecx,' '
         .if ( [rbx].context.state == 0 )
-            mov ecx,U_BLACK_LEFT_POINTER
+            mov ecx,U_BLACK_TRIANGLE_LEFT
         .endif
         mov x,al
         _scputc(x, rc.y, 1, cx)

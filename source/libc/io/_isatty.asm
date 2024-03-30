@@ -46,7 +46,8 @@ ifdef __UNIX__
 
    .new termios:__kernel_termios
 
-    .ifsd ( sys_ioctl(ecx, TCGETS, &termios) < 0 )
+    lea rax,termios
+    .ifsd ( sys_ioctl(ecx, TCGETS, rax) < 0 )
 
         neg eax
         _set_errno( eax )

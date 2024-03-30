@@ -291,7 +291,7 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
         .return( 0 )
     .endif
 
-    lea rcx,_ltype[1]
+    lea rcx,_ltype
     mov eax,esi
 
     .if ( !ah && byte ptr [rcx+rax] & _CONTROL )
@@ -346,7 +346,7 @@ event_nextword proc fastcall uses rsi rbx ti:PTEDIT
     mov rbx,rcx
    .return .if !curlptr(rcx)
 
-    lea rsi,_ltype[1]
+    lea rsi,_ltype
     mov rdx,rax
     mov rcx,rax
     movzx eax,TCHAR ptr [rcx]
@@ -398,7 +398,7 @@ event_prevword proc fastcall uses rsi rbx ti:PTEDIT
     add eax,[rbx].xoffs
    .return .ifz
 
-    lea rsi,_ltype[1]
+    lea rsi,_ltype
     movzx eax,TCHAR ptr [rcx]
 
     .if ( ah || byte ptr [rsi+rax] & _LABEL )

@@ -2,10 +2,13 @@ include io.inc
 include direct.inc
 include stdio.inc
 include string.inc
+include malloc.inc
+ifndef __INIX__
 include winbase.inc
+endif
 include tchar.inc
 
-BUFSIZE equ 4096 ; Size of line buffer
+define BUFSIZE 4096 ; Size of line buffer
 
 .data
 file_count  dd 0
@@ -15,74 +18,79 @@ print_line  dd 0
 .code
 
 print_usage proc
-    .return printf(
+
+    printf(
         "Usage: brackets [-option] [file(s)]\n\n"
-        "/l Print Line context\n"
-        "/r Recurse subdirectories\n\n"
+        "-l Print Line context\n"
+        "-r Recurse subdirectories\n\n"
         )
+   .return( 0 )
+
 print_usage endp
 
-strfcat proc b:string_t, path:string_t, file:string_t
-    .return strcat(strcat(strcpy(rcx, rdx), "\\"), file)
-strfcat endp
-
-strfn proc path:string_t
-    mov rax,rcx
-    .while byte ptr [rcx]
-        .if byte ptr [rcx] == '\' && byte ptr [rcx+1]
-            lea rax,[rcx+1]
-        .endif
-        inc rcx
-    .endw
-    ret
-strfn endp
 
 scanfile proc uses rsi rdi rbx name:string_t
 
-  .new buffer[BUFSIZE]:sbyte
-  .new fp:LPFILE = fopen(name, "rt")
+  .new fp:LPFILE = fopen(name, "r")
+  .new buffer:string_t = alloca(BUFSIZE)
   .new line:long_t = 0
 
     .if ( fp == NULL )
+
         perror(name)
-        .return 0
+       .return( 0 )
     .endif
 
-    .while fgets(&buffer, BUFSIZE, fp)
+    .while fgets(buffer, BUFSIZE, fp)
 
-        lea rsi,buffer
         .while 1
+
             inc line
-            .if strchr(rsi, ';')
+            .if strchr(buffer, ';')
+
                 mov byte ptr [rax],0
             .endif
-            lea rbx,[rsi+strlen(rsi)-1]
-            .while rbx > rsi
+
+            lea rbx,[strlen(buffer)-1]
+            add rbx,buffer
+
+            .while ( rbx > buffer )
+
                 movzx eax,byte ptr [rbx]
                 .if ( al <= ' ' )
+
                     mov byte ptr [rbx],0
                     dec rbx
                 .else
                     .break
                 .endif
             .endw
-            .break .if al != '\'
-            mov rcx,rbx
-            sub rcx,rsi
-            mov edx,BUFSIZE
-            sub edx,ecx
-            .break .if !fgets(rbx, edx, fp)
+            .break .if ( al != '\' )
+
+            mov rdx,rbx
+            sub rdx,buffer
+            mov ecx,BUFSIZE
+            sub ecx,edx
+
+           .break .if !fgets(rbx, ecx, fp)
         .endw
+
+        mov rsi,buffer
         xor edi,edi
         xor ebx,ebx
         lodsb
+
         .while al
-            .if al == '('
+
+            .if ( al == '(' )
+
                 inc edi
                 .if ( rbx == NULL )
                     lea rbx,[rsi-1]
                 .endif
-            .elseif al == ')'
+
+            .elseif ( al == ')' )
+
                 dec edi
                 .if ( rbx == NULL )
                     lea rbx,[rsi-1]
@@ -90,6 +98,7 @@ scanfile proc uses rsi rdi rbx name:string_t
             .endif
             lodsb
         .endw
+
         .if ( edi )
             .if ( print_line )
                 printf("%s(%d)[%s]\n", name, line, rbx)
@@ -99,107 +108,130 @@ scanfile proc uses rsi rdi rbx name:string_t
         .endif
     .endw
     fclose(fp)
-    .return line
+   .return( line )
 
 scanfile endp
 
-scanfiles proc uses rsi rdi rbx directory:string_t, fmask:string_t
 
-  local path[_MAX_PATH]:sbyte, ff:_finddata_t
+scanfiles proc uses rbx directory:string_t, fmask:string_t
+
+    .new path[_MAX_PATH]:char_t
+    .new ff:_finddata_t
 
     .ifd _findfirst(strfcat(&path, directory, fmask), &ff) != -1
-        mov rsi,rax
+
+        mov rbx,rax
         .repeat
-            .if !( ff.attrib & _A_SUBDIR )
+            .if !( ff.attrib & _F_SUBDIR )
+
                 scanfile(strfcat(&path, directory, &ff.name))
                 inc file_count
             .endif
-        .until _findnext(rsi, &ff)
-        _findclose(rsi)
+        .until _findnext(rbx, &ff)
+        _findclose(rbx)
     .endif
+
     .if do_subdir
-        .ifd _findfirst(strfcat(&path, directory, "*.*"), &ff) != -1
-            mov rsi,rax
+
+        .ifd ( _findfirst(strfcat(&path, directory, "*.*"), &ff) != -1 )
+
+            mov rbx,rax
             .repeat
-                .if word ptr ff.name == '.'
-                    .break .if _findnext(rsi, &ff)
+
+                mov eax,dword ptr ff.name
+                and eax,0x00FFFFFF
+                .if ( ax != '.' && eax != '..' && ff.attrib & _F_SUBDIR )
+
+                    scanfiles(strfcat(&path, directory, &ff.name), fmask)
                 .endif
-                .if word ptr ff.name == '..' && ff.name[2] == 0
-                    .break .if _findnext(rsi, &ff)
-                .endif
-                .repeat
-                    .if ff.attrib & _A_SUBDIR
-                        scanfiles(strfcat(&path, directory, &ff.name), fmask)
-                    .endif
-                .until _findnext(rsi, &ff)
-            .until 1
-            _findclose(rsi)
+            .until _findnext(rbx, &ff)
+            _findclose(rbx)
         .endif
     .endif
     ret
 
 scanfiles endp
 
+
 main proc argc:int_t, argv:array_t
 
-  local path[_MAX_PATH]:sbyte, fmask[_MAX_PATH]:sbyte
+   .new path[_MAX_PATH]:char_t = 0
+   .new fmask[_MAX_PATH]:char_t = 0
 
-    mov edi,ecx
-    mov rsi,rdx
-    .if edi == 1
-        print_usage()
-        .return 0
+    .if ( argc == 1 )
+
+        .return print_usage()
     .endif
-    dec edi
-    lodsq
-    .repeat
-        lodsq
-        mov rbx,rax
-        mov eax,[rbx]
+
+    mov rbx,argv
+    dec argc
+
+    .while ( argc )
+
+        add rbx,string_t
+        mov rcx,[rbx]
+        mov eax,[rcx]
+
         .switch al
+ifndef __UNIX__
         .case '?'
-            print_usage()
-            .return 0
+endif
+        .case 'h'
+            .return( print_usage() )
+
+ifndef __UNIX__
         .case '/'
+endif
         .case '-'
+
             shr eax,8
-            or  eax,202020h
-            .if al == 'r'
+            .if ( al == 'r' )
+
                 inc do_subdir
-                .endc
-            .elseif al == 'l'
+               .endc
+
+            .elseif ( al == 'l' )
+
                 inc print_line
-                .endc
+               .endc
             .endif
-            .gotosw('?')
+            .gotosw('h')
+
         .default
-            strcpy(&path, rbx)
-            mov rbx,strfn(rax)
-            strcpy(&fmask, rax)
+
+            strcpy(&fmask, strfn(strcpy(&path, rcx)))
+            strfn(&path)
             lea rcx,path
-            .if rbx > rcx  && byte ptr [rbx-1] == '\'
-                mov byte ptr [rbx-1],0
+ifdef __UNIX__
+            mov edx,'/'
+else
+            mov edx,'\'
+endif
+            .if ( rax > rcx && dl == [rax-1] )
+                mov [rax-1],dh
             .else
-                mov byte ptr [rbx],0
+                mov [rax],dh
             .endif
         .endsw
-        dec edi
-    .until !edi
+        dec argc
+    .endw
 
-    lea rdi,fmask
-    lea rsi,path
-    .if byte ptr [rdi] == 0
+    .if ( fmask == 0 )
+
         perror("Nothing to do..")
-        .return 0
+       .return( 0 )
     .endif
-    .if byte ptr [rsi] == 0
-        strcpy(rsi, ".")
+    .if ( path == 0 )
+
+        mov word ptr path,'.'
     .endif
-    GetFullPathName(rsi, _MAX_PATH, rsi, 0)
-    printf( "\nFile(s):   %s\nDirectory: %s\n\n", rdi, rsi)
-    scanfiles(rsi, rdi)
+ifndef __UNIX__
+    GetFullPathName(&path, _MAX_PATH, &path, 0)
+endif
+    printf( "\nFile(s):   %s\nDirectory: %s\n\n", &fmask, &path)
+    scanfiles(&path, &fmask)
     printf("Total %d file(s)\n", file_count)
-    .return 0
+   .return( 0 )
 
 main endp
 

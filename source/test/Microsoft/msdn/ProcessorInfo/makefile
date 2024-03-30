@@ -1,7 +1,5 @@
-
-test.exe:
-    asmc64 -q -pe $*.asm
-    $@
-    pause
-    del *.obj
-    del *.exe
+ProcessorInfo.exe:
+	asmc64 -q -pe $*.asm
+	$@
+	pause
+	del *.exe

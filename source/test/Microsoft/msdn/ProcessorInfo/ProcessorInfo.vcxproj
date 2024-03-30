@@ -12,11 +12,10 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <AsmcDir>$(AsmcDir)</AsmcDir>
-    <RootNamespace>h2inc</RootNamespace>
+    <RootNamespace>ProcessorInfo</RootNamespace>
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectGuid>{9C659DF5-4D33-49C4-94EA-96F19354FA06}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -26,7 +25,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-  <Import Project="$(AsmcDir)\bin\asmc.props" />
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -46,6 +45,7 @@
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\X64</AdditionalLibraryDirectories>
     </Link>
     <ASMC>
+      <WCharacterSet>NotSet</WCharacterSet>
       <GenerateUnwindInformation>true</GenerateUnwindInformation>
       <GenerateCStackFrame>true</GenerateCStackFrame>
       <PackAlignmentBoundary>4</PackAlignmentBoundary>
@@ -59,13 +59,14 @@
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
     </Link>
     <ASMC>
+      <WCharacterSet>NotSet</WCharacterSet>
       <GenerateCStackFrame>true</GenerateCStackFrame>
       <PackAlignmentBoundary>3</PackAlignmentBoundary>
       <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ASMC Include="h2inc.asm" />
+    <ASMC Include="ProcessorInfo.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

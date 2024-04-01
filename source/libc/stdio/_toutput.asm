@@ -617,10 +617,10 @@ endif
                         ;
                         ; alternate form means '0x' prefix
                         ;
-                        mov eax,'x' - 'a' + '9' + 1
-                        add eax,hexoff
+                        ;mov eax,'x' - 'a' + '9' + 1
+                        ;add eax,hexoff
                         mov prefix,'0'
-                        mov prefix[TCHAR],_tal
+                        mov prefix[TCHAR],'x';_tal
                         mov prefixlen,2
                     .endif
                     jmp COMMON_INT

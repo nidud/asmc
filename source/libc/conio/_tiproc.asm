@@ -612,7 +612,9 @@ _tiputs proc fastcall public uses rsi rdi rbx ti:PTEDIT
 
             lea rdi,ci
             lea rdi,[rdi+rax*4+2]
-            mov al,BG_INVERSE shl 4
+            mov al,[rdi]
+            and al,0x0F
+            or  al,at_background[BG_INVERSE]
             .repeat
                 mov [rdi],al
                 add rdi,4

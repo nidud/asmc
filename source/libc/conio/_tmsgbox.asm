@@ -183,7 +183,7 @@ endif
         mov rc.y,1
     .endif
 
-    mov ecx,_getat(0, 7)
+    _at 0,7,,ecx
     mov eax,W_MOVEABLE or W_SHADE
     .if ( flags & MB_USERICON )
         mov eax,W_MOVEABLE or W_TRANSPARENT
@@ -200,7 +200,8 @@ endif
     and eax,0x00000070
     .if ( eax == MB_ICONERROR || eax == MB_ICONWARNING )
 
-        _rcclear([rbx].rc, [rbx].window, _getattrib(BG_ERROR, 7))
+        _at BG_ERROR,7,' '
+        _rcclear([rbx].rc, [rbx].window, eax)
     .endif
 
     _dltitle(rbx, title)

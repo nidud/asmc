@@ -56,9 +56,8 @@ _rsopen proc uses rsi rdi rbx res:PTRES
     add     eax,rsize
     add     eax,dsize
     mov     tsize,eax
-    mov     hwnd,malloc(eax)
 
-    .return .if !( rax )
+    .return .if !( malloc(eax) )
 
     mov     ecx,tsize
     mov     rdi,rax
@@ -95,9 +94,14 @@ _rsopen proc uses rsi rdi rbx res:PTRES
     assume  rbx:THWND
     assume  rdi:THWND
     or      [rbx].flags,eax
-    mov     rdi,[rbx].object
+    mov     hwnd,rsi
 
-    .for ( edx = 0 : dl < [rbx].count : edx++, rdi+=TCLASS )
+    _rcunzip([rbx].rc, [rbx].window, rdata)
+    .if ( [rbx].flags & W_RESAT )
+        _rcunzipat([rbx].rc, [rbx].window)
+    .endif
+
+    .for ( rsi = hwnd, rdi = [rbx].object, edx = 0 : dl < [rbx].count : edx++, rdi+=TCLASS )
 
         mov     ecx,TOBJ
         rep     movsb
@@ -138,7 +142,9 @@ _rsopen proc uses rsi rdi rbx res:PTRES
                 lea     rax,[rcx+TEDIT]
                 mov     [rcx].base,rax
                 mov     [rdi].buffer,rax
-                mov     eax,_getattrib(BG_EDIT, FG_EDIT, U_MIDDLE_DOT)
+                mov     rax,[rdi].window
+                mov     eax,[rax]
+                mov     ax,U_MIDDLE_DOT
                 mov     [rcx].clrattrib,eax
                 movzx   eax,[rbx].rc.y
                 add     al,[rdi].rc.y
@@ -166,7 +172,6 @@ _rsopen proc uses rsi rdi rbx res:PTRES
     .if ( [rbx].flags & O_CURSOR )
         _getcursor(&[rbx].cursor)
     .endif
-    _rcunzip([rbx].rc, [rbx].window, rdata)
     _conslink(rbx)
     ret
 

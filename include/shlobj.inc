@@ -267,12 +267,12 @@ ifdef _INC_SHELLAPI
 .comdef IShellExecuteHookA : public IUnknown
 
     Execute		proc :LPSHELLEXECUTEINFOA
-    .ends
+   .ends
 
 .comdef IShellExecuteHookW : public IUnknown
 
     Execute		proc :LPSHELLEXECUTEINFOW
-    .ends
+   .ends
 
 ifdef _UNICODE
 IShellExecuteHook	equ <IShellExecuteHookW>
@@ -284,19 +284,19 @@ endif
 .comdef IURLSearchHook : public IUnknown
 
     Translate		proc :LPWSTR, :DWORD
-    .ends
+   .ends
 
 .comdef ISearchContext : public IUnknown
 
     GetSearchUrl	proc :ptr
     GetSearchText	proc :ptr
     GetSearchStyle	proc :ptr
-    .ends
+   .ends
 
 .comdef IURLSearchHook2 : public IURLSearchHook
 
     TranslateWithSearchContext proc :LPWSTR, :DWORD, :ptr
-    .ends
+   .ends
 
 
 .comdef INewShortcutHookA : public IUnknown
@@ -307,8 +307,7 @@ endif
     GetFolder		proc :LPSTR, :SINT
     GetName		proc :LPSTR, :SINT
     GetExtension	proc :LPSTR, :SINT
-
-    .ends
+   .ends
 
 .comdef INewShortcutHookW : public IUnknown
 
@@ -318,8 +317,7 @@ endif
     GetFolder		proc :LPWSTR, :SINT
     GetName		proc :LPWSTR, :SINT
     GetExtension	proc :LPWSTR, :SINT
-
-    .ends
+   .ends
 
 ifdef _UNICODE
 INewShortcutHook	equ <INewShortcutHookW>
@@ -330,16 +328,14 @@ endif
 .comdef ICopyHookA : public IUnknown
 
     CopyCallback	proc :HWND, :UINT, :UINT, :LPCSTR, :DWORD, :LPCSTR, :DWORD
-
-    .ends
+   .ends
 
 LPCOPYHOOKA		typedef ptr ICopyHookA
 
 .comdef ICopyHookW : public IUnknown
 
     CopyCallback	proc :HWND, :UINT, :UINT, :LPCWSTR, :DWORD, :LPCWSTR, :DWORD
-
-    .ends
+   .ends
 
 LPCOPYHOOKW		typedef ptr ICopyHookW
 ifdef _UNICODE
@@ -356,8 +352,7 @@ if (NTDDI_VERSION LT NTDDI_WIN2K)
 
     SetPinnedWindow	proc :HWND
     GetPinnedWindow	proc :ptr
-
-    .ends
+   .ends
 
 LPFILEVIEWERSITE	typedef ptr IFileViewerSite
 
@@ -367,13 +362,10 @@ FVSHOWINFO		STRUC
 cbSize			dd ?
 hwndOwner		HWND ?
 iShow			SINT ?
-
 dwFlags			dd ?
 rect			RECT ?
 punkRel			LPUNKNOWN ?
-
 strNewFile		OLECHAR MAX_PATH dup(?)
-
 FVSHOWINFO		ENDS
 LPFVSHOWINFO		typedef ptr FVSHOWINFO
 
@@ -381,9 +373,7 @@ LPFVSHOWINFO		typedef ptr FVSHOWINFO
 
 FVSIF_RECT		equ 0x00000001
 FVSIF_PINNED		equ 0x00000002
-
 FVSIF_NEWFAILED		equ 0x08000000
-
 FVSIF_NEWFILE		equ 0x80000000
 FVSIF_CANVIEWIT		equ 0x40000000
 
@@ -392,7 +382,7 @@ FVSIF_CANVIEWIT		equ 0x40000000
     ShowInitialize	proc :LPFILEVIEWERSITE
     Show		proc :LPFVSHOWINFO
     PrintTo		proc :LPSTR, :BOOL
-    .ends
+   .ends
 
 LPFILEVIEWERA		typedef ptr IFileViewerA
 
@@ -401,7 +391,7 @@ LPFILEVIEWERA		typedef ptr IFileViewerA
     ShowInitialize	proc :LPFILEVIEWERSITE
     Show		proc :LPFVSHOWINFO
     PrintTo		proc :LPWSTR, :BOOL
-    .ends
+   .ends
 
 LPFILEVIEWERW		typedef ptr IFileViewerW
 

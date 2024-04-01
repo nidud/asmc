@@ -67,7 +67,8 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
         _rcread(rc, [rbx].window)
         _rcclear(rc, [rbx].window, 0x00080000)
     .else
-        _rcclear(rc, [rbx].window, _getattrib(BG_MENU, FG_MENU))
+        _at BG_MENU,FG_MENU,' '
+        _rcclear(rc, [rbx].window, eax)
     .endif
     .for ( rdx=rbx, rbx=[rbx].object, ecx=0 : ecx < count : ecx++, rbx+=TCLASS )
 

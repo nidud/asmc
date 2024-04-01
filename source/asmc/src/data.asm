@@ -106,8 +106,10 @@ InitializeArray proc __ccall uses rsi rdi rbx f:ptr sfield, pi:ptr int_t, tokena
                 .break
             .elseif ( [rbx].token == T_RES_ID && [rbx].tokval == T_DUP )
                 mov bArray,TRUE
-            .elseif ( no_of_bytes == 1 && [rbx].token == T_STRING &&
-                     ( [rbx].string_delim == '"' || [rbx].string_delim == "'" ) )
+            .elseif ( ( no_of_bytes == 1 || ; added @v2.34.51
+                      ( no_of_bytes == 2 && ModuleInfo.xflag & OPT_WSTRING or OPT_LSTRING ) ) &&
+                      [rbx].token == T_STRING &&
+                      ( [rbx].string_delim == '"' || [rbx].string_delim == "'" ) )
                 mov bArray,TRUE
             .endif
         .endf

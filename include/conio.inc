@@ -131,21 +131,6 @@ define SHIFTKEY_DOWN	( KF_EXTENDED shl 17 )
 define CTRLKEY_DOWN	( KF_EXTENDED shl 18 )
 define ALTKEY_DOWN	( KF_ALTDOWN  shl 16 )
 
-define BG_MENU		3	; CYAN
-define BG_ERROR		4	; RED
-define BG_TITLE		15	; WHITE
-define BG_INVERSE	1	; LIGHTCYAN
-define BG_PUSHBUTTON	2	; GREEN
-define BG_EDIT		0	; BLACK
-
-define FG_MENU		0	; BLACK
-define FG_TITLE		0	; BLACK
-define FG_PUSHBUTTON	0	; BLACK
-define FG_PBUTTONKEY	14	; YELLOW
-define FG_TITLEKEY	14	; YELLOW
-define FG_MENUKEY	15	; WHITE
-define FG_EDIT		7	; GRAY
-
 .enum VTI_COLOR { ; Virtual Terminal Color Index
     TC_BLACK,
     TC_BLUE,
@@ -165,13 +150,52 @@ define FG_EDIT		7	; GRAY
     TC_WHITE
     }
 
-_getat macro B, F
-    exitm<( F or ( B shl 4 ) )>
-    endm
-_getattrib macro B, F, C:=<' '>
-    exitm<( ( ( F or ( B shl 4 ) ) shl 16 ) or C )>
-    endm
+.enum ColorBackground {
+    BG_DESKTOP,
+    BG_PANEL,
+    BG_DIALOG,
+    BG_MENU,
+    BG_ERROR,
+    BG_TITLE,
+    BG_INVERSE,
+    BG_GRAY,
+    BG_PBUTTON,
+    BG_INVPANEL,
+    BG_INVMENU,
+    BG_TVIEW,
+    BG_TEDIT,
+    }
 
+.enum ColorForeground {
+    FG_TITLE,
+    FG_FRAME,
+    FG_FILES,
+    FG_SYSTEM,
+    FG_HIDDEN,
+    FG_PBSHADE,
+    FG_KEYBAR,
+    FG_DESKTOP,
+    FG_INACTIVE,
+    FG_DIALOG,
+    FG_PANEL,
+    FG_SUBDIR,
+    FG_MENU,
+    FG_TITLEKEY,
+    FG_DIALOGKEY,
+    FG_MENUKEY,
+    }
+
+externdef at_background:byte
+externdef at_foreground:byte
+
+_at macro B, F, C, reg:=<eax>
+    movzx reg,at_background[B]
+    or	  @REG8(reg),at_foreground[F]
+    ifnb <C>
+      shl reg,16
+      mov @REG16(reg),C
+    endif
+    endm
 
 .enum BOXTYPE {
     BOX_SINGLE,			; Single corners
@@ -211,7 +235,7 @@ _getattrib macro B, F, C:=<' '>
     W_SHADE		= 0x00000008,
     W_WNDPROC		= 0x00000010,
     W_CHILD		= 0x00000020,	; Item is a child
-    W_CONSOLE		= 0x00000040,
+    W_RESAT		= 0x00000040,
     W_TRANSPARENT	= 0x00000080,
 
     O_RADIO		= 0x00000100,	; Active (*)
@@ -234,6 +258,7 @@ _getattrib macro B, F, C:=<' '>
     O_USEBEEP		= 0x00800000,
     O_CURSOR		= 0x01000000,
     O_MYBUF		= 0x02000000,	; T_EDIT -- no alloc
+    W_CONSOLE		= 0x10000000,
     }
 
 .enum CURSOR_TYPE {
@@ -430,6 +455,7 @@ _rcmoveu	proto __cdecl :TRECT, :PCHAR_INFO
 _rcmoved	proto __cdecl :TRECT, :PCHAR_INFO
 _rczip		proto __cdecl :TRECT, :ptr, :PCHAR_INFO
 _rcunzip	proto __cdecl :TRECT, :PCHAR_INFO, :ptr
+_rcunzipat	proto __cdecl :TRECT, :PCHAR_INFO
 _rcbprc		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO
 _rcgetw		proto __cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t
 _rcputc		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :wchar_t

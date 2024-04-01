@@ -24,12 +24,13 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
 
     .case T_PUSHBUTTON
 
-        mov     eax,_getattrib(BG_PUSHBUTTON, FG_PUSHBUTTON)
+        _at     BG_PBUTTON,FG_TITLE,' '
         movzx   ecx,[rbx].rc.col
         mov     rdx,rdi
         rep     stosd
         mov     al,[rdi+2]
         and     eax,0xF0
+        or      al,at_foreground[FG_PBSHADE]
         shl     eax,16
         mov     ax,U_LOWER_HALF_BLOCK
         mov     [rdi],eax
@@ -39,49 +40,65 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
         mov     ax,U_UPPER_HALF_BLOCK
         rep     stosd
         lea     rdi,[rdx+8]
-        mov     eax,_getattrib(BG_PUSHBUTTON, FG_PUSHBUTTON)
-        mov     ecx,_getat(BG_PUSHBUTTON, FG_PBUTTONKEY)
+        mov     eax,[rdi-4]
+        mov     ecx,[rdi-2]
+        and     ecx,0xF0
+        or      cl,at_foreground[FG_TITLEKEY]
         mov     rdx,name
 
     .case T_RADIOBUTTON
 
-        mov     wchar_t ptr [rdi],'('
-        mov     wchar_t ptr [rdi+8],')'
+        mov     eax,[rdi]
+        mov     ax,'('
+        mov     [rdi],ax
+        mov     al,')'
+        mov     [rdi+8],ax
         add     rdi,4*4
-        mov     eax,_getattrib(BG_MENU, FG_MENU)
-        mov     ecx,_getat(BG_MENU, FG_MENUKEY)
+        mov     al,' '
+        mov     ecx,[rdi+2]
+        and     ecx,0xF0
+        or      cl,at_foreground[FG_MENUKEY]
         mov     rdx,name
 
     .case T_CHECKBOX
 
-        mov     eax,_getattrib(BG_MENU, FG_MENU)
-        mov     wchar_t ptr [rdi],'['
-        mov     wchar_t ptr [rdi+8],']'
+        mov     eax,[rdi]
+        mov     ax,'['
+        mov     [rdi],ax
+        mov     al,']'
+        mov     [rdi+8],ax
         add     rdi,4*4
-        mov     ecx,_getat(BG_MENU, FG_MENUKEY)
+        mov     al,' '
+        mov     ecx,[rdi+2]
+        and     ecx,0xF0
+        or      cl,at_foreground[FG_MENUKEY]
         mov     rdx,name
 
     .case T_XCELL
     .case T_TEXTBUTTON
     .case T_MENUITEM
-
         add     rdi,4
-        mov     eax,_getattrib(BG_MENU, FG_MENU)
-        mov     ecx,_getat(BG_MENU, FG_MENUKEY)
+        _at     BG_MENU,FG_MENU,' '
+        mov     ecx,eax
+        shr     ecx,16
+        and     ecx,0xF0
+        or      cl,at_foreground[FG_MENUKEY]
         mov     rdx,name
 
     .case T_EDIT
-
-        mov     eax,_getattrib(FG_EDIT, BG_EDIT)
+        mov     eax,[rdi]
         mov     ax,U_MIDDLE_DOT
         movzx   ecx,[rbx].rc.col
         rep     stosd
 
     .case T_TEXTAREA
     .case T_MOUSERECT
-
-        mov     eax,_getattrib(BG_MENU, FG_MENU)
-        mov     ecx,_getat(BG_MENU, FG_MENUKEY)
+        mov     eax,[rdi]
+        mov     ax,' '
+        mov     ecx,eax
+        shr     ecx,16
+        and     ecx,0xF0
+        or      cl,at_foreground[FG_MENUKEY]
         mov     rdx,name
     .endsw
 

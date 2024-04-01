@@ -288,9 +288,12 @@ wm_setfocus proc uses rbx hwnd:THWND
     .case T_XCELL
         _cursoroff()
         _scgeta(rc.x, rc.y)
+        shr al,4
         mov [rbx].context.flags,al
         mov [rbx].context.state,1
-        _scputbg(rc.x, rc.y, rc.col, BG_INVERSE)
+        mov al,at_background[BG_INVERSE]
+        shr al,4
+        _scputbg(rc.x, rc.y, rc.col, al)
 
         .if ( [rbx].flags & O_LIST )
 
@@ -341,9 +344,7 @@ wm_killfocus proc uses rbx hwnd:THWND
     .case T_XCELL
        .return 1 .if ( [rbx].context.state == 0 )
         mov [rbx].context.state,0
-        movzx eax,[rbx].context.flags
-        shr eax,4
-        _scputbg(rc.x, rc.y, rc.col, al)
+        _scputbg(rc.x, rc.y, rc.col, [rbx].context.flags)
        .endc
     .endsw
     .return( 0 )

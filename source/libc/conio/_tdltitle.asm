@@ -14,7 +14,8 @@ _dltitle proc uses rbx hwnd:THWND, string:LPTSTR
 
     mov rbx,hwnd
    .new rc:TRECT = { 0, 0, [rbx].rc.col, 1}
-    _rcclear(rc, [rbx].window, _getattrib(BG_TITLE, FG_TITLE))
+    _at BG_TITLE,FG_TITLE,' '
+    _rcclear(rc, [rbx].window, eax)
     _rccenter([rbx].rc, [rbx].window, rc, 0, string)
     ret
 

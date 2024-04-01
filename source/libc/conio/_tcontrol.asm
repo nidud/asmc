@@ -39,13 +39,13 @@ _tcontrol proc uses rbx hwnd:THWND, count:UINT, char:WORD, string:LPTSTR
     mov [rdx].winproc,&_tiproc
     mov [rbx].flags,[rdx].flags
     mov [rbx].scols,[rdx].rc.col
-    mov eax,_getattrib(BG_EDIT, FG_EDIT)
+    mov rax,[rdx].window
+    mov eax,[rax]
     mov ax,char
     .if ( ax == 0 )
         mov ax,U_MIDDLE_DOT
     .endif
     mov [rbx].clrattrib,eax
-
     mov rcx,[rdx].prev
     movzx eax,[rdx].rc.y
     add al,[rcx].rc.y

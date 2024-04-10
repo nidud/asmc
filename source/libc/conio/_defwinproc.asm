@@ -11,19 +11,6 @@ include malloc.inc
     option proc:private
 
     assume rcx:THWND
-
-_setfocus proc fastcall hwnd:THWND
-
-    .for ( rdx = rcx,
-           rdx = [rdx].TCLASS.prev,
-           rdx = [rdx].TCLASS.object,
-           eax = 0 : rdx != rcx : eax++, rdx = [rdx].TCLASS.next )
-    .endf
-    _dlsetfocus(rcx, al)
-    .return( 0 )
-
-_setfocus endp
-
     assume rbx:THWND
 
 _dlinside proc fastcall hwnd:THWND, pos:COORD
@@ -258,7 +245,7 @@ wm_setfocus proc uses rbx hwnd:THWND
         _cursoroff()
         mov eax,' '
         .if ( [rbx].context.state == 0 )
-            mov eax,U_BLACK_TRIANGLE_RIGHT
+            mov eax,U_BLACK_POINTER_RIGHT;U_BLACK_TRIANGLE_RIGHT
         .endif
         _scputc(rc.x, rc.y, 1, ax)
         mov al,rc.x
@@ -266,7 +253,7 @@ wm_setfocus proc uses rbx hwnd:THWND
         dec al
         mov ecx,' '
         .if ( [rbx].context.state == 0 )
-            mov ecx,U_BLACK_TRIANGLE_LEFT
+            mov ecx,U_BLACK_POINTER_LEFT;U_BLACK_TRIANGLE_LEFT
         .endif
         mov x,al
         _scputc(x, rc.y, 1, cx)
@@ -351,34 +338,33 @@ wm_killfocus proc uses rbx hwnd:THWND
 
 wm_killfocus endp
 
+    assume rcx:THWND
 
-wm_syschar proc uses rbx hwnd:THWND, wParam:UINT
+wm_syschar proc hwnd:THWND, wParam:UINT
 
-    mov eax,wParam
+    ldr eax,wParam
     .if ( ah || !eax )
         .return( 1 )
     .endif
 
-    mov rbx,hwnd
+    ldr rcx,hwnd
     .if ( eax == 'x' )
-        .return _postquitmsg(rbx, 0)
+        .return _postquitmsg(rcx, 0)
     .endif
 
-    test [rbx].flags,W_CHILD
-    cmovnz rbx,[rbx].prev
-    .for ( ecx = 0, rbx = [rbx].object : rbx : ecx++, rbx = [rbx].next )
+    test [rcx].flags,W_CHILD
+    cmovnz rcx,[rcx].prev
+    .for ( rcx = [rcx].object : rcx : rcx = [rcx].next )
 
-        .if ( al == [rbx].syskey )
+        .if ( al == [rcx].syskey )
 
-            _dlsetfocus(rbx, cl)
-            .return( 0 )
+            .return( _dlsetfocus(rcx, [rcx].index) )
         .endif
     .endf
     .return( 1 )
 
 wm_syschar endp
 
-    assume rcx:THWND
 
 wm_char proc uses rbx hwnd:THWND, wParam:UINT
 
@@ -401,8 +387,20 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
             .return _postquitmsg(rbx, edx)
         .endif
         .return _postmessage([rbx].prev, WM_COMMAND, rdx, rax)
+
     .elseif ( eax == VK_TAB )
-        .return _postmessage([rbx].prev, WM_KEYDOWN, VK_DOWN, KEY_EXTENDED)
+
+        .ifd _sendmessage([rbx].prev, WM_KEYDOWN, VK_DOWN, KEY_EXTENDED)
+
+            mov rcx,[rbx].prev
+            .for ( rcx = [rcx].object : rcx != rbx : rcx = [rcx].next )
+                .if ( !( [rcx].flags & O_STATE ) && [rcx].type < T_MOUSERECT )
+                    .return( _dlsetfocus( rcx, [rcx].index ) )
+                .endif
+            .endf
+        .endif
+        .return
+
     .elseif ( eax == VK_ESCAPE )
         .return _postquitmsg(rbx, 0)
     .endif
@@ -468,26 +466,26 @@ wm_keydown proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
 
             .switch eax
             .case VK_UP
-
                 .for ( eax = 0, rcx = [rcx].object : rcx != rbx : rcx = [rcx].next )
 
-                    .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
+                    .if ( !( [rcx].flags & O_STATE ) && [rcx].type < T_MOUSERECT )
 
-                        mov rax,rcx
+                         mov rax,rcx
                     .endif
                 .endf
                 .if ( rax )
-                    .return( _setfocus(rax) )
+
+                    mov rcx,rax
+                   .return( _dlsetfocus( rcx, [rcx].index ) )
                 .endif
                 .endc
 
             .case VK_DOWN
-
                 .for ( rcx = [rbx].next : rcx : rcx = [rcx].next )
 
-                    .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
+                    .if ( !( [rcx].flags & O_STATE ) && [rcx].type < T_MOUSERECT )
 
-                        .return( _setfocus(rcx) )
+                        .return( _dlsetfocus( rcx, [rcx].index ) )
                     .endif
                 .endf
                 .endc
@@ -498,7 +496,7 @@ wm_keydown proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
 
                 .for ( edx = [rbx].rc, eax = 0, rcx = [rcx].object : rcx != rbx : rcx = [rcx].next )
 
-                    .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
+                    .if ( !( [rcx].flags & O_STATE ) && [rcx].type < T_MOUSERECT )
 
                         .if ( dh == [rcx].rc.y && dl > [rcx].rc.x )
 
@@ -507,7 +505,9 @@ wm_keydown proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
                     .endif
                 .endf
                 .if ( rax )
-                    .return( _setfocus(rax) )
+
+                    mov rcx,rax
+                   .return( _dlsetfocus( rcx, [rcx].index ) )
                 .endif
                 .endc
 
@@ -515,11 +515,11 @@ wm_keydown proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
 
                 .for ( rcx = [rbx].next, eax = [rbx].rc : rcx : rcx = [rcx].next )
 
-                    .if ( !( [rcx].flags & O_DEACT ) && [rcx].type < T_MOUSERECT )
+                    .if ( !( [rcx].flags & O_STATE ) && [rcx].type < T_MOUSERECT )
 
                         .if ( ah == [rcx].rc.y && al < [rcx].rc.x )
 
-                            .return( _setfocus(rcx) )
+                            .return( _dlsetfocus( rcx, [rcx].index ) )
                         .endif
                     .endif
                 .endf
@@ -539,12 +539,7 @@ _defwinproc proc public hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
     ldr rcx,hwnd
 
     .switch pascal uiMsg
-    .case WM_ENTERIDLE
-ifdef __UNIX__
-else
-        Sleep( 4 )
-endif
-       .return( 0 )
+    .case WM_ENTERIDLE:     .return( _tidle() )
     .case WM_SETFOCUS:      .return wm_setfocus(rcx)
     .case WM_KILLFOCUS:     .return wm_killfocus(rcx)
     .case WM_LBUTTONDOWN:   .return wm_lbbuttondown(rcx, edx)

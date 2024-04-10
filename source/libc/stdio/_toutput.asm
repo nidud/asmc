@@ -31,19 +31,19 @@ define FL_I64           0x8000  ; 64-bit value given
 define FL_PTRSIZE       0x10000 ; platform dependent number
 define FL_CHAR          0x20000 ; hh - int-size arg from char
 
-define ST_NORMAL       0       ; normal state; outputting literal chars
-define ST_PERCENT      1       ; just read '%'
-define ST_FLAG         2       ; just read flag character
-define ST_WIDTH        3       ; just read width specifier
-define ST_DOT          4       ; just read '.'
-define ST_PRECIS       5       ; just read precision specifier
-define ST_SIZE         6       ; just read size specifier
-define ST_TYPE         7       ; just read type specifier
+define ST_NORMAL        0       ; normal state; outputting literal chars
+define ST_PERCENT       1       ; just read '%'
+define ST_FLAG          2       ; just read flag character
+define ST_WIDTH         3       ; just read width specifier
+define ST_DOT           4       ; just read '.'
+define ST_PRECIS        5       ; just read precision specifier
+define ST_SIZE          6       ; just read size specifier
+define ST_TYPE          7       ; just read type specifier
 
 ifdef FORMAT_VALIDATIONS
-define NUMSTATES       (ST_INVALID + 1)
+define NUMSTATES        (ST_INVALID + 1)
 else
-define NUMSTATES       (ST_TYPE + 1)
+define NUMSTATES        (ST_TYPE + 1)
 endif
 
 externdef __lookuptable:byte
@@ -457,8 +457,8 @@ ifndef _STDCALL_SUPPORTED
                 .case 'E'
                 .case 'G'
                 .case 'A'
-                    or  flags,_ST_CAPEXP  ; capitalize exponent
-                    add dl,'a' - 'A'    ; convert format char to lower
+                    or  flags,_ST_CAPEXP    ; capitalize exponent
+                    add dl,'a' - 'A'        ; convert format char to lower
                     ;
                     ; DROP THROUGH
                     ;
@@ -470,16 +470,16 @@ ifndef _STDCALL_SUPPORTED
                     ; floating point conversion -- we call cfltcvt routines
                     ; to do the work for us.
                     ;
-                    or  flags,FL_SIGNED   ; floating point is signed conversion
-                    lea rax,buffer      ; put result in buffer
+                    or  flags,FL_SIGNED     ; floating point is signed conversion
+                    lea rax,buffer          ; put result in buffer
                     mov text,rax
                     ;
                     ; compute the precision value
                     ;
                     .ifs ( precision < 0 )
-                        mov precision,6       ; default precision: 6
+                        mov precision,6     ; default precision: 6
                     .elseif ( !precision && dl == 'g' )
-                        mov precision,1       ; ANSI specified
+                        mov precision,1     ; ANSI specified
                     .endif
 if defined(__UNIX__) and defined(_AMD64_)
                     mov rax,argxmm
@@ -501,25 +501,23 @@ ifndef _WIN64
                         mov eax,ecx
 endif
                         or edx,_ST_LONGDOUBLE
-                        _cldcvt( rax, text, ebx, precision, edx )
                     .elseif ( flags & FL_LONGLONG )
 ifndef _WIN64
                         add arglist,8
                         mov eax,ecx
 endif
                         or edx,_ST_QUADFLOAT
-                        _cqcvt( rax, text, ebx, precision, edx )
                     .else
 ifndef _WIN64
                         add arglist,4
 endif
                         or edx,_ST_DOUBLE
 if defined(__UNIX__) and defined(_AMD64_)
-                        _cfltcvt( rax, text, ebx, precision, edx )
 else
-                        _cfltcvt( rcx, text, ebx, precision, edx )
+                        mov rax,rcx
 endif
                     .endif
+                    _cfltcvt( rax, text, ebx, precision, edx )
                     ;
                     ; '#' and precision == 0 means force a decimal point
                     ;

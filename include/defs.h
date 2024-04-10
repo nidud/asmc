@@ -90,6 +90,11 @@ typedef wchar_t wctype_t;
 typedef long off32_t;
 typedef __int64 off64_t;
 
+#ifndef WPARAM
+typedef size_t WPARAM;
+typedef _off_t LPARAM;
+#endif
+
 #ifndef NULL
 #define NULL	0
 #endif

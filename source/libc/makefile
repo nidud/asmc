@@ -4,11 +4,11 @@
 ifdef YACC
 
 libasmc.a:
-	asmc64 -fpic -Zp8 -D_CRTBLD -Cs -r *.asm
+	asmc64 -fpic -Zp8 -MT -Cs -r *.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
-	asmc -6 -elf -fpic -Zp4 -D_CRTBLD -Cs -r *.asm
+	asmc -6 -elf -fpic -Zp4 -MT -Cs -r *.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc/x86
@@ -17,14 +17,16 @@ else
 
 include srcpath
 
+flag = -Zi8 -MT -Cs -I$(inc_dir)
+
 ifdef x86
 path = $(lib_dir)\x86
 name = $(lib_dir)\x86\libc.lib
-flag = -6 -coff -Zp4 -Zi8 -D_CRTBLD -Cs -I$(inc_dir)
+flag += -6 -coff -Zp4
 else
 path = $(lib_dir)\x64
 name = $(lib_dir)\x64\libc.lib
-flag = -win64 -frame -Zp8 -Zi8 -D_CRTBLD -Cs -I$(inc_dir)
+flag += -win64 -frame -Zp8
 endif
 ifdef tty
 flag += -D__TTY__
@@ -38,10 +40,10 @@ $(name):
 	asmc $(flag) -Fo w* -r -ws $(src_dir)\libc\_t*.asm
 	libw -q -b -n -c -fac $@ *.obj
 	del *.obj
-	asmc $(flag) -nologo -D_MSVCRT -Fo msvcrt0 $(src_dir)\libc\crt\_tcrt0.asm
-	asmc $(flag) -nologo -D_MSVCRT -Fo wmsvcrt0 -ws $(src_dir)\libc\crt\_tcrt0.asm
-	asmc $(flag) -nologo -D_MSVCRT -Fo msvcrtWin $(src_dir)\libc\crt\_tWinStart.asm
-	asmc $(flag) -nologo -D_MSVCRT -Fo wmsvcrtWin -ws $(src_dir)\libc\crt\_tWinStart.asm
+	asmc $(flag) -nologo -MD -Fo msvcrt0 $(src_dir)\libc\crt\_tcrt0.asm
+	asmc $(flag) -nologo -MD -Fo wmsvcrt0 -ws $(src_dir)\libc\crt\_tcrt0.asm
+	asmc $(flag) -nologo -MD -Fo msvcrtWin $(src_dir)\libc\crt\_tWinStart.asm
+	asmc $(flag) -nologo -MD -Fo wmsvcrtWin -ws $(src_dir)\libc\crt\_tWinStart.asm
 	libw -q -b -n -c -fac $(path)\msvcrt0.lib *.obj
 	del *.obj
 

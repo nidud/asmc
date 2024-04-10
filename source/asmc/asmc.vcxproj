@@ -44,6 +44,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
       <Profile>false</Profile>
       <StackCommitSize>0x200000</StackCommitSize>
       <StackReserveSize>0x300000</StackReserveSize>
@@ -67,6 +68,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
       <Profile>false</Profile>
       <StackCommitSize>0x200000</StackCommitSize>
       <StackReserveSize>0x300000</StackReserveSize>
@@ -121,7 +123,6 @@
     <ASMC Include="src\input.asm" />
     <ASMC Include="src\invoke.asm" />
     <ASMC Include="src\label.asm" />
-    <ASMC Include="src\ldr.asm" />
     <ASMC Include="src\linnum.asm" />
     <ASMC Include="src\listing.asm" />
     <ASMC Include="src\logo.asm" />
@@ -157,6 +158,7 @@
     <ASMC Include="src\typeid.asm" />
     <ASMC Include="src\types.asm" />
     <ASMC Include="src\undef.asm" />
+    <ASMC Include="src\ldr.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

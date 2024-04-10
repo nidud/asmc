@@ -8,7 +8,7 @@ include conio.inc
 
     .code
 
-_rcunzip proc uses rsi rdi rbx rc:TRECT, dst:PCHAR_INFO, src:ptr
+_rcunzip proc uses rsi rdi rbx rc:TRECT, dst:PCHAR_INFO, src:ptr, flags:uint_t
 
    .new count:int_t
 
@@ -16,22 +16,36 @@ _rcunzip proc uses rsi rdi rbx rc:TRECT, dst:PCHAR_INFO, src:ptr
     mul rc.row
     mov count,eax
 
+    .if !( flags & _D_UTF16 )
+
+        mov rdi,dst
+        mov ecx,count
+        xor eax,eax
+        rep stosd
+    .endif
+
     mov rsi,src
     mov rdi,dst
     mov ecx,count
     decompress()
-    mov rdi,dst
-    inc rdi
-    mov ecx,count
-    decompress()
+    .if ( flags & _D_UTF16 )
+
+        mov rdi,dst
+        inc rdi
+        mov ecx,count
+        decompress()
+    .endif
     mov rdi,dst
     add rdi,2
     mov ecx,count
     decompress()
-    mov rdi,dst
-    add rdi,3
-    mov ecx,count
-    decompress()
+    .if ( flags & _D_UTF16 )
+
+        mov rdi,dst
+        add rdi,3
+        mov ecx,count
+        decompress()
+    .endif
     ret
 
 decompress:

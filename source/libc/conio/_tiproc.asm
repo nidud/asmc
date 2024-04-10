@@ -556,13 +556,13 @@ ClipPaste proc fastcall uses rbx ti:PTEDIT
 ClipPaste endp
 
 
-_tiputs proc fastcall public uses rsi rdi rbx ti:PTEDIT
+_tiputs proc public uses rsi rdi rbx ti:PTEDIT
 
    .new ci[MAXSCRLINE]:CHAR_INFO
    .new i:int_t
    .new x:byte
 
-    mov rbx,rcx
+    ldr rbx,ti
     lea rdi,ci
     mov ecx,[rbx].scols
     mov eax,[rbx].clrattrib

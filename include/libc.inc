@@ -38,6 +38,10 @@ define _X86_
 define _M_IX86	600
 endif
 
+ifdef _MT
+define _CRTBLD
+endif
+
 ifdef _LINUX
 define __Ctype	<syscall>
 define __Cdecl	<syscall>

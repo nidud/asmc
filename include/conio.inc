@@ -190,10 +190,10 @@ externdef at_foreground:byte
 
 _at macro B, F, C, reg:=<eax>
     movzx reg,at_background[B]
-    or	  @REG8(reg),at_foreground[F]
+    or	  @Reg(reg,8),at_foreground[F]
     ifnb <C>
       shl reg,16
-      mov @REG16(reg),C
+      mov @Reg(reg,16),C
     endif
     endm
 
@@ -229,36 +229,89 @@ _at macro B, F, C, reg:=<eax>
     }
 
 .enum TFLAGS {
-    W_ISOPEN		= 0x00000001,
-    W_VISIBLE		= 0x00000002,
-    W_MOVEABLE		= 0x00000004,
-    W_SHADE		= 0x00000008,
-    W_WNDPROC		= 0x00000010,
-    W_CHILD		= 0x00000020,	; Item is a child
-    W_RESAT		= 0x00000040,
-    W_TRANSPARENT	= 0x00000080,
+    W_ISOPEN		= 0x0001,
+    W_VISIBLE		= 0x0002,
+    W_MOVEABLE		= 0x0004,
+    W_SHADE		= 0x0008,
+    W_MYBUF		= 0x0010,	; do not delete on exit (static)
+    W_RCNEW		= 0x0020,	; dlclose -- delete dialog if set
+    W_RESAT		= 0x0040,	; attrib is index in color table (rcedit)
+    W_DHELP		= 0x0080,	; execute thelp() if set
+    W_TRANSPARENT	= 0x0100,
+    W_CONSOLE		= 0x0200,
+    W_LIST		= 0x0400,
+    W_STDLG		= 0x0800,
+    W_STERR		= 0x1000,	; error color (red)
+    W_MENUS		= 0x2000,	; menus color (gray), no title
+    W_UTF16		= 0x8000,
+    W_RESBITS		= 0xF9FC,
 
-    O_RADIO		= 0x00000100,	; Active (*)
-    O_CHECK		= 0x00000200,	; Active [x]
-    O_LIST		= 0x00000400,	; Linked list item
-    O_SELECT		= 0x00000800,	; Select text on activation
-    O_CONTROL		= 0x00001000,	; Allow _CONTROL chars
-    O_DEXIT		= 0x00002000,	; Close dialog and return 0: Cancel
-    O_PBKEY		= 0x00004000,	; Return result if short key used
-    O_DLGED		= 0x00008000,	; dialog text -- return Left/Right
-    O_GLOBAL		= 0x00010000,	; Item contain global short-key table
-    O_EVENT		= 0x00020000,	; Item have local event handler
-    O_CHILD		= 0x00040000,	; Item have a child
-    O_STATE		= 0x00080000,	; State (ON/OFF)
-    O_DEACT		= O_STATE,
+    O_MODIFIED		= 0x0001,	; dialog text
+    O_OVERWRITE		= 0x0002,	; selected text on paste
+    O_USEBEEP		= 0x0004,
+    O_MYBUF		= 0x0008,	; T_EDIT -- no alloc
+    O_RADIO		= 0x0010,	; Active (*)
+    O_CHECK		= 0x0020,	; Active [x]
+    O_LIST		= 0x0040,	; Linked list item
+    O_SELECT		= 0x0080,	; Select text on activation
+    O_CONTROL		= 0x0100,	; Allow _CONTROL chars
+    O_DEXIT		= 0x0200,	; Close dialog and return 0: Cancel
+    O_PBKEY		= 0x0400,	; Return result if short key used
+    O_DLGED		= 0x0800,	; dialog text -- return Left/Right
+    O_GLOBAL		= 0x1000,	; Item contain global short-key table
+    O_EVENT		= 0x2000,	; Item have local event handler
+    O_CHILD		= 0x4000,	; Item have a child
+    O_STATE		= 0x8000,	; State (ON/OFF)
+    O_RESBITS		= 0xFFF0,
 
-    O_VTERMINAL		= 0x00100000,	;
-    O_MODIFIED		= 0x00200000,	; dialog text
-    O_OVERWRITE		= 0x00400000,	; selected text on paste
-    O_USEBEEP		= 0x00800000,
-    O_CURSOR		= 0x01000000,
-    O_MYBUF		= 0x02000000,	; T_EDIT -- no alloc
-    W_CONSOLE		= 0x10000000,
+    W_WNDPROC	    = 0x00010000,
+    W_CHILD	    = 0x00020000,	; is a child
+    O_CURSOR	    = 0x00040000,
+    }
+
+.enum RESOURCE_FLAGS {
+
+    _D_DOPEN		= 0x0001,
+    _D_ONSCR		= 0x0002,
+    _D_DMOVE		= 0x0004,
+    _D_SHADE		= 0x0008,
+    _D_MYBUF		= 0x0010,	; do not delete on exit (static)
+    _D_RCNEW		= 0x0020,	; dlclose -- delete dialog if set
+    _D_RESAT		= 0x0040,	; attrib is index in color table (rcedit)
+    _D_DHELP		= 0x0080,	; execute thelp() if set
+    _D_CLEAR		= 0x0100,	; args on open/create
+    _D_BACKG		= 0x0200,
+    _D_FOREG		= 0x0400,
+    _D_STDLG		= 0x0800,
+    _D_STERR		= 0x1000,	; error color (red)
+    _D_MENUS		= 0x2000,	; menus color (gray), no title
+    _D_MUSER		= 0x4000,
+    _D_UTF16		= 0x8000,
+
+    _O_PBUTT		= 0x0000,
+    _O_RBUTT		= 0x0001,
+    _O_CHBOX		= 0x0002,
+    _O_XCELL		= 0x0003,
+    _O_TEDIT		= 0x0004,
+    _O_MENUS		= 0x0005,
+    _O_XHTML		= 0x0006,
+    _O_MOUSE		= 0x0007,
+    _O_LLMSU		= 0x0008,
+    _O_LLMSD		= 0x0009,
+    _O_TBUTT		= 0x000A,
+
+    _O_RADIO		= 0x0010,
+    _O_FLAGB		= 0x0020,
+    _O_LLIST		= 0x0040,
+    _O_DTEXT		= 0x0080,
+    _O_CONTR		= 0x0100,
+    _O_DEXIT		= 0x0200,
+    _O_PBKEY		= 0x0400,
+    _O_DLGED		= 0x0800,
+    _O_GLCMD		= 0x1000,
+    _O_EVENT		= 0x2000,
+    _O_CHILD		= 0x4000,
+    _O_STATE		= 0x8000,
     }
 
 .enum CURSOR_TYPE {
@@ -271,7 +324,9 @@ _at macro B, F, C, reg:=<eax>
     CURSOR_BAR
     }
 
-.pragma pack(push, size_t)
+CALLBACKC(DPROC)
+
+.pragma pack(push, 1)
 
 .template CURSOR
     x		db ?
@@ -288,6 +343,44 @@ _at macro B, F, C, reg:=<eax>
     row		db ?
    .ends
 
+.template RIDD
+   size		dw ?
+   flag		dw ?
+   count	db ?
+   index	db ?
+   rc		TRECT <>
+  .ends
+   PIDD		typedef ptr RIDD
+
+.template ROBJ
+    flag	dw ?		; 8 byte object size in Resource.idd
+    count	db ?
+    index	db ?
+    rc		TRECT <>
+   .ends
+    PROBJ	typedef ptr ROBJ
+    PTRES	typedef ptr ROBJ
+
+.template TOBJ
+    flag	dw ?
+    count	db ?
+    ascii	db ?
+    rc		TRECT <>
+    data	PVOID ?
+    tproc	DPROC ?
+   .ends
+    PTOBJ	typedef ptr TOBJ
+
+.template DOBJ
+    flag	dw ?
+    count	db ?
+    index	db ?
+    rc		TRECT <>
+    wp		PCHAR_INFO ?
+    object	PTOBJ ?
+   .ends
+    PDOBJ	typedef ptr DOBJ
+
 .template TLIST
     dlgoff	dd ?		; start index in dialog
     dcount	dd ?		; number of cells (max)
@@ -299,7 +392,7 @@ _at macro B, F, C, reg:=<eax>
    .ends
     PTLIST	typedef ptr TLIST
 
-.template TOBJ
+.template TDLG
     flags	dd ?
     type	db ?
     syskey	db ?
@@ -307,10 +400,12 @@ _at macro B, F, C, reg:=<eax>
     index	db ?
     rc		TRECT <>
    .ends
-    PTOBJ	typedef ptr TOBJ
+    PTDLG	typedef ptr TDLG
     THWND	typedef ptr TCLASS
-    PTRES	typedef ptr TOBJ
 
+.pragma pack(pop)
+
+.pragma pack(push, size_t)
 
 .template TEDIT
     base	LPTSTR ?	; base pointer
@@ -322,9 +417,9 @@ _at macro B, F, C, reg:=<eax>
     xoffs	uint_t ?	; x offset on screen
     boffs	uint_t ?	; base offset - start of screen-line
     bcount	uint_t ?	; byte count in line (expanded)
-    clrattrib	CHAR_INFO <>	; clear attrib/char
     clip_so	uint_t ?	; Clipboard start offset
     clip_eo	uint_t ?	; Clipboard end offset
+    clrattrib	CHAR_INFO <>	; clear attrib/char
    .ends
     PTEDIT	typedef ptr TEDIT
 
@@ -346,7 +441,7 @@ _at macro B, F, C, reg:=<eax>
 
 CALLBACKC(TPROC, :THWND, :UINT, :WPARAM, :LPARAM)
 
-.template TCLASS : public TOBJ
+.template TCLASS : public TDLG
     cursor	CURSOR <>
     window	PCHAR_INFO ?
     next	THWND ?
@@ -403,6 +498,53 @@ externdef	_console:PCONSOLE
 externdef	_rgbcolortable:COLORREF
 externdef	_terminalcolorid:byte
 
+_inithelp	proto __cdecl :DPROC
+_initidle	proto __cdecl :DPROC
+_initupdate	proto __cdecl :DPROC
+
+_thelp		proto __cdecl
+_tidle		proto __cdecl
+_tupdate	proto __cdecl
+
+;;;
+
+externdef	tgetevent:DPROC
+
+getevent	proto __cdecl
+getkey		proto __cdecl
+mousep		proto __cdecl
+mousey		proto __cdecl
+mousex		proto __cdecl
+msloop		proto __cdecl
+mousewait	proto __cdecl :int_t, :int_t, :int_t
+
+getxyc		proto __cdecl :int_t, :int_t
+getxya		proto __cdecl :int_t, :int_t
+scputc		proto __cdecl :int_t, :int_t, :int_t, :int_t
+scputa		proto __cdecl :int_t, :int_t, :int_t, :int_t
+scputbg		proto __cdecl :int_t, :int_t, :int_t, :int_t
+scputfg		proto __cdecl :int_t, :int_t, :int_t, :int_t
+
+
+wcputw		proto __cdecl :PCHAR_INFO, :int_t, :uint_t
+wcputs		proto __cdecl :PCHAR_INFO, :int_t, :int_t, :LPSTR
+wcputa		proto __cdecl :PCHAR_INFO, :int_t, :int_t
+wcputbg		proto __cdecl :PCHAR_INFO, :int_t, :int_t
+wcputfg		proto __cdecl :PCHAR_INFO, :int_t, :int_t
+wcenter		proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
+wcpath		proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
+wcpbutt		proto __cdecl :PCHAR_INFO, :int_t, :int_t, :LPSTR
+wcpushst	proto __cdecl :PCHAR_INFO, :LPSTR
+wcpopst		proto __cdecl :PCHAR_INFO
+wctitle		proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
+wcstrcpy	proto __cdecl :LPSTR, :PCHAR_INFO, :int_t
+
+rcread		proto __cdecl :TRECT, :PCHAR_INFO
+rcwrite		proto __cdecl :TRECT, :PCHAR_INFO
+rcxchg		proto __cdecl :TRECT, :PCHAR_INFO
+
+;;;
+
 _coutA		proto __Cdecl :string_t, :vararg
 _coutW		proto __Cdecl :wstring_t, :vararg
 _readinputA	proto __cdecl :PINPUT_RECORD
@@ -453,8 +595,8 @@ _rcmovel	proto __cdecl :TRECT, :PCHAR_INFO
 _rcmover	proto __cdecl :TRECT, :PCHAR_INFO
 _rcmoveu	proto __cdecl :TRECT, :PCHAR_INFO
 _rcmoved	proto __cdecl :TRECT, :PCHAR_INFO
-_rczip		proto __cdecl :TRECT, :ptr, :PCHAR_INFO
-_rcunzip	proto __cdecl :TRECT, :PCHAR_INFO, :ptr
+_rczip		proto __cdecl :TRECT, :ptr, :PCHAR_INFO, :uint_t
+_rcunzip	proto __cdecl :TRECT, :PCHAR_INFO, :ptr, :uint_t
 _rcunzipat	proto __cdecl :TRECT, :PCHAR_INFO
 _rcbprc		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO
 _rcgetw		proto __cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t
@@ -476,8 +618,14 @@ _clipsetW	proto __cdecl :wstring_t, :uint_t
 _clipgetA	proto __cdecl
 _clipgetW	proto __cdecl
 
+_vmsgboxA	proto __cdecl :uint_t, :string_t, :string_t
+_vmsgboxW	proto __cdecl :uint_t, :wstring_t, :wstring_t
 _msgboxA	proto __Cdecl :uint_t, :string_t, :string_t, :vararg
 _msgboxW	proto __Cdecl :uint_t, :wstring_t, :wstring_t, :vararg
+_stdmsgA	proto __Cdecl :string_t, :string_t, :vararg
+_stdmsgW	proto __Cdecl :wstring_t, :wstring_t, :vararg
+_errmsgA	proto __Cdecl :string_t, :string_t, :vararg
+_errmsgW	proto __Cdecl :wstring_t, :wstring_t, :vararg
 _syserrA	proto __cdecl :uint_t, :string_t
 _syserrW	proto __cdecl :uint_t, :wstring_t
 
@@ -489,16 +637,15 @@ _dlmodal	proto __cdecl :THWND, :TPROC
 _dlhide		proto __cdecl :THWND
 _dlshow		proto __cdecl :THWND
 _dlsetfocus	proto __cdecl :THWND, :uchar_t
-_dlgetfocus	proto watcall :THWND
-_dlgetid	proto watcall :THWND, :uint_t
+_dlgetfocus	proto __cdecl :THWND
 _dlmove		proto __cdecl :THWND, :int_t
 _dltitleA	proto __cdecl :THWND, :string_t
 _dltitleW	proto __cdecl :THWND, :wstring_t
 
 _tcontrolA	proto __cdecl :THWND, :uint_t, :ushort_t, :string_t
 _tcontrolW	proto __cdecl :THWND, :uint_t, :ushort_t, :wstring_t
-_tiputsA	proto fastcall :PTEDIT
-_tiputsW	proto fastcall :PTEDIT
+_tiputsA	proto __cdecl :PTEDIT
+_tiputsW	proto __cdecl :PTEDIT
 _tiprocA	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 _tiprocW	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 
@@ -513,7 +660,7 @@ _postmessage	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 _getmessage	proto __cdecl :PMESSAGE, :THWND
 _dispatchmsg	proto __cdecl :PMESSAGE
 _translatemsg	proto __cdecl :PMESSAGE
-_postquitmsg	proto fastcall :THWND, :uint_t
+_postquitmsg	proto __cdecl :THWND, :uint_t
 _defwinproc	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 
 _rsopenA	proto __cdecl :PTRES
@@ -521,6 +668,7 @@ _rsopenW	proto __cdecl :PTRES
 _rssave		proto __cdecl :THWND, :string_t
 
 _getkey		proto __cdecl
+
 
 define KEY_ESC		VK_ESCAPE
 define KEY_SPACE	VK_SPACE
@@ -593,6 +741,9 @@ define _tcontrol	<_tcontrolW>
 define _tiputs		<_tiputsW>
 define _tiproc		<_tiprocW>
 define _msgbox		<_msgboxW>
+define _vmsgbox		<_vmsgboxW>
+define _stdmsg		<_stdmsgW>
+define _errmsg		<_errmsgW>
 define _syserr		<_syserrW>
 define _clipget		<_clipgetW>
 define _clipset		<_clipsetW>
@@ -615,6 +766,9 @@ define _tcontrol	<_tcontrolA>
 define _tiputs		<_tiputsA>
 define _tiproc		<_tiprocA>
 define _msgbox		<_msgboxA>
+define _vmsgbox		<_vmsgboxA>
+define _stdmsg		<_stdmsgA>
+define _errmsg		<_errmsgA>
 define _syserr		<_syserrA>
 define _clipget		<_clipgetA>
 define _clipset		<_clipsetA>

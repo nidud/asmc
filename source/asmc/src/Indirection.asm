@@ -140,18 +140,13 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
         .switch ( langtype )
         .case LANG_SYSCALL
             mov eax,T_RDI
-            .endc
+           .endc
         .case LANG_FASTCALL
-            mov eax,T_ECX
-            .if ( ModuleInfo.Ofssize == USE64 )
-                mov eax,T_RCX
-            .endif
-            .endc
+            mov eax,T_CX - T_AX
+            add eax,ModuleInfo.accumulator
+           .endc
         .case LANG_WATCALL
-            mov eax,T_EAX
-            .if ( ModuleInfo.Ofssize == USE64 )
-                mov eax,T_RAX
-            .endif
+            mov eax,ModuleInfo.accumulator
         .endsw
 
         .if ( eax )
@@ -243,11 +238,8 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm
         mov dest,[rbx-2*asm_tok].tokval
     .endif
 
-    mov reg,T_EAX
-    .if ( ModuleInfo.Ofssize == USE64 )
-        mov reg,T_RAX
-    .endif
-    AddLineQueueX( " mov %r, %s", reg, [rbx].string_ptr )
+    mov reg,ModuleInfo.accumulator
+    AddLineQueueX( " mov %r, %s", eax, [rbx].string_ptr )
 
     add rbx,asm_tok
     mov rsi,sym

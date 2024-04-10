@@ -12,16 +12,18 @@ include tchar.inc
 _istdigit proc c:int_t
 
     ldr eax,c
+    movzx eax,_tal
+ifdef _UNICODE
     .if ( eax < 256 )
-
-        add     eax,eax
-        add     rax,_pctype
-        movzx   eax,byte ptr [rax]
-        test    eax,_DIGIT
-        setnz   al
+endif
+        mov   rcx,_pctype
+        test  byte ptr [rcx+rax*2],_DIGIT
+        setnz al
+ifdef _UNICODE
     .else
         xor     eax,eax
     .endif
+endif
     ret
 
 _istdigit endp

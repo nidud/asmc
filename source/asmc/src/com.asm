@@ -114,14 +114,11 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     .if ( [rbx+asm_tok].token == T_COMMA && [rbx+asm_tok*3].token == T_CL_BRACKET )
         mov table,[rbx+asm_tok*2].string_ptr
     .endif
-    mov edi,T_EAX
-    .if (  ModuleInfo.Ofssize == USE64 )
-        mov edi,T_RAX
-    .endif
     .if ModuleInfo.line_queue.head
         RunLineQueue()
     .endif
 
+    mov edi,ModuleInfo.accumulator
     .if ( table )
         AddLineQueueX( "mov %r,malloc(%s)", &[rdi+T_ECX-T_EAX], name )
     .else

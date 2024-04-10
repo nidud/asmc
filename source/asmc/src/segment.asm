@@ -540,8 +540,12 @@ SetOfssize proc
     shl eax,cl
     mov CurrWordSize,al
     xor eax,eax
+    mov ModuleInfo.accumulator,T_AX
     .if ( cl == USE64 )
         inc eax
+        mov ModuleInfo.accumulator,T_RAX
+    .elseif ( cl == USE32 )
+        mov ModuleInfo.accumulator,T_EAX
     .endif
     Set64Bit( eax )
    .return( NOT_ERROR )
@@ -1600,7 +1604,6 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
     .endf
 
     mov ModuleInfo.Ofssize,USE16
-
     .if ( ebx != PASS_1 && UseSavedState == TRUE )
 
         mov CurrSeg,saved_CurrSeg

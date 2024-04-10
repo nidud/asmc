@@ -973,6 +973,8 @@ segm_override endp
 ;   CodeInfo->opsiz
 ;   CodeInfo->iswide
 
+memory_operand proto __ccall private :ptr code_info, :uint_t, :expr_t, :int_t
+
     assume rdi:expr_t
 
 idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:uint_t, opndx:expr_t
@@ -980,6 +982,9 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
    .new op_type:int_t
    .new value:int_t
    .new size:int_t = 0
+
+    UNREFERENCED_PARAMETER(opndx)
+    UNREFERENCED_PARAMETER(CodeInfo)
 
     ldr rsi,CodeInfo
     ldr rdi,opndx
@@ -1115,6 +1120,63 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
     .endif
 
     .switch [rsi].token
+    .case T_OR
+    .case T_TEST
+       .endc .if ( [rdi].hvalue || ModuleInfo.strict_masm_compat )
+        ;
+        ; Optimization for mem,CONST
+        ;
+        ; mem16[2],0x100 --> mem8[3],0x01
+        ;
+        mov edx,[rsi].opnd.type
+        .if ( !( [rdi].flags & E_EXPLICIT ) && [rsi].Ofssize > USE16 &&
+               ( edx == OP_M16 || edx == OP_M32  || edx == OP_M64 ) )
+
+            sub rdi,expr
+            mov [rsi].rex,0
+
+            .if ( op_type == OP_I8 )
+
+                mov [rdi].mem_type,MT_BYTE
+
+            .else
+
+                mov eax,[rdi+expr].value ; find a byte..
+                xor ecx,ecx
+                .switch
+                .case ( edx != OP_M16 && !( eax & 0x00FFFFFF ) )
+                    inc ecx
+                    shr eax,8
+                .case ( edx != OP_M16 && !( eax & 0xFF00FFFF ) )
+                    inc ecx
+                    shr eax,8
+                .case ( edx != OP_M16 && !( eax & 0xFFFF00FF ) )
+                .case ( edx == OP_M16 && !( eax & 0x00FF ) )
+                    inc ecx
+                    shr eax,8
+                   .endc
+                .endsw
+
+                .if ( ecx )
+
+                    mov op_type,OP_I8
+                    mov [rdi].mem_type,MT_BYTE
+                    add [rdi].value,ecx
+                    adc [rdi].hvalue,0
+                    mov [rsi].opnd[rbx].data32l,eax
+                    mov [rdi+expr].value,eax
+                .else
+                    ;
+                    ; mem64 --> mem32
+                    ; mem16 --> mem32
+                    ;
+                    mov op_type,OP_I32
+                    mov [rdi].mem_type,MT_DWORD
+                .endif
+            .endif
+            memory_operand(rsi, 0, rdi, 0)
+        .endif
+        .endc
     .case T_PUSH
         .if !( [rdi].flags & E_EXPLICIT )
             .if [rsi].Ofssize > USE16 && op_type == OP_I16
@@ -1760,6 +1822,9 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
    .new j:int_t
    .new mem_type:byte
    .new scale_factor:uchar_t = SCALE_FACTOR_1
+
+    UNREFERENCED_PARAMETER(opndx)
+    UNREFERENCED_PARAMETER(CodeInfo)
 
     ldr rsi,CodeInfo
     ldr rdi,opndx

@@ -1,2 +1,2 @@
 iddc.exe:
-    asmc -pe $*.asm
+	asmc64 -frame -pe $*.asm

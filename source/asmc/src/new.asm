@@ -167,11 +167,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
     .if ( [rbx].token == T_COLON ) ; Class() : member(value) [ , member(value) ]
 
         add rbx,asm_tok
-        mov acc,T_EAX
-
-        .if ( ModuleInfo.Ofssize == USE64 )
-            mov acc,T_RAX
-        .endif
+        mov acc,ModuleInfo.accumulator
         .if ( reg )
             mov acc,reg
         .endif

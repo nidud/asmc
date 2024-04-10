@@ -538,6 +538,11 @@ ModulePassInit proc __ccall private uses rsi
     mov ModuleInfo.procs_export,0
     mov ModuleInfo.offsettype,OT_GROUP
     mov ModuleInfo.scoped,1
+ifdef ASMC64
+    mov ModuleInfo.accumulator,T_RAX
+else
+    mov ModuleInfo.accumulator,T_AX
+endif
 
     .if ( !UseSavedState )
 

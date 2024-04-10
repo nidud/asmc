@@ -5,8 +5,10 @@
 ;
 
 include ctype.inc
+ifndef __UNIX__
 include winnls.inc
 include consoleapi.inc
+endif
 
     .code
 

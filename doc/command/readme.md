@@ -52,6 +52,8 @@ The options listed in the following table.
 | **-homeparams** | Forces parameters passed in registers to be written to their locations on the stack upon function entry. |
 | **-I**_pathname_ | Sets path for include file. |
 | **-logo** | Print logo string and exit. |
+| **-MD[d]** | Defines _MSVCRT [_DEBUG]. |
+| **-MT[d]** | Defines _MT [_DEBUG]. |
 | **-m**[_tscmlhf_] | Set memory model. |
 | **-mz** | Generate DOS MZ binary file. |
 | **-nc**_name_ | Set class name of code segment. |

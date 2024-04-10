@@ -70,7 +70,10 @@ _postmessage proc hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 _postmessage endp
 
 
-_postquitmsg proc fastcall hwnd:THWND, retval:UINT
+_postquitmsg proc hwnd:THWND, retval:UINT
+
+    ldr rcx,hwnd
+    ldr edx,retval
 
     test [rcx].TCLASS.flags,W_CHILD
     cmovnz rax,[rcx].TCLASS.prev

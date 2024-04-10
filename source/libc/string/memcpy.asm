@@ -6,6 +6,9 @@
 
 include string.inc
 
+undef memmove
+ALIAS <memmove>=<memcpy>
+
     .code
 
     option dotname

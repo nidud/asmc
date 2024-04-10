@@ -11,38 +11,111 @@ include malloc.inc
     .code
 
     assume rbx:PTRES
-    assume rdi:PTRES
     assume rsi:THWND
 
 _rsopen proc uses rsi rdi rbx res:PTRES
 
-   .new hwnd:THWND
-   .new rsize:int_t
-   .new dsize:int_t
-   .new tsize:int_t
-   .new xsize:int_t
-   .new rdata:string_t
+   .new     hwnd:THWND
+   .new     rsize:int_t
+   .new     dsize:int_t
+   .new     tsize:int_t
+   .new     xsize:int_t
+   .new     count:int_t
+   .new     olist:int_t = 0
+   .new     rdata:string_t
 
     ldr     rbx,res
-    xor     edx,edx
-    test    [rbx].flags,W_SHADE
-    setnz   dl
-    mov     rsize,_rcmemsize([rbx].rc, edx)
-    movzx   eax,[rbx].count
-    inc     eax
-    imul    eax,eax,TCLASS
-    mov     dsize,eax
+    movzx   ecx,word ptr [rbx]
+    mov     hwnd,malloc(ecx)
+    .return .if !rax
+
+    mov     rsi,rax
+    mov     rdi,rax
     xor     eax,eax
-    mov     ecx,TLIST
-    test    [rbx].flags,O_LIST
-    cmovnz  eax,ecx
+    movzx   ecx,word ptr [rbx]
+    add     rbx,2
+    rep     stosb
+    movzx   eax,[rbx].flag
+    and     eax,W_RESBITS
+    mov     [rsi].flags,eax
+    mov     [rsi].type,T_WINDOW
+    mov     [rsi].rc,[rbx].rc
+    mov     [rsi].index,[rbx].index
+    mov     [rsi].count,[rbx].count
 
-    .for ( rdi = &[rbx+TOBJ], ecx = 0 : cl < [rbx].count : ecx++, rdi += TOBJ )
+    movzx   eax,[rbx].count
+    mov     count,eax
+    inc     eax
+    imul    edx,eax,TCLASS
+    mov     dsize,edx
+    add     rdx,rsi
+    mov     [rsi].window,rdx
+    imul    edx,eax,ROBJ
+    add     rdx,rbx
+    mov     rdata,rdx
+    lea     rax,[rsi+TCLASS]
+    cmp     cl,[rbx].count
+    cmovz   rax,rcx
+    mov     [rsi].object,rax
+    mov     eax,O_CHILD
+    cmovz   eax,ecx
+    or      eax,W_ISOPEN
+    or      [rsi].flags,eax
 
-        movzx edx,[rdi].count
+    .for ( rdi = rsi, ecx = 0 : ecx < count : ecx++ )
+
+        add rsi,TCLASS
+        add rbx,ROBJ
+
+        movzx eax,[rbx].flag
+        mov edx,eax
+        and eax,O_RESBITS
+        and edx,0xF
+
+        mov [rsi].flags,eax
+        mov [rsi].type,dl
+        and eax,O_LIST
+        or  olist,eax
+        mov [rsi].rc,[rbx].rc
+        mov [rsi].syskey,[rbx].index
+        mov [rsi].count,[rbx].count
+        mov [rsi].index,cl
+        mov [rsi].prev,rdi
+        mov [rsi].next,0
+
+        lea eax,[rcx+1]
+        .if ( eax < count )
+
+            lea rax,[rsi+TCLASS]
+            mov [rsi].next,rax
+        .endif
+    .endf
+
+    assume rbx:THWND
+    mov rbx,rdi
+    _rcunzip([rbx].rc, [rbx].window, rdata, [rbx].flags)
+    .if ( [rbx].flags & W_RESAT )
+        _rcunzipat([rbx].rc, [rbx].window)
+    .endif
+
+    xor edx,edx
+    test [rbx].flags,W_SHADE
+    setnz dl
+    mov rsize,_rcmemsize([rbx].rc, edx)
+
+    xor eax,eax
+    .if ( olist )
+
+        add eax,TLIST
+        or  [rbx].flags,W_LIST
+    .endif
+
+    .for ( rsi = [rbx].object : rsi : rsi = [rsi].next )
+
+        movzx edx,[rsi].count
         shl edx,3+TCHAR
-        .if ( [rdi].type == T_EDIT )
-            .if ( [rdi].flags & O_MYBUF )
+        .if ( [rsi].type == T_EDIT )
+            .if ( [rsi].flags & O_MYBUF )
                 mov edx,TEDIT
             .else
                 add edx,TEDIT
@@ -51,122 +124,75 @@ _rsopen proc uses rsi rdi rbx res:PTRES
         add eax,edx
     .endf
 
-    mov     rdata,rdi
+    xor     ecx,ecx
     mov     xsize,eax
-    add     eax,rsize
-    add     eax,dsize
-    mov     tsize,eax
-
-    .return .if !( malloc(eax) )
-
-    mov     ecx,tsize
-    mov     rdi,rax
-    mov     rsi,rax
-    xor     eax,eax
-    rep     stosb
-
     mov     eax,dsize
     add     eax,rsize
-    add     rax,rsi
+    add     rax,rbx
     cmp     ecx,xsize
     cmovz   rax,rcx
     lea     rdx,[rax+TLIST]
-    mov     [rsi].context.llist,rax
-    test    [rbx].flags,O_LIST
+    mov     [rbx].context.llist,rax
+    test    [rbx].flags,W_LIST
     cmovnz  rax,rdx
-    mov     [rsi].buffer,rax
+    mov     [rbx].buffer,rax
 
-    mov     eax,dsize
-    add     rax,rsi
-    mov     [rsi].window,rax
-    lea     rax,[rsi+TCLASS]
-    cmp     cl,[rbx].count
-    cmovz   rax,rcx
-    mov     [rsi].object,rax
-    mov     eax,O_CHILD
-    cmovz   eax,ecx
-    or      eax,W_ISOPEN
+    .for ( rsi = [rbx].object : rsi : rsi = [rsi].next )
 
-    mov     rdi,rsi
-    xchg    rsi,rbx
-    mov     ecx,TOBJ
-    rep     movsb
-    assume  rbx:THWND
-    assume  rdi:THWND
-    or      [rbx].flags,eax
-    mov     hwnd,rsi
-
-    _rcunzip([rbx].rc, [rbx].window, rdata)
-    .if ( [rbx].flags & W_RESAT )
-        _rcunzipat([rbx].rc, [rbx].window)
-    .endif
-
-    .for ( rsi = hwnd, rdi = [rbx].object, edx = 0 : dl < [rbx].count : edx++, rdi+=TCLASS )
-
-        mov     ecx,TOBJ
-        rep     movsb
-        sub     rdi,TOBJ
         movzx   eax,[rbx].rc.col
-        mul     [rdi].rc.y
-        movzx   ecx,[rdi].rc.x
+        mul     [rsi].rc.y
+        movzx   ecx,[rsi].rc.x
         add     eax,ecx
         shl     eax,2
         add     rax,[rbx].window
-        mov     [rdi].window,rax
-        mov     [rdi].prev,rbx
+        mov     [rsi].window,rax
+
         lea     rcx,_tiproc
         lea     rax,_defwinproc
-        cmp     [rdi].type,T_EDIT
+        cmp     [rsi].type,T_EDIT
         cmovz   rax,rcx
-        mov     [rdi].winproc,rax
+        mov     [rsi].winproc,rax
 
-        .if ( [rdi].count )
+        .if ( [rsi].count )
 
-            .if ( [rdi].type == T_EDIT )
+            .if ( [rsi].type == T_EDIT )
 
-                mov [rdi].context.tedit,[rbx].buffer
+                mov [rsi].context.tedit,[rbx].buffer
                 add [rbx].buffer,TEDIT
 
-                .if !( [rdi].flags & O_MYBUF )
+                .if !( [rsi].flags & O_MYBUF )
 
-                    movzx   ecx,[rdi].count
+                    movzx   ecx,[rsi].count
                     shl     ecx,3+TCHAR
                     add     [rbx].buffer,rcx
                 .endif
 
                 mov     rcx,rax
                 assume  rcx:PTEDIT
-                movzx   eax,[rdi].count
+                movzx   eax,[rsi].count
                 shl     eax,4
                 mov     [rcx].bcols,eax
                 lea     rax,[rcx+TEDIT]
                 mov     [rcx].base,rax
-                mov     [rdi].buffer,rax
-                mov     rax,[rdi].window
+                mov     [rsi].buffer,rax
+                mov     rax,[rsi].window
                 mov     eax,[rax]
                 mov     ax,U_MIDDLE_DOT
                 mov     [rcx].clrattrib,eax
                 movzx   eax,[rbx].rc.y
-                add     al,[rdi].rc.y
+                add     al,[rsi].rc.y
                 mov     [rcx].ypos,eax
                 mov     al,[rbx].rc.x
-                add     al,[rdi].rc.x
+                add     al,[rsi].rc.x
                 mov     [rcx].xpos,eax
-                mov     [rcx].flags,[rdi].flags
-                mov     [rcx].scols,[rdi].rc.col
+                mov     [rcx].flags,[rsi].flags
+                mov     [rcx].scols,[rsi].rc.col
             .else
-                mov     [rdi].buffer,[rbx].buffer
-                movzx   ecx,[rdi].count
+                mov     [rsi].buffer,[rbx].buffer
+                movzx   ecx,[rsi].count
                 shl     ecx,4
                 add     [rbx].buffer,rcx
             .endif
-        .endif
-
-        lea eax,[rdx+1]
-        .if ( al < [rbx].count )
-
-            lea rax,[rdi+TCLASS]
-            mov [rdi].next,rax
         .endif
     .endf
     .if ( [rbx].flags & O_CURSOR )

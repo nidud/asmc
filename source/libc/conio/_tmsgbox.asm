@@ -76,14 +76,13 @@ INFO PBINFO {
 WndProc proc private hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch uiMsg
-      .case WM_CREATE
+    .case WM_CREATE
         _dlshow(hwnd)
         mov rcx,hwnd
-        _dlsetfocus(hwnd, [rcx].index)
-        .return 0
-      .case WM_CLOSE
+       .return( _dlsetfocus(hwnd, [rcx].index) )
+    .case WM_CLOSE
         _dlclose(hwnd)
-        .return 0
+        .return( 0 )
     .endsw
     _defwinproc(hwnd, uiMsg, wParam, lParam)
     ret
@@ -92,7 +91,7 @@ WndProc endp
 
     assume rbx:THWND
 
-_msgbox proc uses rbx flags:UINT, title:LPTSTR, format:LPTSTR, argptr:vararg
+_vmsgbox proc uses rbx flags:UINT, title:LPTSTR, string:LPTSTR
 
    .new width:int_t
    .new line:int_t
@@ -129,9 +128,8 @@ _msgbox proc uses rbx flags:UINT, title:LPTSTR, format:LPTSTR, argptr:vararg
     .endif
 
     mov line,0
-    _vstprintf(&_bufin, format, &argptr)
     mov width,_tcslen(title)
-    lea rbx,_bufin
+    mov rbx,string
 
     .if TCHAR ptr [rbx]
 
@@ -269,7 +267,7 @@ endif
     mov rc.y,2
     mov rc.x,2
     sub rc.col,4
-    mov p,&_bufin
+    mov p,string
 
     .repeat
 
@@ -286,6 +284,30 @@ endif
     .until ( rax == NULL || rc.y == 17+2 )
     .return _dlmodal(rbx, &WndProc)
 
+_vmsgbox endp
+
+_msgbox proc flags:UINT, title:LPTSTR, format:LPTSTR, argptr:vararg
+
+    _vstprintf(&_bufin, format, &argptr)
+    _vmsgbox(flags, title, &_bufin)
+    ret
+
 _msgbox endp
+
+_stdmsg proc title:LPTSTR, format:LPTSTR, argptr:vararg
+
+    _vstprintf(&_bufin, format, &argptr)
+    _vmsgbox(MB_OK, title, &_bufin)
+    ret
+
+_stdmsg endp
+
+_errmsg proc title:LPTSTR, format:LPTSTR, argptr:vararg
+
+    _vstprintf(&_bufin, format, &argptr)
+    _vmsgbox(MB_OK or MB_ICONERROR, title, &_bufin)
+    ret
+
+_errmsg endp
 
     end

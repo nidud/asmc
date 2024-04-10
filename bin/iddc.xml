@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions xmlns="http://schemas.microsoft.com/build/2009/properties" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <Rule
+    Name="IDDC"
+    PageTemplate="tool"
+    DisplayName="Asmc Binary Resource Compiler"
+    Order="200">
+    <Rule.DataSource>
+      <DataSource
+        Persistence="ProjectFile"
+        ItemType="IDDC" />
+    </Rule.DataSource>
+    <Rule.Categories>
+      <Category
+        Name="General">
+        <Category.DisplayName>
+          <sys:String>General</sys:String>
+        </Category.DisplayName>
+      </Category>
+      <Category
+        Name="Command Line"
+        Subtype="CommandLine">
+        <Category.DisplayName>
+          <sys:String>Command Line</sys:String>
+        </Category.DisplayName>
+      </Category>
+    </Rule.Categories>
+    <StringProperty
+      Name="Inputs"
+      Category="Command Line"
+      IsRequired="true">
+      <StringProperty.DataSource>
+        <DataSource
+          Persistence="ProjectFile"
+          ItemType="IDDC"
+          SourceType="Item" />
+      </StringProperty.DataSource>
+    </StringProperty>
+    <BoolProperty
+      Name="OutputCOFFObject"
+      Category="Object File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
+      DisplayName="Common Object File Format (COFF)"
+      Description="Specifies the type of the output object file."
+      Switch="/coff" />
+    <BoolProperty
+      Name="OutputOMFObject"
+      Category="Object File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
+      DisplayName="Object Module Format (OMF)"
+      Description="Specifies the type of the output object file."
+      Switch="/omf" />
+    <StringProperty
+      Name="ObjectFileName"
+      Category="Object File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
+      DisplayName="Object File Name"
+      Description="Specifies the name of the output object file."
+      Switch="/Fo &quot;[value]&quot;" />
+    <BoolProperty
+      Name="Output16Compact"
+      Category="Memory Model"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
+      DisplayName="Model Compact 16-bit"
+      Description="Specifies the memory model of the output object file."
+      Switch="/mc" />
+    <BoolProperty
+      Name="Output16Large"
+      Category="Memory Model"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
+      DisplayName="Model Large 16-bit"
+      Description="Specifies the memory model of the output object file."
+      Switch="/ml" />
+    <BoolProperty
+      Name="Output32Flat"
+      Category="Memory Model"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
+      DisplayName="Model Flat 32-bit"
+      Description="Specifies the memory model of the output object file."
+      Switch="/mf" />
+    <BoolProperty
+      Name="Output64Flat"
+      Category="Memory Model"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
+      DisplayName="Model Flat 64-bit"
+      Description="Specifies the memory model of the output object file."
+      Switch="/win64" />
+    <StringProperty
+      Name="CommandLineTemplate"
+      DisplayName="Command Line"
+      Visible="False"
+      IncludeInCommandLine="False" />
+    <DynamicEnumProperty
+     Name="IDDCBeforeTargets"
+     Category="General"
+     EnumProvider="Targets"
+     IncludeInCommandLine="False">
+      <DynamicEnumProperty.DisplayName>
+        <sys:String>Execute Before</sys:String>
+      </DynamicEnumProperty.DisplayName>
+      <DynamicEnumProperty.Description>
+        <sys:String>Specifies the targets for the build customization to run before.</sys:String>
+      </DynamicEnumProperty.Description>
+      <DynamicEnumProperty.ProviderSettings>
+        <NameValuePair
+          Name="Exclude"
+          Value="^IDDCBeforeTargets|^Compute" />
+      </DynamicEnumProperty.ProviderSettings>
+      <DynamicEnumProperty.DataSource>
+        <DataSource
+          Persistence="ProjectFile"
+          ItemType=""
+          HasConfigurationCondition="true" />
+      </DynamicEnumProperty.DataSource>
+    </DynamicEnumProperty>
+    <DynamicEnumProperty
+      Name="IDDCAfterTargets"
+      Category="General"
+      EnumProvider="Targets"
+      IncludeInCommandLine="False">
+      <DynamicEnumProperty.DisplayName>
+        <sys:String>Execute After</sys:String>
+      </DynamicEnumProperty.DisplayName>
+      <DynamicEnumProperty.Description>
+        <sys:String>Specifies the targets for the build customization to run after.</sys:String>
+      </DynamicEnumProperty.Description>
+      <DynamicEnumProperty.ProviderSettings>
+        <NameValuePair
+          Name="Exclude"
+          Value="^IDDCAfterTargets|^Compute" />
+      </DynamicEnumProperty.ProviderSettings>
+      <DynamicEnumProperty.DataSource>
+        <DataSource
+          Persistence="ProjectFile"
+          ItemType=""
+          HasConfigurationCondition="true" />
+      </DynamicEnumProperty.DataSource>
+    </DynamicEnumProperty>
+    <StringProperty
+      Name="ExecutionDescription"
+      DisplayName="Execution Description"
+      IncludeInCommandLine="False"
+      Visible="False" />
+    <StringListProperty
+      Name="AdditionalDependencies"
+      DisplayName="Additional Dependencies"
+      IncludeInCommandLine="False"
+      Visible="False" />
+    <StringProperty
+      Subtype="AdditionalOptions"
+      Name="AdditionalOptions"
+      Category="Command Line">
+      <StringProperty.DisplayName>
+        <sys:String>Additional Options</sys:String>
+      </StringProperty.DisplayName>
+      <StringProperty.Description>
+        <sys:String>Additional Options</sys:String>
+      </StringProperty.Description>
+    </StringProperty>
+  </Rule>
+  <ItemType
+    Name="IDDC"
+    DisplayName="Asmc Binary Resource Compiler" />
+  <FileExtension
+    Name="*.idd"
+    ContentType="IDDC" />
+  <ContentType
+    Name="IDDC"
+    DisplayName="Asmc Binary Resource Compiler"
+    ItemType="IDDC" />
+</ProjectSchemaDefinitions>

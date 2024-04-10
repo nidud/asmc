@@ -27,6 +27,9 @@ Changes in 2.35 - xx xxx 2022
 - added macro @REG8, @REG16, and @REG32(reg)
 - fixed bug in Unicode "strings" in struct
 - chanded linkw.lnk to linkw.cfg and LINKW_LNK to LINKW_CFG
+- added switch -MD[d] and -MT[d]
+- added optimization for TEST mem,imm
+- changed @REGnn macros to @Reg(reg[,bits]), bits: 8, 16, 32 (default), and 64
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

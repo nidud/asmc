@@ -5,19 +5,28 @@
 ;
 
 include ctype.inc
-include malloc.inc
-ifndef __UNIX__
-include winnls.inc
-endif
 
 public _pctype ; pointer to table for char's
-public _pcumap
-public _pclmap
 
 .data
- _pctype ptr ushort_t NULL
- _pcumap string_t NULL
- _pclmap string_t NULL
+  db size_t-2 dup(0)
+ _ctype word 0,                 ; -1
+     9 dup(_CONTROL),           ; 00-08
+     5 dup(_SPACE+_CONTROL),    ; 09-0D
+    18 dup(_CONTROL),           ; 0E-1F
+       _SPACE+_BLANK,           ; 20 SPACE
+    15 dup(_PUNCT),             ; 21-2F (!-/)
+    10 dup(_DIGIT+_HEX),        ; 30-39 (0-9)
+     7 dup(_PUNCT),             ; 3A-40 (:-@)
+     6 dup(_UPPER+_HEX),        ; 41-46 (A-F)
+    20 dup(_UPPER),             ; 47-5A (G-Z)
+     6 dup(_PUNCT),             ; 5B-60 ([-`)
+     6 dup(_LOWER+_HEX),        ; 61-66 (a-f)
+    20 dup(_LOWER),             ; 67-7A (g-z)
+     4 dup(_PUNCT),             ; 7B-7E ({-~)
+       _CONTROL,                ; 7F
+    128 dup(0)                  ; and the rest are 0...
+  _pctype ptr word _ctype[2]
 
 .code
 
@@ -27,127 +36,5 @@ __pctype_func proc
     ret
 
 __pctype_func endp
-
-
-__initpctype proc private uses rsi rdi
-ifndef __UNIX__
-    .new lcid:LCID
-endif
-    .if ( malloc(16+2*256+256+256) == NULL )
-
-        .return
-    .endif
-
-    mov rdi,rax
-    mov ecx,16/4
-    xor eax,eax
-    rep stosd
-    mov _pctype,rdi
-    lea rcx,[rdi+512]
-    mov _pcumap,rcx
-    add rcx,256
-    mov _pclmap,rcx
-
-    mov eax,_CONTROL
-    mov ecx,0x08-0x00+1
-    rep stosw
-    mov eax,_SPACE+_CONTROL
-    mov ecx,0x0D-0x09+1
-    rep stosw
-    mov eax,_CONTROL
-    mov ecx,0x1F-0x0E+1
-    rep stosw
-    mov eax,_SPACE+_BLANK
-    stosw
-    mov eax,_PUNCT
-    mov ecx,0x2F-0x21+1
-    rep stosw
-    mov eax,_DIGIT+_HEX
-    mov ecx,0x39-0x30+1
-    rep stosw
-    mov eax,_PUNCT
-    mov ecx,0x40-0x3A+1
-    rep stosw
-    mov eax,_UPPER+_HEX
-    mov ecx,0x46-0x41+1
-    rep stosw
-    mov eax,_UPPER
-    mov ecx,0x5A-0x47+1
-    rep stosw
-    mov eax,_PUNCT
-    mov ecx,0x60-0x5B+1
-    rep stosw
-    mov eax,_LOWER+_HEX
-    mov ecx,0x66-0x61+1
-    rep stosw
-    mov eax,_LOWER
-    mov ecx,0x7A-0x67+1
-    rep stosw
-    mov eax,_PUNCT
-    mov ecx,0x7E-0x7B+1
-    rep stosw
-    mov eax,_CONTROL
-    stosw
-    xor eax,eax
-    mov ecx,128/2
-    rep stosd
-
-    .for ( rax = _pclmap, ecx = 0 : ecx < 256 : ecx++ )
-
-        mov dl,cl
-        .if ( cl >= 'A' && cl <= 'Z' )
-            or dl,0x20
-        .endif
-        mov [rax+rcx],dl
-    .endf
-
-    .for ( rax = _pcumap, ecx = 0 : ecx < 256 : ecx++ )
-
-        mov dl,cl
-        .if ( cl >= 'a' && cl <= 'z' )
-            and dl,0xDF
-        .endif
-        mov [rax+rcx],dl
-    .endf
-
-ifndef __UNIX__
-
-    mov lcid,GetUserDefaultLCID()
-    LCMapStringA(lcid, LCMAP_LOWERCASE, _pclmap, 256, _pclmap, 256)
-    LCMapStringA(lcid, LCMAP_UPPERCASE, _pcumap, 256, _pcumap, 256)
-
-endif
-
-    .for ( rdx = _pctype, rsi = _pcumap, rdi = _pclmap, ecx = 0 : ecx < 256 : ecx++ )
-
-        mov al,[rdx+rcx*2]
-        and al,not (_LOWER or _UPPER)
-
-        .if ( cl != [rsi+rcx] )
-
-            or al,_LOWER
-        .elseif ( cl != [rdi+rcx] )
-
-            or al,_UPPER
-        .endif
-        mov [rdx+rcx*2],al
-    .endf
-    ret
-
-__initpctype endp
-
-__exitpctype proc
-
-    mov rcx,_pctype
-    .if ( rcx )
-
-        free(&[rcx-16])
-    .endif
-    ret
-
-__exitpctype endp
-
-.pragma(init(__initpctype, 50))
-.pragma(exit(__exitpctype, 50))
 
     end

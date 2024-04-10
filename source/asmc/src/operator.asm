@@ -204,10 +204,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
         movzx edx,[rax].asym.regist[2]
         movzx eax,[rax].asym.regist
         .if ( eax == 0 )
-            mov eax,T_EAX
-            .if ( ModuleInfo.Ofssize == USE64 )
-                mov eax,T_RAX
-            .endif
+            mov eax,ModuleInfo.accumulator
         .endif
         .if ( edx == 0 )
             mov edx,T_DWORD
@@ -474,10 +471,7 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
     movzx eax,[rcx].asym.regist
     movzx edx,[rcx].asym.regist[2]
     .if ( eax == 0 )
-        mov eax,T_EAX
-        .if ( ModuleInfo.Ofssize == USE64 )
-            mov eax,T_RAX
-        .endif
+        mov eax,ModuleInfo.accumulator
     .endif
     .if ( edx == 0 )
         mov edx,T_DWORD

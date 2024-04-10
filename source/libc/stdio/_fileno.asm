@@ -5,13 +5,20 @@
 ;
 
 include stdio.inc
+include errno.inc
 
     .code
 
 _fileno proc fp:LPFILE
 
     ldr rcx,fp
-   .return( [rcx].FILE._file )
+
+    .if ( rcx == NULL )
+        _set_errno(EINVAL)
+    .else
+        mov eax,[rcx].FILE._file
+    .endif
+    ret
 
 _fileno endp
 

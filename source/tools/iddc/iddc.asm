@@ -1,5 +1,10 @@
+; IDDC.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; Change history:
+; 2024-04-08 - added 64-bit
 ; 2016-09-24 - added switch -win64
 ; 2016-04-05 - added switch -coff and -omf
 ; 2014-08-18 - moved IDD_ to top -- align 16
@@ -11,12 +16,13 @@ include direct.inc
 include stdio.inc
 include stdlib.inc
 include string.inc
-include consx.inc
+include conio.inc
 include time.inc
 include winnt.inc
 include tchar.inc
 
-__IDDC__        equ 106
+define __IDDC__ 108
+define version <"1.08">
 
 MAXIDDSIZE      equ 2048
 OMF_THEADR      equ 080h
@@ -38,9 +44,6 @@ S_OMFR          ENDS
 
 .data
 
-console         dd 0
-PUBLIC          console
-
 omf             S_OMFR  <0>
 fileidd         db _MAX_PATH dup(0)
 fileobj         db _MAX_PATH dup(0)
@@ -58,7 +61,7 @@ option_coff     db 0
 option_win64    db 0
 
 COMENT          db 88h,1Ch,00h,1Ah
-                db 'Doszip Resource Edit v2.33',0
+                db "Asmc Binary Resource Compiler v", version,0
 COMENT_SIZE     = $ - COMENT
 
 LNAMES          db 96h,0Dh,00h,00h
@@ -74,102 +77,8 @@ LNAMES32        db 96h,1Dh,00h,00h
                 db 5, '_DATA'
 LNAMES_SIZE32   = $ - LNAMES
 
-        .code
+c_header            label BYTE
 
-strfn proc uses edi ecx path:LPSTR
-    mov edi,path
-    lea eax,[edi+strlen(edi)-1]
-@@:
-    cmp byte ptr [eax],'\'
-    je  @F
-    cmp byte ptr [eax],'/'
-    je  @F
-    dec eax
-    cmp eax,edi
-    ja  @B
-    lea eax,[edi-1]
-@@:
-    inc eax
-    ret
-strfn endp
-
-strfcat PROC USES esi edi ecx edx buffer:LPSTR, path:LPSTR, file:LPSTR
-
-    mov edx,buffer
-    mov esi,path
-    xor eax,eax
-    lea ecx,[eax-1]
-
-    .if esi
-        mov edi,esi ; overwrite buffer
-        repne scasb
-        mov edi,edx
-        not ecx
-        rep movsb
-    .else
-        mov edi,edx ; length of buffer
-        repne scasb
-    .endif
-
-    dec edi
-    .if edi != edx  ; add slash if missing
-
-        mov al,[edi-1]
-        .if !( al == '\' || al == '/' )
-
-            mov al,'\'
-            stosb
-        .endif
-    .endif
-
-    mov esi,file    ; add file name
-    .repeat
-        lodsb
-        stosb
-    .until !eax
-    mov eax,edx
-    ret
-
-strfcat ENDP
-
-owrite proc fp, b, l
-
-    .if fwrite(b, 1, l, fp) != l
-
-        perror(addr fileobj)
-        exit(2)
-    .endif
-    ret
-
-owrite  ENDP
-
-omf_write proc uses esi
-    lea esi,omf
-    xor eax,eax
-    xor edx,edx
-    movzx ecx,[esi].S_OMFR.o_length
-    add ecx,2
-    .repeat
-        lodsb
-        add edx,eax
-    .untilcxz
-    lea esi,omf
-    dec edx
-    not edx
-    movzx ebx,[esi].S_OMFR.o_length
-    add ebx,2
-    mov [esi+ebx],dl
-    inc ebx
-    owrite(edi, esi, ebx)
-    ret
-omf_write endp
-
-WR_COFF PROC USES esi edi ebx handle, rbuf, len
-local path[_MAX_PATH]:BYTE
-local is:IMAGE_SYMBOL
-
-    .data
-    c_header        label BYTE
     Machine         dw IMAGE_FILE_MACHINE_I386
     Sections        dw 2
     TimeStamp       dd ?
@@ -200,18 +109,151 @@ local is:IMAGE_SYMBOL
                     dd 0                    ; _IDD_*
     ch_size         equ $ - c_header
                     dd 0
+
+l_10                dd 0
+                    dd 5                    ; SymbolTableIndex
+                    dw 6                    ; Type
+
+c_end               db ".text",0,0,0        ; Name
+                    dd 0                    ; Value
+                    dw 1                    ; SectionNumber
+                    dw 0                    ; Type
+                    db 3                    ; StorageClass
+                    db 1                    ; NumberOfAuxSymbols
+                    dd 0                    ; Length
+                    dw 0                    ; NumberOfRelocations
+                    dw 0                    ; NumberOfLinenumbers
+                    dd 0                    ; CheckSum
+                    dw 0
+                    dw 0                    ; Number
+    Selection       dw 16h                  ; Selection
+                    db ".data",0,0,0        ; Name
+                    dd 0                    ; Value
+                    dw 2                    ; SectionNumber
+                    dw 0                    ; Type
+                    db 3                    ; StorageClass
+                    db 1                    ; NumberOfAuxSymbols
+    DLength         dd ?                    ; Length
+                    dw 1                    ; NumberOfRelocations
+                    dw 0                    ; NumberOfLinenumbers
+                    dd 0                    ; CheckSum
+                    dw 0
+                    dw 0                    ; Number
+                    dw 0                    ; Selection
+    ce_size         equ $ - c_end
+
     .code
+
+strfn proc path:string_t
+
+    ldr rcx,path
+    .for ( rax = rcx, dl = [rcx] : dl : rcx++, dl=[rcx] )
+
+        .if ( dl == '\' || dl == '/' )
+
+            .if ( byte ptr [rcx+1] )
+
+                lea rax,[rcx+1]
+            .endif
+        .endif
+    .endf
+    ret
+
+strfn endp
+
+
+strfcat proc uses rsi rdi buffer:string_t, path:string_t, file:string_t
+
+    mov rdx,buffer
+    mov rsi,path
+    xor eax,eax
+    mov ecx,-1
+
+    .if rsi
+        mov rdi,rsi
+        repne scasb
+        mov rdi,rdx
+        not ecx
+        rep movsb
+    .else
+        mov rdi,rdx
+        repne scasb
+    .endif
+
+    dec rdi
+    .if rdi != rdx
+        mov al,[rdi-1]
+        .if !( al == '\' || al == '/' )
+            mov al,'\'
+            stosb
+        .endif
+    .endif
+    mov rsi,file
+
+    .repeat
+        lodsb
+        stosb
+    .until !eax
+    mov rax,rdx
+    ret
+
+strfcat endp
+
+
+owrite proc fp:LPFILE, b:ptr, l:int_t
+
+    .ifd ( fwrite(b, 1, l, fp) != l )
+
+        perror(&fileobj)
+        exit(2)
+    .endif
+    ret
+
+owrite endp
+
+
+omf_write proc uses rsi fp:LPFILE
+
+    lea rsi,omf
+    xor eax,eax
+    xor edx,edx
+    movzx ecx,[rsi].S_OMFR.o_length
+    add ecx,2
+    .repeat
+        lodsb
+        add edx,eax
+    .untilcxz
+    lea rsi,omf
+    dec edx
+    not edx
+    movzx ecx,[rsi].S_OMFR.o_length
+    add ecx,2
+    mov [rsi+rcx],dl
+    inc ecx
+    owrite(fp, rsi, ecx)
+    ret
+
+omf_write endp
+
+
+write_coff proc uses rdi rbx fp:LPFILE, rbuf:ptr, len:int_t
+
+  local path[_MAX_PATH]:BYTE
+  local is:IMAGE_SYMBOL
+  local n:int_t, j:int_t
 
     .if option_win64
         mov Machine,IMAGE_FILE_MACHINE_AMD64
         ;
         ; pointers from DD to DQ: + 8 byte for each object
         ;
-        mov ecx,rbuf
-        movzx eax,[ecx].S_ROBJ.rs_count
+if 0
+        mov rcx,rbuf
+        movzx eax,[rcx].S_ROBJ.rs_count
         inc eax
         shl eax,3
-        add [ecx].S_ROBJ.rs_memsize,ax
+        add [rcx].S_ROBJ.rs_memsize,ax
+endif
     .endif
 
     _time(&TimeStamp)
@@ -233,58 +275,20 @@ local is:IMAGE_SYMBOL
     .if option_win64
         add eax,4
     .endif
-    owrite(handle, &c_header, eax)
-    owrite(handle, rbuf, len)
-
-    .data
-        l_10    dd 0
-                dd 5            ; SymbolTableIndex
-                dw 6            ; Type
-    .code
+    owrite(fp, &c_header, eax)
+    owrite(fp, rbuf, len)
 
     mov eax,len
     add eax,ch_size + 4
     .if option_win64
         add eax,4
-        mov WORD PTR l_10[8],1
+        mov word ptr l_10[8],1
     .endif
     .if eax & 1
-        push 0
-        mov eax,esp
-        owrite(handle, eax, 1)
-        pop eax
+        mov n,0
+        owrite(fp, &n, 1)
     .endif
-    owrite(handle, &l_10, 10)
-
-    .data
-    c_end       db ".text",0,0,0        ; Name
-                dd 0                    ; Value
-                dw 1                    ; SectionNumber
-                dw 0                    ; Type
-                db 3                    ; StorageClass
-                db 1                    ; NumberOfAuxSymbols
-                dd 0                    ; Length
-                dw 0                    ; NumberOfRelocations
-                dw 0                    ; NumberOfLinenumbers
-                dd 0                    ; CheckSum
-                dw 0
-                dw 0                    ; Number
-    Selection   dw 16h                  ; Selection
-                db ".data",0,0,0        ; Name
-                dd 0                    ; Value
-                dw 2                    ; SectionNumber
-                dw 0                    ; Type
-                db 3                    ; StorageClass
-                db 1                    ; NumberOfAuxSymbols
-    DLength     dd ?                    ; Length
-                dw 1                    ; NumberOfRelocations
-                dw 0                    ; NumberOfLinenumbers
-                dd 0                    ; CheckSum
-                dw 0
-                dw 0                    ; Number
-                dw 0                    ; Selection
-    ce_size equ $ - c_end
-    .code
+    owrite(fp, &l_10, 10)
 
     mov eax,len
     add eax,4
@@ -293,39 +297,40 @@ local is:IMAGE_SYMBOL
         mov Selection,0
     .endif
     mov DLength,eax
-    owrite(handle, addr c_end, ce_size)
+    owrite(fp, &c_end, ce_size)
 
-    xor esi,esi
+    mov n,0
     mov ecx,sizeof(IMAGE_SYMBOL)
-    lea edi,is
+    lea rdi,is
     xor eax,eax
     rep stosb
     mov is.SectionNumber,2
     mov is.StorageClass,2
 
-    lea edi,idname
+    lea rbx,idname
     .if option_win64
-        inc edi
+        inc rbx
     .endif
-    .if strlen(edi) <= 8
-        memcpy(&is.ShortName, edi, eax)
+    .ifd strlen(rbx) <= 8
+        memcpy(&is.ShortName, rbx, eax)
     .else
         mov is._Long,4
-        lea esi,[eax+1]
+        inc eax
+        mov n,eax
     .endif
-    owrite(handle, &is, sizeof(IMAGE_SYMBOL))
+    owrite(fp, &is, sizeof(IMAGE_SYMBOL))
 
     mov ecx,sizeof(IMAGE_SYMBOL)
-    lea edi,is
+    lea rdi,is
     xor eax,eax
     rep stosb
-    lea ebx,path
-    lea edi,idname[4]
+    lea rbx,path
+    lea rdx,idname[4]
     .if option_win64
-        inc edi
+        inc rdx
     .endif
-    strcpy(ebx, edi)
-    xor edi,edi
+    strcpy(rbx, rdx)
+    mov j,0
 
     mov is.Value,4
     .if option_win64
@@ -333,57 +338,60 @@ local is:IMAGE_SYMBOL
     .endif
     mov is.SectionNumber,2
     mov is.StorageClass,2
-    .if strlen(strcat(ebx, "_RC")) <= 8
-        memcpy(&is.ShortName, ebx, eax)
+    .ifd strlen(strcat(rbx, "_RC")) <= 8
+        memcpy(&is.ShortName, rbx, eax)
     .else
-        lea edx,[esi+4]
+        mov edx,n
+        add edx,4
         mov is._Long,edx
-        lea edi,[eax+1]
+        inc eax
+        mov j,eax
     .endif
-    owrite(handle, &is, sizeof(IMAGE_SYMBOL))
+    owrite(fp, &is, sizeof(IMAGE_SYMBOL))
 
-    lea eax,[esi+edi+4]
+    mov eax,n
+    add eax,4
+    add eax,j
     mov DLength,eax
-    owrite(handle, &DLength, 4)
-
-    .if esi
-        lea eax,idname
+    owrite(fp, &DLength, 4)
+    .if n
+        lea rax,idname
         .if option_win64
-            inc eax
+            inc rax
         .endif
-        owrite(handle, eax, esi)
+        owrite(fp, rax, n)
     .endif
-    .if edi
-        owrite(handle, ebx, edi)
+    .if j
+        owrite(fp, rbx, j)
     .endif
-
-    fclose(handle)
+    fclose(fp)
     xor eax,eax
     ret
 
-WR_COFF endp
+write_coff endp
 
-WR_OMF proc uses esi edi ebx handle, rbuf, len
 
-    mov edx,strfn(&fileidd)
-    strlen(strcpy(&omf.o_data[1], edx))
+write_omf proc fp:LPFILE, rbuf:ptr, len:int_t
+
+    mov rdx,strfn(&fileidd)
+    strlen(strcpy(&omf.o_data[1], rdx))
     mov omf.o_type,OMF_THEADR
     mov omf.o_data,al
     add eax,2
     mov omf.o_length,ax
-    omf_write()
+    omf_write(fp)
 
     memcpy(&omf, &COMENT, COMENT_SIZE)
-    omf_write()
+    omf_write(fp)
 
     .if option_m == 'f'
         memcpy(&omf, &LNAMES32, LNAMES_SIZE32)
     .else
         memcpy(&omf, &LNAMES, LNAMES_SIZE)
     .endif
-    omf_write()
+    omf_write(fp)
 
-    mov eax,esi
+    mov eax,len
     add eax,4
     mov omf.o_type,OMF_SEGDEF
     mov omf.o_length,7
@@ -403,7 +411,7 @@ WR_OMF proc uses esi edi ebx handle, rbuf, len
         mov omf.o_data[4],2
         mov omf.o_data[5],1
     .endif
-    omf_write()
+    omf_write(fp)
 
     .if option_m == 'f'
         mov omf.o_type,OMF_COMENT
@@ -412,8 +420,8 @@ WR_OMF proc uses esi edi ebx handle, rbuf, len
         mov omf.o_data[1],0FEh
         mov omf.o_data[2],04Fh
         mov omf.o_data[3],1
-        omf_write()
-        mov eax,esi
+        omf_write(fp)
+        mov eax,len
         add eax,4
         mov omf.o_type,OMF_SEGDEF
         mov omf.o_length,7
@@ -423,12 +431,12 @@ WR_OMF proc uses esi edi ebx handle, rbuf, len
         mov omf.o_data[3],6
         mov omf.o_data[4],5
         mov omf.o_data[5],1
-        omf_write()
+        omf_write(fp)
         mov omf.o_type,9Ah
         mov omf.o_length,2
         mov omf.o_data,02h
         mov omf.o_data[1],62h
-        omf_write()
+        omf_write(fp)
     .endif
     mov omf.o_type,OMF_PUBDEF
     .if option_m == 'f'
@@ -438,33 +446,33 @@ WR_OMF proc uses esi edi ebx handle, rbuf, len
         mov omf.o_data[0],0
         mov omf.o_data[1],1
     .endif
-    mov edx,offset idname
+    lea rdx,idname
     .if option_m != 'f'
-        inc edx
+        inc rdx
     .endif
-    strlen(strcpy(&omf.o_data[3], edx))
+    strlen(strcpy(&omf.o_data[3], rdx))
     mov omf.o_data[2],al
     add eax,7
     mov omf.o_length,ax
-    mov ebx,eax
-    mov omf.o_data[ebx-4],0
-    mov omf.o_data[ebx-3],0
-    mov omf.o_data[ebx-2],0
-    mov omf.o_data[ebx-1],0
-    omf_write()
+    lea rcx,omf
+    mov [rcx].S_OMFR.o_data[rax-4],0
+    mov [rcx].S_OMFR.o_data[rax-3],0
+    mov [rcx].S_OMFR.o_data[rax-2],0
+    mov [rcx].S_OMFR.o_data[rax-1],0
+    omf_write(fp)
     mov omf.o_type,OMF_COMENT
     mov omf.o_length,4
     mov omf.o_data,0
     mov omf.o_data[1],0A2h
     mov omf.o_data[2],1
-    omf_write()
-    mov edx,edi
+    omf_write(fp)
+    mov rdx,rdi
     mov ecx,1024
-    lea edi,omf.o_data
+    lea rdi,omf.o_data
     xor eax,eax
     rep stosb
-    mov edi,edx
-    mov eax,esi
+    mov rdi,rdx
+    mov eax,len
     add eax,8
     mov omf.o_type,OMF_LEDATA
     mov omf.o_length,ax
@@ -472,13 +480,13 @@ WR_OMF proc uses esi edi ebx handle, rbuf, len
     .if option_m == 'f'
         inc omf.o_data
     .endif
-    mov ecx,esi
+    mov ecx,len
     .if option_t
         dec ecx
     .endif
     memcpy(&omf.o_data[3+4], &dialog, ecx)
     mov omf.o_data[3],4
-    omf_write()
+    omf_write(fp)
     mov omf.o_type,OMF_FIXUPP
     .if option_m == 'f'
         mov omf.o_type,OMF_FIXUPP32
@@ -496,264 +504,228 @@ WR_OMF proc uses esi edi ebx handle, rbuf, len
         mov omf.o_data[3],2
     .endif
     mov omf.o_data[4],0
-    omf_write()
+    omf_write(fp)
     mov omf.o_type,OMF_MODEND
     mov omf.o_length,2
     mov omf.o_data,0
-    omf_write()
-    fclose(edi)
+    omf_write(fp)
+    fclose(fp)
     xor eax,eax
     ret
-WR_OMF endp
+
+write_omf endp
 
 
-AssembleModule PROC USES esi edi ebx module
+AssembleModule proc uses rbx module:string_t
+
+    .new fp:LPFILE
+    .new len:int_t
 
     .if _access(module, 0)
 
         perror(module)
-        exit(1)
+        exit( 1 )
     .endif
 
     .if strrchr(strcpy(&dlname, strfn(module)), '.')
 
-        mov byte ptr [eax],0
+        mov byte ptr [rax],0
     .endif
 
-    lea edi,fileobj
-
+    lea rbx,fileobj
     .if !option_f
 
-        _getcwd(edi, _MAX_PATH)
-        strfcat(edi, 0, strfn(module))
-
-        .if strrchr(edi, '.')
-
-            mov byte ptr [eax],0
+        _getcwd(rbx, _MAX_PATH)
+        strfcat(rbx, 0, strfn(module))
+        .if strrchr(rbx, '.')
+            mov byte ptr [rax],0
         .endif
-        strcat(edi, &extobj)
+        strcat(rbx, &extobj)
     .endif
 
     .if !fopen(module, "rb")
 
         perror(module)
-        exit(2)
+        exit( 2 )
     .endif
-    mov ebx,eax
+    mov fp,rax
 
-    mov esi,fread(&dialog, 1, MAXIDDSIZE, ebx)
-    fclose(ebx)
+    mov len,fread(&dialog, 1, MAXIDDSIZE, fp)
+    fclose(fp)
 
-    .if !esi
+    .if ( len == 0 )
 
         perror(module)
-        exit(3)
+        exit( 3 )
+    .endif
+    .if ( option_t )
+        inc len
     .endif
 
-    .if option_t
-        inc esi
-    .endif
-
-    .if esi > 1020
+    .if ( len > 1020 )
 
         perror("Resource is to big -- > 1024")
-        exit(3)
+        exit( 3 )
     .endif
 
-    .if !fopen(edi, "wb")
+    .if !fopen(rbx, "wb")
 
-        perror(edi)
-        exit(2)
+        perror(rbx)
+        exit( 2 )
     .endif
 
-    mov edi,eax
+    mov fp,rax
     .if option_omf
-        WR_OMF(edi, &dialog, esi)
+        write_omf(fp, &dialog, len)
     .else
-        WR_COFF(edi, &dialog, esi)
+        write_coff(fp, &dialog, len)
     .endif
     ret
 
-AssembleModule ENDP
+AssembleModule endp
 
 
-AssembleSubdir PROC USES esi edi ebx directory, wild
+AssembleSubdir proc directory:string_t, wild:string_t
 
-  local path[_MAX_PATH]:BYTE
-  local ff:_finddata_t
-  local h:HANDLE
-  local rc:DWORD
+   .new path[_MAX_PATH]:char_t
+   .new ff:_finddata_t
+   .new h:ptr
+   .new rc:int_t = 0
 
-    lea esi,path
-    lea edi,ff
-    lea ebx,ff.name
-    mov rc,0
+    mov rcx,strfcat(&path, directory, wild)
+    .ifd ( _findfirst(rcx, &ff) != -1 )
 
-    .if _findfirst(strfcat(esi, directory, wild), edi) != -1
-
-        mov h,eax
-
+        mov h,rax
         .repeat
-
-            mov rc,AssembleModule(strfcat(esi, directory, ebx))
-
-        .until _findnext(h, edi)
-
+            mov rc,AssembleModule(strfcat(&path, directory, &ff.name))
+        .untild _findnext(h, &ff)
         _findclose(h)
-
     .endif
 
-    .if _findfirst(strfcat(esi, directory, "*.*"), edi) != -1
+    mov rcx,strfcat(&path, directory, "*.*")
+    .ifd ( _findfirst(rcx, &ff) != -1 )
 
-        mov h,eax
-
+        mov h,rax
         .repeat
-
-            mov eax,[ebx]
+            mov eax,dword ptr ff.name
             and eax,00FFFFFFh
-
-            .if ff.attrib & _A_SUBDIR && ax != '.' && eax != '..'
-
-                perror(ebx)
-
-                .if AssembleSubdir(strfcat(esi, directory, ebx), wild)
-
+            .if ( ff.attrib & _A_SUBDIR && ax != '.' && eax != '..' )
+                perror(&ff.name)
+                .if AssembleSubdir(strfcat(&path, directory, &ff.name), wild)
                     mov rc,eax
-                    .break
+                   .break
                 .endif
             .endif
-
-        .until _findnext(h, edi)
-
+        .untild _findnext(h, &ff)
         _findclose(h)
     .endif
     mov eax,rc
     ret
 
-AssembleSubdir ENDP
+AssembleSubdir endp
 
-arg_option proc uses ebx arg:ptr
 
-    mov ebx,arg
-    mov eax,[ebx]
+exit_usage proc
 
-    .switch al
-
-      .case '?'
-
-        printf( "Binary Resource Compiler Version %d.%d.%d.%d\n"
-                "Usage: IDDC [-/Options] <idd-file>\n"
-                " Options:\n"
-                "  -mc     output 16-bit .compact\n"
-                "  -ml     output 16-bit .large\n"
-                "  -mf     output 32-bit .flat (default)\n"
-                "  -win64  output 64-bit .flat\n"
-                "  -omf    output OMF object (default)\n"
-                "  -coff   output COFF object\n"
-                "  -f#     full pathname of .OBJ file\n"
-                "  -r      recurse subdirectories\n"
-                "  -t      compile text file (add zero)\n",
-                __IDDC__ / 100, __IDDC__ mod 100,
-                __ASMC__ / 100, __ASMC__ mod 100 )
-        exit(0)
-
-      .case '-'
-      .case '/'
-
-        shr eax,8
-        or  eax,0x202020
-
-        .switch al
-
-          .case 'w'
-            inc option_win64
-
-          .case 'c'
-            mov option_omf,0
-            inc option_coff
-            .endc
-
-          .case 'm'
-            mov option_m,ah
-            .endc
-
-          .case 'o'
-            mov option_coff,0
-            inc option_omf
-            .endc
-
-          .case 'f'
-            inc option_f
-            add ebx,2
-            .if ( byte ptr [ebx] == 0 )
-                .if ( edi > 1 )
-                    dec edi
-                    lodsd
-                    mov ebx,eax
-                .endif
-            .endif
-            strcpy(&fileobj, ebx)
-            .endc
-
-          .case 'r'
-            inc option_r
-            .endc
-
-          .case 't'
-            inc option_t
-            .endc
-
-          .default
-            .gotosw(1:'?')
-        .endsw
-        .endc
-
-      .default
-        .if !fileidd
-            strcpy(&fileidd, ebx)
-        .else
-            .gotosw('?')
-        .endif
-    .endsw
-
-    xor eax,eax
-    inc eax
+    printf( "Asmc Binary Resource Compiler Version %d.%d.%d.%d\n"
+            "Usage: IDDC [-Options] <idd-file>\n"
+            " Options:\n"
+            "  -mc     Set memory model to Compact\n"
+            "  -ml     Set memory model to Large\n"
+            "  -mf     Set memory model to Flat (default)\n"
+            "  -win64  Generate 64-bit COFF object\n"
+            "  -omf    Generate OMF format object file (default)\n"
+            "  -coff   Generate COFF format object file\n"
+            "  -Fo#    Names an object file\n"
+            "  -r      Recurse subdirectories with use of wildcards\n"
+            "  -t      Compile text file (add zero)\n",
+            __IDDC__ / 100, __IDDC__ mod 100,
+            __ASMC__ / 100, __ASMC__ mod 100 )
+    exit( 0 )
     ret
 
-arg_option endp
+exit_usage endp
 
 
 main proc argc:int_t, argv:array_t
 
-  local path[_MAX_PATH]:BYTE
+  local path[_MAX_PATH]:char_t
 
-    mov edi,argc
-    mov esi,argv
-
-    .if edi == 1
-        arg_option("?")
+    .if ( argc <= 1 )
+        exit_usage()
     .endif
-    dec edi
 
-    lodsd
-    .repeat
-        lodsd
-        arg_option(eax)
-        dec edi
-    .until !edi
+    .for ( ebx = 1 : ebx < argc : ebx++ )
 
-    lea esi,fileidd
-    lea edi,path
+        mov rdx,argv
+        mov rcx,[rdx+rbx*size_t]
+        mov eax,[rcx]
 
+        .switch al
+        .case 'h'
+ifndef __UNIX__
+        .case '?'
+endif
+            exit_usage()
+        .case '-'
+ifndef __UNIX__
+        .case '/'
+endif
+            shr eax,8
+            .switch al
+            .case 'w'
+                inc option_win64
+            .case 'c'
+                mov option_omf,0
+                inc option_coff
+               .endc
+            .case 'm'
+                mov option_m,ah
+               .endc
+            .case 'o'
+                mov option_coff,0
+                inc option_omf
+               .endc
+            .case 'F'
+                inc option_f
+                add rcx,3
+                .if ( byte ptr [rcx] == 0 )
+                    inc ebx
+                    .if ( ebx < argc )
+                        mov rcx,[rdx+rbx*size_t]
+                    .endif
+                .endif
+                strcpy(&fileobj, rcx)
+               .endc
+            .case 'r'
+                inc option_r
+               .endc
+            .case 't'
+                inc option_t
+               .endc
+            .default
+                .gotosw(1:'h')
+            .endsw
+            .endc
+        .default
+            .if !fileidd
+                strcpy(&fileidd, rcx)
+            .else
+                .gotosw('?')
+            .endif
+        .endsw
+    .endf
+
+    lea rbx,fileidd
     .if !option_r
-        AssembleModule(esi)
+        AssembleModule(rbx)
     .else
-        strcpy(edi, esi)
-        .if strfn(esi) > esi
-            dec eax
+        strcpy(&path, rbx)
+        .if strfn(rbx) > rbx
+            dec rax
         .endif
-        mov BYTE PTR [eax],0
-        AssembleSubdir(esi, strfn(edi))
+        mov BYTE PTR [rax],0
+        AssembleSubdir(rbx, strfn(&path))
     .endif
     ret
 

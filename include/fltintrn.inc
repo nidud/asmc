@@ -216,9 +216,7 @@ __cmpq		proto __ccall A:ptr qfloat_t, B:ptr qfloat_t
 
 __sqrtq		proto __ccall A:ptr qfloat_t
 
-_cqcvt		proto __cdecl :ptr real16, :string_t, :int_t, :int_t, :int_t
-_cldcvt		proto __cdecl :ptr real10, :string_t, :int_t, :int_t, :int_t
-_cfltcvt	proto __cdecl :ptr real8, :string_t, :int_t, :int_t, :int_t
+_cfltcvt	proto __cdecl :ptr, :string_t, :int_t, :int_t, :int_t
 _cropzeros	proto __cdecl :string_t
 _forcdecpt	proto __cdecl :string_t
 

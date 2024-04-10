@@ -674,14 +674,18 @@ define SIT_MACRO       1
     currcomment             string_t ?      ; current comment
     token_count             int_t ?         ; number of tokens in curr line
     basereg                 uint_t 3 dup(?) ; stack base register (16-, 32-, 64-bit
+
     name                    db 260 dup(?)   ; name of module
     xflag                   db ?            ; extended option
     loopalign               db ?            ; OPTION:LOOPALIGN setting
     casealign               db ?            ; OPTION:CASEALIGN setting
+
     assert_proc             string_t ?      ; .assert:<proc/macro name>
+    accumulator             int_t ?         ; AX/EAX/RAX
     codepage                uint_t ?
     class_label             uint_t ?
     floatdigits             int_t ?         ; option floatdigits:<value>
+
     floatformat             db ?            ; option floatformat:<e|f|g>
     flt_size                db ?            ; option float:<4|8>
     pic                     db ?            ; -fpic | -fno-pic

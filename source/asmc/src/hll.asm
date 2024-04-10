@@ -156,7 +156,7 @@ GetCOp endp
 
     assume rbx:ptr asm_tok
 
-RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:string_t, start1:uint_t,
+RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:int_t, start1:uint_t,
         end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:ptr asm_tok
 
    .new reg:int_t = 0
@@ -176,12 +176,7 @@ RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:string_t, start1:ui
             mov rax,[rbx+rcx].string_ptr
             .if ( word ptr [rax] == '&' )
 
-                mov eax,T_EAX
-                .if ModuleInfo.Ofssize == USE64
-                    mov eax,T_RAX
-                .endif
-                mov reg,eax
-
+                mov reg,ModuleInfo.accumulator
                 imul edx,end2,asm_tok
                 mov rsi,[rbx+rdx].tokpos
                 mov dl,[rsi]
@@ -196,11 +191,7 @@ RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:string_t, start1:ui
 
     ; copy the instruction
 
-    mov rsi,inst
-    mov ecx,tstrlen(rsi)
-    rep movsb
-    mov eax,' '
-    stosb
+    add rdi,tsprintf(rdi, "%r ", inst)
 
     ; copy the first operand's tokens
 
@@ -398,7 +389,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
     ; get (first) operand
     ;
    .new is_float:byte = 0
-   .new inst_cmp:string_t = "cmp"
+   .new inst_cmp:int_t = T_CMP
    .new op1_pos:int_t = edi
    .new op1:expr
 
@@ -414,11 +405,11 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
 
             .if ( GetValueSp( [rax].asm_tok.tokval ) & ( OP_XMM or OP_YMM or OP_ZMM ) )
 
-                lea rax,@CStr( "comisd" )
+                mov eax,T_COMISD
                 .if ( ModuleInfo.flt_size == 4 )
-                    lea rax,@CStr( "comiss" )
+                    mov eax,T_COMISS
                 .endif
-                mov inst_cmp,rax
+                mov inst_cmp,eax
                 inc is_float
             .endif
         .endif
@@ -495,31 +486,31 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
     .if ( op == COP_NONE )
 
         .switch eax
-          .case EXPR_REG
+        .case EXPR_REG
             .if ( !( op1.flags & E_INDIRECT ) && is_float == 0 )
 
-                lea rdx,@CStr( "test" )
+                mov edx,T_TEST
                 .if ( Options.masm_compat_gencode )
-                    lea rdx,@CStr( "or" )
+                    mov edx,T_OR
                 .endif
-                RenderInstr( buffer, rdx, op1_pos, op1_end,
+                RenderInstr( buffer, edx, op1_pos, op1_end,
                     op1_pos, op1_end, rbx )
                 mov rdx,hllop
                 mov [rdx].hll_opnd.lastjmp,rax
                 RenderJcc( rax, 'z', is_true, jcclabel )
-                .endc
+               .endc
             .endif
             ;
             ; no break
             ;
-          .case EXPR_ADDR
+        .case EXPR_ADDR
 
             RenderInstr( buffer, inst_cmp, op1_pos, op1_end, EMPTY, 0, rbx )
             mov rdx,hllop
             mov [rdx].hll_opnd.lastjmp,rax
             RenderJcc( rax, 'z', is_true, jcclabel )
-            .endc
-          .case EXPR_CONST
+           .endc
+        .case EXPR_CONST
             .if ( op1.hvalue != 0 && op1.hvalue != -1 )
                 .return EmitConstError( &op1 )
             .endif
@@ -563,9 +554,9 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
                 mov op2.kind,EXPR_ADDR
             .elseif ( op1.kind == EXPR_ADDR )
                 .if ( op1.mem_type == MT_REAL4 )
-                    mov inst_cmp,&@CStr( "comiss" )
+                    mov inst_cmp,T_COMISS
                 .elseif ( op1.mem_type == MT_REAL8 )
-                    mov inst_cmp,&@CStr( "comisd" )
+                    mov inst_cmp,T_COMISD
                 .endif
             .endif
         .else
@@ -576,9 +567,9 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         ; ( xmm0 > float/double )
 
         .if ( op2.mem_type == MT_REAL4 )
-            mov inst_cmp,&@CStr( "comiss" )
+            mov inst_cmp,T_COMISS
         .elseif ( op2.mem_type == MT_REAL8 )
-            mov inst_cmp,&@CStr( "comisd" )
+            mov inst_cmp,T_COMISD
         .endif
     .endif
 
@@ -594,11 +585,11 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         ;
         ; v2.22 - switch /Zg to OR
         ;
-        lea rdx,@CStr("test")
+        mov edx,T_TEST
         .if Options.masm_compat_gencode
-            lea rdx,@CStr("or")
+            mov edx,T_OR
         .endif
-        RenderInstr( buffer, rdx, op1_pos, op1_end, op2_pos, op2_end, rbx )
+        RenderInstr( buffer, edx, op1_pos, op1_end, op2_pos, op2_end, rbx )
         mov rcx,hllop
         mov [rcx].hll_opnd.lastjmp,rax
         RenderJcc( rax, 'e', is_true, jcclabel )
@@ -616,11 +607,11 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
             ;
             ; v2.22 - switch /Zg to OR
             ;
-            lea rdx,@CStr("test")
+            mov edx,T_TEST
             .if ( Options.masm_compat_gencode )
-                lea rdx,@CStr("or")
+                mov edx,T_OR
             .endif
-            RenderInstr( buffer, rdx, op1_pos, op1_end, op1_pos, op1_end, rbx )
+            RenderInstr( buffer, edx, op1_pos, op1_end, op1_pos, op1_end, rbx )
         .else
             RenderInstr( buffer, inst_cmp,  op1_pos, op1_end, op2_pos, op2_end, rbx )
         .endif
@@ -1375,12 +1366,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:p
     .if !esi
 
 ifndef ASMC64
-        mov esi,T_EAX
-        .if ModuleInfo.Ofssize == USE64
-            mov esi,T_RAX
-        .elseif ModuleInfo.Ofssize == USE16
-            mov esi,T_AX
-        .endif
+        mov esi,ModuleInfo.accumulator
 else
         mov esi,T_RAX
 endif
@@ -2442,13 +2428,7 @@ RenderUntilXX proc __ccall private uses rdi hll:ptr hll_item, cmd:uint_t
     ldr eax,cmd
     mov ecx,T_CX - T_AX
 ifndef ASMC64
-    .if ( ModuleInfo.Ofssize == USE16 )
-        add ecx,T_AX
-    .elseif ( ModuleInfo.Ofssize == USE32 )
-        add ecx,T_EAX
-    .else
-        add ecx,T_RAX
-    .endif
+    add ecx,ModuleInfo.accumulator
 else
     add ecx,T_RAX
 endif

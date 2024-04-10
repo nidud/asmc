@@ -466,14 +466,19 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov rc,eax
 
     mov edi,MaxLineLength
-    lea eax,[rdi+rdi*2+64*2]
+    lea ecx,[rdi*4+64*2]
 
     .if ( edi > MAX_LINE_LEN )
         inc mem_alloc
-        MemAlloc(eax)
+        MemAlloc(ecx)
     .else
-        alloca(eax)
+        alloca(ecx)
     .endif
+
+    ; v2.34.52 - extended buffer size..
+    mov ecx,edi
+    shr ecx,2
+    add edi,ecx
     mov buffer,rax
     add rax,rdi
     mov b_data,rax
@@ -1595,17 +1600,18 @@ CStringFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenar
 
 CStringFunc endp
 
-; convert register to reg8/16/32.
+; convert register to reg8/16/32/64.
 
-REGFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
 
-  .new opndx:expr
+  .new opnd:expr
   .new i:int_t
-  .new size:int_t = eax
+  .new bits:int_t = 32 ; default bits
+  .new reg:int_t
 
-;   ldr rcx,mi
-    mov rdx,[rcx].macro_instance.parm_array
-    mov rcx,[rdx]
+    ldr rcx,mi
+    mov rbx,[rcx].macro_instance.parm_array
+    mov rcx,[rbx]
 
     .if ( rcx == NULL )
 
@@ -1615,52 +1621,44 @@ REGFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:
     mov eax,TokenCount
     inc eax
     mov i,eax
+    mov reg,eax
 
-    mov edx,Tokenize( rcx, eax, tokenarray, TOK_RESCAN )
-    .ifd ( EvalOperand( &i, tokenarray, edx, &opndx, EXPF_NOUNDEF ) == ERROR )
-        .return( ERROR )
+    mov ecx,Tokenize( rcx, eax, tokenarray, TOK_RESCAN )
+    .ifd ( EvalOperand( &reg, tokenarray, ecx, &opnd, EXPF_NOUNDEF ) == ERROR )
+        .return
     .endif
-    imul ecx,i,asm_tok
-    add rcx,tokenarray
-    .if( opndx.kind != EXPR_REG || [rcx].asm_tok.token != T_FINAL )
-        .return( asmerr(2008, [rcx-asm_tok].asm_tok.string_ptr ) )
+    .if ( opnd.kind != EXPR_REG )
+
+        imul ecx,reg,asm_tok
+        add rcx,tokenarray
+       .return( asmerr(2008, [rcx-asm_tok].asm_tok.string_ptr ) )
     .endif
-    mov rcx,opndx.base_reg
-    mov ecx,get_register( [rcx].asm_tok.tokval, size )
+
+    mov rcx,opnd.base_reg
+    mov reg,[rcx].asm_tok.tokval
+
+    mov rcx,[rbx+string_t]
+    .if ( rcx != NULL )
+
+        mov ecx,Tokenize( rcx, i, tokenarray, TOK_RESCAN )
+        .ifd ( EvalOperand( &i, tokenarray, ecx, &opnd, EXPF_NOUNDEF ) == ERROR )
+            .return
+        .endif
+        mov bits,opnd.value
+        .if ( opnd.kind != EXPR_CONST || eax < 8 || eax > 64 )
+
+            imul ecx,i,asm_tok
+            add rcx,tokenarray
+           .return( asmerr(2008, [rcx-asm_tok].asm_tok.string_ptr ) )
+        .endif
+    .endif
+    mov edx,bits
+    shr edx,3
+    mov ecx,get_register( reg, edx )
     GetResWName( ecx, buffer )
    .return( NOT_ERROR )
 
-REGFunc endp
-
-
-REG8Func proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
-
-    ldr rcx,mi
-    ldr rdx,buffer
-    mov eax,1
-   .return( REGFunc(rcx, rdx, tokenarray) )
-
-REG8Func endp
-
-
-REG16Func proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
-
-    ldr rcx,mi
-    ldr rdx,buffer
-    mov eax,2
-   .return( REGFunc(rcx, rdx, tokenarray) )
-
-REG16Func endp
-
-
-REG32Func proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
-
-    ldr rcx,mi
-    ldr rdx,buffer
-    mov eax,4
-   .return( REGFunc(rcx, rdx, tokenarray) )
-
-REG32Func endp
+RegFunc endp
 
 
 ; convert string to a number.
@@ -1886,41 +1884,19 @@ endif
     mov [rax].mparm_list.deflt,NULL
     mov [rax].mparm_list.required,TRUE
 
-    ;; add @REG8() macro func
+    ;; add @Reg() macro func
 
-    mov rdi,CreateMacro( "@REG8" )
+    mov rdi,CreateMacro( "@Reg" )
     mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
-    mov [rdi].func_ptr,&REG8Func
+    mov [rdi].func_ptr,&RegFunc
     mov [rdi].mac_flag,M_ISFUNC
     mov rsi,[rdi].macroinfo
-    mov [rsi].parmcnt,1
-    mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
+    mov [rsi].parmcnt,2
+    mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
     mov [rax].mparm_list.deflt,NULL
-    mov [rax].mparm_list.required,FALSE
-
-    ;; add @REG16() macro func
-
-    mov rdi,CreateMacro( "@REG16" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
-    mov [rdi].func_ptr,&REG16Func
-    mov [rdi].mac_flag,M_ISFUNC
-    mov rsi,[rdi].macroinfo
-    mov [rsi].parmcnt,1
-    mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
-    mov [rax].mparm_list.deflt,NULL
-    mov [rax].mparm_list.required,FALSE
-
-    ;; add @REG32() macro func
-
-    mov rdi,CreateMacro( "@REG32" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
-    mov [rdi].func_ptr,&REG32Func
-    mov [rdi].mac_flag,M_ISFUNC
-    mov rsi,[rdi].macroinfo
-    mov [rsi].parmcnt,1
-    mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
-    mov [rax].mparm_list.deflt,NULL
-    mov [rax].mparm_list.required,FALSE
+    mov [rax].mparm_list.required,TRUE
+    mov [rax].mparm_list[mparm_list].deflt,NULL
+    mov [rax].mparm_list[mparm_list].required,FALSE
 
     ;; add @CatStr() macro func
 

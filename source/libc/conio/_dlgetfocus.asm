@@ -6,36 +6,27 @@
 
 include conio.inc
 
-    option dotname
-
     .code
 
-    assume rax:THWND
+    assume rcx:THWND
 
-_dlgetfocus proc watcall hwnd:THWND
+_dlgetfocus proc hwnd:THWND
 
-    test    [rax].flags,W_CHILD
-    cmovnz  rax,[rax].prev
-    test    [rax].flags,O_CHILD
-    jz      .3
-    movzx   edx,word ptr [rax].rc
-    mov     cl,[rax].index
-    mov     rax,[rax].object
-    test    cl,cl
-    jz      .1
-.0:
-    test    rax,rax
-    jz      .2
-    mov     rax,[rax].next
-    dec     cl
-    jnz     .0
-.1:
-    add     edx,[rax].rc
-.2:
-    ret
-.3:
-    xor     eax,eax
-    jmp     .2
+    ldr     rcx,hwnd
+    test    [rcx].flags,W_CHILD
+    cmovnz  rcx,[rcx].prev
+    mov     al,[rcx].index
+    movzx   edx,word ptr [rcx].rc
+
+    .for ( rcx = [rcx].object : rcx : rcx = [rcx].next )
+
+        .if ( al == [rcx].index )
+
+            add edx,[rcx].rc
+            .return( rcx )
+        .endif
+    .endf
+    .return( 0 )
 
 _dlgetfocus endp
 

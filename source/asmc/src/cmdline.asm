@@ -705,10 +705,20 @@ ifndef ASMC64
         define_name( "__TINY__", "1" )
         .return
 endif
+    .case 'dTM'             ; -MTd
+        define_name( "_DEBUG", "1" )
+    .case 'TM'              ; -MT
+        define_name( "_MT", "1" )
+       .return
+    .case 'dDM'             ; -MDd
+        define_name( "_DEBUG", "1" )
+    .case 'DM'              ; -MD
+        define_name( "_MSVCRT", "1" )
+       .return
     .case 'ilon'            ; -nolib
         mov Options.nolib,TRUE
         define_name( "_MSVCRT", "1" )
-        .return
+       .return
 ifndef ASMC64
     .case 'fmo'             ; -omf
         mov Options.output_format,OFORMAT_OMF
@@ -783,26 +793,24 @@ endif
        .return
     .case 'X'               ; -X
         mov Options.ignore_include,1
-        .return
+       .return
 ifndef ASMC64
     .case 'mcz'             ; -zcm
         mov Options.no_cdecl_decoration,0
-        .return
+       .return
     .case 'wcz'             ; -zcw
         mov Options.no_cdecl_decoration,1
-        .return
+       .return
 endif
     .case 'fZ'              ; -Zf
         mov Options.all_symbols_public,1
-        .return
-ifndef ASMC64
+       .return
     .case '0fz'             ; -zf0
         mov Options.fctype,FCT_MSC
-        .return
-endif
+       .return
     .case '1fz'             ; -zf1
         mov Options.fctype,FCT_WATCOMC
-        .return
+       .return
     .case 'gZ'              ; -Zg
         mov Options.masm_compat_gencode,1
         .return
@@ -830,14 +838,13 @@ ifndef ASMC64
 endif
     .case 'enZ'             ; -Zne
         mov Options.strict_masm_compat,1
-        .return
+       .return
     .case 'knZ'             ; -Znk
         mov Options.masm_keywords,1
-        .return
+       .return
     .case 'sZ'              ; -Zs
         mov Options.syntax_check_only,1
-        .return
-ifndef ASMC64
+       .return
     .case '0tz'             ; -zt0
         mov Options.stdcall_decoration,0
         .return
@@ -847,6 +854,7 @@ ifndef ASMC64
     .case '2tz'             ; -zt2
         mov Options.stdcall_decoration,2
         .return
+ifndef ASMC64
     .case '8vZ'             ; -Zv8
         mov Options.masm8_proc_visibility,1
         .return

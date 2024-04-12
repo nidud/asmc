@@ -70,24 +70,24 @@ externdef e23:proto far32 :DWORD
 
 	.code
 
-	dw .length e1,	 .size e1
-	dw .length e2,	 .size e2
-	dw .length e3,	 .size e3
-	dw .length e4,	 .size e4
-	dw .length e5,	 .size e5
-	dw .length e6,	 .size e6
-	dw .length e10,	 .size e10
-	dw .length e11,	 .size e11
-	dw .length e12,	 .size e12
-	dw .length e13,	 .size e13
-	dw .length e14,	 .size e14
-	dw .length e15,	 .size e15
-	dw .length e16,	 .size e16
-	dw .length e17,	 .size e17
-	dw .length e20,	 .size e20
-	dw .length e21,	 .size e21
-	dw .length e22,	 .size e22
-	dw .length e23,	 .size e23
+	dw LENGTH e1,	 SIZE e1
+	dw LENGTH e2,	 SIZE e2
+	dw LENGTH e3,	 SIZE e3
+	dw LENGTH e4,	 SIZE e4
+	dw LENGTH e5,	 SIZE e5
+	dw LENGTH e6,	 SIZE e6
+	dw LENGTH e10,	 SIZE e10
+	dw LENGTH e11,	 SIZE e11
+	dw LENGTH e12,	 SIZE e12
+	dw LENGTH e13,	 SIZE e13
+	dw LENGTH e14,	 SIZE e14
+	dw LENGTH e15,	 SIZE e15
+	dw LENGTH e16,	 SIZE e16
+	dw LENGTH e17,	 SIZE e17
+	dw LENGTH e20,	 SIZE e20
+	dw LENGTH e21,	 SIZE e21
+	dw LENGTH e22,	 SIZE e22
+	dw LENGTH e23,	 SIZE e23
 
 	invoke e10, ax
 	invoke e11, ax

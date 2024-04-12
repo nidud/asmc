@@ -632,7 +632,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
                  ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) && fastcall_id == FCT_ELF64 + 1 ) )
 
                 mov [rdi].asym.target_type,NULL
-                .if ( !ModuleInfo.strict_masm_compat )
+                .if ( !ModuleInfo.masm_compat_gencode )
                     mov fast_type,1 ; v2.27 added
                 .endif
             .endif
@@ -4356,7 +4356,7 @@ ProcInit proc __ccall
     ; v2.06: no forward references in INVOKE if -Zne is set
     ;
     xor eax,eax
-    .if ( ModuleInfo.strict_masm_compat )
+    .if ( ModuleInfo.masm_compat_gencode )
         mov al,EXPF_NOUNDEF
     .endif
     mov ModuleInfo.invoke_exprparm,al

@@ -23,10 +23,10 @@ void ends
 
 @OPS macro prefix
 	for chr,<prefix>
-	dw sizeof chr&1, lengthof chr&1, .size chr&1, .length chr&1
-	dw sizeof chr&2, lengthof chr&2, .size chr&2, .length chr&2
-	dw sizeof chr&3, lengthof chr&3, .size chr&3, .length chr&3
-	dw sizeof chr&4, lengthof chr&4, .size chr&4, .length chr&4
+	dw sizeof chr&1, lengthof chr&1, SIZE chr&1, LENGTH chr&1
+	dw sizeof chr&2, lengthof chr&2, SIZE chr&2, LENGTH chr&2
+	dw sizeof chr&3, lengthof chr&3, SIZE chr&3, LENGTH chr&3
+	dw sizeof chr&4, lengthof chr&4, SIZE chr&4, LENGTH chr&4
 	dw typeof chr&1, typeof chr&2, typeof chr&3, typeof chr&4
 	endm
 	endm

@@ -634,7 +634,6 @@ endif
     mov ModuleInfo.casealign,Options.casealign
     mov ModuleInfo.codepage,Options.codepage
     mov ModuleInfo.win64_flags,Options.win64_flags
-    mov ModuleInfo.strict_masm_compat,Options.strict_masm_compat
     mov ModuleInfo.frame_auto,Options.frame_auto
     mov ModuleInfo.floatformat,Options.floatformat
     mov ModuleInfo.floatdigits,Options.floatdigits
@@ -644,6 +643,7 @@ endif
     mov ModuleInfo.dotname,Options.dotname
     mov ModuleInfo.dotnamex,Options.dotnamex
     mov ModuleInfo.sysvregs,Options.sysvregs
+    mov ModuleInfo.masm_compat_gencode,Options.masm_compat_gencode
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
@@ -1018,69 +1018,6 @@ ModuleInit proc private
 ModuleInit endp
 
 
-ifdef OLDKEYWORDS
-
-MASMKEYW        STRUC
-token           dw ?
-oldlen          db ?
-newlen          db ?
-oldname         string_t ?
-newname         string_t ?
-MASMKEYW        ENDS
-
-res macro token, oldlen, newlen, oldname, newname
-    exitm<MASMKEYW { token, oldlen, newlen, @CStr("&oldname"), @CStr("&newname") }>
-    endm
-
-    .data
-
-masmkeyw label MASMKEYW
-include oldkeyw.inc
-OLDKCOUNT equ ($ - masmkeyw) / sizeof(MASMKEYW)
-
-    .code
-
-MasmKeywords proc __ccall private uses rdi rbx disable:int_t
-
-    .for ( rdi = &masmkeyw,
-           ebx = 0 : ebx < OLDKCOUNT : ebx++, rdi += sizeof(MASMKEYW) )
-
-        .if ( disable == 0 )
-            mov rdx,[rdi].MASMKEYW.oldname
-            mov cl,[rdi].MASMKEYW.oldlen
-        .else
-            mov rdx,[rdi].MASMKEYW.newname
-            mov cl,[rdi].MASMKEYW.newlen
-        .endif
-        RenameKeyword( [rdi].MASMKEYW.token, rdx, cl )
-    .endf
-    ret
-
-MasmKeywords endp
-
-endif
-
-
-EnableKeyword proto __ccall :uint_t
-
-
-AsmcKeywords proc __ccall uses rbx enable:int_t
-
-    .for ( ebx = T_DOT_IFA : ebx <= T_DOT_ENDSW : ebx++ )
-        .if ( enable )
-            EnableKeyword( ebx )
-        .else
-            DisableKeyword( ebx )
-        .endif
-    .endf
-ifdef OLDKEYWORDS
-    MasmKeywords( enable )
-endif
-    ret
-
-AsmcKeywords endp
-
-
 ReswTableInit proc __ccall private
 
     ResWordsInit()
@@ -1088,17 +1025,6 @@ ReswTableInit proc __ccall private
 
         DisableKeyword( T_IMAGEREL )
         DisableKeyword( T_SECTIONREL )
-    .endif
-
-    .if ( Options.strict_masm_compat == 1 )
-
-        DisableKeyword( T_INCBIN )
-        DisableKeyword( T_FASTCALL )
-        AsmcKeywords( 0 )
-
-    .elseif ( Options.masm_keywords == 1 )
-
-        MasmKeywords( 0 )
     .endif
     ret
 

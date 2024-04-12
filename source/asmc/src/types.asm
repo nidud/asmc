@@ -675,8 +675,13 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_to
   local offs:int_32
   local len:int_t
   local s:ptr struct_info
+  local bitfield:int_t ; don't align bitfields..
 
+    mov bitfield,0
     mov rcx,CurrStruct
+    .if ( [rcx].asym.typekind == TYPE_RECORD )
+        mov bitfield,1
+    .endif
     mov s,[rcx].dsym.structinfo
     mov offs,[rcx].asym.offs
 
@@ -798,8 +803,11 @@ endif
     mov [rdi].type,vartype
     mov [rdi].next,NULL
 
+    
     mov rsi,s
+    mov rcx,[rsi].head
     .if ( [rsi].head == NULL )
+        mov bitfield,0      ; align the first one..
         mov [rsi].head,rdi
         mov [rsi].tail,rdi
     .else
@@ -827,7 +835,7 @@ endif
 
     movzx eax,[rsi].alignment
 
-    .if ( eax > 1 )
+    .if ( eax > 1 && bitfield == 0 )
 
         ; if it's the first field to add, use offset of the parent's current field
 

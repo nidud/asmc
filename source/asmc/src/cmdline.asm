@@ -41,7 +41,6 @@ Options global_options {
         0,                      ; .convert_uppercase
         0,                      ; .preprocessor_stdout
         0,                      ; .masm51_compat
-        0,                      ; .strict_masm_compat
         0,                      ; .masm_compat_gencode
         0,                      ; .masm8_proc_visibility
         0,                      ; .listif
@@ -69,7 +68,6 @@ Options global_options {
         0,                      ; .win64_flags
         0,                      ; .chkstack
         0,                      ; .nolib
-        0,                      ; .masm_keywords
         0,                      ; .arch
         0,                      ; .frame_auto
         0,                      ; .floatformat
@@ -836,12 +834,6 @@ ifndef ASMC64
     .case 'mZ'              ; -Zm
         mov Options.masm51_compat,1
 endif
-    .case 'enZ'             ; -Zne
-        mov Options.strict_masm_compat,1
-       .return
-    .case 'knZ'             ; -Znk
-        mov Options.masm_keywords,1
-       .return
     .case 'sZ'              ; -Zs
         mov Options.syntax_check_only,1
        .return

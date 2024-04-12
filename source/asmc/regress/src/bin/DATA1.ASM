@@ -16,7 +16,7 @@ vb2		db "abc!def"
 vb3		db 10t
 vb4		db 1,2,3,4,"abc",3 dup (9),"abc"
 vb5		db ?,1,?,2,"abc"
-vb6		db .LOW offset vb1, .HIGH offset vb1
+vb6		db LOW offset vb1, HIGH offset vb1
 vb7		BYTE 1
 vb8		SBYTE 2
 vb9		SBYTE -20
@@ -25,7 +25,7 @@ vw2		dw 1,3,3,4,5 dup (8),3 dup (4)
 vw3		dw ds:12h		;this shouldn't create a fixup
 ;vw4	dw seg v1, seg vb1
 vw5		dw LOWWORD(offset vb1), LOWWORD(offset vb2)
-vw6		dw .LOW(offset vb4) ;, HIGH(offset vb5)
+vw6		dw LOW(offset vb4) ;, HIGH(offset vb5)
 vw7		WORD 5,6
 vw8		SWORD -5,6
 vd1		dd 10q

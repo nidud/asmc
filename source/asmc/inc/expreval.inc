@@ -22,26 +22,29 @@ define __EXPREVAL_INC
 ; argument types accepted by unary operators
 
 .enum oparg_types {
-    AT_TYPE  = 0x01, ; type
-    AT_LABEL = 0x02, ; label (direct memory)
-    AT_IND   = 0x04, ; indirect memory
-    AT_REG   = 0x08, ; register
-    AT_FIELD = 0x10, ; struct field
-    AT_NUM   = 0x20, ; number
-    AT_BF    = 0x40, ; bitfield and record types
-    AT_UNDEF = 0x80, ; undefined label
-    AT_FLOAT = 0x100,; float constant
-    AT_CONST = AT_TYPE or AT_NUM,
-    AT_TL    = AT_TYPE or AT_LABEL,
-    AT_TLN   = AT_TYPE or AT_LABEL or AT_NUM,
-    AT_TLF   = AT_TYPE or AT_LABEL or AT_FIELD,
-    AT_TLFN  = AT_TYPE or AT_LABEL or AT_FIELD or AT_NUM,
-    AT_TBF   = AT_TYPE or AT_BF,
-    AT_LF    = AT_LABEL or AT_FIELD,
-    AT_LIF   = AT_LABEL or AT_IND or AT_FIELD,
-    AT_LFN   = AT_LABEL or AT_FIELD or AT_NUM,
-    AT_TLR   = AT_TYPE or AT_LABEL or AT_REG,
-    AT_ALL   = AT_TYPE or AT_LABEL or AT_IND or AT_REG or AT_FIELD or AT_NUM or AT_UNDEF or AT_BF or AT_FLOAT
+    AT_TYPE	= 0x01, ; type
+    AT_LABEL	= 0x02, ; label (direct memory)
+    AT_IND	= 0x04, ; indirect memory
+    AT_REG	= 0x08, ; register
+    AT_FIELD	= 0x10, ; struct field
+    AT_NUM	= 0x20, ; number
+    AT_BF	= 0x40, ; bitfield and record types
+    AT_UNDEF	= 0x80, ; undefined label
+    AT_FLOAT	= 0x100,; float constant
+
+    AT_CONST	= AT_TYPE or AT_NUM,
+    AT_CONSTF	= AT_TYPE or AT_NUM or AT_FLOAT,
+    AT_TL	= AT_TYPE or AT_LABEL,
+    AT_TLN	= AT_TYPE or AT_LABEL or AT_NUM,
+    AT_TLNF	= AT_TYPE or AT_LABEL or AT_NUM or AT_FLOAT,
+    AT_TLF	= AT_TYPE or AT_LABEL or AT_FIELD,
+    AT_TLFN	= AT_TYPE or AT_LABEL or AT_FIELD or AT_NUM,
+    AT_TBF	= AT_TYPE or AT_BF,
+    AT_LF	= AT_LABEL or AT_FIELD,
+    AT_LIF	= AT_LABEL or AT_IND or AT_FIELD,
+    AT_LFN	= AT_LABEL or AT_FIELD or AT_NUM,
+    AT_TLR	= AT_TYPE or AT_LABEL or AT_REG,
+    AT_ALL	= AT_TYPE or AT_LABEL or AT_IND or AT_REG or AT_FIELD or AT_NUM or AT_UNDEF or AT_BF or AT_FLOAT
     }
 
 ; expression, returned by expression evaluator

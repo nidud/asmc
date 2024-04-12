@@ -22,7 +22,6 @@ for %%f in (..\src\cofferr\*.asm) do call :cofferr %%f
 for %%f in (..\src\win64\*.asm) do call :win64 %%f
 for %%f in (..\src\coffdbg\*.asm) do call :coffdbg %%f
 for %%f in (..\src\pe\*.asm) do call :pe %%f
-for %%f in (..\src\zne\*.asm) do call :zne %%f
 for %%f in (..\src\zg\*.asm) do call :zg %%f
 for %%f in (..\src\zd\*.asm) do call :zd %%f
 for %%f in (..\src\binerr\*.asm) do call :binerr %%f
@@ -198,21 +197,6 @@ goto end
 fcmp -pe %~n1.EXE ..\exp\%~n1.EXE
 if errorlevel 1 goto end
 del %~n1.EXE
-goto end
-
-:zne
-if exist ..\exp\%~n1.err (
-%ASMX% -q -eq -Zne %1
-fcmp %~n1.ERR ..\exp\%~n1.err
-if errorlevel 1 goto end
-del %~n1.ERR
-)
-if exist ..\exp\%~n1.obj (
-%ASMX% -q -Zne %1
-fcmp %~n1.obj ..\exp\%~n1.obj
-if errorlevel 1 goto end
-del %~n1.obj
-)
 goto end
 
 :zg

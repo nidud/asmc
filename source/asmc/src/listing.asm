@@ -1599,7 +1599,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
     .case T_DOT_TFCOND ; .TFCOND toggles .LFCOND, .SFCOND
         xor ModuleInfo.listif,1
         .endc
-    .case T_DOT_PAGE
+    .case T_PAGE
     .default ; TITLE, SUBTITLE, SUBTTL
 
         ; tiny checks to ensure that these directives

@@ -141,11 +141,11 @@ Can also be used as a type specifier anywhere a type is legal.
 | **.NOLIST** | Suppresses program listing. Same as .XLIST. |
 | **.NOLISTIF** | Suppresses listing of conditional blocks whose condition evaluates to false (0). This is the default. Same as .SFCOND. |
 | **.NOLISTMACRO** | Suppresses listing of macro expansions. Same as .SALL. |
-| **.PAGE** [[[[_length_]], _width_]] | Sets line length and character width of the program listing. If no arguments are given, generates a page break. |
-| **.PAGE** + | Increments the section number and resets the page number to 1. |
-| **.SUBTITLE** | Defines the listing subtitle. Same as .SUBTTL. |
+| **PAGE** [[[[_length_]], _width_]] | Sets line length and character width of the program listing. If no arguments are given, generates a page break. _Note: case sensitive in Asmc_. |
+| **PAGE** + | Increments the section number and resets the page number to 1. _Note: case sensitive in Asmc_. |
+| **SUBTITLE** | Defines the listing subtitle. Same as SUBTTL. |
 | **.TFCOND** | Toggles listing of false conditional blocks. |
-| **.TITLE** _text_ | Defines the program listing title. |
+| **TITLE** _text_ | Defines the program listing title. _Note: case sensitive in Asmc_.|
 |xxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
 
 ### Macros

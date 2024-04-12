@@ -12,7 +12,9 @@ define entry <>
 else
 define entry <cstart_>
 
-main_ proto syscall
+ALIAS <argc>=<__argc>
+
+main proto syscall :int_t, :ptr, :ptr
 
 externdef __xi_a:ptr ; pointers to initialization sections
 externdef __xi_z:ptr
@@ -28,7 +30,7 @@ cstart_ proc
     mov rdx,__argv
     mov rbx,_environ
     mov eax,ecx
-    exit(main_())
+    exit(main(ecx, rdx, rbx))
 
 cstart_ endp
 endif

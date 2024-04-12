@@ -34,27 +34,27 @@ vb3	db "abc"
 vb4	db "abc","def"
 vb5	db 4 dup (3), 2 dup (4)
 	dw vb1, vb2, vb3, vb4
-	db sizeof vb1, lengthof vb1, .size vb1, .length vb1, typeof vb1
-	db sizeof vb2, lengthof vb2, .size vb2, .length vb2, typeof vb2
-	db sizeof vb3, lengthof vb3, .size vb3, .length vb3, typeof vb3
-	db sizeof vb4, lengthof vb4, .size vb4, .length vb4, typeof vb4
-	db sizeof vb5, lengthof vb5, .size vb5, .length vb5, typeof vb5
-	db sizeof vb5, lengthof vb5, .size vb5, .length vb5, typeof vb5
+	db sizeof vb1, lengthof vb1, SIZE vb1, LENGTH vb1, typeof vb1
+	db sizeof vb2, lengthof vb2, SIZE vb2, LENGTH vb2, typeof vb2
+	db sizeof vb3, lengthof vb3, SIZE vb3, LENGTH vb3, typeof vb3
+	db sizeof vb4, lengthof vb4, SIZE vb4, LENGTH vb4, typeof vb4
+	db sizeof vb5, lengthof vb5, SIZE vb5, LENGTH vb5, typeof vb5
+	db sizeof vb5, lengthof vb5, SIZE vb5, LENGTH vb5, typeof vb5
 
-	db sizeof S1.f1, lengthof S1.f1, .size S1.f1, .length S1.f1, typeof S1.f1
-	db sizeof S1.f2, lengthof S1.f2, .size S1.f2, .length S1.f2, typeof S1.f2
-	db sizeof S1.f3, lengthof S1.f3, .size S1.f3, .length S1.f3, typeof S1.f3
-	db sizeof S1.f4, lengthof S1.f4, .size S1.f4, .length S1.f4, typeof S1.f4
+	db sizeof S1.f1, lengthof S1.f1, SIZE S1.f1, LENGTH S1.f1, typeof S1.f1
+	db sizeof S1.f2, lengthof S1.f2, SIZE S1.f2, LENGTH S1.f2, typeof S1.f2
+	db sizeof S1.f3, lengthof S1.f3, SIZE S1.f3, LENGTH S1.f3, typeof S1.f3
+	db sizeof S1.f4, lengthof S1.f4, SIZE S1.f4, LENGTH S1.f4, typeof S1.f4
 
 ;--- no sizeof, lengthof for code labels
 
-	dw .size pr1, .length pr1, typeof pr1
-	dw .size pr2, .length pr2, typeof pr2
-	dw .size lb1, .length lb1, typeof lb1
-	dw .size lb2, .length lb2, typeof lb2
-	dw opattr vb1, .type vb1
-	dw opattr pr1, .type pr1
-	dw opattr lb1, .type lb1
+	dw SIZE pr1, LENGTH pr1, typeof pr1
+	dw SIZE pr2, LENGTH pr2, typeof pr2
+	dw SIZE lb1, LENGTH lb1, typeof lb1
+	dw SIZE lb2, LENGTH lb2, typeof lb2
+	dw opattr vb1, TYPE vb1
+	dw opattr pr1, TYPE pr1
+	dw opattr lb1, TYPE lb1
 
 _DATA ends
 

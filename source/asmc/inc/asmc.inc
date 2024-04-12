@@ -513,7 +513,6 @@ define SIT_MACRO       1
     convert_uppercase       db ?    ; -C<p|x|u> options
     preprocessor_stdout     db ?    ; -EP option
     masm51_compat           db ?    ; -Zm option
-    strict_masm_compat      db ?    ; -Zne option
     masm_compat_gencode     db ?    ; -Zg option
     masm8_proc_visibility   db ?    ; -Zv8 option
     listif                  db ?    ; -Sx, -Sa option
@@ -541,7 +540,6 @@ define SIT_MACRO       1
     win64_flags             db ?    ; -homeparams, -autostack, -stackalign
     chkstack                db ?    ; _chkstk()
     nolib                   db ?    ; skip includelib directives
-    masm_keywords           db ?    ; -Znk
     arch                    db ?    ; -arch:AVX[2|512]
     frame_auto              db ?    ; -frame
     floatformat             db ?    ; option floatformat:<e|f|g>
@@ -665,7 +663,6 @@ define SIT_MACRO       1
     epiloguemode            db ?            ; current PEM_ enum value for OPTION EPILOGUE
     invoke_exprparm         db ?            ; flag: forward refs for INVOKE params ok?
     cv_opt                  db ?            ; option codeview
-    strict_masm_compat      db ?            ; -Zne option
     srcfile                 uint_t ?        ; main source file - is an index for FNames[]
     currseg                 ptr dsym ?      ; currently active segment - dsym *
     flat_grp                ptr dsym ?      ; magic FLAT group - dsym *
@@ -679,6 +676,7 @@ define SIT_MACRO       1
     xflag                   db ?            ; extended option
     loopalign               db ?            ; OPTION:LOOPALIGN setting
     casealign               db ?            ; OPTION:CASEALIGN setting
+    masm_compat_gencode     db ?            ; -Zg option
 
     assert_proc             string_t ?      ; .assert:<proc/macro name>
     accumulator             int_t ?         ; AX/EAX/RAX
@@ -730,7 +728,6 @@ define_name             proto __ccall :string_t, :string_t
 
 asmerr                  proto __ccall :int_t, :vararg
 DelayExpand             proto fastcall :token_t
-AsmcKeywords            proto __ccall :int_t
 
 write_logo              proto __ccall
 SetCPU                  proto __ccall :int_t

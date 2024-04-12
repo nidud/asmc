@@ -145,9 +145,9 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .break
             .endif
             ;
-            ; reject option if -Zne is set
+            ; reject option if -Zg is set
             ;
-            .if ( edi >= MASMOPTS && ModuleInfo.strict_masm_compat )
+            .if ( edi >= MASMOPTS && ModuleInfo.masm_compat_gencode )
                 sub rbx,asm_tok*2
                 .break
             .endif

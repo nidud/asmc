@@ -854,7 +854,7 @@ next_item:
                         ; v2.22 - unicode
                         ; v2.23 - use L"Unicode"
 
-                        .if ( inside_struct == TRUE || !( ( ModuleInfo.strict_masm_compat == 0 ) &&
+                        .if ( inside_struct == TRUE || !( ( ModuleInfo.masm_compat_gencode == 0 ) &&
                               ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
                               no_of_bytes == 2 ) )
 
@@ -868,7 +868,7 @@ next_item:
                     xor ecx,ecx
                     .if ( no_of_bytes == 1 && eax > 1 )
                         inc ecx
-                    .elseif ( ( ModuleInfo.strict_masm_compat == 0 ) &&
+                    .elseif ( ( ModuleInfo.masm_compat_gencode == 0 ) &&
                               ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
                               no_of_bytes == 2 && eax > 1 )
                         mov ecx,2
@@ -892,7 +892,7 @@ next_item:
                     ; v2.22 - unicode
                     ; v2.23 - use L"Unicode"
 
-                    .if ( ( ModuleInfo.strict_masm_compat == 0 ) &&
+                    .if ( ( ModuleInfo.masm_compat_gencode == 0 ) &&
                           ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
                             string_len > 1 && no_of_bytes == 2 )
 ifndef __UNIX__
@@ -1078,10 +1078,10 @@ endif
                 .endif
                 mov edi,FIX_OFF32_SECREL
                 .endc
-            .case T_DOT_LOW
+            .case T_LOW
                 mov edi,FIX_OFF8    ; OMF, BIN + GNU-ELF only
                 .endc
-            .case T_DOT_HIGH
+            .case T_HIGH
                 mov edi,FIX_HIBYTE  ; OMF only
                 .endc
             .case T_LOWWORD

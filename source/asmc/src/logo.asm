@@ -90,8 +90,7 @@ ifndef ASMC64
  char_t "-zlc No OMF records of data in code        -zld No OMF records of far call",10
  char_t "-Zm Enable MASM 5.10 compatibility         -Zv8 Enable Masm v8+ PROC visibility",10
 endif
- char_t "-zl<f|p|s> Suppress items in COFF          -Zne Disable non Masm extensions",10
- char_t "-Znk Disable non Masm keywords             -Zp[n] Set structure alignment",10
+ char_t "-zl<f|p|s> Suppress items in COFF          -Zp[n] Set structure alignment",10
  char_t "-Zs Perform syntax check only              -zt<0|1|2> Set STDCALL decoration",10
  char_t "-zze No export symbol decoration           -zzs Store name of start address",10
  char_t 0

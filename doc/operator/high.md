@@ -1,11 +1,13 @@
 Asmc Macro Assembler Reference
 
-## operator .HIGH
+## operator HIGH
 
-**.HIGH _expression_**
+**HIGH _expression_**
 
 
 Returns the high byte of _expression_.
+
+_Note: case sensitive in Asmc_.
 
 #### See Also
 

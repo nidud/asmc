@@ -1122,7 +1122,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
     .switch [rsi].token
     .case T_OR
     .case T_TEST
-       .endc .if ( [rdi].hvalue || ModuleInfo.strict_masm_compat )
+       .endc .if ( [rdi].hvalue || ModuleInfo.masm_compat_gencode )
         ;
         ; Optimization for mem,CONST
         ;
@@ -1315,7 +1315,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
         .switch eax
         .case 1
-            .if ( [rdi].flags & E_IS_ABS || [rdi].inst == T_DOT_LOW || [rdi].inst == T_DOT_HIGH )
+            .if ( [rdi].flags & E_IS_ABS || [rdi].inst == T_LOW || [rdi].inst == T_HIGH )
                 mov [rsi].mem_type,MT_BYTE
             .endif
             .endc
@@ -1382,8 +1382,8 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
                     mov eax,[rdi].inst
                     .switch eax
                     .case EMPTY
-                    .case T_DOT_LOW
-                    .case T_DOT_HIGH
+                    .case T_LOW
+                    .case T_HIGH
                         mov [rdi].mem_type,MT_BYTE
                         .endc
                     .case T_LOW32 ;; v2.10: added - low32_op() doesn't set mem_type anymore.
@@ -1498,7 +1498,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     .if ( [rdi].inst == T_SEG )
         mov fixup_type,FIX_SEG
     .elseif ( [rsi].mem_type == MT_BYTE )
-        .if ( [rdi].inst == T_DOT_HIGH )
+        .if ( [rdi].inst == T_HIGH )
             mov fixup_type,FIX_HIBYTE
         .else
             mov fixup_type,FIX_OFF8
@@ -2876,6 +2876,9 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
   local op1_size:int_t
   local op2_size:int_t
 
+    UNREFERENCED_PARAMETER(CodeInfo)
+    UNREFERENCED_PARAMETER(opndx)
+
     ldr rsi,CodeInfo
     ldr rdi,opndx
 
@@ -4029,7 +4032,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             ;
             .if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD )
 
-                .if ( ModuleInfo.strict_masm_compat == FALSE )
+                .if ( ModuleInfo.masm_compat_gencode == FALSE )
 
                     ; v2.27: convert to REAL
 
@@ -4407,7 +4410,7 @@ endif
         ;
         ; v2.31.24: immediate operand to XMM
         ;
-        .if ( ModuleInfo.strict_masm_compat == 0 && CodeInfo.token == T_MOVSD )
+        .if ( ModuleInfo.masm_compat_gencode == 0 && CodeInfo.token == T_MOVSD )
             .if ( CodeInfo.opnd[OPND1].type == OP_XMM &&
                 ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
                 .return imm2xmm( tokenarray, &opndx[expr] )
@@ -4536,7 +4539,7 @@ endif
             .case T_UCOMISS
             .case T_MOVD
             .case T_MOVSS
-                .endc .if ( ModuleInfo.strict_masm_compat != 0 )
+                .endc .if ( ModuleInfo.masm_compat_gencode != 0 )
                 .endc .if ( CodeInfo.opnd[OPND1].type != OP_XMM )
                 .endc .if !( CodeInfo.opnd[OPNI2].type & OP_I_ANY )
                 .return imm2xmm( tokenarray, &opndx[expr] )
@@ -4549,7 +4552,7 @@ endif
             .endsw
         .endif
 
-        .if ( CodeInfo.Ofssize > USE16 && !ModuleInfo.strict_masm_compat )
+        .if ( CodeInfo.Ofssize > USE16 && !ModuleInfo.masm_compat_gencode )
 
             movzx eax,CodeInfo.token
             mov ecx,CodeInfo.opnd[OPND1].type

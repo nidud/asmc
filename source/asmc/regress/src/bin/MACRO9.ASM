@@ -9,7 +9,7 @@
 	endm
 
 @strout macro xx,yy
-if ( (.TYPE xx) and 0018h )
+if ( (TYPE xx) and 0018h )
 ??TYPE = 1
 endif
     endm

@@ -196,7 +196,7 @@ tofloat proc fastcall opnd1:expr_t, opnd2:expr_t, size:int_t
     UNREFERENCED_PARAMETER(opnd1)
     UNREFERENCED_PARAMETER(opnd2)
 
-    .if ( ModuleInfo.strict_masm_compat )
+    .if ( ModuleInfo.masm_compat_gencode )
 
         ConstError( rcx, rdx )
         mov ecx,eax
@@ -225,10 +225,10 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
     ldr eax,uot
 
     .switch eax
-    .case UOT_DOT_LOW
+    .case UOT_LOW
         TokenAssign( rsi, rdi )
         .if ( [rdi].kind == EXPR_ADDR && [rdi].inst != T_SEG )
-            mov [rsi].inst,T_DOT_LOW
+            mov [rsi].inst,T_LOW
             mov [rsi].mem_type,MT_EMPTY
         .endif
         mov eax,[rsi].value
@@ -236,10 +236,10 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         mov [rsi].value,eax
         mov [rsi].hvalue,0
        .return NOT_ERROR
-    .case UOT_DOT_HIGH
+    .case UOT_HIGH
         TokenAssign( rsi, rdi )
         .if ( [rdi].kind == EXPR_ADDR && [rdi].inst != T_SEG )
-            mov [rsi].inst,T_DOT_HIGH
+            mov [rsi].inst,T_HIGH
             mov [rsi].mem_type,MT_EMPTY
         .endif
         mov eax,[rsi].value
@@ -333,7 +333,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         mov [rsi].mem_type,MT_EMPTY
        .return NOT_ERROR
     .case UOT_OPATTR
-    .case UOT_DOT_TYPE
+    .case UOT_TYPE
         xor eax,eax
         mov [rsi].kind,EXPR_CONST
         mov [rsi].sym,rax
@@ -409,9 +409,9 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             .endif
         .endif
         .return( NOT_ERROR )
-    .case UOT_DOT_SIZE
+    .case UOT_SIZE
     .case UOT_SIZEOF
-    .case UOT_DOT_LENGTH
+    .case UOT_LENGTH
     .case UOT_LENGTHOF
         mov rbx,sym
         mov [rsi].kind,EXPR_CONST
@@ -426,13 +426,13 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                     [rbx].mem_type != MT_NEAR )
             .case ( [rbx].state == SYM_GRP || [rbx].state == SYM_SEG )
                 .return fnasmerr( 2143 )
-            .case ( oper == T_DOT_SIZE || oper == T_DOT_LENGTH )
+            .case ( oper == T_SIZE || oper == T_LENGTH )
             .default
                 .return fnasmerr( 2143 )
             .endsw
         .endif
         .switch oper
-        .case T_DOT_LENGTH
+        .case T_LENGTH
             .if ( [rbx].flags & S_ISDATA )
                 mov [rsi].value,[rbx].first_length
             .else
@@ -449,7 +449,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 mov [rsi].value,[rbx].total_length
             .endif
             .endc
-        .case T_DOT_SIZE
+        .case T_SIZE
             .switch pascal
             .case ( rbx == NULL )
                 mov al,[rdi].mem_type
@@ -509,7 +509,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         TokenAssign( rsi, rdi )
         mov [rsi].inst,oper
        .return NOT_ERROR
-    .case UOT_DOT_THIS
+    .case UOT_THIS
         .if !( [rdi].flags & E_IS_TYPE )
             .return fnasmerr( 2010 )
         .endif
@@ -552,8 +552,8 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .case ( [rdi].inst != EMPTY )
             .if ( [rdi].sym )
                 .switch [rdi].inst
-                .case T_DOT_LOW
-                .case T_DOT_HIGH
+                .case T_LOW
+                .case T_HIGH
                     mov [rsi].value,1
                    .endc
                 .case T_LOWWORD
@@ -686,8 +686,8 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             .endsw
         .endsw
         .return( NOT_ERROR )
-    .case UOT_DOT_MASK
-    .case UOT_DOT_WIDTH
+    .case UOT_MASK
+    .case UOT_WIDTH
         .switch pascal
         .case ( [rdi].flags & E_IS_TYPE )
             mov rbx,[rdi].type
@@ -699,7 +699,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .default
             mov rbx,[rdi].sym
         .endsw
-        .if ( oper == T_DOT_MASK )
+        .if ( oper == T_MASK )
             mov [rsi].value,0
             .if ( [rdi].flags & E_IS_TYPE )
                 GetRecordMask(rbx)
@@ -997,7 +997,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
         ;
         ; v2.30.24 -- mov mem,&mem
         ;
-        .if ( Options.strict_masm_compat == FALSE && i > 2 &&
+        .if ( Options.masm_compat_gencode == FALSE && i > 2 &&
               [rbx-asm_tok].token == T_COMMA && [rbx-asm_tok*2].token != T_REG )
 
             inc i
@@ -1091,7 +1091,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
             .elseif ( [rax].special_item.value & OP_SR )
 
                 .if ( [rbx+asm_tok].token != T_COLON ||
-                      ( ModuleInfo.strict_masm_compat && [rbx+asm_tok*2].token == T_REG ) )
+                      ( ModuleInfo.masm_compat_gencode && [rbx+asm_tok*2].token == T_REG ) )
                     .return fnasmerr( 2032 )
                 .endif
             .else
@@ -1376,7 +1376,7 @@ endif
                 mov [rdi].hvalue,[rsi].value3264
                 mov [rdi].mem_type,[rsi].mem_type
 
-                .if ( al == MT_REAL16 && !ModuleInfo.strict_masm_compat )
+                .if ( al == MT_REAL16 && !ModuleInfo.masm_compat_gencode )
 
                     mov [rdi].kind,EXPR_FLOAT
                     mov [rdi].float_tok,NULL
@@ -3149,7 +3149,7 @@ endif
     .case T_UNARY_OPERATOR
         .switch [rax].asm_tok.tokval
         .case T_OPATTR
-        .case T_DOT_TYPE
+        .case T_TYPE
             or [rcx].flags,E_IS_OPEATTR
            .endc
         .endsw

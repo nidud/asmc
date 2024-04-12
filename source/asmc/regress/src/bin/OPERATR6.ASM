@@ -11,8 +11,8 @@
 E1 = size_xarray / typeof xarray
 E1 = size_xarray / sizeof xarray
 E1 = size_xarray / lengthof xarray
-E1 = size_xarray / .size xarray
-E1 = size_xarray / .length xarray   ;actually, LENGTH operator was ok
+E1 = size_xarray / SIZE xarray
+E1 = size_xarray / LENGTH xarray   ;actually, LENGTH operator was ok
 
 xarray label word
     dw 1,2

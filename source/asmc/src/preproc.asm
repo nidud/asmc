@@ -80,7 +80,7 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
 
     xor eax,eax
     .if ( !( [rcx].flags & T_HLLCODE ) ||
-           al != ModuleInfo.strict_masm_compat ||
+           al != ModuleInfo.masm_compat_gencode ||
           eax != Parse_Pass ||
           eax != NoLineStore )
         .return

@@ -141,7 +141,7 @@ ContextDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; reject ALIGNMENT if strict masm compat is on
 
-        .if ( ModuleInfo.strict_masm_compat )
+        .if ( ModuleInfo.masm_compat_gencode )
             .if ( edi == CONT_ALIGNMENT )
                 .break
             .else

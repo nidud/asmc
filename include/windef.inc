@@ -194,16 +194,15 @@ LPPOINT		typedef ptr POINT
 POINTL		typedef POINT
 PPOINTL		typedef ptr POINT
 
-SIZE		STRUC
+tagSIZE		STRUC
 _cx		sdword ?
 cy		sdword ?
-SIZE		ENDS
-tagSIZE		typedef SIZE
-PSIZE		typedef ptr SIZE
-LPSIZE		typedef ptr SIZE
-SIZEL		typedef SIZE
-PSIZEL		typedef ptr SIZE
-LPSIZEL		typedef ptr SIZE
+tagSIZE		ENDS
+PSIZE		typedef ptr tagSIZE
+LPSIZE		typedef ptr tagSIZE
+SIZEL		typedef tagSIZE
+PSIZEL		typedef ptr tagSIZE
+LPSIZEL		typedef ptr tagSIZE
 
 POINTS		STRUC
 x		sword ?

@@ -15,7 +15,7 @@ v1	R1 <>
 	.CODE
 
 	mov  eax, R1		;must return the MASK value!
-	mov  eax, .mask R1
+	mov  eax, MASK R1
 	mov  eax, sizeof R1
 	mov  eax, typeof R1
 ;--- won't work currently with JWasm

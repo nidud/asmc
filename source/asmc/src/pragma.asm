@@ -2,6 +2,7 @@
 ; Copyright (C) 2018 Asmc Developers
 ;
 ; Change history:
+; 2024-04-12 - removed .pragma asmc
 ; 2019-04-18 - .pragma(asmc(push, <0|1>))
 ;              .pragma(asmc(pop))
 ; 2019-03-19 - .pragma(warning(disable: <num>))
@@ -85,7 +86,6 @@ MAXSTACK equ 16
     PackStack db MAXSTACK dup(0)
     ListStack db MAXSTACK dup(0)
     CrefStack db MAXSTACK dup(0)
-    AsmcStack db MAXSTACK dup(0)
     WarnStack intptr_t MAXSTACK dup(0)
 
     .code
@@ -126,73 +126,6 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     bswap   eax
     .switch eax
 
-      .case "asmc"
-
-        .if ( [rbx].tokval == T_POP )
-
-            add rbx,asm_tok
-            .if ( [rbx].token == T_CL_BRACKET )
-                add rbx,asm_tok
-            .endif
-            .endc .if !AsmcCount
-
-            dec AsmcCount
-            mov eax,AsmcCount
-            lea rcx,AsmcStack
-            mov al,[rcx+rax]
-
-            .if ( al != ModuleInfo.strict_masm_compat )
-
-                mov ModuleInfo.strict_masm_compat,al
-                xor eax,1
-                AsmcKeywords(eax)
-            .endif
-            .endc
-        .endif
-
-        .endc .if ( [rbx].tokval != T_PUSH )
-        .endc .if ( AsmcCount >= MAXSTACK )
-
-        mov edx,AsmcCount
-        inc AsmcCount
-        mov al,ModuleInfo.strict_masm_compat
-        lea rcx,AsmcStack
-        mov [rcx+rdx],al
-        inc i
-        .if ( [rbx+asm_tok].token == T_OP_BRACKET || [rbx+asm_tok].token == T_COMMA )
-            inc i
-        .endif
-        .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
-
-        imul ebx,i,asm_tok
-        add rbx,tokenarray
-        .if ( opndx.kind != EXPR_CONST )
-
-            asmerr( 2026 )
-            .endc
-        .endif
-
-        mov eax,opndx.uvalue
-        .if ( eax > 1 )
-            asmerr( 2064 )
-            .endc
-        .endif
-
-        xor eax,1
-        .if al != ModuleInfo.strict_masm_compat
-
-            mov ModuleInfo.strict_masm_compat,al
-            xor eax,1
-            AsmcKeywords(eax)
-        .endif
-
-        add rbx,asm_tok
-        .if [rbx].token == T_CL_BRACKET
-
-            add rbx,asm_tok
-        .endif
-        .endc
-
       .case "warn"
 
         ;
@@ -219,8 +152,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endf
 
             MemFree(rdx)
-            .endc
-
+           .endc
         .endif
 
         ;

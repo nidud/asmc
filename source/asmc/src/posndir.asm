@@ -64,7 +64,7 @@ OrgDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
 
     inc i
     xor ecx,ecx
-    .if ( ModuleInfo.strict_masm_compat )
+    .if ( ModuleInfo.masm_compat_gencode )
         mov ecx,EXPF_NOUNDEF
     .endif
     .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, cl ) == ERROR )

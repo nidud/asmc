@@ -481,7 +481,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
                     add rbx,asm_tok
 
                 .elseif ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_LABEL &&
-                          ModuleInfo.strict_masm_compat == FALSE ) ; parm:LABEL?
+                          ModuleInfo.masm_compat_gencode == FALSE ) ; parm:LABEL?
 
                     ; LABEL attribute for first param only!
 
@@ -865,7 +865,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .if ( [rsi].state != SYM_UNDEFINED )
 
-            .if ( [rsi].state == SYM_EXTERNAL && !ModuleInfo.strict_masm_compat )
+            .if ( [rsi].state == SYM_EXTERNAL && !ModuleInfo.masm_compat_gencode )
 
                 mov rbx,rdx ; address of symbol from SymSearch()
                 mov [rsi].target_type,SymAlloc(rdi)

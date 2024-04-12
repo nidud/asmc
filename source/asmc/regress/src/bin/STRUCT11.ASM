@@ -17,9 +17,9 @@ x2   EMM59 2 dup (<1,2,3,4,5>)
 
 	.code
 
-    mov ecx, .size x1
-    mov ecx, .length x1
-    mov ecx, .size x2
-    mov ecx, .length x2
+    mov ecx, SIZE x1
+    mov ecx, LENGTH x1
+    mov ecx, SIZE x2
+    mov ecx, LENGTH x2
 
 	END

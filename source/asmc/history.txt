@@ -30,6 +30,10 @@ Changes in 2.35 - xx xxx 2022
 - added switch -MD[d] and -MT[d]
 - added optimization for TEST mem,imm
 - changed @REGnn macros to @Reg(reg[,bits]), bits: 8, 16, 32 (default), and 64
+- fixed alignment bug in RECORD
+- removed switch -Zne and -Znk, .pragma asmc
+- removed directive .name, .page, .subtitle, .subttl, .title, .low, .high, .size, .length, .this, .mask, and .width
+- added Masm compatible UPPER NAME,..., and WIDTH
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

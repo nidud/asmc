@@ -65,7 +65,7 @@ The options listed in the following table.
 | **-omf** | Generates object module file format (OMF) type of object module. |
 | **-pe** | Generate PE binary file, 32/64-bit. |
 | **-q** | Suppress copyright message. |
-| **-r** | Recurse subdirectories with use of wild args. |
+| **-r** | Recurse subdirectories with use of wildcards. |
 | **-Sa** | Turns on listing of all available information. |
 | **-safeseh** | Marks the object as either containing no exception handlers or containing exception handlers that are all declared with SAFESEH. |
 | **-Sf** | Adds first-pass listing to listing file. |
@@ -94,8 +94,6 @@ The options listed in the following table.
 | **-zlp** | Suppress items in COFF: No static procs. |
 | **-zls** | Suppress items in COFF: No section aux entry. |
 | **-Zm** | Enable MASM 5.10 compatibility. |
-| [**-Zne**](Zne.md) | Disable non Masm extensions. |
-| [**-Znk**](Znk.md) | Disable non Masm keywords. |
 | **-Zp**[[_alignment_]] | Packs structures on the specified byte boundary. |
 | **-Zs** | Perform syntax check only. |
 | **-zt**[012] | Set STDCALL decoration. |

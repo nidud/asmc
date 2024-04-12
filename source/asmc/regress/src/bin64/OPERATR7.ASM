@@ -13,6 +13,6 @@ start:
 	dw TYPEOF QWORD PTR offset start
 	dw TYPEOF QWORD PTR low32 start
 	dw TYPEOF QWORD PTR lowword start
-	dw TYPEOF QWORD PTR .low start
+	dw TYPEOF QWORD PTR LOW start
 
 END

@@ -32,16 +32,16 @@ p1 proc a1:near, a2:far
 	dw sizeof c2
 
 ;--- SIZE for externals was wrong before v2.05
-	dw .size e1
-	dw .size e2
-	dw .size e3
-	dw .size e4
-	dw .size e5
-	dw .size e6
-	dw .size c1
-	dw .size c2
-	dw .size a1
-	dw .size a2
+	dw SIZE e1
+	dw SIZE e2
+	dw SIZE e3
+	dw SIZE e4
+	dw SIZE e5
+	dw SIZE e6
+	dw SIZE c1
+	dw SIZE c2
+	dw SIZE a1
+	dw SIZE a2
 
 	dw lengthof e1	;non-comm should always return 1
 	dw lengthof e2
@@ -52,14 +52,14 @@ p1 proc a1:near, a2:far
 	dw lengthof c1
 	dw lengthof c2
 
-	dw .length e1 ;should always return 1
-	dw .length e2
-	dw .length e3
-	dw .length e4
-	dw .length e5
-	dw .length e6
-	dw .length c1
-	dw .length c2
+	dw LENGTH e1 ;should always return 1
+	dw LENGTH e2
+	dw LENGTH e3
+	dw LENGTH e4
+	dw LENGTH e5
+	dw LENGTH e6
+	dw LENGTH c1
+	dw LENGTH c2
 
 p1 endp
 

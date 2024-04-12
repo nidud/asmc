@@ -1,13 +1,13 @@
 
-;--- test .TYPE
+;--- test TYPE
 
 	.386
 
 @what macro xx
-	dw .TYPE xx
+	dw TYPE xx
 ;TX textequ %(TYPE xx)
 ;%	echo -xx- has type TX
-        endm
+	endm
 
 T1 typedef WORD
 PP typedef near ptr

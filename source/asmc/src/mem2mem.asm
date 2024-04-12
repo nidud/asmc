@@ -153,7 +153,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     ldr edi,op2
 
     .if ( !( ebx & OP_M_ANY ) || !( edi & OP_M_ANY ) ||
-          ModuleInfo.strict_masm_compat == 1 )
+          ModuleInfo.masm_compat_gencode == 1 )
         .return asmerr( 2070 )
     .endif
 

@@ -1227,7 +1227,7 @@ endif
 
                     .case 10
 
-                        .if ( Ofssize == USE16 || ModuleInfo.strict_masm_compat == TRUE ||
+                        .if ( Ofssize == USE16 || ModuleInfo.masm_compat_gencode == TRUE ||
                               opnd.kind != EXPR_FLOAT )
                             .endc
                         .endif
@@ -1255,7 +1255,7 @@ endif
 
                     .case 16
 
-                        .endc .if ( Ofssize == USE16 || ModuleInfo.strict_masm_compat == TRUE )
+                        .endc .if ( Ofssize == USE16 || ModuleInfo.masm_compat_gencode == TRUE )
 ifndef ASMC64
                         .if ( Ofssize == USE32 )
 
@@ -1364,7 +1364,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     inc i ; skip INVOKE directive
     mov namepos,i
 
-    .if ( ModuleInfo.strict_masm_compat == 0 )
+    .if ( ModuleInfo.masm_compat_gencode == 0 )
         .while 1
             .return .ifd ( ExpandHllProc( &buffer, i, tokenarray ) == ERROR )
             .break  .if !buffer
@@ -1465,7 +1465,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov rcx,rsi
     mov info,[rcx].dsym.procinfo
 
-    .if ( ModuleInfo.strict_masm_compat == 0 )
+    .if ( ModuleInfo.masm_compat_gencode == 0 )
 
         imul ebx,namepos,asm_tok
         add rbx,tokenarray

@@ -4,9 +4,9 @@ Asmc Macro Assembler Reference
 
 **NAME**
 
-Renamed to .NAME
+Ignored.
 
 #### See Also
 
-[.NAME](dot_name.md)
+[Directives Reference](readme.md)
 

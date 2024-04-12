@@ -419,7 +419,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov rc,eax
     mov merged,al
 
-    .return .if ( ModuleInfo.strict_masm_compat )
+    .return .if ( ModuleInfo.masm_compat_gencode )
 
     ;
     ; need "quote"

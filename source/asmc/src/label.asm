@@ -259,7 +259,7 @@ endif
 if LABELARRAY
 
     .elseif ( [rbx].token == T_COLON && [rbx+asm_tok].token != T_FINAL &&
-            ModuleInfo.strict_masm_compat == FALSE )
+            ModuleInfo.masm_compat_gencode == FALSE )
 
        .new opnd:expr
         inc i

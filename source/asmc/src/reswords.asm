@@ -870,38 +870,6 @@ DisableKeyword proc fastcall uses rdi rbx token:uint_t
 
 DisableKeyword endp
 
-EnableKeyword proc __ccall token:uint_t
-
-    lea r11,ResWordTable
-    mov edx,ecx
-    shl edx,4
-
-    .if ( ( [r11+rdx].flags & RWF_DISABLED ) )
-
-        .if ( Removed.Head == cx )
-            mov Removed.Head,[r11+rdx].next
-        .else
-            movzx r8d,Removed.Head
-            .for ( : r8d : r8d = r9d )
-                shl r8d,4
-                movzx r9d,[r11+r8].next
-                .if r9d == ecx
-                    mov [r11+r8].next,[r11+rdx].next
-                   .break
-                .endif
-            .endf
-        .endif
-
-        .if Removed.Tail == cx
-            mov Removed.Tail,Removed.Head
-        .endif
-        and [r11+rdx].flags,not RWF_DISABLED
-        AddResWord(ecx)
-    .endif
-    ret
-
-EnableKeyword endp
-
 ;; check if a keyword is in the list of disabled words.
 
 IsKeywordDisabled proc __ccall uses rdi rbx name:string_t, len:int_t
@@ -1442,34 +1410,6 @@ DisableKeyword proc uses ebx token:uint_t
     ret
 
 DisableKeyword endp
-
-EnableKeyword proc uses esi edi ebx token:uint_t
-
-    mov ebx,token
-    .if ( ( ResWordTable[ebx*8].flags & RWF_DISABLED ) )
-
-        .if ( Removed.Head == bx )
-            mov Removed.Head,ResWordTable[ebx*8].next
-        .else
-            xor esi,esi
-            xor edi,edi
-            .for( di = Removed.Head: edi != 0: edi = esi )
-                mov si,ResWordTable[edi*8].next
-                .if esi == ebx
-                    mov ResWordTable[edi*8].next,ResWordTable[ebx*8].next
-                    .break
-                .endif
-            .endf
-        .endif
-        .if Removed.Tail == bx
-            mov Removed.Tail,Removed.Head
-        .endif
-        and ResWordTable[ebx*8].flags,not RWF_DISABLED
-        AddResWord(ebx)
-    .endif
-    ret
-
-EnableKeyword endp
 
 ; check if a keyword is in the list of disabled words.
 

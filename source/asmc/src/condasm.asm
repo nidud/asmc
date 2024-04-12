@@ -383,10 +383,10 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( al == T_FINAL )
         .elseif ( al == T_ID  )
 
-            ; v2.07: handle structs + members (if -Zne is NOT set)
+            ; v2.07: handle structs + members (if -Zg is NOT set)
 
             SymSearch( [rbx].string_ptr )
-            .if ( ModuleInfo.strict_masm_compat == FALSE &&
+            .if ( ModuleInfo.masm_compat_gencode == FALSE &&
                   [rbx+asm_tok].token == T_DOT && eax &&
                   ( ( [rax].asym.state == SYM_TYPE ) || [rax].asym.type ) )
 
@@ -563,7 +563,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         add rdi,tokenarray
         mov sym,SymSearch( [rdi].asm_tok.string_ptr )
 
-        .if ( ModuleInfo.strict_masm_compat == FALSE && \
+        .if ( ModuleInfo.masm_compat_gencode == FALSE && \
               [rdi+asm_tok].asm_tok.token == T_DOT && \
               rax && ( ( [rax].asym.state == SYM_TYPE ) || [rax].asym.type ) )
 

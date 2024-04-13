@@ -17,6 +17,11 @@ include lqueue.inc
 GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         string:string_t, is_addr:int_t
 
+    UNREFERENCED_PARAMETER(buffer)
+    UNREFERENCED_PARAMETER(opnd)
+    UNREFERENCED_PARAMETER(string)
+    UNREFERENCED_PARAMETER(is_addr)
+
     ldr rdi,buffer
     ldr rbx,opnd
     ldr rdx,string
@@ -96,7 +101,27 @@ GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         GetResWName( T_PTR, rdi )
        .return 1
     .endif
-    assume rbx:ptr asym
+
+    .if ( [rdx].asym.state == SYM_STRUCT_FIELD )
+
+        mov rsi,[rdx].asym.name
+        mov rbx,[rbx].sym
+    
+        assume rbx:ptr asym
+        .if ( [rbx].mem_type == MT_TYPE )
+            mov rbx,[rbx].type
+        .endif
+        .if ( [rbx].target_type &&
+              ( [rbx].mem_type == MT_PTR || [rbx].ptr_memtype == MT_TYPE ) )
+            mov rbx,[rbx].asym.target_type
+        .endif
+    
+        tstrcpy( rdi, [rbx].name )
+        tstrcat( rdi, "." )
+        tstrcat( rdi, rsi )
+       .return 1
+    .endif
+
     mov rbx,rdx
 
     .if ( [rbx].mem_type == MT_TYPE && [rbx].type )

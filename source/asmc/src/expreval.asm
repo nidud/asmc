@@ -333,7 +333,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         mov [rsi].mem_type,MT_EMPTY
        .return NOT_ERROR
     .case UOT_OPATTR
-    .case UOT_TYPE
+    .case UOT_DOT_TYPE
         xor eax,eax
         mov [rsi].kind,EXPR_CONST
         mov [rsi].sym,rax
@@ -541,7 +541,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         mov al,[rbx].mem_type
         mov [rsi].mem_type,al
        .return( NOT_ERROR )
-    .case UOT_TYPEOF
+    .case UOT_TYPE
         mov rbx,sym
         mov [rsi].kind,EXPR_CONST
         .if ( [rdi].inst != EMPTY && [rdi].mem_type != MT_EMPTY )
@@ -1072,11 +1072,10 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
             .endif
         .endif
 
-        .if ( ( i > 0 && [rbx-asm_tok].tokval == T_TYPEOF ) ||
-              ( i > 1 && [rbx-asm_tok].token == T_OP_BRACKET &&
-                [rbx-asm_tok*2].tokval == T_TYPEOF ) )
+        .if ( ( i > 0 && [rbx-asm_tok].tokval == T_TYPE ) ||
+              ( i > 1 && [rbx-asm_tok].token == T_OP_BRACKET && [rbx-asm_tok*2].tokval == T_TYPE ) )
 
-             ; v2.24 [reg + type reg] | [reg + type(reg)]
+             ; v2.24 [reg + TYPE reg] | [reg + TYPE(reg)]
 
         .elseif ( flags & EXPF_IN_SQBR )
 
@@ -1462,10 +1461,10 @@ endif
             mov [rdi].label_tok,rbx
             mov [rdi].kind,EXPR_ADDR
 
-            ; added v2.31.32: typeof(addr ...)
+            ; added v2.31.32: TYPE(addr ...)
 
         .elseif ( [rbx].tokval == T_ADDR && i > 2 &&
-                  ( [rbx-asm_tok].tokval == T_TYPEOF || [rbx-asm_tok*2].tokval == T_TYPEOF ) &&
+                  ( [rbx-asm_tok].tokval == T_TYPE || [rbx-asm_tok*2].tokval == T_TYPE ) &&
                   ( [rbx+asm_tok].token == T_ID || [rbx+asm_tok].token == T_OP_SQ_BRACKET ) )
 
             inc dword ptr [rdx]
@@ -2433,6 +2432,10 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
   local sym:asym_t
   local opnd:expr
 
+    UNREFERENCED_PARAMETER(opnd1)
+    UNREFERENCED_PARAMETER(opnd2)
+    UNREFERENCED_PARAMETER(oper)
+
     ldr rsi,opnd1
     ldr rdi,opnd2
     ldr rbx,oper
@@ -3147,12 +3150,9 @@ endif
         .endif
         .endc
     .case T_UNARY_OPERATOR
-        .switch [rax].asm_tok.tokval
-        .case T_OPATTR
-        .case T_TYPE
+        .if ( [rax].asm_tok.tokval == T_OPATTR || [rax].asm_tok.tokval == T_DOT_TYPE )
             or [rcx].flags,E_IS_OPEATTR
-           .endc
-        .endsw
+        .endif
         .endc
     .endsw
     ret

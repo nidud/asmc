@@ -18,7 +18,7 @@ include tchar.inc
 
 _tcontrol proc uses rbx hwnd:THWND, count:UINT, char:WORD, string:LPTSTR
 
-    mov rdx,hwnd
+    ldr rdx,hwnd
     mov rbx,[rdx].context.tedit
     mov rcx,[rdx].prev
 
@@ -27,11 +27,20 @@ _tcontrol proc uses rbx hwnd:THWND, count:UINT, char:WORD, string:LPTSTR
         mov rbx,[rcx].buffer
         mov [rdx].context.tedit,rbx
         add [rcx].buffer,TEDIT
-        mov [rdx].buffer,[rcx].buffer
+        .if ( [rdx].flags & O_MYBUF )
+            mov [rdx].buffer,string
+        .else
+            mov [rdx].buffer,[rcx].buffer
+        .endif
+
         mov [rbx].base,rax
         mov [rbx].bcols,count
-        shl eax,TCHAR-1
-        add [rcx].buffer,rax
+ifdef _UNICODE
+        shl eax,1
+endif
+        .if !( [rdx].flags & O_MYBUF )
+            add [rcx].buffer,rax
+        .endif
         shr eax,3+TCHAR
         mov [rdx].count,al
     .endif
@@ -46,7 +55,6 @@ _tcontrol proc uses rbx hwnd:THWND, count:UINT, char:WORD, string:LPTSTR
         mov ax,U_MIDDLE_DOT
     .endif
     mov [rbx].clrattrib,eax
-    mov rcx,[rdx].prev
     movzx eax,[rdx].rc.y
     add al,[rcx].rc.y
     mov [rbx].ypos,eax
@@ -54,7 +62,7 @@ _tcontrol proc uses rbx hwnd:THWND, count:UINT, char:WORD, string:LPTSTR
     add al,[rcx].rc.x
     mov [rbx].xpos,eax
     mov rax,string
-    .if ( rax )
+    .if ( rax && !( [rdx].flags & O_MYBUF ) )
         _tcsncpy([rbx].base, rax, [rbx].bcols)
     .endif
     mov rdx,hwnd

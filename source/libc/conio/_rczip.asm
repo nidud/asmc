@@ -11,13 +11,16 @@ include conio.inc
 _rczip proc uses rsi rdi rbx rc:TRECT, dst:ptr, src:PCHAR_INFO, flags:uint_t
 
    .new count:int_t
+   .new tmp:int_t
 
-    movzx eax,rc.col
-    mul rc.row
+    ldr eax,rc
+    ldr rsi,src
+    ldr edx,flags
+
+    shr eax,16
+    mul ah
     mov count,eax
-    mov rsi,src
     mov ecx,eax
-    mov edx,flags
     lea rdi,at_foreground
     lea rbx,at_background
 
@@ -31,11 +34,11 @@ _rczip proc uses rsi rdi rbx rc:TRECT, dst:ptr, src:PCHAR_INFO, flags:uint_t
         mov al,[rsi+2]
         mov ah,al
 
-        .if ( edx & _D_RESAT )
+        .if ( edx & W_RESAT )
 
             and ax,0x0FF0
 
-            .if ( edx & _D_MENUS )
+            .if ( edx & W_MENUS )
 
                 mov al,BG_MENU shl 4
                 .if ah == [rdi+FG_MENUKEY]
@@ -79,26 +82,51 @@ _rczip proc uses rsi rdi rbx rc:TRECT, dst:ptr, src:PCHAR_INFO, flags:uint_t
             or  al,ah
             mov [rsi+2],al
         .endif
+
+        .if !( edx & W_UTF16 )
+
+            mov     tmp,ecx
+            movzx   eax,word ptr [rsi]
+            lea     rdi,_unicode850
+            mov     ecx,256
+            repnz   scasw
+            mov     eax,256
+            sub     eax,ecx
+            dec     eax
+            mov     [rsi],ax
+            lea     rdi,at_foreground
+            mov     ecx,tmp
+        .endif
         add rsi,4
     .untilcxz
 
-    mov rdi,dst
-    mov rsi,src
-    mov ecx,count
-    compress()
-    .if ( flags & _D_UTF16 )
+    .if ( flags & W_UTF16 )
+
+        mov rdi,dst
+        mov rsi,src
+        mov ecx,count
+        compress()
         mov rsi,src
         inc rsi
         mov ecx,count
         compress()
-    .endif
-    mov rsi,src
-    add rsi,2
-    mov ecx,count
-    compress()
-    .if ( flags & _D_UTF16 )
+        mov rsi,src
+        add rsi,2
+        mov ecx,count
+        compress()
         mov rsi,src
         add rsi,3
+        mov ecx,count
+        compress()
+
+    .else
+
+        mov rdi,dst
+        mov rsi,src
+        add rsi,2
+        mov ecx,count
+        compress()
+        mov rsi,src
         mov ecx,count
         compress()
     .endif

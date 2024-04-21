@@ -110,27 +110,6 @@ define MAXSCRLINE	MAXCOLS
 
 define CURSOR_NORMAL	16	; default cursor size (0..100)
 
-;
-; https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-char
-;
-; lParam
-;
-;  0-15 Virtual Key Code (Win: Repeat Count)
-; 16-23 Virtual Scan Code
-;    24 Extended ( KF_EXTENDED << 16 )
-;    25 Shift key (Win: reserved)
-;    26 Control key (Win: reserved)
-; 27-28 reserved
-;    29 ALT key ( KF_ALTDOWN << 16 )
-;    30 previous key state ( KF_REPEAT << 16 )
-;    31 transition state ( KF_UP << 16 )
-;
-
-define KEY_EXTENDED	( KF_EXTENDED shl 16 )
-define SHIFTKEY_DOWN	( KF_EXTENDED shl 17 )
-define CTRLKEY_DOWN	( KF_EXTENDED shl 18 )
-define ALTKEY_DOWN	( KF_ALTDOWN  shl 16 )
-
 .enum VTI_COLOR { ; Virtual Terminal Color Index
     TC_BLACK,
     TC_BLUE,
@@ -193,7 +172,7 @@ _at macro B, F, C, reg:=<eax>
     or	  @Reg(reg,8),at_foreground[F]
     ifnb <C>
       shl reg,16
-      mov @Reg(reg,16),C
+      or  reg,C
     endif
     endm
 
@@ -269,50 +248,23 @@ _at macro B, F, C, reg:=<eax>
     O_CURSOR	    = 0x00040000,
     }
 
-.enum RESOURCE_FLAGS {
 
-    _D_DOPEN		= 0x0001,
-    _D_ONSCR		= 0x0002,
-    _D_DMOVE		= 0x0004,
-    _D_SHADE		= 0x0008,
-    _D_MYBUF		= 0x0010,	; do not delete on exit (static)
-    _D_RCNEW		= 0x0020,	; dlclose -- delete dialog if set
-    _D_RESAT		= 0x0040,	; attrib is index in color table (rcedit)
-    _D_DHELP		= 0x0080,	; execute thelp() if set
-    _D_CLEAR		= 0x0100,	; args on open/create
-    _D_BACKG		= 0x0200,
-    _D_FOREG		= 0x0400,
-    _D_STDLG		= 0x0800,
-    _D_STERR		= 0x1000,	; error color (red)
-    _D_MENUS		= 0x2000,	; menus color (gray), no title
-    _D_MUSER		= 0x4000,
-    _D_UTF16		= 0x8000,
+define _D_CLEAR		0x0001		; args to rcopen()
+define _D_BACKG		0x0002
+define _D_FOREG		0x0004
+define _D_COLOR		(_D_BACKG or _D_FOREG)
 
-    _O_PBUTT		= 0x0000,
-    _O_RBUTT		= 0x0001,
-    _O_CHBOX		= 0x0002,
-    _O_XCELL		= 0x0003,
-    _O_TEDIT		= 0x0004,
-    _O_MENUS		= 0x0005,
-    _O_XHTML		= 0x0006,
-    _O_MOUSE		= 0x0007,
-    _O_LLMSU		= 0x0008,
-    _O_LLMSD		= 0x0009,
-    _O_TBUTT		= 0x000A,
-
-    _O_RADIO		= 0x0010,
-    _O_FLAGB		= 0x0020,
-    _O_LLIST		= 0x0040,
-    _O_DTEXT		= 0x0080,
-    _O_CONTR		= 0x0100,
-    _O_DEXIT		= 0x0200,
-    _O_PBKEY		= 0x0400,
-    _O_DLGED		= 0x0800,
-    _O_GLCMD		= 0x1000,
-    _O_EVENT		= 0x2000,
-    _O_CHILD		= 0x4000,
-    _O_STATE		= 0x8000,
-    }
+define _O_PBUTT		0
+define _O_RBUTT		1
+define _O_CHBOX		2
+define _O_XCELL		3
+define _O_TEDIT		4
+define _O_MENUS		5
+define _O_XHTML		6
+define _O_MOUSE		7
+define _O_LLMSU		8
+define _O_LLMSD		9
+define _O_TBUTT		10
 
 .enum CURSOR_TYPE {
     CURSOR_DEFAULT,
@@ -381,6 +333,11 @@ CALLBACKC(DPROC)
    .ends
     PDOBJ	typedef ptr DOBJ
 
+.template GLCMD
+    key		dd ?
+    cmd		DPROC ?
+   .ends
+
 .template TLIST
     dlgoff	dd ?		; start index in dialog
     dcount	dd ?		; number of cells (max)
@@ -389,7 +346,10 @@ CALLBACKC(DPROC)
     count	dd ?		; total number of items in list
     index	dd ?		; index in list buffer
     list	array_t ?	; pointer to list buffer
+    lproc	DPROC ?
    .ends
+    LOBJ	typedef TLIST
+    PLOBJ	typedef ptr TLIST
     PTLIST	typedef ptr TLIST
 
 .template TDLG
@@ -423,7 +383,6 @@ CALLBACKC(DPROC)
    .ends
     PTEDIT	typedef ptr TEDIT
 
-
 .template TCONTEXT
     union
      struct
@@ -437,6 +396,18 @@ CALLBACKC(DPROC)
     ends
     llist	PTLIST ?
    .ends
+
+define MAXMSGCNT 32
+
+.template MESSAGE
+    next	ptr MESSAGE ?
+    prev	ptr MESSAGE ?
+    hwnd	THWND ?
+    message	UINT ?
+    wParam	WPARAM ?
+    lParam	LPARAM ?
+   .ends
+    PMESSAGE	typedef ptr MESSAGE
 
 
 CALLBACKC(TPROC, :THWND, :UINT, :WPARAM, :LPARAM)
@@ -454,6 +425,8 @@ CALLBACKC(TPROC, :THWND, :UINT, :WPARAM, :LPARAM)
 
 .template TCONSOLE : public TCLASS
     color	LPCOLORREF ?
+    msgptr	PMESSAGE ?
+    focus	int_t ?
     winpos	COORD <> ; old metrics
     consize	COORD <>
     conmax	COORD <>
@@ -463,14 +436,6 @@ CALLBACKC(TPROC, :THWND, :UINT, :WPARAM, :LPARAM)
    .ends
     PCONSOLE	typedef ptr TCONSOLE
 
-.template MESSAGE
-    next	ptr MESSAGE ?
-    hwnd	THWND ?
-    message	UINT ?
-    wParam	WPARAM ?
-    lParam	LPARAM ?
-   .ends
-    PMESSAGE	typedef ptr MESSAGE
 
 .template CINPUT
     union
@@ -497,6 +462,7 @@ externdef	_coninpfd:int_t
 externdef	_console:PCONSOLE
 externdef	_rgbcolortable:COLORREF
 externdef	_terminalcolorid:byte
+externdef	_unicode850:wchar_t
 
 _inithelp	proto __cdecl :DPROC
 _initidle	proto __cdecl :DPROC
@@ -508,40 +474,123 @@ _tupdate	proto __cdecl
 
 ;;;
 
-externdef	tgetevent:DPROC
+externdef	tgeteventA:DPROC
+externdef	tgeteventW:DPROC
 
-getevent	proto __cdecl
-getkey		proto __cdecl
-mousep		proto __cdecl
-mousey		proto __cdecl
-mousex		proto __cdecl
-msloop		proto __cdecl
-mousewait	proto __cdecl :int_t, :int_t, :int_t
+_initeventA	proto __cdecl :DPROC
+_initeventW	proto __cdecl :DPROC
+geteventA	proto __cdecl
+geteventW	proto __cdecl
+getkeyA		proto __cdecl
+getkeyW		proto __cdecl
+mousepA		proto __cdecl
+mousepW		proto __cdecl
+mouseyA		proto __cdecl
+mouseyW		proto __cdecl
+mousexA		proto __cdecl
+mousexW		proto __cdecl
+msloopA		proto __cdecl
+msloopW		proto __cdecl
+mousewaitA	proto __cdecl :int_t, :int_t, :int_t
+mousewaitW	proto __cdecl :int_t, :int_t, :int_t
 
-getxyc		proto __cdecl :int_t, :int_t
-getxya		proto __cdecl :int_t, :int_t
-scputc		proto __cdecl :int_t, :int_t, :int_t, :int_t
-scputa		proto __cdecl :int_t, :int_t, :int_t, :int_t
-scputbg		proto __cdecl :int_t, :int_t, :int_t, :int_t
-scputfg		proto __cdecl :int_t, :int_t, :int_t, :int_t
-
+ifdef _UNICODE
+define _initevent	<_initeventW>
+define tgetevent	<tgeteventW>
+define getevent		<geteventW>
+define getkey		<getkeyW>
+define mousep		<mousepW>
+define mousey		<mouseyW>
+define mousex		<mousexW>
+define msloop		<msloopW>
+define mousewait	<mousewaitW>
+else
+define _initevent	<_initeventA>
+define tgetevent	<tgeteventA>
+define getevent		<geteventA>
+define getkey		<getkeyA>
+define mousep		<mousepA>
+define mousey		<mouseyA>
+define mousex		<mousexA>
+define msloop		<msloopA>
+define mousewait	<mousewaitA>
+endif
 
 wcputw		proto __cdecl :PCHAR_INFO, :int_t, :uint_t
-wcputs		proto __cdecl :PCHAR_INFO, :int_t, :int_t, :LPSTR
+wcputsA		proto __cdecl :PCHAR_INFO, :int_t, :int_t, :LPSTR
+wcputsW		proto __cdecl :PCHAR_INFO, :int_t, :int_t, :LPWSTR
 wcputa		proto __cdecl :PCHAR_INFO, :int_t, :int_t
 wcputbg		proto __cdecl :PCHAR_INFO, :int_t, :int_t
 wcputfg		proto __cdecl :PCHAR_INFO, :int_t, :int_t
-wcenter		proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
-wcpath		proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
-wcpbutt		proto __cdecl :PCHAR_INFO, :int_t, :int_t, :LPSTR
-wcpushst	proto __cdecl :PCHAR_INFO, :LPSTR
-wcpopst		proto __cdecl :PCHAR_INFO
-wctitle		proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
-wcstrcpy	proto __cdecl :LPSTR, :PCHAR_INFO, :int_t
+wcenterA	proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
+wcenterW	proto __cdecl :PCHAR_INFO, :int_t, :LPWSTR
+wcpathA		proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
+wcpathW		proto __cdecl :PCHAR_INFO, :int_t, :LPWSTR
+wcpbuttA	proto __cdecl :PCHAR_INFO, :int_t, :int_t, :LPSTR
+wcpbuttW	proto __cdecl :PCHAR_INFO, :int_t, :int_t, :LPWSTR
+wcpushstA	proto __cdecl :PCHAR_INFO, :LPSTR
+wcpushstW	proto __cdecl :PCHAR_INFO, :LPWSTR
+wcpopstA	proto __cdecl :PCHAR_INFO
+wcpopstW	proto __cdecl :PCHAR_INFO
+wctitleA	proto __cdecl :PCHAR_INFO, :int_t, :LPSTR
+wctitleW	proto __cdecl :PCHAR_INFO, :int_t, :LPWSTR
+wcstrcpyA	proto __cdecl :LPSTR, :PCHAR_INFO, :int_t
+wcstrcpyW	proto __cdecl :LPWSTR, :PCHAR_INFO, :int_t
+wcmemset	proto __cdecl :PCHAR_INFO, :CHAR_INFO, :int_t
 
-rcread		proto __cdecl :TRECT, :PCHAR_INFO
-rcwrite		proto __cdecl :TRECT, :PCHAR_INFO
-rcxchg		proto __cdecl :TRECT, :PCHAR_INFO
+ifdef _UNICODE
+define wcputs		<wcputsW>
+define wcenter		<wcenterW>
+define wcpath		<wcpathW>
+define wcpbutt		<wcpbuttW>
+define wcpushst		<wcpushstW>
+define wcpopst		<wcpopstW>
+define wctitle		<wctitleW>
+define wcstrcpy		<wcstrcpyW>
+else
+define wcputs		<wcputsA>
+define wcenter		<wcenterA>
+define wcpath		<wcpathA>
+define wcpbutt		<wcpbuttA>
+define wcpushst		<wcpushstA>
+define wcpopst		<wcpopstA>
+define wctitle		<wctitleA>
+define wcstrcpy		<wcstrcpyA>
+endif
+
+scputsA		proto __cdecl :int_t, :int_t, :int_t, :int_t, :string_t
+scputsW		proto __cdecl :int_t, :int_t, :int_t, :int_t, :wstring_t
+
+ifdef _UNICODE
+define scputs		<scputsW>
+else
+define scputs		<scputsA>
+endif
+
+rcopen		proto __cdecl :TRECT, :uint_t, :uint_t, :uint_t, :string_t, :ptr
+rcclose		proto __cdecl :TRECT, :uint_t, :PCHAR_INFO
+
+rcshow		proto __cdecl :TRECT, :uint_t, :PCHAR_INFO
+rchide		proto __cdecl :TRECT, :uint_t, :PCHAR_INFO
+rcmove		proto __cdecl :ptr TRECT, :PCHAR_INFO, :int_t, :int_t, :int_t
+rcxyrow		proto __cdecl :TRECT, :int_t, :int_t
+rcmsmove	proto __cdecl :ptr TRECT, :PCHAR_INFO, :uint_t
+
+dlopen		proto __cdecl :PDOBJ, :uint_t, :LPSTR
+dlclose		proto __cdecl :PDOBJ
+dlhide		proto __cdecl :PDOBJ
+dlshow		proto __cdecl :PDOBJ
+dlinit		proto __cdecl :PDOBJ
+dlmemsize	proto __cdecl :PDOBJ
+dlevent		proto __cdecl :PDOBJ
+dlmove		proto __cdecl :PDOBJ
+dledit		proto __cdecl :LPSTR, :TRECT, :int_t, :uint_t
+tosetbitflag	proto __cdecl :PTOBJ, :int_t, :uint_t, :uint_t
+togetbitflag	proto __cdecl :PTOBJ, :int_t, :uint_t
+
+rsopen		proto __cdecl :PIDD
+rsevent		proto __cdecl :PIDD, :PDOBJ
+rsmodal		proto __cdecl :PIDD
 
 ;;;
 
@@ -552,6 +601,16 @@ _readinputW	proto __cdecl :PINPUT_RECORD
 _kbflushA	proto __cdecl
 _kbflushW	proto __cdecl
 
+ifdef _UNICODE
+define _cout		<_coutW>
+define _readinput	<_readinputW>
+define _kbflush		<_kbflushW>
+else
+define _cout		<_coutA>
+define _readinput	<_readinputA>
+define _kbflush		<_kbflushA>
+endif
+
 _scgetp		proto __cdecl :uchar_t, :uchar_t, :uchar_t
 _scgeta		proto __cdecl :uchar_t, :uchar_t
 _scgetc		proto __cdecl :uchar_t, :uchar_t
@@ -559,7 +618,7 @@ _scgetw		proto __cdecl :uchar_t, :uchar_t
 _scputa		proto __cdecl :uchar_t, :uchar_t, :uchar_t, :ushort_t
 _scputfg	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :uchar_t
 _scputbg	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :uchar_t
-_scputc		proto __cdecl :uchar_t, :uchar_t, :uchar_t, :wchar_t
+_scputc		proto __cdecl :uchar_t, :uchar_t, :uchar_t, :int_t
 _scputw		proto __cdecl :uchar_t, :uchar_t, :uchar_t, :CHAR_INFO
 _scgetl		proto __cdecl :int_t, :int_t, :int_t
 _scputl		proto __cdecl :int_t, :int_t, :int_t, :PCHAR_INFO
@@ -575,6 +634,20 @@ _sccenterA	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :string_t
 _sccenterW	proto __cdecl :uchar_t, :uchar_t, :uchar_t, :wstring_t
 _scframe	proto __cdecl :TRECT, :int_t, :ushort_t
 
+ifdef _UNICODE
+define _scputs		<_scputsW>
+define _scnputs		<_scnputsW>
+define _scputf		<_scputfW>
+define _scpath		<_scpathW>
+define _sccenter	<_sccenterW>
+else
+define _scputs		<_scputsA>
+define _scnputs		<_scnputsA>
+define _scputf		<_scputfA>
+define _scpath		<_scpathA>
+define _sccenter	<_sccenterA>
+endif
+
 _getcursor	proto __cdecl :PCURSOR
 _setcursor	proto __cdecl :PCURSOR
 _cursoron	proto __cdecl
@@ -585,9 +658,10 @@ _gotoxy		proto __cdecl :uint_t, :uint_t
 ifdef __TTY__
 externdef	_cursor:CURSOR
 endif
+
 _rcframe	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :int_t, :uchar_t
-_rcmemsize	proto __cdecl :TRECT, :int_t
-_rcalloc	proto __cdecl :TRECT, :int_t
+_rcmemsize	proto __cdecl :TRECT, :uint_t
+_rcalloc	proto __cdecl :TRECT, :uint_t
 _rcread		proto __cdecl :TRECT, :PCHAR_INFO
 _rcwrite	proto __cdecl :TRECT, :PCHAR_INFO
 _rcxchg		proto __cdecl :TRECT, :PCHAR_INFO
@@ -599,6 +673,9 @@ _rczip		proto __cdecl :TRECT, :ptr, :PCHAR_INFO, :uint_t
 _rcunzip	proto __cdecl :TRECT, :PCHAR_INFO, :ptr, :uint_t
 _rcunzipat	proto __cdecl :TRECT, :PCHAR_INFO
 _rcbprc		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO
+_rcaddrc	proto __cdecl :TRECT, :TRECT
+_rcinside	proto __cdecl :TRECT, :TRECT
+
 _rcgetw		proto __cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t
 _rcputc		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :wchar_t
 _rcputa		proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :ushort_t
@@ -613,10 +690,28 @@ _rcputsW	proto __cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t, :ushort_t, :wstr
 _rcputfA	proto __Cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t, :ushort_t, :string_t, :vararg
 _rcputfW	proto __Cdecl :TRECT, :PCHAR_INFO, :uchar_t, :uchar_t, :ushort_t, :wstring_t, :vararg
 
+ifdef _UNICODE
+define _rccenter	<_rccenterW>
+define _rcputs		<_rcputsW>
+define _rcputf		<_rcputfW>
+else
+define _rccenter	<_rccenterA>
+define _rcputs		<_rcputsA>
+define _rcputf		<_rcputfA>
+endif
+
 _clipsetA	proto __cdecl :string_t, :uint_t
 _clipsetW	proto __cdecl :wstring_t, :uint_t
 _clipgetA	proto __cdecl
 _clipgetW	proto __cdecl
+
+ifdef _UNICODE
+define _clipget		<_clipgetW>
+define _clipset		<_clipsetW>
+else
+define _clipget		<_clipgetA>
+define _clipset		<_clipsetA>
+endif
 
 _vmsgboxA	proto __cdecl :uint_t, :string_t, :string_t
 _vmsgboxW	proto __cdecl :uint_t, :wstring_t, :wstring_t
@@ -626,14 +721,33 @@ _stdmsgA	proto __Cdecl :string_t, :string_t, :vararg
 _stdmsgW	proto __Cdecl :wstring_t, :wstring_t, :vararg
 _errmsgA	proto __Cdecl :string_t, :string_t, :vararg
 _errmsgW	proto __Cdecl :wstring_t, :wstring_t, :vararg
-_syserrA	proto __cdecl :uint_t, :string_t
-_syserrW	proto __cdecl :uint_t, :wstring_t
+_syserrA	proto __Cdecl :string_t, :string_t, :vararg
+_syserrW	proto __Cdecl :wstring_t, :wstring_t, :vararg
+_eropenA	proto __cdecl :string_t
+_eropenW	proto __cdecl :wstring_t
+
+ifdef _UNICODE
+define _msgbox		<_msgboxW>
+define _vmsgbox		<_vmsgboxW>
+define _stdmsg		<_stdmsgW>
+define _errmsg		<_errmsgW>
+define _syserr		<_syserrW>
+define _eropen		<_eropenW>
+else
+define _msgbox		<_msgboxA>
+define _vmsgbox		<_vmsgboxA>
+define _stdmsg		<_stdmsgA>
+define _errmsg		<_errmsgA>
+define _syserr		<_syserrA>
+define _eropen		<_eropenA>
+endif
 
 _dlopen		proto __cdecl :TRECT, :uint_t, :uint_t, :uint_t
 _dlinitA	proto __cdecl :THWND, :string_t
 _dlinitW	proto __cdecl :THWND, :wstring_t
 _dlclose	proto __cdecl :THWND
-_dlmodal	proto __cdecl :THWND, :TPROC
+_dlmodalA	proto __cdecl :THWND, :TPROC
+_dlmodalW	proto __cdecl :THWND, :TPROC
 _dlhide		proto __cdecl :THWND
 _dlshow		proto __cdecl :THWND
 _dlsetfocus	proto __cdecl :THWND, :uchar_t
@@ -642,12 +756,36 @@ _dlmove		proto __cdecl :THWND, :int_t
 _dltitleA	proto __cdecl :THWND, :string_t
 _dltitleW	proto __cdecl :THWND, :wstring_t
 
+ifdef _UNICODE
+define _dlinit		<_dlinitW>
+define _dlmodal		<_dlmodalW>
+define _dltitle		<_dltitleW>
+else
+define _dlinit		<_dlinitA>
+define _dlmodal		<_dlmodalA>
+define _dltitle		<_dltitleA>
+endif
+
 _tcontrolA	proto __cdecl :THWND, :uint_t, :ushort_t, :string_t
 _tcontrolW	proto __cdecl :THWND, :uint_t, :ushort_t, :wstring_t
 _tiputsA	proto __cdecl :PTEDIT
 _tiputsW	proto __cdecl :PTEDIT
 _tiprocA	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 _tiprocW	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
+_tgetlineA	proto __cdecl :string_t, :string_t, :int_t, :int_t
+_tgetlineW	proto __cdecl :wstring_t, :wstring_t, :int_t, :int_t
+
+ifdef _UNICODE
+define _tcontrol	<_tcontrolW>
+define _tiputs		<_tiputsW>
+define _tiproc		<_tiprocW>
+define _tgetline	<_tgetlineW>
+else
+define _tcontrol	<_tcontrolA>
+define _tiputs		<_tiputsA>
+define _tiproc		<_tiprocA>
+define _tgetline	<_tgetlineA>
+endif
 
 _conslink	proto __cdecl :THWND
 _consunlink	proto __cdecl :THWND
@@ -657,21 +795,56 @@ _cendpaint	proto __cdecl
 
 _sendmessage	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 _postmessage	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
-_getmessage	proto __cdecl :PMESSAGE, :THWND
+_getmessageA	proto __cdecl :PMESSAGE, :THWND, :int_t
+_getmessageW	proto __cdecl :PMESSAGE, :THWND, :int_t
 _dispatchmsg	proto __cdecl :PMESSAGE
 _translatemsg	proto __cdecl :PMESSAGE
 _postquitmsg	proto __cdecl :THWND, :uint_t
 _defwinproc	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 
+ifdef _UNICODE
+define _getmessage	<_getmessageW>
+else
+define _getmessage	<_getmessageA>
+endif
+
 _rsopenA	proto __cdecl :PTRES
 _rsopenW	proto __cdecl :PTRES
 _rssave		proto __cdecl :THWND, :string_t
 
+ifdef _UNICODE
+define _rsopen		<_rsopenW>
+else
+define _rsopen		<_rsopenA>
+endif
+
 _getkey		proto __cdecl
 
 
-define KEY_ESC		VK_ESCAPE
+define _C_NORMAL	1
+define _C_RETURN	2
+define _C_ESCAPE	3
+define _C_REOPEN	4
+
+define MOUSECMD		(-2)	; tgetkey()
+define KEY_MOUSEUP	(-3)
+define KEY_MOUSEDN	(-4)
+
+define KEY_CHAR		0x10000 ;
+
+define KEY_ALT		0x10000 ;
+define KEY_CTRL		0x20000 ;
+define KEY_SHIFT	0x40000 ;
+
+
+define KEY_BKSP		0x0008
+define KEY_TAB		0x0009
+
 define KEY_SPACE	VK_SPACE
+define KEY_ESC		VK_ESCAPE
+define KEY_RETURN	VK_RETURN
+define KEY_KPRETURN	(VK_RETURN shl 8)
+
 define KEY_PGUP		(VK_PRIOR  shl 8)
 define KEY_PGDN		(VK_NEXT   shl 8)
 define KEY_END		(VK_END	   shl 8)
@@ -696,6 +869,11 @@ define KEY_F10		(VK_F10	   shl 8)
 define KEY_F11		(VK_F11	   shl 8)
 define KEY_F12		(VK_F12	   shl 8)
 
+define KEY_CTRLINS	(KEY_CTRL or KEY_INSERT)
+define KEY_CTRLDEL	(KEY_CTRL or KEY_DELETE)
+
+define KEY_CTRLC	(KEY_CTRL or ('C' shl 8))
+define KEY_CTRLV	(KEY_CTRL or ('V' shl 8))
 
 define ESC <"\e">
 define CSI <"\e[">
@@ -723,58 +901,6 @@ define RST_EXT_MODE_MOUSE	   <CSI "?1005l">
 define RST_SGR_EXT_MODE_MOUSE	   <CSI "?1006l">
 define RST_URXVT_EXT_MODE_MOUSE	   <CSI "?1015l">
 define RST_PIXEL_POSITION_MOUSE	   <CSI "?1016l">
-
-ifdef _UNICODE
-define _cout		<_coutW>
-define _scputs		<_scputsW>
-define _scnputs		<_scnputsW>
-define _scputf		<_scputfW>
-define _scpath		<_scpathW>
-define _sccenter	<_sccenterW>
-define _rccenter	<_rccenterW>
-define _rcputs		<_rcputsW>
-define _rcputf		<_rcputfW>
-define _dlinit		<_dlinitW>
-define _dltitle		<_dltitleW>
-define _rsopen		<_rsopenW>
-define _tcontrol	<_tcontrolW>
-define _tiputs		<_tiputsW>
-define _tiproc		<_tiprocW>
-define _msgbox		<_msgboxW>
-define _vmsgbox		<_vmsgboxW>
-define _stdmsg		<_stdmsgW>
-define _errmsg		<_errmsgW>
-define _syserr		<_syserrW>
-define _clipget		<_clipgetW>
-define _clipset		<_clipsetW>
-define _readinput	<_readinputW>
-define _kbflush		<_kbflushW>
-else
-define _cout		<_coutA>
-define _scputs		<_scputsA>
-define _scnputs		<_scnputsA>
-define _scputf		<_scputfA>
-define _scpath		<_scpathA>
-define _sccenter	<_sccenterA>
-define _rccenter	<_rccenterA>
-define _rcputs		<_rcputsA>
-define _rcputf		<_rcputfA>
-define _dlinit		<_dlinitA>
-define _dltitle		<_dltitleA>
-define _rsopen		<_rsopenA>
-define _tcontrol	<_tcontrolA>
-define _tiputs		<_tiputsA>
-define _tiproc		<_tiprocA>
-define _msgbox		<_msgboxA>
-define _vmsgbox		<_vmsgboxA>
-define _stdmsg		<_stdmsgA>
-define _errmsg		<_errmsgA>
-define _syserr		<_syserrA>
-define _clipget		<_clipgetA>
-define _clipset		<_clipsetA>
-define _readinput	<_readinputA>
-define _kbflush		<_kbflushA>
-endif
 
 ; Unicode box charcters -- https://www.compart.com/en/unicode/U+2500
 

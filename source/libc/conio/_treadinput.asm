@@ -16,27 +16,22 @@ ifdef __TTY__
 
     .data
 
-_scancode_c byte \
-     0, 0, 0, 0, 0, 0, 0, 0,14,15,28, 0, 0,28, 0, 0, ; 00-0F
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, ; 10-1F
-    57, 0, 0, 0, 0, 0, 0,40, 0, 0,42, 0,51,12,52, 0, ; 20-2F
-    11, 2, 3, 4, 5, 6, 7, 8, 9,10,58,39, 0,13, 0, 0, ; 30-3F
-     0,30,48,46,32,18,33,34,35,23,36,37,38,50,49,24, ; 40-4F
-    25,16,19,31,20,22,47,17,45,21,44,26,43,27, 0, 0, ; 50-5F
-     0,30,48,46,32,18,33,34,35,23,36,37,38,50,49,24, ; 60-6F
-    25,16,19,31,20,22,47,17,45,21,44, 0, 0, 0, 0,14  ; 70-7F
+     cursor_keys db VK_UP,      ; A
+                    VK_DOWN,    ; B
+                    VK_RIGHT,   ; C
+                    VK_LEFT,    ; D
+                    0,
+                    VK_END,     ; F
+                    0,
+                    VK_HOME     ; H
 
-_scancode_x byte \
-     0, 0, 0, 0, 0, 0, 0, 0, 0,15,28, 0, 0,28, 0, 0, ; 00-0F
-    42,29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, ; 10-1F
-    57,73,81,79,71,75,72,77,80, 0, 0, 0, 0,82,83,59, ; 20-2F
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 30-3F
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 40-4F
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 50-5F
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 60-6F
-    59,60,61,62,63,64,65,66,67,68,87,88, 0, 0, 0, 0, ; 70-7F
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 80-8F
-    69,70
+     modifiers   db SHIFT_PRESSED,
+                    LEFT_ALT_PRESSED,
+                    LEFT_ALT_PRESSED or SHIFT_PRESSED,
+                    LEFT_CTRL_PRESSED,
+                    LEFT_CTRL_PRESSED or SHIFT_PRESSED,
+                    LEFT_ALT_PRESSED or LEFT_CTRL_PRESSED,
+                    LEFT_ALT_PRESSED or LEFT_CTRL_PRESSED or SHIFT_PRESSED
 
     .code
 
@@ -45,25 +40,6 @@ _scancode_x byte \
 _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
 
     .new keys:CINPUT
-    .new modifiers[7]:byte = {
-        SHIFT_PRESSED,
-        LEFT_ALT_PRESSED,
-        LEFT_ALT_PRESSED or SHIFT_PRESSED,
-        LEFT_CTRL_PRESSED,
-        LEFT_CTRL_PRESSED or SHIFT_PRESSED,
-        LEFT_ALT_PRESSED or LEFT_CTRL_PRESSED,
-        LEFT_ALT_PRESSED or LEFT_CTRL_PRESSED or SHIFT_PRESSED
-        }
-    .new cursor_keys[8]:byte = {
-        VK_UP,      ; A
-        VK_DOWN,    ; B
-        VK_RIGHT,   ; C
-        VK_LEFT,    ; D
-        0,
-        VK_END,     ; F
-        0,
-        VK_HOME     ; H
-        }
 
     .while 1
 
@@ -105,20 +81,14 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
         .switch al
 
         .case 'O'
-            .switch ah
-            .case 'P'
-                mov [rbx].Event.KeyEvent.wVirtualKeyCode,VK_F1
+            .if ( ah >= 'P' && ah <= 'S' )
+
+                sub   ah,'P'
+                movzx eax,ah
+                add   eax,VK_F1
+                mov   [rbx].Event.KeyEvent.wVirtualKeyCode,ax
                .break
-            .case 'Q'
-                mov [rbx].Event.KeyEvent.wVirtualKeyCode,VK_F2
-               .break
-            .case 'R'
-                mov [rbx].Event.KeyEvent.wVirtualKeyCode,VK_F3
-               .break
-            .case 'S'
-                mov [rbx].Event.KeyEvent.wVirtualKeyCode,VK_F4
-               .break
-            .endsw
+            .endif
             .endc
 
         .case '['
@@ -134,20 +104,20 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
                     .if ( keys.b[rsi] == ';' )
 
                         movzx edx,keys.b[rsi+1]
+                        .if ( dl >= '2' && dl <= '8' )
 
-                        .switch dl
+                            ; '2' ; Shift
+                            ; '3' ; Alt
+                            ; '4' ; Shift + Alt
+                            ; '5' ; Control
+                            ; '6' ; Shift + Control
+                            ; '7' ; Alt + Control
+                            ; '8' ; Shift + Alt + Control
 
-                        .case '2' ; Shift
-                        .case '3' ; Alt
-                        .case '4' ; Shift + Alt
-                        .case '5' ; Control
-                        .case '6' ; Shift + Control
-                        .case '7' ; Alt + Control
-                        .case '8' ; Shift + Alt + Control
-
-                            mov dl,modifiers[rdx-'2']
+                            lea rdi,modifiers
+                            mov dl,[rdi+rdx-'2']
                             or  [rbx].Event.KeyEvent.dwControlKeyState,edx
-                        .endsw
+                        .endif
                     .endif
                 .endf
             .endif
@@ -163,8 +133,8 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
             .case 'F' ; End
             .case 'H' ; Home
                 movzx eax,al
-                sub eax,'A'
-                mov al,cursor_keys[rax]
+                lea rdi,cursor_keys
+                mov al,[rdi+rax-'A']
                 mov [rbx].Event.KeyEvent.wVirtualKeyCode,ax
                 or  [rbx].Event.KeyEvent.dwControlKeyState,ENHANCED_KEY
                .break
@@ -431,22 +401,6 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
             .endc
         .endsw
     .endw
-    .if ( [rbx].EventType == KEY_EVENT )
-
-        xor eax,eax
-        movzx edx,[rbx].Event.KeyEvent.uChar.UnicodeChar
-        .if ( edx == 0 )
-            mov dx,[rbx].Event.KeyEvent.wVirtualKeyCode
-            .if ( edx < sizeof(_scancode_x) )
-                lea rcx,_scancode_x
-                mov al,[rcx+rdx]
-            .endif
-        .elseif ( edx < sizeof(_scancode_c) )
-            lea rcx,_scancode_c
-            mov al,[rcx+rdx]
-        .endif
-        mov [rbx].Event.KeyEvent.wVirtualScanCode,ax
-    .endif
     .return( 1 )
 
 _readinput endp
@@ -460,16 +414,21 @@ _readinput proc Input:PINPUT_RECORD
     .new Count:dword
     .new NumberOfEventsRead:dword
 
-    .while 1
+    .ifd !GetNumberOfConsoleInputEvents(_coninpfh, &Count)
 
-        .break .ifd !GetNumberOfConsoleInputEvents(_coninpfh, &Count)
+        dec rax
+    .else
 
-        .if ( Count )
+        mov eax,Count
+        .if ( eax )
 
-            .break .ifd !ReadConsoleInput(_coninpfh, Input, 1, &NumberOfEventsRead)
-            .return( NumberOfEventsRead )
+            .ifd !ReadConsoleInput(_coninpfh, Input, 1, &NumberOfEventsRead)
+                dec rax
+            .else
+                mov eax,NumberOfEventsRead
+            .endif
         .endif
-    .endw
+    .endif
     ret
 
 _readinput endp

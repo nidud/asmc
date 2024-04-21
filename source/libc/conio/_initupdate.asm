@@ -22,9 +22,10 @@ _initupdate endp
 
 _tupdate proc
 
-    .if ( tupdate )
+    mov rax,tupdate
+    .if ( rax )
 
-        tupdate()
+        rax()
     .endif
     ret
 

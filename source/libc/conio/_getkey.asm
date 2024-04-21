@@ -24,13 +24,13 @@ endif
 
     .for ( :: )
 
-        .if ( !_readinput( &ConInpRec ) )
+        .ifd ( _readinput( &ConInpRec ) == -1 )
 
-            mov c,EOF
+            mov c,eax
            .break
         .endif
 
-        .if ( ( ConInpRec.EventType == KEY_EVENT ) && ConInpRec.Event.KeyEvent.bKeyDown )
+        .if ( eax && ConInpRec.EventType == KEY_EVENT && ConInpRec.Event.KeyEvent.bKeyDown )
 
             movzx   eax,ConInpRec.Event.KeyEvent.wVirtualKeyCode
             shl     eax,8

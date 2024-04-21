@@ -661,13 +661,13 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
     xor edx,edx
     mov ecx,lParam
     mov eax,wParam
-    .if ( ecx & SHIFTKEY_DOWN )
+    .if ( ecx & SHIFT_PRESSED )
         mov edx,VK_SHIFT
-    .elseif ( ecx & CTRLKEY_DOWN )
+    .elseif ( ecx & ( RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED ) )
         mov edx,VK_CONTROL
     .endif
 
-    .if ( ecx & KEY_EXTENDED )
+    .if ( ecx & ENHANCED_KEY )
 
         .switch eax
         .case VK_UP
@@ -871,7 +871,7 @@ _tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARA
         .endc
 
     .case WM_KEYDOWN
-        .endc .if !( eax & KEY_EXTENDED )
+        .endc .if !( eax & ENHANCED_KEY )
         .switch edx
         .case VK_UP
         .case VK_DOWN

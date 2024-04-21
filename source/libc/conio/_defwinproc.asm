@@ -390,7 +390,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
 
     .elseif ( eax == VK_TAB )
 
-        .ifd _sendmessage([rbx].prev, WM_KEYDOWN, VK_DOWN, KEY_EXTENDED)
+        .ifd _sendmessage([rbx].prev, WM_KEYDOWN, VK_DOWN, ENHANCED_KEY)
 
             mov rcx,[rbx].prev
             .for ( rcx = [rcx].object : rcx != rbx : rcx = [rcx].next )
@@ -454,7 +454,7 @@ wm_char endp
 wm_keydown proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
 
     ldr eax,lParam
-    .if ( eax & KEY_EXTENDED )
+    .if ( eax & ENHANCED_KEY )
 
         ldr rcx,hwnd
         ldr ebx,wParam

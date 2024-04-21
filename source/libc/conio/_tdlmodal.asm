@@ -1,4 +1,4 @@
-; _DLMODAL.ASM--
+; _TDLMODAL.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -21,7 +21,7 @@ ifdef __TTY__
     _cout(SET_ANY_EVENT_MOUSE)
 endif
     .new msg:MESSAGE
-    .while _getmessage(&msg, NULL)
+    .while _getmessage(&msg, NULL, 1)
 
         .return .if ( eax == -1 )
 

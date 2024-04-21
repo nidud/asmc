@@ -9,9 +9,12 @@ include malloc.inc
 
 .code
 
-_rcalloc proc rc:TRECT, shade:int_t
+_rcalloc proc rc:TRECT, flags:uint_t
 
-    malloc(_rcmemsize(rc, shade))
+    ldr ecx,rc
+    ldr edx,flags
+
+    malloc(_rcmemsize(ecx, edx))
     ret
 
 _rcalloc endp

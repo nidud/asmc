@@ -123,7 +123,7 @@ _tmain proc
 
     paint()
 
-    mov rbx,_dlopen(rc, 1, W_MOVEABLE or W_TRANSPARENT or W_SHADE, 128*TCHAR+TEDIT)
+    mov rbx,_dlopen(rc, 1, W_UTF16 or W_MOVEABLE or W_TRANSPARENT or W_SHADE, 128*TCHAR+TEDIT)
     _rcframe(rc, f1, [rbx].window, BOX_SINGLE_ARC, 0x0F)
     _rcframe(rc, f2, [rbx].window, BOX_SINGLE_ARC, 0x06)
     _rcputs(rc, [rbx].window, 17, 1, 0x0F, "  Text Control  ")

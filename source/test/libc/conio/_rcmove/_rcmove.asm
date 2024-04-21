@@ -78,7 +78,7 @@ _tmain proc
 
    .new rc:TRECT = { 10, 5, 60, 14 }
    .new cr:TRECT = {  0, 0, 60, 14 }
-   .new p:PCHAR_INFO = _rcalloc(rc, 0)
+   .new p:PCHAR_INFO = _rcalloc(rc, W_UTF16)
 
     mov rdi,p
     mov eax,(AT shl 16) or ' '

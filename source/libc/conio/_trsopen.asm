@@ -94,14 +94,7 @@ _rsopen proc uses rsi rdi rbx res:PTRES
     assume rbx:THWND
     mov rbx,rdi
     _rcunzip([rbx].rc, [rbx].window, rdata, [rbx].flags)
-    .if ( [rbx].flags & W_RESAT )
-        _rcunzipat([rbx].rc, [rbx].window)
-    .endif
-
-    xor edx,edx
-    test [rbx].flags,W_SHADE
-    setnz dl
-    mov rsize,_rcmemsize([rbx].rc, edx)
+    mov rsize,_rcmemsize([rbx].rc, [rbx].flags)
 
     xor eax,eax
     .if ( olist )

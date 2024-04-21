@@ -16,8 +16,8 @@ _tmain proc argc:int_t, argv:array_t
 
    .new rc:TRECT = { 10, 5, 60, 24 }
    .new b1:TRECT = {  0, 0, 60, 24 }
-   .new p:PCHAR_INFO = _rcalloc(rc, 0)
-   .new z:PCHAR_INFO = _rcalloc(rc, 0)
+   .new p:PCHAR_INFO = _rcalloc(rc, W_UTF16)
+   .new z:PCHAR_INFO = _rcalloc(rc, W_UTF16)
 
     mov rdi,p
     mov eax,(AT shl 16) or ' '
@@ -29,8 +29,8 @@ _tmain proc argc:int_t, argv:array_t
     _rcxchg(rc, p)
     _gettch()
     _rcxchg(rc, p)
-    .new size:int_t = _rczip(rc, z, p)
-    _rcunzip(rc, p, z)
+    .new size:int_t = _rczip(rc, z, p, W_UTF16)
+    _rcunzip(rc, p, z, W_UTF16)
     _rcputf(rc, p, 2, 3, 0, "Compresed size: %6d byte", size)
     _rcxchg(rc, p)
     _gettch()

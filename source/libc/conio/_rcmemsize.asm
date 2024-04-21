@@ -9,21 +9,25 @@ include conio.inc
 
 .code
 
-_rcmemsize proc rc:TRECT, shade:int_t
+_rcmemsize proc rc:TRECT, flags:uint_t
 
     movzx eax,rc.col
     movzx edx,rc.row
     mov   ecx,eax
     mul   dl
-    shl   eax,2
+    add   eax,eax
 
-    .if ( shade )
+    .if ( flags & W_SHADE )
 
-        ; ( ( col + ( row * 2 ) - 2 ) * 4 )
+        ; ( ( col + ( row * 2 ) - 2 ) * n )
 
         lea ecx,[rcx+rdx*2-2]
-        shl ecx,2
         add eax,ecx
+        add eax,ecx
+    .endif
+    .if (  flags & W_UTF16 )
+
+        add eax,eax
     .endif
     ret
 

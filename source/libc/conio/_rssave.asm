@@ -31,10 +31,7 @@ _rssave proc uses rbx hwnd:THWND, file:LPSTR
     and     eax,W_RESBITS
     mov     flags,eax
     mov     o.flag,ax
-    xor     edx,edx
-    test    [rbx].flags,_D_SHADE
-    setnz   dl
-    mov     size,_rcmemsize([rbx].rc, edx)
+    mov     size,_rcmemsize([rbx].rc, [rbx].flags)
     movzx   eax,[rbx].count
     inc     eax
     imul    eax,eax,TCLASS

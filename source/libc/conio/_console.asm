@@ -14,7 +14,7 @@ include malloc.inc
 
     .code
 
-__inticonsole proc uses rsi rdi rbx
+__initconsole proc uses rsi rdi rbx
 
    .new rc:TRECT = {0}
    .new w:int_t = 0
@@ -58,7 +58,8 @@ ifndef __TTY__
         dec eax
         mov edx,h
         dec edx
-        .if dx != ci.srWindow.Right || ax != ci.srWindow.Bottom
+
+        .if ( dx != ci.srWindow.Right || ax != ci.srWindow.Bottom )
 
             mov ci.srWindow.Top,0
             mov ci.srWindow.Left,0
@@ -94,15 +95,16 @@ endif
         .return 0
     .endif
 
-    mov w,_rcmemsize(rc, 0)
-    lea ecx,[rax*2+TCONSOLE]
-    mov rbx,malloc(ecx)
-    .if ( rax == NULL )
+    mov w,_rcmemsize(rc, W_UTF16)
+    lea ecx,[rax*2+TCONSOLE+MESSAGE*MAXMSGCNT]
+    .if ( malloc(ecx) == NULL )
+
         .return
     .endif
 
     assume rbx:PCONSOLE
 
+    mov rbx,rax
     mov rdi,rax
     mov ecx,TCONSOLE
     xor eax,eax
@@ -113,8 +115,9 @@ endif
     mov [rbx].window,rax
     add rax,rcx
     mov [rbx].buffer,rax
-    mov rax,_console
-    mov [rbx].prev,rax
+    add rax,rcx
+    mov [rbx].msgptr,rax
+    mov [rbx].prev,_console
     mov _console,rbx
     mov [rbx].flags,W_ISOPEN or W_CONSOLE
     mov [rbx].rc,rc
@@ -123,7 +126,23 @@ endif
     shr ecx,1
     mov eax,0x00070020
     rep stosd
+    mov ecx,( ( MESSAGE * MAXMSGCNT ) / 4 )
+    xor eax,eax
+    rep stosd
 
+    ; circular buffer for the message loop..
+
+    .for ( rdx = [rbx].msgptr : ecx < MAXMSGCNT : ecx++, rdx+=MESSAGE )
+
+        lea rax,[rdx+MESSAGE]
+        lea rdi,[rdx-MESSAGE]
+        mov [rdx].MESSAGE.next,rax
+        mov [rdx].MESSAGE.prev,rdi
+    .endf
+    sub rdx,MESSAGE
+    mov [rdx].MESSAGE.next,[rbx].msgptr
+    mov [rax].MESSAGE.prev,rdx
+    mov [rbx].focus,1
 
 ifdef __TTY__
 
@@ -163,7 +182,7 @@ endif
     _gotoxy(0, 0)
     ret
 
-__inticonsole endp
+__initconsole endp
 
 __termconsole proc uses rbx
 
@@ -180,7 +199,7 @@ endif
 
 __termconsole endp
 
-.pragma(init(__inticonsole, 100))
+.pragma(init(__initconsole, 100))
 .pragma(exit(__termconsole, 2))
 
     end

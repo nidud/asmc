@@ -16,10 +16,7 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
    .new     dsize:int_t
    .new     tsize:int_t
 
-    xor     edx,edx
-    test    flags,W_SHADE
-    setnz   dl
-    mov     rsize,_rcmemsize(rc, edx)
+    mov     rsize,_rcmemsize(rc, flags)
     mov     eax,count
     inc     eax
     imul    eax,eax,TCLASS

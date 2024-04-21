@@ -1,11 +1,10 @@
-; _MESSAGE.ASM--
+; _GETMESSAGE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
 include conio.inc
-include malloc.inc
 
 define MOUSE_BUTTON_UP      0x0010
 define MOUSE_BUTTON_DOWN    0x0020
@@ -13,87 +12,24 @@ define MOUSE_WHEEL_UP       0x0040
 define MOUSE_WHEEL_DOWN     0x0080
 
     .data
-     _msgptr    PMESSAGE 0
-     _msbuttons UINT 0
-     _focus     UINT 1
+     msbuttons UINT 0
 
     .code
 
     assume rdx:PMESSAGE
     assume rbx:PMESSAGE
 
-_dispatchmsg proc uses rbx msg:PMESSAGE
-
-    ldr rbx,msg
-    mov rbx,[rbx].next
-    mov rdx,_msgptr
-
-    .if ( rdx == rbx )
-        mov _msgptr,[rbx].next
-    .elseif ( rdx )
-        .while ( rdx && rbx != [rdx].next )
-            mov rdx,[rdx].next
-        .endw
-        .if ( rdx && rbx == [rdx].next )
-            mov [rdx].next,[rbx].next
-        .endif
-    .endif
-    free(rbx)
-    ret
-
-_dispatchmsg endp
-
-
-_postmessage proc hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
-
-    .if malloc(MESSAGE)
-
-        mov rdx,rax
-        mov [rdx].next,    NULL
-        mov [rdx].hwnd,    hwnd
-        mov [rdx].message, uiMsg
-        mov [rdx].wParam,  wParam
-        mov [rdx].lParam,  lParam
-
-        .for ( rax = rdx,
-               rdx = _msgptr : rdx && [rdx].next : rdx = [rdx].next )
-        .endf
-        .if rdx
-            mov [rdx].next,rax
-        .else
-            mov _msgptr,rax
-        .endif
-        xor eax,eax
-    .endif
-    ret
-
-_postmessage endp
-
-
-_postquitmsg proc hwnd:THWND, retval:UINT
-
-    ldr rcx,hwnd
-    ldr edx,retval
-
-    test [rcx].TCLASS.flags,W_CHILD
-    cmovnz rax,[rcx].TCLASS.prev
-    _postmessage(rax, WM_QUIT, edx, 0)
-    .return( 0 )
-
-_postquitmsg endp
-
-
-_getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
+_getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
 
     .new Input:INPUT_RECORD
-    .new IdleCount:dword
 
     .while 1
 
         mov rbx,hwnd
-        mov rdx,_msgptr
+        mov rcx,_console
+        mov rdx,[rcx].TCONSOLE.msgptr
 
-        .if ( rdx && !rbx )
+        .if ( [rdx].message && !rbx )
 
             returnmsg:
 
@@ -112,9 +48,9 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
             .endif
             .return( 1 )
 
-        .elseif ( rdx && rbx == -1 )
+        .elseif ( [rdx].message && ebx == -1 )
 
-            .for ( rbx = 0 : rdx : rdx = [rdx].next )
+            .for ( rcx = [rdx].prev, rbx = 0 : rdx != rcx : rdx = [rdx].next )
 
                 .if ( rbx == [rdx].hwnd )
 
@@ -122,9 +58,9 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
                 .endif
             .endf
 
-        .elseif ( rdx )
+        .elseif ( [rdx].message )
 
-            .for ( : rdx : rdx = [rdx].next )
+            .for ( rcx = [rdx].prev : rdx != rcx : rdx = [rdx].next )
 
                 .if ( rbx == [rdx].hwnd )
 
@@ -133,67 +69,65 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
             .endf
         .endif
 
-         mov IdleCount,0
+        .while 1
 
-        .if ( _readinput(&Input) == 0 )
+            .ifd ( _readinput(&Input) == -1 )
 
-            .return( -1 )
-        .endif
+                .return
+            .endif
+            .break .if ( eax )
+
+            .if ( eax == Idle )
+
+                .return
+            .endif
+            _tidle()
+        .endw
 
         .switch pascal Input.EventType
 
         .case KEY_EVENT
-
             ;
             ; lParam
             ;
-            ;  0-15 repeat count
-            ; 16-23 scan code
-            ;    24 extended key - Ctrl or right Alt
-            ; 25-28 reserved
-            ;    29 1 if the ALT key is held down while the key is pressed
-            ;    30 previous key state
-            ;    31 transition state - 1 if the key is being released
+            ;  0-15 Control Key State
+            ;  16   Key Char
             ;
-
-            xor     edi,edi
-            mov     edx,Input.Event.KeyEvent.dwControlKeyState
-            test    edx,ENHANCED_KEY
-            mov     ecx,KEY_EXTENDED
-            cmovz   ecx,edi
-            test    edx,LEFT_CTRL_PRESSED or RIGHT_CTRL_PRESSED
-            mov     eax,CTRLKEY_DOWN
-            cmovz   eax,edi
-            or      ecx,eax
-            test    edx,SHIFT_PRESSED
-            mov     eax,SHIFTKEY_DOWN
-            cmovz   eax,edi
-            or      ecx,eax
-            test    edx,RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED
-            mov     eax,ALTKEY_DOWN
-            cmovz   eax,edi
-            or      ecx,eax
-            movzx   eax,Input.Event.KeyEvent.wVirtualScanCode
-            shl     eax,16
-            mov     ax,Input.Event.KeyEvent.wVirtualKeyCode
-            or      ecx,eax
-            mov     eax,KF_UP shl 16
-            cmp     edi,Input.Event.KeyEvent.bKeyDown
-            cmovz   eax,edi
-            or      ecx,eax
-            cmp     edi,Input.Event.KeyEvent.bKeyDown
+            movzx   ecx,word ptr Input.Event.KeyEvent.dwControlKeyState
+            cmp     Input.Event.KeyEvent.bKeyDown,0
             mov     eax,WM_KEYUP
             mov     esi,WM_KEYDOWN
             cmovz   esi,eax
             ;
             ; wParam
             ;
-            ; The character code of the key
+            ; The Char or Virtual Key Code of the key
             ;
             movzx   edi,Input.Event.KeyEvent.wVirtualKeyCode
-            movzx   edx,Input.Event.KeyEvent.uChar.UnicodeChar
-            test    ecx,0x01000000
+            mov     eax,ecx
+            or      ecx,KEY_CHAR
+            movzx   edx,TCHAR ptr Input.Event.KeyEvent.uChar.UnicodeChar
+            test    ecx,ENHANCED_KEY or RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED
             cmovnz  edx,edi
+            cmovnz  ecx,eax
+            test    edx,edx
+            cmovz   edx,edi
+            cmovz   ecx,eax
+
+            _postmessage(rbx, esi, rdx, rcx)
+
+            movzx   edx,TCHAR ptr Input.Event.KeyEvent.uChar.UnicodeChar
+            mov     ecx,Input.Event.KeyEvent.dwControlKeyState
+
+            .endc .if ( Input.Event.KeyEvent.bKeyDown == 0 )
+            .endc .if ( edx == 0 )
+            .endc .if ( ecx & ENHANCED_KEY )
+
+            or      ecx,KEY_CHAR
+            mov     eax,WM_CHAR
+            mov     esi,WM_SYSCHAR
+            test    ecx,RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED
+            cmovz   esi,eax
 
             _postmessage(rbx, esi, rdx, rcx)
 
@@ -238,6 +172,9 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
             test    edi,RIGHTMOST_BUTTON_PRESSED
             cmovz   eax,edx
             or      ecx,eax
+            mov     eax,edi
+            and     eax,0xFFFFFF00
+            or      ecx,eax
             xor     esi,esi
             mov     eax,Input.Event.MouseEvent.dwEventFlags
 
@@ -258,8 +195,8 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND
                 .endif
 ifdef __TTY__
             .case MOUSE_BUTTON_UP
-                mov eax,_msbuttons
-                mov _msbuttons,0
+                mov eax,msbuttons
+                mov msbuttons,0
                 .if ( eax & MK_RBUTTON )
                     mov esi,WM_RBUTTONUP
                 .elseif ( eax & MK_MBUTTON )
@@ -268,7 +205,7 @@ ifdef __TTY__
                     mov esi,WM_LBUTTONUP
                 .endif
             .case MOUSE_BUTTON_DOWN
-                mov _msbuttons,ecx
+                mov msbuttons,ecx
                 .if ( ecx & MK_LBUTTON )
                     mov esi,WM_LBUTTONDOWN
                 .elseif ( ecx & MK_RBUTTON )
@@ -278,8 +215,8 @@ ifdef __TTY__
                 .endif
 else
             .default
-                mov eax,_msbuttons
-                mov _msbuttons,edi
+                mov eax,msbuttons
+                mov msbuttons,edi
                 .if ( eax != edi )
                     .if ( ( eax & FROM_LEFT_1ST_BUTTON_PRESSED ) && !( edi & FROM_LEFT_1ST_BUTTON_PRESSED ) )
                         mov esi,WM_LBUTTONUP
@@ -310,104 +247,15 @@ endif
         .case WINDOW_BUFFER_SIZE_EVENT
             _postmessage(rbx, WM_SIZE, 0, 0)
         .case FOCUS_EVENT
-            mov _focus,Input.Event.FocusEvent.bSetFocus
+            mov rcx,_console
+            mov eax,Input.Event.FocusEvent.bSetFocus
+            mov [rcx].TCONSOLE.focus,eax
         .case MENU_EVENT
             _postmessage(rbx, Input.Event.MenuEvent.dwCommandId, 0, 0)
         .endsw
-
-        mov rbx,_msgptr
-        .if ( rbx == NULL || _focus == 0 )
-
-            inc IdleCount
-            .if IdleCount >= 100
-
-                mov IdleCount,0
-                _postmessage(rbx, WM_ENTERIDLE, 0, 0)
-            .endif
-        .endif
     .endw
     ret
 
 _getmessage endp
-
-
-    assume rdx:nothing
-
-_translatemsg proc uses rbx msg:PMESSAGE
-
-    ldr rbx,msg
-
-    mov eax,[rbx].message
-    .if ( eax == WM_NULL )
-
-        .return
-    .endif
-
-    mov rcx,[rbx].hwnd
-    .if ( rcx == NULL )
-
-        mov rcx,_console
-        .for ( : rcx && [rcx].TCLASS.next : rcx = [rcx].TCLASS.next )
-        .endf
-        mov [rbx].hwnd,rcx
-    .endif
-
-    _sendmessage([rbx].hwnd, [rbx].message, [rbx].wParam, [rbx].lParam)
-
-    .return .if ( !eax )
-    .return .if ( [rbx].message != WM_KEYDOWN )
-
-    mov rcx,[rbx].lParam
-    .if !( ecx & KEY_EXTENDED )
-
-        mov   edx,WM_CHAR
-        mov   eax,WM_SYSCHAR
-        test  ecx,ALTKEY_DOWN
-        cmovz eax,edx
-
-        _sendmessage([rbx].hwnd, eax, [rbx].wParam, rcx)
-    .endif
-    ret
-
-_translatemsg endp
-
-
-    assume rbx:THWND
-
-_sendmessage proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
-
-    ldr rbx,hwnd
-    .if ( [rbx].flags & W_WNDPROC && [rbx].flags & W_CHILD )
-
-        .return( [rbx].winproc(rbx, uiMsg, wParam, lParam) )
-    .endif
-    .if ( [rbx].flags & O_CHILD )
-
-        .if _dlgetfocus(rbx)
-
-            mov rbx,rax
-            .if ( [rbx].flags & W_WNDPROC )
-                .return .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
-            .endif
-            mov rbx,hwnd
-        .endif
-        .for ( rbx = [rbx].object : rbx : )
-            .if ( [rbx].flags & W_WNDPROC )
-                .return .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
-            .endif
-            mov rbx,[rbx].next
-        .endf
-        mov rbx,hwnd
-    .endif
-    .for ( eax = 1 : rbx : )
-
-        .if ( [rbx].flags & W_WNDPROC )
-            .break .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
-        .endif
-        mov rbx,[rbx].prev
-    .endf
-    ret
-
-_sendmessage endp
 
     end

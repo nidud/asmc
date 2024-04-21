@@ -12,39 +12,55 @@ _rcunzip proc uses rsi rdi rbx rc:TRECT, dst:PCHAR_INFO, src:ptr, flags:uint_t
 
    .new count:int_t
 
-    movzx eax,rc.col
-    mul rc.row
+    ldr eax,rc
+    ldr rdi,dst
+    ldr rsi,src
+    ldr ecx,flags
+
+    shr eax,16
+    mul ah
     mov count,eax
 
-    .if !( flags & _D_UTF16 )
+    .if !( ecx & W_UTF16 )
 
-        mov rdi,dst
+        lea rdx,[rdi+2]
         mov ecx,count
         xor eax,eax
         rep stosd
-    .endif
 
-    mov rsi,src
-    mov rdi,dst
-    mov ecx,count
-    decompress()
-    .if ( flags & _D_UTF16 )
+        mov rdi,rdx
+        mov ecx,count
+        decompress()
+        mov rdi,dst
+        mov ecx,count
+        decompress()
 
+        .for ( rbx = dst, rsi = &_unicode850, ecx = 0 : ecx < count : ecx++, rbx+=4 )
+
+            movzx eax,byte ptr [rbx]
+            mov ax,[rsi+rax*2]
+            mov [rbx],ax
+        .endf
+
+    .else
+
+        mov ecx,count
+        decompress()
         mov rdi,dst
         inc rdi
         mov ecx,count
         decompress()
-    .endif
-    mov rdi,dst
-    add rdi,2
-    mov ecx,count
-    decompress()
-    .if ( flags & _D_UTF16 )
-
+        mov rdi,dst
+        add rdi,2
+        mov ecx,count
+        decompress()
         mov rdi,dst
         add rdi,3
         mov ecx,count
         decompress()
+    .endif
+    .if ( flags & W_RESAT )
+        _rcunzipat(rc, dst)
     .endif
     ret
 

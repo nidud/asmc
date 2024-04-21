@@ -38,6 +38,8 @@ _dlsetfocus proc uses rbx hwnd:THWND, index:BYTE
             mov rcx,rax
             [rcx].winproc(rcx, WM_KILLFOCUS, 0, 0)
         .endif
+        mov rcx,[rbx].prev
+        mov [rcx].index,[rbx].index
         [rbx].winproc(rbx, WM_SETFOCUS, 0, 0)
     .endif
     .return( 0 )

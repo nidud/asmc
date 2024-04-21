@@ -4,32 +4,32 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include stdio.inc
 include conio.inc
 include syserr.inc
+include tchar.inc
 
 .code
 
-_syserr proc en:uint_t, title:tstring_t
+_syserr proc title:tstring_t, format:tstring_t, argptr:vararg
 
-ifdef _UNICODE
-   .new buffer[_SYS_MSGMAX]:wchar_t
-endif
+   .new msg:string_t = _sys_err_msg(_get_errno(NULL))
 
-    ldr ecx,en
-    mov rcx,_sys_err_msg(ecx)
+    _vstprintf(&_bufin, format, &argptr)
+    lea rcx,_bufin
+    lea rcx,[rcx+rax*TCHAR]
+    mov eax,10
+    mov [rcx],_tal
+    mov [rcx+TCHAR],_tal
+    add rcx,TCHAR*2
 
-ifdef _UNICODE
-    movzx eax,char_t ptr [rcx]
-    .for ( edx = 0 : eax && edx < _SYS_MSGMAX : edx++ )
+    .for ( rdx = msg : eax : rdx++, rcx+=TCHAR )
 
-        mov al,[rcx+rdx]
-        mov buffer[rdx*2],ax
+        mov al,[rdx]
+        mov [rcx],_tal
     .endf
-    xor eax,eax
-    mov buffer[rdx*2],ax
-    lea rcx,buffer
-endif
-    _msgbox(MB_ICONERROR, title, rcx)
+
+    _vmsgbox(MB_OK or MB_ICONERROR, title, &_bufin)
     xor eax,eax
     ret
 

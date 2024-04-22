@@ -35,6 +35,7 @@ define OPATTR_DEFINED   0x20
 define OPATTR_SSREL     0x40
 define OPATTR_EXTRNREF  0x80
 define OPATTR_LANG_MASK 0x700
+define OPATTR_SIGNED    0x8000
 
 externdef StackAdj:uint_t
 
@@ -343,9 +344,16 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .if ( [rdi].kind == EXPR_EMPTY )
             .return
         .endif
+        .if ( ( [rdi].kind == EXPR_CONST || [rdi].kind == EXPR_FLOAT ) &&
+              oper == T_OPATTR && [rdi].flags & E_NEGATIVE )
+            or [rsi].value,OPATTR_SIGNED
+        .endif
         mov rbx,[rdi].sym
         .if ( [rdi].kind == EXPR_ADDR )
             mov al,[rdi].mem_type
+            .if ( al & MT_SIGNED && oper == T_OPATTR )
+                or [rsi].value,OPATTR_SIGNED
+            .endif
             and al,MT_SPECIAL_MASK
             .if ( rbx && [rbx].state != SYM_STACK && eax == MT_ADDRESS )
                 or [rsi].value,OPATTR_CODELABEL
@@ -382,6 +390,9 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .endif
         .if ( [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
             or [rsi].value,OPATTR_REGISTER
+            .if ( [rdi].mem_type & MT_SIGNED && oper == T_OPATTR )
+                or [rsi].value,OPATTR_SIGNED
+            .endif
         .endif
         .if ( [rdi].kind != EXPR_ERROR && [rdi].kind != EXPR_FLOAT && ( ebx == NULL || [rbx].flags & S_ISDEFINED ) )
             or [rsi].value,OPATTR_DEFINED

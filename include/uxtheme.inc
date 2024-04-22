@@ -5,7 +5,6 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-
 include commctrl.inc
 include specstrings.inc
 
@@ -19,22 +18,10 @@ endif
 HTHEME typedef HANDLE
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
-;BOOL
-BeginPanningFeedback proto WINAPI \
-		  hwnd: HWND
 
-;BOOL
-UpdatePanningFeedback proto WINAPI \
-		  hwnd: HWND,
-  lTotalOverpanOffsetX: LONG,
-  lTotalOverpanOffsetY: LONG,
-	    fInInertia: BOOL
-
-
-;BOOL
-EndPanningFeedback proto WINAPI \
-		  hwnd: HWND,
-	  fAnimateBack: BOOL
+BeginPanningFeedback proto WINAPI :HWND
+UpdatePanningFeedback proto WINAPI :HWND, :LONG, :LONG, :BOOL
+EndPanningFeedback proto WINAPI :HWND, :BOOL
 
 endif
 
@@ -58,16 +45,7 @@ if (NTDDI_VERSION GE NTDDI_WIN8)
     TAPF_HASPERSPECTIVE	    = 0x10,
     }
 
-
-GetThemeAnimationProperty proto WINAPI \
-		hTheme: HTHEME,
-	 iStoryboardId: int_t,
-	     iTargetId: int_t,
-	     eProperty: TA_PROPERTY,
-	    pvProperty: ptr VOID,
-		cbSize: DWORD,
-	    pcbSizeOut: ptr DWORD
-
+GetThemeAnimationProperty proto WINAPI :HTHEME, :sdword, :sdword, :TA_PROPERTY, :ptr, :DWORD, :ptr
 
 .enum TA_TRANSFORM_TYPE {
     TATT_TRANSLATE_2D,
@@ -127,15 +105,7 @@ PTA_TRANSFORM_CLIP	typedef ptr TA_TRANSFORM_CLIP
 
 .pragma pack(pop)
 
-GetThemeAnimationTransform proto WINAPI \
-		hTheme: HTHEME,
-	 iStoryboardId: int_t,
-	     iTargetId: int_t,
-      dwTransformIndex: DWORD,
-	    pTransform: ptr TA_TRANSFORM,
-		cbSize: DWORD,
-	    pcbSizeOut: ptr DWORD
-
+GetThemeAnimationTransform proto WINAPI :HTHEME, :sdword, :sdword, :DWORD, : ptr, :DWORD, :ptr
 
 .enum TA_TIMINGFUNCTION_TYPE {
     TTFT_UNDEFINED,
@@ -160,39 +130,19 @@ PTA_CUBIC_BEZIER	typedef ptr TA_CUBIC_BEZIER
 
 .pragma pack(pop)
 
-GetThemeTimingFunction proto WINAPI \
-		hTheme: HTHEME,
-     iTimingFunctionId: int_t,
-       pTimingFunction: ptr TA_TIMINGFUNCTION,
-		cbSize: DWORD,
-	    pcbSizeOut: ptr DWORD
+GetThemeTimingFunction proto WINAPI :HTHEME, :sdword, :ptr, :DWORD, :ptr
 
 endif
 
-OpenThemeData proto WINAPI \
-		  hwnd: HWND,
-	  pszClassList: LPCWSTR
-
+OpenThemeData proto WINAPI :HWND, :LPCWSTR
 
 OTD_FORCE_RECT_SIZING	equ 0x00000001
 OTD_NONCLIENT		equ 0x00000002
 OTD_VALIDBITS		equ OTD_FORCE_RECT_SIZING OR OTD_NONCLIENT
 
-OpenThemeDataEx proto WINAPI \
-		  hwnd: HWND,
-	  pszClassList: LPCWSTR,
-	       dwFlags: DWORD
-
-CloseThemeData proto WINAPI \
-		hTheme: HTHEME
-
-DrawThemeBackground proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-		 pRect: LPCRECT,
-	     pClipRect: LPCRECT
+OpenThemeDataEx proto WINAPI :HWND, :LPCWSTR, :DWORD
+CloseThemeData proto WINAPI :HTHEME
+DrawThemeBackground proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :LPCRECT, :LPCRECT
 
 
 DTBG_CLIPRECT		equ 0x00000001
@@ -202,12 +152,7 @@ DTBG_OMITCONTENT	equ 0x00000008
 DTBG_COMPUTINGREGION	equ 0x00000010
 DTBG_MIRRORDC		equ 0x00000020
 DTBG_NOMIRROR		equ 0x00000040
-DTBG_VALIDBITS		equ (DTBG_CLIPRECT OR \
-			     DTBG_DRAWSOLID OR \
-			     DTBG_OMITBORDER OR \
-			     DTBG_OMITCONTENT OR \
-			     DTBG_COMPUTINGREGION OR \
-			     DTBG_MIRRORDC)
+DTBG_VALIDBITS		equ (DTBG_CLIPRECT OR DTBG_DRAWSOLID OR DTBG_OMITBORDER OR DTBG_OMITCONTENT OR DTBG_COMPUTINGREGION OR DTBG_MIRRORDC)
 
 DTBGOPTS		STRUC
 dwSize			dd ?
@@ -216,56 +161,15 @@ rcClip			RECT <>
 DTBGOPTS		ENDS
 PDTBGOPTS		typedef ptr DTBGOPTS
 
-DrawThemeBackgroundEx proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-		 pRect: LPCRECT,
-	      pOptions: ptr DTBGOPTS
-
+DrawThemeBackgroundEx proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :ptr, :ptr
 
 DTT_GRAYED		equ 0x00000001
 DTT_FLAGS2VALIDBITS	equ (DTT_GRAYED)
 
-DrawThemeText proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       pszText: LPCWSTR,
-	       cchText: int_t,
-	   dwTextFlags: DWORD,
-	  dwTextFlags2: DWORD,
-		 pRect: LPCRECT
-
-
-GetThemeBackgroundContentRect proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	 pBoundingRect: LPCRECT,
-	  pContentRect: LPRECT
-
-
-GetThemeBackgroundExtent proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	  pContentRect: LPCRECT,
-	   pExtentRect: LPRECT
-
-
-GetThemeBackgroundRegion proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-		 pRect: LPCRECT,
-	       pRegion: ptr HRGN
-
+DrawThemeText proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :LPCWSTR, :sdword, :DWORD, :DWORD, :ptr
+GetThemeBackgroundContentRect proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :ptr, :ptr
+GetThemeBackgroundExtent proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :ptr, :ptr
+GetThemeBackgroundRegion proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :ptr, :ptr
 
 .enum THEMESIZE {
     TS_MIN,
@@ -273,36 +177,9 @@ GetThemeBackgroundRegion proto WINAPI \
     TS_DRAW
     }
 
-GetThemePartSize proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-		   prc: LPCRECT,
-		 eSize: THEMESIZE,
-		   psz: ptr SIZE
-
-
-GetThemeTextExtent proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       pszText: LPCWSTR,
-	  cchCharCount: int_t,
-	   dwTextFlags: DWORD,
-	 pBoundingRect: LPCRECT,
-	   pExtentRect: LPRECT
-
-
-GetThemeTextMetrics proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-		   ptm: ptr TEXTMETRICW
-
-
+GetThemePartSize proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :LPCRECT, :THEMESIZE, :ptr
+GetThemeTextExtent proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :LPCWSTR, :sdword, :DWORD, :LPCRECT, :LPRECT
+GetThemeTextMetrics proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :ptr
 
 HTTB_BACKGROUNDSEG	equ 0x00000000
 HTTB_FIXEDBORDER	equ 0x00000002
@@ -311,117 +188,24 @@ HTTB_RESIZINGBORDER_LEFT equ 0x00000010
 HTTB_RESIZINGBORDER_TOP equ 0x00000020
 HTTB_RESIZINGBORDER_RIGHT equ 0x00000040
 HTTB_RESIZINGBORDER_BOTTOM equ 0x00000080
-HTTB_RESIZINGBORDER	equ (HTTB_RESIZINGBORDER_LEFT OR \
-			     HTTB_RESIZINGBORDER_TOP OR \
-			     HTTB_RESIZINGBORDER_RIGHT)
+HTTB_RESIZINGBORDER	equ (HTTB_RESIZINGBORDER_LEFT OR HTTB_RESIZINGBORDER_TOP OR HTTB_RESIZINGBORDER_RIGHT)
 HTTB_SIZINGTEMPLATE	equ 0x00000100
 HTTB_SYSTEMSIZINGMARGINS equ 0x00000200
 
-HitTestThemeBackground proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	     dwOptions: DWORD,
-		 pRect: LPCRECT,
-		  hrgn: HRGN,
-		ptTest: POINT,
-	 pwHitTestCode: ptr WORD
-
-DrawThemeEdge proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	     pDestRect: LPCRECT,
-		 uEdge: UINT,
-		uFlags: UINT,
-	  pContentRect: LPRECT
-
-DrawThemeIcon proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-		 pRect: LPCRECT,
-		  himl: HIMAGELIST,
-	   iImageIndex: int_t
-
-IsThemePartDefined proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t
-
-IsThemeBackgroundPartiallyTransparent proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t
-
-GetThemeColor proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		pColor: ptr COLORREF
-
-GetThemeMetric proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		 piVal: ptr int_t
-
-GetThemeString proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-	       pszBuff: LPWSTR,
-       cchMaxBuffChars: int_t
-
-GetThemeBool proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		 pfVal: ptr BOOL
-
-GetThemeInt proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		 piVal: ptr int_t
-
-GetThemeEnumValue proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		 piVal: ptr int_t
-
-GetThemePosition proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		pPoint: ptr POINT
-
-GetThemeFont proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		 pFont: ptr LOGFONTW
-
-GetThemeRect proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		 pRect: LPRECT
+HitTestThemeBackground proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :DWORD, :LPCRECT, :HRGN, :POINT, :ptr
+DrawThemeEdge proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :LPCRECT, :UINT, :UINT, :LPRECT
+DrawThemeIcon proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :LPCRECT, :HIMAGELIST, :sdword
+IsThemePartDefined proto WINAPI :HTHEME, :sdword, :sdword
+IsThemeBackgroundPartiallyTransparent proto WINAPI :HTHEME, :sdword, :sdword
+GetThemeColor proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ptr
+GetThemeMetric proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :sdword, :ptr
+GetThemeString proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :LPWSTR, :sdword
+GetThemeBool proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ptr
+GetThemeInt proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ptr
+GetThemeEnumValue proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ptr
+GetThemePosition proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ptr
+GetThemeFont proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :sdword, :ptr
+GetThemeRect proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :LPRECT
 
 MARGINS			STRUC
 cxLeftWidth		int_t ?
@@ -431,15 +215,7 @@ cyBottomHeight		int_t ?
 MARGINS			ENDS
 PMARGINS		typedef ptr MARGINS
 
-GetThemeMargins proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-		   prc: LPCRECT,
-	      pMargins: ptr MARGINS
-
+GetThemeMargins proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :sdword, :LPCRECT, :ptr
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 MAX_INTLIST_COUNT	equ 402
@@ -453,13 +229,7 @@ iValues			int_t MAX_INTLIST_COUNT dup(?)
 INTLIST			ENDS
 PINTLIST		typedef ptr INTLIST
 
-GetThemeIntList proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-	      pIntList: ptr INTLIST
-
+GetThemeIntList proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ptr
 
 .enum PROPERTYORIGIN {
     PO_STATE,
@@ -469,135 +239,51 @@ GetThemeIntList proto WINAPI \
     PO_NOTFOUND
     }
 
-GetThemePropertyOrigin proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-	       pOrigin: ptr PROPERTYORIGIN
-
-SetWindowTheme proto WINAPI \
-		  hwnd: HWND,
-	 pszSubAppName: LPCWSTR,
-	  pszSubIdList: LPCWSTR
-
-
-GetThemeFilename proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-      pszThemeFileName: LPWSTR,
-       cchMaxBuffChars: int_t
-
-GetThemeSysColor proto WINAPI \
-		hTheme: HTHEME,
-	      iColorId: int_t
-
-GetThemeSysColorBrush proto WINAPI \
-		hTheme: HTHEME,
-	      iColorId: int_t
-
-GetThemeSysBool proto WINAPI \
-		hTheme: HTHEME,
-	       iBoolId: int_t
-
-GetThemeSysSize proto WINAPI \
-		hTheme: HTHEME,
-	       iSizeId: int_t
-
-GetThemeSysFont proto WINAPI \
-		hTheme: HTHEME,
-	       iFontId: int_t,
-		   plf: ptr LOGFONTW
-
-GetThemeSysString proto WINAPI \
-		hTheme: HTHEME,
-	     iStringId: int_t,
-	 pszStringBuff: LPWSTR,
-     cchMaxStringChars: int_t
-
-GetThemeSysInt proto WINAPI \
-		hTheme: HTHEME,
-		iIntId: int_t,
-	       piValue: ptr int_t
-
+GetThemePropertyOrigin proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ptr
+SetWindowTheme proto WINAPI :HWND, :LPCWSTR, :LPCWSTR
+GetThemeFilename proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :LPWSTR, :sdword
+GetThemeSysColor proto WINAPI :HTHEME, :sdword
+GetThemeSysColorBrush proto WINAPI :HTHEME, :sdword
+GetThemeSysBool proto WINAPI :HTHEME, :sdword
+GetThemeSysSize proto WINAPI :HTHEME, :sdword
+GetThemeSysFont proto WINAPI :HTHEME,:sdword, :ptr
+GetThemeSysString proto WINAPI :HTHEME, :sdword, :LPWSTR, :sdword
+GetThemeSysInt proto WINAPI :HTHEME, :sdword, :ptr
 IsThemeActive proto WINAPI
-
 IsAppThemed proto WINAPI
-
-GetWindowTheme proto WINAPI \
-		  hwnd: HWND
-
+GetWindowTheme proto WINAPI :HWND
 
 ETDT_DISABLE		equ 0x00000001
 ETDT_ENABLE		equ 0x00000002
 ETDT_USETABTEXTURE	equ 0x00000004
-
 ETDT_ENABLETAB		equ (ETDT_ENABLE OR ETDT_USETABTEXTURE)
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 ETDT_USEAEROWIZARDTABTEXTURE equ 0x00000008
-
 ETDT_ENABLEAEROWIZARDTAB equ (ETDT_ENABLE OR ETDT_USEAEROWIZARDTABTEXTURE)
-ETDT_VALIDBITS		equ (ETDT_DISABLE OR \
-			     ETDT_ENABLE OR \
-			     ETDT_USETABTEXTURE OR \
-			     ETDT_USEAEROWIZARDTABTEXTURE)
+ETDT_VALIDBITS		equ (ETDT_DISABLE OR ETDT_ENABLE OR ETDT_USETABTEXTURE OR ETDT_USEAEROWIZARDTABTEXTURE)
 endif
 
-EnableThemeDialogTexture proto WINAPI \
-		  hwnd: HWND,
-	       dwFlags: DWORD
+EnableThemeDialogTexture proto WINAPI :HWND, :DWORD
+IsThemeDialogTextureEnabled proto WINAPI :HWND
 
-IsThemeDialogTextureEnabled proto WINAPI \
-		  hwnd: HWND
-
-
-
-STAP_ALLOW_NONCLIENT	equ (1UL SHL 0)
-STAP_ALLOW_CONTROLS	equ (1UL SHL 1)
-STAP_ALLOW_WEBCONTENT	equ (1UL SHL 2)
-STAP_VALIDBITS		equ (STAP_ALLOW_NONCLIENT OR \
-			     STAP_ALLOW_CONTROLS OR \
-			     STAP_ALLOW_WEBCONTENT)
+STAP_ALLOW_NONCLIENT	equ (1 SHL 0)
+STAP_ALLOW_CONTROLS	equ (1 SHL 1)
+STAP_ALLOW_WEBCONTENT	equ (1 SHL 2)
+STAP_VALIDBITS		equ (STAP_ALLOW_NONCLIENT OR STAP_ALLOW_CONTROLS OR STAP_ALLOW_WEBCONTENT)
 
 GetThemeAppProperties proto WINAPI
-
-SetThemeAppProperties proto WINAPI \
-	       dwFlags: DWORD
-
-
-GetCurrentThemeName proto WINAPI \
-      pszThemeFileName: LPWSTR,
-       cchMaxNameChars: int_t,
-	  pszColorBuff: LPWSTR,
-      cchMaxColorChars: int_t,
-	   pszSizeBuff: LPWSTR,
-       cchMaxSizeChars: int_t
-
+SetThemeAppProperties proto WINAPI :DWORD
+GetCurrentThemeName proto WINAPI :LPWSTR, :sdword, :LPWSTR, :sdword, :LPWSTR, :sdword
 
 SZ_THDOCPROP_DISPLAYNAME equ <L"DisplayName">
 SZ_THDOCPROP_CANONICALNAME equ <L"ThemeName">
 SZ_THDOCPROP_TOOLTIP	equ <L"ToolTip">
 SZ_THDOCPROP_AUTHOR	equ <L"author">
 
-GetThemeDocumentationProperty proto WINAPI \
-	  pszThemeName: LPCWSTR,
-       pszPropertyName: LPCWSTR,
-	  pszValueBuff: LPWSTR,
-	cchMaxValChars: int_t
-
-
-DrawThemeParentBackground proto WINAPI \
-		  hwnd: HWND,
-		   hdc: HDC,
-		   prc: ptr RECT
-
-
-EnableTheming proto WINAPI \
-	       fEnable: BOOL
-
+GetThemeDocumentationProperty proto WINAPI :LPCWSTR, :LPCWSTR, :LPWSTR, :sdword
+DrawThemeParentBackground proto WINAPI :HWND, :HDC, :ptr
+EnableTheming proto WINAPI :BOOL
 
 GBF_DIRECT		equ 0x00000001
 GBF_COPY		equ 0x00000002
@@ -609,13 +295,7 @@ DTPB_WINDOWDC		equ 0x00000001
 DTPB_USECTLCOLORSTATIC	equ 0x00000002
 DTPB_USEERASEBKGND	equ 0x00000004
 
-DrawThemeParentBackgroundEx proto WINAPI \
-		  hwnd: HWND,
-		   hdc: HDC,
-	       dwFlags: DWORD,
-		   prc: ptr RECT
-
-
+DrawThemeParentBackgroundEx proto WINAPI :HWND, :HDC, :DWORD, :ptr
 
 .enum WINDOWTHEMEATTRIBUTETYPE {
     WTA_NONCLIENT = 1
@@ -631,22 +311,12 @@ WTNCA_NODRAWCAPTION	equ 0x00000001
 WTNCA_NODRAWICON	equ 0x00000002
 WTNCA_NOSYSMENU		equ 0x00000004
 WTNCA_NOMIRRORHELP	equ 0x00000008
-WTNCA_VALIDBITS		equ (WTNCA_NODRAWCAPTION OR \
-			     WTNCA_NODRAWICON OR \
-			     WTNCA_NOSYSMENU OR \
-			     WTNCA_NOMIRRORHELP)
+WTNCA_VALIDBITS		equ (WTNCA_NODRAWCAPTION OR WTNCA_NODRAWICON OR WTNCA_NOSYSMENU OR WTNCA_NOMIRRORHELP)
 
-SetWindowThemeAttribute proto WINAPI \
-		  hwnd: HWND,
-	    eAttribute: WINDOWTHEMEATTRIBUTETYPE,
-	   pvAttribute: PVOID,
-	   cbAttribute: DWORD
-
+SetWindowThemeAttribute proto WINAPI :HWND, :WINDOWTHEMEATTRIBUTETYPE, :PVOID, :DWORD
 
 SetWindowThemeNonClientAttributes proto :HWND, :DWORD, :DWORD {
-
-    .new wta:WTA_OPTIONS
-
+   .new wta:WTA_OPTIONS
     mov wta.dwFlags,r8d
     mov wta.dwMask,edx
     SetWindowThemeAttribute(rcx, WTA_NONCLIENT, addr wta, sizeof(wta))
@@ -654,35 +324,25 @@ SetWindowThemeNonClientAttributes proto :HWND, :DWORD, :DWORD {
 
 endif
 
-CALLBACK(DTT_CALLBACK_PROC, :HDC, :LPWSTR, :int_t, :LPRECT, :UINT, :LPARAM)
+CALLBACK(DTT_CALLBACK_PROC, :HDC, :LPWSTR, :sdword, :LPRECT, :UINT, :LPARAM)
 
-DTT_TEXTCOLOR		equ (1UL SHL 0)
-DTT_BORDERCOLOR		equ (1UL SHL 1)
-DTT_SHADOWCOLOR		equ (1UL SHL 2)
-DTT_SHADOWTYPE		equ (1UL SHL 3)
-DTT_SHADOWOFFSET	equ (1UL SHL 4)
-DTT_BORDERSIZE		equ (1UL SHL 5)
-DTT_FONTPROP		equ (1UL SHL 6)
-DTT_COLORPROP		equ (1UL SHL 7)
-DTT_STATEID		equ (1UL SHL 8)
-DTT_CALCRECT		equ (1UL SHL 9)
-DTT_APPLYOVERLAY	equ (1UL SHL 10)
-DTT_GLOWSIZE		equ (1UL SHL 11)
-DTT_CALLBACK		equ (1UL SHL 12)
-DTT_COMPOSITED		equ (1UL SHL 13)
-DTT_VALIDBITS		equ (DTT_TEXTCOLOR OR \
-			     DTT_BORDERCOLOR OR \
-			     DTT_SHADOWCOLOR OR \
-			     DTT_SHADOWTYPE OR \
-			     DTT_SHADOWOFFSET OR \
-			     DTT_BORDERSIZE OR \
-			     DTT_FONTPROP OR \
-			     DTT_COLORPROP OR \
-			     DTT_STATEID OR \
-			     DTT_CALCRECT OR \
-			     DTT_APPLYOVERLAY OR \
-			     DTT_GLOWSIZE OR \
-			     DTT_COMPOSITED)
+DTT_TEXTCOLOR		equ (1 SHL 0)
+DTT_BORDERCOLOR		equ (1 SHL 1)
+DTT_SHADOWCOLOR		equ (1 SHL 2)
+DTT_SHADOWTYPE		equ (1 SHL 3)
+DTT_SHADOWOFFSET	equ (1 SHL 4)
+DTT_BORDERSIZE		equ (1 SHL 5)
+DTT_FONTPROP		equ (1 SHL 6)
+DTT_COLORPROP		equ (1 SHL 7)
+DTT_STATEID		equ (1 SHL 8)
+DTT_CALCRECT		equ (1 SHL 9)
+DTT_APPLYOVERLAY	equ (1 SHL 10)
+DTT_GLOWSIZE		equ (1 SHL 11)
+DTT_CALLBACK		equ (1 SHL 12)
+DTT_COMPOSITED		equ (1 SHL 13)
+DTT_VALIDBITS		equ (DTT_TEXTCOLOR OR DTT_BORDERCOLOR OR DTT_SHADOWCOLOR OR DTT_SHADOWTYPE OR \
+			     DTT_SHADOWOFFSET OR DTT_BORDERSIZE OR DTT_FONTPROP OR DTT_COLORPROP OR \
+			     DTT_STATEID OR DTT_CALCRECT OR DTT_APPLYOVERLAY OR DTT_GLOWSIZE OR DTT_COMPOSITED)
 
 DTTOPTS			STRUC
 dwSize			dd ?
@@ -705,37 +365,9 @@ PDTTOPTS		typedef ptr DTTOPTS
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-DrawThemeTextEx proto WINAPI \
-		hTheme: HTHEME,
-		   hdc: HDC,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       pszText: LPCWSTR,
-	       cchText: int_t,
-	   dwTextFlags: DWORD,
-		 pRect: LPRECT,
-	      pOptions: ptr DTTOPTS
-
-
-GetThemeBitmap proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-	       dwFlags: ULONG,
-	      phBitmap: ptr HBITMAP
-
-
-GetThemeStream proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	      iStateId: int_t,
-	       iPropId: int_t,
-	     ppvStream: ptr VOID,
-	     pcbStream: ptr DWORD,
-		 hInst: HINSTANCE
-
-
+DrawThemeTextEx proto WINAPI :HTHEME, :HDC, :sdword, :sdword, :LPCWSTR, :sdword, :DWORD, :LPRECT, :ptr
+GetThemeBitmap proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ULONG, :ptr
+GetThemeStream proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :ptr, :ptr, :HINSTANCE
 BufferedPaintInit proto WINAPI
 BufferedPaintUnInit proto WINAPI
 
@@ -750,14 +382,12 @@ HPAINTBUFFER typedef HANDLE
 
 BPBF_COMPOSITED		equ BPBF_TOPDOWNDIB
 
-
 .enum BP_ANIMATIONSTYLE {
     BPAS_NONE,
     BPAS_LINEAR,
     BPAS_CUBIC,
     BPAS_SINE
     }
-
 
 BP_ANIMATIONPARAMS	STRUC
 cbSize			dd ?
@@ -771,7 +401,6 @@ BPPF_ERASE		equ 0x0001
 BPPF_NOCLIP		equ 0x0002
 BPPF_NONCLIENT		equ 0x0004
 
-
 BP_PAINTPARAMS		STRUC
 cbSize			dd ?
 dwFlags			dd ?
@@ -780,86 +409,24 @@ pBlendFunction		LPBLENDFUNCTION ?
 BP_PAINTPARAMS		ENDS
 PBP_PAINTPARAMS		typedef ptr BP_PAINTPARAMS
 
-BeginBufferedPaint proto WINAPI \
-	     hdcTarget: HDC,
-	     prcTarget: ptr RECT,
-	      dwFormat: BP_BUFFERFORMAT,
-	  pPaintParams: ptr BP_PAINTPARAMS,
-		  phdc: ptr HDC
-
-
-EndBufferedPaint proto WINAPI \
-	hBufferedPaint: HPAINTBUFFER,
-	 fUpdateTarget: BOOL
-
-
-GetBufferedPaintTargetRect proto WINAPI \
-	hBufferedPaint: HPAINTBUFFER,
-		   prc: ptr RECT
-
-GetBufferedPaintTargetDC proto WINAPI \
-	hBufferedPaint: HPAINTBUFFER
-
-
-GetBufferedPaintDC proto WINAPI \
-	hBufferedPaint: HPAINTBUFFER
-
-
-GetBufferedPaintBits proto WINAPI \
-	hBufferedPaint: HPAINTBUFFER,
-	     ppbBuffer: ptr RGBQUAD,
-		pcxRow: ptr int_t
-
-
-BufferedPaintClear proto WINAPI \
-	hBufferedPaint: HPAINTBUFFER,
-		   prc: ptr RECT
-
-
-BufferedPaintSetAlpha proto WINAPI \
-	hBufferedPaint: HPAINTBUFFER,
-		   prc: ptr RECT,
-		 alpha: BYTE
-
-
+BeginBufferedPaint proto WINAPI :HDC, :ptr, :BP_BUFFERFORMAT, :ptr, :ptr
+EndBufferedPaint proto WINAPI :HPAINTBUFFER, :BOOL
+GetBufferedPaintTargetRect proto WINAPI :HPAINTBUFFER, :ptr
+GetBufferedPaintTargetDC proto WINAPI :HPAINTBUFFER
+GetBufferedPaintDC proto WINAPI :HPAINTBUFFER
+GetBufferedPaintBits proto WINAPI :HPAINTBUFFER, :ptr, :ptr
+BufferedPaintClear proto WINAPI :HPAINTBUFFER, :ptr
+BufferedPaintSetAlpha proto WINAPI :HPAINTBUFFER, :ptr, :BYTE
 BufferedPaintMakeOpaque macro hBufferedPaint, prc
 	exitm<BufferedPaintSetAlpha(hBufferedPaint, prc, 255)>
 	endm
 
-BufferedPaintStopAllAnimations proto WINAPI \
-		  hwnd: HWND
-
+BufferedPaintStopAllAnimations proto WINAPI :HWND
 HANIMATIONBUFFER typedef HANDLE
-
-BeginBufferedAnimation proto WINAPI \
-		  hwnd: HWND,
-	     hdcTarget: HDC,
-	     prcTarget: ptr RECT,
-	      dwFormat: BP_BUFFERFORMAT,
-	  pPaintParams: ptr BP_PAINTPARAMS,
-      pAnimationParams: ptr BP_ANIMATIONPARAMS,
-	      phdcFrom: ptr HDC,
-		phdcTo: ptr HDC
-
-
-EndBufferedAnimation proto WINAPI \
-	  hbpAnimation: HANIMATIONBUFFER,
-	 fUpdateTarget: BOOL
-
-
-BufferedPaintRenderAnimation proto WINAPI \
-		  hwnd: HWND,
-	     hdcTarget: HDC
-
-
-GetThemeTransitionDuration proto WINAPI \
-		hTheme: HTHEME,
-	       iPartId: int_t,
-	  iStateIdFrom: int_t,
-	    iStateIdTo: int_t,
-	       iPropId: int_t,
-	   pdwDuration: ptr DWORD
-
+BeginBufferedAnimation proto WINAPI :HWND, :HDC, :ptr, :BP_BUFFERFORMAT, :ptr, :ptr, :ptr, :ptr
+EndBufferedAnimation proto WINAPI :HANIMATIONBUFFER, :BOOL
+BufferedPaintRenderAnimation proto WINAPI :HWND, :HDC
+GetThemeTransitionDuration proto WINAPI :HTHEME, :sdword, :sdword, :sdword, :sdword, :ptr
 
 endif
 endif

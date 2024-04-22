@@ -149,55 +149,71 @@ LOADTYPES_2 macro a, b, t1, t2
 
 ifndef NOMINMAX
 
-GETMINMAX macro a, b, x
-
-  local ra,rb,ta,tb,signed
-
-    if LOADTYPES_2(a, b, ta, tb)
-      if (a) &x&t (b)
-	exitm<a>
-      else
-	exitm<b>
-      endif
-    endif
-    LOADARGS_2(a,b,ta,tb,ra,rb)
-    cmp ra,rb
-    if ( typeof(ra) lt 4 )
-	ra textequ <eax>
-	rb textequ <edx>
-    endif
-    ifidn @SubStr(%ta, 1, 1),<s>
-	signed = 1
-    elseifidn @SubStr(%tb, 1, 1),<s>
-	signed = 1
-    else
-	signed = 0
-    endif
-    if signed
-     ifidn <x>,<g>
-	cmovl ra,rb
-     else
-	cmovg ra,rb
-     endif
-    else
-     ifidn <x>,<g>
-	cmovb ra,rb
-     else
-	cmova ra,rb
-     endif
-    endif
-    retm<ra>
-    endm
-
 ifndef max
 max macro a, b
-%   retm<GETMINMAX(a, b, g)>
+  local reg, src
+    if ( ( (OPATTR a) and 4 ) and ( (OPATTR b) and 4 ) )
+    if (a) gt (b)
+	exitm<a>
+    else
+	exitm<b>
+    endif
+    endif
+    if ( (OPATTR a) and 4 )
+	reg textequ @Reg(eax,TYPE(b) shl 3)
+    else
+	reg textequ @Reg(eax,TYPE(a) shl 3)
+    endif
+    ifdif reg,<a>
+	mov reg,a
+    endif
+    cmp reg,b
+    if ( (OPATTR b) and 4 )
+	src textequ @Reg(edx,TYPE(a) shl 3)
+	mov edx,b
+    else
+	src textequ <b>
+    endif
+    if ( ( (OPATTR a) and 0x8000 ) or ( (OPATTR b) and 0x8000 ) )
+	cmovl reg,src
+    else
+	cmovb reg,src
+    endif
+%   exitm<reg>
     endm
 endif
 
 ifndef min
 min macro a, b
-%   retm<GETMINMAX(a, b, l)>
+  local reg, src
+    if ( ( (OPATTR a) and 4 ) and ( (OPATTR b) and 4 ) )
+    if (a) lt (b)
+	exitm<a>
+    else
+	exitm<b>
+    endif
+    endif
+    if ( (OPATTR a) and 4 )
+	reg textequ @Reg(eax,TYPE(b) shl 3)
+    else
+	reg textequ @Reg(eax,TYPE(a) shl 3)
+    endif
+    ifdif reg,<a>
+	mov reg,a
+    endif
+    cmp reg,b
+    if ( (OPATTR b) and 4 )
+	src textequ @Reg(edx,TYPE(a) shl 3)
+	mov edx,b
+    else
+	src textequ <b>
+    endif
+    if ( ( (OPATTR a) and 0x8000 ) or ( (OPATTR b) and 0x8000 ) )
+	cmovg reg,src
+    else
+	cmova reg,src
+    endif
+%   exitm<reg>
     endm
 endif
 
@@ -217,18 +233,16 @@ endif
 
 MAKELONG macro a, b, reg:=<eax>
 	local ta,tb
-	ifidn typeid(a),<imm>
-	ifidn typeid(b),<imm>
+    if ( ( (OPATTR a) and 4 ) and ( (OPATTR b) and 4 ) )
 	exitm<(((a) AND 0xffff) OR (((b) AND 0xffff) SHL 16))>
-	endif
-	endif
+    endif
 	ta textequ <dword>
 	tb textequ <dword>
 	LOADARGS_2(a,b,ta,tb)
 	shl	eax,16
 	shrd	eax,edx,16
 %	ifdif <reg>,<eax>
-	if ( typeof(reg) eq 8 )
+	if ( TYPE(reg) eq 8 )
 	movsxd	reg,eax
 	else
 	mov	reg,eax

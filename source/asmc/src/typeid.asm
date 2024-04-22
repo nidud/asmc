@@ -104,28 +104,21 @@ GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
 
     .if ( [rdx].asym.state == SYM_STRUCT_FIELD )
 
-
         mov rcx,[rbx].sym
         mov eax,[rbx].kind
         assume rbx:ptr asym
-        .if ( rcx == NULL )
+        .if ( rsi && rcx == NULL )
 
-            mov rbx,rdx
             .if ( eax == EXPR_ADDR )
 
                 GetResWName( T_PTR, rdi )
                 add rdi,3
             .endif
-            .if ( rsi )
-                mov rbx,rsi
-            .endif
-            tstrcpy( rdi, [rbx].name )
+            tstrcpy( rdi, [rsi].asym.name )
            .return 1
         .endif
 
         mov rbx,rcx
-        mov rsi,[rdx].asym.name
-
         .if ( rbx )
             .if ( [rbx].mem_type == MT_TYPE )
                 mov rbx,[rbx].type
@@ -134,10 +127,14 @@ GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
                   ( [rbx].mem_type == MT_PTR || [rbx].ptr_memtype == MT_TYPE ) )
                 mov rbx,[rbx].asym.target_type
             .endif
-            tstrcpy( rdi, [rbx].name )
-            tstrcat( rdi, "." )
-            tstrcat( rdi, rsi )
-           .return 1
+            .if ( [rdx].asym.mem_type == MT_BITS && [rbx].typekind == TYPE_STRUCT )
+
+                mov rsi,[rdx].asym.name
+                tstrcpy( rdi, [rbx].name )
+                tstrcat( rdi, "." )
+                tstrcat( rdi, rsi )
+               .return 1
+            .endif
        .endif
     .endif
 

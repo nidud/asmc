@@ -1,6 +1,6 @@
 include stdarg.inc
 ifndef _WINBASE_
- include winbase.inc
+include winbase.inc
 endif
 
 .pragma pack(push, 8)
@@ -60,6 +60,7 @@ CALLBACK(EDITWORDBREAKPROCW, :LPWSTR, :SINT, :SINT, :SINT)
 if(WINVER GE 0x0400)
 CALLBACK(DRAWSTATEPROC, hdc:HDC, lData:LPARAM, wData:WPARAM, x:SINT, cy:SINT)
 endif
+
 else
 
 DLGPROC			typedef FARPROC
@@ -81,7 +82,7 @@ PROPENUMPROCEXW		typedef FARPROC
 if(WINVER GE 0x0400)
 DRAWSTATEPROC		typedef FARPROC
 endif
-endif
+endif ; STRICT
 
 ifdef _UNICODE
 PROPENUMPROC		typedef PROPENUMPROCW
@@ -156,34 +157,17 @@ RT_ANIICON		equ 22
 endif
 RT_HTML			equ 23
 
-endif
+endif ; NORESOURCE
 
-;int
-wvsprintfA proto WINAPI \
-		      : LPSTR,
-		      : LPCSTR,
-	       arglist: PVOID
-;int
-wvsprintfW proto WINAPI \
-		      : LPWSTR,
-		      : LPCWSTR,
-	       arglist: PVOID
+wvsprintfA proto WINAPI :LPSTR, :LPCSTR, :PVOID
+wvsprintfW proto WINAPI :LPWSTR, :LPCWSTR, :PVOID
 ifdef _UNICODE
 wvsprintf		equ <wvsprintfW>
 else
 wvsprintf		equ <wvsprintfA>
 endif
-
-;int
-wsprintfA proto __Cdecl \
-		      : LPSTR,
-		      : LPCSTR,
-		      : VARARG
-;int
-wsprintfW proto __Cdecl \
-		      : LPWSTR,
-		      : LPCWSTR,
-		      : VARARG
+wsprintfA proto __Cdecl :LPSTR, :LPCSTR, :VARARG
+wsprintfW proto __Cdecl :LPWSTR, :LPCWSTR, :VARARG
 ifdef _UNICODE
 wsprintf		equ <wsprintfW>
 else
@@ -215,7 +199,7 @@ SB_BOTTOM		equ 7
 SB_RIGHT		equ 7
 SB_ENDSCROLL		equ 8
 
-endif
+endif ; NOSCROLL
 
 ifndef NOSHOWWINDOW
 
@@ -246,8 +230,7 @@ SW_OTHERZOOM		equ 2
 SW_PARENTOPENING	equ 3
 SW_OTHERUNZOOM		equ 4
 
-
-endif
+endif ; NOSHOWWINDOW
 
 if(WINVER GE 0x0500)
 AW_HOR_POSITIVE		equ 0x00000001
@@ -259,7 +242,6 @@ AW_HIDE			equ 0x00010000
 AW_ACTIVATE		equ 0x00020000
 AW_SLIDE		equ 0x00040000
 AW_BLEND		equ 0x00080000
-
 endif
 
 KF_EXTENDED		equ 0x0100
@@ -285,7 +267,6 @@ else
 VK_BACK			equ 0x08
 endif
 VK_TAB			equ 0x09
-
 VK_CLEAR		equ 0x0C
 ifdef __UNIX__
 VK_RETURN		equ 0x0A
@@ -330,7 +311,6 @@ VK_SNAPSHOT		equ 0x2C
 VK_INSERT		equ 0x2D
 VK_DELETE		equ 0x2E
 VK_HELP			equ 0x2F
-
 
 VK_LWIN			equ 0x5B
 VK_RWIN			equ 0x5C
@@ -377,7 +357,6 @@ VK_F22			equ 0x85
 VK_F23			equ 0x86
 VK_F24			equ 0x87
 
-
 VK_NUMLOCK		equ 0x90
 VK_SCROLL		equ 0x91
 
@@ -388,7 +367,6 @@ VK_OEM_FJ_MASSHOU	equ 0x93
 VK_OEM_FJ_TOUROKU	equ 0x94
 VK_OEM_FJ_LOYA		equ 0x95
 VK_OEM_FJ_ROYA		equ 0x96
-
 
 VK_LSHIFT		equ 0xA0
 VK_RSHIFT		equ 0xA1
@@ -418,7 +396,6 @@ VK_LAUNCH_APP1		equ 0xB6
 VK_LAUNCH_APP2		equ 0xB7
 endif
 
-
 VK_OEM_1		equ 0xBA
 VK_OEM_PLUS		equ 0xBB
 VK_OEM_COMMA		equ 0xBC
@@ -444,7 +421,6 @@ if(_WIN32_WINNT GE 0x0500)
 VK_PACKET		equ 0xE7
 endif
 
-
 VK_OEM_RESET		equ 0xE9
 VK_OEM_JUMP		equ 0xEA
 VK_OEM_PA1		equ 0xEB
@@ -469,7 +445,7 @@ VK_NONAME		equ 0xFC
 VK_PA1			equ 0xFD
 VK_OEM_CLEAR		equ 0xFE
 
-endif
+endif ; NOVIRTUALKEYCODES
 
 ifndef NOWH
 
@@ -572,7 +548,6 @@ WTS_SESSION_UNLOCK	equ 0x8
 WTS_SESSION_REMOTE_CONTROL equ 0x9
 WTS_SESSION_CREATE	equ 0xa
 WTS_SESSION_TERMINATE	equ 0xb
-
 endif
 
 MSGF_DIALOGBOX		equ 0
@@ -690,7 +665,9 @@ GET_FLAGS_LPARAM macro lParam
 GET_KEYSTATE_LPARAM macro lParam
 	exitm<GET_FLAGS_LPARAM(lParam)>
 	endm
-endif
+
+endif ; _WIN32_WINNT GE 0x0500
+
 
 SHELLHOOKINFO		STRUC
 hwnd			HWND ?
@@ -733,7 +710,6 @@ CWPRETSTRUCT		ENDS
 PCWPRETSTRUCT		typedef ptr CWPRETSTRUCT
 NPCWPRETSTRUCT		typedef ptr CWPRETSTRUCT
 LPCWPRETSTRUCT		typedef ptr CWPRETSTRUCT
-
 endif
 
 if (_WIN32_WINNT GE 0x0400)
@@ -764,7 +740,6 @@ dwExtraInfo		ULONG_PTR ?
 MSLLHOOKSTRUCT		ENDS
 LPMSLLHOOKSTRUCT	typedef ptr MSLLHOOKSTRUCT
 PMSLLHOOKSTRUCT		typedef ptr MSLLHOOKSTRUCT
-
 endif
 
 DEBUGHOOKINFO		STRUC
@@ -796,7 +771,8 @@ HARDWAREHOOKSTRUCT	ENDS
 LPHARDWAREHOOKSTRUCT	typedef ptr HARDWAREHOOKSTRUCT
 PHARDWAREHOOKSTRUCT	typedef ptr HARDWAREHOOKSTRUCT
 endif
-endif
+
+endif ; NOWH
 
 HKL_PREV		equ 0
 HKL_NEXT		equ 1
@@ -825,55 +801,25 @@ endif
 
 KL_NAMELENGTH		equ 9
 
-;HKL
-LoadKeyboardLayoutA proto WINAPI \
-	      pwszKLID: LPCSTR,
-		 Flags: UINT
-;HKL
-LoadKeyboardLayoutW proto WINAPI \
-	      pwszKLID: LPCWSTR,
-		 Flags: UINT
+LoadKeyboardLayoutA proto WINAPI :LPCSTR, :UINT
+LoadKeyboardLayoutW proto WINAPI :LPCWSTR, :UINT
 ifdef _UNICODE
 LoadKeyboardLayout	equ <LoadKeyboardayoutW>
 else
 LoadKeyboardLayout	equ <LoadKeyboardayoutA>
 endif
 
-
 if(WINVER GE 0x0400)
-;HKL
-ActivateKeyboardLayout proto WINAPI \
-		   hkl: HKL,
-		 Flags: UINT
+ActivateKeyboardLayout proto WINAPI :HKL, :UINT
 else
-;BOOL
-ActivateKeyboardLayout proto WINAPI \
-		   hkl: HKL,
-		 Flags: UINT
+ActivateKeyboardLayout proto WINAPI :HKL, :UINT
 endif
-
 if(WINVER GE 0x0400)
-;int
-ToUnicodeEx proto WINAPI \
-	      wVirtKey: UINT,
-	     wScanCode: UINT,
-	    lpKeyState: PBYTE,
-	      pwszBuff: LPWSTR,
-	       cchBuff: SINT,
-		wFlags: UINT,
-		 dwhkl: HKL
+ToUnicodeEx proto WINAPI :UINT, :UINT, :PBYTE, :LPWSTR, :SINT, :UINT, :HKL
 endif
-
-;BOOL
-UnloadKeyboardLayout proto WINAPI \
-		   hkl: HKL
-
-;BOOL
-GetKeyboardLayoutNameA proto WINAPI \
-	      pwszKLID: LPSTR
-;BOOL
-GetKeyboardLayoutNameW proto WINAPI \
-	      pwszKLID: LPWSTR
+UnloadKeyboardLayout proto WINAPI :HKL
+GetKeyboardLayoutNameA proto WINAPI :LPSTR
+GetKeyboardLayoutNameW proto WINAPI :LPWSTR
 ifdef _UNICODE
 GetKeyboardLayoutName	equ <GetKeyboardayoutNameW>
 else
@@ -881,14 +827,8 @@ GetKeyboardLayoutName	equ <GetKeyboardayoutNameA>
 endif
 
 if(WINVER GE 0x0400)
-;int
-GetKeyboardLayoutList proto WINAPI \
-		 nBuff: SINT,
-		lpList: ptr HKL
-
-;HKL
-GetKeyboardLayout proto WINAPI \
-	     dwLayout : DWORD
+GetKeyboardLayoutList proto WINAPI :SINT, :ptr HKL
+GetKeyboardLayout proto WINAPI :DWORD
 endif
 
 if(WINVER GE 0x0500)
@@ -904,24 +844,12 @@ LPMOUSEMOVEPOINT	typedef ptr MOUSEMOVEPOINT
 GMMP_USE_DISPLAY_POINTS equ 1
 GMMP_USE_DRIVER_POINTS	equ 2
 
-;int
-GetMouseMovePoints proto WINAPI \
-		cbSize: UINT,
-		  lppt: LPMOUSEMOVEPOINT,
-	       lpptBuf: LPMOUSEMOVEPOINT,
-	    nBufPoints: SINT,
-	   resolution : DWORD
-
-;int
-GetMouseMovePointsEx proto WINAPI \
-		cbSize: UINT,
-		  lppt: LPMOUSEMOVEPOINT,
-	       lpptBuf: LPMOUSEMOVEPOINT,
-	    nBufPoints: SINT,
-	   resolution : DWORD
+GetMouseMovePoints proto WINAPI :UINT, :LPMOUSEMOVEPOINT, :LPMOUSEMOVEPOINT, :SINT, :DWORD
+GetMouseMovePointsEx proto WINAPI :UINT, :LPMOUSEMOVEPOINT, :LPMOUSEMOVEPOINT, :SINT, :DWORD
 endif
 
 ifndef NODESKTOP
+
 DESKTOP_READOBJECTS	equ 0x0001
 DESKTOP_CREATEWINDOW	equ 0x0002
 DESKTOP_CREATEMENU	equ 0x0004
@@ -937,120 +865,51 @@ DF_ALLOWOTHERACCOUNTHOOK equ 0x0001
 ifdef _WINGDI_
 ifndef NOGDI
 
-;HDESK
-CreateDesktopA proto WINAPI \
-	   lpszDesktop: LPSTR,
-	    lpszDevice: LPSTR,
-	      pDevmode: LPDEVMODEA,
-	       dwFlags: DWORD,
-       dwDesiredAccess: ACCESS_MASK,
-		  lpsa: LPSECURITY_ATTRIBUTES
-CreateDesktopW proto WINAPI \
-	   lpszDesktop: LPWSTR,
-	    lpszDevice: LPWSTR,
-	      pDevmode: LPDEVMODEW,
-	       dwFlags: DWORD,
-       dwDesiredAccess: ACCESS_MASK,
-		  lpsa: LPSECURITY_ATTRIBUTES
+CreateDesktopA proto WINAPI :LPSTR, :LPSTR, :LPDEVMODEA, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES
+CreateDesktopW proto WINAPI :LPWSTR, :LPWSTR, :LPDEVMODEW, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES
 ifdef _UNICODE
 CreateDesktop		equ <CreateDesktopW>
 else
 CreateDesktop		equ <CreateDesktopA>
 endif
 
-CreateDesktopExA proto WINAPI \
-	   lpszDesktop: LPCSTR,
-	    lpszDevice: LPCSTR,
-	      pDevmode: ptr DEVMODEA,
-	       dwFlags: DWORD,
-       dwDesiredAccess: ACCESS_MASK,
-		  lpsa: LPSECURITY_ATTRIBUTES,
-	    ulHeapSize: ULONG,
-		 pvoid: PVOID
-
-CreateDesktopExW proto WINAPI \
-	   lpszDesktop: LPCWSTR,
-	    lpszDevice: LPCWSTR,
-	      pDevmode: ptr DEVMODEW,
-	       dwFlags: DWORD,
-       dwDesiredAccess: ACCESS_MASK,
-		  lpsa: LPSECURITY_ATTRIBUTES,
-	    ulHeapSize: ULONG,
-		 pvoid: PVOID
-
+CreateDesktopExA proto WINAPI :LPCSTR, :LPCSTR, :ptr DEVMODEA, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES, :ULONG, :ptr
+CreateDesktopExW proto WINAPI :LPCWSTR, :LPCWSTR, :ptr DEVMODEW, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES, :ULONG, :ptr
 ifdef _UNICODE
 CreateDesktopEx		equ <CreateDesktopExW>
 else
 CreateDesktopEx		equ <CreateDesktopExA>
 endif
-endif
-endif
+endif ; NOGDI
+endif ; _WINGDI_
 
-;HDESK
-OpenDesktopA proto WINAPI \
-	   lpszDesktop: LPSTR,
-	       dwFlags: DWORD,
-	      fInherit: BOOL,
-       dwDesiredAccess: ACCESS_MASK
-;HDESK
-OpenDesktopW proto WINAPI \
-	   lpszDesktop: LPWSTR,
-	       dwFlags: DWORD,
-	      fInherit: BOOL,
-       dwDesiredAccess: ACCESS_MASK
+OpenDesktopA proto WINAPI :LPSTR, :DWORD, :BOOL, :ACCESS_MASK
+OpenDesktopW proto WINAPI :LPWSTR, :DWORD, :BOOL, :ACCESS_MASK
 ifdef _UNICODE
 OpenDesktop		equ <OpenDesktopW>
 else
 OpenDesktop		equ <OpenDesktopA>
 endif
 
-;HDESK
-OpenInputDesktop proto WINAPI \
-	       dwFlags: DWORD,
-	      fInherit: BOOL,
-       dwDesiredAccess: ACCESS_MASK
-
-;BOOL
-EnumDesktopsA proto WINAPI \
-	       hwinsta: HWINSTA,
-	    lpEnumFunc: DESKTOPENUMPROCA,
-		lParam: LPARAM
-;BOOL
-EnumDesktopsW proto WINAPI \
-	       hwinsta: HWINSTA,
-	    lpEnumFunc: DESKTOPENUMPROCW,
-		lParam: LPARAM
+OpenInputDesktop proto WINAPI :DWORD, :BOOL, :ACCESS_MASK
+EnumDesktopsA proto WINAPI :HWINSTA, :DESKTOPENUMPROCA, :LPARAM
+EnumDesktopsW proto WINAPI :HWINSTA, :DESKTOPENUMPROCW, :LPARAM
 ifdef _UNICODE
 EnumDesktops		equ <EnumDesktopsW>
 else
 EnumDesktops		equ <EnumDesktopsA>
 endif
 
-;BOOL
-EnumDesktopWindows proto WINAPI \
-	      hDesktop: HDESK,
-		  lpfn: WNDENUMPROC,
-		lParam: LPARAM
+EnumDesktopWindows proto WINAPI :HDESK, :WNDENUMPROC, :LPARAM
+SwitchDesktop proto WINAPI :HDESK
+SetThreadDesktop proto WINAPI :HDESK
+CloseDesktop proto WINAPI :HDESK
+GetThreadDesktop proto WINAPI :DWORD
 
-;BOOL
-SwitchDesktop proto WINAPI \
-	      hDesktop: HDESK
-
-;BOOL
-SetThreadDesktop proto WINAPI \
-	      hDesktop: HDESK
-
-;BOOL
-CloseDesktop proto WINAPI \
-	      hDesktop: HDESK
-
-;HDESK
-GetThreadDesktop proto WINAPI \
-	    dwThreadId: DWORD
-endif
-
+endif ; NODESKTOP
 
 ifndef NOWINDOWSTATION
+
 WINSTA_ENUMDESKTOPS	equ 0x0001
 WINSTA_READATTRIBUTES	equ 0x0002
 WINSTA_ACCESSCLIPBOARD	equ 0x0004
@@ -1064,87 +923,43 @@ WINSTA_READSCREEN	equ 0x0200
 WINSTA_ALL_ACCESS	equ (WINSTA_ENUMDESKTOPS  or WINSTA_READATTRIBUTES  or WINSTA_ACCESSCLIPBOARD or \
 			     WINSTA_CREATEDESKTOP or WINSTA_WRITEATTRIBUTES or WINSTA_ACCESSGLOBALATOMS or \
 			     WINSTA_EXITWINDOWS	  or WINSTA_ENUMERATE	    or WINSTA_READSCREEN)
-
 CWF_CREATE_ONLY		equ 0x00000001
-
 WSF_VISIBLE		equ 0x0001
 
-;HWINSTA
-CreateWindowStationA proto WINAPI \
-	      lpwinsta: LPSTR,
-	    dwReserved: DWORD,
-       dwDesiredAccess: ACCESS_MASK,
-		  lpsa: LPSECURITY_ATTRIBUTES
-;HWINSTA
-CreateWindowStationW proto WINAPI \
-	      lpwinsta: LPWSTR,
-	    dwReserved: DWORD,
-       dwDesiredAccess: ACCESS_MASK,
-		  lpsa: LPSECURITY_ATTRIBUTES
+CreateWindowStationA proto WINAPI :LPSTR, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES
+CreateWindowStationW proto WINAPI :LPWSTR, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES
 ifdef _UNICODE
 CreateWindowStation	equ <CreateWindowStationW>
 else
 CreateWindowStation	equ <CreateWindowStationA>
 endif
 
-;HWINSTA
-OpenWindowStationA proto WINAPI \
-	    lpszWinSta: LPSTR,
-	      fInherit: BOOL,
-       dwDesiredAccess: ACCESS_MASK
-;HWINSTA
-OpenWindowStationW proto WINAPI \
-	    lpszWinSta: LPWSTR,
-	      fInherit: BOOL,
-       dwDesiredAccess: ACCESS_MASK
+OpenWindowStationA proto WINAPI :LPSTR, :BOOL, :ACCESS_MASK
+OpenWindowStationW proto WINAPI :LPWSTR, :BOOL, :ACCESS_MASK
 ifdef _UNICODE
 OpenWindowStation	equ <OpenWindowStationW>
 else
 OpenWindowStation	equ <OpenWindowStationA>
 endif
 
-;BOOL
-EnumWindowStationsA proto WINAPI \
-	    lpEnumFunc: WINSTAENUMPROCA,
-		lParam: LPARAM
-;BOOL
-EnumWindowStationsW proto WINAPI \
-	    lpEnumFunc: WINSTAENUMPROCW,
-		lParam: LPARAM
+EnumWindowStationsA proto WINAPI :WINSTAENUMPROCA, :LPARAM
+EnumWindowStationsW proto WINAPI :WINSTAENUMPROCW, :LPARAM
 ifdef _UNICODE
 EnumWindowStations	equ <EnumWindowStationsW>
 else
 EnumWindowStations	equ <EnumWindowStationsA>
 endif
 
-
-;BOOL
-CloseWindowStation proto WINAPI \
-	       hWinSta: HWINSTA
-
-;BOOL
-SetProcessWindowStation proto WINAPI \
-	       hWinSta: HWINSTA
-
-;HWINSTA
+CloseWindowStation proto WINAPI :HWINSTA
+SetProcessWindowStation proto WINAPI :HWINSTA
 GetProcessWindowStation proto WINAPI
-endif
+
+endif ; NOWINDOWSTATION
 
 ifndef NOSECURITY
 
-;BOOL
-SetUserObjectSecurity proto WINAPI \
-		  hObj: HANDLE,
-	  pSIRequested: PSECURITY_INFORMATION,
-		  pSID: PSECURITY_DESCRIPTOR
-
-;BOOL
-GetUserObjectSecurity proto WINAPI \
-		  hObj: HANDLE,
-	  pSIRequested: PSECURITY_INFORMATION,
-		  pSID: PSECURITY_DESCRIPTOR,
-	       nLength: DWORD,
-       lpnLengthNeeded: LPDWORD
+SetUserObjectSecurity proto WINAPI :HANDLE, :PSECURITY_INFORMATION, :PSECURITY_DESCRIPTOR
+GetUserObjectSecurity proto WINAPI :HANDLE, :PSECURITY_INFORMATION, :PSECURITY_DESCRIPTOR, :DWORD, :LPDWORD
 
 UOI_FLAGS		equ 1
 UOI_NAME		equ 2
@@ -1162,45 +977,23 @@ dwFlags			dd ?
 USEROBJECTFLAGS		ENDS
 PUSEROBJECTFLAGS	typedef ptr USEROBJECTFLAGS
 
-;BOOL
-GetUserObjectInformationA proto WINAPI \
-		  hObj: HANDLE,
-		nIndex: SINT,
-		pvInfo: PVOID,
-	       nLength: DWORD,
-       lpnLengthNeeded: LPDWORD
-;BOOL
-GetUserObjectInformationW proto WINAPI \
-		  hObj: HANDLE,
-		nIndex: SINT,
-		pvInfo: PVOID,
-	       nLength: DWORD,
-       lpnLengthNeeded: LPDWORD
+GetUserObjectInformationA proto WINAPI :HANDLE, :SINT, :PVOID, :DWORD, :LPDWORD
+GetUserObjectInformationW proto WINAPI :HANDLE, :SINT, :PVOID, :DWORD, :LPDWORD
 ifdef _UNICODE
 GetUserObjectInformation equ <GetUserObjectInformationW>
 else
 GetUserObjectInformation equ <GetUserObjectInformationA>
 endif
 
-;BOOL
-SetUserObjectInformationA proto WINAPI \
-		  hObj: HANDLE,
-		nIndex: SINT,
-		pvInfo: PVOID,
-	       nLength: DWORD
-;BOOL
-SetUserObjectInformationW proto WINAPI \
-		  hObj: HANDLE,
-		nIndex: SINT,
-		pvInfo: PVOID,
-	       nLength: DWORD
+SetUserObjectInformationA proto WINAPI :HANDLE, :SINT, :PVOID, :DWORD
+SetUserObjectInformationW proto WINAPI :HANDLE, :SINT, :PVOID, :DWORD
 ifdef _UNICODE
 SetUserObjectInformation equ <SetUserObjectInformationW>
 else
 SetUserObjectInformation equ <SetUserObjectInformationA>
 endif
 
-endif
+endif ; NOSECURITY
 
 if(WINVER GE 0x0400)
 WNDCLASSEXA		STRUC
@@ -1292,13 +1085,8 @@ NPWNDCLASS		typedef NPWNDCLASSA
 LPWNDCLASS		typedef LPWNDCLASSA
 endif
 
-;BOOL
-IsHungAppWindow proto WINAPI \
-		hwnd: HWND
-
+IsHungAppWindow proto WINAPI :HWND
 if (WINVER GE 0x0501)
-
-;VOID
 DisableProcessWindowsGhosting proto WINAPI
 endif
 
@@ -1349,7 +1137,8 @@ endif
 MAKELRESULT macro l,h
 	exitm<MAKELONG(l, h, rax)>
 	endm
-endif
+
+endif ; NOMSG
 
 IS_INTRESOURCE proto watcall _r:ptr {
 	shr	_r,16
@@ -1360,22 +1149,17 @@ IS_INTRESOURCE proto watcall _r:ptr {
 
 ifndef NOWINOFFSETS
 
+ifndef _WIN64
 GWL_WNDPROC	    equ (-4)
 GWL_HINSTANCE	    equ (-6)
 GWL_HWNDPARENT	    equ (-8)
+endif
 GWL_STYLE	    equ (-16)
 GWL_EXSTYLE	    equ (-20)
+ifndef _WIN64
 GWL_USERDATA	    equ (-21)
-GWL_ID		    equ (-12)
-
-ifdef _WIN64
-
-undef GWL_WNDPROC
-undef GWL_HINSTANCE
-undef GWL_HWNDPARENT
-undef GWL_USERDATA
-
 endif
+GWL_ID		    equ (-12)
 
 GWLP_WNDPROC	    equ (-4)
 GWLP_HINSTANCE	    equ (-6)
@@ -1411,7 +1195,7 @@ GCLP_HMODULE		equ (-16)
 GCLP_WNDPROC		equ (-24)
 GCLP_HICONSM		equ (-34)
 
-endif
+endif ; NOWINOFFSETS
 
 ifndef NOWINMESSAGES
 
@@ -1446,7 +1230,6 @@ WM_WININICHANGE		equ 0x001A
 if(WINVER GE 0x0400)
 WM_SETTINGCHANGE	equ WM_WININICHANGE
 endif
-
 
 WM_DEVMODECHANGE	equ 0x001B
 WM_ACTIVATEAPP		equ 0x001C
@@ -1626,7 +1409,6 @@ endif
 endif
 endif
 
-
 WM_CTLCOLORMSGBOX	equ 0x0132
 WM_CTLCOLOREDIT		equ 0x0133
 WM_CTLCOLORLISTBOX	equ 0x0134
@@ -1635,7 +1417,6 @@ WM_CTLCOLORDLG		equ 0x0136
 WM_CTLCOLORSCROLLBAR	equ 0x0137
 WM_CTLCOLORSTATIC	equ 0x0138
 MN_GETHMENU		equ 0x01E1
-
 
 WM_MOUSEFIRST		equ 0x0200
 WM_MOUSEMOVE		equ 0x0200
@@ -1702,22 +1483,16 @@ WM_POWERBROADCAST	equ 0x0218
 
 PBT_APMQUERYSUSPEND	equ 0x0000
 PBT_APMQUERYSTANDBY	equ 0x0001
-
 PBT_APMQUERYSUSPENDFAILED equ 0x0002
 PBT_APMQUERYSTANDBYFAILED equ 0x0003
-
 PBT_APMSUSPEND		equ 0x0004
 PBT_APMSTANDBY		equ 0x0005
-
 PBT_APMRESUMECRITICAL	equ 0x0006
 PBT_APMRESUMESUSPEND	equ 0x0007
 PBT_APMRESUMESTANDBY	equ 0x0008
-
 PBTF_APMRESUMEFROMFAILURE equ 0x00000001
-
 PBT_APMBATTERYLOW	equ 0x0009
 PBT_APMPOWERSTATUSCHANGE equ 0x000A
-
 PBT_APMOEMEVENT		equ 0x000B
 PBT_APMRESUMEAUTOMATIC	equ 0x0012
 if (_WIN32_WINNT GE 0x0502)
@@ -1731,11 +1506,9 @@ POWERBROADCAST_SETTING	ENDS
 PPOWERBROADCAST_SETTING typedef ptr POWERBROADCAST_SETTING
 endif
 endif
-
-
 WM_DEVICECHANGE		equ 0x0219
 
-endif
+endif ; WINVER GE 0x0400
 
 WM_MDICREATE		equ 0x0220
 WM_MDIDESTROY		equ 0x0221
@@ -1747,7 +1520,6 @@ WM_MDITILE		equ 0x0226
 WM_MDICASCADE		equ 0x0227
 WM_MDIICONARRANGE	equ 0x0228
 WM_MDIGETACTIVE		equ 0x0229
-
 
 WM_MDISETMENU		equ 0x0230
 WM_ENTERSIZEMOVE	equ 0x0231
@@ -1872,7 +1644,6 @@ endif
 WM_USER			equ 0x0400
 
 if(WINVER GE 0x0400)
-
 WMSZ_LEFT		equ 1
 WMSZ_RIGHT		equ 2
 WMSZ_TOP		equ 3
@@ -1884,7 +1655,6 @@ WMSZ_BOTTOMRIGHT	equ 8
 endif
 
 ifndef NONCMESSAGES
-
 HTERROR			equ (-2)
 HTTRANSPARENT		equ (-1)
 HTNOWHERE		equ 0
@@ -1916,7 +1686,6 @@ HTOBJECT		equ 19
 HTCLOSE			equ 20
 HTHELP			equ 21
 endif
-
 SMTO_NORMAL		equ 0x0000
 SMTO_BLOCK		equ 0x0001
 SMTO_ABORTIFHUNG	equ 0x0002
@@ -1927,7 +1696,7 @@ if(WINVER GE 0x0600)
 SMTO_ERRORONEXIT	equ 0x0020
 endif
 
-endif
+endif ; NONCMESSAGES
 
 MA_ACTIVATE		equ 1
 MA_ACTIVATEANDEAT	equ 2
@@ -1937,19 +1706,13 @@ MA_NOACTIVATEANDEAT	equ 4
 ICON_SMALL		equ 0
 ICON_BIG		equ 1
 
-
-;UINT
-RegisterWindowMessageA proto WINAPI \
-	      lpString: LPCSTR
-;UINT
-RegisterWindowMessageW proto WINAPI \
-	      lpString: LPCWSTR
+RegisterWindowMessageA proto WINAPI :LPCSTR
+RegisterWindowMessageW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 RegisterWindowMessage	equ <RegisterWindowMessageW>
 else
 RegisterWindowMessage	equ <RegisterWindowMessageA>
 endif
-
 
 SIZE_RESTORED		equ 0
 SIZE_MINIMIZED		equ 1
@@ -1990,9 +1753,7 @@ WVR_VREDRAW		equ 0x0200
 WVR_REDRAW		equ (WVR_HREDRAW OR WVR_VREDRAW)
 WVR_VALIDRECTS		equ 0x0400
 
-
 ifndef NOKEYSTATES
-
 MK_LBUTTON		equ 0x0001
 MK_RBUTTON		equ 0x0002
 MK_SHIFT		equ 0x0004
@@ -2006,7 +1767,6 @@ endif
 
 if(_WIN32_WINNT GE 0x0400)
 ifndef NOTRACKMOUSEEVENT
-
 TME_HOVER		equ 0x00000001
 TME_LEAVE		equ 0x00000002
 if(WINVER GE 0x0500)
@@ -2014,9 +1774,7 @@ TME_NONCLIENT		equ 0x00000010
 endif
 TME_QUERY		equ 0x40000000
 TME_CANCEL		equ 0x80000000
-
 HOVER_DEFAULT		equ 0xFFFFFFFF
-
 TRACKMOUSEEVENT		STRUC
 cbSize			dd ?
 dwFlags			dd ?
@@ -2025,19 +1783,13 @@ dwHoverTime		dd ?
 TRACKMOUSEEVENT		ENDS
 LPTRACKMOUSEEVENT	typedef ptr TRACKMOUSEEVENT
 
-;BOOL
-TrackMouseEvent proto WINAPI \
-	  lpEventTrack: LPTRACKMOUSEEVENT
-
-
+TrackMouseEvent proto WINAPI :LPTRACKMOUSEEVENT
 endif
 endif
 
-
-endif
+endif ; NOWINMESSAGES
 
 ifndef NOWINSTYLES
-
 
 WS_OVERLAPPED		equ 0x00000000
 WS_POPUP		equ 0x80000000
@@ -2060,7 +1812,6 @@ WS_TABSTOP		equ 0x00010000
 
 WS_MINIMIZEBOX		equ 0x00020000
 WS_MAXIMIZEBOX		equ 0x00010000
-
 
 WS_TILED		equ WS_OVERLAPPED
 WS_ICONIC		equ WS_MINIMIZE
@@ -2095,10 +1846,8 @@ WS_EX_CONTROLPARENT	equ 0x00010000
 WS_EX_STATICEDGE	equ 0x00020000
 WS_EX_APPWINDOW		equ 0x00040000
 
-
 WS_EX_OVERLAPPEDWINDOW	equ WS_EX_WINDOWEDGE OR WS_EX_CLIENTEDGE
 WS_EX_PALETTEWINDOW	equ WS_EX_WINDOWEDGE OR WS_EX_TOOLWINDOW OR WS_EX_TOPMOST
-
 endif
 
 if(_WIN32_WINNT GE 0x0500)
@@ -2134,9 +1883,10 @@ if(_WIN32_WINNT GE 0x0501)
 CS_DROPSHADOW		equ 0x00020000
 endif
 
-endif
+endif ; NOWINSTYLES
 
-if(WINVER GE 0x0400)
+if (WINVER GE 0x0400)
+
 PRF_CHECKVISIBLE	equ 0x00000001
 PRF_NONCLIENT		equ 0x00000002
 PRF_CLIENT		equ 0x00000004
@@ -2177,21 +1927,13 @@ BF_DIAGONAL_ENDTOPLEFT	equ (BF_DIAGONAL OR BF_TOP OR BF_LEFT)
 BF_DIAGONAL_ENDBOTTOMLEFT equ (BF_DIAGONAL OR BF_BOTTOM OR BF_LEFT)
 BF_DIAGONAL_ENDBOTTOMRIGHT equ (BF_DIAGONA OR BF_BOTTOM OR BF_RIGHT)
 
-
 BF_MIDDLE		equ 0x0800
 BF_SOFT			equ 0x1000
 BF_ADJUST		equ 0x2000
 BF_FLAT			equ 0x4000
 BF_MONO			equ 0x8000
 
-
-;BOOL
-DrawEdge proto WINAPI \
-		   hdc: HDC,
-		   qrc: LPRECT,
-		  edge: UINT,
-	      grfFlags: UINT
-
+DrawEdge proto WINAPI :HDC, :LPRECT, :UINT, :UINT
 
 DFC_CAPTION		equ 1
 DFC_MENU		equ 2
@@ -2239,13 +1981,7 @@ DFCS_ADJUSTRECT		equ 0x2000
 DFCS_FLAT		equ 0x4000
 DFCS_MONO		equ 0x8000
 
-;BOOL
-DrawFrameControl proto WINAPI \
-		      : HDC,
-		      : LPRECT,
-		      : UINT,
-		      : UINT
-
+DrawFrameControl proto WINAPI :HDC, :LPRECT, :UINT, :UINT
 
 DC_ACTIVE		equ 0x0001
 DC_SMALLCAP		equ 0x0002
@@ -2259,29 +1995,17 @@ if(_WIN32_WINNT GE 0x0501)
 DC_BUTTONS		equ 0x1000
 endif
 
-;BOOL
-DrawCaption proto WINAPI \
-		      : HWND,
-		      : HDC,
-		      : LPRECT,
-		      : UINT
-
+DrawCaption proto WINAPI :HWND, :HDC, :LPRECT, :UINT
 
 IDANI_OPEN		equ 1
 IDANI_CLOSE		equ 2
 IDANI_CAPTION		equ 3
 
-;BOOL
-DrawAnimatedRects proto WINAPI \
-		  hwnd: HWND,
-		 idAni: SINT,
-	      lprcFrom: LPRECT,
-		lprcTo: LPRECT
+DrawAnimatedRects proto WINAPI :HWND, :SINT, :LPRECT, :LPRECT
 
-endif
+endif ; WINVER GE 0x0400
 
 ifndef NOCLIPBOARD
-
 
 CF_TEXT			equ 1
 CF_BITMAP		equ 2
@@ -2324,7 +2048,7 @@ CF_PRIVATELAST		equ 0x02FF
 CF_GDIOBJFIRST		equ 0x0300
 CF_GDIOBJLAST		equ 0x03FF
 
-endif
+endif ; NOCLIPBOARD
 
 FVIRTKEY		equ TRUE
 FNOINVERT		equ 0x02
@@ -2508,60 +2232,26 @@ LPCOMPAREITEMSTRUCT	typedef ptr COMPAREITEMSTRUCT
 
 ifndef NOMSG
 
-
-;BOOL
-GetMessageA proto WINAPI \
-		 lpMsg: LPMSG,
-		 hWnd : HWND,
-	 wMsgFilterMin: UINT,
-	 wMsgFilterMax: UINT
-;BOOL
-GetMessageW proto WINAPI \
-		 lpMsg: LPMSG,
-		 hWnd : HWND,
-	 wMsgFilterMin: UINT,
-	 wMsgFilterMax: UINT
+GetMessageA proto WINAPI :LPMSG, :HWND, :UINT, :UINT
+GetMessageW proto WINAPI :LPMSG, :HWND, :UINT, :UINT
 ifdef _UNICODE
 GetMessage		equ <GetMessageW>
 else
 GetMessage		equ <GetMessageA>
 endif
 
-;BOOL
-TranslateMessage proto WINAPI \
-		 lpMsg: ptr MSG
-
-;LONG
-DispatchMessageA proto WINAPI \
-		 lpMsg: ptr MSG
-;LONG
-DispatchMessageW proto WINAPI \
-		 lpMsg: ptr MSG
+TranslateMessage proto WINAPI :ptr MSG
+DispatchMessageA proto WINAPI :ptr MSG
+DispatchMessageW proto WINAPI :ptr MSG
 ifdef _UNICODE
 DispatchMessage		equ <DispatchMessageW>
 else
 DispatchMessage		equ <DispatchMessageA>
 endif
 
-
-;BOOL
-SetMessageQueue proto WINAPI \
-	  cMessagesMax: SINT
-
-;BOOL
-PeekMessageA proto WINAPI \
-		 lpMsg: LPMSG,
-		 hWnd : HWND,
-	 wMsgFilterMin: UINT,
-	 wMsgFilterMax: UINT,
-	    wRemoveMsg: UINT
-;BOOL
-PeekMessageW proto WINAPI \
-		 lpMsg: LPMSG,
-		 hWnd : HWND,
-	 wMsgFilterMin: UINT,
-	 wMsgFilterMax: UINT,
-	    wRemoveMsg: UINT
+SetMessageQueue proto WINAPI :SINT
+PeekMessageA proto WINAPI :LPMSG, :HWND, :UINT, :UINT, :UINT
+PeekMessageW proto WINAPI :LPMSG, :HWND, :UINT, :UINT, :UINT
 ifdef _UNICODE
 PeekMessage		equ <PeekMessageW>
 else
@@ -2578,19 +2268,10 @@ PM_QS_PAINT		equ (QS_PAINT SHL 16)
 PM_QS_SENDMESSAGE	equ (QS_SENDMESSAGE SHL 16)
 endif
 
-endif
+endif ; NOMSG
 
-;BOOL
-RegisterHotKey proto WINAPI \
-		 hWnd : HWND,
-		    id: SINT,
-	   fsModifiers: UINT,
-		    vk: UINT
-
-;BOOL
-UnregisterHotKey proto WINAPI \
-		  hWnd: HWND,
-		    id: SINT
+RegisterHotKey proto WINAPI :HWND, :SINT, :UINT, :UINT
+UnregisterHotKey proto WINAPI :HWND, :SINT
 
 MOD_ALT			equ 0x0001
 MOD_CONTROL		equ 0x0002
@@ -2642,118 +2323,53 @@ ExitWindows macro dwReserved, Code
 	exitm<ExitWindowsEx(EWX_LOGOFF, 0xFFFFFFFF)>
 	endm
 
-;BOOL
-ExitWindowsEx proto WINAPI \
-		uFlags: UINT,
-	    dwReserved: DWORD
-
-;BOOL
-SwapMouseButton proto WINAPI \
-		 fSwap: BOOL
-
-;DWORD
+ExitWindowsEx proto WINAPI :UINT, :DWORD
+SwapMouseButton proto WINAPI :BOOL
 GetMessagePos proto WINAPI
-
-;LONG
 GetMessageTime proto WINAPI
-
-;LONG
 GetMessageExtraInfo proto WINAPI
-
 if(_WIN32_WINNT GE 0x0602)
 GetUnpredictedMessagePos proto WINAPI
 endif
-
 if(_WIN32_WINNT GE 0x0501)
 IsWow64Message proto WINAPI
 endif
-
 if(WINVER GE 0x0400)
-SetMessageExtraInfo proto WINAPI \
-		lParam: LPARAM
+SetMessageExtraInfo proto WINAPI :LPARAM
 endif
-
-SendMessageA proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-
-SendMessageW proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+SendMessageA proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
+SendMessageW proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 SendMessage		equ <SendMessageW>
 else
 SendMessage		equ <SendMessageA>
 endif
 
-;LRESULT
-SendMessageTimeoutA proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM,
-	       fuFlags: UINT,
-	      uTimeout: UINT,
-	    lpdwResult: LPDWORD
-;LRESULT
-SendMessageTimeoutW proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM,
-	       fuFlags: UINT,
-	      uTimeout: UINT,
-	    lpdwResult: LPDWORD
+SendMessageTimeoutA proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM, :UINT, :UINT, :LPDWORD
+SendMessageTimeoutW proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM, :UINT, :UINT, :LPDWORD
 ifdef _UNICODE
 SendMessageTimeout	equ <SendMessageTimeoutW>
 else
 SendMessageTimeout	equ <SendMessageTimeoutA>
 endif
 
-;BOOL
-SendNotifyMessageA proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-;BOOL
-SendNotifyMessageW proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+SendNotifyMessageA proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
+SendNotifyMessageW proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 SendNotifyMessage	equ <SendNotifyMessageW>
 else
 SendNotifyMessage	equ <SendNotifyMessageA>
 endif
 
-;BOOL
-SendMessageCallbackA proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM,
-      lpResultCallBack: SENDASYNCPROC,
-		dwData: ULONG_PTR
-SendMessageCallbackW proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM,
-      lpResultCallBack: SENDASYNCPROC,
-		dwData: ULONG_PTR
+SendMessageCallbackA proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM, :SENDASYNCPROC, :ULONG_PTR
+SendMessageCallbackW proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM, :SENDASYNCPROC, :ULONG_PTR
 ifdef _UNICODE
 SendMessageCallback	equ <SendMessageCallbackW>
 else
 SendMessageCallback	equ <SendMessageCallbackA>
 endif
 
-if(_WIN32_WINNT GE 0x0501)
+if (_WIN32_WINNT GE 0x0501)
 BSMINFO			STRUC
 cbSize			UINT ?
 hdesk			HDESK ?
@@ -2762,22 +2378,8 @@ luid			LUID <>
 BSMINFO			ENDS
 PBSMINFO		typedef ptr BSMINFO
 
-;WINUSERAPI
-;long
-BroadcastSystemMessageExA proto WINAPI \
-		 flags: DWORD,
-		lpInfo: LPDWORD,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM,
-	      pbsmInfo: PBSMINFO
-BroadcastSystemMessageExW proto WINAPI \
-		 flags: DWORD,
-		lpInfo: LPDWORD,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM,
-	      pbsmInfo: PBSMINFO
+BroadcastSystemMessageExA proto WINAPI :DWORD, :LPDWORD, :UINT, :WPARAM, :LPARAM, :PBSMINFO
+BroadcastSystemMessageExW proto WINAPI :DWORD, :LPDWORD, :UINT, :WPARAM, :LPARAM, :PBSMINFO
 ifdef _UNICODE
 BroadcastSystemMessageEx equ <BroadcastSystemMessageExW>
 else
@@ -2785,36 +2387,18 @@ BroadcastSystemMessageEx equ <BroadcastSystemMessageExA>
 endif
 endif
 
-if(WINVER GE 0x0400)
+if (WINVER GE 0x0400)
 
 ifdef _WIN32_WINNT
-;long
-BroadcastSystemMessageA proto WINAPI \
-		      : DWORD,
-		      : LPDWORD,
-		      : UINT,
-		      : WPARAM,
-		      : LPARAM
-;long
-BroadcastSystemMessageW proto WINAPI \
-		      : DWORD,
-		      : LPDWORD,
-		      : UINT,
-		      : WPARAM,
-		      : LPARAM
+BroadcastSystemMessageA proto WINAPI :DWORD, :LPDWORD, :UINT, :WPARAM, :LPARAM
+BroadcastSystemMessageW proto WINAPI :DWORD, :LPDWORD, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 BroadcastSystemMessage	equ <BroadcastSystemMessageW>
 else
 BroadcastSystemMessage	equ <BroadcastSystemMessageA>
 endif
 elseifdef _WIN32_WINDOWS
-;long
-BroadcastSystemMessage proto WINAPI \
-		      : DWORD,
-		      : LPDWORD,
-		      : UINT,
-		      : WPARAM,
-		      : LPARAM
+BroadcastSystemMessage proto WINAPI :DWORD, :LPDWORD, :UINT, :WPARAM, :LPARAM
 endif
 
 BSM_ALLCOMPONENTS	equ 0x00000000
@@ -2840,10 +2424,11 @@ BSF_RETURNHDESK		equ 0x00000200
 BSF_LUID		equ 0x00000400
 endif
 BROADCAST_QUERY_DENY	equ 0x424D5144
-endif
+
+endif ; WINVER GE 0x0400
 
 
-if(WINVER GE 0x0500)
+if (WINVER GE 0x0500)
 HDEVNOTIFY	typedef ptr
 PHDEVNOTIFY	typedef ptr HDEVNOTIFY
 
@@ -2852,85 +2437,41 @@ DEVICE_NOTIFY_SERVICE_HANDLE equ 0x00000001
 if(_WIN32_WINNT GE 0x0501)
 DEVICE_NOTIFY_ALL_INTERFACE_CLASSES equ 0x00000004
 endif
-;HDEVNOTIFY
-RegisterDeviceNotificationA proto WINAPI \
-	      hRecipient: HANDLE,
-      NotificationFilter: LPVOID,
-		  Flags : DWORD
-RegisterDeviceNotificationW proto WINAPI \
-	      hRecipient: HANDLE,
-      NotificationFilter: LPVOID,
-		  Flags : DWORD
+RegisterDeviceNotificationA proto WINAPI :HANDLE, :LPVOID, :DWORD
+RegisterDeviceNotificationW proto WINAPI :HANDLE, :LPVOID, :DWORD
 ifdef _UNICODE
 RegisterDeviceNotification equ <RegisterDeviceNotificationW>
 else
 RegisterDeviceNotification equ <RegisterDeviceNotificationA>
 endif
-
-;BOOL
-UnregisterDeviceNotification proto WINAPI \
-	      Handle : HDEVNOTIFY
+UnregisterDeviceNotification proto WINAPI :HDEVNOTIFY
 
 if (_WIN32_WINNT GE 0x0502)
 ifndef _HPOWERNOTIFY_DEF_
-_HPOWERNOTIFY_DEF_	equ 1
+define _HPOWERNOTIFY_DEF_
 HPOWERNOTIFY	typedef PVOID
 PHPOWERNOTIFY	typedef ptr HPOWERNOTIFY
 endif
-
-LPCGUID			typedef ptr GUID
-
-RegisterPowerSettingNotification proto WINAPI \
-	    hRecipient: HANDLE,
-      PowerSettingGuid: LPCGUID,
-		 Flags: DWORD
-
-UnregisterPowerSettingNotification proto WINAPI \
-		Handle: HPOWERNOTIFY
-
-RegisterSuspendResumeNotification proto WINAPI \
-	    hRecipient: HANDLE,
-		 Flags: DWORD
-
-UnregisterSuspendResumeNotification proto WINAPI \
-		Handle: HPOWERNOTIFY
-
+LPCGUID typedef ptr GUID
+RegisterPowerSettingNotification proto WINAPI :HANDLE, :LPCGUID, :DWORD
+UnregisterPowerSettingNotification proto WINAPI :HPOWERNOTIFY
+RegisterSuspendResumeNotification proto WINAPI :HANDLE, :DWORD
+UnregisterSuspendResumeNotification proto WINAPI :HPOWERNOTIFY
 endif
+endif ; WINVER GE 0x0500
 
-endif
-endif
+endif ; NOUSER
 
-
-;BOOL
-PostMessageA proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-;BOOL
-PostMessageW proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+PostMessageA proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
+PostMessageW proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 PostMessage		equ <PostMessageW>
 else
 PostMessage		equ <PostMessageA>
 endif
 
-;BOOL
-PostThreadMessageA proto WINAPI \
-	      idThread: DWORD,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-;BOOL
-PostThreadMessageW proto WINAPI \
-	      idThread: DWORD,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+PostThreadMessageA proto WINAPI :DWORD, :UINT, :WPARAM, :LPARAM
+PostThreadMessageW proto WINAPI :DWORD, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 PostThreadMessage	equ <PostThreadMessageW>
 else
@@ -2955,96 +2496,46 @@ if(WINVER GE 0x0500)
 HWND_MESSAGE		equ (-3)
 endif
 
-;BOOL
-AttachThreadInput proto WINAPI \
-	      idAttach: DWORD,
-	    idAttachTo: DWORD,
-	       fAttach: BOOL
-;BOOL
-ReplyMessage proto WINAPI \
-	       lResult: LRESULT
-;BOOL
+AttachThreadInput proto WINAPI :DWORD, :DWORD, :BOOL
+ReplyMessage proto WINAPI :LRESULT
 WaitMessage proto WINAPI
-;DWORD
-WaitForInputIdle proto WINAPI \
-	      hProcess: HANDLE,
-	dwMilliseconds: DWORD
+WaitForInputIdle proto WINAPI :HANDLE, :DWORD
 
-;LRESULT
-;CALLBACK
-DefWindowProcA proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-DefWindowProcW proto WINAPI \
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+DefWindowProcA proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
+DefWindowProcW proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 DefWindowProc equ <DefWindowProcW>
 else
 DefWindowProc equ <DefWindowProcA>
 endif
-
-;VOID
-PostQuitMessage proto WINAPI \
-	     nExitCode: SINT
+PostQuitMessage proto WINAPI :SINT
 
 ifdef STRICT
 
-;LRESULT
-CallWindowProcA proto WINAPI \
-	 lpPrevWndFunc: WNDPROC,
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-;LRESULT
-CallWindowProcW proto WINAPI \
-	 lpPrevWndFunc: WNDPROC,
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+CallWindowProcA proto WINAPI :WNDPROC, :HWND, :UINT, :WPARAM, :LPARAM
+CallWindowProcW proto WINAPI :WNDPROC, :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 CallWindowProc		equ <CallWindowProcW>
 else
 CallWindowProc		equ <CallWindowProcA>
 endif
 
-else
+else ; STRICT
 
-;LRESULT
-CallWindowProcA proto WINAPI \
-	 lpPrevWndFunc: FARPROC,
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-;LRESULT
-CallWindowProcW proto WINAPI \
-	 lpPrevWndFunc: FARPROC,
-		  hWnd: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+CallWindowProcA proto WINAPI :FARPROC, :HWND, :UINT, :WPARAM, :LPARAM
+CallWindowProcW proto WINAPI :FARPROC, :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 CallWindowProc		equ <CallWindowProcW>
 else
 CallWindowProc		equ <CallWindowProcA>
 endif
 
-endif
+endif ; STRICT
 
-;BOOL
 InSendMessage proto WINAPI
 
 if(WINVER GE 0x0500)
-;DWORD
-InSendMessageEx proto WINAPI \
-	    lpReserved: LPVOID
+InSendMessageEx proto WINAPI :LPVOID
 
 ISMEX_NOSEND		equ 0x00000000
 ISMEX_SEND		equ 0x00000001
@@ -3053,49 +2544,26 @@ ISMEX_CALLBACK		equ 0x00000004
 ISMEX_REPLIED		equ 0x00000008
 endif
 
-;UINT
 GetDoubleClickTime proto WINAPI
-
-;BOOL
-SetDoubleClickTime proto WINAPI \
-		      : UINT
-
-;ATOM
-RegisterClassA proto WINAPI \
-	    lpWndClass: ptr WNDCLASSA
-;ATOM
-RegisterClassW proto WINAPI \
-	    lpWndClass: ptr WNDCLASSA
+SetDoubleClickTime proto WINAPI :UINT
+RegisterClassA proto WINAPI :ptr WNDCLASSA
+RegisterClassW proto WINAPI :ptr WNDCLASSA
 ifdef _UNICODE
 RegisterClass		equ <RegisterClassW>
 else
 RegisterClass		equ <RegisterClassA>
 endif
 
-;BOOL
-UnregisterClassA proto WINAPI \
-	   lpClassName: LPCSTR,
-	     hInstance: HINSTANCE
-;BOOL
-UnregisterClassW proto WINAPI \
-	   lpClassName: LPCWSTR,
-	     hInstance: HINSTANCE
+UnregisterClassA proto WINAPI :LPCSTR, :HINSTANCE
+UnregisterClassW proto WINAPI :LPCWSTR, :HINSTANCE
 ifdef _UNICODE
 UnregisterClass		equ <UnregisterClassW>
 else
 UnregisterClass		equ <UnregisterClassA>
 endif
 
-;BOOL
-GetClassInfoA proto WINAPI \
-	    hInstance : HINSTANCE,
-	   lpClassName: LPCSTR,
-	    lpWndClass: LPWNDCLASSA
-;BOOL
-GetClassInfoW proto WINAPI \
-	    hInstance : HINSTANCE,
-	   lpClassName: LPCWSTR,
-	    lpWndClass: LPWNDCLASSW
+GetClassInfoA proto WINAPI :HINSTANCE, :LPCSTR, :LPWNDCLASSA
+GetClassInfoW proto WINAPI :HINSTANCE, :LPCWSTR, :LPWNDCLASSW
 ifdef _UNICODE
 GetClassInfo		equ <GetClassInfoW>
 else
@@ -3103,26 +2571,16 @@ GetClassInfo		equ <GetClassInfoA>
 endif
 
 if(WINVER GE 0x0400)
-;ATOM
-RegisterClassExA proto WINAPI \
-		      : ptr WNDCLASSEXA
-RegisterClassExW proto WINAPI \
-		      : ptr WNDCLASSEXW
+RegisterClassExA proto WINAPI :ptr WNDCLASSEXA
+RegisterClassExW proto WINAPI :ptr WNDCLASSEXW
 ifdef _UNICODE
 RegisterClassEx		equ <RegisterClassExW>
 else
 RegisterClassEx		equ <RegisterClassExA>
 endif
 
-;BOOL
-GetClassInfoExA proto WINAPI \
-		      : HINSTANCE,
-		      : LPCSTR,
-		      : LPWNDCLASSEXA
-GetClassInfoExW proto WINAPI \
-		      : HINSTANCE,
-		      : LPCWSTR,
-		      : LPWNDCLASSEXW
+GetClassInfoExA proto WINAPI :HINSTANCE, :LPCSTR, :LPWNDCLASSEXA
+GetClassInfoExW proto WINAPI :HINSTANCE, :LPCWSTR,:LPWNDCLASSEXW
 ifdef _UNICODE
 GetClassInfoEx		equ <GetClassInfoExW>
 else
@@ -3130,42 +2588,14 @@ GetClassInfoEx		equ <GetClassInfoExA>
 endif
 
 endif
-
 CW_USEDEFAULT		equ 0x80000000
-
 HWND_DESKTOP		equ 0
 if(_WIN32_WINNT GE 0x0501)
 CALLBACK(PREGISTERCLASSNAMEW, :LPCWSTR)
 endif
 
-;HWND
-CreateWindowExA proto WINAPI \
-	     dwExStyle: DWORD,
-	   lpClassName: LPCSTR,
-	  lpWindowName: LPCSTR,
-	       dwStyle: DWORD,
-		     X: SINT,
-		     Y: SINT,
-		nWidth: SINT,
-	       nHeight: SINT,
-	    hWndParent: HWND,
-		 hMenu: HMENU,
-	     hInstance: HINSTANCE,
-	       lpParam: LPVOID
-;HWND
-CreateWindowExW proto WINAPI \
-	     dwExStyle: DWORD,
-	   lpClassName: LPCWSTR,
-	  lpWindowName: LPCWSTR,
-	       dwStyle: DWORD,
-		     X: SINT,
-		     Y: SINT,
-		nWidth: SINT,
-	       nHeight: SINT,
-	    hWndParent: HWND,
-		 hMenu: HMENU,
-	     hInstance: HINSTANCE,
-	       lpParam: LPVOID
+CreateWindowExA proto WINAPI :DWORD, :LPCSTR, :LPCSTR, :DWORD, :SINT, :SINT, :SINT, :SINT, :HWND, :HMENU, :HINSTANCE, :LPVOID
+CreateWindowExW proto WINAPI :DWORD, :LPCWSTR, :LPCWSTR, :DWORD, :SINT, :SINT, :SINT, :SINT, :HWND, :HMENU, :HINSTANCE, :LPVOID
 ifdef _UNICODE
 CreateWindowEx		equ <CreateWindowExW>
 else
@@ -3186,50 +2616,20 @@ else
 CreateWindow		equ <CreateWindowA>
 endif
 
-;BOOL
-IsWindow proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-IsMenu proto WINAPI \
-		 hMenu: HMENU
-
-;BOOL
-IsChild proto WINAPI \
-	    hWndParent: HWND,
-		  hWnd: HWND
-
-;BOOL
-DestroyWindow proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-ShowWindow proto WINAPI \
-		  hWnd: HWND,
-	      nCmdShow: SINT
+IsWindow proto WINAPI :HWND
+IsMenu proto WINAPI :HMENU
+IsChild proto WINAPI :HWND, :HWND
+DestroyWindow proto WINAPI :HWND
+ShowWindow proto WINAPI :HWND, :SINT
 
 if(WINVER GE 0x0500)
-;BOOL
-AnimateWindow proto WINAPI \
-		  hWnd: HWND,
-		dwTime: DWORD,
-	       dwFlags: DWORD
+AnimateWindow proto WINAPI :HWND, :DWORD, :DWORD
 endif
 
-if(_WIN32_WINNT GE 0x0500)
-if defined(_WINGDI_) AND NOT defined(NOGDI)
+if (_WIN32_WINNT GE 0x0500)
 
-;BOOL
-UpdateLayeredWindow proto WINAPI \
-		  hWnd: HWND,
-		hdcDst: HDC,
-		pptDst: ptr POINT,
-		 psize: ptr POINT,
-		hdcSrc: HDC,
-		pptSrc: ptr POINT,
-		 crKey: COLORREF,
-		pblend: ptr BLENDFUNCTION,
-	       dwFlags: DWORD
+if defined(_WINGDI_) AND NOT defined(NOGDI)
+UpdateLayeredWindow proto WINAPI :HWND, :HDC, :ptr POINT, :ptr POINT, :HDC, :ptr POINT, :COLORREF, :ptr BLENDFUNCTION, :DWORD
 
 LPBLENDFUNCTION		typedef ptr BLENDFUNCTION
 UPDATELAYEREDWINDOWINFO STRUC
@@ -3246,42 +2646,22 @@ prcDirty		LPRECT ?
 UPDATELAYEREDWINDOWINFO ENDS
 PUPDATELAYEREDWINDOWINFO typedef ptr UPDATELAYEREDWINDOWINFO
 
-
 if (_WIN32_WINNT LT 0x0502)
-
-;BOOL
 CALLBACK(UpdateLayeredWindowIndirect, :HWND, :ptr UPDATELAYEREDWINDOWINFO)
 else
-UpdateLayeredWindowIndirect proto WINAPI \
-		  hWnd: HWND,
-	      pULWInfo: ptr UPDATELAYEREDWINDOWINFO
+UpdateLayeredWindowIndirect proto WINAPI :HWND, :ptr UPDATELAYEREDWINDOWINFO
 endif
-
-endif
+endif ; defined(_WINGDI_) AND NOT defined(NOGDI)
 
 if(_WIN32_WINNT GE 0x0501)
-
-;BOOL
-GetLayeredWindowAttributes proto WINAPI \
-		  hwnd: HWND,
-		pcrKey: ptr COLORREF,
-	       pbAlpha: ptr BYTE,
-	      pdwFlags: ptr DWORD
+GetLayeredWindowAttributes proto WINAPI :HWND, :ptr COLORREF, :ptr BYTE, :ptr DWORD
 
 PW_CLIENTONLY		equ 0x00000001
 
-;BOOL
-PrintWindow proto WINAPI \
-		  hwnd: HWND,
-		hdcBlt: HDC,
-		nFlags: UINT
+PrintWindow proto WINAPI :HWND, :HDC, :UINT
 endif
 
-SetLayeredWindowAttributes proto WINAPI \
-		  hwnd: HWND,
-		 crKey: COLORREF,
-		bAlpha: BYTE,
-	       dwFlags: DWORD
+SetLayeredWindowAttributes proto WINAPI :HWND, :COLORREF, :BYTE, :DWORD
 
 LWA_COLORKEY		equ 0x00000001
 LWA_ALPHA		equ 0x00000002
@@ -3289,29 +2669,19 @@ LWA_ALPHA		equ 0x00000002
 ULW_COLORKEY		equ 0x00000001
 ULW_ALPHA		equ 0x00000002
 ULW_OPAQUE		equ 0x00000004
-
 ULW_EX_NORESIZE		equ 0x00000008
 
 if(WINVER GE 0x0400)
-;BOOL
-ShowWindowAsync proto WINAPI \
-		  hWnd: HWND,
-	      nCmdShow: SINT
+ShowWindowAsync proto WINAPI :HWND, :SINT
 endif
 
-;BOOL
 if(WINVER GE 0x0500)
-FlashWindow proto WINAPI \
-		  hWnd: HWND,
-	       dwFlags: DWORD
+FlashWindow proto WINAPI :HWND, :DWORD
 else
-FlashWindow proto WINAPI \
-		  hWnd: HWND,
-	       bInvert: BOOL
+FlashWindow proto WINAPI :HWND, :BOOL
 endif
 
 if(WINVER GE 0x0500)
-
 FLASHWINFO		STRUC
 cbSize			UINT ?
 hwnd			HWND ?
@@ -3321,8 +2691,7 @@ dwTimeout		DWORD ?
 FLASHWINFO		ENDS
 PFLASHWINFO		typedef ptr FLASHWINFO
 
-FlashWindowEx proto WINAPI \
-		  pfwi: PFLASHWINFO
+FlashWindowEx proto WINAPI :PFLASHWINFO
 
 FLASHW_STOP		equ 0
 FLASHW_CAPTION		equ 0x00000001
@@ -3332,107 +2701,39 @@ FLASHW_TIMER		equ 0x00000004
 FLASHW_TIMERNOFG	equ 0x0000000C
 endif
 
-;BOOL
-ShowOwnedPopups proto WINAPI \
-		  hWnd: HWND,
-		 fShow: BOOL
+ShowOwnedPopups proto WINAPI :HWND, :BOOL
+OpenIcon proto WINAPI :HWND
+CloseWindow proto WINAPI :HWND
+MoveWindow proto WINAPI :HWND, :SINT,:SINT, :SINT, :SINT, :BOOL
 
-;BOOL
-OpenIcon proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-CloseWindow proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-MoveWindow proto WINAPI \
-		  hWnd: HWND,
-		     X: SINT,
-		     Y: SINT,
-		nWidth: SINT,
-	       nHeight: SINT,
-	      bRepaint: BOOL
-
-if(WINVER GE 0x0500)
-;BOOL
-SetWindowPos proto WINAPI \
-		  hWnd: HWND,
-       hWndInsertAfter: HWND,
-		     X: SINT,
-		     Y: SINT,
-		   _cx: SINT,
-		    cy: SINT,
-		uFlags: UINT
+if (WINVER GE 0x0500)
+SetWindowPos proto WINAPI :HWND, :HWND, :SINT, :SINT, :SINT, :SINT, :UINT
 else
-CALLBACK(SetWindowPos_T, :HWND, :HWND, :SINT, :SINT, :SINT, :SINT, :UINT)
-externdef	SetWindowPos:SetWindowPos_T
+CALLBACK(SetWindowPos, :HWND, :HWND, :SINT, :SINT, :SINT, :SINT, :UINT)
 endif
 
-;BOOL
-GetWindowPlacement proto WINAPI \
-		  hWnd: HWND,
-	       lpwndpl: ptr WINDOWPLACEMENT
-
-;BOOL
-SetWindowPlacement proto WINAPI \
-		  hWnd: HWND,
-	       lpwndpl: ptr WINDOWPLACEMENT
+GetWindowPlacement proto WINAPI :HWND, :ptr WINDOWPLACEMENT
+SetWindowPlacement proto WINAPI :HWND, :ptr WINDOWPLACEMENT
 
 if(_WIN32_WINNT GE 0x0601)
 WDA_NONE		equ 0x00000000
 WDA_MONITOR		equ 0x00000001
-;BOOL
-GetWindowDisplayAffinity proto WINAPI \
-		  hWnd: HWND,
-	   pdwAffinity: LPDWORD
-;BOOL
-SetWindowDisplayAffinity proto WINAPI \
-		  hWnd: HWND,
-	    dwAffinity: DWORD
+
+GetWindowDisplayAffinity proto WINAPI :HWND, :LPDWORD
+SetWindowDisplayAffinity proto WINAPI :HWND, :DWORD
 endif
 
 ifndef NODEFERWINDOWPOS
-
-;HDWP
-BeginDeferWindowPos proto WINAPI \
-	   nNumWindows: SINT
-
-;HDWP
-DeferWindowPos proto WINAPI \
-	   hWinPosInfo: HDWP,
-		  hWnd: HWND,
-      hWndInsertAfter : HWND,
-		     x: SINT,
-		     y: SINT,
-		   _cx: SINT,
-		    cy: SINT,
-		uFlags: UINT
-
-;BOOL
-EndDeferWindowPos proto WINAPI \
-	   hWinPosInfo: HDWP
-
+BeginDeferWindowPos proto WINAPI :SINT
+DeferWindowPos proto WINAPI :HDWP, :HWND, :HWND, :SINT, :SINT, :SINT, :SINT, :UINT
+EndDeferWindowPos proto WINAPI :HDWP
 endif
 
-;BOOL
-IsWindowVisible proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-IsIconic proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
+IsWindowVisible proto WINAPI :HWND
+IsIconic proto WINAPI :HWND
 AnyPopup proto WINAPI
-
-;BOOL
-BringWindowToTop proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-IsZoomed proto WINAPI \
-		  hWnd: HWND
+BringWindowToTop proto WINAPI :HWND
+IsZoomed proto WINAPI :HWND
 
 SWP_NOSIZE		equ 0x0001
 SWP_NOMOVE		equ 0x0002
@@ -3454,14 +2755,12 @@ SWP_DEFERERASE		equ 0x2000
 SWP_ASYNCWINDOWPOS	equ 0x4000
 endif
 
-
 HWND_TOP		equ (0)
 HWND_BOTTOM		equ (1)
 HWND_TOPMOST		equ (-1)
 HWND_NOTOPMOST		equ (-2)
 
 ifndef NOCTLMGR
-
 
 .pragma pack(push, 2)
 
@@ -3515,40 +2814,16 @@ endif
 
 .pragma pack(pop)
 
-;HWND
-CreateDialogParamA proto WINAPI \
-	     hInstance: HINSTANCE,
-	lpTemplateName: LPCSTR,
-	   hWndParent : HWND,
-	  lpDialogFunc: DLGPROC,
-	   dwInitParam: LPARAM
-;HWND
-CreateDialogParamW proto WINAPI \
-	     hInstance: HINSTANCE,
-	lpTemplateName: LPCWSTR,
-	   hWndParent : HWND,
-	  lpDialogFunc: DLGPROC,
-	   dwInitParam: LPARAM
+CreateDialogParamA proto WINAPI :HINSTANCE, :LPCSTR, :HWND, :DLGPROC, :LPARAM
+CreateDialogParamW proto WINAPI :HINSTANCE, :LPCWSTR,:HWND, :DLGPROC, :LPARAM
 ifdef _UNICODE
 CreateDialogParam	equ <CreateDialogParamW>
 else
 CreateDialogParam	equ <CreateDialogParamA>
 endif
 
-;HWND
-CreateDialogIndirectParamA proto WINAPI \
-	     hInstance: HINSTANCE,
-	    lpTemplate: LPCDLGTEMPLATEA,
-	    hWndParent: HWND,
-	  lpDialogFunc: DLGPROC,
-	   dwInitParam: LPARAM
-;HWND
-CreateDialogIndirectParamW proto WINAPI \
-	     hInstance: HINSTANCE,
-	    lpTemplate: LPCDLGTEMPLATEW,
-	    hWndParent: HWND,
-	  lpDialogFunc: DLGPROC,
-	   dwInitParam: LPARAM
+CreateDialogIndirectParamA proto WINAPI :HINSTANCE, :LPCDLGTEMPLATEA, :HWND, :DLGPROC, :LPARAM
+CreateDialogIndirectParamW proto WINAPI :HINSTANCE, :LPCDLGTEMPLATEW, :HWND, :DLGPROC, :LPARAM
 ifdef _UNICODE
 CreateDialogIndirectParam equ <CreateDialogIndirectParamW>
 else
@@ -3558,7 +2833,6 @@ endif
 CreateDialogA macro hInstance,lpName,hWndParent,lpDialogFunc
 	exitm<CreateDialogParamA(hInstance, lpName, hWndParent, lpDialogFunc, 0)>
 	endm
-
 CreateDialogW macro hInstance,lpName,hWndParent,lpDialogFunc
 	exitm<CreateDialogParamW(hInstance, lpName, hWndParent, lpDialogFunc, 0)>
 	endm
@@ -3582,40 +2856,16 @@ else
 CreateDialogIndirect	equ <CreateDialogIndirectA>
 endif
 
-;int
-DialogBoxParamA proto WINAPI \
-	     hInstance: HINSTANCE,
-	lpTemplateName: LPCSTR,
-	   hWndParent : HWND,
-	  lpDialogFunc: DLGPROC,
-	   dwInitParam: LPARAM
-;int
-DialogBoxParamW proto WINAPI \
-	     hInstance: HINSTANCE,
-	lpTemplateName: LPCWSTR,
-	   hWndParent : HWND,
-	  lpDialogFunc: DLGPROC,
-	   dwInitParam: LPARAM
+DialogBoxParamA proto WINAPI :HINSTANCE, :LPCSTR, :HWND, :DLGPROC, :LPARAM
+DialogBoxParamW proto WINAPI :HINSTANCE, :LPCWSTR, :HWND, :DLGPROC, :LPARAM
 ifdef _UNICODE
 DialogBoxParam		equ <DialogBoxParamW>
 else
 DialogBoxParam		equ <DialogBoxParamA>
 endif
 
-;int
-DialogBoxIndirectParamA proto WINAPI \
-	     hInstance: HINSTANCE,
-       hDialogTemplate: LPCDLGTEMPLATEA,
-	   hWndParent : HWND,
-	  lpDialogFunc: DLGPROC,
-	   dwInitParam: LPARAM
-;int
-DialogBoxIndirectParamW proto WINAPI \
-	     hInstance: HINSTANCE,
-       hDialogTemplate: LPCDLGTEMPLATEW,
-	   hWndParent : HWND,
-	  lpDialogFunc: DLGPROC,
-	   dwInitParam: LPARAM
+DialogBoxIndirectParamA proto WINAPI :HINSTANCE, :LPCDLGTEMPLATEA, :HWND, :DLGPROC, :LPARAM
+DialogBoxIndirectParamW proto WINAPI :HINSTANCE, :LPCDLGTEMPLATEW, :HWND, :DLGPROC, :LPARAM
 ifdef _UNICODE
 DialogBoxIndirectParam	equ <DialogBoxIndirectParamW>
 else
@@ -3646,135 +2896,51 @@ else
 DialogBoxIndirect	equ <DialogBoxIndirectA>
 endif
 
-;BOOL
-EndDialog proto WINAPI \
-		  hDlg: HWND,
-	       nResult: INT_PTR
+EndDialog proto WINAPI :HWND, :INT_PTR
+GetDlgItem proto WINAPI :HWND, :SINT
+SetDlgItemInt proto WINAPI  :HWND, :SINT, :UINT, :BOOL
+GetDlgItemInt proto WINAPI :HWND, :SINT, :LPBOOL, :BOOL
 
-;HWND
-GetDlgItem proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT
-
-;BOOL
-SetDlgItemInt proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT,
-		uValue: UINT,
-	       bSigned: BOOL
-
-;UINT
-GetDlgItemInt proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT,
-	  lpTranslated: LPBOOL,
-	       bSigned: BOOL
-
-;BOOL
-SetDlgItemTextA proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT,
-	      lpString: LPCSTR
-;BOOL
-SetDlgItemTextW proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT,
-	      lpString: LPCWSTR
+SetDlgItemTextA proto WINAPI :HWND, :SINT, :LPCSTR
+SetDlgItemTextW proto WINAPI :HWND, :SINT, :LPCWSTR
 ifdef _UNICODE
-SetDlgItemText		equ <SetDlgItemTextW>
+SetDlgItemText equ <SetDlgItemTextW>
 else
-SetDlgItemText		equ <SetDlgItemTextA>
+SetDlgItemText equ <SetDlgItemTextA>
 endif
 
-;UINT
-GetDlgItemTextA proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT,
-	      lpString: LPSTR,
-	     nMaxCount: SINT
-;UINT
-GetDlgItemTextW proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT,
-	      lpString: LPWSTR,
-	     nMaxCount: SINT
+GetDlgItemTextA proto WINAPI  :HWND, :SINT, :LPSTR, :SINT
+GetDlgItemTextW proto WINAPI :HWND, :SINT, :LPWSTR, :SINT
 ifdef _UNICODE
-GetDlgItemText		equ <GetDlgItemTextW>
+GetDlgItemText equ <GetDlgItemTextW>
 else
-GetDlgItemText		equ <GetDlgItemTextA>
+GetDlgItemText equ <GetDlgItemTextA>
 endif
 
-;BOOL
-CheckDlgButton proto WINAPI \
-		  hDlg: HWND,
-	     nIDButton: SINT,
-		uCheck: UINT
+CheckDlgButton proto WINAPI :HWND, :SINT, :UINT
+CheckRadioButton proto WINAPI :HWND, :SINT, :SINT, :SINT
+IsDlgButtonChecked proto WINAPI :HWND, :SINT
 
-;BOOL
-CheckRadioButton proto WINAPI \
-		  hDlg: HWND,
-	nIDFirstButton: SINT,
-	 nIDLastButton: SINT,
-	nIDCheckButton: SINT
-
-;UINT
-IsDlgButtonChecked proto WINAPI \
-		  hDlg: HWND,
-	     nIDButton: SINT
-
-;LONG
-SendDlgItemMessageA proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-;LONG
-SendDlgItemMessageW proto WINAPI \
-		  hDlg: HWND,
-	    nIDDlgItem: SINT,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+SendDlgItemMessageA proto WINAPI :HWND, :SINT, :UINT, :WPARAM, :LPARAM
+SendDlgItemMessageW proto WINAPI :HWND, :SINT, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
-SendDlgItemMessage	equ <SendDlgItemMessageW>
+SendDlgItemMessage equ <SendDlgItemMessageW>
 else
-SendDlgItemMessage	equ <SendDlgItemMessageA>
+SendDlgItemMessage equ <SendDlgItemMessageA>
 endif
 
-;HWND
-GetNextDlgGroupItem proto WINAPI \
-		  hDlg: HWND,
-		  hCtl: HWND,
-	     bPrevious: BOOL
+GetNextDlgGroupItem proto WINAPI :HWND, :HWND, :BOOL
+GetNextDlgTabItem proto WINAPI :HWND, :HWND, :BOOL
+GetDlgCtrlID proto WINAPI :HWND
 
-;HWND
-GetNextDlgTabItem proto WINAPI \
-		  hDlg: HWND,
-		  hCtl: HWND,
-	     bPrevious: BOOL
-
-;int
-GetDlgCtrlID proto WINAPI \
-		  hWnd: HWND
-
-;long
 GetDialogBaseUnits proto WINAPI
 
-DefDlgProcA typedef proto WINAPI \
-		  hDlg: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-DefDlgProcW typedef proto WINAPI \
-		  hDlg: HWND,
-		   Msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+DefDlgProcA typedef proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
+DefDlgProcW typedef proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
-DefDlgProc		typedef ptr DefDlgProcW
+DefDlgProc typedef ptr DefDlgProcW
 else
-DefDlgProc		typedef ptr DefDlgProcA
+DefDlgProc typedef ptr DefDlgProcA
 endif
 
 ifndef _MAC
@@ -3783,285 +2949,144 @@ else
 DLGWINDOWEXTRA		equ 48
 endif
 
-endif
+endif ; NOCTLMGR
+
 
 ifndef NOMSG
-
-;BOOL
-CallMsgFilterA proto WINAPI \
-		 lpMsg: LPMSG,
-		 nCode: SINT
-;BOOL
-CallMsgFilterW proto WINAPI \
-		 lpMsg: LPMSG,
-		 nCode: SINT
+CallMsgFilterA proto WINAPI :LPMSG, :SINT
+CallMsgFilterW proto WINAPI :LPMSG, :SINT
 ifdef _UNICODE
-CallMsgFilter		equ <CallMsgFilterW>
+CallMsgFilter equ <CallMsgFilterW>
 else
-CallMsgFilter		equ <CallMsgFilterA>
+CallMsgFilter equ <CallMsgFilterA>
 endif
-
 endif
 
 ifndef NOCLIPBOARD
 
-
-;BOOL
-OpenClipboard proto WINAPI \
-	  hWndNewOwner: HWND
-
-;BOOL
+OpenClipboard proto WINAPI :HWND
 CloseClipboard proto WINAPI
-
-
 if(WINVER GE 0x0500)
-;DWORD
 GetClipboardSequenceNumber proto WINAPI
 endif
-
-;HWND
 GetClipboardOwner proto WINAPI
-
-;HWND
-SetClipboardViewer proto WINAPI \
-	 hWndNewViewer: HWND
-
-;HWND
+SetClipboardViewer proto WINAPI :HWND
 GetClipboardViewer proto WINAPI
+ChangeClipboardChain proto WINAPI :HWND, :HWND
+SetClipboardData proto WINAPI :UINT, :HANDLE
+GetClipboardData proto WINAPI :UINT
 
-;BOOL
-ChangeClipboardChain proto WINAPI \
-	    hWndRemove: HWND,
-	   hWndNewNext: HWND
-
-;HANDLE
-SetClipboardData proto WINAPI \
-	       uFormat: UINT,
-		  hMem: HANDLE
-
-;HANDLE
-GetClipboardData proto WINAPI \
-	       uFormat: UINT
-
-;UINT
-RegisterClipboardFormatA proto WINAPI \
-	    lpszFormat: LPCSTR
-;UINT
-RegisterClipboardFormatW proto WINAPI \
-	    lpszFormat: LPCWSTR
+RegisterClipboardFormatA proto WINAPI :LPCSTR
+RegisterClipboardFormatW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 RegisterClipboardFormat equ <RegisterClipboardFormatW>
 else
 RegisterClipboardFormat equ <RegisterClipboardFormatA>
 endif
-
-;int
 CountClipboardFormats proto WINAPI
-
-;UINT
-EnumClipboardFormats proto WINAPI \
-		format: UINT
-
-;int
-GetClipboardFormatNameA proto WINAPI \
-		format: UINT,
-	lpszFormatName: LPSTR,
-	   cchMaxCount: SINT
-;int
-GetClipboardFormatNameW proto WINAPI \
-		format: UINT,
-	lpszFormatName: LPWSTR,
-	   cchMaxCount: SINT
+EnumClipboardFormats proto WINAPI :UINT
+GetClipboardFormatNameA proto WINAPI :UINT, :LPSTR, :SINT
+GetClipboardFormatNameW proto WINAPI :UINT, :LPWSTR, :SINT
 ifdef _UNICODE
 GetClipboardFormatName	equ <GetClipboardFormatNameW>
 else
 GetClipboardFormatName	equ <GetClipboardFormatNameA>
 endif
-
-;BOOL
 EmptyClipboard proto WINAPI
-
-;BOOL
-IsClipboardFormatAvailable proto WINAPI \
-		format: UINT
-
-;int
-GetPriorityClipboardFormat proto WINAPI \
-  paFormatPriorityList: ptr UINT,
-	      cFormats: SINT
-
-;HWND
+IsClipboardFormatAvailable proto WINAPI :UINT
+GetPriorityClipboardFormat proto WINAPI :ptr UINT, :SINT
 GetOpenClipboardWindow proto WINAPI
-
-if(WINVER GE 0x0600)
-
-;BOOL
-AddClipboardFormatListener proto WINAPI \
-		  hwnd: HWND
-;BOOL
-RemoveClipboardFormatListener proto WINAPI \
-		  hwnd: HWND
-;BOOL
-GetUpdatedClipboardFormats proto WINAPI \
-	  lpuiFormats: PUINT,
-	     cFormats: UINT,
-	 pcFormatsOut: PUINT
-
+if (WINVER GE 0x0600)
+AddClipboardFormatListener proto WINAPI :HWND
+RemoveClipboardFormatListener proto WINAPI :HWND
+GetUpdatedClipboardFormats proto WINAPI :PUINT, :UINT, :PUINT
 endif
-endif
+endif ; NOCLIPBOARD
 
 
-;BOOL
-CharToOemA proto WINAPI \
-	       lpszSrc: LPCSTR,
-	       lpszDst: LPSTR
-;BOOL
-CharToOemW proto WINAPI \
-	       lpszSrc: LPCWSTR,
-	       lpszDst: LPSTR
+CharToOemA proto WINAPI :LPCSTR, :LPSTR
+CharToOemW proto WINAPI :LPCWSTR, :LPSTR
 ifdef _UNICODE
-CharToOem		equ <CharToOemW>
+CharToOem equ <CharToOemW>
 else
-CharToOem		equ <CharToOemA>
+CharToOem equ <CharToOemA>
 endif
 
-;BOOL
-OemToCharA proto WINAPI \
-	       lpszSrc: LPCSTR,
-	       lpszDst: LPSTR
-;BOOL
-OemToCharW proto WINAPI \
-	       lpszSrc: LPCSTR,
-	       lpszDst: LPWSTR
+OemToCharA proto WINAPI :LPCSTR, :LPSTR
+OemToCharW proto WINAPI :LPCSTR, :LPWSTR
 ifdef _UNICODE
-OemToChar		equ <OemToCharW>
+OemToChar equ <OemToCharW>
 else
-OemToChar		equ <OemToCharA>
+OemToChar equ <OemToCharA>
 endif
 
-;BOOL
-CharToOemBuffA proto WINAPI \
-	       lpszSrc: LPCSTR,
-	       lpszDst: LPSTR,
-	  cchDstLength: DWORD
-;BOOL
-CharToOemBuffW proto WINAPI \
-	       lpszSrc: LPCWSTR,
-	       lpszDst: LPSTR,
-	  cchDstLength: DWORD
+CharToOemBuffA proto WINAPI :LPCSTR, :LPSTR, :DWORD
+CharToOemBuffW proto WINAPI :LPCWSTR, :LPSTR, :DWORD
 ifdef _UNICODE
-CharToOemBuff		equ <CharToOemBuffW>
+CharToOemBuff equ <CharToOemBuffW>
 else
-CharToOemBuff		equ <CharToOemBuffA>
+CharToOemBuff equ <CharToOemBuffA>
 endif
 
-;BOOL
-OemToCharBuffA proto WINAPI \
-	       lpszSrc: LPCSTR,
-	       lpszDst: LPSTR,
-	  cchDstLength: DWORD
-;BOOL
-OemToCharBuffW proto WINAPI \
-	       lpszSrc: LPCSTR,
-	       lpszDst: LPWSTR,
-	  cchDstLength: DWORD
+OemToCharBuffA proto WINAPI :LPCSTR, :LPSTR, :DWORD
+OemToCharBuffW proto WINAPI :LPCSTR, :LPWSTR, :DWORD
 ifdef _UNICODE
-OemToCharBuff		equ <OemToCharBuffW>
+OemToCharBuff equ <OemToCharBuffW>
 else
-OemToCharBuff		equ <OemToCharBuffA>
+OemToCharBuff equ <OemToCharBuffA>
 endif
 
-;LPSTR
-CharUpperA proto WINAPI \
-		  lpsz: LPSTR
-;LPWSTR
-CharUpperW proto WINAPI \
-		  lpsz: LPWSTR
+CharUpperA proto WINAPI :LPSTR
+CharUpperW proto WINAPI :LPWSTR
 ifdef _UNICODE
-CharUpper		equ <CharUpperW>
+CharUpper equ <CharUpperW>
 else
-CharUpper		equ <CharUpperA>
+CharUpper equ <CharUpperA>
 endif
 
-;DWORD
-CharUpperBuffA proto WINAPI \
-		  lpsz: LPSTR,
-	     cchLength: DWORD
-;DWORD
-CharUpperBuffW proto WINAPI \
-		  lpsz: LPWSTR,
-	     cchLength: DWORD
+CharUpperBuffA proto WINAPI :LPSTR, :DWORD
+CharUpperBuffW proto WINAPI :LPWSTR,  :DWORD
 ifdef _UNICODE
-CharUpperBuff		equ <CharUpperBuffW>
+CharUpperBuff equ <CharUpperBuffW>
 else
-CharUpperBuff		equ <CharUpperBuffA>
+CharUpperBuff equ <CharUpperBuffA>
 endif
 
-;LPSTR
-CharLowerA proto WINAPI \
-		  lpsz: LPSTR
-;LPWSTR
-CharLowerW proto WINAPI \
-		  lpsz: LPWSTR
+CharLowerA proto WINAPI :LPSTR
+CharLowerW proto WINAPI :LPWSTR
 ifdef _UNICODE
-CharLower		equ <CharLowerW>
+CharLower equ <CharLowerW>
 else
-CharLower		equ <CharLowerA>
+CharLower equ <CharLowerA>
 endif
 
-;DWORD
-CharLowerBuffA proto WINAPI \
-		  lpsz: LPSTR,
-	     cchLength: DWORD
-;DWORD
-CharLowerBuffW proto WINAPI \
-		  lpsz: LPWSTR,
-	     cchLength: DWORD
+CharLowerBuffA proto WINAPI :LPSTR, :DWORD
+CharLowerBuffW proto WINAPI :LPWSTR, :DWORD
 ifdef _UNICODE
-CharLowerBuff		equ <CharLowerBuffW>
+CharLowerBuff equ <CharLowerBuffW>
 else
-CharLowerBuff		equ <CharLowerBuffA>
+CharLowerBuff equ <CharLowerBuffA>
 endif
 
-;LPSTR
-CharNextA proto WINAPI \
-		  lpsz: LPCSTR
-;LPWSTR
-CharNextW proto WINAPI \
-		  lpsz: LPCWSTR
+CharNextA proto WINAPI :LPCSTR
+CharNextW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-CharNext		equ <CharNextW>
+CharNext equ <CharNextW>
 else
-CharNext		equ <CharNextA>
+CharNext equ <CharNextA>
 endif
 
-;LPSTR
-CharPrevA proto WINAPI \
-	     lpszStart: LPCSTR,
-	   lpszCurrent: LPCSTR
-;LPWSTR
-CharPrevW proto WINAPI \
-	     lpszStart: LPCWSTR,
-	   lpszCurrent: LPCWSTR
+CharPrevA proto WINAPI :LPCSTR, :LPCSTR
+CharPrevW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-CharPrev		equ <CharPrevW>
+CharPrev equ <CharPrevW>
 else
-CharPrev		equ <CharPrevA>
+CharPrev equ <CharPrevA>
 endif
 
 if(WINVER GE 0x0400)
-;LPSTR
-CharNextExA proto WINAPI \
-	      CodePage: WORD,
-	 lpCurrentChar: LPCSTR,
-	       dwFlags: DWORD
-
-;LPSTR
-CharPrevExA proto WINAPI \
-	      CodePage: WORD,
-	       lpStart: LPCSTR,
-	 lpCurrentChar: LPCSTR,
-	       dwFlags: DWORD
+CharNextExA proto WINAPI :WORD, :LPCSTR, :DWORD
+CharPrevExA proto WINAPI :WORD, :LPCSTR, :LPCSTR, :DWORD
 endif
 
 AnsiToOem		equ <CharToOemA>
@@ -4077,167 +3102,86 @@ AnsiPrev		equ <CharPrevA>
 
 ifndef	NOLANGUAGE
 
-;BOOL
-IsCharAlphaA proto WINAPI \
-		      : CHAR
-;BOOL
-IsCharAlphaW proto WINAPI \
-		      : WCHAR
+IsCharAlphaA proto WINAPI :CHAR
+IsCharAlphaW proto WINAPI :WCHAR
 ifdef _UNICODE
-IsCharAlpha		equ <IsCharAlphaW>
+IsCharAlpha equ <IsCharAlphaW>
 else
-IsCharAlpha		equ <IsCharAlphaA>
+IsCharAlpha equ <IsCharAlphaA>
 endif
 
-;BOOL
-IsCharAlphaNumericA proto WINAPI \
-		      : CHAR
-;BOOL
-IsCharAlphaNumericW proto WINAPI \
-		      : WCHAR
+IsCharAlphaNumericA proto WINAPI :CHAR
+IsCharAlphaNumericW proto WINAPI :WCHAR
 ifdef _UNICODE
-IsCharAlphaNumeric	equ <IsCharAlphaNumericW>
+IsCharAlphaNumeric equ <IsCharAlphaNumericW>
 else
-IsCharAlphaNumeric	equ <IsCharAlphaNumericA>
+IsCharAlphaNumeric equ <IsCharAlphaNumericA>
 endif
 
-;BOOL
-IsCharUpperA proto WINAPI \
-		      : CHAR
-;BOOL
-IsCharUpperW proto WINAPI \
-		      : WCHAR
+IsCharUpperA proto WINAPI :CHAR
+IsCharUpperW proto WINAPI :WCHAR
 ifdef _UNICODE
-IsCharUpper		equ <IsCharUpperW>
+IsCharUpper equ <IsCharUpperW>
 else
-IsCharUpper		equ <IsCharUpperA>
+IsCharUpper equ <IsCharUpperA>
 endif
 
-;BOOL
-IsCharLowerA proto WINAPI \
-		      : CHAR
-;BOOL
-IsCharLowerW proto WINAPI \
-		      : WCHAR
+IsCharLowerA proto WINAPI :CHAR
+IsCharLowerW proto WINAPI :WCHAR
 ifdef _UNICODE
-IsCharLower		equ <IsCharLowerW>
+IsCharLower equ <IsCharLowerW>
 else
-IsCharLower		equ <IsCharLowerA>
+IsCharLower equ <IsCharLowerA>
 endif
 
 endif
 
-;HWND
-SetFocus proto WINAPI \
-		  hWnd: HWND
-
-;HWND
+SetFocus proto WINAPI :HWND
 GetActiveWindow proto WINAPI
-
-;HWND
 GetFocus proto WINAPI
-
-;UINT
 GetKBCodePage proto WINAPI
 
 if (WINVER GE 0x0500)
-;SHORT
-GetKeyState proto WINAPI \
-	      nVirtKey: SINT
+GetKeyState proto WINAPI :SINT
 else
-CALLBACK(GetKeyState_T, nVirtKey:SINT)
+CALLBACK(GetKeyState_T, :SINT)
 externdef	GetKeyState:GetKeyState_T
 endif
 
-;SHORT
-GetAsyncKeyState proto WINAPI \
-		  vKey: SINT
+GetAsyncKeyState proto WINAPI :SINT
+GetKeyboardState proto WINAPI :PBYTE
+SetKeyboardState proto WINAPI :LPBYTE
 
-;BOOL
-GetKeyboardState proto WINAPI \
-	    lpKeyState: PBYTE
-
-;BOOL
-SetKeyboardState proto WINAPI \
-	    lpKeyState: LPBYTE
-
-;int
-GetKeyNameTextA proto WINAPI \
-		lParam: LONG,
-	      lpString: LPSTR,
-		nSize : SINT
-;int
-GetKeyNameTextW proto WINAPI \
-		lParam: LONG,
-	      lpString: LPWSTR,
-		nSize : SINT
+GetKeyNameTextA proto WINAPI :LONG, :LPSTR, :SINT
+GetKeyNameTextW proto WINAPI :LONG, :LPWSTR, :SINT
 ifdef _UNICODE
-GetKeyNameText		equ <GetKeyNameTextW>
+GetKeyNameText equ <GetKeyNameTextW>
 else
-GetKeyNameText		equ <GetKeyNameTextA>
+GetKeyNameText equ <GetKeyNameTextA>
 endif
 
-;int
-GetKeyboardType proto WINAPI \
-	     nTypeFlag: SINT
-
-;int
-ToAscii proto WINAPI \
-	      uVirtKey: UINT,
-	     uScanCode: UINT,
-	    lpKeyState: PBYTE,
-		lpChar: LPWORD,
-		uFlags: UINT
-
+GetKeyboardType proto WINAPI :SINT
+ToAscii proto WINAPI :UINT, :UINT, :PBYTE, :LPWORD, :UINT
 if(WINVER GE 0x0400)
-;int
-ToAsciiEx proto WINAPI \
-	      uVirtKey: UINT,
-	     uScanCode: UINT,
-	    lpKeyState: PBYTE,
-		lpChar: LPWORD,
-		uFlags: UINT,
-		 dwhkl: HKL
+ToAsciiEx proto WINAPI :UINT, :UINT, :PBYTE, :LPWORD, :UINT, :HKL
 endif
-
-;int
-ToUnicode proto WINAPI \
-	      wVirtKey: UINT,
-	     wScanCode: UINT,
-	    lpKeyState: PBYTE,
-	      pwszBuff: LPWSTR,
-	       cchBuff: SINT,
-		wFlags: UINT
-
-;DWORD
-OemKeyScan proto WINAPI \
-	      wOemChar: WORD
-
-;SHORT
-VkKeyScanA proto WINAPI \
-		      : CHAR
-;SHORT
-VkKeyScanW proto WINAPI \
-		      : WCHAR
+ToUnicode proto WINAPI :UINT, :UINT, :PBYTE, :LPWSTR, :SINT, :UINT
+OemKeyScan proto WINAPI :WORD
+VkKeyScanA proto WINAPI :CHAR
+VkKeyScanW proto WINAPI :WCHAR
 ifdef _UNICODE
-VkKeyScan		equ <VkKeyScanW>
+VkKeyScan equ <VkKeyScanW>
 else
-VkKeyScan		equ <VkKeyScanA>
+VkKeyScan equ <VkKeyScanA>
 endif
 
 if(WINVER GE 0x0400)
-;SHORT
-VkKeyScanExA proto WINAPI \
-		      : CHAR,
-		 dwhkl: HKL
-;SHORT
-VkKeyScanExW proto WINAPI \
-		      : WCHAR,
-		 dwhkl: HKL
+VkKeyScanExA proto WINAPI :CHAR, :HKL
+VkKeyScanExW proto WINAPI :WCHAR, :HKL
 ifdef _UNICODE
-VkKeyScanEx		equ <VkKeyScanExW>
+VkKeyScanEx equ <VkKeyScanExW>
 else
-VkKeyScanEx		equ <VkKeyScanExA>
+VkKeyScanEx equ <VkKeyScanExA>
 endif
 endif
 KEYEVENTF_EXTENDEDKEY	equ 0x0001
@@ -4247,12 +3191,7 @@ KEYEVENTF_UNICODE	equ 0x0004
 KEYEVENTF_SCANCODE	equ 0x0008
 endif
 
-;VOID
-keybd_event proto WINAPI \
-		   bVk: BYTE,
-		 bScan: BYTE,
-	       dwFlags: DWORD,
-	   dwExtraInfo: ULONG_PTR
+keybd_event proto WINAPI :BYTE, :BYTE, :DWORD, :ULONG_PTR
 
 MOUSEEVENTF_MOVE	equ 0x0001
 MOUSEEVENTF_LEFTDOWN	equ 0x0002
@@ -4273,13 +3212,7 @@ endif
 MOUSEEVENTF_VIRTUALDESK equ 0x4000
 MOUSEEVENTF_ABSOLUTE	equ 0x8000
 
-;VOID
-mouse_event proto WINAPI \
-	       dwFlags: DWORD,
-		     x: DWORD,
-		    dy: DWORD,
-		dwData: DWORD,
-	   dwExtraInfo: ULONG_PTR
+mouse_event proto WINAPI :DWORD, :DWORD, :DWORD, :DWORD, :ULONG_PTR
 
 if (_WIN32_WINNT GT 0x0400)
 
@@ -4327,16 +3260,11 @@ INPUT			ENDS
 PINPUT			typedef ptr INPUT
 LPINPUT			typedef ptr INPUT
 
-;UINT
-SendInput proto WINAPI \
-	       cInputs: UINT,
-	       pInputs: LPINPUT,
-		cbSize: SINT
+SendInput proto WINAPI :UINT, :LPINPUT, :SINT
 
 endif
 
 if(WINVER GE 0x0601)
-
 
 HTOUCHINPUT		typedef HANDLE ; DECLARE_HANDLE(HTOUCHINPUT);
 
@@ -4373,35 +3301,15 @@ TOUCHINPUTMASKF_TIMEFROMSYSTEM equ 0x0001
 TOUCHINPUTMASKF_EXTRAINFO      equ 0x0002
 TOUCHINPUTMASKF_CONTACTAREA    equ 0x0004
 
-;BOOL
-GetTouchInputInfo proto WINAPI \
-	   hTouchInput: HTOUCHINPUT,
-	       cInputs: UINT,
-	       pInputs: PTOUCHINPUT,
-		cbSize: SINT
-
-;BOOL
-CloseTouchInputHandle proto WINAPI \
-	   hTouchInput: HTOUCHINPUT
-
-
+GetTouchInputInfo proto WINAPI :HTOUCHINPUT, :UINT, :PTOUCHINPUT, :SINT
+CloseTouchInputHandle proto WINAPI :HTOUCHINPUT
 
 TWF_FINETOUCH		equ 0x00000001
 TWF_WANTPALM		equ 0x00000002
 
-;BOOL
-RegisterTouchWindow proto WINAPI \
-		  hwnd: HWND,
-	       ulFlags: ULONG
-
-;BOOL
-UnregisterTouchWindow proto WINAPI \
-		  hwnd: HWND
-
-;BOOL
-IsTouchWindow proto WINAPI \
-		  hwnd: HWND,
-	      pulFlags: PULONG
+RegisterTouchWindow proto WINAPI :HWND, :ULONG
+UnregisterTouchWindow proto WINAPI :HWND
+IsTouchWindow proto WINAPI :HWND, :PULONG
 
 endif
 
@@ -4476,7 +3384,6 @@ PerformanceCount	UINT64 ?
 ButtonChangeType	POINTER_BUTTON_CHANGE_TYPE ?
 POINTER_INFO		ENDS
 
-
 TOUCH_FLAGS		typedef UINT32
 TOUCH_FLAG_NONE		equ 0x00000000
 TOUCH_MASK		typedef UINT32
@@ -4540,107 +3447,35 @@ TOUCH_FEEDBACK_DEFAULT	equ 0x1
 TOUCH_FEEDBACK_INDIRECT equ 0x2
 TOUCH_FEEDBACK_NONE	equ 0x3
 
-InitializeTouchInjection proto WINAPI \
-	      maxCount: UINT32,
-		dwMode: DWORD
+InitializeTouchInjection proto WINAPI :UINT32, :DWORD
+InjectTouchInput proto WINAPI :UINT32, :ptr POINTER_TOUCH_INFO
 
-InjectTouchInput proto WINAPI \
-		 count: UINT32,
-	      contacts: ptr POINTER_TOUCH_INFO
+GetPointerType proto WINAPI :UINT32, :ptr POINTER_INPUT_TYPE
+GetPointerCursorId proto WINAPI :UINT32, :ptr UINT32
+GetPointerInfo proto WINAPI :UINT32, :ptr POINTER_INFO
+GetPointerInfoHistory proto WINAPI :UINT32, :ptr UINT32, :ptr POINTER_INFO
+GetPointerFrameInfo proto WINAPI :UINT32, :ptr UINT32, :ptr POINTER_INFO
+GetPointerFrameInfoHistory proto WINAPI :UINT32, :ptr UINT32, :ptr UINT32, :ptr POINTER_INFO
+GetPointerTouchInfo proto WINAPI :UINT32, :ptr POINTER_TOUCH_INFO
+GetPointerTouchInfoHistory proto WINAPI :UINT32, :ptr UINT32, :ptr POINTER_TOUCH_INFO
+GetPointerFrameTouchInfo proto WINAPI :UINT32, :ptr UINT32, :ptr POINTER_TOUCH_INFO
+GetPointerFrameTouchInfoHistory proto WINAPI :UINT32, :ptr UINT32, :ptr UINT32, :ptr POINTER_TOUCH_INFO
+GetPointerPenInfo proto WINAPI :UINT32, :ptr POINTER_PEN_INFO
+GetPointerPenInfoHistory proto WINAPI :UINT32, :ptr UINT32, :ptr POINTER_PEN_INFO
+GetPointerFramePenInfo proto WINAPI :UINT32, :ptr UINT32, :ptr POINTER_PEN_INFO
+GetPointerFramePenInfoHistory proto WINAPI :UINT32, :ptr UINT32, :ptr UINT32, :ptr POINTER_PEN_INFO
+SkipPointerFrameMessages proto WINAPI :UINT32
+RegisterPointerInputTarget proto WINAPI :HWND, :POINTER_INPUT_TYPE
+UnregisterPointerInputTarget proto WINAPI :HWND, :POINTER_INPUT_TYPE
 
-GetPointerType proto WINAPI \
-	     pointerId: UINT32,
-	   pointerType: ptr POINTER_INPUT_TYPE
-
-GetPointerCursorId proto WINAPI \
-	     pointerId: UINT32,
-	      cursorId: ptr UINT32
-
-GetPointerInfo proto WINAPI \
-	     pointerId: UINT32,
-	   pointerInfo: ptr POINTER_INFO
-
-GetPointerInfoHistory proto WINAPI \
-	     pointerId: UINT32,
-	  entriesCount: ptr UINT32,
-	   pointerInfo: ptr POINTER_INFO
-
-GetPointerFrameInfo proto WINAPI \
-	     pointerId: UINT32,
-	  pointerCount: ptr UINT32,
-	   pointerInfo: ptr POINTER_INFO
-
-GetPointerFrameInfoHistory proto WINAPI \
-	     pointerId: UINT32,
-	  entriesCount: ptr UINT32,
-	  pointerCount: ptr UINT32,
-	   pointerInfo: ptr POINTER_INFO
-
-GetPointerTouchInfo proto WINAPI \
-	     pointerId: UINT32,
-	     touchInfo: ptr POINTER_TOUCH_INFO
-
-GetPointerTouchInfoHistory proto WINAPI \
-	     pointerId: UINT32,
-	  entriesCount: ptr UINT32,
-	     touchInfo: ptr POINTER_TOUCH_INFO
-
-GetPointerFrameTouchInfo proto WINAPI \
-	     pointerId: UINT32,
-	  pointerCount: ptr UINT32,
-	     touchInfo: ptr POINTER_TOUCH_INFO
-
-GetPointerFrameTouchInfoHistory proto WINAPI \
-	     pointerId: UINT32,
-	  entriesCount: ptr UINT32,
-	  pointerCount: ptr UINT32,
-	     touchInfo: ptr POINTER_TOUCH_INFO
-
-GetPointerPenInfo proto WINAPI \
-	     pointerId: UINT32,
-	       penInfo: ptr POINTER_PEN_INFO
-
-GetPointerPenInfoHistory proto WINAPI \
-	     pointerId: UINT32,
-	  entriesCount: ptr UINT32,
-	       penInfo: ptr POINTER_PEN_INFO
-
-GetPointerFramePenInfo proto WINAPI \
-	     pointerId: UINT32,
-	  pointerCount: ptr UINT32,
-	       penInfo: ptr POINTER_PEN_INFO
-
-GetPointerFramePenInfoHistory proto WINAPI \
-	     pointerId: UINT32,
-	  entriesCount: ptr UINT32,
-	  pointerCount: ptr UINT32,
-	       penInfo: ptr POINTER_PEN_INFO
-
-SkipPointerFrameMessages proto WINAPI \
-	     pointerId: UINT32
-
-RegisterPointerInputTarget proto WINAPI \
-		  hwnd: HWND,
-	   pointerType: POINTER_INPUT_TYPE
-
-UnregisterPointerInputTarget proto WINAPI \
-		  hwnd: HWND,
-	   pointerType: POINTER_INPUT_TYPE
-
-
-EnableMouseInPointer proto WINAPI \
-	       fEnable: BOOL
-
+EnableMouseInPointer proto WINAPI :BOOL
 IsMouseInPointerEnabled proto WINAPI
-
 
 TOUCH_HIT_TESTING_DEFAULT equ 0x0
 TOUCH_HIT_TESTING_CLIENT  equ 0x1
 TOUCH_HIT_TESTING_NONE	  equ 0x2
 
-RegisterTouchHitTestingWindow proto WINAPI \
-		  hwnd: HWND,
-		 value: ULONG
+RegisterTouchHitTestingWindow proto WINAPI :HWND, :ULONG
 
 TOUCH_HIT_TESTING_PROXIMITY_EVALUATION STRUC
 score			UINT16 ?
@@ -4660,20 +3495,9 @@ PTOUCH_HIT_TESTING_INPUT typedef ptr TOUCH_HIT_TESTING_INPUT
 TOUCH_HIT_TESTING_PROXIMITY_CLOSEST  equ 0x0
 TOUCH_HIT_TESTING_PROXIMITY_FARTHEST equ 0xFFF
 
-EvaluateProximityToRect proto WINAPI \
-    controlBoundingBox: ptr RECT,
-      pHitTestingInput: ptr TOUCH_HIT_TESTING_INPUT,
-	pProximityEval: ptr TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
-
-EvaluateProximityToPolygon proto WINAPI \
-	   numVertices: UINT32,
-	controlPolygon: ptr POINT,
-      pHitTestingInput: ptr TOUCH_HIT_TESTING_INPUT,
-	pProximityEval: ptr TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
-
-PackTouchHitTestingProximityEvaluation proto WINAPI \
-      pHitTestingInput: ptr TOUCH_HIT_TESTING_INPUT,
-	pProximityEval: ptr TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
+EvaluateProximityToRect proto WINAPI :ptr, :ptr, :ptr
+EvaluateProximityToPolygon proto WINAPI :UINT32, :ptr, :ptr, :ptr
+PackTouchHitTestingProximityEvaluation proto WINAPI :ptr, :ptr
 
 .enum FEEDBACK_TYPE {
     FEEDBACK_TOUCH_CONTACTVISUALIZATION = 1,
@@ -4693,20 +3517,8 @@ PackTouchHitTestingProximityEvaluation proto WINAPI \
 
 GWFS_INCLUDE_ANCESTORS equ 0x00000001
 
-GetWindowFeedbackSetting proto WINAPI \
-		  hwnd: HWND,
-	      feedback: FEEDBACK_TYPE,
-	       dwFlags: DWORD,
-		 pSize: ptr UINT32,
-		config: ptr
-
-SetWindowFeedbackSetting proto WINAPI \
-		  hwnd: HWND,
-	      feedback: FEEDBACK_TYPE,
-	       dwFlags: DWORD,
-		  size: UINT32,
-	 configuration: ptr
-
+GetWindowFeedbackSetting proto WINAPI :HWND, :FEEDBACK_TYPE, :DWORD, :ptr UINT32, : ptr
+SetWindowFeedbackSetting proto WINAPI :HWND, :FEEDBACK_TYPE, :DWORD, :UINT32, :ptr
 
 endif
 
@@ -4736,11 +3548,7 @@ UNION
 ENDS
 INPUT_TRANSFORM		ENDS
 
-
-GetPointerInputTransform proto WINAPI \
-	     pointerId: UINT32,
-	  historyCount: UINT32,
-	inputTransform: ptr INPUT_TRANSFORM
+GetPointerInputTransform proto WINAPI :UINT32, :UINT32, :ptr INPUT_TRANSFORM
 
 endif
 
@@ -4751,40 +3559,24 @@ dwTime			dd ?
 LASTINPUTINFO		ENDS
 PLASTINPUTINFO		typedef ptr LASTINPUTINFO
 
-;BOOL
-GetLastInputInfo proto WINAPI \
-		  plii: PLASTINPUTINFO
+GetLastInputInfo proto WINAPI :PLASTINPUTINFO
 endif
 
-;UINT
-MapVirtualKeyA proto WINAPI \
-		 uCode: UINT,
-	      uMapType: UINT
-;UINT
-MapVirtualKeyW proto WINAPI \
-		 uCode: UINT,
-	      uMapType: UINT
+MapVirtualKeyA proto WINAPI :UINT, :UINT
+MapVirtualKeyW proto WINAPI :UINT, :UINT
 ifdef _UNICODE
-MapVirtualKey		equ <MapVirtualKeyW>
+MapVirtualKey equ <MapVirtualKeyW>
 else
-MapVirtualKey		equ <MapVirtualKeyA>
+MapVirtualKey equ <MapVirtualKeyA>
 endif
 
 if(WINVER GE 0x0400)
-;UINT
-MapVirtualKeyExA proto WINAPI \
-		 uCode: UINT,
-	      uMapType: UINT,
-		 dwhkl: HKL
-;UINT
-MapVirtualKeyExW proto WINAPI \
-		 uCode: UINT,
-	      uMapType: UINT,
-		 dwhkl: HKL
+MapVirtualKeyExA proto WINAPI :UINT, :UINT, :HKL
+MapVirtualKeyExW proto WINAPI :UINT, :UINT, :HKL
 ifdef _UNICODE
-MapVirtualKeyEx		equ <MapVirtualKeyExW>
+MapVirtualKeyEx equ <MapVirtualKeyExW>
 else
-MapVirtualKeyEx		equ <MapVirtualKeyExA>
+MapVirtualKeyEx equ <MapVirtualKeyExA>
 endif
 endif
 
@@ -4796,38 +3588,13 @@ if(WINVER GE 0x0600)
 MAPVK_VK_TO_VSC_EX	equ 4
 endif
 
-;BOOL
 GetInputState proto WINAPI
-
-;DWORD
-GetQueueStatus proto WINAPI \
-		 flags: UINT
-
-;HWND
+GetQueueStatus proto WINAPI :UINT
 GetCapture proto WINAPI
-
-;HWND
-SetCapture proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
+SetCapture proto WINAPI :HWND
 ReleaseCapture proto WINAPI
-
-;DWORD
-MsgWaitForMultipleObjects proto WINAPI \
-		nCount: DWORD,
-	      pHandles: LPHANDLE,
-	      fWaitAll: BOOL,
-	dwMilliseconds: DWORD,
-	    dwWakeMask: DWORD
-
-;DWORD
-MsgWaitForMultipleObjectsEx proto WINAPI \
-		nCount: DWORD,
-	      pHandles: LPHANDLE,
-	dwMilliseconds: DWORD,
-	    dwWakeMask: DWORD,
-	       dwFlags: DWORD
+MsgWaitForMultipleObjects proto WINAPI :DWORD, :LPHANDLE, :BOOL, :DWORD, :DWORD
+MsgWaitForMultipleObjectsEx proto WINAPI :DWORD, :LPHANDLE, :DWORD, :DWORD, :DWORD
 
 MWMO_WAITALL		equ 0x0001
 MWMO_ALERTABLE		equ 0x0002
@@ -4857,22 +3624,13 @@ QS_INPUT		equ QS_MOUSE or QS_KEY or QS_RAWINPUT
 else
 QS_INPUT		equ QS_MOUSE or QS_KEY
 endif
-QS_ALLEVENTS		equ QS_INPUT OR QS_POSTMESSAGE OR \
-			QS_TIMER OR QS_PAINT OR QS_HOTKEY
-QS_ALLINPUT		equ QS_INPUT OR QS_POSTMESSAGE OR \
-			QS_TIMER OR QS_PAINT OR QS_HOTKEY OR \
-			QS_SENDMESSAGE
-
+QS_ALLEVENTS		equ QS_INPUT OR QS_POSTMESSAGE OR QS_TIMER OR QS_PAINT OR QS_HOTKEY
+QS_ALLINPUT		equ QS_INPUT OR QS_POSTMESSAGE OR QS_TIMER OR QS_PAINT OR QS_HOTKEY OR QS_SENDMESSAGE
 
 USER_TIMER_MAXIMUM	equ 0x7FFFFFFF
 USER_TIMER_MINIMUM	equ 0x0000000A
 
-;UINT
-SetTimer proto WINAPI \
-		 hWnd : HWND,
-	      nIDEvent: UINT_PTR,
-	       uElapse: UINT,
-	   lpTimerFunc: TIMERPROC
+SetTimer proto WINAPI :HWND, :UINT_PTR, :UINT, :TIMERPROC
 
 if(WINVER GE 0x0601)
 
@@ -4882,103 +3640,53 @@ TIMERV_NO_COALESCING	    equ (0xFFFFFFFF)
 TIMERV_COALESCING_MIN	    equ (1)
 TIMERV_COALESCING_MAX	    equ (0x7FFFFFF5)
 
-SetCoalescableTimer proto WINAPI \
-		  hWnd: HWND,
-	      nIDEvent: UINT_PTR,
-	       uElapse: UINT,
-	   lpTimerFunc: TIMERPROC,
-       uToleranceDelay: ULONG
+SetCoalescableTimer proto WINAPI :HWND, :UINT_PTR, :UINT, :TIMERPROC, :ULONG
 
 endif
 
-;BOOL
-KillTimer proto WINAPI \
-		  hWnd: HWND,
-	      uIDEvent: UINT_PTR
+KillTimer proto WINAPI :HWND, :UINT_PTR
+IsWindowUnicode proto WINAPI :HWND
+EnableWindow proto WINAPI :HWND, :BOOL
+IsWindowEnabled proto WINAPI :HWND
 
-;BOOL
-IsWindowUnicode proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-EnableWindow proto WINAPI \
-		  hWnd: HWND,
-	       bEnable: BOOL
-
-;BOOL
-IsWindowEnabled proto WINAPI \
-		  hWnd: HWND
-
-;HACCEL
-LoadAcceleratorsA proto WINAPI \
-	     hInstance: HINSTANCE,
-	   lpTableName: LPCSTR
-;HACCEL
-LoadAcceleratorsW proto WINAPI \
-	     hInstance: HINSTANCE,
-	   lpTableName: LPCWSTR
+LoadAcceleratorsA proto WINAPI :HINSTANCE, :LPCSTR
+LoadAcceleratorsW proto WINAPI :HINSTANCE, :LPCWSTR
 ifdef _UNICODE
-LoadAccelerators	equ <LoadAcceleratorsW>
+LoadAccelerators equ <LoadAcceleratorsW>
 else
-LoadAccelerators	equ <LoadAcceleratorsA>
+LoadAccelerators equ <LoadAcceleratorsA>
 endif
 
-;HACCEL
-CreateAcceleratorTableA proto WINAPI \
-		      : LPACCEL,
-		      : SINT
-;HACCEL
-CreateAcceleratorTableW proto WINAPI \
-		      : LPACCEL,
-		      : SINT
+CreateAcceleratorTableA proto WINAPI :LPACCEL, :SINT
+CreateAcceleratorTableW proto WINAPI :LPACCEL, :SINT
 ifdef _UNICODE
-CreateAcceleratorTable	equ <CreateAcceleratorTableW>
+CreateAcceleratorTable equ <CreateAcceleratorTableW>
 else
-CreateAcceleratorTable	equ <CreateAcceleratorTableA>
+CreateAcceleratorTable equ <CreateAcceleratorTableA>
 endif
 
-;BOOL
-DestroyAcceleratorTable proto WINAPI \
-		hAccel: HACCEL
-
-;int
-CopyAcceleratorTableA proto WINAPI \
-	     hAccelSrc: HACCEL,
-	    lpAccelDst: LPACCEL,
-	 cAccelEntries: SINT
-;int
-CopyAcceleratorTableW proto WINAPI \
-	     hAccelSrc: HACCEL,
-	    lpAccelDst: LPACCEL,
-	 cAccelEntries: SINT
+DestroyAcceleratorTable proto WINAPI :HACCEL
+CopyAcceleratorTableA proto WINAPI :HACCEL, :LPACCEL, :SINT
+CopyAcceleratorTableW proto WINAPI :HACCEL, :LPACCEL, :SINT
 ifdef _UNICODE
-CopyAcceleratorTable	equ <CopyAcceleratorTableW>
+CopyAcceleratorTable equ <CopyAcceleratorTableW>
 else
-CopyAcceleratorTable	equ <CopyAcceleratorTableA>
+CopyAcceleratorTable equ <CopyAcceleratorTableA>
 endif
 
 ifndef NOMSG
 
-;int
-TranslateAcceleratorA proto WINAPI \
-		  hWnd: HWND,
-	     hAccTable: HACCEL,
-		 lpMsg: LPMSG
-;int
-TranslateAcceleratorW proto WINAPI \
-		  hWnd: HWND,
-	     hAccTable: HACCEL,
-		 lpMsg: LPMSG
+TranslateAcceleratorA proto WINAPI :HWND, :HACCEL, :LPMSG
+TranslateAcceleratorW proto WINAPI :HWND, :HACCEL, :LPMSG
 ifdef _UNICODE
-TranslateAccelerator	equ <TranslateAcceleratorW>
+TranslateAccelerator equ <TranslateAcceleratorW>
 else
-TranslateAccelerator	equ <TranslateAcceleratorA>
+TranslateAccelerator equ <TranslateAcceleratorA>
 endif
 
-endif
+endif ; NOMSG
 
 ifndef NOSYSMETRICS
-
 
 SM_CXSCREEN		equ 0
 SM_CYSCREEN		equ 1
@@ -5030,7 +3738,6 @@ SM_CXFIXEDFRAME		equ SM_CXDGFRAME
 SM_CYFIXEDFRAME		equ SM_CYDGFRAME
 SM_CXSIZEFRAME		equ SM_CXFRAME
 SM_CYSIZEFRAME		equ SM_CYFRAME
-
 SM_SECURE		equ 44
 SM_CXEDGE		equ 45
 SM_CYEDGE		equ 46
@@ -5129,240 +3836,92 @@ endif
 
 endif
 
-;int
-GetSystemMetrics proto WINAPI \
-		nIndex: SINT
+GetSystemMetrics proto WINAPI :SINT
 
-endif
+endif ; NOSYSMETRICS
 
 ifndef NOMENUS
 
-;HMENU
-LoadMenuA proto WINAPI \
-	     hInstance: HINSTANCE,
-	    lpMenuName: LPCSTR
-;HMENU
-LoadMenuW proto WINAPI \
-	     hInstance: HINSTANCE,
-	    lpMenuName: LPCWSTR
+LoadMenuA proto WINAPI :HINSTANCE, :LPCSTR
+LoadMenuW proto WINAPI :HINSTANCE, :LPCWSTR
 ifdef _UNICODE
-LoadMenu		equ <LoadMenuW>
+LoadMenu equ <LoadMenuW>
 else
-LoadMenu		equ <LoadMenuA>
+LoadMenu equ <LoadMenuA>
+endif
+LoadMenuIndirectA proto WINAPI :ptr MENUTEMPLATEA
+LoadMenuIndirectW proto WINAPI :ptr MENUTEMPLATEA
+ifdef _UNICODE
+LoadMenuIndirect equ <LoadMenuIndirectW>
+else
+LoadMenuIndirect equ <LoadMenuIndirectA>
 endif
 
-;HMENU
-LoadMenuIndirectA proto WINAPI \
-	lpMenuTemplate: ptr MENUTEMPLATEA
-;HMENU
-LoadMenuIndirectW proto WINAPI \
-	lpMenuTemplate: ptr MENUTEMPLATEA
+GetMenu proto WINAPI :HWND
+SetMenu proto WINAPI :HWND, :HMENU
+
+ChangeMenuA proto WINAPI :HMENU, :UINT, :LPCSTR, :UINT, :UINT
+ChangeMenuW proto WINAPI :HMENU, :UINT, :LPCWSTR, :UINT, :UINT
 ifdef _UNICODE
-LoadMenuIndirect	equ <LoadMenuIndirectW>
+ChangeMenu equ <ChangeMenuW>
 else
-LoadMenuIndirect	equ <LoadMenuIndirectA>
+ChangeMenu equ <ChangeMenuA>
 endif
 
-;HMENU
-GetMenu proto WINAPI \
-		  hWnd: HWND
+HiliteMenuItem proto WINAPI :HWND, :HMENU, :UINT, :UINT
 
-;BOOL
-SetMenu proto WINAPI \
-		  hWnd: HWND,
-		 hMenu: HMENU
-
-;BOOL
-ChangeMenuA proto WINAPI \
-		 hMenu: HMENU,
-		   cmd: UINT,
-	   lpszNewItem: LPCSTR,
-	     cmdInsert: UINT,
-		 flags: UINT
-;BOOL
-ChangeMenuW proto WINAPI \
-		 hMenu: HMENU,
-		   cmd: UINT,
-	   lpszNewItem: LPCWSTR,
-	     cmdInsert: UINT,
-		 flags: UINT
+GetMenuStringA proto WINAPI :HMENU, :UINT, :LPSTR, :SINT, :UINT
+GetMenuStringW proto WINAPI :HMENU, :UINT, :LPWSTR, :SINT, :UINT
 ifdef _UNICODE
-ChangeMenu		equ <ChangeMenuW>
+GetMenuString equ <GetMenuStringW>
 else
-ChangeMenu		equ <ChangeMenuA>
+GetMenuString equ <GetMenuStringA>
 endif
 
-;BOOL
-HiliteMenuItem proto WINAPI \
-		  hWnd: HWND,
-		 hMenu: HMENU,
-	 uIDHiliteItem: UINT,
-	       uHilite: UINT
-
-;int
-GetMenuStringA proto WINAPI \
-		 hMenu: HMENU,
-	       uIDItem: UINT,
-	      lpString: LPSTR,
-	     nMaxCount: SINT,
-		 uFlag: UINT
-;int
-GetMenuStringW proto WINAPI \
-		 hMenu: HMENU,
-	       uIDItem: UINT,
-	      lpString: LPWSTR,
-	     nMaxCount: SINT,
-		 uFlag: UINT
-ifdef _UNICODE
-GetMenuString		equ <GetMenuStringW>
-else
-GetMenuString		equ <GetMenuStringA>
-endif
-
-;UINT
-GetMenuState proto WINAPI \
-		 hMenu: HMENU,
-		   uId: UINT,
-		uFlags: UINT
-
-;BOOL
-DrawMenuBar proto WINAPI \
-		  hWnd: HWND
+GetMenuState proto WINAPI :HMENU, :UINT, :UINT
+DrawMenuBar proto WINAPI :HWND
 
 if(_WIN32_WINNT GE 0x0501)
 PMB_ACTIVE		equ 0x00000001
 endif
-;HMENU
-GetSystemMenu proto WINAPI \
-		  hWnd: HWND,
-	       bRevert: BOOL
-
-;HMENU
+GetSystemMenu proto WINAPI :HWND, :BOOL
 CreateMenu proto WINAPI
-
-;HMENU
 CreatePopupMenu proto WINAPI
-
-;BOOL
-DestroyMenu proto WINAPI \
-		 hMenu: HMENU
-
-;DWORD
-CheckMenuItem proto WINAPI \
-		 hMenu: HMENU,
-	  uIDCheckItem: UINT,
-		uCheck: UINT
-
-;BOOL
-EnableMenuItem proto WINAPI \
-		 hMenu: HMENU,
-	 uIDEnableItem: UINT,
-	       uEnable: UINT
-
-;HMENU
-GetSubMenu proto WINAPI \
-		 hMenu: HMENU,
-		  nPos: SINT
-
-;UINT
-GetMenuItemID proto WINAPI \
-		 hMenu: HMENU,
-		  nPos: SINT
-
-;int
-GetMenuItemCount proto WINAPI \
-		 hMenu: HMENU
-
-;BOOL
-InsertMenuA proto WINAPI \
-		 hMenu: HMENU,
-	     uPosition: UINT,
-		uFlags: UINT,
-	    uIDNewItem: UINT_PTR,
-	    lpNewItem : LPCSTR
-;BOOL
-InsertMenuW proto WINAPI \
-		 hMenu: HMENU,
-	     uPosition: UINT,
-		uFlags: UINT,
-	    uIDNewItem: UINT_PTR,
-	    lpNewItem : LPCWSTR
+DestroyMenu proto WINAPI :HMENU
+CheckMenuItem proto WINAPI :HMENU, :UINT, :UINT
+EnableMenuItem proto WINAPI :HMENU, :UINT, :UINT
+GetSubMenu proto WINAPI :HMENU, :SINT
+GetMenuItemID proto WINAPI :HMENU, :SINT
+GetMenuItemCount proto WINAPI :HMENU
+InsertMenuA proto WINAPI :HMENU, :UINT, :UINT, :UINT_PTR, :LPCSTR
+InsertMenuW proto WINAPI :HMENU, :UINT, :UINT, :UINT_PTR, :LPCWSTR
 ifdef _UNICODE
-InsertMenu		equ <InsertMenuW>
+InsertMenu equ <InsertMenuW>
 else
-InsertMenu		equ <InsertMenuA>
+InsertMenu equ <InsertMenuA>
 endif
 
-;BOOL
-AppendMenuA proto WINAPI \
-		 hMenu: HMENU,
-		uFlags: UINT,
-	    uIDNewItem: UINT_PTR,
-	    lpNewItem : LPCSTR
-;BOOL
-AppendMenuW proto WINAPI \
-		 hMenu: HMENU,
-		uFlags: UINT,
-	    uIDNewItem: UINT_PTR,
-	    lpNewItem : LPCWSTR
+AppendMenuA proto WINAPI :HMENU, :UINT, :UINT_PTR, :LPCSTR
+AppendMenuW proto WINAPI :HMENU, :UINT, :UINT_PTR, :LPCWSTR
 ifdef _UNICODE
-AppendMenu		equ <AppendMenuW>
+AppendMenu equ <AppendMenuW>
 else
-AppendMenu		equ <AppendMenuA>
+AppendMenu equ <AppendMenuA>
 endif
 
-;BOOL
-ModifyMenuA proto WINAPI \
-		  hMnu: HMENU,
-	     uPosition: UINT,
-		uFlags: UINT,
-	    uIDNewItem: UINT_PTR,
-	    lpNewItem : LPCSTR
-;BOOL
-ModifyMenuW proto WINAPI \
-		  hMnu: HMENU,
-	     uPosition: UINT,
-		uFlags: UINT,
-	    uIDNewItem: UINT_PTR,
-	    lpNewItem : LPCWSTR
+ModifyMenuA proto WINAPI :HMENU, :UINT, :UINT, :UINT_PTR, :LPCSTR
+ModifyMenuW proto WINAPI :HMENU, :UINT, :UINT, :UINT_PTR, :LPCWSTR
 ifdef _UNICODE
-ModifyMenu		equ <ModifyMenuW>
+ModifyMenu equ <ModifyMenuW>
 else
-ModifyMenu		equ <ModifyMenuA>
+ModifyMenu equ <ModifyMenuA>
 endif
 
-;BOOL
-RemoveMenu proto WINAPI \
-		 hMenu: HMENU,
-	     uPosition: UINT,
-		uFlags: UINT
-
-;BOOL
-DeleteMenu proto WINAPI \
-		 hMenu: HMENU,
-	     uPosition: UINT,
-		uFlags: UINT
-
-;BOOL
-SetMenuItemBitmaps proto WINAPI \
-		 hMenu: HMENU,
-	     uPosition: UINT,
-		uFlags: UINT,
-      hBitmapUnchecked: HBITMAP,
-	hBitmapChecked: HBITMAP
-
-;LONG
+RemoveMenu proto WINAPI :HMENU, :UINT, :UINT
+DeleteMenu proto WINAPI :HMENU, :UINT, :UINT
+SetMenuItemBitmaps proto WINAPI :HMENU, :UINT, :UINT, :HBITMAP,:HBITMAP
 GetMenuCheckMarkDimensions proto WINAPI
-
-;BOOL
-TrackPopupMenu proto WINAPI \
-		 hMenu: HMENU,
-		uFlags: UINT,
-		     x: SINT,
-		     y: SINT,
-	     nReserved: SINT,
-		  hWnd: HWND,
-	       prcRect: LPRECT
+TrackPopupMenu proto WINAPI :HMENU, :UINT, :SINT, :SINT, :SINT, :HWND, :LPRECT
 
 if(WINVER GE 0x0400)
 MNC_IGNORE		equ 0
@@ -5376,24 +3935,11 @@ rcExclude		RECT <>
 TPMPARAMS		ENDS
 LPTPMPARAMS		typedef ptr TPMPARAMS
 
-;BOOL
-TrackPopupMenuEx proto WINAPI \
-		      : HMENU,
-		      : UINT,
-		      : SINT,
-		      : SINT,
-		      : HWND,
-		      : LPTPMPARAMS
+TrackPopupMenuEx proto WINAPI :HMENU, :UINT, :SINT, :SINT, :HWND, :LPTPMPARAMS
 endif
 
 if(_WIN32_WINNT GE 0x0601)
-;BOOL
-CalculatePopupWindowPosition proto WINAPI \
-	   anchorPoint: ptr POINT,
-	    windowSize: ptr POINT,
-		 flags: UINT,
-	   excludeRect: ptr RECT,
-   popupWindowPosition: ptr RECT
+CalculatePopupWindowPosition proto WINAPI :ptr POINT, :ptr POINT, :UINT, :ptr RECT, :ptr RECT
 endif
 
 if(WINVER GE 0x0500)
@@ -5423,17 +3969,9 @@ MENUINFO		ENDS
 LPMENUINFO		typedef ptr MENUINFO
 LPCMENUINFO		typedef ptr MENUINFO
 
-;BOOL
-GetMenuInfo proto WINAPI \
-		      : HMENU,
-		      : LPMENUINFO
+GetMenuInfo proto WINAPI :HMENU, :LPMENUINFO
+SetMenuInfo proto WINAPI :HMENU, :LPCMENUINFO
 
-;BOOL
-SetMenuInfo proto WINAPI \
-		      : HMENU,
-		      : LPCMENUINFO
-
-;BOOL
 EndMenu proto WINAPI
 
 MND_CONTINUE		equ 0
@@ -5531,86 +4069,37 @@ else
 LPCMENUITEMINFO		typedef LPCMENUITEMINFOA
 endif
 
-;BOOL
-InsertMenuItemA proto WINAPI \
-		      : HMENU,
-		      : UINT,
-		      : BOOL,
-		      : LPCMENUITEMINFOA
-;BOOL
-InsertMenuItemW proto WINAPI \
-		      : HMENU,
-		      : UINT,
-		      : BOOL,
-		      : LPCMENUITEMINFOW
+InsertMenuItemA proto WINAPI :HMENU, :UINT, :BOOL, :LPCMENUITEMINFOA
+InsertMenuItemW proto WINAPI :HMENU, :UINT, :BOOL, :LPCMENUITEMINFOW
 ifdef _UNICODE
-InsertMenuItem		equ <InsertMenuItemW>
+InsertMenuItem equ <InsertMenuItemW>
 else
-InsertMenuItem		equ <InsertMenuItemA>
+InsertMenuItem equ <InsertMenuItemA>
 endif
 
-;BOOL
-GetMenuItemInfoA proto WINAPI \
-		      : HMENU,
-		      : UINT,
-		      : BOOL,
-		      : LPMENUITEMINFOA
-;BOOL
-GetMenuItemInfoW proto WINAPI \
-		      : HMENU,
-		      : UINT,
-		      : BOOL,
-		      : LPMENUITEMINFOW
+GetMenuItemInfoA proto WINAPI :HMENU, :UINT, :BOOL, :LPMENUITEMINFOA
+GetMenuItemInfoW proto WINAPI :HMENU, :UINT, :BOOL, :LPMENUITEMINFOW
 ifdef _UNICODE
-GetMenuItemInfo		equ <GetMenuItemInfoW>
+GetMenuItemInfo equ <GetMenuItemInfoW>
 else
-GetMenuItemInfo		equ <GetMenuItemInfoA>
+GetMenuItemInfo equ <GetMenuItemInfoA>
 endif
 
-;BOOL
-SetMenuItemInfoA proto WINAPI \
-		      : HMENU,
-		      : UINT,
-		      : BOOL,
-		      : LPCMENUITEMINFOA
-;BOOL
-SetMenuItemInfoW proto WINAPI \
-		      : HMENU,
-		      : UINT,
-		      : BOOL,
-		      : LPCMENUITEMINFOW
+SetMenuItemInfoA proto WINAPI :HMENU, :UINT, :BOOL, :LPCMENUITEMINFOA
+SetMenuItemInfoW proto WINAPI :HMENU, :UINT, :BOOL, :LPCMENUITEMINFOW
 ifdef _UNICODE
-SetMenuItemInfo		equ <SetMenuItemInfoW>
+SetMenuItemInfo equ <SetMenuItemInfoW>
 else
-SetMenuItemInfo		equ <SetMenuItemInfoA>
+SetMenuItemInfo equ <SetMenuItemInfoA>
 endif
-
 
 GMDI_USEDISABLED	equ 0x0001
 GMDI_GOINTOPOPUPS	equ 0x0002
 
-;UINT
-GetMenuDefaultItem proto WINAPI \
-		 hMenu: HMENU,
-		fByPos: UINT,
-	     gmdiFlags: UINT
-;BOOL
-SetMenuDefaultItem proto WINAPI \
-		 hMenu: HMENU,
-		 uItem: UINT,
-		fByPos: UINT
-
-;BOOL
-GetMenuItemRect proto WINAPI \
-		  hWnd: HWND,
-		 hMenu: HMENU,
-		 uItem: UINT,
-	      lprcItem: LPRECT
-;int
-MenuItemFromPoint proto WINAPI \
-		  hWnd: HWND,
-		 hMenu: HMENU,
-	      ptScreen: POINT
+GetMenuDefaultItem proto WINAPI :HMENU, :UINT, :UINT
+SetMenuDefaultItem proto WINAPI :HMENU, :UINT, :UINT
+GetMenuItemRect proto WINAPI :HWND,:HMENU, :UINT, :LPRECT
+MenuItemFromPoint proto WINAPI :HWND, :HMENU, :POINT
 endif
 
 TPM_LEFTBUTTON		equ 0x0000
@@ -5671,26 +4160,10 @@ DOF_SHELLDATA		equ 0x0002
 DO_DROPFILE		equ 0x454C4946
 DO_PRINTFILE		equ 0x544E5250
 
-;DWORD
-DragObject proto WINAPI \
-		      : HWND,
-		      : HWND,
-		      : UINT,
-		      : ULONG_PTR,
-		      : HCURSOR
-
-;BOOL
-DragDetect proto WINAPI \
-		      : HWND,
-		      : POINT
+DragObject proto WINAPI :HWND, :HWND, :UINT, :ULONG_PTR, :HCURSOR
+DragDetect proto WINAPI :HWND, :POINT
 endif
-
-;BOOL
-DrawIcon proto WINAPI \
-		   hDC: HDC,
-		     X: SINT,
-		     Y: SINT,
-		 hIcon: HICON
+DrawIcon proto WINAPI :HDC, :SINT, :SINT, :HICON
 
 ifndef NODRAWTEXT
 
@@ -5725,7 +4198,6 @@ DT_PREFIXONLY		equ 0x00200000
 endif
 endif
 
-
 DRAWTEXTPARAMS		STRUC
 cbSize			UINT ?
 iTabLength		SINT ?
@@ -5736,80 +4208,33 @@ DRAWTEXTPARAMS		ENDS
 LPDRAWTEXTPARAMS	typedef ptr DRAWTEXTPARAMS
 endif
 
-
-;int
-DrawTextA proto WINAPI \
-		   hDC: HDC,
-	      lpString: LPCSTR,
-		nCount: SINT,
-		lpRect: LPRECT,
-	       uFormat: UINT
-;int
-DrawTextW proto WINAPI \
-		   hDC: HDC,
-	      lpString: LPCWSTR,
-		nCount: SINT,
-		lpRect: LPRECT,
-	       uFormat: UINT
+DrawTextA proto WINAPI :HDC, :LPCSTR, :SINT, :LPRECT, :UINT
+DrawTextW proto WINAPI :HDC, :LPCWSTR, :SINT, :LPRECT, :UINT
 ifdef _UNICODE
-DrawText		equ <DrawTextW>
+DrawText equ <DrawTextW>
 else
-DrawText		equ <DrawTextA>
+DrawText equ <DrawTextA>
 endif
 
 
 if(WINVER GE 0x0400)
-;int
-DrawTextExA proto WINAPI \
-		      : HDC,
-		      : LPSTR,
-		      : SINT,
-		      : LPRECT,
-		      : UINT,
-		      : LPDRAWTEXTPARAMS
-;int
-DrawTextExW proto WINAPI \
-		      : HDC,
-		      : LPWSTR,
-		      : SINT,
-		      : LPRECT,
-		      : UINT,
-		      : LPDRAWTEXTPARAMS
+DrawTextExA proto WINAPI :HDC, :LPSTR, :SINT, :LPRECT, :UINT, :LPDRAWTEXTPARAMS
+DrawTextExW proto WINAPI :HDC, :LPWSTR, :SINT, :LPRECT, :UINT, :LPDRAWTEXTPARAMS
 ifdef _UNICODE
-DrawTextEx		equ <DrawTextExW>
+DrawTextEx equ <DrawTextExW>
 else
-DrawTextEx		equ <DrawTextExA>
+DrawTextEx equ <DrawTextExA>
 endif
 endif
 
 endif
 
-;BOOL
-GrayStringA proto WINAPI \
-		   hDC: HDC,
-		hBrush: HBRUSH,
-	  lpOutputFunc: GRAYSTRINGPROC,
-		lpData: LPARAM,
-		nCount: SINT,
-		     X: SINT,
-		     Y: SINT,
-		nWidth: SINT,
-	       nHeight: SINT
-;BOOL
-GrayStringW proto WINAPI \
-		   hDC: HDC,
-		hBrush: HBRUSH,
-	  lpOutputFunc: GRAYSTRINGPROC,
-		lpData: LPARAM,
-		nCount: SINT,
-		     X: SINT,
-		     Y: SINT,
-		nWidth: SINT,
-	       nHeight: SINT
+GrayStringA proto WINAPI :HDC, :HBRUSH, :GRAYSTRINGPROC, :LPARAM, :SINT, :SINT, :SINT, :SINT, :SINT
+GrayStringW proto WINAPI :HDC, :HBRUSH, :GRAYSTRINGPROC, :LPARAM, :SINT, :SINT, :SINT, :SINT, :SINT
 ifdef _UNICODE
-GrayString		equ <GrayStringW>
+GrayString equ <GrayStringW>
 else
-GrayString		equ <GrayStringA>
+GrayString equ <GrayStringA>
 endif
 
 if(WINVER GE 0x0400)
@@ -5829,138 +4254,59 @@ DSS_HIDEPREFIX		equ 0x0200
 DSS_PREFIXONLY		equ 0x0400
 endif
 
-;BOOL
-DrawStateA proto WINAPI \
-		      : HDC,
-		      : HBRUSH,
-		      : DRAWSTATEPROC,
-		      : LPARAM,
-		      : WPARAM,
-		      : SINT,
-		      : SINT,
-		      : SINT,
-		      : SINT,
-		      : UINT
-;BOOL
-DrawStateW proto WINAPI \
-		      : HDC,
-		      : HBRUSH,
-		      : DRAWSTATEPROC,
-		      : LPARAM,
-		      : WPARAM,
-		      : SINT,
-		      : SINT,
-		      : SINT,
-		      : SINT,
-		      : UINT
+DrawStateA proto WINAPI :HDC, :HBRUSH, :DRAWSTATEPROC, :LPARAM, :WPARAM, :SINT, :SINT, :SINT, :SINT, :UINT
+DrawStateW proto WINAPI :HDC, :HBRUSH, :DRAWSTATEPROC, :LPARAM, :WPARAM, :SINT, :SINT, :SINT, :SINT, :UINT
 ifdef _UNICODE
-DrawState		equ <DrawStateW>
+DrawState equ <DrawStateW>
 else
-DrawState		equ <DrawStateA>
+DrawState equ <DrawStateA>
 endif
 endif
 
-;LONG
-TabbedTextOutA proto WINAPI \
-		   hDC: HDC,
-		     X: SINT,
-		     Y: SINT,
-	      lpString: LPCSTR,
-		nCount: SINT,
-	 nTabPositions: SINT,
-   lpnTabStopPositions: LPINT,
-	    nTabOrigin: SINT
-;LONG
-TabbedTextOutW proto WINAPI \
-		   hDC: HDC,
-		     X: SINT,
-		     Y: SINT,
-	      lpString: LPCWSTR,
-		nCount: SINT,
-	 nTabPositions: SINT,
-   lpnTabStopPositions: LPINT,
-	    nTabOrigin: SINT
+TabbedTextOutA proto WINAPI :HDC, :SINT, :SINT, :LPCSTR, :SINT, :SINT, :LPINT, :SINT
+TabbedTextOutW proto WINAPI :HDC, :SINT, :SINT, :LPCWSTR, :SINT, :SINT,:LPINT, :SINT
 ifdef _UNICODE
-TabbedTextOut		equ <TabbedTextOutW>
+TabbedTextOut equ <TabbedTextOutW>
 else
-TabbedTextOut		equ <TabbedTextOutA>
+TabbedTextOut equ <TabbedTextOutA>
 endif
 
-;DWORD
-GetTabbedTextExtentA proto WINAPI \
-		   hDC: HDC,
-	      lpString: LPCSTR,
-		nCount: SINT,
-	 nTabPositions: SINT,
-   lpnTabStopPositions: LPINT
-;DWORD
-GetTabbedTextExtentW proto WINAPI \
-		   hDC: HDC,
-	      lpString: LPCWSTR,
-		nCount: SINT,
-	 nTabPositions: SINT,
-   lpnTabStopPositions: LPINT
+GetTabbedTextExtentA proto WINAPI :HDC, :LPCSTR, :SINT, :SINT, :LPINT
+GetTabbedTextExtentW proto WINAPI :HDC, :LPCWSTR, :SINT, :SINT, :LPINT
 ifdef _UNICODE
-GetTabbedTextExtent	equ <GetTabbedTextExtentW>
+GetTabbedTextExtent equ <GetTabbedTextExtentW>
 else
-GetTabbedTextExtent	equ <GetTabbedTextExtentA>
+GetTabbedTextExtent equ <GetTabbedTextExtentA>
 endif
 
-;BOOL
-UpdateWindow proto WINAPI \
-		  hWnd: HWND
-
-;HWND
-SetActiveWindow proto WINAPI \
-		  hWnd: HWND
+UpdateWindow proto WINAPI :HWND
+SetActiveWindow proto WINAPI :HWND
 
 if (_WIN32_WINNT GE 0x0500)
-;HWND
 GetForegroundWindow	proto WINAPI
 else
 CALLBACK(GetForegroundWindow_T)
-externdef		GetForegroundWindow:GetForegroundWindow_T
+externdef GetForegroundWindow:GetForegroundWindow_T
 endif
-
 if(WINVER GE 0x0400)
-;BOOL
-PaintDesktop proto WINAPI \
-		   hdc: HDC
-
+PaintDesktop proto WINAPI :HDC
 endif
-
-;BOOL
-SetForegroundWindow proto WINAPI \
-		  hWnd: HWND
+SetForegroundWindow proto WINAPI :HWND
 
 if(_WIN32_WINNT GE 0x0500)
-;BOOL
-AllowSetForegroundWindow proto WINAPI \
-	   dwProcessId: DWORD
+AllowSetForegroundWindow proto WINAPI :DWORD
 
 ASFW_ANY		equ (-1)
 
-;BOOL
-LockSetForegroundWindow proto WINAPI \
-	     uLockCode: UINT
+LockSetForegroundWindow proto WINAPI :UINT
 
 LSFW_LOCK		equ 1
 LSFW_UNLOCK		equ 2
 endif
 
-;HWND
-WindowFromDC proto WINAPI \
-		   hDC: HDC
-
-;HDC
-GetDC proto WINAPI \
-		  hWnd: HWND
-
-;HDC
-GetDCEx proto WINAPI \
-		 hWnd : HWND,
-	      hrgnClip: HRGN,
-		 flags: DWORD
+WindowFromDC proto WINAPI :HDC
+GetDC proto WINAPI :HWND
+GetDCEx proto WINAPI :HWND, :HRGN, :DWORD
 
 DCX_WINDOW		equ 0x00000001
 DCX_CACHE		equ 0x00000002
@@ -5975,13 +4321,7 @@ DCX_INTERSECTUPDATE	equ 0x00000200
 DCX_LOCKWINDOWUPDATE	equ 0x00000400
 DCX_VALIDATE		equ 0x00200000
 
-;BOOL
-AlignRects proto WINAPI \
-		   arc: LPRECT,
-		cCount: DWORD,
-	      iPrimary: DWORD,
-	       dwFlags: DWORD
-
+AlignRects proto WINAPI :LPRECT, :DWORD, :DWORD, :DWORD
 
 CUDR_NORMAL		equ 0x0000
 CUDR_NOSNAPTOGRID	equ 0x0001
@@ -5990,141 +4330,41 @@ CUDR_NOCLOSEGAPS	equ 0x0004
 CUDR_NEGATIVECOORDS	equ 0x0008
 CUDR_NOPRIMARY		equ 0x0010
 
-
-;HDC
-GetWindowDC proto WINAPI \
-		  hWnd: HWND
-
-;int
-ReleaseDC proto WINAPI \
-		  hWnd: HWND,
-		   hDC: HDC
-
-;HDC
-BeginPaint proto WINAPI \
-		  hWnd: HWND,
-	       lpPaint: LPPAINTSTRUCT
-
-;BOOL
-EndPaint proto WINAPI \
-		  hWnd: HWND,
-	       lpPaint: ptr PAINTSTRUCT
-
-;BOOL
-GetUpdateRect proto WINAPI \
-		  hWnd: HWND,
-		lpRect: LPRECT,
-		bErase: BOOL
-
-;int
-GetUpdateRgn proto WINAPI \
-		  hWnd: HWND,
-		  hRgn: HRGN,
-		bErase: BOOL
-
-;int
-SetWindowRgn proto WINAPI \
-		  hWnd: HWND,
-		  hRgn: HRGN,
-	       bRedraw: BOOL
-
-;int
-GetWindowRgn proto WINAPI \
-		  hWnd: HWND,
-		  hRgn: HRGN
+GetWindowDC proto WINAPI :HWND
+ReleaseDC proto WINAPI :HWND, :HDC
+BeginPaint proto WINAPI :HWND, :LPPAINTSTRUCT
+EndPaint proto WINAPI :HWND, :ptr PAINTSTRUCT
+GetUpdateRect proto WINAPI :HWND, :LPRECT, :BOOL
+GetUpdateRgn proto WINAPI :HWND, :HRGN, :BOOL
+SetWindowRgn proto WINAPI :HWND, :HRGN, :BOOL
+GetWindowRgn proto WINAPI :HWND, :HRGN
 if(_WIN32_WINNT GE 0x0501)
-;int
-GetWindowRgnBox proto WINAPI \
-		  hWnd: HWND,
-		  lprc: LPRECT
+GetWindowRgnBox proto WINAPI :HWND, :LPRECT
 endif
-
-;int
-ExcludeUpdateRgn proto WINAPI \
-		   hDC: HDC,
-		  hWnd: HWND
-
-;BOOL
-InvalidateRect proto WINAPI \
-		 hWnd : HWND,
-		lpRect: LPRECT,
-		bErase: BOOL
-
-;BOOL
-ValidateRect proto WINAPI \
-		 hWnd : HWND,
-		lpRect: LPRECT
-
-;BOOL
-InvalidateRgn proto WINAPI \
-		  hWnd: HWND,
-		  hRgn: HRGN,
-		bErase: BOOL
-
-;BOOL
-ValidateRgn proto WINAPI \
-		  hWnd: HWND,
-		  hRgn: HRGN
-
-
-;BOOL
-RedrawWindow proto WINAPI \
-		  hWnd: HWND,
-	    lprcUpdate: LPRECT,
-	    hrgnUpdate: HRGN,
-		 flags: UINT
+ExcludeUpdateRgn proto WINAPI :HDC, :HWND
+InvalidateRect proto WINAPI :HWND, :LPRECT, :BOOL
+ValidateRect proto WINAPI :HWND, :LPRECT
+InvalidateRgn proto WINAPI :HWND, :HRGN, :BOOL
+ValidateRgn proto WINAPI :HWND, :HRGN
+RedrawWindow proto WINAPI :HWND, :LPRECT, :HRGN, :UINT
 
 RDW_INVALIDATE		equ 0x0001
 RDW_INTERNALPAINT	equ 0x0002
 RDW_ERASE		equ 0x0004
-
 RDW_VALIDATE		equ 0x0008
 RDW_NOINTERNALPAINT	equ 0x0010
 RDW_NOERASE		equ 0x0020
-
 RDW_NOCHILDREN		equ 0x0040
 RDW_ALLCHILDREN		equ 0x0080
-
 RDW_UPDATENOW		equ 0x0100
 RDW_ERASENOW		equ 0x0200
-
 RDW_FRAME		equ 0x0400
 RDW_NOFRAME		equ 0x0800
 
-
-
-;BOOL
-LockWindowUpdate proto WINAPI \
-	      hWndLock: HWND
-
-;BOOL
-ScrollWindow proto WINAPI \
-		  hWnd: HWND,
-	       XAmount: SINT,
-	       YAmount: SINT,
-		lpRect: LPRECT,
-	    lpClipRect: LPRECT
-
-;BOOL
-ScrollDC proto WINAPI \
-		   hDC: HDC,
-		   _dx: SINT,
-		    dy: SINT,
-	    lprcScroll: LPRECT,
-	     lprcClip : LPRECT,
-	    hrgnUpdate: HRGN,
-	    lprcUpdate: LPRECT
-
-;int
-ScrollWindowEx proto WINAPI \
-		  hWnd: HWND,
-		   _dx: SINT,
-		    dy: SINT,
-	     prcScroll: LPRECT,
-	      prcClip : LPRECT,
-	    hrgnUpdate: HRGN,
-	     prcUpdate: LPRECT,
-		 flags: UINT
+LockWindowUpdate proto WINAPI :HWND
+ScrollWindow proto WINAPI :HWND, :SINT, :SINT, :LPRECT, :LPRECT
+ScrollDC proto WINAPI :HDC, :SINT, :SINT, :LPRECT,:LPRECT, :HRGN, :LPRECT
+ScrollWindowEx proto WINAPI :HWND, :SINT, :SINT, :LPRECT, :LPRECT, :HRGN, :LPRECT, :UINT
 
 SW_SCROLLCHILDREN	equ 0x0001
 SW_INVALIDATE		equ 0x0002
@@ -6134,200 +4374,91 @@ SW_SMOOTHSCROLL		equ 0x0010
 endif
 
 ifndef NOSCROLL
-
-;int
-SetScrollPos proto WINAPI \
-		  hWnd: HWND,
-		  nBar: SINT,
-		  nPos: SINT,
-	       bRedraw: BOOL
-
-;int
-GetScrollPos proto WINAPI \
-		  hWnd: HWND,
-		  nBar: SINT
-
-;BOOL
-SetScrollRange proto WINAPI \
-		  hWnd: HWND,
-		  nBar: SINT,
-	       nMinPos: SINT,
-	       nMaxPos: SINT,
-	       bRedraw: BOOL
-
-;BOOL
-GetScrollRange proto WINAPI \
-		  hWnd: HWND,
-		  nBar: SINT,
-	      lpMinPos: LPINT,
-	      lpMaxPos: LPINT
-
-;BOOL
-ShowScrollBar proto WINAPI \
-		  hWnd: HWND,
-		  wBar: SINT,
-		 bShow: BOOL
-
-;BOOL
-EnableScrollBar proto WINAPI \
-		  hWnd: HWND,
-	      wSBflags: UINT,
-	       wArrows: UINT
-
+SetScrollPos proto WINAPI :HWND, :SINT, :SINT, :BOOL
+GetScrollPos proto WINAPI :HWND, :SINT
+SetScrollRange proto WINAPI :HWND, :SINT, :SINT, :SINT, :BOOL
+GetScrollRange proto WINAPI :HWND, :SINT, :LPINT, :LPINT
+ShowScrollBar proto WINAPI :HWND, :SINT, :BOOL
+EnableScrollBar proto WINAPI :HWND, :UINT, :UINT
 
 ESB_ENABLE_BOTH		equ 0x0000
 ESB_DISABLE_BOTH	equ 0x0003
-
 ESB_DISABLE_LEFT	equ 0x0001
 ESB_DISABLE_RIGHT	equ 0x0002
-
 ESB_DISABLE_UP		equ 0x0001
 ESB_DISABLE_DOWN	equ 0x0002
-
 ESB_DISABLE_LTUP	equ ESB_DISABLE_LEFT
 ESB_DISABLE_RTDN	equ ESB_DISABE_RIGHT
-
-
 endif
 
-;BOOL
-SetPropA proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPCSTR,
-		 hData: HANDLE
-;BOOL
-SetPropW proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPCWSTR,
-		 hData: HANDLE
+SetPropA proto WINAPI :HWND, :LPCSTR, :HANDLE
+SetPropW proto WINAPI :HWND, :LPCWSTR, :HANDLE
 ifdef _UNICODE
-SetProp			equ <SetPropW>
+SetProp equ <SetPropW>
 else
-SetProp			equ <SetPropA>
+SetProp equ <SetPropA>
 endif
 
-;HANDLE
-GetPropA proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPCSTR
-;HANDLE
-GetPropW proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPCWSTR
+GetPropA proto WINAPI :HWND, :LPCSTR
+GetPropW proto WINAPI :HWND, :LPCWSTR
 ifdef _UNICODE
-GetProp			equ <GetPropW>
+GetProp equ <GetPropW>
 else
-GetProp			equ <GetPropA>
+GetProp equ <GetPropA>
 endif
 
-;HANDLE
-RemovePropA proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPCSTR
-;HANDLE
-RemovePropW proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPCWSTR
+RemovePropA proto WINAPI :HWND, :LPCSTR
+RemovePropW proto WINAPI :HWND, :LPCWSTR
 ifdef _UNICODE
-RemoveProp		equ <RemovePropW>
+RemoveProp equ <RemovePropW>
 else
-RemoveProp		equ <RemovePropA>
+RemoveProp equ <RemovePropA>
 endif
 
-;int
-EnumPropsExA proto WINAPI \
-		  hWnd: HWND,
-	    lpEnumFunc: PROPENUMPROCEXA,
-		lParam: LPARAM
-;int
-EnumPropsExW proto WINAPI \
-		  hWnd: HWND,
-	    lpEnumFunc: PROPENUMPROCEXW,
-		lParam: LPARAM
+EnumPropsExA proto WINAPI :HWND, :PROPENUMPROCEXA, :LPARAM
+EnumPropsExW proto WINAPI :HWND, :PROPENUMPROCEXW, :LPARAM
 ifdef _UNICODE
-EnumPropsEx		equ <EnumPropsExW>
+EnumPropsEx equ <EnumPropsExW>
 else
-EnumPropsEx		equ <EnumPropsExA>
+EnumPropsEx equ <EnumPropsExA>
 endif
 
-;int
-EnumPropsA proto WINAPI \
-		  hWnd: HWND,
-	    lpEnumFunc: PROPENUMPROCA
-;int
-EnumPropsW proto WINAPI \
-		  hWnd: HWND,
-	    lpEnumFunc: PROPENUMPROCW
+EnumPropsA proto WINAPI :HWND, :PROPENUMPROCA
+EnumPropsW proto WINAPI :HWND, :PROPENUMPROCW
 ifdef _UNICODE
-EnumProps		equ <EnumPropsW>
+EnumProps equ <EnumPropsW>
 else
-EnumProps		equ <EnumPropsA>
+EnumProps equ <EnumPropsA>
 endif
 
-;BOOL
-SetWindowTextA proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPCSTR
-;BOOL
-SetWindowTextW proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPCWSTR
+SetWindowTextA proto WINAPI :HWND, :LPCSTR
+SetWindowTextW proto WINAPI :HWND, :LPCWSTR
 ifdef _UNICODE
-SetWindowText		equ <SetWindowTextW>
+SetWindowText equ <SetWindowTextW>
 else
-SetWindowText		equ <SetWindowTextA>
+SetWindowText equ <SetWindowTextA>
 endif
 
-;int
-GetWindowTextA proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPSTR,
-	     nMaxCount: SINT
-;int
-GetWindowTextW proto WINAPI \
-		  hWnd: HWND,
-	      lpString: LPWSTR,
-	     nMaxCount: SINT
+GetWindowTextA proto WINAPI :HWND, :LPSTR, :SINT
+GetWindowTextW proto WINAPI :HWND, :LPWSTR, :SINT
 ifdef _UNICODE
 GetWindowText		equ <GetWindowTextW>
 else
 GetWindowText		equ <GetWindowTextA>
 endif
 
-;int
-GetWindowTextLengthA proto WINAPI \
-		  hWnd: HWND
-;int
-GetWindowTextLengthW proto WINAPI \
-		  hWnd: HWND
+GetWindowTextLengthA proto WINAPI :HWND
+GetWindowTextLengthW proto WINAPI :HWND
 ifdef _UNICODE
 GetWindowTextLength	equ <GetWindowTextLengthW>
 else
 GetWindowTextLength	equ <GetWindowTextLengthA>
 endif
 
-;BOOL
-GetClientRect proto WINAPI \
-		  hWnd: HWND,
-		lpRect: LPRECT
-
-;BOOL
-GetWindowRect proto WINAPI \
-		  hWnd: HWND,
-		lpRect: LPRECT
-
-;BOOL
-AdjustWindowRect proto WINAPI \
-		lpRect: LPRECT,
-	       dwStyle: DWORD,
-		 bMenu: BOOL
-
-;BOOL
-AdjustWindowRectEx proto WINAPI \
-		lpRect: LPRECT,
-	       dwStyle: DWORD,
-		 bMenu: BOOL,
-	     dwExStyle: DWORD
+GetClientRect proto WINAPI :HWND, :LPRECT
+GetWindowRect proto WINAPI :HWND, :LPRECT
+AdjustWindowRect proto WINAPI :LPRECT, :DWORD, :BOOL
+AdjustWindowRectEx proto WINAPI :LPRECT, :DWORD, :BOOL, :DWORD
 
 if(WINVER GE 0x0400)
 HELPINFO_WINDOW		equ 0x0001
@@ -6342,20 +4473,10 @@ MousePos		POINT <>
 HELPINFO		ENDS
 LPHELPINFO		typedef ptr HELPINFO
 
-;BOOL
-SetWindowContextHelpId proto WINAPI \
-		      : HWND,
-		      : DWORD
-;DWORD
-GetWindowContextHelpId proto WINAPI \
-		      : HWND
-;BOOL
-SetMenuContextHelpId proto WINAPI \
-		      : HMENU,
-		      : DWORD
-;DWORD
-GetMenuContextHelpId proto WINAPI \
-		      : HMENU
+SetWindowContextHelpId proto WINAPI :HWND, :DWORD
+GetWindowContextHelpId proto WINAPI :HWND
+SetMenuContextHelpId proto WINAPI :HMENU, :DWORD
+GetMenuContextHelpId proto WINAPI :HMENU
 
 endif
 
@@ -6424,38 +4545,16 @@ MB_DEFMASK		equ 0x00000F00
 MB_MODEMASK		equ 0x00003000
 MB_MISCMASK		equ 0x0000C000
 
-;int
-MessageBoxA proto WINAPI \
-		 hWnd : HWND,
-		lpText: LPCSTR,
-	     lpCaption: LPCSTR,
-		 uType: UINT
-;int
-MessageBoxW proto WINAPI \
-		 hWnd : HWND,
-		lpText: LPCWSTR,
-	     lpCaption: LPCWSTR,
-		 uType: UINT
+MessageBoxA proto WINAPI :HWND, :LPCSTR, :LPCSTR, :UINT
+MessageBoxW proto WINAPI :HWND, :LPCWSTR,:LPCWSTR, :UINT
 ifdef _UNICODE
 MessageBox		equ <MessageBoxW>
 else
 MessageBox		equ <MessageBoxA>
 endif
 
-;int
-MessageBoxExA proto WINAPI \
-		 hWnd : HWND,
-		lpText: LPCSTR,
-	     lpCaption: LPCSTR,
-		 uType: UINT,
-	   wLanguageId: WORD
-;int
-MessageBoxExW proto WINAPI \
-		 hWnd : HWND,
-		lpText: LPCWSTR,
-	     lpCaption: LPCWSTR,
-		 uType: UINT,
-	   wLanguageId: WORD
+MessageBoxExA proto WINAPI :HWND, :LPCSTR, :LPCSTR, :UINT, :WORD
+MessageBoxExW proto WINAPI :HWND, :LPCWSTR, :LPCWSTR, :UINT, :WORD
 ifdef _UNICODE
 MessageBoxEx		equ <MessageBoxExW>
 else
@@ -6505,13 +4604,8 @@ PMSGBOXPARAMS		typedef PMSGBOXPARAMSA
 LPMSGBOXPARAMS		typedef LPMSGBOXPARAMSA
 endif
 
-
-;int
-MessageBoxIndirectA proto WINAPI \
-		      : LPMSGBOXPARAMSA
-;int
-MessageBoxIndirectW proto WINAPI \
-		      : LPMSGBOXPARAMSW
+MessageBoxIndirectA proto WINAPI :LPMSGBOXPARAMSA
+MessageBoxIndirectW proto WINAPI :LPMSGBOXPARAMSW
 ifdef _UNICODE
 MessageBoxIndirect	equ <MessageBoxIndirectW>
 else
@@ -6519,141 +4613,50 @@ MessageBoxIndirect	equ <MessageBoxIndirectA>
 endif
 endif
 
-
-
-;BOOL
-MessageBeep proto WINAPI \
-		 uType: UINT
-
+MessageBeep proto WINAPI :UINT
 endif
 
-;int
-ShowCursor proto WINAPI \
-		 bShow: BOOL
-
-;BOOL
-SetCursorPos proto WINAPI \
-		     X: SINT,
-		     Y: SINT
+ShowCursor proto WINAPI :BOOL
+SetCursorPos proto WINAPI :SINT, :SINT
 if(WINVER GE 0x0600)
-;BOOL
-SetPhysicalCursorPos proto WINAPI \
-		     X: SINT,
-		     Y: SINT
+SetPhysicalCursorPos proto WINAPI :SINT, :SINT
 endif
-
-;HCURSOR
-SetCursor proto WINAPI \
-	       hCursor: HCURSOR
-
-;BOOL
-GetCursorPos proto WINAPI \
-	       lpPoint: LPPOINT
-
+SetCursor proto WINAPI :HCURSOR
+GetCursorPos proto WINAPI :LPPOINT
 if(WINVER GE 0x0600)
-;BOOL
-GetPhysicalCursorPos proto WINAPI \
-	       lpPoint: LPPOINT
+GetPhysicalCursorPos proto WINAPI :LPPOINT
 endif
-
-;BOOL
-ClipCursor proto WINAPI \
-		lpRect: LPRECT
-
-;BOOL
-GetClipCursor proto WINAPI \
-		lpRect: LPRECT
-
-;HCURSOR
+ClipCursor proto WINAPI :LPRECT
+GetClipCursor proto WINAPI :LPRECT
 GetCursor proto WINAPI
-
-;BOOL
-CreateCaret proto WINAPI \
-		  hWnd: HWND,
-	      hBitmap : HBITMAP,
-		nWidth: SINT,
-	       nHeight: SINT
-
-;UINT
+CreateCaret proto WINAPI :HWND, :HBITMAP, :SINT, :SINT
 GetCaretBlinkTime proto WINAPI
-
-;BOOL
-SetCaretBlinkTime proto WINAPI \
-	     uMSeconds: UINT
-
-;BOOL
+SetCaretBlinkTime proto WINAPI :UINT
 DestroyCaret proto WINAPI
-
-;BOOL
-HideCaret proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-ShowCaret proto WINAPI \
-		  hWnd: HWND
-
-;BOOL
-SetCaretPos proto WINAPI \
-		     X: SINT,
-		     Y: SINT
-
-;BOOL
-GetCaretPos proto WINAPI \
-	       lpPoint: LPPOINT
-
-;BOOL
-ClientToScreen proto WINAPI \
-		  hWnd: HWND,
-	       lpPoint: LPPOINT
-
-;BOOL
-ScreenToClient proto WINAPI \
-		  hWnd: HWND,
-	       lpPoint: LPPOINT
+HideCaret proto WINAPI :HWND
+ShowCaret proto WINAPI :HWND
+SetCaretPos proto WINAPI :SINT, :SINT
+GetCaretPos proto WINAPI :LPPOINT
+ClientToScreen proto WINAPI :HWND, :LPPOINT
+ScreenToClient proto WINAPI :HWND, :LPPOINT
 
 if(WINVER GE 0x0600)
-;BOOL
-LogicalToPhysicalPoint proto WINAPI \
-		  hWnd: HWND,
-	       lpPoint: LPPOINT
-;BOOL
-PhysicalToLogicalPoint proto WINAPI \
-		  hWnd: HWND,
-	       lpPoint: LPPOINT
+LogicalToPhysicalPoint proto WINAPI :HWND, :LPPOINT
+PhysicalToLogicalPoint proto WINAPI :HWND, :LPPOINT
 endif
 
 if(WINVER GE 0x0603)
-LogicalToPhysicalPointForPerMonitorDPI proto WINAPI \
-		  hWnd: HWND,
-	       lpPoint: LPPOINT
-
-PhysicalToLogicalPointForPerMonitorDPI proto WINAPI \
-		  hWnd: HWND,
-	       lpPoint: LPPOINT
-
+LogicalToPhysicalPointForPerMonitorDPI proto WINAPI :HWND, :LPPOINT
+PhysicalToLogicalPointForPerMonitorDPI proto WINAPI :HWND, :LPPOINT
 endif
 
-;int
-MapWindowPoints proto WINAPI \
-	      hWndFrom: HWND,
-		hWndTo: HWND,
-	      lpPoints: LPPOINT,
-	       cPoints: UINT
-
-;HWND
-WindowFromPoint proto WINAPI \
-		 Point: POINT
+MapWindowPoints proto WINAPI :HWND, :HWND, :LPPOINT, :UINT
+WindowFromPoint proto WINAPI :POINT
 
 if(WINVER GE 0x0600)
-;HWND
-WindowFromPhysicalPoint proto WINAPI \
-		 Point: POINT
+WindowFromPhysicalPoint proto WINAPI :POINT
 endif
-
-;HWND
-ChildWindowFromPoint proto WINAPI \
-	    hWndParent: HWND,
-		 Point: POINT
+ChildWindowFromPoint proto WINAPI :HWND, :POINT
 
 if(WINVER GE 0x0400)
 CWP_ALL			equ 0x0000
@@ -6661,11 +4664,7 @@ CWP_SKIPINVISIBLE	equ 0x0001
 CWP_SKIPDISABLED	equ 0x0002
 CWP_SKIPTRANSPARENT	equ 0x0004
 
-;HWND
-ChildWindowFromPointEx proto WINAPI \
-		      : HWND,
-		      : POINT,
-		      : UINT
+ChildWindowFromPointEx proto WINAPI :HWND, :POINT, :UINT
 endif
 
 ifndef NOCOLOR
@@ -6727,188 +4726,62 @@ COLOR_3DHILIGHT		equ COLOR_BTNHIGHLIGHT
 COLOR_BTNHILIGHT	equ COLOR_BTNHIGHLIGHT
 endif
 
-
-;DWORD
-GetSysColor proto WINAPI \
-		nIndex: SINT
-
+GetSysColor proto WINAPI :SINT
 if(WINVER GE 0x0400)
-;HBRUSH
-GetSysColorBrush proto WINAPI \
-		nIndex: SINT
-
+GetSysColorBrush proto WINAPI :SINT
+endif
+SetSysColors proto WINAPI :SINT, :ptr, :ptr COLORREF
 
 endif
 
-;BOOL
-SetSysColors proto WINAPI \
-	     cElements: SINT,
-	   lpaElements: ptr,
-	  lpaRgbValues: ptr COLORREF
-
-endif
-
-;BOOL
-DrawFocusRect proto WINAPI \
-		   hDC: HDC,
-		  lprc: LPRECT
-
-;int
-FillRect proto WINAPI \
-		   hDC: HDC,
-		  lprc: LPRECT,
-		   hbr: HBRUSH
-
-;int
-FrameRect proto WINAPI \
-		   hDC: HDC,
-		  lprc: LPRECT,
-		   hbr: HBRUSH
-
-;BOOL
-InvertRect proto WINAPI \
-		   hDC: HDC,
-		  lprc: LPRECT
-
-;BOOL
-SetRect proto WINAPI \
-		  lprc: LPRECT,
-		 xLeft: SINT,
-		  yTop: SINT,
-		xRight: SINT,
-	       yBottom: SINT
-
-;BOOL
-SetRectEmpty proto WINAPI \
-		  lprc: LPRECT
-
-;BOOL
-CopyRect proto WINAPI \
-	       lprcDst: LPRECT,
-	       lprcSrc: LPRECT
-
-;BOOL
-InflateRect proto WINAPI \
-		  lprc: LPRECT,
-		   _dx: SINT,
-		    dy: SINT
-
-;BOOL
-IntersectRect proto WINAPI \
-	       lprcDst: LPRECT,
-	      lprcSrc1: LPRECT,
-	      lprcSrc2: LPRECT
-
-;BOOL
-UnionRect proto WINAPI \
-	       lprcDst: LPRECT,
-	      lprcSrc1: LPRECT,
-	      lprcSrc2: LPRECT
-
-;BOOL
-SubtractRect proto WINAPI \
-	       lprcDst: LPRECT,
-	      lprcSrc1: LPRECT,
-	      lprcSrc2: LPRECT
-
-;BOOL
-OffsetRect proto WINAPI \
-		  lprc: LPRECT,
-		   _dx: SINT,
-		    dy: SINT
-
-;BOOL
-IsRectEmpty proto WINAPI \
-		  lprc: LPRECT
-
-;BOOL
-EqualRect proto WINAPI \
-		  lprc1: LPRECT,
-		  lprc2: LPRECT
-
-;BOOL
-PtInRect proto WINAPI \
-		  lprc: LPRECT,
-		    pt: POINT
+DrawFocusRect proto WINAPI :HDC, :LPRECT
+FillRect proto WINAPI :HDC, :LPRECT, :HBRUSH
+FrameRect proto WINAPI :HDC, :LPRECT, :HBRUSH
+InvertRect proto WINAPI :HDC, :LPRECT
+SetRect proto WINAPI :LPRECT, :SINT, :SINT, :SINT, :SINT
+SetRectEmpty proto WINAPI :LPRECT
+CopyRect proto WINAPI :LPRECT, :LPRECT
+InflateRect proto WINAPI :LPRECT, :SINT, :SINT
+IntersectRect proto WINAPI :LPRECT, :LPRECT, :LPRECT
+UnionRect proto WINAPI :LPRECT, :LPRECT, :LPRECT
+SubtractRect proto WINAPI :LPRECT, :LPRECT, :LPRECT
+OffsetRect proto WINAPI :LPRECT, :SINT, :SINT
+IsRectEmpty proto WINAPI :LPRECT
+EqualRect proto WINAPI :LPRECT, :LPRECT
+PtInRect proto WINAPI :LPRECT, :POINT
 
 ifndef NOWINOFFSETS
 
-;WORD
-GetWindowWord proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
-
-;WORD
-SetWindowWord proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	      wNewWord: WORD
-
-;LONG
-GetWindowLongA proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
-;LONG
-GetWindowLongW proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
+GetWindowWord proto WINAPI :HWND, :SINT
+SetWindowWord proto WINAPI :HWND, :SINT, :WORD
+GetWindowLongA proto WINAPI :HWND, :SINT
+GetWindowLongW proto WINAPI :HWND, :SINT
 ifdef _UNICODE
 GetWindowLong		equ <GetWindowLongW>
 else
 GetWindowLong		equ <GetWindowLongA>
 endif
 
-;LONG
-SetWindowLongA proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	     dwNewLong: LONG
-;LONG
-SetWindowLongW proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	     dwNewLong: LONG
+SetWindowLongA proto WINAPI :HWND, :SINT, :LONG
+SetWindowLongW proto WINAPI :HWND, :SINT, :LONG
 ifdef _UNICODE
 SetWindowLong		equ <SetWindowLongW>
 else
 SetWindowLong		equ <SetWindowLongA>
 endif
 
-;WORD
-GetClassWord proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
-
-;WORD
-SetClassWord proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	      wNewWord: WORD
-
-;DWORD
-GetClassLongA proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
-;DWORD
-GetClassLongW proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
+GetClassWord proto WINAPI :HWND, :SINT
+SetClassWord proto WINAPI :HWND, :SINT, :WORD
+GetClassLongA proto WINAPI :HWND, :SINT
+GetClassLongW proto WINAPI :HWND, :SINT
 ifdef _UNICODE
 GetClassLong		equ <GetClassLongW>
 else
 GetClassLong		equ <GetClassLongA>
 endif
 
-;DWORD
-SetClassLongA proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	     dwNewLong: LONG
-;DWORD
-SetClassLongW proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	     dwNewLong: LONG
+SetClassLongA proto WINAPI :HWND, :SINT, :LONG
+SetClassLongW proto WINAPI :HWND, :SINT, :LONG
 ifdef _UNICODE
 SetClassLong		equ <SetClassLongW>
 else
@@ -6917,29 +4790,18 @@ endif
 
 endif
 
-
 ifdef _WIN64
 
-GetClassLongPtrA proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
-GetClassLongPtrW proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
+GetClassLongPtrA proto WINAPI :HWND, :SINT
+GetClassLongPtrW proto WINAPI :HWND, :SINT
 ifdef _UNICODE
 define GetClassLongPtr	<GetClassLongPtrW>
 else
 define GetClassLongPtr	<GetClassLongPtrA>
 endif
 
-SetClassLongPtrA proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	     dwNewLong: LONG_PTR
-SetClassLongPtrW proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	     dwNewLong: LONG_PTR
+SetClassLongPtrA proto WINAPI :HWND, :SINT, :LONG_PTR
+SetClassLongPtrW proto WINAPI :HWND, :SINT, :LONG_PTR
 ifdef _UNICODE
 define SetClassLongPtr	<SetClassLongPtrW>
 else
@@ -6968,28 +4830,16 @@ endif
 
 ifdef _WIN64
 
-;LONG_PTR
-GetWindowLongPtrA proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
-GetWindowLongPtrW proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT
+GetWindowLongPtrA proto WINAPI :HWND, :SINT
+GetWindowLongPtrW proto WINAPI :HWND, :SINT
 ifdef _UNICODE
 GetWindowLongPtr	equ <GetWindowLongPtrW>
 else
 GetWindowLongPtr	equ <GetWindowLongPtrA>
 endif
 
-;LONG_PTR
-SetWindowLongPtrA proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	     dwNewLong: LONG_PTR
-SetWindowLongPtrW proto WINAPI \
-		  hWnd: HWND,
-		nIndex: SINT,
-	     dwNewLong: LONG_PTR
+SetWindowLongPtrA proto WINAPI :HWND, :SINT, :LONG_PTR
+SetWindowLongPtrW proto WINAPI :HWND, :SINT, :LONG_PTR
 ifdef _UNICODE
 SetWindowLongPtr	equ <SetWindowLongPtrW>
 else
@@ -7014,33 +4864,13 @@ SetWindowLongPtr	equ <SetWindowLongPtrA>
 endif
 endif
 
-;HWND
 GetDesktopWindow proto WINAPI
+GetParent proto WINAPI :HWND
+SetParent proto WINAPI :HWND, :HWND
+EnumChildWindows proto WINAPI :HWND, :WNDENUMPROC, :LPARAM
 
-
-;HWND
-GetParent proto WINAPI \
-		  hWnd: HWND
-
-;HWND
-SetParent proto WINAPI \
-	     hWndChild: HWND,
-	 hWndNewParent: HWND
-
-;BOOL
-EnumChildWindows proto WINAPI \
-	    hWndParent: HWND,
-	    lpEnumFunc: WNDENUMPROC,
-		lParam: LPARAM
-
-;HWND
-FindWindowA proto WINAPI \
-	  lpClassName : LPCSTR,
-	  lpWindowName: LPCSTR
-;HWND
-FindWindowW proto WINAPI \
-	  lpClassName : LPCWSTR,
-	  lpWindowName: LPCWSTR
+FindWindowA proto WINAPI :LPCSTR, :LPCSTR
+FindWindowW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 FindWindow		equ <FindWindowW>
 else
@@ -7048,18 +4878,8 @@ FindWindow		equ <FindWindowA>
 endif
 
 if(WINVER GE 0x0400)
-;HWND
-FindWindowExA proto WINAPI \
-		      : HWND,
-		      : HWND,
-		      : LPCSTR,
-		      : LPCSTR
-;HWND
-FindWindowExW proto WINAPI \
-		      : HWND,
-		      : HWND,
-		      : LPCWSTR,
-		      : LPCWSTR
+FindWindowExA proto WINAPI :HWND, :HWND, :LPCSTR, :LPCSTR
+FindWindowExW proto WINAPI :HWND, :HWND, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 FindWindowEx		equ <FindWindowExW>
 else
@@ -7069,45 +4889,21 @@ endif
 GetShellWindow proto WINAPI
 endif
 
-RegisterShellHookWindow proto WINAPI \
-		  hwnd: HWND
-
-DeregisterShellHookWindow proto WINAPI \
-		  hwnd: HWND
-
-
-;BOOL
-EnumWindows proto WINAPI \
-	    lpEnumFunc: WNDENUMPROC,
-		lParam: LPARAM
-
-;BOOL
-EnumThreadWindows proto WINAPI \
-	    dwThreadId: DWORD,
-		  lpfn: WNDENUMPROC,
-		lParam: LPARAM
-
+RegisterShellHookWindow proto WINAPI :HWND
+DeregisterShellHookWindow proto WINAPI :HWND
+EnumWindows proto WINAPI :WNDENUMPROC, :LPARAM
+EnumThreadWindows proto WINAPI :DWORD, :WNDENUMPROC, :LPARAM
 EnumTaskWindows equ <EnumThreadWindows>
 
-;int
-GetClassNameA proto WINAPI \
-		  hWnd: HWND,
-	   lpClassName: LPSTR,
-	     nMaxCount: SINT
-;int
-GetClassNameW proto WINAPI \
-		  hWnd: HWND,
-	   lpClassName: LPWSTR,
-	     nMaxCount: SINT
+GetClassNameA proto WINAPI :HWND, :LPSTR, :SINT
+GetClassNameW proto WINAPI :HWND, :LPWSTR, :SINT
 ifdef _UNICODE
 GetClassName		equ <GetClassNameW>
 else
 GetClassName		equ <GetClassNameA>
 endif
 
-;HWND
-GetTopWindow proto WINAPI \
-		  hWnd: HWND
+GetTopWindow proto WINAPI :HWND
 
 GetNextWindow macro hWnd, wCmd
 	exitm<GetWindow(hWnd, wCmd)>
@@ -7119,18 +4915,13 @@ SetSysModalWindow macro hWnd
 	exitm<(NULL)>
 	endm
 
-;DWORD
-GetWindowThreadProcessId proto WINAPI \
-		  hWnd: HWND,
-	 lpdwProcessId: LPDWORD
+GetWindowThreadProcessId proto WINAPI :HWND, :LPDWORD
 
 GetWindowTask macro hWnd
 	exitm<GetWindowThreadProcessId(hWnd, NULL)>
 	endm
 
-;HWND
-GetLastActivePopup proto WINAPI \
-		  hWnd: HWND
+GetLastActivePopup proto WINAPI :HWND
 
 GW_HWNDFIRST		equ 0
 GW_HWNDLAST		equ 1
@@ -7145,22 +4936,13 @@ GW_ENABLEDPOPUP		equ 6
 GW_MAX			equ 6
 endif
 
-;HWND
-GetWindow proto WINAPI \
-		  hWnd: HWND,
-		  uCmd: UINT
+GetWindow proto WINAPI :HWND, :UINT
 
 ifndef NOWH
 ifdef STRICT
 
-;HHOOK
-SetWindowsHookA proto WINAPI \
-	   nFilterType: SINT,
-	 pfnFilterProc: HOOKPROC
-;HHOOK
-SetWindowsHookW proto WINAPI \
-	   nFilterType: SINT,
-	 pfnFilterProc: HOOKPROC
+SetWindowsHookA proto WINAPI :SINT, :HOOKPROC
+SetWindowsHookW proto WINAPI :SINT, :HOOKPROC
 ifdef _UNICODE
 SetWindowsHook		equ <SetWindowsHookW>
 else
@@ -7169,14 +4951,8 @@ endif
 
 else
 
-;HOOKPROC
-SetWindowsHookA proto WINAPI \
-	   nFilterType: SINT,
-	 pfnFilterProc: HOOKPROC
-;HOOKPROC
-SetWindowsHookW proto WINAPI \
-	   nFilterType: SINT,
-	 pfnFilterProc: HOOKPROC
+SetWindowsHookA proto WINAPI :SINT, :HOOKPROC
+SetWindowsHookW proto WINAPI :SINT, :HOOKPROC
 ifdef _UNICODE
 SetWindowsHook		equ <SetWindowsHookW>
 else
@@ -7185,39 +4961,17 @@ endif
 
 endif
 
-;BOOL
-UnhookWindowsHook proto WINAPI \
-		 nCode: SINT,
-	 pfnFilterProc: HOOKPROC
-
-;HHOOK
-SetWindowsHookExA proto WINAPI \
-		idHook: SINT,
-		  lpfn: HOOKPROC,
-		  hmod: HINSTANCE,
-	    dwThreadId: DWORD
-;HHOOK
-SetWindowsHookExW proto WINAPI \
-		idHook: SINT,
-		  lpfn: HOOKPROC,
-		  hmod: HINSTANCE,
-	    dwThreadId: DWORD
+UnhookWindowsHook proto WINAPI :SINT,:HOOKPROC
+SetWindowsHookExA proto WINAPI :SINT, :HOOKPROC, :HINSTANCE, :DWORD
+SetWindowsHookExW proto WINAPI :SINT, :HOOKPROC, :HINSTANCE, :DWORD
 ifdef _UNICODE
 SetWindowsHookEx	equ <SetWindowsHookExW>
 else
 SetWindowsHookEx	equ <SetWindowsHookExA>
 endif
 
-;BOOL
-UnhookWindowsHookEx proto WINAPI \
-		   hhk: HHOOK
-
-;LRESULT
-CallNextHookEx proto WINAPI \
-		   hhk: HHOOK,
-		 nCode: SINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+UnhookWindowsHookEx proto WINAPI :HHOOK
+CallNextHookEx proto WINAPI :HHOOK, :SINT, :WPARAM, :LPARAM
 
 ifdef STRICT
 DefHookProc macro nCode, wParam, lParam, phhk
@@ -7235,34 +4989,26 @@ endif
 
 ifndef NOMENUS
 
-
 MF_INSERT		equ 0x00000000
 MF_CHANGE		equ 0x00000080
 MF_APPEND		equ 0x00000100
 MF_DELETE		equ 0x00000200
 MF_REMOVE		equ 0x00001000
-
 MF_BYCOMMAND		equ 0x00000000
 MF_BYPOSITION		equ 0x00000400
-
 MF_SEPARATOR		equ 0x00000800
-
 MF_ENABLED		equ 0x00000000
 MF_GRAYED		equ 0x00000001
 MF_DISABLED		equ 0x00000002
-
 MF_UNCHECKED		equ 0x00000000
 MF_CHECKED		equ 0x00000008
 MF_USECHECKBITMAPS	equ 0x00000200
-
 MF_STRING		equ 0x00000000
 MF_BITMAP		equ 0x00000004
 MF_OWNERDRAW		equ 0x00000100
-
 MF_POPUP		equ 0x00000010
 MF_MENUBARBREAK		equ 0x00000020
 MF_MENUBREAK		equ 0x00000040
-
 MF_UNHILITE		equ 0x00000000
 MF_HILITE		equ 0x00000080
 
@@ -7279,7 +5025,6 @@ MF_MOUSESELECT		equ 0x00008000
 if(WINVER GE 0x0400)
 MF_END			equ 0x00000080
 endif
-
 
 if(WINVER GE 0x0400)
 MFT_STRING		equ MF_STRING
@@ -7311,16 +5056,8 @@ endif
 
 endif
 
-
 if(WINVER GE 0x0400)
-
-;BOOL
-CheckMenuRadioItem proto WINAPI \
-		      : HMENU,
-		      : UINT,
-		      : UINT,
-		      : UINT,
-		      : UINT
+CheckMenuRadioItem proto WINAPI :HMENU, :UINT, :UINT, :UINT, :UINT
 endif
 
 MENUITEMTEMPLATEHEADER	STRUC
@@ -7376,69 +5113,39 @@ SC_ZOOM			equ SC_MAXIMIZE
 
 endif
 
-
-;HBITMAP
-LoadBitmapA proto WINAPI \
-	     hInstance: HINSTANCE,
-	  lpBitmapName: LPCSTR
-;HBITMAP
-LoadBitmapW proto WINAPI \
-	     hInstance: HINSTANCE,
-	  lpBitmapName: LPCWSTR
+LoadBitmapA proto WINAPI :HINSTANCE, :LPCSTR
+LoadBitmapW proto WINAPI :HINSTANCE, :LPCWSTR
 ifdef _UNICODE
 LoadBitmap		equ <LoadBitmapW>
 else
 LoadBitmap		equ <LoadBitmapA>
 endif
 
-;HCURSOR
-LoadCursorA proto WINAPI \
-	     hInstance: HINSTANCE,
-	  lpCursorName: LPCSTR
-;HCURSOR
-LoadCursorW proto WINAPI \
-	     hInstance: HINSTANCE,
-	  lpCursorName: LPCWSTR
+LoadCursorA proto WINAPI :HINSTANCE, :LPCSTR
+LoadCursorW proto WINAPI :HINSTANCE, :LPCWSTR
 ifdef _UNICODE
 LoadCursor		equ <LoadCursorW>
 else
 LoadCursor		equ <LoadCursorA>
 endif
 
-;HCURSOR
-LoadCursorFromFileA proto WINAPI \
-	    lpFileName: LPCSTR
-;HCURSOR
-LoadCursorFromFileW proto WINAPI \
-	    lpFileName: LPCWSTR
+LoadCursorFromFileA proto WINAPI :LPCSTR
+LoadCursorFromFileW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 LoadCursorFromFile	equ <LoadCursorFromFileW>
 else
 LoadCursorFromFile	equ <LoadCursorFromFileA>
 endif
 
-;HCURSOR
-CreateCursor proto WINAPI \
-		 hInst: HINSTANCE,
-	      xHotSpot: SINT,
-	      yHotSpot: SINT,
-		nWidth: SINT,
-	       nHeight: SINT,
-	    pvANDPlane: PVOID,
-	    pvXORPlane: PVOID
-
-;BOOL
-DestroyCursor proto WINAPI \
-	       hCursor: HCURSOR
+CreateCursor proto WINAPI :HINSTANCE, :SINT, :SINT, :SINT, :SINT, :PVOID, :PVOID
+DestroyCursor proto WINAPI :HCURSOR
 
 ifndef _MAC
 CopyCursor macro pcur
 	exitm<CopyIcon(pcur)>
 	endm
 else
-;HCURSOR
-CopyCursor proto WINAPI \
-	       hCursor: HCURSOR
+CopyCursor proto WINAPI :HCURSOR
 endif
 
 IDC_ARROW		equ MAKEINTRESOURCE(32512)
@@ -7462,10 +5169,7 @@ if(WINVER GE 0x0400)
 IDC_HELP		equ MAKEINTRESOURCE(32651)
 endif
 
-;BOOL
-SetSystemCursor proto WINAPI \
-		  hcur: HCURSOR,
-		    id: DWORD
+SetSystemCursor proto WINAPI :HCURSOR, :DWORD
 
 ICONINFO		STRUC
 fIcon			BOOL ?
@@ -7476,67 +5180,25 @@ hbmColor		HBITMAP ?
 ICONINFO		ENDS
 PICONINFO		typedef ptr ICONINFO
 
-;HICON
-LoadIconA proto WINAPI \
-	     hInstance: HINSTANCE,
-	    lpIconName: LPCSTR
-;HICON
-LoadIconW proto WINAPI \
-	     hInstance: HINSTANCE,
-	    lpIconName: LPCWSTR
+LoadIconA proto WINAPI :HINSTANCE, :LPCSTR
+LoadIconW proto WINAPI :HINSTANCE, :LPCWSTR
 ifdef _UNICODE
 LoadIcon		equ <LoadIconW>
 else
 LoadIcon		equ <LoadIconA>
 endif
 
-
-;HICON
-CreateIcon proto WINAPI \
-	     hInstance: HINSTANCE,
-		nWidth: SINT,
-	       nHeight: SINT,
-	       cPlanes: BYTE,
-	    cBitsPixel: BYTE,
-	    lpbANDbits: PBYTE,
-	    lpbXORbits: PBYTE
-
-;BOOL
-DestroyIcon proto WINAPI \
-		 hIcon: HICON
-
-;int
-LookupIconIdFromDirectory proto WINAPI \
-	      presbits: PBYTE,
-		 fIcon: BOOL
+CreateIcon proto WINAPI :HINSTANCE, :SINT, :SINT, :BYTE, :BYTE, :PBYTE, :PBYTE
+DestroyIcon proto WINAPI :HICON
+LookupIconIdFromDirectory proto WINAPI :PBYTE, :BOOL
 
 if(WINVER GE 0x0400)
-;int
-LookupIconIdFromDirectoryEx proto WINAPI \
-	      presbits: PBYTE,
-		 fIcon: BOOL,
-	     cxDesired: SINT,
-	     cyDesired: SINT,
-		 Flags: UINT
+LookupIconIdFromDirectoryEx proto WINAPI :PBYTE, :BOOL, :SINT, :SINT, :UINT
 endif
-
-;HICON
-CreateIconFromResource proto WINAPI \
-	      presbits: PBYTE,
-	     dwResSize: DWORD,
-		 fIcon: BOOL,
-		 dwVer: DWORD
+CreateIconFromResource proto WINAPI :PBYTE, :DWORD, :BOOL, :DWORD
 
 if(WINVER GE 0x0400)
-;HICON
-CreateIconFromResourceEx proto WINAPI \
-	      presbits: PBYTE,
-	     dwResSize: DWORD,
-		 fIcon: BOOL,
-		 dwVer: DWORD,
-	     cxDesired: SINT,
-	     cyDesired: SINT,
-		 Flags: UINT
+CreateIconFromResourceEx proto WINAPI :PBYTE, :DWORD, :BOOL, :DWORD, :SINT, :SINT, :UINT
 
 CURSORSHAPE		STRUC
 xHotSpot		SINT ?
@@ -7570,35 +5232,15 @@ LR_CREATEDIBSECTION	equ 0x2000
 LR_COPYFROMRESOURCE	equ 0x4000
 LR_SHARED		equ 0x8000
 
-;HANDLE
-LoadImageA proto WINAPI \
-		      : HINSTANCE,
-		      : LPCSTR,
-		      : UINT,
-		      : SINT,
-		      : SINT,
-		      : UINT
-;HANDLE
-LoadImageW proto WINAPI \
-		      : HINSTANCE,
-		      : LPCWSTR,
-		      : UINT,
-		      : SINT,
-		      : SINT,
-		      : UINT
+LoadImageA proto WINAPI :HINSTANCE, :LPCSTR, :UINT, :SINT, :SINT, :UINT
+LoadImageW proto WINAPI :HINSTANCE, :LPCWSTR, :UINT, :SINT, :SINT, :UINT
 ifdef _UNICODE
 LoadImage		equ <LoadImageW>
 else
 LoadImage		equ <LoadImageA>
 endif
 
-;HANDLE
-CopyImage proto WINAPI \
-		      : HANDLE,
-		      : UINT,
-		      : SINT,
-		      : SINT,
-		      : UINT
+CopyImage proto WINAPI :HANDLE, :UINT, :SINT, :SINT, :UINT
 
 DI_MASK			equ 0x0001
 DI_IMAGE		equ 0x0002
@@ -7608,32 +5250,12 @@ DI_DEFAULTSIZE		equ 0x0008
 if(_WIN32_WINNT GE 0x0501)
 DI_NOMIRROR		equ 0x0010
 endif
-
-;BOOL
-DrawIconEx proto WINAPI \
-		   hdc: HDC,
-		 xLeft: SINT,
-		  yTop: SINT,
-		 hIcon: HICON,
-	       cxWidth: SINT,
-	       cyWidth: SINT,
-	 istepIfAniCur: UINT,
-    hbrFlickerFreeDraw: HBRUSH,
-	       diFlags: UINT
+DrawIconEx proto WINAPI :HDC, :SINT, :SINT, :HICON, :SINT, :SINT, :UINT, :HBRUSH, :UINT
 endif
 
-;HICON
-CreateIconIndirect proto WINAPI \
-	     piconinfo: PICONINFO
-
-;HICON
-CopyIcon proto WINAPI \
-		 hIcon: HICON
-
-;BOOL
-GetIconInfo proto WINAPI \
-		 hIcon: HICON,
-	     piconinfo: PICONINFO
+CreateIconIndirect proto WINAPI :PICONINFO
+CopyIcon proto WINAPI :HICON
+GetIconInfo proto WINAPI :HICON, :PICONINFO
 
 if(_WIN32_WINNT GE 0x0600)
 ICONINFOEXA		STRUC
@@ -7667,13 +5289,8 @@ else
 ICONINFOEX		typedef ICONINFOEXA
 PICONINFOEX		typedef PICONINFOEXA
 endif
-;BOOL
-GetIconInfoExA proto WINAPI \
-		 hicon: HICON,
-	     piconinfo: PICONINFOEXA
-GetIconInfoExW proto WINAPI \
-		 hicon: HICON,
-	     piconinfo: PICONINFOEXW
+GetIconInfoExA proto WINAPI :HICON, :PICONINFOEXA
+GetIconInfoExW proto WINAPI :HICON, :PICONINFOEXW
 ifdef _UNICODE
 GetIconInfoEx		equ <GetIconInfoExW>
 else
@@ -7687,7 +5304,6 @@ RES_CURSOR		equ 2
 endif
 
 ifdef OEMRESOURCE
-
 
 OBM_CLOSE		equ 32754
 OBM_UPARROW		equ 32753
@@ -7725,7 +5341,6 @@ OBM_OLD_REDUCE		equ 32757
 OBM_OLD_ZOOM		equ 32756
 OBM_OLD_RESTORE		equ 32755
 
-
 OCR_NORMAL		equ 32512
 OCR_IBEAM		equ 32513
 OCR_WAIT		equ 32514
@@ -7758,8 +5373,6 @@ OIC_WARNING		equ OIC_BANG
 OIC_ERROR		equ OIC_HAND
 OIC_INFORMATION		equ OIC_NOTE
 endif
-
-
 
 endif
 
@@ -7799,27 +5412,15 @@ IDI_ERROR		equ IDI_HAND
 IDI_INFORMATION		equ IDI_ASTERISK
 endif
 
-
 endif
 
-;int
-LoadStringA proto WINAPI \
-	     hInstance: HINSTANCE,
-		   uID: UINT,
-	      lpBuffer: LPSTR,
-	    nBufferMax: SINT
-;int
-LoadStringW proto WINAPI \
-	     hInstance: HINSTANCE,
-		   uID: UINT,
-	      lpBuffer: LPWSTR,
-	    nBufferMax: SINT
+LoadStringA proto WINAPI :HINSTANCE, :UINT, :LPSTR, :SINT
+LoadStringW proto WINAPI :HINSTANCE, :UINT, :LPWSTR, :SINT
 ifdef _UNICODE
 LoadString		equ <LoadStringW>
 else
 LoadString		equ <LoadStringA>
 endif
-
 
 IDOK			equ 1
 IDCANCEL		equ 2
@@ -7842,12 +5443,9 @@ IDTIMEOUT		equ 32000
 endif
 endif
 
-
 ifndef NOCTLMGR
 
-
 ifndef NOWINSTYLES
-
 
 ES_LEFT			equ 0x0000
 ES_CENTER		equ 0x0001
@@ -7865,7 +5463,6 @@ ES_WANTRETURN		equ 0x1000
 if(WINVER GE 0x0400)
 ES_NUMBER		equ 0x2000
 endif
-
 
 endif
 
@@ -7891,14 +5488,12 @@ endif
 
 if(WINVER GE 0x0500)
 EMSIS_COMPOSITIONSTRING equ 0x0001
-
 EIMES_GETCOMPSTRATONCE	equ 0x0001
 EIMES_CANCELCOMPSTRINFOCUS equ 0x0002
 EIMES_COMPLETECOMPSTRKILLFOCUS equ 0x0004
 endif
 
 ifndef NOWINMESSAGES
-
 
 EM_GETSEL		equ 0x00B0
 EM_SETSEL		equ 0x00B1
@@ -7945,13 +5540,11 @@ EM_SETIMESTATUS		equ 0x00D8
 EM_GETIMESTATUS		equ 0x00D9
 endif
 
-
 endif
 
 WB_LEFT			equ 0
 WB_RIGHT		equ 1
 WB_ISDELIMITER		equ 2
-
 
 BS_PUSHBUTTON		equ 0x00000000
 BS_DEFPUSHBUTTON	equ 0x00000001
@@ -8055,7 +5648,6 @@ SS_WORDELLIPSIS		equ 0x0000C000
 SS_ELLIPSISMASK		equ 0x0000C000
 endif
 
-
 ifndef NOWINMESSAGES
 STM_SETICON		equ 0x0170
 STM_GETICON		equ 0x0171
@@ -8076,17 +5668,10 @@ DWL_MSGRESULT		equ 0
 DWL_DLGPROC		equ 4
 DWL_USER		equ 8
 
-
 ifndef NOMSG
 
-;BOOL
-IsDialogMessageA proto WINAPI \
-		  hDlg: HWND,
-		 lpMsg: LPMSG
-;BOOL
-IsDialogMessageW proto WINAPI \
-		  hDlg: HWND,
-		 lpMsg: LPMSG
+IsDialogMessageA proto WINAPI :HWND, :LPMSG
+IsDialogMessageW proto WINAPI :HWND, :LPMSG
 ifdef _UNICODE
 IsDialogMessage		equ <IsDialogMessageW>
 else
@@ -8095,25 +5680,10 @@ endif
 
 endif
 
-;BOOL
-MapDialogRect proto WINAPI \
-		  hDlg: HWND,
-		lpRect: LPRECT
+MapDialogRect proto WINAPI :HWND, :LPRECT
 
-;int
-DlgDirListA proto WINAPI \
-		  hDlg: HWND,
-	    lpPathSpec: LPSTR,
-	    nIDListBox: SINT,
-	 nIDStaticPath: SINT,
-	     uFileType: UINT
-;int
-DlgDirListW proto WINAPI \
-		  hDlg: HWND,
-	    lpPathSpec: LPWSTR,
-	    nIDListBox: SINT,
-	 nIDStaticPath: SINT,
-	     uFileType: UINT
+DlgDirListA proto WINAPI :HWND, :LPSTR, :SINT, :SINT, :UINT
+DlgDirListW proto WINAPI :HWND, :LPWSTR, :SINT, :SINT, :UINT
 ifdef _UNICODE
 DlgDirList		equ <DlgDirListW>
 else
@@ -8131,63 +5701,29 @@ DDL_POSTMSGS		equ 0x2000
 DDL_DRIVES		equ 0x4000
 DDL_EXCLUSIVE		equ 0x8000
 
-;BOOL
-DlgDirSelectExA proto WINAPI \
-		  hDlg: HWND,
-	      lpString: LPSTR,
-		nCount: SINT,
-	    nIDListBox: SINT
-;BOOL
-DlgDirSelectExW proto WINAPI \
-		  hDlg: HWND,
-	      lpString: LPWSTR,
-		nCount: SINT,
-	    nIDListBox: SINT
+DlgDirSelectExA proto WINAPI :HWND, :LPSTR, :SINT, :SINT
+DlgDirSelectExW proto WINAPI :HWND, :LPWSTR, :SINT, :SINT
 ifdef _UNICODE
 DlgDirSelectEx		equ <DlgDirSelectExW>
 else
 DlgDirSelectEx		equ <DlgDirSelectExA>
 endif
 
-;int
-DlgDirListComboBoxA proto WINAPI \
-		  hDlg: HWND,
-	    lpPathSpec: LPSTR,
-	   nIDComboBox: SINT,
-	 nIDStaticPath: SINT,
-	     uFiletype: UINT
-;int
-DlgDirListComboBoxW proto WINAPI \
-		  hDlg: HWND,
-	    lpPathSpec: LPWSTR,
-	   nIDComboBox: SINT,
-	 nIDStaticPath: SINT,
-	     uFiletype: UINT
+DlgDirListComboBoxA proto WINAPI :HWND, :LPSTR, :SINT, :SINT, :UINT
+DlgDirListComboBoxW proto WINAPI :HWND, :LPWSTR, :SINT, :SINT, :UINT
 ifdef _UNICODE
 DlgDirListComboBox	equ <DlgDirListComboBoxW>
 else
 DlgDirListComboBox	equ <DlgDirListComboBoxA>
 endif
 
-;BOOL
-DlgDirSelectComboBoxExA proto WINAPI \
-		  hDlg: HWND,
-	      lpString: LPSTR,
-		nCount: SINT,
-	   nIDComboBox: SINT
-;BOOL
-DlgDirSelectComboBoxExW proto WINAPI \
-		  hDlg: HWND,
-	      lpString: LPWSTR,
-		nCount: SINT,
-	   nIDComboBox: SINT
+DlgDirSelectComboBoxExA proto WINAPI :HWND, :LPSTR, :SINT, :SINT
+DlgDirSelectComboBoxExW proto WINAPI :HWND, :LPWSTR, :SINT, :SINT
 ifdef _UNICODE
 DlgDirSelectComboBoxEx	equ <DlgDirSelectComboBoxExW>
 else
 DlgDirSelectComboBoxEx	equ <DlgDirSelectComboBoxExA>
 endif
-
-
 
 DS_ABSALIGN		equ 0x01
 DS_SYSMODAL		equ 0x02
@@ -8196,7 +5732,6 @@ DS_SETFONT		equ 0x40
 DS_MODALFRAME		equ 0x80
 DS_NOIDLEMSG		equ 0x100
 DS_SETFOREGROUND	equ 0x200
-
 
 if(WINVER GE 0x0400)
 DS_3DLOOK		equ 0x0004
@@ -8208,7 +5743,6 @@ DS_CENTERMOUSE		equ 0x1000
 DS_CONTEXTHELP		equ 0x2000
 DS_SHELLFONT		equ (DS_SETFONT OR DS_FIXEDSYS)
 endif
-
 
 DM_GETDEFID		equ (WM_USER+0)
 DM_SETDEFID		equ (WM_USER+1)
@@ -8231,12 +5765,9 @@ DLGC_STATIC		equ 0x0100
 DLGC_BUTTON		equ 0x2000
 
 LB_CTLCODE		equ 0
-
 LB_OKAY			equ 0
 LB_ERR			equ (-1)
 LB_ERRSPACE		equ (-2)
-
-
 
 LBN_ERRSPACE		equ (-2)
 LBN_SELCHANGE		equ 1
@@ -8244,8 +5775,6 @@ LBN_DBLCLK		equ 2
 LBN_SELCANCEL		equ 3
 LBN_SETFOCUS		equ 4
 LBN_KILLFOCUS		equ 5
-
-
 
 ifndef NOWINMESSAGES
 
@@ -8309,7 +5838,6 @@ endif
 
 ifndef NOWINSTYLES
 
-
 LBS_NOTIFY		equ 0x0001
 LBS_SORT		equ 0x0002
 LBS_NOREDRAW		equ 0x0004
@@ -8348,7 +5876,6 @@ CBN_SELENDOK		equ 9
 CBN_SELENDCANCEL	equ 10
 
 ifndef NOWINSTYLES
-
 CBS_SIMPLE		equ 0x0001
 CBS_DROPDOWN		equ 0x0002
 CBS_DROPDOWNLIST	equ 0x0003
@@ -8364,9 +5891,7 @@ if(WINVER GE 0x0400)
 CBS_UPPERCASE		equ 0x2000
 CBS_LOWERCASE		equ 0x4000
 endif
-
 endif
-
 
 ifndef NOWINMESSAGES
 CB_GETEDITSEL		equ 0x0140
@@ -8473,17 +5998,8 @@ SCROLLINFO		ENDS
 LPSCROLLINFO		typedef ptr SCROLLINFO
 LPCSCROLLINFO		typedef ptr SCROLLINFO
 
-;int
-SetScrollInfo proto WINAPI \
-		      : HWND,
-		      : SINT,
-		      : LPCSCROLLINFO,
-		      : BOOL
-;BOOL
-GetScrollInfo proto WINAPI \
-		      : HWND,
-		      : SINT,
-		      : LPSCROLLINFO
+SetScrollInfo proto WINAPI :HWND, :SINT, :LPCSCROLLINFO, :BOOL
+GetScrollInfo proto WINAPI :HWND, :SINT, :LPSCROLLINFO
 endif
 endif
 endif
@@ -8491,7 +6007,6 @@ endif
 ifndef NOMDI
 
 MDIS_ALLCHILDSTYLES	equ 0x0001
-
 MDITILE_VERTICAL	equ 0x0000
 MDITILE_HORIZONTAL	equ 0x0001
 MDITILE_SKIPDISABLED	equ 0x0002
@@ -8537,79 +6052,28 @@ idFirstChild		UINT ?
 CLIENTCREATESTRUCT	ENDS
 LPCLIENTCREATESTRUCT	typedef ptr CLIENTCREATESTRUCT
 
-;LRESULT
-DefFrameProcA proto WINAPI \
-		  hWnd: HWND,
-	 hWndMDIClient: HWND,
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-;LRESULT
-DefFrameProcW proto WINAPI \
-		  hWnd: HWND,
-	 hWndMDIClient: HWND,
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+DefFrameProcA proto WINAPI :HWND, :HWND, :UINT, :WPARAM, :LPARAM
+DefFrameProcW proto WINAPI :HWND, :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 DefFrameProc		equ <DefFrameProcW>
 else
 DefFrameProc		equ <DefFrameProcA>
 endif
 
-DefMDIChildProcA typedef proto WINAPI \
-		  hWnd: HWND,
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-DefMDIChildProcW typedef proto WINAPI \
-		  hWnd: HWND,
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
+DefMDIChildProcA typedef proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
+DefMDIChildProcW typedef proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 DefMDIChildProc typedef ptr DefMDIChildProcW
 else
 DefMDIChildProc typedef ptr DefMDIChildProcA
 endif
-
 ifndef NOMSG
-
-;BOOL
-TranslateMDISysAccel proto WINAPI \
-	    hWndClient: HWND,
-		 lpMsg: LPMSG
-
+TranslateMDISysAccel proto WINAPI :HWND, :LPMSG
 endif
+ArrangeIconicWindows proto WINAPI :HWND
 
-;UINT
-ArrangeIconicWindows proto WINAPI \
-		  hWnd: HWND
-
-;HWND
-CreateMDIWindowA proto WINAPI \
-	   lpClassName: LPSTR,
-	  lpWindowName: LPSTR,
-	       dwStyle: DWORD,
-		     X: SINT,
-		     Y: SINT,
-		nWidth: SINT,
-	       nHeight: SINT,
-	    hWndParent: HWND,
-	     hInstance: HINSTANCE,
-	       lParam : LPARAM
-;HWND
-CreateMDIWindowW proto WINAPI \
-	   lpClassName: LPWSTR,
-	  lpWindowName: LPWSTR,
-	       dwStyle: DWORD,
-		     X: SINT,
-		     Y: SINT,
-		nWidth: SINT,
-	       nHeight: SINT,
-	    hWndParent: HWND,
-	     hInstance: HINSTANCE,
-	       lParam : LPARAM
+CreateMDIWindowA proto WINAPI :LPSTR, :LPSTR, :DWORD, :SINT, :SINT, :SINT, :SINT, :HWND, :HINSTANCE, :LPARAM
+CreateMDIWindowW proto WINAPI :LPWSTR, :LPWSTR, :DWORD, :SINT, :SINT, :SINT, :SINT, :HWND, :HINSTANCE, :LPARAM
 ifdef _UNICODE
 CreateMDIWindow		equ <CreateMDIWindowW>
 else
@@ -8617,25 +6081,12 @@ CreateMDIWindow		equ <CreateMDIWindowA>
 endif
 
 if(WINVER GE 0x0400)
-;WORD
-TileWindows proto WINAPI \
-	    hwndParent: HWND,
-		  wHow: UINT,
-		lpRect: LPRECT,
-		 cKids: UINT,
-		lpKids: ptr HWND
-;WORD
-CascadeWindows proto WINAPI \
-	    hwndParent: HWND,
-		  wHow: UINT,
-		lpRect: LPRECT,
-		 cKids: UINT,
-		lpKids: ptr HWND
+TileWindows proto WINAPI :HWND, :UINT, :LPRECT, :UINT, :ptr HWND
+CascadeWindows proto WINAPI :HWND, :UINT, :LPRECT, :UINT, :ptr HWND
 endif
 endif
 
 endif
-
 
 ifndef NOHELP
 
@@ -8730,20 +6181,8 @@ IDH_HELP		equ 28445
 
 endif
 
-
-
-;BOOL
-WinHelpA proto WINAPI \
-	      hWndMain: HWND,
-	      lpszHelp: LPCSTR,
-	      uCommand: UINT,
-	       dwData : ULONG_PTR
-;BOOL
-WinHelpW proto WINAPI \
-	      hWndMain: HWND,
-	      lpszHelp: LPCWSTR,
-	      uCommand: UINT,
-	       dwData : ULONG_PTR
+WinHelpA proto WINAPI :HWND, :LPCSTR, :UINT, :ULONG_PTR
+WinHelpW proto WINAPI :HWND, :LPCWSTR, :UINT, :ULONG_PTR
 ifdef _UNICODE
 WinHelp			equ <WinHelpW>
 else
@@ -8765,14 +6204,10 @@ endif
 endif
 
 if(WINVER GE 0x0500)
-;DWORD
-GetGuiResources proto WINAPI \
-	      hProcess: HANDLE,
-	       uiFlags: DWORD
+GetGuiResources proto WINAPI :HANDLE, :DWORD
 endif
 
 ifndef NOSYSPARAMSINFO
-
 
 SPI_GETBEEP		equ 1
 SPI_SETBEEP		equ 2
@@ -9041,7 +6476,6 @@ SPIF_UPDATEINIFILE	equ 0x0001
 SPIF_SENDWININICHANGE	equ 0x0002
 SPIF_SENDCHANGE		equ SPIF_SENDWININICHANGE
 
-
 METRICS_USEDEFAULT	equ -1
 ifdef _WINGDI_
 ifndef NOGDI
@@ -9195,7 +6629,6 @@ SERKF_SERIALKEYSON	equ 0x00000001
 SERKF_AVAILABLE		equ 0x00000002
 SERKF_INDICATOR		equ 0x00000004
 
-
 HIGHCONTRASTA		STRUC
 cbSize			UINT ?
 dwFlags			dd ?
@@ -9256,34 +6689,16 @@ endif
 ifdef _WINGDI_
 ifndef NOGDI
 
-;LONG
-ChangeDisplaySettingsA proto WINAPI \
-	     lpDevMode: LPDEVMODEA,
-	       dwFlags: DWORD
-;LONG
-ChangeDisplaySettingsW proto WINAPI \
-	     lpDevMode: LPDEVMODEW,
-	       dwFlags: DWORD
+ChangeDisplaySettingsA proto WINAPI :LPDEVMODEA, :DWORD
+ChangeDisplaySettingsW proto WINAPI :LPDEVMODEW, :DWORD
 ifdef _UNICODE
 ChangeDisplaySettings	equ <ChangeDisplaySettingsW>
 else
 ChangeDisplaySettings	equ <ChangeDisplaySettingsA>
 endif
 
-;LONG
-ChangeDisplaySettingsExA proto WINAPI \
-	lpszDeviceName: LPCSTR,
-	     lpDevMode: LPDEVMODEA,
-		  hwnd: HWND,
-	       dwflags: DWORD,
-		lParam: LPVOID
-;LONG
-ChangeDisplaySettingsExW proto WINAPI \
-	lpszDeviceName: LPCWSTR,
-	     lpDevMode: LPDEVMODEW,
-		  hwnd: HWND,
-	       dwflags: DWORD,
-		lParam: LPVOID
+ChangeDisplaySettingsExA proto WINAPI :LPCSTR, :LPDEVMODEA, :HWND, :DWORD, :ptr
+ChangeDisplaySettingsExW proto WINAPI :LPCWSTR, :LPDEVMODEW, :HWND, :DWORD, :ptr
 ifdef _UNICODE
 ChangeDisplaySettingsEx equ <ChangeDisplaySettingsExW>
 else
@@ -9293,16 +6708,8 @@ endif
 ENUM_CURRENT_SETTINGS	equ (-1)
 ENUM_REGISTRY_SETTINGS	equ (-2)
 
-;BOOL
-EnumDisplaySettingsA proto WINAPI \
-	lpszDeviceName: LPCSTR,
-	      iModeNum: DWORD,
-	     lpDevMode: LPDEVMODEA
-;BOOL
-EnumDisplaySettingsW proto WINAPI \
-	lpszDeviceName: LPCWSTR,
-	      iModeNum: DWORD,
-	     lpDevMode: LPDEVMODEW
+EnumDisplaySettingsA proto WINAPI :LPCSTR, :DWORD, :LPDEVMODEA
+EnumDisplaySettingsW proto WINAPI :LPCWSTR, :DWORD, :LPDEVMODEW
 ifdef _UNICODE
 EnumDisplaySettings	equ <EnumDisplaySettingsW>
 else
@@ -9310,17 +6717,8 @@ EnumDisplaySettings	equ <EnumDisplaySettingsA>
 endif
 
 if(WINVER GE 0x0500)
-;BOOL
-EnumDisplaySettingsExA proto WINAPI \
-	lpszDeviceName: LPCSTR,
-	      iModeNum: DWORD,
-	     lpDevMode: LPDEVMODEA,
-	       dwFlags: DWORD
-EnumDisplaySettingsExW proto WINAPI \
-	lpszDeviceName: LPCWSTR,
-	      iModeNum: DWORD,
-	     lpDevMode: LPDEVMODEA,
-	       dwFlags: DWORD
+EnumDisplaySettingsExA proto WINAPI :LPCSTR, :DWORD, :LPDEVMODEA, :DWORD
+EnumDisplaySettingsExW proto WINAPI :LPCWSTR, :DWORD, :LPDEVMODEA, :DWORD
 ifdef _UNICODE
 EnumDisplaySettingsEx	equ <EnumDisplaySettingsExW>
 else
@@ -9330,18 +6728,8 @@ endif
 EDS_RAWMODE		equ 0x00000002
 EDS_ROTATEDMODE		equ 0x00000004
 
-;BOOL
-EnumDisplayDevicesA proto WINAPI \
-		Unused: PVOID,
-	       iDevNum: DWORD,
-       lpDisplayDevice: PDISPLAY_DEVICEA,
-	       dwFlags: DWORD
-;BOOL
-EnumDisplayDevicesW proto WINAPI \
-		Unused: PVOID,
-	       iDevNum: DWORD,
-       lpDisplayDevice: PDISPLAY_DEVICEW,
-	       dwFlags: DWORD
+EnumDisplayDevicesA proto WINAPI :ptr, :DWORD, :PDISPLAY_DEVICEA, :DWORD
+EnumDisplayDevicesW proto WINAPI :ptr, :DWORD, :PDISPLAY_DEVICEW, :DWORD
 ifdef _UNICODE
 EnumDisplayDevices	equ <EnumDisplayDevicesW>
 else
@@ -9353,54 +6741,18 @@ EDD_GET_DEVICE_INTERFACE_NAME equ 0x00000001
 endif
 
 if(WINVER GE 0x0601)
-
-;LONG
-GetDisplayConfigBufferSizes proto WINAPI \
-		 flags: UINT,
-  numPathArrayElements: ptr UINT,
-numModeInfoArrayElements: ptr UINT
-
-;LONG
-SetDisplayConfig proto WINAPI \
-	     pathArray: ptr DISPLAYCONFIG_PATH_INFO,
-  numPathArrayElements: UINT,
-	 modeInfoArray: ptr DISPLAYCONFIG_MODE_INFO,
-		 flags: UINT
-
-;LONG
-QueryDisplayConfig proto WINAPI \
-		 flags: UINT,
-  numPathArrayElements: ptr UINT,
-	     pathArray: ptr DISPLAYCONFIG_PATH_INFO,
-	 modeInfoArray: ptr DISPLAYCONFIG_MODE_INFO,
-     currentTopologyId: ptr DISPLAYCONFIG_TOPOLOGY_ID
-
-;LONG
-DisplayConfigGetDeviceInfo proto WINAPI \
-	 requestPacket: ptr DISPLAYCONFIG_DEVICE_INFO_HEADER
-
-;LONG
-DisplayConfigSetDeviceInfo proto WINAPI \
-	     setPacket: ptr DISPLAYCONFIG_DEVICE_INFO_HEADER
-
+GetDisplayConfigBufferSizes proto WINAPI :UINT, :ptr, :ptr
+SetDisplayConfig proto WINAPI :ptr, :UINT, :ptr, :UINT
+QueryDisplayConfig proto WINAPI :UINT, :ptr, :ptr, :ptr, :ptr
+DisplayConfigGetDeviceInfo proto WINAPI :ptr
+DisplayConfigSetDeviceInfo proto WINAPI :ptr
 endif
 
 endif
 endif
 
-
-;BOOL
-SystemParametersInfoA proto WINAPI \
-	      uiAction: UINT,
-	       uiParam: UINT,
-	       pvParam: PVOID,
-	       fWinIni: UINT
-;BOOL
-SystemParametersInfoW proto WINAPI \
-	      uiAction: UINT,
-	       uiParam: UINT,
-	       pvParam: PVOID,
-	       fWinIni: UINT
+SystemParametersInfoA proto WINAPI :UINT, :UINT, :ptr, :UINT
+SystemParametersInfoW proto WINAPI :UINT, :UINT, :ptr, :UINT
 ifdef _UNICODE
 SystemParametersInfo	equ <SystemParametersInfoW>
 else
@@ -9555,7 +6907,6 @@ SSF_AVAILABLE		equ 0x00000002
 SSF_INDICATOR		equ 0x00000004
 
 if(_WIN32_WINNT GE 0x0600)
-;BOOL
 SoundSentry proto WINAPI
 endif
 
@@ -9581,21 +6932,13 @@ AUDIODESCRIPTION	ENDS
 LPAUDIODESCRIPTION	typedef ptr AUDIODESCRIPTION
 endif
 
-
-;VOID
-SetDebugErrorLevel proto WINAPI \
-	      dwLevel : DWORD
-
+SetDebugErrorLevel proto WINAPI :DWORD
 
 SLE_ERROR		equ 0x00000001
 SLE_MINORERROR		equ 0x00000002
 SLE_WARNING		equ 0x00000003
 
-;VOID
-SetLastErrorEx proto WINAPI \
-	     dwErrCode: DWORD,
-	       dwType : DWORD
-
+SetLastErrorEx proto WINAPI :DWORD, :DWORD
 
 if(WINVER GE 0x0500)
 
@@ -9603,20 +6946,9 @@ MONITOR_DEFAULTTONULL	equ 0x00000000
 MONITOR_DEFAULTTOPRIMARY equ 0x00000001
 MONITOR_DEFAULTTONEAREST equ 0x00000002
 
-;HMONITOR
-MonitorFromPoint proto WINAPI \
-		    pt: POINT,
-	       dwFlags: DWORD
-
-;HMONITOR
-MonitorFromRect proto WINAPI \
-		  lprc: LPCRECT,
-	       dwFlags: DWORD
-
-;HMONITOR
-MonitorFromWindow proto WINAPI \
-		  hwnd: HWND,
-	       dwFlags: DWORD
+MonitorFromPoint proto WINAPI :POINT, :DWORD
+MonitorFromRect proto WINAPI :LPCRECT, :DWORD
+MonitorFromWindow proto WINAPI :HWND, : DWORD
 
 MONITORINFOF_PRIMARY	equ 0x00000001
 
@@ -9649,47 +6981,25 @@ MONITORINFOEX		typedef MONITORINFOEXA
 LPMONITORINFOEX		typedef LPMONITORINFOEXA
 endif
 
-;BOOL
-GetMonitorInfoA proto WINAPI \
-	      hMonitor: HMONITOR,
-		  lpmi: LPMONITORINFO
-;BOOL
-GetMonitorInfoW proto WINAPI \
-	      hMonitor: HMONITOR,
-		  lpmi: LPMONITORINFO
+GetMonitorInfoA proto WINAPI :HMONITOR, :LPMONITORINFO
+GetMonitorInfoW proto WINAPI :HMONITOR, :LPMONITORINFO
 ifdef _UNICODE
-GetMonitorInfo		equ <GetMonitorInfoW>
+GetMonitorInfo equ <GetMonitorInfoW>
 else
-GetMonitorInfo		equ <GetMonitorInfoA>
+GetMonitorInfo equ <GetMonitorInfoA>
 endif
 
 CALLBACK(MONITORENUMPROC, :HMONITOR, :HDC, :LPRECT, :LPARAM)
 
-;BOOL
-EnumDisplayMonitors proto WINAPI \
-		   hdc: HDC,
-	      lprcClip: LPCRECT,
-	      lpfnEnum: MONITORENUMPROC,
-		dwData: LPARAM
-
+EnumDisplayMonitors proto WINAPI :HDC, :LPCRECT, :MONITORENUMPROC, :LPARAM
 
 ifndef NOWINABLE
 
-
-;VOID
-NotifyWinEvent proto WINAPI \
-		 event: DWORD,
-		  hwnd: HWND,
-	      idObject: LONG,
-	       idChild: LONG
-
+NotifyWinEvent proto WINAPI :DWORD, :HWND, :LONG, :LONG
 CALLBACK(WINEVENTPROC, :HWINEVENTHOOK, :DWORD, :HWND, :LONG, :LONG, :DWORD, :DWORD)
 
 if(_WIN32_WINNT GE 0x0501)
-;BOOL
-IsWinEventHookInstalled proto WINAPI \
-		 event: DWORD
-
+IsWinEventHookInstalled proto WINAPI :DWORD
 endif
 
 WINEVENT_OUTOFCONTEXT	equ 0x0000
@@ -9697,12 +7007,7 @@ WINEVENT_SKIPOWNTHREAD	equ 0x0001
 WINEVENT_SKIPOWNPROCESS equ 0x0002
 WINEVENT_INCONTEXT	equ 0x0004
 
-;BOOL
-UnhookWinEvent proto WINAPI \
-	 hWinEventHook: HWINEVENTHOOK
-
-
-
+UnhookWinEvent proto WINAPI :HWINEVENTHOOK
 
 CHILDID_SELF		equ 0
 INDEXID_OBJECT		equ 0
@@ -9723,42 +7028,27 @@ OBJID_SOUND		equ 0xFFFFFFF5
 
 EVENT_MIN		equ 0x00000001
 EVENT_MAX		equ 0x7FFFFFFF
-
-
 EVENT_SYSTEM_SOUND	equ 0x0001
-
 EVENT_SYSTEM_ALERT	equ 0x0002
-
 EVENT_SYSTEM_FOREGROUND equ 0x0003
-
 EVENT_SYSTEM_MENUSTART	equ 0x0004
 EVENT_SYSTEM_MENUEND	equ 0x0005
-
 EVENT_SYSTEM_MENUPOPUPSTART equ 0x0006
 EVENT_SYSTEM_MENUPOPUPEND equ 0x0007
-
-
 EVENT_SYSTEM_CAPTURESTART equ 0x0008
 EVENT_SYSTEM_CAPTUREEND equ 0x0009
-
 EVENT_SYSTEM_MOVESIZESTART equ 0x000A
 EVENT_SYSTEM_MOVESIZEEND equ 0x000B
-
 EVENT_SYSTEM_CONTEXTHELPSTART equ 0x000C
 EVENT_SYSTEM_CONTEXTHELPEND equ 0x000D
-
 EVENT_SYSTEM_DRAGDROPSTART equ 0x000E
 EVENT_SYSTEM_DRAGDROPEND equ 0x000F
-
 EVENT_SYSTEM_DIALOGSTART equ 0x0010
 EVENT_SYSTEM_DIALOGEND	equ 0x0011
-
 EVENT_SYSTEM_SCROLLINGSTART equ 0x0012
 EVENT_SYSTEM_SCROLLINGEND equ 0x0013
-
 EVENT_SYSTEM_SWITCHSTART equ 0x0014
 EVENT_SYSTEM_SWITCHEND	equ 0x0015
-
 EVENT_SYSTEM_MINIMIZESTART equ 0x0016
 EVENT_SYSTEM_MINIMIZEEND equ 0x0017
 
@@ -9768,13 +7058,10 @@ endif
 
 if(_WIN32_WINNT GE 0x0601)
 EVENT_SYSTEM_END	equ 0x00FF
-
 EVENT_OEM_DEFINED_START equ 0x0101
 EVENT_OEM_DEFINED_END	equ 0x01FF
-
 EVENT_UIA_EVENTID_START equ 0x4E00
 EVENT_UIA_EVENTID_END	equ 0x4EFF
-
 EVENT_UIA_PROPID_START	equ 0x7500
 EVENT_UIA_PROPID_END	equ 0x75FF
 endif
@@ -9800,13 +7087,11 @@ if(_WIN32_WINNT GE 0x0601)
 EVENT_CONSOLE_END	equ 0x40FF
 endif
 
-
 EVENT_OBJECT_CREATE	equ 0x8000
 EVENT_OBJECT_DESTROY	equ 0x8001
 EVENT_OBJECT_SHOW	equ 0x8002
 EVENT_OBJECT_HIDE	equ 0x8003
 EVENT_OBJECT_REORDER	equ 0x8004
-
 
 EVENT_OBJECT_FOCUS	equ 0x8005
 EVENT_OBJECT_SELECTION	equ 0x8006
@@ -9814,10 +7099,8 @@ EVENT_OBJECT_SELECTIONADD equ 0x8007
 EVENT_OBJECT_SELECTIONREMOVE equ 0x8008
 EVENT_OBJECT_SELECTIONWITHIN equ 0x8009
 
-
 EVENT_OBJECT_STATECHANGE equ 0x800A
 EVENT_OBJECT_LOCATIONCHANGE equ 0x800B
-
 
 EVENT_OBJECT_NAMECHANGE equ 0x800C
 EVENT_OBJECT_DESCRIPTIONCHANGE equ 0x800D
@@ -9839,11 +7122,9 @@ endif
 
 if(_WIN32_WINNT GE 0x0601)
 EVENT_OBJECT_END	equ 0x80FF
-
 EVENT_AIA_START		equ 0xA000
 EVENT_AIA_END		equ 0xAFFF
 endif
-
 
 SOUND_SYSTEM_STARTUP	equ 1
 SOUND_SYSTEM_SHUTDOWN	equ 2
@@ -9870,19 +7151,8 @@ ALERT_SYSTEM_QUERY	equ 4
 ALERT_SYSTEM_CRITICAL	equ 5
 CALERT_SYSTEM		equ 6
 
-;HWINEVENTHOOK
-SetWinEventHook proto WINAPI \
-	      eventMin: DWORD,
-	      eventMax: DWORD,
-      hmodWinEventProc: HMODULE,
-       pfnWinEventProc: WINEVENTPROC,
-	     idProcess: DWORD,
-	      idThread: DWORD,
-	       dwFlags: DWORD
-
-;BOOL
-UnhookWinEvent proto WINAPI \
-	 hWinEventHook: HWINEVENTHOOK
+SetWinEventHook proto WINAPI :DWORD, :DWORD, :HMODULE, :WINEVENTPROC, :DWORD, :DWORD, :DWORD
+UnhookWinEvent proto WINAPI :HWINEVENTHOOK
 
 WINEVENT_OUTOFCONTEXT	equ 0x0000
 WINEVENT_SKIPOWNTHREAD	equ 0x0001
@@ -9917,31 +7187,13 @@ endif
 
 if(_WIN32_WINNT GE 0x0600)
 USER_DEFAULT_SCREEN_DPI equ 96
-;BOOL
 SetProcessDPIAware proto WINAPI
-;BOOL
 IsProcessDPIAware proto WINAPI
 endif
-
-;BOOL
-GetGUIThreadInfo proto WINAPI \
-	      idThread: DWORD,
-		  pgui: PGUITHREADINFO
-;BOOL
-BlockInput proto WINAPI \
-	      fBlockIt: BOOL
-
-
-;UINT
-GetWindowModuleFileNameA proto WINAPI \
-		  hwnd: HWND,
-	   pszFileName: LPSTR,
-	cchFileNameMax: UINT
-;UINT
-GetWindowModuleFileNameW proto WINAPI \
-		  hwnd: HWND,
-	   pszFileName: LPWSTR,
-	cchFileNameMax: UINT
+GetGUIThreadInfo proto WINAPI :DWORD, :PGUITHREADINFO
+BlockInput proto WINAPI :BOOL
+GetWindowModuleFileNameA proto WINAPI :HWND, :LPSTR, :UINT
+GetWindowModuleFileNameW proto WINAPI :HWND, :LPWSTR, :UINT
 ifdef _UNICODE
 GetWindowModuleFileName equ <GetWindowModuleFileNameW>
 else
@@ -9994,9 +7246,7 @@ LPCURSORINFO		typedef ptr CURSORINFO
 
 CURSOR_SHOWING		equ 0x00000001
 
-;BOOL
-GetCursorInfo proto WINAPI \
-		  pci : PCURSORINFO
+GetCursorInfo proto WINAPI :PCURSORINFO
 
 WINDOWINFO		STRUC
 cbSize			dd ?
@@ -10015,10 +7265,7 @@ LPWINDOWINFO		typedef ptr WINDOWINFO
 
 WS_ACTIVECAPTION	equ 0x0001
 
-;BOOL
-GetWindowInfo proto WINAPI \
-		  hwnd: HWND,
-		  pwi : PWINDOWINFO
+GetWindowInfo proto WINAPI :HWND, :PWINDOWINFO
 
 TITLEBARINFO		STRUC
 cbSize			dd ?
@@ -10028,10 +7275,7 @@ TITLEBARINFO		ENDS
 PTITLEBARINFO		typedef ptr TITLEBARINFO
 LPTITLEBARINFO		typedef ptr TITLEBARINFO
 
-;BOOL
-GetTitleBarInfo proto WINAPI \
-		  hwnd: HWND,
-		   pti: PTITLEBARINFO
+GetTitleBarInfo proto WINAPI :HWND, :PTITLEBARINFO
 
 if(WINVER GE 0x0600)
 TITLEBARINFOEX		STRUC
@@ -10055,12 +7299,7 @@ MENUBARINFO		ENDS
 PMENUBARINFO		typedef ptr MENUBARINFO
 LPMENUBARINFO		typedef ptr MENUBARINFO
 
-;BOOL
-GetMenuBarInfo proto WINAPI \
-		  hwnd: HWND,
-	      idObject: LONG,
-		idItem: LONG,
-		  pmbi: PMENUBARINFO
+GetMenuBarInfo proto WINAPI :HWND, :LONG, :LONG, :PMENUBARINFO
 
 SCROLLBARINFO		STRUC
 cbSize			dd ?
@@ -10074,11 +7313,7 @@ SCROLLBARINFO		ENDS
 PSCROLLBARINFO		typedef ptr SCROLLBARINFO
 LPSCROLLBARINFO		typedef ptr SCROLLBARINFO
 
-;BOOL
-GetScrollBarInfo proto WINAPI \
-		  hwnd: HWND,
-	      idObject: LONG,
-		 psbi : PSCROLLBARINFO
+GetScrollBarInfo proto WINAPI :HWND, :LONG, :PSCROLLBARINFO
 
 COMBOBOXINFO		STRUC
 cbSize			dd ?
@@ -10092,10 +7327,7 @@ COMBOBOXINFO		ENDS
 PCOMBOBOXINFO		typedef ptr COMBOBOXINFO
 LPCOMBOBOXINFO		typedef ptr COMBOBOXINFO
 
-;BOOL
-GetComboBoxInfo proto WINAPI \
-	     hwndCombo: HWND,
-		 pcbi : PCOMBOBOXINFO
+GetComboBoxInfo proto WINAPI :HWND, :PCOMBOBOXINFO
 
 GA_MIC			equ 1
 GA_PARENT		equ 1
@@ -10103,28 +7335,10 @@ GA_ROOT			equ 2
 GA_ROOTOWNER		equ 3
 GA_MAC			equ 4
 
-;HWND
-GetAncestor proto WINAPI \
-		  hwnd: HWND,
-	      gaFlags : UINT
-
-
-;HWND
-RealChildWindowFromPoint proto WINAPI \
-	    hwndParent: HWND,
- ptParentClientCoords : POINT
-
-
-;UINT
-RealGetWindowClassA proto WINAPI \
-		  hwnd: HWND,
-	       pszType: LPTSTR,
-	      cchType : UINT
-;UINT
-RealGetWindowClassW proto WINAPI \
-		  hwnd: HWND,
-	       pszType: LPTSTR,
-	      cchType : UINT
+GetAncestor proto WINAPI :HWND, :UINT
+RealChildWindowFromPoint proto WINAPI :HWND, :POINT
+RealGetWindowClassA proto WINAPI :HWND, :LPTSTR, :UINT
+RealGetWindowClassW proto WINAPI :HWND, :LPTSTR, :UINT
 ifdef _UNICODE
 RealGetWindowClass	equ <RealGetWindowClassW>
 else
@@ -10145,62 +7359,35 @@ ALTTABINFO		ENDS
 PALTTABINFO		typedef ptr ALTTABINFO
 LPALTTABINFO		typedef ptr ALTTABINFO
 
-;BOOL
-GetAltTabInfoA proto WINAPI \
-		  hwnd: HWND,
-		 iItem: SINT,
-		  pati: PALTTABINFO,
-	   pszItemText: LPTSTR,
-	  cchItemText : UINT
-;BOOL
-GetAltTabInfoW proto WINAPI \
-		  hwnd: HWND,
-		 iItem: SINT,
-		  pati: PALTTABINFO,
-	   pszItemText: LPTSTR,
-	  cchItemText : UINT
+GetAltTabInfoA proto WINAPI :HWND, :SINT, :PALTTABINFO, :LPTSTR, :UINT
+GetAltTabInfoW proto WINAPI :HWND, :SINT, :PALTTABINFO, :LPTSTR, :UINT
 ifdef _UNICODE
-GetAltTabInfo		equ <GetAltTabInfoW>
+GetAltTabInfo equ <GetAltTabInfoW>
 else
-GetAltTabInfo		equ <GetAltTabInfoA>
+GetAltTabInfo equ <GetAltTabInfoA>
 endif
-
-;DWORD
-GetListBoxInfo proto WINAPI \
-		 hwnd : HWND
+GetListBoxInfo proto WINAPI :HWND
 
 endif
 endif
-
 
 if(_WIN32_WINNT GE 0x0500)
-;BOOL
 LockWorkStation proto WINAPI
 endif
-
 if(_WIN32_WINNT GE 0x0500)
-
-;BOOL
-UserHandleGrantAccess proto WINAPI \
-	   hUserHandle: HANDLE,
-		  hJob: HANDLE
-
+UserHandleGrantAccess proto WINAPI :HANDLE, :HANDLE
 endif
 
 if(_WIN32_WINNT GE 0x0501)
 
-
 HRAWINPUT		typedef HANDLE
-
 
 GET_RAWINPUT_CODE_WPARAM macro wParam
 	exitm<((wParam) AND 0xff)>
 	endm
 
 RIM_INPUT		equ 0
-
 RIM_INPUTSINK		equ 1
-
 
 RAWINPUTHEADER		STRUC
 dwType			dd ?
@@ -10246,12 +7433,10 @@ RI_MOUSE_BUTTON_2_DOWN	equ RI_MOUSE_RIGHT_BUTTON_DOWN
 RI_MOUSE_BUTTON_2_UP	equ RI_MOUSE_RIGHT_BUTTON_UP
 RI_MOUSE_BUTTON_3_DOWN	equ RI_MOUSE_MIDDE_BUTTON_DOWN
 RI_MOUSE_BUTTON_3_UP	equ RI_MOUSE_MIDDE_BUTTON_UP
-
 RI_MOUSE_BUTTON_4_DOWN	equ 0x0040
 RI_MOUSE_BUTTON_4_UP	equ 0x0080
 RI_MOUSE_BUTTON_5_DOWN	equ 0x0100
 RI_MOUSE_BUTTON_5_UP	equ 0x0200
-
 RI_MOUSE_WHEEL		equ 0x0400
 
 MOUSE_MOVE_RELATIVE	equ 0
@@ -10273,7 +7458,6 @@ RAWKEYBOARD		ENDS
 PRAWKEYBOARD		typedef ptr RAWKEYBOARD
 LPRAWKEYBOARD		typedef ptr RAWKEYBOARD
 
-
 KEYBOARD_OVERRUN_MAKE_CODE equ 0xFF
 
 RI_KEY_MAKE		equ 0
@@ -10282,7 +7466,6 @@ RI_KEY_E0		equ 2
 RI_KEY_E1		equ 4
 RI_KEY_TERMSRV_SET_LED	equ 8
 RI_KEY_TERMSRV_SHADOW	equ 0x10
-
 
 RAWHID			STRUC
 dwSizeHid		dd ?
@@ -10321,13 +7504,7 @@ NEXTRAWINPUTBLOCK macro p
 RID_INPUT		equ 0x10000003
 RID_HEADER		equ 0x10000005
 
-;UINT
-GetRawInputData proto WINAPI \
-	     hRawInput: HRAWINPUT,
-	     uiCommand: UINT,
-		 pData: LPVOID,
-	       pcbSize: PUINT,
-	  cbSizeHeader: UINT
+GetRawInputData proto WINAPI :HRAWINPUT, :UINT, :LPVOID, :PUINT, :UINT
 
 RIDI_PREPARSEDDATA	equ 0x20000005
 RIDI_DEVICENAME		equ 0x20000007
@@ -10372,29 +7549,15 @@ RID_DEVICE_INFO		ENDS
 PRID_DEVICE_INFO	typedef ptr RID_DEVICE_INFO
 LPRID_DEVICE_INFO	typedef ptr RID_DEVICE_INFO
 
-;UINT
-GetRawInputDeviceInfoA proto WINAPI \
-	       hDevice: HANDLE,
-	     uiCommand: UINT,
-		 pData: LPVOID,
-	       pcbSize: PUINT
-GetRawInputDeviceInfoW proto WINAPI \
-	       hDevice: HANDLE,
-	     uiCommand: UINT,
-		 pData: LPVOID,
-	       pcbSize: PUINT
+GetRawInputDeviceInfoA proto WINAPI :HANDLE, :UINT, :LPVOID, :PUINT
+GetRawInputDeviceInfoW proto WINAPI :HANDLE, :UINT, :LPVOID, :PUINT
 ifdef _UNICODE
 GetRawInputDeviceInfo	equ <GetRawInputDeviceInfoW>
 else
 GetRawInputDeviceInfo	equ <GetRawInputDeviceInfoA>
 endif
 
-
-;UINT
-GetRawInputBuffer proto WINAPI \
-		 pData: PRAWINPUT,
-	       pcbSize: PUINT,
-	  cbSizeHeader: UINT
+GetRawInputBuffer proto WINAPI :PRAWINPUT, :PUINT, :UINT
 
 RAWINPUTDEVICE		STRUC
 usUsagePage		dw ?
@@ -10439,16 +7602,8 @@ GET_DEVICE_CHANGE_LPARAM macro lParam
 	endm
 endif
 
-;BOOL
-RegisterRawInputDevices proto WINAPI \
-      pRawInputDevices: PCRAWINPUTDEVICE,
-	  uiNumDevices: UINT,
-		cbSize: UINT
-;UINT
-GetRegisteredRawInputDevices proto WINAPI \
-      pRawInputDevices: PCRAWINPUTDEVICE,
-	 puiNumDevices: PUINT,
-		cbSize: UINT
+RegisterRawInputDevices proto WINAPI :PCRAWINPUTDEVICE, :UINT, :UINT
+GetRegisteredRawInputDevices proto WINAPI :PCRAWINPUTDEVICE, :PUINT, :UINT
 
 RAWINPUTDEVICELIST	STRUC
 hDevice			HANDLE ?
@@ -10456,33 +7611,16 @@ dwType			dd ?
 RAWINPUTDEVICELIST	ENDS
 PRAWINPUTDEVICELIST	typedef ptr RAWINPUTDEVICELIST
 
-;UINT
-GetRawInputDeviceList proto WINAPI \
-   pRawInputDeviceList: PRAWINPUTDEVICELIST,
-	 puiNumDevices: PUINT,
-		cbSize: UINT
-
-;LRESULT
-DefRawInputProc proto WINAPI \
-	    paRawInput: ptr PRAWINPUT,
-		nInput: SINT,
-	  cbSizeHeader: UINT
+GetRawInputDeviceList proto WINAPI :PRAWINPUTDEVICELIST, :PUINT, :UINT
+DefRawInputProc proto WINAPI :ptr PRAWINPUT, :SINT, :UINT
 
 endif
 
-
 if(WINVER GE 0x0600)
-
-
 MSGFLT_ADD		equ 1
 MSGFLT_REMOVE		equ 2
 
-;BOOL
-ChangeWindowMessageFilter proto WINAPI \
-	       message: UINT,
-		dwFlag: DWORD
-
-
+ChangeWindowMessageFilter proto WINAPI :UINT, :DWORD
 endif
 
 if(WINVER GE 0x0601)
@@ -10502,22 +7640,13 @@ MSGFLT_RESET		equ 0
 MSGFLT_ALLOW		equ 1
 MSGFLT_DISALLOW		equ 2
 
-;BOOL
-ChangeWindowMessageFilterEx proto WINAPI \
-		  hwnd: HWND,
-	       message: UINT,
-		action: DWORD,
-   pChangeFilterStruct: PCHANGEFILTERSTRUCT
-
+ChangeWindowMessageFilterEx proto WINAPI :HWND, :UINT, :DWORD, :PCHANGEFILTERSTRUCT
 
 endif
 
-
 if(WINVER GE 0x0601)
 
-
 HGESTUREINFO		typedef HANDLE
-
 
 GF_BEGIN		equ 0x00000001
 GF_INERTIA		equ 0x00000002
@@ -10546,7 +7675,6 @@ GESTUREINFO		ENDS
 PGESTUREINFO		typedef ptr GESTUREINFO
 PCGESTUREINFO		typedef ptr GESTUREINFO
 
-
 GESTURENOTIFYSTRUCT	STRUC
 cbSize			UINT ?
 dwFlags			dd ?
@@ -10557,7 +7685,7 @@ GESTURENOTIFYSTRUCT	ENDS
 PGESTURENOTIFYSTRUCT	typedef ptr GESTURENOTIFYSTRUCT
 
 GID_ROTATE_ANGLE_TO_ARGUMENT macro _arg_
-    if (typeof(_arg_))
+    if (TYPE(_arg_))
 	ifdif <_arg_>,<xmm0>
 	    movsd xmm0,_arg_
 	endif
@@ -10576,7 +7704,7 @@ GID_ROTATE_ANGLE_TO_ARGUMENT macro _arg_
     endif
 	endm
 GID_ROTATE_ANGLE_FROM_ARGUMENT macro _arg_
-    if (typeof(_arg_))
+    if (TYPE(_arg_))
 	ifdif <_arg_>,<xmm0>
 	    movsd xmm0,_arg_
 	endif
@@ -10595,22 +7723,9 @@ GID_ROTATE_ANGLE_FROM_ARGUMENT macro _arg_
     endif
 	endm
 
-;BOOL
-GetGestureInfo proto WINAPI \
-	  hGestureInfo: HGESTUREINFO,
-	  pGestureInfo: PGESTUREINFO
-
-;BOOL
-GetGestureExtraArgs proto WINAPI \
-	  hGestureInfo: HGESTUREINFO,
-	   cbExtraArgs: UINT,
-	    pExtraArgs: PBYTE
-
-;BOOL
-CloseGestureInfoHandle proto WINAPI \
-	  hGestureInfo: HGESTUREINFO
-
-
+GetGestureInfo proto WINAPI :HGESTUREINFO, :PGESTUREINFO
+GetGestureExtraArgs proto WINAPI :HGESTUREINFO, :UINT, :PBYTE
+CloseGestureInfoHandle proto WINAPI :HGESTUREINFO
 
 GESTURECONFIG		STRUC
 dwID			dd ?
@@ -10619,74 +7734,39 @@ dwBlock			dd ?
 GESTURECONFIG		ENDS
 PGESTURECONFIG		typedef ptr GESTURECONFIG
 
-
 GC_ALLGESTURES		equ 0x00000001
-
 GC_ZOOM			equ 0x00000001
-
 GC_PAN			equ 0x00000001
 GC_PAN_WITH_SINGLE_FINGER_VERTICALLY equ 0x00000002
 GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY equ 0x00000004
 GC_PAN_WITH_GUTTER	equ 0x00000008
 GC_PAN_WITH_INERTIA	equ 0x00000010
-
 GC_ROTATE		equ 0x00000001
-
 GC_TWOFINGERTAP		equ 0x00000001
-
 GC_PRESSANDTAP		equ 0x00000001
 GC_ROLLOVER		equ GC_PRESSANDTAP
-
 GESTURECONFIGMAXCOUNT	equ 256
 
-;BOOL
-SetGestureConfig proto WINAPI \
-		  hwnd: HWND ,
-	    dwReserved: DWORD,
-		  cIDs: UINT,
-	pGestureConfig: PGESTURECONFIG,
-		cbSize: UINT
-
+SetGestureConfig proto WINAPI :HWND, :DWORD, :UINT, :PGESTURECONFIG, :UINT
 GCF_INCLUDE_ANCESTORS	equ 0x00000001
-;BOOL
-GetGestureConfig proto WINAPI \
-		 hwnd: HWND,
-	   dwReserved: DWORD,
-	      dwFlags: DWORD,
-		pcIDs: PUINT,
-       pGestureConfig: PGESTURECONFIG,
-	       cbSize: UINT
+GetGestureConfig proto WINAPI :HWND, :DWORD, :DWORD, :PUINT, :PGESTURECONFIG, :UINT
 
 endif
 
 if(WINVER GE 0x0601)
-
 NID_INTEGRATED_TOUCH	equ 0x00000001
 NID_EXTERNAL_TOUCH	equ 0x00000002
 NID_INTEGRATED_PEN	equ 0x00000004
 NID_EXTERNAL_PEN	equ 0x00000008
 NID_MULTI_INPUT		equ 0x00000040
 NID_READY		equ 0x00000080
-
 endif
-
 
 MAX_STR_BLOCKREASON	equ 256
 
-;BOOL
-ShutdownBlockReasonCreate proto WINAPI \
-		  hWnd: HWND,
-	    pwszReason: LPCWSTR
-
-;BOOL
-ShutdownBlockReasonQuery proto WINAPI \
-		  hWnd: HWND,
-	      pwszBuff: LPWSTR,
-	      pcchBuff: ptr DWORD
-
-;BOOL
-ShutdownBlockReasonDestroy proto WINAPI \
-		  hWnd: HWND
+ShutdownBlockReasonCreate proto WINAPI :HWND, :LPCWSTR
+ShutdownBlockReasonQuery proto WINAPI :HWND, :LPWSTR, :ptr DWORD
+ShutdownBlockReasonDestroy proto WINAPI :HWND
 
 if(WINVER GE 0x0601)
 
@@ -10713,12 +7793,8 @@ deviceType		INPUT_MESSAGE_DEVICE_TYPE ?
 originId		INPUT_MESSAGE_ORIGIN_ID ?
 INPUT_MESSAGE_SOURCE	ENDS
 
-
-GetCurrentInputMessageSource proto WINAPI \
-    inputMessageSource: ptr INPUT_MESSAGE_SOURCE
-
-GetCIMSSM proto WINAPI \
-    inputMessageSource: ptr INPUT_MESSAGE_SOURCE
+GetCurrentInputMessageSource proto WINAPI :ptr INPUT_MESSAGE_SOURCE
+GetCIMSSM proto WINAPI :ptr INPUT_MESSAGE_SOURCE
 
 endif
 
@@ -10746,30 +7822,16 @@ PAR_STATE typedef ptr AR_STATE
     ORIENTATION_PREFERENCE_PORTRAIT_FLIPPED  = 0x8
     }
 
-GetAutoRotationState proto WINAPI \
-		pState: PAR_STATE
-
-GetDisplayAutoRotationPreferences proto WINAPI \
-	  pOrientation: ptr ORIENTATION_PREFERENCE
-
-GetDisplayAutoRotationPreferencesByProcessId proto WINAPI \
-	   dwProcessId: DWORD,
-	  pOrientation: ORIENTATION_PREFERENCE,
-	 fRotateScreen: BOOL
-
-SetDisplayAutoRotationPreferences proto WINAPI \
-	   orientation: ORIENTATION_PREFERENCE
+GetAutoRotationState proto WINAPI :PAR_STATE
+GetDisplayAutoRotationPreferences proto WINAPI :ptr ORIENTATION_PREFERENCE
+GetDisplayAutoRotationPreferencesByProcessId proto WINAPI :DWORD, :ORIENTATION_PREFERENCE, :BOOL
+SetDisplayAutoRotationPreferences proto WINAPI :ORIENTATION_PREFERENCE
 
 endif
 
 if(WINVER GE 0x0601)
-
-IsImmersiveProcess proto WINAPI \
-	      hProcess: HANDLE
-
-SetProcessRestrictionExemption proto WINAPI \
-      fEnableExemption: BOOL
-
+IsImmersiveProcess proto WINAPI :HANDLE
+SetProcessRestrictionExemption proto WINAPI :BOOL
 endif
 
 ifdef ISOLATION_AWARE_ENABLED

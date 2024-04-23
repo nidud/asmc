@@ -132,43 +132,12 @@
       DisplayName="Make All Symbols Public"
       Description="Makes all symbols public."
       Switch="/Zf" />
-    <EnumProperty
+    <BoolProperty
       Name="GenerateDebugInformation"
       HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/Zi.md"
       DisplayName="Generate Debug Information"
-      Description="Generates Debug Information.">
-      <EnumValue
-        Name="NoDebug"
-        DisplayName="No Debug Information" />
-      <EnumValue
-        Name="0"
-        DisplayName="Line numbers only"
-        Switch="/Zd" />
-      <EnumValue
-        Name="1"
-        DisplayName="Line numbers and Globals"
-        Switch="/Zi08" />
-      <EnumValue
-        Name="2"
-        DisplayName="Line numbers, Globals and locals"
-        Switch="/Zi18" />
-      <EnumValue
-        Name="3"
-        DisplayName="Line numbers, Globals, locals and types"
-        Switch="/Zi8" />
-      <EnumValue
-        Name="4"
-        DisplayName="Line numbers, Globals, locals, types and constants"
-        Switch="/Zi38" />
-      <EnumValue
-        Name="CV5"
-        DisplayName="C11 (Visual C++ 5.x) 32-bit types"
-        Switch="/Zi5" />
-      <EnumValue
-        Name="CodeView"
-        DisplayName="CodeView (Masm 5.1)"
-        Switch="/Zi" />
-    </EnumProperty>
+      Description="Generates Debug Information"
+      Switch="/Zi8" />
     <BoolProperty
       Name="EnableMASM51Compatibility"
       HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
@@ -187,19 +156,12 @@
       DisplayName="Ignore INCLUDELIB directive"
       Description="Ignores INCLUDELIB directives."
       Switch="/nolib" />
-    <EnumProperty
-      Name="WCharacterSet"
+    <BoolProperty
+      Name="UnicodeCharacterSet"
       HelpUrl="https://github.com/nidud/asmc/blob/master/doc/directive/opt_wstring.md"
-      DisplayName="Character Set"
-      Description="Tells the assembler to use the specified character set.">
-      <EnumValue
-        Name="NotSet"
-        DisplayName="Not Set" />
-      <EnumValue
-        Name="Unicode"
-        DisplayName="Use Unicode Character Set"
-        Switch="/ws" />
-    </EnumProperty>
+      DisplayName="Unicode Character Set"
+      Description="Use Unicode Characters and defines _UNICODE."
+      Switch="/ws" />
     <StringProperty
       Name="ObjectFileName"
       Category="Object File"
@@ -330,15 +292,15 @@
         DisplayName="Default" />
       <EnumValue
         Name="1"
-        DisplayName="Use C Calling Convention"
+        DisplayName="Use C-style Calling Convention"
         Switch="/Gd" />
       <EnumValue
         Name="2"
-        DisplayName="Use STDCALL Calling Convention"
+        DisplayName="Use stdcall Calling Convention"
         Switch="/Gz" />
       <EnumValue
         Name="3"
-        DisplayName="Use PASCAL Calling Convention"
+        DisplayName="Use Pascal Calling Convention"
         Switch="/Gc" />
       <EnumValue
         Name="4"
@@ -356,19 +318,19 @@
       DisplayName="Error Reporting (not implemented)"
       Description="Masm switch to report internal assembler errors to Microsoft. These options have no effect.">
       <EnumValue
-        Name="0"
+        Name="default"
         DisplayName="Default" />
       <EnumValue
-        Name="1"
+        Name="immediately"
         DisplayName="Prompt to send report immediately (/errorReport:prompt)" />
       <EnumValue
-        Name="2"
+        Name="logon"
         DisplayName="Prompt to send report at the next logon (/errorReport:queue)" />
       <EnumValue
-        Name="3"
+        Name="auto"
         DisplayName="Automatically send report (/errorReport:send)" />
       <EnumValue
-        Name="4"
+        Name="none"
         DisplayName="Do not send report (/errorReport:none)" />
     </EnumProperty>
     <StringProperty

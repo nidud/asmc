@@ -105,7 +105,7 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
             ;
             movzx   edi,Input.Event.KeyEvent.wVirtualKeyCode
             mov     eax,ecx
-            or      ecx,KEY_CHAR
+            or      ecx,KEY_WMCHAR
             movzx   edx,TCHAR ptr Input.Event.KeyEvent.uChar.UnicodeChar
             test    ecx,ENHANCED_KEY or RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED
             cmovnz  edx,edi
@@ -123,7 +123,7 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
             .endc .if ( edx == 0 )
             .endc .if ( ecx & ENHANCED_KEY )
 
-            or      ecx,KEY_CHAR
+            or      ecx,KEY_WMCHAR
             mov     eax,WM_CHAR
             mov     esi,WM_SYSCHAR
             test    ecx,RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED

@@ -160,16 +160,16 @@ max macro a, b
     endif
     endif
     if ( (OPATTR a) and 4 )
-	reg textequ @Reg(eax,TYPE(b) shl 3)
+	reg textequ @Reg(eax,TYPEOF(b))
     else
-	reg textequ @Reg(eax,TYPE(a) shl 3)
+	reg textequ @Reg(eax,TYPEOF(a))
     endif
     ifdif reg,<a>
 	mov reg,a
     endif
     cmp reg,b
     if ( (OPATTR b) and 4 )
-	src textequ @Reg(edx,TYPE(a) shl 3)
+	src textequ @Reg(edx,TYPEOF(a))
 	mov edx,b
     else
 	src textequ <b>
@@ -194,16 +194,16 @@ min macro a, b
     endif
     endif
     if ( (OPATTR a) and 4 )
-	reg textequ @Reg(eax,TYPE(b) shl 3)
+	reg textequ @Reg(eax,TYPEOF(b))
     else
-	reg textequ @Reg(eax,TYPE(a) shl 3)
+	reg textequ @Reg(eax,TYPEOF(a))
     endif
     ifdif reg,<a>
 	mov reg,a
     endif
     cmp reg,b
     if ( (OPATTR b) and 4 )
-	src textequ @Reg(edx,TYPE(a) shl 3)
+	src textequ @Reg(edx,TYPEOF(a))
 	mov edx,b
     else
 	src textequ <b>
@@ -242,7 +242,7 @@ MAKELONG macro a, b, reg:=<eax>
 	shl	eax,16
 	shrd	eax,edx,16
 %	ifdif <reg>,<eax>
-	if ( TYPE(reg) eq 8 )
+	if ( TYPEOF(reg) eq 8 )
 	movsxd	reg,eax
 	else
 	mov	reg,eax

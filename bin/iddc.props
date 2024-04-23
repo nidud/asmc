@@ -8,8 +8,8 @@
   <ItemDefinitionGroup>
     <IDDC>
       <ObjectFileName>$(IntDir)%(FileName).obj</ObjectFileName>
-      <CommandLineTemplate Condition="'$(Platform)' == 'win32'">iddc.exe [AllOptions] [AdditionalOptions] [Inputs]</CommandLineTemplate>
-      <CommandLineTemplate Condition="'$(Platform)' == 'X64'">iddc.exe [AllOptions] [AdditionalOptions] [Inputs]</CommandLineTemplate>
+      <CommandLineTemplate Condition="'$(Platform)' == 'win32'">asmc.exe /idd /coff [AllOptions] [AdditionalOptions] [Inputs]</CommandLineTemplate>
+      <CommandLineTemplate Condition="'$(Platform)' == 'X64'">asmc64.exe /idd [AllOptions] [AdditionalOptions] [Inputs]</CommandLineTemplate>
       <CommandLineTemplate Condition="'$(Platform)' != 'win32' and '$(Platform)' != 'X64'">echo IDDC not supported on this platform
 exit 1</CommandLineTemplate>
       <ExecutionDescription>Assembling %(Identity)...</ExecutionDescription>

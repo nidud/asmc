@@ -200,6 +200,7 @@ cy		sdword ?
 tagSIZE		ENDS
 PSIZE		typedef ptr tagSIZE
 LPSIZE		typedef ptr tagSIZE
+SIZE		typedef tagSIZE
 SIZEL		typedef tagSIZE
 PSIZEL		typedef ptr tagSIZE
 LPSIZEL		typedef ptr tagSIZE

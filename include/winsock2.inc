@@ -18,8 +18,8 @@ endif
 .pragma pack(push, size_t)
 
 ifndef MAKEWORD
-MAKEWORD macro low,high
-	exitm<((low) OR ((high) SHL 8))>
+MAKEWORD macro l,h
+	exitm<((l) OR ((h) SHL 8))>
 	endm
 endif
 

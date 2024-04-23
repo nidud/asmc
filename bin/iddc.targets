@@ -70,13 +70,15 @@
     <IDDC
       Condition="'@(IDDC)' != '' and '%(IDDC.ExcludedFromBuild)' != 'true'"
       CommandLineTemplate="%(IDDC.CommandLineTemplate)"
-      OutputCOFFObject="%(IDDC.OutputCOFFObject)"
-      OutputOMFObject="%(IDDC.OutputOMFObject)"
-      Output16Compact="%(IDDC.Output16Compact)"
-      Output16Large="%(IDDC.Output16Large)"
-      Output32Flat="%(IDDC.Output32Flat)"
-      Output64Flat="%(IDDC.Output64Flat)"
+      NoLogo="%(IDDC.NoLogo)"
+      ObjectFileTypeCOFF="%(IDDC.ObjectFileTypeCOFF)"
+      ObjectFileTypeOMF="%(IDDC.ObjectFileTypeOMF)"
+      TreatWarningsAsErrors="%(IDDC.TreatWarningsAsErrors)"
       ObjectFileName="%(IDDC.ObjectFileName)"
+      PreserveIdentifierCase="%(IDDC.PreserveIdentifierCase)"
+      WarningLevel="%(IDDC.WarningLevel)"
+      CallingConvention="%(IDDC.CallingConvention)"
+      MemoryModel="%(IDDC.MemoryModel)"
       AdditionalOptions="%(IDDC.AdditionalOptions)"
       Inputs="%(IDDC.Identity)" />
   </Target>

@@ -41,7 +41,6 @@ PREFIX_GS       equ 0x65
 
     .code
 
-    option procalign:4
     option proc:private
     assume rsi:ptr code_info
     assume rdi:instr_t

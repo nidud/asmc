@@ -4,13 +4,15 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include conio.inc
 ifdef __UNIX__
 include malloc.inc
 .data
  clipboard string_t NULL
  clipbsize uint_t 0
+else
+include winuser.inc
 endif
+include conio.inc
 
 ifdef _UNICODE
 define CLFLAGS CF_UNICODETEXT

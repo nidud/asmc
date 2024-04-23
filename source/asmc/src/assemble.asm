@@ -51,6 +51,7 @@ extern  MacroLocals:dword
 ModuleInfo      module_info <>
 LinnumQueue     qdesc <>
 jmpenv          _JUMP_BUFFER <>
+iddcfile        db 256 dup(?)
 
 .data
 
@@ -1026,6 +1027,20 @@ ReswTableInit proc __ccall private
         DisableKeyword( T_IMAGEREL )
         DisableKeyword( T_SECTIONREL )
     .endif
+    .if ( Options.strict_masm_compat == 0 )
+
+        DisableKeyword( T_NAME )
+        DisableKeyword( T_TITLE )
+        DisableKeyword( T_PAGE )
+        DisableKeyword( T_SIZE )
+        DisableKeyword( T_LENGTH )
+        DisableKeyword( T_THIS )
+        DisableKeyword( T_MASK )
+        DisableKeyword( T_WIDTH )
+        DisableKeyword( T_TYPE )
+        DisableKeyword( T_HIGH )
+        DisableKeyword( T_LOW )
+    .endif
     ret
 
 ReswTableInit endp
@@ -1059,6 +1074,44 @@ open_files proc __ccall private uses rsi rdi
 
 open_files endp
 
+iddc_file proc __ccall uses rsi rdi rbx source:string_t
+
+   .new iddc[260]:byte
+   .new file:string_t
+   .new fp:ptr FILE
+
+    mov rbx,tstrcpy(&iddc, GetFNamePart( source ) )
+
+    .if ( GetExtPart( rbx ) == rbx )
+
+        tstrcat( rax, ".s" )
+    .else
+        tstrcpy( rax, ".s" )
+    .endif
+    mov file,tstrcpy( &iddcfile, rbx )
+    .if ( fopen( rax, "wb" ) == NULL )
+        asmerr( 1000, file )
+    .endif
+    mov fp,rax
+    GetExtPart( rbx )
+    mov byte ptr [rax],0
+
+    tfprintf( fp,
+        "public IDD_%s\n"
+        ".data\n"
+        "PIDD typedef ptr\n"
+        "IDD_%s PIDD %s_RC\n"
+        "%s_RC label byte\n"
+        "incbin <%s>\n",
+        rbx, rbx, rbx, rbx, source)
+    .if ( Options.iddc == 2 )
+        tfprintf( fp, "db 0\n" )
+    .endif
+    tfprintf( fp, "end\n" )
+    fclose(fp)
+   .return( file )
+
+iddc_file endp
 
 close_files proc __ccall uses rsi rdi
 
@@ -1290,6 +1343,11 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
             .endif
             jmp done
         .endif
+    .endif
+
+    .if ( Options.iddc )
+
+        mov source,iddc_file( source )
     .endif
 
     AssembleInit( source )

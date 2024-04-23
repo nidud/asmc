@@ -5,6 +5,7 @@
 ;
 
 include conio.inc
+include winbase.inc
 
 .data
  tidle DPROC 0

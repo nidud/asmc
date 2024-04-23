@@ -6987,8 +6987,8 @@ iValue			SINT ?
 NMIPADDRESS		ENDS
 LPNMIPADDRESS		typedef ptr NMIPADDRESS
 
-MAKEIPRANGE macro low, high
-	exitm<((high SHL 8) + low)>
+MAKEIPRANGE macro l, h
+	exitm<((h SHL 8) + l)>
 	endm
 
 MAKEIPADDRESS macro b1,b2,b3,b4

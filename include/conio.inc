@@ -170,7 +170,7 @@ externdef at_foreground:byte
 
 _at macro B, F, C, reg:=<eax>
     movzx reg,at_background[B]
-    or	  @Reg(reg,8),at_foreground[F]
+    or	  @Reg(reg,1),at_foreground[F]
     ifnb <C>
       shl reg,16
       or  reg,C

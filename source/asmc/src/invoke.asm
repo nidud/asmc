@@ -697,7 +697,7 @@ endif
                 .case MT_WORD
                 .case MT_SWORD
 
-                    .if ( opnd.mem_type == MT_WORD && ( Options.masm_compat_gencode || psize == 2 ))
+                    .if ( opnd.mem_type == MT_WORD && ( ModuleInfo.masm_compat_gencode || psize == 2 ))
 
                         .if ( pushsize == 8 )
 
@@ -1227,7 +1227,7 @@ endif
 
                     .case 10
 
-                        .if ( Ofssize == USE16 || ModuleInfo.masm_compat_gencode == TRUE ||
+                        .if ( Ofssize == USE16 || Options.strict_masm_compat == TRUE ||
                               opnd.kind != EXPR_FLOAT )
                             .endc
                         .endif
@@ -1255,7 +1255,7 @@ endif
 
                     .case 16
 
-                        .endc .if ( Ofssize == USE16 || ModuleInfo.masm_compat_gencode == TRUE )
+                        .endc .if ( Ofssize == USE16 || Options.strict_masm_compat == TRUE )
 ifndef ASMC64
                         .if ( Ofssize == USE32 )
 
@@ -1364,7 +1364,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     inc i ; skip INVOKE directive
     mov namepos,i
 
-    .if ( ModuleInfo.masm_compat_gencode == 0 )
+    .if ( Options.strict_masm_compat == 0 )
         .while 1
             .return .ifd ( ExpandHllProc( &buffer, i, tokenarray ) == ERROR )
             .break  .if !buffer
@@ -1465,7 +1465,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov rcx,rsi
     mov info,[rcx].dsym.procinfo
 
-    .if ( ModuleInfo.masm_compat_gencode == 0 )
+    .if ( Options.strict_masm_compat == 0 )
 
         imul ebx,namepos,asm_tok
         add rbx,tokenarray

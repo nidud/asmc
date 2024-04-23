@@ -481,7 +481,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
                     add rbx,asm_tok
 
                 .elseif ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_LABEL &&
-                          ModuleInfo.masm_compat_gencode == FALSE ) ; parm:LABEL?
+                          Options.strict_masm_compat == FALSE ) ; parm:LABEL?
 
                     ; LABEL attribute for first param only!
 

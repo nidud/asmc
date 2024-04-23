@@ -37,54 +37,137 @@
       </StringProperty.DataSource>
     </StringProperty>
     <BoolProperty
-      Name="OutputCOFFObject"
+      Name="NoLogo"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Suppress Startup Banner"
+      Description="Suppress the display of the startup banner and information messages."
+      Switch="/nologo" />
+    <BoolProperty
+      Name="ObjectFileTypeCOFF"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
-      DisplayName="Common Object File Format (COFF)"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Common Object File Format"
       Description="Specifies the type of the output object file."
       Switch="/coff" />
     <BoolProperty
-      Name="OutputOMFObject"
+      Name="ObjectFileTypeOMF"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
-      DisplayName="Object Module Format (OMF)"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Object Module Format"
       Description="Specifies the type of the output object file."
       Switch="/omf" />
+    <BoolProperty
+      Name="TreatWarningsAsErrors"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Treat Warnings As Errors"
+      Description="Returns an error code if warnings are generated."
+      Switch="/WX" />
     <StringProperty
       Name="ObjectFileName"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
       DisplayName="Object File Name"
       Description="Specifies the name of the output object file."
       Switch="/Fo &quot;[value]&quot;" />
-    <BoolProperty
-      Name="Output16Compact"
-      Category="Memory Model"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
-      DisplayName="Model Compact 16-bit"
-      Description="Specifies the memory model of the output object file."
-      Switch="/mc" />
-    <BoolProperty
-      Name="Output16Large"
-      Category="Memory Model"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
-      DisplayName="Model Large 16-bit"
-      Description="Specifies the memory model of the output object file."
-      Switch="/ml" />
-    <BoolProperty
-      Name="Output32Flat"
-      Category="Memory Model"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
-      DisplayName="Model Flat 32-bit"
-      Description="Specifies the memory model of the output object file."
-      Switch="/mf" />
-    <BoolProperty
-      Name="Output64Flat"
-      Category="Memory Model"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/source/tools/iddc/readme.md"
-      DisplayName="Model Flat 64-bit"
-      Description="Specifies the memory model of the output object file."
-      Switch="/win64" />
+    <EnumProperty
+      Name="PreserveIdentifierCase"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Preserve Identifier Case"
+      Description="Specifies preservation of case of user identifiers.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="1"
+        DisplayName="Preserves Identifier Case"
+        Switch="/Cp" />
+      <EnumValue
+        Name="2"
+        DisplayName="Maps all identifiers to upper case."
+        Switch="/Cu" />
+      <EnumValue
+        Name="3"
+        DisplayName="Preserves case in public and extern symbols."
+        Switch="/Cx" />
+    </EnumProperty>
+    <EnumProperty
+      Name="WarningLevel"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Warning Level"
+      Description="Sets the warning level, where level = 0, 1, 2, or 3.">
+      <EnumValue
+        Name="0"
+        DisplayName="Warning Level 0"
+        Switch="/W0" />
+      <EnumValue
+        Name="1"
+        DisplayName="Warning Level 1"
+        Switch="/W1" />
+      <EnumValue
+        Name="2"
+        DisplayName="Warning Level 2"
+        Switch="/W2" />
+      <EnumValue
+        Name="3"
+        DisplayName="Warning Level 3"
+        Switch="/W3" />
+    </EnumProperty>
+    <EnumProperty
+      Name="CallingConvention"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Calling Convention"
+      Description="Selects calling convention for your application.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="c"
+        DisplayName="Use C Calling Convention"
+        Switch="/Gd" />
+      <EnumValue
+        Name="stdcall"
+        DisplayName="Use STDCALL Calling Convention"
+        Switch="/Gz" />
+      <EnumValue
+        Name="pascal"
+        DisplayName="Use PASCAL Calling Convention"
+        Switch="/Gc" />
+      <EnumValue
+        Name="vectorcall"
+        DisplayName="Use VECTORCALL Calling Convention"
+        Switch="/Gv" />
+      <EnumValue
+        Name="syscall"
+        DisplayName="Use SYSCALL Calling Convention"
+        Switch="/Gs" />
+    </EnumProperty>
+    <EnumProperty
+      Name="MemoryModel"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Memory Model"
+      Description="Specifies the memory model of the output object file.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="compact"
+        DisplayName="Model Compact 16-bit"
+        Switch="/mc" />
+      <EnumValue
+        Name="large"
+        DisplayName="Model Large 16-bit"
+        Switch="/ml" />
+      <EnumValue
+        Name="flat"
+        DisplayName="Model Flat 32-bit"
+        Switch="/mf" />
+      <EnumValue
+        Name="win64"
+        DisplayName="Model Flat 64-bit"
+        Switch="/win64" />
+    </EnumProperty>
     <StringProperty
       Name="CommandLineTemplate"
       DisplayName="Command Line"

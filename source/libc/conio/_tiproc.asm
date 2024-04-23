@@ -4,9 +4,12 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include conio.inc
 include malloc.inc
 include ltype.inc
+ifndef __UNIX__
+include winuser.inc
+endif
+include conio.inc
 include tchar.inc
 
     .code

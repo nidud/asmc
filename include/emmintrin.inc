@@ -642,7 +642,7 @@ endif
 
 _mm_cvtsi32_si128 macro x, d
     ifnb <d>
-	if (TYPE d) eq 4 and (opattr d) eq 48
+	if (TYPEOF d) eq 4 and (opattr d) eq 48
 	    movd x,d
 	else
 	    mov eax,d
@@ -900,7 +900,7 @@ _mm_cvtsi64_sd macro x:=<xmm0>, reg:=<rax>
     if (opattr(reg)) eq 48
 	cvtsi2sd x,reg
     else
-	if (TYPE reg) eq 4 and not ((opattr(reg)) eq 48)
+	if (TYPEOF reg) eq 4 and not ((opattr(reg)) eq 48)
 	    mov eax,reg
 	else
 	    mov rax,reg

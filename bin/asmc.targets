@@ -86,7 +86,7 @@
       EnableMASM51Compatibility="%(ASMC.EnableMASM51Compatibility)"
       PerformSyntaxCheckOnly="%(ASMC.PerformSyntaxCheckOnly)"
       IgnoreINCLUDELIB="%(ASMC.IgnoreINCLUDELIB)"
-      WCharacterSet="%(ASMC.WCharacterSet)"
+      UnicodeCharacterSet="%(ASMC.UnicodeCharacterSet)"
       ObjectFileName="%(ASMC.ObjectFileName)"
       PreprocessorDefinitions="%(ASMC.PreprocessorDefinitions)"
       ForseIncludeFile="%(ASMC.ForseIncludeFile)"

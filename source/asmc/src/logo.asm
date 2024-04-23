@@ -66,7 +66,8 @@ ifndef ASMC64
 endif
  char_t "-Ge force stack checking for all funcs     -G<cdzvs> Pascal, C, Std/Vector/Sys-call",10
  char_t "-gui, -cui (-pe) Windows/Console           -homeparams Copy Reg. parameters to Stack",10
- char_t "-I<name> Add include path                  -logo Print logo string and exit",10
+ char_t "-I<name> Add include path                  -idd Assemble source as binary data",10
+ char_t "-iddt Same as -idd with added 0 (.txt)     -logo Print logo string and exit",10
 ifndef ASMC64
  char_t "-m<t|s|c|m|l|h|f> Set memory model         -mz Generate DOS MZ binary file",10
 endif
@@ -90,9 +91,10 @@ ifndef ASMC64
  char_t "-zlc No OMF records of data in code        -zld No OMF records of far call",10
  char_t "-Zm Enable MASM 5.10 compatibility         -Zv8 Enable Masm v8+ PROC visibility",10
 endif
- char_t "-zl<f|p|s> Suppress items in COFF          -Zp[n] Set structure alignment",10
- char_t "-Zs Perform syntax check only              -zt<0|1|2> Set STDCALL decoration",10
- char_t "-zze No export symbol decoration           -zzs Store name of start address",10
+ char_t "-Zne Disable non Masm extensions           -zl<f|p|s> Suppress items in COFF",10
+ char_t "-Zp[n] Set structure alignment             -Zs Perform syntax check only",10
+ char_t "-zt<0|1|2> Set STDCALL decoration          -zze No export symbol decoration",10
+ char_t "-zzs Store name of start address",10
  char_t 0
 
 .code

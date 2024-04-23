@@ -419,7 +419,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov rc,eax
     mov merged,al
 
-    .return .if ( ModuleInfo.masm_compat_gencode )
+    .return .if ( Options.strict_masm_compat )
 
     ;
     ; need "quote"
@@ -1601,12 +1601,15 @@ CStringFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenar
 CStringFunc endp
 
 ; convert register to reg8/16/32/64.
+;
+; @Reg( reg )
+; @Reg( reg, size )
 
 RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
 
   .new opnd:expr
   .new i:int_t
-  .new bits:int_t = 32 ; default bits
+  .new size:int_t = 4 ; default size
   .new reg:int_t
 
     ldr rcx,mi
@@ -1644,17 +1647,15 @@ RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, to
         .ifd ( EvalOperand( &i, tokenarray, ecx, &opnd, EXPF_NOUNDEF ) == ERROR )
             .return
         .endif
-        mov bits,opnd.value
-        .if ( opnd.kind != EXPR_CONST || eax < 8 || eax > 64 )
+        mov size,opnd.value
+        .if ( opnd.kind != EXPR_CONST || eax < 1 || eax > 8 )
 
             imul ecx,i,asm_tok
             add rcx,tokenarray
            .return( asmerr(2008, [rcx-asm_tok].asm_tok.string_ptr ) )
         .endif
     .endif
-    mov edx,bits
-    shr edx,3
-    mov ecx,get_register( reg, edx )
+    mov ecx,get_register( reg, size )
     GetResWName( ecx, buffer )
    .return( NOT_ERROR )
 

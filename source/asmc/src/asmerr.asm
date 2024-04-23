@@ -395,7 +395,7 @@ W5 string_t E(A8000),E(A8001),E(A8002),E(A8003),E(A8004),E(A8005),E(A8006),E(A80
             E(A8010),E(A8011),E(A8012),E(A8013),E(A8014),E(A8015),E(INTER),E(A8017),E(A8018),E(A8019),
             E(A8020)
 
-MS string_t E("name"),E("page"),E("subtitle"),E("subttl"),E("title"),E("low"),E("high"),E("size"),
+MS string_t E("name"),E("page"),E("title"),E("low"),E("high"),E("size"),
             E("length"),E("this"),E("mask"),E("width"),E("type"),0
 
 define MAX_E0 lengthof(E0)
@@ -589,7 +589,7 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
                     .ifd ( tstricmp( rax, rbx ) == 0 )
 
                         tstrcpy( &masm, rbx )
-                        mov args,tstrcat( rax, " -- use option /Znk for Masm keywords" )
+                        mov args,tstrcat( rax, " -- use option /Zne for Masm keywords" )
                        .break
                     .endif
                 .endw

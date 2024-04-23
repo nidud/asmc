@@ -529,6 +529,10 @@ define SIT_MACRO       1
     cpu                     dd ?    ; -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option
     fctype                  dd ?    ; -zf0 & -zf1 option
     codepage                dd ?    ; Unicode code page
+    floatdigits             dd ?    ; option floatdigits:<value>
+    floatformat             db ?    ; option floatformat:<e|f|g>
+    flt_size                db ?    ; option float:<4|8>
+    strict_masm_compat      db ?    ; -Zne option
     ignore_include          db ?    ; -X option
     fieldalign              db ?    ; -Zp option
     syntax_check_only       db ?    ; -Zs option
@@ -542,12 +546,10 @@ define SIT_MACRO       1
     nolib                   db ?    ; skip includelib directives
     arch                    db ?    ; -arch:AVX[2|512]
     frame_auto              db ?    ; -frame
-    floatformat             db ?    ; option floatformat:<e|f|g>
-    floatdigits             dd ?    ; option floatdigits:<value>
-    flt_size                db ?    ; option float:<4|8>
     pic                     db ?    ; -fpic | -fno-pic
     endbr                   db ?    ; -endbr
-    dotname                 db ?    ; -dotname : option dotname
+    iddc                    db ?    ; -idd
+    dotname                 db ?    ; -dotname  : option dotname
     dotnamex                db ?    ; -dotnamex : option dotnamex:<on:off>
     sysvregs                db ?    ; -sysvregs : skip RDI and RSI in USES
    .ends
@@ -745,6 +747,7 @@ RetLineQueue            proto __ccall
 
 tprintf                 proto __ccall :string_t, :vararg
 tsprintf                proto __ccall :string_t, :string_t, :vararg
+tfprintf                proto __ccall :ptr FILE, :string_t, :vararg
 tvsprintf               proto __ccall :string_t, :string_t, :ptr
 tvfprintf               proto __ccall :ptr FILE, :string_t, :ptr
 tstrupr                 proto fastcall :string_t

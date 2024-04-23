@@ -57,6 +57,10 @@ Options global_options {
         P_86,                   ; .cpu
         FCT_MSC,                ; .fctype
         0,                      ; .codepage
+        1,                      ; .floatdigits
+        0,                      ; .floatformat
+        4,                      ; .flt_size
+        0,                      ; .strict_masm_compat
         0,                      ; .ignore_include
         0,                      ; .fieldalign
         0,                      ; .syntax_check_only
@@ -70,12 +74,11 @@ Options global_options {
         0,                      ; .nolib
         0,                      ; .arch
         0,                      ; .frame_auto
-        0,                      ; .floatformat
-        1,                      ; .floatdigits
-        4,                      ; .flt_size
         0,                      ; .pic
         0,                      ; .endbr
+        0,                      ; .iddc
         0,                      ; .dotname
+        0,                      ; .dotnamex
         0 }                     ; .sysvregs
 
     align size_t
@@ -666,6 +669,12 @@ endif
     .case 'emoh'            ; -homeparams
         or Options.win64_flags,W64F_SAVEREGPARAMS
         .return
+    .case 'tddi'            ; -iddt
+        mov Options.iddc,2
+        .return
+    .case 'ddi'             ; -idd
+        mov Options.iddc,1
+        .return
     .case 'ogol'            ; -logo
         tprintf("%s\n", &cp_logo)
         exit(0)
@@ -829,6 +838,9 @@ endif
         .return
     .case 'slz'             ; -zls
         mov Options.no_section_aux_entry,1
+        .return
+    .case 'enZ'
+        mov Options.strict_masm_compat,1
         .return
 ifndef ASMC64
     .case 'mZ'              ; -Zm

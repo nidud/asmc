@@ -952,7 +952,7 @@ ExpandCStrings proc __ccall public uses rdi rbx tokenarray:ptr asm_tok
 
     xor eax,eax
     .return .if ( !( [rcx].asm_tok.flags & T_EXPAND ) )
-    .return .if ( ModuleInfo.masm_compat_gencode == 1 )
+    .return .if ( Options.strict_masm_compat == 1 )
 
     .for ( edi = 0, rbx = rcx: [rbx].token != T_FINAL: rbx += asm_tok, edi++ )
 
@@ -2026,7 +2026,7 @@ ExpandHllProc proc __ccall public uses rsi rdi dst:string_t, i:int_t, tokenarray
     mov rax,dst
     mov B[rax],0
 
-    .if ( ModuleInfo.masm_compat_gencode == 0 )
+    .if ( Options.strict_masm_compat == 0 )
 
         mov  esi,i
         mov  edi,esi
@@ -2095,7 +2095,7 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
     mov eax,[rdx].hll_item.flags
     and eax,HLLF_EXPRESSION
 
-    .if ( ( ModuleInfo.masm_compat_gencode == 0 ) && !eax && [rbx].asm_tok.flags & T_HLLCODE )
+    .if ( ( Options.strict_masm_compat == 0 ) && !eax && [rbx].asm_tok.flags & T_HLLCODE )
 
         mov edi,[rsi]
         .while ( edi < TokenCount )
@@ -2894,7 +2894,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( [rbx].token != T_FINAL )
 
             mov ecx,LSTART
-            .if ( Options.masm_compat_gencode == 0 && ModuleInfo.masm_compat_gencode == 0 )
+            .if ( Options.strict_masm_compat == 0 )
 
                 ;
                 ; <expression> ? .BREAK
@@ -2911,8 +2911,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .if ( eax == NOT_ERROR )
 
-                .if ( ModuleInfo.masm_compat_gencode == 1 ||
-                      ( Options.masm_compat_gencode == 1 && cmd == T_DOT_UNTILCXZ ) )
+                .if ( ModuleInfo.masm_compat_gencode == 1 && cmd == T_DOT_UNTILCXZ )
 
                     mov rc,CheckCXZLines( rdi )
                 .endif
@@ -2922,7 +2921,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     ; write condition lines
                     ;
                     QueueTestLines( rdi )
-                    .if ( Options.masm_compat_gencode == 0 && ModuleInfo.masm_compat_gencode == 0 )
+                    .if ( ModuleInfo.masm_compat_gencode == 0 )
                         RenderUntilXX( rsi, cmd )
                     .endif
                 .else

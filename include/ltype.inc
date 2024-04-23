@@ -46,7 +46,7 @@ DEFINE_LTYPE macro name
     128 dup(0)                  ; and the rest are 0...
     endm
 
-if defined(LTYPE_INLINE) or defined(_MSVCRT)
+if defined(LTYPE_INLINE) or defined(__PE__)
 .data
 DEFINE_LTYPE _ltype
 _DATA ends

@@ -938,7 +938,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
 
         .if ( GetRegNo( ecx ) != 5 )
 
-        .elseif ( Options.masm_compat_gencode )
+        .elseif ( ModuleInfo.masm_compat_gencode )
 
             ; v2.07: Masm uses LEAVE if
             ; - current code is 32-bit/64-bit or
@@ -3177,7 +3177,7 @@ endif
         xor ecx,ecx
         sub ecx,[rsi].localsize
 
-        .if ( Options.masm_compat_gencode || [rsi].localsize == 128 )
+        .if ( ModuleInfo.masm_compat_gencode || [rsi].localsize == 128 )
             AddLineQueueX( "add %r, %d", ebx, ecx )
         .else
             AddLineQueueX( "sub %r, %d", ebx, [rsi].localsize )
@@ -4356,7 +4356,7 @@ ProcInit proc __ccall
     ; v2.06: no forward references in INVOKE if -Zne is set
     ;
     xor eax,eax
-    .if ( ModuleInfo.masm_compat_gencode )
+    .if ( Options.strict_masm_compat )
         mov al,EXPF_NOUNDEF
     .endif
     mov ModuleInfo.invoke_exprparm,al

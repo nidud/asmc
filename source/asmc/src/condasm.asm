@@ -381,14 +381,16 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov al,[rbx].token
 
         .if ( al == T_FINAL )
+
         .elseif ( al == T_ID  )
 
-            ; v2.07: handle structs + members (if -Zg is NOT set)
+            ; v2.07: handle structs + members (if -Zne is NOT set)
 
             SymSearch( [rbx].string_ptr )
-            .if ( ModuleInfo.masm_compat_gencode == FALSE &&
-                  [rbx+asm_tok].token == T_DOT && eax &&
-                  ( ( [rax].asym.state == SYM_TYPE ) || [rax].asym.type ) )
+
+            .if ( Options.strict_masm_compat == FALSE &&
+                  [rbx+asm_tok].token == T_DOT && rax &&
+                  ( [rax].asym.state == SYM_TYPE || [rax].asym.type ) )
 
                 .repeat
                     add rbx,asm_tok
@@ -412,8 +414,11 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
             add rbx,asm_tok
+
         .elseif ( al == T_RES_ID && [rbx].tokval == T_FLAT )
+
             ; v2.09: special treatment of FLAT added
+
             mov rax,ModuleInfo.flat_grp
             .if ( rax && [rax].asym.flags & S_ISDEFINED )
                 mov esi,BLOCK_ACTIVE
@@ -421,15 +426,20 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov esi,BLOCK_INACTIVE
             .endif
             add rbx,asm_tok
+
         .endif
 
         .if ( [rbx].token != T_FINAL )
+
             asmerr( 8005, [rbx-asm_tok].tokpos )
+
             .while ( [rbx].token != T_FINAL )
                 add rbx,asm_tok
             .endw
         .endif
+
         .if ( directive == T_IFNDEF || directive == T_ELSEIFNDEF )
+
             .if ( esi == BLOCK_ACTIVE )
                 mov esi,BLOCK_INACTIVE
             .else
@@ -563,9 +573,9 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         add rdi,tokenarray
         mov sym,SymSearch( [rdi].asm_tok.string_ptr )
 
-        .if ( ModuleInfo.masm_compat_gencode == FALSE && \
-              [rdi+asm_tok].asm_tok.token == T_DOT && \
-              rax && ( ( [rax].asym.state == SYM_TYPE ) || [rax].asym.type ) )
+        .if ( Options.strict_masm_compat == FALSE &&
+              [rdi+asm_tok].asm_tok.token == T_DOT &&
+              rax && ( [rax].asym.state == SYM_TYPE || [rax].asym.type ) )
 
             mov rsi,rdi
             .repeat

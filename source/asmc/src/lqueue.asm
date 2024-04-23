@@ -258,6 +258,14 @@ tvfprintf proc __ccall uses rsi rdi file:ptr FILE, format:string_t, argptr:ptr
 tvfprintf endp
 
 
+tfprintf proc __ccall file:ptr FILE, format:string_t, argptr:vararg
+
+    tvfprintf( file, format, &argptr )
+    ret
+
+tfprintf endp
+
+
 tsprintf proc __ccall buffer:string_t, format:string_t, argptr:vararg
 
     tvsprintf( buffer, format, &argptr )

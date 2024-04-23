@@ -272,7 +272,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .if ( [rbx].token == T_ID &&
             ( esi == SIM_CODE || esi == SIM_FARDATA || esi == SIM_FARDATA_UN
-            || ( ModuleInfo.masm_compat_gencode == FALSE &&
+            || ( Options.strict_masm_compat == FALSE &&
                ( esi == SIM_DATA || esi == SIM_DATA_UN || esi == SIM_CONST ) ) ) )
             mov rdi,[rbx].string_ptr
             inc i

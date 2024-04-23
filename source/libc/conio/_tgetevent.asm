@@ -131,7 +131,7 @@ getkey proc
     .case WM_KEYDOWN
         mov  edx,dword ptr msg.lParam
 
-        .endc .if ( edx & KEY_CHAR )
+        .endc .if ( edx & KEY_WMCHAR )
         .endc .if ( cx == VK_SHIFT )
         .endc .if ( cx == VK_CONTROL )
 

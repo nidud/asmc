@@ -4,6 +4,9 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+ifndef __UNIX__
+include winuser.inc
+endif
 include conio.inc
 include tchar.inc
 

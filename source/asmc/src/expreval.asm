@@ -197,7 +197,7 @@ tofloat proc fastcall opnd1:expr_t, opnd2:expr_t, size:int_t
     UNREFERENCED_PARAMETER(opnd1)
     UNREFERENCED_PARAMETER(opnd2)
 
-    .if ( ModuleInfo.masm_compat_gencode )
+    .if ( Options.strict_masm_compat )
 
         ConstError( rcx, rdx )
         mov ecx,eax
@@ -421,9 +421,9 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .endif
         .return( NOT_ERROR )
     .case UOT_SIZE
-    .case UOT_SIZEOF
     .case UOT_LENGTH
     .case UOT_LENGTHOF
+        mov eax,oper
         mov rbx,sym
         mov [rsi].kind,EXPR_CONST
         .if ( rbx )
@@ -437,12 +437,12 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                     [rbx].mem_type != MT_NEAR )
             .case ( [rbx].state == SYM_GRP || [rbx].state == SYM_SEG )
                 .return fnasmerr( 2143 )
-            .case ( oper == T_SIZE || oper == T_LENGTH )
+            .case ( eax == T_SIZE || eax == T_LENGTH )
             .default
                 .return fnasmerr( 2143 )
             .endsw
         .endif
-        .switch oper
+        .switch eax
         .case T_LENGTH
             .if ( [rbx].flags & S_ISDATA )
                 mov [rsi].value,[rbx].first_length
@@ -553,6 +553,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         mov [rsi].mem_type,al
        .return( NOT_ERROR )
     .case UOT_TYPE
+    .case UOT_TYPEOF
         mov rbx,sym
         mov [rsi].kind,EXPR_CONST
         .if ( [rdi].inst != EMPTY && [rdi].mem_type != MT_EMPTY )
@@ -565,6 +566,8 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 .switch [rdi].inst
                 .case T_LOW
                 .case T_HIGH
+                .case T_LOW16
+                .case T_HIGH16
                     mov [rsi].value,1
                    .endc
                 .case T_LOWWORD
@@ -710,7 +713,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .default
             mov rbx,[rdi].sym
         .endsw
-        .if ( oper == T_MASK )
+        .if ( oper == T_MASK || oper == T_MASKOF )
             mov [rsi].value,0
             .if ( [rdi].flags & E_IS_TYPE )
                 GetRecordMask(rbx)
@@ -1008,7 +1011,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
         ;
         ; v2.30.24 -- mov mem,&mem
         ;
-        .if ( Options.masm_compat_gencode == FALSE && i > 2 &&
+        .if ( Options.strict_masm_compat == FALSE && i > 2 &&
               [rbx-asm_tok].token == T_COMMA && [rbx-asm_tok*2].token != T_REG )
 
             inc i
@@ -1083,8 +1086,8 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
             .endif
         .endif
 
-        .if ( ( i > 0 && [rbx-asm_tok].tokval == T_TYPE ) ||
-              ( i > 1 && [rbx-asm_tok].token == T_OP_BRACKET && [rbx-asm_tok*2].tokval == T_TYPE ) )
+        .if ( ( i > 0 && [rbx-asm_tok].tokval == T_TYPEOF ) ||
+              ( i > 1 && [rbx-asm_tok].token == T_OP_BRACKET && [rbx-asm_tok*2].tokval == T_TYPEOF ) )
 
              ; v2.24 [reg + TYPE reg] | [reg + TYPE(reg)]
 
@@ -1101,7 +1104,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
             .elseif ( [rax].special_item.value & OP_SR )
 
                 .if ( [rbx+asm_tok].token != T_COLON ||
-                      ( ModuleInfo.masm_compat_gencode && [rbx+asm_tok*2].token == T_REG ) )
+                      ( Options.strict_masm_compat && [rbx+asm_tok*2].token == T_REG ) )
                     .return fnasmerr( 2032 )
                 .endif
             .else
@@ -1386,7 +1389,7 @@ endif
                 mov [rdi].hvalue,[rsi].value3264
                 mov [rdi].mem_type,[rsi].mem_type
 
-                .if ( al == MT_REAL16 && !ModuleInfo.masm_compat_gencode )
+                .if ( al == MT_REAL16 && !Options.strict_masm_compat )
 
                     mov [rdi].kind,EXPR_FLOAT
                     mov [rdi].float_tok,NULL
@@ -1472,10 +1475,10 @@ endif
             mov [rdi].label_tok,rbx
             mov [rdi].kind,EXPR_ADDR
 
-            ; added v2.31.32: TYPE(addr ...)
+            ; added v2.31.32: TYPEOF(addr ...)
 
         .elseif ( [rbx].tokval == T_ADDR && i > 2 &&
-                  ( [rbx-asm_tok].tokval == T_TYPE || [rbx-asm_tok*2].tokval == T_TYPE ) &&
+                  ( [rbx-asm_tok].tokval == T_TYPEOF || [rbx-asm_tok*2].tokval == T_TYPEOF ) &&
                   ( [rbx+asm_tok].token == T_ID || [rbx+asm_tok].token == T_OP_SQ_BRACKET ) )
 
             inc dword ptr [rdx]

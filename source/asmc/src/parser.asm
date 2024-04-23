@@ -1290,9 +1290,9 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
         ; may be a forward reference, so wait till pass 2
 
+        mov ecx,[rdi].inst
         .if ( Parse_Pass > PASS_1 && [rdi].inst != EMPTY )
 
-            mov ecx,[rdi].inst
             .switch ecx
             .case T_SEG ; v2.04a: added
                 .if ( eax && eax < 2 )
@@ -1315,13 +1315,12 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
         .switch eax
         .case 1
-            .if ( [rdi].flags & E_IS_ABS || [rdi].inst == T_LOW || [rdi].inst == T_HIGH )
+            .if ( [rdi].flags & E_IS_ABS || ecx == T_LOW || ecx == T_HIGH || ecx == T_LOW16 || ecx == T_HIGH16 )
                 mov [rsi].mem_type,MT_BYTE
             .endif
             .endc
         .case 2
-            .if ( [rdi].flags & E_IS_ABS || [rsi].Ofssize == USE16 ||
-                  [rdi].inst == T_LOWWORD || [rdi].inst == T_HIGHWORD )
+            .if ( [rdi].flags & E_IS_ABS || [rsi].Ofssize == USE16 || ecx == T_LOWWORD || ecx == T_HIGHWORD )
                 mov [rsi].mem_type,MT_WORD
             .endif
             .endc
@@ -1331,12 +1330,12 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
         .case 8
             .if ( Ofssize == USE64 )
 
-                .if ( [rdi].inst == T_LOW64 || [rdi].inst == T_HIGH64 ||
+                .if ( ecx == T_LOW64 || ecx == T_HIGH64 ||
                       ( [rsi].token == T_MOV && ( [rsi].opnd[OPND1].type & OP_R64 ) ) )
 
                     mov [rsi].mem_type,MT_QWORD
 
-                .elseif ( [rdi].inst == T_LOW32 || [rdi].inst == T_HIGH32 )
+                .elseif ( ecx == T_LOW32 || ecx == T_HIGH32 )
 
                     ;
                     ; v2.10:added; LOW32/HIGH32 in expreval.c won't set mem_type anymore.
@@ -1384,6 +1383,8 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
                     .case EMPTY
                     .case T_LOW
                     .case T_HIGH
+                    .case T_LOW16
+                    .case T_HIGH16
                         mov [rdi].mem_type,MT_BYTE
                         .endc
                     .case T_LOW32 ;; v2.10: added - low32_op() doesn't set mem_type anymore.
@@ -1498,7 +1499,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     .if ( [rdi].inst == T_SEG )
         mov fixup_type,FIX_SEG
     .elseif ( [rsi].mem_type == MT_BYTE )
-        .if ( [rdi].inst == T_HIGH )
+        .if ( [rdi].inst == T_HIGH || [rdi].inst == T_HIGH16 )
             mov fixup_type,FIX_HIBYTE
         .else
             mov fixup_type,FIX_OFF8
@@ -4032,7 +4033,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             ;
             .if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD )
 
-                .if ( ModuleInfo.masm_compat_gencode == FALSE )
+                .if ( Options.strict_masm_compat == FALSE )
 
                     ; v2.27: convert to REAL
 

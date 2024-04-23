@@ -707,7 +707,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                 .endif
                 .switch
 
-                .case ( ModuleInfo.masm_compat_gencode == 1 )
+                .case ( Options.strict_masm_compat == 1 )
                     .endc .if ( edx != SYM_MACRO )
                     .endc .if ( !( [rax].asym.mac_flag & M_ISFUNC ) )
                      and [rsi].flags2,not DF_CEXPR
@@ -810,7 +810,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
             mov eax,[rdi]
         .endif
         or cl,[rbx-asm_tok].flags
-        .if ( cl & T_ISPROC && !ModuleInfo.masm_compat_gencode )
+        .if ( cl & T_ISPROC && !Options.strict_masm_compat )
 
             mov rcx,[rsi].tokenarray
             or  [rcx].asm_tok.flags,T_EXPAND
@@ -1456,7 +1456,7 @@ GetToken proc fastcall uses rsi rdi rbx tokenarray:token_t, p:ptr line_status
         .return get_id( rcx, rdx )
 
     .case ( al == '`' )
-        .endc .if ModuleInfo.masm_compat_gencode
+        .endc .if Options.strict_masm_compat
         .return get_id_in_backquotes( rcx, rdx )
 
     .case ( al == '.' )
@@ -1658,7 +1658,7 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
                .break
 
             .case ( [rbx].token == T_DBL_COLON )
-                .if ( !ModuleInfo.masm_compat_gencode )
+                .if ( !Options.strict_masm_compat )
                     mov rax,p.tokenarray
                     or [rax].asm_tok.flags,T_EXPAND
                 .endif

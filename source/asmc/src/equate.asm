@@ -48,7 +48,7 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
         mov [rcx].uvalue,[rdx].uvalue
         mov [rcx].value3264,[rdx].hvalue
         mov [rcx].mem_type,[rdx].mem_type
-        .if al == MT_REAL16 && !ModuleInfo.masm_compat_gencode
+        .if al == MT_REAL16 && !Options.strict_masm_compat
             mov [rcx].total_length,dword ptr [rdx].hlvalue
             mov [rcx].ext_idx,dword ptr [rdx].hlvalue[4]
         .endif
@@ -201,7 +201,7 @@ endif
                     FStoreLine(0) ;; make sure this line is evaluated in pass two
                 .endif
 
-            .elseif ( !rcx && opnd.kind == EXPR_FLOAT && !ModuleInfo.masm_compat_gencode )
+            .elseif ( !rcx && opnd.kind == EXPR_FLOAT && !Options.strict_masm_compat )
 
                 mov opnd.mem_type,MT_REAL16
                 mov opnd.kind,EXPR_CONST

@@ -10,7 +10,7 @@ include conio.inc
     assume rbx:THWND
     assume rcx:THWND
 
-_dlsetfocus proc uses rbx hwnd:THWND, index:BYTE
+_dlsetfocus proc uses rsi rbx hwnd:THWND, index:BYTE
 
     ldr rcx,hwnd
     ldr dl,index
@@ -20,14 +20,14 @@ _dlsetfocus proc uses rbx hwnd:THWND, index:BYTE
 
     .for ( eax = 0, ebx = 0, dh = [rcx].index, rcx = [rcx].object : rcx : rcx = [rcx].next )
 
-        .if ( dl == [rcx].index )
+        .if ( dl == [rcx].oindex )
 
-            .if ( ( [rcx].flags & O_STATE ) || !( [rcx].flags & W_WNDPROC ) || [rcx].type >= T_MOUSERECT )
-                .break
-            .endif
-            mov rbx,rcx
+             movzx esi,[rcx].flags
+            .break .if ( ( esi & O_STATE or O_NOFOCUS ) || !( esi & W_WNDPROC ) )
+             mov rbx,rcx
         .endif
-        .if ( dh == [rcx].index && [rcx].flags & W_WNDPROC )
+
+        .if ( dh == [rcx].oindex && [rcx].flags & W_WNDPROC )
             mov rax,rcx
         .endif
     .endf
@@ -39,7 +39,7 @@ _dlsetfocus proc uses rbx hwnd:THWND, index:BYTE
             [rcx].winproc(rcx, WM_KILLFOCUS, 0, 0)
         .endif
         mov rcx,[rbx].prev
-        mov [rcx].index,[rbx].index
+        mov [rcx].index,[rbx].oindex
         [rbx].winproc(rbx, WM_SETFOCUS, 0, 0)
     .endif
     .return( 0 )

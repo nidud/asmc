@@ -18,28 +18,28 @@ dlclose proc uses rbx dobj:PDOBJ
 
     ldr rbx,dobj
 
-    .if ( [rbx].flag & W_ISOPEN )
+    .if ( [rbx].flags & W_ISOPEN )
 
         inc retval
 
-        .if ( [rbx].flag & W_VISIBLE )
+        .if ( [rbx].flags & W_VISIBLE )
 
             inc retval
-            _rcwrite([rbx].rc, [rbx].wp)
-            .if ( [rbx].flag & W_SHADE )
+            _rcwrite([rbx].rc, [rbx].window)
+            .if ( [rbx].flags & W_SHADE )
 
-                _rcshade([rbx].rc, [rbx].wp, 0)
+                _rcshade([rbx].rc, [rbx].window, 0)
             .endif
         .endif
 
-        and [rbx].flag,not (W_ISOPEN or W_VISIBLE)
-        .if !( [rbx].flag & W_MYBUF )
+        and [rbx].flags,not (W_ISOPEN or W_VISIBLE)
+        .if !( [rbx].flags & W_MYBUF )
 
-            free([rbx].wp)
-            mov [rbx].wp,0
+            free([rbx].window)
+            mov [rbx].window,NULL
         .endif
 
-        .if ( [rbx].flag & W_RCNEW )
+        .if ( [rbx].flags & W_RCNEW )
 
             free(rbx)
         .endif

@@ -15,7 +15,7 @@ paint proc uses rbx
    .new fc:TRECT = { 2, 10, 51, 3 }
 
     mov rcx,_console
-    mov rc,[rcx].TCLASS.rc
+    mov rc,[rcx].TCONSOLE.rc
 
     _cbeginpaint()
     _scputa(0, 0, rc.col, 0x47)
@@ -75,6 +75,7 @@ _tmain proc
    .new y:byte = 0
    .new n:string_t = 0
    .new keys:CINPUT
+   .new s:ptr = _conpush()
 
     paint()
 
@@ -173,7 +174,7 @@ _tmain proc
     .endif
 
     mov rcx,_console
-    mov al,[rcx].TCLASS.rc.row
+    mov al,[rcx].TCONSOLE.rc.row
     dec al
     mov y,al
     _cout(SET_ANY_EVENT_MOUSE)
@@ -186,11 +187,14 @@ _tmain proc
         .elseif ( _kbflush() == 0 )
            .break
         .else
+            shl rcx,16
+            mov cx,'e\'
             mov keys.q,rcx
         .endif
         _scputf(13, y, "%-8s", &keys.b)
     .endw
     _cout(RST_ANY_EVENT_MOUSE)
+    _conpop(s)
     .return(0)
 
 _tmain endp

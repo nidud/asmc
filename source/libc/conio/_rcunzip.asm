@@ -21,7 +21,7 @@ _rcunzip proc uses rsi rdi rbx rc:TRECT, dst:PCHAR_INFO, src:ptr, flags:uint_t
     mul ah
     mov count,eax
 
-    .if !( ecx & W_UTF16 )
+    .if !( ecx & W_UNICODE )
 
         lea rdx,[rdi+2]
         mov ecx,count

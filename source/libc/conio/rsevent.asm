@@ -13,9 +13,9 @@ rsevent proc uses rbx robj:PIDD, dobj:PDOBJ
     ldr rbx,dobj
 
     dlevent(rbx)
-    mov edx,[rbx+4]
+    mov edx,[rbx].DOBJ.rc
     mov rcx,robj
-    mov [rcx+6],edx
+    mov [rcx].RIDD.rc,edx
     ret
 
 rsevent endp

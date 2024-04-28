@@ -13,11 +13,11 @@ _conslink proc hwnd:THWND
     ldr rax,hwnd
     mov rcx,_console
     .if ( rcx )
-        .while ( [rcx].TCLASS.next )
-            mov rcx,[rcx].TCLASS.next
+        .while ( [rcx].TDIALOG.next )
+            mov rcx,[rcx].TDIALOG.next
         .endw
-        mov [rax].TCLASS.prev,rcx
-        mov [rcx].TCLASS.next,rax
+        mov [rax].TDIALOG.prev,rcx
+        mov [rcx].TDIALOG.next,rax
     .endif
     ret
 

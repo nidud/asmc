@@ -19,7 +19,7 @@ _scgetl proc x:int_t, y:int_t, l:int_t
         mov rc.col,1
         mov rc.row,al
     .endif
-    .if _rcalloc(rc, W_UTF16)
+    .if _rcalloc(rc, W_UNICODE)
 
         _rcread(rc, rax)
     .endif

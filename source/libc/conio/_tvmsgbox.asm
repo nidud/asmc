@@ -71,25 +71,24 @@ INFO PBINFO {
 
     .code
 
-    assume rcx:THWND
-
 WndProc proc private hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .switch uiMsg
-    .case WM_CREATE
-        _dlshow(hwnd)
-        mov rcx,hwnd
-       .return( _dlsetfocus(hwnd, [rcx].index) )
-    .case WM_CLOSE
-        _dlclose(hwnd)
+    ldr eax,uiMsg
+    .if ( eax == WM_CREATE || eax == WM_CLOSE )
+
         .return( 0 )
-    .endsw
+    .endif
+ifdef _WIN64
+    _defwinproc()
+else
     _defwinproc(hwnd, uiMsg, wParam, lParam)
+endif
     ret
 
 WndProc endp
 
     assume rbx:THWND
+    assume rcx:THWND
 
 _vmsgbox proc uses rbx flags:UINT, title:LPTSTR, string:LPTSTR
 
@@ -182,14 +181,14 @@ endif
     .endif
 
     _at 0,7,,ecx
-    mov eax,W_MOVEABLE or W_SHADE or W_UTF16
+    mov eax,W_MOVEABLE or W_SHADE or W_UNICODE
     .if ( flags & MB_USERICON )
-        mov eax,W_MOVEABLE or W_TRANSPARENT or W_UTF16
+        mov eax,W_MOVEABLE or W_TRANSPARENT or W_UNICODE
         mov attrib,cx
     .endif
 
     movzx ebx,pb.count
-    or  eax,O_CURSOR
+    or  eax,W_CURSOR
     mov hwnd,_dlopen(rc, ebx, eax, 0)
     .return .if !rax
 
@@ -234,9 +233,9 @@ endif
         add al,4
         mov rc.col,al
         mov [rbx].rc,rc
-        mov [rbx].type,T_PUSHBUTTON
         mov [rbx].flags,W_CHILD or W_WNDPROC or O_DEXIT
-        mov [rbx].index,pb.id[rcx]
+        mov [rbx].oindex,pb.id[rcx]
+        mov [rbx].retval,al
         mov [rbx].buffer,pb.name[rcx*LPTSTR]
         mov [rbx].winproc,&_defwinproc
         mov al,rc.col
@@ -262,7 +261,7 @@ endif
     .elseif ( eax == MB_DEFBUTTON2 )
         mov rcx,[rcx].next
     .endif
-    mov [rbx].index,[rcx].index
+    mov [rbx].index,[rcx].oindex
 
     mov rc,[rbx].rc
     mov rc.y,2
@@ -283,7 +282,13 @@ endif
         inc rc.y
         mov p,q
     .until ( rax == NULL || rc.y == 17+2 )
-    .return _dlmodal(rbx, &WndProc)
+    _dlshow(rbx)
+    _dlsetfocus(rbx, [rbx].index)
+    _dlmodal(rbx, &WndProc)
+    xchg rbx,rax
+    _dlclose(rax)
+    mov eax,ebx
+    ret
 
 _vmsgbox endp
 

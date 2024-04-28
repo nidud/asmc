@@ -13,7 +13,7 @@ include conio.inc
 dlmemsize proc uses rbx dobj:PDOBJ
 
     ldr rbx,dobj
-    _rcmemsize([rbx].rc, [rbx].flag)
+    _rcmemsize([rbx].rc, [rbx].flags)
 
     .for ( ch = [rbx].count, cl = 0, edx = 0,
            rbx = [rbx].object : cl < ch : cl++, rbx+=TOBJ )

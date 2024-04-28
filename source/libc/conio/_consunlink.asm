@@ -11,13 +11,13 @@ include conio.inc
 _consunlink proc hwnd:THWND
 
     ldr rax,hwnd
-    mov rcx,[rax].TCLASS.prev
-    mov rdx,[rax].TCLASS.next
+    mov rcx,[rax].TDIALOG.prev
+    mov rdx,[rax].TDIALOG.next
     .if ( rcx )
-        mov [rcx].TCLASS.next,rdx
+        mov [rcx].TDIALOG.next,rdx
     .endif
     .if ( rdx )
-        mov [rdx].TCLASS.prev,rcx
+        mov [rdx].TDIALOG.prev,rcx
     .endif
     ret
 

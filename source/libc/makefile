@@ -30,6 +30,11 @@ flag += -win64 -frame -Zp8
 endif
 ifdef tty
 flag += -D__TTY__
+ifdef x86
+name = $(lib_dir)\x86\libtty.lib
+else
+name = $(lib_dir)\x64\libtty.lib
+endif
 endif
 ifdef avx
 flag += -arch:AVX

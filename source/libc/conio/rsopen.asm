@@ -7,103 +7,93 @@
 include conio.inc
 include malloc.inc
 
-.code
+    .code
+
+    assume rbx:PIDD
+    assume rdi:PDOBJ
 
 rsopen proc uses rsi rdi rbx idd:PIDD
 
-   .new     dlg:PDOBJ
-   .new     flags:int_t
-   .new     rc:TRECT
+   .new dlg:PDOBJ
+   .new flags:int_t
+   .new size:int_t
+   .new count:int_t
+   .new rsize:int_t
+   .new dsize:int_t
+   .new rc:TRECT
 
-    ldr     rsi,idd
-    mov     rc,[rsi].RIDD.rc
-    movzx   eax,[rsi].RIDD.rc.col
-    mul     [rsi].RIDD.rc.row
-    shl     eax,2
-    mov     edi,eax
+    ldr rbx,idd
 
-    .if ( [rsi].RIDD.flag & W_SHADE )
+    mov     rc,[rbx].rc
+    movzx   eax,[rbx].flags
+    mov     flags,eax
+    or      eax,W_UNICODE
+    mov     rsize,_rcmemsize([rbx].rc, eax)
+    movzx   eax,[rbx].count
+    mov     count,eax
+    inc     eax
+    imul    eax,eax,TOBJ
+    mov     dsize,eax
 
-        movzx   eax,[rsi].RIDD.rc.col
-        movzx   edx,[rsi].RIDD.rc.row
-        lea     eax,[rax+rdx*2-2]
-        shl     eax,2
-        add     edi,eax
-    .endif
+    .for ( ecx = 0, eax = 0, rsi = &[rbx+RIDD] : ecx < count : ecx++, rsi+=ROBJ )
 
-    .if !( [rsi].RIDD.flag & W_UTF16 )
+        movzx edx,[rsi].ROBJ.count
+        add eax,edx
+    .endf
+    shl eax,4
+    add eax,rsize
+    add eax,dsize
+    mov size,eax
 
-        mov     eax,edi
-        shr     eax,1
-        sub     [rsi].RIDD.size,ax
-        add     [rsi].RIDD.size,di
-    .endif
-
-    movzx   eax,[rsi].RIDD.size
-    mov     dlg,malloc(eax)
-    mov     ebx,edi
-    mov     rdi,rax
-    mov     rdx,rax
-    movzx   ecx,[rsi].RIDD.size
-
-    .if ( rax == NULL )
+    .if ( malloc(eax) == NULL )
 
         .return
     .endif
 
-    xor     eax,eax
-    rep     stosb
-    mov     rcx,rdx
-    mov     rdi,rdx
-    lodsw                   ; skip size
+    mov dlg,rax
+    mov rdi,rax
+    mov ecx,size
+    xor eax,eax
+    rep stosb
 
-    ; -- copy dialog
+    mov rdi,dlg
+    mov eax,dword ptr [rbx]
+    or  eax,W_RCNEW or W_MYBUF or W_ISOPEN
+    mov [rdi],eax
+    mov [rdi].rc,[rbx].rc
+    mov eax,dsize
+    add rax,rdi
+    mov [rdi].window,rax
+    mov edx,rsize
+    add edx,dsize
+    add rdx,rdi
 
-    lodsw                   ; .flag
-    or      eax,W_RCNEW or W_MYBUF or W_ISOPEN
-    mov     flags,eax
-    stosw                   ; .flag
-    movsw                   ; .count + .index
-    movsd                   ; .rect
-    movzx   eax,byte ptr [rsi-6]
-    inc     eax
-    imul    eax,eax,TOBJ    ; * size of objects
-    add     rax,rcx         ; + adress
-    mov     [rdi],rax
-    add     rdi,size_t
-    xchg    rdx,rax
-    add     rax,TOBJ        ; + dialog
-    mov     [rdi],rax
-    add     rdi,size_t
+    add rbx,RIDD
+    add rdi,DOBJ
 
-    ; -- copy objects
+    .if ( count )
 
-    add     rdx,rbx         ; end of wp = start of object alloc
-    movzx   ebx,byte ptr [rsi-6]
+        mov [rdi-DOBJ].object,rdi
 
-    .while ebx
+        assume rbx:PROBJ
+        assume rdi:PTOBJ
 
-        movsd               ; copy 8 byte
-        movsd               ; get alloc size of object
-        movzx   eax,byte ptr [rsi-6]
-        shl     eax,4
+        .for ( ecx = 0 : ecx < count : ecx++, rbx+=ROBJ, rdi+=TOBJ )
 
-        .if eax
+            mov [rdi],size_t ptr [rbx]
+ifndef _WIN64
+            mov [rdi].rc,[rbx].rc
+endif
+            movzx eax,[rdi].count
+            .if ( eax )
 
-            xchg    rax,rdx ; offset of mem (.data)
-            mov     [rdi],rax
-            add     rdi,size_t
-            add     rdx,rax
-            xor     eax,eax
-        .else
-            mov     [rdi],rax
-            add     rdi,size_t
-        .endif
-        add rdi,size_t
-        dec ebx
-    .endw
-    mov rbx,rdi
-    _rcunzip(rc, rdi, rsi, flags)
+                mov [rdi].data,rdx
+                shl eax,4
+                add rdx,rax
+            .endif
+        .endf
+    .endif
+    _rcunzip(rc, rdi, rbx, flags)
     mov rax,dlg
     ret
 

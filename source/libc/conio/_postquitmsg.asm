@@ -13,8 +13,8 @@ _postquitmsg proc hwnd:THWND, retval:UINT
     ldr rax,hwnd
     ldr edx,retval
 
-    test [rax].TCLASS.flags,W_CHILD
-    cmovnz rax,[rax].TCLASS.prev
+    test [rax].TDIALOG.flags,W_CHILD
+    cmovnz rax,[rax].TDIALOG.prev
     _postmessage(rax, WM_QUIT, edx, 0)
     ret
 

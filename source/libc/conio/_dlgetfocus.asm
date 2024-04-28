@@ -20,7 +20,7 @@ _dlgetfocus proc hwnd:THWND
 
     .for ( rcx = [rcx].object : rcx : rcx = [rcx].next )
 
-        .if ( al == [rcx].index )
+        .if ( al == [rcx].oindex )
 
             add edx,[rcx].rc
             .return( rcx )

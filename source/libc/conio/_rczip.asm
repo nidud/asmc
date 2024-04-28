@@ -5,6 +5,9 @@
 ;
 
 include conio.inc
+include malloc.inc
+
+define W_MENUS 0x0001 ; menus color (gray), no title
 
     .code
 
@@ -12,17 +15,32 @@ _rczip proc uses rsi rdi rbx rc:TRECT, dst:ptr, src:PCHAR_INFO, flags:uint_t
 
    .new count:int_t
    .new tmp:int_t
+   .new window:PCHAR_INFO
 
     ldr eax,rc
-    ldr rsi,src
-    ldr edx,flags
+    ldr rbx,src
 
     shr eax,16
     mul ah
     mov count,eax
-    mov ecx,eax
+    shl eax,2
+    mov rdi,malloc(eax)
+    mov window,rax
+    mov ecx,count
+    mov rsi,rbx
+    rep movsd
+
+    mov rsi,window
+    mov edx,flags
+    and edx,W_RESBITS
+    mov ecx,count
     lea rdi,at_foreground
     lea rbx,at_background
+    mov al,[rbx+BG_MENU]
+    or  al,[rdi+FG_MENU]
+    .if ( al == [rsi+2] )
+        or edx,W_MENUS
+    .endif
 
     .repeat
 
@@ -83,7 +101,7 @@ _rczip proc uses rsi rdi rbx rc:TRECT, dst:ptr, src:PCHAR_INFO, flags:uint_t
             mov [rsi+2],al
         .endif
 
-        .if !( edx & W_UTF16 )
+        .if !( edx & W_UNICODE )
 
             mov     tmp,ecx
             movzx   eax,word ptr [rsi]
@@ -100,21 +118,21 @@ _rczip proc uses rsi rdi rbx rc:TRECT, dst:ptr, src:PCHAR_INFO, flags:uint_t
         add rsi,4
     .untilcxz
 
-    .if ( flags & W_UTF16 )
+    .if ( flags & W_UNICODE )
 
         mov rdi,dst
-        mov rsi,src
+        mov rsi,window
         mov ecx,count
         compress()
-        mov rsi,src
+        mov rsi,window
         inc rsi
         mov ecx,count
         compress()
-        mov rsi,src
+        mov rsi,window
         add rsi,2
         mov ecx,count
         compress()
-        mov rsi,src
+        mov rsi,window
         add rsi,3
         mov ecx,count
         compress()
@@ -122,14 +140,15 @@ _rczip proc uses rsi rdi rbx rc:TRECT, dst:ptr, src:PCHAR_INFO, flags:uint_t
     .else
 
         mov rdi,dst
-        mov rsi,src
+        mov rsi,window
         add rsi,2
         mov ecx,count
         compress()
-        mov rsi,src
+        mov rsi,window
         mov ecx,count
         compress()
     .endif
+    free(window)
     mov rax,rdi
     sub rax,dst
     ret

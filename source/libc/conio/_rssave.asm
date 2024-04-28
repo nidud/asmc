@@ -16,6 +16,7 @@ include string.inc
 
 _rssave proc uses rbx hwnd:THWND, file:LPSTR
 
+   .new     d:RIDD
    .new     o:ROBJ
    .new     size:int_t
    .new     flags:int_t
@@ -24,51 +25,23 @@ _rssave proc uses rbx hwnd:THWND, file:LPSTR
    .return .if ( rax == NULL )
 
     mov     rbx,hwnd
-    mov     o.rc,[rbx].rc
-    mov     o.index,[rbx].index
-    mov     o.count,[rbx].count
-    mov     eax,[rbx].flags
+    mov     d.rc,[rbx].rc
+    mov     d.index,[rbx].index
+    mov     d.count,[rbx].count
+    movzx   eax,[rbx].flags
     and     eax,W_RESBITS
     mov     flags,eax
-    mov     o.flag,ax
-    mov     size,_rcmemsize([rbx].rc, [rbx].flags)
-    movzx   eax,[rbx].count
-    inc     eax
-    imul    eax,eax,TCLASS
-    add     size,eax
-    xor     eax,eax
-    mov     ecx,TLIST
-    test    [rbx].flags,O_LIST
-    cmovnz  eax,ecx
-
-    .for ( rcx = [rbx].object : rcx : rcx = [rcx].next )
-
-        movzx edx,[rcx].count
-        shl edx,3+TCHAR
-        .if ( [rcx].type == T_EDIT )
-            .if ( [rcx].flags & O_MYBUF )
-                mov edx,TEDIT
-            .else
-                add edx,TEDIT
-            .endif
-        .endif
-        add eax,edx
-    .endf
-    add size,eax
-    fwrite(&size, 1, 2, fp)
-    fwrite(&o, 1, ROBJ, fp)
+    mov     d.flags,ax
+    fwrite(&d, 1, RIDD, fp)
 
     .for ( rbx = [rbx].object : rbx : rbx = [rbx].next )
 
-        mov o.rc,[rbx].rc
-        mov o.index,[rbx].index
+        mov ax,[rbx].flags
+        and ax,O_RESBITS
+        mov o.flags,ax
         mov o.count,[rbx].count
-        movzx eax,[rbx].type
-        dec eax
-        mov ecx,[rbx].flags
-        and ecx,O_RESBITS
-        or  eax,ecx
-        mov o.flag,ax
+        mov o.syskey,[rbx].index
+        mov o.rc,[rbx].rc
         fwrite(&o, 1, ROBJ, fp)
     .endf
 
@@ -78,7 +51,6 @@ _rssave proc uses rbx hwnd:THWND, file:LPSTR
     shl eax,4
     mov wp,malloc(eax)
     mov size,_rczip([rbx].rc, rax, [rbx].window, flags)
-
     fwrite(wp, 1, size, fp)
     free(wp)
     fclose(fp)

@@ -44,7 +44,7 @@ PrevItem proc private uses rsi
             sub rdx,TOBJ
             .repeat
 
-                .if !( [rdx].TOBJ.flag & O_STATE )
+                .if !( [rdx].TOBJ.flags & O_STATE )
 
                     dec ecx
                     mov [rsi].DOBJ.index,cl
@@ -68,7 +68,7 @@ PrevItem proc private uses rsi
 
                 .break .if eax > ecx
 
-                .if !( [rdx].TOBJ.flag & O_STATE )
+                .if !( [rdx].TOBJ.flags & O_STATE )
 
                     dec ecx
                     mov [rsi].DOBJ.index,cl
@@ -99,7 +99,7 @@ NextItem proc private uses rsi
 
         .while ecx <= eax
 
-            .if !( [rdx].TOBJ.flag & O_STATE )
+            .if !( [rdx].TOBJ.flags & O_STATE )
 
                 dec ecx
                 mov [rsi].DOBJ.index,cl
@@ -117,7 +117,7 @@ NextItem proc private uses rsi
 
         .while ecx <= eax
 
-            .if !( [rdx].TOBJ.flag & O_STATE )
+            .if !( [rdx].TOBJ.flags & O_STATE )
 
                 dec ecx
                 mov [rsi].DOBJ.index,cl
@@ -168,7 +168,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
         mov     bl,[rsi].DOBJ.index
         imul    ebx,ebx,TOBJ
         add     rbx,rcx
-        movzx   edi,[rbx].TOBJ.flag
+        movzx   edi,[rbx].TOBJ.flags
     .endif
 
     mov eax,cmd
@@ -182,10 +182,10 @@ test_event proc private uses rsi rdi rbx cmd, extended
     .case KEY_ALTDN
     .case KEY_ALTLEFT
     .case KEY_ALTRIGHT
-        movzx ecx,[rsi].DOBJ.flag
+        movzx ecx,[rsi].DOBJ.flags
         .if ( ecx & W_MOVEABLE )
 
-            mov rdi,[rsi].DOBJ.wp
+            mov rdi,[rsi].DOBJ.window
             mov ebx,[rsi].DOBJ.rc
 
             .if ( ecx & W_SHADE )
@@ -203,7 +203,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
 
             mov bx,ax
             mov word ptr [rsi].DOBJ.rc,ax
-            .if [rsi].DOBJ.flag & W_SHADE
+            .if [rsi].DOBJ.flags & W_SHADE
                 _rcshade(ebx, rdi, 1)
             .endif
         .endif
@@ -212,7 +212,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
     .case KEY_RETURN
     .case KEY_KPRETURN
         mov eax,_C_RETURN
-        .if ( edi & O_CHILD )
+        .if ( edi & O_PARENT )
 
             mov rax,[rbx].TOBJ.tproc
             .if rax
@@ -265,7 +265,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
                 imul eax,eax,TOBJ
                 add rax,[rsi].DOBJ.object
                 mov rdi,rax
-                mov ax,[rdi].TOBJ.flag
+                mov ax,[rdi].TOBJ.flags
                 mov flag,eax
 
                 .if !( eax & O_STATE )
@@ -342,7 +342,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
                         mov dlresult,_C_ESCAPE
                     .endif
 
-                    .if ( eax & O_CHILD )
+                    .if ( eax & O_PARENT )
 
                         mov rax,[rdi].TOBJ.tproc
                         .if rax
@@ -421,7 +421,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
 
                     .elseif ( al == _O_MOUSE )
 
-                        .if ( flag & O_CHILD )
+                        .if ( flag & O_PARENT )
 
                             mov rax,[rdi].TOBJ.tproc
                             .if rax
@@ -488,7 +488,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
 
                 .if ( ah == [rdx].TOBJ.rc.y && al > [rdx].TOBJ.rc.x )
 
-                    .if !( [rdx].TOBJ.flag & O_STATE)
+                    .if !( [rdx].TOBJ.flags & O_STATE)
 
                         dec ecx
                         mov [rsi].DOBJ.index,cl
@@ -554,7 +554,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
 
                 .if ( ah == [rdx].TOBJ.rc.y && al < [rdx].TOBJ.rc.x )
 
-                    .if !( [rdx].TOBJ.flag & O_STATE )
+                    .if !( [rdx].TOBJ.flags & O_STATE )
 
                         mov [rsi].DOBJ.index,cl
                        .return
@@ -806,7 +806,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
             xor eax,eax
             mov rdx,tdialog
 
-            .if ( [rdx].DOBJ.flag & W_DHELP )
+            .if ( [rdx].DOBJ.flags & W_DHELP )
 
                 _thelp()
                 mov eax,_C_NORMAL
@@ -825,25 +825,25 @@ test_event proc private uses rsi rdi rbx cmd, extended
 
         .repeat
 
-            .if ( [rdx].TOBJ.flag & O_GLOBAL )
+            .if ( [rdx].TOBJ.flags & O_FLAGE );O_GLOBAL )
 
                 mov rbx,[rdx].TOBJ.data
             .endif
 
             push rax
 
-            .if ( [rdx].TOBJ.flag & O_STATE || [rdx].TOBJ.ascii == 0 )
+            .if ( [rdx].TOBJ.flags & O_STATE || [rdx].TOBJ.syskey == 0 )
 
                 xor eax,eax
             .else
 
                 and al,0xDF
-                .if ( [rdx].TOBJ.ascii == al )
+                .if ( [rdx].TOBJ.syskey == al )
 
                     or al,1
                 .else
 
-                    mov     al,[rdx].TOBJ.ascii
+                    mov     al,[rdx].TOBJ.syskey
                     and     al,0xDF
                     sub     al,'A'
                     push    rdx
@@ -862,7 +862,7 @@ test_event proc private uses rsi rdi rbx cmd, extended
 
             .ifnz
 
-                test    [rdx].TOBJ.flag,O_PBKEY
+                test    [rdx].TOBJ.flags,O_FLAGD;O_PBKEY
                 mov     eax,esi
                 mov     rdx,tdialog
                 mov     [rdx].DOBJ.index,al
@@ -919,7 +919,7 @@ dlpbuttevent proc private uses rsi rdi rbx
     add   al,[rdi].TOBJ.rc.y
     mov   y,eax
 
-    mov al,byte ptr [rdi].TOBJ.flag
+    mov al,byte ptr [rdi].TOBJ.flags
     and al,0x0F
     .if al != _O_TBUTT
         _cursoroff()
@@ -989,7 +989,7 @@ dlradioevent proc private uses rsi rdi
                 .break(1)
             .endif
 
-            mov ax,[rdi].TOBJ.flag
+            mov ax,[rdi].TOBJ.flags
             and eax,O_RADIO
             .repeat
                 .ifz
@@ -998,12 +998,12 @@ dlradioevent proc private uses rsi rdi
 
                     mov rdx,[rsi].DOBJ.object
                     .repeat
-                        .break .if [rdx].TOBJ.flag & O_RADIO
+                        .break .if [rdx].TOBJ.flags & O_RADIO
                         add rdx,TOBJ
                     .untilcxz
                     .break .ifz
-                    and [rdx].TOBJ.flag,not O_RADIO
-                    or  [rdi].TOBJ.flag,O_RADIO
+                    and [rdx].TOBJ.flags,not O_RADIO
+                    or  [rdi].TOBJ.flags,O_RADIO
                     mov cx,[rdx+4]
                     add cx,[rsi+4]
                     mov dl,ch
@@ -1013,7 +1013,7 @@ dlradioevent proc private uses rsi rdi
                 .endif
                 msloop()
             .until 1
-        .until [rdi].TOBJ.flag & O_EVENT
+        .until [rdi].TOBJ.flags & O_WNDPROC
         mov eax,KEY_SPACE
     .until 1
     mov esi,eax
@@ -1063,14 +1063,14 @@ dlcheckevent proc uses rsi rdi
                 .break(1)
             .endif
 
-            xor [rdi].TOBJ.flag,O_CHECK
+            xor [rdi].TOBJ.flags,O_CHECK
             mov eax,' '
-            .if [rdi].TOBJ.flag & O_CHECK
+            .if [rdi].TOBJ.flags & O_CHECK
                 mov eax,'x'
             .endif
             _scputc(byte ptr x, byte ptr y, 1, eax)
             msloop()
-        .until [rdi].TOBJ.flag & O_EVENT
+        .until [rdi].TOBJ.flags & O_WNDPROC
         mov esi,KEY_SPACE
     .until 1
     _setcursor(&cursor)
@@ -1093,7 +1093,7 @@ dlxcellevent proc uses rsi rdi rbx
         _cursoroff()
     .endif
 
-    .if [rdi].TOBJ.flag & O_LIST
+    .if [rdi].TOBJ.flags & O_LIST
 
         movzx eax,[rsi].DOBJ.index
         mov rdx,tdllist
@@ -1121,14 +1121,14 @@ dlxcellevent proc uses rsi rdi rbx
 
           .case KEY_MOUSEUP
             mov eax,KEY_UP
-            .if [rdi].TOBJ.flag & O_LIST
+            .if [rdi].TOBJ.flags & O_LIST
                 _postmessage(0, WM_KEYDOWN, VK_UP, ENHANCED_KEY)
             .endif
             .endc
 
           .case KEY_MOUSEDN
             mov eax,KEY_DOWN
-            .if [rdi].TOBJ.flag & O_LIST
+            .if [rdi].TOBJ.flags & O_LIST
                 _postmessage(0, WM_KEYDOWN, VK_DOWN, ENHANCED_KEY)
             .endif
             .endc
@@ -1142,7 +1142,7 @@ dlxcellevent proc uses rsi rdi rbx
                 mov cl,bh
                 mousewait(ebx, ecx, eax)
 
-                movzx eax,[rdi].TOBJ.flag
+                movzx eax,[rdi].TOBJ.flags
                 and eax,0x0F
                 cmp eax,_O_XHTML
                 mov eax,KEY_RETURN
@@ -1187,10 +1187,10 @@ dlteditevent proc private uses rsi rbx
     add     rcx,[rdx].DOBJ.object
     mov     eax,[rcx].TOBJ.rc
     add     ax,si
-    movzx   ebx,[rcx].TOBJ.flag
+    ;movzx   ebx,[rcx].TOBJ.flags
     movzx   edx,[rcx].TOBJ.count
     shl     edx,4
-    dledit([rcx].TOBJ.data, eax, edx, ebx)
+    dledit([rcx].TOBJ.data, eax, edx, 0)
     ret
 
 dlteditevent endp
@@ -1251,7 +1251,7 @@ dlevent proc uses rsi rdi rbx dialog:PDOBJ
     mov prevdlg,tdialog
     mov tdialog,dialog
     mov rbx,tdialog
-    movzx esi,[rbx].DOBJ.flag
+    movzx esi,[rbx].DOBJ.flags
 
     .repeat
 
@@ -1270,7 +1270,7 @@ dlevent proc uses rsi rdi rbx dialog:PDOBJ
             imul eax,eax,TOBJ
             add  rax,[rbx].DOBJ.object
 
-            .if [rax].TOBJ.flag & O_STATE
+            .if [rax].TOBJ.flags & O_STATE
 
                 NextItem()
             .endif
@@ -1298,7 +1298,7 @@ dlevent proc uses rsi rdi rbx dialog:PDOBJ
                 imul eax,eax,TOBJ
                 add rax,[rbx].DOBJ.object
 
-                .if [rax].TOBJ.flag & O_EVENT
+                .if [rax].TOBJ.flags & O_WNDPROC
 
                     call [rax].TOBJ.tproc
                 .else
@@ -1333,7 +1333,7 @@ dlevent proc uses rsi rdi rbx dialog:PDOBJ
                     imul eax,eax,TOBJ
                     add rax,[rbx].DOBJ.object
 
-                    .if [rax].TOBJ.flag & O_DEXIT
+                    .if [rax].TOBJ.flags & O_DEXIT
 
                         mov event,0
                     .else

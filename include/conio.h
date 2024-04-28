@@ -135,21 +135,6 @@ enum _DLMOVE_DIRECTION {
     TW_MOVEDOWN
     };
 
-enum TTYPE {
-    T_WINDOW,			/* Main window */
-    T_PUSHBUTTON,		/*  [ > Selectable text < ] + shade */
-    T_RADIOBUTTON,		/*  (*) */
-    T_CHECKBOX,			/*  [x] */
-    T_XCELL,			/*  [ Selectable text ] */
-    T_EDIT,			/*  [Text input] */
-    T_MENUITEM,			/*  XCELL + Stausline info */
-    T_TEXTAREA,			/*  [Selectable text] */
-    T_TEXTBUTTON,		/*  [>Selectable text<] */
-    T_MOUSERECT,		/*  Clickable area -- no focus */
-    T_SCROLLUP,			/*  Clickable area for list items */
-    T_SCROLLDOWN,
-    };
-
 enum TFLAGS {
     W_ISOPEN		= 0x0001,
     W_VISIBLE		= 0x0002,
@@ -162,33 +147,55 @@ enum TFLAGS {
     W_TRANSPARENT	= 0x0100,
     W_CONSOLE		= 0x0200,
     W_LIST		= 0x0400,
-    W_STDLG		= 0x0800,
-    W_STERR		= 0x1000,	/* error color (red) */
-    W_MENUS		= 0x2000,	/* menus color (gray), no title */
-    W_UTF16		= 0x8000,
-    W_RESBITS		= 0xF9FC,
+    W_CHILD		= 0x0800,	/* is a child */
+    W_CURSOR		= 0x1000,
+    W_WNDPROC		= 0x2000,
+    W_PARENT		= 0x4000,
+    W_UNICODE		= 0x8000,
+    W_RESBITS		= 0xEFEC,
 
-    O_MODIFIED		= 0x0001,	/* dialog text */
-    O_OVERWRITE		= 0x0002,	/* selected text on paste */
-    O_USEBEEP		= 0x0004,
-    O_MYBUF		= 0x0008,	/* T_EDIT -- no alloc */
+    O_PBUTT		= 0x0000,
+    O_RBUTT		= 0x0001,
+    O_CHBOX		= 0x0002,
+    O_XCELL		= 0x0003,
+    O_TEDIT		= 0x0004,
+    O_MENUS		= 0x0005,
+    O_TBUTT		= 0x0006,
+    O_USERTYPE		= 0x0007,
+    O_TYPEMASK		= 0x0007,
+    O_TYPEBITS		= 3,
+
+    O_FLAGA		= 0x0008,	/* User defined */
     O_RADIO		= 0x0010,	/* Active (*) */
-    O_CHECK		= 0x0020,	/* Active [x] */
+    O_FLAGB		= 0x0020,	/* User defined */
     O_LIST		= 0x0040,	/* Linked list item */
-    O_SELECT		= 0x0080,	/* Select text on activation */
-    O_CONTROL		= 0x0100,	/* Allow _CONTROL chars */
-    O_DEXIT		= 0x0200,	/* Close dialog and return 0: Cancel */
-    O_PBKEY		= 0x0400,	/* Return result if short key used */
-    O_DLGED		= 0x0800,	/* dialog text -- return Left/Right */
-    O_GLOBAL		= 0x1000,	/* Item contain global short-key table */
-    O_EVENT		= 0x2000,	/* Item have local event handler */
-    O_CHILD		= 0x4000,	/* Item have a child */
-    O_STATE		= 0x8000,	/* State (ON/OFF) */
-    O_RESBITS		= 0xFFF0,
+    O_FLAGC		= 0x0080,	/* User defined */
+    O_NOFOCUS		= 0x0100,
+    O_DEXIT		= 0x0200,	/* Close dialog and return */
+    O_FLAGD		= 0x0400,	/* User defined */
+    O_CHILD		= 0x0800,	/* is a child */
+    O_FLAGE		= 0x1000,	/* User defined */
+    O_WNDPROC		= 0x2000,	/* Item have local event handler */
+    O_PARENT		= 0x4000,	/* Item have a child */
+    O_STATE		= 0x8000,	/* Item state (ON/OFF) */
+    O_RESBITS		= 0xFFFF,
+    O_FLAGBITS		= 13,
 
-    W_WNDPROC	    = 0x00010000,
-    W_CHILD	    = 0x00020000,	/* is a child */
-    O_CURSOR	    = 0x00020000,
+    O_CHECK		= O_FLAGB,	/* O_CHBOX: Active [x] */
+    O_MYBUF		= O_FLAGB,	/* O_TEDIT: static buffer (no alloc) */
+    O_AUTOSELECT	= O_FLAGC,	/* O_TEDIT: Auto select text on activation */
+    O_USEBEEP		= O_FLAGD,	/* O_TEDIT: Play sound on NoCanDo */
+    O_CONTROL		= O_FLAGE,	/* O_TEDIT: Allow _CONTROL chars */
+    };
+
+enum TEDITFLAGS {
+    TE_MODIFIED		= 0x0001,	/* text is modified */
+    TE_OVERWRITE	= 0x0002,	/* selected text on paste */
+    TE_DLGEDIT		= 0x0004,	/* return Left/Right */
+    TE_USEBEEP		= O_USEBEEP,
+    TE_MYBUF		= O_MYBUF,
+    TE_CONTROL		= O_CONTROL,
+    TE_AUTOSELECT	= O_AUTOSELECT,
     };
 
 #define _D_CLEAR	0x0001		/* args to rcopen() */
@@ -253,31 +260,30 @@ typedef struct {
 } TRECT, *PTRECT;
 
 typedef struct {
-    WORD	size;
-    WORD	flag;
+    WORD	flags;
     BYTE	count;
     BYTE	index;
     TRECT	rc;
 } RIDD, *PIDD;
 
 typedef struct {		/* 8 byte object size in Resource.idd */
-    WORD	flag;
+    WORD	flags;
     BYTE	count;
-    BYTE	index;
+    BYTE	syskey;
     TRECT	rc;
 } ROBJ, *PROBJ, *PTRES;
 
 typedef struct {
-    WORD	flag;
+    WORD	flags;
     BYTE	count;
-    BYTE	index;
+    BYTE	syskey;
     TRECT	rc;
-    void *	data;
+    char *	data;
     DPROC	tproc;
 } TOBJ, *PTOBJ;
 
 typedef struct {
-    WORD	flag;
+    WORD	flags;
     BYTE	count;
     BYTE	index;
     TRECT	rc;

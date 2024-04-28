@@ -1079,11 +1079,11 @@ endif
                 mov edi,FIX_OFF32_SECREL
                 .endc
             .case T_LOW
-            .case T_LOW16
+            .case T_LOWBYTE
                 mov edi,FIX_OFF8    ; OMF, BIN + GNU-ELF only
                 .endc
             .case T_HIGH
-            .case T_HIGH16
+            .case T_HIGHBYTE
                 mov edi,FIX_HIBYTE  ; OMF only
                 .endc
             .case T_LOWWORD

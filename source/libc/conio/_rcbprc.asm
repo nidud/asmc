@@ -10,12 +10,16 @@ include conio.inc
 
 _rcbprc proc w:TRECT, rc:TRECT, p:PCHAR_INFO
 
-    movzx   eax,w.col
-    mul     rc.y
-    movzx   edx,rc.x
+    ldr     eax,w
+    ldr     rcx,p
+    ldr     edx,rc
+
+    shr     eax,16
+    mul     dh
+    movzx   edx,dl
     add     eax,edx
     shl     eax,2
-    add     rax,p
+    add     rax,rcx
     ret
 
 _rcbprc endp

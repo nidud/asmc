@@ -38,179 +38,179 @@
     </StringProperty>
     <BoolProperty
       Name="NoLogo"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Suppress Startup Banner"
       Description="Suppress the display of the startup banner and information messages."
       Switch="/nologo" />
     <BoolProperty
       Name="GeneratePreprocessedSourceListing"
       Category="Listing File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Generate Preprocessed Source Listing"
       Description="Generates a preprocessed source listing to the Output Window."
       Switch="/EP" />
     <BoolProperty
       Name="ListAllAvailableInformation"
       Category="Listing File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="List All Available Information"
       Description="Turns on listing of all available information."
       Switch="/Sa" />
     <BoolProperty
       Name="UseSafeExceptionHandlers"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Use Safe Exception Handlers"
       Description="Marks the object as either containing no exception handlers or containing exception handlers that are all declared with .SAFESEH.     (/safeseh)"
       Switch="/safeseh" />
     <BoolProperty
       Name="GenerateUnwindInformation"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Generate unwind information"
       Description="Auto adds frame directive for all procedures."
       Switch="/frame" />
     <BoolProperty
       Name="GenerateCStackFrame"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Generate C-stack frame"
       Description="Pushes USES register before the stack frame is created. Use this for dynamic stack allocation.    (/Cs)"
       Switch="/Cs" />
     <BoolProperty
       Name="ObjectFileTypeCOFF"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Common Object File Format"
       Description="Specifies the type of the output object file."
       Switch="/coff" />
     <BoolProperty
       Name="ObjectFileTypeOMF"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Object Module Format"
       Description="Specifies the type of the output object file."
       Switch="/omf" />
     <BoolProperty
       Name="AddFirstPassListing"
       Category="Listing File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Add First Pass Listing"
       Description="Adds first-pass listing to listing file."
       Switch="/Sf" />
     <BoolProperty
       Name="EnableAssemblyGeneratedCodeListing"
       Category="Listing File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Enable Assembly Generated Code Listing"
       Description="Turns on listing of assembly-generated code."
       Switch="/Sg" />
     <BoolProperty
       Name="DisableSymbolTable"
       Category="Listing File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Disable Symbol Table"
       Description="Turns off symbol table when producing a listing."
       Switch="/Sn" />
     <BoolProperty
       Name="EnableFalseConditionalsInListing"
       Category="Listing File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Enable False Conditionals In Listing"
       Description="Turns on false conditionals in listing."
       Switch="/Sx" />
     <BoolProperty
       Name="TreatWarningsAsErrors"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Treat Warnings As Errors"
       Description="Returns an error code if warnings are generated."
       Switch="/WX" />
     <BoolProperty
       Name="MakeAllSymbolsPublic"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Make All Symbols Public"
       Description="Makes all symbols public."
       Switch="/Zf" />
     <BoolProperty
       Name="GenerateDebugInformation"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/Zi.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Generate Debug Information"
       Description="Generates Debug Information"
       Switch="/Zi8" />
     <BoolProperty
       Name="EnableMASM51Compatibility"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Enable MASM 5.1 Compatibility"
       Description="Enables M510 option for maximum compatibility with MASM 5.1."
       Switch="/Zm" />
     <BoolProperty
       Name="PerformSyntaxCheckOnly"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Perform Syntax Check Only"
       Description="Performs a syntax check only."
       Switch="/Zs" />
     <BoolProperty
       Name="IgnoreINCLUDELIB"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Ignore INCLUDELIB directive"
       Description="Ignores INCLUDELIB directives."
       Switch="/nolib" />
     <BoolProperty
       Name="UnicodeCharacterSet"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/directive/opt_wstring.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Unicode Character Set"
       Description="Use Unicode Characters and defines _UNICODE."
       Switch="/ws" />
     <StringProperty
       Name="ObjectFileName"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Object File Name"
       Description="Specifies the name of the output object file."
       Switch="/Fo &quot;[value]&quot;" />
     <StringListProperty
       Name="PreprocessorDefinitions"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Preprocessor Definitions"
       Description="Defines a text macro with the given name."
       Switch="/D&quot;[value]&quot;" />
     <StringProperty
       Name="ForseIncludeFile"
       Category="Included File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Included File"
       Description="Force file to be included."
       Switch="/Fi&quot;[value]&quot;" />
     <StringProperty
       Name="AssembledCodeListingFile"
       Category="Listing File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Assembled Code Listing File"
       Description="Generates an assembled code listing file."
       Switch="/Fl&quot;[value]&quot;" />
     <StringListProperty
       Name="IncludePaths"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Include Paths"
       Description="Sets path for include file. A maximum of 10 /I options is allowed."
       Switch="/I&quot;[value]&quot;" />
     <StringListProperty
       Name="AdditionalIncludeDirectories"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Additional Include Directories"
       Description="Sets path for include file. A maximum of 10 /I options is allowed."
       Switch="/I&quot;[value]&quot;" />
     <StringListProperty
       Name="BrowseFile"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Generate Browse Information File"
       Description="Specifies whether to generate browse information file and its optional name or location of the browse information file.     (/FR[name])"
       Switch="/FR&quot;[value]&quot;" />
     <EnumProperty
       Name="PreserveIdentifierCase"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Preserve Identifier Case"
       Description="Specifies preservation of case of user identifiers.">
       <EnumValue
@@ -231,7 +231,7 @@
     </EnumProperty>
     <EnumProperty
       Name="WarningLevel"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Warning Level"
       Description="Sets the warning level, where level = 0, 1, 2, or 3.">
       <EnumValue
@@ -254,7 +254,7 @@
     <EnumProperty
       Name="PackAlignmentBoundary"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Pack Alignment Boundary"
       Description="Packs structures on the specified byte boundary. The alignment can be 1, 2, 4, 8 or 16.">
       <EnumValue
@@ -284,7 +284,7 @@
     <EnumProperty
       Name="CallingConvention"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Calling Convention"
       Description="Selects calling convention for your application.">
       <EnumValue
@@ -314,7 +314,7 @@
     <EnumProperty
       Name="ErrorReporting"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Error Reporting (not implemented)"
       Description="Masm switch to report internal assembler errors to Microsoft. These options have no effect.">
       <EnumValue

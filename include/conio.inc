@@ -4,7 +4,6 @@ ifndef __INC_CONIO
 define __INC_CONIO
 
 define NOGDI
-;define NOAPISET
 include wincon.inc
 
 ifdef __UNIX__
@@ -193,20 +192,17 @@ _at macro B, F, C, reg:=<eax>
     TW_MOVEDOWN
     }
 
-.enum TTYPE {
-    T_WINDOW,			; Main window
-    T_PUSHBUTTON,		;  [ > Selectable text < ] + shade
-    T_RADIOBUTTON,		;  (*)
-    T_CHECKBOX,			;  [x]
-    T_XCELL,			;  [ Selectable text ]
-    T_EDIT,			;  [Text input]
-    T_MENUITEM,			;  XCELL + Stausline info
-    T_TEXTAREA,			;  [Selectable text]
-    T_TEXTBUTTON,		;  [>Selectable text<]
-    T_MOUSERECT,		;  Clickable area -- no focus
-    T_SCROLLUP,			;  Clickable area for list items
-    T_SCROLLDOWN,
-    }
+define _O_PBUTT		0
+define _O_RBUTT		1
+define _O_CHBOX		2
+define _O_XCELL		3
+define _O_TEDIT		4
+define _O_MENUS		5
+define _O_XHTML		6
+define _O_MOUSE		7
+define _O_LLMSU		8
+define _O_LLMSD		9
+define _O_TBUTT		10
 
 .enum TFLAGS {
     W_ISOPEN		= 0x0001,
@@ -220,33 +216,53 @@ _at macro B, F, C, reg:=<eax>
     W_TRANSPARENT	= 0x0100,
     W_CONSOLE		= 0x0200,
     W_LIST		= 0x0400,
-    W_STDLG		= 0x0800,
-    W_STERR		= 0x1000,	; error color (red)
-    W_MENUS		= 0x2000,	; menus color (gray), no title
-    W_UTF16		= 0x8000,
-    W_RESBITS		= 0xF9FC,
+    W_CHILD		= 0x0800,	; is a child
+    W_CURSOR		= 0x1000,	; Have saved cursor
+    W_WNDPROC		= 0x2000,
+    W_PARENT		= 0x4000,	; Window have children
+    W_UNICODE		= 0x8000,
+    W_RESBITS		= 0xEFEC,
 
-    O_MODIFIED		= 0x0001,	; dialog text
-    O_OVERWRITE		= 0x0002,	; selected text on paste
-    O_USEBEEP		= 0x0004,
-    O_MYBUF		= 0x0008,	; T_EDIT -- no alloc
+    O_PBUTT		= 0x0000,
+    O_RBUTT		= 0x0001,
+    O_CHBOX		= 0x0002,
+    O_XCELL		= 0x0003,
+    O_TEDIT		= 0x0004,
+    O_MENUS		= 0x0005,
+    O_TBUTT		= 0x0006,
+    O_USERTYPE		= 0x0007,
+    O_TYPEMASK		= 0x0007,
+
+    O_FLAGA		= 0x0008,	; User defined
     O_RADIO		= 0x0010,	; Active (*)
-    O_CHECK		= 0x0020,	; Active [x]
+    O_FLAGB		= 0x0020,	; User defined
     O_LIST		= 0x0040,	; Linked list item
-    O_SELECT		= 0x0080,	; Select text on activation
-    O_CONTROL		= 0x0100,	; Allow _CONTROL chars
-    O_DEXIT		= 0x0200,	; Close dialog and return 0: Cancel
-    O_PBKEY		= 0x0400,	; Return result if short key used
-    O_DLGED		= 0x0800,	; dialog text -- return Left/Right
-    O_GLOBAL		= 0x1000,	; Item contain global short-key table
-    O_EVENT		= 0x2000,	; Item have local event handler
-    O_CHILD		= 0x4000,	; Item have a child
-    O_STATE		= 0x8000,	; State (ON/OFF)
-    O_RESBITS		= 0xFFF0,
+    O_FLAGC		= 0x0080,	; User defined
+    O_NOFOCUS		= 0x0100,	;
+    O_DEXIT		= 0x0200,	; Close dialog and return
+    O_FLAGD		= 0x0400,	; User defined
+    O_CHILD		= 0x0800,	; is a child
+    O_FLAGE		= 0x1000,	; User defined
+    O_WNDPROC		= 0x2000,	; Item have local event handler
+    O_PARENT		= 0x4000,	; Item have a child
+    O_STATE		= 0x8000,	; Item state (ON/OFF)
+    O_RESBITS		= 0xFFFF,
 
-    W_WNDPROC	    = 0x00010000,
-    W_CHILD	    = 0x00020000,	; is a child
-    O_CURSOR	    = 0x00040000,
+    O_CHECK		= O_FLAGB,	; O_CHBOX: Active [x]
+    O_MYBUF		= O_FLAGB,	; O_TEDIT: static buffer (no alloc)
+    O_AUTOSELECT	= O_FLAGC,	; O_TEDIT: Auto select text on activation
+    O_USEBEEP		= O_FLAGD,	; O_TEDIT: Play sound on NoCanDo
+    O_CONTROL		= O_FLAGE,	; O_TEDIT: Allow _CONTROL chars
+    }
+
+.enum TEDITFLAGS {
+    TE_MODIFIED		= 0x0001,	; text is modified
+    TE_OVERWRITE	= 0x0002,	; selected text on paste
+    TE_DLGEDIT		= 0x0004,	; return Left/Right
+    TE_USEBEEP		= O_USEBEEP,
+    TE_MYBUF		= O_MYBUF,
+    TE_CONTROL		= O_CONTROL,
+    TE_AUTOSELECT	= O_AUTOSELECT,
     }
 
 
@@ -254,18 +270,6 @@ define _D_CLEAR		0x0001		; args to rcopen()
 define _D_BACKG		0x0002
 define _D_FOREG		0x0004
 define _D_COLOR		(_D_BACKG or _D_FOREG)
-
-define _O_PBUTT		0
-define _O_RBUTT		1
-define _O_CHBOX		2
-define _O_XCELL		3
-define _O_TEDIT		4
-define _O_MENUS		5
-define _O_XHTML		6
-define _O_MOUSE		7
-define _O_LLMSU		8
-define _O_LLMSD		9
-define _O_TBUTT		10
 
 .enum CURSOR_TYPE {
     CURSOR_DEFAULT,
@@ -297,27 +301,25 @@ CALLBACKC(DPROC)
    .ends
 
 .template RIDD
-   size		dw ?
-   flag		dw ?
-   count	db ?
-   index	db ?
-   rc		TRECT <>
-  .ends
-   PIDD		typedef ptr RIDD
-
-.template ROBJ
-    flag	dw ?		; 8 byte object size in Resource.idd
+    flags	dw ?
     count	db ?
     index	db ?
     rc		TRECT <>
    .ends
+    PIDD	typedef ptr RIDD
+
+.template ROBJ
+    flags	dw ?		; 8 byte object size in Resource.idd
+    count	db ?
+    syskey	db ?
+    rc		TRECT <>
+   .ends
     PROBJ	typedef ptr ROBJ
-    PTRES	typedef ptr ROBJ
 
 .template TOBJ
-    flag	dw ?
+    flags	dw ?
     count	db ?
-    ascii	db ?
+    syskey	db ?
     rc		TRECT <>
     data	PVOID ?
     tproc	DPROC ?
@@ -325,11 +327,11 @@ CALLBACKC(DPROC)
     PTOBJ	typedef ptr TOBJ
 
 .template DOBJ
-    flag	dw ?
+    flags	dw ?
     count	db ?
     index	db ?
     rc		TRECT <>
-    wp		PCHAR_INFO ?
+    window	PCHAR_INFO ?
     object	PTOBJ ?
    .ends
     PDOBJ	typedef ptr DOBJ
@@ -353,21 +355,6 @@ CALLBACKC(DPROC)
     PLOBJ	typedef ptr TLIST
     PTLIST	typedef ptr TLIST
 
-.template TDLG
-    flags	dd ?
-    type	db ?
-    syskey	db ?
-    count	db ?		; item: extra buffer size in para
-    index	db ?
-    rc		TRECT <>
-   .ends
-    PTDLG	typedef ptr TDLG
-    THWND	typedef ptr TCLASS
-
-.pragma pack(pop)
-
-.pragma pack(push, size_t)
-
 .template TEDIT
     base	LPTSTR ?	; base pointer
     flags	uint_t ?	; config
@@ -384,19 +371,43 @@ CALLBACKC(DPROC)
    .ends
     PTEDIT	typedef ptr TEDIT
 
-.template TCONTEXT
+THWND typedef ptr TDIALOG
+
+CALLBACKC(TPROC, :THWND, :UINT, :WPARAM, :LPARAM)
+
+.template TDIALOG
+
+    flags	dw ?
+    count	db ?		; item: extra buffer size in para
     union
-     struct
-      state	db ?
-      flags	db ?
-      x		db ?
-      y		db ?
-      rc	TRECT <>
-     ends
-     tedit	PTEDIT ?
+     index	db ?		; dialog: current item id
+     syskey	db ?		; item
     ends
-    llist	PTLIST ?
+    rc		TRECT <>
+    window	PCHAR_INFO ?
+    object	THWND ?
+    winproc	TPROC ?
+    buffer	LPTSTR ?
+    state	db ?		; focus state
+    attrib	db ?		; normal color
+    x		db ?
+    y		db ?
+    rx		db ?		; relative x/y on move
+    ry		db ?
+    retval	db ?		; return value for O_DEXIT
+    oindex	db ?		; item id
+    union
+     tedit	PTEDIT ?
+     llist	PTLIST ?
+    ends
+    cursor	CURSOR <>
+    prev	THWND ?
+    next	THWND ?
    .ends
+
+.pragma pack(pop)
+
+.pragma pack(push, size_t)
 
 define MAXMSGCNT 32
 
@@ -411,23 +422,10 @@ define MAXMSGCNT 32
     PMESSAGE	typedef ptr MESSAGE
 
 
-CALLBACKC(TPROC, :THWND, :UINT, :WPARAM, :LPARAM)
-
-.template TCLASS : public TDLG
-    cursor	CURSOR <>
-    window	PCHAR_INFO ?
-    next	THWND ?
-    prev	THWND ?
-    object	THWND ?
-    winproc	TPROC ?
-    context	TCONTEXT <>
-    buffer	ptr_t ?
-   .ends
-
-.template TCONSOLE : public TCLASS
-    color	LPCOLORREF ?
+.template TCONSOLE : public TDIALOG
     msgptr	PMESSAGE ?
     focus	int_t ?
+    color	LPCOLORREF ?
     winpos	COORD <> ; old metrics
     consize	COORD <>
     conmax	COORD <>
@@ -803,8 +801,8 @@ define _dlmodal		<_dlmodalA>
 define _dltitle		<_dltitleA>
 endif
 
-_tcontrolA	proto __cdecl :THWND, :uint_t, :ushort_t, :string_t
-_tcontrolW	proto __cdecl :THWND, :uint_t, :ushort_t, :wstring_t
+_tcontrolA	proto __cdecl :THWND, :uint_t, :string_t
+_tcontrolW	proto __cdecl :THWND, :uint_t, :wstring_t
 _tiputsA	proto __cdecl :PTEDIT
 _tiputsW	proto __cdecl :PTEDIT
 _tiprocA	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
@@ -829,6 +827,8 @@ _consunlink	proto __cdecl :THWND
 _conpaint	proto __cdecl
 _cbeginpaint	proto __cdecl
 _cendpaint	proto __cdecl
+_conpush	proto __cdecl
+_conpop		proto __cdecl :PCHAR_INFO
 
 _sendmessage	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
 _postmessage	proto __cdecl :THWND, :uint_t, :WPARAM, :LPARAM
@@ -845,8 +845,8 @@ else
 define _getmessage	<_getmessageA>
 endif
 
-_rsopenA	proto __cdecl :PTRES
-_rsopenW	proto __cdecl :PTRES
+_rsopenA	proto __cdecl :PIDD
+_rsopenW	proto __cdecl :PIDD
 _rssave		proto __cdecl :THWND, :string_t
 
 ifdef _UNICODE

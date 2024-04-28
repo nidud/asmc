@@ -16,10 +16,13 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
    .new     dsize:int_t
    .new     tsize:int_t
 
-    mov     rsize,_rcmemsize(rc, flags)
+    ldr     eax,flags
+    ldr     ecx,rc
+    or      eax,W_UNICODE
+    mov     rsize,_rcmemsize(ecx, eax)
     mov     eax,count
     inc     eax
-    imul    eax,eax,TCLASS
+    imul    eax,eax,TDIALOG
     mov     dsize,eax
     add     eax,size
     add     eax,rsize
@@ -47,15 +50,15 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
     mov     eax,dsize
     add     rax,rbx
     mov     [rbx].window,rax
-    lea     rax,[rbx+TCLASS]
+    lea     rax,[rbx+TDIALOG]
     cmp     ecx,count
     cmovz   rax,rcx
     mov     [rbx].object,rax
-    mov     eax,O_CHILD
+    mov     eax,W_PARENT
     cmovz   eax,ecx
     or      eax,flags
-    mov     [rbx].flags,eax
-    or      [rbx].flags,W_ISOPEN or O_CURSOR
+    or      eax,W_ISOPEN or W_CURSOR
+    mov     [rbx].flags,ax
     mov     [rbx].rc,rc
     mov     [rbx].count,count
 
@@ -67,16 +70,16 @@ _dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
         _at BG_MENU,FG_MENU,' '
         _rcclear(rc, [rbx].window, eax)
     .endif
-    .for ( rdx=rbx, rbx=[rbx].object, ecx=0 : ecx < count : ecx++, rbx+=TCLASS )
+    .for ( rdx = rbx, rbx = [rbx].object, ecx = 0 : ecx < count : ecx++, rbx+=TDIALOG )
 
         lea eax,[rcx+1]
         mov [rbx].flags,W_CHILD
         mov [rbx].prev,rdx
-        mov [rbx].index,al
+        mov [rbx].oindex,al
 
         .if ( eax < count )
 
-            lea rax,[rbx+TCLASS]
+            lea rax,[rbx+TDIALOG]
             mov [rbx].next,rax
         .endif
     .endf

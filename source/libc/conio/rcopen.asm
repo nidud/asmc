@@ -14,7 +14,7 @@ rcopen proc rc:TRECT, flag:uint_t, color:uint_t, attrib:uint_t, title:string_t, 
     ldr eax,flag
     .if !( eax & W_MYBUF )
 
-        or eax,W_UTF16
+        or eax,W_UNICODE
         .if !_rcalloc(rc, eax)
             .return
         .endif

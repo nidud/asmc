@@ -16,7 +16,7 @@ _dlclose proc uses rbx hwnd:THWND
     ldr rbx,hwnd
 
     _dlhide(rbx)
-    .if ( [rbx].flags & O_CURSOR )
+    .if ( [rbx].flags & W_CURSOR )
         _setcursor(&[rbx].cursor)
     .endif
     _consunlink(rbx)

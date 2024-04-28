@@ -22,8 +22,8 @@ _translatemsg proc msg:PMESSAGE
         .if ( rax == NULL )
 
             mov rdx,_console
-            .while ( rdx && rax != [rdx].TCLASS.next )
-                mov rdx,[rdx].TCLASS.next
+            .while ( rdx && rax != [rdx].TDIALOG.next )
+                mov rdx,[rdx].TDIALOG.next
             .endw
             mov [rcx].hwnd,rdx
         .endif

@@ -13,8 +13,8 @@ include conio.inc
 _dlshow proc uses rbx hwnd:THWND
 
     ldr rbx,hwnd
-    mov edx,[rbx].flags
 
+    movzx edx,[rbx].flags
     .if ( !( edx & W_ISOPEN ) )
 
         .return(0)

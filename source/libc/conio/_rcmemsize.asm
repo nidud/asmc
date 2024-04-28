@@ -25,7 +25,7 @@ _rcmemsize proc rc:TRECT, flags:uint_t
         add eax,ecx
         add eax,ecx
     .endif
-    .if (  flags & W_UTF16 )
+    .if (  flags & W_UNICODE )
 
         add eax,eax
     .endif

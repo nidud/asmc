@@ -18,9 +18,10 @@ _tmain proc argc:int_t, argv:array_t
    .new esc:int_t = 2
    .new rc:TRECT = { 10, 6, 40, 14 }
    .new fc:TRECT = {  0, 0, 40, 14 }
-   .new p:PCHAR_INFO = _rcalloc(rc, W_UTF16)
+   .new p:PCHAR_INFO = _rcalloc(rc, 0)
+   .new s:PCHAR_INFO = _conpush()
 
-    mov rdi,rax
+    mov rdi,p
     mov eax,(AT shl 16) or ' '
     mov ecx,40*14
     rep stosd
@@ -57,7 +58,8 @@ _tmain proc argc:int_t, argv:array_t
             .endif
         .endif
     .endw
-    _rcxchg(rc, p)
+    ;_rcxchg(rc, p)
+    _conpop(s)
     .return( 0 )
 
 _tmain endp

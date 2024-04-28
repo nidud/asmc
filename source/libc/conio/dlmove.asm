@@ -11,7 +11,7 @@ include conio.inc
 dlmove proc uses rbx dobj:PDOBJ
 
     ldr rbx,dobj
-    mov cx,[rbx].DOBJ.flag
+    mov cx,[rbx].DOBJ.flags
     and ecx,W_MOVEABLE or W_ISOPEN or W_VISIBLE
     xor eax,eax
 
@@ -19,8 +19,8 @@ dlmove proc uses rbx dobj:PDOBJ
 
         .ifd mousep()
 
-            movzx ecx,[rbx].DOBJ.flag
-            rcmsmove(&[rbx].DOBJ.rc, [rbx].DOBJ.wp, ecx)
+            movzx ecx,[rbx].DOBJ.flags
+            rcmsmove(&[rbx].DOBJ.rc, [rbx].DOBJ.window, ecx)
             mov eax,1
         .endif
     .endif

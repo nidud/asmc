@@ -10,9 +10,6 @@ include conio.inc
 include tchar.inc
 include ltype.inc
 
-define _TE_OVERWRITE    2
-define _TE_USECONTROL   O_CONTROL
-
 define _TE_CONTINUE     1 ; continue edit
 define _TE_RETEVENT     2 ; return current event (keystroke)
 
@@ -61,7 +58,7 @@ IncreaseX endp
 
 tinocando proc fastcall ti:PTEDIT
 
-    .if ( [rcx].flags & O_USEBEEP )
+    .if ( [rcx].flags & TE_USEBEEP )
 ifdef __UNIX__
         _cout("\x7")
 else
@@ -251,7 +248,7 @@ event_delete proc fastcall uses rbx ti:PTEDIT
                 dec [rbx].bcount
                 mov rcx,rax
                 _tcscpy(rcx, &[rax+TCHAR])
-                or  [rbx].flags,O_MODIFIED
+                or  [rbx].flags,TE_MODIFIED
                .return( 1 )
             .endif
         .endif
@@ -310,7 +307,7 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
     mov eax,esi
 
     .if ( !ah && byte ptr [rcx+rax] & _CONTROL )
-        .if ( !( [rbx].flags & O_CONTROL ) )
+        .if ( !( [rbx].flags & TE_CONTROL ) )
             .return( _TE_RETEVENT )
         .endif
     .endif
@@ -325,7 +322,7 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
             inc [rbx].bcount
             .if getline(rbx)
 
-                or      [rbx].flags,O_MODIFIED
+                or      [rbx].flags,TE_MODIFIED
                 mov     eax,[rbx].boffs
                 add     eax,[rbx].xoffs
                 mov     rcx,[rbx].base
@@ -490,7 +487,7 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
             .until ( edi == esi )
         .endif
 
-        or  [rcx].flags,O_MODIFIED
+        or  [rcx].flags,TE_MODIFIED
         mov rdi,[rcx].base
         mov eax,[rcx].clip_so
         mov edx,[rcx].clip_eo
@@ -538,7 +535,7 @@ ClipPaste proc fastcall uses rbx ti:PTEDIT
    .new p:string_t
 
     mov rbx,rcx
-    .if [rcx].flags & O_OVERWRITE
+    .if [rcx].flags & TE_OVERWRITE
         ClipDelete(rcx)
     .else
         ClipSet(rcx)
@@ -751,7 +748,7 @@ ti_event proc uses rsi rdi rbx ti:PTEDIT, event:uint_t
         mov eax,_TE_RETEVENT ; return current event (keystroke)
        .endc
     .case KEY_TAB
-        .if !( ecx & _TE_USECONTROL )
+        .if !( ecx & TE_CONTROL )
 
             mov eax,_TE_RETEVENT ; return current event (keystroke)
            .endc
@@ -927,8 +924,8 @@ dledit proc uses rdi rbx b:LPSTR, rc:TRECT, bz:int_t, oflag:uint_t
     mov rax,b
     mov t.base,rax
     mov eax,oflag
-    and eax,O_CONTROL or O_DLGED
-    or  eax,_TE_OVERWRITE
+    ;and eax,TE_CONTROL ;or O_DLGED
+    or  eax,TE_OVERWRITE
     mov t.flags,eax
     setcursor(rbx)
     .ifd !_scgeta(byte ptr t.xpos, byte ptr t.ypos)
@@ -937,7 +934,7 @@ dledit proc uses rdi rbx b:LPSTR, rc:TRECT, bz:int_t, oflag:uint_t
     shl eax,16
     mov ax,U_MIDDLE_DOT
     mov t.clrattrib,eax  ; save text color
-    .if oflag & O_SELECT
+    .if oflag & TE_AUTOSELECT
         event_toend(rbx)
         mov eax,t.xoffs
         add eax,t.boffs

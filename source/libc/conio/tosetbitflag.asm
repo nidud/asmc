@@ -22,13 +22,13 @@ tosetbitflag proc uses rsi rbx tobj:PTOBJ, count:int_t, flag:uint_t, bitflag:uin
         ;
         ; Remove the flag from Object
         ;
-        and [rbx].TOBJ.flag,ax
+        and [rbx].TOBJ.flags,ax
         ;
         ; Max 32 object flags
         ;
         shr edx,1
         .ifc
-            or [rbx].TOBJ.flag,cx
+            or [rbx].TOBJ.flags,cx
         .endif
         add rbx,TOBJ
         dec esi

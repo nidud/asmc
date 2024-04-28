@@ -13,9 +13,9 @@ include conio.inc
 dlshow proc uses rbx dobj:PDOBJ
 
     ldr rbx,dobj
-    .if rcshow([rbx].rc, [rbx].flag, [rbx].wp)
+    .if rcshow([rbx].rc, [rbx].flags, [rbx].window)
 
-        or [rbx].flag,W_VISIBLE
+        or [rbx].flags,W_VISIBLE
     .endif
     ret
 

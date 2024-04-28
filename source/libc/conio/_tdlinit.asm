@@ -15,15 +15,18 @@ include tchar.inc
 
 _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
 
-    ldr rbx,hwnd
-    mov rdi,[rbx].window
-    mov rsi,[rbx].prev
-    xor edx,edx
+   .new type:int_t
 
-    .switch pascal [rbx].type
+    ldr     rbx,hwnd
+    mov     rdi,[rbx].window
+    mov     rsi,[rbx].prev
+    xor     edx,edx
+    movzx   eax,[rbx].flags
+    and     eax,O_TYPEMASK
+    mov     type,eax
 
-    .case T_PUSHBUTTON
-
+    .switch pascal eax
+    .case O_PBUTT
         _at     BG_PBUTTON,FG_TITLE,' '
         movzx   ecx,[rbx].rc.col
         mov     rdx,rdi
@@ -46,8 +49,7 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
         or      cl,at_foreground[FG_TITLEKEY]
         mov     rdx,name
 
-    .case T_RADIOBUTTON
-
+    .case O_RBUTT
         mov     eax,[rdi]
         mov     ax,'('
         mov     [rdi],ax
@@ -60,8 +62,7 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
         or      cl,at_foreground[FG_MENUKEY]
         mov     rdx,name
 
-    .case T_CHECKBOX
-
+    .case O_CHBOX
         mov     eax,[rdi]
         mov     ax,'['
         mov     [rdi],ax
@@ -74,9 +75,9 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
         or      cl,at_foreground[FG_MENUKEY]
         mov     rdx,name
 
-    .case T_XCELL
-    .case T_TEXTBUTTON
-    .case T_MENUITEM
+    .case O_XCELL
+    .case O_TBUTT
+    .case O_MENUS
         add     rdi,4
         _at     BG_MENU,FG_MENU,' '
         mov     ecx,eax
@@ -85,14 +86,13 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
         or      cl,at_foreground[FG_MENUKEY]
         mov     rdx,name
 
-    .case T_EDIT
+    .case O_TEDIT
         mov     eax,[rdi]
         mov     ax,U_MIDDLE_DOT
         movzx   ecx,[rbx].rc.col
         rep     stosd
 
-    .case T_TEXTAREA
-    .case T_MOUSERECT
+    .case O_USERTYPE
         mov     eax,[rdi]
         mov     ax,' '
         mov     ecx,eax
@@ -109,7 +109,7 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
             _tlodsb
             .break .if !_tal
 
-            .if ( _tal == '&' && [rbx].type != T_EDIT )
+            .if ( _tal == '&' && type != O_TEDIT )
 
                 _tlodsb
                 .break .if !_tal

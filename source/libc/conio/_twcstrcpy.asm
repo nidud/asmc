@@ -8,6 +8,12 @@ include conio.inc
 include string.inc
 include tchar.inc
 
+ifdef _UNICODE
+define MAXCH 0x00FF
+else
+define MAXCH 0x00B0
+endif
+
     .code
 
 wcstrcpy proc uses rsi rdi rbx cp:LPTSTR, wc:PCHAR_INFO, count:int_t
@@ -25,13 +31,14 @@ wcstrcpy proc uses rsi rdi rbx cp:LPTSTR, wc:PCHAR_INFO, count:int_t
          dec ecx
          lodsd
         .continue( 0 ) .if ax <= ' '
-        .continue( 0 ) .if ax > 176
+        .continue( 0 ) .if ax > MAXCH
          sub rsi,4
-        .break .if !ecx
+         inc ecx
+
         .repeat
 
             lodsd
-            .break( 1 ) .if ax > 176
+            .break( 1 ) .if ax > MAXCH
 
             mov dl,[rsi-4+2]
             and dl,0x0F

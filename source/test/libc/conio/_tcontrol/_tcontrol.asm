@@ -14,6 +14,7 @@
 ;
 define _CONIO_RETRO_COLORS
 include conio.inc
+include string.inc
 include tchar.inc
 
 define AT ((BLUE shl 4) or WHITE)
@@ -28,7 +29,7 @@ paint proc uses rbx
 
     _cbeginpaint()
     mov rcx,_console
-    mov rc,[rcx].TCLASS.rc
+    mov rc,[rcx].TCONSOLE.rc
 
     _scputa(0, 0, rc.col, 0x47)
     mov cl,rc.col
@@ -36,15 +37,12 @@ paint proc uses rbx
     sub cl,12
     _scputs(cl, 0, "Virtual Terminal Sample")
 
-    _scputs(2, 2, "A text control is added externally (Unicode/ASCII) and buffering")
-    _scputs(2, 3, "added to the main window (128*TCHAR+TEDIT)")
-
+    _scputs(2, 2, "A text control is added to _console")
     _scputs(2, 5, "Flags:")
-
-    _scputs(2, 7, "O_DEXIT   - dialog exits on Enter")
-    _scputs(2, 8, "O_USEBEEP - if no-can-do: try to delete a char at the end")
-    _scputs(2, 9, "O_SELECT  - text is auto selected on entry")
-
+    _scputs(2, 7, "O_DEXIT       - Exit on VK_RETURN")
+    _scputs(2, 8, "O_USEBEEP     - If NoCanDo: delete a char at the end")
+    _scputs(2, 9, "O_AUTOSELECT  - Auto select text on activation")
+    _scputs(2,10, "O_MYBUF       - Local buffer")
 
     mov al,rc.row
     sub al,10
@@ -85,66 +83,69 @@ paint proc uses rbx
     .endf
     dec rc.row
     _scputs(1, rc.row, "./_tcontrol$")
-    _cendpaint()
     _gotoxy(14, rc.row)
+
+    sub fc.y,10
+    mov cl,fc.y
+    dec cl
+    _scputs(fc.x, cl, " Text Control ")
+
+    _scframe(fc, BOX_SINGLE_ARC, 0x06)
+    _cendpaint()
+    mov eax,fc
     ret
 
 paint endp
 
-    assume rbx:THWND
+WndProc proc private hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-WndProc proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
+    ldr eax,uiMsg
+    .if ( eax == WM_CREATE || eax == WM_CLOSE )
 
-    mov rbx,hwnd
-    .switch uiMsg
-    .case WM_CREATE
-        _dlshow(rbx)
-        _tcontrol([rbx].object, 128, ' ', "string to edit...")
         .return( 0 )
-    .case WM_CLOSE
-        _dlclose(rbx)
-        .return( 0 )
-    .default
-        mov rbx,[rbx].object
-        .if ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
-            .return
-        .endif
-    .endsw
-    .return(_defwinproc(hwnd, uiMsg, wParam, lParam))
+    .endif
+ifdef _WIN64
+    _defwinproc()
+else
+    _defwinproc(hwnd, uiMsg, wParam, lParam)
+endif
+    ret
 
 WndProc endp
 
+    assume rbx:THWND
+
 _tmain proc
 
-   .new rc:TRECT = { 10, 8, 50, 8 }
-   .new f1:TRECT = { 16, 0, 18, 3 }
-   .new f2:TRECT = { 14, 4, 22, 3 }
-   .new ec:TRECT = { 15, 5, 20, 1 }
+   .new o:TDIALOG = {0}
+   .new t:TEDIT = {0}
+   .new b[128]:tchar_t
+   .new p:ptr = _conpush()
 
     paint()
-
-    mov rbx,_dlopen(rc, 1, W_UTF16 or W_MOVEABLE or W_TRANSPARENT or W_SHADE, 128*TCHAR+TEDIT)
-    _rcframe(rc, f1, [rbx].window, BOX_SINGLE_ARC, 0x0F)
-    _rcframe(rc, f2, [rbx].window, BOX_SINGLE_ARC, 0x06)
-    _rcputs(rc, [rbx].window, 17, 1, 0x0F, "  Text Control  ")
-
-    assume rcx:THWND
-
-    mov     rcx,[rbx].object
-    mov     [rcx].rc,ec
-    mov     [rcx].type,T_EDIT
-    or      [rcx].flags,W_WNDPROC or O_DEXIT or O_USEBEEP or O_SELECT
-    movzx   eax,[rbx].rc.col
-    mul     [rcx].rc.y
-    movzx   edx,[rcx].rc.x
-    add     eax,edx
-    shl     eax,2
-    add     rax,[rbx].window
-    mov     [rcx].window,rax
-    mov     [rcx].index,0
-
-    _dlinit(rcx, 0)
+    mov rbx,_console
+    mov o.rc,eax
+    add o.rc.x,2
+    inc o.rc.y
+    sub o.rc.col,4
+    mov o.rc.row,1
+    mov o.window,_rcbprc([rbx].rc, o.rc, [rbx].window)
+    mov word ptr [rax],U_MIDDLE_DOT
+    mov o.count,lengthof(b)/16
+    mov o.flags,O_WNDPROC or O_DEXIT or O_TEDIT or O_USEBEEP or O_AUTOSELECT or O_CHILD or O_MYBUF
+    mov o.tedit,&t
+    mov t.base,&b
+    mov o.buffer,rax
+    mov t.bcols,lengthof(b)
+    mov o.next,NULL
+    mov o.prev,rbx
+    mov [rbx].count,1
+    mov [rbx].object,&o
+    or  [rbx].flags,W_VISIBLE or W_PARENT
+    _tcscpy(&b, "string to edit")
+    _tcontrol(&o, 128, &b)
     _dlmodal(rbx, &WndProc)
+    _conpop(p)
     xor eax,eax
     ret
 

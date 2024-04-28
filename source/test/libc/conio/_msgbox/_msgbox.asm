@@ -16,7 +16,7 @@ paint proc uses rbx
    .new fc:TRECT = { 2, 10, 51, 3 }
 
     mov rcx,_console
-    mov rc,[rcx].TCLASS.rc
+    mov rc,[rcx].TCONSOLE.rc
 
     _cbeginpaint()
     _scputa(0, 0, rc.col, 0x47)
@@ -69,6 +69,7 @@ paint endp
 
 _tmain proc argc:int_t, argv:array_t
 
+   .new p:ptr = _conpush()
     paint()
 
     _msgbox(MB_CANCELTRYCONTINUE or MB_DEFBUTTON3,
@@ -83,7 +84,7 @@ _tmain proc argc:int_t, argv:array_t
             IDCANCEL, IDTRYAGAIN, IDCONTINUE )
 
     _msgbox(MB_OK or MB_USERICON, "_msgbox()", "return value: %d", eax )
-
+    _conpop(p)
     .return(0)
 
 _tmain endp

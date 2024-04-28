@@ -21,7 +21,7 @@ _rcmoveu proc uses rbx rc:TRECT, p:PCHAR_INFO
    .new cz:TRECT
 
     mov rbx,_console
-    mov cz,[rbx].TCLASS.rc
+    mov cz,[rbx].TDIALOG.rc
 
     movzx eax,rc.y
     .if ( eax > 1 )
@@ -89,7 +89,7 @@ _rcmoved proc uses rbx rc:TRECT, p:PCHAR_INFO
    .new cz:TRECT
 
     mov rbx,_console
-    mov cz,[rbx].TCLASS.rc
+    mov cz,[rbx].TDIALOG.rc
     movzx ecx,cz.row
     movzx eax,rc.y
     movzx edx,rc.row
@@ -229,7 +229,7 @@ _rcmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
    .new cz:TRECT
 
     mov     rbx,_console
-    mov     cz,[rbx].TCLASS.rc
+    mov     cz,[rbx].TDIALOG.rc
     movzx   edi,cz.col
     movzx   ecx,rc.x
     movzx   edx,rc.col

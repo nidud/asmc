@@ -17,7 +17,7 @@ _sendmessage proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
         .return( [rbx].winproc(rbx, uiMsg, wParam, lParam) )
     .endif
-    .if ( [rbx].flags & O_CHILD )
+    .if ( [rbx].flags & W_PARENT )
 
         .if _dlgetfocus(rbx)
 

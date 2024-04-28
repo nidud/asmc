@@ -75,7 +75,7 @@ ifndef __TTY__
 
 else
 
-    _cout(CSI "?1049h" )  ; push screen
+;   _cout(CSI "?1049h" )  ; _conpush()
     _cout(ESC "7")        ; push cursor
     _cout(CSI "256;256H")
     _cursorxy()
@@ -95,7 +95,7 @@ endif
         .return 0
     .endif
 
-    mov w,_rcmemsize(rc, W_UTF16)
+    mov w,_rcmemsize(rc, W_UNICODE)
     lea ecx,[rax*2+TCONSOLE+MESSAGE*MAXMSGCNT]
     .if ( malloc(ecx) == NULL )
 
@@ -192,7 +192,7 @@ __termconsole proc uses rbx
         mov _console,[rbx].prev
         free(rbx)
 ifdef __TTY__
-        _cout(CSI "?1049l" ) ; pop screen
+;       _cout(CSI "?1049l" ) ; _conpop()
 endif
     .endif
     ret

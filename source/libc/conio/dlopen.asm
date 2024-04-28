@@ -16,11 +16,11 @@ dlopen proc uses rbx dobj:PDOBJ, at:uint_t, ttl:LPSTR
     ldr edx,at
 
     and edx,0xFF
-    mov [rbx].wp,rcopen([rbx].rc, [rbx].flag, 0, edx, ttl, [rbx].wp)
+    mov [rbx].window,rcopen([rbx].rc, [rbx].flags, 0, edx, ttl, [rbx].window)
 
     .if rax
 
-        or  [rbx].flag,W_ISOPEN
+        or  [rbx].flags,W_ISOPEN
         mov eax,1
     .endif
     ret

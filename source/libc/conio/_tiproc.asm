@@ -57,7 +57,7 @@ IncreaseX endp
 
 tinocando proc fastcall ti:PTEDIT
 
-    .if ( [rcx].flags & O_USEBEEP )
+    .if ( [rcx].flags & TE_USEBEEP )
 ifdef __UNIX__
         _cout("\x7")
 else
@@ -247,7 +247,7 @@ event_delete proc fastcall uses rbx ti:PTEDIT
                 dec [rbx].bcount
                 mov rcx,rax
                 _tcscpy(rcx, &[rax+TCHAR])
-                or  [rbx].flags,O_MODIFIED
+                or  [rbx].flags,TE_MODIFIED
                .return( 1 )
             .endif
         .endif
@@ -298,7 +298,7 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
     mov eax,esi
 
     .if ( !ah && byte ptr [rcx+rax] & _CONTROL )
-        .if ( !( [rbx].flags & O_CONTROL ) )
+        .if ( !( [rbx].flags & TE_CONTROL ) )
             .return( 0 )
         .endif
     .endif
@@ -313,7 +313,7 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
             inc [rbx].bcount
             .if getline(rbx)
 
-                or      [rbx].flags,O_MODIFIED
+                or      [rbx].flags,TE_MODIFIED
                 mov     eax,[rbx].boffs
                 add     eax,[rbx].xoffs
                 mov     rcx,[rbx].base
@@ -478,7 +478,7 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
             .until ( edi == esi )
         .endif
 
-        or  [rcx].flags,O_MODIFIED
+        or  [rcx].flags,TE_MODIFIED
         mov rdi,[rcx].base
         mov eax,[rcx].clip_so
         mov edx,[rcx].clip_eo
@@ -526,7 +526,7 @@ ClipPaste proc fastcall uses rbx ti:PTEDIT
    .new p:string_t
 
     mov rbx,rcx
-    .if [rcx].flags & O_OVERWRITE
+    .if [rcx].flags & TE_OVERWRITE
         ClipDelete(rcx)
     .else
         ClipSet(rcx)
@@ -647,7 +647,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
    .new add_char:char_t = false
 
     ldr rax,hwnd
-    mov rbx,[rax].TCLASS.context.tedit
+    mov rbx,[rax].TDIALOG.tedit
 
     .ifd !ClipIsSelected(rbx)
 
@@ -771,7 +771,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
             event_back(rbx)
            .endc
         .case VK_TAB
-            .gotosw(VK_RETURN) .if !( [rbx].flags & O_CONTROL )
+            .gotosw(VK_RETURN) .if !( [rbx].flags & TE_CONTROL )
         .default
             .if ( edx == VK_CONTROL )
 
@@ -818,7 +818,7 @@ _tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARA
     ldr rax,lParam
     ldr rcx,hwnd
     ldr rdx,wParam
-    mov rbx,[rcx].context.tedit
+    mov rbx,[rcx].tedit
 
     .switch uiMsg
     .case WM_SETFOCUS
@@ -829,15 +829,15 @@ _tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARA
         mov [rbx].clip_eo,eax
         mov rdx,[rcx].prev
         mov al,[rcx].rc.y
-        add al,[rdx].TCLASS.rc.y
+        add al,[rdx].TDIALOG.rc.y
         mov [rbx].ypos,eax
         movzx ecx,[rcx].rc.x
-        add cl,[rdx].TCLASS.rc.x
+        add cl,[rdx].TDIALOG.rc.x
         mov [rbx].xpos,ecx
         add ecx,[rbx].xoffs
         _gotoxy(ecx, eax)
         _cursoron()
-        .if ( [rbx].flags & O_SELECT )
+        .if ( [rbx].flags & TE_AUTOSELECT )
             mov [rbx].clip_eo,_tcslen([rbx].base)
         .endif
         .return( _tiputs(rbx) )
@@ -849,10 +849,10 @@ _tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARA
         mov [rbx].clip_eo,eax
         mov rdx,[rcx].prev
         mov al,[rcx].rc.y
-        add al,[rdx].TCLASS.rc.y
+        add al,[rdx].TDIALOG.rc.y
         mov [rbx].ypos,eax
         mov al,[rcx].rc.x
-        add al,[rdx].TCLASS.rc.x
+        add al,[rdx].TDIALOG.rc.x
         mov [rbx].xpos,eax
        .return( _tiputs(rbx) )
     .case WM_LBUTTONDOWN
@@ -866,8 +866,8 @@ _tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARA
             ; inserting char needs focus..
 
             mov rdx,[rcx].prev
-            mov dl,[rdx].TCLASS.index
-           .endc .if dl != [rcx].index
+            mov dl,[rdx].TDIALOG.index
+           .endc .if dl != [rcx].oindex
 
            .return wm_char(rcx, ebx, eax)
         .endif
@@ -876,9 +876,12 @@ _tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARA
     .case WM_KEYDOWN
         .endc .if !( eax & ENHANCED_KEY )
         .switch edx
+        .case VK_DIVIDE
+            mov edx,'/'
+            and eax,not ENHANCED_KEY
+;        .case VK_RETURN
         .case VK_UP
         .case VK_DOWN
-;       .case VK_RETURN
         .case VK_INSERT
         .case VK_DELETE
         .case VK_HOME

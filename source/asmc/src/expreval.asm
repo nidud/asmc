@@ -566,8 +566,8 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 .switch [rdi].inst
                 .case T_LOW
                 .case T_HIGH
-                .case T_LOW16
-                .case T_HIGH16
+                .case T_LOWBYTE
+                .case T_HIGHBYTE
                     mov [rsi].value,1
                    .endc
                 .case T_LOWWORD

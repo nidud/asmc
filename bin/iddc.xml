@@ -38,40 +38,40 @@
     </StringProperty>
     <BoolProperty
       Name="NoLogo"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Suppress Startup Banner"
       Description="Suppress the display of the startup banner and information messages."
       Switch="/nologo" />
     <BoolProperty
       Name="ObjectFileTypeCOFF"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Common Object File Format"
       Description="Specifies the type of the output object file."
       Switch="/coff" />
     <BoolProperty
       Name="ObjectFileTypeOMF"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Object Module Format"
       Description="Specifies the type of the output object file."
       Switch="/omf" />
     <BoolProperty
       Name="TreatWarningsAsErrors"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Treat Warnings As Errors"
       Description="Returns an error code if warnings are generated."
       Switch="/WX" />
     <StringProperty
       Name="ObjectFileName"
       Category="Object File"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Object File Name"
       Description="Specifies the name of the output object file."
       Switch="/Fo &quot;[value]&quot;" />
     <EnumProperty
       Name="PreserveIdentifierCase"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Preserve Identifier Case"
       Description="Specifies preservation of case of user identifiers.">
       <EnumValue
@@ -92,7 +92,7 @@
     </EnumProperty>
     <EnumProperty
       Name="WarningLevel"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Warning Level"
       Description="Sets the warning level, where level = 0, 1, 2, or 3.">
       <EnumValue
@@ -115,7 +115,7 @@
     <EnumProperty
       Name="CallingConvention"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Calling Convention"
       Description="Selects calling convention for your application.">
       <EnumValue
@@ -145,7 +145,7 @@
     <EnumProperty
       Name="MemoryModel"
       Category="Advanced"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Memory Model"
       Description="Specifies the memory model of the output object file.">
       <EnumValue

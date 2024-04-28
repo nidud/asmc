@@ -16,16 +16,3 @@ Linux:
     cd asmc/source/asmc
     make
     make install
-
-
-Asmc Macro Assembler Reference
-
-## Reference
-
-- [Asmc Command-Line Reference](doc/command.md)
-- [Asmc Error Messages](doc/error.md)
-- [Directives Reference](doc/directive.md)
-- [Symbols Reference](doc/symbol.md)
-- [Operators Reference](doc/operator.md)
-
-

@@ -112,7 +112,7 @@ Asmc Macro Assembler Reference
 - [TYPE (get expression type)](#operator-type)
 - [TYPEID (get expression id)](#operator-typeid)
 - [TYPEOF (get expression type)](#operator-typeof)
-- [.TYPE (get argument type info)](#operator-dot-type)
+- [.TYPE (get argument type info)](#operator-.type)
 
 ### See Also
 

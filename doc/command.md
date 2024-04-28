@@ -96,7 +96,7 @@ The options listed in the following table.
 | **-zlp** | Suppress items in COFF: No static procs. |
 | **-zls** | Suppress items in COFF: No section aux entry. |
 | **-Zm** | Enable MASM 5.10 compatibility. |
-| **-Zne** | Disable syntax extensions not supported and enable syntax supported by Masm.  |
+| [**-Zne**](#disable-non-masm-extensions) | Disable syntax extensions not supported and enable syntax supported by Masm.  |
 | **-Zp**[[_alignment_]] | Packs structures on the specified byte boundary. |
 | **-Zs** | Perform syntax check only. |
 | **-zt**[012] | Set STDCALL decoration. |
@@ -150,3 +150,21 @@ This uses INCBIN <source> and create a public pointer named IDD_<source> pointin
 
 A file named <source>.s is created in the local directory. If the **-iddt** (text file) is used a zero is added.
 
+
+## Disable Non Masm Extensions
+
+    Command-line options -Zne
+
+Asmc allows in addition to C the following keywords to be used as identifiers.
+
+- [HIGH](operator.md#high)
+- [LENGTH](operator.md#high)
+- [LOW](operator.md#high)
+- [MASK](operator.md#high)
+- [NAME](operator.md#high)
+- [PAGE](operator.md#high)
+- [SIZE](operator.md#high)
+- [THIS](operator.md#high)
+- [TITLE](operator.md#high)
+- [TYPE](operator.md#high)
+- [WIDTH](operator.md#high)

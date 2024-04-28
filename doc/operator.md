@@ -826,7 +826,7 @@ The LENGTH and SIZE operators are allowed for compatibility with previous versio
 
 Returns an operand of specified type whose offset and segment values are equal to the current location counter value.
 
-_Note: **THIS** is disable by default in Asmc. Use [switch -Zne](command.md#disable-non-masm-extensions) to enable Masm compatible opeators._
+_Note: **THIS** is disable by default in Asmc. Use [switch -Zne](https://github.com/nidud/asmc/blob/master/doc/command.md#disable-non-masm-extensions) to enable Masm compatible opeators._
 
 
 ### Operator TYPE

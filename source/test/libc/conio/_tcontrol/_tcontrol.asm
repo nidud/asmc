@@ -31,18 +31,14 @@ paint proc uses rbx
     mov rcx,_console
     mov rc,[rcx].TCONSOLE.rc
 
-    _scputa(0, 0, rc.col, 0x47)
-    mov cl,rc.col
-    shr cl,1
-    sub cl,12
-    _scputs(cl, 0, "Virtual Terminal Sample")
+    _scputa(0, 0, rc.col, 0x4F)
+    _scputs(2, 0, "Virtual Terminal Sample: A text control added to _console")
 
-    _scputs(2, 2, "A text control is added to _console")
-    _scputs(2, 5, "Flags:")
-    _scputs(2, 7, "O_DEXIT       - Exit on VK_RETURN")
-    _scputs(2, 8, "O_USEBEEP     - If NoCanDo: delete a char at the end")
-    _scputs(2, 9, "O_AUTOSELECT  - Auto select text on activation")
-    _scputs(2,10, "O_MYBUF       - Local buffer")
+    _scputs(1, 2, ".flags:")
+    _scputs(2, 3, "O_DEXIT       - Exit on VK_RETURN")
+    _scputs(2, 4, "O_USEBEEP     - If NoCanDo: delete a char at the end")
+    _scputs(2, 5, "O_AUTOSELECT  - Auto select text on activation")
+    _scputs(2, 6, "O_MYBUF       - Local buffer")
 
     mov al,rc.row
     sub al,10

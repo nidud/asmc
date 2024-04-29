@@ -1,9 +1,8 @@
 ifdef YACC
 _terminal:
 	asmc64 $@.asm
-	gcc -nostdlib -o $@ $@.o /lib/alibc.a
+	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
-	echo Press enter to continue; read dummy;
 	rm -f $@.o
 	rm -f $@
 else

@@ -18,7 +18,8 @@ _tmain proc argc:int_t, argv:array_t
    .new b2:TRECT = {  2, 2, 36, 16 }
    .new b3:TRECT = {  4, 4, 32, 12 }
    .new b4:TRECT = {  4, 8, 32,  4 }
-   .new p:PCHAR_INFO = _rcalloc(rc, W_UTF16)
+   .new s:PCHAR_INFO = _conpush()
+   .new p:PCHAR_INFO = _rcalloc(rc, 0)
 
     mov rdi,rax
     mov eax,(AT shl 16) or ' '
@@ -31,9 +32,9 @@ _tmain proc argc:int_t, argv:array_t
     _rcframe(rc, b4, p, BOX_SINGLE_HORIZONTAL, 0)
     _rcxchg(rc, p)
     _gettch()
-
     _rcxchg(rc, p)
     _gettch()
+    _conpop(s)
     ret
 
 _tmain endp

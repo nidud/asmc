@@ -13,7 +13,7 @@ include tchar.inc
 _tmain proc
 
     _set_errno(22)
-    _eropen(__FILE__)
+;    _eropen(__FILE__)
     _syserr("Error open file", "Can't open the file:\n%s", __FILE__)
    .return(0)
 

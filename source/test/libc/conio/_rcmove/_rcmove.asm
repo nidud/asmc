@@ -20,7 +20,7 @@ paint proc uses rbx
 
     _cbeginpaint()
     mov rcx,_console
-    mov rc,[rcx].TCLASS.rc
+    mov rc,[rcx].TCONSOLE.rc
 
     _scputa(0, 0, rc.col, 0x47)
     mov cl,rc.col
@@ -78,7 +78,8 @@ _tmain proc
 
    .new rc:TRECT = { 10, 5, 60, 14 }
    .new cr:TRECT = {  0, 0, 60, 14 }
-   .new p:PCHAR_INFO = _rcalloc(rc, W_UTF16)
+   .new s:PCHAR_INFO = _conpush()
+   .new p:PCHAR_INFO = _rcalloc(rc, 0)
 
     mov rdi,p
     mov eax,(AT shl 16) or ' '
@@ -112,6 +113,7 @@ _tmain proc
         .endsw
     .endw
     _rcxchg(rc, p)
+    _conpop(s)
     .return(0)
 
 _tmain endp

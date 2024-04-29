@@ -9,6 +9,7 @@ include conio.inc
 
     assume rbx:THWND
     assume rcx:THWND
+    assume rax:THWND
 
 _dlsetfocus proc uses rsi rbx hwnd:THWND, index:BYTE
 
@@ -35,8 +36,7 @@ _dlsetfocus proc uses rsi rbx hwnd:THWND, index:BYTE
 
         .if ( rax )
 
-            mov rcx,rax
-            [rcx].winproc(rcx, WM_KILLFOCUS, 0, 0)
+            [rax].winproc(rax, WM_KILLFOCUS, 0, 0)
         .endif
         mov rcx,[rbx].prev
         mov [rcx].index,[rbx].oindex

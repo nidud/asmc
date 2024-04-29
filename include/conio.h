@@ -94,7 +94,7 @@ enum ColorBackground {
     BG_INVPANEL,
     BG_INVMENU,
     BG_TVIEW,
-    BG_TEDIT,
+    BG_TEDIT
     };
 
 enum ColorForeground {
@@ -113,7 +113,7 @@ enum ColorForeground {
     FG_MENU,
     FG_TITLEKEY,
     FG_DIALOGKEY,
-    FG_MENUKEY,
+    FG_MENUKEY
     };
 
 extern unsigned char at_background[16];
@@ -185,7 +185,7 @@ enum TFLAGS {
     O_MYBUF		= O_FLAGB,	/* O_TEDIT: static buffer (no alloc) */
     O_AUTOSELECT	= O_FLAGC,	/* O_TEDIT: Auto select text on activation */
     O_USEBEEP		= O_FLAGD,	/* O_TEDIT: Play sound on NoCanDo */
-    O_CONTROL		= O_FLAGE,	/* O_TEDIT: Allow _CONTROL chars */
+    O_CONTROL		= O_FLAGE	/* O_TEDIT: Allow _CONTROL chars */
     };
 
 enum TEDITFLAGS {
@@ -195,7 +195,7 @@ enum TEDITFLAGS {
     TE_USEBEEP		= O_USEBEEP,
     TE_MYBUF		= O_MYBUF,
     TE_CONTROL		= O_CONTROL,
-    TE_AUTOSELECT	= O_AUTOSELECT,
+    TE_AUTOSELECT	= O_AUTOSELECT
     };
 
 #define _D_CLEAR	0x0001		/* args to rcopen() */
@@ -332,17 +332,15 @@ typedef struct {
 
 
 typedef struct {
+    BYTE	state;
+    BYTE	flags;
+    BYTE	x;
+    BYTE	y;
+    TRECT	rc;
     union {
-     struct {
-      BYTE	state;
-      BYTE	flags;
-      BYTE	x;
-      BYTE	y;
-      TRECT	rc;
-     };
      PTEDIT	tedit;
-    };
-    PTLIST	llist;
+     PTLIST	llist;
+    } p;
 } TCONTEXT;
 
 typedef struct {

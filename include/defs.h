@@ -70,6 +70,11 @@ typedef int intptr_t;
 typedef unsigned short wchar_t;
 #endif
 
+#ifndef _WINT_T_DEFINED
+#define _WINT_T_DEFINED
+typedef unsigned short wint_t;
+#endif
+
 #ifndef _INO_T_DEFINED
 #define _INO_T_DEFINED
 typedef unsigned short _ino_t;
@@ -85,7 +90,7 @@ typedef unsigned int _dev_t;
 typedef char * va_list;
 #endif
 
-typedef wchar_t wint_t;
+
 typedef wchar_t wctype_t;
 typedef long off32_t;
 typedef __int64 off64_t;

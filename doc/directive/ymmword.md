@@ -1,10 +1,10 @@
 Asmc Macro Assembler Reference
 
-## ZWORD
+## Y[MM]WORD
 
-[[_name_]] ZWORD _initializer_ [[, _initializer_ ...]]
+[[_name_]] Y[MM]WORD _initializer_ [[, _initializer_ ...]]
 
-Allocates and optionally initializes 64 bytes of storage for each _initializer_.
+Allocates and optionally initializes 32 bytes of storage for each _initializer_.
 
 Can also be used as a type specifier anywhere a type is legal.
 

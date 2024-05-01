@@ -8,4 +8,4 @@ Generates an error if textitem is not blank.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Conditional Error](conditional-error.md) | [Directives Reference](readme.md)

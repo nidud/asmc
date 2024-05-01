@@ -8,4 +8,4 @@ Assigns _textitem_ to _name_. The textitem can be a literal string, a constant p
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Equates](equates.md) | [Directives Reference](readme.md)

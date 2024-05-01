@@ -12,4 +12,4 @@ Declares a union of one or more data types. The fielddeclarations must be valid 
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Structure and Record](structure-and-record.md) | [Directives Reference](readme.md)

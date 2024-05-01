@@ -8,4 +8,4 @@ Automatically align procedures. The default value is 1.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

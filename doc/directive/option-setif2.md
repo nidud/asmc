@@ -8,4 +8,4 @@ If TRUE, .ERR2 statements and IF2 and ELSEIF2 conditional blocks are evaluated o
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

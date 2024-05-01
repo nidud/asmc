@@ -8,4 +8,4 @@ Finds the first occurrence of textitem2 in textitem1. The starting position is o
 
 #### See Also
 
-[Directives Reference](readme.md)
+[String](string.md) | [Directives Reference](readme.md)

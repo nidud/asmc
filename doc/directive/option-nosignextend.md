@@ -6,4 +6,4 @@ Overrides the default sign-extended opcodes for the AND, OR, and XOR instruction
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

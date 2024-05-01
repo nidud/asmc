@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ## .ENDN
 
-.ENDN closes a .NAMESPACE statement.
+.ENDN closes a [.NAMESPACE](dot-namespace.md) statement.
 
 #### See Also
 
-[Directives Reference](readme.md) | [.NAMESPACE](dot-namespace.md)
+[Conditional Control Flow](conditional-control-flow.md)

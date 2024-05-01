@@ -8,4 +8,4 @@ Allows global default segment size to be set. Also determines the default addres
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

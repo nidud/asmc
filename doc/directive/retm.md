@@ -19,4 +19,4 @@ In this case the latter returns a value but the former do not:
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Macros](macros.md) | [Directives Reference](readme.md)

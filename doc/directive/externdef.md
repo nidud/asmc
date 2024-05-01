@@ -8,4 +8,4 @@ Defines one or more external variables, labels, or symbols called name whose typ
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Scope](scope.md) | [Directives Reference](readme.md)

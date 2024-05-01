@@ -8,22 +8,21 @@ Declares a structure type for a [COM interface](https://en.wikipedia.org/wiki/Co
 
 A class can have the following kinds of members
 
-```
-  - data members
-  - member functions
-```
+- data members
+- member functions
 
 The first entry is added by the assembler
-```assembly
-lpVtbl ptr nameVtbl ?
-; additional data members
-```
+
+- lpVtbl ptr _name_**Vtbl** ?
+- _additional data members_
+
 Member functions are added to a second struct: _name_**Vtbl**
-```assembly
-name proc    ; constructor - not added
-Release proc ; first member function
-```
+
+- _name_ proc (_constructor - not added_)
+- Release proc (_first member function_)
+
 
 #### See Also
 
-[.ENDS](dot-ends.md) | [.COMDEF](dot-comdef.md) | [.NEW](dot-new.md)
+[Conditional Control Flow](conditional-control-flow.md)
+

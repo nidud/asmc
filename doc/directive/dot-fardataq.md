@@ -8,4 +8,4 @@ When used with .MODEL, starts a far data segment for uninitialized data (segment
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Simplified Segment](simplified-segment.md) | [Directives Reference](readme.md)

@@ -10,7 +10,7 @@ This includes directives .ENUM, EQU, DEFINE, .CLASS, .COMDEF, .TEMPLATE, and dat
 
 Example:
 
-```assembly
+```
 include iostream
 
 .data
@@ -39,5 +39,5 @@ main endp
 
 #### See Also
 
-[Directives Reference](readme.md) | [.ENDN](dot-endn.md)
+[Conditional Control Flow](conditional-control-flow.md) | [.ENDN](dot-endn.md)
 

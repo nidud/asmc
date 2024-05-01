@@ -8,4 +8,4 @@ Generates termination code. Returns optional expression to shell.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Simplified Segment](simplified-segment.md) | [Directives Reference](readme.md)

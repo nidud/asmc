@@ -10,4 +10,4 @@ Can also be used as a type specifier anywhere a type is legal. [DB](db.md) is a 
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Data Allocation](data-allocation.md) | [Directives Reference](readme.md)

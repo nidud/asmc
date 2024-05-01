@@ -6,4 +6,4 @@ Guarantees that all labels inside procedures are local to the procedure when SCO
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

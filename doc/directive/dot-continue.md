@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## .CONTINUE
 
-.**CONTINUE**[([0]1..n)] [[.**IF** _condition_]]
+**.CONTINUE**[([0]1..n)] [[**.IF** _condition_]]
 
 Generates code to jump to the top of a [.WHILE](dot_while.md) or [.REPEAT](dot_repeat.md) block if _condition_ is true.
 
@@ -45,4 +45,5 @@ Generates code to jump to the top of a [.WHILE](dot_while.md) or [.REPEAT](dot_r
 
 #### See Also
 
-[Directives Reference](readme.md) | [.BREAK](dot-break.md)
+[Conditional Control Flow](conditional-control-flow.md)
+

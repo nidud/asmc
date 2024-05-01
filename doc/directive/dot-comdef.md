@@ -8,4 +8,5 @@ Declares a structure type for a [COM interface](https://en.wikipedia.org/wiki/Co
 
 #### See Also
 
-[.ENDS](dot-ends.md) | [.CLASS](dot-class.md)
+[Conditional Control Flow](conditional-control-flow.md)
+

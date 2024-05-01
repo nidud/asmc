@@ -8,4 +8,4 @@ Registers a function as a structured exception handler. identifier must be the I
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Miscellaneous](miscellaneous.md) | [Directives Reference](readme.md)

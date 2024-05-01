@@ -15,4 +15,4 @@ The switch /ws is also extended to /ws[_value_].
 
 #### See Also
 
-[Directives Reference](readme.md) | [Asmc Command-Line Reference](../command/readme.md)
+[Option](option.md) | [Directives Reference](readme.md) | [Asmc Command-Line Reference](../command/readme.md)

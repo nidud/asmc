@@ -10,4 +10,4 @@ OPTION FIELDALIGN: [1|2|4|8|16|32]
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

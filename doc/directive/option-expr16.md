@@ -8,4 +8,4 @@ Sets the expression word size to 16 bits. The default is 32 bits.
 
 #### See Also
 
-[Directives Reference](readme.md) | [OPTION EXPR32](option-expr32.md)
+[Option](option.md) | [Directives Reference](readme.md) | [OPTION EXPR32](option-expr32.md)

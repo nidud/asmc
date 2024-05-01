@@ -20,4 +20,4 @@ In this case, no user-defined macro is called, and the assembler does not genera
 
 #### See Also
 
-[Directives Reference](readme.md) | [OPTION PROLOGUE](option-prologue.md)
+[Option](option.md) | [Directives Reference](readme.md) | [OPTION PROLOGUE](option-prologue.md)

@@ -4,8 +4,8 @@ Asmc Macro Assembler Reference
 
 .STATIC [ _name_ | _OP_ ] [[ : _args_ ]] [[ { ... } ]]
 
-Declares a static method type for a Asmc class interface.
+Declares a static method type for a Asmc [class interface](dot-class.md).
 
 #### See Also
 
-[.CLASS](dot-class.md) | [.ENDS](dot-ends.md)
+[Conditional Control Flow](conditional-control-flow.md)

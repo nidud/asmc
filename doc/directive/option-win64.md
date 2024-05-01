@@ -12,4 +12,4 @@ FRAME is the same as option FRAME:ADD.
 
 #### See Also
 
-[Directives Reference](readme.md) | [FRAME](opt_frame.md)
+[Option](option.md) | [Directives Reference](readme.md) | [FRAME](opt_frame.md)

@@ -8,4 +8,4 @@ OPTION MZ:[start_fixups][:header_align][:heap_min][:heap_max]
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

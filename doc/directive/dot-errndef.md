@@ -8,4 +8,4 @@ Generates an error if _name_ has not been defined.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Conditional Error](conditional-error.md) | [Directives Reference](readme.md)

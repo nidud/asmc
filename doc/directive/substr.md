@@ -8,4 +8,4 @@ Returns a substring of textitem, starting at position. The textitem can be a lit
 
 #### See Also
 
-[Directives Reference](readme.md)
+[String](string.md) | [Directives Reference](readme.md)

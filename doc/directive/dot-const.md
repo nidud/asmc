@@ -6,4 +6,4 @@ When used with .MODEL, starts a constant data segment (with segment name CONST).
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Simplified Segment](simplified-segment.md) | [Directives Reference](readme.md)

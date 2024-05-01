@@ -6,4 +6,4 @@ Orders the segments according to the MS-DOS segment convention: CODE first, then
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Simplified Segment](simplified-segment.md) | [Segment](segments.md) | [Directives Reference](readme.md)

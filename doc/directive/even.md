@@ -6,4 +6,4 @@ Aligns the next variable or instruction on an even byte.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Code Labels](code-labels.md) | [Directives Reference](readme.md)

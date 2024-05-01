@@ -12,4 +12,4 @@ Assigns specified _text_ to _name_. The _name_ can be assigned a different text 
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Equates](equates.md) | [Directives Reference](readme.md)

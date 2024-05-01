@@ -8,4 +8,4 @@ It is an error to use any of the prologue declarations outside of the region bet
 
 #### See Also
 
-[Directives Reference](readme.md)
+[x64](x64.md) | [Directives Reference](readme.md)

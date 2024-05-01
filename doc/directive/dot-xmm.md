@@ -6,4 +6,4 @@ Enables assembly of Internet Streaming SIMD Extension instructions.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Processor](processor.md) | [Directives Reference](readme.md)

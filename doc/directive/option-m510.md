@@ -6,4 +6,4 @@ Sets all features to be compatible with MASM version 5.1, disabling the SCOPED a
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

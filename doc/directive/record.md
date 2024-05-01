@@ -24,4 +24,4 @@ Note that the record field names here are not global (Masm design flaw) and ther
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Structure and Record](structure-and-record.md) | [Directives Reference](readme.md)

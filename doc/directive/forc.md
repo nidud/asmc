@@ -12,4 +12,4 @@ Marks a block that will be repeated once for each character in string, with the 
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Repeat Blocks](repeat-blocks.md) | [Directives Reference](readme.md)

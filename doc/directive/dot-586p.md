@@ -6,4 +6,4 @@ Enables assembly of all instructions (including privileged) for the Pentium proc
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Processor](processor.md) | [Directives Reference](readme.md)

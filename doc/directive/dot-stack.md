@@ -8,4 +8,4 @@ When used with .MODEL, defines a stack segment (with segment name STACK). The op
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Simplified Segment](simplified-segment.md) | [Directives Reference](readme.md)

@@ -8,4 +8,4 @@ Grants assembly if _textitem_ is blank.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Conditional Assembly](conditional-assembly.md) | [Directives Reference](readme.md)

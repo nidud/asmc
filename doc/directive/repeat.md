@@ -12,4 +12,4 @@ Marks a block that is to be repeated expression times. Same as REPT.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Repeat Blocks](repeat-blocks.md) | [Directives Reference](readme.md)

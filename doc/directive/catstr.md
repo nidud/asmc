@@ -8,4 +8,4 @@ Concatenates text items. Each text item can be a literal string, a constant prec
 
 #### See Also
 
-[Directives Reference](readme.md)
+[String](string.md) | [Directives Reference](readme.md)

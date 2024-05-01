@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 .OPERATOR [ &lt;_type_&gt; ] [ _name_ | _OP_ ] [[ : _args_ ]] { ... }
 
-Declares a inline method type for a Asmc class interface.
+Declares a inline method type for a Asmc [class interface](dot-class.md).
 
 Arithmetic Operators
 
@@ -70,4 +70,4 @@ Immediate values must be defined as :ABS.
 
 #### See Also
 
-[.CLASS](dot-class.md) | [.ENDS](dot-ends.md)
+[Conditional Control Flow](conditional-control-flow.md)

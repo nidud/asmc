@@ -8,4 +8,4 @@ Add the specified segments to the group called name.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Segment](segments.md) | [Directives Reference](readme.md)

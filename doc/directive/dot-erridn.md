@@ -8,4 +8,4 @@ Generates an error if the text items are identical. If I is given, the compariso
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Conditional Error](conditional-error.md) | [Directives Reference](readme.md)

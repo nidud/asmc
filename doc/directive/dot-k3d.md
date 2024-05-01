@@ -6,4 +6,4 @@ Enables assembly of K3D instructions.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Processor](processor.md) | [Directives Reference](readme.md)

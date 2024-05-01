@@ -2,10 +2,8 @@ Asmc Macro Assembler Reference
 
 ## .ENDSW
 
-**.ENDSW**
-
-.ENDSW closes a .SWITCH statement.
+.ENDSW closes a [.SWITCH](dot-switch.md) statement.
 
 #### See Also
 
-[.SWITCH](dot-switch.md) | [.CASE](dot-case.md) | [.ENDC](dot-endc.md) | [.DEFAULT](dot-default.md)
+[Conditional Control Flow](conditional-control-flow.md)

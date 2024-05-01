@@ -8,4 +8,4 @@ The ALIAS directive creates an alternate name for a function. This lets you crea
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Miscellaneous](miscellaneous.md) | [Directives Reference](readme.md)

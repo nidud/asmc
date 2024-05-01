@@ -8,4 +8,4 @@ Enables checking for instructions that modify code segments, thereby guaranteein
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

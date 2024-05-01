@@ -14,4 +14,4 @@ This controls case of identifiers. The default value is ALL.
 ```
 #### See Also
 
-[Directives Reference](readme.md) | [Asmc Command-Line Reference](../command/readme.md)
+[Option](option.md) | [Directives Reference](readme.md) | [Asmc Command-Line Reference](../command/readme.md)

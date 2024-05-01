@@ -6,4 +6,4 @@ Enables assembly of MMX or single-instruction, multiple data (SIMD) instructions
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Processor](processor.md) | [Directives Reference](readme.md)

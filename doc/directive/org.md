@@ -8,4 +8,4 @@ Sets the location counter to _expression_.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Code Labels](code-labels.md) | [Directives Reference](readme.md)

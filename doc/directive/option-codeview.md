@@ -11,4 +11,4 @@ If set generation of symbolic debugging information use THREAD32 instead of DATA
 ```
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

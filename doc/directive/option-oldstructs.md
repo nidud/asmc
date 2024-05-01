@@ -8,4 +8,4 @@ Enables compatibility with MASM 5.1 for treatment of structure members.
 
 #### See Also
 
-[Directives Reference](readme.md) | [OLDMACROS](option-oldmacros.md)
+[Option](option.md) | [Directives Reference](readme.md) | [OLDMACROS](option-oldmacros.md)

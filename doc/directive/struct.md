@@ -12,4 +12,4 @@ Declares a structure type having the specified fielddeclarations. Each field mus
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Structure and Record](structure-and-record.md) | [Directives Reference](readme.md)

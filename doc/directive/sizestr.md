@@ -8,4 +8,4 @@ Finds the size of a text item.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[String](string.md) | [Directives Reference](readme.md)

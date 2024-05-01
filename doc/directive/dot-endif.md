@@ -2,10 +2,8 @@ Asmc Macro Assembler Reference
 
 ## .ENDIF
 
-**.ENDIF**
-
 See [.IF](dot-if.md).
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Conditional Control Flow](conditional-control-flow.md)

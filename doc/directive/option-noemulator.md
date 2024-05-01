@@ -4,4 +4,4 @@ Asmc Macro Assembler Reference
 
 #### See Also
 
-[Directives Reference](readme.md) | [EMULATOR](option-emulator.md)
+[Option](option.md) | [Directives Reference](readme.md) | [EMULATOR](option-emulator.md)

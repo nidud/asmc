@@ -8,4 +8,4 @@ Assigns value of _expression_ to _name_.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Equates](equates.md) | [Directives Reference](readme.md)

@@ -8,4 +8,4 @@ This controls the alignment for .CASE labels. The default value is 0.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

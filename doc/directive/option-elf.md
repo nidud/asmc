@@ -12,4 +12,4 @@ The only argument _osabi_ will be copied to the ELF header field EI_OSABI.
 
 #### See Also
 
-[Directives Reference](readme.md) | [Asmc Command-Line Reference](../command/readme.md)
+[Option](option.md) | [Directives Reference](readme.md) | [Asmc Command-Line Reference](../command/readme.md)

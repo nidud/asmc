@@ -6,4 +6,4 @@ Terminates a macro or repeat block. See [MACRO](macro.md), [FOR](for.md), [FORC]
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Macros](macros.md) | [Directives Reference](readme.md)

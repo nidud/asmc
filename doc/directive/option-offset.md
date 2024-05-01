@@ -10,4 +10,4 @@ SEGMENT sets the defaults for fixups to be segment-relative (compatible with MAS
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

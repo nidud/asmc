@@ -22,11 +22,11 @@ In the control table switch .CASE is equal to .IF:
 
 ```
     .case al
-    .case ax &lt;= 2 && !bx
+    .case ax == 2 && !bx
 ```
 
 Name is optional global name for the case label.
 
 #### See Also
 
-[.SWITCH](dot-switch.md) | [.ENDC](dot-endc.md) | [.DEFAULT](dot-default.md) | [.ENDSW](dot-endsw.md)
+[Conditional Control Flow](conditional-control-flow.md)

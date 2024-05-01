@@ -12,4 +12,4 @@ Treats all text between or on the same line as the delimiters as a comment.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Miscellaneous](miscellaneous.md) | [Directives Reference](readme.md)

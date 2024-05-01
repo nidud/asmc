@@ -8,4 +8,4 @@ Grants assembly if the text items are identical. If I is given, the comparison i
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Conditional Assembly](conditional-assembly.md) | [Directives Reference](readme.md)

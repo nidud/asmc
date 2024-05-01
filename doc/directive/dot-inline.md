@@ -8,4 +8,4 @@ Declares a method type for a Asmc class interface or an inline function.
 
 #### See Also
 
-[.CLASS](dot-class.md) | [.ENDS](dot-ends.md)
+[Conditional Control Flow](conditional-control-flow.md)

@@ -8,4 +8,4 @@ Makes each variable, label, or absolute symbol specified as name available to al
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Scope](scope.md) | [Directives Reference](readme.md)

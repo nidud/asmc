@@ -8,4 +8,4 @@ Initializes the program memory model. The memorymodel can be TINY, SMALL, COMPAC
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Simplified Segment](simplified-segment.md) | [Directives Reference](readme.md)

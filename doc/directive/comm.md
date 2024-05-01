@@ -12,4 +12,4 @@ The label is the name of the variable. The type can be any type specifier (BYTE,
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Scope](scope.md) | [Directives Reference](readme.md)

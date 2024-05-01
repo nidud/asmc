@@ -8,4 +8,4 @@ Enables the version 5.1 treatment of macros. MASM 6.1 treats macros differently.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

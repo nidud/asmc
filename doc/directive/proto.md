@@ -14,4 +14,4 @@ _mm256_mpsadbw_epu8 proto :yword, :yword, i:abs {
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Procedures](procedures.md) | [Directives Reference](readme.md)

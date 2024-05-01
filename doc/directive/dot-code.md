@@ -8,4 +8,4 @@ When used with .MODEL, indicates the start of a code segment called name (the de
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Simplified Segment](simplified-segment.md) | [Directives Reference](readme.md)

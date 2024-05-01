@@ -21,4 +21,4 @@ Generates code that tests _condition1_ (for example, AX > 7) and executes the _s
 
 #### See Also
 
-[Directives Reference](readme.md) | [Flag conditions](flag-conditions.md) | [Signed compare](signed-compare.md) | [Return code](return-code.md)
+[Conditional Control Flow](conditional-control-flow.md)

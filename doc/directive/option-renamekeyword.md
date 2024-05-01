@@ -10,4 +10,4 @@ _current_name_ is the current name of the keyword and must be enclosed in angle 
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

@@ -8,4 +8,4 @@ Displays message to the standard output device (by default, the screen). Same as
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Miscellaneous](miscellaneous.md) | [Directives Reference](readme.md)

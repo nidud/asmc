@@ -16,4 +16,4 @@ option float: 8
 
 #### See Also
 
-[Directives Reference](readme.md) | [.IF](dot-if.md)
+[Option](option.md) | [Directives Reference](readme.md) | [.IF](dot-if.md)

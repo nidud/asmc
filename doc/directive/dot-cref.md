@@ -6,4 +6,4 @@ Enables listing of symbols in the symbol portion of the symbol table and browser
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Listing Control](listing-control.md) | [Directives Reference](readme.md)

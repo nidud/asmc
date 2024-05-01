@@ -21,4 +21,4 @@ value = 1[...]0.0
 
 #### See Also
 
-[Directives Reference](readme.md) | [option floatdigits](option-floatdigits.md)
+[Option](option.md) | [Directives Reference](readme.md) | [option floatdigits](option-floatdigits.md)

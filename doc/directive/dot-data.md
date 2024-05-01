@@ -6,4 +6,4 @@ When used with .MODEL, starts a near data segment for initialized data (segment 
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Simplified Segment](simplified-segment.md) | [Directives Reference](readme.md)

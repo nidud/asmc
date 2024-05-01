@@ -13,4 +13,4 @@ removes the keywords INVOKE and STRUCT from the assembler's list of reserved wor
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

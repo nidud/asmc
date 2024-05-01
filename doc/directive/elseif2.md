@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ## ELSEIF2
 
-ELSEIF block evaluated on every assembly pass if OPTION:SETIF2 is TRUE.
+[ELSEIF](elseif.md) block evaluated on every assembly pass if [OPTION:SETIF2](option-setif2.md) is TRUE.
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Conditional Assembly](conditional-assembly.md) | [Directives Reference](readme.md)

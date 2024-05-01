@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ## .ENDS
 
-.ENDS closes a .COMDEF or .CLASS statement.
+.ENDS closes a [.COMDEF](dot-comdef.md) or [.CLASS](dot-class.md) statement.
 
 #### See Also
 
-[.COMDEF](dot-comdef.md) | [.CLASS](dot-class.md)
+[Conditional Control Flow](conditional-control-flow.md)

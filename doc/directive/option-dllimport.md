@@ -10,4 +10,4 @@ This option makes the assembler assume that all PROTOs that follow this directiv
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

@@ -12,4 +12,4 @@ Defines a program segment called name having segment attributes align (BYTE, WOR
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Segment](segments.md) | [Directives Reference](readme.md)

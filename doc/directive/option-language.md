@@ -8,4 +8,4 @@ Specifies the default language type (C[CALL], PASCAL, FORTRAN, BASIC, SYSCALL, S
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Option](option.md) | [Directives Reference](readme.md)

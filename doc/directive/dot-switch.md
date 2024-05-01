@@ -95,4 +95,4 @@ In 32-bit the table entry is an address. If not Pascal is used (no auto exit) th
 ```
 #### See Also
 
-[Directives Reference](readme.md) | [OPTION SWITCH](opt-switch.md) | [.CASE](dot-case.md) | [.ENDC](dot-endc.md) | [.ENDSW](dot-endsw.md)
+[Conditional Control Flow](conditional-control-flow.md) | [OPTION SWITCH](option-switch.md)

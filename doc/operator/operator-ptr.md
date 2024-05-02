@@ -12,4 +12,4 @@ The second operator specifies a pointer to _type_.
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

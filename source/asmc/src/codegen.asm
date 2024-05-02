@@ -79,6 +79,11 @@ output_opc proc __ccall uses rdi rbx
 
     .if ( rflags & RWF_EVEX )
 
+        .if !( ModuleInfo.avxencoding & PREFER_VEX or PREFER_VEX3 or NO_EVEX )
+
+            mov [rsi].evex,1
+        .endif
+    .elseif ( ModuleInfo.avxencoding == PREFER_EVEX )
         mov [rsi].evex,1
     .endif
 
@@ -283,6 +288,7 @@ output_opc proc __ccall uses rdi rbx
             .endc
         .case F_F3      ;; PAUSE instruction
         .case F_F30F
+        .case F_F30F3A
             OutputByte(0xF3)
         .endsw
     .endif
@@ -1003,7 +1009,7 @@ output_opc proc __ccall uses rdi rbx
 
         ;; the REX prefix must be located after the other prefixes
 
-        .if ( [rsi].rex != 0 && [rsi].token != T_RDPID )
+        .if ( [rsi].rex != 0 && [rsi].token != T_RDPID && [rsi].token != T_SENDUIPI )
             .if ( [rsi].Ofssize != USE64 )
                 asmerr(2024)
             .endif
@@ -1026,6 +1032,7 @@ output_opc proc __ccall uses rdi rbx
             .case F_F20F38
             .case F_660F38: OutputByte(0x38) : .endc
             .case F_0F3A
+            .case F_F30F3A
             .case F_660F3A: OutputByte(0x3A) : .endc
             .endsw
         .endif

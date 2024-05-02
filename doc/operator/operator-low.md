@@ -10,4 +10,4 @@ _Note: **LOW** is disable by default in Asmc. Use [LOWBYTE](operator-lowbyte.md)
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

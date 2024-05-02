@@ -37,6 +37,7 @@ opt( NOKEYWORD )        ; : <id>
 opt( SETIF2 )           ; : <value>
 opt( OFFSET )           ; ; <GROUP|..>
 opt( SEGMENT )          ; : <USE16|..>
+opt( AVXENCODING )      ; : <PREFER_FIRST|PREFER_VEX|PREFER_VEX3|PREFER_EVEX|NO_EVEX>
 
 ; options not compatible with Masm
 

@@ -8,4 +8,4 @@ Returns the high word of _expression_.
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

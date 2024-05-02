@@ -1239,6 +1239,21 @@ insa(AESKEYGENASSIST,aeskeygenassist,OpCls(XMM,XMM_M128,I8_U),F_660F3A,1,no_WDS,
 insa(ADCX, adcx,        OpCls( R32,  R32_M32,  NONE ), F_660F38,1,  no_WDS, 0xF6, 0x00, P_686 or P_SSSE3, 0,0)
 insn(ADCX, 1,           OpCls( R64,  R64_M64,  NONE ), F_660F38,1,  no_WDS, 0xF6, 0x00, P_686 or P_SSSE3, 0,0)
 
+; added v2.34.59
+
+; NP 0F 01 EE RDPKRU  ZO  V/V
+; NP 0F 01 EF WRPKRU  ZO  V/V
+
+insa(RDPKRU,  rdpkru,   OpCls( NONE,     NONE,       NONE ), F_0F,    0, 0,      0x01, 0xEE, P_686,    0,0)
+insa(WRPKRU,  wrpkru,   OpCls( NONE,     NONE,       NONE ), F_0F,    0, 0,      0x01, 0xEF, P_686,    0,0)
+
+; F3 0F 01 EF STUI ZO V/V
+; F3 0F 3A F0 C0 /ib HRESET imm8, <EAX> V/V
+
+
+insa(STUI,    stui,     OpCls( NONE,     NONE,       NONE ), F_F30F,  0, 0,      0x01, 0xEF, P_586,    0,0)
+insa(HRESET,  hreset,   OpCls( I8_U,     EAX,        NONE ), F_F30F3A,0, no_WDS, 0xF0, 0xC0, P_586,    0,0)
+
 ; CDQE must be first in this group, see reswords.asm
 
 insx(CDQE, cdqe,        OpCls( NONE,     NONE,       NONE ), F_48,   0,  no_RM,  0x98, 0x00, P_64,     0,0,      RWF_X64)
@@ -1267,12 +1282,20 @@ insx(SWAPGS, swapgs,    OpCls( NONE,     NONE,       NONE ), F_0F,   0,  0,     
 insx(SYSCALL_, syscall_,OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x05, 0x00, P_64,     0,0, RWF_X64)
 insx(SYSRET, sysret,    OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x07, 0x00, P_64,     0,0, RWF_X64)
 
+; F3 0F 01 EE CLUI ZO V/I
+; F3 0F C7 /6 SENDUIPI reg V/I -- RDPID/RDRAND
+; F3 0F 01 ED TESTUI  ZO  V/I
+; F3 0F 01 EC UIRET   ZO  V/I
+
+insx(CLUI,    clui,     OpCls( NONE,     NONE,       NONE ), F_F30F,  0, 0,      0x01, 0xEE, P_64,     0,0, RWF_X64)
+insx(SENDUIPI,senduipi, OpCls( R64,      NONE,       NONE ), F_F30F,  0, 0,      0xC7, 0x30, P_64,     0,0, RWF_X64)
+insx(TESTUI,  testui,   OpCls( NONE,     NONE,       NONE ), F_F30F,  0, 0,      0x01, 0xED, P_64,     0,0, RWF_X64)
+insx(UIRET,   uiret,    OpCls( NONE,     NONE,       NONE ), F_F30F,  0, 0,      0x01, 0xEC, P_64,     0,0, RWF_X64)
+
 ; Terminate an Indirect Branch in 64-bit Mode
 
 insx(ENDBR64, endbr64,  OpCls( NONE,     NONE,       NONE ), F_F30F, 0,  0,      0x1E, 0xFA, P_64,     0,0, RWF_X64)
 insa(ENDBR32, endbr32,  OpCls( NONE,     NONE,       NONE ), F_F30F, 0,  0,      0x1E, 0xFB, P_686,    0,0)
-
-;insa(SYSCALL_, syscall_,OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x05, 0x00, P_586,    0,0)
 
 ; SSE4.1
 
@@ -2126,3 +2149,32 @@ avxins(VPMOVB2M,        VPMOVW2M,       vpmovw2m,       RWF_EVEX, VX_L or VX_HAL
 avxins(VPMOVD2M,        VPMOVQ2M,       vpmovq2m,       RWF_EVEX, VX_L or VX_HALF or VX_RW1 )
 avxins(VPMOVM2D,        VPMOVM2Q,       vpmovm2q,       RWF_EVEX, VX_L or VX_HALF or VX_RW1 )
 avxins(VPMOVM2B,        VPMOVM2W,       vpmovm2w,       RWF_EVEX, VX_L or VX_HALF or VX_RW1 )
+
+; added v2.34.59
+
+; VEX.128.66.0F38.W0 50 /r VPDPBUSD xmm1, xmm2, xmm3/m128
+; VEX.128.66.0F38.W0 51 /r VPDPBUSDS xmm1, xmm2, xmm3/m128
+; VEX.128.66.0F38.W0 52 /r VPDPWSSD xmm1, xmm2, xmm3/m128
+; VEX.128.66.0F38.W0 53 /r VPDPWSSDS xmm1, xmm2, xmm3/m128
+
+; EVEX.128.66.0F38.W0 53 /r VPDPWSSDS xmm1{k1}{z}, xmm2, xmm3/m128/m32bcst
+
+insv(PDPBUSD,   0pdpbusd, OpCls( XMM, XMM_M128_M32, NONE ), F_660F38, 1, 0, 0x50, 0x00, P_686 or P_AVX, 0,0x80, RWF_VEX or RWF_T1S, VX_NND or VX_RW0 )
+insn(PDPBUSD,   1,        OpCls( YMM, YMM_M256_M32, NONE ), F_660F38, 1, 0, 0x50, 0x00, P_686 or P_AVX, 0,0x80)
+insn(PDPBUSD,   2,        OpCls( ZMM, ZMM_M512_M32, NONE ), F_660F38, 1, 0, 0x50, 0x00, P_686 or P_AVX, 0,0x80)
+insv(PDPBUSDS,  0pdpbusds,OpCls( XMM, XMM_M128_M32, NONE ), F_660F38, 1, 0, 0x51, 0x00, P_686 or P_AVX, 0,0x80, RWF_VEX or RWF_T1S, VX_NND or VX_RW0 )
+insn(PDPBUSDS,  1,        OpCls( YMM, YMM_M256_M32, NONE ), F_660F38, 1, 0, 0x51, 0x00, P_686 or P_AVX, 0,0x80)
+insn(PDPBUSDS,  2,        OpCls( ZMM, ZMM_M512_M32, NONE ), F_660F38, 1, 0, 0x51, 0x00, P_686 or P_AVX, 0,0x80)
+insv(PDPWSSD,   0pdpwssd, OpCls( XMM, XMM_M128_M32, NONE ), F_660F38, 1, 0, 0x52, 0x00, P_686 or P_AVX, 0,0x80, RWF_VEX or RWF_T1S, VX_NND or VX_RW0 )
+insn(PDPWSSD,   1,        OpCls( YMM, YMM_M256_M32, NONE ), F_660F38, 1, 0, 0x52, 0x00, P_686 or P_AVX, 0,0x80)
+insn(PDPWSSD,   2,        OpCls( ZMM, ZMM_M512_M32, NONE ), F_660F38, 1, 0, 0x52, 0x00, P_686 or P_AVX, 0,0x80)
+insv(PDPWSSDS,  0pdpwssds,OpCls( XMM, XMM_M128_M32, NONE ), F_660F38, 1, 0, 0x53, 0x00, P_686 or P_AVX, 0,0x80, RWF_VEX or RWF_T1S, VX_NND or VX_RW0 )
+insn(PDPWSSDS,  1,        OpCls( YMM, YMM_M256_M32, NONE ), F_660F38, 1, 0, 0x53, 0x00, P_686 or P_AVX, 0,0x80)
+insn(PDPWSSDS,  2,        OpCls( ZMM, ZMM_M512_M32, NONE ), F_660F38, 1, 0, 0x53, 0x00, P_686 or P_AVX, 0,0x80)
+
+avxins(PDPBUSD,  VPDPBUSD,  vpdpbusd,  RWF_EVEX, VX_RW0 )
+avxins(PDPBUSDS, VPDPBUSDS, vpdpbusds, RWF_EVEX, VX_RW0 )
+avxins(PDPWSSD,  VPDPWSSD,  vpdpwssd,  RWF_EVEX, VX_RW0 )
+avxins(PDPWSSDS, VPDPWSSDS, vpdpwssds, RWF_EVEX, VX_RW0 )
+
+

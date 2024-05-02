@@ -8,4 +8,4 @@ Macro function that creates a string in the .DATA or .CONST segment. The macro a
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Macro Functions](macro-functions.md) | [Symbols Reference](readme.md)

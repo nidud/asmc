@@ -6,4 +6,4 @@ Two for a 16-bit, four for a 32-bit, and eight for a 64-bit segment (numeric equ
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Segment Information](segment-information.md) | [Symbols Reference](readme.md)

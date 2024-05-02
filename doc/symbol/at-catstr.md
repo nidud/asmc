@@ -8,4 +8,4 @@ Macro function that concatenates one or more strings. Returns a string.
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Macro Functions](macro-functions.md) | [Symbols Reference](readme.md)

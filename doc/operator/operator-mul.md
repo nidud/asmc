@@ -14,4 +14,4 @@ y = x mul 2
 ```
 #### See Also
 
-[Operators Reference](readme.md)
+[Logical and Shift](logical-and-shift.md) | [Operators Reference](readme.md)

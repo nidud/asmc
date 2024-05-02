@@ -6,4 +6,4 @@ See [SIZEOF](operator-sizeof.md).
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

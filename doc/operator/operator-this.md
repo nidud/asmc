@@ -10,4 +10,4 @@ _Note: **THIS** is disable by default in Asmc. Use [switch -Zne](../command/opti
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

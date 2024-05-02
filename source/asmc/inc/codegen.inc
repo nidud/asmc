@@ -105,7 +105,8 @@ IS_MEMTYPE_SIZ macro op, siz
     F_C4M0          = 32,  ; VEX.L1.0F.C5.M0
     F_C4M0P0        = 33,  ; VEX.L1.66.0F.C5.M0.P0
     F_C4M0L         = 34,  ; VEX.L1.0F.C5.M0.L
-    F_C4M0P0L       = 35   ; VEX.L1.66.0F.C5.M0.L.P0
+    F_C4M0P0L       = 35,  ; VEX.L1.66.0F.C5.M0.L.P0
+    F_F30F3A        = 36,
     }
 
 

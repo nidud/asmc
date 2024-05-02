@@ -8,5 +8,5 @@ Value of environment variable _envvar_ (macro function).
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Environment Information](environment-information.md) | [Symbols Reference](readme.md)
 

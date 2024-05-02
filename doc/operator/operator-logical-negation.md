@@ -10,4 +10,4 @@ Used only within .IF, .WHILE, or .REPEAT blocks and evaluated at run time, not a
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Macro](macro.md) | [Operators Reference](readme.md)

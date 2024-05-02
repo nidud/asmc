@@ -8,4 +8,4 @@ Sets the type of _label_ to short. All jumps to _label_ must be short (within th
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

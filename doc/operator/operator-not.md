@@ -8,4 +8,4 @@ Returns _expression_ with all bits reversed.
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Logical and Shift](logical-and-shift.md) | [Operators Reference](readme.md)

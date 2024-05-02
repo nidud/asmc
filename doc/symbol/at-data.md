@@ -6,4 +6,4 @@ The name of the default data group. Evaluates to DGROUP for all models except FL
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Segment Information](segment-information.md) | [Symbols Reference](readme.md)

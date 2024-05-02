@@ -8,4 +8,4 @@ Returns the result of shifting the bits of _expression_ left _count_ number of b
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Logical and Shift](logical-and-shift.md) | [Operators Reference](readme.md)

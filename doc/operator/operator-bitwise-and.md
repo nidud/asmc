@@ -10,14 +10,11 @@ Used only within [.IF](../directive/dot-if.md), [.WHILE](../directive/dot-while.
 
 **&**_address_
 
-_procedure_( **&**_address_ )
-
-.for ( reg = **&**_address_ :: )
-
-.return ( **&**_address_ )
-
-.if ( a == **&**_address_ && b & **&**_address_ )
+- _procedure_( **&**_address_ )
+- .for ( reg = **&**_address_ :: )
+- .return ( **&**_address_ )
+- .if ( a == **&**_address_ && b & **&**_address_ )
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Control Flow](control-flow.md) | [Operators Reference](readme.md)

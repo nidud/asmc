@@ -22,4 +22,4 @@ sqrt_approx macro f
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Logical and Shift](logical-and-shift.md) | [Operators Reference](readme.md)

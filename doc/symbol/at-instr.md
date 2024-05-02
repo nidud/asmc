@@ -12,4 +12,4 @@ Returns a position integer or 0 if string2 is not found.
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Macro Functions](macro-functions.md) | [Symbols Reference](readme.md)

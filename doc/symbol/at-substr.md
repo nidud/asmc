@@ -8,4 +8,4 @@ A macro function that returns a substring starting at position.
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Macro Functions](macro-functions.md) | [Symbols Reference](readme.md)

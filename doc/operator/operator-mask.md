@@ -10,4 +10,4 @@ _Note: **MASK** is disable by default in Asmc. Use [MASKOF](operator-maskof.md) 
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Record](record.md) | [Operators Reference](readme.md)

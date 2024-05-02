@@ -391,6 +391,22 @@ endif
                 .break
             .endif
             inc i
+        .case OP_AVXENCODING ; : PREFER_FIRST, PREFER_VEX, PREFER_VEX3, PREFER_EVEX, NO_EVEX
+            .ifd ( !tstricmp( rsi, "PREFER_FIRST" ) )
+                mov ModuleInfo.avxencoding,PREFER_FIRST
+            .elseif ( !tstricmp( rsi, "PREFER_VEX" ) )
+                mov ModuleInfo.avxencoding,PREFER_VEX
+            .elseif ( !tstricmp( rsi, "PREFER_VEX3" ) )
+                mov ModuleInfo.avxencoding,PREFER_VEX3
+            .elseif ( !tstricmp( rsi, "PREFER_EVEX" ) )
+                mov ModuleInfo.avxencoding,PREFER_EVEX
+            .elseif ( !tstricmp( rsi, "NO_EVEX" ) )
+                mov ModuleInfo.avxencoding,NO_EVEX
+            .else
+                .break
+            .endif
+            inc i
+
         .case OP_FIELDALIGN ;; 1|2|4|8|16|32
             .return .ifd SetAlignment( &i, tokenarray, MAX_STRUCT_ALIGN, &ModuleInfo.fieldalign ) == ERROR
         .case OP_PROCALIGN ;; 1|2|4|8|16|32

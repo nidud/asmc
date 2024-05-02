@@ -8,4 +8,4 @@ Returns the result of a bitwise OR operation for _expression1_ and _expression2_
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Logical and Shift](logical-and-shift.md) | [Operators Reference](readme.md)

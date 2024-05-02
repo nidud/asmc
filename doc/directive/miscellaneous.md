@@ -9,6 +9,7 @@ Asmc Macro Assembler Reference
 - [END](end.md)
 - [INCLUDE](include.md)
 - [INCLUDELIB](includelib.md)
+- [MMWORD](mmword.md)
 - [OPTION](option.md)
 - [POPCONTEXT](popcontext.md)
 - [PUSHCONTEXT](pushcontext.md)

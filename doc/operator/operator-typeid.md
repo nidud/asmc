@@ -27,4 +27,4 @@ Returns a string equivalent of a type from _expression_.
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

@@ -10,4 +10,4 @@ _Note: **TYPE** is disable by default in Asmc. Use [TYPEOF](operator-typeof.md) 
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

@@ -6,6 +6,7 @@ Asmc Macro Assembler Reference
 
 Enables and disables features of the assembler. Available options include:
 
+- [AVXENCODING](option-avxencoding.md)
 - [CASEALIGN](option-casealign.md)
 - [CASEMAP](option-casemap.md)
 - [CODEPAGE](option-codepage.md)

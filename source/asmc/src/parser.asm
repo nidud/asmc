@@ -2892,6 +2892,11 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
 
     movzx eax,[rsi].token
     .switch eax
+    .case T_HRESET ; added v2.34.59
+        .if ( ecx != OP_I8 && edx != OP_EAX )
+            jmp def_check
+        .endif
+        .endc
     .case T_IN
 
         .if ( op2 == OP_DX )

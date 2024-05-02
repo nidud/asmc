@@ -57,7 +57,7 @@
       <WarningLevel>2</WarningLevel>
       <IncludePaths>inc;$(AsmcDir)\include</IncludePaths>
       <GenerateUnwindInformation>true</GenerateUnwindInformation>
-      <PackAlignmentBoundary>8</PackAlignmentBoundary>
+      <PackAlignmentBoundary>4</PackAlignmentBoundary>
       <GenerateCStackFrame>true</GenerateCStackFrame>
     </ASMC>
   </ItemDefinitionGroup>
@@ -79,7 +79,7 @@
     <ASMC>
       <WarningLevel>2</WarningLevel>
       <IncludePaths>inc;$(AsmcDir)\include</IncludePaths>
-      <PackAlignmentBoundary>4</PackAlignmentBoundary>
+      <PackAlignmentBoundary>3</PackAlignmentBoundary>
       <GenerateCStackFrame>true</GenerateCStackFrame>
       <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
     </ASMC>

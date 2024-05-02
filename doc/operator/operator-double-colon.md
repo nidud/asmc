@@ -2,15 +2,11 @@ Asmc Macro Assembler Reference
 
 ## operator ::
 
-**rdx::rax**
-
-**edx::eax**
-
-**label::**
-
-**type::id proto ...**
-
-**type::id proc ...**
+- **rdx::rax**
+- **edx::eax**
+- **label::**
+- **type::id proto ...**
+- **type::id proc ...**
 
 The first operator is used in [INVOKE](directive.md#invoke) to create a 128-bit argument in 64-bit.
 
@@ -22,4 +18,4 @@ The next two operators is used to define a class member with a hidden (this) arg
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Segment](segment.md) | [Miscellaneous](miscellaneous.md) | [Operators Reference](readme.md)

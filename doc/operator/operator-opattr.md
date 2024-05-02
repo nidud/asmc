@@ -40,4 +40,4 @@ Bit 13 and 14 are undefined and reserved for future expansion.
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

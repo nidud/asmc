@@ -8,4 +8,4 @@ Returns the _segment_ of _expression_.
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Segment](segment.md) | [Operators Reference](readme.md)

@@ -8,4 +8,4 @@ Macro function that allocates a CLASS object. Returns a pointer to the new objec
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Macro Functions](macro-functions.md) | [Symbols Reference](readme.md)

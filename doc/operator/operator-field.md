@@ -2,9 +2,8 @@ Asmc Macro Assembler Reference
 
 ## operator .
 
-**_expression_. _field_ [[. _field_]]...**
-
-**[_register_]. _field_ [[. _field_]]...**
+- **_expression_. _field_ [[. _field_]]...**
+- **[_register_]. _field_ [[. _field_]]...**
 
 The first operator returns _expression_ plus the offset of _field_ within its structure or union.
 
@@ -18,4 +17,4 @@ The result of the indirection operator is _type_ if the operand is of type _poin
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Arithmetic](arithmetic.md) | [Operators Reference](readme.md)

@@ -10,4 +10,4 @@ _Note: **HIGH** is disable by default in Asmc. Use [HIGHBYTE](operator-highbyte.
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Type](type.md) | [Operators Reference](readme.md)

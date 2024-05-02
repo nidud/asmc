@@ -6,4 +6,4 @@ The name of the current function (string macro).
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[File Information](file-information.md) | [Symbols Reference](readme.md)

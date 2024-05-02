@@ -33,9 +33,14 @@ Changes in 2.35 - xx xxx 2022
 - changed @Reg(reg[,bits]) to @Reg(reg[,size]), size: 1, 2, 4 (default), and 8
 - fixed alignment bug in RECORD
 - removed switch -Znk, .pragma asmc
-- removed directive .name, .page, .subtitle, .subttl, .title, .low, .high, .size, .length, .this, .mask, and .width
+- removed directive .name, .page, .subtitle, .subttl, .title, .low, .high,
+	.size, .length, .this, .mask, and .width
 - added swtich -idd and -iddt -- Assemble source as binary data / text
 - added operator LOWBYTE, HIGHBYTE, MASKOF
+- added option AVXENCODING
+- added instructions: VPDPBUSD, VPDPBUSDS, VPDPWSSD, VPDPWSSDS, RDPKRU,
+	WRPKRU, STUI, HRESET, CLUI, SENDUIPI, TESTUI, UIRET
+
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

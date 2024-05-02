@@ -8,4 +8,4 @@ A macro function that returns the length of the given string. Returns an integer
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Macro Functions](macro-functions.md) | [Symbols Reference](readme.md)

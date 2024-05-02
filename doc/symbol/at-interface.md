@@ -6,5 +6,5 @@ Information about the language parameters (numeric equate).
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Environment Information](environment-information.md) | [Symbols Reference](readme.md)
 

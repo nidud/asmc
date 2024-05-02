@@ -8,4 +8,4 @@ Returns the result of shifting the bits of _expression_ right _count_ number of 
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Logical and Shift](logical-and-shift.md) | [Operators Reference](readme.md)

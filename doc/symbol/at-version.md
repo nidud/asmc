@@ -6,5 +6,4 @@ Defined as an integer literal value that represents the compatible version of Ma
 
 #### See Also
 
-[Symbols Reference](readme.md)
-
+[Environment Information](environment-information.md) | [Symbols Reference](readme.md)

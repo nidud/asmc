@@ -645,6 +645,7 @@ endif
     mov ModuleInfo.dotnamex,Options.dotnamex
     mov ModuleInfo.sysvregs,Options.sysvregs
     mov ModuleInfo.masm_compat_gencode,Options.masm_compat_gencode
+    mov ModuleInfo.avxencoding,0
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags

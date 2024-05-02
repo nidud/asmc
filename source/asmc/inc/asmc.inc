@@ -424,19 +424,27 @@ define FCT_VEC64    5
     SEGTYPE_ERROR, ; must be last - an "impossible" segment type
     }
 
-define CSF_GRPCHK      1
+define CSF_GRPCHK       1
 
-define CSI_TEXT        0
-define CSI_DATA        1
-define CSI_CONST       2
-define CSI_BSS         3
+define CSI_TEXT         0
+define CSI_DATA         1
+define CSI_CONST        2
+define CSI_BSS          3
 
-define BLOCK_ACTIVE    0
-define BLOCK_INACTIVE  1
-define BLOCK_DONE      2
+define BLOCK_ACTIVE     0
+define BLOCK_INACTIVE   1
+define BLOCK_DONE       2
 
-define SIT_FILE        0
-define SIT_MACRO       1
+define SIT_FILE         0
+define SIT_MACRO        1
+
+.enum avx_encoding {
+    PREFER_FIRST = 0x00,    ; Use first defined form if possible.
+    PREFER_VEX   = 0x01,    ; Use VEX encoding in preference to EVEX encoding.
+    PREFER_VEX3  = 0x02,    ; Use 3-byte VEX encoding in preference to EVEX encoding.
+    PREFER_EVEX  = 0x04,    ; Use EVEX encoding in preference to VEX encoding.
+    NO_EVEX      = 0x08,    ; Don't encode using EVEX.
+    }
 
 .template qditem
     next            ptr qditem ?
@@ -673,25 +681,23 @@ define SIT_MACRO       1
     currcomment             string_t ?      ; current comment
     token_count             int_t ?         ; number of tokens in curr line
     basereg                 uint_t 3 dup(?) ; stack base register (16-, 32-, 64-bit
-
     name                    db 260 dup(?)   ; name of module
     xflag                   db ?            ; extended option
     loopalign               db ?            ; OPTION:LOOPALIGN setting
     casealign               db ?            ; OPTION:CASEALIGN setting
     masm_compat_gencode     db ?            ; -Zg option
-
     assert_proc             string_t ?      ; .assert:<proc/macro name>
     accumulator             int_t ?         ; AX/EAX/RAX
     codepage                uint_t ?
     class_label             uint_t ?
     floatdigits             int_t ?         ; option floatdigits:<value>
-
     floatformat             db ?            ; option floatformat:<e|f|g>
     flt_size                db ?            ; option float:<4|8>
     pic                     db ?            ; -fpic | -fno-pic
     endbr                   db ?            ; -endbr
     dotnamex                db ?            ; -dotnamex : option dotnamex:<on:off>
     sysvregs                db ?            ; -sysvregs : skip RDI and RSI in USES
+    avxencoding             db ?            ; option avxencoding:<>
    .ends
 
 TokenCount              equ <ModuleInfo.token_count>

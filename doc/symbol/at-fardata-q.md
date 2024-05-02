@@ -6,4 +6,4 @@ The name of the segment defined by the .FARDATA? directive (text macro).
 
 #### See Also
 
-[Symbols Reference](readme.md)
+[Segment Information](segment-information.md) | [Symbols Reference](readme.md)

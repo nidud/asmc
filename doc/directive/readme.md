@@ -23,4 +23,4 @@ Asmc Macro Assembler Reference
 
 ### See Also
 
-[Symbols Reference](../symbol/readme.md)
+[Asmc Reference](../readme.md) | [Symbols Reference](../symbol/readme.md)

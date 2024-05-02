@@ -12,4 +12,4 @@ Asmc Macro Assembler Reference
 
 #### See Also
 
-[Directives Reference](../directive/readme.md)
+[Asmc Reference](../readme.md) | [Operators Reference](../operator/readme.md)

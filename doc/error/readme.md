@@ -26,4 +26,4 @@ _Utility_: _Filename_ <_Line_> : <_Errortype_> <_Code_>: <_Messagetext_>
 
 #### See Also
 
-[Asmc Macro Assembler Reference](../readme.md)
+[Asmc Reference](../readme.md) | [Directives Reference](../directive/readme.md)

@@ -14,5 +14,5 @@ Asmc Macro Assembler Reference
 
 ### See Also
 
-[Directives Reference](directive.md)
+[Asmc Reference](../readme.md) | [Directives Reference](../directive/readme.md)
 

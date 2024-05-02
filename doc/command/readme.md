@@ -40,13 +40,13 @@ The options listed in the following table.
 - **-fp**_n_ - Set FPU: 0=8087, 2=80287, 3=80387.
 - **-frame** - Auto generate unwind information.
 - **-Fw**_filename_ - Set errors file name.
-- **-Gc** - Specifies use of FORTRAN- or Pascal-style function calling and naming conventions. Same as **OPTION LANGUAGE:PASCAL**.
-- **-Gd** - Specifies use of C-style function calling and naming conventions. Same as **OPTION LANGUAGE:C**.
-- **-Gs** - Specifies use of SYSCALL (System V)-style function calling and naming conventions. Same as **OPTION LANGUAGE:SYSCALL**.
+- **-Gc** - Specifies use of FORTRAN- or Pascal-style function calling and naming conventions.
+- **-Gd** - Specifies use of C-style function calling and naming conventions.
+- **-Gs** - Specifies use of SYSCALL (System V)-style function calling and naming conventions.
 - **-Ge** - Emit a conditional _chkstk() inside the prologue.
 - **-gui** - Link switch used with **-pe** -- subsystem:windows.
 - **-Gv** - Specifies use of VECTORCALL-style function calling and naming conventions.
-- **-Gz** - Specifies use of STDCALL-style function calling and naming conventions. Defines _STDCALL_SUPPORTED. Same as **OPTION LANGUAGE:STDCALL**.
+- **-Gz** - Specifies use of STDCALL-style function calling and naming conventions. Defines _STDCALL_SUPPORTED.
 - **-homeparams** - Forces parameters passed in registers to be written to their locations on the stack upon function entry.
 - **-I**_pathname_ - Sets path for include file.
 - [**-idd**](option-idd.md) Assemble source as binary data.
@@ -111,4 +111,4 @@ The options listed in the following table.
 
 #### See Also
 
-[ASMC Error Messages](../error/readme.md) | [Predefined macros](../symbol/predefined-macros.md)
+[Asmc Reference](../readme.md) | [Error Messages](../error/readme.md) | [Predefined macros](../symbol/predefined-macros.md)

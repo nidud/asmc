@@ -14,9 +14,9 @@ externdef E1:abs
 	mov ax, HIGH E1
 	mov ax, lowword E1
 	mov ax, highword E1	;is to fail
-	mov ax, typeof E1
-	mov ax, opattr E1
 	mov ax, TYPE E1
+	mov ax, opattr E1
+	mov ax, .TYPE E1
 
 	mov ax, LENGTH E1
 	mov ax, SIZE E1

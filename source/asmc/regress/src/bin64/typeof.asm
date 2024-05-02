@@ -1,6 +1,6 @@
 
     ; 2.31.32
-    ; typeof(addr p)
+    ; TYPEOF(addr p)
 
 ifndef __ASMC64__
     .x64
@@ -16,8 +16,8 @@ main proc
 
   local a:byte
 
-    mov eax,typeof(a)       ; 1
-    mov eax,typeof(addr a)  ; 8
+    mov eax,TYPEOF(a)       ; 1
+    mov eax,TYPEOF(addr a)  ; 8
     ret
 
 main endp

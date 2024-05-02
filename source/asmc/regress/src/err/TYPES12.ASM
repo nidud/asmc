@@ -6,7 +6,7 @@
 
 	.code
 
-	mov eax, (typeof var) ptr [ebx]
+	mov eax, (TYPEOF var) ptr [ebx]
 
 var dw 0
 

@@ -1,25 +1,26 @@
 
-;--- operators SIZE, TYPEOF
-;--- for 64-bit NEAR/FAR
+;--- operators SIZE, TYPE
+;--- for 32-bit NEAR/FAR
 
-ifndef __ASMC64__
-    .x64
-    .model flat, fastcall
-endif
+	.386
+	.model flat
 
 TN  typedef near
 TF  typedef far
 
 	.code
 
-	dw TN, SIZE TN, typeof TN
-	dw TF, SIZE TF, typeof TF
+	dw near, SIZE near, TYPE near
+	dw far,	 SIZE far,  TYPE far
+
+	dw TN, SIZE TN, TYPE TN
+	dw TF, SIZE TF, TYPE TF
 
 v1	label near
 v2	label far
 
-	dw SIZE v1, typeof v1
-	dw SIZE v2, typeof v2
+	dw SIZE v1, TYPE v1
+	dw SIZE v2, TYPE v2
 
 p1	proc
 
@@ -30,13 +31,13 @@ local l2[2]:TF
 	dw lengthof l1
 	dw SIZE	    l1
 	dw LENGTH   l1
-	dw typeof   l1
+	dw TYPE	    l1
 
 	dw sizeof   l2
 	dw lengthof l2
 	dw SIZE	    l2
 	dw LENGTH   l2
-	dw typeof   l2
+	dw TYPE	    l2
 
 p1	endp
 

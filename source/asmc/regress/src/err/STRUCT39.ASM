@@ -13,17 +13,17 @@ S1 ends
 myvar S1 <>
 nostruct db ?
 
-	if typeof(nostruct.foo) eq BYTE
+	if TYPEOF(nostruct.foo) eq BYTE
 		db 0
-	elseif typeof(nostruct.foo[ecx]) eq BYTE
+	elseif TYPEOF(nostruct.foo[ecx]) eq BYTE
 		db 1
 	else
 		db 2
 	endif
 
-	if typeof(myvar.f2) eq BYTE
+	if TYPEOF(myvar.f2) eq BYTE
 		db 0
-	elseif typeof(myvar.f2[ecx]) eq BYTE
+	elseif TYPEOF(myvar.f2[ecx]) eq BYTE
 		db 1
 	else
 		db 2

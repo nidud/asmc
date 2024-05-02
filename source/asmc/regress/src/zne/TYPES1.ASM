@@ -7,16 +7,16 @@
     option casemap:none
 
 TrueType MACRO arg
-	if (typeof(arg) eq BYTE)
+	if (TYPE(arg) eq BYTE)
 		exitm <1>
 	endif
-	if (typeof(arg) eq DWORD)
+	if (TYPE(arg) eq DWORD)
 		exitm <2>
 	endif
-	if (typeof(arg) eq SDWORD)
+	if (TYPE(arg) eq SDWORD)
 		exitm <3>
 	endif
-	if (typeof(arg) eq REAL4)
+	if (TYPE(arg) eq REAL4)
 		exitm <4>
 	endif
 	ENDM

@@ -8,7 +8,7 @@
 
 v1	db 0
 
-	mov ax, typeof 0	;ok
+	mov ax, TYPE 0 ;ok
 
 	mov ax, seg    0
 	mov ax, offset 0;ok

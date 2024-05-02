@@ -5,7 +5,7 @@
 	.model flat
 	.code
 
-	lea edx,[esp + typeof edx ]
-	lea edx,[esp + typeof(edx)]
+	lea edx,[esp + TYPEOF edx ]
+	lea edx,[esp + TYPEOF(edx)]
 
 	end

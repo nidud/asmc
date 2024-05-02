@@ -17,7 +17,7 @@ endif
     Pen_Pen macro this, _1, _2:=<1.0>, _3:=<0>
         ifb <_1>
             this.Pen0()
-        elseif typeof(_1) eq 2
+        elseif TYPEOF(_1) eq 2
             this.Pen1(_1, _2, _3, rcx)
         else
             this.Pen2(_1, _2)

@@ -63,9 +63,9 @@ main:
 	mov si,sizeof s1
 	mov di,sizeof var1
 	mov bp,sizeof var1.v3
-	mov si,typeof s1
-	mov si,typeof s2
-	mov si,typeof s1.v4
+	mov si,TYPE s1
+	mov si,TYPE s2
+	mov si,TYPE s1.v4
 	mov al,[bx].s1.v2
 	mov al,s1.v1[bx]
 	mov al, [bx].s4.m1.v1

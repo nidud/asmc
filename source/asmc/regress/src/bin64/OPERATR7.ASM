@@ -11,8 +11,8 @@ endif
 start:
 
 	dw TYPEOF QWORD PTR offset start
-	dw TYPEOF QWORD PTR low32 start
-	dw TYPEOF QWORD PTR lowword start
-	dw TYPEOF QWORD PTR LOW start
+	dw TYPEOF QWORD PTR LOW32 start
+	dw TYPEOF QWORD PTR LOWWORD start
+	dw TYPEOF QWORD PTR LOWBYTE start
 
 END

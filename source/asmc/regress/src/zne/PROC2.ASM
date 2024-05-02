@@ -27,7 +27,7 @@ void ends
 	dw sizeof chr&2, lengthof chr&2, SIZE chr&2, LENGTH chr&2
 	dw sizeof chr&3, lengthof chr&3, SIZE chr&3, LENGTH chr&3
 	dw sizeof chr&4, lengthof chr&4, SIZE chr&4, LENGTH chr&4
-	dw typeof chr&1, typeof chr&2, typeof chr&3, typeof chr&4
+	dw TYPE chr&1, TYPE chr&2, TYPE chr&3, TYPE chr&4
 	endm
 	endm
 

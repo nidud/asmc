@@ -1,5 +1,5 @@
 
-;--- operators SIZEOF, LENGTHOF, .SIZE, .LENGTH, TYPEOF
+;--- operators SIZEOF, LENGTHOF, SIZE, LENGTH, TYPE
 ;--- for LOCAL and LABEL
 
 	.model small

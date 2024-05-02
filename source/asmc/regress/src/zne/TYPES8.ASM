@@ -12,13 +12,13 @@ PREAL8 typedef ptr REAL8
 
 assume eax:PREAL8
 
-	dw (typeof eax ) EQ (typeof DWORD)	;0
-	dw (typeof [eax] ) EQ (typeof REAL8);-1
-	dw (typeof eax ) EQ (typeof PREAL8)	;-1
+	dw (TYPE eax ) EQ (TYPE DWORD) ;0
+	dw (TYPE [eax] ) EQ (TYPE REAL8);-1
+	dw (TYPE eax ) EQ (TYPE PREAL8) ;-1
 
 assume eax:nothing
 
-	dw (typeof eax ) EQ (typeof DWORD)	;-1
-	dw (typeof eax ) EQ (typeof PREAL8)	;0
+	dw (TYPE eax ) EQ (TYPE DWORD) ;-1
+	dw (TYPE eax ) EQ (TYPE PREAL8) ;0
 
 end

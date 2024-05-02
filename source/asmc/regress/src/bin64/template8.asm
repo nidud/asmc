@@ -13,11 +13,11 @@ endif
 
 main proc
 
-    ; @easycode: typeof(<float>) failed within a macro()
+    ; @easycode: TYPE(<float>) failed within a macro()
     ;
     ; returned 16 (size of real16)
     ;
-    mov eax,@CatStr(<!">, %(typeof(5.0)), <!">)
+    mov eax,@CatStr(<!">, %(TYPEOF(5.0)), <!">)
     ;
     ; recursive typeid(?, ...)typeid(?, ...)
     ;

@@ -128,6 +128,7 @@ strtrunc	proto __cdecl :LPSTR
 strfcat		proto __cdecl :LPSTR, :LPSTR, :LPSTR
 strshr		proto __cdecl :LPSTR, :int_t
 _awildcard	proto __cdecl :LPSTR, :LPSTR
+_aesc2str	proto __cdecl :LPSTR, :LPSTR
 
 _wstrfn		proto __cdecl :LPWSTR
 _wstrext	proto __cdecl :LPWSTR
@@ -138,6 +139,7 @@ _wstrtrunc	proto __cdecl :LPWSTR
 _wstrfcat	proto __cdecl :LPWSTR, :LPWSTR, :LPWSTR
 _wstrshr	proto __cdecl :LPWSTR, :int_t
 _wwildcard	proto __cdecl :LPTSTR, :LPTSTR
+_wesc2str	proto __cdecl :LPWSTR, :LPWSTR
 
 ifdef _UNICODE
 define _tstrfn		<_wstrfn>
@@ -149,6 +151,7 @@ define _tstrtrunc	<_wstrtrunc>
 define _tstrfcat	<_wstrfcat>
 define _tstrshr		<_wstrshr>
 define _twildcard	<_wwildcard>
+define _tesc2str	<_wesc2str>
 else
 define _tstrfn		<strfn>
 define _tstrext		<strext>
@@ -159,6 +162,7 @@ define _tstrtrunc	<strtrunc>
 define _tstrfcat	<strfcat>
 define _tstrshr		<strshr>
 define _twildcard	<_awildcard>
+define _tesc2str	<_aesc2str>
 endif
 
 endif

@@ -2,12 +2,12 @@ Asmc Macro Assembler Reference
 
 # Miscellaneous
 
-- [**$**](dollar.md)
-- [**?**](q.md)
-- [**@@:**](at-at.md)
-- [**@B**](at-b.md)
-- [**@F**](at-f.md)
-- [**{evex}**](evex.md)
+- [$](dollar.md)
+- [?](q.md)
+- [@@:](at-at.md)
+- [@B](at-b.md)
+- [@F](at-f.md)
+- [{evex}](evex.md)
 
 #### See Also
 

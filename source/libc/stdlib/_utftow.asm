@@ -16,23 +16,26 @@ externdef _lookuptrailbytes:byte
 _utftow proc utf:string_t
 
     ldr     rdx,utf
+
     lea     rcx,_lookuptrailbytes
     movzx   eax,byte ptr [rdx]
     movzx   ecx,byte ptr [rcx+rax]
     inc     ecx
 
-    .switch ecx
-    .case 1
+    .if ( ecx == 1 )
+
         and     eax,0x7F
-       .endc
-    .case 2
+
+    .elseif ( ecx == 2 )
+
         and     eax,0x1F
         shl     eax,6
         movzx   edx,byte ptr [rdx+1]
         and     edx,0x3F
         or      eax,edx
-       .endc
-    .case 3
+
+    .elseif ( ecx == 3 )
+
         and     eax,0x0F
         shl     eax,12
         movzx   ecx,byte ptr [rdx+1]
@@ -43,7 +46,7 @@ _utftow proc utf:string_t
         and     edx,0x3F
         or      eax,edx
         mov     ecx,3
-    .endsw
+    .endif
     ret
 
 _utftow endp

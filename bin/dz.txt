@@ -2,9 +2,9 @@ DZ.TXT--
 Copyright (C) 2024 Doszip Developers.
 
 DOSZIP COMMANDER
-Version 3.71
+Version 3.73
 
-Welcome to Doszip Commander Version 3.71!
+Welcome to Doszip Commander Version 3.73!
 =========================================
 
 
@@ -750,5 +750,5 @@ Welcome to Doszip Commander Version 3.71!
    These people contributed to Doszip (additions, bugfixes, bug reports):
 
    Hjort Nidudsson, Japheth, Michael Kennedy, Robert Riebisch, Rugxulo,
-   Yury, Fritz Mueller
+   Yury, Fritz Mueller, xrayer
 

@@ -1,4 +1,7 @@
 .pragma list(push, 0)
+ifndef __DIRECT_INC
+define __DIRECT_INC
+
 include io.inc
 ifdef __UNIX__
 include sys/stat.inc
@@ -81,30 +84,30 @@ define _D_SORTSIZE	0x0080
 define _D_SORTSUB	0x0100
 define _D_DOSORT	0x00F0
 
-.template FBLKA
+.template FILENTA
     attrib	uint_t ?
     time	uint_t ?
     size	uint64_t ?
     name	string_t ?
     nbuf	char_t 1 dup(?)
    .ends
-    PFBLKA	typedef ptr FBLKA
+    PFILENTA	typedef ptr FILENTA
 
-.template FBLKW
+.template FILENTW
     attrib	uint_t ?
     time	uint_t ?
     size	uint64_t ?
     name	wstring_t ?
     nbuf	wchar_t 1 dup(?)
    .ends
-    PFBLKW	typedef ptr FBLKW
+    PFILENTW	typedef ptr FILENTW
 
 .template DIRENTW
     flags	uint_t ?
     count	uint_t ?
     path	wstring_t ?
     mask	wstring_t ?
-    fcb		PFBLKW ?
+    fcb		PFILENTW ?
    .ends
     PDIRENTW	typedef ptr DIRENTW
 
@@ -113,18 +116,18 @@ define _D_DOSORT	0x00F0
     count	uint_t ?
     path	string_t ?
     mask	string_t ?
-    fcb		PFBLKA ?
+    fcb		PFILENTA ?
    .ends
     PDIRENTA	typedef ptr DIRENTA
 
 ifdef _UNICODE
-FBLK		typedef FBLKW
+FILENT		typedef FILENTW
 DIRENT		typedef DIRENTW
 else
-FBLK		typedef FBLKA
+FILENT		typedef FILENTA
 DIRENT		typedef DIRENTA
 endif
-PFBLK		typedef ptr FBLK
+PFILENT		typedef ptr FILENT
 PDIRENT		typedef ptr DIRENT
 
 _dopenA		proto __cdecl :PDIRENTA, :LPSTR, :LPSTR, :UINT
@@ -152,4 +155,5 @@ endif
 
 endif
 
+endif
 .pragma list(pop)

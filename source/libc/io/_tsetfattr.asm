@@ -1,13 +1,11 @@
-; _TGETFATTR.ASM--
+; _TSETFATTR.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
 include io.inc
-ifdef __UNIX__
-include sys/stat.inc
-else
+ifndef __UNIX__
 include winbase.inc
 endif
 include errno.inc
@@ -15,26 +13,23 @@ include tchar.inc
 
     .code
 
-_tgetfattr proc file:LPTSTR
+_tsetfattr proc file:LPTSTR, attrib:UINT
 
     ldr rcx,file
+    ldr edx,attrib
 
 ifdef __UNIX__
-
-    .new s:_stat32
-
-    .ifd ( _stat(rcx, &s) == 0 )
-
-        mov eax,s.st_mode
+    mov eax,-1
 else
-    .ifd ( GetFileAttributes( rcx ) == -1 )
+    .ifd ( SetFileAttributes(rcx, edx) == 0 )
 
-        _dosmaperr( GetLastError() )
-endif
+        .return( _dosmaperr( GetLastError() ) )
     .endif
+    xor eax,eax
+endif
     ret
 
-_tgetfattr endp
+_tsetfattr endp
 
     end
 

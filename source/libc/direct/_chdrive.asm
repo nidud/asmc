@@ -18,7 +18,7 @@ else
    .new newdrive[4]:char_t
 
     ldr eax,drive
-    .if ( eax < 1 || eax > 31 )
+    .ifs ( eax < 1 || eax > 31 )
 
         _set_doserrno( ERROR_INVALID_DRIVE )
         .return( _set_errno( EACCES ) )

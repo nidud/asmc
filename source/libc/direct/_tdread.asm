@@ -29,7 +29,7 @@ endif
     add rax,[rbx].path
     mov fp,rax
 
-    mov rcx,_tstrfcat([rbx].path, NULL, [rbx].mask)
+    mov rcx,_tcsfcat([rbx].path, NULL, [rbx].mask)
     mov h,_tfindfirsti64(rcx, &ff)
     mov rcx,fp
     mov TCHAR ptr [rcx],0
@@ -48,26 +48,26 @@ endif
         .endif
 
         _tcslen(&ff.name)
-        .if !malloc(&[rax*TCHAR+FBLK])
+        .if !malloc(&[rax*TCHAR+FILENT])
 
             .break
         .endif
 
         mov rcx,rax
-        mov [rcx].FBLK.name,NULL
-        mov [rcx].FBLK.attrib,ff.attrib
-        mov [rcx].FBLK.size,ff.size
+        mov [rcx].FILENT.name,NULL
+        mov [rcx].FILENT.attrib,ff.attrib
+        mov [rcx].FILENT.size,ff.size
 
         mov rax,[rbx].fcb
         .if ( rax == NULL )
             mov [rbx].fcb,rcx
         .else
-            .while ( [rax].FBLK.name )
-                mov rax,[rax].FBLK.name
+            .while ( [rax].FILENT.name )
+                mov rax,[rax].FILENT.name
             .endw
-            mov [rax].FBLK.name,rcx
+            mov [rax].FILENT.name,rcx
         .endif
-        _tcscpy(&[rcx].FBLK.nbuf, &ff.name)
+        _tcscpy(&[rcx].FILENT.nbuf, &ff.name)
 
         inc [rbx].count
         _tfindnexti64(h, &ff)
@@ -86,10 +86,10 @@ endif
         .for ( rbx = rcx : rbx : rdx+=size_t )
 
             mov [rdx],rbx
-            lea rax,[rbx].FBLK.nbuf
+            lea rax,[rbx].FILENT.nbuf
             mov rcx,rbx
-            mov rbx,[rbx].FBLK.name
-            mov [rcx].FBLK.name,rax
+            mov rbx,[rbx].FILENT.name
+            mov [rcx].FILENT.name,rax
         .endf
         mov [rdx],rbx
         mov rbx,d
@@ -100,7 +100,7 @@ endif
         .for ( rbx = rcx : rbx : )
 
             mov rcx,rbx
-            mov rbx,[rbx].FBLK.name
+            mov rbx,[rbx].FILENT.name
             free(rcx)
         .endf
         xor eax,eax

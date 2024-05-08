@@ -23,7 +23,7 @@ _dsearch proc uses rbx d:PDIRENT, name:LPTSTR
         add  rax,[rbx].fcb
         mov  rcx,[rax]
 
-        .ifd ( !_tcscmp(name, [rcx].FBLK.name) )
+        .ifd ( !_tcscmp(name, [rcx].FILENT.name) )
 
             .return( i )
         .endif

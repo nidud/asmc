@@ -16,21 +16,21 @@ include tchar.inc
 
     option dotname
 
-compare proc private uses rsi rdi rbx a:PFBLK, b:PFBLK
+compare proc private uses rsi rdi rbx a:PFILENT, b:PFILENT
 
    .new name_a:LPTSTR
    .new name_b:LPTSTR
 
     ldr rax,b
     mov rsi,[rax]
-    mov edx,[rsi].FBLK.attrib
-    mov rbx,[rsi].FBLK.name
+    mov edx,[rsi].FILENT.attrib
+    mov rbx,[rsi].FILENT.name
     mov name_b,rbx
 
     ldr rax,a
     mov rdi,[rax]
-    mov ecx,[rdi].FBLK.attrib
-    mov rbx,[rdi].FBLK.name
+    mov ecx,[rdi].FILENT.attrib
+    mov rbx,[rdi].FILENT.name
     mov name_a,rbx
     test ecx,_F_SUBDIR
     jz  .0
@@ -72,8 +72,8 @@ compare proc private uses rsi rdi rbx a:PFBLK, b:PFBLK
     je  .8
     jmp .N
 .4:
-    mov rbx,_tstrext(name_b)
-    and rax,_tstrext(name_a)
+    mov rbx,_tcsext(name_b)
+    and rax,_tcsext(name_a)
     jz  .5
     and rbx,rbx
     jz  .A
@@ -89,28 +89,28 @@ endif
     jnz .9
     jmp .N
 .6:
-    mov ecx,[rdi].FBLK.time
-    cmp ecx,[rsi].FBLK.time
+    mov ecx,[rdi].FILENT.time
+    cmp ecx,[rsi].FILENT.time
     jb  .A
     ja  .9
     jmp .N
 .7:
 ifdef _WIN64
-    mov rcx,[rdi].FBLK.size
-    cmp rcx,[rsi].FBLK.size
+    mov rcx,[rdi].FILENT.size
+    cmp rcx,[rsi].FILENT.size
 else
-    mov ecx,dword ptr [rdi].FBLK.size[4]
-    cmp ecx,dword ptr [rsi].FBLK.size[4]
+    mov ecx,dword ptr [rdi].FILENT.size[4]
+    cmp ecx,dword ptr [rsi].FILENT.size[4]
     jb  .A
     ja  .9
-    mov ecx,dword ptr [rdi].FBLK.size
-    cmp ecx,dword ptr [rsi].FBLK.size
+    mov ecx,dword ptr [rdi].FILENT.size
+    cmp ecx,dword ptr [rsi].FILENT.size
 endif
     jb  .A
     ja  .9
     jmp .N
 .8:
-    test [rsi].FBLK.attrib,_F_SUBDIR
+    test [rsi].FILENT.attrib,_F_SUBDIR
     jnz .A
 .9:
     mov eax,-1

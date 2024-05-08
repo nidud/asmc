@@ -96,12 +96,13 @@ _wcsset_s	proto __cdecl :LPWSTR, :size_t, :uint_t
 _wcslwr_s	proto __cdecl :LPWSTR, :size_t
 _wcsupr_s	proto __cdecl :LPWSTR, :size_t
 
-;; Old names
-wcswcs		equ <wcsstr>
+; Old names
+
+define wcswcs	<wcsstr>
 
 ifndef __STDC__
 
-;; prototypes for oldnames.lib functions
+; prototypes for oldnames.lib functions
 
 wcsdup		proto __cdecl :LPWSTR
 wcsicmp		proto __cdecl :LPWSTR, :LPWSTR
@@ -119,51 +120,38 @@ endif
 ifndef _MSVCRT
 
 memxchg		proto __cdecl :ptr, :ptr, :size_t
+
+stristr		proto __cdecl :LPSTR, :LPSTR
+strxchg		proto __cdecl :LPSTR, :LPSTR, :LPSTR
+strmove		proto __cdecl :LPSTR, :LPSTR
 strfn		proto __cdecl :LPSTR
 strext		proto __cdecl :LPSTR
-setfext		proto __cdecl :LPSTR, :LPSTR
 strtrim		proto __cdecl :LPSTR
 strstart	proto __cdecl :LPSTR
 strtrunc	proto __cdecl :LPSTR
 strfcat		proto __cdecl :LPSTR, :LPSTR, :LPSTR
+strfxcat	proto __cdecl :LPSTR, :LPSTR
 strshr		proto __cdecl :LPSTR, :int_t
-_awildcard	proto __cdecl :LPSTR, :LPSTR
-_aesc2str	proto __cdecl :LPSTR, :LPSTR
+strwild		proto __cdecl :LPSTR, :LPSTR
+stresc		proto __cdecl :LPSTR, :LPSTR
+strdos		proto __cdecl :LPSTR
+strunix		proto __cdecl :LPSTR
 
+_wstristr	proto __cdecl :LPWSTR, :LPWSTR
+_wstrxchg	proto __cdecl :LPWSTR, :LPWSTR, :LPWSTR
+_wstrmove	proto __cdecl :LPWSTR, :LPWSTR
 _wstrfn		proto __cdecl :LPWSTR
 _wstrext	proto __cdecl :LPWSTR
-_wsetfext	proto __cdecl :LPWSTR, :LPWSTR
 _wstrtrim	proto __cdecl :LPWSTR
 _wstrstart	proto __cdecl :LPWSTR
 _wstrtrunc	proto __cdecl :LPWSTR
 _wstrfcat	proto __cdecl :LPWSTR, :LPWSTR, :LPWSTR
+_wstrfxcat	proto __cdecl :LPWSTR, :LPWSTR
 _wstrshr	proto __cdecl :LPWSTR, :int_t
-_wwildcard	proto __cdecl :LPTSTR, :LPTSTR
-_wesc2str	proto __cdecl :LPWSTR, :LPWSTR
-
-ifdef _UNICODE
-define _tstrfn		<_wstrfn>
-define _tstrext		<_wstrext>
-define _tsetfext	<_wsetfext>
-define _tstrtrim	<_wstrtrim>
-define _tstrstart	<_wstrstart>
-define _tstrtrunc	<_wstrtrunc>
-define _tstrfcat	<_wstrfcat>
-define _tstrshr		<_wstrshr>
-define _twildcard	<_wwildcard>
-define _tesc2str	<_wesc2str>
-else
-define _tstrfn		<strfn>
-define _tstrext		<strext>
-define _tsetfext	<setfext>
-define _tstrtrim	<strtrim>
-define _tstrstart	<strstart>
-define _tstrtrunc	<strtrunc>
-define _tstrfcat	<strfcat>
-define _tstrshr		<strshr>
-define _twildcard	<_awildcard>
-define _tesc2str	<_aesc2str>
-endif
+_wstrwild	proto __cdecl :LPTSTR, :LPTSTR
+_wstresc	proto __cdecl :LPWSTR, :LPWSTR
+_wstrdos	proto __cdecl :LPWSTR
+_wstrunix	proto __cdecl :LPWSTR
 
 endif
 

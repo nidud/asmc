@@ -9,8 +9,6 @@
 ;
 include stdlib.inc
 
-externdef _lookuptrailbytes:byte
-
     .code
 
 _utftow proc utf:string_t

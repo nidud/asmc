@@ -14,29 +14,21 @@ include sselevel.inc
     .code
 
 setsselevel proc uses rbx
-ifdef _WIN64
-    pushfq
-else
+ifndef _WIN64
     pushfd
-endif
-    pop     rax
+    pop     eax
     mov     ecx,0x200000
-    mov     rdx,rax
-    xor     rax,rcx
-    push    rax
-ifdef _WIN64
-    popfq
-    pushfq
-else
+    mov     edx,eax
+    xor     eax,ecx
+    push    eax
     popfd
     pushfd
-endif
-    pop     rax
-    xor     rax,rdx
-    and     rax,rcx
+    pop     eax
+    xor     eax,edx
+    and     eax,ecx
 
     .ifnz
-
+endif
         xor eax,eax
         cpuid
         .if rax
@@ -74,8 +66,9 @@ endif
                 mov     sselevel,eax
             .endif
         .endif
+ifndef _WIN64
     .endif
-
+endif
     .if eax & SSE_XGETBV
 
         xor ecx,ecx
@@ -143,6 +136,7 @@ endif
             .endif
         .endif
     .endif
+    mov eax,sselevel
     ret
 
 setsselevel endp

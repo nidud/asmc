@@ -85,21 +85,37 @@ TCHAR		typedef wchar_t
 endif
 endif
 
-define _tal	<ax>
-define _tbl	<bx>
-define _tcl	<cx>
-define _tdl	<dx>
-define _tlodsb	<lodsw>
-define _tstosb	<stosw>
-define _tscasb	<scasw>
-define _tmovsb	<movsw>
+define _tal		<ax>
+define _tbl		<bx>
+define _tcl		<cx>
+define _tdl		<dx>
+define _tlodsb		<lodsw>
+define _tstosb		<stosw>
+define _tscasb		<scasw>
+define _tmovsb		<movsw>
 
-_TEOF		equ WEOF
-if 0
-__T	macro x
-%	exitm<L&x&>
-	endm
-endif
+define _tcsistr		<_wstristr>
+define _tcsxchg		<_wstrxchg>
+define _tcsmove		<_wstrmove>
+define _tcsfn		<_wstrfn>
+define _tcsshr		<_wstrshr>
+define _tcsext		<_wstrext>
+define _tcsfcat		<_wstrfcat>
+define _tcsfxcat	<_wstrfxcat>
+define _tcstrim		<_wstrtrim>
+define _tcsstart	<_wstrstart>
+define _tcstrunc	<_wstrtrunc>
+define _tcswild		<_wstrwild>
+define _tcsesc		<_wstresc>
+define _tcsdos		<_wstrdos>
+define _tcsunix		<_wstrunix>
+
+define _tosopen		<_wosopen>
+define _tgetfattr	<_wgetfattr>
+define _tsetfattr	<_wsetfattr>
+define _tfilexist	<_wfilexist>
+
+define _TEOF		WEOF
 
 _tmain			equ <wmain>
 _tWinMain		equ <wWinMain>
@@ -699,18 +715,37 @@ else
 
 include string.inc
 
-define _tal	<al>
-define _tbl	<bl>
-define _tcl	<cl>
-define _tdl	<dl>
-define _tlodsb	<lodsb>
-define _tstosb	<stosb>
-define _tscasb	<scasb>
-define _tmovsb	<movsb>
+define _tal		<al>
+define _tbl		<bl>
+define _tcl		<cl>
+define _tdl		<dl>
+define _tlodsb		<lodsb>
+define _tstosb		<stosb>
+define _tscasb		<scasb>
+define _tmovsb		<movsb>
 
-_TEOF			equ EOF
+define _tcsistr		<stristr>
+define _tcsxchg		<strxchg>
+define _tcsmove		<strmove>
+define _tcsfn		<strfn>
+define _tcsshr		<strshr>
+define _tcsext		<strext>
+define _tcsfcat		<strfcat>
+define _tcsfxcat	<strfxcat>
+define _tcstrim		<strtrim>
+define _tcsstart	<strstart>
+define _tcstrunc	<strtrunc>
+define _tcswild		<strwild>
+define _tcsesc		<stresc>
+define _tcsdos		<strdos>
+define _tcsunix		<strunix>
 
-;__T	macro x
+define _tosopen		<osopen>
+define _tgetfattr	<getfattr>
+define _tsetfattr	<setfattr>
+define _tfilexist	<filexist>
+
+define _TEOF		EOF
 
 _tmain			equ <main>
 _tWinMain		equ <WinMain>

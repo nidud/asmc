@@ -53,7 +53,7 @@ wcstrcpy proc uses rsi rdi rbx cp:LPTSTR, wc:PCHAR_INFO, count:int_t
         .untilcxz
     .until 1
     mov TCHAR ptr [rdi],0
-    _tstrtrim(cp)
+    _tcstrim(cp)
     ret
 
 wcstrcpy endp

@@ -351,7 +351,7 @@ IConfig::IConfig proc uses rbx file:string_t
         mov path,_strdup(rcx)
     .else
         mov path,_strdup(_pgmptr)
-        setfext(rax, ".ini")
+        strfxcat(rax, ".ini")
     .endif
 
     mov rbx,@ComAlloc(IConfig)

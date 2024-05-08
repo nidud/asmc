@@ -643,6 +643,7 @@ externdef	_ermode:uint_t
 externdef	_cvtbuf:string_t
 externdef	_aenvptr:string_t
 externdef	_wenvptr:wstring_t
+externdef	_lookuptrailbytes:byte
 
 _agetenvs	proto __cdecl
 _wgetenvs	proto __cdecl
@@ -660,6 +661,9 @@ _xtoa_s		proto __cdecl :qword, :string_t, :size_t, :uint_t, :int_t
 _xtow_s		proto __cdecl :qword, :wstring_t, :size_t, :uint_t, :int_t
 _wtoutf		proto __cdecl :wchar_t
 _utftow		proto __cdecl :string_t
+_utftows	proto __cdecl :string_t
+_utfslen	proto __cdecl :string_t
+
 _pathtow	proto __cdecl :string_t, :ptr wstring_t
 _aisexec	proto __cdecl :string_t
 _wisexec	proto __cdecl :wstring_t

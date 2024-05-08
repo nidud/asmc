@@ -13,6 +13,7 @@ else
 intptr_t typedef sdword
 endif
 endif
+
 ifndef _TIME64_T_DEFINED
 define _TIME64_T_DEFINED
 __time64_t typedef sqword
@@ -79,12 +80,24 @@ endif
 
 define _NFILE_		20
 
-define _A_NORMAL	0x00
 define _A_RDONLY	0x01
 define _A_HIDDEN	0x02
 define _A_SYSTEM	0x04
+define _A_VOLID		0x08
 define _A_SUBDIR	0x10
 define _A_ARCH		0x20
+define _A_NORMAL	0x00
+
+define _A_TEMPORARY	0x0100
+define _A_SPARSE_FILE	0x0200
+define _A_DELETE	0x0400
+define _A_REPARSEPOINT	0x0400
+define _A_SEQSCAN	0x0800
+define _A_COMPRESSED	0x0800
+define _A_RANDOM	0x1000
+define _A_OFFLINE	0x1000
+define _A_NOT_INDEXED	0x2000
+define _A_ENCRYPTED	0x4000
 
 define FOPEN		0x01
 define FEOFLAG		0x02
@@ -221,6 +234,7 @@ _wcreat		proto __cdecl :wstring_t, :int_t
 _wfindfirst	proto __cdecl :wstring_t, :ptr _wfinddata_t
 _wfindnext	proto __cdecl :ptr, :ptr _wfinddata_t
 _wunlink	proto __cdecl :wstring_t
+_wremove	proto __cdecl :wstring_t
 _wrename	proto __cdecl :wstring_t, :wstring_t
 _wopen		proto __Cdecl :wstring_t, :int_t, :vararg
 _wsopen		proto __Cdecl :wstring_t, :int_t, :int_t, :vararg
@@ -265,16 +279,24 @@ _alloc_osfhnd	proto __cdecl
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
 
-osmaperr	proto __cdecl
 osread		proto __cdecl :int_t, :ptr, :uint_t
 oswrite		proto __cdecl :int_t, :ptr, :uint_t
-getfattr	proto __cdecl :string_t
+osopen		proto __cdecl :LPSTR, :uint_t, :uint_t, :uint_t
+
+getftime	proto __cdecl :int_t
+getftime_access proto __cdecl :int_t
+getftime_create proto __cdecl :int_t
+setftime	proto __cdecl :int_t, :uint_t
+setftime_access proto __cdecl :int_t, :uint_t
+setftime_create proto __cdecl :int_t, :uint_t
+getfattr	proto __cdecl :LPSTR
+setfattr	proto __cdecl :LPSTR, :UINT
+filexist	proto __cdecl :LPSTR
+
+_wosopen	proto __cdecl :LPWSTR, :uint_t, :uint_t, :uint_t
 _wgetfattr	proto __cdecl :LPWSTR
-ifdef _UNICODE
-define _tgetfattr <_wgetfattr>
-else
-define _tgetfattr <getfattr>
-endif
+_wsetfattr	proto __cdecl :LPWSTR, :UINT
+_wfilexist	proto __cdecl :LPWSTR
 
 endif ; _MSVCRT
 

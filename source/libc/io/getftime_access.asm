@@ -21,7 +21,7 @@ getftime_access proc fd:int_t
 
     ldr ecx,fd
 
-ifdef _UNIX
+ifdef __UNIX__
     mov eax,-1
 else
     .ifd ( _get_osfhandle(ecx) != -1 )

@@ -20,7 +20,7 @@ getftime_create proc fd:int_t
   local FileTime:FILETIME
 
     ldr ecx,fd
-ifdef _UNIX
+ifdef __UNIX__
     mov eax,-1
 else
     .ifd ( _get_osfhandle(ecx) != -1 )

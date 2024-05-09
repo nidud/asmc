@@ -20,7 +20,7 @@ setftime_access proc uses rbx fd:int_t, ftime:uint_t
   local FileTime:FILETIME
 
     ldr ecx,fd
-ifdef _UNIX
+ifdef __UNIX__
     mov eax,-1
 else
     .ifd ( _get_osfhandle(ecx) != -1 )

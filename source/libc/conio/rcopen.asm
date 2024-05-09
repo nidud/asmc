@@ -44,8 +44,8 @@ rcopen proc rc:TRECT, flag:uint_t, color:uint_t, attrib:uint_t, title:string_t, 
         mov rax,title
         .if rax
 
-            movzx edx,rc.col
-            wctitle(p, edx, rax)
+            movzx ecx,rc.col
+            wctitle(p, ecx, rax)
         .endif
     .endif
     mov rax,p

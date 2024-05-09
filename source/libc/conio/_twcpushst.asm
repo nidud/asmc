@@ -23,13 +23,12 @@ wcpushst proc uses rbx p:PCHAR_INFO, cp:LPTSTR
     dec     ch
     mov     rc,ecx
     _at     BG_MENU,FG_KEYBAR,' '
-    movzx   edx,rc.col
-    invoke  wcputw(rbx, edx, eax)
+    movzx   ecx,rc.col
+    invoke  wcputw(rbx, ecx, eax)
     mov     eax,U_LIGHT_VERTICAL
     mov     [rbx+18*4],ax
-    lea     rcx,[rbx+4]
-    movzx   edx,rc.col
-    invoke  wcputs(rcx, edx, edx, cp)
+    movzx   eax,rc.col
+    invoke  wcputs(&[rbx+4], eax, eax, cp)
     invoke  _rcxchg(rc, rbx)
     ret
 

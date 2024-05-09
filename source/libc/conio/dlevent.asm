@@ -6,7 +6,6 @@
 
 ifndef __UNIX__
 include winuser.inc
-endif
 include conio.inc
 include tchar.inc
 
@@ -1372,5 +1371,5 @@ dllevent proc uses rbx ldlg:PDOBJ, listp:ptr LOBJ
     ret
 
 dllevent endp
-
+endif
     end

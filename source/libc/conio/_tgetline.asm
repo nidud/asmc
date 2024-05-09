@@ -70,7 +70,8 @@ _tgetline proc uses rdi rbx title:tstring_t, buffer:tstring_t, line_size:int_t, 
     mov     edx,ecx
     mov     rdi,[rbx].window
     rep     stosd
-    invoke  wcenter([rbx].window, edx, title)
+    mov     ecx,edx
+    invoke  wcenter([rbx].window, ecx, title)
     invoke  _tcontrol([rbx].object, buffer_size, buffer)
     invoke  _dlshow(rbx)
     invoke  _dlmodal(rbx, &WndProc)

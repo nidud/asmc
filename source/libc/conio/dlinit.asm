@@ -81,9 +81,9 @@ dlinit proc uses rsi rdi rbx td:PDOBJ
             mov rsi,[rbx].TOBJ.data
             .if rsi
                 add rdi,4
-                movzx edx,[rbx].TOBJ.rc.col
-                sub edx,2
-                wcpath(rdi, edx, rsi)
+                movzx ecx,[rbx].TOBJ.rc.col
+                sub ecx,2
+                wcpath(rdi, ecx, rsi)
             .endif
             .endc
 

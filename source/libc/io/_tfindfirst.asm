@@ -54,7 +54,7 @@ _tfindnext proc uses rbx handle:ptr, ff:ptr _tfinddata_t
 
         mov file,&[rax].dirent.d_name
 
-        .ifd ( _twildcard([rbx].mask, file) )
+        .ifd ( _tcswild([rbx].mask, file) )
 
             strcat( strcat( strcpy(&path, &[rbx].path), "/" ), file )
 
@@ -92,7 +92,7 @@ _tfindfirst proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
     .endif
     mov dir,rax
 
-    .if ( _tstrfn(rbx) == rbx )
+    .if ( _tcsfn(rbx) == rbx )
 
         mov rcx,dir
         strcpy(&[rcx].FFDATA.path, "./")
@@ -102,7 +102,7 @@ _tfindfirst proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
         strcpy(&[rcx].FFDATA.path, rbx)
     .endif
     mov rbx,dir
-    mov [rbx].mask,_tstrfn(rax)
+    mov [rbx].mask,_tcsfn(rax)
     mov byte ptr [rax-1],0
     mov [rbx].dirp,opendir(&[rbx].path)
 

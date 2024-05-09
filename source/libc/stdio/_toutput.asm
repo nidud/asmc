@@ -452,7 +452,7 @@ endif
                     .endif
                     .endc
 
-ifndef _STDCALL_SUPPORTED
+if not defined(_STDCALL_SUPPORTED) and not defined(NOSTDFLT)
 
                 .case 'E'
                 .case 'G'

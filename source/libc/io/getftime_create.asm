@@ -26,7 +26,7 @@ else
     .ifd ( _get_osfhandle(ecx) != -1 )
 
         mov rcx,rax
-        .ifd !GetFileTime(rcx, 0, 0, &FileTime)
+        .ifd !GetFileTime(rcx, &FileTime, 0, 0)
 
             _dosmaperr( GetLastError() )
         .else

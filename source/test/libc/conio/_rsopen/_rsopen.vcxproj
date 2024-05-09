@@ -27,6 +27,7 @@
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
     <Import Project="$(AsmcDir)\bin\asmc.props" />
+    <Import Project="$(AsmcDir)\bin\iddc.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -44,6 +45,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\X64</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WCharacterSet>NotSet</WCharacterSet>
@@ -58,6 +60,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WCharacterSet>NotSet</WCharacterSet>
@@ -68,9 +71,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ASMC Include="_rsopen.asm" />
+    <IDDC Include="res\OpenFile.idd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(AsmcDir)\bin\asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\iddc.targets" />
   </ImportGroup>
 </Project>

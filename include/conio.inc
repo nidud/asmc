@@ -785,6 +785,7 @@ _dlmodalA	proto __cdecl :THWND, :TPROC
 _dlmodalW	proto __cdecl :THWND, :TPROC
 _dlhide		proto __cdecl :THWND
 _dlshow		proto __cdecl :THWND
+_dlgetid	proto __cdecl :THWND, :int_t
 _dlsetfocus	proto __cdecl :THWND, :uchar_t
 _dlgetfocus	proto __cdecl :THWND
 _dlmove		proto __cdecl :THWND, :int_t

@@ -105,11 +105,12 @@ endif
 
         movzx   eax,[rbx].flags
         and     eax,O_RESBITS
+        or      eax,O_WNDPROC or W_CHILD
         mov     [rsi].flags,ax
         mov     [rsi].rc,[rbx].rc
         mov     [rsi].syskey,[rbx].index
         mov     [rsi].count,[rbx].count
-        mov     [rsi].index,cl
+        mov     [rsi].oindex,cl
         mov     [rsi].prev,rdi
         lea     rax,[rsi+TDIALOG]
         mov     [rsi].next,rax
@@ -140,7 +141,7 @@ endif
         shl     eax,2
         add     rax,[rbx].window
         mov     [rsi].window,rax
-        movzx   edx,[rbx].flags
+        movzx   edx,[rsi].flags
         and     edx,O_TYPEMASK
 
         lea     rcx,_tiproc
@@ -148,25 +149,26 @@ endif
         cmp     edx,O_TEDIT
         cmovz   rax,rcx
         mov     [rsi].winproc,rax
+        .ifz
+            mov [rsi].tedit,rdi
+            add rdi,TEDIT
+        .endif
 
         .if ( [rsi].count )
 
-            .if ( edx == O_TEDIT)
+            .if ( edx == O_TEDIT )
 
-                mov     [rsi].tedit,rdi
-                mov     rcx,rdi
+                lea     rcx,[rdi-TEDIT]
                 assume  rcx:PTEDIT
-                add     rdi,TEDIT
                 movzx   eax,[rsi].count
                 shl     eax,4
                 mov     [rcx].bcols,eax
 ifdef _UNICODE
                 add     eax,eax
 endif
+                mov     [rcx].base,rdi
+                mov     [rsi].buffer,rdi
                 add     rdi,rax
-                lea     rax,[rcx+TEDIT]
-                mov     [rcx].base,rax
-                mov     [rsi].buffer,rax
                 mov     rax,[rsi].window
                 mov     eax,[rax]
                 mov     ax,U_MIDDLE_DOT

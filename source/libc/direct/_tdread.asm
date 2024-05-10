@@ -29,7 +29,11 @@ endif
     add rax,[rbx].path
     mov fp,rax
 
-    mov rcx,_tcsfcat([rbx].path, NULL, [rbx].mask)
+    mov rdx,[rbx].mask
+    .if ( [rbx].flags & _D_READSUB )
+        lea rdx,@CStr("*.*")
+    .endif
+    mov rcx,_tcsfcat([rbx].path, NULL, rdx)
     mov h,_tfindfirsti64(rcx, &ff)
     mov rcx,fp
     mov TCHAR ptr [rcx],0
@@ -45,6 +49,15 @@ endif
 
             _tfindnexti64(h, &ff)
             .continue
+        .endif
+
+        .if ( [rbx].flags & _D_READSUB && !( ff.attrib & _F_SUBDIR ) )
+
+            .ifd !_tcswild([rbx].mask, &ff.name)
+
+                _tfindnexti64(h, &ff)
+                .continue
+            .endif
         .endif
 
         _tcslen(&ff.name)

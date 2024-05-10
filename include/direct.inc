@@ -77,6 +77,7 @@ __copy_path_to_wide_string proto __cdecl :ptr char_t, :ptr ptr wchar_t
 define DMAXPATH		2048	; the max length is 0x8000..
 
 define _D_MALLOC	0x0001
+define _D_READSUB	0x0002	;
 define _D_SORTNAME	0x0010
 define _D_SORTTYPE	0x0020
 define _D_SORTDATE	0x0040

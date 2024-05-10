@@ -195,7 +195,7 @@ read_list proc uses rbx hwnd:THWND
     mov [rcx].TLIST.numcel,0              ; number of visible cells
     mov [rcx].TLIST.count,eax             ; total number of items in list
     mov [rcx].TLIST.index,0               ; index in list buffer
-    mov [rcx].TLIST.list,[rdx].DIRENT.fcb   ; pointer to list buffer
+    mov [rcx].TLIST.list,[rdx].DIRENT.fcb ; pointer to list buffer
 
     .if ( [rdx].DIRENT.flags & _D_DOSORT )
 
@@ -440,7 +440,7 @@ _tmain proc public argc:int_t, argv:array_t
 
    .new p:ptr = _conpush()
    .new d:THWND = _rsopen(IDD_OpenFile)
-   .new w:PDIRENT = _dopen(NULL, NULL, NULL, _D_SORTTYPE)
+   .new w:PDIRENT = _dopen(NULL, NULL, NULL, _D_SORTTYPE or _D_READSUB)
 
     paint()
 

@@ -28,6 +28,7 @@ strcpy		proto __cdecl :LPSTR, :LPSTR
 strncpy		proto __cdecl :LPSTR, :LPSTR, :size_t
 strcat		proto __cdecl :LPSTR, :LPSTR
 strncat		proto __cdecl :LPSTR, :LPSTR, :size_t
+strnlen		proto __cdecl :LPSTR, :size_t
 _stricmp	proto __cdecl :LPSTR, :LPSTR
 _strnicmp	proto __cdecl :LPSTR, :LPSTR, :size_t
 _strupr		proto __cdecl :LPSTR

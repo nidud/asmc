@@ -17,9 +17,10 @@ include tchar.inc
 
 _putts proc uses rbx string:LPTSTR
 
+   .new retval:int_t = 0
+
     ldr rbx,string
 ifdef _UNICODE
-    .new retval:int_t = 0
     .for ( : TCHAR ptr [rbx] : rbx+=TCHAR, retval++ )
 
         movzx ecx,TCHAR ptr [rbx]
@@ -28,10 +29,17 @@ ifdef _UNICODE
            .return
         .endif
     .endf
-    mov eax,retval
+    mov ebx,retval
+    _puttch( 10 )
+    inc ebx
 else
-    _write( 1, string, strlen( string ) )
+    _write( 1, rbx, strlen( rbx ) )
+    mov ebx,eax
+    mov retval,10
+    _write( 1, &retval, 1 )
+    add ebx,eax
 endif
+    mov eax,ebx
     ret
 
 _putts endp

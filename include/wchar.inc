@@ -393,6 +393,7 @@ endif
 endif
 
 ifndef _WSTDIO_DEFINED
+define _WSTDIO_DEFINED
 
 ifdef  _POSIX_
 _wfsopenproto	proto __cdecl :ptr wchar_t, :ptr wchar_t
@@ -447,13 +448,10 @@ _wpopen		proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wremove	proto __cdecl :ptr wchar_t
 _wtempnam	proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wtmpnam	proto __cdecl :ptr wchar_t
-
-_WSTDIO_DEFINED equ 1
 endif
 
 ifndef _WSTDLIB_DEFINED
 define _WSTDLIB_DEFINED
-
 _itow		proto __cdecl :SINT, :ptr wchar_t, :SINT
 _ltow		proto __cdecl :LONG, :ptr wchar_t, :SINT
 _ultow		proto __cdecl :DWORD, :ptr wchar_t, :SINT
@@ -474,20 +472,19 @@ endif
 ifndef _POSIX_
 
 ifndef _WSTDLIBP_DEFINED
-
+define _WSTDLIBP_DEFINED
 _wfullpath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :int_t
 _wmakepath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 _wperror	proto __cdecl :ptr wchar_t
 _wputenv	proto __cdecl :ptr wchar_t
 _wsearchenv	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 _wsplitpath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
-
-_WSTDLIBP_DEFINED equ 1
 endif
 
 endif
 
 ifndef _WSTRING_DEFINED
+define _WSTRING_DEFINED
 
 wcscat		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcschr		proto __cdecl :ptr wchar_t, :wchar_t
@@ -520,7 +517,6 @@ _wcsnicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 wcswcs		equ <wcsstr>
 
 if NOT __STDC__
-
 wcsdup		proto __cdecl :ptr wchar_t
 wcsicmp		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcsnicmp	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
@@ -530,10 +526,7 @@ wcsset		proto __cdecl :ptr wchar_t, :wchar_t
 wcslwr		proto __cdecl :ptr wchar_t
 wcsupr		proto __cdecl :ptr wchar_t
 wcsicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t
-
 endif
-
-_WSTRING_DEFINED equ 1
 endif
 
 ifndef _TM_DEFINED
@@ -552,14 +545,12 @@ tm		ENDS
 endif
 
 ifndef _WTIME_DEFINED
-
+define _WTIME_DEFINED
 _wasctime	proto __cdecl :ptr tm
 _wctime		proto __cdecl :ptr time_t
 wcsftime	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :ptr tm
 _wstrdate	proto __cdecl :ptr wchar_t
 _wstrtime	proto __cdecl :ptr wchar_t
-
-_WTIME_DEFINED	equ 1
 endif
 
 mbstate_t	typedef SINT
@@ -573,6 +564,12 @@ mbsrtowcs	proto __cdecl :ptr wchar_t, :LPSTR, :size_t, :ptr mbstate_t
 wcrtomb		proto __cdecl :LPSTR, :wchar_t, :ptr mbstate_t
 wcsrtombs	proto __cdecl :LPSTR, :ptr wchar_t, :size_t, :ptr mbstate_t
 wctob		proto __cdecl :wint_t
+
+wmemchr		proto __cdecl :ptr, :int_t, :size_t
+wmemcpy		proto __cdecl :ptr, :ptr, :size_t
+wmemmove	proto __cdecl :ptr, :ptr, :size_t
+wmemcmp		proto __cdecl :ptr, :ptr, :size_t
+wmemset		proto __cdecl :ptr, :int_t, :size_t
 
 .pragma list(pop)
 endif

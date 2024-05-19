@@ -624,6 +624,14 @@ endif
             .ifs ( eax < 0 )
                 xor eax,eax
             .endif
+            .ifs ( ecx > -5 && ecx < 0 )
+
+                neg ecx
+                add eax,ecx
+                add edx,ecx
+                sub rsi,rcx
+                xor ecx,ecx
+            .endif
         .endif
         mov [rbx].ndigits,eax
         mov xexp,ecx
@@ -724,116 +732,123 @@ endif
             rep stosb
         .endif
 
-
+        mov edi,xexp
         mov rsi,buf
         mov ecx,i
-        mov eax,[rbx].expchar
-        .if ( al )
 
-            mov [rsi+rcx],al
-            inc i
-            inc ecx
-        .endif
+        .if ( [rbx].flags & _ST_G && edi == 0 )
 
-        mov edi,xexp
-        .ifs ( edi >= 0 )
-            mov byte ptr [rsi+rcx],'+'
+            mov edx,ecx
         .else
-            mov byte ptr [rsi+rcx],'-'
-            neg edi
-        .endif
 
-        inc i
-        mov eax,edi
-        mov ecx,[rbx].expwidth
+            mov eax,[rbx].expchar
+            .if ( al )
 
-        .switch ecx
-        .case 0           ; width unspecified
-            mov ecx,3
-            .ifs ( eax >= 1000 )
-                mov ecx,4
+                mov [rsi+rcx],al
+                inc i
+                inc ecx
             .endif
-            .endc
-          .case 1
-            .ifs ( eax >= 10 )
-                mov ecx,2
+
+            .ifs ( edi >= 0 )
+                mov byte ptr [rsi+rcx],'+'
+            .else
+                mov byte ptr [rsi+rcx],'-'
+                neg edi
             .endif
-          .case 2
-            .ifs ( eax >= 100 )
+
+            inc i
+            mov eax,edi
+            mov ecx,[rbx].expwidth
+
+            .switch ecx
+            .case 0           ; width unspecified
                 mov ecx,3
+                .ifs ( eax >= 1000 )
+                    mov ecx,4
+                .endif
+                .endc
+            .case 1
+                .ifs ( eax >= 10 )
+                    mov ecx,2
+                .endif
+            .case 2
+                .ifs ( eax >= 100 )
+                    mov ecx,3
+                .endif
+            .case 3
+                .ifs ( eax >= 1000 )
+                    mov ecx,4
+                .endif
+                .endc
+            .endsw
+            mov [rbx].expwidth,ecx    ; pass back width actually used
+
+            .if ( ecx >= 4 )
+
+                xor edx,edx
+
+                .if ( eax >= 1000 )
+
+                    mov  ecx,1000
+                    div  ecx
+                    mov  edx,eax
+                    imul eax,eax,1000
+                    sub  edi,eax
+                    mov  ecx,[rbx].expwidth
+                .endif
+
+                lea eax,[rdx+'0']
+                mov edx,i
+                mov [rsi+rdx],al
+                inc i
             .endif
-          .case 3
-            .ifs ( eax >= 1000 )
-                mov ecx,4
+
+            .if ( ecx >= 3 )
+
+                xor edx,edx
+                .ifs ( edi >= 100 )
+
+                    mov  eax,edi
+                    mov  ecx,100
+                    div  ecx
+                    mov  edx,eax
+                    imul eax,eax,100
+                    sub  edi,eax
+                    mov  ecx,[rbx].expwidth
+                .endif
+
+                lea eax,[rdx+'0']
+                mov edx,i
+                mov [rsi+rdx],al
+                inc i
             .endif
-            .endc
-         .endsw
-         mov [rbx].expwidth,ecx    ; pass back width actually used
 
-         .if ( ecx >= 4 )
+            .if ( ecx >= 2 )
 
-            xor edx,edx
+                xor edx,edx
+                .ifs ( edi >= 10 )
 
-            .if ( eax >= 1000 )
+                    mov  eax,edi
+                    mov  ecx,10
+                    div  ecx
+                    mov  edx,eax
+                    imul eax,eax,10
+                    sub  edi,eax
+                    mov  ecx,[rbx].expwidth
+                .endif
 
-                mov  ecx,1000
-                div  ecx
-                mov  edx,eax
-                imul eax,eax,1000
-                sub  edi,eax
-                mov  ecx,[rbx].expwidth
+                lea eax,[rdx+'0']
+                mov edx,i
+                mov [rsi+rdx],al
+                inc i
             .endif
 
-            lea eax,[rdx+'0']
             mov edx,i
+            lea eax,[rdi+'0']
             mov [rsi+rdx],al
-            inc i
+            inc edx
          .endif
 
-         .if ( ecx >= 3 )
-
-            xor edx,edx
-            .ifs ( edi >= 100 )
-
-                mov  eax,edi
-                mov  ecx,100
-                div  ecx
-                mov  edx,eax
-                imul eax,eax,100
-                sub  edi,eax
-                mov  ecx,[rbx].expwidth
-            .endif
-
-            lea eax,[rdx+'0']
-            mov edx,i
-            mov [rsi+rdx],al
-            inc i
-         .endif
-
-         .if ( ecx >= 2 )
-
-            xor edx,edx
-            .ifs ( edi >= 10 )
-
-                mov  eax,edi
-                mov  ecx,10
-                div  ecx
-                mov  edx,eax
-                imul eax,eax,10
-                sub  edi,eax
-                mov  ecx,[rbx].expwidth
-            .endif
-
-            lea eax,[rdx+'0']
-            mov edx,i
-            mov [rsi+rdx],al
-            inc i
-         .endif
-
-         mov edx,i
-         lea eax,[rdi+'0']
-         mov [rsi+rdx],al
-         inc edx
          mov eax,edx
          sub eax,[rbx].n1
          mov [rbx].n2,eax

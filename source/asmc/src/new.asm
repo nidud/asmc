@@ -701,7 +701,7 @@ endif
             .if ( eax == 8 && opndx.kind == EXPR_CONST )
 
                 .if ( [rsi].Ofssize == USE32 ||
-                      ( [rbx].token != T_STRING && opndx.hvalue > 0 ) )
+                      ( [rbx].token != T_STRING && ( opndx.hvalue > 0 || opndx.hvalue < -1 ) ) )
 
                     AddLineQueueX(
                         " mov dword ptr %s[0], %u\n"

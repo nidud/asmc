@@ -36,6 +36,7 @@ define _IOCOMMIT	0x4000
 define _IOLOCKED	0x8000
 
 define _IOMEMBUF	0x10000
+define _IOSNPRINTF	0x20000
 
 define EOF		(-1)
 
@@ -68,8 +69,8 @@ externdef	stdout:ptr _iobuf
 externdef	stderr:ptr _iobuf
 elseifdef _LIBCMT
 stdin		equ <__acrt_iob_func(0)>
-stdout		equ <&[__acrt_iob_func(1)]>
-stderr		equ <&[__acrt_iob_func(2)]>
+stdout		equ <__acrt_iob_func(1)>
+stderr		equ <__acrt_iob_func(2)>
 else
 stdin		equ <__iob_func()>
 stdout		equ <&[__iob_func()+sizeof(_iobuf)]>
@@ -77,14 +78,15 @@ stderr		equ <&[__iob_func()+sizeof(_iobuf)*2]>
 endif
 
 ifdef __UNIX__
-_fileno		equ <fileno>
+define _fileno	<fileno>
 endif
 _fileno		proto __cdecl :LPFILE
 
 _output		proto __cdecl :LPFILE, :string_t, :ptr
 sprintf		proto __Cdecl :string_t, :string_t, :vararg
-_scprintf	proto __Cdecl :string_t, :vararg
-ftobufin	proto __Cdecl :string_t, :ptr
+sprintf_s	proto __Cdecl :string_t, :size_t, :string_t, :vararg
+scprintf	proto __Cdecl :string_t, :vararg
+snprintf	proto __Cdecl :string_t, :size_t, :string_t, :vararg
 printf		proto __Cdecl :string_t, :vararg
 fprintf		proto __Cdecl :LPFILE, :string_t, :vararg
 scanf		proto __Cdecl :string_t, :vararg
@@ -96,12 +98,15 @@ fclose		proto __cdecl :LPFILE
 fgetc		proto __cdecl :LPFILE
 getchar		proto __cdecl
 vsprintf	proto __cdecl :string_t, :string_t, :ptr
+vsprintf_s	proto __cdecl :string_t, :size_t, :string_t, :ptr
+vsnprintf	proto __cdecl :string_t, :size_t, :string_t, :ptr
+vscprintf	proto __cdecl :string_t, :ptr
 _vsnprintf	proto __cdecl :string_t, :size_t, :string_t, :ptr
 _vscprintf	proto __cdecl :string_t, :ptr
 vfprintf	proto __cdecl :LPFILE,:string_t, :ptr
 fread		proto __cdecl :string_t, :int_t, :int_t, :LPFILE
 fwrite		proto __cdecl :string_t, :int_t, :int_t, :LPFILE
-fseek		proto __cdecl :LPFILE,:SIZE_T, :SIZE_T
+fseek		proto __cdecl :LPFILE,:size_t, :size_t
 fgets		proto __cdecl :string_t, :int_t, :LPFILE
 fputs		proto __cdecl :string_t, :LPFILE
 _fputchar	proto __cdecl :int_t
@@ -171,6 +176,7 @@ vwprintf	proto __cdecl :wstring_t, :ptr
 _vsnwprintf	proto __cdecl :wstring_t, :size_t, :wstring_t, :ptr
 _vscwprintf	proto __cdecl :wstring_t, :ptr
 vswprintf	proto __cdecl :wstring_t, :wstring_t, :ptr
+vswprintf_s	proto __cdecl :wstring_t, :size_t, :wstring_t, :ptr
 fwscanf		proto __Cdecl :LPFILE, :wstring_t, :vararg
 swscanf		proto __Cdecl :wstring_t, :wstring_t, :vararg
 swscanf_s	proto __Cdecl :wstring_t, :wstring_t, :vararg

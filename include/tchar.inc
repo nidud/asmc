@@ -796,11 +796,11 @@ _stprintf_s		equ <sprintf_s>
 _stprintf_s_l		equ <_sprintf_s_l>
 _stprintf_p		equ <_sprintf_p>
 _stprintf_p_l		equ <_sprintf_p_l>
-_sctprintf		equ <_scprintf>
+_sctprintf		equ <scprintf> ; _*
 _sctprintf_l		equ <_scprintf_l>
 _sctprintf_p		equ <_scprintf_p>
 _sctprintf_p_l		equ <_scprintf_p_l>
-_sntprintf		equ <_snprintf>
+_sntprintf		equ <snprintf> ; _*
 _sntprintf_l		equ <_snprintf_l>
 _sntprintf_s		equ <_snprintf_s>
 _sntprintf_s_l		equ <_snprintf_s_l>
@@ -822,11 +822,11 @@ _vstprintf_s		equ <vsprintf_s>
 _vstprintf_s_l		equ <_vsprintf_s_l>
 _vstprintf_p		equ <_vsprintf_p>
 _vstprintf_p_l		equ <_vsprintf_p_l>
-_vsctprintf		equ <_vscprintf>
+_vsctprintf		equ <vscprintf> ; _*
 _vsctprintf_l		equ <_vscprintf_l>
 _vsctprintf_p		equ <_vscprintf_p>
 _vsctprintf_p_l		equ <_vscprintf_p_l>
-_vsntprintf		equ <_vsnprintf>
+_vsntprintf		equ <vsnprintf> ; _*
 _vsntprintf_l		equ <_vsnprintf_l>
 _vsntprintf_s		equ <_vsnprintf_s>
 _vsntprintf_s_l		equ <_vsnprintf_s_l>

@@ -63,6 +63,12 @@ write_char proc private uses rbx c:int_t, fp:LPFILE, pnumwritten:ptr int_t
 
     .elseifd ( _fputtc( ecx, rdx ) == -1 )
 
+        mov rdx,fp
+        .if ( [rdx]._iobuf._flag & _IOSNPRINTF )
+
+            mov eax,[rbx]
+            inc eax
+        .endif
         mov [rbx],eax
     .else
         inc int_t ptr [rbx]
@@ -343,21 +349,18 @@ endif
                 mov eax,edx
                 .switch eax
 
+                .case 'B'
                 .case 'b'
-                    mov edx,_va_arg(arglist)
-                    xor ecx,ecx
-                    bsr ecx,edx
-                    inc ecx
-                    mov textlen,ecx
-                    lea rbx,buffer
-                    .repeat
-                        xor eax,eax
-                        shr edx,1
-                        adc al,'0'
-                        mov [rbx+rcx*TCHAR-TCHAR],_tal
-                    .untilcxz
-                    mov text,rbx
-                    .endc
+                    mov curadix,2
+                    .if ( flags & FL_ALTERNATE )
+                        ;
+                        ; alternate form means '0b' prefix
+                        ;
+                        mov prefix,'0'
+                        mov prefix[TCHAR],_tal
+                        mov prefixlen,2
+                    .endif
+                    jmp COMMON_INT
 
                 .case 'C' ; ISO wide character
                     .if ( !( flags & ( FL_SHORT or FL_LONG or FL_WIDECHAR ) ) )
@@ -412,33 +415,39 @@ endif
                     .if ( ecx == -1 )
                         mov ecx,INT_MAX
                     .endif
+
                     .if ( !rax )
+
                         lea rax,@CStr("(null)")
 ifndef _UNICODE
                         and flags,not ( FL_LONG or FL_WIDECHAR )
 endif
                     .endif
-                    mov text,rax
+                    mov rdx,rax
 ifndef _UNICODE
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
+
                         mov bufferiswide,1
 endif
-                        .repeat
-                            .break .if ( word ptr [rax] == 0 )
+                        .while ( ecx && word ptr [rax] )
+
                             add rax,2
-                        .untilcxz
+                            dec ecx
+                        .endw
+                        sub rax,rdx
+                        sar eax,1
 ifndef _UNICODE
                     .else
-                        .repeat
-                            .break .if ( byte ptr [rax] == 0 )
+
+                        .while ( ecx && byte ptr [rax] )
+
                             inc rax
-                        .untilcxz
+                            dec ecx
+                        .endw
+                        sub rax,rdx
                     .endif
 endif
-                    sub rax,text
-ifdef _UNICODE
-                    shr eax,1
-endif
+                    mov text,rdx
                     mov textlen,eax
                    .endc
 
@@ -792,7 +801,9 @@ endif
 
                     lea rax,buffer[BUFFERSIZE*TCHAR-TCHAR]
                     sub rax,rbx
-                    shr eax,TCHAR-1
+ifdef _UNICODE
+                    shr eax,1
+endif
                     add rbx,TCHAR
 
                     ; text points to first digit now
@@ -863,6 +874,7 @@ endif
                     ; write text
 
 if not defined(__UNIX__) and not defined(_UNICODE)
+
                     .if ( bufferiswide && textlen )
 
                         mov rbx,text
@@ -874,7 +886,7 @@ if not defined(__UNIX__) and not defined(_UNICODE)
                             write_char( ecx, fp, &charsout )
 
                             add rbx,2
-                            sub textlen,2
+                            sub textlen,1
                            .break .ifs
                         .endw
                     .else

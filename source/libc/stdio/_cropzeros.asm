@@ -12,19 +12,34 @@ include fltintrn.inc
 _cropzeros proc uses rbx buffer:LPSTR
 
     ldr rbx,buffer
-    mov rcx,strlen(rbx)
-    mov rax,rbx
-    add rbx,rcx
 
-    .while ( byte ptr [rbx-1] == '0' )
+    .for ( rax = rbx, cl = [rbx] : cl && cl != '.' : )
 
+        inc rbx
+        mov cl,[rbx]
+    .endf
+
+    .if ( cl )
+
+        .for ( rbx++, cl = [rbx] : cl && cl != 'e' && cl != 'E' : )
+            inc rbx
+            mov cl,[rbx]
+        .endf
+        mov rdx,rbx
         dec rbx
-        mov byte ptr [rbx],0
-    .endw
-
-    .if ( byte ptr [rbx-1] == '.' )
-
-        mov byte ptr [rbx-1],0
+        .while ( byte ptr [rbx] == '0' )
+            dec rbx
+        .endw
+        .if ( byte ptr [rbx] == '.' )
+            dec rbx
+        .endif
+        .for ( rbx++, cl = [rdx] : cl : )
+            mov [rbx],cl
+            inc rdx
+            inc rbx
+            mov cl,[rdx]
+        .endf
+        mov [rbx],cl
     .endif
     ret
 

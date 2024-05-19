@@ -7,6 +7,7 @@
 include stdio.inc
 include io.inc
 include malloc.inc
+include errno.inc
 include tchar.inc
 
     .code
@@ -19,13 +20,19 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
    .new written:int_t = 0
 
     ldr rbx,fp
+
     xor eax,eax
     mov edx,[rbx]._flag
-    .if ( !( edx & _IOREAD or _IOWRT or _IORW ) || edx & _IOSTRG )
+
+    .if !( edx & _IOWRT or _IORW )
 
         or [rbx]._flag,_IOERR
-        dec rax
-       .return
+       .return _set_errno(EBADF)
+
+    .elseif ( edx & _IOSTRG )
+
+        or [rbx]._flag,_IOERR
+       .return _set_errno(ERANGE)
     .endif
 
     .if ( edx & _IOREAD )

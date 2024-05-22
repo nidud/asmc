@@ -337,7 +337,7 @@ ifndef _WIN64
                    .endc
 endif
                 .case 'j' ; [u]intmax_t
-                .case 'q' ; quad qord
+                .case 'q' ; quad word
                     and flags,NOT FL_LONG
                     or  flags,FL_LONGLONG or FL_I64
                    .endc

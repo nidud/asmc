@@ -19,6 +19,7 @@ memcmp		proto __cdecl :ptr, :ptr, :size_t
 memset		proto __cdecl :ptr, :int_t, :size_t
 _memicmp	proto __cdecl :ptr, :ptr, :size_t
 memcpy_s	proto __cdecl :ptr, :size_t, :ptr, :size_t
+memmem		proto __cdecl :ptr, :size_t, :ptr, :size_t
 
 strlen		proto __cdecl :LPSTR
 strchr		proto __cdecl :LPSTR, :int_t

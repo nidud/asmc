@@ -4,55 +4,171 @@ include stdlib.inc
 include string.inc
 include assert.inc
 include signal.inc
+include wchar.inc
+
+define BUFSIZE 2048
+
+    .data
+     d33_0   real8 33.0
+     d33_3e7 real8 33.3e7
+     d33_3   real8 33.3
+     d3_3    real8 3.3
+     d3_33   real8 3.33
 
     .code
 
+CHECK_PRINTF macro EXPECTED, FMT, ARGS:vararg
+    mov ebx,snprintf(rdi, BUFSIZE, FMT, ARGS)
+    .assertd ( strcmp(EXPECTED, rdi) == 0 )
+    .assertd ( strlen(rdi) == ebx )
+    exitm<>
+    endm
+
+CHECK_WPRINTF macro EXPECTED, FMT, ARGS:vararg
+    mov ebx,_snwprintf(rdi, BUFSIZE/2, FMT, ARGS)
+    .assertd ( wcscmp(EXPECTED, rdi) == 0 )
+    .assertd ( wcslen(rdi) == ebx )
+    exitm<>
+    endm
+
 main proc
 
-  local buffer[4096]:byte
+    .new buffer[BUFSIZE]:byte
+    .new q:qword = 1123456789ABCDEFh
+    .new b:qword = 0xfedcba9987654321
 
     signal(SIGSEGV, &__crtGeneralFailure)
 
     lea rdi,buffer
 
-    .assert sprintf(rdi,"hello%c",'!') == 6
-    .assert !strcmp(rdi,"hello!")
-    .assert sprintf(rdi,"%d",1) == 1
-    .assert !strcmp(rdi,"1")
-    .assert sprintf(rdi,"%02d",99) == 2
-    .assert !strcmp(rdi,"99")
-    .assert sprintf(rdi,"%03d",99) == 3
-    .assert !strcmp(rdi,"099")
-    .assert sprintf(rdi,"%x",1) == 1
-    .assert !strcmp(rdi,"1")
-    .assert sprintf(rdi,"%02x",255) == 2
-    .assert !strcmp(rdi,"ff")
-    .assert sprintf(rdi,"%02X",254) == 2
-    .assert !strcmp(rdi,"FE")
-    .assert sprintf(rdi,"%X",0xABCD) == 4
-    .assert !strcmp(rdi,"ABCD")
-    .assert sprintf(rdi,"%X",89ABCDEFh) == 8
-    .assert !strcmp(rdi,"89ABCDEF")
-    .assert sprintf(rdi,"%p",89ABCDEFh) == size_t*2
+    CHECK_PRINTF("hello!",  "hello%c", '!')
+    CHECK_PRINTF("1",       "%d", 1)
+    CHECK_PRINTF("99",      "%02d", 99)
+    CHECK_PRINTF("099",     "%03d", 99)
+    CHECK_PRINTF("1",       "%x", 1)
+    CHECK_PRINTF("ff",      "%02x", 255)
+    CHECK_PRINTF("FE",      "%02X", 254)
+    CHECK_PRINTF("ABCD",    "%X", 0xABCD)
+    CHECK_PRINTF("89ABCDEF","%X", 0x89ABCDEF)
+    CHECK_PRINTF("1123456789ABCDEF", "%016I64X", q)
+    CHECK_PRINTF("-1",      "%i", -1)
+    CHECK_PRINTF("4294967295", "%u", 0xFFFFFFFF)
 ifdef _WIN64
-    .assert !strcmp(rdi,"0000000089ABCDEF")
+    CHECK_PRINTF("0000000089ABCDEF", "%p", 0x89ABCDEF)
 else
-    .assert !strcmp(rdi,"89ABCDEF")
+    CHECK_PRINTF("89ABCDEF", "%p", 0x89ABCDEF)
 endif
-    .new q:qword = 1123456789ABCDEFh
-    .assert sprintf(rdi,"%016I64X",q) == 16
-    .assert !strcmp(rdi,"1123456789ABCDEF")
-    .assert sprintf(rdi,"%b",1) == 1
-    .assert !strcmp(rdi,"1")
-    .assert sprintf(rdi,"%03b",3) == 3
-    .assert !strcmp(rdi,"011")
-    .assert sprintf(rdi,"%lb",8000h) == 16
-    .assert !strcmp(rdi,"1000000000000000")
-    mov eax,-1
-    .assert sprintf(rdi,"%i",eax) == 2
-    .assert !strcmp(rdi,"-1")
-    .assert sprintf(rdi,"%u",0xFFFFFFFF) == 10
-    .assert !strcmp(rdi,"4294967295")
+    CHECK_PRINTF("0",       "%b", 0)
+    CHECK_PRINTF("0",       "%B", 0)
+    CHECK_PRINTF("0",       "%#b", 0)
+    CHECK_PRINTF("0",       "%#B", 0)
+    CHECK_PRINTF("1",       "%b", 1)
+    CHECK_PRINTF("1",       "%B", 1)
+    CHECK_PRINTF("10",      "%b", 2)
+    CHECK_PRINTF("10",      "%B", 2)
+    CHECK_PRINTF("11",      "%b", 3)
+    CHECK_PRINTF("11",      "%B", 3)
+    CHECK_PRINTF("10000111011001010100001100100001", "%b", 0x87654321)
+    CHECK_PRINTF("10000111011001010100001100100001", "%B", 0x87654321)
+    CHECK_PRINTF("100001100100001", "%hb", 0x87654321)
+    CHECK_PRINTF("100001100100001", "%hB", 0x87654321)
+    CHECK_PRINTF("100001", "%hhb", 0x87654321)
+    CHECK_PRINTF("100001", "%hhB", 0x87654321)
+    CHECK_PRINTF("10000111011001010100001100100001", "%lb", 0x87654321)
+    CHECK_PRINTF("10000111011001010100001100100001", "%lB", 0x87654321)
+    CHECK_PRINTF("1111111011011100101110101001100110000111011001010100001100100001", "%llb", b)
+    CHECK_PRINTF("1111111011011100101110101001100110000111011001010100001100100001", "%llB", b)
+    CHECK_PRINTF(" 1010", "%5b", 10)
+    CHECK_PRINTF(" 1010", "%5B", 10)
+    CHECK_PRINTF("01010", "%05b", 10)
+    CHECK_PRINTF("01010", "%05B", 10)
+    CHECK_PRINTF("1011 ", "%-5b", 11)
+    CHECK_PRINTF("1011 ", "%-5B", 11)
+    CHECK_PRINTF("0b10011", "%#b", 19)
+    CHECK_PRINTF("0B10011", "%#B", 19)
+    CHECK_PRINTF("   0b10011", "%#10b", 19)
+    CHECK_PRINTF("   0B10011", "%#10B", 19)
+    CHECK_PRINTF("0b00010011", "%0#10b", 19)
+    CHECK_PRINTF("0B00010011", "%0#10B", 19)
+    CHECK_PRINTF("0b00010011", "%#010b", 19)
+    CHECK_PRINTF("0B00010011", "%#010B", 19)
+    CHECK_PRINTF("0b10011   ", "%#-10b", 19)
+    CHECK_PRINTF("0B10011   ", "%#-10B", 19)
+    CHECK_PRINTF("00010011", "%.8b", 19)
+    CHECK_PRINTF("00010011", "%.8B", 19)
+    CHECK_PRINTF("0b00010011", "%#.8b", 19)
+    CHECK_PRINTF("0B00010011", "%#.8B", 19)
+    CHECK_PRINTF("       00010011", "%15.8b", 19)
+    CHECK_PRINTF("       00010011", "%15.8B", 19)
+    CHECK_PRINTF("00010011       ", "%-15.8b", 19)
+    CHECK_PRINTF("00010011       ", "%-15.8B", 19)
+    CHECK_PRINTF("     0b00010011", "%#15.8b", 19)
+    CHECK_PRINTF("     0B00010011", "%#15.8B", 19)
+    CHECK_PRINTF("0b00010011     ", "%-#15.8b", 19)
+    CHECK_PRINTF("0B00010011     ", "%-#15.8B", 19)
+    CHECK_PRINTF("1011 ", "%0-5b", 11)
+    CHECK_PRINTF("1011 ", "%0-5B", 11)
+    CHECK_PRINTF("0b10011   ", "%#0-10b", 19)
+    CHECK_PRINTF("0B10011   ", "%#0-10B", 19)
+    CHECK_PRINTF("       00010011", "%015.8b", 19)
+    CHECK_PRINTF("       00010011", "%015.8B", 19)
+    CHECK_PRINTF("     0b00010011", "%0#15.8b", 19)
+    CHECK_PRINTF("     0B00010011", "%0#15.8B", 19)
+
+    CHECK_PRINTF("     ",   "%5.s", "xyz")
+    CHECK_PRINTF("   33",   "%5.f", d33_0)
+    CHECK_PRINTF("  3e+008", "%8.e", d33_3e7)
+    CHECK_PRINTF("  3E+008", "%8.E", d33_3e7)
+    CHECK_PRINTF("3e+001",  "%.g", d33_3)
+    CHECK_PRINTF("3E+001",  "%.G", d33_3)
+    CHECK_PRINTF("3",       "%.*g", 0, d3_3)
+    CHECK_PRINTF("3",       "%.*G", 0, d3_3)
+    CHECK_PRINTF("      3", "%7.*G", 0, d3_33)
+    CHECK_PRINTF(" 041",    "%04.*o", 3, 33)
+    CHECK_PRINTF("  0000033", "%09.*u", 7, 33)
+    CHECK_PRINTF(" 021",    "%04.*x", 3, 33)
+
+    wmemset(rdi, 'x', (BUFSIZE/2) - 1)
+    mov word ptr [rdi+BUFSIZE-2],0
+
+    .new result[9]:wchar_t
+    .assert snprintf(&result, lengthof(result), "%.*ls", BUFSIZE/2-2, rdi) == BUFSIZE/2 - 2
+    .assert !strcmp("xxxxxxxx", &result)
+    .assert snprintf(&result, lengthof(result), "%.*ls", BUFSIZE/2, rdi) == BUFSIZE/2 - 1
+    .assert !strcmp("xxxxxxxx", &result)
+    .assert snprintf(&result, lengthof(result), "%ls", rdi) == BUFSIZE/2 - 1
+    .assert !strcmp("xxxxxxxx", &result)
+
+    CHECK_WPRINTF(L"hello!",  L"hello%c", '!')
+    CHECK_WPRINTF(L"1",       L"%d", 1)
+    CHECK_WPRINTF(L"99",      L"%02d", 99)
+    CHECK_WPRINTF(L"099",     L"%03d", 99)
+    CHECK_WPRINTF(L"1",       L"%x", 1)
+    CHECK_WPRINTF(L"ff",      L"%02x", 255)
+    CHECK_WPRINTF(L"FE",      L"%02X", 254)
+    CHECK_WPRINTF(L"ABCD",    L"%X", 0xABCD)
+    CHECK_WPRINTF(L"89ABCDEF",L"%X", 0x89ABCDEF)
+    CHECK_WPRINTF(L"1123456789ABCDEF", L"%016I64X", q)
+    CHECK_WPRINTF(L"-1",      L"%i", -1)
+    CHECK_WPRINTF(L"4294967295", L"%u", 0xFFFFFFFF)
+ifdef _WIN64
+    CHECK_WPRINTF(L"0000000089ABCDEF", L"%p", 0x89ABCDEF)
+else
+    CHECK_WPRINTF(L"89ABCDEF", L"%p", 0x89ABCDEF)
+endif
+
+    CHECK_WPRINTF(L"0b00010011     ", L"%-#15.8b", 19)
+    CHECK_WPRINTF(L"10000111011001010100001100100001", L"%b", 0x87654321)
+    CHECK_WPRINTF(L"10000111011001010100001100100001", L"%B", 0x87654321)
+    CHECK_WPRINTF(L"100001100100001", L"%hb", 0x87654321)
+    CHECK_WPRINTF(L"100001100100001", L"%hB", 0x87654321)
+    CHECK_WPRINTF(L"100001", L"%hhb", 0x87654321)
+    CHECK_WPRINTF(L"100001", L"%hhB", 0x87654321)
+    CHECK_WPRINTF(L"10000111011001010100001100100001", L"%lb", 0x87654321)
+    CHECK_WPRINTF(L"10000111011001010100001100100001", L"%lB", 0x87654321)
+    CHECK_WPRINTF(L"1111111011011100101110101001100110000111011001010100001100100001", L"%llb", b)
+
+
     .assert atol("247") == 247
     .assert fopen("test.fil","w")
     mov rsi,rax
@@ -78,36 +194,6 @@ endif
     .assert !fclose(rsi)
     .assert !strncmp(rdi,"aabcdefghijklmnopq",18)
     .assert !remove("test.fil")
-
-test_f  macro z,r,s,v:VARARG
-    .assert swprintf(rdi,s,v) == z
-    .assert !wcscmp(rdi,r)
-    endm
-
-    test_f 6,L"hello!",L"hello%c",'!'
-    test_f 1,L"1",L"%d",1
-    test_f 2,L"99",L"%02d",99
-    test_f 3,L"099",L"%03d",99
-    test_f 1,L"1",L"%x",1
-    test_f 2,L"ff",L"%02x",255
-    test_f 2,L"FE",L"%02X",254
-    test_f 4,L"ABCD",L"%X",0ABCDh
-    test_f 8,L"89ABCDEF",L"%X",89ABCDEFh
-    test_f 16,L"1123456789ABCDEF",L"%016I64X",q
-ifdef _WIN64
-    test_f 16,L"0000000089ABCDEF",L"%p",89ABCDEFh
-else
-    test_f 8,L"89ABCDEF",L"%p",89ABCDEFh
-endif
-    test_f 1,L"1",L"%b",1
-    test_f 3,L"011",L"%03b",3
-    test_f 16,L"1000000000000000",L"%lb",8000h
-ifdef _WIN64
-    test_f 2,L"-1",L"%lld",0xFFFFFFFFFFFFFFFF
-else
-    test_f 2,L"-1",L"%d",0xFFFFFFFF
-endif
-    test_f 10,L"4294967295",L"%u",0xFFFFFFFF
 
     .assert _wtol(L"247") == 247
     .assert _wfopen(L"test.fil",L"w,ccs=UTF-16LE")

@@ -13,6 +13,7 @@ ifdef _AMD64_
 
 define __USE_GNU
 include ucontext.inc
+include sys/syscall.inc
 
 sig_restore proto
 
@@ -49,7 +50,7 @@ sigaction proc sig:int_t, act:ptr sigaction_t, oact:ptr sigaction_t
         mov a.sa_restorer,&sig_restore
     .endif
 
-    .ifsd ( sys_rt_sigaction(edi, rsi, rdx) < 0 )
+    .ifsd ( sys_rt_sigaction(edi, rsi, rdx, compat_sigset_t) < 0 )
 
         neg eax
         _set_errno(eax)

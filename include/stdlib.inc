@@ -282,6 +282,9 @@ ifndef _countof
 _countof	equ <lengthof>
 endif
 
+define EXIT_SUCCESS 0
+define EXIT_FAILURE 1
+
 ifndef _CRT_TERMINATE_DEFINED
 define _CRT_TERMINATE_DEFINED
 exit		proto __cdecl :int_t

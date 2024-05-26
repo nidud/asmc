@@ -13,16 +13,54 @@ define _SIG_ATOMIC_T_DEFINED
 sig_atomic_t typedef int_t
 endif
 
-define NSIG		23	; maximum signal number + 1
+ifdef __UNIX__
+define NSIG		65	; maximum signal number + 1
+else
+define NSIG		23
+endif
 
+define SIGHUP		1	; Hangup
 define SIGINT		2	; interrupt
-define SIGILL		4	; illegal instruction - invalid function image
+define SIGQUIT		3	; Quit
+define SIGILL		4	; illegal instruction
+define SIGTRAP		5	; Trace/breakpoint trap
+ifdef __UNIX__
+define SIGABRT		6	; Abnormal termination
+define SIGBUS		7	; Bus error
+else
+define SIGABRT		22
+endif
+define SIGABRT_COMPAT	6
+
 define SIGFPE		8	; floating point exception
+define SIGKILL		9	; Killed
+define SIGUSR1		10	; User-defined signal 1
 define SIGSEGV		11	; segment violation
+define SIGUSR2		12	; User-defined signal 2
+define SIGPIPE		13	; Broken pipe
+define SIGALRM		14	; Alarm clock
 define SIGTERM		15	; Software termination signal from kill
+define SIGSTKFLT	16	; Stack fault (obsolete)
+define SIGCHLD		17	; Child terminated or stopped
+define SIGCONT		18	; Continue
+define SIGSTOP		19	; Stop, unblockable
+define SIGTSTP		20	; Keyboard stop
 define SIGBREAK		21	; Ctrl-Break sequence
-define SIGABRT		22	; abnormal termination triggered by abort call
-define SIGABRT_COMPAT	6	; SIGABRT compatible with other platforms, same as SIGABRT
+define SIGTTIN		21	; Background read from control terminal
+define SIGTTOU		22	; Background write to control terminal
+define SIGURG		23	; Urgent data is available at a socket
+define SIGXCPU		24	; CPU time limit exceeded
+define SIGXFSZ		25	; File size limit exceeded
+define SIGVTALRM	26	; Virtual timer expired
+define SIGPROF		27	; Profiling timer expired
+define SIGWINCH		28	; Window size change (4.3 BSD, Sun)
+define SIGPOLL		29	; Pollable event occurred (System V)
+define SIGPWR		30	; Power failure imminent
+define SIGSYS		31	; Bad system call
+
+define SIGCLD		SIGCHLD ; Old System V name
+define SIGIO		SIGPOLL ; I/O now possible (4.2 BSD).
+define SIGIOT		SIGABRT ; IOT instruction, abort() on a PDP-11.
 
 ifndef _M_CEE_PURE		; signal action codes
 define SIG_DFL		0	; default signal action
@@ -34,7 +72,7 @@ ifdef _CRTBLD			; internal use only! not valid as an argument to signal()
 define SIG_DIE		5	; terminate process
 endif
 ; signal error value (returned by signal call on error)
-define SIG_ERR		-1	; signal error value
+define SIG_ERR		(-1)	; signal error value
 endif
 
 __sigfunc typedef proto __cdecl :int_t
@@ -155,12 +193,6 @@ sa_restorer		compat_uptr_t ?
 endif
 sa_mask			compat_sigset_t <>
 compat_sigaction	ends
-
-sys_rt_sigaction proto syscall :int_t, :ptr compat_sigaction, :ptr compat_sigaction {
-    mov eax,13
-    mov r10,compat_sigset_t
-    syscall
-    }
 endif
 sigaction proto __cdecl :int_t, :ptr sigaction_t, :ptr sigaction_t
 

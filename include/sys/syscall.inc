@@ -272,39 +272,46 @@ ifdef _WIN64
 
 else
 
+    SYS_EXIT                    = 1,
+    SYS_FORK                    = 2,
     SYS_READ                    = 3,
     SYS_WRITE                   = 4,
     SYS_OPEN                    = 5,
     SYS_CREAT                   = 8,
     SYS_CLOSE                   = 6,
-    SYS_CHMOD                   = 15,
-    SYS_STAT                    = 106,
-    SYS_STAT64                  = 195,
-    SYS_FSTAT                   = 108,
-    SYS_FSTAT64                 = 197,
-    SYS_LSEEK                   = 19,
-    SYS_LLSEEK                  = 140,
-    SYS_MMAP                    = 90,
-    SYS_MUNMAP                  = 91,
-    SYS_FCNTL                   = 55,
-    SYS_ACCESS                  = 33,
-    SYS_IOCTL                   = 54,
-    SYS_GETCWD                  = 183,
+    SYS_WAITPID                 = 7,
+    SYS_UNLINK                  = 10,
+    SYS_EXECVE                  = 11,
     SYS_CHDIR                   = 12,
-    SYS_CHROOT                  = 61,
-    SYS_FCHDIR                  = 133,
+    SYS_TIME                    = 13,
+    SYS_CHMOD                   = 15,
+    SYS_LSEEK                   = 19,
+    SYS_GETPID                  = 20,
+    SYS_ACCESS                  = 33,
+    SYS_RENAME                  = 38,
     SYS_MKDIR                   = 39,
     SYS_RMDIR                   = 40,
-    SYS_EXIT                    = 1,
-    SYS_UNLINK                  = 10,
-    SYS_RENAME                  = 38,
-    SYS_TIME                    = 13,
     SYS_TIMES                   = 43,
+    SYS_IOCTL                   = 54,
+    SYS_FCNTL                   = 55,
+    SYS_CHROOT                  = 61,
     SYS_GETTIMEOFDAY            = 78,
     SYS_SETTIMEOFDAY            = 79,
+    SYS_MMAP                    = 90,
+    SYS_MUNMAP                  = 91,
+    SYS_STAT                    = 106,
+    SYS_FSTAT                   = 108,
+    SYS_WAIT4                   = 114,
+    SYS_FCHDIR                  = 133,
+    SYS_LLSEEK                  = 140,
     SYS_GETDENTS                = 141,
-    SYS_GETDENTS64              = 220,
     SYS_NANOSLEEP               = 162,
+    SYS_GETCWD                  = 183,
+    SYS_VFORK                   = 190,
+    SYS_STAT64                  = 195,
+    SYS_FSTAT64                 = 197,
+    SYS_GETDENTS64              = 220,
+    SYS_WAITID                  = 284,
 endif
     }
 
@@ -364,7 +371,6 @@ sys_nanosleep proto :ptr, :ptr {
     mov eax,SYS_NANOSLEEP
     syscall
     }
-
 sys_mmap proto :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
     add rsi,_GRANULARITY-1
     and sil,-(_GRANULARITY)
@@ -373,9 +379,13 @@ sys_mmap proto :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
     mov eax,SYS_MMAP
     syscall
     }
-
 sys_munmap proto :ptr, :size_t {
     mov eax,SYS_MUNMAP
+    syscall
+    }
+sys_rt_sigaction proto :int_t, :ptr, :ptr, :size_t {
+    mov r10,rcx
+    mov eax,SYS_RT_SIGACTION
     syscall
     }
 sys_fcntl proto :int_t, :int_t, :int_t {
@@ -450,86 +460,124 @@ sys_getdents64 proto :int_t, :ptr, :uint_t {
     mov eax,SYS_GETDENTS64
     syscall
     }
+sys_fork proto {
+    mov eax,SYS_FORK
+    syscall
+    }
+sys_vfork proto {
+    mov eax,SYS_VFORK
+    syscall
+    }
+sys_execve proto :string_t, :array_t, :array_t {
+    mov eax,SYS_EXECVE
+    syscall
+    }
+sys_wait4 proto :int_t, :ptr int_t, :int_t, :ptr rusage {
+    mov r10,rcx
+    mov eax,SYS_WAIT4
+    syscall
+    }
+sys_clone proto :size_t, :size_t, :ptr int_t, :size_t, :ptr int_t {
+    mov r10,rcx
+    mov eax,SYS_CLONE
+    syscall
+    }
+sys_getpid proto {
+    mov eax,SYS_GETPID
+    syscall
+    }
 
 else
 
-syscall_1 macro _1, index
+sys_call macro id, _1, _2, _3, _4, _5
+ifnb <_1>
     push    ebx
     mov     ebx,_1
-    mov     eax,index
-    int     0x80
-    pop     ebx
-    retm   <eax>
-    endm
-
-syscall_2 macro _1, _2, index
-    push    ebx
-    mov     ebx,_1
+ ifnb <_2>
     mov     ecx,_2
-    mov     eax,index
-    int     0x80
-    pop     ebx
-    retm   <eax>
-    endm
-
-syscall_3 macro _1, _2, _3, index
-    push    ebx
-    mov     ebx,_1
-    mov     ecx,_2
+  ifnb <_3>
     mov     edx,_3
-    mov     eax,index
+   ifnb <_4>
+    push    esi
+    mov     esi,_4
+    ifnb <_5>
+    push    edi
+    mov     edi,_5
+    endif
+   endif
+  endif
+ endif
+endif
+    mov     eax,id
     int     0x80
+ifnb <_1>
+ ifnb <_4>
+  ifnb <_5>
+    pop     edi
+  endif
+    pop     esi
+ endif
     pop     ebx
+endif
     retm   <eax>
     endm
 
+sys_fork proto fastcall {
+    sys_call(SYS_FORK)
+    }
+sys_vfork proto fastcall {
+    sys_call(SYS_VFORK)
+    }
+sys_getpid proto fastcall {
+    sys_call(SYS_GETPID)
+    }
+sys_execve proto fastcall :string_t, :array_t, :abs {
+    sys_call(SYS_EXECVE, _1, _2, _3)
+    }
+sys_wait4 proto fastcall :int_t, :ptr, :abs, :abs {
+    sys_call(SYS_WAIT4, _1, _2, _3, _4)
+    }
+sys_waitid proto fastcall :int_t, :ptr, :abs, :abs, :abs {
+    sys_call(SYS_WAITID, _1, _2, _3, _4, _5)
+    }
+sys_waitpid proto fastcall :int_t, :ptr, :abs {
+    sys_call(SYS_WAITPID, _1, _2, _3)
+    }
 sys_read proto fastcall :int_t, :ptr, :abs {
-    syscall_3(_1, _2, _3, SYS_READ)
+    sys_call(SYS_READ, _1, _2, _3)
     }
 sys_write proto fastcall :int_t, :ptr, :abs {
-    syscall_3(_1, _2, _3, SYS_WRITE)
+    sys_call(SYS_WRITE, _1, _2, _3)
     }
 sys_open proto fastcall :string_t, :int_t, :abs {
-    syscall_3(_1, _2, _3, SYS_OPEN)
+    sys_call(SYS_OPEN, _1, _2, _3)
     }
 sys_creat proto fastcall :string_t, :uint_t {
-    syscall_2(_1, _2, SYS_CREAT)
+    sys_call(SYS_CREAT, _1, _2)
     }
 sys_close proto fastcall :int_t {
-    syscall_1(_1, SYS_CLOSE)
+    sys_call(SYS_CLOSE, _1)
     }
 sys_chmod proto fastcall :string_t, :int_t {
-    syscall_2(_1, _2, SYS_CHMOD)
+    sys_call(SYS_CHMOD, _1, _2)
     }
 sys_newstat proto fastcall :string_t, :ptr {
-    syscall_2(_1, _2, SYS_STAT)
+    sys_call(SYS_STAT, _1, _2)
     }
 sys_newstat64 proto fastcall :string_t, :ptr {
-    syscall_2(_1, _2, SYS_STAT64)
+    sys_call(SYS_STAT64, _1, _2)
     }
 sys_newfstat proto fastcall :int_t, :ptr {
-    syscall_2(_1, _2, SYS_FSTAT)
+    sys_call(SYS_FSTAT, _1, _2)
     }
 sys_newfstat64 proto fastcall :int_t, :ptr {
-    syscall_2(_1, _2, SYS_FSTAT64)
+    sys_call(SYS_FSTAT64, _1, _2)
     }
 sys_lseek proto fastcall :int_t, :size_t, :abs {
-    syscall_3(_1, _2, _3, SYS_LSEEK)
+    sys_call(SYS_LSEEK, _1, _2, _3)
     }
 sys_llseek proto fastcall :int_t, :uint_t, :abs, :abs, :abs {
-    push    esi
-    push    edi
-    push    ebx
-    mov     ebx,_1
-    mov     ecx,_2
-    mov     edx,_3
-    mov     esi,_4
-    mov     edi,_5
-    mov     eax,SYS_LLSEEK
-    int     0x80
-    pop     ebx
-    pop     edi
-    pop     esi
+    sys_call(SYS_LLSEEK, _1, _2, _3, _4, _5)
     }
 
 .template mmap_arg_struct
@@ -554,69 +602,69 @@ sys_mmap proto fastcall :ptr, :size_t, :abs, :abs, :abs, :abs {
     mov mmap.m_fd,_5
     mov mmap.m_offset,_6
     lea ecx,mmap
-    syscall_1(ecx, SYS_MMAP)
+    sys_call(SYS_MMAP, ecx)
     }
 
 
 sys_munmap proto fastcall :ptr, :size_t {
-    syscall_2(_1, _2, SYS_MUNMAP)
+    sys_call(SYS_MUNMAP, _1, _2)
     }
 sys_fcntl proto fastcall :int_t, :int_t, :abs {
-    syscall_3(_1, _2, _3, SYS_FCNTL)
+    sys_call(SYS_FCNTL, _1, _2, _3)
     }
 sys_access proto fastcall :string_t, :int_t {
-    syscall_2(_1, _2, SYS_ACCESS)
+    sys_call(SYS_ACCESS, _1, _2)
     }
 sys_ioctl proto fastcall :int_t, :int_t, :abs {
-    syscall_3(_1, _2, _3, SYS_IOCTL)
+    sys_call(SYS_IOCTL, _1, _2, _3)
     }
 sys_getcwd proto fastcall :string_t, :int_t {
-    syscall_2(_1, _2, SYS_GETCWD)
+    sys_call(SYS_GETCWD, _1, _2)
     }
 sys_chdir proto fastcall :string_t {
-    syscall_1(_1, SYS_CHDIR)
+    sys_call(SYS_CHDIR, _1)
     }
 sys_chroot proto fastcall :string_t {
-    syscall_1(_1, SYS_CHROOT)
+    sys_call(SYS_CHROOT, _1)
     }
 sys_fchdir proto fastcall :int_t {
-    syscall_1(_1, SYS_FCHDIR)
+    sys_call(SYS_FCHDIR, _1)
     }
 sys_mkdir proto fastcall :string_t {
-    syscall_1(_1, SYS_MKDIR)
+    sys_call(SYS_MKDIR, _1)
     }
 sys_rmdir proto fastcall :string_t {
-    syscall_1(_1, SYS_RMDIR)
+    sys_call(SYS_RMDIR, _1)
     }
 sys_exit proto fastcall :int_t {
-    syscall_1(_1, SYS_EXIT)
+    sys_call(SYS_EXIT, _1)
     }
 sys_unlink proto fastcall :string_t {
-    syscall_1(_1, SYS_UNLINK)
+    sys_call(SYS_UNLINK, _1)
     }
 sys_rename proto fastcall :string_t, :string_t {
-    syscall_2(_1, _2, SYS_RENAME)
+    sys_call(SYS_RENAME, _1, _2)
     }
 sys_time proto fastcall :ptr {
-    syscall_1(_1, SYS_TIME)
+    sys_call(SYS_TIME, _1)
     }
 sys_times proto fastcall :ptr {
-    syscall_1(_1, SYS_TIMES)
+    sys_call(SYS_TIMES, _1)
     }
 sys_nanosleep proto fastcall :ptr, :ptr {
-    syscall_2(_1, _2, SYS_NANOSLEEP)
+    sys_call(SYS_NANOSLEEP, _1, _2)
     }
 sys_gettimeofday proto fastcall :ptr, :ptr {
-    syscall_2(_1, _2, SYS_GETTIMEOFDAY)
+    sys_call(SYS_GETTIMEOFDAY, _1, _2)
     }
 sys_settimeofday proto fastcall :ptr, :ptr {
-    syscall_2(_1, _2, SYS_SETTIMEOFDAY)
+    sys_call(SYS_SETTIMEOFDAY, _1, _2)
     }
 sys_getdents proto fastcall :int_t, :ptr, :abs {
-    syscall_2(_1, _2, SYS_GETDENTS)
+    sys_call(SYS_GETDENTS, _1, _2)
     }
 sys_getdents64 proto fastcall :int_t, :ptr, :abs {
-    syscall_2(_1, _2, SYS_GETDENTS64)
+    sys_call(SYS_GETDENTS64, _1, _2)
     }
 
 endif

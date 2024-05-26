@@ -11,6 +11,7 @@ include signal.inc
 ifdef __UNIX__
 define __USE_GNU
 include ucontext.inc
+include sys/syscall.inc
 else
 include winbase.inc
 endif
@@ -116,7 +117,7 @@ endif
     ldr ecx,sig
     ldr rdx,func
 
-    mov rax,-1
+    mov eax,-1
     .switch ecx
     .case SIGABRT   : inc eax   ; abnormal termination triggered by abort call
     .case SIGBREAK  : inc eax   ; Ctrl-Break sequence
@@ -145,7 +146,7 @@ if defined(__UNIX__) and defined(_AMD64_)
     mov ac.sa_restorer,&sig_restore
     mov ac.sa_flags,SA_SIGINFO or SA_RESTORER
 
-    .ifsd ( sys_rt_sigaction(sig, &ac, 0) < 0 )
+    .ifsd ( sys_rt_sigaction(sig, &ac, 0, compat_sigset_t) < 0 )
 
         neg eax
         _set_errno(eax)
@@ -153,7 +154,7 @@ if defined(__UNIX__) and defined(_AMD64_)
         lea rcx,sig_table
         mov edx,sig
         mov [rcx+rdx*size_t],rbx
-       .return(SIG_ERR)
+        mov rbx,rax
     .endif
     mov rax,rbx
 endif

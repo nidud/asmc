@@ -14,11 +14,10 @@ abs proc x:int_t
 
     mov     eax,ecx
     neg     eax
-    test    ecx,ecx
 ifdef __SSE__
-    cmovns  eax,ecx
+    cmovs   eax,ecx
 else
-    .ifns
+    .ifs
         mov eax,ecx
     .endif
 endif

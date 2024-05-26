@@ -68,6 +68,7 @@ system proto __cdecl :string_t
 endif
 
 ifndef _WPROCESS_DEFINED
+define _WPROCESS_DEFINED
 ;; wide function prototypes, also declared in wchar.inc
 _wexecl     proto __Cdecl :wstring_t, :wstring_t, :vararg
 _wexecle    proto __Cdecl :wstring_t, :wstring_t, :vararg
@@ -89,8 +90,6 @@ ifndef _CRT_WSYSTEM_DEFINED
 define _CRT_WSYSTEM_DEFINED
 _wsystem proto __cdecl :ptr wchar_t
 endif
-
-define _WPROCESS_DEFINED
 endif
 
 endif

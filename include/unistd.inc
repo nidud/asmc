@@ -1,7 +1,5 @@
 ifndef _UNISTD_H
 define _UNISTD_H
-define __UNISTD_H_SOURCED__ 1
-
 include io.inc
 
 ifndef SEEK_SET
@@ -17,50 +15,24 @@ define STDERR_FILENO 2
 endif
 
 ifdef _POSIX_SOURCE
-
 ifndef SHUT_RDWR
 define SHUT_RD   0x00
 define SHUT_WR   0x01
 define SHUT_RDWR 0x02
 endif
-
 endif
 
-undef sleep
-sleep proto __cdecl :dword
-
-if not defined(__NO_ISOCEXT)
+sleep       proto __cdecl :dword
+ifndef __NO_ISOCEXT
 include sys/types.inc
-
-usleep proto __cdecl :useconds_t
+usleep      proto __cdecl :useconds_t
 endif
 
 ifndef FTRUNCATE_DEFINED
 define FTRUNCATE_DEFINED
-
-if not defined(NO_OLDNAMES) or defined(_POSIX)
-ftruncate64 proto __cdecl :sdword, :off64_t
-truncate proto __cdecl :ptr, :off32_t
-truncate64 proto __cdecl :ptr, :off64_t
-ifndef __CRT__NO_INLINE
-;ftruncate proto __cdecl __fd:sdword, __length:off32_t {
-;    _chsize(__fd, __length)
-;    }
-else
-;ftruncate proto __cdecl :sdword, :off32_t
-endif
-else
-ftruncate64 proto __cdecl :sdword, :_off64_t
-truncate proto __cdecl :ptr, :_off_t
-truncate64 proto __cdecl :ptr, :_off64_t
-ifndef __CRT__NO_INLINE
-;ftruncate proto __cdecl __fd:sdword, __length:_off_t {
-;    _chsize(__fd, __length)
-;    }
-else
-;ftruncate proto __cdecl :sdword, :_off_t
-endif
-endif
+ftruncate64 proto __cdecl :int_t, :off64_t
+truncate    proto __cdecl :ptr, :off32_t
+truncate64  proto __cdecl :ptr, :off64_t
 endif
 
 ifndef _FILE_OFFSET_BITS_SET_FTRUNCATE
@@ -72,12 +44,29 @@ endif
 
 ifndef _CRT_SWAB_DEFINED
 define _CRT_SWAB_DEFINED
-swab proto __cdecl :ptr sbyte, :ptr sbyte, :sdword
+swab        proto __cdecl :string_t, :string_t, :int_t
 endif
 
 ifndef _CRT_GETPID_DEFINED
 define _CRT_GETPID_DEFINED
-getpid proto __cdecl
+getpid      proto __cdecl
 endif
-undef __UNISTD_H_SOURCED__
+
+unlink      proto __cdecl :ptr
+fsync       proto __cdecl :int_t
+pipe        proto __cdecl :int_t
+alarm       proto __cdecl :uint_t
+chown       proto __cdecl :ptr, :uid_t, :gid_t
+fchown      proto __cdecl :int_t, :uid_t, :gid_t
+fdatasync   proto __cdecl :int_t
+fork        proto __cdecl
+
+execl       proto __Cdecl :string_t, :string_t, :vararg
+execle      proto __Cdecl :string_t, :string_t, :vararg
+execlp      proto __Cdecl :string_t, :string_t, :vararg
+execlpe     proto __Cdecl :string_t, :string_t, :vararg
+execv       proto __cdecl :string_t, :ptr string_t
+execve      proto __cdecl :string_t, :ptr string_t, :ptr string_t
+execvp      proto __cdecl :string_t, :ptr string_t
+
 endif

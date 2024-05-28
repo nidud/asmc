@@ -10,6 +10,11 @@ include process.inc
 include errno.inc
 include tchar.inc
 
+if not defined(_UNICODE) and not defined(__UNIX__)
+undef execvpe
+ALIAS <execvpe>=<_execvpe>
+endif
+
 .code
 
 _texecvpe proc path:tstring_t, argv:tarray_t, envp:tarray_t

@@ -10,6 +10,11 @@ include process.inc
 include errno.inc
 include tchar.inc
 
+if not defined(_UNICODE) and not defined(__UNIX__)
+undef spawnlpe
+ALIAS <spawnlpe>=<_spawnlpe>
+endif
+
 .code
 
 _tspawnlpe proc mode:int_t, name:tstring_t, arg0:tstring_t, argptr:vararg
@@ -43,13 +48,14 @@ else
         lodsq ; rcx..r9
         stosq
     .endf
+    .if ( edx == 4 )
 
-    .for ( rsi = r8 : rax && edx < 26 : edx++ )
+        .for ( rsi = r8 : rax && edx < 26 : edx++ )
 
-        lodsq ; arg4..argn
-        stosq
-    .endf
-
+            lodsq ; arg4..argn
+            stosq
+        .endf
+    .endif
     .if ( rax )
 
         .return( _set_errno(EINVAL) )

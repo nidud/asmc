@@ -10,6 +10,11 @@ include process.inc
 include errno.inc
 include tchar.inc
 
+if not defined(_UNICODE) and not defined(__UNIX__)
+undef execle
+ALIAS <execle>=<_execle>
+endif
+
 .code
 
 _texecle proc name:tstring_t, arg0:tstring_t, argptr:vararg
@@ -45,13 +50,13 @@ else
         lodsq
         stosq
     .endf
+    .if ( ecx == 5 )
+        .for ( rsi = r8 : rax && ecx < 26 : ecx++ )
 
-    .for ( rsi = r8 : rax && ecx < 26 : ecx++ )
-
-        lodsq
-        stosq
-    .endf
-
+            lodsq
+            stosq
+        .endf
+    .endif
     .if ( rax )
 
         .return( _set_errno(EINVAL) )

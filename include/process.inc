@@ -35,6 +35,24 @@ _c_exit proto __cdecl
 _getpid     proto __cdecl
 _cwait      proto __cdecl :ptr int_t, :intptr_t, :int_t
 
+ifdef __UNIX__
+define _execl       <execl>
+define _execle      <execle>
+define _execlp      <execlp>
+define _execlpe     <execlpe>
+define _execv       <execv>
+define _execve      <execve>
+define _execvp      <execvp>
+define _execvpe     <execvpe>
+define _spawnl      <spawnl>
+define _spawnle     <spawnle>
+define _spawnlp     <spawnlp>
+define _spawnlpe    <spawnlpe>
+define _spawnv      <spawnv>
+define _spawnve     <spawnve>
+define _spawnvp     <spawnvp>
+define _spawnvpe    <spawnvpe>
+else
 _execl      proto __Cdecl :string_t, :string_t, :vararg
 _execle     proto __Cdecl :string_t, :string_t, :vararg
 _execlp     proto __Cdecl :string_t, :string_t, :vararg
@@ -51,6 +69,7 @@ _spawnv     proto __cdecl :int_t, :string_t, :array_t
 _spawnve    proto __cdecl :int_t, :string_t, :array_t, :array_t
 _spawnvp    proto __cdecl :int_t, :string_t, :array_t
 _spawnvpe   proto __cdecl :int_t, :string_t, :array_t, :array_t
+endif
 
 ifndef _CRT_SYSTEM_DEFINED
 define _CRT_SYSTEM_DEFINED
@@ -108,22 +127,23 @@ define WAIT_GRANDCHILD _WAIT_GRANDCHILD
 
 getpid      proto __cdecl
 cwait       proto __cdecl :ptr int_t, :intptr_t, :int_t
+
 execl       proto __Cdecl :string_t, :string_t, :vararg
 execle      proto __Cdecl :string_t, :string_t, :vararg
 execlp      proto __Cdecl :string_t, :string_t, :vararg
 execlpe     proto __Cdecl :string_t, :string_t, :vararg
-execv       proto __cdecl :string_t, :ptr string_t
-execve      proto __cdecl :string_t, :ptr string_t, :ptr string_t
-execvp      proto __cdecl :string_t, :ptr string_t
-execvpe     proto __cdecl :string_t, :ptr string_t, :ptr string_t
+execv       proto __cdecl :string_t, :array_t
+execve      proto __cdecl :string_t, :array_t, :array_t
+execvp      proto __cdecl :string_t, :array_t
+execvpe     proto __cdecl :string_t, :array_t, :array_t
 spawnl      proto __Cdecl :int_t, :string_t, :string_t, :vararg
 spawnle     proto __Cdecl :int_t, :string_t, :string_t, :vararg
 spawnlp     proto __Cdecl :int_t, :string_t, :string_t, :vararg
 spawnlpe    proto __Cdecl :int_t, :string_t, :string_t, :vararg
-spawnv      proto __cdecl :int_t, :string_t, :ptr string_t
-spawnve     proto __cdecl :int_t, :string_t, :ptr string_t, :ptr string_t
-spawnvp     proto __cdecl :int_t, :string_t, :string_t
-spawnvpe    proto __cdecl :int_t, :string_t, :string_t, :ptr string_t
+spawnv      proto __cdecl :int_t, :string_t, :array_t
+spawnve     proto __cdecl :int_t, :string_t, :array_t, :array_t
+spawnvp     proto __cdecl :int_t, :string_t, :array_t
+spawnvpe    proto __cdecl :int_t, :string_t, :array_t, :array_t
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
 _dospawn    proto __cdecl :int_t, :string_t, :string_t, :string_t

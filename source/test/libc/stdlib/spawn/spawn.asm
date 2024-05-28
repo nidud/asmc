@@ -1,7 +1,6 @@
 ; SPAWN.ASM--
 ;
-; Copyright (c) The Asmc Contributors. All rights reserved.
-; Consult your license regarding permissions and restrictions.
+; https://learn.microsoft.com/en-us/cpp/c-runtime-library/spawn-wspawn-functions?view=msvc-170
 ;
 ; This program accepts a number in the range
 ; 1-8 from the command line. Based on the number it receives,
@@ -45,33 +44,33 @@ _tmain proc argc:int_t, argv:array_t
     mov rcx,argv
     mov rax,[rcx+string_t]
     movzx eax,byte ptr [rax]
-    mov rcx,[rcx+string_t*2]
+    mov rbx,[rcx+string_t*2]
 
     .switch eax ; Based on first letter of argument
 
     .case '1'
-        _spawnl( _P_WAIT, rcx, rcx, "_spawnl", "two", NULL )
+        _spawnl( _P_WAIT, rbx, rbx, "_spawnl", "two", NULL )
        .endc
     .case '2'
-        _spawnle( _P_WAIT, rcx, rcx, "_spawnle", "two", NULL, &my_env )
+        _spawnle( _P_WAIT, rbx, rbx, "_spawnle", "two", NULL, &my_env )
        .endc
     .case '3'
-        _spawnlp( _P_WAIT, rcx, rcx, "_spawnlp", "two", NULL );
+        _spawnlp( _P_WAIT, rbx, rbx, "_spawnlp", "two", NULL );
        .endc
     .case '4'
-        _spawnlpe( _P_WAIT, rcx, rcx, "_spawnlpe", "two", NULL, &my_env )
+        _spawnlpe( _P_WAIT, rbx, rbx, "_spawnlpe", "two", NULL, &my_env )
        .endc
     .case '5'
-        _spawnv( _P_OVERLAY, rcx, &args )
+        _spawnv( _P_OVERLAY, rbx, &args )
        .endc
     .case '6'
-        _spawnve( _P_OVERLAY, rcx, &args, &my_env )
+        _spawnve( _P_OVERLAY, rbx, &args, &my_env )
        .endc
     .case '7'
-        _spawnvp( _P_OVERLAY, rcx, &args )
+        _spawnvp( _P_OVERLAY, rbx, &args )
        .endc
     .case '8'
-        _spawnvpe( _P_OVERLAY, rcx, &args, &my_env )
+        _spawnvpe( _P_OVERLAY, rbx, &args, &my_env )
        .endc
     .default
         printf( "SYNTAX: SPAWN <1-8> <childprogram>\n" )

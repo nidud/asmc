@@ -9,6 +9,11 @@
 include process.inc
 include tchar.inc
 
+if not defined(_UNICODE) and not defined(__UNIX__)
+undef execve
+ALIAS <execve>=<_execve>
+endif
+
 .code
 
 _texecve proc name:tstring_t, argv:tarray_t, envp:tarray_t

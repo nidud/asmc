@@ -9,6 +9,11 @@
 include process.inc
 include tchar.inc
 
+if not defined(_UNICODE) and not defined(__UNIX__)
+undef spawnv
+ALIAS <spawnv>=<_spawnv>
+endif
+
 .code
 
 _tspawnv proc mode:int_t, name:tstring_t, argv:tarray_t

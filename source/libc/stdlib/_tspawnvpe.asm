@@ -10,6 +10,11 @@ include process.inc
 include errno.inc
 include tchar.inc
 
+if not defined(_UNICODE) and not defined(__UNIX__)
+undef spawnvpe
+ALIAS <spawnvpe>=<_spawnvpe>
+endif
+
 .code
 
 _tspawnvpe proc mode:int_t, name:tstring_t, argv:tarray_t, envp:tarray_t

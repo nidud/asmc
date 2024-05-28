@@ -20,6 +20,11 @@ include wincon.inc
 endif
 include tchar.inc
 
+if not defined(_UNICODE) and not defined(__UNIX__)
+undef spawnve
+ALIAS <spawnve>=<_spawnve>
+endif
+
 .code
 
 _tspawnve proc uses rsi rdi rbx mode:int_t, name:tstring_t, argv:tarray_t, envp:tarray_t

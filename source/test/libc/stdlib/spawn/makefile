@@ -1,18 +1,20 @@
 ifdef YACC
 
 spawn:
-	asmc64 -fpic $@.asm
+	asmc64 -q $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q -fpic ../exec/args.asm
+	gcc -o args args.o
+	./$@ 2 ./args
+	rm *.o
 
 else
 
 spawn.exe:
-ifdef msvcrt
-	asmc64 -pe $*.asm
-else
-	asmc64 $*.asm
+	asmc64 -q $*.asm
 	linkw system con_64 file $*.obj
-endif
-	$@
+	asmc64 -q -pe ../exec/args.asm
+	$@ 2 args.exe
 	pause
+	del $*.obj
 endif

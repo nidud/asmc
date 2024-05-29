@@ -6,15 +6,19 @@
 
 include time.inc
 
-		.data
+.data
 
-PST		db "PST",0
-PDT		db "PDT",0
-_timezone	dd 8*3600
-_daylight	dd 1
-_tzname		LPSTR PST
-		LPSTR PDT
-__dnames	db "SunMonTueWedThuFriSat",0
-__mnames	db "JanFebMarAprMayJunJulAugSepOctNovDec",0
+PST char_t "PST",_TZ_STRINGS_SIZE-3 dup(0)
+PDT char_t "PDT",_TZ_STRINGS_SIZE-3 dup(0)
 
-		END
+_tzname LPSTR PST
+        LPSTR PDT
+
+_timezone long_t 8*3600  ; Pacific Time Zone
+_daylight int_t 1        ; Daylight Saving Time (DST) in timezone
+_dstbias  long_t -3600   ; DST offset in seconds
+
+__dnames  char_t "SunMonTueWedThuFriSat",0
+__mnames  char_t "JanFebMarAprMayJunJulAugSepOctNovDec",0
+
+    end

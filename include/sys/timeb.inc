@@ -9,7 +9,10 @@ else
 time_t typedef long_t
 endif
 endif
-
+ifdef __UNIX__
+define _timeb <timeb>
+define _ftime <ftime>
+endif
 ifndef _TIMEB_DEFINED
 define _TIMEB_DEFINED
 _timeb		STRUC

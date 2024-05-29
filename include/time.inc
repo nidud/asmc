@@ -53,17 +53,20 @@ endif
 ;
 ; input accept: MM/DD/YY[YY] | DD.MM.YY[YY] | [YY]YY-MM-DD
 ;
-DT_BASEYEAR		equ 1980
+define DT_BASEYEAR	1980
 
-_DAY_SEC		equ 24 * 60 * 60	; secs in a day
-_YEAR_SEC		equ 365 * _DAY_SEC	; secs in a year
-_FOUR_YEAR_SEC		equ 1461 * _DAY_SEC	; secs in a 4 year interval
-_DEC_SEC		equ 315532800		; secs in 1970-1979
-_BASE_YEAR		equ 70			; 1970 is the base year
-_BASE_DOW		equ 4			; 01-01-70 was a Thursday
-_LEAP_YEAR_ADJUST	equ 17			; Leap years 1900 - 1970
-_MAX_YEAR		equ 138			; 2038 is the max year
+define _DAY_SEC		(24 * 60 * 60)		; secs in a day
+define _YEAR_SEC	(365 * _DAY_SEC)	; secs in a year
+define _FOUR_YEAR_SEC	(1461 * _DAY_SEC)	; secs in a 4 year interval
+define _DEC_SEC		315532800		; secs in 1970-1979
+define _BASE_YEAR	70			; 1970 is the base year
+define _BASE_DOW	4			; 01-01-70 was a Thursday
+define _LEAP_YEAR_ADJUST 17			; Leap years 1900 - 1970
+define _MAX_YEAR	138			; 2038 is the max year
 
+ifndef _TZ_STRINGS_SIZE
+define _TZ_STRINGS_SIZE 64
+endif
 
 ifndef LPFILETIME
 FILETIME	STRUC
@@ -118,11 +121,7 @@ gmtime		proto __cdecl :ptr time_t
 _gmtime		proto __cdecl :ptr time_t, :ptr tm
 _sleep		proto __cdecl :ulong_t
 
-ifdef __LIBASMC__
-define localtime <gmtime>
-else
 localtime	proto __cdecl :ptr time_t
-endif
 mktime		proto __cdecl :ptr tm
 _mkgmtime	proto __cdecl :ptr tm
 strftime	proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
@@ -133,6 +132,8 @@ time		proto __cdecl :ptr time_t
 _time64		proto __cdecl :ptr time_t
 _isindst	proto __cdecl :ptr tm
 _loctotime_t	proto __cdecl y:SINT, m:SINT, d:SINT, h:SINT, m:SINT, s:SINT
+_gmtime32_s	proto __cdecl :ptr tm, :ptr time_t
+_localtime32_s	proto __cdecl :ptr tm, :ptr time_t
 
 _time		equ <time>
 _strdate	equ <strdate>
@@ -146,7 +147,6 @@ wcsftime	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :ptr tm
 _wstrdate	proto __cdecl :ptr wchar_t
 _wstrtime	proto __cdecl :ptr wchar_t
 endif
-
 
 ifdef __UNIX__
 
@@ -196,15 +196,26 @@ settimeofday	proto __cdecl :ptr timeval, :ptr timezone
 
 endif
 
+__daylight	proto __cdecl
+__dstbias	proto __cdecl
+__timezone	proto __cdecl
+__tzname	proto __cdecl
+
+_get_daylight	proto __cdecl :ptr int_t
+_get_dstbias	proto __cdecl :ptr long_t
+_get_timezone	proto __cdecl :ptr long_t
+_get_tzname	proto __cdecl :ptr size_t, :string_t, :size_t, :int_t
+
 if not defined(_MSVCRT) or defined(_CRTBLD)
 
 externdef	_days:DWORD
 externdef	_lpdays:DWORD
-externdef	_timezone:DWORD
-externdef	_daylight:DWORD
+externdef	_daylight:int_t
+externdef	_dstbias:long_t
+externdef	_timezone:long_t
 externdef	_tzname:LPSTR
-externdef	__dnames:BYTE
-externdef	__mnames:BYTE
+externdef	__dnames:char_t
+externdef	__mnames:char_t
 
 DaysInFebruary		proto __cdecl :uint_t
 DaysInMonth		proto __cdecl :uint_t, :uint_t

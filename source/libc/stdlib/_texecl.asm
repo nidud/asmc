@@ -10,6 +10,11 @@ include process.inc
 include errno.inc
 include tchar.inc
 
+if not defined(_UNICODE) and not defined(__UNIX__)
+undef execl
+ALIAS <execl>=<_execl>
+endif
+
 .code
 
 _texecl proc name:tstring_t, arg0:tstring_t, argptr:vararg

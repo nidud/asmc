@@ -1,13 +1,18 @@
-; _FMODE.ASM--
+; __DAYLIGHT.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdlib.inc
-include fcntl.inc
+include time.inc
 
-    .data
-    _fmode int_t 0
+.code
+
+__daylight proc
+
+    lea rax,_daylight
+    ret
+
+__daylight endp
 
     end

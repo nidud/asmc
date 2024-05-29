@@ -1,13 +1,18 @@
-; _FMODE.ASM--
+; __TIMEZONE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdlib.inc
-include fcntl.inc
+include time.inc
 
-    .data
-    _fmode int_t 0
+.code
+
+__timezone proc
+
+    lea rax,_timezone
+    ret
+
+__timezone endp
 
     end

@@ -80,24 +80,38 @@ endif
 
 define _NFILE_		20
 
+; File Attribute Constants for _findfirst()
+
+define _A_NORMAL	0x00
 define _A_RDONLY	0x01
 define _A_HIDDEN	0x02
 define _A_SYSTEM	0x04
 define _A_VOLID		0x08
 define _A_SUBDIR	0x10
 define _A_ARCH		0x20
-define _A_NORMAL	0x00
 
-define _A_TEMPORARY	0x0100
-define _A_SPARSE_FILE	0x0200
-define _A_DELETE	0x0400
-define _A_REPARSEPOINT	0x0400
-define _A_SEQSCAN	0x0800
-define _A_COMPRESSED	0x0800
-define _A_RANDOM	0x1000
-define _A_OFFLINE	0x1000
-define _A_NOT_INDEXED	0x2000
-define _A_ENCRYPTED	0x4000
+; File Attribute Constants for APIs (winnt.inc)
+
+define _FA_READONLY	0x00000001
+define _FA_HIDDEN	0x00000002
+define _FA_SYSTEM	0x00000004
+define _FA_DIRECTORY	0x00000010
+define _FA_ARCHIVE	0x00000020
+define _FA_DEVICE	0x00000040
+define _FA_NORMAL	0x00000080
+define _FA_TEMPORARY	0x00000100
+define _FA_SPARSEFILE	0x00000200
+define _FA_REPARSEPOINT 0x00000400
+define _FA_COMPRESSED	0x00000800
+define _FA_OFFLINE	0x00001000
+define _FA_NOTINDEXED	0x00002000
+define _FA_ENCRYPTED	0x00004000
+define _FA_INTEGRITYSTR 0x00008000
+define _FA_VIRTUAL	0x00010000
+define _FA_NOSCRUBDATA	0x00020000
+define _FA_EA		0x00040000 ; extended attributes
+define _FA_PINNED	0x00080000
+define _FA_UNPINNED	0x00100000
 
 define FOPEN		0x01
 define FEOFLAG		0x02

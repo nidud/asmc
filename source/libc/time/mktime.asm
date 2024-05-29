@@ -5,162 +5,191 @@
 ;
 
 include time.inc
+include errno.inc
 
-    .data
     .code
 
-ChkAdd macro dest, src1, src2
-    exitm<( ((src1 !>= 0) && (src2 !>= 0) && (dest !< 0)) || ((src1 !< 0) && (src2 !< 0) && (dest !>= 0)) )>
+ChkAdd macro d, a, b
+    .ifs ( (a >= 0 && b >= 0 && d < 0) || (a < 0 && b < 0 && d >= 0) )
+        .return( -1 )
+    .endif
+    exitm<>
     endm
 
-ChkMul macro dest, src1, src2
-    .if src1
-        mov eax,dest
-        xor edx,edx
-        div src1
-        cmp eax,src2
-        mov eax,0
-        setne al
-    .else
-        xor eax,eax
+ChkMul macro d, a, i
+    .if ( a )
+        mov eax,d
+        cdq
+        idiv a
+        .if ( eax != i )
+            .return( -1 )
+        .endif
     .endif
-    retm<eax>
+    exitm<>
     endm
 
-_make_time_t proc private uses rsi rdi rbx tb:ptr tm, ultflag:int_t
+_make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
 
-  local tmptm1:long_t, tmptm2:long_t, tmptm3:long_t
-  local tbtemp:ptr tm
+   .new tb:tm
+   .new tmp:long_t
 
-    ldr rcx,tb
-    mov rdi,rcx
-    mov eax,[rdi].tm.tm_year
+    ldr rbx,tp
 
-    .if ( ( eax < _BASE_YEAR - 1) || ( eax > _MAX_YEAR + 1) )
-        jmp err_mktime
-    .endif
-    mov tmptm1,eax
-
-    mov eax,[rdi].tm.tm_mon
-    mov ecx,12
-    xor edx,edx
-    div ecx
-    mov tmptm2,eax
-
-    .if ( eax != 0 )
-
-        add tmptm1,eax
-        mov [rdi].tm.tm_mon,edx
-
-        .ifs ( edx < 0 )
-            add [rdi].tm.tm_mon,12
-            dec tmptm1
-        .endif
-        .if ( (tmptm1 < _BASE_YEAR - 1) || (tmptm1 > _MAX_YEAR + 1) )
-            jmp err_mktime
-        .endif
+    .if ( rbx == NULL )
+        .return( _set_errno(EINVAL) )
     .endif
 
-    mov eax,[rdi].tm.tm_mon
+    mov eax,[rbx].tm.tm_year
+    .ifs ( ( eax < _BASE_YEAR - 1 ) || ( eax > _MAX_YEAR + 1 ) )
+
+       .return( -1 )
+    .endif
+    mov esi,eax
+    mov edi,[rbx].tm.tm_mon
+
+    .ifs ( edi < 0 || edi > 11 )
+
+        mov eax,edi
+        mov ecx,12
+        cdq
+        idiv ecx
+        add esi,eax
+        mov edi,edx
+
+        .ifs ( edi < 0 )
+
+            add edi,12
+            dec esi
+        .endif
+        .ifs ( ( esi < _BASE_YEAR - 1 ) || ( esi > _MAX_YEAR + 1 ) )
+
+           .return( -1 )
+        .endif
+    .endif
+    mov [rbx].tm.tm_mon,edi
+
+    ; ESI: number of elapsed years
+    ;
+    ; Calculate days elapsed minus one, in the given year, to the given
+    ; month. Check for leap year and adjust if necessary.
+
     lea rdx,_days
-    mov ecx,[rdx+rax]
-
-    .if ( !(tmptm1 & 3) && (eax > 1) )
+    mov ecx,[rdx+rdi*4]
+    .if ( !( esi & 3 ) && edi > 1 )
         inc ecx
     .endif
-    mov tmptm2,ecx
 
-    mov eax,tmptm1
-    mov ecx,eax
-    sub eax,_BASE_YEAR
-    imul eax,eax,365
-    dec ecx
-    shr ecx,2
-    add eax,ecx
-    sub eax,_LEAP_YEAR_ADJUST
+    ; Calculate elapsed days since base date (midnight, 1/1/70, UTC)
+    ;
+    ; 365 days for each elapsed year since 1970, plus one more day for
+    ; each elapsed leap year. no danger of overflow because of the range
+    ; check (above) on ESI.
 
-    add eax,tmptm2
-    mov tmptm3,eax
+    lea eax,[rsi-_BASE_YEAR]
+    imul edi,eax,365
+    lea eax,[rsi-1]
+    shr eax,2
+    add edi,eax
+    sub edi,_LEAP_YEAR_ADJUST
 
-    mov ecx,[rdi].tm.tm_mday
-    mov tmptm2,ecx
-    lea edx,[rcx+rax]
-    mov tmptm1,edx
-    .ifs ( ChkAdd(edx, eax, ecx) )
-        jmp err_mktime
-    .endif
+    ; elapsed days to current month (still no possible overflow)
 
-    imul eax,tmptm1,24
-    mov tmptm2,eax
-    .if ( ChkMul(tmptm2, tmptm1, 24) )
-        jmp err_mktime
-    .endif
+    add edi,ecx
 
-    mov eax,[rdi].tm.tm_hour
-    mov tmptm3,eax
-    add eax,tmptm2
-    mov tmptm1,eax
-    .if ( ChkAdd(tmptm1, tmptm2, tmptm3) )
-        jmp err_mktime
-    .endif
+    ; elapsed days to current date. overflow is now possible.
 
-    imul eax,tmptm1,60
-    mov tmptm2,eax
-    .if ( ChkMul(tmptm2, tmptm1, 60) )
-        jmp err_mktime
-    .endif
+    mov ecx,[rbx].tm.tm_mday
+    lea rsi,[rdi+rcx]
 
-    mov eax,[rdi].tm.tm_min
-    mov tmptm3,eax
-    add eax,tmptm2
-    mov tmptm1,eax
-    .if ( ChkAdd(tmptm1, tmptm2, tmptm3) )
-        jmp err_mktime
-    .endif
+    ChkAdd(esi, edi, ecx)
 
-    imul eax,tmptm1,60
-    mov tmptm2,eax
-    .if ( ChkMul(tmptm2, tmptm1, 60) )
-        jmp err_mktime
-    .endif
+    ; ESI: number of elapsed days
+    ;
+    ; Calculate elapsed hours since base date
 
-    mov eax,[rdi].tm.tm_sec
-    mov tmptm3,eax
-    add eax,tmptm2
-    mov tmptm1,eax
-    .if ( ChkAdd(tmptm1, tmptm2, tmptm3) )
-        jmp err_mktime
-    .endif
+    imul ecx,esi,24
+
+    ChkMul(ecx, esi, 24)
+
+    mov edi,[rbx].tm.tm_hour
+    lea rsi,[rdi+rcx]
+
+    ChkAdd(esi, ecx, edi)
+
+    ; ESI: number of elapsed hours
+    ;
+    ; Calculate elapsed minutes since base date
+
+    imul ecx,esi,60
+
+    ChkMul(ecx, esi, 60)
+
+    mov edi,[rbx].tm.tm_min
+    lea rsi,[rdi+rcx]
+
+    ChkAdd(esi, ecx, edi)
+
+    ; ESI: number of elapsed minutes
+    ;
+    ; Calculate elapsed seconds since base date
+
+    imul ecx,esi,60
+
+    ChkMul(ecx, esi, 60)
+
+    mov edi,[rbx].tm.tm_sec
+    lea rsi,[rdi+rcx]
+
+    ChkAdd(esi, ecx, edi)
+
+    ; ESI: number of elapsed seconds
+
+    mov tmp,esi
 
     .if ( ultflag )
 
+        ; Adjust for timezone. No need to check for overflow since
+        ; localtime() will check its arg value
+
         _tzset()
-        add tmptm1,_timezone
 
-        mov rsi,localtime(&tmptm1)
-        .if ( rax == NULL )
-            jmp err_mktime
+        add tmp,_timezone
+
+        ; Convert this second count back into a time block structure.
+        ; If localtime returns NULL, return an error.
+
+        .ifd ( _localtime32_s(&tb, &tmp) )
+
+            .return( -1 )
         .endif
 
-        .if ( ( [rdi].tm.tm_isdst > 0) || ( ( [rdi].tm.tm_isdst < 0 ) && ( [rsi].tm.tm_isdst > 0 ) ) )
-            sub tmptm1,3600
-            mov rsi,localtime(&tmptm1)
+        ; Now must compensate for DST. The ANSI rules are to use the
+        ; passed-in tm_isdst flag if it is non-negative. Otherwise,
+        ; compute if DST applies. Recall that tbtemp has the time without
+        ; DST compensation, but has set tm_isdst correctly.
+
+        .if ( [rbx].tm.tm_isdst > 0 || ( [rbx].tm.tm_isdst < 0 && tb.tm_isdst > 0 ) )
+
+            add tmp,_dstbias
+            .ifd ( _localtime32_s(&tb, &tmp) )
+
+                .return( -1 )
+            .endif
         .endif
 
-    .else
-        .if ( gmtime( &tmptm1 ) == NULL )
-            jmp err_mktime
-        .endif
-        mov rsi,rax
+    .elseifd ( _gmtime32_s(&tb, &tmp) )
+
+        .return( -1 )
     .endif
 
-    mov ecx,sizeof(tm)
+    ; tmp holds number of elapsed seconds, adjusted for local time if requested
+
+    mov rdi,rbx
+    lea rsi,tb
+    mov ecx,sizeof(tb)
     rep movsb
-   .return tmptm1
-
-err_mktime:
-
-    .return (-1)
+    mov eax,tmp
+    ret
 
 _make_time_t endp
 
@@ -168,13 +197,19 @@ _make_time_t endp
 mktime proc tb:ptr tm
 
     ldr rcx,tb
-   .return( _make_time_t( rcx, 1 ) )
+
+    _make_time_t( rcx, 1 )
+    ret
+
 mktime endp
 
 _mkgmtime proc tb:ptr tm
 
     ldr rcx,tb
-   .return( _make_time_t( rcx, 0 ) )
+
+    _make_time_t( rcx, 0 )
+    ret
+
 _mkgmtime endp
 
     end

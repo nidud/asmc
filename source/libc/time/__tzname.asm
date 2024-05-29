@@ -1,13 +1,18 @@
-; _FMODE.ASM--
+; __TZNAME.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdlib.inc
-include fcntl.inc
+include time.inc
 
-    .data
-    _fmode int_t 0
+.code
+
+__tzname proc
+
+    lea rax,_tzname
+    ret
+
+__tzname endp
 
     end

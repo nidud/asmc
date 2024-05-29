@@ -65,8 +65,9 @@ execl       proto __Cdecl :string_t, :string_t, :vararg
 execle      proto __Cdecl :string_t, :string_t, :vararg
 execlp      proto __Cdecl :string_t, :string_t, :vararg
 execlpe     proto __Cdecl :string_t, :string_t, :vararg
-execv       proto __cdecl :string_t, :ptr string_t
-execve      proto __cdecl :string_t, :ptr string_t, :ptr string_t
-execvp      proto __cdecl :string_t, :ptr string_t
+execv       proto __cdecl :string_t, :array_t
+execve      proto __cdecl :string_t, :array_t, :array_t
+execvp      proto __cdecl :string_t, :array_t
+execvpe     proto __cdecl :string_t, :array_t, :array_t
 
 endif

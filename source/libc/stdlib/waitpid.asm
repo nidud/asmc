@@ -1,33 +1,33 @@
-; CHMOD.ASM--
+; WAITPID.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include sys/wait.inc
 include errno.inc
-include fcntl.inc
 ifdef __UNIX__
-include sys/stat.inc
 include sys/syscall.inc
 endif
 
 .code
 
-chmod proc path:string_t, mode:int_t
+waitpid proc pid:pid_t, wstatus:ptr int_t, options:int_t
 ifdef __UNIX__
 ifdef _WIN64
-    .ifs ( sys_chmod(rdi, esi) < 0 )
+    .ifsd ( sys_wait4(edi, rsi, edx, NULL) < 0 )
 else
-    .ifs ( sys_chmod(path, mode) < 0 )
+    .ifs ( sys_waitpid(pid, wstatus, options) < 0 )
 endif
         neg eax
-        _set_errno( eax )
-    .endif
 else
-    int 3
+        mov eax,ENOSYS
+endif
+        _set_errno( eax )
+ifdef __UNIX__
+    .endif
 endif
     ret
-
-chmod endp
+waitpid endp
 
     end

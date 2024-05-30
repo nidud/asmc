@@ -1,21 +1,23 @@
-; WAITPID.ASM--
+; FCHOWN.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include sys/wait.inc
-include sys/syscall.inc
 include errno.inc
+include unistd.inc
+ifdef __UNIX__
+include sys/syscall.inc
+endif
 
 .code
 
-waitpid proc pid:pid_t, wstatus:ptr int_t, options:int_t
+fchown proc fd:int_t, user:uid_t, grp:gid_t
 ifdef __UNIX__
 ifdef _WIN64
-    .ifsd ( sys_wait4(edi, rsi, edx, NULL) < 0 )
+    .ifsd ( sys_fchown(edi, esi, edx) < 0 )
 else
-    .ifs ( sys_waitpid(pid, wstatus, options) < 0 )
+    .ifs ( sys_fchown(fd, user, grp) < 0 )
 endif
         neg eax
 else
@@ -26,6 +28,6 @@ ifdef __UNIX__
     .endif
 endif
     ret
-waitpid endp
+fchown endp
 
     end

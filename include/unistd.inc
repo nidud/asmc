@@ -52,14 +52,18 @@ define _CRT_GETPID_DEFINED
 getpid      proto __cdecl
 endif
 
-unlink      proto __cdecl :ptr
+chroot      proto __cdecl :string_t
+unlink      proto __cdecl :string_t
 fsync       proto __cdecl :int_t
-pipe        proto __cdecl :int_t
+pipe        proto __cdecl :ptr int_t
 alarm       proto __cdecl :uint_t
-chown       proto __cdecl :ptr, :uid_t, :gid_t
+chown       proto __cdecl :string_t, :uid_t, :gid_t
 fchown      proto __cdecl :int_t, :uid_t, :gid_t
 fdatasync   proto __cdecl :int_t
 fork        proto __cdecl
+
+_dup        proto __cdecl :int_t
+_dup2       proto __cdecl :int_t, :int_t
 
 execl       proto __Cdecl :string_t, :string_t, :vararg
 execle      proto __Cdecl :string_t, :string_t, :vararg

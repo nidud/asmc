@@ -206,6 +206,7 @@ M_WRONLY	equ 0x40000000
 M_RDWR		equ M_RDONLY or M_WRONLY
 
 ifdef __UNIX__
+
 define _chsize	<ftruncate>
 define _open	<open>
 define _close	<close>
@@ -214,6 +215,11 @@ define _write	<write>
 define _lseek	<lseek>
 define _creat	<creat>
 define _isatty	<isatty>
+define _unlink	<unlink>
+define _chmod	<chmod>
+
+fchmod		proto __cdecl :int_t, :int_t
+
 endif
 
 _open		proto __Cdecl :string_t, :int_t, :vararg
@@ -224,6 +230,7 @@ _close		proto __cdecl :int_t
 _lseek		proto __cdecl :int_t, :size_t, :uint_t
 _write		proto __cdecl :int_t, :ptr, :uint_t
 _access		proto __cdecl :string_t, :int_t
+_chmod		proto __cdecl :string_t, :int_t
 _isatty		proto __cdecl :int_t
 _eof		proto __cdecl :int_t
 _chsize		proto __cdecl :int_t, :size_t
@@ -234,6 +241,7 @@ _findclose	proto __cdecl :ptr
 _tell		proto __cdecl :int_t
 remove		proto __cdecl :string_t
 rename		proto __cdecl :string_t, :string_t
+_unlink		proto __cdecl :string_t
 _lseeki64	proto __cdecl :int_t, :uint64_t, :uint_t
 _telli64	proto __cdecl :int_t
 _filelengthi64	proto __cdecl :int_t

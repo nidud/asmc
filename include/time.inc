@@ -194,6 +194,11 @@ nanosleep	proto __cdecl :ptr timespec, :ptr timespec
 gettimeofday	proto __cdecl :ptr timeval, :ptr timezone
 settimeofday	proto __cdecl :ptr timeval, :ptr timezone
 
+clock_getres	proto __cdecl :int_t, :ptr timespec
+clock_gettime	proto __cdecl :int_t, :ptr timespec
+clock_settime	proto __cdecl :int_t, :ptr timespec
+clock_nanosleep proto __cdecl :int_t, :int_t, :ptr timespec, :ptr timespec
+
 endif
 
 __daylight	proto __cdecl

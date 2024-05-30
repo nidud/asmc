@@ -85,10 +85,3 @@ uninstall:
 	sudo rm -f /usr/bin/asmc64
 	sudo rm -f -R /usr/lib/asmc
 	sudo rm -f /etc/profile.d/asmc-profile.sh
-
-clean_old:
-	sudo rm -f /usr/local/bin/asmc
-	sudo rm -f /usr/local/bin/asmc64
-	sudo rm -f -R /usr/lib/asmc-2.34
-	sudo rm -f -R /usr/include/asmc-2.34
-	sudo rm -f /etc/profile.d/include-path.sh

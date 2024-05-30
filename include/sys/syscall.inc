@@ -37,6 +37,7 @@ ifdef _WIN64
     SYS_SHMGET                  = 29,   ; sys_shmget()
     SYS_SHMAT                   = 30,   ; sys_shmat()
     SYS_SHMCTL                  = 31,   ; sys_shmctl()
+    SYS_DUP                     = 32,   ; sys_dup()
     SYS_DUP2                    = 33,   ; sys_dup2()
     SYS_PAUSE                   = 34,   ; sys_pause()
     SYS_NANOSLEEP               = 35,   ; sys_nanosleep()
@@ -204,6 +205,7 @@ ifdef _WIN64
     SYS_CLOCK_SETTIME           = 227,  ; sys_clock_settime()
     SYS_CLOCK_GETTIME           = 228,  ; sys_clock_gettime()
     SYS_CLOCK_GETRES            = 229,  ; sys_clock_getres()
+    SYS_CLOCK_NANOSLEEP         = 230,  ; sys_clock_nanosleep()
     SYS_EXIT_GROUP              = 231,  ; sys_exit_group()
     SYS_EPOLL_WAIT              = 232,  ; sys_epoll_wait()
     SYS_EPOLL_CTL               = 233,  ; sys_epoll_ctl()
@@ -287,30 +289,42 @@ else
     SYS_CHMOD                   = 15,
     SYS_LSEEK                   = 19,
     SYS_GETPID                  = 20,
+    SYS_ALARM                   = 27,
     SYS_ACCESS                  = 33,
     SYS_RENAME                  = 38,
     SYS_MKDIR                   = 39,
     SYS_RMDIR                   = 40,
+    SYS_DUP                     = 41,
+    SYS_PIPE                    = 42,
     SYS_TIMES                   = 43,
     SYS_IOCTL                   = 54,
     SYS_FCNTL                   = 55,
     SYS_CHROOT                  = 61,
+    SYS_DUP2                    = 63,
     SYS_GETTIMEOFDAY            = 78,
     SYS_SETTIMEOFDAY            = 79,
     SYS_MMAP                    = 90,
     SYS_MUNMAP                  = 91,
+    SYS_FCHMOD                  = 94,
+    SYS_FCHOWN                  = 95,
     SYS_STAT                    = 106,
     SYS_FSTAT                   = 108,
     SYS_WAIT4                   = 114,
     SYS_FCHDIR                  = 133,
     SYS_LLSEEK                  = 140,
     SYS_GETDENTS                = 141,
+    SYS_FDATASYNC               = 148,
     SYS_NANOSLEEP               = 162,
+    SYS_CHOWN                   = 182,
     SYS_GETCWD                  = 183,
     SYS_VFORK                   = 190,
     SYS_STAT64                  = 195,
     SYS_FSTAT64                 = 197,
     SYS_GETDENTS64              = 220,
+    SYS_CLOCK_SETTIME           = 264,
+    SYS_CLOCK_GETTIME           = 265,
+    SYS_CLOCK_GETRES            = 266,
+    SYS_CLOCK_NANOSLEEP         = 267,
     SYS_WAITID                  = 284,
 endif
     }
@@ -353,6 +367,10 @@ sys_close proto :int_t {
     }
 sys_chmod proto :string_t, :int_t {
     mov eax,SYS_CHMOD
+    syscall
+    }
+sys_fchmod proto :int_t, :int_t {
+    mov eax,SYS_FCHMOD
     syscall
     }
 sys_newstat proto :string_t, :ptr {
@@ -486,6 +504,51 @@ sys_getpid proto {
     mov eax,SYS_GETPID
     syscall
     }
+sys_chown proto :string_t, :uint_t, :uint_t {
+    mov eax,SYS_CHOWN
+    syscall
+    }
+sys_fchown proto :int_t, :uint_t, :uint_t {
+    mov eax,SYS_FCHOWN
+    syscall
+    }
+sys_alarm proto :uint_t {
+    mov eax,SYS_ALARM
+    syscall
+    }
+sys_pipe proto :ptr int_t {
+    mov eax,SYS_PIPE
+    syscall
+    }
+sys_fdatasync proto :int_t {
+    mov eax,SYS_FDATASYNC
+    syscall
+    }
+sys_clock_settime proto :int_t, :ptr {
+    mov eax,SYS_CLOCK_SETTIME
+    syscall
+    }
+sys_clock_gettime proto :int_t, :ptr {
+    mov eax,SYS_CLOCK_GETTIME
+    syscall
+    }
+sys_clock_getres proto :int_t, :ptr {
+    mov eax,SYS_CLOCK_GETRES
+    syscall
+    }
+sys_clock_nanosleep proto :int_t, :int_t, :ptr, :ptr {
+    mov r10,rcx
+    mov eax,SYS_CLOCK_NANOSLEEP
+    syscall
+    }
+sys_dup proto :int_t {
+    mov eax,SYS_DUP
+    syscall
+    }
+sys_dup2 proto :int_t, :int_t {
+    mov eax,SYS_DUP2
+    syscall
+    }
 
 else
 
@@ -560,6 +623,9 @@ sys_close proto fastcall :int_t {
     }
 sys_chmod proto fastcall :string_t, :int_t {
     sys_call(SYS_CHMOD, _1, _2)
+    }
+sys_fchmod proto fastcall :int_t, :int_t {
+    sys_call(SYS_FCHMOD, _1, _2)
     }
 sys_newstat proto fastcall :string_t, :ptr {
     sys_call(SYS_STAT, _1, _2)
@@ -665,6 +731,39 @@ sys_getdents proto fastcall :int_t, :ptr, :abs {
     }
 sys_getdents64 proto fastcall :int_t, :ptr, :abs {
     sys_call(SYS_GETDENTS64, _1, _2)
+    }
+sys_chown proto fastcall :string_t, :uint_t, :abs {
+    sys_call(SYS_CHOWN, _1, _2, _3)
+    }
+sys_fchown proto fastcall :int_t, :uint_t, :abs {
+    sys_call(SYS_FCHOWN, _1, _2, _3)
+    }
+sys_alarm proto fastcall :uint_t {
+    sys_call(SYS_ALARM, _1)
+    }
+sys_pipe proto fastcall :ptr int_t {
+    sys_call(SYS_PIPE, _1)
+    }
+sys_fdatasync proto fastcall :int_t {
+    sys_call(SYS_FDATASYNC, _1)
+    }
+sys_clock_settime proto fastcall :int_t, :ptr {
+    sys_call(SYS_CLOCK_SETTIME, _1, _2)
+    }
+sys_clock_gettime proto fastcall :int_t, :ptr {
+    sys_call(SYS_CLOCK_GETTIME, _1, _2)
+    }
+sys_clock_getres proto fastcall :int_t, :ptr {
+    sys_call(SYS_CLOCK_GETRES, _1, _2)
+    }
+sys_clock_nanosleep proto fastcall :int_t, :int_t, :abs, :abs {
+    sys_call(SYS_CLOCK_NANOSLEEP, _1, _2, _3, _4)
+    }
+sys_dup proto fastcall :int_t {
+    sys_call(SYS_DUP, _1)
+    }
+sys_dup2 proto fastcall :int_t, :int_t {
+    sys_call(SYS_DUP2, _1, _2)
     }
 
 endif

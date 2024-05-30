@@ -34,16 +34,17 @@ _loctotime_t proc uses rbx year:int_t, month:int_t, day:int_t, hour:int_t, minut
     mul edx
     dec ecx
     shr ecx,2
-    lea rbx,[rax+rcx-_LEAP_YEAR_ADJUST]
-    add ebx,tb.tm_yday
+    lea rax,[rax+rcx-_LEAP_YEAR_ADJUST]
+    add eax,tb.tm_yday
     mov ecx,24
     mul ecx
-    add ebx,hour
+    add eax,hour
     mov ecx,60
     mul ecx
-    add ebx,minute
+    add eax,minute
     mul ecx
-    add ebx,second
+    add eax,second
+    mov ebx,eax
     _tzset()
     add ebx,_timezone
     mov ecx,month

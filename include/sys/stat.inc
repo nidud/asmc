@@ -185,6 +185,8 @@ define _fstat   <fstat>
 define _stat64  <stat64>
 define _fstat64 <fstat64>
 chmod       proto __cdecl :string_t, :int_t
+lstat       proto __cdecl :string_t, :PSTAT
+lstat64     proto __cdecl :string_t, :PSTAT64
 endif
 
 _stat       proto __cdecl :string_t, :PSTAT

@@ -1,10 +1,10 @@
-; FCHMOD.ASM--
+; POLL.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include io.inc
+include sys/poll.inc
 include errno.inc
 ifdef __UNIX__
 include sys/syscall.inc
@@ -12,12 +12,12 @@ endif
 
 .code
 
-fchmod proc fd:int_t, mode:int_t
+poll proc fds:ptr pollfd, nfds:nfds_t, timeout:int_t
 ifdef __UNIX__
 ifdef _WIN64
-    .ifs ( sys_fchmod(edi, esi) < 0 )
+    .ifsd ( sys_poll(rdi, esi, edx) < 0 )
 else
-    .ifs ( sys_fchmod(fd, mode) < 0 )
+    .ifs ( sys_poll(fds, nfds, timeout) < 0 )
 endif
         neg eax
 else
@@ -28,6 +28,6 @@ ifdef __UNIX__
     .endif
 endif
     ret
-fchmod endp
+poll endp
 
     end

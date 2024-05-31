@@ -8,6 +8,7 @@ include malloc.inc
 include errno.inc
 ifdef __UNIX__
 include sys/syscall.inc
+include sys/mman.inc
 endif
 
 public  _crtheap

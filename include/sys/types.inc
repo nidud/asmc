@@ -1,5 +1,6 @@
 ifndef _INC_TYPES
 define _INC_TYPES
+include libc.inc
 
 ifndef _TIME_T_DEFINED
 define _TIME_T_DEFINED

@@ -61,9 +61,13 @@ chown       proto __cdecl :string_t, :uid_t, :gid_t
 fchown      proto __cdecl :int_t, :uid_t, :gid_t
 fdatasync   proto __cdecl :int_t
 fork        proto __cdecl
-
 _dup        proto __cdecl :int_t
 _dup2       proto __cdecl :int_t, :int_t
+brk         proto __cdecl :ptr
+sbrk        proto __cdecl :intptr_t
+pread       proto __cdecl :int_t, :ptr, :size_t, :off_t
+pwrite      proto __cdecl :int_t, :ptr, :size_t, :off_t
+
 
 execl       proto __Cdecl :string_t, :string_t, :vararg
 execle      proto __Cdecl :string_t, :string_t, :vararg

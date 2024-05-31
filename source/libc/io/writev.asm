@@ -1,23 +1,23 @@
-; FCHMOD.ASM--
+; WRITEV.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
-include io.inc
 include errno.inc
+include unistd.inc
 ifdef __UNIX__
+include sys/uio.inc
 include sys/syscall.inc
 endif
 
 .code
 
-fchmod proc fd:int_t, mode:int_t
+writev proc fd:int_t, iov:ptr iovec, iovcnt:int_t
 ifdef __UNIX__
 ifdef _WIN64
-    .ifs ( sys_fchmod(edi, esi) < 0 )
+    .ifs ( sys_writev(edi, rsi, edx) < 0 )
 else
-    .ifs ( sys_fchmod(fd, mode) < 0 )
+    .ifs ( sys_writev(fd, iov, iovcnt) < 0 )
 endif
         neg eax
 else
@@ -28,6 +28,6 @@ ifdef __UNIX__
     .endif
 endif
     ret
-fchmod endp
+writev endp
 
     end

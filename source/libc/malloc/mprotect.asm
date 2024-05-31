@@ -1,23 +1,23 @@
-; FCHMOD.ASM--
+; MPROTECT.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include io.inc
 include errno.inc
 ifdef __UNIX__
 include sys/syscall.inc
+include sys/mman.inc
 endif
 
 .code
 
-fchmod proc fd:int_t, mode:int_t
+mprotect proc p:ptr, len:size_t, prot:int_t
 ifdef __UNIX__
 ifdef _WIN64
-    .ifs ( sys_fchmod(edi, esi) < 0 )
+    .ifsd ( sys_mprotect(rdi, rsi, edx) < 0 )
 else
-    .ifs ( sys_fchmod(fd, mode) < 0 )
+    .ifs ( sys_mprotect(p, len, prot) < 0 )
 endif
         neg eax
 else
@@ -28,6 +28,6 @@ ifdef __UNIX__
     .endif
 endif
     ret
-fchmod endp
+mprotect endp
 
     end

@@ -63,8 +63,8 @@ quot		int_t ?
 rem		int_t ?
 _div_t		ends
 _ldiv_t		struct
-quot		long_t ?
-rem		long_t ?
+quot		int_t ?
+rem		int_t ?
 _ldiv_t		ends
 _lldiv_t	struct
 quot		int64_t ?
@@ -191,8 +191,8 @@ endif
 endif
 
 __doserrno	proto __cdecl
-_set_doserrno	proto __cdecl :ulong_t
-_get_doserrno	proto __cdecl :ptr ulong_t
+_set_doserrno	proto __cdecl :uint_t
+_get_doserrno	proto __cdecl :ptr uint_t
 __sys_errlist	proto __cdecl
 if defined(_WIN64) or defined(_MSVCRT)
 _doserrno	equ <errno_t ptr [__doserrno()]>
@@ -205,7 +205,7 @@ externdef	_sys_nerr:int_t
 osmaperr	proto __cdecl
 endif
 __sys_nerr	proto __cdecl
-_dosmaperr	proto __cdecl :ulong_t
+_dosmaperr	proto __cdecl :uint_t
 
 if defined (_DLL) and defined (_M_IX86)
 __p___argc	proto __cdecl
@@ -295,7 +295,7 @@ endif
 _set_abort_behavior proto __cdecl :int_t, :int_t
 
 abs		proto __cdecl :int_t
-labs		proto __cdecl :long_t
+labs		proto __cdecl :int_t
 llabs		proto __cdecl :int64_t
 _abs64		proto __cdecl :int64_t
 
@@ -374,10 +374,10 @@ _strtoi64	proto __cdecl :string_t, :array_t, :int_t
 _strtoi64_l	proto __cdecl :string_t, :array_t, :int_t, :_locale_t
 _strtoui64	proto __cdecl :string_t, :array_t, :int_t
 _strtoui64_l	proto __cdecl :string_t, :array_t, :int_t, :_locale_t
-ldiv		proto __cdecl :long_t, :long_t
+ldiv		proto __cdecl :int_t, :int_t
 lldiv		proto __cdecl :ptr _lldiv_t, :int64_t, :int64_t
 
-_ltoa_s		proto __cdecl :long_t, :string_t, :size_t, :int_t
+_ltoa_s		proto __cdecl :int_t, :string_t, :size_t, :int_t
 
 mblen		proto __cdecl :string_t, :size_t
 _mblen_l	proto __cdecl :string_t, :size_t, :_locale_t
@@ -421,7 +421,7 @@ define _CRT_SYSTEM_DEFINED
 system		proto __cdecl :string_t
 endif
 
-_ultoa_s	proto __cdecl :ulong_t, :string_t, :size_t, :int_t
+_ultoa_s	proto __cdecl :uint_t, :string_t, :size_t, :int_t
 wctomb		proto __cdecl :string_t, :wchar_t
 _wctomb_l	proto __cdecl :string_t, :wchar_t, :_locale_t
 if __STDC_WANT_SECURE_LIB__
@@ -465,9 +465,9 @@ endif
 _itow		proto __cdecl :int_t, :wstring_t, :int_t
 _itow_s		proto __cdecl :int_t, :wstring_t, :size_t, :int_t
 _ltow		proto __cdecl :int_t, :wstring_t, :int_t
-_ltow_s		proto __cdecl :long_t, :wstring_t, :size_t,:int_t
-_ultow		proto __cdecl :ulong_t, :wstring_t, :int_t
-_ultow_s	proto __cdecl :ulong_t, :wstring_t, :size_t, :int_t
+_ltow_s		proto __cdecl :int_t, :wstring_t, :size_t,:int_t
+_ultow		proto __cdecl :uint_t, :wstring_t, :int_t
+_ultow_s	proto __cdecl :uint_t, :wstring_t, :size_t, :int_t
 wcstod		proto __cdecl :wstring_t, :warray_t
 _wcstod_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
 wcstol		proto __cdecl :wstring_t, :warray_t, :int_t
@@ -533,10 +533,10 @@ _atodbl_l	proto __cdecl :ptr real8, :string_t, :_locale_t
 _atoldbl_l	proto __cdecl :ptr real10, :string_t, :_locale_t
 _atoflt_l	proto __cdecl :ptr real4, :string_t, :_locale_t
 
-_lrotl proto watcall :long_t, :abs {
+_lrotl proto watcall :int_t, :abs {
     rol	    eax,_2
     }
-_lrotr proto watcall :long_t, :abs {
+_lrotr proto watcall :int_t, :abs {
     ror	    eax,_2
     }
 
@@ -600,25 +600,25 @@ endif ;; _WSTDLIBP_DEFINED
 ;; The Win32 API SetErrorMode, Beep and Sleep should be used instead.
 
 _seterrormode	proto __cdecl :int_t
-_beep		proto __cdecl :ulong_t, :ulong_t
-_sleep		proto __cdecl :ulong_t
+_beep		proto __cdecl :uint_t, :uint_t
+_sleep		proto __cdecl :uint_t
 
 ecvt		proto __cdecl :real8, :int_t, :ptr int_t, :ptr int_t
 fcvt		proto __cdecl :real8, :int_t, :ptr int_t, :ptr int_t
 gcvt		proto __cdecl :real8, :int_t, :string_t
 itoa		proto __cdecl :int_t, :string_t, :int_t
-ltoa		proto __cdecl :long_t, :string_t, :int_t
+ltoa		proto __cdecl :int_t, :string_t, :int_t
 
 _itoa		proto __cdecl :int_t, :string_t, :int_t
-_ltoa		proto __cdecl :long_t, :string_t, :int_t
-_ultoa		proto __cdecl :ulong_t, :string_t, :int_t
+_ltoa		proto __cdecl :int_t, :string_t, :int_t
+_ultoa		proto __cdecl :uint_t, :string_t, :int_t
 _i64toa		proto __cdecl :int64_t, :string_t, :int_t
 _ui64toa	proto __cdecl :uint64_t, :string_t, :int_t
 
 putenv		proto __cdecl :string_t
 
 swab		proto __cdecl :string_t, :string_t, :int_t
-ultoa		proto __cdecl :ulong_t, :string_t, :int_t
+ultoa		proto __cdecl :uint_t, :string_t, :int_t
 onexit		proto __cdecl :onexit_t
 
 ;;---

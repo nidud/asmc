@@ -56,12 +56,12 @@ _HOOK_REALLOC		equ 2
 _HOOK_FREE		equ 3
 
 ifndef _M_CEE_PURE
-CALLBACK(_CRT_ALLOC_HOOK, :int_t, :ptr, :size_t, :int_t, :long_t, :string_t, :int_t)
+CALLBACK(_CRT_ALLOC_HOOK, :int_t, :ptr, :size_t, :int_t, :int_t, :string_t, :int_t)
 else
-CALLBACK(_CRT_ALLOC_HOOK, :int_t, :ptr, :size_t, :int_t, :long_t, :string_t, :int_t)
+CALLBACK(_CRT_ALLOC_HOOK, :int_t, :ptr, :size_t, :int_t, :int_t, :string_t, :int_t)
 endif
 ifdef _M_CEE
-CALLBACK(_CRT_ALLOC_HOOK_M, :int_t, :ptr, :size_t, :int_t, :long_t, :string_t, :int_t)
+CALLBACK(_CRT_ALLOC_HOOK_M, :int_t, :ptr, :size_t, :int_t, :int_t, :string_t, :int_t)
 endif
 
 _CRTDBG_ALLOC_MEM_DF	equ 0x01
@@ -444,7 +444,7 @@ endif
 endif
 
 ifndef _M_CEE_PURE
-externdef _crtAssertBusy:long_t
+externdef _crtAssertBusy:int_t
 endif
 
 ifndef _M_CEE_PURE
@@ -719,10 +719,10 @@ endif
 endif
 
 ifndef _M_CEE_PURE
-externdef _crtBreakAlloc:long_t
+externdef _crtBreakAlloc:int_t
 endif
 
-_CrtSetBreakAlloc	proto __cdecl :long_t
+_CrtSetBreakAlloc	proto __cdecl :int_t
 
 _malloc_dbg		proto __cdecl :size_t, :int_t, :string_t, :int_t
 _calloc_dbg		proto __cdecl :size_t, :size_t, :int_t, :string_t, :int_t

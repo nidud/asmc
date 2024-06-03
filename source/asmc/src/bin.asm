@@ -1693,15 +1693,40 @@ endif
     .endf
 
     mov rbx,cp
-    .if ( reloc )
+    mov rcx,reloc
 
-        pe_set_base_relocs( reloc )
+    .if ( rcx )
+
+        pe_set_base_relocs( rcx )
+
+if 0    ; v2.34.61 - jwasm
 
         mov rcx,reloc
-        mov rsi,[rcx].dsym.seginfo
         mov eax,[rcx].asym.max_offset
+        mov rsi,[rcx].dsym.seginfo
         add eax,[rsi].start_offset
         mov [rbx].calc_param.rva,eax
+
+else
+
+        ; v2.13: if no relocs exist, remove the .reloc section that was just created.
+        ; v2.16: this didn't work because reloc->sym.max_offset was initialized
+        ;        with size of IMAGE_BASE_RELOCATION
+
+        mov rcx,reloc
+        mov eax,[rcx].asym.max_offset
+
+        .if ( eax > IMAGE_BASE_RELOCATION )
+
+            mov rsi,[rcx].dsym.seginfo
+            add eax,[rsi].start_offset
+            mov [rbx].calc_param.rva,eax
+        .else
+            mov rdx,objtab
+            sub [rcx].asym.max_offset,IMAGE_SECTION_HEADER
+            sub [rbx].calc_param.rva,IMAGE_BASE_RELOCATION ; v2.16: added
+        .endif
+endif
     .endif
 
     mov sizeimg,[rbx].calc_param.rva
@@ -1750,6 +1775,20 @@ endif
         .continue .if ( [rsi].segtype == SEGTYPE_HDR )
         .continue .if ( [rdi].asym.max_offset == 0 ) ;; ignore empty sections
 
+if 1    ; v2.34.61 - jwasm
+
+        ; v2.16: linker directive sections are ignored. Would be good to scan
+        ; them for export directives, since masm/jwasm has the restriction that only PROCs can
+        ; be exported. The problem is that it's far too late here, function pe_emit_export_data() has
+        ; been called just after step 1 - and worse, inside pe_emit_export_data() it cannot be done
+        ; either since at that time there are no section contents available yet!
+
+        .if ( [rsi].info ) ; v2.13: ignore 'info' sections (linker directives)
+
+            ;asmerr( 8017, [rdi].asym.name ) ; v2.15: emit warning
+           .continue
+        .endif
+endif
         assume rcx:ptr IMAGE_SECTION_HEADER
 
         .if ( [rsi].lname_idx != ebx )

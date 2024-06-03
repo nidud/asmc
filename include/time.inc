@@ -16,7 +16,7 @@ endif
 
 ifndef _TIME32_T_DEFINED
 define _TIME32_T_DEFINED
-__time32_t typedef long_t	;; 32-bit time value
+__time32_t typedef int_t	;; 32-bit time value
 endif
 
 ifndef _TIME64_T_DEFINED
@@ -29,13 +29,13 @@ define _TIME_T_DEFINED
 ifdef _WIN64
 time_t typedef int64_t
 else
-time_t typedef long_t
+time_t typedef int_t
 endif
 endif
 
 ifndef _CLOCK_T_DEFINED
 define _CLOCK_T_DEFINED
-clock_t typedef long_t
+clock_t typedef int_t
 endif
 
 ifndef _SIZE_T_DEFINED
@@ -119,7 +119,7 @@ difftime	proto __cdecl :time_t, :time_t
 
 gmtime		proto __cdecl :ptr time_t
 _gmtime		proto __cdecl :ptr time_t, :ptr tm
-_sleep		proto __cdecl :ulong_t
+_sleep		proto __cdecl :uint_t
 
 localtime	proto __cdecl :ptr time_t
 mktime		proto __cdecl :ptr tm
@@ -207,8 +207,8 @@ __timezone	proto __cdecl
 __tzname	proto __cdecl
 
 _get_daylight	proto __cdecl :ptr int_t
-_get_dstbias	proto __cdecl :ptr long_t
-_get_timezone	proto __cdecl :ptr long_t
+_get_dstbias	proto __cdecl :ptr int_t
+_get_timezone	proto __cdecl :ptr int_t
 _get_tzname	proto __cdecl :ptr size_t, :string_t, :size_t, :int_t
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
@@ -216,8 +216,8 @@ if not defined(_MSVCRT) or defined(_CRTBLD)
 externdef	_days:DWORD
 externdef	_lpdays:DWORD
 externdef	_daylight:int_t
-externdef	_dstbias:long_t
-externdef	_timezone:long_t
+externdef	_dstbias:int_t
+externdef	_timezone:int_t
 externdef	_tzname:LPSTR
 externdef	__dnames:char_t
 externdef	__mnames:char_t

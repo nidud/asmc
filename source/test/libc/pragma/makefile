@@ -1,12 +1,11 @@
 ifdef YACC
 pragma:
-	asmc64 -fpic $@.asm
+	asmc64 -q -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
-	asmc -elf -fpic $@.asm
+	asmc -q -elf -fpic $@.asm
 	gcc -m32 -nostdlib -o $@ $@.o -l:x86/libasmc.a
 	./$@
-	echo Press enter to continue; read dummy;
 	rm -f $@.o
 	rm -f $@
 else

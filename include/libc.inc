@@ -173,17 +173,23 @@ define _ERRNO_T_DEFINED
 errno_t typedef sdword
 endif
 
-;
 ; the following should be set depending on the sizes of various types
-;
 
 ifndef LONGDOUBLE_IS_DOUBLE
-define LONGDOUBLE_IS_DOUBLE 0  ; 1 means long double is same as double
-define LONG_IS_INT     1       ; 1 means long is same size as int
-define SHORT_IS_INT    0       ; 1 means short is same size as int
+define LONGDOUBLE_IS_DOUBLE 0
+if defined(__UNIX__) and defined(_WIN64)
+define LONG_IS_INT     0
+else
+define LONG_IS_INT     1
+endif
+define SHORT_IS_INT    0
 ifdef _WIN64
-define PTR_IS_INT      0       ; 1 means ptr is same size as int
-define PTR_IS_LONG     0       ; 1 means ptr is same size as long
+define PTR_IS_INT      0
+ifdef __UNIX__
+define PTR_IS_LONG     1
+else
+define PTR_IS_LONG     0
+endif
 else
 define PTR_IS_INT      1
 define PTR_IS_LONG     1

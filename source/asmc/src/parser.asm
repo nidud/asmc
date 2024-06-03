@@ -494,22 +494,21 @@ check_assume proc __ccall CodeInfo:ptr code_info, sym:asym_t, default_reg:int_t
 check_assume endp
 
 
-    assume rdx:ptr code_info
+    assume rbx:ptr code_info
 
-seg_override proc __ccall CodeInfo:ptr code_info, seg_reg:int_t, sym:asym_t, direct:int_t
+seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:asym_t, direct:int_t
 
     ; called by set_rm_sib(). determine if segment override is necessary
     ; with the current address mode;
     ; - seg_reg: register index (T_DS, T_BP, T_EBP, T_BX, ... )
 
-
   local default_seg:int_t
   local assum:asym_t
 
-    mov     ecx,seg_reg
-    mov     rdx,CodeInfo
+    ldr     rbx,CodeInfo
+    ldr     ecx,seg_reg
 
-    mov     rax,[rdx].pinstr
+    mov     rax,[rbx].pinstr
     movzx   eax,[rax].instr_item.flags
     and     eax,II_ALLOWED_PREFIX
 
@@ -517,9 +516,9 @@ seg_override proc __ccall CodeInfo:ptr code_info, seg_reg:int_t, sym:asym_t, dir
 
     .return .if ( eax == AP_REP || eax == AP_REPxx )
 
-    .if ( [rdx].token == T_LEA )
+    .if ( [rbx].token == T_LEA )
 
-        mov [rdx].RegOverride,ASSUME_NOTHING ;; skip segment override
+        mov [rbx].RegOverride,ASSUME_NOTHING ;; skip segment override
         .return SetFixupFrame( sym, FALSE )
     .endif
 
@@ -536,9 +535,9 @@ seg_override proc __ccall CodeInfo:ptr code_info, seg_reg:int_t, sym:asym_t, dir
         mov default_seg,ASSUME_DS
     .endsw
 
-    .if ( [rdx].RegOverride != EMPTY )
+    .if ( [rbx].RegOverride != EMPTY )
 
-        mov assum,GetOverrideAssume( [rdx].RegOverride )
+        mov assum,GetOverrideAssume( [rbx].RegOverride )
 
         ; assume now holds assumed SEG/GRP symbol
 
@@ -555,40 +554,45 @@ seg_override proc __ccall CodeInfo:ptr code_info, seg_reg:int_t, sym:asym_t, dir
 
             .if assum
                 GetSymOfssize( assum )
-                mov rdx,CodeInfo
-                mov [rdx].adrsiz,ADDRSIZE( [rdx].Ofssize, eax )
+                mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, eax )
             .else
                 ;
                 ; v2.01: if -Zm, then use current CS offset size.
                 ; This isn't how Masm v6 does it, but it matches Masm v5.
                 ;
-                mov rdx,CodeInfo
                 .if ModuleInfo.m510
-                    mov [rdx].adrsiz,ADDRSIZE( [rdx].Ofssize, ModuleInfo.Ofssize )
+                    mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, ModuleInfo.Ofssize )
                 .else
-                    mov [rdx].adrsiz,ADDRSIZE( [rdx].Ofssize, ModuleInfo.defOfssize )
+                    mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, ModuleInfo.defOfssize )
                 .endif
             .endif
         .endif
     .else
         .if ( sym || SegOverride )
-            mov rcx,rdx
-            check_assume( rcx, sym, default_seg )
+
+            check_assume( rbx, sym, default_seg )
         .endif
+if 1
+        ; v2.17: no address prefix in 64-bit or if segoverride is FLAT.
+        ; todo: check if this isn't generally the wrong place to modify the adrsiz prefix.
+        ; Also, the ADDRSIZE() macro should really be removed/replaced.
+
+        .if ( sym == NULL && SegOverride && SegOverride != ModuleInfo.flat_grp && [rbx].Ofssize != USE64 )
+else
         .if ( sym == NULL && SegOverride )
+endif
             GetSymOfssize( SegOverride )
-            mov rdx,CodeInfo
-            mov [rdx].adrsiz,ADDRSIZE( [rdx].Ofssize, eax )
+            mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, eax )
         .endif
     .endif
-    mov rdx,CodeInfo
-    .if [rdx].RegOverride == default_seg
-        mov [rdx].RegOverride,ASSUME_NOTHING
+    .if [rbx].RegOverride == default_seg
+        mov [rbx].RegOverride,ASSUME_NOTHING
     .endif
     ret
 
 seg_override endp
 
+    assume rbx:nothing
 
 ; prepare fixup creation
 ; called by:
@@ -2172,8 +2176,21 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
             CreateFixup( sym, fixup_type, OPTJ_NONE )
             mov [rsi].opnd[rbx].InsFixup,rax
         .endif
-
     .endif
+
+if 1 ; v2.34.60 - jwasm
+
+    ; v2.17: check if offset fits in 32-bit; this replaces check
+    ; in process_address(), which was for indirect addressing only.
+
+    .if ( [rdi].hvalue && ( [rdi].hvalue != -1 || [rdi].value >= 0 ) )
+
+        .if ( [rsi].Ofssize != USE64 || [rdi].flags & E_INDIRECT )
+            .return( EmitConstError( rdi ) )
+        .endif
+    .endif
+endif
+
     .ifd ( set_rm_sib( rsi, CurrOpnd, scale_factor, index, base, sym ) == ERROR )
         .return
     .endif

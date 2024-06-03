@@ -113,8 +113,6 @@ StackAdjHigh        int_t 0
 
     .code
 
-    assume rbx:ptr asm_tok
-
 ifdef FCT_ELF64
 externdef elf64_regs:byte
 endif
@@ -171,6 +169,7 @@ pop_proc endp
 ; count: number of array elements, default is 1
 ; type:  qualified type [simple type, structured type, ptr to simple/structured type]
 ;
+    assume rbx:ptr asm_tok
 
 LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
@@ -267,6 +266,14 @@ LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov opndx.value,1
             .endif
 
+if 1 ; v2.34.61 - jwasm v2.17
+
+            ; v2.17: check if value is too large
+
+            .if ( opndx.hvalue && ( opndx.hvalue != -1 || opndx.value >= 0 ) )
+                EmitConstError( &opndx )
+            .endif
+endif
             ; zero is allowed as value!
 
             mov rbx,tokenarray.tokptr(i)
@@ -960,6 +967,8 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
         .endif
     .endif
 
+    mov rdi,p
+
     ; 1. attribute is <distance>
 
     mov rbx,tokenarray.tokptr(i)
@@ -988,19 +997,16 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
         mov cl,ModuleInfo._model
         shl eax,cl
         and eax,SIZE_CODEPTR
-        .if eax
-            mov eax,MT_FAR
-        .else
+        mov eax,MT_FAR
+        .ifz
             mov eax,MT_NEAR
         .endif
         mov newmemtype,al
         mov newofssize,ModuleInfo.Ofssize
     .endif
 
-    ;
     ; v2.11: GetSymOfssize() cannot handle SYM_TYPE correctly
-    ;
-    mov rdi,p
+
     .if ( [rdi].asym.state == SYM_TYPE )
         mov oldofssize,[rdi].asym.segoffsize
     .else
@@ -1009,8 +1015,9 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
 
     ; did the distance attribute change?
 
-    .if ( [rdi].asym.mem_type != MT_EMPTY &&
-          ( [rdi].asym.mem_type != newmemtype || oldofssize != newofssize ) )
+    mov cl,newmemtype
+    mov dl,newofssize
+    .if ( [rdi].asym.mem_type != MT_EMPTY && ( cl != [rdi].asym.mem_type || al != dl ) )
 
         .if ( [rdi].asym.mem_type == MT_NEAR || [rdi].asym.mem_type == MT_FAR )
             asmerr( 2112 )
@@ -1018,10 +1025,8 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
             .return( asmerr( 2005, [rdi].asym.name ) )
         .endif
     .else
-        mov [rdi].asym.mem_type,newmemtype
-        .if ( IsPROC == FALSE )
-            mov [rdi].asym.segoffsize,newofssize
-        .endif
+        mov [rdi].asym.mem_type,cl
+        mov [rdi].asym.segoffsize,dl
     .endif
 
     ; 2. attribute is <langtype>
@@ -1389,36 +1394,38 @@ ParseProc endp
 ; - ExternDirective ( state == SYM_EXTERNAL )
 ; - TypedefDirective ( state == SYM_TYPE, sym==NULL )
 
-    B equ <byte ptr>
+CreateProc proc __ccall uses rdi sym:ptr asym, name:string_t, state:sym_state
 
-CreateProc proc __ccall uses rsi rdi sym:ptr asym, name:string_t, state:sym_state
+    ldr rdi,sym
 
-    ldr rax,sym
-    .if ( rax == NULL )
-        mov rdi,name
-        .if ( B[rdi] )
-            SymCreate( rdi )
+    .if ( rdi == NULL )
+
+        ldr rcx,name
+        .if ( byte ptr [rcx] )
+            SymCreate( rcx )
         .else
-            SymAlloc( rdi )
+            SymAlloc( rcx )
         .endif
-        mov sym,rax
+        mov rdi,rax
+        .if ( rdi )
+            mov [rdi].asym.segoffsize,ModuleInfo.Ofssize
+        .endif
     .else
-        .if ( [rax].asym.state == SYM_UNDEFINED )
+        .if ( [rdi].asym.state == SYM_UNDEFINED )
             lea rcx,SymTables[TAB_UNDEF*symbol_queue]
         .else
             lea rcx,SymTables[TAB_EXT*symbol_queue]
         .endif
-        sym_remove_table( rcx, rax )
+        sym_remove_table( rcx, rdi )
     .endif
 
-    mov rdi,sym
     .if ( rdi )
+
         mov [rdi].asym.state,state
-        .if ( state != SYM_INTERNAL )
-            mov [rdi].asym.segoffsize,ModuleInfo.Ofssize
-        .endif
         mov [rdi].dsym.procinfo,LclAlloc( sizeof( proc_info ) )
+
 if 0 ; zero alloc..
+
         xor ecx,ecx
         mov [rax].proc_info.regslist,ecx
         mov [rax].proc_info.paralist,ecx
@@ -1429,6 +1436,7 @@ if 0 ; zero alloc..
         mov [rax].proc_info.prologuearg,ecx
         mov [rax].proc_info.flags,cl
 endif
+
         .switch ( [rdi].asym.state )
         .case SYM_INTERNAL
 
@@ -1453,7 +1461,7 @@ endif
         .case SYM_EXTERNAL
             or [rdi].asym.sflags,S_WEAK
             sym_add_table( &SymTables[TAB_EXT*symbol_queue], rdi )
-            .endc
+           .endc
         .endsw
     .endif
     .return( rdi )
@@ -1643,6 +1651,22 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( [rsi].paralist && GetRegNo( ecx ) == 4 )
             or [rsi].flags,PROC_FPO
         .endif
+
+        ; add item to the PUBLIC queue.
+        ; this is done when
+        ; a) OPTION PROC:PRIVATE is set:
+        ;    Masm6: PROC must be marked as PUBLIC, EXTERNDEF or PROTO won't have any effect
+        ;    Masm8: EXTERNDEF or PROTO will change visibility to public!
+        ;    JWasm: default is Masm6, option -Zv8 switches to Masm8
+        ; b) OPTION PROC:PRIVATE is NOT set:
+        ;    Masm:
+        ;    -  PROC will be public unless it's marked as private;
+        ;       In that case it depends if an EXTERNDEF/PROTO is also found
+        ;    JWasm:
+        ;    -  if PROC is marked as private, EXTERNDEF/PROTO will change that
+        ;       only if option -Zv8 is set!
+
+
         .if ( [rdi].asym.flags & S_ISPUBLIC && oldpubstate == FALSE )
             AddPublicData( rdi )
         .endif
@@ -1753,9 +1777,9 @@ CopyPrototype proc __ccall uses rsi rdi p:ptr dsym, src:ptr dsym
     .if ( [rcx].asym.flags & S_ISPUBLIC )
         or [rdi].asym.flags,S_ISPUBLIC
     .endif
-    ;
+
     ; we use the PROTO part, not the TYPE part
-    ;
+
     mov [rdi].asym.segoffsize,[rcx].asym.segoffsize
     or  [rdi].asym.flags,S_ISPROC
     mov [rsi].paralist,NULL

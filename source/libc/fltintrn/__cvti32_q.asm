@@ -7,7 +7,7 @@ include fltintrn.inc
 
     .code
 
-__cvti32_q proc __ccall q:ptr qfloat_t, l:long_t
+__cvti32_q proc __ccall q:ptr qfloat_t, l:int_t
 
   local flt:STRFLT
 

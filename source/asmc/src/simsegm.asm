@@ -235,6 +235,25 @@ EndSimSeg proc fastcall private segm:sim_seg
 EndSimSeg endp
 
 
+GetCodeGroupName proc fastcall private name:string_t
+
+    ldr rax,name
+
+    .if ( ModuleInfo._model == MODEL_FLAT ||
+          Options.output_format == OFORMAT_COFF ||
+          Options.output_format == OFORMAT_ELF )
+
+        .if ( rax == NULL )
+            mov rax,SegmNames[SIM_CODE*size_t]
+        .endif
+    .else
+        lea rax,szDgroup
+    .endif
+    ret
+
+GetCodeGroupName endp
+
+
     assume rbx:ptr asm_tok
 
 SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
@@ -301,23 +320,55 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .switch( esi )
     .case SIM_CODE ; .code
+
         SetSimSeg( SIM_CODE, rdi )
 
         .if ( ModuleInfo._model == MODEL_TINY )
-            ; v2.05: add the named code segment to DGROUP
-            .if ( edi )
-                AddToDgroup( SIM_CODE, rdi )
+
+            ; v2.34.61 - v2.05: add the named code segment to DGROUP
+
+            .if ( rdi )
+
+                ; v2.17: don't add to DGROUP if code segment's wordsize isn't the default wordsize;
+                ;        todo: check why this "auto adding" has been implemented.
+
+                .if ( SymSearch( rdi ) && [rax].asym.state == SYM_SEG )
+
+                    mov rax,[rax].dsym.seginfo
+                    mov al,[rax].seg_info.Ofssize
+
+                    .if ( al == ModuleInfo.defOfssize )
+
+                        AddToDgroup( SIM_CODE, rdi )
+                        mov rdi,GetCodeGroupName( rdi )
+                    .endif
+                .endif
+            .else
+                mov rdi,GetCodeGroupName( rdi )
             .endif
-            lea rdi,szDgroup
+
         .elseif ( ModuleInfo._model == MODEL_FLAT )
+
             lea rdi,T("FLAT")
+
         .else
-            .if ( edi == NULL )
+            .if ( rdi == NULL )
                 mov rdi,SegmNames[SIM_CODE*size_t]
+            .endif
+
+            ; v2.34.61 - v2.13: added
+
+            .if ( SymSearch( rdi ) && [rax].asym.state == SYM_SEG )
+
+                mov rax,[rax].dsym.seginfo
+                mov rax,[rax].seg_info.sgroup
+                .if ( rax )
+                    mov rdi,[rax].asym.name
+                .endif
             .endif
         .endif
         AddLineQueueX( "assume cs:%s", rdi )
-        .endc
+       .endc
     .case SIM_STACK ; .stack
         ; if code is generated which does "emit" bytes,
         ; the original source line has to be saved.

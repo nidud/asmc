@@ -147,7 +147,7 @@ __scrt_uninitialize_crt         proto __cdecl :bool, :bool
 __scrt_initialize_onexit_tables proto __cdecl :__scrt_module_type
 
 __scrt_dllmain_exception_filter proto __cdecl :HINSTANCE, :DWORD, :LPVOID,
-        :__scrt_dllmain_type, :ulong_t, :PEXCEPTION_POINTERS
+        :__scrt_dllmain_type, :int_t, :PEXCEPTION_POINTERS
 
 __scrt_dllmain_before_initialize_c      proto __cdecl
 __scrt_dllmain_after_initialize_c       proto __cdecl

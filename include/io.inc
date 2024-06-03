@@ -274,7 +274,7 @@ ifdef _CRTBLD
 ifndef _NOT_CRTL_BUILD_
 _chsize_nolock	proto __cdecl :int_t, :int64_t
 _close_nolock	proto __cdecl :int_t
-_lseek_nolock	proto __cdecl :int_t, :long_t, :int_t
+_lseek_nolock	proto __cdecl :int_t, :int_t, :int_t
 _setmode_nolock proto __cdecl :int_t, :int_t
 _read_nolock	proto __cdecl :int_t, :ptr, :uint_t
 _write_nolock	proto __cdecl :int_t, :ptr, :uint_t

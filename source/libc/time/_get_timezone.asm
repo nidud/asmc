@@ -9,7 +9,7 @@ include errno.inc
 
 .code
 
-_get_timezone proc ptimezone:ptr long_t
+_get_timezone proc ptimezone:ptr int_t
 
     ldr rcx,ptimezone
 

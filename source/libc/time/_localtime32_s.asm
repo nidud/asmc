@@ -12,7 +12,7 @@ include errno.inc
 
 _localtime32_s proc uses rbx rdi tp:ptr tm, ptime:LPTIME
 
-   .new ltime[2]:long_t
+   .new ltime[2]:int_t
 
     ldr rcx,tp
     ldr rdx,ptime

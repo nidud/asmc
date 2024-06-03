@@ -202,7 +202,7 @@ __cvta_q	proto __ccall :ptr qfloat_t, :string_t, :ptr string_t
 
 __cvtq_i32	proto __ccall :ptr qfloat_t
 __cvtq_i64	proto __ccall :ptr qfloat_t
-__cvti32_q	proto __ccall :ptr qfloat_t, :long_t
+__cvti32_q	proto __ccall :ptr qfloat_t, :int_t
 __cvti64_q	proto __ccall :ptr qfloat_t, :int64_t
 
 ; */+-
@@ -239,7 +239,7 @@ _fltmul		proto __ccall :ptr STRFLT, :ptr STRFLT
 
 _flttoi		proto __ccall :ptr STRFLT
 _flttoi64	proto __ccall :ptr STRFLT
-_itoflt		proto __ccall :ptr STRFLT, :long_t
+_itoflt		proto __ccall :ptr STRFLT, :int_t
 _i64toflt	proto __ccall :ptr STRFLT, :int64_t
 
 

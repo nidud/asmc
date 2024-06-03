@@ -39,14 +39,14 @@ __debugbreak macro
     retm<>
     endm
 
-_BitScanForward proto fastcall :ptr, :long_t {
+_BitScanForward proto fastcall :ptr, :int_t {
     xor     eax,eax
     bsf     eax,edx
     mov     [rcx],eax
     setne   al
     }
 
-_BitScanReverse proto fastcall :ptr, :long_t {
+_BitScanReverse proto fastcall :ptr, :int_t {
     xor     eax,eax
     bsr     eax,edx
     mov     [rcx],eax
@@ -71,7 +71,7 @@ _BitScanReverse64 proto fastcall :ptr, :qword {
 
 endif
 
-_InterlockedCompareExchange proto :ptr, :long_t, :long_t {
+_InterlockedCompareExchange proto :ptr, :int_t, :int_t {
     mov     eax,r8d
     push    [rcx]
     lock    cmpxchg dword ptr [rcx],edx
@@ -209,10 +209,10 @@ _rotl proto watcall :uint_t, :abs {
 _rotr proto watcall :uint_t, :abs {
     ror     eax,_2
     }
-_lrotl proto watcall :long_t, :abs {
+_lrotl proto watcall :int_t, :abs {
     rol     eax,_2
     }
-_lrotr proto watcall :long_t, :abs {
+_lrotr proto watcall :int_t, :abs {
     ror     eax,_2
     }
 
@@ -249,7 +249,7 @@ endif
 
 ifdef __MACHINEX64
 
-_InterlockedAnd proto fastcall :ptr, :long_t {
+_InterlockedAnd proto fastcall :ptr, :int_t {
     mov     eax,[rcx]
     lock    and [rcx],edx
     }
@@ -269,7 +269,7 @@ _InterlockedAnd64 proto fastcall :ptr, :qword {
     lock    and [rcx],rdx
     }
 
-_InterlockedOr proto fastcall :ptr, :long_t {
+_InterlockedOr proto fastcall :ptr, :int_t {
     mov     eax,[rcx]
     lock    or [rcx],edx
     }
@@ -289,7 +289,7 @@ _InterlockedOr64 proto fastcall :ptr, :qword {
     lock    or [rcx],rdx
     }
 
-_InterlockedXor proto fastcall :ptr, :long_t {
+_InterlockedXor proto fastcall :ptr, :int_t {
     mov     eax,[rcx]
     lock    or [rcx],edx
     }

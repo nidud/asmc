@@ -879,16 +879,14 @@ SetCurrSeg proc fastcall private uses rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     mov rbx,rdx
     mov rdi,SymSearch( [rbx].string_ptr )
-    .if ( edi == NULL || [rdi].asym.state != SYM_SEG )
+    .if ( rdi == NULL || [rdi].asym.state != SYM_SEG )
         .return( asmerr( 2006, [rbx].string_ptr ) )
     .endif
 
     ; v2.04: added
 
     or [rdi].asym.flags,S_ISDEFINED
-
 ifndef ASMC64
-
     .if ( CurrSeg && Options.output_format == OFORMAT_OMF )
 
         omf_FlushCurrSeg()
@@ -898,14 +896,14 @@ ifndef ASMC64
         .endif
     .endif
 endif
-
     push_seg( rdi )
+    mov ebx,SetOfssize() ; v2.18: set offset size BEFORE listing, so it shows correctly
 
     .if ( ModuleInfo.list )
 
         LstWrite( LSTTYPE_LABEL, 0, NULL )
     .endif
-    .return( SetOfssize() )
+    .return( ebx )
 
 SetCurrSeg endp
 
@@ -982,6 +980,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov sym,CreateSegment( sym, name, TRUE )
         or  [rax].asym.flags,S_LIST ; always list segments
         mov dir,rax
+        mov oldOfssize,USE_EMPTY ; v2.13: added
 
     .elseif ( [rax].asym.state == SYM_SEG ) ; segment already defined?
 
@@ -1004,6 +1003,14 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov rcx,SymTables[TAB_SEG*symbol_queue].tail
                 mov [rcx].dsym.next,rdi
                 mov SymTables[TAB_SEG*symbol_queue].tail,rdi
+            .endif
+            mov rcx,[rdi].dsym.seginfo
+            mov oldOfssize,[rcx].seg_info.Ofssize ; v2.13: check segment's word size
+
+            ; v2.14: set a default ofsset size
+
+            .if ( al == USE_EMPTY )
+                mov [rcx].seg_info.Ofssize,ModuleInfo.Ofssize
             .endif
         .else
 
@@ -1086,8 +1093,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov [rdi].seg_info.readonly,TRUE
            .endc
         .case INIT_ALIGN
-            mov al,[rcx].typeinfo.value
-            mov [rdi].seg_info.alignment,al
+            mov [rdi].seg_info.alignment,[rcx].typeinfo.value
            .endc
         .case INIT_ALIGN_PARAM
             .if ( Options.output_format == OFORMAT_OMF )
@@ -1228,32 +1234,40 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov rcx,type
             mov [rdi].seg_info.combine,[rcx].typeinfo.value
            .endc
-        .case INIT_OFSSIZE
         .case INIT_OFSSIZE_FLAT
-            .if ( [rcx].typeinfo.init == INIT_OFSSIZE_FLAT )
-                DefineFlatGroup()
+            .if ( ModuleInfo.defOfssize == USE16 )
 
-                ; v2.09: make sure ofssize is at least USE32 for FLAT
+                asmerr( 2085 )
+               .endc
+            .endif
 
-                mov al,USE32
-                .if ( ModuleInfo.defOfssize > USE16 )
-                    mov al,ModuleInfo.defOfssize
-                .endif
-                mov [rdi].seg_info.Ofssize,al
+            DefineFlatGroup()
 
-                ; put the segment into the FLAT group.
-                ; this is not quite Masm-compatible, because trying to put
-                ; the segment into another group will cause an error.
+            ; v2.09: make sure ofssize is at least USE32 for FLAT
+            ; v2.14: USE16 doesn't need to be handled here anymore
 
+            mov [rdi].seg_info.Ofssize,ModuleInfo.defOfssize
+
+            ; put the segment into the FLAT group.
+            ; this is not quite Masm-compatible, because trying to put
+            ; the segment into another group will cause an error.
+
+            mov [rdi].seg_info.sgroup,ModuleInfo.flat_grp
+           .endc
+        .case INIT_OFSSIZE
+            mov rcx,type
+            mov [rdi].seg_info.Ofssize,[rcx].typeinfo.value
+
+            ; v2.17: if .model FLAT, put USE64 segments into flat group.
+            ; be aware that the "flat" attribute affects fixups of non-flat items for -pe format.
+
+            .if ( [rcx].typeinfo.value == USE64 && ModuleInfo._model == MODEL_FLAT )
                 mov [rdi].seg_info.sgroup,ModuleInfo.flat_grp
-            .else
-                mov rcx,type
-                mov [rdi].seg_info.Ofssize,[rcx].typeinfo.value
             .endif
             .endc
         .case INIT_CHAR_INFO
             mov [rdi].seg_info.info,TRUE ; fixme: check that this flag isn't changed
-            .endc
+           .endc
         .case INIT_CHAR
             ; characteristics are restricted to COFF/ELF/BIN-PE
             .if ( Options.output_format == OFORMAT_OMF || ( Options.output_format == OFORMAT_BIN &&
@@ -1369,11 +1383,43 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .else
 
         ; A new definition
+
         mov rcx,sym
         or  [rcx].asym.flags,S_ISDEFINED
         mov [rcx].asym.segm,rcx
         mov [rcx].asym.offs,0 ; remains 0 ( =segment's local start offset )
 
+if 1    ; v2.34.61
+
+        ; v2.13: check segment's word size. This is mainly for segment forward
+        ; refs in GROUP directives. If this check is missing, one can mix segments
+        ; in a group by adding segments BEFORE they were defined.
+
+        mov al,oldOfssize
+        .if ( al != USE_EMPTY && al != [rdi].seg_info.Ofssize )
+
+            asmerr( 2015, [rcx].asym.name, "segment word size" )
+
+        .else  ; v2.14: else-block added
+
+            mov rdx,[rdi].seg_info.sgroup
+            .if ( rdx )
+
+                .if ( [rdx].asym.Ofssize == USE_EMPTY )
+
+                    mov [rdx].asym.Ofssize,[rdi].seg_info.Ofssize
+
+                .elseif ( [rdx].asym.Ofssize != [rdi].seg_info.Ofssize )
+
+                    .if ( rdx == ModuleInfo.flat_grp && [rdi].seg_info.Ofssize >= USE32 )
+                        ; v2.17: allow both 32- and 64-bit segments in FLAT group
+                    .else
+                        asmerr( 2015, [rcx].asym.name, "segment word size" )
+                    .endif
+                .endif
+            .endif
+        .endif
+endif
         ; no segment index for COMDAT segments in OMF!
 
         .if ( [rdi].seg_info.comdatselection && Options.output_format == OFORMAT_OMF )
@@ -1381,7 +1427,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .else
             inc ModuleInfo.num_segs
             mov [rdi].seg_info.seg_idx,ModuleInfo.num_segs
-            AddLnameItem( rcx )
+            AddLnameItem( sym )
         .endif
 
     .endif
@@ -1391,15 +1437,15 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     push_seg( dir ) ; set CurrSeg
 
-    .if ( ModuleInfo.list )
-        LstWrite( LSTTYPE_LABEL, 0, NULL )
-    .endif
-
     mov esi,SetOfssize()
     .if ( Options.debug_symbols == 4 && newseg )
         .if ( [rdi].seg_info.segtype == SEGTYPE_CODE && CV8Label == NULL )
             mov CV8Label,CreateLabel( "$$000000", 0, 0, 0 )
         .endif
+    .endif
+
+    .if ( ModuleInfo.list )
+        LstWrite( LSTTYPE_LABEL, 0, NULL )
     .endif
     .return( esi )
 

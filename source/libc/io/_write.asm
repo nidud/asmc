@@ -24,7 +24,7 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
 
   local lfcount:int_t           ; count of line feeds
   local charcount:int_t         ; count of chars written so far
-  local dosretval:ulong_t       ; o.s. return value
+  local dosretval:uint_t        ; o.s. return value
   local written:int_t           ; count of chars written on this write
   local bytes_written:int_t
   local bytes_converted:int_t

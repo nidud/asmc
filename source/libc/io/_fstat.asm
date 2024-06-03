@@ -59,7 +59,7 @@ _lk_getltime endp
 
 _fstat proc uses rsi rdi rbx fd:int_t, buf:PSTAT
 
-   .new ulAvail:ulong_t
+   .new ulAvail:uint_t
    .new bhfi:BY_HANDLE_FILE_INFORMATION
    .new LocalFTime:FILETIME
    .new SystemTime:SYSTEMTIME

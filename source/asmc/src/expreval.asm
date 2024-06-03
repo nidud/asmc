@@ -1271,9 +1271,20 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
 
                         SymLookup(rsi)
                         mov sym,rax
-                        mov [rax].asym.state,SYM_UNDEFINED
-                        sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], rax )
-                        mov rax,sym
+
+                        ; v2.18 - don't insert an already defined symbol to the "undefined" list
+
+                        .if ( [rax].asym.state == SYM_UNDEFINED )
+                            sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], rax )
+                            mov rax,sym
+                        .elseif ( [rdi].flags & E_IS_DOT )
+                            mov rax,nullmbr
+                            .if ( rax == NULL )
+                                mov nullmbr,SymAlloc("")
+                            .endif
+                        .else
+                            .return fnasmerr( 2004, [rax].asym.name )
+                        .endif
 
                     .elseif ( [rcx].asym.typekind != TYPE_NONE )
 
@@ -2544,8 +2555,10 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
         .return(colon_op( rsi, rdi ) )
 
     .case '*'
+
         MakeConst(rsi)
         MakeConst(rdi)
+
         .if ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST )
 
             __mul64( [rdi].llvalue, [rsi].llvalue )
@@ -2556,18 +2569,22 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
             .ifd ( check_direct_reg( rsi, rdi ) == ERROR )
                 .return fnasmerr( 2032 )
             .endif
-            .if ( [rdi].kind == EXPR_REG )
 
+            ; v2.34.61 - jwasm v2.17
+            ; v2.17: check if bits are lost ( else scales of 257 or similar are accepted )
+
+            .if ( [rdi].kind == EXPR_REG )
                 mov [rsi].idx_reg,[rdi].base_reg
-                mov [rsi].scale,[rsi].value
-                mov [rsi].value,0
             .else
                 mov [rsi].idx_reg,[rsi].base_reg
-                mov [rsi].scale,[rdi].value
+                mov [rsi].value,[rdi].value
             .endif
-            .if ( [rsi].scale == 0 )
+            .if ( [rsi].value <= 0 || [rsi].value > 127 )
                 .return( fnasmerr( 2083 ) )
             .endif
+            mov [rsi].scale,[rsi].value
+            mov [rsi].value,0
+
             mov [rsi].base_reg,NULL
             or  [rsi].flags,E_INDIRECT
             mov [rsi].kind,EXPR_ADDR

@@ -28,7 +28,7 @@ _read proc uses rsi rdi rbx fh:int_t, inputbuf:ptr, cnt:size_t
 ifndef __UNIX__
   local bytes_read:int_t        ; number of bytes read
   local os_read:int_t           ; bytes read on OS call
-  local dosretval:ulong_t       ; o.s. return value
+  local dosretval:uint_t        ; o.s. return value
   local buf:ptr
   local dwMode:DWORD
   local fromConsole:DWORD

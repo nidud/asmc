@@ -7,7 +7,7 @@
 include errno.inc
 
 errentry    struct
-oscode      ulong_t ?   ; OS return value
+oscode      uint_t ?    ; OS return value
 errnocode   int_t ?     ; System V error code
 errentry    ends
 
@@ -70,7 +70,7 @@ MAX_EACCES_RANGE equ ERROR_SHARING_BUFFER_EXCEEDED
 
     .code
 
-_get_errno_from_oserr proc oserrno:ulong_t
+_get_errno_from_oserr proc oserrno:uint_t
 
     ldr ecx,oserrno
     .for ( rdx = &errtable, eax = 0: eax < ERRTABLESIZE: ++eax )

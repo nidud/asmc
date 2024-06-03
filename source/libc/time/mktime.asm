@@ -31,7 +31,7 @@ ChkMul macro d, a, i
 _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
 
    .new tb:tm
-   .new tmp:long_t
+   .new tmp:int_t
 
     ldr rbx,tp
 

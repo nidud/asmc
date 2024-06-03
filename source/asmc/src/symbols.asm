@@ -1178,6 +1178,14 @@ QAddItem proc fastcall uses rsi rdi q:qdesc_t, d:ptr
 
 QAddItem endp
 
+; add a symbol into the Publics queue.
+; called by:
+; - EXTERNDEF (if symbol is internal and public=0) - this cannot happen in pass 1
+;   ( and it's a very questionable thing!)
+; - PUBLIC ( this usually happens in pass 1 )
+; - END ( if the label hasn't been marked as public )
+; - PROC
+; - sym_ext2int() in parser.asm, for public data, constants, labels ( not PROCs )
 
 AddPublicData proc fastcall sym:asym_t
 

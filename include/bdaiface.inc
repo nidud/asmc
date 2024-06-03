@@ -431,7 +431,7 @@ DEFINE_IIDX(ICCSubStreamFiltering, "4B2BD7EA-8347-467b-8DBF-62F784929CC3")
 .comdef ICCSubStreamFiltering : public IUnknown
 
     get_SubstreamTypes	proc :ptr
-    put_SubstreamTypes	proc :long_t
+    put_SubstreamTypes	proc :int_t
    .ends
 
 endif

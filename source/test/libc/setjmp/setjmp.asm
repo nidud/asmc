@@ -23,6 +23,7 @@ _tmain proc
     .else
         _tprintf( "catch(): %d\n", eax )
     .endif
+    xor eax,eax
     ret
 
 _tmain endp

@@ -42,20 +42,20 @@ ifdef __UNIX__
 
     ldr  ecx,milliseconds
     mov  eax,1000
-    cdq
-    div  ecx
-    mov  req.tv_sec,eax
-    imul eax,edx,1000
-    mov  req.tv_nsec,eax
+    xor  edx,edx
+    div  rcx
+    mov  req.tv_sec,rax
+    imul rax,rdx,1000
+    mov  req.tv_nsec,rax
 
     nanosleep( &req, &rem )
 
-    mov  ecx,rem.tv_nsec
+    mov  rcx,rem.tv_nsec
     mov  eax,1000
-    cdq
-    div  ecx
-    imul ecx,rem.tv_sec,1000
-    add  eax,ecx
+    xor  edx,edx
+    div  rcx
+    imul rcx,rem.tv_sec,1000
+    add  rax,rcx
 
 else
 

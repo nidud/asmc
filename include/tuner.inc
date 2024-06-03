@@ -178,7 +178,7 @@ DEFINE_IIDX(ITuningSpaceContainer, "5B692E84-E2F1-11d2-9493-00C04F72D980")
     get_EnumTuningSpaces proc :ptr ptr IEnumTuningSpaces
     Remove		proc :VARIANT
     get_MaxCount	proc :ptr
-    put_MaxCount	proc :long_t
+    put_MaxCount	proc :int_t
    .ends
 
 endif

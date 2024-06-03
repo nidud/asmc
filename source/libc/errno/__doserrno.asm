@@ -21,7 +21,7 @@ __doserrno proc
 
 __doserrno endp
 
-_set_doserrno proc value:ulong_t
+_set_doserrno proc value:uint_t
 
     ldr ecx,value
     mov DoserrorNoMem,ecx
@@ -29,7 +29,7 @@ _set_doserrno proc value:ulong_t
 
 _set_doserrno endp
 
-_get_doserrno proc pValue:ptr ulong_t
+_get_doserrno proc pValue:ptr uint_t
 
     ldr rcx,pValue
     mov eax,DoserrorNoMem

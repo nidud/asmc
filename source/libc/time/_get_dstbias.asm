@@ -9,7 +9,7 @@ include errno.inc
 
 .code
 
-_get_dstbias proc pdstbias:ptr long_t
+_get_dstbias proc pdstbias:ptr int_t
 
     ldr rcx,pdstbias
 

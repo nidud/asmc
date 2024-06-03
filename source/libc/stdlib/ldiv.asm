@@ -8,7 +8,7 @@ include stdlib.inc
 
 .code
 
-ldiv proc x:long_t, y:long_t
+ldiv proc x:int_t, y:int_t
 
     ldr eax,x
     ldr ecx,y

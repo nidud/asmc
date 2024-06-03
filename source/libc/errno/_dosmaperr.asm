@@ -6,11 +6,11 @@
 
 include errno.inc
 
-_get_errno_from_oserr proto oserrno:ulong_t
+_get_errno_from_oserr proto oserrno:uint_t
 
     .code
 
-_dosmaperr proc oserrno:ulong_t
+_dosmaperr proc oserrno:uint_t
 
     ldr ecx,oserrno
 

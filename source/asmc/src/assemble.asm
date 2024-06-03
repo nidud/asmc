@@ -1436,8 +1436,11 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 done:
 
     AssembleFini()
-   .return( false ) .if ( ModuleInfo.error_count )
-   .return( true )
+    xor eax,eax
+    .if ( eax == ModuleInfo.error_count )
+        inc eax
+    .endif
+    ret
 
 AssembleModule endp
 

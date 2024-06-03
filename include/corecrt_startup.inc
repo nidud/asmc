@@ -2,8 +2,8 @@ include corecrt.inc
 include math.inc
 include vcruntime_startup.inc
 
-_seh_filter_dll proto __cdecl :ulong_t, :ptr EXCEPTION_POINTERS
-_seh_filter_exe proto __cdecl :ulong_t, :ptr EXCEPTION_POINTERS
+_seh_filter_dll proto __cdecl :uint_t, :ptr EXCEPTION_POINTERS
+_seh_filter_exe proto __cdecl :uint_t, :ptr EXCEPTION_POINTERS
 
 .enum _crt_app_type {
     _crt_unknown_app,

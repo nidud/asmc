@@ -5,9 +5,9 @@ include libc.inc
 ifndef _TIME_T_DEFINED
 define _TIME_T_DEFINED
 ifdef _WIN64
-time_t typedef int64_t
+time_t typedef sqword
 else
-time_t typedef long_t
+time_t typedef sdword
 endif
 endif
 ifndef _INO_T_DEFINED

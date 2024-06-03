@@ -34,8 +34,8 @@ endif
 endif
 
 __doserrno	proto __cdecl
-_set_doserrno	proto __cdecl :ulong_t
-_get_doserrno	proto __cdecl :ptr ulong_t
+_set_doserrno	proto __cdecl :uint_t
+_get_doserrno	proto __cdecl :ptr uint_t
 __sys_errlist	proto __cdecl
 if defined(_WIN64) or defined(_MSVCRT)
 _doserrno	equ <errno_t ptr [__doserrno()]>
@@ -47,7 +47,7 @@ externdef	_sys_errlist:array_t
 externdef	_sys_nerr:int_t
 endif
 __sys_nerr	proto __cdecl
-_dosmaperr	proto __cdecl :ulong_t
+_dosmaperr	proto __cdecl :uint_t
 
 ENOERR		equ 0
 EPERM		equ 1

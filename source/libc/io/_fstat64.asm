@@ -59,7 +59,7 @@ _lk_getltime endp
 
 _fstat64 proc uses rsi rdi rbx fd:int_t, buf:PSTAT64
 
-   .new ulAvail:ulong_t
+   .new ulAvail:uint_t
    .new bhfi:BY_HANDLE_FILE_INFORMATION
    .new LocalFTime:FILETIME
    .new SystemTime:SYSTEMTIME
@@ -120,7 +120,7 @@ _fstat64 proc uses rsi rdi rbx fd:int_t, buf:PSTAT64
 
                 .ifd PeekNamedPipe(osfhnd, NULL, 0, NULL, &ulAvail, NULL)
 
-                    mov ulong_t ptr [rdi].st_size,ulAvail
+                    mov uint_t ptr [rdi].st_size,ulAvail
                 .endif
             .endif
             .return( 0 )

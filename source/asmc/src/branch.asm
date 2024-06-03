@@ -224,7 +224,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
         .endif
         mov symseg,[rdi].segm
 
-        .if ( rax == NULL || ( CurrSeg != rax ) )
+        .if ( rax == NULL || rax != CurrSeg )
 
             ; if label has a different segment and jump/call is near or short,
             ; report an error
@@ -232,16 +232,18 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             .if rax
                 mov rcx,[rax].dsym.seginfo
             .endif
-            .if ( ModuleInfo.flat_grp && ( rax == NULL || [rcx].seg_info.Ofssize == ModuleInfo.Ofssize ) )
+            mov dl,ModuleInfo.Ofssize
+            .if ( ModuleInfo.flat_grp && ( rax == NULL || [rcx].seg_info.Ofssize == dl ) )
 
-            .elseif ( rax != NULL && CurrSeg != NULL )
+            .elseif ( rax && CurrSeg )
 
                 ; if the segments belong to the same group, it's ok
 
-                mov rdx,CurrSeg
-                mov rdx,[rdx].dsym.seginfo
+                mov rax,CurrSeg
+                mov rdx,[rax].dsym.seginfo
+                mov rax,[rcx].seg_info.sgroup
 
-                .if ( [rcx].seg_info.sgroup != NULL && [rcx].seg_info.sgroup == [rdx].seg_info.sgroup )
+                .if ( rax && rax == [rdx].seg_info.sgroup && [rcx].seg_info.Ofssize == ModuleInfo.Ofssize )
                     ;
                 .elseif ( [rbx].mem_type == MT_NEAR && SegOverride == NULL )
                     .return( asmerr( 2107 ) )

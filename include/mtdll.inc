@@ -101,12 +101,12 @@ __threadhandle		proto __cdecl
 _threadhandle		equ <__threadhandle()>
 
 _tiddata		STRUC
-_tid			ulong_t ?
+_tid			uint_t ?
 _thandle		uintptr_t ?
 _terrno			int_t ?
-_tdoserrno		ulong_t ?
+_tdoserrno		uint_t ?
 _fpds			uint_t ?
-_holdrand		ulong_t ?
+_holdrand		uint_t ?
 _token			string_t ?
 _wtoken			wstring_t ?
 _mtoken			ustring_t ?
@@ -130,7 +130,7 @@ _tfpecode		int_t ?
 ptmbcinfo		pthreadmbcinfo ?
 ptlocinfo		pthreadlocinfo ?
 _ownlocale		int_t ?
-_NLG_dwCode		ulong_t ?
+_NLG_dwCode		uint_t ?
 _terminate		ptr_t ?
 _unexpected		ptr_t ?
 _translator		ptr_t ?
@@ -163,7 +163,7 @@ _reserved4		ptr_t ?
 _reserved5		ptr_t ?
 endif
 _cxxReThrow		int_t ?
-__initDomain		ulong_t ?
+__initDomain		uint_t ?
 if defined(_CRT_APP) AND NOT defined(_KERNELX)
 _winRTThreadHandle	HANDLE ?
 else

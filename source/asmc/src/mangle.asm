@@ -85,12 +85,19 @@ StdcallMangler endp
 
 ms32_decorate proc fastcall sym:asym_t, buffer:string_t
 
-    mov rax,rdx
-    mov rdx,[rcx].procinfo
-    .if rdx
-        mov edx,[rdx].proc_info.parasize
+    .if ( [rcx].flags & S_ISPROC )
+
+        ; v2.18: don't assume all symbols are PROCs
+
+        mov rax,rdx
+        mov rdx,[rcx].procinfo
+        .if rdx
+            mov edx,[rdx].proc_info.parasize
+        .endif
+        tsprintf( rax, "@%s@%u", [rcx].name, edx )
+    .else
+        UScoreMangler(rcx, rdx)
     .endif
-    tsprintf( rax, "@%s@%u", [rcx].name, edx )
     ret
 
 ms32_decorate endp

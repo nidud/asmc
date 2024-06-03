@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_ultot proc val:ulong_t, buffer:tstring_t, radix:int_t
+_ultot proc val:uint_t, buffer:tstring_t, radix:int_t
 
 ifdef _WIN64
  ifdef __UNIX__

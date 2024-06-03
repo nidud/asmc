@@ -149,7 +149,7 @@ si_pid			pid_t ?
 si_uid			uid_t ?
 si_addr			ptr_t ?
 si_status		int_t ?
-si_band			long_t ?
+si_band			int_t ?
 si_value		sigval <>
 siginfo_t		ends
 endif

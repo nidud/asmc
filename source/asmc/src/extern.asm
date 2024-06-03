@@ -256,6 +256,12 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             mov rsi,CreateExternal( rsi, token, TRUE )
             mov isnew,TRUE
+
+        .elseif ( [rsi].asym.state != SYM_INTERNAL && [rsi].asym.state != SYM_EXTERNAL )
+
+            ; v2.16: externdef must be intern or extern
+
+            .return( asmerr( 2014, [rsi].asym.name ) )
         .endif
 
         ; new symbol?
@@ -301,7 +307,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov rcx,[rsi].asym.segm
                 .if ( rcx )
                     mov rdx,[rcx].dsym.seginfo
-                    .if ( [rdx].seg_info.Ofssize != al )
+                    .if ( al != [rdx].seg_info.Ofssize )
                         mov [rsi].asym.segm,NULL
                     .endif
                 .endif
@@ -365,14 +371,42 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( langtype != LANG_NONE && [rsi].asym.langtype != langtype )
                 asmerr( 7000, [rsi].asym.name )
             .endif
+if 1
+            ; v2.18: code moved from below to this place
+            ; this covers the case where the externdef is located BEHIND
+            ; the label that is to become public.
+            ; It's still a bit doubtful for PROCs, because the PROC directive
+            ; should know better about the visibility status of the procedure.
+            ; So if the PROC has been explicitely marked as private, the
+            ; externdef doesn't care. But that's what masm (6/8) does...
+
+            .if ( [rsi].asym.state == SYM_INTERNAL && !( [rsi].asym.flags & S_ISPUBLIC ) )
+
+                or [rsi].asym.flags,S_ISPUBLIC
+                AddPublicData( rsi )
+            .endif
+endif
         .endif
         or [rsi].asym.flags,S_ISDEFINED
 
+if 0
+        ; v2.18: removed, because it's a bug.
+        ; 1. adding a public after pass one is something that should NOT be done.
+        ; If output format is OMF, the publics are written after pass one and then
+        ; again when all is finished. If the number of publics differ for the second
+        ; write, the object module may become invalid!
+        ; 2. if FASTPASS is on, there's a good chance that the EXTERNDEF directive
+        ; code won't run after pass one - if the FASTPASS's line store feature hasn't
+        ; been triggered yet ( that is, no code or data definition BEFORE the EXTERNDEF ).
+        ; 3. the EXTERNDEF directive running in pass 2 surely cannot know better than
+        ; the PROC directive what the visibility status of the procedure is supposed to be.
+
         .if ( [rsi].asym.state == SYM_INTERNAL && !( [rsi].asym.flags & S_ISPUBLIC ) )
+
             or [rsi].asym.flags,S_ISPUBLIC
             AddPublicData(rsi)
         .endif
-
+endif
         .if ( [rbx].token != T_FINAL )
             .if ( [rbx].token == T_COMMA )
                 mov eax,i
@@ -430,17 +464,22 @@ ProtoDirective endp
 
 MakeExtern proc __ccall name:string_t, mem_type:byte, vartype:ptr asym, sym:ptr asym, Ofssize:byte
 
-    mov rcx,CreateExternal( sym, name, FALSE )
-    .return .if !rax
-    .if ( mem_type == MT_EMPTY )
-    .elseif ( Options.masm_compat_gencode == FALSE || mem_type != MT_FAR )
+    .if ( CreateExternal( sym, name, FALSE ) == NULL )
+
+        .return
+    .endif
+    mov rcx,rax
+
+    .if ( mem_type != MT_EMPTY &&
+        ( Options.masm_compat_gencode == FALSE || mem_type != MT_FAR ) )
         mov [rcx].asym.segm,CurrSeg
     .endif
     or  [rcx].asym.flags,S_ISDEFINED
     mov [rcx].asym.mem_type,mem_type
     mov [rcx].asym.segoffsize,Ofssize
     mov [rcx].asym.type,vartype
-   .return( rcx )
+    mov rax,rcx
+    ret
 
 MakeExtern endp
 
@@ -693,12 +732,13 @@ endif
         or  [rdi].asym.flags,S_ISDEFINED
         mov [rdi].asym.Ofssize,ti.Ofssize
 
-        .if ( ti.is_ptr == 0 && ti.Ofssize != ModuleInfo.Ofssize )
+        .if ( ti.is_ptr == 0 && al != ModuleInfo.Ofssize )
+
+            mov [rdi].asym.segoffsize,al
             mov rcx,[rdi].asym.segm
             .if ( rcx )
                 mov rdx,[rcx].dsym.seginfo
             .endif
-            mov [rdi].asym.segoffsize,ti.Ofssize
             .if ( rcx && [rdx].seg_info.Ofssize != al )
                 mov [rdi].asym.segm,NULL
             .endif
@@ -785,6 +825,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local size:uint_32  ; v2.12: changed from 'int' to 'uint_32'
   local count:uint_32 ; v2.12: changed from 'int' to 'uint_32'
   local sym:ptr asym
+  local type:ptr asym ; v2.17: remember type in case one was given
   local opndx:expr
   local langtype:byte
 
@@ -877,6 +918,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
 
         mov size,opndx.uvalue
+        mov type,opndx.type     ; v2.17: save type
         mov count,1
 
         imul ebx,i,asm_tok
@@ -913,6 +955,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( rdi == NULL )
                 .return( ERROR )
             .endif
+            mov [rdi].asym.type,type ; v2.17 added
         .elseif ( [rdi].asym.state != SYM_EXTERNAL || !( [rdi].asym.sflags & S_ISCOM ) )
             .return( asmerr( 2005, [rdi].asym.name ) )
         .else

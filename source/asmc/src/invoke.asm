@@ -500,7 +500,9 @@ endif
                     mov asize,SizeFromMemtype( [rcx].asym.mem_type, opnd.Ofssize, [rcx].asym.type )
                 .endif
             .endif
-if 1 ;
+
+if 0 ; Masm error up to v11, v12+ allow this..
+
             ; v2.18: error (vararg param used as argument?)
 
             mov rcx,opnd.sym

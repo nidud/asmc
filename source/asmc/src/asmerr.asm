@@ -396,10 +396,10 @@ W4 string_t E(A7000),E(A7001),E(A7002),E(A7003),E(A7004),E(A7005),E(A7006),E(A70
 W5 string_t E(A8000),E(A8001),E(A8002),E(A8003),E(A8004),E(A8005),E(A8006),E(A8007),E(A8008),E(A8009),
             E(A8010),E(A8011),E(A8012),E(A8013),E(A8014),E(A8015),E(INTER),E(A8017),E(A8018),E(A8019),
             E(A8020),E(A8021)
-
+if 0
 MS string_t E("name"),E("page"),E("title"),E("low"),E("high"),E("size"),
             E("length"),E("this"),E("mask"),E("width"),E("type"),0
-
+endif
 define MAX_E0 lengthof(E0)
 define MAX_E2 lengthof(E2)
 define MAX_W1 lengthof(W1)
@@ -499,7 +499,6 @@ errexit endp
 
 asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
 
-   .new masm[64]:char_t
    .new erbuf[512]:char_t
    .new format[512]:char_t
 
@@ -577,7 +576,8 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
 
             lea rdi,format
             tstrcat( rdi, rsi )
-
+if 0
+            .new masm[64]:char_t
             .if ( ebx == 2006 )
 
                 mov rbx,args
@@ -596,7 +596,7 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
                     .endif
                 .endw
             .endif
-
+endif
             print_err( &erbuf, rdi, &args )
 
             lea rsi,erbuf

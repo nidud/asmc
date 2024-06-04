@@ -19,7 +19,7 @@ if defined(__UNIX__) and defined(_WIN64)
 elseifdef _WIN64
     _tsopen( rcx, edx, SH_DENYNO, r8d )
 else
-    _tsopen( path, oflag, SH_DENYNO, dword ptr args )
+    _tsopen( path, oflag, SH_DENYNO, args )
 endif
     ret
 

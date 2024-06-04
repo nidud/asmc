@@ -640,6 +640,33 @@ GetOverrideAssume proc fastcall override:int_t
 
 GetOverrideAssume endp
 
+; v2.17: get word size of a segment assume ( usually SS )
+
+GetOfssizeAssume proc fastcall segno:int_t
+
+    imul edx,ecx,assume_info
+    lea rcx,SegAssumeTable
+
+    .if ( [rdx+rcx].is_flat == 0 )
+
+        mov rax,[rdx+rcx].symbol
+        .if ( rax )
+
+            .if ( [rax].asym.state == SYM_SEG )
+
+                mov rax,[rax].dsym.seginfo
+                movzx eax,[rax].seg_info.Ofssize
+               .return
+            .endif
+            movzx eax,[rax].asym.Ofssize
+           .return
+        .endif
+    .endif
+    movzx eax,ModuleInfo.Ofssize
+    ret
+
+GetOfssizeAssume endp
+
 ;
 ; GetAssume():
 ; called by check_assume() in parser.c

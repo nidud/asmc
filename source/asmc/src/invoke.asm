@@ -42,7 +42,6 @@ elf64regs       uint_8 T_RDI, T_RSI, T_RDX, T_RCX, T_R8, T_R9
     .code
 
     assume rbx:ptr asm_tok
-    B equ <byte ptr>
 
 SkipTypecast proc fastcall private uses rsi rdi rbx fullparam:string_t, i:int_t, tokenarray:ptr asm_tok
 
@@ -166,7 +165,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
     sub rcx,rsi
     lea rdi,fullparam
     rep movsb
-    mov B[rdi],0
+    mov byte ptr [rdi],0
 
     mov rdi,curr
     .if ( [rdi].asym.mem_type == MT_ABS && t_addr )
@@ -234,7 +233,9 @@ endif
 
 ifndef ASMC64
 
-            .if ( [rdi].asym.is_far || psize == fptrsize )
+            .if ( [rdi].asym.is_far || psize == fptrsize ||
+                ( [rdi].asym.sflags & S_ISVARARG && opnd.mem_type == MT_FAR ) )
+
                 mov rcx,opnd.sym
                 .if ( rcx && [rcx].asym.state == SYM_STACK )
                     AddLineQueue( " push ss" )
@@ -248,15 +249,17 @@ ifndef ASMC64
 endif
             AddLineQueueX( " lea %r, %s", t_regax, &fullparam )
             mov rcx,r0flags
-            or B[rcx],R0_USED
+            or  byte ptr [rcx],R0_USED
             AddLineQueueX( " push %r", t_regax )
 
         .else
+
          push_address:
 
             ; push segment part of address?
             ; v2.11: do not assume a far pointer if psize == fptrsize
             ; ( parameter might be near32 in a 16-bit environment )
+            ; v2.16: also include far overrides in vararg arguments.
 
 ifndef ASMC64
 
@@ -264,7 +267,8 @@ ifndef ASMC64
             mov eax,2
             shl eax,cl
 
-            .if ( [rdi].asym.is_far || psize > eax )
+            .if ( [rdi].asym.is_far || psize > eax ||
+                ( [rdi].asym.sflags & S_ISVARARG && opnd.mem_type == MT_FAR ) )
 
                 GetSegmentPart( &opnd, &buffer, &fullparam )
                 .if ( eax )
@@ -281,9 +285,12 @@ ifndef ASMC64
                 .else
                     AddLineQueueX( " push %s", &buffer )
                 .endif
+                .if ( [rdi].asym.sflags & S_ISVARARG )
+                    add size_vararg,CurrWordSize
+                .endif
             .endif
 
-            ;; push offset part of address
+            ; push offset part of address
 
             .if ( curr_cpu < P_186 )
 
@@ -291,29 +298,65 @@ ifndef ASMC64
                     " mov ax, offset %s\n"
                     " push ax", &fullparam )
                 mov rcx,r0flags
-                or B[rcx],R0_USED
+                or  byte ptr [rcx],R0_USED
 
             .else
 
-                .if ( [rdi].asym.sflags & S_ISVARARG && opnd.Ofssize == USE_EMPTY && opnd.sym )
+                mov rcx,opnd.sym
+                .if ( opnd.Ofssize == USE_EMPTY && rcx )
 
-                    mov opnd.Ofssize,GetSymOfssize( opnd.sym )
+                    GetSymOfssize( rcx )
+
+                    .if ( [rdi].asym.sflags & S_ISVARARG )
+
+                        mov opnd.Ofssize,al
+
+                    .else
+
+                        ; v2.16: opnd.Ofssize is set - by the evaluator - only in a few cases (not clear when exactly),
+                        ; but here it might be needed.
+                        ; Either display an error or make jwasm extend the offset size.
+                        ; v2.17: causes regression in v2.16 if current ofssize is USE64, see adjustment below.
+
+                        mov cl,al
+                        mov eax,2
+                        shl eax,cl
+                        .if ( al != CurrWordSize )
+                            mov opnd.Ofssize,cl
+                        .endif
+                    .endif
                 .endif
+
 
                 ; v2.04: expand 16-bit offset to 32
                 ; v2.11: also expand if there's an explicit near32 ptr requested in 16-bit
+                ; v2.17: regression in v2.16 if USE64 is active (invoke54.asm); "CurrWordSize > 2" changed to "CurrWordSize == 4"
 
-
-                .if ( ( opnd.Ofssize == USE16 && CurrWordSize > 2 ) ||
+                .if ( ( opnd.Ofssize == USE16 && CurrWordSize == 4 ) ||
                     ( [rdi].asym.Ofssize == USE32 && CurrWordSize == 2 ) )
                     AddLineQueueX( " pushd offset %s", &fullparam )
                 .elseif ( CurrWordSize > 2 && [rdi].asym.Ofssize == USE16 &&
                         ( [rdi].asym.is_far || Ofssize == USE16 ) ) ; v2.11: added
                     AddLineQueueX( " pushw offset %s", &fullparam )
+                .elseif ( CurrWordSize == 2 && opnd.Ofssize == USE32 && !( [rdi].asym.sflags & S_ISVARARG ) ) ; v2.16: added
+                    AddLineQueueX( " pushw offset %s", &fullparam )
                 .else
                     .if ( !( [rsi].asym.flags & S_ISINLINE && [rdi].asym.sflags & S_ISVARARG ) )
-                        AddLineQueueX( " push offset %s", &fullparam )
+
+                        ; v2.13: in 64-bit you can't push a 64-bit offset
+
+                        .if ( [rdi].asym.Ofssize == USE64 )
+
+                            AddLineQueueX( " lea rax, %s", &fullparam )
+                            AddLineQueueX( " push rax" )
+                            mov rcx,r0flags
+                            or  byte ptr [rcx],R0_USED
+                        .else
+                            AddLineQueueX( " push offset %s", &fullparam )
+                        .endif
+
                         ; v2.04: a 32bit offset pushed in 16-bit code
+
                         .if ( [rdi].asym.sflags & S_ISVARARG && CurrWordSize == 2 && opnd.Ofssize > USE16 )
                             add size_vararg,CurrWordSize
                         .endif
@@ -392,12 +435,13 @@ endif
     .else
 
         ; v2.06: don't handle forward refs if -Zne is set
-        ; v2.31: :ABS to const
+        ; v2.31: ABS to const
 
         .if ( [rdi].asym.mem_type == MT_ABS )
 
             mov opnd.kind,EXPR_CONST
             mov opnd.mem_type,MT_ABS
+            mov opnd.sym,NULL
             mov opnd.mbr,NULL
             mov opnd.base_reg,NULL
 
@@ -417,9 +461,28 @@ endif
             mov rcx,opnd.base_reg
             mov asize,SizeFromRegister([rcx].asm_tok.tokval)
 
+            ; v2.15: check if there's nothing behind the register.
+            ; because if "indirect" is false, the checks may be too simple.
+
+            .if ( j < TokenCount && [rbx].token != T_COMMA )
+                or opnd.flags,E_INDIRECT
+            .endif
+
         .elseif ( opnd.kind == EXPR_CONST || opnd.mem_type == MT_EMPTY )
 
-            mov asize,psize
+            mov eax,psize
+if 1
+            ; v2.16: don't set asize = psize if argument is an address
+
+            mov rcx,opnd.sym
+            .if ( opnd.kind == EXPR_ADDR && opnd.inst == T_OFFSET && rcx )
+
+                mov ecx,GetSymOfssize( rcx )
+                mov eax,2
+                shl eax,cl
+            .endif
+endif
+            mov asize,eax
 
             ; v2.04: added, to catch 0-size params ( STRUCT without members )
 
@@ -437,6 +500,17 @@ endif
                     mov asize,SizeFromMemtype( [rcx].asym.mem_type, opnd.Ofssize, [rcx].asym.type )
                 .endif
             .endif
+if 1 ;
+            ; v2.18: error (vararg param used as argument?)
+
+            mov rcx,opnd.sym
+            .if ( rcx && [rcx].asym.state == SYM_STACK && [rcx].asym.sflags & S_ISVARARG )
+
+                mov edx,reqParam
+                inc edx
+                asmerr( 2114, edx )
+            .endif
+endif
 
         .elseif ( opnd.mem_type != MT_TYPE )
 
@@ -446,12 +520,52 @@ endif
                 jmp push_address
             .endif
 
-            .if ( opnd.Ofssize == USE_EMPTY )
+            ; v2.16: if type is MT_PTR, then SizeFromMemtype() cannot decide if pointer is near or far;
+            ; see invoke47/49/50.asm;
+            ; sym.isfar and sym.Ofssize are NOT set if state is SYM_INTERNAL ( fields overlapp with first_size )!
 
-                mov opnd.Ofssize,ModuleInfo.Ofssize
+            .if ( opnd.kind == EXPR_ADDR && opnd.mem_type == MT_PTR && opnd.sym )
+
+                mov rcx,opnd.sym
+                .if ( [rcx].asym.state == SYM_EXTERNAL ) ; external symbol: see invoke50.asm
+
+                    movzx edx,opnd.Ofssize
+                    .if ( edx == USE_EMPTY )
+                        mov dl,[rcx].asym.Ofssize
+                    .endif
+                    .if ( [rcx].asym.is_far )
+                        mov ecx,MT_FAR
+                    .else
+                        mov ecx,MT_NEAR
+                    .endif
+                    SizeFromMemtype( cl, edx, NULL )
+
+                .else
+
+                    mov rdx,opnd.mbr
+                    .if ( rdx )
+                        mov rcx,rdx
+                    .endif
+                    mov eax,[rcx].asym.total_size
+                    .if ( [rcx].asym.flags & S_ISARRAY )
+
+                        mov ecx,[rcx].asym.total_length
+                        xor edx,edx
+                        div ecx
+                    .endif
+                .endif
+
+            .else
+
+                ; v2.16: init opnd.Ofssize only if NOT MT_PTR!
+
+                .if ( opnd.Ofssize == USE_EMPTY )
+                    mov opnd.Ofssize,ModuleInfo.Ofssize
+                .endif
+                SizeFromMemtype( opnd.mem_type, opnd.Ofssize, opnd.type )
             .endif
+            mov asize,eax
 
-            mov asize,SizeFromMemtype( opnd.mem_type, opnd.Ofssize, opnd.type )
         .else
 
             mov rcx,opnd.sym
@@ -515,12 +629,12 @@ endif
         mov rdx,opnd.base_reg
         mov rax,opnd.idx_reg
 
-        .if ( B[rcx] && ( ( rdx != NULL &&
+        .if ( byte ptr [rcx] && ( ( rdx != NULL &&
              ( [rdx].asm_tok.tokval == T_EAX || [rdx].asm_tok.tokval == T_RAX ) ) ||
              ( rax != NULL &&
              ( [rax].asm_tok.tokval == T_EAX || [rax].asm_tok.tokval == T_RAX ) ) ) )
 
-            mov B[rcx],0
+            mov byte ptr [rcx],0
             asmerr( 2133 )
         .endif
 
@@ -617,7 +731,7 @@ endif
                     " push %r", &fullparam, r_ax )
 
                 mov rcx,r0flags
-                mov B[rcx],R0_USED ; reset R0_H_CLEARED
+                mov byte ptr [rcx],R0_USED ; reset R0_H_CLEARED
 
             .else
 
@@ -640,11 +754,11 @@ ifndef ASMC64
                                 .if ( curr_cpu < P_186 )
 
                                     mov rcx,r0flags
-                                    .if ( !( B[rcx] & R0_X_CLEARED ) )
+                                    .if ( !( byte ptr [rcx] & R0_X_CLEARED ) )
                                         AddLineQueue( " xor ax, ax" )
                                     .endif
                                     mov rcx,r0flags
-                                    or B[rcx],( R0_X_CLEARED or R0_H_CLEARED )
+                                    or byte ptr [rcx],( R0_X_CLEARED or R0_H_CLEARED )
                                     AddLineQueue( " push ax" )
                                 .else
                                     AddLineQueue( " push 0" )
@@ -653,9 +767,9 @@ ifndef ASMC64
 
                             AddLineQueueX( " mov al, %s", &fullparam )
                             mov rcx,r0flags
-                            .if ( !( B[rcx] & R0_H_CLEARED ) )
+                            .if ( !( byte ptr [rcx] & R0_H_CLEARED ) )
 
-                                or B[rcx],R0_H_CLEARED
+                                or byte ptr [rcx],R0_H_CLEARED
                                 AddLineQueue( " mov ah, 0" )
                             .endif
 
@@ -664,7 +778,7 @@ ifndef ASMC64
                             AddLineQueueX( " mov al, %s", &fullparam )
 
                             mov rcx,r0flags
-                            mov B[rcx],0 ; reset AH_CLEARED
+                            mov byte ptr [rcx],0 ; reset AH_CLEARED
                             AddLineQueue( " cbw" )
 
                             .if ( psize == 4 )
@@ -673,7 +787,7 @@ ifndef ASMC64
                                     " cwd\n"
                                     " push dx" )
                                 mov rcx,r0flags
-                                or B[rcx],R2_USED
+                                or byte ptr [rcx],R2_USED
                             .endif
                         .endif
                         AddLineQueue( " push ax" )
@@ -691,7 +805,7 @@ endif
                     .endif
 
                     mov rcx,r0flags
-                    or B[rcx],R0_USED
+                    or byte ptr [rcx],R0_USED
                     .endc
 
                 .case MT_WORD
@@ -705,7 +819,7 @@ endif
                                 " mov ax, %s\n"
                                 " push rax", &fullparam )
                             mov rcx,r0flags
-                            mov B[rcx],R0_USED ; reset R0_H_CLEARED
+                            mov byte ptr [rcx],R0_USED ; reset R0_H_CLEARED
 ifndef ASMC64
                         .else
                             .if ( [rdi].asym.sflags & S_ISVARARG || psize != 2 )
@@ -724,15 +838,14 @@ endif
                     .else
 
                         mov ecx,T_MOVSX
-                        .if opnd.mem_type == MT_WORD
-
+                        .if ( opnd.mem_type == MT_WORD )
                             mov ecx,T_MOVZX
                         .endif
                         AddLineQueueX(
                             " %r eax, %s\n"
                             " push %r", ecx, &fullparam, r_ax )
                         mov rcx,r0flags
-                        or B[rcx],R0_USED
+                        or byte ptr [rcx],R0_USED
                     .endif
                     .endc
 
@@ -745,8 +858,8 @@ endif
                             " mov eax, %s\n"
                             " push rax", &fullparam )
                         mov rcx,r0flags
-                        or B[rcx],R0_USED
-                        .endc
+                        or byte ptr [rcx],R0_USED
+                       .endc
                     .endif
 
                 .default
@@ -766,7 +879,6 @@ endif
                                 " push word ptr %s", &fullparam, &fullparam )
                         .endif
                     .else
-
                         AddLineQueueX( " push %s", &fullparam )
                     .endif
                 .endsw
@@ -782,7 +894,7 @@ endif
                         " movsx eax, %s\n"
                         " push %r", &fullparam, r_ax )
                     mov rcx,r0flags
-                    mov B[rcx],R0_USED ; reset R0_H_CLEARED
+                    mov byte ptr [rcx],R0_USED ; reset R0_H_CLEARED
 ifndef ASMC64
                 .elseif ( pushsize == 2 && psize > 2 )
 
@@ -792,7 +904,7 @@ ifndef ASMC64
                         " push dx\n"
                         " push ax", &fullparam )
                     mov rcx,r0flags
-                    mov B[rcx],R0_USED or R2_USED
+                    mov byte ptr [rcx],R0_USED or R2_USED
 endif
                 .else
                     AddLineQueueX( " push %s", &fullparam )
@@ -804,13 +916,13 @@ ifndef ASMC64
                     .if ( curr_cpu < P_186 )
 
                         mov rcx,r0flags
-                        .if ( !( B[rcx] & R0_X_CLEARED ) )
+                        .if ( !( byte ptr [rcx] & R0_X_CLEARED ) )
 
                             AddLineQueue( " xor ax, ax" )
                         .endif
                         AddLineQueue( " push ax" )
                         mov rcx,r0flags
-                        or B[rcx],( R0_USED or R0_X_CLEARED or R0_H_CLEARED )
+                        or byte ptr [rcx],( R0_USED or R0_X_CLEARED or R0_H_CLEARED )
                     .else
                         AddLineQueue( " pushw 0" )
                     .endif
@@ -846,14 +958,14 @@ endif
             .endif
 
             mov rcx,r0flags
-            .if ( ( B[rcx] & R0_USED ) && ( reg == T_AH || ( optype & OP_A ) ) )
+            .if ( ( byte ptr [rcx] & R0_USED ) && ( reg == T_AH || ( optype & OP_A ) ) )
 
-                and B[rcx],not R0_USED
+                and byte ptr [rcx],not R0_USED
                 asmerr( 2133 )
 
-            .elseif ( ( B[rcx] & R2_USED ) && ( reg == T_DH || GetRegNo(reg) == 2 ) )
+            .elseif ( ( byte ptr [rcx] & R2_USED ) && ( reg == T_DH || GetRegNo(reg) == 2 ) )
 
-                and B[rcx],not R2_USED
+                and byte ptr [rcx],not R2_USED
                 asmerr( 2133 )
             .endif
 
@@ -890,7 +1002,7 @@ endif
 
                                 AddLineQueueX( " mov al, %s", &fullparam )
                                 mov rcx,r0flags
-                                or B[rcx],R0_USED
+                                or byte ptr [rcx],R0_USED
                                 mov reg,T_EAX
                             .endif
                             mov asize,2
@@ -904,13 +1016,13 @@ ifndef ASMC64
 
                             AddLineQueueX( " movsx eax, %s", &fullparam )
                             mov rcx,r0flags
-                            mov B[rcx],R0_USED
+                            mov byte ptr [rcx],R0_USED
                             mov reg,T_EAX
 
                         .else
 
                             mov rcx,r0flags
-                            mov B[rcx],R0_USED or R2_USED
+                            mov byte ptr [rcx],R0_USED or R2_USED
                             .if ( asize == 1 )
 
                                 .if ( reg != T_AL )
@@ -949,7 +1061,7 @@ ifndef ASMC64
 
                                 AddLineQueueX( " movsx eax, %s", &fullparam )
                                 mov rcx,r0flags
-                                mov B[rcx],R0_USED
+                                mov byte ptr [rcx],R0_USED
                                 mov reg,T_EAX
                             .else
                                 AddLineQueue( " pushw 0" )
@@ -961,7 +1073,7 @@ ifndef ASMC64
                     .else
 
                         mov rcx,r0flags
-                        .if ( !( B[rcx] & R0_X_CLEARED ) )
+                        .if ( !( byte ptr [rcx] & R0_X_CLEARED ) )
 
                             ; v2.11: extra check needed
 
@@ -974,7 +1086,7 @@ ifndef ASMC64
 
                         AddLineQueue( " push ax" )
                         mov rcx,r0flags
-                        mov B[rcx],R0_USED or R0_H_CLEARED or R0_X_CLEARED
+                        mov byte ptr [rcx],R0_USED or R0_H_CLEARED or R0_X_CLEARED
 endif
                     .endif
 
@@ -1039,8 +1151,8 @@ endif
                                 AddLineQueueX( " mov al, %s", &fullparam )
 
                                 mov rcx,r0flags
-                                or  B[rcx],R0_USED
-                                and B[rcx],not R0_X_CLEARED
+                                or  byte ptr [rcx],R0_USED
+                                and byte ptr [rcx],not R0_X_CLEARED
                             .endif
 
                             .if ( psize != 1 ) ; v2.11: don't modify AH if paramsize is 1
@@ -1048,12 +1160,12 @@ endif
                                 mov rcx,r0flags
                                 .if ( IS_SIGNED( opnd.mem_type ) )
 
-                                    and B[rcx],not ( R0_H_CLEARED or R0_X_CLEARED )
+                                    and byte ptr [rcx],not ( R0_H_CLEARED or R0_X_CLEARED )
                                     AddLineQueue( " cbw" )
 
-                                .elseif ( !( B[rcx] & R0_H_CLEARED ) )
+                                .elseif ( !( byte ptr [rcx] & R0_H_CLEARED ) )
 
-                                    or B[rcx],R0_H_CLEARED
+                                    or byte ptr [rcx],R0_H_CLEARED
                                     AddLineQueue( " mov ah, 0" )
                                 .endif
                             .endif
@@ -1068,6 +1180,22 @@ endif
 
                             sub eax,T_AL
                             add eax,T_EAX
+
+                        .elseif ( pushsize == 8 && curr_cpu >= P_64 )
+
+                            .if ( eax >= T_AL && eax <= T_BL )
+
+                                sub eax,T_AL
+                                add eax,T_RAX
+
+                            .elseif ( eax >= T_SPL && eax <= T_DIL )
+
+                                sub eax,T_SPL
+                                add eax,T_RSP
+                            .else
+                                sub eax,T_R8B
+                                add eax,T_R8
+                            .endif
 
                         .elseif ( pushsize < 8 )
 
@@ -1141,7 +1269,7 @@ endif
             .if ( curr_cpu < P_186 )
 ifndef ASMC64p
                 mov rcx,r0flags
-                or B[rcx],R0_USED
+                or byte ptr [rcx],R0_USED
 
                 .switch ( psize )
                 .case 2
@@ -1149,13 +1277,13 @@ ifndef ASMC64p
 
                         AddLineQueueX( " mov ax, %s", &fullparam )
                     .else
-                        .if ( !( B[rcx] & R0_X_CLEARED ) )
+                        .if ( !( byte ptr [rcx] & R0_X_CLEARED ) )
 
                             AddLineQueue( " xor ax, ax" )
                         .endif
 
                         mov rcx,r0flags
-                        or B[rcx],R0_H_CLEARED or R0_X_CLEARED
+                        or byte ptr [rcx],R0_H_CLEARED or R0_X_CLEARED
                     .endif
                     .endc
 
@@ -1173,7 +1301,7 @@ ifndef ASMC64p
                         AddLineQueueX( " mov ax, lowword (%s)", &fullparam )
                     .else
                         mov rcx,r0flags
-                        or B[rcx],R0_H_CLEARED or R0_X_CLEARED
+                        or byte ptr [rcx],R0_H_CLEARED or R0_X_CLEARED
                     .endif
                     .endc
                 .default
@@ -1238,7 +1366,7 @@ endif
                         .if ( curr_cpu >= P_64 )
 
                             mov rcx,r0flags
-                            or B[rcx],R0_USED
+                            or byte ptr [rcx],R0_USED
                             AddLineQueueX(
                                 " mov rax, 0x%lx\n"
                                 " push rax", opnd.llvalue )
@@ -1274,7 +1402,7 @@ endif
                         .else
 
                             mov rcx,r0flags
-                            or B[rcx],R0_USED
+                            or byte ptr [rcx],R0_USED
                             AddLineQueueX(
                                 " mov rax, 0x%lx\n"
                                 " push rax", opnd.hlvalue )
@@ -1286,7 +1414,7 @@ endif
                         .else
 
                             mov rcx,r0flags
-                            or B[rcx],R0_USED
+                            or byte ptr [rcx],R0_USED
                             AddLineQueueX(
                                 " mov rax, 0x%lx\n"
                                 " push rax", opnd.llvalue )
@@ -1295,9 +1423,11 @@ endif
 
                     .case 8
 
-                        .endc .if ( curr_cpu >= P_64 )
+                        ; v2.13: .x64 doesn't mean that the current segment is 64-bit
+
+                        .endc .if ( Ofssize == USE64 )
 ifndef ASMC64
-                        ;; v2.06: added support for double constants
+                        ; v2.06: added support for double constants
 
                         .if ( opnd.kind == EXPR_CONST || opnd.kind == EXPR_FLOAT )
 
@@ -1976,7 +2106,13 @@ endif
     .if ( ( [rsi].langtype == LANG_C || ( [rsi].langtype == LANG_SYSCALL && !fastcall_id ) ) &&
           ( [rdi].parasize || ( [rdi].flags & PROC_HAS_VARARG && size_vararg ) ) )
 
+        ; v2.17: if stackbase is active, use the ofssize of the assumed SS;
+        ; however, do this in 16-bit code only ( don't generate "add SP, x" in 32-bit )
+
         movzx eax,ModuleInfo.Ofssize
+        .if ( ModuleInfo.Ofssize == USE16 && ModuleInfo.StackBase )
+            GetOfssizeAssume( ASSUME_SS )
+        .endif
         lea rdx,stackreg
         mov eax,[rdx+rax*4]
 

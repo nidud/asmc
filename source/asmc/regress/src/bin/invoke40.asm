@@ -1,32 +1,23 @@
-;
-; v2.29.02 - 3 byte type as argument
-;
-    .386
-    .model flat, c
 
-    MS3 struct
-    _0  db ?
-    _1  db ?
-    _2  db ?
-    MS3 ends
+;--- up to v2.12, the qword param
+;--- wasn't pushed correctly because
+;--- the assembler assumed current mode
+;--- was 64-bit. 
 
-    .data
-    ms2 MS3 <>
+	.model small
+	.x64p
+	.stack 1024
+	.code
 
-    .code
+tproc proto stdcall :dword, :qword, :dword
 
-foo proc x:MS3
-    ret
-foo endp
+tproc proc stdcall a1:dword, a2:qword, a3:dword
+	ret
+tproc endp
 
-bar proc
+start16:
+	mov ax,4c00h
+	int 21h
+	invoke tproc, 0, 1, 2
 
-  local ms:MS3
-
-    invoke foo, ms
-    invoke foo, ms2
-    ret
-
-bar endp
-
-    end
+	end start16

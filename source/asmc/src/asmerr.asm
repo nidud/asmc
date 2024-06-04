@@ -323,6 +323,7 @@ externdef jmpenv:byte
     A8018 equ <"group definition too large, truncated : %s">
     A8019 equ <"size not specified, assuming: %s">
     A8020 equ <"constant expected">
+    A8021 equ <"opcode size suffix ignored for segment registers">
 
 ;; warning level 3 -- MASM
 
@@ -348,6 +349,7 @@ externdef jmpenv:byte
     A7006 equ <"parameter/local name is reserved word: %s">
     A7007 equ <".CASE without .ENDC: assumed fall through">
     A7008 equ <"cannot delay macro function: %s">
+    A7009 equ <"magnitude of offset exceeds 16 bit">
 
 E macro string
     exitm<@CStr(string)>
@@ -390,10 +392,10 @@ W1 string_t E(INTER),E(INTER),E(INTER),E(A4003),E(INTER),E(A4005),E(A4006),E(A40
             E(INTER),E(A4011),E(A4012),E(INTER),E(A4910)
 W2 string_t E(INTER)
 W3 string_t E(INTER),E(INTER),E(INTER),E(A6003),E(A6004),E(A6005)
-W4 string_t E(A7000),E(A7001),E(A7002),E(A7003),E(A7004),E(A7005),E(A7006),E(A7007),E(A7008)
+W4 string_t E(A7000),E(A7001),E(A7002),E(A7003),E(A7004),E(A7005),E(A7006),E(A7007),E(A7008),E(A7009)
 W5 string_t E(A8000),E(A8001),E(A8002),E(A8003),E(A8004),E(A8005),E(A8006),E(A8007),E(A8008),E(A8009),
             E(A8010),E(A8011),E(A8012),E(A8013),E(A8014),E(A8015),E(INTER),E(A8017),E(A8018),E(A8019),
-            E(A8020)
+            E(A8020),E(A8021)
 
 MS string_t E("name"),E("page"),E("title"),E("low"),E("high"),E("size"),
             E("length"),E("this"),E("mask"),E("width"),E("type"),0

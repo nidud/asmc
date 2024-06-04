@@ -1275,9 +1275,17 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                         ; v2.18 - don't insert an already defined symbol to the "undefined" list
 
                         .if ( [rax].asym.state == SYM_UNDEFINED )
-                            sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], rax )
-                            mov rax,sym
+
+                            .if !( [rax].asym.flags & S_USED )
+
+                                ; don't add undefined symbols multiple times!
+
+                                sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], rax )
+                                mov rax,sym
+                            .endif
+
                         .elseif ( [rdi].flags & E_IS_DOT )
+
                             mov rax,nullmbr
                             .if ( rax == NULL )
                                 mov nullmbr,SymAlloc("")

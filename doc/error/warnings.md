@@ -41,6 +41,7 @@ _Non ML compatible warnings_
 - [ASMC Warning A8018](A8018.md)
 - [ASMC Warning A8019](A8019.md)
 - [ASMC Warning A8020](A8020.md)
+- [ASMC Warning A8021](A8021.md)
 
 _Non ML compatible level 3 warnings_
 
@@ -53,6 +54,7 @@ _Non ML compatible level 3 warnings_
 - [ASMC Warning A7006](A7006.md)
 - [ASMC Warning A7007](A7007.md)
 - [ASMC Warning A7008](A7008.md)
+- [ASMC Warning A7009](A7009.md)
 
 #### See Also
 

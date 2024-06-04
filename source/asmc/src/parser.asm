@@ -319,11 +319,27 @@ SizeFromMemtype proc fastcall mem_type:uchar_t, _Ofssize:int_t, type:asym_t
         .endif
         .endc
     .case MT_PTR
-        mov eax,edx
-        movzx ecx,ModuleInfo._model
-        mov edx,1
-        shl edx,cl
-        and edx,SIZE_DATAPTR
+if 0
+        ; v2.16: check type; might be called so by idata_nofixup; see invoke52.asm
+
+        mov rcx,type
+        .if rcx
+            xor edx,edx
+            .if ( [rcx].is_far )
+                add edx,2
+            .endif
+            mov cl,[rcx].Ofssize
+            mov eax,2
+            shl eax,cl
+            add eax,edx
+           .endc
+        .endif
+endif
+        mov     eax,edx
+        movzx   ecx,ModuleInfo._model
+        mov     edx,1
+        shl     edx,cl
+        and     edx,SIZE_DATAPTR
         .ifnz
             add eax,2
         .endif
@@ -690,9 +706,21 @@ ifndef ASMC64
               ( [rsi].Ofssize == USE32 && [rsi].adrsiz == 1 ) )
 
             .if !InWordRange( [rsi].opnd[rbx].data32l )
-                .return asmerr( 2011 )
+
+                ; v2.16: accept 32-bit offset for 16-bit, i.e. "mov ax,es:[10000000h]", but
+                ; generate a warning level 3 ( Masm just truncates to 16-bit ); see offset15.asm.
+                ; for the case code=use32 + addr size prefix 67h + offset >= 0x10000 see offset16.asm.
+                ; before v2.16, both cases were errors.
+
+                mov rm_field,RM_D32
+                xor [rsi].adrsiz,1
+                .if ( Parse_Pass == PASS_1 )
+
+                    asmerr( 7009 )
+                .endif
+            .else
+                mov rm_field,RM_D16 ; D16=110b
             .endif
-            mov rm_field,RM_D16 ; D16=110b
         .else
 endif
             mov rm_field,RM_D32 ; D32=101b
@@ -1260,6 +1288,11 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
     .if ( [rdi].Ofssize != USE_EMPTY )
         mov Ofssize,[rdi].Ofssize
+    .elseif( rcx == NULL ) ; v2.15: branch added
+        segm_override( rdi, NULL )
+        .if ( SegOverride )
+            mov Ofssize,GetSymOfssize( SegOverride )
+        .endif
     .elseif ( [rcx].asym.state == SYM_SEG || [rcx].asym.state == SYM_GRP || [rdi].inst == T_SEG )
         mov Ofssize,USE16
     .elseif ( [rdi].flags & E_IS_ABS ) ; an (external) absolute symbol?
@@ -1457,25 +1490,24 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     .case 1
         mov [rsi].opnd[rbx].type,OP_I8
         mov [rsi].opsiz,FALSE ; v2.10: reset opsize is not really a good idea
-                              ; - might have been set by previous operand
-
-       .endc
+       .endc                  ; - might have been set by previous operand
     .case 2: mov [rsi].opnd[rbx].type,OP_I16 : mov [rsi].opsiz,OPSIZE16(rsi) : .endc
     .case 4: mov [rsi].opnd[rbx].type,OP_I32 : mov [rsi].opsiz,OPSIZE32(rsi) : .endc
     .case 8
-        ;
+
         ; v2.05: do only assume size 8 if the constant won't fit in 4 bytes.
-        ;
+        ; v2.14: don't use LONG_MAX/MIN, won't work in 64-bit unix
+
         mov al,[rdi].mem_type
         and eax,MT_SIZE_MASK
         xor ecx,ecx
         mov edx,[rdi].hvalue
         .if edx == ecx
-            cmp [rdi].value,LONG_MAX
+            cmp [rdi].value,INT_MAX
         .endif
         setg cl
         .if edx == -1
-            cmp [rdi].value,LONG_MIN
+            cmp [rdi].value,INT_MIN
         .endif
         setl ch
 
@@ -1485,17 +1517,17 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
             mov [rsi].opnd[rbx].data32h,[rdi].hvalue
 
         .elseif Ofssize == USE64 && ( [rdi].inst == T_OFFSET || ( [rsi].token == T_MOV && ( [rsi].opnd[OPND1].type & OP_R64 ) ) )
-            ;
+
             ; v2.06d: in 64-bit, ALWAYS set OP_I64, so "mov m64, ofs" will fail,
             ; This was accepted in v2.05-v2.06c)
-            ;
+
             mov [rsi].opnd[rbx].type,OP_I64
             mov [rsi].opnd[rbx].data32h,[rdi].hvalue
         .else
             mov [rsi].opnd[rbx].type,OP_I32
         .endif
         mov [rsi].opsiz,OPSIZE32(rsi)
-        .endc
+       .endc
     .endsw
 
     ; set fixup_type
@@ -2107,7 +2139,11 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .if ( base == EMPTY && index == EMPTY )
 
             mov [rsi].adrsiz,ADDRSIZE( [rsi].Ofssize, Ofssize )
-            .if ( Ofssize == USE64 )
+
+            ; v2.13: also check CI->Ofssize. if current segm is 64-bit,
+            ; use 32-bit rel fixups (mixed mode 64-bit mz binary) - ignore Ofssize
+
+            .if ( Ofssize == USE64 || [rsi].Ofssize == USE64 )
 
                 ; v2.03: override with a segment assumed != FLAT?
 
@@ -2125,37 +2161,33 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
             .endif
         .else
 
-            xor eax,eax
-            cmp [rsi].Ofssize,al
-            setz al
-
             .if ( Ofssize == USE64 )
+
                 mov fixup_type,FIX_OFF32
+
+            .elseif IS_ADDR32(rsi) ; address prefix needed?
+
+                ; changed for v1.95. Probably more tests needed!
+                ; test case:
+                ;   mov eax,[rbx*2-10+offset var] ;code and var are 16bit!
+                ; the old code usually works fine because HiWord of the
+                ; symbol's offset is zero. However, if there's an additional
+                ; displacement which makes the value stored at the location
+                ; < 0, then the target's HiWord becomes <> 0.
+
+                mov fixup_type,FIX_OFF32
+
             .else
-                .if IS_ADDR32(rsi) ; address prefix needed?
 
-                    ; changed for v1.95. Probably more tests needed!
-                    ; test case:
-                    ;   mov eax,[rbx*2-10+offset var] ;code and var are 16bit!
-                    ; the old code usually works fine because HiWord of the
-                    ; symbol's offset is zero. However, if there's an additional
-                    ; displacement which makes the value stored at the location
-                    ; < 0, then the target's HiWord becomes <> 0.
+                mov fixup_type,FIX_OFF16
+                .if ( Ofssize && Parse_Pass == PASS_2 )
 
-                    mov fixup_type,FIX_OFF32
+                    ; address size is 16bit but label is 32-bit.
+                    ; example: use a 16bit register as base in FLAT model:
+                    ;   test buff[di],cl
 
-                .else
-
-                    mov fixup_type,FIX_OFF16
-                    .if ( Ofssize && Parse_Pass == PASS_2 )
-
-                        ; address size is 16bit but label is 32-bit.
-                        ; example: use a 16bit register as base in FLAT model:
-                        ;   test buff[di],cl
-
-                        mov rax,sym
-                        asmerr( 8007, [rax].asym.name )
-                    .endif
+                    mov rax,sym
+                    asmerr( 8007, [rax].asym.name )
                 .endif
             .endif
         .endif
@@ -2178,8 +2210,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .endif
     .endif
 
-if 1 ; v2.34.60 - jwasm
-
+if 1
     ; v2.17: check if offset fits in 32-bit; this replaces check
     ; in process_address(), which was for indirect addressing only.
 
@@ -2226,13 +2257,16 @@ process_address proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         ; JWasm throws an error in 64bit mode and
         ; warns (level 3) in the other modes.
         ; todo: this check should also be done for direct addressing!
-
+        ; v2.17: removed, more generic check now in memory_operand();
+        ; it always emits error "constant value too large".
+if 0
         .if ( [rdi].hvalue && ( [rdi].hvalue != -1 || [rdi].value >= 0 ) )
             .if ( ModuleInfo.Ofssize == USE64 )
                 .return EmitConstError( rdi )
             .endif
             asmerr( 8008, [rdi].value64 )
         .endif
+endif
         mov rcx,[rdi].sym
         .if ( rcx == NULL || [rcx].asym.state == SYM_STACK )
             .return memory_operand( rsi, ebx, rdi, FALSE )
@@ -2243,8 +2277,10 @@ process_address proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
     .elseif ( [rdi].inst != EMPTY )
 
         ; instr is OFFSET | LROFFSET | SEG | LOW | LOWWORD, ...
+        ; v2.15 create fixup if override is given
 
-        .if ( [rdi].sym == NULL ) ; better to check opndx->type?
+        mov rcx,[rdi].override
+        .if ( [rdi].sym == NULL && ( !rcx || [rcx].asm_tok.token == T_REG ) )
             .return idata_nofixup( rsi, ebx, rdi )
         .else
 
@@ -2524,6 +2560,17 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
                 .return asmerr( 2008, "POP CS" )
             .endif
         .endif
+if 1
+        ; v2.15: emit warning if PUSHD/PUSHW are used and size doesn't match current mode.
+        ; emitting a size prefix (0x66) silently would break masm compatibility.
+
+        .if ( Parse_Pass == PASS_2 )
+            .if ( [rsi].token == T_PUSHD && [rsi].Ofssize == USE16 ||
+                  [rsi].token == T_PUSHW && [rsi].Ofssize > USE16 )
+                asmerr( 8021 )
+            .endif
+        .endif
+endif
 
     .elseif ( eax & OP_ST )
 
@@ -2660,6 +2707,25 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
 process_register endp
 
 
+; v2.14: check if variable is accessible thru ES
+
+IsAccessible proc fastcall uses rbx sym:ptr asym, sr:int_t
+
+    imul edx,edx,assume_info
+    lea  rax,SegAssumeTable
+    mov  rbx,[rdx+rax].assume_info.symbol
+
+    .if ( [rcx].asym.segm && rbx )
+        .if ( [rcx].asym.segm != rbx )
+            .if ( GetGroup( rcx ) != rbx )
+                .return( FALSE )
+            .endif
+        .endif
+    .endif
+    .return( TRUE )
+
+IsAccessible endp
+
 ; special handling for string instructions
 ; CMPS[B|W|D|Q]
 ;  INS[B|W|D]
@@ -2704,6 +2770,16 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
     .case T_CMPSW
     .case T_CMPSQ
 
+        ; v2.14: reject segment != ES for second op if symbolic
+
+        .if ( [rsi].opnd[OPNI2].type != OP_NONE && [rdi+expr].override == NULL && [rdi+expr].sym )
+            .ifd ( !IsAccessible( [rdi+expr].sym, ASSUME_ES ) )
+
+                asmerr( 2070 )
+               .endc
+            .endif
+        .endif
+
         ; cmps allows prefix for the first operand (=source) only
 
         .if ( [rsi].RegOverride != EMPTY )
@@ -2723,12 +2799,18 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
                 .else
                     asmerr( 2070 )
                 .endif
-            .elseif ( [rsi].RegOverride == ASSUME_DS )
-
-                ; prefix for first operand?
-
-                mov [rsi].RegOverride,EMPTY
             .endif
+
+        .elseif ( [rsi].opnd[OPND1].type != OP_NONE && ; v2.14
+                  [rdi].override == NULL && [rdi].sym )
+
+            check_assume( rsi, [rdi].sym, ASSUME_DS )
+        .endif
+        .if ( [rsi].RegOverride == ASSUME_DS )
+
+            ; prefix for first operand?
+
+            mov [rsi].RegOverride,EMPTY
         .endif
         .endc
 
@@ -2753,14 +2835,47 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
     .case T_MOVSW
     .case T_MOVSQ
 
-        ; movs allows prefix for the second operand (=source) only
+        ; v2.14: reject segment != ES for second op if symbolic
 
-        .if ( [rsi].RegOverride != EMPTY )
-            .if ( [rdi+expr].override == NULL )
+        .if ( [rsi].opnd[OPND1].type != OP_NONE && [rdi].override == NULL && [rdi].sym )
+            .ifd ( !IsAccessible( [rdi].sym, ASSUME_ES ) )
+
                 asmerr( 2070 )
-            .elseif ( [rsi].RegOverride == ASSUME_DS )
-                mov [rsi].RegOverride,EMPTY
+               .endc
             .endif
+        .endif
+
+        ; MOVSx allows prefix for the second operand (=source) only.
+        ; there's only one place to store the register override in CodeInfo,
+        ; so it's a problem if both operands have an override; to be improved.
+
+        .if ( [rsi].RegOverride != ASSUME_NOTHING )
+
+            ; v2.14: destination must be ES:
+
+            mov rcx,[rdi].override
+            .if ( rcx && [rcx].asm_tok.token == T_REG && [rcx].asm_tok.tokval != T_ES )
+
+                asmerr( 2070 )
+
+            .elseif ( [rdi+expr].override == NULL )
+
+                ; v2.14: "if block" added
+
+                .if ( [rsi].RegOverride == ASSUME_ES )
+                    mov [rsi].RegOverride,ASSUME_NOTHING
+                .else
+                    asmerr( 2070 )
+                .endif
+            .endif
+
+        .elseif ( [rsi].opnd[OPNI2].type != OP_NONE && ; v2.14
+                  [rdi+expr].override == NULL && [rdi+expr].sym )
+
+            check_assume( rsi, [rdi+expr].sym, ASSUME_DS )
+        .endif
+        .if ( [rsi].RegOverride == ASSUME_DS )
+            mov [rsi].RegOverride,ASSUME_NOTHING
         .endif
         .endc
 
@@ -2769,18 +2884,31 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
     .case T_OUTSW
     .case T_OUTSD
 
+        ; v2.14
+
+        .if ( [rsi].opnd[OPNI2].type != OP_NONE && [rdi+expr].override == NULL && [rdi+expr].sym )
+            check_assume( rsi, [rdi+expr].sym, ASSUME_DS )
+        .endif
+
         ; v2.01: remove default DS prefix
 
         .if ( [rsi].RegOverride == ASSUME_DS )
             mov [rsi].RegOverride,EMPTY
         .endif
         mov opndidx,OPND2
-        .endc
+       .endc
+
     .case T_LODS
     .case T_LODSB
     .case T_LODSW
     .case T_LODSD
     .case T_LODSQ
+
+        ; v2.14
+
+        .if ( [rsi].opnd[OPND1].type != OP_NONE && [rdi].override == NULL && [rdi].sym )
+            check_assume( rsi, [rdi].sym, ASSUME_DS )
+        .endif
 
         ; v2.10: remove unnecessary DS prefix ( Masm-compatible )
 
@@ -2788,11 +2916,21 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
             mov [rsi].RegOverride,EMPTY
         .endif
         .endc
+
     .default ; INS[B|W|D], SCAS[B|W|D|Q], STOS[B|W|D|Q]
              ; INSx, SCASx and STOSx don't allow any segment prefix != ES
              ; for the memory operand.
 
-        .if ( [rsi].RegOverride != EMPTY )
+        ; v2.14: check added to reject invalid segment assumes
+
+        .if ( [rsi].opnd[OPND1].type != OP_NONE && [rdi].override == NULL && [rdi].sym )
+            .ifd ( !IsAccessible( [rdi].sym, ASSUME_ES ) )
+                asmerr( 2070 )
+               .endc
+            .endif
+        .endif
+
+        .if ( [rsi].RegOverride != ASSUME_NOTHING )
             .if ( [rsi].RegOverride == ASSUME_ES )
                 mov [rsi].RegOverride,EMPTY
             .else

@@ -99,18 +99,25 @@ DYNAMIC_WAIT::DYNAMIC_WAIT proc uses rdi
 
     mov rdi,@ComAlloc(DYNAMIC_WAIT)
     mov [rdi].m_QPCValid,QueryPerformanceFrequency(&[rdi].m_QPCFrequency)
+
    .return rdi
 
 DYNAMIC_WAIT::DYNAMIC_WAIT endp
 
+
 DYNAMIC_WAIT::Release proc
+
+    ldr rcx,this
+
     free(rcx)
     ret
+
 DYNAMIC_WAIT::Release endp
+
 
 DYNAMIC_WAIT::DoWait proc uses rdi
 
-    mov rdi,rcx
+    ldr rdi,this
 
     ; Is this wait being called with the period that we consider it to be part
     ; of the same wait sequence
@@ -124,11 +131,18 @@ DYNAMIC_WAIT::DoWait proc uses rdi
         { 5000, WAIT_BAND_STOP } ; Never move past this band
         }
 
+    mov  ecx,[rdi].m_CurrentWaitBandIdx
+ifdef _WIN64
     imul rax,[rdi].m_QPCFrequency.QuadPart,WaitSequenceTimeInSeconds
     add  rax,[rdi].m_LastWakeUpTime.QuadPart
-    mov  ecx,[rdi].m_CurrentWaitBandIdx
 
     .if ( [rdi].m_QPCValid && ( CurrentQPC.QuadPart <= rax ) )
+else
+    imul eax,sdword ptr [rdi].m_QPCFrequency.QuadPart,WaitSequenceTimeInSeconds
+    add  eax,sdword ptr [rdi].m_LastWakeUpTime.QuadPart
+
+    .if ( [rdi].m_QPCValid && ( sdword ptr CurrentQPC.QuadPart <= eax ) )
+endif
 
         ; We are still in the same wait sequence, lets check if we should move
         ; to the next band
@@ -167,7 +181,7 @@ DYNAMIC_WAIT::DoWait endp
 ;
 ; Program entry point
 ;
-WinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nCmdShow:SINT
+WinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nCmdShow:SINT
 
     .new SingleOutput:SINT
     .new OutMgr:ptr OUTPUTMANAGER()
@@ -350,7 +364,8 @@ WinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nCmd
 
                 .if ( !Occluded )
 
-                    mov retval,OutMgr.UpdateApplicationWindow(ThreadMgr.GetPointerInfo(), &Occluded)
+                    mov rcx,ThreadMgr.GetPointerInfo()
+                    mov retval,OutMgr.UpdateApplicationWindow(rcx, &Occluded)
                 .endif
 
             .else
@@ -480,7 +495,8 @@ ShowHelp endp
 ;
 ProcessCmdline proc uses rsi rdi rbx Output:ptr SINT
 
-    mov rdi,rcx
+    ldr rdi,Output
+
     assume rdi:ptr SINT
 
     mov [rdi],-1
@@ -527,11 +543,15 @@ ProcessCmdline endp
 ;
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
+    ldr rcx,hWnd
+    ldr edx,message
+    ldr rax,lParam
+
     .switch ( edx )
 
     .case WM_CREATE
 
-        SetWindowLongPtr(rcx, GWLP_USERDATA, [r9].CREATESTRUCT.lpCreateParams)
+        SetWindowLongPtr(rcx, GWLP_USERDATA, [rax].CREATESTRUCT.lpCreateParams)
        .return 1
 
     .case WM_DESTROY
@@ -547,7 +567,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
        .endc
 
     .default
-        .return DefWindowProc(rcx, edx, r8, r9)
+        .return DefWindowProc(rcx, edx, wParam, rax)
     .endsw
     .return 0
 
@@ -562,7 +582,7 @@ DDProc proc uses rsi rdi rbx Param:ptr
 
     ; Data passed in from thread creation
 
-    mov rsi,rcx
+    ldr rsi,Param
 
     ; Classes
 
@@ -798,7 +818,7 @@ ProcessFailure proc Device:ptr ID3D11Device, String:LPCWSTR, Title:LPCWSTR,
             ; condition
 
             mov TranslatedHr,DXGI_ERROR_DEVICE_REMOVED
-            .endc
+           .endc
 
 
         .case S_OK
@@ -806,7 +826,7 @@ ProcessFailure proc Device:ptr ID3D11Device, String:LPCWSTR, Title:LPCWSTR,
             ; Device is not removed so use original error
 
             mov TranslatedHr,hr
-            .endc
+           .endc
 
 
         .default
@@ -814,11 +834,9 @@ ProcessFailure proc Device:ptr ID3D11Device, String:LPCWSTR, Title:LPCWSTR,
             ; Device is removed but not a error we want to remap
 
             mov TranslatedHr,DeviceRemovedReason
-
         .endsw
 
     .else
-
         mov TranslatedHr,hr
     .endif
 

@@ -43,12 +43,12 @@
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\X64</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
-      <WCharacterSet>Unicode</WCharacterSet>
+      <UnicodeCharacterSet>true</UnicodeCharacterSet>
       <GenerateUnwindInformation>true</GenerateUnwindInformation>
       <GenerateCStackFrame>true</GenerateCStackFrame>
-      <PackAlignmentBoundary>4</PackAlignmentBoundary>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">
@@ -57,11 +57,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
-      <WCharacterSet>Unicode</WCharacterSet>
+      <UnicodeCharacterSet>true</UnicodeCharacterSet>
       <GenerateCStackFrame>true</GenerateCStackFrame>
-      <PackAlignmentBoundary>3</PackAlignmentBoundary>
       <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
     </ASMC>
   </ItemDefinitionGroup>

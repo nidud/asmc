@@ -39,6 +39,8 @@ DXGI_USAGE_DISCARD_ON_PRESENT equ ( 1 SHL (5 + 4) )
 DXGI_USAGE_UNORDERED_ACCESS equ ( 1 SHL (6 + 4) )
 DXGI_USAGE		typedef UINT
 
+.pragma pack(push, size_t)
+
 DXGI_FRAME_STATISTICS	STRUC
 PresentCount		UINT ?
 PresentRefreshCount	UINT ?
@@ -332,6 +334,8 @@ DXGI_DISPLAY_COLOR_SPACE STRUC
 PrimaryCoordinates	FLOAT  8  dup(?)
 WhitePoints		FLOAT  16  dup(?)
 DXGI_DISPLAY_COLOR_SPACE ENDS
+
+.pragma pack(pop)
 
 ifndef __IDXGIFactory1_INTERFACE_DEFINED__
 define __IDXGIFactory1_INTERFACE_DEFINED__

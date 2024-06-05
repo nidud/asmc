@@ -2025,19 +2025,45 @@ endif
         .endif
 
         .if struct_ptr
-
+ifndef ASMC64
             mov edi,T_EAX
             .if ( ModuleInfo.Ofssize == USE64 )
+endif
                 .if ( [rsi].langtype == LANG_SYSCALL )
                     mov edi,T_R10
                 .else
                     mov edi,T_RAX
                 .endif
+ifndef ASMC64
             .endif
+endif
             mov rbx,struct_ptr
             mov rcx,SymSearch( [rbx].string_ptr )
             AssignPointer( rcx, edi, struct_ptr, pclass, [rsi].langtype, pmacro)
+ifndef ASMC64
 
+            ; v2.34.64 - indirection for 32-bit C/STDCALL -- indirect32_3.asm
+
+            .if ( edi == T_EAX && ( [rsi].langtype == LANG_C || [rsi].langtype == LANG_STDCALL ) )
+
+                ; *this is the last push and EAX is the interface...
+
+                .if ( rax )
+                    .if ( [rax].asym.mem_type == MT_TYPE )
+                        mov rax,[rax].asym.type
+                    .endif
+                    .if ( [rax].asym.mem_type == MT_PTR )
+                        mov rax,[rax].asym.target_type
+                    .endif
+                    .if ( rax && !( [rax].asym.flags & S_VTABLE ) )
+                        xor eax,eax
+                    .endif
+                .endif
+                .if ( rax )
+                    AddLineQueue( " mov [esp], eax\n mov eax, [eax]" )
+                .endif
+            .endif
+endif
         .elseif ( !pmacro )
 
             imul ebx,parmpos,asm_tok

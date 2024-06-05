@@ -124,12 +124,13 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
 
     .if ( rsi == NULL )
         .if ( [rbx].token == T_REG )
-            .return .if ( [rbx].tokval == reg )
-            AddLineQueueX( " mov %r, %r", reg, [rbx].tokval )
+            .if ( [rbx].tokval != reg )
+                AddLineQueueX( " mov %r, %r", reg, [rbx].tokval )
+            .endif
         .else
             AddLineQueueX( " mov %r, %s", reg, [rbx].tokpos )
         .endif
-        .return
+        .return( rsi )
     .endif
 
     mov vtable,0
@@ -162,6 +163,8 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
                 mov rbx,rax
                 AddLineQueueX( " lea %r, [%r]%s", edi, edi, &buffer )
             .endif
+            mov rax,rsi
+
             .return .if ( [rbx].token != T_DOT )
             add rbx,asm_tok
             .if ( [rsi].asym.mem_type == MT_TYPE )
@@ -172,8 +175,10 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
             .endif
             .return .if ( !rsi )
             .return .if ( [rsi].asym.state != SYM_TYPE )
+
             AddLineQueueX( " mov %r, [%r].%s.%s", edi, edi, [rsi].asym.name, [rbx].string_ptr )
-            mov rsi,SearchNameInStruct( rsi, [rbx].string_ptr, 0, 0 )
+            SearchNameInStruct( rsi, [rbx].string_ptr, 0, 0 )
+            xchg rsi,rax
             .return .if ( !rsi )
             mov vtable,1
         .endif
@@ -181,7 +186,9 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
     .if ( !vtable )
         AddLineQueueX( " mov %r, %s", reg, [rsi].asym.name )
     .endif
+
     add rbx,asm_tok
+
     .while ( [rbx].token != T_FINAL )
 
         .break .if ( [rbx].token == T_COMMA )
@@ -197,20 +204,20 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
         .break .if ( [rbx].token != T_DOT )
 
         add rbx,asm_tok
-
-        .if ( [rsi].asym.mem_type == MT_TYPE )
-            mov rsi,[rsi].asym.type
+        mov rax,rsi
+        .if ( [rax].asym.mem_type == MT_TYPE )
+            mov rax,[rax].asym.type
         .endif
-        .if ( [rsi].asym.mem_type == MT_PTR )
-            mov rsi,[rsi].asym.target_type
+        .if ( [rax].asym.mem_type == MT_PTR )
+            mov rax,[rax].asym.target_type
         .endif
-        .break .if ( !rsi )
-        .break .if ( [rsi].asym.state != SYM_TYPE )
+        .break .if ( !rax )
+        .break .if ( [rax].asym.state != SYM_TYPE )
+        mov rsi,rax
 
         AddLineQueueX( " mov %r, [%r].%s.%s", reg, reg, [rsi].asym.name, [rbx].string_ptr )
-
-        mov rsi,SearchNameInStruct( rsi, [rbx].string_ptr, 0, 0 )
-        .break .if ( !rsi )
+        .break .if ( !SearchNameInStruct( rsi, [rbx].string_ptr, 0, 0 ) )
+        mov rsi,rax
         add rbx,asm_tok
     .endw
     .if ( vtable && !pmacro )

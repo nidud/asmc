@@ -5,8 +5,8 @@ define NTDDI_VERSION    0x0A000003
 define _USE_MATH_DEFINES
 
 include windows.inc
-include d2d1.inc
-include dwrite.inc
+include DirectX/d2d1.inc
+include DirectX/dwrite.inc
 include stdio.inc
 include math.inc
 include tchar.inc

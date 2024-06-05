@@ -8,7 +8,9 @@ include libc.inc
 DIRECTX_MATH_VERSION	equ 312
 
 ifndef __PE__
+ifdef _WIN64
 includelib directxmath.lib
+endif
 endif
 
 if defined(_MSC_VER) and  _MSC_VER LT 1200 ; 1800
@@ -1281,8 +1283,7 @@ endif
 if defined(_XM_NO_INTRINSICS_)
 else
 endif
-
 include DirectXMath.inl
 
-.pragma list(pop)
 endif
+.pragma list(pop)

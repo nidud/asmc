@@ -18,7 +18,7 @@ DUPLICATIONMANAGER::DUPLICATIONMANAGER endp
 ;
 DUPLICATIONMANAGER::Release proc uses rsi
 
-    mov rsi,rcx
+    ldr rsi,this
     SafeRelease([rsi].m_DeskDupl)
     SafeRelease([rsi].m_AcquiredDesktopImage)
     .if ( [rsi].m_MetaDataBuffer )
@@ -36,9 +36,11 @@ DUPLICATIONMANAGER::Release endp
 ;
 DUPLICATIONMANAGER::InitDupl proc uses rsi Device:ptr ID3D11Device, Output:UINT
 
-    mov rsi,rcx
+    ldr rsi,this
+    ldr rdx,Device
+    ldr eax,Output
 
-    mov [rsi].m_OutputNumber,r8d
+    mov [rsi].m_OutputNumber,eax
 
     ; Take a reference on the device
 
@@ -130,9 +132,9 @@ DUPLICATIONMANAGER::GetMouse proc uses rsi rdi rbx \
         OffsetX     : SINT,
         OffsetY     : SINT
 
-    mov rsi,rcx
-    mov rdi,rdx
-    mov rbx,r8
+    ldr rsi,this
+    ldr rdi,PtrInfo
+    ldr rbx,FrameInfo
 
     assume rdi:ptr PTR_INFO
     assume rbx:ptr DXGI_OUTDUPL_FRAME_INFO
@@ -140,8 +142,11 @@ DUPLICATIONMANAGER::GetMouse proc uses rsi rdi rbx \
     ; A non-zero mouse update timestamp indicates that there is a mouse position
     ; update and optionally a shape change
 
+ifdef _WIN64
     .if ( [rbx].LastMouseUpdateTime.QuadPart == 0 )
-
+else
+    .if ( dword ptr [rbx].LastMouseUpdateTime.QuadPart == 0 )
+endif
         .return DUPL_RETURN_SUCCESS
     .endif
 
@@ -249,8 +254,8 @@ DUPLICATIONMANAGER::GetMouse endp
 
 DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr bool
 
-    mov rsi,rcx
-    mov rdi,rdx
+    ldr rsi,this
+    ldr rdi,Data
 
     assume rdi:ptr FRAME_DATA
 
@@ -380,7 +385,7 @@ DUPLICATIONMANAGER::GetFrame endp
 ;
 DUPLICATIONMANAGER::DoneWithFrame proc uses rsi
 
-    mov rsi,rcx
+    ldr rsi,this
 
     .new hr:HRESULT = this.m_DeskDupl.ReleaseFrame()
     .if (FAILED(hr))
@@ -400,8 +405,10 @@ DUPLICATIONMANAGER::DoneWithFrame endp
 ;
 DUPLICATIONMANAGER::GetOutputDesc proc uses rsi rdi DescPtr:ptr DXGI_OUTPUT_DESC
 
+    ldr rcx,this
+    ldr rdi,DescPtr
+
     lea rsi,[rcx].DUPLICATIONMANAGER.m_OutputDesc
-    mov rdi,rdx
     mov ecx,DXGI_OUTPUT_DESC
     rep movsb
     ret

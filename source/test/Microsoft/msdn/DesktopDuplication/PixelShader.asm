@@ -1,3 +1,4 @@
+include libc.inc
 
 public g_PS
 public g_PS_size

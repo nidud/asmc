@@ -59,7 +59,7 @@ CreateDefs proc uses esi edi ebx windef:bool
             .break    .if ( byte ptr [esi] == '[' )
 
              .if ( windef )
-                fprintf(ebx, "%_s\n", esi)
+                fprintf(ebx, "%s\n", esi)
              .else
                 fprintf(ebx, "++_%s.\'%s\'\n", esi, &dll)
              .endif
@@ -1426,6 +1426,59 @@ CryptXmlOpenToEncode@28
 CryptXmlSetHMACSecret@12
 CryptXmlSign@32
 CryptXmlVerifySignature@12
+
+[d3d11.dll]
+CreateDirect3D11DeviceFromDXGIDevice@8
+CreateDirect3D11SurfaceFromDXGISurface@8
+D3D11CoreCreateDevice@40
+D3D11CoreCreateLayeredDevice@20
+D3D11CoreGetLayeredDeviceSize@8
+D3D11CoreRegisterLayers@8
+D3D11CreateDevice@40
+D3D11CreateDeviceAndSwapChain@4
+D3D11CreateDeviceForD3D12@36
+D3D11On12CreateDevice@40
+D3DKMTCloseAdapter@4
+D3DKMTCreateAllocation@4
+D3DKMTCreateContext@4
+D3DKMTCreateDevice@4
+D3DKMTCreateSynchronizationObject@4
+D3DKMTDestroyAllocation@4
+D3DKMTDestroyContext@4
+D3DKMTDestroyDevice@4
+D3DKMTDestroySynchronizationObject@4
+D3DKMTEscape@4
+D3DKMTGetContextSchedulingPriority@4
+D3DKMTGetDeviceState@4
+D3DKMTGetDisplayModeList@4
+D3DKMTGetMultisampleMethodList@4
+D3DKMTGetRuntimeData@4
+D3DKMTGetSharedPrimaryHandle@4
+D3DKMTLock@4
+D3DKMTOpenAdapterFromHdc@4
+D3DKMTOpenResource@4
+D3DKMTPresent@4
+D3DKMTQueryAdapterInfo@4
+D3DKMTQueryAllocationResidency@4
+D3DKMTQueryResourceInfo@4
+D3DKMTRender@4
+D3DKMTSetAllocationPriority@4
+D3DKMTSetContextSchedulingPriority@4
+D3DKMTSetDisplayMode@4
+D3DKMTSetDisplayPrivateDriverFormat@4
+D3DKMTSetGammaRamp@4
+D3DKMTSetVidPnSourceOwner@4
+D3DKMTSignalSynchronizationObject@4
+D3DKMTUnlock@4
+D3DKMTWaitForSynchronizationObject@4
+D3DKMTWaitForVerticalBlankEvent@4
+D3DPerformance_BeginEvent@8
+D3DPerformance_EndEvent@4
+D3DPerformance_GetStatus@4
+D3DPerformance_SetMarker@8
+EnableFeatureLevelUpgrade@4
+OpenAdapter10@4
+OpenAdapter10_2@4
 
 [dbgeng.dll]
 DebugConnect

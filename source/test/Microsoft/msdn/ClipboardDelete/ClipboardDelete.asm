@@ -4,8 +4,8 @@
 ;
 
 include windows.inc
-include winrt/roapi.inc
-include winrt/Windows.ApplicationModel.DataTransfer.inc
+include roapi.inc
+include Windows.ApplicationModel.DataTransfer.inc
 include stdio.inc
 include tchar.inc
 

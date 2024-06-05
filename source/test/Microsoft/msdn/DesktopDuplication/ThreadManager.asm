@@ -28,7 +28,7 @@ THREADMANAGER::Release endp
 ;
 THREADMANAGER::Clean proc uses rsi rdi rbx
 
-    mov rsi,rcx
+    ldr rsi,this
     .if ( [rsi].m_PtrInfo.PtrShapeBuffer )
 
         free([rsi].m_PtrInfo.PtrShapeBuffer)
@@ -78,7 +78,7 @@ THREADMANAGER::Clean endp
 
 THREADMANAGER::CleanDx proc uses rdi Data:ptr DX_RESOURCES
 
-    mov rdi,rdx
+    ldr rdi,Data
     SafeRelease([rdi].Device)
     SafeRelease([rdi].Context)
     SafeRelease([rdi].VertexShader)
@@ -98,10 +98,12 @@ THREADMANAGER::Initialize proc uses rsi rdi rbx SingleOutput:SINT, OutputCount:U
         UnexpectedErrorEvent:HANDLE, ExpectedErrorEvent:HANDLE,
         TerminateThreadsEvent:HANDLE, SharedHandle:HANDLE, DesktopDim:ptr RECT
 
-    mov rsi,rcx
-    mov [rsi].m_ThreadCount,r8d ; OutputCount
+    ldr rsi,this
+    ldr ecx,OutputCount
 
-    imul ecx,r8d,HANDLE
+    mov [rsi].m_ThreadCount,ecx ; OutputCount
+
+    imul ecx,ecx,HANDLE
     mov [rsi].m_ThreadHandles,malloc(rcx)
 
     imul ecx,[rsi].m_ThreadCount,THREAD_DATA
@@ -168,7 +170,8 @@ THREADMANAGER::Initialize endp
 ;
 THREADMANAGER::InitializeDx proc uses rsi rdi rbx Data:ptr DX_RESOURCES
 
-    mov rsi,rcx
+    ldr rsi,this
+    ldr rdx,Data
 
     .new hr:HRESULT = S_OK
 
@@ -293,6 +296,8 @@ THREADMANAGER::InitializeDx endp
 ;
 THREADMANAGER::GetPointerInfo proc
 
+    ldr rcx,this
+
     .return &[rcx].THREADMANAGER.m_PtrInfo
 
 THREADMANAGER::GetPointerInfo endp
@@ -301,6 +306,8 @@ THREADMANAGER::GetPointerInfo endp
 ; Waits infinitely for all spawned threads to terminate
 ;
 THREADMANAGER::WaitForThreadTermination proc
+
+    ldr rcx,this
 
     .if ( [rcx].THREADMANAGER.m_ThreadCount != 0 )
 

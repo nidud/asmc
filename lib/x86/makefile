@@ -19,6 +19,7 @@ targets = \
 	crypt32.lib	\
 	cryptui.lib	\
 	cryptxml.lib	\
+	d3d11.lib	\
 	dbghelp.lib	\
 	dhcpcsvc.lib	\
 	dnsapi.lib	\

@@ -1,3 +1,5 @@
+include libc.inc
+
 public g_VS
 public g_VS_size
 

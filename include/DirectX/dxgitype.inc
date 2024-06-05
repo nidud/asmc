@@ -49,6 +49,8 @@ DXGI_USAGE_READ_ONLY	equ ( 1L SHL (4 + 4) )
 DXGI_USAGE_DISCARD_ON_PRESENT equ ( 1L SHL (5 + 4) )
 DXGI_USAGE_UNORDERED_ACCESS equ ( 1L SHL (6 + 4) )
 
+.pragma pack(push, size_t)
+
 DXGI_RGB		STRUC
 Red			REAL4 ?
 Green			REAL4 ?
@@ -105,5 +107,7 @@ DXGI_SAMPLE_DESC	STRUC
 Count			UINT ?
 Quality			UINT ?
 DXGI_SAMPLE_DESC	ENDS
+
+.pragma pack(pop)
 
 endif

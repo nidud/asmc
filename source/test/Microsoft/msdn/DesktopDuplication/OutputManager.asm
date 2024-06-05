@@ -35,6 +35,8 @@ OUTPUTMANAGER::InitGeometry endp
 ;
 OUTPUTMANAGER::WindowResize proc
 
+    ldr rcx,this
+
     mov [rcx].OUTPUTMANAGER.m_NeedsResize,true
     ret
 
@@ -46,9 +48,10 @@ OUTPUTMANAGER::WindowResize endp
 OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
         OutCount:ptr UINT, DeskBounds:ptr RECT
 
-    mov rsi,rcx
-
    .new hr:HRESULT
+
+    ldr rsi,this
+    ldr rdx,Window
 
     ; Store window handle
 
@@ -269,8 +272,8 @@ OUTPUTMANAGER::InitOutput endp
 OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
         OutCount:ptr UINT, DeskBounds:ptr RECT
 
-    mov rsi,rcx
-    mov rdi,r9
+    ldr rsi,this
+    ldr rdi,DeskBounds
 
     ; Get DXGI resources
 
@@ -436,7 +439,7 @@ OUTPUTMANAGER::CreateSharedSurf endp
 ;
 OUTPUTMANAGER::UpdateApplicationWindow proc uses rsi PointerInfo:ptr PTR_INFO, Occluded:ptr bool
 
-    mov rsi,rcx
+    ldr rsi,this
 
     ; In a typical desktop duplication application there would be an application
     ; running on one system collecting the desktop images and another
@@ -538,8 +541,8 @@ OUTPUTMANAGER::GetSharedHandle endp
 ;
 OUTPUTMANAGER::DrawFrame proc uses rsi rbx
 
-    mov rsi,rcx
    .new hr:HRESULT
+    ldr rsi,this
 
     ; If window was resized, resize swapchain
 
@@ -643,7 +646,7 @@ OUTPUTMANAGER::DrawFrame endp
 ;
 ; Process both masked and monochrome pointers
 ;
-OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx r12 r13 r14 r15 \
+OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
         IsMono      : bool,
         PtrInfo     : ptr PTR_INFO,
         PtrWidth    : ptr SINT,
@@ -653,8 +656,8 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx r12 r13 r14 r15 \
         InitBuffer  : ptr ptr BYTE,
         Box         : ptr D3D11_BOX
 
-    mov rsi,rcx
-    mov rdi,r8
+    ldr rsi,this
+    ldr rdi,PtrInfo
 
     assume rdi:ptr PTR_INFO
 
@@ -739,8 +742,7 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx r12 r13 r14 r15 \
     mov CopyBufferDesc.MiscFlags,0
 
     .new CopyBuffer:ptr ID3D11Texture2D = nullptr
-    .new hr:HRESULT = this.m_Device.CreateTexture2D(
-            &CopyBufferDesc, nullptr, &CopyBuffer)
+    .new hr:HRESULT = this.m_Device.CreateTexture2D(&CopyBufferDesc, nullptr, &CopyBuffer)
     .if (FAILED(hr))
 
         .return ProcessFailure([rsi].m_Device,
@@ -795,17 +797,22 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx r12 r13 r14 r15 \
 
     ; New mouseshape buffer
 
+   .new InitBuffer32:ptr UINT
+   .new Width:SINT
+   .new Height:SINT
+
     mov rcx,PtrWidth
     mov rdx,PtrHeight
-    mov r11d,[rcx]
     mov eax,[rdx]
-    mov r12d,eax
-    mul r11d
+    mov ecx,[rcx]
+    mov Height,eax
+    mov Width,ecx
+    mul ecx
     mov ecx,BPP
     mul ecx
-    mov r15,malloc(rax)
-    mov rbx,InitBuffer
-    mov [rbx],rax
+    mov InitBuffer32,malloc(rax)
+    mov rcx,InitBuffer
+    mov [rcx],rax
 
     .if ( !rax )
 
@@ -815,7 +822,7 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx r12 r13 r14 r15 \
     .endif
 
 
-    mov r10,MappedSurface.pBits
+    mov rbx,MappedSurface.pBits
     mov eax,MappedSurface.Pitch
     shr eax,2
    .new DesktopPitchInPixels:UINT = eax
@@ -825,18 +832,23 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx r12 r13 r14 r15 \
     xor eax,eax
     xor ecx,ecx
     .if ( GivenLeft < 0 )
+        mov eax,GivenLeft
         neg eax
     .endif
     .if ( GivenTop < 0 )
+        mov ecx,GivenTop
         neg ecx
     .endif
 
    .new SkipX:UINT = eax
    .new SkipY:UINT = ecx
+   .new Col:SINT
+   .new Row:SINT
+   .new Mask:BYTE
 
     .if ( IsMono )
 
-        .fors ( r13d = 0: r13d < r12d: ++r13d )
+        .fors ( Row = 0 : Row < Height : Row++ )
 
             ; Set mask
 
@@ -844,60 +856,65 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx r12 r13 r14 r15 \
             mov ecx,SkipX
             and ecx,7
             shr eax,cl
-            mov ecx,eax
+            mov Mask,al
 
-            .fors ( r14d = 0: r14d < r11d: ++r14d )
+            .fors ( Col = 0 : Col < Width : Col++ )
 
                 ; Get masks using appropriate offsets
 
-                mov eax,r13d
+                mov eax,Row
                 add eax,SkipY
                 mul [rdi].ShapeInfo.Pitch
-                mov edx,r14d
+                mov edx,Col
                 add edx,SkipX
                 shr edx,3
                 add edx,eax
                 add rdx,[rdi].PtrShapeBuffer
-                test [rdx],cl
-                mov r8d,0xFFFFFFFF
+                mov al,Mask
+                test al,[rdx]
+                mov ecx,0xFFFFFFFF
                 mov eax,0xFF000000
-                cmovz r8d,eax
+                cmovz ecx,eax
 
                 mov eax,[rdi].ShapeInfo.Height
                 shr eax,1
-                add eax,r13d
+                add eax,Row
                 add eax,SkipY
                 mul [rdi].ShapeInfo.Pitch
-                mov edx,r14d
+                mov edx,Col
                 add edx,SkipX
                 shr edx,3
                 add edx,eax
                 add rdx,[rdi].PtrShapeBuffer
-                xor r9d,r9d
-                test [rdx],cl
+                mov al,Mask
+                test al,[rdx]
                 mov eax,0x00FFFFFF
-                cmovnz r8d,eax
+                mov edx,0
+                cmovnz edx,eax
 
                 ; Set new pixel
 
-                mov eax,r13d
+                mov eax,Row
                 mul DesktopPitchInPixels
-                add eax,r14d
-                mov eax,[r10+rax*4]
-                and r8d,eax
-                xor r8d,r9d
-                mov eax,r11d
-                mul r13d
-                add eax,r14d
-                mov [r15+rax*4],r8d
+                add eax,Col
+                mov eax,[rbx+rax*4]
+                and ecx,eax
+                xor ecx,edx
+                mov eax,Width
+                mul Row
+                add eax,Col
+                mov rdx,InitBuffer32
+                mov [rdx+rax*4],ecx
 
                 ; Adjust mask
 
-                .if ( ecx == 0x01 )
-                    mov ecx,0x80
+                mov al,Mask
+                .if ( al == 0x01 )
+                    mov al,0x80
                 .else
-                    shr ecx,1
+                    shr al,1
                 .endif
+                mov Mask,al
             .endf
         .endf
 
@@ -905,42 +922,39 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx r12 r13 r14 r15 \
 
         ; Iterate through pixels
 
-        mov r9,[rdi].PtrShapeBuffer
-        mov ecx,[rdi].ShapeInfo.Pitch
+        .fors ( Row = 0 : Row < Height : Row++ )
 
-        .fors ( r13d = 0: r13d < r12d: ++r13d )
-
-
-            .fors ( r14d = 0: r14d < r11d: ++r14d )
+            .fors ( Col = 0 : Col < Width : Col++ )
 
                 ; Set up mask
 
-                mov eax,r13d
+                mov eax,Row
                 add eax,SkipY
-                mov edx,ecx
+                mov edx,[rdi].ShapeInfo.Pitch
                 shr edx,2
                 mul edx
-                mov edx,r14d
+                mov edx,Col
                 add edx,SkipX
                 add edx,eax
                 shl edx,2
-                add rdx,r9
-                mov r8d,[rdx]
+                add rdx,[rdi].PtrShapeBuffer
+                mov ecx,[rdx]
 
-                .if ( r8d & 0xFF000000 )
+                .if ( ecx & 0xFF000000 )
 
                     ; Mask was 0xFF
 
-                    mov eax,r13d
+                    mov eax,Row
                     mul DesktopPitchInPixels
-                    add eax,r14d
-                    xor r8d,[r10+rax*4]
+                    add eax,Col
+                    xor ecx,[rbx+rax*4]
                 .endif
-                or  r8d,0xFF000000
-                mov eax,r11d
-                mul r13d
-                add eax,r14d
-                mov [r15+rax*4],r8d
+                or  ecx,0xFF000000
+                mov eax,Width
+                mul Row
+                add eax,Col
+                mov rdx,InitBuffer32
+                mov [rdx+rax*4],ecx
             .endf
         .endf
     .endif
@@ -965,8 +979,8 @@ OUTPUTMANAGER::ProcessMonoMask endp
 ;
 OUTPUTMANAGER::DrawMouse proc uses rsi rdi rbx PtrInfo:ptr PTR_INFO
 
-    mov rsi,rcx
-    mov rdi,rdx
+    ldr rsi,this
+    ldr rdi,PtrInfo
 
     ; Vars to be used
 
@@ -1196,10 +1210,11 @@ OUTPUTMANAGER::DrawMouse endp
 ;
 OUTPUTMANAGER::InitShaders proc uses rsi
 
-    mov rsi,rcx
-
    .new hr:HRESULT
    .new Size:size_t = g_VS_size
+
+    ldr rsi,this
+
     mov hr,this.m_Device.CreateVertexShader(&g_VS, Size, nullptr, &[rsi].m_VertexShader)
     .if (FAILED(hr))
 
@@ -1240,7 +1255,7 @@ OUTPUTMANAGER::InitShaders endp
 ;
 OUTPUTMANAGER::MakeRTV proc uses rsi
 
-    mov rsi,rcx
+    ldr rsi,this
 
     ; Get backbuffer
 
@@ -1279,8 +1294,11 @@ OUTPUTMANAGER::SetViewPort proc Width:UINT, Height:UINT
 
    .new VP:D3D11_VIEWPORT
 
+    ldr edx,Width
+    ldr eax,Height
+
     cvtsi2ss xmm0,edx
-    cvtsi2ss xmm1,r8d
+    cvtsi2ss xmm1,eax
     movss VP.Width,xmm0
     movss VP.Height,xmm1
     mov VP.MinDepth,0.0
@@ -1298,7 +1316,7 @@ OUTPUTMANAGER::SetViewPort endp
 ;
 OUTPUTMANAGER::ResizeSwapChain proc uses rsi
 
-    mov rsi,rcx
+    ldr rsi,this
 
     SafeRelease([rsi].m_RTV)
 
@@ -1351,7 +1369,8 @@ OUTPUTMANAGER::ResizeSwapChain endp
 ;
 OUTPUTMANAGER::CleanRefs proc uses rsi
 
-    mov rsi,rcx
+    ldr rsi,this
+
     SafeRelease([rsi].m_VertexShader)
     SafeRelease([rsi].m_PixelShader)
     SafeRelease([rsi].m_InputLayout)

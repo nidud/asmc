@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 **.CLASS** _name_ [[ _type_ ]] [[ : public _class_ ]]
 
-Declares a structure type for a [COM interface](https://en.wikipedia.org/wiki/Component_Object_Model).
+Declares a structure type for a COM interface.
 
 A class can have the following kinds of members
 

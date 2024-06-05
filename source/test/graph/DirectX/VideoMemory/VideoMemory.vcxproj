@@ -16,6 +16,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{50D4A542-6425-48E0-8CF4-178DA6361F05}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -25,7 +26,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-  <Import Project="$(AsmcDir)\bin\asmc.props" />
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -43,12 +44,12 @@
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\X64</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
-      <WCharacterSet>NotSet</WCharacterSet>
+      <UnicodeCharacterSet>false</UnicodeCharacterSet>
       <GenerateUnwindInformation>true</GenerateUnwindInformation>
       <GenerateCStackFrame>true</GenerateCStackFrame>
-      <PackAlignmentBoundary>4</PackAlignmentBoundary>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">
@@ -57,21 +58,16 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
-      <WCharacterSet>NotSet</WCharacterSet>
+      <UnicodeCharacterSet>false</UnicodeCharacterSet>
       <GenerateCStackFrame>true</GenerateCStackFrame>
-      <PackAlignmentBoundary>3</PackAlignmentBoundary>
       <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ASMC Include="VideoMemory.asm" />
-    <ASMC Include="VidMemViaD3D9.asm" />
-    <ASMC Include="VidMemViaDDraw.asm" />
-    <ASMC Include="VidMemViaDxDiag.asm" />
-    <ASMC Include="VidMemViaDXGI.asm" />
-    <ASMC Include="VidMemViaWMI.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

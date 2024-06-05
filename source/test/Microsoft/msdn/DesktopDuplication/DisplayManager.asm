@@ -19,7 +19,8 @@ DISPLAYMANAGER::DISPLAYMANAGER endp
 ;
 DISPLAYMANAGER::Release proc uses rsi
 
-    mov rsi,rcx
+    ldr rsi,this
+
     [rsi].CleanRefs()
 
     .if ( [rsi].m_DirtyVertexBufferAlloc )
@@ -36,6 +37,9 @@ DISPLAYMANAGER::Release endp
 ; Initialize D3D variables
 ;
 DISPLAYMANAGER::InitD3D proc Data:ptr DX_RESOURCES
+
+    ldr rcx,this
+    ldr rdx,Data
 
     mov [rcx].DISPLAYMANAGER.m_Device,         [rdx].DX_RESOURCES.Device
     mov [rcx].DISPLAYMANAGER.m_DeviceContext,  [rdx].DX_RESOURCES.Context
@@ -65,8 +69,8 @@ DISPLAYMANAGER::ProcessFrame proc uses rsi rdi rbx Data:ptr FRAME_DATA,
 
     ; Process dirties and moves
 
-    mov rsi,rcx
-    mov rdi,rdx
+    ldr rsi,this
+    ldr rdi,Data
 
     assume rdi:ptr FRAME_DATA
 
@@ -88,9 +92,9 @@ DISPLAYMANAGER::ProcessFrame proc uses rsi rdi rbx Data:ptr FRAME_DATA,
 
         .if ( [rdi].DirtyCount )
 
-            imul r8d,[rdi].MoveCount,sizeof(DXGI_OUTDUPL_MOVE_RECT)
-            add r8,[rdi].MetaData
-            mov retval,[rsi].CopyDirty([rdi].tFrame, SharedSurf, r8,
+            imul ecx,[rdi].MoveCount,sizeof(DXGI_OUTDUPL_MOVE_RECT)
+            add rcx,[rdi].MetaData
+            mov retval,[rsi].CopyDirty([rdi].tFrame, SharedSurf, rcx,
                     [rdi].DirtyCount, OffsetX, OffsetY, DeskDesc)
         .endif
     .endif
@@ -103,6 +107,8 @@ DISPLAYMANAGER::ProcessFrame endp
 ;
 DISPLAYMANAGER::GetDevice proc
 
+    ldr rcx,this
+
     .return [rcx].DISPLAYMANAGER.m_Device
 
 DISPLAYMANAGER::GetDevice endp
@@ -110,7 +116,7 @@ DISPLAYMANAGER::GetDevice endp
 ;
 ; Set appropriate source and destination rects for move rects
 ;
-DISPLAYMANAGER::SetMoveRect proc \
+DISPLAYMANAGER::SetMoveRect proc uses rbx \
         SrcRect   : ptr RECT,
         DestRect  : ptr RECT,
         DeskDesc  : ptr DXGI_OUTPUT_DESC,
@@ -118,123 +124,130 @@ DISPLAYMANAGER::SetMoveRect proc \
         TexWidth  : SINT,
         TexHeight : SINT
 
-    assume r10:ptr DXGI_OUTDUPL_MOVE_RECT
-    mov r10,MoveRect
+    ldr rdx,SrcRect
+    ldr rcx,DestRect
+    ldr rax,DeskDesc
+    mov rbx,MoveRect
+    assume rbx:ptr DXGI_OUTDUPL_MOVE_RECT
 
-    .switch ( [r9].DXGI_OUTPUT_DESC.Rotation )
+    .switch ( [rax].DXGI_OUTPUT_DESC.Rotation )
 
     .case DXGI_MODE_ROTATION_UNSPECIFIED
     .case DXGI_MODE_ROTATION_IDENTITY
 
-        mov [rdx].RECT.left,[r10].SourcePoint.x
-        add eax,[r10].DestinationRect.right
-        sub eax,[r10].DestinationRect.left
+        mov [rdx].RECT.left,[rbx].SourcePoint.x
+        add eax,[rbx].DestinationRect.right
+        sub eax,[rbx].DestinationRect.left
         mov [rdx].RECT.right,eax
-        mov [rdx].RECT.top,[r10].SourcePoint.y
-        add eax,[r10].DestinationRect.bottom
-        sub eax,[r10].DestinationRect.top
+        mov [rdx].RECT.top,[rbx].SourcePoint.y
+        add eax,[rbx].DestinationRect.bottom
+        sub eax,[rbx].DestinationRect.top
         mov [rdx].RECT.bottom,eax
-        mov [r8],[r10].DestinationRect
+        mov [rcx],[rbx].DestinationRect
        .endc
 
     .case DXGI_MODE_ROTATION_ROTATE90
 
         mov eax,TexHeight
-        mov ecx,[r10].SourcePoint.y
-        add ecx,[r10].DestinationRect.bottom
-        sub ecx,[r10].DestinationRect.top
-        sub eax,ecx
+        sub eax,[rbx].SourcePoint.y
+        sub eax,[rbx].DestinationRect.bottom
+        add eax,[rbx].DestinationRect.top
         mov [rdx].RECT.left,eax
         mov eax,TexHeight
-        sub eax,[r10].SourcePoint.y
+        sub eax,[rbx].SourcePoint.y
         mov [rdx].RECT.right,eax
-        mov [rdx].RECT.top,[r10].SourcePoint.x
-        add eax,[r10].DestinationRect.right
-        sub eax,[r10].DestinationRect.left
+        mov [rdx].RECT.top,[rbx].SourcePoint.x
+        add eax,[rbx].DestinationRect.right
+        sub eax,[rbx].DestinationRect.left
         mov [rdx].RECT.bottom,eax
 
         mov eax,TexHeight
-        sub eax,[r10].DestinationRect.bottom
-        mov [r8].RECT.left,eax
-        mov [r8].RECT.top,[r10].DestinationRect.left
+        sub eax,[rbx].DestinationRect.bottom
+        mov [rcx].RECT.left,eax
+        mov [rcx].RECT.top,[rbx].DestinationRect.left
         mov eax,TexHeight
-        sub eax,[r10].DestinationRect.top
-        mov [r8].RECT.right,eax
-        mov [r8].RECT.bottom,[r10].DestinationRect.right
+        sub eax,[rbx].DestinationRect.top
+        mov [rcx].RECT.right,eax
+        mov [rcx].RECT.bottom,[rbx].DestinationRect.right
        .endc
 
     .case DXGI_MODE_ROTATION_ROTATE180
 
-        mov ecx,[r10].SourcePoint.x
-        add ecx,[r10].DestinationRect.right
-        sub ecx,[r10].DestinationRect.left
         mov eax,TexWidth
-        sub eax,ecx
+        sub eax,[rbx].SourcePoint.x
+        sub eax,[rbx].DestinationRect.right
+        add eax,[rbx].DestinationRect.left
         mov [rdx].RECT.left,eax
-        mov ecx,[r10].SourcePoint.y
-        add ecx,[r10].DestinationRect.bottom
-        sub ecx,[r10].DestinationRect.top
         mov eax,TexHeight
-        sub eax,ecx
+        sub eax,[rbx].SourcePoint.y
+        sub eax,[rbx].DestinationRect.bottom
+        add eax,[rbx].DestinationRect.top
         mov [rdx].RECT.top,eax
         mov eax,TexWidth
-        sub eax,[r10].SourcePoint.x
+        sub eax,[rbx].SourcePoint.x
         mov [rdx].RECT.right,eax
         mov eax,TexHeight
-        sub eax,[r10].SourcePoint.y
+        sub eax,[rbx].SourcePoint.y
         mov [rdx].RECT.bottom,eax
 
         mov eax,TexWidth
-        sub eax,[r10].DestinationRect.right
-        mov [r8].RECT.left,eax
+        sub eax,[rbx].DestinationRect.right
+        mov [rcx].RECT.left,eax
         mov eax,TexHeight
-        sub eax,[r10].DestinationRect.bottom
-        mov [r8].RECT.top,eax
+        sub eax,[rbx].DestinationRect.bottom
+        mov [rcx].RECT.top,eax
         mov eax,TexWidth
-        sub eax,[r10].DestinationRect.left
-        mov [r8].RECT.right,eax
+        sub eax,[rbx].DestinationRect.left
+        mov [rcx].RECT.right,eax
         mov eax,TexHeight
-        sub eax,[r10].DestinationRect.top
-        mov [r8].RECT.bottom,eax
+        sub eax,[rbx].DestinationRect.top
+        mov [rcx].RECT.bottom,eax
        .endc
 
     .case DXGI_MODE_ROTATION_ROTATE270
 
-        mov [rdx].RECT.left,[r10].SourcePoint.x
-        mov ecx,TexWidth
-        add eax,[r10].DestinationRect.right
-        sub eax,[r10].DestinationRect.left
-        sub ecx,eax
-        mov [rdx].RECT.top,ecx
-        mov eax,[r10].SourcePoint.y
-        add eax,[r10].DestinationRect.bottom
-        sub eax,[r10].DestinationRect.top
+        mov [rdx].RECT.left,[rbx].SourcePoint.x
+        mov eax,TexWidth
+        sub eax,[rbx].DestinationRect.right
+        add eax,[rbx].DestinationRect.left
+        mov [rdx].RECT.top,eax
+        mov eax,[rbx].SourcePoint.y
+        add eax,[rbx].DestinationRect.bottom
+        sub eax,[rbx].DestinationRect.top
         mov [rdx].RECT.right,eax
         mov eax,TexWidth
-        sub eax,[r10].SourcePoint.x
+        sub eax,[rbx].SourcePoint.x
         mov [rdx].RECT.bottom,eax
 
-        mov [r8].RECT.left,[r10].DestinationRect.top
+        mov [rcx].RECT.left,[rbx].DestinationRect.top
         mov eax,TexWidth
-        sub eax,[r10].DestinationRect.right
-        mov [r8].RECT.top,eax
-        mov [r8].RECT.right,[r10].DestinationRect.bottom
+        sub eax,[rbx].DestinationRect.right
+        mov [rcx].RECT.top,eax
+        mov [rcx].RECT.right,[rbx].DestinationRect.bottom
         mov eax,TexWidth
-        sub eax,[r10].DestinationRect.left
-        mov [r8].RECT.bottom,eax
+        sub eax,[rbx].DestinationRect.left
+        mov [rcx].RECT.bottom,eax
        .endc
 
     .default
         xor eax,eax
-        mov [r8],rax
-        mov [r8+8],rax
+        mov [rcx],rax
+        mov [rcx+8],rax
         mov [rdx],rax
         mov [rdx+8],rax
+ifndef _WIN64
+        mov [ecx+4],eax
+        mov [ecx+12],eax
+        mov [edx+4],eax
+        mov [edx+12],eax
+endif
        .endc
     .endsw
     ret
 
 DISPLAYMANAGER::SetMoveRect endp
+
+    assume rbx:nothing
 
 ;
 ; Copy move rectangles
@@ -249,7 +262,7 @@ DISPLAYMANAGER::CopyMove proc uses rsi rdi rbx \
         TexWidth    : SINT,
         TexHeight   : SINT
 
-    mov rsi,rcx
+    ldr rsi,this
     mov rdi,DeskDesc
     assume rdi:ptr DXGI_OUTPUT_DESC
 
@@ -324,14 +337,14 @@ DISPLAYMANAGER::CopyMove proc uses rsi rdi rbx \
         mov Box.bottom,SrcRect.bottom
         mov Box.back,1
 
-        mov r9d,DestRect.left
-        add r9d,[rdi].DesktopCoordinates.left
-        sub r9d,OffsetX
+        mov edx,DestRect.left
+        add edx,[rdi].DesktopCoordinates.left
+        sub edx,OffsetX
         mov ecx,DestRect.top
         add ecx,[rdi].DesktopCoordinates.top
         sub ecx,OffsetY
         this.m_DeviceContext.CopySubresourceRegion(
-                SharedSurf, 0, r9d, ecx, 0, [rsi].m_MoveSurf, 0, &Box)
+                SharedSurf, 0, edx, ecx, 0, [rsi].m_MoveSurf, 0, &Box)
     .endf
     .return DUPL_RETURN_SUCCESS
 
@@ -349,13 +362,14 @@ DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi rbx \
         FullDesc    : ptr D3D11_TEXTURE2D_DESC,
         ThisDesc    : ptr D3D11_TEXTURE2D_DESC
 
-    mov rsi,rcx
-    mov r10,FullDesc
+    ldr rsi,this
+    ldr rdx,Vertices
+    mov rbx,FullDesc
     mov rdi,DeskDesc
-    assume r10:ptr D3D11_TEXTURE2D_DESC
+    assume rbx:ptr D3D11_TEXTURE2D_DESC
 
-    mov eax,[r10].Width
-    mov ecx,[r10].Height
+    mov eax,[rbx].Width
+    mov ecx,[rbx].Height
     shr eax,1
     shr ecx,1
    .new CenterX:SINT = eax
@@ -370,17 +384,18 @@ DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi rbx \
 
     ; Rotation compensated destination rect
 
-    .new DestDirty:RECT = [r8]
+    ldr rcx,Dirty
+   .new DestDirty:RECT = [rcx]
 
     ; Set appropriate coordinates compensated for rotation
 
-    mov r10,ThisDesc
-    cvtsi2ss xmm4,[r10].D3D11_TEXTURE2D_DESC.Width
-    cvtsi2ss xmm5,[r10].D3D11_TEXTURE2D_DESC.Height
-    cvtsi2ss xmm0,[r8].RECT.left
-    cvtsi2ss xmm1,[r8].RECT.right
-    cvtsi2ss xmm2,[r8].RECT.top
-    cvtsi2ss xmm3,[r8].RECT.bottom
+    mov rbx,ThisDesc
+    cvtsi2ss xmm4,[rbx].D3D11_TEXTURE2D_DESC.Width
+    cvtsi2ss xmm5,[rbx].D3D11_TEXTURE2D_DESC.Height
+    cvtsi2ss xmm0,[rcx].RECT.left
+    cvtsi2ss xmm1,[rcx].RECT.right
+    cvtsi2ss xmm2,[rcx].RECT.top
+    cvtsi2ss xmm3,[rcx].RECT.bottom
     divss xmm0,xmm4 ; left / Width
     divss xmm1,xmm4 ; right / Width
     divss xmm2,xmm5 ; top / Height
@@ -391,13 +406,13 @@ DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi rbx \
     .case DXGI_MODE_ROTATION_ROTATE90
 
         mov eax,Width
-        sub eax,[r8].RECT.bottom
+        sub eax,[rcx].RECT.bottom
         mov DestDirty.left,eax
-        mov DestDirty.top,[r8].RECT.left
+        mov DestDirty.top,[rcx].RECT.left
         mov eax,Width
-        sub eax,[r8].RECT.top
+        sub eax,[rcx].RECT.top
         mov DestDirty.right,eax
-        mov DestDirty.bottom,[r8].RECT.right
+        mov DestDirty.bottom,[rcx].RECT.right
 
         movss [rdx+VERTEX*0].VERTEX.TexCoord.x,xmm1 ; right / Width
         movss [rdx+VERTEX*0].VERTEX.TexCoord.y,xmm3 ; bottom / Height
@@ -412,16 +427,16 @@ DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi rbx \
     .case DXGI_MODE_ROTATION_ROTATE180
 
         mov eax,Width
-        sub eax,[r8].RECT.right
+        sub eax,[rcx].RECT.right
         mov DestDirty.left,eax
         mov eax,Height
-        sub eax,[r8].RECT.bottom
+        sub eax,[rcx].RECT.bottom
         mov DestDirty.top,eax
         mov eax,Width
-        sub eax,[r8].RECT.left
+        sub eax,[rcx].RECT.left
         mov DestDirty.right,eax
         mov eax,Height
-        sub eax,[r8].RECT.top
+        sub eax,[rcx].RECT.top
         mov DestDirty.bottom,eax
 
         movss [rdx+VERTEX*0].VERTEX.TexCoord.x,xmm1 ; right / Width
@@ -436,13 +451,13 @@ DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi rbx \
 
     .case DXGI_MODE_ROTATION_ROTATE270
 
-        mov DestDirty.left,[r8].RECT.top
+        mov DestDirty.left,[rcx].RECT.top
         mov eax,Height
-        sub eax,[r8].RECT.right
+        sub eax,[rcx].RECT.right
         mov DestDirty.top,eax
-        mov DestDirty.right,[r8].RECT.bottom
+        mov DestDirty.right,[rcx].RECT.bottom
         mov eax,Height
-        sub eax,[r8].RECT.left
+        sub eax,[rcx].RECT.left
         mov DestDirty.bottom,eax
 
         movss [rdx+VERTEX*0].VERTEX.TexCoord.x,xmm0 ; left / Width
@@ -535,10 +550,11 @@ DISPLAYMANAGER::CopyDirty proc uses rsi rdi rbx \
         OffsetY     : SINT,
         DeskDesc    : ptr DXGI_OUTPUT_DESC
 
-    mov rsi,rcx
-
    .new hr:HRESULT
    .new FullDesc:D3D11_TEXTURE2D_DESC
+
+    ldr rsi,this
+
     SharedSurf.GetDesc(&FullDesc)
 
    .new ThisDesc:D3D11_TEXTURE2D_DESC
@@ -674,7 +690,8 @@ DISPLAYMANAGER::CopyDirty endp
 ;
 DISPLAYMANAGER::CleanRefs proc uses rsi
 
-    mov rsi,rcx
+    ldr rsi,this
+
     SafeRelease([rsi].m_DeviceContext)
     SafeRelease([rsi].m_Device)
     SafeRelease([rsi].m_MoveSurf)

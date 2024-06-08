@@ -80,7 +80,7 @@ Reserved1               BYTE 2 dup(?)
 BeingDebugged           BYTE ?
 Reserved2               BYTE 1 dup(?)
 Reserved3               PVOID 2 dup(?)
-Ldr                     PPEB_LDR_DATA ?
+_Ldr                    PPEB_LDR_DATA ?
 ProcessParameters       PRTL_USER_PROCESS_PARAMETERS ?
 Reserved4               PVOID 3 dup(?)
 AtlThunkSListPtr        PVOID ?

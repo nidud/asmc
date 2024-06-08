@@ -457,7 +457,7 @@ _mm_cvtt_ss2si macro a:=<xmm0>
     retm<eax>
     endm
 _mm_cvt_si2ss macro x:=<xmm0>, d
-    if (TYPE d) eq 4 and (opattr d) eq 48
+    if (typeof d) eq 4 and (opattr d) eq 48
 	cvtsi2ss x,d
     else
 	mov eax,d

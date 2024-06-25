@@ -76,7 +76,7 @@ __rem64 endp
 
 _atoow proc fastcall dst:string_t, src:string_t, radix:int_t, bsize:int_t
 
-    push    rcx
+    mov     r10,rcx
     mov     r11,rdx
     xor     edx,edx
     mov     [rcx],rdx
@@ -111,7 +111,7 @@ endif
     add     rcx,rax
     dec     r9d
     jnz     .1
-    jmp     .8
+    jmp     .7
 
 .2:
     cmp     r8d,10
@@ -122,7 +122,7 @@ endif
     sub     cl,'0'
 .4:
     dec     r9d
-    jz      .8
+    jz      .7
 
     mov     r8,rdx
     mov     rax,rcx
@@ -140,8 +140,6 @@ endif
     jmp     .4
 
 .5:
-    mov     r10,[rsp]
-.6:
     movzx   eax,byte ptr [r11]
     and     eax,not 0x30
     bt      eax,6
@@ -149,7 +147,7 @@ endif
     and     ecx,0x37
     sub     eax,ecx
     mov     ecx,8
-.7:
+.6:
     movzx   edx,word ptr [r10]
     imul    edx,r8d
     add     eax,edx
@@ -157,18 +155,17 @@ endif
     add     r10,2
     shr     eax,16
     dec     ecx
-    jnz     .7
+    jnz     .6
     sub     r10,16
     inc     r11
     dec     r9d
-    jnz     .6
-    pop     rax
-    jmp     .9
-.8:
-    pop     rax
+    jnz     .5
+    mov     rcx,[r10]
+    mov     rdx,[r10+8]
+.7:
+    mov     rax,r10
     mov     [rax],rcx
     mov     [rax+8],rdx
-.9:
     ret
 
 _atoow endp

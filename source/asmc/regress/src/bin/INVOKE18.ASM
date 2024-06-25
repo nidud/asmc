@@ -24,7 +24,7 @@ fast2 endp
 
 fast3 proc fastcall a1:word, a2:byte, a3:word
 	mov ax,a1
-	add ax,a2
+	add al,a2
 	add ax,a3
 	ret
 fast3 endp
@@ -39,7 +39,7 @@ fast4 endp
 
 fast5 proc fastcall a1:word, a2:byte, a3:word, a4:word, a5:word
 	mov ax,a1
-	add ax,a2
+	add al,a2
 	add ax,a3
 	add ax,a4
 	add ax,a5

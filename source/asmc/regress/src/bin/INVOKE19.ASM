@@ -18,28 +18,28 @@ fast1 endp
 
 fast2 proc fastcall a1:dword, a2:word
 	mov eax,a1
-	add eax,a2
+	add ax,a2
 	ret
 fast2 endp
 
 fast3 proc fastcall a1:dword, a2:byte, a3:dword
 	mov eax,a1
-	add eax,a2
+	add al,a2
 	add eax,a3
 	ret
 fast3 endp
 
 fast4 proc fastcall a1:dword, a2:byte, a3:dword, a4:dword
 	mov eax,a1
-	add eax,a2
+	add al,a2
 	add eax,a3
 	add eax,a4
 	ret
 fast4 endp
 
 fast5 proc fastcall a1:sword, a2:sbyte
-	mov eax,a1
-	add eax,a2
+	mov ax,a1
+	add al,a2
 	ret
 fast5 endp
 

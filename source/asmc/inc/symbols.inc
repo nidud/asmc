@@ -121,6 +121,7 @@ S_ISSTATIC      equ 0x00200000 ; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
 S_VPARRAY       equ 0x00400000 ; p.p.proc() -- nested function call
 S_OPERATOR      equ 0x00800000
 S_REGPARAM      equ 0x01000000 ; syscall: regist[0] = reg, 1 = index
+S_REGPAIR       equ 0x02000000 ; reg::reg param
 
 S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02
@@ -217,7 +218,15 @@ M_PURGED        equ 0x10
     ;
     ; SYM_TMACRO (if it's a register variable for FASTCALL)
     ;
-    regist          ushort_t 2 dup(?)
+    union
+     regist         ushort_t 2 dup(?)
+     struct
+      param_reg     uchar_t ?   ; param register token
+      param_id      uchar_t ?   ; param index
+      param_regs    uchar_t ?   ; number or registers assign to this param
+      param_offs    uchar_t ?   ; stack offset used by inline functions
+     ends
+    ends
 
     union
      ;

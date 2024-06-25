@@ -249,6 +249,8 @@ GetLangType proc __ccall i:ptr int_t, tokenarray:token_t, plang:ptr byte
 
 GetLangType endp
 
+    assume rdx:nothing
+
 ; get size of a register
 ; v2.06: rewritten, since the sflags field
 ; does now contain size for GPR, STx, MMX, XMM regs.
@@ -257,21 +259,24 @@ SizeFromRegister proc fastcall registertoken:int_t
 
     UNREFERENCED_PARAMETER(registertoken)
 
-    mov eax,GetSflagsSp(ecx)
-    and eax,SFR_SIZMSK
-    .return .if eax
+    lea  rdx,SpecialTable
+    imul eax,ecx,special_item
+    add  rdx,rax
+    mov  eax,[rdx].special_item.sflags
+    and  eax,SFR_SIZMSK
 
-    .if ( GetValueSp(ecx) & OP_SR )
+    .ifz
 
         movzx eax,CurrWordSize
-        .return
-    .endif
+        .if !( [rdx].special_item.value & OP_SR )
 
-    ; CRx, DRx, TRx remaining
+            ; CRx, DRx, TRx remaining
 
-    mov eax,4
-    .if ModuleInfo.Ofssize == USE64
-        mov eax,8
+            mov eax,4
+            .if ( ModuleInfo.Ofssize == USE64 )
+                mov eax,8
+            .endif
+        .endif
     .endif
     ret
 
@@ -1077,7 +1082,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
 
     mov  edx,[rdi].hvalue
     xor  ecx,ecx
-    add  eax,LONG_MIN
+    add  eax,INT_MIN
     adc  edx,0
     test edx,edx
     seta cl

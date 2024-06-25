@@ -141,9 +141,7 @@ set_cpu proc fastcall _cpu:int_t, pm:int_t
 set_cpu endp
 
 
-init_options proc public
-
-ifdef ASMC64
+init_win64 proc public
 
     set_cpu( CPU_64, 1 )
     define_name( "_WIN64", "1" )
@@ -163,11 +161,9 @@ else
     mov Options.langtype,LANG_FASTCALL
     mov Options.fctype,FCT_WIN64
 endif
-
-endif
     ret
 
-init_options endp
+init_win64 endp
 
 
 ; current cmdline string is done, get the next one!
@@ -777,18 +773,7 @@ endif
         .return
     .case '6niw'            ; -win64
 ifndef ASMC64
-        set_cpu( CPU_64, 1 )
-        .if ( Options.output_format != OFORMAT_BIN )
-            mov Options.output_format,OFORMAT_COFF
-        .else
-            mov Options._model,MODEL_FLAT
-            .if Options.langtype != LANG_VECTORCALL
-                mov Options.langtype,LANG_FASTCALL
-            .endif
-        .endif
-        mov Options.sub_format,SFORMAT_64BIT
-        define_name( "_WIN64", "1" )
-        or  Options.xflag,OPT_REGAX
+        init_win64()
 endif
         .return
     .case '7Z'          ; -Z7

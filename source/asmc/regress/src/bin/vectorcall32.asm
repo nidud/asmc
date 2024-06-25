@@ -7,8 +7,8 @@
     .code
 
 p1  proc a1:byte, a2:byte, a3:byte, a4:byte, a5:byte, a6:byte
-    mov eax,a1
-    mov eax,a2
+    mov al,a1
+    mov al,a2
     mov al,a3
     mov al,a4
     mov al,a5
@@ -17,8 +17,8 @@ p1  proc a1:byte, a2:byte, a3:byte, a4:byte, a5:byte, a6:byte
 p1  endp
 
 p2  proc a1:word, a2:word, a3:word, a4:word, a5:word, a6:word
-    mov eax,a1
-    mov eax,a2
+    mov ax,a1
+    mov ax,a2
     mov ax,a3
     mov ax,a4
     mov ax,a5
@@ -65,7 +65,7 @@ pp  endp
 
     invoke p1,cl,dl,al,bl,bl,bl
     invoke p2,cx,dx,ax,di,si,bx
-    invoke p4,edx,ecx,eax,edi,esi,ebx
+    invoke p4,ecx,edx,eax,edi,esi,ebx
     invoke p8,1,2,3,4,5,6
     invoke p8,ecx::ecx,ecx::ecx,ecx::ecx,ecx::ecx,ecx::ecx,ecx::ecx
     invoke pf,xmm0,xmm1,xmm2,xmm3,xmm4,xmm5

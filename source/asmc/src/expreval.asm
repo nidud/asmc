@@ -2483,7 +2483,7 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
             .if ( !( [rdi].flags & E_IS_OPEATTR || ( ( [rbx].token == '+' ||
                   [rbx].token == '-' ) && [rbx].specval == 0 ) ) )
 
-                .return( fnasmerr( 2084, [rdi].hlvalue, [rdi].value64 ) )
+                .return( fnasmerr( 2084 ) )
             .endif
         .endif
     .endif

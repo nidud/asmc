@@ -6,6 +6,7 @@
 ifndef __QFLOAT_INC
 define __QFLOAT_INC
 include fltintrn.inc
+include expreval.inc
 
 ifdef _WIN64
 __mul64 proto watcall multiplier:int64_t, multiplicand:int64_t {
@@ -21,5 +22,6 @@ quad_resize proto __ccall :ptr expr, :int_t
 _atoqw      proto fastcall :string_t
 _atoow      proto __ccall :string_t, :string_t, :int_t, :int_t
 atofloat    proto __ccall :ptr, :string_t, :uint_t, :int_t, :uchar_t
+CreateFloat proto __ccall :int_t, :expr_t, :string_t
 
 endif

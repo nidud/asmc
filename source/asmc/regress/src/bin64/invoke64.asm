@@ -1,5 +1,6 @@
 
     ; 2.31.27
+    ; 2.34.65 - changed arg 'e' to QWORD ( was DWORD )
 
 ifndef __ASMC64__
     .x64

@@ -16,7 +16,7 @@ p1  endp
 p2  proc a1:ptr, a2:word, a3:dword, a4:real4, a5:real8, a6:real16
 
     p1(a1, a2, a3)          ; al == 0
-    p1(a1, a2, a3, a4, a5)  ; al == 1
+    p1(a1, a2, a3, a4, a5)  ; al == 2, a4 --> real8
     ret
 p2  endp
 

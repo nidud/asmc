@@ -9,6 +9,7 @@ define __PROC_INC
 ; interface to PROC.ASM routines
 
 ; v2.11: proc status flags
+
 .enum proc_status {
     PRST_INSIDE_PROLOGUE   = 0x01,
     PRST_INSIDE_EPILOGUE   = 0x02,
@@ -23,17 +24,9 @@ ROUND_UP proto watcall i:uint_t, r:uint_t {
     and eax,edx
     }
 
-fastcall_conv	struct
-invokestart	proc __ccall :ptr dsym, :int_t, :int_t, :ptr asm_tok, :ptr int_t
-invokeend	proc __ccall :ptr dsym, :int_t, :int_t
-handleparam	proc __ccall :ptr dsym, :int_t, :ptr dsym, :int_t, :ptr expr, :string_t, :ptr uint_8
-paramcheck	proc __ccall :ptr dsym, :ptr dsym, :ptr int_t
-handlereturn	proc __ccall :ptr dsym, :string_t
-fastcall_conv	ends
-
-externdef	fastcall_tab:fastcall_conv
 externdef	CurrProc:ptr dsym		; current procedure
 externdef	sym_ReservedStack:ptr asym	; max stack space required by INVOKE
+externdef	size_vararg:int_t		; size of :VARARG arguments
 
 ParseProc	proto __ccall :ptr dsym, :int_t, :ptr asm_tok, :int_t, :uchar_t
 CreateProc	proto __ccall :ptr asym, :string_t, :int_t
@@ -46,10 +39,16 @@ ProcInit	proto __ccall
 
 ProcCheckOpen	proto __ccall
 
-GetSegmentPart	proto __ccall :ptr expr, :string_t, :string_t
-fastcall_init	proto __ccall
 GetFastcallId	proto fastcall :int_t
+GetParamDirection proto fastcall :dsym_t
 get_regname	proto __ccall :int_t, :int_t
 get_register	proto __ccall :int_t, :int_t
+
+fastcall_init	proto __ccall
+fast_pcheck	proto __ccall :dsym_t, :dsym_t, :ptr int_t
+fast_fcstart	proto __ccall :dsym_t, :int_t, :int_t, :token_t, :ptr int_t
+fast_param	proto __ccall :dsym_t, :int_t, :dsym_t, :int_t, :ptr expr, :string_t, :ptr byte
+fast_return	proto __ccall :dsym_t, :string_t
+fast_fcend	proto __ccall :dsym_t, :int_t, :int_t
 
 endif

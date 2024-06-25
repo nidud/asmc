@@ -102,9 +102,6 @@ GetValue proc __ccall private uses rsi rdi rbx \
 
 GetValue endp
 
-
-CreateFloat proto __ccall :int_t, :expr_t, :string_t
-
 AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr asm_tok, type:ptr asm_tok, count:int_t
 
   local opnd        : expr

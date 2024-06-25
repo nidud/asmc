@@ -41,6 +41,59 @@ elf64regs       uint_8 T_RDI, T_RSI, T_RDX, T_RCX, T_R8, T_R9
 
     .code
 
+; get segment part of an argument
+; v2.05: extracted from PushInvokeParam(),
+; so it could be used by watc_param() as well.
+
+GetSegmentPart proc __ccall uses rsi rdi rbx opnd:ptr expr, buffer:string_t, fullparam:string_t
+
+    mov esi,T_NULL
+    ldr rdi,opnd
+    mov rax,[rdi].expr.sym
+    mov rdx,[rdi].expr.override
+
+    .if ( rdx )
+
+        .if ( [rdx].asm_tok.token == T_REG )
+            mov esi,[rdx].asm_tok.tokval
+        .else
+            tstrcpy( rdi, [rdx].asm_tok.string_ptr )
+        .endif
+
+    .elseif ( rax && [rax].asym.segm )
+
+        mov rbx,[rax].asym.segm
+        mov rcx,[rbx].dsym.seginfo
+
+        .if ( [rcx].seg_info.segtype == SEGTYPE_DATA ||
+              [rcx].seg_info.segtype == SEGTYPE_BSS )
+            search_assume( rbx, ASSUME_DS, TRUE )
+        .else
+            search_assume( rbx, ASSUME_CS, TRUE )
+        .endif
+        .if ( eax != ASSUME_NOTHING )
+
+            lea rsi,[rax+T_ES] ; v2.08: T_ES is first seg reg in special.h
+        .else
+            .if !GetGroup([rdi].expr.sym)
+                mov rax,rbx
+            .endif
+            .if rax
+                tstrcpy( buffer, [rax].asym.name )
+            .else
+                tstrcat( tstrcpy( buffer, "seg " ), fullparam )
+            .endif
+        .endif
+    .elseif ( rax && [rax].asym.state == SYM_STACK )
+        mov esi,T_SS
+    .else
+        tstrcat( tstrcpy( buffer, "seg " ), fullparam )
+    .endif
+    .return( rsi )
+
+GetSegmentPart endp
+
+
     assume rbx:ptr asm_tok
 
 SkipTypecast proc fastcall private uses rsi rdi rbx fullparam:string_t, i:int_t, tokenarray:ptr asm_tok
@@ -68,7 +121,6 @@ SkipTypecast proc fastcall private uses rsi rdi rbx fullparam:string_t, i:int_t,
 
 SkipTypecast endp
 
-
 ;;
 ;; push one parameter of a procedure called with INVOKE onto the stack
 ;; - i       : index of the start of the parameter list
@@ -82,7 +134,7 @@ SkipTypecast endp
 ;;
 
 PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, pproc:ptr dsym,
-        curr:ptr dsym, reqParam:int_t, r0flags:ptr uint_8
+        curr:ptr dsym, reqParam:int_t, r0flags:ptr uint_t
 
   local currParm:int_t
   local psize:int_t
@@ -214,17 +266,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
 
         .if ( fastcall_id  )
 
-            mov  eax,fastcall_id
-            dec  eax
-            imul ecx,eax,fastcall_conv
-ifdef _WIN64
-            lea r10,fastcall_tab
-            add r10,rcx
-            [r10].fastcall_conv.handleparam( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )
-else
-            fastcall_tab[ecx].handleparam( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )
-endif
-            .if ( eax  )
+            .ifd ( fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )  )
                .return( NOT_ERROR )
             .endif
         .endif
@@ -411,7 +453,7 @@ endif
 
         ; v2.31.35: Watcom handles the two first sets
 
-        .if ( asize2 != 8 && !( fastcall_id == FCT_WATCOMC + 1 && currParm < 3 ) )
+        .if ( asize2 != 8 && !fastcall_id ) ;( fastcall_id == FCT_WATCOMC + 1 && currParm < 3 ) )
 
             AddLineQueueX( " push %r", [rbx].tokval )
         .endif
@@ -594,17 +636,7 @@ endif
 
     .if ( fastcall_id )
 
-        mov  eax,fastcall_id
-        dec  eax
-        imul ecx,eax,fastcall_conv
-ifdef _WIN64
-        lea r10,fastcall_tab
-        add r10,rcx
-        [r10].fastcall_conv.handleparam( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )
-else
-        fastcall_tab[ecx].handleparam( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )
-endif
-        .if ( eax )
+        .ifd ( fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags ) )
 
             .return( NOT_ERROR )
         .endif
@@ -1467,6 +1499,15 @@ skip_push:
 
 PushInvokeParam endp
 
+
+get_regname proc __ccall reg:int_t, size:int_t
+
+    mov reg,get_register( reg, size )
+    GetResWName( reg, LclAlloc(8) )
+    ret
+
+get_regname endp
+
 ; generate a call for a prototyped procedure
 
 InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
@@ -1483,7 +1524,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new namepos:int_t
    .new porder:int_t
    .new j:int_t
-   .new r0flags:uint_8 = 0
+   .new r0flags:uint_t = 0
    .new info:ptr proc_info
    .new curr:ptr dsym
    .new opnd:expr
@@ -1695,17 +1736,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .if ( fastcall_id )
 
         fastcall_init()
-
-        mov eax,fastcall_id
-        dec eax
-        imul ecx,eax,fastcall_conv
-ifdef _WIN64
-        lea r10,fastcall_tab
-        add r10,rcx
-        [r10].fastcall_conv.invokestart( rsi, numParam, i, tokenarray, &value )
-else
-        fastcall_tab[ecx].invokestart( esi, numParam, i, tokenarray, &value )
-endif
+        fast_fcstart( rsi, numParam, i, tokenarray, &value )
         mov porder,eax
     .endif
 
@@ -1750,13 +1781,9 @@ endif
     .endif
 
     ; the parameters are usually stored in "push" order.
-    ; This if() must match the one in proc.c, ParseParams().
+    ; This if() must match the one in proc.asm, ParseParams().
 
-
-    .if ( [rsi].langtype == LANG_STDCALL || [rsi].langtype == LANG_C ||
-          [rsi].langtype == LANG_SYSCALL || [rsi].langtype == LANG_VECTORCALL ||
-          ( ( [rsi].langtype == LANG_WATCALL || [rsi].langtype == LANG_FASTCALL ) && porder ) ||
-          ( fastcall_id == FCT_WIN64 + 1 ) )
+    .ifd GetParamDirection(rsi)
 
         ; v2.23 if stack base is ESP
 
@@ -1829,6 +1856,7 @@ endif
     .endif
 
     mov i,j
+
     mov rdx,info
     mov rcx,pproc
     .if ( !pmacro && [rcx].asym.langtype == LANG_SYSCALL &&
@@ -1883,9 +1911,9 @@ endif
 
         .if ( pmacro )
 
-            .new cnt:int_t = 0
-            .new stk:int_t = 0
-            .new args[128]:string_t
+           .new cnt:int_t = 0
+           .new args[64]:string_t
+           .new regname[16]:sbyte
 
             mov rcx,StringBufferEnd
             inc rcx
@@ -1896,90 +1924,29 @@ endif
 
             .if ( fastcall_id )
 
-                mov rdx,info
-                .for ( rdi = [rdx].proc_info.paralist: rdi: rdi = [rdi].nextparam, cnt++ )
-                    mov eax,cnt
-                    mov args[rax*string_t],NULL
-                .endf
+                .for ( rdx = info, rdi = [rdx].proc_info.paralist: rdi: rdi = [rdi].nextparam, cnt++ )
 
-                .if ( [rsi].langtype == LANG_WATCALL )
-                    mov stk,4
-                .elseif ( [rsi].langtype == LANG_FASTCALL && ModuleInfo.Ofssize == USE32 )
-                    mov stk,2
-                .endif
-                assume rbx:nothing
-                .for ( ebx = 0: ebx < cnt: ebx++ )
-
-                   .new reg:int_t = 0
-                    mov eax,cnt
-                    sub eax,ebx
-                    dec eax
-                   .new ind:int_t = eax
-
-                    mov rdx,info
-                    .for ( rdi = [rdx].proc_info.paralist: ind: rdi = [rdi].nextparam, ind-- )
-                    .endf
-
-                    mov args[rbx*string_t],[rdi].string_ptr
-                    mov size,SizeFromMemtype( [rdi].mem_type, [rdi].Ofssize, [rdi].type )
-
-                    xor eax,eax
-                    mov cl,[rdi].mem_type
-                    .if ( cl == MT_TYPE )
-                        mov rcx,[rdi].type
-                        mov cl,[rcx].asym.mem_type
-                    .endif
-
-                    .if ( [rsi].langtype == LANG_SYSCALL )
-                        movzx eax,[rdi].regist[0]
-                    .elseif ( ebx < 4 )
-                        .if ( cl & MT_FLOAT && size <= 16 )
-                            lea eax,[rbx + T_XMM0]
-                        .elseif ( cl == MT_YWORD )
-                            lea eax,[rbx + T_YMM0]
-                        .elseif ( cl == MT_ZWORD )
-                            lea eax,[rbx + T_ZMM0]
-                        .elseif ( ModuleInfo.Ofssize == USE64 || ebx < stk )
-                            lea rax,win64regs
-                            movzx eax,byte ptr [rax+rbx]
-                        .endif
-                    .elseif ( ebx < 6 && [rsi].langtype == LANG_VECTORCALL )
-                        .if ( cl & MT_FLOAT && size <= 16 )
-                            lea eax,[rbx + T_XMM0]
-                        .elseif ( cl == MT_YWORD )
-                            lea eax,[rbx + T_YMM0]
-                        .elseif ( cl == MT_ZWORD )
-                            lea eax,[rbx + T_ZMM0]
-                        .endif
-                    .endif
-                    mov reg,eax
-
-                    .if ( [rsi].langtype == LANG_WATCALL && ebx < 4 )
-                        .if ( [rdi].mem_type == MT_ABS )
-                            mov args[rbx*string_t],[rdi].name
-                            mov [rdi].name,&@CStr("")
-                        .endif
-                    .elseif ( [rdi].mem_type == MT_ABS )
-                        mov args[rbx*string_t],[rdi].name
-                        mov [rdi].name,&@CStr("")
-                    .elseif ( reg )
-                        mov args[rbx*string_t],get_regname(reg, size)
+                    mov rax,[rdi].name
+                    .if ( [rdi].mem_type == MT_ABS )
+                        lea rdx,@CStr("")
+                        mov [rdi].name,rdx
+                    .elseif ( [rdi].state == SYM_TMACRO )
+                        mov rax,[rdi].string_ptr
+                    .elseif ( [rdi].flags & S_REGPARAM )
+                        movzx ecx,[rdi].param_reg
+                        LclDup( GetResWName(ecx, &regname) )
                     .else
-                        mov args[rbx*string_t],LclAlloc(16)
-                        movzx eax,ModuleInfo.Ofssize
-                        shl eax,2
-                        .if ( ModuleInfo.Ofssize == USE64 )
-                            tsprintf( args[rbx*string_t], "[rsp+%d*%d]", ebx, eax )
-                        .else
-                            mov ecx,ebx
-                            sub ecx,stk
-                            tsprintf( args[rbx*string_t], "[esp+%d*%d]", ecx, eax )
-                        .endif
+                        movzx eax,[rdi].Ofssize
+                        lea   rdx,stackreg
+                        mov   edx,[rdx+rax*4]
+                        movzx ecx,[rdi].param_offs
+                        tsprintf( &regname, "[%r+%u]", edx, ecx )
+                        LclDup( &regname )
                     .endif
+                    movzx ecx,[rdi].param_id
+                    mov args[rcx*string_t],rax
                 .endf
             .endif
-
-            assume rbx:ptr asm_tok
 
             imul ebx,i,asm_tok
             add rbx,tokenarray
@@ -1990,28 +1957,28 @@ endif
 
                 .if ( [rbx].token != T_FINAL )
 
+                    mov rdx,[rbx+asm_tok].tokpos
                     .if ( [rdi].flags & S_ISSTATIC )
-                        tstrcat( p, [rbx+asm_tok*2].tokpos )
-                    .else
-                        tstrcat( p, [rbx+asm_tok].tokpos )
+                        mov rdx,[rbx+asm_tok*2].tokpos
                     .endif
+                    tstrcat( p, rdx )
                 .endif
 
             .elseif ( [rdx].proc_info.flags & PROC_HAS_VARARG )
 
+                mov rdx,[rbx+asm_tok].tokpos
                 .if ( [rbx+asm_tok].tokval == T_ADDR && [rdi].flags & S_METHOD )
-                    tstrcat( p, [rbx+asm_tok*2].tokpos )
-                .else
-                    tstrcat( p, [rbx+asm_tok].tokpos )
+                    mov rdx,[rbx+asm_tok*2].tokpos
                 .endif
+                tstrcat( p, rdx )
            .else
                 mov esi,1
+                mov rdx,args[0]
                 .if ( [rdi].flags & S_ISSTATIC )
-                    tstrcat( p, [rbx+asm_tok*2].string_ptr )
-                    mov esi,0
-                .else
-                    tstrcat( p, args[0] )
+                    mov rdx,[rbx+asm_tok*2].string_ptr
+                    xor esi,esi
                 .endif
+                tstrcat( p, rdx )
                 .for ( : esi < cnt: esi++ )
                     tstrcat( p, ", " )
                     .if ( args[rsi*string_t] )
@@ -2029,10 +1996,9 @@ ifndef ASMC64
             mov edi,T_EAX
             .if ( ModuleInfo.Ofssize == USE64 )
 endif
+                mov edi,T_RAX
                 .if ( [rsi].langtype == LANG_SYSCALL )
                     mov edi,T_R10
-                .else
-                    mov edi,T_RAX
                 .endif
 ifndef ASMC64
             .endif
@@ -2156,13 +2122,7 @@ endif
 
     .elseif ( fastcall_id )
 
-        mov  ecx,fastcall_id
-        dec  ecx
-        imul eax,ecx,fastcall_conv
-        lea  rcx,fastcall_tab
-        add  rax,rcx
-
-        [rax].fastcall_conv.invokeend( pproc, numParam, value )
+        fast_fcend( pproc, numParam, value )
     .endif
 
     LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL )

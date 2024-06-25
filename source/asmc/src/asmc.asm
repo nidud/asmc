@@ -19,7 +19,7 @@ include memalloc.inc
 include symbols.inc
 include input.inc
 
-init_options proto
+init_win64 proto
 
 .data
 ifdef __UNIX__
@@ -507,7 +507,9 @@ else
     signal(SIGTERM, &GeneralFailure)
 endif
 endif
-    init_options()
+ifdef ASMC64
+    init_win64()
+endif
 
     .if !tgetenv( "ASMC" )     ; v2.21 -- getenv() error..
         lea rax,@CStr( "" )

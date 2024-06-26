@@ -3669,7 +3669,7 @@ parsevex endp
 ProcType        proto __ccall :int_t, :token_t
 PublicDirective proto __ccall :int_t, :token_t
 mem2mem         proto __ccall :uint_t, :uint_t, :token_t, :ptr expr
-imm2xmm         proto __ccall :token_t, :expr_t
+imm2xmm         proto __ccall :token_t, :expr_t, :uint_t
 NewDirective    proto __ccall :int_t, :token_t
 
 externdef       CurrEnum:asym_t
@@ -4579,7 +4579,7 @@ endif
         .if ( ModuleInfo.masm_compat_gencode == 0 && CodeInfo.token == T_MOVSD )
             .if ( CodeInfo.opnd[OPND1].type == OP_XMM &&
                 ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
-                .return imm2xmm( tokenarray, &opndx[expr] )
+                .return imm2xmm( tokenarray, &opndx[expr], 8 )
             .endif
         .endif
 
@@ -4670,12 +4670,13 @@ endif
                 .endif
             .endif
 
+            mov ecx,4
             .switch eax
             .case T_PUSH
             .case T_POP
                 ;; v2.06: REX.W prefix is always 0, because size is either 2 or 8
                 and CodeInfo.rex,0x7
-                .endc
+               .endc
             .case T_CALL
             .case T_JMP
             .case T_VMREAD
@@ -4685,10 +4686,11 @@ endif
                 ;; distinguishable!
 
                 and CodeInfo.rex,0x7
-                .endc
+               .endc
                 ;; v2.31.32: immediate operand to XMM { 1.0, 2.0 }
             .case T_MOVAPS
                 ;; v2.31.24: immediate operand to XMM
+                add ecx,8
             .case T_MOVQ
             .case T_MOVSD
             .case T_ADDSD
@@ -4697,6 +4699,7 @@ endif
             .case T_DIVSD
             .case T_COMISD
             .case T_UCOMISD
+                add ecx,4
             .case T_ADDSS
             .case T_SUBSS
             .case T_MULSS
@@ -4708,7 +4711,7 @@ endif
                 .endc .if ( ModuleInfo.masm_compat_gencode != 0 )
                 .endc .if ( CodeInfo.opnd[OPND1].type != OP_XMM )
                 .endc .if !( CodeInfo.opnd[OPNI2].type & OP_I_ANY )
-                .return imm2xmm( tokenarray, &opndx[expr] )
+                .return imm2xmm( tokenarray, &opndx[expr], ecx )
             .case T_MOV:
                 ;; don't use the Wide bit for moves to/from special regs
                 .if ( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPNI2].type & OP_RSPEC )
@@ -4747,18 +4750,20 @@ endif
             xor ebx,ebx
             .if ( eax == T_COMISS && ecx == OP_M32 && ( edx & OP_I_ANY ) )
                 inc ebx
+                mov ecx,4
             .elseif ( eax == T_COMISD && ecx == OP_M64 && ( edx & OP_I_ANY ) )
                 inc ebx
+                mov ecx,8
             .elseif ( ( ecx == OP_XMM ) && ( edx & OP_I_ANY ) )
 
+                mov ecx,4
                 .switch eax
 
+                    ;; v2.31.24: immediate operand to XMM
                     ;; v2.31.32: immediate operand to XMM { 1.0, 2.0 }
 
                 .case T_MOVAPS
-
-                    ;; v2.31.24: immediate operand to XMM
-
+                    add ecx,8
                 .case T_MOVQ
                 .case T_MOVSD
                 .case T_ADDSD
@@ -4767,6 +4772,7 @@ endif
                 .case T_DIVSD
                 .case T_COMISD
                 .case T_UCOMISD
+                    add ecx,4
                 .case T_ADDSS
                 .case T_SUBSS
                 .case T_MULSS
@@ -4779,7 +4785,7 @@ endif
                 .endsw
             .endif
             .if ( ebx )
-                .return imm2xmm( tokenarray, &opndx[expr] )
+                .return imm2xmm( tokenarray, &opndx[expr], ecx )
             .endif
         .endif
     .endif

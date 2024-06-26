@@ -1606,8 +1606,11 @@ handle_address:
                 mov ecx,T_MOVSS
                 .if ( [rsi].sflags & S_ISVARARG && wordsize == 8 )
                     mov ecx,T_CVTSS2SD
+                    .if ( [rdi].kind == EXPR_FLOAT )
+                        mov ecx,T_MOVSD
+                    .endif
                 .endif
-                AddLineQueueX( " %r %r, real4 ptr %s", ecx, ebx, paramvalue )
+                AddLineQueueX( " %r %r, %s", ecx, ebx, paramvalue )
                 .if ( dst_flt )
                     AddLineQueueX( " movq %r, %r", dst_flt, ebx )
                 .endif

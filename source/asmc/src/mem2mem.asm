@@ -441,24 +441,20 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
 immarray16 endp
 
 
-imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t
+imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t, size:uint_t
 
   local flabel[16]:char_t
   local i:int_t
   local opnd2:expr
 
     ldr rdi,tokenarray
-    mov esi,[rdi].tokval
     ldr rcx,opnd
-    mov edx,4
 
-    .if ( [rcx].expr.mem_type == MT_REAL8 )
-        mov edx,8
-    .elseif ( [rcx].expr.mem_type == MT_EMPTY )
-        mov edx,immarray16(rdi, rcx)
+    mov esi,[rdi].tokval
+    .if ( size == 16 && [rcx].expr.mem_type == MT_EMPTY )
+        immarray16(rdi, rcx)
     .endif
-    mov ecx,edx
-    CreateFloat( ecx, opnd, &flabel )
+    CreateFloat( size, opnd, &flabel )
 
     .if ( [rdi+asm_tok].token == T_REG )
         AddLineQueueX( " %r %r,%s", esi, [rdi+asm_tok].tokval, &flabel )

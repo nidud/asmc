@@ -256,17 +256,14 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
 
            .new n:int_t
            .new i:int_t
-            push rax
+            mov n,eax
             mov rax,rbx
             sub rax,tokenarray
             mov ecx,asm_tok
             xor edx,edx
             div ecx
-            mov ecx,eax
-            pop rax
-            mov i,ecx
-            add eax,ecx
-            mov n,eax
+            mov i,eax
+            add n,eax
             tstrcat( rsi, ", " )
             mov rdi,rsi
             mov rsi,[rbx].tokpos

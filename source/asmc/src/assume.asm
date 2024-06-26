@@ -300,8 +300,9 @@ GetStdAssumeEx proc watcall reg:int_t
         push rcx
         imul ecx,eax,assume_info
         lea  rax,StdAssumeTable
-        mov  rax,[rax+rcx].assume_info.symbol
+        add  rax,rcx
         pop  rcx
+        mov  rax,[rax].assume_info.symbol
     .else
         xor eax,eax
     .endif

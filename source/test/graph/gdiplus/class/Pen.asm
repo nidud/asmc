@@ -14,6 +14,7 @@ main proc
 
   .new a:Pen(Blue)
   .new b:Pen
+  .new r:REAL
 
     a.Release()
 
@@ -56,9 +57,9 @@ main proc
     a.SetDashPattern(NULL, 0)
     a.GetDashPatternCount()
     a.GetDashPattern(NULL, 0)
-    a.SetCompoundArray(1.0, 0)
+    a.SetCompoundArray(&r, 0)
     a.GetCompoundArrayCount()
-    a.GetCompoundArray(1.0, 0)
+    a.GetCompoundArray(&r, 0)
     a.GetLastStatus()
     a.SetNativePen(&a)
     a.SetStatus(0)

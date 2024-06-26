@@ -214,18 +214,18 @@ RestoreState proc
 
         ; v2.23: save L"Unicode" flag
 
-        push    rsi
-        mov     rdx,rdi
-        mov     al,ModuleInfo.xflag
-        mov     ecx,sizeof(modstate.modinfo)
-        lea     rsi,modstate.modinfo
-        lea     rdi,ModuleInfo.proc_prologue
-        rep     movsb
-        mov     rdi,rdx
-        pop     rsi
-        and     al,OPT_LSTRING
-        or      ModuleInfo.xflag,al
-
+        test ModuleInfo.xflag,OPT_LSTRING
+        mov rax,rsi
+        mov rdx,rdi
+        mov ecx,sizeof(modstate.modinfo)
+        lea rsi,modstate.modinfo
+        lea rdi,ModuleInfo.proc_prologue
+        rep movsb
+        mov rdi,rdx
+        mov rsi,rax
+        .ifnz
+            or ModuleInfo.xflag,OPT_LSTRING
+        .endif
         SetInputState(&modstate.state)
         SetOfssize()
         SymSetCmpFunc()

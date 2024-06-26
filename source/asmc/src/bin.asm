@@ -1106,8 +1106,11 @@ name    string_t ?
 idx     dd ?
 expitem ends
 
-compare_exp proc __ccall p1:ptr expitem, p2:ptr expitem
-    .return( tstrcmp( [rcx].expitem.name, [rdx].expitem.name ) )
+compare_exp proc fastcall p1:ptr expitem, p2:ptr expitem
+
+    tstrcmp( [rcx].expitem.name, [rdx].expitem.name )
+    ret
+
 compare_exp endp
 
 

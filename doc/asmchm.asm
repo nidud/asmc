@@ -467,7 +467,9 @@ makecss proc
         "h4 { font-size: 110%%; }\n"
         "a { text-decoration: none; }\n"
         "a:hover { color: #ffffff; background: #1b2466; }\n"
-        "pre { width: 96%%; padding: 4px 10px; font-size: 120%%; }\n"
+        "table { font-size: 90%%; }\n"
+        "td { text-align: center; padding: 0px 10px 0px 10px; }\n"
+        "pre { width: 96%%; padding: 4px 10px; font-size: 100%%; }\n"
         "code { width: 96%%; padding: 4px 10px; }\n" )
     fclose(fp)
     ret

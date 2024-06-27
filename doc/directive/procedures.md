@@ -8,6 +8,13 @@ Asmc Macro Assembler Reference
 - [PROTO](proto.md)
 - [LDR](ldr.md)
 
+## Register Calling Conventions
+
+- [FASTCALL](fastcall.md)
+- [SYSCALL](syscall.md)
+- [VECTORCALL](vectorcall.md)
+- [WATCALL](watcall.md)
+
 #### See Also
 
 [Directives Reference](readme.md)

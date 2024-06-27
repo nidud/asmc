@@ -1697,8 +1697,15 @@ endif
 
         .elseif ( resstack == FALSE )
 
-            AddLineQueueX( " push %s", rdx )
-           .return( TRUE )
+            .if ( cpu < P_186 )
+
+                AddLineQueueX( " mov %r, %s\n push %r", ebx, rdx, ebx )
+                mov rax,regs_used
+                or byte ptr [rax],R0_USED
+            .else
+                AddLineQueueX( " push %s", rdx )
+            .endif
+            .return( TRUE )
         .endif
 
         .if ( stack )

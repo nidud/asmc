@@ -377,6 +377,14 @@ makehtm proc uses rsi rdi rbx pm:pmd
                .endc
             .case '_'
                 .endc .if ( byte ptr [rbx-2] == '\' )
+                .if ( i == 0 )
+                    .ifd !strchr(rbx, '_')
+
+                        mov ecx,eax
+                        mov eax,'_'
+                       .endc
+                    .endif
+                .endif
                 .if ( i )
                     fprintf(fp, "</i>" )
                     dec i

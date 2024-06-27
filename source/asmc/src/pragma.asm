@@ -17,17 +17,25 @@
 ;              .pragma(pack(pop))
 ; 2018-03-24 - .pragma(init(<proc>, <priority>))
 ;              .pragma(exit(<proc>, <priority>))
+; 2024-06-27 - .pragma(aux(push, <language>, <fixed>, <regs>))
+;              .pragma(aux(pop))
 ;
 include malloc.inc
 include string.inc
 
 include asmc.inc
+include proc.inc
 include hllext.inc
 
-warning  struct
-id       short_t ?
-state    char_t ?
-warning  ends
+asmcall struct
+fcp     ptr_t ?
+fc      fc_info <>
+asmcall ends
+
+warning struct
+id      short_t ?
+state   char_t ?
+warning ends
 
 MAXSTACK equ 16
 
@@ -87,6 +95,7 @@ MAXSTACK equ 16
     ListStack db MAXSTACK dup(0)
     CrefStack db MAXSTACK dup(0)
     WarnStack intptr_t MAXSTACK dup(0)
+    AsmcStack asmcall MAXSTACK dup(<>)
 
     .code
 
@@ -125,6 +134,121 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     bswap   eax
     .switch eax
+
+      .case "aux "
+
+        ;
+        ; .pragma aux(pop)
+        ;
+        .if [rbx].tokval == T_POP
+
+            add rbx,asm_tok
+            .if [rbx].token == T_CL_BRACKET
+                add rbx,asm_tok
+            .endif
+
+            .endc .if !AsmcCount
+
+            lea  rsi,AsmcStack
+            dec  AsmcCount
+            imul eax,AsmcCount,asmcall
+            add  rsi,rax
+            mov  rdi,[rsi]
+            add  rsi,size_t
+            mov  ecx,asmcall
+            rep  movsb
+           .endc
+        .endif
+        .endc .if [rbx].tokval != T_PUSH
+        .endc .if [rbx+asm_tok].token != T_COMMA
+         add rbx,asm_tok*2
+        .endc .if [rbx].token != T_RES_ID
+         movzx edx,[rbx].bytval
+        .endc .if ( dl != LANG_SYSCALL && dl != LANG_FASTCALL && dl != LANG_VECTORCALL && dl != LANG_WATCALL )
+        .endc .if [rbx+asm_tok].token != T_COMMA
+        .endc .if [rbx+asm_tok*2].token != T_NUM
+        .endc .if [rbx+asm_tok*3].token != T_COMMA
+        .endc .if [rbx+asm_tok*4].token != T_REG
+
+        lea rdi,AsmcStack
+        imul eax,AsmcCount,asmcall
+        add rdi,rax
+        get_fasttype(ModuleInfo.Ofssize, edx)
+        mov [rdi],rax
+        add rdi,size_t
+        mov rsi,rax
+        mov rdx,rax
+        mov ecx,asmcall
+        rep movsb
+        mov rdi,rdx
+        inc AsmcCount
+        xor eax,eax
+        mov ecx,4*8
+        rep stosb
+        mov rdi,rdx
+        mov rcx,[rbx+asm_tok*2].string_ptr
+        .if ( word ptr [rcx] == '1' )
+            mov al,FC_FIXED
+        .endif
+        or al,FC_TMACRO
+        mov [rdi].fc_info.flags,al
+        add rbx,asm_tok*4
+        mov [rdi].fc_info.max_gpr,0
+        mov [rdi].fc_info.gpr_mask,0
+        .for ( esi = 0 : esi < 8 : esi++ )
+
+            .break .if [rbx].token != T_REG
+
+            get_register([rbx].tokval, 1)
+            mov [rdi].fc_info.gpr_db[rsi],al
+            get_register([rbx].tokval, 2)
+            mov [rdi].fc_info.gpr_dw[rsi],al
+            .if ( ModuleInfo.Ofssize )
+                get_register([rbx].tokval, 4)
+                mov [rdi].fc_info.gpr_dd[rsi],al
+            .endif
+            .if ( ModuleInfo.Ofssize == USE64 )
+                get_register([rbx].tokval, 8)
+                mov [rdi].fc_info.gpr_dq[rsi],al
+            .endif
+
+            mov ecx,[rbx].asm_tok.tokval
+            lea rdx,SpecialTable
+            imul eax,ecx,special_item
+            mov cl,[rdx+rax].special_item.bytval
+            mov eax,1
+            shl eax,cl
+            or  [rdi].fc_info.gpr_mask,eax
+            add rbx,asm_tok
+            .if ( [rbx].token == T_COMMA )
+                add rbx,asm_tok
+            .endif
+        .endf
+        mov eax,esi
+        mov [rdi].fc_info.max_gpr,al
+        .if ( [rdi].fc_info.flags & FC_FIXED )
+            mov [rdi].fc_info.max_reg,al
+            mov [rdi].fc_info.max_xmm,al
+        .else
+            add al,8
+            mov [rdi].fc_info.max_reg,al
+            mov [rdi].fc_info.max_xmm,8
+        .endif
+
+        mov cl,ModuleInfo.Ofssize
+        mov eax,2
+        shl eax,cl
+        mov [rdi].fc_info.stk_size,al
+        mov [rdi].fc_info.max_int,al
+        .if ( cl )
+            mov al,4
+        .endif
+        mov [rdi].fc_info.exp_size,al
+        add rbx,asm_tok
+        .if [rbx].token == T_CL_BRACKET
+            add rbx,asm_tok
+        .endif
+        .endc
 
       .case "warn"
 

@@ -25,31 +25,8 @@ include assume.inc
 ;
 ; v2.07: 16-bit MS FASTCALL registers are AX, DX, BX.
 ; And params on stack are in PASCAL order.
-;
-; v2.34.64 - new fastcall info
-;
-define FC_FIXED     0x01    ; registers is equal to param index
-define FC_LOCAL     0x02    ; local stack cleanup
-define FC_RESERVED  0x04    ; use reserved stack
-define FC_TMACRO    0x08    ; add TMACRO register-param name
 
 define R0_USED      0x01    ; register contents of AX/EAX/RAX is destroyed
-
-.template fc_info
-
-    gpr_db      db 8 dup(?) ; General purpose registers
-    gpr_dw      db 8 dup(?)
-    gpr_dd      db 8 dup(?) ; mask bits
-    gpr_dq      db 8 dup(?) ; 0  1  2  3  6  7  8  9
-    gpr_mask    dd ?        ; AX CX DX BX SI DI R8 R9
-    max_reg     db ?        ; 0..14
-    max_gpr     db ?        ; 0..6
-    max_xmm     db ?        ; 0..8
-    max_int     db ?        ; sizeof(reg::reg[::reg::reg])
-    stk_size    db ?        ; word size or 16 for vectorcall
-    exp_size    db ?        ; extend regs to exp_size
-    flags       db ?
-   .ends
 
 .pragma warning(disable: 6004)
 
@@ -76,7 +53,7 @@ fast_table fc_info {
         { T_DIL, T_SIL, T_DL,  T_CL,  T_R8B, T_R9B, 0, 0 }, ; SYSCALL64
         { T_DI,  T_SI,  T_DX,  T_CX,  T_R8W, T_R9W, 0, 0 }, ;
         { T_EDI, T_ESI, T_EDX, T_ECX, T_R8D, T_R9D, 0, 0 },
-        { T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9,  0, 0 }, 0x3C6, 14,  6,  8, 32,  8,  4,  0
+        { T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9,  0, 0 }, 0x3C6, 14,  6,  8, 32,  8,  4,  FC_SYSTEMV
     },{
         { T_AL,  T_DL,  T_BL,  0,     0,     0,     0, 0 }, ; FASTCALL16
         { T_AX,  T_DX,  T_BX,  0,     0,     0,     0, 0 },
@@ -538,7 +515,7 @@ fast_fcstart proc __ccall uses rsi rdi rbx pp:dsym_t, numparams:int_t, start:int
             .return( 0 )
         .endif
 
-    .elseif ( Ofssize == USE64 )
+    .elseif ( [rdi].flags & FC_SYSTEMV )
 
         movzx edi,[rbx].asym.sys_xcnt
         movzx esi,[rbx].asym.sys_rcnt

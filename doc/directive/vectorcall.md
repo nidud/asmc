@@ -9,7 +9,7 @@ Registers are assigned to arguments in the order ECX/EDX or RCX/RDX/R8/R9. Argum
 In addition vectorcall support passing 6 SIMD registers. In 64-bit the arguments are fixed (max 6) but "floating" in 32-bit (max 8).
 
 <table>
-<tr><td>**vectorcall**</td><td>**param**</td><td>**max**</td><td>**min**</td><td>**clean-up**</td><td>**mangle**</td></tr>
+<tr><td><b>vectorcall</b></td><td><b>param</b></td><td><b>max</b></td><td><b>min</b></td><td><b>clean-up</b></td><td><b>mangle</b></td></tr>
 <tr><td>16-bit</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
 <tr><td>32-bit</td><td>reg</td><td>4</td><td>4</td><td>callee</td><td>foo@@n</td></tr>
 <tr><td>64-bit</td><td>stack</td><td>16</td><td>4</td><td>caller</td><td>foo@@n</td></tr>

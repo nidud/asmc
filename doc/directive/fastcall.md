@@ -7,7 +7,7 @@ Microsoft \_\_fastcall Convention.
 Registers are assigned to arguments in the order AX/DX/BX, ECX/EDX, or RCX/RDX/R8/R9. Arguments (except from 16-bit) are assigned from right to left.
 
 <table>
-<tr><td>**fastcall**</td><td>**param**</td><td>**max**</td><td>**min**</td><td>**clean-up**</td><td>**mangle**</td></tr>
+<tr><td><b>fastcall</b></td><td><b>param</b></td><td><b>max</b></td><td><b>min</b></td><td><b>clean-up</b></td><td><b>mangle</b></td></tr>
 <tr><td>16-bit</td><td>reg</td><td>4</td><td>2</td><td>callee</td><td>@foo@n</td></tr>
 <tr><td>32-bit</td><td>reg</td><td>4</td><td>4</td><td>callee</td><td>@foo@n</td></tr>
 <tr><td>64-bit</td><td>stack</td><td>16</td><td>4</td><td>caller</td><td>foo</td></tr>

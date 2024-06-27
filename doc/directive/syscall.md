@@ -9,7 +9,7 @@ Registers are assigned to arguments in the order RDI, RSI, RDX, RCX, R8, R9. Arg
 In addition syscall support passing 8 SIMD registers and param-positions are not fixed.
 
 <table>
-<tr><td>**vectorcall**</td><td>**param**</td><td>**max**</td><td>**min**</td><td>**clean-up**</td><td>**mangle**</td></tr>
+<tr><td><b>syscall</b></td><td><b>param</b></td><td><b>max</b></td><td><b>min</b></td><td><b>clean-up</b></td><td><b>mangle</b></td></tr>
 <tr><td>16-bit</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
 <tr><td>32-bit</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
 <tr><td>64-bit</td><td>stack</td><td>16</td><td>4</td><td>caller</td><td>foo</td></tr>

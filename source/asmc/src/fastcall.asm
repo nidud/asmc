@@ -1060,6 +1060,21 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                         AddLineQueueX( " sub %r, %u\n"
                                        " %r [%r], %r", sreg, src_size, ecx, sreg, src_reg )
                     .endif
+
+                .elseif ( [rdi].kind == EXPR_FLOAT ) ; added v2.34.70
+
+                    xor eax,eax
+                    mov rdx,paramvalue
+                    .if ( [rdi].flags & E_NEGATIVE )
+                        inc eax
+                    .endif
+                    mov rcx,[rdi].float_tok
+                    .if rcx
+                        mov rdx,[rcx].asm_tok.string_ptr
+                    .endif
+                    atofloat( rdi, rdx, 8, eax, 0 )
+                    AddLineQueueX( " push %u\n"
+                                   " push %u", [rdi].hvalue, [rdi].value )
                 .else
                     AddLineQueueX( " push dword ptr %s[4]\n"
                                    " push dword ptr %s[0]", paramvalue, paramvalue )

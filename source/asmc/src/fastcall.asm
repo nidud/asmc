@@ -63,7 +63,7 @@ fast_table fc_info {
         { T_CL,  T_DL,  0,     0,     0,     0,     0, 0 }, ; FASTCALL32
         { T_CX,  T_DX,  0,     0,     0,     0,     0, 0 },
         { T_ECX, T_EDX, 0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x006,  2,  2,  0,  4,  4,  4, FC_FIXED or FC_LOCAL or FC_TMACRO
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x006,  2,  2,  0,  4,  4,  4, FC_LOCAL or FC_TMACRO
     },{
         { T_CL,  T_DL,  T_R8B, T_R9B, 0,     0,     0, 0 }, ; FASTCALL64
         { T_CX,  T_DX,  T_R8W, T_R9W, 0,     0,     0, 0 },
@@ -1573,6 +1573,27 @@ handle_address:
         .if ( dl == MT_REAL4 )
 
             .if ( stack )
+
+                .if ( wordsize == 4 ) ; added v2.34.69
+
+                    .if ( [rdi].kind == EXPR_FLOAT )
+
+                        xor eax,eax
+                        mov rdx,paramvalue
+                        .if ( [rdi].flags & E_NEGATIVE )
+                            inc eax
+                        .endif
+                        mov rcx,[rdi].float_tok
+                        .if rcx
+                            mov rdx,[rcx].asm_tok.string_ptr
+                        .endif
+                        atofloat( rdi, rdx, 4, eax, 0 )
+                        AddLineQueueX( " push %d", [rdi].value )
+                    .else
+                        AddLineQueueX( " push %s", paramvalue )
+                    .endif
+                    .return( TRUE )
+                .endif
 
                 AddLineQueueX( " mov eax, %s", paramvalue )
                 .if ( resstack )

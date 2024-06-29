@@ -2647,15 +2647,28 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
                 mov  ecx,[rax].asm_tok.tokval
                 imul eax,ecx,special_item
                 lea  rdx,SpecialTable
+                add  rdx,rax
 
-                .if ( [rdx+rax].special_item.value & OP_SR )
+                .if ( [rdx].special_item.value & OP_SR )
                     .if ( [rsi].value != 2 && [rsi].value != 4 )
                         .return( fnasmerr( 2032 ) )
                     .endif
                 .else
-                    SizeFromRegister( ecx )
-                    .if ( [rsi].value != eax )
-                        .return( fnasmerr( 2032 ) )
+
+                    mov eax,[rdx].special_item.sflags
+                    and eax,SFR_SIZMSK
+                    .ifz
+                        mov eax,4 ; CRx, DRx, TRx remaining
+                        .if ( ModuleInfo.Ofssize == USE64 )
+                            mov eax,8
+                        .endif
+                    .endif
+                    .if ( eax != [rsi].value )
+
+                        .if !( eax == 16 && ( [rsi].mem_type == MT_REAL4 || [rsi].mem_type == MT_REAL8 ) )
+
+                            .return( fnasmerr( 2032 ) )
+                        .endif
                     .endif
                 .endif
             .elseif ( [rdi].kind == EXPR_FLOAT )

@@ -44,8 +44,6 @@ foo endp
 ```
 Note that a stack-frame is added here regardless if the argument is used or not as the ABI demand the stack to be aligned 16.
 
-_The keyword **syscall** is also used as a 64-bit instruction in addition to the 32-bit stack-based calling convention._
-
 #### See Also
 
 [Procedures](procedures.md) | [Directives Reference](readme.md)

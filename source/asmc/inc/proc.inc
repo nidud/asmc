@@ -71,7 +71,7 @@ get_fasttype	proto fastcall :int_t, :int_t
 fastcall_init	proto __ccall
 fast_pcheck	proto __ccall :dsym_t, :dsym_t, :ptr int_t
 fast_fcstart	proto __ccall :dsym_t, :int_t, :int_t, :token_t, :ptr int_t
-fast_param	proto __ccall :dsym_t, :int_t, :dsym_t, :int_t, :ptr expr, :string_t, :ptr byte
+fast_param	proto __ccall :dsym_t, :int_t, :dsym_t, :int_t, :ptr expr, :string_t, :ptr uint_t
 fast_return	proto __ccall :dsym_t, :string_t
 fast_fcend	proto __ccall :dsym_t, :int_t, :int_t
 

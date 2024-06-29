@@ -26,7 +26,8 @@ include assume.inc
 ; v2.07: 16-bit MS FASTCALL registers are AX, DX, BX.
 ; And params on stack are in PASCAL order.
 
-define R0_USED      0x01    ; register contents of AX/EAX/RAX is destroyed
+define R0_USED      0x00001 ; register contents of AX/EAX/RAX is destroyed
+define X0_USED      0x10000 ; register contents of Z/Y/XMM0 is destroyed
 
 .pragma warning(disable: 6004)
 
@@ -43,62 +44,62 @@ fast_table fc_info {
         { 0,     0,     0,     0,     0,     0,     0, 0 }, ; SYSCALL16
         { 0,     0,     0,     0,     0,     0,     0, 0 },
         { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000,  0,  0,  0,  0,  0,  0,  0
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000000,  0,  0,  0,  0,  0,  0,  0
     },{
         { 0,     0,     0,     0,     0,     0,     0, 0 }, ; SYSCALL32
         { 0,     0,     0,     0,     0,     0,     0, 0 },
         { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000,  0,  0,  0,  0,  0,  0,  0
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000000,  0,  0,  0,  0,  0,  0,  0
     },{
         { T_DIL, T_SIL, T_DL,  T_CL,  T_R8B, T_R9B, 0, 0 }, ; SYSCALL64
         { T_DI,  T_SI,  T_DX,  T_CX,  T_R8W, T_R9W, 0, 0 }, ;
         { T_EDI, T_ESI, T_EDX, T_ECX, T_R8D, T_R9D, 0, 0 },
-        { T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9,  0, 0 }, 0x3C6, 14,  6,  8, 32,  8,  4,  FC_SYSTEMV
+        { T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9,  0, 0 }, 0xFF03C6, 14,  6,  8, 32,  8,  4,  FC_SYSTEMV
     },{
         { T_AL,  T_DL,  T_BL,  0,     0,     0,     0, 0 }, ; FASTCALL16
         { T_AX,  T_DX,  T_BX,  0,     0,     0,     0, 0 },
         { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00D,  3,  3,  0,  4,  2,  2, FC_FIXED or FC_LOCAL or FC_TMACRO
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00000D,  3,  3,  0,  4,  2,  2, FC_FIXED or FC_LOCAL or FC_TMACRO
     },{
         { T_CL,  T_DL,  0,     0,     0,     0,     0, 0 }, ; FASTCALL32
         { T_CX,  T_DX,  0,     0,     0,     0,     0, 0 },
         { T_ECX, T_EDX, 0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x006,  2,  2,  0,  4,  4,  4, FC_LOCAL or FC_TMACRO
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000006,  2,  2,  0,  4,  4,  4, FC_LOCAL or FC_TMACRO
     },{
         { T_CL,  T_DL,  T_R8B, T_R9B, 0,     0,     0, 0 }, ; FASTCALL64
         { T_CX,  T_DX,  T_R8W, T_R9W, 0,     0,     0, 0 },
         { T_ECX, T_EDX, T_R8D, T_R9D, 0,     0,     0, 0 },
-        { T_RCX, T_RDX, T_R8,  T_R9,  0,     0,     0, 0 }, 0x306,  4,  4,  4, 16,  8,  4, FC_FIXED or FC_RESERVED
+        { T_RCX, T_RDX, T_R8,  T_R9,  0,     0,     0, 0 }, 0x0F0306,  4,  4,  4, 16,  8,  4, FC_FIXED or FC_RESERVED
     },{
         { 0,     0,     0,     0,     0,     0,     0, 0 }, ; VECTORCALL16
         { 0,     0,     0,     0,     0,     0,     0, 0 },
         { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000,  0,  0,  0,  0,  0,  0, 0
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000000,  0,  0,  0,  0,  0,  0, 0
     },{
         { T_CL,  T_DL,  0,     0,     0,     0,     0, 0 }, ; VECTORCALL32
         { T_CX,  T_DX,  0,     0,     0,     0,     0, 0 },
         { T_ECX, T_EDX, 0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x006,  8,  2,  6,  4,  4,  4, FC_FIXED or FC_LOCAL or FC_TMACRO
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x3F0006,  8,  2,  6,  4,  4,  4, FC_FIXED or FC_LOCAL or FC_TMACRO
     },{
         { T_CL,  T_DL,  T_R8B, T_R9B, 0,     0,     0, 0 }, ; VECTORCALL64
         { T_CX,  T_DX,  T_R8W, T_R9W, 0,     0,     0, 0 },
         { T_ECX, T_EDX, T_R8D, T_R9D, 0,     0,     0, 0 },
-        { T_RCX, T_RDX, T_R8,  T_R9,  0,     0,     0, 0 }, 0x306,  6,  4,  6, 16, 16,  4, FC_FIXED or FC_RESERVED
+        { T_RCX, T_RDX, T_R8,  T_R9,  0,     0,     0, 0 }, 0x3F0306,  6,  4,  6, 16, 16,  4, FC_FIXED or FC_RESERVED
     },{
         { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0, 0 }, ; WATCALL16
         { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0, 0 },
         { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00F,  4,  4,  0,  8,  2,  0, FC_FIXED or FC_LOCAL or FC_TMACRO
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00000F,  4,  4,  0,  8,  2,  0, FC_FIXED or FC_LOCAL or FC_TMACRO
     },{
         { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0, 0 }, ; WATCALL32
         { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0, 0 },
         { T_EAX, T_EDX, T_EBX, T_ECX, 0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00F,  4,  4,  4,  16, 4,  4, FC_FIXED or FC_TMACRO
+        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00000F,  4,  4,  4,  16, 4,  4, FC_FIXED or FC_TMACRO
     },{
         { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0, 0 }, ; WATCALL64
         { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0, 0 },
         { T_EAX, T_EDX, T_EBX, T_ECX, 0,     0,     0, 0 },
-        { T_RAX, T_RDX, T_RBX, T_RCX, 0,     0,     0, 0 }, 0x00F,  4,  4,  4,  32, 8,  4, FC_FIXED or FC_TMACRO
+        { T_RAX, T_RDX, T_RBX, T_RCX, 0,     0,     0, 0 }, 0x0F000F,  4,  4,  4,  32, 8,  4, FC_FIXED or FC_TMACRO
     }
 
 simd_scratch int_t 0
@@ -427,6 +428,7 @@ fast_fcstart proc __ccall uses rsi rdi rbx pp:dsym_t, numparams:int_t, start:int
             movzx eax,[rdi].asm_tok.token
             .switch eax
             .case T_ID
+            .case T_STYPE
             .case T_OP_SQ_BRACKET
                 mov i,start
                 .endc .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, EXPF_NOERRMSG ) == ERROR )
@@ -626,7 +628,7 @@ fast_fcend endp
     assume rdi:expr_t
 
 fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
-        address:int_t, opnd:ptr expr, paramvalue:string_t, regs_used:ptr byte
+        address:int_t, opnd:ptr expr, paramvalue:string_t, regs_used:ptr uint_t
 
    .new src_size:int_t          ; size of param
    .new src_reg:int_t = 0       ; register param
@@ -754,6 +756,10 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
             .elseif ( memtype == MT_PTR || [rsi].sflags & S_ISVARARG )
                 mov src_size,wordsize
             .endif
+        .elseif ( cl != MT_EMPTY ) ; type ptr reg
+            .ifd SizeFromMemtype( cl, Ofssize, [rdi].type )
+                mov src_size,eax
+            .endif
         .endif
     .elseif ( [rdi].kind == EXPR_ADDR )
         xor eax,eax
@@ -792,8 +798,9 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
         .endif
         .if ( edx & ( OP_XMM or OP_YMM or OP_ZMM ) )
             inc isfloat
+            add ecx,16
         .endif
-        .if ( edx & OP_R )
+        .if ( edx & OP_R || ( ecx < 32 && edx & ( OP_XMM or OP_YMM or OP_ZMM ) ) )
 
             mov reg,eax
             mov eax,1
@@ -807,7 +814,7 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
             .elseif ( byte ptr [rcx] & R0_USED && ( edx & OP_A || reg == T_AH ) )
                 mov destroyed,TRUE
             .endif
-            .if ( [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
+            .if ( edx & OP_R && [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
                 mov src_size,src_rsize
             .endif
         .endif
@@ -952,21 +959,24 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
 
     .if ( ebx )
 
-        .if ( !isfloat || dst_flt )
+        mov ecx,ebx
+        .if ( dst_flt )
+            mov ecx,dst_flt
+        .endif
+        lea   rdx,SpecialTable
+        imul  eax,ecx,special_item
+        movzx ecx,[rdx+rax].special_item.bytval
 
-            mov ecx,ebx
-            .if ( dst_flt )
-                mov ecx,dst_flt
+        .if ( dst_flt || !( src_reg && ecx == src_regno ) )
+
+            ; v2.34.65 - a register is only used if written to
+
+            ; - it may however be sign extended..
+
+            .if ( isfloat && !dst_flt )
+                add ecx,16
             .endif
-            lea   rdx,SpecialTable
-            imul  eax,ecx,special_item
-            movzx ecx,[rdx+rax].special_item.bytval
-
-            .if ( dst_flt || !( src_reg && ecx == src_regno ) )
-
-                ; v2.34.65 - a register is only used if written to
-
-                ; - it may however be sign extended..
+            .if ( ecx < 24 ) ; max 8 float args..
 
                 mov eax,1
                 shl eax,cl
@@ -1509,11 +1519,11 @@ handle_address:
                 .endif
                 .return( TRUE )
             .endif
-            mov esi,edx
+            mov memtype,dl
             .if ( stack && resstack == FALSE )
                 AddLineQueueX( " sub %r, %u", sreg, ecx )
             .endif
-            mov edx,esi
+            mov dl,memtype
 
             mov ecx,T_MOVAPS
             .if ( dl == MT_REAL4 || dl == MT_REAL2 )
@@ -1539,8 +1549,17 @@ handle_address:
                 .endif
             .else
                 .if ( stack )
+                    .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
+                        
+                        mov ecx,T_CVTSS2SD
+                        AddLineQueueX( " %r %r, %r", ecx, src_reg, src_reg )
+                        mov ecx,T_MOVSD
+                    .endif
                     AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, src_reg )
                 .else
+                    .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
+                        mov ecx,T_CVTSS2SD
+                    .endif
                     AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
                     .if ( dst_flt )
                         AddLineQueueX( " movq %r, %r", dst_flt, ebx )
@@ -1561,7 +1580,14 @@ handle_address:
             .if rcx
                 mov rdx,[rcx].asm_tok.string_ptr
             .endif
+
+            ; v2.34.71 - the default size in 64-bit is double..
+
+            .if ( wordsize == 8 && [rsi].sflags & S_ISVARARG && dst_size == 4 )
+                mov dst_size,8
+            .endif
             atofloat( rdi, rdx, dst_size, eax, 0 )
+
             AddLineQueueX( " mov dword ptr [%r+%u], %u", sreg, argoffs, [rdi].l64_l )
             .if ( dst_size == 8 )
                 AddLineQueueX( " mov dword ptr [%r+%u][4], %u", sreg, argoffs, [rdi].l64_h )
@@ -1589,7 +1615,7 @@ handle_address:
 
             .if ( stack )
 
-                .if ( wordsize == 4 ) ; added v2.34.69
+                .if ( wordsize <= 4 ) ; added v2.34.69
 
                     .if ( [rdi].kind == EXPR_FLOAT )
 
@@ -1610,9 +1636,36 @@ handle_address:
                     .return( TRUE )
                 .endif
 
-                AddLineQueueX( " mov eax, %s", paramvalue )
+                mov ecx,T_MOV
+                mov reg,T_EAX
+
+                .if ( [rsi].sflags & S_ISVARARG )
+
+                    ; v2.34.71 - convert float to double in 64-bit
+
+                    mov reg,T_RAX
+                    .if ( [rdi].kind != EXPR_FLOAT )
+
+                        mov ecx,T_CVTSS2SD
+                        mov esi,T_XMM0
+                        AddLineQueueX( " %r %r, dword ptr %s", ecx, esi, paramvalue )
+                        mov rax,regs_used
+                        or byte ptr [rax+2],R0_USED
+
+                        .if ( resstack )
+
+                            mov ecx,T_MOVSD
+                            AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, esi )
+                           .return( TRUE )
+                        .endif
+                        mov ecx,T_MOVQ
+                        AddLineQueueX( " %r %r, %r", ecx, ebx, esi )
+                        jmp stack_ebx
+                    .endif
+                .endif
+                AddLineQueueX( " %r %r, %s", ecx, reg, paramvalue )
                 .if ( resstack )
-                    mov ebx,T_EAX
+                    mov ebx,reg
                 .endif
                 jmp stack_ebx
             .else

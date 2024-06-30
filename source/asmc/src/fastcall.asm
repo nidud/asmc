@@ -884,7 +884,12 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
     .elseif ( [rsi].sflags & S_ISVARARG )
 
         .if ( memtype == MT_EMPTY )
+
             mov memtype,[rdi].mem_type
+            and al,0xE0
+            .if ( al == MT_FLOAT )
+                inc isfloat
+            .endif
         .endif
 
         mov rdx,langid
@@ -959,12 +964,8 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
 
     .if ( ebx )
 
-        mov ecx,ebx
-        .if ( dst_flt )
-            mov ecx,dst_flt
-        .endif
         lea   rdx,SpecialTable
-        imul  eax,ecx,special_item
+        imul  eax,ebx,special_item
         movzx ecx,[rdx+rax].special_item.bytval
 
         .if ( dst_flt || !( src_reg && ecx == src_regno ) )
@@ -973,16 +974,27 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
 
             ; - it may however be sign extended..
 
-            .if ( isfloat && !dst_flt )
+            .if ( [rdx+rax].special_item.value & ( OP_XMM or OP_YMM or OP_ZMM ) )
+
                 add ecx,16
             .endif
-            .if ( ecx < 24 ) ; max 8 float args..
 
-                mov eax,1
+            xor eax,eax
+            .if ( ecx < 24 ) ; max 8 float args..
+                inc eax
                 shl eax,cl
-                mov rcx,regs_used
-                or  [rcx],eax
             .endif
+            mov ecx,dst_flt
+            .if ( ecx )
+
+                imul  ecx,ecx,special_item
+                movzx ecx,[rdx+rcx].special_item.bytval
+                mov   edx,1
+                shl   edx,cl
+                or    eax,edx
+            .endif
+            mov rcx,regs_used
+            or  [rcx],eax
         .endif
 
     .else
@@ -1550,7 +1562,7 @@ handle_address:
             .else
                 .if ( stack )
                     .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
-                        
+
                         mov ecx,T_CVTSS2SD
                         AddLineQueueX( " %r %r, %r", ecx, src_reg, src_reg )
                         mov ecx,T_MOVSD
@@ -1648,7 +1660,7 @@ handle_address:
 
                         mov ecx,T_CVTSS2SD
                         mov esi,T_XMM0
-                        AddLineQueueX( " %r %r, dword ptr %s", ecx, esi, paramvalue )
+                        AddLineQueueX( " %r %r, %s", ecx, esi, paramvalue )
                         mov rax,regs_used
                         or byte ptr [rax+2],R0_USED
 

@@ -115,7 +115,7 @@ atanq proc Q:real16
 ifdef _WIN64
 
   local x:U128
-  local k:int_t, sign:int_t
+  local k[4]:int_t, sign:int_t
 
     movaps  x,xmm0
     mov     eax,x.u32[12]
@@ -201,8 +201,10 @@ ifdef _WIN64
         ; Roundoff to integer is asymmetrical to avoid cancellation when t < 0
         ; (cf. fdlibm).
 
-        mov k,cvtqsi(addq(mulq(8.0, x), 0.25))
-        movaps xmm3,mulq(cvtsiq(k), 0.125)
+        cvtqsi(addq(mulq(8.0, x), 0.25))
+        mov qword ptr k,rax
+        mov qword ptr k[8],rdx
+        movaps xmm3,mulq(cvtsiq(&k), 0.125)
 
         ; Small arctan argument.
         movaps xmm2,addq(mulq(x, xmm3), 1.0)

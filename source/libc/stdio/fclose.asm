@@ -31,7 +31,7 @@ fclose proc uses rbx fp:LPFILE
     dec eax
     mov [rbx]._iobuf._file,eax
 
-    .if ( _close( ecx ) == 0 )
+    .ifd ( _close( ecx ) == 0 )
 
         mov rax,retval
     .endif

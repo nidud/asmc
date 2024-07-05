@@ -316,7 +316,7 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .if ( IsCom )
 
-            .if ( [rbx].tokval >= T_CCALL && [rbx].tokval <= T_WATCALL )
+            .if ( [rbx].tokval >= T_CCALL && [rbx].tokval <= T_ASMCALL )
 
                 inc esi
             .endif
@@ -809,7 +809,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
 
         mov edx,[rbx].tokval
-        .if ( [rbx].token != T_FINAL && edx >= T_CCALL && edx <= T_WATCALL )
+        .if ( [rbx].token != T_FINAL && edx >= T_CCALL && edx <= T_ASMCALL )
 
             mov rcx,ModuleInfo.ComStack
             mov [rcx].com_item.langtype,edx

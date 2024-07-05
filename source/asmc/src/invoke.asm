@@ -2047,7 +2047,7 @@ ifndef ASMC64
 
                 .new reg:int_t = T_EAX ; v2.31 - skip mov eax,reg
 
-                .if ( [rsi].langtype == LANG_WATCALL )
+                .if ( [rsi].langtype == LANG_WATCALL || [rsi].langtype == LANG_ASMCALL )
 
                     ; do nothing: class in eax
 

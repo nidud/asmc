@@ -6,6 +6,9 @@ include windows.inc
 include gdiplus.inc
 include tchar.inc
 
+define WINWIDTH     400
+define WINHEIGHT    200
+
 CLASSNAME equ <"ImageAttributes">
 
     .code

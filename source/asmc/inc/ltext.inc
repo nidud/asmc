@@ -59,6 +59,7 @@ ltext(BASIC,	"BASIC"	 )
 ltext(FASTCALL, "FASTCALL")
 ltext(VECTORCALL, "VECTORCALL")
 ltext(WATCALL,	"WATCALL")
+ltext(ASMCALL,	"ASMCALL")
 
 ltext( TXT_MACROS,	       "Macros:" )
 ltext( TXT_MACROCAP,	       "                N a m e                 Type" )

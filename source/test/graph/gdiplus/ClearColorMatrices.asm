@@ -5,6 +5,9 @@ include windows.inc
 include gdiplus.inc
 include tchar.inc
 
+define WINWIDTH     610
+define WINHEIGHT    300
+
     .data
 
     defaultColorMatrix ColorMatrix { ;; Multiply red component by 1.5.

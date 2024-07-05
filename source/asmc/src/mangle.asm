@@ -227,6 +227,7 @@ Mangle proc __ccall uses rsi rdi sym:asym_t, buffer:string_t
         lea rsi,vect_decorate
     .case LANG_NONE
     .case LANG_SYSCALL
+    .case LANG_ASMCALL
         .endc
     .endsw
     mov  rdx,buffer

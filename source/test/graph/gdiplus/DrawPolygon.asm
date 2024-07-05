@@ -23,7 +23,7 @@ OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
         { 250,  50 },
         { 300, 100 },
         { 350, 200 },
-        { 250, 150 }
+        { 250, 250 }
         }
 
     ; Draw polygon curve to screen.

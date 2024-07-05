@@ -359,12 +359,13 @@ res(FRAME,	frame,		RWT_RES_ID, 0, 0, RWF_X64, P_64, 0)
 ; languages, must be in this order!
 ; token	     str	  type	     value bytval	 flags	   cpu	sflags
 
-res(CCALL,	ccall,		RWT_RES_ID, 0, LANG_C,	      0, P_86, 0)
+res(CCALL,	ccall,		RWT_RES_ID, 0, LANG_C,		0, P_86, 0)
 res(SYSCALL,	syscall,	RWT_RES_ID, 0, LANG_SYSCALL,	0, P_86, 0)
 res(STDCALL,	stdcall,	RWT_RES_ID, 0, LANG_STDCALL,	0, P_86, 0)
 res(PASCAL,	pascal,		RWT_RES_ID, 0, LANG_PASCAL,	0, P_86, 0)
 res(FORTRAN,	fortran,	RWT_RES_ID, 0, LANG_FORTRAN,	0, P_86, 0)
 res(BASIC,	basic,		RWT_RES_ID, 0, LANG_BASIC,	0, P_86, 0)
 res(FASTCALL,	fastcall,	RWT_RES_ID, 0, LANG_FASTCALL,	0, P_86, 0)
-res(VECTORCALL, vectorcall,	RWT_RES_ID, 0, LANG_VECTORCALL, 0, P_64, 0)
+res(VECTORCALL, vectorcall,	RWT_RES_ID, 0, LANG_VECTORCALL, 0, P_86, 0)
 res(WATCALL,	watcall,	RWT_RES_ID, 0, LANG_WATCALL,	0, P_86, 0)
+res(ASMCALL,	asmcall,	RWT_RES_ID, 0, LANG_ASMCALL,	0, P_86, 0)

@@ -1,10 +1,13 @@
 
 build_samples:
-    if not exist x86\NUL md x86
-    if not exist x64\NUL md x64
-    for %%q in (*.asm) do call :build %%q
-    exit
-    :build
-    asmc -nologo -8 -ws -pe -gui -Fo x86\%~n1.exe %1
-    asmc -q -win64  -ws -pe -gui -Fo x64\%~n1.exe %1
+	if not exist x86\NUL md x86
+	if not exist x64\NUL md x64
+	asmc -8 -ws -pe -gui -Fo x86\* *.asm
+	asmc -Zp8 -win64 -ws -pe -gui -Fo x64\* *.asm
+
+clean:
+	if exist x86\NUL del /Q x86\*.*
+	if exist x64\NUL del /Q x64\*.*
+	if exist x86\NUL rd x86
+	if exist x64\NUL rd x64
 

@@ -727,26 +727,20 @@ endif
 
                     lea rbx,buffer[BUFFERSIZE*TCHAR-TCHAR]
 ifdef _WIN64
-                    mov r8,rbx
-                    mov r9d,curadix
+                    mov ecx,curadix
                     shl rdx,32
                     or  rax,rdx
 
                     .fors ( : rax || precision > 0 : precision-- )
 
                         xor edx,edx
-                        div r9
+                        div rcx
                         add dl,'0'
                         .ifs dl > '9'
                             add dl,byte ptr hexoff
                         .endif
-ifdef _UNICODE
-                        mov [rbx],dx
-                        sub rbx,2
-else
-                        mov [rbx],dl
-                        dec rbx
-endif
+                        mov [rbx],_tdl
+                        sub rbx,TCHAR
                     .endf
 
 else
@@ -787,13 +781,8 @@ else
                         .ifs ( ecx > '9' )
                             add ecx,hexoff
                         .endif
-ifdef _UNICODE
-                        mov [ebx],cx
-                        sub ebx,2
-else
-                        mov [ebx],cl
-                        dec ebx
-endif
+                        mov [ebx],_tcl
+                        sub ebx,TCHAR
                     .endf
 
 endif

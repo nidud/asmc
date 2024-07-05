@@ -144,10 +144,9 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
            .endc
         .case LANG_FASTCALL
             mov eax,T_CX - T_AX
-            add eax,ModuleInfo.accumulator
-           .endc
         .case LANG_WATCALL
-            mov eax,ModuleInfo.accumulator
+        .case LANG_ASMCALL
+            add eax,ModuleInfo.accumulator
         .endsw
 
         .if ( eax )

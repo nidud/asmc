@@ -29,7 +29,7 @@ _fgetts proc uses rbx buf:LPTSTR, count:SINT, fp:LPFILE
             .break
         .endif
 
-        mov [rbx],ax
+        mov [rbx],_tal
         add rbx,TCHAR
        .break .if ( eax == 10 )
     .endf

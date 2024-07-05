@@ -2,6 +2,9 @@ include windows.inc
 include gdiplus.inc
 include tchar.inc
 
+define WINWIDTH     450
+define WINHEIGHT    590
+
 CLASSNAME equ <"EffectHueSaturationLightness">
 
     .code

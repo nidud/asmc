@@ -148,7 +148,8 @@ define OPT_PUSHF        0x80 ; Push/Pop flags
     LANG_BASIC      = 6,
     LANG_FASTCALL   = 7,
     LANG_VECTORCALL = 8,
-    LANG_WATCALL    = 9
+    LANG_WATCALL    = 9,
+    LANG_ASMCALL    = 10,
     }
 
 ; Memory model type.

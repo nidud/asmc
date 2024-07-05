@@ -5,7 +5,9 @@
 ;
 include stdio.inc
 include io.inc
+ifdef _UNICODE
 include winnls.inc
+endif
 include tchar.inc
 
     .code

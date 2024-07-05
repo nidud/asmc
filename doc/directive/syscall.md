@@ -4,6 +4,11 @@ Asmc Macro Assembler Reference
 
 System V AMD64 ABI Convention.
 
+- Stack aligned on 16 bytes boundary.
+- 128 bytes red zone below stack.
+- The kernel interface uses RDI, RSI, RDX, R10, R8 and R9.
+- In C++, this is the first parameter.
+
 Registers are assigned to arguments in the order RDI, RSI, RDX, RCX, R8, R9. Arguments are assigned from right to left.
 
 In addition syscall support passing 8 SIMD registers and param-positions are not fixed.

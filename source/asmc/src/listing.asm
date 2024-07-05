@@ -642,7 +642,7 @@ GetMemtypeString endp
 GetLanguage proc fastcall sym:ptr asym
 
     movzx eax,[rcx].asym.langtype
-    .if ( eax <= LANG_WATCALL )
+    .if ( eax <= LANG_ASMCALL )
         lea rdx,strings
         .return( [rdx+rax*string_t+LS_VOID] )
     .endif

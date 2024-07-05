@@ -452,7 +452,27 @@ imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t, size:uint
 
     mov esi,[rdi].tokval
     .if ( size == 16 && [rcx].expr.mem_type == MT_EMPTY )
+
         immarray16(rdi, rcx)
+
+
+    ; added v2.34.73 - movxx reg,0.0
+
+    .elseif ( ( esi == T_MOVSS || esi == T_MOVSD ) && [rdi+asm_tok].token == T_REG )
+
+        mov rax,[rcx]
+        or  rax,[rcx+8]
+ifndef _WIN64
+        or  eax,[ecx+4]
+        or  eax,[ecx+12]
+endif
+        .if ( !rax )
+
+            mov esi,T_XORPS
+            AddLineQueueX( " %r %r,%r", esi, [rdi+asm_tok].tokval, [rdi+asm_tok].tokval )
+
+           .return( RetLineQueue() )
+        .endif
     .endif
     CreateFloat( size, opnd, &flabel )
 

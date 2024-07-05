@@ -25,6 +25,13 @@ WndProc proc WINAPI hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
 WndProc endp
 
+ifndef WINWIDTH
+define WINWIDTH 600
+endif
+ifndef WINHEIGHT
+define WINHEIGHT 400
+endif
+
 _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
   local wc:WNDCLASSEX, msg:MSG, hwnd:HANDLE
@@ -45,7 +52,7 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LP
     .ifd RegisterClassEx(&wc)
 
         .if CreateWindowEx(0, CLASSNAME, "gdiplus.Graphics(" CLASSNAME ")", WS_OVERLAPPEDWINDOW,
-                CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, NULL, NULL, hInstance, 0)
+                CW_USEDEFAULT, CW_USEDEFAULT, WINWIDTH , WINHEIGHT, NULL, NULL, hInstance, 0)
 
             mov hwnd,rax
 ifdef __HWND__

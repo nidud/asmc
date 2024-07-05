@@ -36,8 +36,9 @@ ifdef _UNICODE
             xor eax,eax
         .endif
         mov buffer[rdx],al
-        perror(&buffer)
-else
+        lea rcx,buffer
+        mov message,rcx
+endif
         .if ( byte ptr [rcx] )
 
             _write( 2, message, strlen( rcx ) )
@@ -47,7 +48,6 @@ else
         mov message,_get_sys_err_msg( _get_errno( 0 ) )
         _write( 2, message, strlen( rax ) )
         _write( 2, "\n", 1 )
-endif
     .endif
     ret
 

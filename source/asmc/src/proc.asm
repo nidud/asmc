@@ -117,19 +117,19 @@ align size_t
 
 lang_tab label byte
 
-; lang    1  2  3  4  5  6  7  8  9
+; lang    1  2  3  4  5  6  7  8  9 10
 
 define LANG_REVERSE ($ - lang_tab)
 
-    db 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 ; USE16
-    db 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 ; USE32
-    db 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 ; USE64
+    db 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 ; USE16
+    db 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0 ; USE32
+    db 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0 ; USE64
 
 define LANG_FASTID ($ - lang_tab)
 
-    db 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0 ; USE16
-    db 0, 0, 0, 0, 0, 0, 0, 1, 5, 2, 0, 0, 0, 0, 0, 0 ; USE32
-    db 0, 0, 4, 0, 0, 0, 0, 3, 6, 2, 0, 0, 0, 0, 0, 0 ; USE64
+    db 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 7, 0, 0, 0, 0, 0 ; USE16
+    db 0, 0, 0, 0, 0, 0, 0, 1, 5, 2, 7, 0, 0, 0, 0, 0 ; USE32
+    db 0, 0, 4, 0, 0, 0, 0, 3, 6, 2, 7, 0, 0, 0, 0, 0 ; USE64
 
    .code
 
@@ -438,7 +438,7 @@ ParseInline proc __ccall private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, to
 
         .if ( [rcx].asm_tok.token == T_RES_ID &&
               [rcx].asm_tok.tokval >= T_CCALL &&
-              [rcx].asm_tok.tokval <= T_WATCALL )
+              [rcx].asm_tok.tokval <= T_ASMCALL )
             add rcx,asm_tok
         .endif
 
@@ -2809,7 +2809,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
 
 
     .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( cl == LANG_WATCALL || cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) && Parse_Pass > PASS_1 )
+          ( cl == LANG_ASMCALL || cl == LANG_WATCALL || cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) && Parse_Pass > PASS_1 )
 
         .if ( !( [rdi].asym.sflags & S_STKUSED ) && ![rsi].locallist )
 
@@ -3856,7 +3856,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
 
     .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( cl == LANG_WATCALL || cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) )
+          ( cl == LANG_ASMCALL || cl == LANG_WATCALL || cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) )
 
         ;
         ; Reserved stack is used if a 64-bit fastcall or vectocall is invoked

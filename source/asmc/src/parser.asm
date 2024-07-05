@@ -235,7 +235,7 @@ GetLangType proc __ccall i:ptr int_t, tokenarray:token_t, plang:ptr byte
 
     .if ( [rdx].token == T_RES_ID )
 
-        .if ( [rdx].tokval >= T_CCALL && [rdx].tokval <= T_WATCALL )
+        .if ( [rdx].tokval >= T_CCALL && [rdx].tokval <= T_ASMCALL )
 
             inc dword ptr [rcx]
             mov al,[rdx].bytval

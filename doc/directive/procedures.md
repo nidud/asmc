@@ -10,6 +10,7 @@ Asmc Macro Assembler Reference
 
 ## Register Calling Conventions
 
+- [ASMCALL](asmcall.md)
 - [FASTCALL](fastcall.md)
 - [SYSCALL](syscall.md)
 - [VECTORCALL](vectorcall.md)

@@ -24,7 +24,7 @@ cvthq		proto __cdecl :real2
 cvtssq		proto __cdecl :real4
 cvtsdq		proto __cdecl :real8
 cvtldq		proto __cdecl :real10
-cvtsiq		proto __cdecl :int128_t
+cvtsiq		proto __cdecl :ptr int128_t
 cvtaq		proto __cdecl :string_t, :ptr string_t
 qtofpu		proto __cdecl :real16
 fputoq		proto __cdecl

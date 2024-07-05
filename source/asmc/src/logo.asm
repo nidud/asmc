@@ -19,7 +19,7 @@ cp_logo \
 ifdef ASMC64
  char_t " (x64)"
 endif
- char_t " Version ", ASMC_VERSSTR
+ char_t " Version ", @CatStr(<!">, @CatStr(%ASMC_MAJOR_VER), <.>, @CatStr(%ASMC_MINOR_VER), <.>, @CatStr(%ASMC_SUBMINOR_VER), <!">)
  char_t 0
 
 cp_copyright \

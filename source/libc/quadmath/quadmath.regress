@@ -425,7 +425,7 @@ ifdef _WIN64
                 b real16 _3
                 i oword _2
             .code
-            cvtsiq(i)
+            cvtsiq(addr i)
             movaps r,xmm0
             this.cmpo(addr r, addr b)
             this.SetStatus()

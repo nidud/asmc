@@ -38,72 +38,100 @@ define X0_USED      0x10000 ; register contents of Z/Y/XMM0 is destroyed
 ; must match order of enum fastcall_type!
 ; also see table in mangle.asm!
 ;
-; param   0      1      2      3      4      5      6       mask   max gpr xmm int stk exp flags
+; param   0      1      2      3      4      5      6      7
+
+ms16_regs fc_regs {
+        { T_AL,  T_DL,  T_BL,  0,     0,     0,     0,     0 },
+        { T_AX,  T_DX,  T_BX,  0,     0,     0,     0,     0 },
+        { 0,     0,     0,     0,     0,     0,     0,     0 },
+        { 0,     0,     0,     0,     0,     0,     0,     0 }}
+ms32_regs fc_regs {
+        { T_CL,  T_DL,  0,     0,     0,     0,     0,     0 },
+        { T_CX,  T_DX,  0,     0,     0,     0,     0,     0 },
+        { T_ECX, T_EDX, 0,     0,     0,     0,     0,     0 },
+        { 0,     0,     0,     0,     0,     0,     0,     0 }}
+ms64_regs fc_regs {
+        { T_CL,  T_DL,  T_R8B, T_R9B, 0,     0,     0,     0 },
+        { T_CX,  T_DX,  T_R8W, T_R9W, 0,     0,     0,     0 },
+        { T_ECX, T_EDX, T_R8D, T_R9D, 0,     0,     0,     0 },
+        { T_RCX, T_RDX, T_R8,  T_R9,  0,     0,     0,     0 }}
+sysv_regs fc_regs {
+        { T_DIL, T_SIL, T_DL,  T_CL,  T_R8B, T_R9B, 0,     0 },
+        { T_DI,  T_SI,  T_DX,  T_CX,  T_R8W, T_R9W, 0,     0 },
+        { T_EDI, T_ESI, T_EDX, T_ECX, T_R8D, T_R9D, 0,     0 },
+        { T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9,  0,     0 }}
+ow16_regs fc_regs {
+        { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0,     0 },
+        { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0,     0 },
+        { 0,     0,     0,     0,     0,     0,     0,     0 },
+        { 0,     0,     0,     0,     0,     0,     0,     0 }}
+ow32_regs fc_regs {
+        { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0,     0 },
+        { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0,     0 },
+        { T_EAX, T_EDX, T_EBX, T_ECX, 0,     0,     0,     0 },
+        { 0,     0,     0,     0,     0,     0,     0,     0 }}
+ow64_regs fc_regs {
+        { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0,     0 },
+        { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0,     0 },
+        { T_EAX, T_EDX, T_EBX, T_ECX, 0,     0,     0,     0 },
+        { T_RAX, T_RDX, T_RBX, T_RCX, 0,     0,     0,     0 }}
+user_regs fc_regs {
+        { T_AL,  T_DL,  T_CL,  T_R8B, T_R9B, T_R10B,T_R11B,0 },
+        { T_AX,  T_DX,  T_CX,  T_R8W, T_R9W, T_R10W,T_R11W,0 },
+        { T_EAX, T_EDX, T_ECX, T_R8D, T_R9D, T_R10D,T_R11D,0 },
+        { T_RAX, T_RDX, T_RCX, T_R8,  T_R9,  T_R10, T_R11, 0 }}
 
 fast_table fc_info {
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, ; SYSCALL16
-        { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000000,  0,  0,  0,  0,  0,  0,  0
-    },{
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, ; SYSCALL32
-        { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000000,  0,  0,  0,  0,  0,  0,  0
-    },{
-        { T_DIL, T_SIL, T_DL,  T_CL,  T_R8B, T_R9B, 0, 0 }, ; SYSCALL64
-        { T_DI,  T_SI,  T_DX,  T_CX,  T_R8W, T_R9W, 0, 0 }, ;
-        { T_EDI, T_ESI, T_EDX, T_ECX, T_R8D, T_R9D, 0, 0 },
-        { T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9,  0, 0 }, 0xFF03C6, 14,  6,  8, 32,  8,  4,  FC_SYSTEMV
-    },{
-        { T_AL,  T_DL,  T_BL,  0,     0,     0,     0, 0 }, ; FASTCALL16
-        { T_AX,  T_DX,  T_BX,  0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00000D,  3,  3,  0,  4,  2,  2, FC_FIXED or FC_LOCAL or FC_TMACRO
-    },{
-        { T_CL,  T_DL,  0,     0,     0,     0,     0, 0 }, ; FASTCALL32
-        { T_CX,  T_DX,  0,     0,     0,     0,     0, 0 },
-        { T_ECX, T_EDX, 0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000006,  2,  2,  0,  4,  4,  4, FC_LOCAL or FC_TMACRO
-    },{
-        { T_CL,  T_DL,  T_R8B, T_R9B, 0,     0,     0, 0 }, ; FASTCALL64
-        { T_CX,  T_DX,  T_R8W, T_R9W, 0,     0,     0, 0 },
-        { T_ECX, T_EDX, T_R8D, T_R9D, 0,     0,     0, 0 },
-        { T_RCX, T_RDX, T_R8,  T_R9,  0,     0,     0, 0 }, 0x0F0306,  4,  4,  4, 16,  8,  4, FC_FIXED or FC_RESERVED
-    },{
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, ; VECTORCALL16
-        { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x000000,  0,  0,  0,  0,  0,  0, 0
-    },{
-        { T_CL,  T_DL,  0,     0,     0,     0,     0, 0 }, ; VECTORCALL32
-        { T_CX,  T_DX,  0,     0,     0,     0,     0, 0 },
-        { T_ECX, T_EDX, 0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x3F0006,  8,  2,  6,  4,  4,  4, FC_FIXED or FC_LOCAL or FC_TMACRO
-    },{
-        { T_CL,  T_DL,  T_R8B, T_R9B, 0,     0,     0, 0 }, ; VECTORCALL64
-        { T_CX,  T_DX,  T_R8W, T_R9W, 0,     0,     0, 0 },
-        { T_ECX, T_EDX, T_R8D, T_R9D, 0,     0,     0, 0 },
-        { T_RCX, T_RDX, T_R8,  T_R9,  0,     0,     0, 0 }, 0x3F0306,  6,  4,  6, 16, 16,  4, FC_FIXED or FC_RESERVED
-    },{
-        { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0, 0 }, ; WATCALL16
-        { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00000F,  4,  4,  0,  8,  2,  0, FC_FIXED or FC_LOCAL or FC_TMACRO
-    },{
-        { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0, 0 }, ; WATCALL32
-        { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0, 0 },
-        { T_EAX, T_EDX, T_EBX, T_ECX, 0,     0,     0, 0 },
-        { 0,     0,     0,     0,     0,     0,     0, 0 }, 0x00000F,  4,  4,  4,  16, 4,  4, FC_FIXED or FC_TMACRO
-    },{
-        { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0, 0 }, ; WATCALL64
-        { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0, 0 },
-        { T_EAX, T_EDX, T_EBX, T_ECX, 0,     0,     0, 0 },
-        { T_RAX, T_RDX, T_RBX, T_RCX, 0,     0,     0, 0 }, 0x0F000F,  4,  4,  4,  32, 8,  4, FC_FIXED or FC_TMACRO
-    }
 
-simd_scratch int_t 0
-wreg_scratch int_t 0
+;      gpr xmm exp int    mask   regs  flags
+
+        0,  0,  0,  0, 0x000000, NULL, 0 },{ ; USE16
+        0,  0,  0,  0, 0x000000, NULL, 0 },{ ; USE32
+        0,  0,  0,  0, 0x000000, NULL, 0 },{ ; USE64
+; 1 C
+        0,  0,  0,  0, 0x000000, NULL, 0 },{
+        0,  0,  0,  0, 0x000000, NULL, 0 },{
+        0,  0,  0,  0, 0x000000, NULL, 0 },{
+; 2 SYSCALL
+        0,  0,  0,  0, 0x000000, NULL, 0 },{
+        0,  0,  0,  0, 0x000000, NULL, 0 },{
+        6,  8,  4, 16, 0xFF03C6, sysv_regs, FC_SYSTEMV },{
+; 3 STDCALL
+        0,  0,  0,  0, 0x000000, NULL, FC_LOCAL },{
+        0,  0,  0,  0, 0x000000, NULL, FC_LOCAL },{
+        0,  0,  0,  0, 0x000000, NULL, FC_LOCAL },{
+; 4 PASCAL
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+; 5 FORTRAN
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+; 6 BASIC
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+        0,  0,  0,  0, 0x000000, NULL, FC_PASCAL or FC_LOCAL },{
+; 7 FASTCALL
+        3,  0,  2,  4, 0x00000D, ms16_regs, FC_PASCAL or FC_FIXED or FC_LOCAL or FC_TMACRO },{
+        2,  0,  4,  4, 0x000006, ms32_regs, FC_LOCAL or FC_TMACRO },{
+        4,  4,  4,  8, 0x0F0306, ms64_regs, FC_FIXED or FC_RESERVED },{
+; 8 VECTORCALL
+        3,  0,  2,  4, 0x00000D, ms16_regs, FC_FIXED or FC_LOCAL or FC_TMACRO },{
+        2,  8,  4,  4, 0x3F0006, ms32_regs, FC_LOCAL or FC_TMACRO },{
+        4,  6,  4,  8, 0x3F0306, ms64_regs, FC_FIXED or FC_RESERVED },{
+; 9 WATCALL
+        4,  0,  0,  8, 0x00000F, ow16_regs, FC_FIXED or FC_LOCAL or FC_TMACRO },{
+        4,  0,  4, 16, 0x00000F, ow32_regs, FC_FIXED or FC_TMACRO },{
+        4,  4,  4, 16, 0x0F000F, ow64_regs, FC_FIXED or FC_TMACRO },{
+; 10 ASMCALL
+        3,  0,  0,  4, 0x000007, user_regs, FC_TMACRO },{
+        3,  0,  0,  8, 0x000007, user_regs, FC_TMACRO },{
+        7,  8,  0, 16, 0xFF0F07, user_regs, FC_TMACRO }
+
+
+        simd_scratch int_t 0
+        wreg_scratch int_t 0
 
     .code
 
@@ -157,8 +185,6 @@ get_register endp
 
 get_fasttype proc fastcall Ofssize:int_t, langtype:int_t
 
-    sub     edx,2
-    and     edx,3
     imul    edx,edx,fc_info * 3
     imul    ecx,ecx,fc_info
     lea     rax,fast_table
@@ -172,6 +198,7 @@ get_fasttype endp
 
 get_nextreg proc watcall private reg:int_t, fp:ptr fc_info
 
+    mov     rdx,[rdx].fc_info.regpack
     xchg    rdx,rdi
     mov     ecx,8*4-1
     repnz   scasb
@@ -232,8 +259,8 @@ fast_pcheck proc __ccall uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:pt
     add eax,edx
     not edx
     and eax,edx
-    .if ( al < [rbx].stk_size )
-        mov al,[rbx].stk_size
+    .if ( eax < wordsize )
+        mov eax,wordsize
     .endif
     mov rdx,pProc
     .if ( al > [rdx].asym.sys_size )
@@ -260,7 +287,7 @@ fast_pcheck proc __ccall uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:pt
             lea edx,[rax+T_YMM0]
         .endif
         mov [rsi].param_reg,dl
-        .if ( al >= [rbx].max_xmm )
+        .if ( al >= [rbx].maxxmm )
            .return( 0 )
         .endif
         inc byte ptr [rdi+1]
@@ -273,11 +300,11 @@ fast_pcheck proc __ccall uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:pt
         .if ( ecx > eax ) ; span 4 registers ?
 
             lea edx,[rax*2]
-            .if ( edx == ecx && dl <= [rbx].max_int )
+            .if ( edx == ecx && dl <= [rbx].maxint )
 
                 mov dl,[rdi]
                 add dl,4
-                .if !( dl > [rbx].max_gpr || ( [rbx].flags & FC_FIXED && dl > [rbx].max_reg ) )
+                .if !( dl > [rbx].maxgpr )
 
                     add byte ptr [rdi],2
                     mov [rsi].param_regs,2
@@ -294,32 +321,39 @@ fast_pcheck proc __ccall uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:pt
         .else
             movzx edx,byte ptr [rdi]
         .endif
-        .if ( dl >= [rbx].max_gpr || ( [rbx].flags & FC_FIXED && dl >= [rbx].max_reg ) )
+        .if ( dl >= [rbx].maxgpr )
             .return( 0 )
         .endif
 
-        .if ( eax == ecx && al <= [rbx].max_int )
+        .if ( eax == ecx && al <= [rbx].maxint )
 
             mov al,dl
             inc al
-            .if ( al >= [rbx].max_gpr || ( [rbx].flags & FC_FIXED && al >= [rbx].max_reg ) )
+            .if ( al >= [rbx].maxgpr )
                 .return( 0 )
             .endif
             .for ( eax = 1 : eax < wordsize : eax+=eax )
                 add edx,8
             .endf
-            mov [rsi].param_reg,[rbx+rdx]
+            add rdx,[rbx].regpack
+            mov [rsi].param_reg,[rdx]
             or  [rsi].flags,S_REGPAIR
             add byte ptr [rdi],2
             add [rsi].param_regs,2
 
-        .elseif ( ecx > wordsize )
-            .return( 0 )
         .else
+            .if ( ecx > wordsize )
+
+                .if !( [rbx].flags & FC_RESERVED )
+                    .return( 0 )
+                .endif
+                mov ecx,wordsize
+            .endif
             .for ( eax = 1 : eax < ecx : eax+=eax )
                 add edx,8
             .endf
-            mov [rsi].param_reg,[rbx+rdx]
+            add rdx,[rbx].regpack
+            mov [rsi].param_reg,[rdx]
             inc byte ptr [rdi]
             inc [rsi].param_regs
         .endif
@@ -470,8 +504,12 @@ fast_fcstart proc __ccall uses rsi rdi rbx pp:dsym_t, numparams:int_t, start:int
 
             xor eax,eax
             mov [rcx],eax
-            movzx ecx,[rdi].stk_size
+            mov ecx,wordsize
+            movzx edx,[rdi].maxxmm ; this will fail in vectorcall with GPR's > 4..
             movzx eax,[rbx].asym.sys_size
+            .if ( dl > [rdi].maxgpr )
+                add ecx,ecx
+            .endif
             .if ( eax > ecx )
                 mov ecx,eax
             .endif
@@ -481,7 +519,7 @@ fast_fcstart proc __ccall uses rsi rdi rbx pp:dsym_t, numparams:int_t, start:int
             add eax,simd_scratch
             add eax,wreg_scratch
             sub eax,absparams
-            mov dl,[rdi].max_reg ; this will fail in vectorcall with GPR's > 4..
+
             .if ( al < dl )
                 mov al,dl
             .endif
@@ -492,7 +530,7 @@ fast_fcstart proc __ccall uses rsi rdi rbx pp:dsym_t, numparams:int_t, start:int
 
             ; v2.31.24: skip stack alloc if inline
 
-            .if ( [rbx].asym.flags & S_ISINLINE && dl == [rdi].max_reg )
+            .if ( [rbx].asym.flags & S_ISINLINE && dl == [rdi].maxxmm )
                 xor eax,eax
             .endif
             mul ecx
@@ -679,11 +717,11 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
         inc al
     .endif
     mov resstack,al
-    mov al,[rdx].fc_info.exp_size
+    mov al,[rdx].fc_info.expsize
     mov expsize,eax
-    mov al,[rdx].fc_info.max_int
+    mov al,[rdx].fc_info.maxint
     mov maxint,eax
-    mov rmask,[rdx].fc_info.gpr_mask
+    mov rmask,[rdx].fc_info.regmask
     mov al,[rsi].mem_type
     .if ( al == MT_TYPE )
         mov rax,[rsi].type
@@ -898,25 +936,27 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
             mov eax,index
             .if ( isfloat )
 
-                .if ( al < [rdx].fc_info.max_xmm )
+                .if ( al < [rdx].fc_info.maxxmm )
 
                     lea ebx,[rax+T_XMM0]
-                    .if ( al < [rdx].fc_info.max_gpr )
+                    .if ( al < [rdx].fc_info.maxgpr )
 
                         movzx   ecx,Ofssize
                         shl     ecx,3
                         add     ecx,eax
-                        movzx   eax,byte ptr [rdx+rcx+8]
+                        add     rcx,[rdx].fc_info.regpack
+                        movzx   eax,byte ptr [rcx+8]
                         mov     dst_flt,eax
                     .endif
                 .endif
 
-            .elseif ( al < [rdx].fc_info.max_gpr )
+            .elseif ( al < [rdx].fc_info.maxgpr )
 
                 movzx   ecx,Ofssize
                 shl     ecx,3
                 add     ecx,eax
-                movzx   ebx,byte ptr [rdx+rcx+8]
+                add     rcx,[rdx].fc_info.regpack
+                movzx   ebx,byte ptr [rcx+8]
             .endif
 
         .elseif ( isfloat )
@@ -926,7 +966,7 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                 movzx eax,[rcx].asym.sys_xcnt
                 dec simd_scratch
                 mov ecx,simd_scratch
-                .if ( [rdx].fc_info.max_xmm > cl )
+                .if ( [rdx].fc_info.maxxmm > cl )
                     lea ebx,[rax+rcx+T_XMM0]
                 .endif
             .endif
@@ -936,13 +976,14 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
             movzx eax,[rcx].asym.sys_rcnt
             dec wreg_scratch
             mov ecx,wreg_scratch
-            .if ( [rdx].fc_info.max_gpr > cl )
+            .if ( [rdx].fc_info.maxgpr > cl )
 
                 add     eax,ecx
                 movzx   ecx,Ofssize
                 shl     ecx,3
                 add     ecx,eax
-                movzx   ebx,byte ptr [rdx+rcx+8]
+                add     rcx,[rdx].fc_info.regpack
+                movzx   ebx,byte ptr [rcx+8]
             .endif
         .endif
 
@@ -1003,7 +1044,7 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
 
             mov     rdx,langid
             movzx   eax,[rsi].param_id
-            sub     al,[rdx].fc_info.max_gpr
+            sub     al,[rdx].fc_info.maxgpr
             mul     wordsize
             mov     [rsi].param_offs,al
         .endif
@@ -1680,7 +1721,9 @@ handle_address:
                     mov ebx,reg
                 .endif
                 jmp stack_ebx
+
             .else
+
                 mov ecx,T_MOVSS
                 .if ( [rsi].sflags & S_ISVARARG && wordsize == 8 )
                     mov ecx,T_CVTSS2SD

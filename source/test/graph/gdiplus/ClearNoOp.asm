@@ -6,6 +6,9 @@ include windows.inc
 include gdiplus.inc
 include tchar.inc
 
+define WINWIDTH     420
+define WINHEIGHT    380
+
     .data
      brushMatrix ColorMatrix {{    ;; red converted to green
         0.0, 1.0, 0.0, 0.0, 0.0,

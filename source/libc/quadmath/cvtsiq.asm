@@ -11,9 +11,14 @@ include quadmath.inc
 
     option dotname
 
-cvtsiq proc i:int128_t
+cvtsiq proc i:ptr int128_t
+
 ifdef _WIN64
-    mov     rax,rcx
+
+    ldr     rcx,i
+
+    mov     rdx,[rcx+8]
+    mov     rax,[rcx]
     mov     r8d,Q_EXPBIAS
     test    rdx,rdx     ; if number is negative
     jns     .0
@@ -59,6 +64,7 @@ else
     int     3
 endif
     ret
+
 cvtsiq endp
 
     end

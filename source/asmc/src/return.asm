@@ -307,45 +307,46 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr as
 
             mov al,opnd.mem_type
             .switch al
-              .case MT_BYTE
-              .case MT_SBYTE
-              .case MT_WORD
+            .case MT_BYTE
+            .case MT_SBYTE
+            .case MT_WORD
                 mov op,T_MOVZX
                 .if reg == T_RAX
                     mov reg,T_EAX
                 .endif
                 .endc
-              .case MT_SWORD
+            .case MT_SWORD
                 .if reg != T_AX
                     mov op,T_MOVSX
                     mov reg,T_EAX
                 .endif
                 .endc
-              .case MT_DWORD
-              .case MT_SDWORD
+            .case MT_DWORD
+            .case MT_SDWORD
                 mov reg,T_EAX
-                .endc
-              .case MT_OWORD
+               .endc
+            .case MT_OWORD
+            .case MT_SOWORD
                 .endc .if reg != T_RAX
                 AddLineQueueX(
                     " mov rax, qword ptr %s\n"
                     " mov rdx, qword ptr %s[8]", rdi, rdi )
                 .return
-              .case MT_REAL2
+            .case MT_REAL2
                 mov reg,T_AX
-                .endc
-              .case MT_REAL4
+               .endc
+            .case MT_REAL4
                 mov reg,T_XMM0
                 mov op,T_MOVSS
-                .endc
-              .case MT_REAL8
+               .endc
+            .case MT_REAL8
                 mov reg,T_XMM0
                 mov op,T_MOVSD
-                .endc
-              .case MT_REAL16
+               .endc
+            .case MT_REAL16
                 mov reg,T_XMM0
                 mov op,T_MOVAPS
-                .endc
+               .endc
             .endsw
 
         .elseif ( opnd.kind == EXPR_EMPTY && byte ptr [rdi] == '{' )

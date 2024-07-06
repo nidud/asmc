@@ -2502,7 +2502,7 @@ win64_MoveRegParam proc __ccall private uses rsi rdi rbx i:int_t, size:int_t, pa
     xor ebx,ebx
 
     .if ( al & MT_FLOAT || al == MT_YWORD ||
-          ( langtype == LANG_VECTORCALL && al == MT_OWORD ) )
+          ( langtype == LANG_VECTORCALL && ( al == MT_OWORD || al == MT_SOWORD ) ) )
 
         .if ( al == MT_REAL4 || al == MT_REAL2 )
             mov esi,T_MOVD
@@ -2539,6 +2539,7 @@ else
             mov esi,get_register(esi, 4)
            .endc
         .case MT_OWORD
+        .case MT_SOWORD
             .if ( langtype != LANG_VECTORCALL )
                 mov ebx,[rdi+rcx*4+4]
                 inc i
@@ -2548,7 +2549,7 @@ else
         mov ecx,i
 endif
         mov esi,T_MOV
-        .if ( al == MT_OWORD && langtype != LANG_VECTORCALL )
+        .if ( ( al == MT_OWORD || al == MT_SOWORD ) && langtype != LANG_VECTORCALL )
             mov ebx,[rdi+rcx*4+4]
             inc i
         .endif
@@ -2573,9 +2574,9 @@ win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size
 
     ldr rsi,size
     ldr rdi,param
+
     mov rcx,CurrProc
     mov cl,[rcx].asym.langtype
-
     .if ( cl == LANG_VECTORCALL )
         mov dword ptr [rsi],16
     .else
@@ -2587,22 +2588,27 @@ win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size
         .return 4
     .endif
     mov dword ptr [rdx],0
+
     .for ( ebx = 0: rdi: rdi = [rdi].dsym.nextparam )
+
         mov eax,[rsi]
         .if ( [rdi].asym.total_size > eax )
+
             .switch ( [rdi].asym.mem_type )  ; limit to float/vector..
             .case MT_REAL10 ; v2.32.32 - REAL10
             .case MT_OWORD
+            .case MT_SOWORD
             .case MT_REAL16
-                mov dword ptr [rsi],16
-                .endc
+                mov eax,16
+               .endc
             .case MT_YWORD
-                mov dword ptr [rsi],32
-                .endc
+                mov eax,32
+               .endc
             .case MT_ZWORD
-                mov dword ptr [rsi],64
-                .endc
+                mov eax,64
+               .endc
             .endsw
+            mov [rsi],eax
         .endif
         inc ebx
     .endf

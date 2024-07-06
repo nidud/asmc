@@ -18,6 +18,7 @@ Asmc Macro Assembler Reference
 - [SQWORD](sqword.md)
 - [TBYTE](tbyte.md)
 - [OWORD](oword.md)
+- [SOWORD](soword.md)
 - [XMMWORD](xmmword.md)
 - [YMMWORD](ymmword.md)
 - [YWORD](ymmword.md)

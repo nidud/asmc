@@ -197,6 +197,7 @@ GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         .case MT_TBYTE   : mov eax,T_TBYTE
         .case MT_REAL10  : mov eax,T_REAL10
         .case MT_OWORD   : mov eax,T_OWORD
+        .case MT_SOWORD  : mov eax,T_SOWORD
         .case MT_REAL16  : mov eax,T_REAL16
         .case MT_YWORD   : mov eax,T_YWORD
         .case MT_ZWORD   : mov eax,T_ZWORD

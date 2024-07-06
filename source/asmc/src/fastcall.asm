@@ -125,9 +125,9 @@ fast_table fc_info {
         4,  0,  4, 16, 0x00000F, ow32_regs, FC_FIXED or FC_TMACRO },{
         4,  4,  4, 16, 0x0F000F, ow64_regs, FC_FIXED or FC_TMACRO },{
 ; 10 ASMCALL
-        3,  0,  0,  4, 0x000007, user_regs, FC_TMACRO },{
-        3,  0,  0,  8, 0x000007, user_regs, FC_TMACRO },{
-        7,  8,  0, 16, 0xFF0F07, user_regs, FC_TMACRO }
+        3,  0,  2,  4, 0x00000007, user_regs, FC_TMACRO },{
+        3, 16,  4,  8, 0xFFFF0007, user_regs, FC_TMACRO },{
+        7, 16,  4, 16, 0xFFFF0F07, user_regs, FC_TMACRO }
 
 
         simd_scratch int_t 0
@@ -281,10 +281,19 @@ fast_pcheck proc __ccall uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:pt
             movzx eax,byte ptr [rdi+1]
         .endif
         lea edx,[rax+T_XMM0]
+        .if ( eax > 7 )
+            add edx,T_XMM8-T_XMM0-8
+        .endif
         .if ( ecx == 64 )
             lea edx,[rax+T_ZMM0]
+            .if ( eax > 7 )
+                add edx,T_ZMM8-T_ZMM0-8
+            .endif
         .elseif ( ecx == 32 )
             lea edx,[rax+T_YMM0]
+            .if ( eax > 7 )
+                add edx,T_YMM8-T_YMM0-8
+            .endif
         .endif
         mov [rsi].param_reg,dl
         .if ( al >= [rbx].maxxmm )
@@ -939,6 +948,9 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                 .if ( al < [rdx].fc_info.maxxmm )
 
                     lea ebx,[rax+T_XMM0]
+                    .if ( al > 7 )
+                        add ebx,T_XMM8-T_XMM0
+                    .endif
                     .if ( al < [rdx].fc_info.maxgpr )
 
                         movzx   ecx,Ofssize
@@ -1021,7 +1033,7 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
             .endif
 
             xor eax,eax
-            .if ( ecx < 24 ) ; max 8 float args..
+            .if ( ecx < 32 ) ; max 16 float args..
                 inc eax
                 shl eax,cl
             .endif

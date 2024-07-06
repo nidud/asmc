@@ -1341,15 +1341,15 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:p
                     .endif
                     .endc
                   .case 16
-                    .if [rcx].asym.mem_type & MT_FLOAT
+                    .if ( [rcx].asym.mem_type & MT_FLOAT )
                         mov esi,T_XMM0
-                    .elseif ModuleInfo.Ofssize == USE64
+                    .elseif ( ModuleInfo.Ofssize == USE64 )
                         mov esi,T_RDX
                         mov reg2,T_RAX
                     .endif
                     .endc
                   .case 32
-                    .if [rcx].asym.mem_type == MT_YWORD
+                    .if ( [rcx].asym.mem_type == MT_YWORD )
                         mov esi,T_YMM0
                     .endif
                     .endc
@@ -1436,6 +1436,7 @@ endif
                             .case MT_DWORD
                             .case MT_SDWORD : mov eax,4 : .endc
                             .case MT_OWORD
+                            .case MT_SOWORD
                             .case MT_REAL2
                             .case MT_REAL4
                             .case MT_REAL8

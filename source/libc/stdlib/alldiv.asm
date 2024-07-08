@@ -16,7 +16,7 @@ endif
 alldiv proc watcall dividend:int64_t, divisor:int64_t
 ifdef _WIN64
     mov     rcx,rdx
-    cdq
+    cqo
     idiv    rcx
 else
     ;

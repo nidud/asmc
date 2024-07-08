@@ -303,7 +303,7 @@ tmUnderlined		BYTE ?
 tmStruckOut		BYTE ?
 tmPitchAndFamily	BYTE ?
 tmCharSet		BYTE ?
-tagTEXTMETRICW		ends
+TEXTMETRICW		ends
 PTEXTMETRICW		typedef ptr TEXTMETRICW
 LPTEXTMETRICW		typedef ptr TEXTMETRICW
 endif

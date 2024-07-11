@@ -16,15 +16,9 @@ Asmc Macro Assembler Reference
 - .**pragma**(warning(disable: _num_))
 - .**pragma**(warning(push))
 - .**pragma**(warning(pop))
-- .**pragma**(aux(push, _language_, _fixed_, _reg0_, _reg1_, ..., _regn_))
-- .**pragma**(aux(pop))
+- .**pragma**(aux(_reg0_, _reg1_, ..., _regn_))
 
-Pragma aux lets you customize a [Register Calling Convention](procedures.md). The first argument is the language. The second is a boolean value indicating if the parameters have fixed positions followed by up to 8 register to be used as parameters.
-
-The following example modifies the [watcall](watcall.md) convention by flipping the last two registers:
-```
-.pragma aux(push, watcall, 1, eax, edx, ecx, ebx)
-```
+Pragma aux lets you customize the [ASMCALL](asmcall.md) Calling Convention. Up to 8 register may be used as parameters.
 
 #### See Also
 

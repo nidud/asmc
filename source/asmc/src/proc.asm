@@ -95,10 +95,6 @@ sym_ReservedStack   ptr asym 0 ;; max stack space required by INVOKE
 ; v2.07: 16-bit MS FASTCALL registers are AX, DX, BX.
 ; And params on stack are in PASCAL order.
 ;
-
-ms64_regs           special_token T_RCX, T_RDX, T_R8, T_R9
-elf64_regs          db T_RDI, T_RSI, T_RDX, T_RCX, T_R8, T_R9, 0, 0
-
 ;
 ; win64 non-volatile GPRs:
 ; T_RBX, T_RBP, T_RSI, T_RDI, T_R12, T_R13, T_R14, T_R15
@@ -113,25 +109,269 @@ stackreg            uint_t T_SP, T_ESP, T_RSP
 StackAdj            uint_t 0    ;; value of @StackBase variable
 StackAdjHigh        int_t 0
 
-align size_t
+align 8
 
-lang_tab label byte
+; param   0      1      2      3      4      5      6      7
 
-; lang    1  2  3  4  5  6  7  8  9 10
+fast_regs fc_regs {
+        { T_CL,  T_DL,  T_R8B, T_R9B, 0,     0,     0,     0 },
+        { T_CX,  T_DX,  T_R8W, T_R9W, 0,     0,     0,     0 },
+        { T_ECX, T_EDX, T_R8D, T_R9D, 0,     0,     0,     0 },
+        { T_RCX, T_RDX, T_R8,  T_R9,  0,     0,     0,     0 }}
+sysv_regs fc_regs {
+        { T_DIL, T_SIL, T_DL,  T_CL,  T_R8B, T_R9B, 0,     0 },
+        { T_DI,  T_SI,  T_DX,  T_CX,  T_R8W, T_R9W, 0,     0 },
+        { T_EDI, T_ESI, T_EDX, T_ECX, T_R8D, T_R9D, 0,     0 },
+        { T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9,  0,     0 }}
+watc_regs fc_regs {
+        { T_AL,  T_DL,  T_BL,  T_CL,  0,     0,     0,     0 },
+        { T_AX,  T_DX,  T_BX,  T_CX,  0,     0,     0,     0 },
+        { T_EAX, T_EDX, T_EBX, T_ECX, 0,     0,     0,     0 },
+        { T_RAX, T_RDX, T_RBX, T_RCX, 0,     0,     0,     0 }}
+user_regs fc_regs {
+        { T_AL,  T_DL,  T_CL,  T_R8B, T_R9B, T_R10B,T_R11B,0 },
+        { T_AX,  T_DX,  T_CX,  T_R8W, T_R9W, T_R10W,T_R11W,0 },
+        { T_EAX, T_EDX, T_ECX, T_R8D, T_R9D, T_R10D,T_R11D,0 },
+        { T_RAX, T_RDX, T_RCX, T_R8,  T_R9,  T_R10, T_R11, 0 }}
 
-define LANG_REVERSE ($ - lang_tab)
+lang_table fc_info {
 
-    db 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 ; USE16
-    db 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0 ; USE32
-    db 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0 ; USE64
+;      gpr xmm exp int    mask     regs  flags
 
-define LANG_FASTID ($ - lang_tab)
+        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; USE16
+        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; USE32
+        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; USE64
+        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; C
+        0,  0,  0,  0, 0x00000000, NULL, 0 },{
+        0,  0,  0,  0, 0x00000000, NULL, 0 },{
+        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; SYSCALL
+        0,  0,  0,  0, 0x00000000, NULL, 0 },{
+        6,  8,  4, 16, 0x00FF03C6, sysv_regs, _P_FASTCALL or _P_SYSTEMV },{
+        0,  0,  0,  0, 0x00000000, NULL, _P_CLEANUP },{ ; STDCALL
+        0,  0,  0,  0, 0x00000000, NULL, _P_CLEANUP },{
+        0,  0,  0,  0, 0x00000000, NULL, _P_CLEANUP },{
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{ ; PASCAL
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{ ; FORTRAN
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{ ; BASIC
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
+        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
+        3,  0,  2,  4, 0x0000000D, watc_regs, _P_FASTCALL or _P_REGPARAM or _P_LEFT or _P_CLEANUP },{ ; FASTCALL
+        2,  0,  4,  4, 0x00000006, fast_regs, _P_FASTCALL or _P_REGPARAM or _P_CLEANUP },{
+        4,  4,  4,  8, 0x000F0306, fast_regs, _P_FASTCALL or _P_RESSTACK },{
+        3,  0,  2,  4, 0x0000000D, watc_regs, _P_FASTCALL or _P_REGPARAM or _P_CLEANUP },{ ; VECTORCALL
+        2,  8,  4,  4, 0x003F0006, fast_regs, _P_FASTCALL or _P_REGPARAM or _P_CLEANUP },{
+        4,  6,  4,  8, 0x003F0306, fast_regs, _P_FASTCALL or _P_RESSTACK },{
+        4,  0,  0,  8, 0x0000000F, watc_regs, _P_FASTCALL or _P_REGPARAM or _P_CLEANUP },{ ; WATCALL
+        4,  0,  4, 16, 0x0000000F, watc_regs, _P_FASTCALL or _P_REGPARAM },{
+        4,  4,  4, 16, 0x000F000F, watc_regs, _P_FASTCALL or _P_REGPARAM },{
+        3,  0,  2,  4, 0x00000007, user_regs, _P_FASTCALL or _P_REGPARAM },{ ; ASMCALL
+        3, 16,  4,  8, 0xFFFF0007, user_regs, _P_FASTCALL or _P_REGPARAM },{
+        7, 16,  4, 16, 0xFFFF0F07, user_regs, _P_FASTCALL or _P_REGPARAM }
 
-    db 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 7, 0, 0, 0, 0, 0 ; USE16
-    db 0, 0, 0, 0, 0, 0, 0, 1, 5, 2, 7, 0, 0, 0, 0, 0 ; USE32
-    db 0, 0, 4, 0, 0, 0, 0, 3, 6, 2, 7, 0, 0, 0, 0, 0 ; USE64
 
    .code
+
+get_fasttype proc fastcall Ofssize:int_t, langtype:int_t
+
+    imul    edx,edx,fc_info * 3
+    imul    ecx,ecx,fc_info
+    lea     rax,lang_table
+    add     rax,rcx
+    add     rax,rdx
+    ret
+
+get_fasttype endp
+
+;
+; fast_pcheck() sets:
+;
+; paranode:
+;   .param_reg      = register
+;   .param_id       = param index
+;   .param_regs     = number or registers assign to this param
+;   .flags          = S_REGPARAM
+;   .state          = SYM_TMACRO
+;   .string_ptr     = param register name
+; proc:
+;   .sys_rcnt       = GP register count
+;   .sys_xcnt       = SIMD register count
+;   .sys_size       = max param size
+;
+    assume rsi:asym_t
+    assume rbx:ptr fc_info
+
+fast_pcheck proc __ccall uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:ptr int_t
+
+   .new regname[32]:sbyte
+   .new wordsize:int_t
+
+    UNREFERENCED_PARAMETER(pProc)
+    UNREFERENCED_PARAMETER(paranode)
+    UNREFERENCED_PARAMETER(used)
+
+    ldr rdi,used
+    ldr rsi,paranode
+    ldr rcx,pProc
+
+    xor eax,eax
+    mov [rsi].string_ptr,rax
+    mov al,[rdi+2]
+    inc byte ptr [rdi+2]
+    mov [rsi].param_id,al
+    mov rbx,get_fasttype([rsi].Ofssize, [rcx].asym.langtype)
+
+    SizeFromMemtype( [rsi].mem_type, [rsi].Ofssize, [rsi].type )
+    movzx ecx,[rsi].Ofssize
+    mov edx,2
+    shl edx,cl
+    mov wordsize,edx
+    .if ( eax == 0 && [rsi].asym.mem_type == MT_ABS )
+        mov eax,edx
+    .endif
+    mov ecx,eax
+    dec edx
+    add eax,edx
+    not edx
+    and eax,edx
+    .if ( eax < wordsize )
+        mov eax,wordsize
+    .endif
+    mov rdx,pProc
+    .if ( al > [rdx].asym.sys_size )
+        mov [rdx].asym.sys_size,al
+    .endif
+
+    mov al,[rsi].mem_type
+    .if ( al == MT_TYPE )
+        mov rax,[rsi].type
+        mov al,[rax].asym.mem_type
+    .endif
+
+    .if ( al & MT_FLOAT || al == MT_YWORD )
+
+        .if ( [rbx].flags & _P_RESSTACK )
+            movzx eax,[rsi].param_id
+        .else
+            movzx eax,byte ptr [rdi+1]
+        .endif
+        lea edx,[rax+T_XMM0]
+        .if ( eax > 7 )
+            add edx,T_XMM8-T_XMM0-8
+        .endif
+        .if ( ecx == 64 )
+            lea edx,[rax+T_ZMM0]
+            .if ( eax > 7 )
+                add edx,T_ZMM8-T_ZMM0-8
+            .endif
+        .elseif ( ecx == 32 )
+            lea edx,[rax+T_YMM0]
+            .if ( eax > 7 )
+                add edx,T_YMM8-T_YMM0-8
+            .endif
+        .endif
+        mov [rsi].param_reg,dl
+        .if ( al >= [rbx].maxxmm )
+           .return( 0 )
+        .endif
+        inc byte ptr [rdi+1]
+        inc [rsi].param_regs
+
+    .else
+
+        mov eax,wordsize
+        add eax,eax
+        .if ( ecx > eax ) ; span 4 registers ?
+
+            lea edx,[rax*2]
+            .if ( edx == ecx && dl <= [rbx].maxint )
+
+                mov dl,[rdi]
+                add dl,4
+                .if !( dl > [rbx].maxgpr )
+
+                    add byte ptr [rdi],2
+                    mov [rsi].param_regs,2
+                    mov eax,ecx
+                .endif
+            .endif
+        .endif
+
+        .if ( [rbx].flags & _P_RESSTACK )
+            movzx edx,[rsi].param_id
+            .if ( dl < [rdi] )
+                mov dl,[rdi]
+            .endif
+        .else
+            movzx edx,byte ptr [rdi]
+        .endif
+        .if ( dl >= [rbx].maxgpr )
+            .return( 0 )
+        .endif
+
+        .if ( eax == ecx && al <= [rbx].maxint )
+
+            mov al,dl
+            inc al
+            .if ( al >= [rbx].maxgpr )
+                .return( 0 )
+            .endif
+            .for ( eax = 1 : eax < wordsize : eax+=eax )
+                add edx,8
+            .endf
+            add rdx,[rbx].regpack
+            mov [rsi].param_reg,[rdx]
+            or  [rsi].flags,S_REGPAIR
+            add byte ptr [rdi],2
+            add [rsi].param_regs,2
+
+        .else
+            .if ( ecx > wordsize )
+
+                .if !( [rbx].flags & _P_RESSTACK )
+                    .return( 0 )
+                .endif
+                mov ecx,wordsize
+            .endif
+            .for ( eax = 1 : eax < ecx : eax+=eax )
+                add edx,8
+            .endf
+            add rdx,[rbx].regpack
+            mov [rsi].param_reg,[rdx]
+            inc byte ptr [rdi]
+            inc [rsi].param_regs
+        .endif
+    .endif
+
+    xor eax,eax
+    .if ( [rsi].sflags & S_ISVARARG )
+       .return
+    .endif
+
+    mov ecx,[rdi]
+    mov rdx,pProc
+    mov [rdx].asym.sys_rcnt,cl
+    mov [rdx].asym.sys_xcnt,ch
+    or  [rsi].flags,S_REGPARAM
+
+    .if ( [rbx].flags & _P_REGPARAM )
+
+        mov [rsi].state,SYM_TMACRO
+        lea rdx,regname
+        mov al,[rsi].param_reg
+        mov [rsi].string_ptr,LclDup( GetResWName(eax, rdx) )
+        mov eax,1
+    .endif
+    ret
+
+fast_pcheck endp
+
+    assume rbx:nothing
+    assume rsi:nothing
+
 
 pushitem proc __ccall private stk:ptr, elmt:ptr
 
@@ -388,40 +628,11 @@ UpdateProcStatus proc fastcall sym:ptr asym, opnd:ptr expr
 
 UpdateProcStatus endp
 
-; Added v2.27
-
-GetFastcallId proc fastcall langtype:int_t
-
-    movzx   eax,ModuleInfo.Ofssize
-    shl     eax,4
-    add     ecx,eax
-    lea     rax,lang_tab
-    movzx   eax,byte ptr [rax+rcx+LANG_FASTID]
-    ret
-
-GetFastcallId endp
-
-; Added v2.34
-
-GetParamDirection proc fastcall p:dsym_t
-
-    movzx   ecx,[rcx].asym.langtype
-    movzx   eax,ModuleInfo.Ofssize
-    shl     eax,4
-    add     ecx,eax
-    lea     rax,lang_tab
-    movzx   eax,byte ptr [rax+rcx+LANG_REVERSE]
-    ret
-
-GetParamDirection endp
-
 ;
 ; parse parameters of a PROC/PROTO.
 ; Called in pass one only.
 ; i=start parameters
 ;
-
-MacroInline proto __ccall :string_t, :int_t, :string_t, :string_t, :int_t
 
 ParseInline proc __ccall private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, tokenarray:ptr asm_tok
 
@@ -473,7 +684,7 @@ ParseInline proc __ccall private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, to
 ParseInline endp
 
 
-ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t
+ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t, flags:byte
 
    .new name:string_t
    .new sym:ptr dsym
@@ -486,8 +697,6 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
    .new paranode:ptr dsym
    .new paracurr:ptr dsym
    .new curr:int_t
-   .new ParamReverse:int_t ; Reverse direction
-   .new fastcall_id:int_t
 
     ldr rcx,p
     mov rsi,[rcx].dsym.procinfo
@@ -495,22 +704,12 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
 
     ; find "first" parameter ( that is, the first to be pushed in INVOKE )
 
-    movzx eax,ModuleInfo.Ofssize
-    lea   rdx,lang_tab
-    shl   eax,4
-    add   rdx,rax
-    movzx eax,byte ptr [rdx+rdi+LANG_REVERSE]
-    movzx ecx,byte ptr [rdx+rdi+LANG_FASTID]
-    mov   ParamReverse,eax
-    mov   fastcall_id,ecx
-
     mov rdi,[rsi].paralist
-    .if ( eax )
+    .if !( flags & _P_LEFT )
         .for ( : rdi && [rdi].dsym.nextparam : rdi = [rdi].dsym.nextparam )
         .endf
     .endif
     mov paracurr,rdi
-
 
     ; v2.11: proc_info.init_done has been removed, sym.isproc flag is used instead
 
@@ -620,7 +819,6 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
             .endif
         .endif
 
-
         ; check if parameter name is defined already
 
         .if ( IsPROC )
@@ -630,7 +828,6 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
                 .endif
             .endif
         .endif
-
 
         ; redefinition?
 
@@ -651,9 +848,11 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
             ; v2.23: proto fastcall :type - fast32.asm
 
             mov rdi,paracurr
+            mov al,flags
+            and eax,_P_FASTCALL or _P_REGPARAM or _P_LEFT or _P_CLEANUP or _P_SYSTEMV
 
-            .if ( fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
-                 ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) && fastcall_id == FCT_ELF64 + 1 ) )
+            .if ( eax == _P_FASTCALL or _P_REGPARAM or _P_CLEANUP ||
+                ( eax == _P_SYSTEMV && !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) )
 
                 mov [rdi].asym.target_type,NULL
                 .if ( !ModuleInfo.masm_compat_gencode )
@@ -697,7 +896,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
 
             ; set paracurr to next parameter
 
-            .if ( ParamReverse )
+            .if !( flags & _P_LEFT )
                 .for ( rcx = [rsi].paralist: rcx && [rcx].dsym.nextparam != rdi : rcx = [rcx].dsym.nextparam )
                 .endf
             .else
@@ -738,7 +937,8 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
                 or [rdi].asym.sflags,S_ISVARARG
             .endif
 
-            mov eax,fastcall_id
+            movzx eax,flags
+            and eax,_P_FASTCALL
             .if eax
                 fast_pcheck( p, rdi, &fcint )
             .endif
@@ -774,7 +974,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
             ;
             ; asmc: Win64 is right to left.
 
-            .ifd GetParamDirection(p)
+            .if !( flags & _P_LEFT )
 
                 mov [rdi].dsym.nextparam,[rsi].paralist
                 mov [rsi].paralist,rdi
@@ -910,6 +1110,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
   .new oldofssize:byte
   .new oldpublic:int_t
   .new Ofssize:byte
+  .new flags:byte
 
     ldr rdi,p
     mov rsi,[rdi].dsym.procinfo
@@ -1041,6 +1242,8 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
     .else
         mov [rdi].asym.langtype,langtype
     .endif
+    get_fasttype(newofssize, langtype)
+    mov flags,[rax].fc_info.flags
 
     ; 3. attribute is <visibility>
     ; note that reserved word PUBLIC is a directive!
@@ -1350,7 +1553,9 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
         .endif
 
     .elseif ( [rdi].asym.langtype == LANG_NONE )
+
         asmerr( 2119 )
+
     .else
 
         ; v2.05: set PROC's vararg flag BEFORE params are scanned!
@@ -1365,7 +1570,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
         .if ( [rbx].token == T_RES_ID && [rbx].tokval == T_VARARG )
             or [rsi].flags,PROC_HAS_VARARG
         .endif
-        .ifd ( ParseParams( rdi, i, tokenarray, IsPROC ) == ERROR )
+        .ifd ( ParseParams( rdi, i, tokenarray, IsPROC, flags ) == ERROR )
 
             ; do proceed if the parameter scan returns an error
         .endif
@@ -2519,12 +2724,12 @@ win64_MoveRegParam proc __ccall private uses rsi rdi rbx i:int_t, size:int_t, pa
         .endif
 
     .elseif ( ecx < 4 )
+
+        lea rdi,fast_regs[3*8]
 if 1
-        lea rdi,ms64_regs
-        mov edx,[rdi+rcx*4]
+        movzx edx,byte ptr [rdi+rcx]
 else
-        lea rdi,ms64_regs
-        mov esi,[rdi+rcx*4]
+        movzx esi,byte ptr [rdi+rcx]
         .switch al
         .case MT_BYTE
         .case MT_SBYTE
@@ -2541,7 +2746,7 @@ else
         .case MT_OWORD
         .case MT_SOWORD
             .if ( langtype != LANG_VECTORCALL )
-                mov ebx,[rdi+rcx*4+4]
+                movzx ebx,byte ptr [rdi+rcx+1]
                 inc i
             .endif
         .endsw
@@ -2550,7 +2755,7 @@ else
 endif
         mov esi,T_MOV
         .if ( ( al == MT_OWORD || al == MT_SOWORD ) && langtype != LANG_VECTORCALL )
-            mov ebx,[rdi+rcx*4+4]
+            movzx ebx,byte ptr [rdi+rcx+1]
             inc i
         .endif
     .endif
@@ -2675,9 +2880,10 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:ptr proc_info
                 mov eax,size
                 mul ebx
                 add eax,8
-                lea rcx,ms64_regs
+                lea rcx,fast_regs[3*8]
+                movzx ecx,byte ptr [rcx+rbx]
 
-                AddLineQueueX( "mov [rsp+%u], %r", eax, [rcx+rbx*4] )
+                AddLineQueueX( "mov [rsp+%u], %r", eax, ecx )
             .endif
 
         .elseif ( Parse_Pass == PASS_1 && !( [rdi].asym.sflags & S_ISVARARG ) && size >= 16 )
@@ -3361,7 +3567,7 @@ runqueue:
 
             .for ( : ebx < 6: ebx++ )
 
-                lea     rcx,elf64_regs
+                lea     rcx,sysv_regs[3*8]
                 movzx   ecx,byte ptr [rcx+rbx]
                 lea     edx,[rbx*8+0x20]
 
@@ -4240,9 +4446,10 @@ write_userdef_epilogue endp
 RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:int_t
 
    .new info:ptr proc_info
-   .new is_iret:int_t = FALSE
    .new p:string_t
    .new buffer[MAX_LINE_LEN]:char_t ; stores modified RETN/RETF/IRET instruction
+   .new is_iret:int_t = FALSE
+   .new wordsize:int_t
 
     ldr ecx,i
     ldr rdx,tokenarray
@@ -4309,11 +4516,12 @@ RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:in
     .endif
     mov byte ptr [rdi],NULLC
 
-    ;
     ; RET without argument? Then calculate the value
-    ;
+
     .if ( is_iret == FALSE && edx == i )
+
         .if ( ModuleInfo.epiloguemode != PEM_NONE )
+
             movzx eax,[rcx].asym.langtype
             .switch eax
             .case LANG_STDCALL
@@ -4325,15 +4533,35 @@ RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:in
                     tsprintf( rdi, "%d", [rsi].parasize )
                 .endif
                 .endc
-            .case LANG_SYSCALL
-                .endc .if ( ModuleInfo.Ofssize != USE64 )
+            .case LANG_WATCALL ; added v2.34.65
+                .endc .if ( ModuleInfo.Ofssize != USE16 || ( [rsi].flags & PROC_HAS_VARARG ) )
             .case LANG_FASTCALL
             .case LANG_VECTORCALL
-                fast_return( CurrProc, &buffer )
-               .endc
-            .case LANG_WATCALL ; added v2.34.65
-                .if ( ModuleInfo.Ofssize == USE16 && !( [rsi].flags & PROC_HAS_VARARG ) )
-                    .gotosw(LANG_FASTCALL)
+
+                mov ebx,eax
+                mov ecx,GetSymOfssize( rcx )
+                mov eax,2
+                shl eax,cl
+                mov wordsize,eax
+                get_fasttype(ecx, ebx)
+
+                .if ( [rax].fc_info.flags & _P_CLEANUP )
+
+                    .for ( ecx = 0, rdx = [rsi].paralist: rdx: rdx = [rdx].dsym.nextparam )
+
+                        .if ( [rdx].asym.state != SYM_TMACRO ) ; v2.34.35: used by ms32..
+
+                            add ecx,[rdx].asym.total_size
+                            mov eax,wordsize
+                            dec eax
+                            add ecx,eax
+                            not eax
+                            and ecx,eax
+                        .endif
+                    .endf
+                    .if ( ecx )
+                        tsprintf( rdi, "%d", ecx )
+                    .endif
                 .endif
                 .endc
             .endsw

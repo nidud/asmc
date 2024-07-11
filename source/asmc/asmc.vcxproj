@@ -111,7 +111,6 @@
     <ASMC Include="src\expans.asm" />
     <ASMC Include="src\expreval.asm" />
     <ASMC Include="src\extern.asm" />
-    <ASMC Include="src\fastcall.asm" />
     <ASMC Include="src\fastpass.asm" />
     <ASMC Include="src\fixup.asm" />
     <ASMC Include="src\for.asm" />

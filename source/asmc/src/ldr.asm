@@ -23,14 +23,14 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
    .new string:string_t = NULL
    .new tokpos:string_t
 
-    inc     i
-    imul    ebx,i,asm_tok
-    add     rbx,tokenarray
-    mov     tokpos,[rbx].tokpos
-    mov     rax,CurrProc
-    movzx   ecx,[rax].asym.langtype
+    inc i
+    imul ebx,i,asm_tok
+    add rbx,tokenarray
+    mov tokpos,[rbx].tokpos
 
-    .ifd ( GetFastcallId(ecx) == 0 )
+    mov rcx,CurrProc
+    get_fasttype([rcx].asym.segoffsize, [rcx].asym.langtype)
+    .if !( [rax].fc_info.flags & _P_FASTCALL )
         jmp move_param
     .endif
 

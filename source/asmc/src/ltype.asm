@@ -30,7 +30,34 @@ endif
 exchange endp
 
 
-tqsort proc __ccall uses rsi rdi rbx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
+define STKSIZ   (8*size_t - 2)
+define swap     <exchange>
+
+ifdef _WIN64
+tqsort proc __ccall uses rsi rdi rbx r12 r13 r14 p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
+
+    define lo    <rsi>
+    define hi    <rdi>
+    define loguy <r12>
+    define higuy <r13>
+    define stkptr <r14d>
+
+    xor r14d,r14d
+
+else
+tqsort proc __ccall uses esi edi ebx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
+
+    define lo <esi>
+    define hi <edi>
+
+   .new loguy:ptr
+   .new higuy:ptr
+   .new stkptr:int_t = 0
+
+endif
+
+   .new lostk[STKSIZ]:ptr
+   .new histk[STKSIZ]:ptr
 
     ldr rcx,p
     ldr edx,n
@@ -39,134 +66,145 @@ tqsort proc __ccall uses rsi rdi rbx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
 
         lea eax,[rdx-1]
         mul w
-        mov rsi,rcx
-        lea rdi,[rsi+rax]
-
-        .new level:int_t = 0
+        mov lo,rcx
+        lea rax,[rcx+rax]
+        mov hi,rax
 
         .while 1
 
             mov ecx,w
-            lea rax,[rdi+rcx]   ; middle from (hi - lo) / 2
-            sub rax,rsi
+            mov rax,hi
+            add rax,rcx ; middle from (hi - lo) / 2
+            sub rax,lo
             .ifnz
                 xor rdx,rdx
                 div rcx
                 shr rax,1
                 mul rcx
             .endif
+            mov rbx,lo
+            add rbx,rax
 
-ifdef _WIN64
-            sub rsp,0x20
-endif
-            lea rbx,[rsi+rax]
-
-            .ifsd compare(rsi, rbx) > 0
-                exchange(rsi, rbx, w)
+            .ifsd compare(lo, rbx) > 0
+                swap(lo, rbx, w)
             .endif
-            .ifsd compare(rsi, rdi) > 0
-                exchange(rsi, rdi, w)
+            .ifsd compare(lo, hi) > 0
+                swap(lo, hi, w)
             .endif
-            .ifsd compare(rbx, rdi) > 0
-                exchange(rbx, rdi, w)
+            .ifsd compare(rbx, hi) > 0
+                swap(rbx, hi, w)
             .endif
 
-            .new _si:ptr = rsi
-            .new _di:ptr = rdi
+            mov loguy,lo
+            mov higuy,hi
 
             .while 1
 
                 mov ecx,w
-                add _si,rcx
-                .if _si < rdi
+                add loguy,rcx
+                .if loguy < hi
 
-                    .continue .ifsd compare(_si, rbx) <= 0
+                    .continue .ifsd compare(loguy, rbx) <= 0
                 .endif
 
                 .while 1
 
                     mov ecx,w
-                    sub _di,rcx
+                    sub higuy,rcx
 
-                    .break .if _di <= rbx
-                    .break .ifsd compare(_di, rbx) <= 0
+                    .break .if higuy <= rbx
+                    .break .ifsd compare(higuy, rbx) <= 0
                 .endw
 
-                mov rcx,_di
-                mov rax,_si
-                .break .if rcx < rax
-                exchange(rcx, rax, w)
-
-                .if rbx == _di
-
-                    mov rbx,_si
+                mov rcx,higuy
+                mov rax,loguy
+                .if rcx < rax
+                    .break
                 .endif
+                .if rbx == rcx
+                    mov rbx,rax
+                .endif
+                swap(rcx, rax, w)
             .endw
 
-            mov ecx,w
-            add _di,rcx
+            mov eax,w
+            add higuy,rax
 
-            .while 1
+            .if ( rbx < higuy )
 
-                mov ecx,w
-                sub _di,rcx
+                .while 1
 
-                .break .if _di <= rsi
-                .break .ifd compare(_di, rbx)
-            .endw
+                    mov eax,w
+                    sub higuy,rax
 
-ifdef _WIN64
-            add rsp,0x20
-endif
-            mov rdx,_si
-            mov rax,_di
-            sub rax,rsi
-            mov rcx,rdi
-            sub rcx,rdx
-
-            .ifs rax < rcx
-
-                mov rcx,_di
-
-                .if rdx < rdi
-
-                    push rdx
-                    push rdi
-                    inc level
-                .endif
-
-                .if rsi < rcx
-
-                    mov rdi,rcx
-                    .continue
-                .endif
-            .else
-                mov rcx,_di
-
-                .if rsi < rcx
-
-                    push rsi
-                    push rcx
-                    inc level
-                .endif
-
-                .if rdx < rdi
-
-                    mov rsi,rdx
-                    .continue
-                .endif
+                    .break .if higuy <= rbx
+                    .break .ifd compare(higuy, rbx)
+                .endw
             .endif
 
-            .break .if !level
+            .if ( rbx >= higuy )
 
-            dec level
-            pop rdi
-            pop rsi
+                .while 1
+
+                    mov eax,w
+                    sub higuy,rax
+
+                    .break .if higuy <= lo
+                    .break .ifd compare(higuy, rbx)
+                .endw
+            .endif
+
+            mov rdx,loguy
+            mov rax,higuy
+            sub rax,lo
+            mov rcx,hi
+            sub rcx,rdx
+
+            .if rax < rcx
+
+                .if rdx < hi
+
+                    mov ecx,stkptr
+                    mov lostk[rcx*size_t],rdx
+                    mov histk[rcx*size_t],hi
+                    inc stkptr
+                .endif
+
+                mov rax,higuy
+                .if lo < rax
+
+                    mov hi,rax
+                   .continue
+                .endif
+            .else
+
+                mov rax,higuy
+                .if lo < rax
+
+                    mov ecx,stkptr
+                    mov histk[rcx*size_t],rax
+                    mov lostk[rcx*size_t],lo
+                    inc stkptr
+                .endif
+
+                .if rdx < hi
+
+                    mov lo,rdx
+                   .continue
+                .endif
+            .endif
+            .break .if !stkptr
+
+            dec stkptr
+            mov ecx,stkptr
+            mov lo,lostk[rcx*size_t]
+            mov hi,histk[rcx*size_t]
         .endw
     .endif
     ret
 
 tqsort endp
+
 
 tstrupr proc fastcall string:string_t
 

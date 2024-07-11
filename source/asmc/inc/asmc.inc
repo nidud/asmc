@@ -724,7 +724,6 @@ externdef               LinnumQueue     : qdesc
 externdef               ModelToken      : string_t
 externdef               LastCodeBufSize : int_t
 externdef               stackreg        : uint_t
-externdef               regax           : uint_t
 externdef               szDgroup        : char_t        ; DGROUP
 
 

@@ -112,17 +112,14 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr as
   local buffer[256] : char_t
   local address     : char_t ; v2.30.24 -- .return &address
 
-    ldr     rsi,i
-    ldr     rdx,tokenarray
+    ldr rsi,i
+    ldr rdx,tokenarray
 
-    imul    ebx,[rsi],asm_tok
-    add     rbx,rdx
-    lea     rdi,buffer
-
-    movzx   ecx,ModuleInfo.Ofssize
-    lea     rdx,regax
-    mov     reg,[rdx+rcx*4]
-    mov     op,T_MOV
+    imul ebx,[rsi],asm_tok
+    add rbx,rdx
+    lea rdi,buffer
+    mov reg,ModuleInfo.accumulator
+    mov op,T_MOV
 
     .ifd ( ExpandHllProc( rdi, [rsi], tokenarray ) != ERROR )
 

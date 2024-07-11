@@ -35,18 +35,6 @@ bminf       BITMAPINFO <<40,0,0,1,24,0,0,0,0,0,0>>
 
 .code
 
-random proc base:UINT
-
-    .ifd rand() > base
-        mov ecx,base
-        xor edx,edx
-        div ecx
-        mov eax,edx
-    .endif
-    ret
-
-random endp
-
 Blur proc
 
     mov     r9,Bitmap2
@@ -119,7 +107,6 @@ Blur proc
         movd        [r9+16],xmm2
         add         r8,12
         add         r9,12
-
     .until r9 > rcx
     ret
 
@@ -127,63 +114,67 @@ Blur endp
 
 Recycle proc uses rdi rbx hb:ptr, x:UINT, y:UINT
 
-    mov rdi,rcx
-    mov [rdi+EXX],edx
-    mov [rdi+EXY],r8d
-    mov lightx,edx
-    mov lighty,r8d
-    add flash,3200
-
-    inc random(20)
-    mov ecx,500
-    mul ecx
-    mov ebx,eax
-    mov eax,[rdi]
-    xor edx,edx
-    div ecx
-    add edx,ebx
-    mov [rdi],edx
-
-    add      random(30),10
-    cvtsi2ss xmm1,eax
-    mov      eax,10000.0
-    movd     xmm2,eax
-    mov      eax,1.0
-    movd     xmm0,eax
-    divss    xmm1,xmm2
-    subss    xmm0,xmm1
-    movss    [rdi+AIR],xmm0
-    add      rdi,SPARC
-    cvtsi2ss xmm4,y
-    cvtsi2ss xmm3,x
-    mov      eax,1000.0
-    movd     xmm2,eax
-    inc      random(5)
-    cvtsi2ss xmm1,eax
-    mov      ebx,(400 - 1) * SPARC
-
+    mov         rdi,rcx
+    mov         [rdi+EXX],edx
+    mov         [rdi+EXY],r8d
+    mov         lightx,edx
+    mov         lighty,r8d
+    add         flash,3200
+    rdrand      eax
+    xor         ecx,ecx
+    and         eax,31
+    setz        cl
+    add         eax,ecx
+    mov         ecx,480
+    mul         ecx
+    mov         ebx,eax
+    mov         eax,[rdi]
+    xor         edx,edx
+    div         ecx
+    add         edx,ebx
+    mov         [rdi],edx
+    rdrand      eax
+    and         eax,31
+    add         eax,10
+    cvtsi2ss    xmm1,eax
+    movss       xmm0,1.0
+    divss       xmm1,10000.0
+    subss       xmm0,xmm1
+    movss       [rdi+AIR],xmm0
+    cvtsi2ss    xmm4,y
+    cvtsi2ss    xmm3,x
+    rdrand      eax
+    xor         ecx,ecx
+    and         eax,7
+    setz        cl
+    add         eax,ecx
+    cvtsi2ss    xmm1,eax
+    movss       xmm2,1000.0
+    mov         ebx,(400 - 1) * SPARC
+    add         rdi,SPARC
     .repeat
-
-        random(2000)
-        cvtsi2ss xmm0,eax
-        subss xmm0,xmm2
-        divss xmm0,xmm2
-        mulss xmm0,xmm1
-        movss [rdi+rbx+4],xmm0
-        movss xmm5,xmm1
-        mulss xmm5,xmm5
-        mulss xmm0,xmm0
-        subss xmm5,xmm0
-        sqrtss xmm0,xmm5
-        random(2000)
-        cvtsi2ss xmm5,eax
-        subss xmm5,xmm2
-        divss xmm5,xmm2
-        mulss xmm0,xmm5
-        movss [rdi+rbx+12],xmm0
-        movss [rdi+rbx],xmm3
-        movss [rdi+rbx+8],xmm4
-        sub ebx,16
+        rdrand      eax
+        and         eax,2047
+        cvtsi2ss    xmm0,eax
+        subss       xmm0,xmm2
+        divss       xmm0,xmm2
+        mulss       xmm0,xmm1
+        movss       [rdi+rbx+4],xmm0
+        movss       xmm5,xmm1
+        mulss       xmm5,xmm5
+        mulss       xmm0,xmm0
+        subss       xmm5,xmm0
+        sqrtss      xmm0,xmm5
+        rdrand      eax
+        and         eax,2047
+        cvtsi2ss    xmm5,eax
+        subss       xmm5,xmm2
+        divss       xmm5,xmm2
+        mulss       xmm0,xmm5
+        movss       [rdi+rbx+12],xmm0
+        movss       [rdi+rbx],xmm3
+        movss       [rdi+rbx+8],xmm4
+        sub         ebx,16
     .untilb
     ret
 
@@ -214,45 +205,38 @@ ThrdProc proc uses rsi rdi rbx
 
             .repeat
 
-                lea rcx,[rsi+SPARC]
-                mov edx,color
-                dec rdx
-                mov r8,hFShells
-                add r8,32
-                .if !CMode
-                    lea r8,chemtable
-                .endif
-                mov r8d,[r8+rdx*4]
-                mov r9d,(400 - 1) * SPARC
-                mov r10,Bitmap1
+                lea     rcx,[rsi+SPARC]
+                mov     edx,color
+                dec     rdx
+                mov     r8,hFShells
+                add     r8,32
+                lea     rax,chemtable
+                cmp     CMode,0
+                cmovz   r8,rax
+                mov     r8d,[r8+rdx*4]
+                mov     r9d,(400 - 1) * SPARC
+                mov     r10,Bitmap1
 
                 .repeat
 
-                    movss   xmm0,[rcx+r9+4]
-                    pcmpeqw xmm1,xmm1
-                    psrld   xmm1,1
-                    andps   xmm0,xmm1
-                    mov     eax,0.00064
-                    movd    xmm1,eax
+                    movss xmm0,[rcx+r9+4]
+                    andps xmm0,{ 0000000000000000000000007FFFFFFFr }
+                    .if ( xmm0 > 0.00064 )
 
-                    .repeat
-
-                        ucomiss xmm1,xmm0
-                        .break .ifnb
-
-                        cvtss2si r11d,[rcx+r9]
+                        cvtss2si edx,[rcx+r9]
                         cvtss2si eax,[rcx+r9+8]
-                        .break .if eax >= maxy
-                        .break .if r11d >= maxx
 
-                        imul maxx
-                        add eax,r11d
-                        lea rax,[rax+rax*2]
-                        mov edx,r8d
-                        mov [r10+rax],dx
-                        shr edx,16
-                        mov [r10+rax+2],dl
-                    .until 1
+                        .if ( eax < maxy && edx < maxx )
+
+                            imul    eax,maxx
+                            add     eax,edx
+                            lea     rax,[rax+rax*2]
+                            mov     edx,r8d
+                            mov     [r10+rax],dx
+                            shr     edx,16
+                            mov     [r10+rax+2],dl
+                        .endif
+                    .endif
                     sub r9d,16
                 .untilb
 
@@ -261,49 +245,55 @@ ThrdProc proc uses rsi rdi rbx
 
                 .if GMode
 
-                    mov   edx,0.00024
-                    movd  xmm2,edx
                     movss xmm1,[rcx+AIR-SPARC]
                     .repeat
-                        movss xmm0,[rcx+rax+4]
-                        mulss xmm0,xmm1
-                        movss [rcx+rax+4],xmm0
-                        addss xmm0,[rcx+rax]
-                        movss [rcx+rax],xmm0
-                        movss xmm0,[rcx+rax+12]
-                        mulss xmm0,xmm1
-                        addss xmm0,xmm2
-                        movss [rcx+rax+12],xmm0
-                        addss xmm0,[rcx+rax+8]
-                        movss [rcx+rax+8],xmm0
-                        sub eax,16
+                        movss   xmm0,[rcx+rax+4]
+                        mulss   xmm0,xmm1
+                        movss   [rcx+rax+4],xmm0
+                        addss   xmm0,[rcx+rax]
+                        movss   [rcx+rax],xmm0
+                        movss   xmm0,[rcx+rax+12]
+                        mulss   xmm0,xmm1
+                        addss   xmm0,0.00024
+                        movss   [rcx+rax+12],xmm0
+                        addss   xmm0,[rcx+rax+8]
+                        movss   [rcx+rax+8],xmm0
+                        sub     eax,16
                     .untilb
 
                 .else
 
                     .repeat
-                        movss xmm0,[rcx+rax]
-                        addss xmm0,[rcx+rax+4]
-                        movss [rcx+rax],xmm0
-                        movss xmm0,[rcx+rax+8]
-                        addss xmm0,[rcx+rax+12]
-                        movss [rcx+rax+8],xmm0
-                        sub eax,16
+                        movss   xmm0,[rcx+rax]
+                        addss   xmm0,[rcx+rax+4]
+                        movss   [rcx+rax],xmm0
+                        movss   xmm0,[rcx+rax+8]
+                        addss   xmm0,[rcx+rax+12]
+                        movss   [rcx+rax+8],xmm0
+                        sub     eax,16
                     .untilb
                 .endif
 
                 dec dword ptr [rcx-SPARC]
-                mov eax,[rcx-SPARC]
-
-                test eax,eax
                 .ifs
-                    mov ebx,random(maxy)
+                    mov ecx,maxy
+                    rdrand eax
+                    .if ( eax > ecx )
+                        xor edx,edx
+                        div ecx
+                        mov eax,edx
+                    .endif
+                    mov ebx,eax
+                    rdrand eax
                     mov ecx,maxx
                     add ecx,ecx
-                    random(ecx)
-                    mov edx,maxx
-                    shr edx,1
-                    sub eax,edx
+                    .if ( eax > ecx )
+                        xor edx,edx
+                        div ecx
+                        mov eax,edx
+                    .endif
+                    shr ecx,2
+                    sub eax,ecx
                     Recycle(rsi, eax, ebx)
                 .endif
                 add rsi,400 * SPARC + SPARC
@@ -349,14 +339,11 @@ ThrdProc proc uses rsi rdi rbx
                         shr      eax,1
                         cvtsi2ss xmm1,eax
                         divss    xmm2,xmm1
-                        mov      eax,1.0
-                        movd     xmm0,eax
+                        movss    xmm0,1.0
                         subss    xmm0,xmm2
                         mulss    xmm0,xmm0
                         mulss    xmm0,xmm0
-                        mov      eax,255.0
-                        movd     xmm1,eax
-                        mulss    xmm0,xmm1
+                        mulss    xmm0,255.0
                         cvtss2si ebx,xmm0
                         mov      rax,0x0000010101010101
                         imul     rbx,rax
@@ -397,9 +384,7 @@ ThrdProc proc uses rsi rdi rbx
         .endif
 
         cvtsi2ss    xmm0,flash
-        mov         eax,0.92
-        movd        xmm1,eax
-        mulss       xmm0,xmm1
+        mulss       xmm0,0.92
         cvtss2si    eax,xmm0
         mov         flash,eax
 
@@ -415,7 +400,6 @@ ThrdProc endp
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch edx
-
     .case WM_MOUSEMOVE
         .endc .if r8d != MK_CONTROL
         xor edx,edx
@@ -425,8 +409,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         shr eax,16
         mov lightx,r9d
         mov lighty,eax
-        .endc
-
+       .endc
     .case WM_SIZE
         .endc .if r8d == SIZE_MINIMIZED
         mov eax,r9d
@@ -438,35 +421,33 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         mov bminf.bmiHeader.biWidth,edx
         neg eax
         mov bminf.bmiHeader.biHeight,eax
-        .endc
-
+       .endc
     .case WM_KEYDOWN
         .switch r8d
         .case VK_SPACE
             xor GMode,1
-            .endc
+           .endc
         .case VK_RETURN
             xor EMode,1
             mov flash,0
-            .endc
+           .endc
         .case VK_ESCAPE
             .gotosw(1:WM_CLOSE)
-            .case VK_F1
+        .case VK_F1
             .gotosw(1:WM_RBUTTONDOWN)
         .case VK_UP
             .endc .if motion >= 64
             inc motion
-            .endc
+           .endc
         .case VK_DOWN
             .endc .if motion == 1
             dec motion
-            .endc
+           .endc
         .case VK_RIGHT
             xor CMode,1
-            .endc
+           .endc
         .endsw
         .endc
-
     .case WM_RBUTTONDOWN
         MessageBox(hWnd,
             "SPACE & ENTER keys toggles 'Gravity and Air' and\n"
@@ -476,7 +457,6 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
             "Use ESC to exit.",
             "Fireworks", MB_OK)
         .endc
-
     .case WM_LBUTTONDOWN
         xor     r10d,r10d
         mov     r10w,r9w
@@ -490,15 +470,13 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         imul    ecx
         add     rax,hFShells
         Recycle(rax, r10d, r9d)
-        .endc
-
+       .endc
     .case WM_CLOSE
     .case WM_DESTROY
         mov EventStop,1
         Sleep(10)
         PostQuitMessage(0)
-        .endc
-
+       .endc
     .default
         .return DefWindowProc( rcx, edx, r8, r9 )
     .endsw

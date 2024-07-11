@@ -19,4 +19,4 @@ Register param are sign-extended to **min** and register-pair are allowed up to 
 
 #### See Also
 
-[Procedures](procedures.md) | [Directives Reference](readme.md)
+[Procedures](procedures.md) | [Directives Reference](readme.md) | [.PRAGMA](dot-pragma.md)

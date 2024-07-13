@@ -521,8 +521,10 @@ endif
     .case 'essa'            ; -assert
         or Options.xflag,OPT_ASSERT
         .return
-    .case 'otua'            ; -autostack
-        or Options.win64_flags,W64F_AUTOSTACKSP
+    .case 'otua'            ; -autostack -- v2.35.02 -win64 needs to come first!
+        .if ( Options.sub_format == SFORMAT_64BIT )
+            or Options.win64_flags,W64F_AUTOSTACKSP
+        .endif
         .return
     .case 'c'               ; -c
         .return
@@ -672,7 +674,8 @@ endif
         mov Options.iddc,1
         .return
     .case 'ogol'            ; -logo
-        tprintf("%s\n", &cp_logo)
+        tprintf( &cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER )
+        tprintf( "\n" )
         exit(0)
 ifndef ASMC64
     .case 'zm'              ; -mz

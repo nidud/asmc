@@ -29,11 +29,8 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
     mov tokpos,[rbx].tokpos
 
     mov rcx,CurrProc
-    get_fasttype([rcx].asym.segoffsize, [rcx].asym.langtype)
-    .if !( [rax].fc_info.flags & _P_FASTCALL )
-        jmp move_param
-    .endif
-
+    test [get_fasttype([rcx].asym.segoffsize, [rcx].asym.langtype)].fc_info.flags,_P_FASTCALL
+    jz  move_param
     mov reg,[rbx].tokval
     .if ( [rbx].token != T_REG )
 

@@ -1647,10 +1647,14 @@ ListMacroDirective endp
 
 LstInit proc __ccall
 
+    .new logo[64]:char_t
+
     .if ( Parse_Pass == PASS_1 )
         mov list_pos,0
     .endif
     .if ( Options.write_listing )
+
+        tsprintf( &logo, &cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER )
         mov rdx,GetFName( ModuleInfo.srcfile )
         lea rcx,@CStr("%s  %s %s\n%s\n")
         .if ( Parse_Pass == PASS_1 && Options.first_pass_listing )
@@ -1658,7 +1662,7 @@ LstInit proc __ccall
         .elseif ( Options.first_pass_listing )
             lea rcx,@CStr("\n%s  %s %s\n%s\n\n")
         .endif
-        LstPrintf( rcx, &cp_logo, &szDate, &szTime, rdx )
+        LstPrintf( rcx, &logo, &szDate, &szTime, rdx )
     .endif
     ret
 

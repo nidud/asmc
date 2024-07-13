@@ -501,61 +501,71 @@ WritePreprocessedLine proc __ccall string:string_t
 
 WritePreprocessedLine endp
 
+    assume rcx:ptr module_info
 
 SetMasm510 proc __ccall value:int_t
 
     ldr eax,value
-    mov ModuleInfo.m510,al
-    mov ModuleInfo.oldstructs,al
-    mov ModuleInfo.dotname,al
-    mov ModuleInfo.setif2,al
 
-    .if ( eax && ModuleInfo._model == MODEL_NONE )
+    lea rcx,ModuleInfo
+    mov [rcx].m510,al
+    mov [rcx].oldstructs,al
+    mov [rcx].dotname,al
+    mov [rcx].setif2,al
+
+    .if ( eax && [rcx]._model == MODEL_NONE )
 
         ;
         ; if no model is specified, set OFFSET:SEGMENT
         ;
-        mov ModuleInfo.offsettype,OT_SEGMENT
+        mov [rcx].offsettype,OT_SEGMENT
 
-        .if ( ModuleInfo.langtype == LANG_NONE )
+        .if ( [rcx].langtype == LANG_NONE )
 
-            mov ModuleInfo.scoped,0
-            mov ModuleInfo.procs_private,0
+            mov [rcx].scoped,0
+            mov [rcx].procs_private,0
         .endif
     .endif
     ret
 
 SetMasm510 endp
 
+    assume rcx:nothing
 
-ModulePassInit proc __ccall private uses rsi
+    assume rbx:ptr module_info
+    assume rdi:ptr global_options
 
-    mov ecx,Options.cpu
-    mov esi,Options._model
+ModulePassInit proc __ccall private uses rsi rdi rbx
+
+    lea rdi,Options
+    lea rbx,ModuleInfo
+
+    mov ecx,[rdi].cpu
+    mov esi,[rdi]._model
     ;
     ; set default values not affected by the masm 5.1 compat switch
     ;
-    mov ModuleInfo.procs_private,0
-    mov ModuleInfo.procs_export,0
-    mov ModuleInfo.offsettype,OT_GROUP
-    mov ModuleInfo.scoped,1
+    mov [rbx].procs_private,0
+    mov [rbx].procs_export,0
+    mov [rbx].offsettype,OT_GROUP
+    mov [rbx].scoped,1
 ifdef ASMC64
-    mov ModuleInfo.accumulator,T_RAX
+    mov [rbx].accumulator,T_RAX
 else
-    mov ModuleInfo.accumulator,T_AX
+    mov [rbx].accumulator,T_AX
 endif
 
     .if ( !UseSavedState )
 
-        mov eax,Options.langtype
-        mov ModuleInfo.langtype,al
-        mov eax,Options.fctype
-        mov ModuleInfo.fctype,al
+        mov eax,[rdi].langtype
+        mov [rbx].langtype,al
+        mov eax,[rdi].fctype
+        mov [rbx].fctype,al
         mov eax,ecx
         and eax,P_CPU_MASK
 
 ifndef ASMC64
-        .if ( ModuleInfo.sub_format == SFORMAT_64BIT )
+        .if ( [rbx].sub_format == SFORMAT_64BIT )
 endif
             ;
             ; v2.06: force cpu to be at least P_64, without side effect to Options.cpu
@@ -569,17 +579,16 @@ endif
             ; there's no other model than FLAT possible.
             ;
             mov esi,MODEL_FLAT
-            .if ( ModuleInfo.langtype == LANG_NONE )
+            .if ( [rbx].langtype == LANG_NONE )
                 ;
                 ; v2.27.38: asmc -pe -win64
                 ;           asmc -win64 -pe
                 ;           asmc64 -pe
                 ;
-                .if ( Options.output_format == OFORMAT_COFF ||
-                      Options.output_format == OFORMAT_BIN )
-                    mov ModuleInfo.langtype,LANG_FASTCALL
-                .elseif ( Options.output_format == OFORMAT_ELF )
-                    mov ModuleInfo.langtype,LANG_SYSCALL
+                .if ( [rdi].output_format == OFORMAT_COFF || [rdi].output_format == OFORMAT_BIN )
+                    mov [rbx].langtype,LANG_FASTCALL
+                .elseif ( [rdi].output_format == OFORMAT_ELF )
+                    mov [rbx].langtype,LANG_SYSCALL
                 .endif
             .endif
 ifndef ASMC64
@@ -607,50 +616,50 @@ ifndef ASMC64
 endif
     .endif
 
-    movzx eax,Options.masm51_compat
+    movzx eax,[rdi].masm51_compat
     SetMasm510( eax )
 ifndef ASMC64
-    mov ModuleInfo.defOfssize,USE16
+    mov [rbx].defOfssize,USE16
 else
-    mov ModuleInfo.defOfssize,USE64
+    mov [rbx].defOfssize,USE64
 endif
-    mov ModuleInfo.ljmp,1
-    mov ModuleInfo.list,Options.write_listing
-    mov ModuleInfo.cref,1
-    mov ModuleInfo.listif,Options.listif
-    mov ModuleInfo.list_generated_code,Options.list_generated_code
-    mov ModuleInfo.list_macro,Options.list_macro
-    mov ModuleInfo.case_sensitive,Options.case_sensitive
-    mov ModuleInfo.convert_uppercase,Options.convert_uppercase
+    mov [rbx].ljmp,1
+    mov [rbx].list,[rdi].write_listing
+    mov [rbx].cref,1
+    mov [rbx].listif,[rdi].listif
+    mov [rbx].list_generated_code,[rdi].list_generated_code
+    mov [rbx].list_macro,[rdi].list_macro
+    mov [rbx].case_sensitive,[rdi].case_sensitive
+    mov [rbx].convert_uppercase,[rdi].convert_uppercase
     SymSetCmpFunc()
-    mov ModuleInfo.segorder,SEGORDER_SEQ
-    mov ModuleInfo.radix,10
-    mov ModuleInfo.fieldalign,Options.fieldalign
-    mov ModuleInfo.procalign,0
-    mov al,ModuleInfo.xflag
+    mov [rbx].segorder,SEGORDER_SEQ
+    mov [rbx].radix,10
+    mov [rbx].fieldalign,[rdi].fieldalign
+    mov [rbx].procalign,0
+    mov al,[rbx].xflag
     and al,OPT_LSTRING
-    or  al,Options.xflag
-    mov ModuleInfo.xflag,al
-    mov ModuleInfo.loopalign,Options.loopalign
-    mov ModuleInfo.casealign,Options.casealign
-    mov ModuleInfo.codepage,Options.codepage
-    mov ModuleInfo.win64_flags,Options.win64_flags
-    mov ModuleInfo.frame_auto,Options.frame_auto
-    mov ModuleInfo.floatformat,Options.floatformat
-    mov ModuleInfo.floatdigits,Options.floatdigits
-    mov ModuleInfo.flt_size,Options.flt_size
-    mov ModuleInfo.pic,Options.pic
-    mov ModuleInfo.endbr,Options.endbr
-    mov ModuleInfo.dotname,Options.dotname
-    mov ModuleInfo.dotnamex,Options.dotnamex
-    mov ModuleInfo.sysvregs,Options.sysvregs
-    mov ModuleInfo.masm_compat_gencode,Options.masm_compat_gencode
-    mov ModuleInfo.avxencoding,0
+    or  al,[rdi].xflag
+    mov [rbx].xflag,al
+    mov [rbx].loopalign,[rdi].loopalign
+    mov [rbx].casealign,[rdi].casealign
+    mov [rbx].codepage,[rdi].codepage
+    mov [rbx].win64_flags,[rdi].win64_flags
+    mov [rbx].frame_auto,[rdi].frame_auto
+    mov [rbx].floatformat,[rdi].floatformat
+    mov [rbx].floatdigits,[rdi].floatdigits
+    mov [rbx].flt_size,[rdi].flt_size
+    mov [rbx].pic,[rdi].pic
+    mov [rbx].endbr,[rdi].endbr
+    mov [rbx].dotname,[rdi].dotname
+    mov [rbx].dotnamex,[rdi].dotnamex
+    mov [rbx].sysvregs,[rdi].sysvregs
+    mov [rbx].masm_compat_gencode,[rdi].masm_compat_gencode
+    mov [rbx].avxencoding,0
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
     ;
-    .if ( ModuleInfo.DllQueue )
+    .if ( [rbx].DllQueue )
 
         mov rax,SymTables[TAB_EXT*symbol_queue].head
         .while rax
@@ -663,9 +672,11 @@ endif
 
 ModulePassInit endp
 
-;
+    assume rbx:nothing
+    assume rdi:nothing
+
 ; checks after pass one has been finished without errors
-;
+
 PassOneChecks proc __ccall private uses rsi rdi
     ;
     ; check for open structures and segments has been done inside the

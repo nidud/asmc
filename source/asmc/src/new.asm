@@ -17,7 +17,6 @@ SIZE_DATAPTR    equ 0x68
 
 SymLCreate      proto __ccall :string_t
 GetQualifiedType proto __ccall :ptr int_t, :token_t, :ptr qualified_type
-SetLocalOffsets proto __ccall :proc_t
 
 qualified_type  struc
 size            int_t ?

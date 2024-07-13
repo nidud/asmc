@@ -51,9 +51,16 @@ public  StackAdj
 
 define  T <@CStr>
 
+.data?
+
+; v2.11: changed 128 -> 258; actually, 255 is the max # of unwind codes
+
+unw_code            UNWIND_CODE 258 dup(<>)
+unw_info            UNWIND_INFO <>
+unw_segs_defined    db ?
+
 .data
 
-;
 ; Masm allows nested procedures
 ; but they must NOT have params or locals
 ;
@@ -62,47 +69,35 @@ define  T <@CStr>
 ; - MS fastcall 16-bit: registers ax,dx,bx (default for 16bit)
 ; - MS fastcall 32-bit: registers ecx,edx (default for 32bit)
 ; - Win64: registers rcx, rdx, r8, r9 (default for 64bit)
-;
 
-CurrProc            ptr dsym 0  ;; current procedure
-procidx             int_t 0     ;; procedure index
-
+CurrProc            ptr dsym 0  ; current procedure
 ProcStack           ptr proc_info 0
 
-;
+; @ReservedStack symbol; used when option W64F_AUTOSTACKSP has been set
+
+sym_ReservedStack   ptr asym 0  ; max stack space required by INVOKE
+
+procidx             int_t 0     ; procedure index
+
 ; v2.11: ProcStatus replaced DefineProc
-;
+
 ProcStatus          proc_status 0
 
 endprolog_found     int_t 0
-unw_segs_defined    db ?
-align 8
-unw_info            UNWIND_INFO <>
-;
-; v2.11: changed 128 -> 258; actually, 255 is the max # of unwind codes
-;
-unw_code            UNWIND_CODE 258 dup(<>)
 
-align 8
-;
-; @ReservedStack symbol; used when option W64F_AUTOSTACKSP has been set
-;
-sym_ReservedStack   ptr asym 0 ;; max stack space required by INVOKE
 
-;
 ; tables for FASTCALL support
 ;
 ; v2.07: 16-bit MS FASTCALL registers are AX, DX, BX.
 ; And params on stack are in PASCAL order.
 ;
-;
 ; win64 non-volatile GPRs:
 ; T_RBX, T_RBP, T_RSI, T_RDI, T_R12, T_R13, T_R14, T_R15
-;
+
 define win64_nvgpr  0xF0E8
-;
+
 ; win64 non-volatile XMM regs: XMM6-XMM15
-;
+
 define win64_nvxmm  0xFFC0
 
 stackreg            uint_t T_SP, T_ESP, T_RSP
@@ -134,54 +129,53 @@ user_regs fc_regs {
         { T_EAX, T_EDX, T_ECX, T_R8D, T_R9D, T_R10D,T_R11D,0 },
         { T_RAX, T_RDX, T_RCX, T_R8,  T_R9,  T_R10, T_R11, 0 }}
 
+
+;         regs        mask    gpr xmm int flags
+
 lang_table fc_info {
-
-;      gpr xmm exp int    mask     regs  flags
-
-        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; USE16
-        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; USE32
-        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; USE64
-        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; C
-        0,  0,  0,  0, 0x00000000, NULL, 0 },{
-        0,  0,  0,  0, 0x00000000, NULL, 0 },{
-        0,  0,  0,  0, 0x00000000, NULL, 0 },{ ; SYSCALL
-        0,  0,  0,  0, 0x00000000, NULL, 0 },{
-        6,  8,  4, 16, 0x00FF03C6, sysv_regs, _P_FASTCALL or _P_SYSTEMV },{
-        0,  0,  0,  0, 0x00000000, NULL, _P_CLEANUP },{ ; STDCALL
-        0,  0,  0,  0, 0x00000000, NULL, _P_CLEANUP },{
-        0,  0,  0,  0, 0x00000000, NULL, _P_CLEANUP },{
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{ ; PASCAL
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{ ; FORTRAN
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{ ; BASIC
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
-        0,  0,  0,  0, 0x00000000, NULL, _P_LEFT or _P_CLEANUP },{
-        3,  0,  2,  4, 0x0000000D, watc_regs, _P_FASTCALL or _P_REGPARAM or _P_LEFT or _P_CLEANUP },{ ; FASTCALL
-        2,  0,  4,  4, 0x00000006, fast_regs, _P_FASTCALL or _P_REGPARAM or _P_CLEANUP },{
-        4,  4,  4,  8, 0x000F0306, fast_regs, _P_FASTCALL or _P_RESSTACK },{
-        3,  0,  2,  4, 0x0000000D, watc_regs, _P_FASTCALL or _P_REGPARAM or _P_CLEANUP },{ ; VECTORCALL
-        2,  8,  4,  4, 0x003F0006, fast_regs, _P_FASTCALL or _P_REGPARAM or _P_CLEANUP },{
-        4,  6,  4,  8, 0x003F0306, fast_regs, _P_FASTCALL or _P_RESSTACK },{
-        4,  0,  0,  8, 0x0000000F, watc_regs, _P_FASTCALL or _P_REGPARAM or _P_CLEANUP },{ ; WATCALL
-        4,  0,  4, 16, 0x0000000F, watc_regs, _P_FASTCALL or _P_REGPARAM },{
-        4,  4,  4, 16, 0x000F000F, watc_regs, _P_FASTCALL or _P_REGPARAM },{
-        3,  0,  2,  4, 0x00000007, user_regs, _P_FASTCALL or _P_REGPARAM },{ ; ASMCALL
-        3, 16,  4,  8, 0xFFFF0007, user_regs, _P_FASTCALL or _P_REGPARAM },{
-        7, 16,  4, 16, 0xFFFF0F07, user_regs, _P_FASTCALL or _P_REGPARAM }
-
+        NULL,      0x00000000, 0,  0,  0,  0 },{ ; USE16
+        NULL,      0x00000000, 0,  0,  0,  0 },{ ; USE32
+        NULL,      0x00000000, 0,  0,  0,  0 },{ ; USE64
+        NULL,      0x00000000, 0,  0,  0,  0 },{ ; C
+        NULL,      0x00000000, 0,  0,  0,  _P_CSTACK },{
+        NULL,      0x00000000, 0,  0,  0,  _P_CSTACK },{
+        NULL,      0x00000000, 0,  0,  0,  0 },{ ; SYSCALL
+        NULL,      0x00000000, 0,  0,  0,  _P_CSTACK },{
+        sysv_regs, 0x00FF03C6, 6,  8, 16,  _P_SYSTEMV or _P_EXTEND or _P_CSTACK },{
+        NULL,      0x00000000, 0,  0,  0,  _P_CLEANUP },{ ; STDCALL
+        NULL,      0x00000000, 0,  0,  0,  _P_CLEANUP or _P_CSTACK },{
+        NULL,      0x00000000, 0,  0,  0,  _P_CLEANUP or _P_CSTACK },{
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{ ; PASCAL
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{ ; FORTRAN
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{ ; BASIC
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{
+        NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{
+        watc_regs, 0x0000000D, 3,  0,  4,  _P_REGPARAM or _P_EXTEND or _P_LEFT or _P_CLEANUP },{ ; FASTCALL
+        fast_regs, 0x00000006, 2,  0,  4,  _P_REGPARAM or _P_EXTEND or _P_CLEANUP },{
+        fast_regs, 0x000F0306, 4,  4,  8,  _P_RESSTACK or _P_EXTEND or _P_CSTACK },{
+        watc_regs, 0x0000000D, 3,  0,  4,  _P_REGPARAM or _P_EXTEND or _P_CLEANUP },{ ; VECTORCALL
+        fast_regs, 0x003F0006, 2,  8,  4,  _P_REGPARAM or _P_EXTEND or _P_CLEANUP },{
+        fast_regs, 0x003F0306, 4,  6,  8,  _P_RESSTACK or _P_EXTEND or _P_CSTACK },{
+        watc_regs, 0x0000000F, 4,  0,  8,  _P_REGPARAM or _P_CLEANUP },{ ; WATCALL
+        watc_regs, 0x0000000F, 4,  0, 16,  _P_REGPARAM or _P_EXTEND },{
+        watc_regs, 0x000F000F, 4,  4, 16,  _P_REGPARAM or _P_EXTEND },{
+        user_regs, 0x00000007, 3,  0,  4,  _P_REGPARAM or _P_EXTEND },{ ; ASMCALL
+        user_regs, 0xFFFF0007, 3, 16,  8,  _P_REGPARAM or _P_EXTEND },{
+        user_regs, 0xFFFF0F07, 7, 16, 16,  _P_REGPARAM or _P_EXTEND }
 
    .code
 
 get_fasttype proc fastcall Ofssize:int_t, langtype:int_t
 
-    imul    edx,edx,fc_info * 3
-    imul    ecx,ecx,fc_info
-    lea     rax,lang_table
-    add     rax,rcx
-    add     rax,rdx
+    imul edx,edx,fc_info * 3
+    imul ecx,ecx,fc_info
+    lea  rax,lang_table
+    add  rax,rcx
+    add  rax,rdx
     ret
 
 get_fasttype endp
@@ -371,52 +365,6 @@ fast_pcheck endp
 
     assume rbx:nothing
     assume rsi:nothing
-
-
-pushitem proc __ccall private stk:ptr, elmt:ptr
-
-    LclAlloc( sizeof( qnode ) )
-    mov rdx,stk
-    mov rcx,[rdx]
-    mov [rax].qnode.next,rcx
-    mov rcx,elmt
-    mov [rax].qnode.elmt,rcx
-    mov [rdx],rax
-    ret
-
-pushitem endp
-
-
-popitem proc __ccall private stk:ptr
-
-    ldr rdx,stk
-    mov rcx,[rdx]
-    mov [rdx],[rcx].qnode.next
-    mov rax,[rcx].qnode.elmt
-    ret
-
-popitem endp
-
-
-push_proc proc __ccall private p:ptr dsym
-
-    .if ( Parse_Pass == PASS_1 ) ;; get the locals stored so far
-        SymGetLocal( p )
-    .endif
-    pushitem( &ProcStack, p )
-    ret
-
-push_proc endp
-
-
-pop_proc proc __ccall private
-
-    .if ( ProcStack == NULL )
-        .return( NULL )
-    .endif
-    .return( popitem( &ProcStack ) )
-
-pop_proc endp
 
 ;
 ; LOCAL directive. Syntax:
@@ -849,9 +797,9 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
 
             mov rdi,paracurr
             mov al,flags
-            and eax,_P_FASTCALL or _P_REGPARAM or _P_LEFT or _P_CLEANUP or _P_SYSTEMV
+            and eax,_P_REGPARAM or _P_LEFT or _P_CLEANUP or _P_SYSTEMV
 
-            .if ( eax == _P_FASTCALL or _P_REGPARAM or _P_CLEANUP ||
+            .if ( eax == _P_REGPARAM or _P_CLEANUP ||
                 ( eax == _P_SYSTEMV && !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) )
 
                 mov [rdi].asym.target_type,NULL
@@ -938,7 +886,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
             .endif
 
             movzx eax,flags
-            and eax,_P_FASTCALL
+            and eax,_P_REGPARAM or _P_RESSTACK or _P_SYSTEMV
             .if eax
                 fast_pcheck( p, rdi, &fcint )
             .endif
@@ -1100,8 +1048,7 @@ ParseParams endp
 ; 3. if no segment is set, use cpu setting
 ;
 
-ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
-        i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t, langtype:byte
+ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t, langtype:byte
 
   .new token:string_t
   .new regist:ptr word
@@ -1709,8 +1656,9 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ldr ecx,i
 
     .if ( ecx != 1 )
+
         imul ecx,ecx,asm_tok
-        .return( asmerr( 2008, [rbx+rcx].string_ptr ) )
+       .return( asmerr( 2008, [rbx+rcx].string_ptr ) )
     .endif
 
     ; v2.04b: check was missing
@@ -1728,22 +1676,30 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov name,[rbx].string_ptr
     add rbx,asm_tok
     mov rdi,CurrProc
+
     .if ( rdi != NULL )
 
         ; this is not needed for JWasm, but Masm will reject nested
         ; procs if there are params, locals or used registers.
 
         mov rsi,[rdi].dsym.procinfo
-        .if ( [rsi].paralist ||
-              [rsi].flags & PROC_ISFRAME ||
-              [rsi].locallist ||
-              [rsi].regslist )
+        .if ( [rsi].paralist || [rsi].flags & PROC_ISFRAME || [rsi].locallist || [rsi].regslist )
+
             .return( asmerr( 2144, name ) )
         .endif
 
         ; nested procs ... push currproc on a stack
 
-        push_proc( rdi )
+        .if ( Parse_Pass == PASS_1 ) ;; get the locals stored so far
+
+            SymGetLocal( rdi )
+        .endif
+        LclAlloc( sizeof( qnode ) )
+        lea rdx,ProcStack
+        mov rcx,[rdx]
+        mov [rax].qnode.next,rcx
+        mov [rax].qnode.elmt,rdi
+        mov [rdx],rax
     .endif
 
 
@@ -1753,7 +1709,6 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     inc i ; go past PROC
     add rbx,asm_tok
-
     mov sym,SymSearch( name )
 
     .if ( Parse_Pass == PASS_1 )
@@ -1818,7 +1773,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             mov CurrProc,NULL
             mov strFUNC,0
-           .return( ERROR )
+           .return
         .endif
 
         ; v2.04: added
@@ -1831,6 +1786,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; change symbol to SYM_INTERNAL!
 
         .if ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.flags & S_ISPROC )
+
             sym_ext2int( rdi )
 
             ; v2.11: added ( may be better to call CreateProc() - currently not possible )
@@ -1958,7 +1914,8 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     BackPatch( sym )
-   .return( NOT_ERROR )
+    mov eax,NOT_ERROR
+    ret
 
 ProcDir endp
 
@@ -2129,8 +2086,6 @@ WriteSEHData endp
 ;
 ; close a PROC
 ;
-SetLocalOffsets proto __ccall :ptr proc_info
-
 ProcFini proc __ccall private uses rsi rdi p:ptr dsym
 
     ;
@@ -2219,12 +2174,23 @@ ProcFini proc __ccall private uses rsi rdi p:ptr dsym
         SymGetLocal( CurrProc )
     .endif
 
-    mov CurrProc,pop_proc()
-    .if ( CurrProc )
+    lea rdx,ProcStack
+    mov rax,[rdx]
+
+    .if ( rax )
+
+        mov rcx,rax
+        mov [rdx],[rcx].qnode.next
+        mov rax,[rcx].qnode.elmt
+    .endif
+    mov CurrProc,rax
+
+    .if ( rax )
+
         tsprintf(&strFUNC, "\"%s\"", [rax].asym.name)
         SymSetLocal( CurrProc ) ; restore local symbol table
     .else
-        mov strFUNC,0
+        mov strFUNC,al
     .endif
     mov ProcStatus,0 ; in case there was an empty PROC/ENDP pair
     ret
@@ -2940,36 +2906,6 @@ push_user_registers proc __ccall private uses rsi rdi rbx list:string_t, usefram
 push_user_registers endp
 
 
-; Use the same logic for prologue/epilogue..
-
-use_cstack proc private
-
-    xor eax,eax
-    .if ( ModuleInfo.xflag & OPT_CSTACK &&
-          ( ModuleInfo.Ofssize == USE64 ||
-            ( ModuleInfo.Ofssize == USE32 &&
-              ( cl == LANG_STDCALL || cl == LANG_C || cl == LANG_SYSCALL )
-            ) ) )
-        inc eax
-    .endif
-    ret
-
-use_cstack endp
-
-use_sysstack proc private
-
-    xor eax,eax
-    .if ( ModuleInfo.Ofssize == USE64 &&
-          cl == LANG_SYSCALL &&
-          [rsi].paralist &&
-          ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
-        inc eax
-    .endif
-    ret
-
-use_sysstack endp
-
-
 ; write PROC prologue
 ; this is to be done after the LOCAL directives
 ; and *before* any real instruction
@@ -2993,7 +2929,8 @@ use_sysstack endp
 ; enter imm,0   4     -   11   10   14   11
 ;
 ; write prolog code
-;
+
+    assume rbx:ptr module_info
 
 write_default_prologue proc __ccall private uses rsi rdi rbx
 
@@ -3004,31 +2941,37 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
    .new cntxmm:int_t = 0
    .new cnt:int_t
    .new offs:int_t
-   .new sysstack:int_t
    .new resstack:int_t = 0
-   .new cstack:int_t
    .new leaf:int_t = 0
    .new usestack:int_t = 1
    .new argstack:int_t = 0
+   .new stkreg:int_t
    .new argoffs:int_t = 0
+   .new sysstack:byte = 0
+   .new cstack:byte = 0
+   .new flags:byte
 
     mov rdi,CurrProc
     mov rsi,[rdi].dsym.procinfo
     mov info,rsi
-    mov cl,[rdi].asym.langtype
-    mov cstack,use_cstack()
-    mov sysstack,use_sysstack()
 
+    get_fasttype([rdi].asym.segoffsize, [rdi].asym.langtype)
+    mov flags,[rax].fc_info.flags
+    lea rbx,ModuleInfo
 
-    .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( cl == LANG_ASMCALL || cl == LANG_WATCALL || cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) && Parse_Pass > PASS_1 )
+    .if ( al & _P_CSTACK && [rbx].xflag & OPT_CSTACK )
+        inc cstack
+    .endif
+    .if ( al & _P_SYSTEMV && [rsi].paralist && [rbx].win64_flags & W64F_AUTOSTACKSP )
+        inc sysstack
+    .endif
+    .if ( al & ( _P_REGPARAM or _P_RESSTACK ) && [rbx].win64_flags & W64F_AUTOSTACKSP && Parse_Pass > PASS_1 )
 
         .if ( !( [rdi].asym.sflags & S_STKUSED ) && ![rsi].locallist )
 
             inc leaf
 
-            .if ( !( [rdi].asym.sflags & ( S_ARGUSED or S_LOCALGPR ) ) &&
-                  [rsi].localsize == 0 && [rsi].regslist == NULL )
+            .if ( !( [rdi].asym.sflags & ( S_ARGUSED or S_LOCALGPR ) ) && ![rsi].localsize && ![rsi].regslist )
 
                 mov usestack,0
             .endif
@@ -3037,17 +2980,17 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
 
     .if ( [rsi].flags & PROC_ISFRAME )
 
-        .if ( ModuleInfo.frame_auto & 1 )
+        .if ( [rbx].frame_auto & 1 )
 
             ; win64 default prologue when PROC FRAME and
             ; OPTION FRAME:AUTO is set
 
-            .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+            .if ( [rbx].win64_flags & W64F_AUTOSTACKSP )
                 mov rcx,sym_ReservedStack
                 mov resstack,[rcx].asym.value
             .endif
 
-            .if ( ModuleInfo.win64_flags & W64F_SAVEREGPARAMS )
+            .if ( [rbx].win64_flags & W64F_SAVEREGPARAMS )
                 win64_SaveRegParams( rsi )
             .endif
 
@@ -3067,7 +3010,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
                     mov cntxmm,push_user_registers( rsi, 1, &offs )
 
                     mov rsi,info
-                    .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam )
+                    .for ( rdi = [rsi].paralist : rdi : rdi = [rdi].dsym.nextparam )
                         .break .if ( ![rdi].dsym.nextparam )
                     .endf
 
@@ -3075,9 +3018,8 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
 
                         ; v2.23 - skip adding if stackbase is not EBP
 
-                        movzx ecx,ModuleInfo.Ofssize
-                        lea rdx,ModuleInfo
-                        mov ecx,[rdx].module_info.basereg[rcx*4]
+                        movzx ecx,[rbx].Ofssize
+                        mov ecx,[rbx].basereg[rcx*4]
 
                         .if ( ( [rdi].asym.offs == 8 && ecx == T_EBP ) ||
                               ( [rdi].asym.offs == 16 && ecx == T_RBP ) )
@@ -3100,12 +3042,12 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
 
             .elseif( usestack )
 
-                movzx ebx,[rsi].basereg
+                movzx ecx,[rsi].basereg
                 AddLineQueueX(
-                    "push %r\n"
-                    "%r %r\n"
-                    "mov %r, %r\n"
-                    "%r %r, 0", ebx, T_DOT_PUSHREG, ebx, ebx, T_RSP, T_DOT_SETFRAME, ebx )
+                    " push %r\n"
+                    " %r %r\n"
+                    " mov %r, %r\n"
+                    " %r %r, 0", ecx, T_DOT_PUSHREG, ecx, ecx, T_RSP, T_DOT_SETFRAME, ecx )
             .endif
 
             ; after the "push rbp", the stack is xmmword aligned
@@ -3214,11 +3156,8 @@ endif
     .endif
 
     mov rsi,info
-    .if ( ModuleInfo.Ofssize == USE64 &&
-          ( ModuleInfo.fctype == FCT_WIN64 ||
-            ModuleInfo.fctype == FCT_VEC64 ||
-            ModuleInfo.fctype == FCT_ELF64 ) &&
-          ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+    .if ( [rbx].Ofssize == USE64 && [rbx].win64_flags & W64F_AUTOSTACKSP &&
+          ( [rbx].fctype == FCT_WIN64 || [rbx].fctype == FCT_VEC64 || [rbx].fctype == FCT_ELF64 ) )
 
         mov rdi,CurrProc ; added v2.33.26
         mov rcx,sym_ReservedStack
@@ -3232,14 +3171,16 @@ endif
                 ;
                 add [rcx].asym.value,208
             .endif
-            .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+            .if ( [rbx].win64_flags & W64F_AUTOSTACKSP )
                 ;
                 ; reserve space for stack params used..
                 ;
                 mov al,[rdi].asym.sys_rcnt
                 add al,[rdi].asym.sys_xcnt
                 .if ( eax )
+
                     .for ( ebx = 8, eax = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+
                         .if ( [rdx].asym.flags & S_USED && [rdx].asym.flags & S_REGPARAM )
 
                             inc eax
@@ -3248,6 +3189,7 @@ endif
                             .endif
                         .endif
                     .endf
+
                     .if ( eax )
 
                         add ebx,7
@@ -3257,6 +3199,7 @@ endif
                         add [rcx].asym.value,ROUND_UP( eax, 16 )
                         mov argstack,eax
                     .endif
+                    lea rbx,ModuleInfo
                 .endif
             .endif
         .endif
@@ -3275,23 +3218,20 @@ endif
 
     ; initialize shadow space for register params
 
-    mov rcx,CurrProc
-    movzx ecx,[rcx].asym.langtype
-    .if ( ModuleInfo.Ofssize == USE64 && ( ecx == LANG_FASTCALL || ecx == LANG_VECTORCALL ) )
+    .if ( flags & _P_RESSTACK )
 
-        .if ( ModuleInfo.win64_flags & W64F_SAVEREGPARAMS )
+        .if ( [rbx].win64_flags & W64F_SAVEREGPARAMS )
 
             win64_SaveRegParams( rsi )
 
-        .elseif ( Parse_Pass == PASS_1 && ModuleInfo.fctype == FCT_VEC64 )
+        .elseif ( Parse_Pass == PASS_1 && [rbx].fctype == FCT_VEC64 )
 
             ; set param offset to 16
 
-            .for ( ebx = 0, ecx = 16,
-                   rdx = [rsi].paralist: rdx: rdx = [rdx].dsym.nextparam, ebx++, ecx += 16 )
+            .for ( eax = 0, ecx = 16, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam, eax++, ecx += 16 )
                 .break .if ( ![rdx].dsym.nextparam )
             .endf
-            .for ( rdx = [rsi].paralist: rdx && ebx: rdx = [rdx].dsym.nextparam, ebx--, ecx -= 16 )
+            .for ( rdx = [rsi].paralist : rdx && eax : rdx = [rdx].dsym.nextparam, eax--, ecx -= 16 )
                 mov [rdx].asym.offs,ecx
             .endf
         .endif
@@ -3306,7 +3246,7 @@ endif
         mov regist,NULL
         add argoffs,offs
 
-        .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam )
+        .for ( rdi = [rsi].paralist : rdi : rdi = [rdi].dsym.nextparam )
             .break .if ( ![rdi].dsym.nextparam )
         .endf
 
@@ -3314,9 +3254,8 @@ endif
 
             ; v2.23 - skip adding if stackbase is not EBP
 
-            lea rdx,ModuleInfo
-            movzx ecx,[rdx].module_info.Ofssize
-            mov ecx,[rdx].module_info.basereg[rcx*4]
+            movzx ecx,[rbx].Ofssize
+            mov ecx,[rbx].basereg[rcx*4]
 
             .if ( ( [rdi].asym.offs == 8 && ecx == T_EBP ) ||
                   ( [rdi].asym.offs == 16 && ecx == T_RBP ) )
@@ -3331,8 +3270,7 @@ endif
         .endif
     .endif
 
-    .if ( sysstack || [rsi].locallist ||
-          [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) )
+    .if ( sysstack || [rsi].locallist || [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) )
 
         ; write 80386 prolog code
         ; PUSH [E|R]BP
@@ -3341,13 +3279,14 @@ endif
 
         .if ( !( [rsi].flags & PROC_FPO ) && usestack )
 
-            movzx ebx,[rsi].basereg
-            movzx ecx,ModuleInfo.Ofssize
+            movzx edx,[rsi].basereg
+            movzx ecx,[rbx].Ofssize
+            lea rax,stackreg
+            mov ecx,[rax+rcx*4]
 
-            lea rdx,stackreg
             AddLineQueueX(
                 "push %r\n"
-                "mov %r, %r", ebx, ebx, [rdx+rcx*4] )
+                "mov %r, %r", edx, edx, ecx )
         .endif
     .endif
 
@@ -3358,28 +3297,28 @@ endif
         push_user_registers( regist, 0, &offs )
         mov regist,NULL
 
-        mov ebx,[rsi].localsize
-        add ebx,resstack
+        mov ecx,[rsi].localsize
+        add ecx,resstack
 
 if STACKPROBE
 
-        .if ( Options.chkstack && ebx > 0x1000 )
+        .if ( Options.chkstack && ecx > 0x1000 )
 
             AddLineQueueX(
                 "mov rax, %d\n"
                 "externdef _chkstk:PROC\n"
                 "call _chkstk\n"
-                "sub rsp, rax", ebx )
+                "sub rsp, rax", ecx )
         .else
 endif
 
-            .if ( ebx )
+            .if ( ecx )
 
-                movzx ecx,ModuleInfo.Ofssize
+                movzx eax,[rbx].Ofssize
                 lea   rdx,stackreg
-                mov   ecx,[rdx+rcx*4]
+                mov   edx,[rdx+rax*4]
 
-                AddLineQueueX( "sub %r, %d", ecx, ebx )
+                AddLineQueueX( "sub %r, %d", edx, ecx )
             .endif
 if STACKPROBE
         .endif
@@ -3391,9 +3330,9 @@ endif
         ; it will generate short instructions up to a size of 128.
         ; with SUB, short instructions work up to 127 only.
 
-        movzx ecx,ModuleInfo.Ofssize
+        movzx ecx,[rbx].Ofssize
         lea rdx,stackreg
-        mov ebx,[rdx+rcx*4]
+        mov stkreg,[rdx+rcx*4]
 
 if STACKPROBE
 
@@ -3404,18 +3343,18 @@ if STACKPROBE
                 "mov eax, %d\n"
                 "call _chkstk", [rsi].localsize )
 
-            .if ( ModuleInfo.Ofssize == USE64 )
-                AddLineQueueX( "sub %r, rax", ebx )
+            .if ( [rbx].Ofssize == USE64 )
+                AddLineQueueX( "sub %r, rax", stkreg )
             .endif
         .else
 endif
         xor ecx,ecx
         sub ecx,[rsi].localsize
 
-        .if ( ModuleInfo.masm_compat_gencode || [rsi].localsize == 128 )
-            AddLineQueueX( "add %r, %d", ebx, ecx )
+        .if ( [rbx].masm_compat_gencode || [rsi].localsize == 128 )
+            AddLineQueueX( "add %r, %d", stkreg, ecx )
         .else
-            AddLineQueueX( "sub %r, %d", ebx, [rsi].localsize )
+            AddLineQueueX( "sub %r, %d", stkreg, [rsi].localsize )
         .endif
 if STACKPROBE
         .endif
@@ -3425,7 +3364,7 @@ endif
     .if ( [rsi].flags & PROC_LOADDS )
 
         mov ecx,T_AX
-        .if ( ModuleInfo.Ofssize )
+        .if ( [rbx].Ofssize )
             mov ecx,T_EAX
         .endif
         AddLineQueueX(
@@ -3446,8 +3385,7 @@ runqueue:
 
     ; v2.33.26 - Use proc language
     mov rdi,CurrProc
-    .if ( ModuleInfo.Ofssize == USE64 && [rdi].asym.langtype == LANG_SYSCALL &&
-          ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+    .if ( flags & _P_SYSTEMV && ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
         .if ( resstack && argstack && resstack )
 
@@ -3686,30 +3624,25 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
    .new rspalign:int_t = FALSE
    .new calign:int_t = CurrWordSize
    .new wsize:int_t = CurrWordSize
-   .new cstack:int_t = 0
+   .new cstack:byte = 0
 
     mov rdi,CurrProc
-    movzx ebx,[rdi].asym.langtype
+    lea rbx,ModuleInfo
 
-    .if ( ModuleInfo.Ofssize == USE64 || ( ModuleInfo.Ofssize == USE32 &&
-            ( ebx == LANG_STDCALL || ebx == LANG_C || ebx == LANG_SYSCALL ) ) )
-        .if ( ModuleInfo.xflag & OPT_CSTACK )
-            inc cstack
-        .endif
+    get_fasttype([rdi].asym.segoffsize, [rdi].asym.langtype)
+    .if ( [rax].fc_info.flags & _P_CSTACK && [rbx].xflag & OPT_CSTACK )
+        inc cstack
     .endif
 
-    .if ( ModuleInfo.fctype == FCT_VEC64 )
+    .if ( [rbx].fctype == FCT_VEC64 )
         mov wsize,16
     .endif
 
     mov rsi,info
-    .if ( [rsi].flags & PROC_ISFRAME ||
-         ( ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-            ( ModuleInfo.fctype == FCT_WIN64 ||
-              ModuleInfo.fctype == FCT_VEC64 ||
-              ModuleInfo.fctype == FCT_ELF64 ) ) )
+    .if ( [rsi].flags & PROC_ISFRAME || ( ( [rbx].win64_flags & W64F_AUTOSTACKSP ) &&
+            ( [rbx].fctype == FCT_WIN64 || [rbx].fctype == FCT_VEC64 || [rbx].fctype == FCT_ELF64 ) ) )
         mov rspalign,TRUE
-        .if ( ModuleInfo.win64_flags & W64F_STACKALIGN16 || ModuleInfo.fctype == FCT_VEC64 )
+        .if ( [rbx].win64_flags & W64F_STACKALIGN16 || [rbx].fctype == FCT_VEC64 )
             mov calign,16
         .endif
     .endif
@@ -3883,10 +3816,11 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
 SetLocalOffsets endp
 
 
-write_prologue proc __ccall uses rsi rdi tokenarray:ptr asm_tok
+write_prologue proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
 
     mov rdi,CurrProc
     mov rsi,[rdi].dsym.procinfo
+    lea rbx,ModuleInfo
 
     .if ( Parse_Pass == PASS_1 )
         and [rdi].asym.sflags,not ( S_STKUSED or S_ARGUSED or S_LOCALGPR )
@@ -3896,19 +3830,16 @@ write_prologue proc __ccall uses rsi rdi tokenarray:ptr asm_tok
 
     and ProcStatus,not PRST_PROLOGUE_NOT_DONE
 
-    .if ( ModuleInfo.endbr && ModuleInfo.prologuemode != PEM_NONE &&
-          ModuleInfo.langtype == LANG_SYSCALL )
-        .if ( ModuleInfo.Ofssize == USE64 )
+    .if ( [rbx].endbr && [rbx].prologuemode != PEM_NONE && [rbx].langtype == LANG_SYSCALL )
+        .if ( [rbx].Ofssize == USE64 )
             AddLineQueue( "endbr64" )
-        .elseif ( ModuleInfo.Ofssize == USE32 )
+        .elseif ( [rbx].Ofssize == USE32 )
             AddLineQueue( "endbr32" )
         .endif
     .endif
 
-    .if ( ( ModuleInfo.fctype == FCT_WIN64 ||
-            ModuleInfo.fctype == FCT_VEC64 ||
-            ModuleInfo.fctype == FCT_ELF64 ) &&
-          ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+    .if ( ( [rbx].win64_flags & W64F_AUTOSTACKSP ) &&
+          ( [rbx].fctype == FCT_WIN64 || [rbx].fctype == FCT_VEC64 || [rbx].fctype == FCT_ELF64 ) )
 
         ; in pass one init reserved stack with 4*8 to force stack frame creation
 
@@ -3920,7 +3851,7 @@ write_prologue proc __ccall uses rsi rdi tokenarray:ptr asm_tok
                 mov [rcx].asym.value,6 * 16
             .elseif ( dl == LANG_SYSCALL )
                 mov [rcx].asym.value,0
-                .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+                .if ( [rbx].win64_flags & W64F_AUTOSTACKSP )
                     .for ( ecx = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
                         .if ( [rdx].asym.flags & S_REGPARAM )
                             add ecx,8
@@ -3951,9 +3882,9 @@ write_prologue proc __ccall uses rsi rdi tokenarray:ptr asm_tok
     ; option prologue:default       *proc_prologue == NULLC
     ; option prologue:usermacro     *proc_prologue != NULLC
 
-    .if ( ModuleInfo.prologuemode == PEM_DEFAULT )
+    .if ( [rbx].prologuemode == PEM_DEFAULT )
         write_default_prologue()
-    .elseif ( ModuleInfo.prologuemode == PEM_NONE )
+    .elseif ( [rbx].prologuemode == PEM_NONE )
     .else
         write_userdef_prologue( tokenarray )
     .endif
@@ -4052,28 +3983,31 @@ pop_register endp
 write_default_epilogue proc __ccall private uses rsi rdi rbx
 
    .new info:ptr proc_info
-   .new sysstack:int_t
    .new leav:int_t = 0
    .new resstack:int_t = 0
-   .new cstack:int_t
    .new sreg:int_t
    .new usestack:int_t = 1
+   .new sysstack:byte = 0
+   .new cstack:byte = 0
 
     mov rdi,CurrProc
     mov rsi,[rdi].dsym.procinfo
     mov info,rsi
-    mov cl,[rdi].asym.langtype
-    mov cstack,use_cstack()
-    mov sysstack,use_sysstack()
+    lea rbx,ModuleInfo
 
+    get_fasttype([rdi].asym.segoffsize, [rdi].asym.langtype)
+    mov al,[rax].fc_info.flags
+    .if ( al & _P_CSTACK && [rbx].xflag & OPT_CSTACK )
+        inc cstack
+    .endif
+    .if ( al & _P_SYSTEMV && [rsi].paralist && [rbx].win64_flags & W64F_AUTOSTACKSP )
+        inc sysstack
+    .endif
+    .if ( al & ( _P_REGPARAM or _P_RESSTACK ) && [rbx].win64_flags & W64F_AUTOSTACKSP )
 
-    .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( cl == LANG_ASMCALL || cl == LANG_WATCALL || cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) )
-
-        ;
         ; Reserved stack is used if a 64-bit fastcall or vectocall is invoked
         ; - see fastcall.asm: ms64_fcstart(), hll.asm: LKRenderHllProc()
-        ;
+
         .if ( [rsi].flags & PROC_HAS_VARARG )
             or [rdi].asym.sflags,S_ARGUSED
         .else
@@ -4095,9 +4029,9 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
                 mov [rsi].localsize,0 ; no alignment needed..
 
-                .if ( ModuleInfo.basereg[USE64*4] == T_RSP ) ; adjust stack params ?
+                .if ( [rbx].basereg[USE64*4] == T_RSP ) ; adjust stack params ?
 
-                    .for ( rdx = [rsi].paralist: rdx: rdx = [rdx].dsym.nextparam )
+                    .for ( rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
                         .if ( [rdx].asym.state != SYM_TMACRO )
                             sub [rdx].asym.offs,8
                         .endif
@@ -4111,19 +4045,17 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
         .endif
     .endif
 
-    .if ( [rsi].locallist || sysstack ||
-          [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) )
+    .if ( [rsi].locallist || sysstack || [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) )
         inc leav
     .endif
 
-    movzx ecx,ModuleInfo.Ofssize
+    movzx ecx,[rbx].Ofssize
     lea rdx,stackreg
     mov sreg,[rdx+rcx*4]
 
     .if ( [rsi].flags & PROC_ISFRAME )
 
-
-        .if ( ModuleInfo.frame_auto & 1 )
+        .if ( [rbx].frame_auto & 1 )
 
             ; Win64 default epilogue if PROC FRAME and OPTION FRAME:AUTO is set
 
@@ -4154,7 +4086,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
                     mov rdi,[rsi].regslist
                     movzx esi,word ptr [rdi]
 
-                    .for ( rdi += 2 : esi: esi--, rdi += 2 )
+                    .for ( rdi += 2 : esi : esi--, rdi += 2 )
 
                         movzx ecx,word ptr [rdi]
 
@@ -4184,8 +4116,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
                 .endif
 
                 .if ( ( !sysstack && [rsi].locallist == NULL ) &&
-                      !( [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) ) &&
-                      resstack == 0 )
+                      !( [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) ) && resstack == 0 )
 
                     .if ( cstack )
                         pop_register( [rsi].regslist )
@@ -4233,11 +4164,9 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
         .return
     .endif
 
-    .if ( ModuleInfo.Ofssize == USE64 &&
-         ( ModuleInfo.fctype == FCT_WIN64 ||
-           ModuleInfo.fctype == FCT_VEC64 ||
-           ModuleInfo.fctype == FCT_ELF64 ) &&
-         ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+    .if ( [rbx].Ofssize == USE64 &&
+         ( [rbx].fctype == FCT_WIN64 || [rbx].fctype == FCT_VEC64 || [rbx].fctype == FCT_ELF64 ) &&
+         ( [rbx].win64_flags & W64F_AUTOSTACKSP ) )
 
         mov rcx,sym_ReservedStack
         mov resstack,[rcx].asym.value
@@ -4255,9 +4184,9 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
             ; v2.27: leave will follow..
 
         .elseif ( resstack || [rsi].localsize )
-            mov ebx,sreg
+            mov ecx,sreg
             mov rdx,sym_ReservedStack
-            AddLineQueueX( "add %r, %d + %s", ebx, [rsi].localsize, [rdx].asym.name )
+            AddLineQueueX( "add %r, %d + %s", ecx, [rsi].localsize, [rdx].asym.name )
         .endif
     .endif
 
@@ -4273,8 +4202,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
     .endif
 
     .if ( ( !sysstack && [rsi].locallist == NULL ) &&
-          !( [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) ) &&
-          resstack == 0 )
+          !( [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) ) && resstack == 0 )
 
         .if ( cstack )
 
@@ -4301,11 +4229,8 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
     .else
 
         .if ( [rsi].flags & PROC_FPO )
-            .if ( ModuleInfo.Ofssize == USE64 &&
-                  ( ModuleInfo.fctype == FCT_WIN64 ||
-                    ModuleInfo.fctype == FCT_VEC64 ||
-                    ModuleInfo.fctype == FCT_ELF64 ) &&
-                  ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+            .if ( [rbx].Ofssize == USE64 && [rbx].win64_flags & W64F_AUTOSTACKSP &&
+                  ( [rbx].fctype == FCT_WIN64 || [rbx].fctype == FCT_VEC64 || [rbx].fctype == FCT_ELF64 ) )
 
             .elseif ( [rsi].localsize )
 
@@ -4345,19 +4270,19 @@ write_default_epilogue endp
 
 write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, tokenarray:ptr asm_tok
 
-    mov rdi,CurrProc
-    mov rsi,[rdi].dsym.procinfo
-    movzx ebx,[rdi].asym.langtype
-
    .new regs:ptr word
    .new i:int_t
    .new p:string_t
    .new is_exitm:int_t
-   .new info:ptr proc_info = rsi
+   .new info:ptr proc_info
    .new flags:int_t
    .new dir:ptr dsym
    .new reglst[128]:char_t
    .new buffer[MAX_LINE_LEN]:char_t ; stores string for RunMacro()
+
+    mov rdi,CurrProc
+    mov rsi,[rdi].dsym.procinfo
+    mov info,rsi
 
     mov dir,SymSearch( ModuleInfo.proc_epilogue )
     .if ( eax == NULL || [rax].asym.state != SYM_MACRO || [rax].asym.mac_flag & M_ISFUNC )
@@ -4366,6 +4291,7 @@ write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, to
 
     ; to be compatible with ML64, translate FASTCALL to 0 (not 7)
 
+    movzx ebx,[rdi].asym.langtype
     mov edx,ebx
     .if ( ebx == LANG_FASTCALL && ModuleInfo.fctype == FCT_WIN64 )
         mov edx,0
@@ -4443,6 +4369,9 @@ write_userdef_epilogue endp
 ; it's ensured already that ModuleInfo.proc_epilogue isn't NULL.
 ;
 
+    assume rbx:ptr asm_tok
+    assume rdi:ptr module_info
+
 RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:int_t
 
    .new info:ptr proc_info
@@ -4454,18 +4383,20 @@ RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:in
     ldr ecx,i
     ldr rdx,tokenarray
 
+    lea rdi,ModuleInfo
     imul ebx,ecx,asm_tok
     add rbx,rdx
-    .if ( [rbx].tokval == T_IRET || [rbx].tokval == T_IRETD || [rbx].tokval == T_IRETQ )
+    mov eax,[rbx].tokval
+    .if ( eax == T_IRET || eax == T_IRETD || eax == T_IRETQ )
         mov is_iret,TRUE
-    .elseif ( [rbx].tokval == T_RET && ModuleInfo.RetStack )
-        mov rcx,ModuleInfo.RetStack
+    .elseif ( eax == T_RET && [rdi].RetStack )
+        mov rcx,[rdi].RetStack
         mov ecx,[rcx].hll_item.labels[LEXIT*4]
         AddLineQueueX( "%s%s", GetLabelStr( ecx, &buffer ), LABELQUAL )
-        mov ModuleInfo.RetStack,NULL
+        mov [rdi].RetStack,NULL
     .endif
 
-    .if ( ModuleInfo.epiloguemode == PEM_MACRO )
+    .if ( [rdi].epiloguemode == PEM_MACRO )
         ;
         ; don't run userdefined epilogue macro if pass > 1
         ;
@@ -4482,10 +4413,11 @@ RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:in
         .return( write_userdef_epilogue( is_iret, tokenarray ) )
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( [rdi].list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL )
     .endif
 
+    assume rdi:nothing
     mov rdi,tstrcpy( &buffer, [rbx].string_ptr )
     add rdi,tstrlen( rax )
 
@@ -4585,27 +4517,29 @@ RetInstr endp
 
 ProcInit proc __ccall
 
-    mov ProcStack,NULL
-    mov CurrProc ,NULL
-    mov strFUNC,0
+    xor eax,eax
+    mov ProcStack,rax
+    mov CurrProc ,rax
+    mov strFUNC,al
     mov procidx,1
-    mov ProcStatus,0
-    ;
+    mov ProcStatus,eax
+
     ; v2.09: reset prolog and epilog mode
-    ;
-    mov ModuleInfo.prologuemode,PEM_DEFAULT
-    mov ModuleInfo.epiloguemode,PEM_DEFAULT
+
+    lea rcx,ModuleInfo
+    assume rcx:ptr module_info
+    mov [rcx].prologuemode,PEM_DEFAULT
+    mov [rcx].epiloguemode,PEM_DEFAULT
     ;
     ; v2.06: no forward references in INVOKE if -Zne is set
     ;
-    xor eax,eax
     .if ( Options.strict_masm_compat )
         mov al,EXPF_NOUNDEF
     .endif
-    mov ModuleInfo.invoke_exprparm,al
-    mov ModuleInfo.basereg[USE16*4],T_BP
-    mov ModuleInfo.basereg[USE32*4],T_EBP
-    mov ModuleInfo.basereg[USE64*4],T_RBP
+    mov [rcx].invoke_exprparm,al
+    mov [rcx].basereg[USE16*4],T_BP
+    mov [rcx].basereg[USE32*4],T_EBP
+    mov [rcx].basereg[USE64*4],T_RBP
     mov unw_segs_defined,0
     ret
 

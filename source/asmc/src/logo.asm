@@ -19,10 +19,9 @@ cp_logo \
 ifdef ASMC64
  char_t " (x64)"
 endif
+ char_t " Version %d.%02d"
 if ASMC_SUBMINOR_VER
- char_t " Version ", @CatStr(<!">, @CatStr(%ASMC_MAJOR_VER), <.>, @CatStr(%ASMC_MINOR_VER), <.>, @CatStr(%ASMC_SUBMINOR_VER), <!">)
-else
- char_t " Version ", @CatStr(<!">, @CatStr(%ASMC_MAJOR_VER), <.>, @CatStr(%ASMC_MINOR_VER), <!">)
+ char_t ".%02d"
 endif
  char_t 0
 
@@ -107,7 +106,7 @@ write_logo proc __ccall
 
     .if ( !banner_printed )
 	mov banner_printed,1
-	tprintf( &cp_logo )
+	tprintf( &cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER )
 	tprintf( "\n%s\n", &cp_copyright )
     .endif
     ret

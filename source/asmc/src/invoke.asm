@@ -376,23 +376,28 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
     ldr rsi,param
     ldr rdi,opnd
 
-    mov Ofssize,GetSymOfssize( rbx )
-    mov ecx,eax
-    mov eax,2
-    shl eax,cl
-    mov wordsize,eax
-    mov langid,get_fasttype(ecx, [rbx].asym.langtype)
-    mov rdx,rax
-    xor eax,eax
-    .if ( [rdx].fc_info.flags & _P_RESSTACK )
-        inc al
-    .endif
-    mov resstack,al
-    mov al,[rdx].fc_info.expsize
-    mov expsize,eax
-    mov al,[rdx].fc_info.maxint
-    mov maxint,eax
-    mov rmask,[rdx].fc_info.regmask
+    movzx   ecx,[rbx].asym.segoffsize
+    mov     Ofssize,cl
+    mov     eax,2
+    shl     eax,cl
+    mov     wordsize,eax
+    mov     langid,get_fasttype(ecx, [rbx].asym.langtype)
+    mov     rdx,rax
+    xor     eax,eax
+    test    [rdx].fc_info.flags,_P_RESSTACK
+    setnz   al
+    mov     resstack,al
+    test    [rdx].fc_info.flags,_P_EXTEND
+    setnz   al
+    add     eax,eax
+    cmp     Ofssize,0
+    setnz   cl
+    shl     eax,cl
+    mov     expsize,eax
+    mov     al,[rdx].fc_info.maxint
+    mov     maxint,eax
+    mov     rmask,[rdx].fc_info.regmask
+
     mov al,[rsi].mem_type
     .if ( al == MT_TYPE )
         mov rax,[rsi].type
@@ -403,9 +408,9 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
     ; skip arg if :vararg and inline
 
     mov rcx,paramvalue
-    .if ( byte ptr [rcx] == 0 ||
-          ( [rsi].sflags & S_ISVARARG && [rbx].asym.flags & S_ISINLINE ) )
-        .return( TRUE )
+    .if ( byte ptr [rcx] == 0 || ( [rsi].sflags & S_ISVARARG && [rbx].asym.flags & S_ISINLINE ) )
+
+        .return
     .endif
 
     ; skip loading class pointer if :vararg and inline
@@ -413,14 +418,16 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
     mov rdx,[rbx].dsym.procinfo
     .if ( [rdx].proc_info.flags & PROC_HAS_VARARG &&
           [rbx].asym.flags & S_ISINLINE && [rbx].asym.flags & S_METHOD && !index )
-        .return( TRUE )
+
+        .return
     .endif
 
     ; skip arg if :abs
 
     .if ( memtype == MT_ABS )
+
         mov [rsi].name,LclDup( paramvalue )
-       .return( TRUE )
+       .return
     .endif
 
     ; Use SIMD if 64-bit or CPU >= SSE2
@@ -762,18 +769,19 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                 mov esi,ext_reg
             .endif
             AddLineQueueX( " lea %r, %s", esi, paramvalue )
+
             .if ( stack )
+
                 .if ( resstack )
                     mov ebx,esi
                 .endif
                 jmp stack_ebx
             .endif
-            .return( TRUE )
-
-        .elseif ( eax < ecx )
-
-            jmp arg_error
+            .return
         .endif
+
+        cmp eax,ecx
+        jb  arg_error
 
         ; param size > stack reg
 
@@ -789,19 +797,21 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                     .if ( eax == 4 )
                         mov ecx,T_MOVSS
                     .endif
-                    .if ( dst_rsize == 16 )
-                        .if ( ebx != src_reg )
-                            AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
-                        .endif
-                    .else
-                        AddLineQueueX( " sub %r, %u\n"
-                                       " %r [%r], %r", sreg, src_size, ecx, sreg, src_reg )
-                    .endif
+                    .if ( stack )
 
-                .elseif ( [rdi].kind == EXPR_FLOAT ) ; added v2.34.70
+                        AddLineQueueX( " sub %r, %u\n %r [%r], %r", sreg, src_size, ecx, sreg, src_reg )
+                       .return
+                    .endif
+                    .if ( ebx != src_reg )
+                        AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
+                    .endif
+                    .return
+                .endif
+
+                mov rdx,paramvalue
+                .if ( [rdi].kind == EXPR_FLOAT ) ; added v2.34.70
 
                     xor eax,eax
-                    mov rdx,paramvalue
                     .if ( [rdi].flags & E_NEGATIVE )
                         inc eax
                     .endif
@@ -810,13 +820,12 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                         mov rdx,[rcx].asm_tok.string_ptr
                     .endif
                     atofloat( rdi, rdx, 8, eax, 0 )
-                    AddLineQueueX( " push %u\n"
-                                   " push %u", [rdi].hvalue, [rdi].value )
-                .else
-                    AddLineQueueX( " push dword ptr %s[4]\n"
-                                   " push dword ptr %s[0]", paramvalue, paramvalue )
+                    AddLineQueueX( " push %u\n push %u", [rdi].hvalue, [rdi].value )
+                   .return
                 .endif
-                .return( TRUE )
+                AddLineQueueX( " push dword ptr %s[4]\n"
+                               " push dword ptr %s[0]", rdx, rdx )
+               .return
             .endif
 
             ; constant value is 128 bit
@@ -831,7 +840,7 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                                        " push %u\n"
                                        " push %u\n"
                                        " push %u", [rdi].h64_h, [rdi].h64_l, [rdi].l64_h, [rdi].l64_l )
-                        .return( TRUE )
+                        .return
                     .endif
 
                     .if ( !resstack )
@@ -845,18 +854,19 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                     .endif
                     AddLineQueueX( " mov dword ptr [%r+%u][8], %u\n"
                                    " mov dword ptr [%r+%u][12], %u", sreg, argoffs, [rdi].h64_l, sreg, argoffs, [rdi].h64_h )
-                    .return( TRUE )
+                    .return
                 .endif
 
                 .if ( [rdi].l64_l == 0 && [rdi].l64_h == 0 && [rdi].h64_l == 0 && [rdi].h64_h == 0 )
 
                     AddLineQueueX( " %r %r, %r", T_XORPS, ebx, ebx )
-                   .return( TRUE )
+                   .return
                 .endif
+
                 lea rsi,buffer
                 CreateFloat( eax, rdi, rsi )
                 AddLineQueueX( " %r %r, xmmword ptr %s", T_MOVAPS, ebx, rsi )
-               .return( TRUE )
+               .return
             .endif
 
             ; SIMD reg 16/32/64
@@ -883,7 +893,7 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                     .endif
                     AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
                 .endif
-                .return( TRUE )
+                .return
             .endif
 
             ; memory operand to SIMD
@@ -907,7 +917,7 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                 .if ( dst_flt )
                     AddLineQueueX( " lea %r, %s", dst_flt, paramvalue )
                 .endif
-               .return( TRUE )
+               .return
             .endif
 
             ; param is memory operand
@@ -956,13 +966,14 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                     .endif
                     AddLineQueueX( " xor %r, %r", eax, eax )
                 .endif
-                .return( TRUE )
+                .return
             .endif
 
             mov reg[0],ecx
             mov reg[4],eax
             mov esi,2
             .if ( [rdx+asm_tok].asm_tok.token == T_DBL_COLON )
+
                 mov ecx,[rdx+asm_tok*2].asm_tok.tokval
                 mov eax,[rdx+asm_tok*4].asm_tok.tokval
                 mov reg[8],ecx
@@ -1012,71 +1023,74 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                     AddLineQueueX( " mov %r, %r", ebx, reg[4] )
                 .endif
             .endif
-            .return( TRUE )
+            .return
         .endif
 
         ; memory or const value to register pair
 
-        .if ( [rdi].kind == EXPR_CONST )
+        .if ( stack && [rdi].kind == EXPR_CONST )
 
-            .if ( stack )
-                .if ( resstack )
-                    .if ( [rdi].l64_h == 0 && [rdi].l64_l == 0 )
-                        AddLineQueueX( " mov qword ptr [%r+%u], 0", sreg, argoffs )
-                    .else
-                        AddLineQueueX( " mov dword ptr [%r+%u][0], %u\n"
-                                       " mov dword ptr [%r+%u][4], %u", sreg, argoffs, [rdi].l64_l, sreg, argoffs, [rdi].l64_h )
-                    .endif
-                    AddLineQueueX( " mov dword ptr [%r+%u][8], %u\n"
-                                   " mov dword ptr [%r+%u][12], %u", sreg, argoffs, [rdi].h64_l, sreg, argoffs, [rdi].h64_h )
-                .elseif ( Ofssize == USE16 )
-                    .switch eax
-                    .case 8
-                        movzx ecx,word ptr [rdi].hvalue[2]
-                        movzx edx,word ptr [rdi].hvalue[0]
-                        AddLineQueueX( " push %u\n push %u", ecx, edx )
-                    .case 4
-                        movzx ecx,word ptr [rdi].value[2]
-                        movzx edx,word ptr [rdi].value[0]
-                        AddLineQueueX( " push %u\n push %u", ecx, edx )
-                       .endc
-                    .default
-                        jmp arg_error
-                    .endsw
-                .elseif ( Ofssize == USE32 )
-                    .switch eax
-                    .case 16
-                        AddLineQueueX( " push %u\n push %u", [rdi].h64_h, [rdi].h64_l )
-                    .case 8
-                        AddLineQueueX( " push %u\n push %u", [rdi].l64_h, [rdi].l64_l )
-                       .endc
-                    .default
-                        jmp arg_error
-                    .endsw
-                .elseif ( eax != 16 )
-                    jmp arg_error
+            .if ( resstack )
+
+                .if ( [rdi].l64_h == 0 && [rdi].l64_l == 0 )
+                    AddLineQueueX( " mov qword ptr [%r+%u], 0", sreg, argoffs )
                 .else
-                    .if ( [rdi].h64_h == 0 )
-                        AddLineQueueX( " push %u", [rdi].h64_l )
-                    .else
-                        mov rax,regs_used
-                        or byte ptr [rax],R0_USED
-                        AddLineQueueX( " mov %r, %lu", ebx, [rdi].hlvalue )
-                        AddLineQueueX( " push %r", ebx )
-                    .endif
-                    .if ( [rdi].l64_h == 0 )
-                        AddLineQueueX( " push %u", [rdi].l64_l )
-                    .else
-                        mov rax,regs_used
-                        or byte ptr [rax],R0_USED
-                        AddLineQueueX( " mov %r, %lu", ebx, [rdi].llvalue )
-                        AddLineQueueX( " push %r", ebx )
-                    .endif
+                    AddLineQueueX( " mov dword ptr [%r+%u][0], %u\n"
+                                   " mov dword ptr [%r+%u][4], %u", sreg, argoffs, [rdi].l64_l, sreg, argoffs, [rdi].l64_h )
                 .endif
-                .return( TRUE )
+                AddLineQueueX( " mov dword ptr [%r+%u][8], %u\n"
+                               " mov dword ptr [%r+%u][12], %u", sreg, argoffs, [rdi].h64_l, sreg, argoffs, [rdi].h64_h )
+               .return
             .endif
-        .endif
 
+            .if ( Ofssize == USE16 )
+
+                .switch eax
+                .case 8
+                    movzx ecx,word ptr [rdi].hvalue[2]
+                    movzx edx,word ptr [rdi].hvalue[0]
+                    AddLineQueueX( " push %u\n push %u", ecx, edx )
+                .case 4
+                    movzx ecx,word ptr [rdi].value[2]
+                    movzx edx,word ptr [rdi].value[0]
+                    AddLineQueueX( " push %u\n push %u", ecx, edx )
+                   .return
+                .endsw
+                jmp arg_error
+            .endif
+
+            .if ( Ofssize == USE32 )
+
+                .switch eax
+                .case 16
+                    AddLineQueueX( " push %u\n push %u", [rdi].h64_h, [rdi].h64_l )
+                .case 8
+                    AddLineQueueX( " push %u\n push %u", [rdi].l64_h, [rdi].l64_l )
+                   .return
+                .endsw
+                jmp arg_error
+            .endif
+
+            cmp eax,16
+            jne arg_error
+            .if ( [rdi].h64_h == 0 )
+                AddLineQueueX( " push %u", [rdi].h64_l )
+            .else
+                mov rax,regs_used
+                or byte ptr [rax],R0_USED
+                AddLineQueueX( " mov %r, %lu", ebx, [rdi].hlvalue )
+                AddLineQueueX( " push %r", ebx )
+            .endif
+            .if ( [rdi].l64_h == 0 )
+                AddLineQueueX( " push %u", [rdi].l64_l )
+            .else
+                mov rax,regs_used
+                or byte ptr [rax],R0_USED
+                AddLineQueueX( " mov %r, %lu", ebx, [rdi].llvalue )
+                AddLineQueueX( " push %r", ebx )
+            .endif
+            .return
+        .endif
 
         .if ( stack == FALSE )
 
@@ -1147,7 +1161,7 @@ fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
                 .endif
                 mov reg,get_nextreg(reg, langid)
             .endf
-            .return( TRUE )
+            .return
         .endif
 
 memory_operand:
@@ -1163,7 +1177,7 @@ handle_address:
             .if ( stack )
                 jmp stack_ebx
             .endif
-            .return( TRUE )
+            .return
         .endif
 
         .if ( [rdi].kind == EXPR_CONST )
@@ -1194,7 +1208,7 @@ handle_address:
                     AddLineQueueX( " push %u", eax )
                 .endif
             .endf
-            .return( TRUE )
+            .return
         .endif
 
         mov ebx,T_DWORD
@@ -1210,7 +1224,7 @@ handle_address:
         AddLineQueueX( " mov [%r+%u], %r ptr %s", sreg, argoffs, ebx, paramvalue )
         mov rax,regs_used
         or byte ptr [rax],R0_USED
-       .return( TRUE )
+       .return
     .endif
 
     ; here param size <= stack size
@@ -1244,8 +1258,9 @@ handle_address:
 
                     AddLineQueueX( " movq %r, %r", dst_flt, ebx )
                 .endif
-                .return( TRUE )
+                .return
             .endif
+
             mov memtype,dl
             .if ( stack && resstack == FALSE )
                 AddLineQueueX( " sub %r, %u", sreg, ecx )
@@ -1274,26 +1289,29 @@ handle_address:
                 .else
                     AddLineQueueX( " %r %r, %r, %r", ecx, ebx, ebx, src_reg )
                 .endif
-            .else
-                .if ( stack )
-                    .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
-
-                        mov ecx,T_CVTSS2SD
-                        AddLineQueueX( " %r %r, %r", ecx, src_reg, src_reg )
-                        mov ecx,T_MOVSD
-                    .endif
-                    AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, src_reg )
-                .else
-                    .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
-                        mov ecx,T_CVTSS2SD
-                    .endif
-                    AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
-                    .if ( dst_flt )
-                        AddLineQueueX( " movq %r, %r", dst_flt, ebx )
-                    .endif
-                .endif
+                .return
             .endif
-            .return( TRUE )
+
+            .if ( stack )
+
+                .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
+
+                    mov ecx,T_CVTSS2SD
+                    AddLineQueueX( " %r %r, %r", ecx, src_reg, src_reg )
+                    mov ecx,T_MOVSD
+                .endif
+                AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, src_reg )
+               .return
+            .endif
+
+            .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
+                mov ecx,T_CVTSS2SD
+            .endif
+            AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
+            .if ( dst_flt )
+                AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+            .endif
+            .return
         .endif
 
         .if ( stack && resstack && [rdi].kind == EXPR_FLOAT )
@@ -1319,7 +1337,7 @@ handle_address:
             .if ( dst_size == 8 )
                 AddLineQueueX( " mov dword ptr [%r+%u][4], %u", sreg, argoffs, [rdi].l64_h )
             .endif
-            .return( TRUE )
+            .return
         .endif
 
         .if ( dl == MT_REAL2 )
@@ -1335,7 +1353,7 @@ handle_address:
                 or  byte ptr [rdx],R0_USED
                 AddLineQueueX( " movd %r, eax", ebx )
             .endif
-            .return( TRUE )
+            .return
         .endif
 
         .if ( dl == MT_REAL4 )
@@ -1360,7 +1378,7 @@ handle_address:
                     .else
                         AddLineQueueX( " push %s", paramvalue )
                     .endif
-                    .return( TRUE )
+                    .return
                 .endif
 
                 mov ecx,T_MOV
@@ -1383,7 +1401,7 @@ handle_address:
 
                             mov ecx,T_MOVSD
                             AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, esi )
-                           .return( TRUE )
+                           .return
                         .endif
                         mov ecx,T_MOVQ
                         AddLineQueueX( " %r %r, %r", ecx, ebx, esi )
@@ -1395,48 +1413,44 @@ handle_address:
                     mov ebx,reg
                 .endif
                 jmp stack_ebx
+            .endif
 
-            .else
-
-                mov ecx,T_MOVSS
-                .if ( [rsi].sflags & S_ISVARARG && wordsize == 8 )
-                    mov ecx,T_CVTSS2SD
-                    .if ( [rdi].kind == EXPR_FLOAT )
-                        mov ecx,T_MOVSD
-                    .endif
-                .endif
-                AddLineQueueX( " %r %r, %s", ecx, ebx, paramvalue )
-                .if ( dst_flt )
-                    AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+            mov ecx,T_MOVSS
+            .if ( [rsi].sflags & S_ISVARARG && wordsize == 8 )
+                mov ecx,T_CVTSS2SD
+                .if ( [rdi].kind == EXPR_FLOAT )
+                    mov ecx,T_MOVSD
                 .endif
             .endif
-            .return( TRUE )
+            AddLineQueueX( " %r %r, %s", ecx, ebx, paramvalue )
+            .if ( dst_flt )
+                AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+            .endif
+            .return
         .endif
 
+        mov rcx,paramvalue
         .if ( stack )
 
             .if ( wordsize == 8 )
 
                 mov ebx,T_RAX
-                AddLineQueueX( " mov %r, %s", ebx, paramvalue )
+                AddLineQueueX( " mov %r, %s", ebx, rcx )
                 jmp stack_ebx
-
-            .elseif ( [rdi].kind == EXPR_FLOAT )
-
-                AddLineQueueX( " push %u\n"
-                               " push %u", [rdi].l64_h, [rdi].l64_l )
-            .else
-
-                AddLineQueueX( " push dword ptr %s[4]\n"
-                               " push dword ptr %s", paramvalue, paramvalue )
             .endif
-        .else
-            AddLineQueueX( " movsd %r, %s", ebx, paramvalue )
-            .if ( dst_flt )
-                AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+            .if ( [rdi].kind == EXPR_FLOAT )
+
+                AddLineQueueX( " push %u\n push %u", [rdi].l64_h, [rdi].l64_l )
+               .return
             .endif
+            AddLineQueueX( " push dword ptr %s[4]\n push dword ptr %s", rcx, rcx )
+           .return
         .endif
-        .return( TRUE )
+        AddLineQueueX( " movsd %r, %s", ebx, rcx )
+        .if ( dst_flt )
+            AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+        .endif
+        .return
     .endif
 
     ; const param
@@ -1469,7 +1483,7 @@ endif
                         jmp stack_ebx
                     .endif
                 .endif
-                .return( TRUE )
+                .return
             .endif
         .endif
 
@@ -1487,7 +1501,7 @@ endif
             .if ( word ptr [rdx] == "0" || ( [rdi].value == 0 && [rdi].hvalue == 0 ) )
 
                 AddLineQueueX( " xor %r, %r", ext_reg, ext_reg )
-               .return( TRUE )
+               .return
             .endif
 
         .elseif ( resstack == FALSE )
@@ -1500,7 +1514,7 @@ endif
             .else
                 AddLineQueueX( " push %s", rdx )
             .endif
-            .return( TRUE )
+            .return
         .endif
 
         .if ( stack )
@@ -1529,7 +1543,7 @@ endif
             .endif
             AddLineQueueX( " mov %r, %s", ebx, rdx )
         .endif
-        .return( TRUE )
+        .return
     .endif
 
     ; register param
@@ -1545,7 +1559,7 @@ endif
 
             mov src_reg,get_register( src_reg, dst_rsize )
             .if ( eax == dst_reg && !stack )
-                .return( TRUE )
+                .return
             .endif
             mov src_rsize,dst_rsize
             mov src_size,eax
@@ -1571,7 +1585,7 @@ endif
             .else
                 AddLineQueueX( " push %r", get_register( src_reg, wordsize ) )
             .endif
-            .return( TRUE )
+            .return
         .endif
 
         mov esi,T_MOV
@@ -1616,7 +1630,7 @@ endif
         .if ( ebx != src_reg )
             AddLineQueueX( " %r %r, %r", esi, ebx, src_reg )
         .endif
-        .return( TRUE )
+        .return
     .endif
 
     ; memory operand
@@ -1634,7 +1648,7 @@ endif
         .if ( eax == ecx && stack && !resstack )
 
             AddLineQueueX( " push %s", paramvalue )
-           .return( TRUE )
+           .return
         .endif
 
         mov esi,T_MOV
@@ -1693,7 +1707,7 @@ endif
             .endif
             jmp stack_ebx
         .endif
-        .return( TRUE )
+        .return
     .endif
 
     ; Here USE16 is done and size left is 3, 5, 6, or 7
@@ -1757,7 +1771,7 @@ stack_ebx:
             AddLineQueueX( " push %r", ebx )
         .endif
     .endif
-    .return( TRUE )
+    .return
 
 arg_error:
 
@@ -1880,7 +1894,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
   local curr_cpu:uint_t
   local ParamId:int_t
   local Ofssize:byte
-  local flags:byte
+  local pfastcall:byte
 
     imul ebx,i,asm_tok
     add  rbx,tokenarray
@@ -1898,7 +1912,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
     .endf
     mov currParm,ecx
 
-    ;; if curr is NULL this call is just a parameter check
+    ; if curr is NULL this call is just a parameter check
 
     mov rdi,curr
     .if ( rdi == NULL )
@@ -1964,7 +1978,9 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
     mov fptrsize,eax
 
     get_fasttype(Ofssize, [rsi].asym.langtype)
-    mov flags,[rax].fc_info.flags
+    cmp [rax].fc_info.regpack,NULL
+    setnz al
+    mov pfastcall,al
 
     .if ( t_addr )
 
@@ -1986,14 +2002,14 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
             ; QWORD is NOT accepted as a FAR ptr
 
             asmerr( 2114, ParamId )
-           .return(NOT_ERROR)
+           .return( NOT_ERROR )
         .endif
 
-        .if ( flags & _P_FASTCALL )
+        .if ( pfastcall )
 
-            .ifd ( fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )  )
-               .return( NOT_ERROR )
-            .endif
+            fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )
+
+           .return( NOT_ERROR )
         .endif
 
         .if ( opnd.kind == EXPR_REG || opnd.flags & E_INDIRECT )
@@ -2178,7 +2194,7 @@ endif
 
         ; v2.31.35: Watcom handles the two first sets
 
-        .if ( asize2 != 8 && !( flags & _P_FASTCALL ) )
+        .if ( asize2 != 8 && !pfastcall )
 
             AddLineQueueX( " push %r", [rbx].tokval )
         .endif
@@ -2359,12 +2375,10 @@ endif
         mov asize,psize
     .endif
 
-    .if ( flags & _P_FASTCALL )
+    .if ( pfastcall )
 
-        .ifd ( fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags ) )
-
-            .return( NOT_ERROR )
-        .endif
+        fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )
+       .return( NOT_ERROR )
     .endif
 
     .if ( ( asize > psize ) || ( asize < psize && [rdi].asym.mem_type == MT_PTR ) )

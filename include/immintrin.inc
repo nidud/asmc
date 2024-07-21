@@ -79,7 +79,7 @@ _mm_getptr macro arg, reg:=<rax>
 	exitm<[reg]>
     elseifidn @SubStr(arg,1,1),<[>
 	exitm<arg>
-    elseif (opattr arg) eq 48
+    elseif (.type arg) eq 48
 	exitm<[arg]>
     endif
     exitm<arg>

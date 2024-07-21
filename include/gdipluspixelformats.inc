@@ -39,21 +39,17 @@ PixelFormat64bppPARGB   equ (14 OR (64 SHL 8) OR PixelFormatAlpha OR PixelFormat
 PixelFormat32bppCMYK    equ (15 OR (32 SHL 8))
 PixelFormatMax          equ 16
 
-GetPixelFormatSize proto format:PixelFormat {
-    mov     eax,format
+GetPixelFormatSize proto watcall :PixelFormat {
     shr     eax,8
     and     eax,0xff
     }
-IsIndexedPixelFormat proto format:PixelFormat {
-    mov     eax,format
+IsIndexedPixelFormat proto watcall :PixelFormat {
     and     eax,PixelFormatIndexed
     }
-IsAlphaPixelFormat proto :PixelFormat {
-    mov     eax,format
+IsAlphaPixelFormat proto watcall :PixelFormat {
     and     eax,PixelFormatAlpha
     }
-IsExtendedPixelFormat proto format:PixelFormat {
-    mov     eax,format
+IsExtendedPixelFormat proto watcall :PixelFormat {
     and     eax,PixelFormatExtended
     }
 

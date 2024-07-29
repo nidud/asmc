@@ -1,4 +1,4 @@
-; _GET_DSTBIAS.ASM--
+; GET_TIMEZONE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -9,19 +9,19 @@ include errno.inc
 
 .code
 
-_get_dstbias proc pdstbias:ptr int_t
+_get_timezone proc ptimezone:ptr int_t
 
-    ldr rcx,pdstbias
+    ldr rcx,ptimezone
 
     mov eax,EINVAL
     .if ( rcx )
 
-        mov eax,_dstbias
+        mov eax,_timezone
         mov [rcx],eax
         xor eax,eax
     .endif
     ret
 
-_get_dstbias endp
+_get_timezone endp
 
     end

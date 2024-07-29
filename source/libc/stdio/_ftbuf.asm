@@ -14,25 +14,17 @@ _ftbuf proc uses rbx flag:int_t, fp:LPFILE
 
     ldr ecx,flag
     ldr rbx,fp
+
     mov edx,[rbx]._flag
+    .if ( ecx && edx & _IOFLRTN )
 
-    .if ( ecx )
+	fflush( rbx )
 
-	.if ( edx & _IOFLRTN )
-
-	    fflush( rbx )
-
-	    and [rbx]._flag,not (_IOYOURBUF or _IOFLRTN)
-	    xor eax,eax
-	    mov [rbx]._ptr,rax
-	    mov [rbx]._base,rax
-	    mov [rbx]._bufsiz,eax
-	.endif
-    .else
-	and edx,_IOFLRTN
-	.ifnz
-	    fflush( rbx )
-	.endif
+	and [rbx]._flag,not (_IOYOURBUF or _IOFLRTN)
+	xor eax,eax
+	mov [rbx]._ptr,rax
+	mov [rbx]._base,rax
+	mov [rbx]._bufsiz,eax
     .endif
     ret
 

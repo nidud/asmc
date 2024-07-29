@@ -1,4 +1,4 @@
-; __timet_from_ft.asm--
+; timet_from_ft.asm--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.

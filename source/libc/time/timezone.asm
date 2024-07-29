@@ -1,4 +1,4 @@
-; __DSTBIAS.ASM--
+; TIMEZONE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,11 +8,11 @@ include time.inc
 
 .code
 
-__dstbias proc
+__timezone proc
 
-    lea rax,_dstbias
+    lea rax,_timezone
     ret
 
-__dstbias endp
+__timezone endp
 
     end

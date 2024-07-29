@@ -1,4 +1,4 @@
-; __DAYLIGHT.ASM--
+; DAYLIGHT.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.

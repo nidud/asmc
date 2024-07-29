@@ -5,7 +5,7 @@
 ;
 
 include strsafe.inc
-include tmacro.inc
+include tchar.inc
 
 .code
 
@@ -33,11 +33,11 @@ StringGetsWorker proc uses rbx pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength
                 .endif
                 .break
             .endif
-            .if ( __a == 10 )
+            .if ( _tal == 10 )
                 .break
             .endif
             mov rcx,pszDest
-            mov [rcx],__a
+            mov [rcx],_tal
             add rcx,TCHAR
             dec rbx
             mov pszDest,rcx

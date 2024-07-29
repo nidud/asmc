@@ -140,7 +140,7 @@ else
 
     .for ( ebx = 0 : ebx < 12 : ebx++ )
 
-        lea ecx,[ebx*2]
+        lea ecx,[ebx+ebx]
 
         ;  b a 9 8 7 6 5 4 3 2 1 0 - index
 

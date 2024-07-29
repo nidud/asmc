@@ -1,4 +1,4 @@
-; _GET_ERRNO_FROM_OSERR.ASM--
+; GET_ERRNO_FROM_OSERR.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.

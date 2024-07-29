@@ -14,8 +14,10 @@ include tchar.inc
 _fgetts proc uses rbx buf:LPTSTR, count:SINT, fp:LPFILE
 
     ldr rbx,buf
-    .if ( count <= 0 )
-        .return( NULL )
+    xor eax,eax
+    .if ( count <= eax )
+
+        .return
     .endif
 
     .for ( count-- : count : count-- )
@@ -33,8 +35,10 @@ _fgetts proc uses rbx buf:LPTSTR, count:SINT, fp:LPFILE
         add rbx,TCHAR
        .break .if ( eax == 10 )
     .endf
-    mov TCHAR ptr [rbx],0
-   .return( buf )
+    xor eax,eax
+    mov [rbx],_tal
+    mov rax,buf
+    ret
 
 _fgetts endp
 

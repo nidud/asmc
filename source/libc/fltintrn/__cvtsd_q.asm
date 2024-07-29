@@ -1,4 +1,4 @@
-; _CVTSD_Q.ASM--
+; __CVTSD_Q.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.

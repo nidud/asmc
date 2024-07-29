@@ -16,19 +16,19 @@ include malloc.inc
 
 _stbuf proc uses rbx fp:LPFILE
 
-   .new p:string_t = &_stdbuf
+   .new p:string_t
 
     ldr rbx,fp
 
     .if _isatty([rbx]._file)
 
         xor eax,eax
+        lea rdx,_stdbuf
         .if ( rbx != stdout )
-
             .if ( rbx != stderr )
                 .return
             .endif
-            add p,string_t
+            add rdx,string_t
         .endif
 
         mov ecx,[rbx]._flag
@@ -39,10 +39,10 @@ _stbuf proc uses rbx fp:LPFILE
         or  ecx,_IOWRT or _IOYOURBUF or _IOFLRTN
         mov [rbx]._flag,ecx
 
-        mov rcx,p
-        mov rax,[rcx]
+        mov rax,[rdx]
         .if ( rax == NULL )
 
+            mov p,rdx
             malloc( _INTIOBUF )
             mov rcx,p
             mov [rcx],rax
@@ -59,7 +59,7 @@ endif
         mov [rbx]._ptr,rax
         mov [rbx]._base,rax
         mov [rbx]._bufsiz,ecx
-        mov rax,1
+        mov eax,1
     .endif
     ret
 

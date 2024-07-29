@@ -4,7 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 include strsafe.inc
-include tmacro.inc
+include tchar.inc
 
     .code
 
@@ -18,11 +18,11 @@ StringCopyWorker proc uses rsi rdi rbx pszDest:LPTSTR, cchDest:size_t, pcchNewDe
     xor ebx,ebx
     mov rdi,cchToCopy
 
-    mov __a,[rsi]
-    .while ( rdx && rdi && __a )
+    mov _tal,[rsi]
+    .while ( rdx && rdi && _tal )
 
-        mov __a,[rsi+rbx*TCHAR]
-        mov [rcx+rbx*TCHAR],__a
+        mov _tal,[rsi+rbx*TCHAR]
+        mov [rcx+rbx*TCHAR],_tal
         dec rdx
         dec rdi
         inc rbx

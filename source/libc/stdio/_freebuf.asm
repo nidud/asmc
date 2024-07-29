@@ -9,25 +9,26 @@ include malloc.inc
 
     .code
 
-    assume rbx:LPFILE
+    assume rdx:LPFILE
 
-_freebuf proc uses rbx fp:LPFILE
+_freebuf proc fp:LPFILE
 
-    ldr rbx,fp
-    mov eax,[rbx]._flag
+    ldr rcx,fp
 
+    mov rdx,rcx
+    mov eax,[rdx]._flag
     .if ( eax & _IOREAD or _IOWRT or _IORW )
 
 	.if ( eax & _IOMYBUF )
 
-	    free( [rbx]._base )
-
 	    xor eax,eax
-	    mov [rbx]._ptr,rax
-	    mov [rbx]._base,rax
-	    mov [rbx]._flag,eax
-	    mov [rbx]._bufsiz,eax
-	    mov [rbx]._cnt,eax
+	    mov rcx,[rdx]._base
+	    mov [rdx]._ptr,rax
+	    mov [rdx]._base,rax
+	    mov [rdx]._flag,eax
+	    mov [rdx]._bufsiz,eax
+	    mov [rdx]._cnt,eax
+	    free( rcx )
 	.endif
     .endif
     ret

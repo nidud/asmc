@@ -55,7 +55,7 @@ else
     xor eax,eax
     .if ( rbx == NULL || _tal == [rbx] )
 
-        mov local_name,bx
+        mov local_name,ax
         lea rbx,local_name
 
         GetUserDefaultLocaleName(rbx, LOCALE_NAME_MAX_LENGTH)

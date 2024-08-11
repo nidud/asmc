@@ -27,6 +27,7 @@ main proc
 
     xsprintf( &string, "%f / %f = %f\n", r0, r1, xmm2 )
     printf( &string )
+    xor eax,eax
     ret
 
 main endp

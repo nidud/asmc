@@ -3,7 +3,9 @@ include fcntl.inc
 include direct.inc
 include stdio.inc
 include string.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 include stdlib.inc
 include tchar.inc
 
@@ -74,82 +76,42 @@ print_usage proc
 
 print_usage endp
 
-
-; get filename part of path
-
-strfn proc path:string_t
-
-    mov rax,rcx
-    .while byte ptr [rax]
-
-        inc rax
-    .endw
-
-    .if rax > rcx
-        dec rax
-    .endif
-
-    .while 1
-
-        .break .if byte ptr [rax] == '\'
-        .break .if byte ptr [rax] == '/'
-
-        dec rax
-        .if rax <= rcx
-
-            lea rax,[rcx-1]
-            .break
-        .endif
-    .endw
-    inc rax
-    ret
-
-strfn endp
-
-; add file to path
-
-strfcat proc b:string_t, path:string_t, file:string_t
-
-    strcat(strcat(strcpy(rcx, rdx), "\\"), file)
-    ret
-
-strfcat endp
-
 compare proc a:ptr, b:ptr
 
-    xor eax,eax
+    ldr rcx,a
+    ldr rdx,b
 
+    xor eax,eax
     mov ecx,[rcx]
     mov edx,[rdx]
-
     .if edx > ecx
-
         inc eax
-
     .elseif !ZERO?
-
         dec eax
     .endif
     ret
 
 compare endp
 
-    assume rsi:ptr token
+    assume rbx:ptr token
 
-tally proc uses rsi rdi rbx string:string_t
+tally proc uses rbx string:string_t
+
+    .new i:int_t
+    .new p:string_t
+
+    ldr rcx,string
 
     .if strtok(rcx, "\n\r\t ,!&")
 
         .while 1
 
-            .for ( rdi = rax,
-                   rsi = &table,
-                   ebx = 0 : ebx < TOKENCOUNT : ebx++, rsi += sizeof(token) )
+            .for ( p = rax, rbx = &table, i = 0 : i < TOKENCOUNT : i++, rbx += sizeof(token) )
 
-                .if !_stricmp([rsi].tname, rdi)
+                .if !_stricmp([rbx].tname, p)
 
-                    inc [rsi].count
-                    .break
+                    inc [rbx].count
+                   .break
                 .endif
             .endf
             .break .if !strtok(NULL, "\n\r\t ,!&")
@@ -159,26 +121,23 @@ tally proc uses rsi rdi rbx string:string_t
 
 tally endp
 
-scanfiles proc uses rsi rdi rbx directory:string_t, fmask:string_t
+scanfiles proc uses rdi rbx directory:string_t, fmask:string_t
 
-  local path[_MAX_PATH]:sbyte, ff:_finddata_t
+  local path[_MAX_PATH]:sbyte, ff:_finddata_t, fd:int_t
 
     .ifd _findfirst(strfcat(&path, directory, fmask), &ff) != -1
 
-        mov rsi,rax
-
+        mov rbx,rax
         .repeat
 
-            .if !( ff.attrib & _A_SUBDIR )
+            .if !( ff.attrib & _F_SUBDIR )
 
-                .ifd _open(
-                        strfcat(&path, directory, &ff.name),
-                        O_RDONLY or O_BINARY, NULL) != -1
+                .ifd _open(strfcat(&path, directory, &ff.name), O_RDONLY or O_BINARY, NULL) != -1
 
-                    mov ebx,eax
+                    mov fd,eax
                     inc line_count
 
-                    .while _read(ebx, &buffer, BUFSIZE)
+                    .while _read(fd, &buffer, BUFSIZE)
 
                         lea rdi,buffer
                         mov ecx,eax
@@ -186,165 +145,114 @@ scanfiles proc uses rsi rdi rbx directory:string_t, fmask:string_t
                         mov byte ptr [rdi+rcx],0
 
                         .while 1
-
                             repnz scasb
                             .break .ifnz
-
                             inc line_count
                         .endw
-
                         tally(&buffer)
                     .endw
-
-                    _close(ebx)
+                    _close(fd)
                     inc file_count
-
                 .endif
-
             .endif
-
-        .until _findnext(rsi, &ff)
-
-        _findclose(rsi)
+        .until _findnext(rbx, &ff)
+        _findclose(rbx)
     .endif
 
     .if do_subdir
 
         .ifd _findfirst(strfcat(&path, directory, "*.*"), &ff) != -1
 
-            mov rsi,rax
-
+            mov rbx,rax
             .repeat
 
-                .if word ptr ff.name == '.'
-
-                    .break .if _findnext(rsi, &ff)
+                mov eax,dword ptr ff.name
+                and eax,0x00FFFFFF
+                .if ( ax != '.' && eax != '..' && ff.attrib & _F_SUBDIR )
+                    scanfiles(strfcat(&path, directory, &ff.name), fmask)
                 .endif
-
-                .if word ptr ff.name == '..' && ff.name[2] == 0
-
-                    .break .if _findnext(rsi, &ff)
-                .endif
-
-                .repeat
-
-                    .if ff.attrib & _A_SUBDIR
-
-                        scanfiles(strfcat(&path, directory, &ff.name), fmask)
-                    .endif
-
-                .until _findnext(rsi, &ff)
-
-            .until 1
-
-            _findclose(rsi)
+            .until _findnext(rbx, &ff)
+            _findclose(rbx)
         .endif
     .endif
-
     ret
 
 scanfiles endp
 
-main proc argc:SINT, argv:ptr
 
-  local path[_MAX_PATH]:sbyte, fmask[_MAX_PATH]:sbyte
+main proc argc:int_t, argv:array_t
 
-    mov edi,argc
-    mov rsi,argv
+  local path[_MAX_PATH]:sbyte, fmask[_MAX_PATH]:sbyte, p:string_t, i:int_t
 
+    .if ( argc == 1 )
+
+        .return( print_usage() )
+    .endif
+    dec argc
+    mov rbx,argv
     .repeat
 
-        .if edi == 1
+        dec argc
+        add rbx,string_t
+        mov rcx,[rbx]
+        mov eax,[rcx]
 
-            print_usage()
-            .break
-        .endif
+        .switch al
+ifndef __UNIX__
+        .case '/'
+endif
+        .case '-'
+            shr eax,8
+            or  eax,202020h
+            .if ( al == 'r' )
+                inc do_subdir
+               .endc
+            .endif
+ifndef __UNIX__
+        .case '?'
+endif
+        .case 'h'
+            .return( print_usage() )
+        .default
+            strcpy(&path, rcx)
+            mov p,strfn(rax)
+            strcpy(&fmask, rax)
+            lea rcx,path
+            mov rdx,p
+ifdef __UNIX__
+            .if ( rdx > rcx && byte ptr [rdx-1] == '/' )
+else
+            .if ( rdx > rcx && byte ptr [rdx-1] == '\' )
+endif
+                mov byte ptr [rdx-1],0
+            .else
+                mov byte ptr [rdx],0
+            .endif
+        .endsw
+    .until !argc
 
-        dec edi
-        lodsq
+    lea rbx,path
+    .if ( fmask == 0 )
 
-        .repeat
+        perror("Nothing to do..")
+       .return( 0 )
+    .endif
+    .if ( path == 0 )
 
-            lodsq
-
-            mov rbx,rax
-            mov eax,[rbx]
-
-            .switch al
-
-              .case '?'
-
-                print_usage()
-                .break(1)
-
-              .case '/'
-              .case '-'
-
-                shr eax,8
-                or  eax,202020h
-
-                .if al == 'r'
-
-                    inc do_subdir
-                    .endc
-                .endif
-                .gotosw('?')
-
-              .default
-
-                strcpy(&path, rbx)
-                mov rbx,strfn(rax)
-                strcpy(&fmask, rax)
-
-                lea rcx,path
-
-                .if rbx > rcx  && byte ptr [rbx-1] == '\'
-
-                    mov byte ptr [rbx-1],0
-
-                .else
-
-                    mov byte ptr [rbx],0
-                .endif
-
-            .endsw
-
-            dec edi
-
-        .until !edi
-
-        lea rdi,fmask
-        lea rsi,path
-
-        .if byte ptr [rdi] == 0
-
-            perror("Nothing to do..")
-
-            xor eax,eax
-            .break
-
-        .endif
-
-        .if byte ptr [rsi] == 0
-
-            strcpy(rsi, ".")
-        .endif
-
-        GetFullPathName(rsi, _MAX_PATH, rsi, 0)
-        printf("\nFile(s):   %s\nDirectory: %s\n\n", rdi, rsi)
-
-        scanfiles(rsi, rdi)
-        printf("Total %d file(s), %d line(s)\n\n", file_count, line_count)
-
-        lea rsi,table
-        qsort(rsi, TOKENCOUNT, sizeof(token), &compare)
-        .for ( ebx = 0 : ebx < TOKENCOUNT && [rsi].count : ebx++, rsi += sizeof(token) )
-
-            printf("%6d %s\n", [rsi].count, [rsi].tname)
-        .endf
-        xor eax,eax
-    .until 1
-    ret
+        strcpy(rbx, ".")
+    .endif
+ifndef __UNIX__
+    GetFullPathName(rbx, _MAX_PATH, rbx, 0)
+endif
+    printf("\nFile(s):   %s\nDirectory: %s\n\n", &fmask, rbx)
+    scanfiles(rbx, &fmask)
+    printf("Total %d file(s), %d line(s)\n\n", file_count, line_count)
+    lea rbx,table
+    qsort(rbx, TOKENCOUNT, sizeof(token), &compare)
+    .for ( i = 0 : i < TOKENCOUNT && [rbx].count : i++, rbx += sizeof(token) )
+        printf("%6d %s\n", [rbx].count, [rbx].tname)
+    .endf
+    .return( 0 )
 
 main endp
 

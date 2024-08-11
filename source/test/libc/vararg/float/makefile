@@ -3,6 +3,7 @@ ifdef YACC
 float:
 	asmc64 -fpic $@.asm
 	gcc -o $@ $@.o
+	./$@
 	@pause
 	rm -f $@
 	rm -f $@.o

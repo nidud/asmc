@@ -6,7 +6,7 @@ argv:
 	asmc64 -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@ "4" 5 -7"quote" ""8" 9" "argv".asm
-	echo Press enter to continue; read dummy;
+	@pause
 	rm $@.o
 	rm $@
 else

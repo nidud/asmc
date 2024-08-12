@@ -6,7 +6,10 @@ spawn:
 	asmc64 -q -fpic ../exec/args.asm
 	gcc -o args args.o
 	./$@ 2 ./args
-	rm *.o
+	@pause
+	rm -f *.o
+	rm -f ./$@
+	rm -f ./args
 
 else
 

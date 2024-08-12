@@ -6,7 +6,10 @@ exec:
 	asmc64 -fpic args.asm
 	gcc -o args args.o
 	./$@ ./args 2
-	rm *.o
+	@pause
+	rm -f *.o
+	rm -f ./$@
+	rm -f ./args
 else
 
 exec.exe:

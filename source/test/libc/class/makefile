@@ -3,7 +3,7 @@ class:
 	asmc64 -fpic $@.asm
 	gcc -o $@ $@.o
 	./$@
-	echo Press enter to continue; read dummy;
+	@pause
 	rm -f $@.o
 	rm -f $@
 else

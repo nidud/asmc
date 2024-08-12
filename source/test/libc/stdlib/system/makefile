@@ -6,6 +6,7 @@ system:
 	asmc -q -elf $@.asm
 	gcc -m32 -nostdlib -o $@ $@.o -l:x86/libasmc.a
 	./$@
+	@pause
 	rm -f $@.o
 	rm -f $@
 else

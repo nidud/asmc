@@ -3,7 +3,7 @@ _aligned_malloc:
 	asmc64 -fpic -Fitchar.inc $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
-	echo Press enter to continue; read dummy;
+	@pause
 	rm -f $@.o
 	rm -f $@
 else

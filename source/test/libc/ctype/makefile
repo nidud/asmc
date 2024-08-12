@@ -3,6 +3,10 @@ ifdef YACC
 ctype:
 	asmc64 -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	./$@
+	@pause
+	@rm $@.o
+	@rm $@
 
 else
 

@@ -4,7 +4,7 @@ mixed:
 	gcc -c main.cpp
 	gcc -o $@ main.o $@.o
 	./$@
-	echo Press enter to continue; read dummy;
+	@pause
 	rm -f *.o
 	rm -f $@
 else

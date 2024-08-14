@@ -1,3 +1,5 @@
+
+include string.inc
 include stdio.inc
 include stdlib.inc
 include sselevel.inc
@@ -6,12 +8,31 @@ include sselevel.inc
 
 main proc
 
+    .new cpustring[80]:char_t
+
+    .if ( sselevel & SSE_SSE2 )
+
+        .for ( rdi = &cpustring, esi = 0 : esi < 3 : esi++, rdi+=16 )
+
+            lea eax,[rsi+0x80000002]
+            cpuid
+
+            mov [rdi+0x00],eax
+            mov [rdi+0x04],ebx
+            mov [rdi+0x08],ecx
+            mov [rdi+0x0C],edx
+        .endf
+        .for ( rax = &cpustring: byte ptr [rax] == ' ' : rax++ )
+        .endf
+    .else
+        strcpy(&cpustring, "Unknown")
+    .endif
+    printf( "%s\n", rax )
+
     support_message macro isa_feature, flags
-        mov edx,'x'
-        mov ecx,' '
-        test sselevel,flags
-        cmovne ecx,edx
-        printf( "[%c] %s\n", ecx, isa_feature )
+        .if ( sselevel & flags )
+            printf( " - %s\n", isa_feature )
+        .endif
         retm<>
         endm
 

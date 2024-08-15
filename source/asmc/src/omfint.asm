@@ -60,46 +60,28 @@ func_index db \
     assume rsi:ptr omf_rec
     assume rbx:ptr outbuff
 
-PutByte proc watcall private value:byte
-    ;
-    ; write a byte to the current record
-    ;
+PutByte proto watcall :byte { ; write a byte to the current record
     mov ecx,[rbx].in_buf
     inc [rbx].in_buf
     mov [rbx].buffer[rcx],al
-    ret
+    }
 
-PutByte endp
-
-
-PutWord proc watcall private value:word
-    ;
-    ; write a word to the current record
-    ;
+PutWord proto watcall :word { ; write a word to the current record
     mov ecx,[rbx].in_buf
     add [rbx].in_buf,2
     mov word ptr [rbx].buffer[rcx],ax
-    ret
+    }
 
-PutWord endp
-
-
-PutDword proc watcall private value:dword
-    ;
-    ; write a dword to the current record
-    ;
+PutDword proto watcall :dword { ; write a dword to the current record
     mov ecx,[rbx].in_buf
     add [rbx].in_buf,4
     mov dword ptr [rbx].buffer[rcx],eax
-    ret
-
-PutDword endp
-
+    }
 
 PutIndex proc watcall private index:word
-    ;
+
     ; write an index - 1|2 byte(s) - to the current record
-    ;
+
     mov ecx,[rbx].in_buf
     inc [rbx].in_buf
     .if ( ax > 0x7f )
@@ -148,16 +130,10 @@ omf_write_record proc fastcall uses rsi rdi rbx objr:ptr omf_rec
     .switch eax
     .case OFF_UNEXP
         asmerr( 1901 ) ; Internal Assembler Error
-    .case OFF_MISC
-        ;
-        ; For 16-bit records which are the same under Intel and MS OMFs
-        ;
+    .case OFF_MISC     ; For 16-bit records which are the same under Intel and MS OMFs
         mov o.cmd,[rsi].command
        .endc
-    .case OFF_MISC32
-        ;
-        ; For 32-bit records which are the same under Intel and MS OMFs
-        ;
+    .case OFF_MISC32   ; For 32-bit records which are the same under Intel and MS OMFs
         mov al,[rsi].command
         or  al,[rsi].is_32
         mov o.cmd,al

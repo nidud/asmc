@@ -91,8 +91,8 @@ startext        int_t 0
 if MULTIHDR
 ln_srcfile      uint_t 0         ; last file for which line numbers have been written
 endif
-ln_is32         uint_8 0         ; last mode for which line numbers have been written
 ln_size         uint_16 0        ; size of line number info
+ln_is32         uint_8 0         ; last mode for which line numbers have been written
 
 ; CodeView symbolic debug info
 
@@ -108,12 +108,11 @@ ln_size         uint_16 0        ; size of line number info
    .ends
 
 ifndef ASMC64
-
+align size_t
 SymDebParm dbg_section \
     { @CStr("$$SYMBOLS"), @CStr("DEBSYM") },
     { @CStr("$$TYPES"),   @CStr("DEBTYP") }
-
-
+align size_t
 SymDebSeg dsym_t DBGS_MAX dup(0)
 endif
 
@@ -1705,10 +1704,10 @@ omf_write_modend proc __ccall private fixp:ptr fixup, displ:uint_32
     .else
         mov obj.d.modend.start_addrs,TRUE
         mov obj.d.modend.main_module,TRUE
-        .if ( GetSymOfssize( [rcx].fixup.sym ) > USE16 )
+        .ifd ( GetSymOfssize( [rcx].fixup.sym ) > USE16 )
             mov eax,1 ; USE16 or USE32
         .else
-            mov eax,eax
+            xor eax,eax
         .endif
         mov obj.is_32,al
         AttachData( &obj, &buffer, 0 )
@@ -1727,27 +1726,27 @@ omf_write_modend endp
 
 ; this callback function is called during codeview debug info generation
 
-omf_cv_flushfunc proc __ccall private uses rsi rdi rbx segm:ptr dsym, curr:ptr uint_8, size:dword, pv:ptr
+omf_cv_flushfunc proc __ccall private uses rbx segm:ptr dsym, curr:ptr uint_8, size:dword, pv:ptr
 
     ldr rcx,segm
-    mov rcx,[rcx].dsym.seginfo
-    mov rdi,[rcx].seg_info.CodeBuffer
+    ldr rbx,curr
+    ldr eax,size
 
-    mov rbx,curr
-    sub rbx,rdi
-    mov eax,size
-    add rax,rbx
+    mov rdx,[rcx].dsym.seginfo
+    sub rbx,[rdx].seg_info.CodeBuffer
+    add eax,ebx
 
-    .if ( rbx && rax > ( 1024 - 8 ) )
+    .if ( ebx && eax > ( 1024 - 8 ) )
 
-        mov eax,[rcx].seg_info.start_loc
-        add rax,rbx
-        mov [rcx].seg_info.current_loc,eax
-        omf_write_ledata( segm )
-
-       .return( rdi )
+        mov eax,[rdx].seg_info.start_loc
+        add eax,ebx
+        mov rbx,[rdx].seg_info.CodeBuffer
+        mov [rdx].seg_info.current_loc,eax
+        omf_write_ledata( rcx )
+    .else
+        add rbx,[rdx].seg_info.CodeBuffer
     .endif
-    .return( curr )
+    .return( rbx )
 
 omf_cv_flushfunc endp
 
@@ -1792,20 +1791,20 @@ omf_write_header_dbgcv endp
 
 ; write contents of segments $$SYMBOLS and $$TYPES
 
-omf_write_debug_tables proc private uses rsi rdi rbx
+omf_write_debug_tables proc private
 
-    .if ( SymDebSeg[DBGS_SYMBOLS*size_t] && SymDebSeg[DBGS_TYPES*size_t] )
+    mov rax,SymDebSeg[DBGS_SYMBOLS*size_t]
+    mov rdx,SymDebSeg[DBGS_TYPES*size_t]
 
-        mov rax,SymDebSeg[DBGS_SYMBOLS*size_t]
+    .if ( rax && rdx )
+
         mov rcx,[rax].dsym.seginfo
         mov [rcx].seg_info.CodeBuffer,CurrSource
-
-        mov rdx,SymDebSeg[DBGS_TYPES*size_t]
         mov rcx,[rdx].dsym.seginfo
         add rax,1024
         mov [rcx].seg_info.CodeBuffer,rax
 
-        cv_write_debug_tables( SymDebSeg[DBGS_SYMBOLS*size_t], SymDebSeg[DBGS_TYPES*size_t], NULL )
+        cv_write_debug_tables( SymDebSeg[DBGS_SYMBOLS*size_t], rdx, NULL )
     .endif
     ret
 

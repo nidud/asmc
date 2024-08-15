@@ -897,7 +897,7 @@ next_item:
                             string_len > 1 && no_of_bytes == 2 )
 ifndef __UNIX__
                         mov ecx,string_len
-                        lea rcx,[rcx*2+8]
+                        lea ecx,[rcx+rcx+8]
                         mov rdi,alloca(ecx)
                         ;; v2.24 - Unicode CodePage
                         .if ( MultiByteToWideChar( ModuleInfo.codepage, 0,

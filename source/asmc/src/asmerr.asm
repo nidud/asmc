@@ -412,7 +412,7 @@ table string_t  E0,E1,E2,W1,W2,W3,W4,W5
 maxid uint_t    MAX_E0,MAX_E1,MAX_E2,MAX_W1,MAX_W2,MAX_W3,MAX_W4,MAX_W5
 
 define MIN_ID 1000
-define MAX_ID 8020
+define MAX_ID 8021
 
 ;
 ; Notes

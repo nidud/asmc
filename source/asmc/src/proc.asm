@@ -280,7 +280,7 @@ fast_pcheck proc __ccall uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:pt
         add eax,eax
         .if ( ecx > eax ) ; span 4 registers ?
 
-            lea edx,[rax*2]
+            lea edx,[rax+rax]
             .if ( edx == ecx && dl <= [rbx].maxint )
 
                 mov dl,[rdi]

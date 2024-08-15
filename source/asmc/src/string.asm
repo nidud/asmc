@@ -713,12 +713,12 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
 
     ldr rbx,tokenarray
     mov edi,MaxLineLength
-    lea eax,[rdi*2+32]
+    lea ecx,[rdi+rdi+32]
     .if ( edi > MAX_LINE_LEN )
         inc mem_alloc
-        MemAlloc(eax)
+        MemAlloc(ecx)
     .else
-        alloca(eax)
+        alloca(ecx)
     .endif
     mov cursrc,rax
     lea rcx,[rax+rdi]

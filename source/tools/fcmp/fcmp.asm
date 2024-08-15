@@ -1,17 +1,10 @@
 ; FCMP.ASM--
-; Copyright (c) 2016 GNU General Public License www.gnu.org/licenses
 ;
-; This program is free software; you can redistribute it and/or modify
-; it under the terms of the GNU General Public License as published by
-; the Free Software Foundation; either version 2 of the License, or
-; (at your option) any later version.
-;
-; This program is distributed in the hope that it will be useful,
-; but WITHOUT ANY WARRANTY; without even the implied warranty of
-; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; GNU General Public License for more details.
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; Change history:
+; 2024-08-15 - updated for Linux
 ; 2013-10-23 - created for the regression test of ASMC
 ;
 include io.inc
@@ -22,250 +15,290 @@ include tchar.inc
 
 .code
 
-main proc uses esi edi ebx argc:int_t, argv:array_t
+print_usage proc
 
-  local fp      :ptr FILE
-  local file1   :string_t
-  local file2   :string_t
-  local buffer1 :string_t
-  local buffer2 :string_t
-  local c       :char_t     ; Compare COFF
-  local p       :char_t     ; Compare PE
-  local d       :char_t     ; Desimal (default is hex)
-  local v       :char_t     ; Verbose
-  local o       :int_t      ; Offset start of compare
-  local n       :int_t      ; Number of lines (default is 10)
-  local size1   :uint_t
-  local size2   :uint_t
-  local unequal :uint_t
-  local h1      :int_t
-  local h2      :int_t
+    printf( "Usage:     fcmp [-option] <file1> <file2>\n"
+            "\n"
+            "-d         Desimal (default is hex)\n"
+            "-v         Verbose\n"
+            "-p         Compare PE\n"
+            "-c         Compare COFF\n"
+            "-o<offs>   Offset start of compare\n"
+            "-n<lines>  Number of lines (default is 10)\n"
+            "\n" )
 
     xor eax,eax
-    mov file1,eax
-    mov file2,eax
-    mov unequal,eax
-    mov c,al
-    mov p,al
-    mov d,al
-    mov v,al
-    mov o,eax
-    mov n,10
-    lea eax,stdout ; default to stdout
-    mov fp,eax
-    mov edi,ecx
-    mov esi,edx
-    lodsd
-    dec edi
+    ret
 
-    .repeat
+print_usage endp
 
-        .while edi
 
-            mov edx,[esi]
-            mov eax,[edx]
-            .if al == '/' || al == '-'
-                or  ah,0x20
-                .if ah == 'd'
-                    inc d
-                .elseif ah == 'c'
-                    inc c
-                .elseif ah == 'p'
-                    inc p
-                .elseif ah == 'v'
-                    inc v
-                .elseif ah == 'n'
-                    add edx,2
-                    .if atol(edx)
-                        mov n,eax
-                    .endif
-                .elseif ah == 'o'
-                    add edx,2
-                    .if atol(edx)
-                        mov o,eax
-                    .endif
-                .else
-                    perror(edx)
+main proc argc:int_t, argv:array_t
+
+   .new file1:string_t = NULL
+   .new file2:string_t = NULL
+   .new buffer1:string_t
+   .new buffer2:string_t
+   .new compare_coff:char_t = 0
+   .new compare_pe:char_t = 0
+   .new desimal:char_t = 0      ; default is hex
+   .new verbose:char_t = 0
+   .new off_start:int_t = 0     ; Offset start of compare
+   .new lines:int_t = 10        ; Number of lines (default is 10)
+   .new size1:size_t
+   .new size2:size_t
+   .new rsize1:size_t
+   .new rsize2:size_t
+   .new unequal:uint_t = 0
+   .new h1:int_t
+   .new h2:int_t
+   .new a:int_t
+   .new b:int_t
+   .new i:int_t
+   .new p:string_t
+   .new q:string_t
+
+    .if ( argc == 1 )
+
+        .return( print_usage() )
+    .endif
+
+    .for ( i = 1 : i < argc : i++ )
+
+        mov ecx,i
+        mov rdx,argv
+        mov rcx,[rdx+rcx*size_t]
+        mov eax,[rcx]
+
+        .switch al
+ifndef __UNIX__
+        .case '/'
+endif
+        .case '-'
+
+            shr eax,8
+            .switch al
+            .case 'd'
+                inc desimal
+               .endc
+            .case 'c'
+                inc compare_coff
+               .endc
+            .case 'p'
+                inc compare_pe
+               .endc
+            .case 'v'
+                inc verbose
+               .endc
+            .case 'n'
+                add rcx,2
+                .if atol(rcx)
+                    mov lines,eax
                 .endif
+                .endc
+            .case 'o'
+                add rcx,2
+                .if atol(rcx)
+                    mov off_start,eax
+                .endif
+                .endc
+            .default
+                perror(rcx)
+               .return(1)
+            .endsw
+            .endc
+        .default
+            .if file1
+                mov file2,rcx
             .else
-                .if file1
-                    mov file2,edx
-                .else
-                    mov file1,edx
-                .endif
+                mov file1,rcx
             .endif
-            add esi,4
-            dec edi
-        .endw
-        .break .if file1 && file2
-        fprintf(fp,
-            "Usage:     FCMP [-/option] <file1> <file2>\n"
-            "\n"
-            "/D         Desimal (default is hex)\n"
-            "/V         Verbose\n"
-            "/P         Compare PE\n"
-            "/C         Compare COFF\n"
-            "/O<offs>   Offset start of compare\n"
-            "/N<lines>  Number of lines (default is 10)\n"
-            "\n"
-        )
-        .return 1
-    .until 1
+        .endsw
+    .endf
 
-    mov edi,file1
-    .if _open(edi, O_RDONLY or O_BINARY, 0) == -1
-        perror(edi)
-        .return 1
+    .if ( !file1 || !file2 )
+
+        print_usage()
+       .return( 1 )
+    .endif
+
+    .ifd ( _open(file1, O_RDONLY or O_BINARY, 0) == -1 )
+
+        perror(file1)
+       .return( 1 )
     .endif
     mov h1,eax
 
-    mov edi,file2
-    .if _open(edi, O_RDONLY or O_BINARY, 0) == -1
-        _close(h1)
-        perror(edi)
-        .return 1
+    .ifd ( _open(file2, O_RDONLY or O_BINARY, 0) == -1 )
+
+        perror(file2)
+       .return( 1 )
     .endif
     mov h2,eax
 
     mov size2,_filelength(eax)
     mov size1,_filelength(h1)
-    add eax,size2
-    .if !malloc(eax)
+
+    .if !malloc(0x10000*2)
+
         perror("No memory")
-        .return 1
+       .return( 1 )
     .endif
-    mov buffer1,eax
-    add eax,size1
-    mov buffer2,eax
+    mov buffer1,rax
+    add rax,0x10000
+    mov buffer2,rax
 
-    .if _read(h1, buffer1, size1) != size1
+    .if !_read(h1, buffer1, 0x10000)
 
         perror("Read error")
-        .return 1
+       .return( 1 )
     .endif
+    mov rsize1,rax
 
-    .if _read(h2, buffer2, size2) != size2
+    .if !_read(h2, buffer2, 0x10000)
+
         perror("Read error")
-        .return 1
+       .return( 1 )
+    .endif
+    mov rsize2,rax
+
+    mov rsi,buffer1
+    mov rdi,buffer2
+    mov rbx,size1
+    mov eax,off_start
+
+    .if ( rax >= rbx )
+
+        printf("%s: Offset >= File Size\n", file1)
+       .return( 1 )
     .endif
 
-    _close(h1)
-    _close(h2)
+    sub rbx,rax
+    add rsi,rax
+    add rdi,rax
 
-    mov esi,buffer1
-    mov edi,buffer2
-    mov ecx,size1
-    mov eax,o
-    .if eax >= ecx
-        perror("Offset >= File Size")
-        .return 1
-    .endif
-
-    sub ecx,eax
-    add esi,eax
-    add edi,eax
-
-    .if p
+    .if ( compare_pe )
 
         .repeat
+
             .repeat
 
-                mov     eax,[esi+0x3C]
-                add     esi,eax
-                .break .if size1 < eax
-                .break .if dword ptr [esi] != 'EP'
-                mov     eax,[edi+0x3C]
-                add     edi,eax
-                .break .if size2 < eax
-                .break .if dword ptr [edi] != 'EP'
+                mov     eax,[rsi+0x3C]
+                add     rsi,rax
+                .break .if ( size1 < rax )
+                .break .if ( dword ptr [rsi] != 'EP' )
 
-                mov     h1,[esi+4+20+0x3C]
-                mov     h2,[edi+4+20+0x3C]
-                movzx   eax,word ptr [esi+4+2]
+                mov     eax,[rdi+0x3C]
+                add     rdi,rax
+                .break .if ( size2 < rax )
+                .break .if ( dword ptr [rdi] != 'EP' )
+
+                mov     a,[rsi+4+20+0x3C]
+                mov     b,[rdi+4+20+0x3C]
+                movzx   eax,word ptr [rsi+4+2]
                 imul    ecx,eax,40
                 add     ecx,0xE0+20+4
-                mov     eax,[esi+8]
-                mov     [edi+8],eax
+                mov     eax,[rsi+8]
+                mov     [rdi+8],eax
+
                 .repeat
+
                     repe cmpsb
                     .break .ifz
+
+                    mov     p,rsi
+                    mov     q,rdi
                     inc     unequal
-                    mov     ebx,ecx
-                    mov     ecx,esi
-                    sub     ecx,buffer1
-                    dec     ecx
-                    movzx   eax,byte ptr [edi-1]
-                    movzx   edx,byte ptr [esi-1]
-                    .if d
-                        fprintf(fp, "%d: %d %d\n", ecx, edx, eax)
+                    mov     rbx,rcx
+                    mov     rax,rsi
+                    sub     rax,buffer1
+                    dec     eax
+                    movzx   ecx,byte ptr [rdi-1]
+                    movzx   edx,byte ptr [rsi-1]
+
+                    .if ( desimal )
+                        printf("%d: %d %d\n", eax, edx, ecx)
                     .else
-                        fprintf(fp, "%08X: %02X %02X\n", ecx, edx, eax)
+                        printf("%08X: %02X %02X\n", eax, edx, ecx)
                     .endif
-                    mov     ecx,ebx
-                    dec     n
-                    .break .ifz
-                .until !ecx
-                mov     esi,buffer1
-                mov     eax,h1
-                add     esi,eax
-                sub     size1,eax
+                    mov rsi,p
+                    mov rdi,q
+                    mov rcx,rbx
+                    dec lines
+                   .break .ifz
+                .until !rcx
+
+                mov     rsi,buffer1
+                mov     eax,a
+                add     rsi,rax
+                sub     rsize1,rax
                 .break .ifb
-                mov     edi,buffer2
-                mov     eax,h2
-                add     edi,eax
-                sub     size2,eax
+                mov     rdi,buffer2
+                mov     eax,b
+                add     rdi,rax
+                sub     rsize2,rax
                 .break .ifb
-                mov     ecx,size1
-                .break(1)
+                .break( 1 )
             .until 1
             perror("invalid PE binary")
-            .return 1
+           .return( 1 )
         .until 1
 
-    .elseif c
+    .elseif ( compare_coff )
 
-        mov eax,[edi+4]
-        mov [esi+4],eax
+        mov eax,[rdi+4]
+        mov [rsi+4],eax
     .endif
 
-    .if size1 != size2
-        fprintf(fp, "%s(%d), %s(%d): file sizes differ\n", file1, size1, file2, size2)
+    .if ( size1 != size2 )
+
+        printf("%s(%d), %s(%d): file sizes differ\n", file1, size1, file2, size2)
         inc unequal
-        .if size1 > size2
-            mov size1,size2
-        .else
-            mov size2,size1
-        .endif
-        mov ecx,size1
     .endif
 
-    .repeat
-        repe cmpsb
-        .break .ifz
-        inc     unequal
-        mov     ebx,ecx
-        mov     ecx,esi
-        sub     ecx,buffer1
-        dec     ecx
-        movzx   eax,byte ptr [edi-1]
-        movzx   edx,byte ptr [esi-1]
-        .if d
-            fprintf(fp, "%d: %d %d\n", ecx, edx, eax)
-        .else
-            fprintf(fp, "%08X: %02X %02X\n", ecx, edx, eax)
+    .while 1
+
+        mov rsi,buffer1
+        mov rdi,buffer2
+        mov rcx,rsize1
+        .if rcx > rsize2
+            mov rcx,rsize2
         .endif
-        mov     ecx,ebx
-        dec     n
-        .break .ifz
-    .until !ecx
+        .break .if !rcx
+        .repeat
+            repe cmpsb
+            mov p,rsi
+            mov q,rdi
+            .break .ifz
+            inc unequal
+            mov ebx,ecx
+            mov rax,rsi
+            sub rax,buffer1
+            dec eax
+            movzx ecx,byte ptr [rdi-1]
+            movzx edx,byte ptr [rsi-1]
+            .if ( desimal )
+                printf("%d: %d %d\n", eax, edx, ecx)
+            .else
+                printf("%08X: %02X %02X\n", eax, edx, ecx)
+            .endif
+            mov rsi,p
+            mov rdi,q
+            mov ecx,ebx
+            dec lines
+           .break .ifz
+        .until !ecx
+        mov rsize1,_read(h1, buffer1, 0x10000)
+        mov rsize2,_read(h2, buffer2, 0x10000)
+    .endw
 
     .if !unequal
-        .if v
-            fprintf(fp, "%s == %s (Ok)\n", file1, file2)
+        .if ( verbose )
+            printf("%s == %s (Ok)\n", file1, file2)
         .endif
         xor eax,eax
     .else
-        fprintf(fp, "%d unequal bytes found cmp(%s, %s)\n", unequal, file1, file2)
+        printf("%d unequal bytes found cmp(%s, %s)\n", unequal, file1, file2)
         mov eax,1
     .endif
     ret

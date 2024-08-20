@@ -711,10 +711,10 @@ LogFileName		LPSTR ?
 LoggerName		LPSTR ?
 CurrentTime		LONGLONG ?
 BuffersRead		ULONG ?
-UNION ; {
+UNION
 LogFileMode		ULONG ?
 ProcessTraceMode	ULONG ?
-ENDS ;DUMMYUNIONNAME
+ENDS
 CurrentEvent		EVENT_TRACE <>
 LogfileHeader		TRACE_LOGFILE_HEADER <>
 BufferCallback		PEVENT_TRACE_BUFFER_CALLBACKA ?

@@ -5088,7 +5088,7 @@ TVINSERTSTRUCTA		STRUC
 hParent			HTREEITEM ?
 hInsertAfter		HTREEITEM ?
 if (_WIN32_IE GE 0x0400)
-UNION ;DUMMYUNIONNAME
+UNION
  itemex			TVITEMEXA <>
  item			TV_ITEMA <>
 ENDS
@@ -5102,7 +5102,7 @@ TVINSERTSTRUCTW		STRUC
 hParent			HTREEITEM ?
 hInsertAfter		HTREEITEM ?
 if (_WIN32_IE GE 0x0400)
-UNION ;DUMMYUNIONNAME
+UNION
  itemex			TVITEMEXW <>
  item			TV_ITEMW <>
 ENDS
@@ -7505,7 +7505,7 @@ hInstance		HINSTANCE ?
 dwFlags			TASKDIALOG_FLAGS ?
 dwCommonButtons		TASKDIALOG_COMMON_BUTTON_FLAGS ?
 pszWindowTitle		PCWSTR ?
-UNION ;DUMMYUNIONNAME
+UNION
  hMainIcon		HICON ?
  pszMainIcon		PCWSTR ?
 ENDS
@@ -7521,7 +7521,7 @@ pszVerificationText	PCWSTR ?
 pszExpandedInformation	PCWSTR ?
 pszExpandedControlText	PCWSTR ?
 pszCollapsedControlText PCWSTR ?
-UNION ;DUMMYUNIONNAME2
+UNION
  hFooterIcon		HICON ?
  pszFooterIcon		PCWSTR ?
 ENDS

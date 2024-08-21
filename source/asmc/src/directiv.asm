@@ -277,7 +277,7 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     xor esi,esi    ; fileoffset -- fixme: should be uint_64
     mov edi,-1     ; sizemax
 
-    inc i
+    add i,2
     add rbx,asm_tok
     .if ( [rbx].token == T_COMMA )
 

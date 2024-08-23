@@ -2,7 +2,7 @@ include limits.inc
 include errno.inc
 include stdio.inc
 include string.inc
-include quadmath.inc
+include fltintrn.inc
 include assert.inc
 include signal.inc
 

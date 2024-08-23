@@ -236,11 +236,10 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local opndx:expr
 
-    ldr ecx,i
     ldr rbx,tokenarray
 
-    inc  ecx ; skip the directive
-    imul eax,ecx,asm_tok
+    inc  i ; skip the directive
+    imul eax,i,asm_tok
     add  rbx,rax
 
     .if ( [rbx].token == T_FINAL )
@@ -251,6 +250,7 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( [rbx].token == T_STRING )
 
         ; v2.08: use string buffer to avoid buffer overflow if string is > FILENAME_MAX
+
         mov rdi,StringBufferEnd
         .if ( [rbx].string_delim == '"' || [rbx].string_delim == "'" )
 
@@ -266,7 +266,6 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov rsi,[rbx].string_ptr
             inc ecx
             rep movsb
-
         .else
             .return( asmerr( 3015 ) )
         .endif
@@ -277,7 +276,7 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     xor esi,esi    ; fileoffset -- fixme: should be uint_64
     mov edi,-1     ; sizemax
 
-    add i,2
+    inc i
     add rbx,asm_tok
     .if ( [rbx].token == T_COMMA )
 
@@ -292,8 +291,11 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         imul ebx,i,asm_tok
         add rbx,tokenarray
         .if ( [rbx].token == T_COMMA )
+
             inc i
-            .return .ifd EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR
+            .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
+                .return
+            .endif
             .if ( opndx.kind == EXPR_CONST )
                 mov edi,opndx.value
             .elseif ( opndx.kind != EXPR_EMPTY )
@@ -313,6 +315,7 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
 
     ; v2.04: tell assembler that data is emitted
+
     .if ( ModuleInfo.CommentDataInCode )
         omf_OutSelect( TRUE )
     .endif

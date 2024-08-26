@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <AsmcDir>$(AsmcDir)</AsmcDir>
-    <RootNamespace>Direct2D</RootNamespace>
+    <RootNamespace>CApplication</RootNamespace>
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -26,6 +26,7 @@
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   <Import Project="$(AsmcDir)\bin\asmc.props" />
+  <Import Project="$(AsmcDir)\bin\iddc.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -66,10 +67,11 @@
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ASMC Include="Direct2D.asm" />
+    <ASMC Include="CApplication.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(AsmcDir)\bin\asmc.targets" />
+    <Import Project="$(AsmcDir)\bin\iddc.targets" />
   </ImportGroup>
 </Project>

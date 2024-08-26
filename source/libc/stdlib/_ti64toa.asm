@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char *_i64toa(__int64 value, char *str, int radix);
+; wchar_t * _i64tow(__int64 value, wchar_t *str, int radix);
+;
 include stdlib.inc
 include tchar.inc
 

@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; void *malloc(size_t size);
+; void free(void *memblock);
+;
 include malloc.inc
 include errno.inc
 ifdef __UNIX__
@@ -11,22 +13,20 @@ include sys/syscall.inc
 include sys/mman.inc
 endif
 
-public  _crtheap
+undef _aligned_free
+alias <_aligned_free>=<free>
 
-    .data
-
-    _crtheap label HANDLE
-    _heap_base heap_t 0     ; address of main memory block
-    _heap_free heap_t 0     ; address of free memory block
-
-    .code
+public _crtheap
 
 CreateHeap proto private :size_t
 
-; Allocates memory blocks.
-;
-; void *malloc( size_t size );
-;
+.data
+ _crtheap label HANDLE
+ _heap_base heap_t 0 ; address of main memory block
+ _heap_free heap_t 0 ; address of free memory block
+
+.code
+
 malloc proc byte_count:size_t
 
     ldr rcx,byte_count
@@ -105,10 +105,6 @@ malloc proc byte_count:size_t
 
 malloc endp
 
-; Deallocates or frees a memory block.
-;
-; void free( void *memblock );
-;
 free proc memblock:ptr
 
     ldr rcx,memblock

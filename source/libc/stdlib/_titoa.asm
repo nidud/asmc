@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char *_itoa(int value, char *str, int radix);
+; wchar_t * _itow(int value, wchar_t *str, int radix);
+;
 include stdlib.inc
 include tchar.inc
 

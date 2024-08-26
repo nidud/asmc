@@ -8,8 +8,13 @@ _aligned_malloc:
 	rm -f $@
 else
 _aligned_malloc.exe:
-	asmc -Fitchar.inc $*.asm
+	asmc -q -Fitchar.inc $*.asm
 	linkw system con_32 file $*
+	$@
+	asmc64 -q -Fitchar.inc $*.asm
+	linkw system con_64 file $*
+	$@
+	asmc64 -q -pe -Fitchar.inc $*.asm
 	$@
 	pause
 	del $*.obj

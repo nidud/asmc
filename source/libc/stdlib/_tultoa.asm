@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char *_ultoa(unsigned long value, char *str, int radix);
+; wchar_t *_ultow(unsigned long value, wchar_t *str, int radix);
+;
 include stdlib.inc
 include tchar.inc
 

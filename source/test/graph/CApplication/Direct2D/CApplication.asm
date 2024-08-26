@@ -1,88 +1,7 @@
 
-include Direct2D.inc
+include CApplication.inc
 
     .code
-
-ErrorMessage proc hr:HRESULT, format:LPTSTR, args:vararg
-
-  local szMessage:LPTSTR
-  local buffer[512]:wchar_t
-  local message[512]:wchar_t
-
-    vswprintf(&buffer, format, &args)
-
-    mov edx,hr
-    .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
-
-        mov hr,HRESULT_CODE(edx)
-    .endif
-
-    FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER or \
-        FORMAT_MESSAGE_FROM_SYSTEM or \
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        hr,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        &szMessage,
-        0,
-        NULL)
-
-    swprintf(&message, "%s\n\nError code: %08X\n\n%s", &buffer, hr, szMessage)
-    MessageBox(NULL, &message, "Error", MB_OK or MB_ICONERROR)
-    LocalFree(szMessage)
-   .return hr
-
-ErrorMessage endp
-
-BoundRand proc b:uint_t
-
-    mov eax,ecx
-    neg eax
-    xor edx,edx
-    div ecx
-    .while 1
-        rdrand eax
-        .break .if ( eax >= edx )
-    .endw
-    xor edx,edx
-    div ecx
-    mov eax,edx
-    ret
-
-BoundRand endp
-
-RangeRand proc b:uint_t, m:uint_t
-
-    .whiled ( BoundRand(ecx) <= m )
-    .endw
-    ret
-
-RangeRand endp
-
-RandRGB proc cv:ptr D3DCOLORVALUE, i:int_t
-
-    mov r8,rcx
-    cvtsi2ss xmm0,edx
-    divss xmm0,255.0
-    movss [r8].D3DCOLORVALUE.a,xmm0
-    BoundRand(0xFF)
-    cvtsi2ss xmm0,eax
-    divss xmm0,255.0
-    movss [r8].D3DCOLORVALUE.r,xmm0
-    BoundRand(0xFF)
-    cvtsi2ss xmm0,eax
-    divss xmm0,255.0
-    movss [r8].D3DCOLORVALUE.g,xmm0
-    BoundRand(0xFF)
-    cvtsi2ss xmm0,eax
-    divss xmm0,255.0
-    movss [r8].D3DCOLORVALUE.b,xmm0
-    BoundRand(0xFF)
-    mov rax,r8
-    ret
-
-RandRGB endp
 
 ; -- CApplication --
 
@@ -91,15 +10,13 @@ RandRGB endp
 CApplication::Run proc
 
     .new result:int_t = 0
-
     .new hr:HRESULT = this.BeforeEnteringMessageLoop()
 
     .if (SUCCEEDED(hr))
 
         mov result,this.EnterMessageLoop()
     .else
-
-        ErrorMessage(hr, "An error occuring when running the sample" )
+        this.ErrorMessage(hr, "An error occuring when running the sample" )
     .endif
 
     this.AfterLeavingMessageLoop()
@@ -139,7 +56,6 @@ CApplication::EnterMessageLoop proc
 
         mov result, msg.wParam
     .endif
-
     .return result
 
 CApplication::EnterMessageLoop endp
@@ -162,7 +78,7 @@ CApplication::ShowApplicationWindow proc uses rdi
 
    .new bSucceeded:BOOL = TRUE
 
-    mov rdi,this;rcx
+    mov rdi,rcx
     .if ( [rdi].m_hwnd == NULL )
 
         mov bSucceeded,FALSE
@@ -175,7 +91,6 @@ CApplication::ShowApplicationWindow proc uses rdi
         GetWindowRect([rdi].m_hwnd, &[rdi].m_rect)
         SetTimer([rdi].m_hwnd, ID_TIMER, [rdi].m_timer, NULL)
     .endif
-
     .return bSucceeded
 
 CApplication::ShowApplicationWindow endp
@@ -200,10 +115,8 @@ CApplication::DestroyApplicationWindow endp
 CApplication::OnSize proc uses rdi width:UINT, height:UINT
 
     mov rdi,rcx
-
     mov [rdi].m_size.width,edx
     mov [rdi].m_size.height,r8d
-
     mov [rdi].m_rc.top,0
     mov [rdi].m_rc.left,0
     mov [rdi].m_rc.right,edx
@@ -219,7 +132,7 @@ CApplication::OnSize proc uses rdi width:UINT, height:UINT
 
     .if ( this.CreateDeviceResources() )
 
-        .return ErrorMessage(eax, "CreateDeviceResources()" )
+        .return this.ErrorMessage(eax, "CreateDeviceResources()" )
     .endif
 
     .if ( [rdi].m_pRT )
@@ -318,6 +231,12 @@ CApplication::OnKeyDown proc wParam:WPARAM
             .endif
         .endf
         .endc
+    .case VK_F3
+        .if ( [rcx].m_rand < 2 )
+            inc [rcx].m_rand
+        .else
+            mov [rcx].m_rand,0
+        .endif
     .case VK_RETURN
         this.InitObjects()
         .endc
@@ -346,6 +265,15 @@ CApplication::OnKeyDown proc wParam:WPARAM
             this.GoFullScreen()
         .endif
         .endc
+    .case VK_F1
+        MessageBox(NULL,
+                   "Enter\t\tRecalculate\n"
+                   "F3\t\tToggle rand-type\n"
+                   "F11\t\tToggle full screen\n"
+                   "Up/Down\tSpeed\n"
+                   "Left/Right\tIntensity\n"
+                   "PGUP/PGDN\tTimer\n",
+                   "Function Keys", MB_OK)
     .endsw
     .return 0
 
@@ -399,7 +327,7 @@ CApplication::InitObjects proc uses rsi rdi rbx
         .return 0
     .endif
 
-    mov [rdi].m_count,RangeRand(MAXOBJ, 1)
+    mov [rdi].m_count,[rdi].RangeRand(MAXOBJ, 1)
 
     .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < [rdi].m_count: ebx++, rsi += sizeof(object) )
 
@@ -408,18 +336,18 @@ CApplication::InitObjects proc uses rsi rdi rbx
         cmp ecx,edx
         cmova ecx,edx
         shr ecx,3
-        mov [rsi].m_radius,RangeRand(ecx, 8)
-        mov [rsi].m_mov.x,RangeRand(9, 1)
-        mov [rsi].m_mov.y,RangeRand(9, 1)
+        mov [rsi].m_radius,[rdi].RangeRand(ecx, 8)
+        mov [rsi].m_mov.x,[rdi].RangeRand(9, 1)
+        mov [rsi].m_mov.y,[rdi].RangeRand(9, 1)
         mov ecx,[rdi].m_rc.right
         sub ecx,[rdi].m_rc.left
         sub ecx,[rsi].m_radius
-        mov [rsi].m_pos.x,RangeRand(ecx, [rsi].m_radius)
+        mov [rsi].m_pos.x,[rdi].RangeRand(ecx, [rsi].m_radius)
         mov ecx,[rdi].m_rc.bottom
         sub ecx,[rdi].m_rc.top
         sub ecx,[rsi].m_radius
-        mov [rsi].m_pos.y,RangeRand(ecx, [rsi].m_radius)
-        RandRGB(&[rsi].m_color, [rdi].m_intensity)
+        mov [rsi].m_pos.y,[rdi].RangeRand(ecx, [rsi].m_radius)
+        [rdi].RandRGB(&[rsi].m_color, [rdi].m_intensity)
     .endf
     .return 0
 
@@ -429,6 +357,14 @@ CApplication::InitObjects endp
 
 CApplication::GoFullScreen proc uses rdi rbx
 
+   .new xSpan:int_t
+   .new ySpan:int_t
+   .new xBorder:int_t
+   .new yCaption:int_t
+   .new yBorder:int_t
+   .new xOrigin:int_t
+   .new yOrigin:int_t
+
     mov rdi,rcx
     mov [rdi].m_isFullScreen,TRUE
 
@@ -436,30 +372,29 @@ CApplication::GoFullScreen proc uses rdi rbx
     SetWindowLong([rdi].m_hwnd, GWL_STYLE,  WS_CAPTION or WS_SYSMENU)
 
     mov rbx,GetDC(NULL)
-   .new xSpan:int_t = GetSystemMetrics(SM_CXSCREEN)
-   .new ySpan:int_t = GetSystemMetrics(SM_CYSCREEN)
+    mov xSpan,GetSystemMetrics(SM_CXSCREEN)
+    mov ySpan,GetSystemMetrics(SM_CYSCREEN)
     ReleaseDC(NULL, rbx)
 
     ; Calculate the size of system elements.
-   .new xBorder:int_t = GetSystemMetrics(SM_CXFRAME)
-   .new yCaption:int_t = GetSystemMetrics(SM_CYCAPTION)
-   .new yBorder:int_t = GetSystemMetrics(SM_CYFRAME)
+    mov xBorder,GetSystemMetrics(SM_CXFRAME)
+    mov yCaption,GetSystemMetrics(SM_CYCAPTION)
+    mov yBorder,GetSystemMetrics(SM_CYFRAME)
 
     ; Calculate the window origin and span for full-screen mode.
     mov eax,xBorder
     neg eax
-   .new xOrigin:int_t = eax
+    mov xOrigin,eax
     mov eax,yBorder
     neg eax
     sub eax,yCaption
-   .new yOrigin:int_t = eax
+    mov yOrigin,eax
     imul eax,xBorder,2
     add xSpan,eax
     imul eax,yBorder,2
     add eax,yCaption
     add ySpan,eax
-    SetWindowPos([rdi].m_hwnd, HWND_TOPMOST, xOrigin, yOrigin, xSpan, ySpan,
-        SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
+    SetWindowPos([rdi].m_hwnd, HWND_TOPMOST, xOrigin, yOrigin, xSpan, ySpan, SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
 
 CApplication::GoFullScreen endp
@@ -471,11 +406,10 @@ CApplication::GoPartialScreen proc uses rdi
 
     mov rdi,rcx
     mov [rdi].m_isFullScreen,FALSE
-    SetWindowLong([rdi].m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED)
+    SetWindowLong([rdi].m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED); or WS_EX_TRANSPARENT)
     SetWindowLong([rdi].m_hwnd, GWL_STYLE, WINDOWSTYLES)
     SetWindowPos([rdi].m_hwnd, HWND_TOPMOST, [rdi].m_rect.left, [rdi].m_rect.top,
-            [rdi].m_rect.right, [rdi].m_rect.bottom,
-            SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
+            [rdi].m_rect.right, [rdi].m_rect.bottom, SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
 
 CApplication::GoPartialScreen endp
@@ -498,15 +432,13 @@ CApplication::CreateDeviceIndependentResources proc uses rdi
 
     ; Create the Direct2D factory.
 
-    .new hr:HRESULT = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-            &IID_ID2D1Factory, NULL, &[rdi].m_pD2DFactory)
+    .new hr:HRESULT = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory, NULL, &[rdi].m_pD2DFactory)
 
     .if (SUCCEEDED(hr))
 
         ; Create a DirectWrite factory.
 
-        mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
-                &IID_IDWriteFactory, &[rdi].m_pDWriteFactory)
+        mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory, &[rdi].m_pDWriteFactory)
     .endif
 
 
@@ -514,27 +446,13 @@ CApplication::CreateDeviceIndependentResources proc uses rdi
 
         ; Create a DirectWrite text format object.
 
-        mov hr,this.m_pDWriteFactory.CreateTextFormat(
-                IDS_TEXTFONT,
-                NULL,
-                DWRITE_FONT_WEIGHT_NORMAL,
-                DWRITE_FONT_STYLE_NORMAL,
-                DWRITE_FONT_STRETCH_NORMAL,
-                14.0,
-                "",
-                &[rdi].m_pTextFont)
+        mov hr,this.m_pDWriteFactory.CreateTextFormat(IDS_TEXTFONT, NULL, DWRITE_FONT_WEIGHT_NORMAL,
+                DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 14.0, "", &[rdi].m_pTextFont)
 
         .if (SUCCEEDED(hr))
 
-            mov hr,this.m_pDWriteFactory.CreateTextFormat(
-                    IDS_TEXTFONT,
-                    NULL,
-                    DWRITE_FONT_WEIGHT_NORMAL,
-                    DWRITE_FONT_STYLE_NORMAL,
-                    DWRITE_FONT_STRETCH_NORMAL,
-                    30.0,
-                    "",
-                    &[rdi].m_pTextFont2)
+            mov hr,this.m_pDWriteFactory.CreateTextFormat(IDS_TEXTFONT, NULL, DWRITE_FONT_WEIGHT_NORMAL,
+                    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 30.0, "", &[rdi].m_pTextFont2)
         .endif
 
         .if (SUCCEEDED(hr))
@@ -546,15 +464,8 @@ CApplication::CreateDeviceIndependentResources proc uses rdi
 
     .if (SUCCEEDED(hr))
 
-        mov hr,this.m_pDWriteFactory.CreateTextFormat(
-                IDS_MONOFONT,
-                NULL,
-                DWRITE_FONT_WEIGHT_NORMAL,
-                DWRITE_FONT_STYLE_NORMAL,
-                DWRITE_FONT_STRETCH_NORMAL,
-                12.0,
-                "",
-                &[rdi].m_pMonoFont)
+        mov hr,this.m_pDWriteFactory.CreateTextFormat(IDS_MONOFONT, NULL, DWRITE_FONT_WEIGHT_NORMAL,
+                DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 12.0, "", &[rdi].m_pMonoFont)
     .endif
     .return hr
 
@@ -572,32 +483,32 @@ CApplication::CreateDeviceIndependentResources endp
 
 CApplication::CreateDeviceResources proc uses rdi
 
-    mov rdi,rcx
    .new hr:HRESULT = S_OK
 
+    mov rdi,rcx
     .if ( ![rdi].m_pRT )
 
         ; Create a Direct2D render target.
 
        .new renderTargetProperties:D2D1_RENDER_TARGET_PROPERTIES = {
-            D2D1_RENDER_TARGET_TYPE_DEFAULT,
-            { DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_UNKNOWN },
-            0.0, 0.0,
-            D2D1_RENDER_TARGET_USAGE_NONE,
-            D2D1_FEATURE_LEVEL_DEFAULT
-            }
+                D2D1_RENDER_TARGET_TYPE_DEFAULT,
+                { DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_UNKNOWN },
+                0.0, 0.0,
+                D2D1_RENDER_TARGET_USAGE_NONE,
+                D2D1_FEATURE_LEVEL_DEFAULT
+                }
 
        .new hwndRenderTargetProperties:D2D1_HWND_RENDER_TARGET_PROPERTIES = {
-            [rdi].m_hwnd,
-            { [rdi].m_size.width, [rdi].m_size.height },
-            D2D1_PRESENT_OPTIONS_NONE
-            }
+                [rdi].m_hwnd,
+                { [rdi].m_size.width, [rdi].m_size.height },
+                D2D1_PRESENT_OPTIONS_NONE
+                }
 
         mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(
-            &renderTargetProperties,
-            &hwndRenderTargetProperties,
-            &[rdi].m_pRT
-            )
+                &renderTargetProperties,
+                &hwndRenderTargetProperties,
+                &[rdi].m_pRT
+                )
 
         .if (SUCCEEDED(hr))
 
@@ -644,7 +555,7 @@ CApplication::RenderMainContent proc uses rsi rdi rbx
             .new pGradientStops:ptr ID2D1GradientStopCollection
             .new gradientStops[2]:D2D1_GRADIENT_STOP = {
                     { 0.0, { 0.0, 0.0, 0.0, 0.0 } },
-                    { 1.0, { 0.0, 0.0, 0.0, 0.6 } } }
+                    { 1.3, { 0.0, 0.0, 0.0, 0.6 } } }
             .new gradisnBrushProperties:D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES = {
                     { 250.0, 100.0 }, { 4.0, -4.0 }, 50.0, 50.0 }
             .new brushProperties:D2D1_BRUSH_PROPERTIES = {
@@ -734,27 +645,33 @@ CApplication::RenderTextInfo proc uses rdi
 
    .new hr:HRESULT = S_OK
    .new textBuffer[400]:WCHAR
-
-    mov rdi,rcx
-
-    .new pRT:ptr ID2D1HwndRenderTarget = [rdi].m_pRT
-
-    swprintf(
-        &textBuffer,
-        "primitives %d\n"
-        "intensity  %d\n"
-        "timer      %d",
-        [rdi].m_count,
-        [rdi].m_intensity,
-        [rdi].m_timer)
-
+   .new n[16]:WCHAR
+   .new pRT:ptr ID2D1HwndRenderTarget
    .new m:Matrix3x2F
-    this.m_pRT.SetTransform(m.Identity())
-
    .new c:D3DCOLORVALUE(Black, 0.5)
-    this.m_pSolidColorBrush.SetColor(&c)
-
+   .new rc:RECT
    .new rr:D2D1_ROUNDED_RECT = { { 30.0, 10.0, 250.0, 100.0 }, 10.0, 10.0 }
+
+    mov rdi,this
+    mov pRT,[rdi].m_pRT
+
+    _ultow([rdi].m_count, &n, 10)
+    wcscat(wcscpy(&textBuffer, "primitives "), &n)
+    _ultow([rdi].m_intensity, &n, 10)
+    wcscat(wcscat(&textBuffer, "\nintensity  "), &n)
+    _ultow([rdi].m_timer, &n, 10)
+    wcscat(wcscat(&textBuffer, "\ntimer      "), &n)
+    wcscat(rax, "\n")
+    .if ( [rdi].m_rand == 0 )
+        wcscat(rax, "CPU")
+    .elseif ( [rdi].m_rand == 1 )
+        wcscat(rax, "LIBC")
+    .else
+        wcscat(rax, "PCG32")
+    .endif
+
+    this.m_pRT.SetTransform(m.Identity())
+    this.m_pSolidColorBrush.SetColor(&c)
 
     mov ecx,[rdi].m_rc.right
     sub ecx,[rdi].m_rc.left
@@ -788,68 +705,23 @@ CApplication::RenderTextInfo proc uses rdi
 
     this.m_pSolidColorBrush.SetColor(c.Init(Gray, 0.8))
     mov r8,wcsnlen(&textBuffer, ARRAYSIZE(textBuffer))
-    pRT.DrawText(
-            &textBuffer,
-            r8d,
-            [rdi].m_pMonoFont,
-            &rr,
-            [rdi].m_pSolidColorBrush,
-            D2D1_DRAW_TEXT_OPTIONS_NONE,
-            DWRITE_MEASURING_MODE_NATURAL
-            )
+    pRT.DrawText(&textBuffer, r8d, [rdi].m_pMonoFont, &rr, [rdi].m_pSolidColorBrush,
+            D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL)
 
     .if ( [rdi].m_isFullScreen == FALSE )
 
-       .new rc:RECT
         pRT.GetSize(&rc[8])
-
         mov rc.left,50.0
         mov rc.top,10.0
-
         pRT.DrawText("Windows samples", lengthof(@CStr(-1))-1, [rdi].m_pTextFont, &rc,
-            [rdi].m_pSolidColorBrush,
-            D2D1_DRAW_TEXT_OPTIONS_NONE,
-            DWRITE_MEASURING_MODE_NATURAL
-            )
+                [rdi].m_pSolidColorBrush, D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL)
         mov rc.top,26.0
         pRT.DrawText("CApplication::Direct2D", lengthof(@CStr(-1))-1, [rdi].m_pTextFont2, &rc,
-            [rdi].m_pSolidColorBrush,
-            D2D1_DRAW_TEXT_OPTIONS_NONE,
-            DWRITE_MEASURING_MODE_NATURAL
-            )
+                [rdi].m_pSolidColorBrush, D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL)
         mov rc.top,70.0
-        pRT.DrawText(
-            "This sample use the CApplication class\n"
-            "Random Count, Speed, Color, and Size",
-            lengthof(@CStr(-1))-1,
-            [rdi].m_pTextFont,
-            &rc,
-            [rdi].m_pSolidColorBrush,
-            D2D1_DRAW_TEXT_OPTIONS_NONE,
-            DWRITE_MEASURING_MODE_NATURAL
-            )
-
-        mov eax,[rdi].m_rc.bottom
-        add eax,8
-        cvtsi2ss xmm0,eax
-        movss rc.top,xmm0
-        mov eax,[rdi].m_rc.right
-        shr eax,1
-        cvtsi2ss xmm0,eax
-        movss rc.left,xmm0
-
-        pRT.DrawText(
-            "Use keys UP/DOWN for speed\n"
-            "LEFT/RIGHT for intensity, PGUP/PGDN timer\n"
-            "ENTER reset, and F11 to toggle full screen",
-            lengthof(@CStr(-1))-1,
-            [rdi].m_pTextFont,
-            &rc,
-            [rdi].m_pSolidColorBrush,
-            D2D1_DRAW_TEXT_OPTIONS_NONE,
-            DWRITE_MEASURING_MODE_NATURAL
-            )
-
+        pRT.DrawText("This sample use the CApplication class\nRandom Count, Speed, Color, and Size",
+                lengthof(@CStr(-1))-1, [rdi].m_pTextFont, &rc, [rdi].m_pSolidColorBrush,
+                D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL)
     .endif
     .return hr
 
@@ -992,6 +864,90 @@ CApplication::CreateApplicationWindow proc uses rdi
 
 CApplication::CreateApplicationWindow endp
 
+CApplication::BoundRand proc uses rsi rdi rbx b:uint_t
+
+    mov rdi,rcx
+    mov esi,edx
+
+    mov eax,esi
+    neg eax
+    xor edx,edx
+    div esi
+    mov ebx,edx
+
+    .while 1
+
+        .if ( [rdi].m_rand == 0 )
+            rdrand eax
+        .elseif ( [rdi].m_rand == 1 )
+            rand()
+        .else
+            pcg32_random()
+        .endif
+        .break .ifd ( eax >= ebx )
+    .endw
+
+    xor edx,edx
+    div esi
+    mov eax,edx
+    ret
+
+CApplication::BoundRand endp
+
+CApplication::RangeRand proc b:uint_t, m:uint_t
+
+    .whiled ( this.BoundRand(b) <= m )
+    .endw
+    ret
+
+CApplication::RangeRand endp
+
+CApplication::RandRGB proc uses rbx cv:ptr D3DCOLORVALUE, i:int_t
+
+    ldr rbx,cv
+    ldr edx,i
+
+    cvtsi2ss xmm0,edx
+    divss xmm0,255.0
+    movss [rbx].D3DCOLORVALUE.a,xmm0
+    this.BoundRand(0xFF)
+    cvtsi2ss xmm0,eax
+    divss xmm0,255.0
+    movss [rbx].D3DCOLORVALUE.r,xmm0
+    this.BoundRand(0xFF)
+    cvtsi2ss xmm0,eax
+    divss xmm0,255.0
+    movss [rbx].D3DCOLORVALUE.g,xmm0
+    this.BoundRand(0xFF)
+    cvtsi2ss xmm0,eax
+    divss xmm0,255.0
+    movss [rbx].D3DCOLORVALUE.b,xmm0
+    this.BoundRand(0xFF)
+    mov rax,rbx
+    ret
+
+CApplication::RandRGB endp
+
+CApplication::ErrorMessage proc hr:HRESULT, format:LPTSTR
+
+  local message[512]:wchar_t
+  local buffer[16]:wchar_t
+  local szMessage:LPTSTR
+
+    mov edx,hr
+    .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
+        mov hr,HRESULT_CODE(edx)
+    .endif
+    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER or FORMAT_MESSAGE_FROM_SYSTEM or FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &szMessage, 0, NULL)
+    _ultow(hr, &buffer, 16)
+    wcscat(wcscat(wcscat(wcscat(wcscpy(&message, format), "\n\nError code: 0x"), &buffer), "\n\n"), szMessage)
+    MessageBox(NULL, &message, "Error", MB_OK or MB_ICONERROR)
+    LocalFree(szMessage)
+   .return hr
+
+CApplication::ErrorMessage endp
+
 
 ; Provides the entry point to the application
 
@@ -1048,4 +1004,4 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, i
 
 wWinMain endp
 
-    end _tstart
+    end

@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char * _ui64toa(unsigned _int64 value, char *str, int radix);
+; wchar_t * _ui64tow(unsigned __int64 value, wchar_t *str, int radix);
+;
 include stdlib.inc
 include tchar.inc
 

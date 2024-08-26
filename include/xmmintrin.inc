@@ -737,7 +737,7 @@ _mm_sfence macro
 
 ifdef __ICL
 _mm_malloc		equ <_aligned_malloc>
-_mm_free		equ <free>
+_mm_free		equ <_aligned_free>
 endif
 
 ifdef _M_IX86

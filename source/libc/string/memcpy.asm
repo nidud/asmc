@@ -6,8 +6,10 @@
 
 include string.inc
 
+ifndef __UNIX__
 undef memmove
 ALIAS <memmove>=<memcpy>
+endif
 
     .code
 
@@ -232,7 +234,17 @@ endif
     ret
 
 endif
-
 memcpy endp
+
+ifdef __UNIX__
+memmove proc dst:ptr, src:ptr, size:size_t
+ifdef _WIN64
+    memcpy(rdi, rsi, rdx)
+else
+    memcpy(dst, src, size)
+endif
+    ret
+memmove endp
+endif
 
     end

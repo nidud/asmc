@@ -11,10 +11,10 @@ include errno.inc
 ifdef __UNIX__
 include sys/syscall.inc
 include sys/mman.inc
-endif
-
+else
 undef _aligned_free
 alias <_aligned_free>=<free>
+endif
 
 public _crtheap
 

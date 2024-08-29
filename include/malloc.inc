@@ -18,7 +18,15 @@ define _HEAP_MAXREGSIZE_S   0x1000000   ; Maximum region size (16M)
                                         ; For large memory systems:
 define _HEAP_REGIONSIZE_L   0x100000    ; Initial region size  (1M)
 define _HEAP_MAXREGSIZE_L   0x1000000   ; Maximum region size (16M)
+ifdef __UNIX__
+ifdef _WIN64
+define _HEAP_GROWSIZE       0x100000    ; --> 2M
+else
+define _HEAP_GROWSIZE       0x10000     ; --> 128K
+endif
+else
 define _HEAP_GROWSIZE       0x20000     ; Default grow increment (64K)
+endif
 define _HEAP_GROWMIN        _PAGESIZE_  ; Minimum grow inc (1 page)
 define _HEAP_GROWSTART      _PAGESIZE_  ; Startup grow increment
 define _HEAP_COALESCE       (-1)        ; Coalesce heap value

@@ -6,15 +6,12 @@
 
 include stdio.inc
 include malloc.inc
-include signal.inc
 include assert.inc
 include tchar.inc
 
 .code
 
 _tmain proc
-
-    signal(SIGSEGV, &__crtGeneralFailure)
 
     .new offs:size_t = 25
     .new alignments[10]:size_t = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }

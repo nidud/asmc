@@ -89,45 +89,9 @@ fill_placeholders proc __ccall uses rsi rdi rbx dst:string_t, src:string_t, argc
 
             .if ( ebx >= argc )
 
-                mov eax,'??'
-                stosw
-
                 add ebx,localstart
                 sub ebx,argc
-
-                .if ( ebx > 0xFFFF )
-
-                    tsprintf( rdi, "%X", ebx )
-                    add rdi,rbx
-                .else
-
-                    mov eax,ebx
-                    and eax,0x0F0F
-                    shr ebx,4
-                    and ebx,0x0F0F
-                    add ebx,'00'
-                    add eax,'00'
-
-                    .if ( al > '9' )
-                        add al,'A' - '9' - 1
-                    .endif
-                    .if ( ah > '9' )
-                        add ah,'A' - '9' - 1
-                    .endif
-                    .if ( bl > '9' )
-                        add bl,'A' - '9' - 1
-                    .endif
-                    .if ( bh > '9' )
-                        add bh,'A' - '9' - 1
-                    .endif
-
-                    mov [rdi+0],bh
-                    mov [rdi+1],ah
-                    mov [rdi+2],bl
-                    mov [rdi+3],al
-                    add rdi,4
-                .endif
-
+                add rdi,tsprintf( rdi, "??%04X", ebx )
             .else
 
                 mov rdx,argv
@@ -141,9 +105,7 @@ fill_placeholders proc __ccall uses rsi rdi rbx dst:string_t, src:string_t, argc
                     mov rsi,rbx
                 .endif
             .endif
-
         .else
-
             movsb
         .endif
     .endf

@@ -132,13 +132,13 @@ endif
     xor eax,eax
     cpuid
     rdtsc
-    mov rdx,rax
+    mov rcx,rax
     sub rax,time_start
-    sub rdx,free_start
-    mov rcx,free_start
-    sub rcx,time_start
+    sub rcx,free_start
+    mov rdx,free_start
+    sub rdx,time_start
 
-    _tprintf("%9zi cycles -- malloc: %9zi free: %9zi\n", rax, rcx, rdx)
+    _tprintf("%9zi cycles -- malloc: %9zi free: %9zi\n", rax, rdx, rcx)
    .return( 0 )
 
 _tmain endp

@@ -7,11 +7,10 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorNegate proc XM_CALLCONV V:FXMVECTOR
 
-    inl_XMVectorNegate(xmm0)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_sub_ps(_mm_setzero_ps(), xmm1)
     ret
 
 XMVectorNegate endp

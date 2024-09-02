@@ -7,11 +7,22 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorInBounds proc XM_CALLCONV V:FXMVECTOR, Bounds:FXMVECTOR
 
-    inl_XMVectorInBounds(xmm0, xmm1)
+    _mm_store_ps(xmm2, xmm0)
+    ;;
+    ;; Test if less than or equal
+    ;;
+    _mm_cmple_ps(xmm0, xmm1)
+    ;;
+    ;; Negate the bounds
+    ;;
+    _mm_mul_ps(xmm1, g_XMNegativeOne)
+    ;;
+    ;; Test if greater or equal (Reversed)
+    ;;
+    _mm_cmple_ps(xmm1, xmm2)
+    _mm_and_ps(xmm0, xmm1)
     ret
 
 XMVectorInBounds endp

@@ -8,8 +8,8 @@
 ;;--------------------------------------------------------------------------------------
 
 include windows.inc
-include SpecStrings.inc
-include d3d11_1.inc
+include specstrings.inc
+include directx/d3d11_1.inc
 include tchar.inc
 
 ifndef _WIN64

@@ -10,12 +10,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorGetIntByIndex proc XM_CALLCONV V:FXMVECTOR, i:size_t
 
-    movaps V,xmm0
-    mov    eax,dword ptr V[r8*4]
+    mov eax,dword ptr V[rdx*4]
     ret
 
 XMVectorGetIntByIndex endp

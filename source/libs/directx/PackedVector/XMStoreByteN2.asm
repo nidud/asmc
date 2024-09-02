@@ -8,11 +8,19 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:rsp noauto nosave
+XMStoreByteN2 proc XM_CALLCONV pDestination:ptr XMBYTEN2, V:FXMVECTOR
 
-XMStoreByteN2 proc vectorcall pSource:ptr XMBYTEN2, V:FXMVECTOR
+    ldr rcx,pDestination
+    ldr xmm0,V
 
-    inl_XMStoreByteN2(rcx, xmm1)
+    XMVectorClamp(xmm0, g_XMNegativeOne, g_XMOne)
+    XMVectorMultiply(xmm0, _mm_get_epi32(127.0, 127.0, 127.0, 127.0))
+    XMVectorRound(xmm0)
+    cvtps2dq xmm0,xmm0
+    movq rdx,xmm0
+    mov [rcx].XMBYTEN2.x,dl
+    shr rdx,32
+    mov [rcx].XMBYTEN2.y,dl
     ret
 
 XMStoreByteN2 endp

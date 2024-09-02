@@ -7,8 +7,6 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVECTOR_multi_sll_epi32 proc vectorcall this:XMVECTOR, V:XMVECTOR
 
     _mm_store_ps(xmm3, xmm0)

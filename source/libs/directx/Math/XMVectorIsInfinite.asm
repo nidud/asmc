@@ -7,11 +7,18 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorIsInfinite proc XM_CALLCONV V:FXMVECTOR
-
-    inl_XMVectorIsInfinite(xmm0)
+    ;;
+    ;; Mask off the sign bit
+    ;;
+    _mm_and_ps(xmm0, g_XMAbsMask)
+    ;;
+    ;; Compare to infinity
+    ;;
+    _mm_cmpeq_ps(xmm0, g_XMInfinity)
+    ;;
+    ;; If any are infinity, the signs are true.
+    ;;
     ret
 
 XMVectorIsInfinite endp

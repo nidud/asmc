@@ -7,24 +7,32 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
+XMMatrixLookToLH proc XM_CALLCONV uses xmm6 xmm7 EyePosition:FXMVECTOR, EyeDirection:FXMVECTOR, UpDirection:FXMVECTOR
 
-XMMatrixLookToLH proc XM_CALLCONV XMTHISPTR, EyePosition:FXMVECTOR, EyeDirection:FXMVECTOR, UpDirection:FXMVECTOR
-
-    _mm_store_ps(EyePosition, xmm6)
-    _mm_store_ps(EyeDirection, xmm7)
-if _XM_VECTORCALL_
-    inl_XMMatrixLookToLH(xmm0, xmm1, xmm2)
-else
-    inl_XMMatrixLookToLH(xmm1, xmm2, xmm3)
-    _mm_store_ps([rcx+0*16], xmm0)
-    _mm_store_ps([rcx+1*16], xmm1)
-    _mm_store_ps([rcx+2*16], xmm2)
-    _mm_store_ps([rcx+3*16], xmm3)
-    mov rax,rcx
-endif
-    _mm_store_ps(xmm6, EyePosition)
-    _mm_store_ps(xmm7, EyeDirection)
+    _mm_store_ps(xmm4, xmm2)
+    _mm_sub_ps(_mm_setzero_ps(xmm6), xmm0)
+    XMVector3Normalize(xmm1)
+    _mm_store_ps(xmm5, xmm0)
+    XMVector3Cross(xmm4, xmm5)
+    XMVector3Normalize(xmm0)
+    _mm_store_ps(xmm4, xmm0)
+    XMVector3Cross(xmm5, xmm4)
+    _mm_store_ps(xmm3, xmm0)
+    XMVector3Dot(xmm4, xmm6)
+    _mm_store_ps(xmm7, xmm0)
+    XMVector3Dot(xmm3, xmm6)
+    _mm_store_ps(xmm2, xmm0)
+    XMVector3Dot(xmm5, xmm6)
+    _mm_store_ps(xmm6, xmm0)
+    _mm_store_ps(xmm0, xmm2)
+    XMVectorSelect(xmm0, xmm3, g_XMSelect1110.v)
+    _mm_store_ps(xmm3, xmm0)
+    XMVectorSelect(xmm7, xmm4, g_XMSelect1110.v)
+    _mm_store_ps(xmm4, xmm0)
+    XMVectorSelect(xmm6, xmm5, g_XMSelect1110.v)
+    _mm_store_ps(xmm2, xmm0)
+    _mm_store_ps(xmm1, xmm3)
+    XMMatrixTranspose(xmm4, xmm1, xmm2, g_XMIdentityR3.v)
     ret
 
 XMMatrixLookToLH endp

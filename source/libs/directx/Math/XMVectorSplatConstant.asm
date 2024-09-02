@@ -7,14 +7,12 @@ include DirectXMath.inc
 
     .code
 
-    option win64:nosave noauto
-
 XMVectorSplatConstant proc XM_CALLCONV IntConstant:int32_t, DivExponent:uint32_t
 
   local x:XMUINT4
 
-    .assert( IntConstant >= -16 && IntConstant <= 15 )
-    .assert( DivExponent < 32 )
+    ldr ecx,IntConstant
+    ldr edx,DivExponent
     ;;
     ;; Splat the int
     ;;

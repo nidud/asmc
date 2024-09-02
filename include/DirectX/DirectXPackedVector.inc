@@ -1,7 +1,8 @@
+.pragma list(push, 0)
 ifndef __DIRECTXPACKEDVECTOR_INC
 define __DIRECTXPACKEDVECTOR_INC
+
 include DirectXMath.inc
-.pragma list(push, 0)
 
 XMCOLOR union
 struct
@@ -271,14 +272,10 @@ ends
 v   uint16_t ?
 XMU555 ends
 
-;float
-XMConvertHalfToFloat proto :HALF
-;HALF
-XMConvertFloatToHalf proto :float
-;float*
-XMConvertHalfToFloatStream proto :ptr float, :size_t, :ptr HALF, :size_t, :size_t
-;HALF*
-XMConvertFloatToHalfStream proto :ptr HALF, :size_t, :ptr float, :size_t, :size_t
+XMConvertHalfToFloat proto XM_CALLCONV :HALF
+XMConvertFloatToHalf proto XM_CALLCONV :float
+XMConvertHalfToFloatStream proto XM_CALLCONV :ptr float, :size_t, :ptr HALF, :size_t, :size_t
+XMConvertFloatToHalfStream proto XM_CALLCONV :ptr HALF, :size_t, :ptr float, :size_t, :size_t
 
 
 ;XMVECTOR
@@ -354,5 +351,5 @@ XMStoreU555     proto XM_CALLCONV :ptr XMU555, :FXMVECTOR
 
 include DirectXPackedVector.inl
 
-.pragma list(pop)
 endif
+.pragma list(pop)

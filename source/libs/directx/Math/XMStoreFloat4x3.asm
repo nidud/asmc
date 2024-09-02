@@ -7,15 +7,23 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
+XMStoreFloat4x3 proc XM_CALLCONV pDestination:ptr XMFLOAT4X3, V0:XMVECTOR, V1:XMVECTOR, V2:XMVECTOR, V3:XMVECTOR
 
-XMStoreFloat4x3 proc XM_CALLCONV pDestination:ptr XMFLOAT4X3, AXMMATRIX
-if _XM_VECTORCALL_
-    inl_XMStoreFloat4x3([rcx])
-else
-    assume rdx:ptr XMMATRIX
-    inl_XMStoreFloat4x3([rcx],[rdx])
-endif
+    ldr rcx,pDestination
+    ldr xmm4,V3
+    ldr xmm3,V2
+    ldr xmm2,V1
+    ldr xmm1,V0
+
+    _mm_store_ps(xmm0, xmm2)
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,2,1))
+    _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(2,2,0,0))
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(0,2,1,0))
+    _mm_storeu_ps([rcx][0], xmm1)
+    _mm_shuffle_ps(xmm3, xmm4, _MM_SHUFFLE(0,0,2,2))
+    _mm_shuffle_ps(xmm3, xmm4, _MM_SHUFFLE(2,1,2,0))
+    _mm_storeu_ps([rcx][16], xmm2)
+    _mm_storeu_ps([rcx][32], xmm3)
     ret
 
 XMStoreFloat4x3 endp

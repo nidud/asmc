@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorSplatInfinity proc XM_CALLCONV
 
-    inl_XMVectorSplatInfinity()
+    _mm_store_ps(xmm0, g_XMInfinity)
     ret
 
 XMVectorSplatInfinity endp

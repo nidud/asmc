@@ -7,8 +7,6 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorSet proc XM_CALLCONV C0:float, C1:float, C2:float, C3:float
 
     unpcklps xmm0,xmm1

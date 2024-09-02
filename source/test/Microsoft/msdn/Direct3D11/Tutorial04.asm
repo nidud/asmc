@@ -1,8 +1,8 @@
 include windows.inc
-include SpecStrings.inc
-include d3d11_1.inc
-include D3Dcompiler.inc
-include directxmath.inc
+include specstrings.inc
+include directx/d3d11_1.inc
+include directx/d3dcompiler.inc
+include directx/directxmath.inc
 include tchar.inc
 
 SimpleVertex    struct
@@ -554,19 +554,21 @@ endif
 
     ;; Initialize the world matrix
 
-    inl_XMMatrixIdentity( g_World )
+    XMMatrixIdentity()
+    XMStoreMatrix( &g_World )
 
     ;; Initialize the view matrix
 
-    inl_XMMatrixLookAtLH( Eye, At, Up )
-    inl_XMStoreMatrix( g_View )
+    XMMatrixLookAtLH( Eye, At, Up )
+    XMStoreMatrix( &g_View )
 
     ;; Initialize the projection matrix
 
     _mm_cvt_si2ss(xmm1, width)
     _mm_cvt_si2ss(xmm0, height)
     _mm_div_ss(xmm1, xmm0)
-    inl_XMMatrixPerspectiveFovLH( XM_PIDIV2, xmm1, 0.01, 100.0, g_Projection )
+    XMMatrixPerspectiveFovLH( XM_PIDIV2, xmm1, 0.01, 100.0 )
+    XMStoreMatrix( &g_Projection )
     mov eax,S_OK
     ret
 
@@ -697,8 +699,8 @@ Render proc
     ;;
     ;; Animate the cube
     ;;
-    inl_XMMatrixRotationY( xmm0 )
-    inl_XMStoreMatrix( g_World )
+    XMMatrixRotationY( xmm0 )
+    XMStoreMatrix( &g_World )
 
     ;;
     ;; Clear the back buffer
@@ -708,9 +710,14 @@ Render proc
     ;;
     ;; Update variables
     ;;
-    inl_XMMatrixTranspose( g_World, cb.mWorld )
-    inl_XMMatrixTranspose( g_View, cb.mView )
-    inl_XMMatrixTranspose( g_Projection, cb.mProjection )
+    XMMatrixTranspose( g_World.r[0x00], g_World.r[0x10], g_World.r[0x20], g_World.r[0x30] )
+    XMStoreMatrix( &cb.mWorld )
+    XMMatrixTranspose( g_View.r[0x00], g_View.r[0x10], g_View.r[0x20], g_View.r[0x30] )
+    XMStoreMatrix( &cb.mView )
+
+    XMMatrixTranspose( g_Projection.r[0x00], g_Projection.r[0x10], g_Projection.r[0x20], g_Projection.r[0x30] )
+    XMStoreMatrix( &cb.mProjection )
+
     g_pImmediateContext.UpdateSubresource( g_pConstantBuffer, 0, NULL, &cb, 0, 0 )
 
     ;;

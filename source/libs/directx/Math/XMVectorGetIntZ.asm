@@ -7,11 +7,10 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorGetIntZ proc XM_CALLCONV V:FXMVECTOR
 
-    inl_XMVectorGetIntZ(xmm0)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2,2,2,2))
+    _mm_cvtsi128_si32(xmm0)
     ret
 
 XMVectorGetIntZ endp

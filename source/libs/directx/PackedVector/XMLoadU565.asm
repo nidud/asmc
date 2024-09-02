@@ -8,11 +8,23 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:rsp noauto nosave
+XMLoadU565 proc XM_CALLCONV pSource:ptr XMU565
 
-XMLoadU565 proc vectorcall pSource:ptr XMU565
-
-    inl_XMLoadU565(rcx)
+    ldr      rcx,pSource
+    movzx    eax,[rcx].XMU565.v
+    mov      edx,eax
+    and      eax,0x1F
+    cvtsi2ss xmm0,eax
+    mov      eax,edx
+    shr      eax,5
+    and      eax,0x3F
+    cvtsi2ss xmm1,eax
+    shufps   xmm0,xmm1,01000100B
+    shufps   xmm0,xmm0,01011000B
+    shr      edx,11
+    and      edx,0x1F
+    cvtsi2ss xmm1,edx
+    shufps   xmm0,xmm1,01000100B
     ret
 
 XMLoadU565 endp

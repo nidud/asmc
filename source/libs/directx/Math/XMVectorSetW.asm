@@ -7,11 +7,19 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorSetW proc XM_CALLCONV V:FXMVECTOR, x:float
-
-    inl_XMVectorSetW(xmm0, xmm1)
+    ;;
+    ;; Swap w and x
+    ;;
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;;
+    ;; Replace the x component
+    ;;
+    _mm_move_ss(xmm0, xmm1)
+    ;;
+    ;; Swap w and x again
+    ;;
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
     ret
 
 XMVectorSetW endp

@@ -8,11 +8,15 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:rsp noauto nosave
+XMLoadUByte2 proc XM_CALLCONV pSource:ptr XMUBYTE2
 
-XMLoadUByte2 proc vectorcall pSource:ptr XMUBYTE2
-
-    inl_XMLoadUByte2(rcx)
+    ldr      rcx,pSource
+    movzx    eax,[rcx].XMUBYTE2.x
+    cvtsi2ss xmm0,eax
+    movzx    eax,[rcx].XMUBYTE2.y
+    cvtsi2ss xmm1,eax
+    shufps   xmm0,xmm1,01000100B
+    shufps   xmm0,xmm0,01011000B
     ret
 
 XMLoadUByte2 endp

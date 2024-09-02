@@ -7,11 +7,20 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorModAngles proc XM_CALLCONV V:FXMVECTOR
 
-    inl_XMVectorModAngles(xmm0)
+    _mm_store_ps(xmm5, xmm0)
+    ;;
+    ;; Modulo the range of the given angles such that -XM_PI <= Angles < XM_PI
+    ;;
+    _mm_mul_ps(xmm0, g_XMReciprocalTwoPi)
+    ;;
+    ;; Use the inline function due to complexity for rounding
+    ;;
+    XMVectorRound(xmm0)
+    _mm_mul_ps(xmm0, g_XMTwoPi)
+    _mm_sub_ps(xmm5, xmm0)
+    _mm_store_ps(xmm0, xmm5)
     ret
 
 XMVectorModAngles endp

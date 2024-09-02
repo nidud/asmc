@@ -7,8 +7,6 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorEqualIntR proc XM_CALLCONV pCR:ptr uint32_t, V1:FXMVECTOR, V2:FXMVECTOR
 
     _mm_store_ps(xmm0, xmm1)

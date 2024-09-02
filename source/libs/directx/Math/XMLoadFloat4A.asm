@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMLoadFloat4A proc XM_CALLCONV pSource:ptr XMFLOAT4A
 
-    .assert( rcx )
+    ldr rcx,pSource
 
     _mm_load_ps([rcx])
     ret

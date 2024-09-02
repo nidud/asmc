@@ -8,11 +8,24 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:rsp noauto nosave
+XMStoreShort2 proc XM_CALLCONV pDestination:ptr XMSHORT2, V:FXMVECTOR
 
-XMStoreShort2 proc vectorcall pDestination:ptr XMSHORT2, V:FXMVECTOR
+    ldr rcx,pDestination
+    ldr xmm0,V
 
-    inl_XMStoreShort2(rcx, xmm1)
+    ;; Bounds check
+
+    _mm_max_ps(xmm0, _mm_get_epi32(-32767.0, -32767.0, -32767.0, -32767.0))
+    _mm_min_ps(xmm0, _mm_get_epi32(32767.0, 32767.0, 32767.0, 32767.0))
+
+    ;; Convert to int with rounding
+
+    _mm_cvtps_epi32(xmm0)
+
+    ;; Pack the ints into shorts
+
+    _mm_packs_epi32(xmm0, xmm0)
+    _mm_store_ss([rcx], _mm_castsi128_ps(xmm0))
     ret
 
 XMStoreShort2 endp

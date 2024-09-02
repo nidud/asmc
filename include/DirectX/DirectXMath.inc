@@ -5,7 +5,7 @@ define __DIRECTXMATH_INC
 
 include libc.inc
 
-DIRECTX_MATH_VERSION	equ 312
+define DIRECTX_MATH_VERSION 312
 
 ifndef __PE__
 ifdef _WIN64
@@ -14,82 +14,61 @@ endif
 endif
 
 if defined(_MSC_VER) and  _MSC_VER LT 1200 ; 1800
- .err <DirectX Math requires Visual C++ 2013 or later.>
+.err <DirectX Math requires Visual C++ 2013 or later.>
 endif
 
-if defined(_MSC_VER) and \
-   not defined(_M_IX86_FP) and \
-   not defined(_XM_NO_INTRINSICS_) and \
-   not defined(_XM_VECTORCALL_)
-_XM_VECTORCALL_		equ 1
+if defined(_MSC_VER) and not defined(_M_IX86_FP) and not defined(_XM_NO_INTRINSICS_) and not defined(_XM_VECTORCALL_)
+define _XM_VECTORCALL_	1
 elseifndef _XM_VECTORCALL_
-_XM_VECTORCALL_		equ 0
+define _XM_VECTORCALL_	0
 endif
 
 if _XM_VECTORCALL_
-XM_CALLCONV		equ <vectorcall>
+define XM_CALLCONV <vectorcall>
 else
-XM_CALLCONV		equ <>
+define XM_CALLCONV <>
 endif
 
-if defined(_MSC_VER) and (_MSC_FULL_VER LT 190023506)
-XM_CONST		equ <>
-XM_CONSTEXPR		equ <>
-else
-XM_CONST		equ <>
-XM_CONSTEXPR		equ <>
+ifndef _XM_NO_INTRINSICS_
+if not defined(_XM_AVX2_INTRINSICS_) and defined(__AVX2__)
+define _XM_AVX2_INTRINSICS_
 endif
-
-ifndef XM_DEPRECATED
-XM_DEPRECATED		equ <__declspec(deprecated("This is deprecated and will be removed in a future version."))>
+if not defined(_XM_FMA3_INTRINSICS_) and defined(_XM_AVX2_INTRINSICS_)
+define _XM_FMA3_INTRINSICS_
 endif
-
-if not defined(_XM_AVX2_INTRINSICS_) and defined(__AVX2__) and not defined(_XM_NO_INTRINSICS_)
-_XM_AVX2_INTRINSICS_	equ <>
+if not defined(_XM_F16C_INTRINSICS_) and defined(_XM_AVX2_INTRINSICS_)
+define _XM_F16C_INTRINSICS_
 endif
-
-if not defined(_XM_FMA3_INTRINSICS_) and defined(_XM_AVX2_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-_XM_FMA3_INTRINSICS_	equ <>
 endif
-
-if not defined(_XM_F16C_INTRINSICS_) and defined(_XM_AVX2_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-_XM_F16C_INTRINSICS_	equ <>
-endif
-
 if defined(_XM_FMA3_INTRINSICS_) and not defined(_XM_AVX_INTRINSICS_)
-_XM_AVX_INTRINSICS_	equ <>
+define _XM_AVX_INTRINSICS_
 endif
-
 if defined(_XM_F16C_INTRINSICS_) and not defined(_XM_AVX_INTRINSICS_)
-_XM_AVX_INTRINSICS_	equ <>
+define _XM_AVX_INTRINSICS_
 endif
-
 if not defined(_XM_AVX_INTRINSICS_) and defined(__AVX__) and not defined(_XM_NO_INTRINSICS_)
-_XM_AVX_INTRINSICS_	equ <>
+define _XM_AVX_INTRINSICS_
 endif
-
 if defined(_XM_AVX_INTRINSICS_) and not defined(_XM_SSE4_INTRINSICS_)
-_XM_SSE4_INTRINSICS_	equ <>
+define _XM_SSE4_INTRINSICS_
 endif
-
 if defined(_XM_SSE4_INTRINSICS_) and not defined(_XM_SSE3_INTRINSICS_)
-_XM_SSE3_INTRINSICS_	equ <>
+define _XM_SSE3_INTRINSICS_
 endif
-
 if defined(_XM_SSE3_INTRINSICS_) and not defined(_XM_SSE_INTRINSICS_)
-_XM_SSE_INTRINSICS_	equ <>
+define _XM_SSE_INTRINSICS_
 endif
 
 if not defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
 if defined(_M_IX86) OR defined(_M_X64)
-_XM_SSE_INTRINSICS_	equ <>
+define _XM_SSE_INTRINSICS_
 elseifndef _XM_NO_INTRINSICS_
- .err <DirectX Math does not support this target>
+.err <DirectX Math does not support this target>
 endif
 endif
 
 if not defined(_XM_NO_XMVECTOR_OVERLOADS_) and defined(__clang__)
-_XM_NO_XMVECTOR_OVERLOADS_ equ 1
+define _XM_NO_XMVECTOR_OVERLOADS_ 1
 endif
 
 include math.inc
@@ -169,36 +148,36 @@ undef XM_CRMASK_CR6BOUNDS
 undef XM_CACHE_LINE_SIZE
 endif
 
-XM_PI		equ 3.141592654
-XM_2PI		equ 6.283185307
-XM_1DIVPI	equ 0.318309886
-XM_1DIV2PI	equ 0.159154943
-XM_PIDIV2	equ 1.570796327
-XM_PIDIV4	equ 0.785398163
+define XM_PI		3.141592654
+define XM_2PI		6.283185307
+define XM_1DIVPI	0.318309886
+define XM_1DIV2PI	0.159154943
+define XM_PIDIV2	1.570796327
+define XM_PIDIV4	0.785398163
 
-XM_SELECT_0	equ 0x00000000
-XM_SELECT_1	equ 0xFFFFFFFF
+define XM_SELECT_0	0x00000000
+define XM_SELECT_1	0xFFFFFFFF
 
-XM_PERMUTE_0X	equ 0
-XM_PERMUTE_0Y	equ 1
-XM_PERMUTE_0Z	equ 2
-XM_PERMUTE_0W	equ 3
-XM_PERMUTE_1X	equ 4
-XM_PERMUTE_1Y	equ 5
-XM_PERMUTE_1Z	equ 6
-XM_PERMUTE_1W	equ 7
+define XM_PERMUTE_0X	0
+define XM_PERMUTE_0Y	1
+define XM_PERMUTE_0Z	2
+define XM_PERMUTE_0W	3
+define XM_PERMUTE_1X	4
+define XM_PERMUTE_1Y	5
+define XM_PERMUTE_1Z	6
+define XM_PERMUTE_1W	7
 
-XM_SWIZZLE_X	equ 0
-XM_SWIZZLE_Y	equ 1
-XM_SWIZZLE_Z	equ 2
-XM_SWIZZLE_W	equ 3
+define XM_SWIZZLE_X	0
+define XM_SWIZZLE_Y	1
+define XM_SWIZZLE_Z	2
+define XM_SWIZZLE_W	3
 
-XM_CRMASK_CR6		equ 0x000000F0
-XM_CRMASK_CR6TRUE	equ 0x00000080
-XM_CRMASK_CR6FALSE	equ 0x00000020
-XM_CRMASK_CR6BOUNDS	equ XM_CRMASK_CR6FALSE
+define XM_CRMASK_CR6		0x000000F0
+define XM_CRMASK_CR6TRUE	0x00000080
+define XM_CRMASK_CR6FALSE	0x00000020
+define XM_CRMASK_CR6BOUNDS	XM_CRMASK_CR6FALSE
 
-XM_CACHE_LINE_SIZE	equ 64
+define XM_CACHE_LINE_SIZE	64
 
 if defined(__XNAMATH_H__) and defined(XMComparisonAllTrue)
 undef XMComparisonAllTrue
@@ -382,11 +361,7 @@ UNION
  m		REAL4 4*4 dup(?)
 ENDS
 else
-ifdef _XM_NO_INTRINSICS_
-r		XMVECTOR 4 dup(<>)
-else
 r		XMVECTOR 4 dup(?)
-endif
 endif
 XMMATRIX	ENDS
 CXMMATRIX	typedef ptr XMMATRIX
@@ -557,11 +532,11 @@ XMLoadFloat4A	proto XM_CALLCONV :ptr XMFLOAT4A
 XMLoadSInt4	proto XM_CALLCONV :ptr XMINT4
 XMLoadUInt4	proto XM_CALLCONV :ptr XMUINT4
 
-XMLoadFloat3x3	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT3X3
-XMLoadFloat4x3	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X3
-XMLoadFloat4x3A proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X3;A
-XMLoadFloat4x4	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X4
-XMLoadFloat4x4A proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X4;A
+XMLoadFloat3x3	proto XM_CALLCONV :ptr XMFLOAT3X3
+XMLoadFloat4x3	proto XM_CALLCONV :ptr XMFLOAT4X3
+XMLoadFloat4x3A proto XM_CALLCONV :ptr XMFLOAT4X3;A
+XMLoadFloat4x4	proto XM_CALLCONV :ptr XMFLOAT4X4
+XMLoadFloat4x4A proto XM_CALLCONV :ptr XMFLOAT4X4;A
 
 XMStoreInt	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 XMStoreFloat	proto XM_CALLCONV :ptr REAL4, :FXMVECTOR
@@ -584,11 +559,11 @@ XMStoreFloat4A	proto XM_CALLCONV :ptr XMFLOAT4, :FXMVECTOR
 XMStoreSInt4	proto XM_CALLCONV :ptr XMINT4, :FXMVECTOR
 XMStoreUInt4	proto XM_CALLCONV :ptr XMUINT4, :FXMVECTOR
 
-XMStoreFloat3x3 proto XM_CALLCONV :ptr XMFLOAT3X3, AXMMATRIX3
-XMStoreFloat4x3 proto XM_CALLCONV :ptr XMFLOAT4X3, AXMMATRIX
-XMStoreFloat4x3A proto XM_CALLCONV :ptr XMFLOAT4X3, AXMMATRIX
-XMStoreFloat4x4 proto XM_CALLCONV :ptr XMFLOAT4X4, AXMMATRIX
-XMStoreFloat4x4A proto XM_CALLCONV :ptr XMFLOAT4X4, AXMMATRIX
+XMStoreFloat3x3 proto XM_CALLCONV :ptr XMFLOAT3X3, :XMVECTOR, :XMVECTOR, :XMVECTOR
+XMStoreFloat4x3 proto XM_CALLCONV :ptr XMFLOAT4X3, :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
+XMStoreFloat4x3A proto XM_CALLCONV :ptr XMFLOAT4X3, :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
+XMStoreFloat4x4 proto XM_CALLCONV :ptr XMFLOAT4X4, :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
+XMStoreFloat4x4A proto XM_CALLCONV :ptr XMFLOAT4X4, :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
 
 XMVectorZero	proto XM_CALLCONV
 XMVectorSet	proto XM_CALLCONV :float, :float, :float, :float
@@ -863,7 +838,7 @@ XMVector3ComponentsFromNormal	proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :F
 
 XMVector3Rotate			proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
 XMVector3InverseRotate		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
-XMVector3Transform		proto XM_CALLCONV :FXMVECTOR, AXMMATRIX
+XMVector3Transform		proto XM_CALLCONV :FXMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
 XMVector3TransformStream	proto XM_CALLCONV :ptr XMFLOAT4, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
 XMVector3TransformCoord		proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
 XMVector3TransformCoordStream	proto XM_CALLCONV :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
@@ -915,22 +890,22 @@ XMVector4TransformStream	proto XM_CALLCONV :ptr XMFLOAT4, :size_t, :ptr XMFLOAT4
 XMMatrixIsNaN		proto XM_CALLCONV :FXMMATRIX
 XMMatrixIsInfinite	proto XM_CALLCONV :FXMMATRIX
 XMMatrixIsIdentity	proto XM_CALLCONV :FXMMATRIX
-XMMatrixMultiply	proto XM_CALLCONV XMTHISPTR, :CXMMATRIX, :CXMMATRIX
+XMMatrixMultiply	proto XM_CALLCONV :CXMMATRIX, :CXMMATRIX
 XMMatrixInverse		proto XM_CALLCONV :ptr XMVECTOR, :FXMMATRIX
 XMMatrixDeterminant	proto XM_CALLCONV :FXMMATRIX
 XMMatrixDecompose	proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :FXMMATRIX
-XMMatrixIdentity	proto XM_CALLCONV XMTHISPTR
+XMMatrixIdentity	proto XM_CALLCONV
 XMMatrixSet		proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float, :float, :float, :float, :float,
 			      :float, :float, :float, :float, :float, :float, :float, :float
-XMMatrixTranslation	proto XM_CALLCONV XMTHISPTR, :float, :float, :float
-XMMatrixScaling		proto XM_CALLCONV XMTHISPTR, :float, :float, :float
+XMMatrixTranslation	proto XM_CALLCONV :float, :float, :float
+XMMatrixScaling		proto XM_CALLCONV :float, :float, :float
 
-XMMatrixTranslationFromVector	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
-XMMatrixScalingFromVector	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
-XMMatrixRotationX		proto XM_CALLCONV XMTHISPTR, :float
-XMMatrixRotationY		proto XM_CALLCONV XMTHISPTR, :float
-XMMatrixRotationZ		proto XM_CALLCONV XMTHISPTR, :float
-XMMatrixRotationRollPitchYaw	proto XM_CALLCONV XMTHISPTR, :float, :float, :float
+XMMatrixTranslationFromVector	proto XM_CALLCONV :FXMVECTOR
+XMMatrixScalingFromVector	proto XM_CALLCONV :FXMVECTOR
+XMMatrixRotationX		proto XM_CALLCONV :float
+XMMatrixRotationY		proto XM_CALLCONV :float
+XMMatrixRotationZ		proto XM_CALLCONV :float
+XMMatrixRotationRollPitchYaw	proto XM_CALLCONV :float, :float, :float
 XMMatrixRotationRollPitchYawFromVector proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
 XMMatrixRotationNormal		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :float
 XMMatrixRotationAxis		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :float
@@ -942,13 +917,13 @@ XMMatrixAffineTransformation	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR
 XMMatrixReflect			proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
 XMMatrixShadow			proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR
 
-XMMatrixLookAtLH		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMMatrixLookAtRH		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMMatrixLookToLH		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMMatrixLookToRH		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixLookAtLH		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixLookAtRH		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixLookToLH		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixLookToRH		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
 XMMatrixPerspectiveLH		proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
 XMMatrixPerspectiveRH		proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
-XMMatrixPerspectiveFovLH	proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
+XMMatrixPerspectiveFovLH	proto XM_CALLCONV :float, :float, :float, :float
 XMMatrixPerspectiveFovRH	proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
 XMMatrixPerspectiveOffCenterLH	proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float, :float, :float
 XMMatrixPerspectiveOffCenterRH	proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float, :float, :float
@@ -1092,42 +1067,6 @@ XMMax macro a, b
     endif
     exitm<b>
     endm
-
-if defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-endif
-
-if defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-else
-endif
-
-if defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-endif
-
-if defined(_XM_SSE4_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-endif
-
-if not defined(_XM_NO_INTRINSICS_)
-endif
-
-if defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-else
-endif
-
-if defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-endif
-
-if defined(_XM_SSE3_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-endif
-
-if defined(_XM_AVX2_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-endif
-
-ifndef _XM_NO_INTRINSICS_
-endif
-
-ifndef XMGLOBALCONST
-XMGLOBALCONST		equ <extern __declspec(selectany)>
-endif
 
 externdef g_XMSinCoefficients0	:XMVECTORF32
 externdef g_XMSinCoefficients1	:XMVECTORF32
@@ -1277,13 +1216,9 @@ externdef g_ShortMin		:XMVECTORF32
 externdef g_ShortMax		:XMVECTORF32
 externdef g_UShortMax		:XMVECTORF32
 
-if defined(_XM_NO_INTRINSICS_)
-else
-endif
-if defined(_XM_NO_INTRINSICS_)
-else
-endif
+ifndef _XM_NO_INTRINSICS_
 include DirectXMath.inl
+endif
 
 endif
 .pragma list(pop)

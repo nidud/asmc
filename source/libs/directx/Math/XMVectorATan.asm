@@ -7,8 +7,6 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorATan proc XM_CALLCONV V:FXMVECTOR
 
     _mm_store_ps(xmm3, g_XMOne)

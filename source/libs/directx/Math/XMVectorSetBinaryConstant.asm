@@ -10,19 +10,23 @@ include DirectXMath.inc
 
     .code
 
-    option win64:nosave noauto
-
-XMVectorSetBinaryConstant proc XM_CALLCONV C0:uint32_t, C1:uint32_t, C2:uint32_t, C3:uint32_t
+XMVectorSetBinaryConstant proc XM_CALLCONV uses rbx C0:uint32_t, C1:uint32_t, C2:uint32_t, C3:uint32_t
 
   local x:XMUINT4
+
     ;;
     ;; Move the parms to a vector
     ;;
+    ldr eax,C3
+    ldr ebx,C2
+    ldr edx,C1
+    ldr ecx,C0
+
     mov x.x,ecx
     mov x.y,edx
-    mov x.z,r8d
-    mov x.w,r9d
-    ;_mm_set_epi32(C3, C2, C1, C0)
+    mov x.z,ebx
+    mov x.w,eax
+
     _mm_store_ps(xmm0, x)
     ;;
     ;; Mask off the low bits

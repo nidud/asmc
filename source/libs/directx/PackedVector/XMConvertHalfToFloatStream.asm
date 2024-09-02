@@ -7,7 +7,7 @@ include DirectXPackedVector.inc
 
     .code
 
-XMConvertHalfToFloatStream proc uses rsi rdi rbx pOutputStream:ptr float, OutputStride:size_t,
+XMConvertHalfToFloatStream proc XM_CALLCONV uses rsi rdi rbx pOutputStream:ptr float, OutputStride:size_t,
         pInputStream:ptr HALF, InputStride:size_t, HalfCount:size_t
 
     .assert(pOutputStream)

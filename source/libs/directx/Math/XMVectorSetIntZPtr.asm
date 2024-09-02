@@ -7,11 +7,21 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
+XMVectorSetIntZPtr proc XM_CALLCONV V:FXMVECTOR, p:ptr uint32_t
 
-XMVectorSetIntZPtr proc XM_CALLCONV V:FXMVECTOR, x:ptr uint32_t
-
-    inl_XMVectorSetIntZPtr(xmm0, [rdx])
+    ldr rdx,p
+    ;;
+    ;; Swap z and x
+    ;;
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;;
+    ;; Replace the x component
+    ;;
+    _mm_move_ss(xmm0, [rdx])
+    ;;
+    ;; Swap z and x again
+    ;;
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
     ret
 
 XMVectorSetIntZPtr endp

@@ -7,11 +7,18 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorNearEqual proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR, Epsilon:FXMVECTOR
-
-    inl_XMVectorNearEqual(xmm0, xmm1, xmm2)
+    ;;
+    ;; Get the difference
+    ;;
+    _mm_sub_ps(xmm0, xmm1)
+    ;;
+    ;; Get the absolute value of the difference
+    ;;
+    _mm_setzero_ps(xmm3)
+    _mm_sub_ps(xmm3, xmm0)
+    _mm_max_ps(xmm0, xmm3)
+    _mm_cmple_ps(xmm0, xmm2)
     ret
 
 XMVectorNearEqual endp

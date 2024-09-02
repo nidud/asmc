@@ -9,10 +9,10 @@
 ;;--------------------------------------------------------------------------------------
 
 include windows.inc
-include SpecStrings.inc
-include d3d11_1.inc
-include D3Dcompiler.inc
-include directxmath.inc
+include specstrings.inc
+include directx/d3d11_1.inc
+include directx/d3dcompiler.inc
+include directx/directxmath.inc
 include tchar.inc
 
 ;;--------------------------------------------------------------------------------------
@@ -611,8 +611,9 @@ endif
 
     ;; Initialize the world matrix
 
-    inl_XMMatrixIdentity( g_World1 )
-    inl_XMStoreMatrix( g_World2 )
+    XMMatrixIdentity()
+    XMStoreMatrix( &g_World1 )
+    XMStoreMatrix( &g_World2 )
 
     ;; Initialize the view matrix
 
@@ -620,8 +621,8 @@ endif
     _mm_store_ps(xmm1, _mm_get_epi32( 0.0, 1.0, 0.0, 0.0 ))
     _mm_store_ps(xmm2, xmm1)
 
-    inl_XMMatrixLookAtLH( xmm0, xmm1, xmm2 )
-    inl_XMStoreMatrix( g_View )
+    XMMatrixLookAtLH( xmm0, xmm1, xmm2 )
+    XMStoreMatrix( &g_View )
 
     ;; Initialize the projection matrix
 
@@ -630,7 +631,8 @@ endif
     _mm_cvt_si2ss(xmm0, height)
     _mm_div_ss(xmm1, xmm0)
 
-    inl_XMMatrixPerspectiveFovLH( XM_PIDIV2, xmm1, 0.01, 100.0, g_Projection )
+    XMMatrixPerspectiveFovLH( XM_PIDIV2, xmm1, 0.01, 100.0 )
+    XMStoreMatrix( &g_Projection )
 
     mov eax,S_OK
     ret
@@ -773,26 +775,38 @@ Render proc WINAPI
 
     _mm_store_ss(_mm_setzero_ps(), xmm1)
 
-    inl_XMMatrixRotationY( xmm0 )
-    inl_XMStoreMatrix( g_World1 )
+    XMMatrixRotationY( xmm0 )
+    XMStoreMatrix( &g_World1 )
 
     ;; 2nd Cube:  Rotate around origin
 
     _mm_sub_ss(_mm_setzero_ps(), t_time)
     _mm_store_ss(temp, xmm0)
 
-    inl_XMMatrixRotationZ( xmm0, mSpin )
+    XMMatrixRotationZ( xmm0 )
+    XMStoreMatrix( &mSpin )
 
     _mm_setzero_ps()
     _mm_store_ss(xmm0, temp)
     _mm_mul_ss(xmm0, 2.0)
 
-    inl_XMMatrixRotationY( xmm0, mOrbit )
-    inl_XMMatrixTranslation( -4.0, 0.0, 0.0, mTranslate )
-    inl_XMMatrixScaling( 0.3, 0.3, 0.3, g_World2 )
-    inl_XMMatrixMultiply( g_World2, mSpin, g_World2 )
-    inl_XMMatrixMultiply( g_World2, mTranslate, g_World2 )
-    inl_XMMatrixMultiply( g_World2, mOrbit, g_World2 )
+    XMMatrixRotationY( xmm0 )
+    XMStoreMatrix( &mOrbit )
+
+    XMMatrixTranslation( -4.0, 0.0, 0.0 )
+    XMStoreMatrix( &mTranslate )
+
+    XMMatrixScaling( 0.3, 0.3, 0.3 )
+    XMStoreMatrix( &g_World2 )
+
+    XMMatrixMultiply( &g_World2, &mSpin )
+    XMStoreMatrix( &g_World2 )
+
+    XMMatrixMultiply( &g_World2, &mTranslate )
+    XMStoreMatrix( &g_World2 )
+
+    XMMatrixMultiply( &g_World2, &mOrbit )
+    XMStoreMatrix( &g_World2 )
 
     ;; Clear the backbuffer
 
@@ -804,9 +818,10 @@ Render proc WINAPI
     ;;
     ;; Update variables for the first cube
     ;;
-    inl_XMMatrixTranspose( g_World1, cb1.mWorld )
-    inl_XMMatrixTranspose( g_View, cb1.mView )
-    inl_XMMatrixTranspose( g_Projection, cb1.mProjection )
+
+    XMMatrixTransposeM( &g_World1, &cb1.mWorld )
+    XMMatrixTransposeM( &g_View, &cb1.mView )
+    XMMatrixTransposeM( &g_Projection, &cb1.mProjection )
     g_pImmediateContext.UpdateSubresource( g_pConstantBuffer, 0, NULL, &cb1, 0, 0 )
     ;;
     ;; Render the first cube
@@ -818,9 +833,9 @@ Render proc WINAPI
     ;;
     ;; Update variables for the second cube
     ;;
-    inl_XMMatrixTranspose( g_World2, cb2.mWorld )
-    inl_XMMatrixTranspose( g_View, cb2.mView )
-    inl_XMMatrixTranspose( g_Projection, cb2.mProjection )
+    XMMatrixTransposeM( &g_World2, &cb2.mWorld )
+    XMMatrixTransposeM( &g_View, &cb2.mView )
+    XMMatrixTransposeM( &g_Projection, &cb2.mProjection )
     g_pImmediateContext.UpdateSubresource( g_pConstantBuffer, 0, NULL, &cb2, 0, 0 )
     ;;
     ;; Render the second cube

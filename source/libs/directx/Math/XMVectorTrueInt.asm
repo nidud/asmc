@@ -7,8 +7,6 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorTrueInt proc XM_CALLCONV
 
     mov eax,-1

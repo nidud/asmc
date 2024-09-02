@@ -7,11 +7,11 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorSplatZ proc XM_CALLCONV V:FXMVECTOR
 
-    inl_XMVectorSplatZ()
+    ldr xmm0,V
+
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))
     ret
 
 XMVectorSplatZ endp

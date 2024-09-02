@@ -74,7 +74,20 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
         .if ( reg == 0 )
             AddLineQueueX( " mov %s, %r", string, ecx )
         .elseif ( ecx != reg )
-            AddLineQueueX( " mov %r, %r", reg, ecx )
+            mov ebx,T_MOV
+            .if ( [rax].asym.mem_type & MT_FLOAT )
+                ; v2.35.06
+                .if ( [rax].asym.total_size <= 4 )
+                    mov ebx,T_MOVSS
+                .elseif ( [rax].asym.total_size == 8 )
+                    mov ebx,T_MOVSD
+                .elseif ( [rax].asym.total_size == 16 )
+                    mov ebx,T_MOVAPS
+                .else
+                    mov ebx,T_VMOVAPS
+                .endif
+            .endif
+            AddLineQueueX( " %r %r, %r", ebx, reg, ecx )
         .endif
        .return( NOT_ERROR )
     .endif

@@ -3242,7 +3242,7 @@ endif
     .if ( regist && cstack )
 
         mov offs,0
-        push_user_registers( regist, 0, &offs )
+        mov cntxmm,push_user_registers( regist, 0, &offs )
         mov regist,NULL
         add argoffs,offs
 
@@ -3294,8 +3294,11 @@ endif
 
         ; in this case, push the USES registers BEFORE the stack space is reserved
 
-        push_user_registers( regist, 0, &offs )
-        mov regist,NULL
+        .if ( regist )
+
+            mov cntxmm,push_user_registers( regist, 0, &offs )
+            mov regist,NULL
+        .endif
 
         mov ecx,[rsi].localsize
         add ecx,resstack
@@ -3378,7 +3381,43 @@ endif
 
     .if ( regist && cstack == 0 )
 
-        push_user_registers( regist, 0, &offs )
+        mov cntxmm,push_user_registers( regist, 0, &offs )
+    .endif
+
+    ; save xmm registers
+
+    .if ( cntxmm && [rbx].Ofssize == USE64 && [rbx].win64_flags & W64F_AUTOSTACKSP )
+
+        imul ecx,cntxmm,16
+        mov eax,[rsi].localsize
+        sub eax,ecx
+        and eax,not (16-1)
+        mov i,eax
+
+        mov rsi,[rsi].regslist
+        lodsw
+        movzx ebx,ax
+
+        .for ( : ebx: ebx--, rsi += 2 )
+
+            movzx edi,word ptr [rsi]
+
+            .if ( GetValueSp( edi ) & OP_XMM )
+
+                lea rdx,ModuleInfo
+                movzx ecx,[rdx].module_info.Ofssize
+                lea rax,stackreg
+                mov ecx,[rax+rcx*4]
+
+                .if ( resstack )
+                    mov rdx,sym_ReservedStack
+                    AddLineQueueX( "movdqa [%r+%u+%s], %r", ecx, i, [rdx].asym.name, edi )
+                .else
+                    AddLineQueueX( "movdqa [%r+%u], %r", ecx, i, edi )
+                .endif
+                add i,16
+            .endif
+        .endf
     .endif
 
 runqueue:
@@ -3921,6 +3960,57 @@ pop_register proc __ccall private uses rsi rdi regist:ptr word
 
 pop_register endp
 
+restore_xmm_registers proc private uses rsi rdi rbx sreg:int_t
+
+    .if ( [rsi].regslist )
+
+        ; v2.12: space for xmm saves is now included in localsize
+        ; so first thing to do is to count the xmm regs that were saved
+
+        mov rdi,[rsi].regslist
+        movzx ebx,word ptr [rdi]
+
+        .for ( rdi += 2, ecx = 0 : ebx : ebx--, rdi += 2 )
+
+            movzx eax,word ptr [rdi]
+            .if ( GetValueSp( eax ) & OP_XMM )
+                inc ecx
+            .endif
+        .endf
+
+        .if ( ecx )
+
+            imul ecx,ecx,16
+            mov ebx,[rsi].localsize
+            sub ebx,ecx
+            and ebx,not (16-1)
+
+            mov rdi,[rsi].regslist
+            movzx esi,word ptr [rdi]
+
+            .for ( rdi += 2 : esi : esi--, rdi += 2 )
+
+                movzx ecx,word ptr [rdi]
+                .if ( GetValueSp( ecx ) & OP_XMM )
+
+                    ; v2.11: use @ReservedStack only if option win64:2 is set
+
+                    .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+
+                        mov rdx,sym_ReservedStack
+                        AddLineQueueX( "movdqa %r, [%r + %u + %s]", ecx, sreg, ebx, [rdx].asym.name )
+                    .else
+                        AddLineQueueX( "movdqa %r, [%r + %u]", ecx, sreg, ebx )
+                    .endif
+                    add ebx,16
+                .endif
+            .endf
+        .endif
+    .endif
+    ret
+
+restore_xmm_registers endp
+
 ;
 ; write default epilogue code
 ; if a RET/IRET instruction has been found inside a PROC.
@@ -4061,52 +4151,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
             ; restore non-volatile xmm registers
 
-            .if ( [rsi].regslist )
-
-                ; v2.12: space for xmm saves is now included in localsize
-                ; so first thing to do is to count the xmm regs that were saved
-
-                mov rdi,[rsi].regslist
-                movzx ebx,word ptr [rdi]
-
-                .for ( rdi += 2, ecx = 0: ebx: ebx--, rdi += 2 )
-                    movzx eax,word ptr [rdi]
-                    .if ( GetValueSp( eax ) & OP_XMM )
-                        inc ecx
-                    .endif
-                .endf
-
-                .if ( ecx )
-
-                    imul ecx,ecx,16
-                    mov ebx,[rsi].localsize
-                    sub ebx,ecx
-                    and ebx,not (16-1)
-
-                    mov rdi,[rsi].regslist
-                    movzx esi,word ptr [rdi]
-
-                    .for ( rdi += 2 : esi : esi--, rdi += 2 )
-
-                        movzx ecx,word ptr [rdi]
-
-                        .if ( GetValueSp( ecx ) & OP_XMM )
-
-                            ; v2.11: use @ReservedStack only if option win64:2 is set
-
-                            .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
-                                mov rdx,sym_ReservedStack
-                                AddLineQueueX( "movdqa %r, [%r + %u + %s]", ecx, sreg, ebx, [rdx].asym.name )
-                            .else
-                                AddLineQueueX( "movdqa %r, [%r + %u]", ecx, sreg, ebx )
-                            .endif
-                            add ebx,16
-                        .endif
-                    .endf
-                .endif
-            .endif
-
-            mov rsi,info
+            restore_xmm_registers(sreg)
 
             .if ( ( leav && [rsi].flags & PROC_PE_TYPE ) &&
                   ( cstack || ( ( sysstack || ![rsi].regslist ) && [rsi].basereg == T_RBP ) ) )
@@ -4162,6 +4207,11 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
             .endif
         .endif
         .return
+    .endif
+
+    .if ( [rbx].Ofssize == USE64 && [rbx].win64_flags & W64F_AUTOSTACKSP )
+
+        restore_xmm_registers(sreg)
     .endif
 
     .if ( [rbx].Ofssize == USE64 &&

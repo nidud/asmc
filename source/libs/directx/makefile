@@ -1,6 +1,6 @@
 !include srcpath
 
-AFLAGS = -Cs -I$(inc_dir)
+AFLAGS = -frame -Zi8 -Cs -I$(inc_dir)
 
 $(lib_dir)\x64\directxmath.lib:
     asmc64 $(AFLAGS) /r *.asm

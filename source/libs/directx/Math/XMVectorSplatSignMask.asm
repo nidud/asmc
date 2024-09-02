@@ -7,8 +7,6 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorSplatSignMask proc XM_CALLCONV
 
     mov eax,0x80000000

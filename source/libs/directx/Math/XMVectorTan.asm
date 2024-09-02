@@ -14,18 +14,13 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
+XMVectorTan proc XM_CALLCONV uses xmm6 xmm7 V:FXMVECTOR
 
-XMVectorTan proc XM_CALLCONV V:FXMVECTOR
-
-    _mm_store_ps(V, xmm0)
-    _mm_store_ps(V[16], xmm6)
-    _mm_store_ps(V[32], xmm7)
     _mm_store_ps(xmm7, xmm0)
 
     _mm_store_ps(xmm4, _mm_store_ps(xmm1, TanConstants.v))
     _mm_mul_ps(xmm0, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3, 3, 3, 3)))
-    inl_XMVectorRound(xmm0)
+    XMVectorRound(xmm0)
 
     _mm_store_ps(xmm1, xmm4)
 
@@ -83,9 +78,6 @@ XMVectorTan proc XM_CALLCONV V:FXMVECTOR
     _mm_andnot_ps(xmm6, xmm4)
     _mm_or_ps(xmm6, xmm2)
     _mm_andnot_ps(xmm0, xmm6)
-
-    _mm_store_ps(xmm6, V[16])
-    _mm_store_ps(xmm7, V[32])
     ret
 
 XMVectorTan endp

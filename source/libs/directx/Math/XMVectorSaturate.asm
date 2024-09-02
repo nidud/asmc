@@ -7,11 +7,15 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorSaturate proc XM_CALLCONV V:FXMVECTOR
-
-    inl_XMVectorSaturate(xmm0)
+    ;;
+    ;; Set <0 to 0
+    ;;
+    _mm_max_ps(xmm0, g_XMZero)
+    ;;
+    ;; Set>1 to 1
+    ;;
+    _mm_min_ps(xmm0, g_XMOne)
     ret
 
 XMVectorSaturate endp

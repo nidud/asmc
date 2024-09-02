@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMLoadInt3A proc XM_CALLCONV pSource:ptr uint32_t
 
-    .assert( rcx )
+    ldr rcx,pSource
     ;;
     ;; Reads an extra integer which is zero'd
     ;;

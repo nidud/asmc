@@ -7,16 +7,20 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
+XMStoreFloat4x4 proc XM_CALLCONV pDestination:ptr XMFLOAT4X4, V0:XMVECTOR, V1:XMVECTOR, V2:XMVECTOR, V3:XMVECTOR
 
-XMStoreFloat4x4 proc XM_CALLCONV pDestination:ptr XMFLOAT4X4, AXMMATRIX
-if _XM_VECTORCALL_
-    inl_XMStoreFloat4x4([rcx])
-else
-    assume rdx:ptr XMMATRIX
-    inl_XMStoreFloat4x4([rcx],[rdx])
-endif
+    ldr rcx,pDestination
+    ldr xmm4,V3
+    ldr xmm3,V2
+    ldr xmm2,V1
+    ldr xmm1,V0
+
+    _mm_storeu_ps([rcx][0x00], xmm0)
+    _mm_storeu_ps([rcx][0x10], xmm1)
+    _mm_storeu_ps([rcx][0x20], xmm2)
+    _mm_storeu_ps([rcx][0x30], xmm3)
     ret
+
 XMStoreFloat4x4 endp
 
     end

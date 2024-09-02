@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorSplatQNaN proc XM_CALLCONV
 
-    inl_XMVectorSplatQNaN()
+    _mm_store_ps(xmm0, g_XMQNaN)
     ret
 
 XMVectorSplatQNaN endp

@@ -8,11 +8,28 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:rsp noauto nosave
+XMStoreUDecN4_XR proc XM_CALLCONV pDestination:ptr XMUDECN4, V:FXMVECTOR
 
-XMStoreUDecN4_XR proc vectorcall pDestination:ptr XMUDECN4, V:FXMVECTOR
+    ldr rcx,pDestination
+    ldr xmm0,V
 
-    inl_XMStoreUDecN4_XR(rcx, xmm1)
+    XMVectorMultiplyAdd( xmm0, _mm_get_epi32(510.0, 510.0, 510.0, 3.0), _mm_get_epi32(384.0, 384.0, 384.0, 0.0) )
+    XMVectorClamp( xmm0, g_XMZero, _mm_get_epi32(1023.0, 1023.0, 1023.0, 3.0) )
+    _mm_extract_epi16(xmm0, 0)
+    and eax,0x3FF
+    mov edx,eax
+    _mm_extract_epi16(xmm0, 2)
+    and eax,0x3FF
+    shl eax,10
+    or  edx,eax
+    _mm_extract_epi16(xmm0, 4)
+    and eax,0x3FF
+    shl eax,20
+    or  edx,eax
+    _mm_extract_epi16(xmm0, 6)
+    shl eax,30
+    or  edx,eax
+    mov [rcx],edx
     ret
 
 XMStoreUDecN4_XR endp

@@ -7,8 +7,6 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorASin proc XM_CALLCONV V:FXMVECTOR
 
     _mm_cmpge_ps(xmm1, xmm0, _mm_setzero_ps(xmm2))

@@ -9,10 +9,10 @@
 ;;--------------------------------------------------------------------------------------
 
 include windows.inc
-include SpecStrings.inc
-include d3d11_1.inc
-include D3Dcompiler.inc
-include directxmath.inc
+include specstrings.inc
+include directx/d3d11_1.inc
+include directx/d3dcompiler.inc
+include directx/directxmath.inc
 include tchar.inc
 
 ifndef _WIN64

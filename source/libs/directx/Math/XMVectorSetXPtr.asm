@@ -7,11 +7,11 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
+XMVectorSetXPtr proc XM_CALLCONV V:FXMVECTOR, p:ptr float
 
-XMVectorSetXPtr proc XM_CALLCONV V:FXMVECTOR, x:ptr float
+    ldr rdx,p
 
-    inl_XMVectorSetXPtr(xmm0, [rdx])
+    _mm_move_ss(xmm0, [rdx])
     ret
 
 XMVectorSetXPtr endp

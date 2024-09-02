@@ -8,11 +8,33 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:rsp noauto nosave
+XMLoadDec4 proc XM_CALLCONV pSource:ptr XMDEC4
 
-XMLoadDec4 proc vectorcall pSource:ptr XMDEC4
+    ldr rcx,pSource
 
-    inl_XMLoadDec4(rcx)
+    ;; Splat the color in all four entries
+
+    _mm_load_ps1([rcx])
+
+    ;; Shift R&0xFF0000, G&0xFF00, B&0xFF, A&0xFF000000
+
+    _mm_and_ps(xmm0, g_XMMaskDec4)
+
+    ;; a is unsigned! Flip the bit to convert the order to signed
+
+    _mm_xor_ps(xmm0, g_XMXorDec4)
+
+    ;; Convert to floating point numbers
+
+    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
+
+    ;; RGB + 0, A + 0x80000000.f to undo the signed order.
+
+    _mm_add_ps(xmm0, g_XMAddDec4)
+
+    ;; Convert 0-255 to 0.0f-1.0f
+
+    _mm_mul_ps(xmm0, g_XMMulDec4)
     ret
 
 XMLoadDec4 endp

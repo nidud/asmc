@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorSplatEpsilon proc XM_CALLCONV
 
-    inl_XMVectorSplatEpsilon()
+    _mm_store_ps(xmm0, g_XMEpsilon)
     ret
 
 XMVectorSplatEpsilon endp

@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMConvertVectorFloatToInt proc XM_CALLCONV VFloat:FXMVECTOR, MulExponent:uint32_t
 
-    mov ecx,edx
+    ldr ecx,MulExponent
     mov eax,1
     sal eax,cl
 

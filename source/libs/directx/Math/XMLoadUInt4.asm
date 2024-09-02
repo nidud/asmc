@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMLoadUInt4 proc XM_CALLCONV pSource:ptr XMUINT4
 
-    .assert( rcx )
+    ldr rcx,pSource
 
     _mm_store_ps(xmm2, _mm_loadu_si128([rcx]))
     ;;

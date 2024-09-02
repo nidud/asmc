@@ -8,11 +8,23 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:rsp noauto nosave
+XMStoreHalf4 proc XM_CALLCONV uses rbx pDestination:ptr XMHALF4, V:FXMVECTOR
 
-XMStoreHalf4 proc vectorcall pDestination:ptr XMHALF4, V:FXMVECTOR
+    ldr rbx,pDestination
+    ldr xmm0,V
 
-    inl_XMStoreHalf4(rcx, xmm1)
+    XMConvertFloatToHalf(xmm0)
+    mov [rbx],ax
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0, 3, 2, 1))
+    XMConvertFloatToHalf(xmm0)
+    mov [rbx+2],ax
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0, 3, 2, 1))
+    XMConvertFloatToHalf(xmm0)
+    mov [rbx+4],ax
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0, 3, 2, 1))
+    XMConvertFloatToHalf(xmm0)
+    mov [rbx+6],ax
+    mov rax,rbx
     ret
 
 XMStoreHalf4 endp

@@ -7,9 +7,10 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMConvertVectorIntToFloat proc XM_CALLCONV VInt:FXMVECTOR, DivExponent:uint32_t
+
+    ldr edx,DivExponent
+
     ;;
     ;; Convert DivExponent into 1.0f/(1<<DivExponent)
     ;;

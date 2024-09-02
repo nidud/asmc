@@ -7,11 +7,11 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorReplicatePtr proc XM_CALLCONV pValue:ptr float
 
-    inl_XMVectorReplicatePtr([rcx])
+    ldr rcx,pValue
+
+    _mm_load_ps1([rcx])
     ret
 
 XMVectorReplicatePtr endp

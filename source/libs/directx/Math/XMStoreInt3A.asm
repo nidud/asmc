@@ -7,13 +7,14 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMStoreInt3A proc XM_CALLCONV pDestination:ptr uint32_t, V:FXMVECTOR
 
-    .assert( rcx )
+    ldr rcx,pDestination
+    ldr xmm0,V
 
-    inl_XMStoreInt3A([rcx], xmm1)
+    _mm_storel_epi64([rcx][0], xmm0)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_store_ss([rcx][8], xmm0)
     ret
 
 XMStoreInt3A endp

@@ -7,13 +7,12 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMStoreFloat2A proc XM_CALLCONV pDestination:ptr XMFLOAT2, V:FXMVECTOR
 
-    .assert( rcx )
+    ldr rcx,pDestination
+    ldr xmm1,V
 
-    inl_XMStoreFloat2A([rcx], xmm1)
+    _mm_storel_epi64([rcx], xmm1)
     ret
 
 XMStoreFloat2A endp

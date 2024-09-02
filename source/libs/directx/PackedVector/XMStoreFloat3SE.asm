@@ -8,9 +8,10 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:rsp noauto nosave
+XMStoreFloat3SE proc XM_CALLCONV pDestination:ptr XMFLOAT3SE, V:FXMVECTOR
 
-XMStoreFloat3SE proc vectorcall pDestination:ptr XMFLOAT3SE, V:FXMVECTOR
+    ldr xmm1,V
+    ldr rcx,pDestination
 
     _mm_setzero_ps()
     .if _mm_comige_ss(xmm1, xmm0)

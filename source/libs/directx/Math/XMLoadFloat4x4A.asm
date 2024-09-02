@@ -7,19 +7,16 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
+XMLoadFloat4x4A proc XM_CALLCONV pSource:ptr XMFLOAT4X4
 
-XMLoadFloat4x4A proc XM_CALLCONV XMTHISPTR, pSource:ptr XMFLOAT4X4
-if _XM_VECTORCALL_
-    assume rcx:ptr XMFLOAT4X4
-    inl_XMLoadFloat4x4A([rcx])
-else
-    assume rcx:ptr XMMATRIX
-    assume rdx:ptr XMFLOAT4X4
-    inl_XMLoadFloat4x4A([rdx], [rcx])
-    mov rax,rcx
-endif
+    ldr rcx,pSource
+
+    _mm_load_ps(xmm0, xmmword ptr [rcx].XMFLOAT4X4._11)
+    _mm_load_ps(xmm1, xmmword ptr [rcx].XMFLOAT4X4._21)
+    _mm_load_ps(xmm2, xmmword ptr [rcx].XMFLOAT4X4._31)
+    _mm_load_ps(xmm3, xmmword ptr [rcx].XMFLOAT4X4._41)
     ret
+
 XMLoadFloat4x4A endp
 
     end

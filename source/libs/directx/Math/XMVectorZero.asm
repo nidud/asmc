@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorZero proc XM_CALLCONV
 
-    inl_XMVectorZero()
+    _mm_setzero_ps()
     ret
 
 XMVectorZero endp

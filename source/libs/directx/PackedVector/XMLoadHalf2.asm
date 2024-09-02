@@ -8,11 +8,18 @@ include DirectXPackedVector.inc
 
     .code
 
-    option win64:nosave
+XMLoadHalf2 proc XM_CALLCONV pSource:ptr XMHALF2
 
-XMLoadHalf2 proc vectorcall pSource:ptr XMHALF2
-
-    inl_XMLoadHalf2(rcx)
+    ldr     rcx,pSource
+    movzx   eax,[rcx].XMHALF2.x
+    movzx   edx,[rcx].XMHALF2.y
+    movd    xmm0,edx
+    movd    xmm2,eax
+    XMConvertHalfToFloat(xmm0)
+    movaps  xmm1,xmm0
+    XMConvertHalfToFloat(xmm2)
+    shufps  xmm0,xmm1,01000100B
+    shufps  xmm0,xmm0,01011000B
     ret
 
 XMLoadHalf2 endp

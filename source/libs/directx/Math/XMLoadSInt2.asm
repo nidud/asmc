@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMLoadSInt2 proc XM_CALLCONV pSource:ptr XMINT2
 
-    .assert( rcx )
+    ldr rcx,pSource
 
     _mm_load_ss(xmm0, [rcx])
     _mm_load_ss(xmm1, [rcx+4])

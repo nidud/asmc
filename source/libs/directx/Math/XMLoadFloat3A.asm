@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMLoadFloat3A proc XM_CALLCONV pSource:ptr XMFLOAT3A
 
-    .assert( rcx )
+    ldr rcx,pSource
     ;;
     ;; Reads an extra float which is zero'd
     ;;

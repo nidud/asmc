@@ -7,11 +7,9 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMLoadInt4A proc XM_CALLCONV pSource:ptr uint32_t
 
-    .assert( rcx )
+    ldr rcx,pSource
 
     _mm_load_si128([rcx])
     ret

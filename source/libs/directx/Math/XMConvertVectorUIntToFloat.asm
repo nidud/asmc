@@ -7,11 +7,10 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMConvertVectorUIntToFloat proc XM_CALLCONV VInt:FXMVECTOR, DivExponent:uint32_t
 
-    .assert DivExponent < 32
+    ldr xmm0,VInt
+    ldr edx,DivExponent
 
     _mm_store_ps(xmm1, xmm0)
     ;;

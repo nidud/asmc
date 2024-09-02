@@ -7,11 +7,11 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorReciprocalSqrt proc XM_CALLCONV V:FXMVECTOR
 
-    inl_XMVectorReciprocalSqrt(xmm0)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ps(xmm0, g_XMOne)
+    _mm_div_ps(xmm0, xmm1)
     ret
 
 XMVectorReciprocalSqrt endp

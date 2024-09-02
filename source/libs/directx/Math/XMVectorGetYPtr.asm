@@ -7,11 +7,13 @@ include DirectXMath.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 XMVectorGetYPtr proc XM_CALLCONV y:ptr float, V:FXMVECTOR
 
-    inl_XMVectorGetYPtr([rcx], xmm1)
+    ldr rcx,y
+    ldr xmm1,V
+
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1,1,1,1))
+    _mm_store_ss([rcx], xmm1)
     ret
 
 XMVectorGetYPtr endp

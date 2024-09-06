@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## .PRAGMA
 
-**.PRAGMA** INIT | EXIT | PACK | LIST | CREF | COMMENT | WARNING | AUX
+**.PRAGMA** INIT | EXIT | PACK | LIST | CREF | COMMENT | WARNING | WSTRING | AUX
 
 - .**pragma**(cref(push, <0|1>))
 - .**pragma**(cref(pop))
@@ -16,6 +16,8 @@ Asmc Macro Assembler Reference
 - .**pragma**(warning(disable: _num_))
 - .**pragma**(warning(push))
 - .**pragma**(warning(pop))
+- .**pragma**(wstring(push, <0|1>))
+- .**pragma**(wstring(pop))
 - .**pragma**(aux(_reg0_, _reg1_, ..., _regn_))
 
 Pragma aux lets you customize the [ASMCALL](asmcall.md) Calling Convention. Up to 8 register may be used as parameters.

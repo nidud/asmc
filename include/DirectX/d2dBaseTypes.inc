@@ -16,7 +16,7 @@ sc_redMask      equ (0xff shl sc_redShift)
 sc_greenMask    equ (0xff shl sc_greenShift)
 sc_blueMask     equ (0xff shl sc_blueShift)
 
-.template D3DCOLORVALUE
+.template D3DCOLORVALUE fastcall
 
     r real4 ?
     g real4 ?

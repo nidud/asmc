@@ -2,6 +2,8 @@
 ; Copyright (C) 2018 Asmc Developers
 ;
 ; Change history:
+; 2024-09-04 - .pragma(wstring(push, <0|1>))
+;              .pragma(wstring(pop))
 ; 2024-04-12 - removed .pragma asmc
 ; 2019-04-18 - .pragma(asmc(push, <0|1>))
 ;              .pragma(asmc(pop))
@@ -84,6 +86,7 @@ MAXSTACK equ 16
     PackCount dd 0
     CrefCount dd 0
     WarnCount dd 0
+    wstringfl dd 0
 
     PackStack db MAXSTACK dup(0)
     ListStack db MAXSTACK dup(0)
@@ -128,7 +131,64 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     bswap   eax
     .switch eax
 
-      .case "aux "
+    .case "wstr"
+
+        ; .pragma wstring(pop)
+
+        .if ( [rbx].tokval == T_POP )
+
+            add rbx,asm_tok
+            .if [rbx].token == T_CL_BRACKET
+                add rbx,asm_tok
+            .endif
+            shr wstringfl,1
+            .ifc
+                or  ModuleInfo.xflag,OPT_WSTRING
+            .else
+                and ModuleInfo.xflag,not OPT_WSTRING
+            .endif
+            .endc
+        .endif
+
+        ; .pragma wstring(push, bool)
+
+        .if ( [rbx].tokval == T_PUSH )
+
+            inc i
+            .if ( [rbx+asm_tok].token == T_COMMA )
+                inc i
+            .endif
+            .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
+
+            imul ebx,i,asm_tok
+            add rbx,tokenarray
+            .if ( opndx.kind != EXPR_CONST )
+                asmerr( 2026 )
+               .endc
+            .endif
+            mov eax,opndx.uvalue
+            .if ( eax > 1 )
+
+                asmerr( 2084 )
+               .endc
+            .endif
+            shl wstringfl,1
+            .if ( ModuleInfo.xflag & OPT_WSTRING )
+                or wstringfl,1
+            .endif
+            .if ( eax )
+                or  ModuleInfo.xflag,OPT_WSTRING
+            .else
+                and ModuleInfo.xflag,not OPT_WSTRING
+            .endif
+            add rbx,asm_tok
+            .if [rbx].token == T_CL_BRACKET
+                add rbx,asm_tok
+            .endif
+        .endif
+        .endc
+
+    .case "aux "
 
         .endc .if ( [rbx].token != T_REG )
 
@@ -183,7 +243,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-      .case "warn"
+    .case "warn"
 
         ;
         ; .pragma warning(pop)
@@ -274,7 +334,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-      .case "comm"
+    .case "comm"
 
         mov eax,[rsi+4]
         or  eax,0x202020
@@ -464,8 +524,8 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-      .case "init"
-      .case "exit"
+    .case "init"
+    .case "exit"
 
         ; .pragma(init(<proc>, <priority>))
         ; .pragma(exit(<proc>, <priority>))
@@ -523,7 +583,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-      .case "pack"
+    .case "pack"
 
         ; .pragma(pack(push, <alignment>))
         ; .pragma(pack(pop))
@@ -596,7 +656,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .gotosw(T_POP)
         .endif
 
-      .case T_PUSH
+    .case T_PUSH
 
         .endc .if [rbx].tokval != T_PUSH
 
@@ -641,7 +701,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-      .case T_POP
+    .case T_POP
 
         mov eax,[rcx]
         .endc .if !eax ; gives an error if nothing pushed

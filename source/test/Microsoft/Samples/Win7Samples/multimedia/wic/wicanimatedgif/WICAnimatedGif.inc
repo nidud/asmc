@@ -1,9 +1,9 @@
 
-IDR_WICANIMATEDGIF equ 103
-IDM_EXIT    equ 105
-IDM_FILE    equ 106
+define IDR_WICANIMATEDGIF   103
+define IDM_EXIT             105
+define IDM_FILE             106
 
-DEFAULT_DPI equ 96.0    ; Default DPI that maps image resolution directly to screen resoltuion
+define DEFAULT_DPI          96.0    ; Default DPI that maps image resolution directly to screen resoltuion
 
 .enum DISPOSAL_METHODS {
     DM_UNDEFINED  = 0,
@@ -39,33 +39,33 @@ DEFAULT_DPI equ 96.0    ; Default DPI that maps image resolution directly to scr
     m_cyGifImagePixel   UINT ? ; Height of the displayed image in pixel calculated using pixel aspect ratio
     m_framePosition     D2D1_RECT_F <>
 
-    DemoApp proc
-    Release proc
+    DemoApp             proc
+    Release             proc
 
-    Initialize proc :HINSTANCE
+    Initialize          proc :HINSTANCE
 
     CreateDeviceResources proc
     RecoverDeviceResources proc
 
-    OnResize proc :UINT, :UINT
-    OnRender proc
+    OnResize            proc :UINT, :UINT
+    OnRender            proc
 
-    GetFileOpen proc :ptr WCHAR, :DWORD
+    GetFileOpen         proc :LPTSTR, :DWORD
     SelectAndDisplayGif proc
 
-    GetRawFrame proc :UINT
-    GetGlobalMetadata proc
-    GetBackgroundColor proc :ptr IWICMetadataQueryReader
+    GetRawFrame         proc :UINT
+    GetGlobalMetadata   proc
+    GetBackgroundColor  proc :ptr IWICMetadataQueryReader
 
-    ComposeNextFrame proc
+    ComposeNextFrame    proc
     DisposeCurrentFrame proc
-    OverlayNextFrame proc
+    OverlayNextFrame    proc
 
-    SaveComposedFrame proc
-    RestoreSavedFrame proc
+    SaveComposedFrame   proc
+    RestoreSavedFrame   proc
     ClearCurrentFrameArea proc
     CalculateDrawRectangle proc :ptr D2D1_RECT_F
-    WndProc proc :HWND, :UINT, :WPARAM, :LPARAM
+    WndProc             proc :HWND, :UINT, :WPARAM, :LPARAM
 
     .inline IsLastFrame {
 

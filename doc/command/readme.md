@@ -97,7 +97,7 @@ The options listed in the following table.
 - [**-Zne**](option-zne.md) Disable syntax extensions not supported and enable syntax supported by Masm.
 - **-Zp**[[_alignment_]] Packs structures of the specified byte boundary.
 - **-Zs** Perform syntax check only.
-- **-zt**[012] Set STDCALL decoration.
+- **-zt**[012] Set STDCALL decoration: FULL (default), NONE, and HALF.
 - **-Zv8** Enable Masm v8+ PROC visibility.
 - **-zze** No export symbol decoration.
 - **-zzs** Store name of start address.

@@ -8,7 +8,7 @@ include strsafe.inc
 
 .code
 
-StringCchVPrintf proc pszDest:LPTSTR, cchDest:size_t, pszFormat:LPTSTR, argList:ptr
+StringCchVPrintf proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszFormat:LPTSTR, argList:ptr
 
     .if ( SUCCEEDED( StringValidateDest(pszDest, cchDest, STRSAFE_MAX_CCH) ) )
 

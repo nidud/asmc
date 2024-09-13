@@ -42,6 +42,14 @@ ifdef _MT
 define _CRTBLD
 endif
 
+ifndef _CRTIMP
+if defined(CRTDLL) and defined(_CRTBLD)
+define _CRTIMP <export>
+else
+define _CRTIMP <>
+endif
+endif
+
 ifdef _LINUX
 define __Ctype	<syscall>
 define __Cdecl	<syscall>

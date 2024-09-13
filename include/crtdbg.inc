@@ -419,21 +419,17 @@ else  ;; _DEBUG
 
 ifndef _MRTIMP
 if defined(MRTDLL) AND defined(_CRTBLD)
-_MRTIMP equ <__declspec(dllexport)>
+define _MRTIMP <export>
 else
-_MRTIMP equ <__declspec(dllimport)>
+define _MRTIMP <>
 endif
 endif
 
 ifndef _CRTIMP
 if defined(CRTDLL) AND defined(_CRTBLD)
-_CRTIMP equ <__declspec(dllexport)>
+define _CRTIMP <export>
 else
-ifdef _DLL
-_CRTIMP equ <__declspec(dllimport)>
-else
-define _CRTIMP
-endif
+define _CRTIMP <>
 endif
 endif
 

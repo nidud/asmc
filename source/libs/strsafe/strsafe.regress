@@ -1,0 +1,770 @@
+
+; https://github.com/JSund/libstrsafe/tree/master/tests
+
+include strsafe.inc
+include stdlib.inc
+include assert.inc
+include tchar.inc
+
+    .code
+
+    .assert:on
+
+assert_exit proc
+
+    mov rdx,[rsp+@ReservedStack+8]
+    printf( "assert failed: %s\nrax: %p, rcx: %p\n", rdx, rax, rcx )
+    exit( 1 )
+
+assert_exit endp
+
+except proc
+
+    printf( "exception: exit(1)\n" )
+    exit( 1 )
+
+except endp
+
+_tmain proc frame:except
+
+   .new dest[64]:char_t
+   .new dest2[64]:char_t
+   .new empty[64]:char_t = 0
+   .new destEnd:string_t
+   .new remaining:size_t
+
+    lea rbx,dest
+
+    ; StringCchCatA
+
+    strcpy(rbx, "test")
+
+    .assertd( SUCCEEDED(StringCchCatA(rbx, 11, "TEST")) )
+     mov dest[4],0 ; Reset dest to "test".
+    .assertd( SUCCEEDED(StringCchCatA(rbx, 11, "")) )
+    .assertd( SUCCEEDED(StringCchCatA(&empty, 10, "test")) )
+    .assertd( StringCchCatA(rbx, 11, "longer string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( StringCchCatA(rbx, 11, "test") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( StringCchCatA(rbx, 0, "test") == STRSAFE_E_INVALID_PARAMETER )
+
+    ; StringCchCatW
+
+    wcscpy(rbx, L"test")
+
+    .assertd( SUCCEEDED(StringCchCatW(rbx, 11, L"TEST")) )
+     mov word ptr dest[4*2],0 ; Reset dest to "test".
+    .assertd( SUCCEEDED(StringCchCatW(rbx, 11, L"")) )
+    .assertd( SUCCEEDED(StringCchCatW(&empty, 10, L"test")) )
+    .assertd( StringCchCatW(rbx, 11, L"longer string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( StringCchCatW(rbx, 11, L"test") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( StringCchCatW(rbx, 0, L"test") == STRSAFE_E_INVALID_PARAMETER )
+
+     ; StringCchCatExA
+
+     strcpy(rbx, "foo")
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, "Data", &destEnd, NULL, 0)) )
+    .assertd( strcmp("fooData", rbx) == 0 )
+     lea rax,[rbx+7]
+    .assert( rax == destEnd )
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, "", &destEnd, NULL, 0)) )
+    .assertd( strcmp("fooData", rbx) == 0 )
+     lea rax,[rbx+7]
+    .assert( rax == destEnd )
+
+     strcpy(rbx, "")
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, "", &destEnd, NULL, 0)) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( destEnd == rbx )
+     strcpy(rbx, "TEST: ")
+    .assertd( StringCchCatExA(rbx, 11, "longer string", &destEnd, NULL, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("TEST: long", rbx) == 0 )
+     lea rax,[rbx+10]
+    .assertd( destEnd == rax )
+
+     strcpy(rbx, "Str")
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, "Safe", NULL, &remaining, 0)) )
+    .assertd( strcmp("StrSafe", rbx) == 0 )
+    .assertd( remaining == 4 )
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, "", NULL, &remaining, 0)) )
+    .assertd( strcmp("StrSafe", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+     strcpy(rbx, "")
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, "", NULL, &remaining, 0)) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+     strcpy(rbx, "TEST: ")
+    .assertd( StringCchCatExA(rbx, 11, "too long string", NULL, &remaining, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("TEST: too ", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+     strcpy(rbx, "test")
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, NULL, NULL, NULL, STRSAFE_IGNORE_NULLS)) )
+    .assertd( strcmp("test", rbx) == 0 )
+     strcpy(rbx, "test")
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, "ing", NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@')) )
+    .assertd( strcmp("testing", rbx) == 0 )
+    .assertd( memcmp(&[rbx+8], "@@@", 3) == 0 )
+     strcpy(rbx, "TEST: ")
+    .assertd( FAILED(StringCchCatExA(rbx, 11, "too much data", NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@')) )
+    .assertd( strcmp("@@@@@@@@@@", rbx) == 0 )
+     strcpy(rbx, "data")
+    .assertd( FAILED(StringCchCatExA(rbx, 11, "Also too much", NULL, NULL, STRSAFE_NULL_ON_FAILURE)) )
+    .assertd( strcmp("", rbx) == 0 )
+     strcpy(rbx, "data")
+    .assertd( FAILED(StringCchCatExA(rbx, 11, "Won't fit in dest", NULL, NULL, STRSAFE_NO_TRUNCATION)) )
+    .assertd( strcmp("data", rbx) == 0 )
+     strcpy(rbx, "TEST")
+    .assertd( SUCCEEDED(StringCchCatExA(rbx, 11, "test", NULL, NULL, 0)) )
+    .assertd( strcmp("TESTtest", rbx) == 0 )
+
+     ; StringCchCatExW
+
+     wcscpy(rbx, L"foo")
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, L"Data", &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"fooData", rbx) == 0 )
+     lea rax,[rbx+7*2]
+    .assert( rax == destEnd )
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, L"", &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"fooData", rbx) == 0 )
+     lea rax,[rbx+7*2]
+    .assert( rax == destEnd )
+
+     wcscpy(rbx, L"")
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, L"", &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( destEnd == rbx )
+     wcscpy(rbx, L"TEST: ")
+    .assertd( StringCchCatExW(rbx, 11, L"longer string", &destEnd, NULL, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"TEST: long", rbx) == 0 )
+     lea rax,[rbx+10*2]
+    .assertd( destEnd == rax )
+
+     wcscpy(rbx, L"Str")
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, L"Safe", NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"StrSafe", rbx) == 0 )
+    .assertd( remaining == 4 )
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, L"", NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"StrSafe", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+     wcscpy(rbx, L"")
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, L"", NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+     wcscpy(rbx, L"TEST: ")
+    .assertd( StringCchCatExW(rbx, 11, L"too long string", NULL, &remaining, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"TEST: too ", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+     wcscpy(rbx, L"test")
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, NULL, NULL, NULL, STRSAFE_IGNORE_NULLS)) )
+    .assertd( wcscmp(L"test", rbx) == 0 )
+     wcscpy(rbx, L"test")
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, L"ing", NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@')) )
+    .assertd( wcscmp(L"testing", rbx) == 0 )
+    .assertd( memcmp(&[rbx+8*2], "@@@@@@", 3*2) == 0 )
+     wcscpy(rbx, L"TEST: ")
+    .assertd( FAILED(StringCchCatExW(rbx, 11, L"too much data", NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@')) )
+    .assertd( memcmp("@@@@@@@@@@@@@@@@@@@@", rbx, 20) == 0 )
+     wcscpy(rbx, L"data")
+    .assertd( FAILED(StringCchCatExW(rbx, 11, L"Also too much", NULL, NULL, STRSAFE_NULL_ON_FAILURE)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+     wcscpy(rbx, L"data")
+    .assertd( FAILED(StringCchCatExW(rbx, 11, L"Won't fit in dest", NULL, NULL, STRSAFE_NO_TRUNCATION)) )
+    .assertd( wcscmp(L"data", rbx) == 0 )
+     wcscpy(rbx, L"TEST")
+    .assertd( SUCCEEDED(StringCchCatExW(rbx, 11, L"test", NULL, NULL, 0)) )
+    .assertd( wcscmp(L"TESTtest", rbx) == 0 )
+
+    ; StringCchCatNA
+
+     mov empty,0
+     strcpy(rbx, "test")
+     strcpy(&dest2, "TEST")
+
+    .assertd( SUCCEEDED(StringCchCatNA(rbx, 11, "test", 4)) )
+    .assertd( strcmp("testtest", rbx) == 0 )
+     mov dest[4],0 ; Reset dest to "test".
+    .assertd( SUCCEEDED(StringCchCatNA(rbx, 11, "", 1)) )
+    .assertd( strcmp("test", rbx) == 0 )
+    .assertd( SUCCEEDED(StringCchCatNA(&empty, 10, "test", 4)) )
+    .assertd( strcmp("test", &empty) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCatNA(&dest2, 11, rbx, 11)) )
+    .assertd( strcmp("TESTtest", &dest2) == 0 )
+
+    .assertd( StringCchCatNA(rbx, 11, "longer string", 12) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("testlonger", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCatNA(&dest2, 11, rbx, 2)) )
+    .assertd( strcmp("TESTtestte", &dest2) == 0 )
+
+    .assertd( StringCchCatNA(rbx, 11, "test", 4) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("testlonger", rbx) == 0 )
+
+    .assertd( StringCchCatNA(rbx, 0, "test", 4) == STRSAFE_E_INVALID_PARAMETER )
+    .assertd( strcmp("testlonger", rbx) == 0 )
+
+    ; StringCchCatNW
+
+     mov wchar_t ptr empty,0
+     wcscpy(rbx, L"test")
+     wcscpy(&dest2, L"TEST")
+
+    .assertd( SUCCEEDED(StringCchCatNW(rbx, 11, L"test", 4)) )
+    .assertd( wcscmp(L"testtest", rbx) == 0 )
+     mov wchar_t ptr dest[4*2],0 ; Reset dest to "test".
+    .assertd( SUCCEEDED(StringCchCatNW(rbx, 11, L"", 1)) )
+    .assertd( wcscmp(L"test", rbx) == 0 )
+    .assertd( SUCCEEDED(StringCchCatNW(&empty, 10, L"test", 4)) )
+    .assertd( wcscmp(L"test", &empty) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCatNW(&dest2, 11, rbx, 11)) )
+    .assertd( wcscmp(L"TESTtest", &dest2) == 0 )
+
+    .assertd( StringCchCatNW(rbx, 11, L"longer string", 12) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"testlonger", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCatNW(&dest2, 11, rbx, 2)) )
+    .assertd( wcscmp(L"TESTtestte", &dest2) == 0 )
+
+    .assertd( StringCchCatNW(rbx, 11, L"test", 4) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"testlonger", rbx) == 0 )
+
+    .assertd( StringCchCatNW(rbx, 0, L"test", 4) == STRSAFE_E_INVALID_PARAMETER )
+    .assertd( wcscmp(L"testlonger", rbx) == 0 )
+
+    ; StringCchCatNExA
+
+     strcpy(rbx, "foo")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "Data", 5, &destEnd, NULL, 0)) )
+    .assertd( strcmp("fooData", rbx) == 0 )
+     lea rax,[rbx+7]
+    .assertd( rax == destEnd )
+
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "", 1, &destEnd, NULL, 0)) )
+    .assertd( strcmp("fooData", rbx) == 0 )
+     lea rax,[rbx+7]
+    .assertd( rax == destEnd )
+
+     strcpy(rbx, "")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "", 1, &destEnd, NULL, 0)) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( destEnd == rbx )
+
+     strcpy(rbx, "TEST: ")
+    .assertd( StringCchCatNExA(rbx, 11, "longer string", 14, &destEnd, NULL, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("TEST: long", rbx) == 0 )
+     lea rax,[rbx+10]
+    .assertd( rax == destEnd )
+
+     strcpy(rbx, "Test: ")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "okay", 2, &destEnd, NULL, 0)) )
+    .assertd( strcmp("Test: ok", rbx) == 0 )
+     lea rax,[rbx+8]
+    .assertd( rax == destEnd )
+
+     strcpy(rbx, "Str")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "Safe", 5, NULL, &remaining, 0)) )
+    .assertd( strcmp("StrSafe", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "", 1, NULL, &remaining, 0)) )
+    .assertd( strcmp("StrSafe", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+     strcpy(rbx, "")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "", 1, NULL, &remaining, 0)) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+     strcpy(rbx, "TEST: ")
+    .assertd( StringCchCatNExA(rbx, 11, "too long string", 16, NULL, &remaining, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("TEST: too ", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+     strcpy(rbx, "Foo ")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "bar baz", 3, NULL, &remaining, 0)) )
+    .assertd( strcmp("Foo bar", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+     strcpy(rbx, "test")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, NULL, 10, NULL, NULL, STRSAFE_IGNORE_NULLS)) )
+    .assertd( strcmp("test", rbx) == 0 )
+
+     strcpy(rbx, "test")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "ingenious", 3, NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@')) )
+    .assertd( strcmp("testing", rbx) == 0 )
+    .assertd( memcmp(&[rbx+8], "@@@", 3) == 0 )
+
+     strcpy(rbx, "TEST: ")
+    .assertd( FAILED(StringCchCatNExA(rbx, 11, "too much data", 14, NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@')) )
+    .assertd( strcmp("@@@@@@@@@@", rbx) == 0 )
+
+     strcpy(rbx, "data")
+    .assertd( FAILED(StringCchCatNExA(rbx, 11, "Also too much", 14, NULL, NULL, STRSAFE_NULL_ON_FAILURE)) )
+    .assertd( strcmp("", rbx) == 0 )
+
+     strcpy(rbx, "data")
+    .assertd( FAILED(StringCchCatNExA(rbx, 11, "Won't fit in dest", 18, NULL, NULL, STRSAFE_NO_TRUNCATION)) )
+    .assertd( strcmp("data", rbx) == 0 )
+
+     strcpy(rbx, "TEST")
+    .assertd( SUCCEEDED(StringCchCatNExA(rbx, 11, "testing", 4, NULL, NULL, 0)) )
+    .assertd( strcmp("TESTtest", rbx) == 0 )
+
+    ; StringCchCatNExW
+
+     wcscpy(rbx, L"foo")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"Data", 5, &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"fooData", rbx) == 0 )
+     lea rax,[rbx+7*2]
+    .assertd( rax == destEnd )
+
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"", 1, &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"fooData", rbx) == 0 )
+     lea rax,[rbx+7*2]
+    .assertd( rax == destEnd )
+
+     wcscpy(rbx, L"")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"", 1, &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( destEnd == rbx )
+
+     wcscpy(rbx, L"TEST: ")
+    .assertd( StringCchCatNExW(rbx, 11, L"longer string", 14, &destEnd, NULL, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"TEST: long", rbx) == 0 )
+     lea rax,[rbx+10*2]
+    .assertd( rax == destEnd )
+
+     wcscpy(rbx, L"Test: ")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"okay", 2, &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"Test: ok", rbx) == 0 )
+     lea rax,[rbx+8*2]
+    .assertd( rax == destEnd )
+
+     wcscpy(rbx, L"Str")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"Safe", 5, NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"StrSafe", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"", 1, NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"StrSafe", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+     wcscpy(rbx, L"")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"", 1, NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+     wcscpy(rbx, L"TEST: ")
+    .assertd( StringCchCatNExW(rbx, 11, L"too long string", 16, NULL, &remaining, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"TEST: too ", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+     wcscpy(rbx, L"Foo ")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"bar baz", 3, NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"Foo bar", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+     wcscpy(rbx, L"test")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, NULL, 10, NULL, NULL, STRSAFE_IGNORE_NULLS)) )
+    .assertd( wcscmp(L"test", rbx) == 0 )
+
+     wcscpy(rbx, L"test")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"ingenious", 3, NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@')) )
+    .assertd( wcscmp(L"testing", rbx) == 0 )
+    .assertd( memcmp(&[rbx+8*2], "@@@@@@", 6) == 0 )
+
+     wcscpy(rbx, L"TEST: ")
+    .assertd( FAILED(StringCchCatNExW(rbx, 11, L"too much data", 14, NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@')) )
+    .assertd( strcmp("@@@@@@@@@@@@@@@@@@@@", rbx) == 0 )
+
+     wcscpy(rbx, L"data")
+    .assertd( FAILED(StringCchCatNExW(rbx, 11, L"Also too much", 14, NULL, NULL, STRSAFE_NULL_ON_FAILURE)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+     wcscpy(rbx, L"data")
+    .assertd( FAILED(StringCchCatNExW(rbx, 11, L"Won't fit in dest", 18, NULL, NULL, STRSAFE_NO_TRUNCATION)) )
+    .assertd( wcscmp(L"data", rbx) == 0 )
+
+     wcscpy(rbx, L"TEST")
+    .assertd( SUCCEEDED(StringCchCatNExW(rbx, 11, L"testing", 4, NULL, NULL, 0)) )
+    .assertd( wcscmp(L"TESTtest", rbx) == 0 )
+
+    ; StringCchCopyA
+
+    .assertd( SUCCEEDED(StringCchCopyA(rbx, 11, "test")) )
+    .assertd( strcmp("test", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyA(rbx, 11, "")) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( StringCchCopyA(rbx, 11, "longer string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("longer str", rbx) == 0 )
+
+    .assertd( StringCchCopyA(rbx, 0, "test") == STRSAFE_E_INVALID_PARAMETER )
+
+    ; StringCchCopyW
+
+    .assertd( SUCCEEDED(StringCchCopyW(rbx, 11, L"test")) )
+    .assertd( wcscmp(L"test", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyW(rbx, 11, L"")) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( StringCchCopyW(rbx, 11, L"longer string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"longer str", rbx) == 0 )
+
+    .assertd( StringCchCopyW(rbx, 0, L"test") == STRSAFE_E_INVALID_PARAMETER )
+
+    ; StringCchCopyExA
+
+    .assertd( SUCCEEDED(StringCchCopyExA(rbx, 11, "STR", NULL, &remaining, 0)) )
+    .assertd( strcmp("STR", rbx) == 0 )
+    .assertd( remaining == 8 )
+
+    .assertd( SUCCEEDED(StringCchCopyExA(rbx, 11, "", NULL, &remaining, 0)) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+    .assertd( StringCchCopyExA(rbx, 11, "too long string", NULL, &remaining, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("too long s", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+    .assertd( SUCCEEDED(StringCchCopyExA(rbx, 11, NULL, NULL, NULL, STRSAFE_IGNORE_NULLS)) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyExA(rbx, 11, "testing", NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@')) )
+    .assertd( strcmp("testing", rbx) == 0 )
+    .assertd( memcmp(&[rbx+8], "@@@", 3) == 0 )
+
+    .assertd( FAILED(StringCchCopyExA(rbx, 11, "too much data", NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@')) )
+    .assertd( strcmp("@@@@@@@@@@", rbx) == 0 )
+
+    .assertd( FAILED(StringCchCopyExA(rbx, 11, "Also too much", NULL, NULL, STRSAFE_NULL_ON_FAILURE)) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( FAILED(StringCchCopyExA(rbx, 11, "Won't fit in dest", NULL, NULL, STRSAFE_NO_TRUNCATION)) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyExA(rbx, 11, "test", NULL, NULL, 0)) )
+    .assertd( strcmp("test", rbx) == 0 )
+
+    ; StringCchCopyExW
+
+    .assertd( SUCCEEDED(StringCchCopyExW(rbx, 11, L"STR", NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"STR", rbx) == 0 )
+    .assertd( remaining == 8 )
+
+    .assertd( SUCCEEDED(StringCchCopyExW(rbx, 11, L"", NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+    .assertd( StringCchCopyExW(rbx, 11, L"too long string", NULL, &remaining, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"too long s", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+    .assertd( SUCCEEDED(StringCchCopyExW(rbx, 11, NULL, NULL, NULL, STRSAFE_IGNORE_NULLS)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyExW(rbx, 11, L"testing", NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@')) )
+    .assertd( wcscmp(L"testing", rbx) == 0 )
+    .assertd( memcmp(&[rbx+8*2], "@@@@@@", 6) == 0 )
+
+    .assertd( FAILED(StringCchCopyExW(rbx, 11, L"too much data", NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@')) )
+    .assertd( strcmp("@@@@@@@@@@@@@@@@@@@@", rbx) == 0 )
+
+    .assertd( FAILED(StringCchCopyExW(rbx, 11, L"Also too much", NULL, NULL, STRSAFE_NULL_ON_FAILURE)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( FAILED(StringCchCopyExW(rbx, 11, L"Won't fit in dest", NULL, NULL, STRSAFE_NO_TRUNCATION)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyExW(rbx, 11, L"test", NULL, NULL, 0)) )
+    .assertd( wcscmp(L"test", rbx) == 0 )
+
+    ; StringCchCopyNA
+
+    .assertd( SUCCEEDED(StringCchCopyNA(rbx, 11, "test", 4)) )
+    .assertd( strcmp("test", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyNA(&dest2, 11, rbx, 11)) )
+    .assertd( strcmp("test", &dest2) == 0 )
+
+    .assertd( StringCchCopyNA(rbx, 11, "longer string", 12) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("longer str", rbx) == 0 )
+
+    .assertd( StringCchCopyNA(rbx, 0, "test", 4) == STRSAFE_E_INVALID_PARAMETER )
+
+    ; StringCchCopyNW
+
+    .assertd( SUCCEEDED(StringCchCopyNW(rbx, 11, L"test", 4)) )
+    .assertd( wcscmp(L"test", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyNW(&dest2, 11, rbx, 11)) )
+    .assertd( wcscmp(L"test", &dest2) == 0 )
+
+    .assertd( StringCchCopyNW(rbx, 11, L"longer string", 12) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"longer str", rbx) == 0 )
+
+    .assertd( StringCchCopyNW(rbx, 0, L"test", 4) == STRSAFE_E_INVALID_PARAMETER )
+
+    ; StringCchCopyNExA
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, "Data", 5, &destEnd, NULL, 0)) )
+    .assertd( strcmp("Data", rbx) == 0 )
+     lea rax,[rbx+4]
+    .assertd( destEnd == rax )
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, "", 1, &destEnd, NULL, 0)) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( destEnd == rbx )
+
+    .assertd( StringCchCopyNExA(rbx, 11, "longer string", 14, &destEnd, NULL, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("longer str", rbx) == 0 )
+     lea rax,[rbx+10]
+    .assertd( destEnd == rax )
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, "Another long string", 7, &destEnd, NULL, 0)) )
+    .assertd( strcmp("Another", rbx) == 0 )
+     lea rax,[rbx+7]
+    .assertd( destEnd == rax )
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, "STR", 4, NULL, &remaining, 0)) )
+    .assertd( strcmp("STR", rbx) == 0 )
+    .assertd( remaining == 8 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, "", 1, NULL, &remaining, 0)) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+    .assertd( StringCchCopyNExA(rbx, 11, "too long string", 16, NULL, &remaining, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("too long s", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, "Foo bar baz", 7, NULL, &remaining, 0)) )
+    .assertd( strcmp("Foo bar", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, NULL, 0, NULL, NULL, STRSAFE_IGNORE_NULLS)) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, "testing", 4, NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@')) )
+    .assertd( strcmp("test", rbx) == 0 )
+    .assertd( memcmp(&[rbx+5], "@@@@@@", 6) == 0 )
+
+    .assertd( FAILED(StringCchCopyNExA(rbx, 11, "too much data", 14, NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@')) )
+    .assertd( strcmp("@@@@@@@@@@", rbx) == 0 )
+
+    .assertd( FAILED(StringCchCopyNExA(rbx, 11, "Also too much", 14, NULL, NULL, STRSAFE_NULL_ON_FAILURE)) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( FAILED(StringCchCopyNExA(rbx, 11, "Won't fit in dest", 18, NULL, NULL, STRSAFE_NO_TRUNCATION)) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExA(rbx, 11, "test", 3, NULL, NULL, 0)) )
+    .assertd( strcmp("tes", rbx) == 0 )
+
+    ; StringCchCopyNExW
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, L"Data", 5, &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"Data", rbx) == 0 )
+     lea rax,[rbx+4*2]
+    .assertd( destEnd == rax )
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, L"", 1, &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( destEnd == rbx )
+
+    .assertd( StringCchCopyNExW(rbx, 11, L"longer string", 14, &destEnd, NULL, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"longer str", rbx) == 0 )
+     lea rax,[rbx+10*2]
+    .assertd( destEnd == rax )
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, L"Another long string", 7, &destEnd, NULL, 0)) )
+    .assertd( wcscmp(L"Another", rbx) == 0 )
+     lea rax,[rbx+7*2]
+    .assertd( destEnd == rax )
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, L"STR", 4, NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"STR", rbx) == 0 )
+    .assertd( remaining == 8 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, L"", 1, NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+    .assertd( StringCchCopyNExW(rbx, 11, L"too long string", 16, NULL, &remaining, 0) == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"too long s", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, L"Foo bar baz", 7, NULL, &remaining, 0)) )
+    .assertd( wcscmp(L"Foo bar", rbx) == 0 )
+    .assertd( remaining == 4 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, NULL, 0, NULL, NULL, STRSAFE_IGNORE_NULLS)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, L"testing", 4, NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@')) )
+    .assertd( wcscmp(L"test", rbx) == 0 )
+    .assertd( memcmp(&[rbx+5*2], "@@@@@@@@@@@@", 12) == 0 )
+
+    .assertd( FAILED(StringCchCopyNExW(rbx, 11, L"too much data", 14, NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@')) )
+    .assertd( strcmp("@@@@@@@@@@@@@@@@@@@@", rbx) == 0 )
+
+    .assertd( FAILED(StringCchCopyNExW(rbx, 11, L"Also too much", 14, NULL, NULL, STRSAFE_NULL_ON_FAILURE)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( FAILED(StringCchCopyNExW(rbx, 11, L"Won't fit in dest", 18, NULL, NULL, STRSAFE_NO_TRUNCATION)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchCopyNExW(rbx, 11, L"test", 3, NULL, NULL, 0)) )
+    .assertd( wcscmp(L"tes", rbx) == 0 )
+
+    ; StringCchLengthA
+
+    .assertd( SUCCEEDED(StringCchLengthA("", 1, &remaining)) )
+    .assertd( remaining == 0 )
+
+    .assertd( SUCCEEDED(StringCchLengthA("test", 5, &remaining)) )
+    .assertd( remaining == 4 )
+
+    .assertd( SUCCEEDED(StringCchLengthA("test\0test", 10, &remaining)) )
+    .assertd( remaining == 4 )
+
+    .assertd( StringCchLengthA("too long", 8, &remaining) == STRSAFE_E_INVALID_PARAMETER )
+
+    ; StringCchLengthW
+
+    .assertd( SUCCEEDED(StringCchLengthW(L"", 1, &remaining)) )
+    .assertd( remaining == 0 )
+
+    .assertd( SUCCEEDED(StringCchLengthW(L"test", 5, &remaining)) )
+    .assertd( remaining == 4 )
+
+    .assertd( SUCCEEDED(StringCchLengthW(L"test\0test", 10, &remaining)) )
+    .assertd( remaining == 4 )
+
+    .assertd( StringCchLengthW(L"too long", 8, &remaining) == STRSAFE_E_INVALID_PARAMETER )
+
+    ; StringCchPrintfA
+
+    .assertd( SUCCEEDED(StringCchPrintfA(rbx, 11, "")) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchPrintfA(rbx, 11, "test")) )
+    .assertd( strcmp("test", rbx) == 0 )
+
+    .assertd( StringCchPrintfA(rbx, 11, "longer string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("longer str", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchPrintfA(rbx, 11, "%d", 17)) )
+    .assertd( strcmp("17", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchPrintfA(rbx, 11, "%%")) )
+    .assertd( strcmp("%", rbx) == 0 )
+
+    .assertd( StringCchPrintfA(rbx, 0, "") == STRSAFE_E_INVALID_PARAMETER )
+
+    ; StringCchPrintfExA
+
+    .assertd( SUCCEEDED(StringCchPrintfExA(rbx, 11, &destEnd, NULL, 0, "Data")) )
+    .assertd( strcmp("Data", rbx) == 0 )
+    .assertd( destEnd == &[rbx+4] )
+
+    .assertd( SUCCEEDED(StringCchPrintfExA(rbx, 11, &destEnd, NULL, 0, "")) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( destEnd == rbx )
+
+    .assertd( StringCchPrintfExA(rbx, 11, &destEnd, NULL, 0, "longer %s", "string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("longer str", rbx) == 0 )
+    .assertd( destEnd == &[rbx+10] )
+
+    .assertd( SUCCEEDED(StringCchPrintfExA(rbx, 11, NULL, &remaining, 0, "STR")) )
+    .assertd( strcmp("STR", rbx) == 0 )
+    .assertd( remaining == 8 )
+
+    .assertd( SUCCEEDED(StringCchPrintfExA(rbx, 11, NULL, &remaining, 0, "")) )
+    .assertd( strcmp("", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+    .assertd( StringCchPrintfExA(rbx, 11, NULL, &remaining, 0, "too long string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( strcmp("too long s", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+    .assertd( SUCCEEDED(StringCchPrintfExA(rbx, 11, NULL, NULL, STRSAFE_IGNORE_NULLS, NULL)) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchPrintfExA(rbx, 11, NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@', "testing")) )
+    .assertd( strcmp("testing", rbx) == 0 )
+
+    .assertd( memcmp(&[rbx+8], "@@@", 3) == 0 )
+
+    .assertd( FAILED(StringCchPrintfExA(rbx, 11, NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@', "too much data")) )
+    .assertd( strcmp("@@@@@@@@@@", rbx) == 0 )
+
+    .assertd( FAILED(StringCchPrintfExA(rbx, 11, NULL, NULL, STRSAFE_NULL_ON_FAILURE, "Also too much")) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( FAILED(StringCchPrintfExA(rbx, 11, NULL, NULL, STRSAFE_NO_TRUNCATION, "Won't fit in dest")) )
+    .assertd( strcmp("", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchPrintfExA(rbx, 11, NULL, NULL, 0, "test")) )
+    .assertd( strcmp("test", rbx) == 0 )
+
+    ; StringCchPrintfExW
+
+    .assertd( SUCCEEDED(StringCchPrintfExW(rbx, 11, &destEnd, NULL, 0, L"Data")) )
+    .assertd( wcscmp(L"Data", rbx) == 0 )
+    .assertd( destEnd == &[rbx+4*2] )
+
+    .assertd( SUCCEEDED(StringCchPrintfExW(rbx, 11, &destEnd, NULL, 0, L"")) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( destEnd == rbx )
+
+    .assertd( StringCchPrintfExW(rbx, 11, &destEnd, NULL, 0, L"longer %s", L"string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"longer str", rbx) == 0 )
+    .assertd( destEnd == &[rbx+10*2] )
+
+    .assertd( SUCCEEDED(StringCchPrintfExW(rbx, 11, NULL, &remaining, 0, L"STR")) )
+    .assertd( wcscmp(L"STR", rbx) == 0 )
+    .assertd( remaining == 8 )
+
+    .assertd( SUCCEEDED(StringCchPrintfExW(rbx, 11, NULL, &remaining, 0, L"")) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+    .assertd( remaining == 11 )
+
+    .assertd( StringCchPrintfExW(rbx, 11, NULL, &remaining, 0, L"too long string") == STRSAFE_E_INSUFFICIENT_BUFFER )
+    .assertd( wcscmp(L"too long s", rbx) == 0 )
+    .assertd( remaining == 1 )
+
+    .assertd( SUCCEEDED(StringCchPrintfExW(rbx, 11, NULL, NULL, STRSAFE_IGNORE_NULLS, NULL)) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchPrintfExW(rbx, 11, NULL, NULL, STRSAFE_FILL_BEHIND_NULL or '@', L"testing")) )
+    .assertd( wcscmp(L"testing", rbx) == 0 )
+
+    .assertd( memcmp(&[rbx+8*2], "@@@@@@", 6) == 0 )
+
+    .assertd( FAILED(StringCchPrintfExW(rbx, 11, NULL, NULL, STRSAFE_FILL_ON_FAILURE or '@', L"too much data")) )
+    .assertd( strcmp("@@@@@@@@@@@@@@@@@@@@", rbx) == 0 )
+
+    .assertd( FAILED(StringCchPrintfExW(rbx, 11, NULL, NULL, STRSAFE_NULL_ON_FAILURE, L"Also too much")) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( FAILED(StringCchPrintfExW(rbx, 11, NULL, NULL, STRSAFE_NO_TRUNCATION, L"Won't fit in dest")) )
+    .assertd( wcscmp(L"", rbx) == 0 )
+
+    .assertd( SUCCEEDED(StringCchPrintfExW(rbx, 11, NULL, NULL, 0, L"test")) )
+    .assertd( wcscmp(L"test", rbx) == 0 )
+
+    _tprintf( "Everything is okay\n" )
+    .return( 0 )
+
+_tmain endp
+
+    end _tstart

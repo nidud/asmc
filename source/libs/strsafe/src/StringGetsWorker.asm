@@ -9,7 +9,7 @@ include tchar.inc
 
 .code
 
-StringGetsWorker proc uses rbx pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr size_t
+StringGetsWorker proc _CRTIMP uses rbx pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr size_t
 
     .new hr:HRESULT = S_OK
     .new cchNewDestLength:size_t = 0

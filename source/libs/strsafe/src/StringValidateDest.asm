@@ -7,12 +7,12 @@ include strsafe.inc
 
     .code
 
-StringValidateDest proc pszDest:LPTSTR, cchDest:size_t, cchMax:size_t
+StringValidateDest proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, cchMax:size_t
 
     ldr rcx,cchMax
     ldr rdx,cchDest
-    mov eax,S_OK
 
+    mov eax,S_OK
     .if ( !rdx || rdx > rcx )
 
         mov eax,STRSAFE_E_INVALID_PARAMETER

@@ -22,17 +22,9 @@ include shobjidl.inc
 
 ;.pragma pack(push, 1)
 
-;SHSTDAPI
-SHGetMalloc proto WINAPI \
-	      ppMalloc: ptr IMalloc
-
-;SHSTDAPI
-SHAlloc proto WINAPI \
-		    cb: SIZE_T
-
-;SHSTDAPI
-SHFree proto WINAPI \
-		    pv: PVOID
+SHGetMalloc proto WINAPI :ptr IMalloc
+SHAlloc proto WINAPI :size_t
+SHFree proto WINAPI :ptr
 
 
 GIL_OPENICON		equ 0x0001
@@ -55,8 +47,7 @@ GIL_FORCENOSHIELD	equ 0x0400
 
     GetIconLocation	proc :UINT, :LPSTR, :UINT, :ptr, :ptr
     Extract		proc :LPCSTR, :UINT, :ptr, :ptr, :UINT
-
-    .ends
+   .ends
 
 LPEXTRACTICONA		typedef ptr IExtractIconA
 
@@ -64,8 +55,7 @@ LPEXTRACTICONA		typedef ptr IExtractIconA
 
     GetIconLocation	proc :UINT, :LPWSTR, :UINT, :ptr, :ptr
     Extract		proc :LPCWSTR, :UINT, :ptr, :ptr, :UINT
-
-    .ends
+   .ends
 
 LPEXTRACTICONW		typedef ptr IExtractIconW
 ifdef _UNICODE
@@ -81,8 +71,7 @@ endif
     IsMemberOf		proc :LPCWSTR, :DWORD
     GetOverlayInfo	proc :LPWSTR, :SINT, :ptr, :ptr
     GetPriority		proc :ptr
-
-    .ends
+   .ends
 
 ISIOI_ICONFILE		equ 0x00000001
 ISIOI_ICONINDEX		equ 0x00000002
@@ -94,8 +83,7 @@ ISIOI_ICONINDEX		equ 0x00000002
     RefreshOverlayImages proc :DWORD
     LoadNonloadedOverlayIdentifiers proc
     OverlayIndexFromImageIndex proc :SINT, :ptr, :BOOL
-
-    .ends
+   .ends
 
 SIOM_OVERLAYINDEX	equ 1
 SIOM_ICONINDEX		equ 2
@@ -108,8 +96,7 @@ SIOM_RESERVED_DEFAULT	equ 3
 
     GetOverlayIndex	proc :PCUITEMID_CHILD, :ptr
     GetOverlayIconIndex proc :PCUITEMID_CHILD, :ptr
-
-    .ends
+   .ends
 
 OI_DEFAULT		equ 0x00000000
 OI_ASYNC		equ 0xFFFFEEEE
@@ -118,15 +105,9 @@ IDO_SHGIOI_SHARE	equ 0x0FFFFFFF
 IDO_SHGIOI_LINK		equ 0x0FFFFFFE
 IDO_SHGIOI_SLOWFILE	equ 0x0FFFFFFFD
 IDO_SHGIOI_DEFAULT	equ 0x0FFFFFFFC
-;SHSTDAPI
-SHGetIconOverlayIndexA proto WINAPI \
-	   pszIconPath: LPCSTR,
-	    iIconIndex: SINT
 
-;SHSTDAPI
-SHGetIconOverlayIndexW proto WINAPI \
-	   pszIconPath: LPCWSTR,
-	    iIconIndex: SINT
+SHGetIconOverlayIndexA proto WINAPI :LPCSTR, :SINT
+SHGetIconOverlayIndexW proto WINAPI :LPCWSTR, :SINT
 
 ifdef _UNICODE
 SHGetIconOverlayIndex	equ <SHGetIconOverlayIndexW>
@@ -449,84 +430,28 @@ PANE_PRIVACY		equ 7
 endif
 
 
-;SHSTDAPI
-ILClone proto WINAPI \
-		  pidl: PCUIDLIST_RELATIVE
-
-;SHSTDAPI
-ILCloneFirst proto WINAPI \
-		  pidl: PCUIDLIST_RELATIVE
-
-;SHSTDAPI
-ILCombine proto WINAPI \
-		 pidl1: PCIDLIST_ABSOLUTE,
-		 pidl2: PCUIDLIST_RELATIVE
-
-;SHSTDAPI
-ILFree proto WINAPI \
-		  pidl: PIDLIST_RELATIVE
-
-;SHSTDAPI
-ILGetNext proto WINAPI \
-		  pidl: PCUIDLIST_RELATIVE
-
-;SHSTDAPI
-ILGetSize proto WINAPI \
-		  pidl: PCUIDLIST_RELATIVE
-
-;SHSTDAPI
-ILFindChild proto WINAPI \
-	    pidlParent: PIDLIST_ABSOLUTE,
-	     pidlChild: PCIDLIST_ABSOLUTE
-
-;SHSTDAPI
-ILFindLastID proto WINAPI \
-		  pidl: PCUIDLIST_RELATIVE
-
-;SHSTDAPI
-ILRemoveLastID proto WINAPI \
-		  pidl: PUIDLIST_RELATIVE
-
-;SHSTDAPI
-ILIsEqual proto WINAPI \
-		 pidl1: PCIDLIST_ABSOLUTE,
-		 pidl2: PCIDLIST_ABSOLUTE
-
-;SHSTDAPI
-ILIsParent proto WINAPI \
-		 pidl1: PCIDLIST_ABSOLUTE,
-		 pidl2: PCIDLIST_ABSOLUTE,
-	    fImmediate: BOOL
-
-;SHSTDAPI
-ILSaveToStream proto WINAPI \
-		  pstm: ptr IStream,
-		  pidl: PCUIDLIST_RELATIVE
+ILClone proto WINAPI :PCUIDLIST_RELATIVE
+ILCloneFirst proto WINAPI :PCUIDLIST_RELATIVE
+ILCombine proto WINAPI :PCIDLIST_ABSOLUTE, :PCUIDLIST_RELATIVE
+ILFree proto WINAPI :PIDLIST_RELATIVE
+ILGetNext proto WINAPI :PCUIDLIST_RELATIVE
+ILGetSize proto WINAPI :PCUIDLIST_RELATIVE
+ILFindChild proto WINAPI :PIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE
+ILFindLastID proto WINAPI :PCUIDLIST_RELATIVE
+ILRemoveLastID proto WINAPI :PUIDLIST_RELATIVE
+ILIsEqual proto WINAPI :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE
+ILIsParent proto WINAPI :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE, :BOOL
+ILSaveToStream proto WINAPI :ptr IStream, :PCUIDLIST_RELATIVE
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-ILLoadFromStreamEx proto WINAPI \
-		  pstm: ptr IStream,
-		  pidl: ptr PIDLIST_RELATIVE
-
+ILLoadFromStreamEx proto WINAPI :ptr IStream, :ptr PIDLIST_RELATIVE
 endif
 
 if (_WIN32_IE GE 0x0400)
-
-;SHSTDAPI
-ILCreateFromPathA proto WINAPI \
-	       pszPath: LPCSTR
-
-;SHSTDAPI
-ILCreateFromPathW proto WINAPI \
-	       pszPath: LPCWSTR
-
-
+ILCreateFromPathA proto WINAPI :LPCSTR
+ILCreateFromPathW proto WINAPI :LPCWSTR
 ifdef NO_WRAPPERS_FOR_ILCREATEFROMPATH
-;SHSTDAPI
-ILCreateFromPath proto WINAPI \
-	       pszPath: LPCTSTR
-
+ILCreateFromPath proto WINAPI :LPCTSTR
 else
 ifdef _UNICODE
 ILCreateFromPath	equ <ILCreateFromPathW>
@@ -534,15 +459,9 @@ else
 ILCreateFromPath	equ <ILCreateFromPathA>
 endif
 endif
-
 endif
 
-;SHSTDAPI
-SHILCreateFromPath proto WINAPI \
-	       pszPath: LPCWSTR,
-		 ppidl: ptr PIDLIST_ABSOLUTE,
-	      rgfInOut: ptr DWORD
-
+SHILCreateFromPath proto WINAPI :LPCWSTR, :ptr PIDLIST_ABSOLUTE, :ptr DWORD
 
 VOID_OFFSET macro pv, cb
 	exitm<(pv+cb)>
@@ -570,13 +489,7 @@ ILIsChild macro pidl
 	exitm<(ILIsEmpty(pidl) OR ILIsEmpty(ILNext(pidl)))>
 	endm
 
-;SHSTDAPI_(PIDLIST_RELATIVE)
-ILAppendID proto WINAPI \
-		  pidl: PIDLIST_RELATIVE,
-		 pmkid: LPCSHITEMID,
-	       fAppend: BOOL
-
-
+ILAppendID proto WINAPI :PIDLIST_RELATIVE, :LPCSHITEMID, :BOOL
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 tagGPFIDL_FLAGS		typedef SDWORD
@@ -585,25 +498,11 @@ GPFIDL_ALTNAME		equ 0x0001	; short file name
 GPFIDL_UNCPRINTER	equ 0x0002	; include UNC printer names too (non file system item)
 GPFIDL_FLAGS		typedef SINT
 
-;SHSTDAPI
-SHGetPathFromIDListEx proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE,
-	       pszPath: PWSTR,
-	       cchPath: DWORD,
-		 uOpts: GPFIDL_FLAGS
-
+SHGetPathFromIDListEx proto WINAPI :PCIDLIST_ABSOLUTE, :PWSTR, :DWORD, :GPFIDL_FLAGS
 endif
 
-;SHSTDAPI
-SHGetPathFromIDListA proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE,
-	       pszPath: LPSTR
-
-
-;SHSTDAPI
-SHGetPathFromIDListW proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE,
-	       pszPath: LPWSTR
+SHGetPathFromIDListA proto WINAPI :PCIDLIST_ABSOLUTE, :LPSTR
+SHGetPathFromIDListW proto WINAPI :PCIDLIST_ABSOLUTE, :LPWSTR
 
 ifdef _UNICODE
 SHGetPathFromIDList	equ <SHGetPathFromIDistW>
@@ -611,22 +510,9 @@ else
 SHGetPathFromIDList	equ <SHGetPathFromIDistA>
 endif
 
-;SHSTDAPI
-SHCreateDirectory proto WINAPI \
-		  hwnd: HWND,
-	       pszPath: LPCWSTR
-
-;SHSTDAPI
-SHCreateDirectoryExA proto WINAPI \
-		  hwnd: HWND,
-	       pszPath: LPCSTR,
-		   psa: ptr SECURITY_ATTRIBUTES
-
-;SHSTDAPI
-SHCreateDirectoryExW proto WINAPI \
-		  hwnd: HWND,
-	       pszPath: LPCWSTR,
-		   psa: ptr SECURITY_ATTRIBUTES
+SHCreateDirectory proto WINAPI :HWND, :LPCWSTR
+SHCreateDirectoryExA proto WINAPI :HWND, :LPCSTR, :ptr SECURITY_ATTRIBUTES
+SHCreateDirectoryExW proto WINAPI :HWND, :LPCWSTR, :ptr SECURITY_ATTRIBUTES
 
 ifdef _UNICODE
 SHCreateDirectoryEx	equ <SHCreateDirectoryExW>
@@ -640,27 +526,11 @@ OFASI_OPENDESKTOP	equ 0x0002
 endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
-
-;SHSTDAPI
-SHOpenFolderAndSelectItems proto WINAPI \
-	    pidlFolder: PCIDLIST_ABSOLUTE,
-		  cidl: UINT,
-		 apidl: PCUITEMID_CHILD_ARRAY,
-	       dwFlags: DWORD
-
-
-;SHSTDAPI
-SHCreateShellItem proto WINAPI \
-	    pidlParent: PCIDLIST_ABSOLUTE,
-	     psfParent: ptr IShellFolder,
-		  pidl: PCUITEMID_CHILD,
-		  ppsi: ptr IShellItem
-
-
+SHOpenFolderAndSelectItems proto WINAPI :PCIDLIST_ABSOLUTE, :UINT, :PCUITEMID_CHILD_ARRAY, :DWORD
+SHCreateShellItem proto WINAPI :PCIDLIST_ABSOLUTE, :ptr IShellFolder, :PCUITEMID_CHILD, :ptr IShellItem
 endif
 
 REGSTR_PATH_SPECIAL_FOLDERS equ REGSTR_PATH_EXPLORER TEXT("\\Shell Folders")
-
 
 CSIDL_DESKTOP		equ 0x0000
 CSIDL_INTERNET		equ 0x0001
@@ -752,34 +622,10 @@ CSIDL_FLAG_PER_USER_INIT equ 0x0800
 endif
 CSIDL_FLAG_MASK		equ 0xFF00
 
-;SHSTDAPI
-SHGetSpecialFolderLocation proto WINAPI \
-		  hwnd: HWND,
-		 csidl: SINT,
-		 ppidl: ptr PIDLIST_ABSOLUTE
-
-
-;SHSTDAPI
-SHCloneSpecialIDList proto WINAPI \
-		  hwnd: HWND,
-		 csidl: SINT,
-	       fCreate: BOOL
-
-
-;SHSTDAPI
-SHGetSpecialFolderPathA proto WINAPI \
-		  hwnd: HWND,
-	       pszPath: LPSTR,
-		 csidl: SINT,
-	       fCreate: BOOL
-
-
-;SHSTDAPI
-SHGetSpecialFolderPathW proto WINAPI \
-		  hwnd: HWND,
-	       pszPath: LPWSTR,
-		 csidl: SINT,
-	       fCreate: BOOL
+SHGetSpecialFolderLocation proto WINAPI :HWND, :SINT, :ptr PIDLIST_ABSOLUTE
+SHCloneSpecialIDList proto WINAPI :HWND, :SINT, :BOOL
+SHGetSpecialFolderPathA proto WINAPI :HWND, :LPSTR, :SINT, :BOOL
+SHGetSpecialFolderPathW proto WINAPI :HWND, :LPWSTR, :SINT, :BOOL
 
 ifdef _UNICODE
 SHGetSpecialFolderPath	equ <SHGetSpecialFolderPathW>
@@ -788,81 +634,35 @@ SHGetSpecialFolderPath	equ <SHGetSpecialFolderPathA>
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
-;SHSTDAPI
 SHFlushSFCache proto WINAPI
 
 SHGFP_TYPE		typedef SDWORD
 SHGFP_TYPE_CURRENT	equ 0
 SHGFP_TYPE_DEFAULT	equ 1	; default value, may not exist
 
-;SHFOLDERAPI
-SHGetFolderPathA proto WINAPI \
-		  hwnd: HWND,
-		 csidl: SINT,
-		hToken: HANDLE,
-	       dwFlags: DWORD,
-	       pszPath: LPSTR
-
-;SHFOLDERAPI
-SHGetFolderPathW proto WINAPI \
-		  hwnd: HWND,
-		 csidl: SINT,
-		hToken: HANDLE,
-	       dwFlags: DWORD,
-	       pszPath: LPWSTR
+SHGetFolderPathA proto WINAPI :HWND, :SINT, :HANDLE, :DWORD, :LPSTR
+SHGetFolderPathW proto WINAPI :HWND, :SINT, :HANDLE, :DWORD, :LPWSTR
 
 ifdef _UNICODE
 SHGetFolderPath		equ <SHGetFolderPathW>
 else
 SHGetFolderPath		equ <SHGetFolderPathA>
 endif
-;SHSTDAPI
-SHGetFolderLocation proto WINAPI \
-		  hwnd: HWND,
-		 csidl: SINT,
-		hToken: HANDLE,
-	       dwFlags: DWORD,
-		 ppidl: ptr PIDLIST_ABSOLUTE
 
+SHGetFolderLocation proto WINAPI :HWND, :SINT, :HANDLE, :DWORD, :ptr PIDLIST_ABSOLUTE
 endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
-;SHSTDAPI
-SHSetFolderPathA proto WINAPI \
-		 csidl: SINT,
-		hToken: HANDLE,
-	       dwFlags: DWORD,
-	       pszPath: LPCSTR
-
-;SHSTDAPI
-SHSetFolderPathW proto WINAPI \
-		 csidl: SINT,
-		hToken: HANDLE,
-	       dwFlags: DWORD,
-	       pszPath: LPCWSTR
+SHSetFolderPathA proto WINAPI :SINT, :HANDLE, :DWORD, :LPCSTR
+SHSetFolderPathW proto WINAPI :SINT, :HANDLE, :DWORD, :LPCWSTR
 
 ifdef _UNICODE
 SHSetFolderPath		equ <SHSetFolderPathW>
 else
 SHSetFolderPath		equ <SHSetFolderPathA>
 endif
-;SHSTDAPI
-SHGetFolderPathAndSubDirA proto WINAPI \
-		  hwnd: HWND,
-		 csidl: SINT,
-		hToken: HANDLE,
-	       dwFlags: DWORD,
-	     pszSubDir: LPCSTR,
-	       pszPath: LPSTR
-
-;SHSTDAPI
-SHGetFolderPathAndSubDirW proto WINAPI \
-		  hwnd: HWND,
-		 csidl: SINT,
-		hToken: HANDLE,
-	       dwFlags: DWORD,
-	     pszSubDir: LPCWSTR,
-	       pszPath: LPWSTR
+SHGetFolderPathAndSubDirA proto WINAPI :HWND, :SINT, :HANDLE, :DWORD, :LPCSTR, :LPSTR
+SHGetFolderPathAndSubDirW proto WINAPI :HWND, :SINT, :HANDLE, :DWORD, :LPCWSTR, :LPWSTR
 
 ifdef _UNICODE
 SHGetFolderPathAndSubDir equ <SHGetFolderPathAndSubDirW>
@@ -872,7 +672,6 @@ endif
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-
 
 KNOWN_FOLDER_FLAG	typedef SDWORD
 KF_FLAG_DEFAULT		equ 0x00000000
@@ -887,38 +686,14 @@ KF_FLAG_SIMPLE_IDLIST	equ 0x00000100
 KF_FLAG_ALIAS_ONLY	equ 0x80000000
 
 
-;STDAPI
-SHGetKnownFolderIDList proto WINAPI \
-		  rfid: REFKNOWNFOLDERID,
-	       dwFlags: DWORD,
-		hToken: HANDLE,
-		 ppidl: ptr PIDLIST_ABSOLUTE
-
-;STDAPI
-SHSetKnownFolderPath proto WINAPI \
-		  rfid: REFKNOWNFOLDERID,
-	       dwFlags: DWORD,
-		hToken: HANDLE,
-	       pszPath: PCWSTR
-
-;STDAPI
-SHGetKnownFolderPath proto WINAPI \
-		  rfid: REFKNOWNFOLDERID,
-	       dwFlags: DWORD,
-		hToken: HANDLE,
-	      ppszPath: ptr PWSTR
+SHGetKnownFolderIDList proto WINAPI :REFKNOWNFOLDERID, :DWORD, :HANDLE, :ptr PIDLIST_ABSOLUTE
+SHSetKnownFolderPath proto WINAPI :REFKNOWNFOLDERID, :DWORD, :HANDLE, :PCWSTR
+SHGetKnownFolderPath proto WINAPI :REFKNOWNFOLDERID, :DWORD, :HANDLE, :ptr PWSTR
 
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
-;STDAPI
-SHGetKnownFolderItem proto WINAPI \
-		  rfid: REFKNOWNFOLDERID,
-		 flags: KNOWN_FOLDER_FLAG,
-		hToken: HANDLE,
-		  riid: REFIID,
-		   ppv: PVOID
-
+SHGetKnownFolderItem proto WINAPI :REFKNOWNFOLDERID, :KNOWN_FOLDER_FLAG, :HANDLE, :REFIID, :ptr
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
@@ -943,7 +718,7 @@ if (NTDDI_VERSION GE NTDDI_VISTA)
 
 LPSHELLVIEWID		typedef ptr SHELLVIEWID
 
-SHFOLDERCUSTOMSETTINGS	STRUC 8
+SHFOLDERCUSTOMSETTINGS	STRUC
 dwSize			dd ?
 dwMask			dd ?
 pvid			LPSHELLVIEWID ?
@@ -964,12 +739,7 @@ LPSHFOLDERCUSTOMSETTINGS typedef ptr SHFOLDERCUSTOMSETTINGS
 
 .pragma pack(pop)
 
-;SHSTDAPI
-SHGetSetFolderCustomSettings proto WINAPI \
-		  pfcs: LPSHFOLDERCUSTOMSETTINGS,
-	       pszPath: LPCWSTR,
-	   dwReadWrite: DWORD
-
+SHGetSetFolderCustomSettings proto WINAPI :LPSHFOLDERCUSTOMSETTINGS, :LPCWSTR, :DWORD
 
 endif
 endif
@@ -992,7 +762,7 @@ BROWSEINFOA		ENDS
 PBROWSEINFOA		typedef ptr BROWSEINFOA
 LPBROWSEINFOA		typedef ptr BROWSEINFOA
 
-BROWSEINFOW		STRUC 8
+BROWSEINFOW		STRUC
 hwndOwner		HWND ?
 pidlRoot		PCIDLIST_ABSOLUTE ?
 pszDisplayName		LPWSTR ?
@@ -1053,13 +823,8 @@ BFFM_SETSTATUSTEXTW	equ (WM_USER + 104)
 BFFM_SETOKTEXT		equ (WM_USER + 105)
 BFFM_SETEXPANDED	equ (WM_USER + 106)
 
-;SHSTDAPI_(PIDLIST_ABSOLUTE)
-SHBrowseForFolderA proto WINAPI \
-		  lpbi: LPBROWSEINFOA
-
-;SHSTDAPI_(PIDLIST_ABSOLUTE)
-SHBrowseForFolderW proto WINAPI \
-		  lpbi: LPBROWSEINFOW
+SHBrowseForFolderA proto WINAPI :LPBROWSEINFOA
+SHBrowseForFolderW proto WINAPI :LPBROWSEINFOW
 
 
 ifdef _UNICODE
@@ -1076,12 +841,7 @@ BFFM_SETSELECTION	equ <BFFM_SETSEECTIONA>
 BFFM_VALIDATEFAILED	equ <BFFM_VALIDATEFAILEDA>
 endif
 
-
-;SHSTDAPI
-SHLoadInProc proto WINAPI \
-		rclsid: REFCLSID
-
-
+SHLoadInProc proto WINAPI :REFCLSID
 
 if (_WIN32_IE GE _WIN32_IE_IE501)
 ISHCUTCMDID_DOWNLOADICON	equ 0
@@ -1095,42 +855,33 @@ endif
 
 
 STR_PARSE_WITH_PROPERTIES equ <L"ParseWithProperties">
-
 STR_PARSE_PARTIAL_IDLIST equ <L"ParseOriginalItem">
 
 
-;SHSTDAPI
-SHGetDesktopFolder proto WINAPI \
-		 ppshf: ptr IShellFolder
-
-
+SHGetDesktopFolder proto WINAPI :ptr IShellFolder
 
 .comdef IShellDetails : public IUnknown
 
     GetDetailsOf	proc :PCUITEMID_CHILD, :UINT, :ptr
     ColumnClick		proc :UINT
-
-    .ends
+   .ends
 
 .comdef IObjMgr : public IUnknown
 
     Append		proc :ptr
     Remove		proc :ptr
-
-    .ends
+   .ends
 
 .comdef ICurrentWorkingDirectory : public IUnknown
 
     GetDirectory	proc :LPWSTR, :DWORD
     SetDirectory	proc :LPCWSTR
-
-    .ends
+   .ends
 
 .comdef IACList : public IUnknown
 
     Expand		proc :LPCWSTR
-
-    .ends
+   .ends
 
 
 tagAUTOCOMPLETELISTOPTIONS typedef SDWORD
@@ -1151,8 +902,7 @@ endif
 
     SetOptions		proc :DWORD
     GetOptions		proc :ptr
-
-    .ends
+   .ends
 
 
 PROGDLG_NORMAL		equ 0x00000000
@@ -1184,8 +934,7 @@ endif
     SetLine		proc :DWORD, :LPCWSTR, :BOOL, :LPCVOID
     SetCancelMsg	proc :LPCWSTR, :LPCVOID
     Timer		proc :DWORD, :LPCVOID
-
-    .ends
+   .ends
 
 
 .comdef IDockingWindowSite : public IOleWindow
@@ -1193,8 +942,7 @@ endif
     GetBorderDW		proc :ptr, :LPRECT
     RequestBorderSpaceDW proc :ptr, :LPCBORDERWIDTHS
     SetBorderSpaceDW	proc :ptr, :LPCBORDERWIDTHS
-
-    .ends
+   .ends
 
 DWFRF_NORMAL		equ 0x0000
 DWFRF_DELETECONFIGDATA	equ 0x0001
@@ -1208,16 +956,14 @@ DWFAF_AUTOHIDE		equ 0x0010
     AddToolbar		proc :ptr, :LPCWSTR, :DWORD
     RemoveToolbar	proc :ptr, :DWORD
     FindToolbar		proc :LPCWSTR, :REFIID, :ptr
-
-    .ends
+   .ends
 
 if (_WIN32_IE GE 0x0400)
 
 .comdef IThumbnailCapture : public IUnknown
 
     CaptureThumbnail	proc :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPTHUMBNAILCAPTURE	typedef ptr IThumbnailCapture
 
@@ -1241,8 +987,7 @@ PENUMSHELLIMAGESTOREDATA typedef ptr ENUMSHELLIMAGESTOREDATA
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 LPENUMSHELLIMAGESTORE	typedef ptr IEnumShellImageStore
 
@@ -1265,8 +1010,7 @@ SHIMSTCAPFLAG_PURGEABLE equ 0x0002
     DeleteEntry		proc :LPCWSTR
     IsEntryInStore	proc :LPCWSTR, :ptr
     Enum		proc :ptr
-
-    .ends
+   .ends
 
 LPSHELLIMAGESTORE	typedef ptr IShellImageStore
 
@@ -1311,7 +1055,7 @@ crBtnLt			COLORREF ?
 crBtnDk			COLORREF ?
 wViewMode		dw ?
 wAlign			dw ?
- psf			LPIShellFolder ?
+psf			LPIShellFolder ?
 pidl			PIDLIST_ABSOLUTE ?
 BANDINFOSFB		ENDS
 PBANDINFOSFB		typedef ptr BANDINFOSFB
@@ -1323,8 +1067,7 @@ PBANDINFOSFB		typedef ptr BANDINFOSFB
     InitializeSFB	proc :ptr, :PCIDLIST_ABSOLUTE
     SetBandInfoSFB	proc :PBANDINFOSFB
     GetBandInfoSFB	proc :PBANDINFOSFB
-
-    .ends
+   .ends
 
 .comdef IDeskBarClient : public IOleWindow
 
@@ -1332,8 +1075,7 @@ PBANDINFOSFB		typedef ptr BANDINFOSFB
     SetModeDBC		proc :DWORD
     UIActivateDBC	proc :DWORD
     GetSize		proc :DWORD, :LPRECT
-
-    .ends
+   .ends
 
 DBC_GS_IDEAL		equ 0
 DBC_GS_SIZEDOWN		equ 1
@@ -1443,7 +1185,6 @@ COMPONENT		ENDS
 LPCOMPONENT		typedef ptr COMPONENT
 LPCCOMPONENT		typedef ptr COMPONENT
 
-
 IS_NORMAL		equ 0x00000001
 IS_FULLSCREEN		equ 0x00000002
 IS_SPLIT		equ 0x00000004
@@ -1530,8 +1271,7 @@ COMPONENT_DEFAULT_TOP	equ (0xFFFF)
     GenerateDesktopItemHtml proc :LPCWSTR, :LPCOMPONENT, :DWORD
     AddUrl		proc :HWND, :LPCWSTR, :LPCOMPONENT, :DWORD
     GetDesktopItemBySource proc :LPCWSTR, :LPCOMPONENT, :DWORD
-
-    .ends
+   .ends
 
 LPACTIVEDESKTOP		typedef ptr IActiveDesktop
 
@@ -1555,8 +1295,7 @@ SCHEME_CREATE		equ 0x0080
     EnsureUpdateHTML	proc
     SetScheme		proc :LPCWSTR, :DWORD
     GetScheme		proc :LPWSTR, :ptr, :DWORD
-
-    .ends
+   .ends
 
 LPACTIVEDESKTOPP	typedef ptr IActiveDesktopP
 
@@ -1568,8 +1307,7 @@ GADOF_DIRTY		equ 0x00000001
     GetADObjectFlags	proc :ptr, :DWORD
     UpdateAllDesktopSubscriptions proc
     MakeDynamicChanges	proc :ptr
-
-    .ends
+   .ends
 
 LPADESKTOPP2		typedef ptr IADesktopP2
 
@@ -1626,8 +1364,7 @@ LPCSHCOLUMNDATA		typedef ptr SHCOLUMNDATA
     Initialize		proc :LPCSHCOLUMNINIT
     GetColumnInfo	proc :DWORD, :ptr
     GetItemData		proc :LPCSHCOLUMNID, :LPCSHCOLUMNDATA, :ptr
-
-    .ends
+   .ends
 
 endif
 endif
@@ -1811,7 +1548,6 @@ fRecursive		BOOL ?
 SHChangeNotifyEntry	ENDS
 
 
-
 SHCNRF_InterruptLevel	equ 0x0001
 SHCNRF_ShellLevel	equ 0x0002
 SHCNRF_RecursiveInterrupt equ 0x1000
@@ -1838,19 +1574,15 @@ SHCNE_RENAMEFOLDER	equ 0x00020000
 SHCNE_FREESPACE		equ 0x00040000
 
 if (_WIN32_IE GE 0x0400)
-
 SHCNE_EXTENDED_EVENT	equ 0x04000000
 endif
-
 SHCNE_ASSOCCHANGED	equ 0x08000000
-
 SHCNE_DISKEVENTS	equ 0x0002381F
 SHCNE_GLOBALEVENTS	equ 0x0C0581E0
 SHCNE_ALLEVENTS		equ 0x7FFFFFFF
 SHCNE_INTERRUPT		equ 0x80000000
 
 if (_WIN32_IE GE 0x0400)
-
 SHCNEE_ORDERCHANGED	equ 2
 SHCNEE_MSI_CHANGE	equ 4
 SHCNEE_MSI_UNINSTALL	equ 5
@@ -1876,28 +1608,19 @@ SHCNF_PATH		equ SHCNF_PATHA
 SHCNF_PRINTER		equ SHCNF_PRINTERA
 endif
 
-;SHSTDAPI
-SHChangeNotify proto WINAPI \
-	      wEventId: LONG,
-		uFlags: UINT,
-	       dwItem1: LPCVOID,
-	       dwItem2: LPCVOID
-
-
+SHChangeNotify proto WINAPI :LONG, :UINT, :LPCVOID, :LPCVOID
 
 .comdef IShellChangeNotify : public IUnknown
 
     OnChange		proc :LONG, :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE
-
-    .ends
+   .ends
 
 
 .comdef IQueryInfo : public IUnknown
 
     GetInfoTip		proc :DWORD, :ptr
     GetInfoFlags	proc :ptr
-
-    .ends
+   .ends
 
 QITIPF_DEFAULT		equ 0x00000000
 QITIPF_USENAME		equ 0x00000001
@@ -1952,11 +1675,7 @@ else
 SHARD_PATH		equ <SHARD_PATHA>
 endif
 
-;SHSTDAPI
-SHAddToRecentDocs proto WINAPI \
-		uFlags: UINT,
-		    pv: LPCVOID
-
+SHAddToRecentDocs proto WINAPI :UINT, :LPCVOID
 
 SHChangeDWORDAsIDList	STRUC
 cb			USHORT ?
@@ -1969,7 +1688,6 @@ LPSHChangeDWORDAsIDList typedef ptr SHChangeDWORDAsIDList
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 
-
 SHChangeUpdateImageIDList STRUC
 cb			USHORT ?
 iIconIndex		SINT ?
@@ -1979,12 +1697,9 @@ dwProcessID		dd ?
 szName			WCHAR MAX_PATH dup(?)
 cbZero			USHORT ?
 SHChangeUpdateImageIDList ENDS
- LPSHChangeUpdateImageIDList typedef ptr SHChangeUpdateImageIDList
-;SHSTDAPI
-SHHandleUpdateImage proto WINAPI \
-	     pidlExtra: PCIDLIST_ABSOLUTE
+LPSHChangeUpdateImageIDList typedef ptr SHChangeUpdateImageIDList
 
-
+SHHandleUpdateImage proto WINAPI :PCIDLIST_ABSOLUTE
 
 SHChangeProductKeyAsIDList  STRUC
 cb			USHORT ?
@@ -1994,19 +1709,8 @@ SHChangeProductKeyAsIDList ENDS
 LPSHChangeProductKeyAsIDList typedef ptr SHChangeProductKeyAsIDList
 
 
-;SHSTDAPI
-SHUpdateImageA proto WINAPI \
-	   pszHashItem: LPCSTR,
-		iIndex: SINT,
-		uFlags: UINT,
-	   iImageIndex: SINT
-
-;SHSTDAPI
-SHUpdateImageW proto WINAPI \
-	   pszHashItem: LPCWSTR,
-		iIndex: SINT,
-		uFlags: UINT,
-	   iImageIndex: SINT
+SHUpdateImageA proto WINAPI :LPCSTR, :SINT, :UINT, :SINT
+SHUpdateImageW proto WINAPI :LPCWSTR, :SINT, :UINT, :SINT
 
 ifdef _UNICODE
 SHUpdateImage		equ <SHUpdateImageW>
@@ -2015,56 +1719,23 @@ SHUpdateImage		equ <SHUpdateImageA>
 endif
 endif
 
-;SHSTDAPI_(ULONG)
-SHChangeNotifyRegister proto WINAPI \
-		  hwnd: HWND,
-	      fSources: SINT,
-	       fEvents: LONG,
-		  wMsg: UINT,
-	      cEntries: SINT,
-		pshcne: ptr SHChangeNotifyEntry
-
-;SHSTDAPI
-SHChangeNotifyDeregister proto WINAPI \
-		  ulID: DWORD
-
+SHChangeNotifyRegister proto WINAPI :HWND, :SINT, :LONG, :UINT, :SINT, : ptr SHChangeNotifyEntry
+SHChangeNotifyDeregister proto WINAPI :DWORD
 
 SCNRT_STATUS		typedef SDWORD
 SCNRT_ENABLE		equ 0
 SCNRT_DISABLE		equ 1
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;STDAPI
-SHChangeNotifyRegisterThread proto WINAPI \
-		status: SCNRT_STATUS
-
+SHChangeNotifyRegisterThread proto WINAPI :SCNRT_STATUS
 endif
 
-;SHSTDAPI_(HANDLE)
-SHChangeNotification_Lock proto WINAPI \
-	      hChange: HANDLE,
-	     dwProcId: DWORD,
-	       pppidl: ptr PIDLIST_ABSOLUTE,
-	      plEvent: ptr
-
-;SHSTDAPI
-SHChangeNotification_Unlock proto WINAPI \
-		 hLock: HANDLE
-
+SHChangeNotification_Lock proto WINAPI :HANDLE, :DWORD, :ptr PIDLIST_ABSOLUTE, :ptr
+SHChangeNotification_Unlock proto WINAPI :HANDLE
 if (_WIN32_IE GE 0x0400)
-;SHSTDAPI
-SHGetRealIDL proto WINAPI \
-		   psf: ptr IShellFolder,
-	    pidlSimple: PCUITEMID_CHILD,
-	     ppidlReal: ptr PITEMID_CHILD
-
+SHGetRealIDL proto WINAPI :ptr IShellFolder, :PCUITEMID_CHILD, :ptr PITEMID_CHILD
 endif
-
-
-;SHSTDAPI
-SHGetInstanceExplorer proto WINAPI \
-		 ppunk: ptr IUnknown
-
+SHGetInstanceExplorer proto WINAPI :ptr IUnknown
 
 SHGDFIL_FINDDATA	equ 1
 SHGDFIL_NETRESOURCE	equ 2
@@ -2106,27 +1777,13 @@ LPSHDESCRIPTIONID	typedef ptr SHDESCRIPTIONID
 
 .pragma pack(pop)
 
-
-;SHSTDAPI
-SHGetDataFromIDListA proto WINAPI \
-		   psf: ptr IShellFolder,
-		  pidl: PCUITEMID_CHILD,
-	       nFormat: SINT,
-		    pv: PVOID,
-		    cb: SINT
-SHGetDataFromIDListW proto WINAPI \
-		   psf: ptr IShellFolder,
-		  pidl: PCUITEMID_CHILD,
-	       nFormat: SINT,
-		    pv: PVOID,
-		    cb: SINT
+SHGetDataFromIDListA proto WINAPI :ptr IShellFolder, :PCUITEMID_CHILD, :SINT, :ptr, :SINT
+SHGetDataFromIDListW proto WINAPI :ptr IShellFolder, :PCUITEMID_CHILD, :SINT, :ptr, :SINT
 ifdef _UNICODE
 SHGetDataFromIDList	equ <SHGetDataFromIDistW>
 else
 SHGetDataFromIDList	equ <SHGetDataFromIDistA>
 endif
-
-
 
 PRF_VERIFYEXISTS	equ 0x0001
 PRF_TRYPROGRAMEXTENSIONS equ (0x0002 OR PRF_VERIFYEXISTS)
@@ -2136,61 +1793,17 @@ if (NTDDI_VERSION GE NTDDI_WINXPSP2)
 PRF_REQUIREABSOLUTE	equ 0x0010
 endif
 
-;SHSTDAPI
-RestartDialog proto WINAPI \
-		  hwnd: HWND,
-	      lpPrompt: LPCWSTR,
-	      dwReturn: DWORD
-
+RestartDialog proto WINAPI :HWND, :LPCWSTR, :DWORD
 if (NTDDI_VERSION GE NTDDI_WINXP)
-;SHSTDAPI
-RestartDialogEx proto WINAPI \
-		  hwnd: HWND,
-	      lpPrompt: LPCWSTR,
-	      dwReturn: DWORD,
-	  dwReasonCode: DWORD
-
+RestartDialogEx proto WINAPI :HWND, :LPCWSTR, :DWORD, :DWORD
 endif
-
-;SHSTDAPI
-SHCoCreateInstance proto WINAPI \
-	      pszCLSID: LPCWSTR,
-		pclsid: ptr CLSID,
-	     pUnkOuter: ptr IUnknown,
-		  riid: REFIID,
-		   ppv: PVOID
-
-
+SHCoCreateInstance proto WINAPI :LPCWSTR, :ptr CLSID, :ptr IUnknown, :REFIID, :ptr
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-SHCreateDataObject proto WINAPI \
-	    pidlFolder: PCIDLIST_ABSOLUTE,
-		  cidl: UINT,
-		 apidl: PCUITEMID_CHILD_ARRAY,
-	      pdtInner: ptr IDataObject,
-		  riid: REFIID,
-		   ppv: PVOID
+SHCreateDataObject proto WINAPI :PCIDLIST_ABSOLUTE, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr IDataObject, :REFIID, :ptr
 endif
-;SHSTDAPI
-CIDLData_CreateFromIDArray proto WINAPI \
-	    pidlFolder: PCIDLIST_ABSOLUTE,
-		  cidl: UINT,
-		 apidl: PCUIDLIST_RELATIVE_ARRAY,
-	       ppdtobj: ptr IDataObject
-
-;SHSTDAPI
-SHCreateStdEnumFmtEtc proto WINAPI \
-		  cfmt: UINT,
-		  afmt: ptr FORMATETC,
-       ppenumFormatEtc: ptr IEnumFORMATETC
-
-;SHSTDAPI
-SHDoDragDrop proto WINAPI \
-		  hwnd: HWND,
-		 pdata: ptr IDataObject,
-		 pdsrc: ptr IDropSource,
-	      dwEffect: DWORD,
-	     pdwEffect: ptr DWORD
+CIDLData_CreateFromIDArray proto WINAPI :PCIDLIST_ABSOLUTE, :UINT, :PCUIDLIST_RELATIVE_ARRAY, :ptr IDataObject
+SHCreateStdEnumFmtEtc proto WINAPI :UINT, :ptr FORMATETC, :ptr IEnumFORMATETC
+SHDoDragDrop proto WINAPI :HWND, :ptr IDataObject, :ptr IDropSource, :DWORD, :ptr DWORD
 
 NUM_POINTS		equ 3
 AUTO_SCROLL_DATA	STRUC
@@ -2201,37 +1814,13 @@ pts			POINT NUM_POINTS dup(<>)
 dwTimes			dd NUM_POINTS dup(?)
 AUTO_SCROLL_DATA	ENDS
 
-;SHSTDAPI
-DAD_SetDragImage proto WINAPI \
-		   him: HIMAGELIST,
-	     pptOffset: ptr POINT
-
-;SHSTDAPI
-DAD_DragEnterEx proto WINAPI \
-	    hwndTarget: HWND,
-	       ptStart: POINT
-
-;SHSTDAPI
-DAD_DragEnterEx2 proto WINAPI \
-	    hwndTarget: HWND,
-	       ptStart: POINT,
-	     pdtObject: ptr IDataObject
-
-;SHSTDAPI
-DAD_ShowDragImage proto WINAPI \
-		 fShow: BOOL
-
-;SHSTDAPI
-DAD_DragMove proto WINAPI \
-		    pt: POINT
-
-;SHSTDAPI
+DAD_SetDragImage proto WINAPI :HIMAGELIST, :ptr POINT
+DAD_DragEnterEx proto WINAPI :HWND, :POINT
+DAD_DragEnterEx2 proto WINAPI :HWND, :POINT, :ptr IDataObject
+DAD_ShowDragImage proto WINAPI :BOOL
+DAD_DragMove proto WINAPI :POINT
 DAD_DragLeave proto WINAPI
-;SHSTDAPI
-DAD_AutoScroll proto WINAPI \
-		  hwnd: HWND,
-		   pad: ptr AUTO_SCROLL_DATA,
-		pptNow: ptr POINT
+DAD_AutoScroll proto WINAPI :HWND, :ptr AUTO_SCROLL_DATA, :ptr POINT
 
 CABINETSTATE		STRUC
 cLength			dw ?
@@ -2253,40 +1842,13 @@ LPCABINETSTATE		typedef ptr CABINETSTATE
 
 CABINETSTATE_VERSION	equ 2
 
-;SHSTDAPI
-ReadCabinetState proto WINAPI \
-		   pcs: ptr CABINETSTATE,
-	       cLength: SINT
-
-;SHSTDAPI
-WriteCabinetState proto WINAPI \
-		   pcs: ptr CABINETSTATE
-
-;SHSTDAPI
-PathMakeUniqueName proto WINAPI \
-	 pszUniqueName: LPWSTR,
-		cchMax: UINT,
-	   pszTemplate: LPCWSTR,
-	  pszLongPlate: LPCWSTR,
-		pszDir: LPCWSTR
-
-;SHSTDAPI
-PathQualify proto WINAPI \
-		   psz: LPWSTR
-
-;SHSTDAPI
-PathIsExe proto WINAPI \
-	       pszPath: LPCWSTR
-
-;SHSTDAPI
-PathIsSlowA proto WINAPI \
-	       pszFile: LPCSTR,
-		dwAttr: DWORD
-
-;SHSTDAPI
-PathIsSlowW proto WINAPI \
-	       pszFile: LPCWSTR,
-		dwAttr: DWORD
+ReadCabinetState proto WINAPI :ptr CABINETSTATE, :SINT
+WriteCabinetState proto WINAPI :ptr CABINETSTATE
+PathMakeUniqueName proto WINAPI :LPWSTR, :UINT, :LPCWSTR, :LPCWSTR, :LPCWSTR
+PathQualify proto WINAPI :LPWSTR
+PathIsExe proto WINAPI :LPCWSTR
+PathIsSlowA proto WINAPI :LPCSTR, :DWORD
+PathIsSlowW proto WINAPI :LPCWSTR, :DWORD
 
 ifdef _UNICODE
 PathIsSlow		equ <PathIsSlowW>
@@ -2299,82 +1861,29 @@ PCS_REMOVEDCHAR		equ 0x00000002
 PCS_TRUNCATED		equ 0x00000004
 PCS_PATHTOOLONG		equ 0x00000008
 
-;SHSTDAPI
-PathCleanupSpec proto WINAPI \
-		pszDir: LPCWSTR,
-	       pszSpec: LPWSTR
-
-
-;SHSTDAPI
-PathResolve proto WINAPI \
-	      lpszPath: LPWSTR,
-		  dirs: PZPCWSTR,
-		fFlags: UINT
-
-;SHSTDAPI
-GetFileNameFromBrowse proto WINAPI \
-		  hwnd: HWND,
-	   pszFilePath: LPWSTR,
-	   cchFilePath: UINT,
-	 pszWorkingDir: LPCWSTR,
-	     pszDefExt: LPCWSTR,
-	    pszFilters: LPCWSTR,
-	      pszTitle: LPCWSTR
-
-;SHSTDAPI
-DriveType proto WINAPI \
-		iDrive: SINT
-
-
-;SHSTDAPI
-RealDriveType proto WINAPI \
-		iDrive: SINT,
-	   fOKToHitNet: BOOL
-
-;SHSTDAPI
-IsNetDrive proto WINAPI \
-		iDrive: SINT
+PathCleanupSpec proto WINAPI :LPCWSTR, :LPWSTR
+PathResolve proto WINAPI :LPWSTR, :PZPCWSTR, :UINT
+GetFileNameFromBrowse proto WINAPI :HWND, :LPWSTR, :UINT, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
+DriveType proto WINAPI :SINT
+RealDriveType proto WINAPI :SINT, :BOOL
+IsNetDrive proto WINAPI :SINT
 
 MM_ADDSEPARATOR		equ 0x00000001
 MM_SUBMENUSHAVEIDS	equ 0x00000002
 MM_DONTREMOVESEPS	equ 0x00000004
 
-;SHSTDAPI_(UINT)
-Shell_MergeMenus proto WINAPI \
-		 hmDst: HMENU,
-		 hmSrc: HMENU,
-	       uInsert: UINT,
-	     uIDAdjust: UINT,
-	  uIDAdjustMax: UINT,
-		uFlags: ULONG
-
-
-
-;SHSTDAPI
-SHObjectProperties proto WINAPI \
-		  hwnd: HWND,
-	shopObjectType: DWORD,
-	 pszObjectName: PCWSTR,
-       pszPropertyPage: PCWSTR
-
+Shell_MergeMenus proto WINAPI :HMENU, :HMENU, :UINT, :UINT, :UINT, :ULONG
+SHObjectProperties proto WINAPI :HWND, :DWORD, :PCWSTR, :PCWSTR
 
 SHOP_PRINTERNAME	equ 0x00000001
 SHOP_FILEPATH		equ 0x00000002
 SHOP_VOLUMEGUID		equ 0x00000004
 
-;SHSTDAPI
-SHFormatDrive proto WINAPI \
-		  hwnd: HWND,
-		 drive: UINT,
-		 fmtID: UINT,
-	       options: UINT
-
+SHFormatDrive proto WINAPI :HWND, :UINT, :UINT, :UINT
 
 SHFMT_ID_DEFAULT	equ 0xFFFF
-
 SHFMT_OPT_FULL		equ 0x0001
 SHFMT_OPT_SYSONLY	equ 0x0002
-
 SHFMT_ERROR		equ 0xFFFFFFFF
 SHFMT_CANCEL		equ 0xFFFFFFFE
 SHFMT_NOFORMAT		equ 0xFFFFFFFD
@@ -2383,28 +1892,10 @@ ifndef HPSXA_DEFINED
 HPSXA_DEFINED equ 1
 DECLARE_HANDLE( HPSXA )
 endif
-;UINT
-SHCreatePropSheetExtArray proto WINAPI \
-		  hKey: HKEY,
-	     pszSubKey: LPCWSTR,
-	     max_iface: UINT
-
-;UINT
-SHDestroyPropSheetExtArray proto WINAPI \
-		 hpsxa: HPSXA
-
-;UINT
-SHAddFromPropSheetExtArray proto WINAPI \
-		 hpsxa: HPSXA,
-	   lpfnAddPage: LPFNADDPROPSHEETPAGE,
-		lParam: LPARAM
-
-;UINT
-SHReplaceFromPropSheetExtArray proto WINAPI \
-		 hpsxa: HPSXA,
-	       uPageID: UINT,
-       lpfnReplaceWith: LPFNADDPROPSHEETPAGE,
-		lParam: LPARAM
+SHCreatePropSheetExtArray proto WINAPI :HKEY, :LPCWSTR, :UINT
+SHDestroyPropSheetExtArray proto WINAPI :HPSXA
+SHAddFromPropSheetExtArray proto WINAPI :HPSXA, :LPFNADDPROPSHEETPAGE, :LPARAM
+SHReplaceFromPropSheetExtArray proto WINAPI :HPSXA, :UINT, :LPFNADDPROPSHEETPAGE, :LPARAM
 
 if (NTDDI_VERSION GE NTDDI_WIN2K AND NTDDI_VERSION LT NTDDI_VISTA)
 .comdef IDefViewFrame : public IUnknown
@@ -2412,8 +1903,7 @@ if (NTDDI_VERSION GE NTDDI_WIN2K AND NTDDI_VERSION LT NTDDI_VISTA)
     GetWindowLV		proc :ptr
     ReleaseWindowLV	proc
     GetShellFolder	proc :ptr
-
-    .ends
+   .ends
 endif
 RESTRICTIONS		typedef SDWORD
 REST_NONE		equ 0x00000000
@@ -2632,32 +2122,11 @@ REST_USEDESKTOPINICACHE equ 0x41000005
 endif
 endif
 
-OpenRegStream proto WINAPI \
-		  hkey: HKEY,
-	     pszSubkey: LPCWSTR,
-	      pszValue: LPCWSTR,
-	       grfMode: DWORD
-
-;SHSTDAPI
-SHFindFiles proto WINAPI \
-	    pidlFolder: PCIDLIST_ABSOLUTE,
-	  pidlSaveFile: PCIDLIST_ABSOLUTE
-
-;SHSTDAPI
-PathGetShortPath proto WINAPI \
-	   pszLongPath: LPWSTR
-
-
-;SHSTDAPI
-PathYetAnotherMakeUniqueName proto WINAPI \
-	 pszUniqueName: LPWSTR,
-	       pszPath: LPCWSTR,
-	      pszShort: LPCWSTR,
-	   pszFileSpec: LPCWSTR
-
-;SHSTDAPI
-Win32DeleteFile proto WINAPI \
-	       pszPath: LPCWSTR
+OpenRegStream proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :DWORD
+SHFindFiles proto WINAPI :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE
+PathGetShortPath proto WINAPI :LPWSTR
+PathYetAnotherMakeUniqueName proto WINAPI :LPWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
+Win32DeleteFile proto WINAPI :LPCWSTR
 
 if (NTDDI_VERSION LT NTDDI_VISTA)
 PPCF_ADDQUOTES		equ 0x00000001
@@ -2666,76 +2135,26 @@ PPCF_NODIRECTORIES	equ 0x00000010
 PPCF_FORCEQUALIFY	equ 0x00000040
 PPCF_LONGESTPOSSIBLE	equ 0x00000080
 
-;SHSTDAPI
-PathProcessCommand proto WINAPI \
-		 lpSrc: LPCWSTR,
-		lpDest: LPWSTR,
-		  iMax: SINT,
-	       dwFlags: DWORD
-
+PathProcessCommand proto WINAPI :LPCWSTR, :LPWSTR, :SINT, :DWORD
 endif
-;SHSTDAPI
-SHRestricted proto WINAPI \
-		  rest: RESTRICTIONS
-
-;SHSTDAPI
-SignalFileOpen proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE
-
+SHRestricted proto WINAPI :RESTRICTIONS
+SignalFileOpen proto WINAPI :PCIDLIST_ABSOLUTE
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-AssocGetDetailsOfPropKey proto WINAPI \
-		   psf: ptr IShellFolder,
-		  pidl: PCUITEMID_CHILD,
-		  pkey: ptr PROPERTYKEY,
-		    pv: ptr VARIANT,
-	pfFoundPropKey: ptr BOOL
-
+AssocGetDetailsOfPropKey proto WINAPI :ptr IShellFolder, :PCUITEMID_CHILD, :ptr PROPERTYKEY, :ptr VARIANT, :ptr BOOL
 endif
-
 if (NTDDI_VERSION LT NTDDI_VISTA)
-;SHSTDAPI
-SHLoadOLE proto WINAPI \
-		lParam: LPARAM
-
+SHLoadOLE proto WINAPI :LPARAM
 endif
-
-;SHSTDAPI
-SHStartNetConnectionDialogA proto WINAPI \
-		  hwnd: HWND,
-	 pszRemoteName: LPCSTR,
-		dwType: DWORD
-
-;SHSTDAPI
-SHStartNetConnectionDialogW proto WINAPI \
-		  hwnd: HWND,
-	 pszRemoteName: LPCWSTR,
-		dwType: DWORD
-
+SHStartNetConnectionDialogA proto WINAPI :HWND, :LPCSTR, :DWORD
+SHStartNetConnectionDialogW proto WINAPI :HWND, :LPCWSTR, :DWORD
 ifdef _UNICODE
 SHStartNetConnectionDialog equ <SHStartNetConnectionDialogW>
 else
 SHStartNetConnectionDialog equ <SHStartNetConnectionDialogA>
 endif
-;SHSTDAPI
-SHDefExtractIconA proto WINAPI \
-	   pszIconFile: LPCSTR,
-		iIndex: SINT,
-		uFlags: UINT,
-	   phiconLarge: ptr HICON,
-	   phiconSmall: ptr HICON,
-	     nIconSize: UINT
-
-;SHSTDAPI
-SHDefExtractIconW proto WINAPI \
-	   pszIconFile: LPCWSTR,
-		iIndex: SINT,
-		uFlags: UINT,
-	   phiconLarge: ptr HICON,
-	   phiconSmall: ptr HICON,
-	     nIconSize: UINT
-
+SHDefExtractIconA proto WINAPI :LPCSTR, :SINT, :UINT, :ptr HICON, :ptr HICON, :UINT
+SHDefExtractIconW proto WINAPI :LPCWSTR, :SINT, :UINT, :ptr HICON, :ptr HICON, :UINT
 ifdef _UNICODE
 SHDefExtractIcon	equ <SHDefExtractIconW>
 else
@@ -2766,36 +2185,16 @@ POPENASINFO		typedef ptr OPENASINFO
 .pragma pack(pop)
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-SHOpenWithDialog proto WINAPI \
-	    hwndParent: HWND,
-	       poainfo: ptr OPENASINFO
-
+SHOpenWithDialog proto WINAPI :HWND, :ptr OPENASINFO
 endif
 
-;SHSTDAPI
-Shell_GetImageLists proto WINAPI \
-		 phiml: ptr HIMAGELIST,
-	    phimlSmall: ptr HIMAGELIST
+Shell_GetImageLists proto WINAPI :ptr HIMAGELIST, :ptr HIMAGELIST
 if 0
-;SHSTDAPI
-Shell_GetCachedImageIndex proto WINAPI \
-	  pwszIconPath: LPCWSTR,
-	    iIconIndex: SINT,
-	    uIconFlags: UINT
+Shell_GetCachedImageIndex proto WINAPI :LPCWSTR, :SINT, :UINT
 endif
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-Shell_GetCachedImageIndexA proto WINAPI \
-	   pszIconPath: LPCSTR,
-	    iIconIndex: SINT,
-	    uIconFlags: UINT
-
-;SHSTDAPI
-Shell_GetCachedImageIndexW proto WINAPI \
-	   pszIconPath: LPCWSTR,
-	    iIconIndex: SINT,
-	    uIconFlags: UINT
+Shell_GetCachedImageIndexA proto WINAPI :LPCSTR, :SINT, :UINT
+Shell_GetCachedImageIndexW proto WINAPI :LPCWSTR, :SINT, :UINT
 ifdef _UNICODE
 Shell_GetCachedImageIndex equ <Shell_GetCachedImageIndexW>
 else
@@ -2806,8 +2205,7 @@ endif
 .comdef IDocViewSite : public IUnknown
 
     OnSetTitle		proc :ptr
-
-    .ends
+   .ends
 
 VALIDATEUNC_CONNECT	equ 0x0001
 VALIDATEUNC_NOUI	equ 0x0002
@@ -2819,11 +2217,7 @@ else
 VALIDATEUNC_VALID	equ 0x0007
 endif
 
-;SHSTDAPI
-SHValidateUNC proto WINAPI \
-	     hwndOwner: HWND,
-	       pszFile: LPWSTR,
-	      fConnect: UINT
+SHValidateUNC proto WINAPI :HWND, :LPWSTR, :UINT
 
 OPENPROPS_NONE		equ 0x0000
 OPENPROPS_INHIBITPIF	equ 0x8000
@@ -2859,47 +2253,17 @@ PPROPPRG		typedef ptr PROPPRG
 LPPROPPRG		typedef ptr PROPPRG
 LPCPROPPRG		typedef ptr PROPPRG
 
-;SHSTDAPI_(HANDLE)
-PifMgr_OpenProperties proto WINAPI \
-		pszApp: LPCWSTR,
-		pszPIF: LPCWSTR,
-		  hInf: UINT,
-		 flOpt: UINT
-
-;SHSTDAPI
-PifMgr_GetProperties proto WINAPI \
-		hProps: HANDLE,
-	      pszGroup: LPCSTR,
-	       lpProps: ptr,
-	       cbProps: SINT,
-		 flOpt: UINT
-
-;SHSTDAPI
-PifMgr_SetProperties proto WINAPI \
-		hProps: HANDLE,
-	      pszGroup: LPCSTR,
-	       lpProps: ptr,
-	       cbProps: SINT,
-		 flOpt: UINT
-
-;SHSTDAPI_(HANDLE)
-PifMgr_CloseProperties proto WINAPI \
-		hProps: HANDLE,
-		 flOpt: UINT
-
-
-;SHSTDAPI
-SHSetInstanceExplorer proto WINAPI \
-		  punk: ptr IUnknown
-
-;SHSTDAPI
+PifMgr_OpenProperties proto WINAPI :LPCWSTR, :LPCWSTR, :UINT, :UINT
+PifMgr_GetProperties proto WINAPI :HANDLE, :LPCSTR, :ptr, :SINT, :UINT
+PifMgr_SetProperties proto WINAPI :HANDLE, :LPCSTR, :ptr, :SINT, :UINT
+PifMgr_CloseProperties proto WINAPI :HANDLE, :UINT
+SHSetInstanceExplorer proto WINAPI :ptr IUnknown
 IsUserAnAdmin proto WINAPI
 
 .comdef IInitializeObject : public IUnknown
 
     Initialize		proc
-
-    .ends
+   .ends
 
 
 BMICON_LARGE		equ 0
@@ -2910,21 +2274,14 @@ BMICON_LARGE		equ 0
     GetIconSize		proc :ptr
     SetBitmap		proc :HBITMAP
     GetBitmap		proc :ptr
+   .ends
 
-    .ends
-
-;SHSTDAPI_(LRESULT)
-SHShellFolderView_Message proto WINAPI \
-	      hwndMain: HWND,
-		  uMsg: UINT,
-		lParam: LPARAM
-
+SHShellFolderView_Message proto WINAPI :HWND, :UINT, :LPARAM
 
 .comdef IShellFolderViewCB : public IUnknown
 
     MessageSFVCB	proc :UINT, :WPARAM, :LPARAM
-
-    .ends
+   .ends
 
 LPIShellFolderViewCB	typedef ptr IShellFolderViewCB
 
@@ -3063,8 +2420,7 @@ SFVS_SELECT_INVERT	equ 0x2
     Select		proc :UINT
     QuerySupport	proc :ptr
     SetAutomationObject proc :ptr
-
-    .ends
+   .ends
 
 LPIShellView		typedef ptr IShellView
 
@@ -3075,24 +2431,12 @@ psvOuter		LPIShellView ?
 psfvcb			LPIShellFolderViewCB ?
 SFV_CREATE		ENDS
 
-;SHSTDAPI
-SHCreateShellFolderView proto WINAPI \
-		 pcsfv: ptr SFV_CREATE,
-		  ppsv: ptr IShellView
+SHCreateShellFolderView proto WINAPI :ptr SFV_CREATE, :ptr IShellView
 
 CALLBACK(LPFNDFMCALLBACK, :ptr, :HWND, :ptr IDataObject, :UINT, :WPARAM, :LPARAM)
 
-;SHSTDAPI
-CDefFolderMenu_Create2 proto WINAPI \
-	    pidlFolder: PCIDLIST_ABSOLUTE,
-		  hwnd: HWND,
-		  cidl: UINT,
-		 apidl: PCUITEMID_CHILD_ARRAY,
-		   psf: ptr IShellFolder,
-		   pfn: LPFNDFMCALLBACK,
-		 nKeys: UINT,
-		ahkeys: ptr HKEY,
-		  ppcm: ptr IContextMenu
+CDefFolderMenu_Create2 proto WINAPI :PCIDLIST_ABSOLUTE, :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr IShellFolder,
+			:LPFNDFMCALLBACK, :UINT, :ptr HKEY, :ptr IContextMenu
 
 LPHKEY			typedef ptr HKEY
 LPIContextMenuCB	typedef ptr IContextMenuCB
@@ -3111,32 +2455,11 @@ DEFCONTEXTMENU		ENDS
 
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-SHCreateDefaultContextMenu proto WINAPI \
-		  pdcm: ptr DEFCONTEXTMENU,
-		  riid: REFIID,
-		   ppv: PVOID
-
+SHCreateDefaultContextMenu proto WINAPI :ptr DEFCONTEXTMENU, :REFIID, :ptr
 endif
 
-
-;SHSTDAPI
-SHOpenPropSheetA proto WINAPI \
-	    pszCaption: LPCSTR,
-		ahkeys: ptr HKEY,
-		cikeys: UINT,
-	 pclsidDefault: ptr CLSID,
-		pdtobj: ptr IDataObject,
-		   psb: ptr LPIShellBrowser,
-	    pStartPage: LPCSTR
-SHOpenPropSheetW proto WINAPI \
-	    pszCaption: LPCWSTR,
-		ahkeys: ptr HKEY,
-		cikeys: UINT,
-	 pclsidDefault: ptr CLSID,
-		pdtobj: ptr IDataObject,
-		   psb: ptr LPIShellBrowser,
-	    pStartPage: LPCWSTR
+SHOpenPropSheetA proto WINAPI :LPCSTR, :ptr HKEY, :UINT, :ptr CLSID, :ptr IDataObject, :ptr LPIShellBrowser, :LPCSTR
+SHOpenPropSheetW proto WINAPI :LPCWSTR, :ptr HKEY, :UINT, :ptr CLSID, :ptr IDataObject, :ptr LPIShellBrowser, :LPCWSTR
 ifdef _UNICODE
 SHOpenPropSheet		equ <SHOpenPropSheetW>
 else
@@ -3252,18 +2575,8 @@ ShellFolderView_SetPoints macro _hwnd, _pdtobj
 	exitm<SHShellFolderView_Message(_hwnd,SFVM_SETPOINTS, _pdtobj)>
 	endm
 
-;include poppack.inc
-SHFind_InitMenuPopup proto WINAPI \
-		 hmenu: HMENU,
-	     hwndOwner: HWND,
-	    idCmdFirst: UINT,
-	     idCmdLast: UINT
-
-;SHSTDAPI
-SHCreateShellFolderViewEx proto WINAPI \
-		 pcsfv: LPCSFV,
-		  ppsv: ptr IShellView
-
+SHFind_InitMenuPopup proto WINAPI :HMENU, :HWND, :UINT, :UINT
+SHCreateShellFolderViewEx proto WINAPI :LPCSFV, :ptr IShellView
 
 PID_IS_URL		equ 2
 PID_IS_NAME		equ 4
@@ -3276,7 +2589,6 @@ PID_IS_WHATSNEW		equ 10
 PID_IS_AUTHOR		equ 11
 PID_IS_DESCRIPTION	equ 12
 PID_IS_COMMENT		equ 13
-
 
 PID_INTSITE_WHATSNEW	equ 2
 PID_INTSITE_AUTHOR	equ 3
@@ -3348,12 +2660,7 @@ SHELLSTATE_SIZE_NT4	equ FIELD_OFFSET(SHELLSTATE,version)
 SHELLSTATE_SIZE_IE4	equ FIELD_OFFSET(SHELLSTATE,uNotUsed)
 SHELLSTATE_SIZE_WIN2K	equ SHELLSTATE
 
-;SHSTDAPI
-SHGetSetSettings proto WINAPI \
-		  lpss: ptr SHELLSTATE,
-		dwMask: DWORD,
-		  bSet: BOOL
-
+SHGetSetSettings proto WINAPI :ptr SHELLSTATE, :DWORD, :BOOL
 
 SHELLFLAGSTATE		STRUC
 Flags			UINT ?
@@ -3391,60 +2698,17 @@ SSF_ICONSONLY		equ 0x01000000
 SSF_SHOWTYPEOVERLAY	equ 0x02000000
 endif
 
-;SHSTDAPI
-SHGetSettings proto WINAPI \
-		  psfs: ptr SHELLFLAGSTATE,
-		dwMask: DWORD
-
-
-;SHSTDAPI
-SHBindToParent proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE,
-		  riid: REFIID,
-		   ppv: PVOID,
-	     ppidlLast: ptr PCUITEMID_CHILD
-
+SHGetSettings proto WINAPI :ptr SHELLFLAGSTATE, :DWORD
+SHBindToParent proto WINAPI :PCIDLIST_ABSOLUTE, :REFIID, :ptr, :ptr PCUITEMID_CHILD
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-
-;SHSTDAPI
-SHBindToFolderIDListParent proto WINAPI \
-	       psfRoot: ptr IShellFolder,
-		  pidl: PCUIDLIST_RELATIVE,
-		  riid: REFIID,
-		   ppv: PVOID,
-	     ppidlLast: ptr PCUITEMID_CHILD
-
-
-;SHSTDAPI
-SHBindToFolderIDListParentEx proto WINAPI \
-	       psfRoot: ptr IShellFolder,
-		  pidl: PCUIDLIST_RELATIVE,
-		  ppbc: ptr IBindCtx,
-		  riid: REFIID,
-		   ppv: ptr,
-	     ppidlLast: ptr PCUITEMID_CHILD
-
-
-;SHSTDAPI
-SHBindToObject proto WINAPI \
-		   psf: ptr IShellFolder,
-		  pidl: PCUIDLIST_RELATIVE,
-		   pbc: ptr IBindCtx,
-		  riid: REFIID,
-		    pp: ptr
-
+SHBindToFolderIDListParent proto WINAPI :ptr IShellFolder, :PCUIDLIST_RELATIVE, :REFIID, :ptr, :ptr PCUITEMID_CHILD
+SHBindToFolderIDListParentEx proto WINAPI :ptr IShellFolder, :PCUIDLIST_RELATIVE, :ptr IBindCtx, :REFIID, :ptr, :ptr PCUITEMID_CHILD
+SHBindToObject proto WINAPI :ptr IShellFolder, :PCUIDLIST_RELATIVE, :ptr IBindCtx, :REFIID, :ptr
 endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
-;SHSTDAPI
-SHParseDisplayName proto WINAPI \
-	       pszName: PCWSTR,
-		   pbc: ptr IBindCtx,
-		 ppidl: ptr PIDLIST_ABSOLUTE,
-	       sfgaoIn: SFGAOF,
-	     psfgaoOut: ptr SFGAOF
-
+SHParseDisplayName proto WINAPI :PCWSTR, :ptr IBindCtx, :ptr PIDLIST_ABSOLUTE, :SFGAOF, :ptr SFGAOF
 endif
 
 SHPPFW_NONE		equ 0x00000000
@@ -3457,19 +2721,8 @@ if (NTDDI_VERSION GE NTDDI_WINXP)
 SHPPFW_MEDIACHECKONLY	equ 0x00000010
 endif
 
-;SHSTDAPI
-SHPathPrepareForWriteA proto WINAPI \
-		  hwnd: HWND,
-     punkEnableModless: ptr IUnknown,
-	       pszPath: LPCSTR,
-	       dwFlags: DWORD
-
-;SHSTDAPI
-SHPathPrepareForWriteW proto WINAPI \
-		  hwnd: HWND,
-     punkEnableModless: ptr IUnknown,
-	       pszPath: LPCWSTR,
-	       dwFlags: DWORD
+SHPathPrepareForWriteA proto WINAPI :HWND, :ptr IUnknown, :LPCSTR, :DWORD
+SHPathPrepareForWriteW proto WINAPI :HWND, :ptr IUnknown, :LPCWSTR, :DWORD
 
 ifdef _UNICODE
 SHPathPrepareForWrite	equ <SHPathPrepareForWriteW>
@@ -3482,125 +2735,38 @@ endif
     ReadPropertyNPB	proc :LPCWSTR, :LPCWSTR, :ptr
     WritePropertyNPB	proc :LPCWSTR, :LPCWSTR, :ptr
     RemovePropertyNPB	proc :LPCWSTR, :LPCWSTR
-
-    .ends
+   .ends
 
 ifdef __urlmon_h__
-
-;SHDOCAPI
-SoftwareUpdateMessageBox proto WINAPI \
-		  hWnd: HWND,
-	   pszDistUnit: LPCWSTR,
-	       dwFlags: DWORD,
-		  psdi: LPSOFTDISTINFO
-
+SoftwareUpdateMessageBox proto WINAPI :HWND, :LPCWSTR, :DWORD, :LPSOFTDISTINFO
 endif
 
-;SHSTDAPI
-SHPropStgCreate proto WINAPI \
-		 psstg: ptr IPropertySetStorage,
-		 fmtid: REFFMTID,
-		pclsid: ptr CLSID,
-	      grfFlags: DWORD,
-	       grfMode: DWORD,
-	 dwDisposition: DWORD,
-		 ppstg: ptr IPropertyStorage,
-	    puCodePage: ptr UINT
-;SHSTDAPI
-SHPropStgReadMultiple proto WINAPI \
-		   pps: ptr IPropertyStorage,
-	     uCodePage: UINT,
-		cpspec: ULONG,
-	       rgpspec: ptr PROPSPEC,
-		 rgvar: ptr PROPVARIANT
-
-;SHSTDAPI
-SHPropStgWriteMultiple proto WINAPI \
-		   pps: ptr IPropertyStorage,
-	    puCodePage: ptr UINT,
-		cpspec: ULONG,
-	       rgpspec: ptr PROPSPEC,
-		 rgvar: ptr PROPVARIANT,
-       propidNameFirst: PROPID
-
+SHPropStgCreate proto WINAPI :ptr IPropertySetStorage, :REFFMTID, :ptr CLSID, :DWORD, :DWORD, :DWORD, :ptr IPropertyStorage, :ptr UINT
+SHPropStgReadMultiple proto WINAPI :ptr IPropertyStorage, :UINT, :ULONG, :ptr PROPSPEC, :ptr PROPVARIANT
+SHPropStgWriteMultiple proto WINAPI :ptr IPropertyStorage, :ptr UINT, :ULONG, :ptr PROPSPEC, :ptr PROPVARIANT, :PROPID
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
-;SHSTDAPI
-SHCreateFileExtractIconA proto WINAPI \
-	       pszFile: LPCSTR,
-      dwFileAttributes: DWORD,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;SHSTDAPI
-SHCreateFileExtractIconW proto WINAPI \
-	       pszFile: LPCWSTR,
-      dwFileAttributes: DWORD,
-		  riid: REFIID,
-		   ppv: PVOID
-
+SHCreateFileExtractIconA proto WINAPI :LPCSTR, :DWORD, :REFIID, :ptr
+SHCreateFileExtractIconW proto WINAPI :LPCWSTR, :DWORD, :REFIID, :ptr
 ifdef _UNICODE
 SHCreateFileExtractIcon equ <SHCreateFileExtractIconW>
 else
 SHCreateFileExtractIcon equ <SHCreateFileExtractIconA>
 endif
-
-;SHSTDAPI
-SHLimitInputEdit proto WINAPI \
-	      hwndEdit: HWND,
-		   psf: ptr IShellFolder
-
-;STDAPI
-SHGetAttributesFromDataObject proto WINAPI \
-		   pdo: ptr IDataObject,
-       dwAttributeMask: DWORD,
-	 pdwAttributes: ptr DWORD,
-	       pcItems: ptr UINT
-
+SHLimitInputEdit proto WINAPI :HWND, :ptr IShellFolder
+SHGetAttributesFromDataObject proto WINAPI :ptr IDataObject, :DWORD, :ptr DWORD, :ptr UINT
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
-
-;SHSTDAPI
-SHMultiFileProperties proto WINAPI \
-		pdtobj: ptr IDataObject,
-	       dwFlags: DWORD
-
-
+SHMultiFileProperties proto WINAPI :ptr IDataObject, :DWORD
 endif
 
-;SHSTDAPI
-SHMapPIDLToSystemImageListIndex proto WINAPI \
-		  pshf: ptr IShellFolder,
-		  pidl: PCUITEMID_CHILD,
-	    piIndexSel: ptr SINT
-
-
-;SHSTDAPI
-SHCLSIDFromString proto WINAPI \
-		   psz: LPCWSTR,
-		pclsid: ptr CLSID
-
-;SHSTDAPI
-SHCreateQueryCancelAutoPlayMoniker proto WINAPI \
-	     ppmoniker: IMoniker
-
-;STDAPI
+SHMapPIDLToSystemImageListIndex proto WINAPI :ptr IShellFolder, :PCUITEMID_CHILD, :ptr SINT
+SHCLSIDFromString proto WINAPI :LPCWSTR, :ptr CLSID
+SHCreateQueryCancelAutoPlayMoniker proto WINAPI :IMoniker
 PerUserInit proto WINAPI
-
-;SHSTDAPI
-SHRunControlPanel proto WINAPI \
-	  lpcszCmdLine: LPCWSTR,
-	 hwndMsgParent: HWND
-
-
-;SHSTDAPI
-PickIconDlg proto WINAPI \
-		  hwnd: HWND,
-	   pszIconPath: LPWSTR,
-	   cchIconPath: UINT,
-	   piIconIndex: ptr SINT
-
+SHRunControlPanel proto WINAPI :LPCWSTR, :HWND
+PickIconDlg proto WINAPI :HWND, :LPWSTR, :UINT, :ptr SINT
 
 AASHELLMENUFILENAME	STRUC 8
 cbTotal			SWORD ?
@@ -3619,14 +2785,7 @@ AASHELLMENUITEM		ENDS
 LPAASHELLMENUITEM	typedef ptr AASHELLMENUITEM
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
-;STDAPI
-StgMakeUniqueName proto WINAPI \
-	    pstgParent: ptr IStorage,
-	   pszFileSpec: PCWSTR,
-	       grfMode: DWORD,
-		  riid: REFIID,
-		   ppv: PVOID
-
+StgMakeUniqueName proto WINAPI :ptr IStorage, :PCWSTR, :DWORD, :REFIID, :ptr
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
@@ -3638,22 +2797,8 @@ IESHORTCUT_BACKGROUNDTAB equ 0x08
 endif
 
 if (_WIN32_IE GE _WIN32_IE_XP)
-
-;SHDOCAPI
-ImportPrivacySettings proto WINAPI \
-	   pszFilename: LPCWSTR,
-pfParsePrivacyPreferences: ptr BOOL,
-   pfParsePerSiteRules: ptr BOOL
-
-;SHDOCAPI
-DoPrivacyDlg proto WINAPI \
-	     hwndOwner: HWND,
-		pszUrl: LPCWSTR,
-	  pPrivacyEnum: ptr IEnumPrivacyRecords,
-       fReportAllSites: BOOL
-
+ImportPrivacySettings proto WINAPI :LPCWSTR, :ptr BOOL, :ptr BOOL
+DoPrivacyDlg proto WINAPI :HWND, :LPCWSTR, :ptr IEnumPrivacyRecords, :BOOL
 endif
-
-;.pragma pack(pop)
 .pragma list(pop)
 endif

@@ -10,7 +10,7 @@ include tchar.inc
 
 .code
 
-StringVPrintfWorker proc pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
+StringVPrintfWorker proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
          pszFormat:LPTSTR, argList:va_list
 
   local hr:HRESULT
@@ -26,13 +26,13 @@ StringVPrintfWorker proc pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr s
 
     ; leave the last space for the null terminator
 
-    lea rax,[rdx-TCHAR]
+    lea rax,[rdx-1]
     mov cchMax,rax
 
 if ( STRSAFE_USE_SECURE_CRT eq 1 ) and not defined(STRSAFE_LIB_IMPL)
     mov retval,_vsntprintf_s(pszDest, cchDest, cchMax, pszFormat, argList)
 else
-    mov retval,_vsntprintf(pszDest, cchMax, pszFormat, argList)
+    mov retval,_vsntprintf(pszDest, cchDest, pszFormat, argList)
 endif
     ; ASSERT((iRet < 0) || (((size_t)iRet) <= cchMax));
 

@@ -7,19 +7,13 @@ include strsafe.inc
 
     .code
 
-StringCchCopy proc pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR
+StringCchCopy proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR
 
-    StringValidateDest(pszDest, cchDest, STRSAFE_MAX_CCH)
+    .if ( SUCCEEDED( StringValidateDest( pszDest, cchDest, STRSAFE_MAX_CCH ) ) )
 
-    .if (SUCCEEDED(eax))
+        StringCopyWorker(pszDest, cchDest, NULL, pszSrc, STRSAFE_MAX_LENGTH)
 
-        StringCopyWorker(pszDest,
-                cchDest,
-                NULL,
-                pszSrc,
-                STRSAFE_MAX_LENGTH)
-
-    .elseif cchDest
+    .elseif ( cchDest )
 
         mov rcx,pszDest
         mov TCHAR ptr [rcx],0

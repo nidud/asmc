@@ -7,9 +7,7 @@ include stdarg.inc
 include specstrings.inc
 include winapifamily.inc
 
-if not defined(STRSAFE_LIB) and not defined(__PE__)
-define STRSAFE_LIB
-endif
+.pragma comment(lib, strsafe)
 
 define ALIGNMENT_MACHINE 1
 
@@ -35,10 +33,6 @@ define STRSAFE_USE_SECURE_CRT 0
 endif
 endif
 
-ifdef STRSAFE_LIB
-includelib strsafe.lib
-endif
-
 if defined(STRSAFE_NO_CB_FUNCTIONS) AND defined(STRSAFE_NO_CCH_FUNCTIONS)
 .err<cannot specify both STRSAFE_NO_CB_FUNCTIONS and STRSAFE_NO_CCH_FUNCTIONS>
 endif
@@ -48,11 +42,11 @@ define STRSAFE_MAX_CCH 2147483647
 endif
 
 C_ASSERT macro exp
-    if (exp)
-        exitm<>
-    else
-        .err<exp>
-    endif
+if (exp)
+    exitm<>
+else
+    .err<exp>
+endif
     endm
 
 C_ASSERT(STRSAFE_MAX_CCH LE 2147483647)
@@ -68,199 +62,58 @@ define STRSAFE_NO_TRUNCATION    0x00001000
 
 define STRSAFE_VALID_FLAGS (0x000000FF OR STRSAFE_IGNORE_NULLS OR STRSAFE_FILL_BEHIND_NULL OR STRSAFE_FILL_ON_FAILURE OR STRSAFE_NULL_ON_FAILURE OR STRSAFE_NO_TRUNCATION)
 
-STRSAFE_FILL_BYTE macro x
-        exitm<(((x AND 0x000000FF) OR STRSAFE_FILL_BEHIND_NULL))>
-        endm
-STRSAFE_FAILURE_BYTE macro x
-        exitm<(((x AND 0x000000FF) OR STRSAFE_FILL_ON_FAILURE))>
-        endm
-
-STRSAFE_GET_FILL_PATTERN macro dwFlags
-        exitm<(dwFlags AND 0x000000FF)>
-        endm
-
+STRSAFE_FILL_BYTE proto watcall :dword {
+        and eax,0x000000FF
+        or  eax,STRSAFE_FILL_BEHIND_NULL
+        }
+STRSAFE_FAILURE_BYTE proto watcall :dword {
+        and eax,0x000000FF
+        or  eax,STRSAFE_FILL_ON_FAILURE
+        }
+STRSAFE_GET_FILL_PATTERN proto watcall :dword {
+        and eax,0x000000FF
+        }
 
 define STRSAFE_E_INSUFFICIENT_BUFFER    0x8007007A
 define STRSAFE_E_INVALID_PARAMETER      0x80070057
 define STRSAFE_E_END_OF_FILE            0x80070026
 
-ifdef STRSAFE_LIB
-
-StringLengthWorkerA proto __cdecl \
-                   psz: LPSTR,
-                cchMax: size_t,
-            pcchLength: ptr size_t
-
-StringLengthWorkerW proto __cdecl \
-                   psz: LPWSTR,
-                cchMax: size_t,
-            pcchLength: ptr size_t
-
+StringLengthWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t
+StringLengthWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t
 ifdef ALIGNMENT_MACHINE
-UnalignedStringLengthWorkerW proto __cdecl \
-                   psz: LPWSTR,
-                cchMax: size_t,
-            pcchLength: ptr size_t
+UnalignedStringLengthWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t
+UnalignedStringLengthWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t
 endif
-
-StringExValidateSrcA proto __cdecl \
-               ppszSrc: ptr LPSTR,
-            pcchToRead: ptr size_t,
-                cchMax: size_t,
-               dwFlags: DWORD
-
-StringExValidateSrcW proto __cdecl \
-               ppszSrc: ptr LPWSTR,
-            pcchToRead: ptr size_t,
-                cchMax: size_t,
-               dwFlags: DWORD
-
-StringValidateDestA proto __cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-                cchMax: size_t
-
-StringValidateDestAndLengthA proto __cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-        pcchDestLength: ptr size_t,
-                cchMax: size_t
-
-StringValidateDestW proto __cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-                cchMax: size_t
-
-StringValidateDestAndLengthW proto __cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-        pcchDestLength: ptr size_t,
-                cchMax: size_t
-
-StringExValidateDestA proto __cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-                cchMax: size_t,
-               dwFlags: DWORD
-
-StringExValidateDestAndLengthA proto __cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-        pcchDestLength: ptr size_t,
-                cchMax: size_t,
-               dwFlags: DWORD
-
-StringExValidateDestW proto __cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-                cchMax: size_t,
-               dwFlags: DWORD
-
-StringExValidateDestAndLengthW proto __cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-        pcchDestLength: ptr size_t,
-                cchMax: size_t,
-               dwFlags: DWORD
-
-StringCopyWorkerA proto __cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-     pcchNewDestLength: ptr size_t,
-                pszSrc: LPSTR,
-             cchToCopy: size_t
-
-StringCopyWorkerW proto __cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-     pcchNewDestLength: ptr size_t,
-                pszSrc: LPWSTR,
-             cchToCopy: size_t
-
-StringVPrintfWorkerA proto __cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-     pcchNewDestLength: ptr size_t,
-             pszFormat: LPSTR,
-               argList: va_list
-
+StringExValidateSrcA proto __cdecl :ptr LPSTR, :ptr size_t, :size_t, :DWORD
+StringExValidateSrcW proto __cdecl :ptr LPWSTR, :ptr size_t, :size_t, :DWORD
+StringValidateDestA proto __cdecl :LPSTR, :size_t, :size_t
+StringValidateDestAndLengthA proto __cdecl :LPSTR, :size_t, :ptr size_t, :size_t
+StringValidateDestW proto __cdecl :LPWSTR, :size_t, :size_t
+StringValidateDestAndLengthW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :size_t
+StringExValidateDestA proto __cdecl :LPSTR, :size_t, :size_t, :DWORD
+StringExValidateDestAndLengthA proto __cdecl :LPSTR, :size_t, :ptr size_t, :size_t, :DWORD
+StringExValidateDestW proto __cdecl :LPWSTR, :size_t, :size_t, :DWORD
+StringExValidateDestAndLengthW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :size_t, :DWORD
+StringCopyWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t, :LPSTR, :size_t
+StringCopyWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :size_t
+StringVPrintfWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t, :LPSTR, :va_list
 ifdef STRSAFE_LOCALE_FUNCTIONS
-StringVPrintf_lWorkerA proto __cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-     pcchNewDestLength: size_t,
-             pszFormat: LPSTR,
-                locale: _locale_t,
-               argList: va_list
+StringVPrintf_lWorkerA proto __cdecl :LPSTR, :size_t, :size_t, :LPSTR, :_locale_t, :va_list
 endif
-
-StringVPrintfWorkerW proto __cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-     pcchNewDestLength: ptr size_t,
-             pszFormat: LPWSTR,
-               argList: va_list
-
+StringVPrintfWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :va_list
 ifdef STRSAFE_LOCALE_FUNCTIONS
-StringVPrintf_lWorkerW proto __cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-     pcchNewDestLength: ptr size_t,
-             pszFormat: LPWSTR,
-                locale: _locale_t,
-               argList: va_list
+StringVPrintf_lWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :_locale_t, :va_list
 endif
-
 ifndef STRSAFE_LIB_IMPL
-StringGetsWorkerA proto __cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-     pcchNewDestLength: ptr size_t
-
-StringGetsWorkerW proto __cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-     pcchNewDestLength: ptr size_t
+StringGetsWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t
+StringGetsWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t
 endif
-
-StringExHandleFillBehindNullA proto __cdecl \
-            pszDestEnd: LPSTR,
-           cbRemaining: size_t,
-               dwFlags: DWORD
-
-StringExHandleFillBehindNullW proto __cdecl \
-            pszDestEnd: LPWSTR,
-           cbRemaining: size_t,
-               dwFlags: DWORD
-
-StringExHandleOtherFlagsA proto __cdecl \
-               pszDest: LPSTR,
-                cbDest: size_t,
- cchOriginalDestLength: size_t,
-           ppszDestEnd: ptr LPSTR,
-         pcchRemaining: ptr size_t,
-               dwFlags: DWORD
-
-StringExHandleOtherFlagsW proto __cdecl \
-               pszDest: LPWSTR,
-                cbDest: size_t,
- cchOriginalDestLength: size_t,
-           ppszDestEnd: ptr LPWSTR,
-         pcchRemaining: ptr size_t,
-               dwFlags: DWORD
-
-StringCchPrintfA proto __Cdecl \
-               pszDest: LPSTR,
-               cchDest: size_t,
-             pszFormat: LPSTR,
-                argptr: vararg
-
-StringCchPrintfW proto __Cdecl \
-               pszDest: LPWSTR,
-               cchDest: size_t,
-             pszFormat: LPWSTR,
-                argptr: vararg
-
+StringExHandleFillBehindNullA proto __cdecl :LPSTR, :size_t, :DWORD
+StringExHandleFillBehindNullW proto __cdecl :LPWSTR, :size_t, :DWORD
+StringExHandleOtherFlagsA proto __cdecl :LPSTR, :size_t, :size_t, :ptr LPSTR, :ptr size_t, :DWORD
+StringExHandleOtherFlagsW proto __cdecl :LPWSTR, :size_t, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD
+StringCchPrintfA proto __Cdecl :LPSTR, :size_t, :LPSTR, :vararg
+StringCchPrintfW proto __Cdecl :LPWSTR, :size_t, :LPWSTR, :vararg
 ifndef _M_CEE_PURE
 StringCchPrintfExA proto __Cdecl :LPSTR, :size_t, :ptr LPSTR, :ptr size_t, :DWORD, :LPSTR, :vararg
 StringCchPrintfExW proto __Cdecl :LPWSTR, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD, :LPWSTR, :vararg
@@ -272,7 +125,24 @@ StringCchLengthW proto __cdecl :LPWSTR, :size_t, :ptr size_t
 StringCchGetsA proto __cdecl :LPSTR, :size_t
 StringCchGetsW proto __cdecl :LPWSTR, :size_t
 
-endif ; !STRSAFE_LIB
+StringCchCatA proto __cdecl :LPSTR, :size_t, :LPCSTR
+StringCchCatW proto __cdecl :LPWSTR, :size_t, :LPCWSTR
+StringCchCatExA proto __cdecl :LPSTR, :size_t, :LPCSTR, :LPSTR, :ptr size_t, :DWORD
+StringCchCatExW proto __cdecl :LPWSTR, :size_t, :LPCWSTR, :LPWSTR, :ptr size_t, :DWORD
+StringCchCatNA proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t
+StringCchCatNW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :size_t
+StringCchCatNExA proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t, :LPSTR, :ptr size_t, :DWORD
+StringCchCatNExW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :size_t, :LPWSTR, :ptr size_t, :DWORD
+
+StringCchCopyA proto __cdecl :LPSTR, :size_t, :LPCSTR
+StringCchCopyW proto __cdecl :LPWSTR, :size_t, :LPCWSTR
+StringCchCopyExA proto __cdecl :LPSTR, :size_t, :LPCSTR, :ptr LPSTR, :ptr size_t, :DWORD
+StringCchCopyExW proto __cdecl :LPWSTR, :size_t, :LPCWSTR, :ptr LPWSTR, :ptr size_t, :DWORD
+StringCchCopyNA proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t
+StringCchCopyNW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :size_t
+StringCchCopyNExA proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t, :ptr LPSTR, :ptr size_t, :DWORD
+StringCchCopyNExW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD
+
 
 ifndef ALIGNMENT_MACHINE
 define UnalignedStringCchLengthW    <StringCchLengthW>
@@ -281,6 +151,7 @@ endif
 ifdef _UNICODE
 define StringValidateDest           <StringValidateDestW>
 define StringValidateDestAndLength  <StringValidateDestAndLengthW>
+define StringExValidateDestAndLength<StringExValidateDestAndLengthW>
 define StringExValidateSrc          <StringExValidateSrcW>
 define StringExValidateDest         <StringExValidateDestW>
 define StringCopyWorker             <StringCopyWorkerW>
@@ -309,9 +180,11 @@ define StringCchGets                <StringCchGetsW>
 define StringCchGetsEx              <StringCchGetsExW>
 define StringCchLength              <StringCchLengthW>
 define UnalignedStringCchLength     <UnalignedStringCchLengthW>
+define UnalignedStringLengthWorker  <UnalignedStringLengthWorkerW>
 else
 define StringValidateDest           <StringValidateDestA>
 define StringValidateDestAndLength  <StringValidateDestAndLengthA>
+define StringExValidateDestAndLength<StringExValidateDestAndLengthA>
 define StringExValidateSrc          <StringExValidateSrcA>
 define StringExValidateDest         <StringExValidateDestA>
 define StringCopyWorker             <StringCopyWorkerA>
@@ -340,6 +213,7 @@ define StringCchGets                <StringCchGetsA>
 define StringCchGetsEx              <StringCchGetsExA>
 define StringCchLength              <StringCchLengthA>
 define UnalignedStringCchLength     <StringCchLengthA>
+define UnalignedStringLengthWorker  <UnalignedStringLengthWorkerA>
 endif
 
 define __WARNING_CYCLOMATIC_COMPLEXITY 28734

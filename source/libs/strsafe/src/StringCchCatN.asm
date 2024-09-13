@@ -8,29 +8,23 @@ include strsafe.inc
 
     .code
 
-StringCchCatN proc pszDest:LPTSTR, cchDest:size_t, pszSrc:LPTSTR, cchToAppend:size_t
+StringCchCatN proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszSrc:LPTSTR, cchToAppend:size_t
 
-  local hr:HRESULT
-  local cchDestLength:size_t
+    .new cchDestLength:size_t
 
-    StringValidateDestAndLength(pszDest,
-            cchDest,
-            &cchDestLength,
-            STRSAFE_MAX_CCH)
+    .if ( SUCCEEDED(StringValidateDestAndLength(pszDest, cchDest, &cchDestLength, STRSAFE_MAX_CCH)) )
 
-    .if (SUCCEEDED(eax))
-
-        .if (cchToAppend > STRSAFE_MAX_LENGTH)
+        .if ( cchToAppend > STRSAFE_MAX_LENGTH )
 
             mov eax,STRSAFE_E_INVALID_PARAMETER
-
         .else
-
-            imul rax,cchDestLength,TCHAR
-            add pszDest,rax
-            sub cchDest,rax
-
-            StringCopyWorker(pszDest, cchDest, NULL, pszSrc, cchToAppend)
+            mov rcx,cchDestLength
+            sub cchDest,rcx
+ifdef _UNICODE
+            add rcx,rcx
+endif
+            add rcx,pszDest
+            StringCopyWorker(rcx, cchDest, NULL, pszSrc, cchToAppend)
         .endif
     .endif
     ret

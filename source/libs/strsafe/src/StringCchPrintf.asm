@@ -8,17 +8,11 @@ include strsafe.inc
 
 .code
 
-StringCchPrintf proc pszDest:LPTSTR, cchDest:size_t, pszFormat:LPTSTR, argptr:vararg
+StringCchPrintf proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszFormat:LPTSTR, argptr:vararg
 
-    StringValidateDest(pszDest, cchDest, STRSAFE_MAX_CCH)
+    .if ( SUCCEEDED( StringValidateDest(pszDest, cchDest, STRSAFE_MAX_CCH) ) )
 
-    .if (SUCCEEDED(eax))
-
-        StringVPrintfWorker(pszDest,
-                cchDest,
-                NULL,
-                pszFormat,
-                &argptr)
+        StringVPrintfWorker(pszDest, cchDest, NULL, pszFormat, &argptr)
 
     .elseif ( cchDest )
 

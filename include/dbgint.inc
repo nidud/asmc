@@ -14,14 +14,10 @@ include crtdbg.inc
 .pragma pack(push, _CRT_PACKING)
 
 ifndef _CRTIMP
-ifdef CRTDLL
-_CRTIMP equ <__declspec(dllexport)>
+if defined(CRTDLL) AND defined(_CRTBLD)
+define _CRTIMP <export>
 else
-ifdef _DLL
-_CRTIMP equ <__declspec(dllimport)>
-else
-_CRTIMP equ <>
-endif
+define _CRTIMP <>
 endif
 endif
 

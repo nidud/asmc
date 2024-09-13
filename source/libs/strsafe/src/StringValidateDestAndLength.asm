@@ -7,18 +7,40 @@ include strsafe.inc
 
     .code
 
-StringValidateDestAndLength proc pszDest:LPCTSTR, cchDest:size_t,
-    pcchDestLength:ptr size_t, cchMax:size_t
+StringValidateDestAndLength proc _CRTIMP uses rbx pszDest:LPCTSTR, cchDest:size_t, pcchDestLength:ptr size_t, cchMax:size_t
 
-    StringValidateDest(pszDest, cchDest, cchMax)
+    ldr rax,pszDest
+    ldr rbx,pcchDestLength
+ifdef __UNIX__
+    ldr rdx,cchMax
+    ldr rcx,cchDest
+else
+    ldr rcx,cchDest
+    ldr rdx,cchMax
+endif
+    .if ( !rcx || rcx > rdx )
 
-    .if (SUCCEEDED(eax))
+        xor eax,eax
+        mov [rbx],rax
+        mov eax,STRSAFE_E_INVALID_PARAMETER
 
-        StringLengthWorker(pszDest, cchDest, pcchDestLength)
     .else
-        mov rdx,pcchDestLength
-        xor ecx,ecx
-        mov [rdx],rcx
+
+        .for ( rdx = rcx : rcx && ( TCHAR ptr [rax] != 0 ) : rcx-- )
+
+            add rax,TCHAR
+        .endf
+        xor eax,eax
+        .if ( !rcx )
+
+            ; the string is longer than cchMax
+
+            mov rdx,rcx
+            mov eax,STRSAFE_E_INVALID_PARAMETER
+        .endif
+        sub rdx,rcx
+        mov rcx,rdx
+        mov [rbx],rcx
     .endif
     ret
 

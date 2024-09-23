@@ -131,128 +131,57 @@ CONNECT_DEFERRED	equ 0x00000400
 CONNECT_RESERVED	equ 0xFF000000
 endif
 
-;DWORD
-WNetAddConnectionA proto WINAPI \
-	  lpRemoteName: LPCSTR,
-	    lpPassword: LPCSTR,
-	   lpLocalName: LPCSTR
-;DWORD
-WNetAddConnectionW proto WINAPI \
-	  lpRemoteName: LPCWSTR,
-	    lpPassword: LPCWSTR,
-	   lpLocalName: LPCWSTR
+WNetAddConnectionA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR
+WNetAddConnectionW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 WNetAddConnection	equ <WNetAddConnectionW>
 else
 WNetAddConnection	equ <WNetAddConnectionA>
 endif
 
-;DWORD
-WNetAddConnection2A proto WINAPI \
-	 lpNetResource: LPNETRESOURCEA,
-	    lpPassword: LPCSTR,
-	    lpUserName: LPCSTR,
-	       dwFlags: DWORD
-;DWORD
-WNetAddConnection2W proto WINAPI \
-	 lpNetResource: LPNETRESOURCEW,
-	    lpPassword: LPCWSTR,
-	    lpUserName: LPCWSTR,
-	       dwFlags: DWORD
+WNetAddConnection2A proto WINAPI :LPNETRESOURCEA, :LPCSTR, :LPCSTR, :DWORD
+WNetAddConnection2W proto WINAPI :LPNETRESOURCEW, :LPCWSTR, :LPCWSTR, :DWORD
 ifdef _UNICODE
 WNetAddConnection2	equ <WNetAddConnection2W>
 else
 WNetAddConnection2	equ <WNetAddConnection2A>
 endif
 
-;DWORD
-WNetAddConnection3A proto WINAPI \
-	     hwndOwner: HWND,
-	 lpNetResource: LPNETRESOURCEA,
-	    lpPassword: LPCSTR,
-	    lpUserName: LPCSTR,
-	       dwFlags: DWORD
-;DWORD
-WNetAddConnection3W proto WINAPI \
-	     hwndOwner: HWND,
-	 lpNetResource: LPNETRESOURCEW,
-	    lpPassword: LPCWSTR,
-	    lpUserName: LPCWSTR,
-	       dwFlags: DWORD
+WNetAddConnection3A proto WINAPI :HWND, :LPNETRESOURCEA, :LPCSTR, :LPCSTR, :DWORD
+WNetAddConnection3W proto WINAPI :HWND, :LPNETRESOURCEW, :LPCWSTR, :LPCWSTR, :DWORD
 ifdef _UNICODE
 WNetAddConnection3	equ <WNetAddConnection3W>
 else
 WNetAddConnection3	equ <WNetAddConnection3A>
 endif
 
-;DWORD
-WNetCancelConnectionA proto WINAPI \
-		lpName: LPCSTR,
-		fForce: BOOL
-;DWORD
-WNetCancelConnectionW proto WINAPI \
-		lpName: LPCWSTR,
-		fForce: BOOL
+WNetCancelConnectionA proto WINAPI :LPCSTR, :BOOL
+WNetCancelConnectionW proto WINAPI :LPCWSTR, :BOOL
 ifdef _UNICODE
 WNetCancelConnection	equ <WNetCancelConnectionW>
 else
 WNetCancelConnection	equ <WNetCancelConnectionA>
 endif
 
-;DWORD
-WNetCancelConnection2A proto WINAPI \
-		lpName: LPCSTR,
-	       dwFlags: DWORD,
-		fForce: BOOL
-;DWORD
-WNetCancelConnection2W proto WINAPI \
-		lpName: LPCWSTR,
-	       dwFlags: DWORD,
-		fForce: BOOL
+WNetCancelConnection2A proto WINAPI :LPCSTR, :DWORD, :BOOL
+WNetCancelConnection2W proto WINAPI :LPCWSTR, :DWORD, :BOOL
 ifdef _UNICODE
 WNetCancelConnection2	equ <WNetCancelConnection2W>
 else
 WNetCancelConnection2	equ <WNetCancelConnection2A>
 endif
 
-;DWORD
-WNetGetConnectionA proto WINAPI \
-	   lpLocalName: LPCSTR,
-	  lpRemoteName: LPSTR,
-	     lpnLength: LPDWORD
-;DWORD
-WNetGetConnectionW proto WINAPI \
-	   lpLocalName: LPCWSTR,
-	  lpRemoteName: LPWSTR,
-	     lpnLength: LPDWORD
+WNetGetConnectionA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD
+WNetGetConnectionW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD
 ifdef _UNICODE
 WNetGetConnection	equ <WNetGetConnectionW>
 else
 WNetGetConnection	equ <WNetGetConnectionA>
 endif
 
-
 if(WINVER GE 0x0400)
-;DWORD
-WNetUseConnectionA proto WINAPI \
-	     hwndOwner: HWND,
-	 lpNetResource: LPNETRESOURCEA,
-	      lpUserID: LPCSTR,
-	    lpPassword: LPCSTR,
-	       dwFlags: DWORD,
-	  lpAccessName: LPSTR,
-	  lpBufferSize: LPDWORD,
-	      lpResult: LPDWORD
-;DWORD
-WNetUseConnectionW proto WINAPI \
-	     hwndOwner: HWND,
-	 lpNetResource: LPNETRESOURCEW,
-	      lpUserID: LPCWSTR,
-	    lpPassword: LPCWSTR,
-	       dwFlags: DWORD,
-	  lpAccessName: LPWSTR,
-	  lpBufferSize: LPDWORD,
-	      lpResult: LPDWORD
+WNetUseConnectionA proto WINAPI :HWND, :LPNETRESOURCEA, :LPCSTR, :LPCSTR, :DWORD, :LPSTR, :LPDWORD, :LPDWORD
+WNetUseConnectionW proto WINAPI :HWND, :LPNETRESOURCEW, :LPCWSTR, :LPCWSTR, :DWORD, :LPWSTR, :LPDWORD, :LPDWORD
 ifdef _UNICODE
 WNetUseConnection	equ <WNetUseConnectionW>
 else
@@ -260,17 +189,8 @@ WNetUseConnection	equ <WNetUseConnectionA>
 endif
 endif
 
-
-
-;DWORD
-WNetConnectionDialog proto WINAPI \
-		  hwnd: HWND,
-		dwType: DWORD
-
-;DWORD
-WNetDisconnectDialog proto WINAPI \
-		  hwnd: HWND,
-		dwType: DWORD
+WNetConnectionDialog proto WINAPI :HWND, :DWORD
+WNetDisconnectDialog proto WINAPI :HWND, :DWORD
 
 if(WINVER GE 0x0400)
 CONNECTDLGSTRUCTA	STRUC
@@ -305,12 +225,8 @@ CONNDLG_HIDE_BOX	equ 0x00000008
 CONNDLG_PERSIST		equ 0x00000010
 CONNDLG_NOT_PERSIST	equ 0x00000020
 
-;DWORD
-WNetConnectionDialog1A proto WINAPI \
-       lpConnDlgStruct: LPCONNECTDLGSTRUCTA
-;DWORD
-WNetConnectionDialog1W proto WINAPI \
-       lpConnDlgStruct: LPCONNECTDLGSTRUCTW
+WNetConnectionDialog1A proto WINAPI :LPCONNECTDLGSTRUCTA
+WNetConnectionDialog1W proto WINAPI :LPCONNECTDLGSTRUCTW
 ifdef _UNICODE
 WNetConnectionDialog1	equ <WNetConnectionDialog1W>
 else
@@ -344,11 +260,8 @@ endif
 DISC_UPDATE_PROFILE	equ 0x00000001
 DISC_NO_FORCE		equ 0x00000040
 
-;DWORD
-WNetDisconnectDialog1A proto WINAPI \
-       lpConnDlgStruct: LPDISCDLGSTRUCTA
-WNetDisconnectDialog1W proto WINAPI \
-       lpConnDlgStruct: LPDISCDLGSTRUCTW
+WNetDisconnectDialog1A proto WINAPI :LPDISCDLGSTRUCTA
+WNetDisconnectDialog1W proto WINAPI :LPDISCDLGSTRUCTW
 ifdef _UNICODE
 WNetDisconnectDialog1	equ <WNetDisconnectDialog1W>
 else
@@ -356,50 +269,23 @@ WNetDisconnectDialog1	equ <WNetDisconnectDialog1A>
 endif
 endif
 
-
-;DWORD
-WNetOpenEnumA proto WINAPI \
-	       dwScope: DWORD,
-		dwType: DWORD,
-	       dwUsage: DWORD,
-	 lpNetResource: LPNETRESOURCEA,
-	       lphEnum: LPHANDLE
-;DWORD
-WNetOpenEnumW proto WINAPI \
-	       dwScope: DWORD,
-		dwType: DWORD,
-	       dwUsage: DWORD,
-	 lpNetResource: LPNETRESOURCEW,
-	       lphEnum: LPHANDLE
+WNetOpenEnumA proto WINAPI :DWORD, :DWORD, :DWORD, :LPNETRESOURCEA, :LPHANDLE
+WNetOpenEnumW proto WINAPI :DWORD, :DWORD, :DWORD, :LPNETRESOURCEW, :LPHANDLE
 ifdef _UNICODE
 WNetOpenEnum		equ <WNetOpenEnumW>
 else
 WNetOpenEnum		equ <WNetOpenEnumA>
 endif
 
-;DWORD
-WNetEnumResourceA proto WINAPI \
-		 hEnum: HANDLE,
-	      lpcCount: LPDWORD,
-	      lpBuffer: LPVOID,
-	  lpBufferSize: LPDWORD
-;DWORD
-WNetEnumResourceW proto WINAPI \
-		 hEnum: HANDLE,
-	      lpcCount: LPDWORD,
-	      lpBuffer: LPVOID,
-	  lpBufferSize: LPDWORD
+WNetEnumResourceA proto WINAPI :HANDLE, :LPDWORD, :ptr, :LPDWORD
+WNetEnumResourceW proto WINAPI :HANDLE, :LPDWORD, :ptr, :LPDWORD
 ifdef _UNICODE
 WNetEnumResource	equ <WNetEnumResourceW>
 else
 WNetEnumResource	equ <WNetEnumResourceA>
 endif
 
-;DWORD
-WNetCloseEnum proto WINAPI \
-		 hEnum: HANDLE
-
-
+WNetCloseEnum proto WINAPI :HANDLE
 
 UNIVERSAL_NAME_INFO_LEVEL equ 0x00000001
 REMOTE_NAME_INFO_LEVEL	equ 0x00000002
@@ -440,42 +326,21 @@ REMOTE_NAME_INFO	typedef REMOTE_NAME_INFOA
 LPREMOTE_NAME_INFO	typedef LPREMOTE_NAME_INFOA
 endif
 
-;DWORD
-WNetGetUniversalNameA proto WINAPI \
-	   lpLocalPath: LPCSTR,
-	   dwInfoLevel: DWORD,
-	      lpBuffer: LPVOID,
-	  lpBufferSize: LPDWORD
-;DWORD
-WNetGetUniversalNameW proto WINAPI \
-	   lpLocalPath: LPCWSTR,
-	   dwInfoLevel: DWORD,
-	      lpBuffer: LPVOID,
-	  lpBufferSize: LPDWORD
+WNetGetUniversalNameA proto WINAPI :LPCSTR, :DWORD, :ptr, :LPDWORD
+WNetGetUniversalNameW proto WINAPI :LPCWSTR, :DWORD, :ptr, :LPDWORD
 ifdef _UNICODE
 WNetGetUniversalName	equ <WNetGetUniversalNameW>
 else
 WNetGetUniversalName	equ <WNetGetUniversalNameA>
 endif
 
-
-;DWORD
-WNetGetUserA proto WINAPI \
-		lpName: LPCSTR,
-	    lpUserName: LPSTR,
-	     lpnLength: LPDWORD
-;DWORD
-WNetGetUserW proto WINAPI \
-		lpName: LPCWSTR,
-	    lpUserName: LPWSTR,
-	     lpnLength: LPDWORD
+WNetGetUserA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD
+WNetGetUserW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD
 ifdef _UNICODE
 WNetGetUser		equ <WNetGetUserW>
 else
 WNetGetUser		equ <WNetGetUserA>
 endif
-
-
 
 if(WINVER GE 0x0400)
 WNFMT_MULTILINE		equ 0x01
@@ -484,18 +349,9 @@ WNFMT_INENUM		equ 0x10
 WNFMT_CONNECTION	equ 0x20
 endif
 
-
 if(WINVER GE 0x0400)
-;DWORD
-WNetGetProviderNameA proto WINAPI \
-	     dwNetType: DWORD,
-	lpProviderName: LPSTR,
-	  lpBufferSize: LPDWORD
-;DWORD
-WNetGetProviderNameW proto WINAPI \
-	     dwNetType: DWORD,
-	lpProviderName: LPWSTR,
-	  lpBufferSize: LPDWORD
+WNetGetProviderNameA proto WINAPI :DWORD, :LPSTR, :LPDWORD
+WNetGetProviderNameW proto WINAPI :DWORD, :LPWSTR, :LPDWORD
 ifdef _UNICODE
 WNetGetProviderName	equ <WNetGetProviderNameW>
 else
@@ -518,31 +374,24 @@ NETINFO_DLL16		equ 0x00000001
 NETINFO_DISKRED		equ 0x00000004
 NETINFO_PRINTERRED	equ 0x00000008
 
-;DWORD
-WNetGetNetworkInformationA proto WINAPI \
-	    lpProvider: LPCSTR,
-       lpNetInfoStruct: LPNETINFOSTRUCT
-;DWORD
-WNetGetNetworkInformationW proto WINAPI \
-	    lpProvider: LPCWSTR,
-       lpNetInfoStruct: LPNETINFOSTRUCT
+WNetGetNetworkInformationA proto WINAPI :LPCSTR, :LPNETINFOSTRUCT
+WNetGetNetworkInformationW proto WINAPI :LPCWSTR, :LPNETINFOSTRUCT
 ifdef _UNICODE
 WNetGetNetworkInformation equ <WNetGetNetworkInformationW>
 else
 WNetGetNetworkInformation equ <WNetGetNetworkInformationA>
 endif
 
-
-CALLBACK(PFNGETPROFILEPATHA, pszUsername:LPCSTR, pszBuffer:LPSTR, cbBuffer:UINT)
-CALLBACK(PFNGETPROFILEPATHW, pszUsername:LPCWSTR, pszBuffer:LPWSTR, cbBuffer:UINT)
+CALLBACK(PFNGETPROFILEPATHA, :LPCSTR, :LPSTR, :UINT)
+CALLBACK(PFNGETPROFILEPATHW, :LPCWSTR, :LPWSTR, :UINT)
 ifdef _UNICODE
 PFNGETPROFILEPATH	equ <PFNGETPROFILEPATHW>
 else
 PFNGETPROFILEPATH	equ <PFNGETPROFILEPATHA>
 endif
 
-CALLBACK(PFNRECONCILEPROFILEA, pszCentralFile:LPCSTR, pszLocalFile:LPCSTR, dwFlags:DWORD)
-CALLBACK(PFNRECONCILEPROFILEW, pszCentralFile:LPCWSTR, pszLocalFile:LPCWSTR, dwFlags:DWORD)
+CALLBACK(PFNRECONCILEPROFILEA, :LPCSTR, :LPCSTR, :DWORD)
+CALLBACK(PFNRECONCILEPROFILEW, :LPCWSTR, :LPCWSTR, :DWORD)
 ifdef _UNICODE
 PFNRECONCILEPROFILE	equ <PFNRECONCILEPROFILEW>
 else
@@ -563,28 +412,13 @@ endif
 PP_DISPLAYERRORS	equ 0x01
 endif
 
-
-;DWORD
-WNetGetLastErrorA proto WINAPI \
-	       lpError: LPDWORD,
-	    lpErrorBuf: LPSTR,
-	 nErrorBufSize: DWORD,
-	     lpNameBuf: LPSTR,
-	  nNameBufSize: DWORD
-;DWORD
-WNetGetLastErrorW proto WINAPI \
-	       lpError: LPDWORD,
-	    lpErrorBuf: LPWSTR,
-	 nErrorBufSize: DWORD,
-	     lpNameBuf: LPWSTR,
-	  nNameBufSize: DWORD
+WNetGetLastErrorA proto WINAPI :LPDWORD, :LPSTR, :DWORD, :LPSTR, :DWORD
+WNetGetLastErrorW proto WINAPI :LPDWORD, :LPWSTR, :DWORD, :LPWSTR, :DWORD
 ifdef _UNICODE
 WNetGetLastError	equ <WNetGetLastErrorW>
 else
 WNetGetLastError	equ <WNetGetLastErrorA>
 endif
-
-
 
 WN_SUCCESS		equ NO_ERROR
 WN_NO_ERROR		equ NO_ERROR
@@ -610,7 +444,6 @@ WN_NOT_INITIALIZING	equ ERROR_ALREADY_INITIAIZED
 WN_NO_MORE_DEVICES	equ ERROR_NO_MORE_DEVICES
 endif
 
-
 WN_NOT_CONNECTED	equ ERROR_NOT_CONNECTED
 WN_OPEN_FILES		equ ERROR_OPEN_FILES
 WN_DEVICE_IN_USE	equ ERROR_DEVICE_IN_USE
@@ -627,17 +460,13 @@ WN_BAD_DEV_TYPE		equ ERROR_BAD_DEV_TYPE
 WN_DEVICE_ALREADY_REMEMBERED equ ERROR_DEVICE_AREADY_REMEMBERED
 WN_CONNECTED_OTHER_PASSWORD equ ERROR_CONNECTED_OTHER_PASSWORD
 
-
 WN_NO_MORE_ENTRIES	equ ERROR_NO_MORE_ITEMS
 WN_NOT_CONTAINER	equ ERROR_NOT_CONTAINER
-
 if(WINVER GE 0x0400)
-
 WN_NOT_AUTHENTICATED	equ ERROR_NOT_AUTHENTICATED
 WN_NOT_LOGGED_ON	equ ERROR_NOT_LOGGED_ON
 WN_NOT_VALIDATED	equ ERROR_NO_LOGON_SERVERS
 endif
-
 
 if(WINVER GE 0x0400)
 NETCONNECTINFOSTRUCT	STRUC
@@ -654,14 +483,8 @@ WNCON_NOTROUTED		equ 0x00000002
 WNCON_SLOWLINK		equ 0x00000004
 WNCON_DYNAMIC		equ 0x00000008
 
-;DWORD
-MultinetGetConnectionPerformanceA proto WINAPI \
-	 lpNetResource: LPNETRESOURCEA,
-lpNetConnectInfoStruct: LPNETCONNECTINFOSTRUCT
-;DWORD
-MultinetGetConnectionPerformanceW proto WINAPI \
-	 lpNetResource: LPNETRESOURCEW,
-lpNetConnectInfoStruct: LPNETCONNECTINFOSTRUCT
+MultinetGetConnectionPerformanceA proto WINAPI :LPNETRESOURCEA, :LPNETCONNECTINFOSTRUCT
+MultinetGetConnectionPerformanceW proto WINAPI :LPNETRESOURCEW, :LPNETCONNECTINFOSTRUCT
 ifdef _UNICODE
 MultinetGetConnectionPerformance equ <MultinetGetConnectionPerformanceW>
 else
@@ -671,4 +494,3 @@ endif
 
 .pragma list(pop)
 endif
-

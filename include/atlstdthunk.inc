@@ -7,8 +7,7 @@ ifndef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
 .err <This file is not compatible with the current WINAPI_FAMILY>
 endif
 
-if not defined(USE_ATL_THUNK2) and not defined(USE_ATL_THUNK1) \
-   and ( defined(_M_IX86) or defined(_M_X64) or defined(_M_ARM) or defined(_M_ARM64) or defined(_M_ARM64EC) )
+if not defined(USE_ATL_THUNK2) and not defined(USE_ATL_THUNK1) and ( defined(_M_IX86) or defined(_M_X64) or defined(_M_ARM) or defined(_M_ARM64) or defined(_M_ARM64EC) )
 define USE_ATL_THUNK2
 endif
 

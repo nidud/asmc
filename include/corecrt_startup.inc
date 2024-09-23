@@ -48,15 +48,15 @@ CALLBACKC(_PIFV)
 CALLBACKC(_PVFI, :int_t)
 
 ifndef _M_CEE
-_initterm   proto __cdecl :ptr _PVFV, :ptr _PVFV
-_initterm_e proto __cdecl :ptr _PIFV, :ptr _PIFV
+_initterm   proto __cdecl :ptr, :ptr
+_initterm_e proto __cdecl :ptr, :ptr
 endif
 
 ifndef _CRT_ONEXIT_T_DEFINED
 define _CRT_ONEXIT_T_DEFINED
-CALLBACK(_onexit_t)
+CALLBACKC(_onexit_t)
 ifdef _M_CEE
-CALLBACK(_onexit_m_t)
+CALLBACKC(_onexit_m_t)
 endif
 endif
 

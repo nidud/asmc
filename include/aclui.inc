@@ -1,9 +1,11 @@
 ifndef _ACLUI_H_
 define _ACLUI_H_
+.pragma list(push, 0)
+
 include objbase.inc
 include commctrl.inc
 include accctrl.inc
-.pragma list(push, 0)
+
 .pragma comment(lib, aclui)
 
 SI_OBJECT_INFO		STRUC

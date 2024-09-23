@@ -137,13 +137,8 @@ DEFINE_IIDX(INetConnection, "C08956A1-1CD3-11D1-B1C5-00805FC1270E")
    .ends
 endif
 
-;STDAPI_(VOID)
-NcFreeNetconProperties proto WINAPI \
-		pProps: ptr NETCON_PROPERTIES
-
-;STDAPI_(BOOL)
-NcIsValidConnectionName proto WINAPI \
-	      pszwName: PCWSTR
+NcFreeNetconProperties proto WINAPI :ptr
+NcIsValidConnectionName proto WINAPI :PCWSTR
 
 ifndef __INetConnectionManager_INTERFACE_DEFINED__
 define __INetConnectionManager_INTERFACE_DEFINED__

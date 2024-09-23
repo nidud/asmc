@@ -23,149 +23,46 @@ endif
 .pragma comment(lib, combase, "api-ms-win-core-winrt-l1-1-0")
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-WindowsCreateString proto WINAPI \
-          sourceString: PCNZWCH,
-                length: UINT32,
-                string: ptr HSTRING
-
-WindowsCreateStringReference proto WINAPI \
-          sourceString: PCWSTR,
-                length: UINT32,
-         hstringHeader: ptr HSTRING_HEADER,
-                string: ptr HSTRING
-
-WindowsDeleteString proto WINAPI \
-                string: HSTRING
-
-WindowsDuplicateString proto WINAPI \
-                string: HSTRING,
-             newString: ptr HSTRING
-
-WindowsGetStringLen proto WINAPI \
-                string: HSTRING
-
-WindowsGetStringRawBuffer proto WINAPI \
-                string: HSTRING,
-                length: ptr UINT32
-
-WindowsIsStringEmpty proto WINAPI \
-                string: HSTRING
-
-WindowsStringHasEmbeddedNull proto WINAPI \
-                string: HSTRING,
-          hasEmbedNull: ptr BOOL
-
-WindowsCompareStringOrdinal proto WINAPI \
-               string1: HSTRING,
-               string2: HSTRING,
-                result: ptr INT32
-
-WindowsSubstring proto WINAPI \
-                string: HSTRING,
-            startIndex: UINT32,
-             newString: ptr HSTRING
-
-WindowsSubstringWithSpecifiedLength proto WINAPI \
-                string: HSTRING,
-            startIndex: UINT32,
-                length: UINT32,
-             newString: ptr HSTRING
-
-WindowsConcatString proto WINAPI \
-               string1: HSTRING,
-               string2: HSTRING,
-             newString: ptr HSTRING
-
-WindowsReplaceString proto WINAPI \
-                string: HSTRING,
-        stringReplaced: HSTRING,
-     stringReplaceWith: HSTRING,
-             newString: ptr HSTRING
-
-WindowsTrimStringStart proto WINAPI \
-                string: HSTRING,
-            trimString: HSTRING,
-             newString: ptr HSTRING
-
-WindowsTrimStringEnd proto WINAPI \
-                string: HSTRING,
-            trimString: HSTRING,
-             newString: ptr HSTRING
-
-WindowsPreallocateStringBuffer proto WINAPI \
-                length: UINT32,
-            charBuffer: ptr WCHAR,
-          bufferHandle: ptr HSTRING_BUFFER
-
-WindowsPromoteStringBuffer proto WINAPI \
-          bufferHandle: HSTRING_BUFFER,
-               string: ptr HSTRING
-
-WindowsDeleteStringBuffer proto WINAPI \
-          bufferHandle: HSTRING_BUFFER
-
+WindowsCreateString proto WINAPI :PCNZWCH, :UINT32, :ptr
+WindowsCreateStringReference proto WINAPI :PCWSTR, :UINT32, :ptr, :ptr
+WindowsDeleteString proto WINAPI :HSTRING
+WindowsDuplicateString proto WINAPI :HSTRING, :ptr
+WindowsGetStringLen proto WINAPI :HSTRING
+WindowsGetStringRawBuffer proto WINAPI :HSTRING, :ptr
+WindowsIsStringEmpty proto WINAPI :HSTRING
+WindowsStringHasEmbeddedNull proto WINAPI :HSTRING, :ptr
+WindowsCompareStringOrdinal proto WINAPI :HSTRING, :HSTRING, :ptr
+WindowsSubstring proto WINAPI :HSTRING, :UINT32, :ptr
+WindowsSubstringWithSpecifiedLength proto WINAPI :HSTRING, :UINT32, :UINT32, :ptr
+WindowsConcatString proto WINAPI :HSTRING, :HSTRING, :ptr
+WindowsReplaceString proto WINAPI :HSTRING, :HSTRING, :HSTRING, :ptr
+WindowsTrimStringStart proto WINAPI :HSTRING, :HSTRING, :ptr
+WindowsTrimStringEnd proto WINAPI :HSTRING, :HSTRING, :ptr
+WindowsPreallocateStringBuffer proto WINAPI :UINT32, :ptr, :ptr
+WindowsPromoteStringBuffer proto WINAPI :HSTRING_BUFFER, :ptr
+WindowsDeleteStringBuffer proto WINAPI :HSTRING_BUFFER
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
+CALLBACK(PINSPECT_HSTRING_CALLBACK, :ptr, :UINT_PTR, :UINT32, :ptr)
 
-CALLBACK(PINSPECT_HSTRING_CALLBACK, :ptr, :UINT_PTR, :UINT32, :ptr BYTE)
-
-WindowsInspectString proto WINAPI \
-         targetHString: UINT_PTR,
-               machine: USHORT,
-              callback: PINSPECT_HSTRING_CALLBACK,
-               context: ptr void,
-                length: ptr UINT32,
-   targetStringAddress: ptr UINT_PTR
-
+WindowsInspectString proto WINAPI :UINT_PTR, :USHORT, :PINSPECT_HSTRING_CALLBACK, :ptr, :ptr, :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-HSTRING_UserSize proto WINAPI \
-                pFlags: ptr DWORD,
-          StartingSize: DWORD,
-                 ppidl: ptr HSTRING
-
-HSTRING_UserMarshal proto WINAPI \
-                pFlags: ptr DWORD,
-               pBuffer: ptr UCHAR,
-                 ppidl: ptr HSTRING
-
-HSTRING_UserUnmarshal proto WINAPI \
-                pFlags: ptr DWORD,
-               pBuffer: ptr UCHAR,
-                 ppidl: ptr HSTRING
-
-HSTRING_UserFree proto WINAPI \
-                pFlags: ptr DWORD,
-                 ppidl: ptr HSTRING
+HSTRING_UserSize proto WINAPI :ptr, :DWORD, :ptr
+HSTRING_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserFree proto WINAPI :ptr, :ptr
 
 ifdef _WIN64
-
-HSTRING_UserSize64 proto WINAPI \
-                pFlags: ptr DWORD,
-          StartingSize: DWORD,
-                 ppidl: ptr HSTRING
-
-HSTRING_UserMarshal64 proto WINAPI \
-                pFlags: ptr DWORD,
-               pBuffer: ptr UCHAR,
-                 ppidl: ptr HSTRING
-
-HSTRING_UserUnmarshal64 proto WINAPI \
-                pFlags: ptr DWORD,
-               pBuffer: ptr UCHAR,
-                 ppidl: ptr HSTRING
-
-HSTRING_UserFree64 proto WINAPI \
-                pFlags: ptr DWORD,
-                 ppidl: ptr HSTRING
-
+HSTRING_UserSize64 proto WINAPI :ptr, :DWORD, :ptr
+HSTRING_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserFree64 proto WINAPI :ptr, :ptr
 endif
-
 endif
 
 endif

@@ -962,18 +962,8 @@ DEFINE_IIDX(IGetAppTrackerData, "507C3AC8-3E12-4cb0-9366-653D3E050638")
     GetSuggestedPollingInterval proc :ptr DWORD
    .ends
 
-IGetAppTrackerData_RemoteGetApplicationProcessDetails_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
-IGetAppTrackerData_RemoteGetComponentDetails_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IGetAppTrackerData_RemoteGetApplicationProcessDetails_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
+IGetAppTrackerData_RemoteGetComponentDetails_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 

@@ -7685,38 +7685,26 @@ GESTURENOTIFYSTRUCT	ENDS
 PGESTURENOTIFYSTRUCT	typedef ptr GESTURENOTIFYSTRUCT
 
 GID_ROTATE_ANGLE_TO_ARGUMENT macro _arg_
-    if (TYPE(_arg_))
+    if (TYPOF(_arg_))
 	ifdif <_arg_>,<xmm0>
 	    movsd xmm0,_arg_
 	endif
-	mov   rax,2.0 * 3.14159265
-	movq  xmm1,rax
-	addsd xmm0,xmm1
-	mov   rax,4.0 * 3.14159265
-	movq  xmm1,rax
-	divsd xmm0,xmm1
-	mov   rax,65535.0
-	movq  xmm1,rax
-	mulsd xmm0,xmm1
+	addsd xmm0,2.0 * 3.14159265
+	divsd xmm0,4.0 * 3.14159265
+	mulsd xmm0,65535.0
 	exitm<xmm0>
     else
 	exitm<((((_arg_ + 2.0 * 3.14159265) / (4.0 * 3.14159265)) * 65535.0))>
     endif
 	endm
 GID_ROTATE_ANGLE_FROM_ARGUMENT macro _arg_
-    if (TYPE(_arg_))
+    if (TYPEOF(_arg_))
 	ifdif <_arg_>,<xmm0>
 	    movsd xmm0,_arg_
 	endif
-	mov   rax,65535.0
-	movq  xmm1,rax
-	divsd xmm0,xmm1
-	mov   rax,4.0 * 3.14159265
-	movq  xmm1,rax
-	mulsd xmm0,xmm1
-	mov   rax,2.0 * 3.14159265
-	movq  xmm1,rax
-	subsd xmm0,xmm1
+	divsd xmm0,65535.0
+	mulsd xmm0,4.0 * 3.14159265
+	subsd xmm0,2.0 * 3.14159265
 	exitm<xmm0>
     else
 	exitm<(((_arg_ / 65535.0) * 4.0 * 3.14159265) - 2.0 * 3.14159265)>

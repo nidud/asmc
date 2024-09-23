@@ -95,18 +95,9 @@ LPD3DX10_INTERSECT_INFO typedef ptr D3DX10_INTERSECT_INFO
     DrawSubsetInstanced proc :UINT, :UINT, :UINT
     GetDeviceVertexBuffer proc :UINT, :ptr ptr ID3D10Buffer
     GetDeviceIndexBuffer proc :ptr ptr ID3D10Buffer
-    .ENDS
+   .ENDS
 
-D3DX10CreateMesh proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	  pDeclaration: ptr D3D10_INPUT_ELEMENT_DESC,
-	     DeclCount: UINT,
-     pPositionSemantic: LPCSTR,
-	   VertexCount: UINT,
-	     FaceCount: UINT,
-	       Options: UINT,
-		ppMesh: ptr ID3DX10Mesh
-
+D3DX10CreateMesh proto WINAPI :ptr, :ptr, :UINT, :LPCSTR, :UINT, :UINT, :UINT, :ptr
 
 .enum D3DX10_MESHOPT {
     D3DX10_MESHOPT_COMPACT	 = 0x01000000,
@@ -150,11 +141,9 @@ LPD3DX10SKININFO	typedef ptr ID3DX10SkinInfo
     GetBoneInfluence	proc :UINT, :UINT, :ptr float
     Compact		proc :UINT, :UINT, :float
     DoSoftwareSkinning	proc :UINT, :UINT, :ptr, :UINT, :ptr, :UINT, :ptr D3DXMATRIX, :ptr D3DXMATRIX, :ptr D3DX10_SKINNING_CHANNEL, :UINT
-    .ENDS
+   .ENDS
 
-D3DX10CreateSkinInfo proto WINAPI \
-	    ppSkinInfo: ptr LPD3DX10SKININFO
-
+D3DX10CreateSkinInfo proto WINAPI :ptr
 
 D3DX10_ATTRIBUTE_WEIGHTS STRUC
 Position		FLOAT ?

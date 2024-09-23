@@ -922,12 +922,7 @@ DEFINE_IIDX(IMSVidWebDVD2, "7027212F-EE9A-4a7c-8B67-F023714CDAFF")
    .ends
 
 
-IMSVidWebDVD2_put_Bookmark_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMSVidWebDVD2_put_Bookmark_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 endif
 
 ifndef __IMSVidWebDVDEvent_INTERFACE_DEFINED__

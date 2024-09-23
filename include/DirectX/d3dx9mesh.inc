@@ -2,16 +2,16 @@ include d3dx9.inc
 ifndef _D3DX9MESH_H
 define _D3DX9MESH_H
 
-DEFINE_GUID(IID_ID3DXBaseMesh, 0x7ed943dd, 0x52e8, 0x40b5, 0xa8, 0xd8, 0x76, 0x68, 0x5c, 0x40, 0x63, 0x30);
-DEFINE_GUID(IID_ID3DXMesh,     0x4020e5c2, 0x1403, 0x4929, 0x88, 0x3f, 0xe2, 0xe8, 0x49, 0xfa, 0xc1, 0x95);
-DEFINE_GUID(IID_ID3DXPMesh,    0x8875769a, 0xd579, 0x4088, 0xaa, 0xeb, 0x53, 0x4d, 0x1a, 0xd8, 0x4e, 0x96);
-DEFINE_GUID(IID_ID3DXSPMesh,   0x667ea4c7, 0xf1cd, 0x4386, 0xb5, 0x23, 0x7c, 0x02, 0x90, 0xb8, 0x3c, 0xc5);
-DEFINE_GUID(IID_ID3DXSkinInfo, 0x11eaa540, 0xf9a6, 0x4d49, 0xae, 0x6a, 0xe1, 0x92, 0x21, 0xf7, 0x0c, 0xc4);
-DEFINE_GUID(IID_ID3DXPatchMesh,0x3ce6cc22, 0xdbf2, 0x44f4, 0x89, 0x4d, 0xf9, 0xc3, 0x4a, 0x33, 0x71, 0x39);
-DEFINE_GUID(IID_ID3DXPRTBuffer,		  0xf1827e47, 0x00a8, 0x49cd, 0x90, 0x8c, 0x9d, 0x11, 0x95, 0x5f, 0x87, 0x28);
-DEFINE_GUID(IID_ID3DXPRTCompBuffer,	  0xa758d465, 0xfe8d, 0x45ad, 0x9c, 0xf0, 0xd0, 0x1e, 0x56, 0x26, 0x6a, 0x07);
-DEFINE_GUID(IID_ID3DXTextureGutterHelper, 0x838f01ec, 0x9729, 0x4527, 0xaa, 0xdb, 0xdf, 0x70, 0xad, 0xe7, 0xfe, 0xa9);
-DEFINE_GUID(IID_ID3DXPRTEngine,		  0x683a4278, 0xcd5f, 0x4d24, 0x90, 0xad, 0xc4, 0xe1, 0xb6, 0x85, 0x5d, 0x53);
+DEFINE_GUID(IID_ID3DXBaseMesh, 0x7ed943dd, 0x52e8, 0x40b5, 0xa8, 0xd8, 0x76, 0x68, 0x5c, 0x40, 0x63, 0x30)
+DEFINE_GUID(IID_ID3DXMesh,     0x4020e5c2, 0x1403, 0x4929, 0x88, 0x3f, 0xe2, 0xe8, 0x49, 0xfa, 0xc1, 0x95)
+DEFINE_GUID(IID_ID3DXPMesh,    0x8875769a, 0xd579, 0x4088, 0xaa, 0xeb, 0x53, 0x4d, 0x1a, 0xd8, 0x4e, 0x96)
+DEFINE_GUID(IID_ID3DXSPMesh,   0x667ea4c7, 0xf1cd, 0x4386, 0xb5, 0x23, 0x7c, 0x02, 0x90, 0xb8, 0x3c, 0xc5)
+DEFINE_GUID(IID_ID3DXSkinInfo, 0x11eaa540, 0xf9a6, 0x4d49, 0xae, 0x6a, 0xe1, 0x92, 0x21, 0xf7, 0x0c, 0xc4)
+DEFINE_GUID(IID_ID3DXPatchMesh,0x3ce6cc22, 0xdbf2, 0x44f4, 0x89, 0x4d, 0xf9, 0xc3, 0x4a, 0x33, 0x71, 0x39)
+DEFINE_GUID(IID_ID3DXPRTBuffer,		  0xf1827e47, 0x00a8, 0x49cd, 0x90, 0x8c, 0x9d, 0x11, 0x95, 0x5f, 0x87, 0x28)
+DEFINE_GUID(IID_ID3DXPRTCompBuffer,	  0xa758d465, 0xfe8d, 0x45ad, 0x9c, 0xf0, 0xd0, 0x1e, 0x56, 0x26, 0x6a, 0x07)
+DEFINE_GUID(IID_ID3DXTextureGutterHelper, 0x838f01ec, 0x9729, 0x4527, 0xaa, 0xdb, 0xdf, 0x70, 0xad, 0xe7, 0xfe, 0xa9)
+DEFINE_GUID(IID_ID3DXPRTEngine,		  0x683a4278, 0xcd5f, 0x4d24, 0x90, 0xad, 0xc4, 0xe1, 0xb6, 0x85, 0x5d, 0x53)
 
 UNUSED16		equ (0xffff)
 UNUSED32		equ (0xffffffff)
@@ -245,11 +245,9 @@ PlaybackType		dd ?
 BufferLength		dd ?
 XFILECOMPRESSEDANIMATIONSET ENDS
 
-;HRESULT
-
-CALLBACK(LPD3DXUVATLASCB, :FLOAT, :PVOID)
-CALLBACK(LPD3DXIMTSIGNALCALLBACK, :ptr D3DXVECTOR2, :UINT, :UINT, :PVOID, :ptr FLOAT)
-CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
+CALLBACK(LPD3DXUVATLASCB, :FLOAT, :ptr)
+CALLBACK(LPD3DXIMTSIGNALCALLBACK, :ptr, :UINT, :UINT, :ptr, :ptr)
+CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :ptr)
 
 .comdef ID3DXBaseMesh : public IUnknown
 
@@ -274,8 +272,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     ConvertAdjacencyToPointReps proc :ptr, :ptr
     GenerateAdjacency	proc :FLOAT, :ptr
     UpdateSemantics	proc :ptr
-
-    .ends
+   .ends
 
 .comdef ID3DXMesh : public ID3DXBaseMesh
 
@@ -284,9 +281,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     Optimize		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
     OptimizeInplace	proc :DWORD, :ptr, :ptr, :ptr, :ptr
     SetAttributeTable	proc :ptr, :DWORD
-
-    .ends
-
+   .ends
 
 .comdef ID3DXPMesh : public ID3DXBaseMesh
 
@@ -305,9 +300,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     TrimByVertices	proc :DWORD, :DWORD, :ptr, :ptr
     GetAdjacency	proc :ptr
     GenerateVertexHistory proc :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXSPMesh : public IUnknown
 
@@ -327,9 +320,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     GetMaxVertices	proc
     GetVertexAttributeWeights proc :LPD3DXATTRIBUTEWEIGHTS
     GetVertexWeights	proc :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXPatchMesh : public IUnknown
 
@@ -356,9 +347,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     GetDisplaceParam	proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     Tessellate		proc :float, :ptr
     TessellateAdaptive	proc :ptr, :DWORD, :DWORD, :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXSkinInfo : public IUnknown
 
@@ -386,9 +375,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     UpdateSkinnedMesh	proc :ptr, :ptr, :ptr, :ptr
     ConvertToBlendedMesh proc :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     ConvertToIndexedBlendedMesh proc :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXPRTBuffer : public IUnknown
 
@@ -408,9 +395,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     EvalGH		proc
     ExtractTexture	proc :UINT, :UINT, :UINT, :ptr
     ExtractToMesh	proc :UINT, :D3DDECLUSAGE, :UINT, :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXPRTCompBuffer : public IUnknown
 
@@ -428,9 +413,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     ExtractPCA		proc :UINT, :UINT, :ptr
     ExtractTexture	proc :UINT, :UINT, :ptr
     ExtractToMesh	proc :UINT, :D3DDECLUSAGE, :UINT, :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXTextureGutterHelper : public IUnknown
 
@@ -448,9 +431,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     SetBaryMap		proc :ptr
     SetTexelMap		proc :ptr
     SetGutterMap	proc :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXPRTEngine : public IUnknown
 
@@ -486,677 +467,86 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     SetCallback		proc :LPD3DXSHPRTSIMCB, :float, :ptr
     ShadowRayIntersects proc :ptr, :ptr
     ClosestRayIntersects proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+   .ends
 
-    .ends
-
-;HRESULT
-D3DXCreateMesh proto WINAPI \
-	    face_count: DWORD,
-	  vertex_count: DWORD,
-		 flags: DWORD,
-	   declaration: ptr D3DVERTEXELEMENT9,
-		device: ptr IDirect3DDevice9,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXCreateMeshFVF proto WINAPI \
-	    face_count: DWORD,
-	  vertex_count: DWORD,
-		 flags: DWORD,
-		   fvf: DWORD,
-		device: ptr IDirect3DDevice9,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXCreateBuffer proto WINAPI \
-		  size: DWORD,
-		buffer: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateSPMesh proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-	     adjacency: ptr DWORD,
-     attribute_weights: ptr D3DXATTRIBUTEWEIGHTS,
-	vertex_weights: ptr FLOAT,
-		spmesh: ptr ID3DXSPMesh
-
-;HRESULT
-D3DXCreatePMeshFromStream proto WINAPI \
-		stream: ptr IStream,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-	     materials: ptr ID3DXBuffer,
-      effect_instances: ptr ID3DXBuffer,
-	material_count: ptr DWORD,
-		  mesh: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateSkinInfo proto WINAPI \
-	  vertex_count: DWORD,
-	   declaration: ptr D3DVERTEXELEMENT9,
-	    bone_count: DWORD,
-	     skin_info: ptr ID3DXSkinInfo
-
-;HRESULT
-D3DXCreateSkinInfoFVF proto WINAPI \
-	  vertex_count: DWORD,
-		   fvf: DWORD,
-	    bone_count: DWORD,
-	     skin_info: ptr ID3DXSkinInfo
-
-;HRESULT
-D3DXCreateSkinInfoFromBlendedMesh proto WINAPI \
-		  mesh: ptr ID3DXBaseMesh,
-	    bone_count: DWORD,
-bone_combination_table: ptr D3DXBONECOMBINATION,
-	     skin_info: ptr ID3DXSkinInfo
-
-;HRESULT
-D3DXCreatePatchMesh proto WINAPI \
-	    patch_info: ptr D3DXPATCHINFO,
-	   patch_count: DWORD,
-	  vertex_count: DWORD,
-		 flags: DWORD,
-	   declaration: ptr D3DVERTEXELEMENT9,
-		device: ptr IDirect3DDevice9,
-		  mesh: ptr ID3DXPatchMesh
-
-;HRESULT
-D3DXCreatePRTBuffer proto WINAPI \
-	  sample_count: UINT,
-	   coeff_count: UINT,
-	 channel_count: UINT,
-		buffer: ptr ID3DXPRTBuffer
-
-;HRESULT
-D3DXCreatePRTBufferTex proto WINAPI \
-		 width: UINT,
-		height: UINT,
-	   coeff_count: UINT,
-	 channel_count: UINT,
-		buffer: ptr ID3DXPRTBuffer
-
-;HRESULT
-D3DXCreatePRTCompBuffer proto WINAPI \
-	       quality: D3DXSHCOMPRESSQUALITYTYPE,
-	 cluster_count: UINT,
-	     pca_count: UINT,
-		    cb: LPD3DXSHPRTSIMCB,
-		   ctx: ptr void,
-		 input: ptr ID3DXPRTBuffer,
-		buffer: ptr ID3DXPRTCompBuffer
-
-;HRESULT
-D3DXCreateTextureGutterHelper proto WINAPI \
-		 width: UINT,
-		height: UINT,
-		  mesh: ptr ID3DXMesh,
-	   gutter_size: FLOAT,
-		    gh: ptr ID3DXTextureGutterHelper
-
-;HRESULT
-D3DXCreatePRTEngine proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-	     adjacency: ptr DWORD,
-	    extract_uv: BOOL,
-	  blocker_mesh: ptr ID3DXMesh,
-		engine: ptr ID3DXPRTEngine
-
-;HRESULT
-D3DXLoadMeshFromXA proto WINAPI \
-	      filename: LPSTR,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-	     adjacency: ptr ID3DXBuffer,
-	     materials: ptr ID3DXBuffer,
-      effect_instances: ptr ID3DXBuffer,
-	material_count: ptr DWORD,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXLoadMeshFromXW proto WINAPI \
-	      filename: LPWSTR,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-	     adjacency: ptr ID3DXBuffer,
-	     materials: ptr ID3DXBuffer,
-      effect_instances: ptr ID3DXBuffer,
-	material_count: ptr DWORD,
-		  mesh: ptr ID3DXMesh
-
+D3DXCreateMesh proto WINAPI :DWORD, :DWORD, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateMeshFVF proto WINAPI :DWORD, :DWORD, :DWORD, :DWORD, :ptr, :ptr
+D3DXCreateBuffer proto WINAPI :DWORD, :ptr
+D3DXCreateSPMesh proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXCreatePMeshFromStream proto WINAPI :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXCreateSkinInfo proto WINAPI :DWORD, :ptr, :DWORD, :ptr
+D3DXCreateSkinInfoFVF proto WINAPI :DWORD, :DWORD, :DWORD, :ptr
+D3DXCreateSkinInfoFromBlendedMesh proto WINAPI :ptr, :DWORD, :ptr, :ptr
+D3DXCreatePatchMesh proto WINAPI :ptr, :DWORD, :DWORD, :DWORD, :ptr, :ptr, :ptr
+D3DXCreatePRTBuffer proto WINAPI :UINT, :UINT,	UINT, :ptr
+D3DXCreatePRTBufferTex proto WINAPI :UINT, :UINT, :UINT, :UINT, :ptr
+D3DXCreatePRTCompBuffer proto WINAPI :D3DXSHCOMPRESSQUALITYTYPE, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
+D3DXCreateTextureGutterHelper proto WINAPI :UINT, :UINT, :ptr, :FLOAT, :ptr
+D3DXCreatePRTEngine proto WINAPI :ptr, :ptr, :BOOL, :ptr, :ptr
+D3DXLoadMeshFromXA proto WINAPI :LPSTR, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXLoadMeshFromXW proto WINAPI :LPWSTR, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
-D3DXLoadMeshFromX	equ <D3DXLoadMeshFromXW>
+D3DXLoadMeshFromX equ <D3DXLoadMeshFromXW>
 else
-D3DXLoadMeshFromX	equ <D3DXLoadMeshFromXA>
+D3DXLoadMeshFromX equ <D3DXLoadMeshFromXA>
 endif
-
-;HRESULT
-D3DXLoadMeshFromXInMemory proto WINAPI \
-		 _data: PVOID,
-	     data_size: DWORD,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-	     adjacency: ptr ID3DXBuffer,
-	     materials: ptr ID3DXBuffer,
-      effect_instances: ptr ID3DXBuffer,
-	material_count: ptr DWORD,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXLoadMeshFromXResource proto WINAPI \
-		module: HMODULE,
-	      resource: LPSTR,
-	 resource_type: LPSTR,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-	     adjacency: ptr ID3DXBuffer,
-	     materials: ptr ID3DXBuffer,
-      effect_instances: ptr ID3DXBuffer,
-	material_count: ptr DWORD,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXLoadMeshFromXof proto WINAPI \
-	     file_data: ptr ID3DXFileData,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-	     adjacency: ptr ID3DXBuffer,
-	     materials: ptr ID3DXBuffer,
-      effect_instances: ptr ID3DXBuffer,
-	material_count: ptr DWORD,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXLoadPatchMeshFromXof proto WINAPI \
-	     file_data: ptr ID3DXFileData,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-	     adjacency: ptr ID3DXBuffer,
-	     materials: ptr ID3DXBuffer,
-      effect_instances: ptr ID3DXBuffer,
-	material_count: ptr DWORD,
-		  mesh: ptr ID3DXPatchMesh
-
-;HRESULT
-D3DXLoadSkinMeshFromXof proto WINAPI \
-	     file_data: ptr ID3DXFileData,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-	     adjacency: ptr ID3DXBuffer,
-	     materials: ptr ID3DXBuffer,
-      effect_instances: ptr ID3DXBuffer,
-	material_count: ptr DWORD,
-	     skin_info: ptr ID3DXSkinInfo,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXLoadPRTBufferFromFileA proto WINAPI \
-	      filename: LPSTR,
-		buffer: ptr ID3DXPRTBuffer
-
-;HRESULT
-D3DXLoadPRTBufferFromFileW proto WINAPI \
-	      filename: ptr WCHAR,
-		buffer: ptr ID3DXPRTBuffer
-
-;HRESULT
-D3DXLoadPRTCompBufferFromFileA proto WINAPI \
-	      filename: LPSTR,
-		buffer: ptr ID3DXPRTCompBuffer
-
-;HRESULT
-D3DXLoadPRTCompBufferFromFileW proto WINAPI \
-	      filename: ptr WCHAR,
-		buffer: ptr ID3DXPRTCompBuffer
-
-D3DXLoadPRTCompBufferFromFile equ __MINGW_NAME_AW(D3DXLoadPRTCompBufferFromFile)
-;HRESULT
-D3DXSaveMeshToXA proto WINAPI \
-	      filename: LPSTR,
-		  mesh: ptr ID3DXMesh,
-	     adjacency: ptr DWORD,
-	     materials: ptr D3DXMATERIAL,
-      effect_instances: ptr D3DXEFFECTINSTANCE,
-	material_count: DWORD,
-		format: DWORD
-
-;HRESULT
-D3DXSaveMeshToXW proto WINAPI \
-	      filename: LPWSTR,
-		  mesh: ptr ID3DXMesh,
-	     adjacency: ptr DWORD,
-	     materials: ptr D3DXMATERIAL,
-      effect_instances: ptr D3DXEFFECTINSTANCE,
-	material_count: DWORD,
-		format: DWORD
-
-;HRESULT
-D3DXSavePRTBufferToFileA proto WINAPI \
-	      filename: LPSTR,
-		buffer: ptr ID3DXPRTBuffer
-
-;HRESULT
-D3DXSavePRTBufferToFileW proto WINAPI \
-	      filename: LPWSTR,
-		buffer: ptr ID3DXPRTBuffer
-
-;HRESULT
-D3DXSavePRTCompBufferToFileA proto WINAPI \
-	      filename: LPSTR,
-		buffer: ptr ID3DXPRTCompBuffer
-
-;HRESULT
-D3DXSavePRTCompBufferToFileW proto WINAPI \
-	      filename: LPWSTR,
-		buffer: ptr ID3DXPRTCompBuffer
-
-;UINT
-D3DXGetDeclLength proto WINAPI \
-		  decl: ptr D3DVERTEXELEMENT9
-
-;UINT
-D3DXGetDeclVertexSize proto WINAPI \
-		  decl: ptr D3DVERTEXELEMENT9,
-	    stream_idx: DWORD
-
-;UINT
-D3DXGetFVFVertexSize proto WINAPI \
-		      : DWORD
-
-;BOOL
-D3DXBoxBoundProbe proto WINAPI \
-		  vmin: ptr D3DXVECTOR3,
-		  vmax: ptr D3DXVECTOR3,
-	       ray_pos: ptr D3DXVECTOR3,
-	       ray_dir: ptr D3DXVECTOR3
-
-;BOOL
-D3DXSphereBoundProbe proto WINAPI \
-		center: ptr D3DXVECTOR3,
-		radius: FLOAT,
-	       ray_pos: ptr D3DXVECTOR3,
-	       ray_dir: ptr D3DXVECTOR3
-
-;HRESULT
-D3DXCleanMesh proto WINAPI \
-	    clean_type: D3DXCLEANTYPE,
-	       mesh_in: ptr ID3DXMesh,
-	  adjacency_in: ptr DWORD,
-	      mesh_out: ptr ID3DXMesh,
-	 adjacency_out: ptr DWORD,
-		errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXConcatenateMeshes proto WINAPI \
-		meshes: ptr ID3DXMesh,
-	    mesh_count: UINT,
-		 flags: DWORD,
-     geometry_matrices: ptr D3DXMATRIX,
-      texture_matrices: ptr D3DXMATRIX,
-	   declaration: ptr D3DVERTEXELEMENT9,
-		device: ptr IDirect3DDevice9,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXComputeBoundingBox proto WINAPI \
-	     first_pos: ptr D3DXVECTOR3,
-	  num_vertices: DWORD,
-		stride: DWORD,
-		  vmin: ptr D3DXVECTOR3,
-		  vmax: ptr D3DXVECTOR3
-
-;HRESULT
-D3DXComputeBoundingSphere proto WINAPI \
-	     first_pos: ptr D3DXVECTOR3,
-	  num_vertices: DWORD,
-		stride: DWORD,
-		center: ptr D3DXVECTOR3,
-		radius: ptr FLOAT
-
-;HRESULT
-D3DXComputeIMTFromPerTexelSignal proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-	   texture_idx: DWORD,
-	  texel_signal: ptr float,
-		 width: UINT,
-		height: UINT,
-      signal_dimension: UINT,
-       component_count: UINT,
-		 flags: DWORD,
-		    cb: LPD3DXUVATLASCB,
-		   ctx: ptr void,
-		buffer: ptr ID3DXBuffer
-
-;HRESULT
-D3DXComputeIMTFromPerVertexSignal proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-	 vertex_signal: ptr FLOAT,
-      signal_dimension: UINT,
-	 signal_stride: UINT,
-		 flags: DWORD,
-		    cb: LPD3DXUVATLASCB,
-		   ctx: ptr void,
-		buffer: ptr ID3DXBuffer
-
-;HRESULT
-D3DXComputeIMTFromSignal proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-	   texture_idx: DWORD,
-      signal_dimension: UINT,
-       max_uv_distance: float,
-		 flags: DWORD,
-	     signal_cb: LPD3DXIMTSIGNALCALLBACK,
-	    signal_ctx: ptr void,
-	     status_cb: LPD3DXUVATLASCB,
-	    status_ctx: ptr void,
-		buffer: ptr ID3DXBuffer
-
-;HRESULT
-D3DXComputeIMTFromTexture proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-	       texture: ptr IDirect3DTexture9,
-	   texture_idx: DWORD,
-	       options: DWORD,
-		    cb: LPD3DXUVATLASCB,
-		   ctx: PVOID,
-		  _out: ptr ID3DXBuffer
-
-;HRESULT
-D3DXComputeNormals proto WINAPI \
-		  mesh: ptr ID3DXBaseMesh,
-	     adjacency: ptr DWORD
-
-;HRESULT
-D3DXComputeTangentFrameEx proto WINAPI \
-	       mesh_in: ptr ID3DXMesh,
-   texture_in_semantic: DWORD,
-	texture_in_idx: DWORD,
-u_partial_out_semantic: DWORD,
-     u_partial_out_idx: DWORD,
-v_partial_out_semantic: DWORD,
-     v_partial_out_idx: DWORD,
-   normal_out_semantic: DWORD,
-	normal_out_idx: DWORD,
-		 flags: DWORD,
-	     adjacency: ptr DWORD,
-partial_edge_threshold: float,
-singular_point_threshold: float,
- normal_edge_threshold: float,
-	      mesh_out: ptr ID3DXMesh,
-		buffer: ptr ID3DXBuffer
-
-;HRESULT
-D3DXComputeTangent proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-		 stage: DWORD,
-	   tangent_idx: DWORD,
-	    binorm_idx: DWORD,
-		  wrap: DWORD,
-	     adjacency: ptr DWORD
-
-;HRESULT
-D3DXConvertMeshSubsetToSingleStrip proto WINAPI \
-	       mesh_in: ptr ID3DXBaseMesh,
-	  attribute_id: DWORD,
-	      ib_flags: DWORD,
-	  index_buffer: ptr IDirect3DIndexBuffer9,
-	   index_count: ptr DWORD
-
-;HRESULT
-D3DXConvertMeshSubsetToStrips proto WINAPI \
-	       mesh_in: ptr ID3DXBaseMesh,
-	  attribute_id: DWORD,
-	      ib_flags: DWORD,
-	  index_buffer: ptr IDirect3DIndexBuffer9,
-	   index_count: ptr DWORD,
-	 strip_lengths: ptr ID3DXBuffer,
-	   strip_count: ptr DWORD
-
-;HRESULT
-D3DXDeclaratorFromFVF proto WINAPI \
-		      : DWORD,
-		      : ptr D3DVERTEXELEMENT9;[MAX_FVF_DECL_SIZE]
-
-;HRESULT
-D3DXFVFFromDeclarator proto WINAPI \
-		  decl: ptr D3DVERTEXELEMENT9,
-		   fvf: ptr DWORD
-
-;HRESULT
-D3DXGenerateOutputDecl proto WINAPI \
-	      decl_out: ptr D3DVERTEXELEMENT9,
-	       decl_in: ptr D3DVERTEXELEMENT9
-
-;HRESULT
-D3DXGeneratePMesh proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-	     adjacency: ptr DWORD,
-     attribute_weights: ptr D3DXATTRIBUTEWEIGHTS,
-	vertex_weights: ptr FLOAT,
-	     min_value: DWORD,
-		 flags: DWORD,
-		 pmesh: ptr ID3DXPMesh
-
-;HRESULT
-D3DXIntersect proto WINAPI \
-		  mesh: ptr ID3DXBaseMesh,
-	  ray_position: ptr D3DXVECTOR3,
-	 ray_direction: ptr D3DXVECTOR3,
-		   hit: ptr BOOL,
-	      face_idx: ptr DWORD,
-		     u: ptr float,
-		     v: ptr float,
-	      distance: ptr float,
-		  hits: ptr ID3DXBuffer,
-	     hit_count: ptr DWORD
-
-;HRESULT
-D3DXIntersectSubset proto WINAPI \
-		  mesh: ptr ID3DXBaseMesh,
-	  attribute_id: DWORD,
-	  ray_position: ptr D3DXVECTOR3,
-	 ray_direction: ptr D3DXVECTOR3,
-		   hit: ptr BOOL,
-	      face_idx: ptr DWORD,
-		     u: ptr float,
-		     v: ptr float,
-	      distance: ptr float,
-		  hits: ptr ID3DXBuffer,
-	     hit_count: ptr DWORD
-
-;BOOL
-D3DXIntersectTri proto WINAPI \
-		  vtx0: ptr D3DXVECTOR3,
-		  vtx1: ptr D3DXVECTOR3,
-		  vtx2: ptr D3DXVECTOR3,
-	       ray_pos: ptr D3DXVECTOR3,
-	       ray_dir: ptr D3DXVECTOR3,
-		     u: ptr FLOAT,
-		     v: ptr FLOAT,
-		  dist: ptr FLOAT
-
-;HRESULT
-D3DXOptimizeFaces proto WINAPI \
-	       indices: PVOID,
-	    face_count: UINT,
-	  vertex_count: UINT,
-	     idx_32bit: BOOL,
-	    face_remap: ptr DWORD
-
-;HRESULT
-D3DXOptimizeVertices proto WINAPI \
-	       indices: PVOID,
-	    face_count: UINT,
-	  vertex_count: UINT,
-	     idx_32bit: BOOL,
-	  vertex_remap: ptr DWORD
-
-;HRESULT
-D3DXRectPatchSize proto WINAPI \
-	 segment_count: ptr FLOAT,
-	 num_triangles: ptr DWORD,
-	  num_vertices: ptr DWORD
-
-;HRESULT
-D3DXSHPRTCompSuperCluster proto WINAPI \
-	   cluster_ids: ptr UINT,
-		 scene: ptr ID3DXMesh,
-     max_cluster_count: UINT,
-	 cluster_count: UINT,
-	  scluster_ids: ptr UINT,
-	scluster_count: ptr UINT
-
-;HRESULT
-D3DXSHPRTCompSplitMeshSC proto WINAPI \
-	   cluster_idx: ptr UINT,
-	  vertex_count: UINT,
-	 cluster_count: UINT,
-	  scluster_ids: ptr UINT,
-	scluster_count: UINT,
-       index_buffer_in: ptr void,
-	   ib_in_32bit: BOOL,
-	    face_count: UINT,
-      index_buffer_out: ptr ID3DXBuffer,
-     index_buffer_size: ptr UINT,
-	  ib_out_32bit: BOOL,
-	    face_remap: ptr ID3DXBuffer,
-	   vertex_data: ptr ID3DXBuffer,
-    vertex_data_length: ptr UINT,
-       sc_cluster_list: ptr UINT,
-	       sc_data: ptr D3DXSHPRTSPLITMESHCLUSTERDATA
-
-;HRESULT
-D3DXSimplifyMesh proto WINAPI \
-	       mesh_in: ptr ID3DXMesh,
-	     adjacency: ptr DWORD,
-     attribute_weights: ptr D3DXATTRIBUTEWEIGHTS,
-	vertex_weights: ptr FLOAT,
-	     min_value: DWORD,
-		 flags: DWORD,
-	      mesh_out: ptr ID3DXMesh
-
-;HRESULT
-D3DXSplitMesh proto WINAPI \
-	       mesh_in: ptr ID3DXMesh,
-	  adjacency_in: ptr DWORD,
-	      max_size: DWORD,
-		 flags: DWORD,
-	mesh_out_count: ptr DWORD,
-	      mesh_out: ptr ID3DXBuffer,
-	 adjacency_out: ptr ID3DXBuffer,
-	face_remap_out: ptr ID3DXBuffer,
-      vertex_remap_out: ptr ID3DXBuffer
-
-;HRESULT
-D3DXTessellateNPatches proto WINAPI \
-	       mesh_in: ptr ID3DXMesh,
-	  adjacency_in: ptr DWORD,
-	 segment_count: float,
-	   quad_interp: BOOL,
-	      mesh_out: ptr ID3DXMesh,
-	 adjacency_out: ptr ID3DXBuffer
-
-;HRESULT
-D3DXTessellateRectPatch proto WINAPI \
-		buffer: ptr IDirect3DVertexBuffer9,
-	 segment_count: ptr FLOAT,
-	   declaration: ptr D3DVERTEXELEMENT9,
-	    patch_info: ptr D3DVERTEXELEMENT9,
-		  mesh: ptr D3DVERTEXELEMENT9
-
-;HRESULT
-D3DXTessellateTriPatch proto WINAPI \
-		buffer: ptr IDirect3DVertexBuffer9,
-	 segment_count: ptr FLOAT,
-	   declaration: ptr D3DVERTEXELEMENT9,
-	    patch_info: ptr D3DTRIPATCH_INFO,
-		  mesh: ptr ID3DXMesh
-
-;HRESULT
-D3DXTriPatchSize proto WINAPI \
-	 segment_count: ptr FLOAT,
-	 num_triangles: ptr DWORD,
-	  num_vertices: ptr DWORD
-
-;HRESULT
-D3DXUVAtlasCreate proto WINAPI \
-	       mesh_in: ptr ID3DXMesh,
-       max_chart_count: UINT,
-	max_stretch_in: float,
-		 width: UINT,
-		height: UINT,
-		gutter: float,
-	   texture_idx: DWORD,
-	     adjacency: ptr DWORD,
-	   false_edges: ptr DWORD,
-	     imt_array: ptr FLOAT,
-		    cb: LPD3DXUVATLASCB,
-	       cb_freq: float,
-		   ctx: ptr void,
-		 flags: DWORD,
-	      mesh_out: ptr ID3DXMesh,
- face_partitioning_out: ptr ID3DXBuffer,
-      vertex_remap_out: ptr ID3DXBuffer,
-       max_stretch_out: ptr float,
-	   chart_count: ptr UINT
-
-;HRESULT
-D3DXUVAtlasPack proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-		 width: UINT,
-		height: UINT,
-		gutter: float,
-	   texture_idx: DWORD,
-partition_result_adjacency: ptr DWORD,
-		    cb: LPD3DXUVATLASCB,
-	       cb_freq: float,
-		   ctx: PVOID,
-		 flags: DWORD,
-     face_partitioning: ptr ID3DXBuffer
-
-;HRESULT
-D3DXUVAtlasPartition proto WINAPI \
-	       mesh_in: ptr ID3DXMesh,
-       max_chart_count: UINT,
-	max_stretch_in: float,
-	   texture_idx: DWORD,
-	     adjacency: ptr DWORD,
-	   false_edges: ptr DWORD,
-	     imt_array: ptr FLOAT,
-		    cb: LPD3DXUVATLASCB,
-	       cb_freq: float,
-		   ctx: PVOID,
-		 flags: DWORD,
-	      mesh_out: ptr ID3DXMesh,
- face_partitioning_out: ptr ID3DXBuffer,
-      vertex_remap_out: ptr ID3DXBuffer,
-	 adjacency_out: ptr ID3DXBuffer,
-       max_stretch_out: ptr float,
-	   chart_count: ptr UINT
-
-;HRESULT
-D3DXValidMesh proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-	     adjacency: ptr DWORD,
-		errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXValidPatchMesh proto WINAPI \
-		  mesh: ptr ID3DXPatchMesh,
-degenerate_vertex_count: ptr DWORD,
-degenerate_patch_count: ptr DWORD,
-		errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXWeldVertices proto WINAPI \
-		  mesh: ptr ID3DXMesh,
-		 flags: DWORD,
-	      epsilons: ptr D3DXWELDEPSILONS,
-	  adjacency_in: ptr DWORD,
-	 adjacency_out: ptr DWORD,
-	face_remap_out: ptr DWORD,
-      vertex_remap_out: ptr ID3DXBuffer
-
+D3DXLoadMeshFromXInMemory proto WINAPI :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXLoadMeshFromXResource proto WINAPI :HMODULE, :LPSTR, :LPSTR, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXLoadMeshFromXof proto WINAPI :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXLoadPatchMeshFromXof proto WINAPI :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXLoadSkinMeshFromXof proto WINAPI :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXLoadPRTBufferFromFileA proto WINAPI :LPSTR, :ptr
+D3DXLoadPRTBufferFromFileW proto WINAPI :ptr, :ptr
+D3DXLoadPRTCompBufferFromFileA proto WINAPI :LPSTR, :ptr
+D3DXLoadPRTCompBufferFromFileW proto WINAPI :ptr, :ptr
+D3DXSaveMeshToXA proto WINAPI :LPSTR, :ptr, :ptr, :ptr, :ptr, :DWORD, :DWORD
+D3DXSaveMeshToXW proto WINAPI :LPWSTR, :ptr, :ptr, :ptr, :ptr, :DWORD, :DWORD
+D3DXSavePRTBufferToFileA proto WINAPI :LPSTR, :ptr
+D3DXSavePRTBufferToFileW proto WINAPI :LPWSTR, :ptr
+D3DXSavePRTCompBufferToFileA proto WINAPI :LPSTR, :ptr
+D3DXSavePRTCompBufferToFileW proto WINAPI :LPWSTR, :ptr
+D3DXGetDeclLength proto WINAPI :ptr
+D3DXGetDeclVertexSize proto WINAPI :ptr, :DWORD
+D3DXGetFVFVertexSize proto WINAPI :DWORD
+D3DXBoxBoundProbe proto WINAPI :ptr, :ptr, :ptr, :ptr
+D3DXSphereBoundProbe proto WINAPI :ptr, :FLOAT, :ptr, :ptr
+D3DXCleanMesh proto WINAPI :D3DXCLEANTYPE, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXConcatenateMeshes proto WINAPI :ptr, :UINT, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXComputeBoundingBox proto WINAPI :ptr, :DWORD, :DWORD, :ptr, :ptr
+D3DXComputeBoundingSphere proto WINAPI :ptr, :DWORD, :DWORD, :ptr, :ptr
+D3DXComputeIMTFromPerTexelSignal proto WINAPI :ptr, :DWORD, :ptr, :UINT, :UINT, :UINT, :UINT, :DWORD, :ptr, :ptr, :ptr
+D3DXComputeIMTFromPerVertexSignal proto WINAPI :ptr, :ptr, :UINT, :UINT, :DWORD, :ptr, :ptr, :ptr
+D3DXComputeIMTFromSignal proto WINAPI :ptr, :DWORD, :UINT, :float, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXComputeIMTFromTexture proto WINAPI :ptr, :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr
+D3DXComputeNormals proto WINAPI :ptr, :ptr
+D3DXComputeTangentFrameEx proto WINAPI :ptr, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :ptr, :float, :float, :float, :ptr, :ptr
+D3DXComputeTangent proto WINAPI :ptr, :DWORD, :DWORD, :DWORD, :DWORD, :ptr
+D3DXConvertMeshSubsetToSingleStrip proto WINAPI :ptr, :DWORD, :DWORD, :ptr, :ptr
+D3DXConvertMeshSubsetToStrips proto WINAPI :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
+D3DXDeclaratorFromFVF proto WINAPI :DWORD, :ptr
+D3DXFVFFromDeclarator proto WINAPI :ptr, :ptr
+D3DXGenerateOutputDecl proto WINAPI :ptr, :ptr
+D3DXGeneratePMesh proto WINAPI :ptr, :ptr, :ptr, :ptr, :DWORD, :DWORD, :ptr
+D3DXIntersect proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXIntersectSubset proto WINAPI :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXIntersectTri proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXOptimizeFaces proto WINAPI :ptr, :UINT, :UINT, :BOOL, :ptr
+D3DXOptimizeVertices proto WINAPI :ptr, :UINT, :UINT, :BOOL, :ptr
+D3DXRectPatchSize proto WINAPI :ptr, :ptr, :ptr
+D3DXSHPRTCompSuperCluster proto WINAPI :ptr, :ptr, :UINT, :UINT, :ptr, :ptr
+D3DXSHPRTCompSplitMeshSC proto WINAPI :ptr, :UINT, :UINT, :ptr, :UINT, :ptr, :BOOL, :UINT, :ptr, :ptr, :BOOL, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXSimplifyMesh proto WINAPI :ptr, :ptr, :ptr, :ptr, :DWORD, :DWORD, :ptr
+D3DXSplitMesh proto WINAPI :ptr, :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXTessellateNPatches proto WINAPI :ptr, :ptr, :float, :BOOL, :ptr, :ptr
+D3DXTessellateRectPatch proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXTessellateTriPatch proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXTriPatchSize proto WINAPI :ptr, :ptr, :ptr
+D3DXUVAtlasCreate proto WINAPI :ptr, :UINT, :float, :UINT, :UINT, :float, :DWORD, :ptr, :ptr, :ptr, :LPD3DXUVATLASCB, :float, :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXUVAtlasPack proto WINAPI :ptr, :UINT, :UINT, :float, :DWORD, :ptr, :LPD3DXUVATLASCB, :float, :ptr, :DWORD, :ptr
+D3DXUVAtlasPartition proto WINAPI :ptr, :UINT, :float, :DWORD, :ptr, :ptr, :ptr, :LPD3DXUVATLASCB, :float, :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXValidMesh proto WINAPI :ptr, :ptr, :ptr
+D3DXValidPatchMesh proto WINAPI :ptr, :ptr, :ptr, :ptr
+D3DXWeldVertices proto WINAPI :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
 
 DEFINE_GUID(DXFILEOBJ_XSkinMeshHeader,		0x3cf169ce, 0xff7c, 0x44ab, 0x93, 0xc0, 0xf7, 0x8f, 0x62, 0xd1, 0x72, 0xe2);
 DEFINE_GUID(DXFILEOBJ_VertexDuplicationIndices, 0xb8d65549, 0xd7c9, 0x4995, 0x89, 0xcf, 0x53, 0xa9, 0xa8, 0xb0, 0x31, 0xe3);

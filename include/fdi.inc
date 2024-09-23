@@ -273,41 +273,11 @@ cpuUNKNOWN		equ (-1)    ;; FDI does detection
 cpu80286		equ (0)	    ;; '286 opcodes only
 cpu80386		equ (1)	    ;; '386 opcodes used
 
-;HFDI DIAMONDAPI
-FDICreate proto WINAPI \
-	      pfnalloc: PFNALLOC,
-	       pfnfree: PFNFREE,
-	       pfnopen: PFNOPEN,
-	       pfnread: PFNREAD,
-	      pfnwrite: PFNWRITE,
-	      pfnclose: PFNCLOSE,
-	       pfnseek: PFNSEEK,
-	       cpuType: SINT,
-		  perf: PERF
-
-FDIIsCabinet proto WINAPI \
-		  hfdi: HFDI,
-		    hf: INT_PTR,
-		pfdici: PFDICABINETINFO
-
-;BOOL
-FDICopy proto WINAPI \
-		  hfdi: HFDI,
-	    pszCabinet: LPSTR,
-	    pszCabPath: LPSTR,
-		 flags: SINT,
-	       pfnfdin: PFNFDINOTIFY,
-	       pfnfdid: PFNFDIDECRYPT,
-		pvUser: ptr
-;BOOL
-FDIDestroy proto WINAPI \
-		  hfdi: HFDI
-
-;BOOL
-FDITruncateCabinet proto WINAPI \
-		  hfdi: HFDI,
-	pszCabinetName: LPSTR,
-       iFolderToDelete: USHORT
+FDICreate proto WINAPI :PFNALLOC, :PFNFREE, :PFNOPEN, :PFNREAD, :PFNWRITE, :PFNCLOSE, :PFNSEEK, :SINT, :PERF
+FDIIsCabinet proto WINAPI :HFDI, :INT_PTR, :PFDICABINETINFO
+FDICopy proto WINAPI :HFDI, :LPSTR, :LPSTR, :SINT, :PFNFDINOTIFY, :PFNFDIDECRYPT, :ptr
+FDIDestroy proto WINAPI :HFDI
+FDITruncateCabinet proto WINAPI :HFDI, :LPSTR, :USHORT
 
 ifndef _WIN64
 .pragma pack(pop)

@@ -4,65 +4,14 @@ define _LMWKSTA_
 include lmcons.inc
 include lmuseflg.inc
 
-;NET_API_STATUS
-NetWkstaGetInfo proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetWkstaSetInfo proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		buffer: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetWkstaUserGetInfo proto WINAPI \
-	      reserved: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-
-;NET_API_STATUS
-NetWkstaUserSetInfo proto WINAPI \
-	      reserved: LMSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetWkstaUserEnum proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  resumehandle: LPDWORD
-
-;NET_API_STATUS
-NetWkstaTransportAdd proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetWkstaTransportDel proto WINAPI \
-	    servername: LMSTR,
-	 transportname: LMSTR,
-		 ucond: DWORD
-
-;NET_API_STATUS
-NetWkstaTransportEnum proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  resumehandle: LPDWORD
+NetWkstaGetInfo proto WINAPI :LMSTR, :DWORD, :ptr
+NetWkstaSetInfo proto WINAPI :LMSTR, :DWORD, :LPBYTE, :LPDWORD
+NetWkstaUserGetInfo proto WINAPI :LMSTR, :DWORD, :ptr
+NetWkstaUserSetInfo proto WINAPI :LMSTR, :DWORD, :LPBYTE, :LPDWORD
+NetWkstaUserEnum proto WINAPI :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetWkstaTransportAdd proto WINAPI :LMSTR, :DWORD, :LPBYTE, :LPDWORD
+NetWkstaTransportDel proto WINAPI :LMSTR, :LMSTR, :DWORD
+NetWkstaTransportEnum proto WINAPI :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
 
 WKSTA_INFO_100		STRUC
 wki100_platform_id	dd ?

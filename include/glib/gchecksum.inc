@@ -16,61 +16,16 @@ include glib/gbytes.inc
     G_CHECKSUM_SHA384
     }
 
-;gssize
-g_checksum_type_get_length proto WINAPI \
-         checksum_type: GChecksumType
-
-
-;GChecksum
-g_checksum_new proto WINAPI \
-         checksum_type: GChecksumType
-
-;void
-g_checksum_reset proto WINAPI \
-              checksum: ptr GChecksum
-
-;GChecksum
-g_checksum_copy proto WINAPI \
-              checksum: ptr GChecksum
-
-;void
-g_checksum_free proto WINAPI \
-              checksum: ptr GChecksum
-
-;void
-g_checksum_update proto WINAPI \
-              checksum: ptr GChecksum,
-                  data: ptr guchar,
-                length: gssize
-
-;const
-g_checksum_get_string proto WINAPI \
-              checksum: ptr GChecksum
-
-;void
-g_checksum_get_digest proto WINAPI \
-              checksum: ptr GChecksum,
-                buffer: ptr guint8,
-            digest_len: ptr gsize
-
-
-;gchar
-g_compute_checksum_for_data proto WINAPI \
-         checksum_type: GChecksumType,
-                  data: ptr guchar,
-                length: gsize
-
-;gchar
-g_compute_checksum_for_string proto WINAPI \
-         checksum_type: GChecksumType,
-                string: ptr gchar,
-                length: gssize
-
-
-;gchar
-g_compute_checksum_for_bytes proto WINAPI \
-         checksum_type: GChecksumType,
-                  data: ptr GBytes
-
+g_checksum_type_get_length proto WINAPI :GChecksumType
+g_checksum_new proto WINAPI :GChecksumType
+g_checksum_reset proto WINAPI :ptr
+g_checksum_copy proto WINAPI :ptr
+g_checksum_free proto WINAPI :ptr
+g_checksum_update proto WINAPI :ptr, :ptr, :gssize
+g_checksum_get_string proto WINAPI :ptr
+g_checksum_get_digest proto WINAPI :ptr, :ptr, :ptr
+g_compute_checksum_for_data proto WINAPI :GChecksumType, :ptr, :gsize
+g_compute_checksum_for_string proto WINAPI :GChecksumType, :ptr, :gssize
+g_compute_checksum_for_bytes proto WINAPI :GChecksumType, :ptr
 
 endif

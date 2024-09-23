@@ -615,15 +615,8 @@ define __IDirectXVideoMemoryConfiguration_INTERFACE_DEFINED__
 
 endif
 
-DXVA2CreateDirect3DDeviceManager9 proto WINAPI \
-	   pResetToken: ptr UINT,
-       ppDeviceManager: ptr ptr IDirect3DDeviceManager9
-
-
-DXVA2CreateVideoService proto WINAPI \
-		   pDD: ptr IDirect3DDevice9,
-		  riid: REFIID,
-	     ppService: pt ptr
+DXVA2CreateDirect3DDeviceManager9 proto WINAPI :ptr, :ptr
+DXVA2CreateVideoService proto WINAPI :ptr, :REFIID, :ptr
 
 endif
 endif

@@ -245,30 +245,9 @@ EtwGetTraitFromProviderTraits proto :PVOID, :UCHAR, :ptr PVOID, :PUSHORT {
     }
 
 if (WINVER GE _WIN32_WINNT_LONGHORN)
-;ULONG
-EventAccessControl proto __cdecl \
-                  Guid: LPGUID,
-             Operation: ULONG,
-                   Sid: PSID,
-                Rights: ULONG,
-           AllowOrDeny: BOOLEAN
-
-endif
-
-if (WINVER GE _WIN32_WINNT_LONGHORN)
-;ULONG
-EventAccessQuery proto __cdecl \
-                  Guid: LPGUID,
-                Buffer: PSECURITY_DESCRIPTOR,
-            BufferSize: PULONG
-
-endif
-
-if (WINVER GE _WIN32_WINNT_LONGHORN)
-;ULONG
-EventAccessRemove proto __cdecl \
-                  Guid: LPGUID
-
+EventAccessControl proto __cdecl :LPGUID, :ULONG, :PSID, :ULONG, :BOOLEAN
+EventAccessQuery proto __cdecl :LPGUID, :PSECURITY_DESCRIPTOR, :PULONG
+EventAccessRemove proto __cdecl :LPGUID
 endif
 endif
 endif

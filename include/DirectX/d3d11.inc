@@ -2261,61 +2261,11 @@ include d3d10shader.inc
 include d3d10effect.inc
 include d3d10_1shader.inc
 
-CALLBACK(PFN_D3D11_CREATE_DEVICE, \
-	:ptr IDXGIAdapter, \
-	:D3D_DRIVER_TYPE, \
-	:HMODULE, \
-	:UINT, \
-	:ptr D3D_FEATURE_LEVEL, \
-	:UINT, \
-	:UINT, \
-	:ptr ptr ID3D11Device, \
-	:ptr D3D_FEATURE_LEVEL, \
-	:ptr ptr ID3D11DeviceContext)
+CALLBACK(PFN_D3D11_CREATE_DEVICE, :ptr, :D3D_DRIVER_TYPE, :HMODULE, :UINT, :ptr D3D_FEATURE_LEVEL, :UINT, :UINT, :ptr, :ptr, :ptr)
+CALLBACK(PFN_D3D11_CREATE_DEVICE_AND_SWAP_CHAIN, :ptr, :D3D_DRIVER_TYPE, :HMODULE, :UINT, :ptr, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr)
 
-;HRESULT
-D3D11CreateDevice proto WINAPI \
-	      pAdapter: ptr IDXGIAdapter,
-	    DriverType: D3D_DRIVER_TYPE,
-	      Software: HMODULE,
-		 Flags: UINT,
-	pFeatureLevels: ptr D3D_FEATURE_LEVEL,
-	 FeatureLevels: UINT,
-	    SDKVersion: UINT,
-	      ppDevice: ptr ptr ID3D11Device,
-	 pFeatureLevel: ptr D3D_FEATURE_LEVEL,
-    ppImmediateContext: ptr ptr ID3D11DeviceContext
-
-
-CALLBACK(PFN_D3D11_CREATE_DEVICE_AND_SWAP_CHAIN, \
-		      : ptr IDXGIAdapter, \
-		      : D3D_DRIVER_TYPE, \
-		      : HMODULE, \
-		      : UINT, \
-		      : ptr D3D_FEATURE_LEVEL, \
-		      : UINT, \
-		      : UINT, \
-		      : ptr DXGI_SWAP_CHAIN_DESC, \
-		      : ptr ptr IDXGISwapChain, \
-		      : ptr ptr ID3D11Device, \
-		      : ptr D3D_FEATURE_LEVEL, \
-		      : ptr ptr ID3D11DeviceContext)
-
-;HRESULT
-D3D11CreateDeviceAndSwapChain proto WINAPI \
-	      pAdapter: ptr IDXGIAdapter,
-	    DriverType: D3D_DRIVER_TYPE,
-	      Software: HMODULE,
-		 Flags: UINT,
-	pFeatureLevels: ptr D3D_FEATURE_LEVEL,
-	 FeatureLevels: UINT,
-	    SDKVersion: UINT,
-	pSwapChainDesc: ptr DXGI_SWAP_CHAIN_DESC,
-	   ppSwapChain: ptr ptr IDXGISwapChain,
-	      ppDevice: ptr ptr ID3D11Device,
-	 pFeatureLevel: ptr D3D_FEATURE_LEVEL,
-    ppImmediateContext: ptr ptr ID3D11DeviceContext
-
+D3D11CreateDevice proto WINAPI :ptr, :D3D_DRIVER_TYPE, :HMODULE, :UINT, :ptr, :UINT, :UINT, :ptr, :ptr, :ptr
+D3D11CreateDeviceAndSwapChain proto WINAPI :ptr, :D3D_DRIVER_TYPE, :HMODULE, :UINT, :ptr, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr
 
 DEFINE_GUID(IID_ID3D11DeviceChild,0x1841e5c8,0x16b0,0x489b,0xbc,0xc8,0x44,0xcf,0xb0,0xd5,0xde,0xae)
 DEFINE_GUID(IID_ID3D11DepthStencilState,0x03823efb,0x8d8f,0x4e1c,0x9a,0xa2,0xf6,0x4b,0xb2,0xcb,0xfd,0xf1)

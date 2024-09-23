@@ -40,77 +40,17 @@ PCOMPRESS_ALLOCATION_ROUTINES typedef ptr COMPRESS_ALLOCATION_ROUTINES
     COMPRESS_INFORMATION_CLASS_LEVEL
     }
 
-;BOOL
-CreateCompressor proto WINAPI \
-	     Algorithm: DWORD,
-    AllocationRoutines: PCOMPRESS_ALLOCATION_ROUTINES,
-      CompressorHandle: PCOMPRESSOR_HANDLE
-
-
-SetCompressorInformation proto WINAPI \
-      CompressorHandle: COMPRESSOR_HANDLE,
-CompressInformationClass: COMPRESS_INFORMATION_CLASS,
-   CompressInformation: LPCVOID,
-CompressInformationSize: SIZE_T
-
-
-QueryCompressorInformation proto WINAPI \
-      CompressorHandle: COMPRESSOR_HANDLE,
-CompressInformationClass: COMPRESS_INFORMATION_CLASS,
-   CompressInformation: PVOID,
-CompressInformationSize: SIZE_T
-
-
-Compress proto WINAPI \
-      CompressorHandle: COMPRESSOR_HANDLE,
-      UncompressedData: LPCVOID,
-  UncompressedDataSize: SIZE_T,
-      CompressedBuffer: PVOID,
-  CompressedBufferSize: SIZE_T,
-    CompressedDataSize: PSIZE_T
-
-
-ResetCompressor proto WINAPI \
-      CompressorHandle: COMPRESSOR_HANDLE
-
-CloseCompressor proto WINAPI \
-      CompressorHandle: COMPRESSOR_HANDLE
-
-CreateDecompressor proto WINAPI \
-	     Algorithm: DWORD,
-    AllocationRoutines: PCOMPRESS_ALLOCATION_ROUTINES,
-    DecompressorHandle: PDECOMPRESSOR_HANDLE
-
-SetDecompressorInformation proto WINAPI \
-    DecompressorHandle: DECOMPRESSOR_HANDLE,
-CompressInformationClass: COMPRESS_INFORMATION_CLASS,
-   CompressInformation: LPCVOID,
-CompressInformationSize: SIZE_T
-
-
-QueryDecompressorInformation proto WINAPI \
-    DecompressorHandle: DECOMPRESSOR_HANDLE,
-CompressInformationClass: COMPRESS_INFORMATION_CLASS,
-   CompressInformation: PVOID,
-CompressInformationSize: SIZE_T
-
-
-Decompress proto WINAPI \
-    DecompressorHandle: DECOMPRESSOR_HANDLE,
-	CompressedData: LPCVOID,
-    CompressedDataSize: SIZE_T,
-    UncompressedBuffer: PVOID,
-UncompressedBufferSize: SIZE_T,
-  UncompressedDataSize: PSIZE_T
-
-
-ResetDecompressor proto WINAPI \
-    DecompressorHandle: DECOMPRESSOR_HANDLE
-
-CloseDecompressor proto WINAPI \
-    DecompressorHandle: DECOMPRESSOR_HANDLE
-
-
+CreateCompressor proto WINAPI :DWORD, :PCOMPRESS_ALLOCATION_ROUTINES, :PCOMPRESSOR_HANDLE
+SetCompressorInformation proto WINAPI :COMPRESSOR_HANDLE, :COMPRESS_INFORMATION_CLASS, :LPCVOID, :SIZE_T
+QueryCompressorInformation proto WINAPI :COMPRESSOR_HANDLE, :COMPRESS_INFORMATION_CLASS, :PVOID, :SIZE_T
+Compress proto WINAPI :COMPRESSOR_HANDLE, :LPCVOID, :SIZE_T, :PVOID, :SIZE_T, :PSIZE_T
+ResetCompressor proto WINAPI :COMPRESSOR_HANDLE
+CloseCompressor proto WINAPI :COMPRESSOR_HANDLE
+CreateDecompressor proto WINAPI :DWORD, :PCOMPRESS_ALLOCATION_ROUTINES, :PDECOMPRESSOR_HANDLE
+SetDecompressorInformation proto WINAPI :DECOMPRESSOR_HANDLE, :COMPRESS_INFORMATION_CLASS, :LPCVOID, :SIZE_T
+QueryDecompressorInformation proto WINAPI :DECOMPRESSOR_HANDLE, :COMPRESS_INFORMATION_CLASS, :PVOID, :SIZE_T
+Decompress proto WINAPI :DECOMPRESSOR_HANDLE, :LPCVOID, :SIZE_T, :PVOID, :SIZE_T, :PSIZE_T
+ResetDecompressor proto WINAPI :DECOMPRESSOR_HANDLE
+CloseDecompressor proto WINAPI :DECOMPRESSOR_HANDLE
 endif
-
 endif

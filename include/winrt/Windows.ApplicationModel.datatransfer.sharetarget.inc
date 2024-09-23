@@ -93,14 +93,14 @@ endif
 define RuntimeClass_Windows_ApplicationModel_DataTransfer_ShareTarget_QuickLink <L"Windows.ApplicationModel.DataTransfer.ShareTarget.QuickLink">
 define RuntimeClass_Windows_ApplicationModel_DataTransfer_ShareTarget_ShareOperation <L"Windows.ApplicationModel.DataTransfer.ShareTarget.ShareOperation">
 
-HSTRING_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
-HSTRING_UserMarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
-HSTRING_UserUnmarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
-HSTRING_UserFree	proto WINAPI :ptr DWORD, :ptr HSTRING
+HSTRING_UserSize	proto WINAPI :ptr, :DWORD, :ptr
+HSTRING_UserMarshal	proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserUnmarshal	proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserFree	proto WINAPI :ptr, :ptr
 
-HSTRING_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
-HSTRING_UserMarshal64	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
-HSTRING_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
-HSTRING_UserFree64	proto WINAPI :ptr DWORD, :ptr HSTRING
+HSTRING_UserSize64	proto WINAPI :ptr, :DWORD, :ptr
+HSTRING_UserMarshal64	proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserFree64	proto WINAPI :ptr, :ptr
 
 endif

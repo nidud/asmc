@@ -183,119 +183,31 @@ a			FLOAT ?
 D3DXCOLOR		ENDS
 LPD3DXCOLOR		typedef ptr D3DXCOLOR
 
-
-D3DXFloat16To32Array proto WINAPI \
-		  pOut: ptr FLOAT,
-		   pIn: ptr D3DXFLOAT16,
-		     n: UINT
-
-
-D3DXVec2Length proto WINAPI \
-		    pV: ptr D3DXVECTOR2
-
-
-D3DXVec2LengthSq proto WINAPI \
-		    pV: ptr D3DXVECTOR2
-
-
-D3DXVec2Dot proto WINAPI \
-		   pV1: ptr D3DXVECTOR2,
-		   pV2: ptr D3DXVECTOR2
-
-
-D3DXVec2CCW proto WINAPI \
-		   pV1: ptr D3DXVECTOR2,
-		   pV2: ptr D3DXVECTOR2
-
-
-D3DXVec3Length proto WINAPI \
-		    pV: ptr D3DXVECTOR3
-
-
-D3DXVec3LengthSq proto WINAPI \
-		    pV: ptr D3DXVECTOR3
-
-
-D3DXVec3Dot proto WINAPI \
-		   pV1: ptr D3DXVECTOR3,
-		   pV2: ptr D3DXVECTOR3
-
-
-D3DXVec4Length proto WINAPI \
-		    pV: ptr D3DXVECTOR4
-
-D3DXVec4LengthSq proto WINAPI \
-		    pV: ptr D3DXVECTOR4
-
-D3DXVec4Dot proto WINAPI \
-		   pV1: ptr D3DXVECTOR4,
-		   pV2: ptr D3DXVECTOR4
-
-
-D3DXMatrixIsIdentity proto WINAPI \
-		    pM: ptr D3DXMATRIX
-
-
-D3DXMatrixDeterminant proto WINAPI \
-		    pM: ptr D3DXMATRIX
-
-
-D3DXMatrixDecompose proto WINAPI \
-	     pOutScale: ptr D3DXVECTOR3,
-	  pOutRotation: ptr D3DXQUATERNION,
-       pOutTranslation: ptr D3DXVECTOR3,
-		    pM: ptr D3DXMATRIX
-
-
-D3DXQuaternionLength proto WINAPI \
-		    pQ: ptr D3DXQUATERNION
-
-
-D3DXQuaternionLengthSq proto WINAPI \
-		    pQ: ptr D3DXQUATERNION
-
-
-D3DXQuaternionDot proto WINAPI \
-		   pQ1: ptr D3DXQUATERNION,
-		   pQ2: ptr D3DXQUATERNION
-
-
-D3DXQuaternionToAxisAngle proto WINAPI \
-		    pQ: ptr D3DXQUATERNION,
-		 pAxis: ptr D3DXVECTOR3,
-		pAngle: ptr FLOAT
-
-
-D3DXQuaternionSquadSetup proto WINAPI \
-		 pAOut: ptr D3DXQUATERNION,
-		 pBOut: ptr D3DXQUATERNION,
-		 pCOut: ptr D3DXQUATERNION,
-		   pQ0: ptr D3DXQUATERNION,
-		   pQ1: ptr D3DXQUATERNION,
-		   pQ2: ptr D3DXQUATERNION,
-		   pQ3: ptr D3DXQUATERNION
-
-
-D3DXPlaneDot proto WINAPI \
-		    pP: ptr D3DXPLANE,
-		    pV: ptr D3DXVECTOR4
-
-D3DXPlaneDotCoord proto WINAPI \
-		    pP: ptr D3DXPLANE,
-		    pV: ptr D3DXVECTOR3
-
-D3DXPlaneDotNormal proto WINAPI \
-		    pP: ptr D3DXPLANE,
-		    pV: ptr D3DXVECTOR3
-
-
-D3DXFresnelTerm proto WINAPI \
-	      CosTheta: FLOAT,
-       RefractionIndex: FLOAT
-
+D3DXFloat16To32Array proto WINAPI :ptr, :ptr, :UINT
+D3DXVec2Length proto WINAPI :ptr
+D3DXVec2LengthSq proto WINAPI :ptr
+D3DXVec2Dot proto WINAPI :ptr, :ptr
+D3DXVec2CCW proto WINAPI :ptr, :ptr
+D3DXVec3Length proto WINAPI :ptr
+D3DXVec3LengthSq proto WINAPI :ptr
+D3DXVec3Dot proto WINAPI :ptr, :ptr
+D3DXVec4Length proto WINAPI :ptr
+D3DXVec4LengthSq proto WINAPI :ptr
+D3DXVec4Dot proto WINAPI :ptr, :ptr
+D3DXMatrixIsIdentity proto WINAPI :ptr
+D3DXMatrixDeterminant proto WINAPI :ptr
+D3DXMatrixDecompose proto WINAPI :ptr, :ptr, :ptr, :ptr
+D3DXQuaternionLength proto WINAPI :ptr
+D3DXQuaternionLengthSq proto WINAPI :ptr
+D3DXQuaternionDot proto WINAPI :ptr, :ptr
+D3DXQuaternionToAxisAngle proto WINAPI :ptr, :ptr, :ptr
+D3DXQuaternionSquadSetup proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXPlaneDot proto WINAPI :ptr, :ptr
+D3DXPlaneDotCoord proto WINAPI :ptr, :ptr
+D3DXPlaneDotNormal proto WINAPI :ptr, :ptr
+D3DXFresnelTerm proto WINAPI :FLOAT, :FLOAT
 
 DEFINE_GUID(IID_ID3DXMatrixStack, 0xc7885ba7, 0xf990, 0x4fe7, 0x92, 0x2d, 0x85, 0x15, 0xe4, 0x77, 0xdd, 0x85)
-
 
 .comdef ID3DXMatrixStack :public IUnknown
 
@@ -314,137 +226,36 @@ DEFINE_GUID(IID_ID3DXMatrixStack, 0xc7885ba7, 0xf990, 0x4fe7, 0x92, 0x2d, 0x85, 
     Translate		proc :FLOAT, :FLOAT, :FLOAT
     TranslateLocal	proc :FLOAT, :FLOAT, :FLOAT
     GetTop		proc
-    .ENDS
+   .ENDS
 
-D3DXCreateMatrixStack proto WINAPI \
-		 Flags: UINT,
-	       ppStack: ptr LPD3DXMATRIXSTACK
-
+D3DXCreateMatrixStack proto WINAPI :UINT, :ptr
 
 D3DXSH_MINORDER		equ 2
 D3DXSH_MAXORDER		equ 6
 
-D3DXSHEvalDirection proto WINAPI \
-		  pOut: ptr FLOAT,
-		 Order: UINT,
-		  pDir: ptr D3DXVECTOR3
+D3DXSHEvalDirection proto WINAPI :ptr, :UINT, :ptr
+D3DXSHRotate proto WINAPI :ptr, :UINT, :ptr, :ptr
+D3DXSHRotateZ proto WINAPI :ptr, :UINT, :FLOAT, :ptr
+D3DXSHAdd proto WINAPI :ptr, :UINT, :ptr, :ptr
+D3DXSHScale proto WINAPI :ptr, :UINT, :ptr, :FLOAT
+D3DXSHDot proto WINAPI :UINT, :ptr, :ptr
 
-D3DXSHRotate proto WINAPI \
-		  pOut: ptr FLOAT,
-		 Order: UINT,
-	       pMatrix: ptr D3DXMATRIX,
-		   pIn: ptr FLOAT
+D3DXSHMultiply2 proto WINAPI :ptr, :ptr, :ptr
+D3DXSHMultiply3 proto WINAPI :ptr, :ptr, :ptr
+D3DXSHMultiply4 proto WINAPI :ptr, :ptr, :ptr
+D3DXSHMultiply5 proto WINAPI :ptr, :ptr, :ptr
+D3DXSHMultiply6 proto WINAPI :ptr, :ptr, :ptr
 
-D3DXSHRotateZ proto WINAPI \
-		  pOut: ptr FLOAT,
-		 Order: UINT,
-		 Angle: FLOAT,
-		   pIn: ptr FLOAT
+D3DXSHEvalDirectionalLight proto WINAPI :UINT, :ptr, :FLOAT, :FLOAT, :FLOAT, :ptr, :ptr, :ptr
+D3DXSHEvalSphericalLight proto WINAPI :UINT, :ptr, :FLOAT, :FLOAT, :FLOAT, :FLOAT, :ptr, :ptr, :ptr
+D3DXSHEvalConeLight proto WINAPI :UINT, :ptr, :FLOAT, :FLOAT, :FLOAT, :FLOAT, :ptr, :ptr, :ptr
+D3DXSHEvalHemisphereLight proto WINAPI :UINT, :ptr, :D3DXCOLOR, :D3DXCOLOR, :ptr, :ptr, :ptr
+D3DXIntersectTri proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXSphereBoundProbe proto WINAPI :ptr, :FLOAT, :ptr, :ptr
+D3DXBoxBoundProbe proto WINAPI :ptr, :ptr, :ptr, :ptr
+D3DXComputeBoundingSphere proto WINAPI :ptr, :DWORD, :DWORD, :ptr, :ptr
 
-D3DXSHAdd proto WINAPI \
-		  pOut: ptr FLOAT,
-		 Order: UINT,
-		    pA: ptr FLOAT,
-		    pB: ptr FLOAT
-
-D3DXSHScale proto WINAPI \
-		  pOut: ptr FLOAT,
-		 Order: UINT,
-		   pIn: ptr FLOAT,
-		 Scale: FLOAT
-
-D3DXSHDot proto WINAPI \
-		 Order: UINT,
-		    pA: ptr FLOAT,
-		    pB: ptr FLOAT
-
-
-D3DXSHMultiply2 proto WINAPI :ptr FLOAT, :ptr FLOAT, :ptr FLOAT
-D3DXSHMultiply3 proto WINAPI :ptr FLOAT, :ptr FLOAT, :ptr FLOAT
-D3DXSHMultiply4 proto WINAPI :ptr FLOAT, :ptr FLOAT, :ptr FLOAT
-D3DXSHMultiply5 proto WINAPI :ptr FLOAT, :ptr FLOAT, :ptr FLOAT
-D3DXSHMultiply6 proto WINAPI :ptr FLOAT, :ptr FLOAT, :ptr FLOAT
-
-
-D3DXSHEvalDirectionalLight proto WINAPI \
-		 Order: UINT,
-		  pDir: ptr D3DXVECTOR3,
-	    RIntensity: FLOAT,
-	    GIntensity: FLOAT,
-	    BIntensity: FLOAT,
-		 pROut: ptr FLOAT,
-		 pGOut: ptr FLOAT,
-		 pBOut: ptr FLOAT
-
-D3DXSHEvalSphericalLight proto WINAPI \
-		 Order: UINT,
-		  pPos: ptr D3DXVECTOR3,
-		Radius: FLOAT,
-	    RIntensity: FLOAT,
-	    GIntensity: FLOAT,
-	    BIntensity: FLOAT,
-		 pROut: ptr FLOAT,
-		 pGOut: ptr FLOAT,
-		 pBOut: ptr FLOAT
-
-D3DXSHEvalConeLight proto WINAPI \
-		 Order: UINT,
-		  pDir: ptr D3DXVECTOR3,
-		Radius: FLOAT,
-	    RIntensity: FLOAT,
-	    GIntensity: FLOAT,
-	    BIntensity: FLOAT,
-		 pROut: ptr FLOAT,
-		 pGOut: ptr FLOAT,
-		 pBOut: ptr FLOAT
-
-D3DXSHEvalHemisphereLight proto WINAPI \
-		 Order: UINT,
-		  pDir: ptr D3DXVECTOR3,
-		   Top: D3DXCOLOR,
-		Bottom: D3DXCOLOR,
-		 pROut: ptr FLOAT,
-		 pGOut: ptr FLOAT,
-		 pBOut: ptr FLOAT
-
-
-D3DXIntersectTri proto WINAPI \
-		    p0: ptr D3DXVECTOR3,
-		    p1: ptr D3DXVECTOR3,
-		    p2: ptr D3DXVECTOR3,
-	       pRayPos: ptr D3DXVECTOR3,
-	       pRayDir: ptr D3DXVECTOR3,
-		    pU: ptr FLOAT,
-		    pV: ptr FLOAT,
-		 pDist: ptr FLOAT
-
-
-D3DXSphereBoundProbe proto WINAPI \
-	       pCenter: ptr D3DXVECTOR3,
-		Radius: FLOAT,
-	  pRayPosition: ptr D3DXVECTOR3,
-	 pRayDirection: ptr D3DXVECTOR3
-
-
-D3DXBoxBoundProbe proto WINAPI \
-		  pMin: ptr D3DXVECTOR3,
-		  pMax: ptr D3DXVECTOR3,
-	  pRayPosition: ptr D3DXVECTOR3,
-	 pRayDirection: ptr D3DXVECTOR3
-
-D3DXComputeBoundingSphere proto WINAPI \
-	pFirstPosition: ptr D3DXVECTOR3,
-	   NumVertices: DWORD,
-	      dwStride: DWORD,
-	       pCenter: ptr D3DXVECTOR3,
-	       pRadius: ptr FLOAT
-
-D3DXComputeBoundingBox proto WINAPI \
-	pFirstPosition: ptr D3DXVECTOR3,
-	   NumVertices: DWORD,
-	      dwStride: DWORD,
-		  pMin: ptr D3DXVECTOR3,
-		  pMax: ptr D3DXVECTOR3
+D3DXComputeBoundingBox proto WINAPI :ptr, :DWORD, :DWORD, :ptr, :ptr
 
 .enum D3DX_CPU_OPTIMIZATION {
     D3DX_NOT_OPTIMIZED = 0,

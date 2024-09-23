@@ -1,18 +1,8 @@
 ifndef _ALERT_
 define _ALERT_
 
-;NET_API_STATUS
-NetAlertRaise proto WINAPI \
-	     AlertType: LPCWSTR,
-		Buffer: LPVOID,
-	    BufferSize: DWORD
-
-;NET_API_STATUS
-NetAlertRaiseEx proto WINAPI \
-	     AlertType: LPCWSTR,
-	  VariableInfo: LPVOID,
-      VariableInfoSize: DWORD,
-	   ServiceName: LPCWSTR
+NetAlertRaise proto WINAPI :LPCWSTR, :ptr, :DWORD
+NetAlertRaiseEx proto WINAPI :LPCWSTR, :ptr, :DWORD, :LPCWSTR
 
 STD_ALERT		STRUC
 alrt_timestamp		dd ?

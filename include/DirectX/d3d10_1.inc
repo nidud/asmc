@@ -263,47 +263,11 @@ D3D10_1_SDK_VERSION	equ ( ( 0 + 0x20 )  )
 
 include d3d10_1shader.inc
 
-CALLBACK(PFN_D3D10_CREATE_DEVICE1, \
-		      : ptr IDXGIAdapter, \
-		      : D3D10_DRIVER_TYPE, \
-		      : HMODULE, \
-		      : UINT, \
-		      : D3D10_FEATURE_LEVEL1, \
-		      : UINT, \
-		      : ptr ptr ID3D10Device1)
+CALLBACK(PFN_D3D10_CREATE_DEVICE1, :ptr, :D3D10_DRIVER_TYPE, :HMODULE, :UINT, :D3D10_FEATURE_LEVEL1, :UINT, :ptr)
+CALLBACK(PFN_D3D10_CREATE_DEVICE_AND_SWAP_CHAIN1, :ptr, :D3D10_DRIVER_TYPE, :HMODULE, :UINT, :D3D10_FEATURE_LEVEL1, :UINT, :ptr, :ptr, :ptr)
 
-;HRESULT
-D3D10CreateDevice1 proto WINAPI \
-	      pAdapter: ptr IDXGIAdapter,
-	    DriverType: D3D10_DRIVER_TYPE,
-	      Software: HMODULE,
-		 Flags: UINT,
-	 HardwareLevel: D3D10_FEATURE_LEVEL1,
-	    SDKVersion: UINT,
-	      ppDevice: ptr ID3D10Device1
-
-CALLBACK(PFN_D3D10_CREATE_DEVICE_AND_SWAP_CHAIN1, \
-		      : ptr IDXGIAdapter, \
-		      : D3D10_DRIVER_TYPE, \
-		      : HMODULE, \
-		      : UINT, \
-		      : D3D10_FEATURE_LEVEL1, \
-		      : UINT, \
-		      : ptr DXGI_SWAP_CHAIN_DESC, \
-		      : ptr ptr IDXGISwapChain, \
-		      : ptr ptr ID3D10Device1)
-
-;HRESULT
-D3D10CreateDeviceAndSwapChain1 proto WINAPI \
-	      pAdapter: ptr IDXGIAdapter,
-	    DriverType: D3D10_DRIVER_TYPE,
-	      Software: HMODULE,
-		 Flags: UINT,
-	 HardwareLevel: D3D10_FEATURE_LEVEL1,
-	    SDKVersion: UINT,
-	pSwapChainDesc: ptr DXGI_SWAP_CHAIN_DESC,
-	   ppSwapChain: ptr IDXGISwapChain,
-	      ppDevice: ptr ID3D10Device1
+D3D10CreateDevice1 proto WINAPI :ptr, :D3D10_DRIVER_TYPE, :HMODULE, :UINT, :D3D10_FEATURE_LEVEL1, :UINT, :ptr
+D3D10CreateDeviceAndSwapChain1 proto WINAPI :ptr, :D3D10_DRIVER_TYPE, :HMODULE, :UINT, :D3D10_FEATURE_LEVEL1, :UINT, :ptr, :ptr, :ptr
 
 DEFINE_GUID(IID_ID3D10BlendState1,0xEDAD8D99,0x8A35,0x4d6d,0x85,0x66,0x2E,0xA2,0x76,0xCD,0xE1,0x61)
 DEFINE_GUID(IID_ID3D10ShaderResourceView1,0x9B7E4C87,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0)

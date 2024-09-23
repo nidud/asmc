@@ -24,20 +24,7 @@ include oaidl.inc
 .pragma comment(lib, mmcndmgr)
 
 ifndef MMC_VER
-MMC_VER equ 0x0210
-endif
-
-if (MMC_VER GE 0x0110)
-endif
-if (MMC_VER GE 0x0120)
-endif
-if (MMC_VER GE 0x0200)
-endif
-if (MMC_VER GE 0x0110)
-endif
-if (MMC_VER GE 0x0120)
-endif
-if (MMC_VER GE 0x0200)
+define MMC_VER 0x0210
 endif
 
 LPCONSOLE		typedef ptr IConsole
@@ -442,34 +429,21 @@ CCF_COLUMN_SET_ID	equ <L"CCF_COLUMN_SET_ID">
 endif
 endif
 
-;STDAPI
-MMCPropertyChangeNotify proto WINAPI \
-	 lNotifyHandle: LONG_PTR,
-		 param: LPARAM
+MMCPropertyChangeNotify proto WINAPI :LONG_PTR, :LPARAM
 
 if (MMC_VER GE 0x0110)
+
 include specstrings.inc
-;STDAPI
-MMCPropertyHelp proto WINAPI \
-	  pszHelpTopic: LPOLESTR
+MMCPropertyHelp proto WINAPI :LPOLESTR
 endif
-
-;STDAPI
-MMCFreeNotifyHandle proto WINAPI \
-	 lNotifyHandle: LONG_PTR
-
-;STDAPI
+MMCFreeNotifyHandle proto WINAPI :LONG_PTR
 MMCPropPageCallback proto WINAPI
-externdef		CLSID_NodeManager:CLSID
+externdef CLSID_NodeManager:CLSID
 if (MMC_VER GE 0x0120)
-externdef		CLSID_MessageView:CLSID
+externdef CLSID_MessageView:CLSID
 endif
 if (MMC_VER GE 0x0210)
-;PFNAfxManageStateCallback)() typedef ptr void (STDAPICALLTYPE
-;STDAPI
-MMCAfxPropPageCallback proto WINAPI \
-		  vpsp: PVOID,
-pfnManageStateCallback: PVOID;PFNAfxManageStateCallback
+MMCAfxPropPageCallback proto WINAPI :ptr, :ptr
 endif
 
 DOBJ_NULL		equ 0
@@ -1411,29 +1385,10 @@ HICON_UserMarshal proto WINAPI :ptr, :ptr, :ptr
 HICON_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
 HICON_UserFree proto WINAPI :ptr, :ptr
 
-;DWORD
-HPALETTE_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HPALETTE
-
-;LPSTR
-HPALETTE_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HPALETTE
-
-;LPSTR
-HPALETTE_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HPALETTE
-
-;void
-HPALETTE_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HPALETTE
-
+HPALETTE_UserSize proto WINAPI :ptr, :DWORD, :ptr
+HPALETTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserFree proto WINAPI :ptr, :ptr
 
 HWND_UserSize proto WINAPI :ptr, :dword, :ptr
 HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
@@ -1455,30 +1410,10 @@ HICON_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
 HICON_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
 HICON_UserFree64 proto WINAPI :ptr, :ptr
 
-
-;DWORD
-HPALETTE_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HPALETTE
-
-;LPSTR
-HPALETTE_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HPALETTE
-
-;LPSTR
-HPALETTE_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HPALETTE
-
-;void
-HPALETTE_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HPALETTE
-
+HPALETTE_UserSize64 proto WINAPI :ptr, :DWORD, :ptr
+HPALETTE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserFree64 proto WINAPI :ptr, :ptr
 
 HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
 HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr

@@ -35,10 +35,8 @@
 ;;
 
 ifndef __PE__
-
 .pragma comment(linker,"/DEFAULTLIB:libcmtd.lib")
 _LIBCMT equ 1
-
 endif
 
 include windows.inc
@@ -57,7 +55,6 @@ option dllimport:none
 SourceFile HANDLE 0
 DestFile HANDLE 0
 
-
 ;; I/O completion ports. All reads from the source file complete
 ;; to ReadPort. All writes to the destination file complete to
 ;; WritePort.
@@ -65,16 +62,13 @@ DestFile HANDLE 0
 ReadPort HANDLE 0
 WritePort HANDLE 0
 
-
 ;; version information
 
 ver OSVERSIONINFO <>
 
-
 ;; Structure used to track each outstanding I/O. The maximum
 ;; number of I/Os that will be outstanding at any time is
 ;; controllable by the MAX_CONCURRENT_IO definition.
-
 
 MAX_CONCURRENT_IO equ 20
 
@@ -86,12 +80,10 @@ PCOPY_CHUNK typedef ptr COPY_CHUNK
 
 CopyChunk COPY_CHUNK MAX_CONCURRENT_IO dup(<>)
 
-
 ;; Define the size of the buffers used to do the I/O.
 ;; 64K is a nice number.
 
 BUFFER_SIZE equ (64*1024)
-
 
 ;; The system's page size will always be a multiple of the
 ;; sector size. Do all I/Os in page-size chunks.
@@ -103,9 +95,8 @@ ferr LPFILE 0
 
 ;; Local function prototypes
 
-
-WriteLoop proto FileSize:ULARGE_INTEGER
-ReadLoop  proto FileSize:ULARGE_INTEGER
+WriteLoop proto FileSize:PULARGE_INTEGER
+ReadLoop  proto FileSize:PULARGE_INTEGER
 
 main proc argc:SINT, argv:ptr ptr sbyte
 
@@ -122,7 +113,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
 
     mov ferr,stderr
 
-    .if (argc != 3)
+    .if ( argc != 3 )
 
         mov rdx,argv
         fprintf(ferr, "Usage: %s SourceFile DestinationFile\n", [rdx])
@@ -212,7 +203,6 @@ main proc argc:SINT, argv:ptr ptr sbyte
     .endif
     mov DestFile,rax
 
-
     ;; Extend the destination file so that the filesystem does not
     ;; turn our asynchronous writes into synchronous ones.
 
@@ -225,12 +215,10 @@ main proc argc:SINT, argv:ptr ptr sbyte
     and rcx,rax
     mov InitialFileSize.QuadPart,rcx
 
-    .ifd SetFilePointer(DestFile,
-            InitialFileSize.LowPart,
-            &InitialFileSize.HighPart,
-            FILE_BEGIN) == INVALID_SET_FILE_POINTER
+    .ifd SetFilePointer(DestFile, InitialFileSize.LowPart, &InitialFileSize.HighPart, FILE_BEGIN) == INVALID_SET_FILE_POINTER
 
         .if (GetLastError() != NO_ERROR)
+
             fprintf(ferr, "SetFilePointer failed, error %d\n", GetLastError())
             exit(1)
         .endif
@@ -278,9 +266,6 @@ main proc argc:SINT, argv:ptr ptr sbyte
                                1)                       ;; # of threads allowed to execute concurrently
 
 
-
-
-
          ;; If we need to, aka we're running on NT 3.51, let's associate a file handle with the
          ;; completion port.
 
@@ -293,9 +278,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
          .if (ReadPort == NULL)
 
             fprintf(ferr, "failed to create ReadPort, error %d\n", GetLastError())
-
             exit(1)
-
          .endif
     .endif
 
@@ -305,7 +288,6 @@ main proc argc:SINT, argv:ptr ptr sbyte
         exit(1)
     .endif
     mov WritePort,rax
-
 
     ;; Start the writing thread
 
@@ -319,10 +301,9 @@ main proc argc:SINT, argv:ptr ptr sbyte
 
     mov StartTime,GetTickCount64()
 
-
     ;; Start the reads
 
-    ReadLoop(FileSize)
+    ReadLoop(&FileSize)
 
     mov EndTime,GetTickCount64()
 
@@ -330,34 +311,26 @@ main proc argc:SINT, argv:ptr ptr sbyte
     ;; opened without FILE_FLAG_NO_BUFFERING. This allows us to set
     ;; the end-of-file marker to a position that is not sector-aligned.
 
-    .if CreateFile(rbx,
-                   GENERIC_WRITE,
-                   FILE_SHARE_READ or FILE_SHARE_WRITE,
-                   NULL,
-                   OPEN_EXISTING,
-                   0,
-                   NULL) == INVALID_HANDLE_VALUE
+    .if CreateFile(rbx, GENERIC_WRITE, FILE_SHARE_READ or FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL) == INVALID_HANDLE_VALUE
 
-        fprintf(ferr,
-                "failed to open buffered handle to %s, error %d\n",
-                rbx, GetLastError())
+        fprintf(ferr, "failed to open buffered handle to %s, error %d\n",  rbx, GetLastError())
         exit(1)
     .endif
     mov BufferedHandle,rax
-
 
     ;; Set the destination's file size to the size of the
     ;; source file, in case the size of the source file was
     ;; not a multiple of the page size.
 
-    mov Status,SetFilePointer(BufferedHandle, FileSize.LowPart,
-            &FileSize.HighPart, FILE_BEGIN)
+    mov Status,SetFilePointer(BufferedHandle, FileSize.LowPart, &FileSize.HighPart, FILE_BEGIN)
     .if ((Status == INVALID_SET_FILE_POINTER) && (GetLastError() != NO_ERROR))
+
         fprintf(ferr, "final SetFilePointer failed, error %d\n", GetLastError())
         exit(1)
     .endif
 
     .if !SetEndOfFile(BufferedHandle)
+
         fprintf(ferr, "SetEndOfFile failed, error %d\n", GetLastError())
         exit(1)
     .endif
@@ -369,21 +342,18 @@ main proc argc:SINT, argv:ptr ptr sbyte
     mov     rax,EndTime
     sub     rax,StartTime
     cvtsi2sd xmm0,rax
-    mov     rax,1000.0
-    movq    xmm1,rax
-    divsd   xmm0,xmm1
+    divsd   xmm0,1000.0
     movq    rbx,xmm0
 
-    printf("\n\n%d bytes copied in %.3f seconds\n", FileSize.LowPart, rbx)
+    printf("\n\n%d bytes copied in %.3f seconds\n", FileSize.LowPart, xmm0)
 
     mov      rax,FileSize.QuadPart
     cvtsi2sd xmm0,rax
     divsd    xmm0,1024.0*1024.0
     movq     xmm1,rbx
     divsd    xmm0,xmm1
-    movq     rdx,xmm0
 
-    printf("%.2f MB/sec\n", rdx)
+    printf("%.2f MB/sec\n", xmm0)
 
     xor eax,eax
     ret
@@ -391,7 +361,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
 main endp
 
 
-ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
+ReadLoop proc uses rsi rdi rbx FileSize:PULARGE_INTEGER
 
   local ReadPointer         : ULARGE_INTEGER,
         Success             : BOOL,
@@ -402,7 +372,6 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
         PendingIO           : SINT,
         i                   : SINT
 
-
     ;; Start reading the file. Kick off MAX_CONCURRENT_IO reads, then just
     ;; loop waiting for writes to complete.
 
@@ -410,14 +379,14 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
     mov PendingIO,eax
     mov ReadPointer.QuadPart,rax
 
-    .for (esi=0, ebx=0: ebx < MAX_CONCURRENT_IO: ebx++, esi+=sizeof(COPY_CHUNK))
+    .for ( esi = 0, ebx = 0 : ebx < MAX_CONCURRENT_IO: ebx++, esi+=sizeof(COPY_CHUNK) )
 
-        .break .if (ReadPointer.QuadPart >= FileSize.QuadPart)
+        mov rcx,FileSize
+        .break .if ( ReadPointer.QuadPart >= [rcx].ULARGE_INTEGER.QuadPart )
 
         lea rdi,CopyChunk
         add rdi,rsi
         assume rdi:ptr COPY_CHUNK
-
 
         ;; Use VirtualAlloc so we get a page-aligned buffer suitable
         ;; for unbuffered I/O.
@@ -433,10 +402,11 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
         mov [rdi].Overlapped.OffsetHigh,ReadPointer.HighPart
         mov [rdi].Overlapped.hEvent,NULL ;; not needed
 
-        .if !ReadFile(SourceFile, [rdi].Buffer, BUFFER_SIZE, &NumberBytes, &[rdi].Overlapped)
+        .ifd !ReadFile(SourceFile, [rdi].Buffer, BUFFER_SIZE, &NumberBytes, &[rdi].Overlapped)
 
-            .if GetLastError() != ERROR_IO_PENDING
-                fprintf(ferr, "ReadFile at %lx failed, error %d\n", ReadPointer.LowPart,  eax)
+            .ifd GetLastError() != ERROR_IO_PENDING
+
+                fprintf(ferr, "ReadFile at %lx failed, error %d\n", ReadPointer.LowPart, eax)
                 exit(1)
             .endif
         .endif
@@ -444,12 +414,11 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
         inc PendingIO
     .endf
 
-
     ;; We have started the initial async. reads, enter the main loop.
     ;; This simply waits until a write completes, then issues the next
     ;; read.
 
-    .while (PendingIO)
+    .while ( PendingIO )
 
         .if !GetQueuedCompletionStatus(WritePort, &NumberBytes, &Key, &CompletedOverlapped, INFINITE)
 
@@ -457,15 +426,14 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
             ;; (CompletedOverlapped is not NULL) or it dequeued a completion
             ;; packet of a failed I/O operation (CompletedOverlapped is NULL).
 
-            fprintf(ferr,
-                    "GetQueuedCompletionStatus on the IoPort failed, error %d\n",
-                    GetLastError())
+            fprintf(ferr, "GetQueuedCompletionStatus on the IoPort failed, error %d\n", GetLastError())
             exit(1)
         .endif
 
         ;; Issue the next read using the buffer that has just completed.
 
-        .if (ReadPointer.QuadPart < FileSize.QuadPart)
+        mov rcx,FileSize
+        .if ( ReadPointer.QuadPart < [rcx].ULARGE_INTEGER.QuadPart )
 
             mov rbx,CompletedOverlapped
             assume rbx:ptr COPY_CHUNK
@@ -475,9 +443,9 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
 
             .if !ReadFile(SourceFile, [rbx].Buffer, BUFFER_SIZE, &NumberBytes, &[rbx].Overlapped)
 
-                .if GetLastError() != ERROR_IO_PENDING
-                    fprintf(ferr, "ReadFile at %lx failed, error %d\n", [rbx].Overlapped._Offset,
-                            eax)
+                .ifd ( GetLastError() != ERROR_IO_PENDING )
+
+                    fprintf(ferr, "ReadFile at %lx failed, error %d\n", [rbx].Overlapped._Offset, eax)
                     exit(1)
                 .endif
             .endif
@@ -488,10 +456,8 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
             ;; for the pending writes to drain.
 
             dec PendingIO
-
         .endif
     .endw
-
     ;; All done. There is no need to call VirtualFree() to free CopyChunk
     ;; buffers here. The buffers will be freed when this process exits.
     ret
@@ -499,7 +465,7 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
 ReadLoop endp
 
 
-WriteLoop proc uses rbx WINAPI FileSize:ULARGE_INTEGER
+WriteLoop proc WINAPI uses rbx FileSize:PULARGE_INTEGER
 
   local Success             : BOOL,
         Key                 : DWORD_PTR,
@@ -518,12 +484,9 @@ WriteLoop proc uses rbx WINAPI FileSize:ULARGE_INTEGER
             ;; (CompletedOverlapped is not NULL) or it dequeued a completion
             ;; packet of a failed I/O operation (CompletedOverlapped is NULL).
 
-            fprintf(ferr,
-                    "GetQueuedCompletionStatus on the IoPort failed, error %d\n",
-                    GetLastError())
+            fprintf(ferr, "GetQueuedCompletionStatus on the IoPort failed, error %d\n", GetLastError())
             exit(1)
         .endif
-
 
         ;; Update the total number of bytes written.
 
@@ -552,11 +515,10 @@ WriteLoop proc uses rbx WINAPI FileSize:ULARGE_INTEGER
             .endif
         .endif
 
+        ;; Check to see if we've copied the complete file, if so return
 
-        ;;Check to see if we've copied the complete file, if so return
-
-        .break .if (TotalBytesWritten.QuadPart >= FileSize.QuadPart)
-
+        mov rcx,FileSize
+       .break .if (TotalBytesWritten.QuadPart >= [rcx].ULARGE_INTEGER.QuadPart)
     .endf
     ret
 

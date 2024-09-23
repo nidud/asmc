@@ -3,13 +3,7 @@ define _LMSTATS_
 
 include lmcons.inc
 
-;NET_API_STATUS
-NetStatisticsGet proto WINAPI \
-	    ServerName: LPTSTR,
-	       Service: LPTSTR,
-		 Level: DWORD,
-	       Options: DWORD,
-		Buffer: ptr LPBYTE
+NetStatisticsGet proto WINAPI :LPTSTR, :LPTSTR, :DWORD, :DWORD, :ptr
 
 ifdef LM20_WORKSTATION_STATISTICS
 STAT_WORKSTATION_0	STRUC

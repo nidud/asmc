@@ -1,5 +1,6 @@
 ifndef __ACCESS_CONTROL__
 define __ACCESS_CONTROL__
+.pragma list(push, 0)
 
 ifndef __midl
 include wtypes.inc
@@ -513,4 +514,5 @@ endif
 
 endif
 
+.pragma list(pop)
 endif

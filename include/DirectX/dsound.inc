@@ -356,7 +356,6 @@ dwBufferBytes		dd ?
 dwReserved		dd ?
 DSCBCAPS		ENDS
 LPDSCBCAPS		typedef ptr DSCBCAPS
-
 LPCDSCBCAPS		typedef ptr DSCBCAPS
 
 DSBPOSITIONNOTIFY	STRUC
@@ -364,68 +363,24 @@ dwOffset		dd ?
 hEventNotify		HANDLE ?
 DSBPOSITIONNOTIFY	ENDS
 LPDSBPOSITIONNOTIFY	typedef ptr DSBPOSITIONNOTIFY
-
 LPCDSBPOSITIONNOTIFY	typedef ptr DSBPOSITIONNOTIFY
 
+CALLBACK(LPDSENUMCALLBACKA, :LPGUID, :LPCSTR, :LPCSTR, :ptr)
+CALLBACK(LPDSENUMCALLBACKW, :LPGUID, :LPCWSTR, :LPCWSTR, :ptr)
 
-CALLBACK(LPDSENUMCALLBACKA, :LPGUID, :LPCSTR, :LPCSTR, :PVOID)
-CALLBACK(LPDSENUMCALLBACKW, :LPGUID, :LPCWSTR, :LPCWSTR, :PVOID)
-
-;HRESULT
-DirectSoundCreate proto WINAPI \
-	  pcGuidDevice: LPCGUID,
-		  ppDS: ptr LPCGUID,
-	     pUnkOuter: LPUNKNOWN
-
-DirectSoundEnumerateA proto WINAPI \
-       pDSEnumCallback: LPDSENUMCALLBACKA,
-	      pContext: PVOID
-
-DirectSoundEnumerateW proto WINAPI \
-       pDSEnumCallback: LPDSENUMCALLBACKW,
-	      pContext: PVOID
-
-DirectSoundCaptureCreate proto WINAPI \
-	  pcGuidDevice: LPCGUID,
-		 ppDSC: ptr LPDIRECTSOUNDCAPTURE,
-	     pUnkOuter: LPUNKNOWN
-
-DirectSoundCaptureEnumerateA proto WINAPI \
-       pDSEnumCallback: LPDSENUMCALLBACKA,
-	      pContext: PVOID
-
-DirectSoundCaptureEnumerateW proto WINAPI \
-       pDSEnumCallback: LPDSENUMCALLBACKW,
-	      pContext: PVOID
+DirectSoundCreate proto WINAPI :ptr, :ptr, :ptr
+DirectSoundEnumerateA proto WINAPI :ptr, :ptr
+DirectSoundEnumerateW proto WINAPI :ptr, :ptr
+DirectSoundCaptureCreate proto WINAPI :ptr, :ptr, :ptr
+DirectSoundCaptureEnumerateA proto WINAPI :ptr, :ptr
+DirectSoundCaptureEnumerateW proto WINAPI :ptr, :ptr
 
 if DIRECTSOUND_VERSION GE 0x0800
-DirectSoundCreate8 proto WINAPI \
-	  pcGuidDevice: LPCGUID,
-		 ppDS8: ptr LPDIRECTSOUND8,
-	     pUnkOuter: LPUNKNOWN
-
-DirectSoundCaptureCreate8 proto WINAPI \
-	  pcGuidDevice: LPCGUID,
-		ppDSC8: ptr LPDIRECTSOUNDCAPTURE8,
-	     pUnkOuter: LPUNKNOWN
-
-DirectSoundFullDuplexCreate proto WINAPI \
-   pcGuidCaptureDevice: LPCGUID,
-    pcGuidRenderDevice: LPCGUID,
-       pcDSCBufferDesc: LPCDSCBUFFERDESC,
-	pcDSBufferDesc: LPCDSBUFFERDESC,
-		  hWnd: HWND,
-	       dwLevel: DWORD,
-		ppDSFD: ptr LPDIRECTSOUNDFULLDUPLEX,
-	  ppDSCBuffer8: ptr LPDIRECTSOUNDCAPTUREBUFFER8,
-	   ppDSBuffer8: ptr LPDIRECTSOUNDBUFFER8,
-	     pUnkOuter: LPUNKNOWN
-
+DirectSoundCreate8 proto WINAPI :ptr, :ptr, :ptr
+DirectSoundCaptureCreate8 proto WINAPI :ptr, :ptr, :ptr
+DirectSoundFullDuplexCreate proto WINAPI :ptr, :ptr, :ptr, :ptr, :HWND, :DWORD, :ptr, :ptr, :ptr, :ptr
 DirectSoundFullDuplexCreate8 equ <DirectSoundFullDuplexCreate>
-
-GetDeviceID proto WINAPI \
-	      pGuidSrc: LPCGUID,
-	     pGuidDest: LPGUID
+GetDeviceID proto WINAPI :ptr, :ptr
 endif
 
 ifdef _UNICODE
@@ -452,8 +407,7 @@ DEFINE_GUID(IID_IReferenceClock, 0x56a86897, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0
     AdviseTime		proc :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
     AdvisePeriodic	proc :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
     Unadvise		proc :DWORD
-
-    .ends
+   .ends
 
 endif
 
@@ -469,8 +423,7 @@ DEFINE_GUID(IID_IDirectSound, 0x279AFA83, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20
     GetSpeakerConfig	proc :LPDWORD
     SetSpeakerConfig	proc :DWORD
     Initialize		proc :LPCGUID
-
-    .ends
+   .ends
 
 if DIRECTSOUND_VERSION GE 0x0800
 
@@ -479,8 +432,7 @@ DEFINE_GUID(IID_IDirectSound8, 0xC50A7E93, 0xF395, 0x4834, 0x9E, 0xF6, 0x7F, 0xA
 .comdef IDirectSound8 : public IDirectSound
 
     VerifyCertification proc :LPDWORD
-
-    .ends
+   .ends
 
 endif
 
@@ -507,8 +459,7 @@ DEFINE_GUID(IID_IDirectSoundBuffer, 0x279AFA85, 0x4981, 0x11CE, 0xA5, 0x21, 0x00
     Stop		proc
     Unlock		proc :PVOID, :DWORD
     Restore		proc
-
-    .ends
+   .ends
 
 if DIRECTSOUND_VERSION GE 0x0800
 
@@ -520,13 +471,11 @@ DEFINE_GUID(IID_IDirectSoundBuffer8, 0x6825a449, 0x7524, 0x4d82, 0x92, 0x0f, 0x5
     SetFX		proc :DWORD, :LPDSEFFECTDESC, :LPDWORD
     AcquireResources	proc :DWORD, :DWORD, :LPDWORD
     GetObjectInPath	proc :REFGUID, :DWORD, :REFGUID, :ptr
-
-    .ends
+   .ends
 
 DEFINE_GUID(GUID_All_Objects, 0xaa114de5, 0xc262, 0x4169, 0xa1, 0xc8, 0x23, 0xd6, 0x98, 0xcc, 0x73, 0xb5)
 
 endif
-
 
 DEFINE_GUID(IID_IDirectSound3DListener, 0x279AFA84, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60)
 
@@ -547,9 +496,7 @@ DEFINE_GUID(IID_IDirectSound3DListener, 0x279AFA84, 0x4981, 0x11CE, 0xA5, 0x21, 
     SetRolloffFactor	proc :D3DVALUE, :DWORD
     SetVelocity		proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
     CommitDeferredSettings proc
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_IDirectSound3DBuffer, 0x279AFA86, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60)
 
@@ -573,9 +520,7 @@ DEFINE_GUID(IID_IDirectSound3DBuffer, 0x279AFA86, 0x4981, 0x11CE, 0xA5, 0x21, 0x
     SetMode		proc :DWORD, :DWORD
     SetPosition		proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
     SetVelocity		proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundCapture, 0xb0210781, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16)
 
@@ -584,9 +529,7 @@ DEFINE_GUID(IID_IDirectSoundCapture, 0xb0210781, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0,
     CreateCaptureBuffer proc :LPCDSCBUFFERDESC, :ptr, :LPUNKNOWN
     GetCaps		proc :LPDSCCAPS
     Initialize		proc :LPCGUID
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundCaptureBuffer, 0xb0210782, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16)
 
@@ -601,8 +544,7 @@ DEFINE_GUID(IID_IDirectSoundCaptureBuffer, 0xb0210782, 0x89cd, 0x11d0, 0xaf, 0x8
     Start		proc :DWORD
     Stop		proc
     Unlock		proc :LPVOID, :DWORD, :LPVOID, :DWORD
-
-    .ends
+   .ends
 
 if DIRECTSOUND_VERSION GE 0x0800
 
@@ -621,8 +563,7 @@ DEFINE_GUID(IID_IDirectSoundCaptureBuffer8, 0x990df4, 0xdbb, 0x4872, 0x83, 0x3e,
     Unlock		proc :LPVOID, :DWORD
     GetObjectInPath	proc :REFGUID, :DWORD, :REFGUID, :ptr
     GetFXStatus		proc :DWORD, :LPDWORD
-
-    .ends
+   .ends
 
 endif
 
@@ -631,8 +572,7 @@ DEFINE_GUID(IID_IDirectSoundNotify, 0xb0210783, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 
 .comdef IDirectSoundNotify : public IUnknown
 
     SetNotificationPositions proc :DWORD, :LPCDSBPOSITIONNOTIFY
-
-    .ends
+   .ends
 
 ifndef _IKsPropertySet_
 _IKsPropertySet_ equ 1
@@ -649,8 +589,7 @@ DEFINE_GUID(IID_IKsPropertySet, 0x31efac30, 0x515c, 0x11d0, 0xa9, 0xaa, 0x00, 0x
     Get			proc :REFGUID, :ULONG, :LPVOID, :ULONG, :PULONG
     Set			proc :REFGUID, :ULONG, :PVOID, :ULONG
     QuerySupport	proc :REFGUID, :ULONG, :PULONG
-
-    .ends
+   .ends
 
 endif
 
@@ -676,8 +615,7 @@ DSFXGARGLE_RATEHZ_MAX	equ 1000
 
     SetAllParameters	proc :LPCDSFXGargle
     GetAllParameters	proc :LPDSFXGargle
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundFXChorus, 0x880842e3, 0x145f, 0x43e6, 0xa9, 0x34, 0xa7, 0x18, 0x06, 0xe5, 0x05, 0x47);
 
@@ -720,8 +658,7 @@ DSFXCHORUS_PHASE_180	equ 4
 
     SetAllParameters	proc :LPCDSFXChorus
     GetAllParameters	proc :LPDSFXChorus
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundFXFlanger, 0x903e9878, 0x2c92, 0x4072, 0x9b, 0x2c, 0xea, 0x68, 0xf5, 0x39, 0x67, 0x83);
 
@@ -763,8 +700,7 @@ DSFXFLANGER_PHASE_180	equ 4
 
     SetAllParameters	proc :LPCDSFXFlanger
     GetAllParameters	proc :LPDSFXFlanger
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundFXEcho, 0x8bd28edf, 0x50db, 0x4e92, 0xa2, 0xbd, 0x44, 0x54, 0x88, 0xd1, 0xed, 0x42);
 
@@ -793,8 +729,7 @@ DSFXECHO_PANDELAY_MAX	equ 1
 
     SetAllParameters	proc :LPCDSFXEcho
     GetAllParameters	proc :LPDSFXEcho
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundFXDistortion, 0x8ecf4326, 0x455f, 0x4d8b, 0xbd, 0xa9, 0x8d, 0x5d, 0x3e, 0x9e, 0x3e, 0x0b)
 
@@ -823,8 +758,7 @@ DSFXDISTORTION_PRELOWPASSCUTOFF_MAX equ 8000.0
 
     SetAllParameters	proc :LPCDSFXDistortion
     GetAllParameters	proc :LPDSFXDistortion
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundFXCompressor, 0x4bbd1154, 0x62f6, 0x4e2c, 0xa1, 0x5c, 0xd3, 0xb6, 0xc4, 0x17, 0xf7, 0xa0);
 
@@ -856,8 +790,7 @@ DSFXCOMPRESSOR_PREDELAY_MAX equ 4.0
 
     SetAllParameters	proc :LPCDSFXCompressor
     GetAllParameters	proc :LPDSFXCompressor
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundFXParamEq, 0xc03ca9fe, 0xfe90, 0x4204, 0x80, 0x78, 0x82, 0x33, 0x4c, 0xd1, 0x77, 0xda);
 
@@ -880,8 +813,7 @@ DSFXPARAMEQ_GAIN_MAX	equ 15.0
 
     SetAllParameters	proc :LPCDSFXCompressor
     GetAllParameters	proc :LPDSFXCompressor
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundFXI3DL2Reverb, 0x4b166a6a, 0x0d66, 0x43f3, 0x80, 0xe3, 0xee, 0x62, 0x80, 0xde, 0xe1, 0xa4);
 
@@ -960,8 +892,7 @@ DSFX_I3DL2REVERB_QUALITY_DEFAULT equ 2
     GetPreset		proc :LPDWORD
     SetQuality		proc :LONG
     GetQuality		proc :ptr
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundFXWavesReverb,0x46858c3a,0x0dc6,0x45e3,0xb7,0x60,0xd4,0xee,0xf1,0x6c,0xb3,0x25);
 
@@ -988,7 +919,6 @@ DSFX_WAVESREVERB_HIGHFREQRTRATIO_MAX equ 0.999
 DSFX_WAVESREVERB_HIGHFREQRTRATIO_DEFAULT equ 0.001
 
 .comdef IDirectSoundFXWavesReverb : public IDirectSoundFXParamEq
-
     .ends
 
 DEFINE_GUID(IID_IDirectSoundCaptureFXAec, 0xad74143d, 0x903d, 0x4ab7, 0x80, 0x66, 0x28, 0xd3, 0x63, 0x03, 0x6d, 0x65);
@@ -1016,8 +946,7 @@ DSCFX_AEC_STATUS_CURRENTLY_CONVERGED equ 0x8
     GetAllParameters	proc :LPDSFXCompressor
     GetStatus		proc :LPDWORD
     Reset		proc
-
-    .ends
+   .ends
 
 DEFINE_GUID(IID_IDirectSoundCaptureFXNoiseSuppress, 0xed311e41, 0xfbae, 0x4175, 0x96, 0x25, 0xcd, 0x8, 0x54, 0xf6, 0x93, 0xca);
 
@@ -1031,8 +960,7 @@ LPCDSCFXNoiseSuppress	typedef ptr DSCFXNoiseSuppress
 .comdef IDirectSoundCaptureFXNoiseSuppress : public IDirectSoundFXParamEq
 
     Reset		proc
-
-    .ends
+   .ends
 
 ifndef _IDirectSoundFullDuplex_
 _IDirectSoundFullDuplex_ equ 1
@@ -1043,8 +971,7 @@ DEFINE_GUID(IID_IDirectSoundFullDuplex, 0xedcb4c7a, 0xdaab, 0x4216, 0xa4, 0x2e, 
 
     Initialize proc :LPCGUID, :LPCGUID, :LPCDSCBUFFERDESC, :LPCDSBUFFERDESC,
 		:HWND, :DWORD, :LPLPDIRECTSOUNDCAPTUREBUFFER8, :LPLPDIRECTSOUNDBUFFER8
-
-    .ends
+   .ends
 
 LPDIRECTSOUNDFULLDUPLEX typedef ptr IDirectSoundFullDuplex
 

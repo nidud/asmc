@@ -6,25 +6,7 @@ CFP_ALLOCPROC		typedef proto __cdecl :size_t
 CFP_REALLOCPROC		typedef proto __cdecl :ptr, :size_t
 CFP_FREEPROC		typedef proto __cdecl :ptr
 
-;DWORD
-CreateFontPackage proto __cdecl \
-	 puchSrcBuffer: ptr BYTE,
-       ulSrcBufferSize: DWORD,
-ppuchFontPackageBuffer: LPSTR,
-pFontPackageBufferSize: ptr LONG,
-       pulBytesWritten: ptr LONG,
-		usFlag: WORD,
-	    usTTCIndex: WORD,
-	usSubsetFormat: WORD,
-      usSubsetLanguage: WORD,
-      usSubsetPlatform: WORD,
-      usSubsetEncoding: WORD,
-     pusSubsetKeepList: ptr WORD,
-     usSubsetListCount: WORD,
-	  lpfnAllocate: ptr CFP_ALLOCPROC,
-	lpfnReAllocate: ptr CFP_REALLOCPROC,
-	      lpfnFree: ptr CFP_FREEPROC,
-	   lpvReserved: ptr
+CreateFontPackage proto __cdecl :ptr, :DWORD, :LPSTR, :ptr, :ptr, :WORD, :WORD, :WORD, :WORD, :WORD, :WORD, :ptr, :WORD, :ptr, :ptr, :ptr, :ptr
 
 TTFCFP_SUBSET		equ 0
 TTFCFP_SUBSET1		equ 1
@@ -47,21 +29,7 @@ TTFCFP_FLAGS_COMPRESS	equ 0x0002
 TTFCFP_FLAGS_TTC	equ 0x0004
 TTFCFP_FLAGS_GLYPHLIST	equ 0x0008
 
-;DWORD
-MergeFontPackage proto __cdecl \
-   puchMergeFontBuffer: LPSTR,
- ulMergeFontBufferSize: DWORD,
- puchFontPackageBuffer: ptr byte,
-uFontPackageBufferSize: DWORD,
-       ppuchDestBuffer: LPSTR,
-     pulDestBufferSize: ptr LONG,
-       pulBytesWritten: ptr LONG,
-		usMode: WORD,
-	  lpfnAllocate: ptr CFP_ALLOCPROC,
-	lpfnReAllocate: ptr CFP_REALLOCPROC,
-	      lpfnFree: ptr CFP_FREEPROC,
-	   lpvReserved: ptr
-
+MergeFontPackage proto __cdecl :LPSTR, :DWORD, :ptr, :DWORD, :LPSTR, :ptr, :ptr, :WORD, :ptr, :ptr, :ptr, :ptr
 
 TTFMFP_SUBSET		equ 0
 TTFMFP_SUBSET1		equ 1

@@ -180,15 +180,9 @@ GetSaveFileName equ <GetSaveFileNameW>
 else
 GetSaveFileName equ <GetSaveFileNameA>
 endif
-;short
-GetFileTitleA proto WINAPI \
-		      : LPCSTR,
-		      : LPSTR,
-		      : WORD
-GetFileTitleW proto WINAPI \
-		      : LPCWSTR,
-		      : LPWSTR,
-		      : WORD
+
+GetFileTitleA proto WINAPI :LPCSTR, :LPSTR, :WORD
+GetFileTitleW proto WINAPI :LPCWSTR, :LPWSTR, :WORD
 ifdef _UNICODE
 GetFileTitle		equ <GetFileTitleW>
 else
@@ -234,7 +228,6 @@ OFN_SHAREFALLTHROUGH	equ 2
 OFN_SHARENOWARN		equ 1
 OFN_SHAREWARN		equ 0
 
-;UINT
 CALLBACK(LPCCHOOKPROC, :HWND, :UINT, :WPARAM, :LPARAM)
 
 if(WINVER GE 0x0400)

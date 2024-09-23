@@ -6,7 +6,6 @@ include wtypes.inc
 include wincrypt.inc
 include winapifamily.inc
 
-
 .enum WS_XML_READER_PROPERTY_ID {
     WS_XML_READER_PROPERTY_MAX_DEPTH				  = 0,
     WS_XML_READER_PROPERTY_ALLOW_FRAGMENT			  = 1,
@@ -25,7 +24,6 @@ include winapifamily.inc
     WS_XML_READER_PROPERTY_MAX_NAMESPACES			  = 14,
     }
 
-
 .enum WS_XML_CANONICALIZATION_ALGORITHM {
     WS_EXCLUSIVE_XML_CANONICALIZATION_ALGORITHM			  = 0,
     WS_EXCLUSIVE_WITH_COMMENTS_XML_CANONICALIZATION_ALGORITHM	  = 1,
@@ -33,14 +31,12 @@ include winapifamily.inc
     WS_INCLUSIVE_WITH_COMMENTS_XML_CANONICALIZATION_ALGORITHM	  = 3,
     }
 
-
 .enum WS_XML_CANONICALIZATION_PROPERTY_ID {
     WS_XML_CANONICALIZATION_PROPERTY_ALGORITHM		    = 0,
     WS_XML_CANONICALIZATION_PROPERTY_INCLUSIVE_PREFIXES	    = 1,
     WS_XML_CANONICALIZATION_PROPERTY_OMITTED_ELEMENT	    = 2,
     WS_XML_CANONICALIZATION_PROPERTY_OUTPUT_BUFFER_SIZE	    = 3,
     }
-
 
 .enum WS_XML_WRITER_PROPERTY_ID {
     WS_XML_WRITER_PROPERTY_MAX_DEPTH				  = 0,
@@ -64,10 +60,8 @@ include winapifamily.inc
     WS_XML_WRITER_PROPERTY_EMIT_UNCOMPRESSED_EMPTY_ELEMENTS	  = 18,
     }
 
-
 .enum WS_XML_BUFFER_PROPERTY_ID {
     }
-
 
 .enum WS_XML_TEXT_TYPE {
     WS_XML_TEXT_TYPE_UTF8	   = 1,
@@ -88,7 +82,6 @@ include winapifamily.inc
     WS_XML_TEXT_TYPE_LIST	   = 16,
     }
 
-
 .enum WS_XML_NODE_TYPE {
     WS_XML_NODE_TYPE_ELEMENT	     = 1,
     WS_XML_NODE_TYPE_TEXT	     = 2,
@@ -99,7 +92,6 @@ include winapifamily.inc
     WS_XML_NODE_TYPE_EOF	     = 8,
     WS_XML_NODE_TYPE_BOF	     = 9,
     }
-
 
 .enum WS_MOVE_TO {
     WS_MOVE_TO_ROOT_ELEMENT	    = 0,
@@ -115,7 +107,6 @@ include winapifamily.inc
     WS_MOVE_TO_EOF		    = 10,
     WS_MOVE_TO_CHILD_NODE	    = 11,
     }
-
 
 .enum WS_VALUE_TYPE {
     WS_BOOL_VALUE_TYPE	       = 0,
@@ -136,12 +127,10 @@ include winapifamily.inc
     WS_DURATION_VALUE_TYPE     = 15,
     }
 
-
 .enum WS_XML_READER_INPUT_TYPE {
     WS_XML_READER_INPUT_TYPE_BUFFER	= 1,
     WS_XML_READER_INPUT_TYPE_STREAM	= 2,
     }
-
 
 .enum WS_XML_READER_ENCODING_TYPE {
     WS_XML_READER_ENCODING_TYPE_TEXT	   = 1,
@@ -150,14 +139,12 @@ include winapifamily.inc
     WS_XML_READER_ENCODING_TYPE_RAW	   = 4,
     }
 
-
 .enum WS_CHARSET {
     WS_CHARSET_AUTO	   = 0,
     WS_CHARSET_UTF8	   = 1,
     WS_CHARSET_UTF16LE	   = 2,
     WS_CHARSET_UTF16BE	   = 3,
     }
-
 
 .enum WS_XML_WRITER_ENCODING_TYPE {
     WS_XML_WRITER_ENCODING_TYPE_TEXT	   = 1,
@@ -166,18 +153,15 @@ include winapifamily.inc
     WS_XML_WRITER_ENCODING_TYPE_RAW	   = 4,
     }
 
-
 .enum WS_XML_WRITER_OUTPUT_TYPE {
     WS_XML_WRITER_OUTPUT_TYPE_BUFFER	 = 1,
     WS_XML_WRITER_OUTPUT_TYPE_STREAM	 = 2,
     }
 
-
 .enum WS_CALLBACK_MODEL {
     WS_SHORT_CALLBACK	  = 0,
     WS_LONG_CALLBACK	  = 1,
     }
-
 
 .enum WS_ENCODING {
     WS_ENCODING_XML_BINARY_1		 = 0,
@@ -191,7 +175,6 @@ include winapifamily.inc
     WS_ENCODING_RAW			 = 8,
     }
 
-
 .enum WS_CHANNEL_STATE {
     WS_CHANNEL_STATE_CREATED	   = 0,
     WS_CHANNEL_STATE_OPENING	   = 1,
@@ -202,12 +185,10 @@ include winapifamily.inc
     WS_CHANNEL_STATE_CLOSED	   = 6,
     }
 
-
 .enum WS_RECEIVE_OPTION {
     WS_RECEIVE_REQUIRED_MESSAGE	    = 1,
     WS_RECEIVE_OPTIONAL_MESSAGE	    = 2,
     }
-
 
 .enum WS_CHANNEL_BINDING {
     WS_HTTP_CHANNEL_BINDING	     = 0,
@@ -218,7 +199,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     WS_NAMEDPIPE_CHANNEL_BINDING     = 4,
 endif
     }
-
 
 .enum WS_CHANNEL_TYPE {
     WS_CHANNEL_TYPE_INPUT	       = 0x1,
@@ -232,7 +212,6 @@ endif
     WS_CHANNEL_TYPE_REPLY	       = 0x10,
     }
 
-
 .enum WS_TRANSFER_MODE {
     WS_STREAMED_INPUT_TRANSFER_MODE	 = 0x1,
     WS_STREAMED_OUTPUT_TRANSFER_MODE	 = 0x2,
@@ -240,13 +219,11 @@ endif
     WS_STREAMED_TRANSFER_MODE		 = (WS_STREAMED_INPUT_TRANSFER_MODE or WS_STREAMED_OUTPUT_TRANSFER_MODE),
     }
 
-
 .enum WS_HTTP_PROXY_SETTING_MODE {
     WS_HTTP_PROXY_SETTING_MODE_AUTO	  = 0x1,
     WS_HTTP_PROXY_SETTING_MODE_NONE	  = 0x2,
     WS_HTTP_PROXY_SETTING_MODE_CUSTOM	  = 0x3,
     }
-
 
 .enum WS_CHANNEL_PROPERTY_ID {
     WS_CHANNEL_PROPERTY_MAX_BUFFERED_MESSAGE_SIZE		 = 0,
@@ -301,30 +278,25 @@ endif
     WS_CHANNEL_PROPERTY_MAX_HTTP_REQUEST_HEADERS_BUFFER_SIZE	 = 49,
     }
 
-
 .enum {
     WS_HTTP_HEADER_MAPPING_COMMA_SEPARATOR	   = 0x1,
     WS_HTTP_HEADER_MAPPING_SEMICOLON_SEPARATOR	   = 0x2,
     WS_HTTP_HEADER_MAPPING_QUOTED_VALUE		   = 0x4,
     }
 
-
 .enum {
     WS_HTTP_RESPONSE_MAPPING_STATUS_CODE     = 0x1,
     WS_HTTP_RESPONSE_MAPPING_STATUS_TEXT     = 0x2,
     }
 
-
 .enum {
     WS_HTTP_REQUEST_MAPPING_VERB     = 0x2,
     }
-
 
 .enum WS_COOKIE_MODE {
     WS_MANUAL_COOKIE_MODE     = 1,
     WS_AUTO_COOKIE_MODE	      = 2,
     }
-
 
 .enum WS_OPERATION_CONTEXT_PROPERTY_ID {
     WS_OPERATION_CONTEXT_PROPERTY_CHANNEL		   = 0,
@@ -338,7 +310,6 @@ endif
     WS_OPERATION_CONTEXT_PROPERTY_ENDPOINT_ADDRESS	   = 8,
     }
 
-
 .enum WS_ENDPOINT_IDENTITY_TYPE {
     WS_DNS_ENDPOINT_IDENTITY_TYPE	  = 1,
     WS_UPN_ENDPOINT_IDENTITY_TYPE	  = 2,
@@ -348,11 +319,9 @@ endif
     WS_UNKNOWN_ENDPOINT_IDENTITY_TYPE	  = 6,
     }
 
-
 .enum WS_ENDPOINT_ADDRESS_EXTENSION_TYPE {
     WS_ENDPOINT_ADDRESS_EXTENSION_METADATA_ADDRESS     = 1,
     }
-
 
 .enum WS_ERROR_PROPERTY_ID {
     WS_ERROR_PROPERTY_STRING_COUNT	      = 0,
@@ -360,12 +329,10 @@ endif
     WS_ERROR_PROPERTY_LANGID		      = 2,
     }
 
-
 .enum WS_EXCEPTION_CODE {
     WS_EXCEPTION_CODE_USAGE_FAILURE	   = 0xC03D0000,
     WS_EXCEPTION_CODE_INTERNAL_FAILURE	   = 0xc03d0001,
     }
-
 
 .enum WS_FAULT_ERROR_PROPERTY_ID {
     WS_FAULT_ERROR_PROPERTY_FAULT      = 0,
@@ -373,12 +340,10 @@ endif
     WS_FAULT_ERROR_PROPERTY_HEADER     = 2,
     }
 
-
 .enum WS_FAULT_DISCLOSURE {
     WS_MINIMAL_FAULT_DISCLOSURE	    = 0,
     WS_FULL_FAULT_DISCLOSURE	    = 1,
     }
-
 
 .enum WS_HEAP_PROPERTY_ID {
     WS_HEAP_PROPERTY_MAX_SIZE		= 0,
@@ -386,7 +351,6 @@ endif
     WS_HEAP_PROPERTY_REQUESTED_SIZE	= 2,
     WS_HEAP_PROPERTY_ACTUAL_SIZE	= 3,
     }
-
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -398,7 +362,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     WS_LISTENER_STATE_CLOSING	  = 4,
     WS_LISTENER_STATE_CLOSED	  = 5,
     }
-
 
 .enum WS_LISTENER_PROPERTY_ID {
     WS_LISTENER_PROPERTY_LISTEN_BACKLOG			    = 0,
@@ -453,7 +416,6 @@ endif
     WS_MESSAGE_STATE_DONE	     = 5,
     }
 
-
 .enum WS_MESSAGE_INITIALIZATION {
     WS_BLANK_MESSAGE	     = 0,
     WS_DUPLICATE_MESSAGE     = 1,
@@ -462,12 +424,10 @@ endif
     WS_FAULT_MESSAGE	     = 4,
     }
 
-
 .enum WS_REPEATING_HEADER_OPTION {
     WS_REPEATING_HEADER	    = 1,
     WS_SINGLETON_HEADER	    = 2,
     }
-
 
 .enum WS_HEADER_TYPE {
     WS_ACTION_HEADER	     = 1,
@@ -479,12 +439,10 @@ endif
     WS_FAULT_TO_HEADER	     = 7,
     }
 
-
 .enum {
     WS_MUST_UNDERSTAND_HEADER_ATTRIBUTE	    = 0x1,
     WS_RELAY_HEADER_ATTRIBUTE		    = 0x2,
     }
-
 
 .enum WS_ADDRESSING_VERSION {
     WS_ADDRESSING_VERSION_0_9		= 1,
@@ -492,13 +450,11 @@ endif
     WS_ADDRESSING_VERSION_TRANSPORT	= 3,
     }
 
-
 .enum WS_ENVELOPE_VERSION {
     WS_ENVELOPE_VERSION_SOAP_1_1     = 1,
     WS_ENVELOPE_VERSION_SOAP_1_2     = 2,
     WS_ENVELOPE_VERSION_NONE	     = 3,
     }
-
 
 .enum WS_MESSAGE_PROPERTY_ID {
     WS_MESSAGE_PROPERTY_STATE				     = 0,
@@ -525,7 +481,6 @@ endif
     WS_MESSAGE_PROPERTY_PROTECTION_LEVEL		     = 21,
     }
 
-
 .enum WS_SECURITY_BINDING_TYPE {
     WS_SSL_TRANSPORT_SECURITY_BINDING_TYPE		  = 1,
     WS_TCP_SSPI_TRANSPORT_SECURITY_BINDING_TYPE		  = 2,
@@ -538,7 +493,6 @@ endif
     WS_NAMEDPIPE_SSPI_TRANSPORT_SECURITY_BINDING_TYPE	  = 9,
     }
 
-
 .enum {
     WS_HTTP_HEADER_AUTH_SCHEME_NONE	     = 0x1,
     WS_HTTP_HEADER_AUTH_SCHEME_BASIC	     = 0x2,
@@ -550,12 +504,10 @@ endif
     WS_HTTP_HEADER_AUTH_SCHEME_PASSPORT	     = 0x20,
     }
 
-
 .enum WS_HTTP_HEADER_AUTH_TARGET {
     WS_HTTP_HEADER_AUTH_TARGET_SERVICE	   = 1,
     WS_HTTP_HEADER_AUTH_TARGET_PROXY	   = 2,
     }
-
 
 .enum WS_WINDOWS_INTEGRATED_AUTH_PACKAGE {
     WS_WINDOWS_INTEGRATED_AUTH_PACKAGE_KERBEROS	    = 1,
@@ -565,18 +517,15 @@ endif
     WS_WINDOWS_INTEGRATED_AUTH_PACKAGE_SPNEGO	    = 3,
     }
 
-
 .enum WS_SECURITY_HEADER_VERSION {
     WS_SECURITY_HEADER_VERSION_1_0     = 0x1,
     WS_SECURITY_HEADER_VERSION_1_1     = 0x2,
     }
 
-
 .enum WS_TRUST_VERSION {
     WS_TRUST_VERSION_FEBRUARY_2005     = 0x1,
     WS_TRUST_VERSION_1_3	       = 0x2,
     }
-
 
 .enum WS_REQUEST_SECURITY_TOKEN_ACTION {
     WS_REQUEST_SECURITY_TOKEN_ACTION_ISSUE	       = 1,
@@ -584,12 +533,10 @@ endif
     WS_REQUEST_SECURITY_TOKEN_ACTION_RENEW_CONTEXT     = 3,
     }
 
-
 .enum WS_SECURE_CONVERSATION_VERSION {
     WS_SECURE_CONVERSATION_VERSION_FEBRUARY_2005     = 0x1,
     WS_SECURE_CONVERSATION_VERSION_1_3		     = 0x2,
     }
-
 
 .enum WS_SECURE_PROTOCOL {
     WS_SECURE_PROTOCOL_SSL2	  = 0x1,
@@ -599,13 +546,11 @@ endif
     WS_SECURE_PROTOCOL_TLS1_2	  = 0x10,
     }
 
-
 .enum WS_SECURITY_TIMESTAMP_USAGE {
     WS_SECURITY_TIMESTAMP_USAGE_ALWAYS		  = 1,
     WS_SECURITY_TIMESTAMP_USAGE_NEVER		  = 2,
     WS_SECURITY_TIMESTAMP_USAGE_REQUESTS_ONLY	  = 3,
     }
-
 
 .enum WS_SECURITY_HEADER_LAYOUT {
     WS_SECURITY_HEADER_LAYOUT_STRICT			   = 1,
@@ -613,7 +558,6 @@ endif
     WS_SECURITY_HEADER_LAYOUT_LAX_WITH_TIMESTAMP_FIRST	   = 3,
     WS_SECURITY_HEADER_LAYOUT_LAX_WITH_TIMESTAMP_LAST	   = 4,
     }
-
 
 .enum WS_SECURITY_ALGORITHM_PROPERTY_ID {
     }
@@ -640,13 +584,11 @@ endif
     WS_SECURITY_ALGORITHM_KEY_DERIVATION_P_SHA1			       = 18,
     }
 
-
 .enum WS_PROTECTION_LEVEL {
     WS_PROTECTION_LEVEL_NONE		     = 1,
     WS_PROTECTION_LEVEL_SIGN		     = 2,
     WS_PROTECTION_LEVEL_SIGN_AND_ENCRYPT     = 3,
     }
-
 
 .enum WS_SECURITY_PROPERTY_ID {
     WS_SECURITY_PROPERTY_TRANSPORT_PROTECTION_LEVEL	  = 1,
@@ -663,13 +605,11 @@ endif
     WS_SECURITY_PROPERTY_SERVICE_IDENTITIES		  = 12,
     }
 
-
 .enum WS_SECURITY_KEY_TYPE {
     WS_SECURITY_KEY_TYPE_NONE		= 1,
     WS_SECURITY_KEY_TYPE_SYMMETRIC	= 2,
     WS_SECURITY_KEY_TYPE_ASYMMETRIC	= 3,
     }
-
 
 .enum WS_SECURITY_ALGORITHM_SUITE_NAME {
     WS_SECURITY_ALGORITHM_SUITE_NAME_BASIC256		       = 1,
@@ -686,7 +626,6 @@ endif
     WS_SECURITY_ALGORITHM_SUITE_NAME_BASIC128_SHA256_RSA15     = 12,
     }
 
-
 .enum WS_SECURITY_TOKEN_REFERENCE_MODE {
     WS_SECURITY_TOKEN_REFERENCE_MODE_LOCAL_ID		     = 1,
     WS_SECURITY_TOKEN_REFERENCE_MODE_XML_BUFFER		     = 2,
@@ -694,7 +633,6 @@ endif
     WS_SECURITY_TOKEN_REFERENCE_MODE_SECURITY_CONTEXT_ID     = 4,
     WS_SECURITY_TOKEN_REFERENCE_MODE_SAML_ASSERTION_ID	     = 5,
     }
-
 
 .enum {
     WS_CERT_FAILURE_CN_MISMATCH		   = 0x1,
@@ -704,13 +642,11 @@ endif
     WS_CERT_FAILURE_REVOCATION_OFFLINE	   = 0x10,
     }
 
-
 .enum WS_SECURITY_KEY_ENTROPY_MODE {
     WS_SECURITY_KEY_ENTROPY_MODE_CLIENT_ONLY	 = 1,
     WS_SECURITY_KEY_ENTROPY_MODE_SERVER_ONLY	 = 2,
     WS_SECURITY_KEY_ENTROPY_MODE_COMBINED	 = 3,
     }
-
 
 .enum WS_EXTENDED_PROTECTION_POLICY {
     WS_EXTENDED_PROTECTION_POLICY_NEVER		     = 1,
@@ -718,12 +654,10 @@ endif
     WS_EXTENDED_PROTECTION_POLICY_ALWAYS	     = 3,
     }
 
-
 .enum WS_EXTENDED_PROTECTION_SCENARIO {
     WS_EXTENDED_PROTECTION_SCENARIO_BOUND_SERVER       = 1,
     WS_EXTENDED_PROTECTION_SCENARIO_TERMINATED_SSL     = 2,
     }
-
 
 .enum WS_SECURITY_BINDING_PROPERTY_ID {
     WS_SECURITY_BINDING_PROPERTY_REQUIRE_SSL_CLIENT_CERT		     = 1,
@@ -751,13 +685,11 @@ endif
     WS_SECURITY_BINDING_PROPERTY_CERTIFICATE_VALIDATION_CALLBACK_CONTEXT     = 23,
     }
 
-
 .enum WS_CERT_CREDENTIAL_TYPE {
     WS_SUBJECT_NAME_CERT_CREDENTIAL_TYPE     = 1,
     WS_THUMBPRINT_CERT_CREDENTIAL_TYPE	     = 2,
     WS_CUSTOM_CERT_CREDENTIAL_TYPE	     = 3,
     }
-
 
 .enum WS_WINDOWS_INTEGRATED_AUTH_CREDENTIAL_TYPE {
     WS_STRING_WINDOWS_INTEGRATED_AUTH_CREDENTIAL_TYPE	   = 1,
@@ -765,11 +697,9 @@ endif
     WS_OPAQUE_WINDOWS_INTEGRATED_AUTH_CREDENTIAL_TYPE	   = 3,
     }
 
-
 .enum WS_USERNAME_CREDENTIAL_TYPE {
     WS_STRING_USERNAME_CREDENTIAL_TYPE	   = 1,
     }
-
 
 .enum WS_SECURITY_TOKEN_PROPERTY_ID {
     WS_SECURITY_TOKEN_PROPERTY_KEY_TYPE			    = 1,
@@ -781,7 +711,6 @@ endif
     WS_SECURITY_TOKEN_PROPERTY_SYMMETRIC_KEY		    = 7,
     }
 
-
 .enum WS_SECURITY_KEY_HANDLE_TYPE {
     WS_RAW_SYMMETRIC_SECURITY_KEY_HANDLE_TYPE	      = 1,
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -790,11 +719,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 endif
     }
 
-
 .enum WS_MESSAGE_SECURITY_USAGE {
     WS_SUPPORTING_MESSAGE_SECURITY_USAGE     = 1,
     }
-
 
 .enum WS_SECURITY_CONTEXT_PROPERTY_ID {
     WS_SECURITY_CONTEXT_PROPERTY_IDENTIFIER			    = 1,
@@ -803,7 +730,6 @@ endif
     WS_SECURITY_CONTEXT_PROPERTY_SAML_ASSERTION			    = 4,
     }
 
-
 .enum WS_XML_SECURITY_TOKEN_PROPERTY_ID {
     WS_XML_SECURITY_TOKEN_PROPERTY_ATTACHED_REFERENCE	    = 1,
     WS_XML_SECURITY_TOKEN_PROPERTY_UNATTACHED_REFERENCE	    = 2,
@@ -811,11 +737,9 @@ endif
     WS_XML_SECURITY_TOKEN_PROPERTY_VALID_TILL_TIME	    = 4,
     }
 
-
 .enum WS_SAML_AUTHENTICATOR_TYPE {
     WS_CERT_SIGNED_SAML_AUTHENTICATOR_TYPE     = 1,
     }
-
 
 .enum WS_REQUEST_SECURITY_TOKEN_PROPERTY_ID {
     WS_REQUEST_SECURITY_TOKEN_PROPERTY_APPLIES_TO		       = 1,
@@ -831,7 +755,6 @@ endif
     WS_REQUEST_SECURITY_TOKEN_PROPERTY_SERVICE_REQUEST_PARAMETERS      = 11,
     WS_REQUEST_SECURITY_TOKEN_PROPERTY_MESSAGE_PROPERTIES	       = 12,
     }
-
 
 .enum WS_TYPE {
     WS_BOOL_TYPE		 = 0,
@@ -871,7 +794,6 @@ endif
     WS_ANY_ATTRIBUTES_TYPE	 = 34,
     }
 
-
 .enum WS_FIELD_MAPPING {
     WS_TYPE_ATTRIBUTE_FIELD_MAPPING		  = 0,
     WS_ATTRIBUTE_FIELD_MAPPING			  = 1,
@@ -888,13 +810,11 @@ endif
     WS_ANY_ATTRIBUTES_FIELD_MAPPING		  = 12,
     }
 
-
 .enum {
     WS_STRUCT_ABSTRACT				  = 0x1,
     WS_STRUCT_IGNORE_TRAILING_ELEMENT_CONTENT	  = 0x2,
     WS_STRUCT_IGNORE_UNHANDLED_ATTRIBUTES	  = 0x4,
     }
-
 
 .enum {
     WS_FIELD_POINTER		 = 0x1,
@@ -904,14 +824,12 @@ endif
     WS_FIELD_OTHER_NAMESPACE	 = 0x10,
     }
 
-
 .enum WS_TYPE_MAPPING {
     WS_ELEMENT_TYPE_MAPPING		= 1,
     WS_ATTRIBUTE_TYPE_MAPPING		= 2,
     WS_ELEMENT_CONTENT_TYPE_MAPPING	= 3,
     WS_ANY_ELEMENT_TYPE_MAPPING		= 4,
     }
-
 
 .enum WS_READ_OPTION {
     WS_READ_REQUIRED_VALUE	 = 1,
@@ -921,14 +839,12 @@ endif
     WS_READ_NILLABLE_VALUE	 = 5,
     }
 
-
 .enum WS_WRITE_OPTION {
     WS_WRITE_REQUIRED_VALUE	  = 1,
     WS_WRITE_REQUIRED_POINTER	  = 2,
     WS_WRITE_NILLABLE_VALUE	  = 3,
     WS_WRITE_NILLABLE_POINTER	  = 4,
     }
-
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -944,7 +860,6 @@ endif
     WS_RPC_LITERAL_OPERATION	     = 1,
     }
 
-
 .enum WS_PARAMETER_TYPE {
     WS_PARAMETER_TYPE_NORMAL	      = 0,
     WS_PARAMETER_TYPE_ARRAY	      = 1,
@@ -952,13 +867,11 @@ endif
     WS_PARAMETER_TYPE_MESSAGES	      = 3,
     }
 
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .enum {
     WS_SERVICE_OPERATION_MESSAGE_NILLABLE_ELEMENT     = 0x1,
     }
-
 
 .enum WS_SERVICE_ENDPOINT_PROPERTY_ID {
     WS_SERVICE_ENDPOINT_PROPERTY_ACCEPT_CHANNEL_CALLBACK	  = 0,
@@ -978,13 +891,11 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     WS_SERVICE_ENDPOINT_PROPERTY_MAX_CHANNELS			  = 14,
     }
 
-
 .enum WS_METADATA_EXCHANGE_TYPE {
     WS_METADATA_EXCHANGE_TYPE_NONE	   = 0,
     WS_METADATA_EXCHANGE_TYPE_MEX	   = 1,
     WS_METADATA_EXCHANGE_TYPE_HTTP_GET	   = 2,
     }
-
 
 .enum WS_SERVICE_PROPERTY_ID {
     WS_SERVICE_PROPERTY_HOST_USER_STATE	     = 0,
@@ -995,7 +906,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     WS_SERVICE_PROPERTY_CLOSE_TIMEOUT	     = 5,
     }
 
-
 .enum WS_SERVICE_HOST_STATE {
     WS_SERVICE_HOST_STATE_CREATED     = 0,
     WS_SERVICE_HOST_STATE_OPENING     = 1,
@@ -1004,7 +914,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     WS_SERVICE_HOST_STATE_CLOSED      = 4,
     WS_SERVICE_HOST_STATE_FAULTED     = 5,
     }
-
 
 endif
 
@@ -1017,7 +926,6 @@ endif
     WS_SERVICE_PROXY_STATE_FAULTED     = 5,
     }
 
-
 .enum WS_PROXY_PROPERTY_ID {
     WS_PROXY_PROPERTY_CALL_TIMEOUT	     = 0,
     WS_PROXY_PROPERTY_MESSAGE_PROPERTIES     = 1,
@@ -1028,14 +936,12 @@ endif
     WS_PROXY_FAULT_LANG_ID		     = 6,
     }
 
-
 .enum WS_CALL_PROPERTY_ID {
     WS_CALL_PROPERTY_CHECK_MUST_UNDERSTAND	 = 0,
     WS_CALL_PROPERTY_SEND_MESSAGE_CONTEXT	 = 1,
     WS_CALL_PROPERTY_RECEIVE_MESSAGE_CONTEXT	 = 2,
     WS_CALL_PROPERTY_CALL_ID			 = 3,
     }
-
 
 .enum WS_TRACE_API {
     WS_TRACE_API_NONE					   = -1,
@@ -1236,7 +1142,6 @@ endif
     WS_TRACE_API_WS_CREATE_SERVICE_HOST_FROM_TEMPLATE	   = 194,
     }
 
-
 .enum WS_URL_SCHEME_TYPE {
     WS_URL_HTTP_SCHEME_TYPE	   = 0,
     WS_URL_HTTPS_SCHEME_TYPE	   = 1,
@@ -1245,13 +1150,11 @@ endif
     WS_URL_NETPIPE_SCHEME_TYPE	   = 4,
     }
 
-
 .enum {
     WS_URL_FLAGS_ALLOW_HOST_WILDCARDS	  = 0x1,
     WS_URL_FLAGS_NO_PATH_COLLAPSE	  = 0x2,
     WS_URL_FLAGS_ZERO_TERMINATE		  = 0x4,
     }
-
 
 .enum WS_DATETIME_FORMAT {
     WS_DATETIME_FORMAT_UTC	 = 0,
@@ -1259,13 +1162,11 @@ endif
     WS_DATETIME_FORMAT_NONE	 = 2,
     }
 
-
 .enum WS_METADATA_STATE {
     WS_METADATA_STATE_CREATED	   = 1,
     WS_METADATA_STATE_RESOLVED	   = 2,
     WS_METADATA_STATE_FAULTED	   = 3,
     }
-
 
 .enum WS_METADATA_PROPERTY_ID {
     WS_METADATA_PROPERTY_STATE			 = 1,
@@ -1277,12 +1178,10 @@ endif
     WS_METADATA_PROPERTY_VERIFY_HOST_NAMES	 = 7,
     }
 
-
 .enum WS_POLICY_STATE {
     WS_POLICY_STATE_CREATED	= 1,
     WS_POLICY_STATE_FAULTED	= 2,
     }
-
 
 .enum WS_POLICY_PROPERTY_ID {
     WS_POLICY_PROPERTY_STATE		    = 1,
@@ -1290,7 +1189,6 @@ endif
     WS_POLICY_PROPERTY_MAX_DEPTH	    = 3,
     WS_POLICY_PROPERTY_MAX_EXTENSIONS	    = 4,
     }
-
 
 .enum WS_SECURITY_BINDING_CONSTRAINT_TYPE {
     WS_SSL_TRANSPORT_SECURITY_BINDING_CONSTRAINT_TYPE		     = 1,
@@ -1303,11 +1201,9 @@ endif
     WS_SECURITY_CONTEXT_MESSAGE_SECURITY_BINDING_CONSTRAINT_TYPE     = 8,
     }
 
-
 .enum WS_POLICY_EXTENSION_TYPE {
     WS_ENDPOINT_POLICY_EXTENSION_TYPE	  = 1,
     }
-
 
 .enum WS_BINDING_TEMPLATE_TYPE {
     WS_HTTP_BINDING_TEMPLATE_TYPE					  = 0,
@@ -1325,7 +1221,6 @@ endif
     WS_TCP_SSPI_USERNAME_SECURITY_CONTEXT_BINDING_TEMPLATE_TYPE		  = 12,
     WS_TCP_SSPI_KERBEROS_APREQ_SECURITY_CONTEXT_BINDING_TEMPLATE_TYPE	  = 13,
     }
-
 
 CALLBACK(WS_READ_CALLBACK, :ptr, :ptr, :ULONG, :ptr ULONG, :ptr WS_ASYNC_CONTEXT, :ptr WS_ERROR)
 CALLBACK(WS_WRITE_CALLBACK, :ptr, :ptr WS_BYTES, :ULONG, :ptr WS_ASYNC_CONTEXT, :ptr WS_ERROR)
@@ -1363,7 +1258,6 @@ CALLBACK(WS_FREE_DECODER_CALLBACK, :ptr)
 CALLBACK(WS_HTTP_REDIRECT_CALLBACK, :ptr, :ptr WS_STRING, :ptr WS_STRING)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 CALLBACK(WS_CREATE_LISTENER_CALLBACK, :WS_CHANNEL_TYPE, :ptr, :ULONG, :ptr, :ptr WS_ERROR)
 CALLBACK(WS_FREE_LISTENER_CALLBACK, :ptr)
 CALLBACK(WS_RESET_LISTENER_CALLBACK, :ptr, :ptr WS_ERROR)
@@ -1374,15 +1268,12 @@ CALLBACK(WS_SET_LISTENER_PROPERTY_CALLBACK, :ptr, :WS_LISTENER_PROPERTY_ID, :ptr
 CALLBACK(WS_ACCEPT_CHANNEL_CALLBACK, :ptr, :ptr, :ptr WS_ASYNC_CONTEXT, :ptr WS_ERROR)
 CALLBACK(WS_ABORT_LISTENER_CALLBACK, :ptr, :ptr WS_ERROR)
 CALLBACK(WS_CREATE_CHANNEL_FOR_LISTENER_CALLBACK, :ptr, :ptr, :ULONG, :ptr, :ptr WS_ERROR)
-
 endif
 
 CALLBACK(WS_MESSAGE_DONE_CALLBACK, :ptr)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 CALLBACK(WS_CERTIFICATE_VALIDATION_CALLBACK, :PCCERT_CONTEXT, :ptr)
-
 endif
 
 CALLBACK(WS_GET_CERT_CALLBACK, :ptr, :ptr WS_ENDPOINT_ADDRESS, :ptr WS_STRING, :ptr ptr, :ptr WS_ERROR)
@@ -1395,21 +1286,17 @@ CALLBACK(WS_WRITE_TYPE_CALLBACK, :ptr WS_XML_WRITER, :WS_TYPE_MAPPING, :ptr, :pt
 CALLBACK(WS_IS_DEFAULT_VALUE_CALLBACK, :ptr, :ptr, :ptr, :ULONG, :ptr BOOL, :ptr WS_ERROR)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 CALLBACK(WS_SERVICE_MESSAGE_RECEIVE_CALLBACK, :ptr WS_OPERATION_CONTEXT, :ptr WS_ASYNC_CONTEXT, :ptr WS_ERROR)
 CALLBACK(WS_OPERATION_CANCEL_CALLBACK, :WS_SERVICE_CANCEL_REASON, :ptr)
 CALLBACK(WS_OPERATION_FREE_STATE_CALLBACK, :ptr)
-
 endif
 
 CALLBACK(WS_SERVICE_STUB_CALLBACK, :ptr WS_OPERATION_CONTEXT, :ptr, :ptr, :ptr WS_ASYNC_CONTEXT, :ptr WS_ERROR)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 CALLBACK(WS_SERVICE_ACCEPT_CHANNEL_CALLBACK, :ptr WS_OPERATION_CONTEXT, :ptr ptr, :ptr WS_ASYNC_CONTEXT, :ptr WS_ERROR)
 CALLBACK(WS_SERVICE_CLOSE_CHANNEL_CALLBACK, :ptr WS_OPERATION_CONTEXT, :ptr WS_ASYNC_CONTEXT)
 CALLBACK(WS_SERVICE_SECURITY_CALLBACK, :ptr WS_OPERATION_CONTEXT, :ptr BOOL, :ptr WS_ERROR)
-
 endif
 
 CALLBACK(WS_PROXY_MESSAGE_CALLBACK, :ptr WS_MESSAGE, :ptr WS_HEAP, :ptr, :ptr WS_ERROR)
@@ -1944,7 +1831,6 @@ properties		ptr WS_MESSAGE_PROPERTY ?
 propertyCount		ULONG ?
 WS_MESSAGE_PROPERTIES	ENDS
 
-
 WS_SECURITY_ALGORITHM_PROPERTY STRUC
 id			WS_SECURITY_ALGORITHM_PROPERTY_ID ?
 value			ptr ?
@@ -1996,12 +1882,10 @@ serviceIdentityCount	ULONG ?
 WS_SERVICE_SECURITY_IDENTITIES ENDS
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 WS_CERTIFICATE_VALIDATION_CALLBACK_CONTEXT STRUC
 callback		WS_CERTIFICATE_VALIDATION_CALLBACK ?
 state			ptr ?
 WS_CERTIFICATE_VALIDATION_CALLBACK_CONTEXT ENDS
-
 endif
 
 WS_CERT_CREDENTIAL	STRUC
@@ -2989,1467 +2873,228 @@ WS_XML_STRING_VALUE macro S
 	exitm<{ sizeof(S)-1, S, NULL, 0 }>
 	endm
 
-
 WS_XML_STRING_NULL equ <{ 0, NULL, NULL, NULL }>
-
 
 WS_STRING_VALUE macro S
 	exitm<{ lengthof(S) - 1, S }>
 	endm
 
-
 WS_STRING_EMPTY equ <{ 0, NULL }>
-
 
 WsCountOf macro arrayValue
 	exitm<RTL_NUMBER_OF(arrayValue)>
 	endm
 
-
 WsOffsetOf macro type, field
 	exitm<FIELD_OFFSET(type, field)>
 	endm
 
-
-WsStartReaderCanonicalization proto WINAPI \
-		reader: ptr WS_XML_READER,
-	 writeCallback: WS_WRITE_CALLBACK,
-    writeCallbackState: ptr,
-	    properties: ptr WS_XML_CANONICALIZATION_PROPERTY,
-	 propertyCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsEndReaderCanonicalization proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 error: ptr WS_ERROR
-
-
-WsStartWriterCanonicalization proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	 writeCallback: WS_WRITE_CALLBACK,
-    writeCallbackState: ptr,
-	    properties: ptr WS_XML_CANONICALIZATION_PROPERTY,
-	 propertyCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsEndWriterCanonicalization proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 error: ptr WS_ERROR
-
-
-WsCreateXmlBuffer proto WINAPI \
-		  heap: ptr WS_HEAP,
-	    properties: ptr WS_XML_BUFFER_PROPERTY,
-	 propertyCount: ULONG,
-		buffer: ptr ptr WS_XML_BUFFER,
-		 error: ptr WS_ERROR
-
-
-WsRemoveNode proto WINAPI \
-	  nodePosition: ptr WS_XML_NODE_POSITION,
-		 error: ptr WS_ERROR
-
-
-WsCreateReader proto WINAPI \
-	    properties: ptr WS_XML_READER_PROPERTY,
-	 propertyCount: ULONG,
-		reader: ptr WS_XML_READER,
-		 error: ptr WS_ERROR
-
-
-WsSetInput proto WINAPI \
-		reader: ptr WS_XML_READER,
-	      encoding: ptr WS_XML_READER_ENCODING,
-		 input: ptr WS_XML_READER_INPUT,
-	    properties: ptr WS_XML_READER_PROPERTY,
-	 propertyCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsSetInputToBuffer proto WINAPI \
-		reader: ptr WS_XML_READER,
-		buffer: ptr WS_XML_BUFFER,
-	    properties: ptr WS_XML_READER_PROPERTY,
-	 propertyCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsFreeReader proto WINAPI \
-		reader: ptr WS_XML_READER
-
-
-WsGetReaderProperty proto WINAPI \
-		reader: ptr WS_XML_READER,
-		    id: WS_XML_READER_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsGetReaderNode proto WINAPI \
-	     xmlReader: ptr WS_XML_READER,
-		  node: ptr ptr WS_XML_NODE,
-		 error: ptr WS_ERROR
-
-
-WsFillReader proto WINAPI \
-		reader: ptr WS_XML_READER,
-	       minSize: ULONG,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsReadStartElement proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 error: ptr WS_ERROR
-
-
-WsReadToStartElement proto WINAPI \
-		reader: ptr WS_XML_READER,
-	     localName: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-		 found: ptr BOOL,
-		 error: ptr WS_ERROR
-
-
-WsReadStartAttribute proto WINAPI \
-		reader: ptr WS_XML_READER,
-	attributeIndex: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadEndAttribute proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 error: ptr WS_ERROR
-
-
-WsReadNode proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 error: ptr WS_ERROR
-
-
-WsSkipNode proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 error: ptr WS_ERROR
-
-
-WsReadEndElement proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 error: ptr WS_ERROR
-
-
-WsFindAttribute proto WINAPI \
-		reader: ptr WS_XML_READER,
-	     localName: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-	      required: BOOL,
-	attributeIndex: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadValue proto WINAPI \
-		reader: ptr WS_XML_READER,
-	     valueType: WS_VALUE_TYPE,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadChars proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 chars: ptr WCHAR,
-	  maxCharCount: ULONG,
-       actualCharCount: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadCharsUtf8 proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 bytes: ptr BYTE,
-	  maxByteCount: ULONG,
-       actualByteCount: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadBytes proto WINAPI \
-		reader: ptr WS_XML_READER,
-		 bytes: ptr,
-	  maxByteCount: ULONG,
-       actualByteCount: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadArray proto WINAPI \
-		reader: ptr WS_XML_READER,
-	     localName: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-	     valueType: WS_VALUE_TYPE,
-		 array: ptr,
-	     arraySize: ULONG,
-	    itemOffset: ULONG,
-	     itemCount: ULONG,
-       actualItemCount: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsGetReaderPosition proto WINAPI \
-		reader: ptr WS_XML_READER,
-	  nodePosition: ptr WS_XML_NODE_POSITION,
-		 error: ptr WS_ERROR
-
-
-WsSetReaderPosition proto WINAPI \
-		reader: ptr WS_XML_READER,
-	  nodePosition: ptr WS_XML_NODE_POSITION,
-		 error: ptr WS_ERROR
-
-
-WsMoveReader proto WINAPI \
-		reader: ptr WS_XML_READER,
-		moveTo: WS_MOVE_TO,
-		 found: ptr BOOL,
-		 error: ptr WS_ERROR
-
-
-WsCreateWriter proto WINAPI \
-	    properties: ptr WS_XML_WRITER_PROPERTY,
-	 propertyCount: ULONG,
-		writer: ptr WS_XML_WRITER,
-		 error: ptr WS_ERROR
-
-
-WsFreeWriter proto WINAPI \
-		writer: ptr WS_XML_WRITER
-
-
-WsSetOutput proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	      encoding: ptr WS_XML_WRITER_ENCODING,
-		output: ptr WS_XML_WRITER_OUTPUT,
-	    properties: ptr WS_XML_WRITER_PROPERTY,
-	 propertyCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsSetOutputToBuffer proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		buffer: ptr WS_XML_BUFFER,
-	    properties: ptr WS_XML_WRITER_PROPERTY,
-	 propertyCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsGetWriterProperty proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		    id: WS_XML_WRITER_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsFlushWriter proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	       minSize: ULONG,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsWriteStartElement proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		prefix: ptr WS_XML_STRING,
-	     localName: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-		 error: ptr WS_ERROR
-
-
-WsWriteEndStartElement proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 error: ptr WS_ERROR
-
-
-WsWriteXmlnsAttribute proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		prefix: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-	   singleQuote: BOOL,
-		 error: ptr WS_ERROR
-
-
-WsWriteStartAttribute proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		prefix: ptr WS_XML_STRING,
-	     localName: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-	   singleQuote: BOOL,
-		 error: ptr WS_ERROR
-
-
-WsWriteEndAttribute proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 error: ptr WS_ERROR
-
-
-WsWriteValue proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	     valueType: WS_VALUE_TYPE,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteXmlBuffer proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	     xmlBuffer: ptr WS_XML_BUFFER,
-		 error: ptr WS_ERROR
-
-
-WsReadXmlBuffer proto WINAPI \
-		reader: ptr WS_XML_READER,
-		  heap: ptr WS_HEAP,
-	     xmlBuffer: ptr ptr WS_XML_BUFFER,
-		 error: ptr WS_ERROR
-
-
-WsWriteXmlBufferToBytes proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	     xmlBuffer: ptr WS_XML_BUFFER,
-	      encoding: ptr WS_XML_WRITER_ENCODING,
-	    properties: ptr WS_XML_WRITER_PROPERTY,
-	 propertyCount: ULONG,
-		  heap: ptr WS_HEAP,
-		 bytes: ptr,
-	     byteCount: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadXmlBufferFromBytes proto WINAPI \
-		reader: ptr WS_XML_READER,
-	      encoding: ptr WS_XML_READER_ENCODING,
-	    properties: ptr WS_XML_READER_PROPERTY,
-	 propertyCount: ULONG,
-		 bytes: ptr,
-	     byteCount: ULONG,
-		  heap: ptr WS_HEAP,
-	     xmlBuffer: ptr ptr WS_XML_BUFFER,
-		 error: ptr WS_ERROR
-
-
-WsWriteArray proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	     localName: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-	     valueType: WS_VALUE_TYPE,
-		 array: ptr,
-	     arraySize: ULONG,
-	    itemOffset: ULONG,
-	     itemCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteQualifiedName proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		prefix: ptr WS_XML_STRING,
-	     localName: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-		 error: ptr WS_ERROR
-
-
-WsWriteChars proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 bytes: ptr,
-	     charCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteCharsUtf8 proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 bytes: ptr,
-	     byteCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteBytes proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 bytes: ptr,
-	     byteCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsPushBytes proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	      callback: WS_PUSH_BYTES_CALLBACK,
-	 callbackState: ptr,
-		 error: ptr WS_ERROR
-
-
-WsPullBytes proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	      callback: WS_PULL_BYTES_CALLBACK,
-	 callbackState: ptr,
-		 error: ptr WS_ERROR
-
-WsWriteEndElement proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 error: ptr WS_ERROR
-
-
-WsWriteText proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		  text: ptr WS_XML_TEXT,
-		 error: ptr WS_ERROR
-
-
-WsWriteStartCData proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 error: ptr WS_ERROR
-
-
-WsWriteEndCData proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		 error: ptr WS_ERROR
-
-
-WsWriteNode proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		  node: ptr WS_XML_NODE,
-		 error: ptr WS_ERROR
-
-
-WsGetPrefixFromNamespace proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		    ns: ptr ptr WS_XML_STRING,
-	      required: BOOL,
-		prefix: ptr ptr WS_XML_STRING,
-		 error: ptr WS_ERROR
-
-
-WsGetWriterPosition proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	  nodePosition: ptr WS_XML_NODE_POSITION,
-		 error: ptr WS_ERROR
-
-
-WsSetWriterPosition proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	  nodePosition: ptr WS_XML_NODE_POSITION,
-		 error: ptr WS_ERROR
-
-
-WsMoveWriter proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		moveTo: WS_MOVE_TO,
-		 found: ptr BOOL,
-		 error: ptr WS_ERROR
-
-
-WsTrimXmlWhitespace proto WINAPI \
-		 chars: ptr WCHAR,
-	     charCount: ULONG,
-	  trimmedChars: ptr ptr WCHAR,
-	  trimmedCount: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsVerifyXmlNCName proto WINAPI \
-	   ncNameChars: ptr WCHAR,
-       ncNameCharCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsXmlStringEquals proto WINAPI \
-	       string1: ptr WS_XML_STRING,
-	       string2: ptr WS_XML_STRING,
-		 error: ptr WS_ERROR
-
-
-WsGetNamespaceFromPrefix proto WINAPI \
-		reader: ptr WS_XML_READER,
-		prefix: ptr WS_XML_STRING,
-	      required: BOOL,
-		    ns: ptr ptr WS_XML_STRING,
-		 error: ptr WS_ERROR
-
-
-WsReadQualifiedName proto WINAPI \
-		reader: ptr WS_XML_READER,
-		  heap: ptr WS_HEAP,
-		prefix: ptr WS_XML_STRING,
-	     localName: ptr WS_XML_STRING,
-		    ns: ptr WS_XML_STRING,
-		 error: ptr WS_ERROR
-
-
-WsGetXmlAttribute proto WINAPI \
-		reader: ptr WS_XML_READER,
-	     localName: WS_XML_STRING,
-		  heap: ptr WS_HEAP,
-	    valueChars: ptr ptr WCHAR,
-	valueCharCount: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsCopyNode proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-		reader: ptr WS_XML_READER,
-		 error: ptr WS_ERROR
-
-
-WsAsyncExecute proto WINAPI \
-	    asyncState: ptr WS_ASYNC_STATE,
-	     operation: WS_ASYNC_FUNCTION,
-	 callbackModel: WS_CALLBACK_MODEL,
-	 callbackState: ptr,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsCreateChannel proto WINAPI \
-	   channelType: WS_CHANNEL_TYPE,
-	channelBinding: WS_CHANNEL_BINDING,
-	    properties: ptr WS_CHANNEL_PROPERTY,
-	 propertyCount: ULONG,
-   securityDescription: ptr WS_SECURITY_DESCRIPTION,
-	       channel: ptr ptr WS_CHANNEL,
-		 error: ptr WS_ERROR
-
-
-WsOpenChannel proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-       endpointAddress: ptr WS_ENDPOINT_ADDRESS,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsSendMessage proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	       message: ptr WS_MESSAGE,
-    messageDescription: ptr WS_MESSAGE_DESCRIPTION,
-	   writeOption: WS_WRITE_OPTION,
-	     bodyValue: ptr,
-	 bodyValueSize: ULONG,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsReceiveMessage proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	       message: ptr WS_MESSAGE,
-   messageDescriptions: ptr ptr WS_MESSAGE_DESCRIPTION,
-messageDescriptionCount: ULONG,
-	 receiveOption: WS_RECEIVE_OPTION,
-	readBodyOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-		 index: ptr ULONG,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsRequestReply proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	requestMessage: ptr WS_MESSAGE,
-requestMessageDescription: ptr WS_MESSAGE_DESCRIPTION,
-	   writeOption: WS_WRITE_OPTION,
-      requestBodyValue: ptr,
-  requestBodyValueSize: ULONG,
-	  replyMessage: ptr WS_MESSAGE,
-replyMessageDescription: ptr WS_MESSAGE_DESCRIPTION,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-
-
-WsSendReplyMessage proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	  replyMessage: ptr WS_MESSAGE,
-replyMessageDescription: ptr WS_MESSAGE_DESCRIPTION,
-	   writeOption: WS_WRITE_OPTION,
-	replyBodyValue: ptr,
-    replyBodyValueSize: ULONG,
-	requestMessage: ptr WS_MESSAGE,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsSendFaultMessageForError proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	  replyMessage: ptr WS_MESSAGE,
-	    faultError: ptr WS_ERROR,
-	faultErrorCode: HRESULT,
-       faultDisclosure: WS_FAULT_DISCLOSURE,
-	requestMessage: ptr WS_MESSAGE,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsGetChannelProperty proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-		    id: WS_CHANNEL_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsSetChannelProperty proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-		    id: WS_CHANNEL_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteMessageStart proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	       message: ptr WS_MESSAGE,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsWriteMessageEnd proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	       message: ptr WS_MESSAGE,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsReadMessageStart proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	       message: ptr WS_MESSAGE,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsReadMessageEnd proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	       message: ptr WS_MESSAGE,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsCloseChannel proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsAbortChannel proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-		 error: ptr WS_ERROR
-
-
-WsFreeChannel proto WINAPI \
-	       channel: ptr WS_CHANNEL
-
-
-WsResetChannel proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-		 error: ptr WS_ERROR
-
-
-WsAbandonMessage proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	       message: ptr WS_MESSAGE,
-		 error: ptr WS_ERROR
-
-
-WsShutdownSessionChannel proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
+WsStartReaderCanonicalization proto WINAPI :ptr, :WS_WRITE_CALLBACK, :ptr, :ptr, :ULONG, :ptr
+WsEndReaderCanonicalization proto WINAPI :ptr, :ptr
+WsStartWriterCanonicalization proto WINAPI :ptr, :WS_WRITE_CALLBACK, :ptr, :ptr, :ULONG, :ptr
+WsEndWriterCanonicalization proto WINAPI :ptr, :ptr
+WsCreateXmlBuffer proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr
+WsRemoveNode proto WINAPI :ptr, :ptr
+WsCreateReader proto WINAPI :ptr, :ULONG, :ptr, :ptr
+WsSetInput proto WINAPI :ptr, :ptr, :ptr, :ptr, :ULONG, :ptr
+WsSetInputToBuffer proto WINAPI :ptr, :ptr, :ptr, :ULONG, :ptr
+WsFreeReader proto WINAPI :ptr
+WsGetReaderProperty proto WINAPI :ptr, :WS_XML_READER_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsGetReaderNode proto WINAPI :ptr, :ptr, :ptr
+WsFillReader proto WINAPI :ptr, :ULONG, :ptr, :ptr
+WsReadStartElement proto WINAPI :ptr, :ptr
+WsReadToStartElement proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr
+WsReadStartAttribute proto WINAPI :ptr, :ULONG, :ptr
+WsReadEndAttribute proto WINAPI :ptr, :ptr
+WsReadNode proto WINAPI :ptr, :ptr
+WsSkipNode proto WINAPI :ptr, :ptr
+WsReadEndElement proto WINAPI :ptr, :ptr
+WsFindAttribute proto WINAPI  :ptr, :ptr, :ptr, :BOOL, :ptr, :ptr
+WsReadValue proto WINAPI :ptr, :WS_VALUE_TYPE, :ptr, :ULONG, :ptr
+WsReadChars proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr
+WsReadCharsUtf8 proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr
+WsReadBytes proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr
+WsReadArray proto WINAPI :ptr, :ptr, :ptr, :WS_VALUE_TYPE, :ptr, :ULONG, :ULONG, :ULONG, :ptr, :ptr
+WsGetReaderPosition proto WINAPI :ptr, :ptr, :ptr
+WsSetReaderPosition proto WINAPI :ptr, :ptr, :ptr
+WsMoveReader proto WINAPI :ptr, :WS_MOVE_TO, :ptr, :ptr
+WsCreateWriter proto WINAPI :ptr, :ULONG, :ptr, :ptr
+WsFreeWriter proto WINAPI :ptr
+WsSetOutput proto WINAPI :ptr, :ptr, :ptr, :ptr, :ULONG, :ptr
+WsSetOutputToBuffer proto WINAPI :ptr, :ptr, :ptr, :ULONG, :ptr
+WsGetWriterProperty proto WINAPI :ptr, :WS_XML_WRITER_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsFlushWriter proto WINAPI :ptr, :ULONG, :ptr, :ptr
+WsWriteStartElement proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr
+WsWriteEndStartElement proto WINAPI :ptr, :ptr
+WsWriteXmlnsAttribute proto WINAPI :ptr, :ptr, :ptr, :BOOL, :ptr
+WsWriteStartAttribute proto WINAPI :ptr, :ptr, :ptr, :ptr, :BOOL, :ptr
+WsWriteEndAttribute proto WINAPI :ptr, :ptr
+WsWriteValue proto WINAPI  :ptr, :WS_VALUE_TYPE, :ptr, :ULONG, :ptr
+WsWriteXmlBuffer proto WINAPI :ptr, :ptr, :ptr
+WsReadXmlBuffer proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsWriteXmlBufferToBytes proto WINAPI :ptr, :ptr, :ptr, :ptr, :ULONG, :ptr, :ptr, :ptr, :ptr
+WsReadXmlBufferFromBytes proto WINAPI :ptr, :ptr, :ptr, :ULONG, :ptr, :ULONG, :ptr, :ptr, :ptr
+WsWriteArray proto WINAPI :ptr, :ptr, :ptr, :WS_VALUE_TYPE, :ptr, :ULONG, :ULONG, :ULONG, :ptr
+WsWriteQualifiedName proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr
+WsWriteChars proto WINAPI :ptr, :ptr, :ULONG, :ptr
+WsWriteCharsUtf8 proto WINAPI :ptr, :ptr, :ULONG, :ptr
+WsWriteBytes proto WINAPI :ptr, :ptr, :ULONG, :ptr
+WsPushBytes proto WINAPI :ptr, :WS_PUSH_BYTES_CALLBACK, :ptr, :ptr
+WsPullBytes proto WINAPI :ptr, :WS_PULL_BYTES_CALLBACK, :ptr, :ptr
+WsWriteEndElement proto WINAPI :ptr, :ptr
+WsWriteText proto WINAPI :ptr, :ptr, :ptr
+WsWriteStartCData proto WINAPI :ptr, :ptr
+WsWriteEndCData proto WINAPI :ptr, :ptr
+WsWriteNode proto WINAPI :ptr, :ptr, :ptr
+WsGetPrefixFromNamespace proto WINAPI :ptr, :ptr, :BOOL, :ptr, :ptr
+WsGetWriterPosition proto WINAPI :ptr, :ptr, :ptr
+WsSetWriterPosition proto WINAPI :ptr, :ptr, :ptr
+WsMoveWriter proto WINAPI :ptr, :WS_MOVE_TO, :ptr, :ptr
+WsTrimXmlWhitespace proto WINAPI :ptr, :ULONG, :ptr, :ptr, :ptr
+WsVerifyXmlNCName proto WINAPI :ptr, :ULONG, :ptr
+WsXmlStringEquals proto WINAPI :ptr, :ptr, :ptr
+WsGetNamespaceFromPrefix proto WINAPI :ptr, :ptr, :BOOL, :ptr, :ptr
+WsReadQualifiedName proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+WsGetXmlAttribute proto WINAPI :ptr, :WS_XML_STRING, :ptr, :ptr, :ptr, :ptr
+WsCopyNode proto WINAPI :ptr, :ptr, :ptr
+WsAsyncExecute proto WINAPI :ptr, :WS_ASYNC_FUNCTION, :WS_CALLBACK_MODEL, :ptr, :ptr, :ptr
+WsCreateChannel proto WINAPI :WS_CHANNEL_TYPE, :WS_CHANNEL_BINDING, :ptr, :ULONG, :ptr, :ptr, :ptr
+WsOpenChannel proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsSendMessage proto WINAPI :ptr, :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr, :ptr
+WsReceiveMessage proto WINAPI :ptr, :ptr, :ptr, :ULONG, :WS_RECEIVE_OPTION, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr, :ptr, :ptr
+WsRequestReply proto WINAPI :ptr, :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr, :ptr, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr
+WsSendReplyMessage proto WINAPI :ptr, :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr, :ptr, :ptr
+WsSendFaultMessageForError proto WINAPI :ptr, :ptr, :ptr, :HRESULT, :WS_FAULT_DISCLOSURE, :ptr, :ptr, :ptr
+WsGetChannelProperty proto WINAPI :ptr, :WS_CHANNEL_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsSetChannelProperty proto WINAPI :ptr, :WS_CHANNEL_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsWriteMessageStart proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsWriteMessageEnd proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsReadMessageStart proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsReadMessageEnd proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsCloseChannel proto WINAPI :ptr, :ptr, :ptr
+WsAbortChannel proto WINAPI :ptr, :ptr
+WsFreeChannel proto WINAPI :ptr
+WsResetChannel proto WINAPI :ptr, :ptr
+WsAbandonMessage proto WINAPI :ptr, :ptr, :ptr
+WsShutdownSessionChannel proto WINAPI :ptr, :ptr, :ptr
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+WsGetOperationContextProperty proto WINAPI :ptr, :WS_OPERATION_CONTEXT_PROPERTY_ID, :ptr, :ULONG, :ptr
+endif
+WsGetDictionary proto WINAPI :WS_ENCODING, :ptr, :ptr
+WsReadEndpointAddressExtension proto WINAPI :ptr, :ptr, :WS_ENDPOINT_ADDRESS_EXTENSION_TYPE, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr
+WsCreateError proto WINAPI :ptr, :ULONG, :ptr
+WsAddErrorString proto WINAPI :ptr, :ptr
+WsGetErrorString proto WINAPI :ptr, :ULONG, :ptr
+WsCopyError proto WINAPI :ptr, :ptr
+WsGetErrorProperty proto WINAPI :ptr, :WS_ERROR_PROPERTY_ID, :ptr, :ULONG
+WsSetErrorProperty proto WINAPI :ptr, :WS_ERROR_PROPERTY_ID, :ptr, :ULONG
+WsResetError proto WINAPI :ptr
+WsFreeError proto WINAPI  :ptr
+WsGetFaultErrorProperty proto WINAPI :ptr, :WS_FAULT_ERROR_PROPERTY_ID, :ptr, :ULONG
+WsSetFaultErrorProperty proto WINAPI :ptr, :WS_FAULT_ERROR_PROPERTY_ID, :ptr, :ULONG
+WsCreateFaultFromError proto WINAPI :ptr, :HRESULT, :WS_FAULT_DISCLOSURE, :ptr, :ptr
+WsSetFaultErrorDetail proto WINAPI :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG
+WsGetFaultErrorDetail proto WINAPI :ptr, :ptr, :WS_READ_OPTION, :ptr, :ptr, :ULONG
+WsCreateHeap proto WINAPI :SIZE_T, :SIZE_T, :ptr, :ULONG, :ptr, :ptr
+WsAlloc proto WINAPI :ptr, :SIZE_T, :ptr, :ptr
+WsGetHeapProperty proto WINAPI :ptr, :WS_HEAP_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsResetHeap proto WINAPI :ptr, :ptr
+WsFreeHeap proto WINAPI :ptr
 
-WsGetOperationContextProperty proto WINAPI \
-	       context: ptr WS_OPERATION_CONTEXT,
-		    id: WS_OPERATION_CONTEXT_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+WsCreateListener proto WINAPI :WS_CHANNEL_TYPE, :WS_CHANNEL_BINDING, :ptr, :ULONG, :ptr, :ptr, :ptr
+WsOpenListener proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsAcceptChannel proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsCloseListener proto WINAPI :ptr, :ptr, :ptr
+WsAbortListener proto WINAPI :ptr, :ptr
+WsResetListener proto WINAPI :ptr, :ptr
+WsFreeListener proto WINAPI :ptr
+WsGetListenerProperty proto WINAPI :ptr, :WS_LISTENER_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsSetListenerProperty proto WINAPI :ptr, :WS_LISTENER_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsCreateChannelForListener proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr
 endif
 
-WsGetDictionary proto WINAPI \
-	      encoding: WS_ENCODING,
-	    dictionary: ptr ptr WS_XML_DICTIONARY,
-		 error: ptr WS_ERROR
-
-
-WsReadEndpointAddressExtension proto WINAPI \
-		reader: ptr WS_XML_READER,
-       endpointAddress: ptr WS_ENDPOINT_ADDRESS,
-	 extensionType: WS_ENDPOINT_ADDRESS_EXTENSION_TYPE,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsCreateError proto WINAPI \
-	    properties: ptr WS_ERROR_PROPERTY,
-	 propertyCount: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsAddErrorString proto WINAPI \
-		 error: ptr WS_ERROR,
-		string: ptr WS_STRING
-
-
-WsGetErrorString proto WINAPI \
-		 error: ptr WS_ERROR,
-		 index: ULONG,
-		string: ptr WS_STRING
-
-
-WsCopyError proto WINAPI \
-		source: ptr WS_ERROR,
-	   destination: ptr WS_ERROR
-
-
-WsGetErrorProperty proto WINAPI \
-		 error: ptr WS_ERROR,
-		    id: WS_ERROR_PROPERTY_ID,
-		buffer: ptr,
-	    bufferSize: ULONG
-
-
-WsSetErrorProperty proto WINAPI \
-		 error: ptr WS_ERROR,
-		    id: WS_ERROR_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG
-
-
-WsResetError proto WINAPI \
-		 error: ptr WS_ERROR
-
-
-WsFreeError proto WINAPI \
-		 error: ptr WS_ERROR
-
-
-WsGetFaultErrorProperty proto WINAPI \
-		 error: ptr WS_ERROR,
-		    id: WS_FAULT_ERROR_PROPERTY_ID,
-		buffer: ptr,
-	    bufferSize: ULONG
-
-
-WsSetFaultErrorProperty proto WINAPI \
-		 error: ptr WS_ERROR,
-		    id: WS_FAULT_ERROR_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG
-
-
-WsCreateFaultFromError proto WINAPI \
-		 error: ptr WS_ERROR,
-	faultErrorCode: HRESULT,
-       faultDisclosure: WS_FAULT_DISCLOSURE,
-		  heap: ptr WS_HEAP,
-		 fault: ptr WS_FAULT
-
-
-WsSetFaultErrorDetail proto WINAPI \
-		 error: ptr WS_ERROR,
-faultDetailDescription: ptr WS_FAULT_DETAIL_DESCRIPTION,
-	   writeOption: WS_WRITE_OPTION,
-		 value: ptr,
-	     valueSize: ULONG
-
-
-WsGetFaultErrorDetail proto WINAPI \
-		 error: ptr WS_ERROR,
-faultDetailDescription: ptr,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG
-
-
-WsCreateHeap proto WINAPI \
-	       maxSize: SIZE_T,
-	      trimSize: SIZE_T,
-	    properties: ptr,
-	 propertyCount: ULONG,
-		  heap: ptr WS_HEAP,
-		 error: ptr WS_ERROR
-
-
-WsAlloc proto WINAPI \
-		  heap: ptr WS_HEAP,
-		  size: SIZE_T,
-		     p: ptr,
-		 error: ptr WS_ERROR
-
-
-WsGetHeapProperty proto WINAPI \
-		  heap: ptr WS_HEAP,
-		    id: WS_HEAP_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsResetHeap proto WINAPI \
-		  heap: ptr WS_HEAP,
-		 error: ptr WS_ERROR
-
-
-WsFreeHeap proto WINAPI \
-		  heap: ptr WS_HEAP
-
+WsCreateMessage proto WINAPI :WS_ENVELOPE_VERSION, :WS_ADDRESSING_VERSION, :ptr, :ULONG, :ptr, :ptr
+WsCreateMessageForChannel proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr
+WsInitializeMessage proto WINAPI :ptr, :WS_MESSAGE_INITIALIZATION, :ptr, :ptr
+WsResetMessage proto WINAPI :ptr, :ptr
+WsFreeMessage proto WINAPI :ptr
+WsGetHeaderAttributes proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsGetHeader proto WINAPI :ptr, :WS_HEADER_TYPE, :WS_TYPE, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr
+WsGetCustomHeader proto WINAPI :ptr, :ptr, :WS_REPEATING_HEADER_OPTION, :ULONG, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr, :ptr
+WsRemoveHeader proto WINAPI :ptr, :WS_HEADER_TYPE, :ptr
+WsSetHeader proto WINAPI :ptr, :WS_HEADER_TYPE, :WS_TYPE, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr
+WsRemoveCustomHeader proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsAddCustomHeader proto WINAPI :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG, :ULONG, :ptr
+WsAddMappedHeader proto WINAPI :ptr, :ptr, :WS_TYPE, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr
+WsRemoveMappedHeader proto WINAPI :ptr, :ptr, :ptr
+WsGetMappedHeader proto WINAPI :ptr, :ptr, :WS_REPEATING_HEADER_OPTION, :ULONG, :WS_TYPE, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr
+WsWriteBody proto WINAPI :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr
+WsReadBody proto WINAPI :ptr, :ptr, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr
+WsWriteEnvelopeStart proto WINAPI :ptr, :ptr, :WS_MESSAGE_DONE_CALLBACK, :ptr, :ptr
+WsWriteEnvelopeEnd proto WINAPI :ptr, :ptr
+WsReadEnvelopeStart proto WINAPI :ptr, :ptr, :WS_MESSAGE_DONE_CALLBACK, :ptr, :ptr
+WsReadEnvelopeEnd proto WINAPI :ptr, :ptr
+WsGetMessageProperty proto WINAPI :ptr, :WS_MESSAGE_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsSetMessageProperty proto WINAPI :ptr, :WS_MESSAGE_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsAddressMessage proto WINAPI :ptr, :ptr, :ptr
+WsCheckMustUnderstandHeaders proto WINAPI :ptr, :ptr
+WsMarkHeaderAsUnderstood proto WINAPI :ptr, :ptr, :ptr
+WsFillBody proto WINAPI :ptr, :ULONG, :ptr, :ptr
+WsFlushBody proto WINAPI :ptr, :ULONG, :ptr, :ptr
+WsRequestSecurityToken proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr, :ptr
+WsGetSecurityTokenProperty proto WINAPI :ptr, :WS_SECURITY_TOKEN_PROPERTY_ID, :ptr, :ULONG, :ptr, :ptr
+WsCreateXmlSecurityToken proto WINAPI :ptr, :ptr, :ptr, :ULONG, :ptr, :ptr
+WsFreeSecurityToken proto WINAPI :ptr
+WsRevokeSecurityContext proto WINAPI :ptr, :ptr
+WsGetSecurityContextProperty proto WINAPI :ptr, :WS_SECURITY_CONTEXT_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsReadElement proto WINAPI :ptr, :ptr, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr
+WsReadAttribute proto WINAPI :ptr, :ptr, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr
+WsReadType proto WINAPI :ptr, :WS_TYPE_MAPPING, :WS_TYPE, :ptr, :WS_READ_OPTION, :ptr, :ptr, :ULONG, :ptr
+WsWriteElement proto WINAPI :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr
+WsWriteAttribute proto WINAPI :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr
+WsWriteType proto WINAPI :ptr, :WS_TYPE_MAPPING, :WS_TYPE, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG, :ptr
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-WsCreateListener proto WINAPI \
-	   channelType: WS_CHANNEL_TYPE,
-	channelBinding: WS_CHANNEL_BINDING,
-	    properties: ptr WS_LISTENER_PROPERTY,
-	 propertyCount: ULONG,
-   securityDescription: ptr WS_SECURITY_DESCRIPTION,
-	      listener: ptr WS_LISTENER,
-		 error: ptr WS_ERROR
-
-
-WsOpenListener proto WINAPI \
-	      listener: ptr WS_LISTENER,
-		   url: ptr WS_STRING,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsAcceptChannel proto WINAPI \
-	      listener: ptr WS_LISTENER,
-	       channel: ptr WS_CHANNEL,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-
-;HRESULT
-WsCloseListener proto WINAPI \
-	      listener: ptr WS_LISTENER,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsAbortListener proto WINAPI \
-	      listener: ptr WS_LISTENER,
-		 error: ptr WS_ERROR
-
-
-WsResetListener proto WINAPI \
-	      listener: ptr WS_LISTENER,
-		 error: ptr WS_ERROR
-
-
-WsFreeListener proto WINAPI \
-	      listener: ptr WS_LISTENER
-
-
-WsGetListenerProperty proto WINAPI \
-	      listener: ptr WS_LISTENER,
-		    id: WS_LISTENER_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsSetListenerProperty proto WINAPI \
-	      listener: ptr WS_LISTENER,
-		    id: WS_LISTENER_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsCreateChannelForListener proto WINAPI \
-	      listener: ptr WS_LISTENER,
-	    properties: ptr WS_CHANNEL_PROPERTY,
-	 propertyCount: ULONG,
-	       channel: ptr ptr WS_CHANNEL,
-		 error: ptr WS_ERROR
-
-
+WsRegisterOperationForCancel proto WINAPI :ptr, :WS_OPERATION_CANCEL_CALLBACK, :WS_OPERATION_FREE_STATE_CALLBACK, :ptr, :ptr
+WsGetServiceHostProperty proto WINAPI :ptr, :WS_SERVICE_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsCreateServiceHost proto WINAPI :ptr, :USHORT, :ptr, :ULONG, :ptr, :ptr
+WsOpenServiceHost proto WINAPI :ptr, :ptr, :ptr
+WsCloseServiceHost proto WINAPI :ptr, :ptr, :ptr
+WsAbortServiceHost proto WINAPI :ptr, :ptr
+WsFreeServiceHost proto WINAPI :ptr
+WsResetServiceHost proto WINAPI :ptr, :ptr
 endif
 
-WsCreateMessage proto WINAPI \
-       envelopeVersion: WS_ENVELOPE_VERSION,
-     addressingVersion: WS_ADDRESSING_VERSION,
-	    properties: ptr WS_MESSAGE_PROPERTY,
-	 propertyCount: ULONG,
-	       message: ptr ptr WS_MESSAGE,
-		 error: ptr WS_ERROR
-
-
-WsCreateMessageForChannel proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	    properties: ptr WS_MESSAGE_PROPERTY,
-	 propertyCount: ULONG,
-	       message: ptr ptr WS_MESSAGE,
-		 error: ptr WS_ERROR
-
-
-WsInitializeMessage proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	initialization: WS_MESSAGE_INITIALIZATION,
-	 sourceMessage: ptr WS_MESSAGE,
-		 error: ptr WS_ERROR
-
-
-WsResetMessage proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		 error: ptr WS_ERROR
-
-WsFreeMessage proto WINAPI \
-	       message: ptr WS_MESSAGE
-
-
-WsGetHeaderAttributes proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		reader: ptr WS_XML_READER,
-      headerAttributes: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsGetHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	    headerType: WS_HEADER_TYPE,
-	     valueType: WS_TYPE,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsGetCustomHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-customHeaderDescription: ptr WS_ELEMENT_DESCRIPTION,
-       repeatingOption: WS_REPEATING_HEADER_OPTION,
-	   headerIndex: ULONG,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-      headerAttributes: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsRemoveHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	    headerType: WS_HEADER_TYPE,
-		 error: ptr WS_ERROR
-
-
-WsSetHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	    headerType: WS_HEADER_TYPE,
-	     valueType: WS_TYPE,
-	   writeOption: WS_WRITE_OPTION,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsRemoveCustomHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	    headerName: ptr WS_XML_STRING,
-	      headerNs: ptr WS_XML_STRING,
-		 error: ptr WS_ERROR
-
-
-WsAddCustomHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-     headerDescription: ptr WS_ELEMENT_DESCRIPTION,
-	   writeOption: WS_WRITE_OPTION,
-		 value: ptr,
-	     valueSize: ULONG,
-      headerAttributes: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsAddMappedHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	    headerName: ptr WS_XML_STRING,
-	     valueType: WS_TYPE,
-	   writeOption: WS_WRITE_OPTION,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsRemoveMappedHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	    headerName: ptr WS_XML_STRING,
-		 error: ptr WS_ERROR
-
-
-WsGetMappedHeader proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	    headerName: ptr WS_XML_STRING,
-       repeatingOption: WS_REPEATING_HEADER_OPTION,
-	   headerIndex: ULONG,
-	     valueType: WS_TYPE,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteBody proto WINAPI \
-	       message: ptr WS_MESSAGE,
-       bodyDescription: ptr WS_ELEMENT_DESCRIPTION,
-	   writeOption: WS_WRITE_OPTION,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadBody proto WINAPI \
-	       message: ptr WS_MESSAGE,
-       bodyDescription: ptr WS_ELEMENT_DESCRIPTION,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteEnvelopeStart proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		writer: ptr WS_XML_WRITER,
-	  doneCallback: WS_MESSAGE_DONE_CALLBACK,
-     doneCallbackState: ptr,
-		 error: ptr WS_ERROR
-
-
-WsWriteEnvelopeEnd proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		 error: ptr WS_ERROR
-
-
-WsReadEnvelopeStart proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		reader: ptr WS_XML_READER,
-	  doneCallback: WS_MESSAGE_DONE_CALLBACK,
-     doneCallbackState: ptr,
-		 error: ptr WS_ERROR
-
-
-WsReadEnvelopeEnd proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		 error: ptr WS_ERROR
-
-
-WsGetMessageProperty proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		    id: WS_MESSAGE_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsSetMessageProperty proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		    id: WS_MESSAGE_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsAddressMessage proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	       address: ptr WS_ENDPOINT_ADDRESS,
-		 error: ptr WS_ERROR
-
-
-WsCheckMustUnderstandHeaders proto WINAPI \
-	       message: ptr WS_MESSAGE,
-		 error: ptr WS_ERROR
-
-
-WsMarkHeaderAsUnderstood proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	headerPosition: ptr WS_XML_NODE_POSITION,
-		 error: ptr WS_ERROR
-
-
-WsFillBody proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	       minSize: ULONG,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsFlushBody proto WINAPI \
-	       message: ptr WS_MESSAGE,
-	       minSize: ULONG,
-	  asyncContext: ptr,
-		 error: ptr WS_ERROR
-
-
-WsRequestSecurityToken proto WINAPI \
-	       channel: ptr WS_CHANNEL,
-	    properties: ptr WS_REQUEST_SECURITY_TOKEN_PROPERTY,
-	 propertyCount: ULONG,
-		 token: ptr ptr WS_SECURITY_TOKEN,
-	  asyncContext: ptr,
-		 error: ptr WS_ERROR
-
-
-WsGetSecurityTokenProperty proto WINAPI \
-	 securityToken: ptr WS_SECURITY_TOKEN,
-		    id: WS_SECURITY_TOKEN_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		  heap: ptr WS_HEAP,
-		 error: ptr WS_ERROR
-
-
-WsCreateXmlSecurityToken proto WINAPI \
-	      tokenXml: ptr WS_XML_BUFFER,
-	      tokenKey: ptr WS_SECURITY_KEY_HANDLE,
-	    properties: ptr WS_XML_SECURITY_TOKEN_PROPERTY,
-	 propertyCount: ULONG,
-		 token: ptr ptr WS_SECURITY_TOKEN,
-		 error: ptr WS_ERROR
-
-
-WsFreeSecurityToken proto WINAPI \
-		 token: ptr WS_SECURITY_TOKEN
-
-
-WsRevokeSecurityContext proto WINAPI \
-       securityContext: ptr WS_SECURITY_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsGetSecurityContextProperty proto WINAPI \
-       securityContext: ptr WS_SECURITY_CONTEXT,
-		    id: WS_SECURITY_CONTEXT_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadElement proto WINAPI \
-		reader: ptr WS_XML_READER,
-    elementDescription: ptr WS_ELEMENT_DESCRIPTION,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadAttribute proto WINAPI \
-		reader: ptr WS_XML_READER,
-  attributeDescription: ptr WS_ATTRIBUTE_DESCRIPTION,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsReadType proto WINAPI \
-		reader: ptr WS_XML_READER,
-	   typeMapping: WS_TYPE_MAPPING,
-		  type: WS_TYPE,
-       typeDescription: ptr,
-	    readOption: WS_READ_OPTION,
-		  heap: ptr WS_HEAP,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteElement proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-    elementDescription: ptr WS_ELEMENT_DESCRIPTION,
-	   writeOption: WS_WRITE_OPTION,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteAttribute proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-  attributeDescription: ptr WS_ATTRIBUTE_DESCRIPTION,
-	   writeOption: WS_WRITE_OPTION,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsWriteType proto WINAPI \
-		writer: ptr WS_XML_WRITER,
-	   typeMapping: WS_TYPE_MAPPING,
-		  type: WS_TYPE,
-       typeDescription: ptr,
-	   writeOption: WS_WRITE_OPTION,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
+WsGetServiceProxyProperty proto WINAPI :ptr, :WS_PROXY_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsCreateServiceProxy proto WINAPI :WS_CHANNEL_TYPE, :WS_CHANNEL_BINDING, :ptr, :ptr, :ULONG, :ptr, :ULONG, :ptr, :ptr
+WsOpenServiceProxy proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsCloseServiceProxy proto WINAPI :ptr, :ptr, :ptr
+WsAbortServiceProxy proto WINAPI :ptr, :ptr
+WsFreeServiceProxy proto WINAPI :ptr
+WsResetServiceProxy proto WINAPI :ptr, :ptr
+WsAbandonCall proto WINAPI :ptr, :ULONG, :ptr
+WsCall proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ULONG, :ptr, :ptr
+WsDecodeUrl proto WINAPI :ptr, :ULONG, :ptr, :ptr, :ptr
+WsEncodeUrl proto WINAPI :ptr, :ULONG, :ptr, :ptr, :ptr
+WsCombineUrl proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr, :ptr
+WsDateTimeToFileTime proto WINAPI :ptr, :ptr, :ptr
+WsFileTimeToDateTime proto WINAPI :ptr, :ptr, :ptr
+WsCreateMetadata proto WINAPI :ptr, :ULONG, :ptr, :ptr
+WsReadMetadata proto WINAPI :ptr, :ptr, :ptr, :ptr
+WsFreeMetadata proto WINAPI :ptr
+WsResetMetadata proto WINAPI :ptr, :ptr
+WsGetMetadataProperty proto WINAPI :ptr, :WS_METADATA_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsGetMissingMetadataDocumentAddress proto WINAPI :ptr, :ptr, :ptr
+WsGetMetadataEndpoints proto WINAPI :ptr, :ptr, :ptr
+WsMatchPolicyAlternative proto WINAPI :ptr, :ULONG, :ptr, :BOOL, :ptr, :ptr
+WsGetPolicyProperty proto WINAPI :ptr, :WS_POLICY_PROPERTY_ID, :ptr, :ULONG, :ptr
+WsGetPolicyAlternativeCount proto WINAPI :ptr, :ptr, :ptr
+WsCreateServiceProxyFromTemplate proto WINAPI :WS_CHANNEL_TYPE, :ptr, :ULONG, :WS_BINDING_TEMPLATE_TYPE, :ptr, :ULONG, :ptr, :ULONG, :ptr, :ptr
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-WsRegisterOperationForCancel proto WINAPI \
-	       context: ptr WS_OPERATION_CONTEXT,
-	cancelCallback: WS_OPERATION_CANCEL_CALLBACK,
-     freestateCallback: WS_OPERATION_FREE_STATE_CALLBACK,
-	     userState: ptr,
-		 error: ptr WS_ERROR
-
-
-WsGetServiceHostProperty proto WINAPI \
-	   serviceHost: ptr WS_SERVICE_HOST,
-		    id: WS_SERVICE_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsCreateServiceHost proto WINAPI \
-	     endpoints: ptr ptr WS_SERVICE_ENDPOINT,
-	 endpointCount: USHORT,
-     serviceProperties: ptr WS_SERVICE_PROPERTY,
-  servicePropertyCount: ULONG,
-	   serviceHost: ptr ptr WS_SERVICE_HOST,
-		 error: ptr WS_ERROR
-
-WsOpenServiceHost proto WINAPI \
-	   serviceHost: ptr WS_SERVICE_HOST,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsCloseServiceHost proto WINAPI \
-	   serviceHost: ptr WS_SERVICE_HOST,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsAbortServiceHost proto WINAPI \
-	   serviceHost: ptr WS_SERVICE_HOST,
-		 error: ptr WS_ERROR
-
-WsFreeServiceHost proto WINAPI \
-	   serviceHost: ptr WS_SERVICE_HOST
-
-
-WsResetServiceHost proto WINAPI \
-	   serviceHost: ptr WS_SERVICE_HOST,
-		 error: ptr WS_ERROR
-
-
-endif
-
-WsGetServiceProxyProperty proto WINAPI \
-	  serviceProxy: ptr WS_SERVICE_PROXY,
-		    id: WS_PROXY_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsCreateServiceProxy proto WINAPI \
-	   channelType: WS_CHANNEL_TYPE,
-	channelBinding: WS_CHANNEL_BINDING,
-   securityDescription: ptr WS_SECURITY_DESCRIPTION,
-	    properties: ptr WS_PROXY_PROPERTY,
-	 propertyCount: ULONG,
-     channelProperties: ptr WS_CHANNEL_PROPERTY,
-  channelPropertyCount: ULONG,
-	  serviceProxy: ptr ptr WS_SERVICE_PROXY,
-		 error: ptr WS_ERROR
-
-
-WsOpenServiceProxy proto WINAPI \
-	  serviceProxy: ptr WS_SERVICE_PROXY,
-	       address: ptr WS_ENDPOINT_ADDRESS,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsCloseServiceProxy proto WINAPI \
-	  serviceProxy: ptr WS_SERVICE_PROXY,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsAbortServiceProxy proto WINAPI \
-	  serviceProxy: ptr WS_SERVICE_PROXY,
-		 error: ptr WS_ERROR
-
-
-WsFreeServiceProxy proto WINAPI \
-	  serviceProxy: ptr WS_SERVICE_PROXY
-
-
-WsResetServiceProxy proto WINAPI \
-	  serviceProxy: ptr WS_SERVICE_PROXY,
-		 error: ptr WS_ERROR
-
-
-WsAbandonCall proto WINAPI \
-	  serviceProxy: ptr WS_SERVICE_PROXY,
-		callId: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsCall proto WINAPI \
-	  serviceProxy: ptr WS_SERVICE_PROXY,
-	     operation: ptr WS_OPERATION_DESCRIPTION,
-	     arguments: ptr ptr ,
-		  heap: ptr WS_HEAP,
-	callProperties: ptr WS_CALL_PROPERTY,
-     callPropertyCount: ULONG,
-	  asyncContext: ptr WS_ASYNC_CONTEXT,
-		 error: ptr WS_ERROR
-
-
-WsDecodeUrl proto WINAPI \
-		   url: ptr WS_STRING,
-		 flags: ULONG,
-		  heap: ptr WS_HEAP,
-		outUrl: ptr ptr WS_URL,
-		 error: ptr WS_ERROR
-
-
-WsEncodeUrl proto WINAPI \
-		   url: ptr WS_URL,
-		 flags: ULONG,
-		  heap: ptr WS_HEAP,
-		outUrl: ptr WS_STRING,
-		 error: ptr WS_ERROR
-
-WsCombineUrl proto WINAPI \
-	       baseUrl: ptr WS_STRING,
-	  referenceUrl: ptr WS_STRING,
-		 flags: ULONG,
-		  heap: ptr WS_HEAP,
-	     resultUrl: ptr WS_STRING,
-		 error: ptr WS_ERROR
-
-
-WsDateTimeToFileTime proto WINAPI \
-	      dateTime: ptr WS_DATETIME,
-	      fileTime: ptr FILETIME,
-		 error: ptr WS_ERROR
-
-
-WsFileTimeToDateTime proto WINAPI \
-	      fileTime: ptr FILETIME,
-	      dateTime: ptr WS_DATETIME,
-		 error: ptr WS_ERROR
-
-
-WsCreateMetadata proto WINAPI \
-	    properties: ptr WS_METADATA_PROPERTY,
-	 propertyCount: ULONG,
-	      metadata: ptr ptr WS_METADATA,
-		 error: ptr WS_ERROR
-
-
-WsReadMetadata proto WINAPI \
-	      metadata: ptr WS_METADATA,
-		reader: ptr WS_XML_READER,
-		   url: ptr WS_STRING,
-		 error: ptr WS_ERROR
-
-
-WsFreeMetadata proto WINAPI \
-	      metadata: ptr WS_METADATA
-
-
-WsResetMetadata proto WINAPI \
-	      metadata: ptr WS_METADATA,
-		 error: ptr WS_ERROR
-
-
-WsGetMetadataProperty proto WINAPI \
-	      metadata: ptr WS_METADATA,
-		    id: WS_METADATA_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsGetMissingMetadataDocumentAddress proto WINAPI \
-	      metadata: ptr WS_METADATA,
-	       address: ptr ptr WS_ENDPOINT_ADDRESS,
-		 error: ptr WS_ERROR
-
-
-WsGetMetadataEndpoints proto WINAPI \
-	      metadata: ptr WS_METADATA,
-	     endpoints: ptr WS_METADATA_ENDPOINTS,
-		 error: ptr WS_ERROR
-
-
-WsMatchPolicyAlternative proto WINAPI \
-		policy: ptr WS_POLICY,
-      alternativeIndex: ULONG,
-     policyConstraints: ptr WS_POLICY_CONSTRAINTS,
-	 matchRequired: BOOL,
-		  heap: ptr WS_HEAP,
-		 error: ptr WS_ERROR
-
-
-WsGetPolicyProperty proto WINAPI \
-		policy: ptr WS_POLICY,
-		    id: WS_POLICY_PROPERTY_ID,
-		 value: ptr,
-	     valueSize: ULONG,
-		 error: ptr WS_ERROR
-
-
-WsGetPolicyAlternativeCount proto WINAPI \
-		policy: ptr WS_POLICY,
-		 count: ptr ULONG,
-		 error: ptr WS_ERROR
-
-
-WsCreateServiceProxyFromTemplate proto WINAPI \
-	   channelType: WS_CHANNEL_TYPE,
-	    properties: ptr WS_PROXY_PROPERTY,
-	 propertyCount: ULONG,
-	  templateType: WS_BINDING_TEMPLATE_TYPE,
-	 templateValue: ptr,
-	  templateSize: ULONG,
-   templateDescription: ptr,
-templateDescriptionSize: ULONG,
-	  serviceProxy: ptr ptr WS_SERVICE_PROXY,
-		 error: ptr WS_ERROR
-
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-WsCreateServiceEndpointFromTemplate proto WINAPI \
-	   channelType: WS_CHANNEL_TYPE,
-	    properties: ptr WS_SERVICE_ENDPOINT_PROPERTY,
-	 propertyCount: ULONG,
-	    addressUrl: ptr WS_STRING,
-	      contract: ptr WS_SERVICE_CONTRACT,
- authorizationCallback: WS_SERVICE_SECURITY_CALLBACK,
-		  heap: ptr WS_HEAP,
-	  templateType: WS_BINDING_TEMPLATE_TYPE,
-	 templateValue: ptr,
-	  templateSize: ULONG,
-
-
+WsCreateServiceEndpointFromTemplate proto WINAPI :WS_CHANNEL_TYPE, :ptr, :ULONG, :ptr, :ptr, :WS_SERVICE_SECURITY_CALLBACK, :ptr, :WS_BINDING_TEMPLATE_TYPE, :ptr, :ULONG, :ptr
 endif
 
 ifndef FACILITY_WEBSERVICES

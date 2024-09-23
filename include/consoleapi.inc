@@ -64,16 +64,16 @@ dwControlKeyState       ULONG ?
 CONSOLE_READCONSOLE_CONTROL ends
 PCONSOLE_READCONSOLE_CONTROL typedef ptr CONSOLE_READCONSOLE_CONTROL
 
-ReadConsoleA proto WINAPI :HANDLE, :LPVOID, :DWORD, :LPDWORD, :PCONSOLE_READCONSOLE_CONTROL
-ReadConsoleW proto WINAPI :HANDLE, :LPVOID, :DWORD, :LPDWORD, :PCONSOLE_READCONSOLE_CONTROL
+ReadConsoleA proto WINAPI :HANDLE, :ptr, :DWORD, :LPDWORD, :PCONSOLE_READCONSOLE_CONTROL
+ReadConsoleW proto WINAPI :HANDLE, :ptr, :DWORD, :LPDWORD, :PCONSOLE_READCONSOLE_CONTROL
 ifdef _UNICODE
 define ReadConsole  <ReadConsoleW>
 else
 define ReadConsole  <ReadConsoleA>
 endif
 
-WriteConsoleA proto WINAPI :HANDLE, :ptr, :DWORD, :LPDWORD, :LPVOID
-WriteConsoleW proto WINAPI :HANDLE, :ptr, :DWORD, :LPDWORD, :LPVOID
+WriteConsoleA proto WINAPI :HANDLE, :ptr, :DWORD, :LPDWORD, :ptr
+WriteConsoleW proto WINAPI :HANDLE, :ptr, :DWORD, :LPDWORD, :ptr
 ifdef _UNICODE
 define WriteConsole  <WriteConsoleW>
 else

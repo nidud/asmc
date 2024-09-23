@@ -66,37 +66,14 @@ include d3d9caps.inc
 
 .pragma comment(lib, d3d9)
 
-;IDirect3D9 *
-Direct3DCreate9 proto WINAPI SDKVersion:UINT
-
-
-;int
-D3DPERF_BeginEvent proto WINAPI \
-		   col: D3DCOLOR,
-	       wszName: LPCWSTR
-
-;int
+Direct3DCreate9 proto WINAPI :UINT
+D3DPERF_BeginEvent proto WINAPI	 :D3DCOLOR, :LPCWSTR
 D3DPERF_EndEvent proto WINAPI
-;void
-D3DPERF_SetMarker proto WINAPI \
-		   col: D3DCOLOR,
-	       wszName: LPCWSTR
-
-;void
-D3DPERF_SetRegion proto WINAPI \
-		   col: D3DCOLOR,
-	       wszName: LPCWSTR
-
-;BOOL
+D3DPERF_SetMarker proto WINAPI :D3DCOLOR, :LPCWSTR
+D3DPERF_SetRegion proto WINAPI :D3DCOLOR, :LPCWSTR
 D3DPERF_QueryRepeatFrame proto WINAPI
-
-;void
-D3DPERF_SetOptions proto WINAPI \
-	     dwOptions: DWORD
-
-;DWORD
+D3DPERF_SetOptions proto WINAPI :DWORD
 D3DPERF_GetStatus proto WINAPI
-
 
 .comdef IDirect3D9 : public IUnknown
 
@@ -114,8 +91,7 @@ D3DPERF_GetStatus proto WINAPI
     GetDeviceCaps	proc :UINT, :D3DDEVTYPE, :ptr
     GetAdapterMonitor	proc :UINT
     CreateDevice	proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3D9		typedef ptr IDirect3D9
 PDIRECT3D9		typedef ptr IDirect3D9
@@ -238,8 +214,7 @@ PDIRECT3D9		typedef ptr IDirect3D9
     DrawTriPatch	proc :UINT, :ptr, :ptr
     DeletePatch		proc :UINT
     CreateQuery		proc :D3DQUERYTYPE, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
 PDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
@@ -249,8 +224,7 @@ PDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
     GetDevice		proc :ptr
     Capture		proc
     Apply		proc
-
-    .ends
+   .ends
 
 LPDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
 PDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
@@ -264,12 +238,10 @@ PDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
     GetDisplayMode	proc :ptr
     GetDevice		proc :ptr
     GetPresentParameters proc :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
 PDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
-
 
 .comdef IDirect3DResource9 : public IUnknown
 
@@ -281,19 +253,16 @@ PDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
     GetPriority		proc
     PreLoad		proc
     GetType		proc
-
-    .ends
+   .ends
 
 LPDIRECT3DRESOURCE9	typedef ptr IDirect3DResource9
 PDIRECT3DRESOURCE9	typedef ptr IDirect3DResource9
-
 
 .comdef IDirect3DVertexDeclaration9 : public IUnknown
 
     GetDevice		proc :ptr
     GetDeclaration	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
 PDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
@@ -302,8 +271,7 @@ PDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
 
     GetDevice		proc :ptr
     GetFunction		proc :ptr, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DVERTEXSHADER9 typedef ptr IDirect3DVertexShader9
 PDIRECT3DVERTEXSHADER9	typedef ptr IDirect3DVertexShader9
@@ -312,8 +280,7 @@ PDIRECT3DVERTEXSHADER9	typedef ptr IDirect3DVertexShader9
 
     GetDevice		proc :ptr
     GetFunction		proc :ptr, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
 PDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
@@ -327,8 +294,7 @@ PDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
     SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
     GetAutoGenFilterType proc
     GenerateMipSubLevels proc
-
-    .ends
+   .ends
 
 LPDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
 PDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
@@ -341,8 +307,7 @@ PDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
     LockRect		proc :UINT, :ptr, :ptr, :DWORD
     UnlockRect		proc :UINT
     AddDirtyRect	proc :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
 PDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
@@ -355,8 +320,7 @@ PDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
     LockBox		proc :UINT, :ptr, :ptr, :DWORD
     UnlockBox		proc :UINT
     AddDirtyBox		proc :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
 PDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
@@ -369,8 +333,7 @@ PDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
     LockRect		proc :D3DCUBEMAP_FACES, :UINT, :ptr, :ptr, :DWORD
     UnlockRect		proc :D3DCUBEMAP_FACES, :UINT
     AddDirtyRect	proc :D3DCUBEMAP_FACES, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
 PDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
@@ -381,8 +344,7 @@ PDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
     _Lock		proc :UINT, :UINT, :ptr, :DWORD
     Unlock		proc
     GetDesc		proc :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DVERTEXBUFFER9 typedef ptr IDirect3DVertexBuffer9
 PDIRECT3DVERTEXBUFFER9	typedef ptr IDirect3DVertexBuffer9
@@ -393,8 +355,7 @@ PDIRECT3DVERTEXBUFFER9	typedef ptr IDirect3DVertexBuffer9
     _Lock		proc :UINT, :UINT, :ptr, :DWORD
     Unlock		proc
     GetDesc		proc :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
 PDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
@@ -408,8 +369,7 @@ PDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
     UnlockRect		proc
     GetDC		proc :ptr
     ReleaseDC		proc :HDC
-
-    .ends
+   .ends
 
 LPDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
 PDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
@@ -425,8 +385,7 @@ PDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
     GetDesc		proc :ptr
     LockBox		proc :ptr, :ptr, :DWORD
     UnlockBox		proc
-
-    .ends
+   .ends
 
 LPDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
 PDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
@@ -439,8 +398,7 @@ PDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
     GetDataSize		proc
     Issue		proc :DWORD
     GetData		proc :ptr, :DWORD, :DWORD
-
-    .ends
+   .ends
 
 LPDIRECT3DQUERY9	typedef ptr IDirect3DQuery9
 PDIRECT3DQUERY9		typedef ptr IDirect3DQuery9
@@ -552,12 +510,7 @@ D3DERR_CANNOTPROTECTCONTENT		equ MAKE_D3DHRESULT(2173)
 D3DERR_UNSUPPORTEDCRYPTO		equ MAKE_D3DHRESULT(2174)
 D3DERR_PRESENT_STATISTICS_DISJOINT	equ MAKE_D3DHRESULT(2180)
 
-
-;HRESULT
-Direct3DCreate9Ex proto WINAPI \
-	    SDKVersion: UINT,
-		      : ptr ptr IDirect3D9Ex
-
+Direct3DCreate9Ex proto WINAPI :UINT, :ptr
 
 .comdef IDirect3D9Ex : public IDirect3D9
 
@@ -566,12 +519,10 @@ Direct3DCreate9Ex proto WINAPI \
     GetAdapterDisplayModeEx proc :UINT, :ptr, :ptr
     CreateDeviceEx	proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr, :ptr
     GetAdapterLUID	proc :UINT, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3D9EX		typedef ptr IDirect3D9Ex
 PDIRECT3D9EX		typedef ptr IDirect3D9Ex
-
 
 .comdef IDirect3DDevice9Ex : public IDirect3DDevice9
 
@@ -590,8 +541,7 @@ PDIRECT3D9EX		typedef ptr IDirect3D9Ex
     CreateDepthStencilSurfaceEx proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :ptr, :ptr, :DWORD
     ResetEx		proc :ptr, :ptr
     GetDisplayModeEx	proc :UINT, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
 PDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
@@ -602,8 +552,7 @@ PDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
     GetLastPresentCount proc :ptr
     GetPresentStats	proc :ptr
     GetDisplayModeEx	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DSWAPCHAIN9EX	typedef ptr IDirect3DSwapChain9Ex
 PDIRECT3DSWAPCHAIN9EX	typedef ptr IDirect3DSwapChain9Ex
@@ -612,10 +561,8 @@ endif ; ifndef D3D_DISABLE_9EX
 
 .comdef IDirect3D9ExOverlayExtension : public IUnknown
 
-    CheckDeviceOverlayType proc :UINT, :D3DDEVTYPE, :UINT, :UINT, :D3DFORMAT,
-		:ptr, :D3DDISPLAYROTATION, :ptr
-
-    .ends
+    CheckDeviceOverlayType proc :UINT, :D3DDEVTYPE, :UINT, :UINT, :D3DFORMAT, :ptr, :D3DDISPLAYROTATION, :ptr
+   .ends
 
 LPDIRECT3D9EXOVERLAYEXTENSION typedef ptr IDirect3D9ExOverlayExtension
 PDIRECT3D9EXOVERLAYEXTENSION  typedef ptr IDirect3D9ExOverlayExtension
@@ -625,8 +572,7 @@ PDIRECT3D9EXOVERLAYEXTENSION  typedef ptr IDirect3D9ExOverlayExtension
     GetContentProtectionCaps proc :ptr, :ptr, :ptr
     CreateAuthenticatedChannel proc :D3DAUTHENTICATEDCHANNELTYPE, :ptr, :ptr
     CreateCryptoSession proc :ptr, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
 PDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
@@ -638,8 +584,7 @@ PDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
     NegotiateKeyExchange proc :UINT, :ptr
     Query		proc :UINT, :ptr, :UINT, :ptr
     Configure		proc :UINT, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPDIRECT3DAUTHENTICATEDCHANNEL9 typedef ptr IDirect3DAuthenticatedChannel9
 PDIRECT3DAUTHENTICATEDCHANNEL9	typedef ptr IDirect3DAuthenticatedChannel9
@@ -655,8 +600,7 @@ PDIRECT3DAUTHENTICATEDCHANNEL9	typedef ptr IDirect3DAuthenticatedChannel9
     StartSessionKeyRefresh proc :ptr, :UINT
     FinishSessionKeyRefresh proc
     GetEncryptionBltKey proc :ptr, :UINT
-
-    .ends
+   .ends
 
 LPDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 PDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9

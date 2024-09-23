@@ -19,122 +19,48 @@ endif
 
 DECLARE_HANDLE(HDROP)
 
-;UINT
-DragQueryFileA proto WINAPI \
-		 hDrop: HDROP,
-		 iFile: UINT,
-	      lpszFile: LPSTR,
-		   cch: UINT
-DragQueryFileW proto WINAPI \
-		      : HDROP,
-		      : UINT,
-		      : LPWSTR,
-		      : UINT
+DragQueryFileA proto WINAPI :HDROP, :UINT, :LPSTR, :UINT
+DragQueryFileW proto WINAPI :HDROP, :UINT, :LPWSTR, :UINT
 ifdef _UNICODE
 DragQueryFile equ <DragQueryFileW>
 else
 DragQueryFile equ <DragQueryFileA>
 endif
-;BOOL
-DragQueryPoint proto WINAPI \
-		      : HDROP,
-		      : LPPOINT
-;VOID
-DragFinish proto WINAPI \
-		      : HDROP
-;VOID
-DragAcceptFiles proto WINAPI \
-		      : HWND,
-		      : BOOL
-
-;HINSTANCE
-ShellExecuteA proto WINAPI \
-		  hwnd: HWND,
-	   lpOperation: LPCSTR,
-		lpFile: LPCSTR,
-	  lpParameters: LPCSTR,
-	   lpDirectory: LPCSTR,
-	      nShowCmd: SINT
-;HINSTANCE
-ShellExecuteW proto WINAPI \
-		  hwnd: HWND,
-	   lpOperation: LPCWSTR,
-		lpFile: LPCWSTR,
-	  lpParameters: LPCWSTR,
-	   lpDirectory: LPCWSTR,
-	      nShowCmd: SINT
+DragQueryPoint proto WINAPI :HDROP, :LPPOINT
+DragFinish proto WINAPI :HDROP
+DragAcceptFiles proto WINAPI :HWND, :BOOL
+ShellExecuteA proto WINAPI :HWND, :LPCSTR, :LPCSTR, :LPCSTR, :LPCSTR, :SINT
+ShellExecuteW proto WINAPI :HWND, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :SINT
 ifdef _UNICODE
 ShellExecute  equ <ShellExecuteW>
 else
 ShellExecute  equ <ShellExecuteA>
 endif
-;HINSTANCE
-FindExecutableA proto WINAPI \
-		lpFile: LPCSTR,
-	   lpDirectory: LPCSTR,
-	      lpResult: LPSTR
-;HINSTANCE
-FindExecutableW proto WINAPI \
-		lpFile: LPCWSTR,
-	   lpDirectory: LPCWSTR,
-	      lpResult: LPWSTR
+FindExecutableA proto WINAPI :LPCSTR, :LPCSTR, :LPSTR
+FindExecutableW proto WINAPI :LPCWSTR, :LPCWSTR, :LPWSTR
 ifdef _UNICODE
 FindExecutable equ <FindExecutableW>
 else
 FindExecutable equ <FindExecutableA>
 endif
-;LPWSTR
-CommandLineToArgvW proto WINAPI \
-	     lpCmdLine: LPCWSTR,
-	      pNumArgs: ptr SINT
-
-;INT
-ShellAboutA proto WINAPI \
-		  hWnd: HWND,
-		 szApp: LPCSTR,
-	  szOtherStuff: LPCSTR,
-		 hIcon: HICON
-;INT
-ShellAboutW proto WINAPI \
-		  hWnd: HWND,
-		 szApp: LPCWSTR,
-	  szOtherStuff: LPCWSTR,
-		 hIcon: HICON
+CommandLineToArgvW proto WINAPI :LPCWSTR, :ptr
+ShellAboutA proto WINAPI :HWND, :LPCSTR, :LPCSTR, :HICON
+ShellAboutW proto WINAPI :HWND, :LPCWSTR, :LPCWSTR, :HICON
 ifdef _UNICODE
 ShellAbout equ <ShellAboutW>
 else
 ShellAbout equ <ShellAboutA>
 endif
-;HICON
-DuplicateIcon proto WINAPI \
-		 hInst: HINSTANCE,
-		 hIcon: HICON
-;HICON
-ExtractAssociatedIconA proto WINAPI \
-		 hInst: HINSTANCE,
-	    lpIconPath: LPSTR,
-	       lpiIcon: LPWORD
-;HICON
-ExtractAssociatedIconW proto WINAPI \
-		 hInst: HINSTANCE,
-	    lpIconPath: LPWSTR,
-	       lpiIcon: LPWORD
+DuplicateIcon proto WINAPI :HINSTANCE, :HICON
+ExtractAssociatedIconA proto WINAPI :HINSTANCE, :LPSTR, :LPWORD
+ExtractAssociatedIconW proto WINAPI :HINSTANCE, :LPWSTR, :LPWORD
 ifdef _UNICODE
 ExtractAssociatedIcon equ <ExtractAssociatedIconW>
 else
 ExtractAssociatedIcon equ <ExtractAssociatedIconA>
 endif
-
-;HICON
-ExtractIconA proto WINAPI \
-		 hInst: HINSTANCE,
-       lpszExeFileName: LPCSTR,
-	    nIconIndex: UINT
-;HICON
-ExtractIconW proto WINAPI \
-		 hInst: HINSTANCE,
-       lpszExeFileName: LPCWSTR,
-	    nIconIndex: UINT
+ExtractIconA proto WINAPI :HINSTANCE, :LPCSTR, :UINT
+ExtractIconW proto WINAPI :HINSTANCE, :LPCWSTR, :UINT
 ifdef _UNICODE
 ExtractIcon equ <ExtractIconW>
 else
@@ -206,32 +132,16 @@ lParam			LPARAM ?
 APPBARDATA		ENDS
 PAPPBARDATA		typedef ptr APPBARDATA
 
-;UINT
-SHAppBarMessage proto WINAPI \
-	     dwMessage: DWORD,
-		 pData: PAPPBARDATA
-
-
-
-;DWORD
-DoEnvironmentSubstA proto WINAPI \
-	      szString: LPSTR,
-	      cbString: UINT
-;DWORD
-DoEnvironmentSubstW proto WINAPI \
-	      szString: LPWSTR,
-	      cbString: UINT
+SHAppBarMessage proto WINAPI :DWORD, :PAPPBARDATA
+DoEnvironmentSubstA proto WINAPI :LPSTR, :UINT
+DoEnvironmentSubstW proto WINAPI :LPWSTR, :UINT
 ifdef _UNICODE
 DoEnvironmentSubst equ <DoEnvironmentSubstW>
 else
 DoEnvironmentSubst equ <DoEnvironmentSubstA>
 endif
-;LPSTR
-FindEnvironmentStringA proto WINAPI \
-	      szEnvVar: LPSTR
-;LPWSTR
-FindEnvironmentStringW proto WINAPI \
-	      szEnvVar: LPWSTR
+FindEnvironmentStringA proto WINAPI :LPSTR
+FindEnvironmentStringW proto WINAPI :LPWSTR
 ifdef _UNICODE
 FindEnvironmentString equ <FindEnvironmentStringW>
 else
@@ -241,26 +151,13 @@ endif
 EIRESID macro x
 	exitm<x * -1>
 	endm
-;UINT
-ExtractIconExA proto WINAPI \
-	      lpszFile: LPCSTR,
-	    nIconIndex: SINT,
-	   phiconLarge: ptr HICON,
-	   phiconSmall: ptr HICON,
-		nIcons: UINT
-;UINT
-ExtractIconExW proto WINAPI \
-	      lpszFile: LPCWSTR,
-	    nIconIndex: SINT,
-	   phiconLarge: ptr HICON,
-	   phiconSmall: ptr HICON,
-		nIcons: UINT
+ExtractIconExA proto WINAPI :LPCSTR, :SINT, :ptr, :ptr, :UINT
+ExtractIconExW proto WINAPI :LPCWSTR, :SINT, :ptr, :ptr, :UINT
 ifdef _UNICODE
 ExtractIconEx equ <ExtractIconExW>
 else
 ExtractIconEx equ <ExtractIconExA>
 endif
-
 
 ifndef FO_MOVE
 
@@ -298,11 +195,9 @@ PO_RENAME		equ 0x0014
 PO_PORTCHANGE		equ 0x0020
 PO_REN_PORT		equ 0x0034
 
-
 PRINTEROP_FLAGS		typedef WORD
 
 endif
-
 
 SHFILEOPSTRUCTA		STRUC
 hwnd			HWND ?
@@ -334,21 +229,15 @@ SHFILEOPSTRUCT		typedef SHFILEOPSTRUCTA
 LPSHFILEOPSTRUCT	typedef LPSHFILEOPSTRUCTA
 endif
 
-;int
-SHFileOperationA proto WINAPI \
-	      lpFileOp: LPSHFILEOPSTRUCTA
-;int
-SHFileOperationW proto WINAPI \
-	      lpFileOp: LPSHFILEOPSTRUCTW
+SHFileOperationA proto WINAPI :LPSHFILEOPSTRUCTA
+SHFileOperationW proto WINAPI :LPSHFILEOPSTRUCTW
 ifdef _UNICODE
 SHFileOperation equ <SHFileOperationW>
 else
 SHFileOperation equ <SHFileOperationA>
 endif
 
-;void
-SHFreeNameMappings proto WINAPI \
-	 hNameMappings: HANDLE
+SHFreeNameMappings proto WINAPI :HANDLE
 
 SHNAMEMAPPINGA		STRUC
 pszOldPath		LPSTR ?
@@ -371,7 +260,6 @@ else
 SHNAMEMAPPING		typedef SHNAMEMAPPINGA
 LPSHNAMEMAPPING		typedef LPSHNAMEMAPPINGA
 endif
-
 
 SE_ERR_FNF		equ 2
 SE_ERR_PNF		equ 3
@@ -475,11 +363,8 @@ SHELLEXECUTEINFO	typedef SHELLEXECUTEINFOA
 LPSHELLEXECUTEINFO	typedef LPSHELLEXECUTEINFOA
 endif
 
-;BOOL
-ShellExecuteExA proto WINAPI \
-	    lpExecInfo: LPSHELLEXECUTEINFOA
-ShellExecuteExW proto WINAPI \
-	    lpExecInfo: LPSHELLEXECUTEINFOW
+ShellExecuteExA proto WINAPI :LPSHELLEXECUTEINFOA
+ShellExecuteExW proto WINAPI :LPSHELLEXECUTEINFOW
 ifdef _UNICODE
 ShellExecuteEx equ <ShellExecuteExW>
 else
@@ -505,22 +390,14 @@ lpProcessInformation	LPPROCESS_INFORMATION ?
 SHCREATEPROCESSINFOW	ENDS
 PSHCREATEPROCESSINFOW	typedef ptr SHCREATEPROCESSINFOW
 
-;SHSTDAPI_(BOOL)
-SHCreateProcessAsUserW proto WINAPI \
-		 pscpi: PSHCREATEPROCESSINFOW
+SHCreateProcessAsUserW proto WINAPI :PSHCREATEPROCESSINFOW
 endif
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-;SHSTDAPI
-SHEvaluateSystemCommandTemplate proto WINAPI \
-	pszCmdTemplate: PCWSTR,
-       ppszApplication: ptr PWSTR,
-       ppszCommandLine: ptr PWSTR,
-	ppszParameters: ptr PWSTR
+SHEvaluateSystemCommandTemplate proto WINAPI :PCWSTR, :ptr, :ptr, :ptr
 if 0
-;HRESULT
 MyCreateProcessPriv proc pszCmd:PCWSTR
 
 local	pszApp:PWSTR,
@@ -598,8 +475,6 @@ local pszApp:PWSTR, pszCmdLine:PWSTR, hr:HRESULT, sei:SHELLEXECUTEINFOW
 MyShellExec endp
 endif
 
-
-
 ASSOCCLASS		typedef sdword ; enum
 ASSOCCLASS_SHELL_KEY	equ 0
 ASSOCCLASS_PROGID_KEY	equ 1
@@ -618,13 +493,7 @@ hkClass			HKEY ?
 pszClass		PCWSTR ?
 ASSOCIATIONELEMENT	ENDS
 
-;SHSTDAPI
-AssocCreateForClasses proto WINAPI \
-	     rgClasses: ptr ASSOCIATIONELEMENT,
-	      cClasses: ULONG,
-		  riid: REFIID,
-		   ppv: ptr PVOID
-
+AssocCreateForClasses proto WINAPI :ptr, :ULONG, :REFIID, :ptr
 endif
 
 
@@ -642,26 +511,15 @@ SHERB_NOCONFIRMATION	equ 0x00000001
 SHERB_NOPROGRESSUI	equ 0x00000002
 SHERB_NOSOUND		equ 0x00000004
 
-;SHSTDAPI
-SHQueryRecycleBinA proto WINAPI \
-	    pszRootPath: LPCSTR,
-	 pSHQueryRBInfo: LPSHQUERYRBINFO
-SHQueryRecycleBinW proto WINAPI \
-	    pszRootPath: LPCWSTR,
-	 pSHQueryRBInfo: LPSHQUERYRBINFO
+SHQueryRecycleBinA proto WINAPI :LPCSTR, :LPSHQUERYRBINFO
+SHQueryRecycleBinW proto WINAPI :LPCWSTR, :LPSHQUERYRBINFO
 ifdef _UNICODE
 SHQueryRecycleBin	equ <SHQueryRecycleBinW>
 else
 SHQueryRecycleBin	equ <SHQueryRecycleBinA>
 endif
-SHEmptyRecycleBinA proto WINAPI \
-		  hwnd: HWND,
-	   pszRootPath: LPCSTR,
-	       dwFlags: DWORD
-SHEmptyRecycleBinW proto WINAPI \
-		  hwnd: HWND,
-	   pszRootPath: LPCWSTR,
-	       dwFlags: DWORD
+SHEmptyRecycleBinA proto WINAPI :HWND, :LPCSTR, :DWORD
+SHEmptyRecycleBinW proto WINAPI :HWND, :LPCWSTR, :DWORD
 ifdef _UNICODE
 SHEmptyRecycleBin equ <SHEmptyRecycleBinW>
 else
@@ -669,8 +527,6 @@ SHEmptyRecycleBin equ <SHEmptyRecycleBinA>
 endif
 
 endif
-
-
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 QUERY_USER_NOTIFICATION_STATE typedef sdword ; enum
@@ -684,17 +540,11 @@ if (NTDDI_VERSION GE NTDDI_WIN7)
 QUNS_QUIET_TIME			equ 6
 endif
 
-;SHSTDAPI
-SHQueryUserNotificationState proto WINAPI \
-		 pquns: ptr QUERY_USER_NOTIFICATION_STATE
+SHQueryUserNotificationState proto WINAPI :ptr
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
-;SHSTDAPI
-SHGetPropertyStoreForWindow proto WINAPI \
-		  hwnd: HWND,
-		  riid: REFIID,
-		   ppv: ptr PVOID
+SHGetPropertyStoreForWindow proto WINAPI :HWND, :REFIID, :ptr
 endif
 
 NOTIFYICONDATAA		STRUC
@@ -870,30 +720,17 @@ guidItem		GUID <>
 NOTIFYICONIDENTIFIER	ENDS
 PNOTIFYICONIDENTIFIER	typedef ptr NOTIFYICONIDENTIFIER
 
-;BOOL
-Shell_NotifyIconA proto WINAPI \
-	     dwMessage: DWORD,
-		lpData: PNOTIFYICONDATAA
-;BOOL
-Shell_NotifyIconW proto WINAPI \
-	     dwMessage: DWORD,
-		lpData: PNOTIFYICONDATAW
+Shell_NotifyIconA proto WINAPI :DWORD, :PNOTIFYICONDATAA
+Shell_NotifyIconW proto WINAPI :DWORD, :PNOTIFYICONDATAW
 ifdef _UNICODE
 Shell_NotifyIcon equ <Shell_NotifyIconW>
 else
 Shell_NotifyIcon equ <Shell_NotifyIconA>
 endif
-
-;SHSTDAPI
-Shell_NotifyIconGetRect proto WINAPI \
-	    identifier: ptr NOTIFYICONIDENTIFIER,
-	  iconLocation: ptr RECT
-
+Shell_NotifyIconGetRect proto WINAPI :ptr, :ptr
 
 ifndef SHFILEINFO_DEFINED
 define SHFILEINFO_DEFINED
-
-
 
 SHFILEINFOA		STRUC
 hIcon			HICON ?
@@ -942,19 +779,8 @@ SHGFI_ADDOVERLAYS	equ 0x000000020
 SHGFI_OVERLAYINDEX	equ 0x000000040
 endif
 
-;SHSTDAPI_(DWORD)
-SHGetFileInfoA proto WINAPI \
-	       pszPath: LPCSTR,
-      dwFileAttributes: DWORD,
-		  psfi: ptr SHFILEINFOA,
-	    cbFileInfo: UINT,
-		uFlags: UINT
-SHGetFileInfoW proto WINAPI \
-	       pszPath: LPCWSTR,
-      dwFileAttributes: DWORD,
-		  psfi: ptr SHFILEINFOW,
-	    cbFileInfo: UINT,
-		uFlags: UINT
+SHGetFileInfoA proto WINAPI :LPCSTR, :DWORD, :ptr, :UINT, :UINT
+SHGetFileInfoW proto WINAPI :LPCWSTR, :DWORD, :ptr, :UINT, :UINT
 ifdef _UNICODE
 SHGetFileInfo equ <SHGetFileInfoW>
 else
@@ -1080,27 +906,14 @@ SIID_MAX_ICONS		equ 174
 
 SIID_INVALID		equ (-1)
 
-;SHSTDAPI
-SHGetStockIconInfo proto WINAPI \
-		  siid: SHSTOCKICONID,
-		uFlags: UINT,
-		  psii: ptr SHSTOCKICONINFO
+SHGetStockIconInfo proto WINAPI :SHSTOCKICONID, :UINT, :ptr
 
 endif
 
 
 if (NTDDI_VERSION LT NTDDI_WIN2K)
-;SHSTDAPI_(BOOL)
-SHGetDiskFreeSpaceA proto WINAPI \
-	     pszVolume: LPCSTR,
-	 pqwFreeCaller: PTR ULARGE_INTEGER,
-		pqwTot: PTR ULARGE_INTEGER,
-	       pqwFree: PTR ULARGE_INTEGER
-SHGetDiskFreeSpaceW proto WINAPI \
-	     pszVolume: LPCWSTR,
-	 pqwFreeCaller: PTR ULARGE_INTEGER,
-		pqwTot: PTR ULARGE_INTEGER,
-	       pqwFree: PTR ULARGE_INTEGER
+SHGetDiskFreeSpaceA proto WINAPI :LPCSTR, :ptr, :ptr, :ptr
+SHGetDiskFreeSpaceW proto WINAPI :LPCWSTR, :ptr, :ptr, :ptr
 ifdef _UNICODE
 SHGetDiskFreeSpace equ <SHGetDiskFreeSpaceW>
 else
@@ -1110,38 +923,16 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 SHGetDiskFreeSpace equ <SHGetDiskFreeSpaceEx>
-
-;BOOL
-SHGetDiskFreeSpaceExA proto WINAPI \
-      pszDirectoryName: LPCSTR,
-	 pqwFreeCaller: PTR ULARGE_INTEGER,
-		pqwTot: PTR ULARGE_INTEGER,
-	       pqwFree: PTR ULARGE_INTEGER
-SHGetDiskFreeSpaceExW proto WINAPI \
-      pszDirectoryName: LPCWSTR,
-	 pqwFreeCaller: PTR ULARGE_INTEGER,
-		pqwTot: PTR ULARGE_INTEGER,
-	       pqwFree: PTR ULARGE_INTEGER
+SHGetDiskFreeSpaceExA proto WINAPI :LPCSTR, :ptr, :ptr, :ptr
+SHGetDiskFreeSpaceExW proto WINAPI :LPCWSTR, :ptr, :ptr, :ptr
 ifdef _UNICODE
 SHGetDiskFreeSpaceEx equ <SHGetDiskFreeSpaceExW>
 else
 SHGetDiskFreeSpaceEx equ <SHGetDiskFreeSpaceExA>
 endif
 
-;SHSTDAPI_(BOOL)
-SHGetNewLinkInfoA proto WINAPI \
-	     pszLinkTo: LPCSTR,
-		pszDir: LPCSTR,
-	       pszName: LPSTR,
-	    pfMustCopy: ptr BOOL,
-		uFlags: UINT
-;SHSTDAPI_(BOOL)
-SHGetNewLinkInfoW proto WINAPI \
-	     pszLinkTo: LPCWSTR,
-		pszDir: LPCWSTR,
-	       pszName: LPWSTR,
-	    pfMustCopy: ptr BOOL,
-		uFlags: UINT
+SHGetNewLinkInfoA proto WINAPI :LPCSTR, :LPCSTR, :LPSTR, :ptr, :UINT
+SHGetNewLinkInfoW proto WINAPI :LPCWSTR, :LPCWSTR, :LPWSTR, :ptr, :UINT
 ifdef _UNICODE
 SHGetNewLinkInfo equ <SHGetNewLinkInfoW>
 else
@@ -1162,7 +953,6 @@ SHGNLI_USEURLEXT	equ 0x000000020
 endif
 endif
 
-
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 
 PRINTACTION_OPEN		equ 0
@@ -1174,20 +964,8 @@ PRINTACTION_OPENNETPRN		equ 5
 PRINTACTION_DOCUMENTDEFAULTS	equ 6
 PRINTACTION_SERVERPROPERTIES	equ 7
 
-
-;SHSTDAPI_(BOOL)
-SHInvokePrinterCommandA proto WINAPI \
-		  hwnd: HWND,
-	       uAction: UINT,
-		lpBuf1: LPCSTR,
-		lpBuf2: LPCSTR,
-		fModal: BOOL
-SHInvokePrinterCommandW proto WINAPI \
-		  hwnd: HWND,
-	       uAction: UINT,
-		lpBuf1: LPCWSTR,
-		lpBuf2: LPCWSTR,
-		fModal: BOOL
+SHInvokePrinterCommandA proto WINAPI :HWND, :UINT, :LPCSTR, :LPCSTR, :BOOL
+SHInvokePrinterCommandW proto WINAPI :HWND, :UINT, :LPCWSTR, :LPCWSTR, :BOOL
 ifdef _UNICODE
 SHInvokePrinterCommand equ <SHInvokePrinterCommandW>
 else
@@ -1226,13 +1004,8 @@ endif
 
 if (_WIN32_WINNT GE 0x0500) OR (_WIN32_WINDOWS GE 0x0500)
 
-;SHSTDAPI
 SHLoadNonloadedIconOverlayIdentifiers proto WINAPI
-
-;SHSTDAPI
-SHIsFileAvailableOffline proto WINAPI \
-	      pwszPath: LPCWSTR,
-	     pdwStatus: LPDWORD
+SHIsFileAvailableOffline proto WINAPI :LPCWSTR, :LPDWORD
 
 OFFLINE_STATUS_LOCAL	  equ 0x0001
 OFFLINE_STATUS_REMOTE	  equ 0x0002
@@ -1241,25 +1014,12 @@ OFFLINE_STATUS_INCOMPLETE equ 0x0004
 endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
-;SHSTDAPI
-SHSetLocalizedName proto WINAPI \
-	       pszPath: LPCWSTR,
-	  pszResModule: LPCWSTR,
-		idsRes: SINT
+SHSetLocalizedName proto WINAPI :LPCWSTR, :LPCWSTR, :SINT
 endif
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-SHRemoveLocalizedName proto WINAPI \
-	       pszPath: LPCWSTR
-SHGetLocalizedName proto WINAPI \
-	       pszPath: LPCWSTR,
-	  pszResModule: LPWSTR,
-		   cch: UINT,
-	       pidsRes: ptr SINT
+SHRemoveLocalizedName proto WINAPI :LPCWSTR
+SHGetLocalizedName proto WINAPI :LPCWSTR, :LPWSTR, :UINT, :ptr
 endif
-
-
-
 
 ifndef _SHLWAPI_
 LWSTDAPIV_ macro x
@@ -1271,21 +1031,8 @@ LWSTDAPIV_ macro x
     endm
 endif
 
-;LWSTDAPIV_(int)
-ShellMessageBoxA proto __Cdecl \
-	      hAppInst: HINSTANCE,
-		  hWnd: HWND,
-	       lpcText: LPCSTR,
-	      lpcTitle: LPCSTR,
-	       fuStyle: UINT,
-		      : VARARG
-ShellMessageBoxW proto __Cdecl \
-	      hAppInst: HINSTANCE,
-		  hWnd: HWND,
-	       lpcText: LPCWSTR,
-	      lpcTitle: LPCWSTR,
-	       fuStyle: UINT,
-		      : VARARG
+ShellMessageBoxA proto __Cdecl :HINSTANCE, :HWND, :LPCSTR, :LPCSTR, :UINT, :VARARG
+ShellMessageBoxW proto __Cdecl :HINSTANCE, :HWND, :LPCWSTR, :LPCWSTR, :UINT, :VARARG
 ifdef _UNICODE
 ShellMessageBox equ <ShellMessageBoxW>
 else
@@ -1293,11 +1040,8 @@ ShellMessageBox equ <ShellMessageBoxA>
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
-;SHSTDAPI_(BOOL)
-IsLFNDriveA proto WINAPI \
-	       pszPath: LPCSTR
-IsLFNDriveW proto WINAPI \
-	       pszPath: LPCWSTR
+IsLFNDriveA proto WINAPI :LPCSTR
+IsLFNDriveW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 IsLFNDrive equ <IsLFNDriveW>
 else
@@ -1306,49 +1050,22 @@ endif
 endif
 
 if _WIN32_IE GE 0x0600
-;STDAPI
-SHEnumerateUnreadMailAccountsA proto WINAPI \
-	      hKeyUser: HKEY,
-	       dwIndex: DWORD,
-	pszMailAddress: LPSTR,
-	cchMailAddress: SINT
-SHEnumerateUnreadMailAccountsW proto WINAPI \
-	      hKeyUser: HKEY,
-	       dwIndex: DWORD,
-	pszMailAddress: LPWSTR,
-	cchMailAddress: SINT
+SHEnumerateUnreadMailAccountsA proto WINAPI :HKEY, :DWORD, :LPSTR, :SINT
+SHEnumerateUnreadMailAccountsW proto WINAPI :HKEY, :DWORD, :LPWSTR, :SINT
 ifdef _UNICODE
 SHEnumerateUnreadMailAccounts equ <SHEnumerateUnreadMailAccountsW>
 else
 SHEnumerateUnreadMailAccounts equ <SHEnumerateUnreadMailAccountsA>
 endif
-SHGetUnreadMailCountA proto WINAPI \
-	      hKeyUser: HKEY,
-	pszMailAddress: LPCSTR,
-	      pdwCount: LPDWORD,
-	     pFileTime: ptr FILETIME,
-pszShellExecuteCommand: LPSTR,
-cchShellExecuteCommand: SINT
-SHGetUnreadMailCountW proto WINAPI \
-	      hKeyUser: HKEY,
-	pszMailAddress: LPCWSTR,
-	      pdwCount: LPDWORD,
-	     pFileTime: ptr FILETIME,
-pszShellExecuteCommand: LPWSTR,
-cchShellExecuteCommand: SINT
+SHGetUnreadMailCountA proto WINAPI :HKEY, :LPCSTR, :LPDWORD, :ptr, :LPSTR, :SINT
+SHGetUnreadMailCountW proto WINAPI :HKEY, :LPCWSTR, :LPDWORD, :ptr, :LPWSTR, :SINT
 ifdef _UNICODE
 SHGetUnreadMailCount equ <SHGetUnreadMailCountW>
 else
 SHGetUnreadMailCount equ <SHGetUnreadMailCountA>
 endif
-SHSetUnreadMailCountA proto WINAPI \
-	pszMailAddress: LPCSTR,
-	       dwCount: DWORD,
-pszShellExecuteCommand: LPCSTR
-SHSetUnreadMailCountW proto WINAPI \
-	pszMailAddress: LPCWSTR,
-	       dwCount: DWORD,
-pszShellExecuteCommand: LPCWSTR
+SHSetUnreadMailCountA proto WINAPI :LPCSTR, :DWORD, :LPCSTR
+SHSetUnreadMailCountW proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR
 ifdef _UNICODE
 SHSetUnreadMailCount equ <SHSetUnreadMailCountW>
 else
@@ -1357,20 +1074,13 @@ endif
 endif
 
 if (_WIN32_IE GE 0x0601)
-;STDAPI_(BOOL)
-SHTestTokenMembership proto WINAPI \
-		hToken: HANDLE,
-		 ulRID: ULONG
+SHTestTokenMembership proto WINAPI :HANDLE, :ULONG
 endif
 
 if _WIN32_IE GE 0x0600
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
-;SHSTDAPI
-SHGetImageList proto WINAPI \
-	    iImageList: SINT,
-		  riid: REFIID,
-		ppvObj: ptr PVOID
+SHGetImageList proto WINAPI :SINT, :REFIID, :ptr
 endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
@@ -1386,8 +1096,8 @@ SHIL_LAST		equ SHIL_SYSSMALL
 endif
 endif
 
-CALLBACK(FNCANSHAREFOLDERW, pszPath:LPCWSTR)
-CALLBACK(FNSHOWSHAREFOLDERUIW, hwndParent:HWND, pszPath:LPCWSTR)
+CALLBACK(FNCANSHAREFOLDERW, :LPCWSTR)
+CALLBACK(FNSHOWSHAREFOLDERUIW, :HWND, :LPCWSTR)
 
 endif
 
@@ -1399,9 +1109,7 @@ endif
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
 WC_NETADDRESS equ <L"msctls_netaddress">
-;SHSTDAPI_(BOOL)
 InitNetworkAddressControl proto WINAPI
-
 
 NCM_GETADDRESS	equ (WM_USER+1)
 NetAddr_GetAddress macro hwnd, pv
@@ -1433,13 +1141,7 @@ NetAddr_DisplayErrorTip macro hwnd
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;STDAPI
-SHGetDriveMedia proto WINAPI \
-	      pszDrive: LPCWSTR,
-       pdwMediaContent: LPDWORD
-endif
-
-if (NTDDI_VERSION GE NTDDI_VISTA)
+SHGetDriveMedia proto WINAPI :LPCWSTR, :LPDWORD
 endif
 
 .pragma pack(pop)

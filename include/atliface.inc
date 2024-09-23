@@ -213,92 +213,30 @@ endif
 
 include atldef.inc
 
-AtlAxDialogBoxW proto WINAPI \
-	     hInstance: HINSTANCE,
-	lpTemplateName: LPCWSTR,
-	    hWndParent: HWND,
-	  lpDialogProc: DLGPROC,
-	   dwInitParam: LPARAM
-
-AtlAxDialogBoxA proto WINAPI \
-	     hInstance: HINSTANCE,
-	lpTemplateName: LPCSTR,
-	    hWndParent: HWND,
-	  lpDialogProc: DLGPROC,
-	   dwInitParam: LPARAM
-
+AtlAxDialogBoxW proto WINAPI :HINSTANCE, :LPCWSTR, :HWND, :DLGPROC, :LPARAM
+AtlAxDialogBoxA proto WINAPI :HINSTANCE, :LPCSTR, :HWND, :DLGPROC, :LPARAM
 ifdef _UNICODE
 AtlAxDialogBox equ <AtlAxDialogBoxW>
 else
 AtlAxDialogBox equ <AtlAxDialogBoxA>
 endif
 
-AtlAxCreateDialogW proto WINAPI \
-	     hInstance: HINSTANCE,
-	lpTemplateName: LPCWSTR,
-	    hWndParent: HWND,
-	  lpDialogProc: DLGPROC,
-	   dwInitParam: LPARAM
-
-AtlAxCreateDialogA proto WINAPI \
-	     hInstance: HINSTANCE,
-	lpTemplateName: LPCSTR,
-	    hWndParent: HWND,
-	  lpDialogProc: DLGPROC,
-	   dwInitParam: LPARAM
-
+AtlAxCreateDialogW proto WINAPI :HINSTANCE, :LPCWSTR, :HWND, :DLGPROC, :LPARAM
+AtlAxCreateDialogA proto WINAPI :HINSTANCE, :LPCSTR, :HWND, :DLGPROC, :LPARAM
 ifdef _UNICODE
 AtlAxCreateDialog equ <AtlAxCreateDialogW>
 else
 AtlAxCreateDialog equ <AtlAxCreateDialogA>
 endif
 
-AtlAxCreateControl proto WINAPI \
-	      lpszName: LPCOLESTR,
-		  hWnd: HWND,
-	       pStream: ptr IStream,
-	ppUnkContainer: ptr ptr IUnknown
-
-AtlAxCreateControlEx proto WINAPI \
-	      lpszName: LPCOLESTR,
-		  hWnd: HWND,
-	       pStream: ptr IStream,
-	ppUnkContainer: ptr ptr IUnknown,
-	  ppUnkControl: ptr ptr IUnknown,
-	       iidSink: REFIID,
-	      punkSink: ptr IUnknown
-
-AtlAxCreateControlLic proto WINAPI \
-	      lpszName: LPCOLESTR,
-		  hWnd: HWND,
-	       pStream: ptr IStream,
-	ppUnkContainer: ptr ptr IUnknown,
-	       bstrLic: BSTR
-
-AtlAxCreateControlLicEx proto WINAPI \
-	      lpszName: LPCOLESTR,
-		  hWnd: HWND,
-	       pStream: ptr IStream,
-	ppUnkContainer: ptr ptr IUnknown,
-	  ppUnkControl: ptr ptr IUnknown,
-	       iidSink: REFIID,
-	      punkSink: ptr IUnknown,
-	       bstrLic: BSTR
-
-AtlAxAttachControl proto WINAPI \
-	      pControl: ptr IUnknown,
-		  hWnd: HWND,
-	ppUnkContainer: ptr ptr IUnknown
-
+AtlAxCreateControl proto WINAPI :LPCOLESTR, :HWND, :ptr, :ptr
+AtlAxCreateControlEx proto WINAPI :LPCOLESTR, :HWND, :ptr, :ptr, :ptr, :REFIID, :ptr
+AtlAxCreateControlLic proto WINAPI :LPCOLESTR, :HWND, :ptr, :ptr, :BSTR
+AtlAxCreateControlLicEx proto WINAPI :LPCOLESTR, :HWND, :ptr, :ptr, :ptr, :REFIID, :ptr, :BSTR
+AtlAxAttachControl proto WINAPI :ptr, :HWND, :ptr
 AtlAxWinInit proto WINAPI
-
-AtlAxGetHost proto WINAPI \
-		     h: HWND,
-		    pp: ptr ptr IUnknown
-
-AtlAxGetControl proto WINAPI \
-		     h: HWND,
-		    pp: ptr ptr IUnknown
+AtlAxGetHost proto WINAPI :HWND, :ptr
+AtlAxGetControl proto WINAPI :HWND, :ptr
 
 
 .pragma pack(pop)

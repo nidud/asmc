@@ -227,48 +227,10 @@ FNFCIGETTEMPFILE macro fn
 	exitm<CALLBACK(fn, :LPSTR, :SINT, :ptr)>
 	endm
 
-;HFCI DIAMONDAPI
-FCICreate proto WINAPI \
-			perf: PERF,
-		    pfnfcifp: PFNFCIFILEPLACED,
-			pfna: PFNFCIALLOC,
-			pfnf: PFNFCIFREE,
-		     pfnopen: PFNFCIOPEN,
-		     pfnread: PFNFCIREAD,
-		    pfnwrite: PFNFCIWRITE,
-		    pfnclose: PFNFCICLOSE,
-		     pfnseek: PFNFCISEEK,
-		   pfndelete: PFNFCIDELETE,
-		   pfnfcigtf: PFNFCIGETTEMPFILE,
-		       pccab: PCCAB,
-			  pv: ptr
-
-
-;BOOL
-FCIAddFile proto WINAPI \
-			hfci: HFCI,
-	       pszSourceFile: LPSTR,
-		 pszFileName: LPSTR,
-		    fExecute: BOOL,
-		   pfnfcignc: PFNFCIGETNEXTCABINET,
-		     pfnfcis: PFNFCISTATUS,
-		   pfnfcigoi: PFNFCIGETOPENINFO,
-		typeCompress: TCOMP
-
-;BOOL
-FCIFlushCabinet proto WINAPI \
-			hfci: HFCI,
-		 fGetNextCab: BOOL,
-		   pfnfcignc: PFNFCIGETNEXTCABINET,
-		     pfnfcis: PFNFCISTATUS
-
-;BOOL
-FCIFlushFolder proto WINAPI \
-			hfci: HFCI,
-		   pfnfcignc: PFNFCIGETNEXTCABINET,
-		     pfnfcis: PFNFCISTATUS
-
-;BOOL
+FCICreate proto WINAPI :PERF, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+FCIAddFile proto WINAPI :HFCI, :LPSTR, :LPSTR, :BOOL, :PFNFCIGETNEXTCABINET, :PFNFCISTATUS, :PFNFCIGETOPENINFO, :TCOMP
+FCIFlushCabinet proto WINAPI :HFCI, :BOOL, :PFNFCIGETNEXTCABINET, :PFNFCISTATUS
+FCIFlushFolder proto WINAPI :HFCI, :PFNFCIGETNEXTCABINET, :PFNFCISTATUS
 FCIDestroy proto WINAPI hfci:HFCI
 
 ifndef _WIN64

@@ -14,37 +14,13 @@ endif
 
 D3DX10_SDK_VERSION	equ 43
 
-D3DX10CreateDevice proto WINAPI \
-	      pAdapter: ptr IDXGIAdapter,
-	    DriverType: D3D10_DRIVER_TYPE,
-	      Software: HMODULE,
-		 Flags: UINT,
-	      ppDevice: ptr ID3D10Device
-
-D3DX10CreateDeviceAndSwapChain proto WINAPI \
-	      pAdapter: ptr IDXGIAdapter,
-	    DriverType: D3D10_DRIVER_TYPE,
-	      Software: HMODULE,
-		 Flags: UINT,
-	pSwapChainDesc: ptr DXGI_SWAP_CHAIN_DESC,
-	   ppSwapChain: ptr IDXGISwapChain,
-	      ppDevice: ptr ID3D10Device
-
-D3DX10GetFeatureLevel1 proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	     ppDevice1: ptr ID3D10Device1
-
-
-
+D3DX10CreateDevice proto WINAPI :ptr, :D3D10_DRIVER_TYPE, :HMODULE, :UINT, :ptr
+D3DX10CreateDeviceAndSwapChain proto WINAPI :ptr, :D3D10_DRIVER_TYPE, :HMODULE, :UINT, :ptr, :ptr, :ptr
+D3DX10GetFeatureLevel1 proto WINAPI :ptr, :ptr
 ifdef D3D_DIAG_DLL
-D3DX10DebugMute proto WINAPI \
-		  Mute: BOOL
-
+D3DX10DebugMute proto WINAPI :BOOL
 endif
-D3DX10CheckVersion proto WINAPI \
-	 D3DSdkVersion: UINT,
-      D3DX10SdkVersion: UINT
-
+D3DX10CheckVersion proto WINAPI :UINT, :UINT
 
 .enum D3DX10_SPRITE_FLAG {
     D3DX10_SPRITE_SORT_TEXTURE		    = 0x01,
@@ -78,28 +54,24 @@ DEFINE_GUID(IID_ID3DX10Sprite, 0xba0b762d, 0x8d28, 0x43ec, 0xb9, 0xdc, 0x2f, 0x8
     GetProjectionTransform proc :ptr D3DXMATRIX
     SetProjectionTransform proc :ptr D3DXMATRIX
     GetDevice		proc :ptr ptr ID3D10Device
-    .ENDS
+   .ENDS
 
 
-D3DX10CreateSprite proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-     cDeviceBufferSize: UINT,
-	      ppSprite: ptr LPD3DX10SPRITE
-
+D3DX10CreateSprite proto WINAPI :ptr, :UINT, :ptr
 
 .comdef ID3DX10DataLoader
 
     Load		proc
     Decompress		proc :ptr ptr, :ptr SIZE_T
     Destroy		proc
-    .ENDS
+   .ENDS
 
 .comdef ID3DX10DataProcessor
 
     Process		proc :ptr, :SIZE_T
     CreateDeviceObject	proc :ptr ptr
     Destroy		proc
-    .ENDS
+   .ENDS
 
 DEFINE_GUID(IID_ID3DX10ThreadPump, 0xc93fecfa, 0x6967, 0x478a, 0xab, 0xbc, 0x40, 0x2d, 0x90, 0x62, 0x1f, 0xcb)
 
@@ -111,12 +83,9 @@ DEFINE_GUID(IID_ID3DX10ThreadPump, 0xc93fecfa, 0x6967, 0x478a, 0xab, 0xbc, 0x40,
     ProcessDeviceWorkItems proc :UINT
     PurgeAllItems	proc
     GetQueueStatus	proc :ptr UINT, :ptr UINT, :ptr UINT
-    .ENDS
+   .ENDS
 
-D3DX10CreateThreadPump proto WINAPI \
-	    cIoThreads: UINT,
-	  cProcThreads: UINT,
-	  ppThreadPump: ptr ID3DX10ThreadPump
+D3DX10CreateThreadPump proto WINAPI :UINT, :UINT, :ptr
 
 D3DX10_FONT_DESCA	STRUC
 Height			SINT ?
@@ -156,7 +125,6 @@ endif
 
 DEFINE_GUID(IID_ID3DX10Font, 0xd79dbb70, 0x5f21, 0x4d36, 0xbb, 0xc2, 0xff, 0x52, 0x5c, 0x21, 0x3c, 0xdc)
 
-
 .comdef ID3DX10Font : public IUnknown
 
     GetDevice		proc :ptr ptr ID3D10Device
@@ -172,8 +140,7 @@ DEFINE_GUID(IID_ID3DX10Font, 0xd79dbb70, 0x5f21, 0x4d36, 0xbb, 0xc2, 0xff, 0x52,
     PreloadTextW	proc :LPCWSTR, :SINT
     DrawTextA		proc :LPD3DX10SPRITE, :LPCSTR, :SINT, :LPRECT, :UINT, :D3DXCOLOR
     DrawTextW		proc :LPD3DX10SPRITE, :LPCWSTR, :SINT, :LPRECT, :UINT, :D3DXCOLOR
-
-    .ends
+   .ends
 
 ifndef GetTextMetrics
 ifdef _UNICODE
@@ -191,62 +158,22 @@ DrawText		equ <DrawTextA>
 endif
 endif
 
-D3DX10CreateFontA proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-		Height: SINT,
-		 Width: UINT,
-		Weight: UINT,
-	     MipLevels: UINT,
-		Italic: BOOL,
-	       CharSet: UINT,
-       OutputPrecision: UINT,
-	       Quality: UINT,
-	PitchAndFamily: UINT,
-	     pFaceName: LPCSTR,
-		ppFont: ptr LPD3DX10FONT
-
-D3DX10CreateFontW proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-		Height: SINT,
-		 Width: UINT,
-		Weight: UINT,
-	     MipLevels: UINT,
-		Italic: BOOL,
-	       CharSet: UINT,
-       OutputPrecision: UINT,
-	       Quality: UINT,
-	PitchAndFamily: UINT,
-	     pFaceName: LPCWSTR,
-		ppFont: ptr LPD3DX10FONT
-
-
+D3DX10CreateFontA proto WINAPI :ptr, :SINT, :UINT, :UINT, :UINT, :BOOL, :UINT, :UINT, :UINT, :UINT, :LPCSTR, ptr
+D3DX10CreateFontW proto WINAPI :ptr, :SINT, :UINT, :UINT, :UINT, :BOOL, :UINT, :UINT, :UINT, :UINT, :LPCWSTR, :ptr
 ifdef _UNICODE
 D3DX10CreateFont	equ <D3DX10CreateFontW>
 else
 D3DX10CreateFont	equ <D3DX10CreateFontA>
 endif
 
-
-D3DX10CreateFontIndirectA proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-		 pDesc: ptr D3DX10_FONT_DESCA,
-		ppFont: ptr LPD3DX10FONT
-
-D3DX10CreateFontIndirectW proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-		 pDesc: ptr D3DX10_FONT_DESCW,
-		ppFont: ptr LPD3DX10FONT
-
-
+D3DX10CreateFontIndirectA proto WINAPI :ptr, :ptr, :ptr
+D3DX10CreateFontIndirectW proto WINAPI :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DX10CreateFontIndirect equ <D3DX10CreateFontIndirectW>
 else
 D3DX10CreateFontIndirect equ <D3DX10CreateFontIndirectA>
 endif
-
-D3DX10UnsetAllDeviceObjects proto WINAPI \
-	       pDevice: ptr ID3D10Device
-
+D3DX10UnsetAllDeviceObjects proto WINAPI :ptr
 
 _FACD3D equ 0x876
 MAKE_D3DHRESULT macro code

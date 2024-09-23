@@ -708,19 +708,13 @@ _mm_storeu_ps macro p, x:=<xmm0>
     movups p,x
     retm<p>
     endm
-_mm_prefetch macro p, imm
-  local i
-    _mm_loadreg(rax, p)
-    i = imm - 1
-    @CatStr(prefetcht, %i) byte ptr [rax]
-    retm<>
-    endm
+_mm_prefetch proto asmcall :ptr, :abs {
+    @CatStr(prefetcht, %(_2 - 1)) byte ptr [_1]
+    }
 ifdef _M_IX86
-_mm_stream_pi macro p, m:=<mm0>
-    _mm_loadreg(rax, p)
-    movntq [rax],m
-    retm<rax>
-    endm
+_mm_stream_pi proto asmcall :ptr, :abs=<mm0> {
+    movntq [_1],_2
+    }
 endif
 _mm_stream_ps macro p, x:=<xmm0>
     movntps p,x

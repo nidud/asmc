@@ -34,78 +34,28 @@ MFSTARTUP_FULL		equ 0
 
 .pragma comment(lib, mfplat)
 
-MFStartup proto WINAPI \
-	       Version: ULONG,
-	       dwFlags: DWORD
-
+MFStartup proto WINAPI :ULONG, :DWORD
 MFShutdown proto WINAPI
 MFLockPlatform proto WINAPI
 MFUnlockPlatform proto WINAPI
 
 MFWORKITEM_KEY typedef qword
 
-MFPutWorkItem proto WINAPI \
-	       dwQueue: DWORD,
-	     pCallback: ptr,
-		pState: ptr
-
-
-MFPutWorkItem2 proto WINAPI \
-	       dwQueue: DWORD,
-	      Priority: LONG,
-	     pCallback: ptr IMFAsyncCallback,
-		pState: ptr IUnknown
-
-MFPutWorkItemEx proto WINAPI \
-	       dwQueue: DWORD,
-	       pResult: ptr
-
-MFPutWorkItemEx2 proto WINAPI \
-	       dwQueue: DWORD,
-	      Priority: LONG,
-	       pResult: ptr IMFAsyncResult
-
-MFPutWaitingWorkItem proto WINAPI \
-		hEvent: HANDLE,
-	      Priority: LONG,
-	       pResult: ptr IMFAsyncResult,
-		  pKey: ptr MFWORKITEM_KEY
-
-MFAllocateSerialWorkQueue proto WINAPI \
-	   dwWorkQueue: DWORD,
-	  pdwWorkQueue: ptr DWORD
-
-
-MFScheduleWorkItem proto WINAPI \
-	     pCallback: ptr,
-		pState: ptr,
-	       Timeout: INT64,
-		  pKey: ptr MFWORKITEM_KEY
-
-MFScheduleWorkItemEx proto WINAPI \
-	       pResult: ptr,
-	       Timeout: INT64,
-		  pKey: ptr MFWORKITEM_KEY
-
-
-MFCancelWorkItem proto WINAPI \
-		   Key: MFWORKITEM_KEY
-
-
-MFGetTimerPeriodicity proto WINAPI \
-	   Periodicity: ptr DWORD
-
+MFPutWorkItem proto WINAPI :DWORD, :ptr, :ptr
+MFPutWorkItem2 proto WINAPI :DWORD, :LONG, :ptr, :ptr
+MFPutWorkItemEx proto WINAPI :DWORD, :ptr
+MFPutWorkItemEx2 proto WINAPI :DWORD, :LONG, :ptr
+MFPutWaitingWorkItem proto WINAPI :HANDLE, :LONG, :ptr, :ptr
+MFAllocateSerialWorkQueue proto WINAPI :DWORD, :ptr
+MFScheduleWorkItem proto WINAPI :ptr, :ptr, :INT64, :ptr
+MFScheduleWorkItemEx proto WINAPI :ptr, :INT64, :ptr
+MFCancelWorkItem proto WINAPI :MFWORKITEM_KEY
+MFGetTimerPeriodicity proto WINAPI :ptr
 
 CALLBACK(MFPERIODICCALLBACK, pContext:ptr IUnknown)
 
-MFAddPeriodicCallback proto WINAPI \
-	      Callback: MFPERIODICCALLBACK,
-	      pContext: ptr,
-		pdwKey: ptr DWORD
-
-MFRemovePeriodicCallback proto WINAPI \
-		 dwKey: DWORD
-
+MFAddPeriodicCallback proto WINAPI :MFPERIODICCALLBACK, :ptr, :ptr
+MFRemovePeriodicCallback proto WINAPI :DWORD
 
 if (WINVER GE _WIN32_WINNT_WIN7)
 
@@ -115,86 +65,25 @@ if (WINVER GE _WIN32_WINNT_WIN7)
     MF_MULTITHREADED_WORKQUEUE = 2,
     }
 
-MFAllocateWorkQueueEx proto WINAPI \
-	 WorkQueueType: MFASYNC_WORKQUEUE_TYPE,
-	  pdwWorkQueue: ptr DWORD
-
+MFAllocateWorkQueueEx proto WINAPI :MFASYNC_WORKQUEUE_TYPE, :ptr
 endif
 
-MFAllocateWorkQueue proto WINAPI \
-	  pdwWorkQueue: ptr DWORD
-
-
-MFLockWorkQueue proto WINAPI \
-	   dwWorkQueue: DWORD
-
-
-MFUnlockWorkQueue proto WINAPI \
-	   dwWorkQueue: DWORD
-
-MFBeginRegisterWorkQueueWithMMCSS proto WINAPI \
-	 dwWorkQueueId: DWORD,
-	      wszClass: LPCWSTR,
-	      dwTaskId: DWORD,
-	 pDoneCallback: ptr IMFAsyncCallback,
-	    pDoneState: ptr IUnknown
-
-MFBeginRegisterWorkQueueWithMMCSSEx proto WINAPI \
-	 dwWorkQueueId: DWORD,
-	      wszClass: LPCWSTR,
-	      dwTaskId: DWORD,
-	     lPriority: LONG,
-	 pDoneCallback: ptr IMFAsyncCallback,
-	    pDoneState: ptr IUnknown
-
-MFEndRegisterWorkQueueWithMMCSS proto WINAPI \
-	       pResult: ptr IMFAsyncResult,
-	     pdwTaskId: ptr DWORD
-
-MFBeginUnregisterWorkQueueWithMMCSS proto WINAPI \
-	 dwWorkQueueId: DWORD,
-	 pDoneCallback: ptr IMFAsyncCallback,
-	    pDoneState: ptr IUnknown
-
-MFEndUnregisterWorkQueueWithMMCSS proto WINAPI \
-	       pResult: ptr IMFAsyncResult
-
-MFGetWorkQueueMMCSSClass proto WINAPI \
-	 dwWorkQueueId: DWORD,
-	     pwszClass: LPWSTR,
-	     pcchClass: ptr DWORD
-
-MFGetWorkQueueMMCSSTaskId proto WINAPI \
-	 dwWorkQueueId: DWORD,
-	     pdwTaskId: LPDWORD
-
-MFRegisterPlatformWithMMCSS proto WINAPI \
-	      wszClass: PCWSTR,
-	     pdwTaskId: ptr DWORD,
-	     lPriority: LONG
-
+MFAllocateWorkQueue proto WINAPI :ptr
+MFLockWorkQueue proto WINAPI :DWORD
+MFUnlockWorkQueue proto WINAPI :DWORD
+MFBeginRegisterWorkQueueWithMMCSS proto WINAPI :DWORD, :LPCWSTR, :DWORD, :ptr, :ptr
+MFBeginRegisterWorkQueueWithMMCSSEx proto WINAPI :DWORD, :LPCWSTR, :DWORD, :LONG, :ptr, :ptr
+MFEndRegisterWorkQueueWithMMCSS proto WINAPI :ptr, :ptr
+MFBeginUnregisterWorkQueueWithMMCSS proto WINAPI :DWORD, :ptr, :ptr
+MFEndUnregisterWorkQueueWithMMCSS proto WINAPI :ptr
+MFGetWorkQueueMMCSSClass proto WINAPI :DWORD, :LPWSTR, :ptr
+MFGetWorkQueueMMCSSTaskId proto WINAPI :DWORD, :LPDWORD
+MFRegisterPlatformWithMMCSS proto WINAPI :PCWSTR, :ptr, :LONG
 MFUnregisterPlatformFromMMCSS proto WINAPI
-
-MFLockSharedWorkQueue proto WINAPI \
-	      wszClass: PCWSTR,
-	  BasePriority: LONG,
-	     pdwTaskId: ptr DWORD,
-		   pID: ptr DWORD
-
-
-MFGetWorkQueueMMCSSPriority proto WINAPI \
-	 dwWorkQueueId: DWORD,
-	     lPriority: ptr LONG
-
-MFCreateAsyncResult proto WINAPI \
-	    punkObject: ptr,
-	     pCallback: ptr,
-	     punkState: ptr,
-	 ppAsyncResult: ptr IMFAsyncResult
-
-
-MFInvokeCallback proto WINAPI \
-	  pAsyncResult: ptr
+MFLockSharedWorkQueue proto WINAPI :PCWSTR, :LONG, :ptr, :ptr
+MFGetWorkQueueMMCSSPriority proto WINAPI :DWORD, :ptr
+MFCreateAsyncResult proto WINAPI :ptr, :ptr, :ptr, :ptr
+MFInvokeCallback proto WINAPI :ptr
 
 if defined(__cplusplus) and not defined(CINTERFACE)
 .template MFASYNCRESULT : public IMFAsyncResult
@@ -204,8 +93,7 @@ if defined(__cplusplus) and not defined(CINTERFACE)
     hrStatusResult	HRESULT ?
     dwBytesTransferred	dd ?
     hEvent		HANDLE ?
-
-    .ends
+   .ends
 else
 LPIMFAsyncCallback	typedef ptr IMFAsyncCallback
 MFASYNCRESULT		STRUC
@@ -218,106 +106,26 @@ hEvent			HANDLE ?
 MFASYNCRESULT		ENDS
 endif
 
-MFCreateFile proto WINAPI \
-	    AccessMode: MF_FILE_ACCESSMODE,
-	      OpenMode: MF_FILE_OPENMODE,
-		fFlags: MF_FILE_FLAGS,
-	   pwszFileURL: LPCWSTR,
-	 ppIByteStream: ptr IMFByteStream
-
-
-MFCreateTempFile proto WINAPI \
-	    AccessMode: MF_FILE_ACCESSMODE,
-	      OpenMode: MF_FILE_OPENMODE,
-		fFlags: MF_FILE_FLAGS,
-	 ppIByteStream: ptr IMFByteStream
-
-
-MFBeginCreateFile proto WINAPI \
-	    AccessMode: MF_FILE_ACCESSMODE,
-	      OpenMode: MF_FILE_OPENMODE,
-		fFlags: MF_FILE_FLAGS,
-	  pwszFilePath: LPCWSTR,
-	     pCallback: ptr,
-		pState: ptr,
-	ppCancelCookie: ptr IUnknown
-
-
-MFEndCreateFile proto WINAPI \
-	       pResult: ptr,
-		ppFile: ptr IMFByteStream
-
-
-MFCancelCreateFile proto WINAPI \
-	 pCancelCookie: ptr
-
-
-
-MFCreateMemoryBuffer proto WINAPI \
-	   cbMaxLength: DWORD,
-	      ppBuffer: ptr IMFMediaBuffer
-
-
-MFCreateMediaBufferWrapper proto WINAPI \
-	       pBuffer: ptr IMFMediaBuffer,
-	      cbOffset: DWORD,
-	      dwLength: DWORD,
-	      ppBuffer: ptr IMFMediaBuffer
-
-
-MFCreateLegacyMediaBufferOnMFMediaBuffer proto WINAPI \
-	       pSample: ptr IMFSample,
-	   pMFMediaBuffer: ptr IMFMediaBuffer,
-	      cbOffset: DWORD,
-	 ppMediaBuffer: ptr IMediaBuffer
-
+MFCreateFile proto WINAPI :MF_FILE_ACCESSMODE, :MF_FILE_OPENMODE, :MF_FILE_FLAGS, :LPCWSTR, :ptr
+MFCreateTempFile proto WINAPI :MF_FILE_ACCESSMODE, :MF_FILE_OPENMODE, :MF_FILE_FLAGS, :ptr
+MFBeginCreateFile proto WINAPI :MF_FILE_ACCESSMODE, :MF_FILE_OPENMODE, :MF_FILE_FLAGS, :LPCWSTR, :ptr, :ptr, :ptr
+MFEndCreateFile proto WINAPI :ptr, :ptr
+MFCancelCreateFile proto WINAPI :ptr
+MFCreateMemoryBuffer proto WINAPI :DWORD, :ptr
+MFCreateMediaBufferWrapper proto WINAPI :ptr, :DWORD, :DWORD, :ptr
+MFCreateLegacyMediaBufferOnMFMediaBuffer proto WINAPI :ptr, :ptr, :DWORD, :ptr
 
 include dxgiformat.inc
 
-MFMapDX9FormatToDXGIFormat proto WINAPI \
-		   dx9: DWORD
-
-
-MFMapDXGIFormatToDX9Format proto WINAPI \
-		  dx11: DXGI_FORMAT
-
-
-MFLockDXGIDeviceManager proto WINAPI \
-	   pResetToken: ptr UINT,
-	     ppManager: ptr ptr IMFDXGIDeviceManager
-
-
+MFMapDX9FormatToDXGIFormat proto WINAPI :DWORD
+MFMapDXGIFormatToDX9Format proto WINAPI :DXGI_FORMAT
+MFLockDXGIDeviceManager proto WINAPI :ptr, :ptr
 MFUnlockDXGIDeviceManager proto WINAPI
-
-MFCreateDXSurfaceBuffer proto WINAPI \
-		  riid: REFIID,
-		 punkSurface: ptr IUnknown,
-   fBottomUpWhenLinear: BOOL,
-	      ppBuffer: ptr IMFMediaBuffer
-
-
-MFCreateWICBitmapBuffer proto WINAPI \
-		  riid: REFIID,
-		 punkSurface: ptr IUnknown,
-	      ppBuffer: ptr IMFMediaBuffer
-
-
-MFCreateDXGISurfaceBuffer proto WINAPI \
-		  riid: REFIID,
-	   punkSurface: ptr IUnknown,
-     uSubresourceIndex: UINT,
-   fBottomUpWhenLinear: BOOL,
-	      ppBuffer: ptr ptr IMFMediaBuffer
-
-
-MFCreateVideoSampleAllocatorEx proto WINAPI \
-		  riid: REFIID,
-     ppSampleAllocator: ptr ptr
-
-MFCreateDXGIDeviceManager proto WINAPI \
-	    resetToken: ptr UINT,
-       ppDeviceManager: ptr ptr IMFDXGIDeviceManager
-
+MFCreateDXSurfaceBuffer proto WINAPI :REFIID, :ptr, :BOOL, :ptr
+MFCreateWICBitmapBuffer proto WINAPI :REFIID, :ptr, :ptr
+MFCreateDXGISurfaceBuffer proto WINAPI :REFIID, :ptr, :UINT, :BOOL, :ptr
+MFCreateVideoSampleAllocatorEx proto WINAPI :REFIID, :ptr
+MFCreateDXGIDeviceManager proto WINAPI :ptr, :ptr
 
 MF_E_DXGI_DEVICE_NOT_INITIALIZED equ (0x80041000)
 MF_E_DXGI_NEW_VIDEO_DEVICE equ (0x80041001)
@@ -334,25 +142,12 @@ MF_128_BYTE_ALIGNMENT	equ 0x0000007f
 MF_256_BYTE_ALIGNMENT	equ 0x000000ff
 MF_512_BYTE_ALIGNMENT	equ 0x000001ff
 
-MFCreateAlignedMemoryBuffer proto WINAPI \
-	   cbMaxLength: DWORD,
-	    cbAligment: DWORD,
-	      ppBuffer: ptr IMFMediaBuffer
-
+MFCreateAlignedMemoryBuffer proto WINAPI :DWORD, :DWORD, :ptr
 
 externdef MR_BUFFER_SERVICE:GUID
 
-MFCreateMediaEvent proto WINAPI \
-		   met: MediaEventType,
-      guidExtendedType: REFGUID,
-	      hrStatus: HRESULT,
-	       pvValue: ptr PROPVARIANT,
-	       ppEvent: ptr IMFMediaEvent
-
-
-MFCreateEventQueue proto WINAPI \
-     ppMediaEventQueue: ptr IMFMediaEventQueue
-
+MFCreateMediaEvent proto WINAPI :MediaEventType, :REFGUID, :HRESULT, :ptr, :ptr
+MFCreateEventQueue proto WINAPI :ptr
 
 DEFINE_GUID(MF_EVENT_SESSIONCAPS, 0x7e5ebcd0, 0x11b8, 0x4abe, 0xaf, 0xad, 0x10, 0xf6, 0x59, 0x9a, 0x7f, 0x42)
 DEFINE_GUID(MF_EVENT_SESSIONCAPS_DELTA, 0x7e5ebcd1, 0x11b8, 0x4abe, 0xaf, 0xad, 0x10, 0xf6, 0x59, 0x9a, 0x7f, 0x42)
@@ -399,8 +194,7 @@ DEFINE_GUID(MF_EVENT_STREAM_METADATA_CONTENT_KEYIDS, 0x5063449d, 0xcc29, 0x4fc6,
 DEFINE_GUID(MF_EVENT_STREAM_METADATA_SYSTEMID, 0x1ea2ef64, 0xba16, 0x4a36, 0x87, 0x19, 0xfe, 0x75, 0x60, 0xba, 0x32, 0xad)
 endif
 
-MFCreateSample proto WINAPI \
-	   ppIMFSample: ptr IMFSample
+MFCreateSample proto WINAPI :ptr
 
 DEFINE_GUID(MFSampleExtension_CleanPoint, 0x9cdf01d8, 0xa0f0, 0x43ba, 0xb0, 0x77, 0xea, 0xa0, 0x6c, 0xbd, 0x72, 0x8a)
 DEFINE_GUID(MFSampleExtension_Discontinuity, 0x9cdf01d9, 0xa0f0, 0x43ba, 0xb0, 0x77, 0xea, 0xa0, 0x6c, 0xbd, 0x72, 0x8a)
@@ -438,24 +232,10 @@ DEFINE_GUID(MFSampleExtension_PhotoThumbnailMediaType, 0x61AD5420, 0xEBF8, 0x414
 DEFINE_GUID(MFSampleExtension_CaptureMetadata, 0x2EBE23A8, 0xFAF5, 0x444A, 0xA6, 0xA2, 0xEB, 0x81, 0x08, 0x80, 0xAB, 0x5D)
 DEFINE_GUID(MF_CAPTURE_METADATA_PHOTO_FRAME_FLASH, 0x0F9DD6C6, 0x6003, 0x45D8, 0xBD, 0x59, 0xF1, 0xF5, 0x3E, 0x3D, 0x04, 0xE8)
 
-MFCreateAttributes proto WINAPI \
-	ppMFAttributes: ptr ptr IMFAttributes,
-	  cInitialSize: UINT32
-
-MFInitAttributesFromBlob proto WINAPI \
-	   pAttributes: ptr IMFAttributes,
-	    pBuf: ptr UINT8,
-	     cbBufSize: UINT
-
-MFGetAttributesAsBlobSize proto WINAPI \
-	   pAttributes: ptr IMFAttributes,
-	    pcbBufSize: ptr UINT32
-
-MFGetAttributesAsBlob proto WINAPI \
-	   pAttributes: ptr IMFAttributes,
-		  pBuf: ptr UINT8,
-	     cbBufSize: UINT
-
+MFCreateAttributes proto WINAPI :ptr, :UINT32
+MFInitAttributesFromBlob proto WINAPI :ptr, :ptr, :UINT
+MFGetAttributesAsBlobSize proto WINAPI :ptr, :ptr
+MFGetAttributesAsBlob proto WINAPI :ptr, :ptr, :UINT
 
 ifdef MF_INIT_GUIDS
 include initguid.inc
@@ -475,61 +255,16 @@ DEFINE_GUID(MFT_CATEGORY_VIDEO_PROCESSOR, 0x302ea3fc, 0xaa5f, 0x47f9, 0x9f, 0x7a
 endif
 DEFINE_GUID(MFT_CATEGORY_OTHER, 0x90175d57, 0xb7ea, 0x4901, 0xae, 0xb3, 0x93, 0x3a, 0x87, 0x47, 0x75, 0x6f)
 
-MFTRegister proto WINAPI \
-	      clsidMFT: CLSID,
-	  guidCategory: GUID,
-	       pszName: LPWSTR,
-		 Flags: UINT32,
-	   cInputTypes: UINT32,
-	   pInputTypes: ptr MFT_REGISTER_TYPE_INFO,
-	  cOutputTypes: UINT32,
-
-
-MFTUnregister proto WINAPI \
-	      clsidMFT: CLSID
-
+MFTRegister proto WINAPI :CLSID, :GUID, :LPWSTR, :UINT32, :UINT32, :ptr, :UINT32, :ptr, :ptr
+MFTUnregister proto WINAPI :CLSID
 
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-MFTRegisterLocal proto WINAPI \
-	 pClassFactory: ptr IClassFactory,
-	  guidCategory: REFGUID,
-	       pszName: LPCWSTR,
-		 Flags: UINT32,
-	   cInputTypes: UINT32,
-	   pInputTypes: ptr MFT_REGISTER_TYPE_INFO,
-	  cOutputTypes: UINT32,
-		      : ptr MFT_REGISTER_TYPE_INFO
-
-
-MFTUnregisterLocal proto WINAPI \
-	 pClassFactory: ptr IClassFactory
-
-
-MFTRegisterLocalByCLSID proto WINAPI \
-	      clisdMFT: REFCLSID,
-	  guidCategory: REFGUID,
-	       pszName: LPCWSTR,
-		 Flags: UINT32,
-	   cInputTypes: UINT32,
-	   pInputTypes: ptr MFT_REGISTER_TYPE_INFO,
-	  cOutputTypes: UINT32,
-		      : ptr MFT_REGISTER_TYPE_INFO
-
-MFTUnregisterLocalByCLSID proto WINAPI \
-	      clsidMFT: CLSID
-
+MFTRegisterLocal proto WINAPI :ptr, :REFGUID, :LPCWSTR, :UINT32, :UINT32, :ptr, :UINT32, :ptr
+MFTUnregisterLocal proto WINAPI :ptr
+MFTRegisterLocalByCLSID proto WINAPI :REFCLSID, :REFGUID, :LPCWSTR, :UINT32, :UINT32, :ptr, :UINT32, :ptr
+MFTUnregisterLocalByCLSID proto WINAPI :CLSID
 endif
-
-MFTEnum proto WINAPI \
-	  guidCategory: GUID,
-		 Flags: UINT32,
-	    pInputType: ptr MFT_REGISTER_TYPE_INFO,
-	   pOutputType: ptr MFT_REGISTER_TYPE_INFO,
-	   pAttributes: ptr IMFAttributes,
-	    ppclsidMFT: ptr ptr CLSID,
-		pcMFTs: ptr UINT32
-
+MFTEnum proto WINAPI :GUID, :UINT32, :ptr, :ptr, :ptr, :ptr, :ptr
 
 if (WINVER GE _WIN32_WINNT_WIN7)
 
@@ -546,64 +281,18 @@ if (WINVER GE _WIN32_WINNT_WIN7)
     MFT_ENUM_FLAG_ALL				= 0x0000003F
     }
 
-MFTEnumEx proto WINAPI \
-	  guidCategory: ptr GUID,
-		 Flags: UINT32,
-	    pInputType: ptr MFT_REGISTER_TYPE_INFO,
-	   pOutputType: ptr MFT_REGISTER_TYPE_INFO,
-	pppMFTActivate: ptr ptr ptr IMFActivate,
-       pnumMFTActivate: ptr UINT32
-
+MFTEnumEx proto WINAPI :ptr, :UINT32, :ptr, :ptr, :ptr, :ptr
 endif
-
-MFTGetInfo proto WINAPI \
-	      clsidMFT: ptr CLSID,
-	       pszName: ptr LPWSTR,
-	  ppInputTypes: ptr ptr MFT_REGISTER_TYPE_INFO,
-	  pcInputTypes: ptr UINT32,
-	 ppOutputTypes: ptr ptr MFT_REGISTER_TYPE_INFO,
-	 pcOutputTypes: ptr UINT32,
-
-
-
+MFTGetInfo proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-MFGetPluginControl proto WINAPI \
-       ppPluginControl: ptr IMFPluginControl
-
-
-MFGetMFTMerit proto WINAPI \
-		  pMFT: ptr IUnknown,
-	    cbVerifier: UINT32,
-	      verifier: ptr BYTE,
-		 merit: ptr DWORD
-
+MFGetPluginControl proto WINAPI :ptr
+MFGetMFTMerit proto WINAPI :ptr, :UINT32, :ptr, :ptr
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-MFRegisterLocalSchemeHandler proto WINAPI \
-	      szScheme: PCWSTR,
-	     pActivate: ptr IMFActivate
-
-
-MFRegisterLocalByteStreamHandler proto WINAPI \
-       szFileExtension: PCWSTR,
-	    szMimeType: PCWSTR,
-	     pActivate: ptr IMFActivate
-
-
-MFCreateMFByteStreamWrapper proto WINAPI \
-	       pStream: ptr IMFByteStream,
-       ppStreamWrapper: ptr ptr IMFByteStream
-
-
-MFCreateMediaExtensionActivate proto WINAPI \
-  szActivatableClassId: PCWSTR,
-	pConfiguration: ptr IUnknown,
-		  riid: REFIID,
-	     ppvObject: ptr LPVOID
-
+MFRegisterLocalSchemeHandler proto WINAPI :PCWSTR, :ptr
+MFRegisterLocalByteStreamHandler proto WINAPI :PCWSTR, :PCWSTR, :ptr
+MFCreateMFByteStreamWrapper proto WINAPI :ptr, :ptr
+MFCreateMediaExtensionActivate proto WINAPI :PCWSTR, :ptr, :REFIID, :ptr
 
 endif ;; (WINVER GE _WIN32_WINNT_WIN8)
 
@@ -611,13 +300,9 @@ endif ;; (WINVER GE _WIN32_WINNT_WIN8)
 DEFINE_GUID(MFT_SUPPORT_DYNAMIC_FORMAT_CHANGE, 0x53476a11, 0x3f13, 0x49fb, 0xac, 0x42, 0xee, 0x27, 0x33, 0xc9, 0x67, 0x41)
 ifndef FCC
 FCC macro ch4
-	exitm<( (((ch4) AND 0xFF)	SHL 24) OR \
-		(((ch4) AND 0xFF00)	SHL 8) OR \
-		(((ch4) AND 0xFF0000)	SHR 8) OR \
-		(((ch4) AND 0xFF000000) SHR 24) )>
+	exitm<( (((ch4) AND 0xFF) SHL 24) OR (((ch4) AND 0xFF00) SHL 8) OR (((ch4) AND 0xFF0000) SHR 8) OR (((ch4) AND 0xFF000000) SHR 24) )>
 	endm
 endif
-
 
 ifndef DEFINE_MEDIATYPE_GUID
 DEFINE_MEDIATYPE_GUID macro name, format
@@ -956,263 +641,58 @@ DEFINE_GUID(AM_MEDIA_TYPE_REPRESENTATION, 0xe2e42ad2, 0x132c, 0x491e, 0xa2, 0x68
 DEFINE_GUID(FORMAT_MFVideoFormat, 0xaed4ab2d, 0x7326, 0x43cb, 0x94, 0x64, 0xc8, 0x79, 0xca, 0xb9, 0xc4, 0x3d)
 
 
-MFValidateMediaTypeSize proto WINAPI \
-	    FormatType: ptr GUID,
-		pBlock: ptr UINT8,
-		cbSize: UINT32
-
-
-MFCreateMediaType proto WINAPI \
-	      ppMFType: ptr ptr IMFMediaType
-
-
-MFCreateMFVideoFormatFromMFMediaType proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-		ppMFVF: ptr ptr MFVIDEOFORMAT,
-	       pcbSize: ptr UINT32
-
+MFValidateMediaTypeSize proto WINAPI :ptr, :ptr, :UINT32
+MFCreateMediaType proto WINAPI :ptr
+MFCreateMFVideoFormatFromMFMediaType proto WINAPI :ptr, :ptr, :ptr
 
 .enum MFWaveFormatExConvertFlags {
     MFWaveFormatExConvertFlag_Normal		= 0,
     MFWaveFormatExConvertFlag_ForceExtensible	= 1
     }
 
-MFCreateWaveFormatExFromMFMediaType proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-		  ppWF: ptr ptr WAVEFORMATEX,
-	       pcbSize: ptr UINT32,
-		 Flags: UINT32
-
-MFInitMediaTypeFromVideoInfoHeader proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-		  pVIH: ptr VIDEOINFOHEADER,
-	     cbBufSize: UINT32,
-	      pSubtype: ptr GUID
-
-MFInitMediaTypeFromVideoInfoHeader2 proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-		 pVIH2: ptr VIDEOINFOHEADER2,
-	     cbBufSize: UINT32,
-	     pSubtypeL: ptr GUID
-
-MFInitMediaTypeFromMPEG1VideoInfo proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-		pMP1VI: ptr MPEG1VIDEOINFO,
-	     cbBufSize: UINT32,
-	      pSubtype: ptr GUID
-
-
-MFInitMediaTypeFromMPEG2VideoInfo proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-		pMP1VI: ptr MPEG1VIDEOINFO,
-	     cbBufSize: UINT32,
-	      pSubtype: ptr GUID
-
-
-MFCalculateBitmapImageSize proto WINAPI \
-		 pBMIH: ptr BITMAPINFOHEADER,
-	     cbBufSize: UINT32,
-	  pcbImageSize: ptr UINT32,
-	       pbKnown: ptr BOOL
-
-
-MFCalculateImageSize proto WINAPI \
-	   guidSubtype: REFGUID,
-	       unWidth: UINT32,
-	      unHeight: UINT32,
-	  pcbImageSize: ptr UINT32
-
-MFFrameRateToAverageTimePerFrame proto WINAPI \
-	   unNumerator: UINT32,
-	 unDenominator: UINT32,
-punAverageTimePerFrame: ptr UINT64
-
-MFAverageTimePerFrameToFrameRate proto WINAPI \
- unAverageTimePerFrame: UINT64,
-	  punNumerator: ptr UINT32,
-	punDenominator: ptr UINT32
-
-
-MFInitMediaTypeFromMFVideoFormat proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-		 pMFVF: ptr MFVIDEOFORMAT,
-	     cbBufSize: UINT32
-
-MFInitMediaTypeFromWaveFormatEx proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-	   pWaveFormat: ptr WAVEFORMATEX,
-	     cbBufSize: UINT32
-
-MFInitMediaTypeFromAMMediaType proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-	       pAMType: ptr AM_MEDIA_TYPE
-
-MFInitAMMediaTypeFromMFMediaType proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-   guidFormatBlockType: ptr GUID,
-	       pAMType: ptr AM_MEDIA_TYPE
-
-MFCreateAMMediaTypeFromMFMediaType proto WINAPI \
-	       pMFType: ptr IMFMediaType,
-   guidFormatBlockType: ptr GUID,
-	      ppAMType: ptr ptr AM_MEDIA_TYPE
-
-MFCompareFullToPartialMediaType proto WINAPI \
-	   pMFTypeFull: ptr IMFMediaType,
-	pMFTypePartial: ptr IMFMediaType
-
-MFWrapMediaType proto WINAPI \
-		 pOrig: ptr IMFMediaType,
-	     MajorType: REFGUID,
-	       SubType: REFGUID,
-		ppWrap: ptr IMFMediaType
-
-MFUnwrapMediaType proto WINAPI \
-		 pWrap: ptr IMFMediaType,
-		ppOrig: ptr IMFMediaType
-
+MFCreateWaveFormatExFromMFMediaType proto WINAPI :ptr, :ptr, :ptr, :UINT32
+MFInitMediaTypeFromVideoInfoHeader proto WINAPI :ptr, :ptr, :UINT32, :ptr
+MFInitMediaTypeFromVideoInfoHeader2 proto WINAPI :ptr, :ptr, :UINT32, :ptr
+MFInitMediaTypeFromMPEG1VideoInfo proto WINAPI :ptr, :ptr, :UINT32, :ptr
+MFInitMediaTypeFromMPEG2VideoInfo proto WINAPI :ptr, :ptr, :UINT32, :ptr
+MFCalculateBitmapImageSize proto WINAPI :ptr, :UINT32, :ptr, :ptr
+MFCalculateImageSize proto WINAPI :REFGUID, :UINT32, :UINT32, :ptr
+MFFrameRateToAverageTimePerFrame proto WINAPI :UINT32, :UINT32, :ptr
+MFAverageTimePerFrameToFrameRate proto WINAPI :UINT64, :ptr, :ptr
+MFInitMediaTypeFromMFVideoFormat proto WINAPI :ptr, :ptr, :UINT32
+MFInitMediaTypeFromWaveFormatEx proto WINAPI :ptr, :ptr, :UINT32
+MFInitMediaTypeFromAMMediaType proto WINAPI :ptr, :ptr
+MFInitAMMediaTypeFromMFMediaType proto WINAPI :ptr, :ptr, :ptr
+MFCreateAMMediaTypeFromMFMediaType proto WINAPI :ptr, :ptr, :ptr
+MFCompareFullToPartialMediaType proto WINAPI :ptr, :ptr
+MFWrapMediaType proto WINAPI :ptr, :REFGUID, :REFGUID, :ptr
+MFUnwrapMediaType proto WINAPI :ptr, :ptr
 
 ifdef _KSMEDIA_
-
-MFCreateVideoMediaTypeFromVideoInfoHeader proto WINAPI \
-      pVideoInfoHeader: ptr KS_VIDEOINFOHEADER,
-     cbVideoInfoHeader: DWORD,
-   dwPixelAspectRatioX: DWORD,
-   dwPixelAspectRatioY: DWORD,
-	 InterlaceMode: MFVideoInterlaceMode,
-	    VideoFlags: QWORD,
-	      pSubtype: ptr GUID,
-     ppIVideoMediaType: ptr ptr IMFVideoMediaType
-
-
-;STDAPI
-MFCreateVideoMediaTypeFromVideoInfoHeader2 proto WINAPI \
-      pVideoInfoHeader: ptr KS_VIDEOINFOHEADER2,
-     cbVideoInfoHeader: DWORD,
-  AdditionalVideoFlags: QWORD,
-	      pSubtype: ptr GUID,
-     ppIVideoMediaType: ptr ptr IMFVideoMediaType
-
-
+MFCreateVideoMediaTypeFromVideoInfoHeader proto WINAPI :ptr, :DWORD, :DWORD, :DWORD, :MFVideoInterlaceMode, :QWORD, :ptr, :ptr ptr
+MFCreateVideoMediaTypeFromVideoInfoHeader2 proto WINAPI :ptr, :DWORD, :QWORD, :ptr, :ptr
 endif
-
-
-MFCreateVideoMediaType proto WINAPI \
-	  pVideoFormat: ptr MFVIDEOFORMAT,
-     ppIVideoMediaType: ptr ptr IMFVideoMediaType
-
-MFCreateVideoMediaTypeFromSubtype proto WINAPI \
-	    pAMSubtype: ptr GUID,
-     ppIVideoMediaType: ptr IMFVideoMediaType
-
-MFIsFormatYUV proto WINAPI \
-		Format: DWORD
-
-
-MFCreateVideoMediaTypeFromBitMapInfoHeader proto WINAPI \
- pbmihBitMapInfoHeader: ptr BITMAPINFOHEADER,
-   dwPixelAspectRatioX: DWORD,
-   dwPixelAspectRatioY: DWORD,
-	 InterlaceMode: MFVideoInterlaceMode,
-	    VideoFlags: QWORD,
-qwFramesPerSecondNumerator: QWORD,
-qwFramesPerSecondDenominator: QWORD,
-	  dwMaxBitRate: DWORD,
-     ppIVideoMediaType: ptr ptr IMFVideoMediaType
-
-MFGetStrideForBitmapInfoHeader proto WINAPI \
-		format: DWORD,
-	       dwWidth: DWORD,
-	       pStride: ptr LONG
-
-MFGetPlaneSize proto WINAPI \
-		format: DWORD,
-	       dwWidth: DWORD,
-	      dwHeight: DWORD,
-	  pdwPlaneSize: ptr DWORD
-
-
+MFCreateVideoMediaType proto WINAPI :ptr, :ptr
+MFCreateVideoMediaTypeFromSubtype proto WINAPI :ptr, :ptr
+MFIsFormatYUV proto WINAPI :DWORD
+MFCreateVideoMediaTypeFromBitMapInfoHeader proto WINAPI :ptr, :DWORD, :DWORD, :MFVideoInterlaceMode, :QWORD, :QWORD, :QWORD, :DWORD, :ptr
+MFGetStrideForBitmapInfoHeader proto WINAPI :DWORD, :DWORD, :ptr
+MFGetPlaneSize proto WINAPI :DWORD, :DWORD, :DWORD, :ptr
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-MFCreateVideoMediaTypeFromBitMapInfoHeaderEx proto WINAPI \
- pbmihBitMapInfoHeader: ptr BITMAPINFOHEADER,
-    cbBitMapInfoHeader: UINT32,
-   dwPixelAspectRatioX: DWORD,
-   dwPixelAspectRatioY: DWORD,
-	 InterlaceMode: MFVideoInterlaceMode,
-	    VideoFlags: QWORD,
-dwFramesPerSecondNumerator: DWORD,
-dwFramesPerSecondDenominator: DWORD,
-	  dwMaxBitRate: DWORD,
-     ppIVideoMediaType: ptr ptr IMFVideoMediaType
-
+MFCreateVideoMediaTypeFromBitMapInfoHeaderEx proto WINAPI :ptr, :UINT32, :DWORD, :DWORD, :MFVideoInterlaceMode, :QWORD, :DWORD, :DWORD, :DWORD, :ptr
 endif
-
-MFCreateMediaTypeFromRepresentation proto WINAPI \
-    guidRepresentation: ptr GUID,
-      pvRepresentation: LPVOID,
-	  ppIMediaType: ptr ptr IMFMediaType
-
-MFCreateAudioMediaType proto WINAPI \
-	  pAudioFormat: ptr WAVEFORMATEX,
-     ppIAudioMediaType: ptr ptr IMFAudioMediaType
-
-
-MFGetUncompressedVideoFormat proto WINAPI \
-	  pVideoFormat: ptr MFVIDEOFORMAT
-
-MFInitVideoFormat proto WINAPI \
-	  pVideoFormat: ptr MFVIDEOFORMAT,
-		  type: MFStandardVideoFormat
-
-MFInitVideoFormat_RGB proto WINAPI \
-	  pVideoFormat: ptr MFVIDEOFORMAT,
-	       dwWidth: DWORD,
-	      dwHeight: DWORD,
-		D3Dfmt: DWORD
-
-MFConvertColorInfoToDXVA proto WINAPI \
-	     pdwToDXVA: ptr DWORD,
-	   pFromFormat: ptr MFVIDEOFORMAT
-
-MFConvertColorInfoFromDXVA proto WINAPI \
-	     pToFormat: ptr MFVIDEOFORMAT,
-	    dwFromDXVA: DWORD
-
-
-MFCopyImage proto WINAPI \
-		 pDest: ptr BYTE,
-	   lDestStride: LONG,
-		  pSrc: ptr BYTE,
-	    lSrcStride: LONG,
-	dwWidthInBytes: DWORD,
-	       dwLines: DWORD
-
-MFConvertFromFP16Array proto WINAPI \
-		 pDest: ptr real4,
-		  pSrc: ptr WORD,
-	       dwCount: DWORD
-
-MFConvertToFP16Array proto WINAPI \
-		 pDest: ptr WORD,
-		  pSrc: ptr real4,
-	       dwCount: DWORD
-
-
-MFCreate2DMediaBuffer proto WINAPI \
-	       dwWidth: DWORD,
-	      dwHeight: DWORD,
-	      dwFourCC: DWORD,
-	     fBottomUp: BOOL,
-	      ppBuffer: ptr ptr IMFMediaBuffer
-
-MFCreateMediaBufferFromMediaType proto WINAPI \
-	    pMediaType: ptr IMFMediaType,
-	    llDuration: LONGLONG,
-	   dwMinLength: DWORD,
-	dwMinAlignment: DWORD,
-	      ppBuffer: ptr ptr IMFMediaBuffer
-
+MFCreateMediaTypeFromRepresentation proto WINAPI :ptr, :ptr, :ptr
+MFCreateAudioMediaType proto WINAPI :ptr, :ptr
+MFGetUncompressedVideoFormat proto WINAPI :ptr
+MFInitVideoFormat proto WINAPI :ptr, :MFStandardVideoFormat
+MFInitVideoFormat_RGB proto WINAPI :ptr, :DWORD, :DWORD, :DWORD
+MFConvertColorInfoToDXVA proto WINAPI :ptr, :ptr
+MFConvertColorInfoFromDXVA proto WINAPI :ptr, :DWORD
+MFCopyImage proto WINAPI :ptr, :LONG, :ptr, :LONG, :DWORD, :DWORD
+MFConvertFromFP16Array proto WINAPI :ptr, :ptr, :DWORD
+MFConvertToFP16Array proto WINAPI :ptr, :ptr, :DWORD
+MFCreate2DMediaBuffer proto WINAPI :DWORD, :DWORD, :DWORD, :BOOL, :ptr
+MFCreateMediaBufferFromMediaType proto WINAPI :ptr, :LONGLONG, :DWORD, :DWORD, :ptr
 
 ifdef _WIN64
 
@@ -1403,8 +883,7 @@ MFGetAttributeString proto fastcall :ptr IMFAttributes, :REFGUID, :ptr PWSTR {
 
 endif ;; _INTSAFE_H_INCLUDED_
 
-MFCreateCollection proto WINAPI \
-       ppIMFCollection: ptr IMFCollection
+MFCreateCollection proto WINAPI :ptr
 
 endif ;; _WIN64
 
@@ -1416,30 +895,14 @@ endif ;; _WIN64
     eAllocationTypeIgnore
     }
 
-MFHeapAlloc proto WINAPI \
-		 nSize: size_t,
-	       dwFlags: ULONG,
-	       pszFile: string_t,
-		  line: int_t,
-		   eat: EAllocationType
-
-MFHeapFree proto WINAPI pv:ptr
+MFHeapAlloc proto WINAPI :size_t, :ULONG, :string_t, :int_t, :EAllocationType
+MFHeapFree proto WINAPI :ptr
 
 DEFINE_GUID(CLSID_MFSourceResolver, 0x90eab60f, 0xe43a, 0x4188, 0xbc, 0xc4, 0xe4, 0x7f, 0xdf, 0x04, 0x86, 0x8c)
 
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-MFllMulDiv proto WINAPI \
-		     a: LONGLONG,
-		     b: LONGLONG,
-		     c: LONGLONG,
-		     d: LONGLONG
-
+MFllMulDiv proto WINAPI :LONGLONG, :LONGLONG, :LONGLONG, :LONGLONG
 endif
-
-MFGetContentProtectionSystemCLSID proto WINAPI \
-guidProtectionSystemID: REFGUID,
-		pclsid: ptr CLSID
-
+MFGetContentProtectionSystemCLSID proto WINAPI :REFGUID, :ptr
 
 endif

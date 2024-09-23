@@ -242,197 +242,43 @@ PPEER_SECURITY_INTERFACE typedef ptr PEER_SECURITY_INTERFACE
 
 .pragma comment(lib, p2pgraph)
 
-PeerGraphStartup proto WINAPI \
-     wVersionRequested: WORD,
-	  pVersionData: PPEER_VERSION_DATA
-
-
-;HRESULT
+PeerGraphStartup proto WINAPI :WORD, :PPEER_VERSION_DATA
 PeerGraphShutdown proto WINAPI
-
-;VOID
-PeerGraphFreeData proto WINAPI \
-		pvData: PVOID
-
-
-;HRESULT
-PeerGraphGetItemCount proto WINAPI \
-	     hPeerEnum: HPEERENUM,
-		pCount: ptr ULONG
-
-
-;HRESULT
-PeerGraphGetNextItem proto WINAPI \
-	     hPeerEnum: HPEERENUM,
-		pCount: ptr ULONG,
-	     pppvItems: ptr PVOID
-
-;HRESULT
-PeerGraphEndEnumeration proto WINAPI \
-	     hPeerEnum: HPEERENUM
-
-
-;HRESULT
-PeerGraphCreate proto WINAPI \
-      pGraphProperties: PPEER_GRAPH_PROPERTIES,
-       pwzDatabaseName: PCWSTR,
-    pSecurityInterface: PPEER_SECURITY_INTERFACE,
-	       phGraph: ptr HGRAPH
-
-
-PeerGraphOpen proto WINAPI \
-	    pwzGraphId: PCWSTR,
-	     pwzPeerId: PCWSTR,
-       pwzDatabaseName: PCWSTR,
-    pSecurityInterface: PPEER_SECURITY_INTERFACE,
-cRecordTypeSyncPrecedence: ULONG,
-pRecordTypeSyncPrecedence: ptr GUID,
-	       phGraph: ptr HGRAPH
-
-
-PeerGraphListen proto WINAPI \
-		hGraph: HGRAPH,
-	       dwScope: DWORD,
-	     dwScopeId: DWORD,
-		 wPort: WORD
-
-PeerGraphConnect proto WINAPI \
-		hGraph: HGRAPH,
-	     pwzPeerId: PCWSTR,
-	      pAddress: PPEER_ADDRESS,
-      pullConnectionId: ptr ULONGLONG
-
-
-PeerGraphClose proto WINAPI \
-		hGraph: HGRAPH
-
-PeerGraphDelete proto WINAPI \
-	    pwzGraphId: PCWSTR,
-	     pwzPeerId: PCWSTR,
-       pwzDatabaseName: PCWSTR
-
-
-PeerGraphGetStatus proto WINAPI \
-		hGraph: HGRAPH,
-	     pdwStatus: ptr DWORD
-
-PeerGraphGetProperties proto WINAPI \
-		hGraph: HGRAPH,
-     ppGraphProperties: ptr PPEER_GRAPH_PROPERTIES
-
-PeerGraphSetProperties proto WINAPI \
-		hGraph: HGRAPH,
-      pGraphProperties: PPEER_GRAPH_PROPERTIES
-
-
-PeerGraphRegisterEvent proto WINAPI \
-		hGraph: HGRAPH,
-		hEvent: HANDLE,
-   cEventRegistrations: ULONG,
-   pEventRegistrations: ptr PEER_GRAPH_EVENT_REGISTRATION,
-	   phPeerEvent: ptr HPEEREVENT
-
-PeerGraphUnregisterEvent proto WINAPI \
-	    hPeerEvent: HPEEREVENT
-
-PeerGraphGetEventData proto WINAPI \
-	    hPeerEvent: HPEEREVENT,
-	   ppEventData: ptr PPEER_GRAPH_EVENT_DATA
-
-
-PeerGraphGetRecord proto WINAPI \
-		hGraph: HGRAPH,
-	     pRecordId: ptr GUID,
-	      ppRecord: ptr PPEER_RECORD
-
-PeerGraphAddRecord proto WINAPI \
-		hGraph: HGRAPH,
-	       pRecord: PPEER_RECORD,
-	     pRecordId: ptr GUID
-
-PeerGraphUpdateRecord proto WINAPI \
-		hGraph: HGRAPH,
-	       pRecord: PPEER_RECORD
-
-PeerGraphDeleteRecord proto WINAPI \
-		hGraph: HGRAPH,
-	     pRecordId: ptr GUID,
-		fLocal: BOOL
-
-PeerGraphEnumRecords proto WINAPI \
-		hGraph: HGRAPH,
-	   pRecordType: ptr GUID,
-	     pwzPeerId: PCWSTR,
-	    phPeerEnum: ptr HPEERENUM
-
-PeerGraphSearchRecords proto WINAPI \
-		hGraph: HGRAPH,
-	   pwzCriteria: PCWSTR,
-	    phPeerEnum: ptr HPEERENUM
-
-PeerGraphExportDatabase proto WINAPI \
-		hGraph: HGRAPH,
-	   pwzFilePath: PCWSTR
-
-PeerGraphImportDatabase proto WINAPI \
-		hGraph: HGRAPH,
-	   pwzFilePath: PCWSTR
-
-PeerGraphValidateDeferredRecords proto WINAPI \
-		hGraph: HGRAPH,
-	    cRecordIds: ULONG,
-	    pRecordIds: ptr GUID
-
-PeerGraphOpenDirectConnection proto WINAPI \
-		hGraph: HGRAPH,
-	     pwzPeerId: PCWSTR,
-	      pAddress: PPEER_ADDRESS,
-      pullConnectionId: ptr ULONGLONG
-
-PeerGraphSendData proto WINAPI \
-		hGraph: HGRAPH,
-       ullConnectionId: ULONGLONG,
-		 pType: ptr GUID,
-		cbData: ULONG,
-		pvData: PVOID
-
-PeerGraphCloseDirectConnection proto WINAPI \
-		hGraph: HGRAPH,
-       ullConnectionId: ULONGLONG
-
-PeerGraphEnumConnections proto WINAPI \
-		hGraph: HGRAPH,
-	       dwFlags: DWORD,
-	    phPeerEnum: ptr HPEERENUM
-
-PeerGraphEnumNodes proto WINAPI \
-		hGraph: HGRAPH,
-	     pwzPeerId: PCWSTR,
-	    phPeerEnum: ptr HPEERENUM
-
-PeerGraphSetPresence proto WINAPI \
-		hGraph: HGRAPH,
-	      fPresent: BOOL
-
-PeerGraphGetNodeInfo proto WINAPI \
-		hGraph: HGRAPH,
-	     ullNodeId: ULONGLONG,
-	    ppNodeInfo: ptr PPEER_NODE_INFO
-
-PeerGraphSetNodeAttributes proto WINAPI \
-		hGraph: HGRAPH,
-	 pwzAttributes: PCWSTR
-
-PeerGraphPeerTimeToUniversalTime proto WINAPI \
-		hGraph: HGRAPH,
-	   pftPeerTime: ptr FILETIME,
-      pftUniversalTime: ptr FILETIME
-
-PeerGraphUniversalTimeToPeerTime proto WINAPI \
-		hGraph: HGRAPH,
-      pftUniversalTime: ptr FILETIME,
-	   pftPeerTime: ptr FILETIME
-
+PeerGraphFreeData proto WINAPI :ptr
+PeerGraphGetItemCount proto WINAPI :HPEERENUM, :ptr
+PeerGraphGetNextItem proto WINAPI :HPEERENUM, :ptr, :ptr
+PeerGraphEndEnumeration proto WINAPI :HPEERENUM
+PeerGraphCreate proto WINAPI :PPEER_GRAPH_PROPERTIES, :PCWSTR, :PPEER_SECURITY_INTERFACE, :ptr
+PeerGraphOpen proto WINAPI :PCWSTR, :PCWSTR, :PCWSTR, :PPEER_SECURITY_INTERFACE, :ULONG, :ptr, :ptr
+PeerGraphListen proto WINAPI :HGRAPH, :DWORD, :DWORD, :WORD
+PeerGraphConnect proto WINAPI :HGRAPH, :PCWSTR, :PPEER_ADDRESS, :ptr
+PeerGraphClose proto WINAPI :HGRAPH
+PeerGraphDelete proto WINAPI :PCWSTR, :PCWSTR, :PCWSTR
+PeerGraphGetStatus proto WINAPI :HGRAPH, :ptr
+PeerGraphGetProperties proto WINAPI :HGRAPH, :ptr
+PeerGraphSetProperties proto WINAPI :HGRAPH, :PPEER_GRAPH_PROPERTIES
+PeerGraphRegisterEvent proto WINAPI :HGRAPH, :HANDLE, :ULONG, :ptr, :ptr
+PeerGraphUnregisterEvent proto WINAPI :HPEEREVENT
+PeerGraphGetEventData proto WINAPI :HPEEREVENT, :ptr
+PeerGraphGetRecord proto WINAPI :HGRAPH, :ptr, :ptr
+PeerGraphAddRecord proto WINAPI :HGRAPH, :PPEER_RECORD, :ptr
+PeerGraphUpdateRecord proto WINAPI :HGRAPH, :PPEER_RECORD
+PeerGraphDeleteRecord proto WINAPI :HGRAPH, :ptr, :BOOL
+PeerGraphEnumRecords proto WINAPI :HGRAPH, :ptr, :PCWSTR, :ptr
+PeerGraphSearchRecords proto WINAPI :HGRAPH, :PCWSTR, :ptr
+PeerGraphExportDatabase proto WINAPI :HGRAPH, :PCWSTR
+PeerGraphImportDatabase proto WINAPI :HGRAPH, :PCWSTR
+PeerGraphValidateDeferredRecords proto WINAPI :HGRAPH, :ULONG, :ptr
+PeerGraphOpenDirectConnection proto WINAPI :HGRAPH, :PCWSTR, :PPEER_ADDRESS, :ptr
+PeerGraphSendData proto WINAPI :HGRAPH, :ULONGLONG, :ptr, :ULONG, :ptr
+PeerGraphCloseDirectConnection proto WINAPI :HGRAPH, :ULONGLONG
+PeerGraphEnumConnections proto WINAPI :HGRAPH, :DWORD, :ptr
+PeerGraphEnumNodes proto WINAPI :HGRAPH, :PCWSTR, :ptr
+PeerGraphSetPresence proto WINAPI :HGRAPH, :BOOL
+PeerGraphGetNodeInfo proto WINAPI :HGRAPH, :ULONGLONG, :ptr
+PeerGraphSetNodeAttributes proto WINAPI :HGRAPH, :PCWSTR
+PeerGraphPeerTimeToUniversalTime proto WINAPI :HGRAPH, :ptr, :ptr
+PeerGraphUniversalTimeToPeerTime proto WINAPI :HGRAPH, :ptr, :ptr
 
 endif ;;   MIDL_PASS
 endif ;; NO_P2P_GRAPH
@@ -444,21 +290,10 @@ ifndef MIDL_PASS
 
 include wincrypt.inc
 
-PeerFreeData proto WINAPI \
-		pvData: LPCVOID
-
-PeerGetItemCount proto WINAPI \
-	     hPeerEnum: HPEERENUM,
-		pCount: ptr ULONG
-
-PeerGetNextItem proto WINAPI \
-	     hPeerEnum: HPEERENUM,
-		pCount: ptr ULONG,
-	     pppvItems: ptr PVOID
-
-PeerEndEnumeration proto WINAPI \
-	     hPeerEnum: HPEERENUM
-
+PeerFreeData proto WINAPI :LPCVOID
+PeerGetItemCount proto WINAPI :HPEERENUM, :ptr
+PeerGetNextItem proto WINAPI :HPEERENUM, :ptr, :ptr
+PeerEndEnumeration proto WINAPI :HPEERENUM
 
 endif ;; MIDL_PASS
 endif
@@ -629,231 +464,54 @@ PPEER_NAME_PAIR		typedef ptr PEER_NAME_PAIR
 
 ifndef MIDL_PASS
 
-PeerGroupStartup proto WINAPI \
-     wVersionRequested: WORD,
-	  pVersionData: PPEER_VERSION_DATA
-
+PeerGroupStartup proto WINAPI :WORD, :PPEER_VERSION_DATA
 PeerGroupShutdown proto WINAPI
-
-PeerGroupCreate proto WINAPI \
-	   pProperties: PPEER_GROUP_PROPERTIES,
-	       phGroup: ptr HGROUP
-
-PeerGroupOpen proto WINAPI \
-	   pwzIdentity: PCWSTR,
-      pwzGroupPeerName: PCWSTR,
-	      pwzCloud: PCWSTR,
-	       phGroup: ptr HGROUP
-
-PeerGroupJoin proto WINAPI \
-	   pwzIdentity: PCWSTR,
-	 pwzInvitation: PCWSTR,
-	      pwzCloud: PCWSTR,
-	       phGroup: ptr HGROUP
-
-
+PeerGroupCreate proto WINAPI :PPEER_GROUP_PROPERTIES, :ptr
+PeerGroupOpen proto WINAPI :PCWSTR, :PCWSTR, :PCWSTR, :ptr
+PeerGroupJoin proto WINAPI :PCWSTR, :PCWSTR, :PCWSTR, :ptr
 
 if NTDDI_VERSION GE NTDDI_VISTA
-PeerGroupPasswordJoin proto WINAPI \
-	   pwzIdentity: PCWSTR,
-	 pwzInvitation: PCWSTR,
-	   pwzPassword: PCWSTR,
-	      pwzCloud: PCWSTR,
-	       phGroup: ptr HGROUP
-
+PeerGroupPasswordJoin proto WINAPI :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :ptr
 endif
-
-PeerGroupConnect proto WINAPI \
-		hGroup: HGROUP
-
+PeerGroupConnect proto WINAPI :HGROUP
+if NTDDI_VERSION GE NTDDI_VISTA
+PeerGroupConnectByAddress proto WINAPI :HGROUP, :ULONG, :PPEER_ADDRESS
+endif
+PeerGroupClose proto WINAPI :HGROUP
+PeerGroupDelete proto WINAPI :PCWSTR, :PCWSTR
+PeerGroupCreateInvitation proto WINAPI :HGROUP, :PCWSTR, :ptr, :ULONG, :ptr, :ptr
 
 if NTDDI_VERSION GE NTDDI_VISTA
-PeerGroupConnectByAddress proto WINAPI \
-		hGroup: HGROUP,
-	    cAddresses: ULONG,
-	    pAddresses: PPEER_ADDRESS
+PeerGroupCreatePasswordInvitation proto WINAPI :HGROUP, :ptr
 endif
-
-PeerGroupClose proto WINAPI \
-		hGroup: HGROUP
-
-
-PeerGroupDelete proto WINAPI \
-	   pwzIdentity: PCWSTR,
-      pwzGroupPeerName: PCWSTR
-
-
-PeerGroupCreateInvitation proto WINAPI \
-		hGroup: HGROUP,
-       pwzIdentityInfo: PCWSTR,
-	 pftExpiration: ptr FILETIME,
-		cRoles: ULONG,
-		pRoles: ptr GUID,
-	ppwzInvitation: ptr PWSTR
-
-
-if NTDDI_VERSION GE NTDDI_VISTA
-
-PeerGroupCreatePasswordInvitation proto WINAPI \
-		hGroup: HGROUP,
-	ppwzInvitation: ptr PWSTR
-
-endif
-
-PeerGroupParseInvitation proto WINAPI \
-	 pwzInvitation: PCWSTR,
-      ppInvitationInfo: ptr PPEER_INVITATION_INFO
-
-
-PeerGroupGetStatus proto WINAPI \
-		hGroup: HGROUP,
-	     pdwStatus: ptr DWORD
-
-
-PeerGroupGetProperties proto WINAPI \
-		hGroup: HGROUP,
-	  ppProperties: ptr PPEER_GROUP_PROPERTIES
-
-
-PeerGroupSetProperties proto WINAPI \
-		hGroup: HGROUP,
-	   pProperties: PPEER_GROUP_PROPERTIES
-
-
-PeerGroupEnumMembers proto WINAPI \
-		hGroup: HGROUP,
-	       dwFlags: DWORD,
-	   pwzIdentity: PCWSTR,
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerGroupOpenDirectConnection proto WINAPI \
-		hGroup: HGROUP,
-	   pwzIdentity: PCWSTR,
-	      pAddress: PPEER_ADDRESS,
-      pullConnectionId: ptr ULONGLONG
-
-
-PeerGroupCloseDirectConnection proto WINAPI \
-		hGroup: HGROUP,
-       ullConnectionId: ULONGLONG
-
-
-PeerGroupEnumConnections proto WINAPI \
-		hGroup: HGROUP,
-	       dwFlags: DWORD,
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerGroupSendData proto WINAPI \
-		hGroup: HGROUP,
-       ullConnectionId: ULONGLONG,
-		 pType: ptr GUID,
-		cbData: ULONG,
-		pvData: PVOID
-
-PeerGroupRegisterEvent proto WINAPI \
-		hGroup: HGROUP,
-		hEvent: HANDLE,
-    cEventRegistration: DWORD,
-   pEventRegistrations: ptr PEER_GROUP_EVENT_REGISTRATION,
-	   phPeerEvent: ptr HPEEREVENT
-
-
-PeerGroupUnregisterEvent proto WINAPI \
-	    hPeerEvent: HPEEREVENT
-
-
-PeerGroupGetEventData proto WINAPI \
-	    hPeerEvent: HPEEREVENT,
-	   ppEventData: ptr PPEER_GROUP_EVENT_DATA
-
-
-
-PeerGroupGetRecord proto WINAPI \
-		hGroup: HGROUP,
-	     pRecordId: ptr GUID,
-	      ppRecord: ptr PPEER_RECORD
-
-
-PeerGroupAddRecord proto WINAPI \
-		hGroup: HGROUP,
-	       pRecord: PPEER_RECORD,
-	     pRecordId: ptr GUID
-
-
-PeerGroupUpdateRecord proto WINAPI \
-		hGroup: HGROUP,
-	       pRecord: PPEER_RECORD
-
-
-PeerGroupDeleteRecord proto WINAPI \
-		hGroup: HGROUP,
-	     pRecordId: ptr GUID
-
-
-PeerGroupEnumRecords proto WINAPI \
-		hGroup: HGROUP,
-	   pRecordType: ptr GUID,
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerGroupSearchRecords proto WINAPI \
-		hGroup: HGROUP,
-	   pwzCriteria: PCWSTR,
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerGroupExportDatabase proto WINAPI \
-		hGroup: HGROUP,
-	   pwzFilePath: PCWSTR
-
-
-PeerGroupImportDatabase proto WINAPI \
-		hGroup: HGROUP,
-	   pwzFilePath: PCWSTR
-
-
-PeerGroupIssueCredentials proto WINAPI \
-		hGroup: HGROUP,
-    pwzSubjectIdentity: PCWSTR,
-       pCredentialInfo: ptr PEER_CREDENTIAL_INFO,
-	       dwFlags: DWORD,
-	ppwzInvitation: ptr PWSTR
-
-
-PeerGroupExportConfig proto WINAPI \
-		hGroup: HGROUP,
-	   pwzPassword: PCWSTR,
-	       ppwzXML: ptr PWSTR
-
-
-PeerGroupImportConfig proto WINAPI \
-		pwzXML: PCWSTR,
-	   pwzPassword: PCWSTR,
-	    fOverwrite: BOOL,
-	  ppwzIdentity: ptr PWSTR,
-	     ppwzGroup: ptr PWSTR
-
-
-PeerGroupPeerTimeToUniversalTime proto WINAPI \
-		hGroup: HGROUP,
-	   pftPeerTime: ptr FILETIME,
-      pftUniversalTime: ptr FILETIME
-
-
-PeerGroupUniversalTimeToPeerTime proto WINAPI \
-		hGroup: HGROUP,
-      pftUniversalTime: ptr FILETIME,
-	   pftPeerTime: ptr FILETIME
-
+PeerGroupParseInvitation proto WINAPI :PCWSTR, :ptr
+PeerGroupGetStatus proto WINAPI :HGROUP, :ptr
+PeerGroupGetProperties proto WINAPI :HGROUP, :ptr
+PeerGroupSetProperties proto WINAPI :HGROUP, :PPEER_GROUP_PROPERTIES
+PeerGroupEnumMembers proto WINAPI :HGROUP, :DWORD, :PCWSTR, :ptr
+PeerGroupOpenDirectConnection proto WINAPI :HGROUP, :PCWSTR, :PPEER_ADDRESS, :ptr
+PeerGroupCloseDirectConnection proto WINAPI :HGROUP, :ULONGLONG
+PeerGroupEnumConnections proto WINAPI :HGROUP, :DWORD, :ptr
+PeerGroupSendData proto WINAPI :HGROUP, :ULONGLONG, :ptr, :ULONG, :ptr
+PeerGroupRegisterEvent proto WINAPI :HGROUP, :HANDLE, :DWORD, :ptr, :ptr
+PeerGroupUnregisterEvent proto WINAPI :HPEEREVENT
+PeerGroupGetEventData proto WINAPI :HPEEREVENT, :ptr
+PeerGroupGetRecord proto WINAPI :HGROUP, :ptr, :ptr
+PeerGroupAddRecord proto WINAPI :HGROUP, :PPEER_RECORD, :ptr
+PeerGroupUpdateRecord proto WINAPI :HGROUP, :PPEER_RECORD
+PeerGroupDeleteRecord proto WINAPI :HGROUP, :ptr
+PeerGroupEnumRecords proto WINAPI :HGROUP, :ptr, :ptr
+PeerGroupSearchRecords proto WINAPI :HGROUP, :PCWSTR, :ptr
+PeerGroupExportDatabase proto WINAPI :HGROUP, :PCWSTR
+PeerGroupImportDatabase proto WINAPI :HGROUP, :PCWSTR
+PeerGroupIssueCredentials proto WINAPI :HGROUP, :PCWSTR, :ptr, :DWORD, :ptr
+PeerGroupExportConfig proto WINAPI :HGROUP, :PCWSTR, :ptr
+PeerGroupImportConfig proto WINAPI :PCWSTR, :PCWSTR, :BOOL, :ptr, :ptr
+PeerGroupPeerTimeToUniversalTime proto WINAPI :HGROUP, :ptr, :ptr
+PeerGroupUniversalTimeToPeerTime proto WINAPI :HGROUP, :ptr, :ptr
 
 if NTDDI_VERSION GE NTDDI_WIN7
-
-PeerGroupResumePasswordAuthentication proto WINAPI \
-		hGroup: HGROUP,
-      hPeerEventHandle: HPEEREVENT
-
+PeerGroupResumePasswordAuthentication proto WINAPI :HGROUP, :HPEEREVENT
 endif
 
 endif ;; NIDL_PASS
@@ -863,56 +521,18 @@ endif ;; NO_P2P_GROUP
 ifndef NO_P2P_IDENTITY
 ifndef MIDL_PASS
 
-PeerIdentityCreate proto WINAPI \
-	 pwzClassifier: PCWSTR,
-       pwzFriendlyName: PCWSTR,
-	    hCryptProv: HCRYPTPROV,
-	  ppwzIdentity: ptr PWSTR
-
-PeerIdentityGetFriendlyName proto WINAPI \
-	   pwzIdentity: PCWSTR,
-      ppwzFriendlyName: ptr PWSTR
-
-PeerIdentitySetFriendlyName proto WINAPI \
-	   pwzIdentity: PCWSTR,
-       pwzFriendlyName: PCWSTR
-
-PeerIdentityGetCryptKey proto WINAPI \
-	   pwzIdentity: PCWSTR,
-	   phCryptProv: ptr HCRYPTPROV
-
-PeerIdentityDelete proto WINAPI \
-	   pwzIdentity: PCWSTR
-
-PeerEnumIdentities proto WINAPI \
-	    phPeerEnum: ptr HPEERENUM
-
-PeerEnumGroups proto WINAPI \
-	   pwzIdentity: PCWSTR,
-	    phPeerEnum: ptr HPEERENUM
-
-PeerCreatePeerName proto WINAPI \
-	   pwzIdentity: PCWSTR,
-	 pwzClassifier: PCWSTR,
-	  ppwzPeerName: ptr PWSTR
-
-PeerIdentityGetXML proto WINAPI \
-	   pwzIdentity: PCWSTR,
-       ppwzIdentityXML: ptr PWSTR
-
-PeerIdentityExport proto WINAPI \
-	   pwzIdentity: PCWSTR,
-	   pwzPassword: PCWSTR,
-	 ppwzExportXML: ptr PWSTR
-
-PeerIdentityImport proto WINAPI \
-	  pwzImportXML: PCWSTR,
-	   pwzPassword: PCWSTR,
-	  ppwzIdentity: ptr PWSTR
-
-PeerIdentityGetDefault proto WINAPI \
-	  ppwzPeerName: ptr PWSTR
-
+PeerIdentityCreate proto WINAPI :PCWSTR, :PCWSTR, :HCRYPTPROV, :ptr
+PeerIdentityGetFriendlyName proto WINAPI :PCWSTR, :ptr
+PeerIdentitySetFriendlyName proto WINAPI :PCWSTR, :PCWSTR
+PeerIdentityGetCryptKey proto WINAPI :PCWSTR, :ptr
+PeerIdentityDelete proto WINAPI :PCWSTR
+PeerEnumIdentities proto WINAPI :ptr
+PeerEnumGroups proto WINAPI :PCWSTR, :ptr
+PeerCreatePeerName proto WINAPI :PCWSTR, :PCWSTR, :ptr
+PeerIdentityGetXML proto WINAPI :PCWSTR, :ptr
+PeerIdentityExport proto WINAPI :PCWSTR, :PCWSTR, :ptr
+PeerIdentityImport proto WINAPI :PCWSTR, :PCWSTR, :ptr
+PeerIdentityGetDefault proto WINAPI :ptr
 
 endif ;; MIDL_PASS
 endif ;; NO_P2P_IDENTITY
@@ -982,24 +602,12 @@ PCPEER_PEOPLE_NEAR_ME	typedef ptr PEER_PEOPLE_NEAR_ME
 PPPEER_PEOPLE_NEAR_ME	typedef ptr PPEER_PEOPLE_NEAR_ME
 
 ifndef MIDL_PASS
-
-PeerCollabStartup proto WINAPI \
-     wVersionRequested: WORD
-
+PeerCollabStartup proto WINAPI :WORD
 PeerCollabShutdown proto WINAPI
-
-PeerCollabSignin proto WINAPI \
-	    hwndParent: HWND,
-       dwSigninOptions: DWORD
-
-PeerCollabSignout proto WINAPI \
-       dwSigninOptions: DWORD
-
-PeerCollabGetSigninOptions proto WINAPI \
-      pdwSigninOptions: ptr DWORD
-
-
-endif ;;MIDL_PASS
+PeerCollabSignin proto WINAPI :HWND, :DWORD
+PeerCollabSignout proto WINAPI :DWORD
+PeerCollabGetSigninOptions proto WINAPI :ptr
+endif
 
 PEER_INVITATION_RESPONSE_TYPE	typedef SDWORD
 PEER_INVITATION_RESPONSE_DECLINED	equ 0
@@ -1045,73 +653,19 @@ PPEER_APPLICATION_REGISTRATION_INFO typedef ptr PEER_APPLICATION_REGISTRATION_IN
 PCPEER_APPLICATION_REGISTRATION_INFO typedef ptr PEER_APPLICATION_REGISTRATION_INFO
 
 ifndef MIDL_PASS
-
-PeerCollabAsyncInviteContact proto WINAPI \
-	     pcContact: PCPEER_CONTACT,
-	    pcEndpoint: PCPEER_ENDPOINT,
-	  pcInvitation: PCPEER_INVITATION,
-		hEvent: HANDLE,
-	  phInvitation: ptr HANDLE
-
-
-PeerCollabGetInvitationResponse proto WINAPI \
-	   hInvitation: HANDLE,
-  ppInvitationResponse: ptr PPEER_INVITATION_RESPONSE
-
-
-PeerCollabCancelInvitation proto WINAPI \
-	   hInvitation: HANDLE
-
-
-PeerCollabCloseHandle proto WINAPI \
-	   hInvitation: HANDLE
-
-
-PeerCollabInviteContact proto WINAPI \
-	     pcContact: PCPEER_CONTACT,
-	    pcEndpoint: PCPEER_ENDPOINT,
-	  pcInvitation: PCPEER_INVITATION,
-	    ppResponse: ptr PPEER_INVITATION_RESPONSE
-
-
-PeerCollabAsyncInviteEndpoint proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT,
-	  pcInvitation: PCPEER_INVITATION,
-		hEvent: HANDLE,
-	  phInvitation: ptr HANDLE
-
-
-PeerCollabInviteEndpoint proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT,
-	  pcInvitation: PCPEER_INVITATION,
-	    ppResponse: ptr PPEER_INVITATION_RESPONSE
-
-
-PeerCollabGetAppLaunchInfo proto WINAPI \
-	  ppLaunchInfo: ptr PPEER_APP_LAUNCH_INFO
-
-
-PeerCollabRegisterApplication proto WINAPI \
-	 pcApplication: PCPEER_APPLICATION_REGISTRATION_INFO,
-      registrationType: PEER_APPLICATION_REGISTRATION_TYPE
-
-
-PeerCollabUnregisterApplication proto WINAPI \
-	pApplicationId: ptr GUID,
-      registrationType: PEER_APPLICATION_REGISTRATION_TYPE
-
-
-PeerCollabGetApplicationRegistrationInfo proto WINAPI \
-	pApplicationId: ptr GUID,
-      registrationType: PEER_APPLICATION_REGISTRATION_TYPE,
-	 ppApplication: ptr PPEER_APPLICATION_REGISTRATION_INFO
-
-
-PeerCollabEnumApplicationRegistrationInfo proto WINAPI \
-      registrationType: PEER_APPLICATION_REGISTRATION_TYPE,
-	    phPeerEnum: ptr HPEERENUM
-
-endif ;; MIDL_PASS
+PeerCollabAsyncInviteContact proto WINAPI :PCPEER_CONTACT, :PCPEER_ENDPOINT, :PCPEER_INVITATION, :HANDLE, :ptr
+PeerCollabGetInvitationResponse proto WINAPI :HANDLE, :ptr
+PeerCollabCancelInvitation proto WINAPI :HANDLE
+PeerCollabCloseHandle proto WINAPI :HANDLE
+PeerCollabInviteContact proto WINAPI :PCPEER_CONTACT, :PCPEER_ENDPOINT, :PCPEER_INVITATION, :ptr
+PeerCollabAsyncInviteEndpoint proto WINAPI :PCPEER_ENDPOINT, :PCPEER_INVITATION, :HANDLE, :ptr
+PeerCollabInviteEndpoint proto WINAPI :PCPEER_ENDPOINT, :PCPEER_INVITATION, :ptr
+PeerCollabGetAppLaunchInfo proto WINAPI :ptr
+PeerCollabRegisterApplication proto WINAPI :PCPEER_APPLICATION_REGISTRATION_INFO, :PEER_APPLICATION_REGISTRATION_TYPE
+PeerCollabUnregisterApplication proto WINAPI :ptr, :PEER_APPLICATION_REGISTRATION_TYPE
+PeerCollabGetApplicationRegistrationInfo proto WINAPI :ptr, :PEER_APPLICATION_REGISTRATION_TYPE, :ptr
+PeerCollabEnumApplicationRegistrationInfo proto WINAPI :PEER_APPLICATION_REGISTRATION_TYPE, :ptr
+endif
 
 PEER_PRESENCE_STATUS	typedef SDWORD
 PEER_PRESENCE_OFFLINE		equ 0
@@ -1131,70 +685,20 @@ PPEER_PRESENCE_INFO	typedef ptr PEER_PRESENCE_INFO
 PCPEER_PRESENCE_INFO	typedef ptr PEER_PRESENCE_INFO
 
 ifndef MIDL_PASS
-
-PeerCollabGetPresenceInfo proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT,
-	ppPresenceInfo: ptr PPEER_PRESENCE_INFO
-
-
-PeerCollabEnumApplications proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT,
-	pApplicationId: ptr GUID,
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerCollabEnumObjects proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT,
-	     pObjectId: ptr GUID,
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerCollabEnumEndpoints proto WINAPI \
-	     pcContact: PCPEER_CONTACT,
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerCollabRefreshEndpointData proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT
-
-
-PeerCollabDeleteEndpointData proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT
-
-
-PeerCollabQueryContactData proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT,
-       ppwzContactData: ptr PWSTR
-
-
-PeerCollabSubscribeEndpointData proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT
-
-
-PeerCollabUnsubscribeEndpointData proto WINAPI \
-	    pcEndpoint: PCPEER_ENDPOINT
-
-
-PeerCollabSetPresenceInfo proto WINAPI \
-	pcPresenceInfo: PCPEER_PRESENCE_INFO
-
-
-PeerCollabGetEndpointName proto WINAPI \
-      ppwzEndpointName: ptr PWSTR
-
-
-PeerCollabSetEndpointName proto WINAPI \
-       pwzEndpointName: PCWSTR
-
-
-PeerCollabSetObject proto WINAPI \
-	      pcObject: PCPEER_OBJECT
-
-
-PeerCollabDeleteObject proto WINAPI \
-	     pObjectId: ptr GUID
-
-
+PeerCollabGetPresenceInfo proto WINAPI :PCPEER_ENDPOINT, :ptr
+PeerCollabEnumApplications proto WINAPI :PCPEER_ENDPOINT, :ptr, :ptr
+PeerCollabEnumObjects proto WINAPI :PCPEER_ENDPOINT, :ptr, :ptr
+PeerCollabEnumEndpoints proto WINAPI :PCPEER_CONTACT, :ptr
+PeerCollabRefreshEndpointData proto WINAPI :PCPEER_ENDPOINT
+PeerCollabDeleteEndpointData proto WINAPI :PCPEER_ENDPOINT
+PeerCollabQueryContactData proto WINAPI :PCPEER_ENDPOINT, :ptr
+PeerCollabSubscribeEndpointData proto WINAPI :PCPEER_ENDPOINT
+PeerCollabUnsubscribeEndpointData proto WINAPI :PCPEER_ENDPOINT
+PeerCollabSetPresenceInfo proto WINAPI :PCPEER_PRESENCE_INFO
+PeerCollabGetEndpointName proto WINAPI :ptr
+PeerCollabSetEndpointName proto WINAPI :PCWSTR
+PeerCollabSetObject proto WINAPI :PCPEER_OBJECT
+PeerCollabDeleteObject proto WINAPI :ptr
 endif
 
 PEER_CHANGE_TYPE	typedef SDWORD
@@ -1288,63 +792,20 @@ endif
 
 
 ifndef MIDL_PASS
+PeerCollabRegisterEvent proto WINAPI :HANDLE, :DWORD, :ptr, :ptr
+PeerCollabGetEventData proto WINAPI :HPEEREVENT, :ptr
+PeerCollabUnregisterEvent proto WINAPI :HPEEREVENT
+PeerCollabEnumPeopleNearMe proto WINAPI :ptr
+PeerCollabAddContact proto WINAPI :PCWSTR, :ptr
+PeerCollabDeleteContact proto WINAPI :PCWSTR
+PeerCollabGetContact proto WINAPI :PCWSTR, :ptr
+PeerCollabUpdateContact proto WINAPI :PCPEER_CONTACT
+PeerCollabEnumContacts proto WINAPI :ptr
+PeerCollabExportContact proto WINAPI :PCWSTR, :ptr
+PeerCollabParseContact proto WINAPI :PCWSTR, :ptr
+endif
 
-;HRESULT
-PeerCollabRegisterEvent proto WINAPI \
-		hEvent: HANDLE,
-    cEventRegistration: DWORD,
-   pEventRegistrations: ptr PEER_COLLAB_EVENT_REGISTRATION,
-	   phPeerEvent: ptr HPEEREVENT
-
-
-PeerCollabGetEventData proto WINAPI \
-	    hPeerEvent: HPEEREVENT,
-	   ppEventData: ptr PPEER_COLLAB_EVENT_DATA
-
-
-PeerCollabUnregisterEvent proto WINAPI \
-	    hPeerEvent: HPEEREVENT
-
-
-PeerCollabEnumPeopleNearMe proto WINAPI \
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerCollabAddContact proto WINAPI \
-	pwzContactData: PCWSTR,
-	     ppContact: ptr PPEER_CONTACT
-
-
-PeerCollabDeleteContact proto WINAPI \
-	   pwzPeerName: PCWSTR
-
-
-PeerCollabGetContact proto WINAPI \
-	   pwzPeerName: PCWSTR,
-	     ppContact: ptr PPEER_CONTACT
-
-
-PeerCollabUpdateContact proto WINAPI \
-	      pContact: PCPEER_CONTACT
-
-
-PeerCollabEnumContacts proto WINAPI \
-	    phPeerEnum: ptr HPEERENUM
-
-
-PeerCollabExportContact proto WINAPI \
-	   pwzPeerName: PCWSTR,
-       ppwzContactData: ptr PWSTR
-
-
-PeerCollabParseContact proto WINAPI \
-	pwzContactData: PCWSTR,
-	     ppContact: ptr PPEER_CONTACT
-
-
-endif ;; MIDL_PASS
 endif ;; NO_P2P_COLLABORATION
-
 
 ifndef	 MIDL_PASS
 ifndef	 NO_P2P_PNRP
@@ -1384,65 +845,18 @@ payload			PEER_DATA <>
 PEER_PNRP_REGISTRATION_INFO ENDS
 PPEER_PNRP_REGISTRATION_INFO typedef ptr PEER_PNRP_REGISTRATION_INFO
 
-
-;HRESULT
-PeerNameToPeerHostName proto WINAPI \
-	   pwzPeerName: PCWSTR,
-	  ppwzHostName: ptr PWSTR
-
-
-PeerHostNameToPeerName proto WINAPI \
-	   pwzHostName: PCWSTR,
-	  ppwzPeerName: ptr PWSTR
-
-
-PeerPnrpStartup proto WINAPI \
-     wVersionRequested: WORD
-
-
+PeerNameToPeerHostName proto WINAPI :PCWSTR, :ptr
+PeerHostNameToPeerName proto WINAPI :PCWSTR, :ptr
+PeerPnrpStartup proto WINAPI :WORD
 PeerPnrpShutdown proto WINAPI
-
-PeerPnrpRegister proto WINAPI \
-	  pcwzPeerName: PCWSTR,
-     pRegistrationInfo: PPEER_PNRP_REGISTRATION_INFO,
-	phRegistration: ptr HREGISTRATION
-
-
-PeerPnrpUpdateRegistration proto WINAPI \
-	 hRegistration: HREGISTRATION,
-     pRegistrationInfo: PPEER_PNRP_REGISTRATION_INFO
-
-
-PeerPnrpUnregister proto WINAPI \
-	 hRegistration: HREGISTRATION
-
-
-PeerPnrpResolve proto WINAPI \
-	  pcwzPeerName: PCWSTR,
-	 pcwzCloudName: PCWSTR,
-	   pcEndpoints: ptr ULONG,
-	   ppEndpoints: ptr PPEER_PNRP_ENDPOINT_INFO
-
-PeerPnrpStartResolve proto WINAPI \
-	  pcwzPeerName: PCWSTR,
-	 pcwzCloudName: PCWSTR,
-	 cMaxEndpoints: ULONG,
-		hEvent: HANDLE,
-	     phResolve: ptr HRESOLUTION
-
-
-PeerPnrpGetCloudInfo proto WINAPI \
-	   pcNumClouds: ptr ULONG,
-	   ppCloudInfo: ptr PPEER_PNRP_CLOUD_INFO
-
-PeerPnrpGetEndpoint proto WINAPI \
-	      hResolve: HRESOLUTION,
-	    ppEndpoint: ptr PPEER_PNRP_ENDPOINT_INFO
-
-
-PeerPnrpEndResolve proto WINAPI \
-	      hResolve: HRESOLUTION
-
+PeerPnrpRegister proto WINAPI :PCWSTR, :PPEER_PNRP_REGISTRATION_INFO, :ptr
+PeerPnrpUpdateRegistration proto WINAPI :HREGISTRATION, :PPEER_PNRP_REGISTRATION_INFO
+PeerPnrpUnregister proto WINAPI :HREGISTRATION
+PeerPnrpResolve proto WINAPI :PCWSTR, :PCWSTR, :ptr, :ptr
+PeerPnrpStartResolve proto WINAPI :PCWSTR, :PCWSTR, :ULONG, :HANDLE, :ptr
+PeerPnrpGetCloudInfo proto WINAPI :ptr, :ptr
+PeerPnrpGetEndpoint proto WINAPI :HRESOLUTION, :ptr
+PeerPnrpEndResolve proto WINAPI :HRESOLUTION
 
 endif ;; NO_P2P_PNRP
 endif ;; MIDL_PASS

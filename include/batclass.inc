@@ -160,37 +160,13 @@ else
 BATTERYCLASSAPI		equ 1
 endif
 
-BatteryClassInitializeDevice proto WINAPI \
-	  MiniportInfo: PBATTERY_MINIPORT_INFO,
-	     ClassData: ptr PVOID
-
-BatteryClassUnload proto WINAPI \
-	     ClassData: PVOID
-
-BatteryClassIoctl proto WINAPI \
-	     ClassData: PVOID,
-		  _Irp: PVOID ;PIRP
-
+BatteryClassInitializeDevice proto WINAPI :PBATTERY_MINIPORT_INFO, :ptr
+BatteryClassUnload proto WINAPI :ptr
+BatteryClassIoctl proto WINAPI :ptr, :ptr
 if (NTDDI_VERSION GE NTDDI_WINXP)
-
-BatteryClassSystemControl proto WINAPI \
-	     ClassData: PVOID,
-	 WmiLibContext: PVOID,
-	  DeviceObject: PVOID, ;PDEVICE_OBJECT,
-		  _Irp: PVOID, ;PIRP,
-	   Disposition: PVOID
-
-BatteryClassQueryWmiDataBlock proto WINAPI \
-	     ClassData: PVOID,
-	  DeviceObject: PVOID, ;PDEVICE_OBJECT,
-		  _Irp: PVOID, ;PIRP,
-	     GuidIndex: ULONG,
-   InstanceLengthArray: PULONG,
-	 OutBufferSize: ULONG,
-		Buffer: PUCHAR
-
+BatteryClassSystemControl proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr
+BatteryClassQueryWmiDataBlock proto WINAPI :ptr, :ptr, :ptr, :ULONG, :PULONG, :ULONG, :PUCHAR
 endif
-
 BatteryClassStatusNotify proto WINAPI :PVOID
 
 endif

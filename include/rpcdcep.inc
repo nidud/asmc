@@ -31,12 +31,7 @@ RPC_MESSAGE		ENDS
 PRPC_MESSAGE		typedef ptr RPC_MESSAGE
 
 
-CALLBACK(RPC_FORWARD_FUNCTION, \
-	InterfaceId:ptr UUID, \
-	InterfaceVersion:ptr RPC_VERSION, \
-	ObjectId:ptr UUID, \
-	Rpcpro:LPBYTE, \
-	ppDestEndpoint:PVOID)
+CALLBACK(RPC_FORWARD_FUNCTION, :ptr, :ptr, :ptr, :LPBYTE, :ptr)
 
 RPC_NCA_FLAGS_DEFAULT	equ 0x00000000
 RPC_NCA_FLAGS_IDEMPOTENT equ 0x00000001
@@ -109,146 +104,54 @@ Flags			UINT ?
 RPC_CLIENT_INTERFACE	ENDS
 PRPC_CLIENT_INTERFACE	typedef ptr RPC_CLIENT_INTERFACE
 
-;RPC_STATUS
-I_RpcGetBuffer proto WINAPI \
-	       Message: ptr RPC_MESSAGE
+I_RpcGetBuffer proto WINAPI :ptr
+I_RpcSendReceive proto WINAPI :ptr
+I_RpcFreeBuffer proto WINAPI :ptr
+I_RpcSend proto WINAPI :ptr
+I_RpcReceive proto WINAPI :PRPC_MESSAGE, :UINT
+I_RpcFreePipeBuffer proto WINAPI :ptr
+I_RpcReallocPipeBuffer proto WINAPI :PRPC_MESSAGE, :UINT
 
-;RPC_STATUS
-I_RpcSendReceive proto WINAPI \
-	       Message: ptr RPC_MESSAGE
+I_RPC_MUTEX typedef ptr
 
-;RPC_STATUS
-I_RpcFreeBuffer proto WINAPI \
-	       Message: ptr RPC_MESSAGE
-
-;RPC_STATUS
-I_RpcSend proto WINAPI \
-	       Message: PRPC_MESSAGE ;
-
-;RPC_STATUS
-I_RpcReceive proto WINAPI \
-	       Message: PRPC_MESSAGE,
-		  Size: UINT
-
-;RPC_STATUS
-I_RpcFreePipeBuffer proto WINAPI \
-	       Message: ptr RPC_MESSAGE ;
-
-;RPC_STATUS
-I_RpcReallocPipeBuffer proto WINAPI \
-	       Message: PRPC_MESSAGE,
-	       NewSize: UINT
-
-I_RPC_MUTEX		typedef PVOID
-
-;void
-I_RpcRequestMutex proto WINAPI \
-		 Mutex: ptr I_RPC_MUTEX
-
-;void
-I_RpcClearMutex proto WINAPI \
-		 Mutex: I_RPC_MUTEX
-
-;void
-I_RpcDeleteMutex proto WINAPI \
-		 Mutex: I_RPC_MUTEX
-
-;PVOID
-I_RpcAllocate proto WINAPI \
-		   Size: UINT
-
-;void
-I_RpcFree proto WINAPI \
-		Object: PVOID
-
-;void
-I_RpcPauseExecution proto WINAPI \
-	  Milliseconds: ULONG
+I_RpcRequestMutex proto WINAPI :ptr
+I_RpcClearMutex proto WINAPI :I_RPC_MUTEX
+I_RpcDeleteMutex proto WINAPI :I_RPC_MUTEX
+I_RpcAllocate proto WINAPI :UINT
+I_RpcFree proto WINAPI :ptr
+I_RpcPauseExecution proto WINAPI :ULONG
 
 CALLBACK(PRPC_RUNDOWN, AssociationContext:PVOID)
 
-;RPC_STATUS
-I_RpcMonitorAssociation proto WINAPI \
-		Handle: RPC_BINDING_HANDLE,
-	RundownRoutine: PRPC_RUNDOWN,
-	       Context: PVOID
-
-;RPC_STATUS
-I_RpcStopMonitorAssociation proto WINAPI \
-		Handle: RPC_BINDING_HANDLE
-
-;RPC_BINDING_HANDLE
+I_RpcMonitorAssociation proto WINAPI :RPC_BINDING_HANDLE, :PRPC_RUNDOWN, :ptr
+I_RpcStopMonitorAssociation proto WINAPI :RPC_BINDING_HANDLE
 I_RpcGetCurrentCallHandle proto WINAPI
-
-;RPC_STATUS
-I_RpcGetAssociationContext proto WINAPI \
-	 BindingHandle: RPC_BINDING_HANDLE,
-    AssociationContext: PVOID
-
-;PVOID
-I_RpcGetServerContextList proto WINAPI \
-	 BindingHandle: RPC_BINDING_HANDLE
-
-;void
-I_RpcSetServerContextList proto WINAPI \
-	 BindingHandle: RPC_BINDING_HANDLE,
-     ServerContextList: PVOID
+I_RpcGetAssociationContext proto WINAPI :RPC_BINDING_HANDLE, :ptr
+I_RpcGetServerContextList proto WINAPI :RPC_BINDING_HANDLE
+I_RpcSetServerContextList proto WINAPI :RPC_BINDING_HANDLE, :ptr
 
 ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-I_RpcNsBindingSetEntryNameW proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-       EntryNameSyntax: ULONG,
-	     EntryName: LPWORD
-
-;RPC_STATUS
-I_RpcNsBindingSetEntryNameA proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-       EntryNameSyntax: ULONG,
-	     EntryName: LPBYTE
-
+I_RpcNsBindingSetEntryNameW proto WINAPI :RPC_BINDING_HANDLE, :ULONG, :LPWORD
+I_RpcNsBindingSetEntryNameA proto WINAPI :RPC_BINDING_HANDLE, :ULONG, :LPBYTE
 ifdef _UNICODE
 I_RpcNsBindingSetEntryName equ <I_RpcNsBindingSetEntryNameW>
 else
 I_RpcNsBindingSetEntryName equ <I_RpcNsBindingSetEntryNameA>
 endif
-
 else
-
-;RPC_STATUS
-I_RpcNsBindingSetEntryName proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-       EntryNameSyntax: ULONG,
-	     EntryName: LPBYTE
-
+I_RpcNsBindingSetEntryName proto WINAPI :RPC_BINDING_HANDLE, :ULONG, :LPBYTE
 endif
 
 ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-I_RpcBindingInqDynamicEndpointW proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-       DynamicEndpoint: LPWORD
-
-;RPC_STATUS
-I_RpcBindingInqDynamicEndpointA proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-       DynamicEndpoint: LPBYTE
-
+I_RpcBindingInqDynamicEndpointW proto WINAPI :RPC_BINDING_HANDLE, :LPWORD
+I_RpcBindingInqDynamicEndpointA proto WINAPI :RPC_BINDING_HANDLE, :LPBYTE
 ifdef _UNICODE
 I_RpcBindingInqDynamicEndpoint equ <I_RpcBindingInqDynamicEndpointW>
 else
 I_RpcBindingInqDynamicEndpoint equ <I_RpcBindingInqDynamicEndpointA>
 endif
-
 else
-
-;RPC_STATUS
-I_RpcBindingInqDynamicEndpoint proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-       DynamicEndpoint: LPBYTE
-
+I_RpcBindingInqDynamicEndpoint proto WINAPI :RPC_BINDING_HANDLE, :LPBYTE
 endif
 
 TRANSPORT_TYPE_CN	equ 0x01
@@ -256,10 +159,7 @@ TRANSPORT_TYPE_DG	equ 0x02
 TRANSPORT_TYPE_LPC	equ 0x04
 TRANSPORT_TYPE_WMSG	equ 0x08
 
-;RPC_STATUS
-I_RpcBindingInqTransportType proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-		  Type: ptr UINT
+I_RpcBindingInqTransportType proto WINAPI :RPC_BINDING_HANDLE, :ptr
 
 RPC_TRANSFER_SYNTAX	STRUC
 Uuid			UUID <>
@@ -267,130 +167,44 @@ VersMajor		dw ?
 VersMinor		dw ?
 RPC_TRANSFER_SYNTAX	ENDS
 
-;RPC_STATUS
-I_RpcIfInqTransferSyntaxes proto WINAPI \
-	   RpcIfHandle: RPC_IF_HANDLE,
-      TransferSyntaxes: ptr RPC_TRANSFER_SYNTAX,
-    TransferSyntaxSize: UINT,
-   TransferSyntaxCount: ptr UINT
-
-;RPC_STATUS
-I_UuidCreate proto WINAPI \
-		  Uuid: ptr UUID
-
-;RPC_STATUS
-I_RpcBindingCopy proto WINAPI \
-	 SourceBinding: RPC_BINDING_HANDLE,
-    DestinationBinding: ptr RPC_BINDING_HANDLE
-
-;RPC_STATUS
-I_RpcBindingIsClientLocal proto WINAPI \
-	 BindingHandle: RPC_BINDING_HANDLE,
-       ClientLocalFlag: ptr UINT
-
-;void
+I_RpcIfInqTransferSyntaxes proto WINAPI :RPC_IF_HANDLE, :ptr, :UINT, :ptr
+I_UuidCreate proto WINAPI :ptr
+I_RpcBindingCopy proto WINAPI :RPC_BINDING_HANDLE, :ptr
+I_RpcBindingIsClientLocal proto WINAPI :RPC_BINDING_HANDLE, :ptr
 I_RpcSsDontSerializeContext proto WINAPI
-
-;RPC_STATUS
-I_RpcLaunchDatagramReceiveThread proto WINAPI \
-	      pAddress: PVOID
-
-;RPC_STATUS
-I_RpcServerRegisterForwardFunction proto WINAPI \
-      pForwardFunction: ptr RPC_FORWARD_FUNCTION
-
-
-;RPC_STATUS
-I_RpcConnectionInqSockBuffSize proto WINAPI \
-	  RecvBuffSize: ptr ULONG,
-	  SendBuffSize: ptr ULONG
-
-;RPC_STATUS
-I_RpcConnectionSetSockBuffSize proto WINAPI \
-	  RecvBuffSize: ULONG,
-	  SendBuffSize: ULONG
+I_RpcLaunchDatagramReceiveThread proto WINAPI :ptr
+I_RpcServerRegisterForwardFunction proto WINAPI :ptr
+I_RpcConnectionInqSockBuffSize proto WINAPI :ptr, :ptr
+I_RpcConnectionSetSockBuffSize proto WINAPI :ULONG, :ULONG
 
 ifdef WINNT
 ifdef MSWMSG
-;RPC_STATUS
-I_RpcServerStartListening proto WINAPI \
-		  hWnd: HWND
-
-;RPC_STATUS
+I_RpcServerStartListening proto WINAPI :HWND
 I_RpcServerStopListening proto WINAPI
+I_RpcGetThreadWindowHandle proto WINAPI :ptr
+I_RpcAsyncSendReceive proto WINAPI :PRPC_MESSAGE, :ptr, :HWND
 
+CALLBACK(RPC_BLOCKING_FN, :ptr, :ptr, :HANDLE)
 
-;RPC_STATUS
-I_RpcGetThreadWindowHandle proto WINAPI \
-	  WindowHandle: ptr HWND
-
-;RPC_STATUS
-I_RpcAsyncSendReceive proto WINAPI \
-	   pRpcMessage: PRPC_MESSAGE,
-	       Context: PVOID,
-		  hWnd: HWND
-
-CALLBACK(RPC_BLOCKING_FN, wnd:PVOID, Context:PVOID, hSyncEvent:HANDLE)
-
-;RPC_STATUS
-I_RpcBindingSetAsync proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-	    BlockingFn: RPC_BLOCKING_FN
-
-;LONG
-I_RpcWindowProc proto WINAPI \
-		  hWnd: HWND,
-	       Message: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM ;
-
-;RPC_STATUS
-I_RpcSetWMsgEndpoint proto WINAPI \
-	      Endpoint: ptr WCHAR ;
+I_RpcBindingSetAsync proto WINAPI :RPC_BINDING_HANDLE, :RPC_BLOCKING_FN
+I_RpcWindowProc proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
+I_RpcSetWMsgEndpoint proto WINAPI :ptr
 endif
 
 else
-
-;RPC_STATUS
-I_RpcServerStartListening proto WINAPI \
-		  hWnd: PVOID ;
-
-;RPC_STATUS
+I_RpcServerStartListening proto WINAPI :ptr
 I_RpcServerStopListening proto WINAPI
 
-CALLBACK(RPC_BLOCKING_FN, hWnd:PVOID, Context:PVOID, hSyncEvent:PVOID)
+CALLBACK(RPC_BLOCKING_FN, :ptr, :ptr, :ptr)
 
-;RPC_STATUS
-I_RpcBindingSetAsync proto WINAPI \
-	       Binding: RPC_BINDING_HANDLE,
-	    BlockingFn: RPC_BLOCKING_FN,
-	     ServerTid: ULONG
-
-;RPC_STATUS
-I_RpcSetThreadParams proto WINAPI \
-	   fClientFree: SINT,
-	       Context: PVOID,
-	    hWndClient: PVOID
-
-;UINT
-I_RpcWindowProc proto WINAPI \
-		  hWnd: PVOID,
-	       Message: UINT,
-		wParam: UINT,
-		lParam: ULONG
+I_RpcBindingSetAsync proto WINAPI :RPC_BINDING_HANDLE, :RPC_BLOCKING_FN, :ULONG
+I_RpcSetThreadParams proto WINAPI :SINT, :ptr, :ptr
+I_RpcWindowProc proto WINAPI :ptr, :UINT, :UINT, :ULONG
 endif
 
 ifndef WINNT
-;RPC_STATUS
-I_RpcServerUnregisterEndpointA proto WINAPI \
-	       Protseq: LPBYTE,
-	      Endpoint: LPBYTE
-
-;RPC_STATUS
-I_RpcServerUnregisterEndpointW proto WINAPI \
-	       Protseq: LPWORD,
-	      Endpoint: LPWORD
-
+I_RpcServerUnregisterEndpointA proto WINAPI :LPBYTE, :LPBYTE
+I_RpcServerUnregisterEndpointW proto WINAPI :LPWORD, :LPWORD
 ifdef _UNICODE
 I_RpcServerUnregisterEndpoint equ <I_RpcServerUnregisterEndpointW>
 else
@@ -398,8 +212,6 @@ I_RpcServerUnregisterEndpoint equ <I_RpcServerUnregisterEndpointA>
 endif
 endif
 
-;RPC_STATUS
-I_RpcServerInqTransportType proto WINAPI \
-		   Type: LPDWORD
+I_RpcServerInqTransportType proto WINAPI :LPDWORD
 
 endif

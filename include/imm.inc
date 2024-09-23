@@ -1,24 +1,25 @@
 .pragma list(push, 0)
 
 ifndef __LIBC_INC
- include libc.inc
+include libc.inc
 endif
 ifndef _WINDEF_
- include windef.inc
+include windef.inc
 endif
+
 ifndef _IMM_
 define _IMM_
 
 if (WINVER GE 0x40A)
-HIMC			typedef HANDLE
-HIMCC			typedef HANDLE
+HIMC		typedef HANDLE
+HIMCC		typedef HANDLE
 else
-HIMC			typedef DWORD
-HIMCC			typedef DWORD
+HIMC		typedef DWORD
+HIMCC		typedef DWORD
 endif
 
-LPHKL			typedef ptr HKL
-LPUINT			typedef ptr UINT
+LPHKL		typedef ptr HKL
+LPUINT		typedef ptr UINT
 
 
 COMPOSITIONFORM		STRUC
@@ -98,7 +99,7 @@ NPRECONVERTSTRING	typedef ptr RECONVERTSTRING
 LPRECONVERTSTRING	typedef ptr RECONVERTSTRING
 endif
 
-STYLE_DESCRIPTION_SIZE	equ 32
+define STYLE_DESCRIPTION_SIZE 32
 
 STYLEBUFA		STRUC
 dwStyle			dd ?
@@ -128,7 +129,8 @@ endif
 
 
 if(WINVER GE 0x040A)
-IMEMENUITEM_STRING_SIZE equ 80
+
+define IMEMENUITEM_STRING_SIZE 80
 
 IMEMENUITEMINFOA	STRUC
 cbSize			UINT ?
@@ -172,438 +174,196 @@ endif
 endif
 
 
-ImmInstallIMEA proto WINAPI \
-       lpszIMEFileName: LPCSTR,
-	lpszLayoutText: LPCSTR
-ImmInstallIMEW proto WINAPI \
-       lpszIMEFileName: LPCWSTR,
-	lpszLayoutText: LPCWSTR
+ImmInstallIMEA proto WINAPI :LPCSTR, :LPCSTR
+ImmInstallIMEW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-ImmInstallIME		equ <ImmInstallIMEW>
+define ImmInstallIME <ImmInstallIMEW>
 else
-ImmInstallIME		equ <ImmInstallIMEA>
+define ImmInstallIME <ImmInstallIMEA>
 endif
 
-;HWND
-ImmGetDefaultIMEWnd proto WINAPI \
-		      : HWND
-
-;UINT
-ImmGetDescriptionA proto WINAPI \
-		      : HKL,
-		      : LPSTR,
-	       uBufLen: UINT
-;UINT
-ImmGetDescriptionW proto WINAPI \
-		      : HKL,
-		      : LPWSTR,
-	       uBufLen: UINT
+ImmGetDefaultIMEWnd proto WINAPI :HWND
+ImmGetDescriptionA proto WINAPI :HKL, :LPSTR, :UINT
+ImmGetDescriptionW proto WINAPI :HKL, :LPWSTR, :UINT
 ifdef _UNICODE
-ImmGetDescription	equ <ImmGetDescriptionW>
+define ImmGetDescription <ImmGetDescriptionW>
 else
-ImmGetDescription	equ <ImmGetDescriptionA>
+define ImmGetDescription <ImmGetDescriptionA>
 endif
 
-;UINT
-ImmGetIMEFileNameA proto WINAPI \
-		      : HKL,
-		      : LPSTR,
-	       uBufLen: UINT
-;UINT
-ImmGetIMEFileNameW proto WINAPI \
-		      : HKL,
-		      : LPWSTR,
-	       uBufLen: UINT
+ImmGetIMEFileNameA proto WINAPI :HKL, :LPSTR, :UINT
+ImmGetIMEFileNameW proto WINAPI :HKL, :LPWSTR, :UINT
 ifdef _UNICODE
-ImmGetIMEFileName	equ <ImmGetIMEFileNameW>
+define ImmGetIMEFileName <ImmGetIMEFileNameW>
 else
-ImmGetIMEFileName	equ <ImmGetIMEFileNameA>
+define ImmGetIMEFileName <ImmGetIMEFileNameA>
 endif
 
-;DWORD
-ImmGetProperty proto WINAPI \
-		      : HKL,
-		      : DWORD
-
-;BOOL
-ImmIsIME proto WINAPI \
-		      : HKL
-;BOOL
-ImmSimulateHotKey proto WINAPI \
-		      : HWND,
-		      : DWORD
-;HIMC
+ImmGetProperty proto WINAPI :HKL, :DWORD
+ImmIsIME proto WINAPI :HKL
+ImmSimulateHotKey proto WINAPI :HWND, :DWORD
 ImmCreateContext proto WINAPI
-;BOOL
-ImmDestroyContext proto WINAPI \
-			: HIMC
-;HIMC
-ImmGetContext proto WINAPI \
-		      : HWND
-;BOOL
-ImmReleaseContext proto WINAPI \
-		      : HWND,
-		      : HIMC
-;HIMC
-ImmAssociateContext proto WINAPI \
-		      : HWND,
-		      : HIMC
+ImmDestroyContext proto WINAPI :HIMC
+ImmGetContext proto WINAPI :HWND
+ImmReleaseContext proto WINAPI :HWND, :HIMC
+ImmAssociateContext proto WINAPI :HWND, :HIMC
 if(WINVER GE 0x040A)
-;BOOL
-ImmAssociateContextEx proto WINAPI \
-		      : HWND,
-		      : HIMC,
-		      : DWORD
+ImmAssociateContextEx proto WINAPI :HWND, :HIMC, :DWORD
 endif
-
-;LONG
-ImmGetCompositionStringA proto WINAPI \
-		      : HIMC,
-		      : DWORD,
-		      : LPVOID,
-		      : DWORD
-ImmGetCompositionStringW proto WINAPI \
-		      : HIMC,
-		      : DWORD,
-		      : LPVOID,
-		      : DWORD
+ImmGetCompositionStringA proto WINAPI :HIMC, :DWORD, :ptr, :DWORD
+ImmGetCompositionStringW proto WINAPI :HIMC, :DWORD, :ptr, :DWORD
 ifdef _UNICODE
-ImmGetCompositionString equ <ImmGetCompositionStringW>
+define ImmGetCompositionString <ImmGetCompositionStringW>
 else
-ImmGetCompositionString equ <ImmGetCompositionStringA>
+define ImmGetCompositionString <ImmGetCompositionStringA>
 endif
 
-;BOOL
-ImmSetCompositionStringA proto WINAPI \
-		      : HIMC,
-	       dwIndex: DWORD,
-		lpComp: LPCVOID,
-		      : DWORD,
-		lpRead: LPCVOID,
-		      : DWORD
-ImmSetCompositionStringW proto WINAPI \
-		      : HIMC,
-	       dwIndex: DWORD,
-		lpComp: LPCVOID,
-		      : DWORD,
-		lpRead: LPCVOID,
-		      : DWORD
+ImmSetCompositionStringA proto WINAPI :HIMC, :DWORD, :ptr, :DWORD, :ptr, :DWORD
+ImmSetCompositionStringW proto WINAPI :HIMC, :DWORD, :ptr, :DWORD, :ptr, :DWORD
 ifdef _UNICODE
-ImmSetCompositionString equ <ImmSetCompositionStringW>
+define ImmSetCompositionString <ImmSetCompositionStringW>
 else
-ImmSetCompositionString equ <ImmSetCompositionStringA>
+define ImmSetCompositionString <ImmSetCompositionStringA>
 endif
 
-;DWORD
-ImmGetCandidateListCountA proto WINAPI \
-		      : HIMC,
-	 lpdwListCount: LPDWORD
-ImmGetCandidateListCountW proto WINAPI \
-		      : HIMC,
-	 lpdwListCount: LPDWORD
+ImmGetCandidateListCountA proto WINAPI :HIMC, :LPDWORD
+ImmGetCandidateListCountW proto WINAPI :HIMC, :LPDWORD
 ifdef _UNICODE
-ImmGetCandidateListCount equ <ImmGetCandidateistCountW>
+define ImmGetCandidateListCount <ImmGetCandidateistCountW>
 else
-ImmGetCandidateListCount equ <ImmGetCandidateistCountA>
+define ImmGetCandidateListCount <ImmGetCandidateistCountA>
 endif
 
-;DWORD
-ImmGetCandidateListA proto WINAPI \
-		      : HIMC,
-	       deIndex: DWORD,
-		      : LPCANDIDATELIST,
-	      dwBufLen: DWORD
-ImmGetCandidateListW proto WINAPI \
-		      : HIMC,
-	       deIndex: DWORD,
-		      : LPCANDIDATELIST,
-	      dwBufLen: DWORD
+ImmGetCandidateListA proto WINAPI :HIMC, :DWORD, :LPCANDIDATELIST, :DWORD
+ImmGetCandidateListW proto WINAPI :HIMC, :DWORD, :LPCANDIDATELIST, :DWORD
 ifdef _UNICODE
-ImmGetCandidateList	equ <ImmGetCandidateistW>
+define ImmGetCandidateList <ImmGetCandidateistW>
 else
-ImmGetCandidateList	equ <ImmGetCandidateistA>
+define ImmGetCandidateList <ImmGetCandidateistA>
 endif
 
-;DWORD
-ImmGetGuideLineA proto WINAPI \
-		      : HIMC,
-	       dwIndex: DWORD,
-		      : LPSTR,
-	      dwBufLen: DWORD
-ImmGetGuideLineW proto WINAPI \
-		      : HIMC,
-	       dwIndex: DWORD,
-		      : LPWSTR,
-	      dwBufLen: DWORD
+ImmGetGuideLineA proto WINAPI :HIMC, :DWORD, :LPSTR, :DWORD
+ImmGetGuideLineW proto WINAPI :HIMC, :DWORD, :LPWSTR, :DWORD
 ifdef _UNICODE
-ImmGetGuideLine		equ <ImmGetGuideineW>
+define ImmGetGuideLine <ImmGetGuideineW>
 else
-ImmGetGuideLine		equ <ImmGetGuideineA>
+define ImmGetGuideLine <ImmGetGuideineA>
 endif
 
-;BOOL
-ImmGetConversionStatus proto WINAPI \
-		      : HIMC,
-		      : LPDWORD,
-		      : LPDWORD
-;BOOL
-ImmSetConversionStatus proto WINAPI \
-		      : HIMC,
-		      : DWORD,
-		      : DWORD
-;BOOL
-ImmSetOpenStatus proto WINAPI \
-		      : HIMC,
-		      : BOOL
+ImmGetConversionStatus proto WINAPI :HIMC, :LPDWORD, :LPDWORD
+ImmSetConversionStatus proto WINAPI :HIMC, :DWORD, :DWORD
+ImmSetOpenStatus proto WINAPI :HIMC, :BOOL
 
 ifdef _WINGDI_
 ifndef NOGDI
-;BOOL
-ImmGetCompositionFontA proto WINAPI \
-		      : HIMC,
-		      : LPLOGFONTA
-ImmGetCompositionFontW proto WINAPI \
-		      : HIMC,
-		      : LPLOGFONTW
+ImmGetCompositionFontA proto WINAPI :HIMC, :LPLOGFONTA
+ImmGetCompositionFontW proto WINAPI :HIMC, :LPLOGFONTW
 ifdef _UNICODE
-ImmGetCompositionFont	equ <ImmGetCompositionFontW>
+define ImmGetCompositionFont <ImmGetCompositionFontW>
 else
-ImmGetCompositionFont	equ <ImmGetCompositionFontA>
+define ImmGetCompositionFont <ImmGetCompositionFontA>
 endif
 
-;BOOL
-ImmSetCompositionFontA proto WINAPI \
-		      : HIMC,
-		      : LPLOGFONTA
-ImmSetCompositionFontW proto WINAPI \
-		      : HIMC,
-		      : LPLOGFONTW
+ImmSetCompositionFontA proto WINAPI :HIMC, :LPLOGFONTA
+ImmSetCompositionFontW proto WINAPI :HIMC, :LPLOGFONTW
 ifdef _UNICODE
-ImmSetCompositionFont	equ <ImmSetCompositionFontW>
+define ImmSetCompositionFont <ImmSetCompositionFontW>
 else
-ImmSetCompositionFont	equ <ImmSetCompositionFontA>
+define ImmSetCompositionFont <ImmSetCompositionFontA>
 endif
 endif
 endif
 
-;BOOL
-ImmConfigureIMEA proto WINAPI \
-		      : HKL,
-		      : HWND,
-		      : DWORD,
-		      : LPVOID
-ImmConfigureIMEW proto WINAPI \
-		      : HKL,
-		      : HWND,
-		      : DWORD,
-		      : LPVOID
+ImmConfigureIMEA proto WINAPI :HKL, :HWND, :DWORD, :ptr
+ImmConfigureIMEW proto WINAPI :HKL, :HWND, :DWORD, :ptr
 ifdef _UNICODE
-ImmConfigureIME		equ <ImmConfigureIMEW>
+define ImmConfigureIME <ImmConfigureIMEW>
 else
-ImmConfigureIME		equ <ImmConfigureIMEA>
+define ImmConfigureIME <ImmConfigureIMEA>
 endif
 
-;LRESULT
-ImmEscapeA proto WINAPI \
-		      : HKL,
-		      : HIMC,
-		      : UINT,
-		      : LPVOID
-ImmEscapeW proto WINAPI \
-		      : HKL,
-		      : HIMC,
-		      : UINT,
-		      : LPVOID
+ImmEscapeA proto WINAPI :HKL, :HIMC, :UINT, :ptr
+ImmEscapeW proto WINAPI :HKL, :HIMC, :UINT, :ptr
 ifdef _UNICODE
-ImmEscape		equ <ImmEscapeW>
+define ImmEscape <ImmEscapeW>
 else
-ImmEscape		equ <ImmEscapeA>
+define ImmEscape <ImmEscapeA>
 endif
 
-;DWORD
-ImmGetConversionListA proto WINAPI \
-		      : HKL,
-		      : HIMC,
-		      : LPCSTR,
-		      : LPCANDIDATELIST,
-	      dwBufLen: DWORD,
-		 uFlag: UINT
-ImmGetConversionListW proto WINAPI \
-		      : HKL,
-		      : HIMC,
-		      : LPCWSTR,
-		      : LPCANDIDATELIST,
-	      dwBufLen: DWORD,
-		 uFlag: UINT
+ImmGetConversionListA proto WINAPI :HKL, :HIMC, :LPCSTR, :LPCANDIDATELIST, :DWORD, :UINT
+ImmGetConversionListW proto WINAPI :HKL, :HIMC, :LPCWSTR,:LPCANDIDATELIST, :DWORD, :UINT
 ifdef _UNICODE
-ImmGetConversionList	equ <ImmGetConversionListW>
+define ImmGetConversionList <ImmGetConversionListW>
 else
-ImmGetConversionList	equ <ImmGetConversionListA>
+define ImmGetConversionList <ImmGetConversionListA>
 endif
 
-;BOOL
-ImmNotifyIME proto WINAPI \
-		      : HIMC,
-	      dwAction: DWORD,
-	       dwIndex: DWORD,
-	       dwValue: DWORD
+ImmNotifyIME proto WINAPI :HIMC, :DWORD, :DWORD, :DWORD
+ImmGetStatusWindowPos proto WINAPI :HIMC, :LPPOINT
+ImmSetStatusWindowPos proto WINAPI :HIMC, :LPPOINT
+ImmGetCompositionWindow proto WINAPI :HIMC, :LPCOMPOSITIONFORM
+ImmSetCompositionWindow proto WINAPI :HIMC, :LPCOMPOSITIONFORM
+ImmGetCandidateWindow proto WINAPI :HIMC, :DWORD, :LPCANDIDATEFORM
+ImmSetCandidateWindow proto WINAPI :HIMC, :LPCANDIDATEFORM
 
-
-;BOOL
-ImmGetStatusWindowPos proto WINAPI \
-		      : HIMC,
-		      : LPPOINT
-;BOOL
-ImmSetStatusWindowPos proto WINAPI \
-		      : HIMC,
-		      : LPPOINT
-;BOOL
-ImmGetCompositionWindow proto WINAPI \
-		      : HIMC,
-		      : LPCOMPOSITIONFORM
-;BOOL
-ImmSetCompositionWindow proto WINAPI \
-		      : HIMC,
-		      : LPCOMPOSITIONFORM
-;BOOL
-ImmGetCandidateWindow proto WINAPI \
-		      : HIMC,
-		      : DWORD,
-		      : LPCANDIDATEFORM
-;BOOL
-ImmSetCandidateWindow proto WINAPI \
-		      : HIMC,
-		      : LPCANDIDATEFORM
-
-;BOOL
-ImmIsUIMessageA proto WINAPI \
-		      : HWND,
-		      : UINT,
-		      : WPARAM,
-		      : LPARAM
-;BOOL
-ImmIsUIMessageW proto WINAPI \
-		      : HWND,
-		      : UINT,
-		      : WPARAM,
-		      : LPARAM
+ImmIsUIMessageA proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
+ImmIsUIMessageW proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
-ImmIsUIMessage		equ <ImmIsUIMessageW>
+define ImmIsUIMessage <ImmIsUIMessageW>
 else
-ImmIsUIMessage		equ <ImmIsUIMessageA>
+define ImmIsUIMessage <ImmIsUIMessageA>
 endif
 
-
-;UINT
-
-CALLBACK(REGISTERWORDENUMPROCA, lpszReading:LPCSTR, :DWORD, lpszRegister:LPCSTR, :LPVOID)
-CALLBACK(REGISTERWORDENUMPROCW, lpszReading:LPCWSTR, :DWORD, lpszRegister:LPCWSTR, :LPVOID)
+CALLBACK(REGISTERWORDENUMPROCA, :LPCSTR, :DWORD, :LPCSTR, :ptr)
+CALLBACK(REGISTERWORDENUMPROCW, :LPCWSTR, :DWORD, :LPCWSTR, :ptr)
 ifdef _UNICODE
-REGISTERWORDENUMPROC	equ <<REGISTERWORDENUMPROCW>
+define REGISTERWORDENUMPROC <REGISTERWORDENUMPROCW>
 else
-REGISTERWORDENUMPROC	equ <<REGISTERWORDENUMPROCA>
+define REGISTERWORDENUMPROC <REGISTERWORDENUMPROCA>
 endif
 
-;BOOL
-ImmRegisterWordA proto WINAPI \
-		      : HKL,
-	   lpszReading: LPCSTR,
-		      : DWORD,
-	  lpszRegister: LPCSTR
-ImmRegisterWordW proto WINAPI \
-		      : HKL,
-	   lpszReading: LPCWSTR,
-		      : DWORD,
-	  lpszRegister: LPCWSTR
+ImmRegisterWordA proto WINAPI :HKL, :LPCSTR, :DWORD, :LPCSTR
+ImmRegisterWordW proto WINAPI :HKL, :LPCWSTR, :DWORD, :LPCWSTR
 ifdef _UNICODE
-ImmRegisterWord		equ <ImmRegisterWordW>
+define ImmRegisterWord <ImmRegisterWordW>
 else
-ImmRegisterWord		equ <ImmRegisterWordA>
+define ImmRegisterWord <ImmRegisterWordA>
 endif
 
-;BOOL
-ImmUnregisterWordA proto WINAPI \
-		      : HKL,
-	   lpszReading: LPCSTR,
-		      : DWORD,
-	lpszUnregister: LPCSTR
-;BOOL
-ImmUnregisterWordW proto WINAPI \
-		      : HKL,
-	   lpszReading: LPCWSTR,
-		      : DWORD,
-	lpszUnregister: LPCWSTR
+ImmUnregisterWordA proto WINAPI :HKL, :LPCSTR, :DWORD, :LPCSTR
+ImmUnregisterWordW proto WINAPI :HKL, :LPCWSTR, :DWORD, :LPCWSTR
 ifdef _UNICODE
-ImmUnregisterWord	equ <ImmUnregisterWordW>
+define ImmUnregisterWord <ImmUnregisterWordW>
 else
-ImmUnregisterWord	equ <ImmUnregisterWordA>
+define ImmUnregisterWord <ImmUnregisterWordA>
 endif
 
-;UINT
-ImmGetRegisterWordStyleA proto WINAPI \
-		      : HKL,
-		 nItem: UINT,
-		      : LPSTYLEBUFA
-;UINT
-ImmGetRegisterWordStyleW proto WINAPI \
-		      : HKL,
-		 nItem: UINT,
-		      : LPSTYLEBUFW
+ImmGetRegisterWordStyleA proto WINAPI :HKL, :UINT, :LPSTYLEBUFA
+ImmGetRegisterWordStyleW proto WINAPI :HKL, :UINT, :LPSTYLEBUFW
 ifdef _UNICODE
-ImmGetRegisterWordStyle equ <ImmGetRegisterWordStyleW>
+define ImmGetRegisterWordStyle <ImmGetRegisterWordStyleW>
 else
-ImmGetRegisterWordStyle equ <ImmGetRegisterWordStyleA>
+define ImmGetRegisterWordStyle <ImmGetRegisterWordStyleA>
 endif
 
-;UINT
-ImmEnumRegisterWordA proto WINAPI \
-		      : HKL,
-		      : REGISTERWORDENUMPROCA,
-	   lpszReading: LPCSTR,
-		      : DWORD,
-	  lpszRegister: LPCSTR,
-		      : LPVOID
-;UINT
-ImmEnumRegisterWordW proto WINAPI \
-		      : HKL,
-		      : REGISTERWORDENUMPROCW,
-	   lpszReading: LPCWSTR,
-		      : DWORD,
-	  lpszRegister: LPCWSTR,
-		      : LPVOID
+ImmEnumRegisterWordA proto WINAPI :HKL, :REGISTERWORDENUMPROCA, :LPCSTR, :DWORD, :LPCSTR, :ptr
+ImmEnumRegisterWordW proto WINAPI :HKL, :REGISTERWORDENUMPROCW, :LPCWSTR, :DWORD, :LPCWSTR, :ptr
 ifdef _UNICODE
-ImmEnumRegisterWord	equ <ImmEnumRegisterWordW>
+define ImmEnumRegisterWord <ImmEnumRegisterWordW>
 else
-ImmEnumRegisterWord	equ <ImmEnumRegisterWordA>
+define ImmEnumRegisterWord <ImmEnumRegisterWordA>
 endif
 
 if(WINVER GE 0x040A)
-;BOOL
-;DWORD
-ImmGetImeMenuItemsA proto WINAPI \
-		      : HIMC,
-		      : DWORD,
-		      : DWORD,
-		      : LPIMEMENUITEMINFOA,
-		      : LPIMEMENUITEMINFOA,
-		      : DWORD
-;DWORD
-ImmGetImeMenuItemsW proto WINAPI \
-		      : HIMC,
-		      : DWORD,
-		      : DWORD,
-		      : LPIMEMENUITEMINFOW,
-		      : LPIMEMENUITEMINFOW,
-		      : DWORD
+ImmGetImeMenuItemsA proto WINAPI :HIMC, :DWORD, :DWORD, :LPIMEMENUITEMINFOA, :LPIMEMENUITEMINFOA, :DWORD
+ImmGetImeMenuItemsW proto WINAPI :HIMC, :DWORD, :DWORD, :LPIMEMENUITEMINFOW, :LPIMEMENUITEMINFOW, :DWORD
 ifdef _UNICODE
-ImmGetImeMenuItems	equ <ImmGetImeMenuItemsW>
+define ImmGetImeMenuItems <ImmGetImeMenuItemsW>
 else
-ImmGetImeMenuItems	equ <ImmGetImeMenuItemsA>
+define ImmGetImeMenuItems <ImmGetImeMenuItemsA>
 endif
 
 endif
-
-
 
 IMC_GETCANDIDATEPOS	equ 0x0007
 IMC_SETCANDIDATEPOS	equ 0x0008
@@ -897,8 +657,8 @@ IMFS_UNHILITE		equ MFS_UNHILITE
 IMFS_DEFAULT		equ MFS_DEFAULT
 endif
 
-SOFTKEYBOARD_TYPE_T1	equ 0x0001
-SOFTKEYBOARD_TYPE_C1	equ 0x0002
+define SOFTKEYBOARD_TYPE_T1 0x0001
+define SOFTKEYBOARD_TYPE_C1 0x0002
 
 endif
 .pragma list(pop)

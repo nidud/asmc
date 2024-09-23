@@ -114,107 +114,50 @@ CALLBACK(PENABLECALLBACK)
 ifndef _APISET_EVENTING
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
 if (WINVER GE _WIN32_WINNT_VISTA)
-
-EventRegister proto __cdecl \
-	    ProviderId: LPCGUID,
-	EnableCallback: PENABLECALLBACK,
-       CallbackContext: PVOID,
-	     RegHandle: PREGHANDLE
-
+EventRegister proto __cdecl :LPCGUID, :PENABLECALLBACK, :ptr, :PREGHANDLE
 endif
-
 if (WINVER GE _WIN32_WINNT_VISTA)
-;ULONG
-EventUnregister proto __cdecl \
-	     RegHandle: REGHANDLE
-
+EventUnregister proto __cdecl :REGHANDLE
 endif
-
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-;ULONG
-EventSetInformation proto __cdecl \
-	     RegHandle: REGHANDLE,
-      InformationClass: EVENT_INFO_CLASS,
-      EventInformation: PVOID,
-     InformationLength: ULONG
-
+EventSetInformation proto __cdecl :REGHANDLE, :EVENT_INFO_CLASS, :ptr, :ULONG
+endif
 endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 if (WINVER GE _WIN32_WINNT_VISTA)
-EventEnabled proto __cdecl \
-	     RegHandle: REGHANDLE,
-       EventDescriptor: PCEVENT_DESCRIPTOR
-
+EventEnabled proto __cdecl :REGHANDLE, :PCEVENT_DESCRIPTOR
 endif
 
 if (WINVER GE _WIN32_WINNT_VISTA)
-EventProviderEnabled proto __cdecl \
-	     RegHandle: REGHANDLE,
-		 Level: UCHAR,
-	       Keyword: ULONGLONG
-
+EventProviderEnabled proto __cdecl :REGHANDLE, :UCHAR, :ULONGLONG
 endif
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if (WINVER GE _WIN32_WINNT_VISTA)
-
-EventWrite proto __cdecl \
-	     RegHandle: REGHANDLE,
-       EventDescriptor: PCEVENT_DESCRIPTOR,
-	 UserDataCount: ULONG,
-	      UserData: PEVENT_DATA_DESCRIPTOR
+EventWrite proto __cdecl :REGHANDLE, :PCEVENT_DESCRIPTOR, :ULONG, :PEVENT_DATA_DESCRIPTOR
 endif
 
 if (WINVER GE _WIN32_WINNT_VISTA)
-
-EventWriteTransfer proto __cdecl \
-	     RegHandle: REGHANDLE,
-       EventDescriptor: PCEVENT_DESCRIPTOR,
-	    ActivityId: LPCGUID,
-     RelatedActivityId: LPCGUID,
-	 UserDataCount: ULONG,
-	      UserData: PEVENT_DATA_DESCRIPTOR
+EventWriteTransfer proto __cdecl :REGHANDLE, :PCEVENT_DESCRIPTOR, :LPCGUID, :LPCGUID, :ULONG, :PEVENT_DATA_DESCRIPTOR
 endif
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-EventWriteEx proto __cdecl \
-	     RegHandle: REGHANDLE,
-       EventDescriptor: PCEVENT_DESCRIPTOR,
-		Filter: ULONG64,
-		 Flags: ULONG,
-	    ActivityId: LPCGUID,
-     RelatedActivityId: LPCGUID,
-	 UserDataCount: ULONG,
-	      UserData: PEVENT_DATA_DESCRIPTOR
+EventWriteEx proto __cdecl :REGHANDLE, :PCEVENT_DESCRIPTOR, :ULONG64, :ULONG, :LPCGUID, :LPCGUID, :ULONG, :PEVENT_DATA_DESCRIPTOR
 endif
 
 if (WINVER GE _WIN32_WINNT_VISTA)
-
-EventWriteString proto __cdecl \
-	     RegHandle: REGHANDLE,
-		 Level: UCHAR,
-	       Keyword: ULONGLONG,
-		String: PCWSTR
-
+EventWriteString proto __cdecl :REGHANDLE, :UCHAR, :ULONGLONG, :PCWSTR
 endif
 
 if (WINVER GE _WIN32_WINNT_VISTA)
-
-EventActivityIdControl proto __cdecl \
-	   ControlCode: ULONG,
-	    ActivityId: LPGUID
-
+EventActivityIdControl proto __cdecl :ULONG, :LPGUID
 endif
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -222,82 +165,28 @@ endif ;; _APISET_EVENTING
 endif ;; _ETW_KM_
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-EventDataDescCreate proto __cdecl \
-   EventDataDescriptor: PEVENT_DATA_DESCRIPTOR,
-	       DataPtr: PVOID,
-	      DataSize: ULONG
-
+EventDataDescCreate proto __cdecl :PEVENT_DATA_DESCRIPTOR, :ptr, :ULONG
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-EventDescCreate proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-		    Id: USHORT,
-	       Version: UCHAR,
-	       Channel: UCHAR,
-		 Level: UCHAR,
-		  Task: USHORT,
-		Opcode: UCHAR,
-	       Keyword: ULONGLONG
-
+EventDescCreate proto __cdecl :PEVENT_DESCRIPTOR, :USHORT, :UCHAR, :UCHAR, :UCHAR, :USHORT, :UCHAR, :ULONGLONG
 EventDescZero proto __cdecl
-
-
-EventDescGetId proto __cdecl \
-       EventDescriptor: PCEVENT_DESCRIPTOR
-
-EventDescGetVersion proto __cdecl \
-       EventDescriptor: PCEVENT_DESCRIPTOR
-
-EventDescGetTask proto __cdecl \
-       EventDescriptor: PCEVENT_DESCRIPTOR
-
-EventDescGetOpcode proto __cdecl \
-       EventDescriptor: PCEVENT_DESCRIPTOR
-
-EventDescGetChannel proto __cdecl \
-       EventDescriptor: PCEVENT_DESCRIPTOR
-
-EventDescGetLevel proto __cdecl \
-       EventDescriptor: PCEVENT_DESCRIPTOR
-
-EventDescGetKeyword proto __cdecl \
-       EventDescriptor: PCEVENT_DESCRIPTOR
-
-
-EventDescSetId proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-		    Id: USHORT
-
-EventDescSetVersion proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-	       Version: UCHAR
-
-EventDescSetTask proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-		  Task: USHORT
-
-EventDescSetOpcode proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-		Opcode: UCHAR
-
-EventDescSetLevel proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-		 Level: UCHAR
-
-EventDescSetChannel proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-	       Channel: UCHAR
-
-EventDescSetKeyword proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-	       Keyword: ULONGLONG
-
-EventDescOrKeyword proto __cdecl \
-       EventDescriptor: PEVENT_DESCRIPTOR,
-	       Keyword: ULONGLONG
+EventDescGetId proto __cdecl :PCEVENT_DESCRIPTOR
+EventDescGetVersion proto __cdecl :PCEVENT_DESCRIPTOR
+EventDescGetTask proto __cdecl :PCEVENT_DESCRIPTOR
+EventDescGetOpcode proto __cdecl :PCEVENT_DESCRIPTOR
+EventDescGetChannel proto __cdecl :PCEVENT_DESCRIPTOR
+EventDescGetLevel proto __cdecl :PCEVENT_DESCRIPTOR
+EventDescGetKeyword proto __cdecl :PCEVENT_DESCRIPTOR
+EventDescSetId proto __cdecl :PEVENT_DESCRIPTOR, :USHORT
+EventDescSetVersion proto __cdecl :PEVENT_DESCRIPTOR, :UCHAR
+EventDescSetTask proto __cdecl :PEVENT_DESCRIPTOR, :USHORT
+EventDescSetOpcode proto __cdecl :PEVENT_DESCRIPTOR, :UCHAR
+EventDescSetLevel proto __cdecl :PEVENT_DESCRIPTOR, :UCHAR
+EventDescSetChannel proto __cdecl :PEVENT_DESCRIPTOR, :UCHAR
+EventDescSetKeyword proto __cdecl :PEVENT_DESCRIPTOR, :ULONGLONG
+EventDescOrKeyword proto __cdecl :PEVENT_DESCRIPTOR, :ULONGLONG
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 endif ;; MIDL_PASS

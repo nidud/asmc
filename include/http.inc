@@ -147,14 +147,7 @@ HTTP_AUTH_ENABLE_DIGEST equ (0x00000002)
 HTTP_AUTH_ENABLE_NTLM	equ (0x00000004)
 HTTP_AUTH_ENABLE_NEGOTIATE equ (0x00000008)
 HTTP_AUTH_ENABLE_KERBEROS equ (0x00000010)
-
-HTTP_AUTH_ENABLE_ALL equ \
-	(HTTP_AUTH_ENABLE_BASIC or \
-	 HTTP_AUTH_ENABLE_DIGEST or \
-	 HTTP_AUTH_ENABLE_NTLM or \
-	 HTTP_AUTH_ENABLE_NEGOTIATEor \
-	 HTTP_AUTH_ENABLE_KERBEROS)
-
+HTTP_AUTH_ENABLE_ALL equ (HTTP_AUTH_ENABLE_BASIC or HTTP_AUTH_ENABLE_DIGEST or HTTP_AUTH_ENABLE_NTLM or HTTP_AUTH_ENABLE_NEGOTIATEor HTTP_AUTH_ENABLE_KERBEROS)
 
 C_ASSERT(HTTP_AUTH_ENABLE_NEGOTIATE gt HTTP_AUTH_ENABLE_NTLM)
 C_ASSERT(HTTP_AUTH_ENABLE_NTLM gt HTTP_AUTH_ENABLE_DIGEST)
@@ -1020,364 +1013,61 @@ PHTTP_SERVICE_CONFIG_CACHE_SET typedef ptr HTTP_SERVICE_CONFIG_CACHE_SET
 
 .pragma pack(pop)
 
-;ULONG
-HttpInitialize proto WINAPI \
-	       Version: HTTPAPI_VERSION,
-		 Flags: ULONG,
-	     pReserved: PVOID
-
-
-;ULONG
-HttpTerminate proto WINAPI \
-		 Flags: ULONG,
-	     pReserved: PVOID
-
-;ULONG
-HttpCreateHttpHandle proto WINAPI \
-       pReqQueueHandle: PHANDLE,
-	      Reserved: ULONG
-
-
+HttpInitialize proto WINAPI :HTTPAPI_VERSION, :ULONG, :ptr
+HttpTerminate proto WINAPI :ULONG, :ptr
+HttpCreateHttpHandle proto WINAPI :PHANDLE, :ULONG
 if _WIN32_WINNT GE 0x0600
-
-;ULONG
-HttpCreateRequestQueue proto WINAPI \
-	       Version: HTTPAPI_VERSION,
-		 pName: PCWSTR,
-   pSecurityAttributes: PSECURITY_ATTRIBUTES,
-		  Fags: ULONG,
-       pReqQueueHandle: PHANDLE
-
-
-;ULONG
-HttpCloseRequestQueue proto WINAPI \
-	ReqQueueHandle: HANDLE
-
-
-;ULONG
-HttpSetRequestQueueProperty proto WINAPI \
-		Handle: HANDLE,
-	      Property: HTTP_SERVER_PROPERTY,
-  pPropertyInformation: PVOID,
-PropertyInformationLength: ULONG,
-	      Reserved: ULONG,
-	     pReserved: PVOID
-
-
-;ULONG
-HttpQueryRequestQueueProperty proto WINAPI \
-		Handle: HANDLE,
-	      Property: HTTP_SERVER_PROPERTY,
-  pPropertyInformation: PVOID,
-PropertyInformationLength: ULONG,
-	      Reserved: ULONG,
-	 pReturnLength: PULONG,
-	     pReserved: PVOID
-
-
-;ULONG
-HttpShutdownRequestQueue proto WINAPI \
-	ReqQueueHandle: HANDLE
-
-
-endif ;; _WIN32_WINNT GE 0x0600
-
-;ULONG
-HttpReceiveClientCertificate proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	  ConnectionId: HTTP_CONNECTION_ID,
-		 Flags: ULONG,
-    pSslClientCertInfo: PHTTP_SSL_CLIENT_CERT_INFO,
- SslClientCertInfoSize: ULONG,
-	pBytesReceived: PULONG,
-	   pOverlapped: LPOVERLAPPED
-
-
+HttpCreateRequestQueue proto WINAPI :HTTPAPI_VERSION, :PCWSTR, :PSECURITY_ATTRIBUTES, :ULONG, :PHANDLE
+HttpCloseRequestQueue proto WINAPI :HANDLE
+HttpSetRequestQueueProperty proto WINAPI :HANDLE, :HTTP_SERVER_PROPERTY, :ptr, :ULONG, :ULONG, :ptr
+HttpQueryRequestQueueProperty proto WINAPI :HANDLE, :HTTP_SERVER_PROPERTY, :ptr, :ULONG, :ULONG, :PULONG, :ptr
+HttpShutdownRequestQueue proto WINAPI :HANDLE
+endif
+HttpReceiveClientCertificate proto WINAPI :HANDLE, :HTTP_CONNECTION_ID, :ULONG, :ptr, :ULONG, :PULONG, :LPOVERLAPPED
 if _WIN32_WINNT GE 0x0600
-
-;ULONG
-HttpCreateServerSession proto WINAPI \
-	       Version: HTTPAPI_VERSION,
-      pServerSessionId: PHTTP_SERVER_SESSION_ID,
-	      Reserved: ULONG
-
-
-;ULONG
-HttpCloseServerSession proto WINAPI \
-       ServerSessionId: HTTP_SERVER_SESSION_ID
-
-
-;ULONG
-HttpQueryServerSessionProperty proto WINAPI \
-       ServerSessionId: HTTP_SERVER_SESSION_ID,
-	      Property: HTTP_SERVER_PROPERTY,
-  pPropertyInformation: PVOID,
-PropertyInformationLength: ULONG,
-	 pReturnLength: PULONG
-
-
-;ULONG
-HttpSetServerSessionProperty proto WINAPI \
-       ServerSessionId: HTTP_SERVER_SESSION_ID,
-	      Property: HTTP_SERVER_PROPERTY,
-  pPropertyInformation: PVOID,
-PropertyInformationLength: ULONG
-
-
-endif ;; _WIN32_WINNT GE 0x0600
-
-;ULONG
-HttpAddUrl proto WINAPI \
-	ReqQueueHandle: HANDLE,
-    pFullyQualifiedUrl: PCWSTR,
-	     pReserved: PVOID
-
-
-;ULONG
-HttpRemoveUrl proto WINAPI \
-	ReqQueueHandle: HANDLE,
-    pFullyQualifiedUrl: PCWSTR
-
-
+HttpCreateServerSession proto WINAPI :HTTPAPI_VERSION, :PHTTP_SERVER_SESSION_ID, :ULONG
+HttpCloseServerSession proto WINAPI :HTTP_SERVER_SESSION_ID
+HttpQueryServerSessionProperty proto WINAPI :HTTP_SERVER_SESSION_ID, :HTTP_SERVER_PROPERTY, :ptr, :ULONG, :PULONG
+HttpSetServerSessionProperty proto WINAPI :HTTP_SERVER_SESSION_ID, :HTTP_SERVER_PROPERTY, :ptr, :ULONG
+endif
+HttpAddUrl proto WINAPI :HANDLE, :PCWSTR, :ptr
+HttpRemoveUrl proto WINAPI :HANDLE, :PCWSTR
 if _WIN32_WINNT GE 0x0600
-
-;ULONG
-HttpCreateUrlGroup proto WINAPI \
-       ServerSessionId: HTTP_SERVER_SESSION_ID,
-	   pUrlGroupId: PHTTP_URL_GROUP_ID,
-	      Reserved: ULONG
-
-
-;ULONG
-HttpCloseUrlGroup proto WINAPI \
-	    UrlGroupId: HTTP_URL_GROUP_ID
-
-
-;ULONG
-HttpAddUrlToUrlGroup proto WINAPI \
-	    UrlGroupId: HTTP_URL_GROUP_ID,
-    pFullyQualifiedUrl: PCWSTR,
-	    UrlContext: HTTP_URL_CONTEXT,
-	      Reserved: ULONG
-
-
-;ULONG
-HttpRemoveUrlFromUrlGroup proto WINAPI \
-	    UrlGroupId: HTTP_URL_GROUP_ID,
-    pFullyQualifiedUrl: PCWSTR,
-		 Flags: ULONG
-
-
-;ULONG
-HttpSetUrlGroupProperty proto WINAPI \
-	    UrlGroupId: HTTP_URL_GROUP_ID,
-	      Property: HTTP_SERVER_PROPERTY,
-  pPropertyInformation: PVOID,
-PropertyInformationLength: ULONG
-
-
-;ULONG
-HttpQueryUrlGroupProperty proto WINAPI \
-	    UrlGroupId: HTTP_URL_GROUP_ID,
-	      Property: HTTP_SERVER_PROPERTY,
-  pPropertyInformation: PVOID,
-PropertyInformationLength: ULONG,
-	 pReturnLength: PULONG
-
-
-endif ;; _WIN32_WINNT GE 0x0600
-
+HttpCreateUrlGroup proto WINAPI :HTTP_SERVER_SESSION_ID, :PHTTP_URL_GROUP_ID, :ULONG
+HttpCloseUrlGroup proto WINAPI :HTTP_URL_GROUP_ID
+HttpAddUrlToUrlGroup proto WINAPI :HTTP_URL_GROUP_ID, :PCWSTR, :HTTP_URL_CONTEXT, :ULONG
+HttpRemoveUrlFromUrlGroup proto WINAPI :HTTP_URL_GROUP_ID, :PCWSTR, :ULONG
+HttpSetUrlGroupProperty proto WINAPI :HTTP_URL_GROUP_ID, :HTTP_SERVER_PROPERTY, :ptr, :ULONG
+HttpQueryUrlGroupProperty proto WINAPI :HTTP_URL_GROUP_ID, :HTTP_SERVER_PROPERTY, :ptr, :ULONG, :PULONG
+endif
 if _WIN32_WINNT GE _WIN32_WINNT_WIN8
-
-;ULONG
-HttpPrepareUrl proto WINAPI \
-	      Reserved: PVOID,
-		 Flags: ULONG,
-		   Url: PCWSTR,
-	   PreparedUrl: ptr PWSTR
-
+HttpPrepareUrl proto WINAPI :ptr, :ULONG, :PCWSTR, :ptr
 endif
-
-;ULONG
-HttpReceiveHttpRequest proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	     RequestId: HTTP_REQUEST_ID,
-		 Flags: ULONG,
-	pRequestBuffer: PHTTP_REQUEST,
-   RequestBufferLength: ULONG,
-	pBytesReturned: PULONG,
-	   pOverlapped: LPOVERLAPPED
-
-
-;ULONG
-HttpReceiveRequestEntityBody proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	     RequestId: HTTP_REQUEST_ID,
-		 Flags: ULONG,
-	       pBuffer: PVOID,
-    EntityBufferLength: ULONG,
-	pBytesReturned: PULONG,
-	   pOverlapped: LPOVERLAPPED
-
-
+HttpReceiveHttpRequest proto WINAPI :HANDLE, :HTTP_REQUEST_ID, :ULONG, :PHTTP_REQUEST, :ULONG, :PULONG, :LPOVERLAPPED
+HttpReceiveRequestEntityBody proto WINAPI :HANDLE, :HTTP_REQUEST_ID, :ULONG, :ptr, :ULONG, :PULONG, :LPOVERLAPPED
 if _WIN32_WINNT GE 0x0600
-
-;ULONG
-HttpSendHttpResponse proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	     RequestId: HTTP_REQUEST_ID,
-		 Flags: ULONG,
-	 pHttpResponse: PHTTP_RESPONSE,
-	  pCachePolicy: PHTTP_CACHE_POLICY,
-	    pBytesSent: PULONG,
-	    pReserved1: PVOID,
-	     Reserved2: ULONG,
-	   pOverlapped: LPOVERLAPPED,
-	      pLogData: PHTTP_LOG_DATA
-
-
+HttpSendHttpResponse proto WINAPI :HANDLE, :HTTP_REQUEST_ID, :ULONG, :ptr, :ptr, :PULONG, :ptr, :ULONG, :ptr, :ptr
 else
-
-;ULONG
-HttpSendHttpResponse proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	     RequestId: HTTP_REQUEST_ID,
-		 Flags: ULONG,
-	 pHttpResponse: PHTTP_RESPONSE,
-	    pReserved1: PVOID,
-	    pBytesSent: PULONG,
-	    pReserved2: PVOID,
-	     Reserved3: ULONG,
-	   pOverlapped: LPOVERLAPPED,
-	    pReserved4: PVOID
-
-
+HttpSendHttpResponse proto WINAPI :HANDLE, :HTTP_REQUEST_ID, :ULONG, :ptr, :ptr, :PULONG, :ptr, :ULONG, :ptr, :ptr
 endif
-
 if _WIN32_WINNT GE 0x0600
-
-;ULONG
-HttpSendResponseEntityBody proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	     RequestId: HTTP_REQUEST_ID,
-		 Flags: ULONG,
-      EntityChunkCount: USHORT,
-	 pEntityChunks: PHTTP_DATA_CHUNK,
-	    pBytesSent: PULONG,
-	    pReserved1: PVOID,
-	     Reserved2: ULONG,
-	   pOverlapped: LPOVERLAPPED,
-	      pLogData: PHTTP_LOG_DATA
-
-
+HttpSendResponseEntityBody proto WINAPI :HANDLE, :HTTP_REQUEST_ID, :ULONG, :USHORT, :ptr, :PULONG, :ptr, :ULONG, :ptr, :ptr
 else
-
-HttpSendResponseEntityBody proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	     RequestId: HTTP_REQUEST_ID,
-		 Flags: ULONG,
-      EntityChunkCount: USHORT,
-	 pEntityChunks: PHTTP_DATA_CHUNK,
-	    pBytesSent: PULONG,
-	    pReserved1: PVOID,
-	     Reserved2: ULONG,
-	   pOverlapped: LPOVERLAPPED,
-	    pReserved3: PVOID
-
-
+HttpSendResponseEntityBody proto WINAPI :HANDLE, :HTTP_REQUEST_ID, :ULONG, :USHORT, :ptr, :PULONG, :ptr, :ULONG, :ptr, :ptr
 endif
-
-;ULONG
-HttpWaitForDisconnect proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	  ConnectionId: HTTP_CONNECTION_ID,
-	   pOverlapped: LPOVERLAPPED
-
-
+HttpWaitForDisconnect proto WINAPI :HANDLE, :HTTP_CONNECTION_ID, :LPOVERLAPPED
 if _WIN32_WINNT GE 0x0600
-
-;ULONG
-HttpWaitForDisconnectEx proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	  ConnectionId: HTTP_CONNECTION_ID,
-	      Reserved: ULONG,
-	   pOverlapped: LPOVERLAPPED
-
-
-;ULONG
-HttpCancelHttpRequest proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	     RequestId: HTTP_REQUEST_ID,
-	   pOverlapped: LPOVERLAPPED
-
-
-;ULONG
-HttpWaitForDemandStart proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	   pOverlapped: LPOVERLAPPED
-
-
-
+HttpWaitForDisconnectEx proto WINAPI :HANDLE, :HTTP_CONNECTION_ID, :ULONG, :LPOVERLAPPED
+HttpCancelHttpRequest proto WINAPI :HANDLE, :HTTP_REQUEST_ID, :LPOVERLAPPED
+HttpWaitForDemandStart proto WINAPI :HANDLE, :LPOVERLAPPED
 endif
-
-;ULONG
-HttpFlushResponseCache proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	    pUrlPrefix: PCWSTR,
-		 Flags: ULONG,
-	   pOverlapped: LPOVERLAPPED
-
-
-;ULONG
-HttpAddFragmentToCache proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	    pUrlPrefix: PCWSTR,
-	    pDataChunk: PHTTP_DATA_CHUNK,
-	  pCachePolicy: PHTTP_CACHE_POLICY,
-	   pOverlapped: LPOVERLAPPED
-
-
-;ULONG
-HttpReadFragmentFromCache proto WINAPI \
-	ReqQueueHandle: HANDLE,
-	    pUrlPrefix: PCWSTR,
-	    pByteRange: PHTTP_BYTE_RANGE,
-	       pBuffer: PVOID,
-	  BufferLength: ULONG,
-	    pBytesRead: PULONG,
-	   pOverlapped: LPOVERLAPPED
-
-
-;ULONG
-HttpSetServiceConfiguration proto WINAPI \
-	 ServiceHandle: HANDLE,
-	      ConfigId: HTTP_SERVICE_CONFIG_ID,
-    pConfigInformation: PVOID,
-ConfigInformationLength: ULONG,
-	   pOverlapped: LPOVERLAPPED
-
-;ULONG
-HttpDeleteServiceConfiguration proto WINAPI \
-	 ServiceHandle: HANDLE,
-	      ConfigId: HTTP_SERVICE_CONFIG_ID,
-    pConfigInformation: PVOID,
-ConfigInformationLength: ULONG,
-	   pOverlapped: LPOVERLAPPED
-
-
-;ULONG
-HttpQueryServiceConfiguration proto WINAPI \
-	 ServiceHandle: HANDLE,
-	      ConfigId: HTTP_SERVICE_CONFIG_ID,
-		pInput: PVOID,
-	   InputLength: ULONG,
-	       pOutput: PVOID,
-	  OutputLength: ULONG,
-	 pReturnLength: PULONG,
-	   pOverlapped: LPOVERLAPPED
-
+HttpFlushResponseCache proto WINAPI :HANDLE, :PCWSTR, :ULONG, :LPOVERLAPPED
+HttpAddFragmentToCache proto WINAPI :HANDLE, :PCWSTR, :PHTTP_DATA_CHUNK, :PHTTP_CACHE_POLICY, :LPOVERLAPPED
+HttpReadFragmentFromCache proto WINAPI :HANDLE, :PCWSTR, :ptr, :ptr, :ULONG, :PULONG, :LPOVERLAPPED
+HttpSetServiceConfiguration proto WINAPI :HANDLE, :HTTP_SERVICE_CONFIG_ID, :ptr, :ULONG, :LPOVERLAPPED
+HttpDeleteServiceConfiguration proto WINAPI :HANDLE, :HTTP_SERVICE_CONFIG_ID, :ptr, :ULONG, :LPOVERLAPPED
+HttpQueryServiceConfiguration proto WINAPI :HANDLE, :HTTP_SERVICE_CONFIG_ID, :ptr, :ULONG, :ptr, :ULONG, :ptr, :ptr
 endif
-
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 endif ;; __HTTP_H__

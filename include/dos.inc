@@ -31,8 +31,12 @@ endif
 endif
 
 ifdef _M_IX86
-_disable proto __cdecl
-_enable  proto __cdecl
+_disable proto fastcall {
+    cli
+    }
+_enable proto fastcall {
+    sti
+    }
 endif
 
 if (__STDC__ eq 0)

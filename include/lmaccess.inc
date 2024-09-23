@@ -3,103 +3,17 @@ define _LMUSER_
 
 include lmcons.inc
 
-;NET_API_STATUS
-NetUserAdd proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-
-;NET_API_STATUS
-NetUserEnum proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		filter: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
-
-;NET_API_STATUS
-NetUserGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	      username: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-
-;NET_API_STATUS
-NetUserSetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	      username: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-
-;NET_API_STATUS
-NetUserDel proto WINAPI \
-	    servername: LPCWSTR,
-	      username: LPCWSTR
-
-
-;NET_API_STATUS
-NetUserGetGroups proto WINAPI \
-	    servername: LPCWSTR,
-	      username: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD
-
-
-;NET_API_STATUS
-NetUserSetGroups proto WINAPI \
-	    servername: LPCWSTR,
-	      username: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	   num_entries: DWORD
-
-
-;NET_API_STATUS
-NetUserGetLocalGroups proto WINAPI \
-	    servername: LPCWSTR,
-	      username: LPCWSTR,
-		 level: DWORD,
-		 flags: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD
-
-
-;NET_API_STATUS
-NetUserModalsGet proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-
-;NET_API_STATUS
-NetUserModalsSet proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-
-;NET_API_STATUS
-NetUserChangePassword proto WINAPI \
-	    domainname: LPCWSTR,
-	      username: LPCWSTR,
-	   oldpassword: LPCWSTR,
-	   newpassword: LPCWSTR
-
+NetUserAdd proto WINAPI :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetUserEnum proto WINAPI :LPCWSTR, :DWORD, :DWORD, :ptr LPBYTE, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetUserGetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPBYTE
+NetUserSetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetUserDel proto WINAPI :LPCWSTR, :LPCWSTR
+NetUserGetGroups proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD
+NetUserSetGroups proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :DWORD
+NetUserGetLocalGroups proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD
+NetUserModalsGet proto WINAPI :LPCWSTR, :DWORD, :ptr LPBYTE
+NetUserModalsSet proto WINAPI :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetUserChangePassword proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
 
 USER_INFO_0		STRUC
 usri0_name		LPWSTR ?
@@ -517,9 +431,7 @@ UF_WORKSTATION_TRUST_ACCOUNT equ 0x1000
 UF_SERVER_TRUST_ACCOUNT equ 0x2000
 
 UF_MACHINE_ACCOUNT_MASK equ ( UF_INTERDOMAIN_TRUST_ACCOUNT OR UF_WORKSTATION_TRUST_ACCOUNT OR UF_SERVER_TRUST_ACCOUNT )
-UF_ACCOUNT_TYPE_MASK	equ ( UF_TEMP_DUPLICATE_ACCOUNT OR UF_NORMAL_ACCOUNT OR UF_INTERDOMAIN_TRUST_ACCOUNT OR \
-			      UF_WORKSTATION_TRUST_ACCOUNT OR UF_SERVER_TRUST_ACCOUNT )
-
+UF_ACCOUNT_TYPE_MASK	equ ( UF_TEMP_DUPLICATE_ACCOUNT OR UF_NORMAL_ACCOUNT OR UF_INTERDOMAIN_TRUST_ACCOUNT OR UF_WORKSTATION_TRUST_ACCOUNT OR UF_SERVER_TRUST_ACCOUNT )
 
 UF_DONT_EXPIRE_PASSWD	equ 0x10000
 UF_MNS_LOGON_ACCOUNT	equ 0x20000
@@ -534,12 +446,7 @@ UF_NO_AUTH_DATA_REQUIRED equ 0x2000000
 UF_PARTIAL_SECRETS_ACCOUNT equ 0x4000000
 UF_USE_AES_KEYS		equ 0x8000000
 
-UF_SETTABLE_BITS	equ ( UF_SCRIPT OR UF_ACCOUNTDISABLE OR UF_LOCKOUT OR UF_HOMEDIR_REQUIRED OR UF_PASSWD_NOTREQD OR \
-			      UF_PASSWD_CANT_CHANGE OR UF_ACCOUNT_TYPE_MASK OR UF_DONT_EXPIRE_PASSWD OR UF_MNS_LOGON_ACCOUNT OR \
-			      UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED OR UF_SMARTCARD_REQUIRED OR UF_TRUSTED_FOR_DELEGATION OR \
-			      UF_NOT_DELEGATED OR UF_USE_DES_KEY_ONLY OR UF_DONT_REQUIRE_PREAUTH OR UF_PASSWORD_EXPIRED OR \
-			      UF_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION OR UF_NO_AUTH_DATA_REQUIRED OR UF_USE_AES_KEYS OR \
-			      UF_PARTIAL_SECRETS_ACCOUNT )
+UF_SETTABLE_BITS	equ ( UF_SCRIPT OR UF_ACCOUNTDISABLE OR UF_LOCKOUT OR UF_HOMEDIR_REQUIRED OR UF_PASSWD_NOTREQD OR UF_PASSWD_CANT_CHANGE OR UF_ACCOUNT_TYPE_MASK OR UF_DONT_EXPIRE_PASSWD OR UF_MNS_LOGON_ACCOUNT OR UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED OR UF_SMARTCARD_REQUIRED OR UF_TRUSTED_FOR_DELEGATION OR UF_NOT_DELEGATED OR UF_USE_DES_KEY_ONLY OR UF_DONT_REQUIRE_PREAUTH OR UF_PASSWORD_EXPIRED OR UF_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION OR UF_NO_AUTH_DATA_REQUIRED OR UF_USE_AES_KEYS OR UF_PARTIAL_SECRETS_ACCOUNT )
 
 FILTER_TEMP_DUPLICATE_ACCOUNT equ (0x0001)
 FILTER_NORMAL_ACCOUNT	equ (0x0002)
@@ -675,82 +582,15 @@ endif ;; _LMUSER_
 ifndef _LMGROUP_
 define _LMGROUP_
 
-;NET_API_STATUS
-NetGroupAdd proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-
-;NET_API_STATUS
-NetGroupAddUser proto WINAPI \
-	    servername: LPCWSTR,
-	     GroupName: LPCWSTR,
-	      username: LPCWSTR
-
-
-;NET_API_STATUS
-NetGroupEnum proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: PDWORD_PTR
-
-
-;NET_API_STATUS
-NetGroupGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-
-;NET_API_STATUS
-NetGroupSetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-
-;NET_API_STATUS
-NetGroupDel proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR
-
-
-;NET_API_STATUS
-NetGroupDelUser proto WINAPI \
-	    servername: LPCWSTR,
-	     GroupName: LPCWSTR,
-	      Username: LPCWSTR
-
-
-;NET_API_STATUS
-NetGroupGetUsers proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  ResumeHandle: PDWORD_PTR
-
-
-;NET_API_STATUS
-NetGroupSetUsers proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	  totalentries: DWORD
-
+NetGroupAdd proto WINAPI :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetGroupAddUser proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR
+NetGroupEnum proto WINAPI :LPCWSTR, :DWORD, :ptr LPBYTE, :DWORD, :LPDWORD, :LPDWORD, :PDWORD_PTR
+NetGroupGetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPBYTE
+NetGroupSetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetGroupDel proto WINAPI :LPCWSTR, :LPCWSTR
+NetGroupDelUser proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR
+NetGroupGetUsers proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :PDWORD_PTR
+NetGroupSetUsers proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :DWORD
 
 GROUP_INFO_0		STRUC
 grpi0_name		LPWSTR ?
@@ -831,99 +671,17 @@ endif  ;; _LMGROUP_
 ifndef _LMLOCALGROUP_
 define _LMLOCALGROUP_
 
-;NET_API_STATUS
-NetLocalGroupAdd proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetLocalGroupAddMember proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-	     membersid: PSID
-
-
-;NET_API_STATUS
-NetLocalGroupEnum proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  resumehandle: PDWORD_PTR
-
-
-;NET_API_STATUS
-NetLocalGroupGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-
-;NET_API_STATUS
-NetLocalGroupSetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-
-;NET_API_STATUS
-NetLocalGroupDel proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR
-
-
-;NET_API_STATUS
-NetLocalGroupDelMember proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-	     membersid: PSID
-
-
-;NET_API_STATUS
-NetLocalGroupGetMembers proto WINAPI \
-	    servername: LPCWSTR,
-	localgroupname: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  resumehandle: PDWORD_PTR
-
-
-;NET_API_STATUS
-NetLocalGroupSetMembers proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	  totalentries: DWORD
-
-
-;NET_API_STATUS
-NetLocalGroupAddMembers proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	  totalentries: DWORD
-
-
-;NET_API_STATUS
-NetLocalGroupDelMembers proto WINAPI \
-	    servername: LPCWSTR,
-	     groupname: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	  totalentries: DWORD
-
+NetLocalGroupAdd proto WINAPI :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetLocalGroupAddMember proto WINAPI :LPCWSTR, :LPCWSTR, :PSID
+NetLocalGroupEnum proto WINAPI :LPCWSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :PDWORD_PTR
+NetLocalGroupGetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr
+NetLocalGroupSetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetLocalGroupDel proto WINAPI :LPCWSTR, :LPCWSTR
+NetLocalGroupDelMember proto WINAPI :LPCWSTR, :LPCWSTR, :PSID
+NetLocalGroupGetMembers proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPBYTE, :DWORD, :LPDWORD, :LPDWORD, :PDWORD_PTR
+NetLocalGroupSetMembers proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :DWORD
+NetLocalGroupAddMembers proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :DWORD
+NetLocalGroupDelMembers proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :DWORD
 
 LOCALGROUP_INFO_0	STRUC
 lgrpi0_name		LPWSTR ?
@@ -982,23 +740,8 @@ PLOCALGROUP_USERS_INFO_0 typedef ptr LOCALGROUP_USERS_INFO_0
 LOCALGROUP_NAME_PARMNUM equ 1
 LOCALGROUP_COMMENT_PARMNUM equ 2
 
-;NET_API_STATUS
-NetQueryDisplayInformation proto WINAPI \
-	    ServerName: LPCWSTR,
-		 Level: DWORD,
-		 Index: DWORD,
-      EntriesRequested: DWORD,
-PreferredMaximumLength: DWORD,
-    ReturnedEntryCount: LPDWORD,
-	  SortedBuffer: ptr PVOID
-
-
-;NET_API_STATUS
-NetGetDisplayInformationIndex proto WINAPI \
-	    ServerName: LPCWSTR,
-		 Level: DWORD,
-		Prefix: LPCWSTR,
-		 Index: LPDWORD
+NetQueryDisplayInformation proto WINAPI :LPCWSTR, :DWORD, :DWORD, :DWORD, :DWORD, :LPDWORD, :ptr
+NetGetDisplayInformationIndex proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :LPDWORD
 
 NET_DISPLAY_USER	STRUC
 usri1_name		LPWSTR ?
@@ -1033,56 +776,12 @@ endif  ;; _LMLOCALGROUP_
 ifndef _LMACCESS_
 define _LMACCESS_
 
-;NET_API_STATUS
-NetAccessAdd proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-
-;NET_API_STATUS
-NetAccessEnum proto WINAPI \
-	    servername: LPCWSTR,
-	      BasePath: LPCWSTR,
-	     Recursive: DWORD,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
-
-;NET_API_STATUS
-NetAccessGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	      resource: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-
-;NET_API_STATUS
-NetAccessSetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	      resource: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-
-;NET_API_STATUS
-NetAccessDel proto WINAPI \
-	    servername: LPCWSTR,
-	      resource: LPCWSTR
-
-
-;NET_API_STATUS
-NetAccessGetUserPerms proto WINAPI \
-	    servername: LPCWSTR,
-		UGname: LPCWSTR,
-	      resource: LPCWSTR,
-		 Perms: LPDWORD
+NetAccessAdd proto WINAPI :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetAccessEnum proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetAccessGetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPBYTE
+NetAccessSetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetAccessDel proto WINAPI :LPCWSTR, :LPCWSTR
+NetAccessGetUserPerms proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPDWORD
 
 ACCESS_INFO_0		STRUC
 acc0_resource_name	LPWSTR ?
@@ -1115,8 +814,7 @@ LPACCESS_LIST		typedef ptr ACCESS_LIST
 MAXPERMENTRIES		equ 64
 
 ACCESS_NONE		equ 0
-ACCESS_ALL		equ ( ACCESS_READ OR ACCESS_WRITE OR ACCESS_CREATE OR \
-			      ACCESS_EXEC OR ACCESS_DELETE OR ACCESS_ATRIB OR ACCESS_PERM )
+ACCESS_ALL		equ ( ACCESS_READ OR ACCESS_WRITE OR ACCESS_CREATE OR ACCESS_EXEC OR ACCESS_DELETE OR ACCESS_ATRIB OR ACCESS_PERM )
 
 ACCESS_READ		equ 0x01
 ACCESS_WRITE		equ 0x02
@@ -1226,61 +924,24 @@ ClearLockout		BOOLEAN ?
 NET_VALIDATE_PASSWORD_RESET_INPUT_ARG ENDS
 PNET_VALIDATE_PASSWORD_RESET_INPUT_ARG typedef ptr NET_VALIDATE_PASSWORD_RESET_INPUT_ARG
 
-;NET_API_STATUS
-NetValidatePasswordPolicy proto WINAPI \
-	    ServerName: LPCWSTR,
-	     Qualifier: LPVOID,
-	ValidationType: NET_VALIDATE_PASSWORD_TYPE,
-	      InputArg: LPVOID,
-	     OutputArg: ptr LPVOID
-
-;NET_API_STATUS
-NetValidatePasswordPolicyFree proto WINAPI \
-	     OutputArg: ptr LPVOID
-
+NetValidatePasswordPolicy proto WINAPI :LPCWSTR, :ptr, :NET_VALIDATE_PASSWORD_TYPE, :ptr, :ptr
+NetValidatePasswordPolicyFree proto WINAPI :ptr
 
 endif ;; _LMACCESS_
 
 ifndef _LMDOMAIN_
 define _LMDOMAIN_
 
-;NET_API_STATUS
-NetGetDCName proto WINAPI \
-	    servername: LPCWSTR,
-	    domainname: LPCWSTR,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetGetAnyDCName proto WINAPI \
-	    servername: LPCWSTR,
-	    domainname: LPCWSTR,
-		bufptr: ptr LPBYTE
-
-
-;NET_API_STATUS
-I_NetLogonControl proto WINAPI \
-	    ServerName: LPCWSTR,
-	  FunctionCode: DWORD,
-	    QueryLevel: DWORD,
-		Buffer: ptr LPBYTE
-
-;NET_API_STATUS
-I_NetLogonControl2 proto WINAPI \
-	    ServerName: LPCWSTR,
-	  FunctionCode: DWORD,
-	    QueryLevel: DWORD,
-		  Data: LPBYTE,
-		Buffer: ptr LPBYTE
-
+NetGetDCName proto WINAPI :LPCWSTR, :LPCWSTR, :ptr
+NetGetAnyDCName proto WINAPI :LPCWSTR, :LPCWSTR, :ptr
+I_NetLogonControl proto WINAPI :LPCWSTR, :DWORD, :DWORD, :ptr LPBYTE
+I_NetLogonControl2 proto WINAPI :LPCWSTR, :DWORD, :DWORD, :LPBYTE, :ptr LPBYTE
 ifndef _NTDEF_
 NTSTATUS  typedef LONG
 PNTSTATUS typedef ptr LONG
 endif
 
-;NET_API_FUNCTION
-NetEnumerateTrustedDomains proto WINAPI \
-	    ServerName: LPWSTR,
-	   DomainNames: ptr LPWSTR
+NetEnumerateTrustedDomains proto WINAPI :LPWSTR, :ptr LPWSTR
 
 NETLOGON_CONTROL_QUERY	equ 1
 NETLOGON_CONTROL_REPLICATE equ 2
@@ -1346,36 +1007,15 @@ NETLOGON_VERIFY_STATUS_RETURNED equ 0x80
 
 DEFINE_GUID(ServiceAccountPasswordGUID, 0x262E99C9, 0x6160, 0x4871, 0xAC, 0xEC, 0x4E, 0x61, 0x73, 0x6B, 0x6F, 0x21 )
 
-NetAddServiceAccount proto WINAPI \
-	    ServerName: LPWSTR,
-	   AccountName: LPWSTR,
-	      Reserved: LPWSTR,
-		 Flags: DWORD
+NetAddServiceAccount proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD
 
 SERVICE_ACCOUNT_FLAG_LINK_TO_HOST_ONLY equ 0x00000001
 SERVICE_ACCOUNT_FLAG_UNLINK_FROM_HOST_ONLY equ 0x00000001
 
-NetRemoveServiceAccount proto WINAPI \
-	    ServerName: LPWSTR,
-	   AccountName: LPWSTR,
-		 Flags: DWORD
-
-NetEnumerateServiceAccounts proto WINAPI \
-	    ServerName: LPWSTR,
-		 Flags: DWORD,
-	 AccountsCount: ptr DWORD,
-	      Accounts: ptr PZPWSTR
-
-NetIsServiceAccount proto WINAPI \
-	    ServerName: LPWSTR,
-	   AccountName: LPWSTR,
-	     IsService: ptr BOOL
-
-NetQueryServiceAccount proto WINAPI \
-	    ServerName: LPWSTR,
-	   AccountName: LPWSTR,
-	     InfoLevel: DWORD,
-		Buffer: ptr PBYTE
+NetRemoveServiceAccount proto WINAPI :LPWSTR, :LPWSTR, :DWORD
+NetEnumerateServiceAccounts proto WINAPI :LPWSTR, :DWORD, :ptr, :ptr
+NetIsServiceAccount proto WINAPI :LPWSTR, :LPWSTR, :ptr
+NetQueryServiceAccount proto WINAPI :LPWSTR, :LPWSTR, :DWORD, :ptr
 
 MSA_INFO_LEVEL		typedef SDWORD
 MsaInfoLevel0		equ 0

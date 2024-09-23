@@ -19,89 +19,38 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 THREAD_ORDER_GROUP_INFINITE_TIMEOUT equ (-1)
 
-AvSetMmThreadCharacteristicsA proto WINAPI \
-              TaskName: LPCSTR,
-             TaskIndex: LPDWORD
-
-AvSetMmThreadCharacteristicsW proto WINAPI \
-              TaskName: LPCWSTR,
-             TaskIndex: LPDWORD
-
+AvSetMmThreadCharacteristicsA proto WINAPI :LPCSTR, :LPDWORD
+AvSetMmThreadCharacteristicsW proto WINAPI :LPCWSTR, :LPDWORD
 ifdef _UNICODE
 AvSetMmThreadCharacteristics equ <AvSetMmThreadCharacteristicsW>
 else
 AvSetMmThreadCharacteristics equ <AvSetMmThreadCharacteristicsA>
 endif
 
-AvSetMmMaxThreadCharacteristicsA proto WINAPI \
-             FirstTask: LPCSTR,
-            SecondTask: LPCSTR,
-             TaskIndex: LPDWORD
-
-AvSetMmMaxThreadCharacteristicsW proto WINAPI \
-             FirstTask: LPCWSTR,
-            SecondTask: LPCWSTR,
-             TaskIndex: LPDWORD
-
+AvSetMmMaxThreadCharacteristicsA proto WINAPI :LPCSTR, :LPCSTR, :LPDWORD
+AvSetMmMaxThreadCharacteristicsW proto WINAPI :LPCWSTR, :LPCWSTR, :LPDWORD
 ifdef _UNICODE
 AvSetMmMaxThreadCharacteristics equ <AvSetMmMaxThreadCharacteristicsW>
 else
 AvSetMmMaxThreadCharacteristics equ <AvSetMmMaxThreadCharacteristicsA>
 endif
 
-AvRevertMmThreadCharacteristics proto WINAPI \
-            AvrtHandle: HANDLE
-
-
-AvSetMmThreadPriority proto WINAPI \
-            AvrtHandle: HANDLE,
-              Priority: AVRT_PRIORITY
-
-
-AvRtCreateThreadOrderingGroup proto WINAPI \
-               Context: PHANDLE,
-                Period: PLARGE_INTEGER,
-    ThreadOrderingGuid: ptr GUID,
-               Timeout: PLARGE_INTEGER
-
-
-AvRtCreateThreadOrderingGroupExA proto WINAPI \
-               Context: PHANDLE,
-                Period: PLARGE_INTEGER,
-    ThreadOrderingGuid: ptr GUID,
-               Timeout: PLARGE_INTEGER,
-              TaskName: LPCSTR
-
-AvRtCreateThreadOrderingGroupExW proto WINAPI \
-               Context: PHANDLE,
-                Period: PLARGE_INTEGER,
-    ThreadOrderingGuid: ptr GUID,
-               Timeout: PLARGE_INTEGER,
-              TaskName: LPCWSTR
-
+AvRevertMmThreadCharacteristics proto WINAPI :HANDLE
+AvSetMmThreadPriority proto WINAPI :HANDLE, :AVRT_PRIORITY
+AvRtCreateThreadOrderingGroup proto WINAPI :PHANDLE, :PLARGE_INTEGER, :ptr, :PLARGE_INTEGER
+AvRtCreateThreadOrderingGroupExA proto WINAPI :PHANDLE, :PLARGE_INTEGER, :ptr, :PLARGE_INTEGER, :LPCSTR
+AvRtCreateThreadOrderingGroupExW proto WINAPI :PHANDLE, :PLARGE_INTEGER, :ptr, :PLARGE_INTEGER, :LPCWSTR
 ifdef _UNICODE
 AvRtCreateThreadOrderingGroupEx equ <AvRtCreateThreadOrderingGroupExW>
 else
 AvRtCreateThreadOrderingGroupEx equ <AvRtCreateThreadOrderingGroupExA>
 endif
 
-AvRtJoinThreadOrderingGroup proto WINAPI \
-               Context: PHANDLE,
-    ThreadOrderingGuid: ptr GUID,
-                Before: BOOL
-
-AvRtWaitOnThreadOrderingGroup proto WINAPI \
-               Context: HANDLE
-
-AvRtLeaveThreadOrderingGroup proto WINAPI \
-               Context: HANDLE
-
-AvRtDeleteThreadOrderingGroup proto WINAPI \
-               Context: HANDLE
-
-AvQuerySystemResponsiveness proto WINAPI \
-            AvrtHandle: HANDLE,
-SystemResponsivenessValue: PULONG
+AvRtJoinThreadOrderingGroup proto WINAPI :PHANDLE, :ptr, :BOOL
+AvRtWaitOnThreadOrderingGroup proto WINAPI :HANDLE
+AvRtLeaveThreadOrderingGroup proto WINAPI :HANDLE
+AvRtDeleteThreadOrderingGroup proto WINAPI :HANDLE
+AvQuerySystemResponsiveness proto WINAPI :HANDLE, :PULONG
 
 endif
 

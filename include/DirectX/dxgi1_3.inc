@@ -24,16 +24,8 @@ include dxgi1_2.inc
 
 DXGI_CREATE_FACTORY_DEBUG equ 0x1
 
-CreateDXGIFactory2 proto WINAPI \
-		 Flags: UINT,
-		  riid: REFIID,
-	     ppFactory: ptr
-
-DXGIGetDebugInterface1 proto WINAPI \
-		 Flags: UINT,
-		  riid: REFIID,
-		pDebug: ptr
-
+CreateDXGIFactory2 proto WINAPI :UINT, :REFIID, :ptr
+DXGIGetDebugInterface1 proto WINAPI :UINT, :REFIID, :ptr
 
 ifndef __IDXGIDevice3_INTERFACE_DEFINED__
 define __IDXGIDevice3_INTERFACE_DEFINED__

@@ -91,9 +91,9 @@ D3DXCONSTANT_DESC	ENDS
 LPD3DXCONSTANT_DESC	typedef ptr D3DXCONSTANT_DESC
 
 if D3DX_SDK_VERSION LT 43
-DEFINE_GUID(IID_ID3DXConstantTable, 0x9dca3190, 0x38b9, 0x4fc3, 0x92, 0xe3, 0x39, 0xc6, 0xdd, 0xfb, 0x35, 0x8b);
+DEFINE_GUID(IID_ID3DXConstantTable, 0x9dca3190, 0x38b9, 0x4fc3, 0x92, 0xe3, 0x39, 0xc6, 0xdd, 0xfb, 0x35, 0x8b)
 else
-DEFINE_GUID(IID_ID3DXConstantTable, 0xab3c758f, 0x093e, 0x4356, 0xb7, 0x62, 0x4d, 0xb1, 0x8f, 0x1b, 0x3a, 0x01);
+DEFINE_GUID(IID_ID3DXConstantTable, 0xab3c758f, 0x093e, 0x4356, 0xb7, 0x62, 0x4d, 0xb1, 0x8f, 0x1b, 0x3a, 0x01)
 endif
 
 .comdef ID3DXConstantTable : public ID3DXBuffer
@@ -120,9 +120,7 @@ endif
     SetMatrixTranspose	proc :ptr, :D3DXHANDLE, :ptr
     SetMatrixTransposeArray proc :ptr, :D3DXHANDLE, :ptr, :UINT
     SetMatrixTransposePointerArray proc :ptr, :D3DXHANDLE, :ptr, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3DXTextureShader, 0x3e3d67f8, 0xaa7a, 0x405d, 0xa8, 0x57, 0xba, 0x1, 0xd4, 0x75, 0x84, 0x26);
 
@@ -151,8 +149,7 @@ DEFINE_GUID(IID_ID3DXTextureShader, 0x3e3d67f8, 0xaa7a, 0x405d, 0xa8, 0x57, 0xba
     SetMatrixTranspose	proc :D3DXHANDLE, :ptr
     SetMatrixTransposeArray proc :D3DXHANDLE, :ptr, :UINT
     SetMatrixTransposePointerArray proc :D3DXHANDLE, :ptr, :UINT
-
-    .ends
+   .ends
 
 D3DXMACRO		STRUC
 Name			LPSTR ?
@@ -184,7 +181,6 @@ Target			dd ?
 D3DXFRAGMENT_DESC	ENDS
 LPD3DXFRAGMENT_DESC	typedef ptr D3DXFRAGMENT_DESC
 
-
 DEFINE_GUID(IID_ID3DXFragmentLinker, 0x1a2c0cc2, 0xe5b6, 0x4ebc, 0x9e, 0x8d, 0x39, 0xe, 0x5, 0x78, 0x11, 0xb6);
 
 .comdef ID3DXFragmentLinker : public IUnknown
@@ -201,257 +197,37 @@ DEFINE_GUID(IID_ID3DXFragmentLinker, 0x1a2c0cc2, 0xe5b6, 0x4ebc, 0x9e, 0x8d, 0x3
     LinkVertexShader	proc :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
     LinkPixelShader	proc :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
     ClearCache		proc
+   .ends
 
-    .ends
-
-
-;const char *
-D3DXGetPixelShaderProfile proto WINAPI \
-		device: IDirect3DDevice9
-
-;UINT
-D3DXGetShaderSize proto WINAPI \
-	     byte_code: ptr DWORD
-
-;DWORD
-D3DXGetShaderVersion proto WINAPI \
-	     byte_code: ptr DWORD
-
-D3DXGetVertexShaderProfile proto WINAPI \
-		device: ptr IDirect3DDevice9
-
-;HRESULT
-D3DXFindShaderComment proto WINAPI \
-	     byte_code: ptr DWORD,
-		fourcc: DWORD,
-		  data: PVOID,
-		  size: ptr UINT
-
-;HRESULT
-D3DXGetShaderSamplers proto WINAPI \
-	     byte_code: ptr DWORD,
-	      samplers: ptr LPSTR,
-		 count: ptr UINT
-
-
-;HRESULT
-D3DXAssembleShaderFromFileA proto WINAPI \
-	      filename: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-;HRESULT
-D3DXAssembleShaderFromFileW proto WINAPI \
-	      filename: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-D3DXAssembleShaderFromFile equ __MINGW_NAME_AW(D3DXAssembleShaderFromFile)
-
-;HRESULT
-D3DXAssembleShaderFromResourceA proto WINAPI \
-		module: HMODULE,
-	      resource: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-;HRESULT
-D3DXAssembleShaderFromResourceW proto WINAPI \
-		module: HMODULE,
-	      resource: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-;HRESULT
-D3DXAssembleShader proto WINAPI \
-		 _data: LPSTR,
-	      data_len: UINT,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-
-;HRESULT
-D3DXCompileShader proto WINAPI \
-	      src_data: LPSTR,
-	      data_len: UINT,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	 function_name: LPSTR,
-	       profile: LPSTR,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer,
-	constant_table: ptr ID3DXConstantTable
-
-
-;HRESULT
-D3DXDisassembleShader proto WINAPI \
-	       pShader: ptr DWORD,
-       EnableColorCode: BOOL,
-	     pComments: LPSTR,
-	 ppDisassembly: ptr ID3DXBuffer
-
-
-;HRESULT
-D3DXCompileShaderFromFileA proto WINAPI \
-	      filename: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	    entrypoint: LPSTR,
-	       profile: LPSTR,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer,
-	constant_table: ptr ID3DXConstantTable
-
-;HRESULT
-D3DXCompileShaderFromFileW proto WINAPI \
-	      filename: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	    entrypoint: LPSTR,
-	       profile: LPSTR,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer,
-	constant_table: ptr ID3DXConstantTable
-
-D3DXCompileShaderFromFile equ __MINGW_NAME_AW(D3DXCompileShaderFromFile)
-
-;HRESULT
-D3DXCompileShaderFromResourceA proto WINAPI \
-		module: HMODULE,
-	      resource: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	    entrypoint: LPSTR,
-	       profile: LPSTR,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer,
-	constant_table: ptr ID3DXConstantTable
-
-;HRESULT
-D3DXCompileShaderFromResourceW proto WINAPI \
-		module: HMODULE,
-	      resource: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	    entrypoint: LPSTR,
-	       profile: LPSTR,
-		 flags: DWORD,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer,
-	constant_table: ptr ID3DXConstantTable
-
-;HRESULT
-D3DXPreprocessShader proto WINAPI \
-		 _data: LPSTR,
-	      data_len: UINT,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-
-;HRESULT
-D3DXPreprocessShaderFromFileA proto WINAPI \
-	      filename: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-;HRESULT
-D3DXPreprocessShaderFromFileW proto WINAPI \
-	      filename: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-D3DXPreprocessShaderFromFile equ __MINGW_NAME_AW(D3DXPreprocessShaderFromFile)
-
-;HRESULT
-D3DXPreprocessShaderFromResourceA proto WINAPI \
-		module: HMODULE,
-	      resource: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-;HRESULT
-D3DXPreprocessShaderFromResourceW proto WINAPI \
-		module: HMODULE,
-	      resource: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		shader: ptr ID3DXBuffer,
-	error_messages: ptr ID3DXBuffer
-
-D3DXPreprocessShaderFromResource equ __MINGW_NAME_AW(D3DXPreprocessShaderFromResource)
-
-;HRESULT
-D3DXGetShaderConstantTableEx proto WINAPI \
-	     byte_code: ptr DWORD,
-		 flags: DWORD,
-	constant_table: ptr ID3DXConstantTable
-
-
-;HRESULT
-D3DXGetShaderConstantTable proto WINAPI \
-	     byte_code: ptr DWORD,
-	constant_table: ptr ID3DXConstantTable
-
-
-;HRESULT
-D3DXGetShaderInputSemantics proto WINAPI \
-	     pFunction: ptr DWORD,
-	    pSemantics: ptr D3DXSEMANTIC,
-		pCount: ptr UINT
-
-;HRESULT
-D3DXGetShaderOutputSemantics proto WINAPI \
-	     pFunction: ptr DWORD,
-	    pSemantics: ptr D3DXSEMANTIC,
-		pCount: ptr UINT
-
-
-;HRESULT
-D3DXCreateTextureShader proto WINAPI \
-	     pFunction: ptr DWORD,
-       ppTextureShader: ptr ID3DXTextureShader
-
-
-;HRESULT
-D3DXCreateFragmentLinker proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		  size: UINT,
-		linker: ptr ID3DXFragmentLinker
-
-;HRESULT
-D3DXCreateFragmentLinkerEx proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		  size: UINT,
-		 flags: DWORD,
-		linker: ptr ID3DXFragmentLinker
-
+D3DXGetPixelShaderProfile proto WINAPI :ptr
+D3DXGetShaderSize proto WINAPI :ptr
+D3DXGetShaderVersion proto WINAPI :ptr
+D3DXGetVertexShaderProfile proto WINAPI :ptr
+D3DXFindShaderComment proto WINAPI :ptr, :DWORD, :ptr, :ptr
+D3DXGetShaderSamplers proto WINAPI :ptr, :ptr, :ptr
+D3DXAssembleShaderFromFileA proto WINAPI :LPSTR, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXAssembleShaderFromFileW proto WINAPI :LPWSTR, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXAssembleShaderFromResourceA proto WINAPI :HMODULE, :LPSTR, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXAssembleShaderFromResourceW proto WINAPI :HMODULE, :LPWSTR, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXAssembleShader proto WINAPI :LPSTR, :UINT, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXCompileShader proto WINAPI :LPSTR, :UINT, :ptr, :ptr, :LPSTR, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXDisassembleShader proto WINAPI :ptr, :BOOL, :LPSTR, :ptr
+D3DXCompileShaderFromFileA proto WINAPI :LPSTR, :ptr, :ptr, :LPSTR, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXCompileShaderFromFileW proto WINAPI :LPWSTR, :ptr, :ptr, :LPSTR, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXCompileShaderFromResourceA proto WINAPI :HMODULE, :LPSTR, :ptr, :ptr, :LPSTR, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXCompileShaderFromResourceW proto WINAPI :HMODULE, :LPWSTR, :ptr, :ptr, :LPSTR, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXPreprocessShader proto WINAPI :LPSTR, :UINT, :ptr, :ptr, :ptr, :ptr
+D3DXPreprocessShaderFromFileA proto WINAPI :LPSTR, :ptr, :ptr, :ptr, :ptr
+D3DXPreprocessShaderFromFileW proto WINAPI :LPWSTR, :ptr, :ptr, :ptr, :ptr
+D3DXPreprocessShaderFromResourceA proto WINAPI :HMODULE, :LPSTR, :ptr, :ptr, :ptr, :ptr
+D3DXPreprocessShaderFromResourceW proto WINAPI :HMODULE, :LPWSTR, :ptr, :ptr, :ptr, :ptr
+D3DXGetShaderConstantTableEx proto WINAPI :ptr, :DWORD, :ptr
+D3DXGetShaderConstantTable proto WINAPI :ptr, :ptr
+D3DXGetShaderInputSemantics proto WINAPI :ptr, :ptr, :ptr
+D3DXGetShaderOutputSemantics proto WINAPI :ptr, :ptr, :ptr
+D3DXCreateTextureShader proto WINAPI :ptr, :ptr
+D3DXCreateFragmentLinker proto WINAPI :ptr, :UINT, :ptr
+D3DXCreateFragmentLinkerEx proto WINAPI :ptr, :UINT, :DWORD, :ptr
 
 D3DXSHADER_CONSTANTTABLE STRUC
 Size			dd ?

@@ -30,31 +30,9 @@ AT_ENUM			ENDS
 PAT_ENUM		typedef ptr AT_ENUM
 LPAT_ENUM		typedef ptr AT_ENUM
 
-;NET_API_STATUS
-NetScheduleJobAdd proto WINAPI \
-	    Servername: LPCWSTR,
-		Buffer: LPBYTE,
-		 JobId: LPDWORD
-
-;NET_API_STATUS
-NetScheduleJobDel proto WINAPI \
-	    Servername: LPCWSTR,
-	      MinJobId: DWORD,
-	      MaxJobId: DWORD
-
-;NET_API_STATUS
-NetScheduleJobEnum proto WINAPI \
-	    Servername: LPCWSTR,
-       PointerToBuffer: ptr LPBYTE,
-PrefferedMaximumLength: DWORD,
-	   EntriesRead: LPDWORD,
-	  TotalEntries: LPDWORD,
-	  ResumeHandle: LPDWORD
-
-;NET_API_STATUS
-NetScheduleJobGetInfo proto WINAPI \
-	    Servername: LPCWSTR,
-		 JobId: DWORD,
-       PointerToBuffer: ptr LPBYTE
+NetScheduleJobAdd proto WINAPI :LPCWSTR, :LPBYTE, :LPDWORD
+NetScheduleJobDel proto WINAPI :LPCWSTR, :DWORD, :DWORD
+NetScheduleJobEnum proto WINAPI :LPCWSTR, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetScheduleJobGetInfo proto WINAPI :LPCWSTR, :DWORD, :ptr
 
 endif

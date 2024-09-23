@@ -73,10 +73,8 @@ fdexPropCannotConstruct equ 0x00000800
 fdexPropCanSourceEvents equ 0x00001000
 fdexPropCannotSourceEvents equ 0x00002000
 
-grfdexPropCanAll equ (fdexPropCanGet or fdexPropCanPut or fdexPropCanPutRef or \
-	fdexPropCanCall or fdexPropCanConstruct or fdexPropCanSourceEvents)
-grfdexPropCannotAll equ (fdexPropCannotGet or fdexPropCannotPut or fdexPropCannotPutRef | \
-	fdexPropCannotCall or fdexPropCannotConstruct or fdexPropCannotSourceEvents)
+grfdexPropCanAll equ (fdexPropCanGet or fdexPropCanPut or fdexPropCanPutRef or fdexPropCanCall or fdexPropCanConstruct or fdexPropCanSourceEvents)
+grfdexPropCannotAll equ (fdexPropCannotGet or fdexPropCannotPut or fdexPropCannotPutRef or fdexPropCannotCall or fdexPropCannotConstruct or fdexPropCannotSourceEvents)
 grfdexPropExtraAll equ (fdexPropNoSideEffects or fdexPropDynamicType)
 grfdexPropAll equ (grfdexPropCanAll or grfdexPropCannotAll or grfdexPropExtraAll)
 

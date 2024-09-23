@@ -50,40 +50,12 @@ cfFormat		dw ?
 rgb			db ?
 DDEUP			ENDS
 
-
-;BOOL
-DdeSetQualityOfService proto WINAPI \
-	    hwndClient: HWND,
-	       pqosNew: PSECURITY_QUALITY_OF_SERVICE,
-	      pqosPrev: PSECURITY_QUALITY_OF_SERVICE
-
-;BOOL
-ImpersonateDdeClientWindow proto WINAPI \
-	    hWndClient: HWND,
-	    hWndServer: HWND
-
-;LONG
-PackDDElParam proto WINAPI \
-		   msg: UINT,
-		  uiLo: UINT,
-		  uiHi: UINT
-;BOOL
-UnpackDDElParam proto WINAPI \
-		   msg: UINT,
-		lParam: LONG,
-		 puiLo: PUINT,
-		 puiHi: PUINT
-;BOOL
-FreeDDElParam proto WINAPI \
-		   msg: UINT,
-		lParam: LONG
-;LONG
-ReuseDDElParam proto WINAPI \
-		lParam: LONG,
-		 msgIn: UINT,
-		msgOut: UINT,
-		  uiLo: UINT,
-		  uiHi: UINT
+DdeSetQualityOfService proto WINAPI :HWND, :PSECURITY_QUALITY_OF_SERVICE, :PSECURITY_QUALITY_OF_SERVICE
+ImpersonateDdeClientWindow proto WINAPI :HWND, :HWND
+PackDDElParam proto WINAPI :UINT, :UINT, :UINT
+UnpackDDElParam proto WINAPI :UINT, :LONG, :PUINT, :PUINT
+FreeDDElParam proto WINAPI :UINT, :LONG
+ReuseDDElParam proto WINAPI :LONG, :UINT, :UINT, :UINT, :UINT
 endif
 
 

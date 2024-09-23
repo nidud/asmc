@@ -36,98 +36,28 @@ ifndef PF_FASTFAIL_AVAILABLE
 PF_FASTFAIL_AVAILABLE   equ 23
 endif
 
-;int
-__crtCompareStringW proto WINAPI \
-           _LocaleName: LPCWSTR,
-           _DwCmpFlags: DWORD,
-            _LpString1: LPCWSTR,
-            _CchCount1: SINT,
-            _LpString2: LPCWSTR,
-            _CchCount2: SINT
-
-__crtCompareStringA proto WINAPI \
-             _Plocinfo: _locale_t,
-           _LocaleName: LPCWSTR,
-           _DwCmpFlags: DWORD,
-            _LpString1: LPCSTR,
-            _CchCount1: SINT,
-            _LpString2: LPCSTR,
-            _CchCount2: SINT,
-            _Code_page: SINT
-
-__crtGetLocaleInfoA proto WINAPI \
-             _Plocinfo: _locale_t,
-           _LocaleName: LPCWSTR,
-               _LCType: LCTYPE,
-             _LpLCData: LPSTR,
-              _CchData: SINT
-
-__crtLCMapStringW proto WINAPI \
-           _LocaleName: LPCWSTR,
-            _DWMapFlag: DWORD,
-             _LpSrcStr: LPCWSTR,
-               _CchSrc: SINT,
-            _LpDestStr: LPWSTR,
-              _CchDest: SINT
-
-__crtLCMapStringA proto WINAPI \
-             _Plocinfo: _locale_t,
-           _LocaleName: LPCWSTR,
-            _DwMapFlag: DWORD,
-             _LpSrcStr: LPCSTR,
-               _CchSrc: SINT,
-            _LpDestStr: LPSTR,
-              _CchDest: SINT,
-            _Code_page: SINT,
-               _BError: BOOL
-
-__crtGetStringTypeA proto WINAPI \
-             _Plocinfo: _locale_t,
-           _DWInfoType: DWORD,
-             _LpSrcStr: LPCSTR,
-               _CchSrc: SINT,
-           _LpCharType: LPWORD,
-            _Code_page: SINT,
-               _BError: BOOL
-
-
+__crtCompareStringW proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :SINT, :LPCWSTR, :SINT
+__crtCompareStringA proto WINAPI :_locale_t, :LPCWSTR, :DWORD, :LPCSTR, :SINT, :LPCSTR, :SINT, :SINT
+__crtGetLocaleInfoA proto WINAPI :_locale_t, :LPCWSTR, :LCTYPE, :LPSTR, :SINT
+__crtLCMapStringW proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :SINT, :LPWSTR, :SINT
+__crtLCMapStringA proto WINAPI :_locale_t, :LPCWSTR, :DWORD, :LPCSTR, :SINT, :LPSTR, :SINT, :SINT, :BOOL
+__crtGetStringTypeA proto WINAPI :_locale_t, :DWORD, :LPCSTR, :SINT, :LPWORD, :SINT, :BOOL
 __crtGetEnvironmentStringsA proto __cdecl
 __crtGetEnvironmentStringsW proto __cdecl
-
-__crtMessageBoxA proto WINAPI \
-               _LpText: LPCSTR,
-            _LpCaption: LPCSTR,
-                _UType: UINT
-
-__crtMessageBoxW proto WINAPI \
-               _LpText: LPCWSTR,
-            _LpCaption: LPCWSTR,
-                _UType: UINT
-
+__crtMessageBoxA proto WINAPI :LPCSTR, :LPCSTR, :UINT
+__crtMessageBoxW proto WINAPI :LPCWSTR, :LPCWSTR, :UINT
 __crtIsPackagedApp proto WINAPI
-
 __crtGetShowWindowMode proto __cdecl
-
-__crtSetUnhandledExceptionFilter proto WINAPI \
-       exceptionFilter: LPTOP_LEVEL_EXCEPTION_FILTER
-
+__crtSetUnhandledExceptionFilter proto WINAPI :LPTOP_LEVEL_EXCEPTION_FILTER
 
 if defined (_M_IX86) OR defined (_M_X64)
-
-__crtUnhandledException proto WINAPI \
-         exceptionInfo: ptr EXCEPTION_POINTERS
-
-__crtTerminateProcess proto WINAPI \
-             uExitCode: UINT
-
+__crtUnhandledException proto WINAPI :ptr EXCEPTION_POINTERS
+__crtTerminateProcess proto WINAPI :UINT
 endif
 
 ifdef _M_X64
-__crtCaptureCurrentContext proto WINAPI \
-        pContextRecord: ptr CONTEXT
-
-__crtCapturePreviousContext proto WINAPI \
-        pContextRecord: ptr CONTEXT
+__crtCaptureCurrentContext proto WINAPI :ptr CONTEXT
+__crtCapturePreviousContext proto WINAPI :ptr CONTEXT
 endif
 
 if _CRT_NTDDI_MIN GE NTDDI_VISTA
@@ -263,242 +193,44 @@ __crtGetTickCount64 macro
 
 else  ;; _CRT_NTDDI_MIN GE NTDDI_VISTA
 
-;; Downlevel NLS locale name <==> LCID conversion
-__crtDownlevelLocaleNameToLCID proto WINAPI \
-            localeName: LPCWSTR
-
-;int
-__crtDownlevelLCIDToLocaleName proto WINAPI \
-                  lcid: LCID,
-         outLocaleName: LPWSTR,
-         cchLocaleName: SINT
-
-;DWORD
-__crtFlsAlloc proto WINAPI \
-            lpCallback: PFLS_CALLBACK_FUNCTION
-
-;BOOL
-__crtFlsFree proto WINAPI \
-            dwFlsIndex: DWORD
-
-
-;PVOID
-__crtFlsGetValue proto WINAPI \
-            dwFlsIndex: DWORD
-
-
-;BOOL
-__crtFlsSetValue proto WINAPI \
-            dwFlsIndex: DWORD,
-             lpFlsData: PVOID
-
-
-;; wrapper for InitializeCriticalSectionEx, available only on Vista+
-;BOOL
-__crtInitializeCriticalSectionEx proto WINAPI \
-     lpCriticalSection: LPCRITICAL_SECTION,
-           dwSpinCount: DWORD,
-                 Flags: DWORD
-
-
-;; wrapper for CreateEventExW, available only on Vista+
-;HANDLE
-__crtCreateEventExW proto WINAPI \
-     lpEventAttributes: LPSECURITY_ATTRIBUTES,
-                lpName: LPCWSTR,
-               dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-
-
-;; wrapper for CreateSemaphoreExW, available only on Vista+
-;HANDLE
-__crtCreateSemaphoreExW proto WINAPI \
- lpSemaphoreAttributes: LPSECURITY_ATTRIBUTES,
-         lInitialCount: LONG,
-         lMaximumCount: LONG,
-                lpName: LPCWSTR,
-               dwFlags: DWORD,
-       dwDesiredAccess: DWORD
-
-
-;; wrapper for SetThreadStackGuarantee, available only on Vista+
-;BOOL
-__crtSetThreadStackGuarantee proto WINAPI \
-      StackSizeInBytes: PULONG
-
-
-;; wrappers for thread pool APIs, available only on Vista+
-;PTP_TIMER
-__crtCreateThreadpoolTimer proto __cdecl \
-                 pfnti: PTP_TIMER_CALLBACK,
-                    pv: PVOID,
-                  pcbe: PTP_CALLBACK_ENVIRON
-
-;VOID
-__crtSetThreadpoolTimer proto WINAPI \
-                   pti: PTP_TIMER,
-            pftDueTime: PFILETIME,
-              msPeriod: DWORD,
-        msWindowLength: DWORD
-
-;VOID
-__crtWaitForThreadpoolTimerCallbacks proto WINAPI \
-                   pti: PTP_TIMER,
-fCancelPendingCallbacks: BOOL
-
-
-;VOID
-__crtCloseThreadpoolTimer proto WINAPI \
-                   pti: PTP_TIMER
-
-
-;PTP_WAIT
-__crtCreateThreadpoolWait proto __cdecl \
-                 pfnwa: PTP_WAIT_CALLBACK,
-                    pv: PVOID,
-                  pcbe: PTP_CALLBACK_ENVIRON
-
-;VOID
-__crtSetThreadpoolWait proto WINAPI \
-                   pwa: PTP_WAIT,
-                     h: HANDLE,
-            pftTimeout: PFILETIME
-
-
-;VOID
-__crtCloseThreadpoolWait proto WINAPI \
-                   pwa: PTP_WAIT
-
-
-;; wrapper for FlushProcessWriteBuffers, available only on Vista+
-;VOID
+__crtDownlevelLocaleNameToLCID proto WINAPI :LPCWSTR
+__crtDownlevelLCIDToLocaleName proto WINAPI :LCID, :LPWSTR, :SINT
+__crtFlsAlloc proto WINAPI :PFLS_CALLBACK_FUNCTION
+__crtFlsFree proto WINAPI :DWORD
+__crtFlsGetValue proto WINAPI :DWORD
+__crtFlsSetValue proto WINAPI :DWORD, :ptr
+__crtInitializeCriticalSectionEx proto WINAPI :LPCRITICAL_SECTION, :DWORD, :DWORD
+__crtCreateEventExW proto WINAPI :LPSECURITY_ATTRIBUTES, :LPCWSTR, :DWORD, :DWORD
+__crtCreateSemaphoreExW proto WINAPI :LPSECURITY_ATTRIBUTES, :LONG, :LONG, :LPCWSTR, :DWORD, :DWORD
+__crtSetThreadStackGuarantee proto WINAPI :PULONG
+__crtCreateThreadpoolTimer proto __cdecl :PTP_TIMER_CALLBACK, :ptr, :PTP_CALLBACK_ENVIRON
+__crtSetThreadpoolTimer proto WINAPI :PTP_TIMER, :PFILETIME, :DWORD, :DWORD
+__crtWaitForThreadpoolTimerCallbacks proto WINAPI :PTP_TIMER, :BOOL
+__crtCloseThreadpoolTimer proto WINAPI :PTP_TIMER
+__crtCreateThreadpoolWait proto __cdecl :PTP_WAIT_CALLBACK, :ptr, :PTP_CALLBACK_ENVIRON
+__crtSetThreadpoolWait proto WINAPI :PTP_WAIT, :HANDLE, :PFILETIME
+__crtCloseThreadpoolWait proto WINAPI :PTP_WAIT
 __crtFlushProcessWriteBuffers proto WINAPI
-
-;; wrapper for FreeLibraryWhenCallbackReturns, available only on Vista+
-;VOID
-__crtFreeLibraryWhenCallbackReturns proto WINAPI \
-                   pci: PTP_CALLBACK_INSTANCE,
-                   _mod: HMODULE
-
-
-;; wrapper for GetCurrentProcessorNumber, available only on Vista+
-;DWORD
+__crtFreeLibraryWhenCallbackReturns proto WINAPI :PTP_CALLBACK_INSTANCE, :HMODULE
 __crtGetCurrentProcessorNumber proto WINAPI
-
-;; wrapper for GetLogicalProcessorInformation, available only on Vista+
-;BOOL
-__crtGetLogicalProcessorInformation proto WINAPI \
-                Buffer: PSYSTEM_LOGICAL_PROCESSOR_INFORMATION,
-          ReturnLength: PDWORD
-
-
-;; wrapper for CreateSymbolicLink, available only on Vista+
-;BOOLEAN
-__crtCreateSymbolicLinkW proto WINAPI \
-     lpSymlinkFileName: LPCWSTR,
-      lpTargetFileName: LPCWSTR,
-               dwFlags: DWORD
-
-
-;; Helper functions for NLS-specific Win32 APIs
-;int
-__crtCompareStringEx proto WINAPI \
-          lpLocaleName: LPCWSTR,
-            dwCmpFlags: DWORD,
-             lpString1: LPCWSTR,
-             cchCount1: SINT,
-             lpString2: LPCWSTR,
-             cchCount2: SINT
-
-
-;BOOL
-__crtEnumSystemLocalesEx proto WINAPI \
-    lpLocaleEnumProcEx: LOCALE_ENUMPROCEX,
-               dwFlags: DWORD,
-                lParam: LPARAM
-
-
-;int
-__crtGetDateFormatEx proto WINAPI \
-          lpLocaleName: LPCWSTR,
-               dwFlags: DWORD,
-                lpDate: ptr SYSTEMTIME,
-              lpFormat: LPCWSTR,
-             lpDateStr: LPWSTR,
-               cchDate: SINT
-
-
-;int
-__crtGetLocaleInfoEx proto WINAPI \
-          lpLocaleName: LPCWSTR,
-                LCType: LCTYPE,
-              lpLCData: LPWSTR,
-               cchData: SINT
-
-
-;int
-__crtGetTimeFormatEx proto WINAPI \
-          lpLocaleName: LPCWSTR,
-               dwFlags: DWORD,
-                lpTime: ptr SYSTEMTIME,
-              lpFormat: LPCWSTR,
-             lpTimeStr: LPWSTR,
-               cchTime: SINT
-
-
-;int
-__crtGetUserDefaultLocaleName proto WINAPI \
-          lpLocaleName: LPWSTR,
-         cchLocaleName: SINT
-
-
-;BOOL
-__crtIsValidLocaleName proto WINAPI \
-          lpLocaleName: LPCWSTR
-
-
-;int
-__crtLCMapStringEx proto WINAPI \
-          lpLocaleName: LPCWSTR,
-            dwMapFlags: DWORD,
-              lpSrcStr: LPCWSTR,
-                cchSrc: SINT,
-             lpDestStr: LPWSTR,
-               cchDest: SINT
-
-
-;; wrapper for GetFileInformationByHandleEx, available only on Vista+
-;BOOL
-__crtGetFileInformationByHandleEx proto WINAPI \
-                 hFile: HANDLE,
-  FileInformationClass: FILE_INFO_BY_HANDLE_CLASS,
-     lpFileInformation: LPVOID,
-          dwBufferSize: DWORD
-
-
-;; wrapper for SetFileInformationByHandle, available only on Vista+
-;BOOL
-__crtSetFileInformationByHandle proto WINAPI \
-                 hFile: HANDLE,
-  FileInformationClass: FILE_INFO_BY_HANDLE_CLASS,
-     lpFileInformation: LPVOID,
-          dwBufferSize: DWORD
-
-
-;; wrapper function for GetTickCount64, available only on Vista+
-;ULONGLONG
+__crtGetLogicalProcessorInformation proto WINAPI :PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, :PDWORD
+__crtCreateSymbolicLinkW proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD
+__crtCompareStringEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :SINT, :LPCWSTR, :SINT
+__crtEnumSystemLocalesEx proto WINAPI :LOCALE_ENUMPROCEX, :DWORD, :LPARAM
+__crtGetDateFormatEx proto WINAPI :LPCWSTR, :DWORD, :ptr SYSTEMTIME, :LPCWSTR, :LPWSTR, :SINT
+__crtGetLocaleInfoEx proto WINAPI :LPCWSTR, :LCTYPE, :LPWSTR, :SINT
+__crtGetTimeFormatEx proto WINAPI :LPCWSTR, :DWORD, :ptr, :LPCWSTR, :LPWSTR, :SINT
+__crtGetUserDefaultLocaleName proto WINAPI :LPWSTR, :SINT
+__crtIsValidLocaleName proto WINAPI :LPCWSTR
+__crtLCMapStringEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :SINT, :LPWSTR, :SINT
+__crtGetFileInformationByHandleEx proto WINAPI :HANDLE, :FILE_INFO_BY_HANDLE_CLASS, :ptr, :DWORD
+__crtSetFileInformationByHandle proto WINAPI :HANDLE, :FILE_INFO_BY_HANDLE_CLASS, :ptr, :DWORD
 __crtGetTickCount64 proto WINAPI
 
 endif  ;; _CRT_NTDDI_MIN GE NTDDI_VISTA
 
-;; Helper function for Sleep
-;void
-__crtSleep proto WINAPI \
-        dwMilliseconds: DWORD
+__crtSleep proto WINAPI :DWORD
 
-
-;; Helper to load all necessary Win32 API function pointers
-;void
 __crtLoadWinApiPointers proto WINAPI
 
 wrapEncodedKERNEL32Functions typedef SDWORD
@@ -595,87 +327,23 @@ IFDYNAMICGETCACHEDFUNCTION macro libraryname, functiontypedef, functionname, fun
 
 ifdef _CRT_APP
 
-;HANDLE
-__crtCreateWinRTThread proto WINAPI \
-        lpStartAddress: LPTHREAD_START_ROUTINE,
-           lpParameter: LPVOID,
-            lpThreadId: LPDWORD
-
-
-;BOOL
-__crtCloseWinRTThreadHandle proto WINAPI \
-               hThread: HANDLE
-
-;HANDLE
+__crtCreateWinRTThread proto WINAPI :LPTHREAD_START_ROUTINE, :ptr, :LPDWORD
+__crtCloseWinRTThreadHandle proto WINAPI :HANDLE
 __crtGetCurrentWinRTThread proto WINAPI
-;DWORD
 __crtGetCurrentWinRTThreadId proto WINAPI
-;BOOL
-__crtGetExitCodeWinRTThread proto WINAPI \
-               hThread: HANDLE,
-           pdwExitCode: ptr DWORD
-
-;HANDLE
-__crtGetWinRTThreadWaitableHandle proto WINAPI \
-               hThread: HANDLE
-
-;DWORD
-__crtGetWinRTThreadId proto WINAPI \
-               hThread: HANDLE
-
-;BOOL
-__crtSetExitCodeWinRTThread proto WINAPI \
-               hThread: HANDLE,
-             wExitCode: DWORD
-
-;DWORD
-__crtWaitForWinRTThreadExit proto WINAPI \
-               hThread: HANDLE,
-               timeout: DWORD
-
-
-;HANDLE
-__crtCreateWinRTTimer proto WINAPI \
-        lpStartAddress: WAITORTIMERCALLBACK,
-           lpParameter: PVOID,
-              duration: SINT,
-              periodic: BOOL
-
-
-;void
-__crtDeleteWinRTTimer proto WINAPI \
-                hTimer: HANDLE,
-       waitForHandlers: BOOL
-
-__crtCancelWinRTTimer proto WINAPI \
-                hTimer: HANDLE,
-       waitForHandlers: BOOL
-
-
-;void
+__crtGetExitCodeWinRTThread proto WINAPI :HANDLE, :ptr DWORD
+__crtGetWinRTThreadWaitableHandle proto WINAPI :HANDLE
+__crtGetWinRTThreadId proto WINAPI :HANDLE
+__crtSetExitCodeWinRTThread proto WINAPI :HANDLE, :DWORD
+__crtWaitForWinRTThreadExit proto WINAPI :HANDLE, :DWORD
+__crtCreateWinRTTimer proto WINAPI :WAITORTIMERCALLBACK, :ptr, :SINT, :BOOL
+__crtDeleteWinRTTimer proto WINAPI :HANDLE, :BOOL
+__crtCancelWinRTTimer proto WINAPI :HANDLE, :BOOL
 __crtExitProcessWinRT proto WINAPI
-;DWORD
-__crtGetFullPathNameWinRTW proto WINAPI \
-              fileName: LPWSTR,
-          bufferLength: DWORD,
-                buffer: LPWSTR
-
-;DWORD
-__crtGetFullPathNameWinRTA proto WINAPI \
-              fileName: char*,
-          bufferLength: DWORD,
-                buffer: LPSTR
-
-;DWORD
-__crtGetTempPathWinRTW proto WINAPI \
-               maxBuff: SINT,
-        tempPathBuffer: LPWSTR
-
-;DWORD
-__crtGetTempPathWinRTA proto WINAPI \
-               maxBuff: SINT,
-        tempPathBuffer: LPSTR
-
+__crtGetFullPathNameWinRTW proto WINAPI :LPWSTR, :DWORD, :LPWSTR
+__crtGetFullPathNameWinRTA proto WINAPI :ptr, :DWORD, :LPSTR
+__crtGetTempPathWinRTW proto WINAPI :SINT, :LPWSTR
+__crtGetTempPathWinRTA proto WINAPI :SINT, :LPSTR
 
 endif  ;; _CRT_APP
 endif  ;; _INC_AWINC

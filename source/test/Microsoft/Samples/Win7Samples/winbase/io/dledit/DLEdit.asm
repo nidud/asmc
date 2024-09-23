@@ -47,14 +47,19 @@
 ;;
 ;; reduce number of headers pulled in by windows.h to improve build time
 ;;
-WIN32_LEAN_AND_MEAN equ 1
-_WIN32_WINNT equ 0x0500
+
+define WIN32_LEAN_AND_MEAN 1
+define _WIN32_WINNT 0x0500
 
 include windows.inc
 include winioctl.inc
 include stdio.inc
 include stdlib.inc
 include tchar.inc
+
+ifndef _TRUNCATE
+define _TRUNCATE (-1)
+endif
 
 ;; -----------------------------------------------------------------------------
 
@@ -345,9 +350,7 @@ PrintHelp proc pszAppName:LPCTSTR
         "       %s <Drive Letter>                      show mapping for drive letter\n"
         "       %s -a                                  show all mappings\n\n"
         "example: %s e:\\ \\Device\\CdRom0\n"
-        "         %s -r e:\\\n",
-        rcx, rcx, rcx, rcx, rcx, rcx, rcx
-        )
+        "         %s -r e:\\\n", rcx, rcx, rcx, rcx, rcx, rcx, rcx )
    xor eax,eax
    ret
 
@@ -451,13 +454,10 @@ AssignPersistentDriveLetter proc WINAPI pszDriveLetter:LPCTSTR, pszDeviceName:LP
         .new volinfo:VOLUME_GET_GPT_ATTRIBUTES_INFORMATION
         .new partinfo:PARTITION_INFORMATION
 
-
         _tcsncpy_s(&szDriveName, _countof(szDriveName), "\\\\.\\", _TRUNCATE)
         _tcsncat_s(&szDriveName, _countof(szDriveName), &szDriveLetter, _TRUNCATE)
 
-        mov hDevice,CreateFile(&szDriveName, GENERIC_READ,
-                            FILE_SHARE_READ or FILE_SHARE_WRITE,
-                            NULL, OPEN_EXISTING, 0, NULL)
+        mov hDevice,CreateFile(&szDriveName, GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL)
 
         .if hDevice != INVALID_HANDLE_VALUE
 
@@ -539,8 +539,8 @@ AssignPersistentDriveLetter proc WINAPI pszDriveLetter:LPCTSTR, pszDeviceName:LP
         ;; a dynamic volume, or a non-partitionable device such as CD-ROM.
         ;;
 
-        .if ( IsRecognizedPartition( partinfo.PartitionType ) || \
-                partinfo.PartitionType == PARTITION_LDM || \
+        .if ( IsRecognizedPartition( partinfo.PartitionType ) ||
+                partinfo.PartitionType == PARTITION_LDM ||
                 partinfo.PartitionType == PARTITION_ENTRY_UNUSED )
 
             ;;
@@ -894,7 +894,8 @@ IsWindowsXP_orLater proc WINAPI
     mov comparisonMask,VerSetConditionMask(comparisonMask, VER_MAJORVERSION, VER_GREATER_EQUAL)
     mov comparisonMask,VerSetConditionMask(comparisonMask, VER_MINORVERSION, VER_GREATER_EQUAL)
 
-    .return VerifyVersionInfo(&osvi, VER_MAJORVERSION or VER_MINORVERSION, comparisonMask)
+    VerifyVersionInfo(&osvi, VER_MAJORVERSION or VER_MINORVERSION, comparisonMask)
+    ret
 
 IsWindowsXP_orLater endp
 

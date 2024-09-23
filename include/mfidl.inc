@@ -87,17 +87,9 @@ DEFINE_GUID( MF_SESSION_SERVER_CONTEXT, 0xafe5b291, 0x50fa, 0x46e8, 0xb9, 0xbe, 
 DEFINE_GUID( MF_SESSION_REMOTE_SOURCE_MODE, 0xf4033ef4, 0x9bb3, 0x4378, 0x94, 0x1f, 0x85, 0xa0, 0x85, 0x6b, 0xc2, 0x44);
 DEFINE_GUID( MF_SESSION_APPROX_EVENT_OCCURRENCE_TIME, 0x190e852f, 0x6238, 0x42d1, 0xb5, 0xaf, 0x69, 0xea, 0x33, 0x8e, 0xf8, 0x50);
 DEFINE_GUID( MF_PMP_SERVER_CONTEXT, 0x2f00c910, 0xd2cf, 0x4278, 0x8b, 0x6a, 0xd0, 0x77, 0xfa, 0xc3, 0xa2, 0x5f);
-;STDAPI
-MFCreateMediaSession proto __cdecl \
-	pConfiguration: ptr IMFAttributes,
-	ppMediaSession: ptr ptr IMFMediaSession
 
-;STDAPI
-MFCreatePMPMediaSession proto __cdecl \
-       dwCreationFlags: DWORD,
-	pConfiguration: ptr IMFAttributes,
-	ppMediaSession: ptr ptr IMFMediaSession,
-     ppEnablerActivate: ptr IMFActivate
+MFCreateMediaSession proto __cdecl :ptr, :ptr
+MFCreatePMPMediaSession proto __cdecl :DWORD, :ptr, :ptr, :ptr
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -162,58 +154,23 @@ DEFINE_IIDX(IMFSourceResolver, "FBE5A32D-A497-4b61-BB85-97B1A848A6E3")
 
 
 IMFSourceResolver_RemoteBeginCreateObjectFromURL_Proxy proto __cdecl :ptr, :DWORD, :ptr, :ptr
-
-IMFSourceResolver_RemoteBeginCreateObjectFromURL_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFSourceResolver_RemoteBeginCreateObjectFromURL_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFSourceResolver_RemoteEndCreateObjectFromURL_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-
-IMFSourceResolver_RemoteEndCreateObjectFromURL_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFSourceResolver_RemoteEndCreateObjectFromURL_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFSourceResolver_RemoteBeginCreateObjectFromByteStream_Proxy proto __cdecl :ptr, :ptr, :ptr, :DWORD, :ptr, :ptr
-
-IMFSourceResolver_RemoteBeginCreateObjectFromByteStream_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFSourceResolver_RemoteBeginCreateObjectFromByteStream_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFSourceResolver_RemoteEndCreateObjectFromByteStream_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-
-IMFSourceResolver_RemoteEndCreateObjectFromByteStream_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFSourceResolver_RemoteEndCreateObjectFromByteStream_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
-;STDAPI
-MFCreateSourceResolver proto __cdecl \
-     ppISourceResolver: ptr IMFSourceResolver
-
+MFCreateSourceResolver proto __cdecl :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-;STDAPI
-CreatePropertyStore proto __cdecl \
-	       ppStore: ptr IPropertyStore
-
-;STDAPI
-MFGetSupportedSchemes proto __cdecl \
-   pPropVarSchemeArray: ptr PROPVARIANT
-
-;STDAPI
-MFGetSupportedMimeTypes proto __cdecl \
- pPropVarMimeTypeArray: ptr PROPVARIANT
-
+CreatePropertyStore proto __cdecl :ptr
+MFGetSupportedSchemes proto __cdecl :ptr
+MFGetSupportedMimeTypes proto __cdecl :ptr
 MFPKEY_SourceOpenMonitor equ <{ { 0x074d4637, 0xb5ae, 0x465d, 0xaf, 0x17, 0x1a, 0x53, 0x8d, 0x28, 0x59, 0xdd}, 0x02 }>
 endif
 
@@ -284,12 +241,7 @@ DEFINE_IIDX(IMFMediaSource, "279a808d-aec7-40c8-9c6b-a6b492c78a66")
    .ends
 
 IMFMediaSource_RemoteCreatePresentationDescriptor_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-
-IMFMediaSource_RemoteCreatePresentationDescriptor_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFMediaSource_RemoteCreatePresentationDescriptor_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 endif
@@ -331,12 +283,7 @@ DEFINE_IIDX(IMFMediaStream, "D182108F-4EC6-443f-AA42-A71106EC825F")
    .ends
 
 IMFMediaStream_RemoteRequestSample_Proxy proto __cdecl :ptr
-
-IMFMediaStream_RemoteRequestSample_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFMediaStream_RemoteRequestSample_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -567,8 +514,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-MFCreateTopology proto __cdecl \
-		ppTopo: ptr ptr
+MFCreateTopology proto __cdecl :ptr
 
 .enum MF_TOPOLOGY_TYPE {
     MF_TOPOLOGY_OUTPUT_NODE = 0,
@@ -604,20 +550,9 @@ DEFINE_IIDX(IMFTopologyNode, "83CF873A-F6DA-4bc8-823F-BACFD55DC430")
    .ends
 
 IMFTopologyNode_RemoteGetOutputPrefType_Proxy proto __cdecl :ptr, :dword, :ptr, :ptr
-
-IMFTopologyNode_RemoteGetOutputPrefType_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFTopologyNode_RemoteGetOutputPrefType_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFTopologyNode_RemoteGetInputPrefType_Proxy proto __cdecl :ptr, :dword, :ptr, :ptr
-
-IMFTopologyNode_RemoteGetInputPrefType_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFTopologyNode_RemoteGetInputPrefType_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -666,18 +601,10 @@ DEFINE_GUID( MF_TOPONODE_RATELESS, 0x14932f9d, 0x9087, 0x4bb4, 0x84, 0x12, 0x51,
 DEFINE_GUID( MF_TOPONODE_DISABLE_PREROLL, 0x14932f9e, 0x9087, 0x4bb4, 0x84, 0x12, 0x51, 0x67, 0x14, 0x5c, 0xbe, 0x04);
 DEFINE_GUID( MF_TOPONODE_PRIMARYOUTPUT, 0x6304ef99, 0x16b2, 0x4ebe, 0x9d, 0x67, 0xe4, 0xc5, 0x39, 0xb3, 0xa2, 0x59);
 
-MFCreateTopologyNode proto __cdecl \
-	      NodeType: MF_TOPOLOGY_TYPE,
-		ppNode: ptr ptr
+MFCreateTopologyNode proto __cdecl :MF_TOPOLOGY_TYPE, :ptr
 
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-MFGetTopoNodeCurrentType proto __cdecl \
-		 pNode: ptr IMFTopologyNode,
-	 dwStreamIndex: DWORD,
-	       fOutput: BOOL,
-		ppType: ptr ptr IMFMediaType
-
+MFGetTopoNodeCurrentType proto __cdecl :ptr, :DWORD, :BOOL, :ptr
 endif
 endif
 
@@ -696,11 +623,7 @@ DEFINE_IIDX(IMFGetService, "fa993888-4383-415a-a930-dd472a8cf6f7")
 
 endif
 
-MFGetService proto __cdecl \
-	    punkObject: ptr IUnknown,
-	   guidService: REFGUID,
-		  riid: REFIID,
-	     ppvObject: ptr ptr
+MFGetService proto __cdecl :ptr, :REFGUID, :REFIID, :ptr
 
 MFTIME	typedef LONGLONG
 
@@ -777,10 +700,7 @@ endif
 
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-MFCreatePresentationClock proto __cdecl \
-   ppPresentationClock: ptr ptr IMFPresentationClock
-
+MFCreatePresentationClock proto __cdecl :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
@@ -798,10 +718,7 @@ endif
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-MFCreateSystemTimeSource proto __cdecl \
-    ppSystemTimeSource: ptr ptr IMFPresentationTimeSource
-
+MFCreateSystemTimeSource proto __cdecl :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
@@ -858,31 +775,13 @@ DEFINE_IIDX(IMFPresentationDescriptor, "03cb2711-24d7-4db6-a17f-f3a7a479a536")
 
 endif
 
-MFCreatePresentationDescriptor proto __cdecl \
-    cStreamDescriptors: DWORD,
-   apStreamDescriptors: ptr ptr IMFStreamDescriptor,
-ppPresentationDescriptor: ptr ptr IMFPresentationDescriptor
-
-
+MFCreatePresentationDescriptor proto __cdecl :DWORD, :ptr, :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-MFRequireProtectedEnvironment proto __cdecl \
-pPresentationDescriptor: ptr IMFPresentationDescriptor
-
-
-MFSerializePresentationDescriptor proto __cdecl \
-		   pPD: ptr,
-	       pcbData: ptr,
-	       ppbData: ptr ptr
-
-
-MFDeserializePresentationDescriptor proto __cdecl \
-		cbData: DWORD,
-		pbData: ptr,
-		  ppPD: ptr ptr
-
+MFRequireProtectedEnvironment proto __cdecl :ptr
+MFSerializePresentationDescriptor proto __cdecl :ptr, :ptr, :ptr
+MFDeserializePresentationDescriptor proto __cdecl :DWORD, :ptr, :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
@@ -905,11 +804,7 @@ DEFINE_IIDX(IMFStreamDescriptor, "56c03d9c-9dbb-45f5-ab4b-d80f47c05938")
 
 endif
 
-MFCreateStreamDescriptor proto __cdecl \
-    dwStreamIdentifier: DWORD,
-	   cMediaTypes: DWORD,
-	  apMediaTypes: ptr ptr IMFMediaType,
-	  ppDescriptor: ptr ptr IMFStreamDescriptor
+MFCreateStreamDescriptor proto __cdecl :DWORD, :DWORD, :ptr, :ptr
 
 ifndef __IMFMediaTypeHandler_INTERFACE_DEFINED__
 define __IMFMediaTypeHandler_INTERFACE_DEFINED__
@@ -927,36 +822,13 @@ DEFINE_IIDX(IMFMediaTypeHandler, "e93dcf6c-4b07-4e1e-8123-aa16ed6eadf5")
    .ends
 
 IMFMediaTypeHandler_RemoteIsMediaTypeSupported_Proxy proto __cdecl :ptr, :ptr, :dword, :ptr, :ptr
-
-IMFMediaTypeHandler_RemoteIsMediaTypeSupported_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFMediaTypeHandler_RemoteIsMediaTypeSupported_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFMediaTypeHandler_RemoteGetMediaTypeByIndex_Proxy proto __cdecl :ptr, :dword, :ptr, :ptr
-
-IMFMediaTypeHandler_RemoteGetMediaTypeByIndex_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFMediaTypeHandler_RemoteGetMediaTypeByIndex_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFMediaTypeHandler_RemoteSetCurrentMediaType_Proxy proto __cdecl :ptr, :ptr, :dword
-
-IMFMediaTypeHandler_RemoteSetCurrentMediaType_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFMediaTypeHandler_RemoteSetCurrentMediaType_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFMediaTypeHandler_RemoteGetCurrentMediaType_Proxy proto __cdecl :ptr, :ptr, :ptr
-
-IMFMediaTypeHandler_RemoteGetCurrentMediaType_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFMediaTypeHandler_RemoteGetCurrentMediaType_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 endif
@@ -964,8 +836,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-MFCreateSimpleTypeHandler proto __cdecl \
-	     ppHandler: ptr ptr
+MFCreateSimpleTypeHandler proto __cdecl :ptr
 
 .enum MFTIMER_FLAGS {
     MFTIMER_RELATIVE	= 0x1
@@ -1026,16 +897,9 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-MFShutdownObject proto __cdecl \
-		  pUnk: ptr
-
-MFCreateAudioRenderer proto __cdecl \
-      pAudioAttributes: ptr IMFAttributes,
-		ppSink: ptr ptr IMFMediaSink
-
-;STDAPI
-MFCreateAudioRendererActivate proto __cdecl \
-	    ppActivate: ptr ptr
+MFShutdownObject proto __cdecl :ptr
+MFCreateAudioRenderer proto __cdecl :ptr, :ptr
+MFCreateAudioRendererActivate proto __cdecl :ptr
 
 DEFINE_GUID( MF_AUDIO_RENDERER_ATTRIBUTE_FLAGS, 0xede4b5e0, 0xf805, 0x4d6c, 0x99, 0xb3, 0xdb, 0x01, 0xbf, 0x95, 0xdf, 0xab);
 MF_AUDIO_RENDERER_ATTRIBUTE_FLAGS_CROSSPROCESS equ 0x00000001
@@ -1048,74 +912,26 @@ DEFINE_GUID( MF_AUDIO_RENDERER_ATTRIBUTE_ENDPOINT_ID, 0xb10aaec3, 0xef71, 0x4cc3
 DEFINE_GUID( MF_AUDIO_RENDERER_ATTRIBUTE_ENDPOINT_ROLE, 0x6ba644ff, 0x27c5, 0x4d02, 0x98, 0x87, 0xc2, 0x86, 0x19, 0xfd, 0xb9, 0x1b);
 DEFINE_GUID( MF_AUDIO_RENDERER_ATTRIBUTE_STREAM_CATEGORY, 0xa9770471, 0x92ec, 0x4df4, 0x94, 0xfe, 0x81, 0xc3, 0x6f, 0xc, 0x3a, 0x7a);
 
-MFCreateVideoRendererActivate proto __cdecl \
-	     hwndVideo: HWND,
-	    ppActivate: ptr ptr
+MFCreateVideoRendererActivate proto __cdecl :HWND, :ptr
 
 if (WINVER GE _WIN32_WINNT_WIN7)
-;STDAPI
-MFCreateMPEG4MediaSink proto __cdecl \
-	  pIByteStream: ptr IMFByteStream,
-       pVideoMediaType: ptr IMFMediaType,
-       pAudioMediaType: ptr IMFMediaType,
-	  ppIMediaSink: ptr ptr IMFMediaSink
+MFCreateMPEG4MediaSink proto __cdecl :ptr, :ptr, :ptr, :ptr
+MFCreate3GPMediaSink proto __cdecl :ptr, :ptr, :ptr, :ptr
+MFCreateMP3MediaSink proto __cdecl :ptr, :ptr
 
-;STDAPI
-MFCreate3GPMediaSink proto __cdecl \
-	  pIByteStream: ptr IMFByteStream,
-       pVideoMediaType: ptr IMFMediaType,
-       pAudioMediaType: ptr IMFMediaType,
-	  ppIMediaSink: ptr ptr IMFMediaSink
-
-;STDAPI
-MFCreateMP3MediaSink proto __cdecl \
-     pTargetByteStream: ptr IMFByteStream,
-	   ppMediaSink: ptr ptr IMFMediaSink
-
-endif ;; (WINVER GE _WIN32_WINNT_WIN7)
+endif
 if (WINVER GE _WIN32_WINNT_WIN8)
-;STDAPI
-MFCreateAC3MediaSink proto __cdecl \
-     pTargetByteStream: ptr IMFByteStream,
-       pAudioMediaType: ptr IMFMediaType,
-	   ppMediaSink: ptr ptr IMFMediaSink
-
-;STDAPI
-MFCreateADTSMediaSink proto __cdecl \
-     pTargetByteStream: ptr IMFByteStream,
-       pAudioMediaType: ptr IMFMediaType,
-	   ppMediaSink: ptr ptr IMFMediaSink
-
-;STDAPI
-MFCreateMuxSink proto __cdecl \
-     guidOutputSubType: ptr GUID,
-     pOutputAttributes: ptr IMFAttributes,
-     pOutputByteStream: ptr IMFByteStream,
-	     ppMuxSink: ptr ptr IMFMediaSink
-
-;STDAPI
-MFCreateFMPEG4MediaSink proto __cdecl \
-	  pIByteStream: ptr IMFByteStream,
-       pVideoMediaType: ptr IMFMediaType,
-       pAudioMediaType: ptr IMFMediaType,
-	  ppIMediaSink: ptr ptr IMFMediaSink
-
+MFCreateAC3MediaSink proto __cdecl :ptr, :ptr, :ptr
+MFCreateADTSMediaSink proto __cdecl :ptr, :ptr, :ptr
+MFCreateMuxSink proto __cdecl :ptr, :ptr, :ptr, :ptr
+MFCreateFMPEG4MediaSink proto __cdecl :ptr, :ptr, :ptr, :ptr
+endif
+if (WINVER GE _WIN32_WINNT_WINBLUE)
+MFCreateAVIMediaSink proto __cdecl :ptr, :ptr, :ptr, :ptr
 endif
 if (WINVER GE _WIN32_WINNT_WINBLUE)
 
-MFCreateAVIMediaSink proto __cdecl \
-	  pIByteStream: ptr IMFByteStream,
-       pVideoMediaType: ptr IMFMediaType,
-       pAudioMediaType: ptr IMFMediaType,
-	  ppIMediaSink: ptr ptr IMFMediaSink
-
-endif
-if (WINVER GE _WIN32_WINNT_WINBLUE)
-
-MFCreateWAVEMediaSink proto __cdecl \
-     pTargetByteStream: ptr IMFByteStream,
-       pAudioMediaType: ptr IMFMediaType,
-	   ppMediaSink: ptr ptr IMFMediaSink
+MFCreateWAVEMediaSink proto __cdecl :ptr, :ptr, :ptr
 
 endif
 
@@ -1131,8 +947,7 @@ DEFINE_IIDX(IMFTopoLoader, "DE9A6157-F660-4643-B56A-DF9F7998C7CD")
 
 endif
 
-MFCreateTopoLoader proto __cdecl \
-		 ppObj: ptr  ptr
+MFCreateTopoLoader proto __cdecl :ptr
 
 ifndef __IMFContentProtectionManager_INTERFACE_DEFINED__
 define __IMFContentProtectionManager_INTERFACE_DEFINED__
@@ -1146,20 +961,9 @@ DEFINE_IIDX(IMFContentProtectionManager, "ACF92459-6A61-42bd-B57C-B43E51203CB0")
    .ends
 
 IMFContentProtectionManager_RemoteBeginEnableContent_Proxy proto __cdecl :ptr, :REFCLSID, :ptr, :dword, :ptr
-
-IMFContentProtectionManager_RemoteBeginEnableContent_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFContentProtectionManager_RemoteBeginEnableContent_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFContentProtectionManager_RemoteEndEnableContent_Proxy proto __cdecl :ptr, :ptr
-
-IMFContentProtectionManager_RemoteEndEnableContent_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFContentProtectionManager_RemoteEndEnableContent_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -1436,10 +1240,7 @@ DEFINE_IIDX(IMFSampleGrabberSinkCallback, "8C7B80BF-EE42-4b59-B1DF-55668E1BDCA8"
 
 endif
 
-MFCreateSampleGrabberSinkActivate proto __cdecl \
-	 pIMFMediaType: ptr IMFMediaType,
-pIMFSampleGrabberSinkCallback: ptr IMFSampleGrabberSinkCallback,
-	   ppIActivate: ptr ptr IMFActivate
+MFCreateSampleGrabberSinkActivate proto __cdecl :ptr, :ptr, :ptr
 
 DEFINE_GUID( MF_SAMPLEGRABBERSINK_SAMPLE_TIME_OFFSET, 0x62e3d776, 0x8100, 0x4e03, 0xa6, 0xe8, 0xbd, 0x38, 0x57, 0xac, 0x9c, 0x47);
 if (WINVER GE _WIN32_WINNT_WIN7)
@@ -1488,68 +1289,21 @@ DEFINE_IIDX(IMFWorkQueueServices, "35FE1BB8-A3A9-40fe-BBEC-EB569C9CCCA3")
 
 
 IMFWorkQueueServices_RemoteBeginRegisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-
-IMFWorkQueueServices_RemoteBeginRegisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFWorkQueueServices_RemoteBeginRegisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFWorkQueueServices_RemoteEndRegisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-
-IMFWorkQueueServices_RemoteEndRegisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFWorkQueueServices_RemoteEndRegisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFWorkQueueServices_RemoteBeginUnregisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-
-IMFWorkQueueServices_RemoteBeginUnregisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFWorkQueueServices_RemoteBeginUnregisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFWorkQueueServices_RemoteEndUnregisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-
-IMFWorkQueueServices_RemoteEndUnregisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFWorkQueueServices_RemoteEndUnregisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFWorkQueueServices_RemoteBeginRegisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :dword, :ptr, :dword, :ptr
-
-IMFWorkQueueServices_RemoteBeginRegisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFWorkQueueServices_RemoteBeginRegisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFWorkQueueServices_RemoteEndRegisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :ptr, :ptr
-
-IMFWorkQueueServices_RemoteEndRegisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFWorkQueueServices_RemoteEndRegisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFWorkQueueServices_RemoteBeginUnregisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :dword, :ptr
-
-IMFWorkQueueServices_RemoteBeginUnregisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFWorkQueueServices_RemoteBeginUnregisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 IMFWorkQueueServices_RemoteEndUnregisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-
-IMFWorkQueueServices_RemoteEndUnregisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFWorkQueueServices_RemoteEndUnregisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -1568,16 +1322,10 @@ DEFINE_IIDX(IMFWorkQueueServicesEx, "96bf961b-40fe-42f1-ba9d-320238b49700")
    .ends
 
 IMFWorkQueueServicesEx_RemoteBeginRegisterPlatformWorkQueueWithMMCSSEx_Proxy proto __cdecl :ptr, :dword, :ptr, :dword, :ptr, :ptr
-
-IMFWorkQueueServicesEx_RemoteBeginRegisterPlatformWorkQueueWithMMCSSEx_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFWorkQueueServicesEx_RemoteBeginRegisterPlatformWorkQueueWithMMCSSEx_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 endif
-
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
@@ -1633,9 +1381,7 @@ DEFINE_IIDX(IMFQualityManager, "8D009D86-5B9F-4115-B1FC-9F80D52AB8AB")
 
 endif
 
-MFCreateStandardQualityManager proto __cdecl \
-      ppQualityManager: ptr IMFQualityManager
-
+MFCreateStandardQualityManager proto __cdecl :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
@@ -1753,24 +1499,14 @@ endif
 
 DEFINE_GUID( MF_TIME_FORMAT_SEGMENT_OFFSET, 0xc8b8be77, 0x869c, 0x431d, 0x81, 0x2e, 0x16, 0x96, 0x93, 0xf6, 0x5a, 0x39 );
 
-MFCreateSequencerSource proto __cdecl \
-	     pReserved: ptr IUnknown,
-     ppSequencerSource: ptr IMFSequencerSource
-
-MFCreateSequencerSegmentOffset proto __cdecl \
-		  dwId: MFSequencerElementId,
-	     hnsOffset: MFTIME,
-     pvarSegmentOffset: ptr PROPVARIANT
+MFCreateSequencerSource proto __cdecl :ptr, :ptr
+MFCreateSequencerSegmentOffset proto __cdecl :MFSequencerElementId, :MFTIME, :ptr
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-MFCreateAggregateSource proto __cdecl \
-     pSourceCollection: ptr IMFCollection,
-	   ppAggSource: ptr IMFMediaSource
-
+MFCreateAggregateSource proto __cdecl :ptr, :ptr
 endif
 endif
 
@@ -1988,9 +1724,7 @@ DEFINE_IIDX(IMFNetCredentialCache, "5b87ef6c-7ed8-434f-ba0e-184fac1628d1")
 
 endif
 
-MFCreateCredentialCache proto __cdecl \
-	       ppCache: ptr ptr
-
+MFCreateCredentialCache proto __cdecl :ptr
 endif
 
 if (WINVER GE _WIN32_WINNT_WIN7)
@@ -2062,10 +1796,7 @@ DEFINE_IIDX(IMFNetProxyLocator, "e9cd0383-a268-4bb4-82de-658d53574d41")
 
 endif
 
-MFCreateProxyLocator proto __cdecl \
-	   pszProtocol: LPCWSTR,
-	  pProxyConfig: ptr IPropertyStore,
-	ppProxyLocator: ptr ptr IMFNetProxyLocator
+MFCreateProxyLocator proto __cdecl :LPCWSTR, :ptr, :ptr
 
 ifndef __IMFNetProxyLocatorFactory_INTERFACE_DEFINED__
 define __IMFNetProxyLocatorFactory_INTERFACE_DEFINED__
@@ -2118,9 +1849,7 @@ DEFINE_IIDX(IMFNetSchemeHandlerConfig, "7BE19E73-C9BF-468a-AC5A-A5E8653BEC87")
 
 endif
 
-MFCreateNetSchemePlugin proto __cdecl \
-		  riid: REFIID,
-	    ppvHandler: ptr LPVOID
+MFCreateNetSchemePlugin proto __cdecl :REFIID, :ptr
 
 .enum MFNETSOURCE_TRANSPORT_TYPE {
     MFNETSOURCE_UDP = 0,
@@ -2620,12 +2349,7 @@ DEFINE_IIDX(IMFPMPHost, "F70CA1A9-FDC7-4782-B994-ADFFB1C98606")
 
 
 IMFPMPHost_RemoteCreateObjectByCLSID_Proxy proto __cdecl :ptr, :REFCLSID, :ptr, :dword, :REFIID, :ptr
-
-IMFPMPHost_RemoteCreateObjectByCLSID_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFPMPHost_RemoteCreateObjectByCLSID_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -2659,9 +2383,7 @@ DEFINE_IIDX(IMFPMPServer, "994e23af-1cc2-493c-b9fa-46f1cb040fa4")
 
 endif
 
-MFCreatePMPServer proto __cdecl \
-       dwCreationFlags: DWORD,
-	   ppPMPServer: ptr ptr IMFPMPServer
+MFCreatePMPServer proto __cdecl :DWORD, :ptr
 
 ifndef __IMFRemoteDesktopPlugin_INTERFACE_DEFINED__
 define __IMFRemoteDesktopPlugin_INTERFACE_DEFINED__
@@ -2675,9 +2397,7 @@ DEFINE_IIDX(IMFRemoteDesktopPlugin, "1cde6309-cae0-4940-907e-c1ec9c3d1d4a")
 
 endif
 
-MFCreateRemoteDesktopPlugin proto __cdecl \
-	      ppPlugin: ptr ptr IMFRemoteDesktopPlugin
-
+MFCreateRemoteDesktopPlugin proto __cdecl :ptr
 CreateNamedPropertyStore proto __cdecl :ptr
 
 
@@ -2705,9 +2425,7 @@ if (WINVER GE _WIN32_WINNT_WIN7)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-MFCreateSampleCopierMFT proto __cdecl \
-	   ppCopierMFT: ptr ptr IMFTransform
-
+MFCreateSampleCopierMFT proto __cdecl :ptr
 
 ifndef __IMFTranscodeProfile_INTERFACE_DEFINED__
 define __IMFTranscodeProfile_INTERFACE_DEFINED__
@@ -2762,38 +2480,20 @@ DEFINE_GUID( MF_TRANSCODE_DONOT_INSERT_ENCODER, 0xf45aa7ce, 0xab24, 0x4012, 0xa1
 
 DEFINE_GUID( MF_VIDEO_PROCESSOR_ALGORITHM, 0x4a0a1e1f, 0x272c, 0x4fb6, 0x9e, 0xb1, 0xdb, 0x33, 0xc, 0xbc, 0x97, 0xca);
 DEFINE_GUID( MF_XVP_DISABLE_FRC, 0x2c0afa19, 0x7a97, 0x4d5a, 0x9e, 0xe8, 0x16, 0xd4, 0xfc, 0x51, 0x8d, 0x8c );
-;STDAPI
-MFCreateTranscodeProfile proto __cdecl \
-    ppTranscodeProfile: ptr ptr IMFTranscodeProfile
-
-;STDAPI
-MFCreateTranscodeTopology proto __cdecl \
-		  pSrc: ptr IMFMediaSource,
-    pwszOutputFilePath: LPCWSTR,
-	      pProfile: ptr IMFTranscodeProfile,
-       ppTranscodeTopo: ptr ptr IMFTopology
+MFCreateTranscodeProfile proto __cdecl :ptr
+MFCreateTranscodeTopology proto __cdecl :ptr, :LPCWSTR, :ptr, :ptr
 
 endif
 
 if (WINVER GE _WIN32_WINNT_WIN8)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-MFCreateTranscodeTopologyFromByteStream proto __cdecl \
-		  pSrc: ptr IMFMediaSource,
-	 pOutputStream: ptr IMFByteStream,
-	      pProfile: ptr IMFTranscodeProfile,
-       ppTranscodeTopo: ptr ptr IMFTopology
-
+MFCreateTranscodeTopologyFromByteStream proto __cdecl :ptr, :ptr, :ptr, :ptr
 endif
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-MFTranscodeGetAudioOutputAvailableTypes proto __cdecl \
-	   guidSubType: REFGUID,
-	    dwMFTFlags: DWORD,
-	  pCodecConfig: ptr IMFAttributes,
-      ppAvailableTypes: ptr ptr IMFCollection
+MFTranscodeGetAudioOutputAvailableTypes proto __cdecl :REFGUID, :DWORD, :ptr, :ptr
 
 MF_TRANSCODE_SINK_INFO	STRUC
 dwVideoStreamID		dd ?
@@ -2914,42 +2614,20 @@ DEFINE_IIDX(IMFTrackedSample, "245BF8E9-0755-40f7-88A5-AE0F18D55E17")
 
 endif
 
-MFCreateTrackedSample proto __cdecl \
-	    ppMFSample: ptr ptr IMFTrackedSample
-
+MFCreateTrackedSample proto __cdecl :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-MFCreateMFByteStreamOnStream proto __cdecl \
-	       pStream: ptr IStream,
-	  ppByteStream: ptr ptr IMFByteStream
-
-MFCreateStreamOnMFByteStream proto __cdecl \
-	   pByteStream: ptr IMFByteStream,
-	      ppStream: ptr ptr IStream
-
+MFCreateMFByteStreamOnStream proto __cdecl :ptr, :ptr
+MFCreateStreamOnMFByteStream proto __cdecl :ptr, :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-MFCreateMFByteStreamOnStreamEx proto __cdecl \
-	    punkStream: ptr IUnknown,
-	  ppByteStream: ptr ptr IMFByteStream
-
-MFCreateStreamOnMFByteStreamEx proto __cdecl \
-	   pByteStream: ptr IMFByteStream,
-		  riid: REFIID,
-		      : ptr ptr
-
-MFCreateMediaTypeFromProperties proto __cdecl \
-	    punkStream: ptr IUnknown,
-	   ppMediaType: ptr ptr IMFMediaType
-
-MFCreatePropertiesFromMediaType proto __cdecl \
-	    pMediaType: ptr IMFMediaType,
-		  riid: REFIID,
-		      : ptr ptr
+MFCreateMFByteStreamOnStreamEx proto __cdecl :ptr, :ptr
+MFCreateStreamOnMFByteStreamEx proto __cdecl :ptr, :REFIID, :ptr
+MFCreateMediaTypeFromProperties proto __cdecl :ptr, :ptr
+MFCreatePropertiesFromMediaType proto __cdecl :ptr, :REFIID, :ptr
 
 if (WINVER GE _WIN32_WINNT_WINBLUE)
 DEFINE_GUID(MF_WRAPPED_BUFFER_SERVICE, 0xab544072, 0xc269, 0x4ebc, 0xa5, 0x52, 0x1c, 0x3b, 0x32, 0xbe, 0xd5, 0xca);
@@ -2969,18 +2647,9 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-MFEnumDeviceSources proto __cdecl \
-	   pAttributes: ptr IMFAttributes,
-     pppSourceActivate: ptr ptr ptr IMFActivate,
-      pcSourceActivate: ptr UINT32
-
-MFCreateDeviceSource proto __cdecl \
-	   pAttributes: ptr IMFAttributes,
-	      ppSource: ptr ptr IMFMediaSource
-
-MFCreateDeviceSourceActivate proto __cdecl \
-	   pAttributes: ptr IMFAttributes,
-	    ppActivate: ptr ptr IMFActivate
+MFEnumDeviceSources proto __cdecl :ptr, :ptr, :ptr
+MFCreateDeviceSource proto __cdecl :ptr, :ptr
+MFCreateDeviceSourceActivate proto __cdecl :ptr, :ptr
 
 DEFINE_GUID( MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, 0xc60ac5fe, 0x252a, 0x478f, 0xa0, 0xef, 0xbc, 0x8f, 0xa5, 0xf7, 0xca, 0xd3);
 DEFINE_GUID( MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_HW_SOURCE, 0xde7046ba, 0x54d6, 0x4487, 0xa2, 0xa4, 0xec, 0x7c, 0xd, 0x1b, 0xd1, 0x63);
@@ -3047,20 +2716,10 @@ DEFINE_IIDX(IMFSystemId, "fff4af3a-1fc1-4ef9-a29b-d26c49e2f31a")
 
 endif
 
-MFCreateProtectedEnvironmentAccess proto __cdecl \
-	      ppAccess: ptr ptr IMFProtectedEnvironmentAccess
-
-MFLoadSignedLibrary proto __cdecl \
-	       pszName: LPCWSTR,
-		 ppLib: ptr ptr IMFSignedLibrary
-
-MFGetSystemId proto __cdecl \
-		  ppId: ptr ptr IMFSystemId
-
-MFGetLocalId proto __cdecl \
-	      verifier: ptr BYTE,
-		  size: UINT32,
-		    id: ptr LPWSTR
+MFCreateProtectedEnvironmentAccess proto __cdecl :ptr
+MFLoadSignedLibrary proto __cdecl :LPCWSTR, :ptr
+MFGetSystemId proto __cdecl :ptr
+MFGetLocalId proto __cdecl :ptr, :UINT32, :ptr
 
 ;; {40871C59-AB40-471F-8DC3-1F259D862479}
 DEFINE_GUID(CLSID_MPEG2ByteStreamPlugin,0x40871c59, 0xab40, 0x471f, 0x8d, 0xc3, 0x1f, 0x25, 0x9d, 0x86, 0x24, 0x79);

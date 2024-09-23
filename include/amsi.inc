@@ -186,7 +186,6 @@ DEFINE_IIDX(IAntimalwareUacProvider, "b2cabfe4-fe04-42b1-a5df-08d483d4d125")
 
 endif
 
-
 ifndef __IAntimalware_INTERFACE_DEFINED__
 define __IAntimalware_INTERFACE_DEFINED__
 
@@ -206,43 +205,14 @@ DEFINE_GUIDS(CLSID_Antimalware, "fdb00e52-a214-4aa1-8fba-4357bb0072ec")
 DECLARE_HANDLE(HAMSICONTEXT)
 DECLARE_HANDLE(HAMSISESSION)
 
-;STDAPI
-AmsiInitialize proto __cdecl \
-	       appName: LPCWSTR,
-	   amsiContext: ptr HAMSICONTEXT
+AmsiInitialize proto __cdecl :LPCWSTR, :ptr
+AmsiUninitialize proto __cdecl :HAMSICONTEXT
+AmsiOpenSession proto __cdecl :HAMSICONTEXT, :ptr
+AmsiCloseSession proto __cdecl :HAMSICONTEXT, :HAMSISESSION
+AmsiScanBuffer proto __cdecl :HAMSICONTEXT, :ptr, :ULONG, :LPCWSTR, :HAMSISESSION, :ptr
+AmsiScanString proto __cdecl :HAMSICONTEXT, :LPCWSTR, :LPCWSTR, :HAMSISESSION, :ptr
 
-;STDAPI_(VOID)
-AmsiUninitialize proto __cdecl \
-	   amsiContext: HAMSICONTEXT
-
-;STDAPI
-AmsiOpenSession proto __cdecl \
-	   amsiContext: HAMSICONTEXT,
-	   amsiSession: ptr HAMSISESSION
-
-;STDAPI_(VOID)
-AmsiCloseSession proto __cdecl \
-	   amsiContext: HAMSICONTEXT,
-	   amsiSession: HAMSISESSION
-
-;STDAPI
-AmsiScanBuffer proto __cdecl \
-	   amsiContext: HAMSICONTEXT,
-		buffer: PVOID,
-		length: ULONG,
-	   contentName: LPCWSTR,
-	   amsiSession: HAMSISESSION,
-		result: ptr AMSI_RESULT
-
-;STDAPI
-AmsiScanString proto __cdecl \
-	   amsiContext: HAMSICONTEXT,
-		string: LPCWSTR,
-	   contentName: LPCWSTR,
-	   amsiSession: HAMSISESSION,
-		result: ptr AMSI_RESULT
-
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif
 
 endif
 .pragma list(pop)

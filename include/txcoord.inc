@@ -119,12 +119,7 @@ DEFINE_IIDX(ITransactionImportWhereabouts, "0141fda4-8fc0-11ce-bd18-204c4f4f5020
     GetWhereaboutsSize	proc :ptr
    .ends
 
-ITransactionImportWhereabouts_RemoteGetWhereabouts_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+ITransactionImportWhereabouts_RemoteGetWhereabouts_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -138,11 +133,7 @@ DEFINE_IIDX(ITransactionExport, "0141fda5-8fc0-11ce-bd18-204c4f4f5020")
     Export		proc :ptr, :ptr
    .ends
 
-ITransactionExport_RemoteGetTransactionCookie_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+ITransactionExport_RemoteGetTransactionCookie_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 

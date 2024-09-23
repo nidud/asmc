@@ -47,14 +47,7 @@ NETSETUP_IGNORE_UNSUPPORTED_FLAGS equ 0x10000000
 NETSETUP_VALID_UNJOIN_FLAGS equ (NETSETUP_ACCT_DELETE OR NETSETUP_IGNORE_UNSUPPORTED_FLAGS OR NETSETUP_JOIN_DC_ACCOUNT)
 NETSETUP_PROCESS_OFFLINE_FLAGS equ ( NETSETUP_JOIN_DOMAIN OR NETSETUP_DOMAIN_JOIN_IF_JOINED OR NETSETUP_JOIN_WITH_NEW_NAME OR NETSETUP_DONT_CONTROL_SERVICES )
 
-;NET_API_STATUS
-NetJoinDomain proto WINAPI \
-              lpServer: LPCWSTR,
-              lpDomain: LPCWSTR,
-           lpAccountOU: LPCWSTR,
-             lpAccount: LPCWSTR,
-            lpPassword: LPCWSTR,
-          fJoinOptions: DWORD
+NetJoinDomain proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD
 
 if(_WIN32_WINNT GE 0x0601)
 
@@ -65,96 +58,24 @@ NETSETUP_PROVISION_SKIP_ACCOUNT_SEARCH equ 0x00000008
 NETSETUP_PROVISION_ONLINE_CALLER equ 0x40000000
 NETSETUP_PROVISION_CHECK_PWD_ONLY equ 0x80000000
 
-;NET_API_STATUS
-NetProvisionComputerAccount proto WINAPI \
-              lpDomain: LPCWSTR,
-         lpMachineName: LPCWSTR,
-    lpMachineAccountOU: LPCWSTR,
-              lpDcName: LPCWSTR,
-             dwOptions: DWORD,
-     pProvisionBinData: ptr PBYTE,
-pdwProvisionBinDataSize: ptr DWORD,
-    pProvisionTextData: ptr LPWSTR
-
-
-;NET_API_STATUS
-NetRequestOfflineDomainJoin proto WINAPI \
-     pProvisionBinData: ptr BYTE,
-cbProvisionBinDataSize: DWORD,
-             dwOptions: DWORD,
-         lpWindowsPath: LPCWSTR
-
+NetProvisionComputerAccount proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD, :ptr, :ptr, :ptr
+NetRequestOfflineDomainJoin proto WINAPI :ptr, :DWORD, :DWORD, :LPCWSTR
 
 endif
 
-;NET_API_STATUS
-NetUnjoinDomain proto WINAPI \
-              lpServer: LPCWSTR,
-             lpAccount: LPCWSTR,
-            lpPassword: LPCWSTR,
-        fUnjoinOptions: DWORD
-
-
-;NET_API_STATUS
-NetRenameMachineInDomain proto WINAPI \
-                 lpServer: LPCWSTR,
-         lpNewMachineName: LPCWSTR,
-                lpAccount: LPCWSTR,
-               lpPassword: LPCWSTR,
-           fRenameOptions: DWORD
-
-;NET_API_STATUS
-NetValidateName proto WINAPI \
-              lpServer: LPCWSTR,
-                lpName: LPCWSTR,
-             lpAccount: LPCWSTR,
-            lpPassword: LPCWSTR,
-              NameType: NETSETUP_NAME_TYPE
-
-;NET_API_STATUS
-NetGetJoinInformation proto WINAPI \
-              lpServer: LPCWSTR,
-          lpNameBuffer: ptr LPWSTR,
-            BufferType: PNETSETUP_JOIN_STATUS
-
-;NET_API_STATUS
-NetGetJoinableOUs proto WINAPI \
-              lpServer: LPCWSTR,
-              lpDomain: LPCWSTR,
-             lpAccount: LPCWSTR,
-            lpPassword: LPCWSTR,
-               OUCount: ptr DWORD,
-                   OUs: ptr ptr LPWSTR
+NetUnjoinDomain proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD
+NetRenameMachineInDomain proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD
+NetValidateName proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :NETSETUP_NAME_TYPE
+NetGetJoinInformation proto WINAPI :LPCWSTR, :ptr, :PNETSETUP_JOIN_STATUS
+NetGetJoinableOUs proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr, :ptr
 
 if(_WIN32_WINNT GE 0x0501)
 
 NET_IGNORE_UNSUPPORTED_FLAGS equ 0x01
 
-;NET_API_STATUS
-NetAddAlternateComputerName proto WINAPI \
-                Server: LPCWSTR,
-         AlternateName: LPCWSTR,
-         DomainAccount: LPCWSTR,
- DomainAccountPassword: LPCWSTR,
-              Reserved: ULONG
-
-
-;NET_API_STATUS
-NetRemoveAlternateComputerName proto WINAPI \
-                Server: LPCWSTR,
-         AlternateName: LPCWSTR,
-         DomainAccount: LPCWSTR,
- DomainAccountPassword: LPCWSTR,
-              Reserved: ULONG
-
-;NET_API_STATUS
-NetSetPrimaryComputerName proto WINAPI \
-                Server: LPCWSTR,
-           PrimaryName: LPCWSTR,
-         DomainAccount: LPCWSTR,
- DomainAccountPassword: LPCWSTR,
-              Reserved: ULONG
-
+NetAddAlternateComputerName proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ULONG
+NetRemoveAlternateComputerName proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ULONG
+NetSetPrimaryComputerName proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ULONG
 
 NET_COMPUTER_NAME_TYPE  typedef SDWORD
 NetPrimaryComputerName  equ 0
@@ -162,14 +83,7 @@ NetAlternateComputerNames equ 1
 NetAllComputerNames     equ 2
 NetComputerNameTypeMax  equ 3
 
-;NET_API_STATUS
-NetEnumerateComputerNames proto WINAPI \
-                Server: LPCWSTR,
-              NameType: NET_COMPUTER_NAME_TYPE,
-              Reserved: ULONG,
-            EntryCount: PDWORD,
-         ComputerNames: ptr ptr LPWSTR
-
+NetEnumerateComputerNames proto WINAPI :LPCWSTR, :NET_COMPUTER_NAME_TYPE, :ULONG, :PDWORD, :ptr
 endif
 
 endif

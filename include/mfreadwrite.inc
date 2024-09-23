@@ -48,20 +48,9 @@ endif
 
 DEFINE_GUID(CLSID_MFSourceReader, 0x1777133c, 0x0881, 0x411b, 0xa5, 0x77, 0xad, 0x54, 0x5f, 0x07, 0x14, 0xc4);
 
-MFCreateSourceReaderFromURL proto WINAPI \
-	       pwszURL: LPCWSTR,
-	   pAttributes: ptr IMFAttributes,
-	ppSourceReader: ptr IMFSourceReader
-
-MFCreateSourceReaderFromByteStream proto WINAPI \
-	   pByteStream: ptr IMFByteStream,
-	   pAttributes: ptr IMFAttributes,
-	ppSourceReader: ptr IMFSourceReader
-
-MFCreateSourceReaderFromMediaSource proto WINAPI \
-	  pMediaSource: ptr IMFMediaSource,
-	   pAttributes: ptr IMFAttributes,
-	ppSourceReader: ptr IMFSourceReader
+MFCreateSourceReaderFromURL proto WINAPI :LPCWSTR, :ptr, :ptr
+MFCreateSourceReaderFromByteStream proto WINAPI :ptr, :ptr, :ptr
+MFCreateSourceReaderFromMediaSource proto WINAPI :ptr, :ptr, :ptr
 
 DEFINE_GUID( MF_SOURCE_READER_ASYNC_CALLBACK, 0x1e3dbeac, 0xbb43, 0x4c35, 0xb5, 0x07, 0xcd, 0x64, 0x44, 0x64, 0xc9, 0x65);
 DEFINE_GUID( MF_SOURCE_READER_D3D_MANAGER, 0xec822da2, 0xe1e9, 0x4b29, 0xa0, 0xd8, 0x56, 0x3c, 0x71, 0x9f, 0x52, 0x69);
@@ -164,16 +153,8 @@ endif
 
 DEFINE_GUID(CLSID_MFSinkWriter, 0xa3bbfb17, 0x8273, 0x4e52, 0x9e, 0x0e, 0x97, 0x39, 0xdc, 0x88, 0x79, 0x90);
 
-MFCreateSinkWriterFromURL proto WINAPI \
-	 pwszOutputURL: LPCWSTR,
-	   pByteStream: ptr IMFByteStream,
-	   pAttributes: ptr IMFAttributes,
-	  ppSinkWriter: ptr IMFSinkWriter
-
-MFCreateSinkWriterFromMediaSink proto WINAPI \
-	    pMediaSink: ptr IMFMediaSink,
-	   pAttributes: ptr IMFAttributes,
-	  ppSinkWriter: ptr IMFSinkWriter
+MFCreateSinkWriterFromURL proto WINAPI :LPCWSTR, :ptr, :ptr, :ptr
+MFCreateSinkWriterFromMediaSink proto WINAPI :ptr, :ptr, :ptr
 
 DEFINE_GUID( MF_SINK_WRITER_ASYNC_CALLBACK, 0x48cb183e, 0x7b0b, 0x46f4, 0x82, 0x2e, 0x5e, 0x1d, 0x2d, 0xda, 0x43, 0x54);
 DEFINE_GUID( MF_SINK_WRITER_DISABLE_THROTTLING, 0x08b845d8, 0x2b74, 0x4afe, 0x9d, 0x53, 0xbe, 0x16, 0xd2, 0xd5, 0xae, 0x4f);

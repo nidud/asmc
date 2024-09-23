@@ -124,16 +124,8 @@ endif
     MF_ATTRIBUTE_SERIALIZE_UNKNOWN_BYREF = 0x1
     }
 
-MFSerializeAttributesToStream proto __cdecl \
-		 pAttr: ptr,
-	     dwOptions: DWORD,
-		  pStm: ptr
-
-MFDeserializeAttributesFromStream proto __cdecl \
-		 pAttr: ptr,
-	     dwOptions: DWORD,
-		  pStm: ptr
-
+MFSerializeAttributesToStream proto __cdecl :ptr, :DWORD, :ptr
+MFDeserializeAttributesFromStream proto __cdecl :ptr, :DWORD, :ptr
 
 ifndef __IMFMediaBuffer_INTERFACE_DEFINED__
 define __IMFMediaBuffer_INTERFACE_DEFINED__
@@ -767,31 +759,10 @@ DEFINE_IIDX(IMFMediaEventGenerator, "2CD0BD52-BCD5-4B89-B62C-EADC0C031E7D")
     QueueEvent		proc :MediaEventType, :REFGUID, :HRESULT, :ptr
    .ends
 
-IMFMediaEventGenerator_RemoteBeginGetEvent_Proxy proto __cdecl \
-		   This: ptr IMFMediaEventGenerator,
-	      pCallback: ptr IMFRemoteAsyncCallback
-
-
-IMFMediaEventGenerator_RemoteBeginGetEvent_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
-IMFMediaEventGenerator_RemoteEndGetEvent_Proxy proto __cdecl \
-		  This: ptr IMFMediaEventGenerator,
-	       pResult: ptr IUnknown,
-	      pcbEvent: ptr DWORD,
-	      ppbEvent: ptr BYTE
-
-
-;void
-IMFMediaEventGenerator_RemoteEndGetEvent_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+IMFMediaEventGenerator_RemoteBeginGetEvent_Proxy proto __cdecl :ptr, :ptr
+IMFMediaEventGenerator_RemoteBeginGetEvent_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
+IMFMediaEventGenerator_RemoteEndGetEvent_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
+IMFMediaEventGenerator_RemoteEndGetEvent_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 endif
@@ -843,55 +814,14 @@ DEFINE_IIDX(IMFByteStream, "ad4c1b00-4bf7-422f-9175-756693d9130d")
     Close		proc
    .ends
 
-IMFByteStream_RemoteBeginRead_Proxy proto __cdecl \
-		  This: ptr IMFByteStream,
-		    cb: ULONG,
-	     pCallback: ptr IMFRemoteAsyncCallback
-
-IMFByteStream_RemoteBeginRead_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-IMFByteStream_RemoteEndRead_Proxy proto __cdecl \
-		  This: ptr IMFByteStream,
-	    punkResult: ptr IUnknown,
-		    pb: ptr BYTE,
-		    cb: ULONG,
-	       pcbRead: ptr ULONG
-
-IMFByteStream_RemoteEndRead_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-IMFByteStream_RemoteBeginWrite_Proxy proto __cdecl \
-		  This: ptr IMFByteStream,
-		    pb: ptr BYTE,
-		    cb: ULONG,
-	     pCallback: ptr IMFRemoteAsyncCallback
-
-IMFByteStream_RemoteBeginWrite_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
-
-IMFByteStream_RemoteEndWrite_Proxy proto __cdecl \
-		  This: ptr IMFByteStream,
-	    punkResult: ptr IUnknown,
-	    pcbWritten: ptr ULONG
-
-IMFByteStream_RemoteEndWrite_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+IMFByteStream_RemoteBeginRead_Proxy proto __cdecl :ptr, :ULONG, :ptr
+IMFByteStream_RemoteBeginRead_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
+IMFByteStream_RemoteEndRead_Proxy proto __cdecl :ptr, :ptr, :ptr, :ULONG, :ptr
+IMFByteStream_RemoteEndRead_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
+IMFByteStream_RemoteBeginWrite_Proxy proto __cdecl :ptr, :ptr, :ULONG, :ptr
+IMFByteStream_RemoteBeginWrite_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
+IMFByteStream_RemoteEndWrite_Proxy proto __cdecl :ptr, :ptr, :ptr
+IMFByteStream_RemoteEndWrite_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 

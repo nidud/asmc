@@ -28,7 +28,6 @@ lpMemory		PVOID ?
 dSize			SIZE_T ?
 D3DXF_FILELOADMEMORY	ENDS
 
-
 ifndef _NO_COM
 DEFINE_GUID(IID_ID3DXFile,	     0xcef08cf9, 0x7b4f, 0x4429, 0x96, 0x24, 0x2a, 0x69, 0x0a, 0x93, 0x32, 0x01);
 DEFINE_GUID(IID_ID3DXFileSaveObject, 0xcef08cfa, 0x7b4f, 0x4429, 0x96, 0x24, 0x2a, 0x69, 0x0a, 0x93, 0x32, 0x01);
@@ -38,10 +37,7 @@ DEFINE_GUID(IID_ID3DXFileData,	     0xcef08cfd, 0x7b4f, 0x4429, 0x96, 0x24, 0x2a
 endif ;; _NO_COM
 
 
-;STDAPI
-D3DXFileCreate proto WINAPI \
-		  file: ptr ID3DXFile
-
+D3DXFileCreate proto WINAPI :ptr
 
 .comdef ID3DXFile : public IUnknown
 
@@ -49,18 +45,14 @@ D3DXFileCreate proto WINAPI \
     CreateSaveObject	proc :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
     RegisterTemplates	proc :ptr, :SIZE_T
     RegisterEnumTemplates proc :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXFileSaveObject : public IUnknown
 
     GetFile		proc :ptr
     AddDataObject	proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
     Save		proc
-
-    .ends
-
+   .ends
 
 .comdef ID3DXFileSaveData : public IUnknown
 
@@ -70,9 +62,7 @@ D3DXFileCreate proto WINAPI \
     GetType		proc :ptr
     AddDataObject	proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
     AddDataReference	proc :ptr, :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXFileEnumObject : public IUnknown
 
@@ -81,9 +71,7 @@ D3DXFileCreate proto WINAPI \
     GetChild		proc :SIZE_T, :ptr
     GetDataObjectById	proc :REFGUID, :ptr
     GetDataObjectByName proc :ptr, :ptr
-
-    .ends
-
+   .ends
 
 .comdef ID3DXFileData : public IUnknown
 
@@ -96,10 +84,8 @@ D3DXFileCreate proto WINAPI \
     IsReference		proc
     GetChildren		proc :ptr
     GetChild		proc :SIZE_T, :ptr
+   .ends
 
-    .ends
-
-;; D3DX File errors
 _FACD3DXF		equ 0x876
 
 D3DXFERR_BADOBJECT	equ MAKE_HRESULT(1,_FACD3DXF,900)

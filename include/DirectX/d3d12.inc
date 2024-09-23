@@ -2172,54 +2172,15 @@ DEFINE_IIDX(ID3D12VersionedRootSignatureDeserializer, "7F91CE67-090C-4BB7-B78E-E
 
 endif
 
-CALLBACK(PFN_D3D12_SERIALIZE_ROOT_SIGNATURE, \
-	:ptr D3D12_ROOT_SIGNATURE_DESC, \
-	:D3D_ROOT_SIGNATURE_VERSION, \
-	:ptr ptr, \
-	:ptr ptr)
+CALLBACK(PFN_D3D12_SERIALIZE_ROOT_SIGNATURE, :ptr, :D3D_ROOT_SIGNATURE_VERSION, :ptr, :ptr)
+CALLBACK(PFN_D3D12_CREATE_ROOT_SIGNATURE_DESERIALIZER, :LPCVOID, :SIZE_T, :REFIID, :ptr)
+CALLBACK(PFN_D3D12_SERIALIZE_VERSIONED_ROOT_SIGNATURE, :ptr, :ptr, :ptr)
+CALLBACK(PFN_D3D12_CREATE_VERSIONED_ROOT_SIGNATURE_DESERIALIZER, :LPCVOID, :SIZE_T, :REFIID, :ptr)
 
-CALLBACK(PFN_D3D12_CREATE_ROOT_SIGNATURE_DESERIALIZER, \
-	:LPCVOID, \
-	:SIZE_T, \
-	:REFIID, \
-	:ptr)
-
-CALLBACK(PFN_D3D12_SERIALIZE_VERSIONED_ROOT_SIGNATURE, \
-	:ptr D3D12_VERSIONED_ROOT_SIGNATURE_DESC, \
-	:ptr ptr, \
-	:ptr ptr)
-
-CALLBACK(PFN_D3D12_CREATE_VERSIONED_ROOT_SIGNATURE_DESERIALIZER, \
-	:LPCVOID, \
-	:SIZE_T, \
-	:REFIID, \
-	:ptr)
-
-D3D12SerializeRootSignature proto WINAPI \
-	pRootSignature: ptr D3D12_ROOT_SIGNATURE_DESC,
-	       Version: D3D_ROOT_SIGNATURE_VERSION,
-		ppBlob: ptr ptr ID3DBlob,
-	   ppErrorBlob: ptr ptr ID3DBlob
-
-D3D12CreateRootSignatureDeserializer proto WINAPI \
-	      pSrcData: LPCVOID,
-    SrcDataSizeInBytes: SIZE_T,
-pRootSignatureDeserializerInterface: REFIID,
-ppRootSignatureDeserializer: ptr ptr
-
-
-D3D12SerializeVersionedRootSignature proto WINAPI \
-	pRootSignature: ptr D3D12_VERSIONED_ROOT_SIGNATURE_DESC,
-		ppBlob: ptr ptr ID3DBlob,
-	   ppErrorBlob: ptr ptr ID3DBlob
-
-
-D3D12CreateVersionedRootSignatureDeserializer proto WINAPI \
-	      pSrcData: LPCVOID,
-    SrcDataSizeInBytes: SIZE_T,
-pRootSignatureDeserializerInterface: REFIID,
-ppRootSignatureDeserializer: ptr ptr
-
+D3D12SerializeRootSignature proto WINAPI :ptr, :D3D_ROOT_SIGNATURE_VERSION, :ptr, :ptr
+D3D12CreateRootSignatureDeserializer proto WINAPI :LPCVOID, :SIZE_T,  :REFIID, :ptr
+D3D12SerializeVersionedRootSignature proto WINAPI :ptr, :ptr, :ptr
+D3D12CreateVersionedRootSignatureDeserializer proto WINAPI :ptr, :SIZE_T, :REFIID, :ptr
 
 D3D12_CPU_DESCRIPTOR_HANDLE STRUC
 _ptr			SIZE_T ?
@@ -3694,34 +3655,17 @@ if NOT defined( D3D12_IGNORE_SDK_LAYERS )
 include d3d12sdklayers.inc
 endif
 
-CALLBACK(PFN_D3D12_CREATE_DEVICE, :ptr IUnknown, :D3D_FEATURE_LEVEL, :REFIID, :ptr )
+CALLBACK(PFN_D3D12_CREATE_DEVICE, :ptr, :D3D_FEATURE_LEVEL, :REFIID, :ptr)
+CALLBACK(PFN_D3D12_GET_DEBUG_INTERFACE, :REFIID, :ptr)
 
-D3D12CreateDevice proto WINAPI \
-	      pAdapter: ptr IUnknown,
-   MinimumFeatureLevel: D3D_FEATURE_LEVEL,
-		  riid: REFIID,
-	      ppDevice: ptr ptr
-
-
-CALLBACK(PFN_D3D12_GET_DEBUG_INTERFACE, :REFIID, :ptr ptr)
-
-D3D12GetDebugInterface proto WINAPI \
-		  riid: REFIID,
-	      ppvDebug: ptr ptr
-
-
-;HRESULT
-D3D12EnableExperimentalFeatures proto WINAPI \
-	   NumFeatures: UINT,
-		 pIIDs: ptr IID,
- pConfigurationStructs: ptr,
-pConfigurationStructSizes: ptr UINT
+D3D12CreateDevice proto WINAPI :ptr, :D3D_FEATURE_LEVEL, :REFIID, :ptr
+D3D12GetDebugInterface proto WINAPI :REFIID, :ptr
+D3D12EnableExperimentalFeatures proto WINAPI :UINT, :ptr, :ptr, :ptr
 
 D3D12ExperimentalShaderModels	equ <{0x76f5573e, 0xf13a, 0x40f5, { 0xb2, 0x97, 0x81, 0xce, 0x9e, 0x18, 0x93, 0x3f}}>
 D3D12TiledResourceTier4		equ <{0xc9c4725f, 0xa81a, 0x4f56, { 0x8c, 0x5b, 0xc5, 0x10, 0x39, 0xd6, 0x94, 0xfb}}>
 D3D12MetaCommand		equ <{0xc734c97e, 0x8077, 0x48c8, { 0x9f, 0xdc, 0xd9, 0xd1, 0xdd, 0x31, 0xdd, 0x77}}>
 D3D12ComputeOnlyDevices		equ <{0x50f7ab08, 0x4b6d, 0x4e14, { 0x89, 0xa5, 0x5d, 0x16, 0xcd, 0x27, 0x25, 0x94}}>
-
 
 .enum D3D12_AXIS_SHADING_RATE {
     D3D12_AXIS_SHADING_RATE_1X	= 0,
@@ -3757,7 +3701,6 @@ D3D12_GET_COARSE_SHADING_RATE_Y_AXIS macro y
     D3D12_SHADING_RATE_COMBINER_MAX	= 3,
     D3D12_SHADING_RATE_COMBINER_SUM	= 4
     }
-
 
 ifndef __ID3D12GraphicsCommandList5_INTERFACE_DEFINED__
 define __ID3D12GraphicsCommandList5_INTERFACE_DEFINED__

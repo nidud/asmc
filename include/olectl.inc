@@ -285,86 +285,21 @@ if (WINVER GE 0x0400)
 OCM_NOTIFY		equ (OCM__BASE + WM_NOTIFY)
 endif
 
-;STDAPI
 DllRegisterServer proto WINAPI
 DllUnregisterServer proto WINAPI
 
-OleCreatePropertyFrame proto WINAPI \
-	     hwndOwner:HWND,
-		     x:UINT,
-		     y:UINT,
-	   lpszCaption:LPCOLESTR,
-	      cObjects:ULONG,
-		 ppUnk:ptr LPUNKNOWN,
-		cPages:ULONG,
-	    pPageClsID:LPCLSID,
-		  lcid:LCID,
-	    dwReserved:DWORD,
-	    pvReserved:LPVOID
-
+OleCreatePropertyFrame proto WINAPI :HWND, :UINT, :UINT, :LPCOLESTR, :ULONG, :ptr, :ULONG, :LPCLSID, :LCID, :DWORD, :ptr
 OleCreatePropertyFrameIndirect proto WINAPI lpParams:LPOCPFIPARAMS
-
-
-OleTranslateColor proto WINAPI \
-		   clr:OLE_COLOR,
-		  hpal:HPALETTE,
-	    lpcolorref:ptr COLORREF
-
-;WINOLECTLAPI
-OleCreateFontIndirect proto WINAPI \
-	    lpFontDesc:LPFONTDESC,
-		  riid:REFIID,
-	      lplpvObj:ptr LPVOID
-
-OleCreatePictureIndirect proto WINAPI \
-	    lpPictDesc:LPPICTDESC,
-		  riid:REFIID,
-		  fOwn:BOOL,
-	      lplpvObj:ptr LPVOID
-
-OleLoadPicture proto WINAPI \
-	      lpstream:LPSTREAM,
-		 lSize:LONG,
-	      fRunmode:BOOL,
-		  riid:REFIID,
-	      lplpvObj:ptr LPVOID
-
-OleLoadPictureEx proto WINAPI \
-	      lpstream:LPSTREAM,
-		 lSize:LONG,
-	      fRunmode:BOOL,
-		  riid:REFIID,
-	  xSizeDesired:DWORD,
-	  ySizeDesired:DWORD,
-	       dwFlags:DWORD,
-	      lplpvObj:ptr LPVOID
-
-OleLoadPicturePath proto WINAPI \
-	   szURLorPath:LPOLESTR,
-	    punkCaller:LPUNKNOWN,
-	    dwReserved:DWORD,
-	   clrReserved:OLE_COLOR,
-		  riid:REFIID,
-		ppvRet:ptr LPVOID
-
-OleLoadPictureFile proto WINAPI \
-	  varFileName:VARIANT,
-      lplpdispPicture:ptr LPDISPATCH
-
-OleLoadPictureFileEx proto WINAPI \
-	  varFileName:VARIANT,
-	 xSizeDesired:DWORD,
-	 ySizeDesired:DWORD,
-	      dwFlags:DWORD,
-      lplpdispPicture:ptr LPDISPATCH
-
-OleSavePictureFile proto WINAPI \
-	lpdispPicture:LPDISPATCH,
-	 bstrFileName:BSTR
-
-OleIconToCursor proto WINAPI \
-	     hinstExe:HINSTANCE,
-		hIcon:HICON
+OleTranslateColor proto WINAPI :OLE_COLOR, :HPALETTE, :ptr
+OleCreateFontIndirect proto WINAPI :LPFONTDESC, :REFIID, :ptr
+OleCreatePictureIndirect proto WINAPI :LPPICTDESC, :REFIID, :BOOL, :ptr
+OleLoadPicture proto WINAPI :LPSTREAM, :LONG, :BOOL, :REFIID, :ptr
+OleLoadPictureEx proto WINAPI :LPSTREAM, :LONG, :BOOL, :REFIID, :DWORD, :DWORD, :DWORD, :ptr
+OleLoadPicturePath proto WINAPI :LPOLESTR, :LPUNKNOWN, :DWORD, :OLE_COLOR, :REFIID, :ptr
+OleLoadPictureFile proto WINAPI :VARIANT, :ptr
+OleLoadPictureFileEx proto WINAPI :VARIANT, :DWORD, :DWORD, :DWORD, :ptr
+OleSavePictureFile proto WINAPI :LPDISPATCH, :BSTR
+OleIconToCursor proto WINAPI :HINSTANCE, :HICON
 
 LP_DEFAULT		equ 0x00
 LP_MONOCHROME		equ 0x01

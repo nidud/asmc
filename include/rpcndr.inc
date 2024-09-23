@@ -88,13 +88,8 @@ midl_user_free		equ <MID_user_free>
 __MIDL_USER_DEFINED	equ 1
 endif
 
-;PVOID
-MIDL_user_allocate proto WINAPI \
-		      : size_t
-
-;void
-MIDL_user_free proto WINAPI \
-		      : PVOID
+MIDL_user_allocate proto WINAPI :size_t
+MIDL_user_free proto WINAPI :ptr
 
 ifdef __RPC_WIN16__
 RPC_VAR_ENTRY		equ <export c>
@@ -117,7 +112,7 @@ NDRSContextValue macro hContext
 
 cbNDRContext		equ 20
 
-CALLBACK(NDR_RUNDOWN, context:PVOID)
+CALLBACK(NDR_RUNDOWN, :ptr)
 
 SCONTEXT_QUEUE		STRUC
 NumberOfObjects		dd ?
@@ -125,206 +120,40 @@ ArrayOfObjects		NDR_SCONTEXT ?
 SCONTEXT_QUEUE		ENDS
 PSCONTEXT_QUEUE		typedef ptr SCONTEXT_QUEUE
 
-;RPC_BINDING_HANDLE
-NDRCContextBinding proto WINAPI \
-	      CContext: NDR_CCONTEXT
-
-;void
-NDRCContextMarshall proto WINAPI \
-	      CContext: NDR_CCONTEXT,
-		 pBuff: PVOID
-
-;void
-NDRCContextUnmarshall proto WINAPI \
-	     pCContext: ptr NDR_CCONTEXT,
-	      hBinding: RPC_BINDING_HANDLE,
-		 pBuff: PVOID,
-    DataRepresentation: DWORD
-
-;void
-NDRSContextMarshall proto WINAPI \
-	      CContext: NDR_SCONTEXT,
-		 pBuff: PVOID,
-	 userRunDownIn: NDR_RUNDOWN
-
-;NDR_SCONTEXT
-NDRSContextUnmarshall proto WINAPI \
-		 pBuff: PVOID,
-    DataRepresentation: DWORD
-
-;void
-NDRSContextMarshallEx proto WINAPI \
-	 BindingHandle: RPC_BINDING_HANDLE,
-	      CContext: NDR_SCONTEXT,
-		 pBuff: PVOID,
-	 userRunDownIn: NDR_RUNDOWN
-
-;NDR_SCONTEXT
-NDRSContextUnmarshallEx proto WINAPI \
-	 BindingHandle: RPC_BINDING_HANDLE,
-		 pBuff: PVOID,
-    DataRepresentation: DWORD
-
-;void
-RpcSsDestroyClientContext proto WINAPI \
-	 ContextHandle: PVOID
-
-;void
-NDRcopy proto WINAPI \
-	       pTarget: PVOID,
-	       pSource: PVOID,
-		  size: UINT
-
-;size_t
-MIDL_wchar_strlen proto WINAPI \
-		     s: ptr wchar_t
-
-;void
-MIDL_wchar_strcpy proto WINAPI \
-		     t: PVOID,
-		     s: ptr wchar_t
-
-;void
-char_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-		Target: LPBYTE
-
-;void
-char_array_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-	    LowerIndex: DWORD,
-	    UpperIndex: DWORD,
-		Target: LPBYTE
-
-;void
-short_from_ndr proto WINAPI \
-		source: PRPC_MESSAGE,
-		target: LPWORD
-
-;void
-short_array_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-	    LowerIndex: DWORD,
-	    UpperIndex: DWORD,
-		Target: LPWORD
-
-;void
-short_from_ndr_temp proto WINAPI \
-		source: LPBYTE,
-		target: LPWORD,
-		format: DWORD
-
-;void
-long_from_ndr proto WINAPI \
-		source: PRPC_MESSAGE,
-		target: LPDWORD
-
-;void
-long_array_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-	    LowerIndex: DWORD,
-	    UpperIndex: DWORD,
-		Target: LPDWORD
-
-;void
-long_from_ndr_temp proto WINAPI \
-		source: LPBYTE,
-		target: LPDWORD,
-		format: DWORD
-
-;void
-enum_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-		Target: LPWORD
-
-;void
-float_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-		Target: PVOID
-
-;void
-float_array_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-	    LowerIndex: DWORD,
-	    UpperIndex: DWORD,
-		Target: PVOID
-
-;void
-double_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-		Target: PVOID
-
-;void
-double_array_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-	    LowerIndex: DWORD,
-	    UpperIndex: DWORD,
-		Target: PVOID
-
-;void
-hyper_from_ndr proto WINAPI \
-		source: PRPC_MESSAGE,
-		target: ptr hyper
-
-;void
-hyper_array_from_ndr proto WINAPI \
-	 SourceMessage: PRPC_MESSAGE,
-	    LowerIndex: DWORD,
-	    UpperIndex: DWORD,
-		Target: ptr hyper
-
-;void
-hyper_from_ndr_temp proto WINAPI \
-		source: LPBYTE,
-		target: ptr hyper,
-		format: DWORD
-
-;void
-data_from_ndr proto WINAPI \
-		source: PRPC_MESSAGE,
-		target: PVOID,
-		format: LPSTR,
-		MscPak: BYTE
-
-;void
-data_into_ndr proto WINAPI \
-		source: PVOID,
-		target: PRPC_MESSAGE,
-		format: LPSTR,
-		MscPak: BYTE
-
-;void
-tree_into_ndr proto WINAPI \
-		source: PVOID,
-		target: PRPC_MESSAGE,
-		format: LPSTR,
-		MscPak: BYTE
-
-;void
-data_size_ndr proto WINAPI \
-		source: PVOID,
-		target: PRPC_MESSAGE,
-		format: LPSTR,
-		MscPak: BYTE
-
-;void
-tree_size_ndr proto WINAPI \
-		source: PVOID,
-		target: PRPC_MESSAGE,
-		format: LPSTR,
-		MscPak: BYTE
-
-;void
-tree_peek_ndr proto WINAPI \
-		source: PRPC_MESSAGE,
-		buffer: LPBYTE,
-		format: LPSTR,
-		MscPak: BYTE
-
-;PVOID
-midl_allocate proto WINAPI \
-		  size: size_t
-
+NDRCContextBinding proto WINAPI :NDR_CCONTEXT
+NDRCContextMarshall proto WINAPI :NDR_CCONTEXT, :ptr
+NDRCContextUnmarshall proto WINAPI :ptr, :RPC_BINDING_HANDLE, :ptr, :DWORD
+NDRSContextMarshall proto WINAPI :NDR_SCONTEXT, :ptr, :NDR_RUNDOWN
+NDRSContextUnmarshall proto WINAPI :ptr, :DWORD
+NDRSContextMarshallEx proto WINAPI :RPC_BINDING_HANDLE, :NDR_SCONTEXT, :ptr, :NDR_RUNDOWN
+NDRSContextUnmarshallEx proto WINAPI :RPC_BINDING_HANDLE, :ptr, :DWORD
+RpcSsDestroyClientContext proto WINAPI :ptr
+NDRcopy proto WINAPI :ptr, :ptr, :UINT
+MIDL_wchar_strlen proto WINAPI :ptr
+MIDL_wchar_strcpy proto WINAPI :ptr, :ptr
+char_from_ndr proto WINAPI :PRPC_MESSAGE, :LPBYTE
+char_array_from_ndr proto WINAPI :PRPC_MESSAGE, :DWORD, :DWORD, :LPBYTE
+short_from_ndr proto WINAPI :PRPC_MESSAGE, :LPWORD
+short_array_from_ndr proto WINAPI :PRPC_MESSAGE, :DWORD, :DWORD, :LPWORD
+short_from_ndr_temp proto WINAPI :LPBYTE, :LPWORD, :DWORD
+long_from_ndr proto WINAPI :PRPC_MESSAGE, :LPDWORD
+long_array_from_ndr proto WINAPI :PRPC_MESSAGE, :DWORD, :DWORD, :LPDWORD
+long_from_ndr_temp proto WINAPI :LPBYTE, :LPDWORD, :DWORD
+enum_from_ndr proto WINAPI :PRPC_MESSAGE, :LPWORD
+float_from_ndr proto WINAPI :PRPC_MESSAGE, :ptr
+float_array_from_ndr proto WINAPI :PRPC_MESSAGE, :DWORD, :DWORD, :ptr
+double_from_ndr proto WINAPI :PRPC_MESSAGE, :ptr
+double_array_from_ndr proto WINAPI :PRPC_MESSAGE, :DWORD, :DWORD, :ptr
+hyper_from_ndr proto WINAPI :PRPC_MESSAGE, :ptr
+hyper_array_from_ndr proto WINAPI :PRPC_MESSAGE, :DWORD, :DWORD, :ptr
+hyper_from_ndr_temp proto WINAPI :LPBYTE, :ptr, :DWORD
+data_from_ndr proto WINAPI :PRPC_MESSAGE, :ptr, :LPSTR, :BYTE
+data_into_ndr proto WINAPI :ptr, :PRPC_MESSAGE, :LPSTR, :BYTE
+tree_into_ndr proto WINAPI :ptr, :PRPC_MESSAGE, :LPSTR, :BYTE
+data_size_ndr proto WINAPI :ptr, :PRPC_MESSAGE, :LPSTR, :BYTE
+tree_size_ndr proto WINAPI :ptr, :PRPC_MESSAGE, :LPSTR, :BYTE
+tree_peek_ndr proto WINAPI :PRPC_MESSAGE, :LPBYTE, :LPSTR, :BYTE
+midl_allocate proto WINAPI :size_t
 
 error_status_t		typedef DWORD
 
@@ -468,14 +297,9 @@ XMIT_ROUTINE_QUINTUPLE	ENDS
 PXMIT_ROUTINE_QUINTUPLE typedef ptr XMIT_ROUTINE_QUINTUPLE
 
 
-;DWORD
 CALLBACK(USER_MARSHAL_SIZING_ROUTINE, :LPDWORD, :DWORD, :PVOID)
-;LPBYTE
 CALLBACK(USER_MARSHAL_MARSHALLING_ROUTINE, :LPDWORD, :LPBYTE, :PVOID)
-;LPBYTE
 CALLBACK(USER_MARSHAL_UNMARSHALLING_ROUTINE, :LPDWORD, :LPBYTE, :PVOID)
-;void
-;LPDWORD
 CALLBACK(USER_MARSHAL_FREEING_ROUTINE, :LPDWORD, :PVOID)
 
 USER_MARSHAL_ROUTINE_QUADRUPLE STRUC
@@ -617,654 +441,109 @@ PFULL_PTR_XLAT_TABLES	typedef ptr FULL_PTR_XLAT_TABLES
 
 
 
-;void
-NdrSimpleTypeMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	    FormatChar: BYTE
-
-;LPBYTE
-NdrPointerMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;LPBYTE
-NdrSimpleStructMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrConformantStructMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrConformantVaryingStructMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrHardStructMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrComplexStructMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;LPBYTE
-NdrFixedArrayMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrConformantArrayMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrConformantVaryingArrayMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrVaryingArrayMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrComplexArrayMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;LPBYTE
-NdrNonConformantStringMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrConformantStringMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;LPBYTE
-NdrEncapsulatedUnionMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;LPBYTE
-NdrNonEncapsulatedUnionMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;LPBYTE
-NdrByteCountPointerMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;LPBYTE
-NdrXmitOrRepAsMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;LPBYTE
-NdrUserMarshalMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;LPBYTE
-NdrInterfacePointerMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrClientContextMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	 ContextHandle: NDR_CCONTEXT,
-		fCheck: SINT
-
-;void
-NdrServerContextMarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	 ContextHandle: NDR_SCONTEXT,
-	RundownRoutine: NDR_RUNDOWN
-
-
-;void
-NdrSimpleTypeUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	    FormatChar: BYTE
-
-;LPBYTE
-NdrPointerUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;LPBYTE
-NdrSimpleStructUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrConformantStructUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrConformantVaryingStructUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrHardStructUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrComplexStructUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;LPBYTE
-NdrFixedArrayUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrConformantArrayUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrConformantVaryingArrayUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrVaryingArrayUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrComplexArrayUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;LPBYTE
-NdrNonConformantStringUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrConformantStringUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;LPBYTE
-NdrEncapsulatedUnionUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-;LPBYTE
-NdrNonEncapsulatedUnionUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;LPBYTE
-NdrByteCountPointerUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;LPBYTE
-NdrXmitOrRepAsUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;LPBYTE
-NdrUserMarshalUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;LPBYTE
-NdrInterfacePointerUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      ppMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING,
-	    fMustAlloc: BYTE
-
-
-;void
-NdrClientContextUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	pContextHandle: ptr NDR_CCONTEXT,
-	    BindHandle: RPC_BINDING_HANDLE
-
-;NDR_SCONTEXT
-NdrServerContextUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE
-
-
-;void
-NdrPointerBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrSimpleStructBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrConformantStructBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrConformantVaryingStructBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrHardStructBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrComplexStructBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrFixedArrayBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrConformantArrayBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrConformantVaryingArrayBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrVaryingArrayBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrComplexArrayBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrConformantStringBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrNonConformantStringBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrEncapsulatedUnionBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrNonEncapsulatedUnionBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrByteCountPointerBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrXmitOrRepAsBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrUserMarshalBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrInterfacePointerBufferSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrContextHandleSize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;DWORD
-NdrPointerMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;DWORD
-NdrSimpleStructMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrConformantStructMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrConformantVaryingStructMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrHardStructMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrComplexStructMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;DWORD
-NdrFixedArrayMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrConformantArrayMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrConformantVaryingArrayMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrVaryingArrayMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrComplexArrayMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;DWORD
-NdrConformantStringMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrNonConformantStringMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;DWORD
-NdrEncapsulatedUnionMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-;DWORD
-NdrNonEncapsulatedUnionMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;DWORD
-NdrXmitOrRepAsMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;DWORD
-NdrUserMarshalMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;DWORD
-NdrInterfacePointerMemorySize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrPointerFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrSimpleStructFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrConformantStructFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrConformantVaryingStructFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrHardStructFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrComplexStructFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrFixedArrayFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrConformantArrayFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrConformantVaryingArrayFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrVaryingArrayFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrComplexArrayFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrEncapsulatedUnionFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-;void
-NdrNonEncapsulatedUnionFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrByteCountPointerFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrXmitOrRepAsFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrUserMarshalFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrInterfacePointerFree proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-	       pFormat: PFORMAT_STRING
-
-
-;void
-NdrConvert2 proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING,
-	  NumberParams: LONG
-
-;void
-NdrConvert proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
+NdrSimpleTypeMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :BYTE
+NdrPointerMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrSimpleStructMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantStructMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantVaryingStructMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrHardStructMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrComplexStructMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrFixedArrayMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantArrayMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantVaryingArrayMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrVaryingArrayMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrComplexArrayMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrNonConformantStringMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantStringMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrEncapsulatedUnionMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrNonEncapsulatedUnionMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrByteCountPointerMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrXmitOrRepAsMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrUserMarshalMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+
+NdrInterfacePointerMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrClientContextMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :NDR_CCONTEXT, :SINT
+NdrServerContextMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :NDR_SCONTEXT, :NDR_RUNDOWN
+NdrSimpleTypeUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :BYTE
+NdrPointerUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrSimpleStructUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrConformantStructUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrConformantVaryingStructUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrHardStructUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrComplexStructUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrFixedArrayUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrConformantArrayUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrConformantVaryingArrayUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrVaryingArrayUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrComplexArrayUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrNonConformantStringUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrConformantStringUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrEncapsulatedUnionUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrNonEncapsulatedUnionUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrByteCountPointerUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrXmitOrRepAsUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrUserMarshalUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+
+NdrInterfacePointerUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING, :BYTE
+NdrClientContextUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :ptr, :RPC_BINDING_HANDLE
+NdrServerContextUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE
+NdrPointerBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrSimpleStructBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantStructBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantVaryingStructBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrHardStructBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrComplexStructBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrFixedArrayBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantArrayBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantVaryingArrayBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrVaryingArrayBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrComplexArrayBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantStringBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrNonConformantStringBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrEncapsulatedUnionBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrNonEncapsulatedUnionBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrByteCountPointerBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrXmitOrRepAsBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrUserMarshalBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrInterfacePointerBufferSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrContextHandleSize proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrPointerMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrSimpleStructMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrConformantStructMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrConformantVaryingStructMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrHardStructMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrComplexStructMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrFixedArrayMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrConformantArrayMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrConformantVaryingArrayMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrVaryingArrayMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrComplexArrayMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrConformantStringMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrNonConformantStringMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrEncapsulatedUnionMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrNonEncapsulatedUnionMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrXmitOrRepAsMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrUserMarshalMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrInterfacePointerMemorySize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrPointerFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrSimpleStructFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantStructFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantVaryingStructFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrHardStructFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrComplexStructFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrFixedArrayFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantArrayFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConformantVaryingArrayFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrVaryingArrayFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrComplexArrayFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrEncapsulatedUnionFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrNonEncapsulatedUnionFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrByteCountPointerFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrXmitOrRepAsFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrUserMarshalFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrInterfacePointerFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :PFORMAT_STRING
+NdrConvert2 proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING, :LONG
+NdrConvert proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
 
 USER_MARSHAL_FC_BYTE	equ 1
 USER_MARSHAL_FC_CHAR	equ 2
@@ -1279,149 +558,31 @@ USER_MARSHAL_FC_FLOAT	equ 10
 USER_MARSHAL_FC_HYPER	equ 11
 USER_MARSHAL_FC_DOUBLE	equ 12
 
-;LPBYTE
-NdrUserMarshalSimpleTypeConvert proto WINAPI \
-		pFlags: LPDWORD,
-	       pBuffer: LPBYTE,
-	    FormatChar: BYTE
-
-
-;void
-NdrClientInitializeNew proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE,
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-       pStubDescriptor: PMIDL_STUB_DESC,
-	       ProcNum: UINT
-
-;LPBYTE
-NdrServerInitializeNew proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE,
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-       pStubDescriptor: PMIDL_STUB_DESC
-
-;void
-NdrServerInitializePartial proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE,
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-       pStubDescriptor: PMIDL_STUB_DESC,
-   RequestedBufferSize: DWORD
-
-;void
-NdrClientInitialize proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE,
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-       pStubDescriptor: PMIDL_STUB_DESC,
-	       ProcNum: UINT
-
-;LPBYTE
-NdrServerInitialize proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE,
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-       pStubDescriptor: PMIDL_STUB_DESC
-
-;LPBYTE
-NdrServerInitializeUnmarshall proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-       pStubDescriptor: PMIDL_STUB_DESC,
-	       pRpcMsg: PRPC_MESSAGE
-
-;void
-NdrServerInitializeMarshall proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE,
-	      pStubMsg: PMIDL_STUB_MESSAGE
-
-;LPBYTE
-NdrGetBuffer proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	  BufferLength: DWORD,
-		Handle: RPC_BINDING_HANDLE
-
-;LPBYTE
-NdrNsGetBuffer proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	  BufferLength: DWORD,
-		Handle: RPC_BINDING_HANDLE
-
-;LPBYTE
-NdrGetPipeBuffer proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	  BufferLength: DWORD,
-		Handle: RPC_BINDING_HANDLE
-
-;void
-NdrGetPartialBuffer proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE
-
-;LPBYTE
-NdrSendReceive proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	    pBufferEnd: LPBYTE
-
-;LPBYTE
-NdrNsSendReceive proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	    pBufferEnd: LPBYTE,
-	   pAutoHandle: ptr RPC_BINDING_HANDLE
-
-;void
-NdrPipeSendReceive proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPipeDesc: PNDR_PIPE_DESC
-
-;void
-NdrFreeBuffer proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE
-
-;RPC_STATUS
-NdrGetDcomProtocolVersion proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	      pVersion: ptr RPC_VERSION
-
-;void
-NdrPipesInitialize proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	    pParamDesc: PFORMAT_STRING,
-	     pPipeDesc: PNDR_PIPE_DESC,
-	      pPipeMsg: PNDR_PIPE_MESSAGE,
-	     pStackTop: LPSTR,
-	  NumberParams: DWORD
-
-;void
-NdrPipePull proto WINAPI \
-		pState: LPSTR,
-		   buf: PVOID,
-		 esize: DWORD,
-		ecount: LPDWORD
-
-;void
-NdrPipePush proto WINAPI \
-		pState: LPSTR,
-		   buf: PVOID,
-		ecount: DWORD
-
-;void
-NdrIsAppDoneWithPipes proto WINAPI \
-	     pPipeDesc: PNDR_PIPE_DESC
-
-;void
-NdrPipesDone proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE
-
-;CLIENT_CALL_RETURN RPC_VAR_ENTRY
-NdrClientCall2 proto WINAPI \
-       pStubDescriptor: PMIDL_STUB_DESC,
-	       pFormat: PFORMAT_STRING
-
-;CLIENT_CALL_RETURN RPC_VAR_ENTRY
-NdrClientCall proto WINAPI \
-       pStubDescriptor: PMIDL_STUB_DESC,
-	       pFormat: PFORMAT_STRING
-
-;CLIENT_CALL_RETURN RPC_VAR_ENTRY
-NdrAsyncClientCall proto WINAPI \
-       pStubDescriptor: PMIDL_STUB_DESC,
-	       pFormat: PFORMAT_STRING
-
+NdrUserMarshalSimpleTypeConvert proto WINAPI :LPDWORD, :LPBYTE, :BYTE
+NdrClientInitializeNew proto WINAPI :PRPC_MESSAGE, :PMIDL_STUB_MESSAGE, :PMIDL_STUB_DESC, :UINT
+NdrServerInitializeNew proto WINAPI :PRPC_MESSAGE, :PMIDL_STUB_MESSAGE, :PMIDL_STUB_DESC
+NdrServerInitializePartial proto WINAPI :PRPC_MESSAGE, :PMIDL_STUB_MESSAGE, :PMIDL_STUB_DESC, :DWORD
+NdrClientInitialize proto WINAPI :PRPC_MESSAGE, :PMIDL_STUB_MESSAGE, :PMIDL_STUB_DESC, :UINT
+NdrServerInitialize proto WINAPI :PRPC_MESSAGE, :PMIDL_STUB_MESSAGE, :PMIDL_STUB_DESC
+NdrServerInitializeUnmarshall proto WINAPI :PMIDL_STUB_MESSAGE, :PMIDL_STUB_DESC, :PRPC_MESSAGE
+NdrServerInitializeMarshall proto WINAPI :PRPC_MESSAGE, :PMIDL_STUB_MESSAGE
+NdrGetBuffer proto WINAPI :PMIDL_STUB_MESSAGE, :DWORD, :RPC_BINDING_HANDLE
+NdrNsGetBuffer proto WINAPI :PMIDL_STUB_MESSAGE, :DWORD, :RPC_BINDING_HANDLE
+NdrGetPipeBuffer proto WINAPI :PMIDL_STUB_MESSAGE, :DWORD, :RPC_BINDING_HANDLE
+NdrGetPartialBuffer proto WINAPI :PMIDL_STUB_MESSAGE
+NdrSendReceive proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE
+NdrNsSendReceive proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :ptr
+NdrPipeSendReceive proto WINAPI :PMIDL_STUB_MESSAGE, :PNDR_PIPE_DESC
+NdrFreeBuffer proto WINAPI :PMIDL_STUB_MESSAGE
+NdrGetDcomProtocolVersion proto WINAPI :PMIDL_STUB_MESSAGE, :ptr
+NdrPipesInitialize proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING, :PNDR_PIPE_DESC, :PNDR_PIPE_MESSAGE, :LPSTR, :DWORD
+NdrPipePull proto WINAPI :LPSTR, :ptr, :DWORD, :LPDWORD
+NdrPipePush proto WINAPI :LPSTR, :ptr, :DWORD
+NdrIsAppDoneWithPipes proto WINAPI :PNDR_PIPE_DESC
+NdrPipesDone proto WINAPI :PMIDL_STUB_MESSAGE
+NdrClientCall2 proto WINAPI :PMIDL_STUB_DESC, :PFORMAT_STRING
+NdrClientCall proto WINAPI :PMIDL_STUB_DESC, :PFORMAT_STRING
+NdrAsyncClientCall proto WINAPI :PMIDL_STUB_DESC, :PFORMAT_STRING
 
 STUB_UNMARSHAL		equ 0
 STUB_CALL_SERVER	equ 1
@@ -1436,308 +597,69 @@ PROXY_MARSHAL		equ 2
 PROXY_SENDRECEIVE	equ 3
 PROXY_UNMARSHAL		equ 4
 
-;IRpcStubBuffer;
+NdrAsyncStubCall proto WINAPI :ptr, :ptr, :ptr, :ptr
+NdrAsyncServerCall proto WINAPI :PRPC_MESSAGE
+NdrStubCall2 proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :LPDWORD
+NdrServerCall2 proto WINAPI :PRPC_MESSAGE
+NdrStubCall proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :LPDWORD
+NdrServerCall proto WINAPI :PRPC_MESSAGE
+NdrServerUnmarshall proto WINAPI :ptr, :PRPC_MESSAGE, :PMIDL_STUB_MESSAGE, :PMIDL_STUB_DESC, :PFORMAT_STRING, :ptr
+NdrServerMarshall proto WINAPI :ptr, :ptr, :PMIDL_STUB_MESSAGE, :PFORMAT_STRING
+NdrMapCommAndFaultStatus proto WINAPI :PMIDL_STUB_MESSAGE, :LPDWORD, :LPDWORD, :RPC_STATUS
+NdrSH_UPDecision proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :RPC_BUFPTR
+NdrSH_TLUPDecision proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE
+NdrSH_TLUPDecisionBuffer proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE
+NdrSH_IfAlloc proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :DWORD
+NdrSH_IfAllocRef proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :DWORD
+NdrSH_IfAllocSet proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :DWORD
+NdrSH_IfCopy proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :DWORD
+NdrSH_IfAllocCopy proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :DWORD
+NdrSH_Copy proto WINAPI :LPBYTE, :LPBYTE, :DWORD
+NdrSH_IfFree proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE
+NdrSH_StringMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :DWORD, :SINT
+NdrSH_StringUnMarshall proto WINAPI :PMIDL_STUB_MESSAGE, :LPBYTE, :SINT
 
-;long
-NdrAsyncStubCall proto WINAPI \
-		 pThis: PVOID,;struct IRpcStubBuffer *
-	      pChannel: PVOID,;struct IRpcChannelBuffer *
-	       pRpcMsg: PRPC_MESSAGE,
-	  pdwStubPhase: LPDWORD
+RPC_SS_THREAD_HANDLE typedef ptr
 
-;void
-NdrAsyncServerCall proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE
+CALLBACK(RPC_CLIENT_ALLOC, :size_t)
+CALLBACK(RPC_CLIENT_FREE, :ptr)
 
-;long
-NdrStubCall2 proto WINAPI \
-		 pThis: PVOID,;struct IRpcStubBuffer *
-	      pChannel: PVOID,;struct IRpcChannelBuffer *
-	       pRpcMsg: PRPC_MESSAGE,
-	  pdwStubPhase: LPDWORD
-
-;void
-NdrServerCall2 proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE
-
-;long
-NdrStubCall proto WINAPI \
-		 pThis: PVOID,;struct IRpcStubBuffer *
-	      pChannel: PVOID,;struct IRpcChannelBuffer *
-	       pRpcMsg: PRPC_MESSAGE,
-	  pdwStubPhase: LPDWORD
-
-;void
-NdrServerCall proto WINAPI \
-	       pRpcMsg: PRPC_MESSAGE
-
-;int
-NdrServerUnmarshall proto WINAPI \
-	      pChannel: PVOID,;struct IRpcChannelBuffer *
-	       pRpcMsg: PRPC_MESSAGE,
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-       pStubDescriptor: PMIDL_STUB_DESC,
-	       pFormat: PFORMAT_STRING,
-	    pParamList: PVOID
-
-;void
-NdrServerMarshall proto WINAPI \
-		 pThis: PVOID,;struct IRpcStubBuffer *
-	      pChannel: PVOID,;struct IRpcChannelBuffer *
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING
-
-
-;RPC_STATUS
-NdrMapCommAndFaultStatus proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	   pCommStatus: LPDWORD,
-	  pFaultStatus: LPDWORD,
-		Status: RPC_STATUS
-
-
-;int
-NdrSH_UPDecision proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPtrInMem: LPBYTE,
-	       pBuffer: RPC_BUFPTR
-
-;int
-NdrSH_TLUPDecision proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPtrInMem: LPBYTE
-
-;int
-NdrSH_TLUPDecisionBuffer proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPtrInMem: LPBYTE
-
-;int
-NdrSH_IfAlloc proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPtrInMem: LPBYTE,
-		 Count: DWORD
-
-;int
-NdrSH_IfAllocRef proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPtrInMem: LPBYTE,
-		 Count: DWORD
-
-;int
-NdrSH_IfAllocSet proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPtrInMem: LPBYTE,
-		 Count: DWORD
-
-;RPC_BUFPTR
-NdrSH_IfCopy proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPtrInMem: LPBYTE,
-		 Count: DWORD
-
-;RPC_BUFPTR
-NdrSH_IfAllocCopy proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	     pPtrInMem: LPBYTE,
-		 Count: DWORD
-
-;DWORD
-NdrSH_Copy proto WINAPI \
-	      pStubMsg: LPBYTE,
-	     pPtrInMem: LPBYTE,
-		 Count: DWORD
-
-;void
-NdrSH_IfFree proto WINAPI \
-	      pMessage: PMIDL_STUB_MESSAGE,
-		  pPtr: LPBYTE
-
-
-;RPC_BUFPTR
-NdrSH_StringMarshall proto WINAPI \
-	      pMessage: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-		 Count: DWORD,
-		  Size: SINT
-
-;RPC_BUFPTR
-NdrSH_StringUnMarshall proto WINAPI \
-	      pMessage: PMIDL_STUB_MESSAGE,
-	       pMemory: LPBYTE,
-		  Size: SINT
-
-
-RPC_SS_THREAD_HANDLE	typedef PVOID
-
-;PVOID
-CALLBACK(RPC_CLIENT_ALLOC,_Size: size_t)
-;void
-CALLBACK(RPC_CLIENT_FREE, :PVOID)
-
-
-;PVOID
-RpcSsAllocate proto WINAPI \
-		  Size: size_t
-
-;void
+RpcSsAllocate proto WINAPI :size_t
 RpcSsDisableAllocate proto WINAPI
-
-;void
 RpcSsEnableAllocate proto WINAPI
-
-;void
-RpcSsFree proto WINAPI \
-	    NodeToFree: PVOID
-
-;RPC_SS_THREAD_HANDLE
+RpcSsFree proto WINAPI :ptr
 RpcSsGetThreadHandle proto WINAPI
-
-;void
-RpcSsSetClientAllocFree proto WINAPI \
-	   ClientAlloc: ptr RPC_CLIENT_ALLOC,
-	    ClientFree: ptr RPC_CLIENT_FREE
-
-;void
-RpcSsSetThreadHandle proto WINAPI \
-		    Id: RPC_SS_THREAD_HANDLE
-
-;void
-RpcSsSwapClientAllocFree proto WINAPI \
-	   ClientAlloc: ptr RPC_CLIENT_ALLOC,
-	    ClientFree: ptr RPC_CLIENT_FREE,
-	OldClientAlloc: RPC_CLIENT_ALLOC,
-	 OldClientFree: RPC_CLIENT_FREE
-
-
-;PVOID
-RpcSmAllocate proto WINAPI \
-		  Size: size_t,
-	       pStatus: ptr RPC_STATUS
-
-;RPC_STATUS
-RpcSmClientFree proto WINAPI \
-	   pNodeToFree: PVOID
-
-;RPC_STATUS
-RpcSmDestroyClientContext proto WINAPI \
-	 ContextHandle: PVOID
-
-;RPC_STATUS
+RpcSsSetClientAllocFree proto WINAPI :ptr, :ptr
+RpcSsSetThreadHandle proto WINAPI :RPC_SS_THREAD_HANDLE
+RpcSsSwapClientAllocFree proto WINAPI :ptr, :ptr, :RPC_CLIENT_ALLOC, :RPC_CLIENT_FREE
+RpcSmAllocate proto WINAPI :size_t, :ptr
+RpcSmClientFree proto WINAPI :ptr
+RpcSmDestroyClientContext proto WINAPI :ptr
 RpcSmDisableAllocate proto WINAPI
-
-;RPC_STATUS
 RpcSmEnableAllocate proto WINAPI
+RpcSmFree proto WINAPI :ptr
+RpcSmGetThreadHandle proto WINAPI :ptr
+RpcSmSetClientAllocFree proto WINAPI :ptr, :ptr
+RpcSmSetThreadHandle proto WINAPI :RPC_SS_THREAD_HANDLE
+RpcSmSwapClientAllocFree proto WINAPI :ptr, :ptr, :ptr, :ptr
+NdrRpcSsEnableAllocate proto WINAPI :PMIDL_STUB_MESSAGE
+NdrRpcSsDisableAllocate proto WINAPI :PMIDL_STUB_MESSAGE
+NdrRpcSmSetClientToOsf proto WINAPI :PMIDL_STUB_MESSAGE
+NdrRpcSmClientAllocate proto WINAPI :size_t
+NdrRpcSmClientFree proto WINAPI :ptr
+NdrRpcSsDefaultAllocate proto WINAPI :size_t
+NdrRpcSsDefaultFree proto WINAPI :ptr
 
-;RPC_STATUS
-RpcSmFree proto WINAPI \
-	    NodeToFree: PVOID
-
-;RPC_SS_THREAD_HANDLE
-RpcSmGetThreadHandle proto WINAPI \
-	       pStatus: ptr RPC_STATUS
-
-;RPC_STATUS
-RpcSmSetClientAllocFree proto WINAPI \
-	   ClientAlloc: ptr RPC_CLIENT_ALLOC,
-	    ClientFree: ptr RPC_CLIENT_FREE
-
-;RPC_STATUS
-RpcSmSetThreadHandle proto WINAPI \
-		    Id: RPC_SS_THREAD_HANDLE
-
-;RPC_STATUS
-RpcSmSwapClientAllocFree proto WINAPI \
-	   ClientAlloc: ptr RPC_CLIENT_ALLOC,
-	    ClientFree: ptr RPC_CLIENT_FREE,
-	OldClientAlloc: ptr RPC_CLIENT_ALLOC,
-	 OldClientFree: ptr RPC_CLIENT_FREE
-
-
-;void
-NdrRpcSsEnableAllocate proto WINAPI \
-	      pMessage: PMIDL_STUB_MESSAGE
-
-;void
-NdrRpcSsDisableAllocate proto WINAPI \
-	      pMessage: PMIDL_STUB_MESSAGE
-
-;void
-NdrRpcSmSetClientToOsf proto WINAPI \
-	      pMessage: PMIDL_STUB_MESSAGE
-
-;PVOID
-NdrRpcSmClientAllocate proto WINAPI \
-		  Size: size_t
-
-;void
-NdrRpcSmClientFree proto WINAPI \
-	    NodeToFree: PVOID
-
-;PVOID
-NdrRpcSsDefaultAllocate proto WINAPI \
-		  Size: size_t
-
-;void
-NdrRpcSsDefaultFree proto WINAPI \
-	    NodeToFree: PVOID
-
-
-
-;PFULL_PTR_XLAT_TABLES
-NdrFullPointerXlatInit proto WINAPI \
-      NumberOfPointers: DWORD,
-	      XlatSide: XLAT_SIDE
-
-;void
-NdrFullPointerXlatFree proto WINAPI \
-	   pXlatTables: PFULL_PTR_XLAT_TABLES
-
-;int
-NdrFullPointerQueryPointer proto WINAPI \
-	   pXlatTables: PFULL_PTR_XLAT_TABLES,
-	      pPointer: PVOID,
-	     QueryType: BYTE,
-		pRefId: LPDWORD
-
-;int
-NdrFullPointerQueryRefId proto WINAPI \
-	   pXlatTables: PFULL_PTR_XLAT_TABLES,
-		 RefId: DWORD,
-	     QueryType: BYTE,
-	     ppPointer: PVOID
-
-;void
-NdrFullPointerInsertRefId proto WINAPI \
-	   pXlatTables: PFULL_PTR_XLAT_TABLES,
-		 RefId: DWORD,
-	      pPointer: PVOID
-
-;int
-NdrFullPointerFree proto WINAPI \
-	   pXlatTables: PFULL_PTR_XLAT_TABLES,
-	       Pointer: PVOID
-
-;PVOID
-NdrAllocate proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-		   Len: size_t
-
-;void
-NdrClearOutParameters proto WINAPI \
-	      pStubMsg: PMIDL_STUB_MESSAGE,
-	       pFormat: PFORMAT_STRING,
-	       ArgAddr: PVOID
-
-
-
-;PVOID
-NdrOleAllocate proto WINAPI \
-		  Size: size_t
-
-;void
-NdrOleFree proto WINAPI \
-	    NodeToFree: PVOID
+NdrFullPointerXlatInit proto WINAPI :DWORD, :XLAT_SIDE
+NdrFullPointerXlatFree proto WINAPI :PFULL_PTR_XLAT_TABLES
+NdrFullPointerQueryPointer proto WINAPI :PFULL_PTR_XLAT_TABLES, :ptr, :BYTE, :LPDWORD
+NdrFullPointerQueryRefId proto WINAPI :PFULL_PTR_XLAT_TABLES, :DWORD, :BYTE, :ptr
+NdrFullPointerInsertRefId proto WINAPI :PFULL_PTR_XLAT_TABLES, :DWORD, :ptr
+NdrFullPointerFree proto WINAPI :PFULL_PTR_XLAT_TABLES, :ptr
+NdrAllocate proto WINAPI :PMIDL_STUB_MESSAGE, :size_t
+NdrClearOutParameters proto WINAPI :PMIDL_STUB_MESSAGE, :PFORMAT_STRING, :ptr
+NdrOleAllocate proto WINAPI :size_t
+NdrOleFree proto WINAPI :ptr
 
 if 0
 ifdef CONST_VTABLE

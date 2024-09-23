@@ -19,1197 +19,248 @@ endif
 
 include oaidl.inc
 
-;WINOLEAUTAPI_(BSTR)
-SysAllocString proto WINAPI \
-		      : ptr OLECHAR
-
-;WINOLEAUTAPI_(INT)
-SysReAllocString proto WINAPI \
-		      : ptr BSTR,
-		      : ptr OLECHAR
-
-;WINOLEAUTAPI_(BSTR)
-SysAllocStringLen proto WINAPI \
-		      : ptr OLECHAR,
-		      : UINT
-
-;WINOLEAUTAPI_(INT)
-SysReAllocStringLen proto WINAPI \
-		      : ptr BSTR,
-		      : ptr OLECHAR,
-		      : UINT
-
-;WINOLEAUTAPI_(void)
-SysFreeString proto WINAPI \
-		      : ptr BSTR
-
-;WINOLEAUTAPI_(UINT)
-SysStringLen proto WINAPI \
-		      : ptr BSTR
+SysAllocString proto WINAPI :ptr
+SysReAllocString proto WINAPI :ptr, :ptr
+SysAllocStringLen proto WINAPI :ptr, :UINT
+SysReAllocStringLen proto WINAPI :ptr, :ptr, :UINT
+SysFreeString proto WINAPI :ptr
+SysStringLen proto WINAPI :ptr
 ifdef _WIN32
-;WINOLEAUTAPI_(UINT)
-SysStringByteLen proto WINAPI \
-		  bstr: BSTR
-
-;WINOLEAUTAPI_(BSTR)
-SysAllocStringByteLen proto WINAPI \
-		   psz: LPCSTR,
-		   len: UINT
-
+SysStringByteLen proto WINAPI :BSTR
+SysAllocStringByteLen proto WINAPI :LPCSTR, :UINT
 endif
-
-;WINOLEAUTAPI_(INT)
-DosDateTimeToVariantTime proto WINAPI \
-	      wDosDate: USHORT,
-	      wDosTime: USHORT,
-		pvtime: ptr DOUBLE
-
-
-;WINOLEAUTAPI_(INT)
-VariantTimeToDosDateTime proto WINAPI \
-		 vtime: DOUBLE,
-	     pwDosDate: ptr USHORT,
-	     pwDosTime: ptr USHORT
-
+DosDateTimeToVariantTime proto WINAPI :USHORT, :USHORT, :ptr
+VariantTimeToDosDateTime proto WINAPI :DOUBLE, :ptr, :ptr
 ifdef _WIN32
-;WINOLEAUTAPI_(INT)
-SystemTimeToVariantTime proto WINAPI \
-	  lpSystemTime: LPSYSTEMTIME,
-		pvtime: ptr DOUBLE
-
-;WINOLEAUTAPI_(INT)
-VariantTimeToSystemTime proto WINAPI \
-		 vtime: DOUBLE,
-	  lpSystemTime: LPSYSTEMTIME
-
+SystemTimeToVariantTime proto WINAPI :LPSYSTEMTIME, :ptr
+VariantTimeToSystemTime proto WINAPI :DOUBLE, :LPSYSTEMTIME
 endif
-
-;WINOLEAUTAPI
-SafeArrayAllocDescriptor proto WINAPI \
-		 cDims: UINT,
-	       ppsaOut: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayAllocDescriptorEx proto WINAPI \
-		    vt: VARTYPE,
-		 cDims: UINT,
-	       ppsaOut: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayAllocData proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-SafeArrayCreate proto WINAPI \
-		    vt: VARTYPE,
-		 cDims: UINT,
-	     rgsabound: ptr SAFEARRAYBOUND
-
-SafeArrayCreateEx proto WINAPI \
-		    vt: VARTYPE,
-		 cDims: UINT,
-	     rgsabound: ptr SAFEARRAYBOUND,
-	       pvExtra: PVOID
-
-;WINOLEAUTAPI
-SafeArrayCopyData proto WINAPI \
-	     psaSource: ptr SAFEARRAY,
-	     psaTarget: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayDestroyDescriptor proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayDestroyData proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayDestroy proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayRedim proto WINAPI \
-		   psa: ptr SAFEARRAY,
-	   psaboundNew: ptr SAFEARRAYBOUND
-
-SafeArrayGetDim proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-SafeArrayGetElemsize proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-SafeArrayGetUBound proto WINAPI \
-		   psa: ptr SAFEARRAY,
-		  nDim: UINT,
-	      plUbound: ptr LONG
-
-SafeArrayGetLBound proto WINAPI \
-		   psa: ptr SAFEARRAY,
-		  nDim: UINT,
-	      plLbound: ptr LONG
-
-SafeArrayLock proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayUnlock proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayAccessData proto WINAPI \
-		   psa: ptr SAFEARRAY,
-	       ppvData: PVOID
-
-;WINOLEAUTAPI
-SafeArrayUnaccessData proto WINAPI \
-		   psa: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayGetElement proto WINAPI \
-		   psa: ptr SAFEARRAY,
-	     rgIndices: ptr LONG,
-		    pv: PVOID
-
-;WINOLEAUTAPI
-SafeArrayPutElement proto WINAPI \
-		   psa: ptr SAFEARRAY,
-	     rgIndices: ptr LONG,
-		    pv: PVOID
-
-;WINOLEAUTAPI
-SafeArrayCopy proto WINAPI \
-		   psa: ptr SAFEARRAY,
-	       ppsaOut: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-SafeArrayPtrOfIndex proto WINAPI \
-		   psa: ptr SAFEARRAY,
-	     rgIndices: ptr LONG,
-	       ppvData: PVOID
-
-;WINOLEAUTAPI
-SafeArraySetRecordInfo proto WINAPI \
-		   psa: ptr SAFEARRAY,
-		prinfo: ptr IRecordInfo
-
-;WINOLEAUTAPI
-SafeArrayGetRecordInfo proto WINAPI \
-		   psa: ptr SAFEARRAY,
-		prinfo: ptr IRecordInfo
-
-;WINOLEAUTAPI
-SafeArraySetIID proto WINAPI \
-		   psa: ptr SAFEARRAY,
-		  guid: REFGUID
-
-;WINOLEAUTAPI
-SafeArrayGetIID proto WINAPI \
-		   psa: ptr SAFEARRAY,
-		 pguid: ptr GUID
-
-;WINOLEAUTAPI
-SafeArrayGetVartype proto WINAPI \
-		   psa: ptr SAFEARRAY,
-		   pvt: ptr VARTYPE
-
-SafeArrayCreateVector proto WINAPI \
-		    vt: VARTYPE,
-	       lLbound: LONG,
-	     cElements: ULONG
-
-SafeArrayCreateVectorEx proto WINAPI \
-		    vt: VARTYPE,
-	       lLbound: LONG,
-	     cElements: ULONG,
-	       pvExtra: PVOID
-
-
-VariantInit proto WINAPI \
-		 pvarg: ptr VARIANTARG
-
-;WINOLEAUTAPI
-VariantClear proto WINAPI \
-		 pvarg: ptr VARIANTARG
-
-;WINOLEAUTAPI
-VariantCopy proto WINAPI \
-	     pvargDest: ptr VARIANTARG,
-	      pvargSrc: ptr VARIANTARG
-
-;WINOLEAUTAPI
-VariantCopyInd proto WINAPI \
-	      pvarDest: ptr VARIANT,
-	      pvargSrc: ptr VARIANTARG
-
-;WINOLEAUTAPI
-VariantChangeType proto WINAPI \
-	     pvargDest: ptr VARIANTARG,
-	       pvarSrc: ptr VARIANTARG,
-		wFlags: USHORT,
-		    vt: VARTYPE
-
-;WINOLEAUTAPI
-VariantChangeTypeEx proto WINAPI \
-	     pvargDest: ptr VARIANTARG,
-	       pvarSrc: ptr VARIANTARG,
-		  lcid: LCID,
-		wFlags: USHORT,
-		    vt: VARTYPE
-
+SafeArrayAllocDescriptor proto WINAPI :UINT, :ptr
+SafeArrayAllocDescriptorEx proto WINAPI :VARTYPE, :UINT, :ptr
+SafeArrayAllocData proto WINAPI :ptr
+SafeArrayCreate proto WINAPI :VARTYPE, :UINT, :ptr
+SafeArrayCreateEx proto WINAPI :VARTYPE, :UINT, :ptr, :ptr
+SafeArrayCopyData proto WINAPI :ptr, :ptr
+SafeArrayDestroyDescriptor proto WINAPI :ptr
+SafeArrayDestroyData proto WINAPI :ptr
+SafeArrayDestroy proto WINAPI :ptr
+SafeArrayRedim proto WINAPI :ptr, :ptr
+SafeArrayGetDim proto WINAPI :ptr
+SafeArrayGetElemsize proto WINAPI :ptr
+SafeArrayGetUBound proto WINAPI :ptr, :UINT, :ptr
+SafeArrayGetLBound proto WINAPI :ptr, :UINT, :ptr
+SafeArrayLock proto WINAPI :ptr
+SafeArrayUnlock proto WINAPI :ptr
+SafeArrayAccessData proto WINAPI :ptr, :ptr
+SafeArrayUnaccessData proto WINAPI :ptr
+SafeArrayGetElement proto WINAPI :ptr, :ptr, :ptr
+SafeArrayPutElement proto WINAPI :ptr, :ptr, :ptr
+SafeArrayCopy proto WINAPI :ptr, :ptr
+SafeArrayPtrOfIndex proto WINAPI :ptr, :ptr, :ptr
+SafeArraySetRecordInfo proto WINAPI :ptr, :ptr
+SafeArrayGetRecordInfo proto WINAPI :ptr, :ptr
+SafeArraySetIID proto WINAPI :ptr, :REFGUID
+SafeArrayGetIID proto WINAPI :ptr, :ptr
+SafeArrayGetVartype proto WINAPI :ptr, :ptr
+SafeArrayCreateVector proto WINAPI :VARTYPE, :LONG, :ULONG
+SafeArrayCreateVectorEx proto WINAPI :VARTYPE, :LONG, :ULONG, :ptr
+VariantInit proto WINAPI :ptr
+VariantClear proto WINAPI :ptr
+VariantCopy proto WINAPI :ptr, :ptr
+VariantCopyInd proto WINAPI :ptr, :ptr
+VariantChangeType proto WINAPI :ptr, :ptr, :USHORT, :VARTYPE
+VariantChangeTypeEx proto WINAPI :ptr, :ptr, :LCID, :USHORT, :VARTYPE
 
 VARIANT_NOVALUEPROP	equ 0x1
 VARIANT_ALPHABOOL	equ 0x2
 VARIANT_NOUSEROVERRIDE	equ 0x4
 VARIANT_LOCALBOOL	equ 0x8
 
-
-;WINOLEAUTAPI
-VectorFromBstr proto WINAPI \
-		  bstr: BSTR,
-		  ppsa: ptr SAFEARRAY
-
-;WINOLEAUTAPI
-BstrFromVector proto WINAPI \
-		   psa: ptr SAFEARRAY,
-		 pbstr: ptr BSTR
-
-
-
-
-
+VectorFromBstr proto WINAPI :BSTR, :ptr
+BstrFromVector proto WINAPI :ptr, :ptr
 
 VAR_TIMEVALUEONLY	equ 0x00000001
 VAR_DATEVALUEONLY	equ 0x00000002
-
 VAR_LOCALBOOL		equ 0x00000010
 
-;WINOLEAUTAPI
-VarUI1FromI2 proto WINAPI \
-		   sIn: SWORD,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromI4 proto WINAPI \
-		   lIn: LONG,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromR4 proto WINAPI \
-		 fltIn: FLOAT,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromCy proto WINAPI \
-		  cyIn: CY,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromDate proto WINAPI \
-		dateIn: DATE,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromI1 proto WINAPI \
-		   cIn: CHAR,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromUI2 proto WINAPI \
-		  uiIn: USHORT,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromUI4 proto WINAPI \
-		  ulIn: ULONG,
-		 pbOut: ptr BYTE
-
-;WINOLEAUTAPI
-VarUI1FromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-		 pbOut: ptr BYTE
-
-
-;WINOLEAUTAPI
-VarI2FromUI1 proto WINAPI \
-		   bIn: BYTE,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromI4 proto WINAPI \
-		   lIn: LONG,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromR4 proto WINAPI \
-		 fltIn: FLOAT,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromCy proto WINAPI \
-		  cyIn: CY,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromDate proto WINAPI \
-		dateIn: DATE,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromI1 proto WINAPI \
-		   cIn: CHAR,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromUI2 proto WINAPI \
-		  uiIn: USHORT,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromUI4 proto WINAPI \
-		  ulIn: ULONG,
-		 psOut: ptr SWORD
-
-;WINOLEAUTAPI
-VarI2FromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-		 psOut: ptr SWORD
-
-
-;WINOLEAUTAPI
-VarI4FromUI1 proto WINAPI \
-		   bIn: BYTE,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromI2 proto WINAPI \
-		   sIn: SWORD,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromR4 proto WINAPI \
-		 fltIn: FLOAT,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromCy proto WINAPI \
-		  cyIn: CY,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromDate proto WINAPI \
-		dateIn: DATE,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromI1 proto WINAPI \
-		   cIn: CHAR,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromUI2 proto WINAPI \
-		  uiIn: USHORT,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromUI4 proto WINAPI \
-		  ulIn: ULONG,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-		 plOut: ptr LONG
-
-;WINOLEAUTAPI
-VarI4FromInt proto WINAPI \
-		 intIn: SINT,
-		 plOut: ptr LONG
-
-
-;WINOLEAUTAPI
-VarR4FromUI1 proto WINAPI \
-		   bIn: BYTE,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromI2 proto WINAPI \
-		   sIn: SWORD,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromI4 proto WINAPI \
-		   lIn: LONG,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromCy proto WINAPI \
-		  cyIn: CY,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromDate proto WINAPI \
-		dateIn: DATE,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromI1 proto WINAPI \
-		   cIn: CHAR,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromUI2 proto WINAPI \
-		  uiIn: USHORT,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromUI4 proto WINAPI \
-		  ulIn: ULONG,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR4FromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-	       pfltOut: ptr FLOAT
-
-;WINOLEAUTAPI
-VarR8FromUI1 proto WINAPI \
-		   bIn: BYTE,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromI2 proto WINAPI \
-		   sIn: SWORD,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromI4 proto WINAPI \
-		   lIn: LONG,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromR4 proto WINAPI \
-		 fltIn: FLOAT,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromCy proto WINAPI \
-		  cyIn: CY,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromDate proto WINAPI \
-		dateIn: DATE,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromI1 proto WINAPI \
-		   cIn: CHAR,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromUI2 proto WINAPI \
-		  uiIn: USHORT,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromUI4 proto WINAPI \
-		  ulIn: ULONG,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarR8FromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-	       pdblOut: ptr DOUBLE
-
-;WINOLEAUTAPI
-VarDateFromUI1 proto WINAPI \
-		   bIn: BYTE,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromI2 proto WINAPI \
-		   sIn: SWORD,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromI4 proto WINAPI \
-		   lIn: LONG,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromR4 proto WINAPI \
-		 fltIn: FLOAT,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromCy proto WINAPI \
-		  cyIn: CY,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromI1 proto WINAPI \
-		   cIn: CHAR,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromUI2 proto WINAPI \
-		  uiIn: USHORT,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromUI4 proto WINAPI \
-		  ulIn: ULONG,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarDateFromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-	      pdateOut: ptr DATE
-
-
-;WINOLEAUTAPI
-VarCyFromUI1 proto WINAPI \
-		   bIn: BYTE,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromI2 proto WINAPI \
-		   sIn: SWORD,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromI4 proto WINAPI \
-		   lIn: LONG,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromR4 proto WINAPI \
-		 fltIn: FLOAT,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromDate proto WINAPI \
-		dateIn: DATE,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromI1 proto WINAPI \
-		   cIn: CHAR,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromUI2 proto WINAPI \
-		  uiIn: USHORT,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromUI4 proto WINAPI \
-		  ulIn: ULONG,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarCyFromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-		pcyOut: ptr CY
-
-;WINOLEAUTAPI
-VarBstrFromUI1 proto WINAPI \
-		  bVal: BYTE,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromI2 proto WINAPI \
-		  iVal: SWORD,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromI4 proto WINAPI \
-		   lIn: LONG,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromR4 proto WINAPI \
-		 fltIn: FLOAT,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromCy proto WINAPI \
-		  cyIn: CY,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromDate proto WINAPI \
-		dateIn: DATE,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromI1 proto WINAPI \
-		   cIn: CHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromUI2 proto WINAPI \
-		  uiIn: USHORT,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromUI4 proto WINAPI \
-		  ulIn: ULONG,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarBstrFromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-
-;WINOLEAUTAPI
-VarBoolFromUI1 proto WINAPI \
-		   bIn: BYTE,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromI2 proto WINAPI \
-		   sIn: SWORD,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromI4 proto WINAPI \
-		   lIn: LONG,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromR4 proto WINAPI \
-		 fltIn: FLOAT,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromDate proto WINAPI \
-		dateIn: DATE,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromCy proto WINAPI \
-		  cyIn: CY,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromI1 proto WINAPI \
-		   cIn: CHAR,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromUI2 proto WINAPI \
-		  uiIn: USHORT,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromUI4 proto WINAPI \
-		  ulIn: ULONG,
-	      pboolOut: ptr VARIANT_BOOL
-
-;WINOLEAUTAPI
-VarBoolFromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-	      pboolOut: ptr VARIANT_BOOL
-
-
-;WINOLEAUTAPI
-VarI1FromUI1 proto WINAPI \
-		   bIn: BYTE,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromI2 proto WINAPI \
-		  uiIn: SWORD,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromI4 proto WINAPI \
-		   lIn: LONG,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromR4 proto WINAPI \
-		 fltIn: FLOAT,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromDate proto WINAPI \
-		dateIn: DATE,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromCy proto WINAPI \
-		  cyIn: CY,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromUI2 proto WINAPI \
-		  uiIn: USHORT,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromUI4 proto WINAPI \
-		  ulIn: ULONG,
-		 pcOut: ptr CHAR
-
-;WINOLEAUTAPI
-VarI1FromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-		 pcOut: ptr CHAR
-
-
-;WINOLEAUTAPI
-VarUI2FromUI1 proto WINAPI \
-		   bIn: BYTE,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromI2 proto WINAPI \
-		  uiIn: SWORD,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromI4 proto WINAPI \
-		   lIn: LONG,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromR4 proto WINAPI \
-		 fltIn: FLOAT,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromDate proto WINAPI \
-		dateIn: DATE,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromCy proto WINAPI \
-		  cyIn: CY,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromI1 proto WINAPI \
-		   cIn: CHAR,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromUI4 proto WINAPI \
-		  ulIn: ULONG,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI2FromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-		puiOut: ptr USHORT
-
-;WINOLEAUTAPI
-VarUI4FromUI1 proto WINAPI \
-		   bIn: BYTE,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromI2 proto WINAPI \
-		  uiIn: SWORD,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromI4 proto WINAPI \
-		   lIn: LONG,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromR4 proto WINAPI \
-		 fltIn: FLOAT,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromDate proto WINAPI \
-		dateIn: DATE,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromCy proto WINAPI \
-		  cyIn: CY,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromI1 proto WINAPI \
-		   cIn: CHAR,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromUI2 proto WINAPI \
-		  uiIn: USHORT,
-		pulOut: ptr ULONG
-
-;WINOLEAUTAPI
-VarUI4FromDec proto WINAPI \
-		pdecIn: ptr DECIMAL,
-		pulOut: ptr ULONG
-
-
-;WINOLEAUTAPI
-VarDecFromUI1 proto WINAPI \
-		   bIn: BYTE,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromI2 proto WINAPI \
-		  uiIn: SWORD,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromI4 proto WINAPI \
-		   lIn: LONG,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromR4 proto WINAPI \
-		 fltIn: FLOAT,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromR8 proto WINAPI \
-		 dblIn: DOUBLE,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromDate proto WINAPI \
-		dateIn: DATE,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromCy proto WINAPI \
-		  cyIn: CY,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromDisp proto WINAPI \
-	       pdispIn: ptr IDispatch,
-		  lcid: LCID,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromBool proto WINAPI \
-		boolIn: VARIANT_BOOL,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromI1 proto WINAPI \
-		   cIn: CHAR,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromUI2 proto WINAPI \
-		  uiIn: USHORT,
-	       pdecOut: ptr DECIMAL
-
-;WINOLEAUTAPI
-VarDecFromUI4 proto WINAPI \
-		  ulIn: ULONG,
-	       pdecOut: ptr DECIMAL
-
-
-VarUI4FromUI4 macro _in, pOut
-	exitm<(*(pOut) = (_in))>
-	endm
-VarI4FromI4 macro _in, pOut
-	exitm<(*(pOut) = (_in))>
-	endm
+VarUI1FromI2 proto WINAPI :SWORD, :ptr
+VarUI1FromI4 proto WINAPI :LONG, :ptr
+VarUI1FromR4 proto WINAPI :FLOAT, :ptr
+VarUI1FromR8 proto WINAPI :DOUBLE, :ptr
+VarUI1FromCy proto WINAPI :CY, :ptr
+VarUI1FromDate proto WINAPI :DATE, :ptr
+VarUI1FromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarUI1FromDisp proto WINAPI :ptr, :LCID, :ptr
+VarUI1FromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarUI1FromI1 proto WINAPI :CHAR, :ptr
+VarUI1FromUI2 proto WINAPI :USHORT, :ptr
+VarUI1FromUI4 proto WINAPI :ULONG, :ptr
+VarUI1FromDec proto WINAPI :ptr, :ptr
+VarI2FromUI1 proto WINAPI :BYTE, :ptr
+VarI2FromI4 proto WINAPI :LONG, :ptr
+VarI2FromR4 proto WINAPI :FLOAT, :ptr
+VarI2FromR8 proto WINAPI :DOUBLE, :ptr
+VarI2FromCy proto WINAPI :CY, :ptr
+VarI2FromDate proto WINAPI :DATE, :ptr
+VarI2FromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarI2FromDisp proto WINAPI :ptr, :LCID, :ptr
+VarI2FromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarI2FromI1 proto WINAPI :CHAR, :ptr
+VarI2FromUI2 proto WINAPI :USHORT, :ptr
+VarI2FromUI4 proto WINAPI :ULONG, :ptr
+VarI2FromDec proto WINAPI :ptr, :ptr
+VarI4FromUI1 proto WINAPI :BYTE, :ptr
+VarI4FromI2 proto WINAPI :SWORD, :ptr
+VarI4FromR4 proto WINAPI :FLOAT, :ptr
+VarI4FromR8 proto WINAPI :DOUBLE, :ptr
+VarI4FromCy proto WINAPI :CY, :ptr
+VarI4FromDate proto WINAPI :DATE, :ptr
+VarI4FromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarI4FromDisp proto WINAPI :ptr, :LCID, :ptr
+VarI4FromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarI4FromI1 proto WINAPI :CHAR, :ptr
+VarI4FromUI2 proto WINAPI :USHORT, :ptr
+VarI4FromUI4 proto WINAPI :ULONG, :ptr
+VarI4FromDec proto WINAPI :ptr, :ptr
+VarI4FromInt proto WINAPI :SINT, :ptr
+VarR4FromUI1 proto WINAPI :BYTE, :ptr
+VarR4FromI2 proto WINAPI :SWORD, :ptr
+VarR4FromI4 proto WINAPI :LONG, :ptr
+VarR4FromR8 proto WINAPI :DOUBLE, :ptr
+VarR4FromCy proto WINAPI :CY, :ptr
+VarR4FromDate proto WINAPI :DATE, :ptr
+VarR4FromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarR4FromDisp proto WINAPI :ptr, :LCID, :ptr
+VarR4FromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarR4FromI1 proto WINAPI :CHAR, :ptr
+VarR4FromUI2 proto WINAPI :USHORT, :ptr
+VarR4FromUI4 proto WINAPI :ULONG, :ptr
+VarR4FromDec proto WINAPI :ptr, :ptr
+VarR8FromUI1 proto WINAPI :BYTE, :ptr
+VarR8FromI2 proto WINAPI :SWORD, :ptr
+VarR8FromI4 proto WINAPI :LONG, :ptr
+VarR8FromR4 proto WINAPI :FLOAT, :ptr
+VarR8FromCy proto WINAPI :CY, :ptr
+VarR8FromDate proto WINAPI :DATE, :ptr
+VarR8FromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarR8FromDisp proto WINAPI :ptr, :LCID, :ptr
+VarR8FromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarR8FromI1 proto WINAPI :CHAR, :ptr
+VarR8FromUI2 proto WINAPI :USHORT, :ptr
+VarR8FromUI4 proto WINAPI :ULONG, :ptr
+VarR8FromDec proto WINAPI :ptr, :ptr
+VarDateFromUI1 proto WINAPI :BYTE, :ptr
+VarDateFromI2 proto WINAPI :SWORD, :ptr
+VarDateFromI4 proto WINAPI :LONG, :ptr
+VarDateFromR4 proto WINAPI :FLOAT, :ptr
+VarDateFromR8 proto WINAPI :DOUBLE, :ptr
+VarDateFromCy proto WINAPI :CY, :ptr
+VarDateFromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarDateFromDisp proto WINAPI :ptr, :LCID, :ptr
+VarDateFromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarDateFromI1 proto WINAPI :CHAR, :ptr
+VarDateFromUI2 proto WINAPI :USHORT, :ptr
+VarDateFromUI4 proto WINAPI :ULONG, :ptr
+VarDateFromDec proto WINAPI :ptr, :ptr
+VarCyFromUI1 proto WINAPI :BYTE, :ptr
+VarCyFromI2 proto WINAPI :SWORD, :ptr
+VarCyFromI4 proto WINAPI :LONG, :ptr
+VarCyFromR4 proto WINAPI :FLOAT, :ptr
+VarCyFromR8 proto WINAPI :DOUBLE, :ptr
+VarCyFromDate proto WINAPI :DATE, :ptr
+VarCyFromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarCyFromDisp proto WINAPI :ptr, :LCID, :ptr
+VarCyFromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarCyFromI1 proto WINAPI :CHAR, :ptr
+VarCyFromUI2 proto WINAPI :USHORT, :ptr
+VarCyFromUI4 proto WINAPI :ULONG, :ptr
+VarCyFromDec proto WINAPI :ptr, :ptr
+VarBstrFromUI1 proto WINAPI :BYTE, :LCID, :ULONG, :ptr
+VarBstrFromI2 proto WINAPI :SWORD, :LCID, :ULONG, :ptr
+VarBstrFromI4 proto WINAPI :LONG, :LCID, :ULONG, :ptr
+VarBstrFromR4 proto WINAPI :FLOAT, :LCID, :ULONG, :ptr
+VarBstrFromR8 proto WINAPI :DOUBLE, :LCID, :ULONG, :ptr
+VarBstrFromCy proto WINAPI :CY, :LCID, :ULONG, :ptr
+VarBstrFromDate proto WINAPI :DATE, :LCID, :ULONG, :ptr
+VarBstrFromDisp proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarBstrFromBool proto WINAPI :VARIANT_BOOL, :LCID, :ULONG, :ptr
+VarBstrFromI1 proto WINAPI :CHAR, :LCID, :ULONG, :ptr
+VarBstrFromUI2 proto WINAPI :USHORT, :LCID, :ULONG, :ptr
+VarBstrFromUI4 proto WINAPI :ULONG, :LCID, :ULONG, :ptr
+VarBstrFromDec proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarBoolFromUI1 proto WINAPI :BYTE, :ptr
+VarBoolFromI2 proto WINAPI :SWORD, :ptr
+VarBoolFromI4 proto WINAPI :LONG, :ptr
+VarBoolFromR4 proto WINAPI :FLOAT, :ptr
+VarBoolFromR8 proto WINAPI :DOUBLE, :ptr
+VarBoolFromDate proto WINAPI :DATE, :ptr
+VarBoolFromCy proto WINAPI :CY, :ptr
+VarBoolFromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarBoolFromDisp proto WINAPI :ptr, :LCID, :ptr
+VarBoolFromI1 proto WINAPI :CHAR, :ptr
+VarBoolFromUI2 proto WINAPI :USHORT, :ptr
+VarBoolFromUI4 proto WINAPI :ULONG, :ptr
+VarBoolFromDec proto WINAPI :ptr, :ptr
+
+VarI1FromUI1 proto WINAPI :BYTE, :ptr
+VarI1FromI2 proto WINAPI :SWORD, :ptr
+VarI1FromI4 proto WINAPI :LONG, :ptr
+VarI1FromR4 proto WINAPI :FLOAT, :ptr
+VarI1FromR8 proto WINAPI :DOUBLE, :ptr
+VarI1FromDate proto WINAPI :DATE, :ptr
+VarI1FromCy proto WINAPI :CY, :ptr
+VarI1FromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarI1FromDisp proto WINAPI :ptr, :LCID, :ptr
+VarI1FromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarI1FromUI2 proto WINAPI :USHORT, :ptr
+VarI1FromUI4 proto WINAPI :ULONG, :ptr
+VarI1FromDec proto WINAPI :ptr, : ptr
+VarUI2FromUI1 proto WINAPI :BYTE, :ptr
+VarUI2FromI2 proto WINAPI :SWORD, :ptr
+VarUI2FromI4 proto WINAPI :LONG, :ptr
+VarUI2FromR4 proto WINAPI :FLOAT, :ptr
+VarUI2FromR8 proto WINAPI :DOUBLE, :ptr
+VarUI2FromDate proto WINAPI :DATE, :ptr
+VarUI2FromCy proto WINAPI :CY, :ptr
+VarUI2FromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarUI2FromDisp proto WINAPI :ptr, :LCID, :ptr
+VarUI2FromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarUI2FromI1 proto WINAPI :CHAR, :ptr
+VarUI2FromUI4 proto WINAPI :ULONG, :ptr
+VarUI2FromDec proto WINAPI :ptr, :ptr
+VarUI4FromUI1 proto WINAPI :BYTE, :ptr
+VarUI4FromI2 proto WINAPI :SWORD, :ptr
+VarUI4FromI4 proto WINAPI :LONG, :ptr
+VarUI4FromR4 proto WINAPI :FLOAT, :ptr
+VarUI4FromR8 proto WINAPI :DOUBLE, :ptr
+VarUI4FromDate proto WINAPI :DATE, :ptr
+VarUI4FromCy proto WINAPI :CY, :ptr
+VarUI4FromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarUI4FromDisp proto WINAPI :ptr, :LCID, :ptr
+VarUI4FromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarUI4FromI1 proto WINAPI :CHAR, :ptr
+VarUI4FromUI2 proto WINAPI :USHORT, :ptr
+VarUI4FromDec proto WINAPI :ptr, :ptr
+VarDecFromUI1 proto WINAPI :BYTE, :ptr
+VarDecFromI2 proto WINAPI :SWORD, :ptr
+VarDecFromI4 proto WINAPI :LONG, :ptr
+VarDecFromR4 proto WINAPI :FLOAT, :ptr
+VarDecFromR8 proto WINAPI :DOUBLE, :ptr
+VarDecFromDate proto WINAPI :DATE, :ptr
+VarDecFromCy proto WINAPI :CY, :ptr
+VarDecFromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr
+VarDecFromDisp proto WINAPI :ptr, :LCID, :ptr
+VarDecFromBool proto WINAPI :VARIANT_BOOL, :ptr
+VarDecFromI1 proto WINAPI :CHAR, :ptr
+VarDecFromUI2 proto WINAPI :USHORT, :ptr
+VarDecFromUI4 proto WINAPI :ULONG, :ptr
+
+VarUI4FromUI4 proto watcall :dword, :ptr {
+	mov [_2],_1
+	}
+VarI4FromI4 proto watcall :sdword, :ptr {
+	mov [_2],_1
+	}
 
 VarUI1FromInt		equ <VarUI1FromI4>
 VarUI1FromUint		equ <VarUI1FromUI4>
@@ -1306,288 +357,56 @@ VTBIT_R8		equ (1 SHL VT_R8)
 VTBIT_CY		equ (1 SHL VT_CY)
 VTBIT_DECIMAL		equ (1 SHL VT_DECIMA)
 
+VarParseNumFromStr proto WINAPI :ptr, :LCID, :ULONG, :ptr, :ptr
+VarNumFromParseNum proto WINAPI :ptr, :ptr, :ULONG, :ptr
+VarAdd proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarAnd proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarCat proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarDiv proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarEqv proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarIdiv proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarImp proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarMod proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarMul proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarOr proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarPow proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarSub proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
+VarXor proto WINAPI :LPVARIANT, :LPVARIANT, :LPVARIANT
 
-;WINOLEAUTAPI
-VarParseNumFromStr proto WINAPI \
-		 strIn: ptr OLECHAR,
-		  lcid: LCID,
-	       dwFlags: ULONG,
-	       pnumprs: ptr NUMPARSE,
-		rgbDig: ptr BYTE
-
-;WINOLEAUTAPI
-VarNumFromParseNum proto WINAPI \
-	       pnumprs: ptr NUMPARSE,
-		rgbDig: ptr BYTE,
-	      dwVtBits: ULONG,
-		  pvar: ptr VARIANT
-
-;STDAPI
-VarAdd proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarAnd proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarCat proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarDiv proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarEqv proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarIdiv proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarImp proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarMod proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarMul proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarOr proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarPow proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarSub proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarXor proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-
-;STDAPI
-VarAbs proto WINAPI \
-		pvarIn: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarFix proto WINAPI \
-		pvarIn: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarInt proto WINAPI \
-		pvarIn: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarNeg proto WINAPI \
-		pvarIn: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarNot proto WINAPI \
-		pvarIn: LPVARIANT,
-	    pvarResult: LPVARIANT
-
-
-;STDAPI
-VarRound proto WINAPI \
-		pvarIn: LPVARIANT,
-	     cDecimals: SINT,
-	    pvarResult: LPVARIANT
-
-;STDAPI
-VarCmp proto WINAPI \
-	      pvarLeft: LPVARIANT,
-	     pvarRight: LPVARIANT,
-		  lcid: LCID
-
-;STDAPI
-VarDecAdd proto WINAPI \
-	      pdecLeft: LPDECIMAL,
-	     pdecRight: LPDECIMAL,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecDiv proto WINAPI \
-	      pdecLeft: LPDECIMAL,
-	     pdecRight: LPDECIMAL,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecMul proto WINAPI \
-	      pdecLeft: LPDECIMAL,
-	     pdecRight: LPDECIMAL,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecSub proto WINAPI \
-	      pdecLeft: LPDECIMAL,
-	     pdecRight: LPDECIMAL,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecAbs proto WINAPI \
-		pdecIn: LPDECIMAL,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecFix proto WINAPI \
-		pdecIn: LPDECIMAL,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecInt proto WINAPI \
-		pdecIn: LPDECIMAL,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecNeg proto WINAPI \
-		pdecIn: LPDECIMAL,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecRound proto WINAPI \
-		pdecIn: LPDECIMAL,
-	     cDecimals: SINT,
-	    pdecResult: LPDECIMAL
-
-;STDAPI
-VarDecCmp proto WINAPI \
-	      pdecLeft: LPDECIMAL,
-	     pdecRight: LPDECIMAL
-
-;STDAPI
-VarDecCmpR8 proto WINAPI \
-	      pdecLeft: LPDECIMAL,
-	      dblRight: DOUBLE
-
-;STDAPI
-VarCyAdd proto WINAPI \
-		cyLeft: CY,
-	       cyRight: CY,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCyMul proto WINAPI \
-		cyLeft: CY,
-	       cyRight: CY,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCyMulI4 proto WINAPI \
-		cyLeft: CY,
-		lRight: LONG,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCySub proto WINAPI \
-		cyLeft: CY,
-	       cyRight: CY,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCyAbs proto WINAPI \
-		  cyIn: CY,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCyFix proto WINAPI \
-		  cyIn: CY,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCyInt proto WINAPI \
-		  cyIn: CY,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCyNeg proto WINAPI \
-		  cyIn: CY,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCyRound proto WINAPI \
-		  cyIn: CY,
-	     cDecimals: SINT,
-	     pcyResult: LPCY
-
-;STDAPI
-VarCyCmp proto WINAPI \
-		cyLeft: CY,
-	       cyRight: CY
-
-;STDAPI
-VarCyCmpR8 proto WINAPI \
-		cyLeft: CY,
-	      dblRight: DOUBLE
-
-;STDAPI
-VarBstrCat proto WINAPI \
-	      bstrLeft: BSTR,
-	     bstrRight: BSTR,
-	   pbstrResult: LPBSTR
-
-;STDAPI
-VarBstrCmp proto WINAPI \
-	      bstrLeft: BSTR,
-	     bstrRight: BSTR,
-		  lcid: LCID
-
-;STDAPI
-VarR8Pow proto WINAPI \
-	       dblLeft: DOUBLE,
-	      dblRight: DOUBLE,
-	    pdblResult: ptr DOUBLE
-
-;STDAPI
-VarR4CmpR8 proto WINAPI \
-	       fltLeft: FLOAT,
-	      dblRight: DOUBLE
-
-;STDAPI
-VarR8Round proto WINAPI \
-		 dblIn: DOUBLE,
-	     cDecimals: SINT,
-	    pdblResult: ptr DOUBLE
-
+VarAbs proto WINAPI :LPVARIANT, :LPVARIANT
+VarFix proto WINAPI :LPVARIANT, :LPVARIANT
+VarInt proto WINAPI :LPVARIANT, :LPVARIANT
+VarNeg proto WINAPI :LPVARIANT, :LPVARIANT
+VarNot proto WINAPI :LPVARIANT, :LPVARIANT
+VarRound proto WINAPI :LPVARIANT, :SINT, :LPVARIANT
+VarCmp proto WINAPI :LPVARIANT, :LPVARIANT, :LCID
+VarDecAdd proto WINAPI :LPDECIMAL, :LPDECIMAL, :LPDECIMAL
+VarDecDiv proto WINAPI :LPDECIMAL, :LPDECIMAL, :LPDECIMAL
+VarDecMul proto WINAPI :LPDECIMAL, :LPDECIMAL, :LPDECIMAL
+VarDecSub proto WINAPI :LPDECIMAL, :LPDECIMAL, :LPDECIMAL
+VarDecAbs proto WINAPI :LPDECIMAL, :LPDECIMAL
+VarDecFix proto WINAPI :LPDECIMAL, :LPDECIMAL
+VarDecInt proto WINAPI :LPDECIMAL, :LPDECIMAL
+VarDecNeg proto WINAPI :LPDECIMAL, :LPDECIMAL
+VarDecRound proto WINAPI :LPDECIMAL, :SINT,:LPDECIMAL
+VarDecCmp proto WINAPI :LPDECIMAL, :LPDECIMAL
+VarDecCmpR8 proto WINAPI :LPDECIMAL, :DOUBLE
+VarCyAdd proto WINAPI :CY, :CY, :LPCY
+VarCyMul proto WINAPI :CY, :CY, :LPCY
+VarCyMulI4 proto WINAPI :CY, :LONG, :LPCY
+VarCySub proto WINAPI :CY, :CY, :LPCY
+VarCyAbs proto WINAPI :CY, :LPCY
+VarCyFix proto WINAPI :CY, :LPCY
+VarCyInt proto WINAPI :CY, :LPCY
+VarCyNeg proto WINAPI :CY, :LPCY
+VarCyRound proto WINAPI :CY, :SINT, :LPCY
+VarCyCmp proto WINAPI :CY, :CY
+VarCyCmpR8 proto WINAPI :CY, :DOUBLE
+VarBstrCat proto WINAPI :BSTR, :BSTR, :LPBSTR
+VarBstrCmp proto WINAPI :BSTR, :BSTR, :LCID
+VarR8Pow proto WINAPI :DOUBLE, :DOUBLE, :ptr
+VarR4CmpR8 proto WINAPI :FLOAT, :DOUBLE
+VarR8Round proto WINAPI :DOUBLE, :SINT, :ptr
 
 VARCMP_LT		equ 0
 VARCMP_EQ		equ 1
@@ -1605,108 +424,23 @@ _st			SYSTEMTIME <>
 wDayOfYear		dw ?
 UDATE			ENDS
 
-;WINOLEAUTAPI
-VarDateFromUdate proto WINAPI \
-	      pudateIn: ptr UDATE,
-	       dwFlags: ULONG,
-	      pdateOut: ptr DATE
-
-;WINOLEAUTAPI
-VarUdateFromDate proto WINAPI \
-		dateIn: DATE,
-	       dwFlags: ULONG,
-	     pudateOut: ptr UDATE
-
-
-;WINOLEAUTAPI
-GetAltMonthNames proto WINAPI \
-		  lcid: LCID,
-		  prgp: ptr LPOLESTR
-
+VarDateFromUdate proto WINAPI :ptr, :ULONG, :ptr
+VarUdateFromDate proto WINAPI :DATE, :ULONG, :ptr
+GetAltMonthNames proto WINAPI :LCID, :ptr
 
 VAR_FORMAT_NOSUBSTITUTE equ 0x00000010
 
-;WINOLEAUTAPI
-VarFormat proto WINAPI \
-		pvarIn: LPVARIANT,
-	    pstrFormat: LPOLESTR,
-	     iFirstDay: SINT,
-	    iFirstWeek: SINT,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarFormatDateTime proto WINAPI \
-		pvarIn: LPVARIANT,
-	  iNamedFormat: SINT,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarFormatNumber proto WINAPI \
-		pvarIn: LPVARIANT,
-	       iNumDig: SINT,
-	      iIncLead: SINT,
-	    iUseParens: SINT,
-		iGroup: SINT,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarFormatPercent proto WINAPI \
-		pvarIn: LPVARIANT,
-	       iNumDig: SINT,
-	      iIncLead: SINT,
-	    iUseParens: SINT,
-		iGroup: SINT,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarFormatCurrency proto WINAPI \
-		pvarIn: LPVARIANT,
-	       iNumDig: SINT,
-	      iIncLead: SINT,
-	    iUseParens: SINT,
-		iGroup: SINT,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarWeekdayName proto WINAPI \
-	      iWeekday: SINT,
-	       fAbbrev: SINT,
-	     iFirstDay: SINT,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarMonthName proto WINAPI \
-		iMonth: SINT,
-	       fAbbrev: SINT,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR
-
-;WINOLEAUTAPI
-VarFormatFromTokens proto WINAPI \
-		pvarIn: LPVARIANT,
-	    pstrFormat: LPOLESTR,
-	      pbTokCur: LPBYTE,
-	       dwFlags: ULONG,
-	      pbstrOut: ptr BSTR,
-		  lcid: LCID
-
-;WINOLEAUTAPI_(LPBYTE)
-VarTokenizeFormatString proto WINAPI \
-	    pstrFormat: LPOLESTR,
-		rgbTok: LPBYTE,
-		 cbTok: SINT,
-	     iFirstDay: SINT,
-	    iFirstWeek: SINT,
-		  lcid: LCID
+VarFormat proto WINAPI :LPVARIANT, :LPOLESTR, :SINT, :SINT, :ULONG, :ptr
+VarFormatDateTime proto WINAPI :LPVARIANT, :SINT, :ULONG, :ptr
+VarFormatNumber proto WINAPI :LPVARIANT, :SINT, :SINT, :SINT, :SINT, :ULONG, :ptr
+VarFormatPercent proto WINAPI :LPVARIANT, :SINT, :SINT, :SINT, :SINT, :ULONG, :ptr
+VarFormatCurrency proto WINAPI :LPVARIANT, :SINT, :SINT, :SINT, :SINT, :ULONG, :ptr
+VarWeekdayName proto WINAPI :SINT, :SINT, :SINT, :ULONG, :ptr
+VarMonthName proto WINAPI :SINT, :SINT, :ULONG, :ptr
+VarFormatFromTokens proto WINAPI :LPVARIANT, :LPOLESTR, :LPBYTE, :ULONG, :ptr, :LCID
+VarTokenizeFormatString proto WINAPI :LPOLESTR, :LPBYTE, :SINT, :SINT, :SINT, :LCID
 
 LPTYPELIB		typedef ptr ITypeLib
-
 DISPID			typedef LONG
 MEMBERID		typedef DISPID
 
@@ -1724,17 +458,9 @@ LPCREATETYPELIB		typedef ptr ICreateTypeLib
 LPCREATETYPEINFO	typedef ptr ICreateTypeInfo
 
 ifdef _WIN32
-;WINOLEAUTAPI_(ULONG)
-LHashValOfNameSysA proto WINAPI \
-	       syskind: SYSKIND,
-		  lcid: LCID,
-		szName: LPCSTR
+LHashValOfNameSysA proto WINAPI :SYSKIND, :LCID, :LPCSTR
 endif
-
-LHashValOfNameSys proto WINAPI \
-	       syskind: SYSKIND,
-		  lcid: LCID,
-		szName: ptr OLECHAR
+LHashValOfNameSys proto WINAPI :SYSKIND, :LCID, :ptr
 
 LHashValOfName macro lcid, szName
 	exitm<LHashValOfNameSys(SYS_WIN32, lcid, szName)>
@@ -1748,65 +474,20 @@ IsHashValCompatible macro lhashval1, lhashval2
 	exitm<(((0x00ff0000 AND (lhashval1)) EQ (0x00ff0000 AND (lhashval2))))>
 	endm
 
-;WINOLEAUTAPI
-LoadTypeLib proto WINAPI \
-		szFile: ptr OLECHAR,
-		pptlib: ptr ITypeLib
-
+LoadTypeLib proto WINAPI :ptr, :ptr
 
 REGKIND			typedef SDWORD
 REGKIND_DEFAULT		equ 0
 REGKIND_REGISTER	equ 1
 REGKIND_NONE		equ 2
 
-;WINOLEAUTAPI
-LoadTypeLibEx proto WINAPI \
-		szFile: LPCOLESTR,
-	       regkind: REGKIND,
-		pptlib: ptr ITypeLib
-
-;WINOLEAUTAPI
-LoadRegTypeLib proto WINAPI \
-		 rguid: REFGUID,
-	     wVerMajor: WORD,
-	     wVerMinor: WORD,
-		  lcid: LCID,
-		pptlib: ptr ITypeLib
-
-;WINOLEAUTAPI
-QueryPathOfRegTypeLib proto WINAPI \
-		  guid: REFGUID,
-		  wMaj: USHORT,
-		  wMin: USHORT,
-		  lcid: LCID,
-	lpbstrPathName: LPBSTR
-
-;WINOLEAUTAPI
-RegisterTypeLib proto WINAPI \
-		 ptlib: ptr ITypeLib,
-	    szFullPath: ptr OLECHAR,
-	     szHelpDir: ptr OLECHAR
-
-;WINOLEAUTAPI
-UnRegisterTypeLib proto WINAPI \
-		 libID: REFGUID,
-	     wVerMajor: WORD,
-	     wVerMinor: WORD,
-		  lcid: LCID,
-	       syskind: SYSKIND
-
-;WINOLEAUTAPI
-CreateTypeLib proto WINAPI \
-	       syskind: SYSKIND,
-		szFile: ptr OLECHAR,
-	       ppctlib: ptr ICreateTypeLib
-
-;WINOLEAUTAPI
-CreateTypeLib2 proto WINAPI \
-	       syskind: SYSKIND,
-		szFile: LPCOLESTR,
-	       ppctlib: ptr ICreateTypeLib2
-
+LoadTypeLibEx proto WINAPI :LPCOLESTR, :REGKIND, :ptr
+LoadRegTypeLib proto WINAPI :REFGUID, :WORD, :WORD, :LCID, :ptr
+QueryPathOfRegTypeLib proto WINAPI :REFGUID, :USHORT, :USHORT, :LCID, :LPBSTR
+RegisterTypeLib proto WINAPI :ptr, :ptr, :ptr
+UnRegisterTypeLib proto WINAPI :REFGUID, :WORD, :WORD, :LCID, :SYSKIND
+CreateTypeLib proto WINAPI :SYSKIND, :ptr, :ptr
+CreateTypeLib2 proto WINAPI :SYSKIND, :LPCOLESTR, :ptr
 
 LPDISPATCH		typedef ptr IDispatch
 
@@ -1834,111 +515,26 @@ cMembers		UINT ?
 INTERFACEDATA		ENDS
 LPINTERFACEDATA		typedef ptr INTERFACEDATA
 
-;WINOLEAUTAPI
-DispGetParam proto WINAPI \
-	   pdispparams: ptr DISPPARAMS,
-	      position: UINT,
-		vtTarg: VARTYPE,
-	    pvarResult: ptr VARIANT,
-	      puArgErr: ptr UINT
-
-;WINOLEAUTAPI
-DispGetIDsOfNames proto WINAPI \
-		ptinfo: ptr ITypeInfo,
-	     rgszNames: ptr OLECHAR,
-		cNames: UINT,
-	      rgdispid: ptr DISPID
-
-;WINOLEAUTAPI
-DispInvoke proto WINAPI \
-		 this: ptr void,
-		ptinfo: ptr ITypeInfo,
-	  dispidMember: DISPID,
-		wFlags: WORD,
-	       pparams: ptr DISPPARAMS,
-	    pvarResult: ptr VARIANT,
-	    pexcepinfo: ptr EXCEPINFO,
-	      puArgErr: ptr UINT
-
-;WINOLEAUTAPI
-CreateDispTypeInfo proto WINAPI \
-		pidata: ptr INTERFACEDATA,
-		  lcid: LCID,
-	       pptinfo: ptr ITypeInfo
-
-;WINOLEAUTAPI
-CreateStdDispatch proto WINAPI \
-	     punkOuter: ptr IUnknown,
-		pvThis: ptr void,
-		ptinfo: ptr ITypeInfo,
-	  ppunkStdDisp: ptr IUnknown
-
-;WINOLEAUTAPI
-DispCallFunc proto WINAPI \
-	    pvInstance: ptr void,
-		  oVft: ULONG,
-		    cc: CALLCONV,
-	      vtReturn: VARTYPE,
-	      cActuals: UINT,
-		 prgvt: ptr VARTYPE,
-	      prgpvarg: ptr VARIANTARG,
-	   pvargResult: ptr VARIANT
+DispGetParam proto WINAPI :ptr, :UINT, :VARTYPE, :ptr, :ptr
+DispGetIDsOfNames proto WINAPI :ptr, :ptr, :UINT, :ptr
+DispInvoke proto WINAPI :ptr, :ptr, :DISPID, :WORD, :ptr, :ptr, :ptr, :ptr
+CreateDispTypeInfo proto WINAPI :ptr, :LCID, :ptr
+CreateStdDispatch proto WINAPI :ptr, :ptr, :ptr, :ptr
+DispCallFunc proto WINAPI :ptr, :ULONG, :CALLCONV, :VARTYPE, :UINT, :ptr, :ptr, :ptr
 
 ACTIVEOBJECT_STRONG	equ 0x0
 ACTIVEOBJECT_WEAK	equ 0x1
 
-;WINOLEAUTAPI
-RegisterActiveObject proto WINAPI \
-		  punk: ptr IUnknown,
-		rclsid: REFCLSID,
-	       dwFlags: DWORD,
-	   pdwRegister: ptr DWORD
-
-;WINOLEAUTAPI
-RevokeActiveObject proto WINAPI \
-	    dwRegister: DWORD,
-		      : PVOID
-
-;WINOLEAUTAPI
-GetActiveObject proto WINAPI \
-		rclsid: REFCLSID,
-	    pvReserved: PVOID,
-		 ppunk: ptr IUnknown
-
-;WINOLEAUTAPI
-SetErrorInfo proto WINAPI \
-	    dwReserved: ULONG,
-	      perrinfo: ptr IErrorInfo
-
-;WINOLEAUTAPI
-GetErrorInfo proto WINAPI \
-	    dwReserved: ULONG,
-	     pperrinfo: ptr IErrorInfo
-
-;WINOLEAUTAPI
-CreateErrorInfo proto WINAPI \
-	     pperrinfo: ptr ICreateErrorInfo
-
-;WINOLEAUTAPI
-GetRecordInfoFromTypeInfo proto WINAPI \
-	     pTypeInfo: ptr ITypeInfo,
-	     ppRecInfo: ptr IRecordInfo
-
-;WINOLEAUTAPI
-GetRecordInfoFromGuids proto WINAPI \
-	  rGuidTypeLib: REFGUID,
-	     uVerMajor: ULONG,
-	     uVerMinor: ULONG,
-		  lcid: LCID,
-	 rGuidTypeInfo: REFGUID,
-	     ppRecInfo: ptr IRecordInfo
-
-;WINOLEAUTAPI_(ULONG)
+RegisterActiveObject proto WINAPI :ptr, :REFCLSID, :DWORD, :ptr
+RevokeActiveObject proto WINAPI :DWORD, :ptr
+GetActiveObject proto WINAPI :REFCLSID, :ptr, :ptr
+SetErrorInfo proto WINAPI :ULONG, :ptr
+GetErrorInfo proto WINAPI :ULONG, :ptr
+CreateErrorInfo proto WINAPI :ptr
+GetRecordInfoFromTypeInfo proto WINAPI :ptr, :ptr
+GetRecordInfoFromGuids proto WINAPI :REFGUID, :ULONG, :ULONG, :LCID, :REFGUID, :ptr
 OaBuildVersion proto WINAPI
-
-;WINOLEAUTAPI_(void)
-ClearCustData proto WINAPI \
-	     pCustData: LPCUSTDATA
+ClearCustData proto WINAPI :LPCUSTDATA
 
 if __STDC__ OR defined(NONAMELESSUNION)
 V_UNION macro X, Y

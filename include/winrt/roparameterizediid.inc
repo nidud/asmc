@@ -40,18 +40,8 @@ DECLARE_HANDLE(ROPARAMIIDHANDLE)
     Locate              proc :PCWSTR, :ptr IRoSimpleMetaDataBuilder
    .ends
 
-
-RoGetParameterizedTypeInstanceIID proto WINAPI \
-      nameElementCount: UINT32,
-          nameElements: ptr PCWSTR,
-       metaDataLocator: ptr IRoMetaDataLocator,
-                   iid: ptr GUID,
-                pExtra: ptr ROPARAMIIDHANDLE
-
-RoFreeParameterizedTypeExtra proto WINAPI \
-                 extra: ROPARAMIIDHANDLE
-
-RoParameterizedTypeExtraGetTypeSignature proto WINAPI \
-                 extra: ROPARAMIIDHANDLE
+RoGetParameterizedTypeInstanceIID proto WINAPI :UINT32, :ptr, :ptr, :ptr, :ptr
+RoFreeParameterizedTypeExtra proto WINAPI :ROPARAMIIDHANDLE
+RoParameterizedTypeExtraGetTypeSignature proto WINAPI :ROPARAMIIDHANDLE
 
 endif

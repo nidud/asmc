@@ -42,8 +42,8 @@ endif
     _RTC_Initialize proto __cdecl
     _RTC_Terminate  proto __cdecl
 
-    _CRT_RTC_INIT  proc __cdecl :ptr, :ptr ptr, :int_t, :int_t, :int_t
-    _CRT_RTC_INITW proc __cdecl :ptr, :ptr ptr, :int_t, :int_t, :int_t
+    _CRT_RTC_INIT  proto __cdecl :ptr, :ptr ptr, :int_t, :int_t, :int_t
+    _CRT_RTC_INITW proto __cdecl :ptr, :ptr ptr, :int_t, :int_t, :int_t
 
     _RTC_vardesc struct
         _addr int_t ?
@@ -92,10 +92,6 @@ if (defined(_M_CEE) eq 0) and (defined(_M_CEE_PURE) eq 0)
     _RTC_AllocaHelper    proto fastcall :ptr _RTC_ALLOCA_NODE, :size_t, :ptr ptr _RTC_ALLOCA_NODE
 endif
     _RTC_UninitUse proto __cdecl :string_t
-
-if !defined (_M_CEE) && !defined (_M_CEE_PURE)
-
-endif
 
     _RTC_Shutdown proto __cdecl
     _RTC_InitBase proto __cdecl

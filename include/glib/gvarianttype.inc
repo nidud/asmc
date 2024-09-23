@@ -43,152 +43,36 @@ else
     endm
 endif
 
-
-;gboolean
-g_variant_type_string_is_valid proto WINAPI \
-           type_string: ptr gchar
-
-;gboolean
-g_variant_type_string_scan proto WINAPI \
-                string: ptr gchar,
-                 limit: ptr gchar,
-                endptr: ptr gchar
-
-
-
-;void
-g_variant_type_free proto WINAPI \
-                  type: ptr GVariantType
-
-;GVariantType
-g_variant_type_copy proto WINAPI \
-                  type: ptr GVariantType
-
-;GVariantType
-g_variant_type_new proto WINAPI \
-           type_string: ptr gchar
-
-
-
-;gsize
-g_variant_type_get_string_length proto WINAPI \
-                  type: ptr GVariantType
-
-;const
-g_variant_type_peek_string proto WINAPI \
-                  type: ptr GVariantType
-
-;gchar
-g_variant_type_dup_string proto WINAPI \
-                  type: ptr GVariantType
-
-
-
-;gboolean
-g_variant_type_is_definite proto WINAPI \
-                  type: ptr GVariantType
-
-;gboolean
-g_variant_type_is_container proto WINAPI \
-                  type: ptr GVariantType
-
-;gboolean
-g_variant_type_is_basic proto WINAPI \
-                  type: ptr GVariantType
-
-;gboolean
-g_variant_type_is_maybe proto WINAPI \
-                  type: ptr GVariantType
-
-;gboolean
-g_variant_type_is_array proto WINAPI \
-                  type: ptr GVariantType
-
-;gboolean
-g_variant_type_is_tuple proto WINAPI \
-                  type: ptr GVariantType
-
-;gboolean
-g_variant_type_is_dict_entry proto WINAPI \
-                  type: ptr GVariantType
-
-;gboolean
-g_variant_type_is_variant proto WINAPI \
-                  type: ptr GVariantType
-
-
-
-;guint
-g_variant_type_hash proto WINAPI \
-                  type: gconstpointer
-
-;gboolean
-g_variant_type_equal proto WINAPI \
-                 type1: gconstpointer,
-                 type2: gconstpointer
-
-
-
-;gboolean
-g_variant_type_is_subtype_of proto WINAPI \
-                  type: ptr GVariantType,
-             supertype: ptr GVariantType
-
-
-
-;const
-g_variant_type_element proto WINAPI \
-                  type: ptr GVariantType
-
-;const
-g_variant_type_first proto WINAPI \
-                  type: ptr GVariantType
-
-;const
-g_variant_type_next proto WINAPI \
-                  type: ptr GVariantType
-
-;gsize
-g_variant_type_n_items proto WINAPI \
-                  type: ptr GVariantType
-
-;const
-g_variant_type_key proto WINAPI \
-                  type: ptr GVariantType
-
-;const
-g_variant_type_value proto WINAPI \
-                  type: ptr GVariantType
-
-
-
-;GVariantType
-g_variant_type_new_array proto WINAPI \
-               element: ptr GVariantType
-
-;GVariantType
-g_variant_type_new_maybe proto WINAPI \
-               element: ptr GVariantType
-
-;GVariantType
-g_variant_type_new_tuple proto WINAPI \
-                 items: ptr GVariantType,
-                length: gint
-
-;GVariantType
-g_variant_type_new_dict_entry proto WINAPI \
-                   key: ptr GVariantType,
-                 value: ptr GVariantType
-
-
-
-;const
-g_variant_type_checked_ proto WINAPI \
-                      : ptr gchar
-
-;gsize
-g_variant_type_string_get_depth_ proto WINAPI \
-           type_string: ptr gchar
-
+g_variant_type_string_is_valid proto WINAPI :ptr
+g_variant_type_string_scan proto WINAPI :ptr, :ptr, :ptr
+g_variant_type_free proto WINAPI :ptr
+g_variant_type_copy proto WINAPI :ptr
+g_variant_type_new proto WINAPI :ptr
+g_variant_type_get_string_length proto WINAPI :ptr
+g_variant_type_peek_string proto WINAPI :ptr
+g_variant_type_dup_string proto WINAPI :ptr
+g_variant_type_is_definite proto WINAPI :ptr
+g_variant_type_is_container proto WINAPI :ptr
+g_variant_type_is_basic proto WINAPI :ptr
+g_variant_type_is_maybe proto WINAPI :ptr
+g_variant_type_is_array proto WINAPI :ptr
+g_variant_type_is_tuple proto WINAPI :ptr
+g_variant_type_is_dict_entry proto WINAPI :ptr
+g_variant_type_is_variant proto WINAPI :ptr
+g_variant_type_hash proto WINAPI :gconstpointer
+g_variant_type_equal proto WINAPI :gconstpointer, :gconstpointer
+g_variant_type_is_subtype_of proto WINAPI :ptr, :ptr
+g_variant_type_element proto WINAPI :ptr
+g_variant_type_first proto WINAPI :ptr
+g_variant_type_next proto WINAPI :ptr
+g_variant_type_n_items proto WINAPI :ptr
+g_variant_type_key proto WINAPI :ptr
+g_variant_type_value proto WINAPI :ptr
+g_variant_type_new_array proto WINAPI :ptr
+g_variant_type_new_maybe proto WINAPI :ptr
+g_variant_type_new_tuple proto WINAPI :ptr, :gint
+g_variant_type_new_dict_entry proto WINAPI :ptr, :ptr
+g_variant_type_checked_ proto WINAPI :ptr
+g_variant_type_string_get_depth_ proto WINAPI :ptr
 
 endif

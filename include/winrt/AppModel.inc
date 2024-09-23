@@ -57,129 +57,37 @@ PACKAGE_ID              ENDS
 
 .pragma pack(pop)
 
-;WINBASEAPI
-;LONG
-
-GetCurrentPackageId proto WINAPI \
-          bufferLength: ptr UINT32,
-                buffer: ptr BYTE
-
-GetCurrentPackageFullName proto WINAPI \
- packageFullNameLength: ptr UINT32,
-       packageFullName: PWSTR
-
-GetCurrentPackageFamilyName proto WINAPI \
-packageFamilyNameLength: ptr UINT32,
-     packageFamilyName: PWSTR
-
-GetCurrentPackagePath proto WINAPI \
-            pathLength: ptr UINT32,
-                  path: PWSTR
-
-GetPackageId proto WINAPI \
-              hProcess: HANDLE,
-          bufferLength: ptr UINT32,
-                buffer: ptr BYTE
-
-GetPackageFullName proto WINAPI \
-              hProcess: HANDLE,
- packageFullNameLength: ptr UINT32,
-       packageFullName: PWSTR
-
-GetPackageFamilyName proto WINAPI \
-              hProcess: HANDLE,
-packageFamilyNameLength: ptr UINT32,
-     packageFamilyName: PWSTR
-
-GetPackagePath proto WINAPI \
-             packageId: ptr PACKAGE_ID,
-              reserved: UINT32,
-            pathLength: ptr UINT32,
-                  path: PWSTR
+GetCurrentPackageId proto WINAPI :ptr, :ptr
+GetCurrentPackageFullName proto WINAPI :ptr, :PWSTR
+GetCurrentPackageFamilyName proto WINAPI :ptr, :PWSTR
+GetCurrentPackagePath proto WINAPI :ptr, :PWSTR
+GetPackageId proto WINAPI :HANDLE, :ptr, :ptr
+GetPackageFullName proto WINAPI :HANDLE, :ptr, :PWSTR
+GetPackageFamilyName proto WINAPI :HANDLE, :ptr, :PWSTR
+GetPackagePath proto WINAPI :ptr, :UINT32, :ptr, :PWSTR
 
 if (defined(_CONTRACT_GEN) EQ 0) OR (_APISET_APPMODELRUNTIME_VER GE 0x0101)
-GetPackagePathByFullName proto WINAPI \
-       packageFullName: PCWSTR,
-            pathLength: ptr UINT32,
-                  path: PWSTR
-
-GetStagedPackagePathByFullName proto WINAPI \
-       packageFullName: PCWSTR,
-            pathLength: ptr UINT32,
-                  path: PWSTR
+GetPackagePathByFullName proto WINAPI :PCWSTR, :ptr, :PWSTR
+GetStagedPackagePathByFullName proto WINAPI :PCWSTR, :ptr, :PWSTR
 endif
 
-GetCurrentApplicationUserModelId proto WINAPI \
-applicationUserModelIdLength: ptr UINT32,
-applicationUserModelId: PWSTR
-
-GetApplicationUserModelId proto WINAPI \
-              hProcess: HANDLE,
-applicationUserModelIdLength: ptr UINT32,
-applicationUserModelId: PWSTR
-
-PackageIdFromFullName proto WINAPI \
-       packageFullName: PCWSTR,
-                 flags: UINT32,
-          bufferLength: ptr UINT32,
-                buffer: ptr BYTE
-
-PackageFullNameFromId proto WINAPI \
-             packageId: ptr PACKAGE_ID,
- packageFullNameLength: ptr UINT32,
-       packageFullName: PWSTR
-
-PackageFamilyNameFromId proto WINAPI \
-             packageId: ptr PACKAGE_ID,
-packageFamilyNameLength: ptr UINT32,
-     packageFamilyName: PWSTR
-
-PackageFamilyNameFromFullName proto WINAPI \
-       packageFullName: PCWSTR,
-packageFamilyNameLength: ptr UINT32,
-     packageFamilyName: PWSTR
-
-PackageNameAndPublisherIdFromFamilyName proto WINAPI \
-     packageFamilyName: PCWSTR,
-     packageNameLength: ptr UINT32,
-           packageName: PWSTR,
-packagePublisherIdLength: ptr UINT32,
-    packagePublisherId: PWSTR
-
+GetCurrentApplicationUserModelId proto WINAPI :ptr, :PWSTR
+GetApplicationUserModelId proto WINAPI :HANDLE, :ptr, :PWSTR
+PackageIdFromFullName proto WINAPI :PCWSTR, :UINT32, :ptr, :ptr
+PackageFullNameFromId proto WINAPI :ptr, :ptr, :PWSTR
+PackageFamilyNameFromId proto WINAPI :ptr, :ptr, :PWSTR
+PackageFamilyNameFromFullName proto WINAPI :PCWSTR, :ptr, :PWSTR
+PackageNameAndPublisherIdFromFamilyName proto WINAPI :PCWSTR, :ptr, :PWSTR, :ptr, :PWSTR
 
 if (defined(_CONTRACT_GEN) EQ 0) OR (_APISET_APPMODELRUNTIME_VER GE 0x0101)
-FormatApplicationUserModelId proto WINAPI \
-     packageFamilyName: PCWSTR,
-packageRelativeApplicationId: PCWSTR,
-applicationUserModelIdLength: ptr UINT32,
-applicationUserModelId: PWSTR
-
-ParseApplicationUserModelId proto WINAPI \
-applicationUserModelId: PCWSTR,
-packageFamilyNameLength: ptr UINT32,
-     packageFamilyName: PWSTR,
-packageRelativeApplicationIdLength: ptr UINT32,
-packageRelativeApplicationId: PWSTR
+FormatApplicationUserModelId proto WINAPI :PCWSTR, :PCWSTR, :ptr, :PWSTR
+ParseApplicationUserModelId proto WINAPI :PCWSTR, :ptr, :PWSTR, :ptr, :PWSTR
 endif
-
-GetPackagesByPackageFamily proto WINAPI \
-     packageFamilyName: PCWSTR,
-                 count: ptr UINT32,
-      packageFullNames: ptr PWSTR,
-          bufferLength: ptr UINT32,
-                buffer: ptr WCHAR
+GetPackagesByPackageFamily proto WINAPI :PCWSTR, :ptr, :ptr, :ptr, :ptr
 
 if (defined(_CONTRACT_GEN) EQ 0) OR (_APISET_APPMODELRUNTIME_VER GE 0x0101)
 
-FindPackagesByPackageFamily proto WINAPI \
-     packageFamilyName: PCWSTR,
-        packageFilters: UINT32,
-                 count: ptr UINT32,
-      packageFullNames: ptr PWSTR,
-          bufferLength: ptr UINT32,
-                buffer: ptr WCHAR,
-     packageProperties: ptr UINT32
-
+FindPackagesByPackageFamily proto WINAPI :PCWSTR, :UINT32, :ptr, :ptr, :ptr, :ptr, :ptr
 
 PackageOrigin           typedef SDWORD
 PackageOrigin_Unknown   equ 0
@@ -190,9 +98,7 @@ PackageOrigin_DeveloperUnsigned equ 4
 PackageOrigin_DeveloperSigned equ 5
 PackageOrigin_LineOfBusiness equ 6
 
-GetStagedPackageOrigin proto WINAPI \
-       packageFullName: PCWSTR,
-                origin: ptr PackageOrigin
+GetStagedPackageOrigin proto WINAPI :PCWSTR, :ptr
 
 endif
 
@@ -228,35 +134,13 @@ PACKAGE_INFO            ENDS
 
 .pragma pack(pop)
 
-GetCurrentPackageInfo proto WINAPI \
-                 flags: UINT32,
-          bufferLength: ptr UINT32,
-                buffer: ptr BYTE,
-                 count: ptr UINT32
-
-OpenPackageInfoByFullName proto WINAPI \
-       packageFullName: PCWSTR,
-              reserved: UINT32,
-  packageInfoReference: ptr PACKAGE_INFO_REFERENCE
-
-ClosePackageInfo proto WINAPI \
-  packageInfoReference: PACKAGE_INFO_REFERENCE
-
-GetPackageInfo proto WINAPI \
-  packageInfoReference: PACKAGE_INFO_REFERENCE,
-                 flags: UINT32,
-          bufferLength: ptr UINT32,
-                buffer: ptr BYTE,
-                 count: ptr UINT32
+GetCurrentPackageInfo proto WINAPI :UINT32, :ptr, :ptr, :ptr
+OpenPackageInfoByFullName proto WINAPI :PCWSTR, :UINT32, :ptr
+ClosePackageInfo proto WINAPI :PACKAGE_INFO_REFERENCE
+GetPackageInfo proto WINAPI :PACKAGE_INFO_REFERENCE, :UINT32, :ptr, :ptr, :ptr
 
 if (defined(_CONTRACT_GEN) EQ 0) OR (_APISET_APPMODELRUNTIME_VER GE 0x0101)
-
-GetPackageApplicationIds proto WINAPI \
-  packageInfoReference: PACKAGE_INFO_REFERENCE,
-          bufferLength: ptr UINT32,
-                buffer: ptr BYTE,
-                 count: ptr UINT32
-
+GetPackageApplicationIds proto WINAPI :PACKAGE_INFO_REFERENCE, :ptr, :ptr, :ptr
 endif
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

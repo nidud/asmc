@@ -1,86 +1,24 @@
+.pragma list(push, 0)
 ifndef _INC_DCIMAN
 define _INC_DCIMAN
-.pragma list(push, 0)
 
 include dciddi.inc
 
 DECLARE_HANDLE(HWINWATCH)
 
 DCIOpenProvider proto WINAPI
-
-;void
-DCICloseProvider proto WINAPI \
-		   hdc: HDC
-
-;int
-DCICreatePrimary proto WINAPI \
-		   hdc: HDC,
-	   lplpSurface: LPDCISURFACEINFO
-
-;int
-DCICreateOffscreen proto WINAPI \
-		   hdc: HDC,
-	 dwCompression: DWORD,
-	     dwRedMask: DWORD,
-	   dwGreenMask: DWORD,
-	    dwBlueMask: DWORD,
-	       dwWidth: DWORD,
-	      dwHeight: DWORD,
-	     dwDCICaps: DWORD,
-	    dwBitCount: DWORD,
-	   lplpSurface: LPDCIOFFSCREEN
-
-;int
-DCICreateOverlay proto WINAPI \
-		   hdc: HDC,
-       lpOffscreenSurf: LPVOID,
-	   lplpSurface: LPDCIOVERLAY
-
-;int
-DCIEnum proto WINAPI \
-		   hdc: HDC,
-		lprDst: LPRECT,
-		lprSrc: LPRECT,
-	  lpFnCallback: LPVOID,
-	     lpContext: LPVOID
-
-DCISetSrcDestClip proto WINAPI \
-		  pdci: LPDCIOFFSCREEN,
-		 srcrc: LPRECT,
-		destrc: LPRECT,
-		   prd: LPRGNDATA
-
-WinWatchOpen proto WINAPI \
-		  hwnd: HWND
-
-;void
-WinWatchClose proto WINAPI \
-		   hWW: HWINWATCH
-
-
-;UINT
-WinWatchGetClipList proto WINAPI \
-		   hWW: HWINWATCH,
-		   prc: LPRECT,
-		  size: UINT,
-		   prd: LPRGNDATA
-
-;BOOL
-WinWatchDidStatusChange proto WINAPI \
-		   hWW: HWINWATCH
-
-
-;DWORD
-GetWindowRegionData proto WINAPI \
-		  hwnd: HWND,
-		  size: DWORD,
-		   prd: LPRGNDATA
-
-;DWORD
-GetDCRegionData proto WINAPI \
-		   hdc: HDC,
-		  size: DWORD,
-		   prd: LPRGNDATA
+DCICloseProvider proto WINAPI :HDC
+DCICreatePrimary proto WINAPI :HDC, :LPDCISURFACEINFO
+DCICreateOffscreen proto WINAPI :HDC, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPDCIOFFSCREEN
+DCICreateOverlay proto WINAPI :HDC, :ptr, :LPDCIOVERLAY
+DCIEnum proto WINAPI :HDC, :LPRECT, :LPRECT, :ptr, :ptr
+DCISetSrcDestClip proto WINAPI :LPDCIOFFSCREEN, :LPRECT, :LPRECT, :LPRGNDATA
+WinWatchOpen proto WINAPI :HWND
+WinWatchClose proto WINAPI :HWINWATCH
+WinWatchGetClipList proto WINAPI :HWINWATCH, :LPRECT, :UINT, :LPRGNDATA
+WinWatchDidStatusChange proto WINAPI :HWINWATCH
+GetWindowRegionData proto WINAPI :HWND, :DWORD, :LPRGNDATA
+GetDCRegionData proto WINAPI :HDC, :DWORD, :LPRGNDATA
 
 WINWATCHNOTIFY_START	equ 0
 WINWATCHNOTIFY_STOP	equ 1
@@ -90,48 +28,17 @@ WINWATCHNOTIFY_CHANGED	equ 4
 
 CALLBACK(WINWATCHNOTIFYPROC, hww:HWINWATCH, hwnd:HWND, code:DWORD, lParam:LPARAM)
 
-;BOOL
-WinWatchNotify proto WINAPI \
-		   hWW: HWINWATCH,
-	NotifyCallback: WINWATCHNOTIFYPROC,
-	   NotifyParam: LPARAM
+WinWatchNotify proto WINAPI :HWINWATCH, :WINWATCHNOTIFYPROC, :LPARAM
 
 ifdef _WIN32
-
-;void
-DCIEndAccess proto WINAPI \
-		  pdci: LPDCISURFACEINFO
-
-DCIBeginAccess proto WINAPI \
-		  pdci: LPDCISURFACEINFO,
-		     x: SINT,
-		     y: SINT,
-		   _dx: SINT,
-		   _dy: SINT
-
-;void
-DCIDestroy proto WINAPI \
-		  pdci: LPDCISURFACEINFO
-
-DCIDraw proto WINAPI \
-		  pdci: LPDCIOFFSCREEN
-
-DCISetClipList proto WINAPI \
-		  pdci: LPDCIOFFSCREEN,
-		   prd: LPRGNDATA
-
-DCISetDestination proto WINAPI \
-		  pdci: LPDCIOFFSCREEN,
-		   dst: LPRECT,
-		   src: LPRECT
+DCIEndAccess proto WINAPI :LPDCISURFACEINFO
+DCIBeginAccess proto WINAPI :LPDCISURFACEINFO, :SINT, :SINT, :SINT, :SINT
+DCIDestroy proto WINAPI :LPDCISURFACEINFO
+DCIDraw proto WINAPI :LPDCIOFFSCREEN
+DCISetClipList proto WINAPI :LPDCIOFFSCREEN, :LPRGNDATA
+DCISetDestination proto WINAPI :LPDCIOFFSCREEN, :LPRECT, :LPRECT
 else
-
-;int
-DCISendCommand proto WINAPI \
-		   hdc: HDC,
-		  pcmd: PVOID,
-		 nSize: SINT
+DCISendCommand proto WINAPI :HDC, :ptr, :SINT
 endif
-
+endif
 .pragma list(pop)
-endif

@@ -200,11 +200,7 @@ if (NTDDI_VERSION GE NTDDI_WINBLUE)
 NCRYPT_IGNORE_DEVICE_STATE_FLAG equ 0x00001000
 endif
 
-NCryptOpenStorageProvider proto WINAPI \
-	    phProvider: ptr NCRYPT_PROV_HANDLE,
-       pszProviderName: LPCWSTR,
-	       dwFlags: DWORD
-
+NCryptOpenStorageProvider proto WINAPI :ptr, :LPCWSTR, :DWORD
 
 NCRYPT_CIPHER_OPERATION equ BCRYPT_CIPHER_OPERATION
 NCRYPT_HASH_OPERATION	equ BCRYPT_HASH_OPERATION
@@ -222,17 +218,8 @@ dwAlgOperations		dd ?
 dwFlags			dd ?
 NCryptAlgorithmName	ENDS
 
-NCryptEnumAlgorithms proto WINAPI \
-	     hProvider: NCRYPT_PROV_HANDLE,
-       dwAlgOperations: DWORD,
-	   pdwAlgCount: ptr DWORD,
-	     ppAlgList: ptr NCryptAlgorithmName,
-	       dwFlags: DWORD
-
-NCryptIsAlgSupported proto WINAPI \
-	     hProvider: NCRYPT_PROV_HANDLE,
-	      pszAlgId: LPCWSTR,
-	       dwFlags: DWORD
+NCryptEnumAlgorithms proto WINAPI :NCRYPT_PROV_HANDLE, :DWORD, :ptr DWORD, :ptr, :DWORD
+NCryptIsAlgSupported proto WINAPI :NCRYPT_PROV_HANDLE, :LPCWSTR, :DWORD
 
 NCRYPT_MACHINE_KEY_FLAG equ 0x00000020
 
@@ -243,50 +230,25 @@ dwLegacyKeySpec		dd ?
 dwFlags			dd ?
 NCryptKeyName		ENDS
 
-NCryptEnumKeys proto WINAPI \
-	     hProvider: NCRYPT_PROV_HANDLE,
-	      pszScope: LPCWSTR,
-	     ppKeyName: ptr NCryptKeyName,
-	   ppEnumState: ptr PVOID,
-	       dwFlags: DWORD
+NCryptEnumKeys proto WINAPI :NCRYPT_PROV_HANDLE, :LPCWSTR, :ptr, :ptr, :DWORD
 
 NCryptProviderName	STRUC
 pszName			LPWSTR ?
 pszComment		LPWSTR ?
 NCryptProviderName	ENDS
 
-NCryptEnumStorageProviders proto WINAPI \
-      pdwProviderCount: ptr DWORD,
-	ppProviderList: ptr NCryptProviderName,
-	       dwFlags: DWORD
-
-NCryptFreeBuffer proto WINAPI \
-	       pvInput: PVOID
+NCryptEnumStorageProviders proto WINAPI :ptr, :ptr, :DWORD
+NCryptFreeBuffer proto WINAPI :ptr
 
 NCRYPT_MACHINE_KEY_FLAG equ 0x00000020
 NCRYPT_SILENT_FLAG	equ 0x00000040
 
-NCryptOpenKey proto WINAPI \
-	     hProvider: NCRYPT_PROV_HANDLE,
-		 phKey: ptr NCRYPT_KEY_HANDLE,
-	    pszKeyName: LPCWSTR,
-       dwLegacyKeySpec: DWORD,
-	       dwFlags: DWORD
-
+NCryptOpenKey proto WINAPI :NCRYPT_PROV_HANDLE, :ptr, :LPCWSTR, :DWORD, :DWORD
 
 NCRYPT_MACHINE_KEY_FLAG equ 0x00000020
 NCRYPT_OVERWRITE_KEY_FLAG equ 0x00000080
 
-NCryptCreatePersistedKey proto WINAPI \
-	     hProvider: NCRYPT_PROV_HANDLE,
-		 phKey: ptr NCRYPT_KEY_HANDLE,
-	      pszAlgId: LPCWSTR,
-	    pszKeyName: LPCWSTR,
-       dwLegacyKeySpec: DWORD,
-	       dwFlags: DWORD
-
-
-
+NCryptCreatePersistedKey proto WINAPI :NCRYPT_PROV_HANDLE, :ptr, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD
 
 NCRYPT_NAME_PROPERTY	equ <L"Name">
 NCRYPT_UNIQUE_NAME_PROPERTY equ <L"Unique Name">
@@ -411,52 +373,18 @@ NCRYPT_SUPPORTED_LENGTHS ENDS
 
 NCRYPT_PERSIST_ONLY_FLAG equ 0x40000000
 
-NCryptGetProperty proto WINAPI \
-	       hObject: NCRYPT_HANDLE,
-	   pszProperty: LPCWSTR,
-	      pbOutput: PBYTE,
-	      cbOutput: DWORD,
-	     pcbResult: ptr DWORD,
-	       dwFlags: DWORD
-
+NCryptGetProperty proto WINAPI :NCRYPT_HANDLE, :LPCWSTR, :PBYTE, :DWORD, :ptr, :DWORD
 
 NCRYPT_PERSIST_FLAG	equ 0x80000000
 NCRYPT_PERSIST_ONLY_FLAG equ 0x40000000
 
-NCryptSetProperty proto WINAPI \
-	       hObject: NCRYPT_HANDLE,
-	   pszProperty: LPCWSTR,
-	       pbInput: PBYTE,
-	       cbInput: DWORD,
-	       dwFlags: DWORD
+NCryptSetProperty proto WINAPI :NCRYPT_HANDLE, :LPCWSTR, :PBYTE, :DWORD, :DWORD
 
 NCRYPT_WRITE_KEY_TO_LEGACY_STORE_FLAG equ 0x00000200
 
-NCryptFinalizeKey proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE,
-	       dwFlags: DWORD
-
-NCryptEncrypt proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE,
-	       pbInput: PBYTE,
-	       cbInput: DWORD,
-	  pPaddingInfo: ptr VOID,
-	      pbOutput: PBYTE,
-	      cbOutput: DWORD,
-	     pcbResult: ptr DWORD,
-	       dwFlags: DWORD
-
-
-NCryptDecrypt proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE,
-	       pbInput: PBYTE,
-	       cbInput: DWORD,
-	  pPaddingInfo: ptr VOID,
-	      pbOutput: PBYTE,
-	      cbOutput: DWORD,
-	     pcbResult: ptr DWORD,
-	       dwFlags: DWORD
-
+NCryptFinalizeKey proto WINAPI :NCRYPT_KEY_HANDLE, :DWORD
+NCryptEncrypt proto WINAPI :NCRYPT_KEY_HANDLE, :PBYTE, :DWORD, :ptr, :PBYTE, :DWORD, :ptr, :DWORD
+NCryptDecrypt proto WINAPI :NCRYPT_KEY_HANDLE, :PBYTE, :DWORD, :ptr, :PBYTE, :DWORD, :ptr, :DWORD
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
@@ -485,107 +413,26 @@ NCRYPT_MACHINE_KEY_FLAG equ 0x00000020
 NCRYPT_DO_NOT_FINALIZE_FLAG equ 0x00000400
 NCRYPT_EXPORT_LEGACY_FLAG equ 0x00000800
 
-NCryptImportKey proto WINAPI \
-	     hProvider: NCRYPT_PROV_HANDLE,
-	    hImportKey: NCRYPT_KEY_HANDLE,
-	   pszBlobType: LPCWSTR,
-	pParameterList: ptr NCryptBufferDesc,
-		 phKey: ptr NCRYPT_KEY_HANDLE,
-		pbData: PBYTE,
-		cbData: DWORD,
-	       dwFlags: DWORD
-
-NCryptExportKey proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE,
-	    hExportKey: NCRYPT_KEY_HANDLE,
-	   pszBlobType: LPCWSTR,
-	pParameterList: ptr NCryptBufferDesc,
-	      pbOutput: PBYTE,
-	      cbOutput: DWORD,
-	     pcbResult: ptr DWORD,
-	       dwFlags: DWORD
-
-NCryptSignHash proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE,
-	  pPaddingInfo: ptr VOID,
-	   pbHashValue: PBYTE,
-	   cbHashValue: DWORD,
-	   pbSignature: PBYTE,
-	   cbSignature: DWORD,
-	     pcbResult: ptr DWORD,
-	       dwFlags: DWORD
-
-NCryptVerifySignature proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE,
-	  pPaddingInfo: ptr VOID,
-	   pbHashValue: PBYTE,
-	   cbHashValue: DWORD,
-	   pbSignature: PBYTE,
-	   cbSignature: DWORD,
-	       dwFlags: DWORD
-
-
-NCryptDeleteKey proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE,
-	       dwFlags: DWORD
-
-NCryptFreeObject proto WINAPI \
-	       hObject: NCRYPT_HANDLE
-
-
-NCryptIsKeyHandle proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE
-
-
-NCryptTranslateHandle proto WINAPI \
-	    phProvider: ptr NCRYPT_PROV_HANDLE,
-		 phKey: ptr NCRYPT_KEY_HANDLE,
-	   hLegacyProv: HCRYPTPROV,
-	    hLegacyKey: HCRYPTKEY,
-       dwLegacyKeySpec: DWORD,
-	       dwFlags: DWORD
-
+NCryptImportKey proto WINAPI :NCRYPT_PROV_HANDLE, :NCRYPT_KEY_HANDLE, :LPCWSTR, :ptr, :ptr, :PBYTE, :DWORD, :DWORD
+NCryptExportKey proto WINAPI :NCRYPT_KEY_HANDLE, :NCRYPT_KEY_HANDLE, :LPCWSTR, :ptr, :PBYTE, :DWORD, :ptr, :DWORD
+NCryptSignHash proto WINAPI :NCRYPT_KEY_HANDLE, :ptr, :PBYTE, :DWORD, :PBYTE, :DWORD, :ptr, :DWORD
+NCryptVerifySignature proto WINAPI :NCRYPT_KEY_HANDLE, :ptr, :PBYTE, :DWORD, :PBYTE, :DWORD, :DWORD
+NCryptDeleteKey proto WINAPI :NCRYPT_KEY_HANDLE, :DWORD
+NCryptFreeObject proto WINAPI :NCRYPT_HANDLE
+NCryptIsKeyHandle proto WINAPI :NCRYPT_KEY_HANDLE
+NCryptTranslateHandle proto WINAPI :ptr, :ptr, :HCRYPTPROV, :HCRYPTKEY, :DWORD, :DWORD
 
 NCRYPT_REGISTER_NOTIFY_FLAG equ 0x00000001
 NCRYPT_UNREGISTER_NOTIFY_FLAG equ 0x00000002
 NCRYPT_MACHINE_KEY_FLAG equ 0x00000020
 
-NCryptNotifyChangeKey proto WINAPI \
-	     hProvider: NCRYPT_PROV_HANDLE,
-	       phEvent: ptr HANDLE,
-	       dwFlags: DWORD
-
-
-NCryptSecretAgreement proto WINAPI \
-	      hPrivKey: NCRYPT_KEY_HANDLE,
-	       hPubKey: NCRYPT_KEY_HANDLE,
-	phAgreedSecret: ptr NCRYPT_SECRET_HANDLE,
-	       dwFlags: DWORD
-
-
-NCryptDeriveKey proto WINAPI \
-	 hSharedSecret: NCRYPT_SECRET_HANDLE,
-	       pwszKDF: LPCWSTR,
-	pParameterList: ptr NCryptBufferDesc,
-	  pbDerivedKey: PBYTE,
-	  cbDerivedKey: DWORD,
-	     pcbResult: ptr DWORD,
-	       dwFlags: ULONG
-
+NCryptNotifyChangeKey proto WINAPI :NCRYPT_PROV_HANDLE, :ptr, :DWORD
+NCryptSecretAgreement proto WINAPI :NCRYPT_KEY_HANDLE, :NCRYPT_KEY_HANDLE, :ptr, :DWORD
+NCryptDeriveKey proto WINAPI :NCRYPT_SECRET_HANDLE, :LPCWSTR, :ptr, :PBYTE, :DWORD, :ptr, :ULONG
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
-
-NCryptKeyDerivation proto WINAPI \
-		  hKey: NCRYPT_KEY_HANDLE,
-	pParameterList: ptr NCryptBufferDesc,
-	  pbDerivedKey: PUCHAR,
-	  cbDerivedKey: DWORD,
-	     pcbResult: ptr DWORD,
-	       dwFlags: ULONG
-
-
+NCryptKeyDerivation proto WINAPI :NCRYPT_KEY_HANDLE, :ptr, :PUCHAR, :DWORD, :ptr, :ULONG
 endif
-
 NCRYPT_KEY_STORAGE_INTERFACE_VERSION equ BCRYPT_MAKE_INTERFACE_VERSION(1,0)
 NCRYPT_KEY_STORAGE_INTERFACE_VERSION_2 equ BCRYPT_MAKE_INTERFACE_VERSION(2,0)
 

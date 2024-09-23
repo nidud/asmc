@@ -15,28 +15,23 @@ endif
 D3DX11_SDK_VERSION	equ 43
 
 ifdef D3D_DIAG_DLL
-D3DX11DebugMute proto WINAPI \
-		  Mute: BOOL
+D3DX11DebugMute proto WINAPI :BOOL
 endif
-
-D3DX11CheckVersion proto WINAPI \
-	 D3DSdkVersion: UINT,
-      D3DX11SdkVersion: UINT
-
+D3DX11CheckVersion proto WINAPI :UINT, :UINT
 
 .comdef ID3DX11DataLoader
 
     Load		proc
     Decompress		proc :ptr ptr, :ptr SIZE_T
     Destroy		proc
-    .ENDS
+   .ENDS
 
 .comdef ID3DX11DataProcessor
 
     Process		proc :ptr, :SIZE_T
     CreateDeviceObject	proc :ptr ptr
     Destroy		proc
-    .ENDS
+   .ENDS
 
 DEFINE_GUID(IID_ID3DX11ThreadPump, 0xc93fecfa, 0x6967, 0x478a, 0xab, 0xbc, 0x40, 0x2d, 0x90, 0x62, 0x1f, 0xcb);
 
@@ -48,16 +43,10 @@ DEFINE_GUID(IID_ID3DX11ThreadPump, 0xc93fecfa, 0x6967, 0x478a, 0xab, 0xbc, 0x40,
     ProcessDeviceWorkItems proc :UINT
     PurgeAllItems	proc
     GetQueueStatus	proc :ptr UINT, :ptr UINT, :ptr UINT
-    .ENDS
+   .ENDS
 
-D3DX11CreateThreadPump proto WINAPI \
-	    cIoThreads: UINT,
-	  cProcThreads: UINT,
-	  ppThreadPump: ptr ID3DX11ThreadPump
-
-D3DX11UnsetAllDeviceObjects proto WINAPI \
-	      pContext: ptr ID3D11DeviceContext
-
+D3DX11CreateThreadPump proto WINAPI :UINT, :UINT, :ptr
+D3DX11UnsetAllDeviceObjects proto WINAPI :ptr
 
 _FACD3D equ 0x876
 MAKE_D3DHRESULT macro code

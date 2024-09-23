@@ -8,12 +8,6 @@ NTPROP typedef ptr
 include propidl.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-StgPropertyLengthAsVariant proto WINAPI \
-            pProp: ptr SERIALIZEDPROPERTYVALUE,
-           cbProp: ULONG,
-         CodePage: USHORT,
-        bReserved: BYTE
-
+StgPropertyLengthAsVariant proto WINAPI :ptr, :ULONG, :USHORT, :BYTE
 endif
 endif

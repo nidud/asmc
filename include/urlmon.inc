@@ -42,168 +42,29 @@ SZ_URLCONTEXT		equ <OLESTR("URL Context")>
 SZ_ASYNC_CALLEE		equ <OLESTR("AsyncCallee")>
 MKSYS_URLMONIKER	equ 6
 
-;STDAPI
-CreateURLMoniker proto WINAPI \
-		pMkCtx: LPMONIKER,
-		 szURL: LPCWSTR,
-		  ppmk: ptr LPMONIKER
-
-;STDAPI
-GetClassURL proto WINAPI \
-		 szURL: LPCWSTR,
-		pClsID: ptr CLSID
-
-;STDAPI
-CreateAsyncBindCtx proto WINAPI \
-	      reserved: DWORD,
-		 pBSCb: ptr IBindStatusCallback,
-		pEFetc: ptr IEnumFORMATETC,
-		  ppBC: ptr IBindCtx
-
-;STDAPI
-CreateAsyncBindCtxEx proto WINAPI \
-		   pbc: ptr IBindCtx,
-	     dwOptions: DWORD,
-		 pBSCb: ptr IBindStatusCallback,
-		 pEnum: ptr IEnumFORMATETC,
-		  ppBC: ptr IBindCtx,
-	      reserved: DWORD
-
-;STDAPI
-MkParseDisplayNameEx proto WINAPI \
-		   pbc: ptr IBindCtx,
-	 szDisplayName: LPCWSTR,
-	      pchEaten: ptr ULONG,
-		  ppmk: ptr LPMONIKER
-
-;STDAPI
-RegisterBindStatusCallback proto WINAPI \
-		   pBC: LPBC,
-		 pBSCb: ptr IBindStatusCallback,
-	    ppBSCBPrev: ptr IBindStatusCallback,
-	    dwReserved: DWORD
-
-;STDAPI
-RevokeBindStatusCallback proto WINAPI \
-		   pBC: LPBC,
-		 pBSCb: ptr IBindStatusCallback
-
-;STDAPI
-GetClassFileOrMime proto WINAPI \
-		   pBC: LPBC,
-	    szFilename: LPCWSTR,
-	       pBuffer: LPVOID,
-		cbSize: DWORD,
-		szMime: LPCWSTR,
-	    dwReserved: DWORD,
-		pclsid: ptr CLSID
-
-;STDAPI
-IsValidURL proto WINAPI \
-		   pBC: LPBC,
-		 szURL: LPCWSTR,
-	    dwReserved: DWORD
-
-;STDAPI
-CoGetClassObjectFromURL proto WINAPI \
-	      rCLASSID: REFCLSID,
-		szCODE: LPCWSTR,
-       dwFileVersionMS: DWORD,
-       dwFileVersionLS: DWORD,
-		szTYPE: LPCWSTR,
-	      pBindCtx: LPBINDCTX,
-	  dwClsContext: DWORD,
-	    pvReserved: LPVOID,
-		  riid: REFIID,
-		   ppv: ptr LPVOID
-
-
-;STDAPI
-IsAsyncMoniker proto WINAPI \
-		   pmk: ptr IMoniker
-
-;STDAPI
-CreateURLBinding proto WINAPI \
-	       lpszUrl: LPCWSTR,
-		   pbc: ptr IBindCtx,
-		 ppBdg: ptr IBinding
-
-
-;STDAPI
-RegisterMediaTypes proto WINAPI \
-		ctypes: UINT,
-	     rgszTypes: LPCSTR,
-	     rgcfTypes: ptr CLIPFORMAT
-
-;STDAPI
-FindMediaType proto WINAPI \
-	     rgszTypes: LPCSTR,
-	     rgcfTypes: ptr CLIPFORMAT
-
-;STDAPI
-CreateFormatEnumerator proto WINAPI \
-	       cfmtetc: UINT,
-	      rgfmtetc: ptr FORMATETC,
-	  ppenumfmtetc: ptr IEnumFORMATETC
-
-;STDAPI
-RegisterFormatEnumerator proto WINAPI \
-		   pBC: LPBC,
-		pEFetc: ptr IEnumFORMATETC,
-	      reserved: DWORD
-
-;STDAPI
-RevokeFormatEnumerator proto WINAPI \
-		   pBC: LPBC,
-		pEFetc: ptr IEnumFORMATETC
-
-;STDAPI
-RegisterMediaTypeClass proto WINAPI \
-		   pBC: LPBC,
-		ctypes: UINT,
-	     rgszTypes: LPCSTR,
-	       rgclsID: ptr CLSID,
-	      reserved: DWORD
-
-;STDAPI
-FindMediaTypeClass proto WINAPI \
-		   pBC: LPBC,
-		szType: LPCSTR,
-		pclsID: ptr CLSID,
-	      reserved: DWORD
-
-;STDAPI
-UrlMkSetSessionOption proto WINAPI \
-	      dwOption: DWORD,
-	       pBuffer: LPVOID,
-	dwBufferLength: DWORD,
-	    dwReserved: DWORD
-
-;STDAPI
-UrlMkGetSessionOption proto WINAPI \
-	      dwOption: DWORD,
-	       pBuffer: LPVOID,
-	dwBufferLength: DWORD,
-       pdwBufferLength: LPDWORD,
-	    dwReserved: DWORD
-
-;STDAPI
-FindMimeFromData proto WINAPI \
-		   pBC: LPBC,
-		pwzUrl: LPCWSTR,
-	       pBuffer: LPVOID,
-		cbSize: DWORD,
-       pwzMimeProposed: LPCWSTR,
-	   dwMimeFlags: DWORD,
-	   ppwzMimeOut: ptr LPWSTR,
-	    dwReserved: DWORD
-
-;STDAPI
-ObtainUserAgentString proto WINAPI \
-	      dwOption: DWORD,
-	      pszUAOut: LPSTR,
-		cbSize: LPDWORD
-
+CreateURLMoniker proto WINAPI :LPMONIKER, :LPCWSTR, :ptr
+GetClassURL proto WINAPI :LPCWSTR, :ptr
+CreateAsyncBindCtx proto WINAPI :DWORD, :ptr, :ptr, :ptr
+CreateAsyncBindCtxEx proto WINAPI :ptr, :DWORD, :ptr, :ptr, :ptr, :DWORD
+MkParseDisplayNameEx proto WINAPI :ptr, :LPCWSTR, :ptr, :ptr
+RegisterBindStatusCallback proto WINAPI :LPBC, :ptr, :ptr, :DWORD
+RevokeBindStatusCallback proto WINAPI :LPBC, :ptr
+GetClassFileOrMime proto WINAPI :LPBC, :LPCWSTR, :ptr, :DWORD, :LPCWSTR, :DWORD, :ptr
+IsValidURL proto WINAPI :LPBC, :LPCWSTR, :DWORD
+CoGetClassObjectFromURL proto WINAPI :REFCLSID, :LPCWSTR, :DWORD, :DWORD, :LPCWSTR, :LPBINDCTX, :DWORD, :ptr, :REFIID, :ptr
+IsAsyncMoniker proto WINAPI :ptr
+CreateURLBinding proto WINAPI :LPCWSTR, :ptr, :ptr
+RegisterMediaTypes proto WINAPI :UINT, :LPCSTR, :ptr
+FindMediaType proto WINAPI :LPCSTR, :ptr
+CreateFormatEnumerator proto WINAPI :UINT, :ptr, :ptr
+RegisterFormatEnumerator proto WINAPI :LPBC, :ptr, :DWORD
+RevokeFormatEnumerator proto WINAPI :LPBC, :ptr
+RegisterMediaTypeClass proto WINAPI :LPBC, :UINT, :LPCSTR, :ptr, :DWORD
+FindMediaTypeClass proto WINAPI :LPBC, :LPCSTR, :ptr, :DWORD
+UrlMkSetSessionOption proto WINAPI :DWORD, :ptr, :DWORD, :DWORD
+UrlMkGetSessionOption proto WINAPI :DWORD, :ptr, :DWORD, :LPDWORD, :DWORD
+FindMimeFromData proto WINAPI :LPBC, :LPCWSTR, :ptr, :DWORD, :LPCWSTR, :DWORD, :ptr, :DWORD
+ObtainUserAgentString proto WINAPI :DWORD, :LPSTR, :LPDWORD
 
 URLMON_OPTION_USERAGENT equ 0x10000001
 URLMON_OPTION_USERAGENT_REFRESH equ 0x10000002
@@ -617,27 +478,9 @@ DEFINE_IIDX(IUri, "A39EE748-6A27-4817-A6F2-13914BEF5890")
 
 endif
 
-CreateUri proto WINAPI \
-		pwzURI: LPCWSTR,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD_PTR,
-		 ppURI: ptr ptr IUri
-
-CreateUriWithFragment proto WINAPI \
-		pwzURI: LPCWSTR,
-	   pwzFragment: LPCWSTR,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD_PTR,
-		 ppURI: ptr ptr IUri
-
-CreateUriFromMultiByteString proto WINAPI \
-       pszANSIInputUri: LPCSTR,
-       dwEncodingFlags: DWORD,
-	    dwCodePage: DWORD,
-	 dwCreateFlags: DWORD,
-	    dwReserved: DWORD_PTR,
-		 ppUri: ptr ptr IUri
-
+CreateUri proto WINAPI :LPCWSTR, :DWORD, :DWORD_PTR, :ptr
+CreateUriWithFragment proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :DWORD_PTR, :ptr
+CreateUriFromMultiByteString proto WINAPI :LPCSTR, :DWORD, :DWORD, :DWORD, :DWORD_PTR, :ptr
 
 Uri_HAS_ABSOLUTE_URI	equ (1 shl Uri_PROPERTY_ABSOLUTE_URI)
 Uri_HAS_AUTHORITY	equ (1 shl Uri_PROPERTY_AUTHORITY)
@@ -690,9 +533,7 @@ Uri_ENCODING_HOST_IS_PERCENT_ENCODED_UTF8		 equ 0x00000008
 Uri_ENCODING_HOST_IS_PERCENT_ENCODED_CP			 equ 0x00000010
 Uri_ENCODING_QUERY_AND_FRAGMENT_IS_PERCENT_ENCODED_UTF8	 equ 0x00000020
 Uri_ENCODING_QUERY_AND_FRAGMENT_IS_CP			 equ 0x00000040
-Uri_ENCODING_RFC equ (Uri_ENCODING_USER_INFO_AND_PATH_IS_PERCENT_ENCODED_UTF8 or \
-		      Uri_ENCODING_HOST_IS_PERCENT_ENCODED_UTF8 or \
-		      Uri_ENCODING_QUERY_AND_FRAGMENT_IS_PERCENT_ENCODED_UTF8)
+Uri_ENCODING_RFC equ (Uri_ENCODING_USER_INFO_AND_PATH_IS_PERCENT_ENCODED_UTF8 or Uri_ENCODING_HOST_IS_PERCENT_ENCODED_UTF8 or Uri_ENCODING_QUERY_AND_FRAGMENT_IS_PERCENT_ENCODED_UTF8)
 
 UriBuilder_USE_ORIGINAL_FLAGS equ 0x00000001
 
@@ -755,12 +596,7 @@ DEFINE_IIDX(IUriBuilderFactory, "E982CE48-0B96-440c-BC37-0C869B27A29E")
 
 endif
 
-CreateIUriBuilder proto WINAPI \
-		 pIUri: ptr IUri,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD_PTR,
-	 ppIUriBuilder: ptr ptr IUriBuilder
-
+CreateIUriBuilder proto WINAPI :ptr, :DWORD, :DWORD_PTR, :ptr
 
 ifndef _LPWININETINFO_DEFINED
 define _LPWININETINFO_DEFINED
@@ -841,92 +677,18 @@ URLOSTRM_USECACHEDCOPY_ONLY equ 0x1
 URLOSTRM_USECACHEDCOPY	equ 0x2
 URLOSTRM_GETNEWESTVERSION equ 0x3
 
-;STDAPI
-HlinkSimpleNavigateToString proto WINAPI \
-	      szTarget: LPCWSTR,
-	    szLocation: LPCWSTR,
-     szTargetFrameName: LPCWSTR,
-		  pUnk: ptr IUnknown,
-		   pbc: ptr IBindCtx,
-		      : ptr IBindStatusCallback,
-	       grfHLNF: DWORD,
-	    dwReserved: DWORD
-
-HlinkSimpleNavigateToMoniker proto WINAPI \
-	     pmkTarget: ptr IMoniker,
-	    szLocation: LPCWSTR,
-     szTargetFrameName: LPCWSTR,
-		  pUnk: ptr IUnknown,
-		   pbc: ptr IBindCtx,
-		      : ptr IBindStatusCallback,
-	       grfHLNF: DWORD,
-	    dwReserved: DWORD
-
-URLOpenStreamA proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCSTR,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-
-URLOpenStreamW proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCWSTR,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-
-URLOpenPullStreamA proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCSTR,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-;STDAPI
-URLOpenPullStreamW proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCWSTR,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-;STDAPI
-URLDownloadToFileA proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCSTR,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-;STDAPI
-URLDownloadToFileW proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCWSTR,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-;STDAPI
-URLDownloadToCacheFileA proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCSTR,
-       out_cchFileName: LPSTR,
-	   cchFileName: DWORD,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-;STDAPI
-URLDownloadToCacheFileW proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCSTR,
-       out_cchFileName: LPWSTR,
-	   cchFileName: DWORD,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-;STDAPI
-URLOpenBlockingStreamA proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCSTR,
-		      : ptr LPSTREAM,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
-;STDAPI
-URLOpenBlockingStreamW proto WINAPI \
-		      : LPUNKNOWN,
-		      : LPCWSTR,
-		      : ptr LPSTREAM,
-		      : DWORD,
-		      : LPBINDSTATUSCALLBACK
+HlinkSimpleNavigateToString proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :ptr, :DWORD, :DWORD
+HlinkSimpleNavigateToMoniker proto WINAPI :ptr, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :ptr, :DWORD, :DWORD
+URLOpenStreamA proto WINAPI :LPUNKNOWN, :LPCSTR, :DWORD, :LPBINDSTATUSCALLBACK
+URLOpenStreamW proto WINAPI :LPUNKNOWN, :LPCWSTR, :DWORD, :LPBINDSTATUSCALLBACK
+URLOpenPullStreamA proto WINAPI :LPUNKNOWN, :LPCSTR, :DWORD, :LPBINDSTATUSCALLBACK
+URLOpenPullStreamW proto WINAPI :LPUNKNOWN, :LPCWSTR, :DWORD, :LPBINDSTATUSCALLBACK
+URLDownloadToFileA proto WINAPI :LPUNKNOWN, :LPCSTR, :DWORD, :LPBINDSTATUSCALLBACK
+URLDownloadToFileW proto WINAPI :LPUNKNOWN, :LPCWSTR, :DWORD, :LPBINDSTATUSCALLBACK
+URLDownloadToCacheFileA proto WINAPI :LPUNKNOWN, :LPCSTR, :LPSTR, :DWORD, :DWORD, :LPBINDSTATUSCALLBACK
+URLDownloadToCacheFileW proto WINAPI :LPUNKNOWN, :LPCSTR, :LPWSTR, :DWORD, :DWORD, :LPBINDSTATUSCALLBACK
+URLOpenBlockingStreamA proto WINAPI :LPUNKNOWN, :LPCSTR, :ptr, :DWORD, :LPBINDSTATUSCALLBACK
+URLOpenBlockingStreamW proto WINAPI :LPUNKNOWN, :LPCWSTR, :ptr, :DWORD, :LPBINDSTATUSCALLBACK
 
 ifdef _UNICODE
 URLOpenStream		equ <URLOpenStreamW>
@@ -942,25 +704,10 @@ URLDownloadToCacheFile	equ <URLDownloadToCacheFileA>
 URLOpenBlockingStream	equ <URLOpenBlockingStreamA>
 endif
 
-
-;STDAPI
-HlinkGoBack proto WINAPI \
-		  pUnk: ptr IUnknown
-
-;STDAPI
-HlinkGoForward proto WINAPI \
-		  pUnk: ptr IUnknown
-
-;STDAPI
-HlinkNavigateString proto WINAPI \
-		  pUnk: ptr IUnknown,
-	      szTarget: LPCWSTR
-
-;STDAPI
-HlinkNavigateMoniker proto WINAPI \
-		  pUnk: ptr IUnknown,
-	     pmkTarget: ptr IMoniker
-
+HlinkGoBack proto WINAPI :ptr
+HlinkGoForward proto WINAPI :ptr
+HlinkNavigateString proto WINAPI :ptr, :LPCWSTR
+HlinkNavigateMoniker proto WINAPI :ptr, :ptr
 
 ifndef _URLMON_NO_ASYNC_PLUGABLE_PROTOCOLS_
 
@@ -1244,76 +991,16 @@ IID_IOInetSession	equ <IID_IInternetSession>
 IID_IOInetPriority	equ <IID_IInternetPriority>
 IID_IOInetThreadSwitch	equ <IID_IInternetThreadSwitch>
 
-;STDAPI
-CoInternetParseUrl proto WINAPI \
-		pwzUrl: LPCWSTR,
-	   ParseAction: PARSEACTION,
-	       dwFlags: DWORD,
-	     pszResult: LPWSTR,
-	     cchResult: DWORD,
-	    pcchResult: ptr DWORD,
-	    dwReserved: DWORD
-
-;STDAPI
-CoInternetCombineUrl proto WINAPI \
-	    pwzBaseUrl: LPCWSTR,
-	pwzRelativeUrl: LPCWSTR,
-	dwCombineFlags: DWORD,
-	     pszResult: LPWSTR,
-	     cchResult: DWORD,
-	    pcchResult: ptr DWORD,
-	    dwReserved: DWORD
-
-;STDAPI
-CoInternetCompareUrl proto WINAPI \
-	       pwzUrl1: LPCWSTR,
-	       pwzUrl2: LPCWSTR,
-	       dwFlags: DWORD
-
-;STDAPI
-CoInternetGetProtocolFlags proto WINAPI \
-		pwzUrl: LPCWSTR,
-	      pdwFlags: ptr DWORD,
-	    dwReserved: DWORD
-
-;STDAPI
-CoInternetQueryInfo proto WINAPI \
-		pwzUrl: LPCWSTR,
-	  QueryOptions: QUERYOPTION,
-	  dwQueryFlags: DWORD,
-	      pvBuffer: LPVOID,
-	      cbBuffer: DWORD,
-	     pcbBuffer: ptr DWORD,
-	    dwReserved: DWORD
-
-;STDAPI
-CoInternetGetSession proto WINAPI \
-	 dwSessionMode: DWORD,
-    ppIInternetSession: ptr IInternetSession,
-	    dwReserved: DWORD
-
-;STDAPI
-CoInternetGetSecurityUrl proto WINAPI \
-		pwzUrl: LPCWSTR,
-	    ppwzSecUrl: ptr LPWSTR,
-	     psuAction: PSUACTION,
-	    dwReserved: DWORD
-
-
-;STDAPI
-CopyStgMedium proto WINAPI \
-	   pcstgmedSrc: ptr STGMEDIUM,
-	   pstgmedDest: ptr STGMEDIUM
-
-;STDAPI
-CopyBindInfo proto WINAPI \
-	       pcbiSrc: ptr BINDINFO,
-	       pbiDest: ptr BINDINFO
-
-;STDAPI_(void)
-ReleaseBindInfo proto WINAPI \
-	     pbindinfo: ptr BINDINFO
-
+CoInternetParseUrl proto WINAPI :LPCWSTR, :PARSEACTION, :DWORD, :LPWSTR, :DWORD, :ptr, :DWORD
+CoInternetCombineUrl proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPWSTR, :DWORD, :ptr, :DWORD
+CoInternetCompareUrl proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD
+CoInternetGetProtocolFlags proto WINAPI :LPCWSTR, :ptr, :DWORD
+CoInternetQueryInfo proto WINAPI :LPCWSTR, :QUERYOPTION, :DWORD, :ptr, :DWORD, :ptr, :DWORD
+CoInternetGetSession proto WINAPI :DWORD, :ptr, :DWORD
+CoInternetGetSecurityUrl proto WINAPI :LPCWSTR, :ptr, :PSUACTION, :DWORD
+CopyStgMedium proto WINAPI :ptr, :ptr
+CopyBindInfo proto WINAPI :ptr, :ptr
+ReleaseBindInfo proto WINAPI :ptr
 
 INET_E_USE_DEFAULT_PROTOCOLHANDLER equ 0x800C0011
 INET_E_USE_DEFAULT_SETTING equ 0x800C0012
@@ -1328,23 +1015,14 @@ OInetGetSession		equ <CoInternetGetSession>
 endif
 PROTOCOLFLAG_NO_PICS_CHECK equ 0x00000001
 
-;STDAPI
-CoInternetCreateSecurityManager proto WINAPI \
-		   pSP: ptr IServiceProvider,
-		  ppSM: ptr IInternetSecurityManager,
-	    dwReserved: DWORD
+CoInternetCreateSecurityManager proto WINAPI :ptr, :ptr, :DWORD
+CoInternetCreateZoneManager proto WINAPI :ptr, :ptr, :DWORD
 
-;STDAPI
-CoInternetCreateZoneManager proto WINAPI \
-		   pSP: ptr IServiceProvider,
-		  ppZM: ptr IInternetZoneManager,
-	    dwReserved: DWORD
+externdef CLSID_InternetSecurityManager:IID
+externdef CLSID_InternetZoneManager:IID
 
-externdef		CLSID_InternetSecurityManager:IID
-externdef		CLSID_InternetZoneManager:IID
-SID_SInternetSecurityManager equ IID_IInternetSecurityManager
-
-SID_SInternetHostSecurityManager equ IID_IInternetHostSecurityManager
+SID_SInternetSecurityManager equ <IID_IInternetSecurityManager>
+SID_SInternetHostSecurityManager equ <IID_IInternetHostSecurityManager>
 
 ifndef _LPINTERNETSECURITYMGRSITE_DEFINED
 define _LPINTERNETSECURITYMGRSITE_DEFINED
@@ -1658,17 +1336,8 @@ DEFINE_IIDX(ISoftDistExt, "B15B8DC1-C7E1-11d0-8680-00AA00BDCB71")
 
 endif
 
-;STDAPI
-GetSoftwareUpdateInfo proto WINAPI \
-	    szDistUnit: LPCWSTR,
-		  psdi: LPSOFTDISTINFO
-
-;STDAPI
-SetSoftwareUpdateAdvertisementState proto WINAPI \
-	    szDistUnit: LPCWSTR,
-	     dwAdState: DWORD,
- dwAdvertisedVersionMS: DWORD,
- dwAdvertisedVersionLS: DWORD
+GetSoftwareUpdateInfo proto WINAPI :LPCWSTR, :LPSOFTDISTINFO
+SetSoftwareUpdateAdvertisementState proto WINAPI :LPCWSTR, :DWORD, :DWORD, :DWORD
 
 endif
 ifndef _LPDATAFILTER_DEFINED
@@ -1725,11 +1394,8 @@ endif
 endif
 ifndef _HITLOGGING_DEFINED
 define _HITLOGGING_DEFINED
-;BOOL
-IsLoggingEnabledA proto WINAPI \
-		pszUrl: LPCTSTR
-IsLoggingEnalbedW proto WINAPI \
-	       pwszUrl: LPCWSTR
+IsLoggingEnabledA proto WINAPI :LPCTSTR
+IsLoggingEnalbedW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 IsLoggingEnabled	equ <IsLoggingEnabledW>
 else
@@ -1744,9 +1410,6 @@ lpszExtendedInfo	LPSTR ?
 HIT_LOGGING_INFO	ENDS
 LPHIT_LOGGING_INFO	typedef ptr HIT_LOGGING_INFO
 
-;BOOL
-WriteHitLogging proto WINAPI \
-	 lpLogginginfo: LPHIT_LOGGING_INFO
-
+WriteHitLogging proto WINAPI :LPHIT_LOGGING_INFO
 endif
 endif

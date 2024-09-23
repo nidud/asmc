@@ -161,17 +161,8 @@ CALLBACK(PFNCALLBACK, :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :DWORD, :DWOR
 
 CBR_BLOCK		equ 0xffffffff
 
-;UINT
-DdeInitializeA proto WINAPI \
-	       pidInst: LPDWORD,
-	   pfnCallback: PFNCALLBACK,
-		 afCmd: DWORD,
-		 ulRes: DWORD
-DdeInitializeW proto WINAPI \
-	       pidInst: LPDWORD,
-	   pfnCallback: PFNCALLBACK,
-		 afCmd: DWORD,
-		 ulRes: DWORD
+DdeInitializeA proto WINAPI :LPDWORD, :PFNCALLBACK, :DWORD, :DWORD
+DdeInitializeW proto WINAPI :LPDWORD, :PFNCALLBACK, :DWORD, :DWORD
 ifdef _UNICODE
 DdeInitialize		equ <DdeInitializeW>
 else
@@ -199,139 +190,43 @@ APPCMD_MASK		equ 0x00000FF0
 APPCLASS_STANDARD	equ 0x00000000
 APPCLASS_MASK		equ 0x0000000F
 
-;BOOL
-DdeUninitialize proto WINAPI \
-		idInst: DWORD
-
-
-;HCONVLIST
-DdeConnectList proto WINAPI \
-		idInst: DWORD,
-	    hszService: HSZ,
-	      hszTopic: HSZ,
-	     hConvList: HCONVLIST,
-		   pCC: PCONVCONTEXT
-
-;HCONV
-DdeQueryNextServer proto WINAPI \
-	     hConvList: HCONVLIST,
-	     hConvPrev: HCONV
-;BOOL
-DdeDisconnectList proto WINAPI \
-	     hConvList: HCONVLIST
-
-;HCONV
-DdeConnect proto WINAPI \
-	       idInst: DWORD,
-	   hszService: HSZ,
-	     hszTopic: HSZ,
-		  pCC: PCONVCONTEXT
-;BOOL
-DdeDisconnect proto WINAPI \
-		 hConv: HCONV
-;HCONV
-DdeReconnect proto WINAPI \
-		 hConv: HCONV
-;UINT
-DdeQueryConvInfo proto WINAPI \
-		 hConv: HCONV,
-	 idTransaction: DWORD,
-	     pConvInfo: PCONVINFO
-;BOOL
-DdeSetUserHandle proto WINAPI \
-		 hConv: HCONV,
-		    id: DWORD,
-		 hUser: DWORD
-;BOOL
-DdeAbandonTransaction proto WINAPI \
-		idInst: DWORD,
-		 hConv: HCONV,
-	 idTransaction: DWORD
-
-;BOOL
-DdePostAdvise proto WINAPI \
-		idInst: DWORD,
-	      hszTopic: HSZ,
-	       hszItem: HSZ
-;BOOL
-DdeEnableCallback proto WINAPI \
-		idInst: DWORD,
-		 hConv: HCONV,
-		  wCmd: UINT
-;BOOL
-DdeImpersonateClient proto WINAPI \
-		 hConv: HCONV
+DdeUninitialize proto WINAPI :DWORD
+DdeConnectList proto WINAPI :DWORD, :HSZ, :HSZ, :HCONVLIST, :PCONVCONTEXT
+DdeQueryNextServer proto WINAPI :HCONVLIST, :HCONV
+DdeDisconnectList proto WINAPI :HCONVLIST
+DdeConnect proto WINAPI :DWORD, :HSZ, :HSZ, :PCONVCONTEXT
+DdeDisconnect proto WINAPI :HCONV
+DdeReconnect proto WINAPI :HCONV
+DdeQueryConvInfo proto WINAPI :HCONV, :DWORD, :PCONVINFO
+DdeSetUserHandle proto WINAPI :HCONV, :DWORD, :DWORD
+DdeAbandonTransaction proto WINAPI :DWORD, :HCONV, :DWORD
+DdePostAdvise proto WINAPI :DWORD, :HSZ, :HSZ
+DdeEnableCallback proto WINAPI :DWORD, :HCONV, :UINT
+DdeImpersonateClient proto WINAPI :HCONV
 
 EC_ENABLEALL		equ 0
 EC_ENABLEONE		equ ST_BOCKNEXT
 EC_DISABLE		equ ST_BOCKED
 EC_QUERYWAITING		equ 2
 
-;HDDEDATA
-DdeNameService proto WINAPI \
-		idInst: DWORD,
-		  hsz1: HSZ,
-		  hsz2: HSZ,
-		 afCmd: UINT
+DdeNameService proto WINAPI :DWORD, :HSZ, :HSZ, :UINT
 
 DNS_REGISTER		equ 0x0001
 DNS_UNREGISTER		equ 0x0002
 DNS_FILTERON		equ 0x0004
 DNS_FILTEROFF		equ 0x0008
 
-;HDDEDATA
-DdeClientTransaction proto WINAPI \
-		 pData: LPBYTE,
-		cbData: DWORD,
-		 hConv: HCONV,
-	       hszItem: HSZ,
-		  wFmt: UINT,
-		 wType: UINT,
-	     dwTimeout: DWORD,
-	     pdwResult: LPDWORD
-
-;HDDEDATA
-DdeCreateDataHandle proto WINAPI \
-		idInst: DWORD,
-		  pSrc: LPBYTE,
-		    cb: DWORD,
-		 cbOff: DWORD,
-	       hszItem: HSZ,
-		  wFmt: UINT,
-		 afCmd: UINT
-
-;HDDEDATA
-DdeAddData proto WINAPI \
-		 hData: HDDEDATA,
-		  pSrc: LPBYTE,
-		    cb: DWORD,
-		 cbOff: DWORD
-
-;DWORD
-DdeGetData proto WINAPI \
-		 hData: HDDEDATA,
-		  pDst: LPBYTE,
-		 cbMax: DWORD,
-		 cbOff: DWORD
-
-;LPBYTE
-DdeAccessData proto WINAPI \
-		 hData: HDDEDATA,
-	   pcbDataSize: LPDWORD
-
-;BOOL
-DdeUnaccessData proto WINAPI \
-		 hData: HDDEDATA
-
-;BOOL
-DdeFreeDataHandle proto WINAPI \
-		 hData: HDDEDATA
+DdeClientTransaction proto WINAPI :LPBYTE, :DWORD, :HCONV, :HSZ, :UINT, :UINT, :DWORD, :LPDWORD
+DdeCreateDataHandle proto WINAPI :DWORD, :LPBYTE, :DWORD, :DWORD, :HSZ, :UINT, :UINT
+DdeAddData proto WINAPI :HDDEDATA, :LPBYTE, :DWORD, :DWORD
+DdeGetData proto WINAPI :HDDEDATA, :LPBYTE, :DWORD, :DWORD
+DdeAccessData proto WINAPI :HDDEDATA, :LPDWORD
+DdeUnaccessData proto WINAPI :HDDEDATA
+DdeFreeDataHandle proto WINAPI :HDDEDATA
 
 HDATA_APPOWNED		equ 0x0001
 
-;UINT
-DdeGetLastError proto WINAPI \
-		idInst: DWORD
+DdeGetLastError proto WINAPI :DWORD
 
 DMLERR_NO_ERROR		equ 0
 DMLERR_FIRST		equ 0x4000
@@ -355,50 +250,23 @@ DMLERR_UNADVACKTIMEOUT	equ 0x4010
 DMLERR_UNFOUND_QUEUE_ID equ 0x4011
 DMLERR_LAST		equ 0x4011
 
-;HSZ
-DdeCreateStringHandleA proto WINAPI \
-		idInst: DWORD,
-		   psz: LPCSTR,
-	     iCodePage: SINT
-DdeCreateStringHandleW proto WINAPI \
-		idInst: DWORD,
-		   psz: LPCWSTR,
-	     iCodePage: SINT
+DdeCreateStringHandleA proto WINAPI :DWORD, :LPCSTR, :SINT
+DdeCreateStringHandleW proto WINAPI :DWORD, :LPCWSTR, :SINT
 ifdef _UNICODE
 DdeCreateStringHandle	equ <DdeCreateStringHandleW>
 else
 DdeCreateStringHandle	equ <DdeCreateStringHandleA>
 endif
-;DWORD
-DdeQueryStringA proto WINAPI \
-		idInst: DWORD,
-		   hsz: HSZ,
-		   psz: LPSTR,
-		cchMax: DWORD,
-	     iCodePage: SINT
-DdeQueryStringW proto WINAPI \
-		idInst: DWORD,
-		   hsz: HSZ,
-		   psz: LPWSTR,
-		cchMax: DWORD,
-	     iCodePage: SINT
+DdeQueryStringA proto WINAPI :DWORD, :HSZ, :LPSTR, :DWORD, :SINT
+DdeQueryStringW proto WINAPI :DWORD, :HSZ, :LPWSTR, :DWORD, :SINT
 ifdef _UNICODE
 DdeQueryString		equ <DdeQueryStringW>
 else
 DdeQueryString		equ <DdeQueryStringA>
 endif
-;BOOL
-DdeFreeStringHandle proto WINAPI \
-		idInst: DWORD,
-		   hsz: HSZ
-;BOOL
-DdeKeepStringHandle proto WINAPI \
-		idInst: DWORD,
-		   hsz: HSZ
-;int
-DdeCmpStringHandles proto WINAPI \
-		  hsz1: HSZ,
-		  hsz2: HSZ
+DdeFreeStringHandle proto WINAPI :DWORD, :HSZ
+DdeKeepStringHandle proto WINAPI :DWORD, :HSZ
+DdeCmpStringHandles proto WINAPI :HSZ, :HSZ
 
 ifndef NODDEMLSPY
 

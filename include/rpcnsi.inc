@@ -19,374 +19,78 @@ RPC_C_PROFILE_MATCH_BY_BOTH	equ 4
 RPC_C_NS_DEFAULT_EXP_AGE	equ -1
 
 
-;RPC_STATUS
-RpcNsBindingExportA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE,
-		IfSpec: RPC_IF_HANDLE,
-	    BindingVec: ptr RPC_BINDING_VECTOR,
-	 ObjectUuidVec: ptr UUID_VECTOR
-
-
-;RPC_STATUS
-RpcNsBindingUnexportA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE,
-		IfSpec: RPC_IF_HANDLE,
-	 ObjectUuidVec: ptr UUID_VECTOR
+RpcNsBindingExportA proto WINAPI :DWORD, :LPBYTE, :RPC_IF_HANDLE, :ptr, :ptr
+RpcNsBindingUnexportA proto WINAPI :DWORD, :LPBYTE, :RPC_IF_HANDLE, :ptr
+ifdef RPC_UNICODE_SUPPORTED
+RpcNsBindingExportW proto WINAPI :DWORD, :LPWORD, :RPC_IF_HANDLE, :ptr, :ptr
+RpcNsBindingUnexportW proto WINAPI :DWORD, :LPWORD, :RPC_IF_HANDLE, :ptr
+endif
+RpcNsBindingLookupBeginA proto WINAPI :DWORD, :LPBYTE, :RPC_IF_HANDLE, :ptr, :DWORD, :ptr
+ifdef RPC_UNICODE_SUPPORTED
+RpcNsBindingLookupBeginW proto WINAPI :DWORD, :LPWORD, :RPC_IF_HANDLE, :ptr, :DWORD, :ptr
+endif
+RpcNsBindingLookupNext proto WINAPI :RPC_NS_HANDLE, :ptr
+RpcNsBindingLookupDone proto WINAPI :ptr
+RpcNsGroupDeleteA proto WINAPI :DWORD, :LPBYTE
+RpcNsGroupMbrAddA proto WINAPI :DWORD, :LPBYTE, :DWORD, :LPBYTE
+RpcNsGroupMbrRemoveA proto WINAPI :DWORD, :LPBYTE, :DWORD, :LPBYTE
+RpcNsGroupMbrInqBeginA proto WINAPI :DWORD, :LPBYTE, :DWORD, :ptr
+RpcNsGroupMbrInqNextA proto WINAPI :RPC_NS_HANDLE, :LPBYTE
 
 ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-RpcNsBindingExportW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD,
-		IfSpec: RPC_IF_HANDLE,
-	    BindingVec: ptr RPC_BINDING_VECTOR,
-	 ObjectUuidVec: ptr UUID_VECTOR
-
-;RPC_STATUS
-RpcNsBindingUnexportW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD,
-		IfSpec: RPC_IF_HANDLE,
-	 ObjectUuidVec: ptr UUID_VECTOR
-
+RpcNsGroupDeleteW proto WINAPI :DWORD, :LPWORD
+RpcNsGroupMbrAddW proto WINAPI :DWORD, :LPWORD, :DWORD, :LPWORD
+RpcNsGroupMbrRemoveW proto WINAPI :DWORD, :LPWORD, :DWORD, :LPWORD
+RpcNsGroupMbrInqBeginW proto WINAPI :DWORD, :LPWORD, :DWORD, :ptr
+RpcNsGroupMbrInqNextW proto WINAPI :RPC_NS_HANDLE, :LPWORD
 endif
-
-
-;RPC_STATUS
-RpcNsBindingLookupBeginA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE,
-		IfSpec: RPC_IF_HANDLE,
-	       ObjUuid: ptr UUID,
-       BindingMaxCount: DWORD,
-	 LookupContext: ptr RPC_NS_HANDLE
+RpcNsGroupMbrInqDone proto WINAPI :ptr
+RpcNsProfileDeleteA proto WINAPI :DWORD, :LPBYTE
+RpcNsProfileEltAddA proto WINAPI :DWORD, :LPBYTE, :ptr, :DWORD, :LPBYTE, :DWORD, :LPBYTE
+RpcNsProfileEltRemoveA proto WINAPI :DWORD, :LPBYTE, :ptr, :DWORD, :LPBYTE
+RpcNsProfileEltInqBeginA proto WINAPI :DWORD, :LPBYTE, :DWORD, :ptr, :DWORD, :DWORD, :LPBYTE, :ptr
+RpcNsProfileEltInqNextA proto WINAPI :RPC_NS_HANDLE, :ptr, :LPBYTE, :LPDWORD, :LPBYTE
 
 ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-RpcNsBindingLookupBeginW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD,
-		IfSpec: RPC_IF_HANDLE,
-	       ObjUuid: ptr UUID,
-       BindingMaxCount: DWORD,
-	 LookupContext: ptr RPC_NS_HANDLE
+RpcNsProfileDeleteW proto WINAPI :DWORD, :LPWORD
+RpcNsProfileEltAddW proto WINAPI :DWORD, :LPWORD, :ptr, :DWORD, :LPWORD, :DWORD, :LPWORD
+RpcNsProfileEltRemoveW proto WINAPI :DWORD, :LPWORD, :ptr, :DWORD, :LPWORD
+RpcNsProfileEltInqBeginW proto WINAPI :DWORD, :LPWORD, :DWORD, :ptr, :DWORD, :DWORD, :LPWORD, :ptr
+RpcNsProfileEltInqNextW proto WINAPI :RPC_NS_HANDLE, :ptr, :LPWORD, :LPDWORD, :LPWORD
 endif
 
-;RPC_STATUS
-RpcNsBindingLookupNext proto WINAPI \
-	 LookupContext: RPC_NS_HANDLE,
-	    BindingVec: ptr RPC_BINDING_VECTOR
+RpcNsProfileEltInqDone proto WINAPI :ptr
+RpcNsEntryObjectInqBeginA proto WINAPI :DWORD, :LPBYTE, :ptr
+ifdef RPC_UNICODE_SUPPORTED
+RpcNsEntryObjectInqBeginW proto WINAPI :DWORD, :LPWORD, :ptr
+endif
 
-;RPC_STATUS
-RpcNsBindingLookupDone proto WINAPI \
-	 LookupContext: ptr RPC_NS_HANDLE
-
-
-;RPC_STATUS
-RpcNsGroupDeleteA proto WINAPI \
-       GroupNameSyntax: DWORD,
-	     GroupName: LPBYTE
-
-;RPC_STATUS
-RpcNsGroupMbrAddA proto WINAPI \
-       GroupNameSyntax: DWORD,
-	     GroupName: LPBYTE,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPBYTE
-
-;RPC_STATUS
-RpcNsGroupMbrRemoveA proto WINAPI \
-       GroupNameSyntax: DWORD,
-	     GroupName: LPBYTE,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPBYTE
-
-;RPC_STATUS
-RpcNsGroupMbrInqBeginA proto WINAPI \
-       GroupNameSyntax: DWORD,
-	     GroupName: LPBYTE,
-      MemberNameSyntax: DWORD,
-	InquiryContext: ptr RPC_NS_HANDLE
-
-;RPC_STATUS
-RpcNsGroupMbrInqNextA proto WINAPI \
-	InquiryContext: RPC_NS_HANDLE,
-	    MemberName: LPBYTE
+RpcNsEntryObjectInqNext proto WINAPI :RPC_NS_HANDLE, :ptr
+RpcNsEntryObjectInqDone proto WINAPI :ptr
+RpcNsEntryExpandNameA proto WINAPI :DWORD, :LPBYTE, :LPBYTE
+RpcNsMgmtBindingUnexportA proto WINAPI :DWORD, :LPBYTE, :ptr, :DWORD, :ptr
+RpcNsMgmtEntryCreateA proto WINAPI :DWORD, :LPBYTE
+RpcNsMgmtEntryDeleteA proto WINAPI :DWORD, :LPBYTE
+RpcNsMgmtEntryInqIfIdsA proto WINAPI :DWORD, :LPBYTE, :ptr
+RpcNsMgmtHandleSetExpAge proto WINAPI :RPC_NS_HANDLE, :DWORD
+RpcNsMgmtInqExpAge proto WINAPI :LPDWORD
+RpcNsMgmtSetExpAge proto WINAPI :DWORD
 
 ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-RpcNsGroupDeleteW proto WINAPI \
-       GroupNameSyntax: DWORD,
-	     GroupName: LPWORD
-
-;RPC_STATUS
-RpcNsGroupMbrAddW proto WINAPI \
-       GroupNameSyntax: DWORD,
-	     GroupName: LPWORD,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPWORD
-
-;RPC_STATUS
-RpcNsGroupMbrRemoveW proto WINAPI \
-       GroupNameSyntax: DWORD,
-	     GroupName: LPWORD,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPWORD
-
-;RPC_STATUS
-RpcNsGroupMbrInqBeginW proto WINAPI \
-       GroupNameSyntax: DWORD,
-	     GroupName: LPWORD,
-      MemberNameSyntax: DWORD,
-	InquiryContext: ptr RPC_NS_HANDLE
-
-;RPC_STATUS
-RpcNsGroupMbrInqNextW proto WINAPI \
-	InquiryContext: RPC_NS_HANDLE,
-	    MemberName: LPWORD
-
+RpcNsEntryExpandNameW proto WINAPI :DWORD, :LPWORD, :LPWORD
+RpcNsMgmtBindingUnexportW proto WINAPI :DWORD, :LPWORD, :ptr, :DWORD, :ptr
+RpcNsMgmtEntryCreateW proto WINAPI :DWORD, :LPWORD
+RpcNsMgmtEntryDeleteW proto WINAPI :DWORD, :LPWORD
+RpcNsMgmtEntryInqIfIdsW proto WINAPI :DWORD, :LPWORD, :ptr
 endif
 
-;RPC_STATUS
-RpcNsGroupMbrInqDone proto WINAPI \
-	InquiryContext: ptr RPC_NS_HANDLE
-
-
-;RPC_STATUS
-RpcNsProfileDeleteA proto WINAPI \
-     ProfileNameSyntax: DWORD,
-	   ProfileName: LPBYTE
-
-;RPC_STATUS
-RpcNsProfileEltAddA proto WINAPI \
-     ProfileNameSyntax: DWORD,
-	   ProfileName: LPBYTE,
-		  IfId: ptr RPC_IF_ID,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPBYTE,
-	      Priority: DWORD,
-	    Annotation: LPBYTE
-
-;RPC_STATUS
-RpcNsProfileEltRemoveA proto WINAPI \
-     ProfileNameSyntax: DWORD,
-	   ProfileName: LPBYTE,
-		  IfId: ptr RPC_IF_ID,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPBYTE
-
-;RPC_STATUS
-RpcNsProfileEltInqBeginA proto WINAPI \
-     ProfileNameSyntax: DWORD,
-	   ProfileName: LPBYTE,
-	   InquiryType: DWORD,
-		  IfId: ptr RPC_IF_ID,
-	    VersOption: DWORD,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPBYTE,
-	InquiryContext: ptr RPC_NS_HANDLE
-
-;RPC_STATUS
-RpcNsProfileEltInqNextA proto WINAPI \
-	InquiryContext: RPC_NS_HANDLE,
-		  IfId: ptr RPC_IF_ID,
-	    MemberName: LPBYTE,
-	      Priority: LPDWORD,
-	    Annotation: LPBYTE
-
+RpcNsBindingImportBeginA proto WINAPI :DWORD, :LPBYTE, :RPC_IF_HANDLE, :ptr, :ptr
 ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-RpcNsProfileDeleteW proto WINAPI \
-     ProfileNameSyntax: DWORD,
-	   ProfileName: LPWORD
-
-;RPC_STATUS
-RpcNsProfileEltAddW proto WINAPI \
-     ProfileNameSyntax: DWORD,
-	   ProfileName: LPWORD,
-		  IfId: ptr RPC_IF_ID,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPWORD,
-	      Priority: DWORD,
-	    Annotation: LPWORD
-
-;RPC_STATUS
-RpcNsProfileEltRemoveW proto WINAPI \
-     ProfileNameSyntax: DWORD,
-	   ProfileName: LPWORD,
-		  IfId: ptr RPC_IF_ID,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPWORD
-
-;RPC_STATUS
-RpcNsProfileEltInqBeginW proto WINAPI \
-     ProfileNameSyntax: DWORD,
-	   ProfileName: LPWORD,
-	   InquiryType: DWORD,
-		  IfId: ptr RPC_IF_ID,
-	    VersOption: DWORD,
-      MemberNameSyntax: DWORD,
-	    MemberName: LPWORD,
-	InquiryContext: ptr RPC_NS_HANDLE
-
-;RPC_STATUS
-RpcNsProfileEltInqNextW proto WINAPI \
-	InquiryContext: RPC_NS_HANDLE,
-		  IfId: ptr RPC_IF_ID,
-	    MemberName: LPWORD,
-	      Priority: LPDWORD,
-	    Annotation: LPWORD
-
+RpcNsBindingImportBeginW proto WINAPI :DWORD, :LPWORD, :RPC_IF_HANDLE, :ptr, :ptr
 endif
-
-;RPC_STATUS
-RpcNsProfileEltInqDone proto WINAPI \
-	InquiryContext: ptr RPC_NS_HANDLE
-
-
-;RPC_STATUS
-RpcNsEntryObjectInqBeginA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE,
-	InquiryContext: ptr RPC_NS_HANDLE
-
-ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-RpcNsEntryObjectInqBeginW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD,
-	InquiryContext: ptr RPC_NS_HANDLE
-
-endif
-
-;RPC_STATUS
-RpcNsEntryObjectInqNext proto WINAPI \
-	InquiryContext: RPC_NS_HANDLE,
-	       ObjUuid: ptr UUID
-
-;RPC_STATUS
-RpcNsEntryObjectInqDone proto WINAPI \
-	InquiryContext: ptr RPC_NS_HANDLE
-
-
-;RPC_STATUS
-RpcNsEntryExpandNameA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE,
-	  ExpandedName: LPBYTE
-
-;RPC_STATUS
-RpcNsMgmtBindingUnexportA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE,
-		  IfId: ptr RPC_IF_ID,
-	    VersOption: DWORD,
-	 ObjectUuidVec: ptr UUID_VECTOR
-
-;RPC_STATUS
-RpcNsMgmtEntryCreateA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE
-
-;RPC_STATUS
-RpcNsMgmtEntryDeleteA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE
-
-;RPC_STATUS
-RpcNsMgmtEntryInqIfIdsA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE,
-	       IfIdVec: ptr RPC_IF_ID_VECTOR
-
-;RPC_STATUS
-RpcNsMgmtHandleSetExpAge proto WINAPI \
-	      NsHandle: RPC_NS_HANDLE,
-	 ExpirationAge: DWORD
-
-;RPC_STATUS
-RpcNsMgmtInqExpAge proto WINAPI \
-	 ExpirationAge: LPDWORD
-
-;RPC_STATUS
-RpcNsMgmtSetExpAge proto WINAPI \
-	 ExpirationAge: DWORD
-
-ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-RpcNsEntryExpandNameW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD,
-	  ExpandedName: LPWORD
-
-;RPC_STATUS
-RpcNsMgmtBindingUnexportW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD,
-		  IfId: ptr RPC_IF_ID,
-	    VersOption: DWORD,
-	 ObjectUuidVec: ptr UUID_VECTOR
-
-;RPC_STATUS
-RpcNsMgmtEntryCreateW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD
-
-;RPC_STATUS
-RpcNsMgmtEntryDeleteW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD
-
-;RPC_STATUS
-RpcNsMgmtEntryInqIfIdsW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD,
-	       IfIdVec: ptr RPC_IF_ID_VECTOR
-
-endif
-
-
-;RPC_STATUS
-RpcNsBindingImportBeginA proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPBYTE,
-		IfSpec: RPC_IF_HANDLE,
-	       ObjUuid: ptr UUID,
-	 ImportContext: ptr RPC_NS_HANDLE
-
-ifdef RPC_UNICODE_SUPPORTED
-
-;RPC_STATUS
-RpcNsBindingImportBeginW proto WINAPI \
-       EntryNameSyntax: DWORD,
-	     EntryName: LPWORD,
-		IfSpec: RPC_IF_HANDLE,
-	       ObjUuid: ptr UUID,
-	 ImportContext: ptr RPC_NS_HANDLE
-
-endif
-
-;RPC_STATUS
-RpcNsBindingImportNext proto WINAPI \
-	 ImportContext: RPC_NS_HANDLE,
-	       Binding: ptr RPC_BINDING_HANDLE
-
-;RPC_STATUS
-RpcNsBindingImportDone proto WINAPI \
-	 ImportContext: ptr RPC_NS_HANDLE
-
-;RPC_STATUS
-RpcNsBindingSelect proto WINAPI \
-	    BindingVec: ptr RPC_BINDING_VECTOR,
-	       Binding: ptr RPC_BINDING_HANDLE
+RpcNsBindingImportNext proto WINAPI :RPC_NS_HANDLE, :ptr
+RpcNsBindingImportDone proto WINAPI :ptr
+RpcNsBindingSelect proto WINAPI :ptr, :ptr
 
 ifdef _UNICODE
 

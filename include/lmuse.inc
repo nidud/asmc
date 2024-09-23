@@ -4,37 +4,10 @@ define _LMUSE_
 include lmcons.inc
 include lmuseflg.inc
 
-;NET_API_STATUS
-NetUseAdd proto WINAPI \
-	 UncServerName: LMSTR,
-		 Level: DWORD,
-		   Buf: LPBYTE,
-	     ParmError: LPDWORD
-
-;NET_API_STATUS
-NetUseDel proto WINAPI \
-	 UncServerName: LMSTR,
-	       UseName: LMSTR,
-	     ForceCond: DWORD
-
-;NET_API_STATUS
-NetUseEnum proto WINAPI \
-	 UncServerName: LMSTR,
-		 Level: DWORD,
-		BufPtr: ptr LPBYTE,
-   PreferedMaximumSize: DWORD,
-	   EntriesRead: LPDWORD,
-	  TotalEntries: LPDWORD,
-	  ResumeHandle: LPDWORD
-
-
-;NET_API_STATUS
-NetUseGetInfo proto WINAPI \
-	 UncServerName: LMSTR,
-	       UseName: LMSTR,
-		 Level: DWORD,
-		BufPtr: ptr LPBYTE
-
+NetUseAdd proto WINAPI :LMSTR, :DWORD, :LPBYTE, :LPDWORD
+NetUseDel proto WINAPI :LMSTR, :LMSTR, :DWORD
+NetUseEnum proto WINAPI :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetUseGetInfo proto WINAPI :LMSTR, :LMSTR, :DWORD, :ptr
 
 USE_INFO_0		STRUC
 ui0_local		LMSTR ?

@@ -1103,49 +1103,13 @@ DEFINE_IIDX(IWICImagingFactory2, "7B816B45-1996-4476-B132-DE9E247C8AF0")
 endif
 
 endif
-;HRESULT
-WICConvertBitmapSource proto __cdecl \
-	     dstFormat: REFWICPixelFormatGUID,
-		 pISrc: ptr IWICBitmapSource,
-		ppIDst: ptr ptr IWICBitmapSource
 
-;HRESULT
-WICCreateBitmapFromSection proto __cdecl \
-		 width: UINT,
-		height: UINT,
-	   pixelFormat: REFWICPixelFormatGUID,
-	      hSection: HANDLE,
-		stride: UINT,
-	       _offset: UINT,
-	     ppIBitmap: ptr ptr IWICBitmap
-;HRESULT
-WICCreateBitmapFromSectionEx proto __cdecl \
-		 width: UINT,
-		height: UINT,
-	   pixelFormat: REFWICPixelFormatGUID,
-	      hSection: HANDLE,
-		stride: UINT,
-	       _offset: UINT,
-    desiredAccessLevel: WICSectionAccessLevel,
-	     ppIBitmap: ptr ptr IWICBitmap
-;HRESULT
-WICMapGuidToShortName proto __cdecl \
-		  guid: REFGUID,
-	       cchName: UINT,
-		wzName: ptr WCHAR,
-	    pcchActual: ptr UINT
-;HRESULT
-WICMapShortNameToGuid proto __cdecl \
-		wzName: PCWSTR,
-		 pguid: ptr GUID
-
-;HRESULT
-WICMapSchemaToName proto __cdecl \
-    guidMetadataFormat: REFGUID,
-	     pwzSchema: LPWSTR,
-	       cchName: UINT,
-		wzName: ptr WCHAR,
-	    pcchActual: ptr UINT
+WICConvertBitmapSource proto __cdecl :REFWICPixelFormatGUID, :ptr, :ptr
+WICCreateBitmapFromSection proto __cdecl :UINT, :UINT, :REFWICPixelFormatGUID, :HANDLE, :UINT, :UINT, :ptr
+WICCreateBitmapFromSectionEx proto __cdecl :UINT, :UINT, :REFWICPixelFormatGUID, :HANDLE, :UINT, :UINT, :WICSectionAccessLevel, :ptr
+WICMapGuidToShortName proto __cdecl :REFGUID, :UINT, :ptr, :ptr
+WICMapShortNameToGuid proto __cdecl :PCWSTR, :ptr
+WICMapSchemaToName proto __cdecl :REFGUID, :LPWSTR, :UINT, :ptr, :ptr
 
 FACILITY_WINCODEC_ERR	equ 0x898
 WINCODEC_ERR_BASE	equ 0x2000
@@ -1433,20 +1397,20 @@ HICON_UserMarshal proto WINAPI :ptr, :ptr, :ptr
 HICON_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
 HICON_UserFree proto WINAPI :ptr, :ptr
 
-HPALETTE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr HPALETTE
-HPALETTE_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HPALETTE
-HPALETTE_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HPALETTE
-HPALETTE_UserFree proto WINAPI :ptr DWORD, :ptr HPALETTE
+HPALETTE_UserSize proto WINAPI :ptr, :DWORD, :ptr
+HPALETTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserFree proto WINAPI :ptr, :ptr
 
 LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
 LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
 LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
 LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
 
-WICInProcPointer_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr WICInProcPointer
-WICInProcPointer_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr WICInProcPointer
-WICInProcPointer_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr WICInProcPointer
-WICInProcPointer_UserFree proto WINAPI :ptr DWORD, :ptr WICInProcPointer
+WICInProcPointer_UserSize proto WINAPI :ptr, :DWORD, :ptr
+WICInProcPointer_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+WICInProcPointer_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+WICInProcPointer_UserFree proto WINAPI :ptr, :ptr
 
 endif
 .pragma list(pop)

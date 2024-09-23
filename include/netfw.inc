@@ -26,15 +26,7 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-;HRESULT
-NetworkIsolationSetupAppContainerBinaries proto WINAPI \
-applicationContainerSid: PSID,
-       packageFullName: LPCWSTR,
-	 packageFolder: LPCWSTR,
-	   displayName: LPCWSTR,
-bBinariesFullyComputed: BOOL,
-	      binaries: ptr LPCWSTR,
-	 binariesCount: DWORD
+NetworkIsolationSetupAppContainerBinaries proto WINAPI :PSID, :LPCWSTR, :LPCWSTR, :LPCWSTR, :BOOL, :ptr LPCWSTR, :DWORD
 
 ifndef __NET_ISOLATION_TYPES__
 define __NET_ISOLATION_TYPES__
@@ -102,42 +94,14 @@ PINET_FIREWALL_APP_CONTAINER typedef ptr INET_FIREWALL_APP_CONTAINER
 endif ; __NET_ISOLATION_TYPES__
 
 CALLBACK(PAC_CHANGES_CALLBACK_FN, :ptr, :ptr)
-;DWORD
-NetworkIsolationRegisterForAppContainerChanges proto WINAPI \
-		 flags: DWORD,
-	      callback: PAC_CHANGES_CALLBACK_FN,
-	       context: PVOID,
-    registrationObject: ptr HANDLE
 
-;DWORD
-NetworkIsolationUnregisterForAppContainerChanges proto WINAPI \
-    registrationObject: HANDLE
-
-;HRESULT
-NetworkIsolationEnumerateAppContainerRules proto WINAPI \
-	       newEnum: ptr IEnumVARIANT
-
-
-;DWORD
-NetworkIsolationFreeAppContainers proto WINAPI \
-	  pPublicAppCs: PINET_FIREWALL_APP_CONTAINER
-
-
-;DWORD
-NetworkIsolationEnumAppContainers proto WINAPI \
-		 Flags: DWORD,
-     pdwNumPublicAppCs: ptr DWORD,
-	 ppPublicAppCs: ptr PINET_FIREWALL_APP_CONTAINER
-
-;DWORD
-NetworkIsolationGetAppContainerConfig proto WINAPI \
-     pdwNumPublicAppCs: ptr DWORD,
-      appContainerSids: ptr PSID_AND_ATTRIBUTES
-
-;DWORD
-NetworkIsolationSetAppContainerConfig proto WINAPI \
-      dwNumPublicAppCs: DWORD,
-      appContainerSids: PSID_AND_ATTRIBUTES
+NetworkIsolationRegisterForAppContainerChanges proto WINAPI :DWORD, :PAC_CHANGES_CALLBACK_FN, :ptr, :ptr
+NetworkIsolationUnregisterForAppContainerChanges proto WINAPI :HANDLE
+NetworkIsolationEnumerateAppContainerRules proto WINAPI :ptr
+NetworkIsolationFreeAppContainers proto WINAPI :PINET_FIREWALL_APP_CONTAINER
+NetworkIsolationEnumAppContainers proto WINAPI :DWORD, :ptr, :ptr
+NetworkIsolationGetAppContainerConfig proto WINAPI :ptr, :ptr
+NetworkIsolationSetAppContainerConfig proto WINAPI :DWORD, :PSID_AND_ATTRIBUTES
 
 ifndef __NET_ISOLATION_DIAG_TYPES__
 define __NET_ISOLATION_DIAG_TYPES__
@@ -150,10 +114,7 @@ define __NET_ISOLATION_DIAG_TYPES__
     }
 endif
 
-;DWORD
-NetworkIsolationDiagnoseConnectFailureAndGetInfo proto WINAPI \
-	 wszServerName: LPCWSTR,
-	   netIsoError: ptr NETISO_ERROR_TYPE
+NetworkIsolationDiagnoseConnectFailureAndGetInfo proto WINAPI :LPCWSTR, :ptr
 
 ifndef __INetFwRemoteAdminSettings_INTERFACE_DEFINED__
 define __INetFwRemoteAdminSettings_INTERFACE_DEFINED__

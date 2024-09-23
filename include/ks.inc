@@ -413,8 +413,7 @@ KSCOMPONENTID		ENDS
 PKSCOMPONENTID		typedef ptr KSCOMPONENTID
 
 DEFINE_KSPROPERTY_ITEM_GENERAL_COMPONENTID macro Handler
-    DEFINE_KSPROPERTY_ITEM(KSPROPERTY_GENERAL_COMPONENTID,Handler,\
-	KSPROPERTY, KSCOMPONENTID, NULL, NULL, 0, NULL, NULL, 0)
+    DEFINE_KSPROPERTY_ITEM(KSPROPERTY_GENERAL_COMPONENTID,Handler, KSPROPERTY, KSCOMPONENTID, NULL, NULL, 0, NULL, NULL, 0)
     endm
 
 STATIC_KSMETHODSETID_StreamIo equ <{0x65D003CA,0x1523,0x11D2,{0xB2,0x7A,0x00,0xA0,0xC9,0x22,0x31,0x96}}>
@@ -424,13 +423,11 @@ KSMETHOD_STREAMIO_READ	equ 0
 KSMETHOD_STREAMIO_WRITE equ 1
 
 DEFINE_KSMETHOD_ITEM_STREAMIO_READ macro Handler
-    DEFINE_KSMETHOD_ITEM(KSMETHOD_STREAMIO_READ,KSMETHOD_TYPE_WRITE,Handler,\
-	KSMETHOD, 0, NULL)
+    DEFINE_KSMETHOD_ITEM(KSMETHOD_STREAMIO_READ,KSMETHOD_TYPE_WRITE,Handler,KSMETHOD, 0, NULL)
     endm
 
 DEFINE_KSMETHOD_ITEM_STREAMIO_WRITE macro Handler
-    DEFINE_KSMETHOD_ITEM(KSMETHOD_STREAMIO_WRITE,KSMETHOD_TYPE_READ,Handler,\
-	KSMETHOD, 0, NULL)
+    DEFINE_KSMETHOD_ITEM(KSMETHOD_STREAMIO_WRITE,KSMETHOD_TYPE_READ,Handler,KSMETHOD, 0, NULL)
     endm
 
 STATIC_KSPROPSETID_MediaSeeking equ <{0xEE904F0C,0xD09B,0x11D0,{0xAB,0xE9,0x00,0xA0,0xC9,0x22,0x31,0x96}}>
@@ -548,9 +545,7 @@ ifdef _NTDDK_
 STATIC_KSPROPSETID_GM	equ <{0xAF627536,0xE719,0x11D2,{0x8A,0x1D,0x00,0x60,0x97,0xD2,0xDF,0x5D}}>
 DEFINE_GUIDSTRUCT("AF627536-E719-11D2-8A1D-006097D2DF5D", KSPROPSETID_GM)
 
-CALLBACK(PFNKSGRAPHMANAGER_NOTIFY,GraphManager:PFILE_OBJECT,\
-	  EventId:ULONG, Filter:PVOID, Pin:PVOID, Frame:PVOID, Duration:ULONG)
-
+CALLBACK(PFNKSGRAPHMANAGER_NOTIFY, :PFILE_OBJECT, :ULONG, :ptr, :ptr, :ptr, :ULONG)
 
 KSGRAPHMANAGER_FUNCTIONTABLE  STRUC
 NotifyEvent		PFNKSGRAPHMANAGER_NOTIFY ?
@@ -832,10 +827,8 @@ KSPIN_PHYSICALCONNECTION ENDS
 PKSPIN_PHYSICALCONNECTION typedef ptr KSPIN_PHYSICALCONNECTION
 
 ifdef _NTDDK_
-;NTSTATUS
-CALLBACK(PFNKSINTERSECTHANDLER, :PIRP, :PKSP_PIN, :PKSDATARANGE, :PVOID)
-CALLBACK(PFNKSINTERSECTHANDLEREX, :PVOID, :PIRP, :PKSP_PIN, :PKSDATARANGE,\
-	:PKSDATARANGE, :ULONG, :PVOID, :PULONG)
+CALLBACK(PFNKSINTERSECTHANDLER, :PIRP, :PKSP_PIN, :PKSDATARANGE, :ptr)
+CALLBACK(PFNKSINTERSECTHANDLEREX, :ptr, :PIRP, :PKSP_PIN, :PKSDATARANGE, :PKSDATARANGE, :ULONG, :ptr, :PULONG)
 endif
 
 DEFINE_KSPIN_INTERFACE_TABLE macro tablename
@@ -945,14 +938,11 @@ DEFINE_KSPIN_DESCRIPTOR_TABLE macro tablename
 tablename label KSPIN_DESCRIPTOR
 	endm
 
-DEFINE_KSPIN_DESCRIPTOR_ITEM macro InterfacesCount, Interfaces,\
-    MediumsCount, Mediums, DataRangesCount, DataRanges,\
-    DataFlow, Communication
-
+DEFINE_KSPIN_DESCRIPTOR_ITEM macro InterfacesCount, Interfaces, MediumsCount, Mediums, DataRangesCount, DataRanges, DataFlow, Communication
     InterfacesCount, Interfaces, MediumsCount, Mediums
     DataRangesCount, DataRanges, DataFlow, Communication
     NULL, NULL, 0
-	endm
+    endm
 
 endif
 
@@ -1379,8 +1369,7 @@ DEFINE_KSPROPERTY_ITEM_CLOCK_STATE macro Handler
 DEFINE_KSPROPERTY_ITEM_CLOCK_FUNCTIONTABLE macro Handler
 	endm
 
-DEFINE_KSPROPERTY_CLOCKSET macro ClockSet, PropTime, PropPhysicalTime, PropCorrelatedTime, \
-	PropCorrelatedPhysicalTime, PropResolution, PropState, PropFunctionTable
+DEFINE_KSPROPERTY_CLOCKSET macro ClockSet, PropTime, PropPhysicalTime, PropCorrelatedTime, PropCorrelatedPhysicalTime, PropResolution, PropState, PropFunctionTable
 	DEFINE_KSPROPERTY_TABLE(ClockSet)
 	DEFINE_KSPROPERTY_ITEM_CLOCK_TIME(PropTime)
 	DEFINE_KSPROPERTY_ITEM_CLOCK_PHYSICALTIME(PropPhysicalTime)
@@ -1817,109 +1806,46 @@ KSGATE			ENDS
 PKSGATE			typedef ptr KSGATE
 
 ifndef _NTOS_
-
-;void
-KsGateTurnInputOn proto WINAPI \
-		  Gate: PKSGATE
-
-;void
-KsGateTurnInputOff proto WINAPI \
-		  Gate: PKSGATE
-
-;BOOLEAN
-KsGateGetStateUnsafe proto WINAPI \
-		  Gate: PKSGATE
-
-;BOOLEAN
-KsGateCaptureThreshold proto WINAPI \
-		  Gate: PKSGATE
-
-;void
-KsGateInitialize proto WINAPI \
-		  Gate: PKSGATE,
-	  InitialCount: LONG,
-	      NextGate: PKSGATE,
-      StateToPropagate: BOOLEAN
-
-;void
-KsGateInitializeAnd proto WINAPI \
-	       AndGate: PKSGATE,
-	   NextAndGate: PKSGATE
-
-;void
-KsGateInitializeOr proto WINAPI \
-		OrGate: PKSGATE,
-	    NextOrGate: PKSGATE
-
-
-;void
-KsGateTerminateAnd proto WINAPI \
-	       AndGate: PKSGATE
-
-;void
-KsGateTerminateOr proto WINAPI \
-		OrGate: PKSGATE
-endif ;; !_NTOS_
-
+KsGateTurnInputOn proto WINAPI :PKSGATE
+KsGateTurnInputOff proto WINAPI :PKSGATE
+KsGateGetStateUnsafe proto WINAPI :PKSGATE
+KsGateCaptureThreshold proto WINAPI :PKSGATE
+KsGateInitialize proto WINAPI :PKSGATE, :LONG, :PKSGATE, :BOOLEAN
+KsGateInitializeAnd proto WINAPI :PKSGATE, :PKSGATE
+KsGateInitializeOr proto WINAPI :PKSGATE, :PKSGATE
+KsGateTerminateAnd proto WINAPI :PKSGATE
+KsGateTerminateOr proto WINAPI :PKSGATE
+endif
 KSOBJECT_BAG		typedef PVOID
 
-;BOOLEAN
 CALLBACK(PFNKSGENERATEEVENTCALLBACK, :PVOID, :PKSEVENT_ENTRY)
 
-;NTSTATUS
 CALLBACK(PFNKSDEVICECREATE, :PKSDEVICE)
-;NTSTATUS
 CALLBACK(PFNKSDEVICEPNPSTART, :PKSDEVICE, :PIRP, :PCM_RESOURCE_LIST, :PCM_RESOURCE_LIST)
-;NTSTATUS
 CALLBACK(PFNKSDEVICE, :PKSDEVICE)
-;NTSTATUS
 CALLBACK(PFNKSDEVICEIRP, :PKSDEVICE, :PIRP)
-void
 CALLBACK(PFNKSDEVICEIRPVOID, :PKSDEVICE, :PIRP)
-;NTSTATUS
 CALLBACK(PFNKSDEVICEQUERYCAPABILITIES, :PKSDEVICE, :PIRP, :PDEVICE_CAPABILITIES)
-;NTSTATUS
-CALLBACK(PFNKSDEVICEQUERYPOWER, :PKSDEVICE, :PIRP, :DEVICE_POWER_STATE, :DEVICE_POWER_STATE,\
- :SYSTEM_POWER_STATE, :SYSTEM_POWER_STATE, :POWER_ACTION)
-;void
+CALLBACK(PFNKSDEVICEQUERYPOWER, :PKSDEVICE, :PIRP, :DEVICE_POWER_STATE, :DEVICE_POWER_STATE, :SYSTEM_POWER_STATE, :SYSTEM_POWER_STATE, :POWER_ACTION)
 CALLBACK(PFNKSDEVICESETPOWER, :PKSDEVICE, :PIRP, :DEVICE_POWER_STATE, :DEVICE_POWER_STATE)
-;NTSTATUS
 CALLBACK(PFNKSFILTERFACTORYVOID, :PKSFILTERFACTORY)
-;void
 CALLBACK(PFNKSFILTERFACTORYPOWER, :PKSFILTERFACTORY, :DEVICE_POWER_STATE)
-;NTSTATUS
 CALLBACK(PFNKSFILTERIRP, :PKSFILTER, :PIRP)
-;NTSTATUS
 CALLBACK(PFNKSFILTERPROCESS, :PKSFILTER, :PKSPROCESSPIN_INDEXENTRY)
-;NTSTATUS
 CALLBACK(PFNKSFILTERVOID, :PKSFILTER)
-;void
 CALLBACK(PFNKSFILTERPOWER, :PKSFILTER, :DEVICE_POWER_STATE)
-;NTSTATUS
 CALLBACK(PFNKSPINIRP, :PKSPIN, :PIRP)
-;NTSTATUS
 CALLBACK(PFNKSPINSETDEVICESTATE, :PKSPIN, :KSSTATE, :KSSTATE)
-;NTSTATUS
 CALLBACK(PFNKSPINSETDATAFORMAT, :PKSPIN, :PKSDATAFORMAT, :PKSMULTIPLE_ITEM, :ptr KSDATARANGE, :ptr KSATTRIBUTE_LIST)
-;NTSTATUS
 CALLBACK(PFNKSPINHANDSHAKE, :PKSPIN, :PKSHANDSHAKE, :PKSHANDSHAKE)
-;NTSTATUS
 CALLBACK(PFNKSPIN, :PKSPIN)
-;void
 CALLBACK(PFNKSPINVOID, :PKSPIN)
-;void
 CALLBACK(PFNKSPINPOWER, :PKSPIN, :DEVICE_POWER_STATE)
-;BOOLEAN
 CALLBACK(PFNKSPINSETTIMER, :PKSPIN, :PKTIMER, :LARGE_INTEGER, :PKDPC)
-;BOOLEAN
 CALLBACK(PFNKSPINCANCELTIMER, :PKSPIN, :PKTIMER)
-;LONGLONG
 CALLBACK(PFNKSPINCORRELATEDTIME, FASTCALL, :PKSPIN, :PLONGLONG)
-;void
 CALLBACK(PFNKSPINRESOLUTION, :PKSPIN, :PKSRESOLUTION)
-;NTSTATUS
 CALLBACK(PFNKSPININITIALIZEALLOCATOR, :PKSPIN, :PKSALLOCATOR_FRAMING, :PVOID)
-;void
 CALLBACK(PFNKSSTREAMPOINTER, :PKSSTREAM_POINTER)
 
 KSAUTOMATION_TABLE	STRUC
@@ -2287,257 +2213,43 @@ endif
 
 ifdef _NTDDK_
 
-;NTAPI
-KsEnableEvent proto WINAPI \
-		   Irp: PIRP,
-	EventSetsCount: ULONG,
-	      EventSet: ptr KSEVENT_SET,
-	    EventsList: PLIST_ENTRY,
-	   EventsFlags: KSEVENTS_LOCKTYPE,
-	    EventsLock: PVOID
-
-;NTAPI
-KsEnableEventWithAllocator proto WINAPI \
-		   Irp: PIRP,
-	EventSetsCount: ULONG,
-	      EventSet: ptr KSEVENT_SET,
-	    EventsList: PLIST_ENTRY,
-  EventsFlags OPTIONAL: KSEVENTS_LOCKTYPE,
-	    EventsLock: PVOID,
-	     Allocator: PFNKSALLOCATOR,
-	 EventItemSize: ULONG
-
-;NTAPI
-KsDisableEvent proto WINAPI \
-		   Irp: PIRP,
-	    EventsList: PLIST_ENTRY,
-	   EventsFlags: KSEVENTS_LOCKTYPE,
-	    EventsLock: PVOID
-
-;VOID
-KsDiscardEvent proto WINAPI \
-	    EventEntry: PKSEVENT_ENTRY
-
-;VOID
-KsFreeEventList proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-	    EventsList: PLIST_ENTRY,
-	   EventsFlags: KSEVENTS_LOCKTYPE,
-	    EventsLock: PVOID
-
-;NTAPI
-KsGenerateEvent proto WINAPI \
-	    EventEntry: PKSEVENT_ENTRY
-
-;NTAPI
-KsGenerateDataEvent proto WINAPI \
-	    EventEntry: PKSEVENT_ENTRY,
-	      DataSize: ULONG,
-		 _Data: PVOID
-
-;VOID
-KsGenerateEventList proto WINAPI \
-		   Set: GUID*,
-	       EventId: ULONG,
-	    EventsList: PLIST_ENTRY,
-	   EventsFlags: KSEVENTS_LOCKTYPE,
-	    EventsLock: PVOID
-
-;NTAPI
-KsPropertyHandler proto WINAPI \
-		   Irp: PIRP,
-     PropertySetsCount: ULONG,
-	   PropertySet: KSPROPERTY_SET
-
-;NTAPI
-KsPropertyHandlerWithAllocator proto WINAPI \
-		   Irp: PIRP,
-     PropertySetsCount: ULONG,
-	   PropertySet: ptr KSPROPERTY_SET,
-	     Allocator: PFNKSALLOCATOR,
-      PropertyItemSize: ULONG
-
-;BOOLEAN
-KsFastPropertyHandler proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-	      Property: PKSPROPERTY,
-	PropertyLength: ULONG,
-		  Data: PVOID,
-	    DataLength: ULONG,
-	      IoStatus: PIO_STATUS_BLOCK,
-     PropertySetsCount: ULONG,
-	   PropertySet: ptr KSPROPERTY_SET
-
-
-;NTAPI
-KsMethodHandler proto WINAPI \
-		   Irp: PIRP,
-       MethodSetsCount: ULONG,
-	     MethodSet: ptr KSMETHOD_SET
-
-;NTAPI
-KsMethodHandlerWithAllocator proto WINAPI \
-		   Irp: PIRP,
-       MethodSetsCount: ULONG,
-	     MethodSet: ptr KSMETHOD_SET,
-	     Allocator: PFNKSALLOCATOR,
-	MethodItemSize: ULONG
-
-;BOOLEAN
-KsFastMethodHandler proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-		Method: PKSMETHOD,
-	  MethodLength: ULONG,
-		  Data: PVOID,
-	    DataLength: ULONG,
-	      IoStatus: PIO_STATUS_BLOCK,
-       MethodSetsCount: ULONG,
-	     MethodSet: ptr KSMETHOD_SET
-
-;NTAPI
-KsCreateDefaultAllocator proto WINAPI \
-		   Irp: PIRP
-
-;NTAPI
-KsCreateDefaultAllocatorEx proto WINAPI \
-		   Irp: PIRP,
-     InitializeContext: PVOID,
-       DefaultAllocate: PFNKSDEFAULTALLOCATE,
-	   DefaultFree: PFNKSDEFAULTFREE,
-   InitializeAllocator: PFNKSINITIALIZEALLOCATOR,
-       DeleteAllocator: PFNKSDELETEALLOCATOR
-
-;NTAPI
-KsCreateAllocator proto WINAPI \
-      ConnectionHandle: HANDLE,
-      AllocatorFraming: PKSALLOCATOR_FRAMING,
-       AllocatorHandle: PHANDLE
-
-
-;NTAPI
-KsValidateAllocatorCreateRequest proto WINAPI \
-		   Irp: PIRP,
-      AllocatorFraming: ptr PKSALLOCATOR_FRAMING
-
-
-;NTAPI
-KsValidateAllocatorFramingEx proto WINAPI \
-	       Framing: PKSALLOCATOR_FRAMING_EX,
-	    BufferSize: ULONG,
-	    PinFraming: ptr KSALLOCATOR_FRAMING_EX
-
-;NTAPI
-KsAllocateDefaultClock proto WINAPI \
-	  DefaultClock: ptr PKSDEFAULTCLOCK
-
-
+KsEnableEvent proto WINAPI :PIRP, :ULONG, :ptr KSEVENT_SET, :PLIST_ENTRY, :KSEVENTS_LOCKTYPE, :ptr
+KsEnableEventWithAllocator proto WINAPI :PIRP, :ULONG, :ptr KSEVENT_SET, :PLIST_ENTRY, :KSEVENTS_LOCKTYPE, :ptr, :PFNKSALLOCATOR, :ULONG
+KsDisableEvent proto WINAPI :PIRP, :PLIST_ENTRY, :KSEVENTS_LOCKTYPE, :ptr
+KsDiscardEvent proto WINAPI :PKSEVENT_ENTRY
+KsFreeEventList proto WINAPI :PFILE_OBJECT, :PLIST_ENTRY, :KSEVENTS_LOCKTYPE, :ptr
+KsGenerateEvent proto WINAPI :PKSEVENT_ENTRY
+KsGenerateDataEvent proto WINAPI :PKSEVENT_ENTRY, :ULONG, :ptr
+KsGenerateEventList proto WINAPI :ptr, :ULONG, :PLIST_ENTRY, :KSEVENTS_LOCKTYPE, :ptr
+KsPropertyHandler proto WINAPI :PIRP, :ULONG, :KSPROPERTY_SET
+KsPropertyHandlerWithAllocator proto WINAPI :PIRP, :ULONG, :ptr, :PFNKSALLOCATOR, :ULONG
+KsFastPropertyHandler proto WINAPI :PFILE_OBJECT, :PKSPROPERTY, :ULONG, :ptr, :ULONG, :PIO_STATUS_BLOCK, :ULONG, :ptr
+KsMethodHandler proto WINAPI :PIRP, :ULONG, :ptr
+KsMethodHandlerWithAllocator proto WINAPI :PIRP, :ULONG, :ptr, :PFNKSALLOCATOR, :ULONG
+KsFastMethodHandler proto WINAPI :PFILE_OBJECT, :PKSMETHOD, :ULONG, :ptr, :ULONG, :PIO_STATUS_BLOCK, :ULONG, :ptr
+KsCreateDefaultAllocator proto WINAPI :PIRP
+KsCreateDefaultAllocatorEx proto WINAPI :PIRP, :ptr, :PFNKSDEFAULTALLOCATE, :PFNKSDEFAULTFREE, :PFNKSINITIALIZEALLOCATOR, :PFNKSDELETEALLOCATOR
+KsCreateAllocator proto WINAPI :HANDLE, :PKSALLOCATOR_FRAMING, :PHANDLE
+KsValidateAllocatorCreateRequest proto WINAPI :PIRP, :ptr
+KsValidateAllocatorFramingEx proto WINAPI :PKSALLOCATOR_FRAMING_EX, :ULONG, :ptr
+KsAllocateDefaultClock proto WINAPI :ptr
 if (NTDDI_VERSION GE NTDDI_WINXP)
-
-;NTAPI
-KsAllocateDefaultClockEx proto WINAPI \
-	  DefaultClock: ptr PKSDEFAULTCLOCK,
-	       Context: PVOID,
-	      SetTimer: PFNKSSETTIMER,
-	   CancelTimer: PFNKSCANCELTIMER,
-	CorrelatedTime: PFNKSCORRELATEDTIME,
-	    Resolution: ptr KSRESOLUTION,
-		 Flags: ULONG
-
-
+KsAllocateDefaultClockEx proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ULONG
 endif
-
-;VOID
-KsFreeDefaultClock proto WINAPI \
-	  DefaultClock: PKSDEFAULTCLOCK
-
-
-;NTAPI
-KsCreateDefaultClock proto WINAPI \
-		   Irp: PIRP,
-	  DefaultClock: PKSDEFAULTCLOCK
-
-
-;NTAPI
-KsCreateClock proto WINAPI \
-      ConnectionHandle: HANDLE,
-	   ClockCreate: PKSCLOCK_CREATE,
-	   ClockHandle: PHANDLE
-
-
-;NTAPI
-KsValidateClockCreateRequest proto WINAPI \
-		   Irp: PIRP,
-	   ClockCreate: PKSCLOCK_CREATE*
-
-;NTAPI
-KsGetDefaultClockState proto WINAPI \
-	  DefaultClock: PKSDEFAULTCLOCK
-
-;VOID
-KsSetDefaultClockState proto WINAPI \
-	  DefaultClock: PKSDEFAULTCLOCK,
-		 State: KSSTATE
-
-;LONGLONG
-KsGetDefaultClockTime proto WINAPI \
-	  DefaultClock: PKSDEFAULTCLOCK
-
-;VOID
-KsSetDefaultClockTime proto WINAPI \
-	  DefaultClock: PKSDEFAULTCLOCK,
-		  Time: LONGLONG
-
-;NTAPI
-KsCreatePin proto WINAPI \
-	  FilterHandle: HANDLE,
-	       Connect: PKSPIN_CONNECT,
-	 DesiredAccess: ACCESS_MASK,
-      ConnectionHandle: PHANDLE
-
-;NTAPI
-KsValidateConnectRequest proto WINAPI \
-		   Irp: PIRP,
-      DescriptorsCount: ULONG,
-	    Descriptor: ptr KSPIN_DESCRIPTOR,
-	       Connect: ptr PKSPIN_CONNECT
-
-;NTAPI
-KsPinPropertyHandler proto WINAPI \
-		   Irp: PIRP,
-	      Property: PKSPROPERTY,
-		  Data: PVOID,
-      DescriptorsCount: ULONG,
-	    Descriptor: ptr KSPIN_DESCRIPTOR
-
-;NTAPI
-KsPinDataIntersection proto WINAPI \
-		   Irp: PIRP,
-		   Pin: PKSP_PIN,
-		  Data: PVOID,
-      DescriptorsCount: ULONG,
-	    Descriptor: ptr KSPIN_DESCRIPTOR,
-      IntersectHandler: PFNKSINTERSECTHANDLER
-
-
-;NTAPI
-KsPinDataIntersectionEx proto WINAPI \
-		   Irp: PIRP,
-		   Pin: PKSP_PIN,
-		  Data: PVOID,
-      DescriptorsCount: ULONG,
-	    Descriptor: ptr KSPIN_DESCRIPTOR,
-	DescriptorSize: ULONG,
-      IntersectHandler: PFNKSINTERSECTHANDLEREX,
-	HandlerContext: PVOID
-
-
-;NTAPI
-KsHandleSizedListQuery proto WINAPI \
-		   Irp: PIRP,
-	DataItemsCount: ULONG,
-	  DataItemSize: ULONG,
-	     DataItems: PVOID
-
+KsFreeDefaultClock proto WINAPI :PKSDEFAULTCLOCK
+KsCreateDefaultClock proto WINAPI :PIRP, :PKSDEFAULTCLOCK
+KsCreateClock proto WINAPI :HANDLE, :PKSCLOCK_CREATE, :PHANDLE
+KsValidateClockCreateRequest proto WINAPI :PIRP, :ptr
+KsGetDefaultClockState proto WINAPI :PKSDEFAULTCLOCK
+KsSetDefaultClockState proto WINAPI :PKSDEFAULTCLOCK, :KSSTATE
+KsGetDefaultClockTime proto WINAPI :PKSDEFAULTCLOCK
+KsSetDefaultClockTime proto WINAPI :PKSDEFAULTCLOCK, :LONGLONG
+KsCreatePin proto WINAPI :HANDLE, :PKSPIN_CONNECT, :ACCESS_MASK, :PHANDLE
+KsValidateConnectRequest proto WINAPI :PIRP, :ULONG, :ptr, :ptr
+KsPinPropertyHandler proto WINAPI :PIRP, :PKSPROPERTY, :ptr, :ULONG, :ptr
+KsPinDataIntersection proto WINAPI :PIRP, :PKSP_PIN, :ptr, :ULONG, :ptr, :PFNKSINTERSECTHANDLER
+KsPinDataIntersectionEx proto WINAPI :PIRP, :PKSP_PIN, :ptr, :ULONG, :ptr, :ULONG, :PFNKSINTERSECTHANDLEREX, :ptr
+KsHandleSizedListQuery proto WINAPI :PIRP, :ULONG, :ULONG, :ptr
 
 if ( NOT defined( MAKEINTRESOURCE ))
 MAKEINTRESOURCE macro res
@@ -2550,1074 +2262,196 @@ RT_STRING		equ MAKEINTRESOURCE( 6 )
 RT_RCDATA		equ MAKEINTRESOURCE( 10 )
 endif
 
-;NTAPI
-KsLoadResource proto WINAPI \
-	     ImageBase: PVOID,
-	      PoolType: POOL_TYPE,
-	  ResourceName: ULONG_PTR,
-	  ResourceType: ULONG,
-	      Resource: ptr PVOID,
-	  ResourceSize: PULONG
-
-;NTAPI
-KsGetImageNameAndResourceId proto WINAPI \
-		RegKey: HANDLE,
-	     ImageName: PUNICODE_STRING,
-	    ResourceId: PULONG_PTR,
-	     ValueType: PULONG
-
-;NTAPI
-KsMapModuleName proto WINAPI \
-  PhysicalDeviceObject: PDEVICE_OBJECT,
-	    ModuleName: PUNICODE_STRING,
-	     ImageName: PUNICODE_STRING,
-	    ResourceId: PULONG_PTR,
-	     ValueType: PULONG
-
-;NTAPI
-KsReferenceBusObject proto WINAPI \
-		Header: KSDEVICE_HEADER
-
-;VOID
-KsDereferenceBusObject proto WINAPI \
-		Header: KSDEVICE_HEADER
-
-;NTAPI
-KsDispatchQuerySecurity proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT,
-		   Irp: PIRP
-
-;NTAPI
-KsDispatchSetSecurity proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT,
-		   Irp: PIRP
-
-;NTAPI
-KsDispatchSpecificProperty proto WINAPI \
-		   Irp: PIRP,
-	       Handler: PFNKSHANDLER
-
-;NTAPI
-KsDispatchSpecificMethod proto WINAPI \
-		   Irp: PIRP,
-	       Handler: PFNKSHANDLER
-
-;NTAPI
-KsReadFile proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-		 Event: PKEVENT,
-	   PortContext: PVOID,
-	 IoStatusBlock: PIO_STATUS_BLOCK,
-		Buffer: PVOID,
-		Length: ULONG,
-	  Key OPTIONAL: ULONG,
-	 RequestorMode: KPROCESSOR_MODE
-
-;NTAPI
-KsWriteFile proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-		 Event: PKEVENT,
-	   PortContext: PVOID,
-	 IoStatusBlock: PIO_STATUS_BLOCK,
-		Buffer: PVOID,
-		Length: ULONG,
-	  Key OPTIONAL: ULONG,
-	 RequestorMode: KPROCESSOR_MODE
-
-
-;NTAPI
-KsQueryInformationFile proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-       FileInformation: PVOID,
-		Length: ULONG,
-  FileInformationClass: FILE_INFORMATION_CLASS
-
-
-;NTAPI
-KsSetInformationFile proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-       FileInformation: PVOID,
-		Length: ULONG,
-  FileInformationClass: FILE_INFORMATION_CLASS
-
-
-;NTAPI
-KsStreamIo proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-		 Event: PKEVENT,
-	   PortContext: PVOID,
-     CompletionRoutine: PIO_COMPLETION_ROUTINE,
-     CompletionContext: PVOID,
-CompletionInvocationFlags: KSCOMPLETION_INVOCATION,
-	 IoStatusBlock: PIO_STATUS_BLOCK,
-	 StreamHeaders: PVOID,
-		Length: ULONG,
-		 Flags: ULONG,
-	 RequestorMode: KPROCESSOR_MODE
-
-;NTAPI
-KsProbeStreamIrp proto WINAPI \
-		   Irp: PIRP,
-	    ProbeFlags: ULONG,
-	    HeaderSize: ULONG
-
-
-;NTAPI
-KsAllocateExtraData proto WINAPI \
-		   Irp: PIRP,
-	     ExtraSize: ULONG,
-	   ExtraBuffer: PVOID
-
-
-;VOID
-KsNullDriverUnload proto WINAPI \
-	  DriverObject: PDRIVER_OBJECT
-
-
-;NTAPI
-KsSetMajorFunctionHandler proto WINAPI \
-	  DriverObject: PDRIVER_OBJECT,
-	 MajorFunction: ULONG
-
-
-;NTAPI
-KsDispatchInvalidDeviceRequest proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT,
-		   Irp: PIRP
-
-
-;NTAPI
-KsDefaultDeviceIoCompletion proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT,
-		   Irp: PIRP
-
-
-;NTAPI
-KsDispatchIrp proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT,
-		   Irp: PIRP
-
-
-;BOOLEAN
-KsDispatchFastIoDeviceControlFailure proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-		 _Wait: BOOLEAN,
-	   InputBuffer: PVOID,
-     InputBufferLength: ULONG,
-	  OutputBuffer: PVOID,
-    OutputBufferLength: ULONG,
-	 IoControlCode: ULONG,
-	      IoStatus: PIO_STATUS_BLOCK,
-	  DeviceObject: PDEVICE_OBJECT
-
-;BOOLEAN
-KsDispatchFastReadFailure proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-	    FileOffset: PLARGE_INTEGER,
-		Length: ULONG,
-		 _Wait: BOOLEAN,
-	       LockKey: ULONG,
-		Buffer: PVOID,
-	      IoStatus: PIO_STATUS_BLOCK,
-	  DeviceObject: PDEVICE_OBJECT
-
-
-KsDispatchFastWriteFailure equ KsDispatchFastReadFailure
-
-DRIVER_CANCEL KsCancelRoutine;
-
-;VOID
-KsCancelIo proto WINAPI \
-	     QueueHead: PLIST_ENTRY,
-	      SpinLock: PKSPIN_LOCK
-
-
-;VOID
-KsReleaseIrpOnCancelableQueue proto WINAPI \
-		   Irp: PIRP,
-	  DriverCancel: PDRIVER_CANCEL
-
-
-;NTAPI
-KsRemoveIrpFromCancelableQueue proto WINAPI \
-	     QueueHead: PLIST_ENTRY,
-	      SpinLock: PKSPIN_LOCK,
-	  ListLocation: KSLIST_ENTRY_LOCATION,
-      RemovalOperation: KSIRP_REMOVAL_OPERATION
-
-;NTAPI
-KsMoveIrpsOnCancelableQueue proto WINAPI \
-	    SourceList: PLIST_ENTRY,
-	    SourceLock: PKSPIN_LOCK,
-       DestinationList: PLIST_ENTRY,
-       DestinationLock: PKSPIN_LOCK,
-	  ListLocation: KSLIST_ENTRY_LOCATION,
-	  ListCallback: PFNKSIRPLISTCALLBACK,
-	       Context: PVOID
-
-
-;VOID
-KsRemoveSpecificIrpFromCancelableQueue proto WINAPI \
-		   Irp: PIRP
-
-
-;VOID
-KsAddIrpToCancelableQueue proto WINAPI \
-	     QueueHead: PLIST_ENTRY,
-	      SpinLock: PKSPIN_LOCK,
-		   Irp: PIRP,
-	  ListLocation: KSLIST_ENTRY_LOCATION,
-	  DriverCancel: PDRIVER_CANCEL
-
-
-;NTAPI
-KsAcquireResetValue proto WINAPI \
-		   Irp: PIRP,
-	    ResetValue: ptr KSRESET
-
-
-;NTAPI
-KsTopologyPropertyHandler proto WINAPI \
-		   Irp: PIRP,
-	      Property: PKSPROPERTY,
-		  Data: PVOID,
-	      Topology: ptr KSTOPOLOGY
-
-
-;VOID
-KsAcquireDeviceSecurityLock proto WINAPI \
-		Header: KSDEVICE_HEADER,
-	     Exclusive: BOOLEAN
-
-
-;VOID
-KsReleaseDeviceSecurityLock proto WINAPI \
-		Header: KSDEVICE_HEADER
-
-
-;VOID
-KsSetDevicePnpAndBaseObject proto WINAPI \
-		Header: KSDEVICE_HEADER,
-       PnpDeviceObject: PDEVICE_OBJECT,
-	    BaseObject: PDEVICE_OBJECT
-
-
-;NTAPI
-KsQueryDevicePnpObject proto WINAPI \
-		Header: KSDEVICE_HEADER
-
-;NTAPI
-KsQueryObjectAccessMask proto WINAPI \
-		Header: KSOBJECT_HEADER
-
-;VOID
-KsRecalculateStackDepth proto WINAPI \
-		Header: KSDEVICE_HEADER,
-    ReuseStackLocation: BOOLEAN
-
-
-;VOID
-KsSetTargetState proto WINAPI \
-		Header: KSOBJECT_HEADER,
-	   TargetState: KSTARGET_STATE
-
-
-;VOID
-KsSetTargetDeviceObject proto WINAPI \
-		Header: KSOBJECT_HEADER,
-	  TargetDevice: PDEVICE_OBJECT
-
-
-;VOID
-KsSetPowerDispatch proto WINAPI \
-		Header: KSOBJECT_HEADER,
-	 PowerDispatch: PFNKSCONTEXT_DISPATCH,
-	  PowerContext: PVOID
-
-
-;NTAPI
-KsQueryObjectCreateItem proto WINAPI \
-		Header: KSOBJECT_HEADER
-
-;NTAPI
-KsAllocateDeviceHeader proto WINAPI \
-		Header: ptr KSDEVICE_HEADER,
-	    ItemsCount: ULONG,
-	     ItemsList: PKSOBJECT_CREATE_ITEM
-
-;VOID
-KsFreeDeviceHeader proto WINAPI \
-		Header: KSDEVICE_HEADER
-
-
-;NTAPI
-KsAllocateObjectHeader proto WINAPI \
-		Header: ptr KSOBJECT_HEADER,
-	    ItemsCount: ULONG,
-	     ItemsList: PKSOBJECT_CREATE_ITEM,
-		   Irp: PIRP,
-		 Table: ptr KSDISPATCH_TABLE
-
-
-;VOID
-KsFreeObjectHeader proto WINAPI \
-		Header: KSOBJECT_HEADER
-
-
-;NTAPI
-KsAddObjectCreateItemToDeviceHeader proto WINAPI \
-		Header: KSDEVICE_HEADER,
-		Create: PDRIVER_DISPATCH,
-	       Context: PVOID,
-	   ObjectClass: PWSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR
-
-
-;NTAPI
-KsAddObjectCreateItemToObjectHeader proto WINAPI \
-		Header: KSOBJECT_HEADER,
-		Create: PDRIVER_DISPATCH,
-	       Context: PVOID,
-	   ObjectClass: PWSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR
-
-
-;NTAPI
-KsAllocateObjectCreateItem proto WINAPI \
-		Header: KSDEVICE_HEADER,
-	    CreateItem: PKSOBJECT_CREATE_ITEM,
-	 AllocateEntry: BOOLEAN,
-      ItemFreeCallback: PFNKSITEMFREECALLBACK
-
-
-;NTAPI
-KsFreeObjectCreateItem proto WINAPI \
-		Header: KSDEVICE_HEADER,
-	    CreateItem: PUNICODE_STRING
-
-
-;NTAPI
-KsFreeObjectCreateItemsByContext proto WINAPI \
-		Header: KSDEVICE_HEADER,
-	       Context: PVOID
-
-
-;NTAPI
-KsCreateDefaultSecurity proto WINAPI \
-	ParentSecurity: PSECURITY_DESCRIPTOR,
-       DefaultSecurity: PSECURITY_DESCRIPTOR*
-
-
-;NTAPI
-KsForwardIrp proto WINAPI \
-		   Irp: PIRP,
-	    FileObject: PFILE_OBJECT,
-    ReuseStackLocation: BOOLEAN
-
-
-;NTAPI
-KsForwardAndCatchIrp proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT,
-		   Irp: PIRP,
-	    FileObject: PFILE_OBJECT,
-	      StackUse: KSSTACK_USE
-
-
-;NTAPI
-KsSynchronousIoControlDevice proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-	 RequestorMode: KPROCESSOR_MODE,
-	     IoControl: ULONG,
-	      InBuffer: PVOID,
-		InSize: ULONG,
-	     OutBuffer: PVOID,
-	       OutSize: ULONG,
-	 BytesReturned: PULONG
-
-
-;NTAPI
-KsUnserializeObjectPropertiesFromRegistry proto WINAPI \
-	    FileObject: PFILE_OBJECT,
-	     ParentKey: HANDLE,
-	  RegistryPath: PUNICODE_STRING
-
-
+KsLoadResource proto WINAPI :ptr, :POOL_TYPE, :ULONG_PTR, :ULONG, :ptr, :PULONG
+KsGetImageNameAndResourceId proto WINAPI :HANDLE, :PUNICODE_STRING, :PULONG_PTR, :PULONG
+KsMapModuleName proto WINAPI :PDEVICE_OBJECT, :PUNICODE_STRING, :PUNICODE_STRING, :PULONG_PTR, :PULONG
+KsReferenceBusObject proto WINAPI :KSDEVICE_HEADER
+KsDereferenceBusObject proto WINAPI :KSDEVICE_HEADER
+KsDispatchQuerySecurity proto WINAPI :PDEVICE_OBJECT, :PIRP
+KsDispatchSetSecurity proto WINAPI :PDEVICE_OBJECT, :PIRP
+KsDispatchSpecificProperty proto WINAPI :PIRP, :PFNKSHANDLER
+KsDispatchSpecificMethod proto WINAPI :PIRP, :PFNKSHANDLER
+KsReadFile proto WINAPI :PFILE_OBJECT, :PKEVENT, :ptr, :PIO_STATUS_BLOCK, :ptr, :ULONG, :ULONG, :KPROCESSOR_MODE
+KsWriteFile proto WINAPI :PFILE_OBJECT, :PKEVENT, :ptr, :PIO_STATUS_BLOCK, :ptr, :ULONG, :ULONG, :KPROCESSOR_MODE
+KsQueryInformationFile proto WINAPI :PFILE_OBJECT, :ptr, :ULONG, :FILE_INFORMATION_CLASS
+KsSetInformationFile proto WINAPI :PFILE_OBJECT, :ptr, :ULONG, :FILE_INFORMATION_CLASS
+KsStreamIo proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :KSCOMPLETION_INVOCATION, :ptr, :ptr, :ULONG, :ULONG, :KPROCESSOR_MODE
+KsProbeStreamIrp proto WINAPI :PIRP, :ULONG, :ULONG
+KsAllocateExtraData proto WINAPI :PIRP, :ULONG, :ptr
+KsNullDriverUnload proto WINAPI :PDRIVER_OBJECT
+KsSetMajorFunctionHandler proto WINAPI :PDRIVER_OBJECT, :ULONG
+KsDispatchInvalidDeviceRequest proto WINAPI :PDEVICE_OBJECT, :PIRP
+KsDefaultDeviceIoCompletion proto WINAPI :PDEVICE_OBJECT, :PIRP
+KsDispatchIrp proto WINAPI :PDEVICE_OBJECT, :PIRP
+KsDispatchFastIoDeviceControlFailure proto WINAPI :ptr, :BOOLEAN, :ptr, :ULONG, :ptr, :ULONG, :ULONG, :ptr, :ptr
+KsDispatchFastReadFailure proto WINAPI :ptr, :ptr, :ULONG, :BOOLEAN, :ULONG, :ptr, :ptr, :ptr
+
+KsDispatchFastWriteFailure equ <KsDispatchFastReadFailure>
+
+KsCancelIo proto WINAPI :PLIST_ENTRY, :PKSPIN_LOCK
+KsReleaseIrpOnCancelableQueue proto WINAPI :PIRP, :PDRIVER_CANCEL
+KsRemoveIrpFromCancelableQueue proto WINAPI :PLIST_ENTRY, :PKSPIN_LOCK, :KSLIST_ENTRY_LOCATION, :KSIRP_REMOVAL_OPERATION
+KsMoveIrpsOnCancelableQueue proto WINAPI :ptr, :ptr, :ptr, :ptr, :KSLIST_ENTRY_LOCATION, :ptr, :ptr
+KsRemoveSpecificIrpFromCancelableQueue proto WINAPI :PIRP
+KsAddIrpToCancelableQueue proto WINAPI :PLIST_ENTRY, :PKSPIN_LOCK, :PIRP, :KSLIST_ENTRY_LOCATION, :PDRIVER_CANCEL
+KsAcquireResetValue proto WINAPI :PIRP, :ptr KSRESET
+KsTopologyPropertyHandler proto WINAPI :PIRP, :PKSPROPERTY, :ptr, :ptr KSTOPOLOGY
+KsAcquireDeviceSecurityLock proto WINAPI :KSDEVICE_HEADER, :BOOLEAN
+KsReleaseDeviceSecurityLock proto WINAPI :KSDEVICE_HEADER
+KsSetDevicePnpAndBaseObject proto WINAPI :KSDEVICE_HEADER, :PDEVICE_OBJECT, :PDEVICE_OBJECT
+KsQueryDevicePnpObject proto WINAPI :KSDEVICE_HEADER
+KsQueryObjectAccessMask proto WINAPI :KSOBJECT_HEADER
+KsRecalculateStackDepth proto WINAPI :KSDEVICE_HEADER, :BOOLEAN
+KsSetTargetState proto WINAPI :KSOBJECT_HEADER, :KSTARGET_STATE
+KsSetTargetDeviceObject proto WINAPI :KSOBJECT_HEADER, :PDEVICE_OBJECT
+KsSetPowerDispatch proto WINAPI :KSOBJECT_HEADER, :PFNKSCONTEXT_DISPATCH, :ptr
+KsQueryObjectCreateItem proto WINAPI :KSOBJECT_HEADER
+KsAllocateDeviceHeader proto WINAPI :ptr KSDEVICE_HEADER, :ULONG, :PKSOBJECT_CREATE_ITEM
+KsFreeDeviceHeader proto WINAPI :KSDEVICE_HEADER
+KsAllocateObjectHeader proto WINAPI :ptr KSOBJECT_HEADER, :ULONG, :PKSOBJECT_CREATE_ITEM, :PIRP, :ptr KSDISPATCH_TABLE
+KsFreeObjectHeader proto WINAPI :KSOBJECT_HEADER
+KsAddObjectCreateItemToDeviceHeader proto WINAPI :KSDEVICE_HEADER, :PDRIVER_DISPATCH, :ptr, :PWSTR, :PSECURITY_DESCRIPTOR
+KsAddObjectCreateItemToObjectHeader proto WINAPI :KSOBJECT_HEADER, :PDRIVER_DISPATCH, :ptr, :PWSTR, :PSECURITY_DESCRIPTOR
+KsAllocateObjectCreateItem proto WINAPI :KSDEVICE_HEADER, :PKSOBJECT_CREATE_ITEM, :BOOLEAN, :PFNKSITEMFREECALLBACK
+KsFreeObjectCreateItem proto WINAPI :KSDEVICE_HEADER, :PUNICODE_STRING
+KsFreeObjectCreateItemsByContext proto WINAPI :KSDEVICE_HEADER, :ptr
+KsCreateDefaultSecurity proto WINAPI :PSECURITY_DESCRIPTOR, :PSECURITY_DESCRIPTOR
+KsForwardIrp proto WINAPI :PIRP, :PFILE_OBJECT, :BOOLEAN
+KsForwardAndCatchIrp proto WINAPI :PDEVICE_OBJECT, :PIRP, :PFILE_OBJECT, :KSSTACK_USE
+KsSynchronousIoControlDevice proto WINAPI :PFILE_OBJECT, :KPROCESSOR_MODE, :ULONG, :ptr, :LONG, :ptr, :ULONG, :PULONG
+KsUnserializeObjectPropertiesFromRegistry proto WINAPI :PFILE_OBJECT, :HANDLE, :PUNICODE_STRING
 if (NTDDI_VERSION GE NTDDI_WINXP)
-
-;NTAPI
-KsCacheMedium proto WINAPI \
-	  SymbolicLink: PUNICODE_STRING,
-		Medium: PKSPIN_MEDIUM,
-	  PinDirection: ULONG
-
-
+KsCacheMedium proto WINAPI :PUNICODE_STRING, :PKSPIN_MEDIUM, :ULONG
 endif
-
-
-;NTAPI
-KsRegisterWorker proto WINAPI \
-	 WorkQueueType: WORK_QUEUE_TYPE,
-		Worker: ptr PKSWORKER
-
-;NTAPI
-KsRegisterCountedWorker proto WINAPI \
-	 WorkQueueType: WORK_QUEUE_TYPE,
-       CountedWorkItem: PWORK_QUEUE_ITEM,
-		Worker: ptr PKSWORKER
-
-;VOID
-KsUnregisterWorker proto WINAPI \
-		Worker: PKSWORKER
-
-;NTAPI
-KsQueueWorkItem proto WINAPI \
-		Worker: PKSWORKER,
-	      WorkItem: PWORK_QUEUE_ITEM
-
-;ULONG
-KsIncrementCountedWorker proto WINAPI \
-		Worker: PKSWORKER
-
-;ULONG
-KsDecrementCountedWorker proto WINAPI \
-		Worker: PKSWORKER
-
-
-;NTAPI
-KsCreateTopologyNode proto WINAPI \
-	  ParentHandle: HANDLE,
-	    NodeCreate: PKSNODE_CREATE,
-	 DesiredAccess: ACCESS_MASK,
-	    NodeHandle: PHANDLE
-
-
-;NTAPI
-KsValidateTopologyNodeCreateRequest proto WINAPI \
-		   Irp: PIRP,
-	      Topology: PKSTOPOLOGY,
-	    NodeCreate: ptr PKSNODE_CREATE
-
+KsRegisterWorker proto WINAPI :WORK_QUEUE_TYPE, :ptr PKSWORKER
+KsRegisterCountedWorker proto WINAPI :WORK_QUEUE_TYPE, :PWORK_QUEUE_ITEM, :ptr PKSWORKER
+KsUnregisterWorker proto WINAPI :PKSWORKER
+KsQueueWorkItem proto WINAPI :PKSWORKER, :PWORK_QUEUE_ITEM
+KsIncrementCountedWorker proto WINAPI :PKSWORKER
+KsDecrementCountedWorker proto WINAPI :PKSWORKER
+KsCreateTopologyNode proto WINAPI :HANDLE, :PKSNODE_CREATE, :ACCESS_MASK, :PHANDLE
+KsValidateTopologyNodeCreateRequest proto WINAPI :PIRP, :PKSTOPOLOGY, :ptr PKSNODE_CREATE
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
-
-;NTAPI
-KsMergeAutomationTables proto WINAPI \
-     AutomationTableAB: ptr PKSAUTOMATION_TABLE,
-      AutomationTableA: PKSAUTOMATION_TABLE,
-      AutomationTableB: PKSAUTOMATION_TABLE,
-		   Bag: KSOBJECT_BAG
-
-
-;NTAPI
-KsInitializeDriver proto WINAPI \
-	  DriverObject: PDRIVER_OBJECT,
-      RegistryPathName: PUNICODE_STRING,
-	    Descriptor: ptr KSDEVICE_DESCRIPTOR
-
-
-;NTAPI
-KsAddDevice proto WINAPI \
-	  DriverObject: PDRIVER_OBJECT,
-  PhysicalDeviceObject: PDEVICE_OBJECT
-
-
-;NTAPI
-KsCreateDevice proto WINAPI \
-	  DriverObject: PDRIVER_OBJECT,
-  PhysicalDeviceObject: PDEVICE_OBJECT,
-	    Descriptor: ptr KSDEVICE_DESCRIPTOR,
-	 ExtensionSize: ULONG,
-		Device: ptr PKSDEVICE
-
-;NTAPI
-KsInitializeDevice proto WINAPI \
-FunctionalDeviceObject: PDEVICE_OBJECT,
-  PhysicalDeviceObject: PDEVICE_OBJECT,
-      NextDeviceObject: PDEVICE_OBJECT,
-	    Descriptor: ptr KSDEVICE_DESCRIPTOR
-
-
-;void
-KsTerminateDevice proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT
-
-;NTAPI
-KsGetDeviceForDeviceObject proto WINAPI \
-FunctionalDeviceObject: PDEVICE_OBJECT
-
-;void
-KsAcquireDevice proto WINAPI \
-		Device: PKSDEVICE
-
-;void
-KsReleaseDevice proto WINAPI \
-		Device: PKSDEVICE
-
-;void
-KsDeviceRegisterAdapterObject proto WINAPI \
-		Device: PKSDEVICE,
-	 AdapterObject: PADAPTER_OBJECT,
-  MaxMappingsByteCount: ULONG,
-    MappingTableStride: ULONG
-
-;ULONG
-KsDeviceGetBusData proto WINAPI \
-		Device: PKSDEVICE,
-	      DataType: ULONG,
-		Buffer: PVOID,
-		Offset: ULONG,
-		Length: ULONG
-
-
-;ULONG
-KsDeviceSetBusData proto WINAPI \
-		Device: PKSDEVICE,
-	      DataType: ULONG,
-		Buffer: PVOID,
-		Offset: ULONG,
-		Length: ULONG
-
-
-;NTAPI
-KsCreateFilterFactory proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT,
-	    Descriptor: ptr KSFILTER_DESCRIPTOR,
-	     RefString: PWSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-       CreateItemFlags: ULONG,
-	 SleepCallback: PFNKSFILTERFACTORYPOWER,
-	  WakeCallback: PFNKSFILTERFACTORYPOWER,
-	 FilterFactory: ptr PKSFILTERFACTORY
+KsMergeAutomationTables proto WINAPI :ptr PKSAUTOMATION_TABLE, :PKSAUTOMATION_TABLE, :PKSAUTOMATION_TABLE, :KSOBJECT_BAG
+KsInitializeDriver proto WINAPI :PDRIVER_OBJECT, :PUNICODE_STRING, :ptr KSDEVICE_DESCRIPTOR
+KsAddDevice proto WINAPI :PDRIVER_OBJECT, :PDEVICE_OBJECT
+KsCreateDevice proto WINAPI :PDRIVER_OBJECT, :PDEVICE_OBJECT, :ptr KSDEVICE_DESCRIPTOR, :ULONG, :ptr PKSDEVICE
+KsInitializeDevice proto WINAPI :PDEVICE_OBJECT, :PDEVICE_OBJECT, :PDEVICE_OBJECT, :ptr KSDEVICE_DESCRIPTOR
+KsTerminateDevice proto WINAPI :PDEVICE_OBJECT
+KsGetDeviceForDeviceObject proto WINAPI :PDEVICE_OBJECT
+KsAcquireDevice proto WINAPI :PKSDEVICE
+KsReleaseDevice proto WINAPI :PKSDEVICE
+KsDeviceRegisterAdapterObject proto WINAPI :PKSDEVICE, :PADAPTER_OBJECT, :ULONG, :ULONG
+KsDeviceGetBusData proto WINAPI :PKSDEVICE, :ULONG, :ptr, :ULONG, :ULONG
+KsDeviceSetBusData proto WINAPI :PKSDEVICE, :ULONG, :ptr, :ULONG, :ULONG
+KsCreateFilterFactory proto WINAPI :ptr, :ptr, :PWSTR, :ptr, :ULONG, :ptr, :ptr, :ptr
 
 
 KsDeleteFilterFactory macro FilterFactory
 	exitm<>
 	endm
 
-;NTAPI
-KsFilterFactoryUpdateCacheData proto WINAPI \
-	 FilterFactory: PKSFILTERFACTORY,
-      FilterDescriptor: ptr KSFILTER_DESCRIPTOR
-
-
-;NTAPI
-KsFilterFactoryAddCreateItem proto WINAPI \
-	 FilterFactory: PKSFILTERFACTORY,
-	     RefString: PWSTR,
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-       CreateItemFlags: ULONG
-
-
-;NTAPI
-KsFilterFactorySetDeviceClassesState proto WINAPI \
-	 FilterFactory: PKSFILTERFACTORY,
-	      NewState: BOOLEAN
-
-
-;NTAPI
-KsFilterFactoryGetSymbolicLink proto WINAPI \
-	 FilterFactory: PKSFILTERFACTORY
-
-;void
-KsAddEvent proto WINAPI \
-		Object: PVOID,
-	    EventEntry: PKSEVENT_ENTRY
-
-
-;void
-KsFilterAddEvent proto WINAPI \
-		Filter: PKSFILTER,
-	    EventEntry: PKSEVENT_ENTRY
-
-;void
-KsPinAddEvent proto WINAPI \
-		   Pin: PKSPIN,
-	    EventEntry: PKSEVENT_ENTRY
-
-
-;NTAPI
-KsDefaultAddEventHandler proto WINAPI \
-		   Irp: PIRP,
-	     EventData: PKSEVENTDATA,
-	    EventEntry: PKSEVENT_ENTRY
-
-
-;void
-KsGenerateEvents proto WINAPI \
-		Object: PVOID,
-	      EventSet: ptr GUID,
-	       EventId: ULONG,
-	      DataSize: ULONG,
-		  Data: PVOID,
-	      CallBack: PFNKSGENERATEEVENTCALLBACK,
-       CallBackContext: PVOID
-
-
-;void
-KsFilterGenerateEvents proto WINAPI \
-		Filter: PKSFILTER,
-	      EventSet: ptr GUID,
-	       EventId: ULONG,
-	      DataSize: ULONG,
-		  Data: PVOID,
-	      CallBack: PFNKSGENERATEEVENTCALLBACK,
-       CallBackContext: PVOID
-
-;void
-KsPinGenerateEvents proto WINAPI \
-		   Pin: PKSPIN,
-	      EventSet: ptr GUID,
-	       EventId: ULONG,
-	      DataSize: ULONG,
-		  Data: PVOID,
-	      CallBack: PFNKSGENERATEEVENTCALLBACK,
-       CallBackContext: PVOID
+KsFilterFactoryUpdateCacheData proto WINAPI :PKSFILTERFACTORY, :ptr KSFILTER_DESCRIPTOR
+KsFilterFactoryAddCreateItem proto WINAPI :PKSFILTERFACTORY, :PWSTR, :PSECURITY_DESCRIPTOR, :ULONG
+KsFilterFactorySetDeviceClassesState proto WINAPI :PKSFILTERFACTORY, :BOOLEAN
+KsFilterFactoryGetSymbolicLink proto WINAPI :PKSFILTERFACTORY
+KsAddEvent proto WINAPI :ptr, :PKSEVENT_ENTRY
+KsFilterAddEvent proto WINAPI :PKSFILTER, :PKSEVENT_ENTRY
+KsPinAddEvent proto WINAPI :PKSPIN, :PKSEVENT_ENTRY
+KsDefaultAddEventHandler proto WINAPI :PIRP, :PKSEVENTDATA, :PKSEVENT_ENTRY
+KsGenerateEvents proto WINAPI :ptr, :ptr, :ULONG, :ULONG, :ptr, :PFNKSGENERATEEVENTCALLBACK, :ptr
+KsFilterGenerateEvents proto WINAPI :PKSFILTER, :ptr, :ULONG, :ULONG, :ptr, :ptr, :ptr
+KsPinGenerateEvents proto WINAPI :PKSPIN, :ptr, :ULONG, :ULONG, :ptr, :ptr, :ptr
 
 KSSTREAM_POINTER_STATE_UNLOCKED equ 0
 KSSTREAM_POINTER_STATE_LOCKED equ 1
 
-;NTAPI
-KsPinGetAvailableByteCount proto WINAPI \
-		   Pin: PKSPIN,
-	InputDataBytes: PLONG,
-     OutputBufferBytes: PLONG
-
-
-;NTAPI
-KsPinGetLeadingEdgeStreamPointer proto WINAPI \
-		   Pin: PKSPIN,
-		 State: KSSTREAM_POINTER_STATE
-
-;NTAPI
-KsPinGetTrailingEdgeStreamPointer proto WINAPI \
-		   Pin: PKSPIN,
-		 State: KSSTREAM_POINTER_STATE
-
-;NTAPI
-KsStreamPointerSetStatusCode proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER,
-		Status: NTSTATUS
-
-
-;NTAPI
-KsStreamPointerLock proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER
-
-
-;void
-KsStreamPointerUnlock proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER,
-		 Eject: BOOLEAN
-
-
-;void
-KsStreamPointerAdvanceOffsetsAndUnlock proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER,
-		InUsed: ULONG,
-	       OutUsed: ULONG,
-		 Eject: BOOLEAN
-
-
-;void
-KsStreamPointerDelete proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER
-
-
-;NTAPI
-KsStreamPointerClone proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER,
-	CancelCallback: PFNKSSTREAMPOINTER,
-	   ContextSize: ULONG,
-    CloneStreamPointer: PKSSTREAM_POINTER*
-
-
-;NTAPI
-KsStreamPointerAdvanceOffsets proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER,
-		InUsed: ULONG,
-	       OutUsed: ULONG,
-		 Eject: BOOLEAN
-
-
-;NTAPI
-KsStreamPointerAdvance proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER
-
-
-;NTAPI
-KsStreamPointerGetMdl proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER
-
-;NTAPI
-KsStreamPointerGetIrp proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER,
-       FirstFrameInIrp: PBOOLEAN,
-	LastFrameInIrp: PBOOLEAN
-
-;void
-KsStreamPointerScheduleTimeout proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER,
-	      Callback: PFNKSSTREAMPOINTER,
-	      Interval: ULONGLONG
-
-
-;void
-KsStreamPointerCancelTimeout proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER
-
-
-;NTAPI
-KsPinGetFirstCloneStreamPointer proto WINAPI \
-		   Pin: PKSPIN
-
-;NTAPI
-KsStreamPointerGetNextClone proto WINAPI \
-	 StreamPointer: PKSSTREAM_POINTER
-
-;NTAPI
-KsPinHandshake proto WINAPI \
-		   Pin: PKSPIN,
-		     I: PKSHANDSHAKE,
-		     O: PKSHANDSHAKE
-
-
-;void
-KsCompletePendingRequest proto WINAPI \
-		   Irp: PIRP
-
-
-;NTAPI
-KsGetObjectTypeFromIrp proto WINAPI \
-		   Irp: PIRP
-
-;PVOID
-KsGetObjectFromFileObject proto WINAPI \
-	    FileObject: PFILE_OBJECT
-
-;NTAPI
-KsGetObjectTypeFromFileObject proto WINAPI \
-	    FileObject: PFILE_OBJECT
-
-;NTAPI
-KsFilterGetAndGate proto WINAPI \
-		Filter: PKSFILTER
-
-;void
-KsFilterAcquireProcessingMutex proto WINAPI \
-		Filter: PKSFILTER
-
-;void
-KsFilterReleaseProcessingMutex proto WINAPI \
-		Filter: PKSFILTER
-
-;void
-KsFilterAttemptProcessing proto WINAPI \
-		Filter: PKSFILTER,
-	  Asynchronous: BOOLEAN
-
-
-;NTAPI
-KsPinGetAndGate proto WINAPI \
-		   Pin: PKSPIN
-
-;void
-KsPinAttachAndGate proto WINAPI \
-		   Pin: PKSPIN,
-	       AndGate: PKSGATE
-
-;void
-KsPinAttachOrGate proto WINAPI \
-		   Pin: PKSPIN,
-		OrGate: PKSGATE
-
-;void
-KsPinAcquireProcessingMutex proto WINAPI \
-		   Pin: PKSPIN
-
-;void
-KsPinReleaseProcessingMutex proto WINAPI \
-		   Pin: PKSPIN
-
-;BOOLEAN
-KsProcessPinUpdate proto WINAPI \
-	    ProcessPin: PKSPROCESSPIN
-
-;void
-KsPinGetCopyRelationships proto WINAPI \
-		   Pin: PKSPIN,
-	    CopySource: PKSPIN*,
-	DelegateBranch: ptr PKSPIN
-
-;void
-KsPinAttemptProcessing proto WINAPI \
-		   Pin: PKSPIN,
-	  Asynchronous: BOOLEAN
-
-;PVOID
-KsGetParent proto WINAPI \
-		Object: PVOID
-
-;NTAPI
-KsPinGetParentFilter proto WINAPI \
-		   Pin: PKSPIN
-
-;PVOID
-KsGetFirstChild proto WINAPI \
-		Object: PVOID
-
-
-;ULONG
-KsFilterGetChildPinCount proto WINAPI \
-		Filter: PKSFILTER,
-		 PinId: ULONG
-
-
-;NTAPI
-KsFilterGetFirstChildPin proto WINAPI \
-		Filter: PKSFILTER,
-		 PinId: ULONG
-
-;PVOID
-KsGetNextSibling proto WINAPI \
-		Object: PVOID
-
-;NTAPI
-KsPinGetNextSiblingPin proto WINAPI \
-		   Pin: PKSPIN
-
-;NTAPI
-KsGetDevice proto WINAPI \
-		Object: PVOID
-
-
-;NTAPI
-KsGetFilterFromIrp proto WINAPI \
-		   Irp: PIRP
-
-;NTAPI
-KsGetPinFromIrp proto WINAPI \
-		   Irp: PIRP
-
-;ULONG
-KsGetNodeIdFromIrp proto WINAPI \
-		   Irp: PIRP
-
-
-;void
-KsAcquireControl proto WINAPI \
-		Object: PVOID
-
-
-;void
-KsReleaseControl proto WINAPI \
-		Object: PVOID
-
-
-;NTAPI
-KsAddItemToObjectBag proto WINAPI \
-	     ObjectBag: KSOBJECT_BAG,
-		  Item: PVOID,
-		  Free: PFNKSFREE
-
-
-;ULONG
-KsRemoveItemFromObjectBag proto WINAPI \
-	     ObjectBag: KSOBJECT_BAG,
-		  Item: PVOID,
-		  Free: BOOLEAN
-
-
-;NTAPI
-KsAllocateObjectBag proto WINAPI \
-		Device: PKSDEVICE,
-	     ObjectBag: KSOBJECT_BAG*
-
-
-;void
-KsFreeObjectBag proto WINAPI \
-	     ObjectBag: KSOBJECT_BAG
-
-
-;NTAPI
-KsCopyObjectBagItems proto WINAPI \
-  ObjectBagDestination: KSOBJECT_BAG,
-       ObjectBagSource: KSOBJECT_BAG
-
-
-;NTAPI
-_KsEdit proto WINAPI \
-	     ObjectBag: KSOBJECT_BAG,
-PointerToPointerToItem: PVOID,
-	       NewSize: ULONG,
-	       OldSize: ULONG,
-		   Tag: ULONG
-
-
-;NTAPI
-KsRegisterFilterWithNoKSPins proto WINAPI \
-	  DeviceObject: PDEVICE_OBJECT,
-    InterfaceClassGUID: ptr GUID,
-	      PinCount: ULONG,
-	  PinDirection: ptr BOOL,
-	    MediumList: ptr KSPIN_MEDIUM,
-	  CategoryList: ptr GUID
-
-;NTAPI
-KsFilterCreatePinFactory proto WINAPI \
-		Filter: PKSFILTER,
-	 PinDescriptor: ptr KSPIN_DESCRIPTOR_EX,
-		 PinID: PULONG
-
-
-;NTAPI
-KsFilterCreateNode proto WINAPI \
-		Filter: PKSFILTER,
-	NodeDescriptor: ptr KSNODE_DESCRIPTOR,
-		NodeID: PULONG
-
-
-;NTAPI
-KsFilterAddTopologyConnections proto WINAPI \
-		Filter: PKSFILTER,
-   NewConnectionsCount: ULONG,
-NewTopologyConnections: ptr KSTOPOLOGY_CONNECTION
-
-;NTAPI
-KsPinGetConnectedPinInterface proto WINAPI \
-		   Pin: PKSPIN,
-	   InterfaceId: ptr GUID,
-	     Interface: PVOID
-
-
-;NTAPI
-KsPinGetConnectedPinFileObject proto WINAPI \
-		   Pin: PKSPIN
-
-;NTAPI
-KsPinGetConnectedPinDeviceObject proto WINAPI \
-		   Pin: PKSPIN
-
-;NTAPI
-KsPinGetConnectedFilterInterface proto WINAPI \
-		   Pin: PKSPIN,
-	   InterfaceId: ptr GUID,
-	     Interface: PVOID
-
-
+KsPinGetAvailableByteCount proto WINAPI :PKSPIN, :PLONG, :PLONG
+KsPinGetLeadingEdgeStreamPointer proto WINAPI :PKSPIN, :KSSTREAM_POINTER_STATE
+KsPinGetTrailingEdgeStreamPointer proto WINAPI :PKSPIN, :KSSTREAM_POINTER_STATE
+KsStreamPointerSetStatusCode proto WINAPI :PKSSTREAM_POINTER, :NTSTATUS
+KsStreamPointerLock proto WINAPI :PKSSTREAM_POINTER
+KsStreamPointerUnlock proto WINAPI :PKSSTREAM_POINTER, :BOOLEAN
+KsStreamPointerAdvanceOffsetsAndUnlock proto WINAPI :PKSSTREAM_POINTER, :ULONG, :ULONG, :BOOLEAN
+KsStreamPointerDelete proto WINAPI :PKSSTREAM_POINTER
+KsStreamPointerClone proto WINAPI :PKSSTREAM_POINTER, :PFNKSSTREAMPOINTER, :ULONG, :PKSSTREAM_POINTER
+KsStreamPointerAdvanceOffsets proto WINAPI :PKSSTREAM_POINTER, :ULONG, :ULONG, :BOOLEAN
+KsStreamPointerAdvance proto WINAPI :PKSSTREAM_POINTER
+KsStreamPointerGetMdl proto WINAPI :PKSSTREAM_POINTER
+KsStreamPointerGetIrp proto WINAPI :PKSSTREAM_POINTER, :PBOOLEAN, :PBOOLEAN
+KsStreamPointerScheduleTimeout proto WINAPI :PKSSTREAM_POINTER, :PFNKSSTREAMPOINTER, :ULONGLONG
+KsStreamPointerCancelTimeout proto WINAPI :PKSSTREAM_POINTER
+KsPinGetFirstCloneStreamPointer proto WINAPI :PKSPIN
+KsStreamPointerGetNextClone proto WINAPI :PKSSTREAM_POINTER
+KsPinHandshake proto WINAPI :PKSPIN, :PKSHANDSHAKE, :PKSHANDSHAKE
+KsCompletePendingRequest proto WINAPI :PIRP
+KsGetObjectTypeFromIrp proto WINAPI :PIRP
+KsGetObjectFromFileObject proto WINAPI :PFILE_OBJECT
+KsGetObjectTypeFromFileObject proto WINAPI :PFILE_OBJECT
+KsFilterGetAndGate proto WINAPI :PKSFILTER
+KsFilterAcquireProcessingMutex proto WINAPI :PKSFILTER
+KsFilterReleaseProcessingMutex proto WINAPI :PKSFILTER
+KsFilterAttemptProcessing proto WINAPI :PKSFILTER, :BOOLEAN
+KsPinGetAndGate proto WINAPI :PKSPIN
+KsPinAttachAndGate proto WINAPI :PKSPIN, :PKSGATE
+KsPinAttachOrGate proto WINAPI :PKSPIN, :PKSGATE
+KsPinAcquireProcessingMutex proto WINAPI :PKSPIN
+KsPinReleaseProcessingMutex proto WINAPI :PKSPIN
+KsProcessPinUpdate proto WINAPI :PKSPROCESSPIN
+KsPinGetCopyRelationships proto WINAPI :PKSPIN, :PKSPIN, :ptr PKSPIN
+KsPinAttemptProcessing proto WINAPI :PKSPIN, :BOOLEAN
+KsGetParent proto WINAPI :ptr
+KsPinGetParentFilter proto WINAPI :PKSPIN
+KsGetFirstChild proto WINAPI :ptr
+KsFilterGetChildPinCount proto WINAPI :PKSFILTER, :ULONG
+KsFilterGetFirstChildPin proto WINAPI :PKSFILTER, :ULONG
+KsGetNextSibling proto WINAPI :ptr
+KsPinGetNextSiblingPin proto WINAPI :PKSPIN
+KsGetDevice proto WINAPI :ptr
+KsGetFilterFromIrp proto WINAPI :PIRP
+KsGetPinFromIrp proto WINAPI :PIRP
+KsGetNodeIdFromIrp proto WINAPI :PIRP
+KsAcquireControl proto WINAPI :ptr
+KsReleaseControl proto WINAPI :ptr
+KsAddItemToObjectBag proto WINAPI :KSOBJECT_BAG, :ptr, :PFNKSFREE
+KsRemoveItemFromObjectBag proto WINAPI :KSOBJECT_BAG, :ptr, :BOOLEAN
+KsAllocateObjectBag proto WINAPI :PKSDEVICE, :KSOBJECT_BAG
+KsFreeObjectBag proto WINAPI :KSOBJECT_BAG
+KsCopyObjectBagItems proto WINAPI :KSOBJECT_BAG, :KSOBJECT_BAG
+_KsEdit proto WINAPI :KSOBJECT_BAG, :ptr, :ULONG, :ULONG, :ULONG
+
+KsRegisterFilterWithNoKSPins proto WINAPI :ptr, :ptr, :ULONG, :ptr, :ptr, :ptr
+KsFilterCreatePinFactory proto WINAPI :PKSFILTER, :ptr, :PULONG
+KsFilterCreateNode proto WINAPI :PKSFILTER, :ptr, :PULONG
+KsFilterAddTopologyConnections proto WINAPI :PKSFILTER, :ULONG, :ptr KSTOPOLOGY_CONNECTION
+KsPinGetConnectedPinInterface proto WINAPI :PKSPIN, :ptr, :ptr
+KsPinGetConnectedPinFileObject proto WINAPI :PKSPIN
+KsPinGetConnectedPinDeviceObject proto WINAPI :PKSPIN
+KsPinGetConnectedFilterInterface proto WINAPI :PKSPIN, :ptr, :ptr
 ifdef __IUnknown_INTERFACE_DEFINED__
-
-;NTAPI
-KsPinGetReferenceClockInterface proto WINAPI \
-		   Pin: PKSPIN,
-	     Interface: ptr PIKSREFERENCECLOCK
-
-
+KsPinGetReferenceClockInterface proto WINAPI :PKSPIN, :ptr PIKSREFERENCECLOCK
 endif
-
-;VOID
-KsPinSetPinClockTime proto WINAPI \
-		   Pin: PKSPIN,
-		  Time: LONGLONG
-
-
-;NTAPI
-KsPinSubmitFrame proto WINAPI \
-		   Pin: PKSPIN,
-		  Data: PVOID,
-		  Size: ULONG,
-	  StreamHeader: PKSSTREAM_HEADER,
-	       Context: PVOID
-
-
-;NTAPI
-KsPinSubmitFrameMdl proto WINAPI \
-		   Pin: PKSPIN,
-		   Mdl: PMDL,
-	  StreamHeader: PKSSTREAM_HEADER,
-	       Context: PVOID
-
-
-;void
-KsPinRegisterFrameReturnCallback proto WINAPI \
-		   Pin: PKSPIN,
-	   FrameReturn: PFNKSPINFRAMERETURN
-
-
-;void
-KsPinRegisterIrpCompletionCallback proto WINAPI \
-		   Pin: PKSPIN,
-	 IrpCompletion: PFNKSPINIRPCOMPLETION
-
-
-;void
-KsPinRegisterHandshakeCallback proto WINAPI \
-		   Pin: PKSPIN,
-	     Handshake: PFNKSPINHANDSHAKE
-
-
-;void
-KsFilterRegisterPowerCallbacks proto WINAPI \
-		Filter: PKSFILTER,
-		 Sleep: PFNKSFILTERPOWER,
-		  Wake: PFNKSFILTERPOWER
-
-
-;void
-KsPinRegisterPowerCallbacks proto WINAPI \
-		   Pin: PKSPIN,
-		 Sleep: PFNKSPINPOWER,
-		  Wake: PFNKSPINPOWER
-
-
+KsPinSetPinClockTime proto WINAPI :PKSPIN, :LONGLONG
+KsPinSubmitFrame proto WINAPI :PKSPIN, :ptr, :ULONG, :PKSSTREAM_HEADER, :ptr
+KsPinSubmitFrameMdl proto WINAPI :PKSPIN, :PMDL, :PKSSTREAM_HEADER, :ptr
+KsPinRegisterFrameReturnCallback proto WINAPI :PKSPIN, :PFNKSPINFRAMERETURN
+KsPinRegisterIrpCompletionCallback proto WINAPI :PKSPIN, :PFNKSPINIRPCOMPLETION
+KsPinRegisterHandshakeCallback proto WINAPI :PKSPIN, :PFNKSPINHANDSHAKE
+KsFilterRegisterPowerCallbacks proto WINAPI :PKSFILTER, :PFNKSFILTERPOWER, :PFNKSFILTERPOWER
+KsPinRegisterPowerCallbacks proto WINAPI :PKSPIN, :PFNKSPINPOWER, :PFNKSPINPOWER
 ifdef __IUnknown_INTERFACE_DEFINED__
-
-;NTAPI
-KsRegisterAggregatedClientUnknown proto WINAPI \
-		Object: PVOID,
-	 ClientUnknown: PUNKNOWN
-
-;NTAPI
-KsGetOuterUnknown proto WINAPI \
-		Object: PVOID
-
+KsRegisterAggregatedClientUnknown proto WINAPI :ptr, :PUNKNOWN
+KsGetOuterUnknown proto WINAPI :ptr
 endif
-
 endif ;; (NTDDI_VERSION >= NTDDI_WINXP)
-
 else  ;; !defined(_NTDDK_)
 
 ifndef KS_NO_CREATE_FUNCTIONS
-
-;DWORD
-KsCreateAllocator proto WINAPI \
-      ConnectionHandle: HANDLE,
-      AllocatorFraming: PKSALLOCATOR_FRAMING,
-       AllocatorHandle: PHANDLE
-
-
-;DWORD
-KsCreateClock proto WINAPI \
-      ConnectionHandle: HANDLE,
-	   ClockCreate: PKSCLOCK_CREATE,
-	   ClockHandle: PHANDLE
-
-
-;DWORD
-KsCreatePin proto WINAPI \
-	  FilterHandle: HANDLE,
-	       Connect: PKSPIN_CONNECT,
-	 DesiredAccess: ACCESS_MASK,
-      ConnectionHandle: PHANDLE
-
-
-;DWORD
-KsCreateTopologyNode proto WINAPI \
-	  ParentHandle: HANDLE,
-	    NodeCreate: PKSNODE_CREATE,
-	 DesiredAccess: ACCESS_MASK,
-	    NodeHandle: PHANDLE
-
-
+KsCreateAllocator proto WINAPI :HANDLE, :PKSALLOCATOR_FRAMING, :PHANDLE
+KsCreateClock proto WINAPI :HANDLE, :PKSCLOCK_CREATE, :PHANDLE
+KsCreatePin proto WINAPI :HANDLE, :PKSPIN_CONNECT, :ACCESS_MASK, :PHANDLE
+KsCreateTopologyNode proto WINAPI :HANDLE, :PKSNODE_CREATE, :ACCESS_MASK, :PHANDLE
 endif
 
 endif ;; !defined(_NTDDK_)

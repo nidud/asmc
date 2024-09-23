@@ -343,11 +343,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-
-UiaGetErrorDescription proto WINAPI \
-	  pDescription: ptr
-
-
+UiaGetErrorDescription proto WINAPI :ptr
 
 .enum ConditionType {
     ConditionType_True = 0,
@@ -405,18 +401,9 @@ cPatterns		SINT ?
 automationElementMode	AutomationElementMode ?
 UiaCacheRequest		ENDS
 
-UiaHUiaNodeFromVariant proto WINAPI \
-		  pvar: ptr,
-		phnode: ptr HUIANODE
-
-UiaHPatternObjectFromVariant proto WINAPI \
-		  pvar: ptr,
-		 phobj: ptr HUIAPATTERNOBJECT
-
-UiaHTextRangeFromVariant proto WINAPI \
-		  pvar: ptr,
-	   phtextrange: ptr HUIATEXTRANGE
-
+UiaHUiaNodeFromVariant proto WINAPI :ptr, :ptr
+UiaHPatternObjectFromVariant proto WINAPI :ptr, :ptr
+UiaHTextRangeFromVariant proto WINAPI :ptr, :ptr
 
 .enum NormalizeState {
     NormalizeState_None,
@@ -431,74 +418,19 @@ ExcludeRoot		BOOL ?
 pFindCondition		LPUiaCondition ?
 UiaFindParams		ENDS
 
-UiaNodeRelease proto WINAPI \
-		 hnode: HUIANODE
-
-UiaGetPropertyValue proto WINAPI \
-		 hnode: HUIANODE,
-	    propertyId: PROPERTYID,
-		pValue: ptr
-
-UiaGetPatternProvider proto WINAPI \
-		 hnode: HUIANODE,
-	     patternId: PATTERNID,
-		 phobj: ptr
-
-UiaGetRuntimeId proto WINAPI \
-		 hnode: HUIANODE,
-	    pruntimeId: ptr ptr
-
-UiaSetFocus proto WINAPI \
-		 hnode: HUIANODE
-
-UiaNavigate proto WINAPI \
-		 hnode: HUIANODE,
-	     direction: NavigateDirection,
-	    pCondition: ptr,
-	      pRequest: ptr,
-       ppRequestedData: ptr ptr,
-       ppTreeStructure: ptr
-
-UiaGetUpdatedCache proto WINAPI \
-		 hnode: HUIANODE,
-	      pRequest: ptr,
-	normalizeState: NormalizeState,
-   pNormalizeCondition: ptr,
-       ppRequestedData: ptr ptr,
-       ppTreeStructure: ptr
-
-UiaFind proto WINAPI \
-		 hnode: HUIANODE,
-	       pParams: ptr,
-	      pRequest: ptr,
-       ppRequestedData: ptr ptr,
-	     ppOffsets: ptr ptr,
-      ppTreeStructures: ptr ptr
-
-
-UiaNodeFromPoint proto WINAPI \
-		     x: real8,
-		     y: real8,
-	      pRequest: ptr,
-       ppRequestedData: ptr ptr,
-       ppTreeStructure: ptr
-
-UiaNodeFromFocus proto WINAPI \
-	      pRequest: ptr,
-       ppRequestedData: ptr ptr,
-       ppTreeStructure: ptr
-
-UiaNodeFromHandle proto WINAPI \
-		  hwnd: HWND,
-		phnode: ptr
-
-UiaNodeFromProvider proto WINAPI \
-	     pProvider: ptr,
-		phnode: ptr
-
-UiaGetRootNode proto WINAPI \
-		phnode: ptr
-
+UiaNodeRelease proto WINAPI :HUIANODE
+UiaGetPropertyValue proto WINAPI :HUIANODE, :PROPERTYID, :ptr
+UiaGetPatternProvider proto WINAPI :HUIANODE, :PATTERNID, :ptr
+UiaGetRuntimeId proto WINAPI :HUIANODE, :ptr
+UiaSetFocus proto WINAPI :HUIANODE
+UiaNavigate proto WINAPI :HUIANODE, :NavigateDirection, :ptr, :ptr, :ptr, :ptr
+UiaGetUpdatedCache proto WINAPI :HUIANODE, :ptr, :NormalizeState, :ptr, :ptr, :ptr
+UiaFind proto WINAPI :HUIANODE, :ptr, :ptr, :ptr, :ptr, :ptr
+UiaNodeFromPoint proto WINAPI :real8, :real8, :ptr, :ptr, :ptr
+UiaNodeFromFocus proto WINAPI :ptr, :ptr, :ptr
+UiaNodeFromHandle proto WINAPI :HWND, :ptr
+UiaNodeFromProvider proto WINAPI :ptr, :ptr
+UiaGetRootNode proto WINAPI :ptr
 
 .enum ProviderType {
     ProviderType_BaseHwnd,
@@ -506,12 +438,8 @@ UiaGetRootNode proto WINAPI \
     ProviderType_NonClientArea
     }
 
-UiaProviderCallback proto WINAPI \
-		  hwnd: HWND,
-		  Type: ProviderType
-
-UiaRegisterProviderCallback proto WINAPI \
-	     pCallback: ptr
+UiaProviderCallback proto WINAPI :HWND, :ProviderType
+UiaRegisterProviderCallback proto WINAPI :ptr
 
 .enum AutomationIdentifierType {
     AutomationIdentifierType_Property,
@@ -521,20 +449,14 @@ UiaRegisterProviderCallback proto WINAPI \
     AutomationIdentifierType_TextAttribute
     }
 
-UiaLookupId proto WINAPI \
-		  type: AutomationIdentifierType,
-		 pGuid: ptr GUID
-
+UiaLookupId proto WINAPI :AutomationIdentifierType, :ptr
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-UiaGetReservedNotSupportedValue proto WINAPI \
- punkNotSupportedValue: ptr IUnknown
-
-UiaGetReservedMixedAttributeValue proto WINAPI \
-punkMixedAttributeValue: ptr IUnknown
+UiaGetReservedNotSupportedValue proto WINAPI :ptr
+UiaGetReservedMixedAttributeValue proto WINAPI :ptr
 
 .enum EventArgsType {
     EventArgsType_Simple,
@@ -595,377 +517,104 @@ UiaWindowClosedEventArgs ENDS
 
 
 UiaClientsAreListening proto WINAPI
-
-UiaRaiseAutomationPropertyChangedEvent proto WINAPI \
-	     pProvider: ptr,
-		    id: PROPERTYID,
-	      oldValue: VARIANT,
-	      newValue: VARIANT
-
-UiaRaiseAutomationEvent proto WINAPI \
-	     pProvider: ptr,
-		    id: EVENTID
-
-UiaRaiseStructureChangedEvent proto WINAPI \
-	     pProvider: ptr,
-   structureChangeType: StructureChangeType,
-	    pRuntimeId: ptr,
-	 cRuntimeIdLen: SINT
-
-UiaRaiseAsyncContentLoadedEvent proto WINAPI \
-	     pProvider: ptr,
-asyncContentLoadedState: AsyncContentLoadedState,
-       percentComplete: real8
-
-UiaRaiseTextEditTextChangedEvent proto WINAPI \
-	     pProvider: ptr,
-    textEditChangeType: TextEditChangeType,
-	  pChangedData: ptr SAFEARRAY
-
+UiaRaiseAutomationPropertyChangedEvent proto WINAPI :ptr, :PROPERTYID, :VARIANT, :VARIANT
+UiaRaiseAutomationEvent proto WINAPI :ptr, :EVENTID
+UiaRaiseStructureChangedEvent proto WINAPI :ptr, :StructureChangeType, :ptr, :SINT
+UiaRaiseAsyncContentLoadedEvent proto WINAPI :ptr, :AsyncContentLoadedState, :real8
+UiaRaiseTextEditTextChangedEvent proto WINAPI :ptr, :TextEditChangeType, :ptr
 
 endif
 
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-UiaEventCallback proto WINAPI \
-		 pArgs: ptr UiaEventArgs,
-	pRequestedData: ptr SAFEARRAY,
-	pTreeStructure: BSTR
-
-
-UiaAddEvent proto WINAPI \
-		 hnode: HUIANODE,
-	       eventId: EVENTID,
-	     pCallback: ptr,
-		 scope: TreeScope,
-	   pProperties: ptr,
-	   cProperties: SINT,
-	      pRequest: ptr,
-	       phEvent: ptr
-
-UiaRemoveEvent proto WINAPI \
-		hEvent: HUIAEVENT
-
-UiaEventAddWindow proto WINAPI \
-		hEvent: HUIAEVENT,
-		  hwnd: HWND
-
-UiaEventRemoveWindow proto WINAPI \
-		hEvent: HUIAEVENT,
-		  hwnd: HWND
-
-
-DockPattern_SetDockPosition proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	  dockPosition: DockPosition
-
-
-ExpandCollapsePattern_Collapse proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-
-ExpandCollapsePattern_Expand proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-GridPattern_GetItem proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		   row: SINT,
-		column: SINT,
-	       pResult: ptr
-
-InvokePattern_Invoke proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-MultipleViewPattern_GetViewName proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		viewId: SINT,
-		 ppStr: ptr
-
-MultipleViewPattern_SetCurrentView proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		viewId: SINT
-
-RangeValuePattern_SetValue proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		   val: real8
-
-ScrollItemPattern_ScrollIntoView proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-ScrollPattern_Scroll proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-      horizontalAmount: ScrollAmount,
-	verticalAmount: ScrollAmount
-
-ScrollPattern_SetScrollPercent proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-     horizontalPercent: real8,
-       verticalPercent: real8
-
-SelectionItemPattern_AddToSelection proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-SelectionItemPattern_RemoveFromSelection proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-SelectionItemPattern_Select proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-TogglePattern_Toggle proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-TransformPattern_Move proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		     x: real8,
-		     y: real8
-
-TransformPattern_Resize proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		 width: real8,
-		height: real8
-
-TransformPattern_Rotate proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	       degrees: real8
-
-ValuePattern_SetValue proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		  pVal: LPCWSTR
-
-WindowPattern_Close proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-WindowPattern_SetWindowVisualState proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		 state: WindowVisualState
-
-WindowPattern_WaitForInputIdle proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	  milliseconds: SINT,
-	       pResult: ptr
-
-
-TextPattern_GetSelection proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	       pRetVal: ptr ptr SAFEARRAY
-
-TextPattern_GetVisibleRanges proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	       pRetVal: ptr ptr SAFEARRAY
-
-TextPattern_RangeFromChild proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	    hnodeChild: HUIANODE,
-	       pRetVal: ptr HUIATEXTRANGE
-
-TextPattern_RangeFromPoint proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-		 point: UiaPoint,
-	       pRetVal: ptr HUIATEXTRANGE
-
-TextPattern_get_DocumentRange proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	       pRetVal: ptr HUIATEXTRANGE
-
-TextPattern_get_SupportedTextSelection proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	       pRetVal: ptr SupportedTextSelection
-
-TextRange_Clone proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	       pRetVal: ptr HUIATEXTRANGE
-
-TextRange_Compare proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-		 range: HUIATEXTRANGE,
-	       pRetVal: ptr BOOL
-
-TextRange_CompareEndpoints proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	      endpoint: TextPatternRangeEndpoint,
-	   targetRange: HUIATEXTRANGE,
-	targetEndpoint: TextPatternRangeEndpoint,
-	       pRetVal: ptr SINT
-
-TextRange_ExpandToEnclosingUnit proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-		  unit: TextUnit
-
-TextRange_GetAttributeValue proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	   attributeId: TEXTATTRIBUTEID,
-	       pRetVal: ptr
-
-TextRange_FindAttribute proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	   attributeId: TEXTATTRIBUTEID,
-		   val: VARIANT,
-	      backward: BOOL,
-	       pRetVal: ptr
-
-TextRange_FindText proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-		  text: BSTR,
-	      backward: BOOL,
-	    ignoreCase: BOOL,
-	       pRetVal: ptr HUIATEXTRANGE
-
-TextRange_GetBoundingRectangles proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	       pRetVal: ptr ptr SAFEARRAY
-
-TextRange_GetEnclosingElement proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	       pRetVal: ptr HUIANODE
-
-TextRange_GetText proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	     maxLength: SINT,
-	       pRetVal: ptr BSTR
-
-TextRange_Move proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-		  unit: TextUnit,
-		 count: SINT,
-	       pRetVal: ptr SINT
-
-TextRange_MoveEndpointByUnit proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	      endpoint: TextPatternRangeEndpoint,
-		  unit: TextUnit,
-		 count: SINT,
-	       pRetVal: ptr SINT
-
-TextRange_MoveEndpointByRange proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	      endpoint: TextPatternRangeEndpoint,
-	   targetRange: HUIATEXTRANGE,
-	targetEndpoint: TextPatternRangeEndpoint
-
-TextRange_Select proto WINAPI \
-		  hobj: HUIATEXTRANGE
-
-TextRange_AddToSelection proto WINAPI \
-		  hobj: HUIATEXTRANGE
-
-TextRange_RemoveFromSelection proto WINAPI \
-		  hobj: HUIATEXTRANGE
-
-TextRange_ScrollIntoView proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	    alignToTop: BOOL
-
-TextRange_GetChildren proto WINAPI \
-		  hobj: HUIATEXTRANGE,
-	       pRetVal: ptr ptr SAFEARRAY
-
-
-ItemContainerPattern_FindItemByProperty proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-       hnodeStartAfter: HUIANODE,
-	    propertyId: PROPERTYID,
-		 value: VARIANT,
-		pFound: ptr HUIANODE
-
-LegacyIAccessiblePattern_Select proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	   flagsSelect: LONG
-
-LegacyIAccessiblePattern_DoDefaultAction proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-LegacyIAccessiblePattern_SetValue proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	       szValue: LPCWSTR
-
-LegacyIAccessiblePattern_GetIAccessible proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	   pAccessible: ptr ptr
-
-SynchronizedInputPattern_StartListening proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT,
-	     inputType: SynchronizedInputType
-
-SynchronizedInputPattern_Cancel proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-VirtualizedItemPattern_Realize proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-
-UiaPatternRelease proto WINAPI \
-		  hobj: HUIAPATTERNOBJECT
-
-UiaTextRangeRelease proto WINAPI \
-		  hobj: HUIATEXTRANGE
-
+UiaEventCallback proto WINAPI :ptr, :ptr, :BSTR
+UiaAddEvent proto WINAPI :HUIANODE, :EVENTID, :ptr, :TreeScope, :ptr, :SINT, :ptr, :ptr
+UiaRemoveEvent proto WINAPI :HUIAEVENT
+UiaEventAddWindow proto WINAPI :HUIAEVENT, :HWND
+UiaEventRemoveWindow proto WINAPI :HUIAEVENT, :HWND
+DockPattern_SetDockPosition proto WINAPI :HUIAPATTERNOBJECT, :DockPosition
+ExpandCollapsePattern_Collapse proto WINAPI :HUIAPATTERNOBJECT
+ExpandCollapsePattern_Expand proto WINAPI :HUIAPATTERNOBJECT
+GridPattern_GetItem proto WINAPI :HUIAPATTERNOBJECT, :SINT, :SINT, :ptr
+InvokePattern_Invoke proto WINAPI :HUIAPATTERNOBJECT
+MultipleViewPattern_GetViewName proto WINAPI :HUIAPATTERNOBJECT, :SINT, :ptr
+MultipleViewPattern_SetCurrentView proto WINAPI :HUIAPATTERNOBJECT, :SINT
+RangeValuePattern_SetValue proto WINAPI :HUIAPATTERNOBJECT, :real8
+ScrollItemPattern_ScrollIntoView proto WINAPI :HUIAPATTERNOBJECT
+ScrollPattern_Scroll proto WINAPI :HUIAPATTERNOBJECT, :ScrollAmount, :ScrollAmount
+ScrollPattern_SetScrollPercent proto WINAPI :HUIAPATTERNOBJECT, :real8, :real8
+SelectionItemPattern_AddToSelection proto WINAPI :HUIAPATTERNOBJECT
+SelectionItemPattern_RemoveFromSelection proto WINAPI :HUIAPATTERNOBJECT
+SelectionItemPattern_Select proto WINAPI :HUIAPATTERNOBJECT
+TogglePattern_Toggle proto WINAPI :HUIAPATTERNOBJECT
+TransformPattern_Move proto WINAPI :HUIAPATTERNOBJECT, :real8, :real8
+TransformPattern_Resize proto WINAPI :HUIAPATTERNOBJECT, :real8, :real8
+TransformPattern_Rotate proto WINAPI :HUIAPATTERNOBJECT, :real8
+ValuePattern_SetValue proto WINAPI :HUIAPATTERNOBJECT, :LPCWSTR
+WindowPattern_Close proto WINAPI :HUIAPATTERNOBJECT
+WindowPattern_SetWindowVisualState proto WINAPI :HUIAPATTERNOBJECT, :WindowVisualState
+WindowPattern_WaitForInputIdle proto WINAPI :HUIAPATTERNOBJECT, :SINT, :ptr
+TextPattern_GetSelection proto WINAPI :HUIAPATTERNOBJECT, :ptr
+TextPattern_GetVisibleRanges proto WINAPI :HUIAPATTERNOBJECT, :ptr
+TextPattern_RangeFromChild proto WINAPI :HUIAPATTERNOBJECT, :HUIANODE, :ptr
+TextPattern_RangeFromPoint proto WINAPI :HUIAPATTERNOBJECT, :UiaPoint, :ptr
+TextPattern_get_DocumentRange proto WINAPI :HUIAPATTERNOBJECT, :ptr
+TextPattern_get_SupportedTextSelection proto WINAPI :HUIAPATTERNOBJECT, :ptr
+TextRange_Clone proto WINAPI :HUIATEXTRANGE, :ptr
+TextRange_Compare proto WINAPI :HUIATEXTRANGE, :HUIATEXTRANGE, :ptr
+TextRange_CompareEndpoints proto WINAPI :HUIATEXTRANGE, :TextPatternRangeEndpoint, :HUIATEXTRANGE, :TextPatternRangeEndpoint, :ptr
+TextRange_ExpandToEnclosingUnit proto WINAPI :HUIATEXTRANGE, :TextUnit
+TextRange_GetAttributeValue proto WINAPI :HUIATEXTRANGE, :TEXTATTRIBUTEID, :ptr
+TextRange_FindAttribute proto WINAPI :HUIATEXTRANGE, :TEXTATTRIBUTEID, :VARIANT, :BOOL, :ptr
+TextRange_FindText proto WINAPI :HUIATEXTRANGE, :BSTR, :BOOL, :BOOL, :ptr
+TextRange_GetBoundingRectangles proto WINAPI :HUIATEXTRANGE, :ptr
+TextRange_GetEnclosingElement proto WINAPI :HUIATEXTRANGE, :ptr
+TextRange_GetText proto WINAPI :HUIATEXTRANGE, :SINT, :ptr
+TextRange_Move proto WINAPI :HUIATEXTRANGE, :TextUnit, :SINT, :ptr
+TextRange_MoveEndpointByUnit proto WINAPI :HUIATEXTRANGE, :TextPatternRangeEndpoint, :TextUnit, :SINT, :ptr
+TextRange_MoveEndpointByRange proto WINAPI :HUIATEXTRANGE, :TextPatternRangeEndpoint, :HUIATEXTRANGE, :TextPatternRangeEndpoint
+TextRange_Select proto WINAPI :HUIATEXTRANGE
+TextRange_AddToSelection proto WINAPI :HUIATEXTRANGE
+TextRange_RemoveFromSelection proto WINAPI :HUIATEXTRANGE
+TextRange_ScrollIntoView proto WINAPI :HUIATEXTRANGE, :BOOL
+TextRange_GetChildren proto WINAPI :HUIATEXTRANGE, :ptr
+ItemContainerPattern_FindItemByProperty proto WINAPI :HUIAPATTERNOBJECT, :HUIANODE, :PROPERTYID, :VARIANT, :ptr
+LegacyIAccessiblePattern_Select proto WINAPI :HUIAPATTERNOBJECT, :LONG
+LegacyIAccessiblePattern_DoDefaultAction proto WINAPI :HUIAPATTERNOBJECT
+LegacyIAccessiblePattern_SetValue proto WINAPI :HUIAPATTERNOBJECT, :LPCWSTR
+LegacyIAccessiblePattern_GetIAccessible proto WINAPI :HUIAPATTERNOBJECT, :ptr
+SynchronizedInputPattern_StartListening proto WINAPI :HUIAPATTERNOBJECT, :SynchronizedInputType
+SynchronizedInputPattern_Cancel proto WINAPI :HUIAPATTERNOBJECT
+VirtualizedItemPattern_Realize proto WINAPI :HUIAPATTERNOBJECT
+UiaPatternRelease proto WINAPI :HUIAPATTERNOBJECT
+UiaTextRangeRelease proto WINAPI :HUIATEXTRANGE
 
 endif
-
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-UiaReturnRawElementProvider proto WINAPI \
-		  hwnd: HWND,
-		wParam: WPARAM,
-		lParam: LPARAM,
-		    el: ptr IRawElementProviderSimple
-
-UiaHostProviderFromHwnd proto WINAPI \
-		  hwnd: HWND,
-	    ppProvider: ptr ptr
-
-
-UiaProviderForNonClient proto WINAPI \
-		  hwnd: HWND,
-	      idObject: LONG,
-	       idChild: LONG,
-	    ppProvider: ptr ptr
-
-
+UiaReturnRawElementProvider proto WINAPI :HWND, :WPARAM, :LPARAM, :ptr
+UiaHostProviderFromHwnd proto WINAPI :HWND, :ptr
+UiaProviderForNonClient proto WINAPI :HWND, :LONG, :LONG, :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 UIA_IAFP_DEFAULT	equ 0x0000
 UIA_IAFP_UNWRAP_BRIDGE	equ 0x0001
 
-UiaIAccessibleFromProvider proto WINAPI \
-	     pProvider: ptr IRawElementProviderSimple,
-	       dwFlags: DWORD,
-	  ppAccessible: ptr IAccessible,
-	     pvarChild: ptr VARIANT
-
-
+UiaIAccessibleFromProvider proto WINAPI :ptr, :DWORD, :ptr, :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
 UIA_PFIA_DEFAULT	equ 0x0000
 UIA_PFIA_UNWRAP_BRIDGE	equ 0x0001
 
-UiaProviderFromIAccessible proto WINAPI \
-	   pAccessible: ptr IAccessible,
-	       idChild: LONG,
-	       dwFlags: DWORD,
-	    ppProvider: ptr IRawElementProviderSimple
-
-
-
+UiaProviderFromIAccessible proto WINAPI :ptr, :LONG, :DWORD, :ptr
 UiaDisconnectAllProviders proto WINAPI
-
-UiaDisconnectProvider proto WINAPI \
-	     pProvider: ptr
-
-
+UiaDisconnectProvider proto WINAPI :ptr
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-UiaHasServerSideProvider proto WINAPI \
-		  hwnd: HWND
-
-
+UiaHasServerSideProvider proto WINAPI :HWND
 endif
 endif

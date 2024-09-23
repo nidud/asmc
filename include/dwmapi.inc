@@ -159,114 +159,39 @@ DWM_PRESENT_PARAMETERS	ENDS
 
 DWM_FRAME_DURATION_DEFAULT equ -1
 
-DwmDefWindowProc proto WINAPI \
-		  hWnd: HWND,
-		   msg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM,
-	      plResult: ptr LRESULT
-
-DwmEnableBlurBehindWindow proto WINAPI \
-		  hWnd: HWND,
-	   pBlurBehind: ptr DWM_BLURBEHIND
-
+DwmDefWindowProc proto WINAPI :HWND, :UINT, :WPARAM, :LPARAM, :ptr
+DwmEnableBlurBehindWindow proto WINAPI :HWND, :ptr
 
 DWM_EC_DISABLECOMPOSITION equ 0
 DWM_EC_ENABLECOMPOSITION equ 1
 
-DwmEnableComposition proto WINAPI \
-    uCompositionAction: UINT
+DwmEnableComposition proto WINAPI :UINT
 
-
-if NTDDI_VERSION GE NTDDI_WIN8
-endif
-
-DwmEnableMMCSS proto WINAPI \
-	  fEnableMMCSS: BOOL
-
-DwmExtendFrameIntoClientArea proto WINAPI \
-		  hWnd: HWND,
-	     pMarInset: ptr MARGINS
-
-DwmGetColorizationColor proto WINAPI \
-       pcrColorization: ptr DWORD,
-	 pfOpaqueBlend: ptr BOOL
-
-DwmGetCompositionTimingInfo proto WINAPI \
-		  hwnd: HWND,
-	   pTimingInfo: ptr DWM_TIMING_INFO
-
-DwmGetWindowAttribute proto WINAPI \
-		  hwnd: HWND,
-	   dwAttribute: DWORD,
-	   pvAttribute: PVOID,
-	   cbAttribute: DWORD
-
-DwmIsCompositionEnabled proto WINAPI \
-	     pfEnabled: ptr BOOL
-
-DwmModifyPreviousDxFrameDuration proto WINAPI \
-		  hwnd: HWND,
-	    cRefreshes: int_t,
-	     fRelative: BOOL
-
-DwmQueryThumbnailSourceSize proto WINAPI \
-	    hThumbnail: HTHUMBNAIL,
-		 pSize: PSIZE
-
-DwmRegisterThumbnail proto WINAPI \
-       hwndDestination: HWND,
-	    hwndSource: HWND,
-	 phThumbnailId: PHTHUMBNAIL
-
-DwmSetDxFrameDuration proto WINAPI \
-		  hwnd: HWND,
-	    cRefreshes: int_t
-
-DwmSetPresentParameters proto WINAPI \
-		  hwnd: HWND,
-	pPresentParams: ptr DWM_PRESENT_PARAMETERS
-
-DwmSetWindowAttribute proto WINAPI \
-		  hwnd: HWND,
-	   dwAttribute: DWORD,
-	   pvAttribute: LPCVOID,
-	   cbAttribute: DWORD
-
-DwmUnregisterThumbnail proto WINAPI \
-	  hThumbnailId: HTHUMBNAIL
-
-DwmUpdateThumbnailProperties proto WINAPI \
-	  hThumbnailId: HTHUMBNAIL,
-	 ptnProperties: ptr DWM_THUMBNAIL_PROPERTIES
-
+DwmEnableMMCSS proto WINAPI :BOOL
+DwmExtendFrameIntoClientArea proto WINAPI :HWND, :ptr
+DwmGetColorizationColor proto WINAPI :ptr, :ptr
+DwmGetCompositionTimingInfo proto WINAPI :HWND, :ptr
+DwmGetWindowAttribute proto WINAPI :HWND, :DWORD, :ptr, :DWORD
+DwmIsCompositionEnabled proto WINAPI :ptr
+DwmModifyPreviousDxFrameDuration proto WINAPI :HWND, :SINT, :BOOL
+DwmQueryThumbnailSourceSize proto WINAPI :HTHUMBNAIL, :PSIZE
+DwmRegisterThumbnail proto WINAPI :HWND, :HWND, :PHTHUMBNAIL
+DwmSetDxFrameDuration proto WINAPI :HWND, :SINT
+DwmSetPresentParameters proto WINAPI :HWND, :ptr
+DwmSetWindowAttribute proto WINAPI :HWND, :DWORD, :ptr, :DWORD
+DwmUnregisterThumbnail proto WINAPI :HTHUMBNAIL
+DwmUpdateThumbnailProperties proto WINAPI :HTHUMBNAIL, :ptr
 
 if(_WIN32_WINNT GE 0x0601)
 
 DWM_SIT_DISPLAYFRAME	equ 0x00000001
 
-DwmSetIconicThumbnail proto WINAPI \
-		  hwnd: HWND,
-		  hbmp: HBITMAP,
-	    dwSITFlags: DWORD
-
-DwmSetIconicLivePreviewBitmap proto WINAPI \
-		  hwnd: HWND,
-		  hbmp: HBITMAP,
-	     pptClient: ptr POINT,
-	    dwSITFlags: DWORD
-
-DwmInvalidateIconicBitmaps proto WINAPI \
-		  hwnd: HWND
-
+DwmSetIconicThumbnail proto WINAPI :HWND, :HBITMAP, :DWORD
+DwmSetIconicLivePreviewBitmap proto WINAPI :HWND, :HBITMAP, :ptr, :DWORD
+DwmInvalidateIconicBitmaps proto WINAPI :HWND
 endif
-
-DwmAttachMilContent proto WINAPI \
-		  hwnd: HWND
-
-DwmDetachMilContent proto WINAPI \
-		  hwnd: HWND
-
+DwmAttachMilContent proto WINAPI :HWND
+DwmDetachMilContent proto WINAPI :HWND
 DwmFlush proto WINAPI
 
 ifndef MILCORE_KERNEL_COMPONENT
@@ -289,30 +214,17 @@ MIL_MATRIX3X2D		typedef MilMatrix3x2D
 MILCORE_MIL_MATRIX3X2D_COMPAT_TYPEDEF equ 1
 endif
 
-DwmGetGraphicsStreamTransformHint proto WINAPI \
-		uIndex: UINT,
-	    pTransform: ptr MilMatrix3x2D
-
-DwmGetGraphicsStreamClient proto WINAPI \
-		uIndex: UINT,
-	   pClientUuid: ptr UUID
-
+DwmGetGraphicsStreamTransformHint proto WINAPI :UINT, :ptr
+DwmGetGraphicsStreamClient proto WINAPI :UINT, :ptr
 endif
-
-DwmGetTransportAttributes proto WINAPI \
-	  pfIsRemoting: ptr BOOL,
-	 pfIsConnected: ptr BOOL,
-	 pDwGeneration: ptr DWORD
-
+DwmGetTransportAttributes proto WINAPI :ptr, :ptr, :ptr
 
 .enum DWMTRANSITION_OWNEDWINDOW_TARGET {
     DWMTRANSITION_OWNEDWINDOW_NULL	    = -1,
     DWMTRANSITION_OWNEDWINDOW_REPOSITION    = 0,
     }
 
-DwmTransitionOwnedWindow proto WINAPI \
-		  hwnd: HWND,
-		target: DWMTRANSITION_OWNEDWINDOW_TARGET
+DwmTransitionOwnedWindow proto WINAPI :HWND, :DWMTRANSITION_OWNEDWINDOW_TARGET
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
@@ -330,17 +242,8 @@ if (NTDDI_VERSION GE NTDDI_WIN8)
     GT_TOUCH_PRESSANDTAP	= 10,
     }
 
-DwmRenderGesture proto WINAPI \
-		    g: GESTURE_TYPE,
-	     cContacts: UINT,
-	  pdwPointerID: ptr DWORD,
-	       pPoints: ptr POINT
-
-DwmTetherContact proto WINAPI \
-	   dwPointerID: DWORD,
-	       fEnable: BOOL,
-	      ptTether: POINT
-
+DwmRenderGesture proto WINAPI :GESTURE_TYPE, :UINT, :ptr, :ptr
+DwmTetherContact proto WINAPI :DWORD, :BOOL, :POINT
 
 .enum DWM_SHOWCONTACT {
     DWMSC_DOWN	    = 0x00000001,
@@ -352,10 +255,7 @@ DwmTetherContact proto WINAPI \
     DWMSC_ALL	    = 0xFFFFFFFF
     }
 
-DwmShowContact proto WINAPI \
-	   dwPointerID: DWORD,
-	  eShowContact: DWM_SHOWCONTACT
-
+DwmShowContact proto WINAPI :DWORD, :DWM_SHOWCONTACT
 
 endif ;; NTDDI_WIN8
 

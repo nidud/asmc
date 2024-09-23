@@ -1,5 +1,6 @@
 ifndef __ACCESS_CONTROL_API__
 define __ACCESS_CONTROL_API__
+.pragma list(push, 0)
 
 include winapifamily.inc
 
@@ -218,6 +219,6 @@ define GetMultipleTrustee  <GetMultipleTrusteeA>
 endif
 
 endif
-
+.pragma list(pop)
 endif
 

@@ -9,7 +9,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 define WINHTTPAPI
 
-HINTERNET		typedef LPVOID
+HINTERNET		typedef ptr
 LPHINTERNET		typedef ptr HINTERNET
 
 INTERNET_PORT		typedef WORD
@@ -650,187 +650,40 @@ WINHTTP_RESET_ALL	equ 0x0000FFFF
 WINHTTP_RESET_NOTIFY_NETWORK_CHANGED equ 0x00010000
 WINHTTP_RESET_OUT_OF_PROC equ 0x00020000
 
-WinHttpSetStatusCallback proto WINAPI \
-	     hInternet: HINTERNET,
-  lpfnInternetCallback: WINHTTP_STATUS_CALLBACK,
-   dwNotificationFlags: DWORD,
-	    dwReserved: DWORD_PTR
-
-WinHttpTimeFromSystemTime proto WINAPI \
-		   pst: ptr SYSTEMTIME,
-	      pwszTime: LPWSTR
-
-WinHttpTimeToSystemTime proto WINAPI \
-	      pwszTime: LPCWSTR,
-		   pst: ptr SYSTEMTIME
-
-WinHttpCrackUrl proto WINAPI \
-	       pwszUrl: LPCWSTR,
-	   dwUrlLength: DWORD,
-	       dwFlags: DWORD,
-       lpUrlComponents: LPURL_COMPONENTS
-
-WinHttpCreateUrl proto WINAPI \
-       lpUrlComponents: LPURL_COMPONENTS,
-	       dwFlags: DWORD,
-	       pwszUrl: LPWSTR,
-	  pdwUrlLength: LPDWORD
-
+WinHttpSetStatusCallback proto WINAPI :HINTERNET, :WINHTTP_STATUS_CALLBACK, :DWORD, :DWORD_PTR
+WinHttpTimeFromSystemTime proto WINAPI :ptr, :LPWSTR
+WinHttpTimeToSystemTime proto WINAPI :LPCWSTR, :ptr
+WinHttpCrackUrl proto WINAPI :LPCWSTR, :DWORD, :DWORD, :LPURL_COMPONENTS
+WinHttpCreateUrl proto WINAPI :LPURL_COMPONENTS, :DWORD, :LPWSTR, :LPDWORD
 WinHttpCheckPlatform proto WINAPI
-
-WinHttpGetDefaultProxyConfiguration proto WINAPI \
-	    pProxyInfo: ptr WINHTTP_PROXY_INFO
-WinHttpSetDefaultProxyConfiguration proto WINAPI \
-	    pProxyInfo: ptr WINHTTP_PROXY_INFO
-
-WinHttpOpen proto WINAPI \
-	     pszAgentW: LPCWSTR,
-	  dwAccessType: DWORD,
-	     pszProxyW: LPCWSTR,
-       pszProxyBypassW: LPCWSTR,
-	       dwFlags: DWORD
-
-WinHttpCloseHandle proto WINAPI \
-	     hInternet: HINTERNET
-
-
-WinHttpConnect proto WINAPI \
-	      hSession: HINTERNET,
-	pswzServerName: LPCWSTR,
-	   nServerPort: INTERNET_PORT,
-	    dwReserved: DWORD
-
-WinHttpReadData proto WINAPI \
-	      hRequest: HINTERNET,
-	      lpBuffer: LPVOID,
- dwNumberOfBytesToRead: DWORD,
- lpdwNumberOfBytesRead: LPDWORD
-
-WinHttpWriteData proto WINAPI \
-	      hRequest: HINTERNET,
-	      lpBuffer: LPCVOID,
-dwNumberOfBytesToWrite: DWORD,
-lpdwNumberOfBytesWritten: LPDWORD
-
-WinHttpQueryDataAvailable proto WINAPI \
-	      hRequest: HINTERNET,
-lpdwNumberOfBytesAvailable: LPDWORD
-
-WinHttpQueryOption proto WINAPI \
-	     hInternet: HINTERNET,
-	      dwOption: DWORD,
-	      lpBuffer: LPVOID,
-      lpdwBufferLength: LPDWORD
-
-WinHttpSetOption proto WINAPI \
-	     hInternet: HINTERNET,
-	      dwOption: DWORD,
-	      lpBuffer: LPVOID,
-	dwBufferLength: DWORD
-
-WinHttpSetTimeouts proto WINAPI \
-	     hInternet: HINTERNET,
-       nResolveTimeout: SINT,
-       nConnectTimeout: SINT,
-	  nSendTimeout: SINT,
-       nReceiveTimeout: SINT
-
-WinHttpIsHostInProxyBypassList proto WINAPI \
-	    pProxyInfo: ptr WINHTTP_PROXY_INFO,
-	      pwszHost: PCWSTR,
-	       tScheme: INTERNET_SCHEME,
-		 nPort: INTERNET_PORT,
-      pfIsInBypassList: ptr BOOL
-
-WinHttpOpenRequest proto WINAPI \
-	      hConnect: HINTERNET,
-	      pwszVerb: LPCWSTR,
-	pwszObjectName: LPCWSTR,
-	   pwszVersion: LPCWSTR,
-	  pwszReferrer: LPCWSTR,
-      ppwszAcceptTypes: ptr LPCWSTR,
-	       dwFlags: DWORD
-
-WinHttpAddRequestHeaders proto WINAPI \
-	      hRequest: HINTERNET,
-	   lpszHeaders: LPCWSTR,
-       dwHeadersLength: DWORD,
-	   dwModifiers: DWORD
-
-WinHttpSendRequest proto WINAPI \
-	      hRequest: HINTERNET,
-	   lpszHeaders: LPCWSTR,
-       dwHeadersLength: DWORD,
-	    lpOptional: LPVOID,
-      dwOptionalLength: DWORD,
-	 dwTotalLength: DWORD,
-	     dwContext: DWORD_PTR
-
-WinHttpSetCredentials proto WINAPI \
-	      hRequest: HINTERNET,
-	   AuthTargets: DWORD,
-	    AuthScheme: DWORD,
-	  pwszUserName: LPCWSTR,
-	  pwszPassword: LPCWSTR,
-	   pAuthParams: LPVOID
-
-WinHttpQueryAuthSchemes proto WINAPI \
-	      hRequest: HINTERNET,
-  lpdwSupportedSchemes: LPDWORD,
-       lpdwFirstScheme: LPDWORD,
-	 pdwAuthTarget: LPDWORD
-
-WinHttpQueryAuthParams proto WINAPI \
-	      hRequest: HINTERNET,
-	    AuthScheme: DWORD,
-	   pAuthParams: ptr LPVOID
-
-WinHttpReceiveResponse proto WINAPI \
-	      hRequest: HINTERNET,
-	    lpReserved: LPVOID
-
-WinHttpQueryHeaders proto WINAPI \
-	      hRequest: HINTERNET,
-	   dwInfoLevel: DWORD,
-	      pwszName: LPCWSTR,
-	      lpBuffer: LPVOID,
-      lpdwBufferLength: LPDWORD,
-	     lpdwIndex: LPDWORD
-
-WinHttpDetectAutoProxyConfigUrl proto WINAPI \
-     dwAutoDetectFlags: DWORD,
-   ppwstrAutoConfigUrl: ptr LPWSTR
-
-WinHttpGetProxyForUrl proto WINAPI \
-	      hSession: HINTERNET,
-	     lpcwszUrl: LPCWSTR,
-     pAutoProxyOptions: ptr WINHTTP_AUTOPROXY_OPTIONS,
-	    pProxyInfo: ptr WINHTTP_PROXY_INFO
-
-WinHttpCreateProxyResolver proto WINAPI \
-	      hSession: HINTERNET,
-	    phResolver: ptr HINTERNET
-
-WinHttpGetProxyForUrlEx proto WINAPI \
-	     hResolver: HINTERNET,
-	      pcwszUrl: PCWSTR,
-     pAutoProxyOptions: ptr WINHTTP_AUTOPROXY_OPTIONS,
-	      pContext: DWORD_PTR
-
-WinHttpGetProxyResult proto WINAPI \
-	     hResolver: HINTERNET,
-	  pProxyResult: ptr WINHTTP_PROXY_RESULT
-
-WinHttpFreeProxyResult proto WINAPI \
-	  pProxyResult: ptr WINHTTP_PROXY_RESULT
-
-WinHttpResetAutoProxy proto WINAPI \
-	      hSession: HINTERNET,
-	       dwFlags: DWORD
-
-WinHttpGetIEProxyConfigForCurrentUser proto WINAPI \
-	  pProxyConfig: ptr WINHTTP_CURRENT_USER_IE_PROXY_CONFIG
-
+WinHttpGetDefaultProxyConfiguration proto WINAPI :ptr WINHTTP_PROXY_INFO
+WinHttpSetDefaultProxyConfiguration proto WINAPI :ptr WINHTTP_PROXY_INFO
+WinHttpOpen proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD
+WinHttpCloseHandle proto WINAPI :HINTERNET
+WinHttpConnect proto WINAPI :HINTERNET,:LPCWSTR, :INTERNET_PORT, :DWORD
+WinHttpReadData proto WINAPI :HINTERNET, :ptr, :DWORD, :LPDWORD
+WinHttpWriteData proto WINAPI :HINTERNET, :ptr, :DWORD, :LPDWORD
+WinHttpQueryDataAvailable proto WINAPI :HINTERNET, :LPDWORD
+WinHttpQueryOption proto WINAPI :HINTERNET, :DWORD, :ptr, :LPDWORD
+WinHttpSetOption proto WINAPI :HINTERNET, :DWORD, :ptr, :DWORD
+WinHttpSetTimeouts proto WINAPI :HINTERNET, :SINT, :SINT, :SINT, :SINT
+WinHttpIsHostInProxyBypassList proto WINAPI :ptr, :PCWSTR, :INTERNET_SCHEME, :INTERNET_PORT, :ptr
+WinHttpOpenRequest proto WINAPI :HINTERNET, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr, :DWORD
+WinHttpAddRequestHeaders proto WINAPI :HINTERNET, :LPCWSTR, :DWORD, :DWORD
+WinHttpSendRequest proto WINAPI :HINTERNET, :LPCWSTR, :DWORD, :ptr, :DWORD, :DWORD, :DWORD_PTR
+WinHttpSetCredentials proto WINAPI :HINTERNET, :DWORD, :DWORD, :LPCWSTR, :LPCWSTR, :ptr
+WinHttpQueryAuthSchemes proto WINAPI :HINTERNET, :LPDWORD, :LPDWORD, :LPDWORD
+WinHttpQueryAuthParams proto WINAPI :HINTERNET, :DWORD, :ptr
+WinHttpReceiveResponse proto WINAPI :HINTERNET, :ptr
+WinHttpQueryHeaders proto WINAPI :HINTERNET, :DWORD, :LPCWSTR, :ptr, :LPDWORD, :LPDWORD
+WinHttpDetectAutoProxyConfigUrl proto WINAPI :DWORD, :ptr
+WinHttpGetProxyForUrl proto WINAPI :HINTERNET, :LPCWSTR, :ptr, :ptr
+WinHttpCreateProxyResolver proto WINAPI :HINTERNET, :ptr
+WinHttpGetProxyForUrlEx proto WINAPI :HINTERNET, :PCWSTR, :ptr, :DWORD_PTR
+WinHttpGetProxyResult proto WINAPI :HINTERNET, :ptr
+WinHttpFreeProxyResult proto WINAPI :ptr
+WinHttpResetAutoProxy proto WINAPI :HINTERNET, :DWORD
+WinHttpGetIEProxyConfigForCurrentUser proto WINAPI :ptr
 
 .enum WINHTTP_WEB_SOCKET_OPERATION {
     WINHTTP_WEB_SOCKET_SEND_OPERATION			= 0,
@@ -875,44 +728,14 @@ WINHTTP_WEB_SOCKET_STATUS ENDS
 WINHTTP_WEB_SOCKET_MAX_CLOSE_REASON_LENGTH equ 123
 WINHTTP_WEB_SOCKET_MIN_KEEPALIVE_VALUE equ 15000
 
-WinHttpWebSocketCompleteUpgrade proto WINAPI \
-	      hRequest: HINTERNET,
-	      pContext: DWORD_PTR
-
-WinHttpWebSocketSend proto WINAPI \
-	    hWebSocket: HINTERNET,
-	   eBufferType: WINHTTP_WEB_SOCKET_BUFFER_TYPE,
-	      pvBuffer: PVOID,
-	dwBufferLength: DWORD
-
-WinHttpWebSocketReceive proto WINAPI \
-	    hWebSocket: HINTERNET,
-	      pvBuffer: PVOID,
-	dwBufferLength: DWORD,
-	  pdwBytesRead: ptr DWORD,
-	  peBufferType: ptr WINHTTP_WEB_SOCKET_BUFFER_TYPE
-
-WinHttpWebSocketShutdown proto WINAPI \
-	    hWebSocket: HINTERNET,
-	      usStatus: USHORT,
-	      pvReason: PVOID,
-	dwReasonLength: DWORD
-
-WinHttpWebSocketClose proto WINAPI \
-	    hWebSocket: HINTERNET,
-	      usStatus: USHORT,
-	      pvReason: PVOID,
-	dwReasonLength: DWORD
-
-WinHttpWebSocketQueryCloseStatus proto WINAPI \
-	    hWebSocket: HINTERNET,
-	     pusStatus: ptr USHORT,
-	      pvReason: PVOID,
-	dwReasonLength: DWORD,
-pdwReasonLengthConsumed: ptr DWORD
+WinHttpWebSocketCompleteUpgrade proto WINAPI :HINTERNET, :DWORD_PTR
+WinHttpWebSocketSend proto WINAPI :HINTERNET, :WINHTTP_WEB_SOCKET_BUFFER_TYPE, :ptr, :DWORD
+WinHttpWebSocketReceive proto WINAPI :HINTERNET, :ptr, :DWORD, :ptr, :ptr
+WinHttpWebSocketShutdown proto WINAPI :HINTERNET, :USHORT, :ptr, :DWORD
+WinHttpWebSocketClose proto WINAPI :HINTERNET, :USHORT, :ptr, :DWORD
+WinHttpWebSocketQueryCloseStatus proto WINAPI :HINTERNET, :ptr, :ptr, :DWORD, :ptr
 
 .pragma pack(pop)
 
 endif
 endif
-

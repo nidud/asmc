@@ -995,139 +995,53 @@ FILEMUIINFO_GET_MUI_TYPENAMES macro pInfo
 	exitm<.err>
 	endm
 
-;BOOL
-IsValidCodePage proto WINAPI \
-	      CodePage: UINT
-
+IsValidCodePage proto WINAPI :UINT
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;UINT
 GetACP proto WINAPI
 GetOEMCP proto WINAPI
-
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;BOOL
-GetCPInfo proto WINAPI \
-	      CodePage: UINT,
-	      lpCPInfo: LPCPINFO
-
-;BOOL
-GetCPInfoExA proto WINAPI \
-	      CodePage: UINT,
-	       dwFlags: DWORD,
-	    lpCPInfoEx: LPCPINFOEXA
-
-;BOOL
-GetCPInfoExW proto WINAPI \
-	      CodePage: UINT,
-	       dwFlags: DWORD,
-	    lpCPInfoEx: LPCPINFOEXW
-
+GetCPInfo proto WINAPI :UINT, :LPCPINFO
+GetCPInfoExA proto WINAPI :UINT, :DWORD, :LPCPINFOEXA
+GetCPInfoExW proto WINAPI :UINT, :DWORD, :LPCPINFOEXW
 ifdef _UNICODE
 define GetCPInfoEx  <GetCPInfoExW>
 else
 define GetCPInfoEx  <GetCPInfoExA>
 endif
-
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-;int
-CompareStringA proto WINAPI \
-		Locale: LCID,
-	    dwCmpFlags: DWORD,
-	     lpString1: PCNZCH,
-	     cchCount1: SINT,
-	     lpString2: PCNZCH,
-	     cchCount2: SINT
-
+CompareStringA proto WINAPI :LCID, :DWORD, :PCNZCH, :SINT, :PCNZCH, :SINT
 ifndef _UNICODE
 define CompareString  <CompareStringA>
 endif
 
 if (WINVER GE 0x0600)
-
-;int
-FindNLSString proto WINAPI \
-		Locale: LCID,
-  dwFindNLSStringFlags: DWORD,
-	lpStringSource: LPCWSTR,
-	     cchSource: SINT,
-	 lpStringValue: LPCWSTR,
-	      cchValue: SINT,
-	     pcchFound: LPINT
-
-
+FindNLSString proto WINAPI :LCID, :DWORD, :LPCWSTR, :SINT, :LPCWSTR, :SINT, :LPINT
 endif
-
-;int
-LCMapStringW proto WINAPI \
-		Locale: LCID,
-	    dwMapFlags: DWORD,
-	      lpSrcStr: LPCWSTR,
-		cchSrc: SINT,
-	     lpDestStr: LPWSTR,
-	       cchDest: SINT
-
+LCMapStringW proto WINAPI :LCID, :DWORD, :LPCWSTR, :SINT, :LPWSTR, :SINT
 ifdef _UNICODE
 define LCMapString  <LCMapStringW>
 endif
-
-;int
-LCMapStringA proto WINAPI \
-		Locale: LCID,
-	    dwMapFlags: DWORD,
-	      lpSrcStr: LPCSTR,
-		cchSrc: SINT,
-	     lpDestStr: LPSTR,
-	       cchDest: SINT
-
+LCMapStringA proto WINAPI :LCID, :DWORD, :LPCSTR, :SINT, :LPSTR,:SINT
 ifndef _UNICODE
 define LCMapString  <LCMapStringA>
 endif
-
-;int
-GetLocaleInfoW proto WINAPI \
-		Locale: LCID,
-		LCType: LCTYPE,
-	      lpLCData: LPWSTR,
-	       cchData: SINT
-
-
+GetLocaleInfoW proto WINAPI :LCID, :LCTYPE, :LPWSTR, :SINT
 ifdef _UNICODE
 define GetLocaleInfo  <GetLocaleInfoW>
 endif
-
-;int
-GetLocaleInfoA proto WINAPI \
-		Locale: LCID,
-		LCType: LCTYPE,
-	      lpLCData: LPSTR,
-	       cchData: SINT
-
-
+GetLocaleInfoA proto WINAPI :LCID, :LCTYPE, :LPSTR, :SINT
 ifndef _UNICODE
 define GetLocaleInfo <GetLocaleInfoA>
 endif
-
-;BOOL
-SetLocaleInfoA proto WINAPI \
-		Locale: LCID,
-		LCType: LCTYPE,
-	      lpLCData: LPCSTR
-
-;BOOL
-SetLocaleInfoW proto WINAPI \
-		Locale: LCID,
-		LCType: LCTYPE,
-	      lpLCData: LPCWSTR
-
+SetLocaleInfoA proto WINAPI :LCID, :LCTYPE, :LPCSTR
+SetLocaleInfoW proto WINAPI :LCID, :LCTYPE, :LPCWSTR
 ifdef _UNICODE
 define SetLocaleInfo  <SetLocaleInfoW>
 else
@@ -1136,44 +1050,16 @@ endif
 
 if (WINVER GE 0x040A)
 
-;int
-GetCalendarInfoA proto WINAPI \
-		Locale: LCID,
-	      Calendar: CALID,
-	       CalType: CALTYPE,
-	     lpCalData: LPSTR,
-	       cchData: SINT,
-	       lpValue: LPDWORD
-
-;int
-GetCalendarInfoW proto WINAPI \
-		Locale: LCID,
-	      Calendar: CALID,
-	       CalType: CALTYPE,
-	     lpCalData: LPWSTR,
-	       cchData: SINT,
-	       lpValue: LPDWORD
-
+GetCalendarInfoA proto WINAPI :LCID, :CALID, :CALTYPE, :LPSTR, :SINT, :LPDWORD
+GetCalendarInfoW proto WINAPI :LCID, :CALID, :CALTYPE, :LPWSTR, :SINT, :LPDWORD
 ifdef _UNICODE
 define GetCalendarInfo	<GetCalendarInfoW>
 else
 define GetCalendarInfo	<GetCalendarInfoA>
 endif
 
-;BOOL
-SetCalendarInfoA proto WINAPI \
-		Locale: LCID,
-	      Calendar: CALID,
-	       CalType: CALTYPE,
-	     lpCalData: LPCSTR
-
-;BOOL
-SetCalendarInfoW proto WINAPI \
-		Locale: LCID,
-	      Calendar: CALID,
-	       CalType: CALTYPE,
-	     lpCalData: LPCWSTR
-
+SetCalendarInfoA proto WINAPI :LCID, :CALID, :CALTYPE, :LPCSTR
+SetCalendarInfoW proto WINAPI :LCID, :CALID, :CALTYPE, :LPCWSTR
 ifdef _UNICODE
 define SetCalendarInfo	<SetCalendarInfoW>
 else
@@ -1187,128 +1073,43 @@ define MUI_FORMAT_INF_COMPAT  0x0002
 define MUI_VERIFY_FILE_EXISTS 0x0004
 define MUI_SKIP_STRING_CACHE  0x0008
 define MUI_IMMUTABLE_LOOKUP   0x0010
-
-;BOOL
-LoadStringByReference proto WINAPI \
-		 Flags: DWORD,
-	      Language: PCWSTR,
-	  SourceString: PCWSTR,
-		Buffer: PWSTR,
-	     cchBuffer: ULONG,
-	     Directory: PCWSTR,
-	 pcchBufferOut: PULONG
-
+LoadStringByReference proto WINAPI :DWORD, :PCWSTR, :PCWSTR, :PWSTR, :ULONG, :PCWSTR, :PULONG
 endif
 
-;BOOL
-IsDBCSLeadByte proto WINAPI \
-	      TestChar: BYTE
-
-;BOOL
-IsDBCSLeadByteEx proto WINAPI \
-	      CodePage: UINT,
-	      TestChar: BYTE
-
-
+IsDBCSLeadByte proto WINAPI :BYTE
+IsDBCSLeadByteEx proto WINAPI :UINT, :BYTE
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
 if (WINVER GE 0x0600)
-
-;int
-LCIDToLocaleName proto WINAPI \
-		Locale: LCID,
-		lpName: LPWSTR,
-	       cchName: SINT,
-	       dwFlags: DWORD
-
-LocaleNameToLCID proto WINAPI \
-		lpName: LPCWSTR,
-	       dwFlags: DWORD
-
+LCIDToLocaleName proto WINAPI :LCID, :LPWSTR, :SINT, :DWORD
+LocaleNameToLCID proto WINAPI :LPCWSTR, :DWORD
 endif
-
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 if (WINVER GE 0x0600)
-
-;int
-GetDurationFormat proto WINAPI \
-		Locale: LCID,
-	       dwFlags: DWORD,
-	    lpDuration: ptr SYSTEMTIME,
-	   ullDuration: ULONGLONG,
-	      lpFormat: LPCWSTR,
-	 lpDurationStr: LPWSTR,
-	   cchDuration: SINT
-
+GetDurationFormat proto WINAPI :LCID, :DWORD, :ptr, :ULONGLONG, :LPCWSTR, :LPWSTR, :SINT
 endif
-
-;int
-GetNumberFormatA proto WINAPI \
-		Locale: LCID,
-	       dwFlags: DWORD,
-	       lpValue: LPCSTR,
-	      lpFormat: ptr NUMBERFMTA,
-	   lpNumberStr: LPSTR,
-	     cchNumber: SINT
-
-;int
-GetNumberFormatW proto WINAPI \
-		Locale: LCID,
-	       dwFlags: DWORD,
-	       lpValue: LPCWSTR,
-	      lpFormat: ptr NUMBERFMTW,
-	   lpNumberStr: LPWSTR,
-	     cchNumber: SINT
-
+GetNumberFormatA proto WINAPI :LCID, :DWORD, :LPCSTR, :ptr, :LPSTR, :SINT
+GetNumberFormatW proto WINAPI :LCID, :DWORD, :LPCWSTR, :ptr, :LPWSTR, :SINT
 ifdef _UNICODE
 define GetNumberFormat	<GetNumberFormatW>
 else
 define GetNumberFormat	<GetNumberFormatA>
 endif
 
-;int
-GetCurrencyFormatA proto WINAPI \
-		Locale: LCID,
-	       dwFlags: DWORD,
-	       lpValue: LPCSTR,
-	      lpFormat: ptr CURRENCYFMTA,
-	 lpCurrencyStr: LPSTR,
-	   cchCurrency: SINT
-
-;int
-GetCurrencyFormatW proto WINAPI \
-		Locale: LCID,
-	       dwFlags: DWORD,
-	       lpValue: LPCWSTR,
-	      lpFormat: ptr CURRENCYFMTW,
-	 lpCurrencyStr: LPWSTR,
-	   cchCurrency: SINT
-
+GetCurrencyFormatA proto WINAPI :LCID, :DWORD, :LPCSTR, :ptr, :LPSTR, :SINT
+GetCurrencyFormatW proto WINAPI :LCID, :DWORD, :LPCWSTR, :ptr, :LPWSTR, :SINT
 ifdef _UNICODE
 define GetCurrencyFormat  <GetCurrencyFormatW>
 else
 define GetCurrencyFormat  <GetCurrencyFormatA>
 endif
 
-;BOOL
-EnumCalendarInfoA proto WINAPI \
-     lpCalInfoEnumProc: CALINFO_ENUMPROCA,
-		Locale: LCID,
-	      Calendar: CALID,
-	       CalType: CALTYPE
-
-;BOOL
-EnumCalendarInfoW proto WINAPI \
-     lpCalInfoEnumProc: CALINFO_ENUMPROCW,
-		Locale: LCID,
-	      Calendar: CALID,
-	       CalType: CALTYPE
-
+EnumCalendarInfoA proto WINAPI :CALINFO_ENUMPROCA, :LCID, :CALID, :CALTYPE
+EnumCalendarInfoW proto WINAPI :CALINFO_ENUMPROCW, :LCID, :CALID, :CALTYPE
 ifdef _UNICODE
 define EnumCalendarInfo	 <EnumCalendarInfoW>
 else
@@ -1317,20 +1118,8 @@ endif
 
 if(WINVER GE 0x0500)
 
-;BOOL
-EnumCalendarInfoExA proto WINAPI \
-   lpCalInfoEnumProcEx: CALINFO_ENUMPROCEXA,
-		Locale: LCID,
-	      Calendar: CALID,
-	       CalType: CALTYPE
-
-;BOOL
-EnumCalendarInfoExW proto WINAPI \
-   lpCalInfoEnumProcEx: CALINFO_ENUMPROCEXW,
-		Locale: LCID,
-	      Calendar: CALID,
-	       CalType: CALTYPE
-
+EnumCalendarInfoExA proto WINAPI :CALINFO_ENUMPROCEXA, :LCID, :CALID, :CALTYPE
+EnumCalendarInfoExW proto WINAPI :CALINFO_ENUMPROCEXW, :LCID, :CALID, :CALTYPE
 ifdef _UNICODE
 define EnumCalendarInfoEx  <EnumCalendarInfoExW>
 else
@@ -1338,36 +1127,16 @@ define EnumCalendarInfoEx  <EnumCalendarInfoExA>
 endif
 endif
 
-;BOOL
-EnumTimeFormatsA proto WINAPI \
-     lpTimeFmtEnumProc: TIMEFMT_ENUMPROCA,
-		Locale: LCID,
-	       dwFlags: DWORD
-
-;BOOL
-EnumTimeFormatsW proto WINAPI \
-     lpTimeFmtEnumProc: TIMEFMT_ENUMPROCW,
-		Locale: LCID,
-	       dwFlags: DWORD
-
+EnumTimeFormatsA proto WINAPI :TIMEFMT_ENUMPROCA, :LCID, :DWORD
+EnumTimeFormatsW proto WINAPI :TIMEFMT_ENUMPROCW, :LCID, :DWORD
 ifdef _UNICODE
 define EnumTimeFormats	<EnumTimeFormatsW>
 else
 define EnumTimeFormats	<EnumTimeFormatsA>
 endif
 
-;BOOL
-EnumDateFormatsA proto WINAPI \
-     lpDateFmtEnumProc: DATEFMT_ENUMPROCA,
-		Locale: LCID,
-	       dwFlags: DWORD
-
-;BOOL
-EnumDateFormatsW proto WINAPI \
-     lpDateFmtEnumProc: DATEFMT_ENUMPROCW,
-		Locale: LCID,
-	       dwFlags: DWORD
-
+EnumDateFormatsA proto WINAPI :DATEFMT_ENUMPROCA, :LCID, :DWORD
+EnumDateFormatsW proto WINAPI :DATEFMT_ENUMPROCW, :LCID, :DWORD
 ifdef _UNICODE
 define EnumDateFormats	<EnumDateFormatsW>
 else
@@ -1375,18 +1144,8 @@ define EnumDateFormats	<EnumDateFormatsA>
 endif
 
 if(WINVER GE 0x0500)
-;BOOL
-EnumDateFormatsExA proto WINAPI \
-   lpDateFmtEnumProcEx: DATEFMT_ENUMPROCEXA,
-		Locale: LCID,
-	       dwFlags: DWORD
-
-;BOOL
-EnumDateFormatsExW proto WINAPI \
-   lpDateFmtEnumProcEx: DATEFMT_ENUMPROCEXW,
-		Locale: LCID,
-	       dwFlags: DWORD
-
+EnumDateFormatsExA proto WINAPI :DATEFMT_ENUMPROCEXA, :LCID, :DWORD
+EnumDateFormatsExW proto WINAPI :DATEFMT_ENUMPROCEXW, :LCID, :DWORD
 ifdef _UNICODE
 define EnumDateFormatsEx  <EnumDateFormatsExW>
 else
@@ -1395,280 +1154,96 @@ endif
 endif
 
 if(WINVER GE 0x0500)
-;BOOL
-IsValidLanguageGroup proto WINAPI \
-	 LanguageGroup: LGRPID,
-	       dwFlags: DWORD
-
+IsValidLanguageGroup proto WINAPI :LGRPID, :DWORD
 endif
-
-;BOOL
-GetNLSVersion proto WINAPI \
-	      Function: NLS_FUNCTION,
-		Locale: LCID,
-  lpVersionInformation: LPNLSVERSIONINFO
-
-
-;BOOL
-IsNLSDefinedString proto WINAPI \
-	      Function: NLS_FUNCTION,
-	       dwFlags: DWORD,
-  lpVersionInformation: LPNLSVERSIONINFO,
-	      lpString: LPCWSTR,
-		cchStr: SINT
-
-;BOOL
-IsValidLocale proto WINAPI \
-		Locale: LCID,
-	       dwFlags: DWORD
-
+GetNLSVersion proto WINAPI :NLS_FUNCTION, :LCID, :LPNLSVERSIONINFO
+IsNLSDefinedString proto WINAPI :NLS_FUNCTION, :DWORD, :LPNLSVERSIONINFO, :LPCWSTR, :SINT
+IsValidLocale proto WINAPI :LCID, :DWORD
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-;int
-GetGeoInfoA proto WINAPI \
-	      Location: GEOID,
-	       GeoType: GEOTYPE,
-	     lpGeoData: LPSTR,
-	       cchData: SINT,
-		LangId: LANGID
-
-;int
-GetGeoInfoW proto WINAPI \
-	      Location: GEOID,
-	       GeoType: GEOTYPE,
-	     lpGeoData: LPWSTR,
-	       cchData: SINT,
-		LangId: LANGID
-
+GetGeoInfoA proto WINAPI :GEOID, :GEOTYPE, :LPSTR, :SINT, :LANGID
+GetGeoInfoW proto WINAPI :GEOID, :GEOTYPE, :LPWSTR, :SINT, :LANGID
 ifdef _UNICODE
 define GetGeoInfo  <GetGeoInfoW>
 else
 define GetGeoInfo  <GetGeoInfoA>
 endif
 
-;BOOL
-EnumSystemGeoID proto WINAPI \
-	      GeoClass: GEOCLASS,
-	   ParentGeoId: GEOID,
-	 lpGeoEnumProc: GEO_ENUMPROC
-
-
-GetUserGeoID proto WINAPI \
-	      GeoClass: GEOCLASS
-
+EnumSystemGeoID proto WINAPI :GEOCLASS, :GEOID, :GEO_ENUMPROC
+GetUserGeoID proto WINAPI :GEOCLASS
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-;BOOL
-SetUserGeoID proto WINAPI \
-		 GeoId: GEOID
-
-ConvertDefaultLocale proto WINAPI \
-		Locale: LCID
-
+SetUserGeoID proto WINAPI :GEOID
+ConvertDefaultLocale proto WINAPI :LCID
 GetThreadLocale proto WINAPI
-
-SetThreadLocale proto WINAPI \
-		Locale: LCID
-
+SetThreadLocale proto WINAPI :LCID
 
 if(WINVER GE 0x0500)
-
 GetSystemDefaultUILanguage proto WINAPI
 GetUserDefaultUILanguage proto WINAPI
 endif
-
 GetSystemDefaultLangID proto WINAPI
 GetUserDefaultLangID proto WINAPI
 GetSystemDefaultLCID proto WINAPI
 GetUserDefaultLCID proto WINAPI
-SetThreadUILanguage proto WINAPI \
-		LangId: LANGID
-
+SetThreadUILanguage proto WINAPI :LANGID
 
 if (WINVER GE 0x0600)
-
 GetThreadUILanguage proto WINAPI
-
-;BOOL
-GetProcessPreferredUILanguages proto WINAPI \
-	       dwFlags: DWORD,
-       pulNumLanguages: PULONG,
-   pwszLanguagesBuffer: PZZWSTR,
-   pcchLanguagesBuffer: PULONG
-
-;BOOL
-SetProcessPreferredUILanguages proto WINAPI \
-	       dwFlags: DWORD,
-   pwszLanguagesBuffer: PCZZWSTR,
-       pulNumLanguages: PULONG
-
-;BOOL
-GetUserPreferredUILanguages proto WINAPI \
-	       dwFlags: DWORD,
-       pulNumLanguages: PULONG,
-   pwszLanguagesBuffer: PZZWSTR,
-   pcchLanguagesBuffer: PULONG
-
-;BOOL
-GetSystemPreferredUILanguages proto WINAPI \
-	       dwFlags: DWORD,
-       pulNumLanguages: PULONG,
-   pwszLanguagesBuffer: PZZWSTR,
-   pcchLanguagesBuffer: PULONG
-
-;BOOL
-GetThreadPreferredUILanguages proto WINAPI \
-	       dwFlags: DWORD,
-       pulNumLanguages: PULONG,
-   pwszLanguagesBuffer: PZZWSTR,
-   pcchLanguagesBuffer: PULONG
-
-;BOOL
-SetThreadPreferredUILanguages proto WINAPI \
-	       dwFlags: DWORD,
-   pwszLanguagesBuffer: PCZZWSTR,
-       pulNumLanguages: PULONG
-
-
-;BOOL
-GetFileMUIInfo proto WINAPI \
-	       dwFlags: DWORD,
-	 pcwszFilePath: PCWSTR,
-	  pFileMUIInfo: PFILEMUIINFO,
-	pcbFileMUIInfo: ptr DWORD
-
-;BOOL
-GetFileMUIPath proto WINAPI \
-	       dwFlags: DWORD,
-	 pcwszFilePath: PCWSTR,
-	  pwszLanguage: ptr PWSTR,
-	  pcchLanguage: PULONG,
-       pwszFileMUIPath: ptr PWSTR,
-       pcchFileMUIPath: PULONG,
-       pululEnumerator: PULONGLONG
-
-;BOOL
-GetUILanguageInfo proto WINAPI \
-	       dwFlags: DWORD,
-	 pwmszLanguage: PCZZWSTR,
- pwszFallbackLanguages: PZZWSTR,
- pcchFallbackLanguages: PDWORD,
-	   pAttributes: PDWORD
-
-;BOOL
-NotifyUILanguageChange proto WINAPI \
-	       dwFlags: DWORD,
-     pcwstrNewLanguage: PCWSTR,
-pcwstrPreviousLanguage: PCWSTR,
-	    dwReserved: DWORD,
-	 pdwStatusRtrn: PDWORD
-
+GetProcessPreferredUILanguages proto WINAPI :DWORD, :PULONG, :PZZWSTR, :PULONG
+SetProcessPreferredUILanguages proto WINAPI :DWORD, :PCZZWSTR, :PULONG
+GetUserPreferredUILanguages proto WINAPI :DWORD, :PULONG, :PZZWSTR, :PULONG
+GetSystemPreferredUILanguages proto WINAPI :DWORD, :PULONG, :PZZWSTR, :PULONG
+GetThreadPreferredUILanguages proto WINAPI :DWORD, :PULONG, :PZZWSTR, :PULONG
+SetThreadPreferredUILanguages proto WINAPI :DWORD, :PCZZWSTR, :PULONG
+GetFileMUIInfo proto WINAPI :DWORD, :PCWSTR, :PFILEMUIINFO, :ptr
+GetFileMUIPath proto WINAPI :DWORD, :PCWSTR, :ptr, :PULONG, :ptr, :PULONG, :PULONGLONG
+GetUILanguageInfo proto WINAPI :DWORD, :PCZZWSTR, :PZZWSTR, :PDWORD, :PDWORD
+NotifyUILanguageChange proto WINAPI :DWORD, :PCWSTR, :PCWSTR, :DWORD, :PDWORD
 endif
 
-;BOOL
-GetStringTypeExA proto WINAPI \
-		Locale: LCID,
-	    dwInfoType: DWORD,
-	      lpSrcStr: LPCSTR,
-		cchSrc: SINT,
-	    lpCharType: LPWORD
+GetStringTypeExA proto WINAPI :LCID, :DWORD, :LPCSTR, :SINT, :LPWORD
 ifndef _UNICODE
 define GetStringTypeEx	<GetStringTypeExA>
 endif
-
-;BOOL
-GetStringTypeA proto WINAPI \
-		Locale: LCID,
-	    dwInfoType: DWORD,
-	      lpSrcStr: LPCSTR,
-		cchSrc: SINT,
-	    lpCharType: LPWORD
-
-;int
-FoldStringA proto WINAPI \
-	    dwMapFlags: DWORD,
-	      lpSrcStr: LPCSTR,
-		cchSrc: SINT,
-	     lpDestStr: LPSTR,
-	       cchDest: SINT
-
+GetStringTypeA proto WINAPI :LCID, :DWORD, :LPCSTR, :SINT, :LPWORD
+FoldStringA proto WINAPI :DWORD, :LPCSTR, :SINT, :LPSTR, :SINT
 ifndef _UNICODE
 define FoldString  <FoldStringA>
 endif
 
 if(WINVER GE 0x0500)
 
-;BOOL
-EnumSystemLocalesA proto WINAPI \
-      lpLocaleEnumProc: LOCALE_ENUMPROCA,
-	       dwFlags: DWORD
-
-;BOOL
-EnumSystemLocalesW proto WINAPI \
-      lpLocaleEnumProc: LOCALE_ENUMPROCW,
-	       dwFlags: DWORD
-
+EnumSystemLocalesA proto WINAPI :LOCALE_ENUMPROCA, :DWORD
+EnumSystemLocalesW proto WINAPI :LOCALE_ENUMPROCW, :DWORD
 ifdef _UNICODE
 define EnumSystemLocales  <EnumSystemLocalesW>
 else
 define EnumSystemLocales  <EnumSystemLocalesA>
 endif
 
-
-;BOOL
-EnumSystemLanguageGroupsA proto WINAPI \
-lpLanguageGroupEnumProc: LANGUAGEGROUP_ENUMPROCA,
-	       dwFlags: DWORD,
-		lParam: LONG_PTR
-
-;BOOL
-EnumSystemLanguageGroupsW proto WINAPI \
-lpLanguageGroupEnumProc: LANGUAGEGROUP_ENUMPROCW,
-	       dwFlags: DWORD,
-		lParam: LONG_PTR
-
+EnumSystemLanguageGroupsA proto WINAPI :LANGUAGEGROUP_ENUMPROCA, :DWORD, :LONG_PTR
+EnumSystemLanguageGroupsW proto WINAPI :LANGUAGEGROUP_ENUMPROCW, :DWORD, :LONG_PTR
 ifdef _UNICODE
 define EnumSystemLanguageGroups	 <EnumSystemLanguageGroupsW>
 else
 define EnumSystemLanguageGroups	 <EnumSystemLanguageGroupsA>
 endif
 
-;BOOL
-EnumLanguageGroupLocalesA proto WINAPI \
-lpLangGroupLocaleEnumProc: LANGGROUPLOCALE_ENUMPROCA,
-	 LanguageGroup: LGRPID,
-	       dwFlags: DWORD,
-		lParam: LONG_PTR
-
-;BOOL
-EnumLanguageGroupLocalesW proto WINAPI \
-lpLangGroupLocaleEnumProc: LANGGROUPLOCALE_ENUMPROCW,
-	 LanguageGroup: LGRPID,
-	       dwFlags: DWORD,
-		lParam: LONG_PTR
-
+EnumLanguageGroupLocalesA proto WINAPI :LANGGROUPLOCALE_ENUMPROCA, :LGRPID, :DWORD, :LONG_PTR
+EnumLanguageGroupLocalesW proto WINAPI :LANGGROUPLOCALE_ENUMPROCW, :LGRPID, :DWORD, :LONG_PTR
 ifdef _UNICODE
 define EnumLanguageGroupLocales	 <EnumLanguageGroupLocalesW>
 else
 define EnumLanguageGroupLocales	 <EnumLanguageGroupLocalesA>
 endif
 
-;BOOL
-EnumUILanguagesA proto WINAPI \
-  lpUILanguageEnumProc: UILANGUAGE_ENUMPROCA,
-	       dwFlags: DWORD,
-		lParam: LONG_PTR
-
-;BOOL
-EnumUILanguagesW proto WINAPI \
-  lpUILanguageEnumProc: UILANGUAGE_ENUMPROCW,
-	       dwFlags: DWORD,
-		lParam: LONG_PTR
-
+EnumUILanguagesA proto WINAPI :UILANGUAGE_ENUMPROCA, :DWORD, :LONG_PTR
+EnumUILanguagesW proto WINAPI :UILANGUAGE_ENUMPROCW, :DWORD, :LONG_PTR
 ifdef _UNICODE
 define EnumUILanguages	<EnumUILanguagesW>
 else
@@ -1680,16 +1255,8 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-;BOOL
-EnumSystemCodePagesA proto WINAPI \
-    lpCodePageEnumProc: CODEPAGE_ENUMPROCA,
-	       dwFlags: DWORD
-
-;BOOL
-EnumSystemCodePagesW proto WINAPI \
-    lpCodePageEnumProc: CODEPAGE_ENUMPROCW,
-	       dwFlags: DWORD
-
+EnumSystemCodePagesA proto WINAPI :CODEPAGE_ENUMPROCA, :DWORD
+EnumSystemCodePagesW proto WINAPI :CODEPAGE_ENUMPROCW, :DWORD
 ifdef _UNICODE
 define EnumSystemCodePages  <EnumSystemCodePagesW>
 else
@@ -1697,62 +1264,13 @@ define EnumSystemCodePages  <EnumSystemCodePagesA>
 endif
 
 if (WINVER GE 0x0600)
-
-;int
-NormalizeString proto WINAPI \
-	      NormForm: NORM_FORM,
-	   lpSrcString: LPCWSTR,
-	   cwSrcLength: SINT,
-	   lpDstString: LPWSTR,
-	   cwDstLength: SINT
-
-;BOOL
-IsNormalizedString proto WINAPI \
-	      NormForm: NORM_FORM,
-	      lpString: LPCWSTR,
-	      cwLength: SINT
-
-;int
-IdnToAscii proto WINAPI \
-	       dwFlags: DWORD,
-      lpUnicodeCharStr: LPCWSTR,
-	cchUnicodeChar: SINT,
-	lpASCIICharStr: LPWSTR,
-	  cchASCIIChar: SINT
-
-;int
-IdnToNameprepUnicode proto WINAPI \
-	       dwFlags: DWORD,
-      lpUnicodeCharStr: LPCWSTR,
-	cchUnicodeChar: SINT,
-     lpNameprepCharStr: LPWSTR,
-       cchNameprepChar: SINT
-
-;int
-IdnToUnicode proto WINAPI \
-	       dwFlags: DWORD,
-	lpASCIICharStr: LPCWSTR,
-	  cchASCIIChar: SINT,
-      lpUnicodeCharStr: LPWSTR,
-	cchUnicodeChar: SINT
-
-;BOOL
-VerifyScripts proto WINAPI \
-	       dwFlags: DWORD,
-       lpLocaleScripts: LPCWSTR,
-      cchLocaleScripts: SINT,
-	 lpTestScripts: LPCWSTR,
-	cchTestScripts: SINT
-
-;int
-GetStringScripts proto WINAPI \
-	       dwFlags: DWORD,
-	      lpString: LPCWSTR,
-	     cchString: SINT,
-	     lpScripts: LPWSTR,
-	    cchScripts: SINT
-
-
+NormalizeString proto WINAPI :NORM_FORM, :LPCWSTR, :SINT, :LPWSTR, :SINT
+IsNormalizedString proto WINAPI :NORM_FORM, :LPCWSTR, :SINT
+IdnToAscii proto WINAPI :DWORD, :LPCWSTR, :SINT, :LPWSTR, :SINT
+IdnToNameprepUnicode proto WINAPI :DWORD, :LPCWSTR, :SINT, :LPWSTR, :SINT
+IdnToUnicode proto WINAPI :DWORD, :LPCWSTR, :SINT, :LPWSTR, :SINT
+VerifyScripts proto WINAPI :DWORD, :LPCWSTR, :SINT, :LPCWSTR, :SINT
+GetStringScripts proto WINAPI :DWORD, :LPCWSTR, :SINT, :LPWSTR, :SINT
 endif
 
 endif
@@ -1761,170 +1279,50 @@ if (WINVER GE 0x0600)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-
 define LOCALE_NAME_USER_DEFAULT		   NULL
 define LOCALE_NAME_INVARIANT		   <L"">
 define LOCALE_NAME_SYSTEM_DEFAULT	   <L" NOT x-sys-default-locale">
 
-;int
-GetLocaleInfoEx proto WINAPI \
-	  lpLocaleName: LPCWSTR,
-		LCType: LCTYPE,
-	      lpLCData: LPWSTR,
-	       cchData: SINT
-
-;int
-GetCalendarInfoEx proto WINAPI \
-	  lpLocaleName: LPCWSTR,
-	      Calendar: CALID,
-	    lpReserved: LPCWSTR,
-	       CalType: CALTYPE,
-	     lpCalData: LPWSTR,
-	       cchData: SINT,
-	       lpValue: LPDWORD
-
-;int
-GetDurationFormatEx proto WINAPI \
-	  lpLocaleName: LPCWSTR,
-	       dwFlags: DWORD,
-	    lpDuration: ptr SYSTEMTIME,
-	   ullDuration: ULONGLONG,
-	      lpFormat: LPCWSTR,
-	 lpDurationStr: LPWSTR,
-	   cchDuration: SINT
-
-;int
-GetNumberFormatEx proto WINAPI \
-	  lpLocaleName: LPCWSTR,
-	       dwFlags: DWORD,
-	       lpValue: LPCWSTR,
-	      lpFormat: ptr NUMBERFMTW,
-	   lpNumberStr: LPWSTR,
-	     cchNumber: SINT
-
-;int
-GetCurrencyFormatEx proto WINAPI \
-	  lpLocaleName: LPCWSTR,
-	       dwFlags: DWORD,
-	       lpValue: LPCWSTR,
-	      lpFormat: ptr CURRENCYFMTW,
-	 lpCurrencyStr: LPWSTR,
-	   cchCurrency: SINT
-
-;int
-GetUserDefaultLocaleName proto WINAPI \
-	  lpLocaleName: LPWSTR,
-	 cchLocaleName: SINT
-
-;int
-GetSystemDefaultLocaleName proto WINAPI \
-	  lpLocaleName: LPWSTR,
-	 cchLocaleName: SINT
-
-;BOOL
-GetNLSVersionEx proto WINAPI \
-	      function: NLS_FUNCTION,
-	  lpLocaleName: LPCWSTR,
-  lpVersionInformation: LPNLSVERSIONINFOEX
-
+GetLocaleInfoEx proto WINAPI :LPCWSTR, :LCTYPE, :LPWSTR, :SINT
+GetCalendarInfoEx proto WINAPI :LPCWSTR, :CALID, :LPCWSTR, :CALTYPE, :LPWSTR, :SINT, :LPDWORD
+GetDurationFormatEx proto WINAPI :LPCWSTR, :DWORD, :ptr, :ULONGLONG, :LPCWSTR, :LPWSTR, :SINT
+GetNumberFormatEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :ptr, :LPWSTR, :SINT
+GetCurrencyFormatEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :ptr, :LPWSTR, :SINT
+GetUserDefaultLocaleName proto WINAPI :LPWSTR, :SINT
+GetSystemDefaultLocaleName proto WINAPI :LPWSTR, :SINT
+GetNLSVersionEx proto WINAPI :NLS_FUNCTION, :LPCWSTR, :LPNLSVERSIONINFOEX
 
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-;DWORD
-IsValidNLSVersion proto WINAPI \
-	      function: NLS_FUNCTION,
-	  lpLocaleName: LPCWSTR,
-  lpVersionInformation: LPNLSVERSIONINFOEX
-
+IsValidNLSVersion proto WINAPI	:NLS_FUNCTION, :LPCWSTR, :LPNLSVERSIONINFOEX
 endif
 
-;int
-FindNLSStringEx proto WINAPI \
-	  lpLocaleName: LPCWSTR,
-  dwFindNLSStringFlags: DWORD,
-	lpStringSource: LPCWSTR,
-	     cchSource: SINT,
-	 lpStringValue: LPCWSTR,
-	      cchValue: SINT,
-	     pcchFound: LPINT,
-  lpVersionInformation: LPNLSVERSIONINFO,
-	    lpReserved: LPVOID,
-	    sortHandle: LPARAM
-
-
-;int
-LCMapStringEx proto WINAPI \
-	  lpLocaleName: LPCWSTR,
-	    dwMapFlags: DWORD,
-	      lpSrcStr: LPCWSTR,
-		cchSrc: SINT,
-	     lpDestStr: LPWSTR,
-	       cchDest: SINT,
-  lpVersionInformation: LPNLSVERSIONINFO,
-	    lpReserved: LPVOID,
-	    sortHandle: LPARAM
-
-
-;BOOL
-IsValidLocaleName proto WINAPI \
-	  lpLocaleName: LPCWSTR
-
+FindNLSStringEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :SINT, :LPCWSTR, :SINT, :LPINT, :LPNLSVERSIONINFO, :ptr, :LPARAM
+LCMapStringEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :SINT, :LPWSTR, :SINT, :LPNLSVERSIONINFO, :ptr, :LPARAM
+IsValidLocaleName proto WINAPI :LPCWSTR
 
 CALLBACK(CALINFO_ENUMPROCEXEX, :LPWSTR, :CALID, :LPWSTR, :LPARAM)
 
-;BOOL
-EnumCalendarInfoExEx proto WINAPI \
-  pCalInfoEnumProcExEx: CALINFO_ENUMPROCEXEX,
-	  lpLocaleName: LPCWSTR,
-	      Calendar: CALID,
-	    lpReserved: LPCWSTR,
-	       CalType: CALTYPE,
-		lParam: LPARAM
-
+EnumCalendarInfoExEx proto WINAPI :CALINFO_ENUMPROCEXEX, :LPCWSTR, :CALID, :LPCWSTR, :CALTYPE, :LPARAM
 
 CALLBACK(DATEFMT_ENUMPROCEXEX, :LPWSTR, :CALID, :LPARAM)
 
-;BOOL
-EnumDateFormatsExEx proto WINAPI \
- lpDateFmtEnumProcExEx: DATEFMT_ENUMPROCEXEX,
-	  lpLocaleName: LPCWSTR,
-	       dwFlags: DWORD,
-		lParam: LPARAM
-
+EnumDateFormatsExEx proto WINAPI :DATEFMT_ENUMPROCEXEX, :LPCWSTR, :DWORD, :LPARAM
 
 CALLBACK(TIMEFMT_ENUMPROCEX, :LPWSTR, :LPARAM)
 
-;BOOL
-EnumTimeFormatsEx proto WINAPI \
-   lpTimeFmtEnumProcEx: TIMEFMT_ENUMPROCEX,
-	  lpLocaleName: LPCWSTR,
-	       dwFlags: DWORD,
-		lParam: LPARAM
-
+EnumTimeFormatsEx proto WINAPI :TIMEFMT_ENUMPROCEX, :LPCWSTR, :DWORD, :LPARAM
 
 CALLBACK(LOCALE_ENUMPROCEX, :LPWSTR, :DWORD, :LPARAM)
 
-;BOOL
-EnumSystemLocalesEx proto WINAPI \
-    lpLocaleEnumProcEx: LOCALE_ENUMPROCEX,
-	       dwFlags: DWORD,
-		lParam: LPARAM,
-	    lpReserved: LPVOID
+EnumSystemLocalesEx proto WINAPI :LOCALE_ENUMPROCEX, :DWORD, :LPARAM, :ptr
 
 endif
-
 endif
 
 if (WINVER GE _WIN32_WINNT_WIN7)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-;int
-ResolveLocaleName proto WINAPI \
-       lpNameToResolve: LPCWSTR,
-	  lpLocaleName: LPWSTR,
-	 cchLocaleName: SINT
+ResolveLocaleName proto WINAPI :LPCWSTR, :LPWSTR, :SINT
 endif
 endif
-
 endif
-
 endif

@@ -51,64 +51,20 @@ GetProcessImageFileNameA equ <K32GetProcessImageFileNameA>
 GetProcessImageFileNameW equ <K32GetProcessImageFileNameW>
 endif
 
-;BOOL
-EnumProcesses proto WINAPI \
-	   lpidProcess: ptr DWORD,
-		    cb: DWORD,
-	    lpcbNeeded: LPDWORD
+EnumProcesses proto WINAPI :ptr, :DWORD, :LPDWORD
+EnumProcessModules proto WINAPI :HANDLE, :ptr, :DWORD, :LPDWORD
+EnumProcessModulesEx proto WINAPI :HANDLE, :ptr, :DWORD, :LPDWORD, :DWORD
 
-;BOOL
-EnumProcessModules proto WINAPI \
-	      hProcess: HANDLE,
-	     lphModule: ptr HMODULE,
-		    cb: DWORD,
-	    lpcbNeeded: LPDWORD
-
-;BOOL
-EnumProcessModulesEx proto WINAPI \
-	      hProcess: HANDLE,
-	     lphModule: ptr HMODULE,
-		    cb: DWORD,
-	    lpcbNeeded: LPDWORD,
-	  dwFilterFlag: DWORD
-
-;DWORD
-GetModuleBaseNameA proto WINAPI \
-	      hProcess: HANDLE,
-	       hModule: HMODULE,
-	    lpBaseName: LPSTR,
-		 nSize: DWORD
-
-;DWORD
-GetModuleBaseNameW proto WINAPI \
-	      hProcess: HANDLE,
-	       hModule: HMODULE,
-	    lpBaseName: LPWSTR,
-		 nSize: DWORD
-
-
+GetModuleBaseNameA proto WINAPI :HANDLE, :HMODULE, :LPSTR, :DWORD
+GetModuleBaseNameW proto WINAPI :HANDLE, :HMODULE, :LPWSTR, :DWORD
 ifdef _UNICODE
 GetModuleBaseName	equ <GetModuleBaseNameW>
 else
 GetModuleBaseName	equ <GetModuleBaseNameA>
 endif
 
-
-;DWORD
-GetModuleFileNameExA proto WINAPI \
-	      hProcess: HANDLE,
-	       hModule: HMODULE,
-	    lpFilename: LPSTR,
-		 nSize: DWORD
-
-;DWORD
-GetModuleFileNameExW proto WINAPI \
-	      hProcess: HANDLE,
-	       hModule: HMODULE,
-	    lpFilename: LPWSTR,
-		 nSize: DWORD
-
-
+GetModuleFileNameExA proto WINAPI :HANDLE, :HMODULE, :LPSTR, :DWORD
+GetModuleFileNameExW proto WINAPI :HANDLE, :HMODULE, :LPWSTR, :DWORD
 ifdef _UNICODE
 GetModuleFileNameEx	equ <GetModuleFileNameExW>
 else
@@ -123,16 +79,8 @@ EntryPoint		LPVOID ?
 MODULEINFO		ENDS
 LPMODULEINFO		typedef ptr MODULEINFO
 
-;BOOL
-GetModuleInformation proto WINAPI \
-	      hProcess: HANDLE,
-	       hModule: HMODULE,
-	     lpmodinfo: LPMODULEINFO,
-		    cb: DWORD
-
-;BOOL
-EmptyWorkingSet proto WINAPI \
-	      hProcess: HANDLE
+GetModuleInformation proto WINAPI :HANDLE, :HMODULE, :LPMODULEINFO, :DWORD
+EmptyWorkingSet proto WINAPI :HANDLE
 
 PSAPI_WORKING_SET_BLOCK UNION
 Flags			ULONG_PTR ?
@@ -193,22 +141,9 @@ VirtualAttributes	PSAPI_WORKING_SET_EX_BLOCK <>
 PSAPI_WORKING_SET_EX_INFORMATION ENDS
 PPSAPI_WORKING_SET_EX_INFORMATION typedef ptr PSAPI_WORKING_SET_EX_INFORMATION
 
-;BOOL
-QueryWorkingSet proto WINAPI \
-	      hProcess: HANDLE,
-		    pv: PVOID,
-		    cb: DWORD
-
-;BOOL
-QueryWorkingSetEx proto WINAPI \
-	      hProcess: HANDLE,
-		    pv: PVOID,
-		    cb: DWORD
-
-;BOOL
-InitializeProcessForWsWatch proto WINAPI \
-	      hProcess: HANDLE
-
+QueryWorkingSet proto WINAPI :HANDLE, :ptr, :DWORD
+QueryWorkingSetEx proto WINAPI :HANDLE, :ptr, :DWORD
+InitializeProcessForWsWatch proto WINAPI :HANDLE
 
 PSAPI_WS_WATCH_INFORMATION  STRUC
 FaultingPc		LPVOID ?
@@ -223,75 +158,27 @@ Flags			ULONG_PTR ?	;; Reserved
 PSAPI_WS_WATCH_INFORMATION_EX ENDS
 PPSAPI_WS_WATCH_INFORMATION_EX typedef ptr PSAPI_WS_WATCH_INFORMATION_EX
 
-;BOOL
-GetWsChanges proto WINAPI \
-	      hProcess: HANDLE,
-	   lpWatchInfo: PPSAPI_WS_WATCH_INFORMATION,
-		    cb: DWORD
-
-;BOOL
-GetWsChangesEx proto WINAPI \
-	      hProcess: HANDLE,
-	 lpWatchInfoEx: PPSAPI_WS_WATCH_INFORMATION_EX,
-		    cb: PDWORD
-
-;DWORD
-GetMappedFileNameW proto WINAPI \
-	      hProcess: HANDLE,
-		   lpv: LPVOID,
-	    lpFilename: LPWSTR,
-		 nSize: DWORD
-
-;DWORD
-GetMappedFileNameA proto WINAPI \
-	      hProcess: HANDLE,
-		   lpv: LPVOID,
-	    lpFilename: LPSTR,
-		 nSize: DWORD
-
-
+GetWsChanges proto WINAPI :HANDLE, :PPSAPI_WS_WATCH_INFORMATION, :DWORD
+GetWsChangesEx proto WINAPI :HANDLE, :PPSAPI_WS_WATCH_INFORMATION_EX, :PDWORD
+GetMappedFileNameW proto WINAPI :HANDLE, :ptr, :LPWSTR, :DWORD
+GetMappedFileNameA proto WINAPI :HANDLE, :ptr, :LPSTR, :DWORD
 ifdef _UNICODE
 GetMappedFileName	equ <GetMappedFileNameW>
 else
 GetMappedFileName	equ <GetMappedFileNameA>
 endif
 
-;BOOL
-EnumDeviceDrivers proto WINAPI \
-	   lpImageBase: ptr LPVOID,
-		    cb: DWORD,
-	    lpcbNeeded: LPDWORD
-
-;DWORD
-GetDeviceDriverBaseNameA proto WINAPI \
-	     ImageBase: LPVOID,
-	    lpFilename: LPSTR,
-		 nSize: DWORD
-
-;DWORD
-GetDeviceDriverBaseNameW proto WINAPI \
-	     ImageBase: LPVOID,
-	    lpBaseName: LPWSTR,
-		 nSize: DWORD
-
+EnumDeviceDrivers proto WINAPI :ptr, :DWORD, :LPDWORD
+GetDeviceDriverBaseNameA proto WINAPI :ptr, :LPSTR, :DWORD
+GetDeviceDriverBaseNameW proto WINAPI :ptr, :LPWSTR, :DWORD
 ifdef _UNICODE
 GetDeviceDriverBaseName equ <GetDeviceDriverBaseNameW>
 else
 GetDeviceDriverBaseName equ <GetDeviceDriverBaseNameA>
 endif
 
-;DWORD
-GetDeviceDriverFileNameA proto WINAPI \
-	     ImageBase: LPVOID,
-	    lpFilename: LPSTR,
-		 nSize: DWORD
-
-;DWORD
-GetDeviceDriverFileNameW proto WINAPI \
-	     ImageBase: LPVOID,
-	    lpFilename: LPWSTR,
-		 nSize: DWORD
-
+GetDeviceDriverFileNameA proto WINAPI :ptr, :LPSTR, :DWORD
+GetDeviceDriverFileNameW proto WINAPI :ptr, :LPWSTR, :DWORD
 ifdef _UNICODE
 GetDeviceDriverFileName equ <GetDeviceDriverFileNameW>
 else
@@ -329,12 +216,7 @@ PROCESS_MEMORY_COUNTERS_EX ENDS
 PPROCESS_MEMORY_COUNTERS_EX typedef ptr PROCESS_MEMORY_COUNTERS_EX
 endif
 
-;BOOL
-GetProcessMemoryInfo proto WINAPI \
-	       Process: HANDLE,
-	ppsmemCounters: PPROCESS_MEMORY_COUNTERS,
-		    cb: DWORD
-
+GetProcessMemoryInfo proto WINAPI :HANDLE, :PPROCESS_MEMORY_COUNTERS, :DWORD
 
 PERFORMANCE_INFORMATION	 STRUC
 cb			dd ?
@@ -356,11 +238,7 @@ PPERFORMANCE_INFORMATION typedef ptr PERFORMANCE_INFORMATION
 PERFORMACE_INFORMATION	typedef PERFORMANCE_INFORMATION
 PPERFORMACE_INFORMATION typedef ptr PERFORMANCE_INFORMATION
 
-;BOOL
-GetPerformanceInfo proto WINAPI \
-pPerformanceInformation: PPERFORMANCE_INFORMATION,
-		    cb: DWORD
-
+GetPerformanceInfo proto WINAPI :PPERFORMANCE_INFORMATION, :DWORD
 
 ENUM_PAGE_FILE_INFORMATION  STRUC
 cb			dd ?
@@ -374,17 +252,8 @@ PENUM_PAGE_FILE_INFORMATION typedef ptr ENUM_PAGE_FILE_INFORMATION
 CALLBACK(PENUM_PAGE_FILE_CALLBACKW, :LPVOID, :PENUM_PAGE_FILE_INFORMATION, :LPCWSTR)
 CALLBACK(PENUM_PAGE_FILE_CALLBACKA, :LPVOID, :PENUM_PAGE_FILE_INFORMATION, :LPCSTR)
 
-;BOOL
-EnumPageFilesW proto WINAPI \
-      pCallBackRoutine: PENUM_PAGE_FILE_CALLBACKW,
-	      pContext: LPVOID
-
-;BOOL
-EnumPageFilesA proto WINAPI \
-      pCallBackRoutine: PENUM_PAGE_FILE_CALLBACKA,
-	      pContext: LPVOID
-
-
+EnumPageFilesW proto WINAPI :PENUM_PAGE_FILE_CALLBACKW, :ptr
+EnumPageFilesA proto WINAPI :PENUM_PAGE_FILE_CALLBACKA, :ptr
 ifdef _UNICODE
 PENUM_PAGE_FILE_CALLBACK equ <PENUM_PAGE_FILE_CALLBACKW>
 EnumPageFiles		equ <EnumPageFilesW>
@@ -393,18 +262,8 @@ PENUM_PAGE_FILE_CALLBACK equ <PENUM_PAGE_FILE_CALLBACKA>
 EnumPageFiles		equ <EnumPageFilesA>
 endif
 
-;DWORD
-GetProcessImageFileNameA proto WINAPI \
-	      hProcess: HANDLE,
-       lpImageFileName: LPSTR,
-		 nSize: DWORD
-
-;DWORD
-GetProcessImageFileNameW proto WINAPI \
-	      hProcess: HANDLE,
-       lpImageFileName: LPWSTR,
-		 nSize: DWORD
-
+GetProcessImageFileNameA proto WINAPI :HANDLE, :LPSTR, :DWORD
+GetProcessImageFileNameW proto WINAPI :HANDLE, :LPWSTR, :DWORD
 ifdef _UNICODE
 GetProcessImageFileName equ <GetProcessImageFileNameW>
 else

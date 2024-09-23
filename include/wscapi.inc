@@ -1,4 +1,3 @@
-
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -31,32 +30,13 @@ if(_WIN32_WINNT GE 0x0600)
     WSC_SECURITY_PROVIDER_HEALTH_SNOOZE,
     }
 
-
-WscRegisterForChanges proto WINAPI \
-              Reserved: LPVOID,
-phCallbackRegistration: PHANDLE,
-     lpCallbackAddress: LPTHREAD_START_ROUTINE,
-              pContext: PVOID
-
-WscUnRegisterChanges proto WINAPI \
-   hRegistrationHandle: HANDLE
-
+WscRegisterForChanges proto WINAPI :ptr, :PHANDLE, :LPTHREAD_START_ROUTINE, :ptr
+WscUnRegisterChanges proto WINAPI :HANDLE
 WscRegisterForUserNotifications proto WINAPI
-
-WscGetSecurityProviderHealth proto WINAPI \
-             Providers: DWORD,
-               pHealth: ptr WSC_SECURITY_PROVIDER_HEALTH
-
-wscShowAMSCN proto WINAPI \
-            InputFlags: DWORD,
-        pdwResultFlags: PDWORD
-
-
+WscGetSecurityProviderHealth proto WINAPI :DWORD, :ptr
+wscShowAMSCN proto WINAPI :DWORD, :PDWORD
 WscQueryAntiMalwareUri proto WINAPI
-
-WscGetAntiMalwareUri proto WINAPI \
-               ppszUri: ptr LPWSTR
-
+WscGetAntiMalwareUri proto WINAPI :ptr
 
 endif
 

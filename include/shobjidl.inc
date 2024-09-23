@@ -1326,82 +1326,20 @@ endif
 
 .pragma comment(lib, shell32)
 
-;SHSTDAPI_(PIDLIST_ABSOLUTE)
-SHSimpleIDListFromPath proto WINAPI \
-	       pszPath: LPCWSTR
-
+SHSimpleIDListFromPath proto WINAPI :LPCWSTR
 if (_WIN32_IE GE _WIN32_IE_IE70)
-;SHSTDAPI
-SHCreateItemFromIDList proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;SHSTDAPI
-SHCreateItemFromParsingName proto WINAPI \
-	       pszPath: PCWSTR,
-		   pbc: ptr IBindCtx,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;SHSTDAPI
-SHCreateItemWithParent proto WINAPI \
-	    pidlParent: PCIDLIST_ABSOLUTE,
-	     psfParent: ptr IShellFolder,
-		  pidl: PCUITEMID_CHILD,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;SHSTDAPI
-SHCreateItemFromRelativeName proto WINAPI \
-	     psiParent: ptr IShellItem,
-	       pszName: PCWSTR,
-		   pbc: ptr IBindCtx,
-		  riid: REFIID,
-		   ppv: PVOID
-
+SHCreateItemFromIDList proto WINAPI :PCIDLIST_ABSOLUTE, :REFIID, :ptr
+SHCreateItemFromParsingName proto WINAPI :PCWSTR, :ptr, :REFIID, :ptr
+SHCreateItemWithParent proto WINAPI :PCIDLIST_ABSOLUTE, :ptr, :PCUITEMID_CHILD, :REFIID, :ptr
+SHCreateItemFromRelativeName proto WINAPI :ptr, :PCWSTR, :ptr, :REFIID, :ptr
 endif
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-SHCreateItemInKnownFolder proto WINAPI \
-		  kfid: REFKNOWNFOLDERID,
-	     dwKFFlags: DWORD,
-	       pszItem: PCWSTR,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;SHSTDAPI
-SHGetIDListFromObject proto WINAPI \
-		  punk: ptr IUnknown,
-		 ppidl: ptr PIDLIST_ABSOLUTE
-
-;SHSTDAPI
-SHGetItemFromObject proto WINAPI \
-		  punk: ptr IUnknown,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;SHSTDAPI
-SHGetPropertyStoreFromIDList proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE,
-		 flags: GETPROPERTYSTOREFLAGS,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;SHSTDAPI
-SHGetPropertyStoreFromParsingName proto WINAPI \
-	       pszPath: PCWSTR,
-		   pbc: ptr IBindCtx,
-		 flags: GETPROPERTYSTOREFLAGS,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;SHSTDAPI
-SHGetNameFromIDList proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE,
-	     sigdnName: SIGDN,
-	      ppszName: PWSTR
-
+SHCreateItemInKnownFolder proto WINAPI :REFKNOWNFOLDERID, :DWORD, :PCWSTR, :REFIID, :ptr
+SHGetIDListFromObject proto WINAPI :ptr, :ptr
+SHGetItemFromObject proto WINAPI :ptr, :REFIID, :ptr
+SHGetPropertyStoreFromIDList proto WINAPI :PCIDLIST_ABSOLUTE, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
+SHGetPropertyStoreFromParsingName proto WINAPI :PCWSTR, :ptr, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
+SHGetNameFromIDList proto WINAPI :PCIDLIST_ABSOLUTE, :SIGDN, :PWSTR
 endif
 if (NTDDI_VERSION GE NTDDI_WIN7)
 DATAOBJ_GET_ITEM_FLAGS	typedef SDWORD
@@ -1411,13 +1349,7 @@ DOGIF_NO_HDROP		equ 0x2
 DOGIF_NO_URL		equ 0x4
 DOGIF_ONLY_IF_ONE	equ 0x8
 
-;STDAPI
-SHGetItemFromDataObject proto WINAPI \
-		pdtobj: ptr IDataObject,
-	       dwFlags: DATAOBJ_GET_ITEM_FLAGS,
-		  riid: REFIID,
-		   ppv: PVOID
-
+SHGetItemFromDataObject proto WINAPI :ptr, :DATAOBJ_GET_ITEM_FLAGS, :REFIID, :ptr
 endif
 STR_GPS_HANDLERPROPERTIESONLY equ <L"GPS_HANDLERPROPERTIESONLY">
 STR_GPS_FASTPROPERTIESONLY equ <L"GPS_FASTPROPERTIESONLY">
@@ -1741,31 +1673,10 @@ DEFINE_IIDX(IShellItemArray, "b63ea76d-1f85-456f-a19c-48159efa858b")
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
-;SHSTDAPI
-SHCreateShellItemArray proto WINAPI \
-	    pidlParent: PCIDLIST_ABSOLUTE,
-		   psf: ptr IShellFolder,
-		  cidl: UINT,
-		 ppidl: PCUITEMID_CHILD_ARRAY,
-	 ppsiItemArray: ptr IShellItemArray
-
-;SHSTDAPI
-SHCreateShellItemArrayFromDataObject proto WINAPI \
-		   pdo: ptr IDataObject,
-		  riid: REFIID,
-		   ppv: PVOID
-;SHSTDAPI
-SHCreateShellItemArrayFromIDLists proto WINAPI \
-		  cidl: UINT,
-		rgpidl: PCIDLIST_ABSOLUTE_ARRAY,
-	 ppsiItemArray: ptr IShellItemArray
-
-;SHSTDAPI
-SHCreateShellItemArrayFromShellItem proto WINAPI \
-		   psi: ptr IShellItem,
-		  riid: REFIID,
-		   ppv: PVOID
-
+SHCreateShellItemArray proto WINAPI :PCIDLIST_ABSOLUTE, :ptr, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
+SHCreateShellItemArrayFromDataObject proto WINAPI :ptr, :REFIID, :ptr
+SHCreateShellItemArrayFromIDLists proto WINAPI :UINT, :PCIDLIST_ABSOLUTE_ARRAY, :ptr
+SHCreateShellItemArrayFromShellItem proto WINAPI :ptr, :REFIID, :ptr
 endif
 
 
@@ -1842,27 +1753,10 @@ DEFINE_IIDX(IPropertyUI, "757a7d9f-919a-4118-99d7-dbb208c8cc66")
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
-;SHSTDAPI
-SHRemovePersonalPropertyValues proto WINAPI \
-		  psia: ptr IShellItemArray
-
-;SHSTDAPI
-SHAddDefaultPropertiesByExt proto WINAPI \
-		pszExt: PCWSTR,
-	    pPropStore: ptr IPropertyStore
-
-;SHSTDAPI
-SHCreateDefaultPropertiesOp proto WINAPI \
-		   psi: ptr IShellItem,
-	      ppFileOp: ptr IFileOperation
-
-;SHSTDAPI
-SHSetDefaultProperties proto WINAPI \
-		  hwnd: HWND,
-		   psi: ptr IShellItem,
-	 dwFileOpFlags: DWORD,
-		 pfops: ptr IFileOperationProgressSink
-
+SHRemovePersonalPropertyValues proto WINAPI :ptr
+SHAddDefaultPropertiesByExt proto WINAPI :PCWSTR, :ptr
+SHCreateDefaultPropertiesOp proto WINAPI :ptr, :ptr
+SHSetDefaultProperties proto WINAPI :HWND, :ptr, :DWORD, :ptr
 endif
 if (_WIN32_IE GE 0x0500)
 
@@ -3605,10 +3499,7 @@ DEFINE_IIDX(IApplicationAssociationRegistration, "4e530b0a-e611-4c77-a3ac-9031d0
 
 endif
 
-;SHSTDAPI
-SHCreateAssociationRegistration proto WINAPI \
-		  riid: REFIID,
-		   ppv: PVOID
+SHCreateAssociationRegistration proto WINAPI :REFIID, :ptr
 
 ifndef __IApplicationAssociationRegistrationUI_INTERFACE_DEFINED__
 define __IApplicationAssociationRegistrationUI_INTERFACE_DEFINED__
@@ -4600,10 +4491,7 @@ DEFINE_IIDX(IDefaultExtractIconInit, "41ded17d-d6b3-4261-997d-88c60e4b1d58")
 
 endif
 
-;STDAPI
-SHCreateDefaultExtractIcon proto WINAPI \
-		  riid: REFIID,
-		   ppv: PVOID
+SHCreateDefaultExtractIcon proto WINAPI :REFIID, :ptr
 
 ifndef __IExplorerCommand_INTERFACE_DEFINED__
 define __IExplorerCommand_INTERFACE_DEFINED__
@@ -4952,13 +4840,8 @@ DEFINE_IIDX(IUpdateIDList, "6589b6d2-5f8d-4b9e-b7e0-23cdd9717d8c")
 
 endif
 
-;SHSTDAPI
-SetCurrentProcessExplicitAppUserModelID proto WINAPI \
-		 AppID: PCWSTR
-
-;SHSTDAPI
-GetCurrentProcessExplicitAppUserModelID proto WINAPI \
-		 AppID: ptr PWSTR
+SetCurrentProcessExplicitAppUserModelID proto WINAPI :PCWSTR
+GetCurrentProcessExplicitAppUserModelID proto WINAPI :ptr
 
 endif
 
@@ -5262,17 +5145,8 @@ DEFINE_GUIDS(CLSID_ExecuteFolder, "11dbb47c-a525-400b-9e80-a54615a090c0")
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;SHSTDAPI
-SHGetTemporaryPropertyForItem proto WINAPI \
-		   psi: ptr IShellItem,
-	       propkey: REFPROPERTYKEY,
-	      ppropvar: ptr PROPVARIANT
-
-SHSetTemporaryPropertyForItem proto WINAPI \
-		   psi: ptr IShellItem,
-	       propkey: REFPROPERTYKEY,
-	       propvar: REFPROPVARIANT
-
+SHGetTemporaryPropertyForItem proto WINAPI :ptr, :REFPROPERTYKEY, :ptr
+SHSetTemporaryPropertyForItem proto WINAPI :ptr, :REFPROPERTYKEY, :REFPROPVARIANT
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
@@ -5283,16 +5157,8 @@ if (_WIN32_IE GE _WIN32_IE_IE70)
     LMD_ALLOWUNINDEXABLENETWORKLOCATIONS
     }
 
-SHShowManageLibraryUI proto WINAPI \
-	    psiLibrary: ptr IShellItem,
-	     hwndOwner: HWND,
-	      pszTitle: LPCWSTR,
-	pszInstruction: LPCWSTR,
-	    lmdOptions: LIBRARYMANAGEDIALOGOPTIONS
-
-SHResolveLibrary proto WINAPI \
-	    psiLibrary: ptr IShellItem
-
+SHShowManageLibraryUI proto WINAPI :ptr, :HWND, :LPCWSTR, :LPCWSTR, :LIBRARYMANAGEDIALOGOPTIONS
+SHResolveLibrary proto WINAPI :ptr
 SHCreateLibrary macro riid, ppv
     exitm<CoCreateInstance(addr CLSID_ShellLibrary, NULL, CLSCTX_INPROC_SERVER, riid, ppv)>
     endm
@@ -5352,21 +5218,12 @@ endif
     ASSOC_FILTER_RECOMMENDED
     }
 
-;SHSTDAPI
-SHAssocEnumHandlers proto WINAPI \
-	      pszExtra: LPCWSTR,
-	      afFilter: ASSOC_FILTER,
-	 ppEnumHandler: ptr IEnumAssocHandlers
+SHAssocEnumHandlers proto WINAPI :LPCWSTR, :ASSOC_FILTER, :ptr
 
 endif ;; NTDDI_VISTA
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
-;SHSTDAPI
-SHAssocEnumHandlersForProtocolByApplication proto WINAPI \
-	      protocol: PCWSTR,
-		  riid: REFIID,
-	  enumHandlers: PVOID
-
+SHAssocEnumHandlersForProtocolByApplication proto WINAPI :PCWSTR, :REFIID, :ptr
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN8)

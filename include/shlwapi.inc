@@ -1,6 +1,6 @@
+.pragma list(push, 0)
 ifndef _INC_SHLWAPI
 define _INC_SHLWAPI
-.pragma list(push, 0)
 
 ifndef __LIBC_INC
  include libc.inc
@@ -30,265 +30,70 @@ ifdef USE_STRICT_CONST
 if (_WIN32_IE GE _WIN32_IE_IE60)
 endif
 else
-;LWSTDAPI
-StrChrA proto WINAPI \
-	       lpStart: LPCSTR,
-		wMatch: WORD
-StrChrW proto WINAPI \
-	       lpStart: LPCWSTR,
-		wMatch: WCHAR
-StrChrIA proto WINAPI \
-	       lpStart: LPCSTR,
-		wMatch: WORD
-StrChrIW proto WINAPI \
-	       lpStart: LPCWSTR,
-		wMatch: WCHAR
+StrChrA proto WINAPI :LPCSTR, :WORD
+StrChrW proto WINAPI :LPCWSTR, :WCHAR
+StrChrIA proto WINAPI :LPCSTR, :WORD
+StrChrIW proto WINAPI :LPCWSTR, :WCHAR
 if (_WIN32_IE GT _WIN32_IE_IE60)
-;LWSTDAPI
-StrChrNW proto WINAPI \
-	       lpStart: LPCWSTR,
-		wMatch: WCHAR,
-		cchMax: UINT
-StrChrNIW proto WINAPI \
-	       lpStart: LPCWSTR,
-		wMatch: WCHAR,
-		cchMax: UINT
+StrChrNW proto WINAPI :LPCWSTR, :WCHAR, :UINT
+StrChrNIW proto WINAPI :LPCWSTR, :WCHAR, :UINT
 endif
-endif ;; USE_STRICT_CONST
+endif
 
-;LWSTDAPI
-StrCmpNA proto WINAPI \
-		lpStr1: LPCSTR,
-		lpStr2: LPCSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-StrCmpNW proto WINAPI \
-		lpStr1: LPCWSTR,
-		lpStr2: LPCWSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-StrCmpNIA proto WINAPI \
-		lpStr1: LPCSTR,
-		lpStr2: LPCSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-StrCmpNIW proto WINAPI \
-		lpStr1: LPCWSTR,
-		lpStr2: LPCWSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-StrCSpnA proto WINAPI \
-		 lpStr: LPCSTR,
-		 lpSet: LPCSTR
-
-;LWSTDAPI
-StrCSpnW proto WINAPI \
-		 lpStr: LPCWSTR,
-		 lpSet: LPCWSTR
-
-;LWSTDAPI
-StrCSpnIA proto WINAPI \
-		 lpStr: LPCSTR,
-		 lpSet: LPCSTR
-
-;LWSTDAPI
-StrCSpnIW proto WINAPI \
-		 lpStr: LPCWSTR,
-		 lpSet: LPCWSTR
-
-;LWSTDAPI
-StrDupA proto WINAPI \
-		lpSrch: LPCSTR
-
-;LWSTDAPI
-StrDupW proto WINAPI \
-		lpSrch: LPCWSTR
-
-
+StrCmpNA proto WINAPI :LPCSTR, :LPCSTR, :SINT
+StrCmpNW proto WINAPI :LPCWSTR, :LPCWSTR, :SINT
+StrCmpNIA proto WINAPI :LPCSTR, :LPCSTR, :SINT
+StrCmpNIW proto WINAPI :LPCWSTR, :LPCWSTR, :SINT
+StrCSpnA proto WINAPI :LPCSTR, :LPCSTR
+StrCSpnW proto WINAPI :LPCWSTR, :LPCWSTR
+StrCSpnIA proto WINAPI :LPCSTR, :LPCSTR
+StrCSpnIW proto WINAPI :LPCWSTR, :LPCWSTR
+StrDupA proto WINAPI :LPCSTR
+StrDupW proto WINAPI :LPCWSTR
 
 tagSFBS_FLAGS		typedef SDWORD
 SFBS_FLAGS_ROUND_TO_NEAREST_DISPLAYED_DIGIT equ 0x0001
 SFBS_FLAGS_TRUNCATE_UNDISPLAYED_DECIMAL_DIGITS equ 0x0002
 SFBS_FLAGS		typedef SINT
 
-;LWSTDAPI
-StrFormatByteSizeEx proto WINAPI \
-		   ull: ULONGLONG,
-		 flags: SFBS_FLAGS,
-		pszBuf: LPWSTR,
-		cchBuf: UINT
-
-
-;LWSTDAPI
-StrFormatByteSizeA proto WINAPI \
-		   _dw: DWORD,
-		pszBuf: LPSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-StrFormatByteSize64A proto WINAPI \
-		   qdw: LONGLONG,
-		pszBuf: LPSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-StrFormatByteSizeW proto WINAPI \
-		   qdw: LONGLONG,
-		pszBuf: LPWSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-StrFormatKBSizeW proto WINAPI \
-		   qdw: LONGLONG,
-		pszBuf: LPWSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-StrFormatKBSizeA proto WINAPI \
-		   qdw: LONGLONG,
-		pszBuf: LPSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-StrFromTimeIntervalA proto WINAPI \
-		pszOut: LPSTR,
-		cchMax: UINT,
-	      dwTimeMS: DWORD,
-		digits: SINT
-
-;LWSTDAPI
-StrFromTimeIntervalW proto WINAPI \
-	       pwszOut: LPWSTR,
-		cchMax: UINT,
-	      dwTimeMS: DWORD,
-		digits: SINT
-
-;LWSTDAPI
-StrIsIntlEqualA proto WINAPI \
-	     fCaseSens: BOOL,
-	     lpString1: LPCSTR,
-	     lpString2: LPCSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-StrIsIntlEqualW proto WINAPI \
-	     fCaseSens: BOOL,
-	     lpString1: LPCWSTR,
-	     lpString2: LPCWSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-StrNCatA proto WINAPI \
-		  psz1: LPSTR,
-		  psz2: LPCSTR,
-		cchMax: SINT
-
-;LWSTDAPI
-StrNCatW proto WINAPI \
-		  psz1: LPWSTR,
-		  psz2: LPCWSTR,
-		cchMax: SINT
+StrFormatByteSizeEx proto WINAPI :ULONGLONG, :SFBS_FLAGS, :LPWSTR, :UINT
+StrFormatByteSizeA proto WINAPI :DWORD, :LPSTR, :UINT
+StrFormatByteSize64A proto WINAPI :LONGLONG, :LPSTR, :UINT
+StrFormatByteSizeW proto WINAPI :LONGLONG, :LPWSTR, :UINT
+StrFormatKBSizeW proto WINAPI :LONGLONG, :LPWSTR, :UINT
+StrFormatKBSizeA proto WINAPI :LONGLONG, :LPSTR, :UINT
+StrFromTimeIntervalA proto WINAPI :LPSTR, :UINT, :DWORD, :SINT
+StrFromTimeIntervalW proto WINAPI :LPWSTR, :UINT, :DWORD, :SINT
+StrIsIntlEqualA proto WINAPI :BOOL, :LPCSTR, :LPCSTR, :SINT
+StrIsIntlEqualW proto WINAPI :BOOL, :LPCWSTR, :LPCWSTR, :SINT
+StrNCatA proto WINAPI :LPSTR, :LPCSTR, :SINT
+StrNCatW proto WINAPI :LPWSTR, :LPCWSTR, :SINT
 
 ifdef USE_STRICT_CONST
 else
-;LWSTDAPI
-StrPBrkA proto WINAPI \
-		   psz: LPCSTR,
-		pszSet: LPCSTR
-
-;LWSTDAPI
-StrPBrkW proto WINAPI \
-		   psz: LPCWSTR,
-		pszSet: LPCWSTR
-
-;LWSTDAPI
-StrRChrA proto WINAPI \
-	       lpStart: LPCSTR,
-		 lpEnd: LPCSTR,
-		wMatch: WORD
-
-;LWSTDAPI
-StrRChrW proto WINAPI \
-	       lpStart: LPCWSTR,
-		 lpEnd: LPCWSTR,
-		wMatch: WCHAR
-
-;LWSTDAPI
-StrRChrIA proto WINAPI \
-	       lpStart: LPCSTR,
-		 lpEnd: LPCSTR,
-		wMatch: WORD
-
-;LWSTDAPI
-StrRChrIW proto WINAPI \
-	       lpStart: LPCWSTR,
-		 lpEnd: LPCWSTR,
-		wMatch: WCHAR
-
-;LWSTDAPI
-StrRStrIA proto WINAPI \
-	      lpSource: LPCSTR,
-		lpLast: LPCSTR,
-		lpSrch: LPCSTR
-
-;LWSTDAPI
-StrRStrIW proto WINAPI \
-	      lpSource: LPCWSTR,
-		lpLast: LPCWSTR,
-		lpSrch: LPCWSTR
+StrPBrkA proto WINAPI :LPCSTR, :LPCSTR
+StrPBrkW proto WINAPI :LPCWSTR, :LPCWSTR
+StrRChrA proto WINAPI :LPCSTR, :LPCSTR, :WORD
+StrRChrW proto WINAPI :LPCWSTR, :LPCWSTR, :WCHAR
+StrRChrIA proto WINAPI :LPCSTR, :LPCSTR, :WORD
+StrRChrIW proto WINAPI :LPCWSTR, :LPCWSTR, :WCHAR
+StrRStrIA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR
+StrRStrIW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR
 endif
 
-;LWSTDAPI
-StrSpnA proto WINAPI \
-		   psz: LPCSTR,
-		pszSet: LPCSTR
-
-;LWSTDAPI
-StrSpnW proto WINAPI \
-		   psz: LPCWSTR,
-		pszSet: LPCWSTR
+StrSpnA proto WINAPI :LPCSTR, :LPCSTR
+StrSpnW proto WINAPI :LPCWSTR, :LPCWSTR
 
 ifdef USE_STRICT_CONST
-if (_WIN32_IE GE _WIN32_IE_IE6)
-endif
 else
-;LWSTDAPI
-StrStrA proto WINAPI \
-	       lpFirst: LPCSTR,
-		lpSrch: LPCSTR
-
-;LWSTDAPI
-StrStrW proto WINAPI \
-	       lpFirst: LPCWSTR,
-		lpSrch: LPCWSTR
-
-;LWSTDAPI
-StrStrIA proto WINAPI \
-	       lpFirst: LPCSTR,
-		lpSrch: LPCSTR
-
-;LWSTDAPI
-StrStrIW proto WINAPI \
-	       lpFirst: LPCWSTR,
-		lpSrch: LPCWSTR
+StrStrA proto WINAPI :LPCSTR, :LPCSTR
+StrStrW proto WINAPI :LPCWSTR, :LPCWSTR
+StrStrIA proto WINAPI :LPCSTR, :LPCSTR
+StrStrIW proto WINAPI :LPCWSTR, :LPCWSTR
 
 if (_WIN32_IE GE _WIN32_IE_IE60)
-;LWSTDAPI
-StrStrNW proto WINAPI \
-	       lpFirst: LPCWSTR,
-		lpSrch: LPCWSTR,
-		cchMax: UINT
-
-;LWSTDAPI
-StrStrNIW proto WINAPI \
-	       lpFirst: LPCWSTR,
-		lpSrch: LPCWSTR,
-		cchMax: UINT
-
+StrStrNW proto WINAPI :LPCWSTR, :LPCWSTR, :UINT
+StrStrNIW proto WINAPI :LPCWSTR, :LPCWSTR, :UINT
 endif
 endif
 
@@ -296,131 +101,30 @@ STIF_DEFAULT		equ 0x00000000
 STIF_SUPPORT_HEX	equ 0x00000001
 STIF_FLAGS		typedef SINT
 
-;LWSTDAPI
-StrToIntA proto WINAPI \
-		 lpSrc: LPCSTR
-
-;LWSTDAPI
-StrToIntW proto WINAPI \
-		 lpSrc: LPCWSTR
-
-;LWSTDAPI
-StrToIntExA proto WINAPI \
-	     pszString: LPCSTR,
-	       dwFlags: STIF_FLAGS,
-		 piRet: ptr SINT
-
-;LWSTDAPI
-StrToIntExW proto WINAPI \
-	     pszString: LPCWSTR,
-	       dwFlags: STIF_FLAGS,
-		 piRet: ptr SINT
+StrToIntA proto WINAPI :LPCSTR
+StrToIntW proto WINAPI :LPCWSTR
+StrToIntExA proto WINAPI :LPCSTR, :STIF_FLAGS, :ptr
+StrToIntExW proto WINAPI :LPCWSTR, :STIF_FLAGS, :ptr
 
 if (_WIN32_IE GE _WIN32_IE_IE60)
-;LWSTDAPI
-StrToInt64ExA proto WINAPI \
-	     pszString: LPCSTR,
-	       dwFlags: STIF_FLAGS,
-		pllRet: ptr LONGLONG
-
-;LWSTDAPI
-StrToInt64ExW proto WINAPI \
-	     pszString: LPCWSTR,
-	       dwFlags: STIF_FLAGS,
-		pllRet: ptr LONGLONG
-
+StrToInt64ExA proto WINAPI :LPCSTR, :STIF_FLAGS, :ptr
+StrToInt64ExW proto WINAPI :LPCWSTR, :STIF_FLAGS, :ptr
 endif
-
-;LWSTDAPI
-StrTrimA proto WINAPI \
-		   psz: LPSTR,
-	  pszTrimChars: LPCSTR
-
-;LWSTDAPI
-StrTrimW proto WINAPI \
-		   psz: LPWSTR,
-	  pszTrimChars: LPCWSTR
-
-
-
-;LWSTDAPI
-StrCatW proto WINAPI \
-		  psz1: LPWSTR,
-		  psz2: LPCWSTR
-
-;LWSTDAPI
-StrCmpW proto WINAPI \
-		  psz1: LPCWSTR,
-		  psz2: LPCWSTR
-
-;LWSTDAPI
-StrCmpIW proto WINAPI \
-		  psz1: LPCWSTR,
-		  psz2: LPCWSTR
-
-;LWSTDAPI
-StrCpyW proto WINAPI \
-		  psz1: LPWSTR,
-		  psz2: LPCWSTR
-
-;LWSTDAPI
-StrCpyNW proto WINAPI \
-		  psz1: LPWSTR,
-		  psz2: LPCWSTR,
-		cchMax: SINT
-
-
-;LWSTDAPI
-StrCatBuffW proto WINAPI \
-	       pszDest: LPWSTR,
-		pszSrc: LPCWSTR,
-       cchDestBuffSize: SINT
-
-;LWSTDAPI
-StrCatBuffA proto WINAPI \
-	       pszDest: LPSTR,
-		pszSrc: LPCSTR,
-       cchDestBuffSize: SINT
-
-;LWSTDAPI
-ChrCmpIA proto WINAPI \
-		    w1: WORD,
-		    w2: WORD
-
-;LWSTDAPI
-ChrCmpIW proto WINAPI \
-		    w1: WCHAR,
-		    w2: WCHAR
-
-
-;LWSTDAPI
-wvnsprintfA proto WINAPI \
-	       pszDest: LPSTR,
-	       cchDest: SINT,
-		pszFmt: LPCSTR,
-	       arglist: va_list
-
-;LWSTDAPI
-wvnsprintfW proto WINAPI \
-	       pszDest: LPWSTR,
-	       cchDest: SINT,
-		pszFmt: LPCWSTR,
-	       arglist: va_list
-
-;LWSTDAPIV
-wnsprintfA proto __Cdecl \
-	       pszDest: LPSTR,
-	       cchDest: SINT,
-		pszFmt: LPCSTR,
-		      : VARARG
-
-;LWSTDAPIV
-wnsprintfW proto __Cdecl \
-	       pszDest: LPWSTR,
-	       cchDest: SINT,
-		pszFmt: LPCWSTR,
-		      : VARARG
-
+StrTrimA proto WINAPI :LPSTR, :LPCSTR
+StrTrimW proto WINAPI :LPWSTR, :LPCWSTR
+StrCatW proto WINAPI :LPWSTR, :LPCWSTR
+StrCmpW proto WINAPI :LPCWSTR, :LPCWSTR
+StrCmpIW proto WINAPI :LPCWSTR, :LPCWSTR
+StrCpyW proto WINAPI :LPWSTR, :LPCWSTR
+StrCpyNW proto WINAPI :LPWSTR, :LPCWSTR, :SINT
+StrCatBuffW proto WINAPI :LPWSTR, :LPCWSTR, :SINT
+StrCatBuffA proto WINAPI :LPSTR, :LPCSTR, :SINT
+ChrCmpIA proto WINAPI :WORD, :WORD
+ChrCmpIW proto WINAPI :WCHAR, :WCHAR
+wvnsprintfA proto WINAPI :LPSTR, :SINT, :LPCSTR, :va_list
+wvnsprintfW proto WINAPI :LPWSTR, :SINT, :LPCWSTR, :va_list
+wnsprintfA proto __Cdecl :LPSTR, :SINT, :LPCSTR, :VARARG
+wnsprintfW proto __Cdecl :LPWSTR, :SINT, :LPCWSTR, :VARARG
 
 StrIntlEqNA macro s1, s2, nChar
 	exitm<StrIsIntlEqualA( TRUE, s1, s2, nChar)>
@@ -435,55 +139,23 @@ StrIntlEqNIW macro s1, s2, nChar
 	exitm<StrIsIntlEqualW(FALSE, s1, s2, nChar)>
 	endm
 
-;LWSTDAPI
-StrRetToStrA proto WINAPI \
-		  pstr: ptr STRRET,
-		  pidl: PCUITEMID_CHILD,
-		  ppsz: ptr LPSTR
-
-;LWSTDAPI
-StrRetToStrW proto WINAPI \
-		  pstr: ptr STRRET,
-		  pidl: PCUITEMID_CHILD,
-		  ppsz: ptr LPWSTR
-
+StrRetToStrA proto WINAPI :ptr, :PCUITEMID_CHILD, :ptr
+StrRetToStrW proto WINAPI :ptr, :PCUITEMID_CHILD, :ptr
 ifdef _UNICODE
 StrRetToStr		equ <StrRetToStrW>
 else
 StrRetToStr		equ <StrRetToStrA>
 endif
 
-;LWSTDAPI
-StrRetToBufA proto WINAPI \
-		  pstr: ptr STRRET,
-		  pidl: PCUITEMID_CHILD,
-		pszBuf: LPSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-StrRetToBufW proto WINAPI \
-		  pstr: ptr STRRET,
-		  pidl: PCUITEMID_CHILD,
-		pszBuf: LPWSTR,
-		cchBuf: UINT
-
+StrRetToBufA proto WINAPI :ptr, :PCUITEMID_CHILD, :LPSTR, :UINT
+StrRetToBufW proto WINAPI :ptr, :PCUITEMID_CHILD, :LPWSTR, :UINT
 ifdef _UNICODE
 StrRetToBuf		equ <StrRetToBufW>
 else
 StrRetToBuf		equ <StrRetToBufA>
 endif
-
-
-;LWSTDAPI
-SHStrDupA proto WINAPI \
-		   psz: LPCSTR,
-		 ppwsz: ptr LPWSTR
-
-;LWSTDAPI
-SHStrDupW proto WINAPI \
-		   psz: LPCWSTR,
-		 ppwsz: ptr LPWSTR
-
+SHStrDupA proto WINAPI :LPCSTR, :ptr
+SHStrDupW proto WINAPI :LPCWSTR, :ptr
 ifdef _UNICODE
 SHStrDup		equ <SHStrDupW>
 else
@@ -491,75 +163,30 @@ SHStrDup		equ <SHStrDupA>
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE55)
-;LWSTDAPI
-StrCmpLogicalW proto WINAPI \
-		  psz1: LPCWSTR,
-		  psz2: LPCWSTR
-
-;LWSTDAPI
-StrCatChainW proto WINAPI \
-		pszDst: LPWSTR,
-		cchDst: DWORD,
-		 ichAt: DWORD,
-		pszSrc: LPCWSTR
-
-;LWSTDAPI
-StrRetToBSTR proto WINAPI \
-		  pstr: ptr STRRET,
-		  pidl: PCUITEMID_CHILD,
-		 pbstr: ptr BSTR
-
-;LWSTDAPI
-SHLoadIndirectString proto WINAPI \
-	     pszSource: LPCWSTR,
-	     pszOutBuf: LPWSTR,
-	     cchOutBuf: UINT,
-	   ppvReserved: PVOID
-
+StrCmpLogicalW proto WINAPI :LPCWSTR, :LPCWSTR
+StrCatChainW proto WINAPI :LPWSTR, :DWORD, :DWORD, :LPCWSTR
+StrRetToBSTR proto WINAPI :ptr, :PCUITEMID_CHILD, :ptr
+SHLoadIndirectString proto WINAPI :LPCWSTR, :LPWSTR, :UINT, :ptr
 endif
 
-
 if (_WIN32_IE GE _WIN32_IE_IE60SP2)
-;LWSTDAPI
-IsCharSpaceA proto WINAPI \
-		   wch: CHAR
-
-;LWSTDAPI
-IsCharSpaceW proto WINAPI \
-		   wch: WCHAR
-
+IsCharSpaceA proto WINAPI :CHAR
+IsCharSpaceW proto WINAPI :WCHAR
 ifdef _UNICODE
 IsCharSpace		equ <IsCharSpaceW>
 else
 IsCharSpace		equ <IsCharSpaceA>
 endif
-
-;LWSTDAPI
-StrCmpCA proto WINAPI \
-	       pszStr1: LPCSTR,
-	       pszStr2: LPCSTR
-
-;LWSTDAPI
-StrCmpCW proto WINAPI \
-	       pszStr1: LPCWSTR,
-	       pszStr2: LPCWSTR
-
+StrCmpCA proto WINAPI :LPCSTR, :LPCSTR
+StrCmpCW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 StrCmpC			equ <StrCmpCW>
 else
 StrCmpC			equ <StrCmpCA>
 endif
 
-;LWSTDAPI
-StrCmpICA proto WINAPI \
-	       pszStr1: LPCSTR,
-	       pszStr2: LPCSTR
-
-;LWSTDAPI
-StrCmpICW proto WINAPI \
-	       pszStr1: LPCWSTR,
-	       pszStr2: LPCWSTR
-
+StrCmpICA proto WINAPI :LPCSTR, :LPCSTR
+StrCmpICW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 StrCmpIC		equ <StrCmpICW>
 else
@@ -638,58 +265,23 @@ StrIsIntlEqual		equ <StrIsIntlEqualA>
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE50)
-;LWSTDAPI
-StrCmpNCA proto WINAPI \
-		lpStr1: LPCSTR,
-		lpStr2: LPCSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-StrCmpNCW proto WINAPI \
-		lpStr1: LPCWSTR,
-		lpStr2: LPCWSTR,
-		 nChar: SINT
-
+StrCmpNCA proto WINAPI :LPCSTR, :LPCSTR, :SINT
+StrCmpNCW proto WINAPI :LPCWSTR, :LPCWSTR, :SINT
 ifdef _UNICODE
 StrCmpNC		equ <StrCmpNCW>
 else
 StrCmpNC		equ <StrCmpNCA>
 endif
-;LWSTDAPI
-StrCmpNICA proto WINAPI \
-		lpStr1: LPCSTR,
-		lpStr2: LPCSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-StrCmpNICW proto WINAPI \
-		lpStr1: LPCWSTR,
-		lpStr2: LPCWSTR,
-		 nChar: SINT
-
+StrCmpNICA proto WINAPI :LPCSTR, :LPCSTR, :SINT
+StrCmpNICW proto WINAPI :LPCWSTR, :LPCWSTR, :SINT
 ifdef _UNICODE
 StrCmpNIC		equ <StrCmpNICW>
 else
 StrCmpNIC		equ <StrCmpNICA>
 endif
 endif
-
-
-;LWSTDAPI
-IntlStrEqWorkerA proto WINAPI \
-	     fCaseSens: BOOL,
-	     lpString1: LPCSTR,
-	     lpString2: LPCSTR,
-		 nChar: SINT
-
-;LWSTDAPI
-IntlStrEqWorkerW proto WINAPI \
-	     fCaseSens: BOOL,
-	     lpString1: LPCWSTR,
-	     lpString2: LPCWSTR,
-		 nChar: SINT
-
-
+IntlStrEqWorkerA proto WINAPI :BOOL, :LPCSTR, :LPCSTR, :SINT
+IntlStrEqWorkerW proto WINAPI :BOOL, :LPCWSTR, :LPCWSTR, :SINT
 IntlStrEqNA macro s1, s2, nChar
 	exitm<IntlStrEqWorkerA( TRUE, s1, s2, nChar)>
 	endm
@@ -731,13 +323,11 @@ PathIsHTMLFileW macro pszPath
 	exitm<PathIsContentTypeW(pszPath, SZ_CONTENTTYPE_HTMLW)>
 	endm
 
-
 StrCatA			equ <lstrcatA>
 StrCmpA			equ <lstrcmpA>
 StrCmpIA		equ <lstrcmpiA>
 StrCpyA			equ <lstrcpyA>
 StrCpyNA		equ <lstrcpynA>
-
 
 StrToLong		equ <StrToInt>
 StrNCmp			equ <StrCmpN>
@@ -765,210 +355,91 @@ endif ;;  NO_SHLWAPI_STRFCNS
 
 ifndef NO_SHLWAPI_PATH
 
-;LWSTDAPI
-PathAddBackslashA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathAddBackslashW proto WINAPI \
-	       pszPath: LPWSTR
-
+PathAddBackslashA proto WINAPI :LPSTR
+PathAddBackslashW proto WINAPI :LPWSTR
 ifdef _UNICODE
 PathAddBackslash	equ <PathAddBackslashW>
 else
 PathAddBackslash	equ <PathAddBackslashA>
 endif
-;LWSTDAPI
-PathAddExtensionA proto WINAPI \
-	       pszPath: LPSTR,
-		pszExt: LPCSTR
-PathAddExtensionW proto WINAPI \
-	       pszPath: LPWSTR,
-		pszExt: LPCWSTR
+PathAddExtensionA proto WINAPI :LPSTR, :LPCSTR
+PathAddExtensionW proto WINAPI :LPWSTR, :LPCWSTR
 ifdef _UNICODE
 PathAddExtension	equ <PathAddExtensionW>
 else
 PathAddExtension	equ <PathAddExtensionA>
 endif
 
-;LWSTDAPI
-PathAppendA proto WINAPI \
-	       pszPath: LPSTR,
-		 pMore: LPCSTR
-
-;LWSTDAPI
-PathAppendW proto WINAPI \
-	       pszPath: LPWSTR,
-		 pMore: LPCWSTR
-
-;LWSTDAPI
-PathBuildRootA proto WINAPI \
-	       pszRoot: LPSTR,
-		iDrive: SINT
-
-;LWSTDAPI
-PathBuildRootW proto WINAPI \
-	       pszRoot: LPWSTR,
-		iDrive: SINT
-
+PathAppendA proto WINAPI :LPSTR, :LPCSTR
+PathAppendW proto WINAPI :LPWSTR, :LPCWSTR
+PathBuildRootA proto WINAPI :LPSTR, :SINT
+PathBuildRootW proto WINAPI :LPWSTR, :SINT
 ifdef _UNICODE
 PathBuildRoot		equ <PathBuildRootW>
 else
 PathBuildRoot		equ <PathBuildRootA>
 endif
-;LWSTDAPI
-PathCanonicalizeA proto WINAPI \
-		pszBuf: LPSTR,
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathCanonicalizeW proto WINAPI \
-		pszBuf: LPWSTR,
-	       pszPath: LPCWSTR
-
-;LWSTDAPI
-PathCombineA proto WINAPI \
-	       pszDest: LPSTR,
-		pszDir: LPCSTR,
-	       pszFile: LPCSTR
-
-;LWSTDAPI
-PathCombineW proto WINAPI \
-	       pszDest: LPWSTR,
-		pszDir: LPCWSTR,
-	       pszFile: LPCWSTR
-
+PathCanonicalizeA proto WINAPI :LPSTR, :LPCSTR
+PathCanonicalizeW proto WINAPI :LPWSTR, :LPCWSTR
+PathCombineA proto WINAPI :LPSTR, :LPCSTR, :LPCSTR
+PathCombineW proto WINAPI :LPWSTR, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 PathCombine		equ <PathCombineW>
 else
 PathCombine		equ <PathCombineA>
 endif
-;LWSTDAPI
-PathCompactPathA proto WINAPI \
-		   hDC: HDC,
-	       pszPath: LPSTR,
-		   _dx: UINT
-
-;LWSTDAPI
-PathCompactPathW proto WINAPI \
-		   hDC: HDC,
-	       pszPath: LPWSTR,
-		   _dx: UINT
-
-;LWSTDAPI
-PathCompactPathExA proto WINAPI \
-		pszOut: LPSTR,
-		pszSrc: LPCSTR,
-		cchMax: UINT,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-PathCompactPathExW proto WINAPI \
-		pszOut: LPWSTR,
-		pszSrc: LPCWSTR,
-		cchMax: UINT,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-PathCommonPrefixA proto WINAPI \
-	      pszFile1: LPCSTR,
-	      pszFile2: LPCSTR,
-	       achPath: LPSTR
-
-;LWSTDAPI
-PathCommonPrefixW proto WINAPI \
-	      pszFile1: LPCWSTR,
-	      pszFile2: LPCWSTR,
-	       achPath: LPWSTR
-
-;LWSTDAPI
-PathFileExistsA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathFileExistsW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathCompactPathA proto WINAPI :HDC, :LPSTR, :UINT
+PathCompactPathW proto WINAPI :HDC, :LPWSTR, :UINT
+PathCompactPathExA proto WINAPI :LPSTR, :LPCSTR, :UINT, :DWORD
+PathCompactPathExW proto WINAPI :LPWSTR, :LPCWSTR, :UINT, :DWORD
+PathCommonPrefixA proto WINAPI :LPCSTR, :LPCSTR, :LPSTR
+PathCommonPrefixW proto WINAPI :LPCWSTR, :LPCWSTR, :LPWSTR
+PathFileExistsA proto WINAPI :LPCSTR
+PathFileExistsW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathFileExists		equ <PathFileExistsW>
 else
 PathFileExists		equ <PathFileExistsA>
 endif
 ifdef USE_STRICT_CONST
-;LWSTDAPI
-PathFindExtensionA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathFindExtensionW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathFindExtensionA proto WINAPI :LPCSTR
+PathFindExtensionW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathFindExtension	equ <PathFindExtensionW>
 else
 PathFindExtension	equ <PathFindExtensionA>
 endif
-;LWSTDAPI
-PathFindFileNameA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathFindFileNameW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathFindFileNameA proto WINAPI :LPCSTR
+PathFindFileNameW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathFindFileName	equ <PathFindFileNameW>
 else
 PathFindFileName	equ <PathFindFileNameA>
 endif
-;LWSTDAPI
-PathFindNextComponentA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathFindNextComponentW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathFindNextComponentA proto WINAPI :LPCSTR
+PathFindNextComponentW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathFindNextComponent	equ <PathFindNextComponentW>
 else
 PathFindNextComponent	equ <PathFindNextComponentA>
 endif
 else
-;LWSTDAPI
-PathFindExtensionA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathFindExtensionW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathFindExtensionA proto WINAPI :LPCSTR
+PathFindExtensionW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathFindExtension	equ <PathFindExtensionW>
 else
 PathFindExtension	equ <PathFindExtensionA>
 endif
-;LWSTDAPI
-PathFindFileNameA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathFindFileNameW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathFindFileNameA proto WINAPI :LPCSTR
+PathFindFileNameW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathFindFileName	equ <PathFindFileNameW>
 else
 PathFindFileName	equ <PathFindFileNameA>
 endif
-;LWSTDAPI
-PathFindNextComponentA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathFindNextComponentW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathFindNextComponentA proto WINAPI :LPCSTR
+PathFindNextComponentW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathFindNextComponent	equ <PathFindNextComponentW>
 else
@@ -976,56 +447,26 @@ PathFindNextComponent	equ <PathFindNextComponentA>
 endif
 endif ;; USE_STRICT_CONST
 
-;LWSTDAPI
-PathFindOnPathA proto WINAPI \
-	       pszPath: LPSTR,
-	 ppszOtherDirs: PZPCSTR
-
-;LWSTDAPI
-PathFindOnPathW proto WINAPI \
-	       pszPath: LPWSTR,
-	 ppszOtherDirs: PZPCWSTR
-
-;LWSTDAPI
-PathFindSuffixArrayA proto WINAPI \
-	       pszPath: LPCSTR,
-	    apszSuffix: ptr LPCSTR,
-	    iArraySize: SINT
-
-;LWSTDAPI
-PathFindSuffixArrayW proto WINAPI \
-	       pszPath: LPCWSTR,
-	    apszSuffix: ptr LPCWSTR,
-	    iArraySize: SINT
-
+PathFindOnPathA proto WINAPI :LPSTR, :PZPCSTR
+PathFindOnPathW proto WINAPI :LPWSTR, :PZPCWSTR
+PathFindSuffixArrayA proto WINAPI :LPCSTR, :ptr, :SINT
+PathFindSuffixArrayW proto WINAPI :LPCWSTR, :ptr, :SINT
 ifdef _UNICODE
 PathFindSuffixArray	equ <PathFindSuffixArrayW>
 else
 PathFindSuffixArray	equ <PathFindSuffixArrayA>
 endif
 ifdef USE_STRICT_CONST
-;LWSTDAPI
-PathGetArgsA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathGetArgsW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathGetArgsA proto WINAPI :LPCSTR
+PathGetArgsW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathGetArgs		equ <PathGetArgsW>
 else
 PathGetArgs		equ <PathGetArgsA>
 endif
 else
-;LWSTDAPI
-PathGetArgsA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathGetArgsW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathGetArgsA proto WINAPI :LPCSTR
+PathGetArgsW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathGetArgs		equ <PathGetArgsW>
 else
@@ -1033,27 +474,15 @@ PathGetArgs		equ <PathGetArgsA>
 endif
 endif ;; USE_STRICT_CONST
 
-;LWSTDAPI
-PathIsLFNFileSpecA proto WINAPI \
-		lpName: LPCSTR
-
-;LWSTDAPI
-PathIsLFNFileSpecW proto WINAPI \
-		lpName: LPCWSTR
-
+PathIsLFNFileSpecA proto WINAPI :LPCSTR
+PathIsLFNFileSpecW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsLFNFileSpec	equ <PathIsLFNFileSpecW>
 else
 PathIsLFNFileSpec	equ <PathIsLFNFileSpecA>
 endif
-;LWSTDAPI
-PathGetCharTypeA proto WINAPI \
-		   _ch: UCHAR
-
-;LWSTDAPI
-PathGetCharTypeW proto WINAPI \
-		   _ch: WCHAR
-
+PathGetCharTypeA proto WINAPI :UCHAR
+PathGetCharTypeW proto WINAPI :WCHAR
 
 GCT_INVALID		equ 0x0000
 GCT_LFNCHAR		equ 0x0001
@@ -1061,473 +490,208 @@ GCT_SHORTCHAR		equ 0x0002
 GCT_WILD		equ 0x0004
 GCT_SEPARATOR		equ 0x0008
 
-;LWSTDAPI
-PathGetDriveNumberA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathGetDriveNumberW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathGetDriveNumberA proto WINAPI :LPCSTR
+PathGetDriveNumberW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathGetDriveNumber	equ <PathGetDriveNumberW>
 else
 PathGetDriveNumber	equ <PathGetDriveNumberA>
 endif
-;LWSTDAPI
-PathIsDirectoryA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsDirectoryW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsDirectoryA proto WINAPI :LPCSTR
+PathIsDirectoryW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsDirectory		equ <PathIsDirectoryW>
 else
 PathIsDirectory		equ <PathIsDirectoryA>
 endif
-;LWSTDAPI
-PathIsDirectoryEmptyA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsDirectoryEmptyW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsDirectoryEmptyA proto WINAPI :LPCSTR
+PathIsDirectoryEmptyW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsDirectoryEmpty	equ <PathIsDirectoryEmptyW>
 else
 PathIsDirectoryEmpty	equ <PathIsDirectoryEmptyA>
 endif
-;LWSTDAPI
-PathIsFileSpecA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsFileSpecW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsFileSpecA proto WINAPI :LPCSTR
+PathIsFileSpecW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsFileSpec		equ <PathIsFileSpecW>
 else
 PathIsFileSpec		equ <PathIsFileSpecA>
 endif
-;LWSTDAPI
-PathIsPrefixA proto WINAPI \
-	     pszPrefix: LPCSTR,
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsPrefixW proto WINAPI \
-	     pszPrefix: LPCWSTR,
-	       pszPath: LPCWSTR
-
+PathIsPrefixA proto WINAPI :LPCSTR, :LPCSTR
+PathIsPrefixW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 PathIsPrefix		equ <PathIsPrefixW>
 else
 PathIsPrefix		equ <PathIsPrefixA>
 endif
-;LWSTDAPI
-PathIsRelativeA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsRelativeW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsRelativeA proto WINAPI :LPCSTR
+PathIsRelativeW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsRelative		equ <PathIsRelativeW>
 else
 PathIsRelative		equ <PathIsRelativeA>
 endif
-;LWSTDAPI
-PathIsRootA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsRootW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsRootA proto WINAPI :LPCSTR
+PathIsRootW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsRoot		equ <PathIsRootW>
 else
 PathIsRoot		equ <PathIsRootA>
 endif
-;LWSTDAPI
-PathIsSameRootA proto WINAPI \
-	      pszPath1: LPCSTR,
-	      pszPath2: LPCSTR
-
-;LWSTDAPI
-PathIsSameRootW proto WINAPI \
-	      pszPath1: LPCWSTR,
-	      pszPath2: LPCWSTR
-
+PathIsSameRootA proto WINAPI :LPCSTR, :LPCSTR
+PathIsSameRootW proto WINAPI :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 PathIsSameRoot		equ <PathIsSameRootW>
 else
 PathIsSameRoot		equ <PathIsSameRootA>
 endif
-;LWSTDAPI
-PathIsUNCA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsUNCW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsUNCA proto WINAPI :LPCSTR
+PathIsUNCW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsUNC		equ <PathIsUNCW>
 else
 PathIsUNC		equ <PathIsUNCA>
 endif
-;LWSTDAPI
-PathIsNetworkPathA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsNetworkPathW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsNetworkPathA proto WINAPI :LPCSTR
+PathIsNetworkPathW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsNetworkPath	equ <PathIsNetworkPathW>
 else
 PathIsNetworkPath	equ <PathIsNetworkPathA>
 endif
-;LWSTDAPI
-PathIsUNCServerA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsUNCServerW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsUNCServerA proto WINAPI :LPCSTR
+PathIsUNCServerW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsUNCServer		equ <PathIsUNCServerW>
 else
 PathIsUNCServer		equ <PathIsUNCServerA>
 endif
-;LWSTDAPI
-PathIsUNCServerShareA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsUNCServerShareW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsUNCServerShareA proto WINAPI :LPCSTR
+PathIsUNCServerShareW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsUNCServerShare	equ <PathIsUNCServerShareW>
 else
 PathIsUNCServerShare	equ <PathIsUNCServerShareA>
 endif
-;LWSTDAPI
-PathIsContentTypeA proto WINAPI \
-	       pszPath: LPCSTR,
-	pszContentType: LPCSTR
-
-;LWSTDAPI
-PathIsContentTypeW proto WINAPI \
-	       pszPath: LPCWSTR,
-	pszContentType: LPCWSTR
-
-;LWSTDAPI
-PathIsURLA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathIsURLW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathIsContentTypeA proto WINAPI :LPCSTR, :LPCSTR
+PathIsContentTypeW proto WINAPI :LPCWSTR, :LPCWSTR
+PathIsURLA proto WINAPI :LPCSTR
+PathIsURLW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathIsURL		equ <PathIsURLW>
 else
 PathIsURL		equ <PathIsURLA>
 endif
-;LWSTDAPI
-PathMakePrettyA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathMakePrettyW proto WINAPI \
-	       pszPath: LPWSTR
-
-;LWSTDAPI
-PathMatchSpecA proto WINAPI \
-	       pszFile: LPCSTR,
-	       pszSpec: LPCSTR
-
-;LWSTDAPI
-PathMatchSpecW proto WINAPI \
-	       pszFile: LPCWSTR,
-	       pszSpec: LPCWSTR
-
-
+PathMakePrettyA proto WINAPI :LPSTR
+PathMakePrettyW proto WINAPI :LPWSTR
+PathMatchSpecA proto WINAPI :LPCSTR, :LPCSTR
+PathMatchSpecW proto WINAPI :LPCWSTR, :LPCWSTR
 if (_WIN32_IE GE _WIN32_IE_IE70)
 PMSF_NORMAL		equ 0x00000000
 PMSF_MULTIPLE		equ 0x00000001
 PMSF_DONT_STRIP_SPACES	equ 0x00010000
 
-;LWSTDAPI
-PathMatchSpecExA proto WINAPI \
-	       pszFile: LPCSTR,
-	       pszSpec: LPCSTR,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-PathMatchSpecExW proto WINAPI \
-	       pszFile: LPCWSTR,
-	       pszSpec: LPCWSTR,
-	       dwFlags: DWORD
-
+PathMatchSpecExA proto WINAPI :LPCSTR, :LPCSTR, :DWORD
+PathMatchSpecExW proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD
 endif
 
-;LWSTDAPI
-PathParseIconLocationA proto WINAPI \
-	   pszIconFile: LPSTR
-
-;LWSTDAPI
-PathParseIconLocationW proto WINAPI \
-	   pszIconFile: LPWSTR
-
-;LWSTDAPI
-PathQuoteSpacesA proto WINAPI \
-		  lpsz: LPSTR
-
-;LWSTDAPI
-PathQuoteSpacesW proto WINAPI \
-		  lpsz: LPWSTR
-
-;LWSTDAPI
-PathRelativePathToA proto WINAPI \
-	       pszPath: LPSTR,
-	       pszFrom: LPCSTR,
-	    dwAttrFrom: DWORD,
-		 pszTo: LPCSTR,
-	      dwAttrTo: DWORD
-
-;LWSTDAPI
-PathRelativePathToW proto WINAPI \
-	       pszPath: LPWSTR,
-	       pszFrom: LPCWSTR,
-	    dwAttrFrom: DWORD,
-		 pszTo: LPCWSTR,
-	      dwAttrTo: DWORD
-
-;LWSTDAPI
-PathRemoveArgsA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathRemoveArgsW proto WINAPI \
-	       pszPath: LPWSTR
-
-;LWSTDAPI
-PathRemoveBackslashA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathRemoveBackslashW proto WINAPI \
-	       pszPath: LPWSTR
-
+PathParseIconLocationA proto WINAPI :LPSTR
+PathParseIconLocationW proto WINAPI :LPWSTR
+PathQuoteSpacesA proto WINAPI :LPSTR
+PathQuoteSpacesW proto WINAPI :LPWSTR
+PathRelativePathToA proto WINAPI :LPSTR, :LPCSTR, :DWORD, :LPCSTR, :DWORD
+PathRelativePathToW proto WINAPI :LPWSTR, :LPCWSTR, :DWORD, :LPCWSTR, :DWORD
+PathRemoveArgsA proto WINAPI :LPSTR
+PathRemoveArgsW proto WINAPI :LPWSTR
+PathRemoveBackslashA proto WINAPI :LPSTR
+PathRemoveBackslashW proto WINAPI :LPWSTR
 ifdef _UNICODE
 PathRemoveBackslash	equ <PathRemoveBackslashW>
 else
 PathRemoveBackslash	equ <PathRemoveBackslashA>
 endif
-;LWSTDAPI
-PathRemoveBlanksA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathRemoveBlanksW proto WINAPI \
-	       pszPath: LPWSTR
-
-;LWSTDAPI
-PathRemoveExtensionA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathRemoveExtensionW proto WINAPI \
-	       pszPath: LPWSTR
-
-;LWSTDAPI
-PathRemoveFileSpecA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathRemoveFileSpecW proto WINAPI \
-	       pszPath: LPWSTR
-
-;LWSTDAPI
-PathRenameExtensionA proto WINAPI \
-	       pszPath: LPSTR,
-		pszExt: LPCSTR
-
-;LWSTDAPI
-PathRenameExtensionW proto WINAPI \
-	       pszPath: LPWSTR,
-		pszExt: LPCWSTR
-
-;LWSTDAPI
-PathSearchAndQualifyA proto WINAPI \
-	       pszPath: LPCSTR,
-		pszBuf: LPSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-PathSearchAndQualifyW proto WINAPI \
-	       pszPath: LPCWSTR,
-		pszBuf: LPWSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-PathSetDlgItemPathA proto WINAPI \
-		  hDlg: HWND,
-		    id: SINT,
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathSetDlgItemPathW proto WINAPI \
-		  hDlg: HWND,
-		    id: SINT,
-	       pszPath: LPCWSTR
+PathRemoveBlanksA proto WINAPI :LPSTR
+PathRemoveBlanksW proto WINAPI :LPWSTR
+PathRemoveExtensionA proto WINAPI :LPSTR
+PathRemoveExtensionW proto WINAPI :LPWSTR
+PathRemoveFileSpecA proto WINAPI :LPSTR
+PathRemoveFileSpecW proto WINAPI :LPWSTR
+PathRenameExtensionA proto WINAPI :LPSTR, :LPCSTR
+PathRenameExtensionW proto WINAPI :LPWSTR, :LPCWSTR
+PathSearchAndQualifyA proto WINAPI :LPCSTR, :LPSTR, :UINT
+PathSearchAndQualifyW proto WINAPI :LPCWSTR, :LPWSTR, :UINT
+PathSetDlgItemPathA proto WINAPI :HWND, :SINT, :LPCSTR
+PathSetDlgItemPathW proto WINAPI :HWND, :SINT, :LPCWSTR
 
 ifdef USE_STRICT_CONST
-;LWSTDAPI
-PathSkipRootA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathSkipRootW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathSkipRootA proto WINAPI :LPCSTR
+PathSkipRootW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathSkipRoot		equ <PathSkipRootW>
 else
 PathSkipRoot		equ <PathSkipRootA>
 endif
 else
-;LWSTDAPI
-PathSkipRootA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathSkipRootW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathSkipRootA proto WINAPI :LPCSTR
+PathSkipRootW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathSkipRoot		equ <PathSkipRootW>
 else
 PathSkipRoot		equ <PathSkipRootA>
 endif
 endif
-;LWSTDAPI
-PathStripPathA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathStripPathW proto WINAPI \
-	       pszPath: LPWSTR
-
+PathStripPathA proto WINAPI :LPSTR
+PathStripPathW proto WINAPI :LPWSTR
 ifdef _UNICODE
 PathStripPath		equ <PathStripPathW>
 else
 PathStripPath		equ <PathStripPathA>
 endif
-;LWSTDAPI
-PathStripToRootA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathStripToRootW proto WINAPI \
-	       pszPath: LPWSTR
-
+PathStripToRootA proto WINAPI :LPSTR
+PathStripToRootW proto WINAPI :LPWSTR
 ifdef _UNICODE
 PathStripToRoot		equ <PathStripToRootW>
 else
 PathStripToRoot		equ <PathStripToRootA>
 endif
-;LWSTDAPI
-PathUnquoteSpacesA proto WINAPI \
-		  lpsz: LPSTR
-
-;LWSTDAPI
-PathUnquoteSpacesW proto WINAPI \
-		  lpsz: LPWSTR
-
-;LWSTDAPI
-PathMakeSystemFolderA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathMakeSystemFolderW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathUnquoteSpacesA proto WINAPI :LPSTR
+PathUnquoteSpacesW proto WINAPI :LPWSTR
+PathMakeSystemFolderA proto WINAPI :LPCSTR
+PathMakeSystemFolderW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathMakeSystemFolder	equ <PathMakeSystemFolderW>
 else
 PathMakeSystemFolder	equ <PathMakeSystemFolderA>
 endif
-;LWSTDAPI
-PathUnmakeSystemFolderA proto WINAPI \
-	       pszPath: LPCSTR
-
-;LWSTDAPI
-PathUnmakeSystemFolderW proto WINAPI \
-	       pszPath: LPCWSTR
-
+PathUnmakeSystemFolderA proto WINAPI :LPCSTR
+PathUnmakeSystemFolderW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 PathUnmakeSystemFolder	equ <PathUnmakeSystemFolderW>
 else
 PathUnmakeSystemFolder	equ <PathUnmakeSystemFolderA>
 endif
-;LWSTDAPI
-PathIsSystemFolderA proto WINAPI \
-	       pszPath: LPCSTR,
-	       dwAttrb: DWORD
-
-;LWSTDAPI
-PathIsSystemFolderW proto WINAPI \
-	       pszPath: LPCWSTR,
-	       dwAttrb: DWORD
-
+PathIsSystemFolderA proto WINAPI :LPCSTR, :DWORD
+PathIsSystemFolderW proto WINAPI :LPCWSTR, :DWORD
 ifdef _UNICODE
 PathIsSystemFolder	equ <PathIsSystemFolderW>
 else
 PathIsSystemFolder	equ <PathIsSystemFolderA>
 endif
-;LWSTDAPI
-PathUndecorateA proto WINAPI \
-	       pszPath: LPSTR
-
-;LWSTDAPI
-PathUndecorateW proto WINAPI \
-	       pszPath: LPWSTR
-
+PathUndecorateA proto WINAPI :LPSTR
+PathUndecorateW proto WINAPI :LPWSTR
 ifdef _UNICODE
 PathUndecorate		equ <PathUndecorateW>
 else
 PathUndecorate		equ <PathUndecorateA>
 endif
-;LWSTDAPI
-PathUnExpandEnvStringsA proto WINAPI \
-	       pszPath: LPCSTR,
-		pszBuf: LPSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-PathUnExpandEnvStringsW proto WINAPI \
-	       pszPath: LPCWSTR,
-		pszBuf: LPWSTR,
-		cchBuf: UINT
-
+PathUnExpandEnvStringsA proto WINAPI :LPCSTR, :LPSTR, :UINT
+PathUnExpandEnvStringsW proto WINAPI :LPCWSTR, :LPWSTR, :UINT
 ifdef _UNICODE
 PathUnExpandEnvStrings	equ <PathUnExpandEnvStringsW>
 else
 PathUnExpandEnvStrings	equ <PathUnExpandEnvStringsA>
 endif
-
 
 ifdef _UNICODE
 PathAppend		equ <PathAppendW>
@@ -1673,207 +837,46 @@ URL_APPLY_GUESSFILE	equ 0x00000004
 URL_APPLY_FORCEAPPLY	equ 0x00000008
 
 
-;LWSTDAPI
-UrlCompareA proto WINAPI \
-		  psz1: LPCSTR,
-		  psz2: LPCSTR,
-	  fIgnoreSlash: BOOL
-
-;LWSTDAPI
-UrlCompareW proto WINAPI \
-		  psz1: LPCWSTR,
-		  psz2: LPCWSTR,
-	  fIgnoreSlash: BOOL
-
-;LWSTDAPI
-UrlCombineA proto WINAPI \
-	       pszBase: LPCSTR,
-	   pszRelative: LPCSTR,
-	   pszCombined: LPSTR,
-	  pcchCombined: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlCombineW proto WINAPI \
-	       pszBase: LPCWSTR,
-	   pszRelative: LPCWSTR,
-	   pszCombined: LPWSTR,
-	  pcchCombined: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlCanonicalizeA proto WINAPI \
-		pszUrl: LPCSTR,
-      pszCanonicalized: LPSTR,
-     pcchCanonicalized: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlCanonicalizeW proto WINAPI \
-		pszUrl: LPCWSTR,
-      pszCanonicalized: LPWSTR,
-     pcchCanonicalized: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlIsOpaqueA proto WINAPI \
-		pszURL: LPCSTR
-
-;LWSTDAPI
-UrlIsOpaqueW proto WINAPI \
-		pszURL: LPCWSTR
-
-;LWSTDAPI
-UrlIsNoHistoryA proto WINAPI \
-		pszURL: LPCSTR
-
-;LWSTDAPI
-UrlIsNoHistoryW proto WINAPI \
-		pszURL: LPCWSTR
-
+UrlCompareA proto WINAPI :LPCSTR, :LPCSTR, :BOOL
+UrlCompareW proto WINAPI :LPCWSTR, :LPCWSTR, :BOOL
+UrlCombineA proto WINAPI :LPCSTR, :LPCSTR, :LPSTR, :LPDWORD, :DWORD
+UrlCombineW proto WINAPI :LPCWSTR, :LPCWSTR, :LPWSTR, :LPDWORD, :DWORD
+UrlCanonicalizeA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD, :DWORD
+UrlCanonicalizeW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD, :DWORD
+UrlIsOpaqueA proto WINAPI :LPCSTR
+UrlIsOpaqueW proto WINAPI :LPCWSTR
+UrlIsNoHistoryA proto WINAPI :LPCSTR
+UrlIsNoHistoryW proto WINAPI :LPCWSTR
 UrlIsFileUrlA macro pszURL
 	exitm<UrlIsA(pszURL, URLIS_FILEURL)>
 	endm
 UrlIsFileUrlW macro pszURL
 	exitm<UrlIsW(pszURL, URLIS_FILEURL)>
 	endm
-;LWSTDAPI
-UrlIsA proto WINAPI \
-		pszUrl: LPCSTR,
-		 UrlIs: URLIS
-
-;LWSTDAPI
-UrlIsW proto WINAPI \
-		pszUrl: LPCWSTR,
-		 UrlIs: URLIS
-
-;LWSTDAPI
-UrlGetLocationA proto WINAPI \
-		  psz1: LPCSTR
-
-;LWSTDAPI
-UrlGetLocationW proto WINAPI \
-		  psz1: LPCWSTR
-
-;LWSTDAPI
-UrlUnescapeA proto WINAPI \
-		pszUrl: LPSTR,
-	  pszUnescaped: LPSTR,
-	 pcchUnescaped: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlUnescapeW proto WINAPI \
-		pszUrl: LPWSTR,
-	  pszUnescaped: LPWSTR,
-	 pcchUnescaped: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlEscapeA proto WINAPI \
-		pszUrl: LPCSTR,
-	    pszEscaped: LPSTR,
-	   pcchEscaped: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlEscapeW proto WINAPI \
-		pszUrl: LPCWSTR,
-	    pszEscaped: LPWSTR,
-	   pcchEscaped: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlCreateFromPathA proto WINAPI \
-	       pszPath: LPCSTR,
-		pszUrl: LPSTR,
-	       pcchUrl: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlCreateFromPathW proto WINAPI \
-	       pszPath: LPCWSTR,
-		pszUrl: LPWSTR,
-	       pcchUrl: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-PathCreateFromUrlA proto WINAPI \
-		pszUrl: LPCSTR,
-	       pszPath: LPSTR,
-	      pcchPath: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-PathCreateFromUrlW proto WINAPI \
-		pszUrl: LPCWSTR,
-	       pszPath: LPWSTR,
-	      pcchPath: LPDWORD,
-	       dwFlags: DWORD
+UrlIsA proto WINAPI :LPCSTR, :URLIS
+UrlIsW proto WINAPI :LPCWSTR, :URLIS
+UrlGetLocationA proto WINAPI :LPCSTR
+UrlGetLocationW proto WINAPI :LPCWSTR
+UrlUnescapeA proto WINAPI :LPSTR, :LPSTR, :LPDWORD, :DWORD
+UrlUnescapeW proto WINAPI :LPWSTR, :LPWSTR, :LPDWORD, :DWORD
+UrlEscapeA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD, :DWORD
+UrlEscapeW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD, :DWORD
+UrlCreateFromPathA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD, :DWORD
+UrlCreateFromPathW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD, :DWORD
+PathCreateFromUrlA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD, :DWORD
+PathCreateFromUrlW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD, :DWORD
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
-;LWSTDAPI
-PathCreateFromUrlAlloc proto WINAPI \
-		 pszIn: LPCWSTR,
-	       ppszOut: ptr LPWSTR,
-	       dwFlags: DWORD
-
+PathCreateFromUrlAlloc proto WINAPI :LPCWSTR, :ptr LPWSTR, :DWORD
 endif
-;LWSTDAPI
-UrlHashA proto WINAPI \
-		pszUrl: LPCSTR,
-		pbHash: LPBYTE,
-		cbHash: DWORD
-
-;LWSTDAPI
-UrlHashW proto WINAPI \
-		pszUrl: LPCWSTR,
-		pbHash: LPBYTE,
-		cbHash: DWORD
-
-;LWSTDAPI
-UrlGetPartW proto WINAPI \
-		 pszIn: LPCWSTR,
-		pszOut: LPWSTR,
-	       pcchOut: LPDWORD,
-		dwPart: DWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlGetPartA proto WINAPI \
-		 pszIn: LPCSTR,
-		pszOut: LPSTR,
-	       pcchOut: LPDWORD,
-		dwPart: DWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlApplySchemeA proto WINAPI \
-		 pszIn: LPCSTR,
-		pszOut: LPSTR,
-	       pcchOut: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-UrlApplySchemeW proto WINAPI \
-		 pszIn: LPCWSTR,
-		pszOut: LPWSTR,
-	       pcchOut: LPDWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-HashData proto WINAPI \
-		pbData: LPBYTE,
-		cbData: DWORD,
-		pbHash: LPBYTE,
-		cbHash: DWORD
-
-;LWSTDAPI
-UrlFixupW proto WINAPI \
-		 pszIn: LPCWSTR,
-		pszOut: LPWSTR,
-		cchOut: DWORD
-
+UrlHashA proto WINAPI :LPCSTR, :LPBYTE, :DWORD
+UrlHashW proto WINAPI :LPCWSTR, :LPBYTE, :DWORD
+UrlGetPartW proto WINAPI :LPCWSTR, :PWSTR, :LPDWORD, :DWORD, :DWORD
+UrlGetPartA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD, :DWORD, :DWORD
+UrlApplySchemeA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD, :DWORD
+UrlApplySchemeW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD, :DWORD
+HashData proto WINAPI :LPBYTE, :DWORD, :LPBYTE, :DWORD
+UrlFixupW proto WINAPI :LPCWSTR, :LPWSTR, :DWORD
 
 ifdef _UNICODE
 UrlCompare		equ <UrlCompareW>
@@ -1944,16 +947,8 @@ PARSEDURL		typedef PARSEDURLA
 PPARSEDURL		typedef PPARSEDURLA
 endif
 
-;LWSTDAPI
-ParseURLA proto WINAPI \
-	       pcszURL: LPCSTR,
-		   ppu: ptr PARSEDURLA
-
-;LWSTDAPI
-ParseURLW proto WINAPI \
-	       pcszURL: LPCWSTR,
-		   ppu: ptr PARSEDURLW
-
+ParseURLA proto WINAPI :LPCSTR, :ptr PARSEDURLA
+ParseURLW proto WINAPI :LPCWSTR, :ptr PARSEDURLW
 ifdef _UNICODE
 ParseURL		equ <ParseURLW>
 else
@@ -1965,98 +960,37 @@ endif ;; NO_SHLWAPI_PATH
 
 ifndef NO_SHLWAPI_REG
 
-;LWSTDAPI
-SHDeleteEmptyKeyA proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCSTR
-
-;LWSTDAPI
-SHDeleteEmptyKeyW proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCWSTR
-
+SHDeleteEmptyKeyA proto WINAPI :HKEY, :LPCSTR
+SHDeleteEmptyKeyW proto WINAPI :HKEY, :LPCWSTR
 ifdef _UNICODE
 SHDeleteEmptyKey	equ <SHDeleteEmptyKeyW>
 else
 SHDeleteEmptyKey	equ <SHDeleteEmptyKeyA>
 endif
-;LWSTDAPI
-SHDeleteKeyA proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCSTR
-
-;LWSTDAPI
-SHDeleteKeyW proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCWSTR
-
+SHDeleteKeyA proto WINAPI :HKEY, :LPCSTR
+SHDeleteKeyW proto WINAPI :HKEY, :LPCWSTR
 ifdef _UNICODE
 SHDeleteKey		equ <SHDeleteKeyW>
 else
 SHDeleteKey		equ <SHDeleteKeyA>
 endif
-;LWSTDAPI
-SHRegDuplicateHKey proto WINAPI \
-		  hkey: HKEY
-
-;LWSTDAPI
-SHDeleteValueA proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCSTR,
-	      pszValue: LPCSTR
-
-;LWSTDAPI
-SHDeleteValueW proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCWSTR,
-	      pszValue: LPCWSTR
-
+SHRegDuplicateHKey proto WINAPI :HKEY
+SHDeleteValueA proto WINAPI :HKEY, :LPCSTR, :LPCSTR
+SHDeleteValueW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 SHDeleteValue		equ <SHDeleteValueW>
 else
 SHDeleteValue		equ <SHDeleteValueA>
 endif
-;LWSTDAPI
-SHGetValueA proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCSTR,
-	      pszValue: LPCSTR,
-	       pdwType: ptr DWORD,
-		pvData: ptr void,
-	       pcbData: ptr DWORD
-
-;LWSTDAPI
-SHGetValueW proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCWSTR,
-	      pszValue: LPCWSTR,
-	       pdwType: ptr DWORD,
-		pvData: ptr void,
-	       pcbData: ptr DWORD
-
+SHGetValueA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :ptr, :ptr, :ptr
+SHGetValueW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :ptr
 ifdef _UNICODE
 SHGetValue		equ <SHGetValueW>
 else
 SHGetValue		equ <SHGetValueA>
 endif
-;LWSTDAPI
-SHSetValueA proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCSTR,
-	      pszValue: LPCSTR,
-		dwType: DWORD,
-		pvData: LPCVOID,
-		cbData: DWORD
-
-;LWSTDAPI
-SHSetValueW proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCWSTR,
-	      pszValue: LPCWSTR,
-		dwType: DWORD,
-		pvData: LPCVOID,
-		cbData: DWORD
-
+SHSetValueA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :DWORD, :ptr, :DWORD
+SHSetValueW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :DWORD, :ptr, :DWORD
 ifdef _UNICODE
 SHSetValue		equ <SHSetValueW>
 else
@@ -2088,184 +1022,36 @@ SRRF_NOEXPAND		equ 0x10000000
 SRRF_ZEROONFAILURE	equ 0x20000000
 SRRF_NOVIRT		equ 0x40000000
 
-
-
-;LWSTDAPI
-SHRegGetValueA proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCSTR,
-	      pszValue: LPCSTR,
-	     srrfFlags: SRRF,
-	       pdwType: ptr DWORD,
-		pvData: PVOID,
-	       pcbData: ptr DWORD
-
-;LWSTDAPI
-SHRegGetValueW proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCWSTR,
-	      pszValue: LPCWSTR,
-	     srrfFlags: SRRF,
-	       pdwType: ptr DWORD,
-		pvData: PVOID,
-	       pcbData: ptr DWORD
-
+SHRegGetValueA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :SRRF, :ptr, :ptr, :ptr
+SHRegGetValueW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :SRRF, :ptr, :ptr, :ptr
 ifdef _UNICODE
 SHRegGetValue		equ <SHRegGetValueW>
 else
 SHRegGetValue		equ <SHRegGetValueA>
 endif
-
-;LWSTDAPI
-SHRegSetValue proto WINAPI \
-		  hkey: HKEY,
-	     pszSubKey: LPCWSTR,
-	      pszValue: LPCWSTR,
-	     srrfFlags: SRRF,
-		dwType: DWORD,
-		pvData: LPCVOID,
-		cbData: DWORD
-
-
-;LWSTDAPI
-SHRegGetValueFromHKCUHKLM proto WINAPI \
-	       pwszKey: PCWSTR,
-	     pwszValue: PCWSTR,
-	     srrfFlags: SRRF,
-	       pdwType: ptr DWORD,
-		pvData: PVOID,
-	       pcbData: ptr DWORD
-
-;STDAPI
-SHRegGetBoolValueFromHKCUHKLM proto WINAPI \
-		pszKey: PCWSTR,
-	      pszValue: PCWSTR,
-	      fDefault: BOOL
-
+SHRegSetValue proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :SRRF, :DWORD, :ptr, :DWORD
+SHRegGetValueFromHKCUHKLM proto WINAPI :PCWSTR, :PCWSTR, :SRRF, :ptr, :ptr, :ptr
+SHRegGetBoolValueFromHKCUHKLM proto WINAPI :PCWSTR, :PCWSTR, :BOOL
 endif
-
-;LWSTDAPI
-SHQueryValueExA proto WINAPI \
-		  hkey: HKEY,
-	      pszValue: LPCSTR,
-	   pdwReserved: ptr DWORD,
-	       pdwType: ptr DWORD,
-		pvData: ptr void,
-	       pcbData: ptr DWORD
-
-;LWSTDAPI
-SHQueryValueExW proto WINAPI \
-		  hkey: HKEY,
-	      pszValue: LPCWSTR,
-	   pdwReserved: ptr DWORD,
-	       pdwType: ptr DWORD,
-		pvData: ptr void,
-	       pcbData: ptr DWORD
-
+SHQueryValueExA proto WINAPI :HKEY, :LPCSTR, :ptr, :ptr, :ptr, :ptr
+SHQueryValueExW proto WINAPI :HKEY, :LPCWSTR, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
 SHQueryValueEx		equ <SHQueryValueExW>
 else
 SHQueryValueEx		equ <SHQueryValueExA>
 endif
-
-
-;LWSTDAPI
-SHEnumKeyExA proto WINAPI \
-		  hkey: HKEY,
-	       dwIndex: DWORD,
-	       pszName: LPSTR,
-	      pcchName: LPDWORD
-
-;LWSTDAPI
-SHEnumKeyExW proto WINAPI \
-		  hkey: HKEY,
-	       dwIndex: DWORD,
-	       pszName: LPWSTR,
-	      pcchName: LPDWORD
-
-;LWSTDAPI
-SHEnumValueA proto WINAPI \
-		  hkey: HKEY,
-	       dwIndex: DWORD,
-	  pszValueName: PSTR,
-	 pcchValueName: LPDWORD,
-	       pdwType: LPDWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD
-
-;LWSTDAPI
-SHEnumValueW proto WINAPI \
-		  hkey: HKEY,
-	       dwIndex: DWORD,
-	  pszValueName: PWSTR,
-	 pcchValueName: LPDWORD,
-	       pdwType: LPDWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD
-
-;LWSTDAPI
-SHQueryInfoKeyA proto WINAPI \
-		  hkey: HKEY,
-	     pcSubKeys: LPDWORD,
-      pcchMaxSubKeyLen: LPDWORD,
-	      pcValues: LPDWORD,
-   pcchMaxValueNameLen: LPDWORD
-
-;LWSTDAPI
-SHQueryInfoKeyW proto WINAPI \
-		  hkey: HKEY,
-	     pcSubKeys: LPDWORD,
-      pcchMaxSubKeyLen: LPDWORD,
-	      pcValues: LPDWORD,
-   pcchMaxValueNameLen: LPDWORD
-
-
-;LWSTDAPI
-SHCopyKeyA proto WINAPI \
-	       hkeySrc: HKEY,
-	   szSrcSubKey: LPCSTR,
-	      hkeyDest: HKEY,
-	     fReserved: DWORD
-
-;LWSTDAPI
-SHCopyKeyW proto WINAPI \
-	       hkeySrc: HKEY,
-	  wszSrcSubKey: LPCWSTR,
-	      hkeyDest: HKEY,
-	     fReserved: DWORD
-
-;LWSTDAPI
-SHRegGetPathA proto WINAPI \
-		  hKey: HKEY,
-	    pcszSubKey: LPCSTR,
-	     pcszValue: LPCSTR,
-	       pszPath: LPSTR,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegGetPathW proto WINAPI \
-		  hKey: HKEY,
-	    pcszSubKey: LPCWSTR,
-	     pcszValue: LPCWSTR,
-	       pszPath: LPWSTR,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegSetPathA proto WINAPI \
-		  hKey: HKEY,
-	    pcszSubKey: LPCSTR,
-	     pcszValue: LPCSTR,
-	      pcszPath: LPCSTR,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegSetPathW proto WINAPI \
-		  hKey: HKEY,
-	    pcszSubKey: LPCWSTR,
-	     pcszValue: LPCWSTR,
-	      pcszPath: LPCWSTR,
-	       dwFlags: DWORD
-
+SHEnumKeyExA proto WINAPI :HKEY, :DWORD, :LPSTR, :LPDWORD
+SHEnumKeyExW proto WINAPI :HKEY, :DWORD, :LPWSTR, :LPDWORD
+SHEnumValueA proto WINAPI :HKEY, :DWORD, :PSTR, :LPDWORD, :LPDWORD, :ptr, :LPDWORD
+SHEnumValueW proto WINAPI :HKEY, :DWORD, :PWSTR, :LPDWORD, :LPDWORD, :ptr, :LPDWORD
+SHQueryInfoKeyA proto WINAPI :HKEY, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD
+SHQueryInfoKeyW proto WINAPI :HKEY, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD
+SHCopyKeyA proto WINAPI :HKEY, :LPCSTR, :HKEY, :DWORD
+SHCopyKeyW proto WINAPI :HKEY, :LPCWSTR, :HKEY, :DWORD
+SHRegGetPathA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :LPSTR, :DWORD
+SHRegGetPathW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :LPWSTR, :DWORD
+SHRegSetPathA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :LPCSTR, :DWORD
+SHRegSetPathW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD
 
 ifdef _UNICODE
 SHEnumKeyEx		equ <SHEnumKeyExW>
@@ -2307,208 +1093,30 @@ ifndef REGSAM
 REGSAM			typedef ACCESS_MASK
 endif
 
-;LWSTDAPI
-SHRegCreateUSKeyA proto WINAPI \
-	       pszPath: LPCSTR,
-	    samDesired: REGSAM,
-	hRelativeUSKey: HUSKEY,
-	    phNewUSKey: PHUSKEY,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegCreateUSKeyW proto WINAPI \
-	       pwzPath: LPCWSTR,
-	    samDesired: REGSAM,
-	hRelativeUSKey: HUSKEY,
-	    phNewUSKey: PHUSKEY,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegOpenUSKeyA proto WINAPI \
-	       pszPath: LPCSTR,
-	    samDesired: REGSAM,
-	hRelativeUSKey: HUSKEY,
-	    phNewUSKey: PHUSKEY,
-	   fIgnoreHKCU: BOOL
-
-;LWSTDAPI
-SHRegOpenUSKeyW proto WINAPI \
-	       pwzPath: LPCWSTR,
-	    samDesired: REGSAM,
-	hRelativeUSKey: HUSKEY,
-	    phNewUSKey: PHUSKEY,
-	   fIgnoreHKCU: BOOL
-
-;LWSTDAPI
-SHRegQueryUSValueA proto WINAPI \
-		hUSKey: HUSKEY,
-	      pszValue: LPCSTR,
-	       pdwType: ptr DWORD,
-		pvData: PVOID,
-	       pcbData: ptr DWORD,
-	   fIgnoreHKCU: BOOL,
-	 pvDefaultData: PVOID,
-     dwDefaultDataSize: DWORD
-
-;LWSTDAPI
-SHRegQueryUSValueW proto WINAPI \
-		hUSKey: HUSKEY,
-	      pszValue: LPCWSTR,
-	       pdwType: ptr DWORD,
-		pvData: PVOID,
-	       pcbData: ptr DWORD,
-	   fIgnoreHKCU: BOOL,
-	 pvDefaultData: PVOID,
-     dwDefaultDataSize: DWORD
-
-;LWSTDAPI
-SHRegWriteUSValueA proto WINAPI \
-		hUSKey: HUSKEY,
-	      pszValue: LPCSTR,
-		dwType: DWORD,
-		pvData: PVOID,
-		cbData: DWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegWriteUSValueW proto WINAPI \
-		hUSKey: HUSKEY,
-	      pwzValue: LPCWSTR,
-		dwType: DWORD,
-		pvData: PVOID,
-		cbData: DWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegDeleteUSValueA proto WINAPI \
-		hUSKey: HUSKEY,
-	      pszValue: LPCSTR,
-	   delRegFlags: SHREGDEL_FLAGS
-
-;LWSTDAPI
-SHRegDeleteUSValueW proto WINAPI \
-		hUSKey: HUSKEY,
-	      pwzValue: LPCWSTR,
-	   delRegFlags: SHREGDEL_FLAGS
-
-;LWSTDAPI
-SHRegDeleteEmptyUSKeyW proto WINAPI \
-		hUSKey: HUSKEY,
-	     pwzSubKey: LPCWSTR,
-	   delRegFlags: SHREGDEL_FLAGS
-
-;LWSTDAPI
-SHRegDeleteEmptyUSKeyA proto WINAPI \
-		hUSKey: HUSKEY,
-	     pszSubKey: LPCSTR,
-	   delRegFlags: SHREGDEL_FLAGS
-
-;LWSTDAPI
-SHRegEnumUSKeyA proto WINAPI \
-		hUSKey: HUSKEY,
-	       dwIndex: DWORD,
-	       pszName: LPSTR,
-	      pcchName: LPDWORD,
-	  enumRegFlags: SHREGENUM_FLAGS
-
-;LWSTDAPI
-SHRegEnumUSKeyW proto WINAPI \
-		hUSKey: HUSKEY,
-	       dwIndex: DWORD,
-	       pwzName: LPWSTR,
-	      pcchName: LPDWORD,
-	  enumRegFlags: SHREGENUM_FLAGS
-
-;LWSTDAPI
-SHRegEnumUSValueA proto WINAPI \
-		hUSkey: HUSKEY,
-	       dwIndex: DWORD,
-	  pszValueName: LPSTR,
-	 pcchValueName: LPDWORD,
-	       pdwType: LPDWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD,
-	  enumRegFlags: SHREGENUM_FLAGS
-
-;LWSTDAPI
-SHRegEnumUSValueW proto WINAPI \
-		hUSkey: HUSKEY,
-	       dwIndex: DWORD,
-	  pszValueName: LPWSTR,
-	 pcchValueName: LPDWORD,
-	       pdwType: LPDWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD,
-	  enumRegFlags: SHREGENUM_FLAGS
-
-;LWSTDAPI
-SHRegQueryInfoUSKeyA proto WINAPI \
-		hUSKey: HUSKEY,
-	     pcSubKeys: LPDWORD,
-      pcchMaxSubKeyLen: LPDWORD,
-	      pcValues: LPDWORD,
-   pcchMaxValueNameLen: LPDWORD,
-	  enumRegFlags: SHREGENUM_FLAGS
-
-;LWSTDAPI
-SHRegQueryInfoUSKeyW proto WINAPI \
-		hUSKey: HUSKEY,
-	     pcSubKeys: LPDWORD,
-      pcchMaxSubKeyLen: LPDWORD,
-	      pcValues: LPDWORD,
-   pcchMaxValueNameLen: LPDWORD,
-	  enumRegFlags: SHREGENUM_FLAGS
-
-;LWSTDAPI
-SHRegCloseUSKey proto WINAPI \
-		hUSKey: HUSKEY
-
-;STDAPI
-SHRegGetUSValueA proto WINAPI \
-	     pszSubKey: LPCSTR,
-	      pszValue: LPCSTR,
-	       pdwType: ptr DWORD,
-		pvData: ptr void,
-	       pcbData: ptr DWORD,
-	   fIgnoreHKCU: BOOL,
-	 pvDefaultData: ptr void,
-     dwDefaultDataSize: DWORD
-
-;STDAPI
-SHRegGetUSValueW proto WINAPI \
-	     pszSubKey: LPCWSTR,
-	      pszValue: LPCWSTR,
-	       pdwType: ptr DWORD,
-		pvData: ptr void,
-	       pcbData: ptr DWORD,
-	   fIgnoreHKCU: BOOL,
-	 pvDefaultData: ptr void,
-     dwDefaultDataSize: DWORD
-
-;LWSTDAPI
-SHRegSetUSValueA proto WINAPI \
-	     pszSubKey: LPCSTR,
-	      pszValue: LPCSTR,
-		dwType: DWORD,
-		pvData: PVOID,
-		cbData: DWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegSetUSValueW proto WINAPI \
-	     pwzSubKey: LPCWSTR,
-	      pwzValue: LPCWSTR,
-		dwType: DWORD,
-		pvData: PVOID,
-		cbData: DWORD,
-	       dwFlags: DWORD
-
-;LWSTDAPI
-SHRegGetIntW proto WINAPI \
-		    hk: HKEY,
-		pwzKey: PCWSTR,
-	      iDefault: SINT
-
+SHRegCreateUSKeyA proto WINAPI :LPCSTR, :REGSAM, :HUSKEY, :PHUSKEY, :DWORD
+SHRegCreateUSKeyW proto WINAPI :LPCWSTR, :REGSAM, :HUSKEY, :PHUSKEY, :DWORD
+SHRegOpenUSKeyA proto WINAPI :LPCSTR, :REGSAM, :HUSKEY, :PHUSKEY, :BOOL
+SHRegOpenUSKeyW proto WINAPI :LPCWSTR, :REGSAM, :HUSKEY, :PHUSKEY, :BOOL
+SHRegQueryUSValueA proto WINAPI :HUSKEY, :LPCSTR, :ptr, :ptr, :ptr, :BOOL, :ptr, :DWORD
+SHRegQueryUSValueW proto WINAPI :HUSKEY, :LPCWSTR, :ptr, :ptr, :ptr, :BOOL, :ptr, :DWORD
+SHRegWriteUSValueA proto WINAPI :HUSKEY, :LPCSTR, :DWORD, :ptr, :DWORD, :DWORD
+SHRegWriteUSValueW proto WINAPI :HUSKEY, :LPCWSTR, :DWORD, :ptr, :DWORD, :DWORD
+SHRegDeleteUSValueA proto WINAPI :HUSKEY, :LPCSTR, :SHREGDEL_FLAGS
+SHRegDeleteUSValueW proto WINAPI :HUSKEY, :LPCWSTR, :SHREGDEL_FLAGS
+SHRegDeleteEmptyUSKeyW proto WINAPI :HUSKEY, :LPCWSTR, :SHREGDEL_FLAGS
+SHRegDeleteEmptyUSKeyA proto WINAPI :HUSKEY, :LPCSTR, :SHREGDEL_FLAGS
+SHRegEnumUSKeyA proto WINAPI :HUSKEY, :DWORD, :LPSTR, :LPDWORD, :SHREGENUM_FLAGS
+SHRegEnumUSKeyW proto WINAPI :HUSKEY, :DWORD, :LPWSTR, :LPDWORD, :SHREGENUM_FLAGS
+SHRegEnumUSValueA proto WINAPI :HUSKEY, :DWORD, :LPSTR, :LPDWORD, :LPDWORD, :ptr, :LPDWORD, :SHREGENUM_FLAGS
+SHRegEnumUSValueW proto WINAPI :HUSKEY, :DWORD, :LPWSTR, :LPDWORD, :LPDWORD, :ptr, :LPDWORD, :SHREGENUM_FLAGS
+SHRegQueryInfoUSKeyA proto WINAPI :HUSKEY, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :SHREGENUM_FLAGS
+SHRegQueryInfoUSKeyW proto WINAPI :HUSKEY, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :SHREGENUM_FLAGS
+SHRegCloseUSKey proto WINAPI :HUSKEY
+SHRegGetUSValueA proto WINAPI :LPCSTR, :LPCSTR, :ptr, :ptr, :ptr, :BOOL, :ptr, :DWORD
+SHRegGetUSValueW proto WINAPI :LPCWSTR, :LPCWSTR, :ptr, :ptr, :ptr, :BOOL, :ptr, :DWORD
+SHRegSetUSValueA proto WINAPI :LPCSTR, :LPCSTR, :DWORD, :ptr, :DWORD, :DWORD
+SHRegSetUSValueW proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr, :DWORD, :DWORD
+SHRegGetIntW proto WINAPI :HKEY, :PCWSTR, :SINT
 
 ifdef _UNICODE
 SHRegCreateUSKey	equ <SHRegCreateUSKeyW>
@@ -2537,26 +1145,13 @@ SHRegGetUSValue		equ <SHRegGetUSValueA>
 SHRegSetUSValue		equ <SHRegSetUSValueA>
 endif
 
-;LWSTDAPI
-SHRegGetBoolUSValueA proto WINAPI \
-	     pszSubKey: LPCSTR,
-	      pszValue: LPCSTR,
-	   fIgnoreHKCU: BOOL,
-	      fDefault: BOOL
-
-;LWSTDAPI
-SHRegGetBoolUSValueW proto WINAPI \
-	     pszSubKey: LPCWSTR,
-	      pszValue: LPCWSTR,
-	   fIgnoreHKCU: BOOL,
-	      fDefault: BOOL
-
+SHRegGetBoolUSValueA proto WINAPI :LPCSTR, :LPCSTR, :BOOL, :BOOL
+SHRegGetBoolUSValueW proto WINAPI :LPCWSTR, :LPCWSTR, :BOOL, :BOOL
 ifdef _UNICODE
 SHRegGetBoolUSValue	equ <SHRegGetBoolUSValueW>
 else
 SHRegGetBoolUSValue	equ <SHRegGetBoolUSValueA>
 endif
-
 
 ASSOCF_INIT_NOREMAPCLSID equ 0x00000001
 ASSOCF_INIT_BYEXENAME	equ 0x00000002
@@ -2629,132 +1224,47 @@ DEFINE_IIDX(IQueryAssociations, "c46ca590-3c3f-11d2-bee6-0000f805ca57")
     GetEnum		proc :ASSOCF, :ASSOCENUM, :LPCWSTR, :REFIID, :PVOID
    .ends
 
-;LWSTDAPI
-AssocCreate proto WINAPI \
-		 clsid: CLSID,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;LWSTDAPI
-AssocQueryStringA proto WINAPI \
-		 flags: ASSOCF,
-		  _str: ASSOCSTR,
-	      pszAssoc: LPCSTR,
-	      pszExtra: LPCSTR,
-		pszOut: LPSTR,
-	       pcchOut: ptr DWORD
-
-;LWSTDAPI
-AssocQueryStringW proto WINAPI \
-		 flags: ASSOCF,
-		  _str: ASSOCSTR,
-	      pszAssoc: LPCWSTR,
-	      pszExtra: LPCWSTR,
-		pszOut: LPWSTR,
-	       pcchOut: ptr DWORD
-
+AssocCreate proto WINAPI :CLSID, :REFIID, :ptr
+AssocQueryStringA proto WINAPI :ASSOCF, :ASSOCSTR, :LPCSTR, :LPCSTR, :LPSTR, :ptr
+AssocQueryStringW proto WINAPI :ASSOCF, :ASSOCSTR, :LPCWSTR, :LPCWSTR, :LPWSTR, :ptr
 ifdef _UNICODE
 AssocQueryString	equ <AssocQueryStringW>
 else
 AssocQueryString	equ <AssocQueryStringA>
 endif
-;LWSTDAPI
-AssocQueryStringByKeyA proto WINAPI \
-		 flags: ASSOCF,
-		  _str: ASSOCSTR,
-	       hkAssoc: HKEY,
-	      pszExtra: LPCSTR,
-		pszOut: LPSTR,
-	       pcchOut: ptr DWORD
-
-;LWSTDAPI
-AssocQueryStringByKeyW proto WINAPI \
-		 flags: ASSOCF,
-		  _str: ASSOCSTR,
-	       hkAssoc: HKEY,
-	      pszExtra: LPCWSTR,
-		pszOut: LPWSTR,
-	       pcchOut: ptr DWORD
-
+AssocQueryStringByKeyA proto WINAPI :ASSOCF, :ASSOCSTR, :HKEY, :LPCSTR, :LPSTR, :ptr
+AssocQueryStringByKeyW proto WINAPI :ASSOCF, :ASSOCSTR, :HKEY, :LPCWSTR, :LPWSTR, :ptr
 ifdef _UNICODE
 AssocQueryStringByKey	equ <AssocQueryStringByKeyW>
 else
 AssocQueryStringByKey	equ <AssocQueryStringByKeyA>
 endif
-;LWSTDAPI
-AssocQueryKeyA proto WINAPI \
-		 flags: ASSOCF,
-		   key: ASSOCKEY,
-	      pszAssoc: LPCSTR,
-	      pszExtra: LPCSTR,
-	      phkeyOut: ptr HKEY
-
-;LWSTDAPI
-AssocQueryKeyW proto WINAPI \
-		 flags: ASSOCF,
-		   key: ASSOCKEY,
-	      pszAssoc: LPCWSTR,
-	      pszExtra: LPCWSTR,
-	      phkeyOut: ptr HKEY
-
+AssocQueryKeyA proto WINAPI :ASSOCF, :ASSOCKEY, :LPCSTR, :LPCSTR, :ptr
+AssocQueryKeyW proto WINAPI :ASSOCF, :ASSOCKEY, :LPCWSTR, :LPCWSTR, :ptr
 ifdef _UNICODE
 AssocQueryKey		equ <AssocQueryKeyW>
 else
 AssocQueryKey		equ <AssocQueryKeyA>
 endif
-
 if (_WIN32_IE GE 0x0601)
-;LWSTDAPI
-AssocIsDangerous proto WINAPI \
-	      pszAssoc: LPCWSTR
+AssocIsDangerous proto WINAPI :LPCWSTR
 endif
-
 if (_WIN32_IE GE _WIN32_IE_IE60SP2)
-;LWSTDAPI
-AssocGetPerceivedType proto WINAPI \
-		pszExt: LPCWSTR,
-		 ptype: ptr PERCEIVED,
-		 pflag: ptr PERCEIVEDFLAG,
-	      ppszType: ptr LPWSTR
+AssocGetPerceivedType proto WINAPI :LPCWSTR, :ptr, :ptr, :ptr
 endif
-
 endif ;; NO_SHLWAPI_REG
 
 ifndef NO_SHLWAPI_STREAM
 
-;LWSTDAPI
-SHOpenRegStreamA proto WINAPI \
-		  hkey: HKEY,
-	     pszSubkey: LPCSTR,
-	      pszValue: LPCSTR,
-	       grfMode: DWORD
-
-;LWSTDAPI
-SHOpenRegStreamW proto WINAPI \
-		  hkey: HKEY,
-	     pszSubkey: LPCWSTR,
-	      pszValue: LPCWSTR,
-	       grfMode: DWORD
-
+SHOpenRegStreamA proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :DWORD
+SHOpenRegStreamW proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :DWORD
 ifdef _UNICODE
 SHOpenRegStream		equ <SHOpenRegStreamW>
 else
 SHOpenRegStream		equ <SHOpenRegStreamA>
 endif
-;LWSTDAPI
-SHOpenRegStream2A proto WINAPI \
-		  hkey: HKEY,
-	     pszSubkey: LPCSTR,
-	      pszValue: LPCSTR,
-	       grfMode: DWORD
-
-;LWSTDAPI
-SHOpenRegStream2W proto WINAPI \
-		  hkey: HKEY,
-	     pszSubkey: LPCWSTR,
-	      pszValue: LPCWSTR,
-	       grfMode: DWORD
-
+SHOpenRegStream2A proto WINAPI :HKEY, :LPCSTR, :LPCSTR, :DWORD
+SHOpenRegStream2W proto WINAPI :HKEY, :LPCWSTR, :LPCWSTR, :DWORD
 ifdef _UNICODE
 SHOpenRegStream2	equ <SHOpenRegStream2W>
 else
@@ -2762,57 +1272,27 @@ SHOpenRegStream2	equ <SHOpenRegStream2A>
 endif
 SHOpenRegStream		equ <SHOpenRegStream2>
 
-;LWSTDAPI
-SHCreateStreamOnFileA proto WINAPI \
-	       pszFile: LPCSTR,
-	       grfMode: DWORD,
-		 ppstm: ptr IStream
-
-;LWSTDAPI
-SHCreateStreamOnFileW proto WINAPI \
-	       pszFile: LPCWSTR,
-	       grfMode: DWORD,
-		 ppstm: ptr IStream
-
+SHCreateStreamOnFileA proto WINAPI :LPCSTR, :DWORD, :ptr
+SHCreateStreamOnFileW proto WINAPI :LPCWSTR, :DWORD, :ptr
 ifdef _UNICODE
 SHCreateStreamOnFile	equ <SHCreateStreamOnFileW>
 else
 SHCreateStreamOnFile	equ <SHCreateStreamOnFileA>
 endif
 
-
 if (_WIN32_IE GE 0x0600)
-
-;LWSTDAPI
-SHCreateStreamOnFileEx proto WINAPI \
-	       pszFile: LPCWSTR,
-	       grfMode: DWORD,
-	  dwAttributes: DWORD,
-	       fCreate: BOOL,
-	  pstmTemplate: ptr IStream,
-		 ppstm: ptr IStream
-
+SHCreateStreamOnFileEx proto WINAPI :LPCWSTR, :DWORD, :DWORD, :BOOL, :ptr, :ptr
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE501)
-
-;LWSTDAPI
-SHCreateMemStream proto WINAPI \
-		 pInit: ptr BYTE,
-		cbInit: UINT
-
+SHCreateMemStream proto WINAPI :ptr, :UINT
 endif
 endif ;; NO_SHLWAPI_STREAM
 
 ifndef NO_SHLWAPI_HTTP
 if (_WIN32_IE GE 0x0603)
-;LWSTDAPI
-GetAcceptLanguagesA proto WINAPI \
-		   psz: LPSTR,
-		  pcch: ptr DWORD
-GetAcceptLanguagesW proto WINAPI \
-		   psz: LPWSTR,
-		  pcch: ptr DWORD
+GetAcceptLanguagesA proto WINAPI :LPSTR, :ptr
+GetAcceptLanguagesW proto WINAPI :LPWSTR, :ptr
 ifdef _UNICODE
 GetAcceptLanguages	equ <GetAcceptLanguagesW>
 else
@@ -2843,120 +1323,36 @@ ifndef NO_ETW_TRACING
 SPMODE_EVENTTRACE	equ 0x00008000
 endif
 
-;DWORD
 StopWatchMode proto WINAPI
-;DWORD
 StopWatchFlush proto WINAPI
-
-endif
-
-
-if (_WIN32_IE GE _WIN32_IE_IE501)
-
-;LWSTDAPI
-IUnknown_Set proto WINAPI \
-		 ppunk: ptr IUnknown,
-		  punk: ptr IUnknown
-
-;LWSTDAPI
-IUnknown_AtomicRelease proto WINAPI \
-		 ppunk: PVOID
-
-;LWSTDAPI
-IUnknown_GetWindow proto WINAPI \
-		  punk: ptr IUnknown,
-		 phwnd: ptr HWND
-
-;LWSTDAPI
-IUnknown_SetSite proto WINAPI \
-		  punk: ptr IUnknown,
-	      punkSite: ptr IUnknown
-
-;LWSTDAPI
-IUnknown_GetSite proto WINAPI \
-		  punk: ptr IUnknown,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;LWSTDAPI
-IUnknown_QueryService proto WINAPI \
-		  punk: ptr IUnknown,
-	   guidService: REFGUID,
-		  riid: REFIID,
-		ppvOut: PVOID
-
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE501)
+IUnknown_Set proto WINAPI :ptr, :ptr
+IUnknown_AtomicRelease proto WINAPI :ptr
+IUnknown_GetWindow proto WINAPI :ptr, :ptr
+IUnknown_SetSite proto WINAPI :ptr, :ptr
+IUnknown_GetSite proto WINAPI :ptr, :REFIID, :ptr
+IUnknown_QueryService proto WINAPI :ptr, :REFGUID, :REFIID, :ptr
+endif
 
-;LWSTDAPI
-IStream_Read proto WINAPI \
-		  pstm: ptr IStream,
-		    pv: PVOID,
-		    cb: ULONG
-
-;LWSTDAPI
-IStream_Write proto WINAPI \
-		  pstm: ptr IStream,
-		    pv: PVOID,
-		    cb: ULONG
-
-;LWSTDAPI
-IStream_Reset proto WINAPI \
-		  pstm: ptr IStream
-
-;LWSTDAPI
-IStream_Size proto WINAPI \
-		  pstm: ptr IStream,
-		   pui: ptr ULARGE_INTEGER
-
-
-;LWSTDAPI
-ConnectToConnectionPoint proto WINAPI \
-		  punk: ptr IUnknown,
-	     riidEvent: REFIID,
-	      fConnect: BOOL,
-	    punkTarget: ptr IUnknown,
-	     pdwCookie: ptr DWORD,
-	       ppcpOut: ptr IConnectionPoint
-
-
-endif ;; (_WIN32_IE >= _WIN32_IE_IE501)
+if (_WIN32_IE GE _WIN32_IE_IE501)
+IStream_Read proto WINAPI :ptr, :ptr, :ULONG
+IStream_Write proto WINAPI :ptr, :ptr, :ULONG
+IStream_Reset proto WINAPI :ptr
+IStream_Size proto WINAPI :ptr, :ptr
+ConnectToConnectionPoint proto WINAPI :ptr, :REFIID, :BOOL, :ptr, :ptr, :ptr
+endif
 
 if (_WIN32_IE GE _WIN32_IE_IE60)
-
-;LWSTDAPI
-IStream_ReadPidl proto WINAPI \
-		  pstm: ptr IStream,
-	      ppidlOut: ptr PIDLIST_RELATIVE
-
-;LWSTDAPI
-IStream_WritePidl proto WINAPI \
-		  pstm: ptr IStream,
-	     pidlWrite: PCUIDLIST_RELATIVE
-
-
+IStream_ReadPidl proto WINAPI :ptr, :ptr
+IStream_WritePidl proto WINAPI :ptr, :PCUIDLIST_RELATIVE
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
-
-;LWSTDAPI
-IStream_ReadStr proto WINAPI \
-		  pstm: ptr IStream,
-		  ppsz: ptr PWSTR
-
-;LWSTDAPI
-IStream_WriteStr proto WINAPI \
-		  pstm: ptr IStream,
-		   psz: PCWSTR
-
-
-;LWSTDAPI
-IStream_Copy proto WINAPI \
-	      pstmFrom: ptr IStream,
-		pstmTo: ptr IStream,
-		    cb: DWORD
-
+IStream_ReadStr proto WINAPI :ptr, :ptr
+IStream_WriteStr proto WINAPI :ptr, :PCWSTR
+IStream_Copy proto WINAPI :ptr, :ptr, :DWORD
 endif
 
 if (_WIN32_IE GE 0x0600)
@@ -2973,14 +1369,7 @@ SHGVSPB_FOLDERNODEFAULTS equ (SHGVSPB_PERUSER OR SHGVSPB_PERFOLDER OR SHGVSPB_NO
 SHGVSPB_USERDEFAULTS	equ (SHGVSPB_PERUSER OR SHGVSPB_ALLFOLDERS)
 SHGVSPB_GLOBALDEFAULTS	equ (SHGVSPB_ALLUSERS OR SHGVSPB_ALLFOLDERS)
 
-;LWSTDAPI
-SHGetViewStatePropertyBag proto WINAPI \
-		  pidl: PCIDLIST_ABSOLUTE,
-	    pszBagName: LPCWSTR,
-	       dwFlags: DWORD,
-		  riid: REFIID,
-		   ppv: ptr PVOID
-
+SHGetViewStatePropertyBag proto WINAPI :PCIDLIST_ABSOLUTE, :LPCWSTR, :DWORD, :REFIID, :ptr
 endif
 
 FDTF_SHORTTIME		equ 0x00000001
@@ -2993,20 +1382,8 @@ FDTF_LTRDATE		equ 0x00000100
 FDTF_RTLDATE		equ 0x00000200
 FDTF_NOAUTOREADINGORDER equ 0x00000400
 
-;LWSTDAPI
-SHFormatDateTimeA proto WINAPI \
-		   pft: ptr FILETIME,
-	      pdwFlags: ptr DWORD,
-		pszBuf: LPSTR,
-		cchBuf: UINT
-
-;LWSTDAPI
-SHFormatDateTimeW proto WINAPI \
-		   pft: ptr FILETIME,
-	      pdwFlags: ptr DWORD,
-		pszBuf: LPWSTR,
-		cchBuf: UINT
-
+SHFormatDateTimeA proto WINAPI :ptr, :ptr, :LPSTR, :UINT
+SHFormatDateTimeW proto WINAPI :ptr, :ptr, :LPWSTR, :UINT
 ifdef _UNICODE
 SHFormatDateTime	equ <SHFormatDateTimeW>
 else
@@ -3014,35 +1391,10 @@ SHFormatDateTime	equ <SHFormatDateTimeA>
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE501)
-
-
-;LWSTDAPI
-SHAnsiToUnicode proto WINAPI \
-		pszSrc: LPCSTR,
-	       pwszDst: LPWSTR,
-	       cwchBuf: SINT
-
-
-;LWSTDAPI
-SHAnsiToAnsi proto WINAPI \
-		pszSrc: LPCSTR,
-		pszDst: LPSTR,
-		cchBuf: SINT
-
-
-;LWSTDAPI
-SHUnicodeToAnsi proto WINAPI \
-	       pwszSrc: LPCWSTR,
-		pszDst: LPSTR,
-		cchBuf: SINT
-
-
-;LWSTDAPI
-SHUnicodeToUnicode proto WINAPI \
-		pwzSrc: LPCWSTR,
-		pwzDst: LPWSTR,
-	       cwchBuf: SINT
-
+SHAnsiToUnicode proto WINAPI :LPCSTR, :LPWSTR, :SINT
+SHAnsiToAnsi proto WINAPI :LPCSTR, :LPSTR, :SINT
+SHUnicodeToAnsi proto WINAPI :LPCWSTR, :LPSTR, :SINT
+SHUnicodeToUnicode proto WINAPI :LPCWSTR, :LPWSTR, :SINT
 
 ifdef _UNICODE
 SHTCharToUnicode macro wzSrc, wzDest, cchSize
@@ -3076,25 +1428,8 @@ endif ;; (_WIN32_IE >= _WIN32_IE_IE501)
 
 
 if (_WIN32_IE GE _WIN32_IE_IE501)
-
-;LWSTDAPI
-SHMessageBoxCheckA proto WINAPI \
-		  hwnd: HWND,
-	       pszText: LPCSTR,
-	    pszCaption: LPCSTR,
-		 uType: UINT,
-	      iDefault: SINT,
-	     pszRegVal: LPCSTR
-
-;LWSTDAPI
-SHMessageBoxCheckW proto WINAPI \
-		  hwnd: HWND,
-	       pszText: LPCWSTR,
-	    pszCaption: LPCWSTR,
-		 uType: UINT,
-	      iDefault: SINT,
-	     pszRegVal: LPCWSTR
-
+SHMessageBoxCheckA proto WINAPI :HWND, :LPCSTR, :LPCSTR, :UINT, :SINT, :LPCSTR
+SHMessageBoxCheckW proto WINAPI :HWND, :LPCWSTR, :LPCWSTR, :UINT, :SINT, :LPCWSTR
 ifdef _UNICODE
 SHMessageBoxCheck	equ <SHMessageBoxCheckW>
 else
@@ -3103,35 +1438,16 @@ endif
 
 endif
 
-
 if (_WIN32_IE GE _WIN32_IE_IE501)
-
-;LWSTDAPI
-SHSendMessageBroadcastA proto WINAPI \
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-
-;LWSTDAPI
-SHSendMessageBroadcastW proto WINAPI \
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-
+SHSendMessageBroadcastA proto WINAPI :UINT, :WPARAM, :LPARAM
+SHSendMessageBroadcastW proto WINAPI :UINT, :WPARAM, :LPARAM
 ifdef _UNICODE
 SHSendMessageBroadcast	equ <SHSendMessageBroadcastW>
 else
 SHSendMessageBroadcast	equ <SHSendMessageBroadcastA>
 endif
-
-;LWSTDAPI
-SHStripMneumonicA proto WINAPI \
-	       pszMenu: LPSTR
-
-;LWSTDAPI
-SHStripMneumonicW proto WINAPI \
-	       pszMenu: LPWSTR
-
+SHStripMneumonicA proto WINAPI :LPSTR
+SHStripMneumonicW proto WINAPI :LPWSTR
 ifdef _UNICODE
 SHStripMneumonic	equ <SHStripMneumonicW>
 else
@@ -3179,9 +1495,7 @@ OS_SERVERADMINUI	equ 34
 OS_MEDIACENTER		equ 35
 OS_APPLIANCE		equ 36
 
-;LWSTDAPI
-IsOS proto WINAPI \
-		  dwOS: DWORD
+IsOS proto WINAPI :DWORD
 
 endif ;; NO_SHLWAPI_ISOS
 endif ;; (_WIN32_IE >= _WIN32_IE_IE501)
@@ -3244,45 +1558,18 @@ GLOBALCOUNTER_MAXIMUMVALUE equ 53
 
 SHGLOBALCOUNTER		typedef SDWORD
 
-;LWSTDAPI
-SHGlobalCounterGetValue proto WINAPI \
-		    id: SHGLOBALCOUNTER
-
-;LWSTDAPI
-SHGlobalCounterIncrement proto WINAPI \
-		    id: SHGLOBALCOUNTER
-
-;LWSTDAPI
-SHGlobalCounterDecrement proto WINAPI \
-		    id: SHGLOBALCOUNTER
-
+SHGlobalCounterGetValue proto WINAPI :SHGLOBALCOUNTER
+SHGlobalCounterIncrement proto WINAPI :SHGLOBALCOUNTER
+SHGlobalCounterDecrement proto WINAPI :SHGLOBALCOUNTER
 if (_WIN32_IE GE 0x0603)
-;LWSTDAPI
-SHAllocShared proto WINAPI \
-		pvData: PVOID,
-		dwSize: DWORD,
-	   dwProcessId: DWORD
-
-;LWSTDAPI
-SHFreeShared proto WINAPI \
-		 hData: HANDLE,
-	   dwProcessId: DWORD
-
-;LWSTDAPI
-SHLockShared proto WINAPI \
-		 hData: HANDLE,
-	   dwProcessId: DWORD
-
-;LWSTDAPI
-SHUnlockShared proto WINAPI \
-		pvData: PVOID
-
+SHAllocShared proto WINAPI :ptr, :DWORD, :DWORD
+SHFreeShared proto WINAPI :HANDLE, :DWORD
+SHLockShared proto WINAPI :HANDLE, :DWORD
+SHUnlockShared proto WINAPI :ptr
 endif
-
 
 if (_WIN32_IE GE _WIN32_IE_IE501)
 
-;LWSTDAPI
 WhichPlatform proto WINAPI
 
 PLATFORM_UNKNOWN	equ 0
@@ -3311,15 +1598,9 @@ QITABENT macro Cthis, Ifoo
 	exitm<QITABENTMULTI(Cthis, Ifoo, Ifoo)>
 	endm
 
-;STDAPI
-QISearch proto WINAPI \
-		  that: PVOID,
-		  pqit: LPCQITAB,
-		  riid: REFIID,
-		   ppv: PVOID
+QISearch proto WINAPI :ptr, :LPCQITAB, :REFIID, :ptr
 
-
-endif ;; (_WIN32_IE >= _WIN32_IE_IE501)
+endif
 
 ifndef STATIC_CAST
 STATIC_CAST macro typ
@@ -3341,23 +1622,9 @@ endif
 
 
 ILMM_IE4		equ 0
-;LWSTDAPI
-SHIsLowMemoryMachine proto WINAPI \
-		dwType: DWORD
-
-
-;LWSTDAPI
-GetMenuPosFromID proto WINAPI \
-		 hmenu: HMENU,
-		    id: UINT
-
-
-;LWSTDAPI
-SHGetInverseCMAP proto WINAPI \
-		 pbMap: ptr BYTE,
-		 cbMap: ULONG
-
-
+SHIsLowMemoryMachine proto WINAPI :DWORD
+GetMenuPosFromID proto WINAPI :HMENU, :UINT
+SHGetInverseCMAP proto WINAPI :ptr, :ULONG
 
 if (_WIN32_IE GE 0x0500)
 
@@ -3379,29 +1646,17 @@ SHACF_AUTOSUGGEST_FORCE_OFF equ 0x20000000
 SHACF_AUTOAPPEND_FORCE_ON equ 0x40000000
 SHACF_AUTOAPPEND_FORCE_OFF equ 0x80000000
 
-;LWSTDAPI
-SHAutoComplete proto WINAPI \
-	      hwndEdit: HWND,
-	       dwFlags: DWORD
-
+SHAutoComplete proto WINAPI :HWND, :DWORD
 
 if (_WIN32_IE GE _WIN32_IE_IE60SP2)
-;LWSTDAPI
-SHCreateThreadRef proto WINAPI \
-		 pcRef: ptr LONG,
-		 ppunk: ptr IUnknown
+SHCreateThreadRef proto WINAPI :ptr, :ptr
 endif
 
-;LWSTDAPI
-SHSetThreadRef proto WINAPI \
-		  punk: ptr IUnknown
-SHGetThreadRef proto WINAPI \
-		 ppunk: ptr IUnknown
-SHSkipJunction proto WINAPI \
-		   pbc: ptr IBindCtx,
-		pclsid: ptr CLSID
+SHSetThreadRef proto WINAPI :ptr
+SHGetThreadRef proto WINAPI :ptr
+SHSkipJunction proto WINAPI :ptr, :ptr
 
-endif ;; (_WIN32_IE >= 0x0500)
+endif
 
 CTF_INSIST		equ 0x00000001
 CTF_THREAD_REF		equ 0x00000002
@@ -3429,55 +1684,17 @@ endif
 
 SHCT_FLAGS		typedef DWORD
 
-;LWSTDAPI
-SHCreateThread proto WINAPI \
-	 pfnThreadProc: LPTHREAD_START_ROUTINE,
-		 pData: PVOID,
-		 flags: SHCT_FLAGS,
-	   pfnCallback: LPTHREAD_START_ROUTINE
-
-;LWSTDAPI
-SHCreateThreadWithHandle proto WINAPI \
-	 pfnThreadProc: LPTHREAD_START_ROUTINE,
-		 pData: PVOID,
-		 flags: SHCT_FLAGS,
-	   pfnCallback: LPTHREAD_START_ROUTINE,
-	       pHandle: ptr HANDLE
-
-
+SHCreateThread proto WINAPI :LPTHREAD_START_ROUTINE, :ptr, :SHCT_FLAGS, :LPTHREAD_START_ROUTINE
+SHCreateThreadWithHandle proto WINAPI :LPTHREAD_START_ROUTINE, :ptr, :SHCT_FLAGS, :LPTHREAD_START_ROUTINE, :ptr
 if (_WIN32_IE GE _WIN32_IE_IE60)
-;LWSTDAPI
 SHReleaseThreadRef proto WINAPI
 endif
-
 ifndef NO_SHLWAPI_GDI
-
-;LWSTDAPI_(HPALETTE)
-SHCreateShellPalette proto WINAPI \
-		   hdc: HDC
-
-
+SHCreateShellPalette proto WINAPI :HDC
 if (_WIN32_IE GE 0x0500)
-
-;LWSTDAPI
-ColorRGBToHLS proto WINAPI \
-		clrRGB: COLORREF,
-		 pwHue: ptr WORD,
-	   pwLuminance: ptr WORD,
-	  pwSaturation: ptr WORD
-
-;LWSTDAPI_(COLORREF)
-ColorHLSToRGB proto WINAPI \
-		  wHue: WORD,
-	    wLuminance: WORD,
-	   wSaturation: WORD
-
-;LWSTDAPI_(COLORREF)
-ColorAdjustLuma proto WINAPI \
-		clrRGB: COLORREF,
-		     n: SINT,
-	       _fScale: BOOL
-
+ColorRGBToHLS proto WINAPI :COLORREF, :ptr, :ptr, :ptr
+ColorHLSToRGB proto WINAPI :WORD, :WORD, :WORD
+ColorAdjustLuma proto WINAPI :COLORREF, :SINT, :BOOL
 endif
 endif
 
@@ -3513,22 +1730,15 @@ MAKEDLLVERULL macro major, minor, build, qfe
 
 CALLBACK(DLLGETVERSIONPROC, :ptr DLLVERSIONINFO)
 
-;STDAPI
-DllInstall proto WINAPI \
-	      bInstall: BOOL,
-	    pszCmdLine: LPCWSTR
+DllInstall proto WINAPI :BOOL, :LPCWSTR
 
 if (_WIN32_IE GE 0x0602)
-;LWSTDAPI
 IsInternetESCEnabled proto WINAPI
 endif
 
 ifdef _WIN32
 .pragma pack(pop)
 endif
-
 endif
-
+endif
 .pragma list(pop)
-endif
-

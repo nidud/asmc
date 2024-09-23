@@ -14,47 +14,17 @@ CI_VERSION_WIN70 equ 0x700
 CINULLCATALOG equ <L"::_noindex_::">
 CIADMIN equ <L"::_nodocstore_::">
 
-LoadIFilter proto WINAPI \
-	      pwcsPath: PCWSTR,
-	     pUnkOuter: ptr IUnknown,
-		ppIUnk: ptr ptr
+LoadIFilter proto WINAPI :PCWSTR, :ptr, :ptr
 
 LIFF_LOAD_DEFINED_FILTER		   equ 1
 LIFF_IMPLEMENT_TEXT_FILTER_FALLBACK_POLICY equ 2
 LIFF_FORCE_TEXT_FILTER_FALLBACK		   equ 3
 
-LoadIFilterEx proto WINAPI \
-	      pwcsPath: PCWSTR,
-	       dwFlags: DWORD,
-		  riid: REFIID,
-		ppIUnk: ptr ptr
-
-BindIFilterFromStorage proto WINAPI \
-		  pStg: ptr IStorage,
-	     pUnkOuter: ptr IUnknown,
-		ppIUnk: ptr ptr
-
-BindIFilterFromStream proto WINAPI \
-		  pStm: ptr IStream,
-	     pUnkOuter: ptr IUnknown,
-		ppIUnk: ptr ptr
-
-LocateCatalogsW proto WINAPI \
-	     pwszScope: PCWSTR,
-		  iBmk: ULONG,
-	   pwszMachine: PWSTR,
-	    pccMachine: ptr ULONG,
-	       pwszCat: PWSTR,
-		pccCat: ptr ULONG
-
-LocateCatalogsA proto WINAPI \
-	     pwszScope: PCSTR,
-		  iBmk: ULONG,
-	   pwszMachine: PSTR,
-	    pccMachine: ptr ULONG,
-	       pwszCat: PSTR,
-		pccCat: ptr ULONG
-
+LoadIFilterEx proto WINAPI :PCWSTR, :DWORD, :REFIID, :ptr
+BindIFilterFromStorage proto WINAPI :ptr, :ptr, :ptr
+BindIFilterFromStream proto WINAPI :ptr, :ptr, :ptr
+LocateCatalogsW proto WINAPI :PCWSTR, :ULONG, :PWSTR, :ptr, :PWSTR, :ptr
+LocateCatalogsA proto WINAPI :PCSTR, :ULONG, :PSTR, :ptr, :PSTR, :ptr
 ifdef _UNICODE
 LocateCatalogs	equ <LocateCatalogsW>
 else
@@ -166,12 +136,7 @@ CICAT_NO_QUERY		equ 0x8
 CICAT_GET_STATE		equ 0x10
 CICAT_ALL_OPENED	equ 0x20
 
-SetCatalogState proto WINAPI \
-	       pwcsCat: ptr,
-	   pwcsMachine: ptr,
-	    dwNewState: DWORD,
-	   pdwOldState: ptr
-
+SetCatalogState proto WINAPI :ptr, :ptr, :DWORD, :ptr
 
 CI_STATE_SHADOW_MERGE	equ 0x0001
 CI_STATE_MASTER_MERGE	equ 0x0002
@@ -216,30 +181,12 @@ CI_STATE		ENDS
 .pragma pack(pop)
 endif
 
-CIState proto WINAPI \
-	       pwcsCat: ptr,
-	   pwcsMachine: ptr,
-	      pCiState: ptr
-
+CIState proto WINAPI :ptr, :ptr, :ptr
 
 ifdef __ICommand_INTERFACE_DEFINED__
 
-CIMakeICommand proto WINAPI \
-	     ppCommand: ptr ptr,
-		cScope: ULONG,
-	       aDepths: ptr,
-	     awcsScope: ptr,
-	  awcsCatalogs: ptr,
-	   awcsMachine: ptr
-
-
-CICreateCommand proto WINAPI \
-	     ppCommand: ptr ptr,
-	     pUnkOuter: ptr IUnknown,
-		  riid: REFIID,
-	   pwcsCatalog: LPWSTR,
-	   pwcsMachine: LPWSTR
-
+CIMakeICommand proto WINAPI :ptr, :ULONG, :ptr, :ptr, :ptr, :ptr
+CICreateCommand proto WINAPI :ptr, :ptr, :REFIID, :LPWSTR, :LPWSTR
 
 ifdef __ICommandTree_INTERFACE_DEFINED__
 
@@ -256,68 +203,13 @@ endif
 ISQLANG_V1		equ 1
 ISQLANG_V2		equ 2
 
-CITextToSelectTree proto WINAPI \
-       pwszRestriction: ptr,
-		ppTree: ptr ptr,
-	   cProperties: ULONG,
-	   pProperties: ptr,
-	      LocaleID: LCID
-
-CITextToSelectTreeEx proto WINAPI \
-       pwszRestriction: ptr,
-	     ulDialect: ULONG,
-		ppTree: ptr ptr,
-	   cProperties: ULONG,
-	   pProperties: ptr,
-	      LocaleID: LCID
-
-CITextToFullTree proto WINAPI \
-       pwszRestriction: ptr,
-	   pwszColumns: ptr,
-       pwszSortColumns: ptr,
-	 pwszGroupings: ptr,
-		ppTree: ptr ptr,
-	   cProperties: ULONG,
-	   pProperties: ptr,
-	      LocaleID: LCID
-
-CITextToFullTreeEx proto WINAPI \
-       pwszRestriction: ptr,
-	     ulDialect: ULONG,
-	   pwszColumns: ptr,
-       pwszSortColumns: ptr,
-	 pwszGroupings: ptr,
-		ppTree: ptr ptr,
-	   cProperties: ULONG,
-	   pProperties: ptr,
-	      LocaleID: LCID
-
-CIBuildQueryNode proto WINAPI \
-	   wcsProperty: ptr WCHAR,
-	    dbOperator: DBCOMMANDOP,
-     pvarPropertyValue: LPPROPVARIANT,
-		ppTree: LPDBCOMMANDTREE,
-	   cProperties: ULONG,
-	     pProperty: LPCIPROPERTYDEF,
-	      LocaleID: LCID
-
-CIBuildQueryTree proto WINAPI \
-	 pExistingTree: ptr DBCOMMANDTREE,
-	      dbBoolOp: DBCOMMANDOP,
-	     cSiblings: ULONG,
-       ppSibsToCombine: ptr LPDBCOMMANDTREE,
-		ppTree: LPDBCOMMANDTREE
-
-CIRestrictionToFullTree proto WINAPI \
-		 pTree: ptr DBCOMMANDTREE,
-	   pwszColumns: ptr,
-       pwszSortColumns: ptr,
-	 pwszGroupings: ptr,
-		ppTree: ptr ptr,
-	   cProperties: ULONG,
-	     pReserved: ptr,
-	      LocaleID: LCID
-
+CITextToSelectTree proto WINAPI :ptr, :ptr, :ULONG, :ptr, :LCID
+CITextToSelectTreeEx proto WINAPI :ptr, :ULONG, :ptr, :ULONG, :ptr, :LCID
+CITextToFullTree proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ULONG, :ptr, :LCID
+CITextToFullTreeEx proto WINAPI :ptr, :ULONG, :ptr, :ptr, :ptr, :ptr, :ULONG, :ptr, :LCID
+CIBuildQueryNode proto WINAPI :ptr, :DBCOMMANDOP, :LPPROPVARIANT, :LPDBCOMMANDTREE, :ULONG, :LPCIPROPERTYDEF, :LCID
+CIBuildQueryTree proto WINAPI :ptr, :DBCOMMANDOP, :ULONG, :ptr, :LPDBCOMMANDTREE
+CIRestrictionToFullTree proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ULONG, :ptr, :LCID
 
 endif
 endif

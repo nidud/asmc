@@ -43,12 +43,7 @@ DEFINE_GUID(IID_ID3DX11Scan, 0x5089b68f, 0xe71d, 0x4d38, 0xbe, 0x8e, 0xf3, 0x63,
     .ENDS
 
 
-D3DX11CreateScan proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-    MaxElementScanSize: UINT,
-	  MaxScanCount: UINT,
-		ppScan: ptr ptr ID3DX11Scan
-
+D3DX11CreateScan proto WINAPI :ptr, :UINT, :UINT, :ptr
 
 DEFINE_GUID(IID_ID3DX11SegmentedScan, 0xa915128c, 0xd954, 0x4c79, 0xbf, 0xe1, 0x64, 0xdb, 0x92, 0x31, 0x94, 0xd6);
 
@@ -58,12 +53,7 @@ DEFINE_GUID(IID_ID3DX11SegmentedScan, 0xa915128c, 0xd954, 0x4c79, 0xbf, 0xe1, 0x
     SegScan		proc :D3DX11_SCAN_DATA_TYPE, :D3DX11_SCAN_OPCODE, :UINT, :ptr ID3D11UnorderedAccessView, :ptr ID3D11UnorderedAccessView, :ptr ID3D11UnorderedAccessView
     .ENDS
 
-
-D3DX11CreateSegmentedScan proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-    MaxElementScanSize: UINT,
-		ppScan: ptr ptr ID3DX11SegmentedScan
-
+D3DX11CreateSegmentedScan proto WINAPI :ptr, :UINT, :ptr
 
 D3DX11_FFT_MAX_PRECOMPUTE_BUFFERS equ 4
 D3DX11_FFT_MAX_TEMP_BUFFERS equ 4
@@ -112,60 +102,12 @@ D3DX11_FFT_BUFFER_INFO	ENDS
     D3DX11_FFT_CREATE_FLAG_NO_PRECOMPUTE_BUFFERS = 0x01,
     }
 
-D3DX11CreateFFT proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-		 pDesc: ptr D3DX11_FFT_DESC,
-		 Flags: UINT,
-	   pBufferInfo: ptr D3DX11_FFT_BUFFER_INFO,
-		 ppFFT: ptr ptr ID3DX11FFT
-
-D3DX11CreateFFT1DReal proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-		     X: UINT,
-		 Flags: UINT,
-	   pBufferInfo: ptr D3DX11_FFT_BUFFER_INFO,
-		 ppFFT: ptr ptr ID3DX11FFT
-
-D3DX11CreateFFT1DComplex proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-		     X: UINT,
-		 Flags: UINT,
-	   pBufferInfo: ptr D3DX11_FFT_BUFFER_INFO,
-		 ppFFT: ptr ptr ID3DX11FFT
-
-D3DX11CreateFFT2DReal proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-		     X: UINT,
-		     Y: UINT,
-		 Flags: UINT,
-	   pBufferInfo: ptr D3DX11_FFT_BUFFER_INFO,
-		 ppFFT: ptr ptr ID3DX11FFT
-
-D3DX11CreateFFT2DComplex proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-		     X: UINT,
-		     Y: UINT,
-		 Flags: UINT,
-	   pBufferInfo: ptr D3DX11_FFT_BUFFER_INFO,
-		 ppFFT: ptr ptr ID3DX11FFT
-
-D3DX11CreateFFT3DReal proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-		     X: UINT,
-		     Y: UINT,
-		     Z: UINT,
-		 Flags: UINT,
-	   pBufferInfo: ptr D3DX11_FFT_BUFFER_INFO,
-		 ppFFT: ptr ptr ID3DX11FFT
-
-D3DX11CreateFFT3DComplex proto WINAPI \
-	pDeviceContext: ptr ID3D11DeviceContext,
-		     X: UINT,
-		     Y: UINT,
-		     Z: UINT,
-		 Flags: UINT,
-	   pBufferInfo: ptr D3DX11_FFT_BUFFER_INFO,
-		 ppFFT: ptr ptr ID3DX11FFT
-
+D3DX11CreateFFT proto WINAPI :ptr, :ptr, :UINT, :ptr, :ptr
+D3DX11CreateFFT1DReal proto WINAPI :ptr, :UINT, :UINT, :ptr, :ptr
+D3DX11CreateFFT1DComplex proto WINAPI :ptr, :UINT, :UINT, :ptr, :ptr
+D3DX11CreateFFT2DReal proto WINAPI :ptr, :UINT, :UINT, :UINT, :ptr, :ptr
+D3DX11CreateFFT2DComplex proto WINAPI :ptr, :UINT, :UINT, :UINT, :ptr, :ptr
+D3DX11CreateFFT3DReal proto WINAPI :ptr, :UINT, :UINT, :UINT, :UINT, :ptr, :ptr
+D3DX11CreateFFT3DComplex proto WINAPI :ptr, :UINT, :UINT, :UINT, :UINT, :ptr, :ptr
 
 endif

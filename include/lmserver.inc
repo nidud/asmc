@@ -4,118 +4,19 @@ define _LMSERVER_
 include winsvc.inc
 include lmcons.inc
 
-;NET_API_STATUS
-NetServerEnum proto WINAPI \
-	    servername: LMCSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	    servertype: DWORD,
-		domain: LMCSTR,
-	 resume_handle: LPDWORD
-
-
-;NET_API_STATUS
-NetServerEnumEx proto WINAPI \
-	    ServerName: LMCSTR,
-		 Level: DWORD,
-		Bufptr: ptr LPBYTE,
-	    PrefMaxlen: DWORD,
-	   EntriesRead: LPDWORD,
-	  totalentries: LPDWORD,
-	    servertype: DWORD,
-		domain: LMCSTR,
-     FirstNameToReturn: LMCSTR
-
-
-;NET_API_STATUS
-NetServerGetInfo proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-
-;NET_API_STATUS
-NetServerSetInfo proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	     ParmError: LPDWORD
-
-
-
-;NET_API_STATUS
-NetServerSetInfoCommandLine proto WINAPI \
-		  argc: WORD,
-		  argv: ptr LMSTR
-
-
-;NET_API_STATUS
-NetServerDiskEnum proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
-
-;NET_API_STATUS
-NetServerComputerNameAdd proto WINAPI \
-	    ServerName: LMSTR,
-    EmulatedDomainName: LMSTR,
-    EmulatedServerName: LMSTR
-
-
-;NET_API_STATUS
-NetServerComputerNameDel proto WINAPI \
-	    ServerName: LMSTR,
-    EmulatedServerName: LMSTR
-
-
-;NET_API_STATUS
-NetServerTransportAdd proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: LPBYTE
-
-
-;NET_API_STATUS
-NetServerTransportAddEx proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: LPBYTE
-
-
-;NET_API_STATUS
-NetServerTransportDel proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: LPBYTE
-
-
-;NET_API_STATUS
-NetServerTransportEnum proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  resumehandle: LPDWORD
-
-
-;BOOL
-SetServiceBits proto WINAPI \
-	hServiceStatus: SERVICE_STATUS_HANDLE,
-	 dwServiceBits: DWORD,
-	    bSetBitsOn: BOOL,
-    bUpdateImmediately: BOOL
-
-
+NetServerEnum proto WINAPI :LMCSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :DWORD, :LMCSTR, :LPDWORD
+NetServerEnumEx proto WINAPI :LMCSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :DWORD, :LMCSTR, :LMCSTR
+NetServerGetInfo proto WINAPI :LMSTR, :DWORD, :ptr
+NetServerSetInfo proto WINAPI :LMSTR, :DWORD, :LPBYTE, :LPDWORD
+NetServerSetInfoCommandLine proto WINAPI :WORD, :ptr
+NetServerDiskEnum proto WINAPI :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetServerComputerNameAdd proto WINAPI :LMSTR, :LMSTR, :LMSTR
+NetServerComputerNameDel proto WINAPI :LMSTR, :LMSTR
+NetServerTransportAdd proto WINAPI :LMSTR, :DWORD, :LPBYTE
+NetServerTransportAddEx proto WINAPI :LMSTR, :DWORD, :LPBYTE
+NetServerTransportDel proto WINAPI :LMSTR, :DWORD, :LPBYTE
+NetServerTransportEnum proto WINAPI :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+SetServiceBits proto WINAPI :SERVICE_STATUS_HANDLE, :DWORD, :BOOL, :BOOL
 
 SERVER_INFO_100		STRUC
 sv100_platform_id	dd ?

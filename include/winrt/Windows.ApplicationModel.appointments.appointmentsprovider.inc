@@ -113,14 +113,14 @@ define RuntimeClass_Windows_ApplicationModel_Appointments_AppointmentsProvider_A
 define RuntimeClass_Windows_ApplicationModel_Appointments_AppointmentsProvider_ReplaceAppointmentOperation <L"Windows.ApplicationModel.Appointments.AppointmentsProvider.ReplaceAppointmentOperation">
 define RuntimeClass_Windows_ApplicationModel_Appointments_AppointmentsProvider_RemoveAppointmentOperation <L"Windows.ApplicationModel.Appointments.AppointmentsProvider.RemoveAppointmentOperation">
 
-HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
-HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
-HSTRING_UserUnmarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
-HSTRING_UserFree	proto WINAPI :ptr ULONG, :ptr HSTRING
+HSTRING_UserSize	proto WINAPI :ptr, :ULONG, :ptr
+HSTRING_UserMarshal	proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserUnmarshal	proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserFree	proto WINAPI :ptr, :ptr
 
-HSTRING_UserSize64	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
-HSTRING_UserMarshal64	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
-HSTRING_UserUnmarshal64 proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
-HSTRING_UserFree64	proto WINAPI :ptr ULONG, :ptr HSTRING
+HSTRING_UserSize64	proto WINAPI :ptr, :ULONG, :ptr
+HSTRING_UserMarshal64	proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HSTRING_UserFree64	proto WINAPI :ptr, :ptr
 
 endif

@@ -1541,1142 +1541,150 @@ DHCP_MAX_DELAY		equ 1000
 
 ifndef	DHCPAPI_NO_PROTOTYPES
 
-;DWORD
-DhcpAddFilterV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 AddFilterInfo: ptr DHCP_FILTER_ADD_INFO,
-	     ForceFlag: BOOL
-
-
-;DWORD
-DhcpDeleteFilterV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-      DeleteFilterInfo: ptr DHCP_ADDR_PATTERN
-
-
-;DWORD
-DhcpSetFilterV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-      GlobalFilterInfo: ptr DHCP_FILTER_GLOBAL_INFO
-
-
-;DWORD
-DhcpGetFilterV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-      GlobalFilterInfo: ptr DHCP_FILTER_GLOBAL_INFO
-
-
-;DWORD
-DhcpEnumFilterV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	  ResumeHandle: LPDHCP_ADDR_PATTERN,
-      PreferredMaximum: DWORD,
-	      ListType: DHCP_FILTER_LIST_TYPE,
-	EnumFilterInfo: ptr LPDHCP_FILTER_ENUM_INFO,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-
-;DWORD
-DhcpCreateSubnet proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    SubnetInfo: ptr DHCP_SUBNET_INFO
-
-
-;DWORD
-DhcpSetSubnetInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    SubnetInfo: ptr DHCP_SUBNET_INFO
-
-
-;DWORD
-DhcpGetSubnetInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    SubnetInfo: ptr
-
-
-;DWORD
-DhcpEnumSubnets proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	      EnumInfo: ptr LPDHCP_IP_ARRAY,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-
-;DWORD
-DhcpAddSubnetElement proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	AddElementInfo: ptr DHCP_SUBNET_ELEMENT_DATA
-
-
-;DWORD
-DhcpEnumSubnetElements proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-       EnumElementType: DHCP_SUBNET_ELEMENT_TYPE,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-       EnumElementInfo: ptr LPDHCP_SUBNET_ELEMENT_INFO_ARRAY,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-
-;DWORD
-DhcpRemoveSubnetElement proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-     RemoveElementInfo: ptr DHCP_SUBNET_ELEMENT_DATA,
-	     ForceFlag: DHCP_FORCE_FLAG
-
-
-;DWORD
-DhcpDeleteSubnet proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	     ForceFlag: DHCP_FORCE_FLAG
-
-;DWORD
-DhcpCreateOption proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	      OptionID: DHCP_OPTION_ID,
-	    OptionInfo: ptr DHCP_OPTION
-
-
-;DWORD
-DhcpSetOptionInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	      OptionID: DHCP_OPTION_ID,
-	    OptionInfo: ptr DHCP_OPTION
-
-
-;DWORD
-DhcpGetOptionInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	      OptionID: DHCP_OPTION_ID,
-	    OptionInfo: ptr LPDHCP_OPTION
-
-
-;DWORD
-DhcpEnumOptions proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	       Options: ptr LPDHCP_OPTION_ARRAY,
-	   OptionsRead: ptr DWORD,
-	  OptionsTotal: ptr DWORD
-
-
-;DWORD
-DhcpRemoveOption proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	      OptionID: DHCP_OPTION_ID
-
-
-;DWORD
-DhcpSetOptionValue proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	      OptionID: DHCP_OPTION_ID,
-	     ScopeInfo: ptr DHCP_OPTION_SCOPE_INFO,
-	   OptionValue: ptr DHCP_OPTION_DATA
-
-
-;DWORD
-DhcpSetOptionValues proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	     ScopeInfo: ptr DHCP_OPTION_SCOPE_INFO,
-	  OptionValues: ptr DHCP_OPTION_VALUE_ARRAY
-
-
-;DWORD
-DhcpGetOptionValue proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	      OptionID: DHCP_OPTION_ID,
-	     ScopeInfo: ptr DHCP_OPTION_SCOPE_INFO,
-	   OptionValue: ptr LPDHCP_OPTION_VALUE
-
-
-;DWORD
-DhcpEnumOptionValues proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	     ScopeInfo: ptr DHCP_OPTION_SCOPE_INFO,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	  OptionValues: ptr LPDHCP_OPTION_VALUE_ARRAY,
-	   OptionsRead: ptr DWORD,
-	  OptionsTotal: ptr DWORD
-
-
-;DWORD
-DhcpRemoveOptionValue proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	      OptionID: DHCP_OPTION_ID,
-	     ScopeInfo: ptr DHCP_OPTION_SCOPE_INFO
-
-
-;DWORD
-DhcpCreateClientInfoVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_CLIENT_INFO_VQ
-
-
-;DWORD
-DhcpSetClientInfoVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_CLIENT_INFO_VQ
-
-
-;DWORD
-DhcpGetClientInfoVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    SearchInfo: ptr DHCP_SEARCH_INFO,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_VQ
-
-
-;DWORD
-DhcpEnumSubnetClientsVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_ARRAY_VQ,
-	   ClientsRead: ptr DWORD,
-	  ClientsTotal: ptr DWORD
-
-
-;DWORD
-DhcpEnumSubnetClientsFilterStatusInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	    ClientInfo: ptr LPDHCP_CLIENT_FILTER_STATUS_INFO_ARRAY,
-	   ClientsRead: ptr DWORD,
-	  ClientsTotal: ptr DWORD
-
-
-;DWORD
-DhcpCreateClientInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_CLIENT_INFO
-
-
-;DWORD
-DhcpSetClientInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_CLIENT_INFO
-
-
-;DWORD
-DhcpGetClientInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    SearchInfo: ptr DHCP_SEARCH_INFO,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO
-
-
-;DWORD
-DhcpDeleteClientInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_SEARCH_INFO
-
-
-;DWORD
-DhcpEnumSubnetClients proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_ARRAY,
-	   ClientsRead: ptr DWORD,
-	  ClientsTotal: ptr DWORD
-
-
-;DWORD
-DhcpGetClientOptions proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-       ClientIpAddress: DHCP_IP_ADDRESS,
-      ClientSubnetMask: DHCP_IP_MASK,
-	 ClientOptions: ptr LPDHCP_OPTION_LIST
-
-
-;DWORD
-DhcpGetMibInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	       MibInfo: ptr LPDHCP_MIB_INFO
-
-
-;DWORD
-DhcpServerSetConfig proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	   FieldsToSet: DWORD,
-	    ConfigInfo: LPDHCP_SERVER_CONFIG_INFO
-
-
-
-;DWORD
-DhcpServerGetConfig proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ConfigInfo: ptr LPDHCP_SERVER_CONFIG_INFO
-
-
-
-;DWORD
-DhcpScanDatabase proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	       FixFlag: DWORD,
-	      ScanList: ptr LPDHCP_SCAN_LIST
-
-;VOID
-DhcpRpcFreeMemory proto WINAPI \
-	 BufferPointer: PVOID
-
-;DWORD
-DhcpGetVersion proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	  MajorVersion: LPDWORD,
-	  MinorVersion: LPDWORD
-
-;DWORD
-DhcpAddSubnetElementV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	AddElementInfo: ptr DHCP_SUBNET_ELEMENT_DATA_V4
-
-;DWORD
-DhcpEnumSubnetElementsV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-       EnumElementType: DHCP_SUBNET_ELEMENT_TYPE,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-       EnumElementInfo: ptr LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V4,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-
-;DWORD
-DhcpRemoveSubnetElementV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-     RemoveElementInfo: ptr DHCP_SUBNET_ELEMENT_DATA_V4,
-	     ForceFlag: DHCP_FORCE_FLAG
-
-
-;DWORD
-DhcpCreateClientInfoV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_CLIENT_INFO_V4
-
-
-;DWORD
-DhcpSetClientInfoV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_CLIENT_INFO_V4
-
-
-
-;DWORD
-DhcpGetClientInfoV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    SearchInfo: ptr DHCP_SEARCH_INFO,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_V4
-
-
-
-;DWORD
-DhcpEnumSubnetClientsV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_ARRAY_V4,
-	   ClientsRead: ptr DWORD,
-	  ClientsTotal: ptr DWORD
-
-
-;DWORD
-DhcpServerSetConfigV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	   FieldsToSet: DWORD,
-	    ConfigInfo: LPDHCP_SERVER_CONFIG_INFO_V4
-
-
-;DWORD
-DhcpServerGetConfigV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ConfigInfo: ptr LPDHCP_SERVER_CONFIG_INFO_V4
-
-
-;DWORD
-DhcpSetSuperScopeV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	SuperScopeName: LPWSTR,
-	ChangeExisting: BOOL
-
-
-;DWORD
-DhcpDeleteSuperScopeV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	SuperScopeName: LPWSTR
-
-
-;DWORD
-DhcpGetSuperScopeInfoV4 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-       SuperScopeTable: ptr LPDHCP_SUPER_SCOPE_TABLE
-
-
-;DWORD
-DhcpEnumSubnetClientsV5 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_ARRAY_V5,
-	   ClientsRead: ptr DWORD,
-	  ClientsTotal: ptr DWORD
-
-;DWORD
-DhcpCreateOptionV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionId: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	    OptionInfo: LPDHCP_OPTION
-
-
-;DWORD
-DhcpSetOptionInfoV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	    OptionInfo: LPDHCP_OPTION
-
-;DWORD
-DhcpGetOptionInfoV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	 OptionInfo: ptr LPDHCP_OPTION
-
-
-;DWORD
-DhcpEnumOptionsV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: ptr DWORD,
-	       Options: ptr LPDHCP_OPTION_ARRAY,
-	   OptionsRead: ptr DWORD,
-	  OptionsTotal: ptr DWORD
-
-
-;DWORD
-DhcpRemoveOptionV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR
-
-
-;DWORD
-DhcpSetOptionValueV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-	   OptionValue: LPDHCP_OPTION_DATA
-
-
-
-;DWORD
-DhcpSetOptionValuesV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-	  OptionValues: LPDHCP_OPTION_VALUE_ARRAY
-
-
-;DWORD
-DhcpGetOptionValueV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-	   OptionValue: ptr LPDHCP_OPTION_VALUE
-
-;DWORD
-DhcpGetOptionValueV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO6,
-	   OptionValue: ptr LPDHCP_OPTION_VALUE
-
-
-;DWORD
-DhcpEnumOptionValuesV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	  OptionValues: ptr LPDHCP_OPTION_VALUE_ARRAY,
-	   OptionsRead: ptr DWORD,
-	  OptionsTotal: ptr DWORD
-
-
-;DWORD
-DhcpRemoveOptionValueV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO
-
-
-;DWORD
-DhcpCreateClass proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-	     ClassInfo: LPDHCP_CLASS_INFO
-
-
-;DWORD
-DhcpModifyClass proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-	     ClassInfo: LPDHCP_CLASS_INFO
-
-
-;DWORD
-DhcpDeleteClass proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-	     ClassName: LPWSTR
-
-
-;DWORD
-DhcpGetClassInfo proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-      PartialClassInfo: LPDHCP_CLASS_INFO,
-       FilledClassInfo: ptr LPDHCP_CLASS_INFO
-
-
-;DWORD
-DhcpEnumClasses proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	ClassInfoArray: ptr LPDHCP_CLASS_INFO_ARRAY,
-		 nRead: ptr DWORD,
-		nTotal: ptr DWORD
-
-
-
-;DWORD
-DhcpGetAllOptions proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	  OptionStruct: ptr LPDHCP_ALL_OPTIONS
-
-;DWORD
-DhcpGetAllOptionsV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	  OptionStruct: ptr LPDHCP_ALL_OPTIONS
-
-
-;DWORD
-DhcpGetAllOptionValues proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-		Values: ptr LPDHCP_ALL_OPTION_VALUES
-
-;DWORD
-DhcpGetAllOptionValuesV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO6,
-		Values: ptr LPDHCP_ALL_OPTION_VALUES
-
-
-;DWORD
-DhcpEnumServers proto WINAPI \
-		 Flags: DWORD,
-		IdInfo: LPVOID,
-	       Servers: ptr LPDHCP_SERVER_INFO_ARRAY,
-	    CallbackFn: LPVOID,
-	  CallbackData: LPVOID
-
-
-;DWORD
-DhcpAddServer proto WINAPI \
-		 Flags: DWORD,
-		IdInfo: LPVOID,
-	     NewServer: LPDHCP_SERVER_INFO,
-	    CallbackFn: LPVOID,
-	  CallbackData: LPVOID
-
-
-;DWORD
-DhcpDeleteServer proto WINAPI \
-		 Flags: DWORD,
-		IdInfo: LPVOID,
-	     NewServer: LPDHCP_SERVER_INFO,
-	    CallbackFn: LPVOID,
-	  CallbackData: LPVOID
-
-
-;DWORD
-DhcpGetServerBindingInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-		 Flags: ULONG,
-      BindElementsInfo: ptr LPDHCP_BIND_ELEMENT_ARRAY
-
-
-;DWORD
-DhcpSetServerBindingInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-		 Flags: ULONG,
-       BindElementInfo: LPDHCP_BIND_ELEMENT_ARRAY
-
-
-;DWORD
-DhcpAddSubnetElementV5 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	AddElementInfo: ptr DHCP_SUBNET_ELEMENT_DATA_V5
-
-
-;DWORD
-DhcpEnumSubnetElementsV5 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-       EnumElementType: DHCP_SUBNET_ELEMENT_TYPE,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-       EnumElementInfo: ptr LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V5,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-
-;DWORD
-DhcpRemoveSubnetElementV5 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-     RemoveElementInfo: ptr DHCP_SUBNET_ELEMENT_DATA_V5,
-	     ForceFlag: DHCP_FORCE_FLAG
-
-
-
-;DWORD
-DhcpV4EnumSubnetReservations proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-       EnumElementInfo: ptr LPDHCP_RESERVATION_INFO_ARRAY,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-;DWORD
-DhcpCreateOptionV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionId: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	    OptionInfo: LPDHCP_OPTION
-
-;DWORD
-DhcpRemoveOptionV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR
-
-;DWORD
-DhcpEnumOptionsV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	       Options: ptr LPDHCP_OPTION_ARRAY,
-	   OptionsRead: ptr DWORD,
-	  OptionsTotal: ptr DWORD
-
-
-;DWORD
-DhcpRemoveOptionValueV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO6
-
-;DWORD
-DhcpGetOptionInfoV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	    OptionInfo: ptr LPDHCP_OPTION
-
-
-;DWORD
-DhcpSetOptionInfoV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	    OptionInfo: LPDHCP_OPTION
-
-
-;DWORD
-DhcpSetOptionValueV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionId: DHCP_OPTION_ID,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO6,
-	   OptionValue: LPDHCP_OPTION_DATA
-
-
-;DWORD
-DhcpGetSubnetInfoVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    SubnetInfo: ptr LPDHCP_SUBNET_INFO_VQ
-
-
-;DWORD
-DhcpCreateSubnetVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    SubnetInfo: ptr DHCP_SUBNET_INFO_VQ
-
-
-;DWORD
-DhcpSetSubnetInfoVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    SubnetInfo: ptr DHCP_SUBNET_INFO_VQ
-
-
-;DWORD
-DhcpEnumOptionValuesV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-		 Flags: DWORD,
-	     ClassName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO6,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	  OptionValues: ptr LPDHCP_OPTION_VALUE_ARRAY,
-	   OptionsRead: ptr DWORD,
-	  OptionsTotal: ptr DWORD
-
+DhcpAddFilterV4 proto WINAPI :ptr, :ptr, :BOOL
+DhcpDeleteFilterV4 proto WINAPI :ptr, :ptr
+DhcpSetFilterV4 proto WINAPI :ptr, :ptr
+DhcpGetFilterV4 proto WINAPI :ptr, :ptr
+DhcpEnumFilterV4 proto WINAPI :ptr, :LPDHCP_ADDR_PATTERN, :DWORD, :DHCP_FILTER_LIST_TYPE, :ptr, :ptr, :ptr
+DhcpCreateSubnet proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpSetSubnetInfo proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpGetSubnetInfo proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpEnumSubnets proto WINAPI :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpAddSubnetElement proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpEnumSubnetElements proto WINAPI :ptr, :DHCP_IP_ADDRESS, :DHCP_SUBNET_ELEMENT_TYPE, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpRemoveSubnetElement proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DHCP_FORCE_FLAG
+DhcpDeleteSubnet proto WINAPI :ptr, :DHCP_IP_ADDRESS, :DHCP_FORCE_FLAG
+DhcpCreateOption proto WINAPI :ptr, :DHCP_OPTION_ID, :ptr
+DhcpSetOptionInfo proto WINAPI :ptr, :DHCP_OPTION_ID, :ptr
+DhcpGetOptionInfo proto WINAPI :ptr, :DHCP_OPTION_ID, :ptr
+DhcpEnumOptions proto WINAPI :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpRemoveOption proto WINAPI :ptr, :DHCP_OPTION_ID
+DhcpSetOptionValue proto WINAPI :ptr, :DHCP_OPTION_ID, :ptr, :ptr
+DhcpSetOptionValues proto WINAPI :ptr, :ptr, :ptr
+DhcpGetOptionValue proto WINAPI :ptr, :DHCP_OPTION_ID, :ptr, :ptr
+DhcpEnumOptionValues proto WINAPI :ptr, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpRemoveOptionValue proto WINAPI :ptr, :DHCP_OPTION_ID, :ptr
+DhcpCreateClientInfoVQ proto WINAPI :ptr, :ptr
+DhcpSetClientInfoVQ proto WINAPI :ptr, :ptr
+DhcpGetClientInfoVQ proto WINAPI :ptr, :ptr, :ptr
+DhcpEnumSubnetClientsVQ proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpEnumSubnetClientsFilterStatusInfo proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpCreateClientInfo proto WINAPI :ptr, :ptr
+DhcpSetClientInfo proto WINAPI :ptr, :ptr
+DhcpGetClientInfo proto WINAPI :ptr, :ptr, :ptr
+DhcpDeleteClientInfo proto WINAPI :ptr, :ptr
+DhcpEnumSubnetClients proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpGetClientOptions proto WINAPI :ptr, :DHCP_IP_ADDRESS, :DHCP_IP_MASK, :ptr
+DhcpGetMibInfo proto WINAPI :ptr, :ptr
+DhcpServerSetConfig proto WINAPI :ptr, :DWORD, :LPDHCP_SERVER_CONFIG_INFO
+DhcpServerGetConfig proto WINAPI :ptr, :ptr
+DhcpScanDatabase proto WINAPI :ptr, :DHCP_IP_ADDRESS, :DWORD, :ptr
+DhcpRpcFreeMemory proto WINAPI :ptr
+DhcpGetVersion proto WINAPI :LPWSTR, :LPDWORD, :LPDWORD
+DhcpAddSubnetElementV4 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpEnumSubnetElementsV4 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :DHCP_SUBNET_ELEMENT_TYPE, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpRemoveSubnetElementV4 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DHCP_FORCE_FLAG
+DhcpCreateClientInfoV4 proto WINAPI :ptr, :ptr
+DhcpSetClientInfoV4 proto WINAPI :ptr, :ptr
+DhcpGetClientInfoV4 proto WINAPI :ptr, :ptr, :ptr
+DhcpEnumSubnetClientsV4 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpServerSetConfigV4 proto WINAPI :ptr, :DWORD, :LPDHCP_SERVER_CONFIG_INFO_V4
+DhcpServerGetConfigV4 proto WINAPI :ptr, :ptr
+DhcpSetSuperScopeV4 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :LPWSTR, :BOOL
+DhcpDeleteSuperScopeV4 proto WINAPI :ptr, :LPWSTR
+DhcpGetSuperScopeInfoV4 proto WINAPI :ptr, :ptr
+DhcpEnumSubnetClientsV5 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpCreateOptionV5 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION
+DhcpSetOptionInfoV5 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION
+DhcpGetOptionInfoV5 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :ptr
+DhcpEnumOptionsV5 proto WINAPI :LPWSTR, :DWORD, :LPWSTR, :LPWSTR, :ptr, :ptr, :ptr, :ptr, :ptr
+DhcpRemoveOptionV5 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR
+DhcpSetOptionValueV5 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO, :LPDHCP_OPTION_DATA
+DhcpSetOptionValuesV5 proto WINAPI :LPWSTR, :DWORD, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO, :LPDHCP_OPTION_VALUE_ARRAY
+DhcpGetOptionValueV5 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO, :ptr
+DhcpGetOptionValueV6 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO6, :ptr
+DhcpEnumOptionValuesV5 proto WINAPI :LPWSTR, :DWORD, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpRemoveOptionValueV5 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO
+DhcpCreateClass proto WINAPI :LPWSTR, :DWORD, :LPDHCP_CLASS_INFO
+DhcpModifyClass proto WINAPI :LPWSTR, :DWORD, :LPDHCP_CLASS_INFO
+DhcpDeleteClass proto WINAPI :LPWSTR, :DWORD, :LPWSTR
+DhcpGetClassInfo proto WINAPI :LPWSTR, :DWORD, :LPDHCP_CLASS_INFO, :ptr
+DhcpEnumClasses proto WINAPI :LPWSTR, :DWORD, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpGetAllOptions proto WINAPI :LPWSTR, :DWORD, :ptr
+DhcpGetAllOptionsV6 proto WINAPI :LPWSTR, :DWORD, :ptr
+DhcpGetAllOptionValues proto WINAPI :LPWSTR, :DWORD, :LPDHCP_OPTION_SCOPE_INFO, :ptr
+DhcpGetAllOptionValuesV6 proto WINAPI :LPWSTR, :DWORD, :LPDHCP_OPTION_SCOPE_INFO6, :ptr
+DhcpEnumServers proto WINAPI :DWORD, :ptr, :ptr, :ptr, :ptr
+DhcpAddServer proto WINAPI :DWORD, :ptr, :LPDHCP_SERVER_INFO, :ptr, :ptr
+DhcpDeleteServer proto WINAPI :DWORD, :ptr, :LPDHCP_SERVER_INFO, :ptr, :ptr
+DhcpGetServerBindingInfo proto WINAPI :ptr, :ULONG, :ptr
+DhcpSetServerBindingInfo proto WINAPI :ptr, :ULONG, :LPDHCP_BIND_ELEMENT_ARRAY
+DhcpAddSubnetElementV5 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpEnumSubnetElementsV5 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :DHCP_SUBNET_ELEMENT_TYPE, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpRemoveSubnetElementV5 proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DHCP_FORCE_FLAG
+DhcpV4EnumSubnetReservations proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpCreateOptionV6 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION
+DhcpRemoveOptionV6 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR
+DhcpEnumOptionsV6 proto WINAPI :LPWSTR, :DWORD, :LPWSTR, :LPWSTR, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpRemoveOptionValueV6 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO6
+DhcpGetOptionInfoV6 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :ptr
+DhcpSetOptionInfoV6 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION
+DhcpSetOptionValueV6 proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO6, :LPDHCP_OPTION_DATA
+DhcpGetSubnetInfoVQ proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpCreateSubnetVQ proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpSetSubnetInfoVQ proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr
+DhcpEnumOptionValuesV6 proto WINAPI :ptr, :DWORD, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO6, :ptr, :DWORD, :ptr, :ptr, :ptr
 
 endif
 
-;DWORD
 DhcpDsInit proto WINAPI
-
-;VOID
 DhcpDsCleanup proto WINAPI
-
-
-;DWORD
-DhcpSetThreadOptions proto WINAPI \
-		 Flags: DWORD,
-	      Reserved: LPVOID
-
-
-;DWORD
-DhcpGetThreadOptions proto WINAPI \
-		pFlags: LPDWORD,
-	      Reserved: LPVOID
-
-
-
-;DWORD
-DhcpServerQueryAttribute proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	    dwReserved: ptr ULONG,
-	  DhcpAttribId: DHCP_ATTRIB_ID,
-	   pDhcpAttrib: ptr LPDHCP_ATTRIB
-
-
-;DWORD
-DhcpServerQueryAttributes proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	    dwReserved: ULONG,
-	 dwAttribCount: ULONG,
-	  pDhcpAttribs: DHCP_ATTRIB_ID,
-	pDhcpAttribArr: ptr LPDHCP_ATTRIB_ARRAY
-
-
-;DWORD
-DhcpServerRedoAuthorization proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	    dwReserved: ULONG
-
-
-;DWORD
-DhcpAuditLogSetParams proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	   AuditLogDir: LPWSTR,
-     DiskCheckInterval: DWORD,
-       MaxLogFilesSize: DWORD,
-	MinSpaceOnDisk: DWORD
-
-
-;DWORD
-DhcpAuditLogGetParams proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	   AuditLogDir: ptr LPWSTR,
-     DiskCheckInterval: ptr DWORD,
-       MaxLogFilesSize: ptr DWORD,
-	MinSpaceOnDisk: ptr DWORD
-
-
-
-
-
-;DWORD
-DhcpServerQueryDnsRegCredentials proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	     UnameSize: ULONG,
-		 Uname: LPWSTR,
-	    DomainSize: ULONG,
-		Domain: LPWSTR
-
-
-;DWORD
-DhcpServerSetDnsRegCredentials proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Uname: LPWSTR,
-		Domain: LPWSTR,
-		Passwd: LPWSTR
-
-
-;DWORD
-DhcpServerSetDnsRegCredentialsV5 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Uname: LPWSTR,
-		Domain: LPWSTR,
-		Passwd: LPWSTR
-
-
-;DWORD
-DhcpServerBackupDatabase proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		  Path: LPWSTR
-
-
-;DWORD
-DhcpServerRestoreDatabase proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		  Path: LPWSTR
-
-
-;DWORD
-DhcpServerSetConfigVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	   FieldsToSet: DWORD,
-	    ConfigInfo: LPDHCP_SERVER_CONFIG_INFO_VQ
-
-
-;DWORD
-DhcpServerGetConfigVQ proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ConfigInfo: ptr LPDHCP_SERVER_CONFIG_INFO_VQ
-
-
-;DWORD
-DhcpGetServerSpecificStrings proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
- ServerSpecificStrings: ptr LPDHCP_SERVER_SPECIFIC_STRINGS
-
-
-;void
-DhcpServerAuditlogParamsFree proto WINAPI \
-	    ConfigInfo: ptr DHCP_SERVER_CONFIG_INFO_VQ
-
-
-;DWORD
-DhcpCreateSubnetV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-	    SubnetInfo: LPDHCP_SUBNET_INFO_V6
-
-
-;DWORD
-DhcpDeleteSubnetV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-	     ForceFlag: DHCP_FORCE_FLAG
-
-
-;DWORD
-DhcpEnumSubnetsV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	      EnumInfo: ptr LPDHCPV6_IP_ARRAY,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-
-;DWORD
-DhcpAddSubnetElementV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-	AddElementInfo: LPDHCP_SUBNET_ELEMENT_DATA_V6
-
-
-;DWORD
-DhcpRemoveSubnetElementV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-     RemoveElementInfo: LPDHCP_SUBNET_ELEMENT_DATA_V6,
-	     ForceFlag: DHCP_FORCE_FLAG
-
-
-;DWORD
-DhcpEnumSubnetElementsV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-       EnumElementType: DHCP_SUBNET_ELEMENT_TYPE_V6,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-       EnumElementInfo: ptr LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V6,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-
-;DWORD
-DhcpGetSubnetInfoV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-	    SubnetInfo: ptr LPDHCP_SUBNET_INFO_V6
-
-
-
-;DWORD
-DhcpEnumSubnetClientsV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_IPV6_HANDLE,
-      PreferredMaximum: DWORD,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_ARRAY_V6,
-	   ClientsRead: ptr DWORD,
-	  ClientsTotal: ptr DWORD
-
-
-;DWORD
-DhcpServerGetConfigV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO6,
-	    ConfigInfo: ptr LPDHCP_SERVER_CONFIG_INFO_V6
-
-
-;DWORD
-DhcpServerSetConfigV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO6,
-	   FieldsToSet: DWORD,
-	    ConfigInfo: LPDHCP_SERVER_CONFIG_INFO_V6
-
-
-;DWORD
-DhcpSetSubnetInfoV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-	    SubnetInfo: LPDHCP_SUBNET_INFO_V6
-
-;DWORD
-DhcpGetMibInfoV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	       MibInfo: ptr LPDHCP_MIB_INFO_V6
-
-;DWORD
-DhcpGetServerBindingInfoV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-		 Flags: ULONG,
-      BindElementsInfo: ptr LPDHCPV6_BIND_ELEMENT_ARRAY
-
-;DWORD
-DhcpSetServerBindingInfoV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-		 Flags: ULONG,
-       BindElementInfo: LPDHCPV6_BIND_ELEMENT_ARRAY
-
-;DWORD
-DhcpSetClientInfoV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_CLIENT_INFO_V6
-
-
-;DWORD
-DhcpGetClientInfoV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    SearchInfo: ptr DHCP_SEARCH_INFO_V6,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_V6
-
-
-;DWORD
-DhcpDeleteClientInfoV6 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: ptr DHCP_SEARCH_INFO_V6
-
-
-;DWORD
-DhcpCreateClassV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-	     ClassInfo: LPDHCP_CLASS_INFO_V6
-
-
-;DWORD
-DhcpModifyClassV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-	     ClassInfo: LPDHCP_CLASS_INFO_V6
-
-
-;DWORD
-DhcpDeleteClassV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-	     ClassName: LPWSTR
-
-
-;DWORD
-DhcpEnumClassesV6 proto WINAPI \
-       ServerIpAddress: LPWSTR,
-    ReservedMustBeZero: DWORD,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	ClassInfoArray: ptr LPDHCP_CLASS_INFO_ARRAY_V6,
-		 nRead: ptr DWORD,
-		nTotal: ptr DWORD
-
-
-;DWORD
-DhcpSetSubnetDelayOffer proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-TimeDelayInMilliseconds: USHORT
-
-
-;DWORD
-DhcpGetSubnetDelayOffer proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	   TimeDelayInMilliseconds: ptr USHORT
-
-
-;DWORD
-DhcpGetMibInfoV5 proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	       MibInfo: ptr LPDHCP_MIB_INFO_V5
-
-
-;DWORD
-DhcpAddSecurityGroup proto WINAPI \
-	       pServer: LPWSTR
-
-
-
-;DWORD
-DhcpV4GetOptionValue proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	    PolicyName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-	   OptionValue: ptr LPDHCP_OPTION_VALUE
-
-
-;DWORD
-DhcpV4SetOptionValue proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionId: DHCP_OPTION_ID,
-	    PolicyName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-	   OptionValue: LPDHCP_OPTION_DATA
-
-
-;DWORD
-DhcpV4SetOptionValues proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	    PolicyName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-	  OptionValues: LPDHCP_OPTION_VALUE_ARRAY
-
-
-;DWORD
-DhcpV4RemoveOptionValue proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	      OptionID: DHCP_OPTION_ID,
-	    PolicyName: LPWSTR,
-	    VendorName: LPWSTR,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO
-
-
-;DWORD
-DhcpV4GetAllOptionValues proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	     ScopeInfo: LPDHCP_OPTION_SCOPE_INFO,
-		Values: ptr LPDHCP_ALL_OPTION_VALUES_PB
-
+DhcpSetThreadOptions proto WINAPI :DWORD, :ptr
+DhcpGetThreadOptions proto WINAPI :LPDWORD, :ptr
+DhcpServerQueryAttribute proto WINAPI :LPWSTR, :ptr, :DHCP_ATTRIB_ID, :ptr
+DhcpServerQueryAttributes proto WINAPI :LPWSTR, :ULONG, :ULONG, :DHCP_ATTRIB_ID, :ptr
+DhcpServerRedoAuthorization proto WINAPI :LPWSTR, :ULONG
+DhcpAuditLogSetParams proto WINAPI :LPWSTR, :DWORD, :LPWSTR, :DWORD, :DWORD, :DWORD
+DhcpAuditLogGetParams proto WINAPI :LPWSTR, :DWORD, :ptr, :ptr, :ptr, :ptr
+DhcpServerQueryDnsRegCredentials proto WINAPI :LPWSTR, :ULONG, :LPWSTR, :ULONG, :LPWSTR
+DhcpServerSetDnsRegCredentials proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR
+DhcpServerSetDnsRegCredentialsV5 proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR
+DhcpServerBackupDatabase proto WINAPI :LPWSTR, :LPWSTR
+DhcpServerRestoreDatabase proto WINAPI :LPWSTR, :LPWSTR
+DhcpServerSetConfigVQ proto WINAPI :ptr, :DWORD, :LPDHCP_SERVER_CONFIG_INFO_VQ
+DhcpServerGetConfigVQ proto WINAPI :ptr, :ptr LPDHCP_SERVER_CONFIG_INFO_VQ
+DhcpGetServerSpecificStrings proto WINAPI :ptr, :ptr LPDHCP_SERVER_SPECIFIC_STRINGS
+DhcpServerAuditlogParamsFree proto WINAPI :ptr DHCP_SERVER_CONFIG_INFO_VQ
+DhcpCreateSubnetV6 proto WINAPI :LPWSTR, :DHCP_IPV6_ADDRESS, :LPDHCP_SUBNET_INFO_V6
+DhcpDeleteSubnetV6 proto WINAPI :LPWSTR, :DHCP_IPV6_ADDRESS, :DHCP_FORCE_FLAG
+DhcpEnumSubnetsV6 proto WINAPI :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpAddSubnetElementV6 proto WINAPI :LPWSTR, :DHCP_IPV6_ADDRESS, :LPDHCP_SUBNET_ELEMENT_DATA_V6
+DhcpRemoveSubnetElementV6 proto WINAPI :LPWSTR, :DHCP_IPV6_ADDRESS, :LPDHCP_SUBNET_ELEMENT_DATA_V6, :DHCP_FORCE_FLAG
+DhcpEnumSubnetElementsV6 proto WINAPI :LPWSTR, :DHCP_IPV6_ADDRESS, :DHCP_SUBNET_ELEMENT_TYPE_V6, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpGetSubnetInfoV6 proto WINAPI :LPWSTR, :DHCP_IPV6_ADDRESS, :ptr
+DhcpEnumSubnetClientsV6 proto WINAPI :ptr, :DHCP_IPV6_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpServerGetConfigV6 proto WINAPI :ptr, :LPDHCP_OPTION_SCOPE_INFO6, :ptr
+DhcpServerSetConfigV6 proto WINAPI :ptr, :ptr, :DWORD, :ptr
+DhcpSetSubnetInfoV6 proto WINAPI :ptr, :DHCP_IPV6_ADDRESS, :LPDHCP_SUBNET_INFO_V6
+DhcpGetMibInfoV6 proto WINAPI :ptr, :ptr
+DhcpGetServerBindingInfoV6 proto WINAPI :ptr, :ULONG, :ptr
+DhcpSetServerBindingInfoV6 proto WINAPI :ptr, :ULONG, :LPDHCPV6_BIND_ELEMENT_ARRAY
+DhcpSetClientInfoV6 proto WINAPI :ptr, :ptr
+DhcpGetClientInfoV6 proto WINAPI :ptr, :ptr, :ptr
+DhcpDeleteClientInfoV6 proto WINAPI :ptr, :ptr
+DhcpCreateClassV6 proto WINAPI :LPWSTR, :DWORD, :LPDHCP_CLASS_INFO_V6
+DhcpModifyClassV6 proto WINAPI :LPWSTR, :DWORD, :LPDHCP_CLASS_INFO_V6
+DhcpDeleteClassV6 proto WINAPI :LPWSTR, :DWORD, :LPWSTR
+DhcpEnumClassesV6 proto WINAPI :LPWSTR, :DWORD, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpSetSubnetDelayOffer proto WINAPI :LPWSTR, :DHCP_IP_ADDRESS, :USHORT
+DhcpGetSubnetDelayOffer proto WINAPI :LPWSTR, :DHCP_IP_ADDRESS, :ptr
+DhcpGetMibInfoV5 proto WINAPI :ptr, :ptr
+DhcpAddSecurityGroup proto WINAPI :LPWSTR
+DhcpV4GetOptionValue proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :ptr, :ptr
+DhcpV4SetOptionValue proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :ptr, :ptr
+DhcpV4SetOptionValues proto WINAPI :LPWSTR, :DWORD, :LPWSTR, :LPWSTR, :ptr, :ptr
+DhcpV4RemoveOptionValue proto WINAPI :LPWSTR, :DWORD, :DHCP_OPTION_ID, :LPWSTR, :LPWSTR, :LPDHCP_OPTION_SCOPE_INFO
+DhcpV4GetAllOptionValues proto WINAPI :LPWSTR, :DWORD, :LPDHCP_OPTION_SCOPE_INFO, :ptr
 
 DHCP_FAILOVER_DELETE_SCOPES equ 0x00000001
 DHCP_FAILOVER_MAX_NUM_ADD_SCOPES equ 400
@@ -2813,427 +1821,61 @@ MODE			equ 0x00000010
 PREVSTATE		equ 0x00000020
 SHAREDSECRET		equ 0x00000040
 
-;DWORD
-DhcpV4FailoverCreateRelationship proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 pRelationship: LPDHCP_FAILOVER_RELATIONSHIP
-
-
-;DWORD
-DhcpV4FailoverSetRelationship proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 Flags: DWORD,
-	 pRelationship: LPDHCP_FAILOVER_RELATIONSHIP
-
-
-
-;DWORD
-DhcpV4FailoverDeleteRelationship proto WINAPI \
-       ServerIpAddress: LPWSTR,
-     pRelationshipName: LPWSTR
-
-
-;DWORD
-DhcpV4FailoverGetRelationship proto WINAPI \
-       ServerIpAddress: LPWSTR,
-     pRelationshipName: LPWSTR,
-	 pRelationship: ptr LPDHCP_FAILOVER_RELATIONSHIP
-
-
-
-;DWORD
-DhcpV4FailoverEnumRelationship proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	 pRelationship: ptr LPDHCP_FAILOVER_RELATIONSHIP_ARRAY,
-      RelationshipRead: LPDWORD,
-     RelationshipTotal: LPDWORD
-
-
-
-;DWORD
-DhcpV4FailoverAddScopeToRelationship proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 pRelationship: LPDHCP_FAILOVER_RELATIONSHIP
-
-
-;DWORD
-DhcpV4FailoverDeleteScopeFromRelationship proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 pRelationship: LPDHCP_FAILOVER_RELATIONSHIP
-
-
-;DWORD
-DhcpV4FailoverGetScopeRelationship proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	       ScopeId: DHCP_IP_ADDRESS,
-	 pRelationship: ptr LPDHCP_FAILOVER_RELATIONSHIP
-
-
-;DWORD
-DhcpV4FailoverGetScopeStatistics proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	       ScopeId: DHCP_IP_ADDRESS,
-		pStats: ptr LPDHCP_FAILOVER_STATISTICS
-
-
-;DWORD
-DhcpV4FailoverGetClientInfo proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	    SearchInfo: ptr DHCP_SEARCH_INFO,
-	    ClientInfo: ptr LPDHCPV4_FAILOVER_CLIENT_INFO
-
-
-;DWORD
-DhcpV4FailoverGetSystemTime proto WINAPI \
-       ServerIpAddress: LPWSTR,
-		 pTime: LPDWORD,
-  pMaxAllowedDeltaTime: LPDWORD
-
-
-;DWORD
-DhcpV4FailoverGetAddressStatus proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	       pStatus: LPDWORD
-
-
-
-;DWORD
-DhcpV4FailoverTriggerAddrAllocation proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	  pFailRelName: LPWSTR
-
-
-
-;DWORD
-DhcpHlprCreateV4Policy proto WINAPI \
-	    PolicyName: LPWSTR,
-	 fGlobalPolicy: BOOL,
-		Subnet: DHCP_IP_ADDRESS,
-       ProcessingOrder: DWORD,
-	  RootOperator: DHCP_POL_LOGIC_OPER,
-	   Description: LPWSTR,
-	       Enabled: BOOL,
-		Policy: ptr LPDHCP_POLICY
-
-
-;DWORD
-DhcpHlprCreateV4PolicyEx proto WINAPI \
-	    PolicyName: LPWSTR,
-	 fGlobalPolicy: BOOL,
-		Subnet: DHCP_IP_ADDRESS,
-       ProcessingOrder: DWORD,
-	  RootOperator: DHCP_POL_LOGIC_OPER,
-	   Description: LPWSTR,
-	       Enabled: BOOL,
-		Policy: ptr LPDHCP_POLICY_EX
-
-
-;DWORD
-DhcpHlprAddV4PolicyExpr proto WINAPI \
-		Policy: LPDHCP_POLICY,
-	    ParentExpr: DWORD,
-	      Operator: DHCP_POL_LOGIC_OPER,
-	     ExprIndex: ptr DWORD
-
-
-;DWORD
-DhcpHlprAddV4PolicyCondition proto WINAPI \
-		Policy: LPDHCP_POLICY,
-	    ParentExpr: DWORD,
-		  Type: DHCP_POL_ATTR_TYPE,
-	      OptionID: DWORD,
-	   SubOptionID: DWORD,
-	    VendorName: LPWSTR,
-	      Operator: DHCP_POL_COMPARATOR,
-		 Value: LPBYTE,
-	      Operator: DHCP_POL_COMPARATOR,
-	   ValueLength: DWORD,
-	ConditionIndex: ptr DWORD
-
-
-;DWORD
-DhcpHlprAddV4PolicyRange proto WINAPI \
-		Policy: LPDHCP_POLICY,
-		 Range: LPDHCP_IP_RANGE
-
-
-;DWORD
-DhcpHlprResetV4PolicyExpr proto WINAPI \
-		Policy: LPDHCP_POLICY
-
-
-;DWORD
-DhcpHlprModifyV4PolicyExpr proto WINAPI \
-		Policy: LPDHCP_POLICY,
-	      Operator: DHCP_POL_LOGIC_OPER
-
-
-;VOID
-DhcpHlprFreeV4Policy proto WINAPI \
-		Policy: LPDHCP_POLICY
-
-
-;VOID
-DhcpHlprFreeV4PolicyArray proto WINAPI \
-	   PolicyArray: LPDHCP_POLICY_ARRAY
-
-
-;VOID
-DhcpHlprFreeV4PolicyEx proto WINAPI \
-	      PolicyEx: LPDHCP_POLICY_EX
-
-
-;VOID
-DhcpHlprFreeV4PolicyExArray proto WINAPI \
-	 PolicyExArray: LPDHCP_POLICY_EX_ARRAY
-
-
-;VOID
-DhcpHlprFreeV4DhcpProperty proto WINAPI \
-	      Property: LPDHCP_PROPERTY
-
-
-;VOID
-DhcpHlprFreeV4DhcpPropertyArray proto WINAPI \
-	 PropertyArray: LPDHCP_PROPERTY_ARRAY
-
-
-DhcpHlprFindV4DhcpProperty proto WINAPI \
-	 PropertyArray: LPDHCP_PROPERTY_ARRAY,
-		    ID: DHCP_PROPERTY_ID,
-		  Type: DHCP_PROPERTY_TYPE
-
-;BOOL
-DhcpHlprIsV4PolicySingleUC proto WINAPI \
-		Policy: LPDHCP_POLICY
-
-
-;DWORD
-DhcpV4QueryPolicyEnforcement proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 fGlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	       Enabled: ptr BOOL
-
-
-;DWORD
-DhcpV4SetPolicyEnforcement proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 fGlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-		Enable: BOOL
-
-
-;BOOL
-DhcpHlprIsV4PolicyWellFormed proto WINAPI \
-	       pPolicy: LPDHCP_POLICY
-
-
-;DWORD
-DhcpHlprIsV4PolicyValid proto WINAPI \
-	       pPolicy: LPDHCP_POLICY
-
-
-;DWORD
-DhcpV4CreatePolicy proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	       pPolicy: LPDHCP_POLICY
-
-
-;DWORD
-DhcpV4GetPolicy proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 fGlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    PolicyName: LPWSTR,
-		Policy: ptr LPDHCP_POLICY
-
-
-;DWORD
-DhcpV4SetPolicy proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	FieldsModified: DWORD,
-	 fGlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    PolicyName: LPWSTR,
-		Policy: LPDHCP_POLICY
-
-
-;DWORD
-DhcpV4DeletePolicy proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 fGlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    PolicyName: LPWSTR
-
-
-;DWORD
-DhcpV4EnumPolicies proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	  ResumeHandle: LPDWORD,
-      PreferredMaximum: DWORD,
-	 fGlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	      EnumInfo: ptr LPDHCP_POLICY_ARRAY,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
-
-;DWORD
-DhcpV4AddPolicyRange proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    PolicyName: LPWSTR,
-		 Range: LPDHCP_IP_RANGE
-
-
-;DWORD
-DhcpV4RemovePolicyRange proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    PolicyName: LPWSTR,
-		 Range: LPDHCP_IP_RANGE
-
-
-
-;DWORD
-DhcpV6SetStatelessStoreParams proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	  fServerLevel: BOOL,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-	 FieldModified: DWORD,
-		Params: LPDHCPV6_STATELESS_PARAMS
-
-
-;DWORD
-DhcpV6GetStatelessStoreParams proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	  fServerLevel: BOOL,
-	 SubnetAddress: DHCP_IPV6_ADDRESS,
-		Params: ptr LPDHCPV6_STATELESS_PARAMS
-
-
-;DWORD
-DhcpV6GetStatelessStatistics proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	StatelessStats: ptr LPDHCPV6_STATELESS_STATS
-
-
-;DWORD
-DhcpV4CreateClientInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: LPDHCP_CLIENT_INFO_PB
-
-
-;DWORD
-DhcpV4EnumSubnetClients proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_PB_ARRAY,
-	   ClientsRead: ptr DWORD,
-	  ClientsTotal: ptr DWORD
-
-
-;DWORD
-DhcpV4GetClientInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    SearchInfo: ptr DHCP_SEARCH_INFO,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_PB
-
-
-;DWORD
-DhcpV6CreateClientInfo proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    ClientInfo: LPDHCP_CLIENT_INFO_V6
-
-
-;DWORD
-DhcpV4GetFreeIPAddress proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	       ScopeId: DHCP_IP_ADDRESS,
-	       StartIP: DHCP_IP_ADDRESS,
-		 EndIP: DHCP_IP_ADDRESS,
-	NumFreeAddrReq: DWORD,
-	    IPAddrList: ptr LPDHCP_IP_ARRAY
-
-
-;DWORD
-DhcpV6GetFreeIPAddress proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	       ScopeId: DHCP_IPV6_ADDRESS,
-	       StartIP: DHCP_IPV6_ADDRESS,
-		 EndIP: DHCP_IPV6_ADDRESS,
-	NumFreeAddrReq: DWORD,
-	    IPAddrList: ptr LPDHCPV6_IP_ARRAY
-
-
-
-
-;DWORD
-DhcpV4CreateClientInfoEx proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	      ClientInfo: LPDHCP_CLIENT_INFO_EX
-
-
-;DWORD
-DhcpV4EnumSubnetClientsEx proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	  ResumeHandle: ptr DHCP_RESUME_HANDLE,
-      PreferredMaximum: DWORD,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_EX_ARRAY,
-	   ClientsRead: ptr DWORD,
-	  ClientsTotal: ptr DWORD
-
-
-;DWORD
-DhcpV4GetClientInfoEx proto WINAPI \
-       ServerIpAddress: ptr WCHAR,
-	    SearchInfo: ptr DHCP_SEARCH_INFO,
-	    ClientInfo: ptr LPDHCP_CLIENT_INFO_EX
-
-
-;DWORD
-DhcpV4CreatePolicyEx proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	      PolicyEx: LPDHCP_POLICY_EX
-
-
-;DWORD
-DhcpV4GetPolicyEx proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	  GlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    PolicyName: LPWSTR,
-		Policy: ptr LPDHCP_POLICY_EX
-
-
-;DWORD
-DhcpV4SetPolicyEx proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	FieldsModified: DWORD,
-	  GlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	    PolicyName: LPWSTR,
-		Policy: LPDHCP_POLICY_EX
-
-
-;DWORD
-DhcpV4EnumPoliciesEx proto WINAPI \
-       ServerIpAddress: LPWSTR,
-	  ResumeHandle: LPDWORD,
-      PreferredMaximum: DWORD,
-	  GlobalPolicy: BOOL,
-	 SubnetAddress: DHCP_IP_ADDRESS,
-	      EnumInfo: ptr LPDHCP_POLICY_EX_ARRAY,
-	  ElementsRead: ptr DWORD,
-	 ElementsTotal: ptr DWORD
-
+DhcpV4FailoverCreateRelationship proto WINAPI :LPWSTR, :LPDHCP_FAILOVER_RELATIONSHIP
+DhcpV4FailoverSetRelationship proto WINAPI :LPWSTR, :DWORD, :LPDHCP_FAILOVER_RELATIONSHIP
+DhcpV4FailoverDeleteRelationship proto WINAPI :LPWSTR, :LPWSTR
+DhcpV4FailoverGetRelationship proto WINAPI :LPWSTR, :LPWSTR, :ptr
+DhcpV4FailoverEnumRelationship proto WINAPI :LPWSTR, :ptr, :DWORD, :ptr, :LPDWORD, :LPDWORD
+DhcpV4FailoverAddScopeToRelationship proto WINAPI :LPWSTR, :LPDHCP_FAILOVER_RELATIONSHIP
+DhcpV4FailoverDeleteScopeFromRelationship proto WINAPI :LPWSTR, :LPDHCP_FAILOVER_RELATIONSHIP
+DhcpV4FailoverGetScopeRelationship proto WINAPI :LPWSTR, :DHCP_IP_ADDRESS, :ptr
+DhcpV4FailoverGetScopeStatistics proto WINAPI :LPWSTR, :DHCP_IP_ADDRESS, :ptr
+DhcpV4FailoverGetClientInfo proto WINAPI :LPWSTR, :ptr, :ptr
+DhcpV4FailoverGetSystemTime proto WINAPI :LPWSTR, :LPDWORD, :LPDWORD
+DhcpV4FailoverGetAddressStatus proto WINAPI :LPWSTR, :DHCP_IP_ADDRESS, :LPDWORD
+DhcpV4FailoverTriggerAddrAllocation proto WINAPI :LPWSTR, :LPWSTR
+DhcpHlprCreateV4Policy proto WINAPI :LPWSTR, :BOOL, :DHCP_IP_ADDRESS, :DWORD, :DHCP_POL_LOGIC_OPER, :LPWSTR, :BOOL,  :ptr
+DhcpHlprCreateV4PolicyEx proto WINAPI :LPWSTR, :BOOL, :DHCP_IP_ADDRESS, :DWORD, :DHCP_POL_LOGIC_OPER, :LPWSTR, :BOOL, :ptr
+DhcpHlprAddV4PolicyExpr proto WINAPI :LPDHCP_POLICY, :DWORD, :DHCP_POL_LOGIC_OPER, :ptr
+DhcpHlprAddV4PolicyCondition proto WINAPI :LPDHCP_POLICY, :DWORD, :DHCP_POL_ATTR_TYPE, :DWORD, :DWORD, :LPWSTR, :DHCP_POL_COMPARATOR, :LPBYTE, :DHCP_POL_COMPARATOR, :DWORD, :ptr
+DhcpHlprAddV4PolicyRange proto WINAPI :LPDHCP_POLICY, :LPDHCP_IP_RANGE
+DhcpHlprResetV4PolicyExpr proto WINAPI :LPDHCP_POLICY
+DhcpHlprModifyV4PolicyExpr proto WINAPI :LPDHCP_POLICY, :DHCP_POL_LOGIC_OPER
+DhcpHlprFreeV4Policy proto WINAPI :LPDHCP_POLICY
+DhcpHlprFreeV4PolicyArray proto WINAPI :LPDHCP_POLICY_ARRAY
+DhcpHlprFreeV4PolicyEx proto WINAPI :LPDHCP_POLICY_EX
+DhcpHlprFreeV4PolicyExArray proto WINAPI :LPDHCP_POLICY_EX_ARRAY
+DhcpHlprFreeV4DhcpProperty proto WINAPI :LPDHCP_PROPERTY
+DhcpHlprFreeV4DhcpPropertyArray proto WINAPI :LPDHCP_PROPERTY_ARRAY
+DhcpHlprFindV4DhcpProperty proto WINAPI :ptr, :DHCP_PROPERTY_ID, :DHCP_PROPERTY_TYPE
+DhcpHlprIsV4PolicySingleUC proto WINAPI :LPDHCP_POLICY
+DhcpV4QueryPolicyEnforcement proto WINAPI :LPWSTR, :BOOL, :DHCP_IP_ADDRESS, :ptr
+DhcpV4SetPolicyEnforcement proto WINAPI :LPWSTR, :BOOL, :DHCP_IP_ADDRESS, :BOOL
+DhcpHlprIsV4PolicyWellFormed proto WINAPI :LPDHCP_POLICY
+DhcpHlprIsV4PolicyValid proto WINAPI :LPDHCP_POLICY
+DhcpV4CreatePolicy proto WINAPI :LPWSTR, :LPDHCP_POLICY
+DhcpV4GetPolicy proto WINAPI :LPWSTR, :BOOL, :DHCP_IP_ADDRESS, :LPWSTR, :ptr
+DhcpV4SetPolicy proto WINAPI :LPWSTR, :DWORD, :BOOL, :DHCP_IP_ADDRESS, :LPWSTR, :LPDHCP_POLICY
+DhcpV4DeletePolicy proto WINAPI :LPWSTR, :BOOL, :DHCP_IP_ADDRESS, :LPWSTR
+DhcpV4EnumPolicies proto WINAPI :LPWSTR, :LPDWORD, :DWORD, :BOOL, :DHCP_IP_ADDRESS, :ptr, :ptr, :ptr
+DhcpV4AddPolicyRange proto WINAPI :LPWSTR, :DHCP_IP_ADDRESS, :LPWSTR, :LPDHCP_IP_RANGE
+DhcpV4RemovePolicyRange proto WINAPI :LPWSTR, :DHCP_IP_ADDRESS, :LPWSTR, :LPDHCP_IP_RANGE
+DhcpV6SetStatelessStoreParams proto WINAPI :LPWSTR, :BOOL, :DHCP_IPV6_ADDRESS, :DWORD, :LPDHCPV6_STATELESS_PARAMS
+DhcpV6GetStatelessStoreParams proto WINAPI :LPWSTR, :BOOL, :DHCP_IPV6_ADDRESS, :ptr
+DhcpV6GetStatelessStatistics proto WINAPI :LPWSTR, :ptr
+DhcpV4CreateClientInfo proto WINAPI :ptr, :LPDHCP_CLIENT_INFO_PB
+DhcpV4EnumSubnetClients proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpV4GetClientInfo proto WINAPI :ptr, :ptr, :ptr
+DhcpV6CreateClientInfo proto WINAPI :ptr, :LPDHCP_CLIENT_INFO_V6
+DhcpV4GetFreeIPAddress proto WINAPI :LPWSTR, :DHCP_IP_ADDRESS, :DHCP_IP_ADDRESS, :DHCP_IP_ADDRESS, :DWORD, :ptr
+DhcpV6GetFreeIPAddress proto WINAPI :LPWSTR, :DHCP_IPV6_ADDRESS, :DHCP_IPV6_ADDRESS, :DHCP_IPV6_ADDRESS, :DWORD, :ptr
+DhcpV4CreateClientInfoEx proto WINAPI :ptr, :LPDHCP_CLIENT_INFO_EX
+DhcpV4EnumSubnetClientsEx proto WINAPI :ptr, :DHCP_IP_ADDRESS, :ptr, :DWORD, :ptr, :ptr, :ptr
+DhcpV4GetClientInfoEx proto WINAPI :ptr, :ptr, :ptr
+DhcpV4CreatePolicyEx proto WINAPI :LPWSTR, :LPDHCP_POLICY_EX
+DhcpV4GetPolicyEx proto WINAPI :LPWSTR, :BOOL, :DHCP_IP_ADDRESS, :LPWSTR, :ptr
+DhcpV4SetPolicyEx proto WINAPI :LPWSTR, :DWORD, :BOOL, :DHCP_IP_ADDRESS, :LPWSTR, :ptr
+DhcpV4EnumPoliciesEx proto WINAPI :LPWSTR, :LPDWORD, :DWORD, :BOOL, :DHCP_IP_ADDRESS, :ptr, :ptr, :ptr
 
 endif
 

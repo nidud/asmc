@@ -1,41 +1,11 @@
 ifndef _LMMSG_
 define _LMMSG_
 
-;NET_API_STATUS
-NetMessageNameAdd proto WINAPI \
-	    servername: LPCWSTR,
-	       msgname: LPCWSTR
-
-;NET_API_STATUS
-NetMessageNameEnum proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
-;NET_API_STATUS
-NetMessageNameGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	       msgname: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetMessageNameDel proto WINAPI \
-	    servername: LPCWSTR,
-	       msgname: LPCWSTR
-
-;NET_API_STATUS
-NetMessageBufferSend proto WINAPI \
-	    servername: LPCWSTR,
-	       msgname: LPCWSTR,
-	      fromname: LPCWSTR,
-		   buf: LPBYTE,
-		buflen: DWORD
-
+NetMessageNameAdd proto WINAPI :LPCWSTR, :LPCWSTR
+NetMessageNameEnum proto WINAPI :LPCWSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetMessageNameGetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr
+NetMessageNameDel proto WINAPI :LPCWSTR, :LPCWSTR
+NetMessageBufferSend proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPBYTE, :DWORD
 
 MSG_INFO_0		STRUC
 msgi0_name		LPWSTR ?

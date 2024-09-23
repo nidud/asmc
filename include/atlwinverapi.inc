@@ -491,12 +491,12 @@ _pAtlLocaleNameToIndexTable _ATL_LOCALENAME_INDEX \
     exitm<>
     endm
 
-_AtlAsciiToWLower proto :wchar_t {
+_AtlAsciiToWLower proto fastcall :wchar_t {
     .if (cx >= 'A' && cx <= 'Z')
         sub cx,'A' + 'a'
     .endif
     movzx eax,cx
-}
+    }
 
 _AtlWcsnicmpAscii proto :ptr wchar_t, :ptr wchar_t, :size_t {
 
@@ -513,7 +513,7 @@ _AtlWcsnicmpAscii proto :ptr wchar_t, :ptr wchar_t, :size_t {
         sub ax,r10w
         movsx eax,ax
     .endif
-}
+    }
 
 _AtlGetTableIndexFromLocaleName proto :ptr wchar_t {
 

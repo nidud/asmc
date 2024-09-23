@@ -22,7 +22,7 @@ endif
 
 define CONSOLE_REAL_OUTPUT_HANDLE (-2)
 define CONSOLE_REAL_INPUT_HANDLE  (-3)
-define CONSOLE_TEXTMODE_BUFFER  1
+define CONSOLE_TEXTMODE_BUFFER 1
 
 .pragma list(pop)
 endif

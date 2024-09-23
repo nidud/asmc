@@ -64,27 +64,6 @@ _CMP_GE_OQ	equ 0x1D
 _CMP_GT_OQ	equ 0x1E
 _CMP_TRUE_US	equ 0x1F
 
-_mm_loadreg macro reg, arg
-    ifidn @SubStr(arg,1,1),<&>
-	lea reg,@SubStr(arg,2)
-    elseifdif <arg>,<reg>
-	mov reg,arg
-    endif
-    retm<reg>
-    endm
-
-_mm_getptr macro arg, reg:=<rax>
-    ifidn @SubStr(arg,1,1),<&>
-	lea reg,@SubStr(arg,2)
-	exitm<[reg]>
-    elseifidn @SubStr(arg,1,1),<[>
-	exitm<arg>
-    elseif (.type arg) eq 48
-	exitm<[arg]>
-    endif
-    exitm<arg>
-    endm
-
 _mm256_add_pd macro a, b
     vaddpd a,a,b
     retm<a>
@@ -356,26 +335,22 @@ _mm256_permute2f128_si256 macro y:=<ymm0>, yi:=<ymm1>, imm:=<0>
     retm<y>
     endm
 
-_mm256_broadcast_ss macro ptr_real4, yr:=<ymm0>
-    vbroadcastss yr,_mm_getptr(ptr_real4)
-    retm<yr>
-    endm
-_mm_broadcast_ss macro ptr_real4, xr:=<xmm0>
-    vbroadcastss xr,_mm_getptr(ptr_real4)
-    retm<xr>
-    endm
-_mm256_broadcast_sd macro ptr_real8, yr:=<ymm0>
-    vbroadcastsd yr,_mm_getptr(ptr_real8)
-    retm<yr>
-    endm
-_mm256_broadcast_ps macro ptr_m128, yr:=<ymm0>
-    vbroadcastf128 yr,_mm_getptr(ptr_m128)
-    retm<yr>
-    endm
-_mm256_broadcast_pd macro ptr_m128, yr:=<ymm0>
-    vbroadcastf128 yr,_mm_getptr(ptr_m128)
-    retm<yr>
-    endm
+_mm256_broadcast_ss proto watcall :ptr, :abs=<ymm0> {
+    vbroadcastss _2,[_1]
+    }
+
+_mm_broadcast_ss proto watcall :ptr, :abs=<xmm0> {
+    vbroadcastss _2,[_1]
+    }
+_mm256_broadcast_sd proto watcall :ptr, :abs=<ymm0> {
+    vbroadcastsd _2,[_1]
+    }
+_mm256_broadcast_ps proto watcall :ptr, :abs=<ymm0> {
+    vbroadcastf128 _2,[_1]
+    }
+_mm256_broadcast_pd proto watcall :ptr, :abs=<ymm0> {
+    vbroadcastf128 _2,[_1]
+    }
 _mm256_insertf128_ps macro y:=<ymm0>, x:=<xmm1>, imm:=<0>
     vinsertf128 y,y,x,imm
     retm<y>
@@ -388,18 +363,15 @@ _mm256_insertf128_si256 macro y:=<ymm0>, x:=<xmm1>, imm:=<0>
     vinsertf128 y,y,x,imm
     retm<y>
     endm
-_mm256_load_pd macro ptr_real8, yr:=<ymm0>
-    vmovupd yr,_mm_getptr(ptr_real8)
-    retm<yr>
-    endm
-_mm256_store_pd macro ptr_real8, yr:=<ymm0>
-    vmovupd _mm_getptr(ptr_real8),yr
-    retm<>
-    endm
-_mm256_load_ps macro ptr_real4, yr:=<ymm0>
-    vmovups yr,_mm_getptr(ptr_real4)
-    retm<yr>
-    endm
+_mm256_load_pd proto watcall :ptr, :abs=<ymm0> {
+    vmovupd _2,[_1]
+    }
+_mm256_store_pd proto watcall :ptr, :abs=<ymm0> {
+    vmovupd [_1],_2
+    }
+_mm256_load_ps proto watcall :ptr, :abs=<ymm0> {
+    vmovups _2,[_1]
+    }
 _mm256_store_ps macro ptr_real4, yr:=<ymm0>
     ifdif <ptr_real4>,<yr>
 	vmovups ptr_real4,yr
@@ -449,41 +421,27 @@ _mm256_loadu2_m128i macro hiaddr, loaddr
     exitm<_mm256_set_m128i(_mm_loadu_si128(hiaddr), _mm_loadu_si128(loaddr))>
     endm
 
-_mm256_storeu2_m128 macro hiaddr, loaddr, y
-    _mm_loadreg(rcx, hiaddr)
-    _mm_loadreg(rdx, loaddr)
-    ifdif <y>,<ymm0>
-	vmovaps ymm0,y
-    endif
+_mm256_storeu2_m128 proto asmcall :ptr, :ptr, :yword {
     vextractf128 xmm1,ymm0,1
-    vmovups [rdx],xmm0
-    vmovups [rcx],xmm1
-    exitm<>
-    endm
+    vmovups [_2],xmm0
+    vmovups [_1],xmm1
+    }
 _mm256_storeu2_m128d equ <_mm256_storeu2_m128>
 _mm256_storeu2_m128i equ <_mm256_storeu2_m128>
 
-_mm256_maskload_pd macro ptr_real8, y:=<ymm0>
-    _mm_loadreg(rcx, ptr_real8)
-    vmaskmovpd ymm0,y,[rcx]
-    retm<ymm0>
-    endm
-_mm256_maskstore_pd macro ptr_real8, y:=<ymm0>, yi:=<ymm1>
-    _mm_loadreg(rcx, ptr_real8)
-    vmaskmovpd [rcx],y,yi
-    retm<>
-    endm
+_mm256_maskload_pd proto asmcall :ptr, :yword {
+    vmaskmovpd ymm0,_2,[_1]
+    }
+_mm256_maskstore_pd proto asmcall :ptr, :yword, :yword {
+    vmaskmovpd [_1],_2,_3
+    }
 
-_mm_maskload_pd macro ptr_real8, x:=<xmm0>
-    _mm_loadreg(rcx, ptr_real8)
-    vmaskmovpd x,x,[rcx]
-    retm<x>
-    endm
-_mm_maskstore_pd macro ptr_real8, x:=<xmm0>, xi:=<xmm1>
-    _mm_loadreg(rcx, ptr_real8)
-    vmaskmovpd [rcx],x,xi
-    retm<>
-    endm
+_mm_maskload_pd proto asmcall :ptr, :xmmword {
+    vmaskmovpd xmm0,_2,[_1]
+    }
+_mm_maskstore_pd proto asmcall :ptr, :xmmword, :xmmword {
+    vmaskmovpd [_1],_2,_3
+    }
 
 _mm256_maskload_ps macro ptr_real4, y:=<ymm0>
     vmaskmovps y,y,ptr_real4
@@ -493,16 +451,12 @@ _mm256_maskstore_ps macro ptr_real4, mask:=<ymm0>, a:=<ymm1>
     vmaskmovps ptr_real4,mask,a
     retm<>
     endm
-_mm_maskload_ps macro ptr_real4, x:=<xmm0>
-    _mm_loadreg(rcx, ptr_real4)
-    vmaskmovps x,x,[rcx]
-    retm<x>
-    endm
-_mm_maskstore_ps macro ptr_real4, x:=<xmm0>, xi:=<xmm1>
-    _mm_loadreg(rcx, ptr_real4)
-    vmaskmovps [rcx],x,xi
-    retm<>
-    endm
+_mm_maskload_ps proto asmcall :ptr, :xmmword {
+    vmaskmovps xmm0,_2,[_1]
+    }
+_mm_maskstore_ps proto asmcall :ptr, :xmmword, :xmmword {
+    vmaskmovps [_1],_2,_3
+    }
 _mm256_movehdup_ps macro y:=<ymm0>
     vmovshdup y,y
     retm<y>

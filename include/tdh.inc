@@ -246,32 +246,11 @@ PPAYLOAD_FILTER_PREDICATE typedef ptr PAYLOAD_FILTER_PREDICATE
 MAX_PAYLOAD_PREDICATES	equ 8
 
 if (WINVER GE _WIN32_WINNT_WINBLUE)
-
-TdhCreatePayloadFilter proto __cdecl \
-	  ProviderGuid: LPCGUID,
-       EventDescriptor: PCEVENT_DESCRIPTOR,
-	 EventMatchANY: BOOLEAN,
- PayloadPredicateCount: ULONG,
-     PayloadPredicates: PPAYLOAD_FILTER_PREDICATE,
-	 PayloadFilter: ptr PVOID
-
-
-TdhDeletePayloadFilter proto __cdecl \
-	 PayloadFilter: ptr PVOID
-
-
-TdhAggregatePayloadFilters proto __cdecl \
-    PayloadFilterCount: ULONG,
-     PayloadFilterPtrs: ptr PVOID,
-    EventMatchALLFlags: PBOOLEAN,
- EventFilterDescriptor: PEVENT_FILTER_DESCRIPTOR
-
-
-TdhCleanupPayloadEventFilterDescriptor proto __cdecl \
- EventFilterDescriptor: PEVENT_FILTER_DESCRIPTOR
-
-
-endif ;; WINVER
+TdhCreatePayloadFilter proto __cdecl :LPCGUID, :PCEVENT_DESCRIPTOR, :BOOLEAN, :ULONG, :PPAYLOAD_FILTER_PREDICATE, :ptr
+TdhDeletePayloadFilter proto __cdecl :ptr
+TdhAggregatePayloadFilters proto __cdecl :ULONG, :ptr, :PBOOLEAN, :PEVENT_FILTER_DESCRIPTOR
+TdhCleanupPayloadEventFilterDescriptor proto __cdecl :PEVENT_FILTER_DESCRIPTOR
+endif
 
 PROVIDER_FILTER_INFO	STRUC
 Id			UCHAR ?
@@ -343,249 +322,82 @@ ParameterSize		ULONG ?
 TDH_CONTEXT		ENDS
 PTDH_CONTEXT		typedef ptr TDH_CONTEXT
 
-TdhGetEventInformation proto __cdecl \
-		 Event: PEVENT_RECORD,
-       TdhContextCount: ULONG,
-	    TdhContext: PTDH_CONTEXT,
-		Buffer: PTRACE_EVENT_INFO,
-	    BufferSize: PULONG
-
-TdhGetEventMapInformation proto __cdecl \
-		pEvent: PEVENT_RECORD,
-	      pMapName: PWSTR,
-	       pBuffer: PEVENT_MAP_INFO,
-	   pBufferSize: ptr ULONG
-
-TdhGetPropertySize proto __cdecl \
-		pEvent: PEVENT_RECORD,
-       TdhContextCount: ULONG,
-	   pTdhContext: PTDH_CONTEXT,
-     PropertyDataCount: ULONG,
-	 pPropertyData: PPROPERTY_DATA_DESCRIPTOR,
-	 pPropertySize: ptr ULONG
-
-TdhGetProperty proto __cdecl \
-		pEvent: PEVENT_RECORD,
-       TdhContextCount: ULONG,
-	   pTdhContext: PTDH_CONTEXT,
-     PropertyDataCount: ULONG,
-	 pPropertyData: PPROPERTY_DATA_DESCRIPTOR,
-	    BufferSize: ULONG,
-	       pBuffer: PBYTE
-
-TdhEnumerateProviders proto __cdecl \
-	       pBuffer: PPROVIDER_ENUMERATION_INFO,
-	   pBufferSize: ptr ULONG
-
-TdhQueryProviderFieldInformation proto __cdecl \
-		 pGuid: LPGUID,
-       EventFieldValue: ULONGLONG,
-	EventFieldType: EVENT_FIELD_TYPE,
-	       pBuffer: PPROVIDER_FIELD_INFOARRAY,
-	   pBufferSize: ptr ULONG
-
-TdhEnumerateProviderFieldInformation proto __cdecl \
-		 pGuid: LPGUID,
-	EventFieldType: EVENT_FIELD_TYPE,
-	       pBuffer: PPROVIDER_FIELD_INFOARRAY,
-	   pBufferSize: ptr ULONG
-
+TdhGetEventInformation proto __cdecl :PEVENT_RECORD, :ULONG, :PTDH_CONTEXT, :PTRACE_EVENT_INFO, :PULONG
+TdhGetEventMapInformation proto __cdecl :PEVENT_RECORD, :PWSTR, :PEVENT_MAP_INFO, :ptr
+TdhGetPropertySize proto __cdecl :PEVENT_RECORD, :ULONG, :PTDH_CONTEXT, :ULONG, :PPROPERTY_DATA_DESCRIPTOR, :ptr
+TdhGetProperty proto __cdecl :PEVENT_RECORD, :ULONG, :PTDH_CONTEXT, :ULONG, :PPROPERTY_DATA_DESCRIPTOR, :ULONG, :PBYTE
+TdhEnumerateProviders proto __cdecl :PPROVIDER_ENUMERATION_INFO, :ptr
+TdhQueryProviderFieldInformation proto __cdecl :LPGUID, :ULONGLONG, :EVENT_FIELD_TYPE, :PPROVIDER_FIELD_INFOARRAY, :ptr
+TdhEnumerateProviderFieldInformation proto __cdecl :LPGUID, :EVENT_FIELD_TYPE, :PPROVIDER_FIELD_INFOARRAY, :ptr
 
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-TdhEnumerateProviderFilters proto __cdecl \
-		  Guid: LPGUID,
-       TdhContextCount: ULONG,
-	    TdhContext: PTDH_CONTEXT,
-	   FilterCount: ptr ULONG,
-		Buffer: ptr PPROVIDER_FILTER_INFO,
-	    BufferSize: ptr ULONG
-
+TdhEnumerateProviderFilters proto __cdecl :LPGUID, :ULONG, :PTDH_CONTEXT, :ptr, :ptr, :ptr
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-TdhLoadManifest proto __cdecl \
-	      Manifest: PWSTR
-
+TdhLoadManifest proto __cdecl :PWSTR
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-TdhUnloadManifest proto __cdecl \
-	      Manifest: PWSTR
-
+TdhUnloadManifest proto __cdecl :PWSTR
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-TdhFormatProperty proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO,
-	       MapInfo: PEVENT_MAP_INFO,
-	   PointerSize: ULONG,
-	PropertyInType: USHORT,
-       PropertyOutType: USHORT,
-	PropertyLength: USHORT,
-	UserDataLength: USHORT,
-	      UserData: PBYTE,
-	    BufferSize: PULONG,
-		Buffer: PWCHAR,
-      UserDataConsumed: PUSHORT
-
+TdhFormatProperty proto __cdecl :PTRACE_EVENT_INFO, :PEVENT_MAP_INFO, :ULONG, :USHORT, :USHORT, :USHORT, :USHORT, :PBYTE, :PULONG, :PWCHAR, :PUSHORT
 endif
 
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-TdhOpenDecodingHandle proto __cdecl \
-		Handle: PTDH_HANDLE
-
+TdhOpenDecodingHandle proto __cdecl :PTDH_HANDLE
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-TdhSetDecodingParameter proto __cdecl \
-		Handle: TDH_HANDLE,
-	    TdhContext: PTDH_CONTEXT
-
+TdhSetDecodingParameter proto __cdecl :TDH_HANDLE, :PTDH_CONTEXT
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-TdhGetDecodingParameter proto __cdecl \
-		Handle: TDH_HANDLE,
-	    TdhContext: PTDH_CONTEXT
-
+TdhGetDecodingParameter proto __cdecl :TDH_HANDLE, :PTDH_CONTEXT
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-TdhGetWppProperty proto __cdecl \
-		Handle: TDH_HANDLE,
-	   EventRecord: PEVENT_RECORD,
-	  PropertyName: PWSTR,
-	    BufferSize: PULONG,
-		Buffer: PBYTE
+TdhGetWppProperty proto __cdecl :TDH_HANDLE, :PEVENT_RECORD, :PWSTR, :PULONG, :PBYTE
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-TdhGetWppMessage proto __cdecl \
-		Handle: TDH_HANDLE,
-	   EventRecord: PEVENT_RECORD,
-	    BufferSize: PULONG,
-		Buffer: PBYTE
+TdhGetWppMessage proto __cdecl :TDH_HANDLE, :PEVENT_RECORD, :PULONG, :PBYTE
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-TdhCloseDecodingHandle proto __cdecl \
-		Handle: TDH_HANDLE
-
+TdhCloseDecodingHandle proto __cdecl :TDH_HANDLE
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-TdhLoadManifestFromBinary proto __cdecl \
-	    BinaryPath: PWSTR
-
+TdhLoadManifestFromBinary proto __cdecl :PWSTR
 endif
 
 if (WINVER GE _WIN32_WINNT_WINBLUE)
-
-TdhEnumerateManifestProviderEvents proto __cdecl \
-	  ProviderGuid: LPGUID,
-		Buffer: PPROVIDER_EVENT_INFO,
-	    BufferSize: ptr ULONG
-
+TdhEnumerateManifestProviderEvents proto __cdecl :LPGUID, :PPROVIDER_EVENT_INFO, :ptr
 endif
-
 if (WINVER GE _WIN32_WINNT_WINBLUE)
-
-TdhGetManifestEventInformation proto __cdecl \
-	  ProviderGuid: LPGUID,
-       EventDescriptor: PEVENT_DESCRIPTOR,
-		Buffer: PTRACE_EVENT_INFO,
-	    BufferSize: ptr ULONG
-
+TdhGetManifestEventInformation proto __cdecl :LPGUID, :PEVENT_DESCRIPTOR, :PTRACE_EVENT_INFO, :ptr
 endif
 
-EMI_MAP_NAME proto __cdecl \
-	       MapInfo: PEVENT_MAP_INFO
-
-
-EMI_MAP_FORMAT proto __cdecl \
-	       MapInfo: PEVENT_MAP_INFO
-
-EMI_MAP_OUTPUT proto __cdecl \
-	       MapInfo: PEVENT_MAP_INFO,
-		   Map: PEVENT_MAP_ENTRY
-
-EMI_MAP_INPUT proto __cdecl \
-	       MapInfo: PEVENT_MAP_INFO,
-		   Map: PEVENT_MAP_ENTRY
-
-TEI_MAP_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO,
-	      Property: PEVENT_PROPERTY_INFO
-
-TEI_PROPERTY_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO,
-	      Property: PEVENT_PROPERTY_INFO
-
-TEI_PROVIDER_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_LEVEL_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_CHANNEL_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_KEYWORDS_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_TASK_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_OPCODE_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_EVENT_MESSAGE proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_PROVIDER_MESSAGE proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_ACTIVITYID_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
-
-TEI_RELATEDACTIVITYID_NAME proto __cdecl \
-	     EventInfo: PTRACE_EVENT_INFO
+EMI_MAP_NAME proto __cdecl :PEVENT_MAP_INFO
+EMI_MAP_FORMAT proto __cdecl :PEVENT_MAP_INFO
+EMI_MAP_OUTPUT proto __cdecl :PEVENT_MAP_INFO, :PEVENT_MAP_ENTRY
+EMI_MAP_INPUT proto __cdecl :PEVENT_MAP_INFO, :PEVENT_MAP_ENTRY
+TEI_MAP_NAME proto __cdecl :PTRACE_EVENT_INFO, :PEVENT_PROPERTY_INFO
+TEI_PROPERTY_NAME proto __cdecl :PTRACE_EVENT_INFO, :PEVENT_PROPERTY_INFO
+TEI_PROVIDER_NAME proto __cdecl :PTRACE_EVENT_INFO
+TEI_LEVEL_NAME proto __cdecl :PTRACE_EVENT_INFO
+TEI_CHANNEL_NAME proto __cdecl :PTRACE_EVENT_INFO
+TEI_KEYWORDS_NAME proto __cdecl :PTRACE_EVENT_INFO
+TEI_TASK_NAME proto __cdecl :PTRACE_EVENT_INFO
+TEI_OPCODE_NAME proto __cdecl :PTRACE_EVENT_INFO
+TEI_EVENT_MESSAGE proto __cdecl :PTRACE_EVENT_INFO
+TEI_PROVIDER_MESSAGE proto __cdecl :PTRACE_EVENT_INFO
+TEI_ACTIVITYID_NAME proto __cdecl :PTRACE_EVENT_INFO
+TEI_RELATEDACTIVITYID_NAME proto __cdecl :PTRACE_EVENT_INFO
 
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-PFI_FILTER_MESSAGE proto __cdecl \
-	    FilterInfo: PPROVIDER_FILTER_INFO
+PFI_FILTER_MESSAGE proto __cdecl :PPROVIDER_FILTER_INFO
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-PFI_PROPERTY_NAME proto __cdecl \
-	    FilterInfo: PPROVIDER_FILTER_INFO,
-	      Property: PEVENT_PROPERTY_INFO
+PFI_PROPERTY_NAME proto __cdecl :PPROVIDER_FILTER_INFO, :PEVENT_PROPERTY_INFO
 endif
-
-PFI_FIELD_NAME proto __cdecl \
-	FieldInfoArray: PPROVIDER_FIELD_INFOARRAY,
-	     FieldInfo: PPROVIDER_FIELD_INFO
-
-PFI_FIELD_MESSAGE proto __cdecl \
-	FieldInfoArray: PPROVIDER_FIELD_INFOARRAY,
-	     FieldInfo: PPROVIDER_FIELD_INFO
-
-PEI_PROVIDER_NAME proto __cdecl \
-	  ProviderEnum: PPROVIDER_ENUMERATION_INFO,
-	  ProviderInfo: PTRACE_PROVIDER_INFO
+PFI_FIELD_NAME proto __cdecl :PPROVIDER_FIELD_INFOARRAY, :PPROVIDER_FIELD_INFO
+PFI_FIELD_MESSAGE proto __cdecl :PPROVIDER_FIELD_INFOARRAY, :PPROVIDER_FIELD_INFO
+PEI_PROVIDER_NAME proto __cdecl :PPROVIDER_ENUMERATION_INFO, :PTRACE_PROVIDER_INFO
 
 endif
 endif

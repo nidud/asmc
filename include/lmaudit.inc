@@ -19,35 +19,9 @@ LOGFLAGS_SEEK		equ 0x2
 
 endif
 
-;NET_API_STATUS
-NetAuditClear proto WINAPI \
-       server: LPCWSTR,
-   backupfile: LPCWSTR,
-      service: LPCWSTR
-
-
-;NET_API_STATUS
-NetAuditRead proto WINAPI \
-		server: LPCWSTR,
-	       service: LPCWSTR,
-	auditloghandle: LPHLOG,
-	       _offset: DWORD,
-	     reserved1: LPDWORD,
-	     reserved2: DWORD,
-	    offsetflag: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	     bytesread: LPDWORD,
-	totalavailable: LPDWORD
-
-
-;NET_API_STATUS
-NetAuditWrite proto WINAPI \
-		  type: DWORD,
-		   buf: LPBYTE,
-	      numbytes: DWORD,
-	       service: LPCWSTR,
-	      reserved: LPBYTE
+NetAuditClear proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR
+NetAuditRead proto WINAPI :LPCWSTR, :LPCWSTR, :LPHLOG, :DWORD, :LPDWORD, :DWORD, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD
+NetAuditWrite proto WINAPI :DWORD, :LPBYTE, :DWORD, :LPCWSTR, :LPBYTE
 
 AUDIT_ENTRY		STRUC
 ae_len			dd ?

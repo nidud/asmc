@@ -2,7 +2,7 @@
 main.exe:
     asmc64 -Cp -frame shape.asm
     cl /c /MD main.cpp
-    link /subsystem:console main.obj shape.obj
+    link /subsystem:console /libpath:%AsmcDir%\lib\x64 main.obj shape.obj
     $@
     pause
     del *.obj

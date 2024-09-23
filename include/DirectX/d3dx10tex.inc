@@ -20,7 +20,6 @@ define __D3DX10TEX_H__
     D3DX10_FILTER_SRGB		  =   (3 shl 21),
     }
 
-
 .enum D3DX10_NORMALMAP_FLAG {
     D3DX10_NORMALMAP_MIRROR_U	       =   (1 shl 16),
     D3DX10_NORMALMAP_MIRROR_V	       =   (2 shl 16),
@@ -29,7 +28,6 @@ define __D3DX10TEX_H__
     D3DX10_NORMALMAP_COMPUTE_OCCLUSION =   (16 shl 16),
     }
 
-
 .enum D3DX10_CHANNEL_FLAG {
     D3DX10_CHANNEL_RED		 =    (1 shl 0),
     D3DX10_CHANNEL_BLUE		 =    (1 shl 1),
@@ -37,7 +35,6 @@ define __D3DX10TEX_H__
     D3DX10_CHANNEL_ALPHA	 =    (1 shl 3),
     D3DX10_CHANNEL_LUMINANCE	 =    (1 shl 4),
     }
-
 
 .enum D3DX10_IMAGE_FILE_FORMAT {
     D3DX10_IFF_BMP	   = 0,
@@ -50,11 +47,9 @@ define __D3DX10TEX_H__
     D3DX10_IFF_FORCE_DWORD = 0x7fffffff
     }
 
-
 .enum D3DX10_SAVE_TEXTURE_FLAG {
     D3DX10_STF_USEINPUTBLOB	 = 0x0001,
     }
-
 
 D3DX10_IMAGE_INFO	STRUC
 Width			UINT ?
@@ -83,172 +78,58 @@ Format			DXGI_FORMAT ?
 Filter			UINT ?
 MipFilter		UINT ?
 pSrcInfo		LPD3DX10_IMAGE_INFO ?
-ifdef __cplusplus
-endif
 D3DX10_IMAGE_LOAD_INFO	ENDS
 
-
-D3DX10GetImageInfoFromFileA proto WINAPI \
-	      pSrcFile: LPCSTR,
-		 pPump: ptr ID3DX10ThreadPump,
-	      pSrcInfo: ptr D3DX10_IMAGE_INFO,
-	      pHResult: ptr HRESULT
-
-D3DX10GetImageInfoFromFileW proto WINAPI \
-	      pSrcFile: LPCWSTR,
-		 pPump: ptr ID3DX10ThreadPump,
-	      pSrcInfo: ptr D3DX10_IMAGE_INFO,
-	      pHResult: ptr HRESULT
-
-
+D3DX10GetImageInfoFromFileA proto WINAPI :LPCSTR, :ptr, :ptr, :ptr
+D3DX10GetImageInfoFromFileW proto WINAPI :LPCWSTR, :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DX10GetImageInfoFromFile equ <D3DX10GetImageInfoFromFileW>
 else
 D3DX10GetImageInfoFromFile equ <D3DX10GetImageInfoFromFileA>
 endif
 
-D3DX10GetImageInfoFromResourceA proto WINAPI \
-	    hSrcModule: HMODULE,
-	  pSrcResource: LPCSTR,
-		 pPump: ptr ID3DX10ThreadPump,
-	      pSrcInfo: ptr D3DX10_IMAGE_INFO,
-	      pHResult: ptr HRESULT
-
-D3DX10GetImageInfoFromResourceW proto WINAPI \
-	    hSrcModule: HMODULE,
-	  pSrcResource: LPCWSTR,
-		 pPump: ptr ID3DX10ThreadPump,
-	      pSrcInfo: ptr D3DX10_IMAGE_INFO,
-	      pHResult: ptr HRESULT
-
+D3DX10GetImageInfoFromResourceA proto WINAPI :HMODULE, :LPCSTR, :ptr, :ptr, :ptr
+D3DX10GetImageInfoFromResourceW proto WINAPI :HMODULE, :LPCWSTR, :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DX10GetImageInfoFromResource equ <D3DX10GetImageInfoFromResourceW>
 else
 D3DX10GetImageInfoFromResource equ <D3DX10GetImageInfoFromResourceA>
 endif
-
-D3DX10GetImageInfoFromMemory proto WINAPI \
-	      pSrcData: LPCVOID,
-	   SrcDataSize: SIZE_T,
-		 pPump: ptr ID3DX10ThreadPump,
-	      pSrcInfo: ptr D3DX10_IMAGE_INFO,
-	      pHResult: ptr HRESULT
-
-
-D3DX10CreateShaderResourceViewFromFileA proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	      pSrcFile: LPCSTR,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-  ppShaderResourceView: ptr ptr ID3D10ShaderResourceView,
-	      pHResult: ptr HRESULT
-
-
-D3DX10CreateShaderResourceViewFromFileW proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	      pSrcFile: LPCWSTR,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-  ppShaderResourceView: ptr ptr ID3D10ShaderResourceView,
-	      pHResult: ptr HRESULT
-
-
+D3DX10GetImageInfoFromMemory proto WINAPI :ptr, :SIZE_T, :ptr, :ptr, :ptr
+D3DX10CreateShaderResourceViewFromFileA proto WINAPI :ptr, :LPCSTR, :ptr, :ptr, :ptr, :ptr
+D3DX10CreateShaderResourceViewFromFileW proto WINAPI :ptr, :LPCWSTR, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DX10CreateShaderResourceViewFromFile equ <D3DX10CreateShaderResourceViewFromFileW>
 else
 D3DX10CreateShaderResourceViewFromFile equ <D3DX10CreateShaderResourceViewFromFileA>
 endif
 
-D3DX10CreateTextureFromFileA proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	      pSrcFile: LPCSTR,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-	     ppTexture: ptr ptr ID3D10Resource,
-	      pHResult: ptr HRESULT
-
-D3DX10CreateTextureFromFileW proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	      pSrcFile: LPCWSTR,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-	     ppTexture: ptr ptr ID3D10Resource,
-	      pHResult: ptr HRESULT
-
-
+D3DX10CreateTextureFromFileA proto WINAPI :ptr, :LPCSTR, :ptr, :ptr, :ptr, :ptr
+D3DX10CreateTextureFromFileW proto WINAPI :ptr, :LPCWSTR, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DX10CreateTextureFromFile equ <D3DX10CreateTextureFromFileW>
 else
 D3DX10CreateTextureFromFile equ <D3DX10CreateTextureFromFileA>
 endif
 
-D3DX10CreateShaderResourceViewFromResourceA proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	    hSrcModule: HMODULE,
-	  pSrcResource: LPCSTR,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-  ppShaderResourceView: ptr ptr ID3D10ShaderResourceView,
-	      pHResult: ptr HRESULT
-
-
-D3DX10CreateShaderResourceViewFromResourceW proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	    hSrcModule: HMODULE,
-	  pSrcResource: LPCWSTR,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-  ppShaderResourceView: ptr ptr ID3D10ShaderResourceView,
-	      pHResult: ptr HRESULT
-
-
+D3DX10CreateShaderResourceViewFromResourceA proto WINAPI :ptr, :HMODULE, :LPCSTR, :ptr, :ptr, :ptr, :ptr
+D3DX10CreateShaderResourceViewFromResourceW proto WINAPI :ptr, :HMODULE, :LPCWSTR, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DX10CreateShaderResourceViewFromResource equ <D3DX10CreateShaderResourceViewFromResourceW>
 else
 D3DX10CreateShaderResourceViewFromResource equ <D3DX10CreateShaderResourceViewFromResourceA>
 endif
 
-D3DX10CreateTextureFromResourceA proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	    hSrcModule: HMODULE,
-	  pSrcResource: LPCSTR,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-	     ppTexture: ptr ptr ID3D10Resource,
-	      pHResult: ptr HRESULT
-
-D3DX10CreateTextureFromResourceW proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	    hSrcModule: HMODULE,
-	  pSrcResource: LPCWSTR,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-	     ppTexture: ptr ptr ID3D10Resource,
-	      pHResult: ptr HRESULT
-
+D3DX10CreateTextureFromResourceA proto WINAPI :ptr, :HMODULE, :LPCSTR, :ptr, :ptr, :ptr, :ptr
+D3DX10CreateTextureFromResourceW proto WINAPI :ptr, :HMODULE, :LPCWSTR, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DX10CreateTextureFromResource equ <D3DX10CreateTextureFromResourceW>
 else
 D3DX10CreateTextureFromResource equ <D3DX10CreateTextureFromResourceA>
 endif
 
-D3DX10CreateShaderResourceViewFromMemory proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	      pSrcData: LPCVOID,
-	   SrcDataSize: SIZE_T,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-  ppShaderResourceView: ptr ptr ID3D10ShaderResourceView,
-	      pHResult: ptr HRESULT
-
-D3DX10CreateTextureFromMemory proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-	      pSrcData: LPCVOID,
-	   SrcDataSize: SIZE_T,
-	     pLoadInfo: ptr D3DX10_IMAGE_LOAD_INFO,
-		 pPump: ptr ID3DX10ThreadPump,
-	     ppTexture: ptr ptr ID3D10Resource,
-	      pHResult: ptr HRESULT
+D3DX10CreateShaderResourceViewFromMemory proto WINAPI :ptr, :ptr, :SIZE_T, :ptr, :ptr, :ptr, :ptr
+D3DX10CreateTextureFromMemory proto WINAPI :ptr, :ptr, :SIZE_T, :ptr, :ptr, :ptr, :ptr
 
 LPD3D10_BOX		typedef ptr D3D10_BOX
 D3DX10_TEXTURE_LOAD_INFO STRUC
@@ -262,58 +143,20 @@ DstFirstElement		UINT ?
 NumElements		UINT ?
 Filter			UINT ?
 MipFilter		UINT ?
-ifdef __cplusplus
-endif
 D3DX10_TEXTURE_LOAD_INFO ENDS
 
-
-D3DX10LoadTextureFromTexture proto WINAPI \
-	   pSrcTexture: ptr ID3D10Resource,
-	     pLoadInfo: ptr D3DX10_TEXTURE_LOAD_INFO,
-	   pDstTexture: ptr ID3D10Resource
-
-D3DX10FilterTexture proto WINAPI \
-	      pTexture: ptr ID3D10Resource,
-	      SrcLevel: UINT,
-	     MipFilter: UINT
-
-D3DX10SaveTextureToFileA proto WINAPI \
-	   pSrcTexture: ptr ID3D10Resource,
-	    DestFormat: D3DX10_IMAGE_FILE_FORMAT,
-	     pDestFile: LPCSTR
-
-D3DX10SaveTextureToFileW proto WINAPI \
-	   pSrcTexture: ptr ID3D10Resource,
-	    DestFormat: D3DX10_IMAGE_FILE_FORMAT,
-	     pDestFile: LPCWSTR
-
-
+D3DX10LoadTextureFromTexture proto WINAPI :ptr, :ptr, :ptr
+D3DX10FilterTexture proto WINAPI :ptr, :UINT, :UINT
+D3DX10SaveTextureToFileA proto WINAPI :ptr, :D3DX10_IMAGE_FILE_FORMAT, :LPCSTR
+D3DX10SaveTextureToFileW proto WINAPI :ptr, :D3DX10_IMAGE_FILE_FORMAT, :LPCWSTR
 ifdef _UNICODE
 D3DX10SaveTextureToFile equ <D3DX10SaveTextureToFileW>
 else
 D3DX10SaveTextureToFile equ <D3DX10SaveTextureToFileA>
 endif
 
-
-D3DX10SaveTextureToMemory proto WINAPI \
-	   pSrcTexture: ptr ID3D10Resource,
-	    DestFormat: D3DX10_IMAGE_FILE_FORMAT,
-	     ppDestBuf: ptr LPD3D10BLOB,
-		 Flags: UINT
-
-D3DX10ComputeNormalMap proto WINAPI \
-	   pSrcTexture: ptr ID3D10Texture2D,
-		 Flags: UINT,
-	       Channel: UINT,
-	     Amplitude: FLOAT,
-	  pDestTexture: ptr ID3D10Texture2D
-
-
-D3DX10SHProjectCubeMap proto WINAPI \
-		 Order: UINT,
-	      pCubeMap: ptr ID3D10Texture2D,
-		 pROut: ptr FLOAT,
-		 pGOut: ptr FLOAT,
-		      : ptr FLOAT
+D3DX10SaveTextureToMemory proto WINAPI :ptr, :D3DX10_IMAGE_FILE_FORMAT, :ptr, :UINT
+D3DX10ComputeNormalMap proto WINAPI :ptr, :UINT, :UINT, :FLOAT, :ptr
+D3DX10SHProjectCubeMap proto WINAPI :UINT, :ptr, :ptr, :ptr, :ptr
 
 endif

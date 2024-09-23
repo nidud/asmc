@@ -673,1475 +673,360 @@ GL_FOG_SPECULAR_TEXTURE_WIN equ 0x80EC
 GL_LOGIC_OP             equ GL_INDEX_LOGIC_OP
 GL_TEXTURE_COMPONENTS   equ GL_TEXTURE_INTERNAL_FORMAT
 
-;WINGDIAPI
-glAccum proto WINAPI \
-                    op: GLenum,
-                 value: GLfloat
-
-glAlphaFunc proto WINAPI \
-                  func: GLenum,
-                   ref: GLclampf
-
-glAreTexturesResident proto WINAPI \
-                     n: GLsizei,
-              textures: ptr GLuint,
-            residences: ptr GLboolean
-
-glArrayElement proto WINAPI \
-                     i: GLint
-
-glBegin proto WINAPI \
-                  mode: GLenum
-
-glBindTexture proto WINAPI \
-                target: GLenum,
-               texture: GLuint
-
-glBitmap proto WINAPI \
-                 width: GLsizei,
-                height: GLsizei,
-                 xorig: GLfloat,
-                 yorig: GLfloat,
-                 xmove: GLfloat,
-                 ymove: GLfloat,
-                bitmap: ptr GLubyte
-
-glBlendFunc proto WINAPI \
-               sfactor: GLenum,
-               dfactor: GLenum
-
-glCallList proto WINAPI \
-                  list: GLuint
-
-glCallLists proto WINAPI \
-                     n: GLsizei,
-                  type: GLenum,
-                 lists: ptr GLvoid
-
-glClear proto WINAPI \
-                  mask: GLbitfield
-
-glClearAccum proto WINAPI \
-                   red: GLfloat,
-                 green: GLfloat,
-                  blue: GLfloat,
-                 alpha: GLfloat
-
-glClearColor proto WINAPI \
-                   red: GLclampf,
-                 green: GLclampf,
-                  blue: GLclampf,
-                 alpha: GLclampf
-
-glClearDepth proto WINAPI \
-                 depth: GLclampd
-
-glClearIndex proto WINAPI \
-                    _c: GLfloat
-
-glClearStencil proto WINAPI \
-                     s: GLint
-
-glClipPlane proto WINAPI \
-                 plane: GLenum,
-              equation: ptr GLdouble
-
-glColor3b proto WINAPI \
-                   red: GLbyte,
-                 green: GLbyte,
-                  blue: GLbyte
-
-glColor3bv proto WINAPI \
-                     v: ptr GLbyte
-
-glColor3d proto WINAPI \
-                   red: GLdouble,
-                 green: GLdouble,
-                  blue: GLdouble
-
-glColor3dv proto WINAPI \
-                     v: ptr GLdouble
-
-glColor3f proto WINAPI \
-                   red: GLfloat,
-                 green: GLfloat,
-                  blue: GLfloat
-
-glColor3fv proto WINAPI \
-                     v: ptr GLfloat
-
-glColor3i proto WINAPI \
-                   red: GLint,
-                 green: GLint,
-                  blue: GLint
-
-glColor3iv proto WINAPI \
-                     v: ptr GLint
-
-glColor3s proto WINAPI \
-                   red: GLshort,
-                 green: GLshort,
-                  blue: GLshort
-
-glColor3sv proto WINAPI \
-                     v: ptr GLshort
-
-glColor3ub proto WINAPI \
-                   red: GLubyte,
-                 green: GLubyte,
-                  blue: GLubyte
-
-glColor3ubv proto WINAPI \
-                     v: ptr GLubyte
-
-glColor3ui proto WINAPI \
-                   red: GLuint,
-                 green: GLuint,
-                  blue: GLuint
-
-glColor3uiv proto WINAPI \
-                     v: ptr GLuint
-
-glColor3us proto WINAPI \
-                   red: GLushort,
-                 green: GLushort,
-                  blue: GLushort
-
-glColor3usv proto WINAPI \
-                     v: ptr GLushort
-
-glColor4b proto WINAPI \
-                   red: GLbyte,
-                 green: GLbyte,
-                  blue: GLbyte,
-                 alpha: GLbyte
-
-glColor4bv proto WINAPI \
-                     v: ptr GLbyte
-
-glColor4d proto WINAPI \
-                   red: GLdouble,
-                 green: GLdouble,
-                  blue: GLdouble,
-                 alpha: GLdouble
-
-glColor4dv proto WINAPI \
-                     v: ptr GLdouble
-
-glColor4f proto WINAPI \
-                   red: GLfloat,
-                 green: GLfloat,
-                  blue: GLfloat,
-                 alpha: GLfloat
-
-glColor4fv proto WINAPI \
-                     v: ptr GLfloat
-
-glColor4i proto WINAPI \
-                   red: GLint,
-                 green: GLint,
-                  blue: GLint,
-                 alpha: GLint
-
-glColor4iv proto WINAPI \
-                     v: ptr GLint
-
-glColor4s proto WINAPI \
-                   red: GLshort,
-                 green: GLshort,
-                  blue: GLshort,
-                 alpha: GLshort
-
-glColor4sv proto WINAPI \
-                     v: ptr GLshort
-
-glColor4ub proto WINAPI \
-                   red: GLubyte,
-                 green: GLubyte,
-                  blue: GLubyte,
-                 alpha: GLubyte
-
-glColor4ubv proto WINAPI \
-                     v: ptr GLubyte
-
-glColor4ui proto WINAPI \
-                   red: GLuint,
-                 green: GLuint,
-                  blue: GLuint,
-                 alpha: GLuint
-
-glColor4uiv proto WINAPI \
-                     v: ptr GLuint
-
-glColor4us proto WINAPI \
-                   red: GLushort,
-                 green: GLushort,
-                  blue: GLushort,
-                 alpha: GLushort
-
-glColor4usv proto WINAPI \
-                     v: ptr GLushort
-
-glColorMask proto WINAPI \
-                   red: GLboolean,
-                 green: GLboolean,
-                  blue: GLboolean,
-                 alpha: GLboolean
-
-glColorMaterial proto WINAPI \
-                  face: GLenum,
-                  mode: GLenum
-
-glColorPointer proto WINAPI \
-                  size: GLint,
-                  type: GLenum,
-                stride: GLsizei,
-               pointer: ptr GLvoid
-
-glCopyPixels proto WINAPI \
-                     x: GLint,
-                     y: GLint,
-                 width: GLsizei,
-                height: GLsizei,
-                  type: GLenum
-
-glCopyTexImage1D proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-        internalFormat: GLenum,
-                     x: GLint,
-                     y: GLint,
-                 width: GLsizei,
-                border: GLint
-
-glCopyTexImage2D proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-        internalFormat: GLenum,
-                     x: GLint,
-                     y: GLint,
-                 width: GLsizei,
-                height: GLsizei,
-                border: GLint
-
-glCopyTexSubImage1D proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-               xoffset: GLint,
-                     x: GLint,
-                     y: GLint,
-                 width: GLsizei
-
-glCopyTexSubImage2D proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-               xoffset: GLint,
-               yoffset: GLint,
-                     x: GLint,
-                     y: GLint,
-                 width: GLsizei,
-                height: GLsizei
-
-glCullFace proto WINAPI \
-                 _mode: GLenum
-
-glDeleteLists proto WINAPI \
-                 _list: GLuint,
-                 range: GLsizei
-
-glDeleteTextures proto WINAPI \
-                     n: GLsizei,
-              textures: ptr GLuint
-
-glDepthFunc proto WINAPI \
-                  func: GLenum
-
-glDepthMask proto WINAPI \
-                  flag: GLboolean
-
-glDepthRange proto WINAPI \
-                 zNear: GLclampd,
-                  zFar: GLclampd
-
-glDisable proto WINAPI \
-                   cap: GLenum
-
-glDisableClientState proto WINAPI \
-                 array: GLenum
-
-glDrawArrays proto WINAPI \
-                  mode: GLenum,
-                 first: GLint,
-                 count: GLsizei
-
-glDrawBuffer proto WINAPI \
-                  mode: GLenum
-
-glDrawElements proto WINAPI \
-                  mode: GLenum,
-                 count: GLsizei,
-                  type: GLenum,
-               indices: ptr GLvoid
-
-glDrawPixels proto WINAPI \
-                 width: GLsizei,
-                height: GLsizei,
-                format: GLenum,
-                  type: GLenum,
-                pixels: ptr GLvoid
-
-glEdgeFlag proto WINAPI \
-                  flag: GLboolean
-
-glEdgeFlagPointer proto WINAPI \
-                stride: GLsizei,
-               pointer: ptr GLvoid
-
-glEdgeFlagv proto WINAPI \
-                  flag: ptr GLboolean
-
-glEnable proto WINAPI \
-                   cap: GLenum
-
-glEnableClientState proto WINAPI \
-                 array: GLenum
-
+glAccum proto WINAPI :GLenum, :GLfloat
+glAlphaFunc proto WINAPI :GLenum, :GLclampf
+glAreTexturesResident proto WINAPI :GLsizei, :ptr, :ptr
+glArrayElement proto WINAPI :GLint
+glBegin proto WINAPI :GLenum
+glBindTexture proto WINAPI :GLenum, :GLuint
+glBitmap proto WINAPI :GLsizei, :GLsizei, :GLfloat, :GLfloat, :GLfloat, :GLfloat, :ptr
+glBlendFunc proto WINAPI :GLenum, :GLenum
+glCallList proto WINAPI :GLuint
+glCallLists proto WINAPI :GLsizei, :GLenum, :ptr
+glClear proto WINAPI :GLbitfield
+glClearAccum proto WINAPI :GLfloat, :GLfloat, :GLfloat, :GLfloat
+glClearColor proto WINAPI :GLclampf, :GLclampf, :GLclampf, :GLclampf
+glClearDepth proto WINAPI :GLclampd
+glClearIndex proto WINAPI :GLfloat
+glClearStencil proto WINAPI :GLint
+glClipPlane proto WINAPI :GLenum, :ptr
+glColor3b proto WINAPI :GLbyte, :GLbyte, :GLbyte
+glColor3bv proto WINAPI :ptr
+glColor3d proto WINAPI :GLdouble, :GLdouble, :GLdouble
+glColor3dv proto WINAPI :ptr
+glColor3f proto WINAPI :GLfloat, :GLfloat, :GLfloat
+glColor3fv proto WINAPI :ptr
+glColor3i proto WINAPI :GLint, :GLint, :GLint
+glColor3iv proto WINAPI :ptr
+glColor3s proto WINAPI :GLshort, :GLshort, :GLshort
+glColor3sv proto WINAPI :ptr
+glColor3ub proto WINAPI :GLubyte, :GLubyte, :GLubyte
+glColor3ubv proto WINAPI :ptr
+glColor3ui proto WINAPI :GLuint, :GLuint, :GLuint
+glColor3uiv proto WINAPI :ptr
+glColor3us proto WINAPI :GLushort, :GLushort, :GLushort
+glColor3usv proto WINAPI :ptr
+glColor4b proto WINAPI :GLbyte, :GLbyte, :GLbyte, :GLbyte
+glColor4bv proto WINAPI :ptr
+glColor4d proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble
+glColor4dv proto WINAPI :ptr
+glColor4f proto WINAPI :GLfloat, :GLfloat, :GLfloat, :GLfloat
+glColor4fv proto WINAPI :ptr
+glColor4i proto WINAPI :GLint, :GLint, :GLint, :GLint
+glColor4iv proto WINAPI :ptr
+glColor4s proto WINAPI :GLshort, :GLshort, :GLshort, :GLshort
+glColor4sv proto WINAPI :ptr
+glColor4ub proto WINAPI :GLubyte, :GLubyte, :GLubyte, :GLubyte
+glColor4ubv proto WINAPI :ptr
+glColor4ui proto WINAPI :GLuint, :GLuint, :GLuint, :GLuint
+glColor4uiv proto WINAPI :ptr
+glColor4us proto WINAPI :GLushort, :GLushort, :GLushort, :GLushort
+glColor4usv proto WINAPI :ptr
+glColorMask proto WINAPI :GLboolean, :GLboolean, :GLboolean, :GLboolean
+glColorMaterial proto WINAPI :GLenum, :GLenum
+glColorPointer proto WINAPI :GLint, :GLenum, :GLsizei, :ptr
+glCopyPixels proto WINAPI :GLint, :GLint, :GLsizei, :GLsizei, :GLenum
+glCopyTexImage1D proto WINAPI :GLenum, :GLint, :GLenum, :GLint, :GLint, :GLsizei, :GLint
+glCopyTexImage2D proto WINAPI :GLenum, :GLint, :GLenum, :GLint, :GLint, :GLsizei, :GLsizei, :GLint
+glCopyTexSubImage1D proto WINAPI :GLenum, :GLint, :GLint, :GLint, :GLint, :GLsizei
+glCopyTexSubImage2D proto WINAPI :GLenum, :GLint, :GLint, :GLint, :GLint, :GLint, :GLsizei, :GLsizei
+glCullFace proto WINAPI :GLenum
+glDeleteLists proto WINAPI :GLuint, :GLsizei
+glDeleteTextures proto WINAPI :GLsizei, :ptr
+glDepthFunc proto WINAPI :GLenum
+glDepthMask proto WINAPI :GLboolean
+glDepthRange proto WINAPI :GLclampd, :GLclampd
+glDisable proto WINAPI :GLenum
+glDisableClientState proto WINAPI :GLenum
+glDrawArrays proto WINAPI :GLenum, :GLint, :GLsizei
+glDrawBuffer proto WINAPI :GLenum
+glDrawElements proto WINAPI :GLenum, :GLsizei, :GLenum, :ptr
+glDrawPixels proto WINAPI :GLsizei, :GLsizei, :GLenum, :GLenum, :ptr
+glEdgeFlag proto WINAPI :GLboolean
+glEdgeFlagPointer proto WINAPI :GLsizei, :ptr
+glEdgeFlagv proto WINAPI :ptr
+glEnable proto WINAPI :GLenum
+glEnableClientState proto WINAPI :GLenum
 glEnd proto WINAPI
 glEndList proto WINAPI
-glEvalCoord1d proto WINAPI \
-                     u: GLdouble
-
-glEvalCoord1dv proto WINAPI \
-                     u: ptr GLdouble
-
-glEvalCoord1f proto WINAPI \
-                     u: GLfloat
-
-glEvalCoord1fv proto WINAPI \
-                     u: ptr GLfloat
-
-glEvalCoord2d proto WINAPI \
-                     u: GLdouble,
-                     v: GLdouble
-
-glEvalCoord2dv proto WINAPI \
-                     u: ptr GLdouble
-
-glEvalCoord2f proto WINAPI \
-                     u: GLfloat,
-                     v: GLfloat
-
-glEvalCoord2fv proto WINAPI \
-                     u: ptr GLfloat
-
-glEvalMesh1 proto WINAPI \
-                  mode: GLenum,
-                    i1: GLint,
-                    i2: GLint
-
-glEvalMesh2 proto WINAPI \
-                  mode: GLenum,
-                    i1: GLint,
-                    i2: GLint,
-                    j1: GLint,
-                    j2: GLint
-
-glEvalPoint1 proto WINAPI \
-                     i: GLint
-
-glEvalPoint2 proto WINAPI \
-                     i: GLint,
-                     j: GLint
-
-glFeedbackBuffer proto WINAPI \
-                  size: GLsizei,
-                  type: GLenum,
-                buffer: ptr GLfloat
-
+glEvalCoord1d proto WINAPI :GLdouble
+glEvalCoord1dv proto WINAPI :ptr
+glEvalCoord1f proto WINAPI :GLfloat
+glEvalCoord1fv proto WINAPI :ptr
+glEvalCoord2d proto WINAPI :GLdouble, :GLdouble
+glEvalCoord2dv proto WINAPI :ptr
+glEvalCoord2f proto WINAPI :GLfloat, :GLfloat
+glEvalCoord2fv proto WINAPI :ptr
+glEvalMesh1 proto WINAPI :GLenum, :GLint, :GLint
+glEvalMesh2 proto WINAPI :GLenum, :GLint, :GLint, :GLint, :GLint
+glEvalPoint1 proto WINAPI :GLint
+glEvalPoint2 proto WINAPI :GLint, :GLint
+glFeedbackBuffer proto WINAPI :GLsizei, :GLenum, :ptr
 glFinish proto WINAPI
 glFlush proto WINAPI
-glFogf proto WINAPI \
-                 pname: GLenum,
-                 param: GLfloat
-
-glFogfv proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glFogi proto WINAPI \
-                 pname: GLenum,
-                 param: GLint
-
-glFogiv proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLint
-
-glFrontFace proto WINAPI \
-                  mode: GLenum
-
-glFrustum proto WINAPI \
-                  left: GLdouble,
-                 right: GLdouble,
-                bottom: GLdouble,
-                   top: GLdouble,
-                 zNear: GLdouble,
-                  zFar: GLdouble
-
-glGenLists proto WINAPI \
-                 range: GLsizei
-
-glGenTextures proto WINAPI \
-                     n: GLsizei,
-              textures: ptr GLuint
-
-glGetBooleanv proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLboolean
-
-glGetClipPlane proto WINAPI \
-                 plane: GLenum,
-              equation: ptr GLdouble
-
-glGetDoublev proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLdouble
-
+glFogf proto WINAPI :GLenum, :GLfloat
+glFogfv proto WINAPI :GLenum, :ptr
+glFogi proto WINAPI :GLenum, :GLint
+glFogiv proto WINAPI :GLenum, :ptr
+glFrontFace proto WINAPI :GLenum
+glFrustum proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble
+glGenLists proto WINAPI :GLsizei
+glGenTextures proto WINAPI :GLsizei, :ptr
+glGetBooleanv proto WINAPI :GLenum, :ptr
+glGetClipPlane proto WINAPI :GLenum, :ptr
+glGetDoublev proto WINAPI :GLenum, :ptr
 glGetError proto WINAPI
-glGetFloatv proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glGetIntegerv proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLint
-
-glGetLightfv proto WINAPI \
-                 light: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glGetLightiv proto WINAPI \
-                 light: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glGetMapdv proto WINAPI \
-                target: GLenum,
-                 query: GLenum,
-                     v: ptr GLdouble
-
-glGetMapfv proto WINAPI \
-                target: GLenum,
-                 query: GLenum,
-                     v: ptr GLfloat
-
-glGetMapiv proto WINAPI \
-                target: GLenum,
-                 query: GLenum,
-                     v: ptr GLint
-
-glGetMaterialfv proto WINAPI \
-                  face: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glGetMaterialiv proto WINAPI \
-                  face: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glGetPixelMapfv proto WINAPI \
-                   map: GLenum,
-                values: ptr GLfloat
-
-glGetPixelMapuiv proto WINAPI \
-                   map: GLenum,
-                values: ptr GLuint
-
-glGetPixelMapusv proto WINAPI \
-                   map: GLenum,
-                values: ptr GLushort
-
-glGetPointerv proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLvoid
-
-glGetPolygonStipple proto WINAPI \
-                  mask: ptr GLubyte
-
-glGetString proto WINAPI \
-                  name: GLenum
-
-glGetTexEnvfv proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glGetTexEnviv proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glGetTexGendv proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                params: ptr GLdouble
-
-glGetTexGenfv proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glGetTexGeniv proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glGetTexImage proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-                format: GLenum,
-                  type: GLenum,
-                pixels: ptr GLvoid
-
-glGetTexLevelParameterfv proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glGetTexLevelParameteriv proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-                 pname: GLenum,
-                params: ptr GLint
-
-glGetTexParameterfv proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glGetTexParameteriv proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glHint proto WINAPI \
-                target: GLenum,
-                  mode: GLenum
-
-glIndexMask proto WINAPI \
-                  mask: GLuint
-
-glIndexPointer proto WINAPI \
-                  type: GLenum,
-                stride: GLsizei,
-               pointer: ptr GLvoid
-
-;WINGDIAPI
-glIndexd proto WINAPI \
-                    _c: GLdouble
-
-glIndexdv proto WINAPI \
-                    _c: ptr GLdouble
-
-glIndexf proto WINAPI \
-                    _c: GLfloat
-
-glIndexfv proto WINAPI \
-                    _c: ptr GLfloat
-
-glIndexi proto WINAPI \
-                    _c: GLint
-
-glIndexiv proto WINAPI \
-                    _c: ptr GLint
-
-glIndexs proto WINAPI \
-                    _c: GLshort
-
-glIndexsv proto WINAPI \
-                    _c: ptr GLshort
-
-glIndexub proto WINAPI \
-                    _c: GLubyte
-
-glIndexubv proto WINAPI \
-                    _c: ptr GLubyte
-
+glGetFloatv proto WINAPI :GLenum, :ptr
+glGetIntegerv proto WINAPI :GLenum, :ptr
+glGetLightfv proto WINAPI :GLenum, :GLenum, :ptr
+glGetLightiv proto WINAPI :GLenum, :GLenum, :ptr
+glGetMapdv proto WINAPI :GLenum, :GLenum, :ptr
+glGetMapfv proto WINAPI :GLenum, :GLenum, :ptr
+glGetMapiv proto WINAPI :GLenum, :GLenum, :ptr
+glGetMaterialfv proto WINAPI :GLenum, :GLenum, :ptr
+glGetMaterialiv proto WINAPI :GLenum, :GLenum, :ptr
+glGetPixelMapfv proto WINAPI :GLenum, :ptr
+glGetPixelMapuiv proto WINAPI :GLenum, :ptr
+glGetPixelMapusv proto WINAPI :GLenum, :ptr
+glGetPointerv proto WINAPI :GLenum, :ptr
+glGetPolygonStipple proto WINAPI :ptr
+glGetString proto WINAPI :GLenum
+glGetTexEnvfv proto WINAPI :GLenum, :GLenum, :ptr
+glGetTexEnviv proto WINAPI :GLenum, :GLenum, :ptr
+glGetTexGendv proto WINAPI :GLenum, :GLenum, :ptr
+glGetTexGenfv proto WINAPI :GLenum, :GLenum, :ptr
+glGetTexGeniv proto WINAPI :GLenum, :GLenum, :ptr
+glGetTexImage proto WINAPI :GLenum, :GLint, :GLenum, :GLenum, :ptr
+glGetTexLevelParameterfv proto WINAPI :GLenum, :GLint, :GLenum, :ptr
+glGetTexLevelParameteriv proto WINAPI :GLenum, :GLint, :GLenum, :ptr
+glGetTexParameterfv proto WINAPI :GLenum, :GLenum, :ptr
+glGetTexParameteriv proto WINAPI :GLenum, :GLenum, :ptr
+glHint proto WINAPI :GLenum, :GLenum
+glIndexMask proto WINAPI :GLuint
+glIndexPointer proto WINAPI :GLenum, :GLsizei, :ptr
+glIndexd proto WINAPI :GLdouble
+glIndexdv proto WINAPI :ptr
+glIndexf proto WINAPI :GLfloat
+glIndexfv proto WINAPI :ptr
+glIndexi proto WINAPI :GLint
+glIndexiv proto WINAPI :ptr
+glIndexs proto WINAPI :GLshort
+glIndexsv proto WINAPI :ptr
+glIndexub proto WINAPI :GLubyte
+glIndexubv proto WINAPI :ptr
 glInitNames proto WINAPI
-glInterleavedArrays proto WINAPI \
-                format: GLenum,
-                stride: GLsizei,
-               pointer: ptr GLvoid
-
-glIsEnabled proto WINAPI \
-                   cap: GLenum
-
-glIsList proto WINAPI \
-                  list: GLuint
-
-glIsTexture proto WINAPI \
-               texture: GLuint
-
-glLightModelf proto WINAPI \
-                 pname: GLenum,
-                 param: GLfloat
-
-glLightModelfv proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glLightModeli proto WINAPI \
-                 pname: GLenum,
-                 param: GLint
-
-glLightModeliv proto WINAPI \
-                 pname: GLenum,
-                params: ptr GLint
-
-glLightf proto WINAPI \
-                 light: GLenum,
-                 pname: GLenum,
-                 param: GLfloat
-
-glLightfv proto WINAPI \
-                 light: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glLighti proto WINAPI \
-                 light: GLenum,
-                 pname: GLenum,
-                 param: GLint
-
-glLightiv proto WINAPI \
-                 light: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glLineStipple proto WINAPI \
-                factor: GLint,
-               pattern: GLushort
-
-glLineWidth proto WINAPI \
-                 width: GLfloat
-
-glListBase proto WINAPI \
-                  base: GLuint
-
+glInterleavedArrays proto WINAPI :GLenum, :GLsizei, :ptr
+glIsEnabled proto WINAPI :GLenum
+glIsList proto WINAPI :GLuint
+glIsTexture proto WINAPI :GLuint
+glLightModelf proto WINAPI :GLenum, :GLfloat
+glLightModelfv proto WINAPI :GLenum, :ptr
+glLightModeli proto WINAPI :GLenum, :GLint
+glLightModeliv proto WINAPI :GLenum, :ptr
+glLightf proto WINAPI :GLenum, :GLenum, :GLfloat
+glLightfv proto WINAPI :GLenum, :GLenum, :ptr
+glLighti proto WINAPI :GLenum, :GLenum, :GLint
+glLightiv proto WINAPI :GLenum, :GLenum, :ptr
+glLineStipple proto WINAPI :GLint, :GLushort
+glLineWidth proto WINAPI :GLfloat
+glListBase proto WINAPI :GLuint
 glLoadIdentity proto WINAPI
-glLoadMatrixd proto WINAPI \
-                     m: ptr GLdouble
-
-glLoadMatrixf proto WINAPI \
-                     m: ptr GLfloat
-
-glLoadName proto WINAPI \
-                  name: GLuint
-
-glLogicOp proto WINAPI \
-                opcode: GLenum
-
-glMap1d proto WINAPI \
-                target: GLenum,
-                    u1: GLdouble,
-                    u2: GLdouble,
-                stride: GLint,
-                 order: GLint,
-                points: ptr GLdouble
-
-glMap1f proto WINAPI \
-                target: GLenum,
-                    u1: GLfloat,
-                    u2: GLfloat,
-                stride: GLint,
-                 order: GLint,
-                points: ptr GLfloat
-
-glMap2d proto WINAPI \
-                target: GLenum,
-                    u1: GLdouble,
-                    u2: GLdouble,
-               ustride: GLint,
-                uorder: GLint,
-                    v1: GLdouble,
-                    v2: GLdouble,
-               vstride: GLint,
-                vorder: GLint,
-                points: ptr GLdouble
-
-glMap2f proto WINAPI \
-                target: GLenum,
-                    u1: GLfloat,
-                    u2: GLfloat,
-               ustride: GLint,
-                uorder: GLint,
-                    v1: GLfloat,
-                    v2: GLfloat,
-               vstride: GLint,
-                vorder: GLint,
-                points: ptr GLfloat
-
-glMapGrid1d proto WINAPI \
-                    un: GLint,
-                    u1: GLdouble,
-                    u2: GLdouble
-
-glMapGrid1f proto WINAPI \
-                    un: GLint,
-                    u1: GLfloat,
-                    u2: GLfloat
-
-glMapGrid2d proto WINAPI \
-                    un: GLint,
-                    u1: GLdouble,
-                    u2: GLdouble,
-                    vn: GLint,
-                    v1: GLdouble,
-                    v2: GLdouble
-
-glMapGrid2f proto WINAPI \
-                    un: GLint,
-                    u1: GLfloat,
-                    u2: GLfloat,
-                    vn: GLint,
-                    v1: GLfloat,
-                    v2: GLfloat
-
-glMaterialf proto WINAPI \
-                  face: GLenum,
-                 pname: GLenum,
-                 param: GLfloat
-
-glMaterialfv proto WINAPI \
-                  face: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glMateriali proto WINAPI \
-                  face: GLenum,
-                 pname: GLenum,
-                 param: GLint
-
-glMaterialiv proto WINAPI \
-                  face: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glMatrixMode proto WINAPI \
-                  mode: GLenum
-
-glMultMatrixd proto WINAPI \
-                     m: ptr GLdouble
-
-glMultMatrixf proto WINAPI \
-                     m: ptr GLfloat
-
-glNewList proto WINAPI \
-                  list: GLuint,
-                  mode: GLenum
-
-glNormal3b proto WINAPI \
-                    nx: GLbyte,
-                    ny: GLbyte,
-                    nz: GLbyte
-
-glNormal3bv proto WINAPI \
-                     v: ptr GLbyte
-
-glNormal3d proto WINAPI \
-                    nx: GLdouble,
-                    ny: GLdouble,
-                    nz: GLdouble
-
-glNormal3dv proto WINAPI \
-                     v: ptr GLdouble
-
-glNormal3f proto WINAPI \
-                    nx: GLfloat,
-                    ny: GLfloat,
-                    nz: GLfloat
-
-glNormal3fv proto WINAPI \
-                     v: ptr GLfloat
-
-glNormal3i proto WINAPI \
-                    nx: GLint,
-                    ny: GLint,
-                    nz: GLint
-
-glNormal3iv proto WINAPI \
-                     v: ptr GLint
-
-glNormal3s proto WINAPI \
-                    nx: GLshort,
-                    ny: GLshort,
-                    nz: GLshort
-
-glNormal3sv proto WINAPI \
-                     v: ptr GLshort
-
-glNormalPointer proto WINAPI \
-                  type: GLenum,
-                stride: GLsizei,
-               pointer: ptr GLvoid
-
-glOrtho proto WINAPI \
-                  left: GLdouble,
-                 right: GLdouble,
-                bottom: GLdouble,
-                   top: GLdouble,
-                 zNear: GLdouble,
-                  zFar: GLdouble
-
-glPassThrough proto WINAPI \
-                 token: GLfloat
-
-glPixelMapfv proto WINAPI \
-                   map: GLenum,
-               mapsize: GLsizei,
-                values: ptr GLfloat
-
-glPixelMapuiv proto WINAPI \
-                   map: GLenum,
-               mapsize: GLsizei,
-                values: ptr GLuint
-
-glPixelMapusv proto WINAPI \
-                   map: GLenum,
-               mapsize: GLsizei,
-                values: ptr GLushort
-
-glPixelStoref proto WINAPI \
-                 pname: GLenum,
-                 param: GLfloat
-
-glPixelStorei proto WINAPI \
-                 pname: GLenum,
-                 param: GLint
-
-glPixelTransferf proto WINAPI \
-                 pname: GLenum,
-                 param: GLfloat
-
-glPixelTransferi proto WINAPI \
-                 pname: GLenum,
-                 param: GLint
-
-glPixelZoom proto WINAPI \
-               xfactor: GLfloat,
-               yfactor: GLfloat
-
-glPointSize proto WINAPI \
-                  size: GLfloat
-
-glPolygonMode proto WINAPI \
-                  face: GLenum,
-                  mode: GLenum
-
-glPolygonOffset proto WINAPI \
-                factor: GLfloat,
-                 units: GLfloat
-
-glPolygonStipple proto WINAPI \
-                  mask: ptr GLubyte
-
+glLoadMatrixd proto WINAPI :ptr
+glLoadMatrixf proto WINAPI :ptr
+glLoadName proto WINAPI :GLuint
+glLogicOp proto WINAPI :GLenum
+glMap1d proto WINAPI :GLenum, :GLdouble, :GLdouble, :GLint, :GLint, :ptr
+glMap1f proto WINAPI :GLenum, :GLfloat, :GLfloat, :GLint, :GLint, :ptr
+glMap2d proto WINAPI :GLenum, :GLdouble, :GLdouble, :GLint, :GLint, :GLdouble, :GLdouble, :GLint, :GLint, :ptr
+glMap2f proto WINAPI :GLenum, :GLfloat, :GLfloat, :GLint, :GLint, :GLfloat, :GLfloat, :GLint, :GLint, :ptr
+glMapGrid1d proto WINAPI :GLint, :GLdouble, :GLdouble
+glMapGrid1f proto WINAPI :GLint, :GLfloat, :GLfloat
+glMapGrid2d proto WINAPI :GLint, :GLdouble, :GLdouble, :GLint, :GLdouble, :GLdouble
+glMapGrid2f proto WINAPI :GLint, :GLfloat, :GLfloat, :GLint, :GLfloat, :GLfloat
+glMaterialf proto WINAPI :GLenum, :GLenum, :GLfloat
+glMaterialfv proto WINAPI :GLenum, :GLenum, :ptr
+glMateriali proto WINAPI :GLenum, :GLenum, :GLint
+glMaterialiv proto WINAPI :GLenum, :GLenum, :ptr
+glMatrixMode proto WINAPI :GLenum
+glMultMatrixd proto WINAPI :ptr
+glMultMatrixf proto WINAPI :ptr
+glNewList proto WINAPI :GLuint, :GLenum
+glNormal3b proto WINAPI :GLbyte, :GLbyte, :GLbyte
+glNormal3bv proto WINAPI :ptr
+glNormal3d proto WINAPI :GLdouble, :GLdouble, :GLdouble
+glNormal3dv proto WINAPI :ptr
+glNormal3f proto WINAPI :GLfloat, :GLfloat, :GLfloat
+glNormal3fv proto WINAPI :ptr
+glNormal3i proto WINAPI :GLint, :GLint, :GLint
+glNormal3iv proto WINAPI :ptr
+glNormal3s proto WINAPI :GLshort, :GLshort, :GLshort
+glNormal3sv proto WINAPI :ptr
+glNormalPointer proto WINAPI :GLenum, :GLsizei, :ptr
+glOrtho proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble
+glPassThrough proto WINAPI :GLfloat
+glPixelMapfv proto WINAPI :GLenum, :GLsizei, :ptr
+glPixelMapuiv proto WINAPI :GLenum, :GLsizei, :ptr
+glPixelMapusv proto WINAPI :GLenum, :GLsizei, :ptr
+glPixelStoref proto WINAPI :GLenum, :GLfloat
+glPixelStorei proto WINAPI :GLenum, :GLint
+glPixelTransferf proto WINAPI :GLenum, :GLfloat
+glPixelTransferi proto WINAPI :GLenum, :GLint
+glPixelZoom proto WINAPI :GLfloat, :GLfloat
+glPointSize proto WINAPI :GLfloat
+glPolygonMode proto WINAPI :GLenum, :GLenum
+glPolygonOffset proto WINAPI :GLfloat, :GLfloat
+glPolygonStipple proto WINAPI :ptr
 glPopAttrib proto WINAPI
 glPopClientAttrib proto WINAPI
 glPopMatrix proto WINAPI
 glPopName proto WINAPI
-glPrioritizeTextures proto WINAPI \
-                     n: GLsizei,
-              textures: ptr GLuint,
-            priorities: ptr GLclampf
-
-glPushAttrib proto WINAPI \
-                  mask: GLbitfield
-
-glPushClientAttrib proto WINAPI \
-                  mask: GLbitfield
-
+glPrioritizeTextures proto WINAPI :GLsizei, :ptr, :ptr
+glPushAttrib proto WINAPI :GLbitfield
+glPushClientAttrib proto WINAPI :GLbitfield
 glPushMatrix proto WINAPI
-glPushName proto WINAPI \
-                  name: GLuint
-
-glRasterPos2d proto WINAPI \
-                     x: GLdouble,
-                     y: GLdouble
-
-glRasterPos2dv proto WINAPI \
-                     v: ptr GLdouble
-
-glRasterPos2f proto WINAPI \
-                     x: GLfloat,
-                     y: GLfloat
-
-glRasterPos2fv proto WINAPI \
-                     v: ptr GLfloat
-
-glRasterPos2i proto WINAPI \
-                     x: GLint,
-                     y: GLint
-
-glRasterPos2iv proto WINAPI \
-                     v: ptr GLint
-
-glRasterPos2s proto WINAPI \
-                     x: GLshort,
-                     y: GLshort
-
-glRasterPos2sv proto WINAPI \
-                     v: ptr GLshort
-
-glRasterPos3d proto WINAPI \
-                     x: GLdouble,
-                     y: GLdouble,
-                     z: GLdouble
-
-glRasterPos3dv proto WINAPI \
-                     v: ptr GLdouble
-
-glRasterPos3f proto WINAPI \
-                     x: GLfloat,
-                     y: GLfloat,
-                     z: GLfloat
-
-glRasterPos3fv proto WINAPI \
-                     v: ptr GLfloat
-
-glRasterPos3i proto WINAPI \
-                     x: GLint,
-                     y: GLint,
-                     z: GLint
-
-glRasterPos3iv proto WINAPI \
-                     v: ptr GLint
-
-glRasterPos3s proto WINAPI \
-                     x: GLshort,
-                     y: GLshort,
-                     z: GLshort
-
-glRasterPos3sv proto WINAPI \
-                     v: ptr GLshort
-
-glRasterPos4d proto WINAPI \
-                     x: GLdouble,
-                     y: GLdouble,
-                     z: GLdouble,
-                     w: GLdouble
-
-glRasterPos4dv proto WINAPI \
-                     v: ptr GLdouble
-
-glRasterPos4f proto WINAPI \
-                     x: GLfloat,
-                     y: GLfloat,
-                     z: GLfloat,
-                     w: GLfloat
-
-glRasterPos4fv proto WINAPI \
-                     v: ptr GLfloat
-
-glRasterPos4i proto WINAPI \
-                     x: GLint,
-                     y: GLint,
-                     z: GLint,
-                     w: GLint
-
-glRasterPos4iv proto WINAPI \
-                     v: ptr GLint
-
-glRasterPos4s proto WINAPI \
-                     x: GLshort,
-                     y: GLshort,
-                     z: GLshort,
-                     w: GLshort
-
-glRasterPos4sv proto WINAPI \
-                     v: ptr GLshort
-
-glReadBuffer proto WINAPI \
-                  mode: GLenum
-
-glReadPixels proto WINAPI \
-                     x: GLint,
-                     y: GLint,
-                 width: GLsizei,
-                height: GLsizei,
-                format: GLenum,
-                  type: GLenum,
-                pixels: ptr GLvoid
-
-glRectd proto WINAPI \
-                    x1: GLdouble,
-                    y1: GLdouble,
-                    x2: GLdouble,
-                    y2: GLdouble
-
-glRectdv proto WINAPI \
-                    v1: ptr GLdouble,
-                    v2: ptr GLdouble
-
-glRectf proto WINAPI \
-                    x1: GLfloat,
-                    y1: GLfloat,
-                    x2: GLfloat,
-                    y2: GLfloat
-
-glRectfv proto WINAPI \
-                    v1: ptr GLfloat,
-                    v2: ptr GLfloat
-
-glRecti proto WINAPI \
-                    x1: GLint,
-                    y1: GLint,
-                    x2: GLint,
-                    y2: GLint
-
-glRectiv proto WINAPI \
-                    v1: ptr GLint,
-                    v2: ptr GLint
-
-glRects proto WINAPI \
-                    x1: GLshort,
-                    y1: GLshort,
-                    x2: GLshort,
-                    y2: GLshort
-
-glRectsv proto WINAPI \
-                    v1: ptr GLshort,
-                    v2: ptr GLshort
-
-glRenderMode proto WINAPI \
-                  mode: GLenum
-
-glRotated proto WINAPI \
-                 angle: GLdouble,
-                     x: GLdouble,
-                     y: GLdouble,
-                     z: GLdouble
-
-glRotatef proto WINAPI \
-                 angle: GLfloat,
-                     x: GLfloat,
-                     y: GLfloat,
-                     z: GLfloat
-
-glScaled proto WINAPI \
-                     x: GLdouble,
-                     y: GLdouble,
-                     z: GLdouble
-
-glScalef proto WINAPI \
-                     x: GLfloat,
-                     y: GLfloat,
-                     z: GLfloat
-
-glScissor proto WINAPI \
-                     x: GLint,
-                     y: GLint,
-                 width: GLsizei,
-                height: GLsizei
-
-glSelectBuffer proto WINAPI \
-                  size: GLsizei,
-                buffer: ptr GLuint
-
-glShadeModel proto WINAPI \
-                  mode: GLenum
-
-glStencilFunc proto WINAPI \
-                  func: GLenum,
-                   ref: GLint,
-                  mask: GLuint
-
-glStencilMask proto WINAPI \
-                  mask: GLuint
-
-glStencilOp proto WINAPI \
-                  fail: GLenum,
-                 zfail: GLenum,
-                 zpass: GLenum
-
-glTexCoord1d proto WINAPI \
-                     s: GLdouble
-
-glTexCoord1dv proto WINAPI \
-                     v: ptr GLdouble
-
-glTexCoord1f proto WINAPI \
-                     s: GLfloat
-
-glTexCoord1fv proto WINAPI \
-                     v: ptr GLfloat
-
-glTexCoord1i proto WINAPI \
-                     s: GLint
-
-glTexCoord1iv proto WINAPI \
-                     v: ptr GLint
-
-glTexCoord1s proto WINAPI \
-                     s: GLshort
-
-glTexCoord1sv proto WINAPI \
-                     v: ptr GLshort
-
-glTexCoord2d proto WINAPI \
-                     s: GLdouble,
-                     t: GLdouble
-
-glTexCoord2dv proto WINAPI \
-                     v: ptr GLdouble
-
-glTexCoord2f proto WINAPI \
-                     s: GLfloat,
-                     t: GLfloat
-
-glTexCoord2fv proto WINAPI \
-                     v: ptr GLfloat
-
-glTexCoord2i proto WINAPI \
-                     s: GLint,
-                     t: GLint
-
-glTexCoord2iv proto WINAPI \
-                     v: ptr GLint
-
-glTexCoord2s proto WINAPI \
-                     s: GLshort,
-                     t: GLshort
-
-glTexCoord2sv proto WINAPI \
-                     v: ptr GLshort
-
-glTexCoord3d proto WINAPI \
-                     s: GLdouble,
-                     t: GLdouble,
-                     r: GLdouble
-
-glTexCoord3dv proto WINAPI \
-                     v: ptr GLdouble
-
-glTexCoord3f proto WINAPI \
-                     s: GLfloat,
-                     t: GLfloat,
-                     r: GLfloat
-
-glTexCoord3fv proto WINAPI \
-                     v: ptr GLfloat
-
-glTexCoord3i proto WINAPI \
-                     s: GLint,
-                     t: GLint,
-                     r: GLint
-
-glTexCoord3iv proto WINAPI \
-                     v: ptr GLint
-
-glTexCoord3s proto WINAPI \
-                     s: GLshort,
-                     t: GLshort,
-                     r: GLshort
-
-glTexCoord3sv proto WINAPI \
-                     v: ptr GLshort
-
-glTexCoord4d proto WINAPI \
-                     s: GLdouble,
-                     t: GLdouble,
-                     r: GLdouble,
-                     q: GLdouble
-
-glTexCoord4dv proto WINAPI \
-                     v: ptr GLdouble
-
-glTexCoord4f proto WINAPI \
-                     s: GLfloat,
-                     t: GLfloat,
-                     r: GLfloat,
-                     q: GLfloat
-
-glTexCoord4fv proto WINAPI \
-                     v: ptr GLfloat
-
-glTexCoord4i proto WINAPI \
-                     s: GLint,
-                     t: GLint,
-                     r: GLint,
-                     q: GLint
-
-glTexCoord4iv proto WINAPI \
-                     v: ptr GLint
-
-glTexCoord4s proto WINAPI \
-                     s: GLshort,
-                     t: GLshort,
-                     r: GLshort,
-                     q: GLshort
-
-glTexCoord4sv proto WINAPI \
-                     v: ptr GLshort
-
-glTexCoordPointer proto WINAPI \
-                  size: GLint,
-                  type: GLenum,
-                stride: GLsizei,
-               pointer: ptr GLvoid
-
-glTexEnvf proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                 param: GLfloat
-
-glTexEnvfv proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glTexEnvi proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                 param: GLint
-
-glTexEnviv proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glTexGend proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                 param: GLdouble
-
-glTexGendv proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                params: ptr GLdouble
-
-glTexGenf proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                 param: GLfloat
-
-glTexGenfv proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glTexGeni proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                 param: GLint
-
-glTexGeniv proto WINAPI \
-                 coord: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glTexImage1D proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-        internalformat: GLint,
-                 width: GLsizei,
-                border: GLint,
-                format: GLenum,
-                  type: GLenum,
-                pixels: ptr GLvoid
-
-glTexImage2D proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-        internalformat: GLint,
-                 width: GLsizei,
-                height: GLsizei,
-                border: GLint,
-                format: GLenum,
-                  type: GLenum,
-                pixels: ptr GLvoid
-
-glTexParameterf proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                 param: GLfloat
-
-glTexParameterfv proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                params: ptr GLfloat
-
-glTexParameteri proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                 param: GLint
-
-glTexParameteriv proto WINAPI \
-                target: GLenum,
-                 pname: GLenum,
-                params: ptr GLint
-
-glTexSubImage1D proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-               xoffset: GLint,
-                 width: GLsizei,
-                format: GLenum,
-                  type: GLenum,
-                pixels: ptr GLvoid
-
-glTexSubImage2D proto WINAPI \
-                target: GLenum,
-                 level: GLint,
-               xoffset: GLint,
-               yoffset: GLint,
-                 width: GLsizei,
-                height: GLsizei,
-                format: GLenum,
-                  type: GLenum,
-                pixels: ptr GLvoid
-
-glTranslated proto WINAPI \
-                     x: GLdouble,
-                     y: GLdouble,
-                     z: GLdouble
-
-glTranslatef proto WINAPI \
-                     x: GLfloat,
-                     y: GLfloat,
-                     z: GLfloat
-
-glVertex2d proto WINAPI \
-                     x: GLdouble,
-                     y: GLdouble
-
-glVertex2dv proto WINAPI \
-                     v: ptr GLdouble
-
-glVertex2f proto WINAPI \
-                     x: GLfloat,
-                     y: GLfloat
-
-glVertex2fv proto WINAPI \
-                     v: ptr GLfloat
-
-glVertex2i proto WINAPI \
-                     x: GLint,
-                     y: GLint
-
-glVertex2iv proto WINAPI \
-                     v: ptr GLint
-
-glVertex2s proto WINAPI \
-                     x: GLshort,
-                     y: GLshort
-
-glVertex2sv proto WINAPI \
-                     v: ptr GLshort
-
-glVertex3d proto WINAPI \
-                     x: GLdouble,
-                     y: GLdouble,
-                     z: GLdouble
-
-glVertex3dv proto WINAPI \
-                     v: ptr GLdouble
-
-glVertex3f proto WINAPI \
-                     x: GLfloat,
-                     y: GLfloat,
-                     z: GLfloat
-
-glVertex3fv proto WINAPI \
-                     v: ptr GLfloat
-
-glVertex3i proto WINAPI \
-                     x: GLint,
-                     y: GLint,
-                     z: GLint
-
-glVertex3iv proto WINAPI \
-                     v: ptr GLint
-
-glVertex3s proto WINAPI \
-                     x: GLshort,
-                     y: GLshort,
-                     z: GLshort
-
-glVertex3sv proto WINAPI \
-                     v: ptr GLshort
-
-glVertex4d proto WINAPI \
-                     x: GLdouble,
-                     y: GLdouble,
-                     z: GLdouble,
-                     w: GLdouble
-
-glVertex4dv proto WINAPI \
-                     v: ptr GLdouble
-
-glVertex4f proto WINAPI \
-                     x: GLfloat,
-                     y: GLfloat,
-                     z: GLfloat,
-                     w: GLfloat
-
-glVertex4fv proto WINAPI \
-                     v: ptr GLfloat
-
-glVertex4i proto WINAPI \
-                     x: GLint,
-                     y: GLint,
-                     z: GLint,
-                     w: GLint
-
-glVertex4iv proto WINAPI \
-                     v: ptr GLint
-
-glVertex4s proto WINAPI \
-                     x: GLshort,
-                     y: GLshort,
-                     z: GLshort,
-                     w: GLshort
-
-glVertex4sv proto WINAPI \
-                     v: ptr GLshort
-
-glVertexPointer proto WINAPI \
-                  size: GLint,
-                  type: GLenum,
-                stride: GLsizei,
-               pointer: ptr GLvoid
-
-glViewport proto WINAPI \
-                     x: GLint,
-                     y: GLint,
-                 width: GLsizei,
-                height: GLsizei
-
-
+glPushName proto WINAPI :GLuint
+glRasterPos2d proto WINAPI :GLdouble, :GLdouble
+glRasterPos2dv proto WINAPI :ptr
+glRasterPos2f proto WINAPI :GLfloat, :GLfloat
+glRasterPos2fv proto WINAPI :ptr
+glRasterPos2i proto WINAPI :GLint, :GLint
+glRasterPos2iv proto WINAPI :ptr
+glRasterPos2s proto WINAPI :GLshort, :GLshort
+glRasterPos2sv proto WINAPI :ptr
+glRasterPos3d proto WINAPI :GLdouble, :GLdouble, :GLdouble
+glRasterPos3dv proto WINAPI :ptr
+glRasterPos3f proto WINAPI :GLfloat, :GLfloat, :GLfloat
+glRasterPos3fv proto WINAPI :ptr
+glRasterPos3i proto WINAPI :GLint, :GLint, :GLint
+glRasterPos3iv proto WINAPI :ptr
+glRasterPos3s proto WINAPI :GLshort, :GLshort, :GLshort
+glRasterPos3sv proto WINAPI :ptr
+glRasterPos4d proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble
+glRasterPos4dv proto WINAPI :ptr
+glRasterPos4f proto WINAPI :GLfloat, :GLfloat, :GLfloat, :GLfloat
+glRasterPos4fv proto WINAPI :ptr
+glRasterPos4i proto WINAPI :GLint, :GLint, :GLint, :GLint
+glRasterPos4iv proto WINAPI :ptr
+glRasterPos4s proto WINAPI :GLshort, :GLshort, :GLshort, :GLshort
+glRasterPos4sv proto WINAPI :ptr
+glReadBuffer proto WINAPI :GLenum
+glReadPixels proto WINAPI :GLint, :GLint, :GLsizei, :GLsizei, :GLenum, :GLenum, :ptr
+glRectd proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble
+glRectdv proto WINAPI :ptr, :ptr
+glRectf proto WINAPI :GLfloat, :GLfloat, :GLfloat, :GLfloat
+glRectfv proto WINAPI :ptr, :ptr
+glRecti proto WINAPI :GLint, :GLint, :GLint, :GLint
+glRectiv proto WINAPI :ptr, :ptr
+glRects proto WINAPI :GLshort, :GLshort, :GLshort, :GLshort
+glRectsv proto WINAPI :ptr, :ptr
+glRenderMode proto WINAPI :GLenum
+glRotated proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble
+glRotatef proto WINAPI :GLfloat, :GLfloat, :GLfloat, :GLfloat
+glScaled proto WINAPI :GLdouble, :GLdouble, :GLdouble
+glScalef proto WINAPI :GLfloat, :GLfloat, :GLfloat
+glScissor proto WINAPI :GLint, :GLint, :GLsizei, :GLsizei
+glSelectBuffer proto WINAPI :GLsizei, :ptr
+glShadeModel proto WINAPI :GLenum
+glStencilFunc proto WINAPI :GLenum, :GLint, :GLuint
+glStencilMask proto WINAPI :GLuint
+glStencilOp proto WINAPI :GLenum, :GLenum, :GLenum
+glTexCoord1d proto WINAPI :GLdouble
+glTexCoord1dv proto WINAPI :ptr
+glTexCoord1f proto WINAPI :GLfloat
+glTexCoord1fv proto WINAPI :ptr
+glTexCoord1i proto WINAPI :GLint
+glTexCoord1iv proto WINAPI :ptr
+glTexCoord1s proto WINAPI :GLshort
+glTexCoord1sv proto WINAPI :ptr
+glTexCoord2d proto WINAPI :GLdouble, :GLdouble
+glTexCoord2dv proto WINAPI :ptr
+glTexCoord2f proto WINAPI :GLfloat, :GLfloat
+glTexCoord2fv proto WINAPI :ptr
+glTexCoord2i proto WINAPI :GLint, :GLint
+glTexCoord2iv proto WINAPI :ptr
+glTexCoord2s proto WINAPI :GLshort, :GLshort
+glTexCoord2sv proto WINAPI :ptr
+glTexCoord3d proto WINAPI :GLdouble, :GLdouble, :GLdouble
+glTexCoord3dv proto WINAPI :ptr
+glTexCoord3f proto WINAPI :GLfloat, :GLfloat, :GLfloat
+glTexCoord3fv proto WINAPI :ptr
+glTexCoord3i proto WINAPI :GLint, :GLint, :GLint
+glTexCoord3iv proto WINAPI :ptr
+glTexCoord3s proto WINAPI :GLshort, :GLshort, :GLshort
+glTexCoord3sv proto WINAPI :ptr
+glTexCoord4d proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble
+glTexCoord4dv proto WINAPI :ptr
+glTexCoord4f proto WINAPI :GLfloat, :GLfloat, :GLfloat, :GLfloat
+glTexCoord4fv proto WINAPI :ptr
+glTexCoord4i proto WINAPI :GLint, :GLint, :GLint, :GLint
+glTexCoord4iv proto WINAPI :ptr
+glTexCoord4s proto WINAPI :GLshort, :GLshort, :GLshort, :GLshort
+glTexCoord4sv proto WINAPI :ptr
+glTexCoordPointer proto WINAPI :GLint, :GLenum, :GLsizei, :ptr
+glTexEnvf proto WINAPI :GLenum, :GLenum, :GLfloat
+glTexEnvfv proto WINAPI :GLenum, :GLenum, :ptr
+glTexEnvi proto WINAPI :GLenum, :GLenum, :GLint
+glTexEnviv proto WINAPI :GLenum, :GLenum, :ptr
+glTexGend proto WINAPI :GLenum, :GLenum, :GLdouble
+glTexGendv proto WINAPI :GLenum, :GLenum, :ptr
+glTexGenf proto WINAPI :GLenum, :GLenum, :GLfloat
+glTexGenfv proto WINAPI :GLenum, :GLenum, :ptr
+glTexGeni proto WINAPI :GLenum, :GLenum, :GLint
+glTexGeniv proto WINAPI :GLenum, :GLenum, :ptr
+glTexImage1D proto WINAPI :GLenum, :GLint, :GLint, :GLsizei, :GLint, :GLenum, :GLenum, :ptr
+glTexImage2D proto WINAPI :GLenum, :GLint, :GLint, :GLsizei, :GLsizei, :GLint, :GLenum, :GLenum, :ptr
+glTexParameterf proto WINAPI :GLenum, :GLenum, :GLfloat
+glTexParameterfv proto WINAPI :GLenum, :GLenum, :ptr
+glTexParameteri proto WINAPI :GLenum, :GLenum, :GLint
+glTexParameteriv proto WINAPI :GLenum, :GLenum, :ptr
+glTexSubImage1D proto WINAPI :GLenum, :GLint, :GLint, :GLsizei, :GLenum, :GLenum, :ptr
+glTexSubImage2D proto WINAPI :GLenum, :GLint, :GLint, :GLint, :GLsizei, :GLsizei, :GLenum, :GLenum, :ptr
+glTranslated proto WINAPI :GLdouble, :GLdouble, :GLdouble
+glTranslatef proto WINAPI :GLfloat, :GLfloat, :GLfloat
+glVertex2d proto WINAPI :GLdouble, :GLdouble
+glVertex2dv proto WINAPI :ptr
+glVertex2f proto WINAPI :GLfloat, :GLfloat
+glVertex2fv proto WINAPI :ptr
+glVertex2i proto WINAPI :GLint, :GLint
+glVertex2iv proto WINAPI :ptr
+glVertex2s proto WINAPI :GLshort, :GLshort
+glVertex2sv proto WINAPI :ptr
+glVertex3d proto WINAPI :GLdouble, :GLdouble, :GLdouble
+glVertex3dv proto WINAPI :ptr
+glVertex3f proto WINAPI :GLfloat, :GLfloat, :GLfloat
+glVertex3fv proto WINAPI :ptr
+glVertex3i proto WINAPI :GLint, :GLint, :GLint
+glVertex3iv proto WINAPI :ptr
+glVertex3s proto WINAPI :GLshort, :GLshort, :GLshort
+glVertex3sv proto WINAPI :ptr
+glVertex4d proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble
+glVertex4dv proto WINAPI :ptr
+glVertex4f proto WINAPI :GLfloat, :GLfloat, :GLfloat, :GLfloat
+glVertex4fv proto WINAPI :ptr
+glVertex4i proto WINAPI :GLint, :GLint, :GLint, :GLint
+glVertex4iv proto WINAPI :ptr
+glVertex4s proto WINAPI :GLshort, :GLshort, :GLshort, :GLshort
+glVertex4sv proto WINAPI :ptr
+glVertexPointer proto WINAPI :GLint, :GLenum, :GLsizei, :ptr
+glViewport proto WINAPI :GLint, :GLint, :GLsizei, :GLsizei
 
 CALLBACK(PFNGLARRAYELEMENTEXTPROC, :GLint)
 CALLBACK(PFNGLDRAWARRAYSEXTPROC, :GLenum, :GLint, :GLsizei)
-CALLBACK(PFNGLVERTEXPOINTEREXTPROC, :GLint, :GLenum, :GLsizei, :GLsizei, :ptr GLvoid)
-CALLBACK(PFNGLNORMALPOINTEREXTPROC, :GLenum, :GLsizei, :GLsizei, :ptr GLvoid)
-CALLBACK(PFNGLCOLORPOINTEREXTPROC, :GLint, :GLenum, :GLsizei, :GLsizei, :ptr GLvoid)
-CALLBACK(PFNGLINDEXPOINTEREXTPROC, :GLenum, :GLsizei, :GLsizei, :ptr GLvoid)
-CALLBACK(PFNGLTEXCOORDPOINTEREXTPROC, :GLint, :GLenum, :GLsizei, :GLsizei, :ptr GLvoid)
-CALLBACK(PFNGLEDGEFLAGPOINTEREXTPROC, :GLsizei, :GLsizei, :ptr GLboolean)
-CALLBACK(PFNGLGETPOINTERVEXTPROC, :GLenum, :ptr GLvoid)
-CALLBACK(PFNGLARRAYELEMENTARRAYEXTPROC, :GLenum, :GLsizei, :ptr GLvoid)
-
-CALLBACK(PFNGLDRAWRANGEELEMENTSWINPROC, :GLenum, :GLuint, :GLuint, :GLsizei, :GLenum, :ptr GLvoid)
-
+CALLBACK(PFNGLVERTEXPOINTEREXTPROC, :GLint, :GLenum, :GLsizei, :GLsizei, :ptr)
+CALLBACK(PFNGLNORMALPOINTEREXTPROC, :GLenum, :GLsizei, :GLsizei, :ptr)
+CALLBACK(PFNGLCOLORPOINTEREXTPROC, :GLint, :GLenum, :GLsizei, :GLsizei, :ptr)
+CALLBACK(PFNGLINDEXPOINTEREXTPROC, :GLenum, :GLsizei, :GLsizei, :ptr)
+CALLBACK(PFNGLTEXCOORDPOINTEREXTPROC, :GLint, :GLenum, :GLsizei, :GLsizei, :ptr)
+CALLBACK(PFNGLEDGEFLAGPOINTEREXTPROC, :GLsizei, :GLsizei, :ptr)
+CALLBACK(PFNGLGETPOINTERVEXTPROC, :GLenum, :ptr)
+CALLBACK(PFNGLARRAYELEMENTARRAYEXTPROC, :GLenum, :GLsizei, :ptr)
+CALLBACK(PFNGLDRAWRANGEELEMENTSWINPROC, :GLenum, :GLuint, :GLuint, :GLsizei, :GLenum, :ptr)
 CALLBACK(PFNGLADDSWAPHINTRECTWINPROC, :GLint, :GLint, :GLsizei, :GLsizei)
-
-CALLBACK(PFNGLCOLORTABLEEXTPROC, :GLenum, :GLenum, :GLsizei, :GLenum, :GLenum, :ptr GLvoid)
-CALLBACK(PFNGLCOLORSUBTABLEEXTPROC, :GLenum, :GLsizei, :GLsizei, :GLenum, :GLenum, :ptr GLvoid)
-CALLBACK(PFNGLGETCOLORTABLEEXTPROC, :GLenum, :GLenum, :GLenum, :ptr GLvoid)
-CALLBACK(PFNGLGETCOLORTABLEPARAMETERIVEXTPROC, :GLenum, :GLenum, :ptr GLint)
-CALLBACK(PFNGLGETCOLORTABLEPARAMETERFVEXTPROC, :GLenum, :GLenum, :ptr GLfloat)
+CALLBACK(PFNGLCOLORTABLEEXTPROC, :GLenum, :GLenum, :GLsizei, :GLenum, :GLenum, :ptr)
+CALLBACK(PFNGLCOLORSUBTABLEEXTPROC, :GLenum, :GLsizei, :GLsizei, :GLenum, :GLenum, :ptr)
+CALLBACK(PFNGLGETCOLORTABLEEXTPROC, :GLenum, :GLenum, :GLenum, :ptr)
+CALLBACK(PFNGLGETCOLORTABLEPARAMETERIVEXTPROC, :GLenum, :GLenum, :ptr)
+CALLBACK(PFNGLGETCOLORTABLEPARAMETERFVEXTPROC, :GLenum, :GLenum, :ptr)
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 

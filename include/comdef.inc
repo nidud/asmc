@@ -186,9 +186,7 @@ _com_dispatch_raw_method proto :ptr IDispatch, :DISPID, :WORD, :VARTYPE, :ptr, :
 
     .static ErrorMessage {
         .if this.m_pszMsg == NULL
-            FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER or \
-                FORMAT_MESSAGE_FROM_SYSTEM or \
-                FORMAT_MESSAGE_IGNORE_INSERTS,
+            FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER or FORMAT_MESSAGE_FROM_SYSTEM or FORMAT_MESSAGE_IGNORE_INSERTS,
                 NULL,
                 this.m_hresult,
                 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),

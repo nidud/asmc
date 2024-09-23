@@ -750,184 +750,65 @@ endif
 ifndef _APISET_EVENTING
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;ULONG
-StartTraceW proto __cdecl \
-	   TraceHandle: PTRACEHANDLE,
-	  InstanceName: LPCWSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
-
+StartTraceW proto __cdecl :PTRACEHANDLE, :LPCWSTR, :PEVENT_TRACE_PROPERTIES
+endif
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+StartTraceA proto __cdecl :PTRACEHANDLE, :LPCSTR, :PEVENT_TRACE_PROPERTIES
+endif
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+StopTraceW proto __cdecl :TRACEHANDLE, :LPCWSTR, :PEVENT_TRACE_PROPERTIES
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;ULONG
-StartTraceA proto __cdecl \
-	   TraceHandle: PTRACEHANDLE,
-	  InstanceName: LPCSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
-
+StopTraceA proto __cdecl :TRACEHANDLE, :LPCSTR, :PEVENT_TRACE_PROPERTIES
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;ULONG
-StopTraceW proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCWSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
-
+QueryTraceW proto __cdecl :TRACEHANDLE, :LPCWSTR, :PEVENT_TRACE_PROPERTIES
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;ULONG
-StopTraceA proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
-
+QueryTraceA proto __cdecl :TRACEHANDLE, :LPCSTR, :PEVENT_TRACE_PROPERTIES
+UpdateTraceW proto __cdecl :TRACEHANDLE, :LPCWSTR, :PEVENT_TRACE_PROPERTIES
+UpdateTraceA proto __cdecl :TRACEHANDLE, :LPCSTR, :PEVENT_TRACE_PROPERTIES
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;ULONG
-QueryTraceW proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCWSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
-
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;ULONG
-QueryTraceA proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
-;ULONG
-UpdateTraceW proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCWSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
-;ULONG
-UpdateTraceA proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
 if (WINVER GE _WIN32_WINNT_WINXP)
-
-;ULONG
-FlushTraceW proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCWSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
+FlushTraceW proto __cdecl :TRACEHANDLE, :LPCWSTR, :PEVENT_TRACE_PROPERTIES
 endif
-
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 if (WINVER GE _WIN32_WINNT_WINXP)
-
-;ULONG
-FlushTraceA proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES
-
+FlushTraceA proto __cdecl :TRACEHANDLE, :LPCSTR, :PEVENT_TRACE_PROPERTIES
 endif
-
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;ULONG
-ControlTraceW proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCWSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES,
-	   ControlCode: ULONG
-
+ControlTraceW proto __cdecl :TRACEHANDLE, :LPCWSTR, :PEVENT_TRACE_PROPERTIES, :ULONG
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;ULONG
-ControlTraceA proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	  InstanceName: LPCSTR,
-	    Properties: PEVENT_TRACE_PROPERTIES,
-	   ControlCode: ULONG
-
-;ULONG
-QueryAllTracesW proto __cdecl \
-	 PropertyArray: ptr PEVENT_TRACE_PROPERTIES,
-    PropertyArrayCount: ULONG,
-	   LoggerCount: PULONG
-
-;ULONG
-QueryAllTracesA proto __cdecl \
-	 PropertyArray: ptr PEVENT_TRACE_PROPERTIES,
-    PropertyArrayCount: ULONG,
-	   LoggerCount: PULONG
-
-
+ControlTraceA proto __cdecl :TRACEHANDLE, :LPCSTR, :PEVENT_TRACE_PROPERTIES, :ULONG
+QueryAllTracesW proto __cdecl :ptr, :ULONG, :PULONG
+QueryAllTracesA proto __cdecl :ptr, :ULONG, :PULONG
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;ULONG
-EnableTrace proto __cdecl \
-		Enable: ULONG,
-	    EnableFlag: ULONG,
-	   EnableLevel: ULONG,
-	   ControlGuid: LPCGUID,
-	   TraceHandle: TRACEHANDLE
-
-
+EnableTrace proto __cdecl :ULONG, :ULONG, :ULONG, :LPCGUID, :TRACEHANDLE
 endif
-endif ;; _APISET_EVENTING
+endif
 
 PEVENT_FILTER_DESCRIPTOR typedef ptr EVENT_FILTER_DESCRIPTOR
 
 ifndef _APISET_EVENTING
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 if (WINVER GE _WIN32_WINNT_VISTA)
-
-;ULONG
-EnableTraceEx proto __cdecl \
-	    ProviderId: LPCGUID,
-	      SourceId: LPCGUID,
-	   TraceHandle: TRACEHANDLE,
-	     IsEnabled: ULONG,
-		 Level: UCHAR,
-       MatchAnyKeyword: ULONGLONG,
-       MatchAllKeyword: ULONGLONG,
-	EnableProperty: ULONG,
-      EnableFilterDesc: PEVENT_FILTER_DESCRIPTOR
-
+EnableTraceEx proto __cdecl :LPCGUID, :LPCGUID, :TRACEHANDLE, :ULONG, :UCHAR, :ULONGLONG, :ULONGLONG, :ULONG, :PEVENT_FILTER_DESCRIPTOR
 endif
-
 endif
-
-endif ;; _APISET_EVENTING
+endif
 
 ENABLE_TRACE_PARAMETERS_VERSION equ 1
 ENABLE_TRACE_PARAMETERS_VERSION_2 equ 2
@@ -952,27 +833,12 @@ ENABLE_TRACE_PARAMETERS ENDS
 PENABLE_TRACE_PARAMETERS typedef ptr ENABLE_TRACE_PARAMETERS
 
 ifndef _APISET_EVENTING
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-;ULONG
-EnableTraceEx2 proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	    ProviderId: LPCGUID,
-	   ControlCode: ULONG,
-		 Level: UCHAR,
-       MatchAnyKeyword: ULONGLONG,
-       MatchAllKeyword: ULONGLONG,
-	       Timeout: ULONG,
-      EnableParameters: PENABLE_TRACE_PARAMETERS
-
+EnableTraceEx2 proto __cdecl :TRACEHANDLE, :LPCGUID, :ULONG, :UCHAR, :ULONGLONG, :ULONGLONG, :ULONG, :PENABLE_TRACE_PARAMETERS
 endif
-
 endif
-
-endif ;; _APISET_EVENTING
+endif
 
 .enum TRACE_QUERY_INFO_CLASS {
     TraceGuidQueryList,
@@ -992,25 +858,12 @@ endif ;; _APISET_EVENTING
 TRACE_INFO_CLASS typedef TRACE_QUERY_INFO_CLASS
 
 ifndef _APISET_EVENTING
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 if (WINVER GE _WIN32_WINNT_VISTA)
-
-;ULONG
-EnumerateTraceGuidsEx proto __cdecl \
-   TraceQueryInfoClass: TRACE_QUERY_INFO_CLASS,
-	      InBuffer: PVOID,
-	  InBufferSize: ULONG,
-	     OutBuffer: PVOID,
-	 OutBufferSize: ULONG,
-	  ReturnLength: PULONG
-
+EnumerateTraceGuidsEx proto __cdecl :TRACE_QUERY_INFO_CLASS, :ptr, :ULONG, :ptr, :ULONG, :PULONG
 endif
-
 endif
-
-endif ;; _APISET_EVENTING
+endif
 
 CLASSIC_EVENT_ID	STRUC
 EventGuid		GUID <>
@@ -1028,178 +881,54 @@ PTRACE_PROFILE_INTERVAL typedef ptr TRACE_PROFILE_INTERVAL
 ifndef _APISET_EVENTING
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 if (WINVER GE _WIN32_WINNT_WIN7)
-
-;ULONG
-TraceSetInformation proto __cdecl \
-	 SessionHandle: TRACEHANDLE,
-      InformationClass: TRACE_INFO_CLASS,
-      TraceInformation: PVOID,
-     InformationLength: ULONG
-
+TraceSetInformation proto __cdecl :TRACEHANDLE, :TRACE_INFO_CLASS, :ptr, :ULONG
 endif
-
 if (WINVER GE _WIN32_WINNT_WIN8)
-
-;ULONG
-TraceQueryInformation proto __cdecl \
-	 SessionHandle: TRACEHANDLE,
-      InformationClass: TRACE_INFO_CLASS,
-      TraceInformation: PVOID,
-     InformationLength: ULONG,
-	  ReturnLength: PULONG
-
+TraceQueryInformation proto __cdecl :TRACEHANDLE, :TRACE_INFO_CLASS, :ptr, :ULONG, :PULONG
 endif
-
-;ULONG
-CreateTraceInstanceId proto __cdecl \
-	     RegHandle: HANDLE,
-	      InstInfo: PEVENT_INSTANCE_INFO
-
-;ULONG
-TraceEvent proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	    EventTrace: PEVENT_TRACE_HEADER
-
-;ULONG
-TraceEventInstance proto __cdecl \
-	   TraceHandle: TRACEHANDLE,
-	    EventTrace: PEVENT_INSTANCE_HEADER,
-	      InstInfo: PEVENT_INSTANCE_INFO,
-	ParentInstInfo: PEVENT_INSTANCE_INFO
-
-
+CreateTraceInstanceId proto __cdecl :HANDLE, :PEVENT_INSTANCE_INFO
+TraceEvent proto __cdecl :TRACEHANDLE, :PEVENT_TRACE_HEADER
+TraceEventInstance proto __cdecl :TRACEHANDLE, :PEVENT_INSTANCE_HEADER, :PEVENT_INSTANCE_INFO, :PEVENT_INSTANCE_INFO
 endif
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;ULONG
-RegisterTraceGuidsW proto __cdecl \
-	RequestAddress: WMIDPREQUEST,
-	RequestContext: PVOID,
-	   ControlGuid: LPCGUID,
-	     GuidCount: ULONG,
-	  TraceGuidReg: PTRACE_GUID_REGISTRATION,
-	  MofImagePath: LPCWSTR,
-       MofResourceName: LPCWSTR,
-    RegistrationHandle: PTRACEHANDLE
-
-
+RegisterTraceGuidsW proto __cdecl :WMIDPREQUEST, :ptr, :LPCGUID, :ULONG, :PTRACE_GUID_REGISTRATION, :LPCWSTR, :LPCWSTR, :PTRACEHANDLE
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;ULONG
-RegisterTraceGuidsA proto __cdecl \
-	RequestAddress: WMIDPREQUEST,
-	RequestContext: PVOID,
-	   ControlGuid: LPCGUID,
-	     GuidCount: ULONG,
-	  TraceGuidReg: PTRACE_GUID_REGISTRATION,
-	  MofImagePath: LPCSTR,
-       MofResourceName: LPCSTR,
-    RegistrationHandle: PTRACEHANDLE
-
-
+RegisterTraceGuidsA proto __cdecl :WMIDPREQUEST, :ptr, :LPCGUID, :ULONG, :PTRACE_GUID_REGISTRATION, :LPCSTR, :LPCSTR, :PTRACEHANDLE
 if (WINVER GE _WIN32_WINNT_WINXP)
-
-;ULONG
-EnumerateTraceGuids proto __cdecl \
-   GuidPropertiesArray: ptr PTRACE_GUID_PROPERTIES,
-    PropertyArrayCount: ULONG,
-	     GuidCount: PULONG
-
+EnumerateTraceGuids proto __cdecl :ptr, :ULONG, :PULONG
 endif
-
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;ULONG
-UnregisterTraceGuids proto __cdecl \
-    RegistrationHandle: TRACEHANDLE
-
-GetTraceLoggerHandle proto __cdecl \
-		Buffer: PVOID
-
-;UCHAR
-GetTraceEnableLevel proto __cdecl \
-	   TraceHandle: TRACEHANDLE
-
-;ULONG
-GetTraceEnableFlags proto __cdecl \
-	   TraceHandle: TRACEHANDLE
-
-
-ETW_APP_DECLSPEC_DEPRECATED
-
-OpenTraceW proto __cdecl \
-	       Logfile: PEVENT_TRACE_LOGFILEW
-
-ETW_APP_DECLSPEC_DEPRECATED
-;ULONG
-ProcessTrace proto __cdecl \
-	   HandleArray: PTRACEHANDLE,
-	   HandleCount: ULONG,
-	     StartTime: LPFILETIME,
-	       EndTime: LPFILETIME
-
-
-ETW_APP_DECLSPEC_DEPRECATED
-;ULONG
-CloseTrace proto __cdecl \
-	   TraceHandle: TRACEHANDLE
-
+UnregisterTraceGuids proto __cdecl :TRACEHANDLE
+GetTraceLoggerHandle proto __cdecl :ptr
+GetTraceEnableLevel proto __cdecl :TRACEHANDLE
+GetTraceEnableFlags proto __cdecl :TRACEHANDLE
+OpenTraceW proto __cdecl :PEVENT_TRACE_LOGFILEW
+ProcessTrace proto __cdecl :PTRACEHANDLE, :ULONG, :LPFILETIME, :LPFILETIME
+CloseTrace proto __cdecl :TRACEHANDLE
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-OpenTraceA proto __cdecl \
-	       Logfile: PEVENT_TRACE_LOGFILEA
-
-;ULONG
-SetTraceCallback proto __cdecl \
-		 pGuid: LPCGUID,
-	 EventCallback: PEVENT_CALLBACK
-
-;ULONG
-RemoveTraceCallback proto __cdecl \
-		 pGuid: LPCGUID
-
-
+OpenTraceA proto __cdecl :PEVENT_TRACE_LOGFILEA
+SetTraceCallback proto __cdecl :LPCGUID, :PEVENT_CALLBACK
+RemoveTraceCallback proto __cdecl :LPCGUID
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-;ULONG
-TraceMessage proto __Cdecl \
-	  LoggerHandle: TRACEHANDLE,
-	  MessageFlags: ULONG,
-	   MessageGuid: LPCGUID,
-	 MessageNumber: USHORT,
-		      : vararg
-
+TraceMessage proto __Cdecl :TRACEHANDLE, :ULONG, :LPCGUID, :USHORT, :vararg
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;ULONG
-TraceMessageVa proto __cdecl \
-	  LoggerHandle: TRACEHANDLE,
-	  MessageFlags: ULONG,
-	   MessageGuid: LPCGUID,
-	 MessageNumber: USHORT,
-	MessageArgList: va_list
-
-
+TraceMessageVa proto __cdecl :TRACEHANDLE, :ULONG, :LPCGUID, :USHORT, :va_list
 endif
-endif ;; _APISET_EVENTING
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
 INVALID_PROCESSTRACE_HANDLE equ INVALID_HANDLE_VALUE
-
 endif
 
 ifndef _APISET_EVENTING

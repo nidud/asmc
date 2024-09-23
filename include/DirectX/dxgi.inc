@@ -288,15 +288,8 @@ define __IDXGIFactory_INTERFACE_DEFINED__
    .ends
 endif
 
-;HRESULT
-CreateDXGIFactory proto WINAPI \
-		  riid: REFIID,
-	     ppFactory: PVOID
-
-;HRESULT
-CreateDXGIFactory1 proto WINAPI \
-		  riid: REFIID,
-	     ppFactory: PVOID
+CreateDXGIFactory proto WINAPI :REFIID, :ptr
+CreateDXGIFactory1 proto WINAPI :REFIID, :ptr
 
 ifndef __IDXGIDevice_INTERFACE_DEFINED__
 define __IDXGIDevice_INTERFACE_DEFINED__

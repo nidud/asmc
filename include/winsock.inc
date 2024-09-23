@@ -528,266 +528,48 @@ ESTALE			equ WSAESTAE
 EREMOTE			equ WSAEREMOTE
 endif
 
-
-accept proto WINAPI \
-		 _addr: ptr sockaddr,
-	       addrlen: ptr SINT
-
-;int
-bind proto WINAPI \
-		     s: SOCKET,
-		 _addr: ptr sockaddr,
-	       namelen: SINT
-
-;int
-closesocket proto WINAPI \
-		     s: SOCKET
-
-;int
-connect proto WINAPI \
-		     s: SOCKET,
-		  name: ptr sockaddr,
-	       namelen: SINT
-
-;int
-ioctlsocket proto WINAPI \
-		     s: SOCKET,
-		   cmd: LONG,
-		  argp: ptr ULONG
-
-;int
-getpeername proto WINAPI \
-		     s: SOCKET,
-		  name: ptr sockaddr,
-	       namelen: ptr SINT
-
-;int
-getsockname proto WINAPI \
-		     s: SOCKET,
-		  name: ptr sockaddr,
-	       namelen: ptr SINT
-
-;int
-getsockopt proto WINAPI \
-		     s: SOCKET,
-		 level: SINT,
-	       optname: SINT,
-		optval: LPSTR,
-		optlen: ptr SINT
-
-;ULONG
-htonl proto WINAPI \
-	      hostlong: ULONG
-
-WORD  htons(WORD hostshort);
-
-;ULONG
-inet_addr proto WINAPI \
-		    cp: LPSTR
-
-;LPSTR
-inet_ntoa proto WINAPI \
-		      : in_addr
-
-;int
-listen proto WINAPI \
-		     s: SOCKET,
-	       backlog: SINT
-
-;ULONG
-ntohl proto WINAPI \
-	       netlong: ULONG
-
-;WORD
-ntohs proto WINAPI \
-	      netshort: WORD
-
-;int
-recv proto WINAPI \
-		     s: SOCKET,
-		   buf: LPSTR,
-		   len: SINT,
-		 flags: SINT
-
-;int
-recvfrom proto WINAPI \
-		     s: SOCKET,
-		   buf: LPSTR,
-		   len: SINT,
-		 flags: SINT,
-		  from: ptr sockaddr,
-	       fromlen: ptr SINT
-
-;int
-select proto WINAPI \
-		  nfds: SINT,
-	       readfds: ptr fd_set,
-	      writefds: ptr fd_set,
-	     exceptfds: ptr fd_set,
-	       timeout: ptr timeval
-
-;int
-send proto WINAPI \
-		     s: SOCKET,
-		   buf: LPSTR,
-		   len: SINT,
-		 flags: SINT
-
-;int
-sendto proto WINAPI \
-		     s: SOCKET,
-		   buf: LPSTR,
-		   len: SINT,
-		 flags: SINT,
-		    to: ptr sockaddr,
-		 tolen: SINT
-
-;int
-setsockopt proto WINAPI \
-		     s: SOCKET,
-		 level: SINT,
-	       optname: SINT,
-		optval: LPSTR,
-		optlen: SINT
-
-;int
-shutdown proto WINAPI \
-		     s: SOCKET,
-		   how: SINT
-
-;SOCKET
-socket proto WINAPI \
-		    af: SINT,
-		  type: SINT,
-	      protocol: SINT
-
-
-;hostent *
-gethostbyaddr proto WINAPI \
-		 _addr: LPSTR,
-		   len: SINT,
-		  type: SINT
-
-hostent *
-gethostbyname proto WINAPI \
-		  name: LPSTR
-
-;int
-gethostname proto WINAPI \
-		  name: LPSTR,
-	       namelen: SINT
-
-;servent *
-getservbyport proto WINAPI \
-		  port: SINT,
-		_proto: LPSTR
-
-;servent *
-getservbyname proto WINAPI \
-		  name: LPSTR,
-		_proto: LPSTR
-
-;protoent *
-getprotobynumber proto WINAPI \
-		_proto: SINT
-
-;protoent *
-getprotobyname proto WINAPI \
-		  name: LPSTR
-
-
-;int
-WSAStartup proto WINAPI \
-      wVersionRequired: WORD,
-	     lpWSAData: LPWSADATA
-
-;int
-
-;void
-WSASetLastError proto WINAPI \
-		iError: SINT
-
-;int
-
-;BOOL
-
-;int
-
-FARPROC
-WSASetBlockingHook proto WINAPI \
-	   lpBlockFunc: FARPROC
-
-;int
-
-;HANDLE
-WSAAsyncGetServByName proto WINAPI \
-		  hWnd: HWND,
-		  wMsg: UINT,
-		  name: LPSTR,
-		_proto: LPSTR,
-		   buf: LPSTR,
-		buflen: SINT
-
-;HANDLE
-WSAAsyncGetServByPort proto WINAPI \
-		  hWnd: HWND,
-		  wMsg: UINT,
-		  port: SINT,
-		_proto: LPSTR,
-		   buf: LPSTR,
-		buflen: SINT
-
-;HANDLE
-WSAAsyncGetProtoByName proto WINAPI \
-		  hWnd: HWND,
-		  wMsg: UINT,
-		  name: LPSTR,
-		   buf: LPSTR,
-		buflen: SINT
-
-;HANDLE
-WSAAsyncGetProtoByNumber proto WINAPI \
-		  hWnd: HWND,
-		  wMsg: UINT,
-		number: SINT,
-		   buf: LPSTR,
-		buflen: SINT
-
-;HANDLE
-WSAAsyncGetHostByName proto WINAPI \
-		  hWnd: HWND,
-		  wMsg: UINT,
-		  name: LPSTR,
-		   buf: LPSTR,
-		buflen: SINT
-
-;HANDLE
-WSAAsyncGetHostByAddr proto WINAPI \
-		  hWnd: HWND,
-		  wMsg: UINT,
-		 _addr: LPSTR,
-		   len: SINT,
-		  type: SINT,
-		   buf: LPSTR,
-		buflen: SINT
-
-;int
-WSACancelAsyncRequest proto WINAPI \
-      hAsyncTaskHandle: HANDLE
-
-;int
-WSAAsyncSelect proto WINAPI \
-		     s: SOCKET,
-		  hWnd: HWND,
-		  wMsg: UINT,
-		lEvent: LONG
-
-;int
-WSARecvEx proto WINAPI \
-		     s: SOCKET,
-		   buf: LPSTR,
-		   len: SINT,
-		 flags: ptr SINT
+accept proto WINAPI :ptr, :ptr
+bind proto WINAPI :SOCKET, :ptr, :SINT
+closesocket proto WINAPI :SOCKET
+connect proto WINAPI :SOCKET, :ptr, :SINT
+ioctlsocket proto WINAPI :SOCKET, :LONG, :ptr
+getpeername proto WINAPI :SOCKET, :ptr, :ptr
+getsockname proto WINAPI :SOCKET, :ptr, :ptr
+getsockopt proto WINAPI :SOCKET, :SINT, :SINT, :LPSTR, :ptr
+htonl proto WINAPI :ULONG
+htons proto WINAPI :WORD
+inet_addr proto WINAPI :LPSTR
+inet_ntoa proto WINAPI :in_addr
+listen proto WINAPI :SOCKET, :SINT
+ntohl proto WINAPI :ULONG
+ntohs proto WINAPI :WORD
+recv proto WINAPI :SOCKET, :LPSTR, :SINT, :SINT
+recvfrom proto WINAPI :SOCKET, :LPSTR, :SINT, :SINT, :ptr, :ptr
+select proto WINAPI :SINT, :ptr, :ptr, :ptr, :ptr
+send proto WINAPI :SOCKET, :LPSTR, :SINT, :SINT
+sendto proto WINAPI :SOCKET, :LPSTR, :SINT, :SINT, :ptr, :SINT
+setsockopt proto WINAPI :SOCKET, :SINT, :SINT, :LPSTR, :SINT
+shutdown proto WINAPI :SOCKET, :SINT
+socket proto WINAPI :SINT, :SINT, :SINT
+gethostbyaddr proto WINAPI :LPSTR, :SINT, :SINT
+gethostbyname proto WINAPI :LPSTR
+gethostname proto WINAPI :LPSTR, :SINT
+getservbyport proto WINAPI :SINT, :LPSTR
+getservbyname proto WINAPI :LPSTR, :LPSTR
+getprotobynumber proto WINAPI :SINT
+getprotobyname proto WINAPI :LPSTR
+WSAStartup proto WINAPI :WORD, :LPWSADATA
+WSASetLastError proto WINAPI :SINT
+WSASetBlockingHook proto WINAPI :ptr
+WSAAsyncGetServByName proto WINAPI :HWND, :UINT, :LPSTR, :LPSTR, :LPSTR, :SINT
+WSAAsyncGetServByPort proto WINAPI :HWND, :UINT, :SINT, :LPSTR, :LPSTR, :SINT
+WSAAsyncGetProtoByName proto WINAPI :HWND, :UINT, :LPSTR, :LPSTR, :SINT
+WSAAsyncGetProtoByNumber proto WINAPI :HWND, :UINT, :SINT, :LPSTR, :SINT
+WSAAsyncGetHostByName proto WINAPI :HWND, :UINT, :LPSTR, :LPSTR, :SINT
+WSAAsyncGetHostByAddr proto WINAPI :HWND, :UINT, :LPSTR, :SINT, :SINT, :LPSTR, :SINT
+WSACancelAsyncRequest proto WINAPI :HANDLE
+WSAAsyncSelect proto WINAPI :SOCKET, :HWND, :UINT, :LONG
+WSARecvEx proto WINAPI :SOCKET, :LPSTR, :SINT, :ptr
 
 TRANSMIT_FILE_BUFFERS	STRUC
 Head			PVOID ?
@@ -802,37 +584,9 @@ TF_DISCONNECT		equ 0x01
 TF_REUSE_SOCKET		equ 0x02
 TF_WRITE_BEHIND		equ 0x04
 
-;BOOL
-TransmitFile proto WINAPI \
-	       hSocket: SOCKET,
-		 hFile: HANDLE,
- nNumberOfBytesToWrite: DWORD,
- nNumberOfBytesPerSend: DWORD,
-	  lpOverlapped: LPOVERLAPPED,
-     lpTransmitBuffers: LPTRANSMIT_FILE_BUFFERS,
-	    dwReserved: DWORD
-
-;BOOL
-AcceptEx proto WINAPI \
-	 sListenSocket: SOCKET,
-	 sAcceptSocket: SOCKET,
-	lpOutputBuffer: PVOID,
-   dwReceiveDataLength: DWORD,
-  dwLocalAddressLength: DWORD,
- dwRemoteAddressLength: DWORD,
-     lpdwBytesReceived: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-;VOID
-GetAcceptExSockaddrs WINAPI \
-	lpOutputBuffer: PVOID,
-   dwReceiveDataLength: DWORD,
-  dwLocalAddressLength: DWORD,
- dwRemoteAddressLength: DWORD,
-	 LocalSockaddr: PVOID,
-   LocalSockaddrLength: LPINT,
-	RemoteSockaddr: PVOID,
-  RemoteSockaddrLength: LPINT
+TransmitFile proto WINAPI :SOCKET, :HANDLE, :DWORD, :DWORD, :LPOVERLAPPED, :LPTRANSMIT_FILE_BUFFERS, :DWORD
+AcceptEx proto WINAPI :SOCKET, :SOCKET, :ptr, :DWORD, :DWORD, :DWORD, :LPDWORD, :LPOVERLAPPED
+GetAcceptExSockaddrs WINAPI :ptr, :DWORD, :DWORD, :DWORD, :ptr, :LPINT, :ptr, :LPINT
 
 ;sockaddr SOCKADDR;	 STRUC
 PSOCKADDR		typedef PVOID

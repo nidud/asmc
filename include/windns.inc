@@ -480,14 +480,7 @@ DNS_CONFIG_TYPE		typedef SDWORD
 
 DNS_CONFIG_FLAG_ALLOC	equ (0x00000001)
 
-;DNS_STATUS
-DnsQueryConfig proto WINAPI \
-		Config: DNS_CONFIG_TYPE,
-		  Flag: DWORD,
-	pwsAdapterName: PCWSTR,
-	     pReserved: PVOID,
-	       pBuffer: PVOID,
-	       pBufLen: PDWORD
+DnsQueryConfig proto WINAPI :DNS_CONFIG_TYPE, :DWORD, :PCWSTR, :ptr, :ptr, :PDWORD
 
 DNS_A_DATA		STRUC
 IpAddress		IP4_ADDRESS ?
@@ -1253,17 +1246,8 @@ DnsCharSetUnicode	equ 1
 DnsCharSetUtf8		equ 2
 DnsCharSetAnsi		equ 3
 
-;PDNS_RECORD
-DnsRecordCopyEx proto WINAPI \
-	       pRecord: PDNS_RECORD,
-	     CharSetIn: DNS_CHARSET,
-	    CharSetOut: DNS_CHARSET
-
-;PDNS_RECORD
-DnsRecordSetCopyEx proto WINAPI \
-	    pRecordSet: PDNS_RECORD,
-	     CharSetIn: DNS_CHARSET,
-	    CharSetOut: DNS_CHARSET
+DnsRecordCopyEx proto WINAPI :PDNS_RECORD, :DNS_CHARSET, :DNS_CHARSET
+DnsRecordSetCopyEx proto WINAPI :PDNS_RECORD, :DNS_CHARSET, :DNS_CHARSET
 
 ifdef _UNICODE
 DnsRecordCopy macro pRR
@@ -1281,32 +1265,16 @@ DnsRecordSetCopy macro pRR
 	endm
 endif
 
-;BOOL
-DnsRecordCompare proto WINAPI \
-	      pRecord1: PDNS_RECORD,
-	      pRecord2: PDNS_RECORD
-
-;BOOL
-DnsRecordSetCompare proto WINAPI \
-		  pRR1: PDNS_RECORD,
-		  pRR2: PDNS_RECORD,
-	       ppDiff1: ptr PDNS_RECORD,
-	       ppDiff2: ptr PDNS_RECORD
-
-;PDNS_RECORD
-DnsRecordSetDetach proto WINAPI \
-	   pRecordList: PDNS_RECORD
-
+DnsRecordCompare proto WINAPI :PDNS_RECORD, :PDNS_RECORD
+DnsRecordSetCompare proto WINAPI :PDNS_RECORD, :PDNS_RECORD, :ptr, :ptr
+DnsRecordSetDetach proto WINAPI :PDNS_RECORD
 
 DnsFreeFlat		equ 0
 DnsFreeRecordList	equ 1
 DnsFreeParsedMessageFields equ 2
 DNS_FREE_TYPE		typedef SDWORD
 
-;VOID
-DnsFree proto WINAPI \
-		 pData: PVOID,
-	      FreeType: DNS_FREE_TYPE
+DnsFree proto WINAPI :ptr, :DNS_FREE_TYPE
 
 DnsFreeRecordListDeep	equ <DnsFreeRecordList>
 
@@ -1315,12 +1283,8 @@ DnsRecordListFree macro p,t
 	exitm<DnsFree(p,DnsFreeRecordList)>
 	endm
 else
-;VOID
-DnsRecordListFree proto WINAPI \
-	   pRecordList: PDNS_RECORD,
-	      FreeType: DNS_FREE_TYPE
-
-endif ;; _WIN32_WINNT GE 0x0501
+DnsRecordListFree proto WINAPI :PDNS_RECORD, :DNS_FREE_TYPE
+endif
 
 DNS_QUERY_STANDARD	equ 0x00000000
 DNS_QUERY_ACCEPT_TRUNCATED_RESPONSE equ 0x00000001
@@ -1348,32 +1312,9 @@ DNS_QUERY_RESERVED	equ 0xf0000000
 DNS_QUERY_CACHE_ONLY	equ DNS_QUERY_NO_WIRE_QUERY
 
 
-;DNS_STATUS
-DnsQuery_A proto WINAPI \
-	       pszName: PCSTR,
-		 wType: WORD,
-	       Options: DWORD,
-		pExtra: PVOID,
-	ppQueryResults: PDNS_RECORD,
-	     pReserved: PVOID
-
-;DNS_STATUS
-DnsQuery_UTF8 proto WINAPI \
-	       pszName: PCSTR,
-		 wType: WORD,
-	       Options: DWORD,
-		pExtra: PVOID,
-	ppQueryResults: PDNS_RECORD,
-	     pReserved: PVOID
-
-;DNS_STATUS
-DnsQuery_W proto WINAPI \
-	       pszName: PCWSTR,
-		 wType: WORD,
-	       Options: DWORD,
-		pExtra: PVOID,
-	ppQueryResults: PDNS_RECORD,
-	     pReserved: PVOID
+DnsQuery_A proto WINAPI :PCSTR, :WORD, :DWORD, :ptr, :PDNS_RECORD, :ptr
+DnsQuery_UTF8 proto WINAPI :PCSTR, :WORD, :DWORD, :ptr, :PDNS_RECORD, :ptr
+DnsQuery_W proto WINAPI :PCWSTR, :WORD, :DWORD, :ptr, :PDNS_RECORD, :ptr
 
 ifdef _UNICODE
 DnsQuery		equ <DnsQuery_W>
@@ -1393,85 +1334,26 @@ DNS_UPDATE_SKIP_NO_UPDATE_ADAPTERS equ 0x00002000
 DNS_UPDATE_REMOTE_SERVER equ 0x00004000
 DNS_UPDATE_RESERVED	equ 0xffff0000
 
-;DNS_STATUS
-DnsAcquireContextHandle_W proto WINAPI \
-       CredentialFlags: DWORD,
-	   Credentials: PVOID,
-	      pContext: PHANDLE
-
-;DNS_STATUS
-DnsAcquireContextHandle_A proto WINAPI \
-       CredentialFlags: DWORD,
-	   Credentials: PVOID,
-	      pContext: PHANDLE
+DnsAcquireContextHandle_W proto WINAPI :DWORD, :ptr, :PHANDLE
+DnsAcquireContextHandle_A proto WINAPI :DWORD, :ptr, :PHANDLE
 ifdef _UNICODE
 DnsAcquireContextHandle equ <DnsAcquireContextHandle_W>
 else
 DnsAcquireContextHandle equ <DnsAcquireContextHandle_A>
 endif
 
-;VOID
-DnsReleaseContextHandle proto WINAPI \
-	      hContext: HANDLE
-
-;DNS_STATUS
-DnsModifyRecordsInSet_W proto WINAPI \
-	   pAddRecords: PDNS_RECORD,
-	pDeleteRecords: PDNS_RECORD,
-	       Options: DWORD,
-	  hCredentials: HANDLE,
-	    pExtraList: PVOID,
-	     pReserved: PVOID
-
-;DNS_STATUS
-DnsModifyRecordsInSet_A proto WINAPI \
-	   pAddRecords: PDNS_RECORD,
-	pDeleteRecords: PDNS_RECORD,
-	       Options: DWORD,
-	  hCredentials: HANDLE,
-	    pExtraList: PVOID,
-	     pReserved: PVOID
-
-;DNS_STATUS
-DnsModifyRecordsInSet_UTF8 proto WINAPI \
-	   pAddRecords: PDNS_RECORD,
-	pDeleteRecords: PDNS_RECORD,
-	       Options: DWORD,
-	  hCredentials: HANDLE,
-	    pExtraList: PVOID,
-	     pReserved: PVOID
-
+DnsReleaseContextHandle proto WINAPI :HANDLE
+DnsModifyRecordsInSet_W proto WINAPI :PDNS_RECORD, :PDNS_RECORD, :DWORD, :HANDLE, :ptr, :ptr
+DnsModifyRecordsInSet_A proto WINAPI :PDNS_RECORD, :PDNS_RECORD, :DWORD, :HANDLE, :ptr, :ptr
+DnsModifyRecordsInSet_UTF8 proto WINAPI :PDNS_RECORD, :PDNS_RECORD, :DWORD, :HANDLE, :ptr, :ptr
 ifdef _UNICODE
 DnsModifyRecordsInSet	equ <DnsModifyRecordsInSet_W>
 else
 DnsModifyRecordsInSet	equ <DnsModifyRecordsInSet_A>
 endif
-
-
-;DNS_STATUS
-DnsReplaceRecordSetW proto WINAPI \
-	   pReplaceSet: PDNS_RECORD,
-	       Options: DWORD,
-	      hContext: HANDLE,
-	    pExtraInfo: PVOID,
-	     pReserved: PVOID
-
-;DNS_STATUS
-DnsReplaceRecordSetA proto WINAPI \
-	   pReplaceSet: PDNS_RECORD,
-	       Options: DWORD,
-	      hContext: HANDLE,
-	    pExtraInfo: PVOID,
-	     pReserved: PVOID
-
-;DNS_STATUS
-DnsReplaceRecordSetUTF8 proto WINAPI \
-	   pReplaceSet: PDNS_RECORD,
-	       Options: DWORD,
-	      hContext: HANDLE,
-	    pExtraInfo: PVOID,
-	     pReserved: PVOID
-
+DnsReplaceRecordSetW proto WINAPI :PDNS_RECORD, :DWORD, :HANDLE, :ptr, :ptr
+DnsReplaceRecordSetA proto WINAPI :PDNS_RECORD, :DWORD, :HANDLE, :ptr, :ptr
+DnsReplaceRecordSetUTF8 proto WINAPI :PDNS_RECORD, :DWORD, :HANDLE, :ptr, :ptr
 ifdef _UNICODE
 DnsReplaceRecordSet	equ <DnsReplaceRecordSetW>
 else
@@ -1488,21 +1370,9 @@ DnsNameSrvRecord	equ 5
 DnsNameValidateTld	equ 6
 
 
-;DNS_STATUS
-DnsValidateName_W proto WINAPI \
-	       pszName: PCWSTR,
-		Format: DNS_NAME_FORMAT
-
-;DNS_STATUS
-DnsValidateName_A proto WINAPI \
-	       pszName: PCSTR,
-		Format: DNS_NAME_FORMAT
-
-;DNS_STATUS
-DnsValidateName_UTF8 proto WINAPI \
-	       pszName: PCSTR,
-		Format: DNS_NAME_FORMAT
-
+DnsValidateName_W proto WINAPI :PCWSTR, :DNS_NAME_FORMAT
+DnsValidateName_A proto WINAPI :PCSTR, :DNS_NAME_FORMAT
+DnsValidateName_UTF8 proto WINAPI :PCSTR, :DNS_NAME_FORMAT
 ifdef _UNICODE
 DnsValidateName macro p,f
 	exitm<DnsValidateName_W( (p), (f) )>
@@ -1525,23 +1395,10 @@ DNS_VALSVR_ERROR_UNKNOWN equ 0xFF
 
 ;; Winsock2.h must be included before windns.h to use the validate server function
 ifdef _WS2DEF_
-
-;DNS_STATUS
-DnsValidateServerStatus proto WINAPI \
-		server: PSOCKADDR,
-	     queryName: PCWSTR,
-	  serverStatus: PDWORD
-
+DnsValidateServerStatus proto WINAPI :PSOCKADDR, :PCWSTR, :PDWORD
 endif
-
-;BOOL
-DnsNameCompare_A proto WINAPI \
-		pName1: PCSTR,
-		pName2: PCSTR
-DnsNameCompare_W proto WINAPI \
-		pName1: PCWSTR,
-		pName2: PCWSTR
-
+DnsNameCompare_A proto WINAPI :PCSTR, :PCSTR
+DnsNameCompare_W proto WINAPI :PCWSTR, :PCWSTR
 ifdef _UNICODE
 DnsNameCompare macro n1,n2
 	exitm<DnsNameCompare_W( (n1),(n2) )>
@@ -1558,48 +1415,12 @@ MessageBody		sbyte 1 dup(?)
 DNS_MESSAGE_BUFFER	ENDS
 PDNS_MESSAGE_BUFFER	typedef ptr DNS_MESSAGE_BUFFER
 
-;BOOL
-DnsWriteQuestionToBuffer_W proto WINAPI \
-	    pDnsBuffer: PDNS_MESSAGE_BUFFER,
-	 pdwBufferSize: PDWORD,
-	       pszName: PCWSTR,
-		 wType: WORD,
-		   Xid: WORD,
-     fRecursionDesired: BOOL
-
-
-;BOOL
-DnsWriteQuestionToBuffer_UTF8 proto WINAPI \
-	    pDnsBuffer: PDNS_MESSAGE_BUFFER,
-	 pdwBufferSize: PDWORD,
-	       pszName: PCSTR,
-		 wType: WORD,
-		   Xid: WORD,
-     fRecursionDesired: BOOL
-
-;DNS_STATUS
-DnsExtractRecordsFromMessage_W proto WINAPI \
-	    pDnsBuffer: PDNS_MESSAGE_BUFFER,
-	wMessageLength: WORD,
-	      ppRecord: PDNS_RECORD
-
-;DNS_STATUS
-DnsExtractRecordsFromMessage_UTF8 proto WINAPI \
-	    pDnsBuffer: PDNS_MESSAGE_BUFFER,
-	wMessageLength: WORD,
-	      ppRecord: PDNS_RECORD
-
-;DWORD
-DnsGetProxyInformation proto WINAPI \
-	      hostName: PCWSTR,
-      proxyInformation: ptr DNS_PROXY_INFORMATION,
-defaultProxyInformation: ptr DNS_PROXY_INFORMATION,
-     completionRoutine: DNS_PROXY_COMPLETION_ROUTINE,
-     completionContext: PVOID
-
-;VOID
-DnsFreeProxyName proto WINAPI \
-	     proxyName: PWSTR
+DnsWriteQuestionToBuffer_W proto WINAPI :PDNS_MESSAGE_BUFFER, :PDWORD, :PCWSTR, :WORD, :WORD, :BOOL
+DnsWriteQuestionToBuffer_UTF8 proto WINAPI :PDNS_MESSAGE_BUFFER, :PDWORD, :PCSTR, :WORD, :WORD, :BOOL
+DnsExtractRecordsFromMessage_W proto WINAPI :PDNS_MESSAGE_BUFFER, :WORD, :PDNS_RECORD
+DnsExtractRecordsFromMessage_UTF8 proto WINAPI :PDNS_MESSAGE_BUFFER, :WORD, :PDNS_RECORD
+DnsGetProxyInformation proto WINAPI :PCWSTR, :ptr, :ptr, :DNS_PROXY_COMPLETION_ROUTINE, :ptr
+DnsFreeProxyName proto WINAPI :PWSTR
 
 .pragma list(pop)
 endif

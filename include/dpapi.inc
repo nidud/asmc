@@ -70,79 +70,23 @@ CRYPTPROTECT_CRED_REGENERATE equ 0x80
 CRYPTPROTECT_FIRST_RESERVED_FLAGVAL equ 0x0FFFFFFF
 CRYPTPROTECT_LAST_RESERVED_FLAGVAL equ 0xFFFFFFFF
 
-CryptProtectData proto WINAPI \
-	       pDataIn: ptr DATA_BLOB,
-	   szDataDescr: LPCWSTR,
-      pOptionalEntropy: ptr DATA_BLOB,
-	    pvReserved: PVOID,
-	 pPromptStruct: ptr CRYPTPROTECT_PROMPTSTRUCT,
-	       dwFlags: DWORD,
-	      pDataOut: ptr DATA_BLOB
-
-CryptUnprotectData proto WINAPI \
-	       pDataIn: ptr DATA_BLOB,
-	 ppszDataDescr: ptr LPWSTR,
-      pOptionalEntropy: ptr DATA_BLOB,
-	    pvReserved: PVOID,
-	 pPromptStruct: ptr CRYPTPROTECT_PROMPTSTRUCT,
-	       dwFlags: DWORD,
-	      pDataOut: ptr DATA_BLOB
-
+CryptProtectData proto WINAPI :ptr, :LPCWSTR, :ptr, :ptr, :ptr, :DWORD, :ptr
+CryptUnprotectData proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
-
-CryptProtectDataNoUI proto WINAPI \
-	       pDataIn: ptr DATA_BLOB,
-	   szDataDescr: LPCWSTR,
-      pOptionalEntropy: ptr DATA_BLOB,
-	    pvReserved: PVOID,
-	 pPromptStruct: ptr CRYPTPROTECT_PROMPTSTRUCT,
-	       dwFlags: DWORD,
-    pbOptionalPassword: ptr BYTE,
-    cbOptionalPassword: DWORD,
-	      pDataOut: ptr DATA_BLOB
-
-CryptUnprotectDataNoUI proto WINAPI \
-	       pDataIn: ptr DATA_BLOB,
-	 ppszDataDescr: ptr LPWSTR,
-      pOptionalEntropy: ptr DATA_BLOB,
-	    pvReserved: PVOID,
-	 pPromptStruct: ptr CRYPTPROTECT_PROMPTSTRUCT,
-	       dwFlags: DWORD,
-    pbOptionalPassword: ptr BYTE,
-    cbOptionalPassword: DWORD,
-	      pDataOut: ptr DATA_BLOB
-
+CryptProtectDataNoUI proto WINAPI :ptr, :LPCWSTR, :ptr, :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
+CryptUnprotectDataNoUI proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
 endif
-
 if (NTDDI_VERSION GE NTDDI_VISTA)
-
-CryptUpdateProtectedState proto WINAPI \
-	       pOldSid: PSID,
-       pwszOldPassword: LPCWSTR,
-	       dwFlags: DWORD,
-       pdwSuccessCount: ptr DWORD,
-       pdwFailureCount: ptr DWORD
-
-
+CryptUpdateProtectedState proto WINAPI :PSID, :LPCWSTR, :DWORD, :ptr, :ptr
 endif
-
 
 CRYPTPROTECTMEMORY_BLOCK_SIZE equ 16
 CRYPTPROTECTMEMORY_SAME_PROCESS equ 0x00
 CRYPTPROTECTMEMORY_CROSS_PROCESS equ 0x01
 CRYPTPROTECTMEMORY_SAME_LOGON equ 0x02
 
-CryptProtectMemory proto WINAPI \
-	       pDataIn: LPVOID,
-	      cbDataIn: DWORD,
-	       dwFlags: DWORD
-
-CryptUnprotectMemory proto WINAPI \
-	       pDataIn: LPVOID,
-	      cbDataIn: DWORD,
-	       dwFlags: DWORD
-
-
+CryptProtectMemory proto WINAPI :ptr, :DWORD, :DWORD
+CryptUnprotectMemory proto WINAPI :ptr, :DWORD, :DWORD
 endif
 endif

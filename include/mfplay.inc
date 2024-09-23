@@ -62,13 +62,7 @@ if (WINVER GE _WIN32_WINNT_WIN7)
     MFP_CREDENTIAL_LOGGED_ON_USER	= 0x20
     }
 
-MFPCreateMediaPlayer proto WINAPI \
-	       pwszURL: LPCWSTR,
-	fStartPlayback: BOOL,
-       creationOptions: MFP_CREATION_OPTIONS,
-	     pCallback: ptr IMFPMediaPlayerCallback,
-		  hWnd: HWND,
-	 ppMediaPlayer: ptr IMFPMediaPlayer
+MFPCreateMediaPlayer proto WINAPI :LPCWSTR, :BOOL, :MFP_CREATION_OPTIONS, :ptr, :HWND, :ptr
 
 ifndef __IMFPMediaPlayer_INTERFACE_DEFINED__
 define __IMFPMediaPlayer_INTERFACE_DEFINED__

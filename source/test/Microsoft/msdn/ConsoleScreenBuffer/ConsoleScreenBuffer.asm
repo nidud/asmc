@@ -6,6 +6,7 @@
 
 include stdio.inc
 include conio.inc
+include winbase.inc
 include tchar.inc
 
 .code

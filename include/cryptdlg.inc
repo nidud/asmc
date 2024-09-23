@@ -109,14 +109,12 @@ CERT_SELECT_STRUCT	typedef CERT_SELECT_STRUCT_A
 PCERT_SELECT_STRUCT	typedef PCERT_SELECT_STRUCT_A
 endif
 
-CertSelectCertificateA proto WINAPI \
-       pCertSelectInfo: PCERT_SELECT_STRUCT_A
+CertSelectCertificateA proto WINAPI :PCERT_SELECT_STRUCT_A
 
 ifdef MAC
 CertSelectCertificate	equ <CertSelectCertificateA>
 else
-CertSelectCertificateW proto WINAPI \
-       pCertSelectInfo: PCERT_SELECT_STRUCT_W
+CertSelectCertificateW proto WINAPI :PCERT_SELECT_STRUCT_W
 ifdef _UNICODE
 CertSelectCertificate	equ <CertSelectCertificateW>
 else
@@ -198,14 +196,12 @@ CERT_VIEWPROPERTIES_STRUCT typedef CERT_VIEWPROPERTIES_STRUCT_A
 PCERT_VIEWPROPERTIES_STRUCT typedef PCERT_VIEWPROPERTIES_STRUCT_A
 endif
 
-CertViewPropertiesA proto WINAPI \
-	 pCertViewInfo: PCERT_VIEWPROPERTIES_STRUCT_A
+CertViewPropertiesA proto WINAPI :PCERT_VIEWPROPERTIES_STRUCT_A
 
 ifdef MAC
 CertViewProperties	equ <CertViewPropertiesA>
 else
-CertViewPropertiesW proto WINAPI \
-	 pCertViewInfo: PCERT_VIEWPROPERTIES_STRUCT_W
+CertViewPropertiesW proto WINAPI :PCERT_VIEWPROPERTIES_STRUCT_W
 
 ifdef _UNICODE
 CertViewProperties	equ <CertViewPropertiesW>
@@ -244,16 +240,8 @@ dwCheckingFlags		dd ?
 CERT_FILTER_DATA	ENDS
 CMFLTR			typedef CERT_FILTER_DATA
 
-GetFriendlyNameOfCertA proto WINAPI \
-		pccert: PCCERT_CONTEXT,
-		   pch: LPSTR,
-		   cch: DWORD
-
-GetFriendlyNameOfCertW proto WINAPI \
-		pccert: PCCERT_CONTEXT,
-		  pwch: LPWSTR,
-		  cwch: DWORD
-
+GetFriendlyNameOfCertA proto WINAPI :PCCERT_CONTEXT, :LPSTR, :DWORD
+GetFriendlyNameOfCertW proto WINAPI :PCCERT_CONTEXT, :LPWSTR, :DWORD
 ifdef _UNICODE
 GetFriendlyNameOfCert	equ <GetFriendlyNameOfCertW>
 else
@@ -329,33 +317,12 @@ dwError			dd ?
 CTL_MODIFY_REQUEST	ENDS
 PCTL_MODIFY_REQUEST	typedef ptr CTL_MODIFY_REQUEST
 
-CertModifyCertificatesToTrust proto WINAPI \
-		cCerts: SINT,
-	       rgCerts: PCTL_MODIFY_REQUEST,
-	     szPurpose: LPCSTR,
-		  hwnd: HWND,
-       hcertstoreTrust: HCERTSTORE,
-	  pccertSigner: PCCERT_CONTEXT
-
+CertModifyCertificatesToTrust proto WINAPI :SINT, :PCTL_MODIFY_REQUEST, :LPCSTR, :HWND, :HCERTSTORE, :PCCERT_CONTEXT
 
 ifdef WIN16
 CertConfigureTrustA proto WINAPI
-
-FormatVerisignExtension proto WINAPI \
-		      : DWORD,
-		      : DWORD,
-		      : DWORD,
-		      : ptr,
-		      : LPCSTR,
-		      : ptr BYTE,
-		      : DWORD,
-	      pbFormat: ptr,
-	     pcbFormat: ptr
-
+FormatVerisignExtension proto WINAPI :DWORD, :DWORD, :DWORD, :ptr, :LPCSTR, :ptr BYTE, :DWORD, :ptr, :ptr
 endif
-
 endif
-
 endif
-
 endif

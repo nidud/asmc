@@ -201,71 +201,32 @@ if NOT defined(_NTDDK_)
 
 if (_WIN32_WINNT GE 0x0500)
 
-;BOOL
-ConvertSidToStringSidA proto WINAPI \
-                   Sid: PSID,
-             StringSid: ptr LPSTR
-
-ConvertSidToStringSidW proto WINAPI \
-                   Sid: PSID,
-             StringSid: ptr LPWSTR
-
+ConvertSidToStringSidA proto WINAPI :PSID, :ptr
+ConvertSidToStringSidW proto WINAPI :PSID, :ptr
 ifdef _UNICODE
 ConvertSidToStringSid   equ <ConvertSidToStringSidW>
 else
 ConvertSidToStringSid   equ <ConvertSidToStringSidA>
 endif
 
-;BOOL
-ConvertStringSidToSidA proto WINAPI \
-             StringSid: LPCSTR,
-                   Sid: ptr PSID
-
-ConvertStringSidToSidW proto WINAPI \
-             StringSid: LPCWSTR,
-                   Sid: ptr PSID
-
+ConvertStringSidToSidA proto WINAPI :LPCSTR, :ptr
+ConvertStringSidToSidW proto WINAPI :LPCWSTR, :ptr
 ifdef _UNICODE
 ConvertStringSidToSid   equ <ConvertStringSidToSidW>
 else
 ConvertStringSidToSid   equ <ConvertStringSidToSidA>
 endif
 
-;BOOL
-ConvertStringSecurityDescriptorToSecurityDescriptorA proto WINAPI \
-StringSecurityDescriptor: LPCSTR,
-      StringSDRevision: DWORD,
-    SecurityDescriptor: ptr PSECURITY_DESCRIPTOR,
-SecurityDescriptorSize: PULONG
-
-ConvertStringSecurityDescriptorToSecurityDescriptorW proto WINAPI \
-StringSecurityDescriptor: LPCWSTR,
-      StringSDRevision: DWORD,
-    SecurityDescriptor: ptr PSECURITY_DESCRIPTOR,
-SecurityDescriptorSize: PULONG
-
+ConvertStringSecurityDescriptorToSecurityDescriptorA proto WINAPI :LPCSTR, :DWORD, :ptr, :PULONG
+ConvertStringSecurityDescriptorToSecurityDescriptorW proto WINAPI :LPCWSTR, :DWORD, :ptr, :PULONG
 ifdef _UNICODE
 ConvertStringSecurityDescriptorToSecurityDescriptor equ <ConvertStringSecurityDescriptorToSecurityDescriptorW>
 else
 ConvertStringSecurityDescriptorToSecurityDescriptor equ <ConvertStringSecurityDescriptorToSecurityDescriptorA>
 endif
 
-
-;BOOL
-ConvertSecurityDescriptorToStringSecurityDescriptorA proto WINAPI \
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-RequestedStringSDRevision: DWORD,
-   SecurityInformation: SECURITY_INFORMATION,
-StringSecurityDescriptor: ptr LPSTR,
-StringSecurityDescriptorLen: PULONG
-
-ConvertSecurityDescriptorToStringSecurityDescriptorW proto WINAPI \
-    SecurityDescriptor: PSECURITY_DESCRIPTOR,
-RequestedStringSDRevision: DWORD,
-   SecurityInformation: SECURITY_INFORMATION,
- StringSecurityDescriptor: ptr LPWSTR,
-StringSecurityDescriptorLen: PULONG
-
+ConvertSecurityDescriptorToStringSecurityDescriptorA proto WINAPI :PSECURITY_DESCRIPTOR, :DWORD, :SECURITY_INFORMATION, :ptr, :PULONG
+ConvertSecurityDescriptorToStringSecurityDescriptorW proto WINAPI :PSECURITY_DESCRIPTOR, :DWORD, :SECURITY_INFORMATION, :ptr, :PULONG
 ifdef _UNICODE
 ConvertSecurityDescriptorToStringSecurityDescriptor equ <ConvertSecurityDescriptorToStringSecurityDescriptorW>
 else

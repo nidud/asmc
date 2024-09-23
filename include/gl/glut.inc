@@ -341,46 +341,20 @@ endif
 else
 glutCreateWindow proto WINAPI :string_t
 endif
-
-glutCreateSubWindow proto WINAPI \
-                   win: SINT,
-                     x: SINT,
-                     y: SINT,
-                 width: SINT,
-                height: SINT
-
-glutDestroyWindow proto WINAPI \
-                   win: SINT
-
+glutCreateSubWindow proto WINAPI :SINT, :SINT, :SINT, :SINT, :SINT
+glutDestroyWindow proto WINAPI :SINT
 glutPostRedisplay proto WINAPI
 if (GLUT_API_VERSION GE 4 OR GLUT_XLIB_IMPLEMENTATION GE 11)
-
-glutPostWindowRedisplay proto WINAPI \
-                   win: SINT
-
+glutPostWindowRedisplay proto WINAPI :SINT
 endif
 
 glutSwapBuffers proto WINAPI
-
 glutGetWindow proto WINAPI
-
-glutSetWindow proto WINAPI \
-                   win: SINT
-
-glutSetWindowTitle proto WINAPI \
-                 title: ptr char_t
-
-glutSetIconTitle proto WINAPI \
-                 title: ptr char_t
-
-glutPositionWindow proto WINAPI \
-                     x: SINT,
-                     y: SINT
-
-glutReshapeWindow proto WINAPI \
-                 width: SINT,
-                height: SINT
-
+glutSetWindow proto WINAPI :SINT
+glutSetWindowTitle proto WINAPI :ptr
+glutSetIconTitle proto WINAPI :ptr
+glutPositionWindow proto WINAPI :SINT, :SINT
+glutReshapeWindow proto WINAPI :SINT, :SINT
 glutPopWindow proto WINAPI
 glutPushWindow proto WINAPI
 glutIconifyWindow proto WINAPI
@@ -389,27 +363,18 @@ glutHideWindow proto WINAPI
 if (GLUT_API_VERSION GE 3)
 
 glutFullScreen proto WINAPI
-glutSetCursor proto WINAPI \
-                cursor: SINT
-
+glutSetCursor proto WINAPI :SINT
 if (GLUT_API_VERSION GE 4 OR GLUT_XLIB_IMPLEMENTATION GE 9)
-
-glutWarpPointer proto WINAPI \
-                     x: SINT,
-                     y: SINT
-
+glutWarpPointer proto WINAPI :SINT, :SINT
 endif
 
 glutEstablishOverlay proto WINAPI
 glutRemoveOverlay proto WINAPI
-glutUseLayer proto WINAPI \
-                 layer: GLenum
+glutUseLayer proto WINAPI :GLenum
 
 glutPostOverlayRedisplay proto WINAPI
 if (GLUT_API_VERSION GE 4 OR GLUT_XLIB_IMPLEMENTATION GE 11)
-
-glutPostWindowOverlayRedisplay proto WINAPI \
-                   win: SINT
+glutPostWindowOverlayRedisplay proto WINAPI :SINT
 endif
 
 glutShowOverlay proto WINAPI
@@ -431,39 +396,16 @@ else
 glutCreateMenu proto WINAPI :ptr_t
 endif
 
-glutDestroyMenu proto WINAPI \
-                  menu: SINT
+glutDestroyMenu proto WINAPI :SINT
 glutGetMenu proto WINAPI
-glutSetMenu proto WINAPI \
-                  menu: SINT
-
-glutAddMenuEntry proto WINAPI \
-                 _label: ptr char_t,
-                 value: SINT
-
-glutAddSubMenu proto WINAPI \
-                _label: ptr char_t,
-               submenu: SINT
-
-glutChangeToMenuEntry proto WINAPI \
-                  item: SINT,
-                _label: ptr char_t,
-                 value: SINT
-
-glutChangeToSubMenu proto WINAPI \
-                  item: SINT,
-                _label: ptr char_t,
-               submenu: SINT
-
-glutRemoveMenuItem proto WINAPI \
-                  item: SINT
-
-glutAttachMenu proto WINAPI \
-                button: SINT
-
-glutDetachMenu proto WINAPI \
-                button: SINT
-
+glutSetMenu proto WINAPI :SINT
+glutAddMenuEntry proto WINAPI :ptr, :SINT
+glutAddSubMenu proto WINAPI :ptr, :SINT
+glutChangeToMenuEntry proto WINAPI :SINT, :ptr, :SINT
+glutChangeToSubMenu proto WINAPI :SINT, :ptr, :SINT
+glutRemoveMenuItem proto WINAPI :SINT
+glutAttachMenu proto WINAPI :SINT
+glutDetachMenu proto WINAPI :SINT
 
 glutDisplayFunc proto WINAPI :ptr
 glutReshapeFunc proto WINAPI :ptr
@@ -502,115 +444,40 @@ endif
 endif
 endif
 
-glutSetColor proto WINAPI \
-                      : SINT,
-                   red: GLfloat,
-                 green: GLfloat,
-                  blue: GLfloat
-
-glutGetColor proto WINAPI \
-                   ndx: int_t,
-             component: int_t
-
-glutCopyColormap proto WINAPI \
-                   win: SINT
-
-
-glutGet proto WINAPI \
-                  type: GLenum
-
-glutDeviceGet proto WINAPI \
-                  type: GLenum
-
+glutSetColor proto WINAPI :SINT, :GLfloat, :GLfloat, :GLfloat
+glutGetColor proto WINAPI :SINT, :SINT
+glutCopyColormap proto WINAPI :SINT
+glutGet proto WINAPI :GLenum
+glutDeviceGet proto WINAPI :GLenum
 if (GLUT_API_VERSION GE 2)
-glutExtensionSupported proto WINAPI \
-                  name: ptr char_t
-
+glutExtensionSupported proto WINAPI :ptr
 endif
 if (GLUT_API_VERSION GE 3)
-
 glutGetModifiers proto WINAPI
-glutLayerGet proto WINAPI \
-                  type: GLenum
-
+glutLayerGet proto WINAPI :GLenum
 endif
 
-glutBitmapCharacter proto WINAPI \
-                  font: ptr,
-             character: SINT
-
-glutBitmapWidth proto WINAPI \
-                  font: ptr,
-             character: SINT
-
-glutStrokeCharacter proto WINAPI \
-                  font: ptr,
-             character: SINT
-
-glutStrokeWidth proto WINAPI \
-                  font: ptr,
-             character: SINT
-
+glutBitmapCharacter proto WINAPI :ptr, :SINT
+glutBitmapWidth proto WINAPI :ptr, :SINT
+glutStrokeCharacter proto WINAPI :ptr, :SINT
+glutStrokeWidth proto WINAPI :ptr, :SINT
 if (GLUT_API_VERSION GE 4 OR GLUT_XLIB_IMPLEMENTATION GE 9)
-
-glutBitmapLength proto WINAPI \
-                  font: ptr,
-                      : LPSTR
-
-glutStrokeLength proto WINAPI \
-                  font: ptr,
-                      : LPSTR
-
+glutBitmapLength proto WINAPI :ptr, :LPSTR
+glutStrokeLength proto WINAPI :ptr, :LPSTR
 endif
 
-glutWireSphere proto WINAPI \
-                radius: GLdouble,
-                slices: GLint,
-                stacks: GLint
-
-glutSolidSphere proto WINAPI \
-                radius: GLdouble,
-                slices: GLint,
-                stacks: GLint
-
-glutWireCone proto WINAPI \
-                  base: GLdouble,
-                height: GLdouble,
-                slices: GLint,
-                stacks: GLint
-
-glutSolidCone proto WINAPI \
-                  base: GLdouble,
-                height: GLdouble,
-                slices: GLint,
-                stacks: GLint
-
-glutWireCube proto WINAPI \
-                  size: GLdouble
-
-glutSolidCube proto WINAPI \
-                  size: GLdouble
-
-glutWireTorus proto WINAPI \
-           innerRadius: GLdouble,
-           outerRadius: GLdouble,
-                 sides: GLint,
-                 rings: GLint
-
-glutSolidTorus proto WINAPI \
-           innerRadius: GLdouble,
-           outerRadius: GLdouble,
-                 sides: GLint,
-                 rings: GLint
-
+glutWireSphere proto WINAPI :GLdouble, :GLint, :GLint
+glutSolidSphere proto WINAPI :GLdouble, :GLint, :GLint
+glutWireCone proto WINAPI :GLdouble, :GLdouble, :GLint, :GLint
+glutSolidCone proto WINAPI :GLdouble, :GLdouble, :GLint, :GLint
+glutWireCube proto WINAPI :GLdouble
+glutSolidCube proto WINAPI :GLdouble
+glutWireTorus proto WINAPI :GLdouble, :GLdouble, :GLint, :GLint
+glutSolidTorus proto WINAPI :GLdouble, :GLdouble, :GLint, :GLint
 glutWireDodecahedron proto WINAPI
 glutSolidDodecahedron proto WINAPI
-glutWireTeapot proto WINAPI \
-                  size: GLdouble
-
-glutSolidTeapot proto WINAPI \
-                  size: GLdouble
-
+glutWireTeapot proto WINAPI :GLdouble
+glutSolidTeapot proto WINAPI :GLdouble
 glutWireOctahedron proto WINAPI
 glutSolidOctahedron proto WINAPI
 glutWireTetrahedron proto WINAPI
@@ -619,24 +486,11 @@ glutWireIcosahedron proto WINAPI
 glutSolidIcosahedron proto WINAPI
 
 if (GLUT_API_VERSION GE 4 OR GLUT_XLIB_IMPLEMENTATION GE 9)
-glutVideoResizeGet proto WINAPI \
-                 param: GLenum
-
+glutVideoResizeGet proto WINAPI :GLenum
 glutSetupVideoResizing proto WINAPI
 glutStopVideoResizing proto WINAPI
-glutVideoResize proto WINAPI \
-                     x: SINT,
-                     y: SINT,
-                 width: SINT,
-                height: SINT
-
-glutVideoPan proto WINAPI \
-                     x: SINT,
-                     y: SINT,
-                 width: SINT,
-                height: SINT
-
-
+glutVideoResize proto WINAPI :SINT, :SINT, :SINT, :SINT
+glutVideoPan proto WINAPI :SINT, :SINT, :SINT, :SINT
 glutReportErrors proto WINAPI
 endif
 
@@ -650,12 +504,8 @@ GLUT_JOYSTICK_BUTTON_B  equ 2
 GLUT_JOYSTICK_BUTTON_C  equ 4
 GLUT_JOYSTICK_BUTTON_D  equ 8
 
-glutIgnoreKeyRepeat proto WINAPI \
-                ignore: SINT
-
-glutSetKeyRepeat proto WINAPI \
-            repeatMode: SINT
-
+glutIgnoreKeyRepeat proto WINAPI :SINT
+glutSetKeyRepeat proto WINAPI :SINT
 glutForceJoystickFunc proto WINAPI
 
 GLUT_GAME_MODE_ACTIVE   equ 0
@@ -666,8 +516,7 @@ GLUT_GAME_MODE_PIXEL_DEPTH equ 4
 GLUT_GAME_MODE_REFRESH_RATE equ 5
 GLUT_GAME_MODE_DISPLAY_CHANGED equ 6
 
-glutGameModeString proto WINAPI :string_t
-
+glutGameModeString proto WINAPI :ptr
 glutEnterGameMode proto WINAPI
 glutLeaveGameMode proto WINAPI
 glutGameModeGet proto WINAPI :GLenum

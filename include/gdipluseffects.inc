@@ -91,22 +91,11 @@ channel                 CurveChannel ?
 adjustValue             SINT ?
 ColorCurveParams        ENDS
 
-GdipCreateEffect proto WINAPI \
-                  guid: GUID,
-                effect: ptr
-GdipDeleteEffect proto WINAPI \
-                effect: ptr
-GdipGetEffectParameterSize proto WINAPI \
-                effect: ptr,
-                  size: ptr
-GdipSetEffectParameters proto WINAPI \
-                effect: ptr,
-                params: ptr,
-                  size: UINT
-GdipGetEffectParameters proto WINAPI \
-                effect: ptr,
-                  size: ptr,
-                params: ptr
+GdipCreateEffect proto WINAPI :GUID, :ptr
+GdipDeleteEffect proto WINAPI :ptr
+GdipGetEffectParameterSize proto WINAPI :ptr, :ptr
+GdipSetEffectParameters proto WINAPI :ptr, :ptr, :UINT
+GdipGetEffectParameters proto WINAPI :ptr, :ptr, :ptr
 
 ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 

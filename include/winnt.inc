@@ -1496,21 +1496,24 @@ __getcallerseflags proto fastcall {
     pop	    rax
     }
 
-__segmentlimit proto fastcall :dword {
-    mov	    eax,ecx
+__segmentlimit proto watcall :dword {
     lsl	    eax,eax
     }
 
 __readpmc proto fastcall :dword {
     rdpmc
+ifdef _WIN64
     shl	    rdx,32
     or	    rax,rdx
+endif
     }
 
 __rdtsc proto fastcall {
     rdtsc
+ifdef _WIN64
     shl	    rdx,32
     or	    rax,rdx
+endif
     }
 
 
@@ -1522,109 +1525,80 @@ GetSegmentLimit		 equ <__segmentlimit>
 ReadPMC			 equ <__readpmc>
 ReadTimeStampCounter	 equ <__rdtsc>
 
-
-__movsb proto fastcall :ptr, :ptr, :sdword {
-    push    rsi
-    push    rdi
-    mov	    rdi,rcx
-    mov	    rsi,rdx
-    mov	    ecx,r8d
+ifndef __MOVSB_DEFINED
+define __MOVSB_DEFINED
+__movsb proto asmcall :ptr, :ptr, :sdword {
+    xchg    rax,rdi
+    xchg    rdx,rsi
     rep	    movsb
-    pop	    rdi
-    pop	    rsi
-    }
-
-__movsw proto fastcall :ptr, :ptr, :sdword {
-    push    rsi
-    push    rdi
-    mov	    rdi,rcx
+    mov	    rdi,rax
     mov	    rsi,rdx
-    mov	    ecx,r8d
+    }
+__movsw proto asmcall :ptr, :ptr, :sdword {
+    xchg    rax,rdi
+    xchg    rdx,rsi
     rep	    movsw
-    pop	    rdi
-    pop	    rsi
-    }
-
-__movsd proto fastcall :ptr, :ptr, :sdword {
-    push    rsi
-    push    rdi
-    mov	    rdi,rcx
+    mov	    rdi,rax
     mov	    rsi,rdx
-    mov	    ecx,r8d
+    }
+__movsd proto asmcall :ptr, :ptr, :sdword {
+    xchg    rax,rdi
+    xchg    rdx,rsi
     rep	    movsd
-    pop	    rdi
-    pop	    rsi
-    }
-
-__movsq proto fastcall :ptr, :qword, :sdword {
-    push    rsi
-    push    rdi
-    mov	    rdi,rcx
+    mov	    rdi,rax
     mov	    rsi,rdx
-    mov	    ecx,r8d
-    rep	    movsq
-    pop	    rdi
-    pop	    rsi
     }
-
-__stosb proto fastcall :ptr, :byte, :sdword {
-    push    rdi
-    mov	    rdi,rcx
-    mov	    al,dl
-    mov	    ecx,r8d
+__stosb proto asmcall :ptr, :byte, :sdword {
+    xchg    rdx,rax
+    xchg    rdx,rdi
     rep	    stosb
-    pop	    rdi
+    mov	    rdi,rdx
     }
-
-__stosw proto fastcall :ptr, :word, :sdword {
-    push    rdi
-    mov	    rdi,rcx
-    mov	    ax,dx
-    mov	    ecx,r8d
+__stosw proto asmcall :ptr, :word, :sdword {
+    xchg    rdx,rax
+    xchg    rdx,rdi
     rep	    stosw
-    pop	    rdi
+    mov	    rdi,rdx
     }
-
-__stosd proto fastcall :ptr, :dword, :sdword {
-    push    rdi
-    mov	    rdi,rcx
-    mov	    eax,edx
-    mov	    ecx,r8d
+__stosd proto asmcall :ptr, :dword, :sdword {
+    xchg    rdx,rax
+    xchg    rdx,rdi
     rep	    stosd
-    pop	    rdi
+    mov	    rdi,rdx
     }
-
-__stosq proto fastcall :ptr, :ptr, :sdword {
-    push    rdi
-    mov	    rdi,rcx
-    mov	    rax,rdx
-    mov	    ecx,r8d
-    rep	    stosd
-    pop	    rdi
+ifdef _WIN64
+__movsq proto asmcall :ptr, :ptr, :sdword {
+    xchg    rax,rdi
+    xchg    rdx,rsi
+    rep	    movsq
+    mov	    rdi,rax
+    mov	    rsi,rdx
     }
-
+__stosq proto asmcall :ptr, :qword, :sdword {
+    xchg    rdx,rax
+    xchg    rdx,rdi
+    rep	    stosq
+    mov	    rdi,rdx
+    }
+endif
+endif
 
 MultiplyHigh		equ <__mulh>
 UnsignedMultiplyHigh	equ <__umulh>
 
-;LONGLONG
-__mulh proto WINAPI \
-	    Multiplier: LONG64,
-	  Multiplicand: LONG64
-;ULONGLONG
-__umulh proto WINAPI \
-	    Multiplier: DWORD64,
-	  Multiplicand: DWORD64
-
+__mulh proto WINAPI :LONG64, :LONG64
+__umulh proto WINAPI :DWORD64, :DWORD64
 
 ShiftLeft128	equ <__shiftleft128>
 ShiftRight128	equ <__shiftright128>
 
-__shiftleft128 proto :qword, :qword, :dword {
-    mov	    rax,rcx
-    mov	    ecx,r8d
-    shld    rdx,rax,cl
-    sal	    rax,cl
+ifdef _WIN64
+ifndef __SHIFT128_DEFINED
+define __SHIFT128_DEFINED
+
+__shiftleft128 proto asmcall :qword, :qword, :dword {
+    shld rdx,rax,cl
+    sal rax,cl
     .if cl & 0xC0
 	.if cl & 0x80
 	    xor eax,eax
@@ -1636,11 +1610,9 @@ __shiftleft128 proto :qword, :qword, :dword {
     .endif
     }
 
-__shiftright128 proto :qword, :qword, :dword {
-    mov	    rax,rcx
-    mov	    ecx,r8d
-    shrd    rdx,rax,cl
-    sar	    rax,cl
+__shiftright128 proto asmcall :qword, :qword, :dword {
+    shrd rdx,rax,cl
+    sar rax,cl
     .if cl & 0xC0
 	.if cl & 0x80
 	    xor eax,eax
@@ -1651,17 +1623,21 @@ __shiftright128 proto :qword, :qword, :dword {
 	.endif
     .endif
     }
+endif
+endif
 
+ifndef __MUL128_DEFINED
+define __MUL128_DEFINED
 ifdef _WIN64
-_mul128 proto fastcall :qword, :qword, :ptr qword {
-    mov rax,rdx
-    mul rcx
-    .if r8
-	mov [r8],rdx
+_mul128 proto asmcall :qword, :qword, :ptr qword {
+    mul rdx
+    .if rcx
+	mov [rcx],rdx
     .endif
     }
 else
 _mul128 proto :qword, :qword, :ptr qword
+endif
 endif
 
 define Multiply128 <_mul128>
@@ -1895,24 +1871,9 @@ PDISPATCHER_CONTEXT	typedef ptr DISPATCHER_CONTEXT
 CALLBACK(PEXCEPTION_FILTER, :ptr EXCEPTION_POINTERS, :ptr)
 CALLBACK(PTERMINATION_HANDLER, :BOOLEAN, :ptr)
 
-;NTSYSAPI
-;VOID
-RtlRestoreContext proto WINAPI \
-	 ContextRecord: PCONTEXT,
-       ExceptionRecord: ptr EXCEPTION_RECORD
-
-;BOOLEAN
-RtlAddFunctionTable proto WINAPI \
-	 FunctionTable: PRUNTIME_FUNCTION,
-	    EntryCount: DWORD,
-	   BaseAddress: DWORD64
-
-;PRUNTIME_FUNCTION
-RtlLookupFunctionEntry proto WINAPI \
-	     ControlPc: DWORD64,
-	     ImageBase: PDWORD64,
-	  HistoryTable: PUNWIND_HISTORY_TABLE
-
+RtlRestoreContext proto WINAPI :PCONTEXT, :ptr
+RtlAddFunctionTable proto WINAPI :PRUNTIME_FUNCTION, :DWORD, :DWORD64
+RtlLookupFunctionEntry proto WINAPI :DWORD64, :PDWORD64, :PUNWIND_HISTORY_TABLE
 
 KNONVOLATILE_CONTEXT_POINTERS  STRUC
 UNION
@@ -1960,30 +1921,9 @@ ENDS
 KNONVOLATILE_CONTEXT_POINTERS ENDS
 PKNONVOLATILE_CONTEXT_POINTERS typedef ptr KNONVOLATILE_CONTEXT_POINTERS
 
-;NTSYSAPI
-;PEXCEPTION_ROUTINE
-RtlVirtualUnwind proto WINAPI \
-	   HandlerType: DWORD,
-	     ImageBase: DWORD64,
-	     ControlPc: DWORD64,
-	 FunctionEntry: PRUNTIME_FUNCTION,
-	 ContextRecord: PCONTEXT,
-	   HandlerData: PVOID,
-      EstablisherFrame: PDWORD64,
-       ContextPointers: PKNONVOLATILE_CONTEXT_POINTERS
-
-;BOOLEAN
-RtlInstallFunctionTableCallback proto WINAPI \
-       TableIdentifier: DWORD64,
-	   BaseAddress: DWORD64,
-		Length: DWORD,
-	      Callback: PGET_RUNTIME_FUNCTION_CALLBACK,
-	       Context: PVOID,
-OutOfProcessCallbackDll: PCWSTR
-
-;BOOLEAN
-RtlDeleteFunctionTable proto WINAPI \
-	 FunctionTable: PRUNTIME_FUNCTION
+RtlVirtualUnwind proto WINAPI :DWORD, :DWORD64, :DWORD64, :PRUNTIME_FUNCTION, :PCONTEXT, :ptr, :PDWORD64, :PKNONVOLATILE_CONTEXT_POINTERS
+RtlInstallFunctionTableCallback proto WINAPI :DWORD64, :DWORD64, :DWORD, :PGET_RUNTIME_FUNCTION_CALLBACK, :ptr, :PCWSTR
+RtlDeleteFunctionTable proto WINAPI :PRUNTIME_FUNCTION
 
 endif
 
@@ -2101,9 +2041,7 @@ endif
 
 if (_MSC_FULL_VER GE 140041204) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
-;VOID
 _mm_pause proto WINAPI
-
 YieldProcessor	equ <_mm_pause>
 
 else
@@ -2121,8 +2059,6 @@ if NOT defined(MIDL_PASS) AND defined(_M_IX86)
 
 ifndef _M_CEE_PURE
 
-;FORCEINLINE
-;VOID
 MemoryBarrier macro
     endm
 
@@ -2192,13 +2128,11 @@ endif
 
 endif
 
-
 EXCEPTION_READ_FAULT	equ 0
 EXCEPTION_WRITE_FAULT	equ 1
 EXCEPTION_EXECUTE_FAULT equ 8
 
 SIZE_OF_80387_REGISTERS equ 80
-
 
 ;ifndef RC_INVOKED
 
@@ -2235,7 +2169,7 @@ PFLOATING_SAVE_AREA	typedef PTR FLOATING_SAVE_AREA
 
 if NOT defined(__midl) AND NOT defined(MIDL_PASS)
 if (XSAVE_FORMAT NE MAXIMUM_SUPPORTED_EXTENSION)
-	.err <XSAVE_FORMAT != MAXIMUM_SUPPORTED_EXTENSION>
+.err <XSAVE_FORMAT != MAXIMUM_SUPPORTED_EXTENSION>
 endif
 endif
 
@@ -2419,42 +2353,23 @@ GetFiberData macro
 
 if defined(_IA64_) AND defined(_M_IA64) AND NOT defined(MIDL_PASS)
 
-;void
-__break proto WINAPI \
-		 StIIM: SINT
+__break proto WINAPI :SINT
 
 BREAK_DEBUG_BASE	equ 0x080000
 ASSERT_BREAKPOINT	equ (BREAK_DEBUG_BASE+3)
 
-;FORCEINLINE
-;VOID
 DbgRaiseAssertionFailure macro
     __break(ASSERT_BREAKPOINT)
     endm
 
 endif
 
-;void
 __yield proto WINAPI
-;void
 __mf proto WINAPI
-;void
-__lfetch proto WINAPI \
-		 Level: SINT,
-	       Address: PVOID
-;void
-__lfetchfault proto WINAPI \
-		 Level: SINT,
-	       Address: PVOID
-;void
-__lfetch_excl proto WINAPI \
-		 Level: SINT,
-	       Address: PVOID
-;void
-__lfetchfault_excl proto WINAPI \
-		 Level: SINT,
-	       Address: PVOID
-
+__lfetch proto WINAPI :SINT, :ptr
+__lfetchfault proto WINAPI :SINT, :ptr
+__lfetch_excl proto WINAPI :SINT, :ptr
+__lfetchfault_excl proto WINAPI :SINT, :ptr
 
 MD_LFHINT_NONE		equ 0x00
 MD_LFHINT_NT1		equ 0x01
@@ -2466,9 +2381,7 @@ ReadTimeStampCounter macro
 	exitm<__getReg(3116)>
 	endm
 
-;unsigned __int64
-__getReg proto WINAPI \
-		Number: SINT
+__getReg proto WINAPI :SINT
 
 YieldProcessor		equ <__yield>
 MemoryBarrier		equ <__mf>
@@ -2480,7 +2393,6 @@ ReadForWriteAccess macro p
 	exitm<(__lfetch_excl(MD_LFHINT_NONE, p), *p)>
 	endm
 
-
 PF_TEMPORAL_LEVEL_1	equ MD_LFHINT_NONE
 PF_TEMPORAL_LEVEL_2	equ MD_LFHINT_NT1
 PF_TEMPORAL_LEVEL_3	equ MD_LFHINT_NT2
@@ -2489,29 +2401,17 @@ PF_NON_TEMPORAL_LEVEL_ALL equ MD_LFHINT_NTA
 
 UnsignedMultiplyHigh	equ <__UMULH>
 
-;ULONGLONG
-__UMULH proto WINAPI \
-	    Multiplier: ULONGLONG,
-	  Multiplicand: ULONGLONG
-
+__UMULH proto WINAPI :ULONGLONG, :ULONGLONG
 
 if (_MSC_VER GE 1400)
-
 UnsignedMultiply128	equ <_umul128>
-
-;DWORD64
 ifndef _M_X64
 _umul128 proto Multiplier: DWORD64, Multiplicand: DWORD64, HighProduct: ptr DWORD64
 endif
 endif
-
 else
-
-;STRUC TEB *
 NtCurrentTeb proto WINAPI
-
 endif
-
 endif
 
 ifdef _IA64_
@@ -2530,7 +2430,6 @@ CONTEXT_HIGHER_FLOATING_POINT equ CONTEXT_IA64 OR 0x00000004
 CONTEXT_INTEGER		equ CONTEXT_IA64 OR 0x00000008
 CONTEXT_DEBUG		equ CONTEXT_IA64 OR 0x00000010
 CONTEXT_IA32_CONTROL	equ CONTEXT_IA64 OR 0x00000020
-
 
 CONTEXT_FLOATING_POINT	equ CONTEXT_LOWER_FLOATING_POINT OR CONTEXT_HIGHER_FOATING_POINT
 CONTEXT_FULL		equ CONTEXT_CONTROL OR CONTEXT_FLOATING_POINT OR \
@@ -2683,49 +2582,16 @@ Reserved		DWORD ?
 DISPATCHER_CONTEXT	ENDS
 PDISPATCHER_CONTEXT	typedef ptr DISPATCHER_CONTEXT
 
-CALLBACK(PEXCEPTION_FILTER, :ptr EXCEPTION_POINTERS, :PVOID)
-CALLBACK(PTERMINATION_HANDLER, :BOOLEAN, :PVOID)
-
-;PRUNTIME_FUNCTION
-CALLBACK(PGET_RUNTIME_FUNCTION_CALLBACK, ControlPc:DWORD64, Context:PVOID)
-
-;DWORD
-CALLBACK(POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK, \
-	       Process: HANDLE,			  \
-	  TableAddress: PVOID,			  \
-	       Entries: PDWORD,			  \
-	     Functions: PRUNTIME_FUNCTION)
-
+CALLBACK(PEXCEPTION_FILTER, :ptr, :ptr)
+CALLBACK(PTERMINATION_HANDLER, :BOOLEAN, :ptr)
+CALLBACK(PGET_RUNTIME_FUNCTION_CALLBACK, :DWORD64, :ptr)
+CALLBACK(POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK, :HANDLE, :ptr, :PDWORD, :PRUNTIME_FUNCTION)
 OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
 
-;NTSYSAPI
-;BOOLEAN
-RtlAddFunctionTable proto WINAPI \
-	 FunctionTable: PRUNTIME_FUNCTION,
-	    EntryCount: DWORD,
-	   BaseAddress: ULONGLONG,
-	      TargetGp: ULONGLONG
-
-;BOOLEAN
-RtlInstallFunctionTableCallback proto WINAPI \
-       TableIdentifier: DWORD64,
-	   BaseAddress: DWORD64,
-		Length: DWORD,
-	      TargetGp: DWORD64,
-	      Callback: PGET_RUNTIME_FUNCTION_CALLBACK,
-	       Context: PVOID,
-OutOfProcessCallbackDll: PCWSTR
-
-;BOOLEAN
-RtlDeleteFunctionTable proto WINAPI \
-	 FunctionTable: PRUNTIME_FUNCTION
-
-;PRUNTIME_FUNCTION
-RtlLookupFunctionEntry proto WINAPI \
-	     ControlPc: ULONGLONG,
-	     ImageBase: PULONGLONG,
-	      TargetGp: PULONGLONG
-
+RtlAddFunctionTable proto WINAPI :PRUNTIME_FUNCTION, :DWORD, :ULONGLONG, :ULONGLONG
+RtlInstallFunctionTableCallback proto WINAPI :DWORD64, :DWORD64, :DWORD, :DWORD64, :PGET_RUNTIME_FUNCTION_CALLBACK, :ptr, :PCWSTR
+RtlDeleteFunctionTable proto WINAPI :PRUNTIME_FUNCTION
+RtlLookupFunctionEntry proto WINAPI :ULONGLONG, :PULONGLONG, :PULONGLONG
 
 KNONVOLATILE_CONTEXT_POINTERS  STRUC
 FltS0			PFLOAT128 ?
@@ -2784,28 +2650,9 @@ BackingStoreFp		ULONGLONG ?
 FRAME_POINTERS		ENDS
 PFRAME_POINTERS		typedef ptr FRAME_POINTERS
 
-;NTSYSAPI
-;ULONGLONG
-RtlVirtualUnwind proto WINAPI \
-	   HandlerType: DWORD,	 ;; <-- ifdef _WIN64
-	     ImageBase: ULONGLONG,
-	     ControlPc: ULONGLONG,
-	 FunctionEntry: PRUNTIME_FUNCTION,
-	 ContextRecord: PCONTEXT,
-	    InFunction: PBOOLEAN,
-      EstablisherFrame: PFRAME_POINTERS,
-       ContextPointers: PKNONVOLATILE_CONTEXT_POINTERS
-
-;VOID
-RtlRestoreContext proto WINAPI \
-	 ContextRecord: PCONTEXT,
-       ExceptionRecord: ptr EXCEPTION_RECORD
-
-;VOID
-__jump_unwind proto WINAPI \
-	 TargetMsFrame: ULONGLONG,
-	 TargetBsFrame: ULONGLONG,
-	      TargetPc: ULONGLONG
+RtlVirtualUnwind proto WINAPI :DWORD, :ULONGLONG, :ULONGLONG, :PRUNTIME_FUNCTION, :PCONTEXT, :PBOOLEAN, :PFRAME_POINTERS, :PKNONVOLATILE_CONTEXT_POINTERS
+RtlRestoreContext proto WINAPI :PCONTEXT, :ptr
+__jump_unwind proto WINAPI :ULONGLONG, :ULONGLONG, :ULONGLONG
 
 endif ; _IA64_
 
@@ -2979,9 +2826,7 @@ WOW64_CONTEXT_XSTATE	equ WOW64_CONTEXT_i386 OR 0x00000040
 
 ;endif
 
-
 WOW64_SIZE_OF_80387_REGISTERS equ 80
-
 WOW64_MAXIMUM_SUPPORTED_EXTENSION equ 512
 
 WOW64_FLOATING_SAVE_AREA  STRUC
@@ -3073,10 +2918,7 @@ EXCEPTION_NESTED_CALL		equ 0x10 ; Nested exception handler call
 EXCEPTION_TARGET_UNWIND		equ 0x20 ; Target unwind in progress
 EXCEPTION_COLLIDED_UNWIND	equ 0x40 ; Collided exception handler call
 
-EXCEPTION_UNWIND		equ EXCEPTION_UNWINDING or \
-				    EXCEPTION_EXIT_UNWIND or \
-				    EXCEPTION_TARGET_UNWIND or \
-				    EXCEPTION_COLLIDED_UNWIND
+EXCEPTION_UNWIND		equ (EXCEPTION_UNWINDING or EXCEPTION_EXIT_UNWIND or EXCEPTION_TARGET_UNWIND or EXCEPTION_COLLIDED_UNWIND)
 
 IS_UNWINDING macro Flag
 	exitm<(Flag & EXCEPTION_UNWIND)>
@@ -3122,41 +2964,15 @@ handler			SIZE_T ?
 EXCEPTION_REGISTRATION	ENDS
 PEXCEPTION_REGISTRATION typedef ptr EXCEPTION_REGISTRATION
 
-;VOID
-RtlUnwind proto WINAPI \
-	   TargetFrame: PVOID,
-	      TargetIp: PVOID,
-       ExceptionRecord: PEXCEPTION_RECORD,
-	   ReturnValue: PVOID
-
+RtlUnwind proto WINAPI :ptr, :ptr, :PEXCEPTION_RECORD, :ptr
 ifdef _IA64_
-;VOID
-RtlUnwind2 proto WINAPI \
-	   TargetFrame: FRAME_POINTERS,
-	      TargetIp: PVOID,
-       ExceptionRecord: PEXCEPTION_RECORD,
-	   ReturnValue: PVOID,
-	 ContextRecord: PCONTEXT
+RtlUnwind2 proto WINAPI :FRAME_POINTERS, :ptr, :PEXCEPTION_RECORD, :ptr, :PCONTEXT
 endif
 
 ifdef _AMD64_
-;VOID
-RtlUnwindEx proto WINAPI \
-	   TargetFrame: PVOID,
-	      TargetIp: PVOID,
-       ExceptionRecord: PEXCEPTION_RECORD,
-	   ReturnValue: PVOID,
-	 ContextRecord: PCONTEXT,
-	  HistoryTable: PUNWIND_HISTORY_TABLE
+RtlUnwindEx proto WINAPI :ptr, :ptr, :PEXCEPTION_RECORD, :ptr, :PCONTEXT, :PUNWIND_HISTORY_TABLE
 elseifdef _IA64_
-;VOID
-RtlUnwindEx proto WINAPI \
-	   TargetFrame: FRAME_POINTERS,
-	      TargetIp: PVOID,
-       ExceptionRecord: PEXCEPTION_RECORD,
-	   ReturnValue: PVOID,
-	 ContextRecord: PCONTEXT,
-	  HistoryTable: PUNWIND_HISTORY_TABLE
+RtlUnwindEx proto WINAPI :FRAME_POINTERS, :ptr, :PEXCEPTION_RECORD, :ptr, :PCONTEXT, :PUNWIND_HISTORY_TABLE
 endif
 
 PACCESS_TOKEN		typedef ptr
@@ -3649,9 +3465,7 @@ SYSTEM_MANDATORY_LABEL_NO_WRITE_UP   equ 0x1
 SYSTEM_MANDATORY_LABEL_NO_READ_UP    equ 0x2
 SYSTEM_MANDATORY_LABEL_NO_EXECUTE_UP equ 0x4
 
-SYSTEM_MANDATORY_LABEL_VALID_MASK equ SYSTEM_MANDATORY_LABEL_NO_WRITE_UP OR \
-				      SYSTEM_MANDATORY_LABEL_NO_READ_UP	 OR \
-				      SYSTEM_MANDATORY_LABEL_NO_EXECUTE_UP
+SYSTEM_MANDATORY_LABEL_VALID_MASK equ (SYSTEM_MANDATORY_LABEL_NO_WRITE_UP OR SYSTEM_MANDATORY_LABEL_NO_READ_UP OR SYSTEM_MANDATORY_LABEL_NO_EXECUTE_UP )
 
 ACCESS_ALLOWED_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
@@ -3855,10 +3669,7 @@ SE_PRIVILEGE_ENABLED_BY_DEFAULT equ 0x00000001
 SE_PRIVILEGE_ENABLED		equ 0x00000002
 SE_PRIVILEGE_REMOVED		equ 0X00000004
 SE_PRIVILEGE_USED_FOR_ACCESS	equ 0x80000000
-SE_PRIVILEGE_VALID_ATTRIBUTES	equ SE_PRIVILEGE_ENABLED_BY_DEFAULT OR \
-				    SE_PRIVILEGE_ENABLED	    OR \
-				    SE_PRIVILEGE_REMOVED	    OR \
-				    SE_PRIVILEGE_USED_FOR_ACCESS
+SE_PRIVILEGE_VALID_ATTRIBUTES	equ (SE_PRIVILEGE_ENABLED_BY_DEFAULT OR SE_PRIVILEGE_ENABLED OR SE_PRIVILEGE_REMOVED OR SE_PRIVILEGE_USED_FOR_ACCESS)
 
 PRIVILEGE_SET_ALL_NECESSARY    equ 1
 
@@ -3989,26 +3800,15 @@ TOKEN_ADJUST_GROUPS	equ 0x0040
 TOKEN_ADJUST_DEFAULT	equ 0x0080
 TOKEN_ADJUST_SESSIONID	equ 0x0100
 
-TOKEN_ALL_ACCESS_P equ STANDARD_RIGHTS_REQUIRED	 or \
-		     TOKEN_ASSIGN_PRIMARY      or \
-		     TOKEN_DUPLICATE	       or \
-		     TOKEN_IMPERSONATE	       or \
-		     TOKEN_QUERY	       or \
-		     TOKEN_QUERY_SOURCE	       or \
-		     TOKEN_ADJUST_PRIVILEGES   or \
-		     TOKEN_ADJUST_GROUPS       or \
-		     TOKEN_ADJUST_DEFAULT
+TOKEN_ALL_ACCESS_P equ (STANDARD_RIGHTS_REQUIRED or TOKEN_ASSIGN_PRIMARY or TOKEN_DUPLICATE or TOKEN_IMPERSONATE or TOKEN_QUERY or TOKEN_QUERY_SOURCE or TOKEN_ADJUST_PRIVILEGES or TOKEN_ADJUST_GROUPS or TOKEN_ADJUST_DEFAULT)
 if(_WIN32_WINNT GT 0x0400)
-TOKEN_ALL_ACCESS equ TOKEN_ALL_ACCESS_P OR TOKEN_ADJUST_SESSIONID
+TOKEN_ALL_ACCESS equ (TOKEN_ALL_ACCESS_P OR TOKEN_ADJUST_SESSIONID)
 else
 TOKEN_ALL_ACCESS equ TOKEN_ALL_ACCESS_P
 endif
 
 TOKEN_READ	equ STANDARD_RIGHTS_READ or TOKEN_QUERY
-TOKEN_WRITE	equ STANDARD_RIGHTS_WRITE   or \
-		    TOKEN_ADJUST_PRIVILEGES or \
-		    TOKEN_ADJUST_GROUPS	    or \
-		    TOKEN_ADJUST_DEFAULT
+TOKEN_WRITE	equ (STANDARD_RIGHTS_WRITE or TOKEN_ADJUST_PRIVILEGES or TOKEN_ADJUST_GROUPS or TOKEN_ADJUST_DEFAULT)
 
 TOKEN_EXECUTE	equ STANDARD_RIGHTS_EXECUTE
 
@@ -4841,18 +4641,16 @@ PSERVERSILO_BASIC_INFORMATION typedef ptr _SERVERSILO_BASIC_INFORMATION
 PFIRMWARE_TYPE		typedef ptr PFIRMWARE_TYPE
 
 EVENT_MODIFY_STATE	equ 0x0002
-EVENT_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3
+EVENT_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3)
 MUTANT_QUERY_STATE	equ 0x0001
 
-MUTANT_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or MUTANT_QUERY_STATE
+MUTANT_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or MUTANT_QUERY_STATE)
 SEMAPHORE_MODIFY_STATE	equ 0x0002
-SEMAPHORE_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3
-
+SEMAPHORE_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3)
 
 TIMER_QUERY_STATE	equ 0x0001
 TIMER_MODIFY_STATE	equ 0x0002
-TIMER_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or \
-			    TIMER_QUERY_STATE or TIMER_MODIFY_STATE
+TIMER_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or TIMER_QUERY_STATE or TIMER_MODIFY_STATE)
 
 TIME_ZONE_ID_UNKNOWN	equ 0
 TIME_ZONE_ID_STANDARD	equ 1
@@ -5174,18 +4972,12 @@ SECTION_MAP_READ	equ 0x0004
 SECTION_MAP_EXECUTE	equ 0x0008
 SECTION_EXTEND_SIZE	equ 0x0010
 
-SECTION_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SECTION_QUERY or \
-			    SECTION_MAP_WRITE	or \
-			    SECTION_MAP_READ	or \
-			    SECTION_MAP_EXECUTE or \
-			    SECTION_EXTEND_SIZE
+SECTION_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED or SECTION_QUERY or SECTION_MAP_WRITE or SECTION_MAP_READ or SECTION_MAP_EXECUTE or SECTION_EXTEND_SIZE)
 
 SESSION_QUERY_ACCESS	equ 0x0001
 SESSION_MODIFY_ACCESS	equ 0x0002
 
-SESSION_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR \
-			    SESSION_QUERY_ACCESS OR \
-			    SESSION_MODIFY_ACCESS
+SESSION_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED OR SESSION_QUERY_ACCESS OR SESSION_MODIFY_ACCESS)
 
 PAGE_NOACCESS		equ 0x01
 PAGE_READONLY		equ 0x02
@@ -5244,10 +5036,10 @@ FILE_DELETE_CHILD	equ 0x0040
 FILE_READ_ATTRIBUTES	equ 0x0080
 FILE_WRITE_ATTRIBUTES	equ 0x0100
 
-FILE_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3FF
-FILE_GENERIC_READ	equ STANDARD_RIGHTS_READ or FILE_READ_DATA or FILE_READ_ATTRIBUTES or FILE_READ_EA or SYNCHRONIZE
-FILE_GENERIC_WRITE	equ STANDARD_RIGHTS_WRITE or FILE_WRITE_DATA or FILE_WRITE_ATTRIBUTES or FILE_WRITE_EA or FILE_APPEND_DATA or SYNCHRONIZE
-FILE_GENERIC_EXECUTE	equ STANDARD_RIGHTS_EXECUTE or FILE_READ_ATTRIBUTES or FILE_EXECUTE or SYNCHRONIZE
+FILE_ALL_ACCESS		equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3FF)
+FILE_GENERIC_READ	equ (STANDARD_RIGHTS_READ or FILE_READ_DATA or FILE_READ_ATTRIBUTES or FILE_READ_EA or SYNCHRONIZE)
+FILE_GENERIC_WRITE	equ (STANDARD_RIGHTS_WRITE or FILE_WRITE_DATA or FILE_WRITE_ATTRIBUTES or FILE_WRITE_EA or FILE_APPEND_DATA or SYNCHRONIZE)
+FILE_GENERIC_EXECUTE	equ (STANDARD_RIGHTS_EXECUTE or FILE_READ_ATTRIBUTES or FILE_EXECUTE or SYNCHRONIZE)
 
 FILE_SHARE_READ			equ 0x00000001
 FILE_SHARE_WRITE		equ 0x00000002
@@ -5360,7 +5152,6 @@ REPARSE_DATA_BUFFER	ENDS
 PREPARSE_DATA_BUFFER	typedef ptr REPARSE_DATA_BUFFER
 
 REPARSE_DATA_BUFFER_HEADER_SIZE equ FIELD_OFFSET(REPARSE_DATA_BUFFER, GenericReparseBuffer)
-
 
 REPARSE_GUID_DATA_BUFFER STRUC
 ReparseTag		dd ?
@@ -5761,14 +5552,11 @@ State			PPM_IDLE_STATE_ACCOUNTING_EX ANYSIZE_ARRAY dup(<>)
 PPM_IDLE_ACCOUNTING_EX	ENDS
 PPPM_IDLE_ACCOUNTING_EX typedef ptr PPM_IDLE_ACCOUNTING_EX
 
-
 ACPI_PPM_SOFTWARE_ALL	equ 0xFC
 ACPI_PPM_SOFTWARE_ANY	equ 0xFD
 ACPI_PPM_HARDWARE_ALL	equ 0xFE
 
-
 MS_PPM_SOFTWARE_ALL	equ 0x1
-
 
 PPM_FIRMWARE_ACPI1C2	equ 0x00000001
 PPM_FIRMWARE_ACPI1C3	equ 0x00000002
@@ -5846,7 +5634,6 @@ POWER_USER_NOTIFY_BUTTON	equ 0x00000008
 POWER_USER_NOTIFY_SHUTDOWN	equ 0x00000010
 POWER_USER_NOTIFY_FORCED_SHUTDOWN equ 0x00000020
 POWER_FORCE_TRIGGER_RESET	equ 0x80000000
-
 
 BATTERY_DISCHARGE_FLAGS_EVENTCODE_MASK equ 0x00000007
 BATTERY_DISCHARGE_FLAGS_ENABLE equ 0x80000000
@@ -6142,7 +5929,6 @@ Characteristics		dw ?
 IMAGE_FILE_HEADER	ENDS
 PIMAGE_FILE_HEADER	typedef ptr IMAGE_FILE_HEADER
 
-
 IMAGE_SIZEOF_FILE_HEADER equ 20
 
 IMAGE_FILE_RELOCS_STRIPPED	equ 0x0001
@@ -6190,7 +5976,6 @@ IMAGE_FILE_MACHINE_EBC		equ 0x0EBC
 IMAGE_FILE_MACHINE_AMD64	equ 0x8664
 IMAGE_FILE_MACHINE_M32R		equ 0x9041
 IMAGE_FILE_MACHINE_CEE		equ 0xC0EE
-
 
 IMAGE_DATA_DIRECTORY	STRUC
 VirtualAddress		dd ?
@@ -6390,7 +6175,6 @@ IMAGE_DIRECTORY_ENTRY_IAT		equ 12
 IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT	equ 13
 IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR	equ 14
 
-
 ANON_OBJECT_HEADER	STRUC
 Sig1			dw ?
 Sig2			dw ?
@@ -6429,7 +6213,6 @@ NumberOfSections	dd ?
 PointerToSymbolTable	dd ?
 NumberOfSymbols		dd ?
 ANON_OBJECT_HEADER_BIGOBJ ENDS
-
 
 IMAGE_SIZEOF_SHORT_NAME equ 8
 
@@ -7725,30 +7508,14 @@ PSLIST_HEADER32		typedef ptr SLIST_HEADER
 endif
 endif ;; _SLIST_HEADER_
 
-;NTSYSAPI
-;VOID
-RtlInitializeSListHead proto WINAPI \
-	      ListHead: PSLIST_HEADER
-;PSLIST_ENTRY
-RtlFirstEntrySList proto WINAPI \
-	      ListHead: PSLIST_HEADER
-;PSLIST_ENTRY
-RtlInterlockedPopEntrySList proto WINAPI \
-	      ListHead: PSLIST_HEADER
-;PSLIST_ENTRY
-RtlInterlockedPushEntrySList proto WINAPI \
-	      ListHead: PSLIST_HEADER,
-	     ListEntry: PSLIST_ENTRY
-;PSLIST_ENTRY
-RtlInterlockedFlushSList proto WINAPI \
-	      ListHead: PSLIST_HEADER
-;WORD
-RtlQueryDepthSList proto WINAPI \
-	      ListHead: PSLIST_HEADER
+RtlInitializeSListHead proto WINAPI :PSLIST_HEADER
+RtlFirstEntrySList proto WINAPI :PSLIST_HEADER
+RtlInterlockedPopEntrySList proto WINAPI :PSLIST_HEADER
+RtlInterlockedPushEntrySList proto WINAPI :PSLIST_HEADER, :PSLIST_ENTRY
+RtlInterlockedFlushSList proto WINAPI :PSLIST_HEADER
+RtlQueryDepthSList proto WINAPI :PSLIST_HEADER
 ifdef _IA64_
-;PSLIST_ENTRY32
-RtlInterlockedPopEntrySList32 proto WINAPI \
-	      ListHead: PSLIST_HEADER32
+RtlInterlockedPopEntrySList32 proto WINAPI :PSLIST_HEADER32
 endif
 
 ifndef _RTL_RUN_ONCE_DEF
@@ -7759,7 +7526,6 @@ RTL_RUN_ONCE_CHECK_ONLY	    equ 0x00000001
 RTL_RUN_ONCE_ASYNC	    equ 0x00000002
 RTL_RUN_ONCE_INIT_FAILED    equ 0x00000004
 
-
 RTL_RUN_ONCE_CTX_RESERVED_BITS equ 2
 
 RTL_RUN_ONCE		UNION
@@ -7767,9 +7533,7 @@ _Ptr			PVOID ?
 RTL_RUN_ONCE		ENDS
 PRTL_RUN_ONCE		typedef ptr RTL_RUN_ONCE
 
-;DWORD
-CALLBACK(PRTL_RUN_ONCE_INIT_FN, RunOnce:PRTL_RUN_ONCE, Parameter:PVOID, Context:PVOID)
-
+CALLBACK(PRTL_RUN_ONCE_INIT_FN, :PRTL_RUN_ONCE, :ptr, :ptr)
 endif
 
 RTL_BARRIER		STRUC
@@ -7808,27 +7572,10 @@ FAST_FAIL_UNSAFE_EXTENSION_CALL equ 26
 FAST_FAIL_INVALID_FAST_FAIL_CODE equ 0xFFFFFFFF
 
 if (NTDDI_VERSION GE NTDDI_LONGHORN)
-
-;VOID
-RtlRunOnceInitialize proto WINAPI \
-	       RunOnce: PRTL_RUN_ONCE
-;DWORD
-RtlRunOnceExecuteOnce proto WINAPI \
-	       RunOnce: PRTL_RUN_ONCE,
-		InitFn: PRTL_RUN_ONCE_INIT_FN,
-	     Parameter: PVOID,
-	       Context: PVOID
-;DWORD
-RtlRunOnceBeginInitialize proto WINAPI \
-	       RunOnce: PRTL_RUN_ONCE,
-		 Flags: DWORD,
-	       Context: PVOID
-;DWORD
-RtlRunOnceComplete proto WINAPI \
-	       RunOnce: PRTL_RUN_ONCE,
-		 Flags: DWORD,
-	       Context: PVOID
-
+RtlRunOnceInitialize proto WINAPI :PRTL_RUN_ONCE
+RtlRunOnceExecuteOnce proto WINAPI :PRTL_RUN_ONCE, :PRTL_RUN_ONCE_INIT_FN, :ptr, :ptr
+RtlRunOnceBeginInitialize proto WINAPI :PRTL_RUN_ONCE, :DWORD, :ptr
+RtlRunOnceComplete proto WINAPI :PRTL_RUN_ONCE, :DWORD, :ptr
 endif
 
 HEAP_NO_SERIALIZE		equ 0x00000001
@@ -7846,44 +7593,29 @@ HEAP_PSEUDO_TAG_FLAG		equ 0x8000
 HEAP_TAG_SHIFT			equ 18
 
 ifndef MIDL_PASS
-;FORCEINLINE
-;DWORD
 HEAP_MAKE_TAG_FLAGS macro TagBase, Tag
     endm
 endif
 
 if (NTDDI_VERSION GT NTDDI_WINXP)
-;WORD
-RtlCaptureStackBackTrace proto WINAPI \
-	  FramesToSkip: DWORD,
-       FramesToCapture: DWORD,
-	     BackTrace: PVOID,
-	 BackTraceHash: PDWORD
+RtlCaptureStackBackTrace proto WINAPI :DWORD, :DWORD, :ptr, :PDWORD
 endif
-
 if (NTDDI_VERSION GT NTDDI_WIN2K)
-;VOID
-RtlCaptureContext proto WINAPI \
-	 ContextRecord: PCONTEXT
+RtlCaptureContext proto WINAPI :PCONTEXT
 endif
 
 IS_TEXT_UNICODE_ASCII16			equ 0x0001
 IS_TEXT_UNICODE_REVERSE_ASCII16		equ 0x0010
-
 IS_TEXT_UNICODE_STATISTICS		equ 0x0002
 IS_TEXT_UNICODE_REVERSE_STATISTICS	equ 0x0020
-
 IS_TEXT_UNICODE_CONTROLS		equ 0x0004
 IS_TEXT_UNICODE_REVERSE_CONTROLS	equ 0x0040
-
 IS_TEXT_UNICODE_SIGNATURE		equ 0x0008
 IS_TEXT_UNICODE_REVERSE_SIGNATURE	equ 0x0080
-
 IS_TEXT_UNICODE_ILLEGAL_CHARS		equ 0x0100
 IS_TEXT_UNICODE_ODD_LENGTH		equ 0x0200
 IS_TEXT_UNICODE_DBCS_LEADBYTE		equ 0x0400
 IS_TEXT_UNICODE_NULL_BYTES		equ 0x1000
-
 IS_TEXT_UNICODE_UNICODE_MASK		equ 0x000F
 IS_TEXT_UNICODE_REVERSE_MASK		equ 0x00F0
 IS_TEXT_UNICODE_NOT_UNICODE_MASK	equ 0x0F00
@@ -7899,20 +7631,19 @@ COMPRESSION_ENGINE_HIBER	equ 0x0200
 ifdef _DBG_MEMCPY_INLINE_
 if _DBG_MEMCPY_INLINE_ and not defined(MIDL_PASS) and not defined(_MEMCPY_INLINE_) and not defined(_CRTBLD)
 define _MEMCPY_INLINE_
-;FORCEINLINE
-;PVOID
-memcpy_inline macro dst, src, _size
-	endm
+memcpy_inline proto asmcall :ptr, :ptr, :sdword {
+    xchg    rax,rdi
+    xchg    rdx,rsi
+    rep	    movsb
+    mov	    rdi,rax
+    mov	    rsi,rdx
+    }
 ;memcpy equ <memcpy_inline>
 endif
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
-;SIZE_T
-RtlCompareMemory proto WINAPI \
-	      Source1: PVOID,
-	      Source2: PVOID,
-	       Length: SIZE_T
+RtlCompareMemory proto WINAPI :ptr, :ptr, :SIZE_T
 endif
 
 RtlEqualMemory macro Destination, Source, L
@@ -7955,9 +7686,7 @@ SEF_MACL_NO_READ_UP		  equ 0x200
 SEF_MACL_NO_EXECUTE_UP		  equ 0x400
 SEF_AVOID_OWNER_RESTRICTION	  equ 0x1000
 
-SEF_MACL_VALID_FLAGS	equ SEF_MACL_NO_WRITE_UP OR \
-			    SEF_MACL_NO_READ_UP	 OR \
-			    SEF_MACL_NO_EXECUTE_UP
+SEF_MACL_VALID_FLAGS	equ (SEF_MACL_NO_WRITE_UP OR SEF_MACL_NO_READ_UP OR SEF_MACL_NO_EXECUTE_UP)
 
 MESSAGE_RESOURCE_ENTRY	STRUC
 Length			dw ?
@@ -7981,10 +7710,7 @@ Blocks			MESSAGE_RESOURCE_BLOCK <>
 MESSAGE_RESOURCE_DATA	ENDS
 PMESSAGE_RESOURCE_DATA	typedef ptr MESSAGE_RESOURCE_DATA
 
-;PVOID
-RtlPcToFileHeader proto WINAPI \
-	       PcValue: PVOID,
-	   BaseOfImage: PVOID
+RtlPcToFileHeader proto WINAPI :ptr, :ptr
 
 OSVERSIONINFOA		STRUC
 dwOSVersionInfoSize	dd ?
@@ -8065,7 +7791,6 @@ VER_OR			equ 7
 VER_CONDITION_MASK	equ 7
 VER_NUM_BITS_PER_CONDITION_MASK equ 3
 
-
 VER_MINORVERSION	equ 0x0000001
 VER_MAJORVERSION	equ 0x0000002
 VER_BUILDNUMBER		equ 0x0000004
@@ -8075,43 +7800,25 @@ VER_SERVICEPACKMAJOR	equ 0x0000020
 VER_SUITENAME		equ 0x0000040
 VER_PRODUCT_TYPE	equ 0x0000080
 
-
 VER_NT_WORKSTATION	equ 0x0000001
 VER_NT_DOMAIN_CONTROLLER equ 0x0000002
 VER_NT_SERVER		equ 0x0000003
 
-
 VER_PLATFORM_WIN32s	equ 0
 VER_PLATFORM_WIN32_WINDOWS equ 1
 VER_PLATFORM_WIN32_NT	equ 2
-
-
 
 VER_SET_CONDITION macro _m_,_t_,_c_
 	exitm<mov _m_,VerSetConditionMask(_m_,_t_,_c_)>
 	endm
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
-;NTSYSAPI
-;ULONGLONG
-VerSetConditionMask proto WINAPI \
-	 ConditionMask: ULONGLONG,
-	      TypeMask: DWORD,
-	     Condition: BYTE
-
-RtlGetVersion	    proto WINAPI \
-  lpVersionInformation: ptr
-
+VerSetConditionMask proto WINAPI :ULONGLONG, :DWORD, :BYTE
+RtlGetVersion	    proto WINAPI :ptr
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;BOOLEAN
-RtlGetProductInfo proto WINAPI \
-	OSMajorVersion: DWORD,
-	OSMinorVersion: DWORD,
-	SpMajorVersion: DWORD,
-	SpMinorVersion: DWORD,
-   ReturnedProductType: PDWORD
+RtlGetProductInfo proto WINAPI :DWORD, :DWORD, :DWORD, :DWORD, :PDWORD
 endif
 
 RTL_UMS_VERSION		equ 0x0100
@@ -8135,43 +7842,17 @@ PRTL_UMS_THREAD_INFO_CLASS typedef ptr RTL_UMS_THREAD_INFO_CLASS
     }
 PRTL_UMS_SCHEDULER_REASON typedef ptr RTL_UMS_SCHEDULER_REASON
 
-;VOID
-CALLBACK(PRTL_UMS_SCHEDULER_ENTRY_POINT, :RTL_UMS_SCHEDULER_REASON, :ULONG_PTR, :PVOID)
+CALLBACK(PRTL_UMS_SCHEDULER_ENTRY_POINT, :RTL_UMS_SCHEDULER_REASON, :ULONG_PTR, :ptr)
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
-;DWORD
-RtlCopyExtendedContext proto WINAPI \
-	   Destination: PCONTEXT_EX,
-	  ContextFlags: DWORD,
-		Source: PCONTEXT_EX
-;DWORD
-RtlInitializeExtendedContext proto WINAPI \
-	       Context: PVOID,
-	  ContextFlags: DWORD,
-	     ContextEx: PCONTEXT_EX
-;DWORD64
-RtlGetEnabledExtendedFeatures proto WINAPI \
-	   FeatureMask: DWORD64
-;DWORD
-RtlGetExtendedContextLength proto WINAPI \
-	  ContextFlags: DWORD,
-	 ContextLength: PDWORD
-;DWORD64
-RtlGetExtendedFeaturesMask proto WINAPI \
-	     ContextEx: PCONTEXT_EX
-;PVOID
-RtlLocateExtendedFeature proto WINAPI \
-	     ContextEx: PCONTEXT_EX,
-	     FeatureId: DWORD,
-		Length: PDWORD
-;PCONTEXT
-RtlLocateLegacyContext proto WINAPI \
-	     ContextEx: PCONTEXT_EX,
-		Length: PDWORD
-;VOID
-RtlSetExtendedFeaturesMask proto WINAPI \
-	     ContextEx: PCONTEXT_EX,
-	   FeatureMask: DWORD64
+RtlCopyExtendedContext proto WINAPI :PCONTEXT_EX, :DWORD, :PCONTEXT_EX
+RtlInitializeExtendedContext proto WINAPI :ptr, :DWORD, :PCONTEXT_EX
+RtlGetEnabledExtendedFeatures proto WINAPI :DWORD64
+RtlGetExtendedContextLength proto WINAPI :DWORD, :PDWORD
+RtlGetExtendedFeaturesMask proto WINAPI :PCONTEXT_EX
+RtlLocateExtendedFeature proto WINAPI :PCONTEXT_EX, :DWORD, :PDWORD
+RtlLocateLegacyContext proto WINAPI :PCONTEXT_EX, :PDWORD
+RtlSetExtendedFeaturesMask proto WINAPI :PCONTEXT_EX, :DWORD64
 endif
 
 RTL_CRITICAL_SECTION_DEBUG	STRUC
@@ -8196,9 +7877,7 @@ RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO equ 0x01000000
 RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN	equ 0x02000000
 RTL_CRITICAL_SECTION_FLAG_STATIC_INIT	equ 0x04000000
 RTL_CRITICAL_SECTION_ALL_FLAG_BITS	equ 0xFF000000
-RTL_CRITICAL_SECTION_FLAG_RESERVED	equ (RTL_CRITICAL_SECTION_ALL_FLAG_BITS AND \
-	( NOT (RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO OR \
-	RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN OR RTL_CRITICAL_SECTION_FAG_STATIC_INIT)))
+RTL_CRITICAL_SECTION_FLAG_RESERVED	equ (RTL_CRITICAL_SECTION_ALL_FLAG_BITS AND ( NOT (RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO OR RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN OR RTL_CRITICAL_SECTION_FAG_STATIC_INIT)))
 
 RTL_CRITICAL_SECTION_DEBUG_FLAG_STATIC_INIT equ 0x00000001
 
@@ -8231,10 +7910,8 @@ PRTL_CONDITION_VARIABLE typedef ptr RTL_CONDITION_VARIABLE
 RTL_CONDITION_VARIABLE_INIT equ <{0}>
 RTL_CONDITION_VARIABLE_LOCKMODE_SHARED equ 0x1
 
-;VOID
 CALLBACK(PAPCFUNC, :ULONG_PTR)
-;LONG
-CALLBACK(PVECTORED_EXCEPTION_HANDLER, ExceptionInfo:ptr EXCEPTION_POINTERS)
+CALLBACK(PVECTORED_EXCEPTION_HANDLER, :ptr)
 
 .enum HEAP_INFORMATION_CLASS {
     HeapCompatibilityInformation,
@@ -8252,7 +7929,6 @@ CALLBACK(PSECURE_MEMORY_CACHE_CALLBACK, :PVOID, :SIZE_T)
 WT_SET_MAX_THREADPOOL_THREADS macro Flags, Limit
 	exitm<(((Flags) OR ((Limit) SHL 16)))>
 	endm
-
 
 WT_EXECUTEDEFAULT		equ 0x00000000
 WT_EXECUTEINIOTHREAD		equ 0x00000001
@@ -8288,7 +7964,6 @@ ulFileIndexInAssembly	dd ?
 ACTIVATION_CONTEXT_QUERY_INDEX ENDS
 PACTIVATION_CONTEXT_QUERY_INDEX typedef ptr ACTIVATION_CONTEXT_QUERY_INDEX
 PCACTIVATION_CONTEXT_QUERY_INDEX typedef ptr ACTIVATION_CONTEXT_QUERY_INDEX
-
 
 ACTIVATION_CONTEXT_PATH_TYPE_NONE	 equ 1
 ACTIVATION_CONTEXT_PATH_TYPE_WIN32_FILE	 equ 2
@@ -8439,13 +8114,11 @@ EVENTLOG_INFORMATION_TYPE	equ 0x0004
 EVENTLOG_AUDIT_SUCCESS		equ 0x0008
 EVENTLOG_AUDIT_FAILURE		equ 0x0010
 
-
 EVENTLOG_START_PAIRED_EVENT    equ 0x0001
 EVENTLOG_END_PAIRED_EVENT      equ 0x0002
 EVENTLOG_END_ALL_PAIRED_EVENTS equ 0x0004
 EVENTLOG_PAIRED_EVENT_ACTIVE   equ 0x0008
 EVENTLOG_PAIRED_EVENT_INACTIVE equ 0x0010
-
 
 EVENTLOGRECORD			STRUC
 Length				dd ?
@@ -8478,7 +8151,6 @@ pEventLogRecords		EVENTLOGRECORD <>
 EVENTSFORLOGFILE		ENDS
 PEVENTSFORLOGFILE		typedef ptr EVENTSFORLOGFILE
 
-
 PACKEDEVENTINFO			STRUC
 ulSize				dd ?
 ulNumEventsForLogFile		dd ?
@@ -8504,16 +8176,10 @@ KEY_WOW64_32KEY		equ 0x0200
 KEY_WOW64_64KEY		equ 0x0100
 KEY_WOW64_RES		equ 0x0300
 
-KEY_READ	equ (STANDARD_RIGHTS_READ or KEY_QUERY_VALUE or \
-		    KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY) and not SYNCHRONIZE
-KEY_WRITE	equ (STANDARD_RIGHTS_WRITE or KEY_SET_VALUE or KEY_CREATE_SUB_KEY) \
-		    and (not SYNCHRONIZE)
-KEY_EXECUTE	equ KEY_READ and (not SYNCHRONIZE)
-KEY_ALL_ACCESS	equ (STANDARD_RIGHTS_ALL or KEY_QUERY_VALUE or KEY_SET_VALUE or \
-		    KEY_CREATE_SUB_KEY or KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY or \
-		    KEY_CREATE_LINK) and (not SYNCHRONIZE)
-
-
+KEY_READ	equ (STANDARD_RIGHTS_READ or KEY_QUERY_VALUE or KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY) and not SYNCHRONIZE
+KEY_WRITE	equ (STANDARD_RIGHTS_WRITE or KEY_SET_VALUE or KEY_CREATE_SUB_KEY) and (not SYNCHRONIZE)
+KEY_EXECUTE	equ (KEY_READ and (not SYNCHRONIZE))
+KEY_ALL_ACCESS	equ (STANDARD_RIGHTS_ALL or KEY_QUERY_VALUE or KEY_SET_VALUE or KEY_CREATE_SUB_KEY or KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY or KEY_CREATE_LINK) and (not SYNCHRONIZE)
 
 REG_OPTION_RESERVED		equ 0x00000000
 REG_OPTION_NON_VOLATILE		equ 0x00000000
@@ -8522,15 +8188,8 @@ REG_OPTION_CREATE_LINK		equ 0x00000002
 REG_OPTION_BACKUP_RESTORE	equ 0x00000004
 REG_OPTION_OPEN_LINK		equ 0x00000008
 
-REG_LEGAL_OPTION equ REG_OPTION_RESERVED or \
-		     REG_OPTION_NON_VOLATILE or \
-		     REG_OPTION_VOLATILE or \
-		     REG_OPTION_CREATE_LINK or \
-		     REG_OPTION_BACKUP_RESTORE or \
-		     REG_OPTION_OPEN_LINK
-
+REG_LEGAL_OPTION equ (REG_OPTION_RESERVED or REG_OPTION_NON_VOLATILE or REG_OPTION_VOLATILE or REG_OPTION_CREATE_LINK or REG_OPTION_BACKUP_RESTORE or REG_OPTION_OPEN_LINK)
 REG_OPEN_LEGAL_OPTION equ REG_OPTION_RESERVED OR REG_OPTION_BACKUP_RESTORE
-
 
 REG_CREATED_NEW_KEY		equ 0x00000001
 REG_OPENED_EXISTING_KEY		equ 0x00000002
@@ -8582,18 +8241,12 @@ SERVICE_KERNEL_DRIVER	       equ 0x00000001
 SERVICE_FILE_SYSTEM_DRIVER     equ 0x00000002
 SERVICE_ADAPTER		       equ 0x00000004
 SERVICE_RECOGNIZER_DRIVER      equ 0x00000008
-SERVICE_DRIVER		       equ SERVICE_KERNEL_DRIVER or \
-				   SERVICE_FILE_SYSTEM_DRIVER or \
-				   SERVICE_RECOGNIZER_DRIVER
+SERVICE_DRIVER		       equ (SERVICE_KERNEL_DRIVER or SERVICE_FILE_SYSTEM_DRIVER or SERVICE_RECOGNIZER_DRIVER)
 SERVICE_WIN32_OWN_PROCESS      equ 0x00000010
 SERVICE_WIN32_SHARE_PROCESS    equ 0x00000020
-SERVICE_WIN32		       equ SERVICE_WIN32_OWN_PROCESS or \
-				   SERVICE_WIN32_SHARE_PROCESS
+SERVICE_WIN32		       equ (SERVICE_WIN32_OWN_PROCESS or SERVICE_WIN32_SHARE_PROCESS)
 SERVICE_INTERACTIVE_PROCESS    equ 0x00000100
-SERVICE_TYPE_ALL	       equ SERVICE_WIN32 or \
-				   SERVICE_ADAPTER or \
-				   SERVICE_DRIVER  or \
-				   SERVICE_INTERACTIVE_PROCESS
+SERVICE_TYPE_ALL	       equ (SERVICE_WIN32 or SERVICE_ADAPTER or SERVICE_DRIVER or SERVICE_INTERACTIVE_PROCESS)
 
 SERVICE_BOOT_START	       equ 0x00000000
 SERVICE_SYSTEM_START	       equ 0x00000001
@@ -8650,7 +8303,6 @@ Immediate			BOOLEAN ?
 TAPE_ERASE			ENDS
 PTAPE_ERASE			typedef ptr TAPE_ERASE
 
-
 TAPE_LOAD			equ 0
 TAPE_UNLOAD			equ 1
 TAPE_TENSION			equ 2
@@ -8664,7 +8316,6 @@ Immediate			BOOLEAN ?
 TAPE_PREPARE			ENDS
 PTAPE_PREPARE			typedef ptr TAPE_PREPARE
 
-
 TAPE_SETMARKS			equ 0
 TAPE_FILEMARKS			equ 1
 TAPE_SHORT_FILEMARKS		equ 2
@@ -8677,7 +8328,6 @@ Immediate			BOOLEAN ?
 TAPE_WRITE_MARKS		ENDS
 PTAPE_WRITE_MARKS		typedef ptr TAPE_WRITE_MARKS
 
-
 TAPE_ABSOLUTE_POSITION		equ 0
 TAPE_LOGICAL_POSITION		equ 1
 TAPE_PSEUDO_LOGICAL_POSITION	equ 2
@@ -8688,7 +8338,6 @@ Partition			dd ?
 _Offset				LARGE_INTEGER <>
 TAPE_GET_POSITION		ENDS
 PTAPE_GET_POSITION		typedef ptr TAPE_GET_POSITION
-
 
 TAPE_REWIND			equ 0
 TAPE_ABSOLUTE_BLOCK		equ 1
@@ -8709,76 +8358,58 @@ Immediate			BOOLEAN ?
 TAPE_SET_POSITION		ENDS
 PTAPE_SET_POSITION		typedef ptr TAPE_SET_POSITION
 
-
-
 TAPE_DRIVE_FIXED		equ 0x00000001
 TAPE_DRIVE_SELECT		equ 0x00000002
 TAPE_DRIVE_INITIATOR		equ 0x00000004
-
 TAPE_DRIVE_ERASE_SHORT		equ 0x00000010
 TAPE_DRIVE_ERASE_LONG		equ 0x00000020
 TAPE_DRIVE_ERASE_BOP_ONLY	equ 0x00000040
 TAPE_DRIVE_ERASE_IMMEDIATE	equ 0x00000080
-
 TAPE_DRIVE_TAPE_CAPACITY	equ 0x00000100
 TAPE_DRIVE_TAPE_REMAINING	equ 0x00000200
 TAPE_DRIVE_FIXED_BLOCK		equ 0x00000400
 TAPE_DRIVE_VARIABLE_BLOCK	equ 0x00000800
-
 TAPE_DRIVE_WRITE_PROTECT	equ 0x00001000
 TAPE_DRIVE_EOT_WZ_SIZE		equ 0x00002000
-
 TAPE_DRIVE_ECC			equ 0x00010000
 TAPE_DRIVE_COMPRESSION		equ 0x00020000
 TAPE_DRIVE_PADDING		equ 0x00040000
 TAPE_DRIVE_REPORT_SMKS		equ 0x00080000
-
 TAPE_DRIVE_GET_ABSOLUTE_BLK	equ 0x00100000
 TAPE_DRIVE_GET_LOGICAL_BLK	equ 0x00200000
 TAPE_DRIVE_SET_EOT_WZ_SIZE	equ 0x00400000
-
 TAPE_DRIVE_EJECT_MEDIA		equ 0x01000000
 TAPE_DRIVE_CLEAN_REQUESTS	equ 0x02000000
 TAPE_DRIVE_SET_CMP_BOP_ONLY	equ 0x04000000
-
 TAPE_DRIVE_RESERVED_BIT		equ 0x80000000
-
-
 TAPE_DRIVE_LOAD_UNLOAD		equ 0x80000001
 TAPE_DRIVE_TENSION		equ 0x80000002
 TAPE_DRIVE_LOCK_UNLOCK		equ 0x80000004
 TAPE_DRIVE_REWIND_IMMEDIATE	equ 0x80000008
-
 TAPE_DRIVE_SET_BLOCK_SIZE	equ 0x80000010
 TAPE_DRIVE_LOAD_UNLD_IMMED	equ 0x80000020
 TAPE_DRIVE_TENSION_IMMED	equ 0x80000040
 TAPE_DRIVE_LOCK_UNLK_IMMED	equ 0x80000080
-
 TAPE_DRIVE_SET_ECC		equ 0x80000100
 TAPE_DRIVE_SET_COMPRESSION	equ 0x80000200
 TAPE_DRIVE_SET_PADDING		equ 0x80000400
 TAPE_DRIVE_SET_REPORT_SMKS	equ 0x80000800
-
 TAPE_DRIVE_ABSOLUTE_BLK		equ 0x80001000
 TAPE_DRIVE_ABS_BLK_IMMED	equ 0x80002000
 TAPE_DRIVE_LOGICAL_BLK		equ 0x80004000
 TAPE_DRIVE_LOG_BLK_IMMED	equ 0x80008000
-
 TAPE_DRIVE_END_OF_DATA		equ 0x80010000
 TAPE_DRIVE_RELATIVE_BLKS	equ 0x80020000
 TAPE_DRIVE_FILEMARKS		equ 0x80040000
 TAPE_DRIVE_SEQUENTIAL_FMKS	equ 0x80080000
-
 TAPE_DRIVE_SETMARKS		equ 0x80100000
 TAPE_DRIVE_SEQUENTIAL_SMKS	equ 0x80200000
 TAPE_DRIVE_REVERSE_POSITION	equ 0x80400000
 TAPE_DRIVE_SPACE_IMMEDIATE	equ 0x80800000
-
 TAPE_DRIVE_WRITE_SETMARKS	equ 0x81000000
 TAPE_DRIVE_WRITE_FILEMARKS	equ 0x82000000
 TAPE_DRIVE_WRITE_SHORT_FMKS	equ 0x84000000
 TAPE_DRIVE_WRITE_LONG_FMKS	equ 0x88000000
-
 TAPE_DRIVE_WRITE_MARK_IMMED	equ 0x90000000
 TAPE_DRIVE_FORMAT		equ 0xA0000000
 TAPE_DRIVE_FORMAT_IMMEDIATE	equ 0xC0000000
@@ -8799,7 +8430,6 @@ EOTWarningZoneSize		dd ?
 TAPE_GET_DRIVE_PARAMETERS	ENDS
 PTAPE_GET_DRIVE_PARAMETERS	typedef ptr TAPE_GET_DRIVE_PARAMETERS
 
-
 TAPE_SET_DRIVE_PARAMETERS	STRUC
 ECC				BOOLEAN ?
 Compression			BOOLEAN ?
@@ -8808,7 +8438,6 @@ ReportSetmarks			BOOLEAN ?
 EOTWarningZoneSize		dd ?
 TAPE_SET_DRIVE_PARAMETERS	ENDS
 PTAPE_SET_DRIVE_PARAMETERS	typedef ptr TAPE_SET_DRIVE_PARAMETERS
-
 
 TAPE_GET_MEDIA_PARAMETERS	STRUC
 Capacity			LARGE_INTEGER <>
@@ -8819,12 +8448,10 @@ WriteProtected			BOOLEAN ?
 TAPE_GET_MEDIA_PARAMETERS	ENDS
 PTAPE_GET_MEDIA_PARAMETERS	typedef ptr TAPE_GET_MEDIA_PARAMETERS
 
-
 TAPE_SET_MEDIA_PARAMETERS	STRUC
 BlockSize			dd ?
 TAPE_SET_MEDIA_PARAMETERS	ENDS
 PTAPE_SET_MEDIA_PARAMETERS	typedef ptr TAPE_SET_MEDIA_PARAMETERS
-
 
 TAPE_FIXED_PARTITIONS		equ 0
 TAPE_SELECT_PARTITIONS		equ 1
@@ -8872,32 +8499,18 @@ define _NTTMAPI_
 
 include ktmtypes.inc
 
-
 TRANSACTIONMANAGER_QUERY_INFORMATION	equ 0x0001
 TRANSACTIONMANAGER_SET_INFORMATION	equ 0x0002
 TRANSACTIONMANAGER_RECOVER		equ 0x0004
 TRANSACTIONMANAGER_RENAME		equ 0x0008
 TRANSACTIONMANAGER_CREATE_RM		equ 0x0010
-
 TRANSACTIONMANAGER_BIND_TRANSACTION	equ 0x0020
 
-
-TRANSACTIONMANAGER_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
-				    TRANSACTIONMANAGER_QUERY_INFORMATION
-
-TRANSACTIONMANAGER_GENERIC_WRITE equ STANDARD_RIGHTS_WRITE OR \
-				     TRANSACTIONMANAGER_SET_INFORMATION OR \
-				     TRANSACTIONMANAGER_RECOVER OR \
-				     TRANSACTIONMANAGER_RENAME OR \
-				     TRANSACTIONMANAGER_CREATE_RM
-
+TRANSACTIONMANAGER_GENERIC_READ equ (STANDARD_RIGHTS_READ OR TRANSACTIONMANAGER_QUERY_INFORMATION)
+TRANSACTIONMANAGER_GENERIC_WRITE equ (STANDARD_RIGHTS_WRITE OR TRANSACTIONMANAGER_SET_INFORMATION OR TRANSACTIONMANAGER_RECOVER OR TRANSACTIONMANAGER_RENAME OR TRANSACTIONMANAGER_CREATE_RM)
 TRANSACTIONMANAGER_GENERIC_EXECUTE equ STANDARD_RIGHTS_EXECUTE
+TRANSACTIONMANAGER_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED OR TRANSACTIONMANAGER_GENERIC_READ OR TRANSACTIONMANAGER_GENERIC_WRITE OR TRANSACTIONMANAGER_GENERIC_EXECUTE OR TRANSACTIONMANAGER_BIND_TRANSACTION)
 
-TRANSACTIONMANAGER_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR \
-				  TRANSACTIONMANAGER_GENERIC_READ OR \
-				  TRANSACTIONMANAGER_GENERIC_WRITE OR \
-				  TRANSACTIONMANAGER_GENERIC_EXECUTE OR \
-				  TRANSACTIONMANAGER_BIND_TRANSACTION
 TRANSACTION_QUERY_INFORMATION	equ 0x0001
 TRANSACTION_SET_INFORMATION	equ 0x0002
 TRANSACTION_ENLIST		equ 0x0004
@@ -8906,36 +8519,12 @@ TRANSACTION_ROLLBACK		equ 0x0010
 TRANSACTION_PROPAGATE		equ 0x0020
 TRANSACTION_RIGHT_RESERVED1	equ 0x0040
 
+TRANSACTION_GENERIC_READ	equ (STANDARD_RIGHTS_READ OR TRANSACTION_QUERY_INFORMATION OR SYNCHRONIZE)
+TRANSACTION_GENERIC_WRITE	equ (STANDARD_RIGHTS_WRITE OR TRANSACTION_SET_INFORMATION OR TRANSACTION_COMMIT OR TRANSACTION_ENLIST OR TRANSACTION_ROLLBACK OR TRANSACTION_PROPAGATE OR SYNCHRONIZE)
+TRANSACTION_GENERIC_EXECUTE	equ (STANDARD_RIGHTS_EXECUTE OR TRANSACTION_COMMIT OR TRANSACTION_ROLLBACK OR SYNCHRONIZE)
+TRANSACTION_ALL_ACCESS		equ (STANDARD_RIGHTS_REQUIRED OR TRANSACTION_GENERIC_READ OR TRANSACTION_GENERIC_WRITE OR TRANSACTION_GENERIC_EXECUTE)
 
-TRANSACTION_GENERIC_READ	equ STANDARD_RIGHTS_READ OR \
-				    TRANSACTION_QUERY_INFORMATION OR \
-				    SYNCHRONIZE
-
-TRANSACTION_GENERIC_WRITE	equ STANDARD_RIGHTS_WRITE OR \
-				    TRANSACTION_SET_INFORMATION OR \
-				    TRANSACTION_COMMIT OR \
-				    TRANSACTION_ENLIST OR \
-				    TRANSACTION_ROLLBACK OR \
-				    TRANSACTION_PROPAGATE OR \
-				    SYNCHRONIZE
-
-TRANSACTION_GENERIC_EXECUTE	equ STANDARD_RIGHTS_EXECUTE OR \
-				    TRANSACTION_COMMIT	OR \
-				    TRANSACTION_ROLLBACK  OR \
-				    SYNCHRONIZE
-
-TRANSACTION_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED OR \
-				    TRANSACTION_GENERIC_READ OR \
-				    TRANSACTION_GENERIC_WRITE OR \
-				    TRANSACTION_GENERIC_EXECUTE
-
-TRANSACTION_RESOURCE_MANAGER_RIGHTS equ TRANSACTION_GENERIC_READ OR \
-				    STANDARD_RIGHTS_WRITE OR \
-				    TRANSACTION_SET_INFORMATION OR \
-				    TRANSACTION_ENLIST OR \
-				    TRANSACTION_ROLLBACK OR \
-				    TRANSACTION_PROPAGATE OR \
-				    SYNCHRONIZE
+TRANSACTION_RESOURCE_MANAGER_RIGHTS equ (TRANSACTION_GENERIC_READ OR STANDARD_RIGHTS_WRITE OR TRANSACTION_SET_INFORMATION OR TRANSACTION_ENLIST OR TRANSACTION_ROLLBACK OR TRANSACTION_PROPAGATE OR SYNCHRONIZE)
 
 RESOURCEMANAGER_QUERY_INFORMATION	equ 0x0001
 RESOURCEMANAGER_SET_INFORMATION		equ 0x0002
@@ -8945,30 +8534,10 @@ RESOURCEMANAGER_GET_NOTIFICATION	equ 0x0010
 RESOURCEMANAGER_REGISTER_PROTOCOL	equ 0x0020
 RESOURCEMANAGER_COMPLETE_PROPAGATION	equ 0x0040
 
-RESOURCEMANAGER_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
-			RESOURCEMANAGER_QUERY_INFORMATION OR \
-			SYNCHRONIZE
-
-RESOURCEMANAGER_GENERIC_WRITE equ STANDARD_RIGHTS_WRITE OR \
-			RESOURCEMANAGER_SET_INFORMATION OR \
-			RESOURCEMANAGER_RECOVER OR \
-			RESOURCEMANAGER_ENLIST OR \
-			RESOURCEMANAGER_GET_NOTIFICATION OR \
-			RESOURCEMANAGER_REGISTER_PROTOCOL OR \
-			RESOURCEMANAGER_COMPLETE_PROPAGATION OR \
-			SYNCHRONIZE
-
-RESOURCEMANAGER_GENERIC_EXECUTE equ STANDARD_RIGHTS_EXECUTE OR \
-			RESOURCEMANAGER_RECOVER OR \
-			RESOURCEMANAGER_ENLIST OR \
-			RESOURCEMANAGER_GET_NOTIFICATION OR \
-			RESOURCEMANAGER_COMPLETE_PROPAGATION OR \
-			SYNCHRONIZE
-
-RESOURCEMANAGER_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR \
-			RESOURCEMANAGER_GENERIC_READ OR \
-			RESOURCEMANAGER_GENERIC_WRITE OR \
-			RESOURCEMANAGER_GENERIC_EXECUTE
+RESOURCEMANAGER_GENERIC_READ equ (STANDARD_RIGHTS_READ OR RESOURCEMANAGER_QUERY_INFORMATION OR SYNCHRONIZE)
+RESOURCEMANAGER_GENERIC_WRITE equ (STANDARD_RIGHTS_WRITE OR RESOURCEMANAGER_SET_INFORMATION OR RESOURCEMANAGER_RECOVER OR RESOURCEMANAGER_ENLIST OR RESOURCEMANAGER_GET_NOTIFICATION OR RESOURCEMANAGER_REGISTER_PROTOCOL OR RESOURCEMANAGER_COMPLETE_PROPAGATION OR SYNCHRONIZE)
+RESOURCEMANAGER_GENERIC_EXECUTE equ (STANDARD_RIGHTS_EXECUTE OR RESOURCEMANAGER_RECOVER OR RESOURCEMANAGER_ENLIST OR RESOURCEMANAGER_GET_NOTIFICATION OR RESOURCEMANAGER_COMPLETE_PROPAGATION OR SYNCHRONIZE)
+RESOURCEMANAGER_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED OR RESOURCEMANAGER_GENERIC_READ OR RESOURCEMANAGER_GENERIC_WRITE OR RESOURCEMANAGER_GENERIC_EXECUTE)
 
 ENLISTMENT_QUERY_INFORMATION	equ 0x0001
 ENLISTMENT_SET_INFORMATION	equ 0x0002
@@ -8976,24 +8545,10 @@ ENLISTMENT_RECOVER		equ 0x0004
 ENLISTMENT_SUBORDINATE_RIGHTS	equ 0x0008
 ENLISTMENT_SUPERIOR_RIGHTS	equ 0x0010
 
-ENLISTMENT_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
-			ENLISTMENT_QUERY_INFORMATION
-
-ENLISTMENT_GENERIC_WRITE equ (STANDARD_RIGHTS_WRITE OR \
-			ENLISTMENT_SET_INFORMATION OR \
-			ENLISTMENT_RECOVER OR \
-			ENLISTMENT_SUBORDINATE_RIGHTS OR \
-			ENLISTMENT_SUPERIOR_RIGHTS)
-
-ENLISTMENT_GENERIC_EXECUTE equ (STANDARD_RIGHTS_EXECUTE OR \
-			ENLISTMENT_RECOVER OR \
-			ENLISTMENT_SUBORDINATE_RIGHTS OR \
-			ENLISTMENT_SUPERIOR_RIGHTS)
-
-ENLISTMENT_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED OR \
-			ENLISTMENT_GENERIC_READ OR \
-			ENLISTMENT_GENERIC_WRITE OR \
-			ENLISTMENT_GENERIC_EXECUTE)
+ENLISTMENT_GENERIC_READ equ (STANDARD_RIGHTS_READ OR ENLISTMENT_QUERY_INFORMATION)
+ENLISTMENT_GENERIC_WRITE equ (STANDARD_RIGHTS_WRITE OR ENLISTMENT_SET_INFORMATION OR ENLISTMENT_RECOVER OR ENLISTMENT_SUBORDINATE_RIGHTS OR ENLISTMENT_SUPERIOR_RIGHTS)
+ENLISTMENT_GENERIC_EXECUTE equ (STANDARD_RIGHTS_EXECUTE OR ENLISTMENT_RECOVER OR ENLISTMENT_SUBORDINATE_RIGHTS OR ENLISTMENT_SUPERIOR_RIGHTS)
+ENLISTMENT_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED OR ENLISTMENT_GENERIC_READ OR ENLISTMENT_GENERIC_WRITE OR ENLISTMENT_GENERIC_EXECUTE)
 
 .enum TRANSACTION_OUTCOME {
     TransactionOutcomeUndetermined = 1,
@@ -9036,12 +8591,10 @@ LastRecoveredLsn	ULONGLONG ?
 TRANSACTIONMANAGER_RECOVERY_INFORMATION ENDS
 PTRANSACTIONMANAGER_RECOVERY_INFORMATION typedef ptr TRANSACTIONMANAGER_RECOVERY_INFORMATION
 
-
 TRANSACTIONMANAGER_OLDEST_INFORMATION STRUC
 OldestTransactionGuid	GUID <>
 TRANSACTIONMANAGER_OLDEST_INFORMATION ENDS
 PTRANSACTIONMANAGER_OLDEST_INFORMATION typedef ptr TRANSACTIONMANAGER_OLDEST_INFORMATION
-
 
 TRANSACTION_PROPERTIES_INFORMATION STRUC
 IsolationLevel		dd ?
@@ -9074,7 +8627,6 @@ TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION STRUC
 SuperiorEnlistmentPair	TRANSACTION_ENLISTMENT_PAIR <>
 TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION ENDS
 PTRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION typedef ptr TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION
-
 
 RESOURCEMANAGER_BASIC_INFORMATION STRUC
 ResourceManagerId	GUID <>
@@ -9206,7 +8758,6 @@ CallbackPriority	TP_CALLBACK_PRIORITY ?
 Size			dd ?
 TP_CALLBACK_ENVIRON_V3	ENDS
 PTP_CALLBACK_ENVIRON	typedef ptr TP_CALLBACK_ENVIRON_V3
-
 TP_CALLBACK_ENVIRON	typedef TP_CALLBACK_ENVIRON_V3
 
 else
@@ -9235,12 +8786,10 @@ endif
 
 ifndef MIDL_PASS
 
-;VOID
 ifdef _WIN64
 TpInitializeCallbackEnviron proto :PTP_CALLBACK_ENVIRON
 TpSetCallbackThreadpool proto :PTP_CALLBACK_ENVIRON, :PTP_POOL
-TpSetCallbackCleanupGroup proto :PTP_CALLBACK_ENVIRON, :PTP_CLEANUP_GROUP,
-	:PTP_CLEANUP_GROUP_CANCEL_CALLBACK
+TpSetCallbackCleanupGroup proto :PTP_CALLBACK_ENVIRON, :PTP_CLEANUP_GROUP, :PTP_CLEANUP_GROUP_CANCEL_CALLBACK
 TpSetCallbackActivationContext proto :PTP_CALLBACK_ENVIRON, :ptr ACTIVATION_CONTEXT
 TpSetCallbackNoActivationContext proto :PTP_CALLBACK_ENVIRON
 TpSetCallbackLongFunction proto :PTP_CALLBACK_ENVIRON
@@ -9323,35 +8872,26 @@ TpDestroyCallbackEnviron macro CallbackEnviron
 endif ;; !MIDL_PASS
 
 PTP_WORK		typedef ptr TP_WORK
-
-CALLBACK(PTP_WORK_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, Work:PTP_WORK)
-
 PTP_TIMER		typedef ptr TP_TIMER
-
-CALLBACK(PTP_TIMER_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, Timer:PTP_TIMER)
-
 TP_WAIT_RESULT		typedef DWORD
 PTP_WAIT		typedef ptr TP_WAIT
-
-CALLBACK(PTP_WAIT_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, _Wait:PTP_WAIT, WaitResult:TP_WAIT_RESULT)
-
 PTP_IO			typedef ptr TP_IO
 
+CALLBACK(PTP_WORK_CALLBACK, :PTP_CALLBACK_INSTANCE, :ptr, :PTP_WORK)
+CALLBACK(PTP_TIMER_CALLBACK, :PTP_CALLBACK_INSTANCE, :ptr, :PTP_TIMER)
+CALLBACK(PTP_WAIT_CALLBACK, :PTP_CALLBACK_INSTANCE, :ptr, :PTP_WAIT, :TP_WAIT_RESULT)
+
 if defined(_M_AMD64) or defined(_WIN64)
-;TEB *
 NtCurrentTeb macro
 	exitm<__readgsqword(FIELD_OFFSET(NT_TIB, Self))>
 	endm
-;PVOID
 GetCurrentFiber macro
 	exitm<__readgsqword(FIELD_OFFSET(NT_TIB, FiberData))>
 	endm
-;PVOID
 GetFiberData macro
 	exitm<GetCurrentFiber()>
 	endm
 endif
-
 
 if defined(_M_IX86) AND NOT defined(MIDL_PASS)
 
@@ -9361,13 +8901,11 @@ if (_MSC_FULL_VER GE 13012035)
 NtCurrentTeb macro
 	exitm<__readfsdword(PcTeb)>
 	endm
-
 else
 NtCurrentTeb macro
 	mov eax,fs:[PcTeb]
 	exitm<eax>
 	endm
-
 endif
 endif
 

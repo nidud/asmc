@@ -6,7 +6,7 @@ main.exe:
     objconv -v0 -nr:?setHeight@Shape@@QEAAXH@Z:Shape_setHeight main2.obj main.obj
     objconv -v0 -nr:?getArea@Rectangle@@QEAAHXZ:Rectangle_getArea main.obj main2.obj
     objconv -v0 -nr:?Rect@@3PEAVRectangle@@EA:Rect main2.obj main.obj
-    link /subsystem:console main.obj shape.obj msvcrt.lib
+    link /subsystem:console /libpath:%AsmcDir%\lib\x64 main.obj shape.obj msvcrt.lib
     $@
     pause
     del *.obj

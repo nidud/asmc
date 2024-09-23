@@ -222,14 +222,6 @@ DEFINE_IIDX(ID3D11ShaderTraceFactory, "1fbad429-66ab-41cc-9617-667ac10e4459")
 
 endif
 
-D3DDisassemble11Trace proto WINAPI \
-	      pSrcData: LPCVOID,
-	   SrcDataSize: SIZE_T,
-		pTrace: ptr ID3D11ShaderTrace,
-	     StartStep: UINT,
-	      NumSteps: UINT,
-		 Flags: UINT,
-	 ppDisassembly: ptr ptr ID3D10Blob
-
+D3DDisassemble11Trace proto WINAPI :LPCVOID, :SIZE_T, :ptr, :UINT, :UINT, :UINT, :ptr
 
 endif

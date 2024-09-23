@@ -35,40 +35,9 @@ LOGFLAGS_SEEK		equ 0x2
 
 endif
 
-
-;NET_API_STATUS
-NetErrorLogClear proto WINAPI \
-	 UncServerName: LPCWSTR,
-	    BackupFile: LPCWSTR,
-	      Reserved: LPBYTE
-
-
-;NET_API_STATUS
-NetErrorLogRead proto WINAPI \
-	 UncServerName: LPCWSTR,
-	     Reserved1: LPWSTR,
-	ErrorLogHandle: LPHLOG,
-	       _Offset: DWORD,
-	     Reserved2: LPDWORD,
-	     Reserved3: DWORD,
-	    OffsetFlag: DWORD,
-		BufPtr: ptr LPBYTE,
-	   PrefMaxSize: DWORD,
-	     BytesRead: LPDWORD,
-	TotalAvailable: LPDWORD
-
-
-;NET_API_STATUS
-NetErrorLogWrite proto WINAPI \
-	     Reserved1: LPBYTE,
-		  Code: DWORD,
-	     Component: LPCWSTR,
-		Buffer: LPBYTE,
-	      NumBytes: DWORD,
-		MsgBuf: LPBYTE,
-	      StrCount: DWORD,
-	     Reserved2: LPBYTE
-
+NetErrorLogClear proto WINAPI :LPCWSTR, :LPCWSTR, :LPBYTE
+NetErrorLogRead proto WINAPI :LPCWSTR, :LPWSTR, :LPHLOG, :DWORD, :LPDWORD, :DWORD, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD
+NetErrorLogWrite proto WINAPI :LPBYTE, :DWORD, :LPCWSTR, :LPBYTE, :DWORD, :LPBYTE, :DWORD, :LPBYTE
 
 ERRLOG_BASE		equ 3100
 NELOG_Internal_Error	equ (ERRLOG_BASE + 0)

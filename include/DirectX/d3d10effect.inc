@@ -33,7 +33,7 @@ include d3d10.inc
     D3D10_DST_RS_SCISSOR_RECTS,
     D3D10_DST_RS_RASTERIZER_STATE,
     D3D10_DST_PREDICATION
-}
+    }
 
 ifndef D3D10_BYTES_FROM_BITS
 D3D10_BYTES_FROM_BITS macro x
@@ -77,62 +77,17 @@ DEFINE_GUID(IID_ID3D10StateBlock,0x803425a,0x57f5,0x4dd6,0x94,0x65,0xa8,0x75,0x7
     Apply		proc
     ReleaseAllDeviceObjects proc
     GetDevice		proc :ptr ptr ID3D10Device
+   .ends
 
-    .ends
-
-;HRESULT
-D3D10StateBlockMaskUnion proto WINAPI \
-		    pA: ptr D3D10_STATE_BLOCK_MASK,
-		    pB: ptr D3D10_STATE_BLOCK_MASK,
-	       pResult: ptr D3D10_STATE_BLOCK_MASK
-
-;HRESULT
-D3D10StateBlockMaskIntersect proto WINAPI \
-		    pA: ptr D3D10_STATE_BLOCK_MASK,
-		    pB: ptr D3D10_STATE_BLOCK_MASK,
-	       pResult: ptr D3D10_STATE_BLOCK_MASK
-
-;HRESULT
-D3D10StateBlockMaskDifference proto WINAPI \
-		    pA: ptr D3D10_STATE_BLOCK_MASK,
-		    pB: ptr D3D10_STATE_BLOCK_MASK,
-	       pResult: ptr D3D10_STATE_BLOCK_MASK
-
-;HRESULT
-D3D10StateBlockMaskEnableCapture proto WINAPI \
-		 pMask: ptr D3D10_STATE_BLOCK_MASK,
-	     StateType: D3D10_DEVICE_STATE_TYPES,
-	    RangeStart: UINT,
-	   RangeLength: UINT
-
-;HRESULT
-D3D10StateBlockMaskDisableCapture proto WINAPI \
-		 pMask: ptr D3D10_STATE_BLOCK_MASK,
-	     StateType: D3D10_DEVICE_STATE_TYPES,
-	    RangeStart: UINT,
-	   RangeLength: UINT
-
-;HRESULT
-D3D10StateBlockMaskEnableAll proto WINAPI \
-		 pMask: ptr D3D10_STATE_BLOCK_MASK
-
-;HRESULT
-D3D10StateBlockMaskDisableAll proto WINAPI \
-		 pMask: ptr D3D10_STATE_BLOCK_MASK
-
-;BOOL
-D3D10StateBlockMaskGetSetting proto WINAPI \
-		 pMask: ptr D3D10_STATE_BLOCK_MASK,
-	     StateType: D3D10_DEVICE_STATE_TYPES,
-		 Entry: UINT
-
-
-;HRESULT
-D3D10CreateStateBlock proto WINAPI \
-	       pDevice: ptr ID3D10Device,
-       pStateBlockMask: ptr D3D10_STATE_BLOCK_MASK,
-	  ppStateBlock: ptr ID3D10StateBlock
-
+D3D10StateBlockMaskUnion proto WINAPI :ptr, :ptr, :ptr
+D3D10StateBlockMaskIntersect proto WINAPI :ptr, :ptr, :ptr
+D3D10StateBlockMaskDifference proto WINAPI :ptr, :ptr, :ptr
+D3D10StateBlockMaskEnableCapture proto WINAPI :ptr, :D3D10_DEVICE_STATE_TYPES, :UINT, :UINT
+D3D10StateBlockMaskDisableCapture proto WINAPI :ptr, :D3D10_DEVICE_STATE_TYPES, :UINT, :UINT
+D3D10StateBlockMaskEnableAll proto WINAPI :ptr
+D3D10StateBlockMaskDisableAll proto WINAPI :ptr
+D3D10StateBlockMaskGetSetting proto WINAPI :ptr, :D3D10_DEVICE_STATE_TYPES, :UINT
+D3D10CreateStateBlock proto WINAPI :ptr, :ptr, :ptr
 
 D3D10_EFFECT_COMPILE_CHILD_EFFECT equ (1 SHL 0)
 D3D10_EFFECT_COMPILE_ALLOW_SLOW_OPS equ (1 SHL 1)
@@ -155,7 +110,6 @@ UnpackedSize		UINT ?
 Stride			UINT ?
 D3D10_EFFECT_TYPE_DESC	ENDS
 
-
 DEFINE_GUID(IID_ID3D10EffectType,0x4e9e1ddc,0xcd9d,0x4772,0xa8,0x37,0x0,0x18,0xb,0x9b,0x88,0xfd);
 
 .comdef ID3D10EffectType
@@ -167,9 +121,7 @@ DEFINE_GUID(IID_ID3D10EffectType,0x4e9e1ddc,0xcd9d,0x4772,0xa8,0x37,0x0,0x18,0xb
     GetMemberTypeBySemantic	proc :LPCSTR
     GetMemberName		proc :UINT
     GetMemberSemantic		proc :UINT
-
-    .ends
-
+   .ends
 
 D3D10_EFFECT_VARIABLE_DESC	STRUC
 Name				LPCSTR ?
@@ -178,9 +130,7 @@ Flags				UINT ?
 Annotations			UINT ?
 BufferOffset			UINT ?
 ExplicitBindPoint		UINT ?
-;D3D10_EFFECT_VARIABLE_EXPLICIT_BIND_POINT
 D3D10_EFFECT_VARIABLE_DESC	ENDS
-
 
 DEFINE_GUID(IID_ID3D10EffectVariable,0xae897105,0xe6,0x45bf,0xbb,0x8e,0x28,0x1d,0xd6,0xdb,0x8e,0x1b)
 
@@ -211,9 +161,7 @@ DEFINE_GUID(IID_ID3D10EffectVariable,0xae897105,0xe6,0x45bf,0xbb,0x8e,0x28,0x1d,
     AsSampler			proc
     SetRawValue			proc :PVOID, :UINT, :UINT
     GetRawValue			proc :PVOID, :UINT, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectScalarVariable,0xe48f7b,0xd2c8,0x49e8,0xa8,0x6c,0x2,0x2d,0xee,0x53,0x43,0x1f)
 
@@ -231,9 +179,7 @@ DEFINE_GUID(IID_ID3D10EffectScalarVariable,0xe48f7b,0xd2c8,0x49e8,0xa8,0x6c,0x2,
     GetBool			proc :ptr
     SetBoolArray		proc :ptr, :UINT, :UINT
     GetBoolArray		proc :ptr, :UINT, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectVectorVariable,0x62b98c44,0x1f82,0x4c67,0xbc,0xd0,0x72,0xcf,0x8f,0x21,0x7e,0x81);
 
@@ -251,9 +197,7 @@ DEFINE_GUID(IID_ID3D10EffectVectorVariable,0x62b98c44,0x1f82,0x4c67,0xbc,0xd0,0x
     GetBoolVectorArray		proc :ptr, :UINT, :UINT
     GetIntVectorArray		proc :ptr, :UINT, :UINT
     GetFloatVectorArray		proc :ptr, :UINT, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectMatrixVariable,0x50666c24,0xb82f,0x4eed,0xa1,0x72,0x5b,0x6e,0x7e,0x85,0x22,0xe0)
 
@@ -267,9 +211,7 @@ DEFINE_GUID(IID_ID3D10EffectMatrixVariable,0x50666c24,0xb82f,0x4eed,0xa1,0x72,0x
     GetMatrixTranspose		proc :ptr
     SetMatrixTransposeArray	proc :ptr, :UINT, :UINT
     GetMatrixTransposeArray	proc :ptr, :UINT, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectStringVariable,0x71417501,0x8df9,0x4e0a,0xa7,0x8a,0x25,0x5f,0x97,0x56,0xba,0xff)
 
@@ -277,9 +219,7 @@ DEFINE_GUID(IID_ID3D10EffectStringVariable,0x71417501,0x8df9,0x4e0a,0xa7,0x8a,0x
 
     GetString			proc :LPCSTR
     GetStringArray		proc :LPCSTR, :UINT, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectShaderResourceVariable,0xc0a7157b,0xd872,0x4b1d,0x80,0x73,0xef,0xc2,0xac,0xd4,0xb1,0xfc)
 
@@ -289,9 +229,7 @@ DEFINE_GUID(IID_ID3D10EffectShaderResourceVariable,0xc0a7157b,0xd872,0x4b1d,0x80
     GetResource			proc :ptr ptr ID3D10ShaderResourceView
     SetResourceArray		proc :ptr ptr ID3D10ShaderResourceView, :UINT, :UINT
     GetResourceArray		proc :ptr ptr ID3D10ShaderResourceView, :UINT, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectRenderTargetViewVariable,0x28ca0cc3,0xc2c9,0x40bb,0xb5,0x7f,0x67,0xb7,0x37,0x12,0x2b,0x17)
 
@@ -301,9 +239,7 @@ DEFINE_GUID(IID_ID3D10EffectRenderTargetViewVariable,0x28ca0cc3,0xc2c9,0x40bb,0x
     GetRenderTarget		proc :ptr ptr ID3D10RenderTargetView
     SetRenderTargetArray	proc :ptr ptr ID3D10RenderTargetView, :UINT, :UINT
     GetRenderTargetArray	proc :ptr ptr ID3D10RenderTargetView, :UINT, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectDepthStencilViewVariable,0x3e02c918,0xcc79,0x4985,0xb6,0x22,0x2d,0x92,0xad,0x70,0x16,0x23)
 
@@ -313,9 +249,7 @@ DEFINE_GUID(IID_ID3D10EffectDepthStencilViewVariable,0x3e02c918,0xcc79,0x4985,0x
     GetDepthStencil		proc :ptr ptr ID3D10DepthStencilView
     SetDepthStencilArray	proc :ptr ptr ID3D10DepthStencilView, :UINT, :UINT
     GetDepthStencilArray	proc :ptr ptr ID3D10DepthStencilView, :UINT, :UINT
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectConstantBuffer,0x56648f4d,0xcc8b,0x4444,0xa5,0xad,0xb5,0xa3,0xd7,0x6e,0x91,0xb3)
 
@@ -325,8 +259,7 @@ DEFINE_GUID(IID_ID3D10EffectConstantBuffer,0x56648f4d,0xcc8b,0x4444,0xa5,0xad,0x
     GetConstantBuffer		proc :ptr ptr ID3D10Buffer
     SetTextureBuffer		proc :ptr ID3D10ShaderResourceView
     GetTextureBuffer		proc :ptr ptr ID3D10ShaderResourceView
-
-    .ends
+   .ends
 
 D3D10_EFFECT_SHADER_DESC	STRUC
 pInputSignature			LPBYTE ?
@@ -338,7 +271,6 @@ NumInputSignatureEntries	UINT ?
 NumOutputSignatureEntries	UINT ?
 D3D10_EFFECT_SHADER_DESC	ENDS
 
-
 DEFINE_GUID(IID_ID3D10EffectShaderVariable,0x80849279,0xc799,0x4797,0x8c,0x33,0x4,0x7,0xa0,0x7d,0x9e,0x6)
 
 .comdef ID3D10EffectShaderVariable : public ID3D10EffectVariable
@@ -349,9 +281,7 @@ DEFINE_GUID(IID_ID3D10EffectShaderVariable,0x80849279,0xc799,0x4797,0x8c,0x33,0x
     GetPixelShader		proc :UINT, :ptr ptr ID3D10PixelShader
     GetInputSignatureElementDesc proc :UINT, :UINT, :ptr D3D10_SIGNATURE_PARAMETER_DESC
     GetOutputSignatureElementDesc proc :UINT, :UINT, :ptr D3D10_SIGNATURE_PARAMETER_DESC
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectBlendVariable,0x1fcd2294,0xdf6d,0x4eae,0x86,0xb3,0xe,0x91,0x60,0xcf,0xb0,0x7b)
 
@@ -359,9 +289,7 @@ DEFINE_GUID(IID_ID3D10EffectBlendVariable,0x1fcd2294,0xdf6d,0x4eae,0x86,0xb3,0xe
 
     GetBlendState		proc :UINT, :ptr ptr ID3D10BlendState
     GetBackingStore		proc :UINT, :ptr D3D10_BLEND_DESC
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectDepthStencilVariable,0xaf482368,0x330a,0x46a5,0x9a,0x5c,0x1,0xc7,0x1a,0xf2,0x4c,0x8d)
 
@@ -369,9 +297,7 @@ DEFINE_GUID(IID_ID3D10EffectDepthStencilVariable,0xaf482368,0x330a,0x46a5,0x9a,0
 
     GetDepthStencilState	proc :UINT, :ptr ptr ID3D10DepthStencilState
     GetBackingStore		proc :UINT, :ptr D3D10_DEPTH_STENCIL_DESC
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectRasterizerVariable,0x21af9f0e,0x4d94,0x4ea9,0x97,0x85,0x2c,0xb7,0x6b,0x8c,0xb,0x34)
 
@@ -379,9 +305,7 @@ DEFINE_GUID(IID_ID3D10EffectRasterizerVariable,0x21af9f0e,0x4d94,0x4ea9,0x97,0x8
 
     GetRasterizerState		proc :UINT, :ptr ptr ID3D10RasterizerState
     GetBackingStore		proc :UINT, :ptr D3D10_RASTERIZER_DESC
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectSamplerVariable,0x6530d5c7,0x7e9,0x4271,0xa4,0x18,0xe7,0xce,0x4b,0xd1,0xe4,0x80)
 
@@ -389,8 +313,7 @@ DEFINE_GUID(IID_ID3D10EffectSamplerVariable,0x6530d5c7,0x7e9,0x4271,0xa4,0x18,0x
 
     GetSampler			proc :UINT, :ptr ptr ID3D10SamplerState
     GetBackingStore		proc :UINT, :ptr D3D10_SAMPLER_DESC
-
-    .ends
+   .ends
 
 LPID3D10EffectShaderVariable	typedef ptr ID3D10EffectShaderVariable
 
@@ -409,7 +332,6 @@ pShaderVariable		LPID3D10EffectShaderVariable ?
 ShaderIndex		UINT ?
 D3D10_PASS_SHADER_DESC	ENDS
 
-
 DEFINE_GUID(IID_ID3D10EffectPass,0x5cfbeb89,0x1a06,0x46e0,0xb2,0x82,0xe3,0xf9,0xbf,0xa3,0x6a,0x54)
 
 .comdef ID3D10EffectPass
@@ -423,15 +345,13 @@ DEFINE_GUID(IID_ID3D10EffectPass,0x5cfbeb89,0x1a06,0x46e0,0xb2,0x82,0xe3,0xf9,0x
     GetAnnotationByName		proc :LPCSTR
     Apply			proc :UINT
     ComputeStateBlockMask	proc :ptr D3D10_STATE_BLOCK_MASK
-
-    .ends
+   .ends
 
 D3D10_TECHNIQUE_DESC	STRUC
 Name			LPCSTR ?
 Passes			UINT ?
 Annotations		UINT ?
 D3D10_TECHNIQUE_DESC	ENDS
-
 
 DEFINE_GUID(IID_ID3D10EffectTechnique,0xdb122ce8,0xd1c9,0x4292,0xb2,0x37,0x24,0xed,0x3d,0xe8,0xb1,0x75)
 
@@ -444,9 +364,7 @@ DEFINE_GUID(IID_ID3D10EffectTechnique,0xdb122ce8,0xd1c9,0x4292,0xb2,0x37,0x24,0x
     GetPassByIndex		proc :UINT
     GetPassByName		proc :LPCSTR
     ComputeStateBlockMask	proc :ptr D3D10_STATE_BLOCK_MASK
-
-    .ends
-
+   .ends
 
 D3D10_EFFECT_DESC	STRUC
 IsChildEffect		BOOL ?
@@ -456,7 +374,6 @@ GlobalVariables		UINT ?
 SharedGlobalVariables	UINT ?
 Techniques		UINT ?
 D3D10_EFFECT_DESC	ENDS
-
 
 DEFINE_GUID(IID_ID3D10Effect,0x51b0ca8b,0xec0b,0x4519,0x87,0xd,0x8e,0xe1,0xcb,0x50,0x17,0xc7)
 
@@ -475,56 +392,18 @@ DEFINE_GUID(IID_ID3D10Effect,0x51b0ca8b,0xec0b,0x4519,0x87,0xd,0x8e,0xe1,0xcb,0x
     GetTechniqueByName		proc :LPCSTR
     Optimize			proc
     IsOptimized			proc
-
-    .ends
-
+   .ends
 
 DEFINE_GUID(IID_ID3D10EffectPool,0x9537ab04,0x3250,0x412e,0x82,0x13,0xfc,0xd2,0xf8,0x67,0x79,0x33)
 
 .comdef ID3D10EffectPool : public IUnknown
 
     AsEffect		proc
+   .ends
 
-    .ends
-
-
-;HRESULT
-D3D10CompileEffectFromMemory proto WINAPI \
-		 pData: ptr void,
-	    DataLength: SIZE_T,
-	  pSrcFileName: LPCSTR,
-	      pDefines: ptr D3D10_SHADER_MACRO,
-	      pInclude: ptr ID3D10Include,
-	     HLSLFlags: UINT,
-	       FXFlags: UINT,
-      ppCompiledEffect: ptr ID3D10Blob,
-	      ppErrors: ptr ID3D10Blob
-
-
-;HRESULT
-D3D10CreateEffectFromMemory proto WINAPI \
-		 pData: ptr void,
-	    DataLength: SIZE_T,
-	       FXFlags: UINT,
-	       pDevice: ptr ID3D10Device,
-	   pEffectPool: ptr ID3D10EffectPool,
-	      ppEffect: ptr ID3D10Effect
-
-
-;HRESULT
-D3D10CreateEffectPoolFromMemory proto WINAPI \
-		 pData: ptr void,
-	    DataLength: SIZE_T,
-	       FXFlags: UINT,
-	       pDevice: ptr ID3D10Device,
-	  ppEffectPool: ptr ID3D10EffectPool
-
-
-;HRESULT
-D3D10DisassembleEffect proto WINAPI \
-	       pEffect: ptr ID3D10Effect,
-       EnableColorCode: BOOL,
-	 ppDisassembly: ptr ID3D10Blob
-
+D3D10CompileEffectFromMemory proto WINAPI :ptr, :SIZE_T, :LPCSTR, :ptr, :ptr, :UINT, :UINT, :ptr, :ptr
+D3D10CreateEffectFromMemory proto WINAPI :ptr, :SIZE_T, :UINT, :ptr, :ptr, :ptr
+D3D10CreateEffectPoolFromMemory proto WINAPI :ptr, :SIZE_T, :UINT, :ptr, :ptr
+D3D10DisassembleEffect proto WINAPI :ptr, :BOOL, :ptr
 
 endif

@@ -88,9 +88,7 @@ DXGI_INFO_QUEUE_FILTER	ENDS
 
 DXGI_INFO_QUEUE_DEFAULT_MESSAGE_COUNT_LIMIT equ 1024
 
-DXGIGetDebugInterface proto WINAPI \
-		  riid: REFIID,
-		      : ptr ptr
+DXGIGetDebugInterface proto WINAPI :REFIID, :ptr
 
 ifndef __IDXGIInfoQueue_INTERFACE_DEFINED__
 define __IDXGIInfoQueue_INTERFACE_DEFINED__

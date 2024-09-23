@@ -10,7 +10,7 @@ include comutil.inc
 include malloc.inc
 ;include type_traits
 
-_com_issue_error proto WINAPI :HRESULT
+_com_issue_error proto :HRESULT
 
 .template _com_IIID
 

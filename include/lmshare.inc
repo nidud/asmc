@@ -3,72 +3,15 @@ define _LMSHARE_
 
 include lmcons.inc
 
-;NET_API_STATUS
-NetShareAdd proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetShareEnum proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
-;NET_API_STATUS
-NetShareEnumSticky proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
-;NET_API_STATUS
-NetShareGetInfo proto WINAPI \
-	    servername: LMSTR,
-	       netname: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetShareSetInfo proto WINAPI \
-	    servername: LMSTR,
-	       netname: LMSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetShareDel proto WINAPI \
-	    servername: LMSTR,
-	       netname: LMSTR,
-	      reserved: DWORD
-
-;NET_API_STATUS
-NetShareDelSticky proto WINAPI \
-	    servername: LMSTR,
-	       netname: LMSTR,
-	      reserved: DWORD
-
-
-;NET_API_STATUS
-NetShareCheck proto WINAPI \
-	    servername: LMSTR,
-		device: LMSTR,
-		  type: LPDWORD
-
-;NET_API_STATUS
-NetShareDelEx proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		   buf: LPBYTE
+NetShareAdd proto WINAPI :LMSTR, :DWORD, :LPBYTE, :LPDWORD
+NetShareEnum proto WINAPI :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetShareEnumSticky proto WINAPI :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetShareGetInfo proto WINAPI :LMSTR, :LMSTR, :DWORD, :ptr
+NetShareSetInfo proto WINAPI :LMSTR, :LMSTR, :DWORD, :LPBYTE, :LPDWORD
+NetShareDel proto WINAPI :LMSTR, :LMSTR, :DWORD
+NetShareDelSticky proto WINAPI :LMSTR, :LMSTR, :DWORD
+NetShareCheck proto WINAPI :LMSTR, :LMSTR, :LPDWORD
+NetShareDelEx proto WINAPI :LMSTR, :DWORD, :LPBYTE
 
 SHARE_INFO_0		STRUC
 shi0_netname		LMSTR ?
@@ -168,28 +111,9 @@ SHARE_INFO_1503		ENDS
 PSHARE_INFO_1503	typedef ptr SHARE_INFO_1503
 LPSHARE_INFO_1503	typedef ptr SHARE_INFO_1503
 
-;NET_API_STATUS
-NetServerAliasAdd proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		   buf: LPBYTE
-
-;NET_API_STATUS
-NetServerAliasDel proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		   buf: LPBYTE
-
-;NET_API_STATUS
-NetServerAliasEnum proto WINAPI \
-	    servername: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  resumehandle: LPDWORD
-
+NetServerAliasAdd proto WINAPI :LMSTR, :DWORD, :LPBYTE
+NetServerAliasDel proto WINAPI :LMSTR, :DWORD, :LPBYTE
+NetServerAliasEnum proto WINAPI :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
 
 SERVER_ALIAS_INFO_0	STRUC
 srvai0_alias		LMSTR ?
@@ -257,32 +181,9 @@ endif
 ifndef _LMSESSION_
 define _LMSESSION_
 
-;NET_API_STATUS
-NetSessionEnum proto WINAPI \
-	    servername: LMSTR,
-	 UncClientName: LMSTR,
-	      username: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
-;NET_API_STATUS
-NetSessionDel proto WINAPI \
-	    servername: LMSTR,
-	 UncClientName: LMSTR,
-	      username: LMSTR
-
-;NET_API_STATUS
-NetSessionGetInfo proto WINAPI \
-	    servername: LMSTR,
-	 UncClientName: LMSTR,
-	      username: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
+NetSessionEnum proto WINAPI :LMSTR, :LMSTR, :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetSessionDel proto WINAPI :LMSTR, :LMSTR, :LMSTR
+NetSessionGetInfo proto WINAPI :LMSTR, :LMSTR, :LMSTR, :DWORD, :ptr
 
 SESSION_INFO_0		STRUC
 sesi0_cname		LMSTR ?
@@ -346,17 +247,7 @@ endif
 ifndef _LMCONNECTION_
 define _LMCONNECTION_
 
-;NET_API_STATUS
-NetConnectionEnum proto WINAPI \
-	    servername: LMSTR,
-	     qualifier: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
+NetConnectionEnum proto WINAPI :LMSTR, :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
 
 CONNECTION_INFO_0	STRUC
 coni0_id		dd ?
@@ -381,29 +272,9 @@ endif
 ifndef _LMFILE_
 define _LMFILE_
 
-;NET_API_STATUS
-NetFileClose proto WINAPI \
-	    servername: LMSTR,
-		fileid: DWORD
-
-;NET_API_STATUS
-NetFileEnum proto WINAPI \
-	    servername: LMSTR,
-	      basepath: LMSTR,
-	      username: LMSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: PDWORD_PTR
-
-;NET_API_STATUS
-NetFileGetInfo proto WINAPI \
-	    servername: LMSTR,
-		fileid: DWORD,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
+NetFileClose proto WINAPI :LMSTR, :DWORD
+NetFileEnum proto WINAPI :LMSTR, :LMSTR, :LMSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :PDWORD_PTR
+NetFileGetInfo proto WINAPI :LMSTR, :DWORD, :DWORD, :ptr
 
 FILE_INFO_2		STRUC
 fi2_id			dd ?

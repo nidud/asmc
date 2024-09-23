@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
@@ -16,8 +17,6 @@ endif
 
 ifndef __activaut_h__
 define __activaut_h__
-
-.pragma list(push, 0)
 
 include ocidl.inc
 
@@ -160,5 +159,5 @@ BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
 BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
 BSTR_UserFree64 proto WINAPI :ptr, :ptr
 
-.pragma list(pop)
 endif
+.pragma list(pop)

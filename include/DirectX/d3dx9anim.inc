@@ -132,8 +132,7 @@ LPD3DXEVENTHANDLE	typedef ptr DWORD
     CreateMeshContainer proc :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr ptr
     DestroyFrame	proc :LPD3DXFRAME
     DestroyMeshContainer proc :LPD3DXMESHCONTAINER
-
-    .ends
+   .ends
 
 
 .comdef ID3DXLoadUserData
@@ -141,8 +140,7 @@ LPD3DXEVENTHANDLE	typedef ptr DWORD
     LoadTopLevelData	proc :ptr
     LoadFrameChildData	proc :ptr, :ptr
     LoadMeshChildData	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 
 .comdef ID3DXSaveUserData
@@ -153,8 +151,7 @@ LPD3DXEVENTHANDLE	typedef ptr DWORD
     AddTopLevelDataObjectsPost proc :ptr
     RegisterTemplates	proc :ptr
     SaveTemplates	proc :ptr
-
-    .ends
+   .ends
 
 
 .comdef ID3DXAnimationSet : public IUnknown
@@ -167,8 +164,7 @@ LPD3DXEVENTHANDLE	typedef ptr DWORD
     GetAnimationIndexByName proc :ptr, :ptr
     GetSRT		proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
     GetCallback		proc :double, :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
 
 
 .comdef ID3DXKeyframedAnimationSet : public ID3DXAnimationSet
@@ -197,8 +193,7 @@ LPD3DXEVENTHANDLE	typedef ptr DWORD
     RegisterAnimationSRTKeys proc :ptr, :UINT, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
     Compress		proc :DWORD, :float, :ptr, :ptr
     UnregisterAnimation proc :UINT
-
-    .ends
+   .ends
 
 
 .comdef ID3DXCompressedAnimationSet : public ID3DXAnimationSet
@@ -208,15 +203,13 @@ LPD3DXEVENTHANDLE	typedef ptr DWORD
     GetCompressedData	proc :ptr
     GetNumCallbackKeys	proc
     GetCallbackKeys	proc :LPD3DXKEY_CALLBACK
-
-    .ends
+   .ends
 
 
 .comdef ID3DXAnimationCallbackHandler
 
     HandleCallback	proc :UINT, :ptr
-
-    .ends
+   .ends
 
 
 .comdef ID3DXAnimationController : public IUnknown
@@ -260,113 +253,21 @@ LPD3DXEVENTHANDLE	typedef ptr DWORD
     ValidateEvent	proc :D3DXEVENTHANDLE
     GetEventDesc	proc :D3DXEVENTHANDLE, :ptr
     CloneAnimationController proc :UINT, :UINT, :UINT, :UINT, :ptr
+   .ends
 
-    .ends
-
-;HRESULT
-D3DXLoadMeshHierarchyFromXA proto WINAPI \
-	      filename: LPSTR,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-		 alloc: ptr ID3DXAllocateHierarchy,
-      user_data_loader: ptr ID3DXLoadUserData,
-       frame_hierarchy: ptr D3DXFRAME,
-  animation_controller: ptr ID3DXAnimationController
-
-;HRESULT
-D3DXLoadMeshHierarchyFromXW proto WINAPI \
-	      filename: LPWSTR,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-		 alloc: ptr ID3DXAllocateHierarchy,
-      user_data_loader: ptr ID3DXLoadUserData,
-       frame_hierarchy: ptr D3DXFRAME,
-  animation_controller: ptr ID3DXAnimationController
-
-D3DXLoadMeshHierarchyFromX equ __MINGW_NAME_AW(D3DXLoadMeshHierarchyFromX)
-;HRESULT
-D3DXLoadMeshHierarchyFromXInMemory proto WINAPI \
-		 _data: PVOID,
-	     data_size: DWORD,
-		 flags: DWORD,
-		device: ptr IDirect3DDevice9,
-		 alloc: ptr ID3DXAllocateHierarchy,
-      user_data_loader: ptr ID3DXLoadUserData,
-       frame_hierarchy: ptr D3DXFRAME,
-  animation_controller: ptr ID3DXAnimationController
-
-;HRESULT
-D3DXSaveMeshHierarchyToFileA proto WINAPI \
-	      filename: LPSTR,
-		format: DWORD,
-	    frame_root: ptr D3DXFRAME,
-  animation_controller: ptr ID3DXAnimationController,
-       user_data_saver: ptr ID3DXSaveUserData
-
-;HRESULT
-D3DXSaveMeshHierarchyToFileW proto WINAPI \
-	      filename: LPWSTR,
-		format: DWORD,
-	    frame_root: ptr D3DXFRAME,
-  animation_controller: ptr ID3DXAnimationController,
-       user_data_saver: ptr ID3DXSaveUserData
-
-;HRESULT
-D3DXFrameDestroy proto WINAPI \
-	    frame_root: ptr D3DXFRAME,
-		 alloc: ptr ID3DXAllocateHierarchy
-
-;HRESULT
-D3DXFrameAppendChild proto WINAPI \
-		parent: ptr D3DXFRAME,
-		 child: ptr D3DXFRAME
-
-;D3DXFRAME *
-D3DXFrameFind proto WINAPI \
-		  root: ptr D3DXFRAME,
-		  name: LPSTR
-
-;HRESULT
-D3DXFrameRegisterNamedMatrices proto WINAPI \
-	    frame_root: ptr D3DXFRAME,
-  animation_controller: ptr ID3DXAnimationController
-
-;UINT
-D3DXFrameNumNamedMatrices proto WINAPI \
-	    frame_root: ptr D3DXFRAME
-
-;HRESULT
-D3DXFrameCalculateBoundingSphere proto WINAPI \
-	    frame_root: ptr D3DXFRAME,
-		center: ptr D3DXVECTOR3,
-		radius: ptr FLOAT
-
-;HRESULT
-D3DXCreateKeyframedAnimationSet proto WINAPI \
-		  name: LPSTR,
-      ticks_per_second: double,
-	 playback_type: D3DXPLAYBACK_TYPE,
-       animation_count: UINT,
-    callback_key_count: UINT,
-	 callback_keys: ptr D3DXKEY_CALLBACK,
-	 animation_set: ptr ID3DXKeyframedAnimationSet
-
-;HRESULT
-D3DXCreateCompressedAnimationSet proto WINAPI \
-		  name: LPSTR,
-      ticks_per_second: double,
-	 playback_type: D3DXPLAYBACK_TYPE,
-       compressed_data: ptr ID3DXBuffer,
-    callback_key_count: UINT,
-	 callback_keys: ptr D3DXKEY_CALLBACK,
-	 animation_set: ptr ID3DXCompressedAnimationSet
-
-;HRESULT
-D3DXCreateAnimationController proto WINAPI \
-max_animation_output_count: UINT,
-max_animation_set_count: UINT,
-       max_track_count: UINT,
-       max_event_count: UINT,
-  animation_controller: ptr ID3DXAnimationController
+D3DXLoadMeshHierarchyFromXA proto WINAPI :LPSTR, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXLoadMeshHierarchyFromXW proto WINAPI :LPWSTR, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXLoadMeshHierarchyFromXInMemory proto WINAPI :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DXSaveMeshHierarchyToFileA proto WINAPI :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXSaveMeshHierarchyToFileW proto WINAPI :LPWSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXFrameDestroy proto WINAPI :ptr, :ptr
+D3DXFrameAppendChild proto WINAPI :ptr, :ptr
+D3DXFrameFind proto WINAPI :ptr, :LPSTR
+D3DXFrameRegisterNamedMatrices proto WINAPI :ptr, :ptr
+D3DXFrameNumNamedMatrices proto WINAPI :ptr
+D3DXFrameCalculateBoundingSphere proto WINAPI :ptr, :ptr, :ptr
+D3DXCreateKeyframedAnimationSet proto WINAPI :LPSTR, :double, :D3DXPLAYBACK_TYPE, :UINT, :UINT, :ptr, :ptr
+D3DXCreateCompressedAnimationSet proto WINAPI :LPSTR, :double, :D3DXPLAYBACK_TYPE, :ptr, :UINT, :ptr, :ptr
+D3DXCreateAnimationController proto WINAPI :UINT, :UINT, :UINT, :UINT, :ptr
 
 endif

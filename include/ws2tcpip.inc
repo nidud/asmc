@@ -66,19 +66,9 @@ endif
 endif
 endif
 
-getaddrinfo proto WINAPI \
-	     pNodeName: PCSTR,
-	  pServiceName: PCSTR,
-		pHints: ptr ADDRINFOA,
-	      ppResult: ptr PADDRINFOA
-
+getaddrinfo proto WINAPI :PCSTR, :PCSTR, :ptr, :ptr
 if (NTDDI_VERSION GE NTDDI_WINXPSP2) OR (_WIN32_WINNT GE 0x0502)
-GetAddrInfoW proto WINAPI \
-	     pNodeName: PCWSTR,
-	  pServiceName: PCWSTR,
-		pHints: ptr ADDRINFOW,
-	      ppResult: ptr PADDRINFOW
-
+GetAddrInfoW proto WINAPI :PCWSTR, :PCWSTR, :ptr, :ptr
 GetAddrInfoA		equ <getaddrinfo>
 ifdef _UNICODE
 GetAddrInfo		equ <GetAddrInfoW>
@@ -103,43 +93,11 @@ if (_WIN32_WINNT GE 0x0600)
 CALLBACK(LPLOOKUPSERVICE_COMPLETION_ROUTINE, :DWORD, :DWORD, :LPWSAOVERLAPPED)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;_WINSOCK_DEPRECATED_BY("GetAddrInfoExW()")
-;INT
-GetAddrInfoExA proto WINAPI \
-		 pName: PCSTR,
-	  pServiceName: PCSTR,
-	   dwNameSpace: DWORD,
-	       lpNspId: LPGUID,
-		 hints: ptr ADDRINFOEXA,
-	      ppResult: ptr PADDRINFOEXA,
-	       timeout: ptr timeval,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPLOOKUPSERVICE_COMPLETION_ROUTINE,
-	  lpNameHandle: LPHANDLE
-
+GetAddrInfoExA proto WINAPI :PCSTR, :PCSTR, :DWORD, :LPGUID, :ptr, :ptr, :ptr, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE
 endif
-
-;INT
-GetAddrInfoExW proto WINAPI \
-		 pName: PCWSTR,
-	  pServiceName: PCWSTR,
-	   dwNameSpace: DWORD,
-	       lpNspId: LPGUID,
-		 hints: ptr ADDRINFOEXW,
-	      ppResult: ptr PADDRINFOEXW,
-	       timeout: ptr timeval,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPLOOKUPSERVICE_COMPLETION_ROUTINE,
-	      lpHandle: LPHANDLE
-
-GetAddrInfoExCancel proto WINAPI \
-	      lpHandle: LPHANDLE
-
-GetAddrInfoExOverlappedResult proto WINAPI \
-	  lpOverlapped: LPOVERLAPPED
-
-
+GetAddrInfoExW proto WINAPI :PCWSTR, :PCWSTR, :DWORD, :LPGUID, :ptr, :ptr, :ptr, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE
+GetAddrInfoExCancel proto WINAPI :LPHANDLE
+GetAddrInfoExOverlappedResult proto WINAPI :LPOVERLAPPED
 ifdef _UNICODE
 GetAddrInfoEx		equ <GetAddrInfoExW>
 else
@@ -149,36 +107,11 @@ endif
 if INCL_WINSOCK_API_TYPEDEFS
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-CALLBACK(LPFN_GETADDRINFOEXA,
-		:PCSTR,
-		:PCSTR,
-		:DWORD,
-		:LPGUID,
-		:ptr ADDRINFOEXA,
-		:ptr PADDRINFOEXA,
-		:ptr timeval,
-		:LPOVERLAPPED,
-		:LPLOOKUPSERVICE_COMPLETION_ROUTINE,
-		:LPHANDLE)
-
+CALLBACK(LPFN_GETADDRINFOEXA, :PCSTR, :PCSTR, :DWORD, :LPGUID, :ptr, :ptr, :ptr, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE)
 endif
-
-CALLBACK(LPFN_GETADDRINFOEXW,
-		:PCWSTR,
-		:PCWSTR,
-		:DWORD,
-		:LPGUID,
-		:ptr ADDRINFOEXW,
-		:ptr PADDRINFOEXW,
-		:ptr timeval,
-		:LPOVERLAPPED,
-		:LPLOOKUPSERVICE_COMPLETION_ROUTINE,
-		:LPHANDLE)
-
+CALLBACK(LPFN_GETADDRINFOEXW, :PCWSTR, :PCWSTR, :DWORD, :LPGUID, :ptr, :ptr, :ptr, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE)
 CALLBACK(LPFN_GETADDRINFOEXCANCEL, :LPHANDLE)
 CALLBACK(LPFN_GETADDRINFOEXOVERLAPPEDRESULT, :LPOVERLAPPED)
-
 ifdef _UNICODE
 LPFN_GETADDRINFOEX	equ <LPFN_GETADDRINFOEXW>
 else
@@ -191,38 +124,9 @@ endif
 if (_WIN32_WINNT GE 0x0600)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-;_WINSOCK_DEPRECATED_BY("SetAddrInfoExW()")
-;INT
-SetAddrInfoExA proto WINAPI \
-		 pName: PCSTR,
-	  pServiceName: PCSTR,
-	    pAddresses: ptr SOCKET_ADDRESS,
-	dwAddressCount: DWORD,
-		lpBlob: LPBLOB,
-	       dwFlags: DWORD,
-	   dwNameSpace: DWORD,
-	       lpNspId: LPGUID,
-	       timeout: ptr timeval,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPLOOKUPSERVICE_COMPLETION_ROUTINE,
-	  lpNameHandle: LPHANDLE
-
+SetAddrInfoExA proto WINAPI :PCSTR, :PCSTR, :ptr, :DWORD, :LPBLOB, :DWORD, :DWORD, :LPGUID, :ptr, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE
 endif
-
-SetAddrInfoExW proto WINAPI \
-		 pName: PCWSTR,
-	  pServiceName: PCWSTR,
-	    pAddresses: ptr SOCKET_ADDRESS,
-	dwAddressCount: DWORD,
-		lpBlob: LPBLOB,
-	       dwFlags: DWORD,
-	   dwNameSpace: DWORD,
-	       lpNspId: LPGUID,
-	       timeout: ptr timeval,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPLOOKUPSERVICE_COMPLETION_ROUTINE,
-	  lpNameHandle: LPHANDLE
-
+SetAddrInfoExW proto WINAPI :PCWSTR, :PCWSTR, :ptr, :DWORD, :LPBLOB, :DWORD, :DWORD, :LPGUID, :ptr, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE
 ifdef _UNICODE
 SetAddrInfoEx		equ <SetAddrInfoExW>
 else
@@ -232,38 +136,9 @@ endif
 if INCL_WINSOCK_API_TYPEDEFS
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-CALLBACK(LPFN_SETADDRINFOEXA,
-	  lpNameHandle: LPHANDLE
-		 pName: PCSTR,
-	  pServiceName: PCSTR,
-	    pAddresses: ptr SOCKET_ADDRESS,
-	dwAddressCount: DWORD,
-		lpBlob: LPBLOB,
-	       dwFlags: DWORD,
-	   dwNameSpace: DWORD,
-	       lpNspId: LPGUID,
-	       timeout: ptr timeval,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPLOOKUPSERVICE_COMPLETION_ROUTINE,
-	  lpNameHandle: LPHANDLE)
+CALLBACK(LPFN_SETADDRINFOEXA, :LPHANDLE :PCSTR, :PCSTR, :ptr, :DWORD, :LPBLOB, :DWORD, :DWORD, :LPGUID, :ptr, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE)
 endif
-
-
-CALLBACK(LPFN_SETADDRINFOEXW,
-	  lpNameHandle: LPHANDLE
-		 pName: PCWSTR,
-	  pServiceName: PCWSTR,
-	    pAddresses: ptr SOCKET_ADDRESS,
-	dwAddressCount: DWORD,
-		lpBlob: LPBLOB,
-	       dwFlags: DWORD,
-	   dwNameSpace: DWORD,
-	       lpNspId: LPGUID,
-	       timeout: ptr timeval,
-	  lpOverlapped: LPOVERLAPPED,
-   lpCompletionRoutine: LPLOOKUPSERVICE_COMPLETION_ROUTINE,
-	  lpNameHandle: LPHANDLE)
-
+CALLBACK(LPFN_SETADDRINFOEXW, :LPHANDLE, :PCWSTR, :PCWSTR, :ptr, :DWORD, :LPBLOB, :DWORD, :DWORD, :LPGUID, :ptr, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE)
 ifdef _UNICODE
 LPFN_SETADDRINFOEX	equ <LPFN_SETADDRINFOEXW>
 else
@@ -273,15 +148,11 @@ endif
 
 endif
 
-freeaddrinfo proto WINAPI \
-	     pAddrInfo: PADDRINFOA
-
+freeaddrinfo proto WINAPI :PADDRINFOA
 
 if (NTDDI_VERSION GE NTDDI_WINXPSP2) OR (_WIN32_WINNT GE 0x0502)
 
-FreeAddrInfoW proto WINAPI pAddrInfo:PADDRINFOW
-
-
+FreeAddrInfoW proto WINAPI :PADDRINFOW
 FreeAddrInfoA		equ <freeaddrinfo>
 ifdef _UNICODE
 FreeAddrInfo		equ <FreeAddrInfoW>
@@ -308,16 +179,10 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 ;_WINSOCK_DEPRECATED_BY("FreeAddrInfoExW()")
 
 ifndef _UNICODE
-
-FreeAddrInfoEx proto WINAPI \
-	   pAddrInfoEx: PADDRINFOEXA
+FreeAddrInfoEx proto WINAPI :PADDRINFOEXA
 endif
 endif
-
-FreeAddrInfoExW proto WINAPI \
-	   pAddrInfoEx: PADDRINFOEXW
-
-
+FreeAddrInfoExW proto WINAPI :PADDRINFOEXW
 FreeAddrInfoExA		equ <FreeAddrInfoEx>
 ifdef _UNICODE
 FreeAddrInfoEx		equ <FreeAddrInfoExW>
@@ -329,7 +194,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 CALLBACK(LPFN_FREEADDRINFOEXA, pAddrInfoEx:PADDRINFOEXA)
 endif
 CALLBACK(LPFN_FREEADDRINFOEXW, pAddrInfoEx:PADDRINFOEXW)
-
 ifdef _UNICODE
 LPFN_FREEADDRINFOEX	equ <LPFN_FREEADDRINFOEXW>
 else
@@ -341,28 +205,11 @@ endif
 
 socklen_t		typedef sdword
 
-getnameinfo proto WINAPI \
-	     pSockaddr: ptr SOCKADDR,
-	SockaddrLength: socklen_t,
-	   pNodeBuffer: PCHAR,
-	NodeBufferSize: DWORD,
-	pServiceBuffer: PCHAR,
-     ServiceBufferSize: DWORD,
-		 Flags: SINT
-
+getnameinfo proto WINAPI :ptr, :socklen_t, :PCHAR, :DWORD, :PCHAR, :DWORD, :SINT
 
 if (NTDDI_VERSION GE NTDDI_WINXPSP2) OR (_WIN32_WINNT GE 0x0502)
 
-GetNameInfoW proto WINAPI \
-	     pSockaddr: ptr SOCKADDR,
-	SockaddrLength: socklen_t,
-	   pNodeBuffer: PWCHAR,
-	NodeBufferSize: DWORD,
-	pServiceBuffer: PWCHAR,
-     ServiceBufferSize: DWORD,
-		 Flags: SINT
-
-
+GetNameInfoW proto WINAPI :ptr, :socklen_t, :PWCHAR, :DWORD, :PWCHAR, :DWORD, :SINT
 GetNameInfoA		equ <getnameinfo>
 ifdef _UNICODE
 GetNameInfo		equ <GetNameInfoW>
@@ -372,24 +219,8 @@ endif
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_GETNAMEINFO,
-	     pSockaddr: ptr SOCKADDR,
-	SockaddrLength: socklen_t,
-	   pNodeBuffer: PCHAR,
-	NodeBufferSize: DWORD,
-	pServiceBuffer: PCHAR,
-     ServiceBufferSize: DWORD,
-		 Flags: SINT)
-
-CALLBACK(LPFN_GETNAMEINFOW,
-	     pSockaddr: ptr SOCKADDR,
-	SockaddrLength: socklen_t,
-	   pNodeBuffer: PWCHAR,
-	NodeBufferSize: DWORD,
-	pServiceBuffer: PWCHAR,
-     ServiceBufferSize: DWORD,
-		 Flags: SINT)
-
+CALLBACK(LPFN_GETNAMEINFO, :ptr, :socklen_t, :PCHAR, :DWORD, :PCHAR, :DWORD, :SINT)
+CALLBACK(LPFN_GETNAMEINFOW, :ptr, :socklen_t, :PWCHAR, :DWORD, :PWCHAR, :DWORD, :SINT)
 LPFN_GETNAMEINFOA	equ <LPFN_GETNAMEINFO>
 ifdef _UNICODE
 LPFN_GETNAMEINFOT	equ <LPFN_GETNAMEINFOW>
@@ -398,32 +229,12 @@ LPFN_GETNAMEINFOT	equ <LPFN_GETNAMEINFOA>
 endif
 endif
 
-
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-inet_pton proto WINAPI \
-		Family: SINT,
-	 pszAddrString: PCSTR,
-	      pAddrBuf: PVOID
-
-InetPtonW proto WINAPI \
-		Family: SINT,
-	 pszAddrString: PCWSTR,
-	      pAddrBuf: PVOID
-
-inet_ntop proto WINAPI \
-		Family: SINT,
-		 pAddr: PVOID,
-	    pStringBuf: PSTR,
-	 StringBufSize: size_t
-
-InetNtopW proto WINAPI \
-		Family: SINT,
-		 pAddr: PVOID,
-	    pStringBuf: PWSTR,
-	 StringBufSize: size_t
-
-
+inet_pton proto WINAPI :SINT, :PCSTR, :ptr
+InetPtonW proto WINAPI :SINT, :PCWSTR, :ptr
+inet_ntop proto WINAPI :SINT, :ptr, :PSTR, :size_t
+InetNtopW proto WINAPI :SINT, :ptr, :PWSTR, :size_t
 InetPtonA		equ <inet_pton>
 InetNtopA		equ <inet_ntop>
 ifdef _UNICODE
@@ -436,28 +247,10 @@ endif
 
 if INCL_WINSOCK_API_TYPEDEFS
 
-CALLBACK(LPFN_INET_PTONA,
-		Family: SINT,
-	 pszAddrString: PCSTR,
-	      pAddrBuf: PVOID)
-
-CALLBACK(LPFN_INET_PTONW,
-		Family: SINT,
-	 pszAddrString: PCWSTR,
-	      pAddrBuf: PVOID)
-
-CALLBACK(LPFN_INET_NTOPA,
-		Family: SINT,
-		 pAddr: PVOID,
-	    pStringBuf: PSTR,
-	 StringBufSize: size_t)
-
-CALLBACK(LPFN_INET_NTOPW,
-		Family: SINT,
-		 pAddr: PVOID,
-	    pStringBuf: PWSTR,
-	 StringBufSize: size_t)
-
+CALLBACK(LPFN_INET_PTONA, :SINT, :PCSTR, :ptr)
+CALLBACK(LPFN_INET_PTONW, :SINT, :PCWSTR, :ptr)
+CALLBACK(LPFN_INET_NTOPA, :SINT, :ptr, :PSTR, :size_t)
+CALLBACK(LPFN_INET_NTOPW, :SINT, :ptr, :PWSTR, :size_t)
 ifdef _UNICODE
 LPFN_INET_PTON		equ <LPFN_INET_PTONW>
 LPFN_INET_NTOP		equ <LPFN_INET_NTOPW>
@@ -510,59 +303,16 @@ endif
 
 endif ;; INCL_WINSOCK_API_PROTOTYPES
 
-
-if (NTDDI_VERSION GE NTDDI_WINXP)
-endif
-
-ifdef IDEAL_SEND_BACKLOG_IOCTLS
-endif
-
 if (_WIN32_WINNT GE 0x0600)
 ifdef _SECURE_SOCKET_TYPES_DEFINED_
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-WSASetSocketSecurity proto WINAPI \
-		Socket: SOCKET,
-      SecuritySettings: ptr SOCKET_SECURITY_SETTINGS,
-   SecuritySettingsLen: ULONG,
-	    Overlapped: LPWSAOVERLAPPED,
-     CompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
-
-WSAQuerySocketSecurity proto WINAPI \
-		Socket: SOCKET,
- SecurityQueryTemplate: ptr SOCKET_SECURITY_QUERY_TEMPLATE,
-SecurityQueryTemplateLen: ULONG,
-     SecurityQueryInfo: ptr SOCKET_SECURITY_QUERY_INFO,
-  SecurityQueryInfoLen: ptr ULONG,
-	    Overlapped: LPWSAOVERLAPPED,
-     CompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
-
-
-WSASetSocketPeerTargetName proto WINAPI \
-		Socket: SOCKET,
-	PeerTargetName: ptr SOCKET_PEER_TARGET_NAME,
-     PeerTargetNameLen: ULONG,
-	    Overlapped: LPWSAOVERLAPPED,
-     CompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
-
-
-WSADeleteSocketPeerTargetName proto WINAPI \
-		Socket: SOCKET,
-	      PeerAddr: ptr sockaddr,
-	   PeerAddrLen: ULONG,
-	    Overlapped: LPWSAOVERLAPPED,
-     CompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
-
-
-WSAImpersonateSocketPeer proto WINAPI \
-		Socket: SOCKET,
-	      PeerAddr: ptr sockaddr,
-	   PeerAddrLen: ULONG
-
-
+WSASetSocketSecurity proto WINAPI :SOCKET, :ptr, :ULONG, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
+WSAQuerySocketSecurity proto WINAPI :SOCKET, :ptr, :ULONG, :ptr, :ptr, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
+WSASetSocketPeerTargetName proto WINAPI :SOCKET, :ptr, :ULONG, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
+WSADeleteSocketPeerTargetName proto WINAPI :SOCKET, :ptr, :ULONG, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
+WSAImpersonateSocketPeer proto WINAPI :SOCKET, :ptr,  :ULONG
 WSARevertImpersonation proto WINAPI
-
 endif
 
 endif

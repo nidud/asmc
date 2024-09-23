@@ -51,14 +51,11 @@ Name			LPSTR ?
 Annotations		UINT ?
 D3DXFUNCTION_DESC	ENDS
 
-
 .comdef ID3DXEffectPool : public IUnknown
-
     .ends
     LPD3DXEFFECTPOOL	typedef ptr ID3DXEffectPool
 
 DEFINE_GUID(IID_ID3DXEffectPool,0x9537ab04,0x3250,0x412e,0x82,0x13,0xfc,0xd2,0xf8,0x67,0x79,0x33)
-
 
 .comdef ID3DXBaseEffect : public IUnknown
 
@@ -116,12 +113,10 @@ DEFINE_GUID(IID_ID3DXEffectPool,0x9537ab04,0x3250,0x412e,0x82,0x13,0xfc,0xd2,0xf
     GetPixelShader	proc :D3DXHANDLE, :ptr
     GetVertexShader	proc :D3DXHANDLE, :ptr
     SetArrayRange	proc :D3DXHANDLE, :UINT, :UINT
-
-    .ends
+   .ends
     LPD3DXBASEEFFECT	typedef ptr ID3DXBaseEffect
 
 DEFINE_GUID(IID_ID3DXBaseEffect,0x17c18ac,0x103f,0x4417,0x8c,0x51,0x6b,0xf6,0xef,0x1e,0x56,0xbe);
-
 
 .comdef ID3DXEffectStateManager : public IUnknown
 
@@ -143,12 +138,10 @@ DEFINE_GUID(IID_ID3DXBaseEffect,0x17c18ac,0x103f,0x4417,0x8c,0x51,0x6b,0xf6,0xef
     SetPixelShaderConstantF proc :UINT, :ptr, :UINT
     SetPixelShaderConstantI proc :UINT, :ptr, :UINT
     SetPixelShaderConstantB proc :UINT, :ptr, :UINT
-
-    .ends
+   .ends
     LPD3DXEFFECTSTATEMANAGER typedef ptr ID3DXEffectStateManager
 
 DEFINE_GUID(IID_ID3DXEffectStateManager,0x79aab587,0x6dbc,0x4fa7,0x82,0xde,0x37,0xfa,0x17,0x81,0xc5,0xce)
-
 
 .comdef ID3DXEffect : public ID3DXBaseEffect
 
@@ -174,8 +167,7 @@ DEFINE_GUID(IID_ID3DXEffectStateManager,0x79aab587,0x6dbc,0x4fa7,0x82,0xde,0x37,
     DeleteParameterBlock proc :D3DXHANDLE
     CloneEffect		proc :ptr, :ptr
     SetRawValue		proc :D3DXHANDLE, :ptr, :UINT, :UINT
-
-    .ends
+   .ends
     LPD3DXEFFECT	typedef ptr ID3DXEffect
 
 DEFINE_GUID(IID_ID3DXEffect,0xf6ceb4b3,0x4e4c,0x40dd,0xb8,0x83,0x8d,0x8d,0xe5,0xea,0xc,0xd5)
@@ -187,202 +179,38 @@ DEFINE_GUID(IID_ID3DXEffect,0xf6ceb4b3,0x4e4c,0x40dd,0xb8,0x83,0x8d,0x8d,0xe5,0x
     GetLiteral		proc :D3DXHANDLE, :ptr
     CompileEffect	proc :DWORD, :ptr, :ptr
     CompileShader	proc :D3DXHANDLE, :ptr, :DWORD, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
     LPD3DXEFFECTCOMPILER typedef ptr ID3DXEffectCompiler
 
 DEFINE_GUID(IID_ID3DXEffectCompiler,0x51b8a949,0x1a31,0x47e6,0xbe,0xa0,0x4b,0x30,0xdb,0x53,0xf1,0xe0)
 
-
-;HRESULT
-D3DXCreateEffectPool proto WINAPI \
-		  pool: ptr ID3DXEffectPool
-
-;HRESULT
-D3DXCreateEffect proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcdata: PVOID,
-	    srcdatalen: UINT,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectEx proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcdata: PVOID,
-	    srcdatalen: UINT,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	skip_constants: LPSTR,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectCompiler proto WINAPI \
-	       srcdata: LPSTR,
-	    srcdatalen: UINT,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-	      compiler: ptr ID3DXEffectCompiler,
-	  parse_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectFromFileExA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	skip_constants: LPSTR,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectFromFileExW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	skip_constants: LPSTR,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
+D3DXCreateEffectPool proto WINAPI :ptr
+D3DXCreateEffect proto WINAPI :ptr, :ptr, :UINT, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateEffectEx proto WINAPI :ptr, :ptr, :UINT, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateEffectCompiler proto WINAPI :LPSTR, :UINT, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXCreateEffectFromFileExA proto WINAPI :ptr, :LPSTR, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateEffectFromFileExW proto WINAPI :ptr, :LPWSTR, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr,
 ifdef _UNICODE
 D3DXCreateEffectFromFileEx equ <D3DXCreateEffectFromFileExW>
 else
 D3DXCreateEffectFromFileEx equ <D3DXCreateEffectFromFileExA>
 endif
 
-;HRESULT
-D3DXCreateEffectFromFileA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectFromFileW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
+D3DXCreateEffectFromFileA proto WINAPI :ptr, :LPSTR, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateEffectFromFileW proto WINAPI :ptr, :LPWSTR, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DXCreateEffectFromFile equ <D3DXCreateEffectFromFileW>
 else
 D3DXCreateEffectFromFile equ <D3DXCreateEffectFromFileA>
 endif
-
-;HRESULT
-D3DXCreateEffectFromResourceExA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	   srcresource: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	skip_constants: LPSTR,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectFromResourceExW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	   srcresource: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-	skip_constants: LPSTR,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectFromResourceA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	   srcresource: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectFromResourceW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	   srcresource: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-		  pool: ptr ID3DXEffectPool,
-		effect: ptr ID3DXEffect,
-    compilation_errors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectCompilerFromFileA proto WINAPI \
-	       srcfile: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-	effectcompiler: ptr ID3DXEffectCompiler,
-	   parseerrors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectCompilerFromFileW proto WINAPI \
-	       srcfile: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-	effectcompiler: ptr ID3DXEffectCompiler,
-	   parseerrors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectCompilerFromResourceA proto WINAPI \
-	     srcmodule: HMODULE,
-	   srcresource: LPSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-	effectcompiler: ptr ID3DXEffectCompiler,
-	   parseerrors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXCreateEffectCompilerFromResourceW proto WINAPI \
-	     srcmodule: HMODULE,
-	   srcresource: LPWSTR,
-	       defines: ptr D3DXMACRO,
-	      _include: ptr ID3DXInclude,
-		 flags: DWORD,
-	effectcompiler: ptr ID3DXEffectCompiler,
-	   parseerrors: ptr ID3DXBuffer
-
-;HRESULT
-D3DXDisassembleEffect proto WINAPI \
-		effect: ptr ID3DXEffect,
-     enable_color_code: BOOL,
-	   disassembly: ptr ID3DXBuffer
+D3DXCreateEffectFromResourceExA proto WINAPI :ptr, :HMODULE, :LPSTR, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateEffectFromResourceExW proto WINAPI :ptr, :HMODULE, :LPWSTR, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateEffectFromResourceA proto WINAPI :ptr, :HMODULE, :LPSTR, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateEffectFromResourceW proto WINAPI :ptr, :HMODULE, :LPWSTR, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
+D3DXCreateEffectCompilerFromFileA proto WINAPI :LPSTR, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXCreateEffectCompilerFromFileW proto WINAPI :LPWSTR, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXCreateEffectCompilerFromResourceA proto WINAPI :HMODULE, :LPSTR, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXCreateEffectCompilerFromResourceW proto WINAPI :HMODULE, :LPWSTR, :ptr, :ptr, :DWORD, :ptr, :ptr
+D3DXDisassembleEffect proto WINAPI :ptr, :BOOL, :ptr
 
 endif

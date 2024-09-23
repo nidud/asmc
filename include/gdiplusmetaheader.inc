@@ -164,8 +164,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     .inline IsDisplay {
 	xor eax,eax
-	.if [this].MetafileHeader.Type >= MetafileTypeEmfPlusOnly && \
-	    [this].MetafileHeader.EmfPlusFlags & GDIP_EMFPLUSFLAGS_DISPLAY
+	.if ( [this].MetafileHeader.Type >= MetafileTypeEmfPlusOnly && [this].MetafileHeader.EmfPlusFlags & GDIP_EMFPLUSFLAGS_DISPLAY )
 	    inc eax
 	.endif
 	}

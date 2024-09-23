@@ -18,491 +18,95 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     PSTF_LOCAL = 0x00000001,
     }
 
-InitPropVariantFromResource proto WINAPI \
-		 hinst: HINSTANCE,
-		    id: UINT,
-	      ppropvar: ptr PROPVARIANT
-
-InitPropVariantFromBuffer proto WINAPI \
-		    pv: ptr void,
-		    cb: UINT,
-	      ppropvar: ptr PROPVARIANT
-
-InitPropVariantFromCLSID proto WINAPI \
-		 clsid: REFCLSID,
-	      ppropvar: ptr PROPVARIANT
-
-InitPropVariantFromGUIDAsString proto WINAPI \
-		  guid: REFGUID,
-	      ppropvar: ptr PROPVARIANT
-
-InitPropVariantFromFileTime proto WINAPI \
-		 pftIn: ptr FILETIME,
-	      ppropvar: ptr PROPVARIANT
-
-InitPropVariantFromPropVariantVectorElem proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		 iElem: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-InitPropVariantVectorFromPropVariant proto WINAPI \
-	 propvarSingle: REFPROPVARIANT,
-	ppropvarVector: ptr PROPVARIANT
-
-
-InitPropVariantFromStrRet proto WINAPI \
-	       pstrret: ptr STRRET,
-		  pidl: PCUITEMID_CHILD,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromBooleanVector proto WINAPI \
-		  prgf: ptr BOOL,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromInt16Vector proto WINAPI \
-		  prgn: ptr SWORD,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromUInt16Vector proto WINAPI \
-		  prgn: ptr USHORT,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromInt32Vector proto WINAPI \
-		  prgn: ptr LONG,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromUInt32Vector proto WINAPI \
-		  prgn: ptr ULONG,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromInt64Vector proto WINAPI \
-		  prgn: ptr LONGLONG,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromUInt64Vector proto WINAPI \
-		  prgn: ptr ULONGLONG,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromDoubleVector proto WINAPI \
-		  prgn: ptr DOUBLE,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromFileTimeVector proto WINAPI \
-		 prgft: ptr FILETIME,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromStringVector proto WINAPI \
-		 prgsz: ptr PCWSTR,
-		cElems: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromStringAsVector proto WINAPI \
-		   psz: PCWSTR,
-	      ppropvar: ptr PROPVARIANT
-
-
-
-InitPropVariantFromBoolean proto WINAPI \
-		  fVal: BOOL,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromInt16 proto WINAPI \
-		  nVal: SWORD,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromUInt16 proto WINAPI \
-		 uiVal: USHORT,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromInt32 proto WINAPI \
-		  lVal: LONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromUInt32 proto WINAPI \
-		 ulVal: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromInt64 proto WINAPI \
-		 llVal: LONGLONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromUInt64 proto WINAPI \
-		ullVal: ULONGLONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromDouble proto WINAPI \
-		dblVal: DOUBLE,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromString proto WINAPI \
-		   psz: PCWSTR,
-	      ppropvar: ptr PROPVARIANT
-
-
-InitPropVariantFromGUIDAsBuffer proto WINAPI \
-		  guid: REFGUID,
-	      ppropvar: ptr PROPVARIANT
-
-
-IsPropVariantVector proto WINAPI \
-	       propvar: REFPROPVARIANT
-
-
-IsPropVariantString proto WINAPI \
-	       propvar: REFPROPVARIANT
-
-
-
-PropVariantToBooleanWithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	      fDefault: BOOL
-
-
-PropVariantToInt16WithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	      iDefault: SWORD
-
-
-PropVariantToUInt16WithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	     uiDefault: USHORT
-
-
-PropVariantToInt32WithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	      lDefault: LONG
-
-
-PropVariantToUInt32WithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	     ulDefault: ULONG
-
-
-PropVariantToInt64WithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	     llDefault: LONGLONG
-
-
-PropVariantToUInt64WithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	    ullDefault: ULONGLONG
-
-
-PropVariantToDoubleWithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	    dblDefault: DOUBLE
-
-
-PropVariantToStringWithDefault proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	    pszDefault: LPCWSTR
-
-
-
-PropVariantToBoolean proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		 pfRet: ptr BOOL
-
-
-PropVariantToInt16 proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		 piRet: ptr SWORD
-
-
-PropVariantToUInt16 proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		puiRet: ptr USHORT
-
-
-PropVariantToInt32 proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		 plRet: ptr LONG
-
-
-PropVariantToUInt32 proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		pulRet: ptr ULONG
-
-
-PropVariantToInt64 proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		pllRet: ptr LONGLONG
-
-
-PropVariantToUInt64 proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	       pullRet: ptr ULONGLONG
-
-
-PropVariantToDouble proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-	       pdblRet: ptr DOUBLE
-
-
-PropVariantToBuffer proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		    pv: ptr void,
-		    cb: UINT
-
-
-PropVariantToString proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		   psz: PWSTR,
-		   cch: UINT
-
-
-PropVariantToGUID proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pguid: ptr GUID
-
-PropVariantToStringAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-	       ppszOut: ptr PWSTR
-
-PropVariantToBSTR proto WINAPI \
-	       propvar: REFPROPVARIANT,
-	      pbstrOut:ptr BSTR
-
-PropVariantToStrRet proto WINAPI \
-	       propvar: REFPROPVARIANT,
-	       pstrret: ptr STRRET
-
-
-PropVariantToFileTime proto WINAPI \
-	       propvar: REFPROPVARIANT,
-	       pstfOut: PSTIME_FLAGS,
-		pftOut: ptr FILETIME
-
-
-
-PropVariantToCLSID proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		pclsid: ptr CLSID
-
-
-
-
-PropVariantGetElementCount proto WINAPI \
-	       propvar: REFPROPVARIANT
-
-
-
-PropVariantToBooleanVector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		  prgf: ptr BOOL,
-		  crgf: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToInt16Vector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		  prgn: ptr SWORD,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToUInt16Vector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		  prgn: ptr USHORT,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToInt32Vector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		  prgn: ptr LONG,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToUInt32Vector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		  prgn: ptr ULONG,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToInt64Vector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		  prgn: ptr LONGLONG,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToUInt64Vector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		  prgn: ptr ULONGLONG,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToDoubleVector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		  prgn: ptr DOUBLE,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToFileTimeVector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 prgft: ptr FILETIME,
-		 crgft: ULONG,
-		pcElem: ptr ULONG
-
-PropVariantToStringVector proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 prgsz: ptr PWSTR,
-		 crgsz: ULONG,
-		pcElem: ptr ULONG
-
-
-PropVariantToBooleanVectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pprgf: ptr ptr BOOL,
-		pcElem: ptr ULONG
-
-PropVariantToInt16VectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pprgf: ptr ptr SWORD,
-		pcElem: ptr ULONG
-
-PropVariantToUInt16VectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pprgf: ptr ptr WORD,
-		pcElem: ptr ULONG
-
-PropVariantToInt32VectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pprgf: ptr ptr LONG,
-		pcElem: ptr ULONG
-
-PropVariantToUInt32VectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pprgf: ptr ptr ULONG,
-		pcElem: ptr ULONG
-
-PropVariantToInt64VectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pprgf: ptr ptr LONGLONG,
-		pcElem: ptr ULONG
-
-PropVariantToUInt64VectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pprgf: ptr ptr ULONGLONG,
-		pcElem: ptr ULONG
-
-PropVariantToDoubleVectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 pprgf: ptr ptr real8,
-		pcElem: ptr ULONG
-
-PropVariantToFileTimeVectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		pprgft: ptr ptr FILETIME,
-		pcElem: ptr ULONG
-
-PropVariantToStringVectorAlloc proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		pprgsz: ptr ptr PWSTR,
-		pcElem: ptr ULONG
-
-
-PropVariantGetBooleanElem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		 pfVal: ptr BOOL
-
-
-PropVariantGetInt16Elem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr SWORD
-
-
-PropVariantGetUInt16Elem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr USHORT
-
-
-PropVariantGetInt32Elem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr LONG
-
-
-PropVariantGetUInt32Elem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr ULONG
-
-
-PropVariantGetInt64Elem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr LONGLONG
-
-
-PropVariantGetUInt64Elem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr ULONGLONG
-
-
-PropVariantGetDoubleElem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr DOUBLE
-
-
-PropVariantGetFileTimeElem proto WINAPI \
-	       propvar: REFPROPVARIANT,
-		 iElem: ULONG,
-		pftVal: ptr FILETIME
-
-PropVariantGetStringElem proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		 iElem: ULONG,
-	       ppszVal: ptr PWSTR
-
-
-PropVariantGetElem proto WINAPI \
-	     propvarIn: REFPROPVARIANT,
-		 iElem: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-ClearPropVariantArray proto WINAPI \
-	     rgPropVar: ptr PROPVARIANT,
-		 cVars: UINT
+InitPropVariantFromResource proto WINAPI :HINSTANCE, :UINT, :ptr
+InitPropVariantFromBuffer proto WINAPI :ptr, :UINT, :ptr
+InitPropVariantFromCLSID proto WINAPI :REFCLSID, :ptr
+InitPropVariantFromGUIDAsString proto WINAPI :REFGUID, :ptr
+InitPropVariantFromFileTime proto WINAPI :ptr, :ptr
+InitPropVariantFromPropVariantVectorElem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+InitPropVariantVectorFromPropVariant proto WINAPI :REFPROPVARIANT, :ptr
+InitPropVariantFromStrRet proto WINAPI :ptr, :PCUITEMID_CHILD, :ptr
+InitPropVariantFromBooleanVector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromInt16Vector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromUInt16Vector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromInt32Vector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromUInt32Vector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromInt64Vector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromUInt64Vector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromDoubleVector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromFileTimeVector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromStringVector proto WINAPI :ptr, :ULONG, :ptr
+InitPropVariantFromStringAsVector proto WINAPI :PCWSTR, :ptr
+InitPropVariantFromBoolean proto WINAPI :BOOL, :ptr
+InitPropVariantFromInt16 proto WINAPI :SWORD, :ptr
+InitPropVariantFromUInt16 proto WINAPI :USHORT, :ptr
+InitPropVariantFromInt32 proto WINAPI :LONG, :ptr
+InitPropVariantFromUInt32 proto WINAPI :ULONG, :ptr
+InitPropVariantFromInt64 proto WINAPI :LONGLONG, :ptr
+InitPropVariantFromUInt64 proto WINAPI :ULONGLONG, :ptr
+InitPropVariantFromDouble proto WINAPI :DOUBLE, :ptr
+InitPropVariantFromString proto WINAPI :PCWSTR, :ptr
+InitPropVariantFromGUIDAsBuffer proto WINAPI :REFGUID, :ptr
+IsPropVariantVector proto WINAPI :REFPROPVARIANT
+IsPropVariantString proto WINAPI :REFPROPVARIANT
+PropVariantToBooleanWithDefault proto WINAPI :REFPROPVARIANT, :BOOL
+PropVariantToInt16WithDefault proto WINAPI :REFPROPVARIANT, :SWORD
+PropVariantToUInt16WithDefault proto WINAPI :REFPROPVARIANT, :USHORT
+PropVariantToInt32WithDefault proto WINAPI :REFPROPVARIANT, :LONG
+PropVariantToUInt32WithDefault proto WINAPI :REFPROPVARIANT, :ULONG
+PropVariantToInt64WithDefault proto WINAPI :REFPROPVARIANT, :LONGLONG
+PropVariantToUInt64WithDefault proto WINAPI :REFPROPVARIANT, :ULONGLONG
+PropVariantToDoubleWithDefault proto WINAPI :REFPROPVARIANT, :DOUBLE
+PropVariantToStringWithDefault proto WINAPI :REFPROPVARIANT, :LPCWSTR
+PropVariantToBoolean proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToInt16 proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToUInt16 proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToInt32 proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToUInt32 proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToInt64 proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToUInt64 proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToDouble proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToBuffer proto WINAPI :REFPROPVARIANT, :ptr, :UINT
+PropVariantToString proto WINAPI :REFPROPVARIANT, :PWSTR, :UINT
+PropVariantToGUID proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToStringAlloc proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToBSTR proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToStrRet proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantToFileTime proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToCLSID proto WINAPI :REFPROPVARIANT, :ptr
+PropVariantGetElementCount proto WINAPI :REFPROPVARIANT
+PropVariantToBooleanVector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToInt16Vector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToUInt16Vector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToInt32Vector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToUInt32Vector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToInt64Vector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToUInt64Vector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToDoubleVector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToFileTimeVector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToStringVector proto WINAPI :REFPROPVARIANT, :ptr, :ULONG, :ptr
+PropVariantToBooleanVectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToInt16VectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToUInt16VectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToInt32VectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToUInt32VectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToInt64VectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToUInt64VectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToDoubleVectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToFileTimeVectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantToStringVectorAlloc proto WINAPI :REFPROPVARIANT, :ptr, :ptr
+PropVariantGetBooleanElem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetInt16Elem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetUInt16Elem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetInt32Elem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetUInt32Elem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetInt64Elem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetUInt64Elem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetDoubleElem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetFileTimeElem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetStringElem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+PropVariantGetElem proto WINAPI :REFPROPVARIANT, :ULONG, :ptr
+ClearPropVariantArray proto WINAPI :ptr, :UINT
 
 endif
 
@@ -528,15 +132,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     PVCF_DIGITSASNUMBERS_CASESENSITIVE = 0x00000020,
     }
 
-PropVariantCompareEx proto WINAPI \
-	      propvar1: REFPROPVARIANT,
-	      propvar2: REFPROPVARIANT,
-		  unit: PROPVAR_COMPARE_UNIT,
-		 flags: PROPVAR_COMPARE_FLAGS
-
-PropVariantCompare proto WINAPI \
-	      propvar1: REFPROPVARIANT,
-	      propvar2: REFPROPVARIANT
+PropVariantCompareEx proto WINAPI :REFPROPVARIANT, :REFPROPVARIANT, :PROPVAR_COMPARE_UNIT, :PROPVAR_COMPARE_FLAGS
+PropVariantCompare proto WINAPI :REFPROPVARIANT, :REFPROPVARIANT
 
 endif
 
@@ -553,508 +150,100 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     }
 
 
-PropVariantChangeType proto WINAPI \
-	  ppropvarDest: ptr PROPVARIANT,
-	    propvarSrc: REFPROPVARIANT,
-		 flags: PROPVAR_CHANGE_FLAGS,
-		    vt: VARTYPE
-
-
-PropVariantToVariant proto WINAPI \
-	      pPropVar: ptr PROPVARIANT,
-		  pVar: ptr VARIANT
-
-
-VariantToPropVariant proto WINAPI \
-		  pVar: ptr VARIANT,
-	      pPropVar: ptr PROPVARIANT
-
-
-StgSerializePropVariant proto WINAPI \
-	      ppropvar: ptr PROPVARIANT,
-		ppProp: ptr ptr SERIALIZEDPROPERTYVALUE,
-		   pcb: ptr ULONG
-
-
-StgDeserializePropVariant proto WINAPI \
-		 pprop: ptr SERIALIZEDPROPERTYVALUE,
-		 cbMax: ULONG,
-	      ppropvar: ptr PROPVARIANT
-
-
-IsVarTypeFloat proto WINAPI \
-		    vt: VARTYPE
-
-
-IsVariantArray proto WINAPI \
-		   var: REFVARIANT
-
-
-IsVariantString proto WINAPI \
-		   var: REFVARIANT
-
-
-IsVarTypeNumber proto WINAPI \
-		    vt: VARTYPE
-
-
-IsVarTypeInteger proto WINAPI \
-		    vt: VARTYPE
-
-
-InitVariantFromResource proto WINAPI \
-		 hinst: HINSTANCE,
-		    id: UINT,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromBuffer proto WINAPI \
-		    pv: ptr void,
-		    cb: UINT,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromGUIDAsString proto WINAPI \
-		  guid: REFGUID,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromFileTime proto WINAPI \
-		   pft: ptr FILETIME,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromFileTimeArray proto WINAPI \
-		 prgft: ptr FILETIME,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromStrRet proto WINAPI \
-	       pstrret: ptr STRRET,
-		  pidl: PCUITEMID_CHILD,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromVariantArrayElem proto WINAPI \
-		 varIn: REFVARIANT,
-		 iElem: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromBooleanArray proto WINAPI \
-		  prgf: ptr BOOL,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromInt16Array proto WINAPI \
-		  prgn: ptr SWORD,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromUInt16Array proto WINAPI \
-		  prgn: ptr USHORT,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromInt32Array proto WINAPI \
-		  prgn: ptr LONG,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromUInt32Array proto WINAPI \
-		  prgn: ptr ULONG,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromInt64Array proto WINAPI \
-		  prgn: ptr LONGLONG,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromUInt64Array proto WINAPI \
-		  prgn: ptr ULONGLONG,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromDoubleArray proto WINAPI \
-		  prgn: ptr DOUBLE,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromStringArray proto WINAPI \
-		 prgsz: ptr PCWSTR,
-		cElems: ULONG,
-		  pvar: ptr VARIANT
-
-InitVariantFromBoolean proto WINAPI \
-		  fVal: BOOL,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromInt16 proto WINAPI \
-		  iVal: SWORD,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromUInt16 proto WINAPI \
-		 uiVal: USHORT,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromInt32 proto WINAPI \
-		  lVal: LONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromUInt32 proto WINAPI \
-		 ulVal: ULONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromInt64 proto WINAPI \
-		 llVal: LONGLONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromUInt64 proto WINAPI \
-		ullVal: ULONGLONG,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromDouble proto WINAPI \
-		dblVal: DOUBLE,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromString proto WINAPI \
-		   psz: PCWSTR,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromDispatch proto WINAPI \
-		 pdisp: ptr IDispatch,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromDosDateTime proto WINAPI \
-		 wDate: WORD,
-		 wTime: WORD,
-		  pvar: ptr VARIANT
-
-
-InitVariantFromGUIDAsBuffer proto WINAPI \
-		  guid: REFGUID,
-		  pvar: ptr VARIANT
-
-
-VariantToBooleanWithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	      fDefault: BOOL
-
-
-VariantToInt16WithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	      iDefault: SWORD
-
-
-VariantToUInt16WithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	     uiDefault: USHORT
-
-
-VariantToInt32WithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	      lDefault: LONG
-
-
-VariantToUInt32WithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	     ulDefault: ULONG
-
-
-VariantToInt64WithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	     llDefault: LONGLONG
-
-
-VariantToUInt64WithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	    ullDefault: ULONGLONG
-
-
-VariantToDoubleWithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	    dblDefault: DOUBLE
-
-
-VariantToStringWithDefault proto WINAPI \
-		 varIn: REFVARIANT,
-	    pszDefault: LPCWSTR
-
-
-
-VariantToBoolean proto WINAPI \
-		 varIn: REFVARIANT,
-		 pfRet: ptr BOOL
-
-
-VariantToInt16 proto WINAPI \
-		 varIn: REFVARIANT,
-		 piRet: ptr SWORD
-
-
-VariantToUInt16 proto WINAPI \
-		 varIn: REFVARIANT,
-		puiRet: ptr USHORT
-
-
-VariantToInt32 proto WINAPI \
-		 varIn: REFVARIANT,
-		 plRet: ptr LONG
-
-
-VariantToUInt32 proto WINAPI \
-		 varIn: REFVARIANT,
-		pulRet: ptr ULONG
-
-
-VariantToInt64 proto WINAPI \
-		 varIn: REFVARIANT,
-		pllRet: ptr LONGLONG
-
-
-VariantToUInt64 proto WINAPI \
-		 varIn: REFVARIANT,
-	       pullRet: ptr ULONGLONG
-
-
-VariantToDouble proto WINAPI \
-		 varIn: REFVARIANT,
-	       pdblRet: ptr DOUBLE
-
-
-VariantToBuffer proto WINAPI \
-		 varIn: REFVARIANT,
-		    pv: ptr void,
-		    cb: UINT
-
-
-VariantToGUID proto WINAPI \
-		 varIn: REFVARIANT,
-		 pguid: ptr GUID
-
-
-VariantToString proto WINAPI \
-		 varIn: REFVARIANT,
-		pszBuf: PWSTR,
-		cchBuf: UINT
-
-VariantToStringAlloc proto WINAPI \
-		 varIn: REFVARIANT,
-	       ppszBuf: ptr PWSTR
-
-VariantToDosDateTime proto WINAPI \
-		 varIn: REFVARIANT,
-		pwDate: ptr WORD,
-		pwTime: ptr WORD
-
-VariantToStrRet proto WINAPI \
-		 varIn: REFVARIANT,
-	       pstrret: ptr STRRET
-
-VariantToFileTime proto WINAPI \
-		 varIn: REFVARIANT,
-		stfOut: PSTIME_FLAGS,
-		pftOut: ptr FILETIME
-
-
-VariantGetElementCount proto WINAPI \
-		 varIn: REFVARIANT
-
-
-
-VariantToBooleanArray proto WINAPI \
-		   var: REFVARIANT,
-		  prgf: ptr BOOL,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-VariantToInt16Array proto WINAPI \
-		   var: REFVARIANT,
-		  prgn: ptr SWORD,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-VariantToUInt16Array proto WINAPI \
-		   var: REFVARIANT,
-		  prgn: ptr USHORT,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-VariantToInt32Array proto WINAPI \
-		   var: REFVARIANT,
-		  prgn: ptr LONG,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-VariantToUInt32Array proto WINAPI \
-		   var: REFVARIANT,
-		  prgn: ptr ULONG,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-VariantToInt64Array proto WINAPI \
-		   var: REFVARIANT,
-		  prgn: ptr LONGLONG,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-VariantToUInt64Array proto WINAPI \
-		   var: REFVARIANT,
-		  prgn: ptr ULONGLONG,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-
-VariantToDoubleArray proto WINAPI \
-		   var: REFVARIANT,
-		  prgn: ptr DOUBLE,
-		  crgn: ULONG,
-		pcElem: ptr ULONG
-
-VariantToStringArray proto WINAPI \
-		   var: REFVARIANT,
-		 prgsz: ptr PWSTR,
-		 crgsz: ULONG,
-		pcElem: ptr ULONG
-
-VariantToBooleanArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		 pprgf: ptr ptr BOOL,
-		pcElem: ptr ULONG
-
-VariantToInt16ArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		 pprgn: ptr ptr SWORD,
-		pcElem: ptr ULONG
-
-VariantToUInt16ArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		 pprgn: ptr ptr WORD,
-		pcElem: ptr ULONG
-
-VariantToInt32ArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		 pprgn: ptr ptr LONG,
-		pcElem: ptr ULONG
-
-VariantToUInt32ArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		 pprgn: ptr ptr ULONG,
-		pcElem: ptr ULONG
-
-VariantToInt64ArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		 pprgn: ptr ptr LONGLONG,
-		pcElem: ptr ULONG
-
-VariantToUInt64ArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		 pprgn: ptr ptr ULONGLONG,
-		pcElem: ptr ULONG
-
-VariantToDoubleArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		 pprgn: ptr ptr real8,
-		pcElem: ptr ULONG
-
-VariantToStringArrayAlloc proto WINAPI \
-		   var: REFVARIANT,
-		pprgsz: ptr ptr PWSTR,
-		pcElem: ptr ULONG
-
-
-VariantGetBooleanElem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-		 pfVal: ptr BOOL
-
-
-VariantGetInt16Elem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr SWORD
-
-
-VariantGetUInt16Elem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr USHORT
-
-
-VariantGetInt32Elem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr LONG
-
-
-VariantGetUInt32Elem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr ULONG
-
-
-VariantGetInt64Elem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr LONGLONG
-
-
-VariantGetUInt64Elem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr ULONGLONG
-
-
-VariantGetDoubleElem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-		 pnVal: ptr DOUBLE
-
-VariantGetStringElem proto WINAPI \
-		   var: REFVARIANT,
-		 iElem: ULONG,
-	       ppszVal: ptr PWSTR
-
-
-VariantGetElem proto WINAPI \
-		 varIn: REFVARIANT,
-		 iElem: ULONG,
-		  pvar: ptr VARIANT
-
-
-ClearVariantArray proto WINAPI \
-		 pvars: ptr VARIANT,
-		 cvars: UINT
-
-VariantCompare proto WINAPI \
-		  var1: REFVARIANT,
-		  var2: REFVARIANT
+PropVariantChangeType proto WINAPI :ptr, :REFPROPVARIANT, :PROPVAR_CHANGE_FLAGS, :VARTYPE
+PropVariantToVariant proto WINAPI :ptr, :ptr
+VariantToPropVariant proto WINAPI :ptr, :ptr
+StgSerializePropVariant proto WINAPI :ptr, :ptr, :ptr
+StgDeserializePropVariant proto WINAPI :ptr, :ULONG, :ptr
+IsVarTypeFloat proto WINAPI :VARTYPE
+IsVariantArray proto WINAPI :REFVARIANT
+IsVariantString proto WINAPI :REFVARIANT
+IsVarTypeNumber proto WINAPI :VARTYPE
+IsVarTypeInteger proto WINAPI :VARTYPE
+InitVariantFromResource proto WINAPI :HINSTANCE, :UINT, :ptr
+InitVariantFromBuffer proto WINAPI :ptr, :UINT, :ptr
+InitVariantFromGUIDAsString proto WINAPI :REFGUID, :ptr
+InitVariantFromFileTime proto WINAPI :ptr, :ptr
+InitVariantFromFileTimeArray proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromStrRet proto WINAPI :ptr, :PCUITEMID_CHILD, :ptr
+InitVariantFromVariantArrayElem proto WINAPI :REFVARIANT, :ULONG, :ptr
+InitVariantFromBooleanArray proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromInt16Array proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromUInt16Array proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromInt32Array proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromUInt32Array proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromInt64Array proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromUInt64Array proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromDoubleArray proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromStringArray proto WINAPI :ptr, :ULONG, :ptr
+InitVariantFromBoolean proto WINAPI :BOOL, :ptr
+InitVariantFromInt16 proto WINAPI :SWORD, :ptr
+InitVariantFromUInt16 proto WINAPI :USHORT, :ptr
+InitVariantFromInt32 proto WINAPI :LONG, :ptr
+InitVariantFromUInt32 proto WINAPI :ULONG, :ptr
+InitVariantFromInt64 proto WINAPI :LONGLONG, :ptr
+InitVariantFromUInt64 proto WINAPI :ULONGLONG, :ptr
+InitVariantFromDouble proto WINAPI :DOUBLE, :ptr
+InitVariantFromString proto WINAPI :PCWSTR, :ptr
+InitVariantFromDispatch proto WINAPI :ptr, :ptr
+InitVariantFromDosDateTime proto WINAPI :WORD, :WORD, :ptr
+InitVariantFromGUIDAsBuffer proto WINAPI :REFGUID, :ptr
+VariantToBooleanWithDefault proto WINAPI :REFVARIANT, :BOOL
+VariantToInt16WithDefault proto WINAPI :REFVARIANT, :SWORD
+VariantToUInt16WithDefault proto WINAPI :REFVARIANT, :USHORT
+VariantToInt32WithDefault proto WINAPI :REFVARIANT, :LONG
+VariantToUInt32WithDefault proto WINAPI :REFVARIANT, :ULONG
+VariantToInt64WithDefault proto WINAPI :REFVARIANT, :LONGLONG
+VariantToUInt64WithDefault proto WINAPI :REFVARIANT, :ULONGLONG
+VariantToDoubleWithDefault proto WINAPI :REFVARIANT, :DOUBLE
+VariantToStringWithDefault proto WINAPI :REFVARIANT, :LPCWSTR
+VariantToBoolean proto WINAPI :REFVARIANT, :ptr
+VariantToInt16 proto WINAPI :REFVARIANT, :ptr
+VariantToUInt16 proto WINAPI :REFVARIANT, :ptr
+VariantToInt32 proto WINAPI :REFVARIANT, :ptr
+VariantToUInt32 proto WINAPI :REFVARIANT, :ptr
+VariantToInt64 proto WINAPI :REFVARIANT, :ptr
+VariantToUInt64 proto WINAPI :REFVARIANT, :ptr
+VariantToDouble proto WINAPI :REFVARIANT, :ptr
+VariantToBuffer proto WINAPI :REFVARIANT, :ptr, :UINT
+VariantToGUID proto WINAPI :REFVARIANT, :ptr
+VariantToString proto WINAPI :REFVARIANT, :PWSTR, :UINT
+VariantToStringAlloc proto WINAPI :REFVARIANT, :ptr
+VariantToDosDateTime proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToStrRet proto WINAPI :REFVARIANT, :ptr
+VariantToFileTime proto WINAPI :REFVARIANT, :PSTIME_FLAGS, :ptr
+VariantGetElementCount proto WINAPI :REFVARIANT
+VariantToBooleanArray proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToInt16Array proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToUInt16Array proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToInt32Array proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToUInt32Array proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToInt64Array proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToUInt64Array proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToDoubleArray proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToStringArray proto WINAPI :REFVARIANT, :ptr, :ULONG, :ptr
+VariantToBooleanArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToInt16ArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToUInt16ArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToInt32ArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToUInt32ArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToInt64ArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToUInt64ArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToDoubleArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantToStringArrayAlloc proto WINAPI :REFVARIANT, :ptr, :ptr
+VariantGetBooleanElem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetInt16Elem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetUInt16Elem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetInt32Elem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetUInt32Elem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetInt64Elem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetUInt64Elem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetDoubleElem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetStringElem proto WINAPI :REFVARIANT, :ULONG, :ptr
+VariantGetElem proto WINAPI :REFVARIANT, :ULONG, :ptr
+
+ClearVariantArray proto WINAPI :ptr, :UINT
+VariantCompare proto WINAPI :REFVARIANT, :REFVARIANT
 
 .enum DRAWPROGRESSFLAGS {
     DPF_NONE		    = 0x0,
@@ -1066,5 +255,3 @@ VariantCompare proto WINAPI \
     }
 
 endif
-
-

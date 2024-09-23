@@ -34,8 +34,7 @@ LPD3DXSPRITE		typedef ptr ID3DXSprite
 
     GetBufferPointer	proc
     GetBufferSize	proc
-
-    .ends
+   .ends
 
 D3DXFONT_DESCA		STRUC
 Height			SINT ?
@@ -146,9 +145,7 @@ D3DXRTS_DESC		ENDS
     EndScene		proc :DWORD
     OnLostDevice	proc
     OnResetDevice	proc
-
-    .ends
-
+   .ends
 
 .comdef ID3DXSprite : public IUnknown
 
@@ -163,92 +160,18 @@ D3DXRTS_DESC		ENDS
     _End		proc
     OnLostDevice	proc
     OnResetDevice	proc
+   .ends
 
-    .ends
+D3DXCheckVersion proto WINAPI :UINT, :UINT
+D3DXCreateFontA proto WINAPI :ptr, :SINT, :UINT, :UINT, :UINT, :BOOL, :DWORD, :DWORD, :DWORD, :DWORD, :ptr, :ptr
+D3DXCreateFontW proto WINAPI :ptr, :SINT, :UINT, :UINT, :UINT, :BOOL, :DWORD, :DWORD, :DWORD, :DWORD, :ptr, :ptr
+D3DXCreateFontIndirectA proto WINAPI :ptr, :ptr, :ptr
+D3DXCreateFontIndirectW proto WINAPI :ptr, :ptr, :ptr
+D3DXCreateLine proto WINAPI :ptr, :ptr
+D3DXCreateRenderToEnvMap proto WINAPI :ptr, :UINT, :UINT, :D3DFORMAT, :BOOL, :D3DFORMAT, :ptr
+D3DXCreateRenderToSurface proto WINAPI :ptr, :UINT, :UINT, :D3DFORMAT, :BOOL, :D3DFORMAT, :ptr
+D3DXCreateSprite proto WINAPI :ptr, :ptr
+D3DXDebugMute proto WINAPI :BOOL
+D3DXGetDriverLevel proto WINAPI :ptr
 
-
-;BOOL
-D3DXCheckVersion proto WINAPI \
-	    d3dsdkvers: UINT,
-	   d3dxsdkvers: UINT
-
-;HRESULT
-D3DXCreateFontA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		height: SINT,
-		 width: UINT,
-		weight: UINT,
-	     miplevels: UINT,
-		italic: BOOL,
-	       charset: DWORD,
-	     precision: DWORD,
-	       quality: DWORD,
-	pitchandfamily: DWORD,
-	      facename: ptr char,
-		  font: ptr ID3DXFont
-
-;HRESULT
-D3DXCreateFontW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		height: SINT,
-		 width: UINT,
-		weight: UINT,
-	     miplevels: UINT,
-		italic: BOOL,
-	       charset: DWORD,
-	     precision: DWORD,
-	       quality: DWORD,
-	pitchandfamily: DWORD,
-	      facename: ptr WCHAR,
-		  font: ptr ID3DXFont
-
-;HRESULT
-D3DXCreateFontIndirectA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		  desc: ptr D3DXFONT_DESCA,
-		  font: ptr ID3DXFont
-
-;HRESULT
-D3DXCreateFontIndirectW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		  desc: ptr D3DXFONT_DESCW,
-		  font: ptr ID3DXFont
-
-;HRESULT
-D3DXCreateLine proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		  line: ptr ID3DXLine
-
-;HRESULT
-D3DXCreateRenderToEnvMap proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		  size: UINT,
-	     miplevels: UINT,
-		format: D3DFORMAT,
-	       stencil: BOOL,
-	stencil_format: D3DFORMAT,
-		  rtem: ptr ID3DXRenderToEnvMap
-
-;HRESULT
-D3DXCreateRenderToSurface proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		 width: UINT,
-		height: UINT,
-		format: D3DFORMAT,
-	       stencil: BOOL,
-	stencil_format: D3DFORMAT,
-		   rts: ptr ID3DXRenderToSurface
-
-;HRESULT
-D3DXCreateSprite proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		sprite: ptr ID3DXSprite
-
-;BOOL
-D3DXDebugMute proto WINAPI \
-		  mute: BOOL
-
-;UINT
-D3DXGetDriverLevel proto WINAPI \
-		device: ptr IDirect3DDevice9
 endif

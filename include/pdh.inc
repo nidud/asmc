@@ -304,101 +304,25 @@ PPDH_LOG_SERVICE_QUERY_INFO_W typedef ptr PDH_LOG_SERVICE_QUERY_INFO_W
 MAX_TIME_VALUE		equ 0x7FFFFFFFFFFFFFFF
 MIN_TIME_VALUE		equ 0
 
-;PDH_FUNCTION
-PdhGetDllVersion proto WINAPI \
-	   lpdwVersion: LPDWORD
-
-;PDH_FUNCTION
-PdhOpenQueryW proto WINAPI \
-	  szDataSource: LPCWSTR,
-	    dwUserData: DWORD_PTR,
-	       phQuery: ptr PDH_HQUERY
-
-;PDH_FUNCTION
-PdhOpenQueryA proto WINAPI \
-	  szDataSource: LPCSTR,
-	    dwUserData: DWORD_PTR,
-	       phQuery: ptr PDH_HQUERY
-
-;PDH_FUNCTION
-PdhAddCounterW proto WINAPI \
-		hQuery: PDH_HQUERY,
-     szFullCounterPath: LPCWSTR,
-	    dwUserData: DWORD_PTR,
-	     phCounter: ptr PDH_HCOUNTER
-
-;PDH_FUNCTION
-PdhAddCounterA proto WINAPI \
-		hQuery: PDH_HQUERY,
-     szFullCounterPath: LPCSTR,
-	    dwUserData: DWORD_PTR,
-	     phCounter: ptr PDH_HCOUNTER
+PdhGetDllVersion proto WINAPI :LPDWORD
+PdhOpenQueryW proto WINAPI :LPCWSTR, :DWORD_PTR, :ptr
+PdhOpenQueryA proto WINAPI :LPCSTR, :DWORD_PTR, :ptr
+PdhAddCounterW proto WINAPI :PDH_HQUERY, :LPCWSTR, :DWORD_PTR, :ptr
+PdhAddCounterA proto WINAPI :PDH_HQUERY, :LPCSTR, :DWORD_PTR, :ptr
 
 if (_WIN32_WINDOWS GE 0x0600 OR _WIN32_WINNT GE 0x0600 OR (defined(NTDDI_VERSION) AND NTDDI_VERSION GE NTDDI_VISTA))
-;PDH_FUNCTION
-PdhAddEnglishCounterW proto WINAPI \
-		hQuery: PDH_HQUERY,
-     szFullCounterPath: LPCWSTR,
-	    dwUserData: DWORD_PTR,
-	     phCounter: ptr PDH_HCOUNTER
-
-;PDH_FUNCTION
-PdhAddEnglishCounterA proto WINAPI \
-		hQuery: PDH_HQUERY,
-     szFullCounterPath: LPCSTR,
-	    dwUserData: DWORD_PTR,
-	     phCounter: ptr PDH_HCOUNTER
-
-;PDH_FUNCTION
-PdhCollectQueryDataWithTime proto WINAPI \
-		hQuery: PDH_HQUERY,
-	  pllTimeStamp: ptr LONGLONG
-
-;PDH_FUNCTION
-PdhValidatePathExW proto WINAPI \
-	   hDataSource: PDH_HLOG,
-      szFullPathBuffer: LPCWSTR
-
-;PDH_FUNCTION
-PdhValidatePathExA proto WINAPI \
-	   hDataSource: PDH_HLOG,
-      szFullPathBuffer: LPCSTR
+PdhAddEnglishCounterW proto WINAPI :PDH_HQUERY, :LPCWSTR, :DWORD_PTR, :ptr
+PdhAddEnglishCounterA proto WINAPI :PDH_HQUERY, :LPCSTR, :DWORD_PTR, :ptr
+PdhCollectQueryDataWithTime proto WINAPI :PDH_HQUERY, :ptr
+PdhValidatePathExW proto WINAPI :PDH_HLOG, :LPCWSTR
+PdhValidatePathExA proto WINAPI :PDH_HLOG, :LPCSTR
 endif
-
-;PDH_FUNCTION
-PdhRemoveCounter proto WINAPI \
-	      hCounter: PDH_HCOUNTER
-
-;PDH_FUNCTION
-PdhCollectQueryData proto WINAPI \
-		hQuery: PDH_HQUERY
-
-;PDH_FUNCTION
-PdhCloseQuery proto WINAPI \
-		hQuery: PDH_HQUERY
-
-;PDH_FUNCTION
-PdhGetFormattedCounterValue proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	      dwFormat: DWORD,
-	      lpdwType: LPDWORD,
-		pValue: PPDH_FMT_COUNTERVALUE
-
-;PDH_FUNCTION
-PdhGetFormattedCounterArrayA proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	      dwFormat: DWORD,
-	lpdwBufferSize: LPDWORD,
-	 lpdwItemCount: LPDWORD,
-	    ItemBuffer: PPDH_FMT_COUNTERVALUE_ITEM_A
-
-;PDH_FUNCTION
-PdhGetFormattedCounterArrayW proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	      dwFormat: DWORD,
-	lpdwBufferSize: LPDWORD,
-	 lpdwItemCount: LPDWORD,
-	    ItemBuffer: PPDH_FMT_COUNTERVALUE_ITEM_W
+PdhRemoveCounter proto WINAPI :PDH_HCOUNTER
+PdhCollectQueryData proto WINAPI :PDH_HQUERY
+PdhCloseQuery proto WINAPI :PDH_HQUERY
+PdhGetFormattedCounterValue proto WINAPI :PDH_HCOUNTER, :DWORD, :LPDWORD, :PPDH_FMT_COUNTERVALUE
+PdhGetFormattedCounterArrayA proto WINAPI :PDH_HCOUNTER, :DWORD, :LPDWORD, :LPDWORD, :PPDH_FMT_COUNTERVALUE_ITEM_A
+PdhGetFormattedCounterArrayW proto WINAPI :PDH_HCOUNTER, :DWORD, :LPDWORD, :LPDWORD, :PPDH_FMT_COUNTERVALUE_ITEM_W
 
 PDH_FMT_RAW		equ 0x00000010
 PDH_FMT_ANSI		equ 0x00000020
@@ -413,160 +337,30 @@ PDH_FMT_NOCAP100	equ 0x00008000
 PERF_DETAIL_COSTLY	equ 0x00010000
 PERF_DETAIL_STANDARD	equ 0x0000FFFF
 
-;PDH_FUNCTION
-PdhGetRawCounterValue proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	      lpdwType: LPDWORD,
-		pValue: PPDH_RAW_COUNTER
-
-
-;PDH_FUNCTION
-PdhGetRawCounterArrayA proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	lpdwBufferSize: LPDWORD,
-	 lpdwItemCount: LPDWORD,
-	    ItemBuffer: PPDH_RAW_COUNTER_ITEM_A
-
-;PDH_FUNCTION
-PdhGetRawCounterArrayW proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	lpdwBufferSize: LPDWORD,
-	 lpdwItemCount: LPDWORD,
-	    ItemBuffer: PPDH_RAW_COUNTER_ITEM_W
-
-;PDH_FUNCTION
-PdhCalculateCounterFromRawValue proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	      dwFormat: DWORD,
-	     rawValue1: PPDH_RAW_COUNTER,
-	     rawValue2: PPDH_RAW_COUNTER,
-	      fmtValue: PPDH_FMT_COUNTERVALUE
-
-;PDH_FUNCTION
-PdhComputeCounterStatistics proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	      dwFormat: DWORD,
-	  dwFirstEntry: DWORD,
-	  dwNumEntries: DWORD,
-       lpRawValueArray: PPDH_RAW_COUNTER,
-		 _data: PPDH_STATISTICS
-
-
-;PDH_FUNCTION
-PdhGetCounterInfoW proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-  bRetrieveExplainText: BOOLEAN,
-	 pdwBufferSize: LPDWORD,
-	      lpBuffer: PPDH_COUNTER_INFO_W
-
-;PDH_FUNCTION
-PdhGetCounterInfoA proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-  bRetrieveExplainText: BOOLEAN,
-	 pdwBufferSize: LPDWORD,
-	      lpBuffer: PPDH_COUNTER_INFO_A
+PdhGetRawCounterValue proto WINAPI :PDH_HCOUNTER, :LPDWORD, :PPDH_RAW_COUNTER
+PdhGetRawCounterArrayA proto WINAPI :PDH_HCOUNTER, :LPDWORD, :LPDWORD, :PPDH_RAW_COUNTER_ITEM_A
+PdhGetRawCounterArrayW proto WINAPI :PDH_HCOUNTER, :LPDWORD, :LPDWORD, :PPDH_RAW_COUNTER_ITEM_W
+PdhCalculateCounterFromRawValue proto WINAPI :PDH_HCOUNTER, :DWORD, :PPDH_RAW_COUNTER, :PPDH_RAW_COUNTER, :PPDH_FMT_COUNTERVALUE
+PdhComputeCounterStatistics proto WINAPI :PDH_HCOUNTER, :DWORD, :DWORD, :DWORD, :PPDH_RAW_COUNTER, :PPDH_STATISTICS
+PdhGetCounterInfoW proto WINAPI :PDH_HCOUNTER, :BOOLEAN, :LPDWORD, :PPDH_COUNTER_INFO_W
+PdhGetCounterInfoA proto WINAPI :PDH_HCOUNTER, :BOOLEAN, :LPDWORD, :PPDH_COUNTER_INFO_A
 
 PDH_MAX_SCALE		equ (7)
 PDH_MIN_SCALE		equ (-7)
 
-;PDH_FUNCTION
-PdhSetCounterScaleFactor proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	       lFactor: LONG
-
-;PDH_FUNCTION
-PdhConnectMachineW proto WINAPI \
-	 szMachineName: LPCWSTR
-
-
-;PDH_FUNCTION
-PdhConnectMachineA proto WINAPI \
-	 szMachineName: LPCSTR
-
-
-;PDH_FUNCTION
-PdhEnumMachinesW proto WINAPI \
-	  szDataSource: LPCWSTR,
-	mszMachineList: PZZWSTR,
-	pcchBufferSize: LPDWORD
-
-;PDH_FUNCTION
-PdhEnumMachinesA proto WINAPI \
-	  szDataSource: LPCSTR,
-	mszMachineList: PZZSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhEnumObjectsW proto WINAPI \
-	  szDataSource: LPCWSTR,
-	 szMachineName: LPCWSTR,
-	 mszObjectList: PZZWSTR,
-	pcchBufferSize: LPDWORD,
-	 dwDetailLevel: DWORD,
-	      bRefresh: BOOL
-
-;PDH_FUNCTION
-PdhEnumObjectsA proto WINAPI \
-	  szDataSource: LPCSTR,
-	 szMachineName: LPCSTR,
-	 mszObjectList: PZZSTR,
-	pcchBufferSize: LPDWORD,
-	 dwDetailLevel: DWORD,
-	      bRefresh: BOOL
-
-;PDH_FUNCTION
-PdhEnumObjectItemsW proto WINAPI \
-	  szDataSource: LPCWSTR,
-	 szMachineName: LPCWSTR,
-	  szObjectName: LPCWSTR,
-	mszCounterList: PZZWSTR,
- pcchCounterListLength: LPDWORD,
-       mszInstanceList: PZZWSTR,
-pcchInstanceListLength: LPDWORD,
-	 dwDetailLevel: DWORD,
-	       dwFlags: DWORD
-
-
-;PDH_FUNCTION
-PdhEnumObjectItemsA proto WINAPI \
-	  szDataSource: LPCSTR,
-	 szMachineName: LPCSTR,
-	  szObjectName: LPCSTR,
-	mszCounterList: PZZSTR,
- pcchCounterListLength: LPDWORD,
-       mszInstanceList: PZZSTR,
-pcchInstanceListLength: LPDWORD,
-	 dwDetailLevel: DWORD,
-	       dwFlags: DWORD
-
-;PDH_FUNCTION
-PdhMakeCounterPathW proto WINAPI \
-  pCounterPathElements: PPDH_COUNTER_PATH_ELEMENTS_W,
-      szFullPathBuffer: LPWSTR,
-	pcchBufferSize: LPDWORD,
-	       dwFlags: DWORD
-
-;PDH_FUNCTION
-PdhMakeCounterPathA proto WINAPI \
-  pCounterPathElements: PPDH_COUNTER_PATH_ELEMENTS_A,
-      szFullPathBuffer: LPSTR,
-	pcchBufferSize: LPDWORD,
-	       dwFlags: DWORD
-
-;PDH_FUNCTION
-PdhParseCounterPathW proto WINAPI \
-      szFullPathBuffer: LPCWSTR,
-  pCounterPathElements: PPDH_COUNTER_PATH_ELEMENTS_W,
-	 pdwBufferSize: LPDWORD,
-	       dwFlags: DWORD
-
-;PDH_FUNCTION
-PdhParseCounterPathA proto WINAPI \
-      szFullPathBuffer: LPCSTR,
-  pCounterPathElements: PPDH_COUNTER_PATH_ELEMENTS_A,
-	 pdwBufferSize: LPDWORD,
-	       dwFlags: DWORD
+PdhSetCounterScaleFactor proto WINAPI :PDH_HCOUNTER, :LONG
+PdhConnectMachineW proto WINAPI :LPCWSTR
+PdhConnectMachineA proto WINAPI :LPCSTR
+PdhEnumMachinesW proto WINAPI :LPCWSTR, :PZZWSTR, :LPDWORD
+PdhEnumMachinesA proto WINAPI :LPCSTR, :PZZSTR, :LPDWORD
+PdhEnumObjectsW proto WINAPI :LPCWSTR, :LPCWSTR, :PZZWSTR, :LPDWORD, :DWORD, :BOOL
+PdhEnumObjectsA proto WINAPI :LPCSTR, :LPCSTR, :PZZSTR, :LPDWORD, :DWORD, :BOOL
+PdhEnumObjectItemsW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :PZZWSTR, :LPDWORD, :PZZWSTR, :LPDWORD, :DWORD, :DWORD
+PdhEnumObjectItemsA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :PZZSTR, :LPDWORD, :PZZSTR, :LPDWORD, :DWORD, :DWORD
+PdhMakeCounterPathW proto WINAPI :PPDH_COUNTER_PATH_ELEMENTS_W, :LPWSTR, :LPDWORD, :DWORD
+PdhMakeCounterPathA proto WINAPI :PPDH_COUNTER_PATH_ELEMENTS_A, :LPSTR, :LPDWORD, :DWORD
+PdhParseCounterPathW proto WINAPI :LPCWSTR, :PPDH_COUNTER_PATH_ELEMENTS_W, :LPDWORD, :DWORD
+PdhParseCounterPathA proto WINAPI :LPCSTR, :PPDH_COUNTER_PATH_ELEMENTS_A, :LPDWORD, :DWORD
 
 PDH_PATH_WBEM_RESULT	equ 0x00000001
 PDH_PATH_WBEM_INPUT	equ 0x00000002
@@ -575,69 +369,14 @@ PDH_PATH_LANG_FLAGS macro LangId, Flags
 	exitm<((((LangId AND 0x0000FFFF) SHL 16) OR (Flags AND 0x0000FFFF)))>
 	endm
 
-;PDH_FUNCTION
-PdhParseInstanceNameW proto WINAPI \
-      szInstanceString: LPCWSTR,
-	szInstanceName: LPWSTR,
-pcchInstanceNameLength: LPDWORD,
-	  szParentName: LPWSTR,
-  pcchParentNameLength: LPDWORD,
-	       lpIndex: LPDWORD
-
-
-;PDH_FUNCTION
-PdhParseInstanceNameA proto WINAPI \
-      szInstanceString: LPCSTR,
-	szInstanceName: LPSTR,
-pcchInstanceNameLength: LPDWORD,
-	  szParentName: LPSTR,
-  pcchParentNameLength: LPDWORD,
-	       lpIndex: LPDWORD
-
-
-;PDH_FUNCTION
-PdhValidatePathW proto WINAPI \
-      szFullPathBuffer: LPCWSTR
-
-
-;PDH_FUNCTION
-PdhValidatePathA proto WINAPI \
-      szFullPathBuffer: LPCSTR
-
-
-;PDH_FUNCTION
-PdhGetDefaultPerfObjectW proto WINAPI \
-	  szDataSource: LPCWSTR,
-	 szMachineName: LPCWSTR,
-	szDefaultObjectName: LPWSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhGetDefaultPerfObjectA proto WINAPI \
-	  szDataSource: LPCSTR,
-	 szMachineName: LPCSTR,
-	szDefaultObjectName: LPSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhGetDefaultPerfCounterW proto WINAPI \
-	  szDataSource: LPCWSTR,
-	 szMachineName: LPCWSTR,
-	  szObjectName: LPCWSTR,
-	szDefaultCounterName: LPWSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhGetDefaultPerfCounterA proto WINAPI \
-	  szDataSource: LPCSTR,
-	 szMachineName: LPCSTR,
-	  szObjectName: LPCSTR,
-	szDefaultCounterName: LPSTR,
-	pcchBufferSize: LPDWORD
-
+PdhParseInstanceNameW proto WINAPI :LPCWSTR, :LPWSTR, :LPDWORD, :LPWSTR, :LPDWORD, :LPDWORD
+PdhParseInstanceNameA proto WINAPI :LPCSTR, :LPSTR, :LPDWORD, :LPSTR, :LPDWORD, :LPDWORD
+PdhValidatePathW proto WINAPI :LPCWSTR
+PdhValidatePathA proto WINAPI :LPCSTR
+PdhGetDefaultPerfObjectW proto WINAPI :LPCWSTR, :LPCWSTR, :LPWSTR, :LPDWORD
+PdhGetDefaultPerfObjectA proto WINAPI :LPCSTR, :LPCSTR, :LPSTR, :LPDWORD
+PdhGetDefaultPerfCounterW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPWSTR, :LPDWORD
+PdhGetDefaultPerfCounterA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :LPSTR, :LPDWORD
 
 CALLBACK(CounterPathCallBack, :DWORD_PTR)
 
@@ -728,56 +467,14 @@ PDH_BROWSE_DLG_CONFIG_A ENDS
  PPDH_BROWSE_DLG_CONFIG_A typedef ptr PDH_BROWSE_DLG_CONFIG_A
 endif
 
-;PDH_FUNCTION
-PdhBrowseCountersW proto WINAPI \
-	pBrowseDlgData: PPDH_BROWSE_DLG_CONFIG_W
-
-
-;PDH_FUNCTION
-PdhBrowseCountersA proto WINAPI \
-	pBrowseDlgData: PPDH_BROWSE_DLG_CONFIG_A
-
-
-;PDH_FUNCTION
-PdhExpandCounterPathW proto WINAPI \
-	szWildCardPath: LPCWSTR,
-	 mszExpandedPathList: PZZWSTR,
-    pcchPathListLength: LPDWORD
-
-
-;PDH_FUNCTION
-PdhExpandCounterPathA proto WINAPI \
-	szWildCardPath: LPCSTR,
-	 mszExpandedPathList: PZZSTR,
-    pcchPathListLength: LPDWORD
-
-
-;PDH_FUNCTION
-PdhLookupPerfNameByIndexW proto WINAPI \
-	 szMachineName: LPCWSTR,
-	   dwNameIndex: DWORD,
-	  szNameBuffer: LPWSTR,
-    pcchNameBufferSize: LPDWORD
-
-;PDH_FUNCTION
-PdhLookupPerfNameByIndexA proto WINAPI \
-	 szMachineName: LPCSTR,
-	   dwNameIndex: DWORD,
-	  szNameBuffer: LPSTR,
-    pcchNameBufferSize: LPDWORD
-
-;PDH_FUNCTION
-PdhLookupPerfIndexByNameW proto WINAPI \
-	 szMachineName: LPCWSTR,
-	  szNameBuffer: LPCWSTR,
-	      pdwIndex: LPDWORD
-
-;PDH_FUNCTION
-PdhLookupPerfIndexByNameA proto WINAPI \
-	 szMachineName: LPCSTR,
-	  szNameBuffer: LPCSTR,
-	      pdwIndex: LPDWORD
-
+PdhBrowseCountersW proto WINAPI :PPDH_BROWSE_DLG_CONFIG_W
+PdhBrowseCountersA proto WINAPI :PPDH_BROWSE_DLG_CONFIG_A
+PdhExpandCounterPathW proto WINAPI :LPCWSTR, :PZZWSTR, :LPDWORD
+PdhExpandCounterPathA proto WINAPI :LPCSTR, :PZZSTR, :LPDWORD
+PdhLookupPerfNameByIndexW proto WINAPI :LPCWSTR, :DWORD, :LPWSTR, :LPDWORD
+PdhLookupPerfNameByIndexA proto WINAPI :LPCSTR, :DWORD, :LPSTR, :LPDWORD
+PdhLookupPerfIndexByNameW proto WINAPI :LPCWSTR, :LPCWSTR, :LPDWORD
+PdhLookupPerfIndexByNameA proto WINAPI :LPCSTR, :LPCSTR, :LPDWORD
 
 PDH_NOEXPANDCOUNTERS	equ 1
 PDH_NOEXPANDINSTANCES	equ 2
@@ -785,22 +482,8 @@ if (_WIN32_WINDOWS GE 0x0502 OR _WIN32_WINNT GE 0x0502 OR (defined(NTDDI_VERSION
 PDH_REFRESHCOUNTERS	equ 4
 endif
 
-;PDH_FUNCTION
-PdhExpandWildCardPathA proto WINAPI \
-	  szDataSource: LPCSTR,
-	szWildCardPath: LPCSTR,
-   mszExpandedPathList: PZZSTR,
-    pcchPathListLength: LPDWORD,
-	       dwFlags: DWORD
-
-
-;PDH_FUNCTION
-PdhExpandWildCardPathW proto WINAPI \
-	  szDataSource: LPCWSTR,
-	szWildCardPath: LPCWSTR,
-   mszExpandedPathList: PZZWSTR,
-    pcchPathListLength: LPDWORD,
-	       dwFlags: DWORD
+PdhExpandWildCardPathA proto WINAPI :LPCSTR, :LPCSTR, :PZZSTR, :LPDWORD, :DWORD
+PdhExpandWildCardPathW proto WINAPI :LPCWSTR, :LPCWSTR, :PZZWSTR, :LPDWORD, :DWORD
 
 PDH_LOG_READ_ACCESS	equ 0x00010000
 PDH_LOG_WRITE_ACCESS	equ 0x00020000
@@ -834,313 +517,61 @@ else
 PDH_LOG_TYPE_BINARY	equ 3
 endif
 
-;PDH_FUNCTION
-PdhOpenLogW proto WINAPI \
-	 szLogFileName: LPCWSTR,
-	 dwAccessFlags: DWORD,
-	   lpdwLogType: LPDWORD,
-		hQuery: PDH_HQUERY,
-	     dwMaxSize: DWORD,
-	 szUserCaption: LPCWSTR,
-		 phLog: ptr PDH_HLOG
-
-;PDH_FUNCTION
-PdhOpenLogA proto WINAPI \
-	 szLogFileName: LPCSTR,
-	 dwAccessFlags: DWORD,
-	   lpdwLogType: LPDWORD,
-		hQuery: PDH_HQUERY,
-	     dwMaxSize: DWORD,
-	 szUserCaption: LPCSTR,
-		 phLog: ptr PDH_HLOG
-
-;PDH_FUNCTION
-PdhUpdateLogW proto WINAPI \
-		  hLog: PDH_HLOG,
-	  szUserString: LPCWSTR
-
-
-;PDH_FUNCTION
-PdhUpdateLogA proto WINAPI \
-		  hLog: PDH_HLOG,
-	  szUserString: LPCSTR
-
-;PDH_FUNCTION
-PdhUpdateLogFileCatalog proto WINAPI \
-		  hLog: PDH_HLOG
-
-;PDH_FUNCTION
-PdhGetLogFileSize proto WINAPI \
-		  hLog: PDH_HLOG,
-		llSize: ptr LONGLONG
-
-;PDH_FUNCTION
-PdhCloseLog proto WINAPI \
-		  hLog: PDH_HLOG,
-	       dwFlags: DWORD
+PdhOpenLogW proto WINAPI :LPCWSTR, :DWORD, :LPDWORD, :PDH_HQUERY, :DWORD, :LPCWSTR, :ptr
+PdhOpenLogA proto WINAPI :LPCSTR, :DWORD, :LPDWORD, :PDH_HQUERY, :DWORD, :LPCSTR, :ptr
+PdhUpdateLogW proto WINAPI :PDH_HLOG, :LPCWSTR
+PdhUpdateLogA proto WINAPI :PDH_HLOG, :LPCSTR
+PdhUpdateLogFileCatalog proto WINAPI :PDH_HLOG
+PdhGetLogFileSize proto WINAPI :PDH_HLOG, :ptr
+PdhCloseLog proto WINAPI :PDH_HLOG, :DWORD
 
 PDH_FLAGS_CLOSE_QUERY	equ 0x00000001
 PDH_FLAGS_FILE_BROWSER_ONLY equ 0x00000001
 
-;PDH_FUNCTION
-PdhSelectDataSourceW proto WINAPI \
-	     hWndOwner: HWND,
-	       dwFlags: DWORD,
-	  szDataSource: LPWSTR,
-      pcchBufferLength: LPDWORD
-
-;PDH_FUNCTION
-PdhSelectDataSourceA proto WINAPI \
-	     hWndOwner: HWND,
-	       dwFlags: DWORD,
-	  szDataSource: LPSTR,
-      pcchBufferLength: LPDWORD
-
-;BOOL
-PdhIsRealTimeQuery proto WINAPI \
-		hQuery: PDH_HQUERY
-
-;PDH_FUNCTION
-PdhSetQueryTimeRange proto WINAPI \
-		hQuery: PDH_HQUERY,
-		 pInfo: PPDH_TIME_INFO
-
-;PDH_FUNCTION
-PdhGetDataSourceTimeRangeW proto WINAPI \
-	  szDataSource: LPCWSTR,
-	 pdwNumEntries: LPDWORD,
-		 pInfo: PPDH_TIME_INFO,
-	 pdwBufferSize: LPDWORD
-
-;PDH_FUNCTION
-PdhGetDataSourceTimeRangeA proto WINAPI \
-	  szDataSource: LPCSTR,
-	 pdwNumEntries: LPDWORD,
-		 pInfo: PPDH_TIME_INFO,
-	 pdwBufferSize: LPDWORD
-
-;PDH_FUNCTION
-PdhCollectQueryDataEx proto WINAPI \
-		hQuery: PDH_HQUERY,
-	dwIntervalTime: DWORD,
-	 hNewDataEvent: HANDLE
-
-;PDH_FUNCTION
-PdhFormatFromRawValue proto WINAPI \
-	 dwCounterType: DWORD,
-	      dwFormat: DWORD,
-	     pTimeBase: ptr LONGLONG,
-	    pRawValue1: PPDH_RAW_COUNTER,
-	    pRawValue2: PPDH_RAW_COUNTER,
-	     pFmtValue: PPDH_FMT_COUNTERVALUE
-
-;PDH_FUNCTION
-PdhGetCounterTimeBase proto WINAPI \
-	      hCounter: PDH_HCOUNTER,
-	     pTimeBase: ptr LONGLONG
-
-;PDH_FUNCTION
-PdhReadRawLogRecord proto WINAPI \
-		  hLog: PDH_HLOG,
-	      ftRecord: FILETIME,
-	 pRawLogRecord: PPDH_RAW_LOG_RECORD,
-       pdwBufferLength: LPDWORD
-
+PdhSelectDataSourceW proto WINAPI :HWND, :DWORD, :LPWSTR, :LPDWORD
+PdhSelectDataSourceA proto WINAPI :HWND, :DWORD, :LPSTR, :LPDWORD
+PdhIsRealTimeQuery proto WINAPI :PDH_HQUERY
+PdhSetQueryTimeRange proto WINAPI :PDH_HQUERY, :PPDH_TIME_INFO
+PdhGetDataSourceTimeRangeW proto WINAPI :LPCWSTR, :LPDWORD, :PPDH_TIME_INFO, :LPDWORD
+PdhGetDataSourceTimeRangeA proto WINAPI :LPCSTR, :LPDWORD, :PPDH_TIME_INFO, :LPDWORD
+PdhCollectQueryDataEx proto WINAPI :PDH_HQUERY, :DWORD, :HANDLE
+PdhFormatFromRawValue proto WINAPI :DWORD, :DWORD, :ptr, :PPDH_RAW_COUNTER, :PPDH_RAW_COUNTER, :PPDH_FMT_COUNTERVALUE
+PdhGetCounterTimeBase proto WINAPI :PDH_HCOUNTER, :ptr
+PdhReadRawLogRecord proto WINAPI :PDH_HLOG, :FILETIME, :PPDH_RAW_LOG_RECORD, :LPDWORD
 
 DATA_SOURCE_REGISTRY	equ 0x00000001
 DATA_SOURCE_LOGFILE	equ 0x00000002
 DATA_SOURCE_WBEM	equ 0x00000004
 
-;PDH_FUNCTION
-PdhSetDefaultRealTimeDataSource proto WINAPI \
-	dwDataSourceId: DWORD
-
+PdhSetDefaultRealTimeDataSource proto WINAPI :DWORD
 
 if (_WIN32_WINDOWS GE 0x0501 OR _WIN32_WINNT GE 0x0501 OR (defined(NTDDI_VERSION) AND NTDDI_VERSION GE NTDDI_WINXP))
-;PDH_FUNCTION
-PdhBindInputDataSourceW proto WINAPI \
-	  phDataSource: ptr PDH_HLOG,
-       LogFileNameList: LPCWSTR
-
-
-;PDH_FUNCTION
-PdhBindInputDataSourceA proto WINAPI \
-	  phDataSource: ptr PDH_HLOG,
-       LogFileNameList: LPCSTR
-
-
-;PDH_FUNCTION
-PdhOpenQueryH proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	    dwUserData: DWORD_PTR,
-	       phQuery: ptr PDH_HQUERY
-
-
-;PDH_FUNCTION
-PdhEnumMachinesHW proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	  mszMachineList: PZZWSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhEnumMachinesHA proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	  mszMachineList: PZZSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhEnumObjectsHW proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 szMachineName: LPCWSTR,
-	  mszObjectList: PZZWSTR,
-	pcchBufferSize: LPDWORD,
-	 dwDetailLevel: DWORD,
-	      bRefresh: BOOL
-
-;PDH_FUNCTION
-PdhEnumObjectsHA proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 szMachineName: LPCSTR,
-	  mszObjectList: PZZSTR,
-	pcchBufferSize: LPDWORD,
-	 dwDetailLevel: DWORD,
-	      bRefresh: BOOL
-
-
-;PDH_FUNCTION
-PdhEnumObjectItemsHW proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 szMachineName: LPCWSTR,
-	  szObjectName: LPCWSTR,
-	mszCounterList: PZZWSTR,
- pcchCounterListLength: LPDWORD,
-       mszInstanceList: PZZWSTR,
-pcchInstanceListLength: LPDWORD,
-	 dwDetailLevel: DWORD,
-	       dwFlags: DWORD
-
-
-;PDH_FUNCTION
-PdhEnumObjectItemsHA proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 szMachineName: LPCSTR,
-	  szObjectName: LPCSTR,
-	mszCounterList: PZZSTR,
- pcchCounterListLength: LPDWORD,
-       mszInstanceList: PZZSTR,
-pcchInstanceListLength: LPDWORD,
-	 dwDetailLevel: DWORD,
-	       dwFlags: DWORD
-
-
-;PDH_FUNCTION
-PdhExpandWildCardPathHW proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	szWildCardPath: LPCWSTR,
-   mszExpandedPathList: PZZWSTR,
-    pcchPathListLength: LPDWORD,
-	       dwFlags: DWORD
-
-
-;PDH_FUNCTION
-PdhExpandWildCardPathHA proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	szWildCardPath: LPCSTR,
-   mszExpandedPathList: PZZSTR,
-    pcchPathListLength: LPDWORD,
-	       dwFlags: DWORD
-
-;PDH_FUNCTION
-PdhGetDataSourceTimeRangeH proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 pdwNumEntries: LPDWORD,
-		 pInfo: PPDH_TIME_INFO,
-	 pdwBufferSize: LPDWORD
-
-;PDH_FUNCTION
-PdhGetDefaultPerfObjectHW proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 szMachineName: LPCWSTR,
-   szDefaultObjectName: LPWSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhGetDefaultPerfObjectHA proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 szMachineName: LPCSTR,
-   szDefaultObjectName: LPSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhGetDefaultPerfCounterHW proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 szMachineName: LPCWSTR,
-	  szObjectName: LPCWSTR,
-  szDefaultCounterName: LPWSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhGetDefaultPerfCounterHA proto WINAPI \
-	   hDataSource: PDH_HLOG,
-	 szMachineName: LPCSTR,
-	  szObjectName: LPCSTR,
-  szDefaultCounterName: LPSTR,
-	pcchBufferSize: LPDWORD
-
-
-;PDH_FUNCTION
-PdhBrowseCountersHW proto WINAPI \
-	pBrowseDlgData: PPDH_BROWSE_DLG_CONFIG_HW
-
-;PDH_FUNCTION
-PdhBrowseCountersHA proto WINAPI \
-	pBrowseDlgData: PPDH_BROWSE_DLG_CONFIG_HA
-
-;PDH_FUNCTION
-PdhVerifySQLDBW proto WINAPI \
-	  szDataSource: LPCWSTR
-
-;PDH_FUNCTION
-PdhVerifySQLDBA proto WINAPI \
-	  szDataSource: LPCSTR
-
-;PDH_FUNCTION
-PdhCreateSQLTablesW proto WINAPI \
-	  szDataSource: LPCWSTR
-
-;PDH_FUNCTION
-PdhCreateSQLTablesA proto WINAPI \
-	  szDataSource: LPCSTR
-
-;PDH_FUNCTION
-PdhEnumLogSetNamesW proto WINAPI \
-	  szDataSource: LPCWSTR,
-    mszDataSetNameList: PZZWSTR,
-      pcchBufferLength: LPDWORD
-
-
-;PDH_FUNCTION
-PdhEnumLogSetNamesA proto WINAPI \
-	  szDataSource: LPCSTR,
-    mszDataSetNameList: PZZSTR,
-      pcchBufferLength: LPDWORD
-
-
-;PDH_FUNCTION
-PdhGetLogSetGUID proto WINAPI \
-		  hLog: PDH_HLOG,
-		 pGuid: ptr GUID,
-		pRunId: ptr SINT
-
-;PDH_FUNCTION
-PdhSetLogSetRunID proto WINAPI \
-		  hLog: PDH_HLOG,
-		 RunId: SINT
+PdhBindInputDataSourceW proto WINAPI :ptr, :LPCWSTR
+PdhBindInputDataSourceA proto WINAPI :ptr, :LPCSTR
+PdhOpenQueryH proto WINAPI :PDH_HLOG, :DWORD_PTR, :ptr
+PdhEnumMachinesHW proto WINAPI :PDH_HLOG, :PZZWSTR, :LPDWORD
+PdhEnumMachinesHA proto WINAPI :PDH_HLOG, :PZZSTR, :LPDWORD
+PdhEnumObjectsHW proto WINAPI :PDH_HLOG, :LPCWSTR, :PZZWSTR, :LPDWORD, :DWORD, :BOOL
+PdhEnumObjectsHA proto WINAPI :PDH_HLOG, :LPCSTR, :PZZSTR, :LPDWORD, :DWORD, :BOOL
+PdhEnumObjectItemsHW proto WINAPI :PDH_HLOG, :LPCWSTR, :LPCWSTR, :PZZWSTR, :LPDWORD, :PZZWSTR, :LPDWORD, :DWORD, :DWORD
+PdhEnumObjectItemsHA proto WINAPI :PDH_HLOG, :LPCSTR, :LPCSTR, :PZZSTR, :LPDWORD, :PZZSTR, :LPDWORD, :DWORD, :DWORD
+PdhExpandWildCardPathHW proto WINAPI :PDH_HLOG, :LPCWSTR, :PZZWSTR, :LPDWORD, :DWORD
+PdhExpandWildCardPathHA proto WINAPI :PDH_HLOG, :LPCSTR, :PZZSTR, :LPDWORD, :DWORD
+PdhGetDataSourceTimeRangeH proto WINAPI :PDH_HLOG, :LPDWORD, :PDH_TIME_INFO, :LPDWORD
+PdhGetDefaultPerfObjectHW proto WINAPI :PDH_HLOG, :LPCWSTR, :LPWSTR, :LPDWORD
+PdhGetDefaultPerfObjectHA proto WINAPI :PDH_HLOG, :LPCSTR, :LPSTR, :LPDWORD
+PdhGetDefaultPerfCounterHW proto WINAPI :PDH_HLOG, :LPCWSTR, :LPCWSTR, :LPWSTR, :LPDWORD
+PdhGetDefaultPerfCounterHA proto WINAPI :PDH_HLOG, :LPCSTR, :LPCSTR, :LPSTR, :LPDWORD
+PdhBrowseCountersHW proto WINAPI :PPDH_BROWSE_DLG_CONFIG_HW
+PdhBrowseCountersHA proto WINAPI :PPDH_BROWSE_DLG_CONFIG_HA
+PdhVerifySQLDBW proto WINAPI :LPCWSTR
+PdhVerifySQLDBA proto WINAPI :LPCSTR
+PdhCreateSQLTablesW proto WINAPI :LPCWSTR
+PdhCreateSQLTablesA proto WINAPI :LPCSTR
+PdhEnumLogSetNamesW proto WINAPI :LPCWSTR, :PZZWSTR, :LPDWORD
+PdhEnumLogSetNamesA proto WINAPI :LPCSTR, :PZZSTR, :LPDWORD
+PdhGetLogSetGUID proto WINAPI :PDH_HLOG, :ptr, :ptr
+PdhSetLogSetRunID proto WINAPI :PDH_HLOG, :SINT
 endif
 
 ifdef UNICODE

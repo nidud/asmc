@@ -61,765 +61,89 @@ ResourceType		D3DRESOURCETYPE ?
 ImageFileFormat		D3DXIMAGE_FILEFORMAT ?
 D3DXIMAGE_INFO		ENDS
 
-;; Typedefs for callback functions
+CALLBACK(LPD3DXFILL2D, :ptr, :ptr, :ptr, :ptr)
+CALLBACK(LPD3DXFILL3D, :ptr, :ptr, :ptr, :ptr)
 
-CALLBACK(LPD3DXFILL2D, :ptr D3DXVECTOR4, :ptr D3DXVECTOR2, :ptr D3DXVECTOR2, :PVOID)
-CALLBACK(LPD3DXFILL3D, :ptr D3DXVECTOR4, :ptr D3DXVECTOR3, :ptr D3DXVECTOR3, :PVOID)
-
-;; Image Information
-;HRESULT
-D3DXGetImageInfoFromFileA proto WINAPI \
-		  file: LPSTR,
-		  info: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXGetImageInfoFromFileW proto WINAPI \
-		  file: LPWSTR,
-		  info: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXGetImageInfoFromResourceA proto WINAPI \
-		module: HMODULE,
-	      resource: LPSTR,
-		  info: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXGetImageInfoFromResourceW proto WINAPI \
-		module: HMODULE,
-	      resource: LPWSTR,
-		  info: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXGetImageInfoFromFileInMemory proto WINAPI \
-		 _data: PVOID,
-	     data_size: UINT,
-		  info: ptr D3DXIMAGE_INFO
-
-;; Surface Loading/Saving
-;HRESULT
-D3DXLoadSurfaceFromFileA proto WINAPI \
-	   destsurface: ptr IDirect3DSurface9,
-	   destpalette: ptr PALETTEENTRY,
-	      destrect: ptr RECT,
-	       srcfile: LPSTR,
-	       srcrect: ptr RECT,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadSurfaceFromFileW proto WINAPI \
-	   destsurface: ptr IDirect3DSurface9,
-	   destpalette: ptr PALETTEENTRY,
-	      destrect: ptr RECT,
-	       srcfile: LPWSTR,
-	       srcrect: ptr RECT,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadSurfaceFromResourceA proto WINAPI \
-	   destsurface: ptr IDirect3DSurface9,
-	   destpalette: ptr PALETTEENTRY,
-	      destrect: ptr RECT,
-	     srcmodule: HMODULE,
-	      resource: LPSTR,
-	       srcrect: ptr RECT,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadSurfaceFromResourceW proto WINAPI \
-	   destsurface: ptr IDirect3DSurface9,
-	   destpalette: ptr PALETTEENTRY,
-	      destrect: ptr RECT,
-	     srcmodule: HMODULE,
-	      resource: LPWSTR,
-	       srcrect: ptr RECT,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadSurfaceFromFileInMemory proto WINAPI \
-	   destsurface: ptr IDirect3DSurface9,
-	   destpalette: ptr PALETTEENTRY,
-	      destrect: ptr RECT,
-	       srcdata: PVOID,
-	   srcdatasize: UINT,
-	       srcrect: ptr RECT,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadSurfaceFromSurface proto WINAPI \
-	   destsurface: ptr IDirect3DSurface9,
-	   destpalette: ptr PALETTEENTRY,
-	      destrect: ptr RECT,
-	    srcsurface: ptr IDirect3DSurface9,
-	    srcpalette: ptr PALETTEENTRY,
-	       srcrect: ptr RECT,
-		filter: DWORD,
-	      colorkey: D3DCOLOR
-
-;HRESULT
-D3DXLoadSurfaceFromMemory proto WINAPI \
-	   dst_surface: ptr IDirect3DSurface9,
-	   dst_palette: ptr PALETTEENTRY,
-	      dst_rect: ptr RECT,
-	    src_memory: PVOID,
-	    src_format: D3DFORMAT,
-	     src_pitch: UINT,
-	   src_palette: ptr PALETTEENTRY,
-	      src_rect: ptr RECT,
-		filter: DWORD,
-	     color_key: D3DCOLOR
-
-;HRESULT
-D3DXSaveSurfaceToFileInMemory proto WINAPI \
-	    destbuffer: ptr ID3DXBuffer,
-	    destformat: D3DXIMAGE_FILEFORMAT,
-	    srcsurface: ptr IDirect3DSurface9,
-	    srcpalette: ptr PALETTEENTRY,
-	       srcrect: ptr RECT
-
-
-;HRESULT
-D3DXSaveSurfaceToFileA proto WINAPI \
-	      destfile: LPSTR,
-	    destformat: D3DXIMAGE_FILEFORMAT,
-	    srcsurface: ptr IDirect3DSurface9,
-	    srcpalette: ptr PALETTEENTRY,
-	       srcrect: ptr RECT
-
-;HRESULT
-D3DXSaveSurfaceToFileW proto WINAPI \
-	      destfile: LPWSTR,
-	    destformat: D3DXIMAGE_FILEFORMAT,
-	    srcsurface: ptr IDirect3DSurface9,
-	    srcpalette: ptr PALETTEENTRY,
-	       srcrect: ptr RECT
-
-
-;; Volume Loading/Saving
-;HRESULT
-D3DXLoadVolumeFromFileA proto WINAPI \
-	    destvolume: ptr IDirect3DVolume9,
-	   destpalette: ptr PALETTEENTRY,
-	       destbox: ptr D3DBOX,
-	       srcfile: LPSTR,
-		srcbox: ptr D3DBOX,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadVolumeFromFileW proto WINAPI \
-	    destvolume: ptr IDirect3DVolume9,
-	   destpalette: ptr PALETTEENTRY,
-	       destbox: ptr D3DBOX,
-	       srcfile: LPWSTR,
-		srcbox: ptr D3DBOX,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadVolumeFromResourceA proto WINAPI \
-	    destvolume: ptr IDirect3DVolume9,
-	   destpalette: ptr PALETTEENTRY,
-	       destbox: ptr D3DBOX,
-	     srcmodule: HMODULE,
-	      resource: LPSTR,
-		srcbox: ptr D3DBOX,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadVolumeFromResourceW proto WINAPI \
-	    destvolume: ptr IDirect3DVolume9,
-	   destpalette: ptr PALETTEENTRY,
-	       destbox: ptr D3DBOX,
-	     srcmodule: HMODULE,
-	      resource: LPWSTR,
-		srcbox: ptr D3DBOX,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-;HRESULT
-D3DXLoadVolumeFromFileInMemory proto WINAPI \
-	    destvolume: ptr IDirect3DVolume9,
-	   destpalette: ptr PALETTEENTRY,
-	       destbox: ptr D3DBOX,
-	       srcdata: PVOID,
-	   srcdatasize: UINT,
-		srcbox: ptr D3DBOX,
-		filter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO
-
-
-;HRESULT
-D3DXLoadVolumeFromVolume proto WINAPI \
-	    destvolume: ptr IDirect3DVolume9,
-	   destpalette: ptr PALETTEENTRY,
-	       destbox: ptr D3DBOX,
-	     srcvolume: ptr IDirect3DVolume9,
-	    srcpalette: ptr PALETTEENTRY,
-		srcbox: ptr D3DBOX,
-		filter: DWORD,
-	      colorkey: D3DCOLOR
-
-
-;HRESULT
-D3DXLoadVolumeFromMemory proto WINAPI \
-	    destvolume: ptr IDirect3DVolume9,
-	   destpalette: ptr PALETTEENTRY,
-	       destbox: ptr D3DBOX,
-	     srcmemory: PVOID,
-	     srcformat: D3DFORMAT,
-	   srcrowpitch: UINT,
-	 srcslicepitch: UINT,
-	    srcpalette: ptr PALETTEENTRY,
-		srcbox: ptr D3DBOX,
-		filter: DWORD,
-	      colorkey: D3DCOLOR
-
-
-;HRESULT
-D3DXSaveVolumeToFileA proto WINAPI \
-	      destfile: LPSTR,
-	    destformat: D3DXIMAGE_FILEFORMAT,
-	     srcvolume: ptr IDirect3DVolume9,
-	    srcpalette: ptr PALETTEENTRY,
-		srcbox: ptr D3DBOX
-
-;HRESULT
-D3DXSaveVolumeToFileW proto WINAPI \
-	      destfile: LPWSTR,
-	    destformat: D3DXIMAGE_FILEFORMAT,
-	     srcvolume: ptr IDirect3DVolume9,
-	    srcpalette: ptr PALETTEENTRY,
-		srcbox: ptr D3DBOX
-
-
-;; Texture, cube texture and volume texture creation
-;HRESULT
-D3DXCheckTextureRequirements proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		 width: ptr UINT,
-		height: ptr UINT,
-	     miplevels: ptr UINT,
-		 usage: DWORD,
-		format: ptr D3DFORMAT,
-		  pool: D3DPOOL
-
-;HRESULT
-D3DXCheckCubeTextureRequirements proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		  size: ptr UINT,
-	     miplevels: ptr UINT,
-		 usage: DWORD,
-		format: ptr D3DFORMAT,
-		  pool: D3DPOOL
-
-;HRESULT
-D3DXCheckVolumeTextureRequirements proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		 width: ptr UINT,
-		height: ptr UINT,
-		 depth: ptr UINT,
-	     miplevels: ptr UINT,
-		 usage: DWORD,
-		format: ptr D3DFORMAT,
-		  pool: D3DPOOL
-
-;HRESULT
-D3DXCreateTexture proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		 width: UINT,
-		height: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-	       texture: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateCubeTexture proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		  size: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateVolumeTexture proto WINAPI \
-		device: ptr IDirect3DDevice9,
-		 width: UINT,
-		height: UINT,
-		 depth: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		volume: ptr IDirect3DVolumeTexture9
-
-
-;HRESULT
-D3DXCreateTextureFromFileA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPSTR,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateTextureFromFileW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPWSTR,
-	       texture: ptr IDirect3DTexture9
+D3DXGetImageInfoFromFileA proto WINAPI :LPSTR, :ptr
+D3DXGetImageInfoFromFileW proto WINAPI :LPWSTR, :ptr
+D3DXGetImageInfoFromResourceA proto WINAPI :HMODULE, :LPSTR, :ptr
+D3DXGetImageInfoFromResourceW proto WINAPI :HMODULE, :LPWSTR, :ptr
+D3DXGetImageInfoFromFileInMemory proto WINAPI :ptr, :UINT, :ptr
+D3DXLoadSurfaceFromFileA proto WINAPI :ptr, :ptr, :ptr, :LPSTR, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadSurfaceFromFileW proto WINAPI :ptr, :ptr, :ptr, :LPWSTR, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadSurfaceFromResourceA proto WINAPI :ptr, :ptr, :ptr, :HMODULE, :LPSTR, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadSurfaceFromResourceW proto WINAPI :ptr, :ptr, :ptr, :HMODULE, :LPWSTR, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadSurfaceFromFileInMemory proto WINAPI :ptr, :ptr, :ptr, :ptr, :UINT, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadSurfaceFromSurface proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :DWORD, :D3DCOLOR
+D3DXLoadSurfaceFromMemory proto WINAPI :ptr, :ptr, :ptr, :ptr, :D3DFORMAT, :UINT, :ptr, :ptr, :DWORD, :D3DCOLOR
+D3DXSaveSurfaceToFileInMemory proto WINAPI :ptr, :D3DXIMAGE_FILEFORMAT, :ptr, :ptr, :ptr
+D3DXSaveSurfaceToFileA proto WINAPI :LPSTR, :D3DXIMAGE_FILEFORMAT, :ptr, :ptr, :ptr
+D3DXSaveSurfaceToFileW proto WINAPI :LPWSTR, :D3DXIMAGE_FILEFORMAT, :ptr, :ptr, :ptr
+D3DXLoadVolumeFromFileA proto WINAPI :ptr, :ptr, :ptr, :LPSTR, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadVolumeFromFileW proto WINAPI :ptr, :ptr, :ptr, :LPWSTR, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadVolumeFromResourceA proto WINAPI :ptr, :ptr, :ptr, :HMODULE, :LPSTR, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadVolumeFromResourceW proto WINAPI :ptr, :ptr, :ptr, :HMODULE, :LPWSTR, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadVolumeFromFileInMemory proto WINAPI :ptr, :ptr, :ptr, :ptr, :UINT, :ptr, :DWORD, :D3DCOLOR, :ptr
+D3DXLoadVolumeFromVolume proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :DWORD, :D3DCOLOR
+D3DXLoadVolumeFromMemory proto WINAPI :ptr, :ptr, :ptr, :ptr, :D3DFORMAT, :UINT, :UINT, :ptr, :ptr, :DWORD, :D3DCOLOR
+D3DXSaveVolumeToFileA proto WINAPI :LPSTR, :D3DXIMAGE_FILEFORMAT, :ptr, :ptr, :ptr
+D3DXSaveVolumeToFileW proto WINAPI :LPWSTR, :D3DXIMAGE_FILEFORMAT, :ptr, :ptr, :ptr
+D3DXCheckTextureRequirements proto WINAPI :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr, :D3DPOOL
+D3DXCheckCubeTextureRequirements proto WINAPI :ptr, :ptr, :ptr, :DWORD, :ptr, :D3DPOOL
+D3DXCheckVolumeTextureRequirements proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr, :D3DPOOL
+D3DXCreateTexture proto WINAPI :ptr, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr
+D3DXCreateCubeTexture proto WINAPI :ptr, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr
+D3DXCreateVolumeTexture proto WINAPI :ptr, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr
+D3DXCreateTextureFromFileA proto WINAPI :ptr, :LPSTR, :ptr
+D3DXCreateTextureFromFileW proto WINAPI :ptr, :LPWSTR, :ptr
 ifdef _UNICODE
 D3DXCreateTextureFromFile equ <D3DXCreateTextureFromFileW>
 else
 D3DXCreateTextureFromFile equ <D3DXCreateTextureFromFileA>
 endif
 
-;HRESULT
-D3DXCreateCubeTextureFromFileA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPSTR,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromFileW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPWSTR,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromFileA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPSTR,
-		volume: ptr IDirect3DVolumeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromFileW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPWSTR,
-		volume: ptr IDirect3DVolumeTexture9
-
-;HRESULT
-D3DXCreateTextureFromResourceA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPSTR,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateTextureFromResourceW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPWSTR,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromResourceA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPSTR,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromResourceW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPWSTR,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromResourceA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPSTR,
-		volume: ptr IDirect3DVolumeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromResourceW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPWSTR,
-		volume: ptr IDirect3DVolumeTexture9
-
-;HRESULT
-D3DXCreateTextureFromFileExA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPSTR,
-		 width: UINT,
-		height: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateTextureFromFileExW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPWSTR,
-		 width: UINT,
-		height: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromFileExA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPSTR,
-		  size: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromFileExW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcfile: LPWSTR,
-		  size: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromFileExA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	      resource: LPSTR,
-		 width: UINT,
-		height: UINT,
-		 depth: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		volume: ptr IDirect3DVolumeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromFileExW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	      resource: LPWSTR,
-		 width: UINT,
-		height: UINT,
-		 depth: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		volume: ptr IDirect3DVolumeTexture9
-
-;HRESULT
-D3DXCreateTextureFromResourceExA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPSTR,
-		 width: UINT,
-		height: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateTextureFromResourceExW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPWSTR,
-		 width: UINT,
-		height: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromResourceExA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPSTR,
-		  size: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromResourceExW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPWSTR,
-		  size: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromResourceExA proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPSTR,
-		 width: UINT,
-		height: UINT,
-		 depth: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		volume: ptr IDirect3DVolumeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromResourceExW proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	     srcmodule: HMODULE,
-	      resource: LPWSTR,
-		 width: UINT,
-		height: UINT,
-		 depth: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		volume: ptr IDirect3DVolumeTexture9
-
-;HRESULT
-D3DXCreateTextureFromFileInMemory proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcdata: PVOID,
-	   srcdatasize: UINT,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromFileInMemory proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcdata: PVOID,
-	   srcdatasize: UINT,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromFileInMemory proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcdata: PVOID,
-	   srcdatasize: UINT,
-		volume: ptr IDirect3DVolumeTexture9
-
-
-;HRESULT
-D3DXCreateTextureFromFileInMemoryEx proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcdata: PVOID,
-	   srcdatasize: UINT,
-		 width: UINT,
-		height: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-	       texture: ptr IDirect3DTexture9
-
-;HRESULT
-D3DXCreateCubeTextureFromFileInMemoryEx proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcdata: PVOID,
-	   srcdatasize: UINT,
-		  size: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		  cube: ptr IDirect3DCubeTexture9
-
-;HRESULT
-D3DXCreateVolumeTextureFromFileInMemoryEx proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	       srcdata: PVOID,
-	   srcdatasize: UINT,
-		 width: UINT,
-		height: UINT,
-		 depth: UINT,
-	     miplevels: UINT,
-		 usage: DWORD,
-		format: D3DFORMAT,
-		  pool: D3DPOOL,
-		filter: DWORD,
-	     mipfilter: DWORD,
-	      colorkey: D3DCOLOR,
-	       srcinfo: ptr D3DXIMAGE_INFO,
-	       palette: ptr PALETTEENTRY,
-		volume: ptr IDirect3DVolumeTexture9
-
-
-;HRESULT
-D3DXSaveTextureToFileInMemory proto WINAPI \
-		device: ptr IDirect3DDevice9,
-	    destformat: D3DXIMAGE_FILEFORMAT,
-	    srctexture: ptr IDirect3DBaseTexture9,
-	    srcpalette: ptr PALETTEENTRY
-
-;HRESULT
-D3DXSaveTextureToFileA proto WINAPI \
-	      destfile: LPSTR,
-	    destformat: D3DXIMAGE_FILEFORMAT,
-	    srctexture: ptr IDirect3DBaseTexture9,
-	    srcpalette: ptr PALETTEENTRY
-
-;HRESULT
-D3DXSaveTextureToFileW proto WINAPI \
-	      destfile: LPWSTR,
-	    destformat: D3DXIMAGE_FILEFORMAT,
-	    srctexture: ptr IDirect3DBaseTexture9,
-	    srcpalette: ptr PALETTEENTRY
-
-;; Other functions
-;HRESULT
-D3DXFilterTexture proto WINAPI \
-	       texture: ptr IDirect3DBaseTexture9,
-	       palette: ptr PALETTEENTRY,
-	      srclevel: UINT,
-		filter: DWORD
+D3DXCreateCubeTextureFromFileA proto WINAPI :ptr, :LPSTR, :ptr
+D3DXCreateCubeTextureFromFileW proto WINAPI :ptr, :LPWSTR, :ptr
+D3DXCreateVolumeTextureFromFileA proto WINAPI :ptr, :LPSTR, :ptr
+D3DXCreateVolumeTextureFromFileW proto WINAPI :ptr, :LPWSTR, :ptr
+D3DXCreateTextureFromResourceA proto WINAPI :ptr, :HMODULE, :LPSTR, :ptr
+D3DXCreateTextureFromResourceW proto WINAPI :ptr, :HMODULE, :LPWSTR, :ptr
+D3DXCreateCubeTextureFromResourceA proto WINAPI :ptr, :HMODULE, :LPSTR, :ptr
+D3DXCreateCubeTextureFromResourceW proto WINAPI :ptr, :HMODULE, :LPWSTR, :ptr
+D3DXCreateVolumeTextureFromResourceA proto WINAPI :ptr, :HMODULE, :LPSTR, :ptr
+D3DXCreateVolumeTextureFromResourceW proto WINAPI :ptr, :HMODULE, :LPWSTR, :ptr
+D3DXCreateTextureFromFileExA proto WINAPI :ptr, :LPSTR, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateTextureFromFileExW proto WINAPI :ptr, :LPWSTR, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateCubeTextureFromFileExA proto WINAPI :ptr, :LPSTR, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateCubeTextureFromFileExW proto WINAPI :ptr, :LPWSTR, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateVolumeTextureFromFileExA proto WINAPI :ptr, :LPSTR, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateVolumeTextureFromFileExW proto WINAPI :ptr, :LPWSTR, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateTextureFromResourceExA proto WINAPI :ptr, :HMODULE, :LPSTR, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateTextureFromResourceExW proto WINAPI :ptr, :HMODULE, :LPWSTR, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateCubeTextureFromResourceExA proto WINAPI :ptr, :HMODULE, :LPSTR, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateCubeTextureFromResourceExW proto WINAPI :ptr, :HMODULE, :LPWSTR, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateVolumeTextureFromResourceExA proto WINAPI :ptr, :HMODULE, :LPSTR, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateVolumeTextureFromResourceExW proto WINAPI :ptr, :HMODULE, :LPWSTR, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateTextureFromFileInMemory proto WINAPI :ptr, :ptr, :UINT, :ptr
+D3DXCreateCubeTextureFromFileInMemory proto WINAPI :ptr, :ptr, :UINT, :ptr
+D3DXCreateVolumeTextureFromFileInMemory proto WINAPI :ptr, :ptr, :UINT, :ptr
+D3DXCreateTextureFromFileInMemoryEx proto WINAPI :ptr, :ptr, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateCubeTextureFromFileInMemoryEx proto WINAPI :ptr, :ptr, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXCreateVolumeTextureFromFileInMemoryEx proto WINAPI :ptr, :ptr, :UINT, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD, :D3DCOLOR, :ptr, :ptr, :ptr
+D3DXSaveTextureToFileInMemory proto WINAPI :ptr, :D3DXIMAGE_FILEFORMAT, :ptr, :ptr
+D3DXSaveTextureToFileA proto WINAPI :LPSTR, :D3DXIMAGE_FILEFORMAT, :ptr, :ptr
+D3DXSaveTextureToFileW proto WINAPI :LPWSTR, :D3DXIMAGE_FILEFORMAT, :ptr, :ptr
+D3DXFilterTexture proto WINAPI :ptr, :ptr, :UINT, :DWORD
 
 D3DXFilterCubeTexture	equ <D3DXFilterTexture>
 D3DXFilterVolumeTexture equ <D3DXFilterTexture>
 
-;HRESULT
-D3DXFillTexture proto WINAPI \
-	       texture: ptr IDirect3DTexture9,
-	      function: LPD3DXFILL2D
-
-;HRESULT
-D3DXFillCubeTexture proto WINAPI \
-		  cube: ptr IDirect3DCubeTexture9,
-	      function: LPD3DXFILL3D
-
-;HRESULT
-D3DXFillVolumeTexture proto WINAPI \
-		volume: ptr IDirect3DVolumeTexture9,
-	      function: LPD3DXFILL3D
-
-
-;HRESULT
-D3DXFillTextureTX proto WINAPI \
-	       texture: ptr IDirect3DTexture9,
-	      function: ptr DWORD,
-	     constants: ptr D3DXVECTOR4,
-	  numconstants: UINT
-
-;HRESULT
-D3DXFillCubeTextureTX proto WINAPI \
-		  cube: ptr IDirect3DCubeTexture9,
-	      function: ptr DWORD,
-	     constants: ptr D3DXVECTOR4,
-	  numconstants: UINT
-
-;HRESULT
-D3DXFillVolumeTextureTX proto WINAPI \
-		volume: ptr IDirect3DVolumeTexture9,
-	      function: ptr DWORD,
-	     constants: ptr D3DXVECTOR4,
-	  numconstants: UINT
-
-
-;HRESULT
-D3DXComputeNormalMap proto WINAPI \
-	       texture: ptr IDirect3DTexture9,
-	    srctexture: ptr IDirect3DTexture9,
-	    srcpalette: ptr IDirect3DVolumeTexture9,
-		 flags: DWORD,
-	       channel: DWORD,
-	     amplitude: float
+D3DXFillTexture proto WINAPI :ptr, :ptr
+D3DXFillCubeTexture proto WINAPI :ptr, :ptr
+D3DXFillVolumeTexture proto WINAPI :ptr, :ptr
+D3DXFillTextureTX proto WINAPI :ptr, :ptr, :ptr, :UINT
+D3DXFillCubeTextureTX proto WINAPI :ptr, :ptr, :ptr, :UINT
+D3DXFillVolumeTextureTX proto WINAPI :ptr, :ptr, :ptr, :UINT
+D3DXComputeNormalMap proto WINAPI :ptr, :ptr, :ptr, :DWORD, :DWORD, :float
 
 endif

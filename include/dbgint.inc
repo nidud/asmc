@@ -194,25 +194,13 @@ pHdr macro pbData
 _CrtSetDbgBlockType	proto __cdecl :ptr, :int_t
 
 _BLOCK_TYPE_IS_VALID macro use
-	exitm<(_BLOCK_TYPE(use) EQ _CLIENT_BLOCK \
-	      or (use) == _NORMAL_BLOCK \
-	      or _BLOCK_TYPE(use) == _CRT_BLOCK \
-	      or (use) == _IGNORE_BLOCK)>
+	exitm<(_BLOCK_TYPE(use) EQ _CLIENT_BLOCK or (use) == _NORMAL_BLOCK or _BLOCK_TYPE(use) == _CRT_BLOCK or (use) == _IGNORE_BLOCK)>
 	endm
 
 
-externdef		_pfnAllocHook:_CRT_ALLOC_HOOK
+externdef _pfnAllocHook:_CRT_ALLOC_HOOK
 
-;int
-_CrtDefaultAllocHook proto WINAPI \
-		      : SINT,
-		      : ptr,
-		      : size_t,
-		      : SINT,
-		      : sdword,
-		      : ptr,
-		      : SINT
-
+_CrtDefaultAllocHook proto WINAPI :SINT, :ptr, :size_t, :SINT, :sdword, :ptr, :SINT
 
 DBGRPT_MAX_MSG		equ 4096
 DBGRPT_TOOLONGMSG	equ <"_CrtDbgReport: String too long or IO Error">

@@ -51,10 +51,7 @@ DEFINE_IIDX(ICoreInputInterop, "40BFE3E3-B75A-4479-AC96-475365749BB8")
    .ends
 
 endif
-;HRESULT
-CreateControlInput proto WINAPI \
-                  riid: REFIID,
-                   ppv: ptr
+CreateControlInput proto WINAPI :REFIID, :ptr
 endif
 endif
 

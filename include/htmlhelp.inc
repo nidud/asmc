@@ -331,27 +331,13 @@ idAction		SINT ?
 phhWinType		ptr HH_WINTYPE ?
 HHNTRACK		ENDS
 
-;HWND
-HtmlHelpA proto WINAPI \
-	    hwndCaller: HWND,
-	       pszFile: LPCSTR,
-	      uCommand: UINT,
-		dwData: DWORD_PTR
-
-
-;HWND
-HtmlHelpW proto WINAPI \
-	    hwndCaller: HWND,
-	       pszFile: LPCWSTR,
-	      uCommand: UINT,
-		dwData: DWORD_PTR
-
+HtmlHelpA proto WINAPI :HWND, :LPCSTR, :UINT, :DWORD_PTR
+HtmlHelpW proto WINAPI :HWND, :LPCWSTR, :UINT, :DWORD_PTR
 ifdef _UNICODE
-define HtmlHelp	 <HtmlHelpW>
+define HtmlHelp <HtmlHelpW>
 else
-define HtmlHelp	 <HtmlHelpA>
+define HtmlHelp <HtmlHelpA>
 endif
-
 
 ATOM_HTMLHELP_API_ANSI	equ 14
 ATOM_HTMLHELP_API_UNICODE equ 15

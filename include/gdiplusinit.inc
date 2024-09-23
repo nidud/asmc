@@ -80,14 +80,8 @@ NotificationHook        NotificationHookProc ?
 NotificationUnhook      NotificationUnhookProc ?
 GdiplusStartupOutput    ENDS
 
-GdiplusStartup proto WINAPI \
-                 token: ptr ULONG_PTR,
-                 input: ptr GdiplusStartupInput,
-                output: ptr GdiplusStartupOutput
-
-GdiplusShutdown proto WINAPI \
-                 token: ULONG_PTR
-
+GdiplusStartup proto WINAPI :ptr, :ptr, :ptr
+GdiplusShutdown proto WINAPI :ULONG_PTR
 
 .template GdiPlus fastcall
 

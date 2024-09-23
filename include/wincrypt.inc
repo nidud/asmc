@@ -721,332 +721,92 @@ pReserved		PVOID ?
 CMS_DH_KEY_INFO		ENDS
 PCMS_DH_KEY_INFO	typedef ptr CMS_DH_KEY_INFO
 
-CryptAcquireContextA proto WINAPI \
-		phProv: ptr HCRYPTPROV,
-	  pszContainer: LPCSTR,
-	   pszProvider: LPCSTR,
-	    dwProvType: DWORD,
-	       dwFlags: DWORD
-CryptAcquireContextW proto WINAPI \
-		phProv: ptr HCRYPTPROV,
-	  pszContainer: LPCWSTR,
-	   pszProvider: LPCWSTR,
-	    dwProvType: DWORD,
-	       dwFlags: DWORD
+CryptAcquireContextA proto WINAPI :ptr, :LPCSTR, :LPCSTR, :DWORD, :DWORD
+CryptAcquireContextW proto WINAPI :ptr, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD
 ifdef _UNICODE
 CryptAcquireContext	equ <CryptAcquireContextW>
 else
 CryptAcquireContext	equ <CryptAcquireContextA>
 endif
-
-;BOOL
-CryptReleaseContext proto WINAPI \
-		 hProv: HCRYPTPROV,
-	       dwFlags: DWORD
-
-;BOOL
-CryptGenKey proto WINAPI \
-		 hProv: HCRYPTPROV,
-		 Algid: ALG_ID,
-	       dwFlags: DWORD,
-		 phKey: ptr HCRYPTKEY
-
-;BOOL
-CryptDeriveKey proto WINAPI \
-		 hProv: HCRYPTPROV,
-		 Algid: ALG_ID,
-	     hBaseData: HCRYPTHASH,
-	       dwFlags: DWORD,
-		 phKey: ptr HCRYPTKEY
-
-;BOOL
-CryptDestroyKey proto WINAPI \
-		  hKey: HCRYPTKEY
-
-;BOOL
-CryptSetKeyParam proto WINAPI \
-		  hKey: HCRYPTKEY,
-	       dwParam: DWORD,
-		pbData: LPBYTE,
-	       dwFlags: DWORD
-
-;BOOL
-CryptGetKeyParam proto WINAPI \
-		  hKey: HCRYPTKEY,
-	       dwParam: DWORD,
-		pbData: LPBYTE,
-	    pdwDataLen: LPDWORD,
-	       dwFlags: DWORD
-
-;BOOL
-CryptSetHashParam proto WINAPI \
-		 hHash: HCRYPTHASH,
-	       dwParam: DWORD,
-		pbData: LPBYTE,
-	       dwFlags: DWORD
-
-;BOOL
-CryptGetHashParam proto WINAPI \
-		 hHash: HCRYPTHASH,
-	       dwParam: DWORD,
-		pbData: LPBYTE,
-	    pdwDataLen: LPDWORD,
-	       dwFlags: DWORD
-
-;BOOL
-CryptSetProvParam proto WINAPI \
-		 hProv: HCRYPTPROV,
-	       dwParam: DWORD,
-		pbData: LPBYTE,
-	       dwFlags: DWORD
-
-;BOOL
-CryptGetProvParam proto WINAPI \
-		 hProv: HCRYPTPROV,
-	       dwParam: DWORD,
-		pbData: LPBYTE,
-	    pdwDataLen: LPDWORD,
-	       dwFlags: DWORD
-
-;BOOL
-CryptGenRandom proto WINAPI \
-		 hProv: HCRYPTPROV,
-		 dwLen: DWORD,
-	      pbBuffer: LPBYTE
-
-;BOOL
-CryptGetUserKey proto WINAPI \
-		 hProv: HCRYPTPROV,
-	     dwKeySpec: DWORD,
-	     phUserKey: ptr HCRYPTKEY
-
-;BOOL
-CryptExportKey proto WINAPI \
-		  hKey: HCRYPTKEY,
-	       hExpKey: HCRYPTKEY,
-	    dwBlobType: DWORD,
-	       dwFlags: DWORD,
-		pbData: LPBYTE,
-	    pdwDataLen: LPDWORD
-
-;BOOL
-CryptImportKey proto WINAPI \
-		 hProv: HCRYPTPROV,
-		pbData: LPBYTE,
-	     dwDataLen: DWORD,
-	       hPubKey: HCRYPTKEY,
-	       dwFlags: DWORD,
-		 phKey: ptr HCRYPTKEY
-
-;BOOL
-CryptEncrypt proto WINAPI \
-		  hKey: HCRYPTKEY,
-		 hHash: HCRYPTHASH,
-		 Final: BOOL,
-	       dwFlags: DWORD,
-		pbData: LPBYTE,
-	    pdwDataLen: LPDWORD,
-	      dwBufLen: DWORD
-
-;BOOL
-CryptDecrypt proto WINAPI \
-		  hKey: HCRYPTKEY,
-		 hHash: HCRYPTHASH,
-		 Final: BOOL,
-	       dwFlags: DWORD,
-		pbData: LPBYTE,
-	    pdwDataLen: LPDWORD
-
-;BOOL
-CryptCreateHash proto WINAPI \
-		 hProv: HCRYPTPROV,
-		 Algid: ALG_ID,
-		  hKey: HCRYPTKEY,
-	       dwFlags: DWORD,
-		phHash: ptr HCRYPTHASH
-
-;BOOL
-CryptHashData proto WINAPI \
-		 hHash: HCRYPTHASH,
-		pbData: LPBYTE,
-	     dwDataLen: DWORD,
-	       dwFlags: DWORD
-
-;BOOL
-CryptHashSessionKey proto WINAPI \
-		 hHash: HCRYPTHASH,
-		  hKey: HCRYPTKEY,
-	       dwFlags: DWORD
-
-;BOOL
-CryptDestroyHash proto WINAPI \
-		 hHash: HCRYPTHASH
-
-;BOOL
-CryptSignHashA proto WINAPI \
-		 hHash: HCRYPTHASH,
-	     dwKeySpec: DWORD,
-	  sDescription: LPCSTR,
-	       dwFlags: DWORD,
-	   pbSignature: LPBYTE,
-	     pdwSigLen: LPDWORD
-;BOOL
-CryptSignHashW proto WINAPI \
-		 hHash: HCRYPTHASH,
-	     dwKeySpec: DWORD,
-	  sDescription: LPCWSTR,
-	       dwFlags: DWORD,
-	   pbSignature: LPBYTE,
-	     pdwSigLen: LPDWORD
+CryptReleaseContext proto WINAPI :HCRYPTPROV, :DWORD
+CryptGenKey proto WINAPI :HCRYPTPROV, :ALG_ID, :DWORD, :ptr
+CryptDeriveKey proto WINAPI :HCRYPTPROV, :ALG_ID, :HCRYPTHASH, :DWORD, :ptr
+CryptDestroyKey proto WINAPI :HCRYPTKEY
+CryptSetKeyParam proto WINAPI :HCRYPTKEY, :DWORD, :LPBYTE, :DWORD
+CryptGetKeyParam proto WINAPI :HCRYPTKEY, :DWORD, :LPBYTE, :LPDWORD, :DWORD
+CryptSetHashParam proto WINAPI :HCRYPTHASH, :DWORD, :LPBYTE, :DWORD
+CryptGetHashParam proto WINAPI :HCRYPTHASH, :DWORD, :LPBYTE, :LPDWORD, :DWORD
+CryptSetProvParam proto WINAPI :HCRYPTPROV, :DWORD, :LPBYTE, :DWORD
+CryptGetProvParam proto WINAPI :HCRYPTPROV, :DWORD, :LPBYTE, :LPDWORD, :DWORD
+CryptGenRandom proto WINAPI :HCRYPTPROV, :DWORD, :LPBYTE
+CryptGetUserKey proto WINAPI :HCRYPTPROV, :DWORD, :ptr
+CryptExportKey proto WINAPI :HCRYPTKEY, :HCRYPTKEY, :DWORD, :DWORD, :LPBYTE, :LPDWORD
+CryptImportKey proto WINAPI :HCRYPTPROV, :LPBYTE, :DWORD, :HCRYPTKEY, :DWORD, :ptr
+CryptEncrypt proto WINAPI :HCRYPTKEY, :HCRYPTHASH, :BOOL, :DWORD, :LPBYTE, :LPDWORD, :DWORD
+CryptDecrypt proto WINAPI :HCRYPTKEY, :HCRYPTHASH, :BOOL, :DWORD, :LPBYTE, :LPDWORD
+CryptCreateHash proto WINAPI :HCRYPTPROV, :ALG_ID, :HCRYPTKEY, :DWORD, :ptr
+CryptHashData proto WINAPI :HCRYPTHASH, :LPBYTE, :DWORD, :DWORD
+CryptHashSessionKey proto WINAPI :HCRYPTHASH, :HCRYPTKEY, :DWORD
+CryptDestroyHash proto WINAPI :HCRYPTHASH
+CryptSignHashA proto WINAPI :HCRYPTHASH, :DWORD, :LPCSTR, :DWORD, :LPBYTE, :LPDWORD
+CryptSignHashW proto WINAPI :HCRYPTHASH, :DWORD, :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
 ifdef _UNICODE
 CryptSignHash		equ <CryptSignHashW>
 else
 CryptSignHash		equ <CryptSignHashA>
 endif
 
-;BOOL
-CryptVerifySignatureA proto WINAPI \
-		 hHash: HCRYPTHASH,
-	   pbSignature: LPBYTE,
-	      dwSigLen: DWORD,
-	       hPubKey: HCRYPTKEY,
-	  sDescription: LPCSTR,
-	       dwFlags: DWORD
-;BOOL
-CryptVerifySignatureW proto WINAPI \
-		 hHash: HCRYPTHASH,
-	   pbSignature: LPBYTE,
-	      dwSigLen: DWORD,
-	       hPubKey: HCRYPTKEY,
-	  sDescription: LPCWSTR,
-	       dwFlags: DWORD
+CryptVerifySignatureA proto WINAPI :HCRYPTHASH, :LPBYTE, :DWORD, :HCRYPTKEY, :LPCSTR, :DWORD
+CryptVerifySignatureW proto WINAPI :HCRYPTHASH, :LPBYTE, :DWORD, :HCRYPTKEY, :LPCWSTR, :DWORD
 ifdef _UNICODE
 CryptVerifySignature	equ <CryptVerifySignatureW>
 else
 CryptVerifySignature	equ <CryptVerifySignatureA>
 endif
-
-;BOOL
-CryptSetProviderA proto WINAPI \
-	   pszProvName: LPCSTR,
-	    dwProvType: DWORD
-;BOOL
-CryptSetProviderW proto WINAPI \
-	   pszProvName: LPCWSTR,
-	    dwProvType: DWORD
+CryptSetProviderA proto WINAPI :LPCSTR, :DWORD
+CryptSetProviderW proto WINAPI :LPCWSTR, :DWORD
 ifdef _UNICODE
 CryptSetProvider	equ <CryptSetProviderW>
 else
 CryptSetProvider	equ <CryptSetProviderA>
 endif
 
-;BOOL
-CryptSetProviderExA proto WINAPI \
-	   pszProvName: LPCSTR,
-	    dwProvType: DWORD,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD
-;BOOL
-CryptSetProviderExW proto WINAPI \
-	   pszProvName: LPCWSTR,
-	    dwProvType: DWORD,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD
+CryptSetProviderExA proto WINAPI :LPCSTR, :DWORD, :LPDWORD, :DWORD
+CryptSetProviderExW proto WINAPI :LPCWSTR, :DWORD, :LPDWORD, :DWORD
 ifdef _UNICODE
 CryptSetProviderEx	equ <CryptSetProviderExW>
 else
 CryptSetProviderEx	equ <CryptSetProviderExA>
 endif
 
-;BOOL
-CryptGetDefaultProviderA proto WINAPI \
-	    dwProvType: DWORD,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD,
-	   pszProvName: LPSTR,
-	   pcbProvName: LPDWORD
-;BOOL
-CryptGetDefaultProviderW proto WINAPI \
-	    dwProvType: DWORD,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD,
-	   pszProvName: LPWSTR,
-	   pcbProvName: LPDWORD
+CryptGetDefaultProviderA proto WINAPI :DWORD, :LPDWORD, :DWORD, :LPSTR, :LPDWORD
+CryptGetDefaultProviderW proto WINAPI :DWORD, :LPDWORD, :DWORD, :LPWSTR, :LPDWORD
 ifdef _UNICODE
 CryptGetDefaultProvider equ <CryptGetDefaultProviderW>
 else
 CryptGetDefaultProvider equ <CryptGetDefaultProviderA>
 endif
 
-;BOOL
-CryptEnumProviderTypesA proto WINAPI \
-	       dwIndex: DWORD,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD,
-	   pdwProvType: LPDWORD,
-	   pszTypeName: LPSTR,
-	   pcbTypeName: LPDWORD
-;BOOL
-CryptEnumProviderTypesW proto WINAPI \
-	       dwIndex: DWORD,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD,
-	   pdwProvType: LPDWORD,
-	   pszTypeName: LPWSTR,
-	   pcbTypeName: LPDWORD
+CryptEnumProviderTypesA proto WINAPI :DWORD, :LPDWORD, :DWORD, :LPDWORD, :LPSTR, :LPDWORD
+CryptEnumProviderTypesW proto WINAPI :DWORD, :LPDWORD, :DWORD, :LPDWORD, :LPWSTR, :LPDWORD
 ifdef _UNICODE
 CryptEnumProviderTypes	equ <CryptEnumProviderTypesW>
 else
 CryptEnumProviderTypes	equ <CryptEnumProviderTypesA>
 endif
 
-;BOOL
-CryptEnumProvidersA proto WINAPI \
-	       dwIndex: DWORD,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD,
-	   pdwProvType: LPDWORD,
-	   pszProvName: LPSTR,
-	   pcbProvName: LPDWORD
-;BOOL
-CryptEnumProvidersW proto WINAPI \
-	       dwIndex: DWORD,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD,
-	   pdwProvType: LPDWORD,
-	   pszProvName: LPWSTR,
-	   pcbProvName: LPDWORD
+CryptEnumProvidersA proto WINAPI :DWORD, :LPDWORD, :DWORD, :LPDWORD, :LPSTR, :LPDWORD
+CryptEnumProvidersW proto WINAPI :DWORD, :LPDWORD, :DWORD, :LPDWORD, :LPWSTR, :LPDWORD
 ifdef _UNICODE
 CryptEnumProviders	equ <CryptEnumProvidersW>
 else
 CryptEnumProviders	equ <CryptEnumProvidersA>
 endif
-
-;BOOL
-CryptContextAddRef proto WINAPI \
-		 hProv: HCRYPTPROV,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD
-
-;BOOL
-CryptDuplicateKey proto WINAPI \
-		  hKey: HCRYPTKEY,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD,
-		 phKey: ptr HCRYPTKEY
-
-;BOOL
-CryptDuplicateHash proto WINAPI \
-		 hHash: HCRYPTHASH,
-	   pdwReserved: LPDWORD,
-	       dwFlags: DWORD,
-		phHash: ptr HCRYPTHASH
-
+CryptContextAddRef proto WINAPI :HCRYPTPROV, :LPDWORD, :DWORD
+CryptDuplicateKey proto WINAPI :HCRYPTKEY, :LPDWORD, :DWORD, :ptr
+CryptDuplicateHash proto WINAPI :HCRYPTHASH, :LPDWORD, :DWORD, :ptr
 if (NTDDI_VERSION GE NTDDI_WS03)
-;BOOL
-GetEncSChannel proto WINAPI \
-		 pData: ptr BYTE,
-	     dwDecSize: ptr DWORD
+GetEncSChannel proto WINAPI :ptr, :ptr
 endif
 
 ifndef _DDK_DRIVER_
@@ -1449,24 +1209,9 @@ EncryptedPrivateKey	CRYPT_DATA_BLOB <>
 CRYPT_ENCRYPTED_PRIVATE_KEY_INFO ENDS
 PCRYPT_ENCRYPTED_PRIVATE_KEY_INFO typedef ptr CRYPT_ENCRYPTED_PRIVATE_KEY_INFO
 
-CALLBACK(PCRYPT_DECRYPT_PRIVATE_KEY_FUNC,\
-	:CRYPT_ALGORITHM_IDENTIFIER,\
-	:CRYPT_DATA_BLOB,\
-	:ptr BYTE,\
-	:ptr DWORD,\
-	:LPVOID)
-
-CALLBACK(PCRYPT_ENCRYPT_PRIVATE_KEY_FUNC,\
-	:ptr CRYPT_ALGORITHM_IDENTIFIER,\
-	:ptr CRYPT_DATA_BLOB,\
-	:ptr BYTE,\
-	:ptr DWORD,\
-	:ptr)
-
-CALLBACK(PCRYPT_RESOLVE_HCRYPTPROV_FUNC,\
-	:ptr CRYPT_PRIVATE_KEY_INFO,\
-	:ptr HCRYPTPROV,\
-	:ptr)
+CALLBACK(PCRYPT_DECRYPT_PRIVATE_KEY_FUNC, :CRYPT_ALGORITHM_IDENTIFIER, :CRYPT_DATA_BLOB, :ptr, :ptr, :ptr)
+CALLBACK(PCRYPT_ENCRYPT_PRIVATE_KEY_FUNC, :ptr, :ptr, :ptr, :ptr, :ptr)
+CALLBACK(PCRYPT_RESOLVE_HCRYPTPROV_FUNC, :ptr, :ptr, :ptr)
 
 CRYPT_PKCS8_IMPORT_PARAMS STRUC
 PrivateKey		CRYPT_DIGEST_BLOB <>
@@ -1654,17 +1399,7 @@ PKCS_7_ASN_ENCODING	equ 0x00010000
 PKCS_7_NDR_ENCODING	equ 0x00020000
 
 
-;BOOL
-CryptFormatObject proto WINAPI \
-    dwCertEncodingType: DWORD,
-	  dwFormatType: DWORD,
-       dwFormatStrType: DWORD,
-	 pFormatStruct: PVOID,
-	lpszStructType: LPCSTR,
-	     pbEncoded: LPBYTE,
-	     cbEncoded: DWORD,
-	      pbFormat: PVOID,
-	     pcbFormat: LPDWORD
+CryptFormatObject proto WINAPI :DWORD, :DWORD, :DWORD, :ptr, :LPCSTR, :LPBYTE, :DWORD, :ptr, :LPDWORD
 
 
 CRYPT_FORMAT_STR_MULTI_LINE	    equ 0x0001
@@ -1681,7 +1416,7 @@ CRYPT_FORMAT_SEMICOLON		    equ CRYPT_FORMAT_RDN_SEMICOLON
 CRYPT_FORMAT_CRLF		    equ CRYPT_FORMAT_RDN_CRLF
 
 CALLBACK(PFN_CRYPT_ALLOC, :size_t)
-CALLBACK(PFN_CRYPT_FREE, :LPVOID)
+CALLBACK(PFN_CRYPT_FREE, :ptr)
 
 CRYPT_ENCODE_PARA	STRUC
 cbSize			dd ?
@@ -1690,25 +1425,8 @@ pfnFree			PFN_CRYPT_FREE ?
 CRYPT_ENCODE_PARA	ENDS
 PCRYPT_ENCODE_PARA	typedef ptr CRYPT_ENCODE_PARA
 
-
-CryptEncodeObjectEx proto WINAPI \
-    dwCertEncodingType: DWORD,
-	lpszStructType: LPCSTR,
-	  pvStructInfo: ptr,
-	       dwFlags: DWORD,
-	   pEncodePara: PCRYPT_ENCODE_PARA,
-	     pvEncoded: ptr,
-	    pcbEncoded: ptr DWORD
-
-
-;BOOL
-CryptEncodeObject proto WINAPI \
-    dwCertEncodingType: DWORD,
-	lpszStructType: LPCSTR,
-	  pvStructInfo: PVOID,
-	     pbEncoded: LPBYTE,
-	    pcbEncoded: LPDWORD
-
+CryptEncodeObjectEx proto WINAPI :DWORD, :LPCSTR, :ptr, :DWORD, :PCRYPT_ENCODE_PARA, :ptr, :ptr
+CryptEncodeObject proto WINAPI :DWORD, :LPCSTR, :ptr, :LPBYTE, :LPDWORD
 
 CRYPT_ENCODE_NO_SIGNATURE_BYTE_REVERSAL_FLAG equ 0x8
 CRYPT_ENCODE_ALLOC_FLAG equ 0x8000
@@ -1729,26 +1447,8 @@ pfnFree			PFN_CRYPT_FREE ?
 CRYPT_DECODE_PARA	ENDS
 PCRYPT_DECODE_PARA	typedef ptr CRYPT_DECODE_PARA
 
-CryptDecodeObjectEx proto WINAPI \
-    dwCertEncodingType: DWORD,
-	lpszStructType: LPCSTR,
-	     pbEncoded: ptr BYTE,
-	     cbEncoded: DWORD,
-	       dwFlags: DWORD,
-	   pDecodePara: PCRYPT_DECODE_PARA,
-	  pvStructInfo: ptr,
-	 pcbStructInfo: ptr DWORD
-
-
-;BOOL
-CryptDecodeObject proto WINAPI \
-    dwCertEncodingType: DWORD,
-	lpszStructType: LPCSTR,
-	     pbEncoded: LPBYTE,
-	     cbEncoded: DWORD,
-	       dwFlags: DWORD,
-	  pvStructInfo: PVOID,
-	 pcbStructInfo: LPDWORD
+CryptDecodeObjectEx proto WINAPI :DWORD, :LPCSTR, :ptr, :DWORD, :DWORD, :PCRYPT_DECODE_PARA, :ptr, :ptr
+CryptDecodeObject proto WINAPI :DWORD, :LPCSTR, :LPBYTE, :DWORD, :DWORD, :ptr, :LPDWORD
 
 CRYPT_DECODE_NOCOPY_FLAG equ 0x1
 CRYPT_DECODE_NOCOPY_FLAG equ 0x1
@@ -3045,123 +2745,29 @@ PCRYPT_OID_FUNC_ENTRY	typedef ptr CRYPT_OID_FUNC_ENTRY
 
 CRYPT_INSTALL_OID_FUNC_BEFORE_FLAG equ 1
 
-;BOOL
-CryptInstallOIDFunctionAddress proto WINAPI \
-	       hModule: HMODULE, ; hModule passed to DllMain
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-	    cFuncEntry: DWORD,
-	   rgFuncEntry: CRYPT_OID_FUNC_ENTRY,
-	       dwFlags: DWORD
-
-;HCRYPTOIDFUNCSET
-CryptInitOIDFunctionSet proto WINAPI \
-	   pszFuncName: LPCSTR,
-	       dwFlags: DWORD
-
-;BOOL
-CryptGetOIDFunctionAddress proto WINAPI \
-	      hFuncSet: HCRYPTOIDFUNCSET,
-	dwEncodingType: DWORD,
-		pszOID: LPCSTR,
-	       dwFlags: DWORD,
-	   ppvFuncAddr: PVOID,
-	    phFuncAddr: ptr HCRYPTOIDFUNCADDR
+CryptInstallOIDFunctionAddress proto WINAPI :HMODULE, :DWORD, :LPCSTR, :DWORD, :CRYPT_OID_FUNC_ENTRY, :DWORD
+CryptInitOIDFunctionSet proto WINAPI :LPCSTR, :DWORD
+CryptGetOIDFunctionAddress proto WINAPI :HCRYPTOIDFUNCSET, :DWORD, :LPCSTR, :DWORD, :ptr, :ptr
 
 CRYPT_GET_INSTALLED_OID_FUNC_FLAG equ 0x1
 
-;BOOL
-CryptGetDefaultOIDDllList proto WINAPI \
-	      hFuncSet: HCRYPTOIDFUNCSET,
-	dwEncodingType: DWORD,
-	   pwszDllList: LPWSTR,
-	   pcchDllList: LPDWORD
-
-;BOOL
-CryptGetDefaultOIDFunctionAddress proto WINAPI \
-	      hFuncSet: HCRYPTOIDFUNCSET,
-	dwEncodingType: DWORD,
-	       pwszDll: LPCWSTR,
-	       dwFlags: DWORD,
-	   ppvFuncAddr: PVOID,
-	    phFuncAddr: ptr HCRYPTOIDFUNCADDR
-
-;BOOL
-CryptFreeOIDFunctionAddress proto WINAPI \
-	     hFuncAddr: HCRYPTOIDFUNCADDR,
-	       dwFlags: DWORD
-
-;BOOL
-CryptRegisterOIDFunction proto WINAPI \
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-		pszOID: LPCSTR,
-	       pwszDll: LPCWSTR,
-   pszOverrideFuncName: LPCSTR
-
-;BOOL
-CryptUnregisterOIDFunction proto WINAPI \
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-		pszOID: LPCSTR
-
-
-;BOOL
-CryptRegisterDefaultOIDFunction proto WINAPI \
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-	       dwIndex: DWORD,
-	       pwszDll: LPCWSTR
+CryptGetDefaultOIDDllList proto WINAPI :HCRYPTOIDFUNCSET, :DWORD, :LPWSTR, :LPDWORD
+CryptGetDefaultOIDFunctionAddress proto WINAPI :HCRYPTOIDFUNCSET, :DWORD, :LPCWSTR, :DWORD, :ptr, :ptr
+CryptFreeOIDFunctionAddress proto WINAPI :HCRYPTOIDFUNCADDR, :DWORD
+CryptRegisterOIDFunction proto WINAPI :DWORD, :LPCSTR, :LPCSTR, :LPCWSTR, :LPCSTR
+CryptUnregisterOIDFunction proto WINAPI :DWORD, :LPCSTR, :LPCSTR
+CryptRegisterDefaultOIDFunction proto WINAPI :DWORD, :LPCSTR, :DWORD, :LPCWSTR
 
 CRYPT_REGISTER_FIRST_INDEX equ 0
 CRYPT_REGISTER_LAST_INDEX equ 0xFFFFFFFF
 
-;BOOL
-CryptUnregisterDefaultOIDFunction proto WINAPI \
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-	       pwszDll: LPCWSTR
+CryptUnregisterDefaultOIDFunction proto WINAPI :DWORD, :LPCSTR, :LPCWSTR
+CryptSetOIDFunctionValue proto WINAPI :DWORD, :LPCSTR, :LPCSTR, :LPCWSTR, :DWORD, :LPBYTE, :DWORD
+CryptGetOIDFunctionValue proto WINAPI :DWORD, :LPCSTR, :LPCSTR, :LPCWSTR, :LPDWORD, :LPBYTE, :LPDWORD
 
-;BOOL
-CryptSetOIDFunctionValue proto WINAPI \
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-		pszOID: LPCSTR,
-	 pwszValueName: LPCWSTR,
-	   dwValueType: DWORD,
-	   pbValueData: LPBYTE,
-	   cbValueData: DWORD
+CALLBACK(PFN_CRYPT_ENUM_OID_FUNC, :DWORD, :LPCSTR, :LPCSTR, :DWORD, :DWORD, :LPCWSTR, :LPBYTE, :DWORD, :PVOID)
 
-;BOOL
-CryptGetOIDFunctionValue proto WINAPI \
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-		pszOID: LPCSTR,
-	 pwszValueName: LPCWSTR,
-	  pdwValueType: LPDWORD,
-	   pbValueData: LPBYTE,
-	  pcbValueData: LPDWORD
-
-;BOOL
-CALLBACK(PFN_CRYPT_ENUM_OID_FUNC, \
-	dwEncodingType: DWORD,	  \
-	   pszFuncName: LPCSTR,	  \
-		pszOID: LPCSTR,	  \
-		cValue: DWORD,	  \
-	 rgdwValueType: DWORD,	  \
-       rgpwszValueName: LPCWSTR,  \
-	 rgpbValueData: LPBYTE,	  \
-	 rgcbValueData: DWORD,	  \
-		 pvArg: PVOID)
-
-;BOOL
-CryptEnumOIDFunction proto WINAPI \
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-		pszOID: LPCSTR,
-	       dwFlags: DWORD,
-		 pvArg: PVOID,
-	pfnEnumOIDFunc: PFN_CRYPT_ENUM_OID_FUNC
+CryptEnumOIDFunction proto WINAPI :DWORD, :LPCSTR, :LPCSTR, :DWORD, :ptr, :PFN_CRYPT_ENUM_OID_FUNC
 
 CRYPT_MATCH_ANY_ENCODING_TYPE equ 0xFFFFFFFF
 
@@ -3224,11 +2830,7 @@ CRYPT_OID_PUBKEY_SIGN_ONLY_FLAG		equ 0x80000000
 CRYPT_OID_PUBKEY_ENCRYPT_ONLY_FLAG	equ 0x40000000
 
 
-;PCCRYPT_OID_INFO
-CryptFindOIDInfo proto WINAPI \
-	     dwKeyType: DWORD,
-		 pvKey: PVOID,
-	     dwGroupId: DWORD
+CryptFindOIDInfo proto WINAPI :DWORD, :ptr, :DWORD
 
 CRYPT_OID_INFO_OID_KEY		equ 1
 CRYPT_OID_INFO_NAME_KEY		equ 2
@@ -3250,27 +2852,16 @@ endif
 CRYPT_OID_INFO_OID_GROUP_BIT_LEN_MASK	equ 0x0FFF0000
 CRYPT_OID_INFO_OID_GROUP_BIT_LEN_SHIFT	equ 16
 
-;BOOL
-CryptRegisterOIDInfo proto WINAPI \
-		 pInfo: PCCRYPT_OID_INFO,
-	       dwFlags: DWORD
+CryptRegisterOIDInfo proto WINAPI :PCCRYPT_OID_INFO, :DWORD
 
 CRYPT_INSTALL_OID_INFO_BEFORE_FLAG equ 1
 
-;BOOL
-CryptUnregisterOIDInfo proto WINAPI \
-		 pInfo: PCCRYPT_OID_INFO
+CryptUnregisterOIDInfo proto WINAPI :PCCRYPT_OID_INFO
 
 CALLBACK(PFN_CRYPT_ENUM_OID_INFO, :PCCRYPT_OID_INFO, :ptr)
 
-CryptEnumOIDInfo proto WINAPI \
-	     dwGroupId: DWORD,
-	       dwFlags: DWORD,
-		 pvArg: ptr,
-	pfnEnumOIDInfo: ptr PFN_CRYPT_ENUM_OID_INFO
-
-CryptFindLocalizedName proto WINAPI \
-	 pwszCryptName: LPCWSTR
+CryptEnumOIDInfo proto WINAPI :DWORD, :DWORD, :ptr, :ptr
+CryptFindLocalizedName proto WINAPI :LPCWSTR
 
 CRYPT_LOCALIZED_NAME_ENCODING_TYPE  equ 0
 CRYPT_LOCALIZED_NAME_OID	    equ <"LocalizedNames">
@@ -3436,50 +3027,12 @@ CMSG_MAX_LENGTH_FLAG			equ 0x00000020
 CMSG_CMS_ENCAPSULATED_CONTENT_FLAG	equ 0x00000040
 CMSG_CRYPT_RELEASE_CONTEXT_FLAG		equ 0x00008000
 
-;HCRYPTMSG
-CryptMsgOpenToEncode proto WINAPI \
-     dwMsgEncodingType: DWORD,
-	       dwFlags: DWORD,
-	     dwMsgType: DWORD,
-       pvMsgEncodeInfo: PVOID,
-  pszInnerContentObjID: LPSTR,
-	   pStreamInfo: PCMSG_STREAM_INFO
-
-;DWORD
-CryptMsgCalculateEncodedLength proto WINAPI \
-     dwMsgEncodingType: DWORD,
-	       dwFlags: DWORD,
-	     dwMsgType: DWORD,
-       pvMsgEncodeInfo: PVOID,
-  pszInnerContentObjID: LPSTR,
-		cbData: DWORD
-
-;HCRYPTMSG
-CryptMsgOpenToDecode proto WINAPI \
-     dwMsgEncodingType: DWORD,
-	       dwFlags: DWORD,
-	     dwMsgType: DWORD,
-	    hCryptProv: HCRYPTPROV,
-	pRecipientInfo: PCERT_INFO,
-	   pStreamInfo: PCMSG_STREAM_INFO
-
-;BOOL
-CryptMsgClose proto WINAPI \
-	     hCryptMsg: HCRYPTMSG
-
-;BOOL
-CryptMsgUpdate proto WINAPI \
-	     hCryptMsg: HCRYPTMSG,
-		pbData: LPBYTE,
-		cbData: DWORD,
-		fFinal: BOOL
-
-;BOOL
-CryptMsgControl proto WINAPI \
-	     hCryptMsg: HCRYPTMSG,
-	       dwFlags: DWORD,
-	    dwCtrlType: DWORD,
-	    pvCtrlPara: PVOID
+CryptMsgOpenToEncode proto WINAPI :DWORD, :DWORD, :DWORD, :ptr, :LPSTR, :PCMSG_STREAM_INFO
+CryptMsgCalculateEncodedLength proto WINAPI :DWORD, :DWORD, :DWORD, :ptr, :LPSTR, :DWORD
+CryptMsgOpenToDecode proto WINAPI :DWORD, :DWORD, :DWORD, :HCRYPTPROV, :PCERT_INFO, :PCMSG_STREAM_INFO
+CryptMsgClose proto WINAPI :HCRYPTMSG
+CryptMsgUpdate proto WINAPI :HCRYPTMSG, :LPBYTE, :DWORD, :BOOL
+CryptMsgControl proto WINAPI :HCRYPTMSG, :DWORD, :DWORD, :ptr
 
 CMSG_CTRL_VERIFY_SIGNATURE		equ 1
 CMSG_CTRL_DECRYPT			equ 2
@@ -3627,11 +3180,7 @@ CMSG_KEY_TRANS_CMS_VERSION		equ CMSG_ENVELOPED_RECIPIENT_V2
 CMSG_KEY_AGREE_VERSION			equ CMSG_ENVELOPED_RECIPIENT_V3
 CMSG_MAIL_LIST_VERSION			equ CMSG_ENVELOPED_RECIPIENT_V4
 
-CryptMsgControl proto WINAPI \
-	     hCryptMsg: HCRYPTMSG,
-	       dwFlags: DWORD,
-	    dwCtrlType: DWORD,
-	    pvCtrlPara: ptr
+CryptMsgControl proto WINAPI :HCRYPTMSG, :DWORD, :DWORD, :ptr
 
 CMSG_CTRL_VERIFY_SIGNATURE	 equ 1
 CMSG_CTRL_DECRYPT		 equ 2
@@ -3692,41 +3241,10 @@ CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA ENDS
 PCMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA typedef ptr CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA
 
 
-;BOOL
-CryptMsgVerifyCountersignatureEncoded proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-	dwEncodingType: DWORD,
-	  pbSignerInfo: PBYTE,
-	  cbSignerInfo: DWORD,
-pbSignerInfoCountersignature: PBYTE,
-cbSignerInfoCountersignature: DWORD,
-      pciCountersigner: PCERT_INFO
-
-;BOOL
-CryptMsgCountersign proto WINAPI \
-	     hCryptMsg: HCRYPTMSG,
-	       dwIndex: DWORD,
-       cCountersigners: DWORD,
-      rgCountersigners: PCMSG_SIGNER_ENCODE_INFO
-
-;BOOL
-CryptMsgCountersignEncoded proto WINAPI \
-	dwEncodingType: DWORD,
-	  pbSignerInfo: PBYTE,
-	  cbSignerInfo: DWORD,
-       cCountersigners: DWORD,
-      rgCountersigners: PCMSG_SIGNER_ENCODE_INFO,
-    pbCountersignature: PBYTE,
-   pcbCountersignature: PDWORD
-
-
-;BOOL
-CryptMsgGetParam proto WINAPI \
-	     hCryptMsg: HCRYPTMSG,
-	   dwParamType: DWORD,
-	       dwIndex: DWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD
+CryptMsgVerifyCountersignatureEncoded proto WINAPI :HCRYPTPROV, :DWORD, :PBYTE, :DWORD, :PBYTE, :DWORD, :PCERT_INFO
+CryptMsgCountersign proto WINAPI :HCRYPTMSG, :DWORD, :DWORD, :PCMSG_SIGNER_ENCODE_INFO
+CryptMsgCountersignEncoded proto WINAPI :DWORD, :PBYTE, :DWORD, :DWORD, :PCMSG_SIGNER_ENCODE_INFO, :PBYTE, :PDWORD
+CryptMsgGetParam proto WINAPI :HCRYPTMSG, :DWORD, :DWORD, :ptr, :LPDWORD
 
 CMSG_TYPE_PARAM		equ 1
 CMSG_CONTENT_PARAM	equ 2
@@ -3904,13 +3422,7 @@ CERT_SYSTEM_STORE_LOCATION_MASK equ 0x00030000
 CERT_SYSTEM_STORE_CURRENT_USER equ 0x00010000
 CERT_SYSTEM_STORE_LOCAL_MACHINE equ 0x00020000
 
-;HCERTSTORE
-CertOpenStore proto WINAPI \
-     lpszStoreProvider: LPCSTR,
-	dwEncodingType: DWORD,
-	    hCryptProv: HCRYPTPROV,
-	       dwFlags: DWORD,
-		pvPara: PVOID
+CertOpenStore proto WINAPI :LPCSTR, :DWORD, :HCRYPTPROV, :DWORD, :ptr
 
 
 HCERTSTOREPROV		typedef PVOID
@@ -3959,12 +3471,9 @@ CALLBACK(PFN_CERT_STORE_PROV_READ_CTL, :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD, 
 CALLBACK(PFN_CERT_STORE_PROV_WRITE_CTL, :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD)
 CALLBACK(PFN_CERT_STORE_PROV_DELETE_CTL, :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD)
 
-;BOOL
 CALLBACK(PFN_CERT_STORE_PROV_SET_CTL_PROPERTY, :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD, :DWORD, :PVOID)
 
-;HCERTSTORE
-CertDuplicateStore proto WINAPI \
-	    hCertStore: HCERTSTORE
+CertDuplicateStore proto WINAPI :HCERTSTORE
 
 CERT_STORE_SAVE_AS_STORE	equ 1
 CERT_STORE_SAVE_AS_PKCS7	equ 2
@@ -3975,42 +3484,15 @@ CERT_STORE_SAVE_TO_FILENAME_A	equ 3
 CERT_STORE_SAVE_TO_FILENAME_W	equ 4
 CERT_STORE_SAVE_TO_FILENAME	equ CERT_STORE_SAVE_TO_FILENAME_W
 
-;BOOL
-CertSaveStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-	dwEncodingType: DWORD,
-	      dwSaveAs: DWORD,
-	      dwSaveTo: DWORD,
-	  pvSaveToPara: PVOID,
-	       dwFlags: DWORD
+CertSaveStore proto WINAPI :HCERTSTORE, :DWORD, :DWORD, :DWORD, :ptr, :DWORD
 
 CERT_CLOSE_STORE_FORCE_FLAG equ 0x00000001
 CERT_CLOSE_STORE_CHECK_FLAG equ 0x00000002
 
-;BOOL
-CertCloseStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-	       dwFlags: DWORD
-
-;PCCERT_CONTEXT
-CertGetSubjectCertificateFromStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-    dwCertEncodingType: DWORD,
-	       pCertId: PCERT_INFO
-
-;PCCERT_CONTEXT
-CertEnumCertificatesInStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-      pPrevCertContext: PCCERT_CONTEXT
-
-;PCCERT_CONTEXT
-CertFindCertificateInStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-    dwCertEncodingType: DWORD,
-	   dwFindFlags: DWORD,
-	    dwFindType: DWORD,
-	    pvFindPara: PVOID,
-      pPrevCertContext: PCCERT_CONTEXT
+CertCloseStore proto WINAPI :HCERTSTORE, :DWORD
+CertGetSubjectCertificateFromStore proto WINAPI :HCERTSTORE, :DWORD, :PCERT_INFO
+CertEnumCertificatesInStore proto WINAPI :HCERTSTORE, :PCCERT_CONTEXT
+CertFindCertificateInStore proto WINAPI :HCERTSTORE, :DWORD, :DWORD, :DWORD, :ptr, :PCCERT_CONTEXT
 
 
 CERT_COMPARE_MASK	equ 0xFFFF
@@ -4059,114 +3541,29 @@ CERT_FIND_EXT_ONLY_CTL_USAGE_FLAG	equ CERT_FIND_EXT_ONLY_ENHKEY_USAGE_FAG
 CERT_FIND_PROP_ONLY_CTL_USAGE_FLAG	equ CERT_FIND_PROP_ONLY_ENHKEY_USAGE_FAG
 CERT_FIND_NO_CTL_USAGE_FLAG		equ CERT_FIND_NO_ENHKEY_USAGE_FAG
 
-;PCCERT_CONTEXT
-CertGetIssuerCertificateFromStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-       pSubjectContext: PCCERT_CONTEXT,
-    pPrevIssuerContext: PCCERT_CONTEXT,
-	      pdwFlags: LPDWORD
-
-;BOOL
-CertVerifySubjectCertificateContext proto WINAPI \
-	      pSubject: PCCERT_CONTEXT,
-	       pIssuer: PCCERT_CONTEXT,
-	      pdwFlags: LPDWORD
-
-;PCCERT_CONTEXT
-CertDuplicateCertificateContext proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT
-
-;PCCERT_CONTEXT
-CertCreateCertificateContext proto WINAPI \
-    dwCertEncodingType: DWORD,
-	 pbCertEncoded: LPBYTE,
-	 cbCertEncoded: DWORD
-
-;BOOL
-CertFreeCertificateContext proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT
-
-;BOOL
-CertSetCertificateContextProperty proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-	      dwPropId: DWORD,
-	       dwFlags: DWORD,
-		pvData: PVOID
-
-;BOOL
-CertGetCertificateContextProperty proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-	      dwPropId: DWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD
-
-;DWORD
-CertEnumCertificateContextProperties proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-	      dwPropId: DWORD
-
-;PCCRL_CONTEXT
-CertGetCRLFromStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-	pIssuerContext: PCCERT_CONTEXT,
-       pPrevCrlContext: PCCRL_CONTEXT,
-	      pdwFlags: LPDWORD
-
-
-;PCCRL_CONTEXT
-CertDuplicateCRLContext proto WINAPI \
-	   pCrlContext: PCCRL_CONTEXT
-
-;PCCRL_CONTEXT
-CertCreateCRLContext proto WINAPI \
-    dwCertEncodingType: DWORD,
-	  pbCrlEncoded: LPBYTE,
-	  cbCrlEncoded: DWORD
-
-;BOOL
-CertFreeCRLContext proto WINAPI \
-	   pCrlContext: PCCRL_CONTEXT
-
-;BOOL
-CertSetCRLContextProperty proto WINAPI \
-	   pCrlContext: PCCRL_CONTEXT,
-	      dwPropId: DWORD,
-	       dwFlags: DWORD,
-		pvData: PVOID
-
-;BOOL
-CertGetCRLContextProperty proto WINAPI \
-	   pCrlContext: PCCRL_CONTEXT,
-	      dwPropId: DWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD
-
-;DWORD
-CertEnumCRLContextProperties proto WINAPI \
-	   pCrlContext: PCCRL_CONTEXT,
-	      dwPropId: DWORD
+CertGetIssuerCertificateFromStore proto WINAPI :HCERTSTORE, :PCCERT_CONTEXT, :PCCERT_CONTEXT, :LPDWORD
+CertVerifySubjectCertificateContext proto WINAPI :PCCERT_CONTEXT, :PCCERT_CONTEXT, :LPDWORD
+CertDuplicateCertificateContext proto WINAPI :PCCERT_CONTEXT
+CertCreateCertificateContext proto WINAPI :DWORD, :LPBYTE, :DWORD
+CertFreeCertificateContext proto WINAPI :PCCERT_CONTEXT
+CertSetCertificateContextProperty proto WINAPI :PCCERT_CONTEXT, :DWORD, :DWORD, :ptr
+CertGetCertificateContextProperty proto WINAPI :PCCERT_CONTEXT, :DWORD, :ptr, :LPDWORD
+CertEnumCertificateContextProperties proto WINAPI :PCCERT_CONTEXT, :DWORD
+CertGetCRLFromStore proto WINAPI :HCERTSTORE, :PCCERT_CONTEXT, :PCCRL_CONTEXT, :LPDWORD
+CertDuplicateCRLContext proto WINAPI :PCCRL_CONTEXT
+CertCreateCRLContext proto WINAPI :DWORD, :LPBYTE, :DWORD
+CertFreeCRLContext proto WINAPI :PCCRL_CONTEXT
+CertSetCRLContextProperty proto WINAPI :PCCRL_CONTEXT, :DWORD, :DWORD, :ptr
+CertGetCRLContextProperty proto WINAPI :PCCRL_CONTEXT, :DWORD, :ptr, :LPDWORD
+CertEnumCRLContextProperties proto WINAPI :PCCRL_CONTEXT, :DWORD
 
 CERT_STORE_ADD_NEW		equ 1
 CERT_STORE_ADD_USE_EXISTING	equ 2
 CERT_STORE_ADD_REPLACE_EXISTING equ 3
 CERT_STORE_ADD_ALWAYS		equ 4
 
-;BOOL
-CertAddEncodedCertificateToStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-    dwCertEncodingType: DWORD,
-	 pbCertEncoded: LPBYTE,
-	 cbCertEncoded: DWORD,
-      dwAddDisposition: DWORD,
-	 ppCertContext: ptr PCCERT_CONTEXT
-
-;BOOL
-CertAddCertificateContextToStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-	  pCertContext: PCCERT_CONTEXT,
-      dwAddDisposition: DWORD,
-	ppStoreContext: ptr PCCERT_CONTEXT
-
+CertAddEncodedCertificateToStore proto WINAPI :HCERTSTORE, :DWORD, :LPBYTE, :DWORD, :DWORD, :ptr
+CertAddCertificateContextToStore proto WINAPI :HCERTSTORE, :PCCERT_CONTEXT, :DWORD, :ptr
 
 CERT_STORE_CERTIFICATE_CONTEXT equ 1
 CERT_STORE_CRL_CONTEXT	equ 2
@@ -4177,100 +3574,21 @@ CERT_STORE_CERTIFICATE_CONTEXT_FLAG equ (1 SHL CERT_STORE_CERTIFICATE_CONTEXT)
 CERT_STORE_CRL_CONTEXT_FLAG equ (1 SHL CERT_STORE_CRL_CONTEXT)
 CERT_STORE_CTL_CONTEXT_FLAG equ (1 SHL CERT_STORE_CTL_CONTEXT)
 
-;BOOL
-CertAddSerializedElementToStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-	     pbElement: LPBYTE,
-	     cbElement: DWORD,
-      dwAddDisposition: DWORD,
-	       dwFlags: DWORD,
-    dwContextTypeFlags: DWORD,
-	pdwContextType: LPDWORD,
-	    ppvContext: PVOID
-
-;BOOL
-CertDeleteCertificateFromStore proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT
-
-;BOOL
-CertAddEncodedCRLToStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-    dwCertEncodingType: DWORD,
-	  pbCrlEncoded: LPBYTE,
-	  cbCrlEncoded: DWORD,
-      dwAddDisposition: DWORD,
-	  ppCrlContext: PCCRL_CONTEXT
-
-;BOOL
-CertAddCRLContextToStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-	   pCrlContext: PCCRL_CONTEXT,
-      dwAddDisposition: DWORD,
-	ppStoreContext: PCCRL_CONTEXT
-
-;BOOL
-CertDeleteCRLFromStore proto WINAPI \
-	   pCrlContext: PCCRL_CONTEXT
-
-;BOOL
-CertSerializeCertificateStoreElement proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-	       dwFlags: DWORD,
-	     pbElement: LPBYTE,
-	    pcbElement: LPDWORD
-
-;BOOL
-CertSerializeCRLStoreElement proto WINAPI \
-	   pCrlContext: PCCRL_CONTEXT,
-	       dwFlags: DWORD,
-	     pbElement: LPBYTE,
-	    pcbElement: LPDWORD
-
-;PCCTL_CONTEXT
-CertDuplicateCTLContext proto WINAPI \
-	   pCtlContext: PCCTL_CONTEXT
-
-;PCCTL_CONTEXT
-CertCreateCTLContext proto WINAPI \
-dwMsgAndCertEncodingType: DWORD,
-	  pbCtlEncoded: LPBYTE,
-	  cbCtlEncoded: DWORD
-
-;BOOL
-CertFreeCTLContext proto WINAPI \
-	   pCtlContext: PCCTL_CONTEXT
-
-;BOOL
-CertSetCTLContextProperty proto WINAPI \
-	   pCtlContext: PCCTL_CONTEXT,
-	      dwPropId: DWORD,
-	       dwFlags: DWORD,
-		pvData: PVOID
-
-;BOOL
-CertGetCTLContextProperty proto WINAPI \
-	   pCtlContext: PCCTL_CONTEXT,
-	      dwPropId: DWORD,
-		pvData: PVOID,
-	       pcbData: LPDWORD
-
-;DWORD
-CertEnumCTLContextProperties proto WINAPI \
-	   pCtlContext: PCCTL_CONTEXT,
-	      dwPropId: DWORD
-
-;PCCTL_CONTEXT
-CertEnumCTLsInStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-       pPrevCtlContext: PCCTL_CONTEXT
-
-;PCTL_ENTRY
-CertFindSubjectInCTL proto WINAPI \
-	dwEncodingType: DWORD,
-	 dwSubjectType: DWORD,
-	     pvSubject: PVOID,
-	   pCtlContext: PCCTL_CONTEXT,
-	       dwFlags: DWORD
+CertAddSerializedElementToStore proto WINAPI :HCERTSTORE, :LPBYTE, :DWORD, :DWORD, :DWORD, :DWORD, :LPDWORD, :ptr
+CertDeleteCertificateFromStore proto WINAPI :PCCERT_CONTEXT
+CertAddEncodedCRLToStore proto WINAPI :HCERTSTORE, :DWORD, :LPBYTE, :DWORD, :DWORD, :PCCRL_CONTEXT
+CertAddCRLContextToStore proto WINAPI :HCERTSTORE, :PCCRL_CONTEXT, :DWORD, :PCCRL_CONTEXT
+CertDeleteCRLFromStore proto WINAPI :PCCRL_CONTEXT
+CertSerializeCertificateStoreElement proto WINAPI :PCCERT_CONTEXT, :DWORD, :LPBYTE, :LPDWORD
+CertSerializeCRLStoreElement proto WINAPI :PCCRL_CONTEXT, :DWORD, :LPBYTE, :LPDWORD
+CertDuplicateCTLContext proto WINAPI :PCCTL_CONTEXT
+CertCreateCTLContext proto WINAPI :DWORD, :LPBYTE, :DWORD
+CertFreeCTLContext proto WINAPI :PCCTL_CONTEXT
+CertSetCTLContextProperty proto WINAPI :PCCTL_CONTEXT, :DWORD, :DWORD, :ptr
+CertGetCTLContextProperty proto WINAPI :PCCTL_CONTEXT, :DWORD, :ptr, :LPDWORD
+CertEnumCTLContextProperties proto WINAPI :PCCTL_CONTEXT, :DWORD
+CertEnumCTLsInStore proto WINAPI :HCERTSTORE, :PCCTL_CONTEXT
+CertFindSubjectInCTL proto WINAPI :DWORD, :DWORD, :ptr, :PCCTL_CONTEXT, :DWORD
 
 CTL_ANY_SUBJECT_TYPE	equ 1
 CTL_CERT_SUBJECT_TYPE	equ 2
@@ -4281,14 +3599,7 @@ SubjectIdentifier	CRYPT_DATA_BLOB <>
 CTL_ANY_SUBJECT_INFO	ENDS
 PCTL_ANY_SUBJECT_INFO	typedef ptr CTL_ANY_SUBJECT_INFO
 
-;PCCTL_CONTEXT
-CertFindCTLInStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-dwMsgAndCertEncodingType: DWORD,
-	   dwFindFlags: DWORD,
-	    dwFindType: DWORD,
-	    pvFindPara: PVOID,
-       pPrevCtlContext: PCCTL_CONTEXT
+CertFindCTLInStore proto WINAPI :HCERTSTORE, :DWORD, :DWORD, :DWORD, :ptr, :PCCTL_CONTEXT
 
 CTL_FIND_ANY		equ 0
 CTL_FIND_SHA1_HASH	equ 1
@@ -4319,88 +3630,22 @@ CTL_FIND_SUBJECT_PARA	ENDS
 PCTL_FIND_SUBJECT_PARA	typedef ptr CTL_FIND_SUBJECT_PARA
 
 
-;BOOL
-CertAddEncodedCTLToStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-dwMsgAndCertEncodingType: DWORD,
-	  pbCtlEncoded: LPBYTE,
-	  cbCtlEncoded: DWORD,
-      dwAddDisposition: DWORD,
-	  ppCtlContext: PCCTL_CONTEXT
-
-;BOOL
-CertAddCTLContextToStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-	   pCtlContext: PCCTL_CONTEXT,
-      dwAddDisposition: DWORD,
-	ppStoreContext: PCCTL_CONTEXT
-
-;BOOL
-CertSerializeCTLStoreElement proto WINAPI \
-	   pCtlContext: PCCTL_CONTEXT,
-	       dwFlags: DWORD,
-	     pbElement: LPBYTE,
-	    pcbElement: LPDWORD
-
-;BOOL
-CertDeleteCTLFromStore proto WINAPI \
-	   pCtlContext: PCCTL_CONTEXT
-
-
-;BOOL
-CertGetEnhancedKeyUsage proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-	       dwFlags: DWORD,
-		pUsage: PCERT_ENHKEY_USAGE,
-	      pcbUsage: LPDWORD
-
-;BOOL
-CertSetEnhancedKeyUsage proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-		pUsage: PCERT_ENHKEY_USAGE
-
-;BOOL
-CertAddEnhancedKeyUsageIdentifier proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-    pszUsageIdentifier: LPCSTR
-
-
-;BOOL
-CertRemoveEnhancedKeyUsageIdentifier proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-    pszUsageIdentifier: LPCSTR
-
-;BOOL
-CryptMsgGetAndVerifySigner proto WINAPI \
-	     hCryptMsg: HCRYPTMSG,
-	  cSignerStore: DWORD,
-	rghSignerStore: ptr HCERTSTORE,
-	       dwFlags: DWORD,
-	      ppSigner: PCCERT_CONTEXT,
-	pdwSignerIndex: LPDWORD
+CertAddEncodedCTLToStore proto WINAPI :HCERTSTORE, :DWORD, :LPBYTE, :DWORD, :DWORD, :PCCTL_CONTEXT
+CertAddCTLContextToStore proto WINAPI :HCERTSTORE, :PCCTL_CONTEXT, :DWORD, :PCCTL_CONTEXT
+CertSerializeCTLStoreElement proto WINAPI :PCCTL_CONTEXT, :DWORD, :LPBYTE, :LPDWORD
+CertDeleteCTLFromStore proto WINAPI :PCCTL_CONTEXT
+CertGetEnhancedKeyUsage proto WINAPI :PCCERT_CONTEXT, :DWORD, :PCERT_ENHKEY_USAGE, :LPDWORD
+CertSetEnhancedKeyUsage proto WINAPI :PCCERT_CONTEXT, :PCERT_ENHKEY_USAGE
+CertAddEnhancedKeyUsageIdentifier proto WINAPI :PCCERT_CONTEXT, :LPCSTR
+CertRemoveEnhancedKeyUsageIdentifier proto WINAPI :PCCERT_CONTEXT, :LPCSTR
+CryptMsgGetAndVerifySigner proto WINAPI :HCRYPTMSG, :DWORD, :ptr, :DWORD, :PCCERT_CONTEXT, :LPDWORD
 
 CMSG_TRUSTED_SIGNER_FLAG	equ 0x1
 CMSG_SIGNER_ONLY_FLAG		equ 0x2
 CMSG_USE_SIGNER_INDEX_FLAG	equ 0x4
 
-;BOOL
-CryptMsgSignCTL proto WINAPI \
-     dwMsgEncodingType: DWORD,
-	  pbCtlContent: LPBYTE,
-	  cbCtlContent: DWORD,
-	     pSignInfo: PCMSG_SIGNED_ENCODE_INFO,
-	       dwFlags: DWORD,
-	     pbEncoded: LPBYTE,
-	    pcbEncoded: LPDWORD
-
-;BOOL
-CryptMsgEncodeAndSignCTL proto WINAPI \
-     dwMsgEncodingType: DWORD,
-	      pCtlInfo: PCTL_INFO,
-	     pSignInfo: PCMSG_SIGNED_ENCODE_INFO,
-	       dwFlags: DWORD,
-	     pbEncoded: LPBYTE,
-	    pcbEncoded: LPDWORD
+CryptMsgSignCTL proto WINAPI :DWORD, :LPBYTE, :DWORD, :PCMSG_SIGNED_ENCODE_INFO, :DWORD, :LPBYTE, :LPDWORD
+CryptMsgEncodeAndSignCTL proto WINAPI :DWORD, :PCTL_INFO, :PCMSG_SIGNED_ENCODE_INFO, :DWORD, :LPBYTE, :LPDWORD
 
 
 CTL_VERIFY_USAGE_PARA	STRUC
@@ -4431,16 +3676,7 @@ CERT_VERIFY_ALLOW_MORE_USAGE_FLAG	equ 0x8
 
 CERT_VERIFY_UPDATED_CTL_FLAG		equ 0x1
 
-;BOOL
-CertVerifyCTLUsage proto WINAPI \
-	dwEncodingType: DWORD,
-	 dwSubjectType: DWORD,
-	     pvSubject: PVOID,
-	 pSubjectUsage: PCTL_USAGE,
-	       dwFlags: DWORD,
-      pVerifyUsagePara: PCTL_VERIFY_USAGE_PARA,
-    pVerifyUsageStatus: PCTL_VERIFY_USAGE_STATUS
-
+CertVerifyCTLUsage proto WINAPI :DWORD, :DWORD, :ptr, :PCTL_USAGE, :DWORD, :PCTL_VERIFY_USAGE_PARA, :PCTL_VERIFY_USAGE_STATUS
 
 CERT_REVOCATION_PARA	STRUC
 cbSize			dd ?
@@ -4458,251 +3694,56 @@ dwReason		dd ?
 CERT_REVOCATION_STATUS	ENDS
 PCERT_REVOCATION_STATUS typedef ptr CERT_REVOCATION_STATUS
 
-
-;BOOL
-CertVerifyRevocation proto WINAPI \
-	dwEncodingType: DWORD,
-	     dwRevType: DWORD,
-	      cContext: DWORD,
-	   rgpvContext: PVOID,
-	       dwFlags: DWORD,
-	      pRevPara: PCERT_REVOCATION_PARA,
-	    pRevStatus: PCERT_REVOCATION_STATUS
+CertVerifyRevocation proto WINAPI :DWORD, :DWORD, :DWORD, :ptr, :DWORD, :PCERT_REVOCATION_PARA, :PCERT_REVOCATION_STATUS
 
 CERT_CONTEXT_REVOCATION_TYPE equ 1
-
 CERT_VERIFY_REV_CHAIN_FLAG equ 0x1
 
-;BOOL
-CertCompareIntegerBlob proto WINAPI \
-		 pInt1: PCRYPT_INTEGER_BLOB,
-		 pInt2: PCRYPT_INTEGER_BLOB
-
-;BOOL
-CertCompareCertificate proto WINAPI \
-    dwCertEncodingType: DWORD,
-	      pCertId1: PCERT_INFO,
-	      pCertId2: PCERT_INFO
-
-;BOOL
-CertCompareCertificateName proto WINAPI \
-    dwCertEncodingType: DWORD,
-	    pCertName1: PCERT_NAME_BLOB,
-	    pCertName2: PCERT_NAME_BLOB
-
-;BOOL
-CertIsRDNAttrsInCertificateName proto WINAPI \
-    dwCertEncodingType: DWORD,
-	       dwFlags: DWORD,
-	     pCertName: PCERT_NAME_BLOB,
-		  pRDN: PCERT_RDN
+CertCompareIntegerBlob proto WINAPI :PCRYPT_INTEGER_BLOB, :PCRYPT_INTEGER_BLOB
+CertCompareCertificate proto WINAPI :DWORD, :PCERT_INFO, :PCERT_INFO
+CertCompareCertificateName proto WINAPI :DWORD, :PCERT_NAME_BLOB, :PCERT_NAME_BLOB
+CertIsRDNAttrsInCertificateName proto WINAPI :DWORD, :DWORD, :PCERT_NAME_BLOB, :PCERT_RDN
 
 CERT_UNICODE_IS_RDN_ATTRS_FLAG equ 0x1
 
-;BOOL
-CertComparePublicKeyInfo proto WINAPI \
-    dwCertEncodingType: DWORD,
-	   pPublicKey1: PCERT_PUBLIC_KEY_INFO,
-	   pPublicKey2: PCERT_PUBLIC_KEY_INFO
+CertComparePublicKeyInfo proto WINAPI :DWORD, :PCERT_PUBLIC_KEY_INFO, :PCERT_PUBLIC_KEY_INFO
+CertGetPublicKeyLength proto WINAPI :DWORD, :PCERT_PUBLIC_KEY_INFO
+CryptVerifyCertificateSignature proto WINAPI :HCRYPTPROV, :DWORD, :LPBYTE, :DWORD, :PCERT_PUBLIC_KEY_INFO
 
-;DWORD
-CertGetPublicKeyLength proto WINAPI \
-    dwCertEncodingType: DWORD,
-	    pPublicKey: PCERT_PUBLIC_KEY_INFO
-
-;BOOL
-CryptVerifyCertificateSignature proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-    dwCertEncodingType: DWORD,
-	     pbEncoded: LPBYTE,
-	     cbEncoded: DWORD,
-	    pPublicKey: PCERT_PUBLIC_KEY_INFO
-
-;BOOL
-CryptHashToBeSigned proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-    dwCertEncodingType: DWORD,
-	     pbEncoded: LPBYTE,
-	     cbEncoded: DWORD,
-	pbComputedHash: LPBYTE,
-       pcbComputedHash: LPDWORD
-
-;BOOL
-CryptHashCertificate proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-		 Algid: ALG_ID,
-	       dwFlags: DWORD,
-	     pbEncoded: LPBYTE,
-	     cbEncoded: DWORD,
-	pbComputedHash: LPBYTE,
-       pcbComputedHash: LPDWORD
-
-;BOOL
-CryptSignCertificate proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-	     dwKeySpec: DWORD,
-    dwCertEncodingType: DWORD,
-   pbEncodedToBeSigned: LPBYTE,
-   cbEncodedToBeSigned: DWORD,
-   pSignatureAlgorithm: PCRYPT_ALGORITHM_IDENTIFIER,
-	 pvHashAuxInfo: PVOID,
-	   pbSignature: LPBYTE,
-	  pcbSignature: LPDWORD
-
-;BOOL
-CryptSignAndEncodeCertificate proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-	     dwKeySpec: DWORD,
-    dwCertEncodingType: DWORD,
-	lpszStructType: LPCSTR,
-	  pvStructInfo: PVOID,
-   pSignatureAlgorithm: PCRYPT_ALGORITHM_IDENTIFIER,
-	 pvHashAuxInfo: PVOID,
-	     pbEncoded: PBYTE,
-	    pcbEncoded: LPDWORD
-
-
-;LONG
-CertVerifyTimeValidity proto WINAPI \
-	 pTimeToVerify: LPFILETIME,
-	     pCertInfo: PCERT_INFO
-
-
-;LONG
-CertVerifyCRLTimeValidity proto WINAPI \
-	 pTimeToVerify: LPFILETIME,
-	      pCrlInfo: PCRL_INFO
-
-;BOOL
-CertVerifyValidityNesting proto WINAPI \
-	  pSubjectInfo: PCERT_INFO,
-	   pIssuerInfo: PCERT_INFO
-
-;BOOL
-CertVerifyCRLRevocation proto WINAPI \
-    dwCertEncodingType: DWORD,
-	       pCertId: PCERT_INFO,
-	      cCrlInfo: DWORD,
-	    rgpCrlInfo: PCRL_INFO
-
-;LPCSTR
-CertAlgIdToOID proto WINAPI \
-	       dwAlgId: DWORD
-
-;DWORD
-CertOIDToAlgId proto WINAPI \
-	      pszObjId: LPCSTR
-
-;PCERT_EXTENSION
-CertFindExtension proto WINAPI \
-	      pszObjId: LPCSTR,
-	   cExtensions: DWORD,
-	  rgExtensions: CERT_EXTENSION
-
-;PCRYPT_ATTRIBUTE
-CertFindAttribute proto WINAPI \
-	      pszObjId: LPCSTR,
-		 cAttr: DWORD,
-		rgAttr: CRYPT_ATTRIBUTE
-
-;PCERT_RDN_ATTR
-CertFindRDNAttr proto WINAPI \
-	      pszObjId: LPCSTR,
-		 pName: PCERT_NAME_INFO
-
-;BOOL
-CertGetIntendedKeyUsage proto WINAPI \
-    dwCertEncodingType: DWORD,
-	     pCertInfo: PCERT_INFO,
-	    pbKeyUsage: LPBYTE,
-	    cbKeyUsage: DWORD
-
-
-;BOOL
-CryptExportPublicKeyInfo proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-	     dwKeySpec: DWORD,
-    dwCertEncodingType: DWORD,
-		 pInfo: PCERT_PUBLIC_KEY_INFO,
-	       pcbInfo: LPDWORD
-
+CryptHashToBeSigned proto WINAPI :HCRYPTPROV, :DWORD, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD
+CryptHashCertificate proto WINAPI :HCRYPTPROV, :ALG_ID, :DWORD, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD
+CryptSignCertificate proto WINAPI :HCRYPTPROV, :DWORD, :DWORD, :LPBYTE, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr, :LPBYTE, :LPDWORD
+CryptSignAndEncodeCertificate proto WINAPI :HCRYPTPROV, :DWORD, :DWORD, :LPCSTR, :ptr, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr, :PBYTE, :LPDWORD
+CertVerifyTimeValidity proto WINAPI :LPFILETIME, :PCERT_INFO
+CertVerifyCRLTimeValidity proto WINAPI :LPFILETIME, :PCRL_INFO
+CertVerifyValidityNesting proto WINAPI :PCERT_INFO, :PCERT_INFO
+CertVerifyCRLRevocation proto WINAPI :DWORD, :PCERT_INFO, :DWORD, :PCRL_INFO
+CertAlgIdToOID proto WINAPI :DWORD
+CertOIDToAlgId proto WINAPI :LPCSTR
+CertFindExtension proto WINAPI :LPCSTR, :DWORD, :CERT_EXTENSION
+CertFindAttribute proto WINAPI :LPCSTR, :DWORD, :CRYPT_ATTRIBUTE
+CertFindRDNAttr proto WINAPI :LPCSTR, :PCERT_NAME_INFO
+CertGetIntendedKeyUsage proto WINAPI :DWORD, :PCERT_INFO, :LPBYTE, :DWORD
+CryptExportPublicKeyInfo proto WINAPI :HCRYPTPROV, :DWORD, :DWORD, :PCERT_PUBLIC_KEY_INFO, :LPDWORD
 
 CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_FUNC equ <"CryptDllExportPublicKeyInfoEx">
 
-;BOOL
-CryptExportPublicKeyInfoEx proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-	     dwKeySpec: DWORD,
-    dwCertEncodingType: DWORD,
-     pszPublicKeyObjId: LPSTR,
-	       dwFlags: DWORD,
-	     pvAuxInfo: PVOID,
-		 pInfo: PCERT_PUBLIC_KEY_INFO,
-	       pcbInfo: LPDWORD
-
-
-;BOOL
-CryptImportPublicKeyInfo proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-    dwCertEncodingType: DWORD,
-		 pInfo: PCERT_PUBLIC_KEY_INFO,
-		 phKey: ptr HCRYPTKEY
+CryptExportPublicKeyInfoEx proto WINAPI :HCRYPTPROV, :DWORD, :DWORD, :LPSTR, :DWORD, :ptr, :PCERT_PUBLIC_KEY_INFO, :LPDWORD
+CryptImportPublicKeyInfo proto WINAPI :HCRYPTPROV, :DWORD, :PCERT_PUBLIC_KEY_INFO, :ptr
 
 CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_FUNC equ <"CryptDllImportPublicKeyInfoEx">
 
-;BOOL
-CryptImportPublicKeyInfoEx proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-    dwCertEncodingType: DWORD,
-		 pInfo: PCERT_PUBLIC_KEY_INFO,
-	      aiKeyAlg: ALG_ID,
-	       dwFlags: DWORD,
-	     pvAuxInfo: PVOID,
-		 phKey: ptr HCRYPTKEY
-
-;BOOL
-CryptHashPublicKeyInfo proto WINAPI \
-	    hCryptProv: HCRYPTPROV,
-		 Algid: ALG_ID,
-	       dwFlags: DWORD,
-    dwCertEncodingType: DWORD,
-		 pInfo: PCERT_PUBLIC_KEY_INFO,
-	pbComputedHash: LPBYTE,
-       pcbComputedHash: LPDWORD
-
-;DWORD
-CertRDNValueToStrA proto WINAPI \
-	   dwValueType: DWORD,
-		pValue: PCERT_RDN_VALUE_BLOB,
-		   psz: LPSTR,
-		   csz: DWORD
-;DWORD
-CertRDNValueToStrW proto WINAPI \
-	   dwValueType: DWORD,
-		pValue: PCERT_RDN_VALUE_BLOB,
-		   psz: LPWSTR,
-		   csz: DWORD
+CryptImportPublicKeyInfoEx proto WINAPI :HCRYPTPROV, :DWORD, :PCERT_PUBLIC_KEY_INFO, :ALG_ID, :DWORD, :ptr, :ptr
+CryptHashPublicKeyInfo proto WINAPI :HCRYPTPROV, :ALG_ID, :DWORD, :DWORD, :PCERT_PUBLIC_KEY_INFO, :LPBYTE, :LPDWORD
+CertRDNValueToStrA proto WINAPI :DWORD, :PCERT_RDN_VALUE_BLOB, :LPSTR, :DWORD
+CertRDNValueToStrW proto WINAPI :DWORD, :PCERT_RDN_VALUE_BLOB, :LPWSTR, :DWORD
 ifdef _UNICODE
 CertRDNValueToStr	equ <CertRDNValueToStrW>
 else
 CertRDNValueToStr	equ <CertRDNValueToStrA>
 endif
-
-
-;DWORD
-CertNameToStrA proto WINAPI \
-    dwCertEncodingType: DWORD,
-		 pName: PCERT_NAME_BLOB,
-	     dwStrType: DWORD,
-		   psz: LPSTR,
-		   csz: DWORD
-;DWORD
-CertNameToStrW proto WINAPI \
-    dwCertEncodingType: DWORD,
-		 pName: PCERT_NAME_BLOB,
-	     dwStrType: DWORD,
-		   psz: LPWSTR,
-		   csz: DWORD
+CertNameToStrA proto WINAPI :DWORD, :PCERT_NAME_BLOB, :DWORD, :LPSTR, :DWORD
+CertNameToStrW proto WINAPI :DWORD, :PCERT_NAME_BLOB, :DWORD, :LPWSTR, :DWORD
 ifdef _UNICODE
 CertNameToStr		equ <CertNameToStrW>
 else
@@ -4719,31 +3760,14 @@ CERT_NAME_STR_NO_QUOTING_FLAG	equ 0x10000000
 CERT_NAME_STR_CRLF_FLAG		equ 0x08000000
 CERT_NAME_STR_COMMA_FLAG	equ 0x04000000
 
-;BOOL
-CertStrToNameA proto WINAPI \
-    dwCertEncodingType: DWORD,
-	       pszX500: LPCSTR,
-	     dwStrType: DWORD,
-	    pvReserved: PVOID,
-	     pbEncoded: LPBYTE,
-	    pcbEncoded: LPDWORD,
-	     ppszError: LPCSTR
-;BOOL
-CertStrToNameW proto WINAPI \
-    dwCertEncodingType: DWORD,
-	       pszX500: LPCWSTR,
-	     dwStrType: DWORD,
-	    pvReserved: PVOID,
-	     pbEncoded: LPBYTE,
-	    pcbEncoded: LPDWORD,
-	     ppszError: LPCWSTR
+CertStrToNameA proto WINAPI :DWORD, :LPCSTR, :DWORD, :ptr, :LPBYTE, :LPDWORD, :LPCSTR
+CertStrToNameW proto WINAPI :DWORD, :LPCWSTR, :DWORD, :ptr, :LPBYTE, :LPDWORD, :LPCWSTR
 ifdef _UNICODE
 CertStrToName		equ <CertStrToNameW>
 else
 CertStrToName		equ <CertStrToNameA>
 endif
 
-;PCCERT_CONTEXT
 CALLBACK(PFN_CRYPT_GET_SIGNER_CERTIFICATE, :PVOID, :DWORD, :PCERT_INFO, :HCERTSTORE)
 
 CRYPT_SIGN_MESSAGE_PARA STRUC
@@ -4804,8 +3828,6 @@ pvHashAuxInfo		PVOID ?
 CRYPT_HASH_MESSAGE_PARA ENDS
 PCRYPT_HASH_MESSAGE_PARA typedef ptr CRYPT_HASH_MESSAGE_PARA
 
-
-
 CRYPT_KEY_SIGN_MESSAGE_PARA STRUC
 cbSize			dd ?
 dwMsgAndCertEncodingType dd ?
@@ -4824,184 +3846,31 @@ hCryptProv		HCRYPTPROV ?
 CRYPT_KEY_VERIFY_MESSAGE_PARA ENDS
 PCRYPT_KEY_VERIFY_MESSAGE_PARA typedef ptr CRYPT_KEY_VERIFY_MESSAGE_PARA
 
-
-;BOOL
-CryptSignMessage proto WINAPI \
-	     pSignPara: PCRYPT_SIGN_MESSAGE_PARA,
-    fDetachedSignature: BOOL,
-	   cToBeSigned: DWORD,
-	rgpbToBeSigned: LPBYTE,
-	rgcbToBeSigned: DWORD,
-	  pbSignedBlob: LPBYTE,
-	 pcbSignedBlob: LPDWORD
-
-;BOOL
-CryptVerifyMessageSignature proto WINAPI \
-	   pVerifyPara: PCRYPT_VERIFY_MESSAGE_PARA,
-	 dwSignerIndex: DWORD,
-	  pbSignedBlob: LPBYTE,
-	  cbSignedBlob: DWORD,
-	     pbDecoded: LPBYTE,
-	    pcbDecoded: LPDWORD,
-	  ppSignerCert: PCCERT_CONTEXT
-
-;LONG
-CryptGetMessageSignerCount proto WINAPI \
-     dwMsgEncodingType: DWORD,
-	  pbSignedBlob: LPBYTE,
-	  cbSignedBlob: DWORD
-
-;HCERTSTORE
-CryptGetMessageCertificates proto WINAPI \
-dwMsgAndCertEncodingType: DWORD,
-	    hCryptProv: HCRYPTPROV,
-	       dwFlags: DWORD,
-	  pbSignedBlob: LPBYTE,
-	  cbSignedBlob: DWORD
-
-;BOOL
-CryptVerifyDetachedMessageSignature proto WINAPI \
-	   pVerifyPara: PCRYPT_VERIFY_MESSAGE_PARA,
-	 dwSignerIndex: DWORD,
-    pbDetachedSignBlob: LPBYTE,
-    cbDetachedSignBlob: DWORD,
-	   cToBeSigned: DWORD,
-	rgpbToBeSigned: LPBYTE,
-	rgcbToBeSigned: DWORD,
-	  ppSignerCert: ptr PCCERT_CONTEXT
-
-;BOOL
-CryptEncryptMessage proto WINAPI \
-	  pEncryptPara: PCRYPT_ENCRYPT_MESSAGE_PARA,
-	cRecipientCert: DWORD,
-      rgpRecipientCert: PCCERT_CONTEXT,
-       pbToBeEncrypted: LPBYTE,
-       cbToBeEncrypted: DWORD,
-       pbEncryptedBlob: LPBYTE,
-      pcbEncryptedBlob: LPDWORD
-
-;BOOL
-CryptDecryptMessage proto WINAPI \
-	  pDecryptPara: PCRYPT_DECRYPT_MESSAGE_PARA,
-       pbEncryptedBlob: LPBYTE,
-       cbEncryptedBlob: DWORD,
-	   pbDecrypted: LPBYTE,
-	  pcbDecrypted: LPDWORD,
-	    ppXchgCert: PCCERT_CONTEXT
-
-;BOOL
-CryptSignAndEncryptMessage proto WINAPI \
-	     pSignPara: PCRYPT_SIGN_MESSAGE_PARA,
-	  pEncryptPara: PCRYPT_ENCRYPT_MESSAGE_PARA,
-	cRecipientCert: DWORD,
-      rgpRecipientCert: PCCERT_CONTEXT,
-pbToBeSignedAndEncrypted: LPBYTE,
-cbToBeSignedAndEncrypted: DWORD,
-pbSignedAndEncryptedBlob: LPBYTE,
-pcbSignedAndEncryptedBlob: LPDWORD
-
-;BOOL
-CryptDecryptAndVerifyMessageSignature proto WINAPI \
-	  pDecryptPara: PCRYPT_DECRYPT_MESSAGE_PARA,
-	   pVerifyPara: PCRYPT_VERIFY_MESSAGE_PARA,
-	 dwSignerIndex: DWORD,
-       pbEncryptedBlob: LPBYTE,
-       cbEncryptedBlob: DWORD,
-	   pbDecrypted: LPBYTE,
-	  pcbDecrypted: LPDWORD,
-	    ppXchgCert: PCCERT_CONTEXT,
-	  ppSignerCert: PCCERT_CONTEXT
-
-;BOOL
-CryptDecodeMessage proto WINAPI \
-	dwMsgTypeFlags: DWORD,
-	  pDecryptPara: PCRYPT_DECRYPT_MESSAGE_PARA,
-	   pVerifyPara: PCRYPT_VERIFY_MESSAGE_PARA,
-	 dwSignerIndex: DWORD,
-	 pbEncodedBlob: LPBYTE,
-	 cbEncodedBlob: DWORD,
-dwPrevInnerContentType: DWORD,
-	    pdwMsgType: LPDWORD,
-   pdwInnerContentType: LPDWORD,
-	     pbDecoded: LPBYTE,
-	    pcbDecoded: LPDWORD,
-	    ppXchgCert: PCCERT_CONTEXT,
-	  ppSignerCert: PCCERT_CONTEXT
-
-;BOOL
-CryptHashMessage proto WINAPI \
-	     pHashPara: PCRYPT_HASH_MESSAGE_PARA,
-	 fDetachedHash: BOOL,
-	   cToBeHashed: DWORD,
-	rgpbToBeHashed: LPBYTE,
-	rgcbToBeHashed: DWORD,
-	  pbHashedBlob: LPBYTE,
-	 pcbHashedBlob: LPDWORD,
-	pbComputedHash: LPBYTE,
-       pcbComputedHash: LPDWORD
-
-;BOOL
-CryptVerifyMessageHash proto WINAPI \
-	     pHashPara: PCRYPT_HASH_MESSAGE_PARA,
-	  pbHashedBlob: LPBYTE,
-	  cbHashedBlob: DWORD,
-	  pbToBeHashed: LPBYTE,
-	 pcbToBeHashed: LPDWORD,
-	pbComputedHash: LPBYTE,
-       pcbComputedHash: LPDWORD
-
-;BOOL
-CryptVerifyDetachedMessageHash proto WINAPI \
-	     pHashPara: PCRYPT_HASH_MESSAGE_PARA,
-    pbDetachedHashBlob: LPBYTE,
-    cbDetachedHashBlob: DWORD,
-	   cToBeHashed: DWORD,
-	rgpbToBeHashed: LPBYTE,
-	rgcbToBeHashed: DWORD,
-	pbComputedHash: LPBYTE,
-       pcbComputedHash: LPDWORD
-
-;BOOL
-CryptSignMessageWithKey proto WINAPI \
-	     pSignPara: PCRYPT_KEY_SIGN_MESSAGE_PARA,
-	  pbToBeSigned: LPBYTE,
-	  cbToBeSigned: DWORD,
-	  pbSignedBlob: LPBYTE,
-	 pcbSignedBlob: LPDWORD
-
-;BOOL
-CryptVerifyMessageSignatureWithKey proto WINAPI \
-	   pVerifyPara: PCRYPT_KEY_VERIFY_MESSAGE_PARA,
-	pPublicKeyInfo: PCERT_PUBLIC_KEY_INFO,
-	  pbSignedBlob: LPBYTE,
-	  cbSignedBlob: DWORD,
-	     pbDecoded: LPBYTE,
-	    pcbDecoded: LPDWORD
-
-;HCERTSTORE
-CertOpenSystemStoreA proto WINAPI \
-		 hProv: HCRYPTPROV,
-   szSubsystemProtocol: LPCSTR
-;HCERTSTORE
-CertOpenSystemStoreW proto WINAPI \
-		 hProv: HCRYPTPROV,
-   szSubsystemProtocol: LPCWSTR
+CryptSignMessage proto WINAPI :ptr, :BOOL, :DWORD, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD
+CryptVerifyMessageSignature proto WINAPI :ptr, :DWORD, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD, :PCCERT_CONTEXT
+CryptGetMessageSignerCount proto WINAPI :DWORD, :LPBYTE, :DWORD
+CryptGetMessageCertificates proto WINAPI :DWORD, :HCRYPTPROV, :DWORD, :LPBYTE, :DWORD
+CryptVerifyDetachedMessageSignature proto WINAPI :ptr, :DWORD, :LPBYTE, :DWORD, :DWORD, :LPBYTE, :DWORD, :ptr
+CryptEncryptMessage proto WINAPI :ptr, :DWORD, :PCCERT_CONTEXT, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD
+CryptDecryptMessage proto WINAPI :ptr, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD, :PCCERT_CONTEXT
+CryptSignAndEncryptMessage proto WINAPI :ptr, :ptr, :DWORD, :ptr, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD
+CryptDecryptAndVerifyMessageSignature proto WINAPI :ptr, :ptr, :DWORD, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD, :ptr, :ptr
+CryptDecodeMessage proto WINAPI :DWORD, :ptr, :ptr, :DWORD, :LPBYTE, :DWORD, :DWORD, :LPDWORD, :LPDWORD, :LPBYTE, :LPDWORD, :ptr, :ptr
+CryptHashMessage proto WINAPI :ptr, :BOOL, :DWORD, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD, :LPBYTE, :LPDWORD
+CryptVerifyMessageHash proto WINAPI :ptr, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD, :LPBYTE, :LPDWORD
+CryptVerifyDetachedMessageHash proto WINAPI :ptr, :LPBYTE, :DWORD, :DWORD, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD
+CryptSignMessageWithKey proto WINAPI :ptr, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD
+CryptVerifyMessageSignatureWithKey proto WINAPI :ptr, :ptr, :LPBYTE, :DWORD, :LPBYTE, :LPDWORD
+CertOpenSystemStoreA proto WINAPI :HCRYPTPROV, :LPCSTR
+CertOpenSystemStoreW proto WINAPI :HCRYPTPROV, :LPCWSTR
 ifdef _UNICODE
 CertOpenSystemStore	equ <CertOpenSystemStoreW>
 else
 CertOpenSystemStore	equ <CertOpenSystemStoreA>
 endif
 
-;BOOL
-CertAddEncodedCertificateToSystemStoreA proto WINAPI \
-       szCertStoreName: LPCSTR,
-	 pbCertEncoded: LPBYTE,
-	 cbCertEncoded: DWORD
-;BOOL
-CertAddEncodedCertificateToSystemStoreW proto WINAPI \
-       szCertStoreName: LPCWSTR,
-	 pbCertEncoded: LPBYTE,
-	 cbCertEncoded: DWORD
+CertAddEncodedCertificateToSystemStoreA proto WINAPI :LPCSTR, :LPBYTE, :DWORD
+CertAddEncodedCertificateToSystemStoreW proto WINAPI :LPCWSTR, :LPBYTE, :DWORD
 ifdef _UNICODE
 CertAddEncodedCertificateToSystemStore equ <CertAddEncodedCertificateToSystemStoreW>
 else
@@ -5016,31 +3885,8 @@ keyLocatorInfo		CRYPT_KEY_PROV_INFO <>
 CERT_CHAIN		ENDS
 PCERT_CHAIN		typedef ptr CERT_CHAIN
 
-
-;HRESULT
-
-FindCertsByIssuer proto WINAPI \
-	   pCertChains: PCERT_CHAIN,
-	 pcbCertChains: LPDWORD,
-	  pcCertChains: LPDWORD,
-   pbEncodedIssuerName: LPBYTE,
-   cbEncodedIssuerName: DWORD,
-	   pwszPurpose: LPCWSTR,
-	     dwKeySpec: DWORD
-
-;BOOL
-CryptQueryObject proto WINAPI \
-	  dwObjectType: DWORD,
-	      pvObject: PVOID,
-dwExpectedContentTypeFlags: DWORD,
-dwExpectedFormatTypeFlags: DWORD,
-	       dwFlags: DWORD,
-pdwMsgAndCertEncodingType: ptr DWORD,
-	pdwContentType: ptr DWORD,
-	 pdwFormatType: ptr DWORD,
-	   phCertStore: ptr HCERTSTORE,
-		 phMsg: ptr HCRYPTMSG,
-	    ppvContext: PVOID
+FindCertsByIssuer proto WINAPI :PCERT_CHAIN, :LPDWORD, :LPDWORD, :LPBYTE, :DWORD, :LPCWSTR, :DWORD
+CryptQueryObject proto WINAPI :DWORD, :ptr, :DWORD, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 
 CERT_QUERY_OBJECT_FILE	equ 0x00000001
 CERT_QUERY_OBJECT_BLOB	equ 0x00000002
@@ -5074,81 +3920,30 @@ CERT_QUERY_CONTENT_FLAG_PKCS10 equ (1 SHL CERT_QUERY_CONTENT_PKCS10)
 CERT_QUERY_CONTENT_FLAG_PFX equ (1 SHL CERT_QUERY_CONTENT_PFX)
 CERT_QUERY_CONTENT_FLAG_CERT_PAIR equ (1 SHL CERT_QUERY_CONTENT_CERT_PAIR)
 CERT_QUERY_CONTENT_FLAG_PFX_AND_LOAD equ (1 SHL CERT_QUERY_CONTENT_PFX_AND_LOAD)
-CERT_QUERY_CONTENT_FLAG_ALL equ \
-	CERT_QUERY_CONTENT_FLAG_CERT OR \
-	CERT_QUERY_CONTENT_FLAG_CTL OR \
-	CERT_QUERY_CONTENT_FLAG_CRL OR \
-	CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE OR \
-	CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT OR \
-	CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL OR \
-	CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL OR \
-	CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED OR \
-	CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED OR \
-	CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED OR \
-	CERT_QUERY_CONTENT_FLAG_PKCS10 OR \
-	CERT_QUERY_CONTENT_FLAG_PFX OR \
-	CERT_QUERY_CONTENT_FLAG_CERT_PAIR
+CERT_QUERY_CONTENT_FLAG_ALL equ (CERT_QUERY_CONTENT_FLAG_CERT OR CERT_QUERY_CONTENT_FLAG_CTL OR CERT_QUERY_CONTENT_FLAG_CRL OR CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE OR CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT OR CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL OR CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL OR CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED OR CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED OR CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED OR CERT_QUERY_CONTENT_FLAG_PKCS10 OR CERT_QUERY_CONTENT_FLAG_PFX OR CERT_QUERY_CONTENT_FLAG_CERT_PAIR)
 
 CERT_QUERY_FORMAT_BINARY equ 1
-
 CERT_QUERY_FORMAT_BASE64_ENCODED equ 2
 
 CERT_QUERY_FORMAT_ASN_ASCII_HEX_ENCODED equ 3
 CERT_QUERY_FORMAT_FLAG_BINARY equ (1 SHL CERT_QUERY_FORMAT_BINARY)
 CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED equ (1 SHL CERT_QUERY_FORMAT_BASE64_ENCODED)
 CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED equ (1 SHL CERT_QUERY_FORMAT_ASN_ASCII_HEX_ENCODED)
-CERT_QUERY_FORMAT_FLAG_ALL equ \
-	CERT_QUERY_FORMAT_FLAG_BINARY OR \
-	CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED OR \
-	CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED
+CERT_QUERY_FORMAT_FLAG_ALL equ (CERT_QUERY_FORMAT_FLAG_BINARY OR CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED OR CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED)
 
-
-;LPVOID
-CryptMemAlloc proto WINAPI \
-		cbSize: ULONG
-
-;LPVOID
-CryptMemRealloc proto WINAPI \
-		    pv: LPVOID,
-		cbSize: ULONG
-
-;VOID
-CryptMemFree proto WINAPI \
-		    pv: LPVOID
-
+CryptMemAlloc proto WINAPI :ULONG
+CryptMemRealloc proto WINAPI :ptr, :ULONG
+CryptMemFree proto WINAPI :ptr
 
 HCRYPTASYNC		typedef HANDLE
 PHCRYPTASYNC		typedef ptr HCRYPTASYNC
 
-CALLBACK(PFN_CRYPT_ASYNC_PARAM_FREE_FUNC, :LPSTR, :LPVOID)
+CALLBACK(PFN_CRYPT_ASYNC_PARAM_FREE_FUNC, :LPSTR, :ptr)
 
-;BOOL
-CryptCreateAsyncHandle proto WINAPI \
-	       dwFlags: DWORD,
-	       phAsync: PHCRYPTASYNC
-
-
-;BOOL
-CryptSetAsyncParam proto WINAPI \
-		hAsync: HCRYPTASYNC,
-	   pszParamOid: LPSTR,
-	       pvParam: PVOID,
-	       pfnFree: PFN_CRYPT_ASYNC_PARAM_FREE_FUNC
-
-
-;BOOL
-CryptGetAsyncParam proto WINAPI \
-		hAsync: HCRYPTASYNC,
-	   pszParamOid: LPSTR,
-	      ppvParam: ptr PVOID,
-	      ppfnFree: ptr PFN_CRYPT_ASYNC_PARAM_FREE_FUNC
-
-
-;BOOL
-CryptCloseAsyncHandle proto WINAPI \
-		hAsync: HCRYPTASYNC
-
-
+CryptCreateAsyncHandle proto WINAPI :DWORD, :PHCRYPTASYNC
+CryptSetAsyncParam proto WINAPI :HCRYPTASYNC, :LPSTR, :ptr, :PFN_CRYPT_ASYNC_PARAM_FREE_FUNC
+CryptGetAsyncParam proto WINAPI :HCRYPTASYNC, :LPSTR, :ptr, :ptr
+CryptCloseAsyncHandle proto WINAPI :HCRYPTASYNC
 
 CRYPT_BLOB_ARRAY	STRUC
 cBlob			dd ?
@@ -5293,28 +4088,8 @@ dwHttpStatusCode	dd ?
 CRYPT_RETRIEVE_AUX_INFO ENDS
 PCRYPT_RETRIEVE_AUX_INFO typedef ptr CRYPT_RETRIEVE_AUX_INFO
 
-;BOOL
-CryptRetrieveObjectByUrlA proto WINAPI \
-		pszUrl: LPCSTR,
-	  pszObjectOid: LPCSTR,
-      dwRetrievalFlags: DWORD,
-	     dwTimeout: DWORD,
-	     ppvObject: ptr PVOID,
-	hAsyncRetrieve: HCRYPTASYNC,
-	  pCredentials: PCRYPT_CREDENTIALS,
-	      pvVerify: PVOID,
-	      pAuxInfo: PCRYPT_RETRIEVE_AUX_INFO
-
-CryptRetrieveObjectByUrlW proto WINAPI \
-		pszUrl: LPCWSTR,
-	  pszObjectOid: LPCSTR,
-      dwRetrievalFlags: DWORD,
-	     dwTimeout: DWORD,
-	     ppvObject: ptr PVOID,
-	hAsyncRetrieve: HCRYPTASYNC,
-	  pCredentials: PCRYPT_CREDENTIALS,
-	      pvVerify: PVOID,
-	      pAuxInfo: PCRYPT_RETRIEVE_AUX_INFO
+CryptRetrieveObjectByUrlA proto WINAPI :LPCSTR, :LPCSTR, :DWORD, :DWORD, :ptr, :HCRYPTASYNC, :ptr, :ptr, :ptr
+CryptRetrieveObjectByUrlW proto WINAPI :LPCWSTR, :LPCSTR, :DWORD, :DWORD, :ptr,:HCRYPTASYNC, :ptr, :ptr,:ptr
 
 ifdef _UNICODE
 CryptRetrieveObjectByUrl equ <CryptRetrieveObjectByUrlW>
@@ -5324,22 +4099,9 @@ endif
 
 CALLBACK(PFN_CRYPT_CANCEL_RETRIEVAL, :DWORD, :ptr)
 
-;BOOL
-CryptInstallCancelRetrieval proto WINAPI \
-	     pfnCancel: PFN_CRYPT_CANCEL_RETRIEVAL,
-		 pvArg: PVOID,
-	       dwFlags: DWORD,
-	    pvReserved: ptr void
-
-;BOOL
-CryptUninstallCancelRetrieval proto WINAPI \
-	       dwFlags: DWORD,
-	    pvReserved: ptr void
-
-;BOOL
-CryptCancelAsyncRetrieval proto WINAPI \
-       hAsyncRetrieval: HCRYPTASYNC
-
+CryptInstallCancelRetrieval proto WINAPI :PFN_CRYPT_CANCEL_RETRIEVAL, :ptr, :DWORD, :ptr
+CryptUninstallCancelRetrieval proto WINAPI :DWORD, :ptr
+CryptCancelAsyncRetrieval proto WINAPI :HCRYPTASYNC
 
 CRYPT_PARAM_ASYNC_RETRIEVAL_COMPLETION equ 1
 
@@ -5350,7 +4112,6 @@ pfnCompletion		PFN_CRYPT_ASYNC_RETRIEVAL_COMPLETION_FUNC ?
 pvCompletion		LPVOID ?
 CRYPT_ASYNC_RETRIEVAL_COMPLETION ENDS
 PCRYPT_ASYNC_RETRIEVAL_COMPLETION typedef ptr CRYPT_ASYNC_RETRIEVAL_COMPLETION
-
 
 CRYPT_PARAM_CANCEL_ASYNC_RETRIEVAL equ 2
 
@@ -5375,17 +4136,7 @@ rgcGroupEntry		LPDWORD ?
 CRYPT_URL_INFO		ENDS
 PCRYPT_URL_INFO		typedef ptr CRYPT_URL_INFO
 
-;BOOL
-CryptGetObjectUrl proto WINAPI \
-	     pszUrlOid: LPCSTR,
-		pvPara: LPVOID,
-	       dwFlags: DWORD,
-	     pUrlArray: PCRYPT_URL_ARRAY,
-	   pcbUrlArray: ptr DWORD,
-	      pUrlInfo: PCRYPT_URL_INFO,
-	    pcbUrlInfo: ptr DWORD,
-	    pvReserved: LPVOID
-
+CryptGetObjectUrl proto WINAPI :LPCSTR, :ptr, :DWORD, :PCRYPT_URL_ARRAY, :ptr, :PCRYPT_URL_INFO, :ptr, :ptr
 
 URL_OID_GET_OBJECT_URL_FUNC equ <"UrlDllGetObjectUrl">
 
@@ -5421,18 +4172,7 @@ pDeltaCrlIndicator	PCRYPT_INTEGER_BLOB ?
 CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO ENDS
 PCRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO typedef ptr CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO
 
-;BOOL
-CryptGetTimeValidObject proto WINAPI \
-       pszTimeValidOid: LPCSTR,
-		pvPara: LPVOID,
-	       pIssuer: PCCERT_CONTEXT,
-	   pftValidFor: LPFILETIME,
-	       dwFlags: DWORD,
-	     dwTimeout: DWORD,
-	     ppvObject: ptr LPVOID,
-	  pCredentials: PCRYPT_CREDENTIALS,
-	    pExtraInfo: PCRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO
-
+CryptGetTimeValidObject proto WINAPI :LPCSTR,  :ptr, :ptr, :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr
 
 TIME_VALID_OID_GET_OBJECT_FUNC equ <"TimeValidDllGetObject">
 
@@ -5443,13 +4183,7 @@ TIME_VALID_OID_GET_CRL_FROM_CERT equ 3
 TIME_VALID_OID_GET_FRESHEST_CRL_FROM_CERT equ 4
 TIME_VALID_OID_GET_FRESHEST_CRL_FROM_CRL equ 5
 
-;BOOL
-CryptFlushTimeValidObject proto WINAPI \
-  pszFlushTimeValidOid: LPCSTR,
-		pvPara: LPVOID,
-	       pIssuer: PCCERT_CONTEXT,
-	       dwFlags: DWORD,
-	    pvReserved: LPVOID
+CryptFlushTimeValidObject proto WINAPI :LPCSTR, :ptr, :ptr, :DWORD, :ptr
 
 TIME_VALID_OID_FLUSH_OBJECT_FUNC equ <"TimeValidDllFlushObject">
 
@@ -5486,37 +4220,11 @@ CRYPTPROTECT_CRED_REGENERATE equ 0x80
 CRYPTPROTECT_FIRST_RESERVED_FLAGVAL equ 0x0FFFFFFF
 CRYPTPROTECT_LAST_RESERVED_FLAGVAL equ 0xFFFFFFFF
 
-;BOOL
-CryptProtectData proto WINAPI \
-	       pDataIn: ptr DATA_BLOB,
-	   szDataDescr: LPCWSTR,
-      pOptionalEntropy: ptr DATA_BLOB,
-	    pvReserved: PVOID,
-	 pPromptStruct: ptr CRYPTPROTECT_PROMPTSTRUCT,
-	       dwFlags: DWORD,
-	      pDataOut: ptr DATA_BLOB
-
-;BOOL
-CryptUnprotectData proto WINAPI \
-	       pDataIn: ptr DATA_BLOB,
-	 ppszDataDescr: ptr LPWSTR,
-      pOptionalEntropy: ptr DATA_BLOB,
-	    pvReserved: PVOID,
-	 pPromptStruct: ptr CRYPTPROTECT_PROMPTSTRUCT,
-	       dwFlags: DWORD,
-	      pDataOut: ptr DATA_BLOB
-
+CryptProtectData proto WINAPI :ptr, :LPCWSTR, :ptr, :ptr, :ptr, :DWORD, :ptr
+CryptUnprotectData proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr
 
 ;if (NTDDI_VERSION GE NTDDI_WINLH)
-
-;BOOL
-CryptUpdateProtectedState proto WINAPI \
-	       pOldSid: PSID,
-       pwszOldPassword: LPCWSTR,
-	       dwFlags: DWORD,
-       pdwSuccessCount: ptr DWORD,
-       pdwFailureCount: ptr DWORD
-
+CryptUpdateProtectedState proto WINAPI :PSID, :LPCWSTR, :DWORD, :ptr, :ptr
 ;endif
 
 CRYPTPROTECTMEMORY_BLOCK_SIZE equ 16
@@ -5524,84 +4232,29 @@ CRYPTPROTECTMEMORY_SAME_PROCESS equ 0x00
 CRYPTPROTECTMEMORY_CROSS_PROCESS equ 0x01
 CRYPTPROTECTMEMORY_SAME_LOGON equ 0x02
 
-;BOOL
-CryptProtectMemory proto WINAPI \
-	       pDataIn: LPVOID,
-	      cbDataIn: DWORD,
-	       dwFlags: DWORD
-
-;BOOL
-CryptUnprotectMemory proto WINAPI \
-	       pDataIn: LPVOID,
-	      cbDataIn: DWORD,
-	       dwFlags: DWORD
+CryptProtectMemory proto WINAPI :ptr, :DWORD, :DWORD
+CryptUnprotectMemory proto WINAPI :ptr, :DWORD, :DWORD
 
 HCRYPTPROV_OR_NCRYPT_KEY_HANDLE typedef ULONG_PTR
 
-;PCCERT_CONTEXT
-CertCreateSelfSignCertificate proto WINAPI \
- hCryptProvOrNCryptKey: HCRYPTPROV_OR_NCRYPT_KEY_HANDLE,
-    pSubjectIssuerBlob: PCERT_NAME_BLOB,
-	       dwFlags: DWORD,
-	  pKeyProvInfo: PCRYPT_KEY_PROV_INFO,
-   pSignatureAlgorithm: PCRYPT_ALGORITHM_IDENTIFIER,
-	    pStartTime: ptr SYSTEMTIME,
-	      pEndTime: ptr SYSTEMTIME,
-	   pExtensions: PCERT_EXTENSIONS
-
+CertCreateSelfSignCertificate proto WINAPI :HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
 CERT_CREATE_SELFSIGN_NO_SIGN equ 1
 CERT_CREATE_SELFSIGN_NO_KEY_INFO equ 2
 
-;BOOL
-CryptGetKeyIdentifierProperty proto WINAPI \
-	pKeyIdentifier: ptr CRYPT_HASH_BLOB,
-	      dwPropId: DWORD,
-	       dwFlags: DWORD,
-      pwszComputerName: LPCWSTR,
-	    pvReserved: PVOID,
-		pvData: PVOID,
-	       pcbData: ptr DWORD
-
+CryptGetKeyIdentifierProperty proto WINAPI :ptr, :DWORD, :DWORD, :LPCWSTR, :ptr, :ptr, :ptr
 
 CRYPT_KEYID_MACHINE_FLAG equ 0x00000020
 CRYPT_KEYID_ALLOC_FLAG	equ 0x00008000
 
-;BOOL
-CryptSetKeyIdentifierProperty proto WINAPI \
-	pKeyIdentifier: ptr CRYPT_HASH_BLOB,
-	      dwPropId: DWORD,
-	       dwFlags: DWORD,
-      pwszComputerName: LPCWSTR,
-	    pvReserved: PVOID,
-		pvData: PVOID
-
+CryptSetKeyIdentifierProperty proto WINAPI :ptr, :DWORD, :DWORD, :LPCWSTR, :ptr, :ptr
 
 CRYPT_KEYID_DELETE_FLAG equ 0x00000010
 CRYPT_KEYID_SET_NEW_FLAG equ 0x00002000
 
 CALLBACK(PFN_CRYPT_ENUM_KEYID_PROP, :ptr, :DWORD, :ptr, :ptr, :DWORD, :ptr, :ptr)
 
-;BOOL
-CryptEnumKeyIdentifierProperties proto WINAPI \
-	pKeyIdentifier: ptr CRYPT_HASH_BLOB,
-	      dwPropId: DWORD,
-	       dwFlags: DWORD,
-      pwszComputerName: LPCWSTR,
-	    pvReserved: PVOID,
-		 pvArg: PVOID,
-	       pfnEnum: PFN_CRYPT_ENUM_KEYID_PROP
-
-;BOOL
-CryptCreateKeyIdentifierFromCSP proto WINAPI \
-    dwCertEncodingType: DWORD,
-	  pszPubKeyOID: LPCSTR,
-	  pPubKeyStruc: ptr PUBLICKEYSTRUC,
-	 cbPubKeyStruc: DWORD,
-	       dwFlags: DWORD,
-	    pvReserved: PVOID,
-		pbHash: ptr BYTE,
-	       pcbHash: ptr DWORD
-
+CryptEnumKeyIdentifierProperties proto WINAPI :ptr, :DWORD, :DWORD, :LPCWSTR, :ptr, :ptr, :ptr
+CryptCreateKeyIdentifierFromCSP proto WINAPI :DWORD, :LPCSTR, :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr
 
 CERT_CHAIN_CONFIG_REGPATH equ <L"Software\\Microsoft\\Cryptography\\OID\\EncodingType 0\\CertDllCreateCertificateChainEngine\\Config">
 CERT_CHAIN_MAX_URL_RETRIEVAL_BYTE_COUNT_VALUE_NAME equ <L"MaxUrlRetrievalByteCount">
@@ -5755,19 +4408,9 @@ endif
 CERT_CHAIN_ENGINE_CONFIG ENDS
 PCERT_CHAIN_ENGINE_CONFIG typedef ptr CERT_CHAIN_ENGINE_CONFIG
 
-;BOOL
-CertCreateCertificateChainEngine proto WINAPI \
-	       pConfig: PCERT_CHAIN_ENGINE_CONFIG,
-	 phChainEngine: ptr HCERTCHAINENGINE
-
-;VOID
-CertFreeCertificateChainEngine proto WINAPI \
-	  hChainEngine: HCERTCHAINENGINE
-
-;BOOL
-CertResyncCertificateChainEngine proto WINAPI \
-	  hChainEngine: HCERTCHAINENGINE
-
+CertCreateCertificateChainEngine proto WINAPI :PCERT_CHAIN_ENGINE_CONFIG, :ptr
+CertFreeCertificateChainEngine proto WINAPI :HCERTCHAINENGINE
+CertResyncCertificateChainEngine proto WINAPI :HCERTCHAINENGINE
 
 CERT_TRUST_STATUS	STRUC
 dwErrorStatus		dd ?
@@ -5915,25 +4558,9 @@ CERT_CHAIN_TIMESTAMP_TIME equ 0x00000200
 CERT_CHAIN_ENABLE_PEER_TRUST equ 0x00000400
 CERT_CHAIN_DISABLE_MY_PEER_TRUST equ 0x00000800
 
-;BOOL
-CertGetCertificateChain proto WINAPI \
-	  hChainEngine: HCERTCHAINENGINE,
-	  pCertContext: PCCERT_CONTEXT,
-		 pTime: LPFILETIME,
-      hAdditionalStore: HCERTSTORE,
-	    pChainPara: PCERT_CHAIN_PARA,
-	       dwFlags: DWORD,
-	    pvReserved: LPVOID,
-	ppChainContext: ptr PCCERT_CHAIN_CONTEXT
-
-;VOID
-CertFreeCertificateChain proto WINAPI \
-	 pChainContext: PCCERT_CHAIN_CONTEXT
-
-
-;PCCERT_CHAIN_CONTEXT
-CertDuplicateCertificateChain proto WINAPI \
-	 pChainContext: PCCERT_CHAIN_CONTEXT
+CertGetCertificateChain proto WINAPI :HCERTCHAINENGINE, :PCCERT_CONTEXT, :LPFILETIME, :HCERTSTORE, :ptr, :DWORD, :ptr, :ptr
+CertFreeCertificateChain proto WINAPI :PCCERT_CHAIN_CONTEXT
+CertDuplicateCertificateChain proto WINAPI :PCCERT_CHAIN_CONTEXT
 
 CERT_REVOCATION_CHAIN_PARA STRUC
 cbSize			dd ?
@@ -5955,14 +4582,7 @@ pCrlIssuerChain		PCCERT_CHAIN_CONTEXT ?
 CRL_REVOCATION_INFO	ENDS
 PCRL_REVOCATION_INFO	typedef ptr CRL_REVOCATION_INFO
 
-;PCCERT_CHAIN_CONTEXT
-CertFindChainInStore proto WINAPI \
-	    hCertStore: HCERTSTORE,
-    dwCertEncodingType: DWORD,
-	   dwFindFlags: DWORD,
-	    dwFindType: DWORD,
-	    pvFindPara: PVOID,
-     pPrevChainContext: PCCERT_CHAIN_CONTEXT
+CertFindChainInStore proto WINAPI :HCERTSTORE, :DWORD, :DWORD, :DWORD, :ptr, :ptr
 
 CERT_CHAIN_FIND_BY_ISSUER equ 1
 
@@ -6014,11 +4634,7 @@ CERT_CHAIN_POLICY_IGNORE_CTL_NOT_TIME_VALID_FLAG equ 0x00000002
 CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG equ 0x00000004
 CERT_CHAIN_POLICY_IGNORE_INVALID_BASIC_CONSTRAINTS_FLAG equ 0x00000008
 
-CERT_CHAIN_POLICY_IGNORE_ALL_NOT_TIME_VALID_FLAGS equ \
-	CERT_CHAIN_POLICY_IGNORE_NOT_TIME_VALID_FLAG OR \
-	CERT_CHAIN_POLICY_IGNORE_CTL_NOT_TIME_VALID_FLAG OR \
-	CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG
-
+CERT_CHAIN_POLICY_IGNORE_ALL_NOT_TIME_VALID_FLAGS equ (CERT_CHAIN_POLICY_IGNORE_NOT_TIME_VALID_FLAG OR CERT_CHAIN_POLICY_IGNORE_CTL_NOT_TIME_VALID_FLAG OR CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG)
 
 CERT_CHAIN_POLICY_ALLOW_UNKNOWN_CA_FLAG equ 0x00000010
 CERT_CHAIN_POLICY_IGNORE_WRONG_USAGE_FLAG equ 0x00000020
@@ -6030,11 +4646,7 @@ CERT_CHAIN_POLICY_IGNORE_CTL_SIGNER_REV_UNKNOWN_FLAG equ 0x00000200
 CERT_CHAIN_POLICY_IGNORE_CA_REV_UNKNOWN_FLAG equ 0x00000400
 CERT_CHAIN_POLICY_IGNORE_ROOT_REV_UNKNOWN_FLAG equ 0x00000800
 
-CERT_CHAIN_POLICY_IGNORE_ALL_REV_UNKNOWN_FLAGS equ \
-	CERT_CHAIN_POLICY_IGNORE_END_REV_UNKNOWN_FLAG OR \
-	CERT_CHAIN_POLICY_IGNORE_CTL_SIGNER_REV_UNKNOWN_FLAG OR \
-	CERT_CHAIN_POLICY_IGNORE_CA_REV_UNKNOWN_FLAG OR \
-	CERT_CHAIN_POLICY_IGNORE_ROOT_REV_UNKNOWN_FLAG
+CERT_CHAIN_POLICY_IGNORE_ALL_REV_UNKNOWN_FLAGS equ (CERT_CHAIN_POLICY_IGNORE_END_REV_UNKNOWN_FLAG OR CERT_CHAIN_POLICY_IGNORE_CTL_SIGNER_REV_UNKNOWN_FLAG OR CERT_CHAIN_POLICY_IGNORE_CA_REV_UNKNOWN_FLAG OR CERT_CHAIN_POLICY_IGNORE_ROOT_REV_UNKNOWN_FLAG)
 
 CERT_CHAIN_POLICY_ALLOW_TESTROOT_FLAG equ 0x00008000
 CERT_CHAIN_POLICY_TRUST_TESTROOT_FLAG equ 0x00004000
@@ -6042,14 +4654,7 @@ CERT_CHAIN_POLICY_TRUST_TESTROOT_FLAG equ 0x00004000
 CERT_CHAIN_POLICY_IGNORE_NOT_SUPPORTED_CRITICAL_EXT_FLAG equ 0x00002000
 CERT_CHAIN_POLICY_IGNORE_PEER_TRUST_FLAG equ 0x00001000
 
-
-;BOOL
-CertVerifyCertificateChainPolicy proto WINAPI \
-	  pszPolicyOID: LPCSTR,
-	 pChainContext: PCCERT_CHAIN_CONTEXT,
-	   pPolicyPara: PCERT_CHAIN_POLICY_PARA,
-	 pPolicyStatus: PCERT_CHAIN_POLICY_STATUS
-
+CertVerifyCertificateChainPolicy proto WINAPI :LPCSTR, :ptr, :ptr, :ptr
 
 CRYPT_OID_VERIFY_CERTIFICATE_CHAIN_POLICY_FUNC equ <"CertDllVerifyCertificateChainPolicy">
 
@@ -6113,42 +4718,16 @@ dwIssuanceUsageIndex	dd ?
 EV_EXTRA_CERT_CHAIN_POLICY_STATUS ENDS
 PEV_EXTRA_CERT_CHAIN_POLICY_STATUS typedef ptr EV_EXTRA_CERT_CHAIN_POLICY_STATUS
 
-;BOOL
-CryptStringToBinaryA proto WINAPI \
-	     pszString: LPCSTR,
-	     cchString: DWORD,
-	       dwFlags: DWORD,
-	      pbBinary: ptr BYTE,
-	     pcbBinary: ptr DWORD,
-	       pdwSkip: ptr DWORD,
-	      pdwFlags: ptr DWORD
-CryptStringToBinaryW proto WINAPI \
-	     pszString: LPCWSTR,
-	     cchString: DWORD,
-	       dwFlags: DWORD,
-	      pbBinary: ptr BYTE,
-	     pcbBinary: ptr DWORD,
-	       pdwSkip: ptr DWORD,
-	      pdwFlags: ptr DWORD
+CryptStringToBinaryA proto WINAPI :LPCSTR, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
+CryptStringToBinaryW proto WINAPI :LPCWSTR, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
 CryptStringToBinary	equ <CryptStringToBinaryW>
 else
 CryptStringToBinary	equ <CryptStringToBinaryA>
 endif
 
-;BOOL
-CryptBinaryToStringA proto WINAPI \
-	      pbBinary: ptr BYTE,
-	      cbBinary: DWORD,
-	       dwFlags: DWORD,
-	     pszString: LPSTR,
-	    pcchString: ptr DWORD
-CryptBinaryToStringW proto WINAPI \
-	      pbBinary: ptr BYTE,
-	      cbBinary: DWORD,
-	       dwFlags: DWORD,
-	     pszString: LPWSTR,
-	    pcchString: ptr DWORD
+CryptBinaryToStringA proto WINAPI :ptr, :DWORD, :DWORD, :LPSTR, :ptr
+CryptBinaryToStringW proto WINAPI :ptr, :DWORD, :DWORD, :LPWSTR, :ptr
 ifdef _UNICODE
 CryptBinaryToString	equ <CryptBinaryToStringW>
 else
@@ -6188,11 +4767,7 @@ iIterations		SINT ?
 cbSalt			ULONG ?
 CRYPT_PKCS12_PBE_PARAMS ENDS
 
-;HCERTSTORE
-PFXImportCertStore proto WINAPI \
-		  pPFX: ptr CRYPT_DATA_BLOB,
-	    szPassword: LPCWSTR,
-	       dwFlags: DWORD
+PFXImportCertStore proto WINAPI :ptr, :LPCWSTR, :DWORD
 
 CRYPT_USER_KEYSET	equ 0x00001000
 PKCS12_PREFER_CNG_KSP	equ 0x00000100
@@ -6201,23 +4776,9 @@ PKCS12_ALLOW_OVERWRITE_KEY equ 0x00004000
 PKCS12_NO_PERSIST_KEY	equ 0x00008000
 PKCS12_IMPORT_RESERVED_MASK equ 0xffff0000
 
-;BOOL
-PFXIsPFXBlob proto WINAPI \
-		  pPFX: ptr CRYPT_DATA_BLOB
-
-;BOOL
-PFXVerifyPassword proto WINAPI \
-		  pPFX: ptr CRYPT_DATA_BLOB,
-	    szPassword: LPCWSTR,
-	       dwFlags: DWORD
-
-;BOOL
-PFXExportCertStoreEx proto WINAPI \
-		hStore: HCERTSTORE,
-		  pPFX: ptr CRYPT_DATA_BLOB,
-	    szPassword: LPCWSTR,
-	    pvReserved: PVOID,
-	       dwFlags: DWORD
+PFXIsPFXBlob proto WINAPI :ptr
+PFXVerifyPassword proto WINAPI :ptr, :LPCWSTR, :DWORD
+PFXExportCertStoreEx proto WINAPI :HCERTSTORE, :ptr, :LPCWSTR, :ptr, :DWORD
 
 REPORT_NO_PRIVATE_KEY	equ 0x0001
 REPORT_NOT_ABLE_TO_EXPORT_PRIVATE_KEY equ 0x0002
@@ -6225,31 +4786,15 @@ EXPORT_PRIVATE_KEYS	equ 0x0004
 PKCS12_INCLUDE_EXTENDED_PROPERTIES equ 0x0010
 PKCS12_EXPORT_RESERVED_MASK equ 0xffff0000
 
-;BOOL
-PFXExportCertStore proto WINAPI \
-		hStore: HCERTSTORE,
-		  pPFX: ptr CRYPT_DATA_BLOB,
-	    szPassword: LPCWSTR,
-	       dwFlags: DWORD
+PFXExportCertStore proto WINAPI :HCERTSTORE, :ptr, :LPCWSTR, :DWORD
 
 if 0;(NTDDI_VERSION GE NTDDI_WINLH)
 
 HCERT_SERVER_OCSP_RESPONSE typedef ptr
 
-;HCERT_SERVER_OCSP_RESPONSE
-CertOpenServerOcspResponse proto WINAPI \
-	 pChainContext: PCCERT_CHAIN_CONTEXT,
-	       dwFlags: DWORD,
-	    pvReserved: LPVOID
-
-;VOID
-CertAddRefServerOcspResponse proto WINAPI \
-   hServerOcspResponse: HCERT_SERVER_OCSP_RESPONSE
-
-;VOID
-CertCloseServerOcspResponse proto WINAPI \
-   hServerOcspResponse: HCERT_SERVER_OCSP_RESPONSE,
-	       dwFlags: DWORD
+CertOpenServerOcspResponse proto WINAPI :PCCERT_CHAIN_CONTEXT, :DWORD, :ptr
+CertAddRefServerOcspResponse proto WINAPI :HCERT_SERVER_OCSP_RESPONSE
+CertCloseServerOcspResponse proto WINAPI :HCERT_SERVER_OCSP_RESPONSE, :DWORD
 
 CERT_SERVER_OCSP_RESPONSE_CONTEXT STRUC
 cbSize			dd ?
@@ -6258,35 +4803,13 @@ cbEncodedOcspResponse	dd ?
 CERT_SERVER_OCSP_RESPONSE_CONTEXT ENDS
 PCCERT_SERVER_OCSP_RESPONSE_CONTEXT typedef ptr CERT_SERVER_OCSP_RESPONSE_CONTEXT
 
-;PCCERT_SERVER_OCSP_RESPONSE_CONTEXT
-CertGetServerOcspResponseContext proto WINAPI \
-   hServerOcspResponse: HCERT_SERVER_OCSP_RESPONSE,
-	       dwFlags: DWORD,
-	    pvReserved: LPVOID
-
-;VOID
-CertAddRefServerOcspResponseContext proto WINAPI \
-pServerOcspResponseContext: PCCERT_SERVER_OCSP_RESPONSE_CONTEXT
-
-;VOID
-CertFreeServerOcspResponseContext proto WINAPI \
-pServerOcspResponseContext: PCCERT_SERVER_OCSP_RESPONSE_CONTEXT
+CertGetServerOcspResponseContext proto WINAPI :HCERT_SERVER_OCSP_RESPONSE, :DWORD, :ptr
+CertAddRefServerOcspResponseContext proto WINAPI :PCCERT_SERVER_OCSP_RESPONSE_CONTEXT
+CertFreeServerOcspResponseContext proto WINAPI :PCCERT_SERVER_OCSP_RESPONSE_CONTEXT
 
 endif
 
-;BOOL
-CertRetrieveLogoOrBiometricInfo proto WINAPI \
-	  pCertContext: PCCERT_CONTEXT,
-lpszLogoOrBiometricType: LPCSTR,
-      dwRetrievalFlags: DWORD,
-	     dwTimeout: DWORD,
-	       dwFlags: DWORD,
-	    pvReserved: PVOID,
-	       ppbData: ptr BYTE,
-	       pcbData: ptr DWORD,
-	 ppwszMimeType: ptr LPWSTR
-
-
+CertRetrieveLogoOrBiometricInfo proto WINAPI :PCCERT_CONTEXT, :LPCSTR, :DWORD, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
 
 CERT_RETRIEVE_ISSUER_LOGO equ 1
 CERT_RETRIEVE_SUBJECT_LOGO equ 2
@@ -6343,21 +4866,8 @@ CERT_SELECT_HAS_KEY_FOR_KEY_EXCHANGE equ 0x00000020
 CERT_SELECT_HARDWARE_ONLY equ 0x00000040
 CERT_SELECT_ALLOW_DUPLICATES equ 0x00000080
 
-;BOOL
-CertSelectCertificateChains proto WINAPI \
-     pSelectionContext: LPCGUID,
-	       dwFlags: DWORD,
-      pChainParameters: PCCERT_SELECT_CHAIN_PARA,
-	     cCriteria: DWORD,
-	   rgpCriteria: PCCERT_SELECT_CRITERIA,
-		hStore: HCERTSTORE,
-	   pcSelection: PDWORD,
-  pprgpSelection: ptr ptr PCCERT_CHAIN_CONTEXT
-
-;VOID
-CertFreeCertificateChainList proto WINAPI \
-	 prgpSelection: ptr PCCERT_CHAIN_CONTEXT
-
+CertSelectCertificateChains proto WINAPI :LPCGUID, :DWORD, :ptr, :DWORD, :ptr, :HCERTSTORE, :PDWORD, :ptr
+CertFreeCertificateChainList proto WINAPI :ptr
 
 endif
 
@@ -6432,7 +4942,6 @@ pTimeStamp		PCRYPT_TIMESTAMP_INFO ?
 CRYPT_TIMESTAMP_CONTEXT ENDS
 PCRYPT_TIMESTAMP_CONTEXT typedef ptr CRYPT_TIMESTAMP_CONTEXT
 
-
 CRYPT_TIMESTAMP_PARA	STRUC
 pszTSAPolicyId		LPCSTR ?
 fRequestCerts		BOOL ?
@@ -6442,35 +4951,13 @@ rgExtension		PCERT_EXTENSION ?
 CRYPT_TIMESTAMP_PARA	ENDS
 PCRYPT_TIMESTAMP_PARA	typedef ptr CRYPT_TIMESTAMP_PARA
 
-;BOOL
-CryptRetrieveTimeStamp proto WINAPI \
-		wszUrl: LPCWSTR,
-      dwRetrievalFlags: DWORD,
-	     dwTimeout: DWORD,
-	     pszHashId: LPCSTR,
-		 pPara: ptr CRYPT_TIMESTAMP_PARA,
-		pbData: ptr BYTE,
-		cbData: DWORD,
-	   ppTsContext: ptr PCRYPT_TIMESTAMP_CONTEXT,
-	    ppTsSigner: ptr PCCERT_CONTEXT,
-	       phStore: ptr HCERTSTORE
-
+CryptRetrieveTimeStamp proto WINAPI :LPCWSTR, :DWORD, :DWORD, :LPCSTR, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
 
 TIMESTAMP_DONT_HASH_DATA equ 0x00000001
 TIMESTAMP_VERIFY_CONTEXT_SIGNATURE equ 0x00000020
 TIMESTAMP_NO_AUTH_RETRIEVAL equ 0x00020000
 
-;BOOL
-CryptVerifyTimeStampSignature proto WINAPI \
-       pbTSContentInfo: ptr BYTE,
-       cbTSContentInfo: DWORD,
-		pbData: ptr BYTE,
-		cbData: DWORD,
-      hAdditionalStore: HCERTSTORE,
-	   ppTsContext: ptr PCRYPT_TIMESTAMP_CONTEXT,
-	    ppTsSigner: ptr PCCERT_CONTEXT,
-	       phStore: ptr HCERTSTORE
-
+CryptVerifyTimeStampSignature proto WINAPI :ptr, :DWORD, :ptr, :DWORD, :HCERTSTORE, :ptr, :ptr, :ptr
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
@@ -6489,13 +4976,8 @@ CRYPT_OBJECT_LOCATOR_RELEASE_PROCESS_EXIT      equ 3
 CRYPT_OBJECT_LOCATOR_RELEASE_DLL_UNLOAD	       equ 4
 
 
-CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FLUSH,\
-    :LPVOID, :ptr PCERT_NAME_BLOB, :DWORD)
-
-CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_GET,\
-    :LPVOID, :PCRYPT_DATA_BLOB, :DWORD, :PCERT_NAME_BLOB,\
-    :ptr PBYTE, :ptr DWORD, :ptr PCWSTR, :ptr PCRYPT_DATA_BLOB)
-
+CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FLUSH, :ptr, :ptr, :DWORD)
+CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_GET, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr)
 CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_RELEASE, :DWORD, :LPVOID)
 CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE_PASSWORD, :LPVOID, :PCWSTR)
 CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE, :LPVOID, :PBYTE)
@@ -6511,12 +4993,7 @@ pfnFreeIdentifier	PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE_IDENTIFIER ?
 CRYPT_OBJECT_LOCATOR_PROVIDER_TABLE ENDS
 PCRYPT_OBJECT_LOCATOR_PROVIDER_TABLE typedef ptr CRYPT_OBJECT_LOCATOR_PROVIDER_TABLE
 
-CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_INITIALIZE,\
-    :PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FLUSH,\
-    :LPVOID,\
-    :ptr DWORD,\
-    :ptr PCRYPT_OBJECT_LOCATOR_PROVIDER_TABLE,\
-    :ptr ptr)
+CALLBACK(PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_INITIALIZE, :ptr, :ptr, :ptr, :ptr, :ptr)
 
 endif ;; (NTDDI_VERSION GE NTDDI_WIN8)
 

@@ -30,38 +30,10 @@ SERVICE_INFO_2		ENDS
 PSERVICE_INFO_2		typedef ptr SERVICE_INFO_2
 LPSERVICE_INFO_2	typedef ptr SERVICE_INFO_2
 
-;NET_API_STATUS
-NetServiceControl proto WINAPI \
-	    servername: LPCWSTR,
-	       service: LPCWSTR,
-		opcode: DWORD,
-		   arg: DWORD,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetServiceEnum proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	 resume_handle: LPDWORD
-
-;NET_API_STATUS
-NetServiceGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	       service: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetServiceInstall proto WINAPI \
-	    servername: LPCWSTR,
-	       service: LPCWSTR,
-		  argc: DWORD,
-		  argv: LPCWSTR,
-		bufptr: ptr LPBYTE
+NetServiceControl proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :ptr
+NetServiceEnum proto WINAPI :LPCWSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetServiceGetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr
+NetServiceInstall proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPCWSTR, :ptr
 
 SERVICE_INSTALL_STATE	equ 0x03
 SERVICE_UNINSTALLED	equ 0x00

@@ -49,20 +49,8 @@ REPL_INFO_1003		ENDS
 PREPL_INFO_1003		typedef ptr REPL_INFO_1003
 LPREPL_INFO_1003	typedef ptr REPL_INFO_1003
 
-
-;NET_API_STATUS
-NetReplGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetReplSetInfo proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
+NetReplGetInfo proto WINAPI :LPCWSTR, :DWORD, :ptr
+NetReplSetInfo proto WINAPI :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
 
 REPL_INTEGRITY_FILE	equ 1
 REPL_INTEGRITY_TREE	equ 2
@@ -72,7 +60,6 @@ REPL_EXTENT_TREE	equ 2
 
 REPL_EXPORT_INTEGRITY_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + 0)
 REPL_EXPORT_EXTENT_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + 1)
-
 
 REPL_EDIR_INFO_0	STRUC
 rped0_dirname		LPWSTR ?
@@ -110,56 +97,13 @@ REPL_EDIR_INFO_1001	ENDS
 PREPL_EDIR_INFO_1001	typedef ptr REPL_EDIR_INFO_1001
 LPREPL_EDIR_INFO_1001	typedef ptr REPL_EDIR_INFO_1001
 
-
-;NET_API_STATUS
-NetReplExportDirAdd proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetReplExportDirDel proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR
-
-;NET_API_STATUS
-NetReplExportDirEnum proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  resumehandle: LPDWORD
-
-;NET_API_STATUS
-NetReplExportDirGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetReplExportDirSetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetReplExportDirLock proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR
-
-
-;NET_API_STATUS
-NetReplExportDirUnlock proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR,
-	   unlockforce: DWORD
-
+NetReplExportDirAdd proto WINAPI :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetReplExportDirDel proto WINAPI :LPCWSTR, :LPCWSTR
+NetReplExportDirEnum proto WINAPI :LPCWSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetReplExportDirGetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr
+NetReplExportDirSetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetReplExportDirLock proto WINAPI :LPCWSTR, :LPCWSTR
+NetReplExportDirUnlock proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD
 
 REPL_UNLOCK_NOFORCE	equ 0
 REPL_UNLOCK_FORCE	equ 1
@@ -182,47 +126,12 @@ REPL_IDIR_INFO_1	ENDS
 PREPL_IDIR_INFO_1	typedef ptr REPL_IDIR_INFO_1
 LPREPL_IDIR_INFO_1	typedef ptr REPL_IDIR_INFO_1
 
-
-;NET_API_STATUS
-NetReplImportDirAdd proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		   buf: LPBYTE,
-	      parm_err: LPDWORD
-
-;NET_API_STATUS
-NetReplImportDirDel proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR
-
-;NET_API_STATUS
-NetReplImportDirEnum proto WINAPI \
-	    servername: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE,
-	    prefmaxlen: DWORD,
-	   entriesread: LPDWORD,
-	  totalentries: LPDWORD,
-	  resumehandle: LPDWORD
-
-;NET_API_STATUS
-NetReplImportDirGetInfo proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR,
-		 level: DWORD,
-		bufptr: ptr LPBYTE
-
-;NET_API_STATUS
-NetReplImportDirLock proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR
-
-;NET_API_STATUS
-NetReplImportDirUnlock proto WINAPI \
-	    servername: LPCWSTR,
-	       dirname: LPCWSTR,
-	   unlockforce: DWORD
-
+NetReplImportDirAdd proto WINAPI :LPCWSTR, :DWORD, :LPBYTE, :LPDWORD
+NetReplImportDirDel proto WINAPI :LPCWSTR, :LPCWSTR
+NetReplImportDirEnum proto WINAPI :LPCWSTR, :DWORD, :ptr, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD
+NetReplImportDirGetInfo proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD, :ptr
+NetReplImportDirLock proto WINAPI :LPCWSTR, :LPCWSTR
+NetReplImportDirUnlock proto WINAPI :LPCWSTR, :LPCWSTR, :DWORD
 
 REPL_STATE_OK		equ 0
 REPL_STATE_NO_MASTER	equ 1

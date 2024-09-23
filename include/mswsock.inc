@@ -42,12 +42,8 @@ SIO_UDP_NETRESET	equ _WSAIOW(IOC_VENDOR,15)
 ifndef SOCKET
 SOCKET			typedef UINT_PTR
 endif
-;int
-WSARecvEx proto WINAPI \
-		     s: SOCKET,
-		   buf: LPSTR,
-		   len: SINT,
-		 flags: ptr SINT
+
+WSARecvEx proto WINAPI :SOCKET, :LPSTR, :SINT, :ptr SINT
 
 TRANSMIT_FILE_BUFFERS	STRUC
 Head			LPVOID ?
@@ -62,38 +58,9 @@ TF_DISCONNECT		equ 0x01
 TF_REUSE_SOCKET		equ 0x02
 TF_WRITE_BEHIND		equ 0x04
 
-;BOOL
-TransmitFile proto WINAPI \
-	       hSocket: SOCKET,
-		 hFile: HANDLE,
- nNumberOfBytesToWrite: DWORD,
- nNumberOfBytesPerSend: DWORD,
-	  lpOverlapped: LPOVERLAPPED,
-     lpTransmitBuffers: LPTRANSMIT_FILE_BUFFERS,
-	    dwReserved: DWORD
-
-;BOOL
-AcceptEx proto WINAPI \
-	 sListenSocket: SOCKET,
-	 sAcceptSocket: SOCKET,
-	lpOutputBuffer: PVOID,
-   dwReceiveDataLength: DWORD,
-  dwLocalAddressLength: DWORD,
- dwRemoteAddressLength: DWORD,
-     lpdwBytesReceived: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-
-;VOID
-GetAcceptExSockaddrs proto WINAPI \
-	lpOutputBuffer: PVOID,
-   dwReceiveDataLength: DWORD,
-  dwLocalAddressLength: DWORD,
- dwRemoteAddressLength: DWORD,
-	 LocalSockaddr: ptr sockaddr,
-   LocalSockaddrLength: LPINT,
-	RemoteSockaddr: ptr sockaddr,
-  RemoteSockaddrLength: LPINT
-
+TransmitFile proto WINAPI :SOCKET, :HANDLE, :DWORD, :DWORD, :LPOVERLAPPED, :LPTRANSMIT_FILE_BUFFERS, :DWORD
+AcceptEx proto WINAPI :SOCKET, :SOCKET, :ptr, :DWORD, :DWORD, :DWORD, :LPDWORD, :LPOVERLAPPED
+GetAcceptExSockaddrs proto WINAPI :ptr, :DWORD, :DWORD, :DWORD, :ptr sockaddr, :LPINT, :ptr sockaddr, :LPINT
 
 CALLBACK(LPFN_TRANSMITFILE, :SOCKET, :HANDLE, :DWORD, :DWORD, :LPOVERLAPPED, :LPTRANSMIT_FILE_BUFFERS, :DWORD)
 define WSAID_TRANSMITFILE <{0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
@@ -103,4 +70,3 @@ CALLBACK(LPFN_GETACCEPTEXSOCKADDRS, :PVOID, :DWORD, :DWORD, :DWORD, :ptr, :LPINT
 define WSAID_GETACCEPTEXSOCKADDRS <{0xb5367df2,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
 
 endif
-

@@ -23,280 +23,52 @@ endif
 gluErrorString proto WINAPI :GLenum
 gluErrorUnicodeStringEXT proto WINAPI :GLenum
 gluGetString proto WINAPI :GLenum
-
-;void
-gluOrtho2D proto WINAPI \
-		  left: GLdouble,
-		 right: GLdouble,
-		bottom: GLdouble,
-		   top: GLdouble
-
-
-;void
-gluPerspective proto WINAPI \
-		  fovy: GLdouble,
-		aspect: GLdouble,
-		 zNear: GLdouble,
-		  zFar: GLdouble
-
-
-;void
-gluPickMatrix proto WINAPI \
-		     x: GLdouble,
-		     y: GLdouble,
-		 width: GLdouble,
-		height: GLdouble,
-	      viewport: ptr GLint
-
-
-;void
-gluLookAt proto WINAPI \
-		  eyex: GLdouble,
-		  eyey: GLdouble,
-		  eyez: GLdouble,
-	       centerx: GLdouble,
-	       centery: GLdouble,
-	       centerz: GLdouble,
-		   upx: GLdouble,
-		   upy: GLdouble,
-		   upz: GLdouble
-
-
-;int
-gluProject proto WINAPI \
-		  objx: GLdouble,
-		  objy: GLdouble,
-		  objz: GLdouble,
-	   modelMatrix: ptr GLdouble,
-	    projMatrix: ptr GLdouble,
-	      viewport: ptr GLint,
-		  winx: ptr GLdouble,
-		  winy: ptr GLdouble,
-		  winz: ptr GLdouble
-
-gluUnProject proto WINAPI \
-		  winx: GLdouble,
-		  winy: GLdouble,
-		  winz: GLdouble,
-	   modelMatrix: ptr GLdouble,
-	    projMatrix: ptr GLdouble,
-	      viewport: ptr GLint,
-		  objx: ptr GLdouble,
-		  objy: ptr GLdouble,
-		  objz: ptr GLdouble
-
-gluScaleImage proto WINAPI \
-		format: GLenum,
-	       widthin: GLint,
-	      heightin: GLint,
-		typein: GLenum,
-		datain: ptr void,
-	      widthout: GLint,
-	     heightout: GLint,
-	       typeout: GLenum,
-	       dataout: ptr
-
-gluBuild1DMipmaps proto WINAPI \
-		target: GLenum,
-	    components: GLint,
-		 width: GLint,
-		format: GLenum,
-		  type: GLenum,
-		 _data: ptr
-
-gluBuild2DMipmaps proto WINAPI \
-		target: GLenum,
-	    components: GLint,
-		 width: GLint,
-		height: GLint,
-		format: GLenum,
-		  type: GLenum,
-		 _data: ptr
-
-;GLUnurbs		typedef GLUnurbs
-;GLUquadric		typedef GLUquadric
-;GLUtesselator		typedef GLUtesselator
-
-;GLUnurbsObj		typedef GLUnurbs
-;GLUquadricObj		typedef GLUquadric
-;GLUtesselatorObj	typedef GLUtesselator
-;GLUtriangulatorObj	typedef GLUtesselator
-
-
+gluOrtho2D proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble
+gluPerspective proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble
+gluPickMatrix proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble, :ptr
+gluLookAt proto WINAPI :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble, :GLdouble
+gluProject proto WINAPI :GLdouble, :GLdouble, :GLdouble, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+gluUnProject proto WINAPI :GLdouble, :GLdouble, :GLdouble, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+gluScaleImage proto WINAPI :GLenum, :GLint, :GLint, :GLenum, :ptr, :GLint, :GLint, :GLenum, :ptr
+gluBuild1DMipmaps proto WINAPI :GLenum, :GLint, :GLint, :GLenum, :GLenum, :ptr
+gluBuild2DMipmaps proto WINAPI :GLenum, :GLint, :GLint, :GLint, :GLenum, :GLenum, :ptr
 gluNewQuadric proto WINAPI
-;void
-gluDeleteQuadric proto WINAPI \
-		 state: ptr GLUquadric
-
-gluQuadricNormals proto WINAPI \
-	    quadObject: ptr GLUquadric,
-	       normals: GLenum
-
-gluQuadricTexture proto WINAPI \
-	    quadObject: ptr GLUquadric,
-	 textureCoords: GLboolean
-
-gluQuadricOrientation proto WINAPI \
-	    quadObject: ptr GLUquadric,
-	   orientation: GLenum
-
-gluQuadricDrawStyle proto WINAPI \
-	    quadObject: ptr GLUquadric,
-	     drawStyle: GLenum
-
-gluCylinder proto WINAPI \
-		  qobj: ptr GLUquadric,
-	    baseRadius: GLdouble,
-	     topRadius: GLdouble,
-		height: GLdouble,
-		slices: GLint,
-		stacks: GLint
-
-gluDisk proto WINAPI \
-		  qobj: ptr GLUquadric,
-	   innerRadius: GLdouble,
-	   outerRadius: GLdouble,
-		slices: GLint,
-		 loops: GLint
-
-gluPartialDisk proto WINAPI \
-		  qobj: ptr GLUquadric,
-	   innerRadius: GLdouble,
-	   outerRadius: GLdouble,
-		slices: GLint,
-		 loops: GLint,
-	    startAngle: GLdouble,
-	    sweepAngle: GLdouble
-
-gluSphere proto WINAPI \
-		  qobj: ptr GLUquadric,
-		radius: GLdouble,
-		slices: GLint,
-		stacks: GLint
-
-gluQuadricCallback proto WINAPI \
-		  qobj: ptr GLUquadric,
-		 which: GLenum,
-		    fn: ptr
-
+gluDeleteQuadric proto WINAPI :ptr
+gluQuadricNormals proto WINAPI :ptr, :GLenum
+gluQuadricTexture proto WINAPI :ptr, :GLboolean
+gluQuadricOrientation proto WINAPI :ptr, :GLenum
+gluQuadricDrawStyle proto WINAPI :ptr, :GLenum
+gluCylinder proto WINAPI :ptr, :GLdouble, :GLdouble, :GLdouble, :GLint, :GLint
+gluDisk proto WINAPI :ptr, :GLdouble, :GLdouble, :GLint, :GLint
+gluPartialDisk proto WINAPI :ptr, :GLdouble, :GLdouble, :GLint, :GLint, :GLdouble, :GLdouble
+gluSphere proto WINAPI :ptr, :GLdouble, :GLint, :GLint
+gluQuadricCallback proto WINAPI :ptr, :GLenum, :ptr
 gluNewTess proto WINAPI
-
-gluDeleteTess proto WINAPI \
-		  tess: ptr GLUtesselator
-
-
-gluTessBeginPolygon proto WINAPI \
-		  tess: ptr GLUtesselator,
-	  polygon_data: ptr
-
-gluTessBeginContour proto WINAPI \
-		  tess: ptr GLUtesselator
-
-gluTessVertex proto WINAPI \
-		  tess: ptr GLUtesselator,
-		coords: ptr GLdouble,
-		 _data: ptr
-
-gluTessEndContour proto WINAPI \
-		  tess: ptr GLUtesselator
-
-gluTessEndPolygon proto WINAPI \
-		  tess: ptr GLUtesselator
-
-gluTessProperty proto WINAPI \
-		  tess: ptr GLUtesselator,
-		 which: GLenum,
-		 value: GLdouble
-
-gluTessNormal proto WINAPI \
-		  tess: ptr GLUtesselator,
-		     x: GLdouble,
-		     y: GLdouble,
-		     z: GLdouble
-
-gluTessCallback proto WINAPI \
-		  tess: ptr GLUtesselator,
-		 which: GLenum,
-		      : ptr
-
-gluGetTessProperty proto WINAPI \
-		  tess: ptr GLUtesselator,
-		 which: GLenum,
-		 value: ptr GLdouble
-
+gluDeleteTess proto WINAPI :ptr
+gluTessBeginPolygon proto WINAPI :ptr, :ptr
+gluTessBeginContour proto WINAPI :ptr
+gluTessVertex proto WINAPI :ptr, :ptr, :ptr
+gluTessEndContour proto WINAPI :ptr
+gluTessEndPolygon proto WINAPI :ptr
+gluTessProperty proto WINAPI :ptr, :GLenum, :GLdouble
+gluTessNormal proto WINAPI :ptr, :GLdouble, :GLdouble, :GLdouble
+gluTessCallback proto WINAPI :ptr, :GLenum, :ptr
+gluGetTessProperty proto WINAPI :ptr, :GLenum, :ptr
 gluNewNurbsRenderer proto WINAPI
-
-gluDeleteNurbsRenderer proto WINAPI \
-		  nobj: ptr GLUnurbs
-
-gluBeginSurface proto WINAPI \
-		  nobj: ptr GLUnurbs
-
-gluBeginCurve proto WINAPI \
-		  nobj: ptr GLUnurbs
-
-gluEndCurve proto WINAPI \
-		  nobj: ptr GLUnurbs
-
-gluEndSurface proto WINAPI \
-		  nobj: ptr GLUnurbs
-
-gluBeginTrim proto WINAPI \
-		  nobj: ptr GLUnurbs
-
-gluEndTrim proto WINAPI \
-		  nobj: ptr GLUnurbs
-
-gluPwlCurve proto WINAPI \
-		  nobj: ptr GLUnurbs,
-		 count: GLint,
-		 array: ptr GLfloat,
-		stride: GLint,
-		  type: GLenum
-
-gluNurbsCurve proto WINAPI \
-		  nobj: ptr GLUnurbs,
-		nknots: GLint,
-		  knot: ptr GLfloat,
-		stride: GLint,
-	      ctlarray: ptr GLfloat,
-		 order: GLint,
-		  type: GLenum
-
-gluNurbsSurface proto WINAPI \
-		  nobj: ptr GLUnurbs,
-	   sknot_count: GLint,
-		 sknot: ptr float,
-	   tknot_count: GLint,
-		 tknot: ptr GLfloat,
-	      s_stride: GLint,
-	      t_stride: GLint,
-	      ctlarray: ptr GLfloat,
-		sorder: GLint,
-		torder: GLint,
-		  type: GLenum
-
-gluLoadSamplingMatrices proto WINAPI \
-		  nobj: ptr GLUnurbs,
-	   modelMatrix: ptr GLfloat,
-	    projMatrix: ptr GLfloat,
-	      viewport: ptr GLint
-
-gluNurbsProperty proto WINAPI \
-		  nobj: ptr GLUnurbs,
-	      property: GLenum,
-		 value: GLfloat
-
-gluGetNurbsProperty proto WINAPI \
-		  nobj: ptr GLUnurbs,
-	      property: GLenum,
-		 value: ptr GLfloat
-
-gluNurbsCallback proto WINAPI \
-		  nobj: ptr GLUnurbs,
-		 which: GLenum,
-		      : ptr
-
+gluDeleteNurbsRenderer proto WINAPI :ptr
+gluBeginSurface proto WINAPI :ptr
+gluBeginCurve proto WINAPI :ptr
+gluEndCurve proto WINAPI :ptr
+gluEndSurface proto WINAPI :ptr
+gluBeginTrim proto WINAPI :ptr
+gluEndTrim proto WINAPI :ptr
+gluPwlCurve proto WINAPI :ptr, :GLint, :ptr, :GLint, :GLenum
+gluNurbsCurve proto WINAPI :ptr, :GLint, :ptr, :GLint, :ptr, :GLint, :GLenum
+gluNurbsSurface proto WINAPI :ptr, :GLint, :ptr, :GLint, :ptr, :GLint, :GLint, :ptr, :GLint, :GLint, :GLenum
+gluLoadSamplingMatrices proto WINAPI :ptr, :ptr, :ptr, :ptr
+gluNurbsProperty proto WINAPI :ptr, :GLenum, :GLfloat
+gluGetNurbsProperty proto WINAPI :ptr, :GLenum, :ptr
+gluNurbsCallback proto WINAPI :ptr, :GLenum, :ptr
 
 CALLBACK(GLUquadricErrorProc, :GLenum)
 
@@ -439,18 +211,9 @@ GLU_NURBS_ERROR35	equ 100285
 GLU_NURBS_ERROR36	equ 100286
 GLU_NURBS_ERROR37	equ 100287
 
-;void
-gluBeginPolygon proto WINAPI \
-		  tess: ptr GLUtesselator
-
-
-gluNextContour proto WINAPI \
-		  tess: ptr GLUtesselator,
-		  type: GLenum
-
-gluEndPolygon proto WINAPI \
-		  tess: ptr GLUtesselator
-
+gluBeginPolygon proto WINAPI :ptr
+gluNextContour proto WINAPI :ptr, :GLenum
+gluEndPolygon proto WINAPI :ptr
 
 GLU_CW			equ 100120
 GLU_CCW			equ 100121

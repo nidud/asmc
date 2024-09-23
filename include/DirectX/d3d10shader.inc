@@ -162,9 +162,10 @@ D3D10_INCLUDE_SYSTEM	equ 1
 D3D10_INCLUDE_FORCE_DWORD equ 0x7fffffff
 
 .comdef ID3D10Include
-    Open	proc :D3D10_INCLUDE_TYPE, :LPCSTR, :PVOID, :PVOID, :LPUINT
-    Close	proc :PVOID
-    .ends
+
+    Open	proc :D3D10_INCLUDE_TYPE, :LPCSTR, :ptr, :ptr, :LPUINT
+    Close	proc :ptr
+   .ends
 
 D3D10_SHADER_DESC	STRUC
 Version			UINT ?
@@ -246,8 +247,6 @@ Mask			db ?
 ReadWriteMask		db ?
 D3D10_SIGNATURE_PARAMETER_DESC ENDS
 
-
-;; {C530AD7D-9B16-4395-A979-BA2ECFF83ADD}
 DEFINE_GUID(IID_ID3D10ShaderReflectionType, 0xc530ad7d, 0x9b16, 0x4395, 0xa9, 0x79, 0xba, 0x2e, 0xcf, 0xf8, 0x3a, 0xdd)
 
 .comdef ID3D10ShaderReflectionType
@@ -256,20 +255,16 @@ DEFINE_GUID(IID_ID3D10ShaderReflectionType, 0xc530ad7d, 0x9b16, 0x4395, 0xa9, 0x
     GetMemberTypeByIndex proc :UINT
     GetMemberTypeByName proc :LPCSTR
     GetMemberTypeName	proc :UINT
+   .ends
 
-    .ends
-
-;; {1BF63C95-2650-405d-99C1-3636BD1DA0A1}
 DEFINE_GUID(IID_ID3D10ShaderReflectionVariable, 0x1bf63c95, 0x2650, 0x405d, 0x99, 0xc1, 0x36, 0x36, 0xbd, 0x1d, 0xa0, 0xa1);
 
 .comdef ID3D10ShaderReflectionVariable
 
     GetDesc		proc :ptr D3D10_SHADER_VARIABLE_DESC
     GetType		proc
+   .ends
 
-    .ends
-
-;; {66C66A94-DDDD-4b62-A66A-F0DA33C2B4D0}
 DEFINE_GUID(IID_ID3D10ShaderReflectionConstantBuffer,0x66c66a94, 0xdddd, 0x4b62, 0xa6, 0x6a, 0xf0, 0xda, 0x33, 0xc2, 0xb4, 0xd0);
 
 .comdef ID3D10ShaderReflectionConstantBuffer
@@ -277,11 +272,8 @@ DEFINE_GUID(IID_ID3D10ShaderReflectionConstantBuffer,0x66c66a94, 0xdddd, 0x4b62,
     GetDesc		proc :ptr D3D10_SHADER_BUFFER_DESC
     GetVariableByIndex	proc :UINT
     GetVariableByName	proc :LPCSTR
+   .ends
 
-    .ends
-
-
-;; {D40E20B6-F8F7-42ad-AB20-4BAF8F15DFAA}
 DEFINE_GUID(IID_ID3D10ShaderReflection,0xd40e20b6, 0xf8f7, 0x42ad, 0xab, 0x20, 0x4b, 0xaf, 0x8f, 0x15, 0xdf, 0xaa);
 
 .comdef ID3D10ShaderReflection : public IUnknown
@@ -292,83 +284,18 @@ DEFINE_GUID(IID_ID3D10ShaderReflection,0xd40e20b6, 0xf8f7, 0x42ad, 0xab, 0x20, 0
     GetResourceBindingDesc proc :UINT, :ptr D3D10_SHADER_INPUT_BIND_DESC
     GetInputParameterDesc proc :UINT, :ptr D3D10_SIGNATURE_PARAMETER_DESC
     GetOutputParameterDesc proc :UINT, :ptr D3D10_SIGNATURE_PARAMETER_DESC
+   .ends
 
-    .ends
-
-
-;HRESULT
-D3D10CompileShader proto WINAPI \
-	      pSrcData: LPCSTR,
-	    SrcDataLen: SIZE_T,
-	     pFileName: LPCSTR,
-	      pDefines: ptr D3D10_SHADER_MACRO,
-	      pInclude: ptr D3D10INCLUDE,
-	 pFunctionName: LPCSTR,
-	      pProfile: LPCSTR,
-		 Flags: UINT,
-	      ppShader: ptr ptr ID3D10Blob,
-	   ppErrorMsgs: ptr ptr ID3D10Blob
-
-
-;HRESULT
-D3D10DisassembleShader proto WINAPI \
-	       pShader: ptr,
-	BytecodeLength: SIZE_T,
-       EnableColorCode: BOOL,
-	     pComments: LPCSTR,
-	 ppDisassembly: ptr ptr ID3D10Blob
-
-
-;LPCSTR
-D3D10GetPixelShaderProfile proto WINAPI \
-	       pDevice: ptr ID3D10Device
-
-D3D10GetVertexShaderProfile proto WINAPI \
-	       pDevice: ptr ID3D10Device
-
-D3D10GetGeometryShaderProfile proto WINAPI \
-	       pDevice: ptr ID3D10Device
-
-;HRESULT
-D3D10ReflectShader proto WINAPI \
-       pShaderBytecode: ptr void,
-	BytecodeLength: SIZE_T,
-	   ppReflector: ptr ID3D10ShaderReflection
-
-
-;HRESULT
-D3D10PreprocessShader proto WINAPI \
-	      pSrcData: LPCSTR,
-	   SrcDataSize: SIZE_T,
-	     pFileName: LPCSTR,
-	      pDefines: ptr D3D10_SHADER_MACRO,
-	      pInclude: ptr D3D10INCLUDE,
-	  ppShaderText: ptr ptr ID3D10Blob,
-	   ppErrorMsgs: ptr ptr ID3D10Blob
-
-;HRESULT
-D3D10GetInputSignatureBlob proto WINAPI \
-       pShaderBytecode: ptr,
-	BytecodeLength: SIZE_T,
-       ppSignatureBlob: ptr ID3D10Blob
-
-;HRESULT
-D3D10GetOutputSignatureBlob proto WINAPI \
-       pShaderBytecode: ptr,
-	BytecodeLength: SIZE_T,
-       ppSignatureBlob: ptr ID3D10Blob
-
-;HRESULT
-D3D10GetInputAndOutputSignatureBlob proto WINAPI \
-       pShaderBytecode: ptr,
-	BytecodeLength: SIZE_T,
-       ppSignatureBlob: ptr ID3D10Blob
-
-
-;HRESULT
-D3D10GetShaderDebugInfo proto WINAPI \
-       pShaderBytecode: ptr,
-	BytecodeLength: SIZE_T,
-	   ppDebugInfo: ptr ptr ID3D10Blob
+D3D10CompileShader proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :ptr, :ptr
+D3D10DisassembleShader proto WINAPI :ptr, :SIZE_T, :BOOL, :LPCSTR, :ptr
+D3D10GetPixelShaderProfile proto WINAPI :ptr
+D3D10GetVertexShaderProfile proto WINAPI :ptr
+D3D10GetGeometryShaderProfile proto WINAPI :ptr
+D3D10ReflectShader proto WINAPI :ptr, :SIZE_T, :ptr
+D3D10PreprocessShader proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :ptr, :ptr
+D3D10GetInputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
+D3D10GetOutputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
+D3D10GetInputAndOutputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
+D3D10GetShaderDebugInfo proto WINAPI :ptr, :SIZE_T, :ptr
 
 endif

@@ -324,61 +324,14 @@ if (NTDDI_VERSION GE NTDDI_VISTA)
 
 ifdef _WS2DEF_
 
-;PSTR
 RtlIpv4AddressToStringA proto WINAPI :ptr, :ptr
-
-;LONG
-RtlIpv4AddressToStringExA proto WINAPI \
-		      : ptr,
-		  Port: WORD,
-	 AddressString: LPSTR,
-   AddressStringLength: PULONG
-
-
-;PWSTR
-RtlIpv4AddressToStringW proto WINAPI \
-		      : ptr,
-		      : ptr
-
-;LONG
-RtlIpv4AddressToStringExW proto WINAPI \
-		      : ptr,
-		  Port: WORD,
-	 AddressString: LPWSTR,
-   AddressStringLength: PULONG
-
-
-;LONG
-RtlIpv4StringToAddressA proto WINAPI \
-		     S: LPCSTR,
-		Strict: BOOLEAN,
-	    Terminator: ptr LPCSTR,
-		      : ptr
-
-
-;LONG
-RtlIpv4StringToAddressExA proto WINAPI \
-	 AddressString: PCSTR,
-		Strict: BOOLEAN,
-		      : ptr,
-		  Port: PUSHORT
-
-
-;LONG
-RtlIpv4StringToAddressW proto WINAPI \
-		     S: PCWSTR,
-		Strict: BOOLEAN,
-	    Terminator: ptr LPCWSTR,
-		      : ptr
-
-
-;LONG
-RtlIpv4StringToAddressExW proto WINAPI \
-	 AddressString: PCWSTR,
-		Strict: BOOLEAN,
-		      : ptr,
-		  Port: PUSHORT
-
+RtlIpv4AddressToStringExA proto WINAPI :ptr, :WORD, :LPSTR, :PULONG
+RtlIpv4AddressToStringW proto WINAPI :ptr, :ptr
+RtlIpv4AddressToStringExW proto WINAPI :ptr, :WORD, :LPWSTR, :PULONG
+RtlIpv4StringToAddressA proto WINAPI :LPCSTR, :BOOLEAN, :ptr LPCSTR, :ptr
+RtlIpv4StringToAddressExA proto WINAPI :PCSTR, :BOOLEAN, :ptr, :PUSHORT
+RtlIpv4StringToAddressW proto WINAPI :PCWSTR, :BOOLEAN, :ptr LPCWSTR, :ptr
+RtlIpv4StringToAddressExW proto WINAPI :PCWSTR, :BOOLEAN, :ptr, :PUSHORT
 
 ifdef _UNICODE
 RtlIpv4AddressToString	equ <RtlIpv4AddressToStringW>
@@ -396,62 +349,14 @@ endif ;;_WS2DEF_
 
 ifdef _WS2IPDEF_
 
-;PSTR
-RtlIpv6AddressToStringA proto WINAPI \
-		      : ptr,
-		      : ptr
-
-;LONG
-RtlIpv6AddressToStringExA proto WINAPI \
-		      : ptr,
-	       ScopeId: ULONG,
-		  Port: USHORT,
-	 AddressString: PSTR,
-   AddressStringLength: PULONG
-
-
-;PWSTR
-RtlIpv6AddressToStringW proto WINAPI \
-		      : ptr,
-		      : ptr
-
-;LONG
-RtlIpv6AddressToStringExW proto WINAPI \
-		      : ptr,
-	       ScopeId: ULONG,
-		  Port: USHORT,
-	 AddressString: PWSTR,
-   AddressStringLength: PULONG
-
-
-;LONG
-RtlIpv6StringToAddressA proto WINAPI \
-		     S: PCSTR,
-	    Terminator: ptr PCSTR,
-		      : ptr
-
-
-;LONG
-RtlIpv6StringToAddressExA proto WINAPI \
-	 AddressString: PCSTR,
-		      : ptr,
-	       ScopeId: PULONG,
-		  Port: PUSHORT
-
-;LONG
-RtlIpv6StringToAddressW proto WINAPI \
-		     S: PCWSTR,
-	    Terminator: ptr PCWSTR,
-		      : ptr
-
-
-;LONG
-RtlIpv6StringToAddressExW proto WINAPI \
-	 AddressString: PCWSTR,
-		      : ptr,
-	       ScopeId: PULONG,
-		  Port: PUSHORT
-
+RtlIpv6AddressToStringA proto WINAPI :ptr, :ptr
+RtlIpv6AddressToStringExA proto WINAPI :ptr, :ULONG, :USHORT, :PSTR, :PULONG
+RtlIpv6AddressToStringW proto WINAPI :ptr, :ptr
+RtlIpv6AddressToStringExW proto WINAPI :ptr, :ULONG, :USHORT, :PWSTR, :PULONG
+RtlIpv6StringToAddressA proto WINAPI :PCSTR, :ptr PCSTR, :ptr
+RtlIpv6StringToAddressExA proto WINAPI :PCSTR, :ptr,  :PULONG, :PUSHORT
+RtlIpv6StringToAddressW proto WINAPI :PCWSTR, :ptr PCWSTR, :ptr
+RtlIpv6StringToAddressExW proto WINAPI :PCWSTR, :ptr, :PULONG, :PUSHORT
 
 ifdef _UNICODE
 RtlIpv6AddressToString	equ <RtlIpv6AddressToStringW>
@@ -469,31 +374,10 @@ endif ;; __WS2IPDEF__
 
 ifdef _WS2DEF_
 
-;PDL_EUI48		typedef ptr ;DL_EUI48
-
-;PSTR
-RtlEthernetAddressToStringA proto WINAPI \
-		      : ptr,
-		      : ptr
-
-;PWSTR
-RtlEthernetAddressToStringW proto WINAPI \
-		      : ptr,
-		      : ptr
-
-;LONG
-RtlEthernetStringToAddressA proto WINAPI \
-		     S: PCSTR,
-	    Terminator: ptr PCSTR,
-		   Adr: ptr DL_EUI48
-
-
-;LONG
-RtlEthernetStringToAddressW proto WINAPI \
-		     S: PCWSTR,
-	    Terminator: ptr LPCWSTR,
-		   Adr: ptr DL_EUI48
-
+RtlEthernetAddressToStringA proto WINAPI :ptr, :ptr
+RtlEthernetAddressToStringW proto WINAPI :ptr, :ptr
+RtlEthernetStringToAddressA proto WINAPI :PCSTR, :ptr PCSTR, :ptr DL_EUI48
+RtlEthernetStringToAddressW proto WINAPI :PCWSTR, :ptr LPCWSTR, :ptr DL_EUI48
 
 ifdef _UNICODE
 RtlEthernetAddressToString equ <RtlEthernetAddressToStringW>
@@ -510,5 +394,3 @@ endif ;; __IP2STRING__
 
 endif ;; GUID_DEFS_ONLY
 endif ;; NOT _MSTCPIP_
-
-

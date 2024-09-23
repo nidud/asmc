@@ -14,25 +14,11 @@ endif
     }
 
 ifdef _M_IX86
-
-_except_handler proto __cdecl \
-       ExceptionRecord: ptr EXCEPTION_RECORD,
-      EstablisherFrame: ptr,
-	 ContextRecord: ptr CONTEXT,
-     DispatcherContext: ptr
-
+_except_handler proto __cdecl :ptr, :ptr, :ptr, :ptr
 elseif defined (_M_X64) or defined (_M_ARM)
-
 ifndef _M_CEE_PURE
-
-__C_specific_handler proto __cdecl \
-       ExceptionRecord: ptr EXCEPTION_RECORD,
-      EstablisherFrame: ptr,
-	 ContextRecord: ptr CONTEXT,
-     DispatcherContext: ptr DISPATCHER_CONTEXT
-
+__C_specific_handler proto __cdecl :ptr, :ptr, :ptr, :ptr
 endif
-
 endif
 
 ;; Keywords and intrinsics for SEH
@@ -45,11 +31,9 @@ AbnormalTermination	    equ <_abnormal_termination>
 abnormal_termination	    equ <_abnormal_termination>
 
 ifdef _MSC_VER
-
 _exception_code		proto
 _exception_info		proto
 _abnormal_termination	proto
-
 endif
 
 EXCEPTION_EXECUTE_HANDLER	equ 1

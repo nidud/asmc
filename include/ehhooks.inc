@@ -12,5 +12,4 @@ endif
 
 externdef __pInconsistency:_inconsistency_function
 
-__CxxUnhandledExceptionFilter proto WINAPI \
-                      : LPEXCEPTION_POINTERS
+__CxxUnhandledExceptionFilter proto WINAPI :LPEXCEPTION_POINTERS

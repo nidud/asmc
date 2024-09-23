@@ -25,15 +25,8 @@ endif
 
 PActivatableClassRegistration typedef ptr ABI::Windows::Foundation::IActivatableClassRegistration
 
-RoGetActivatableClassRegistration proto WINAPI \
-    activatableClassId: HSTRING,
- activatableClassRegistration: ptr PActivatableClassRegistration
-
-RoGetServerActivatableClasses proto WINAPI \
-            serverName: HSTRING,
-   activatableClassIds: ptr HSTRING,
-                 count: ptr DWORD
-
+RoGetActivatableClassRegistration proto WINAPI :HSTRING, :ptr
+RoGetServerActivatableClasses proto WINAPI :HSTRING, :ptr, :ptr
 Windows::Foundation::GetActivatableClassRegistration proto activatableClassId:HSTRING,
         activatableClassRegistration: ptr PActivatableClassRegistration {
     RoGetActivatableClassRegistration(activatableClassId, activatableClassRegistration)

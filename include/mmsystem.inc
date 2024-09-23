@@ -19,7 +19,7 @@ LPCWSTR			typedef DWORD
 LRESULT			typedef DWORD
 LPARAM			typedef DWORD
 WPARAM			typedef DWORD
-WCHAR			typedef short
+WCHAR			typedef WORD
 endif
 
 MAXPNAMELEN		equ 32
@@ -262,67 +262,19 @@ ifndef _WIN32_VXD
 
 CALLBACK(DRIVERPROC, :DWORD, :HDRVR, :UINT, :LPARAM, :LPARAM)
 
-;LRESULT
-CloseDriver proto WINAPI \
-	       hDriver: HDRVR,
-	       lParam1: LONG,
-	       lParam2: LONG
-;HDRVR
-OpenDriver proto WINAPI \
-	  szDriverName: LPCWSTR,
-	 szSectionName: LPCWSTR,
-	       lParam2: LONG
-
-;LRESULT
-SendDriverMessage proto WINAPI \
-	       hDriver: HDRVR,
-	       message: UINT,
-	       lParam1: LONG,
-	       lParam2: LONG
-;HMODULE
-DrvGetModuleHandle proto WINAPI \
-	       hDriver: HDRVR
-;HMODULE
-GetDriverModuleHandle proto WINAPI \
-	       hDriver: HDRVR
-;LRESULT
-DefDriverProc proto WINAPI \
-    dwDriverIdentifier: DWORD,
-		 hdrvr: HDRVR,
-		  uMsg: UINT,
-	       lParam1: LPARAM,
-	       lParam2: LPARAM
+CloseDriver proto WINAPI :HDRVR, :LONG, :LONG
+OpenDriver proto WINAPI :LPCWSTR, :LPCWSTR, :LONG
+SendDriverMessage proto WINAPI :HDRVR, :UINT, :LONG, :LONG
+DrvGetModuleHandle proto WINAPI :HDRVR
+GetDriverModuleHandle proto WINAPI :HDRVR
+DefDriverProc proto WINAPI :DWORD, :HDRVR, :UINT, :LPARAM, :LPARAM
 endif
 else
-;LRESULT
-DrvClose proto WINAPI \
-		 hdrvr: HDRVR,
-	       lParam1: LPARAM,
-	       lParam2: LPARAM
-
-;HDRVR
-DrvOpen proto WINAPI \
-	  szDriverName: LPCSTR,
-	 szSectionName: LPCSTR,
-	       lParam2: LPARAM
-
-;LRESULT
-DrvSendMessage proto WINAPI \
-		 hdrvr: HDRVR,
-		  uMsg: UINT,
-	       lParam1: LPARAM,
-	       lParam2: LPARAM
-
-;HINSTANCE
-DrvGetModuleHandle proto WINAPI \
-		  hdrvr: HDRVR
-
-DrvDefDriverProc proto WINAPI \
-    dwDriverIdentifier: DWORD,
-		 hdrvr: HDRVR,
-		  uMsg: UINT,
-	       lParam1: LPARAM,
-	       lParam2: LPARAM
+DrvClose proto WINAPI :HDRVR, :LPARAM, :LPARAM
+DrvOpen proto WINAPI :LPCSTR, :LPCSTR, :LPARAM
+DrvSendMessage proto WINAPI :HDRVR, :UINT, :LPARAM, :LPARAM
+DrvGetModuleHandle proto WINAPI :HDRVR
+DrvDefDriverProc proto WINAPI :DWORD, :HDRVR, :UINT, :LPARAM, :LPARAM
 
 DefDriverProc		equ <DrvDefDriverProc>
 endif
@@ -351,17 +303,10 @@ endif
 
 ifndef _WIN32_VXD
 
-;void
-DRVCALLBACK typedef proto WINAPI \
-		 hdrvr: HDRVR,
-		  uMsg: UINT,
-		dwUser: DWORD,
-		   dw1: DWORD,
-		   dw2: DWORD
-
-LPDRVCALLBACK	typedef ptr DRVCALLBACK
+DRVCALLBACK typedef proto WINAPI :HDRVR, :UINT, :DWORD, :DWORD, :DWORD
+LPDRVCALLBACK typedef ptr DRVCALLBACK
 ifdef _WIN32
-PDRVCALLBACK	typedef ptr DRVCALLBACK
+PDRVCALLBACK typedef ptr DRVCALLBACK
 endif
 
 endif
@@ -370,15 +315,12 @@ ifndef MMNOMMSYSTEM
 ifndef _WIN32_VXD
 
 if (WINVER LE 0x030A)
-;UINT
 mmsystemGetVersion proto WINAPI
 endif
 ifdef _WIN32
 OutputDebugStr		equ <OutputDebugString>
 else
-;void
-OutputDebugStr proto WINAPI \
-		      : LPCSTR
+OutputDebugStr proto WINAPI :LPCSTR
 endif
 
 endif
@@ -388,26 +330,15 @@ ifndef MMNOSOUND
 ifndef _WIN32_VXD
 
 ifdef _WIN32
-
-;BOOL
-sndPlaySoundA proto WINAPI \
-	      pszSound: LPCSTR,
-	       fuSound: UINT
-;BOOL
-sndPlaySoundW proto WINAPI \
-	      pszSound: LPCWSTR,
-	       fuSound: UINT
+sndPlaySoundA proto WINAPI :LPCSTR, :UINT
+sndPlaySoundW proto WINAPI :LPCWSTR, :UINT
 ifdef _UNICODE
 sndPlaySound	equ <sndPlaySoundW>
 else
 sndPlaySound	equ <sndPlaySoundA>
 endif
-
 else
-;BOOL
-sndPlaySound proto WINAPI \
-	      pszSound: LPCSTR,
-	       fuSound: UINT
+sndPlaySound proto WINAPI :LPCSTR, :UINT
 endif
 
 SND_SYNC		equ 0x0000
@@ -443,28 +374,15 @@ SND_ALIAS_SYSTEMWELCOME		equ sndAlias('S', 'W')
 SND_ALIAS_SYSTEMEXCLAMATION	equ sndAlias('S', ' NOT ')
 SND_ALIAS_SYSTEMDEFAULT		equ sndAlias('S', 'D')
 
-;BOOL
-PlaySoundA proto WINAPI \
-	      pszSound: LPCSTR,
-		  hmod: HMODULE,
-	      fdwSound: DWORD
-;BOOL
-PlaySoundW proto WINAPI \
-	      pszSound: LPCWSTR,
-		  hmod: HMODULE,
-	      fdwSound: DWORD
+PlaySoundA proto WINAPI :LPCSTR, :HMODULE, :DWORD
+PlaySoundW proto WINAPI :LPCWSTR, :HMODULE, :DWORD
 ifdef _UNICODE
-PlaySound		equ <PlaySoundW>
+PlaySound equ <PlaySoundW>
 else
-PlaySound		equ <PlaySoundA>
+PlaySound equ <PlaySoundA>
 endif
-
 else
-;BOOL
-PlaySound proto WINAPI \
-	      pszSound: LPCSTR,
-		  hmod: HMODULE,
-	      fdwSound: DWORD
+PlaySound proto WINAPI :LPCSTR, :HMODULE, :DWORD
 endif
 
 endif
@@ -699,15 +617,8 @@ waveOutGetNumDevs proto WINAPI
 
 ifdef _WIN32
 
-;MMRESULT
-waveOutGetDevCapsA proto WINAPI \
-	     uDeviceID: UINT,
-		  pwoc: LPWAVEOUTCAPSA,
-		 cbwoc: UINT
-waveOutGetDevCapsW proto WINAPI \
-	     uDeviceID: UINT,
-		  pwoc: LPWAVEOUTCAPSW,
-		 cbwoc: UINT
+waveOutGetDevCapsA proto WINAPI :UINT, :LPWAVEOUTCAPSA, :UINT
+waveOutGetDevCapsW proto WINAPI :UINT, :LPWAVEOUTCAPSW, :UINT
 ifdef _UNICODE
 waveOutGetDevCaps	equ <waveOutGetDevCapsW>
 else
@@ -715,42 +626,21 @@ waveOutGetDevCaps	equ <waveOutGetDevCapsA>
 endif
 
 else
-;RESULT
-waveOutGetDevCaps proto WINAPI \
-	     uDeviceID: UINT,
-		  pwoc: LPWAVEOUTCAPS,
-		 cbwoc: UINT
+waveOutGetDevCaps proto WINAPI :UINT, :LPWAVEOUTCAPS, :UINT
 endif
 
 if (WINVER GE 0x0400)
-;RESULT
-waveOutGetVolume proto WINAPI \
-		   hwo: HWAVEOUT,
-	     pdwVolume: LPDWORD
-waveOutSetVolume proto WINAPI \
-		   hwo: HWAVEOUT,
-	      dwVolume: DWORD
+waveOutGetVolume proto WINAPI :HWAVEOUT, :LPDWORD
+waveOutSetVolume proto WINAPI :HWAVEOUT, :DWORD
 else
-waveOutGetVolume proto WINAPI \
-		   uId: UINT,
-	     pdwVolume: LPDWORD
-waveOutSetVolume proto WINAPI \
-		   uId: UINT,
-	      dwVolume: DWORD
+waveOutGetVolume proto WINAPI :UINT, :LPDWORD
+waveOutSetVolume proto WINAPI :UINT, :DWORD
 endif
 
 ifdef _WIN32
 
-;RESULT
-waveOutGetErrorTextA proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPSTR,
-	       cchText: UINT
-;RESULT
-waveOutGetErrorTextW proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPWSTR,
-	       cchText: UINT
+waveOutGetErrorTextA proto WINAPI :MMRESULT, :LPSTR, :UINT
+waveOutGetErrorTextW proto WINAPI :MMRESULT, :LPWSTR, :UINT
 ifdef _UNICODE
 waveOutGetErrorText	equ <waveOutGetErrorTextW>
 else
@@ -758,111 +648,37 @@ waveOutGetErrorText	equ <waveOutGetErrorTextA>
 endif
 
 else
-;MMRESULT
-waveOutGetErrorText proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPWSTR,
-	       cchText: UINT
+waveOutGetErrorText proto WINAPI :MMRESULT, :LPWSTR, :UINT
 endif
 
-;RESULT
-waveOutOpen proto WINAPI \
-		  phwo: LPHWAVEOUT,
-	     uDeviceID: UINT,
-		  pwfx: LPCWAVEFORMATEX,
-	    dwCallback: DWORD,
-	    dwInstance: DWORD,
-	       fdwOpen: DWORD
-
-;RESULT
-waveOutClose proto WINAPI \
-		   hwo: HWAVEOUT
-;RESULT
-waveOutPrepareHeader proto WINAPI \
-		   hwo: HWAVEOUT,
-		   pwh: LPWAVEHDR,
-		  cbwh: UINT
-;RESULT
-waveOutUnprepareHeader proto WINAPI \
-		   hwo: HWAVEOUT,
-		   pwh: LPWAVEHDR,
-		  cbwh: UINT
-;RESULT
-waveOutWrite proto WINAPI \
-		   hwo: HWAVEOUT,
-		   pwh: LPWAVEHDR,
-		  cbwh: UINT
-;RESULT
-waveOutPause proto WINAPI \
-		   hwo: HWAVEOUT
-;RESULT
-waveOutRestart proto WINAPI \
-		   hwo: HWAVEOUT
-;RESULT
-waveOutReset proto WINAPI \
-		   hwo: HWAVEOUT
-;RESULT
-waveOutBreakLoop proto WINAPI \
-		   hwo: HWAVEOUT
-;RESULT
-waveOutGetPosition proto WINAPI \
-		   hwo: HWAVEOUT,
-		  pmmt: LPMMTIME,
-		 cbmmt: UINT
-;RESULT
-waveOutGetPitch proto WINAPI \
-		   hwo: HWAVEOUT,
-	      pdwPitch: LPDWORD
-;RESULT
-waveOutSetPitch proto WINAPI \
-		   hwo: HWAVEOUT,
-	       dwPitch: DWORD
-;RESULT
-waveOutGetPlaybackRate proto WINAPI \
-		   hwo: HWAVEOUT,
-	       pdwRate: LPDWORD
-;RESULT
-waveOutSetPlaybackRate proto WINAPI \
-		   hwo: HWAVEOUT,
-		dwRate: DWORD
-;RESULT
-waveOutGetID proto WINAPI \
-		   hwo: HWAVEOUT,
-	    puDeviceID: LPUINT
+waveOutOpen proto WINAPI :LPHWAVEOUT, :UINT, :LPCWAVEFORMATEX, :DWORD, :DWORD, :DWORD
+waveOutClose proto WINAPI :HWAVEOUT
+waveOutPrepareHeader proto WINAPI :HWAVEOUT, :LPWAVEHDR, :UINT
+waveOutUnprepareHeader proto WINAPI :HWAVEOUT, :LPWAVEHDR, :UINT
+waveOutWrite proto WINAPI :HWAVEOUT, :LPWAVEHDR, :UINT
+waveOutPause proto WINAPI :HWAVEOUT
+waveOutRestart proto WINAPI :HWAVEOUT
+waveOutReset proto WINAPI :HWAVEOUT
+waveOutBreakLoop proto WINAPI :HWAVEOUT
+waveOutGetPosition proto WINAPI :HWAVEOUT, :LPMMTIME, :UINT
+waveOutGetPitch proto WINAPI :HWAVEOUT, :LPDWORD
+waveOutSetPitch proto WINAPI :HWAVEOUT, :DWORD
+waveOutGetPlaybackRate proto WINAPI :HWAVEOUT, :LPDWORD
+waveOutSetPlaybackRate proto WINAPI :HWAVEOUT, :DWORD
+waveOutGetID proto WINAPI :HWAVEOUT, :LPUINT
 
 if (WINVER GE 0x030a)
 ifdef _WIN32
-;MRESULT
-waveOutMessage proto WINAPI \
-		   hwo: HWAVEOUT,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+waveOutMessage proto WINAPI :HWAVEOUT, :UINT, :DWORD, :DWORD
 else
-;DWORD
-waveOutMessage proto WINAPI \
-		   hwo: HWAVEOUT,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+waveOutMessage proto WINAPI :HWAVEOUT, :UINT, :DWORD, :DWORD
 endif
 endif
-
-;UINT
 waveInGetNumDevs proto WINAPI
 
 ifdef _WIN32
-
-;RESULT
-waveInGetDevCapsA proto WINAPI \
-	     uDeviceID: UINT,
-		  pwic: LPWAVEINCAPSA,
-		 cbwic: UINT
-;RESULT
-waveInGetDevCapsW proto WINAPI \
-	     uDeviceID: UINT,
-		  pwic: LPWAVEINCAPSW,
-		 cbwic: UINT
+waveInGetDevCapsA proto WINAPI :UINT, :LPWAVEINCAPSA, :UINT
+waveInGetDevCapsW proto WINAPI :UINT, :LPWAVEINCAPSW, :UINT
 ifdef _UNICODE
 waveInGetDevCaps	equ <waveInGetDevCapsW>
 else
@@ -870,24 +686,12 @@ waveInGetDevCaps	equ <waveInGetDevCapsA>
 endif
 
 else
-waveInGetDevCaps proto WINAPI \
-	     uDeviceID: UINT,
-		  pwic: LPWAVEINCAPS,
-		 cbwic: UINT
+waveInGetDevCaps proto WINAPI :UINT, :LPWAVEINCAPS, :UINT
 endif
 
 ifdef _WIN32
-
-;RESULT
-waveInGetErrorTextA proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPSTR,
-	       cchText: UINT
-;RESULT
-waveInGetErrorTextW proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPWSTR,
-	       cchText: UINT
+waveInGetErrorTextA proto WINAPI :MMRESULT, :LPSTR, :UINT
+waveInGetErrorTextW proto WINAPI :MMRESULT, :LPWSTR, :UINT
 ifdef _UNICODE
 waveInGetErrorText	equ <waveInGetErrorTextW>
 else
@@ -895,73 +699,24 @@ waveInGetErrorText	equ <waveInGetErrorTextA>
 endif
 
 else
-waveInGetErrorText proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPSTR,
-	       cchText: UINT
+waveInGetErrorText proto WINAPI :MMRESULT, :LPSTR, :UINT
 endif
-
-;RESULT
-waveInOpen proto WINAPI \
-		  phwi: LPHWAVEIN,
-	     uDeviceID: UINT,
-		  pwfx: LPCWAVEFORMATEX,
-	    dwCallback: DWORD,
-	    dwInstance: DWORD,
-	       fdwOpen: DWORD
-
-;RESULT
-waveInClose proto WINAPI \
-		   hwi: HWAVEIN
-;RESULT
-waveInPrepareHeader proto WINAPI \
-		   hwi: HWAVEIN,
-		   pwh: LPWAVEHDR,
-		  cbwh: UINT
-;RESULT
-waveInUnprepareHeader proto WINAPI \
-		   hwi: HWAVEIN,
-		   pwh: LPWAVEHDR,
-		  cbwh: UINT
-;RESULT
-waveInAddBuffer proto WINAPI \
-		   hwi: HWAVEIN,
-		   pwh: LPWAVEHDR,
-		  cbwh: UINT
-;RESULT
-waveInStart proto WINAPI \
-		   hwi: HWAVEIN
-;RESULT
-waveInStop proto WINAPI \
-		   hwi: HWAVEIN
-;RESULT
-waveInReset proto WINAPI \
-		   hwi: HWAVEIN
-;RESULT
-waveInGetPosition proto WINAPI \
-		   hwi: HWAVEIN,
-		  pmmt: LPMMTIME,
-		 cbmmt: UINT
-;RESULT
-waveInGetID proto WINAPI \
-		   hwi: HWAVEIN,
-	    puDeviceID: LPUINT
+waveInOpen proto WINAPI :LPHWAVEIN, :UINT, :LPCWAVEFORMATEX, :DWORD, :DWORD, :DWORD
+waveInClose proto WINAPI :HWAVEIN
+waveInPrepareHeader proto WINAPI :HWAVEIN, :LPWAVEHDR, :UINT
+waveInUnprepareHeader proto WINAPI :HWAVEIN, :LPWAVEHDR, :UINT
+waveInAddBuffer proto WINAPI :HWAVEIN, :LPWAVEHDR, :UINT
+waveInStart proto WINAPI :HWAVEIN
+waveInStop proto WINAPI :HWAVEIN
+waveInReset proto WINAPI :HWAVEIN
+waveInGetPosition proto WINAPI :HWAVEIN, :LPMMTIME, :UINT
+waveInGetID proto WINAPI :HWAVEIN, :LPUINT
 
 if (WINVER GE 0x030a)
 ifdef _WIN32
-;RESULT
-waveInMessage proto WINAPI \
-		   hwi: HWAVEIN,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+waveInMessage proto WINAPI :HWAVEIN, :UINT, :DWORD, :DWORD
 else
-;DWORD
-waveInMessage proto WINAPI \
-		   hwi: HWAVEIN,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+waveInMessage proto WINAPI :HWAVEIN, :UINT, :DWORD, :DWORD
 endif
 endif
 endif
@@ -1231,71 +986,24 @@ ifndef _WIN32_VXD
 
 midiOutGetNumDevs proto WINAPI
 if(WINVER GE 0x0400)
-;RESULT
-midiStreamOpen proto WINAPI \
-		  phms: LPHMIDISTRM,
-	    puDeviceID: LPUINT,
-		 cMidi: DWORD,
-	    dwCallback: DWORD,
-	    dwInstance: DWORD,
-	       fdwOpen: DWORD
-;RESULT
-midiStreamClose proto WINAPI \
-		   hms: HMIDISTRM
-
-;RESULT
-midiStreamProperty proto WINAPI \
-		   hms: HMIDISTRM,
-	    lppropdata: LPBYTE,
-	    dwProperty: DWORD
-;RESULT
-midiStreamPosition proto WINAPI \
-		   hms: HMIDISTRM,
-		 lpmmt: LPMMTIME,
-		 cbmmt: UINT
-
-;RESULT
-midiStreamOut proto WINAPI \
-		   hms: HMIDISTRM,
-		   pmh: LPMIDIHDR,
-		  cbmh: UINT
-;RESULT
-midiStreamPause proto WINAPI \
-		   hms: HMIDISTRM
-;RESULT
-midiStreamRestart proto WINAPI \
-		   hms: HMIDISTRM
-;RESULT
-midiStreamStop proto WINAPI \
-		   hms: HMIDISTRM
-
+midiStreamOpen proto WINAPI :LPHMIDISTRM, :LPUINT, :DWORD, :DWORD, :DWORD, :DWORD
+midiStreamClose proto WINAPI :HMIDISTRM
+midiStreamProperty proto WINAPI :HMIDISTRM, :LPBYTE, :DWORD
+midiStreamPosition proto WINAPI :HMIDISTRM, :LPMMTIME, :UINT
+midiStreamOut proto WINAPI :HMIDISTRM, :LPMIDIHDR, :UINT
+midiStreamPause proto WINAPI :HMIDISTRM
+midiStreamRestart proto WINAPI :HMIDISTRM
+midiStreamStop proto WINAPI :HMIDISTRM
 ifdef _WIN32
-;RESULT
-midiConnect proto WINAPI \
-		   hmi: HMIDI,
-		   hmo: HMIDIOUT,
-	     pReserved: LPVOID
-;RESULT
-midiDisconnect proto WINAPI \
-		   hmi: HMIDI,
-		   hmo: HMIDIOUT,
-	     pReserved: LPVOID
-
+midiConnect proto WINAPI :HMIDI, :HMIDIOUT, :ptr
+midiDisconnect proto WINAPI :HMIDI, :HMIDIOUT, :ptr
 endif
 endif
 
 ifdef _WIN32
 
-;RESULT
-midiOutGetDevCapsA proto WINAPI \
-	     uDeviceID: UINT,
-		  pmoc: LPMIDIOUTCAPSA,
-		 cbmoc: UINT
-;RESULT
-midiOutGetDevCapsW proto WINAPI \
-	     uDeviceID: UINT,
-		  pmoc: LPMIDIOUTCAPSW,
-		 cbmoc: UINT
+midiOutGetDevCapsA proto WINAPI :UINT, :LPMIDIOUTCAPSA, :UINT
+midiOutGetDevCapsW proto WINAPI :UINT, :LPMIDIOUTCAPSW, :UINT
 ifdef _UNICODE
 midiOutGetDevCaps	equ <midiOutGetDevCapsW>
 else
@@ -1303,44 +1011,21 @@ midiOutGetDevCaps	equ <midiOutGetDevCapsA>
 endif
 
 else
-midiOutGetDevCaps proto WINAPI \
-	     uDeviceID: UINT,
-		  pmoc: LPMIDIOUTCAPS,
-		 cbmoc: UINT
+midiOutGetDevCaps proto WINAPI :UINT, :LPMIDIOUTCAPS, :UINT
 endif
 
 if (WINVER GE 0x0400)
-;RESULT
-midiOutGetVolume proto WINAPI \
-		   hmo: HMIDIOUT,
-	     pdwVolume: LPDWORD
-;RESULT
-midiOutSetVolume proto WINAPI \
-		   hmo: HMIDIOUT,
-	      dwVolume: DWORD
+midiOutGetVolume proto WINAPI :HMIDIOUT, :LPDWORD
+midiOutSetVolume proto WINAPI :HMIDIOUT, :DWORD
 else
-;RESULT
-midiOutGetVolume proto WINAPI \
-		   uId: UINT,
-	     pdwVolume: LPDWORD
-;RESULT
-midiOutSetVolume proto WINAPI \
-		   uId: UINT,
-	      dwVolume: DWORD
+midiOutGetVolume proto WINAPI :UINT, :LPDWORD
+midiOutSetVolume proto WINAPI :UINT, :DWORD
 endif
 
 ifdef _WIN32
 
-;RESULT
-midiOutGetErrorTextA proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPSTR,
-	       cchText: UINT
-;RESULT
-midiOutGetErrorTextW proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPWSTR,
-	       cchText: UINT
+midiOutGetErrorTextA proto WINAPI :MMRESULT, :LPSTR, :UINT
+midiOutGetErrorTextW proto WINAPI :MMRESULT, :LPWSTR, :UINT
 ifdef _UNICODE
 midiOutGetErrorText	equ <midiOutGetErrorTextW>
 else
@@ -1348,108 +1033,37 @@ midiOutGetErrorText	equ <midiOutGetErrorTextA>
 endif
 
 else
-;RESULT
-midiOutGetErrorText proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPSTR,
-	       cchText: UINT
+midiOutGetErrorText proto WINAPI :MMRESULT, :LPSTR, :UINT
 endif
-
-;RESULT
-midiOutOpen proto WINAPI \
-		  phmo: LPHMIDIOUT,
-	     uDeviceID: UINT,
-	    dwCallback: DWORD,
-	    dwInstance: DWORD,
-	       fdwOpen: DWORD
-;RESULT
-midiOutClose proto WINAPI \
-		   hmo: HMIDIOUT
-;RESULT
-midiOutPrepareHeader proto WINAPI \
-		   hmo: HMIDIOUT,
-		   pmh: LPMIDIHDR,
-		  cbmh: UINT
-;RESULT
-midiOutUnprepareHeader proto WINAPI \
-		   hmo: HMIDIOUT,
-		   pmh: LPMIDIHDR,
-		  cbmh: UINT
-;RESULT
-midiOutShortMsg proto WINAPI \
-		   hmo: HMIDIOUT,
-		 dwMsg: DWORD
-;RESULT
-midiOutLongMsg proto WINAPI \
-		   hmo: HMIDIOUT,
-		   pmh: LPMIDIHDR,
-		  cbmh: UINT
-;RESULT
-midiOutReset proto WINAPI \
-		   hmo: HMIDIOUT
-;RESULT
-midiOutCachePatches proto WINAPI \
-		   hmo: HMIDIOUT,
-		 uBank: UINT,
-		  pwpa: LPWORD,
-	       fuCache: UINT
-;RESULT
-midiOutCacheDrumPatches proto WINAPI \
-		   hmo: HMIDIOUT,
-		uPatch: UINT,
-		 pwkya: LPWORD,
-	       fuCache: UINT
-;RESULT
-midiOutGetID proto WINAPI \
-		   hmo: HMIDIOUT,
-	    puDeviceID: LPUINT
+midiOutOpen proto WINAPI :LPHMIDIOUT, :UINT, :DWORD, :DWORD, :DWORD
+midiOutClose proto WINAPI :HMIDIOUT
+midiOutPrepareHeader proto WINAPI :HMIDIOUT, :LPMIDIHDR, :UINT
+midiOutUnprepareHeader proto WINAPI :HMIDIOUT, :LPMIDIHDR, :UINT
+midiOutShortMsg proto WINAPI :HMIDIOUT, :DWORD
+midiOutLongMsg proto WINAPI :HMIDIOUT, :LPMIDIHDR, :UINT
+midiOutReset proto WINAPI :HMIDIOUT
+midiOutCachePatches proto WINAPI :HMIDIOUT, :UINT, :LPWORD, :UINT
+midiOutCacheDrumPatches proto WINAPI :HMIDIOUT, :UINT, :LPWORD, :UINT
+midiOutGetID proto WINAPI :HMIDIOUT, :LPUINT
 
 if (WINVER GE 0x030a)
 ifdef _WIN32
-;RESULT
-midiOutMessage proto WINAPI \
-		   hmo: HMIDIOUT,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+midiOutMessage proto WINAPI :HMIDIOUT, :UINT, :DWORD, :DWORD
 else
-;DWORD
-midiOutMessage proto WINAPI \
-		   hmo: HMIDIOUT,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+midiOutMessage proto WINAPI :HMIDIOUT, :UINT, :DWORD, :DWORD
 endif
 endif
-
 midiInGetNumDevs proto WINAPI
-
 ifdef _WIN32
-;RESULT
-midiInGetDevCapsA proto WINAPI \
-	     uDeviceID: UINT,
-		  pmic: LPMIDIINCAPSA,
-		 cbmic: UINT
-;RESULT
-midiInGetDevCapsW proto WINAPI \
-	     uDeviceID: UINT,
-		  pmic: LPMIDIINCAPSW,
-		 cbmic: UINT
+midiInGetDevCapsA proto WINAPI :UINT, :LPMIDIINCAPSA, :UINT
+midiInGetDevCapsW proto WINAPI :UINT, :LPMIDIINCAPSW, :UINT
 ifdef _UNICODE
 midiInGetDevCaps	equ <midiInGetDevCapsW>
 else
 midiInGetDevCaps	equ <midiInGetDevCapsA>
 endif
-;RESULT
-midiInGetErrorTextA proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPSTR,
-	       cchText: UINT
-;RESULT
-midiInGetErrorTextW proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPWSTR,
-	       cchText: UINT
+midiInGetErrorTextA proto WINAPI :MMRESULT, :LPSTR, :UINT
+midiInGetErrorTextW proto WINAPI :MMRESULT, :LPWSTR, :UINT
 ifdef _UNICODE
 midiInGetErrorText	equ <midiInGetErrorTextW>
 else
@@ -1457,71 +1071,24 @@ midiInGetErrorText	equ <midiInGetErrorTextA>
 endif
 
 else
-midiInGetDevCaps proto WINAPI \
-	     uDeviceID: UINT,
-		  pmic: LPMIDIINCAPS,
-		 cbmic: UINT
-;RESULT
-midiInGetErrorText proto WINAPI \
-	      mmrError: MMRESULT,
-	       pszText: LPSTR,
-	       cchText: UINT
+midiInGetDevCaps proto WINAPI :UINT, :LPMIDIINCAPS, :UINT
+midiInGetErrorText proto WINAPI :MMRESULT, :LPSTR, :UINT
 endif
-
-;RESULT
-midiInOpen proto WINAPI \
-		  phmi: LPHMIDIIN,
-	     uDeviceID: UINT,
-	    dwCallback: DWORD,
-	    dwInstance: DWORD,
-	       fdwOpen: DWORD
-;RESULT
-midiInClose proto WINAPI \
-		   hmi: HMIDIIN
-;RESULT
-midiInPrepareHeader proto WINAPI \
-		   hmi: HMIDIIN,
-		   pmh: LPMIDIHDR,
-		  cbmh: UINT
-;RESULT
-midiInUnprepareHeader proto WINAPI \
-		   hmi: HMIDIIN,
-		   pmh: LPMIDIHDR,
-		  cbmh: UINT
-;RESULT
-midiInAddBuffer proto WINAPI \
-		   hmi: HMIDIIN,
-		   pmh: LPMIDIHDR,
-		  cbmh: UINT
-;RESULT
-midiInStart proto WINAPI \
-		   hmi: HMIDIIN
-;RESULT
-midiInStop proto WINAPI \
-		   hmi: HMIDIIN
-;RESULT
-midiInReset proto WINAPI \
-		   hmi: HMIDIIN
-;RESULT
-midiInGetID proto WINAPI \
-		   hmi: HMIDIIN,
-	    puDeviceID: LPUINT
+midiInOpen proto WINAPI :LPHMIDIIN, :UINT, :DWORD, :DWORD, :DWORD
+midiInClose proto WINAPI :HMIDIIN
+midiInPrepareHeader proto WINAPI :HMIDIIN, :LPMIDIHDR, :UINT
+midiInUnprepareHeader proto WINAPI :HMIDIIN, :LPMIDIHDR, :UINT
+midiInAddBuffer proto WINAPI :HMIDIIN, :LPMIDIHDR, :UINT
+midiInStart proto WINAPI :HMIDIIN
+midiInStop proto WINAPI :HMIDIIN
+midiInReset proto WINAPI :HMIDIIN
+midiInGetID proto WINAPI :HMIDIIN, :LPUINT
 
 if (WINVER GE 0x030a)
 ifdef _WIN32
-;RESULT
-midiInMessage proto WINAPI \
-		   hmi: HMIDIIN,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+midiInMessage proto WINAPI :HMIDIIN, :UINT, :DWORD, :DWORD
 else
-;DWORD
-midiInMessage proto WINAPI \
-		   hmi: HMIDIIN,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+midiInMessage proto WINAPI :HMIDIIN, :UINT, :DWORD, :DWORD
 endif
 endif
 endif
@@ -1593,16 +1160,8 @@ ifndef _WIN32_VXD
 
 auxGetNumDevs proto WINAPI
 ifdef _WIN32
-;RESULT
-auxGetDevCapsA proto WINAPI \
-	     uDeviceID: UINT,
-		   pac: LPAUXCAPSA,
-		  cbac: UINT
-;RESULT
-auxGetDevCapsW proto WINAPI \
-	     uDeviceID: UINT,
-		   pac: LPAUXCAPSW,
-		  cbac: UINT
+auxGetDevCapsA proto WINAPI :UINT, :LPAUXCAPSA, :UINT
+auxGetDevCapsW proto WINAPI :UINT, :LPAUXCAPSW, :UINT
 ifdef _UNICODE
 auxGetDevCaps		equ <auxGetDevCapsW>
 else
@@ -1610,37 +1169,16 @@ auxGetDevCaps		equ <auxGetDevCapsA>
 endif
 
 else
-;MMRESULT
-auxGetDevCaps proto WINAPI \
-	     uDeviceID: UINT,
-		   pac: LPAUXCAPS,
-		  cbac: UINT
+auxGetDevCaps proto WINAPI :UINT, :LPAUXCAPS, :UINT
 endif
-;RESULT
-auxSetVolume proto WINAPI \
-	     uDeviceID: UINT,
-	      dwVolume: DWORD
-;RESULT
-auxGetVolume proto WINAPI \
-	     uDeviceID: UINT,
-	     pdwVolume: LPDWORD
-
+auxSetVolume proto WINAPI :UINT, :DWORD
+auxGetVolume proto WINAPI :UINT, :LPDWORD
 
 if (WINVER GE 0x030a)
 ifdef _WIN32
-;RESULT
-auxOutMessage proto WINAPI \
-	     uDeviceID: UINT,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+auxOutMessage proto WINAPI :UINT, :UINT, :DWORD, :DWORD
 else
-;DWORD
-auxOutMessage proto WINAPI \
-	     uDeviceID: UINT,
-		  uMsg: UINT,
-		   dw1: DWORD,
-		   dw2: DWORD
+auxOutMessage proto WINAPI :UINT, :UINT, :DWORD, :DWORD
 endif
 endif
 endif
@@ -1725,16 +1263,8 @@ endif
 
 ifdef _WIN32
 
-;RESULT
-mixerGetDevCapsA proto WINAPI \
-		 uMxId: UINT,
-	       pmxcaps: LPMIXERCAPSA,
-	      cbmxcaps: UINT
-;RESULT
-mixerGetDevCapsW proto WINAPI \
-		 uMxId: UINT,
-	       pmxcaps: LPMIXERCAPSW,
-	      cbmxcaps: UINT
+mixerGetDevCapsA proto WINAPI :UINT, :LPMIXERCAPSA, :UINT
+mixerGetDevCapsW proto WINAPI :UINT, :LPMIXERCAPSW, :UINT
 ifdef _UNICODE
 mixerGetDevCaps		equ <mixerGetDevCapsW>
 else
@@ -1742,30 +1272,11 @@ mixerGetDevCaps		equ <mixerGetDevCapsA>
 endif
 
 else
-mixerGetDevCaps proto WINAPI \
-		 uMxId: UINT,
-	       pmxcaps: LPMIXERCAPS,
-	      cbmxcaps: UINT
+mixerGetDevCaps proto WINAPI :UINT, :LPMIXERCAPS, :UINT
 endif
-
-;RESULT
-mixerOpen proto WINAPI \
-		  phmx: LPHMIXER,
-		 uMxId: UINT,
-	    dwCallback: DWORD,
-	    dwInstance: DWORD,
-	       fdwOpen: DWORD
-
-;RESULT
-mixerClose proto WINAPI \
-		   hmx: HMIXER
-
-;ORD
-mixerMessage proto WINAPI \
-		   hmx: HMIXER,
-		  uMsg: UINT,
-	      dwParam1: DWORD,
-	      dwParam2: DWORD
+mixerOpen proto WINAPI :LPHMIXER, :UINT, :DWORD, :DWORD,  :DWORD
+mixerClose proto WINAPI :HMIXER
+mixerMessage proto WINAPI :HMIXER, :UINT, :DWORD, :DWORD
 
 ifdef _WIN32
 
@@ -1895,16 +1406,8 @@ MIXERLINE_TARGETTYPE_AUX	equ 5
 
 ifdef _WIN32
 
-;RESULT
-mixerGetLineInfoA proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		  pmxl: LPMIXERLINEA,
-	       fdwInfo: DWORD
-;RESULT
-mixerGetLineInfoW proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		  pmxl: LPMIXERLINEW,
-	       fdwInfo: DWORD
+mixerGetLineInfoA proto WINAPI :HMIXEROBJ, :LPMIXERLINEA, :DWORD
+mixerGetLineInfoW proto WINAPI :HMIXEROBJ, :LPMIXERLINEW, :DWORD
 ifdef _UNICODE
 mixerGetLineInfo	equ <mixerGetLineInfoW>
 else
@@ -1912,11 +1415,7 @@ mixerGetLineInfo	equ <mixerGetLineInfoA>
 endif
 
 else
-;MMRESULT
-mixerGetLineInfo proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		  pmxl: LPMIXERLINE,
-	       fdwInfo: DWORD
+mixerGetLineInfo proto WINAPI :HMIXEROBJ, :LPMIXERLINE, :DWORD
 endif
 
 MIXER_GETLINEINFOF_DESTINATION	equ 0x00000000
@@ -1927,11 +1426,7 @@ MIXER_GETLINEINFOF_TARGETTYPE	equ 0x00000004
 
 MIXER_GETLINEINFOF_QUERYMASK	equ 0x0000000F
 
-;RESULT
-mixerGetID proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		puMxId: UINT,
-		 fdwId: DWORD
+mixerGetID proto WINAPI :HMIXEROBJ, :UINT, :DWORD
 
 ifdef _WIN32
 
@@ -2144,15 +1639,8 @@ endif
 
 ifdef _WIN32
 
-;MMRESULT
-mixerGetLineControlsA proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		 pmxlc: LPMIXERLINECONTROLSA,
-	   fdwControls: DWORD
-mixerGetLineControlsW proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		 pmxlc: LPMIXERLINECONTROLSW,
-	   fdwControls: DWORD
+mixerGetLineControlsA proto WINAPI :HMIXEROBJ, :LPMIXERLINECONTROLSA, :DWORD
+mixerGetLineControlsW proto WINAPI :HMIXEROBJ, :LPMIXERLINECONTROLSW, :DWORD
 ifdef _UNICODE
 mixerGetLineControls	equ <mixerGetLineControlsW>
 else
@@ -2160,10 +1648,7 @@ mixerGetLineControls	equ <mixerGetLineControlsA>
 endif
 
 else
-mixerGetLineControls proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		 pmxlc: LPMIXERLINECONTROLS,
-	   fdwControls: DWORD
+mixerGetLineControls proto WINAPI :HMIXEROBJ, :LPMIXERLINECONTROLS,  DWORD
 endif
 
 MIXER_GETLINECONTROLSF_ALL equ 0x00000000
@@ -2242,15 +1727,8 @@ LPMIXERCONTROLDETAILS_UNSIGNED typedef ptr MIXERCONTROLDETAILS_UNSIGNED
 
 ifdef _WIN32
 
-;MMRESULT
-mixerGetControlDetailsA proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		 pmxcd: LPMIXERCONTROLDETAILS,
-	    fdwDetails: DWORD
-mixerGetControlDetailsW proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		 pmxcd: LPMIXERCONTROLDETAILS,
-	    fdwDetails: DWORD
+mixerGetControlDetailsA proto WINAPI :HMIXEROBJ, :LPMIXERCONTROLDETAILS, :DWORD
+mixerGetControlDetailsW proto WINAPI :HMIXEROBJ, :LPMIXERCONTROLDETAILS, :DWORD
 ifdef _UNICODE
 mixerGetControlDetails	equ <mixerGetControlDetailsW>
 else
@@ -2258,10 +1736,7 @@ mixerGetControlDetails	equ <mixerGetControlDetailsA>
 endif
 
 else
-mixerGetControlDetails proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		 pmxcd: LPMIXERCONTROLDETAILS,
-	    fdwDetails: DWORD
+mixerGetControlDetails proto WINAPI :HMIXEROBJ, :LPMIXERCONTROLDETAILS,	 DWORD
 endif
 
 MIXER_GETCONTROLDETAILSF_VALUE equ 0x00000000
@@ -2269,11 +1744,7 @@ MIXER_GETCONTROLDETAILSF_LISTTEXT equ 0x00000001
 
 MIXER_GETCONTROLDETAILSF_QUERYMASK equ 0x0000000F
 
-;MMRESULT
-mixerSetControlDetails proto WINAPI \
-		hmxobj: HMIXEROBJ,
-		 pmxcd: LPMIXERCONTROLDETAILS,
-	    fdwDetails: DWORD
+mixerSetControlDetails proto WINAPI :HMIXEROBJ, :LPMIXERCONTROLDETAILS, :DWORD
 
 MIXER_SETCONTROLDETAILSF_VALUE equ 0x00000000
 MIXER_SETCONTROLDETAILSF_CUSTOM equ 0x00000001
@@ -2290,7 +1761,6 @@ TIMERR_NOERROR		equ (0)
 TIMERR_NOCANDO		equ (TIMERR_BASE+1)
 TIMERR_STRUCT		equ (TIMERR_BASE+33)
 
-;void
 CALLBACK(LPTIMECALLBACK, uTimerID:UINT, uMsg:UINT, dwUser:DWORD, dw1:DWORD, dw2:DWORD)
 
 TIME_ONESHOT		equ 0x0000
@@ -2310,38 +1780,13 @@ PTIMECAPS		typedef ptr TIMECAPS
 NPTIMECAPS		typedef ptr TIMECAPS
 LPTIMECAPS		typedef ptr TIMECAPS
 
-;MMRESULT
-timeGetSystemTime proto WINAPI \
-		  pmmt: LPMMTIME,
-		 cbmmt: UINT
-;DWORD
+timeGetSystemTime proto WINAPI :LPMMTIME, :UINT
 timeGetTime proto WINAPI
-
-;MMRESULT
-timeSetEvent proto WINAPI \
-		uDelay: UINT,
-	   uResolution: UINT,
-		  fptc: LPTIMECALLBACK,
-		dwUser: DWORD,
-	       fuEvent: UINT
-
-;MMRESULT
-timeKillEvent proto WINAPI \
-	      uTimerID: UINT
-
-;MMRESULT
-timeGetDevCaps proto WINAPI \
-		   ptc: LPTIMECAPS,
-		  cbtc: UINT
-
-;MMRESULT
-timeBeginPeriod proto WINAPI \
-	       uPeriod: UINT
-
-;MMRESULT
-timeEndPeriod proto WINAPI \
-	       uPeriod: UINT
-
+timeSetEvent proto WINAPI :UINT, :UINT, :LPTIMECALLBACK, :DWORD, :UINT
+timeKillEvent proto WINAPI :UINT
+timeGetDevCaps proto WINAPI :LPTIMECAPS, :UINT
+timeBeginPeriod proto WINAPI :UINT
+timeEndPeriod proto WINAPI :UINT
 endif
 endif
 
@@ -2578,19 +2023,11 @@ endif
 
 ifndef _WIN32_VXD
 
-;UINT
 joyGetNumDevs proto WINAPI
 ifdef _WIN32
 
-;MMRESULT
-joyGetDevCapsA proto WINAPI \
-		uJoyID: UINT,
-		   pjc: LPJOYCAPSA,
-		  cbjc: UINT
-joyGetDevCapsW proto WINAPI \
-		uJoyID: UINT,
-		   pjc: LPJOYCAPSW,
-		  cbjc: UINT
+joyGetDevCapsA proto WINAPI :UINT, :LPJOYCAPSA, :UINT
+joyGetDevCapsW proto WINAPI :UINT, :LPJOYCAPSW, :UINT
 ifdef _UNICODE
 joyGetDevCaps		equ <joyGetDevCapsW>
 else
@@ -2598,41 +2035,17 @@ joyGetDevCaps		equ <joyGetDevCapsA>
 endif
 
 else
-;MMRESULT
-joyGetDevCaps proto WINAPI \
-		uJoyID: UINT,
-		   pjc: LPJOYCAPS,
-		  cbjc: UINT
+joyGetDevCaps proto WINAPI :UINT, :LPJOYCAPS, :UINT
 endif
-;MMRESULT
-joyGetPos proto WINAPI \
-		uJoyID: UINT,
-		   pji: LPJOYINFO
+joyGetPos proto WINAPI :UINT, :LPJOYINFO
 
 if(WINVER GE 0x0400)
-;MMRESULT
-joyGetPosEx proto WINAPI \
-		uJoyID: UINT,
-		   pji: LPJOYINFOEX
+joyGetPosEx proto WINAPI :UINT, :LPJOYINFOEX
 endif
-
-;MMRESULT
-joyGetThreshold proto WINAPI \
-		uJoyID: UINT,
-	   puThreshold: LPUINT
-;MMRESULT
-joyReleaseCapture proto WINAPI \
-		uJoyID: UINT
-;MMRESULT
-joySetCapture proto WINAPI \
-		  hwnd: HWND,
-		uJoyID: UINT,
-	       uPeriod: UINT,
-	      fChanged: BOOL
-;MMRESULT
-joySetThreshold proto WINAPI \
-		uJoyID: UINT,
-	    uThreshold: UINT
+joyGetThreshold proto WINAPI :UINT, :LPUINT
+joyReleaseCapture proto WINAPI :UINT
+joySetCapture proto WINAPI :HWND, :UINT, :UINT, :BOOL
+joySetThreshold proto WINAPI :UINT, :UINT
 
 endif
 
@@ -2664,8 +2077,6 @@ CFSEPCHAR		equ '+'
 FOURCC			typedef DWORD
 HPSTR			typedef ptr
 HMMIO			typedef HANDLE
-
-;LRESULT
 
 CALLBACK(LPMMIOPROC, lpmmioinfo:LPSTR, uMsg:UINT, lParam1:LPARAM, lParam2:LPARAM)
 
@@ -2777,162 +2188,55 @@ MMIO_DEFAULTBUFFER	equ 8192
 
 ifdef _WIN32
 
-;FOURCC
-mmioStringToFOURCCA proto WINAPI \
-		    sz: LPCSTR,
-		uFlags: UINT
-mmioStringToFOURCCW proto WINAPI \
-		    sz: LPCWSTR,
-		uFlags: UINT
+mmioStringToFOURCCA proto WINAPI :LPCSTR, :UINT
+mmioStringToFOURCCW proto WINAPI :LPCWSTR, :UINT
 ifdef _UNICODE
 mmioStringToFOURCC	equ <mmioStringToFOURCCW>
 else
 mmioStringToFOURCC	equ <mmioStringToFOURCCA>
 endif
-;LPMMIOPROC
-mmioInstallIOProcA proto WINAPI \
-	     fccIOProc: FOURCC,
-	       pIOProc: LPMMIOPROC,
-	       dwFlags: DWORD
-mmioInstallIOProcW proto WINAPI \
-	     fccIOProc: FOURCC,
-	       pIOProc: LPMMIOPROC,
-	       dwFlags: DWORD
+mmioInstallIOProcA proto WINAPI :FOURCC, :LPMMIOPROC, :DWORD
+mmioInstallIOProcW proto WINAPI :FOURCC, :LPMMIOPROC, :DWORD
 ifdef _UNICODE
 mmioInstallIOProc	equ <mmioInstallIOProcW>
 else
 mmioInstallIOProc	equ <mmioInstallIOProcA>
 endif
-;HMMIO
-mmioOpenA proto WINAPI \
-	   pszFileName: LPSTR,
-	     pmmioinfo: LPMMIOINFO,
-	       fdwOpen: DWORD
-mmioOpenW proto WINAPI \
-	   pszFileName: LPWSTR,
-	     pmmioinfo: LPMMIOINFO,
-	       fdwOpen: DWORD
+mmioOpenA proto WINAPI :LPSTR, :LPMMIOINFO, :DWORD
+mmioOpenW proto WINAPI :LPWSTR, :LPMMIOINFO, :DWORD
 ifdef _UNICODE
 mmioOpen		equ <mmioOpenW>
 else
 mmioOpen		equ <mmioOpenA>
 endif
-;MMRESULT
-mmioRenameA proto WINAPI \
-	   pszFileName: LPCSTR,
-	pszNewFileName: LPCSTR,
-	     pmmioinfo: LPCMMIOINFO,
-	     fdwRename: DWORD
-mmioRenameW proto WINAPI \
-	   pszFileName: LPCWSTR,
-	pszNewFileName: LPCWSTR,
-	     pmmioinfo: LPCMMIOINFO,
-	     fdwRename: DWORD
+mmioRenameA proto WINAPI :LPCSTR, :LPCSTR, :LPCMMIOINFO, :DWORD
+mmioRenameW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCMMIOINFO, :DWORD
 ifdef _UNICODE
 mmioRename		equ <mmioRenameW>
 else
 mmioRename		equ <mmioRenameA>
 endif
 else
-;FOURCC
-mmioStringToFOURCC proto WINAPI \
-		    sz: LPCSTR,
-		uFlags: UINT
-;LPMMIOPROC
-mmioInstallIOProc proto WINAPI \
-	     fccIOProc: FOURCC,
-	       pIOProc: LPMMIOPROC,
-	       dwFlags: DWORD
-mmioOpen proto WINAPI \
-	   pszFileName: LPSTR,
-	     pmmioinfo: LPMMIOINFO,
-	       fdwOpen: DWORD
+mmioStringToFOURCC proto WINAPI :LPCSTR, :UINT
+mmioInstallIOProc proto WINAPI :FOURCC, :LPMMIOPROC, :DWORD
+mmioOpen proto WINAPI :LPSTR, :LPMMIOINFO, :DWORD
 if (WINVER GE 0x030a)
-;MMRESULT
-mmioRename proto WINAPI \
-	   pszFileName: LPCSTR,
-	pszNewFileName: LPCSTR,
-	     pmmioinfo: ptr MMIOINFO,
-	     fdwRename: DWORD
+mmioRename proto WINAPI :LPCSTR, :LPCSTR, :ptr MMIOINFO, :DWORD
 endif
 endif
-
-;MMRESULT
-mmioClose proto WINAPI \
-		 hmmio: HMMIO,
-	       fuClose: UINT
-
-;LONG
-mmioRead proto WINAPI \
-		 hmmio: HMMIO,
-		   pch: HPSTR,
-		   cch: LONG
-
-;LONG
-mmioWrite proto WINAPI \
-		 hmmio: HMMIO,
-		   pch: ptr,
-		   cch: LONG
-
-;LONG
-mmioSeek proto WINAPI \
-		 hmmio: HMMIO,
-	       lOffset: LONG,
-	       iOrigin: SINT
-
-;MMRESULT
-mmioGetInfo proto WINAPI \
-		 hmmio: HMMIO,
-	     pmmioinfo: LPMMIOINFO,
-		fuInfo: UINT
-
-;MMRESULT
-mmioSetInfo proto WINAPI \
-		 hmmio: HMMIO,
-	     pmmioinfo: LPCMMIOINFO,
-		fuInfo: UINT
-
-;MMRESULT
-mmioSetBuffer proto WINAPI \
-		 hmmio: HMMIO,
-	     pchBuffer: LPSTR,
-	     cchBuffer: LONG,
-	      fuBuffer: UINT
-
-;MMRESULT
-mmioFlush proto WINAPI \
-		 hmmio: HMMIO,
-	       fuFlush: UINT
-
-;MMRESULT
-mmioAdvance proto WINAPI \
-		 hmmio: HMMIO,
-	     pmmioinfo: LPMMIOINFO,
-	     fuAdvance: UINT
-
-;LRESULT
-mmioSendMessage proto WINAPI \
-		 hmmio: HMMIO,
-		  uMsg: UINT,
-	       lParam1: LPARAM,
-	       lParam2: HMMIO
-;MMRESULT
-mmioDescend proto WINAPI \
-		 hmmio: HMMIO,
-		pmmcki: LPMMCKINFO,
-	  pmmckiParent: MMCKINFO,
-	     fuDescend: UINT
-
-;MMRESULT
-mmioAscend proto WINAPI \
-		 hmmio: HMMIO,
-		pmmcki: LPMMCKINFO,
-	      fuAscend: UINT
-;MMRESULT
-mmioCreateChunk proto WINAPI \
-		 hmmio: HMMIO,
-		pmmcki: LPMMCKINFO,
-	      fuCreate: UINT
+mmioClose proto WINAPI :HMMIO, :UINT
+mmioRead proto WINAPI :HMMIO, :HPSTR, :LONG
+mmioWrite proto WINAPI :HMMIO, :ptr, :LONG
+mmioSeek proto WINAPI :HMMIO, :LONG, :SINT
+mmioGetInfo proto WINAPI :HMMIO, :LPMMIOINFO, :UINT
+mmioSetInfo proto WINAPI :HMMIO, :LPCMMIOINFO, :UINT
+mmioSetBuffer proto WINAPI :HMMIO, :LPSTR, :LONG, :UINT
+mmioFlush proto WINAPI :HMMIO, :UINT
+mmioAdvance proto WINAPI :HMMIO, :LPMMIOINFO, :UINT
+mmioSendMessage proto WINAPI :HMMIO, :UINT, :LPARAM, :HMMIO
+mmioDescend proto WINAPI :HMMIO, :LPMMCKINFO, :MMCKINFO, :UINT
+mmioAscend proto WINAPI :HMMIO, :LPMMCKINFO, :UINT
+mmioCreateChunk proto WINAPI :HMMIO, :LPMMCKINFO, :UINT
 
 endif
 endif
@@ -2950,75 +2254,41 @@ _MCIDEVICEID_		equ 1
 MCIDEVICEID		typedef UINT
 endif
 
-;UINT
 CALLBACK(YIELDPROC, mciId:MCIDEVICEID, dwYieldData:DWORD)
 
 ifdef _WIN32
 
-;MCIERROR
-mciSendCommandA proto WINAPI \
-		 mciId: MCIDEVICEID,
-		  uMsg: UINT,
-	      dwParam1: DWORD,
-	      dwParam2: DWORD
-mciSendCommandW proto WINAPI \
-		 mciId: MCIDEVICEID,
-		  uMsg: UINT,
-	      dwParam1: DWORD,
-	      dwParam2: DWORD
+mciSendCommandA proto WINAPI :MCIDEVICEID, :UINT, :DWORD, :DWORD
+mciSendCommandW proto WINAPI :MCIDEVICEID, :UINT, :DWORD, :DWORD
 ifdef _UNICODE
 mciSendCommand		equ <mciSendCommandW>
 else
 mciSendCommand		equ <mciSendCommandA>
 endif
-;MCIERROR
-mciSendStringA proto WINAPI \
-	  lpstrCommand: LPCSTR,
-     lpstrReturnString: LPSTR,
-	 uReturnLength: UINT,
-	  hwndCallback: HWND
-mciSendStringW proto WINAPI \
-	 lpstrCommand: LPCWSTR,
-    lpstrReturnString: LPWSTR,
-	uReturnLength: UINT,
-	 hwndCallback: HWND
+mciSendStringA proto WINAPI :LPCSTR, :LPSTR, :UINT, :HWND
+mciSendStringW proto WINAPI :LPCWSTR, :LPWSTR, :UINT, :HWND
 ifdef _UNICODE
 mciSendString		equ <mciSendStringW>
 else
 mciSendString		equ <mciSendStringA>
 endif
-;MCIDEVICEID
-mciGetDeviceIDA proto WINAPI \
-	     pszDevice: LPCSTR
-mciGetDeviceIDW proto WINAPI \
-	     pszDevice: LPCWSTR
+mciGetDeviceIDA proto WINAPI :LPCSTR
+mciGetDeviceIDW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 mciGetDeviceID		equ <mciGetDeviceIDW>
 else
 mciGetDeviceID		equ <mciGetDeviceIDA>
 endif
-;MCIDEVICEID
-mciGetDeviceIDFromElementIDA proto WINAPI \
-	   dwElementID: DWORD,
-	     lpstrType: LPCSTR
-mciGetDeviceIDFromElementIDW proto WINAPI \
-	   dwElementID: DWORD,
-	     lpstrType: LPWSTR
+mciGetDeviceIDFromElementIDA proto WINAPI :DWORD, :LPCSTR
+mciGetDeviceIDFromElementIDW proto WINAPI :DWORD, :LPWSTR
 ifdef _UNICODE
 mciGetDeviceIDFromElementID equ <mciGetDeviceIDFromElementIDW>
 else
 mciGetDeviceIDFromElementID equ <mciGetDeviceIDFromElementIDA>
 endif
 
-;BOOL
-mciGetErrorStringA proto WINAPI \
-		mcierr: MCIERROR,
-	       pszText: LPSTR,
-	       cchText: UINT
-mciGetErrorStringW proto WINAPI \
-		mcierr: MCIERROR,
-	       pszText: LPWSTR,
-	       cchText: UINT
+mciGetErrorStringA proto WINAPI :MCIERROR, :LPSTR, :UINT
+mciGetErrorStringW proto WINAPI :MCIERROR, :LPWSTR, :UINT
 ifdef _UNICODE
 mciGetErrorString	equ <mciGetErrorStringW>
 else
@@ -3026,47 +2296,20 @@ mciGetErrorString	equ <mciGetErrorStringA>
 endif
 
 else
-;MCIERROR
-mciSendCommand proto WINAPI \
-		 mciId: MCIDEVICEID,
-		  uMsg: UINT,
-	      dwParam1: DWORD,
-	      dwParam2: DWORD
-;MCIERROR
-mciSendString proto WINAPI \
-	  lpstrCommand: LPCSTR,
-     lpstrReturnString: LPSTR,
-	 uReturnLength: UINT,
-	  hwndCallback: HWND
-;MCIDEVICEID
-mciGetDeviceID proto WINAPI \
-	     pszDevice: LPCSTR
-;BOOL
-mciGetErrorString proto WINAPI \
-		mcierr: MCIERROR,
-	       pszText: LPSTR,
-	       cchText: UINT
+mciSendCommand proto WINAPI :MCIDEVICEID, :UINT, :DWORD, :DWORD
+mciSendString proto WINAPI :LPCSTR, :LPSTR, :UINT, :HWND
+mciGetDeviceID proto WINAPI :LPCSTR
+mciGetErrorString proto WINAPI :MCIERROR, :LPSTR, :UINT
 endif
-
-;BOOL
-mciSetYieldProc proto WINAPI \
-		 mciId: MCIDEVICEID,
-	   fpYieldProc: YIELDPROC,
-	   dwYieldData: DWORD
+mciSetYieldProc proto WINAPI :MCIDEVICEID, :YIELDPROC, :DWORD
 
 if (WINVER GE 0x030a)
-;HTASK
-mciGetCreatorTaskg proto WINAPI \
-		 mciId: MCIDEVICEID
-;YIELDPROC
-mciGetYieldProcg proto WINAPI \
-		 mciId: MCIDEVICEID,
-	  pdwYieldData: LPDWORD
+mciGetCreatorTaskg proto WINAPI :MCIDEVICEID
+mciGetYieldProcg proto WINAPI :MCIDEVICEID, :LPDWORD
 endif
 
 if (WINVER LT 0x030a)
-mciExecute proto WINAPI \
-	    pszCommand: LPCSTR
+mciExecute proto WINAPI :LPCSTR
 endif
 
 MCIERR_INVALID_DEVICE_ID equ (MCIERR_BASE + 1)

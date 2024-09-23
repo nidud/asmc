@@ -433,11 +433,7 @@ if (NTDDI_VERSION GE NTDDI_WINBLUE)
 BCRYPT_EXTENDED_KEYSIZE equ 0x00000080
 endif
 
-BCryptOpenAlgorithmProvider proto WINAPI \
-	   phAlgorithm: ptr BCRYPT_ALG_HANDLE,
-	      pszAlgId: LPCWSTR,
-     pszImplementation: LPCWSTR,
-	       dwFlags: ULONG
+BCryptOpenAlgorithmProvider proto WINAPI :ptr, :LPCWSTR, :LPCWSTR, :ULONG
 
 BCRYPT_CIPHER_OPERATION equ 0x00000001
 BCRYPT_HASH_OPERATION	equ 0x00000002
@@ -453,272 +449,56 @@ dwClass			ULONG ?
 dwFlags			ULONG ?
 BCRYPT_ALGORITHM_IDENTIFIER ENDS
 
-BCryptEnumAlgorithms proto WINAPI \
-       dwAlgOperations: ULONG,
-	     pAlgCount: ptr ULONG,
-	     ppAlgList: ptr BCRYPT_ALGORITHM_IDENTIFIER,
-	       dwFlags: ULONG
-
+BCryptEnumAlgorithms proto WINAPI :ULONG, :ptr, :ptr, :ULONG
 
 BCRYPT_PROVIDER_NAME	STRUC
 pszProviderName		LPWSTR ?
 BCRYPT_PROVIDER_NAME	ENDS
 
-BCryptEnumProviders proto WINAPI \
-	      pszAlgId: LPCWSTR,
-	    pImplCount: ptr ULONG,
-	    ppImplList: ptr BCRYPT_PROVIDER_NAME,
-	       dwFlags: ULONG
+BCryptEnumProviders proto WINAPI :LPCWSTR, :ptr, :ptr, :ULONG
 
 BCRYPT_PUBLIC_KEY_FLAG	equ 0x00000001
 BCRYPT_PRIVATE_KEY_FLAG equ 0x00000002
 
-BCryptGetProperty proto WINAPI \
-	       hObject: BCRYPT_HANDLE,
-	   pszProperty: LPCWSTR,
-	      pbOutput: PUCHAR,
-	      cbOutput: ULONG,
-	     pcbResult: ptr ULONG,
-	       dwFlags: ULONG
-
-
-BCryptSetProperty proto WINAPI \
-	       hObject: BCRYPT_HANDLE,
-	   pszProperty: LPCWSTR,
-	       pbInput: PUCHAR,
-	       cbInput: ULONG,
-	       dwFlags: ULONG
-
-BCryptCloseAlgorithmProvider proto WINAPI \
-	    hAlgorithm: BCRYPT_ALG_HANDLE,
-	       dwFlags: ULONG
-
-BCryptFreeBuffer proto WINAPI \
-	      pvBuffer: PVOID
-
-
-BCryptGenerateSymmetricKey proto WINAPI \
-	    hAlgorithm: BCRYPT_ALG_HANDLE,
-		 phKey: ptr BCRYPT_KEY_HANDLE,
-	   pbKeyObject: PUCHAR,
-	   cbKeyObject: ULONG,
-	      pbSecret: PUCHAR,
-	      cbSecret: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptGenerateKeyPair proto WINAPI \
-	    hAlgorithm: BCRYPT_ALG_HANDLE,
-		 phKey: ptr BCRYPT_KEY_HANDLE,
-	      dwLength: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptEncrypt proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE,
-	       pbInput: PUCHAR,
-	       cbInput: ULONG,
-	  pPaddingInfo: ptr VOID,
-		  pbIV: PUCHAR,
-		  cbIV: ULONG,
-	      pbOutput: PUCHAR,
-
-
-BCryptDecrypt proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE,
-	       pbInput: PUCHAR,
-	       cbInput: ULONG,
-	  pPaddingInfo: ptr VOID,
-		  pbIV: PUCHAR,
-		  cbIV: ULONG,
-	      pbOutput: PUCHAR,
-
-
-BCryptExportKey proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE,
-	    hExportKey: BCRYPT_KEY_HANDLE,
-	   pszBlobType: LPCWSTR,
-	      pbOutput: PUCHAR,
-	      cbOutput: ULONG,
-	     pcbResult: ptr ULONG,
-	       dwFlags: ULONG
-
-
-BCryptImportKey proto WINAPI \
-	    hAlgorithm: BCRYPT_ALG_HANDLE,
-	    hImportKey: BCRYPT_KEY_HANDLE,
-	   pszBlobType: LPCWSTR,
-		 phKey: ptr BCRYPT_KEY_HANDLE,
-	   pbKeyObject: PUCHAR,
-	   cbKeyObject: ULONG,
-	       pbInput: PUCHAR,
-	       cbInput: ULONG,
-
+BCryptGetProperty proto WINAPI :BCRYPT_HANDLE, :LPCWSTR, :PUCHAR, :ULONG, :ptr, :ULONG
+BCryptSetProperty proto WINAPI :BCRYPT_HANDLE, :LPCWSTR, :PUCHAR, :ULONG, :ULONG
+BCryptCloseAlgorithmProvider proto WINAPI :BCRYPT_ALG_HANDLE, :ULONG
+BCryptFreeBuffer proto WINAPI :ptr
+BCryptGenerateSymmetricKey proto WINAPI :BCRYPT_ALG_HANDLE, :ptr, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ULONG
+BCryptGenerateKeyPair proto WINAPI :BCRYPT_ALG_HANDLE, :ptr, :ULONG, :ULONG
+BCryptEncrypt proto WINAPI :BCRYPT_KEY_HANDLE, :PUCHAR, :ULONG, :ptr, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ptr, :ULONG
+BCryptDecrypt proto WINAPI :BCRYPT_KEY_HANDLE, :PUCHAR, :ULONG, :ptr, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ptr, :ULONG
+BCryptExportKey proto WINAPI :BCRYPT_KEY_HANDLE, :BCRYPT_KEY_HANDLE, :LPCWSTR, :PUCHAR, :ULONG, :ptr, :ULONG
+BCryptImportKey proto WINAPI :BCRYPT_ALG_HANDLE, :BCRYPT_KEY_HANDLE, :LPCWSTR, :ptr, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ULONG
 
 BCRYPT_NO_KEY_VALIDATION equ 0x00000008
 
-BCryptImportKeyPair proto WINAPI \
-	    hAlgorithm: BCRYPT_ALG_HANDLE,
-	    hImportKey: BCRYPT_KEY_HANDLE,
-	   pszBlobType: LPCWSTR,
-		 phKey: ptr BCRYPT_KEY_HANDLE,
-	       pbInput: PUCHAR,
-	       cbInput: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptDuplicateKey proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE,
-	      phNewKey: ptr BCRYPT_KEY_HANDLE,
-	   pbKeyObject: PUCHAR,
-	   cbKeyObject: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptFinalizeKeyPair proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE,
-	       dwFlags: ULONG
-
-
-BCryptDestroyKey proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE
-
-BCryptDestroySecret proto WINAPI \
-	       hSecret: BCRYPT_SECRET_HANDLE
-
-BCryptSignHash proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE,
-	  pPaddingInfo: ptr VOID,
-	       pbInput: PUCHAR,
-	       cbInput: ULONG,
-	      pbOutput: PUCHAR,
-	      cbOutput: ULONG,
-	     pcbResult: ptr ULONG,
-	       dwFlags: ULONG
-
-BCryptVerifySignature proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE,
-	  pPaddingInfo: ptr VOID,
-		pbHash: PUCHAR,
-		cbHash: ULONG,
-	   pbSignature: PUCHAR,
-	   cbSignature: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptSecretAgreement proto WINAPI \
-	      hPrivKey: BCRYPT_KEY_HANDLE,
-	       hPubKey: BCRYPT_KEY_HANDLE,
-	phAgreedSecret: ptr BCRYPT_SECRET_HANDLE,
-	       dwFlags: ULONG
-
-
-BCryptDeriveKey proto WINAPI \
-	 hSharedSecret: BCRYPT_SECRET_HANDLE,
-	       pwszKDF: LPCWSTR,
-	pParameterList: ptr BCryptBufferDesc,
-	  pbDerivedKey: PUCHAR,
-	  cbDerivedKey: ULONG,
-	     pcbResult: ptr ULONG,
-	       dwFlags: ULONG
-
-
-BCryptKeyDerivation proto WINAPI \
-		  hKey: BCRYPT_KEY_HANDLE,
-	pParameterList: ptr BCryptBufferDesc,
-	  pbDerivedKey: PUCHAR,
-	  cbDerivedKey: ULONG,
-	     pcbResult: ptr ULONG,
-	       dwFlags: ULONG
-
-BCryptCreateHash proto WINAPI \
-	    hAlgorithm: BCRYPT_ALG_HANDLE,
-		phHash: ptr BCRYPT_HASH_HANDLE,
-	  pbHashObject: PUCHAR,
-	  cbHashObject: ULONG,
-	      pbSecret: PUCHAR,
-	      cbSecret: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptHashData proto WINAPI \
-		 hHash: BCRYPT_HASH_HANDLE,
-	       pbInput: PUCHAR,
-	       cbInput: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptFinishHash proto WINAPI \
-		 hHash: BCRYPT_HASH_HANDLE,
-	      pbOutput: PUCHAR,
-	      cbOutput: ULONG,
-	       dwFlags: ULONG
-
-
-
+BCryptImportKeyPair proto WINAPI :BCRYPT_ALG_HANDLE, :BCRYPT_KEY_HANDLE, :LPCWSTR, :ptr, :PUCHAR, :ULONG, :ULONG
+BCryptDuplicateKey proto WINAPI :BCRYPT_KEY_HANDLE, :ptr, :PUCHAR, :ULONG, :ULONG
+BCryptFinalizeKeyPair proto WINAPI :BCRYPT_KEY_HANDLE, :ULONG
+BCryptDestroyKey proto WINAPI :BCRYPT_KEY_HANDLE
+BCryptDestroySecret proto WINAPI :BCRYPT_SECRET_HANDLE
+BCryptSignHash proto WINAPI :BCRYPT_KEY_HANDLE, :ptr, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ptr, :ULONG
+BCryptVerifySignature proto WINAPI :BCRYPT_KEY_HANDLE, :ptr, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ULONG
+BCryptSecretAgreement proto WINAPI :BCRYPT_KEY_HANDLE, :BCRYPT_KEY_HANDLE, :ptr, :ULONG
+BCryptDeriveKey proto WINAPI :BCRYPT_SECRET_HANDLE, :LPCWSTR, :ptr, :PUCHAR, :ULONG, :ptr, :ULONG
+BCryptKeyDerivation proto WINAPI :BCRYPT_KEY_HANDLE, :ptr, :PUCHAR, :ULONG, :ptr, :ULONG
+BCryptCreateHash proto WINAPI :BCRYPT_ALG_HANDLE, :ptr, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ULONG
+BCryptHashData proto WINAPI :BCRYPT_HASH_HANDLE, :PUCHAR, :ULONG, :ULONG
+BCryptFinishHash proto WINAPI :BCRYPT_HASH_HANDLE, :PUCHAR, :ULONG, :ULONG
 if (NTDDI_VERSION GT NTDDI_WINBLUE OR (NTDDI_VERSION EQ NTDDI_WINBLUE AND defined(WINBLUE_KBSPRING14)))
-
-BCryptCreateMultiHash proto WINAPI \
-	    hAlgorithm: BCRYPT_ALG_HANDLE,
-		phHash: ptr BCRYPT_HASH_HANDLE,
-	       nHashes: ULONG,
-	  pbHashObject: PUCHAR,
-	  cbHashObject: ULONG,
-	      pbSecret: PUCHAR,
-	      cbSecret: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptProcessMultiOperations proto WINAPI \
-	       hObject: BCRYPT_HANDLE,
-	 operationType: BCRYPT_MULTI_OPERATION_TYPE,
-	   pOperations: PVOID,
-	  cbOperations: ULONG,
-	       dwFlags: ULONG
-
+BCryptCreateMultiHash proto WINAPI :BCRYPT_ALG_HANDLE, :ptr, :ULONG, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ULONG
+BCryptProcessMultiOperations proto WINAPI :BCRYPT_HANDLE, :BCRYPT_MULTI_OPERATION_TYPE, :ptr, :ULONG, :ULONG
 endif
-
-BCryptDuplicateHash proto WINAPI \
-		 hHash: BCRYPT_HASH_HANDLE,
-	     phNewHash: ptr BCRYPT_HASH_HANDLE,
-	  pbHashObject: PUCHAR,
-	  cbHashObject: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptDestroyHash proto WINAPI \
-		 hHash: BCRYPT_HASH_HANDLE
-
-
+BCryptDuplicateHash proto WINAPI :BCRYPT_HASH_HANDLE, :ptr, :PUCHAR, :ULONG, :ULONG
+BCryptDestroyHash proto WINAPI :BCRYPT_HASH_HANDLE
 
 BCRYPT_RNG_USE_ENTROPY_IN_BUFFER equ 0x00000001
 BCRYPT_USE_SYSTEM_PREFERRED_RNG equ 0x00000002
 
-BCryptGenRandom proto WINAPI \
-	    hAlgorithm: BCRYPT_ALG_HANDLE,
-	      pbBuffer: PUCHAR,
-	      cbBuffer: ULONG,
-	       dwFlags: ULONG
-
-BCryptDeriveKeyCapi proto WINAPI \
-		 hHash: BCRYPT_HASH_HANDLE,
-	    hTargetAlg: BCRYPT_ALG_HANDLE,
-	  pbDerivedKey: PUCHAR,
-	  cbDerivedKey: ULONG,
-	       dwFlags: ULONG
-
-
-BCryptDeriveKeyPBKDF2 proto WINAPI \
-		  hPrf: BCRYPT_ALG_HANDLE,
-	    pbPassword: PUCHAR,
-	    cbPassword: ULONG,
-		pbSalt: PUCHAR,
-		cbSalt: ULONG,
-	   cIterations: ULONGLONG,
-	  pbDerivedKey: PUCHAR,
-	  cbDerivedKey: ULONG,
-	       dwFlags: ULONG
-
+BCryptGenRandom proto WINAPI :BCRYPT_ALG_HANDLE, :PUCHAR, :ULONG, :ULONG
+BCryptDeriveKeyCapi proto WINAPI :BCRYPT_HASH_HANDLE, :BCRYPT_ALG_HANDLE, :PUCHAR, :ULONG, :ULONG
+BCryptDeriveKeyPBKDF2 proto WINAPI :BCRYPT_ALG_HANDLE, :PUCHAR, :ULONG, :PUCHAR, :ULONG, :ULONGLONG, :PUCHAR, :ULONG, :ULONG
 
 BCRYPT_INTERFACE_VERSION STRUC
 MajorVersion		USHORT ?
@@ -858,142 +638,35 @@ PCRYPT_PROVIDER_REFS	typedef ptr CRYPT_PROVIDER_REFS
 
 ifndef KERNEL_MODE_CNG
 
-BCryptQueryProviderRegistration proto WINAPI \
-	   pszProvider: LPCWSTR,
-		dwMode: ULONG,
-	   dwInterface: ULONG,
-	     pcbBuffer: ptr ULONG,
-	      ppBuffer: ptr PCRYPT_PROVIDER_REG
-
-BCryptEnumRegisteredProviders proto WINAPI \
-	     pcbBuffer: ptr ULONG,
-	      ppBuffer: ptr PCRYPT_PROVIDERS
-
-BCryptCreateContext proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	       pConfig: PCRYPT_CONTEXT_CONFIG
-
-
-BCryptDeleteContext proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR
-
-
-BCryptEnumContexts proto WINAPI \
-	       dwTable: ULONG,
-	     pcbBuffer: ptr ULONG,
-	      ppBuffer: ptr PCRYPT_CONTEXTS
-
-BCryptConfigureContext proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	       pConfig: PCRYPT_CONTEXT_CONFIG
-
-
-BCryptQueryContextConfiguration proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	     pcbBuffer: ptr ULONG,
-	      ppBuffer: ptr PCRYPT_CONTEXT_CONFIG
-
-BCryptAddContextFunction proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	   pszFunction: LPCWSTR,
-	    dwPosition: ULONG
-
-
-BCryptRemoveContextFunction proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	   pszFunction: LPCWSTR
-
-
-BCryptEnumContextFunctions proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	     pcbBuffer: ptr ULONG,
-	      ppBuffer: ptr PCRYPT_CONTEXT_FUNCTIONS
-
-BCryptConfigureContextFunction proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	   pszFunction: LPCWSTR,
-	       pConfig: PCRYPT_CONTEXT_FUNCTION_CONFIG
-
-
-BCryptQueryContextFunctionConfiguration proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	   pszFunction: LPCWSTR,
-	     pcbBuffer: ptr ULONG,
-	      ppBuffer: ptr PCRYPT_CONTEXT_FUNCTION_CONFIG
-
-
-BCryptEnumContextFunctionProviders proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	   pszFunction: LPCWSTR,
-	     pcbBuffer: ptr ULONG,
-	      ppBuffer: ptr PCRYPT_CONTEXT_FUNCTION_PROVIDERS
-
-BCryptSetContextFunctionProperty proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	   pszFunction: LPCWSTR,
-	   pszProperty: LPCWSTR,
-	       cbValue: ULONG,
-	       pbValue: PUCHAR
-
-BCryptQueryContextFunctionProperty proto WINAPI \
-	       dwTable: ULONG,
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	   pszFunction: LPCWSTR,
-	   pszProperty: LPCWSTR,
-	      pcbValue: ptr ULONG,
-	      ppbValue: ptr PUCHAR
+BCryptQueryProviderRegistration proto WINAPI :LPCWSTR, :ULONG, :ULONG, :ptr, :ptr
+BCryptEnumRegisteredProviders proto WINAPI :ptr, :ptr
+BCryptCreateContext proto WINAPI :ULONG, :LPCWSTR, :PCRYPT_CONTEXT_CONFIG
+BCryptDeleteContext proto WINAPI :ULONG, :LPCWSTR
+BCryptEnumContexts proto WINAPI :ULONG, :ptr, :ptr
+BCryptConfigureContext proto WINAPI :ULONG, :LPCWSTR, :PCRYPT_CONTEXT_CONFIG
+BCryptQueryContextConfiguration proto WINAPI :ULONG, :LPCWSTR, :ptr, :ptr
+BCryptAddContextFunction proto WINAPI :ULONG, :LPCWSTR, :ULONG, :LPCWSTR, :ULONG
+BCryptRemoveContextFunction proto WINAPI :ULONG, :LPCWSTR, :ULONG, :LPCWSTR
+BCryptEnumContextFunctions proto WINAPI :ULONG, :LPCWSTR, :ULONG, :ptr, :ptr
+BCryptConfigureContextFunction proto WINAPI :ULONG, :LPCWSTR, :ULONG, :LPCWSTR, :PCRYPT_CONTEXT_FUNCTION_CONFIG
+BCryptQueryContextFunctionConfiguration proto WINAPI :ULONG, :LPCWSTR, :ULONG, :LPCWSTR, :ptr, :ptr
+BCryptEnumContextFunctionProviders proto WINAPI :ULONG, :LPCWSTR, :ULONG, :LPCWSTR, :ptr, :ptr
+BCryptSetContextFunctionProperty proto WINAPI :ULONG, :LPCWSTR, :ULONG, :LPCWSTR, :LPCWSTR, :ULONG, :PUCHAR
+BCryptQueryContextFunctionProperty proto WINAPI :ULONG, :LPCWSTR, :ULONG, :LPCWSTR, :LPCWSTR, :ptr, :ptr
 
 endif ;; ifndef KERNEL_MODE_CNG
 
 ifdef KERNEL_MODE_CNG
-
-BCryptRegisterConfigChangeNotify proto WINAPI \
-		pEvent: PRKEVENT
+BCryptRegisterConfigChangeNotify proto WINAPI :PRKEVENT
 else
-BCryptRegisterConfigChangeNotify proto WINAPI \
-	       phEvent: ptr HANDLE
+BCryptRegisterConfigChangeNotify proto WINAPI :ptr
 endif
-
 ifdef KERNEL_MODE_CNG
-BCryptUnregisterConfigChangeNotify proto WINAPI \
-		pEvent: PRKEVENT
+BCryptUnregisterConfigChangeNotify proto WINAPI :PRKEVENT
 else
-BCryptUnregisterConfigChangeNotify proto WINAPI \
-		hEvent: HANDLE
+BCryptUnregisterConfigChangeNotify proto WINAPI :HANDLE
 endif
-
-BCryptResolveProviders proto WINAPI \
-	    pszContext: LPCWSTR,
-	   dwInterface: ULONG,
-	   pszFunction: LPCWSTR,
-	   pszProvider: LPCWSTR,
-		dwMode: ULONG,
-	       dwFlags: ULONG,
-	     pcbBuffer: ptr ULONG,
-	      ppBuffer: ptr PCRYPT_PROVIDER_REFS
-
-BCryptGetFipsAlgorithmMode proto WINAPI \
-	     pfEnabled: ptr BOOLEAN
-
-
+BCryptResolveProviders proto WINAPI :LPCWSTR, :ULONG, :LPCWSTR, :LPCWSTR, :ULONG, :ULONG, :ptr, :ptr
+BCryptGetFipsAlgorithmMode proto WINAPI :ptr
 endif
 endif

@@ -2,7 +2,7 @@ ifndef _WINVER_
 define _WINVER_
 .pragma list(push, 0)
 ifndef __LIBC_INC
- include libc.inc
+include libc.inc
 endif
 
 .pragma comment(lib, version)
@@ -122,115 +122,48 @@ VS_FIXEDFILEINFO	ENDS
 
 PUINT	typedef ptr DWORD
 
-;DWORD
-VerFindFileA proto WINAPI \
-		uFlags: DWORD,
-	    szFileName: LPSTR,
-	      szWinDir: LPSTR,
-	      szAppDir: LPSTR,
-	      szCurDir: LPSTR,
-	  lpuCurDirLen: PUINT,
-	     szDestDir: LPSTR,
-	lpuDestDirLen : PUINT
-VerFindFileW proto WINAPI \
-		uFlags: DWORD,
-	    szFileName: LPWSTR,
-	      szWinDir: LPWSTR,
-	      szAppDir: LPWSTR,
-	      szCurDir: LPWSTR,
-	  lpuCurDirLen: PUINT,
-	     szDestDir: LPWSTR,
-	lpuDestDirLen : PUINT
+VerFindFileA proto WINAPI :DWORD, :LPSTR, :LPSTR, :LPSTR, :LPSTR, :PUINT, :LPSTR, :PUINT
+VerFindFileW proto WINAPI :DWORD, :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :PUINT, :LPWSTR, :PUINT
 ifdef _UNICODE
 VerFindFile		equ <VerFindFileW>
 else
 VerFindFile		equ <VerFindFileA>
 endif
 
-;DWORD
-VerInstallFileA proto WINAPI \
-		uFlags: DWORD,
-	 szSrcFileName: LPSTR,
-	szDestFileName: LPSTR,
-	      szSrcDir: LPSTR,
-	     szDestDir: LPSTR,
-	      szCurDir: LPSTR,
-	     szTmpFile: LPSTR,
-	lpuTmpFileLen : PUINT
-VerInstallFileW proto WINAPI \
-		uFlags: DWORD,
-	 szSrcFileName: LPWSTR,
-	szDestFileName: LPWSTR,
-	      szSrcDir: LPWSTR,
-	     szDestDir: LPWSTR,
-	      szCurDir: LPWSTR,
-	     szTmpFile: LPWSTR,
-	lpuTmpFileLen : PUINT
+VerInstallFileA proto WINAPI :DWORD, :LPSTR, :LPSTR, :LPSTR, :LPSTR, :LPSTR, :LPSTR, :PUINT
+VerInstallFileW proto WINAPI :DWORD, :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :PUINT
 ifdef _UNICODE
 VerInstallFile		equ <VerInstallFileW>
 else
 VerInstallFile		equ <VerInstallFileA>
 endif
 
-;DWORD
-GetFileVersionInfoSizeA proto WINAPI \
-	lptstrFilename: LPSTR,
-	    lpdwHandle: LPDWORD
-GetFileVersionInfoSizeW proto WINAPI \
-	lptstrFilename: LPWSTR,
-	    lpdwHandle: LPDWORD
+GetFileVersionInfoSizeA proto WINAPI :LPSTR, :LPDWORD
+GetFileVersionInfoSizeW proto WINAPI :LPWSTR, :LPDWORD
 ifdef _UNICODE
 GetFileVersionInfoSize	equ <GetFileVersionInfoSizeW>
 else
 GetFileVersionInfoSize	equ <GetFileVersionInfoSizeA>
 endif
 
-;BOOL
-GetFileVersionInfoA proto WINAPI \
-	lptstrFilename: LPSTR,
-	      dwHandle: DWORD,
-		 dwLen: DWORD,
-		lpData: PVOID
-
-;BOOL
-GetFileVersionInfoW proto WINAPI \
-	lptstrFilename: LPWSTR,
-	      dwHandle: DWORD,
-		 dwLen: DWORD,
-		lpData: PVOID
+GetFileVersionInfoA proto WINAPI :LPSTR, :DWORD, :DWORD, :ptr
+GetFileVersionInfoW proto WINAPI :LPWSTR, :DWORD, :DWORD, :ptr
 ifdef _UNICODE
 GetFileVersionInfo	equ <GetFileVersionInfoW>
 else
 GetFileVersionInfo	equ <GetFileVersionInfoA>
 endif
 
-;DWORD
-VerLanguageNameA proto WINAPI \
-		 wLang: DWORD,
-		szLang: LPSTR,
-		 nSize: DWORD
-VerLanguageNameW proto WINAPI \
-		 wLang: DWORD,
-		szLang: LPWSTR,
-		 nSize: DWORD
+VerLanguageNameA proto WINAPI :DWORD, :LPSTR, :DWORD
+VerLanguageNameW proto WINAPI :DWORD, :LPWSTR, :DWORD
 ifdef _UNICODE
 VerLanguageName		equ <VerLanguageNameW>
 else
 VerLanguageName		equ <VerLanguageNameA>
 endif
 
-;BOOL
-VerQueryValueA proto WINAPI \
-		pBlock: PVOID,
-	    lpSubBlock: LPSTR,
-	    lplpBuffer: PVOID,
-		 puLen: PUINT
-;BOOL
-VerQueryValueW proto WINAPI \
-		pBlock: PVOID,
-	    lpSubBlock: LPWSTR,
-	    lplpBuffer: PVOID,
-		 puLen: PUINT
+VerQueryValueA proto WINAPI :ptr, :LPSTR, :ptr, :PUINT
+VerQueryValueW proto WINAPI :ptr, :LPWSTR, :ptr, :PUINT
 ifdef _UNICODE
 VerQueryValue		equ <VerQueryValueW>
 else

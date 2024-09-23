@@ -211,9 +211,7 @@ PDFS_INFO_9		typedef ptr DFS_INFO_9
 LPDFS_INFO_9		typedef ptr DFS_INFO_9
 
 
-DFS_VALID_PROPERTY_FLAGS equ (DFS_PROPERTY_FLAG_INSITE_REFERRALS OR DFS_PROPERTY_FLAG_ROOT_SCALABILITY OR \
-			      DFS_PROPERTY_FLAG_SITE_COSTING OR DFS_PROPERTY_FLAG_TARGET_FAILBACK OR \
-			      DFS_PROPERTY_FLAG_CLUSTER_ENABLED OR DFS_PROPERTY_FLAG_ABDE)
+DFS_VALID_PROPERTY_FLAGS equ (DFS_PROPERTY_FLAG_INSITE_REFERRALS OR DFS_PROPERTY_FLAG_ROOT_SCALABILITY OR DFS_PROPERTY_FLAG_SITE_COSTING OR DFS_PROPERTY_FLAG_TARGET_FAILBACK OR DFS_PROPERTY_FLAG_CLUSTER_ENABLED OR DFS_PROPERTY_FLAG_ABDE)
 
 DFS_PROPERTY_FLAG_INSITE_REFERRALS equ 0x00000001
 DFS_PROPERTY_FLAG_ROOT_SCALABILITY equ 0x00000002
@@ -316,75 +314,19 @@ PDFS_INFO_300		typedef ptr DFS_INFO_300
 LPDFS_INFO_300		typedef ptr DFS_INFO_300
 
 
-;NET_API_STATUS
-NetDfsAdd proto WINAPI \
-	  DfsEntryPath: LPWSTR,
-	    ServerName: LPWSTR,
-	     ShareName: LPWSTR,
-	      _Comment: LPWSTR,
-		 Flags: DWORD
-
+NetDfsAdd proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :DWORD
 
 DFS_ADD_VOLUME		equ 1
 DFS_RESTORE_VOLUME	equ 2
 
-
-;NET_API_STATUS
-NetDfsAddStdRoot proto WINAPI \
-	    ServerName: LPWSTR,
-	     RootShare: LPWSTR,
-	      _Comment: LPWSTR,
-		 Flags: DWORD
-
-;NET_API_STATUS
-NetDfsRemoveStdRoot proto WINAPI \
-	    ServerName: LPWSTR,
-	     RootShare: LPWSTR,
-		 Flags: DWORD
-
-;NET_API_STATUS
-NetDfsAddFtRoot proto WINAPI \
-	    ServerName: LPWSTR,
-	     RootShare: LPWSTR,
-	     FtDfsName: LPWSTR,
-	      _Comment: LPWSTR,
-		 Flags: DWORD
-
-;NET_API_STATUS
-NetDfsRemoveFtRoot proto WINAPI \
-	    ServerName: LPWSTR,
-	     RootShare: LPWSTR,
-	     FtDfsName: LPWSTR,
-		 Flags: DWORD
-
-;NET_API_STATUS
-NetDfsRemoveFtRootForced proto WINAPI \
-	    DomainName: LPWSTR,
-	    ServerName: LPWSTR,
-	     RootShare: LPWSTR,
-	     FtDfsName: LPWSTR,
-		 Flags: DWORD
-
-;NET_API_STATUS
-NetDfsManagerInitialize proto WINAPI \
-	    ServerName: LPWSTR,
-		 Flags: DWORD
-
-
-;NET_API_STATUS
-NetDfsAddStdRootForced proto WINAPI \
-	    ServerName: LPWSTR,
-	     RootShare: LPWSTR,
-	      _Comment: LPWSTR,
-		 Store: LPWSTR
-
-
-;NET_API_STATUS
-NetDfsGetDcAddress proto WINAPI \
-	    ServerName: LPWSTR,
-	   DcIpAddress: ptr LPWSTR,
-		IsRoot: PBOOLEAN,
-	       Timeout: PULONG
+NetDfsAddStdRoot proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD
+NetDfsRemoveStdRoot proto WINAPI :LPWSTR, :LPWSTR, :DWORD
+NetDfsAddFtRoot proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :DWORD
+NetDfsRemoveFtRoot proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD
+NetDfsRemoveFtRootForced proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :DWORD
+NetDfsManagerInitialize proto WINAPI :LPWSTR, :DWORD
+NetDfsAddStdRootForced proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR
+NetDfsGetDcAddress proto WINAPI :LPWSTR, :ptr, :PBOOLEAN, :PULONG
 
 NET_DFS_SETDC_FLAGS	equ 0x00000000
 NET_DFS_SETDC_TIMEOUT	equ 0x00000001
@@ -407,127 +349,30 @@ DFS_SITELIST_INFO	ENDS
 PDFS_SITELIST_INFO	typedef ptr DFS_SITELIST_INFO
 LPDFS_SITELIST_INFO	typedef ptr DFS_SITELIST_INFO
 
-;NET_API_STATUS
-NetDfsRemove proto WINAPI \
-	  DfsEntryPath: LPWSTR,
-	    ServerName: LPWSTR,
-	     ShareName: LPWSTR
-
-
-;NET_API_STATUS
-NetDfsEnum proto WINAPI \
-	       DfsName: LPWSTR,
-		 Level: DWORD,
-	    PrefMaxLen: DWORD,
-		Buffer: ptr LPBYTE,
-	   EntriesRead: LPDWORD,
-	  ResumeHandle: LPDWORD
-
-
-;NET_API_STATUS
-NetDfsGetInfo proto WINAPI \
-	  DfsEntryPath: LPWSTR,
-	    ServerName: LPWSTR,
-	     ShareName: LPWSTR,
-		 Level: DWORD,
-		Buffer: ptr LPBYTE
-
-
-;NET_API_STATUS
-NetDfsSetInfo proto WINAPI \
-	  DfsEntryPath: LPWSTR,
-	    ServerName: LPWSTR,
-	     ShareName: LPWSTR,
-		 Level: DWORD,
-		Buffer: LPBYTE
-
-
-;NET_API_STATUS
-NetDfsGetClientInfo proto WINAPI \
-	  DfsEntryPath: LPWSTR,
-	    ServerName: LPWSTR,
-	     ShareName: LPWSTR,
-		 Level: DWORD,
-		Buffer: ptr LPBYTE
-
-;NET_API_STATUS
-NetDfsSetClientInfo proto WINAPI \
-	  DfsEntryPath: LPWSTR,
-	    ServerName: LPWSTR,
-	     ShareName: LPWSTR,
-		 Level: DWORD,
-		Buffer: LPBYTE
-
-
-;NET_API_STATUS
-NetDfsMove proto WINAPI \
-       OldDfsEntryPath: LPWSTR,
-       NewDfsEntryPath: LPWSTR,
-		 Flags: ULONG
+NetDfsRemove proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR
+NetDfsEnum proto WINAPI :LPWSTR, :DWORD, :DWORD, :ptr, :LPDWORD, :LPDWORD
+NetDfsGetInfo proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD, :ptr
+NetDfsSetInfo proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD, :LPBYTE
+NetDfsGetClientInfo proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD, :ptr
+NetDfsSetClientInfo proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD, :LPBYTE
+NetDfsMove proto WINAPI :LPWSTR, :LPWSTR, :ULONG
 
 DFS_MOVE_FLAG_REPLACE_IF_EXISTS equ 0x00000001
 
-;NET_API_STATUS
-NetDfsRename proto WINAPI \
-		  Path: LPWSTR,
-	       NewPath: LPWSTR
-
-;NET_API_STATUS
-NetDfsAddRootTarget proto WINAPI \
-	      pDfsPath: LPWSTR,
-	   pTargetPath: LPWSTR,
-	  MajorVersion: ULONG,
-	      pComment: LPWSTR,
-		 Flags: ULONG
+NetDfsRename proto WINAPI :LPWSTR, :LPWSTR
+NetDfsAddRootTarget proto WINAPI :LPWSTR, :LPWSTR, :ULONG, :LPWSTR, :ULONG
 
 ifndef DFS_FORCE_REMOVE
 DFS_FORCE_REMOVE	equ 0x80000000
 endif
 
-;NET_API_STATUS
-NetDfsRemoveRootTarget proto WINAPI \
-	      pDfsPath: LPWSTR,
-	   pTargetPath: LPWSTR,
-		 Flags: ULONG
-
-;NET_API_STATUS
-NetDfsGetSecurity proto WINAPI \
-	  DfsEntryPath: LPWSTR,
-   SecurityInformation: SECURITY_INFORMATION,
-  ppSecurityDescriptor: ptr PSECURITY_DESCRIPTOR,
-lpcbSecurityDescriptor: LPDWORD
-
-;NET_API_STATUS
-NetDfsSetSecurity proto WINAPI \
-	  DfsEntryPath: LPWSTR,
-   SecurityInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR
-
-;NET_API_STATUS
-NetDfsGetStdContainerSecurity proto WINAPI \
-	   MachineName: LPWSTR,
-   SecurityInformation: SECURITY_INFORMATION,
-  ppSecurityDescriptor: ptr PSECURITY_DESCRIPTOR,
-lpcbSecurityDescriptor: LPDWORD
-
-;NET_API_STATUS
-NetDfsSetStdContainerSecurity proto WINAPI \
-	   MachineName: LPWSTR,
-   SecurityInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR
-
-;NET_API_STATUS
-NetDfsGetFtContainerSecurity proto WINAPI \
-	    DomainName: LPWSTR,
-   SecurityInformation: SECURITY_INFORMATION,
-  ppSecurityDescriptor: ptr PSECURITY_DESCRIPTOR,
-lpcbSecurityDescriptor: LPDWORD
-
-;NET_API_STATUS
-NetDfsSetFtContainerSecurity proto WINAPI \
-	    DomainName: LPWSTR,
-   SecurityInformation: SECURITY_INFORMATION,
-   pSecurityDescriptor: PSECURITY_DESCRIPTOR
+NetDfsRemoveRootTarget proto WINAPI :LPWSTR, :LPWSTR, :ULONG
+NetDfsGetSecurity proto WINAPI :LPWSTR, :SECURITY_INFORMATION, :ptr, :LPDWORD
+NetDfsSetSecurity proto WINAPI :LPWSTR, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR
+NetDfsGetStdContainerSecurity proto WINAPI :LPWSTR, :SECURITY_INFORMATION, :ptr, :LPDWORD
+NetDfsSetStdContainerSecurity proto WINAPI :LPWSTR, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR
+NetDfsGetFtContainerSecurity proto WINAPI :LPWSTR, :SECURITY_INFORMATION, :ptr, :LPDWORD
+NetDfsSetFtContainerSecurity proto WINAPI :LPWSTR, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR
 
 DFS_NAMESPACE_VERSION_ORIGIN	typedef SDWORD
 PDFS_NAMESPACE_VERSION_ORIGIN	typedef ptr SDWORD
@@ -548,10 +393,5 @@ StandaloneDfsCapabilities ULONGLONG ?
 DFS_SUPPORTED_NAMESPACE_VERSION_INFO ENDS
 PDFS_SUPPORTED_NAMESPACE_VERSION_INFO typedef ptr DFS_SUPPORTED_NAMESPACE_VERSION_INFO
 
-;NET_API_STATUS
-NetDfsGetSupportedNamespaceVersion proto WINAPI \
-		Origin: DFS_NAMESPACE_VERSION_ORIGIN,
-		 pName: PWSTR,
-	 ppVersionInfo: ptr PDFS_SUPPORTED_NAMESPACE_VERSION_INFO
-
+NetDfsGetSupportedNamespaceVersion proto WINAPI :DFS_NAMESPACE_VERSION_ORIGIN, :PWSTR, :ptr
 endif

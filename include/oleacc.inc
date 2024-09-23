@@ -25,7 +25,6 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-
 CALLBACK(LPFNLRESULTFROMOBJECT, :REFIID, :WPARAM, :LPUNKNOWN)
 CALLBACK(LPFNOBJECTFROMLRESULT, :LRESULT, :REFIID, :WPARAM, :ptr ptr)
 CALLBACK(LPFNACCESSIBLEOBJECTFROMWINDOW, :HWND, :DWORD, :REFIID, :ptr ptr)
@@ -46,104 +45,33 @@ DEFINE_GUID(IIS_IsOleaccProxy,	     0x902697fa, 0x80e4, 0x4560, 0x80, 0x2a, 0xa1
 DEFINE_GUID(IIS_ControlAccessible,   0x38c682a6, 0x9731, 0x43f2, 0x9f, 0xae, 0xe9, 0x01, 0xe6, 0x41, 0xb1, 0x01)
 
 
-LresultFromObject proto WINAPI \
-		  riid: REFIID,
-		wParam: WPARAM,
-		  punk: LPUNKNOWN
-
-ObjectFromLresult proto WINAPI \
-	       lResult: LRESULT,
-		  riid: REFIID,
-		wParam: WPARAM,
-	     ppvObject: ptr ptr
-
-WindowFromAccessibleObject proto WINAPI \
-		      : ptr IAccessible,
-		 phwnd: ptr HWND
-
-AccessibleObjectFromWindow proto WINAPI \
-		  hwnd: HWND,
-		  dwId: DWORD,
-		  riid: REFIID,
-	     ppvObject: ptr
-
-AccessibleObjectFromEvent proto WINAPI \
-		  hwnd: HWND,
-		  dwId: DWORD,
-	     dwChildId: DWORD,
-		 ppacc: ptr ptr IAccessible,
-	     pvarChild: ptr VARIANT
-
-AccessibleObjectFromPoint proto WINAPI \
-	      ptScreen: POINT,
-		 ppacc: ptr IAccessible,
-	     pvarChild: ptr VARIANT
-
-AccessibleChildren proto WINAPI \
-	 paccContainer: ptr IAccessible,
-	   iChildStart: LONG,
-	     cChildren: LONG,
-	 rgvarChildren: ptr VARIANT,
-	    pcObtained: ptr LONG
-
-
-GetRoleTextA proto WINAPI \
-		 lRole: DWORD,
-	      lpszRole: LPSTR,
-	    cchRoleMax: UINT
-
-GetRoleTextW proto WINAPI \
-		 lRole: DWORD,
-	      lpszRole: LPWSTR,
-	    cchRoleMax: UINT
-
+LresultFromObject proto WINAPI :REFIID, :WPARAM, :LPUNKNOWN
+ObjectFromLresult proto WINAPI :LRESULT, :REFIID, :WPARAM, :ptr
+WindowFromAccessibleObject proto WINAPI :ptr, :ptr
+AccessibleObjectFromWindow proto WINAPI :HWND, :DWORD, :REFIID, :ptr
+AccessibleObjectFromEvent proto WINAPI :HWND, :DWORD, :DWORD, :ptr, :ptr
+AccessibleObjectFromPoint proto WINAPI :POINT, :ptr, :ptr
+AccessibleChildren proto WINAPI :ptr, :LONG, :LONG, :ptr, :ptr
+GetRoleTextA proto WINAPI :DWORD, :LPSTR, :UINT
+GetRoleTextW proto WINAPI :DWORD, :LPWSTR, :UINT
 ifdef _UNICODE
 GetRoleText		equ <GetRoleTextW>
 else
 GetRoleText		equ <GetRoleTextA>
 endif
 
-GetStateTextA proto WINAPI \
-	     lStateBit: DWORD,
-	     lpszState: LPSTR,
-	      cchState: UINT
-
-GetStateTextW proto WINAPI \
-	     lStateBit: DWORD,
-	     lpszState: LPWSTR,
-	      cchState: UINT
-
+GetStateTextA proto WINAPI :DWORD, :LPSTR, :UINT
+GetStateTextW proto WINAPI :DWORD, :LPWSTR, :UINT
 ifdef _UNICODE
 GetStateText		equ <GetStateTextW>
 else
 GetStateText		equ <GetStateTextA>
 endif
 
-GetOleaccVersionInfo proto WINAPI \
-		  pVer: ptr DWORD,
-		pBuild: ptr DWORD
-
-
-CreateStdAccessibleObject proto WINAPI \
-		  hwnd: HWND,
-	      idObject: LONG,
-		  riid: REFIID,
-	     ppvObject: ptr ptr
-
-CreateStdAccessibleProxyA proto WINAPI \
-		  hwnd: HWND,
-	    pClassName: LPCSTR,
-	      idObject: LONG,
-		  riid: REFIID,
-	     ppvObject: ptr ptr
-
-CreateStdAccessibleProxyW proto WINAPI \
-		  hwnd: HWND,
-	    pClassName: LPCWSTR,
-	      idObject: LONG,
-		  riid: REFIID,
-	     ppvObject: ptr ptr
-
+GetOleaccVersionInfo proto WINAPI :ptr, :ptr
+CreateStdAccessibleObject proto WINAPI :HWND, :LONG, :REFIID, :ptr
+CreateStdAccessibleProxyA proto WINAPI :HWND, :LPCSTR, :LONG, :REFIID, :ptr
+CreateStdAccessibleProxyW proto WINAPI :HWND, :LPCWSTR, :LONG, :REFIID, :ptr
 ifdef _UNICODE
 CreateStdAccessibleProxy equ <CreateStdAccessibleProxyW>
 else
@@ -155,15 +83,8 @@ ANRUS_TOUCH_MODIFICATION_ACTIVE equ 0x0000002
 ANRUS_PRIORITY_AUDIO_ACTIVE equ 0x0000004
 ANRUS_PRIORITY_AUDIO_ACTIVE_NODUCK equ 0x0000008
 
-AccSetRunningUtilityState proto WINAPI \
-	       hwndApp: HWND,
-    dwUtilityStateMask: DWORD,
-	dwUtilityState: DWORD
-
-AccNotifyTouchInteraction proto WINAPI \
-	       hwndApp: HWND,
-	    hwndTarget: HWND,
-	      ptTarget: POINT
+AccSetRunningUtilityState proto WINAPI :HWND, :DWORD, :DWORD
+AccNotifyTouchInteraction proto WINAPI :HWND, :HWND, :POINT
 
 MSAA_MENU_SIG		equ 0xAA0DF00D
 

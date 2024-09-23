@@ -1007,77 +1007,18 @@ HDC_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
 HDC_UserFree proto WINAPI :ptr, :ptr
 
 
-;unsigned
-HFONT_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HFONT
-
-;unsigned
-HFONT_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HFONT
-
-;unsigned
-HFONT_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HFONT
-
-;void
-HFONT_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HFONT
-
-
-;unsigned
-HPALETTE_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HPALETTE
-
-;unsigned
-HPALETTE_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HPALETTE
-
-;unsigned
-HPALETTE_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HPALETTE
-
-;void
-HPALETTE_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HPALETTE
-
-
-;unsigned
-HRGN_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HRGN
-
-;unsigned
-HRGN_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HRGN
-
-;unsigned
-HRGN_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HRGN
-
-;void
-HRGN_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr HRGN
-
+HFONT_UserSize proto WINAPI :ptr, :DWORD, :ptr
+HFONT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HFONT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HFONT_UserFree proto WINAPI :ptr, :ptr
+HPALETTE_UserSize proto WINAPI :ptr, :DWORD, :ptr
+HPALETTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserFree proto WINAPI :ptr, :ptr
+HRGN_UserSize proto WINAPI :ptr, :DWORD, :ptr
+HRGN_UserMarshal proto WINAPI :ptr, :ptr, :ptr
+HRGN_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
+HRGN_UserFree proto WINAPI :ptr, :ptr
 
 HWND_UserSize proto WINAPI :ptr, :dword, :ptr
 HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
@@ -1109,75 +1050,18 @@ HDC_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
 HDC_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
 HDC_UserFree64 proto WINAPI :ptr, :ptr
 
-
-;unsigned
-HFONT_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HFONT
-
-;unsigned
-HFONT_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HFONT
-
-;unsigned
-HFONT_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HFONT
-
-;void
-HFONT_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr HFONT
-
-
-;unsigned
-HPALETTE_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HPALETTE
-
-;unsigned
-HPALETTE_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HPALETTE
-
-;unsigned
-HPALETTE_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HPALETTE
-
-;void
-HPALETTE_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr HPALETTE
-
-;unsigned
-HRGN_UserSize64 proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr HRGN
-
-;unsigned
-HRGN_UserMarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HRGN
-
-;unsigned
-HRGN_UserUnmarshal64 proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr HRGN
-;void
-HRGN_UserFree64 proto WINAPI \
-		      : LPDWORD,
-		      : ptr HRGN
+HFONT_UserSize64 proto WINAPI :ptr, :DWORD, :ptr
+HFONT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HFONT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HFONT_UserFree64 proto WINAPI :ptr, :ptr
+HPALETTE_UserSize64 proto WINAPI :ptr, :DWORD, :ptr
+HPALETTE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HPALETTE_UserFree64 proto WINAPI :ptr, :ptr
+HRGN_UserSize64 proto WINAPI :ptr, :DWORD, :ptr
+HRGN_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
+HRGN_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
+HRGN_UserFree64 proto WINAPI :ptr, :ptr
 
 HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
 HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr

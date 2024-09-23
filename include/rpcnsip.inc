@@ -1,7 +1,7 @@
 ifndef __RPCNSIP_H__
 define __RPCNSIP_H__
 ifndef __LIBC_INC
- include libc.inc
+include libc.inc
 endif
 
 PRPC_BINDING_VECTOR	typedef ptr RPC_BINDING_VECTOR
@@ -13,33 +13,12 @@ Bindings		PRPC_BINDING_VECTOR ?
 RPC_IMPORT_CONTEXT_P	ENDS
 PRPC_IMPORT_CONTEXT_P	typedef ptr RPC_IMPORT_CONTEXT_P
 
-
-
-;RPC_STATUS
-I_RpcNsGetBuffer proto WINAPI \
-	       Message: PRPC_MESSAGE
-
-;RPC_STATUS
-I_RpcNsSendReceive proto WINAPI \
-	       Message: PRPC_MESSAGE,
-		Handle: ptr RPC_BINDING_HANDLE
-
-;void
-I_RpcNsRaiseException proto WINAPI \
-	       Message: PRPC_MESSAGE,
-		Status: RPC_STATUS
-
-;RPC_STATUS
-I_RpcReBindBuffer proto WINAPI \
-	       Message: PRPC_MESSAGE
-
-;RPC_STATUS
+I_RpcNsGetBuffer proto WINAPI :PRPC_MESSAGE
+I_RpcNsSendReceive proto WINAPI :PRPC_MESSAGE, :ptr
+I_RpcNsRaiseException proto WINAPI :PRPC_MESSAGE, :RPC_STATUS
+I_RpcReBindBuffer proto WINAPI :PRPC_MESSAGE
 I_NsServerBindSearch proto WINAPI
-
-;RPC_STATUS
 I_NsClientBindSearch proto WINAPI
-
-;void
 I_NsClientBindDone proto WINAPI
 
 endif

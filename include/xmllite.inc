@@ -24,43 +24,12 @@ IXmlWriterOutput	typedef IUnknown
 
 .pragma comment(lib, xmllite)
 
-CreateXmlReader proto WINAPI \
-		  riid: REFIID,
-	     ppvObject: ptr,
-	       pMalloc: ptr IMalloc
-
-CreateXmlReaderInputWithEncodingCodePage proto WINAPI \
-	  pInputStream: ptr IUnknown,
-	       pMalloc: ptr IMalloc,
-     nEncodingCodePage: UINT,
-	 fEncodingHint: BOOL,
-	   pwszBaseUri: LPCWSTR,
-	       ppInput: ptr IXmlReaderInput
-
-CreateXmlReaderInputWithEncodingName proto WINAPI \
-	  pInputStream: ptr IUnknown,
-	       pMalloc: ptr IMalloc,
-      pwszEncodingName: LPCWSTR,
-	 fEncodingHint: BOOL,
-	   pwszBaseUri: LPCWSTR,
-	       ppInput: ptr IXmlReaderInput
-
-CreateXmlWriter proto WINAPI \
-		  riid: REFIID,
-	     ppvObject: ptr,
-	       pMalloc: ptr IMalloc
-
-CreateXmlWriterOutputWithEncodingCodePage proto WINAPI \
-	 pOutputStream: ptr IUnknown,
-	       pMalloc: ptr IMalloc,
-     nEncodingCodePage: UINT,
-	      ppOutput: ptr IXmlWriterOutput
-
-CreateXmlWriterOutputWithEncodingName proto WINAPI \
-	 pOutputStream: ptr IUnknown,
-	       pMalloc: ptr IMalloc,
-      pwszEncodingName: LPCWSTR,
-	      ppOutput: ptr IXmlWriterOutput
+CreateXmlReader proto WINAPI :REFIID, :ptr, :ptr
+CreateXmlReaderInputWithEncodingCodePage proto WINAPI :ptr, :ptr, :UINT, :BOOL, :LPCWSTR, :ptr
+CreateXmlReaderInputWithEncodingName proto WINAPI :ptr, :ptr, :LPCWSTR, :BOOL, :LPCWSTR, :ptr
+CreateXmlWriter proto WINAPI :REFIID, :ptr, :ptr
+CreateXmlWriterOutputWithEncodingCodePage proto WINAPI :ptr, :ptr, :UINT, :ptr
+CreateXmlWriterOutputWithEncodingName proto WINAPI :ptr, :ptr, :LPCWSTR, :ptr
 
 ifndef __XmlLite_LIBRARY_DEFINED__
 define __XmlLite_LIBRARY_DEFINED__

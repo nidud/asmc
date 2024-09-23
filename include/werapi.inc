@@ -145,35 +145,11 @@ WerConsentDenied	equ 3
 WerConsentAlwaysPrompt	equ 4
 WerConsentMax		equ 4
 
-WerReportCreate proto WINAPI \
-	  pwzEventType: PCWSTR,
-	       repType: WER_REPORT_TYPE,
-    pReportInformation: PWER_REPORT_INFORMATION,
-	phReportHandle: ptr HREPORT
-
-WerReportSetParameter proto WINAPI \
-	 hReportHandle: HREPORT,
-	     dwparamID: DWORD,
-	       pwzName: PCWSTR,
-	      pwzValue: PCWSTR
-
-WerReportAddFile proto WINAPI \
-	 hReportHandle: HREPORT,
-	       pwzPath: PCWSTR,
-	   repFileType: WER_FILE_TYPE,
-	   dwFileFlags: DWORD
-
-WerReportSetUIOption proto WINAPI \
-	 hReportHandle: HREPORT,
-	   repUITypeID: WER_REPORT_UI,
-	      pwzValue: PCWSTR
-
-WerReportSubmit proto WINAPI \
-	 hReportHandle: HREPORT,
-	       consent: WER_CONSENT,
-	       dwFlags: DWORD,
-	 pSubmitResult: PWER_SUBMIT_RESULT
-
+WerReportCreate proto WINAPI :PCWSTR, :WER_REPORT_TYPE, :PWER_REPORT_INFORMATION, :ptr
+WerReportSetParameter proto WINAPI :HREPORT, :DWORD, :PCWSTR, :PCWSTR
+WerReportAddFile proto WINAPI :HREPORT, :PCWSTR, :WER_FILE_TYPE, :DWORD
+WerReportSetUIOption proto WINAPI :HREPORT, :WER_REPORT_UI, :PCWSTR
+WerReportSubmit proto WINAPI :HREPORT, :WER_CONSENT, :DWORD, :PWER_SUBMIT_RESULT
 
 WER_DUMP_MASK_START	equ 1
 WER_DUMP_MASK_DUMPTYPE	equ (WER_DUMP_MASK_START SHL 0)
@@ -194,62 +170,24 @@ WerDumpTypeMiniDump	equ 2
 WerDumpTypeHeapDump	equ 3
 WerDumpTypeMax		equ 4
 
-WerReportAddDump proto WINAPI \
-	 hReportHandle: HREPORT,
-	      hProcess: HANDLE,
-	       hThread: HANDLE,
-	      dumpType: WER_DUMP_TYPE,
-       pExceptionParam: PWER_EXCEPTION_INFORMATION,
-    pDumpCustomOptions: PWER_DUMP_CUSTOM_OPTIONS,
-	       dwFlags: DWORD
-
-
-WerReportCloseHandle proto WINAPI \
-	 hReportHandle: HREPORT
+WerReportAddDump proto WINAPI :HREPORT, :HANDLE, :HANDLE, :WER_DUMP_TYPE, :PWER_EXCEPTION_INFORMATION, :PWER_DUMP_CUSTOM_OPTIONS, :DWORD
+WerReportCloseHandle proto WINAPI :HREPORT
 
 WER_MAX_REGISTERED_ENTRIES equ 512
 
-WerRegisterFile proto WINAPI \
-	       pwzFile: PCWSTR,
-	   regFileType: WER_REGISTER_FILE_TYPE,
-	       dwFlags: DWORD
-
-WerUnregisterFile proto WINAPI \
-	   pwzFilePath: PCWSTR
-
-WerRegisterMemoryBlock proto WINAPI \
-	     pvAddress: PVOID,
-		dwSize: DWORD
-
-WerUnregisterMemoryBlock proto WINAPI \
-	     pvAddress: PVOID
-
-WerSetFlags proto WINAPI \
-	       dwFlags: DWORD
-
-WerGetFlags proto WINAPI \
-	      hProcess: HANDLE,
-	      pdwFlags: PDWORD
-
-WerAddExcludedApplication proto WINAPI \
-	    pwzExeName: PCWSTR,
-	     bAllUsers: BOOL
-
-WerRemoveExcludedApplication proto WINAPI \
-	    pwzExeName: PCWSTR,
-	     bAllUsers: BOOL
+WerRegisterFile proto WINAPI :PCWSTR, :WER_REGISTER_FILE_TYPE, :DWORD
+WerUnregisterFile proto WINAPI :PCWSTR
+WerRegisterMemoryBlock proto WINAPI :ptr, :DWORD
+WerUnregisterMemoryBlock proto WINAPI :ptr
+WerSetFlags proto WINAPI :DWORD
+WerGetFlags proto WINAPI :HANDLE, :PDWORD
+WerAddExcludedApplication proto WINAPI :PCWSTR, :BOOL
+WerRemoveExcludedApplication proto WINAPI :PCWSTR, :BOOL
 
 WER_MAX_REGISTERED_RUNTIME_EXCEPTION_MODULES equ 16
 
-WerRegisterRuntimeExceptionModule proto WINAPI \
-pwszOutOfProcessCallbackDll: PCWSTR,
-	      pContext: PVOID
-
-
-WerUnregisterRuntimeExceptionModule proto WINAPI \
-pwszOutOfProcessCallbackDll: PCWSTR,
-	      pContext: PVOID
-
+WerRegisterRuntimeExceptionModule proto WINAPI :PCWSTR, :ptr
+WerUnregisterRuntimeExceptionModule proto WINAPI :PCWSTR, :ptr
 
 WER_RUNTIME_EXCEPTION_EVENT_FUNCTION equ <"OutOfProcessExceptionEventCallback">
 WER_RUNTIME_EXCEPTION_EVENT_SIGNATURE_FUNCTION equ <"OutOfProcessExceptionEventSignatureCallback">
@@ -265,15 +203,9 @@ pwszReportId		PCWSTR ?
 WER_RUNTIME_EXCEPTION_INFORMATION ENDS
 PWER_RUNTIME_EXCEPTION_INFORMATION typedef ptr WER_RUNTIME_EXCEPTION_INFORMATION
 
-
-CALLBACK(PFN_WER_RUNTIME_EXCEPTION_EVENT, \
-	:PVOID, :PWER_RUNTIME_EXCEPTION_INFORMATION, :ptr BOOL, :PWSTR, :PDWORD, :PDWORD)
-
-CALLBACK(PFN_WER_RUNTIME_EXCEPTION_EVENT_SIGNATURE, \
-	:PVOID, :PWER_RUNTIME_EXCEPTION_INFORMATION, :DWORD, :PWSTR, :PDWORD, :PWSTR, :PDWORD)
-
-CALLBACK(PFN_WER_RUNTIME_EXCEPTION_DEBUGGER_LAUNCH, \
-	:PVOID, :PWER_RUNTIME_EXCEPTION_INFORMATION, :PBOOL, :PWSTR, :PDWORD, :PBOOL)
+CALLBACK(PFN_WER_RUNTIME_EXCEPTION_EVENT, :ptr, :PWER_RUNTIME_EXCEPTION_INFORMATION, :ptr, :PWSTR, :PDWORD, :PDWORD)
+CALLBACK(PFN_WER_RUNTIME_EXCEPTION_EVENT_SIGNATURE, :ptr, :PWER_RUNTIME_EXCEPTION_INFORMATION, :DWORD, :PWSTR, :PDWORD, :PWSTR, :PDWORD)
+CALLBACK(PFN_WER_RUNTIME_EXCEPTION_DEBUGGER_LAUNCH, :ptr, :PWER_RUNTIME_EXCEPTION_INFORMATION, :PBOOL, :PWSTR, :PDWORD, :PBOOL)
 
 .pragma pack(pop)
 .pragma list(pop)

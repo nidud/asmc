@@ -1,5 +1,8 @@
+ifndef CC
+CC = LIBW
+endif
 
-all: import build clean
+all: import build
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lib
@@ -117,15 +120,15 @@ targets = \
 	wsock32.lib	\
 	wtsapi32.lib
 
-.def.lib:
-	libw /n /c /q /b /fac /ii $*.lib @$<
+{def}.def.lib:
+	$(CC) /NOLOGO /MACHINE:X86 /OUT:$*.lib /DEF:$<
 
 build: $(targets)
 
 import:
-	asmc -nologo -pe def32.asm
-	def32
-
-clean:
-	del *.def
-	del def32.exe
+	if not exist ..\..\bin\impdef32.exe (
+	   asmc -pe -Fo..\..\bin\impdef32.exe ..\..\source\tools\impdef\impdef.asm
+	)
+	md def
+	impdef32 -pdef -c msvcrt sensorsapi wldap32
+	impdef32 -pdef $(targets)

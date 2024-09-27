@@ -1939,7 +1939,7 @@ endif
     .if ( SymSearch( edataname ) )
 
         mov rsi,[rax].dsym.seginfo
-        mov rdx,datadir
+        mov rcx,datadir
         mov [rcx][IMAGE_DIRECTORY_ENTRY_EXPORT*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.Size,[rax].asym.max_offset
         mov [rcx][IMAGE_DIRECTORY_ENTRY_EXPORT*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.VirtualAddress,[rsi].start_offset
     .endif
@@ -2030,13 +2030,14 @@ pe_set_values endp
 ; v2.11: this function is called when the END directive has been found.
 ; Previously the code was run inside EndDirective() directly.
 
-pe_enddirhook proc fastcall modinfo:ptr module_info
+pe_enddirhook proc fastcall uses rbx modinfo:ptr module_info
+
+    mov rbx,rcx
 
     pe_create_MZ_header( rcx )
     pe_emit_export_data()
 
-    mov rcx,modinfo
-    .if ( [rcx].module_info.DllQueue )
+    .if ( [rbx].module_info.DllQueue )
         pe_emit_import_data()
     .endif
 

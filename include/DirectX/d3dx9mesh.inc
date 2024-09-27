@@ -478,7 +478,7 @@ D3DXCreateSkinInfo proto WINAPI :DWORD, :ptr, :DWORD, :ptr
 D3DXCreateSkinInfoFVF proto WINAPI :DWORD, :DWORD, :DWORD, :ptr
 D3DXCreateSkinInfoFromBlendedMesh proto WINAPI :ptr, :DWORD, :ptr, :ptr
 D3DXCreatePatchMesh proto WINAPI :ptr, :DWORD, :DWORD, :DWORD, :ptr, :ptr, :ptr
-D3DXCreatePRTBuffer proto WINAPI :UINT, :UINT,	UINT, :ptr
+D3DXCreatePRTBuffer proto WINAPI :UINT, :UINT, :UINT, :ptr
 D3DXCreatePRTBufferTex proto WINAPI :UINT, :UINT, :UINT, :UINT, :ptr
 D3DXCreatePRTCompBuffer proto WINAPI :D3DXSHCOMPRESSQUALITYTYPE, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
 D3DXCreateTextureGutterHelper proto WINAPI :UINT, :UINT, :ptr, :FLOAT, :ptr

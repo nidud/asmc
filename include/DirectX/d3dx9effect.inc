@@ -189,7 +189,7 @@ D3DXCreateEffect proto WINAPI :ptr, :ptr, :UINT, :ptr, :ptr, :DWORD, :ptr, :ptr,
 D3DXCreateEffectEx proto WINAPI :ptr, :ptr, :UINT, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr
 D3DXCreateEffectCompiler proto WINAPI :LPSTR, :UINT, :ptr, :ptr, :DWORD, :ptr, :ptr
 D3DXCreateEffectFromFileExA proto WINAPI :ptr, :LPSTR, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr
-D3DXCreateEffectFromFileExW proto WINAPI :ptr, :LPWSTR, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr,
+D3DXCreateEffectFromFileExW proto WINAPI :ptr, :LPWSTR, :ptr, :ptr, :LPSTR, :DWORD, :ptr, :ptr, :ptr
 ifdef _UNICODE
 D3DXCreateEffectFromFileEx equ <D3DXCreateEffectFromFileExW>
 else

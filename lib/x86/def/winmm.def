@@ -1,0 +1,16 @@
+LIBRARY winmm.dll
+EXPORTS
+CloseDriver@12
+DefDriverProc@20
+DriverCallback@28
+DrvGetModuleHandle@4
+GetDriverModuleHandle@4
+NotifyCallbackData@20
+OpenDriver@12
+PlaySound@12
+PlaySoundA@12
+PlaySoundW@12
+SendDriverMessage@16
+WOW32DriverCallback@28
+WOW32ResolveMultiMediaHandle@24
+WOWAppExit@4

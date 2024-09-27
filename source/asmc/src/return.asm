@@ -417,12 +417,11 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             add i,count
             HllContinueIf( rsi, &i, tokenarray, LEXIT, rsi, 1 )
         .endif
-
-    .elseif ( retval )
-
-        AssignValue( &i, tokenarray, type, count )
-        AddLineQueueX( "jmp %s", rdi )
     .else
+        .if ( retval )
+
+            AssignValue( &i, tokenarray, type, count )
+        .endif
         AddLineQueueX( "jmp %s", rdi )
     .endif
 

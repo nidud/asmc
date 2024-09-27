@@ -113,7 +113,7 @@ D3DXQuaternionInverse proto WINAPI :ptr, :ptr
 D3DXQuaternionLn proto WINAPI :ptr, :ptr
 D3DXQuaternionMultiply proto WINAPI :ptr, :ptr, :ptr
 D3DXQuaternionNormalize proto WINAPI :ptr, :ptr
-D3DXQuaternionRotationAxis proto WINAPI :ptr, :ptr,  FLOAT
+D3DXQuaternionRotationAxis proto WINAPI :ptr, :ptr, :FLOAT
 D3DXQuaternionRotationMatrix proto WINAPI :ptr, :ptr
 D3DXQuaternionRotationYawPitchRoll proto WINAPI :ptr, :FLOAT, :FLOAT, :FLOAT
 D3DXQuaternionSlerp proto WINAPI :ptr, :ptr, :ptr, :FLOAT

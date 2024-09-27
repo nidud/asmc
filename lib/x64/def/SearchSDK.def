@@ -1,0 +1,3 @@
+LIBRARY SearchSDK.dll
+EXPORTS
+SearchSDK_dummy

@@ -1,15 +1,13 @@
+ifndef CC
+CC = LIBW
+endif
 
-!ifdef MSVC
-DF = -windef
-!endif
-
-all: import build clean
+all: import build
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lib
 
 targets = \
-	aclui.lib	\
 	aclui.lib	\
 	activeds.lib	\
 	advapi32.lib	\
@@ -88,6 +86,7 @@ targets = \
 	kernelbase.lib	\
 	ksuser.lib	\
 	ktmw32.lib	\
+	libcmt.lib	\
 	loadperf.lib	\
 	lz32.lib	\
 	Magnification.lib \
@@ -128,11 +127,11 @@ targets = \
 	odbc32.lib	\
 	odbcbcp.lib	\
 	odbccp32.lib	\
-	oldnames.lib	\
 	ole32.lib	\
 	oleacc.lib	\
 	oleaut32.lib	\
 	oledlg.lib	\
+	oldnames.lib	\
 	opengl32.lib	\
 	p2p.lib		\
 	p2pgraph.lib	\
@@ -201,22 +200,14 @@ targets = \
 	xolehlp.lib	\
 	xpsprint.lib
 
-.def.lib:
-!ifdef MSVC
-	lib /NOLOGO /MACHINE:X64 /OUT:$*.lib /DEF:$<
-!else
-	libw /n /c /q /b /fac /i6 $*.lib @$<
-!endif
+{def}.def.lib:
+	$(CC) /NOLOGO /MACHINE:X64 /OUT:$*.lib /DEF:$<
 
 build: $(targets)
 
 import:
-	asmc -nologo -win64 -pe def64.asm
-	def64 $(DF) $(targets)
-
-clean:
-	del *.def
-	del def64.exe
-!ifdef MSVC
-	del *.exp
-!endif
+	if not exist def\kernel32.def (
+	   md def
+	   asmc -nologo -win64 -pe -Fo..\..\bin\impdef64.exe ..\..\source\tools\impdef\impdef.asm
+	   impdef64 -pdef $(targets)
+	)

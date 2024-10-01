@@ -47,6 +47,7 @@ define INIT_EXCL_MASK     0x1F   ; exclusive bits
 
 .data
 
+ImageBase   asym_t 0
 CV8Label    asym_t 0 ; Start label for Code View 8
 symCurSeg   asym_t 0 ; @CurSeg symbol
 
@@ -1438,12 +1439,24 @@ endif
     push_seg( dir ) ; set CurrSeg
 
     mov esi,SetOfssize()
-    .if ( Options.debug_symbols == 4 && newseg )
-        .if ( [rdi].seg_info.segtype == SEGTYPE_CODE && CV8Label == NULL )
+
+    .if ( newseg && [rdi].seg_info.segtype == SEGTYPE_CODE )
+
+        .if ( Options.debug_symbols == 4 && CV8Label == NULL )
             mov CV8Label,CreateLabel( "$$000000", 0, 0, 0 )
         .endif
-    .endif
 
+        .if ( Options.output_format == OFORMAT_BIN && Options.sub_format != SFORMAT_NONE && ImageBase == NULL )
+
+            .new ti:qualified_type
+            .if !SymFind("IMAGE_DOS_HEADER")
+                SymCreate("IMAGE_DOS_HEADER")
+            .endif
+            mov ti.symtype,rax
+            mov ImageBase,CreateLabel( "__ImageBase", MT_TYPE, &ti, 0 )
+            mov [rax].asym.offs,-0x1000
+        .endif
+    .endif
     .if ( ModuleInfo.list )
         LstWrite( LSTTYPE_LABEL, 0, NULL )
     .endif

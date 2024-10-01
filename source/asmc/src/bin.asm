@@ -32,9 +32,7 @@ IMPILTSUF  equ <"4"> ;; ILT segment suffix
 IMPIATSUF  equ <"5"> ;; IAT segment suffix
 IMPSTRSUF  equ <"6"> ;; import strings segment suffix
 
-;
 ; pespec.inc contains MZ header declaration
-;
 
 include pespec.inc
 
@@ -42,9 +40,7 @@ SortSegments proto __ccall :int_t
 
 .data
 
-;
 ; if the structure changes, option.c, SetMZ() might need adjustment!
-;
 
 MZDATA      struct
 ofs_fixups  dw ?    ; offset start fixups
@@ -121,9 +117,7 @@ idataattr   equ <"FLAT read public alias('.rdata') 'DATA'">
 
 ifndef ASMC64
 
-;
 ; default 32-bit PE header
-;
 
 pe32def IMAGE_PE_HEADER32 {
     'EP',
@@ -144,9 +138,7 @@ pe32def IMAGE_PE_HEADER32 {
     }}
 endif
 
-;
 ; default 64-bit PE header
-;
 
 pe64def IMAGE_PE_HEADER64 {
     'EP',
@@ -173,9 +165,7 @@ pe64def IMAGE_PE_HEADER64 {
 
     option proc:private
 
-    ;
     ; calculate starting offset of segments and groups
-    ;
 
     assume rbx:ptr calc_param
     assume rdi:ptr seg_info
@@ -226,9 +216,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
     .else
         .if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
 
-            ;
             ; v2.24
-            ;
 
             mov offs,[rbx].rva
         .else
@@ -515,12 +503,10 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
             mov rsi,[rsi].dsym.seginfo
             assume rsi:ptr seg_info
 
-            ;
             ; the offset result consists of
             ; - the symbol's offset
             ; - the fixup's offset (usually the displacement )
             ; - the segment/group offset in the image
-            ;
 
             mov al,[rbx].type
             .switch al
@@ -542,10 +528,8 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
                 sub eax,[rsi].start_loc
                 mov value,eax
 
-                ;
                 ; check if symbol's segment name contains a '$'.
                 ; If yes, search the segment without suffix.
-                ;
 
                 mov rcx,segm
                 .if ( tstrchr( [rcx].asym.name, '$' ) )
@@ -584,10 +568,8 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
             .case FIX_RELOFF16
             .case FIX_RELOFF32
 
-                ;
                 ; v1.96: special handling for "relative" fixups
                 ; v2.28: removed fixup->offset..
-                ;
 
                 mov eax,[rsi].start_offset
                 add eax,offs
@@ -752,9 +734,9 @@ endif
             mov eax,value
 
         .case FIX_PTR16
-            ;
+
             ; v2.10: absolute segments are ok
-            ;
+
             .if ( segm && [rsi].segtype == SEGTYPE_ABS )
                 mov [rcx],ax
                 mov eax,[rsi].abs_frame
@@ -782,9 +764,9 @@ endif
             .endif
             mov eax,value
         .case FIX_PTR32
-            ;
+
             ; v2.10: absolute segments are ok
-            ;
+
             .if ( segm && [rsi].segtype == SEGTYPE_ABS )
 
                 mov [rcx],eax
@@ -829,7 +811,6 @@ DoFixup endp
 
     assume rsi:ptr module_info, rbx:nothing, rdi:nothing
 
-
 pe_create_MZ_header proc fastcall uses rsi modinfo:ptr module_info
 
     mov rsi,rcx
@@ -845,12 +826,29 @@ pe_create_MZ_header proc fastcall uses rsi modinfo:ptr module_info
 
         AddLineQueueX(
             "option dotname\n"
+            "IMAGE_DOS_HEADER STRUC\n"
+            "e_magic         dw ?\n"
+            "e_cblp          dw ?\n"
+            "e_cp            dw ?\n"
+            "e_crlc          dw ?\n"
+            "e_cparhdr       dw ?\n"
+            "e_minalloc      dw ?\n"
+            "e_maxalloc      dw ?\n"
+            "e_ss            dw ?\n"
+            "e_sp            dw ?\n"
+            "e_csum          dw ?\n"
+            "e_ip            dw ?\n"
+            "e_cs            dw ?\n"
+            "e_lfarlc        dw ?\n"
+            "e_ovno          dw ?\n"
+            "e_res           dw 4 dup(?)\n"
+            "e_oemid         dw ?\n"
+            "e_oeminfo       dw ?\n"
+            "e_res2          dw 10 dup(?)\n"
+            "e_lfanew        dd ?\n"
+            "IMAGE_DOS_HEADER ENDS\n"
             "%s1 segment USE16 word %s\n"
-            "db 'MZ'\n"             ; e_magic
-            "dw 68h,1,0,4\n"        ; e_cblp, e_cp, e_crlc, e_cparhdr
-            "dw 0,-1,0,0B8h\n"      ; e_minalloc, e_maxalloc, e_ss, e_sp
-            "dw 0,0,0,40h\n"        ; e_csum, e_ip, e_cs, e_sp, e_lfarlc
-            "org 40h\n"             ; e_lfanew, will be set by program
+            "IMAGE_DOS_HEADER { 'ZM', 0x68, 1, 0, 4, 0, -1, 0, 0xB8, 0, 0, 0, 0x40 }\n"
             "push cs\n"
             "pop ds\n"
             "mov dx,@F-40h\n"
@@ -920,7 +918,6 @@ endif
             .if ( Options.pe_subsystem == 1 )
                 mov pe64def.OptionalHeader.Subsystem,IMAGE_SUBSYSTEM_WINDOWS_GUI
             .endif
-
 
             mov eax,0x400000
 ifndef _WIN64
@@ -1064,9 +1061,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
             .endif
         .endf
 
-        ;
         ; count objects ( without header types )
-        ;
 
         .for ( ebx = 1, esi = 0 : ebx < SIZE_PEFLAT : ebx++ )
 
@@ -1164,11 +1159,9 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     .endf
     tqsort( pitems, cnt, sizeof( expitem ), &compare_exp )
 
-    ;
     ; emit export address table.
     ; would be possible to just use the array of sorted names,
     ; but we want to emit the EAT being sorted by address.
-    ;
 
     AddLineQueueX( "@%s_func label dword", name )
 
@@ -1181,27 +1174,24 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
         .endif
     .endf
 
-    ;
     ; emit the name pointer table
-    ;
+
     AddLineQueueX( "@%s_names label dword", name )
 
     .for ( rsi = pitems, ebx = 0: ebx < cnt: ebx++, rsi += expitem )
         AddLineQueueX( "dd imagerel @%s", [rsi].name )
     .endf
 
-    ;
     ; ordinal table. each ordinal is an index into the export address table
-    ;
+
     AddLineQueueX( "@%s_nameord label word", name )
 
     .for ( rsi = pitems, ebx = 0: ebx < cnt: ebx++, rsi += expitem )
         AddLineQueueX( "dw %u", [rsi].idx )
     .endf
 
-    ;
     ; v2.10: name+ext of dll
-    ;
+
     .for ( rbx = CurrFName[OBJ*string_t], rbx += tstrlen( rbx ): rbx > CurrFName[OBJ*string_t]: rbx-- )
         .break .if ( B[rbx] == '/' || B[rbx] == '\' || B[rbx] == ':' )
     .endf
@@ -1221,9 +1211,8 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
         .endif
     .endf
 
-    ;
     ; exit .edata segment
-    ;
+
     AddLineQueueX( "%s ends", edataname )
     RunLineQueue()
     ret
@@ -1231,7 +1220,6 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
 pe_emit_export_data endp
 
 
-;
 ; write import data.
 ; convention:
 ; .idata$2: import directory
@@ -1239,7 +1227,6 @@ pe_emit_export_data endp
 ; .idata$4: ILT entry
 ; .idata$5: IAT entry
 ; .idata$6: strings
-;
 
 pe_emit_import_data proc __ccall uses rsi rdi rbx
 
@@ -1330,7 +1317,6 @@ endif
                         "even", [rdi].asym.name, [rdi].asym.name )
                 .endif
             .endf
-
 
             ; dll name table entry
 
@@ -1477,13 +1463,13 @@ pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:ptr dsym
             .switch al
             .case FIX_OFF16
                 mov ecx,IMAGE_REL_BASED_LOW
-                .endc
+               .endc
             .case FIX_OFF32
                 mov ecx,IMAGE_REL_BASED_HIGHLOW
-                .endc
+               .endc
             .case FIX_OFF64
                 mov ecx,IMAGE_REL_BASED_DIR64
-                .endc
+               .endc
             .endsw
 
             .if ( ecx )
@@ -1499,9 +1485,9 @@ pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:ptr dsym
 
                 .if ( eax != [rdx].VirtualAddress )
                     .if ( [rdx].VirtualAddress != -1 )
-                        ;
+
                         ; address of relocation header must be DWORD aligned
-                        ;
+
                         .if ( [rdx].SizeOfBlock & 2 )
                             mov W[rcx],0
                             add rcx,2
@@ -1559,7 +1545,6 @@ ifndef ASMC64
 endif
     }
 
-;
 ; set values in PE header
 ; including data directories:
 ; special section names:
@@ -1569,7 +1554,6 @@ endif
 ; .pdata - IMAGE_DIRECTORY_ENTRY_EXCEPTION (64-bit only)
 ; .reloc - IMAGE_DIRECTORY_ENTRY_BASERELOC
 ; .tls   - IMAGE_DIRECTORY_ENTRY_TLS
-;
 
     assume rbx:nothing
 

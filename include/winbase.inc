@@ -61,16 +61,6 @@ else
 endif
     endm
 
-ifdef _WIN64
-DeclImageBase macro
-public __ImageBase
-    .code
-    org -0x1000
-    __ImageBase label IMAGE_DOS_HEADER
-    org 0
-    endm
-endif
-
 DefineHandleTable macro w
   exitm<((w),TRUE)>
   endm

@@ -1788,10 +1788,6 @@ ifdef __GUI__
 
 	.code
 
-	org -0x1000
-	__ImageBase label IMAGE_DOS_HEADER
-	org 0
-
 mainCRTStartup proc
 
     mov rbx,GetModuleHandle(0)

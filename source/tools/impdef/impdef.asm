@@ -314,7 +314,7 @@ write_logo proc
 
         mov banner,1
         _tprintf(
-            "Asmc Macro Assembler Module Definition Manager %d.%d\n"
+            "Asmc Module Definition Manager %d.%d\n"
             "Copyright (C) The Asmc Contributors. All Rights Reserved.\n\n",
             __IMPDEF__ / 100, __IMPDEF__ mod 100)
     .endif
@@ -366,6 +366,9 @@ _tmain proc argc:int_t, argv:array_t
     .new argdll:string_t = NULL
     .new fp:LPFILE
 
+    .if ( argc == 1 )
+        exit_options()
+    .endif
     .for ( ebx = 1 : ebx < argc : ebx++ )
 
         mov rdx,argv

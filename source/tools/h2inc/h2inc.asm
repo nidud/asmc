@@ -319,7 +319,7 @@ write_logo proc
 
         mov banner,1
         printf(
-            "Asmc Macro Assembler C Include File Translator %d.%d\n"
+            "Asmc C Include File Translator %d.%d\n"
             "Copyright (C) The Asmc Contributors. All Rights Reserved.\n\n",
             __H2INC__ / 100, __H2INC__ mod 100)
     .endif

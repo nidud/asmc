@@ -202,6 +202,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
    .new i:int_t = 0
    .new t:string_t
    .new q:string_t
+   .new r[64]:char_t
    .new name:string_t
 
     ldr rbx,pm
@@ -213,6 +214,17 @@ makehtm proc uses rsi rdi rbx pm:pmd
         exit(1)
     .endif
     mov fp,rax
+
+    .if ( strchr([rbx].md.file, 10) == NULL )
+        erexit( [rbx].md.name, "Missing \\n" )
+    .endif
+    .if ( byte ptr [rax-1] == 13 )
+        dec rax
+    .endif
+    mov rcx,rax
+    sub rcx,[rbx].md.file
+    mov r[rcx],0
+    memcpy(&r, [rbx].md.file, ecx)
 
     .if ( strchr([rbx].md.file, '#') == NULL )
         erexit( [rbx].md.name, "Missing #<title>" )
@@ -241,8 +253,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
         "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">\n"
         "<html><head><title>%s</title></head>\n"
         "<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\">\n"
-        "<body>\n"
-        "Asmc Macro Assembler Reference\n", rcx, rdx)
+        "<body>\n%s\n", rcx, rdx, &r)
 
     mov rbx,t
 
@@ -476,7 +487,7 @@ makecss proc
         "a { text-decoration: none; }\n"
         "a:hover { color: #ffffff; background: #1b2466; }\n"
         "table { font-size: 90%%; }\n"
-        "td { text-align: center; padding: 0px 10px 0px 10px; }\n"
+        "td { text-align: left; padding: 0px 10px 0px 10px; }\n"
         "pre { width: 96%%; padding: 4px 10px; font-size: 100%%; }\n"
         "code { width: 96%%; padding: 4px 10px; }\n" )
     fclose(fp)

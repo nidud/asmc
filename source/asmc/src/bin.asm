@@ -848,7 +848,7 @@ pe_create_MZ_header proc fastcall uses rsi modinfo:ptr module_info
             "e_lfanew        dd ?\n"
             "IMAGE_DOS_HEADER ENDS\n"
             "%s1 segment USE16 word %s\n"
-            "IMAGE_DOS_HEADER { 'ZM', 0x68, 1, 0, 4, 0, -1, 0, 0xB8, 0, 0, 0, 0x40 }\n"
+            "IMAGE_DOS_HEADER { 0x5A4D, 0x68, 1, 0, 4, 0, -1, 0, 0xB8, 0, 0, 0, 0x40 }\n"
             "push cs\n"
             "pop ds\n"
             "mov dx,@F-40h\n"

@@ -1,0 +1,3 @@
+LIBRARY mydll.dll
+EXPORT
+DllProc

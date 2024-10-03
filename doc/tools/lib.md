@@ -20,13 +20,13 @@ The changes in the JWlib sources are:
 ### Library Manager options
 
 <table>
-<tr><td>**Option**</td><td>**Purpose**</td></tr>
-<tr><td>/DEF:_filename_</td><td>Passes a module-definition (.def) file.</td></tr>
-<tr><td>/LIST[:_filename_]</td><td>Make list (-l)</td></tr>
+<tr><td><b>Option</b></td><td><b>Purpose</b></td></tr>
+<tr><td>/DEF:<i>filename</i></td><td>Passes a module-definition (.def) file.</td></tr>
+<tr><td>/LIST[:<i>filename</i></td><td>Make list (-l)</td></tr>
 <tr><td>/MACHINE:{X64|X86}</td><td>Specifies the target platform.</td></tr>
 <tr><td>/NODEC</td><td>SNo symbol decoration (.def input).</td></tr>
 <tr><td>/NOLOGO</td><td>Suppresses the startup banner.</td></tr>
-<tr><td>/OUT:_filename_</td><td>Specifies the output file name.</td></tr>
+<tr><td>/OUT:<i>filename</i></td><td>Specifies the output file name.</td></tr>
 </table>
 
 #### See Also

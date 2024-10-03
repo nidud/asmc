@@ -18,7 +18,7 @@ Usage: MAKE [-/options] [macro=text] [target(s)]
 options:
 
 <table>
-<tr><td>**Option**</td><td>**Purpose**</td></tr>
+<tr><td><b>Option</b></td><td><b>Purpose</b></td></tr>
 <tr><td>-a</td><td>Build all targets (always set)</td></tr>
 <tr><td>-d</td><td>Debug - echo progress of work</td></tr>
 <tr><td>-f#</td><td>Full pathname of make file</td></tr>

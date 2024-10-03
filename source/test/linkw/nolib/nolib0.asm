@@ -4,11 +4,11 @@ include stdio.inc
 
 main proc
 
-    printf("dcon_64: Win64 console application\n")
+    printf("MSVCRT Console Application: external mainCRTStartup\n")
     xor eax,eax
     ret
 
 main endp
 
-    end main
+    end
 

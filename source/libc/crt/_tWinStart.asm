@@ -7,17 +7,11 @@
 ;
 include stdlib.inc
 
-ifdef __UNIX__
-
-define entry <>
-
-else
+ifndef __UNIX__
 
 include winbase.inc
 include winuser.inc
 include tchar.inc
-
-define entry <_tWinMainCRTStartup>
 
 ifndef _MSVCRT
 externdef __xi_a:ptr
@@ -38,7 +32,5 @@ endif
     ExitProcess( _tWinMain( rbx, 0, GetCommandLine(), SW_SHOWDEFAULT ) )
 
 _tWinMainCRTStartup endp
-
 endif
-
-    end entry
+    end

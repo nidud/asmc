@@ -13,8 +13,6 @@ _tmain proto __cdecl :dword, :ptr, :ptr
 
 ifdef __UNIX__
 
-define entry <>
-
 externdef __init_array_start:ptr
 externdef __init_array_end:ptr
 
@@ -26,8 +24,6 @@ externdef __init_array_end:ptr
      public         __ImageBase
 
 else
-
-define entry <_tmainCRTStartup>
 
 ifdef _MSVCRT
     .data
@@ -100,5 +96,4 @@ endif
 _tmainCRTStartup endp
 
 endif
-
-    end entry
+    end

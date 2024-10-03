@@ -7,10 +7,7 @@
 ;
 include stdlib.inc
 
-if defined(_WIN64) or defined(__UNIX__)
-define entry <>
-else
-define entry <cstart_>
+if not defined(_WIN64) and not defined(__UNIX__)
 
 ALIAS <argc>=<__argc>
 
@@ -34,4 +31,4 @@ cstart_ proc
 
 cstart_ endp
 endif
-    end entry
+    end

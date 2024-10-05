@@ -200,6 +200,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
    .new h:int_t = 0
    .new b:int_t = 0
    .new i:int_t = 0
+   .new table:int_t = 0
    .new t:string_t
    .new q:string_t
    .new r[64]:char_t
@@ -299,6 +300,13 @@ makehtm proc uses rsi rdi rbx pm:pmd
             .endif
             fprintf(fp, "<h%d>", h)
            .endc
+        .case '<'
+            .ifd !memcmp(rbx, "<table>", 7)
+                mov table,1
+            .elseifd !memcmp(rbx, "</table>", 8)
+                mov table,0
+            .endif
+            .endc
         .default
             .if ( ul )
                 fprintf(fp, "</ul>\n" )
@@ -311,7 +319,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
         .endsw
 
 
-        .if ( pre )
+        .if ( table || pre )
 
             fprintf(fp, "%s\n", rbx)
             jmp continue

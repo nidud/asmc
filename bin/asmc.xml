@@ -137,7 +137,7 @@
       HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Generate Debug Information"
       Description="Generates Debug Information"
-      Switch="/Zi8" />
+      Switch="/Z7" />
     <BoolProperty
       Name="EnableMASM51Compatibility"
       HelpUrl="https://github.com/nidud/asmc/"

@@ -8,9 +8,9 @@ Option -pe will make Asmc create a binary in Windows PE format.
 
 <table>
 <tr><td><b>Option</b></td><td><b>Global</b></td><td><b></b></td></tr>
-<tr><td>-pec</td><td>\_\_CUI\_\_</td><td>Subsystem Console (default)</td></tr>
-<tr><td>-peg</td><td>\_\_GUI\_\_</td><td>Subsystem Windows</td></tr>
-<tr><td>-ped</td><td>\_\_DLL\_\_</td><td>Builds a DLL</td></tr>
+<tr><td>-pec</td><td>__CUI__</td><td>Subsystem Console (default)</td></tr>
+<tr><td>-peg</td><td>__GUI__</td><td>Subsystem Windows</td></tr>
+<tr><td>-ped</td><td>__DLL__</td><td>Builds a DLL</td></tr>
 </table>
 
 You can use the [comment](../directive/dot-pragma.md) pragma to specify some linker options.

@@ -2,25 +2,26 @@
 ; Copyright (C) 2018 Asmc Developers
 ;
 ; Change history:
-; 2024-09-04 - .pragma(wstring(push, <0|1>))
-;              .pragma(wstring(pop))
+; 2024-09-04 - .pragma wstring(push, <0|1>)
+;              .pragma wstring(pop)
 ; 2024-04-12 - removed .pragma asmc
-; 2019-04-18 - .pragma(asmc(push, <0|1>))
-;              .pragma(asmc(pop))
-; 2019-03-19 - .pragma(warning(disable: <num>))
-;              .pragma(warning(push))
-;              .pragma(warning(pop))
-; 2019-03-17 - .pragma(comment(lib, name[, name]))
-; 2018-05-04 - .pragma(cref(push, <0|1>))
-;              .pragma(cref(pop))
-; 2018-04-24 - .pragma(list(push, <0|1>))
-;              .pragma(list(pop))
-; 2018-04-22 - .pragma(pack(push, <alignment>))
-;              .pragma(pack(pop))
-; 2018-03-24 - .pragma(init(<proc>, <priority>))
-;              .pragma(exit(<proc>, <priority>))
-; 2024-06-27 - .pragma(aux(push, <language>, <fixed>, <regs>))
-;              .pragma(aux(pop))
+; 2019-04-18 - .pragma asmc(push, <0|1>)
+;              .pragma asmc(pop)
+; 2019-03-19 - .pragma warning(disable: <num>)
+;              .pragma warning(push)
+;              .pragma warning(pop)
+; 2019-03-17 - .pragma comment(lib, name[, name])
+;              .pragma comment(linker, "/..")
+; 2018-05-04 - .pragma cref(push, <0|1>)
+;              .pragma cref(pop)
+; 2018-04-24 - .pragma list(push, <0|1>)
+;              .pragma list(pop)
+; 2018-04-22 - .pragma pack(push, <alignment>)
+;              .pragma pack(pop)
+; 2018-03-24 - .pragma init(<proc>, <priority>)
+;              .pragma exit(<proc>, <priority>)
+; 2024-06-27 - .pragma aux(push, <language>, <fixed>, <regs>)
+;              .pragma aux(pop)
 ;
 include malloc.inc
 include string.inc
@@ -272,9 +273,8 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
            .endc
         .endif
 
-        ;
         ; .pragma warning(push)
-        ;
+
         .if ( [rbx].tokval == T_PUSH )
 
             add rbx,asm_tok
@@ -476,9 +476,8 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             and eax,0xFFFFFF
             .endc .if eax != 'rek'
 
-            ;
             ; .pragma comment(linker, "/..")
-            ;
+
             add rbx,asm_tok*2
             mov rsi,[rbx].tokpos
             .endc .if byte ptr [rsi] != '"'
@@ -527,8 +526,8 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .case "init"
     .case "exit"
 
-        ; .pragma(init(<proc>, <priority>))
-        ; .pragma(exit(<proc>, <priority>))
+        ; .pragma init(<proc>, <priority>)
+        ; .pragma exit(<proc>, <priority>)
 
         mov edi,eax
         .if !ModuleInfo.dotname

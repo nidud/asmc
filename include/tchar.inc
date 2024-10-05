@@ -1822,6 +1822,12 @@ mainCRTStartup endp
 
 _tstart equ <mainCRTStartup>
 _tend equ <>
+
+elseifdef __DLL__
+
+.pragma comment(linker, "/ENTRY:DllMain")
+_tstart equ <>
+
 else
 
 _tstart equ <>

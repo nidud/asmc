@@ -132,15 +132,15 @@ endif
 
 ifndef MIDL_PASS
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
-GetCurrentProcessToken proto fastcall {
-    mov rax,-4
-    }
-GetCurrentThreadToken proto fastcall {
-    mov rax,-5
-    }
-GetCurrentThreadEffectiveToken proto fastcall {
-    mov rax,-6
-    }
+GetCurrentProcessToken macro
+    exitm<(-4)>
+    endm
+GetCurrentThreadToken macro
+    exitm<(-5)>
+    endm
+GetCurrentThreadEffectiveToken macro
+    exitm<(-6)>
+    endm
 endif
 endif
 

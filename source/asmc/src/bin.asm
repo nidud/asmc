@@ -22,6 +22,7 @@ include segment.inc
 include equate.inc
 include expreval.inc
 include pespec.inc
+include qfloat.inc
 
 define RAWSIZE_ROUND 1 ;; SectionHeader.SizeOfRawData is multiple FileAlign. Required by MS COFF spec
 define IMGSIZE_ROUND 1 ;; OptionalHeader.SizeOfImage is multiple ObjectAlign. Required by MS COFF spec
@@ -113,6 +114,12 @@ edataattr   equ <"FLAT read public alias('.rdata') 'DATA'">
 idataname   equ <".idata$">
 idataattr   equ <"FLAT read public alias('.rdata') 'DATA'">
 
+define PE_UNDEF_BASE 0xffffffff
+define PE32_DEF_BASE_EXE 0x400000
+define PE32_DEF_BASE_DLL 0x10000000
+define PE64_DEF_BASE_EXE 0x140000000
+define PE64_DEF_BASE_DLL 0x180000000
+
     align size_t
 
 ifndef ASMC64
@@ -126,14 +133,14 @@ pe32def IMAGE_PE_HEADER32 {
       IMAGE_FILE_LINE_NUMS_STRIPPED or IMAGE_FILE_LOCAL_SYMS_STRIPPED or \
       IMAGE_FILE_32BIT_MACHINE },
     { IMAGE_NT_OPTIONAL_HDR32_MAGIC,
-      5,1,0,0,0,0,0,0, ;; linkervers maj/min, sizeof code/init/uninit, entrypoint, base code/data
-      0x400000,        ;; image base
-      0x1000, 0x200,   ;; SectionAlignment, FileAlignment
-      4,0,0,0,4,0,     ;; OSversion maj/min, Imagevers maj/min, Subsystemvers maj/min
-      0,0,0,0,         ;; Win32vers, sizeofimage, sizeofheaders, checksum
+      5,1,0,0,0,0,0,0,  ;; linkervers maj/min, sizeof code/init/uninit, entrypoint, base code/data
+      PE_UNDEF_BASE,    ;; image base
+      0x1000, 0x200,    ;; SectionAlignment, FileAlignment
+      4,0,0,0,4,0,      ;; OSversion maj/min, Imagevers maj/min, Subsystemvers maj/min
+      0,0,0,0,          ;; Win32vers, sizeofimage, sizeofheaders, checksum
       IMAGE_SUBSYSTEM_WINDOWS_CUI,0,  ;; subsystem, dllcharacteristics
-      0x100000,0x1000, ;; sizeofstack reserve/commit
-      0x100000,0x1000, ;; sizeofheap reserve/commit
+      0x100000,0x1000,  ;; sizeofstack reserve/commit
+      0x100000,0x1000,  ;; sizeofheap reserve/commit
       0, IMAGE_NUMBEROF_DIRECTORY_ENTRIES, ;; loaderflags, numberofRVAandSizes
     }}
 endif
@@ -147,14 +154,14 @@ pe64def IMAGE_PE_HEADER64 {
       IMAGE_FILE_LINE_NUMS_STRIPPED or IMAGE_FILE_LOCAL_SYMS_STRIPPED or \
       IMAGE_FILE_LARGE_ADDRESS_AWARE or IMAGE_FILE_32BIT_MACHINE },
     { IMAGE_NT_OPTIONAL_HDR64_MAGIC,
-      5,1,0,0,0,0,0,   ;; linkervers maj/min, sizeof code/init data/uninit data, entrypoint, base code RVA
-      0x400000,        ;; image base
-      0x1000, 0x200,   ;; SectionAlignment, FileAlignment
-      4,0,0,0,4,0,     ;; OSversion maj/min, Imagevers maj/min, Subsystemvers maj/min
-      0,0,0,0,         ;; Win32vers, sizeofimage, sizeofheaders, checksum
+      5,1,0,0,0,0,0,    ;; linkervers maj/min, sizeof code/init data/uninit data, entrypoint, base code RVA
+      PE_UNDEF_BASE,    ;; image base
+      0x1000, 0x200,    ;; SectionAlignment, FileAlignment
+      4,0,0,0,4,0,      ;; OSversion maj/min, Imagevers maj/min, Subsystemvers maj/min
+      0,0,0,0,          ;; Win32vers, sizeofimage, sizeofheaders, checksum
       IMAGE_SUBSYSTEM_WINDOWS_CUI,0,  ;; subsystem, dllcharacteristics
-      0x100000,0x1000, ;; sizeofstack reserve/commit
-      0x100000,0x1000, ;; sizeofheap reserve/commit
+      0x100000,0x1000,  ;; sizeofstack reserve/commit
+      0x100000,0x1000,  ;; sizeofheap reserve/commit
       0, IMAGE_NUMBEROF_DIRECTORY_ENTRIES, ;; loaderflags, numberofRVAandSizes
     } }
 
@@ -909,43 +916,23 @@ pe_create_PE_header proc public uses rsi rdi rbx
             asmerr( 3002 )
         .endif
 
+        movzx eax,Options.pe_subsystem
 ifndef ASMC64
         .if ( ModuleInfo.defOfssize == USE64 )
 endif
             mov ebx,IMAGE_PE_HEADER64
             lea rdi,pe64def
-            mov pe64def.OptionalHeader.Subsystem,IMAGE_SUBSYSTEM_WINDOWS_CUI
-            .if ( Options.pe_subsystem == 1 )
-                mov pe64def.OptionalHeader.Subsystem,IMAGE_SUBSYSTEM_WINDOWS_GUI
-            .endif
-
-            mov eax,0x400000
-ifndef _WIN64
-            cdq
-endif
-            .if ( ModuleInfo.sub_format == SFORMAT_64BIT )
-
-ifdef _WIN64
-                mov rax,0x140000000
-else
-                mov eax,LOW32(0x140000000)
-                mov edx,HIGH32(0x140000000)
-endif
-            .endif
-            .s8 pe64def.OptionalHeader.ImageBase
-
+            mov [rdi].IMAGE_PE_HEADER64.OptionalHeader.Subsystem,ax
 ifndef ASMC64
-
         .else
-
             mov ebx,IMAGE_PE_HEADER32
             lea rdi,pe32def
-            mov pe32def.OptionalHeader.Subsystem,IMAGE_SUBSYSTEM_WINDOWS_CUI
-            .if ( Options.pe_subsystem == 1 )
-                mov pe32def.OptionalHeader.Subsystem,IMAGE_SUBSYSTEM_WINDOWS_GUI
-            .endif
+            mov [rdi].IMAGE_PE_HEADER32.OptionalHeader.Subsystem,ax
         .endif
 endif
+        .if ( Options.pe_dll )
+            or [rdi].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_DLL
+        .endif
 
         .if !SymSearch( hdrname "2" )
 
@@ -1522,26 +1509,25 @@ pe_set_base_relocs endp
 
 
 GHF proto watcall x:abs {
+    mov rax,pe
 ifndef ASMC64
- .if ( ModuleInfo.defOfssize == USE64 )
+    .if ( ModuleInfo.defOfssize == USE64 )
 endif
-    mov rax,ph64
-  if sizeof(IMAGE_PE_HEADER64.x) lt 4
-    movzx eax,[rax].IMAGE_PE_HEADER64.x
-  elseif sizeof(IMAGE_PE_HEADER64.x) eq 4
-    mov eax,[rax].IMAGE_PE_HEADER64.x
-  else
-    .l8 [rax].IMAGE_PE_HEADER64.x
-   endif
+if sizeof(IMAGE_PE_HEADER64.x) lt 4
+        movzx eax,[rax].IMAGE_PE_HEADER64.x
+elseif sizeof(IMAGE_PE_HEADER64.x) eq 4
+        mov eax,[rax].IMAGE_PE_HEADER64.x
+else
+        .l8 [rax].IMAGE_PE_HEADER64.x
+endif
 ifndef ASMC64
- .else
-    mov rax,ph32
-  if sizeof(IMAGE_PE_HEADER32.x) lt 4
-    movzx eax,[rax].IMAGE_PE_HEADER32.x
-  else
-    mov eax,[rax].IMAGE_PE_HEADER32.x
-  endif
- .endif
+    .else
+if sizeof(IMAGE_PE_HEADER32.x) lt 4
+        movzx eax,[rax].IMAGE_PE_HEADER32.x
+else
+        mov eax,[rax].IMAGE_PE_HEADER32.x
+endif
+    .endif
 endif
     }
 
@@ -1556,6 +1542,140 @@ endif
 ; .tls   - IMAGE_DIRECTORY_ENTRY_TLS
 
     assume rbx:nothing
+    assume rsi:nothing
+
+pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, size:int_t
+
+   .new num[4]:dword
+   .new entry[128]:char_t
+
+    ldr rbx,pe
+    ldr rsi,cmd
+
+    .while ( size > 3 )
+
+        lodsb
+        dec size
+        .if ( al == '-' || al == '/' )
+
+            lodsd
+            sub size,4
+            or eax,0x20202020
+            .switch eax
+            .case 'esab'
+                lodsb
+                dec size
+                .if ( al == ':' )
+                    mov eax,[rsi]
+                    mov ecx,10
+                    .if ( al == '0' && ah == 'x' )
+                        lodsw
+                        sub size,2
+                        mov ecx,16
+                    .endif
+                    _atoow( rsi, &num, ecx, size )
+                    mov eax,num  ; base != 0, fits in 64-bits, page aligned?
+                    mov ecx,eax
+                    or  ecx,num[4]
+                    mov edx,num[8]
+                    or  edx,num[12]
+                    .if ( ecx && !edx && !( eax & 0x0FFF ) )
+                        mov edx,num[4]
+                        .if ( ModuleInfo.defOfssize == USE64 )
+                            mov dword ptr [rbx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase,eax
+                            mov dword ptr [rbx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase[4],edx
+                        .elseif ( !edx && eax <= 0xfffff000 )
+                            mov [rbx].IMAGE_PE_HEADER32.OptionalHeader.ImageBase,eax
+                        .endif
+                    .endif
+                .endif
+                .endc
+            .case 'rtne'
+                lodsw
+                dec size
+                or al,0x20
+                .if ( al == 'y' && ah == ':' )
+                    .for ( rdi = &entry : size > 0 : size-- )
+                        lodsb
+                        .break .if ( al == 0 || al == ' ' )
+                        stosb
+                    .endf
+                    xor eax,eax
+                    stosb
+                    .if SymFind( &entry )
+                        mov ModuleInfo.start_label,rax
+                    .endif
+                .endif
+                .endc
+            .case 'exif'
+                lodsb
+                dec size
+                or al,0x20
+                .if ( al == 'd' )
+                    lodsb
+                    dec size
+                    .if ( al == ':' )
+                        and [rbx].IMAGE_PE_HEADER32.FileHeader.Characteristics,not IMAGE_FILE_RELOCS_STRIPPED
+                    .else
+                        or  [rbx].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_RELOCS_STRIPPED
+                    .endif
+                .endif
+                .endc
+            .case 'gral'
+                .ifd !tmemicmp( rsi, "eaddressaware", 13 )
+                    sub size,13
+                    add rsi,13
+                    .ifd !tmemicmp( rsi, ":no", 3 )
+                        sub size,3
+                        add rsi,3
+                        and [rbx].IMAGE_PE_HEADER32.FileHeader.Characteristics,not IMAGE_FILE_LARGE_ADDRESS_AWARE
+                    .else
+                        or  [rbx].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_LARGE_ADDRESS_AWARE
+                    .endif
+                .endif
+                .endc
+            .case 'sbus'
+                .new subsystem:int_t = IMAGE_SUBSYSTEM_UNKNOWN
+                .ifd !tmemicmp( rsi, "ystem:", 6 )
+                    sub size,6
+                    add rsi,6
+                    .ifd !tmemicmp( rsi, "windows", 7 )
+                        sub size,7
+                        add rsi,7
+                        mov subsystem,IMAGE_SUBSYSTEM_WINDOWS_GUI
+                    .elseifd !tmemicmp( rsi, "console", 7 )
+                        sub size,7
+                        add rsi,7
+                        mov subsystem,IMAGE_SUBSYSTEM_WINDOWS_CUI
+                    .elseifd !tmemicmp( rsi, "native", 6 )
+                        sub size,6
+                        add rsi,6
+                        mov subsystem,IMAGE_SUBSYSTEM_NATIVE
+                    .endif
+                .endif
+                .if ( subsystem != IMAGE_SUBSYSTEM_UNKNOWN )
+                    mov eax,subsystem
+                    .if ( ModuleInfo.defOfssize == USE64 )
+                        mov [rbx].IMAGE_PE_HEADER64.OptionalHeader.Subsystem,ax
+                    .else
+                        mov [rbx].IMAGE_PE_HEADER32.OptionalHeader.Subsystem,ax
+                    .endif
+                .endif
+                .endc
+            .default
+                and eax,0x00FFFFFF
+                .if eax == 'lld'
+                    or [rbx].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_DLL
+                .endif
+            .endsw
+        .endif
+    .endw
+    ret
+
+pe_scan_linker_directives endp
+
+
+    assume rsi:ptr seg_info
 
 pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
 
@@ -1573,10 +1693,7 @@ pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
     .new pehdr:ptr dsym
     .new objtab:ptr dsym
     .new reloc:ptr dsym = NULL
-ifndef ASMC64
-    .new ph32:ptr IMAGE_PE_HEADER32
-endif
-    .new ph64:ptr IMAGE_PE_HEADER64
+    .new pe:ptr IMAGE_PE_HEADER64
     .new fh:ptr IMAGE_FILE_HEADER
     .new section:ptr IMAGE_SECTION_HEADER
     .new datadir:ptr IMAGE_DATA_DIRECTORY
@@ -1594,17 +1711,37 @@ endif
     mov rax,pehdr
     mov rsi,[rax].dsym.seginfo
     mov rcx,[rsi].CodeBuffer
+    mov pe,rcx
 ifndef ASMC64
     .if ( ModuleInfo.defOfssize == USE64 )
 endif
-        mov ph64,rcx
         mov ff,[rcx].IMAGE_PE_HEADER64.FileHeader.Characteristics
 ifndef ASMC64
     .else
-        mov ph32,rcx
         mov ff,[rcx].IMAGE_PE_HEADER32.FileHeader.Characteristics
     .endif
 endif
+
+    ; .pragma comment(linker, "/..")
+
+    .for ( rdi = ModuleInfo.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
+
+        tstrlen( &[rdi].qitem.value )
+        pe_scan_linker_directives( pe, &[rdi].qitem.value, eax )
+    .endf
+
+    ; v2.19: first, handle ".drectve" info sections
+
+    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
+
+        mov rsi,[rdi].dsym.seginfo
+        .if ( [rsi].info )
+            .if ( !tstrcmp( [rdi].asym.name, ".drectve" ) )
+                pe_scan_linker_directives( pe, [rsi].CodeBuffer, [rsi].bytes_written )
+            .endif
+        .endif
+    .endf
+
     .if ( !( eax & IMAGE_FILE_RELOCS_STRIPPED ) )
 
         mov reloc,CreateIntSegment( ".reloc", "RELOC", 2, ModuleInfo.defOfssize, TRUE )
@@ -1686,34 +1823,22 @@ endif
 
         pe_set_base_relocs( rcx )
 
-if 0    ; v2.34.61 - jwasm
-
-        mov rcx,reloc
-        mov eax,[rcx].asym.max_offset
-        mov rsi,[rcx].dsym.seginfo
-        add eax,[rsi].start_offset
-        mov [rbx].calc_param.rva,eax
-
-else
-
         ; v2.13: if no relocs exist, remove the .reloc section that was just created.
         ; v2.16: this didn't work because reloc->sym.max_offset was initialized
         ;        with size of IMAGE_BASE_RELOCATION
 
         mov rcx,reloc
         mov eax,[rcx].asym.max_offset
-
-        .if ( eax > IMAGE_BASE_RELOCATION )
+        .ifs ( eax > IMAGE_BASE_RELOCATION )
 
             mov rsi,[rcx].dsym.seginfo
             add eax,[rsi].start_offset
             mov [rbx].calc_param.rva,eax
         .else
             mov rdx,objtab
-            sub [rcx].asym.max_offset,IMAGE_SECTION_HEADER
+            sub [rdx].asym.max_offset,IMAGE_SECTION_HEADER
             sub [rbx].calc_param.rva,IMAGE_BASE_RELOCATION ; v2.16: added
         .endif
-endif
     .endif
 
     mov sizeimg,[rbx].calc_param.rva
@@ -1858,15 +1983,13 @@ endif
         mov rsi,[rdx].dsym.seginfo
         mov ecx,[rsi].start_offset
         add ecx,[rax].asym.offs
-
+        mov rax,pe
 ifndef ASMC64
         .if ( ModuleInfo.defOfssize == USE64 )
 endif
-            mov rax,ph64
             mov [rax].IMAGE_PE_HEADER64.OptionalHeader.AddressOfEntryPoint,ecx
 ifndef ASMC64
         .else
-            mov rax,ph32
             mov [rax].IMAGE_PE_HEADER32.OptionalHeader.AddressOfEntryPoint,ecx
         .endif
 endif
@@ -1874,10 +1997,10 @@ endif
         asmerr( 8009 )
     .endif
 
+    mov rcx,pe
 ifndef ASMC64
     .if ( ModuleInfo.defOfssize == USE64 )
 endif
-        mov rcx,ph64
 if IMGSIZE_ROUND
         ;; round up the SizeOfImage field to page boundary
         mov eax,[rcx].IMAGE_PE_HEADER64.OptionalHeader.SectionAlignment
@@ -1895,7 +2018,6 @@ endif
         mov datadir,&[rcx].IMAGE_PE_HEADER64.OptionalHeader.DataDirectory
 ifndef ASMC64
     .else
-        mov rcx,ph32
 if IMGSIZE_ROUND
         ;
         ; round up the SizeOfImage field to page boundary
@@ -1997,11 +2119,48 @@ endif
             mov [rdx][IMAGE_DIRECTORY_ENTRY_EXCEPTION*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.Size,[rax].asym.max_offset
             mov [rdx][IMAGE_DIRECTORY_ENTRY_EXCEPTION*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.VirtualAddress,[rsi].start_offset
         .endif
+        mov rcx,pe
+ifdef _WIN64
+        mov rax,[rcx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase
+        .if ( eax == PE_UNDEF_BASE )
+            mov rax,PE64_DEF_BASE_EXE
+            .if ( ff & IMAGE_FILE_DLL )
+                mov rax,PE64_DEF_BASE_DLL
+            .elseif !( [rcx].IMAGE_PE_HEADER32.FileHeader.Characteristics & IMAGE_FILE_LARGE_ADDRESS_AWARE )
+                mov eax,PE32_DEF_BASE_EXE
+            .endif
+            mov [rcx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase,rax
+        .endif
         mov rcx,cp
-        GHF( OptionalHeader.ImageBase )
-        .s8 [rcx].calc_param.imagebase64
+        mov [rcx].calc_param.imagebase64,rax
+else
+        mov eax,dword ptr [rcx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase
+        mov edx,dword ptr [rcx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase[4]
+        .if ( eax == PE_UNDEF_BASE )
+            mov eax,LOW32(PE64_DEF_BASE_EXE)
+            mov edx,HIGH32(PE64_DEF_BASE_EXE)
+            .if ( ff & IMAGE_FILE_DLL )
+                mov eax,LOW32(PE64_DEF_BASE_DLL)
+                mov edx,HIGH32(PE64_DEF_BASE_DLL)
+            .endif
+            mov dword ptr [rcx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase,eax
+            mov dword ptr [rcx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase[4],edx
+        .endif
+        mov rcx,cp
+        mov dword ptr [rcx].calc_param.imagebase64,eax
+        mov dword ptr [rcx].calc_param.imagebase64[4],edx
+endif
 ifndef ASMC64
     .else
+        ; v2.16: set default base for dll/exe
+        mov rcx,pe
+        .if ( [rcx].IMAGE_PE_HEADER32.OptionalHeader.ImageBase == PE_UNDEF_BASE )
+            mov eax,PE32_DEF_BASE_EXE
+            .if ( ff & IMAGE_FILE_DLL )
+                mov eax,PE32_DEF_BASE_DLL
+            .endif
+            mov [rcx].IMAGE_PE_HEADER32.OptionalHeader.ImageBase,eax
+        .endif
         mov rcx,cp
         mov [rcx].calc_param.imagebase,GHF( OptionalHeader.ImageBase )
     .endif
@@ -2307,9 +2466,15 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
         .if ( ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT ) &&
               ( [rsi].segtype == SEGTYPE_BSS || [rsi].info ) )
             xor eax,eax
+            .if ( [rsi].info )
+                .continue ; v2.19: info sections shouldn't appear in binary map
+            .endif
         .else
+            ; v2.19: subtract start_loc only if -bin AND first segment
             mov eax,[rdi].asym.max_offset
-            sub eax,[rsi].start_loc
+            .if ( first && [rbx].sub_format == SFORMAT_NONE )
+                sub eax,[rsi].start_loc
+            .endif
         .endif
         mov size,eax
         .if first == 0

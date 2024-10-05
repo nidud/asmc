@@ -26,6 +26,10 @@ Options global_options {
         0,                      ; .process_subdir
         {0,0,0,0,0,0,0,0,0},    ; .names
         {0,0,0},                ; .queues
+        0,                      ; .link_linker
+        0,                      ; .link_options
+        0,                      ; .link_objects
+        0,                      ; .link
         0,                      ; .no_comment_in_code_rec
         0,                      ; .no_opt_farcall
         0,                      ; .no_file_entry
@@ -68,7 +72,8 @@ Options global_options {
         0,                      ; .loopalign
         0,                      ; .casealign
         4,                      ; .segmentalign
-        0,                      ; .pe_subsystem
+        3,                      ; .pe_subsystem
+        0,                      ; .pe_dll
         0,                      ; .win64_flags
         0,                      ; .chkstack
         0,                      ; .nolib
@@ -79,7 +84,8 @@ Options global_options {
         0,                      ; .iddc
         0,                      ; .dotname
         0,                      ; .dotnamex
-        0 }                     ; .sysvregs
+        0,                      ; .sysvregs
+        0 }                     ; .no_linking
 
     align size_t
 
@@ -423,6 +429,35 @@ endif
 
 GetNameToken endp
 
+ifdef _EXEC_LINK
+
+CollectLinkArg proc __ccall uses rdi rdi rbx arg:string_t, is_option:int_t
+
+   .new size:int_t
+
+    ldr rsi,arg
+    mov rbx,Options.link_options
+    mov size,&[tstrlen( rsi ) + 2]
+    .if ( rbx )
+        add size,&[tstrlen( rbx ) + 1]
+    .endif
+    mov Options.link_options,MemAlloc( size )
+    mov byte ptr [rax],0
+    .if ( rbx )
+        tstrcat( tstrcpy( rax, rbx ), " " )
+    .endif
+    .if ( is_option )
+        tstrcat( rax, "/" )
+    .endif
+    tstrcat( rax, rsi )
+    .if ( rbx )
+        MemFree( rbx )
+    .endif
+    ret
+
+CollectLinkArg endp
+
+endif
 
 ProcessOption proc __ccall uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
 
@@ -433,6 +468,15 @@ ProcessOption proc __ccall uses rsi rdi rbx cmdline:ptr string_t, buffer:string_
     ldr rsi,cmdline
     ldr rdi,buffer
     mov rbx,[rsi]
+
+ifdef _EXEC_LINK
+    .if ( Options.link )
+
+        mov [rsi],GetNameToken(rdi, rbx, 256, 0)
+       .return CollectLinkArg( rdi, 1 )
+    .endif
+endif
+
     mov eax,[rbx]
 
 ifndef ASMC64
@@ -527,6 +571,7 @@ endif
         .endif
         .return
     .case 'c'               ; -c
+        mov Options.no_linking,1
         .return
     .case 'ffoc'            ; -coff
         mov Options.output_format,OFORMAT_COFF
@@ -553,9 +598,6 @@ endif
     .case 'uC'              ; -Cu
         mov Options.case_sensitive,0
         mov Options.convert_uppercase,1
-        .return
-    .case 'iuc'             ; -cui - subsystem:console
-        mov Options.pe_subsystem,0
         .return
     .case 'xC'              ; -Cx
         mov Options.case_sensitive,0
@@ -652,10 +694,6 @@ ifndef ASMC64
         define_name( "_STDCALL_SUPPORTED", "1" )
         .return
 endif
-    .case 'iug'             ; -gui - subsystem:windows
-        mov Options.pe_subsystem,1
-        define_name( "__GUI__", "1" )
-        .return
 ifdef __UNIX__
     .case 'leh-'            ; --help
 else
@@ -672,6 +710,12 @@ endif
         .return
     .case 'ddi'             ; -idd
         mov Options.iddc,1
+        .return
+    .case 'knil'            ; -link
+        mov Options.link,1
+        .if ( byte ptr [rdi+4] == ':' )
+            mov Options.link_linker,MemDup(&[rdi+5])
+        .endif
         .return
     .case 'ogol'            ; -logo
         tprintf( &cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER )
@@ -718,11 +762,9 @@ endif
        .return
     .case 'dDM'             ; -MDd
         define_name( "_DEBUG", "1" )
-    .case 'DM'              ; -MD
-        define_name( "_MSVCRT", "1" )
-       .return
     .case 'ilon'            ; -nolib
         mov Options.nolib,TRUE
+    .case 'DM'              ; -MD
         define_name( "_MSVCRT", "1" )
        .return
 ifndef ASMC64
@@ -731,6 +773,9 @@ ifndef ASMC64
         mov Options.sub_format,SFORMAT_NONE
         .return
 endif
+    .case 'cep'             ; -pec - subsystem:console
+        mov Options.pe_subsystem,3
+        define_name( "__CUI__", "1" )
     .case 'ep'              ; -pe
         .if ( Options.sub_format != SFORMAT_64BIT )
             mov Options.sub_format,SFORMAT_PE
@@ -738,6 +783,15 @@ endif
         mov Options.output_format,OFORMAT_BIN
         define_name( "__PE__", "1" )
         .return
+    .case 'gep'             ; -peg - subsystem:windows
+        mov Options.pe_subsystem,2
+        define_name( "__GUI__", "1" )
+        .gotosw('ep')
+    .case 'dep'             ; -ped -dll
+        mov Options.pe_dll,1
+        mov Options.no_export_decoration,1
+        define_name( "__DLL__", "1" )
+       .gotosw('ep')
     .case 'r'               ; -r
         mov Options.process_subdir,1
         .return
@@ -1044,12 +1098,20 @@ endif
                 mov rbx,ReadParamFile(&paramfile)
             .endif
             .endc
-        .default ; collect  file name
+        .default ; collect file name
             mov rbx,GetNameToken(&paramfile, rbx, sizeof(paramfile) - 1, '@')
-            mov Options.names[ASM*string_t],MemDup(&paramfile)
-            inc dword ptr [rdi]
             mov [rsi],rbx
-           .return
+ifdef _EXEC_LINK
+            .if ( Options.link )
+                CollectLinkArg( &paramfile, 0 )
+            .else
+endif
+                mov Options.names[ASM*string_t],MemDup(&paramfile)
+                inc dword ptr [rdi]
+               .return
+ifdef _EXEC_LINK
+            .endif
+endif
         .endsw
     .endf
     mov [rsi],rbx

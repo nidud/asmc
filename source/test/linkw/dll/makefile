@@ -12,7 +12,7 @@ endif
 
 FL = /MACHINE:$(MC) /SUBSYSTEM:WINDOWS /LIBPATH:%ASMCDIR%\lib\$(MC) /MERGE:.CRT=.rdata
 
-all: clean mydll myapp
+all: mydll myapp
 
 mydll:
 	$(CC) $@.asm
@@ -25,6 +25,10 @@ clean:
 	del *.exe
 	del *.dll
 	del *.lib
+pe:
+	asmc -peg myapp.asm -ped mydll.asm
+pe64:
+	asmc64 -peg myapp.asm -ped mydll.asm
 x86:
 	make MC=x86
 mslink:

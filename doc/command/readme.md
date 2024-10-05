@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 Assembles and links one or more assembly-language source files. The command-line options are case sensitive.
 
-**ASMC** [[options]] filename [[ [[options]] filename]]
+**ASMC** [_options_] _filename_ [ [_options_] _filename_] ... [[**/link**](option-link.md) _link\_options_]
 
 _options_
 
@@ -15,11 +15,11 @@ The options listed in the following table.
 - [**-assert**](../directive/dot-assert.md) - Generate .assert(code).
 - **-autostack** - Calculate required stack space for arguments.
 - **-bin** - Generate plain binary file.
+- **-c** - Assembles only. Does no linking.
 - **-Cs** - Push user registers before [stack-frame](../directive/option-cstack.md) is created in a proc.
 - **-coff** - Generate COFF format object file.
 - **-Cp** - Preserves case of all user identifiers.
 - **-Cu** - Maps all identifiers to upper case (default).
-- **-cui** - Link switch used with **-pe** -- subsystem:console (default).
 - **-Cx** - Preserves case in public and extern symbols.
 - **-D**_symbol_[[=_value_]] - Defines a text macro with the given name. If value is missing, it is blank. Multiple tokens separated by spaces must be enclosed in quotation marks. |
 - **-dotname** - Allows names of identifiers to begin with a period.
@@ -44,7 +44,6 @@ The options listed in the following table.
 - **-Gd** - Specifies use of C-style function calling and naming conventions.
 - **-Gs** - Specifies use of SYSCALL (System V)-style function calling and naming conventions.
 - **-Ge** - Emit a conditional _chkstk() inside the prologue.
-- **-gui** - Link switch used with **-pe** -- subsystem:windows.
 - **-Gv** - Specifies use of VECTORCALL-style function calling and naming conventions.
 - **-Gz** - Specifies use of STDCALL-style function calling and naming conventions. Defines _STDCALL_SUPPORTED.
 - **-homeparams** - Forces parameters passed in registers to be written to their locations on the stack upon function entry.
@@ -63,7 +62,7 @@ The options listed in the following table.
 - **-nolib** - Ignore INCLUDELIB directive.
 - **-nologo** - Suppresses messages for successful assembly.
 - **-omf** - Generates object module file format (OMF) type of object module.
-- **-pe** - Generate PE binary file, 32/64-bit.
+- [**-pe[c|g|d]**](option-pe.md) - Generate PE binary file, 32/64-bit.
 - **-q** - Suppress copyright message.
 - **-r** - Recurse subdirectories with use of wildcards.
 - **-Sa** - Turns on listing of all available information.

@@ -41,7 +41,6 @@ $(OUTP)\$(NAME).exe:
 	..\..\bin\linkw @<<
 libpath ..\..\lib\$(LIBP)
 name	$@
-symt	_cstart
 option	stack=0x300000 com stack=0x200000
 file	{ *.obj }
 <<

@@ -13,6 +13,7 @@ define __USE_GNU
 include ucontext.inc
 else
 include winbase.inc
+include process.inc
 endif
 include asmc.inc
 include memalloc.inc
@@ -562,12 +563,41 @@ endif
         write_usage()
     .elseif !numFiles
         asmerr(1017)
+ifdef _EXEC_LINK
+    .elseif ( rc == 1 && Options.sub_format != SFORMAT_PE &&
+             !( Options.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
+ifdef _AUTO_LINK
+        .if ( !Options.no_linking )
+else
+        .if ( Options.link )
+endif
+            .new linker[_MAX_PATH]:char_t
+            .if ( Options.link_linker )
+                .if ( !tstrchr( tstrcpy( &linker, Options.link_linker ), '.' ) )
+                    tstrcat( &linker, ".exe" )
+                .endif
+            .else
+                tstrcpy(&linker, "linkw.exe")
+            .endif
+            .ifd ( SearchPathA( 0, &linker, 0, _MAX_PATH, path, 0 ) == 0 )
+                mov path,&linker
+            .endif
+            mov rbx,Options.link_options
+            .if ( rbx == 0 )
+                lea rbx,@CStr("/map") ; or some other dummy...
+            .endif
+            .if ( _spawnl( P_WAIT, path, path, rbx, Options.link_objects, NULL ) == -1 )
+                mov rc,0
+            .endif
+        .endif
+endif
     .endif
     mov eax,1
     sub eax,rc
     ret
 
 main endp
+
 
 tgetenv proc fastcall uses rsi rdi rbx enval:string_t
 

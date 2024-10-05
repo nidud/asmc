@@ -1190,6 +1190,9 @@ GetExt proc fastcall private ftype:int_t
                   Options.sub_format == SFORMAT_PE ||
                   Options.sub_format == SFORMAT_64BIT )
                 mov edx,'exe.'
+                .if ( Options.pe_dll )
+                    mov edx,'lld.'
+                .endif
             .endif
         .elseif ( Options.output_format == OFORMAT_ELF )
             and edx,0xFFFF

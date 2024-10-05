@@ -34,7 +34,7 @@ cp_usage \
 ifdef ASMC64
  char_t "64"
 endif
- char_t " [ options ] filelist",10
+ char_t " [options] filename [ [options] filename] ... [/link link_options]",10
 ifdef __UNIX__
  char_t "Use option -h for more info" ,10
 else
@@ -47,7 +47,7 @@ cp_options \
 ifdef ASMC64
  char_t "64"
 endif
- char_t " [ -options ] filelist",10
+ char_t " [options] filename [ [options] filename] ... [/link link_options]",10
  char_t 10
 ifndef ASMC64
  char_t "-<0|1|..|10>[p] Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486,",10
@@ -68,16 +68,15 @@ ifndef ASMC64
  char_t "-fpc Disallow floating-point instructions  -fp<n> Set FPU: 0=8087, 2=80287, 3=80387",10
 endif
  char_t "-Ge force stack checking for all funcs     -G<cdzvs> Pascal, C, Std/Vector/Sys-call",10
- char_t "-gui, -cui (-pe) Windows/Console           -homeparams Copy Reg. parameters to Stack",10
- char_t "-I<name> Add include path                  -idd Assemble source as binary data",10
- char_t "-iddt Same as -idd with added 0 (.txt)     -logo Print logo string and exit",10
+ char_t "-homeparams Copy Reg. parameters to Stack  -I<name> Add include path",10
+ char_t "-idd[t] Assemble as binary data [or text]  -logo Print logo string and exit",10
 ifndef ASMC64
  char_t "-m<t|s|c|m|l|h|f> Set memory model         -mz Generate DOS MZ binary file",10
 endif
  char_t "-MD[d] (dynamic) Defines _MSVCRT [_DEBUG]  -MT[d] (static) Defines _MT [_DEBUG]",10
  char_t "-nc<name> Set class name of code segment   -nd<name> Set name of data segment",10
  char_t "-nm<name> Set name of module               -nolib Ignore INCLUDELIB directive",10
- char_t "-nt<name> Set name of text segment         -pe Generate PE binary file",10
+ char_t "-nt<name> Set name of text segment         -pe[c|g|d] Generate PE binary file",10
  char_t "-q, -nologo Suppress copyright message     -r Recurse subdirectories",10
  char_t "-Sa Maximize source listing                -safeseh Assert exception handlers",10
  char_t "-Sf Generate first pass listing            -Sg Display generated code in listing",10

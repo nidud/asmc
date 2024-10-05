@@ -5,6 +5,8 @@ Change Log File for ASMC
 Changes in 2.36 - xx xxx 2024
 - added .pragma wstring
 - added __ImageBase to -pe
+- added options -pec, -peg, -ped, and -link [link_options]
+- removed options -gui and -cui
 
 Changes in 2.35 - 6 Jul 2024
 - added separate list section for -Sf

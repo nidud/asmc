@@ -16,6 +16,11 @@ include stdlib.inc
 include string.inc
 include inttype.inc
 
+ifndef __UNIX__
+define _EXEC_LINK   ; Spawn linker if /link [ /args ] or
+;define _AUTO_LINK  ; Spawn linker if /c not set
+endif
+
 define NULLC 0
 
 ifndef __ccall
@@ -493,6 +498,11 @@ define SIT_MACRO        1
     sym         ptr asym ?  ; set by StructDirective()
    .ends
 
+define PE_SUBSYSTEM_NATIVE  0x01
+define PE_SUBSYSTEM_GUI     0x02
+define PE_SUBSYSTEM_CUI     0x03
+define PE_SUBSYSTEM_MASK    0x03
+define PE_DLL               0x04
 
 .template global_options
     quiet                   db ?    ; -q option
@@ -507,6 +517,10 @@ define SIT_MACRO        1
     process_subdir          db ?    ; -r option
     names                   string_t OPTN_LAST dup(?) ; char *  4
     queues                  ptr_t OPTQ_LAST dup(?)  ; qitem * 4
+    link_linker             string_t ? ; -link<:linker>
+    link_options            string_t ? ; -link <options...>
+    link_objects            string_t ? ; -link [options...] <.OBJ files>
+    link                    db ?    ; -link option
     no_comment_in_code_rec  db ?    ; -zlc option
     no_opt_farcall          db ?    ; -zld option
     no_file_entry           db ?    ; -zlf option
@@ -550,6 +564,7 @@ define SIT_MACRO        1
     casealign               db ?    ; OPTION:CASEALIGN setting
     segmentalign            db ?    ; -Sp[n] Set segment alignment
     pe_subsystem            db ?    ; -cui, -gui
+    pe_dll                  db ?    ; -dll
     win64_flags             db ?    ; -homeparams, -autostack, -stackalign
     chkstack                db ?    ; _chkstk()
     nolib                   db ?    ; skip includelib directives
@@ -561,6 +576,7 @@ define SIT_MACRO        1
     dotname                 db ?    ; -dotname  : option dotname
     dotnamex                db ?    ; -dotnamex : option dotnamex:<on:off>
     sysvregs                db ?    ; -sysvregs : skip RDI and RSI in USES
+    no_linking              db ?    ; -c        ; Assembles only. Does no linking.
    .ends
 
 .template module_vars

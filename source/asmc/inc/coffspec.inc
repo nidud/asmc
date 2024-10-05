@@ -20,6 +20,7 @@ define IMAGE_FILE_LINE_NUMS_STRIPPED  0x0004 ; no line number info
 define IMAGE_FILE_LOCAL_SYMS_STRIPPED 0x0008 ; no local symbols
 define IMAGE_FILE_LARGE_ADDRESS_AWARE 0x0020 ; App can handle >2gb addresses
 define IMAGE_FILE_32BIT_MACHINE       0x0100 ; 32 bit word machine.
+define IMAGE_FILE_DLL                 0x2000 ; v2.16: for PE binaries only
 
 IMAGE_FILE_HEADER       struct
 Machine                 dw ?

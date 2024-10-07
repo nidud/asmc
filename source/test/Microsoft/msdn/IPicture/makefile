@@ -1,5 +1,5 @@
 IPicture.exe:
-    asmc64 -pe -gui $*.asm
+    asmc64 -peg $*.asm
     if exist $@ (
       $@
       dir *.ico | find "result"

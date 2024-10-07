@@ -10,7 +10,7 @@ endif
 if $(unicode)
 flags += -ws
 endif
-flags += -pe -gui -Cs
+flags += -peg -Cs
 
 WicAnimatedGif.exe:
 	asmc $(flags) $*.asm

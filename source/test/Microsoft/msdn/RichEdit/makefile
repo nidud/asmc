@@ -1,6 +1,6 @@
 
 test.exe:
-    asmc -q -pe -gui $*.asm
+    asmc -q -peg $*.asm
     $@
     pause
     del *.exe

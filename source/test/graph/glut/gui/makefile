@@ -2,6 +2,6 @@
 win64 = 64
 
 test.exe:
-    asmc$(win64) -pe -gui $*.asm
+    asmc$(win64) -peg $*.asm
     $@
 

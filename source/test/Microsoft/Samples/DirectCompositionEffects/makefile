@@ -10,7 +10,7 @@ CApplication.exe:
     linkw system gui_64W file $*.obj
 !endif
 !else
-    asmc64 -ws -pe -gui -Zp8 $*.asm
+    asmc64 -ws -peg -Zp8 $*.asm
 !endif
     $@
 

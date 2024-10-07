@@ -1,4 +1,4 @@
 
 GeometryRealizationSample.exe:
-    asmc64 -pe -Cs -ws -gui GeometryRealizationSample.asm
+    asmc64 -peg -Cs -ws GeometryRealizationSample.asm
     $@

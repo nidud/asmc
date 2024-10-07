@@ -8,7 +8,7 @@ else
 msvcrt = 1
 fireworks.exe:
 ifdef msvcrt
-	asmc64 -Cs -pe -gui $*.asm
+	asmc64 -Cs -peg $*.asm
 else
 	asmc64 -Cs $*.asm
 	linkw system gui_64 file $*.obj

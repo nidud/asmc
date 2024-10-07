@@ -1,6 +1,6 @@
 !include srcpath
 
-aflags = -nologo -ws -pe -gui -I$(inc_dir)
+aflags = -nologo -ws -peg -I$(inc_dir)
 
 CreateDevice.exe:
     asmc64 $(aflags) CreateDevice.asm

@@ -1,4 +1,4 @@
 GdiInteropSample.exe:
-    asmc64 -pe -ws -gui $*.asm
+    asmc64 -peg -ws $*.asm
     $@
 

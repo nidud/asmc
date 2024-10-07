@@ -3,8 +3,8 @@ Win64 = 0
 
 MagnifierSample.exe:
 !if $(Win64)
-   asmc64 -frame -pe -gui $*.asm
+   asmc64 -frame -peg $*.asm
 !else
-   asmc -pe -gui -arch:SSE $*.asm
+   asmc -peg -arch:SSE $*.asm
 !endif
     $@

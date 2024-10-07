@@ -1,3 +1,3 @@
 test.exe:
-    asmc64 -pe -gui -D_GLPE $*.asm
+    asmc64 -peg -D_GLPE $*.asm
     $@

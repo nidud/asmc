@@ -1,3 +1,3 @@
 
 SimplePlay.exe:
-    asmc64 -pe -ws -gui -Zp8 $*.asm
+    asmc64 -peg -ws -Zp8 $*.asm

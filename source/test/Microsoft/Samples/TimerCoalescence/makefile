@@ -1,4 +1,4 @@
 timer.exe:
-    asmc64 -pe -ws -gui timer.asm
+    asmc64 -peg -ws timer.asm
     $@
 

@@ -11,6 +11,6 @@ else
 	linkw system gui_64W file $*.obj
 endif
 else
-	asmc64 -I$(incdir) -ws -pe -gui $*.asm
+	asmc64 -I$(incdir) -ws -peg $*.asm
 endif
 	$@

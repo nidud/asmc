@@ -13,9 +13,9 @@ test.exe:
   !endif
  !else
   !if $(unicode)
-    asmc64 -q -pe -gui -ws $*.asm
+    asmc64 -q -peg -ws $*.asm
   !else
-    asmc64 -q -pe -gui $*.asm
+    asmc64 -q -peg $*.asm
   !endif
  !endif
 !else
@@ -29,9 +29,9 @@ test.exe:
   !endif
  !else
   !if $(unicode)
-    asmc -q -pe -gui -ws $*.asm
+    asmc -q -peg -ws $*.asm
   !else
-    asmc -q -pe -gui $*.asm
+    asmc -q -peg $*.asm
   !endif
  !endif
 !endif

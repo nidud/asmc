@@ -1,5 +1,5 @@
 
 CpuUsage.exe:
-    asmc64 -q -pe -gui -ws -Cs -Zp8 $*.asm
+    asmc64 -q -peg -ws -Cs -Zp8 $*.asm
     $@
 

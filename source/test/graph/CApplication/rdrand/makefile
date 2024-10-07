@@ -5,7 +5,7 @@ rdrand.exe:
     asmc64 -ws $*.asm
     linkw system gui_64W file $*.obj
 !else
-    asmc64 -pe -ws -gui $*.asm
+    asmc64 -peg -ws $*.asm
 !endif
     $@
     pause

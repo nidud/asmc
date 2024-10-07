@@ -8,9 +8,9 @@ x64 = 0
 
 .asm.exe:
 !if $(x64)
-    asmc64 -pe -gui -ws $<
+    asmc64 -peg -ws $<
 !else
-    asmc -pe -gui -ws $<
+    asmc -peg -ws $<
 !endif
 
 targets = \

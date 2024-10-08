@@ -489,19 +489,18 @@ define _XFORM_
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagXFORM                struct
+XFORM                   struct
 eM11                    FLOAT ?
 eM12                    FLOAT ?
 eM21                    FLOAT ?
 eM22                    FLOAT ?
 _eDx                    FLOAT ?
 eDy                     FLOAT ?
-tagXFORM                ends
-XFORM                   typedef tagXFORM
-PXFORM                  typedef ptr tagXFORM
-LPXFORM                 typedef ptr tagXFORM
+XFORM                   ends
+PXFORM                  typedef ptr XFORM
+LPXFORM                 typedef ptr XFORM
 
-tagBITMAP               struct
+BITMAP                  struct
 bmType                  LONG ?
 bmWidth                 LONG ?
 bmHeight                LONG ?
@@ -509,37 +508,34 @@ bmWidthBytes            LONG ?
 bmPlanes                WORD ?
 bmBitsPixel             WORD ?
 bmBits                  LPVOID ?
-tagBITMAP               ends
-BITMAP                  typedef tagBITMAP
-PBITMAP                 typedef ptr tagBITMAP
-NPBITMAP                typedef ptr tagBITMAP
-LPBITMAP                typedef ptr tagBITMAP
+BITMAP                  ends
+PBITMAP                 typedef ptr BITMAP
+NPBITMAP                typedef ptr BITMAP
+LPBITMAP                typedef ptr BITMAP
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagRGBTRIPLE            struct 1
+RGBTRIPLE               struct 1
 rgbtBlue                BYTE ?
 rgbtGreen               BYTE ?
 rgbtRed                 BYTE ?
-tagRGBTRIPLE            ends
-RGBTRIPLE               typedef tagRGBTRIPLE
-PRGBTRIPLE              typedef ptr tagRGBTRIPLE
-NPRGBTRIPLE             typedef ptr tagRGBTRIPLE
-LPRGBTRIPLE             typedef ptr tagRGBTRIPLE
+RGBTRIPLE               ends
+PRGBTRIPLE              typedef ptr RGBTRIPLE
+NPRGBTRIPLE             typedef ptr RGBTRIPLE
+LPRGBTRIPLE             typedef ptr RGBTRIPLE
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagRGBQUAD              struct
+RGBQUAD                 struct
 rgbBlue                 BYTE ?
 rgbGreen                BYTE ?
 rgbRed                  BYTE ?
 rgbReserved             BYTE ?
-tagRGBQUAD              ends
-RGBQUAD                 typedef tagRGBQUAD
+RGBQUAD                 ends
 
 endif
 
@@ -648,43 +644,33 @@ FXPT2DOT30              typedef LONG
 LPFXPT16DOT16           typedef ptr
 LPFXPT2DOT30            typedef ptr
 
-tagCIEXYZ               struct
+CIEXYZ                  struct
 ciexyzX                 FXPT2DOT30 ?
 ciexyzY                 FXPT2DOT30 ?
 ciexyzZ                 FXPT2DOT30 ?
-tagCIEXYZ               ends
-CIEXYZ                  typedef tagCIEXYZ
+CIEXYZ                  ends
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-LPCIEXYZ                typedef ptr
-
+LPCIEXYZ                typedef ptr CIEXYZ
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-tagICEXYZTRIPLE         struct
+CIEXYZTRIPLE            struct
 ciexyzRed               CIEXYZ <>
 ciexyzGreen             CIEXYZ <>
 ciexyzBlue              CIEXYZ <>
-tagICEXYZTRIPLE         ends
-CIEXYZTRIPLE            typedef tagICEXYZTRIPLE
-
+CIEXYZTRIPLE            ends
 endif
-;.pragma endregion
 
-;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-LPCIEXYZTRIPLE          typedef ptr
-
+LPCIEXYZTRIPLE          typedef ptr CICEXYZTRIPLE
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagLOGCOLORSPACEA       struct
+LOGCOLORSPACEA          struct
 lcsSignature            DWORD ?
 lcsVersion              DWORD ?
 lcsSize                 DWORD ?
@@ -695,10 +681,9 @@ lcsGammaRed             DWORD ?
 lcsGammaGreen           DWORD ?
 lcsGammaBlue            DWORD ?
 lcsFilename             CHAR MAX_PATH dup(?)
-tagLOGCOLORSPACEA       ends
-LOGCOLORSPACEA          typedef tagLOGCOLORSPACEA
-LPLOGCOLORSPACEA        typedef ptr tagLOGCOLORSPACEA
-tagLOGCOLORSPACEW       struct
+LOGCOLORSPACEA          ends
+LPLOGCOLORSPACEA        typedef ptr LOGCOLORSPACEA
+LOGCOLORSPACEW          struct
 lcsSignature            DWORD ?
 lcsVersion              DWORD ?
 lcsSize                 DWORD ?
@@ -709,9 +694,8 @@ lcsGammaRed             DWORD ?
 lcsGammaGreen           DWORD ?
 lcsGammaBlue            DWORD ?
 lcsFilename             WCHAR MAX_PATH dup(?)
-tagLOGCOLORSPACEW       ends
-LOGCOLORSPACEW          typedef tagLOGCOLORSPACEW
-LPLOGCOLORSPACEW        typedef ptr tagLOGCOLORSPACEW
+LOGCOLORSPACEW          ends
+LPLOGCOLORSPACEW        typedef ptr LOGCOLORSPACEW
 ifdef _UNICODE
 LOGCOLORSPACE           typedef LOGCOLORSPACEW
 LPLOGCOLORSPACE         typedef LPLOGCOLORSPACEW
@@ -726,22 +710,21 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagBITMAPCOREHEADER     struct
+BITMAPCOREHEADER        struct
 bcSize                  DWORD ?
 bcWidth                 WORD ?
 bcHeight                WORD ?
 bcPlanes                WORD ?
 bcBitCount              WORD ?
-tagBITMAPCOREHEADER     ends
-BITMAPCOREHEADER        typedef tagBITMAPCOREHEADER
-LPBITMAPCOREHEADER      typedef ptr tagBITMAPCOREHEADER
-PBITMAPCOREHEADER       typedef ptr tagBITMAPCOREHEADER
+BITMAPCOREHEADER        ends
+LPBITMAPCOREHEADER      typedef ptr BITMAPCOREHEADER
+PBITMAPCOREHEADER       typedef ptr BITMAPCOREHEADER
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagBITMAPINFOHEADER     struct
+BITMAPINFOHEADER        struct
 biSize                  DWORD ?
 biWidth                 LONG ?
 biHeight                LONG ?
@@ -753,10 +736,9 @@ biXPelsPerMeter         LONG ?
 biYPelsPerMeter         LONG ?
 biClrUsed               DWORD ?
 biClrImportant          DWORD ?
-tagBITMAPINFOHEADER     ends
-BITMAPINFOHEADER        typedef tagBITMAPINFOHEADER
-LPBITMAPINFOHEADER      typedef ptr tagBITMAPINFOHEADER
-PBITMAPINFOHEADER       typedef ptr tagBITMAPINFOHEADER
+BITMAPINFOHEADER        ends
+LPBITMAPINFOHEADER      typedef ptr BITMAPINFOHEADER
+PBITMAPINFOHEADER       typedef ptr BITMAPINFOHEADER
 
 endif
 
@@ -841,40 +823,37 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagBITMAPINFO           struct
+BITMAPINFO              struct
 bmiHeader               BITMAPINFOHEADER <>
 bmiColors               RGBQUAD 1 dup(<>)
-tagBITMAPINFO           ends
-BITMAPINFO              typedef tagBITMAPINFO
-LPBITMAPINFO            typedef ptr tagBITMAPINFO
-PBITMAPINFO             typedef ptr tagBITMAPINFO
+BITMAPINFO              ends
+LPBITMAPINFO            typedef ptr BITMAPINFO
+PBITMAPINFO             typedef ptr BITMAPINFO
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagBITMAPCOREINFO       struct
+BITMAPCOREINFO          struct
 bmciHeader              BITMAPCOREHEADER <>
 bmciColors              RGBTRIPLE 1 dup(<>)
-tagBITMAPCOREINFO       ends
-BITMAPCOREINFO          typedef tagBITMAPCOREINFO
-LPBITMAPCOREINFO        typedef ptr tagBITMAPCOREINFO
-PBITMAPCOREINFO         typedef ptr tagBITMAPCOREINFO
+BITMAPCOREINFO          ends
+LPBITMAPCOREINFO        typedef ptr BITMAPCOREINFO
+PBITMAPCOREINFO         typedef ptr BITMAPCOREINFO
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagBITMAPFILEHEADER     struct 2
+BITMAPFILEHEADER        struct 2
 bfType                  WORD ?
 bfSize                  DWORD ?
 bfReserved1             WORD ?
 bfReserved2             WORD ?
 bfOffBits               DWORD ?
-tagBITMAPFILEHEADER     ends
-BITMAPFILEHEADER        typedef tagBITMAPFILEHEADER
-LPBITMAPFILEHEADER      typedef ptr tagBITMAPFILEHEADER
-PBITMAPFILEHEADER       typedef ptr tagBITMAPFILEHEADER
+BITMAPFILEHEADER        ends
+LPBITMAPFILEHEADER      typedef ptr BITMAPFILEHEADER
+PBITMAPFILEHEADER       typedef ptr BITMAPFILEHEADER
 
 endif
 
@@ -887,23 +866,21 @@ ifndef NOFONTSIG
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagFONTSIGNATURE        struct
+FONTSIGNATURE           struct
 fsUsb                   DWORD 4 dup(?)
 fsCsb                   DWORD 2 dup(?)
-tagFONTSIGNATURE        ends
-FONTSIGNATURE           typedef tagFONTSIGNATURE
-PFONTSIGNATURE          typedef ptr tagFONTSIGNATURE
-LPFONTSIGNATURE         typedef ptr tagFONTSIGNATURE
+FONTSIGNATURE           ends
+PFONTSIGNATURE          typedef ptr FONTSIGNATURE
+LPFONTSIGNATURE         typedef ptr FONTSIGNATURE
 
-tagCHARSETINFO          struct
+CHARSETINFO             struct
 ciCharset               UINT ?
 ciACP                   UINT ?
 _fs                     FONTSIGNATURE <>
-tagCHARSETINFO          ends
-CHARSETINFO             typedef tagCHARSETINFO
-PCHARSETINFO            typedef ptr tagCHARSETINFO
-NPCHARSETINFO           typedef ptr tagCHARSETINFO
-LPCHARSETINFO           typedef ptr tagCHARSETINFO
+CHARSETINFO             ends
+PCHARSETINFO            typedef ptr CHARSETINFO
+NPCHARSETINFO           typedef ptr CHARSETINFO
+LPCHARSETINFO           typedef ptr CHARSETINFO
 
 endif
 
@@ -916,14 +893,13 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagLOCALESIGNATURE      struct
+LOCALESIGNATURE         struct
 lsUsb                   DWORD 4 dup(?)
 lsCsbDefault            DWORD 2 dup(?)
 lsCsbSupported          DWORD 2 dup(?)
-tagLOCALESIGNATURE      ends
-LOCALESIGNATURE         typedef tagLOCALESIGNATURE
-PLOCALESIGNATURE        typedef ptr tagLOCALESIGNATURE
-LPLOCALESIGNATURE       typedef ptr tagLOCALESIGNATURE
+LOCALESIGNATURE         ends
+PLOCALESIGNATURE        typedef ptr LOCALESIGNATURE
+LPLOCALESIGNATURE       typedef ptr LOCALESIGNATURE
 
 endif
 
@@ -934,46 +910,41 @@ ifndef NOMETAFILE
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagHANDLETABLE          struct
+HANDLETABLE             struct
 objectHandle            HGDIOBJ 1 dup(?)
-tagHANDLETABLE          ends
-HANDLETABLE             typedef tagHANDLETABLE
-PHANDLETABLE            typedef ptr tagHANDLETABLE
-LPHANDLETABLE           typedef ptr tagHANDLETABLE
+HANDLETABLE             ends
+PHANDLETABLE            typedef ptr HANDLETABLE
+LPHANDLETABLE           typedef ptr HANDLETABLE
 
-tagMETARECORD           struct
+METARECORD              struct
 rdSize                  DWORD ?
 rdFunction              WORD ?
 rdParm                  WORD 1 dup(?)
-tagMETARECORD           ends
-METARECORD              typedef tagMETARECORD
+METARECORD              ends
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-PMETARECORD             typedef ptr tagMETARECORD
-
+PMETARECORD             typedef ptr METARECORD
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-LPMETARECORD            typedef ptr tagMETARECORD
+LPMETARECORD            typedef ptr METARECORD
 
-tagMETAFILEPICT         struct
+METAFILEPICT            struct
 mm                      LONG ?
 xExt                    LONG ?
 yExt                    LONG ?
 hMF                     HMETAFILE ?
-tagMETAFILEPICT         ends
-METAFILEPICT            typedef tagMETAFILEPICT
-LPMETAFILEPICT          typedef ptr tagMETAFILEPICT
+METAFILEPICT            ends
+LPMETAFILEPICT          typedef ptr METAFILEPICT
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagMETAHEADER           struct 2
+METAHEADER              struct 2
 mtType                  WORD ?
 mtHeaderSize            WORD ?
 mtVersion               WORD ?
@@ -981,25 +952,23 @@ mtSize                  DWORD ?
 mtNoObjects             WORD ?
 mtMaxRecord             DWORD ?
 mtNoParameters          WORD ?
-tagMETAHEADER           ends
-METAHEADER              typedef tagMETAHEADER
-PMETAHEADER             typedef ptr tagMETAHEADER
-LPMETAHEADER            typedef ptr
+METAHEADER              ends
+PMETAHEADER             typedef ptr METAHEADER
+LPMETAHEADER            typedef ptr METAHEADER
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagENHMETARECORD        struct
+ENHMETARECORD           struct
 iType                   DWORD ?
 nSize                   DWORD ?
 dParm                   DWORD 1 dup(?)
-tagENHMETARECORD        ends
-ENHMETARECORD           typedef tagENHMETARECORD
-PENHMETARECORD          typedef ptr tagENHMETARECORD
-LPENHMETARECORD         typedef ptr tagENHMETARECORD
+ENHMETARECORD           ends
+PENHMETARECORD          typedef ptr ENHMETARECORD
+LPENHMETARECORD         typedef ptr ENHMETARECORD
 
-tagENHMETAHEADER        struct
+ENHMETAHEADER           struct
 iType                   DWORD ?
 nSize                   DWORD ?
 rclBounds               RECTL <>
@@ -1023,10 +992,9 @@ endif
 if(WINVER ge 0x0500)
 szlMicrometers          SIZEL <>
 endif
-tagENHMETAHEADER        ends
-ENHMETAHEADER           typedef tagENHMETAHEADER
-PENHMETAHEADER          typedef ptr tagENHMETAHEADER
-LPENHMETAHEADER         typedef ptr tagENHMETAHEADER
+ENHMETAHEADER           ends
+PENHMETAHEADER          typedef ptr ENHMETAHEADER
+LPENHMETAHEADER         typedef ptr ENHMETAHEADER
 
 endif
 
@@ -1054,7 +1022,7 @@ define _TEXTMETRIC_DEFINED
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagTEXTMETRICA          struct 4
+TEXTMETRICA             struct 4
 tmHeight                LONG ?
 tmAscent                LONG ?
 tmDescent               LONG ?
@@ -1075,12 +1043,11 @@ tmUnderlined            BYTE ?
 tmStruckOut             BYTE ?
 tmPitchAndFamily        BYTE ?
 tmCharSet               BYTE ?
-tagTEXTMETRICA          ends
-TEXTMETRICA             typedef tagTEXTMETRICA
-PTEXTMETRICA            typedef ptr tagTEXTMETRICA
-NPTEXTMETRICA           typedef ptr tagTEXTMETRICA
-LPTEXTMETRICA           typedef ptr tagTEXTMETRICA
-tagTEXTMETRICW          struct
+TEXTMETRICA             ends
+PTEXTMETRICA            typedef ptr TEXTMETRICA
+NPTEXTMETRICA           typedef ptr TEXTMETRICA
+LPTEXTMETRICA           typedef ptr TEXTMETRICA
+TEXTMETRICW             struct
 tmHeight                LONG ?
 tmAscent                LONG ?
 tmDescent               LONG ?
@@ -1101,11 +1068,10 @@ tmUnderlined            BYTE ?
 tmStruckOut             BYTE ?
 tmPitchAndFamily        BYTE ?
 tmCharSet               BYTE ?
-tagTEXTMETRICW          ends
-TEXTMETRICW             typedef tagTEXTMETRICW
-PTEXTMETRICW            typedef ptr tagTEXTMETRICW
-NPTEXTMETRICW           typedef ptr tagTEXTMETRICW
-LPTEXTMETRICW           typedef ptr tagTEXTMETRICW
+TEXTMETRICW             ends
+PTEXTMETRICW            typedef ptr TEXTMETRICW
+NPTEXTMETRICW           typedef ptr TEXTMETRICW
+LPTEXTMETRICW           typedef ptr TEXTMETRICW
 ifdef _UNICODE
 TEXTMETRIC              typedef TEXTMETRICW
 PTEXTMETRIC             typedef PTEXTMETRICW
@@ -1135,7 +1101,7 @@ define NTM_DSIG            0x00200000
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagNEWTEXTMETRICA       struct 4
+NEWTEXTMETRICA          struct 4
 tmHeight                LONG ?
 tmAscent                LONG ?
 tmDescent               LONG ?
@@ -1160,12 +1126,11 @@ ntmFlags                DWORD ?
 ntmSizeEM               UINT ?
 ntmCellHeight           UINT ?
 ntmAvgWidth             UINT ?
-tagNEWTEXTMETRICA       ends
-NEWTEXTMETRICA          typedef tagNEWTEXTMETRICA
-PNEWTEXTMETRICA         typedef ptr tagNEWTEXTMETRICA
-NPNEWTEXTMETRICA        typedef ptr tagNEWTEXTMETRICA
-LPNEWTEXTMETRICA        typedef ptr tagNEWTEXTMETRICA
-tagNEWTEXTMETRICW       struct
+NEWTEXTMETRICA          ends
+PNEWTEXTMETRICA         typedef ptr NEWTEXTMETRICA
+NPNEWTEXTMETRICA        typedef ptr NEWTEXTMETRICA
+LPNEWTEXTMETRICA        typedef ptr NEWTEXTMETRICA
+NEWTEXTMETRICW          struct
 tmHeight                LONG ?
 tmAscent                LONG ?
 tmDescent               LONG ?
@@ -1190,11 +1155,10 @@ ntmFlags                DWORD ?
 ntmSizeEM               UINT ?
 ntmCellHeight           UINT ?
 ntmAvgWidth             UINT ?
-tagNEWTEXTMETRICW       ends
-NEWTEXTMETRICW          typedef tagNEWTEXTMETRICW
-PNEWTEXTMETRICW         typedef ptr tagNEWTEXTMETRICW
-NPNEWTEXTMETRICW        typedef ptr tagNEWTEXTMETRICW
-LPNEWTEXTMETRICW        typedef ptr tagNEWTEXTMETRICW
+NEWTEXTMETRICW          ends
+PNEWTEXTMETRICW         typedef ptr NEWTEXTMETRICW
+NPNEWTEXTMETRICW        typedef ptr NEWTEXTMETRICW
+LPNEWTEXTMETRICW        typedef ptr NEWTEXTMETRICW
 ifdef _UNICODE
 NEWTEXTMETRIC           typedef NEWTEXTMETRICW
 PNEWTEXTMETRIC          typedef PNEWTEXTMETRICW
@@ -1213,16 +1177,14 @@ if(WINVER ge 0x0400)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagNEWTEXTMETRICEXA     struct
+NEWTEXTMETRICEXA        struct
 ntmTm                   NEWTEXTMETRICA <>
 ntmFontSig              FONTSIGNATURE <>
-tagNEWTEXTMETRICEXA     ends
-NEWTEXTMETRICEXA        typedef tagNEWTEXTMETRICEXA
-tagNEWTEXTMETRICEXW     struct
+NEWTEXTMETRICEXA        ends
+NEWTEXTMETRICEXW        struct
 ntmTm                   NEWTEXTMETRICW <>
 ntmFontSig              FONTSIGNATURE <>
-tagNEWTEXTMETRICEXW     ends
-NEWTEXTMETRICEXW        typedef tagNEWTEXTMETRICEXW
+NEWTEXTMETRICEXW        ends
 ifdef _UNICODE
 NEWTEXTMETRICEX         typedef NEWTEXTMETRICEXW
 else
@@ -1236,41 +1198,38 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagPELARRAY             struct
+PELARRAY                struct
 paXCount                LONG ?
 paYCount                LONG ?
 paXExt                  LONG ?
 paYExt                  LONG ?
 paRGBs                  BYTE ?
-tagPELARRAY             ends
-PELARRAY                typedef tagPELARRAY
-PPELARRAY               typedef ptr tagPELARRAY
-NPPELARRAY              typedef ptr tagPELARRAY
-LPPELARRAY              typedef ptr tagPELARRAY
+PELARRAY                ends
+PPELARRAY               typedef ptr PELARRAY
+NPPELARRAY              typedef ptr PELARRAY
+LPPELARRAY              typedef ptr PELARRAY
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagLOGBRUSH             struct
+LOGBRUSH                struct
 lbStyle                 UINT ?
 lbColor                 COLORREF ?
 lbHatch                 ULONG_PTR ?
-tagLOGBRUSH             ends
-LOGBRUSH                typedef tagLOGBRUSH
-PLOGBRUSH               typedef ptr tagLOGBRUSH
-NPLOGBRUSH              typedef ptr tagLOGBRUSH
-LPLOGBRUSH              typedef ptr tagLOGBRUSH
+LOGBRUSH                ends
+PLOGBRUSH               typedef ptr LOGBRUSH
+NPLOGBRUSH              typedef ptr LOGBRUSH
+LPLOGBRUSH              typedef ptr LOGBRUSH
 
-tagLOGBRUSH32           struct
+LOGBRUSH32              struct
 lbStyle                 UINT ?
 lbColor                 COLORREF ?
 lbHatch                 ULONG ?
-tagLOGBRUSH32           ends
-LOGBRUSH32              typedef tagLOGBRUSH32
-PLOGBRUSH32             typedef ptr tagLOGBRUSH32
-NPLOGBRUSH32            typedef ptr tagLOGBRUSH32
-LPLOGBRUSH32            typedef ptr tagLOGBRUSH32
+LOGBRUSH32              ends
+PLOGBRUSH32             typedef ptr LOGBRUSH32
+NPLOGBRUSH32            typedef ptr LOGBRUSH32
+LPLOGBRUSH32            typedef ptr LOGBRUSH32
 
 endif
 
@@ -1285,21 +1244,20 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagLOGPEN               struct
+LOGPEN                  struct
 lopnStyle               UINT ?
 lopnWidth               POINT <>
 lopnColor               COLORREF ?
-tagLOGPEN               ends
-LOGPEN                  typedef tagLOGPEN
-PLOGPEN                 typedef ptr tagLOGPEN
-NPLOGPEN                typedef ptr tagLOGPEN
-LPLOGPEN                typedef ptr tagLOGPEN
+LOGPEN                  ends
+PLOGPEN                 typedef ptr LOGPEN
+NPLOGPEN                typedef ptr LOGPEN
+LPLOGPEN                typedef ptr LOGPEN
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagEXTLOGPEN            struct
+EXTLOGPEN               struct
 elpPenStyle             DWORD ?
 elpWidth                DWORD ?
 elpBrushStyle           UINT ?
@@ -1307,17 +1265,16 @@ elpColor                COLORREF ?
 elpHatch                ULONG_PTR ?
 elpNumEntries           DWORD ?
 elpStyleEntry           DWORD 1 dup(?)
-tagEXTLOGPEN            ends
-EXTLOGPEN               typedef tagEXTLOGPEN
-PEXTLOGPEN              typedef ptr tagEXTLOGPEN
-NPEXTLOGPEN             typedef ptr tagEXTLOGPEN
-LPEXTLOGPEN             typedef ptr tagEXTLOGPEN
+EXTLOGPEN               ends
+PEXTLOGPEN              typedef ptr EXTLOGPEN
+NPEXTLOGPEN             typedef ptr EXTLOGPEN
+LPEXTLOGPEN             typedef ptr EXTLOGPEN
 
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagEXTLOGPEN32          struct
+EXTLOGPEN32             struct
 elpPenStyle             DWORD ?
 elpWidth                DWORD ?
 elpBrushStyle           UINT ?
@@ -1325,41 +1282,38 @@ elpColor                COLORREF ?
 elpHatch                ULONG ?
 elpNumEntries           DWORD ?
 elpStyleEntry           DWORD 1 dup(?)
-tagEXTLOGPEN32          ends
-EXTLOGPEN32             typedef tagEXTLOGPEN32
-PEXTLOGPEN32            typedef ptr tagEXTLOGPEN32
-NPEXTLOGPEN32           typedef ptr tagEXTLOGPEN32
-LPEXTLOGPEN32           typedef ptr tagEXTLOGPEN32
+EXTLOGPEN32             ends
+PEXTLOGPEN32            typedef ptr EXTLOGPEN32
+NPEXTLOGPEN32           typedef ptr EXTLOGPEN32
+LPEXTLOGPEN32           typedef ptr EXTLOGPEN32
 
 ifndef _PALETTEENTRY_DEFINED
 define _PALETTEENTRY_DEFINED
-tagPALETTEENTRY         struct
+PALETTEENTRY            struct
 peRed                   BYTE ?
 peGreen                 BYTE ?
 peBlue                  BYTE ?
 peFlags                 BYTE ?
-tagPALETTEENTRY         ends
-PALETTEENTRY            typedef tagPALETTEENTRY
-PPALETTEENTRY           typedef ptr tagPALETTEENTRY
-LPPALETTEENTRY          typedef ptr tagPALETTEENTRY
+PALETTEENTRY            ends
+PPALETTEENTRY           typedef ptr PALETTEENTRY
+LPPALETTEENTRY          typedef ptr PALETTEENTRY
 endif
 
 ifndef _LOGPALETTE_DEFINED
 define _LOGPALETTE_DEFINED
-tagLOGPALETTE           struct
+LOGPALETTE              struct
 palVersion              WORD ?
 palNumEntries           WORD ?
 palPalEntry             PALETTEENTRY 1 dup(<>)
-tagLOGPALETTE           ends
-LOGPALETTE              typedef tagLOGPALETTE
-PLOGPALETTE             typedef ptr tagLOGPALETTE
-NPLOGPALETTE            typedef ptr tagLOGPALETTE
-LPLOGPALETTE            typedef ptr tagLOGPALETTE
+LOGPALETTE              ends
+PLOGPALETTE             typedef ptr LOGPALETTE
+NPLOGPALETTE            typedef ptr LOGPALETTE
+LPLOGPALETTE            typedef ptr LOGPALETTE
 endif
 
 define LF_FACESIZE      32
 
-tagLOGFONTA             struct
+LOGFONTA                struct
 lfHeight                LONG ?
 lfWidth                 LONG ?
 lfEscapement            LONG ?
@@ -1374,12 +1328,11 @@ lfClipPrecision         BYTE ?
 lfQuality               BYTE ?
 lfPitchAndFamily        BYTE ?
 lfFaceName              CHAR LF_FACESIZE dup(?)
-tagLOGFONTA             ends
-LOGFONTA                typedef tagLOGFONTA
-PLOGFONTA               typedef ptr tagLOGFONTA
-NPLOGFONTA              typedef ptr tagLOGFONTA
-LPLOGFONTA              typedef ptr tagLOGFONTA
-tagLOGFONTW             struct
+LOGFONTA                ends
+PLOGFONTA               typedef ptr LOGFONTA
+NPLOGFONTA              typedef ptr LOGFONTA
+LPLOGFONTA              typedef ptr LOGFONTA
+LOGFONTW                struct
 lfHeight                LONG ?
 lfWidth                 LONG ?
 lfEscapement            LONG ?
@@ -1394,11 +1347,10 @@ lfClipPrecision         BYTE ?
 lfQuality               BYTE ?
 lfPitchAndFamily        BYTE ?
 lfFaceName              WCHAR LF_FACESIZE dup(?)
-tagLOGFONTW             ends
-LOGFONTW                typedef tagLOGFONTW
-PLOGFONTW               typedef ptr tagLOGFONTW
-NPLOGFONTW              typedef ptr tagLOGFONTW
-LPLOGFONTW              typedef ptr tagLOGFONTW
+LOGFONTW                ends
+PLOGFONTW               typedef ptr LOGFONTW
+NPLOGFONTW              typedef ptr LOGFONTW
+LPLOGFONTW              typedef ptr LOGFONTW
 ifdef _UNICODE
 LOGFONT                 typedef LOGFONTW
 PLOGFONT                typedef PLOGFONTW
@@ -1417,20 +1369,18 @@ define LF_FULLFACESIZE     64
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagENUMLOGFONTA         struct
+ENUMLOGFONTA            struct
 elfLogFont              LOGFONTA <>
 elfFullName             BYTE LF_FULLFACESIZE dup(?)
 elfStyle                BYTE LF_FACESIZE dup(?)
-tagENUMLOGFONTA         ends
-ENUMLOGFONTA            typedef tagENUMLOGFONTA
- LPENUMLOGFONTA         typedef ptr tagENUMLOGFONTA
-tagENUMLOGFONTW         struct
+ENUMLOGFONTA            ends
+LPENUMLOGFONTA          typedef ptr ENUMLOGFONTA
+ENUMLOGFONTW            struct
 elfLogFont              LOGFONTW <>
 elfFullName             WCHAR LF_FULLFACESIZE dup(?)
 elfStyle                WCHAR LF_FACESIZE dup(?)
-tagENUMLOGFONTW         ends
-ENUMLOGFONTW            typedef tagENUMLOGFONTW
- LPENUMLOGFONTW         typedef ptr tagENUMLOGFONTW
+ENUMLOGFONTW            ends
+LPENUMLOGFONTW          typedef ptr ENUMLOGFONTW
 ifdef _UNICODE
 ENUMLOGFONT             typedef ENUMLOGFONTW
 LPENUMLOGFONT           typedef LPENUMLOGFONTW
@@ -1440,22 +1390,20 @@ LPENUMLOGFONT           typedef LPENUMLOGFONTA
 endif
 
 if(WINVER ge 0x0400)
-tagENUMLOGFONTEXA       struct
+ENUMLOGFONTEXA          struct
 elfLogFont              LOGFONTA <>
 elfFullName             BYTE LF_FULLFACESIZE dup(?)
 elfStyle                BYTE LF_FACESIZE dup(?)
 elfScript               BYTE LF_FACESIZE dup(?)
-tagENUMLOGFONTEXA       ends
-ENUMLOGFONTEXA          typedef tagENUMLOGFONTEXA
-LPENUMLOGFONTEXA        typedef ptr tagENUMLOGFONTEXA
-tagENUMLOGFONTEXW       struct
+ENUMLOGFONTEXA          ends
+LPENUMLOGFONTEXA        typedef ptr ENUMLOGFONTEXA
+ENUMLOGFONTEXW          struct
 elfLogFont              LOGFONTW <>
 elfFullName             WCHAR LF_FULLFACESIZE dup(?)
 elfStyle                WCHAR LF_FACESIZE dup(?)
 elfScript               WCHAR LF_FACESIZE dup(?)
-tagENUMLOGFONTEXW       ends
-ENUMLOGFONTEXW          typedef tagENUMLOGFONTEXW
-LPENUMLOGFONTEXW        typedef ptr tagENUMLOGFONTEXW
+ENUMLOGFONTEXW          ends
+LPENUMLOGFONTEXW        typedef ptr ENUMLOGFONTEXW
 ifdef _UNICODE
 ENUMLOGFONTEX           typedef ENUMLOGFONTEXW
 LPENUMLOGFONTEX         typedef LPENUMLOGFONTEXW
@@ -1591,7 +1539,7 @@ define PAN_CULTURE_LATIN           0
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagPANOSE               struct
+PANOSE                  struct
 bFamilyType             BYTE ?
 bSerifStyle             BYTE ?
 bWeight                 BYTE ?
@@ -1602,9 +1550,8 @@ bArmStyle               BYTE ?
 bLetterform             BYTE ?
 bMidline                BYTE ?
 bXHeight                BYTE ?
-tagPANOSE               ends
-PANOSE                  typedef tagPANOSE
-LPPANOSE                typedef ptr tagPANOSE
+PANOSE                  ends
+LPPANOSE                typedef ptr PANOSE
 
 define PAN_ANY                         0
 define PAN_NO_FIT                      1
@@ -1714,7 +1661,7 @@ define PAN_XHEIGHT_DUCKING_LARGE       7
 
 define ELF_VENDOR_SIZE     4
 
-tagEXTLOGFONTA          struct
+EXTLOGFONTA             struct
 elfLogFont              LOGFONTA <>
 elfFullName             BYTE LF_FULLFACESIZE dup(?)
 elfStyle                BYTE LF_FACESIZE dup(?)
@@ -1725,12 +1672,11 @@ elfReserved             DWORD ?
 elfVendorId             BYTE ELF_VENDOR_SIZE dup(?)
 elfCulture              DWORD ?
 elfPanose               PANOSE <>
-tagEXTLOGFONTA          ends
-EXTLOGFONTA             typedef tagEXTLOGFONTA
-PEXTLOGFONTA            typedef ptr tagEXTLOGFONTA
-NPEXTLOGFONTA           typedef ptr tagEXTLOGFONTA
-LPEXTLOGFONTA           typedef ptr tagEXTLOGFONTA
-tagEXTLOGFONTW          struct
+EXTLOGFONTA             ends
+PEXTLOGFONTA            typedef ptr EXTLOGFONTA
+NPEXTLOGFONTA           typedef ptr EXTLOGFONTA
+LPEXTLOGFONTA           typedef ptr EXTLOGFONTA
+EXTLOGFONTW             struct
 elfLogFont              LOGFONTW <>
 elfFullName             WCHAR LF_FULLFACESIZE dup(?)
 elfStyle                WCHAR LF_FACESIZE dup(?)
@@ -1741,11 +1687,10 @@ elfReserved             DWORD ?
 elfVendorId             BYTE ELF_VENDOR_SIZE dup(?)
 elfCulture              DWORD ?
 elfPanose               PANOSE <>
-tagEXTLOGFONTW          ends
-EXTLOGFONTW             typedef tagEXTLOGFONTW
-PEXTLOGFONTW            typedef ptr tagEXTLOGFONTW
-NPEXTLOGFONTW           typedef ptr tagEXTLOGFONTW
-LPEXTLOGFONTW           typedef ptr tagEXTLOGFONTW
+EXTLOGFONTW             ends
+PEXTLOGFONTW            typedef ptr EXTLOGFONTW
+NPEXTLOGFONTW           typedef ptr EXTLOGFONTW
+LPEXTLOGFONTW           typedef ptr EXTLOGFONTW
 ifdef _UNICODE
 EXTLOGFONT              typedef EXTLOGFONTW
 PEXTLOGFONT             typedef PEXTLOGFONTW
@@ -3117,7 +3062,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagPOLYTEXTA            struct
+POLYTEXTA               struct
 x                       sdword ?
 y                       sdword ?
 n                       UINT ?
@@ -3125,12 +3070,11 @@ lpstr                   LPCSTR ?
 uiFlags                 UINT ?
 _rcl                    RECT <>
 pdx                     ptr sdword ?
-tagPOLYTEXTA            ends
-POLYTEXTA               typedef tagPOLYTEXTA
-PPOLYTEXTA              typedef ptr tagPOLYTEXTA
-NPPOLYTEXTA             typedef ptr tagPOLYTEXTA
-LPPOLYTEXTA             typedef ptr tagPOLYTEXTA
-tagPOLYTEXTW            struct
+POLYTEXTA               ends
+PPOLYTEXTA              typedef ptr POLYTEXTA
+NPPOLYTEXTA             typedef ptr POLYTEXTA
+LPPOLYTEXTA             typedef ptr POLYTEXTA
+POLYTEXTW               struct
 x                       sdword ?
 y                       sdword ?
 n                       UINT ?
@@ -3138,11 +3082,10 @@ lpstr                   LPCWSTR ?
 uiFlags                 UINT ?
 _rcl                    RECT <>
 pdx                     ptr sdword ?
-tagPOLYTEXTW            ends
-POLYTEXTW               typedef tagPOLYTEXTW
-PPOLYTEXTW              typedef ptr tagPOLYTEXTW
-NPPOLYTEXTW             typedef ptr tagPOLYTEXTW
-LPPOLYTEXTW             typedef ptr tagPOLYTEXTW
+POLYTEXTW               ends
+PPOLYTEXTW              typedef ptr POLYTEXTW
+NPPOLYTEXTW             typedef ptr POLYTEXTW
+LPPOLYTEXTW             typedef ptr POLYTEXTW
 ifdef _UNICODE
 POLYTEXT                typedef POLYTEXTW
 PPOLYTEXT               typedef PPOLYTEXTW
@@ -3215,28 +3158,25 @@ define TT_PRIM_CSPLINE    3
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagPOINTFX              struct
+POINTFX                 struct
 x                       FIXED <>
 y                       FIXED <>
-tagPOINTFX              ends
-POINTFX                 typedef tagPOINTFX
-LPPOINTFX               typedef ptr tagPOINTFX
+POINTFX                 ends
+LPPOINTFX               typedef ptr POINTFX
 
-tagTTPOLYCURVE          struct
+TTPOLYCURVE             struct
 wType                   WORD ?
 cpfx                    WORD ?
 apfx                    POINTFX 1 dup(<>)
-tagTTPOLYCURVE          ends
-TTPOLYCURVE             typedef tagTTPOLYCURVE
-LPTTPOLYCURVE           typedef ptr tagTTPOLYCURVE
+TTPOLYCURVE             ends
+LPTTPOLYCURVE           typedef ptr TTPOLYCURVE
 
-tagTTPOLYGONHEADER      struct
+TTPOLYGONHEADER         struct
 cb                      DWORD ?
 dwType                  DWORD ?
 pfxStart                POINTFX <>
-tagTTPOLYGONHEADER      ends
-TTPOLYGONHEADER         typedef tagTTPOLYGONHEADER
-LPTTPOLYGONHEADER       typedef ptr tagTTPOLYGONHEADER
+TTPOLYGONHEADER         ends
+LPTTPOLYGONHEADER       typedef ptr TTPOLYGONHEADER
 
 endif
 
@@ -3282,7 +3222,7 @@ define GCPGLYPH_LINKAFTER           0x4000
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagGCP_RESULTSA         struct
+GCP_RESULTSA            struct
 lStructSize             DWORD ?
 lpOutString             LPSTR ?
 lpOrder                 ptr ?
@@ -3292,10 +3232,9 @@ lpClass                 LPSTR ?
 lpGlyphs                LPWSTR ?
 nGlyphs                 UINT ?
 nMaxFit                 sdword ?
-tagGCP_RESULTSA         ends
-GCP_RESULTSA            typedef tagGCP_RESULTSA
-LPGCP_RESULTSA          typedef ptr tagGCP_RESULTSA
-tagGCP_RESULTSW         struct
+GCP_RESULTSA            ends
+LPGCP_RESULTSA          typedef ptr GCP_RESULTSA
+GCP_RESULTSW            struct
 lStructSize             DWORD ?
 lpOutString             LPWSTR ?
 lpOrder                 ptr ?
@@ -3305,9 +3244,8 @@ lpClass                 LPSTR ?
 lpGlyphs                LPWSTR ?
 nGlyphs                 UINT ?
 nMaxFit                 sdword ?
-tagGCP_RESULTSW         ends
-GCP_RESULTSW            typedef tagGCP_RESULTSW
- LPGCP_RESULTSW         typedef ptr tagGCP_RESULTSW
+GCP_RESULTSW            ends
+LPGCP_RESULTSW          typedef ptr GCP_RESULTSW
 ifdef _UNICODE
 GCP_RESULTS             typedef GCP_RESULTSW
 LPGCP_RESULTS           typedef LPGCP_RESULTSW
@@ -3336,7 +3274,7 @@ define TT_ENABLED      0x0002
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-tagPIXELFORMATDESCRIPTOR struct
+PIXELFORMATDESCRIPTOR   struct
 nSize                   WORD ?
 nVersion                WORD ?
 dwFlags                 DWORD ?
@@ -3363,10 +3301,9 @@ bReserved               BYTE ?
 dwLayerMask             DWORD ?
 dwVisibleMask           DWORD ?
 dwDamageMask            DWORD ?
-tagPIXELFORMATDESCRIPTOR ends
-PIXELFORMATDESCRIPTOR   typedef tagPIXELFORMATDESCRIPTOR
-PPIXELFORMATDESCRIPTOR  typedef ptr tagPIXELFORMATDESCRIPTOR
-LPPIXELFORMATDESCRIPTOR typedef ptr tagPIXELFORMATDESCRIPTOR
+PIXELFORMATDESCRIPTOR   ends
+PPIXELFORMATDESCRIPTOR  typedef ptr PIXELFORMATDESCRIPTOR
+LPPIXELFORMATDESCRIPTOR typedef ptr PIXELFORMATDESCRIPTOR
 
 endif
 
@@ -3838,24 +3775,22 @@ if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-tagWCRANGE              struct
+WCRANGE                 struct
 wcLow                   WCHAR ?
 cGlyphs                 USHORT ?
-tagWCRANGE              ends
-WCRANGE                 typedef tagWCRANGE
-PWCRANGE                typedef ptr tagWCRANGE
-LPWCRANGE               typedef ptr tagWCRANGE
+WCRANGE                 ends
+PWCRANGE                typedef ptr WCRANGE
+LPWCRANGE               typedef ptr WCRANGE
 
-tagGLYPHSET             struct
+GLYPHSET                struct
 cbThis                  DWORD ?
 flAccel                 DWORD ?
 cGlyphsSupported        DWORD ?
 cRanges                 DWORD ?
 ranges                  WCRANGE 1 dup(<>)
-tagGLYPHSET             ends
-GLYPHSET                typedef tagGLYPHSET
-PGLYPHSET               typedef ptr tagGLYPHSET
-LPGLYPHSET              typedef ptr tagGLYPHSET
+GLYPHSET                ends
+PGLYPHSET               typedef ptr GLYPHSET
+LPGLYPHSET              typedef ptr GLYPHSET
 
 define GS_8BIT_INDICES     0x00000001
 
@@ -3879,14 +3814,13 @@ define STAMP_DESIGNVECTOR  (0x8000000 + 'd' + ('v' shl 8))
 define STAMP_AXESLIST      (0x8000000 + 'a' + ('l' shl 8))
 define MM_MAX_NUMAXES      16
 
-tagDESIGNVECTOR         struct
+DESIGNVECTOR            struct
 dvReserved              DWORD ?
 dvNumAxes               DWORD ?
 dvValues                LONG MM_MAX_NUMAXES dup(?)
-tagDESIGNVECTOR         ends
-DESIGNVECTOR            typedef tagDESIGNVECTOR
-PDESIGNVECTOR           typedef ptr tagDESIGNVECTOR
-LPDESIGNVECTOR          typedef ptr tagDESIGNVECTOR
+DESIGNVECTOR            ends
+PDESIGNVECTOR           typedef ptr DESIGNVECTOR
+LPDESIGNVECTOR          typedef ptr DESIGNVECTOR
 
 AddFontResourceExA proto WINAPI :LPCSTR, :DWORD, :PVOID
 AddFontResourceExW proto WINAPI :LPCWSTR, :DWORD, :PVOID
@@ -3910,22 +3844,20 @@ define FR_NOT_ENUM    0x20
 
 define MM_MAX_AXES_NAMELEN 16
 
-tagAXISINFOA            struct
+AXISINFOA               struct
 axMinValue              LONG ?
 axMaxValue              LONG ?
 axAxisName              BYTE MM_MAX_AXES_NAMELEN dup(?)
-tagAXISINFOA            ends
-AXISINFOA               typedef tagAXISINFOA
-PAXISINFOA              typedef ptr tagAXISINFOA
-LPAXISINFOA             typedef ptr tagAXISINFOA
-tagAXISINFOW            struct
+AXISINFOA               ends
+PAXISINFOA              typedef ptr AXISINFOA
+LPAXISINFOA             typedef ptr AXISINFOA
+AXISINFOW               struct
 axMinValue              LONG ?
 axMaxValue              LONG ?
 axAxisName              WCHAR MM_MAX_AXES_NAMELEN dup(?)
-tagAXISINFOW            ends
-AXISINFOW               typedef tagAXISINFOW
-PAXISINFOW              typedef ptr tagAXISINFOW
-LPAXISINFOW             typedef ptr tagAXISINFOW
+AXISINFOW               ends
+PAXISINFOW              typedef ptr AXISINFOW
+LPAXISINFOW             typedef ptr AXISINFOW
 ifdef _UNICODE
 AXISINFO                typedef AXISINFOW
 PAXISINFO               typedef PAXISINFOW
@@ -3936,22 +3868,20 @@ PAXISINFO               typedef PAXISINFOA
 LPAXISINFO              typedef LPAXISINFOA
 endif
 
-tagAXESLISTA            struct
+AXESLISTA               struct
 axlReserved             DWORD ?
 axlNumAxes              DWORD ?
 axlAxisInfo             AXISINFOA MM_MAX_NUMAXES dup(<>)
-tagAXESLISTA            ends
-AXESLISTA               typedef tagAXESLISTA
-PAXESLISTA              typedef ptr tagAXESLISTA
-LPAXESLISTA             typedef ptr tagAXESLISTA
-tagAXESLISTW            struct
+AXESLISTA               ends
+PAXESLISTA              typedef ptr AXESLISTA
+LPAXESLISTA             typedef ptr AXESLISTA
+AXESLISTW               struct
 axlReserved             DWORD ?
 axlNumAxes              DWORD ?
 axlAxisInfo             AXISINFOW MM_MAX_NUMAXES dup(<>)
-tagAXESLISTW            ends
-AXESLISTW               typedef tagAXESLISTW
-PAXESLISTW              typedef ptr tagAXESLISTW
-LPAXESLISTW             typedef ptr tagAXESLISTW
+AXESLISTW               ends
+PAXESLISTW              typedef ptr AXESLISTW
+LPAXESLISTW             typedef ptr AXESLISTW
 ifdef _UNICODE
 AXESLIST                typedef AXESLISTW
 PAXESLIST               typedef PAXESLISTW
@@ -3962,20 +3892,18 @@ PAXESLIST               typedef PAXESLISTA
 LPAXESLIST              typedef LPAXESLISTA
 endif
 
-tagENUMLOGFONTEXDVA     struct
+ENUMLOGFONTEXDVA        struct
 elfEnumLogfontEx        ENUMLOGFONTEXA <>
 elfDesignVector         DESIGNVECTOR <>
-tagENUMLOGFONTEXDVA     ends
-ENUMLOGFONTEXDVA        typedef tagENUMLOGFONTEXDVA
-PENUMLOGFONTEXDVA       typedef ptr tagENUMLOGFONTEXDVA
-LPENUMLOGFONTEXDVA      typedef ptr tagENUMLOGFONTEXDVA
-tagENUMLOGFONTEXDVW     struct
+ENUMLOGFONTEXDVA        ends
+PENUMLOGFONTEXDVA       typedef ptr ENUMLOGFONTEXDVA
+LPENUMLOGFONTEXDVA      typedef ptr ENUMLOGFONTEXDVA
+ENUMLOGFONTEXDVW        struct
 elfEnumLogfontEx        ENUMLOGFONTEXW <>
 elfDesignVector         DESIGNVECTOR <>
-tagENUMLOGFONTEXDVW     ends
-ENUMLOGFONTEXDVW        typedef tagENUMLOGFONTEXDVW
-PENUMLOGFONTEXDVW       typedef ptr tagENUMLOGFONTEXDVW
-LPENUMLOGFONTEXDVW      typedef ptr tagENUMLOGFONTEXDVW
+ENUMLOGFONTEXDVW        ends
+PENUMLOGFONTEXDVW       typedef ptr ENUMLOGFONTEXDVW
+LPENUMLOGFONTEXDVW      typedef ptr ENUMLOGFONTEXDVW
 ifdef _UNICODE
 ENUMLOGFONTEXDV         typedef ENUMLOGFONTEXDVW
 PENUMLOGFONTEXDV        typedef PENUMLOGFONTEXDVW
@@ -3995,20 +3923,18 @@ define CreateFontIndirectEx  <CreateFontIndirectExA>
 endif
 
 ifndef NOTEXTMETRIC
-tagENUMTEXTMETRICA      struct
+ENUMTEXTMETRICA         struct
 etmNewTextMetricEx      NEWTEXTMETRICEXA <>
 etmAxesList             AXESLISTA <>
-tagENUMTEXTMETRICA      ends
-ENUMTEXTMETRICA         typedef tagENUMTEXTMETRICA
-PENUMTEXTMETRICA        typedef ptr tagENUMTEXTMETRICA
-LPENUMTEXTMETRICA       typedef ptr tagENUMTEXTMETRICA
-tagENUMTEXTMETRICW      struct
+ENUMTEXTMETRICA         ends
+PENUMTEXTMETRICA        typedef ptr ENUMTEXTMETRICA
+LPENUMTEXTMETRICA       typedef ptr ENUMTEXTMETRICA
+ENUMTEXTMETRICW         struct
 etmNewTextMetricEx      NEWTEXTMETRICEXW <>
 etmAxesList             AXESLISTW <>
-tagENUMTEXTMETRICW      ends
-ENUMTEXTMETRICW         typedef tagENUMTEXTMETRICW
-PENUMTEXTMETRICW        typedef ptr tagENUMTEXTMETRICW
-LPENUMTEXTMETRICW       typedef ptr tagENUMTEXTMETRICW
+ENUMTEXTMETRICW         ends
+PENUMTEXTMETRICW        typedef ptr ENUMTEXTMETRICW
+LPENUMTEXTMETRICW       typedef ptr ENUMTEXTMETRICW
 ifdef _UNICODE
 ENUMTEXTMETRIC          typedef ENUMTEXTMETRICW
 PENUMTEXTMETRIC         typedef PENUMTEXTMETRICW
@@ -4316,16 +4242,15 @@ endif
 
 endif
 
-tagDIBSECTION           struct
+DIBSECTION              struct
 dsBm                    BITMAP <>
 dsBmih                  BITMAPINFOHEADER <>
 dsBitfields             DWORD 3 dup(?)
 dshSection              HANDLE ?
 dsOffset                DWORD ?
-tagDIBSECTION           ends
-DIBSECTION              typedef tagDIBSECTION
-LPDIBSECTION            typedef ptr tagDIBSECTION
-PDIBSECTION             typedef ptr tagDIBSECTION
+DIBSECTION              ends
+LPDIBSECTION            typedef ptr DIBSECTION
+PDIBSECTION             typedef ptr DIBSECTION
 
 AngleArc proto WINAPI :HDC, :sdword, :sdword, :DWORD, :FLOAT, :FLOAT
 PolyPolyline proto WINAPI :HDC, :ptr, :ptr, :DWORD
@@ -4389,7 +4314,7 @@ define REFERENCE_BLACK_MAX         4000
 define COLOR_ADJ_MIN               -100
 define COLOR_ADJ_MAX               100
 
-tagCOLORADJUSTMENT      struct
+COLORADJUSTMENT         struct
 caSize                  WORD ?
 caFlags                 WORD ?
 caIlluminantIndex       WORD ?
@@ -4402,10 +4327,9 @@ caContrast              SWORD ?
 caBrightness            SWORD ?
 caColorfulness          SWORD ?
 caRedGreenTint          SWORD ?
-tagCOLORADJUSTMENT      ends
-COLORADJUSTMENT         typedef tagCOLORADJUSTMENT
-PCOLORADJUSTMENT        typedef ptr tagCOLORADJUSTMENT
-LPCOLORADJUSTMENT       typedef ptr tagCOLORADJUSTMENT
+COLORADJUSTMENT         ends
+PCOLORADJUSTMENT        typedef ptr COLORADJUSTMENT
+LPCOLORADJUSTMENT       typedef ptr COLORADJUSTMENT
 
 SetColorAdjustment proto WINAPI :HDC, :ptr
 GetColorAdjustment proto WINAPI :HDC, :LPCOLORADJUSTMENT
@@ -4548,13 +4472,12 @@ endif
 
 define FONTMAPPER_MAX 10
 
-tagKERNINGPAIR          struct
+KERNINGPAIR             struct
 wFirst                  WORD ?
 wSecond                 WORD ?
 iKernAmount             sdword ?
-tagKERNINGPAIR          ends
-KERNINGPAIR             typedef tagKERNINGPAIR
-LPKERNINGPAIR           typedef ptr tagKERNINGPAIR
+KERNINGPAIR             ends
+LPKERNINGPAIR           typedef ptr KERNINGPAIR
 
 GetKerningPairsA proto WINAPI :HDC, :DWORD, :LPKERNINGPAIR
 GetKerningPairsW proto WINAPI :HDC, :DWORD, :LPKERNINGPAIR
@@ -4800,443 +4723,402 @@ else
 define EMR_MAX                         97
 endif
 
-tagEMR                  struct
+EMR                     struct
 iType                   DWORD ?
 nSize                   DWORD ?
-tagEMR                  ends
-EMR                     typedef tagEMR
-PEMR                    typedef ptr tagEMR
+EMR                     ends
+PEMR                    typedef ptr EMR
 
-tagEMRTEXT              struct
+EMRTEXT                 struct
 ptlReference            POINTL <>
 nChars                  DWORD ?
 offString               DWORD ?
 fOptions                DWORD ?
 _rcl                    RECTL <>
 offDx                   DWORD ?
-tagEMRTEXT              ends
-EMRTEXT                 typedef tagEMRTEXT
-PEMRTEXT                typedef ptr tagEMRTEXT
+EMRTEXT                 ends
+PEMRTEXT                typedef ptr EMRTEXT
 
-tagABORTPATH            struct
+ABORTPATH               struct
 emr                     EMR <>
-tagABORTPATH            ends
-EMRABORTPATH            typedef tagABORTPATH
-PEMRABORTPATH           typedef ptr tagABORTPATH
-EMRBEGINPATH            typedef tagABORTPATH
-PEMRBEGINPATH           typedef ptr tagABORTPATH
-EMRENDPATH              typedef tagABORTPATH
-PEMRENDPATH             typedef ptr tagABORTPATH
-EMRCLOSEFIGURE          typedef tagABORTPATH
-PEMRCLOSEFIGURE         typedef ptr tagABORTPATH
-EMRFLATTENPATH          typedef tagABORTPATH
-PEMRFLATTENPATH         typedef ptr tagABORTPATH
-EMRWIDENPATH            typedef tagABORTPATH
-PEMRWIDENPATH           typedef ptr tagABORTPATH
-EMRSETMETARGN           typedef tagABORTPATH
-PEMRSETMETARGN          typedef ptr tagABORTPATH
-EMRSAVEDC               typedef tagABORTPATH
-PEMRSAVEDC              typedef ptr tagABORTPATH
-EMRREALIZEPALETTE       typedef tagABORTPATH
-PEMRREALIZEPALETTE      typedef ptr tagABORTPATH
+ABORTPATH               ends
+EMRABORTPATH            typedef ABORTPATH
+PEMRABORTPATH           typedef ptr ABORTPATH
+EMRBEGINPATH            typedef ABORTPATH
+PEMRBEGINPATH           typedef ptr ABORTPATH
+EMRENDPATH              typedef ABORTPATH
+PEMRENDPATH             typedef ptr ABORTPATH
+EMRCLOSEFIGURE          typedef ABORTPATH
+PEMRCLOSEFIGURE         typedef ptr ABORTPATH
+EMRFLATTENPATH          typedef ABORTPATH
+PEMRFLATTENPATH         typedef ptr ABORTPATH
+EMRWIDENPATH            typedef ABORTPATH
+PEMRWIDENPATH           typedef ptr ABORTPATH
+EMRSETMETARGN           typedef ABORTPATH
+PEMRSETMETARGN          typedef ptr ABORTPATH
+EMRSAVEDC               typedef ABORTPATH
+PEMRSAVEDC              typedef ptr ABORTPATH
+EMRREALIZEPALETTE       typedef ABORTPATH
+PEMRREALIZEPALETTE      typedef ptr ABORTPATH
 
-tagEMRSELECTCLIPPATH    struct
+EMRSELECTCLIPPATH       struct
 emr                     EMR <>
 iMode                   DWORD ?
-tagEMRSELECTCLIPPATH    ends
-EMRSELECTCLIPPATH       typedef tagEMRSELECTCLIPPATH
-PEMRSELECTCLIPPATH      typedef ptr tagEMRSELECTCLIPPATH
-EMRSETBKMODE            typedef tagEMRSELECTCLIPPATH
-PEMRSETBKMODE           typedef ptr tagEMRSELECTCLIPPATH
-EMRSETMAPMODE           typedef tagEMRSELECTCLIPPATH
-PEMRSETMAPMODE          typedef ptr tagEMRSELECTCLIPPATH
+EMRSELECTCLIPPATH       ends
+PEMRSELECTCLIPPATH      typedef ptr EMRSELECTCLIPPATH
+EMRSETBKMODE            typedef EMRSELECTCLIPPATH
+PEMRSETBKMODE           typedef ptr EMRSELECTCLIPPATH
+EMRSETMAPMODE           typedef EMRSELECTCLIPPATH
+PEMRSETMAPMODE          typedef ptr EMRSELECTCLIPPATH
 if(WINVER ge 0x0500)
-EMRSETLAYOUT            typedef tagEMRSELECTCLIPPATH
-PEMRSETLAYOUT           typedef ptr tagEMRSELECTCLIPPATH
+EMRSETLAYOUT            typedef EMRSELECTCLIPPATH
+PEMRSETLAYOUT           typedef ptr EMRSELECTCLIPPATH
 endif
-EMRSETPOLYFILLMODE      typedef tagEMRSELECTCLIPPATH
-PEMRSETPOLYFILLMODE     typedef ptr tagEMRSELECTCLIPPATH
-EMRSETROP2              typedef tagEMRSELECTCLIPPATH
-PEMRSETROP2             typedef ptr tagEMRSELECTCLIPPATH
-EMRSETSTRETCHBLTMODE    typedef tagEMRSELECTCLIPPATH
-PEMRSETSTRETCHBLTMODE   typedef ptr tagEMRSELECTCLIPPATH
-EMRSETICMMODE           typedef tagEMRSELECTCLIPPATH
-PEMRSETICMMODE          typedef ptr tagEMRSELECTCLIPPATH
-EMRSETTEXTALIGN         typedef tagEMRSELECTCLIPPATH
-PEMRSETTEXTALIGN        typedef ptr tagEMRSELECTCLIPPATH
+EMRSETPOLYFILLMODE      typedef EMRSELECTCLIPPATH
+PEMRSETPOLYFILLMODE     typedef ptr EMRSELECTCLIPPATH
+EMRSETROP2              typedef EMRSELECTCLIPPATH
+PEMRSETROP2             typedef ptr EMRSELECTCLIPPATH
+EMRSETSTRETCHBLTMODE    typedef EMRSELECTCLIPPATH
+PEMRSETSTRETCHBLTMODE   typedef ptr EMRSELECTCLIPPATH
+EMRSETICMMODE           typedef EMRSELECTCLIPPATH
+PEMRSETICMMODE          typedef ptr EMRSELECTCLIPPATH
+EMRSETTEXTALIGN         typedef EMRSELECTCLIPPATH
+PEMRSETTEXTALIGN        typedef ptr EMRSELECTCLIPPATH
 
-tagEMRSETMITERLIMIT     struct
+EMRSETMITERLIMIT        struct
 emr                     EMR <>
 eMiterLimit             FLOAT ?
-tagEMRSETMITERLIMIT     ends
-EMRSETMITERLIMIT        typedef tagEMRSETMITERLIMIT
-PEMRSETMITERLIMIT       typedef ptr tagEMRSETMITERLIMIT
+EMRSETMITERLIMIT        ends
+PEMRSETMITERLIMIT       typedef ptr EMRSETMITERLIMIT
 
-tagEMRRESTOREDC         struct
+EMRRESTOREDC            struct
 emr                     EMR <>
 iRelative               LONG ?
-tagEMRRESTOREDC         ends
-EMRRESTOREDC            typedef tagEMRRESTOREDC
-PEMRRESTOREDC           typedef ptr tagEMRRESTOREDC
+EMRRESTOREDC            ends
+PEMRRESTOREDC           typedef ptr EMRRESTOREDC
 
-tagEMRSETARCDIRECTION   struct
+EMRSETARCDIRECTION      struct
 emr                     EMR <>
 iArcDirection           DWORD ?
-tagEMRSETARCDIRECTION   ends
-EMRSETARCDIRECTION      typedef tagEMRSETARCDIRECTION
-PEMRSETARCDIRECTION     typedef ptr tagEMRSETARCDIRECTION
+EMRSETARCDIRECTION      ends
+PEMRSETARCDIRECTION     typedef ptr EMRSETARCDIRECTION
 
-tagEMRSETMAPPERFLAGS    struct
+EMRSETMAPPERFLAGS       struct
 emr                     EMR <>
 dwFlags                 DWORD ?
-tagEMRSETMAPPERFLAGS    ends
-EMRSETMAPPERFLAGS       typedef tagEMRSETMAPPERFLAGS
-PEMRSETMAPPERFLAGS      typedef ptr tagEMRSETMAPPERFLAGS
+EMRSETMAPPERFLAGS       ends
+PEMRSETMAPPERFLAGS      typedef ptr EMRSETMAPPERFLAGS
 
-tagEMRSETTEXTCOLOR      struct
+EMRSETTEXTCOLOR         struct
 emr                     EMR <>
 crColor                 COLORREF ?
-tagEMRSETTEXTCOLOR      ends
-EMRSETBKCOLOR           typedef tagEMRSETTEXTCOLOR
-PEMRSETBKCOLOR          typedef ptr tagEMRSETTEXTCOLOR
-EMRSETTEXTCOLOR         typedef tagEMRSETTEXTCOLOR
-PEMRSETTEXTCOLOR        typedef ptr tagEMRSETTEXTCOLOR
+EMRSETTEXTCOLOR         ends
+PEMRSETTEXTCOLOR        typedef ptr EMRSETTEXTCOLOR
+EMRSETBKCOLOR           typedef EMRSETTEXTCOLOR
+PEMRSETBKCOLOR          typedef ptr EMRSETTEXTCOLOR
 
-tagEMRSELECTOBJECT      struct
+EMRSELECTOBJECT         struct
 emr                     EMR <>
 ihObject                DWORD ?
-tagEMRSELECTOBJECT      ends
-EMRSELECTOBJECT         typedef tagEMRSELECTOBJECT
-PEMRSELECTOBJECT        typedef ptr tagEMRSELECTOBJECT
-EMRDELETEOBJECT         typedef tagEMRSELECTOBJECT
-PEMRDELETEOBJECT        typedef ptr tagEMRSELECTOBJECT
+EMRSELECTOBJECT         ends
+PEMRSELECTOBJECT        typedef ptr EMRSELECTOBJECT
+EMRDELETEOBJECT         typedef EMRSELECTOBJECT
+PEMRDELETEOBJECT        typedef ptr EMRSELECTOBJECT
 
-tagEMRSELECTPALETTE     struct
+EMRSELECTPALETTE        struct
 emr                     EMR <>
 ihPal                   DWORD ?
-tagEMRSELECTPALETTE     ends
-EMRSELECTPALETTE        typedef tagEMRSELECTPALETTE
-PEMRSELECTPALETTE       typedef ptr tagEMRSELECTPALETTE
+EMRSELECTPALETTE        ends
+PEMRSELECTPALETTE       typedef ptr EMRSELECTPALETTE
 
-tagEMRRESIZEPALETTE     struct
+EMRRESIZEPALETTE        struct
 emr                     EMR <>
 ihPal                   DWORD ?
 cEntries                DWORD ?
-tagEMRRESIZEPALETTE     ends
-EMRRESIZEPALETTE        typedef tagEMRRESIZEPALETTE
-PEMRRESIZEPALETTE       typedef ptr tagEMRRESIZEPALETTE
+EMRRESIZEPALETTE        ends
+PEMRRESIZEPALETTE       typedef ptr EMRRESIZEPALETTE
 
-tagEMRSETPALETTEENTRIES struct
+EMRSETPALETTEENTRIES    struct
 emr                     EMR <>
 ihPal                   DWORD ?
 iStart                  DWORD ?
 cEntries                DWORD ?
 aPalEntries             PALETTEENTRY 1 dup(<>)
-tagEMRSETPALETTEENTRIES ends
-EMRSETPALETTEENTRIES    typedef tagEMRSETPALETTEENTRIES
-PEMRSETPALETTEENTRIES   typedef ptr tagEMRSETPALETTEENTRIES
+EMRSETPALETTEENTRIES    ends
+PEMRSETPALETTEENTRIES   typedef ptr EMRSETPALETTEENTRIES
 
-tagEMRSETCOLORADJUSTMENT struct
+EMRSETCOLORADJUSTMENT   struct
 emr                     EMR <>
 ColorAdjustment         COLORADJUSTMENT <>
-tagEMRSETCOLORADJUSTMENT ends
-EMRSETCOLORADJUSTMENT   typedef tagEMRSETCOLORADJUSTMENT
-PEMRSETCOLORADJUSTMENT  typedef ptr tagEMRSETCOLORADJUSTMENT
+EMRSETCOLORADJUSTMENT   ends
+PEMRSETCOLORADJUSTMENT  typedef ptr EMRSETCOLORADJUSTMENT
 
-tagEMRGDICOMMENT        struct
+EMRGDICOMMENT           struct
 emr                     EMR <>
 cbData                  DWORD ?
 Data                    BYTE 1 dup(?)
-tagEMRGDICOMMENT        ends
-EMRGDICOMMENT           typedef tagEMRGDICOMMENT
-PEMRGDICOMMENT          typedef ptr tagEMRGDICOMMENT
+EMRGDICOMMENT           ends
+PEMRGDICOMMENT          typedef ptr EMRGDICOMMENT
 
-tagEMREOF               struct
+EMREOF                  struct
 emr                     EMR <>
 nPalEntries             DWORD ?
 offPalEntries           DWORD ?
 nSizeLast               DWORD ?
-tagEMREOF               ends
-EMREOF                  typedef tagEMREOF
-PEMREOF                 typedef ptr tagEMREOF
+EMREOF                  ends
+PEMREOF                 typedef ptr EMREOF
 
-tagEMRLINETO            struct
+EMRLINETO               struct
 emr                     EMR <>
 ptl                     POINTL <>
-tagEMRLINETO            ends
-EMRLINETO               typedef tagEMRLINETO
-PEMRLINETO              typedef ptr tagEMRLINETO
-EMRMOVETOEX             typedef tagEMRLINETO
-PEMRMOVETOEX            typedef ptr tagEMRLINETO
+EMRLINETO               ends
+PEMRLINETO              typedef ptr EMRLINETO
+EMRMOVETOEX             typedef EMRLINETO
+PEMRMOVETOEX            typedef ptr EMRLINETO
 
-tagEMROFFSETCLIPRGN     struct
+EMROFFSETCLIPRGN        struct
 emr                     EMR <>
 ptlOffset               POINTL <>
-tagEMROFFSETCLIPRGN     ends
-EMROFFSETCLIPRGN        typedef tagEMROFFSETCLIPRGN
-PEMROFFSETCLIPRGN       typedef ptr tagEMROFFSETCLIPRGN
+EMROFFSETCLIPRGN        ends
+PEMROFFSETCLIPRGN       typedef ptr EMROFFSETCLIPRGN
 
-tagEMRFILLPATH          struct
+EMRFILLPATH             struct
 emr                     EMR <>
 rclBounds               RECTL <>
-tagEMRFILLPATH          ends
-EMRFILLPATH             typedef tagEMRFILLPATH
-PEMRFILLPATH            typedef ptr tagEMRFILLPATH
-EMRSTROKEANDFILLPATH    typedef tagEMRFILLPATH
-PEMRSTROKEANDFILLPATH   typedef ptr tagEMRFILLPATH
-EMRSTROKEPATH           typedef tagEMRFILLPATH
-PEMRSTROKEPATH          typedef ptr tagEMRFILLPATH
+EMRFILLPATH             ends
+PEMRFILLPATH            typedef ptr EMRFILLPATH
+EMRSTROKEANDFILLPATH    typedef EMRFILLPATH
+PEMRSTROKEANDFILLPATH   typedef ptr EMRFILLPATH
+EMRSTROKEPATH           typedef EMRFILLPATH
+PEMRSTROKEPATH          typedef ptr EMRFILLPATH
 
-tagEMREXCLUDECLIPRECT   struct
+EMREXCLUDECLIPRECT      struct
 emr                     EMR <>
 rclClip                 RECTL <>
-tagEMREXCLUDECLIPRECT   ends
-EMREXCLUDECLIPRECT      typedef tagEMREXCLUDECLIPRECT
-PEMREXCLUDECLIPRECT     typedef ptr tagEMREXCLUDECLIPRECT
-EMRINTERSECTCLIPRECT    typedef tagEMREXCLUDECLIPRECT
-PEMRINTERSECTCLIPRECT   typedef ptr tagEMREXCLUDECLIPRECT
+EMREXCLUDECLIPRECT      ends
+PEMREXCLUDECLIPRECT     typedef ptr EMREXCLUDECLIPRECT
+EMRINTERSECTCLIPRECT    typedef EMREXCLUDECLIPRECT
+PEMRINTERSECTCLIPRECT   typedef ptr EMREXCLUDECLIPRECT
 
-tagEMRSETVIEWPORTORGEX  struct
+EMRSETVIEWPORTORGEX     struct
 emr                     EMR <>
 ptlOrigin               POINTL <>
-tagEMRSETVIEWPORTORGEX  ends
-EMRSETVIEWPORTORGEX     typedef tagEMRSETVIEWPORTORGEX
-PEMRSETVIEWPORTORGEX    typedef ptr tagEMRSETVIEWPORTORGEX
-EMRSETWINDOWORGEX       typedef tagEMRSETVIEWPORTORGEX
-PEMRSETWINDOWORGEX      typedef ptr tagEMRSETVIEWPORTORGEX
-EMRSETBRUSHORGEX        typedef tagEMRSETVIEWPORTORGEX
-PEMRSETBRUSHORGEX       typedef ptr tagEMRSETVIEWPORTORGEX
+EMRSETVIEWPORTORGEX     ends
+PEMRSETVIEWPORTORGEX    typedef ptr EMRSETVIEWPORTORGEX
+EMRSETWINDOWORGEX       typedef EMRSETVIEWPORTORGEX
+PEMRSETWINDOWORGEX      typedef ptr EMRSETVIEWPORTORGEX
+EMRSETBRUSHORGEX        typedef EMRSETVIEWPORTORGEX
+PEMRSETBRUSHORGEX       typedef ptr EMRSETVIEWPORTORGEX
 
-tagEMRSETVIEWPORTEXTEX  struct
+EMRSETVIEWPORTEXTEX     struct
 emr                     EMR <>
 szlExtent               SIZEL <>
-tagEMRSETVIEWPORTEXTEX  ends
-EMRSETVIEWPORTEXTEX     typedef tagEMRSETVIEWPORTEXTEX
-PEMRSETVIEWPORTEXTEX    typedef ptr tagEMRSETVIEWPORTEXTEX
-EMRSETWINDOWEXTEX       typedef tagEMRSETVIEWPORTEXTEX
-PEMRSETWINDOWEXTEX      typedef ptr tagEMRSETVIEWPORTEXTEX
+EMRSETVIEWPORTEXTEX     ends
+PEMRSETVIEWPORTEXTEX    typedef ptr EMRSETVIEWPORTEXTEX
+EMRSETWINDOWEXTEX       typedef EMRSETVIEWPORTEXTEX
+PEMRSETWINDOWEXTEX      typedef ptr EMRSETVIEWPORTEXTEX
 
-tagEMRSCALEVIEWPORTEXTEX struct
+EMRSCALEVIEWPORTEXTEX   struct
 emr                     EMR <>
 xNum                    LONG ?
 xDenom                  LONG ?
 yNum                    LONG ?
 yDenom                  LONG ?
-tagEMRSCALEVIEWPORTEXTEX ends
-EMRSCALEVIEWPORTEXTEX   typedef tagEMRSCALEVIEWPORTEXTEX
-PEMRSCALEVIEWPORTEXTEX  typedef ptr tagEMRSCALEVIEWPORTEXTEX
-EMRSCALEWINDOWEXTEX     typedef tagEMRSCALEVIEWPORTEXTEX
-PEMRSCALEWINDOWEXTEX    typedef ptr tagEMRSCALEVIEWPORTEXTEX
+EMRSCALEVIEWPORTEXTEX   ends
+PEMRSCALEVIEWPORTEXTEX  typedef ptr EMRSCALEVIEWPORTEXTEX
+EMRSCALEWINDOWEXTEX     typedef EMRSCALEVIEWPORTEXTEX
+PEMRSCALEWINDOWEXTEX    typedef ptr EMRSCALEVIEWPORTEXTEX
 
-tagEMRSETWORLDTRANSFORM struct
+EMRSETWORLDTRANSFORM    struct
 emr                     EMR <>
 xform                   XFORM <>
-tagEMRSETWORLDTRANSFORM ends
-EMRSETWORLDTRANSFORM    typedef tagEMRSETWORLDTRANSFORM
-PEMRSETWORLDTRANSFORM   typedef ptr tagEMRSETWORLDTRANSFORM
+EMRSETWORLDTRANSFORM    ends
+PEMRSETWORLDTRANSFORM   typedef ptr EMRSETWORLDTRANSFORM
 
-tagEMRMODIFYWORLDTRANSFORM struct
+EMRMODIFYWORLDTRANSFORM struct
 emr                     EMR <>
 xform                   XFORM <>
 iMode                   DWORD ?
-tagEMRMODIFYWORLDTRANSFORM ends
-EMRMODIFYWORLDTRANSFORM typedef tagEMRMODIFYWORLDTRANSFORM
-PEMRMODIFYWORLDTRANSFORM typedef ptr tagEMRMODIFYWORLDTRANSFORM
+EMRMODIFYWORLDTRANSFORM ends
+PEMRMODIFYWORLDTRANSFORM typedef ptr EMRMODIFYWORLDTRANSFORM
 
-tagEMRSETPIXELV         struct
+EMRSETPIXELV            struct
 emr                     EMR <>
 ptlPixel                POINTL <>
 crColor                 COLORREF ?
-tagEMRSETPIXELV         ends
-EMRSETPIXELV            typedef tagEMRSETPIXELV
-PEMRSETPIXELV           typedef ptr tagEMRSETPIXELV
+EMRSETPIXELV            ends
+PEMRSETPIXELV           typedef ptr EMRSETPIXELV
 
-tagEMREXTFLOODFILL      struct
+EMREXTFLOODFILL         struct
 emr                     EMR <>
 ptlStart                POINTL <>
 crColor                 COLORREF ?
 iMode                   DWORD ?
-tagEMREXTFLOODFILL      ends
-EMREXTFLOODFILL         typedef tagEMREXTFLOODFILL
-PEMREXTFLOODFILL        typedef ptr tagEMREXTFLOODFILL
+EMREXTFLOODFILL         ends
+PEMREXTFLOODFILL        typedef ptr EMREXTFLOODFILL
 
-tagEMRELLIPSE           struct
+EMRELLIPSE              struct
 emr                     EMR <>
 rclBox                  RECTL <>
-tagEMRELLIPSE           ends
-EMRELLIPSE              typedef tagEMRELLIPSE
-PEMRELLIPSE             typedef ptr tagEMRELLIPSE
-EMRRECTANGLE            typedef tagEMRELLIPSE
-PEMRRECTANGLE           typedef ptr tagEMRELLIPSE
+EMRELLIPSE              ends
+PEMRELLIPSE             typedef ptr EMRELLIPSE
+EMRRECTANGLE            typedef EMRELLIPSE
+PEMRRECTANGLE           typedef ptr EMRELLIPSE
 
-tagEMRROUNDRECT         struct
+EMRROUNDRECT            struct
 emr                     EMR <>
 rclBox                  RECTL <>
 szlCorner               SIZEL <>
-tagEMRROUNDRECT         ends
-EMRROUNDRECT            typedef tagEMRROUNDRECT
-PEMRROUNDRECT           typedef ptr tagEMRROUNDRECT
+EMRROUNDRECT            ends
+PEMRROUNDRECT           typedef ptr EMRROUNDRECT
 
-tagEMRARC               struct
+EMRARC                  struct
 emr                     EMR <>
 rclBox                  RECTL <>
 ptlStart                POINTL <>
 ptlEnd                  POINTL <>
-tagEMRARC               ends
-EMRARC                  typedef tagEMRARC
-PEMRARC                 typedef ptr tagEMRARC
-EMRARCTO                typedef tagEMRARC
-PEMRARCTO               typedef ptr tagEMRARC
-EMRCHORD                typedef tagEMRARC
-PEMRCHORD               typedef ptr tagEMRARC
-EMRPIE                  typedef tagEMRARC
-PEMRPIE                 typedef ptr tagEMRARC
+EMRARC                  ends
+PEMRARC                 typedef ptr EMRARC
+EMRARCTO                typedef EMRARC
+PEMRARCTO               typedef ptr EMRARC
+EMRCHORD                typedef EMRARC
+PEMRCHORD               typedef ptr EMRARC
+EMRPIE                  typedef EMRARC
+PEMRPIE                 typedef ptr EMRARC
 
-tagEMRANGLEARC          struct
+EMRANGLEARC             struct
 emr                     EMR <>
 ptlCenter               POINTL <>
 nRadius                 DWORD ?
 eStartAngle             FLOAT ?
 eSweepAngle             FLOAT ?
-tagEMRANGLEARC          ends
-EMRANGLEARC             typedef tagEMRANGLEARC
-PEMRANGLEARC            typedef ptr tagEMRANGLEARC
+EMRANGLEARC             ends
+PEMRANGLEARC            typedef ptr EMRANGLEARC
 
-tagEMRPOLYLINE          struct
+EMRPOLYLINE             struct
 emr                     EMR <>
 rclBounds               RECTL <>
 cptl                    DWORD ?
 aptl                    POINTL 1 dup(<>)
-tagEMRPOLYLINE          ends
-EMRPOLYLINE             typedef tagEMRPOLYLINE
-PEMRPOLYLINE            typedef ptr tagEMRPOLYLINE
-EMRPOLYBEZIER           typedef tagEMRPOLYLINE
-PEMRPOLYBEZIER          typedef ptr tagEMRPOLYLINE
-EMRPOLYGON              typedef tagEMRPOLYLINE
-PEMRPOLYGON             typedef ptr tagEMRPOLYLINE
-EMRPOLYBEZIERTO         typedef tagEMRPOLYLINE
-PEMRPOLYBEZIERTO        typedef ptr tagEMRPOLYLINE
-EMRPOLYLINETO           typedef tagEMRPOLYLINE
-PEMRPOLYLINETO          typedef ptr tagEMRPOLYLINE
+EMRPOLYLINE             ends
+PEMRPOLYLINE            typedef ptr EMRPOLYLINE
+EMRPOLYBEZIER           typedef EMRPOLYLINE
+PEMRPOLYBEZIER          typedef ptr EMRPOLYLINE
+EMRPOLYGON              typedef EMRPOLYLINE
+PEMRPOLYGON             typedef ptr EMRPOLYLINE
+EMRPOLYBEZIERTO         typedef EMRPOLYLINE
+PEMRPOLYBEZIERTO        typedef ptr EMRPOLYLINE
+EMRPOLYLINETO           typedef EMRPOLYLINE
+PEMRPOLYLINETO          typedef ptr EMRPOLYLINE
 
-tagEMRPOLYLINE16        struct
+EMRPOLYLINE16           struct
 emr                     EMR <>
 rclBounds               RECTL <>
 cpts                    DWORD ?
 apts                    POINTS 1 dup(<>)
-tagEMRPOLYLINE16        ends
-EMRPOLYLINE16           typedef tagEMRPOLYLINE16
-PEMRPOLYLINE16          typedef ptr tagEMRPOLYLINE16
-EMRPOLYBEZIER16         typedef tagEMRPOLYLINE16
-PEMRPOLYBEZIER16        typedef ptr tagEMRPOLYLINE16
-EMRPOLYGON16            typedef tagEMRPOLYLINE16
-PEMRPOLYGON16           typedef ptr tagEMRPOLYLINE16
-EMRPOLYBEZIERTO16       typedef tagEMRPOLYLINE16
-PEMRPOLYBEZIERTO16      typedef ptr tagEMRPOLYLINE16
-EMRPOLYLINETO16         typedef tagEMRPOLYLINE16
-PEMRPOLYLINETO16        typedef ptr tagEMRPOLYLINE16
+EMRPOLYLINE16           ends
+PEMRPOLYLINE16          typedef ptr EMRPOLYLINE16
+EMRPOLYBEZIER16         typedef EMRPOLYLINE16
+PEMRPOLYBEZIER16        typedef ptr EMRPOLYLINE16
+EMRPOLYGON16            typedef EMRPOLYLINE16
+PEMRPOLYGON16           typedef ptr EMRPOLYLINE16
+EMRPOLYBEZIERTO16       typedef EMRPOLYLINE16
+PEMRPOLYBEZIERTO16      typedef ptr EMRPOLYLINE16
+EMRPOLYLINETO16         typedef EMRPOLYLINE16
+PEMRPOLYLINETO16        typedef ptr EMRPOLYLINE16
 
-tagEMRPOLYDRAW          struct
+EMRPOLYDRAW             struct
 emr                     EMR <>
 rclBounds               RECTL <>
 cptl                    DWORD ?
 aptl                    POINTL 1 dup(<>)
 abTypes                 BYTE 1 dup(?)
-tagEMRPOLYDRAW          ends
-EMRPOLYDRAW             typedef tagEMRPOLYDRAW
-PEMRPOLYDRAW            typedef ptr tagEMRPOLYDRAW
+EMRPOLYDRAW             ends
+PEMRPOLYDRAW            typedef ptr EMRPOLYDRAW
 
-tagEMRPOLYDRAW16        struct
+EMRPOLYDRAW16           struct
 emr                     EMR <>
 rclBounds               RECTL <>
 cpts                    DWORD ?
 apts                    POINTS 1 dup(<>)
 abTypes                 BYTE 1 dup(?)
-tagEMRPOLYDRAW16        ends
-EMRPOLYDRAW16           typedef tagEMRPOLYDRAW16
-PEMRPOLYDRAW16          typedef ptr tagEMRPOLYDRAW16
+EMRPOLYDRAW16           ends
+PEMRPOLYDRAW16          typedef ptr EMRPOLYDRAW16
 
-tagEMRPOLYPOLYLINE      struct
+EMRPOLYPOLYLINE         struct
 emr                     EMR <>
 rclBounds               RECTL <>
 nPolys                  DWORD ?
 cptl                    DWORD ?
 aPolyCounts             DWORD 1 dup(?)
 aptl                    POINTL 1 dup(<>)
-tagEMRPOLYPOLYLINE      ends
-EMRPOLYPOLYLINE         typedef tagEMRPOLYPOLYLINE
-PEMRPOLYPOLYLINE        typedef ptr tagEMRPOLYPOLYLINE
-EMRPOLYPOLYGON          typedef tagEMRPOLYPOLYLINE
-PEMRPOLYPOLYGON         typedef ptr tagEMRPOLYPOLYLINE
+EMRPOLYPOLYLINE         ends
+PEMRPOLYPOLYLINE        typedef ptr EMRPOLYPOLYLINE
+EMRPOLYPOLYGON          typedef EMRPOLYPOLYLINE
+PEMRPOLYPOLYGON         typedef ptr EMRPOLYPOLYLINE
 
-tagEMRPOLYPOLYLINE16    struct
+EMRPOLYPOLYLINE16       struct
 emr                     EMR <>
 rclBounds               RECTL <>
 nPolys                  DWORD ?
 cpts                    DWORD ?
 aPolyCounts             DWORD 1 dup(?)
 apts                    POINTS 1 dup(<>)
-tagEMRPOLYPOLYLINE16    ends
-EMRPOLYPOLYLINE16       typedef tagEMRPOLYPOLYLINE16
-PEMRPOLYPOLYLINE16      typedef ptr tagEMRPOLYPOLYLINE16
-EMRPOLYPOLYGON16        typedef tagEMRPOLYPOLYLINE16
-PEMRPOLYPOLYGON16       typedef ptr tagEMRPOLYPOLYLINE16
+EMRPOLYPOLYLINE16       ends
+PEMRPOLYPOLYLINE16      typedef ptr EMRPOLYPOLYLINE16
+EMRPOLYPOLYGON16        typedef EMRPOLYPOLYLINE16
+PEMRPOLYPOLYGON16       typedef ptr EMRPOLYPOLYLINE16
 
-tagEMRINVERTRGN         struct
+EMRINVERTRGN            struct
 emr                     EMR <>
 rclBounds               RECTL <>
 cbRgnData               DWORD ?
 RgnData                 BYTE 1 dup(?)
-tagEMRINVERTRGN         ends
-EMRINVERTRGN            typedef tagEMRINVERTRGN
-PEMRINVERTRGN           typedef ptr tagEMRINVERTRGN
-EMRPAINTRGN             typedef tagEMRINVERTRGN
-PEMRPAINTRGN            typedef ptr tagEMRINVERTRGN
+EMRINVERTRGN            ends
+PEMRINVERTRGN           typedef ptr EMRINVERTRGN
+EMRPAINTRGN             typedef EMRINVERTRGN
+PEMRPAINTRGN            typedef ptr EMRINVERTRGN
 
-tagEMRFILLRGN           struct
+EMRFILLRGN              struct
 emr                     EMR <>
 rclBounds               RECTL <>
 cbRgnData               DWORD ?
 ihBrush                 DWORD ?
 RgnData                 BYTE 1 dup(?)
-tagEMRFILLRGN           ends
-EMRFILLRGN              typedef tagEMRFILLRGN
-PEMRFILLRGN             typedef ptr tagEMRFILLRGN
+EMRFILLRGN              ends
+PEMRFILLRGN             typedef ptr EMRFILLRGN
 
-tagEMRFRAMERGN          struct
+EMRFRAMERGN             struct
 emr                     EMR <>
 rclBounds               RECTL <>
 cbRgnData               DWORD ?
 ihBrush                 DWORD ?
 szlStroke               SIZEL <>
 RgnData                 BYTE 1 dup(?)
-tagEMRFRAMERGN          ends
-EMRFRAMERGN             typedef tagEMRFRAMERGN
-PEMRFRAMERGN            typedef ptr tagEMRFRAMERGN
+EMRFRAMERGN             ends
+PEMRFRAMERGN            typedef ptr EMRFRAMERGN
 
-tagEMREXTSELECTCLIPRGN  struct
+EMREXTSELECTCLIPRGN     struct
 emr                     EMR <>
 cbRgnData               DWORD ?
 iMode                   DWORD ?
 RgnData                 BYTE 1 dup(?)
-tagEMREXTSELECTCLIPRGN  ends
-EMREXTSELECTCLIPRGN     typedef tagEMREXTSELECTCLIPRGN
-PEMREXTSELECTCLIPRGN    typedef ptr tagEMREXTSELECTCLIPRGN
+EMREXTSELECTCLIPRGN     ends
+PEMREXTSELECTCLIPRGN    typedef ptr EMREXTSELECTCLIPRGN
 
-tagEMREXTTEXTOUTA       struct
+EMREXTTEXTOUTA          struct
 emr                     EMR <>
 rclBounds               RECTL <>
 iGraphicsMode           DWORD ?
 exScale                 FLOAT ?
 eyScale                 FLOAT ?
 emrtext                 EMRTEXT <>
-tagEMREXTTEXTOUTA       ends
-EMREXTTEXTOUTA          typedef tagEMREXTTEXTOUTA
-PEMREXTTEXTOUTA         typedef ptr tagEMREXTTEXTOUTA
-EMREXTTEXTOUTW          typedef tagEMREXTTEXTOUTA
-PEMREXTTEXTOUTW         typedef ptr tagEMREXTTEXTOUTA
+EMREXTTEXTOUTA          ends
+PEMREXTTEXTOUTA         typedef ptr EMREXTTEXTOUTA
+EMREXTTEXTOUTW          typedef EMREXTTEXTOUTA
+PEMREXTTEXTOUTW         typedef ptr EMREXTTEXTOUTA
 
-tagEMRPOLYTEXTOUTA      struct
+EMRPOLYTEXTOUTA         struct
 emr                     EMR <>
 rclBounds               RECTL <>
 iGraphicsMode           DWORD ?
@@ -5244,13 +5126,12 @@ exScale                 FLOAT ?
 eyScale                 FLOAT ?
 cStrings                LONG ?
 aemrtext                EMRTEXT 1 dup(<>)
-tagEMRPOLYTEXTOUTA      ends
-EMRPOLYTEXTOUTA         typedef tagEMRPOLYTEXTOUTA
-PEMRPOLYTEXTOUTA        typedef ptr tagEMRPOLYTEXTOUTA
-EMRPOLYTEXTOUTW         typedef tagEMRPOLYTEXTOUTA
-PEMRPOLYTEXTOUTW        typedef ptr tagEMRPOLYTEXTOUTA
+EMRPOLYTEXTOUTA         ends
+PEMRPOLYTEXTOUTA        typedef ptr EMRPOLYTEXTOUTA
+EMRPOLYTEXTOUTW         typedef EMRPOLYTEXTOUTA
+PEMRPOLYTEXTOUTW        typedef ptr EMRPOLYTEXTOUTA
 
-tagEMRBITBLT            struct
+EMRBITBLT               struct
 emr                     EMR <>
 rclBounds               RECTL <>
 xDest                   LONG ?
@@ -5267,11 +5148,10 @@ offBmiSrc               DWORD ?
 cbBmiSrc                DWORD ?
 offBitsSrc              DWORD ?
 cbBitsSrc               DWORD ?
-tagEMRBITBLT            ends
-EMRBITBLT               typedef tagEMRBITBLT
-PEMRBITBLT              typedef ptr tagEMRBITBLT
+EMRBITBLT               ends
+PEMRBITBLT              typedef ptr EMRBITBLT
 
-tagEMRSTRETCHBLT        struct
+EMRSTRETCHBLT           struct
 emr                     EMR <>
 rclBounds               RECTL <>
 xDest                   LONG ?
@@ -5290,11 +5170,10 @@ offBitsSrc              DWORD ?
 cbBitsSrc               DWORD ?
 cxSrc                   LONG ?
 cySrc                   LONG ?
-tagEMRSTRETCHBLT        ends
-EMRSTRETCHBLT           typedef tagEMRSTRETCHBLT
-PEMRSTRETCHBLT          typedef ptr tagEMRSTRETCHBLT
+EMRSTRETCHBLT           ends
+PEMRSTRETCHBLT          typedef ptr EMRSTRETCHBLT
 
-tagEMRMASKBLT           struct
+EMRMASKBLT              struct
 emr                     EMR <>
 rclBounds               RECTL <>
 xDest                   LONG ?
@@ -5318,11 +5197,10 @@ offBmiMask              DWORD ?
 cbBmiMask               DWORD ?
 offBitsMask             DWORD ?
 cbBitsMask              DWORD ?
-tagEMRMASKBLT           ends
-EMRMASKBLT              typedef tagEMRMASKBLT
-PEMRMASKBLT             typedef ptr tagEMRMASKBLT
+EMRMASKBLT              ends
+PEMRMASKBLT             typedef ptr EMRMASKBLT
 
-tagEMRPLGBLT            struct
+EMRPLGBLT               struct
 emr                     EMR <>
 rclBounds               RECTL <>
 aptlDest                POINTL 3 dup(<>)
@@ -5344,11 +5222,10 @@ offBmiMask              DWORD ?
 cbBmiMask               DWORD ?
 offBitsMask             DWORD ?
 cbBitsMask              DWORD ?
-tagEMRPLGBLT            ends
-EMRPLGBLT               typedef tagEMRPLGBLT
-PEMRPLGBLT              typedef ptr tagEMRPLGBLT
+EMRPLGBLT               ends
+PEMRPLGBLT              typedef ptr EMRPLGBLT
 
-tagEMRSETDIBITSTODEVICE struct
+EMRSETDIBITSTODEVICE    struct
 emr                     EMR <>
 rclBounds               RECTL <>
 xDest                   LONG ?
@@ -5364,11 +5241,10 @@ cbBitsSrc               DWORD ?
 iUsageSrc               DWORD ?
 iStartScan              DWORD ?
 cScans                  DWORD ?
-tagEMRSETDIBITSTODEVICE ends
-EMRSETDIBITSTODEVICE    typedef tagEMRSETDIBITSTODEVICE
-PEMRSETDIBITSTODEVICE   typedef ptr tagEMRSETDIBITSTODEVICE
+EMRSETDIBITSTODEVICE    ends
+PEMRSETDIBITSTODEVICE   typedef ptr EMRSETDIBITSTODEVICE
 
-tagEMRSTRETCHDIBITS     struct
+EMRSTRETCHDIBITS        struct
 emr                     EMR <>
 rclBounds               RECTL <>
 xDest                   LONG ?
@@ -5385,35 +5261,31 @@ iUsageSrc               DWORD ?
 dwRop                   DWORD ?
 cxDest                  LONG ?
 cyDest                  LONG ?
-tagEMRSTRETCHDIBITS     ends
-EMRSTRETCHDIBITS        typedef tagEMRSTRETCHDIBITS
-PEMRSTRETCHDIBITS       typedef ptr tagEMRSTRETCHDIBITS
+EMRSTRETCHDIBITS        ends
+PEMRSTRETCHDIBITS       typedef ptr EMRSTRETCHDIBITS
 
-tagEMREXTCREATEFONTINDIRECTW struct
+EMREXTCREATEFONTINDIRECTW struct
 emr                     EMR <>
 ihFont                  DWORD ?
 elfw                    EXTLOGFONTW <>
-tagEMREXTCREATEFONTINDIRECTW ends
-EMREXTCREATEFONTINDIRECTW typedef tagEMREXTCREATEFONTINDIRECTW
-PEMREXTCREATEFONTINDIRECTW typedef ptr tagEMREXTCREATEFONTINDIRECTW
+EMREXTCREATEFONTINDIRECTW ends
+PEMREXTCREATEFONTINDIRECTW typedef ptr EMREXTCREATEFONTINDIRECTW
 
-tagEMRCREATEPALETTE     struct
+EMRCREATEPALETTE        struct
 emr                     EMR <>
 ihPal                   DWORD ?
 lgpl                    LOGPALETTE <>
-tagEMRCREATEPALETTE     ends
-EMRCREATEPALETTE        typedef tagEMRCREATEPALETTE
-PEMRCREATEPALETTE       typedef ptr tagEMRCREATEPALETTE
+EMRCREATEPALETTE        ends
+PEMRCREATEPALETTE       typedef ptr EMRCREATEPALETTE
 
-tagEMRCREATEPEN         struct
+EMRCREATEPEN            struct
 emr                     EMR <>
 ihPen                   DWORD ?
 lopn                    LOGPEN <>
-tagEMRCREATEPEN         ends
-EMRCREATEPEN            typedef tagEMRCREATEPEN
-PEMRCREATEPEN           typedef ptr tagEMRCREATEPEN
+EMRCREATEPEN            ends
+PEMRCREATEPEN           typedef ptr EMRCREATEPEN
 
-tagEMREXTCREATEPEN      struct
+EMREXTCREATEPEN         struct
 emr                     EMR <>
 ihPen                   DWORD ?
 offBmi                  DWORD ?
@@ -5421,19 +5293,17 @@ cbBmi                   DWORD ?
 offBits                 DWORD ?
 cbBits                  DWORD ?
 elp                     EXTLOGPEN32 <>
-tagEMREXTCREATEPEN      ends
-EMREXTCREATEPEN         typedef tagEMREXTCREATEPEN
-PEMREXTCREATEPEN        typedef ptr tagEMREXTCREATEPEN
+EMREXTCREATEPEN         ends
+PEMREXTCREATEPEN        typedef ptr EMREXTCREATEPEN
 
-tagEMRCREATEBRUSHINDIRECT struct
+EMRCREATEBRUSHINDIRECT  struct
 emr                     EMR <>
 ihBrush                 DWORD ?
 lb                      LOGBRUSH32 <>
-tagEMRCREATEBRUSHINDIRECT ends
-EMRCREATEBRUSHINDIRECT  typedef tagEMRCREATEBRUSHINDIRECT
-PEMRCREATEBRUSHINDIRECT typedef ptr tagEMRCREATEBRUSHINDIRECT
+EMRCREATEBRUSHINDIRECT  ends
+PEMRCREATEBRUSHINDIRECT typedef ptr EMRCREATEBRUSHINDIRECT
 
-tagEMRCREATEMONOBRUSH   struct
+EMRCREATEMONOBRUSH      struct
 emr                     EMR <>
 ihBrush                 DWORD ?
 iUsage                  DWORD ?
@@ -5441,11 +5311,10 @@ offBmi                  DWORD ?
 cbBmi                   DWORD ?
 offBits                 DWORD ?
 cbBits                  DWORD ?
-tagEMRCREATEMONOBRUSH   ends
-EMRCREATEMONOBRUSH      typedef tagEMRCREATEMONOBRUSH
-PEMRCREATEMONOBRUSH     typedef ptr tagEMRCREATEMONOBRUSH
+EMRCREATEMONOBRUSH      ends
+PEMRCREATEMONOBRUSH     typedef ptr EMRCREATEMONOBRUSH
 
-tagEMRCREATEDIBPATTERNBRUSHPT struct
+EMRCREATEDIBPATTERNBRUSHPT struct
 emr                     EMR <>
 ihBrush                 DWORD ?
 iUsage                  DWORD ?
@@ -5453,142 +5322,131 @@ offBmi                  DWORD ?
 cbBmi                   DWORD ?
 offBits                 DWORD ?
 cbBits                  DWORD ?
-tagEMRCREATEDIBPATTERNBRUSHPT ends
-EMRCREATEDIBPATTERNBRUSHPT typedef tagEMRCREATEDIBPATTERNBRUSHPT
-PEMRCREATEDIBPATTERNBRUSHPT typedef ptr tagEMRCREATEDIBPATTERNBRUSHPT
+EMRCREATEDIBPATTERNBRUSHPT ends
+PEMRCREATEDIBPATTERNBRUSHPT typedef ptr EMRCREATEDIBPATTERNBRUSHPT
 
-tagEMRFORMAT            struct
+EMRFORMAT               struct
 dSignature              DWORD ?
 nVersion                DWORD ?
 cbData                  DWORD ?
 offData                 DWORD ?
-tagEMRFORMAT            ends
-EMRFORMAT               typedef tagEMRFORMAT
-PEMRFORMAT              typedef ptr tagEMRFORMAT
+EMRFORMAT               ends
+PEMRFORMAT              typedef ptr EMRFORMAT
 
 if(WINVER ge 0x0400)
 
-tagEMRGLSRECORD         struct
+EMRGLSRECORD            struct
 emr                     EMR <>
 cbData                  DWORD ?
 Data                    BYTE 1 dup(?)
-tagEMRGLSRECORD         ends
-EMRGLSRECORD            typedef tagEMRGLSRECORD
-PEMRGLSRECORD           typedef ptr tagEMRGLSRECORD
+EMRGLSRECORD            ends
+PEMRGLSRECORD           typedef ptr EMRGLSRECORD
 
-tagEMRGLSBOUNDEDRECORD  struct
+EMRGLSBOUNDEDRECORD     struct
 emr                     EMR <>
 rclBounds               RECTL <>
 cbData                  DWORD ?
 Data                    BYTE 1 dup(?)
-tagEMRGLSBOUNDEDRECORD  ends
-EMRGLSBOUNDEDRECORD     typedef tagEMRGLSBOUNDEDRECORD
-PEMRGLSBOUNDEDRECORD    typedef ptr tagEMRGLSBOUNDEDRECORD
+EMRGLSBOUNDEDRECORD     ends
+PEMRGLSBOUNDEDRECORD    typedef ptr EMRGLSBOUNDEDRECORD
 
-tagEMRPIXELFORMAT       struct
+EMRPIXELFORMAT          struct
 emr                     EMR <>
 pfd                     PIXELFORMATDESCRIPTOR <>
-tagEMRPIXELFORMAT       ends
-EMRPIXELFORMAT          typedef tagEMRPIXELFORMAT
-PEMRPIXELFORMAT         typedef ptr tagEMRPIXELFORMAT
+EMRPIXELFORMAT          ends
+PEMRPIXELFORMAT         typedef ptr EMRPIXELFORMAT
 
-tagEMRCREATECOLORSPACE  struct
+EMRCREATECOLORSPACE     struct
 emr                     EMR <>
 ihCS                    DWORD ?
 lcs                     LOGCOLORSPACEA <>
-tagEMRCREATECOLORSPACE  ends
-EMRCREATECOLORSPACE     typedef tagEMRCREATECOLORSPACE
-PEMRCREATECOLORSPACE    typedef ptr tagEMRCREATECOLORSPACE
+EMRCREATECOLORSPACE     ends
+PEMRCREATECOLORSPACE    typedef ptr EMRCREATECOLORSPACE
 
-tagEMRSETCOLORSPACE     struct
+EMRSETCOLORSPACE        struct
 emr                     EMR <>
 ihCS                    DWORD ?
-tagEMRSETCOLORSPACE     ends
-EMRSETCOLORSPACE        typedef tagEMRSETCOLORSPACE
-PEMRSETCOLORSPACE       typedef ptr tagEMRSETCOLORSPACE
-EMRSELECTCOLORSPACE     typedef tagEMRSETCOLORSPACE
-PEMRSELECTCOLORSPACE    typedef ptr tagEMRSETCOLORSPACE
-EMRDELETECOLORSPACE     typedef tagEMRSETCOLORSPACE
-PEMRDELETECOLORSPACE    typedef ptr tagEMRSETCOLORSPACE
+EMRSETCOLORSPACE        ends
+PEMRSETCOLORSPACE       typedef ptr EMRSETCOLORSPACE
+EMRSELECTCOLORSPACE     typedef EMRSETCOLORSPACE
+PEMRSELECTCOLORSPACE    typedef ptr EMRSETCOLORSPACE
+EMRDELETECOLORSPACE     typedef EMRSETCOLORSPACE
+PEMRDELETECOLORSPACE    typedef ptr EMRSETCOLORSPACE
 
 endif
 
 if(WINVER ge 0x0500)
 
-tagEMREXTESCAPE         struct
+EMREXTESCAPE            struct
 emr                     EMR <>
 iEscape                 SINT ?
 cbEscData               SINT ?
 EscData                 BYTE 1 dup(?)
-tagEMREXTESCAPE         ends
-EMREXTESCAPE            typedef tagEMREXTESCAPE
-PEMREXTESCAPE           typedef ptr tagEMREXTESCAPE
-EMRDRAWESCAPE           typedef tagEMREXTESCAPE
-PEMRDRAWESCAPE          typedef ptr tagEMREXTESCAPE
+EMREXTESCAPE            ends
+PEMREXTESCAPE           typedef ptr EMREXTESCAPE
+EMRDRAWESCAPE           typedef EMREXTESCAPE
+PEMRDRAWESCAPE          typedef ptr EMREXTESCAPE
 
-tagEMRNAMEDESCAPE       struct
+EMRNAMEDESCAPE          struct
 emr                     EMR <>
 iEscape                 SINT ?
 cbDriver                SINT ?
 cbEscData               SINT ?
 EscData                 BYTE 1 dup(?)
-tagEMRNAMEDESCAPE       ends
-EMRNAMEDESCAPE          typedef tagEMRNAMEDESCAPE
-PEMRNAMEDESCAPE         typedef ptr tagEMRNAMEDESCAPE
+EMRNAMEDESCAPE          ends
+PEMRNAMEDESCAPE         typedef ptr EMRNAMEDESCAPE
 
 define SETICMPROFILE_EMBEDED           0x00000001
 
-tagEMRSETICMPROFILE     struct
+EMRSETICMPROFILE        struct
 emr                     EMR <>
 dwFlags                 DWORD ?
 cbName                  DWORD ?
 cbData                  DWORD ?
 Data                    BYTE 1 dup(?)
-tagEMRSETICMPROFILE     ends
-EMRSETICMPROFILE        typedef tagEMRSETICMPROFILE
-PEMRSETICMPROFILE       typedef ptr tagEMRSETICMPROFILE
-EMRSETICMPROFILEA       typedef tagEMRSETICMPROFILE
-PEMRSETICMPROFILEA      typedef ptr tagEMRSETICMPROFILE
-EMRSETICMPROFILEW       typedef tagEMRSETICMPROFILE
-PEMRSETICMPROFILEW      typedef ptr tagEMRSETICMPROFILE
+EMRSETICMPROFILE        ends
+PEMRSETICMPROFILE       typedef ptr EMRSETICMPROFILE
+EMRSETICMPROFILEA       typedef EMRSETICMPROFILE
+PEMRSETICMPROFILEA      typedef ptr EMRSETICMPROFILE
+EMRSETICMPROFILEW       typedef EMRSETICMPROFILE
+PEMRSETICMPROFILEW      typedef ptr EMRSETICMPROFILE
 
 define CREATECOLORSPACE_EMBEDED        0x00000001
 
-tagEMRCREATECOLORSPACEW struct
+EMRCREATECOLORSPACEW    struct
 emr                     EMR <>
 ihCS                    DWORD ?
 lcs                     LOGCOLORSPACEW <>
 dwFlags                 DWORD ?
 cbData                  DWORD ?
 Data                    BYTE 1 dup(?)
-tagEMRCREATECOLORSPACEW ends
-EMRCREATECOLORSPACEW    typedef tagEMRCREATECOLORSPACEW
-PEMRCREATECOLORSPACEW   typedef ptr tagEMRCREATECOLORSPACEW
+EMRCREATECOLORSPACEW    ends
+PEMRCREATECOLORSPACEW   typedef ptr EMRCREATECOLORSPACEW
 
 define COLORMATCHTOTARGET_EMBEDED      0x00000001
 
-tagCOLORMATCHTOTARGET   struct
+COLORMATCHTOTARGET      struct
 emr                     EMR <>
 dwAction                DWORD ?
 dwFlags                 DWORD ?
 cbName                  DWORD ?
 cbData                  DWORD ?
 Data                    BYTE 1 dup(?)
-tagCOLORMATCHTOTARGET   ends
-EMRCOLORMATCHTOTARGET   typedef tagCOLORMATCHTOTARGET
-PEMRCOLORMATCHTOTARGET  typedef ptr tagCOLORMATCHTOTARGET
+COLORMATCHTOTARGET      ends
+EMRCOLORMATCHTOTARGET   typedef COLORMATCHTOTARGET
+PEMRCOLORMATCHTOTARGET  typedef ptr COLORMATCHTOTARGET
 
-tagCOLORCORRECTPALETTE  struct
+COLORCORRECTPALETTE     struct
 emr                     EMR <>
 ihPalette               DWORD ?
 nFirstEntry             DWORD ?
 nPalEntries             DWORD ?
 nReserved               DWORD ?
-tagCOLORCORRECTPALETTE  ends
-EMRCOLORCORRECTPALETTE  typedef tagCOLORCORRECTPALETTE
-PEMRCOLORCORRECTPALETTE typedef ptr tagCOLORCORRECTPALETTE
+COLORCORRECTPALETTE     ends
+EMRCOLORCORRECTPALETTE  typedef COLORCORRECTPALETTE
+PEMRCOLORCORRECTPALETTE typedef ptr COLORCORRECTPALETTE
 
-tagEMRALPHABLEND        struct
+EMRALPHABLEND           struct
 emr                     EMR <>
 rclBounds               RECTL <>
 xDest                   LONG ?
@@ -5607,22 +5465,20 @@ offBitsSrc              DWORD ?
 cbBitsSrc               DWORD ?
 cxSrc                   LONG ?
 cySrc                   LONG ?
-tagEMRALPHABLEND        ends
-EMRALPHABLEND           typedef tagEMRALPHABLEND
-PEMRALPHABLEND          typedef ptr tagEMRALPHABLEND
+EMRALPHABLEND           ends
+PEMRALPHABLEND          typedef ptr EMRALPHABLEND
 
-tagEMRGRADIENTFILL      struct
+EMRGRADIENTFILL         struct
 emr                     EMR <>
 rclBounds               RECTL <>
 nVer                    DWORD ?
 nTri                    DWORD ?
 ulMode                  ULONG ?
 Ver                     TRIVERTEX 1 dup(<>)
-tagEMRGRADIENTFILL      ends
-EMRGRADIENTFILL         typedef tagEMRGRADIENTFILL
-PEMRGRADIENTFILL        typedef ptr tagEMRGRADIENTFILL
+EMRGRADIENTFILL         ends
+PEMRGRADIENTFILL        typedef ptr EMRGRADIENTFILL
 
-tagEMRTRANSPARENTBLT    struct
+EMRTRANSPARENTBLT       struct
 emr                     EMR <>
 rclBounds               RECTL <>
 xDest                   LONG ?
@@ -5641,9 +5497,8 @@ offBitsSrc              DWORD ?
 cbBitsSrc               DWORD ?
 cxSrc                   LONG ?
 cySrc                   LONG ?
-tagEMRTRANSPARENTBLT    ends
-EMRTRANSPARENTBLT       typedef tagEMRTRANSPARENTBLT
-PEMRTRANSPARENTBLT      typedef ptr tagEMRTRANSPARENTBLT
+EMRTRANSPARENTBLT       ends
+PEMRTRANSPARENTBLT      typedef ptr EMRTRANSPARENTBLT
 
 endif
 
@@ -5711,7 +5566,7 @@ else
 define wglUseFontOutlines  <wglUseFontOutlinesA>
 endif
 
-tagLAYERPLANEDESCRIPTOR struct
+LAYERPLANEDESCRIPTOR    struct
 nSize                   WORD ?
 nVersion                WORD ?
 dwFlags                 DWORD ?
@@ -5736,10 +5591,9 @@ cAuxBuffers             BYTE ?
 iLayerPlane             BYTE ?
 bReserved               BYTE ?
 crTransparent           COLORREF ?
-tagLAYERPLANEDESCRIPTOR ends
-LAYERPLANEDESCRIPTOR    typedef tagLAYERPLANEDESCRIPTOR
-PLAYERPLANEDESCRIPTOR   typedef ptr tagLAYERPLANEDESCRIPTOR
-LPLAYERPLANEDESCRIPTOR  typedef ptr tagLAYERPLANEDESCRIPTOR
+LAYERPLANEDESCRIPTOR    ends
+PLAYERPLANEDESCRIPTOR   typedef ptr LAYERPLANEDESCRIPTOR
+LPLAYERPLANEDESCRIPTOR  typedef ptr LAYERPLANEDESCRIPTOR
 
 define LPD_DOUBLEBUFFER        0x00000001
 define LPD_STEREO              0x00000002

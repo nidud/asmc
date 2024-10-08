@@ -43,7 +43,7 @@ define _CRTBLD
 endif
 
 ifndef _CRTIMP
-if defined(CRTDLL) and defined(_CRTBLD)
+if defined(__DLL__) or ( defined(CRTDLL) and defined(_CRTBLD) )
 define _CRTIMP <export>
 else
 define _CRTIMP <>

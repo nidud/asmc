@@ -78,7 +78,7 @@ _dbcsBufferUsed macro fh
 
 endif
 
-define _NFILE_		20
+define _NFILE_		64
 
 ; File Attribute Constants for _findfirst()
 

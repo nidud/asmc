@@ -36,6 +36,8 @@ define _ST_FLOAT	0x040000 ; REAL4
 define _ST_DOUBLE	0x080000 ; REAL8
 define _ST_LONGDOUBLE	0x100000 ; REAL10
 define _ST_QUADFLOAT	0x200000 ; REAL16
+define _ST_ALTERNATE	0x400000 ; alternate form requested
+define _ST_UNICODE	0x800000
 
 
 ; Half precision - binary16 -- REAL2 (half)
@@ -216,10 +218,6 @@ __cmpq		proto __ccall A:ptr qfloat_t, B:ptr qfloat_t
 
 __sqrtq		proto __ccall A:ptr qfloat_t
 
-_cfltcvt	proto __cdecl :ptr, :string_t, :int_t, :int_t, :int_t
-_cropzeros	proto __cdecl :string_t
-_forcdecpt	proto __cdecl :string_t
-
 _flttostr	proto __ccall :ptr, :ptr FLTINFO, :string_t, :uint_t
 _strtoflt	proto __ccall :string_t
 _fltsetflags	proto __ccall :ptr STRFLT, :string_t, :uint_t
@@ -242,9 +240,18 @@ _flttoi64	proto __ccall :ptr STRFLT
 _itoflt		proto __ccall :ptr STRFLT, :int_t
 _i64toflt	proto __ccall :ptr STRFLT, :int64_t
 
+_fptrap		proto __cdecl
+_cropzeros	proto __cdecl :string_t
+_forcdecpt	proto __cdecl :string_t
+_fltconvert	proto __cdecl :ptr, :ptr, :int_t, :int_t, :int_t
 
-externdef	_fltpowtable:EXTFLOAT
-externdef	qerrno:errno_t
+define _cfltcvt <_cfltcvt_tab>
+
+CALLBACKC(PF0, :ptr, :ptr, :int_t, :int_t, :int_t)
+externdef _cfltcvt_tab:PF0
+externdef _fltused:int_t
+externdef _fltpowtable:EXTFLOAT
+externdef qerrno:errno_t
 
 endif
 

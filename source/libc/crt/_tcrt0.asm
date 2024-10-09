@@ -67,31 +67,17 @@ _start endp
 
 else
 
-ifdef _WIN64
-ifdef _UNICODE
-_wcstart::
-else
-_cstart::
-endif
-else
-ifdef _UNICODE
-wcstart::
-else
-cstart::
-endif
-endif
-
 _tmainCRTStartup proc
 
 ifdef _MSVCRT
     _tgetmainargs( addr __argc, addr __targv, addr _tenviron, 0, addr _startup )
 else
 ifndef _WIN64
-  local _exception_registration[2]:dword
+    .new _exception_registration[2]:dword
 endif
     _initterm( &__xi_a, &__xi_z )
 endif
-    exit( _tmain( __argc, __targv, _tenviron ) )
+    exit( _tmain( __argc, _targvcrt, _tenvironcrt ) )
 
 _tmainCRTStartup endp
 

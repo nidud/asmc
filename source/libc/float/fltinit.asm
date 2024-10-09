@@ -7,7 +7,7 @@
 include float.inc
 
 public  _except_list
-public  _fltused
+;public  _fltused
 public  _ldused
 public  _8087
 public  _real87
@@ -23,7 +23,7 @@ public  _init_387_emulator
      _8087cw            dw 0x127F
 
      _except_list       equ 0
-     _fltused           equ 0x9876
+;     _fltused           equ 0x9876
      _ldused            equ 0x9876
 
     .code

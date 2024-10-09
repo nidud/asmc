@@ -12,9 +12,7 @@ include stdio.inc
 
 _getst proc
 
-    .for ( rcx = stdin,
-           rdx = &[rcx+(_NSTREAM_ * sizeof(_iobuf))],
-           eax = 0 : rcx < rdx : rcx += sizeof(_iobuf) )
+    .for ( eax = 0, rcx = stdin, edx = 0 : edx < _nstream : edx++, rcx+=FILE )
 
         .if ( !( [rcx]._flag & _IOREAD or _IOWRT or _IORW ) )
 

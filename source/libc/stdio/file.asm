@@ -5,43 +5,89 @@
 ;
 
 include stdio.inc
+include malloc.inc
+include rterr.inc
 
 .data
-if defined(_WIN64) or not defined(__UNIX__)
-_iob    _iobuf <_bufin, 0, _bufin, _IOREAD or _IOYOURBUF, 0, 0, _INTIOBUF, NULL>
-_stdout _iobuf <0, 0, 0, _IOWRT, 1, 0, 0, NULL>
-_stderr _iobuf <0, 0, 0, _IOWRT, 2, 0, 0, NULL>
-_first  _iobuf _NSTREAM_ - 4 dup(<NULL, 0, NULL, 0, -1, 0, 0, NULL>)
-_last   _iobuf <NULL, 0, NULL, 0, -1, 0, 0, NULL>
-else
-_iob    _iobuf <_bufin, 0, _bufin, _IOREAD or _IOYOURBUF, 0, _INTIOBUF, NULL>
-_stdout _iobuf <0, 0, 0, _IOWRT, 1, 0, NULL>
-_stderr _iobuf <0, 0, 0, _IOWRT, 2, 0, NULL>
-_first  _iobuf _NSTREAM_ - 4 dup(<NULL, 0, NULL, 0, -1, 0, NULL>)
-_last   _iobuf <NULL, 0, NULL, 0, -1, 0, NULL>
-endif
-
-align   size_t
-stdin   LPFILE _iob
-stdout  LPFILE _stdout
-stderr  LPFILE _stderr
+stdin   LPFILE NULL
+stdout  LPFILE NULL
+stderr  LPFILE NULL
 
 .code
 
-_stdioexit proc uses rbx
+__initstdio proc uses rbx
 
-    lea rbx,_first
-    .repeat
-        .if ( [rbx]._iobuf._file != -1 )
-            fclose(rbx)
-        .endif
-        add rbx,sizeof(_iobuf)
-        lea rax,_last
-    .until ( rbx > rax )
+    .if ( _nstream ==  0 )
+        mov _nstream,_NSTREAM_
+    .elseif ( _nstream < _IOB_ENTRIES )
+        mov _nstream,_IOB_ENTRIES
+    .endif
+
+    imul ebx,_nstream,_iobuf
+    .if ( malloc( &[rbx+_INTIOBUF] ) == NULL )
+
+        .return( _RT_STDIOINIT )
+    .endif
+
+    mov rdx,rdi
+    mov rdi,rax
+    lea ecx,[rbx+_INTIOBUF]
+    mov rbx,rax
+    xor eax,eax
+    rep stosb
+    mov rdi,rdx
+
+    assume rbx:ptr _iobuf
+
+    imul eax,_nstream,_iobuf
+    add rax,rbx
+    mov [rbx]._ptr,rax
+    mov [rbx]._base,rax
+    mov [rbx]._flag,_IOREAD or _IOYOURBUF
+    mov [rbx]._bufsiz,_INTIOBUF
+    mov stdin,rbx
+
+    add rbx,_iobuf
+    mov [rbx]._flag,_IOWRT
+    mov [rbx]._file,1
+    mov stdout,rbx
+
+    add rbx,_iobuf
+    mov [rbx]._flag,_IOWRT
+    mov [rbx]._file,2
+    mov stderr,rbx
+
+    add rbx,_iobuf
+    .for ( ecx = 3 : ecx < _nstream : ecx++, rbx+=_iobuf )
+        mov [rbx]._file,-1
+    .endf
+    xor eax,eax
     ret
 
-_stdioexit endp
+__initstdio endp
 
-.pragma exit(_stdioexit, 98)
+
+__endstdio proc uses rbx
+
+    .if ( stdin != NULL )
+
+        .for ( ebx = 3 : ebx < _nstream : ebx++ )
+
+            imul ecx,ebx,_iobuf
+            add rcx,stdin
+
+            .if ( [rcx]._iobuf._file != -1 )
+                fclose(rcx)
+            .endif
+        .endf
+        free(stdin)
+        mov stdin,NULL
+    .endif
+    ret
+
+__endstdio endp
+
+.pragma init(__initstdio, 4)
+.pragma exit(__endstdio, 98)
 
     end

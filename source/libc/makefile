@@ -17,7 +17,6 @@ else
 
 include srcpath
 
-#flag = -DNOSTDFLT -Zi8 -MT -Cs -I$(inc_dir)
 flag = -Zi8 -MT -Cs -I$(inc_dir)
 
 ifdef x86

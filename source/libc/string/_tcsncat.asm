@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char *strncat(char *strDest, const char *strSource, size_t count);
+; wchar_t *wcsncat(wchar_t *strDest, const wchar_t *strSource, size_t count);
+;
 include string.inc
 include tchar.inc
 

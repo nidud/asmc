@@ -1,12 +1,12 @@
-; _CURSOR.ASM--
+; _NSTREAM.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include conio.inc
+include stdio.inc
 
-   .data
-    _cursor CURSOR { -1, -1, CURSOR_DEFAULT, 1 }
+.data
+_nstream int_t _NSTREAM_
 
-    end
+end

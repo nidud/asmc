@@ -16,9 +16,9 @@ _tmain proc uses rbx argc:int_t, argv:array_t
 
     .for ( ebx = 0 : ebx < argc : ebx++ )
 
-	mov rcx,argv
-	mov rax,[rcx+rbx*size_t]
-	_tprintf( " [%d] %s\n", ebx, rax )
+        mov rcx,argv
+        mov rax,[rcx+rbx*size_t]
+        _tprintf( " [%d] %s\n", ebx, rax )
     .endf
     xor eax,eax
     ret

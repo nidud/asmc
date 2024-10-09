@@ -39,9 +39,9 @@ malloc proc byte_count:size_t
         .if ( rdx )
 
             .if ( [rdx].HEAP.type == _HEAP_FREE )
-                ;
+
                 ; Use a free block.
-                ;
+
                 mov rax,[rdx].HEAP.size
                 .if ( rax >= rcx )
 
@@ -64,9 +64,9 @@ malloc proc byte_count:size_t
 
             mov eax,_amblksiz
             .if ( rcx <= rax )
-                ;
+
                 ; Find a free block.
-                ;
+
                 mov rdx,_heap_base
                 xor eax,eax
 
@@ -75,9 +75,9 @@ malloc proc byte_count:size_t
                     add rdx,rax
                     mov rax,[rdx].HEAP.size
                     .if !rax
-                        ;
+
                         ; Last block is zero and points to first block.
-                        ;
+
                         mov rdx,[rdx].HEAP.prev
                         mov rdx,[rdx].HEAP.prev
                        .continue(0) .if rdx
@@ -109,11 +109,12 @@ free proc memblock:ptr
 
     ldr rcx,memblock
     sub rcx,HEAP
+
     .ifns
-        ;
+
         ; If memblock is NULL, the pointer is ignored. Attempting to free an
         ; invalid pointer not allocated by malloc() may cause errors.
-        ;
+
         .if ( [rcx].HEAP.type == _HEAP_ALIGNED )
 
             mov rcx,[rcx].HEAP.prev
@@ -124,30 +125,32 @@ free proc memblock:ptr
             xor edx,edx
             mov [rcx].HEAP.type,_HEAP_FREE ; Delete this block.
 
-            .for ( rax = [rcx].HEAP.size : dl == [rcx+rax].HEAP.type,
-                   : rax += [rcx+rax].HEAP.size, [rcx].HEAP.size = rax )
-                 ;
-                 ; Extend size of block if next block is free.
-                 ;
+            .for ( rax = [rcx].HEAP.size : dl == [rcx+rax].HEAP.type : )
+
+                ; Extend size of block if next block is free.
+
+                add rax,[rcx+rax].HEAP.size
+                mov [rcx].HEAP.size,rax
             .endf
             mov _heap_free,rcx
 
             .if ( rdx == [rcx+rax].HEAP.size )
-                ;
+
                 ; This is the last bloc in this chain.
-                ;
+
                 mov rcx,[rcx+rax].HEAP.prev ; <= first bloc
                 .if ( dl == [rcx].HEAP.type )
 
-                    .for ( rax = [rcx].HEAP.size : dl == [rcx+rax].HEAP.type,
-                           : rax += [rcx+rax].HEAP.size, [rcx].HEAP.size = rax )
+                    .for ( rax = [rcx].HEAP.size : dl == [rcx+rax].HEAP.type : )
+
+                        add rax,[rcx+rax].HEAP.size
+                        mov [rcx].HEAP.size,rax
                     .endf
 
                     .if ( rdx == [rcx+rax].HEAP.size )
 
-                        ;
                         ; unlink the node
-                        ;
+
                         mov rdx,[rcx].HEAP.prev
                         mov rax,[rcx].HEAP.next
                         .if rdx
@@ -188,6 +191,11 @@ CreateHeap proc private uses rbx size:size_t
     ldr rcx,size
 
     mov ebx,_amblksiz
+    lea eax,[rbx+rbx]
+    .if ( eax <= _HEAP_MAXREGSIZE_S )
+        mov _amblksiz,eax
+        mov ebx,eax
+    .endif
     sub ebx,HEAP
     .if ( rbx < rcx )
         mov rbx,rcx

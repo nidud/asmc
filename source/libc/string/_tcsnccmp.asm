@@ -3,6 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+; int strncmp(const char *string1, const char *string2, size_t count);
+; int wcsncmp(const wchar_t *string1, const wchar_t *string2, size_t count);
+;
 
 include string.inc
 include tchar.inc

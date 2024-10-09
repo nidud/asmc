@@ -464,10 +464,9 @@ endif
 if not defined(_STDCALL_SUPPORTED) and not defined(NOSTDFLT)
 
                 .case 'E'
-                .case 'G'
-                .case 'A'
-                    or  flags,_ST_CAPEXP    ; capitalize exponent
-                    add dl,'a' - 'A'        ; convert format char to lower
+                .case 'G' ; capitalize exponent
+                .case 'A' ; convert format char to lower
+                    add edx,('a'-'A') or _ST_CAPEXP
                     ;
                     ; DROP THROUGH
                     ;
@@ -498,8 +497,7 @@ else
                     add arglist,size_t
                     mov rax,[rcx]
 endif
-                    mov ebx,edx
-                    mov edx,flags
+                    movzx ebx,dl
                     and edx,_ST_CAPEXP
                     ;
                     ; do the conversion
@@ -526,55 +524,20 @@ else
                         mov rax,rcx
 endif
                     .endif
+
+                    .if ( flags & FL_ALTERNATE )
+                        or edx,_ST_ALTERNATE
+                    .endif
+ifdef _UNICODE
+                    or edx,_ST_UNICODE
+endif
                     _cfltcvt( rax, text, ebx, precision, edx )
-                    ;
-                    ; '#' and precision == 0 means force a decimal point
-                    ;
-                    .if ( ( flags & FL_ALTERNATE ) && !precision )
-
-                        _forcdecpt( text )
-                    .endif
-                    ;
-                    ; 'g' format means crop zero unless '#' given
-                    ;
-                    .if ( bl == 'g' && !( flags & FL_ALTERNATE ) )
-
-                        _cropzeros( text )
-                    .endif
-                    ;
-                    ; check if result was negative, save '-' for later
-                    ; and point to positive part (this is for '0' padding)
-                    ;
-                    mov rcx,text
-                    mov al,[rcx]
-                    .if ( al == '-' )
+                    .ifs ( eax < 0 )
 
                         or  flags,FL_NEGATIVE
-                        inc rcx
-                        mov text,rcx
+                        neg eax
                     .endif
-                    mov textlen,strlen( rcx ) ; compute length of text
-ifdef _UNICODE ; convert to wide string
-ifndef __UNIX__
-                    push rsi
-                    push rdi
-endif
-                    lea  rcx,[rax+1]
-                    mov  rdx,text
-                    lea  rsi,[rdx+rax]
-                    lea  rdi,[rdx+rax*2]
-                    xor  eax,eax
-                    std
-                    .repeat
-                        lodsb
-                        stosw
-                    .untilcxz
-                    cld
-ifndef __UNIX__
-                    pop rdi
-                    pop rsi
-endif
-endif
+                    mov textlen,eax
                    .endc
 
 endif ; _STDCALL_SUPPORTED

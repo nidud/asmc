@@ -12,7 +12,9 @@ define SEEK_CUR		1
 define SEEK_END		2
 define SEEK_SET		0
 
-define _NSTREAM_	20
+define _NSTREAM_	64
+define _IOB_ENTRIES	20
+
 define _MAXIOBUF	0x4000
 define _INTIOBUF	0x1000
 define _MINIOBUF	0x0200
@@ -63,6 +65,7 @@ LPFILE		typedef ptr _iobuf
 endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
+externdef	_nstream:int_t
 externdef	_bufin:BYTE
 externdef	stdin:ptr _iobuf
 externdef	stdout:ptr _iobuf
@@ -110,6 +113,7 @@ fseek		proto __cdecl :LPFILE,:size_t, :size_t
 fgets		proto __cdecl :string_t, :int_t, :LPFILE
 fputs		proto __cdecl :string_t, :LPFILE
 _fputchar	proto __cdecl :int_t
+_fgetchar	proto __cdecl
 fputc		proto __cdecl :int_t, :LPFILE
 feof		proto __cdecl :LPFILE
 ftell		proto __cdecl :LPFILE
@@ -156,6 +160,7 @@ fgetwc		proto __cdecl :LPFILE
 _fgetwchar	proto __cdecl
 fputwc		proto __cdecl :int_t, :LPFILE
 _fputwchar	proto __cdecl :wint_t
+_fgetwchar	proto __cdecl
 getwc		proto __cdecl :LPFILE
 getwchar	proto __cdecl
 putwc		proto __cdecl :wint_t, :LPFILE

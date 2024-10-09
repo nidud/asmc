@@ -572,6 +572,7 @@ else
         .if ( Options.link )
 endif
             .new linker[_MAX_PATH]:char_t
+
             .if ( Options.link_linker )
                 .if ( !tstrchr( tstrcpy( &linker, Options.link_linker ), '.' ) )
                     tstrcat( &linker, ".exe" )
@@ -584,7 +585,18 @@ endif
             .endif
             mov rbx,Options.link_options
             .if ( rbx == 0 )
-                lea rbx,@CStr("/map") ; or some other dummy...
+
+               .new defopt[64]:char_t
+                lea rbx,defopt
+                tstrcpy(rbx, "/MACHINE:X")
+                .if ( Options.fctype == FCT_WIN64 )
+                    tstrcat(rbx, "64")
+                .else
+                    tstrcat(rbx, "86")
+                .endif
+                .if ( Options.quiet )
+                    tstrcat(rbx, " /NOLOGO")
+                .endif
             .endif
             .if ( _spawnl( P_WAIT, path, path, rbx, Options.link_objects, NULL ) == -1 )
                 mov rc,0

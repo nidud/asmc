@@ -124,6 +124,8 @@ __targv			equ <__wargv>
 _tgetmainargs		equ <__wgetmainargs>
 _tmainCRTStartup	equ <wmainCRTStartup>
 _tWinMainCRTStartup	equ <wWinMainCRTStartup>
+_tenvironcrt		equ <_wenvironcrt>
+_targvcrt		equ <_wargvcrt>
 
 ;; Formatted i/o
 
@@ -753,6 +755,8 @@ __targv			equ <__argv>
 _tgetmainargs		equ <__getmainargs>
 _tmainCRTStartup	equ <mainCRTStartup>
 _tWinMainCRTStartup	equ <WinMainCRTStartup>
+_tenvironcrt		equ <_environcrt>
+_targvcrt		equ <_argvcrt>
 
 ;; Formatted i/o
 

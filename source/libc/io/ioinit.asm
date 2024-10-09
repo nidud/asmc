@@ -11,9 +11,8 @@ include winbase.inc
 endif
 
     .data
-     _nfile     dd _NFILE_
      _ermode    dd 5
-     __pioinfo  pioinfo 0
+     __pioinfo  pioinfo NULL
 
     .code
 
@@ -21,12 +20,12 @@ endif
 
 _ioinit proc uses rbx
 
-    .if malloc(_NFILE_ * ioinfo)
+    imul ebx,_nfile,ioinfo
+    .if malloc(ebx)
 
         mov __pioinfo,rax
+        mov ecx,ebx
         mov rbx,rax
-
-        mov ecx,_NFILE_ * ioinfo
         mov rdx,rdi
         mov rdi,rbx
         xor eax,eax
@@ -34,7 +33,7 @@ _ioinit proc uses rbx
         mov rdi,rdx
 
 ifndef __UNIX__
-        .for ( rdx = rbx, ecx = 0: ecx < _NFILE_: ecx++, rbx += ioinfo )
+        .for ( rdx = rbx, ecx = 0: ecx < _nfile: ecx++, rbx += ioinfo )
 
             mov [rbx].pipech,10         ; linefeed/newline char
             mov [rbx].pipech2[0],10
@@ -59,7 +58,7 @@ _ioexit proc uses rbx
 
     .if ( __pioinfo  )
 
-        .for ( ebx = 3 : ebx < _NFILE_ : ebx++ )
+        .for ( ebx = 3 : ebx < _nfile : ebx++ )
             .if ( _osfile(ebx) & FOPEN )
                 _close( ebx )
             .endif

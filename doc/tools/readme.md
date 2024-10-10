@@ -4,11 +4,11 @@ Asmc Macro Assembler Reference
 
 ### In This Section
 
-- [Asmc Linker Reference](link.md)
-- [Asmc Library Manager Reference](lib.md)
-- [Asmc C Include File Translator Reference](h2inc.md)
-- [Asmc Program Maintenance Utility Reference](make.md)
-- [Asmc Module Definition Manager Reference](impdef.md)
+- [Asmc Linker Reference](linkw/readme.md)
+- [Asmc Library Manager Reference](libw/readme.md)
+- [Asmc C Include File Translator Reference](h2inc/readme.md)
+- [Asmc Program Maintenance Utility Reference](make/readme.md)
+- [Asmc Module Definition Manager Reference](impdef/readme.md)
 
 #### See Also
 

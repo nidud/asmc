@@ -14,7 +14,7 @@ XMLoadUShortN4 proc XM_CALLCONV pSource:ptr XMUSHORTN4
 
     ;; Splat the color in all four entries (x,z,y,w)
 
-    _mm_load1_pd(_mm_getptr(pSource))
+    _mm_load1_pd([rcx])
 
     ;; Shift x&0ffff,z&0xffff,y&0xffff0000,w&0xffff0000
 

@@ -4,17 +4,28 @@
 ifdef YACC
 
 apcg32.a:
-	asmc64 -fpic -Cs x64/*.asm
+	asmc64 -fpic -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)
+	asmc -elf -fpic -Cs src/*.asm
+	ar rcs $@ *.o
+	rm *.o
+	sudo cp $@ $(ASMCDIR)/x86
 
 else
 
 include srcpath
 
+all: $(lib_dir)/x64/pcg32.lib $(lib_dir)/x86/pcg32.lib
+
+$(lib_dir)/x86/pcg32.lib:
+	asmc -coff -Cs src/*.asm
+	libw -q -b -n -c -fac $@ *.obj
+	del *.obj
+
 $(lib_dir)/x64/pcg32.lib:
-	asmc64 -Cs x64/*.asm
+	asmc64 -Cs src/*.asm
 	libw -q -b -n -c -fac $@ *.obj
 	del *.obj
 

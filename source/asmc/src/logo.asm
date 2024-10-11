@@ -54,7 +54,8 @@ ifndef ASMC64
  char_t " 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64; <p> allows privileged instructions",10
 endif
  char_t "-assert Generate .assert() code            -autostack Auto stack space for arguments",10
- char_t "-bin Generate plain binary file            -Cs Push USER registers before prolouge",10
+ char_t "-bin Generate plain binary file            -Bl<file> Selects an alternate linker",10
+ char_t "-c Assembles only - no linking             -Cs Push USES registers before prolouge",10
  char_t "-coff Generate COFF format object file     -C<p|u|x> Set OPTION CASEMAP",10
  char_t "-D<name>[=text] Define text macro          -dotname Allow dot .identifiers",10
  char_t "-e<number> Set error limit number          -elf[64] Generate ELF object file",10

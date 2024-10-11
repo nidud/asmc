@@ -15,6 +15,7 @@ The options listed in the following table.
 - [**-assert**](../directive/dot-assert.md) - Generate .assert(code).
 - **-autostack** - Calculate required stack space for arguments.
 - **-bin** - Generate plain binary file.
+- **-Bl**_filename_ - Selects an alternate linker in _filename_.
 - **-c** - Assembles only. Does no linking.
 - **-Cs** - Push user registers before [stack-frame](../directive/option-cstack.md) is created in a proc.
 - **-coff** - Generate COFF format object file.

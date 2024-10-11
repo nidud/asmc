@@ -9,6 +9,7 @@ include stdlib.inc
 include signal.inc
 ifdef __UNIX__
 include direct.inc
+include sys/syscall.inc
 define __USE_GNU
 include ucontext.inc
 else
@@ -27,8 +28,8 @@ ifdef __UNIX__
 ifdef __WATCOM__
 extern _cstart_: byte
 endif
-_pgmptr string_t 0
 endif
+_pgmptr string_t 0
 my_environ array_t 0
 
 .code
@@ -36,7 +37,7 @@ my_environ array_t 0
 ;
 ; v2.34.41 - set OBJ name -Fo _*_
 ;
-setoname proc __ccall uses rsi rdi rbx file:string_t, newo:string_t
+setoname proc __ccall private uses rsi rdi rbx file:string_t, newo:string_t
 
    .new optr:string_t = NULL
    .new name[_MAX_PATH]:char_t
@@ -516,11 +517,8 @@ endif
         lea rax,@CStr( "" )
     .endif
     mov rcx,argv
-
-ifdef __UNIX__
     mov rdx,[rcx]
     mov _pgmptr,rdx
-endif
     mov [rcx],rax
 ifdef _WIN64
     lea r15,_ltype
@@ -569,16 +567,112 @@ ifdef _EXEC_LINK
 ifdef _AUTO_LINK
         .if ( !Options.no_linking )
 else
-        .if ( Options.link )
+        .if ( Options.link && !Options.no_linking )
 endif
-            .new linker[_MAX_PATH]:char_t
 
+ifdef __UNIX__
+
+           .new args[256]:string_t
+           .new exitcode:int_t = -1
+           .new pid:pid_t
+
+            lea rbx,args
+            lea rax,@CStr(_ASMC_LINK)
             .if ( Options.link_linker )
-                .if ( !tstrchr( tstrcpy( &linker, Options.link_linker ), '.' ) )
-                    tstrcat( &linker, ".exe" )
+                mov rax,Options.link_linker
+            .endif
+            mov path,rax
+            mov [rbx],rax
+            add rbx,string_t
+            mov buffer,0 ; [-l:[x86/]libasmc.a]
+
+            mov rsi,Options.link_options
+            .if ( rsi == 0 )
+
+                ; gcc [-m32 -static] [-nostdlib] -o <name> *.o [-l:[x86/]libasmc.a]
+
+                .if ( Options.fctype != FCT_ELF64 )
+                    mov [rbx],&@CStr("-m32")
+                    mov [rbx+string_t],&@CStr("-nostdlib")
+                    mov [rbx+string_t*2],&@CStr("-static")
+                    add rbx,string_t*3
+                    tstrcpy(&buffer, "-l:x86/libasmc.a")
+                .elseif ( Options.pic == 0 )
+                    mov [rbx],&@CStr("-nostdlib")
+                    add rbx,string_t
+                    tstrcpy(&buffer, "-l:libasmc.a")
+                .endif
+                mov [rbx],&@CStr("-o")
+                add rbx,string_t
+                .for ( rdi = &buffer[32], rsi = Options.link_objects : : )
+                    lodsb
+                    .break .if ( al <= ' ' || al == '.' )
+                    stosb
+                .endf
+                mov byte ptr [rdi],0
+                mov [rbx],&buffer[32]
+                add rbx,string_t
+
+            .else
+                .for ( : tstrchr(rsi, ' ') : rsi = &[rax+1] )
+                    mov [rbx],rsi
+                    add rbx,string_t
+                    mov byte ptr [rax],0
+                .endf
+                mov [rbx],rsi
+                add rbx,string_t
+            .endif
+            .for ( rsi = Options.link_objects : tstrchr(rsi, ' ') : rsi = &[rax+1] )
+                mov [rbx],rsi
+                add rbx,string_t
+                mov byte ptr [rax],0
+            .endf
+            mov [rbx],rsi
+            add rbx,string_t
+            .if ( buffer )
+                mov [rbx],&buffer
+                add rbx,string_t
+            .endif
+            xor eax,eax
+            mov [rbx],rax
+            .if ( !Options.quiet )
+                .for ( ebx = 0 : args[rbx*size_t] : ebx++ )
+                    tprintf( " %s\n", args[rbx*size_t] )
+                .endf
+            .endif
+
+            mov pid,sys_fork()
+            .if ( pid == 0 )
+
+                ; child process
+
+                sys_execve(path, &args, environ)
+                sys_exit(EXIT_SUCCESS)
+
+            .elseif ( pid > 0 )
+
+                ; parent process
+ifdef _WIN64
+                sys_wait4(pid, &exitcode, 0, NULL)
+else
+                sys_waitpid(pid, &exitcode, 0)
+endif
+                .ifs ( eax < 0 )
+                    mov eax,-1
+                .else
+                    mov eax,exitcode
                 .endif
             .else
-                tstrcpy(&linker, "linkw.exe")
+                mov eax,-1
+            .endif
+else
+           .new linker[_MAX_PATH]:char_t
+            tstrcpy(&linker, _ASMC_LINK)
+            .if ( Options.link_linker )
+                tstrcpy( rax, Options.link_linker )
+                .if ( !tstrchr( rax, '.' ) )
+                    tstrcat( &linker, ".exe" )
+                .endif
             .endif
             .ifd ( SearchPathA( 0, &linker, 0, _MAX_PATH, path, 0 ) == 0 )
                 mov path,&linker
@@ -586,19 +680,43 @@ endif
             mov rbx,Options.link_options
             .if ( rbx == 0 )
 
-               .new defopt[64]:char_t
+               .new defopt[_MAX_PATH]:char_t
+
                 lea rbx,defopt
-                tstrcpy(rbx, "/MACHINE:X")
-                .if ( Options.fctype == FCT_WIN64 )
-                    tstrcat(rbx, "64")
+                tstrcpy(rbx, "/LIBPATH:")
+                .if tgetenv("ASMCDIR")
+                    tstrcat(rbx, rax)
                 .else
-                    tstrcat(rbx, "86")
+                    mov rcx,_pgmptr
+                    .if ( byte ptr [rcx+1] == ':' && byte ptr [rcx+2] == '\' )
+                        tstrrchr(tstrcat(rbx, rcx), '\' )
+                        mov ecx,[rax-4]
+                        .if ( ecx == '\nib' )
+                            mov byte ptr [rax-4],0
+                        .else
+                            mov byte ptr [rbx],0
+                        .endif
+                    .else
+                        mov byte ptr [rbx],0
+                    .endif
+                .endif
+                .if ( byte ptr [rbx] )
+                    tstrcat(rbx, "\\lib")
+                    .if ( Options.fctype == FCT_WIN64 )
+                        tstrcat(rbx, "\\x64")
+                    .else
+                        tstrcat(rbx, "\\x86")
+                    .endif
                 .endif
                 .if ( Options.quiet )
                     tstrcat(rbx, " /NOLOGO")
                 .endif
             .endif
-            .if ( _spawnl( P_WAIT, path, path, rbx, Options.link_objects, NULL ) == -1 )
+            _spawnl( P_WAIT, path, path, rbx, Options.link_objects, NULL )
+endif
+            .if ( eax == -1 )
+
+                asmerr( 2018, path )
                 mov rc,0
             .endif
         .endif

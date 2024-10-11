@@ -1086,7 +1086,7 @@ open_files proc __ccall private uses rsi rdi
 
 open_files endp
 
-iddc_file proc __ccall uses rsi rdi rbx source:string_t
+iddc_file proc __ccall private uses rsi rdi rbx source:string_t
 
    .new iddc[260]:byte
    .new file:string_t

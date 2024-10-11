@@ -20,8 +20,8 @@ include fixup.inc
 include qfloat.inc
 include operator.inc
 
-public maxintvalues
-public minintvalues
+;public maxintvalues
+;public minintvalues
 
     .data
      maxintvalues int64_t 0x00000000ffffffff, 0x00000000ffffffff, 0x7fffffffffffffff

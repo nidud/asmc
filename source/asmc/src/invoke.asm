@@ -37,7 +37,7 @@ wreg_scratch int_t 0
 
 .code
 
-fastcall_init proc __ccall
+fastcall_init proc __ccall private
 
     mov simd_scratch,0
     mov wreg_scratch,0
@@ -102,7 +102,7 @@ get_nextreg endp
 
     assume rsi:asym_t
 
-fast_fcstart proc __ccall uses rsi rdi rbx pp:dsym_t, numparams:int_t, start:int_t,
+fast_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, start:int_t,
     tokenarray:token_t, value:ptr int_t
 
    .new opnd:expr
@@ -314,7 +314,7 @@ fast_fcstart endp
     assume rdi:nothing
 
 
-fast_fcend proc __ccall pp:dsym_t, numparams:int_t, value:int_t
+fast_fcend proc __ccall private pp:dsym_t, numparams:int_t, value:int_t
 
     ldr rcx,pp
     ldr edx,value
@@ -336,7 +336,7 @@ fast_fcend endp
 
     assume rdi:expr_t
 
-fast_param proc __ccall uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
+fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
         address:int_t, opnd:ptr expr, paramvalue:string_t, regs_used:ptr uint_t
 
    .new src_size:int_t          ; size of param
@@ -1789,7 +1789,7 @@ fast_param endp
 ; v2.05: extracted from PushInvokeParam(),
 ; so it could be used by watc_param() as well.
 
-GetSegmentPart proc __ccall uses rsi rdi rbx opnd:ptr expr, buffer:string_t, fullparam:string_t
+GetSegmentPart proc __ccall private uses rsi rdi rbx opnd:ptr expr, buffer:string_t, fullparam:string_t
 
     mov esi,T_NULL
     ldr rdi,opnd
@@ -3238,7 +3238,7 @@ skip_push:
 
 PushInvokeParam endp
 
-
+if 0
 get_regname proc __ccall reg:int_t, size:int_t
 
     mov reg,get_register( reg, size )
@@ -3246,6 +3246,7 @@ get_regname proc __ccall reg:int_t, size:int_t
     ret
 
 get_regname endp
+endif
 
 ; generate a call for a prototyped procedure
 

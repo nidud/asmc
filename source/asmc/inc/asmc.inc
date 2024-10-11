@@ -16,9 +16,14 @@ include stdlib.inc
 include string.inc
 include inttype.inc
 
-ifndef __UNIX__
+ifndef NOSPAWN
 define _EXEC_LINK   ; Spawn linker if /link [ /args ] or
 ;define _AUTO_LINK  ; Spawn linker if /c not set
+ifdef __UNIX__
+define _ASMC_LINK <"gcc">
+else
+define _ASMC_LINK <"linkw.exe">
+endif
 endif
 
 define NULLC 0

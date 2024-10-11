@@ -11,7 +11,7 @@ include asmc.inc
 
     .code
 
-exchange proc fastcall a:ptr, b:ptr, size:int_t
+exchange proc fastcall private a:ptr, b:ptr, size:int_t
     mov     rax,[rcx]
     xchg    rax,[rdx]
     mov     [rcx],rax

@@ -431,7 +431,7 @@ GetNameToken endp
 
 ifdef _EXEC_LINK
 
-CollectLinkArg proc __ccall uses rdi rdi rbx arg:string_t, is_option:int_t
+CollectLinkArg proc __ccall uses rsi rdi rbx arg:string_t
 
    .new size:int_t
 
@@ -445,9 +445,6 @@ CollectLinkArg proc __ccall uses rdi rdi rbx arg:string_t, is_option:int_t
     mov byte ptr [rax],0
     .if ( rbx )
         tstrcat( tstrcpy( rax, rbx ), " " )
-    .endif
-    .if ( is_option )
-        tstrcat( rax, "/" )
     .endif
     tstrcat( rax, rsi )
     .if ( rbx )
@@ -468,14 +465,6 @@ ProcessOption proc __ccall uses rsi rdi rbx cmdline:ptr string_t, buffer:string_
     ldr rsi,cmdline
     ldr rdi,buffer
     mov rbx,[rsi]
-
-ifdef _EXEC_LINK
-    .if ( Options.link )
-
-        mov [rsi],GetNameToken(rdi, rbx, 256, 0)
-       .return CollectLinkArg( rdi, 1 )
-    .endif
-endif
 
     mov eax,[rbx]
 
@@ -713,9 +702,6 @@ endif
         .return
     .case 'knil'            ; -link
         mov Options.link,1
-        .if ( byte ptr [rdi+4] == ':' )
-            mov Options.link_linker,MemDup(&[rdi+5])
-        .endif
         .return
     .case 'ogol'            ; -logo
         tprintf( &cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER )
@@ -1027,6 +1013,10 @@ endif
         mov rbx,rax
         mov [rsi],GetNameToken(rdi, rbx, 256, '@')
         mov eax,j
+        .if eax == 'lB'         ; -Bl<file>
+            mov Options.link_linker,MemDup(rdi)
+           .return
+        .endif
         .if eax == 'iF'         ; -Fi<file>
             .return queue_item(OPTQ_FINCLUDE, rdi)
         .endif
@@ -1077,16 +1067,6 @@ ParseCmdline proc __ccall uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int
         .case 0
             mov rbx,getnextcmdstring(rsi)
             .endc
-        .case '-'
-ifndef __UNIX__
-        .case '/'
-endif
-            inc rbx
-            mov [rsi],rbx
-            ProcessOption(rsi, &paramfile)
-            inc dword ptr [rdi]
-            mov rbx,[rsi]
-            .endc
         .case '@'
             inc rbx
             mov [rsi],GetNameToken(&paramfile, rbx, sizeof(paramfile)-1, '@')
@@ -1098,12 +1078,29 @@ endif
                 mov rbx,ReadParamFile(&paramfile)
             .endif
             .endc
+
+        .case '-'
+ifndef __UNIX__
+        .case '/'
+endif
+ifdef _EXEC_LINK
+            .if ( !Options.link )
+endif
+                inc rbx
+                mov [rsi],rbx
+                ProcessOption(rsi, &paramfile)
+                inc dword ptr [rdi]
+                mov rbx,[rsi]
+               .endc
+ifdef _EXEC_LINK
+            .endif
+endif
         .default ; collect file name
             mov rbx,GetNameToken(&paramfile, rbx, sizeof(paramfile) - 1, '@')
             mov [rsi],rbx
 ifdef _EXEC_LINK
             .if ( Options.link )
-                CollectLinkArg( &paramfile, 0 )
+                CollectLinkArg( &paramfile )
             .else
 endif
                 mov Options.names[ASM*string_t],MemDup(&paramfile)

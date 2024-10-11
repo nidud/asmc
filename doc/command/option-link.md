@@ -2,7 +2,9 @@ Asmc Macro Assembler Reference
 
 ## option -link
 
-**/link**[:_linker_] _link\_options_
+**-link** _link\_options_
+
+**-Bl** _linker_
 
 _linker_
 

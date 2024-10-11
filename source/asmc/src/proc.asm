@@ -198,7 +198,7 @@ get_fasttype endp
     assume rsi:asym_t
     assume rbx:ptr fc_info
 
-fast_pcheck proc __ccall uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:ptr int_t
+fast_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:ptr int_t
 
    .new regname[32]:sbyte
    .new wordsize:int_t

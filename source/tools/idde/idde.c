@@ -29,15 +29,15 @@
 
 #define __IDDE__        206
 
-#define MAXOBJECT       128
-#define MAXWINDOW       (25*80)
-#define MAXALLOCSIZE    (16+(MAXWINDOW*2)+(MAXOBJECT*16))
-#define MAXNAMELEN      32
-
 #define MAX_X           127
 #define MAX_Y           127
 #define MAX_ROW         128
 #define MAX_COL         128
+
+#define MAXOBJECT       128
+#define MAXWINDOW       (MAX_COL*MAX_ROW)
+#define MAXALLOCSIZE    (16+(MAXWINDOW*2)+(MAXOBJECT*16))
+#define MAXNAMELEN      32
 
 #define MAXATTRIB       (8+16+16)
 
@@ -789,7 +789,7 @@ void init_objectdlg(TOBJ *o, TOBJ *src)
     q = (src->flags & O_TYPEMASK);
     o[q].flags |= O_RADIO;
     q = src->count;
-    q <<= O_TYPEBITS;
+    q <<= 4;
     sprintf(o[OBJ_BCOUNT].data, "%d", q);
     p = (char*)o[OBJ_ASCII].data;
     p[0] = src->syskey;
@@ -827,8 +827,8 @@ void save_objectdlg(TOBJ *o, TOBJ *src)
     src->syskey = *p;
     p = (char*)o[OBJ_BCOUNT].data;
     if ((q = atoi(p)) != 0) {
-        x = (q & O_TYPEMASK);
-        q >>= O_TYPEBITS;
+        x = (q & 16-1);
+        q >>= 4;
         if (x != 0)
             q++;
     }
@@ -1647,7 +1647,7 @@ int cmdbground(void)
     if (x == 0)
         return 0;
     rc = dialog.rc;
-    color = (x - 1) << 4;
+    color = (x - 1);
     apushstl("Left-Click to set/Right-Click to get background..");
     while ( 1 ) {
         if (tgetevent() != MOUSECMD)
@@ -1657,7 +1657,7 @@ int cmdbground(void)
         if (mousep() == 1 && rcxyrow(rc, x, y)) {
             _scputbg(x, y, 1, color);
         } else if (mousep() == 2) {
-            color = _scgeta(x, y);
+            color = (_scgeta(x, y) >> 4);
         }
         mousewait(x, y, 1);
     }

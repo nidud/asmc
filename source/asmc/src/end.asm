@@ -288,29 +288,10 @@ endif
         ModuleInfo.EndDirHook( &ModuleInfo )
 
 ifdef _EXEC_LINK
-    
     .elseif ( Parse_Pass == PASS_1 )
-    
-        mov rsi,ModuleInfo.curr_fname[OBJ*string_t]
-        .if ( rsi )
-
-           .new size:int_t
-
-            inc tstrlen( rsi )
-            mov rbx,Options.link_objects
-            mov size,eax
-            .if ( rbx )
-                add size,&[tstrlen( rbx ) + 1]
-            .endif
-            mov Options.link_objects,MemAlloc( size )
-            ;mov byte ptr [rax],0
-            .if ( rbx )
-                tstrcat( tstrcpy( rax, rbx ), " " )
-            .endif
-            tstrcat( rax, rsi )
-            .if ( rbx )
-                MemFree( rbx )
-            .endif
+        mov rcx,ModuleInfo.curr_fname[OBJ*string_t]
+        .if ( rcx )
+            CollectLinkObject(rcx)
         .endif
 endif
     .endif

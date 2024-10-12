@@ -431,28 +431,39 @@ GetNameToken endp
 
 ifdef _EXEC_LINK
 
-CollectLinkArg proc __ccall uses rsi rdi rbx arg:string_t
+CollectLinkNode proc __ccall uses rbx arg:string_t, node:ptr anode
 
-   .new size:int_t
+    ldr rbx,arg
 
-    ldr rsi,arg
-    mov rbx,Options.link_options
-    mov size,&[tstrlen( rsi ) + 2]
-    .if ( rbx )
-        add size,&[tstrlen( rbx ) + 1]
+    MemAlloc( &[tstrlen(rbx)+anode] )
+    mov rdx,node
+    mov rcx,[rdx]
+    .if ( rcx )
+        .for ( : [rcx].anode.next : rcx = [rcx].anode.next )
+        .endf
+        mov [rcx].anode.next,rax
+    .else
+        mov [rdx],rax
     .endif
-    mov Options.link_options,MemAlloc( size )
-    mov byte ptr [rax],0
-    .if ( rbx )
-        tstrcat( tstrcpy( rax, rbx ), " " )
-    .endif
-    tstrcat( rax, rsi )
-    .if ( rbx )
-        MemFree( rbx )
-    .endif
+    mov [rax].anode.next,NULL
+    tstrcpy( &[rax].anode.name, rbx )
     ret
 
-CollectLinkArg endp
+CollectLinkNode endp
+
+CollectLinkOption proc fastcall public arg:string_t
+
+    CollectLinkNode( rcx, &Options.link_options )
+    ret
+
+CollectLinkOption endp
+
+CollectLinkObject proc fastcall public arg:string_t
+
+    CollectLinkNode( rcx, &Options.link_objects )
+    ret
+
+CollectLinkObject endp
 
 endif
 
@@ -1100,7 +1111,7 @@ endif
             mov [rsi],rbx
 ifdef _EXEC_LINK
             .if ( Options.link )
-                CollectLinkArg( &paramfile )
+                CollectLinkOption( &paramfile )
             .else
 endif
                 mov Options.names[ASM*string_t],MemDup(&paramfile)

@@ -17,13 +17,24 @@ include string.inc
 include inttype.inc
 
 ifndef NOSPAWN
+
 define _EXEC_LINK   ; Spawn linker if /link [ /args ] or
 ;define _AUTO_LINK  ; Spawn linker if /c not set
+
 ifdef __UNIX__
-define _ASMC_LINK <"gcc">
+define _ASMC_LINK <"/usr/bin/gcc">
 else
 define _ASMC_LINK <"linkw.exe">
 endif
+
+.template anode
+    next string_t ?
+    name char_t ?
+   .ends
+
+CollectLinkOption proto fastcall :string_t
+CollectLinkObject proto fastcall :string_t
+
 endif
 
 define NULLC 0

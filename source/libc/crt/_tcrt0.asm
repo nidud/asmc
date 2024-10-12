@@ -71,13 +71,14 @@ _tmainCRTStartup proc
 
 ifdef _MSVCRT
     _tgetmainargs( addr __argc, addr __targv, addr _tenviron, 0, addr _startup )
+    exit( _tmain( __argc, __targv, _tenviron ) )
 else
 ifndef _WIN64
     .new _exception_registration[2]:dword
 endif
     _initterm( &__xi_a, &__xi_z )
-endif
     exit( _tmain( __argc, _targvcrt, _tenvironcrt ) )
+endif
 
 _tmainCRTStartup endp
 

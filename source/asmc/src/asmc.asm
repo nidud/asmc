@@ -570,119 +570,38 @@ else
         .if ( Options.link && !Options.no_linking )
 endif
 
+           .new args:array_t
 ifdef __UNIX__
-
-           .new args[256]:string_t
-           .new exitcode:int_t = -1
            .new pid:pid_t
+           .new exitcode:int_t = -1
+endif
 
-            lea rbx,args
-            lea rax,@CStr(_ASMC_LINK)
-            .if ( Options.link_linker )
-                mov rax,Options.link_linker
-            .endif
-            mov path,rax
-            mov [rbx],rax
-            add rbx,string_t
-            mov buffer,0 ; [-l:[x86/]libasmc.a]
-
-            mov rsi,Options.link_options
-            .if ( rsi == 0 )
-
+            mov rbx,Options.link_options
+            .if ( rbx == 0 )
+ifdef __UNIX__
                 ; gcc [-m32 -static] [-nostdlib] -o <name> *.o [-l:[x86/]libasmc.a]
 
                 .if ( Options.fctype != FCT_ELF64 )
-                    mov [rbx],&@CStr("-m32")
-                    mov [rbx+string_t],&@CStr("-nostdlib")
-                    mov [rbx+string_t*2],&@CStr("-static")
-                    add rbx,string_t*3
-                    tstrcpy(&buffer, "-l:x86/libasmc.a")
+
+                    CollectLinkOption("-m32")
+                    CollectLinkOption("-static")
+                    CollectLinkOption("-nostdlib")
+                    CollectLinkObject("-l:x86/libasmc.a")
                 .elseif ( Options.pic == 0 )
-                    mov [rbx],&@CStr("-nostdlib")
-                    add rbx,string_t
-                    tstrcpy(&buffer, "-l:libasmc.a")
+                    CollectLinkOption("-nostdlib")
+                    CollectLinkObject("-l:libasmc.a")
                 .endif
-                mov [rbx],&@CStr("-o")
-                add rbx,string_t
-                .for ( rdi = &buffer[32], rsi = Options.link_objects : : )
-                    lodsb
-                    .break .if ( al <= ' ' || al == '.' )
-                    stosb
-                .endf
-                mov byte ptr [rdi],0
-                mov [rbx],&buffer[32]
-                add rbx,string_t
-
-            .else
-                .for ( : tstrchr(rsi, ' ') : rsi = &[rax+1] )
-                    mov [rbx],rsi
-                    add rbx,string_t
+                CollectLinkOption("-o")
+                mov rcx,Options.link_objects
+                .if tstrrchr(tstrcpy(&buffer[32], &[rcx].anode.name), '.')
                     mov byte ptr [rax],0
-                .endf
-                mov [rbx],rsi
-                add rbx,string_t
-            .endif
-            .for ( rsi = Options.link_objects : tstrchr(rsi, ' ') : rsi = &[rax+1] )
-                mov [rbx],rsi
-                add rbx,string_t
-                mov byte ptr [rax],0
-            .endf
-            mov [rbx],rsi
-            add rbx,string_t
-            .if ( buffer )
-                mov [rbx],&buffer
-                add rbx,string_t
-            .endif
-            xor eax,eax
-            mov [rbx],rax
-            .if ( !Options.quiet )
-                .for ( ebx = 0 : args[rbx*size_t] : ebx++ )
-                    tprintf( " %s\n", args[rbx*size_t] )
-                .endf
-            .endif
-
-            mov pid,sys_fork()
-            .if ( pid == 0 )
-
-                ; child process
-
-                sys_execve(path, &args, environ)
-                sys_exit(EXIT_SUCCESS)
-
-            .elseif ( pid > 0 )
-
-                ; parent process
-ifdef _WIN64
-                sys_wait4(pid, &exitcode, 0, NULL)
-else
-                sys_waitpid(pid, &exitcode, 0)
-endif
-                .ifs ( eax < 0 )
-                    mov eax,-1
-                .else
-                    mov eax,exitcode
                 .endif
-            .else
-                mov eax,-1
-            .endif
+                CollectLinkOption(&buffer[32])
 else
-           .new linker[_MAX_PATH]:char_t
-            tstrcpy(&linker, _ASMC_LINK)
-            .if ( Options.link_linker )
-                tstrcpy( rax, Options.link_linker )
-                .if ( !tstrchr( rax, '.' ) )
-                    tstrcat( &linker, ".exe" )
-                .endif
-            .endif
-            .ifd ( SearchPathA( 0, &linker, 0, _MAX_PATH, path, 0 ) == 0 )
-                mov path,&linker
-            .endif
-            mov rbx,Options.link_options
-            .if ( rbx == 0 )
 
-               .new defopt[_MAX_PATH]:char_t
+                ; LINKW /LIBPATH:%ASMCDIR%\lib\x[86|64] [/NOLOGO]
 
-                lea rbx,defopt
+                lea rbx,ff
                 tstrcpy(rbx, "/LIBPATH:")
                 .if tgetenv("ASMCDIR")
                     tstrcat(rbx, rax)
@@ -707,18 +626,100 @@ else
                     .else
                         tstrcat(rbx, "\\x86")
                     .endif
+                    CollectLinkOption(rbx)
                 .endif
                 .if ( Options.quiet )
-                    tstrcat(rbx, " /NOLOGO")
+                    CollectLinkOption("/NOLOGO")
+                .endif
+endif
+            .endif
+
+ifdef __UNIX__
+            lea rax,@CStr(_ASMC_LINK)
+            .if ( Options.link_linker )
+                mov rax,Options.link_linker
+            .endif
+            mov path,rax
+else
+           .new linker[_MAX_PATH]:char_t
+            tstrcpy(&linker, _ASMC_LINK)
+            .if ( Options.link_linker )
+                tstrcpy( rax, Options.link_linker )
+                .if ( !tstrchr( rax, '.' ) )
+                    tstrcat( &linker, ".exe" )
                 .endif
             .endif
-            _spawnl( P_WAIT, path, path, rbx, Options.link_objects, NULL )
+            .ifd ( SearchPathA( 0, &linker, 0, _MAX_PATH, path, 0 ) == 0 )
+                mov path,&linker
+            .endif
+endif
+            .for ( ebx = 2,
+                   rcx = Options.link_options : rcx : rcx = [rcx].anode.next, ebx++ )
+            .endf
+            .for ( rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, ebx++ )
+            .endf
+            mov args,MemAlloc( &[rbx*string_t] )
+            .for ( rcx = path, [rax] = rcx, rbx = &[rax+string_t],
+                   rcx = Options.link_options : rcx : rcx = [rcx].anode.next, rbx+=string_t )
+                mov [rbx],&[rcx].anode.name
+            .endf
+            .for ( rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, rbx+=string_t )
+                mov [rbx],&[rcx].anode.name
+            .endf
+            xor eax,eax
+            mov [rbx],rax
+            .if ( !Options.quiet )
+                .for ( rbx = args : string_t ptr [rbx] : rbx+=string_t )
+                    tprintf( " %s\n", [rbx] )
+                .endf
+            .endif
+
+ifdef __UNIX__
+
+            mov pid,sys_fork()
+            .if ( pid == 0 )
+
+                ; child process
+
+                sys_execve(path, args, environ)
+                sys_exit(EXIT_SUCCESS)
+
+            .elseif ( pid > 0 )
+
+                ; parent process
+ifdef _WIN64
+                sys_wait4(pid, &exitcode, 0, NULL)
+else
+                sys_waitpid(pid, &exitcode, 0)
+endif
+                .ifs ( eax < 0 )
+                    mov eax,-1
+                .else
+                    mov eax,exitcode
+                .endif
+            .else
+                mov eax,-1
+            .endif
+else
+            _spawnve(P_WAIT, path, args, environ)
 endif
             .if ( eax == -1 )
-
                 asmerr( 2018, path )
                 mov rc,0
             .endif
+if 1
+            MemFree(args)
+            .for ( rbx = Options.link_options : rbx : )
+                mov rcx,rbx
+                mov rbx,[rbx].anode.next
+                MemFree(rcx)
+            .endf
+            .for ( rbx = Options.link_objects : rbx : )
+                mov rcx,rbx
+                mov rbx,[rbx].anode.next
+                MemFree(rcx)
+            .endf
+endif
         .endif
 endif
     .endif

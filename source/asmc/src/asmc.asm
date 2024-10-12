@@ -564,6 +564,11 @@ endif
 ifdef _EXEC_LINK
     .elseif ( rc == 1 && Options.sub_format != SFORMAT_PE &&
              !( Options.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
+
+        .if ( Options.link_linker )
+            mov Options.link,1
+        .endif
+
 ifdef _AUTO_LINK
         .if ( !Options.no_linking )
 else
@@ -668,13 +673,14 @@ endif
             .endf
             xor eax,eax
             mov [rbx],rax
+
+ifdef __UNIX__
+
             .if ( !Options.quiet )
                 .for ( rbx = args : string_t ptr [rbx] : rbx+=string_t )
                     tprintf( " %s\n", [rbx] )
                 .endf
             .endif
-
-ifdef __UNIX__
 
             mov pid,sys_fork()
             .if ( pid == 0 )
@@ -707,7 +713,7 @@ endif
                 asmerr( 2018, path )
                 mov rc,0
             .endif
-if 1
+if 0
             MemFree(args)
             .for ( rbx = Options.link_options : rbx : )
                 mov rcx,rbx

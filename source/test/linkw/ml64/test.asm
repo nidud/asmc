@@ -1,6 +1,6 @@
 includelib msvcrt0.lib
 
-MessageBoxA proto :ptr, :ptr, :ptr, :sword
+MessageBoxA proto :ptr, :ptr, :ptr, :sdword
 
     .data
      message sbyte "Win64 gui application", 0

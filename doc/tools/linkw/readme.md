@@ -18,6 +18,8 @@ The changes in the JWlink sources are:
 - added import lib creation from (.def) input
 - added auto assignment of library directories and startup modules
 - added support for Unicode response file input
+- changed the default name of the linker directive file to **linkw.lnk**
+- changed the default environment variable to **LINKW_LNK**
 
 ### Linker options
 

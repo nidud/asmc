@@ -1,4 +1,4 @@
-# generic linkw.cfg file
+# generic linkw.lnk file
 
 # default if no format is defined and 16/32/64-bit module is found
 system begin 286

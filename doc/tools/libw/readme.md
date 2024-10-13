@@ -31,4 +31,4 @@ The changes in the JWlib sources are:
 
 #### See Also
 
-[Asmc Build Tools Reference](../readme.md) | [Asmc Reference](../../readme.md)
+[Asmc Build Tools Reference](../readme.md) | [Asmc Linker Reference](../linkw/readme.md)

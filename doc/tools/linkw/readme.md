@@ -6,7 +6,6 @@ Asmc Macro Assembler Reference
 
 - About LINKW
 - Linker options
-- Asmc-controlled linker options
 
 ### About LINKW
 
@@ -18,6 +17,7 @@ The changes in the JWlink sources are:
 - added module-definition (.def) input for /DLL
 - added import lib creation from (.def) input
 - added auto assignment of library directories and startup modules
+- added support for Unicode response file input
 
 ### Linker options
 
@@ -54,12 +54,10 @@ The changes in the JWlink sources are:
 - [/VERBOSE](verbose.md) Prints linker progress messages.
 - [/VERSION](version.md) Assigns a version number.
 
-### Asmc-controlled Linker options
+The Open Watcom Linker User’s Guide
 
-You can use the [comment](../../directive/dot-pragma.md) pragma to specify some linker options.
-
-Valid options are [/DEFAULTLIB](defaultlib.md), [/ENTRY](entry.md), [/EXPORT](export.md), /IMPORT, and [/MANIFESTDEPENDENCY](manifestdependency.md)
+- https://open-watcom.github.io/open-watcom-v2-wikidocs/lguide.pdf
 
 #### See Also
 
-[Asmc Build Tools Reference](../readme.md) | [Asmc Reference](../../readme.md)
+[Asmc Build Tools Reference](../readme.md) | [Asmc Library Manager Reference](../libw/readme.md)

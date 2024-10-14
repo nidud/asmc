@@ -1,6 +1,6 @@
 ifdef YACC
 isatty:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	@pause
@@ -8,15 +8,15 @@ isatty:
 	rm -f $@
 else
 isatty.exe:
-	asmc -q $*.asm
+	asmc -c -q $*.asm
 	linkw system con_32 name A32$@ file $*
-	asmc -q -ws $*.asm
+	asmc -c -q -ws $*.asm
 	linkw system con_32W name W32$@ file $*
-	asmc64 -q $*.asm
+	asmc64 -c -q $*.asm
 	linkw system con_64 name A64$@ file $*
-	asmc64 -q -ws $*.asm
+	asmc64 -c -q -ws $*.asm
 	linkw system con_64W name W64$@ file $*
-	asmc64 -q -ws -pe $*.asm
+	asmc64 -c -q -ws -pe $*.asm
 	$@
 	echo A32:
 	A32$@

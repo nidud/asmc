@@ -50,7 +50,7 @@ define _CRTIMP <>
 endif
 endif
 
-ifdef _LINUX
+ifdef __UNIX__
 define __Ctype	<syscall>
 define __Cdecl	<syscall>
 define __cdecl	<syscall>

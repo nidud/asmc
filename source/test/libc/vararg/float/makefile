@@ -1,7 +1,7 @@
 ifdef YACC
 
 float:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -o $@ $@.o
 	./$@
 	@pause
@@ -15,7 +15,6 @@ ifdef msvcrt
 	asmc64 -pe $*.asm
 else
 	asmc64 $*.asm
-	linkw system con_64 file $*.obj
 endif
 	$@
 	pause

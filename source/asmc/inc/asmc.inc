@@ -19,7 +19,7 @@ include inttype.inc
 ifndef NOSPAWN
 
 define _EXEC_LINK   ; Spawn linker if /link [ /args ] or
-;define _AUTO_LINK  ; Spawn linker if /c not set
+define _AUTO_LINK   ; Spawn linker if /c not set
 
 ifdef __UNIX__
 define _ASMC_LINK <"/usr/bin/gcc">
@@ -765,6 +765,7 @@ CmdlineFini             proto __ccall
 ParseCmdline            proto __ccall :ptr string_t, :ptr int_t
 write_usage             proto __ccall
 define_name             proto __ccall :string_t, :string_t
+undef_name              proto __ccall :string_t
 
 asmerr                  proto __ccall :int_t, :vararg
 DelayExpand             proto fastcall :token_t

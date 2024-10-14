@@ -1,10 +1,12 @@
 
-test.exe:
-    asmc -win64 -D_MSVCRT $*.asm
-    link /map /libpath:%AsmcDir%\lib\x64 /machine:x64 /subsystem:console test.obj
+test:
+    asmc -nolib -coff -Bl link $@.asm
     $@
     pause
-    #del $*.obj
-    #del $*.exe
+    asmc64 -nolib -Bl link $@.asm
+    $@
+    pause
+    del $@.obj
+    del $@.exe
 
 

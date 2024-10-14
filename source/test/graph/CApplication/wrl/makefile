@@ -4,13 +4,12 @@ incdir = %AsmcDir%\include\winrt
 
 wrl.exe:
 if $(static)
-	asmc64 -I$(incdir) -ws -frame $*.asm
 if $(mslink)
-	link /libpath:%AsmcDir%\lib\x64 /machine:x64 $*.obj
+	asmc64 -q -Bl link -I$(incdir) -ws -frame $*.asm
 else
-	linkw system gui_64W file $*.obj
+	asmc64 -q -I$(incdir) -ws -frame $*.asm
 endif
 else
-	asmc64 -I$(incdir) -ws -peg $*.asm
+	asmc64 -q -I$(incdir) -ws -peg $*.asm
 endif
 	$@

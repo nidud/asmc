@@ -7,11 +7,11 @@ FL = /MACHINE:x64 /SUBSYSTEM:CONSOLE /LIBPATH:%ASMCDIR%\lib\x64 /MERGE:.CRT=.rda
 all: manifest clean
 
 manifest:
-	$(CC) $@.asm
+	$(CC) -c $@.asm
 	$(LC) /$@ $(FL) $@.obj
-	$(CC) -Fo my$@ $@.asm
+	$(CC) -c -Fo my$@ $@.asm
 	$(LC) /$@ /$@FILE:my.$@ $(FL) $@.obj
-	$(CC) $@dependency.asm
+	$(CC) -c $@dependency.asm
 	$(LC) $(FL) $@dependency.obj
 
 clean:

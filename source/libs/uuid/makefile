@@ -1,6 +1,6 @@
 !include srcpath
 
-AFLAGS = -I$(inc_dir)
+AFLAGS = -c -I$(inc_dir)
 UUID32 = $(lib_dir)\x86\uuid.lib
 UUID64 = $(lib_dir)\x64\uuid.lib
 

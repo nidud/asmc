@@ -4,11 +4,11 @@
 ifdef YACC
 
 strsafe.a:
-	asmc64 -fpic -Cs src/*.asm
+	asmc64 -c -fpic -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)
-	asmc -elf -fpic -Cs src/*.asm
+	asmc -c -elf -fpic -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)/x86
@@ -17,24 +17,24 @@ else
 
 include srcpath
 
-all: $(lib_dir)/x64/strsafe.lib $(lib_dir)/x86/strsafe.lib
+all: $(lib_dir)/x86/strsafe.lib $(lib_dir)/x64/strsafe.lib
 
 $(lib_dir)/x86/strsafe.lib:
-	asmc -coff -Cs -Zi8 src/*.asm
-	asmc -coff -Cs -Zi8 -ws -Fo *W src/*.asm
+	asmc -c -coff -Cs -Z7 src/*.asm
+	asmc -c -coff -Cs -Z7 -ws -Fo *W src/*.asm
 	libw -q -b -n -c -fac $@ *.obj
 	del *.obj
 
 $(lib_dir)/x64/strsafe.lib:
-	asmc64 -frame -Cs -Zi8 src/*.asm
-	asmc64 -frame -Cs -Zi8 -ws -Fo *W src/*.asm
+	asmc64 -c -frame -Cs -Z7 src/*.asm
+	asmc64 -c -frame -Cs -Z7 -ws -Fo *W src/*.asm
 	libw -q -b -n -c -fac $@ *.obj
 	del *.obj
 
 strsafe.dll:
-	asmc64 -q -frame -Cs -Zi8 src/*.s
-	asmc64 -q -frame -Cs -Zi8 -DCRTDLL -D_CRTBLD src/*.asm
-	asmc64 -q -frame -Cs -Zi8 -DCRTDLL -D_CRTBLD -ws -Fo *W src/*.asm
+	asmc64 -c -q -frame -Cs -Z7 src/*.s
+	asmc64 -c -q -frame -Cs -Z7 -DCRTDLL -D_CRTBLD src/*.asm
+	asmc64 -c -q -frame -Cs -Z7 -DCRTDLL -D_CRTBLD -ws -Fo *W src/*.asm
 	linkw op q name strsafe.dll sys dll_64 file { *.obj }
 	del *.obj
 

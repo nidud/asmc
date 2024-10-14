@@ -3,7 +3,7 @@ mslink = 0
 
 CApplication.exe:
 !if $(static)
-    asmc64 -ws -frame -Zp8 $*.asm
+    asmc64 -c -ws -frame -Zp8 $*.asm
 !if $(mslink)
     link /libpath:%AsmcDir%\lib\x64 /machine:x64 $*.obj
 !else

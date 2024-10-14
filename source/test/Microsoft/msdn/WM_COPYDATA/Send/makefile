@@ -4,7 +4,7 @@
 watcom = 1
 
 SendWM_COPYDATA.exe:
-    asmc64 -q -ws -Cs -Zp8 $*.asm
+    asmc64 -c -q -ws -Cs -Zp8 $*.asm
 !if $(watcom)
     wrc -r $*.rc
     linkw system gui_64W file $* option RESource=$*.res

@@ -1,6 +1,6 @@
 ifdef YACC
 cout:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	@pause
@@ -8,8 +8,8 @@ cout:
 	rm -f $@
 else
 cout.exe:
-	asmc64 $*.asm
-	asmc64 stdio.asm
+	asmc64 -c $*.asm
+	asmc64 -c stdio.asm
 	linkw system con_64 file $*
 	linkw system con_64 file stdio
 	del *.obj

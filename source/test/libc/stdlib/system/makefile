@@ -1,6 +1,6 @@
 ifdef YACC
 system:
-	asmc64 -q $@.asm
+	asmc64 -c -q $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	asmc -q -elf $@.asm
@@ -12,16 +12,16 @@ system:
 else
 
 system.exe:
-	asmc -q $*.asm
+	asmc -c -q $*.asm
 	linkw system con_32 file $*
 	$@
-	asmc64 -q -Zp8 -Cs $*.asm
+	asmc64 -c -q -Zp8 -Cs $*.asm
 	linkw system con_64 file $*
 	$@
-	asmc -q -ws -Cs $*.asm
+	asmc -c -q -ws -Cs $*.asm
 	linkw system con_32W file $*
 	$@
-	asmc64 -q -Zp8 -ws -Cs $*.asm
+	asmc64 -c -q -Zp8 -ws -Cs $*.asm
 	linkw system con_64W file $*
 	$@
 	pause

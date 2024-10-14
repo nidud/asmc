@@ -19,6 +19,10 @@ If link options are omitted the default options added depends on the situation. 
 gcc [-m32 -static] [-nostdlib] -o name object_files [-l:[x86/]libasmc.a]
 ```
 
+You can use the [comment](../directive/dot-pragma.md) pragma to specify some linker options.
+
+Valid options for LINK are [/DEFAULTLIB](../tools/linkw/defaultlib.md), [/EXPORT](../tools/linkw/export.md), [/INCLUDE](../tools/linkw/include.md), [/MANIFESTDEPENDENCY](../tools/linkw/manifestdependency.md), [/MERGE](../tools/linkw/merge.md), and [/SECTION](../tools/linkw/section.md).
+
 #### See Also
 
 [Asmc Command-Line Reference](readme.md) | [option -pe](option-pe.md)

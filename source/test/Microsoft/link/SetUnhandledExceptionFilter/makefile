@@ -1,8 +1,6 @@
 test.exe:
-    asmc64 -ws -frame $*.asm
-    link /libpath:%AsmcDir%\lib\x64 /machine:x64 $*.obj
+    asmc64 -Bl link -ws -frame $*.asm
     $@
-    pause
     del $*.obj
 
 

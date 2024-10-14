@@ -5,9 +5,9 @@ ifndef MC
 MC = x64
 endif
 ifeq x64 $(MC)
-CC = ASMC64
+CC = ASMC64 -c
 else
-CC = ASMC -coff
+CC = ASMC -c -coff
 endif
 
 FL = /MACHINE:$(MC) /SUBSYSTEM:WINDOWS /LIBPATH:%ASMCDIR%\lib\$(MC) /MERGE:.CRT=.rdata

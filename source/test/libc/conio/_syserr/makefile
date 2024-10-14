@@ -1,7 +1,7 @@
 ifdef YACC
 
 _syserr:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	rm -f $@.o
@@ -10,7 +10,7 @@ _syserr:
 else
 
 _syserr.exe:
-	asmc64 -ws $*.asm
+	asmc64 -c -ws $*.asm
 	linkw system con_64W file $*.obj
 	$@
 	del $*.obj

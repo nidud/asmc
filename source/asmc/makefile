@@ -37,7 +37,7 @@ endif
 
 $(OUTP)\$(NAME).exe:
 	del *.obj
-	..\..\bin\$(NAME) $(FLAG) -Cs -Iinc -I..\..\include src\*.asm
+	..\..\bin\$(NAME) -c $(FLAG) -Cs -Iinc -I..\..\include src\*.asm
 	..\..\bin\linkw @<<
 libpath ..\..\lib\$(LIBP)
 name	$@
@@ -49,13 +49,13 @@ endif
 
 asmc:
 	chmod a+x $(CC)
-	$(CC) $(flags) ../libc/fltintrn/*.asm src/*.asm
+	$(CC) -c $(flags) ../libc/fltintrn/*.asm src/*.asm
 	gcc $(lpic) -s -o $@ *.o
 
 asmc64:
-	$(CC) -DASMC64 $(flags) ../libc/fltintrn/*.asm src/*.asm
+	$(CC) -c -DASMC64 $(flags) ../libc/fltintrn/*.asm src/*.asm
 	gcc $(lpic) -s -o $@ *.o
-#	$(CC) -DASMC64 $(flags) src/*.asm
+#	$(CC) -c -DASMC64 $(flags) src/*.asm
 #	gcc -nostdlib $(lpic) -s -o $@ *.o -l:libasmc.a
 
 clean:
@@ -84,3 +84,4 @@ uninstall:
 	sudo rm -f /usr/bin/asmc64
 	sudo rm -f -R /usr/lib/asmc
 	sudo rm -f /etc/profile.d/asmc-profile.sh
+

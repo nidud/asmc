@@ -1,10 +1,8 @@
 test.exe:
-    asmc64 $*.asm
-    linkw system con_64 file $*
+    asmc64 -q $*.asm
     $@
     pause
-    asmc $*.asm
-    linkw system con_32 file $*
+    asmc -q $*.asm
     $@
     pause
 

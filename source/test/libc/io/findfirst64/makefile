@@ -1,6 +1,6 @@
 ifdef YACC
 findfirst:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@ "*.*"
 	@pause
@@ -8,10 +8,10 @@ findfirst:
 	rm -f $@
 else
 findfirst.exe:
-	asmc64 -q $*.asm
+	asmc64 -c -q $*.asm
 	linkw system con_64 name A64$@ file $*
 	A64$@ *.*
-	asmc -q $*.asm
+	asmc -c -q $*.asm
 	linkw system con_32 name A32$@ file $*
 	A32$@ *.*
 	asmc64 -q -pe $*.asm

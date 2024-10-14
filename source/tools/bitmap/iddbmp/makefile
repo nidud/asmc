@@ -1,3 +1,3 @@
 iddbmp.exe:
-	asmc64 $*.asm -link -nologo
+	asmc64 -q -frame $*.asm
 

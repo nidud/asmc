@@ -2,8 +2,7 @@ static = 0
 
 gdiplus.exe:
 !if $(static)
-    asmc64 -ws $*.asm
-    linkw system gui_64W file $*.obj
+    asmc64 -q -ws $*.asm
 !else
     asmc64 -peg -ws $*.asm
 !endif

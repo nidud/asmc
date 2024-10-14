@@ -4,7 +4,7 @@ define _INTSAFE_H_INCLUDED_
 include specstrings.inc
 
 ifdef _WIN64
-    ifdef _LINUX
+    ifdef __UNIX__
 	__bytereg  equ <dil>
 	__wordreg  equ <di>
 	__dwordreg equ <edi>

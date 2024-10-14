@@ -1,7 +1,7 @@
 ifdef YACC
 
 strtok:
-	asmc64 -q -Cs -fpic $@.asm
+	asmc64 -c -q -Cs -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@ *.asm
 	@pause
@@ -9,7 +9,7 @@ strtok:
 	rm -f $@.o
 else
 strtok.exe:
-	asmc64 $*.asm
+	asmc64 -c $*.asm
 	linkw sys con_64 file $*
 	$@ *.asm
 	pause

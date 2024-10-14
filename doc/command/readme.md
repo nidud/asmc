@@ -25,8 +25,8 @@ The options listed in the following table.
 - **-D**_symbol_[[=_value_]] - Defines a text macro with the given name. If value is missing, it is blank. Multiple tokens separated by spaces must be enclosed in quotation marks. |
 - **-dotname** - Allows names of identifiers to begin with a period.
 - **-e**_number_ - Set error limit number.
-- **-elf** - Generate 32-bit ELF object file. Defines _LINUX(1).
-- **-elf64** - Generate 64-bit ELF object file. Defines _LINUX(2) and _WIN64.
+- **-elf** - Generate 32-bit ELF object file.
+- **-elf64** - Generate 64-bit ELF object file.
 - **-endbr** - Insert ENDBR instruction at function entry.
 - **-EP** - Generates a preprocessed source listing (sent to STDOUT). See /Sf.
 - **-eq** - Don't display error messages.

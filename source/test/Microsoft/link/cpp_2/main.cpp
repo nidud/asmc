@@ -15,7 +15,7 @@ class Rectangle: public Shape {
       virtual int getArea();
 };
 
-extern "C" { extern class Rectangle *Rect; };
+extern "C" { extern class Rectangle *Rect;
 
 int mainCRTStartup(void)
 {
@@ -26,3 +26,4 @@ int mainCRTStartup(void)
 
    return 0;
 }
+};

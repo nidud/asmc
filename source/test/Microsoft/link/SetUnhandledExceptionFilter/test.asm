@@ -1,3 +1,6 @@
+;
+; https://devblogs.microsoft.com/oldnewthing/20180726-00/?p=99345
+;
 include windows.inc
 
 define CUSTOM_CODE 0x87654321

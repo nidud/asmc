@@ -1,7 +1,7 @@
 ifdef YACC
 
 spawn:
-	asmc64 -q $@.asm
+	asmc64 -c -q $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	asmc64 -q -fpic ../exec/args.asm
 	gcc -o args args.o
@@ -14,9 +14,9 @@ spawn:
 else
 
 spawn.exe:
-	asmc64 -q $*.asm
+	asmc64 -c -q $*.asm
 	linkw system con_64 file $*.obj
-	asmc64 -q -pe ../exec/args.asm
+	asmc64 -c -q -pe ../exec/args.asm
 	$@ 2 args.exe
 	pause
 	del $*.obj

@@ -1,8 +1,13 @@
 include stdio.inc
 include stdlib.inc
 include winnt.inc
+ifdef _WIN64
+.pragma comment(linker, @CatStr(<!"/defaultlib:>, %@Environ(ASMCDIR), <\lib\x64\msvcrt.lib!">))
+else
+.pragma comment(linker, @CatStr(<!"/defaultlib:>, %@Environ(ASMCDIR), <\lib\x86\msvcrt.lib!">))
+endif
 
-extern __ImageBase:IMAGE_DOS_HEADER ; created by LINK
+externdef __ImageBase:IMAGE_DOS_HEADER ; created by LINK
 
     .code
 
@@ -17,8 +22,7 @@ main proc
     add rdx,rax
 
     printf("Address Of EntryPoint:\t%p\n", rdx)
-
-    .return(0)
+   .return( 0 )
 
 main endp
 

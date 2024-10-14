@@ -1,6 +1,6 @@
 ifdef YACC
 hello:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	@pause
@@ -8,7 +8,7 @@ hello:
 	rm -f $@
 else
 hello.exe:
-	asmc64 $*.asm
+	asmc64 -c $*.asm
 	linkw sys con_64 file $*
 	$@
 	pause

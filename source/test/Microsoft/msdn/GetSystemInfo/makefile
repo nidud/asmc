@@ -12,7 +12,6 @@ test.exe:
     echo.
     echo 64-bit /LARGEADDRESSAWARE
     asmc -q -win64 $*.asm
-    linkw system con_64 file $*
     $@
     pause
     del *.obj

@@ -1,12 +1,11 @@
 static = 0
 
 project.exe:
-!if $(static)
-    asmc64 $*.asm
-    linkw system con_64 file $*.obj
-!else
-    asmc64 -pe $*.asm
-!endif
-    $@
-    pause
+if $(static)
+	asmc64 -q $*.asm
+else
+	asmc64 -pe -Fo $@ $*.asm
+endif
+	$@
+	pause
 

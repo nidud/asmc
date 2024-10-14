@@ -15,11 +15,11 @@ FL = /NOLOGO /MAP /MACHINE:$(MC) /SUBSYSTEM:CONSOLE /LIBPATH:%ASMCDIR%\lib\$(MC)
 all: nolib nolib0 clean
 
 nolib:
-	$(CC) -q -nolib $@.asm
+	$(CC) -c -q -nolib $@.asm
 	$(LC) $(FL) $@.obj msvcrt.lib msvcrt0.lib
 	$@
 nolib0:
-	$(CC) -q -nolib $@.asm
+	$(CC) -c -q -nolib $@.asm
 	$(LC) $(FL) $@.obj msvcrt.lib msvcrt0.lib
 	$@
 clean:

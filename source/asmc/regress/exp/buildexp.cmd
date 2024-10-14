@@ -48,103 +48,103 @@ rem del *.*
 exit
 
 :cmpbin
-%MLBASE% -q -bin -Fo ..\exp\%~n1.bin %1
+%MLBASE% -c -q -bin -Fo ..\exp\%~n1.bin %1
 goto end
 
 :cmpmz
-%MLBASE% -q -mz -Fo ..\exp\%~n1.exe %1
+%MLBASE% -c -q -mz -Fo ..\exp\%~n1.exe %1
 goto end
 
 :cmperr
-%MLBASE% -q -W3 -omf %1 > ..\exp\%~n1.err
+%MLBASE% -c -q -W3 -omf %1 > ..\exp\%~n1.err
 goto end
 
 :cmpomf
-%MLBASE% -q -omf -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -omf -Fo ..\exp\%~n1.obj %1
 goto end
 
 :lnkomf
 if (%OWLINK%) == () goto end
-%MLBASE% -q -omf %1
+%MLBASE% -c -q -omf %1
 %OWLINK% n ..\exp\%~n1.exe op q,nofar format dos LIBPath ..\src\omf file %~n1.obj
 goto end
 
 :safeseh
 if (%MSLINK%) == () goto end
-%MLBASE% -q -coff -safeseh ..\src\safeseh\safeseh.asm
+%MLBASE% -c -q -coff -safeseh ..\src\safeseh\safeseh.asm
 %MSLINK% /out:..\exp\safeseh.exe /nologo /SAFESEH safeseh.obj ..\src\safeseh\safeseh.lib
 goto end
 
 :coff
-%MLBASE% -q -coff -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -coff -Fo ..\exp\%~n1.obj %1
 goto end
 
 :cofferr
-%MLBASE% -q -coff -eq %1
+%MLBASE% -c -q -coff -eq %1
 copy %~n1.err ..\exp\%~n1.err
 goto end
 
 :win64
-%MLBASE% -q -win64 -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -win64 -Fo ..\exp\%~n1.obj %1
 goto end
 
 :vec64
-%MLBASE% -q -Gv -win64 -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -Gv -win64 -Fo ..\exp\%~n1.obj %1
 goto end
 
 :coffdbg
-%MLBASE% -q -coff -Zi -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -coff -Zi -Fo ..\exp\%~n1.obj %1
 goto end
 
 :dllimp
 if (%OWLINK%) == () goto extern
-%MLBASE% -q -coff -Fd ..\src\dllimp\dllimp.asm
+%MLBASE% -c -q -coff -Fd ..\src\dllimp\dllimp.asm
 %OWLINK% name ..\exp\dllimp.exe format win pe f dllimp.obj op q,noreloc
 :extern
 if (%MSLINK%) == () goto end
-%MLBASE% -q -coff ..\src\extern\extern4.asm
+%MLBASE% -c -q -coff ..\src\extern\extern4.asm
 %MSLINK% /out:..\exp\extern4.exe /nologo /subsystem:console extern4.obj
 goto end
 
 :ifdef
-%MLBASE% -q -zlc -zld -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -zlc -zld -Fo ..\exp\%~n1.obj %1
 goto end
 
 :elf
-%MLBASE% -q -elf -Fo ..\exp\%~n1.o %1
+%MLBASE% -c -q -elf -Fo ..\exp\%~n1.o %1
 goto end
 
 :elf64
-%MLBASE% -q -elf64 -Fo ..\exp\%~n1.o %1
+%MLBASE% -c -q -elf64 -Fo ..\exp\%~n1.o %1
 goto end
 
 :omfcu
-%MLBASE% -q -Cu -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -Cu -Fo ..\exp\%~n1.obj %1
 goto end
 
 :omf2
-%MLBASE% -q -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -Fo ..\exp\%~n1.obj %1
 goto end
 
 :pe
-%MLBASE% -q -pe -Fo ..\exp\%~n1.exe %1
+%MLBASE% -c -q -pe -Fo ..\exp\%~n1.exe %1
 goto end
 
 :zne
-%MLBASE% -q -eq -Zne %1
+%MLBASE% -c -q -eq -Zne %1
 copy %~n1.err ..\exp\%~n1.err
 goto end
 
 :zg
-%MLBASE% -q -Zg -bin -Fo ..\exp\%~n1.bin %1
+%MLBASE% -c -q -Zg -bin -Fo ..\exp\%~n1.bin %1
 goto end
 
 :zd
-%MLBASE% -q -Zd -omf -Fo ..\exp\%~n1.obj %1
+%MLBASE% -c -q -Zd -omf -Fo ..\exp\%~n1.obj %1
 goto end
 
 :binerr
-%MLBASE% -q -eq -bin %1
+%MLBASE% -c -q -eq -bin %1
 copy %~n1.err ..\exp\%~n1.err
 goto end
 

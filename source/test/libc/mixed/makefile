@@ -1,6 +1,6 @@
 ifdef YACC
 mixed:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -c main.cpp
 	gcc -o $@ main.o $@.o
 	./$@
@@ -9,7 +9,7 @@ mixed:
 	rm -f $@
 else
 mixed.exe:
-	asmc64 $*.asm
+	asmc64 -c $*.asm
 	cl -c main.cpp
 	linkw system con_64 file $*, main
 	$@

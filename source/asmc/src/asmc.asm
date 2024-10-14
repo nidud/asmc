@@ -561,26 +561,21 @@ endif
         write_usage()
     .elseif !numFiles
         asmerr(1017)
+
 ifdef _EXEC_LINK
-    .elseif ( rc == 1 && Options.sub_format != SFORMAT_PE &&
-             !( Options.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
-
-        .if ( Options.link_linker )
-            mov Options.link,1
-        .endif
-
-ifdef _AUTO_LINK
-        .if ( !Options.no_linking )
+ifdef __UNIX__
+    .elseif ( rc == 1 && Options.output_format == OFORMAT_ELF && !Options.no_linking )
 else
-        .if ( Options.link && !Options.no_linking )
+    .elseif ( rc == 1 && ModuleInfo._model == MODEL_FLAT && !Options.no_linking )
 endif
-
+ifndef _AUTO_LINK
+        .if ( Options.link_linker || Options.link )
+endif
            .new args:array_t
 ifdef __UNIX__
            .new pid:pid_t
            .new exitcode:int_t = -1
 endif
-
             mov rbx,Options.link_options
             .if ( rbx == 0 )
 ifdef __UNIX__
@@ -604,8 +599,11 @@ ifdef __UNIX__
                 CollectLinkOption(&buffer[32])
 else
 
-                ; LINKW /LIBPATH:%ASMCDIR%\lib\x[86|64] [/NOLOGO]
-
+                ; Masm use a (Unicode) response file here (mllink$.lnk)
+                ; /OUT:name.exe *.obj
+                ;
+                ; /LIBPATH and /NOLOGO is added here
+                ;
                 lea rbx,ff
                 tstrcpy(rbx, "/LIBPATH:")
                 .if tgetenv("ASMCDIR")
@@ -675,13 +673,13 @@ endif
             mov [rbx],rax
 
 ifdef __UNIX__
-
+if 0
             .if ( !Options.quiet )
                 .for ( rbx = args : string_t ptr [rbx] : rbx+=string_t )
                     tprintf( " %s\n", [rbx] )
                 .endf
             .endif
-
+endif
             mov pid,sys_fork()
             .if ( pid == 0 )
 
@@ -726,7 +724,9 @@ if 0
                 MemFree(rcx)
             .endf
 endif
+ifndef _AUTO_LINK
         .endif
+endif
 endif
     .endif
     mov eax,1

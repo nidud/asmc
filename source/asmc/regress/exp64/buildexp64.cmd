@@ -19,17 +19,17 @@ rem del *.*
 exit
 
 :cv8
-%MLBASE% -q -win64 -Zi8 %1
+%MLBASE% -c -q -win64 -Z7 %1
 copy %~n1.obj ..\exp64\%~n1.obj
 goto end
 
 :cv8bin
-%MLBASE% -q -win64 -D__ASMC64__ -Zi8 %1
+%MLBASE% -c -q -win64 -D__ASMC64__ -Z7 %1
 copy %~n1.obj ..\exp64\%~n1.obj
 goto end
 
 :cv8Gv
-%MLBASE% -q -win64 -Gv -Zi8 %1
+%MLBASE% -c -q -win64 -Gv -Z7 %1
 copy %~n1.obj ..\exp64\%~n1.obj
 goto end
 

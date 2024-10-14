@@ -1,6 +1,6 @@
 ifdef YACC
 vararg:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	@pause
@@ -9,7 +9,6 @@ vararg:
 else
 vararg.exe:
 	asmc64 $*.asm
-	linkw system con_64 file $*
 	$@
 	pause
 	del *.obj

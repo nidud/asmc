@@ -116,7 +116,9 @@ FindDefinedName proc fastcall private uses rsi rdi rbx name:string_t
 
         .lodsd
         .if !tstrcmp( rbx, rax )
-            .return 1
+            
+            inc edi
+           .return( edi )
         .endif
     .endf
     .return 0
@@ -140,6 +142,26 @@ define_name proc __ccall name:string_t, value:string_t
     ret
 
 define_name endp
+
+
+undef_name proc __ccall name:string_t
+
+    .if FindDefinedName( name )
+
+        .for ( ecx = eax : ecx < dyneqcount : ecx++ )
+
+            lea rdx,dyneqtable
+            mov rax,[rdx+rcx*string_t]
+            mov [rdx+rcx*string_t-string_t],rax
+            lea rdx,dyneqvalue
+            mov rax,[rdx+rcx*string_t]
+            mov [rdx+rcx*string_t-string_t],rax
+        .endf
+        dec dyneqcount
+    .endif
+    ret
+
+undef_name endp
 
 
 SymSetCmpFunc proc __ccall

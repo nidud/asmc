@@ -2,12 +2,16 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.36 - xx xxx 2024
+Changes in 2.37 - xx xxx 2024
+
+Changes in 2.36 - 15 Oct 2024
 - added .pragma wstring
 - added __ImageBase to -pe
 - added options -pec, -peg, -ped, and -link [link_options]
 - removed options -gui and -cui
-- added options -Bl <filename> -- Selects an alternate linker in <filename>.
+- added options -Bl <linker> -- Selects an alternate <linker>
+- removed _LINUX --> use __UNIX__ and _WIN64
+- activated option -c
 
 Changes in 2.35 - 6 Jul 2024
 - added separate list section for -Sf

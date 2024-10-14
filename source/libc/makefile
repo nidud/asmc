@@ -4,11 +4,11 @@
 ifdef YACC
 
 libasmc.a:
-	asmc64 -fpic -Zp8 -MT -Cs -r *.asm
+	asmc64 -c -fpic -Zp8 -MT -Cs -r *.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
-	asmc -6 -elf -fpic -Zp4 -MT -Cs -r *.asm
+	asmc -c -6 -elf -fpic -Zp4 -MT -Cs -r *.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc/x86
@@ -17,7 +17,7 @@ else
 
 include srcpath
 
-flag = -Zi8 -MT -Cs -I$(inc_dir)
+flag = -c -Z7 -MT -Cs -I$(inc_dir)
 
 ifdef x86
 path = $(lib_dir)\x86
@@ -58,7 +58,7 @@ regress:
 
 regress32:
 	if exist *.obj del *.obj
-	asmc -q -coff -Zi -assert -r *.regress
+	asmc -c -q -coff -Zi -assert -r *.regress
 	for %%f in (*.obj) do call :test_32 %%f
 	exit
 	:test_32
@@ -70,7 +70,7 @@ regress32:
 
 regress64:
 	if exist *.obj del *.obj
-	asmc64 -q -assert -r *.regress
+	asmc64 -c -q -assert -r *.regress
 	for %%f in (*.obj) do call :test_64 %%f
 	exit
 	:test_64

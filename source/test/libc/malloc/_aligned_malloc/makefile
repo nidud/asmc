@@ -1,6 +1,6 @@
 ifdef YACC
 _aligned_malloc:
-	asmc64 -fpic -Fitchar.inc $@.asm
+	asmc64 -c -fpic -Fitchar.inc $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	@pause
@@ -8,13 +8,13 @@ _aligned_malloc:
 	rm -f $@
 else
 _aligned_malloc.exe:
-	asmc -q -Fitchar.inc $*.asm
+	asmc -c -q -Fitchar.inc $*.asm
 	linkw system con_32 file $*
 	$@
-	asmc64 -q -Fitchar.inc $*.asm
+	asmc64 -c -q -Fitchar.inc $*.asm
 	linkw system con_64 file $*
 	$@
-	asmc64 -q -pe -Fitchar.inc $*.asm
+	asmc64 -c -q -pe -Fitchar.inc $*.asm
 	$@
 	pause
 	del $*.obj

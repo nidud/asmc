@@ -24,7 +24,7 @@ OBJS =	hello-world.o \
 	window-default.o
 
 .asm.o:
-	asmc64 -q -Zp8 -Cs -fpic $<
+	asmc64 -c -q -Zp8 -Cs -fpic $<
 	gcc -o $* $*.o `pkg-config --cflags --libs gtk4`
 
 targets: $(OBJS)
@@ -63,7 +63,7 @@ OBJS =	hello-world.obj \
 	window-default.obj
 
 .asm.obj:
-	asmc64 -nologo $(flags) $<
+	asmc64 -c -nologo $(flags) $<
 	linkw system gtk_$(lib) file $*.obj
 
 targets: $(OBJS)

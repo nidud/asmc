@@ -3,7 +3,7 @@ mslink = 0
 
 GetFirewallSettings.exe:
 !if $(static)
-    asmc64 -frame $*.asm
+    asmc64 -c -frame $*.asm
 !if $(mslink)
     link /libpath:%AsmcDir%\lib\x64 /machine:x64 $*.obj
 !else

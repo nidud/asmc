@@ -158,7 +158,6 @@ init_win64 proc public
 
 ifdef _LIN64
     define_name( "__UNIX__", "1" )
-    define_name( "_LINUX",   "2" )
     mov Options.output_format,OFORMAT_ELF
     mov Options.langtype,LANG_SYSCALL
     mov Options.fctype,FCT_ELF64
@@ -578,6 +577,7 @@ endif
         mov Options.sub_format,SFORMAT_NONE
         .return
     .case 'PE'              ; -EP
+        mov Options.no_linking,1
         mov Options.preprocessor_stdout,1
     .case 'q'               ; -q
         mov Options.quiet,1
@@ -585,6 +585,7 @@ endif
         mov banner_printed,1
         .return
     .case 'nib'             ; -bin
+        mov Options.no_linking,1
         mov Options.output_format,OFORMAT_BIN
         mov Options.sub_format,SFORMAT_NONE
         .return
@@ -615,7 +616,6 @@ endif
     .case '6fle'            ; -elf64
         set_cpu( CPU_64, 1 )
         define_name( "__UNIX__", "1" )
-        define_name( "_LINUX",   "2" )
         define_name( "_WIN64",   "1" )
         or  Options.xflag,OPT_REGAX
         mov Options._model,MODEL_FLAT
@@ -635,7 +635,6 @@ ifndef ASMC64
     .case 'fle'             ; -elf
         mov Options.output_format,OFORMAT_ELF
         mov Options.sub_format,SFORMAT_NONE
-        define_name( "_LINUX", "1" )
         define_name( "__UNIX__", "1" )
         .return
     .case '8iPF'            ; -FPi87
@@ -701,7 +700,7 @@ else
 endif
     .case 'h'
         write_options()
-        exit(1)
+        exit(0)
     .case 'emoh'            ; -homeparams
         or Options.win64_flags,W64F_SAVEREGPARAMS
         .return
@@ -722,6 +721,7 @@ ifndef ASMC64
     .case 'zm'              ; -mz
         mov Options.output_format,OFORMAT_BIN
         mov Options.sub_format,SFORMAT_MZ
+        mov Options.no_linking,1
         .return
     .case 'cm'              ; -mc
         mov Options._model,MODEL_COMPACT
@@ -774,11 +774,17 @@ endif
         mov Options.pe_subsystem,3
         define_name( "__CUI__", "1" )
     .case 'ep'              ; -pe
+ifdef _LIN64
+        undef_name( "__UNIX__" )
+        mov Options.langtype,LANG_FASTCALL
+        mov Options.fctype,FCT_WIN64
+endif
         .if ( Options.sub_format != SFORMAT_64BIT )
             mov Options.sub_format,SFORMAT_PE
         .endif
         mov Options.output_format,OFORMAT_BIN
         define_name( "__PE__", "1" )
+        mov Options.no_linking,1
         .return
     .case 'gep'             ; -peg - subsystem:windows
         mov Options.pe_subsystem,2

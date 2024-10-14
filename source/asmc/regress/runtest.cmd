@@ -56,7 +56,7 @@ del %~n1.exe
 goto end
 
 :cmperr
-%ASMX% -q -W3 -omf %1 >NUL
+%ASMX% -c -q -W3 -omf %1 >NUL
 fcmp %~n1.err exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.err
@@ -64,7 +64,7 @@ if exist %~n1.obj del %~n1.obj
 goto end
 
 :zneerr
-%ASMX% -q -Zne -W3 -omf %1 >NUL
+%ASMX% -c -q -Zne -W3 -omf %1 >NUL
 fcmp %~n1.err exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.err
@@ -72,13 +72,13 @@ if exist %~n1.obj del %~n1.obj
 goto end
 
 :zneomf
-%ASMX% -q -Zne -omf %1
+%ASMX% -c -q -Zne -omf %1
 if errorlevel 1 goto end
 fcmp %~n1.obj exp\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj
 if (%OWLINK%) == () goto end
-%ASMX% -q -Zne -omf %1
+%ASMX% -c -q -Zne -omf %1
 if errorlevel 1 goto end
 %OWLINK% op q,nofar format dos LIBPath src\omf file %~n1.obj
 fcmp %~n1.exe exp\%~n1.exe
@@ -88,7 +88,7 @@ del %~n1.exe
 goto end
 
 :cmpomf
-%ASMX% -q -omf %1
+%ASMX% -c -q -omf %1
 if errorlevel 1 goto end
 fcmp %~n1.obj exp\%~n1.obj
 if errorlevel 1 goto end
@@ -97,7 +97,7 @@ goto end
 
 :lnkomf
 if (%OWLINK%) == () goto end
-%ASMX% -q -omf %1
+%ASMX% -c -q -omf %1
 if errorlevel 1 goto end
 %OWLINK% op q,nofar format dos LIBPath src\omf file %~n1.obj
 fcmp %~n1.exe exp\%~n1.exe
@@ -108,7 +108,7 @@ goto end
 
 :safeseh
 if (%MSLINK%) == () goto end
-%ASMX% -q -coff -safeseh src\safeseh\safeseh.asm
+%ASMX% -c -q -coff -safeseh src\safeseh\safeseh.asm
 if errorlevel 1 exit
 %MSLINK% /nologo /SAFESEH safeseh.obj src\safeseh\safeseh.lib
 fcmp -p SAFESEH.EXE exp\SAFESEH.EXE
@@ -118,7 +118,7 @@ del SAFESEH.OBJ
 goto end
 
 :coff
-%ASMX% -q -coff %1
+%ASMX% -c -q -coff %1
 if errorlevel 1 goto end
 fcmp -coff %~n1.OBJ exp\%~n1.OBJ
 if errorlevel 1 goto end
@@ -126,14 +126,14 @@ del %~n1.OBJ
 goto end
 
 :cofferr
-%ASMX% -q -coff -eq %1
+%ASMX% -c -q -coff -eq %1
 fcmp %~n1.err exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.err
 goto end
 
 :win64
-%ASMX% -q -win64 %1
+%ASMX% -c -q -win64 %1
 if errorlevel 1 exit
 fcmp -coff %~n1.OBJ exp\%~n1.OBJ
 if errorlevel 1 goto end
@@ -141,7 +141,7 @@ del %~n1.OBJ
 goto end
 
 :vec64
-%ASMX% -q -Gv -win64 %1
+%ASMX% -c -q -win64 -Gv %1
 if errorlevel 1 exit
 fcmp -coff %~n1.OBJ exp\%~n1.OBJ
 if errorlevel 1 goto end
@@ -149,7 +149,7 @@ del %~n1.OBJ
 goto end
 
 :coffdbg
-%ASMX% -q -coff -Zi %1
+%ASMX% -c -q -coff -Zi %1
 if errorlevel 1 exit
 fcmp -coff %~n1.OBJ exp\%~n1.OBJ
 if errorlevel 1 goto end
@@ -158,7 +158,7 @@ goto end
 
 :dllimp
 if (%OWLINK%) == () goto extern
-%ASMX% -q -coff -Fd src\dllimp\dllimp.asm
+%ASMX% -c -q -coff -Fd src\dllimp\dllimp.asm
 if errorlevel 1 exit
 %OWLINK% format win pe f dllimp.obj op q,noreloc
 fcmp -pe DLLIMP.EXE exp\DLLIMP.EXE
@@ -167,7 +167,7 @@ del DLLIMP.EXE
 del DLLIMP.OBJ
 :extern
 if (%MSLINK%) == () goto end
-%ASMX% -q -coff src\extern\extern4.asm
+%ASMX% -c -q -coff src\extern\extern4.asm
 if errorlevel 1 exit
 %MSLINK% /nologo /subsystem:console extern4.obj
 fcmp -pe EXTERN4.EXE exp\EXTERN4.EXE
@@ -177,7 +177,7 @@ del EXTERN4.OBJ
 goto end
 
 :ifdef
-%ASMX% -q -zlc -zld %1
+%ASMX% -c -q -zlc -zld %1
 if errorlevel 1 exit
 fcmp %~n1.OBJ exp\%~n1.obj
 if errorlevel 1 goto end
@@ -185,7 +185,7 @@ del %~n1.OBJ
 goto end
 
 :elf
-%ASMX% -q -elf %1
+%ASMX% -c -q -elf %1
 if errorlevel 1 exit
 fcmp %~n1.o exp\%~n1.o
 if errorlevel 1 goto end
@@ -193,7 +193,7 @@ del %~n1.o
 goto end
 
 :elf64
-%ASMX% -q -elf64 %1
+%ASMX% -c -q -elf64 %1
 if errorlevel 1 exit
 fcmp %~n1.o exp\%~n1.o
 if errorlevel 1 goto end
@@ -201,7 +201,7 @@ del %~n1.o
 goto end
 
 :omfcu
-%ASMX% -q -Cu %1
+%ASMX% -c -q -Cu %1
 if errorlevel 1 exit
 fcmp %~n1.OBJ exp\%~n1.obj
 if errorlevel 1 goto end
@@ -209,7 +209,7 @@ del %~n1.OBJ
 goto end
 
 :omf2
-%ASMX% -q %1
+%ASMX% -c -q %1
 if errorlevel 1 exit
 fcmp %~n1.OBJ exp\%~n1.obj
 if errorlevel 1 goto end
@@ -231,35 +231,35 @@ del %~n1.BIN
 goto end
 
 :zd
-%ASMX% -q -Zd -omf %1
+%ASMX% -c -q -Zd -omf %1
 fcmp %~n1.OBJ exp\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.OBJ
 goto end
 
 :binerr
-%ASMX% -q -eq -bin %1
+%ASMX% -c -q -eq -bin %1
 fcmp %~n1.ERR exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.ERR
 goto end
 
 :cv8
-%ASMX% -q -win64 -Zi8 %1
+%ASMX% -c -q -win64 -Zi8 %1
 fcmp -coff %~n1.obj exp64\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj
 goto end
 
 :cv8bin
-%ASMX% -q -win64 -D__ASMC64__ -Zi8 %1
+%ASMX% -c -q -win64 -D__ASMC64__ -Zi8 %1
 fcmp -coff %~n1.obj exp64\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj
 goto end
 
 :cv8Gv
-%ASMX% -q -win64 -Zi8 -Gv %1
+%ASMX% -c -q -win64 -Zi8 -Gv %1
 fcmp -coff %~n1.obj exp64\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj

@@ -1,7 +1,7 @@
 #
 # Makefile for H2INC
 #
-aflags = -q -Cs
+aflags = -c -q -Cs
 
 ifdef YACC
 
@@ -16,15 +16,12 @@ h2inc:
 	asmc64 $(aflags) $@.asm
 	gcc -s -o $@ $@.o $(lflags)
 
-install:
-	sudo install ./h2inc /usr/bin
-
 else
 
 ifdef static
 aflags += -frame
 else
-aflags += -pe -frame
+aflags += -pe -frame -Fo \asmc\bin\h2inc.exe
 endif
 h2inc.exe:
 	asmc64 $(aflags) $*.asm

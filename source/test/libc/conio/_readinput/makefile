@@ -1,7 +1,7 @@
 ifdef YACC
 
 _readinput:
-	asmc64 -fpic $@.asm
+	asmc64 -c -fpic $@.asm
 	gcc -nostdlib -o $@ $@.o -l:libasmc.a
 	./$@
 	rm -f $@.o
@@ -10,7 +10,7 @@ _readinput:
 else
 
 _readinput.exe:
-	asmc64 -D__TTY__ $*.asm
+	asmc64 -c -D__TTY__ $*.asm
 	linkw sys tty_64 file $*.obj
 	$@
 	del $*.obj

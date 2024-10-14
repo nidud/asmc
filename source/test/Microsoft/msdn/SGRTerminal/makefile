@@ -1,27 +1,10 @@
-static = 0
+PE = -pe
 
-all: EnablingVTerminal.exe SGRTerminal.exe AnniversaryUpdate.exe
+all: EnablingVTerminal SGRTerminal AnniversaryUpdate
 
 EnablingVTerminal.exe:
-!if $(static)
-    asmc64 $*.asm
-    linkw system con_64 file $*.obj
-!else
-    asmc64 -pe $*.asm
-!endif
-
+	asmc64 $(PE) $@.asm
 SGRTerminal.exe:
-!if $(static)
-    asmc64 $*.asm
-    linkw system con_64 file $*.obj
-!else
-    asmc64 -pe $*.asm
-!endif
-
+	asmc64 $(PE) $@.asm
 AnniversaryUpdate.exe:
-!if $(static)
-    asmc64 $*.asm
-    linkw system con_64 file $*.obj
-!else
-    asmc64 -pe $*.asm
-!endif
+	asmc64 $(PE) $@.asm

@@ -11,7 +11,6 @@ SDE = \sde-external-8.35.0-2019-03-11-win
 
 test.exe:
     asmc64 $*.asm
-    linkw system con_64 file $*
     $(SDE)\sde -- $@
     pause
 

@@ -1,2 +1,2 @@
 conidd.exe:
-	asmc64 -frame $*.asm -link -nologo
+	asmc64 -q -frame $*.asm

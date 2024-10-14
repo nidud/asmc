@@ -17,8 +17,8 @@ class Rectangle: public Shape {
 
 extern class Rectangle *Rect;
 
-int mainCRTStartup(void) {
-
+int main(void)
+{
    Rect->setWidth(5);
    Rect->setHeight(7);
 

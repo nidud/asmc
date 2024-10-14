@@ -1,6 +1,6 @@
 ifdef YACC
 
-aflags = -q -Cs -fpic
+aflags = -c -q -Cs -fpic
 lflags = -nostdlib -Wl,-pie,-z,now,-z,noexecstack
 
 pause:

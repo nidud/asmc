@@ -1,17 +1,13 @@
-ifdef YACC
-
 strtok:
-	asmc64 -c -q -Cs -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
-	./$@ *.asm
+	asmc64 -q -Cs $@.asm
+ifdef YACC
+	./$@ $@.asm
 	@pause
-	rm -f $@
-	rm -f $@.o
+	@rm -f $@
+	@rm -f $@.o
 else
-strtok.exe:
-	asmc64 -c $*.asm
-	linkw sys con_64 file $*
-	$@ *.asm
+	$@ $@.asm
 	pause
-	del $*.obj
+	del $@.obj
+	del $@.exe
 endif

@@ -1,15 +1,13 @@
-ifdef YACC
 Inheritance:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
 	@pause
-	rm -f $@.o
-	rm -f $@
+	@rm -f $@.o
+	@rm -f $@
 else
-Inheritance.exe:
-	asmc64 -pe $*.asm
 	$@
 	pause
-	del $@
+	del $@.obj
+	del $@.exe
 endif

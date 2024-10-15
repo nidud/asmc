@@ -1,6 +1,4 @@
-ifdef YACC
-flags = -fpic
-else
+ifndef YACC
 flags = -pe
 endif
 fcmp:

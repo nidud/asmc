@@ -60,6 +60,7 @@ system begin con_32D
 system begin watcom_c
     system  386
     library libc
+    option  start=_cstart_
     end
 
 system begin tty_32

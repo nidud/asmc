@@ -1,19 +1,13 @@
-ifdef YACC
 signal:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
 	@pause
-	rm -f $@.o
-	rm -f $@
+	@rm -f $@.o
+	@rm -f $@
 else
-signal.exe:
-	asmc -c $*.asm
-	linkw system con_32 file $*
 	$@
-	pause
-	asmc64 -c $*.asm
-	linkw system con_64 file $*
+	asmc -q $*.asm
 	$@
 	pause
 	del $*.obj

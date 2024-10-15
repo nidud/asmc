@@ -1,19 +1,15 @@
-ifdef YACC
 test:
-	asmc64 -c $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
-	echo Press enter to continue; read dummy;
-	rm -f $@.o
-	rm -f $@
+	@pause
+	@rm -f $@.o
+	@rm -f $@
 else
-test.exe:
-	asmc64 -c -q $*.asm
-	linkw system con_64 file $*
 	$@
-	asmc64 -c -q -pe $*.asm
+	asmc64 -q -pe $@.asm
 	$@
 	pause
-	del *.obj
-	del *.exe
+	del $@.obj
+	del $@.exe
 endif

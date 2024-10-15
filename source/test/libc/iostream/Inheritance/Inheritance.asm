@@ -41,8 +41,9 @@ main proc
 
     cout << "Total area: " << Rect.getArea() << endl
 
-    exit(0)
+    xor eax,eax
+    ret
 
 main endp
 
-    end main
+    end

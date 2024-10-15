@@ -22,4 +22,4 @@ _tmain proc
 
 _tmain endp
 
-    end
+    end _tstart

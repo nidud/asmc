@@ -1,30 +1,21 @@
-ifdef YACC
 system:
-	asmc64 -c -q $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
 	asmc -q -elf $@.asm
-	gcc -m32 -nostdlib -o $@ $@.o -l:x86/libasmc.a
 	./$@
 	@pause
-	rm -f $@.o
-	rm -f $@
+	@rm -f $@.o
+	@rm -f $@
 else
-
-system.exe:
-	asmc -c -q $*.asm
-	linkw system con_32 file $*
 	$@
-	asmc64 -c -q -Zp8 -Cs $*.asm
-	linkw system con_64 file $*
+	asmc -q $@.asm
 	$@
-	asmc -c -q -ws -Cs $*.asm
-	linkw system con_32W file $*
+	asmc -q -ws -Cs $@.asm
 	$@
-	asmc64 -c -q -Zp8 -ws -Cs $*.asm
-	linkw system con_64W file $*
+	asmc64 -q -Zp8 -ws -Cs $@.asm
 	$@
 	pause
-	del $*.obj
-	del $@
+	del $@.obj
+	del $@.exe
 endif

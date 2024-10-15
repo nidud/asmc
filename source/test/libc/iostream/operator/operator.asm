@@ -58,6 +58,7 @@ _tmain proc
    .new i:int_t = foo(1, 2, 3, 4)
 
     cout << "(1 + 2 * 4 - 3) / 2 = " << i << endl
+    xor eax,eax
     ret
 
 _tmain endp

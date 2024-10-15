@@ -4,14 +4,14 @@ include signal.inc
 
 main proc
 
-    lea r10,__crtGeneralFailure
+    lea rbx,__crtGeneralFailure
 
-    signal(SIGINT,   r10) ; interrupt
-    signal(SIGILL,   r10) ; illegal instruction - invalid function image
-    signal(SIGFPE,   r10) ; floating point exception
-    signal(SIGSEGV,  r10) ; segment violation
-    signal(SIGTERM,  r10) ; Software termination signal from kill
-    signal(SIGABRT,  r10) ; abnormal termination triggered by abort call
+    signal(SIGINT,   rbx) ; interrupt
+    signal(SIGILL,   rbx) ; illegal instruction - invalid function image
+    signal(SIGFPE,   rbx) ; floating point exception
+    signal(SIGSEGV,  rbx) ; segment violation
+    signal(SIGTERM,  rbx) ; Software termination signal from kill
+    signal(SIGABRT,  rbx) ; abnormal termination triggered by abort call
 
     mov ebx,-1
     mov rcx,-1

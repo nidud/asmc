@@ -26,6 +26,7 @@ _tmain proc
     cout << box1::box_side << endl  ; Outputs 4.
     cout << box2::box_side << endl  ; Outputs 12.
     cout << box_side << endl        ; Outputs 42.
+    xor eax,eax
     ret
 
 _tmain endp

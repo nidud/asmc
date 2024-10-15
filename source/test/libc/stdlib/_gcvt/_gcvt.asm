@@ -47,7 +47,7 @@ ifdef __SSE__
     _gcvt( value, 12, &buffer )
     printf( "buffer: '%s' (%d chars)\n", &buffer, strlen(&buffer) )
 
-    printf( "\n" );
+    ;printf( "\n" );
     movsd xmm0,-12.34567890123
     movsd value,xmm0
 

@@ -148,9 +148,10 @@ _rczip proc uses rsi rdi rbx rc:TRECT, dst:ptr, src:PCHAR_INFO, flags:uint_t
         mov ecx,count
         compress()
     .endif
+    mov rbx,rdi
+    sub rbx,dst
     free(window)
-    mov rax,rdi
-    sub rax,dst
+    mov eax,ebx
     ret
 
     option dotname

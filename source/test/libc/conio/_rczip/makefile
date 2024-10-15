@@ -1,7 +1,6 @@
 ifdef YACC
 _rczip:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 $@.asm
 	./$@
 	rm -f $@.o
 	rm -f $@

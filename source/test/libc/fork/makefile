@@ -1,16 +1,14 @@
-ifdef YACC
-
 fork:
-	asmc64 -c -fpic $@.asm
-	gcc -o $@ $@.o
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
-	gcc -nostdlib -o a$@ $@.o -l:libasmc.a
-	./a$@
-
+	asmc64 -q -fpic $@.asm
+	./$@
+	@rm ./$@.o
+	@rm ./$@
 else
-
-fork.exe:
-	asmc64 $*.asm
 	$@
-	pause
+	del $@.obj
+	del $@.exe
 endif
+	@pause

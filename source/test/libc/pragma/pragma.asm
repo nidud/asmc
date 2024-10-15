@@ -22,7 +22,10 @@ exit_proc2 proc
 exit_proc2 endp
 
 main proc
-   .return 0
+
+   xor eax,eax
+   ret
+
 main endp
 
     end

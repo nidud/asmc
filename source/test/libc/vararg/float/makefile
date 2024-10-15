@@ -1,21 +1,14 @@
-ifdef YACC
-
 float:
-	asmc64 -c -fpic $@.asm
-	gcc -o $@ $@.o
+ifdef YACC
+	asmc64 -q -fpic $@.asm
 	./$@
 	@pause
-	rm -f $@
-	rm -f $@.o
-
+	@rm -f $@.o
+	@rm -f $@
 else
-
-float.exe:
-ifdef msvcrt
-	asmc64 -pe $*.asm
-else
-	asmc64 $*.asm
-endif
+	asmc64 -q -pe $@.asm
 	$@
 	pause
+	del $@.obj
+	del $@.exe
 endif

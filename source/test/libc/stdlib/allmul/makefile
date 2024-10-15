@@ -1,26 +1,19 @@
-ifdef YACC
 allmul:
-	asmc64 -c -fpic $@.asm
-	gcc -o $@ $@.o
+	asmc64 -q -fpic $@.asm
+ifdef YACC
 	./$@
 	@pause
-	rm -f $@.o
-	rm -f $@
+	@rm -f $@.o
+	@rm -f $@
 else
-allmul.exe:
-	asmc -c -q $*.asm
-	linkw system con_32 name A32$@ file $*
-	asmc -c -q -ws $*.asm
-	linkw system con_32W name W32$@ file $*
-	asmc64 -c -q $*.asm
-	linkw system con_64 name A64$@ file $*
-	asmc64 -c -q -ws $*.asm
-	linkw system con_64W name W64$@ file $*
-	echo A32:
-	A32$@
-	echo W64:
-	W64$@
-	del *.obj
-	del *.exe
+	$@
+	asmc64 -q -ws $@.asm
+	$@
+	asmc -q $@.asm
+	$@
+	asmc -q -ws $@.asm
+	$@
 	pause
+	del $@.obj
+	del $@.exe
 endif

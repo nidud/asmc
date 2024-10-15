@@ -1,16 +1,13 @@
-ifdef YACC
 float2:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q -fpic $@.asm
+ifdef YACC
 	./$@
 	@pause
-	rm -f $@.o
-	rm -f $@
+	@rm -f $@.o
+	@rm -f $@
 else
-float2.exe:
-	asmc64 -pe $*.asm
 	$@
 	pause
-	del *.exe
+	del $@.obj
+	del $@.exe
 endif
-

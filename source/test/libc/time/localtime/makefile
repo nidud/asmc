@@ -1,20 +1,17 @@
-ifdef YACC
-
 localtime:
-	asmc64 -c -fpic $@.asm
-	gcc -o $@ $@.o
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q -fpic $@.asm
 	./$@
-	rm $@.o
-	rm $@
+	@pause
+	@rm $@.o
+	@rm $@
 else
-
-localtime.exe:
-	asmc64 -pe -Zp8 $*.asm
 	$@
-	asmc64 -c -q $*.asm
-	linkw system con_64 file $*.obj
+	asmc64 -q -pe $@.asm
 	$@
 	pause
+	del $@.obj
+	del $@.exe
 endif

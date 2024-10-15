@@ -1,19 +1,17 @@
-ifdef YACC
 pragma:
-	asmc64 -c -q -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
-	asmc -c -q -elf -fpic $@.asm
-	gcc -m32 -nostdlib -o $@ $@.o -l:x86/libasmc.a
+	asmc -q -elf $@.asm
 	./$@
-	rm -f $@.o
-	rm -f $@
+	@pause
+	@rm -f $@.o
+	@rm -f $@
 else
-pragma.exe:
-	asmc64 -c $*.asm
-	linkw system con_64 file $*
+	$@
+	asmc -coff -q $@.asm
 	$@
 	pause
-	del $*.obj
-	del $@
+	del $@.obj
+	del $@.exe
 endif

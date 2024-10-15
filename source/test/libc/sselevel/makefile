@@ -1,18 +1,14 @@
-ifdef YACC
 test:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
 	@pause
-	rm -f $@.o
-	rm -f $@
+	@rm -f $@.o
+	@rm -f $@
 else
-test.exe:
-	asmc64 -c $*.asm
-	linkw system con_64 file $*
 	$@
 	pause
-	del $*.obj
-	del $*.exe
+	del $@.obj
+	del $@.exe
 endif
 

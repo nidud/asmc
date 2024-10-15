@@ -1,26 +1,17 @@
-ifdef YACC
 setjmp:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@
-	rm -f $@.o
-	rm -f $@
+	@pause
+	@rm -f $@.o
+	@rm -f $@
 else
-setjmp.exe:
-	asmc -c -q -coff $*.asm
-	linkw system con_32 file $*
 	$@
-	pause
-	asmc64 -c -q $*.asm
-	linkw system con_64 file $*
+	asmc -q -coff $@.asm
 	$@
-	pause
-	asmc -q -c -coff -ws $*.asm
-	linkw system con_32W file $*
+	asmc -q -coff -ws $*.asm
 	$@
-	pause
-	asmc64 -c -q -ws $*.asm
-	linkw system con_64W file $*
+	asmc64 -q -ws $*.asm
 	$@
 	pause
 	del $*.obj

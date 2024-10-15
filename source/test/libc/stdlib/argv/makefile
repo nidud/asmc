@@ -1,25 +1,22 @@
 #
 # Startup module for LIBC
 #
-ifdef YACC
 argv:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q $@.asm
+ifdef YACC
 	./$@ "4" 5 -7"quote" ""8" 9" "argv".asm
-	echo Press enter to continue; read dummy;
-	rm $@.o
-	rm $@
+	@pause
+	@rm $@.o
+	@rm $@
 else
-argv.exe:
-	asmc -c -q $*.asm -link
 	$@ "4" 5 -7"quote" ""8" 9" "argv".asm
-	asmc -c -q -ws $*.asm -link
+	asmc64 -q -ws $@.asm
 	$@ "4" 5 -7"quote" ""8" 9" "argv".asm
-	asmc64 -c -q $*.asm -link
+	asmc -q $@.asm
 	$@ "4" 5 -7"quote" ""8" 9" "argv".asm
-	asmc64 -c -q -ws $*.asm -link
+	asmc -q -ws $@.asm
 	$@ "4" 5 -7"quote" ""8" 9" "argv".asm
-	del $*.obj
-	del $*.exe
 	pause
+	del $@.obj
+	del $@.exe
 endif

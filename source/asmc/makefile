@@ -56,7 +56,7 @@ asmc64:
 	$(CC) -c -DASMC64 $(flags) ../libc/fltintrn/*.asm src/*.asm
 	gcc $(lpic) -s -o $@ *.o
 #	$(CC) -c -DASMC64 $(flags) src/*.asm
-#	gcc -nostdlib $(lpic) -s -o $@ *.o -l:libasmc.a
+#	gcc -static -nostdlib -Wl,-no-pie -s -o $@ *.o -l:libasmc.a
 
 clean:
 	rm *.o

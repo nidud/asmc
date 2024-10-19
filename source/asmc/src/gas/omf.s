@@ -1,0 +1,41 @@
+
+.intel_syntax noprefix
+
+.global omf_OutSelect
+.global omf_FlushCurrSeg
+.global omf_check_flush
+.global omf_set_filepos
+.global omf_init
+.global LastCodeBufSize
+
+
+.SECTION .text
+	.ALIGN	16
+
+omf_OutSelect:
+	ret
+
+omf_FlushCurrSeg:
+	ret
+
+omf_check_flush:
+	ret
+
+omf_set_filepos:
+	ret
+
+omf_init:
+	ret
+
+
+.SECTION .data
+	.ALIGN	16
+
+LastCodeBufSize:
+	.byte  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	.byte  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	.byte  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	.byte  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+
+
+.att_syntax prefix

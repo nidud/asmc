@@ -194,7 +194,7 @@ Mangle proc __ccall uses rsi rdi sym:asym_t, buffer:string_t
     mov al,[rcx].langtype
     and eax,0x0F
     lea rsi,VoidMangler
-    .switch jmp rax
+    .switch eax
     .case LANG_C
         ; leading underscore for C ?
         .if !Options.no_cdecl_decoration

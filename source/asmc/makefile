@@ -3,7 +3,7 @@
 #
 ifdef YACC
 
-acc = asmc64
+acc = asmc236
 pic-default = yes
 ifeq (yes,$(pic-default))
 lpic = -Wl,-pie,-z,now,-z,noexecstack
@@ -11,12 +11,12 @@ apic = -fpic
 else
 lpic = -Wl,-no-pie
 endif
-CC = ../../bin/$(acc)
+CC = ./$(acc)
 flags = $(apic) -Zp8 -Cs -Iinc -I../../include
 ifeq (asmc,$(acc))
 flags += -elf64
 endif
-all: asmc asmc64 clean
+all: asmc236 asmc asmc64 clean
 
 else
 
@@ -47,8 +47,10 @@ file	{ *.obj }
 	del *.obj
 endif
 
+asmc236:
+	gcc -c src/gas/*.s && gcc -Wl,-pie -s -o $@ *.o
+
 asmc:
-	chmod a+x $(CC)
 	$(CC) -c $(flags) ../libc/fltintrn/*.asm src/*.asm
 	gcc $(lpic) -s -o $@ *.o
 
@@ -60,6 +62,7 @@ asmc64:
 
 clean:
 	rm *.o
+	rm ./asmc236
 
 install:
 	sudo install ./asmc /usr/bin

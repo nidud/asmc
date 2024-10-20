@@ -1,0 +1,6 @@
+-c__cdecl
+-m
+-fG_GNUC_PRINTF
+-f__attribute__
+-o"(g_" "<g_"
+-o" ())" "()>"

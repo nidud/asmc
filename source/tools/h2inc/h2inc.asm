@@ -362,6 +362,7 @@ exit_options proc
         "-s<string>      -- Strip string\n"
         "-r<old> <new>   -- Replace string\n"
         "-o<old> <new>   -- Replace output string\n"
+        "@               -- Specifies a response file or %%environ%%\n"
         "\n"
         "Note that \"quotes\" are stripped so use -r\"\\\"old\\\"\" \"\\\"new\\\"\" to replace\n"
         "actual \"quoted strings\".\n\n"

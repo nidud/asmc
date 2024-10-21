@@ -12,18 +12,27 @@ include io.inc
 include direct.inc
 include stdio.inc
 include stdlib.inc
+include time.inc
 include string.inc
 include tchar.inc
 
 .code
 
-CreateProject proc name:string_t, Unicode:int_t, Windows:int_t
+CreateProject proc path:string_t, name:string_t, Unicode:int_t, Windows:int_t, iddc:int_t
 
    .new lpWindows[2]:string_t = { "Console", "Windows" }
-   .new lpUnicode[2]:string_t = { "NotSet", "Unicode" }
+   .new lpUnicode[2]:string_t = { "false", "true" }
    .new file[_MAX_PATH]:char_t
+   .new iddc_props:string_t   = { "    <Import Project=\"$(AsmcDir)\\bin\\iddc.props\" />\n" }
+   .new iddc_targets:string_t = { "    <Import Project=\"$(AsmcDir)\\bin\\iddc.targets\" />\n" }
 
-    sprintf(&file, "%s\\%s.vcxproj", name, name)
+    .if ( iddc == 0 )
+
+        mov iddc_props,&@CStr("")
+        mov iddc_targets,rax
+    .endif
+
+    sprintf(&file, "%s/%s.vcxproj", path, name)
     .if ( fopen(&file, "wt") == NULL )
 
         perror(&file)
@@ -64,8 +73,7 @@ CreateProject proc name:string_t, Unicode:int_t, Windows:int_t
         "  </PropertyGroup>\n"
         "  <Import Project=\"$(VCTargetsPath)\Microsoft.Cpp.props\" />\n"
         "  <ImportGroup Label=\"ExtensionSettings\">\n"
-        "  <Import Project=\"$(AsmcDir)\\bin\\asmc.props\" />\n"
-        "  <Import Project=\"$(AsmcDir)\\bin\\iddc.props\" />\n"
+        "    <Import Project=\"$(AsmcDir)\\bin\\asmc.props\" />\n%s"
         "  </ImportGroup>\n"
         "  <ImportGroup Label=\"Shared\">\n"
         "  </ImportGroup>\n"
@@ -86,14 +94,10 @@ CreateProject proc name:string_t, Unicode:int_t, Windows:int_t
         "      <AdditionalOptions>/merge:.CRT=.rdata %%(AdditionalOptions)</AdditionalOptions>\n"
         "    </Link>\n"
         "    <ASMC>\n"
-        "      <WCharacterSet>%s</WCharacterSet>\n"
+        "      <UnicodeCharacterSet>%s</UnicodeCharacterSet>\n"
         "      <GenerateUnwindInformation>true</GenerateUnwindInformation>\n"
         "      <GenerateCStackFrame>true</GenerateCStackFrame>\n"
-        "      <PackAlignmentBoundary>4</PackAlignmentBoundary>\n"
         "    </ASMC>\n"
-        "    <IDDC>\n"
-        "      <Output64Flat>true</Output64Flat>\n"
-        "    </IDDC>\n"
         "  </ItemDefinitionGroup>\n"
         "  <ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='Debug|win32'\">\n"
         "    <Link>\n"
@@ -104,38 +108,35 @@ CreateProject proc name:string_t, Unicode:int_t, Windows:int_t
         "      <AdditionalOptions>/merge:.CRT=.rdata %%(AdditionalOptions)</AdditionalOptions>\n"
         "    </Link>\n"
         "    <ASMC>\n"
-        "      <WCharacterSet>%s</WCharacterSet>\n"
+        "      <UnicodeCharacterSet>%s</UnicodeCharacterSet>\n"
         "      <GenerateCStackFrame>true</GenerateCStackFrame>\n"
-        "      <PackAlignmentBoundary>3</PackAlignmentBoundary>\n"
         "      <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>\n"
         "    </ASMC>\n"
-        "    <IDDC>\n"
-        "      <OutputCOFFObject>true</OutputCOFFObject>\n"
-        "    </IDDC>\n"
         "  </ItemDefinitionGroup>\n"
         "  <ItemGroup>\n"
         "    <ASMC Include=\"%s.asm\" />\n"
         "  </ItemGroup>\n"
         "  <Import Project=\"$(VCTargetsPath)\Microsoft.Cpp.targets\" />\n"
         "  <ImportGroup Label=\"ExtensionTargets\">\n"
-        "    <Import Project=\"$(AsmcDir)\\bin\\asmc.targets\" />\n"
-        "    <Import Project=\"$(AsmcDir)\\bin\\iddc.targets\" />\n"
+        "    <Import Project=\"$(AsmcDir)\\bin\\asmc.targets\" />\n%s"
         "  </ImportGroup>\n"
-        "</Project>", name, rdx, rcx, rdx, rcx, name )
+        "</Project>", name, iddc_props, rdx, rcx, rdx, rcx, name, iddc_targets )
     ret
 
 CreateProject endp
 
-CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t
+
+CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t, pe:int_t
 
    .new W:string_t = ""
    .new ws:string_t = ""
    .new gui:string_t = ""
    .new sys:string_t = "con"
+   .new ltime:time_t
 
    .new file[_MAX_PATH]:char_t
 
-    sprintf(&file, "%s\\makefile", name)
+    sprintf(&file, "%s/makefile", name)
     .if ( fopen(&file, "wt") == NULL )
 
         perror(&file)
@@ -143,45 +144,57 @@ CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t
     .endif
     .new fp:LPFILE = rax
 
+    _time( &ltime )
+    fprintf(fp, "# Makefile for %s\n", name)
+    fprintf(fp, "# %s\n", asctime(gmtime( &ltime )))
+
+    fprintf(fp, "flags = -q\nifdef YACC\n")
+    .if ( !Static )
+        fprintf(fp, "flags += -fpic\n")
+    .endif
+    fprintf(fp, "else\n")
     .if ( Unicode )
-
-        mov W,&@CStr("W")
-        mov ws,&@CStr("-ws ")
+        fprintf(fp, "flags += -ws\n")
     .endif
-    .if ( Windows )
-
-        mov gui,&@CStr("-gui ")
-        mov sys,&@CStr("gui")
+    .if ( pe )
+        .if ( Windows )
+            fprintf(fp, "flags += -peg\n")
+        .else
+            fprintf(fp, "flags += -pe\n")
+        .endif
     .endif
-
+    mov rcx,name
     fprintf(fp,
-        "ifdef YACC\n"
+        "endif\n"
         "\n"
         "%s:\n"
-        "\tasmc64 -fpic $@.asm\n"
-        "\tgcc -nostdlib -o $@ $@.o -l:libasmc.a\n"
-        "\n"
+        "\tasmc64 $(flags) $@.asm\n"
+        "ifdef YACC\n"
+        "\t./$@\n"
         "else\n"
-        "\n"
-        "%s.exe:\n"
-        "ifdef msvcrt\n"
-        "\tasmc64 -pe %s%s$*.asm\n"
-        "else\n"
-        "\tasmc64 %s$*.asm\n"
-        "\tlinkw system %s_64%s file $*.obj\n"
-        "endif\n"
         "\t$@\n"
-        "\tpause\n"
-        "endif\n", name, name, ws, gui, ws, sys, W)
-
+        "endif\n"
+        "\t@pause\n"
+        "\n"
+        "clean:\n"
+        "ifdef YACC\n"
+        "\trm ./%s.o\n"
+        "\trm ./%s\n"
+        "else\n"
+        "\tdel %s.exe\n", rcx, rcx, rcx, rcx )
+    .if ( pe == 0 )
+        fprintf(fp, "\tdel %s.obj\n", name)
+    .endif
+    fprintf(fp, "endif\n")
     ret
 
 CreateMakefile endp
 
+
 CreateSource proc name:string_t, Windows:int_t
 
    .new file[_MAX_PATH]:char_t
-    sprintf(&file, "%s\\%s.asm", name, name)
+    sprintf(&file, "%s/%s.asm", name, name)
     .ifd ( _access(&file, 0) == 0 )
 
         perror(&file)
@@ -195,7 +208,7 @@ CreateSource proc name:string_t, Windows:int_t
     .new fp:LPFILE = rax
 
     .new uname[_MAX_PATH]:char_t
-    _strupr(strcpy(&uname, name))
+    strupr(strcpy(&uname, name))
     fprintf(fp,
         "; %s.ASM--\n"
         ";\n"
@@ -297,38 +310,70 @@ _tmain proc argc:int_t, argv:array_t
    .new Unicode:int_t = 0
    .new Windows:int_t = 0
    .new Static:int_t = 0
+   .new Project:int_t = 0
+   .new iddc:int_t = 0
+   .new pe:int_t = 0
 
     .for ( rdx = argv, ecx = 1 : ecx < argc : ecx++ )
 
         mov rax,[rdx+rcx*string_t]
-        .if ( char_t ptr [rax] == '-' || char_t ptr [rax] == '/' )
-            .if ( char_t ptr [rax+1] == 'w' )
+        mov eax,[rax]
+        .if ( al == '-' || al == '/' )
+            .if ( ah == 'w' )
                 mov Windows,1
-            .elseif ( char_t ptr [rax+1] == 'u' )
+            .elseif ( ah == 'u' )
                 mov Unicode,1
-            .elseif ( char_t ptr [rax+1] == 's' )
+            .elseif ( ah == 's' )
                 mov Static,1
+            .elseif ( ah == 'p' )
+                shr eax,16
+                .if ( al == 'e' )
+                    mov pe,1
+                .else
+                    mov Project,1
+                .endif
+            .elseif ( ah == 'c' )
+                mov iddc,1
             .else
-                perror(rax)
+                perror([rdx+rcx*string_t])
                 exit(1)
             .endif
         .else
-            mov name,rax
+            mov name,[rdx+rcx*string_t]
         .endif
     .endf
     .if ( name == NULL )
 
-        printf("Usage: project <name> [-win] [-unicode] [-static]\n")
+        printf(
+            "Usage: project [ options ] name\n"
+            "\n"
+            "-w     -- Windows (default is Console)\n"
+            "-u     -- Unicode\n"
+            "-s     -- Static\n"
+            "-c     -- Add iddc.targets\n"
+            "-p     -- Create <name>.vcxproj\n"
+            "-pe    -- Generate PE binary file\n"
+            "\n"
+            "If the -p option is not given a directory is created:\n"
+            " - <name>\makefile\n"
+            " - <name>\<name>.asm\n"
+            " - <name>\<name>.vcxproj - Visual Studio 2022\n"
+            "\n"
+            )
         exit(0)
     .endif
-    .if ( _mkdir(name) )
+    .if ( Project )
+        CreateProject(".", name, Unicode, Windows, iddc)
+    .else
+        .if ( _mkdir(name) )
 
-        perror(name)
-        exit(1)
+            perror(name)
+            exit(1)
+        .endif
+        CreateProject(name, name, Unicode, Windows, iddc)
+        CreateMakefile(name, Unicode, Windows, Static, pe)
+        CreateSource(name, Windows)
     .endif
-    CreateProject(name, Unicode, Windows)
-    CreateMakefile(name, Unicode, Windows, Static)
-    CreateSource(name, Windows)
     xor eax,eax
     ret
 

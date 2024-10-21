@@ -1,5 +1,5 @@
 
-; CR/LF to LF -- for files copied from Windows to Linux
+; LF to CR/LF -- for files copied from Linux to Windows
 
 include io.inc
 include direct.inc
@@ -24,17 +24,18 @@ include pe/_tcsfcat.asm
 
 print_usage proc
     printf(
-        "Usage: tounix [-r] [file(s)]\n"
+        "Usage: tocrlf [-r] [file(s)]\n"
         "\n"
         "-r Recurse subdirectories\n"
         )
    .return(0)
 print_usage endp
 
+
 scanfile proc uses rbx name:string_t
 
   .new buffer[BUFSIZE]:sbyte
-  .new fp:LPFILE = fopen(name, "rb")
+  .new fp:LPFILE = fopen(name, "rt")
   .new fo:LPFILE
 
     .if ( fp == NULL )
@@ -42,7 +43,7 @@ scanfile proc uses rbx name:string_t
         perror(name)
        .return(0)
     .endif
-    .if !fopen("convert.$$$", "wb")
+    .if !fopen("convert.$$$", "wt")
 
         fclose(fp)
         perror("convert.$$$")
@@ -50,19 +51,10 @@ scanfile proc uses rbx name:string_t
     .endif
     mov fo,rax
 
-    .while fread(&buffer, 1, BUFSIZE-1, fp)
+    .while fgets(&buffer, BUFSIZE, fp)
 
-        mov ebx,eax
-        mov buffer[rax],0
-        .while strchr(&buffer, 13)
-
-            dec ebx
-            lea rdx,[rax+1]
-            strcpy(rax, rdx)
-        .endw
-        fwrite(&buffer, 1, ebx, fo)
+        fputs(&buffer, fo)
     .endw
-
     fclose(fp)
     fclose(fo)
     remove(name)

@@ -1,11 +1,25 @@
-static = 0
+# Makefile for project
+# Mon Oct 21 19:31:07 2024
 
-project.exe:
-if $(static)
-	asmc64 -q $*.asm
+flags = -q
+ifdef YACC
 else
-	asmc64 -pe -Fo $@ $*.asm
+flags += -pe
 endif
-	$@
-	pause
 
+project:
+	asmc64 $(flags) $@.asm
+ifdef YACC
+	./$@
+else
+	$@
+endif
+	@pause
+
+clean:
+ifdef YACC
+	rm ./project.o
+	rm ./project
+else
+	del project.exe
+endif

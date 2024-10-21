@@ -5,13 +5,13 @@ else
 flags += -pe
 endif
 
-tounix:
+tocrlf:
 	asmc64 $(flags) $@.asm
 clean:
 ifdef YACC
-	rm -f tounix
-	rm -f tounix.o
+	rm -f tocrlf
+	rm -f tocrlf.o
 else
-#	del tounix.obj
-	del tounix.exe
+#	del tocrlf.obj
+	del tocrlf.exe
 endif

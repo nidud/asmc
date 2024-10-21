@@ -8,6 +8,7 @@ include io.inc
 include errno.inc
 include direct.inc
 ifdef __UNIX__
+include sys/stat.inc
 include sys/syscall.inc
 else
 include winbase.inc
@@ -23,7 +24,7 @@ ifdef __UNIX__
 ifdef _UNICODE
     _set_errno( ENOSYS )
 else
-    .ifsd ( sys_mkdir(rcx) < 0 )
+    .ifsd ( sys_mkdir(rcx, S_IRWXU or S_IRWXG or S_IROTH or S_IXOTH) < 0 )
 
         neg eax
         _set_errno(eax)

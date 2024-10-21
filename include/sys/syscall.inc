@@ -983,7 +983,7 @@ sys_rename proto :string_t, :string_t {
     mov eax,SYS_RENAME
     syscall
     }
-sys_mkdir proto :string_t {
+sys_mkdir proto :string_t, :int_t {
     mov eax,SYS_MKDIR
     syscall
     }
@@ -2321,8 +2321,8 @@ sys_kill proto fastcall :int_t, :int_t {
 sys_rename proto fastcall :string_t, :string_t {
     sys_call(SYS_RENAME, _1, _2)
     }
-sys_mkdir proto fastcall :string_t {
-    sys_call(SYS_MKDIR, _1)
+sys_mkdir proto fastcall :string_t, :int_t {
+    sys_call(SYS_MKDIR, _1, _2)
     }
 sys_rmdir proto fastcall :string_t {
     sys_call(SYS_RMDIR, _1)

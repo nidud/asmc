@@ -38,7 +38,7 @@ ifdef __UNIX__
 
    .new mode:uint_t
    .new share:uint_t
-   .new access:uint_t
+   .new faccess:uint_t
    .new fh:uint_t
 
     ldr rdi,path
@@ -64,7 +64,7 @@ endif
     .default
        .return( _set_errno( EINVAL ) )
     .endsw
-    mov access,eax
+    mov faccess,eax
 
     ; decode sharing flags
 
@@ -91,7 +91,7 @@ endif
     .default
        .return( _set_errno( EINVAL ) )
     .endsw
-    or access,eax
+    or faccess,eax
 
     mov eax,FOPEN
 
@@ -109,15 +109,15 @@ endif
     .endif
     mov fh,eax
 
-    mov edx,access
+    mov edx,faccess
     .if ( esi & O_CREAT )
 
         or edx,ecx
         .if ( esi & O_APPEND )
             mov rbx,rdi
-            mov access,edx
+            mov faccess,edx
             .ifsd ( sys_open(rdi, esi, edx) < 0 )
-                sys_creat(rbx, access)
+                sys_creat(rbx, faccess)
             .endif
         .else
             sys_creat(rdi, edx)

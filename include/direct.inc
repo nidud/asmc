@@ -46,8 +46,8 @@ readdir		proto __cdecl :LPDIR
 closedir	proto __cdecl :LPDIR
 fchdir		proto __cdecl :int_t
 
+mkdir		proto __cdecl :LPSTR, :int_t
 define _rmdir	<rmdir>
-define _mkdir	<mkdir>
 define _chdir	<chdir>
 define _getcwd	<getcwd>
 

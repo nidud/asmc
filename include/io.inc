@@ -217,6 +217,7 @@ define _creat	<creat>
 define _isatty	<isatty>
 define _unlink	<unlink>
 define _chmod	<chmod>
+define _access	<access>
 
 fchmod		proto __cdecl :int_t, :int_t
 

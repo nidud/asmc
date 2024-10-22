@@ -119,6 +119,27 @@ wcsicoll	proto __cdecl :LPWSTR, :LPWSTR
 endif ;; NOT __STDC__
 endif
 
+ifndef strupr
+strupr proto watcall :string_t {
+    .for ( rcx = rax : byte ptr [rcx] : rcx++ )
+	mov dl,[rcx]
+	.if ( dl >= 'a' && dl <= 'z' )
+	    sub dl,'a' - 'A'
+	.endif
+	mov [rcx],dl
+    .endf
+    }
+strlwr proto watcall :string_t {
+    .for ( rcx = rax : byte ptr [rcx] : rcx++ )
+	mov dl,[rcx]
+	.if ( dl >= 'A' && dl <= 'Z' )
+	    add dl,'a' - 'A'
+	.endif
+	mov [rcx],dl
+    .endf
+    }
+endif
+
 ifndef _MSVCRT
 
 memxchg		proto __cdecl :ptr, :ptr, :size_t

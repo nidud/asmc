@@ -1918,6 +1918,28 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
             inc j
             add rbx,asm_tok
             .break
+
+        .elseif ( al == T_DIRECTIVE && [rbx].tokval == T_LDR )
+
+            ; v2.36.01 -- extension: pull register from ldr(param)
+
+            add rbx,asm_tok*2
+
+            .if ( SymFind( [rbx].string_ptr ) && [rax].asym.state == SYM_STACK )
+
+                .if ( [rax].asym.flags & S_REGPARAM )
+
+                    movzx ecx,[rax].asym.param_reg
+                    mov rsi,GetResWName( ecx, NULL )
+                    .for ( ecx = 0 : byte ptr [rsi+rcx] : ecx++ )
+                    .endf
+                .else
+                    mov rsi,[rax].asym.name
+                    mov ecx,[rax].asym.name_size
+                .endif
+                add rbx,asm_tok
+                add j,3
+            .endif
         .else
             mov rsi,[rbx].tokpos
             mov rcx,[rbx+asm_tok].tokpos

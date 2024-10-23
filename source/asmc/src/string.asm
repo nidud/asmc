@@ -1607,10 +1607,10 @@ CStringFunc endp
 
 RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
 
-  .new opnd:expr
-  .new i:int_t
-  .new size:int_t = 4 ; default size
-  .new reg:int_t
+   .new opnd:expr
+   .new i:int_t
+   .new size:int_t = 4 ; default size
+   .new reg:int_t
 
     ldr rcx,mi
     mov rbx,[rcx].macro_instance.parm_array
@@ -1630,6 +1630,7 @@ RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, to
     .ifd ( EvalOperand( &reg, tokenarray, ecx, &opnd, EXPF_NOUNDEF ) == ERROR )
         .return
     .endif
+
     .if ( opnd.kind != EXPR_REG )
 
         imul ecx,reg,asm_tok

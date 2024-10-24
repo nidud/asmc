@@ -12,12 +12,11 @@ endif
 .code
 
 clock_getres proc which_clock:int_t, tp:ptr timespec
+
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_clock_getres(edi, rsi) < 0 )
-else
-    .ifs ( sys_clock_getres(which_clock, tp) < 0 )
-endif
+
+    .ifsd ( sys_clock_getres( ldr(which_clock), ldr(tp) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -27,6 +26,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 clock_getres endp
 
     end

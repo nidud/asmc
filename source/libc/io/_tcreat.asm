@@ -13,10 +13,7 @@ include tchar.inc
 
 _tcreat proc path:LPTSTR, mode:SINT
 
-    ldr rax,path
-    ldr edx,mode
-
-    _tsopen( rax, O_CREAT or O_TRUNC or O_RDWR, SH_DENYNO, edx )
+    _tsopen( ldr(path), O_CREAT or O_TRUNC or O_RDWR, SH_DENYNO, ldr(mode) )
     ret
 
 _tcreat endp

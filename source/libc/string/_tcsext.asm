@@ -13,9 +13,7 @@ include tchar.inc
 
 _tcsext proc uses rbx string:LPTSTR
 
-    ldr rcx,string
-
-    mov rbx,_tcsfn( rcx )
+    mov rbx,_tcsfn( ldr(string) )
 
     .if _tcsrchr( rbx, '.' )
 

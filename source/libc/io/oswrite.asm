@@ -18,11 +18,9 @@ oswrite proc uses rbx handle:int_t, buffer:ptr, size:uint_t
 
 ifdef __UNIX__
 
-    ldr ecx,handle
-    ldr rax,buffer
     ldr ebx,size
 
-    .ifs ( sys_write(ecx, rax, rbx) < 0 )
+    .ifs ( sys_write( ldr(handle), ldr(buffer), rbx ) < 0 )
 
         neg eax
         _set_errno( eax )

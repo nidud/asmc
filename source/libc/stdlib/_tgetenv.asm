@@ -14,8 +14,7 @@ _tgetenv proc uses rbx enval:LPTSTR
 
    .new len:int_t
 
-    ldr rcx,enval
-    .ifd ( _tcsclen( rcx ) == 0 )
+    .ifd ( _tcsclen( ldr(enval) ) == 0 )
 	.return
     .endif
 

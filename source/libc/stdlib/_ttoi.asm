@@ -11,9 +11,7 @@ include tchar.inc
 
 _ttoi proc string:LPTSTR
 
-    ldr rcx,string
-
-   .return( _ttol( rcx ) )
+   .return( _ttol( ldr(string) ) )
 
 _ttoi endp
 

@@ -12,8 +12,7 @@ include fltintrn.inc
 
 _atodbl proc dbl:ptr double_t, string:string_t
 
-    ldr rcx,string
-    mov rdx,_strtoflt( rcx )
+    mov rdx,_strtoflt( ldr(string) )
     mov rcx,dbl
     xor eax,eax
     mov [rcx],rax

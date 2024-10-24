@@ -12,8 +12,7 @@ include fltintrn.inc
 
 _atoflt proc flt:ptr float_t, string:string_t
 
-    ldr rcx,string
-    mov rdx,_strtoflt( rcx )
+    mov rdx,_strtoflt( ldr(string) )
     mov rcx,flt
     xor eax,eax
     mov [rcx],eax

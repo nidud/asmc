@@ -17,10 +17,8 @@ include tchar.inc
 
 _tchdir proc directory:LPTSTR
 
-    ldr rcx,directory
-
 ifdef __UNIX__
-    .ifsd ( sys_chdir(rcx) < 0 )
+    .ifsd ( sys_chdir( ldr(directory) ) < 0 )
 
         neg eax
         _set_errno(eax)
@@ -29,7 +27,7 @@ else
     .new abspath[_MAX_PATH]:TCHAR
     .new result[4]:TCHAR
 
-    .ifd SetCurrentDirectory( rcx )
+    .ifd SetCurrentDirectory( ldr(directory) )
 
         .ifd GetCurrentDirectory( _MAX_PATH, &abspath )
 

@@ -8,23 +8,31 @@ include winnls.inc
 
     .code
 
-SystemTimeToString proc string:LPTSTR, stime:ptr SYSTEMTIME
+SystemTimeToString proc uses rbx string:LPTSTR, stime:ptr SYSTEMTIME
+
+    ldr rbx,string
+
 ifndef __UNIX__
 ifdef _UNICODE
-    GetTimeFormatEx( NULL, TIME_FORCE24HOURFORMAT, stime, NULL, string, 9 )
+    GetTimeFormatEx( NULL, TIME_FORCE24HOURFORMAT, ldr(stime), NULL, rbx, 9 )
 else
+
    .new timeString[64]:wchar_t
 
-    GetTimeFormatEx(NULL, TIME_FORCE24HOURFORMAT, stime, NULL, &timeString, lengthof(timeString))
+    GetTimeFormatEx(NULL, TIME_FORCE24HOURFORMAT, ldr(stime), NULL, &timeString, lengthof(timeString))
 
-    .for ( rdx = string, ecx = 0 : ecx < 9 : ecx++ )
+    .for ( ecx = 0 : ecx < 9 : ecx++ )
+
         mov al,byte ptr timeString[rcx*2]
-        mov [rdx+rcx],al
+        mov [rbx+rcx],al
     .endf
-    mov byte ptr [rdx+rcx],0
+    mov byte ptr [rbx+rcx],0
+
 endif
 endif
-   .return( string )
+   mov rax,rbx
+   ret
+
 SystemTimeToString endp
 
     END

@@ -11,8 +11,7 @@ include tchar.inc
 
 _vftprintf proc uses rbx file:LPFILE, format:LPTSTR, args:ptr
 
-    ldr rcx,file
-    mov rbx,_stbuf(rcx)
+    mov rbx,_stbuf( ldr(file) )
     _toutput(file, format, args)
     mov rcx,rbx
     mov rbx,rax

@@ -11,9 +11,7 @@ include malloc.inc
 
 _aligned_msize proc memblock:ptr, alignment:size_t, offs:size_t
 
-    ldr rcx,memblock
-
-    _msize(rcx)
+    _msize( ldr(memblock) )
     ret
 
 _aligned_msize endp

@@ -16,19 +16,18 @@ include tchar.inc
     .code
 
 _trmdir proc directory:LPTSTR
-    ldr rcx,directory
 ifdef __UNIX__
 ifdef _UNICODE
     _set_errno( ENOSYS )
 else
-    .ifsd ( sys_rmdir(rcx) < 0 )
+    .ifsd ( sys_rmdir( ldr(directory) ) < 0 )
 
         neg eax
         _set_errno(eax)
     .endif
 endif
 else
-    .if RemoveDirectory( rcx )
+    .if RemoveDirectory( ldr(directory) )
         xor eax,eax
     .else
         _dosmaperr( GetLastError() )

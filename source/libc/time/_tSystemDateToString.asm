@@ -9,25 +9,28 @@ include winnls.inc
 
     .code
 
-SystemDateToString proc string:LPTSTR, date:ptr SYSTEMTIME
+SystemDateToString proc uses rbx string:LPTSTR, date:ptr SYSTEMTIME
+
+    ldr rbx,string
 
 ifndef __UNIX__
 ifdef _UNICODE
-    GetDateFormatEx(NULL, DATE_SHORTDATE, date, NULL, string, 11, NULL)
+    GetDateFormatEx(NULL, DATE_SHORTDATE, ldr(date), NULL, rbx, 11, NULL)
 else
    .new dateString[64]:wchar_t
 
-    GetDateFormatEx(NULL, DATE_SHORTDATE, date, NULL, &dateString, lengthof(dateString), NULL)
+    GetDateFormatEx(NULL, DATE_SHORTDATE, ldr(date), NULL, &dateString, lengthof(dateString), NULL)
 
-    .for ( rdx = string, ecx = 0 : ecx < 10 : ecx++ )
+    .for ( ecx = 0 : ecx < 10 : ecx++ )
 
         mov al,byte ptr dateString[rcx*2]
-        mov [rdx+rcx],al
+        mov [rbx+rcx],al
     .endf
-    mov byte ptr [rdx+rcx],0
+    mov byte ptr [rbx+rcx],0
 endif
 endif
-   .return( string )
+   mov rax,rbx
+   ret
 
 SystemDateToString endp
 

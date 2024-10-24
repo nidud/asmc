@@ -13,8 +13,8 @@ endif
 
 fchdir proc fd:int_t
 ifdef __UNIX__
-    ldr ecx,fd
-    .ifsd ( sys_fchdir(ecx) < 0 )
+
+    .ifsd ( sys_fchdir(ldr(fd)) < 0 )
 
         neg eax
         _set_errno(eax)

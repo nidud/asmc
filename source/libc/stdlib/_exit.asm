@@ -13,8 +13,7 @@ doexit proto :int_t, :int_t, :int_t
 
 _exit proc retval:int_t
 
-    ldr ecx,retval
-    doexit( ecx, 1, 0 ) ; quick term, kill process
+    doexit( ldr(retval), 1, 0 ) ; quick term, kill process
 
 ifdef _CRT_APP
     ;

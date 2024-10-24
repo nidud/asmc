@@ -16,7 +16,7 @@ else
   local ftime:FILETIME
   local stime:SYSTEMTIME
 
-    FileTimeToLocalFileTime(ft, &ftime)
+    FileTimeToLocalFileTime(ldr(ft), &ftime)
     FileTimeToSystemTime(&ftime, &stime)
     SystemTimeToTime(&stime)
 endif

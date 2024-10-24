@@ -13,7 +13,7 @@ include time.inc
 
 gmtime proc tp:ptr time_t
 
-    _gmtime(tp, &tb)
+    _gmtime(ldr(tp), &tb)
     ret
 
 gmtime endp

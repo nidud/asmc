@@ -12,12 +12,10 @@ endif
 .code
 
 clock_settime proc which_clock:int_t, tp:ptr timespec
+
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_clock_settime(edi, rsi) < 0 )
-else
-    .ifs ( sys_clock_settime(which_clock, tp) < 0 )
-endif
+    .ifsd ( sys_clock_settime( ldr(which_clock), ldr(tp) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -27,6 +25,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 clock_settime endp
 
     end

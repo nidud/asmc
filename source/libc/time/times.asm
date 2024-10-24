@@ -18,9 +18,7 @@ times proc pt:ptr tms
 
 ifdef __UNIX__
 
-    ldr rcx,pt
-
-    .ifsd ( sys_times(rcx) < 0 )
+    .ifsd ( sys_times( ldr(pt) ) < 0 )
 
         neg eax
         _set_errno( eax )

@@ -17,17 +17,15 @@ include tchar.inc
 
 _tgetfattr proc file:LPTSTR
 
-    ldr rcx,file
-
 ifdef __UNIX__
 
     .new s:_stat32
 
-    .ifd ( _stat(rcx, &s) == 0 )
+    .ifd ( _stat( ldr(file), &s ) == 0 )
 
         mov eax,s.st_mode
 else
-    .ifd ( GetFileAttributes( rcx ) == -1 )
+    .ifd ( GetFileAttributes( ldr(file) ) == -1 )
 
         _dosmaperr( GetLastError() )
 endif

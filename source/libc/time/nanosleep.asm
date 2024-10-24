@@ -14,12 +14,7 @@ endif
 
 nanosleep proc req:ptr timespec, rem:ptr timespec
 ifdef __UNIX__
-ifdef _WIN64
-    sys_nanosleep(rdi, rsi)
-else
-    sys_nanosleep(req, rem)
-endif
-    .ifsd ( eax < 0 )
+    .ifsd ( sys_nanosleep( ldr(req), ldr(rem) ) < 0 )
 
         neg eax
 else

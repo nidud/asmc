@@ -14,14 +14,10 @@ include tchar.inc
     .code
 
 _tsetfattr proc file:LPTSTR, attrib:UINT
-
-    ldr rcx,file
-    ldr edx,attrib
-
 ifdef __UNIX__
     mov eax,-1
 else
-    .ifd ( SetFileAttributes(rcx, edx) == 0 )
+    .ifd ( SetFileAttributes( ldr(file), ldr(attrib) ) == 0 )
 
         .return( _dosmaperr( GetLastError() ) )
     .endif

@@ -11,9 +11,7 @@ include tchar.inc
 
 _tfilexist proc file:LPTSTR
 
-    ldr rcx,file
-
-    _tgetfattr(rcx)
+    _tgetfattr( ldr(file) )
     inc eax
     .ifnz
         dec eax             ; 1 = file

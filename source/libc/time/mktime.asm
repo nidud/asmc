@@ -196,18 +196,14 @@ _make_time_t endp
 
 mktime proc tb:ptr tm
 
-    ldr rcx,tb
-
-    _make_time_t( rcx, 1 )
+    _make_time_t( ldr(tb), 1 )
     ret
 
 mktime endp
 
 _mkgmtime proc tb:ptr tm
 
-    ldr rcx,tb
-
-    _make_time_t( rcx, 0 )
+    _make_time_t( ldr(tb), 0 )
     ret
 
 _mkgmtime endp

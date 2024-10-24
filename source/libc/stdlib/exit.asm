@@ -13,8 +13,7 @@ doexit proto :int_t, :int_t, :int_t
 
 exit proc retval:int_t
 
-    ldr ecx,retval
-    doexit( ecx, 0, 0 ) ; full term, kill process
+    doexit( ldr(retval), 0, 0 ) ; full term, kill process
 
 exit endp
 

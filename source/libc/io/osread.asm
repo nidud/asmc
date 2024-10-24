@@ -17,11 +17,7 @@ endif
 osread proc handle:int_t, buffer:ptr, size:uint_t
 ifdef __UNIX__
 
-    ldr ecx,handle
-    ldr rax,buffer
-    ldr edx,size
-
-    .ifs ( sys_read(ecx, rax, rdx) < 0 )
+    .ifsd ( sys_read( ldr(handle), ldr(buffer), ldr(size) ) < 0 )
 
         neg eax
         _set_errno( eax )

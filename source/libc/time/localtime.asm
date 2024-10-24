@@ -14,7 +14,7 @@ include errno.inc
 
 localtime proc ptime:LPTIME
 
-    .ifd _localtime32_s(&tb, ptime)
+    .ifd _localtime32_s( &tb, ldr(ptime) )
 
         _set_errno( eax )
         .return( 0 )

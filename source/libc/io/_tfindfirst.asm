@@ -160,11 +160,10 @@ _tfindnext proc uses rsi rdi handle:ptr, ff:ptr _tfinddata_t
 
   local wf:WIN32_FIND_DATA
 
-    ldr rcx,handle
     ldr rdi,ff
     lea rsi,wf
 
-    .if FindNextFile( rcx, rsi )
+    .if FindNextFile( ldr(handle), rsi )
         copyblock()
     .else
         _dosmaperr( GetLastError() )
@@ -178,11 +177,10 @@ _tfindfirst proc uses rsi rdi rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
 
   local FindFileData:WIN32_FIND_DATA
 
-    ldr rcx,lpFileName
     ldr rdi,ff
     lea rsi,FindFileData
 
-    .ifd ( FindFirstFile( rcx, rsi ) != -1 )
+    .ifd ( FindFirstFile( ldr(lpFileName), rsi ) != -1 )
 
         mov rbx,rax
         copyblock()

@@ -16,9 +16,7 @@ include tchar.inc
 
 _tcstrunc proc string:LPTSTR
 
-    ldr rcx,string
-
-    _tcstrim(_tcsstart(rcx))
+    _tcstrim( _tcsstart( ldr(string) ) )
     ret
 
 _tcstrunc endp

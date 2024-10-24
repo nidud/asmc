@@ -14,11 +14,9 @@ endif
 
 alarm proc seconds:uint_t
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_alarm(edi) < 0 )
-else
-    .ifs ( sys_alarm(seconds) < 0 )
-endif
+
+    .ifsd ( sys_alarm( ldr(seconds) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -28,6 +26,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 alarm endp
 
     end

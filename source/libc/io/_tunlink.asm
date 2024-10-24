@@ -13,9 +13,7 @@ include tchar.inc
 
 _tunlink proc filename:tstring_t
 
-    ldr rcx,filename
-
-    _tremove(rcx)
+    _tremove( ldr(filename) )
     ret
 
 _tunlink endp

@@ -14,25 +14,6 @@ endif
 
 .code
 
-ifdef __UNIX__
-
-nanosleep proc req:ptr timespec, rem:ptr timespec
-ifdef _WIN64
-    sys_nanosleep(rdi, rsi)
-else
-    sys_nanosleep(req, rem)
-endif
-    .ifsd ( eax < 0 )
-
-        neg eax
-        _set_errno( eax )
-    .endif
-    ret
-
-nanosleep endp
-
-endif
-
 _sleep proc milliseconds:uint_t
 
 ifdef __UNIX__
@@ -58,10 +39,7 @@ ifdef __UNIX__
     add  rax,rcx
 
 else
-
-    ldr ecx,milliseconds
-
-    Sleep(ecx)
+    Sleep( ldr(milliseconds) )
 endif
     ret
 

@@ -13,8 +13,7 @@ include tchar.inc
 
 _tisexec proc uses rbx path:LPTSTR
 
-    ldr rcx,path
-    .if _tcsext( rcx )
+    .if _tcsext( ldr(path) )
 
         lea rbx,[rax+TCHAR]
         .if ( _tcsicmp(rbx, "cmd") == 0 )

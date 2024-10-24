@@ -13,23 +13,17 @@ endif
 
 .code
 
-_taccess proc uses rbx file:LPTSTR, mode:SINT
-
-    ldr rcx,file
-    ldr ebx,mode
-
+_taccess proc file:LPTSTR, mode:SINT
 ifdef __UNIX__
-
-    .ifsd ( sys_access(rcx, ebx) < 0 )
+    .ifsd ( sys_access( ldr(file), ldr(mode) ) < 0 )
 
         neg eax
         _set_errno( eax )
     .endif
 else
+    .ifd ( _tgetfattr( ldr(file) ) != -1 )
 
-    .ifd ( _tgetfattr( rcx ) != -1 )
-
-        .if ( ebx == 2 && eax & _A_RDONLY )
+        .if ( mode == 2 && eax & _A_RDONLY )
             mov eax,-1
         .else
             xor eax,eax

@@ -11,8 +11,7 @@ include tchar.inc
 
 _ttoll proc string:LPTSTR
 
-    ldr rcx,string
-    _ttoi64(rcx)
+    _ttoi64( ldr(string) )
     ret
 
 _ttoll endp

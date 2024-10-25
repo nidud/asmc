@@ -1,9 +1,27 @@
-all: test.exe clean
+# Makefile for cpuid
+# Thu Oct 24 23:18:12 2024
 
-test.exe:
-    asmc64 -nologo $*.asm
-    $@
-    pause
+flags = -q
+ifdef YACC
+flags += -fpic
+else
+flags += -pe
+endif
+
+cpuid:
+	asmc64 $(flags) $@.asm
+ifdef YACC
+	./$@
+else
+	$@
+endif
+	@pause
 
 clean:
-    del *.obj
+ifdef YACC
+	rm ./cpuid.o
+	rm ./cpuid
+else
+	del cpuid.exe
+	del cpuid.obj
+endif

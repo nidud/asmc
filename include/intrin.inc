@@ -447,45 +447,46 @@ __clts macro
     exitm<clts>
     endm
 
-__cpuid proto fastcall :ptr, :int_t {
-    push    rsi
-    push    rbx
-    mov     rsi,rcx
+__cpuidex proto asmcall :ptr, :int_t, :int_t {
+ifdef _WIN64
+    mov     r8,rax
+    mov     r9,rbx
     mov     eax,edx
-    xor     ecx,ecx
     cpuid
-    mov     [rsi],eax
-    mov     [rsi+4],ebx
-    mov     [rsi+8],ecx
-    mov     [rsi+12],edx
-    pop     rbx
-    pop     rsi
-    }
-
-__cpuidex proto fastcall :ptr, :int_t, :int_t {
-    push    rsi
-    push    rbx
-    mov     rsi,_1
-    mov     eax,_2
-    mov     ecx,_3
+    mov     [r8+0x0],eax
+    mov     [r8+0x4],ebx
+    mov     [r8+0x8],ecx
+    mov     [r8+0xC],edx
+    mov     rbx,r9
+else
+    push    esi
+    push    ebx
+    mov     esi,eax
+    mov     eax,edx
     cpuid
-    mov     [rsi],eax
-    mov     [rsi+4],ebx
-    mov     [rsi+8],ecx
-    mov     [rsi+12],edx
-    pop     rbx
-    pop     rsi
+    mov     [esi+0x0],eax
+    mov     [esi+0x4],ebx
+    mov     [esi+0x8],ecx
+    mov     [esi+0xC],edx
+    pop     ebx
+    pop     esi
+endif
     }
 
-__emul proto fastcall :int_t, :int_t {
-    movsxd  rcx,ecx
-    movsxd  rax,edx
-    imul    rcx
+__cpuid macro p, i
+    exitm<__cpuidex(p, i, 0)>
+    endm
+
+__emul proto watcall :int_t, :int_t {
+ifdef _WIN64
+    movsxd  rdx,edx
+    movsxd  rax,eax
+endif
+    imul    rdx
     }
 
-__emulu proto fastcall :int_t, :int_t {
-    mov     eax,_2
-    mul     rcx
+__emulu proto watcall :int_t, :int_t {
+    mul     rdx
     }
 
 endif

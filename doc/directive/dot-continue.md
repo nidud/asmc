@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 **.CONTINUE**[([0]1..n)] [[**.IF** _condition_]]
 
-Generates code to jump to the top of a [.WHILE](dot_while.md) or [.REPEAT](dot_repeat.md) block if _condition_ is true.
+Generates code to jump to the top of a [.WHILE](dot-while.md) or [.REPEAT](dot-repeat.md) block if _condition_ is true.
 
 **.CONTINUE**[(1..n)] is optional nesting level to continue.
 

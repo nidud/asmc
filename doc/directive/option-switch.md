@@ -12,4 +12,4 @@ The **NOREGS** and **REGAX** options control the usage of registers in jump-tabl
 
 #### See Also
 
-[Option](option.md) | [Directives Reference](readme.md) | [.SWITCH](dot_switch.md)
+[Option](option.md) | [Directives Reference](readme.md) | [.SWITCH](dot-switch.md)

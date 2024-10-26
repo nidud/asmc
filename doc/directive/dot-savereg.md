@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## .SAVEREG
 
-Generates either a UWOP_SAVE_NONVOL or a UWOP_SAVE_NONVOL_FAR unwind code entry for the specified register (reg) and offset (offset) using the current prologue offset. MASM will choose the most efficient encoding.
+Generates either a UWOP_SAVE_NONVOL or a UWOP_SAVE_NONVOL_FAR unwind code entry for the specified register (reg) and offset (offset) using the current prologue offset. ASMC will choose the most efficient encoding.
 
 **.SAVEREG** _reg_, _offset_
 

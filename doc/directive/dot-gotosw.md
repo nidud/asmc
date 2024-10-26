@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 .**GOTOSW** [[([[n:]]<_caseval_>)] | [.**IF** _condition_]]
 
-Generates code to jump to the top of a [.SWITCH](dot_switch.md) block if _condition_ is true.
+Generates code to jump to the top of a [.SWITCH](dot-switch.md) block if _condition_ is true.
 
 **.GOTOSW** jump's directly to the TEST label.
 

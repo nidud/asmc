@@ -17,4 +17,4 @@ value = 0.3333333333333333
 
 #### See Also
 
-[Option](option.md) | [Directives Reference](readme.md) | [option floatformat](opt_floatformat.md)
+[Option](option.md) | [Directives Reference](readme.md) | [option floatformat](option-floatformat.md)

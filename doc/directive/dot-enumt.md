@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 **.ENUMT** [[ _name_ ]] [[ : _type_ ]] [[ { ]]
 
-The enumt keyword is similar to [.ENUM](dot_enum.md) but uses _type_ as _size_ multiplier.
+The enumt keyword is similar to [.ENUM](dot-enum.md) but uses _type_ as _size_ multiplier.
 
 For example, in the following enumeration, Sat is 0, Sun is 2, Mon is 4, and so forth.
 ```

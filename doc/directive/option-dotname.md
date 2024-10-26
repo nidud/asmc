@@ -6,4 +6,4 @@ Allows names of identifiers to begin with a period. The default is OPTION NODOTN
 
 #### See Also
 
-[Option](option.md) | [Directives Reference](readme.md) | [NODOTNAME](opt_nodotname.md)
+[Option](option.md) | [Directives Reference](readme.md) | [NODOTNAME](option-nodotname.md)

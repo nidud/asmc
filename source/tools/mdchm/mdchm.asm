@@ -357,7 +357,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
             fprintf(fp, "<h%d>", h)
            .endc
         .case '<'
-            .ifd !memcmp(rbx, "<table>", 7)
+            .ifd !memcmp(rbx, "<table", 6)
                 mov table,1
             .elseifd !memcmp(rbx, "</table>", 8)
                 mov table,0
@@ -569,7 +569,7 @@ makecss proc opt_css:int_t
         "a { text-decoration: none; }\n"
         "a:hover { color: #ffffff; background: #1b2466; }\n"
         "table { font-size: 90%%; }\n"
-        "td { text-align: left; padding: 0px 10px 0px 10px; }\n"
+        "td { vertical-align: top; text-align: left; padding: 0px 10px 0px 10px; }\n"
         "pre { width: 96%%; padding: 4px 10px; font-size: 100%%; }\n"
         "code { width: 96%%; padding: 4px 10px; }\n" )
     fclose(fp)

@@ -490,7 +490,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
             .if ( !( op1.flags & E_INDIRECT ) && is_float == 0 )
 
                 mov edx,T_TEST
-                .if ( Options.masm_compat_gencode )
+                .if ( ModuleInfo.masm_compat_gencode )
                     mov edx,T_OR
                 .endif
                 RenderInstr( buffer, edx, op1_pos, op1_end,
@@ -586,7 +586,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         ; v2.22 - switch /Zg to OR
         ;
         mov edx,T_TEST
-        .if Options.masm_compat_gencode
+        .if ModuleInfo.masm_compat_gencode
             mov edx,T_OR
         .endif
         RenderInstr( buffer, edx, op1_pos, op1_end, op2_pos, op2_end, rbx )
@@ -608,7 +608,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
             ; v2.22 - switch /Zg to OR
             ;
             mov edx,T_TEST
-            .if ( Options.masm_compat_gencode )
+            .if ( ModuleInfo.masm_compat_gencode )
                 mov edx,T_OR
             .endif
             RenderInstr( buffer, edx, op1_pos, op1_end, op1_pos, op1_end, rbx )

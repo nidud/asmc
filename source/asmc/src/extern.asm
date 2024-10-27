@@ -289,7 +289,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 ; v2.04: don't inherit current segment for FAR externals
                 ; if -Zg is set.
 
-                .endc .if ( Options.masm_compat_gencode )
+                .endc .if ( ModuleInfo.masm_compat_gencode )
 
                 ; fall through
 

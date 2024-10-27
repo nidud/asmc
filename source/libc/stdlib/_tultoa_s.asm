@@ -10,13 +10,8 @@ include tchar.inc
     .code
 
 _ultot_s proc val:uint_t, buffer:tstring_t, sizeInTChars:size_t, radix:int_t
-
 ifdef _WIN64
- ifdef __UNIX__
-    _txtoa_s( rdi, rsi, edx, ecx, 0 )
- else
-    _txtoa_s( rcx, rdx, r8d, r9d, 0 )
- endif
+    _txtoa_s( ldr(val), ldr(buffer), ldr(sizeInTChars), ldr(radix), 0 )
 else
     mov eax,val
     xor edx,edx

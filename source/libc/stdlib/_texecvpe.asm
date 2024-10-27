@@ -18,15 +18,9 @@ endif
 .code
 
 _texecvpe proc path:tstring_t, argv:tarray_t, envp:tarray_t
-ifdef _WIN64
-ifdef __UNIX__
-    _texecve( rdi, rsi, rdx )
-else
-    _texecve( rcx, rdx, r8 )
-endif
-else
-    _texecve( path, argv, envp )
-endif
+
+    _texecve( ldr(path), ldr(argv), ldr(envp) )
+
 if 0
    .new retval:int_t = eax
     _get_errno(NULL)

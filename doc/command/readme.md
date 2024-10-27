@@ -86,7 +86,7 @@ The options listed in the following table.
 - **-Zd** - Generates line-number information in object file.
 - **-Zf** - Make all symbols public.
 - **-zf**[01] - Set FASTCALL type: MS/OW.
-- **-Zg** - Generate code to match Masm.
+- [**-Zg**](option-zg.md) - Generate code to match Masm.
 - [**-Zi**](option-zi.md) - Add symbolic debugging information.
 - **-zlc** - No OMF records of data in code.
 - **-zld** - No OMF records of far call.

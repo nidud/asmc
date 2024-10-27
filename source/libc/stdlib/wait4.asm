@@ -12,11 +12,7 @@ include errno.inc
 
 wait4 proc pid:pid_t, stat_addr:ptr int_t, options:int_t, ru:ptr rusage
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_wait4(edi, rsi, edx, rcx) < 0 )
-else
-    .ifs ( sys_wait4(pid, stat_addr, options, ru) < 0 )
-endif
+    .ifsd ( sys_wait4(ldr(pid), ldr(stat_addr), ldr(options), ldr(ru)) < 0 )
         neg eax
 else
         mov eax,ENOSYS

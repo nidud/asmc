@@ -23,15 +23,7 @@ _tspawnvp proc mode:int_t, name:tstring_t, argv:tarray_t
     .if ( !rax || TCHAR ptr [rax] == 0 )
         .return( _set_errno(EINVAL) )
     .endif
-ifdef _WIN64
-ifdef __UNIX__
-    _tspawnvpe( edi, rsi, rdx, _tenviron )
-else
-    _tspawnvpe( ecx, rdx, r8, _tenviron )
-endif
-else
-    _tspawnvpe( mode, name, argv, _tenviron )
-endif
+    _tspawnvpe( ldr(mode), ldr(name), ldr(argv), _tenviron )
     ret
 
 _tspawnvp endp

@@ -2659,7 +2659,29 @@ endif
 
         .else ; asize == pushsize
 
-            .if ( IS_SIGNED(opnd.mem_type) && psize > asize )
+            .if ( psize == 8 && asize == 4 )
+
+                .if ( ModuleInfo.masm_compat_gencode == 1 )
+
+                    asmerr( 2114, ParamId )
+
+                .elseif ( IS_SIGNED(opnd.mem_type) )
+
+                    AddLineQueueX(
+                        " mov eax,%s\n"
+                        " cdq\n"
+                        " push edx\n"
+                        " push eax", &fullparam )
+
+                    mov rcx,r0flags
+                    mov byte ptr [rcx],R0_USED
+                .else
+                    AddLineQueueX(
+                        " push 0\n"
+                        " push %s", &fullparam )
+                .endif
+
+            .elseif ( IS_SIGNED(opnd.mem_type) && psize > asize )
 
                 .if ( psize > 2 && ( curr_cpu >= P_386 ) )
 
@@ -2751,7 +2773,25 @@ endif
 
                 .if ( psize > 4 && pushsize < 8 )
 
-                    asmerr( 2114, ParamId )
+                    .if ( psize != 8 || ModuleInfo.masm_compat_gencode == 1 )
+
+                        asmerr( 2114, ParamId )
+
+                    .elseif ( IS_SIGNED(opnd.mem_type) )
+
+                        .if ( reg != T_EAX )
+
+                            AddLineQueueX( " mov eax,%r", reg )
+                            mov rcx,r0flags
+                            mov byte ptr [rcx],R0_USED
+                            mov reg,T_EAX
+                        .endif
+                        AddLineQueueX(
+                            " cdq\n"
+                            " push edx" )
+                    .else
+                        AddLineQueueX(" push 0")
+                    .endif
                 .endif
 
                 .if ( asize <= 2 && ( psize == 4 || pushsize == 4 ) )

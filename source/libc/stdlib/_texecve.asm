@@ -17,16 +17,10 @@ endif
 .code
 
 _texecve proc name:tstring_t, argv:tarray_t, envp:tarray_t
-ifdef _WIN64
-ifdef __UNIX__
-    _tspawnve( _P_OVERLAY, rdi, rsi, rdx )
-else
-    _tspawnve( _P_OVERLAY, rcx, rdx, r8 )
-endif
-else
-    _tspawnve( _P_OVERLAY, name, argv, envp )
-endif
+
+    _tspawnve( _P_OVERLAY, ldr(name), ldr(argv), ldr(envp) )
     ret
+
 _texecve endp
 
     end

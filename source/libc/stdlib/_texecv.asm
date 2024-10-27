@@ -17,15 +17,8 @@ endif
 .code
 
 _texecv proc file:tstring_t, argv:tarray_t
-ifdef _WIN64
-ifdef __UNIX__
-    _texecve( rdi, rsi, _tenviron )
-else
-    _texecve( rcx, rdx, _tenviron )
-endif
-else
-    _texecve( file, argv, _tenviron )
-endif
+
+    _texecve( ldr(file), ldr(argv), _tenviron )
     ret
 
 _texecv endp

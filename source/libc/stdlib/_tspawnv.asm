@@ -17,15 +17,8 @@ endif
 .code
 
 _tspawnv proc mode:int_t, name:tstring_t, argv:tarray_t
-ifdef _WIN64
-ifdef __UNIX__
-    _tspawnve( edi, rsi, rdx, _tenviron )
-else
-    _tspawnve( ecx, rdx, r8, _tenviron )
-endif
-else
-    _tspawnve( mode, name, argv, _tenviron )
-endif
+
+    _tspawnve( ldr(mode), ldr(name), ldr(argv), _tenviron )
     ret
 
 _tspawnv endp

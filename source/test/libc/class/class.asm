@@ -48,6 +48,8 @@ _tmain proc
 
     p.Print()
     p.Release()
+
+    xor eax,eax
     ret
 
 _tmain endp

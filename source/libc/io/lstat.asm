@@ -13,11 +13,8 @@ endif
 
 lstat proc file:string_t, buf:PSTAT
 ifdef __UNIX__
-ifdef _WIN64
-    .ifs ( sys_newlstat(rdi, rsi) < 0 )
-else
-    .ifs ( sys_newlstat(file, buf) < 0 )
-endif
+    .ifsd ( sys_newlstat( ldr(file), ldr(buf) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -27,6 +24,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 lstat endp
 
     end

@@ -26,11 +26,8 @@ ifdef __UNIX__
 
 _tchmod proc path:tstring_t, mode:int_t
 
-ifdef _WIN64
-    .ifs ( sys_chmod(rdi, esi) < 0 )
-else
-    .ifs ( sys_chmod(path, mode) < 0 )
-endif
+    .ifsd ( sys_chmod( ldr(path), ldr(mode) ) < 0 )
+
         neg eax
         _set_errno( eax )
     .endif

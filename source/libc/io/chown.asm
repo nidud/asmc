@@ -14,11 +14,8 @@ endif
 
 chown proc file:string_t, user:uid_t, grp:gid_t
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_chown(rdi, esi, edx) < 0 )
-else
-    .ifs ( sys_chown(file, user, grp) < 0 )
-endif
+    .ifs ( sys_chown( ldr(file), ldr(user), ldr(grp) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -28,6 +25,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 chown endp
 
     end

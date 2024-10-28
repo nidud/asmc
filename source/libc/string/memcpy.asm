@@ -238,12 +238,10 @@ memcpy endp
 
 ifdef __UNIX__
 memmove proc dst:ptr, src:ptr, size:size_t
-ifdef _WIN64
-    memcpy(rdi, rsi, rdx)
-else
-    memcpy(dst, src, size)
-endif
+
+    memcpy( ldr(dst), ldr(src), ldr(size) )
     ret
+
 memmove endp
 endif
 

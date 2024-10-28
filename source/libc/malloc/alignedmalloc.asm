@@ -34,12 +34,10 @@ _aligned_malloc endp
 
 ifdef __UNIX__
 _aligned_free proc p:ptr
-ifdef _WIN64
-    free(rdi)
-else
-    free(p)
-endif
+
+    free( ldr(p) )
     ret
+
 _aligned_free endp
 endif
 

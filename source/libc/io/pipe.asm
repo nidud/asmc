@@ -14,11 +14,8 @@ endif
 
 pipe proc pfd:ptr int_t
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_pipe(rdi) < 0 )
-else
-    .ifs ( sys_pipe(pfd) < 0 )
-endif
+    .ifsd ( sys_pipe( ldr(pfd) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -28,6 +25,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 pipe endp
 
     end

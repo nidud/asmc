@@ -38,9 +38,7 @@ _lk_getltime proc private ft:LPFILETIME
   local SystemTime:SYSTEMTIME
   local LocalFTime:FILETIME
 
-    ldr rcx,ft
-
-    .if FileTimeToLocalFileTime(rcx, &LocalFTime)
+    .if FileTimeToLocalFileTime( ldr(ft), &LocalFTime )
         .if FileTimeToSystemTime(&LocalFTime, &SystemTime)
             _loctotime_t(
                 SystemTime.wYear,

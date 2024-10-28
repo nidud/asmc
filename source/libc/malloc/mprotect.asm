@@ -13,12 +13,10 @@ endif
 .code
 
 mprotect proc p:ptr, len:size_t, prot:int_t
+
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_mprotect(rdi, rsi, edx) < 0 )
-else
-    .ifs ( sys_mprotect(p, len, prot) < 0 )
-endif
+    .ifsd ( sys_mprotect( ldr(p), ldr(len), ldr(prot) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -28,6 +26,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 mprotect endp
 
     end

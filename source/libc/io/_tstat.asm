@@ -24,11 +24,9 @@ include tchar.inc
 ifdef __UNIX__
 
 _stat proc file:string_t, buf:PSTAT
-ifdef _WIN64
-    .ifs ( sys_newstat(rdi, rsi) < 0 )
-else
-    .ifs ( sys_newstat(file, buf) < 0 )
-endif
+
+    .ifsd ( sys_newstat( ldr(file), ldr(buf) ) < 0 )
+
         neg eax
         _set_errno( eax )
     .endif

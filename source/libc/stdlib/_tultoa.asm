@@ -12,13 +12,8 @@ include tchar.inc
     .code
 
 _ultot proc val:uint_t, buffer:tstring_t, radix:int_t
-ifdef _WIN64
+
     _txtoa( ldr(val), ldr(buffer), ldr(radix), 0 )
-else
-    mov eax,val
-    xor edx,edx
-    _txtoa( edx::eax, buffer, radix, 0 )
-endif
     ret
 
 _ultot endp

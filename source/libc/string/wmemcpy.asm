@@ -63,12 +63,10 @@ wmemcpy endp
 
 ifdef __UNIX__
 wmemmove proc dst:ptr, src:ptr, size:size_t
-ifdef _WIN64
-    wmemcpy(rdi, rsi, rdx)
-else
-    wmemcpy(dst, src, size)
-endif
+
+    wmemcpy( ldr(dst), ldr(src), ldr(size) )
     ret
+
 wmemmove endp
 endif
 

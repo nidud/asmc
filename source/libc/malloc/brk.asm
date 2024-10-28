@@ -12,12 +12,10 @@ endif
 .code
 
 brk proc p:ptr
+
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_brk(rdi) < 0 )
-else
-    .ifs ( sys_brk(p) < 0 )
-endif
+    .ifsd ( sys_brk( ldr(p) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -27,6 +25,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 brk endp
 
     end

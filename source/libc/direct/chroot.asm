@@ -14,11 +14,8 @@ endif
 
 chroot proc path:string_t
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_chroot(rdi) < 0 )
-else
-    .ifs ( sys_chroot(path) < 0 )
-endif
+    .ifsd ( sys_chroot( ldr(path) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS

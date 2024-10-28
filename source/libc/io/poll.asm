@@ -14,11 +14,8 @@ endif
 
 poll proc fds:ptr pollfd, nfds:nfds_t, timeout:int_t
 ifdef __UNIX__
-ifdef _WIN64
-    .ifsd ( sys_poll(rdi, esi, edx) < 0 )
-else
-    .ifs ( sys_poll(fds, nfds, timeout) < 0 )
-endif
+    .ifsd ( sys_poll( ldr(fds), ldr(nfds), ldr(timeout) ) < 0 )
+
         neg eax
 else
         mov eax,ENOSYS
@@ -28,6 +25,7 @@ ifdef __UNIX__
     .endif
 endif
     ret
+
 poll endp
 
     end

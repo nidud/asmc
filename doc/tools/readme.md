@@ -4,6 +4,7 @@ Asmc Macro Assembler Reference
 
 ### In This Section
 
+- [Asmc Build Environment Reference](environ/readme.md)
 - [Asmc Linker Reference](linkw/readme.md)
 - [Asmc Library Manager Reference](libw/readme.md)
 - [Asmc C Include File Translator Reference](h2inc/readme.md)

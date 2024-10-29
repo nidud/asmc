@@ -20,4 +20,4 @@ This means there's some discipline with regards to register usage throughout the
 
 In addition to this a large portion of the source code which depends on LIBC (local or external) may also work in Linux. This require some additional discipline and [Asmc](asmc/) falls into this category (and also [libc](libc/) itself).
 
-In Linux GNU make is used, so to distinguish between the simple make utility supplied here a symbol always defined by GNU make (YACC in this case) is used in the make files. Another common command used in make files is [pause](tools/pause/pause.asm), so if you plan on playing with the samples in Linux it may be a good idea to install that first.
+In Linux GNU make is used, so to distinguish between the simple [make utility](tools/make/) supplied here a symbol always defined by GNU make (YACC in this case) is used in the make files. Another common command used in make files is [pause](tools/pause/), so if you plan on playing with the samples in Linux it may be a good idea to install that first.

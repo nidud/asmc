@@ -31,4 +31,4 @@ These people contributed to Asmc (additions, bugfixes, bug reports):
 
 #### See Also
 
-[Asmc Reference](readme.md) | [JWasm](https://github.com/Baron-von-Riedesel/JWasm)
+[Asmc Reference](readme.md)

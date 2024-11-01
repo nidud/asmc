@@ -3,7 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-; Capture the console window to (a relatively large) bitmap.
+; Capture the console window to bitmap.
 ;
 include stdio.inc
 include windows.inc
@@ -25,20 +25,69 @@ _tmain proc argc:int_t, argv:array_t
    .new retval:DWORD = 1
    .new rc:RECT
    .new bf:BITMAPFILEHEADER
+   .new color[256]:DWORD
    .new bi:BITMAPINFOHEADER
    .new hWnd:HWND
    .new file:tstring_t = "default.bmp"
+   .new bits:int_t = 4
+   .new colors:int_t = 16
 
-    .if ( argc > 1 )
+    .for ( ebx = 1 : ebx < argc : ebx++ )
 
         mov rcx,argv
-        mov rbx,[rcx+size_t]
-        .if ( byte ptr [rbx] == '-' || byte ptr [rbx] == '/' )
-            _putts("usage: CONBMP [<bmp_file>]\n")
-            .return( 0 )
+        mov rcx,[rcx+rbx*size_t]
+        mov eax,[rcx]
+        .if ( al == '-' || al == '/' )
+            shr eax,8
+            .switch al
+            .case '1'
+                .if ( ah == '6' )
+                    mov bits,16
+                    mov colors,0
+                .else
+                    mov bits,1
+                    mov colors,2
+                .endif
+                .endc
+            .case '2'
+                .if ( ah == '4' )
+                    mov bits,24
+                    mov colors,0
+                .else
+                    mov bits,2
+                    mov colors,4
+                .endif
+                .endc
+            .case '4'
+                mov bits,4
+                mov colors,16
+               .endc
+            .case '8'
+                mov bits,8
+                mov colors,256
+               .endc
+            .case '3'
+                mov bits,32
+                mov colors,0
+               .endc
+            .default
+                _putts(
+                    "usage: CONBMP [ -<bits_per_pixel> ] [ <bmp_file> ]\n"
+                    "\n"
+                    "-1        2 colors (monochrome)\n"
+                    "-2        4 colors\n"
+                    "-4       16 colors (default)\n"
+                    "-8      256 colors\n"
+                    "-16    2^16 colors\n"
+                    "-24    2^24 colors\n"
+                    "-32    2^32 colors\n"
+                    "\n" )
+                .return( 0 )
+            .endsw
+        .else
+            mov file,rcx
         .endif
-        mov file,rbx
-    .endif
+    .endf
 
     mov hWnd,GetConsoleWindow()
     GetClientRect(hWnd, &rc)
@@ -79,40 +128,47 @@ _tmain proc argc:int_t, argv:array_t
     mov bi.biWidth,bmp.bmWidth
     mov bi.biHeight,bmp.bmHeight
     mov bi.biPlanes,1
-    mov bi.biBitCount,32
+    mov bi.biBitCount,bits
     mov bi.biCompression,BI_RGB
     mov bi.biSizeImage,0
     mov bi.biXPelsPerMeter,0
     mov bi.biYPelsPerMeter,0
-    mov bi.biClrUsed,0
+    mov bi.biClrUsed,colors
     mov bi.biClrImportant,0
 
-    movzx ecx,bi.biBitCount
-    mov eax,bmp.bmWidth
-    mul ecx
-    add eax,31
-    shr eax,5
-    shl eax,2
-    mul bmp.bmHeight
-    mov bmpsize,eax
+    .ifd GetDIBits(hdc, hbm, 0, bmp.bmHeight, 0, &bi, DIB_RGB_COLORS)
 
-    mov rsi,GlobalAlloc(GHND, bmpsize)
-    mov rdi,GlobalLock(rsi)
-    GetDIBits(hdc, hbm, 0, bmp.bmHeight, rdi, &bi, DIB_RGB_COLORS)
-    mov rbx,CreateFile(file, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL)
-    mov eax,bmpsize
-    add eax,BITMAPFILEHEADER + BITMAPINFOHEADER
-    mov dibsize,eax
-    mov bf.bfOffBits, BITMAPFILEHEADER + BITMAPINFOHEADER
-    mov bf.bfSize,dibsize
-    mov bf.bfType,0x4D42 ; BM.
-    WriteFile(rbx, &bf, BITMAPFILEHEADER, &written, NULL)
-    WriteFile(rbx, &bi, BITMAPINFOHEADER, &written, NULL)
-    WriteFile(rbx, rdi, bmpsize, &written, NULL)
-    GlobalUnlock(rsi)
-    GlobalFree(rsi)
-    CloseHandle(rbx)
-    mov retval,0
+        mov bmpsize,bi.biSizeImage
+
+        mov rsi,GlobalAlloc(GHND, bmpsize)
+        mov rdi,GlobalLock(rsi)
+
+        .ifd GetDIBits(hdc, hbm, 0, bmp.bmHeight, rdi, &bi, DIB_RGB_COLORS)
+
+            mov rbx,CreateFile(file, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL)
+            mov eax,bmpsize
+            add eax,BITMAPFILEHEADER + BITMAPINFOHEADER
+            mov dibsize,eax
+            mov bf.bfOffBits, BITMAPFILEHEADER + BITMAPINFOHEADER
+            mov bf.bfSize,dibsize
+            mov bf.bfType,0x4D42 ; BM.
+            WriteFile(rbx, &bf, BITMAPFILEHEADER, &written, NULL)
+            WriteFile(rbx, &bi, BITMAPINFOHEADER, &written, NULL)
+            .if ( colors )
+                imul ecx,colors,4
+                WriteFile(rbx, &color, ecx, &written, NULL)
+            .endif
+            WriteFile(rbx, rdi, bmpsize, &written, NULL)
+            CloseHandle(rbx)
+            mov retval,0
+        .else
+            _putts("GetDIBits failed\n")
+        .endif
+        GlobalUnlock(rsi)
+        GlobalFree(rsi)
+    .else
+        _putts("GetDIBits failed\n")
+    .endif
 done:
     DeleteObject(hbm)
     DeleteObject(mdc)

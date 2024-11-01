@@ -107,9 +107,6 @@ wmain proc argc:int_t, argv:ptr wstring_t
                .new Status:AsyncStatus = 0
                .new progressHandler:ptr ProgressHandler(&completedEvent, &Status)
                 mov hr,deploymentOperation.put_Completed(progressHandler)
-                ;.if (SUCCEEDED(hr))
-                ;    mov hr,deploymentOperation.put_Progress(progressHandler)
-                ;.endif
             .endif
 
             .if (SUCCEEDED(hr))
@@ -121,11 +118,12 @@ wmain proc argc:int_t, argv:ptr wstring_t
 
                 .if (Status == AsyncStatus_Error)
 
-                   .new errorMsg:ptr wchar_t = "Unknown"
+                   .new errorMsg:wstring_t = "Unknown"
                    .new errorCode:int_t = 0
 
                    .new deploymentResult:ptr Windows::Management::Deployment::IDeploymentResult = nullptr
                     mov hr,deploymentOperation.GetResults(&deploymentResult)
+
                     .if (SUCCEEDED(hr))
 
                         .new errorText:HSTRING = nullptr

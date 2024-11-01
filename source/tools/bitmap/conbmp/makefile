@@ -1,2 +1,3 @@
 conbmp.exe:
-	asmc64 -pe -frame $*.asm
+	asmc64 -pe -frame -Fo ..\..\..\..\bin\$@ $*.asm
+	$@ -?

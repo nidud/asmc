@@ -173,6 +173,8 @@ compress:
     jmp     .6
 .2:
     inc     ebx
+    bt      ebx,16
+    jc      .9
     add     rsi,4
     mov     al,[rsi]
     cmp     al,[rsi+4]
@@ -189,6 +191,10 @@ compress:
     mov     al,dl
     stosb
     jmp     .7
+.9:
+    dec     ebx
+    inc     ecx
+    jmp     .4
 .5:
     xchg    ah,al
 .6:

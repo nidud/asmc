@@ -28,5 +28,3 @@ Asmc Macro Assembler Reference
 - [Symbols Reference](doc/symbol/readme.md)
 - [Operators Reference](doc/operator/readme.md)
 - [Asmc Build Tools Reference](doc/tools/readme.md)
-
-![AddPackageSample.asm](source/tools/bitmap/imgconv/default.png)

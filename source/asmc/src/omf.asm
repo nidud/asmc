@@ -8,7 +8,11 @@
 
 include limits.inc
 include time.inc
+ifdef __UNIX__
 include sys/stat.inc
+else
+include winbase.inc
+endif
 
 include asmc.inc
 include memalloc.inc
@@ -1416,20 +1420,51 @@ omf_write_comdef endp
 
 
 ifdef __UNIX__
+
 GetFileTimeStamp proc __ccall private uses rsi rdi filename:string_t
+
   local statbuf:_stat32
-    .if ( stat( filename, &statbuf ) != 0 )
-else
-GetFileTimeStamp proc __ccall private filename:string_t
-  local statbuf:_stat32
-    .if ( _stat( filename, &statbuf ) != 0 )
-endif
+
+    .ifd ( stat( filename, &statbuf ) != 0 )
         .return( 0 )
     .endif
     .return( statbuf.st_mtime )
 
 GetFileTimeStamp endp
 
+else
+
+GetFileTimeStamp proc __ccall private filename:string_t
+
+    .new ff:WIN32_FIND_DATA
+    .new SystemTime:SYSTEMTIME
+    .new LocalFTime:FILETIME
+
+    .ifd ( FindFirstFile( ldr(filename), &ff ) == -1 )
+
+        .return( 0 )
+    .endif
+    FindClose( rax )
+
+    .if FileTimeToLocalFileTime(&ff.ftLastWriteTime, &LocalFTime)
+
+        .if FileTimeToSystemTime(&LocalFTime, &SystemTime)
+
+            _loctotime_t(
+                SystemTime.wYear,
+                SystemTime.wMonth,
+                SystemTime.wDay,
+                SystemTime.wHour,
+                SystemTime.wMinute,
+                SystemTime.wSecond
+            )
+        .endif
+    .endif
+    ret
+
+GetFileTimeStamp endp
+
+endif
 
 ; write COMENT dependency records (CMT_DEPENDENCY) for debugging
 ; if line numbers are on; this is a Borland/OW thing.

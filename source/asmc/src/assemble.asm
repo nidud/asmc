@@ -900,7 +900,7 @@ OnePass proc __ccall private uses rsi rdi
         .while ( rsi && !ModuleInfo.EndDirFound )
 
 if ( USELSLINE eq 0 )
-            strcpy( CurrSource, &[rsi].line_item.line )
+            tstrcpy( CurrSource, &[rsi].line_item.line )
 endif
             set_curr_srcfile([rsi].line_item.srcfile, [rsi].line_item.lineno)
             mov ModuleInfo.line_flags,0

@@ -2633,12 +2633,12 @@ $$357:	cmp	al, 3
 	mov	rsi, rax
 	xor	ecx, ecx
 $$358:	cmp	byte ptr [rsi+rcx], 0
-	jz	$_358
+	jz	$$361
 	inc	ecx
 	jmp	$$358
 $$360:	mov	rsi, qword ptr [rax+0x8]
 	mov	ecx, dword ptr [rax+0x10]
-	add	rbx, 24
+$$361:	add	rbx, 24
 	add	dword ptr [rbp-0xA24], 3
 	jmp	$_358
 

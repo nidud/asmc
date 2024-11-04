@@ -182,48 +182,35 @@ else
     mov     edx,edi
     xor     ebx,ebx
     xor     edi,edi
-    jmp     .s7             ; ??
 endif
 .s4:
 ifdef _WIN64
     xor     r9d,r9d
-    mov     r10d,eax
-    shrd    r9d,r10d,cl     ; get the extra sticky bits
+    shrd    r9d,eax,cl      ; get the extra sticky bits
     or      r8d,r9d         ; save them
+    shrd    rax,rdx,cl      ; align the fractions
+    shr     rdx,cl
 else
+    push    ebx
+    xor     ebx,ebx
+    shrd    ebx,eax,cl
+    or      r8d,ebx
+    pop     ebx
+    push    ecx
+    and     ecx,64-1        ; MOD 64..
     cmp     cl,32
-    jb      .s6
-    test    eax,eax         ; check low order qword for 1 bits
-    jnz     .s5
-    inc     r8d             ; edi=1 if EDX:EAX non zero
-.s5:
+    jb      .s5
     mov     eax,edx
     mov     edx,ebx
     mov     ebx,edi
     xor     edi,edi
-    jmp     .s7
-.s6:
-    push    eax             ; get the extra sticky bits
-    push    ebx
-    xor     ebx,ebx
-    shr     eax,15
-    shrd    ebx,eax,cl
-    or      r8d,ebx         ; save them
-    pop     ebx
-    pop     eax
-endif
-
-.s7:
-ifdef _WIN64
-    shrd    rax,rdx,cl      ; align the fractions
-    shr     rdx,cl
-else
+.s5:
     shrd    eax,edx,cl
     shrd    edx,ebx,cl
     shrd    ebx,edi,cl
     shr     edi,cl
+    pop     ecx
 endif
-
 .m1:
 ifdef _WIN64
     add     rax,rbx         ; add the fractions

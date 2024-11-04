@@ -1797,48 +1797,35 @@ else
     mov     edx,edi
     xor     ebx,ebx
     xor     edi,edi
-    jmp     .s7             ; ??
 endif
 .s4:
 ifdef _WIN64
     xor     r9d,r9d
-    mov     r10d,eax
-    shrd    r9d,r10d,cl     ; get the extra sticky bits
+    shrd    r9d,eax,cl      ; get the extra sticky bits
     or      r8d,r9d         ; save them
+    shrd    rax,rdx,cl      ; align the fractions
+    shr     rdx,cl
 else
-    cmp     cl,32
-    jb      .s6
-    test    eax,eax         ; check low order qword for 1 bits
-    jnz     .s5
-    inc     r8d             ; edi=1 if EDX:EAX non zero
-.s5:
+    push    ebx
+    xor     ebx,ebx
+    shrd    ebx,eax,cl
+    or      r8d,ebx
+    pop     ebx
+    push    ecx
+    and     ecx,64-1
+    cmp     cl,32           ; MOD 64..
+    jb      .s5
     mov     eax,edx
     mov     edx,ebx
     mov     ebx,edi
     xor     edi,edi
-    jmp     .s7
-.s6:
-    push    eax             ; get the extra sticky bits
-    push    ebx
-    xor     ebx,ebx
-    shr     eax,15
-    shrd    ebx,eax,cl
-    or      r8d,ebx         ; save them
-    pop     ebx
-    pop     eax
-endif
-
-.s7:
-ifdef _WIN64
-    shrd    rax,rdx,cl      ; align the fractions
-    shr     rdx,cl
-else
+.s5:
     shrd    eax,edx,cl
     shrd    edx,ebx,cl
     shrd    ebx,edi,cl
     shr     edi,cl
+    pop     ecx
 endif
-
 .m1:
 ifdef _WIN64
     add     rax,rbx         ; add the fractions
@@ -2113,17 +2100,17 @@ endif
 _lc_fltadd endp
 
 
-_fltadd proc __ccall private a:ptr STRFLT, b:ptr STRFLT
+_fltadd proc fastcall private a:ptr STRFLT, b:ptr STRFLT
 
-    _lc_fltadd( ldr(a), ldr(b), 0 )
+    _lc_fltadd( rcx, rdx, 0 )
     ret
 
 _fltadd endp
 
 
-_fltsub proc __ccall private a:ptr STRFLT, b:ptr STRFLT
+_fltsub proc fastcall private a:ptr STRFLT, b:ptr STRFLT
 
-    _lc_fltadd( ldr(a), ldr(b), 0x80000000 )
+    _lc_fltadd( rcx, rdx, 0x80000000 )
     ret
 
 _fltsub endp
@@ -3328,8 +3315,8 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
 
     ldr rbx,fp
     ldr rdi,buffer
-    mov rsi,[rbx].STRFLT.string
-    mov ecx,[rbx].STRFLT.flags
+    mov rsi,[rbx].string
+    mov ecx,[rbx].flags
     xor eax,eax
     xor edx,edx
 
@@ -4123,145 +4110,138 @@ endif
     mov [edx+8],eax
     mov [edx+12],eax
 
-    .repeat
+    .if ebx == 16 && edi <= 16
 
-        .if ebx == 16 && edi <= 16
+        ; hex value <= qword
 
-            ; hex value <= qword
+        xor ecx,ecx
 
-            xor ecx,ecx
+        .if edi <= 8
 
-            .if edi <= 8
-
-                ; 32-bit value
-
-                .repeat
-                    mov al,[esi]
-                    add esi,1
-                    and eax,not 0x30    ; 'a' (0x61) --> 'A' (0x41)
-                    bt  eax,6           ; digit ?
-                    sbb ebx,ebx         ; -1 : 0
-                    and ebx,0x37        ; 10 = 0x41 - 0x37
-                    sub eax,ebx
-                    shl ecx,4
-                    add ecx,eax
-                    dec edi
-                .untilz
-
-                mov [edx],ecx
-                mov eax,edx
-                .break
-            .endif
-
-            ; 64-bit value
-
-            xor edx,edx
+            ; 32-bit value
 
             .repeat
-                mov  al,[esi]
-                add  esi,1
-                and  eax,not 0x30
-                bt   eax,6
-                sbb  ebx,ebx
-                and  ebx,0x37
-                sub  eax,ebx
-                shld edx,ecx,4
-                shl  ecx,4
-                add  ecx,eax
-                adc  edx,0
-                dec  edi
+                mov al,[esi]
+                add esi,1
+                and eax,not 0x30    ; 'a' (0x61) --> 'A' (0x41)
+                bt  eax,6           ; digit ?
+                sbb ebx,ebx         ; -1 : 0
+                and ebx,0x37        ; 10 = 0x41 - 0x37
+                sub eax,ebx
+                shl ecx,4
+                add ecx,eax
+                dec edi
             .untilz
 
-            mov eax,dst
-            mov [eax],ecx
-            mov [eax+4],edx
-            .break
+            mov [edx],ecx
+           .return( edx )
+        .endif
 
-        .elseif ebx == 10 && edi <= 20
+        ; 64-bit value
 
-            xor ecx,ecx
+        xor edx,edx
+        .repeat
+            mov  al,[esi]
+            add  esi,1
+            and  eax,not 0x30
+            bt   eax,6
+            sbb  ebx,ebx
+            and  ebx,0x37
+            sub  eax,ebx
+            shld edx,ecx,4
+            shl  ecx,4
+            add  ecx,eax
+            adc  edx,0
+            dec  edi
+        .untilz
 
-            mov cl,[esi]
-            add esi,1
-            sub cl,'0'
+        mov eax,dst
+        mov [eax],ecx
+        mov [eax+4],edx
 
-            .if edi < 10
+    .elseif ( ebx == 10 && edi <= 20 )
 
-                .while 1
+        xor ecx,ecx
 
-                    ; FFFFFFFF - 4294967295 = 10
+        mov cl,[esi]
+        add esi,1
+        sub cl,'0'
 
-                    dec edi
-                    .break .ifz
-
-                    mov al,[esi]
-                    add esi,1
-                    sub al,'0'
-                    lea ebx,[ecx*8+eax]
-                    lea ecx,[ecx*2+ebx]
-                .endw
-
-                mov [edx],ecx
-                mov eax,edx
-                .break
-
-            .endif
-
-            xor edx,edx
+        .if edi < 10
 
             .while 1
 
-                ; FFFFFFFFFFFFFFFF - 18446744073709551615 = 20
+                ; FFFFFFFF - 4294967295 = 10
 
                 dec edi
                 .break .ifz
 
-                mov  al,[esi]
-                add  esi,1
-                sub  al,'0'
-                mov  ebx,edx
-                mov  bsize,ecx
-                shld edx,ecx,3
-                shl  ecx,3
-                add  ecx,bsize
-                adc  edx,ebx
-                add  ecx,bsize
-                adc  edx,ebx
-                add  ecx,eax
-                adc  edx,0
+                mov al,[esi]
+                add esi,1
+                sub al,'0'
+                lea ebx,[ecx*8+eax]
+                lea ecx,[ecx*2+ebx]
             .endw
 
-            mov eax,dst
-            mov [eax],ecx
-            mov [eax+4],edx
+            mov [edx],ecx
+           .return( edx )
 
-        .else
-
-            mov bsize,edi
-            mov edi,edx
-            .repeat
-                mov al,[esi]
-                and eax,not 0x30
-                bt  eax,6
-                sbb ecx,ecx
-                and ecx,0x37
-                sub eax,ecx
-                mov ecx,8
-                .repeat
-                    movzx edx,word ptr [edi]
-                    imul  edx,ebx
-                    add   eax,edx
-                    mov   [edi],ax
-                    add   edi,2
-                    shr   eax,16
-                .untilcxz
-                sub edi,16
-                add esi,1
-                dec bsize
-            .untilz
-            mov eax,dst
         .endif
-    .until 1
+
+        xor edx,edx
+
+        .while 1
+
+            ; FFFFFFFFFFFFFFFF - 18446744073709551615 = 20
+
+            dec edi
+            .break .ifz
+
+            mov  al,[esi]
+            add  esi,1
+            sub  al,'0'
+            mov  ebx,edx
+            mov  bsize,ecx
+            shld edx,ecx,3
+            shl  ecx,3
+            add  ecx,bsize
+            adc  edx,ebx
+            add  ecx,bsize
+            adc  edx,ebx
+            add  ecx,eax
+            adc  edx,0
+        .endw
+
+        mov eax,dst
+        mov [eax],ecx
+        mov [eax+4],edx
+
+    .else
+
+        mov bsize,edi
+        mov edi,edx
+        .repeat
+            mov al,[esi]
+            and eax,not 0x30
+            bt  eax,6
+            sbb ecx,ecx
+            and ecx,0x37
+            sub eax,ecx
+            mov ecx,8
+            .repeat
+                movzx edx,word ptr [edi]
+                imul  edx,ebx
+                add   eax,edx
+                mov   [edi],ax
+                add   edi,2
+                shr   eax,16
+            .untilcxz
+            sub edi,16
+            add esi,1
+            dec bsize
+        .untilz
+        mov eax,dst
+    .endif
     ret
 
 _atoow endp

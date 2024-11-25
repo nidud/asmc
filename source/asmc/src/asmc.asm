@@ -662,6 +662,15 @@ endif
             .for ( rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, ebx++ )
             .endf
             mov args,MemAlloc( &[rbx*string_t] )
+ifdef __UNIX__
+            .for ( rcx = path, [rax] = rcx, rbx = &[rax+string_t],
+                   rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, rbx+=string_t )
+                mov [rbx],&[rcx].anode.name
+            .endf
+            .for ( rcx = Options.link_options : rcx : rcx = [rcx].anode.next, rbx+=string_t )
+                mov [rbx],&[rcx].anode.name
+            .endf
+else
             .for ( rcx = path, [rax] = rcx, rbx = &[rax+string_t],
                    rcx = Options.link_options : rcx : rcx = [rcx].anode.next, rbx+=string_t )
                 mov [rbx],&[rcx].anode.name
@@ -669,6 +678,7 @@ endif
             .for ( rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, rbx+=string_t )
                 mov [rbx],&[rcx].anode.name
             .endf
+endif
             xor eax,eax
             mov [rbx],rax
 

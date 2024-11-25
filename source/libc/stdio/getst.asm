@@ -18,6 +18,7 @@ _getst proc
 
             mov [rcx]._cnt,eax
             mov [rcx]._flag,eax
+            mov [rcx]._bk,eax
             mov [rcx]._ptr,rax
             mov [rcx]._base,rax
             dec eax

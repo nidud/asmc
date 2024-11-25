@@ -79,8 +79,8 @@ asctime proc uses rsi rdi rbx tb:ptr tm
     mov esi,edx
     mov rdi,store_dt(rdi, eax)  ;  year (after 1900)
     mov rdi,store_dt(rdi, esi)
-    mov eax,0x0A0D
-    stosd
+    mov eax,10
+    stosw
     lea rax,buf
     ret
 

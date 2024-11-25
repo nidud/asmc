@@ -59,6 +59,10 @@ _ungotten	dw ?
 else
 _tmpfname	LPTSTR ?
 endif
+ifdef _CRTBLD
+_bk		dd ?
+_bb		dd ?
+endif
 _iobuf		ends
 FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
@@ -203,6 +207,9 @@ _wopenfile	proto __cdecl :wstring_t, :wstring_t, :int_t, :LPFILE
 endif ; _WSTDIO_DEFINED
 
 _fopent		proto __cdecl
+_fgetb		proto __cdecl :LPFILE, :int_t
+_fputb		proto __cdecl :LPFILE, :uint_t, :int_t
+_fflushb	proto __cdecl :LPFILE
 
 ifdef _UNICODE
 define _toutput		<_woutput>

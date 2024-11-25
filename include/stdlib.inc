@@ -735,7 +735,7 @@ alldiv proto watcall :int64_t, :int64_t {
     }
 aulldiv proto watcall :uint64_t, :uint64_t {
     mov	    rcx,rdx
-    xor	    edx,edx
+    cqo
     div	    rcx
     }
 allmul proto watcall :int64_t, :int64_t {

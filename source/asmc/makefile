@@ -1,69 +1,66 @@
 #
 # Makefile for Asmc
 #
+
+flags = -Cs -Iinc -I../../include
+
 ifdef YACC
-
-acc = asmcg
-pic-default = yes
-ifeq (yes,$(pic-default))
-lpic = -Wl,-pie,-z,now,-z,noexecstack
-apic = -fpic
+link = -o $@ -s
 else
-lpic = -Wl,-no-pie
+link = -out:$@.exe -stack:0x300000,0x200000
 endif
-CC = ./$(acc)
-flags = $(apic) -Zp8 -Cs -Iinc -I../../include
-ifeq (asmc,$(acc))
-flags += -elf64
-endif
-all: asmcg asmc asmc64 clean
 
-else
-
-NAME = asmc
-FLAG = -Zp8 -win64 -frame
-LIBP = x64
 ifdef x86
-FLAG = -Zp4 -coff
-LIBP = x86
+acc = asmc
+flags += -Zp4
+ifdef YACC
+ifdef LIBC
+link += -m32 -static -nostdlib -l:x86/libasmc.a -Wl,-no-pie,-z,now,-z,noexecstack
+else
+link += -m32 -static -Wl,-no-pie,-z,now,-z,noexecstack
 endif
-ifdef ASMC64
-NAME = asmc64
-FLAG += -DASMC64
+flags += -elf
+else
+flags += -coff
 endif
-ifndef OUTP
-OUTP = .
+else
+acc = asmc64
+flags += -Zp8
+ifdef YACC
+ifdef LIBC
+link += -static -nostdlib -l:libasmc.a -Wl,-no-pie,-z,now,-z,noexecstack
+else
+link += -Wl,-pie,-z,now,-z,noexecstack
+flags += -fpic
+endif
+else
+flags += -win64 -frame
+endif
 endif
 
-$(OUTP)\$(NAME).exe:
-	del *.obj
-	..\..\bin\$(NAME) -c $(FLAG) -Cs -Iinc -I..\..\include src\*.asm
-	..\..\bin\linkw @<<
-libpath ..\..\lib\$(LIBP)
-name	$@
-option	stack=0x300000 com stack=0x200000
-file	{ *.obj }
-<<
-	del *.obj
+ifdef YACC
+CC = ../../bin/$(acc)
+else
+CC = ..\..\bin\$(acc).exe
 endif
 
-asmcg:
-	gcc -c src/gas/*.s && gcc -Wl,-pie -s -o $@ *.o
-	rm *.o
+all: asmc asmc64 clean
 
 asmc:
-	$(CC) -c $(flags) src/*.asm
-	gcc $(lpic) -s -o $@ *.o
+ifdef YACC
+	chmod a+x $(CC)
+endif
+	$(CC) $(flags) src/*.asm -link $(link)
 
 asmc64:
-	$(CC) -c -DASMC64 $(flags) src/*.asm
-	gcc $(lpic) -s -o $@ *.o
-#	$(CC) -c -DASMC64 $(flags) src/*.asm
-#	gcc -static -nostdlib -Wl,-no-pie -s -o $@ *.o -l:libasmc.a
+	$(CC) -DASMC64 $(flags) src/*.asm -link $(link)
 
 clean:
+ifdef YACC
 	rm *.o
-	rm ./asmcg
+else
+	del *.obj
+endif
 
 install:
 	sudo install ./asmc /usr/bin

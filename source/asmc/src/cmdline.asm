@@ -156,7 +156,7 @@ init_win64 proc public
     mov Options._model,MODEL_FLAT
     mov Options.xflag,OPT_REGAX
 
-ifdef _LIN64
+ifdef __UNIX__
     define_name( "__UNIX__", "1" )
     mov Options.output_format,OFORMAT_ELF
     mov Options.langtype,LANG_SYSCALL
@@ -774,10 +774,12 @@ endif
         mov Options.pe_subsystem,3
         define_name( "__CUI__", "1" )
     .case 'ep'              ; -pe
-ifdef _LIN64
+ifdef __UNIX__
         undef_name( "__UNIX__" )
+ifdef ASMC64
         mov Options.langtype,LANG_FASTCALL
         mov Options.fctype,FCT_WIN64
+endif
 endif
         .if ( Options.sub_format != SFORMAT_64BIT )
             mov Options.sub_format,SFORMAT_PE

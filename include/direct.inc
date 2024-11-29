@@ -48,12 +48,7 @@ ifdef __UNIX__
 
 .pragma pack(pop)
 
-ifdef _WIN64
-dirent typedef	dirent64
-else
-dirent typedef	dirent32
-endif
-
+dirent		typedef dirent64
 DIR		typedef byte
 LPDIR		typedef ptr DIR
 opendir		proto __cdecl :LPSTR

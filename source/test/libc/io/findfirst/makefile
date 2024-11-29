@@ -2,6 +2,7 @@ findfirst:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@ "*.*"
+	@pause
 	asmc -elf $@.asm
 	./$@ "*.*"
 else

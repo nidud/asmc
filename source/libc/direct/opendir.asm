@@ -32,8 +32,11 @@ ifdef __UNIX__
 readblk proc private uses rbx dirp:ptr DIR
 
     ldr rbx,dirp
+ifdef _WIN64
     .ifsd ( sys_getdents64( [rbx].fd, &[rbx].buf, MAXDBUF ) < 0 )
-
+else
+    .ifs ( sys_getdents( [rbx].fd, &[rbx].buf, MAXDBUF ) < 0 )
+endif
         neg eax
         _set_errno(eax)
         xor eax,eax

@@ -16,7 +16,7 @@ ifdef _WIN64
 
    .new q:_tstati64
 
-    .if _tstat64("makefile", &q)
+    .if _tstat64(__FILE__, &q)
 
         _tperror("_stat64()")
        .return( 1 )
@@ -33,9 +33,9 @@ ifdef __UNIX__
         " .st_gid      %d\n"
         " .st_pad      %d\n"
         " .st_rdev     %p\n"
-        " .st_size     %p\n"
-        " .st_blksize  %p\n"
-        " .st_blocks   %p\n"
+        " .st_size     %d\n"
+        " .st_blksize  %d\n"
+        " .st_blocks   %d\n"
         " .st_atime    %p\n"
         " .st_atimesec %p\n"
         " .st_mtime    %p\n"
@@ -89,7 +89,7 @@ endif
 else
     .new p:_tstat32
 
-    .if _tstat("makefile", &p)
+    .if _tstat(__FILE__, &p)
 
         _tperror("_stat()")
        .return( 1 )
@@ -104,11 +104,10 @@ ifdef __UNIX__
         " .st_mode     %d\n"
         " .st_uid      %d\n"
         " .st_gid      %d\n"
-        " .st_pad      %d\n"
         " .st_rdev     %p\n"
-        " .st_size     %p\n"
-        " .st_blksize  %p\n"
-        " .st_blocks   %p\n"
+        " .st_size     %d\n"
+        " .st_blksize  %d\n"
+        " .st_blocks   %d\n"
         " .st_atime    %p\n"
         " .st_atimesec %p\n"
         " .st_mtime    %p\n"
@@ -121,7 +120,6 @@ ifdef __UNIX__
         p.st_mode,
         p.st_uid,
         p.st_gid,
-        p.st_pad,
         p.st_rdev,
         p.st_size,
         p.st_blksize,

@@ -29,15 +29,30 @@ ifdef __UNIX__
 
 .pragma pack(push, size_t)
 
-dirent		struct
-d_ino		size_t ?
-d_off		size_t ?
-d_reclen	ushort_t ?
-d_type		char_t ?
-d_name		char_t 1 dup(?)
-dirent		ends
+.template dirent32
+
+    d_ino	dd ?
+    d_off	dd ?
+    d_reclen	dw ?
+    d_name	db 1 dup(?)
+   .ends
+
+.template dirent64
+
+    d_ino	dq ?
+    d_off	dq ?
+    d_reclen	dw ?
+    d_type	db ?
+    d_name	db 1 dup(?)
+   .ends
 
 .pragma pack(pop)
+
+ifdef _WIN64
+dirent typedef	dirent64
+else
+dirent typedef	dirent32
+endif
 
 DIR		typedef byte
 LPDIR		typedef ptr DIR

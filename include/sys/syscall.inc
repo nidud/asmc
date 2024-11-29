@@ -2558,7 +2558,7 @@ sys_llseek proto fastcall :int_t, :uint_t, :abs, :abs, :abs {
     sys_call(SYS_LLSEEK, _1, _2, _3, _4, _5)
     }
 sys_getdents proto fastcall :int_t, :ptr, :abs {
-    sys_call(SYS_GETDENTS, _1, _2)
+    sys_call(SYS_GETDENTS, _1, _2, _3)
     }
 sys_flock proto fastcall :uint_t, :uint_t {
     sys_call(SYS_FLOCK, _1, _2)
@@ -2702,7 +2702,7 @@ sys_madvise proto fastcall :ptr, :size_t, :abs {
     sys_call(SYS_MADVISE, _1, _2, _3)
     }
 sys_getdents64 proto fastcall :int_t, :ptr, :abs {
-    sys_call(SYS_GETDENTS64, _1, _2)
+    sys_call(SYS_GETDENTS64, _1, _2, _3)
     }
 sys_gettid proto fastcall {
     sys_call(SYS_GETTID)

@@ -50,17 +50,17 @@ readblk endp
 
 opendir proc uses rbx name:LPSTR
 
-    .new fd:int_t
+   .new fd:int_t
 
-ifdef _WIN64
+    ldr rcx,name
 
-    .if ( !rdi || byte ptr [rdi] == 0 )
+    .if ( !rcx || byte ptr [rcx] == 0 )
 
         _set_errno(ENOENT)
         .return( NULL )
     .endif
 
-    mov fd,_open(rdi, O_RDONLY or O_NONBLOCK or O_DIRECTORY)
+    mov fd,_open(rcx, O_RDONLY or O_NONBLOCK or O_DIRECTORY)
     .ifs ( eax < 0 )
 
        .return( NULL )
@@ -79,9 +79,6 @@ ifdef _WIN64
        .return( closedir(rbx) )
     .endif
     mov rax,rbx
-else
-    xor eax,eax
-endif
     ret
 
 opendir endp

@@ -22,8 +22,11 @@ ifdef __UNIX__
     .new s:_stat32
 
     .ifd ( _stat( ldr(file), &s ) == 0 )
-
+ ifdef _WIN64
         mov eax,s.st_mode
+ else
+        mov ax,s.st_mode
+ endif
 else
     .ifd ( GetFileAttributes( ldr(file) ) == -1 )
 

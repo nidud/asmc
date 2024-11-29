@@ -1885,6 +1885,7 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             .endif
             mov rbx,[rsi].sym
             add [rsi].value,[rbx].asym.offs
+            adc [rsi].hvalue,0
             mov rax,[rdi].sym
             .if ( Parse_Pass > PASS_1 )
                 .if ( ( [rax].asym.state == SYM_EXTERNAL || [rbx].asym.state == SYM_EXTERNAL ) &&

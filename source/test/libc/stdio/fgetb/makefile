@@ -2,14 +2,12 @@
 # Fri Nov 15 21:20:25 2024
 
 flags = -q
-ifdef YACC
-flags += -fpic
-else
-endif
 
 fgetb:
 	asmc64 $(flags) $@.asm
 ifdef YACC
+	./$@
+	asmc $(flags) -elf $@.asm
 	./$@
 else
 	$@

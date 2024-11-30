@@ -49,7 +49,10 @@ _topenfile proc uses rbx file:LPTSTR, mode:LPTSTR, shflag:SINT, stream:LPFILE
             or  ecx,_IORW
             and ecx,not (_IOREAD or _IOWRT)
 
-        .case 't': or  edx,O_TEXT
+        .case 't'
+ifndef __UNIX__
+            or  edx,O_TEXT
+endif
         .case 'b': or  edx,O_BINARY
         .case 'c': or  ecx,_IOCOMMIT
         .case 'n': and ecx,not _IOCOMMIT

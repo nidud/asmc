@@ -2449,8 +2449,14 @@ sys_munmap proto fastcall :ptr, :size_t {
 sys_truncate proto fastcall :ptr, :int_t {
     sys_call(SYS_TRUNCATE, _1, _2)
     }
+sys_truncate64 proto fastcall :ptr, :int_t, :int_t {
+    sys_call(SYS_TRUNCATE64, _1, _2, _3)
+    }
 sys_ftruncate proto fastcall :uint_t, :int_t {
     sys_call(SYS_FTRUNCATE, _1, _2)
+    }
+sys_ftruncate64 proto fastcall :uint_t, :int_t, :int_t {
+    sys_call(SYS_FTRUNCATE64, _1, _2, _3)
     }
 sys_fchmod proto fastcall :int_t, :int_t {
     sys_call(SYS_FCHMOD, _1, _2)

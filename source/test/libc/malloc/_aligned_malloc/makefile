@@ -1,15 +1,18 @@
 _aligned_malloc:
-	asmc64 -q -Fitchar.inc $@.asm
+	asmc64 -q $@.asm
 ifdef YACC
+	./$@
+	@pause
+	asmc -q -elf $@.asm
 	./$@
 	@pause
 	@rm -f $@.o
 	@rm -f $@
 else
 	$@
-	asmc -q -Fitchar.inc $*.asm
+	asmc -q $*.asm
 	$@
-	asmc64 -q -pe -Fitchar.inc $*.asm
+	asmc64 -q -pe $*.asm
 	$@
 	pause
 	del $*.obj

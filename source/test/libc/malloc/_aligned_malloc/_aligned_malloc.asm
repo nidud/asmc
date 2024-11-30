@@ -3,6 +3,7 @@
 ;
 include stdio.inc
 include malloc.inc
+include tchar.inc
 
     .code
 

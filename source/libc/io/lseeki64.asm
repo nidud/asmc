@@ -35,7 +35,10 @@ ifdef __UNIX__
     .ifs ( sys_llseek(fd, uint_t ptr offs, uint_t ptr offs[4], eax, pos) < 0 )
 
         neg eax
-        _set_errno(eax)
+        mov edx,_set_errno(eax)
+    .else
+        mov eax,uint_t ptr new_offs
+        mov edx,uint_t ptr new_offs[4]
     .endif
 
 else

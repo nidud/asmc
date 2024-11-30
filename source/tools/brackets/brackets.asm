@@ -118,7 +118,8 @@ scanfiles proc uses rbx directory:string_t, fmask:string_t
     .new path[_MAX_PATH]:char_t
     .new ff:_finddata_t
 
-    .ifd _findfirst(strfcat(&path, directory, fmask), &ff) != -1
+    mov rcx,strfcat(&path, directory, fmask)
+    .ifd _findfirst(rcx, &ff) != -1
 
         mov rbx,rax
         .repeat
@@ -133,7 +134,8 @@ scanfiles proc uses rbx directory:string_t, fmask:string_t
 
     .if do_subdir
 
-        .ifd ( _findfirst(strfcat(&path, directory, "*.*"), &ff) != -1 )
+        mov rcx,strfcat(&path, directory, "*.*")
+        .ifd ( _findfirst(rcx, &ff) != -1 )
 
             mov rbx,rax
             .repeat

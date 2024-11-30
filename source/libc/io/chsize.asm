@@ -6,8 +6,23 @@
 
 include io.inc
 include errno.inc
+ifdef __UNIX__
+include sys/syscall.inc
+endif
 
     .code
+
+ifdef __UNIX__
+
+_chsize proc fd:int_t, size:size_t
+
+    .ifsd ( sys_ftruncate( ldr(fd), ldr(size) ) < 0 )
+
+        neg eax
+        _set_errno( eax )
+    .endif
+
+else
 
 _chsize proc uses rbx handle:int_t, new_size:size_t
 
@@ -68,6 +83,7 @@ _chsize proc uses rbx handle:int_t, new_size:size_t
     .if ( _lseek( handle, current_offset, SEEK_SET ) != -1 )
         xor eax,eax
     .endif
+endif
     ret
 
 _chsize endp

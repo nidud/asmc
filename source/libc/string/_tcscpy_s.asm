@@ -30,10 +30,10 @@ ifdef _WIN64
 endif
     mov     [rcx],[rdx]
 .0:
-    dec     rbx
-    jz      .4
     test    eax,eax
     jz      .1
+    dec     rbx
+    jz      .4
     add     rcx,TCHAR
     add     rdx,TCHAR
     mov     [rcx],[rdx]

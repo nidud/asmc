@@ -15,7 +15,7 @@ _tgetenv proc uses rbx enval:LPTSTR
    .new len:int_t
 
     .ifd ( _tcsclen( ldr(enval) ) == 0 )
-	.return
+        .return
     .endif
 
     mov len,eax
@@ -24,20 +24,20 @@ _tgetenv proc uses rbx enval:LPTSTR
 
     .while ( rax )
 
-	.ifd ( !_tcsncicmp( rax, enval, len ) )
+        .ifd ( !_tcsncicmp( rax, enval, len ) )
 
-	    mov eax,len
+            mov eax,len
 ifdef _UNICODE
-	    add eax,eax
+            add eax,eax
 endif
-	    add rax,[rbx]
+            add rax,[rbx]
 
-	    .if ( TCHAR ptr [rax] == '=' )
-		.return( &[rax+TCHAR] )
-	    .endif
-	.endif
-	add rbx,LPTSTR
-	mov rax,[rbx]
+            .if ( TCHAR ptr [rax] == '=' )
+                .return( &[rax+TCHAR] )
+            .endif
+        .endif
+        add rbx,LPTSTR
+        mov rax,[rbx]
     .endw
     ret
 

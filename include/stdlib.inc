@@ -574,6 +574,8 @@ _rotr64 proto watcall :uint64_t, :abs {
     }
 endif
 
+_getpath	proto __cdecl :string_t, :string_t, :size_t
+_searchenv	proto __cdecl :string_t, :string_t, :string_t
 _searchenv_s	proto __cdecl :string_t, :string_t, :string_t, :size_t
 _splitpath	proto __cdecl :string_t, :string_t, :string_t, :string_t, :string_t
 _splitpath_s	proto __cdecl :string_t, :string_t, :size_t, :string_t, :size_t, :string_t, :size_t, :string_t, :size_t
@@ -590,6 +592,8 @@ _wperror	proto __cdecl :wstring_t
 endif
 _wputenv	proto __cdecl :wstring_t
 _wputenv_s	proto __cdecl :wstring_t, :wstring_t
+_wgetpath	proto __cdecl :wstring_t, :wstring_t, :size_t
+_wsearchenv	proto __cdecl :wstring_t, :wstring_t, :wstring_t
 _wsearchenv_s	proto __cdecl :wstring_t, :wstring_t, :wstring_t, :size_t
 
 _wsplitpath	proto __cdecl :wstring_t, :wstring_t, :wstring_t, :wstring_t, :wstring_t

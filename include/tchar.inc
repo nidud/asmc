@@ -115,6 +115,8 @@ define _tgetfattr	<_wgetfattr>
 define _tsetfattr	<_wsetfattr>
 define _tfilexist	<_wfilexist>
 
+define _tgetpath	<_wgetpath>
+
 define _TEOF		WEOF
 
 _tmain			equ <wmain>
@@ -741,6 +743,8 @@ define _tosopen		<osopen>
 define _tgetfattr	<getfattr>
 define _tsetfattr	<setfattr>
 define _tfilexist	<filexist>
+
+define _tgetpath	<_getpath>
 
 define _TEOF		EOF
 

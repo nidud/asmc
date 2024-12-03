@@ -306,7 +306,7 @@ SetCurrOffset endp
 ;
 ; write object module
 ;
-WriteModule proc __ccall private uses rsi rdi rbx modinfo:ptr module_info
+WriteModule proc private uses rsi rdi rbx
 
     mov rbx,SymTables[TAB_SEG*symbol_queue].head
 
@@ -324,7 +324,7 @@ WriteModule proc __ccall private uses rsi rdi rbx modinfo:ptr module_info
         mov rbx,[rbx].dsym.next
     .endw
 
-    modinfo.WriteModule(modinfo)
+    ModuleInfo.WriteModule()
 
     mov rbx,Options.names[OPTN_LNKDEF_FN*string_t]
     .if rbx
@@ -845,7 +845,7 @@ aliases:
         .endif
 
         .if ( ModuleInfo.Pass1Checks )
-            ModuleInfo.Pass1Checks( &ModuleInfo )
+            ModuleInfo.Pass1Checks()
         .endif
     .endif
     ret
@@ -1025,7 +1025,7 @@ ModuleInit proc private
     rep stosb
     mov rdi,rdx
 
-    fm.init( &ModuleInfo )
+    fm.init()
     ret
 
 ModuleInit endp
@@ -1443,7 +1443,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
     .if ( Parse_Pass > PASS_1 && write_to_file )
 
-        WriteModule( &ModuleInfo )
+        WriteModule()
     .endif
     LstWriteCRef()
 

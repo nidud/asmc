@@ -816,20 +816,18 @@ endif
 DoFixup endp
 
 
-    assume rsi:ptr module_info, rbx:nothing, rdi:nothing
+    assume rbx:nothing, rdi:nothing
 
-pe_create_MZ_header proc fastcall uses rsi modinfo:ptr module_info
-
-    mov rsi,rcx
+pe_create_MZ_header proc
 
     .if ( Parse_Pass == PASS_1 )
 
         .if ( SymSearch( hdrname "1" ) == NULL )
-            or [rsi].pe_flags,PEF_MZHDR
+            or ModuleInfo.pe_flags,PEF_MZHDR
         .endif
     .endif
 
-    .if ( [rsi].pe_flags & PEF_MZHDR )
+    .if ( ModuleInfo.pe_flags & PEF_MZHDR )
 
         AddLineQueueX(
             "option dotname\n"
@@ -2173,14 +2171,12 @@ pe_set_values endp
 ; v2.11: this function is called when the END directive has been found.
 ; Previously the code was run inside EndDirective() directly.
 
-pe_enddirhook proc fastcall uses rbx modinfo:ptr module_info
+pe_enddirhook proc
 
-    mov rbx,rcx
-
-    pe_create_MZ_header( rcx )
+    pe_create_MZ_header()
     pe_emit_export_data()
 
-    .if ( [rbx].module_info.DllQueue )
+    .if ( ModuleInfo.DllQueue )
         pe_emit_import_data()
     .endif
 
@@ -2193,7 +2189,7 @@ pe_enddirhook endp
 ; write section contents
 ; this is done after the last step only!
 
-bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
+bin_write_module proc uses rsi rdi rbx
 
     .new curr:ptr dsym
     .new size:uint_32
@@ -2227,16 +2223,13 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
 
     ; calculate size of header
 
-    mov rbx,modinfo
-    assume rbx:ptr module_info
-
-    .if ( [rbx].sub_format == SFORMAT_MZ )
+    .if ( ModuleInfo.sub_format == SFORMAT_MZ )
 
         mov reloccnt,GetSegRelocs( NULL )
         shl eax,2
-        movzx edx,[rbx].mz_ofs_fixups
+        movzx edx,ModuleInfo.mz_ofs_fixups
         add eax,edx
-        movzx edx,[rbx].mz_alignment
+        movzx edx,ModuleInfo.mz_alignment
         dec edx
         add eax,edx
         mov ecx,edx
@@ -2257,19 +2250,21 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
     ; set starting offsets for all sections
 
     mov cp.rva,0
-    .if ( [rbx].sub_format == SFORMAT_PE || [rbx].sub_format == SFORMAT_64BIT )
+    .if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
 
         .if ( ModuleInfo._model == MODEL_NONE )
             .return( asmerr( 2013 ) )
         .endif
         pe_set_values( &cp )
 
-    .elseif ( [rbx].segorder == SEGORDER_DOSSEG )
+    .elseif ( ModuleInfo.segorder == SEGORDER_DOSSEG )
 
         ; for .DOSSEG, regroup segments (CODE, UNDEF, DATA, BSS)
 
         .for ( ebx = 0 : ebx < SIZE_DOSSEG : ebx++ )
+
             .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
+
                 mov rsi,[rdi].dsym.seginfo
                 lea rcx,dosseg_order
                 .continue .if ( [rsi].segtype != [rcx+rbx*4] )
@@ -2277,11 +2272,10 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
             .endf
         .endf
         SortSegments( 0 )
-        mov rbx,modinfo
 
     .else ; segment order .SEQ (default) and .ALPHA
 
-        .if ( [rbx].segorder == SEGORDER_ALPHA )
+        .if ( ModuleInfo.segorder == SEGORDER_ALPHA )
             SortSegments( 1 )
         .endif
 
@@ -2305,16 +2299,16 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
 
     ; v2.04: return if any errors occured during fixup handling
 
-    .if ( [rbx].error_count )
+    .if ( ModuleInfo.error_count )
         .return( ERROR )
     .endif
 
     ; for plain binaries make sure the start label is at
     ; the beginning of the first segment
 
-    .if ( [rbx].sub_format == SFORMAT_NONE )
-        .if ( [rbx].start_label )
-            mov rax,[rbx].start_label
+    .if ( ModuleInfo.sub_format == SFORMAT_NONE )
+        .if ( ModuleInfo.start_label )
+            mov rax,ModuleInfo.start_label
             .if ( cp.entryoffset == -1 || cp.entryseg != [rax].asym.segm )
                 .return( asmerr( 3003 ) )
             .endif
@@ -2325,7 +2319,7 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
 
     ; for MZ|PE format, initialize the header
 
-    .if ( [rbx].sub_format == SFORMAT_MZ )
+    .if ( ModuleInfo.sub_format == SFORMAT_MZ )
 
         ; set fields in MZ header
 
@@ -2355,10 +2349,10 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
             inc eax
         .endif
         mov [rdi].e_minalloc,ax ;; heap min
-        .if ( ax < [rbx].mz_heapmin )
-            mov [rdi].e_minalloc,[rbx].mz_heapmin
+        .if ( ax < ModuleInfo.mz_heapmin )
+            mov [rdi].e_minalloc,ModuleInfo.mz_heapmin
         .endif
-        mov [rdi].e_maxalloc,[rbx].mz_heapmax ;; heap max
+        mov [rdi].e_maxalloc,ModuleInfo.mz_heapmax ;; heap max
         .if ( ax < [rdi].e_minalloc )
             mov [rdi].e_maxalloc,[rdi].e_minalloc
         .endif
@@ -2391,9 +2385,9 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
 
         ; set entry CS:IP if defined
 
-        .if ( [rbx].start_label )
+        .if ( ModuleInfo.start_label )
 
-            mov rcx,[rbx].start_label
+            mov rcx,ModuleInfo.start_label
             mov rdx,[rcx].asym.segm
             mov rsi,[rdx].dsym.seginfo
 
@@ -2423,7 +2417,7 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
             asmerr( 8009 )
         .endif
 
-        mov [rdi].e_lfarlc,[rbx].mz_ofs_fixups
+        mov [rdi].e_lfarlc,ModuleInfo.mz_ofs_fixups
         add rax,hdrbuf
         GetSegRelocs( rax )
     .endif
@@ -2472,7 +2466,7 @@ bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
         .else
             ; v2.19: subtract start_loc only if -bin AND first segment
             mov eax,[rdi].asym.max_offset
-            .if ( first && [rbx].sub_format == SFORMAT_NONE )
+            .if ( first && ModuleInfo.sub_format == SFORMAT_NONE )
                 sub eax,[rsi].start_loc
             .endif
         .endif
@@ -2523,7 +2517,7 @@ endif
         mov first,FALSE
     .endf
 
-    .if ( [rbx].sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
+    .if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
 
         mov size,ftell( CurrFile[OBJ*string_t] )
         mov eax,cp.rawpagesize
@@ -2540,12 +2534,12 @@ endif
     LstPrintf( szSep )
     LstNL()
 
-    .if ( [rbx].sub_format == SFORMAT_MZ )
+    .if ( ModuleInfo.sub_format == SFORMAT_MZ )
 
         mov eax,sizetotal
         sub eax,cp.sizehdr
         add sizeheap,eax
-    .elseif ( [rbx].sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
+    .elseif ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
         mov sizeheap,cp.rva
     .else
         mov sizeheap,GetImageSize( TRUE )
@@ -2558,7 +2552,7 @@ endif
 bin_write_module endp
 
 
-bin_check_external proc fastcall modinfo:ptr module_info
+bin_check_external proc
 
     .for ( rdx = SymTables[TAB_EXT*symbol_queue].head : rdx : rdx = [rdx].dsym.next )
         .if ( !( [rdx].asym.sflags & S_WEAK ) || [rdx].asym.flags & S_USED )
@@ -2572,16 +2566,15 @@ bin_check_external proc fastcall modinfo:ptr module_info
 bin_check_external endp
 
 
-bin_init proc fastcall public uses rsi rdi rbx modinfo:ptr module_info
+bin_init proc public uses rsi rdi rbx
 
-    mov rbx,rcx
-    mov [rbx].WriteModule,&bin_write_module
-    mov [rbx].Pass1Checks,&bin_check_external
-    mov al,[rbx].sub_format
+    mov ModuleInfo.WriteModule,&bin_write_module
+    mov ModuleInfo.Pass1Checks,&bin_check_external
+    mov al,ModuleInfo.sub_format
     .switch al
 ifndef ASMC64
     .case SFORMAT_MZ
-        lea rdi,[rbx].mz_ofs_fixups
+        lea rdi,ModuleInfo.mz_ofs_fixups
         lea rsi,mzdata
         mov ecx,sizeof( MZDATA )
         rep movsb
@@ -2589,7 +2582,7 @@ ifndef ASMC64
 endif
     .case SFORMAT_PE
     .case SFORMAT_64BIT
-        mov [rbx].EndDirHook,&pe_enddirhook ;; v2.11
+        mov ModuleInfo.EndDirHook,&pe_enddirhook ;; v2.11
        .endc
     .endsw
     ret

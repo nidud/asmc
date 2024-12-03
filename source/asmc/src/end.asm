@@ -285,7 +285,7 @@ endif
 
     .if ( ModuleInfo.EndDirHook )
 
-        ModuleInfo.EndDirHook( &ModuleInfo )
+        ModuleInfo.EndDirHook()
 
 ifdef _EXEC_LINK
     .elseif ( Parse_Pass == PASS_1 )

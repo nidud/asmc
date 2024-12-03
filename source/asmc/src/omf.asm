@@ -1851,7 +1851,7 @@ omf_write_debug_tables endp
 ; since the OMF records are written "on the fly",
 ; the "normal" section contents are already written at this time.
 
-omf_write_module proc __ccall private uses rsi rdi modinfo:ptr module_info
+omf_write_module proc private uses rsi rdi
 
 if TRUNCATE
   local fh:int_t
@@ -1863,8 +1863,7 @@ endif
     .if ( Options.debug_symbols )
         omf_write_debug_tables()
     .endif
-    mov rcx,modinfo
-    omf_write_modend( [rcx].module_info.start_fixup, [rcx].module_info.start_displ )
+    omf_write_modend( ModuleInfo.start_fixup, ModuleInfo.start_displ )
 
 if TRUNCATE
 
@@ -1901,13 +1900,9 @@ omf_write_module endp
 
 ; write OMF header info after pass 1
 
-    assume rbx:ptr module_info
-
-omf_write_header_initial proc fastcall private uses rsi rdi rbx modinfo:ptr module_info
+omf_write_header_initial proc private uses rsi rdi rbx
 
    .new ext_idx:uint_16
-
-    mov rbx,rcx
 
     .if ( write_to_file == FALSE )
         .return( NOT_ERROR )
@@ -1926,9 +1921,9 @@ omf_write_header_initial proc fastcall private uses rsi rdi rbx modinfo:ptr modu
     .if ( Options.line_numbers )
         omf_write_autodep() ; write dependency COMENT records ( known by Borland & OW )
     .endif
-    .if ( [rbx].segorder == SEGORDER_DOSSEG )
+    .if ( ModuleInfo.segorder == SEGORDER_DOSSEG )
         omf_write_dosseg() ; write dosseg COMENT records
-    .elseif ( [rbx].segorder == SEGORDER_ALPHA )
+    .elseif ( ModuleInfo.segorder == SEGORDER_ALPHA )
         SortSegments( 1 )
     .endif
     omf_write_lib()    ; write default lib COMENT records
@@ -1958,7 +1953,7 @@ omf_write_header_initial proc fastcall private uses rsi rdi rbx modinfo:ptr modu
     ; comment record is NOT to be present if
     ; the MODEND record contains a starting address!
 
-    .if ( ![rbx].start_fixup )
+    .if ( !ModuleInfo.start_fixup )
         omf_end_of_pass1()
     .endif
     mov end_of_header,ftell( CurrFile[OBJ*size_t] )
@@ -1971,16 +1966,16 @@ endif
 
 ; init. called once per module
 
-omf_init proc fastcall modinfo:ptr module_info
+omf_init proc
 
 ifndef ASMC64
 
-    mov [rcx].module_info.WriteModule,&omf_write_module
-    mov [rcx].module_info.Pass1Checks,&omf_write_header_initial
+    mov ModuleInfo.WriteModule,&omf_write_module
+    mov ModuleInfo.Pass1Checks,&omf_write_header_initial
     mov SymDebSeg[DBGS_SYMBOLS*size_t],NULL
     mov SymDebSeg[DBGS_TYPES*size_t],NULL
 if MULTIHDR
-    mov ln_srcfile,[rcx].module_info.srcfile
+    mov ln_srcfile,ModuleInfo.srcfile
 endif
     mov ln_size,0
 endif

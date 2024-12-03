@@ -8,7 +8,7 @@
 ifndef __BIN_INC
 define __BIN_INC
 
-bin_init            proto fastcall :ptr module_info
+bin_init            proto
 pe_create_PE_header proto
 
 endif

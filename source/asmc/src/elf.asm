@@ -151,15 +151,24 @@ cst conv_section \
 ElfConvertSectionName proc __ccall private uses rsi rdi rbx sym:ptr asym, buffer:string_t
 
     ldr rcx,sym
+
     mov rsi,[rcx].asym.name
-    .for ( rdi = &cst, ebx = 0: ebx < lengthof(cst): ebx++, rdi += conv_section )
+
+    .for ( rdi = &cst, ebx = 0 : ebx < lengthof(cst) : ebx++, rdi += conv_section )
+
         .if ( tmemcmp( rsi, [rdi].src, [rdi].len ) == 0 )
+
             movzx edx,[rdi].len
+
             .if ( byte ptr [rsi+rdx] == NULLC )
+
                 .return( [rdi].dst )
+
             .elseif ( ( [rdi].flags & CSF_GRPCHK ) && byte ptr [rsi+rdx] == '$' )
+
                 add rsi,rdx
-                .return( tstrcat( tstrcpy( buffer, [rdi].dst ), rsi ) )
+
+               .return( tstrcat( tstrcpy( buffer, [rdi].dst ), rsi ) )
             .endif
         .endif
     .endf
@@ -174,7 +183,8 @@ ElfConvertSectionName endp
 
 get_num_reloc_sections proc private
 
-    .for ( eax = 0, rcx = SymTables[TAB_SEG*symbol_queue].head: rcx: rcx = [rcx].dsym.next )
+    .for ( eax = 0, rcx = SymTables[TAB_SEG*symbol_queue].head : rcx : rcx = [rcx].dsym.next )
+
         mov rdx,[rcx].dsym.seginfo
         .if ( [rdx].seg_info.head )
             inc eax
@@ -200,10 +210,13 @@ set_symtab32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, entries:uint_t
    .new buffer[MAX_ID_LEN+MANGLE_BYTES+1]:char_t
 
     ldr rbx,em
+
     imul esi,entries,sizeof( Elf32_Sym )
     mov [rbx].internal_segs[OSYMTAB_IDX].size,esi
+
     mov [rbx].internal_segs[OSYMTAB_IDX].data,LclAlloc( esi )
     mov rdi,rax
+
     mov ecx,esi
     xor eax,eax
     mov rdx,rdi
@@ -868,8 +881,7 @@ Get_Alignment endp
 
 ifndef ASMC64
 
-elf_write_section_table32 proc __ccall private uses rsi rdi rbx modinfo:ptr module_info,
-        em:ptr elfmod, fileoffset:dword
+elf_write_section_table32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, fileoffset:dword
 
    .new shdr32:Elf32_Shdr
 
@@ -991,8 +1003,7 @@ endif
 
         .if ( esi == SYMTAB_IDX )
 
-            mov rcx,modinfo
-            mov eax,[rcx].module_info.num_segs
+            mov eax,ModuleInfo.num_segs
             add eax,1 + STRTAB_IDX
             mov shdr32.sh_link,eax
             mov shdr32.sh_info,[rbx].start_globals
@@ -1050,8 +1061,7 @@ endif
         mul [rcx].seg_info.num_relocs
         mov shdr32.sh_size,eax
 
-        mov rcx,modinfo
-        mov eax,[rcx].module_info.num_segs
+        mov eax,ModuleInfo.num_segs
         add eax,1 + SYMTAB_IDX
         mov shdr32.sh_link,eax
 
@@ -1086,8 +1096,7 @@ endif
 
 ; write ELF64 section table.
 
-elf_write_section_table64 proc __ccall private uses rsi rdi rbx modinfo:ptr module_info,
-        em:ptr elfmod, fileoffset:uint_t
+elf_write_section_table64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, fileoffset:uint_t
 
    .new shdr64:Elf64_Shdr
 
@@ -1209,8 +1218,7 @@ endif
 
         .if ( esi == SYMTAB_IDX )
 
-            mov rcx,modinfo
-            mov eax,[rcx].module_info.num_segs
+            mov eax,ModuleInfo.num_segs
             add eax,1 + STRTAB_IDX
             mov shdr64.sh_link,eax
             mov shdr64.sh_info,[rbx].start_globals
@@ -1268,8 +1276,7 @@ endif
         mul [rcx].seg_info.num_relocs
         mov dword ptr shdr64.sh_size,eax
 
-        mov rcx,modinfo
-        mov eax,[rcx].module_info.num_segs
+        mov eax,ModuleInfo.num_segs
         add eax,SYMTAB_IDX + 1
         mov shdr64.sh_link,eax
 
@@ -1446,7 +1453,7 @@ write_relocs64 endp
     assume rdi:nothing
     assume rsi:nothing
 
-elf_write_data proc __ccall private uses rsi rdi rbx modinfo:ptr module_info, em:ptr elfmod
+elf_write_data proc __ccall private uses rsi rdi rbx em:ptr elfmod
 ifdef _LIN64
     .new _rsi:ptr
     .new _rdi:ptr
@@ -1521,8 +1528,7 @@ ifdef _LIN64
             mov rsi,_rsi
             mov rdi,_rdi
 endif
-            mov rcx,modinfo
-            .if ( [rcx].module_info.defOfssize == USE64 )
+            .if ( ModuleInfo.defOfssize == USE64 )
                 write_relocs64( rsi )
             .else
                 write_relocs32( rbx, rsi )
@@ -1541,7 +1547,7 @@ elf_write_data endp
 
 ; write ELF module
 
-elf_write_module proc __ccall private uses rsi rdi rbx modinfo:ptr module_info
+elf_write_module proc private uses rsi rdi rbx
 
    .new em:elfmod
 
@@ -1564,16 +1570,15 @@ elf_write_module proc __ccall private uses rsi rdi rbx modinfo:ptr module_info
 
     fseek( CurrFile[OBJ*size_t], 0, SEEK_SET )
 
-    mov rdi,modinfo
 ifndef ASMC64
-    .switch ( [rdi].module_info.defOfssize )
+    .switch ( ModuleInfo.defOfssize )
     .case USE64
 endif
         tmemcpy( &em.ehdr64.e_ident, ELF_SIGNATURE, ELF_SIGNATURE_LEN )
         mov em.ehdr64.e_ident[EI_CLASS],ELFCLASS64
         mov em.ehdr64.e_ident[EI_DATA],ELFDATA2LSB
         mov em.ehdr64.e_ident[EI_VERSION],EV_CURRENT
-        mov em.ehdr64.e_ident[EI_OSABI],[rdi].module_info.elf_osabi
+        mov em.ehdr64.e_ident[EI_OSABI],ModuleInfo.elf_osabi
 
         ; v2.07: set abiversion to 0
 
@@ -1592,24 +1597,21 @@ endif
         ; - n .rela<xxx> sections
 
         get_num_reloc_sections()
-        add eax,[rdi].module_info.num_segs
+        add eax,ModuleInfo.num_segs
         add eax,1 + 3
         mov em.ehdr64.e_shnum,ax
 
-        mov eax,[rdi].module_info.num_segs
+        mov eax,ModuleInfo.num_segs
         add eax,1 + SHSTRTAB_IDX
         mov em.ehdr64.e_shstrndx,ax ; set index of .shstrtab section
 
         .if ( fwrite( &em.ehdr64, 1, sizeof( em.ehdr64 ), CurrFile[OBJ*size_t] ) != sizeof( em.ehdr64 ) )
             WriteError()
         .endif
-ifdef _LIN64
-        mov rdi,modinfo
-endif
         movzx eax,em.ehdr64.e_shnum
         mul em.ehdr64.e_shentsize
         add eax,sizeof( Elf64_Ehdr )
-        elf_write_section_table64( rdi, &em, eax )
+        elf_write_section_table64( &em, eax )
 
 ifndef ASMC64
        .endc
@@ -1620,7 +1622,7 @@ ifndef ASMC64
         mov em.ehdr32.e_ident[EI_CLASS],ELFCLASS32
         mov em.ehdr32.e_ident[EI_DATA],ELFDATA2LSB
         mov em.ehdr32.e_ident[EI_VERSION],EV_CURRENT
-        mov em.ehdr32.e_ident[EI_OSABI],[rdi].module_info.elf_osabi
+        mov em.ehdr32.e_ident[EI_OSABI],ModuleInfo.elf_osabi
 
         ; v2.07: set abiversion to 0
 
@@ -1639,27 +1641,24 @@ ifndef ASMC64
         ; - n .rel<xxx> entries
 
         get_num_reloc_sections()
-        add eax,[rdi].module_info.num_segs
+        add eax,ModuleInfo.num_segs
         add eax,1 + 3
         mov em.ehdr32.e_shnum,ax
 
-        mov eax,[rdi].module_info.num_segs
+        mov eax,ModuleInfo.num_segs
         add eax,1 + SHSTRTAB_IDX
         mov em.ehdr32.e_shstrndx,ax ; set index of .shstrtab section
 
         .if ( fwrite( &em.ehdr32, 1, sizeof( em.ehdr32 ), CurrFile[OBJ*size_t] ) != sizeof( em.ehdr32 ) )
             WriteError()
         .endif
-ifdef _LIN64
-        mov rdi,modinfo
-endif
         movzx eax,em.ehdr32.e_shnum
         mul em.ehdr32.e_shentsize
         add eax,sizeof( Elf32_Ehdr )
-        elf_write_section_table32( rdi, &em, eax )
+        elf_write_section_table32( &em, eax )
     .endsw
 endif
-    elf_write_data( rdi, &em )
+    elf_write_data( &em )
    .return( NOT_ERROR )
 
 elf_write_module endp
@@ -1668,10 +1667,10 @@ elf_write_module endp
 ; format-specific init.
 ; called once per module.
 
-elf_init proc fastcall modinfo:ptr module_info
+elf_init proc
 
-    mov [rcx].module_info.elf_osabi,ELFOSABI_SYSV
-    mov [rcx].module_info.WriteModule,&elf_write_module
+    mov ModuleInfo.elf_osabi,ELFOSABI_SYSV
+    mov ModuleInfo.WriteModule,&elf_write_module
     ret
 
 elf_init endp

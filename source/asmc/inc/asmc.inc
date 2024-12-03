@@ -461,11 +461,11 @@ define SIT_FILE         0
 define SIT_MACRO        1
 
 .enum avx_encoding {
-    PREFER_FIRST = 0x00,    ; Use first defined form if possible.
-    PREFER_VEX   = 0x01,    ; Use VEX encoding in preference to EVEX encoding.
-    PREFER_VEX3  = 0x02,    ; Use 3-byte VEX encoding in preference to EVEX encoding.
-    PREFER_EVEX  = 0x04,    ; Use EVEX encoding in preference to VEX encoding.
-    NO_EVEX      = 0x08,    ; Don't encode using EVEX.
+    PREFER_FIRST    = 0x00,    ; Use first defined form if possible.
+    PREFER_VEX      = 0x01,    ; Use VEX encoding in preference to EVEX encoding.
+    PREFER_VEX3     = 0x02,    ; Use 3-byte VEX encoding in preference to EVEX encoding.
+    PREFER_EVEX     = 0x04,    ; Use EVEX encoding in preference to VEX encoding.
+    NO_EVEX         = 0x08,    ; Don't encode using EVEX.
     }
 
 .template qditem
@@ -500,18 +500,18 @@ define SIT_MACRO        1
 
 
 .template format_options
-    init            proc local fastcall :ptr module_info
+    init            proc local
     invalid_fixup_type sword ?
     formatname      char_t 6 dup(?)
    .ends
 
 .template com_item
-    cmd         dd ?
-    class       string_t ?
-    langtype    dd ?
-    publsym     ptr asym ?  ; .class name : public class
-    method      dd ?        ; .INLINE/.OPERATOR/.STATIC
-    sym         ptr asym ?  ; set by StructDirective()
+    cmd             dd ?
+    class           string_t ?
+    langtype        dd ?
+    publsym         ptr asym ?  ; .class name : public class
+    method          dd ?        ; .INLINE/.OPERATOR/.STATIC
+    sym             ptr asym ?  ; set by StructDirective()
    .ends
 
 define PE_SUBSYSTEM_NATIVE  0x01
@@ -632,9 +632,9 @@ define PE_DLL               0x04
     anonymous_label         uint_t ?        ; "anonymous label" counter
     StackBase               ptr asym ?
     ProcStatus              ptr asym ?
-    WriteModule             proc local __ccall :ptr module_info
-    EndDirHook              proc local fastcall :ptr module_info
-    Pass1Checks             proc local fastcall :ptr module_info
+    WriteModule             proc local
+    EndDirHook              proc local
+    Pass1Checks             proc local
     pe_flags                uint_t ?
     maxlinelen              uint_t ?
     currsource              string_t ?      ; current source line

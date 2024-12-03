@@ -8,6 +8,6 @@
 ifndef __ELF_INC
 define __ELF_INC
 
-elf_init proto fastcall :ptr module_info
+elf_init proto __ccall
 
 endif

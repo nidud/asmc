@@ -2,8 +2,7 @@
 # Mon Oct 21 19:31:07 2024
 
 flags = -q
-ifdef YACC
-else
+ifndef YACC
 flags += -pe
 endif
 

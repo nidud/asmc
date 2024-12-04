@@ -15,7 +15,7 @@ These messages indicate conditions that may prevent you from getting the results
 
 All error messages take the following form:
 
-_Utility_: _Filename_ <_Line_> : <_Errortype_> <_Code_>: <_Messagetext_>
+_Utility_: _Filename_ &lt;_Line_&gt; : &lt;_Errortype_&gt; &lt;_Code_&gt;: &lt;_Messagetext_&gt;
 
 - _Utility_: The program that sent the error message.
 - _Filename_: The file that contains the error-generating condition.

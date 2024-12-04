@@ -8,10 +8,13 @@ include stdlib.inc
 include string.inc
 include malloc.inc
 include direct.inc
-ifndef __INIX__
+ifdef __UNIX__
+define HHC <"chmcmd">
+else
 include winbase.inc
-include process.inc
+define HHC <"hhc.exe">
 endif
+include process.inc
 include tchar.inc
 
 .template md
@@ -45,9 +48,11 @@ readfile proc uses rdi rbx path:string_t, ff:ptr _finddata_t
     .if ( word ptr [rcx] == '.' )
 
         inc rcx
-
+ifdef __UNIX__
+    .elseif ( word ptr [rcx] == '/.' )
+else
     .elseif ( word ptr [rcx] == '\.' )
-
+endif
         add rcx,2
     .endif
 
@@ -147,11 +152,9 @@ strfcat proc uses rsi rdi rbx buffer:string_t, path:string_t, file:string_t
         movzx eax,byte ptr [rdi-1]
 ifdef __UNIX__
         .if ( eax != '/' )
-
             mov eax,'/'
 else
         .if ( !( eax == '\' || eax == '/' ) )
-
             mov eax,'\'
 endif
            stosb
@@ -301,16 +304,16 @@ makehtm proc uses rsi rdi rbx pm:pmd
     .endw
     strcat(&css, "style.css")
 
-    .for ( rcx = t : byte ptr [rcx] == '#' : rcx++ )
+    .for ( rbx = t : byte ptr [rbx] == '#' : rbx++ )
     .endf
-    .if ( byte ptr [rcx] == ' ' )
-        inc rcx
+    .if ( byte ptr [rbx] == ' ' )
+        inc rbx
     .endif
     fprintf(fp,
         "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">\n"
         "<html><head><title>%s</title></head>\n"
         "<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\">\n"
-        "<body>\n%s\n", rcx, &css, &r)
+        "<body>\n%s\n", rbx, &css, &r)
 
     mov rbx,t
 
@@ -532,7 +535,9 @@ continue:
         .if ( strchr(rbx, 10) )
 
             mov byte ptr [rax],0
-            mov byte ptr [rax-1],0
+            .if ( byte ptr [rax-1] == 13 )
+                mov byte ptr [rax-1],0
+            .endif
             inc rax
         .endif
         mov q,rax
@@ -662,7 +667,7 @@ makehhp proc uses rbx name:string_t
 makehhp endp
 
 
-unlink proc p:pmd
+unlinkmd proc p:pmd
 
     ldr rcx,p
 
@@ -685,7 +690,7 @@ unlink proc p:pmd
     .endf
     ret
 
-unlink endp
+unlinkmd endp
 
 
 getsubdir proc uses rbx p:pmd
@@ -769,7 +774,7 @@ makehhc proc uses rsi rdi rbx name:string_t
            " <param name=\"Local\" value=\"%s\">\n"
            " </OBJECT>\n", title, [rbx].md.name)
 
-       unlink(rbx)
+       unlinkmd(rbx)
 
        .while getindex()
 
@@ -813,12 +818,12 @@ makehhc proc uses rsi rdi rbx name:string_t
                    "    <param name=\"Local\" value=\"%s\">\n"
                    "    </OBJECT>\n", title, [rbx].md.name)
 
-                unlink(rbx)
+                unlinkmd(rbx)
             .endw
             .if ( ul )
                 fprintf(fp, "  </UL>\n" )
             .endif
-            unlink(pm)
+            unlinkmd(pm)
             fprintf(fp, " </UL>\n" )
        .endw
     .endif
@@ -918,12 +923,12 @@ makehhk proc uses rsi rdi rbx name:string_t
 
         .for ( ebx = 0 : ebx < hhk : ebx++ )
 
-            mov rcx,pm[rbx*pmd]
+            mov rdx,pm[rbx*pmd]
             fprintf(fp,
                 "<LI> <OBJECT type=\"text/sitemap\">\n"
                 " <param name=\"Name\" value=\"%s\">\n"
                 " <param name=\"Local\" value=\"%s\">\n"
-                " </OBJECT>\n", [rcx].md.file, [rcx].md.name)
+                " </OBJECT>\n", [rdx].md.file, [rdx].md.name)
         .endf
     .endif
     fprintf(fp,
@@ -1008,9 +1013,10 @@ main proc uses rbx argc:int_t, argv:array_t
         .endf
         makehhc(name)
         makehhk(name)
-        strcpy(&hhc, "hhc.exe")
+
+        strcpy(&hhc, HHC)
         strcat(strcpy(&hhp, name), ".hhp")
-        .ifd ( SearchPathA( 0, &hhc, 0, _MAX_PATH, path, 0 ) == 0 )
+        .ifd ( _searchenv_s( HHC, "PATH", path, _MAX_PATH ) != 0 )
             mov path,&hhc
         .endif
         .if ( _spawnl( P_WAIT, path, path, &hhp, NULL ) == -1 )

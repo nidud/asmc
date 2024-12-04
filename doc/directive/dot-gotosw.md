@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## .GOTOSW
 
-.**GOTOSW** [[([[n:]]<_caseval_>)] | [.**IF** _condition_]]
+.**GOTOSW** [[([[n:]]&lt;_caseval_&gt;)] | [.**IF** _condition_]]
 
 Generates code to jump to the top of a [.SWITCH](dot-switch.md) block if _condition_ is true.
 

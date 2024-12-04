@@ -3,7 +3,7 @@ Asmc Macro Assembler Reference
 # Segment
 
 - [: (segment override)](operator-colon.md)
-- [:: (register segment and offset)](operator-duoble-colon.md)
+- [:: (register segment and offset)](operator-double-colon.md)
 - [IMAGEREL (image relative offset)](operator-imagerel.md)
 - [LROFFSET (loader resolved offset)](operator-lroffset.md)
 - [OFFSET (segment relative offset)](operator-offset.md)

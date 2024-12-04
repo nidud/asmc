@@ -1,2 +1,8 @@
-mdchm.exe:
-	asmc64 -q -pe -frame $*.asm
+ifndef YACC
+flags = -pe -frame
+endif
+mdchm:
+	asmc64 -q $(flags) $@.asm
+
+install:
+	sudo install ./mdchm /usr/bin

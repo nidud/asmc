@@ -12,7 +12,7 @@ The /IMPLIB option overrides the default name for the import library that LINKW 
 
 LINKW ignores /IMPLIB when an import library is not being created. If no exports are specified, LINKW does not create an import library. If an export file is used in the build, LINKW assumes that an import library already exists and does not create one.
 
-For information on import libraries and export files, see [LIBW Reference](lib.md).
+For information on import libraries and export files, see [LIBW Reference](../libw/readme.md).
 
 #### See Also
 

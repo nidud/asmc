@@ -3,7 +3,11 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; errno_t _searchenv(const char *, const char *, char *);
+; errno_t _searchenv_s(const char *, const char *, char *, size_t);
+; errno_t _wsearchenv(const wchar_t *, const wchar_t *, wchar_t *);
+; errno_t _wsearchenv_s(const wchar_t *, const wchar_t *, wchar_t *, size_t);
+;
 include stdlib.inc
 include io.inc
 include errno.inc

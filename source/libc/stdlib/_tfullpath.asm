@@ -3,261 +3,178 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+; char * _fullpath(char *, const char *, size_t);
+; wchar_t * _wfullpath(wchar_t *, const wchar_t *, size_t);
+;
 
 include direct.inc
 include malloc.inc
 include string.inc
+include stdlib.inc
 include errno.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 include tchar.inc
 
-.code
+    .code
 
-_tfullpath proc uses rsi rdi rbx buf:LPTSTR, path:LPTSTR, maxlen:int_t
+    assume rsi:tstring_t
+    assume rdi:tstring_t
+
+_tfullpath proc uses rsi rdi rbx buf:tstring_t, path:tstring_t, maxlen:size_t
+
+    ldr rbx,buf
+    ldr rsi,path
+    ldr rcx,maxlen
+
+    .if ( !rsi || [rsi] == 0 )
+
+        .return( _tgetcwd(rbx, ecx) )
+    .endif
+
+    .if ( !rbx )
+ifdef __UNIX__
+        mov eax,_MAX_PATH
+else
+        .ifd ( GetFullPathName(rsi, 0, NULL, NULL) == 0 )
+
+            _dosmaperr( GetLastError() )
+            .return( NULL )
+        .endif
+endif
+        .if ( rax > maxlen )
+            mov maxlen,rax
+        .endif
+        calloc( maxlen, TCHAR )
+        .if ( rax == NULL )
+            .return
+        .endif
+        mov rbx,rax
+if defined(__UNIX__) and defined(_WIN64)
+        mov rsi,path
+endif
+    .endif
 
 ifdef __UNIX__
 
-    int 3
-
-else
-
-  local drive:byte
-  local dchar:byte
-
     .repeat
 
-        mov rsi,path
-        .if ( !rsi || TCHAR ptr [rsi] == 0 )
+        mov rdi,rbx
+        .if ( [rsi] == '/' )
 
-            _tgetcwd(buf, maxlen)
-            .break
-        .endif
-
-        mov rdi,buf
-        .if ( !rdi )
-
-            .if !malloc( _MAX_PATH*TCHAR )
-
-                _set_errno(ENOMEM)
-                .return(0)
-            .endif
-
-            mov rdi,rax
-            mov maxlen,_MAX_PATH
-
-        .elseif ( maxlen < _MAX_DRIVE+1 )
-
-            _set_errno(ERANGE)
-            .return(0)
-        .endif
-
-        mov rbx,rdi
-        mov edx,'\'
-        mov eax,'/'
-
-        .if ( ( [rdi] == _tdl || [rdi] == _tal ) &&
-              ( [rdi+TCHAR] == _tdl || [rdi+TCHAR] == _tal ) )
-
-            mov eax,maxlen
-            lea rcx,[rbx+rax*TCHAR-TCHAR]
-            xor eax,eax
-            xor edx,edx
-
-            .repeat
-
-                _tlodsb
-                mov [rdi],_tal
-                .break .if !_tal
-
-                .if ( rdi >= rcx )
-
-                    _set_errno(ERANGE)
-                    xor eax,eax
-                   .break
-                .endif
-
-                .if ( _tal == '\' || _tal == '/' )
-
-                    mov TCHAR ptr [rdi],'\'
-                    inc edx
-
-                    .if ( ( edx == 2 && TCHAR ptr [rsi] == 0 ) ||
-                          ( edx >= 3 && TCHAR ptr [rdi-TCHAR] == '\' ) )
-
-                        _set_errno(EINVAL)
-                        xor eax,eax
-                       .break
-                    .endif
-                .endif
-
-                add rdi,TCHAR
-            .until ( edx == 4 )
-
-            mov TCHAR ptr [rdi],'\'
-            mov rcx,rdi
+            inc rsi
 
         .else
 
-            mov drive,0
-            mov _tcl,[rsi]
-            or  cl,0x20
-
-            .if ( _tcl >= 'a' && _tcl <= 'z' && TCHAR ptr [rsi+TCHAR] == ':' )
-
-                _tmovsb
-                _tmovsb
-                sub cl,'a' + 1
-                and cl,1Fh
-                mov drive,cl
-
-                GetLogicalDrives()
-
-                movzx ecx,drive
-                dec ecx
-                shr eax,cl
-                sbb eax,eax
-                and eax,1
-
-                .ifz
-                    _set_errno(EACCES)
-                    _set_doserrno(ERROR_INVALID_DRIVE)
-                    xor eax,eax
-                   .break
-                .endif
+            .break .if ( !_tgetcwd( rbx, maxlen ) )
+            lea rdi,[rbx+_tcslen(rbx)]
+            .if ( [rdi-1] == '/' )
+                dec rdi
             .endif
-
-            mov _tal,[rsi]
-            .if ( _tal == '\' || _tal == '/' )
-
-                .if ( drive == 0 )
-
-                    _getdrive()
-                    add al,'A'- 1
-                    _tstosb
-                    mov al,':'
-                    _tstosb
-                .endif
-                add rsi,TCHAR
-
-            .else
-
-                .if ( drive )
-
-                    mov al,[rsi-2*TCHAR]
-                    mov dchar,al
-                .endif
-
-                movzx eax,drive
-                .break .if ( !_tgetdcwd( eax, rbx, maxlen ) )
-
-                _tcslen( rbx )
-                lea rdi,[rbx+rax*TCHAR]
-                xor eax,eax
-
-                .if ( drive )
-
-                    mov al,dchar
-                    mov [rbx],_tal
-                .endif
-
-                mov _tal,[rdi-TCHAR]
-                .if ( _tal == '\' || _tal == '/' )
-
-                    sub rdi,TCHAR
-                .endif
-            .endif
-
-            mov TCHAR ptr [rdi],'\'
-            lea rcx,[rbx+2*TCHAR]
+ifdef _WIN64
+            mov rsi,path
+endif
         .endif
+        mov rax,maxlen
+        lea rcx,[rbx+rax-1]
+        mov [rdi],'/'
 
-        .while TCHAR ptr [rsi] != 0
+        .while ( [rsi] )
 
-            mov _tal,[rsi+2*TCHAR]
-            mov _tdl,[rsi+TCHAR]
-
-            .if ( TCHAR ptr [rsi] == '.' && _tdl == '.' && ( !_tal || _tal == '\' || _tal == '/' ) )
+            mov ax,word ptr [rsi+1]
+            .if ( [rsi] == '.' && al == '.' && ( !ah || ah == '/' ) )
 
                 .repeat
-                    sub rdi,TCHAR
-                    mov _tal,[rdi]
-                .until ( _tal == '\' || _tal == '/' || rdi <= rcx )
+                    dec rdi
+                    mov al,[rdi]
+                .until ( al == '/' || rdi < rbx )
 
-                .if rdi < rcx
+                .if ( rdi < rbx )
 
-                    _set_errno(EACCES)
+                    _set_errno( EACCES )
                     xor eax,eax
-                   .break(1)
+                   .break( 1 )
                 .endif
 
-                add rsi,2*TCHAR
-                .if TCHAR ptr [rsi] != 0
-
-                    add rsi,TCHAR
+                add rsi,2
+                .if ( [rsi] )
+                    inc rsi
                 .endif
 
-            .elseif ( TCHAR ptr [rsi] == '.' && ( ( _tdl == '\' || _tdl == '/' ) || !_tdl ) )
+            .elseif ( [rsi] == '.' && ( al == '/' || !al ) )
 
-                add rsi,TCHAR
-                .if TCHAR ptr [rsi] != 0
-
-                    add rsi,TCHAR
+                inc rsi
+                .if ( [rsi] )
+                    inc rsi
                 .endif
+
             .else
 
                 mov rdx,rdi
-                mov _tal,[rsi]
+                mov al,[rsi]
 
-                .while ( _tal && !( _tal == '\' || _tal == '/' ) && rdi < rcx )
+                .while ( al && al != '/' && rdi < rcx )
 
-                    _tlodsb
-                    add rdi,TCHAR
-                    mov [rdi],_tal
+                    inc rsi
+                    inc rdi
+                    mov [rdi],al
+                    mov al,[rsi]
                 .endw
 
                 .if ( rdi >= rcx )
 
-                    _set_errno(ERANGE)
+                    _set_errno( ERANGE )
                     xor eax,eax
-                   .break
+                   .break( 1 )
                 .endif
 
                 .if ( rdi == rdx )
 
-                    _set_errno(EINVAL)
+                    _set_errno( EINVAL )
                     xor eax,eax
-                   .break(1)
+                   .break( 1 )
                 .endif
 
-                add rdi,TCHAR
-                mov TCHAR ptr [rdi],'\'
-                mov _tal,[rsi]
-                .if _tal == '\' || _tal == '/'
-
-                    add rsi,TCHAR
+                inc rdi
+                mov [rdi],'/'
+                .if ( [rsi] == '/' )
+                    inc rsi
                 .endif
             .endif
         .endw
-
-        .if ( TCHAR ptr [rdi-TCHAR] == ':' )
-            add rdi,TCHAR
-        .endif
-
-        mov TCHAR ptr [rdi],0
+        mov [rdi],0
         mov rax,rbx
     .until 1
-
     .if ( rax == NULL )
-
         .if ( rax == buf )
             free(rbx)
         .endif
         xor eax,eax
     .endif
+
+else
+
+    .if ( GetFullPathName(rsi, maxlen, rbx, NULL) >= maxlen )
+
+        .if ( !buf )
+            free(rbx)
+        .endif
+        _set_errno( ERANGE )
+        xor ebx,ebx
+
+    .elseif ( eax == 0 )
+
+        .if ( !buf )
+            free(rbx)
+        .endif
+        _dosmaperr( GetLastError() )
+        xor ebx,ebx
+    .endif
+    mov rax,rbx
 endif
     ret
 
 _tfullpath endp
 
     end
-

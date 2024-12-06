@@ -517,7 +517,7 @@ endif ; _WSTDLIB_DEFINED
 
 _CVTBUFSIZE	equ (309+40) ;; # of digits in max. dp value + slop
 
-_fullpath	proto __cdecl :string_t, :string_t, :int_t
+_fullpath	proto __cdecl :string_t, :string_t, :size_t
 
 _ecvt_s		proto __cdecl :string_t, :size_t, :real8, :int_t, :ptr int_t, :ptr int_t
 _ecvt		proto __cdecl :real8, :int_t, :ptr int_t, :ptr int_t
@@ -584,7 +584,7 @@ _swab		proto __cdecl :string_t, :string_t, :int_t
 ifndef _WSTDLIBP_DEFINED
 define _WSTDLIBP_DEFINED
 
-_wfullpath	proto __cdecl :wstring_t, :wstring_t, :int_t
+_wfullpath	proto __cdecl :wstring_t, :wstring_t, :size_t
 _wmakepath_s	proto __cdecl :wstring_t, :size_t, :wstring_t, :wstring_t, :wstring_t, :wstring_t
 ifndef _CRT_WPERROR_DEFINED
 define _CRT_WPERROR_DEFINED

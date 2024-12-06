@@ -3,10 +3,13 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char * _getpath(const char *, char *, size_t);
+; wchar_t * _wgetpath(const wchar_t *, wchar_t *, size_t);
+;
 include stdlib.inc
 include errno.inc
 include tchar.inc
+
 ifdef __UNIX__
 define DELIM ':'
 else

@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char * _getcwd(char *, int);
+; wchar_t * _wgetcwd(wchar_t *, int);
+;
 include direct.inc
 ifdef __UNIX__
 include errno.inc

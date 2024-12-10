@@ -8,6 +8,6 @@
 ifndef __ELF_INC
 define __ELF_INC
 
-elf_init proto __ccall
+elf_init proto
 
 endif

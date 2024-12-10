@@ -108,8 +108,6 @@ define MINCOLS		80
 define MINROWS		25
 define MAXSCRLINE	MAXCOLS
 
-define CURSOR_NORMAL	16	; default cursor size (0..100)
-
 .enum VTI_COLOR { ; Virtual Terminal Color Index
     TC_BLACK,
     TC_BLUE,
@@ -272,13 +270,23 @@ define _D_FOREG		0x0004
 define _D_COLOR		(_D_BACKG or _D_FOREG)
 
 .enum CURSOR_TYPE {
+ifdef __TTY__
     CURSOR_DEFAULT,
     CURSOR_BLOCK_BL,
     CURSOR_BLOCK,
     CURSOR_UNDERL_BL,
     CURSOR_UNDERL,
     CURSOR_BAR_BL,
-    CURSOR_BAR
+    CURSOR_BAR,
+else
+    CURSOR_DEFAULT	= 16,
+    CURSOR_BLOCK_BL	= 50,
+    CURSOR_BLOCK	= 100,
+    CURSOR_UNDERL_BL	= 16,
+    CURSOR_UNDERL	= 16,
+    CURSOR_BAR_BL	= 16,
+    CURSOR_BAR		= 16,
+endif
     }
 
 CALLBACKC(DPROC)
@@ -432,17 +440,12 @@ define MAXMSGCNT 32
     modein	int_t ?
     modeout	int_t ?
     paint	int_t ?
+ifdef __TTY__
+    csize	uint_t ?
+    cvisible	uint_t ?
+endif
    .ends
     PCONSOLE	typedef ptr TCONSOLE
-
-
-.template CINPUT
-    union
-     q	    intptr_t ?
-     b	    db 8 dup(?)
-    ends
-    count   dd ?
-   .ends
 
 .pragma pack(pop)
 
@@ -452,10 +455,26 @@ define CONOUT	<"/dev/tty">
 else
 define CONIN	<"CONIN$">
 define CONOUT	<"CONOUT$">
-externdef	_confh:HANDLE
-externdef	_coninpfh:HANDLE
 endif
 
+ifdef __TTY__
+_getconsolecursorinfo proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
+_setconsolecursorinfo proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
+_getconsolescreenbufferinfo proto WINAPI :HANDLE, :PCONSOLE_SCREEN_BUFFER_INFO
+_getconsolescreenbufferinfoex proto WINAPI :HANDLE, :PCONSOLE_SCREEN_BUFFER_INFOEX
+_setconsolecursorposition proto WINAPI :HANDLE, :COORD
+_writeconsoleoutputw proto WINAPI :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
+else
+define _getconsolecursorinfo <GetConsoleCursorInfo>
+define _setconsolecursorinfo <SetConsoleCursorInfo>
+define _getconsolescreenbufferinfo <GetConsoleScreenBufferInfo>
+define _getconsolescreenbufferinfoex <GetConsoleScreenBufferInfoEx>
+define _setconsolecursorposition <SetConsoleCursorPosition>
+define _writeconsoleoutputw <WriteConsoleOutputW>
+endif
+
+externdef	_confh:HANDLE
+externdef	_coninpfh:HANDLE
 externdef	_confd:int_t
 externdef	_coninpfd:int_t
 externdef	_console:PCONSOLE
@@ -593,6 +612,17 @@ rsmodal		proto __cdecl :PIDD
 
 ;;;
 
+.template AnsiEscapeCode
+
+    final	db ?		; (0x40–0x7E)
+    count	db ?		; (0x30–0x39) -> 1;2;3
+    param	db ?		; (0x3A–0x3F)
+    inter	db ?		; (0x20–0x2F)
+    n		dd 7 dup(?)
+   .ends
+
+_readansi	proto __cdecl :ptr AnsiEscapeCode
+
 _coutA		proto __Cdecl :string_t, :vararg
 _coutW		proto __Cdecl :wstring_t, :vararg
 _readinputA	proto __cdecl :PINPUT_RECORD
@@ -652,11 +682,7 @@ _setcursor	proto __cdecl :PCURSOR
 _cursoron	proto __cdecl
 _cursoroff	proto __cdecl
 _cursortype	proto __cdecl :int_t
-_cursorxy	proto __cdecl ; COORD
 _gotoxy		proto __cdecl :uint_t, :uint_t
-ifdef __TTY__
-externdef	_cursor:CURSOR
-endif
 
 _rcframe	proto __cdecl :TRECT, :TRECT, :PCHAR_INFO, :int_t, :uchar_t
 _rcmemsize	proto __cdecl :TRECT, :uint_t

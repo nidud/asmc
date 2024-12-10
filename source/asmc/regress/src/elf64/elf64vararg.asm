@@ -12,7 +12,7 @@ main proc
 
     ; sub     rsp, 8
     ; movsd   xmm2, qword ptr [F0000]
-    ; movsd   xmm1, xmm0
+    ; movaps  xmm1, xmm0
     ; cvtss2sd xmm0, dword ptr [d]
     ; xor     edi, edi
     ; mov     eax, 3

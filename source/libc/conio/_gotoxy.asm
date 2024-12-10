@@ -11,17 +11,11 @@ include conio.inc
 _gotoxy proc x:uint_t, y:uint_t
 
     ldr ecx,x
-    ldr eax,y
+    ldr edx,y
 
-ifdef __TTY__
-    inc ecx ; zero based..
-    inc eax
-    _cout("\e[%d;%dH", eax, ecx)
-else
-    shl eax,16
-    mov ax,cx
-    SetConsoleCursorPosition(_confh, eax)
-endif
+    shl edx,16
+    mov dx,cx
+    _setconsolecursorposition(_confh, edx)
     ret
 
 _gotoxy endp

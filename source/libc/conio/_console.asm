@@ -19,16 +19,13 @@ __initconsole proc uses rsi rdi rbx
    .new rc:TRECT = {0}
    .new w:int_t = 0
    .new h:int_t = 0
-
-ifndef __TTY__
-
    .new bz:COORD
    .new sr:SMALL_RECT
    .new ci:CONSOLE_SCREEN_BUFFER_INFOEX = {CONSOLE_SCREEN_BUFFER_INFOEX}
 
-    .if GetConsoleScreenBufferInfoEx(_confh, &ci)
+    .if _getconsolescreenbufferinfoex(_confh, &ci)
 
-        SetConsoleCursorPosition(_confh, 0)
+        _setconsolecursorposition(_confh, 0)
 
         movzx eax,ci.srWindow.Right
         sub ax,ci.srWindow.Left
@@ -48,6 +45,8 @@ ifndef __TTY__
             mov eax,MINROWS
         .endif
         mov h,eax
+
+ifndef __TTY__
 
         lea rdi,_rgbcolortable
         lea rsi,ci.ColorTable
@@ -71,23 +70,8 @@ ifndef __TTY__
         shl edx,16
         mov dx,word ptr w
         SetConsoleScreenBufferSize(_confh, edx)
-    .endif
-
-else
-
-;   _cout(CSI "?1049h" )  ; _conpush()
-    _cout(ESC "7")        ; push cursor
-    _cout(CSI "256;256H")
-    _cursorxy()
-
-    add eax,0x00010001
-    movzx ecx,ax
-    shr eax,16
-    mov w,ecx
-    mov h,eax
-    _cout(ESC "8" ) ; pop cursor
-
 endif
+    .endif
 
     mov rc.col,w
     mov rc.row,h
@@ -179,10 +163,11 @@ endif
     mov [rbx].color,rcx
     mov [rbx].conmax.X,rc.col
     mov [rbx].conmax.Y,rc.row
-    _gotoxy(0, 0)
+    mov rax,rbx
     ret
 
 __initconsole endp
+
 
 __termconsole proc uses rbx
 
@@ -191,9 +176,6 @@ __termconsole proc uses rbx
 
         mov _console,[rbx].prev
         free(rbx)
-ifdef __TTY__
-;       _cout(CSI "?1049l" ) ; _conpop()
-endif
     .endif
     ret
 

@@ -1,18 +1,11 @@
-ifdef YACC
-
 _syserr:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q -D__TTY__ $@.asm
+ifdef YACC
 	./$@
 	rm -f $@.o
 	rm -f $@
-
 else
-
-_syserr.exe:
-	asmc64 -c -ws $*.asm
-	linkw system con_64W file $*.obj
 	$@
-	del $*.obj
-	del $*.exe
+	del $@.obj
+	del $@.exe
 endif

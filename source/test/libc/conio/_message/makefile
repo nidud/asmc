@@ -1,16 +1,11 @@
-ifdef YACC
-
 message:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
-
+	asmc64 -q -D__TTY__ $@.asm
+ifdef YACC
+	./$@
+	rm -f $@.o
+	rm -f $@
 else
-
-message.exe:
-ifdef msvcrt
-	asmc64 -pe $*.asm
-else
-	asmc64 $*.asm
-endif
 	$@
+	del $@.obj
+	del $@.exe
 endif

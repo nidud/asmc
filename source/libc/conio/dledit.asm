@@ -577,7 +577,7 @@ setcursor proc fastcall ti:PTEDIT
     mov cursor.x,al
     mov cursor.y,dl
     mov cursor.visible,1
-    mov cursor.type,CURSOR_NORMAL
+    mov cursor.type,CURSOR_DEFAULT
     _setcursor(&cursor)
     ret
 

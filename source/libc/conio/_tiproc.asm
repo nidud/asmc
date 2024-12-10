@@ -813,29 +813,31 @@ wm_char endp
 
     assume rcx:THWND
 
-_tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
+_tiproc proc public uses rsi rdi rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
     ldr rax,lParam
     ldr rcx,hwnd
     ldr rdx,wParam
+
     mov rbx,[rcx].tedit
+    mov rsi,[rcx].prev
+    mov edi,eax
+    movzx eax,[rcx].rc.y
+    add al,[rsi].TDIALOG.rc.y
+    mov [rbx].ypos,eax
+    mov al,[rcx].rc.x
+    add al,[rsi].TDIALOG.rc.x
+    mov [rbx].xpos,eax
 
     .switch uiMsg
     .case WM_SETFOCUS
+        mov ecx,eax
         xor eax,eax
         mov [rbx].xoffs,eax
         mov [rbx].boffs,eax
         mov [rbx].clip_so,eax
         mov [rbx].clip_eo,eax
-        mov rdx,[rcx].prev
-        mov al,[rcx].rc.y
-        add al,[rdx].TDIALOG.rc.y
-        mov [rbx].ypos,eax
-        movzx ecx,[rcx].rc.x
-        add cl,[rdx].TDIALOG.rc.x
-        mov [rbx].xpos,ecx
-        add ecx,[rbx].xoffs
-        _gotoxy(ecx, eax)
+        _gotoxy(ecx, [rbx].ypos)
         _cursoron()
         .if ( [rbx].flags & TE_AUTOSELECT )
             mov [rbx].clip_eo,_tcslen([rbx].base)
@@ -847,13 +849,6 @@ _tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARA
         mov [rbx].boffs,eax
         mov [rbx].clip_so,eax
         mov [rbx].clip_eo,eax
-        mov rdx,[rcx].prev
-        mov al,[rcx].rc.y
-        add al,[rdx].TDIALOG.rc.y
-        mov [rbx].ypos,eax
-        mov al,[rcx].rc.x
-        add al,[rdx].TDIALOG.rc.x
-        mov [rbx].xpos,eax
        .return( _tiputs(rbx) )
     .case WM_LBUTTONDOWN
         .endc
@@ -865,20 +860,19 @@ _tiproc proc public uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARA
 
             ; inserting char needs focus..
 
-            mov rdx,[rcx].prev
-            mov dl,[rdx].TDIALOG.index
-           .endc .if dl != [rcx].oindex
+            mov al,[rsi].TDIALOG.index
+           .endc .if al != [rcx].oindex
 
-           .return wm_char(rcx, ebx, eax)
+           .return wm_char(rcx, ebx, edi)
         .endif
         .endc
 
     .case WM_KEYDOWN
-        .endc .if !( eax & ENHANCED_KEY )
+        .endc .if !( edi & ENHANCED_KEY )
         .switch edx
         .case VK_DIVIDE
             mov edx,'/'
-            and eax,not ENHANCED_KEY
+            and edi,not ENHANCED_KEY
 ;        .case VK_RETURN
         .case VK_UP
         .case VK_DOWN

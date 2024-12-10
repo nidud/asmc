@@ -10,16 +10,16 @@ include conio.inc
 
 _cursoron proc
 
-ifdef __TTY__
-    mov _cursor.visible,1
-    _cout(ESC "[?25h")
-else
   local cu:CONSOLE_CURSOR_INFO
 
-    mov cu.dwSize,CURSOR_NORMAL
-    mov cu.bVisible,1
-    SetConsoleCursorInfo(_confh, &cu)
+ifdef __TTY__
+    mov rcx,_console
+    mov cu.dwSize,[rcx].TCONSOLE.csize
+else
+    mov cu.dwSize,CURSOR_DEFAULT
 endif
+    mov cu.bVisible,1
+    _setconsolecursorinfo(_confh, &cu)
     ret
 
 _cursoron endp

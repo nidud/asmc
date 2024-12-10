@@ -1,13 +1,10 @@
-ifdef YACC
 _rczip:
-	asmc64 $@.asm
+	asmc64 -q -D__TTY__ $@.asm
+ifdef YACC
 	./$@
 	rm -f $@.o
 	rm -f $@
 else
-_rczip.exe:
-	asmc64 -c -q $*.asm
-	linkw system tty_64 file $*
 	$@
 	del *.obj
 	del *.exe

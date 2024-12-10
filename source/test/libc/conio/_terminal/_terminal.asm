@@ -64,97 +64,33 @@ paint proc uses rbx
 paint endp
 
 
-setn proto fastcall :tstring_t {
-    mov n,_1
-    }
-
 _tmain proc
 
-   .new p:int_t = 0
-   .new c:int_t = 0
+   .new esc:int_t = 0
    .new y:byte = 0
-   .new n:string_t = 0
-   .new keys:CINPUT
+   .new a:AnsiEscapeCode = {0}
    .new s:ptr = _conpush()
 
     paint()
 
-    _cout(CSI "0c" ) ; read terminal identity
-    .repeat
-
-        .break .if ( _getch() != VK_ESCAPE )
-        .break .if ( _getch() != '[' )
-        .break .if ( _getch() != '?' )
-
-        mov p,_getch()
-        mov c,_getch()
-
-        .if ( p == '1' )
-
-            .if ( c == ';' )
-
-                mov c,_getch()
-            .endif
-            _kbflush()
-            .if ( c == '0' )
-                setn("VT101 with No Options")
-            .else
-                setn("VT100 with Advanced Video Option")
-            .endif
-            .break
-        .endif
-
-        mov eax,c
-        .switch eax
-        .case '2'
-            setn("VT220")
-           .endc
-        .case '3'
-            setn("VT320")
-           .endc
-        .case '4'
-            setn("VT420")
-           .endc
-        .case '5'
-            setn("VT520")
-           .endc
-        .default
-            setn("VT102")
-           .break
-        .endsw
+    _cout(CSI "c" ) ; read terminal identity
+    _readansi(&a)
+    .if ( a.param == '?' && a.n[4] != 0 )
         mov y,5
-    .until 1
-
-    _scputf(2, 2, "Terminal type: %s", n)
+    .endif
+    mov eax,a.n
+    .while ( eax < 100 )
+        imul eax,eax,10
+    .endw
+    _scputf(2, 2, "Terminal type: VT%03d", eax)
     _scputs(3, 4, "Supported features:")
 
     .if ( y )
 
-        mov c,_getch()
+        .for ( ebx = 1 : bl < a.count : ebx++, y++ )
 
-        .while ( c != 'c' )
-
-            inc y
-            mov eax,c
-            .if ( eax == ';' )
-                mov c,_getch()
-            .endif
-            xor ebx,ebx
-            .if ( eax >= '0' && eax <= '9' )
-
-                sub eax,'0'
-                mov ebx,eax
-                mov c,_getch()
-            .endif
-            .if ( eax >= '0' && eax <= '9' )
-
-                imul ebx,ebx,10
-                sub eax,'0'
-                add ebx,eax
-                mov c,_getch()
-            .endif
-
-            .switch pascal ebx
+            mov eax,a.n[rbx*4]
+            .switch pascal eax
             .case  1: _scputs(4, y, "132-columns")
             .case  2: _scputs(4, y, "Printer")
             .case  3: _scputs(4, y, "ReGIS graphics")
@@ -170,30 +106,23 @@ _tmain proc
             .default
             .break
             .endsw
-        .endw
+        .endf
     .endif
 
     mov rcx,_console
     mov al,[rcx].TCONSOLE.rc.row
     dec al
     mov y,al
+
     _cout(SET_ANY_EVENT_MOUSE)
-    .whiled ( _getch() != -1 )
+    .whiled ( _readansi( &a ) )
 
-        .if ( eax != VK_ESCAPE )
-
-           .break .if ( eax == VK_RETURN )
-            mov keys.q,rax
-        .elseif ( _kbflush() == 0 )
-           .break
-        .else
-            shl rcx,16
-            mov cx,'e\'
-            mov keys.q,rcx
-        .endif
-        _scputf(13, y, "%-8s", &keys.b)
+        .break .if ( a.final == VK_ESCAPE || a.final == VK_RETURN )
+        _scputf(13, y, "%c %d %d %d %3d %3d %3d %3d",
+            a.final, a.count, a.param, a.inter, a.n[0x0], a.n[0x4], a.n[0x8], a.n[0xC])
     .endw
     _cout(RST_ANY_EVENT_MOUSE)
+
     _conpop(s)
     .return(0)
 

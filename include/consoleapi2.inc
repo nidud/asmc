@@ -52,7 +52,7 @@ CONSOLE_CURSOR_INFO     ends
 PCONSOLE_CURSOR_INFO    typedef ptr CONSOLE_CURSOR_INFO
 
 GetConsoleCursorInfo proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
-SetConsoleCursorInfo proto WINAPI :HANDLE, :ptr
+SetConsoleCursorInfo proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
 
 CONSOLE_SCREEN_BUFFER_INFO struct
 dwSize                  COORD <>
@@ -119,8 +119,8 @@ else
 define ScrollConsoleScreenBuffer  <ScrollConsoleScreenBufferA>
 endif
 
-WriteConsoleOutputA proto WINAPI :HANDLE, :ptr, :COORD, :COORD, :PSMALL_RECT
-WriteConsoleOutputW proto WINAPI :HANDLE, :ptr, :COORD, :COORD, :PSMALL_RECT
+WriteConsoleOutputA proto WINAPI :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
+WriteConsoleOutputW proto WINAPI :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
 ifdef _UNICODE
 define WriteConsoleOutput  <WriteConsoleOutputW>
 else

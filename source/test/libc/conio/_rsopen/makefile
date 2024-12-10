@@ -1,18 +1,13 @@
-ifdef YACC
 _rsopen:
-	asmc64 -c $@.asm
-	asmc64 -c -idd res/OpenFile.idd
-	gcc -nostdlib -o $@ $@.o OpenFile.o -l:libasmc.a
+	asmc64 -q $@.asm -idd res/OpenFile.idd
+ifdef YACC
 	./$@
-	rm -f *.o
-	rm -f $@
+	rm *.o
+	rm *.s
+	rm $@
 else
-_rsopen.exe:
-	asmc64 -c -q $*.asm
-	asmc64 -c -idd res/OpenFile.idd
-	linkw system con_64 file $*.obj, OpenFile.obj
 	$@
 	del *.obj
 	del *.s
-	del *.exe
+	del $@.exe
 endif

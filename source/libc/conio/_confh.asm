@@ -9,25 +9,22 @@ include fcntl.inc
 include conio.inc
 
     .data
-ifndef __UNIX__
     _confh      HANDLE -1
- ifdef __TTY__
+    _confd      int_t -1
+if not defined(__UNIX__) and defined(__TTY__)
     _conoutcp   int_t 0
     _modeout    int_t -1
- endif
 endif
-    _confd      int_t -1
 
     .code
 
 __initconout proc private
 
     mov _confd,_open(CONOUT, O_BINARY or O_RDWR or O_NOCTTY)
-ifndef __UNIX__
     .ifs ( eax > 0 )
         mov _confh,_get_osfhandle(eax)
     .endif
- ifdef __TTY__
+if not defined(__UNIX__) and defined(__TTY__)
     .ifs ( eax > 0 )
         .ifd GetConsoleMode(_confh, &_modeout)
             SetConsoleMode(_confh, ENABLE_PROCESSED_OUTPUT or ENABLE_VIRTUAL_TERMINAL_PROCESSING)
@@ -35,7 +32,6 @@ ifndef __UNIX__
     .endif
     mov _conoutcp,GetConsoleOutputCP()
     SetConsoleOutputCP(65001)
- endif
 endif
     ret
 

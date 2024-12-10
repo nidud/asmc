@@ -10,8 +10,12 @@ include conio.inc
 
 _wherey proc
 
-    _cursorxy()
-    shr eax,16
+    .new ci:CONSOLE_SCREEN_BUFFER_INFO
+
+    .ifd _getconsolescreenbufferinfo(_confh, &ci)
+
+        movzx eax,ci.dwCursorPosition.Y
+    .endif
     ret
 
 _wherey endp

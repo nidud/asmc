@@ -1,13 +1,10 @@
-ifdef YACC
 _rcxchg:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q -D__TTY__ $@.asm
+ifdef YACC
 	./$@
 	rm -f $@.o
 	rm -f $@
 else
-_rcxchg.exe:
-	asmc64 -q $*.asm
 	$@
 	del *.obj
 	del *.exe

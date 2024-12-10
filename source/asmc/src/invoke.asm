@@ -647,8 +647,9 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
                 movzx eax,[rcx].asym.sys_xcnt
                 dec simd_scratch
                 mov ecx,simd_scratch
-                .if ( [rdx].fc_info.maxxmm > cl )
-                    lea ebx,[rax+rcx+T_XMM0]
+                add ecx,eax
+                .if ( cl < [rdx].fc_info.maxxmm )
+                    lea ebx,[rcx+T_XMM0]
                 .endif
             .endif
 
@@ -657,9 +658,10 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
             movzx eax,[rcx].asym.sys_rcnt
             dec wreg_scratch
             mov ecx,wreg_scratch
-            .if ( [rdx].fc_info.maxgpr > cl )
+            add ecx,eax
+            .if ( cl < [rdx].fc_info.maxgpr )
 
-                add     eax,ecx
+                mov     eax,ecx
                 movzx   ecx,Ofssize
                 shl     ecx,3
                 add     ecx,eax
@@ -1304,8 +1306,12 @@ handle_address:
                .return
             .endif
 
-            .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
-                mov ecx,T_CVTSS2SD
+            .if ( wordsize == 8 && [rsi].sflags & S_ISVARARG )
+                .if ( ecx == T_MOVSS )
+                    mov ecx,T_CVTSS2SD
+                .elseif ( ecx == T_MOVSD )
+                    mov ecx,T_MOVAPS
+                .endif
             .endif
             AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
             .if ( dst_flt )

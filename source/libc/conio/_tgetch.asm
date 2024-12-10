@@ -65,7 +65,7 @@ _ungettch proc c:int_t
 
     ; Fail if the char is EOF or the pushback buffer is non-empty
 
-    .if ( ( eax == EOF ) || ( chbuf != EOF ) )
+    .if ( eax == EOF || chbuf != EOF )
         .return EOF
     .endif
     mov chbuf,eax
@@ -78,9 +78,15 @@ _kbhit proc
 
     ; Fail if the buffer is empty
 
-    mov eax,count
-    .if ( eax )
-        mov al,byte ptr inbuf
+    mov eax,chbuf
+    mov ecx,1
+    .if ( eax == EOF )
+
+        xor eax,eax
+        mov ecx,count
+        .if ( ecx )
+            mov al,byte ptr inbuf
+        .endif
     .endif
     ret
 
@@ -98,6 +104,14 @@ _kbflush proc
     not     rax
     and     rax,inbuf
     xchg    rax,rcx
+
+    .if ( chbuf != EOF )
+
+        inc eax
+        shl rcx,8
+        mov cl,byte ptr chbuf
+        mov chbuf,EOF
+    .endif
     ret
 
 _kbflush endp

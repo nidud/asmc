@@ -10,23 +10,12 @@ include conio.inc
 
 _cursortype proc type:int_t
 
-ifdef __TTY__
-    ldr edx,type
-
-    .if ( _cursor.type != dl )
-
-        mov _cursor.type,dl
-        _cout(ESC "[%d q", edx)
-    .endif
-else
-  local cu:CONSOLE_CURSOR_INFO
-
-    .if GetConsoleCursorInfo(_confh, &cu)
+    .new cu:CONSOLE_CURSOR_INFO
+    .ifd _getconsolecursorinfo(_confh, &cu)
 
         mov cu.dwSize,type
-        SetConsoleCursorInfo(_confh, &cu)
+        _setconsolecursorinfo(_confh, &cu)
     .endif
-endif
     ret
 
 _cursortype endp

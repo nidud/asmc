@@ -4,11 +4,11 @@
 ifdef YACC
 
 libasmc.a:
-	asmc64 -c -fpic -Zp8 -MT -Cs -r *.asm
+	asmc64 -c -fpic -Zp8 -MT -Cs -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
-	asmc -c -6 -elf -fpic -Zp4 -MT -Cs -r *.asm
+	asmc -c -6 -elf -fpic -Zp4 -MT -Cs -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc/x86
@@ -30,11 +30,6 @@ flag += -win64 -frame -Zp8
 endif
 ifdef tty
 flag += -D__TTY__
-ifdef x86
-name = $(lib_dir)\x86\libtty.lib
-else
-name = $(lib_dir)\x64\libtty.lib
-endif
 endif
 ifdef avx
 flag += -arch:AVX
@@ -42,6 +37,9 @@ endif
 
 $(name):
 	asmc $(flag) -r $(src_dir)\libc\*.asm
+ifdef tty
+	asmc $(flag) -r $(src_dir)\libc\*.s
+endif
 	asmc $(flag) -Fo w* -r -ws $(src_dir)\libc\_t*.asm
 	libw -q -b -n -c -fac $@ *.obj
 	del *.obj

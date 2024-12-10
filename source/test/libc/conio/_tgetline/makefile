@@ -1,13 +1,11 @@
-ifdef YACC
-
 _tgetline:
-	asmc64 -c -fpic $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
-
+	asmc64 -q -D__TTY__ $@.asm
+ifdef YACC
+	./$@
+	rm $@.o
+	tm $@
 else
-
-_tgetline.exe:
-	asmc64 -c $*.asm
-	linkw system con_64 file $*.obj
 	$@
+	del $@.exe
+	del $@.obj
 endif

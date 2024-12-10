@@ -1,14 +1,10 @@
-ifdef YACC
 _terminal:
-	asmc64 -c $@.asm
-	gcc -nostdlib -o $@ $@.o -l:libasmc.a
+	asmc64 -q -D__TTY__ $@.asm
+ifdef YACC
 	./$@
 	rm -f $@.o
 	rm -f $@
 else
-_terminal.exe:
-	asmc64 -c -q -D__TTY__ $*.asm
-	linkw system tty_64 file $*
 	$@
 	del *.obj
 	del *.exe

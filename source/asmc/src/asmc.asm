@@ -563,11 +563,13 @@ endif
         asmerr(1017)
 
 ifdef _EXEC_LINK
+
 ifdef __UNIX__
     .elseif ( rc == 1 && Options.output_format == OFORMAT_ELF && !Options.no_linking )
 else
-    .elseif ( rc == 1 && ModuleInfo._model == MODEL_FLAT && !Options.no_linking )
+    .elseif ( rc == 1 && Options.output_format == OFORMAT_COFF && ModuleInfo._model == MODEL_FLAT && !Options.no_linking )
 endif
+
 ifndef _AUTO_LINK
         .if ( Options.link_linker || Options.link )
 endif

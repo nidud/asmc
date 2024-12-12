@@ -121,7 +121,7 @@ expr_t		typedef ptr expr
     }
 
 EvalOperand	proto __ccall :ptr int_t, :ptr asm_tok, :int_t, :ptr expr, :uchar_t
-ExprEvalInit	proto __ccall
-EmitConstError	proto __ccall :expr_t
+ExprEvalInit	proto
+EmitConstError	proto
 
 endif

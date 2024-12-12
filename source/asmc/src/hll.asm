@@ -512,7 +512,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
            .endc
         .case EXPR_CONST
             .if ( op1.hvalue != 0 && op1.hvalue != -1 )
-                .return EmitConstError( &op1 )
+                .return EmitConstError()
             .endif
             mov rcx,hllop
             mov [rcx].hll_opnd.lastjmp,buffer

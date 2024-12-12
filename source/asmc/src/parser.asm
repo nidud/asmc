@@ -1068,7 +1068,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
     ; 64bit immediates are restricted to MOV <reg>,<imm64>
 
     .if ( [rdi].h64_l || [rdi].h64_h ) ; magnitude > 64 bits?
-        .return EmitConstError(rdi)
+        .return EmitConstError()
     .endif
 
     ; v2.03: handle QWORD type coercion here as well!
@@ -1113,7 +1113,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
             mov [rsi].opnd[rbx].data32h,[rdi].hvalue
            .return NOT_ERROR
         .endif
-        .return EmitConstError(rdi)
+        .return EmitConstError()
     .endif
 
     ; v2.06: code simplified.
@@ -2222,7 +2222,7 @@ if 1
     .if ( [rdi].hvalue && ( [rdi].hvalue != -1 || [rdi].value >= 0 ) )
 
         .if ( [rsi].Ofssize != USE64 || [rdi].flags & E_INDIRECT )
-            .return( EmitConstError( rdi ) )
+            .return EmitConstError()
         .endif
     .endif
 endif
@@ -2267,7 +2267,7 @@ process_address proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
 if 0
         .if ( [rdi].hvalue && ( [rdi].hvalue != -1 || [rdi].value >= 0 ) )
             .if ( ModuleInfo.Ofssize == USE64 )
-                .return EmitConstError( rdi )
+                .return EmitConstError()
             .endif
             asmerr( 8008, [rdi].value64 )
         .endif

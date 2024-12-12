@@ -475,7 +475,7 @@ if 1 ; v2.34.61 - jwasm v2.17
             ; v2.17: check if value is too large
 
             .if ( opndx.hvalue && ( opndx.hvalue != -1 || opndx.value >= 0 ) )
-                EmitConstError( &opndx )
+                EmitConstError()
             .endif
 endif
             ; zero is allowed as value!
@@ -2309,7 +2309,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; v2.11: check added
 
         .if ( opndx.hvalue )
-            .return( EmitConstError( &opndx ) )
+            .return EmitConstError()
         .endif
         .if ( opndx.uvalue == 0 )
             .return( asmerr( 2090 ) )
@@ -2491,7 +2491,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endc
         .case T_DOT_SETFRAME
             .if ( opndx.uvalue > 240 )
-                .return( EmitConstError( &opndx ) )
+                .return EmitConstError()
             .endif
             unw_info.set_FrameRegister(reg)
             mov edx,opndx.uvalue

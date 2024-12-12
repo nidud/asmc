@@ -19,7 +19,7 @@ _conpaint proc uses rbx
    .new l:byte
 
 ifdef __TTY__
-    _cout( ESC "7" )
+    fprintf(_confp, ESC "7")
 endif
     mov rcx,_console
     mov rc,[rcx].TCONSOLE.rc
@@ -29,7 +29,7 @@ endif
     mov p,rax
 ifdef __TTY__
     .if ( [rcx].TCONSOLE.cvisible )
-        _cout( CSI "?25l")
+        fprintf(_confp, CSI "?25l")
     .endif
 endif
 
@@ -81,11 +81,12 @@ endif
         .endif
     .endf
 ifdef __TTY__
-    _cout( ESC "8" )
+    fprintf(_confp, ESC "8")
     mov rcx,_console
     .if ( [rcx].TCONSOLE.cvisible )
-        _cout( CSI "?25h" )
+        fprintf(_confp, CSI "?25h")
     .endif
+    fflush(_confp)
 endif
     ret
 

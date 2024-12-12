@@ -12,6 +12,9 @@ define __TTY__
 endif
 include termios.inc
 endif
+ifdef __TTY__
+include stdio.inc
+endif
 
 .pragma comment(lib, libc, msvcrt)
 
@@ -98,6 +101,15 @@ intptr_t typedef sqword
 else
 intptr_t typedef sdword
 endif
+endif
+
+if defined(_MSVCRT) or not defined(__TTY__)
+define _getconsolecursorinfo		<GetConsoleCursorInfo>
+define _setconsolecursorinfo		<SetConsoleCursorInfo>
+define _getconsolescreenbufferinfo	<GetConsoleScreenBufferInfo>
+define _getconsolescreenbufferinfoex	<GetConsoleScreenBufferInfoEx>
+define _setconsolecursorposition	<SetConsoleCursorPosition>
+define _writeconsoleoutputw		<WriteConsoleOutputW>
 endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
@@ -458,19 +470,15 @@ define CONOUT	<"CONOUT$">
 endif
 
 ifdef __TTY__
-_getconsolecursorinfo proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
-_setconsolecursorinfo proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
-_getconsolescreenbufferinfo proto WINAPI :HANDLE, :PCONSOLE_SCREEN_BUFFER_INFO
-_getconsolescreenbufferinfoex proto WINAPI :HANDLE, :PCONSOLE_SCREEN_BUFFER_INFOEX
-_setconsolecursorposition proto WINAPI :HANDLE, :COORD
-_writeconsoleoutputw proto WINAPI :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
-else
-define _getconsolecursorinfo <GetConsoleCursorInfo>
-define _setconsolecursorinfo <SetConsoleCursorInfo>
-define _getconsolescreenbufferinfo <GetConsoleScreenBufferInfo>
-define _getconsolescreenbufferinfoex <GetConsoleScreenBufferInfoEx>
-define _setconsolecursorposition <SetConsoleCursorPosition>
-define _writeconsoleoutputw <WriteConsoleOutputW>
+
+_getconsolecursorinfo		proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
+_setconsolecursorinfo		proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
+_getconsolescreenbufferinfo	proto WINAPI :HANDLE, :PCONSOLE_SCREEN_BUFFER_INFO
+_getconsolescreenbufferinfoex	proto WINAPI :HANDLE, :PCONSOLE_SCREEN_BUFFER_INFOEX
+_setconsolecursorposition	proto WINAPI :HANDLE, :COORD
+_writeconsoleoutputw		proto WINAPI :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
+
+externdef	_confp:LPFILE
 endif
 
 externdef	_confh:HANDLE
@@ -622,20 +630,15 @@ rsmodal		proto __cdecl :PIDD
    .ends
 
 _readansi	proto __cdecl :ptr AnsiEscapeCode
-
-_coutA		proto __Cdecl :string_t, :vararg
-_coutW		proto __Cdecl :wstring_t, :vararg
 _readinputA	proto __cdecl :PINPUT_RECORD
 _readinputW	proto __cdecl :PINPUT_RECORD
 _kbflushA	proto __cdecl
 _kbflushW	proto __cdecl
 
 ifdef _UNICODE
-define _cout		<_coutW>
 define _readinput	<_readinputW>
 define _kbflush		<_kbflushW>
 else
-define _cout		<_coutA>
 define _readinput	<_readinputA>
 define _kbflush		<_kbflushA>
 endif

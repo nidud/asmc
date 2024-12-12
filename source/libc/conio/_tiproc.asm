@@ -9,6 +9,7 @@ include ltype.inc
 ifndef __UNIX__
 include winuser.inc
 endif
+include io.inc
 include conio.inc
 include tchar.inc
 
@@ -59,7 +60,7 @@ tinocando proc fastcall ti:PTEDIT
 
     .if ( [rcx].flags & TE_USEBEEP )
 ifdef __UNIX__
-        _cout("\x7")
+        _write(_confd, "\x7", 1)
 else
         MessageBeep(MB_ICONERROR)
 endif

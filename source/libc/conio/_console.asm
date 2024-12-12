@@ -130,9 +130,9 @@ endif
 
 ifdef __TTY__
 
-    _cout("\e]4;0;rgb:00/00/00\e\\\e]4;7;rgb:AA/AA/AA\e\\")
-    _cout("\e[48;5;0m")
-    _cout("\e[38;5;7m")
+    _write(_confd, "\e]4;0;rgb:00/00/00\e\\\e]4;7;rgb:AA/AA/AA\e\\", 40)
+    _write(_confd, "\e[48;5;0m", 9)
+    _write(_confd, "\e[38;5;7m", 9)
 
 else
 

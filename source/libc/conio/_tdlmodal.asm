@@ -3,6 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+include io.inc
 include conio.inc
 
     .code
@@ -19,7 +20,7 @@ _dlmodal proc uses rbx hwnd:THWND, wndp:TPROC
     [rbx].winproc(rbx, WM_CREATE, 0, 0)
     _dlsetfocus(rbx, [rbx].index)
 ifdef __TTY__
-    _cout(SET_ANY_EVENT_MOUSE)
+    _write(_confd, SET_ANY_EVENT_MOUSE, 8)
 else
     .new modein:int_t = -1
     .ifd GetConsoleMode(_coninpfh, &modein)
@@ -37,7 +38,7 @@ endif
         _dispatchmsg(&msg)
     .endw
 ifdef __TTY__
-    _cout(RST_ANY_EVENT_MOUSE)
+    _write(_confd, RST_ANY_EVENT_MOUSE, 8)
 else
     .if ( modein != -1 )
         SetConsoleMode(_coninpfh, modein)

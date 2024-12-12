@@ -4,6 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
 include conio.inc
 include malloc.inc
 
@@ -14,7 +15,8 @@ include malloc.inc
 _conpush proc uses rbx
 
 ifdef __TTY__
-    _cout(CSI "?1049h" )  ; enables the alternative buffer
+
+    _write(_confd, CSI "?1049h", 8)  ; enables the alternative buffer
 else
     mov rbx,_console
     .if ( _rcalloc([rbx].rc, 0) )
@@ -35,7 +37,7 @@ _conpush endp
 _conpop proc uses rbx p:PCHAR_INFO
 
 ifdef __TTY__
-    _cout(CSI "?1049l" ) ; disables the alternative buffer
+    _write(_confd, CSI "?1049l", 8) ; disables the alternative buffer
 else
     mov rbx,_console
     mov eax,[rbx].rc

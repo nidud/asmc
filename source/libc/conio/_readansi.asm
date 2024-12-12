@@ -5,6 +5,7 @@
 ;
 
 include conio.inc
+include stdlib.inc
 
     .code
 
@@ -33,7 +34,51 @@ _readansi proc uses rbx csi:ptr AnsiEscapeCode
 
     .if ( eax != VK_ESCAPE )
 
+        lea rcx,_lookuptrailbytes
+        mov cl,byte ptr [rcx+rax]
+
+        .if ( cl == 0 )
+
+            and eax,0x7F
+
+        .elseif ( cl == 1 )
+
+            and eax,0x1F
+            shl eax,6
+            mov value,eax
+
+            .ifd ( _getch() == -1 )
+
+                .return( 0 )
+            .endif
+            and eax,0x3F
+            or  eax,value
+            mov [rbx].count,ah
+
+        .elseif ( cl == 2 )
+
+            and eax,0x0F
+            shl eax,12
+            mov value,eax
+
+            .ifd ( _getch() == -1 )
+
+                .return( 0 )
+            .endif
+            and eax,0x3F
+            shl eax,6
+            or  value,eax
+
+            .ifd ( _getch() == -1 )
+
+                .return( 0 )
+            .endif
+            and eax,0x3F
+            or  eax,value
+            mov [rbx].count,ah
+        .endif
         mov [rbx].final,al
+
        .return( 1 )
     .endif
 

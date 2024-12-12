@@ -424,7 +424,7 @@ endif
                 .if ( opnd.kind == EXPR_EMPTY )
                 .elseif ( opnd.kind == EXPR_CONST )
                     .if ( opnd.value > 0xFFFF )
-                        .return( EmitConstError( &opnd ) )
+                        .return EmitConstError()
                     .endif
                     .if ( ModuleInfo.sub_format == SFORMAT_MZ )
                         mov eax,opnd.value
@@ -475,7 +475,7 @@ endif
             .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value > 0xFF )
-                    .return( EmitConstError( &opnd ) )
+                    .return EmitConstError()
                 .endif
                 .if ( Options.output_format == OFORMAT_ELF )
                     mov ModuleInfo.elf_osabi,opnd.value
@@ -517,7 +517,7 @@ endif
                 .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
                 .if ( opnd.kind == EXPR_CONST )
                     .if ( opnd.uvalue & ( not W64F_ALL ) )
-                        .return( EmitConstError( &opnd ) )
+                        .return EmitConstError()
                     .endif
                     mov ModuleInfo.win64_flags,opnd.value
                 .endif
@@ -665,7 +665,7 @@ endif
             .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value > 0xFFFF )
-                    .return( EmitConstError( &opnd ) )
+                    .return EmitConstError()
                 .endif
                 mov ModuleInfo.codepage,opnd.value
             .else
@@ -688,7 +688,7 @@ endif
             .return .if ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value != 4 && opnd.value != 8 )
-                    .return( EmitConstError( &opnd ) )
+                    .return EmitConstError()
                 .endif
                 mov ModuleInfo.flt_size,opnd.value
             .else
@@ -698,7 +698,7 @@ endif
             .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value > 0xFF )
-                    .return( EmitConstError( &opnd ) )
+                    .return EmitConstError()
                 .endif
                 mov ModuleInfo.floatdigits,opnd.value
             .else
@@ -708,7 +708,7 @@ endif
             .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )
                 .if ( opnd.value > 0xFFFF )
-                    .return( EmitConstError( &opnd ) )
+                    .return EmitConstError()
                 .endif
                 mov p.input,CurrSource
                 mov p.start,rax

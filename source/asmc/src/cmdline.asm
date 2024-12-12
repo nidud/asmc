@@ -154,7 +154,7 @@ init_win64 proc public
 
     mov Options.sub_format,SFORMAT_64BIT
     mov Options._model,MODEL_FLAT
-    mov Options.xflag,OPT_REGAX
+    or  Options.xflag,OPT_REGAX
 
 ifdef __UNIX__
     define_name( "__UNIX__", "1" )

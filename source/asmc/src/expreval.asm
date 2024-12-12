@@ -3518,6 +3518,28 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
                .continue
             .endif
 
+            ; added v2.36.10
+
+            .if ( [rbx].tokval == T_LDR && [rbx+asm_tok].token == T_OP_BRACKET )
+
+                .if ( SymFind( [rbx+asm_tok*2].string_ptr ) && [rax].asym.state == SYM_STACK )
+
+                    .if ( [rax].asym.flags & S_REGPARAM )
+
+                        movzx ecx,[rax].asym.param_reg
+                        mov [rbx].tokval,ecx
+                        mov [rbx].token,T_REG
+                        get_operand(result, start_tok, tokenarray, flags)
+                        mov rdx,start_tok
+                        add dword ptr [rdx],3
+                    .else
+                        mov rdx,start_tok
+                        inc dword ptr [rdx]
+                    .endif
+                    .continue
+                .endif
+            .endif
+
             ; fall through. Other directives will end the expression
 
         .case T_COMMA
@@ -3539,9 +3561,7 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
 EvalOperand endp
 
 
-EmitConstError proc __ccall opnd:expr_t
-
-    UNREFERENCED_PARAMETER(opnd)
+EmitConstError proc
 
     asmerr( 2084 )
     ret
@@ -3549,8 +3569,10 @@ EmitConstError proc __ccall opnd:expr_t
 EmitConstError endp
 
 
-ExprEvalInit proc __ccall
+ExprEvalInit proc
 
+    lea rax,asmerr
+    mov fnasmerr,rax
     xor eax,eax
     mov thissym,rax
     mov nullstruct,rax

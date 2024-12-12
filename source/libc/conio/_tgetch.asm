@@ -8,14 +8,20 @@ include io.inc
 include conio.inc
 include malloc.inc
 include tchar.inc
+ifdef __UNIX__
+include sys/ioctl.inc
+elseifdef __TTY__
+include winnls.inc
+endif
 
 define EOF (-1)
 
 ifdef __TTY__
 
 .data
- inbuf size_t 0
- count uint_t 0
+ inbuf db 32 dup(0)
+ chptr string_t 0
+ count int_t 0
 
 ;
 ; This is the one character push-back buffer used by _getch(), _getche()
@@ -40,81 +46,53 @@ _gettch proc
 
             .return( EOF )
         .endif
-
-        mov count,_read(_coninpfd, &inbuf, sizeof(inbuf))
-
+        lea rcx,inbuf
+        mov chptr,rcx
+ifdef __UNIX__
+        mov count,_read(_coninpfd, rcx, sizeof(inbuf))
+else
+        .new wc[sizeof(inbuf)/2-1]:wchar_t
+        .new n:int_t
+        .ifd ReadConsoleW( _coninpfh, &wc, lengthof(wc), &n, NULL)
+            mov count,WideCharToMultiByte(CP_UTF8, 0, &wc, n, chptr, sizeof(inbuf), NULL, NULL)
+        .endif
+endif
         .if ( eax == 0 )
 
             .return( EOF )
         .endif
     .endif
-
     dec count
-    mov rcx,inbuf
-    movzx eax,cl
-    shr rcx,8
-    mov inbuf,rcx
+    mov rdx,chptr
+    movzx eax,byte ptr [rdx]
+    inc rdx
+    mov chptr,rdx
     ret
 
 _gettch endp
 
-
-_ungettch proc c:int_t
-
-    ldr eax,c
-
-    ; Fail if the char is EOF or the pushback buffer is non-empty
-
-    .if ( eax == EOF || chbuf != EOF )
-        .return EOF
-    .endif
-    mov chbuf,eax
-    ret
-
-_ungettch endp
-
-
 _kbhit proc
 
-    ; Fail if the buffer is empty
+    .new NumPending:DWORD
 
-    mov eax,chbuf
-    mov ecx,1
-    .if ( eax == EOF )
+    .if ( count || chbuf != EOF )
 
-        xor eax,eax
-        mov ecx,count
-        .if ( ecx )
-            mov al,byte ptr inbuf
+        .return( 1 )
+    .endif
+ifdef __UNIX__
+    .ifd !ioctl( _coninpfd, FIONREAD, &NumPending )
+else
+    .ifd GetNumberOfConsoleInputEvents( _coninpfh, &NumPending )
+endif
+        .if ( NumPending )
+
+            .return( 1 )
         .endif
     .endif
+    xor eax,eax
     ret
 
 _kbhit endp
-
-_kbflush proc
-
-    xor     eax,eax     ; return content in RCX
-    mov     ecx,count   ; and char count in EAX
-    mov     count,eax
-    dec     rax
-    shl     ecx,3
-    shl     rax,cl
-    shr     ecx,3
-    not     rax
-    and     rax,inbuf
-    xchg    rax,rcx
-
-    .if ( chbuf != EOF )
-
-        inc eax
-        shl rcx,8
-        mov cl,byte ptr chbuf
-        mov chbuf,EOF
-    .endif
-    ret
-
-_kbflush endp
 
 else
 
@@ -273,6 +251,7 @@ _gettch proc uses rbx
     .new ConInpRec:INPUT_RECORD
     .new c:int_t = 0
     .new oldstate:DWORD
+    .new NumRead:DWORD
 
     .if ( chbuf != EOF )
 
@@ -292,15 +271,15 @@ _gettch proc uses rbx
 
     .for ( : : )
 
-        .ifd ( _readinput( &ConInpRec ) == -1 )
+        .ifd ( ReadConsoleInput( _coninpfh, &ConInpRec, 1, &NumRead ) == 0 || NumRead == 0 )
 
-            mov c,eax
+            mov c,EOF
            .break
         .endif
 
-        .if ( eax && ConInpRec.EventType == KEY_EVENT && ConInpRec.Event.KeyEvent.bKeyDown )
+        .if ( ConInpRec.EventType == KEY_EVENT && ConInpRec.Event.KeyEvent.bKeyDown )
 
-            movzx eax,ConInpRec.Event.KeyEvent.uChar.UnicodeChar
+            movzx eax,TCHAR ptr ConInpRec.Event.KeyEvent.uChar.UnicodeChar
             .if ( eax )
 
                 mov c,eax
@@ -383,8 +362,10 @@ else
 
                 .if ( [rbx].Event.KeyEvent.uChar.AsciiChar )
                     mov retval,TRUE
-                .elseif _getextendedkeycode( &[rbx].Event.KeyEvent )
+                    .break
+                .elseifd _getextendedkeycode( &[rbx].Event.KeyEvent )
                     mov retval,TRUE
+                    .break
                 .endif
             .endif
         .endf
@@ -393,36 +374,6 @@ else
     .return retval
 endif
 _kbhit endp
-
-
-_ungettch proc c:int_t
-
-    ldr ecx,c
-    .if ( ( ecx == EOF ) || ( chbuf != EOF ) )
-        .return EOF
-    .endif
-    movzx eax,cl
-    mov chbuf,eax
-    ret
-
-_ungettch endp
-
-
-_kbflush proc
-
-    xor ecx,ecx ; return content in ecx
-    xor eax,eax ; and char count in eax
-
-    .if ( chbuf != EOF )
-
-        inc eax
-        mov ecx,chbuf
-        mov chbuf,EOF
-    .endif
-    ret
-
-_kbflush endp
-
 
 _getextendedkeycode proc private pKE:ptr KEY_EVENT_RECORD
 
@@ -491,5 +442,30 @@ _getextendedkeycode proc private pKE:ptr KEY_EVENT_RECORD
 _getextendedkeycode endp
 
 endif
+
+_ungettch proc c:int_t
+
+    ldr ecx,c
+
+    mov eax,EOF
+    .if ( eax != ecx && eax == chbuf )
+
+        movzx eax,cl
+        mov chbuf,eax
+    .endif
+    ret
+
+_ungettch endp
+
+
+_kbflush proc
+
+    mov chbuf,EOF
+ifdef __TTY__
+    mov count,0
+endif
+    ret
+
+_kbflush endp
 
     end

@@ -4,6 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
 include conio.inc
 
 ; wParam
@@ -37,7 +38,7 @@ mousey endp
 
 readevent proc private
 ifdef __TTY__
-    _cout(SET_ANY_EVENT_MOUSE)
+    _write(_confd, SET_ANY_EVENT_MOUSE, 8)
 else
    .new oldstate:uint_t
     GetConsoleMode(_coninpfh, &oldstate)
@@ -53,7 +54,7 @@ endif
     .endif
 
 ifdef __TTY__
-    _cout(RST_ANY_EVENT_MOUSE)
+    _write(_confd, RST_ANY_EVENT_MOUSE, 8)
 else
     SetConsoleMode(_coninpfh, oldstate)
 endif

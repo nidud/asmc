@@ -55,7 +55,7 @@ ifdef __UNIX__
 
 define F_SETFL 4
 
-fcntl proto __cdecl __fd:int_t, __cmd:int_t, :vararg
+fcntl proto __cdecl :int_t, :int_t, :size_t
 endif
 
 .pragma list(pop)

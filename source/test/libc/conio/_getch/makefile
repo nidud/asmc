@@ -6,9 +6,9 @@ ifdef YACC
 	rm -f $@.o
 	rm -f $@
 else
-	asmc -q $*.asm
+	asmc -q -coff $*.asm
 	$@
-	asmc -q -ws $*.asm
+	asmc -q -coff -ws $*.asm
 	$@
 	asmc64 -q $*.asm
 	$@

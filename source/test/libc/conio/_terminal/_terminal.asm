@@ -4,6 +4,8 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
+include fcntl.inc
 include conio.inc
 include tchar.inc
 
@@ -66,14 +68,13 @@ paint endp
 
 _tmain proc
 
-   .new esc:int_t = 0
    .new y:byte = 0
    .new a:AnsiEscapeCode = {0}
    .new s:ptr = _conpush()
 
     paint()
 
-    _cout(CSI "c" ) ; read terminal identity
+    _write(_confd, CSI "c", 3) ; read terminal identity
     _readansi(&a)
     .if ( a.param == '?' && a.n[4] != 0 )
         mov y,5
@@ -114,15 +115,14 @@ _tmain proc
     dec al
     mov y,al
 
-    _cout(SET_ANY_EVENT_MOUSE)
+    _write(_confd, SET_ANY_EVENT_MOUSE, 8)
     .whiled ( _readansi( &a ) )
 
         .break .if ( a.final == VK_ESCAPE || a.final == VK_RETURN )
         _scputf(13, y, "%c %d %d %d %3d %3d %3d %3d",
             a.final, a.count, a.param, a.inter, a.n[0x0], a.n[0x4], a.n[0x8], a.n[0xC])
     .endw
-    _cout(RST_ANY_EVENT_MOUSE)
-
+    _write(_confd, RST_ANY_EVENT_MOUSE, 8)
     _conpop(s)
     .return(0)
 

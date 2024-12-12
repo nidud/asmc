@@ -163,7 +163,7 @@ endif
           endif
         .endif
         .if rax
-            EmitConstError(&opnd)
+            EmitConstError()
            .return NULL
         .endif
     .else
@@ -226,7 +226,7 @@ endif
 
         ; v2.08: accept any result that fits in 64-bits from expression evaluator
         .if ( dword ptr opnd.hlvalue || dword ptr opnd.hlvalue[4] )
-            EmitConstError(&opnd)
+            EmitConstError()
            .return NULL
         .endif
         ; for quoted strings, the same restrictions as for plain numbers apply

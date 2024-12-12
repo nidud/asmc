@@ -1009,7 +1009,7 @@ endif
             .endif
             .if ( ModuleInfo.Ofssize != USE64 )
                 .if ( opndx.hvalue && ( opndx.hvalue != -1 || opndx.value >= 0 ) )
-                    .return( EmitConstError( &opndx ) )
+                    .return EmitConstError()
                 .endif
             .endif
 

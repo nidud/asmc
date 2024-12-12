@@ -37,16 +37,17 @@ endif
 
 $(name):
 	asmc $(flag) -r $(src_dir)\libc\*.asm
-ifdef tty
-	asmc $(flag) -r $(src_dir)\libc\*.s
-endif
+ifndef tty
 	asmc $(flag) -Fo w* -r -ws $(src_dir)\libc\_t*.asm
+endif
 	libw -q -b -n -c -fac $@ *.obj
 	del *.obj
 	asmc $(flag) -nologo -MD -Fo msvcrt0 $(src_dir)\libc\crt\_tcrt0.asm
-	asmc $(flag) -nologo -MD -Fo wmsvcrt0 -ws $(src_dir)\libc\crt\_tcrt0.asm
 	asmc $(flag) -nologo -MD -Fo msvcrtWin $(src_dir)\libc\crt\_tWinStart.asm
+ifndef tty
+	asmc $(flag) -nologo -MD -Fo wmsvcrt0 -ws $(src_dir)\libc\crt\_tcrt0.asm
 	asmc $(flag) -nologo -MD -Fo wmsvcrtWin -ws $(src_dir)\libc\crt\_tWinStart.asm
+endif
 	libw -q -b -n -c -fac $(path)\msvcrt0.lib *.obj
 	del *.obj
 

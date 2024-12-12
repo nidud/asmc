@@ -48,7 +48,8 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
             .return
         .endif
         mov ecx,eax
-        movzx eax,a.final
+        mov al,a.final
+        mov ah,a.count
 
         mov rbx,Input
         mov [rbx].EventType,KEY_EVENT
@@ -61,6 +62,7 @@ _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
 
         .break .if ( ecx == 1 )
 
+        movzx eax,al
         .if ( al == 'M' )
 
             mov [rbx].EventType,MOUSE_EVENT

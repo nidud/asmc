@@ -912,7 +912,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .elseif ( al == MT_ADDRESS )
             asmerr( 2104, token )
         .elseif ( opndx.hvalue != 0 && opndx.hvalue != -1 )
-            EmitConstError( &opndx )
+            EmitConstError()
         .elseif ( opndx.uvalue == 0 )
             asmerr( 2090 )
         .endif
@@ -941,7 +941,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .if ( opndx.kind != EXPR_CONST )
                 asmerr( 2026 )
             .elseif ( opndx.hvalue != 0 && opndx.hvalue != -1 )
-                EmitConstError( &opndx )
+                EmitConstError()
             .elseif ( opndx.uvalue == 0 )
                 asmerr( 2090 )
             .endif

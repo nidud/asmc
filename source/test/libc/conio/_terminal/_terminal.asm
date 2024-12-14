@@ -5,6 +5,8 @@
 ;
 
 include io.inc
+include stdio.inc
+include stdlib.inc
 include fcntl.inc
 include conio.inc
 include tchar.inc
@@ -69,21 +71,35 @@ paint endp
 _tmain proc
 
    .new y:byte = 0
-   .new a:AnsiEscapeCode = {0}
+   .new a:CINPUT = {0}
    .new s:ptr = _conpush()
+   .new v:int_t = 100
 
     paint()
 
     _write(_confd, CSI "c", 3) ; read terminal identity
-    _readansi(&a)
-    .if ( a.param == '?' && a.n[4] != 0 )
+    _readansi( &a )
+
+    mov eax,a.n
+    mov edx,a.n[4]
+
+    .if ( eax == 1 )
+
+        .if ( edx == 0 )
+            mov v,101
+        .endif
+
+    .elseif ( eax == 6 )
+
+        mov v,102
+
+    .elseif ( eax >= 60 )
+
+        mov v,220
         mov y,5
     .endif
-    mov eax,a.n
-    .while ( eax < 100 )
-        imul eax,eax,10
-    .endw
-    _scputf(2, 2, "Terminal type: VT%03d", eax)
+
+    _scputf(2, 2, "Terminal type: VT%03d", v)
     _scputs(3, 4, "Supported features:")
 
     .if ( y )
@@ -115,12 +131,13 @@ _tmain proc
     dec al
     mov y,al
 
+    _write(_confd, "\e]4;1;?\e\\", 9)
     _write(_confd, SET_ANY_EVENT_MOUSE, 8)
     .whiled ( _readansi( &a ) )
 
         .break .if ( a.final == VK_ESCAPE || a.final == VK_RETURN )
-        _scputf(13, y, "%c %d %d %d %3d %3d %3d %3d",
-            a.final, a.count, a.param, a.inter, a.n[0x0], a.n[0x4], a.n[0x8], a.n[0xC])
+        _scputf(13, y, "%c %d %2d %2d %04X %04X %04X %04X %04X %04X %04X",
+            a.final, a.count, a.param, a.inter, a.n, a.n[4], a.n[8], a.n[12], a.n[16], a.n[20], a.n[24])
     .endw
     _write(_confd, RST_ANY_EVENT_MOUSE, 8)
     _conpop(s)

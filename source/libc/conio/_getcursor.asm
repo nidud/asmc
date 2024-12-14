@@ -13,7 +13,7 @@ _getcursor proc uses rbx p:PCURSOR
 
    .new cu:CONSOLE_CURSOR_INFO
 ifdef __TTY__
-   .new a:AnsiEscapeCode
+   .new a:CINPUT
 else
    .new ci:CONSOLE_SCREEN_BUFFER_INFO
 endif

@@ -18,13 +18,13 @@ _ftbuf proc uses rbx flag:int_t, fp:LPFILE
     mov edx,[rbx]._flag
     .if ( ecx && edx & _IOFLRTN )
 
-	fflush( rbx )
+        fflush( rbx )
 
-	and [rbx]._flag,not (_IOYOURBUF or _IOFLRTN)
-	xor eax,eax
-	mov [rbx]._ptr,rax
-	mov [rbx]._base,rax
-	mov [rbx]._bufsiz,eax
+        and [rbx]._flag,not (_IOYOURBUF or _IOFLRTN)
+        xor eax,eax
+        mov [rbx]._ptr,rax
+        mov [rbx]._base,rax
+        mov [rbx]._bufsiz,eax
     .endif
     ret
 

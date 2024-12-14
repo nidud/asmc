@@ -45,6 +45,7 @@ define EOF		(-1)
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
 _iobuf		struct size_t
+ifdef _MSVCRT
 _ptr		LPTSTR ?
 _cnt		int_t ?
 _base		string_t ?
@@ -59,9 +60,15 @@ _ungotten	dw ?
 else
 _tmpfname	LPTSTR ?
 endif
-ifdef _CRTBLD
-_bk		dd ?
-_bb		dd ?
+else
+_ptr		string_t ?
+_base		string_t ?
+_cnt		int_t ?
+_flag		int_t ?
+_file		int_t ?
+_bufsiz		int_t ?
+_charbuf	int_t ?
+_bitcnt		int_t ?
 endif
 _iobuf		ends
 FILE		typedef _iobuf

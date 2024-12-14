@@ -39,7 +39,7 @@ ifdef __TTY__
 
 _readinput proc uses rsi rdi rbx Input:PINPUT_RECORD
 
-    .new a:AnsiEscapeCode
+    .new a:CINPUT
 
     .while 1
 

@@ -620,7 +620,7 @@ rsmodal		proto __cdecl :PIDD
 
 ;;;
 
-.template AnsiEscapeCode
+.template CINPUT
 
     final	db ?		; (0x40–0x7E)
     count	db ?		; (0x30–0x39) -> 1;2;3
@@ -628,8 +628,9 @@ rsmodal		proto __cdecl :PIDD
     inter	db ?		; (0x20–0x2F)
     n		dd 7 dup(?)
    .ends
+    PCINPUT	typedef ptr CINPUT
 
-_readansi	proto __cdecl :ptr AnsiEscapeCode
+_readansi	proto __cdecl :PCINPUT
 _readinputA	proto __cdecl :PINPUT_RECORD
 _readinputW	proto __cdecl :PINPUT_RECORD
 _kbflushA	proto __cdecl

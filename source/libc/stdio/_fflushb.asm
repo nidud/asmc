@@ -14,27 +14,27 @@ _fflushb proc uses rbx fp:LPFILE
 
     ldr rbx,fp
 
-    .while ( [rbx]._bk >= 8 )
+    .while ( [rbx]._bitcnt >= 8 )
 
-        movzx ecx,byte ptr [rbx]._bb
+        movzx ecx,byte ptr [rbx]._charbuf
         .ifd ( fputc(ecx, rbx) == -1 )
             .return
         .endif
-        sub [rbx]._bk,8
-        shr [rbx]._bb,8
+        sub [rbx]._bitcnt,8
+        shr [rbx]._charbuf,8
     .endw
 
-    .if ( [rbx]._bk )
+    .if ( [rbx]._bitcnt )
 
         mov eax,1
-        mov ecx,[rbx]._bk
+        mov ecx,[rbx]._bitcnt
         shl eax,cl
         dec eax
-        and eax,[rbx]._bb
+        and eax,[rbx]._charbuf
         fputc(eax, rbx)
     .endif
-    mov [rbx]._bb,0
-    mov [rbx]._bk,0
+    mov [rbx]._charbuf,0
+    mov [rbx]._bitcnt,0
     ret
 
 _fflushb endp

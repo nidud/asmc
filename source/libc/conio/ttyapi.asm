@@ -71,7 +71,7 @@ _setconsolecursorposition endp
 
 _getconsolescreenbufferinfo proc WINAPI uses rbx fh:HANDLE, pc:PCONSOLE_SCREEN_BUFFER_INFO
 
-   .new a:AnsiEscapeCode
+   .new a:CINPUT
 
     ldr rbx,pc
 

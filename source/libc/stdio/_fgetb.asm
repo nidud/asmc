@@ -17,14 +17,14 @@ _fgetb proc uses rbx fp:LPFILE, count:int_t
     .while 1
 
         mov ecx,count
-        .if ( [rbx]._bk >= ecx )
+        .if ( [rbx]._bitcnt >= ecx )
 
             mov eax,1           ; create mask
             shl eax,cl
             dec eax
-            and eax,[rbx]._bb   ; bits to EAX
-            sub [rbx]._bk,ecx   ; dec bit count
-            shr [rbx]._bb,cl    ; dump used bits
+            and eax,[rbx]._charbuf  ; bits to EAX
+            sub [rbx]._bitcnt,ecx   ; dec bit count
+            shr [rbx]._charbuf,cl   ; dump used bits
            .break
         .endif
 
@@ -32,16 +32,16 @@ _fgetb proc uses rbx fp:LPFILE, count:int_t
 
         .ifd ( fgetc(rbx) == -1 )
 
-            .if ( [rbx]._bk )
-                mov count,[rbx]._bk
+            .if ( [rbx]._bitcnt )
+                mov count,[rbx]._bitcnt
             .else
                 .break
             .endif
         .else
-            mov ecx,[rbx]._bk
+            mov ecx,[rbx]._bitcnt
             shl eax,cl
-            or  [rbx]._bb,eax
-            add [rbx]._bk,8
+            or  [rbx]._charbuf,eax
+            add [rbx]._bitcnt,8
         .endif
     .endw
     ret

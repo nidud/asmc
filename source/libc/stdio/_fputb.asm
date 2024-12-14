@@ -14,23 +14,23 @@ _fputb proc uses rbx fp:LPFILE, bits:uint_t, count:int_t
 
     ldr rbx,fp
 
-    .while ( [rbx]._bk >= 8 )
+    .while ( [rbx]._bitcnt >= 8 )
 
-        movzx ecx,byte ptr [rbx]._bb
+        movzx ecx,byte ptr [rbx]._charbuf
         .ifd ( fputc(ecx, rbx) == -1 )
             .return
         .endif
-        sub [rbx]._bk,8
-        shr [rbx]._bb,8
+        sub [rbx]._bitcnt,8
+        shr [rbx]._charbuf,8
     .endw
 
-    mov ecx,[rbx]._bk
+    mov ecx,[rbx]._bitcnt
     mov edx,bits
     mov eax,count
 
     shl edx,cl
-    or  [rbx]._bb,edx
-    add [rbx]._bk,eax
+    or  [rbx]._charbuf,edx
+    add [rbx]._bitcnt,eax
     ret
 
 _fputb endp

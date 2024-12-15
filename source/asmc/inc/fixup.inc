@@ -5,6 +5,7 @@
 ;
 ; fixup related variables and routines
 ;
+.pragma list(push, 0)
 ifndef __FIXUP_inc
 define __FIXUP_inc
 
@@ -96,3 +97,4 @@ store_fixup	proto __ccall :ptr fixup, :ptr dsym, :ptr int_t
 BackPatch	proto fastcall :ptr asym
 
 endif
+.pragma list(pop)

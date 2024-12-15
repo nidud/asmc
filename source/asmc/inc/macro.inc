@@ -5,6 +5,7 @@
 ;
 ; prototypes for macro stuff
 ;
+.pragma list(push, 0)
 ifndef __MACRO_INC
 define __MACRO_INC
 
@@ -42,3 +43,4 @@ StringInit		proto __ccall
 MacroLineQueue		proto __ccall
 
 endif
+.pragma list(pop)

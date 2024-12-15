@@ -29,6 +29,7 @@ include listing.inc
 include qfloat.inc
 include lqueue.inc
 include types.inc
+include reswords.inc
 
 public MacroLocals
 
@@ -1845,6 +1846,31 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                         .return
                     .endif
                     mov rc,STRING_EXPANDED
+
+                .elseif ( [rsi].asym.state == SYM_STACK && i > 2 &&
+                          [rbx-asm_tok].token == T_OP_BRACKET && [rbx-asm_tok*2].tokval == T_LDR )
+
+                    ; v2.36.01 -- extension: pull register from ldr(param)
+                    ; v2.36.11 -- moved here
+
+                    .if ( [rsi].asym.flags & S_REGPARAM )
+                        movzx ecx,[rsi].asym.param_reg
+                        GetResWName( ecx, buffer )
+                    .else
+                        tstrcpy( buffer, [rbx].string_ptr )
+                    .endif
+                    sub rbx,asm_tok*2
+                    sub i,2
+                    mov rcx,[rbx+asm_tok*4].tokpos
+                    mov rdx,rcx
+                    sub rdx,[rbx].tokpos
+                    sub rcx,line
+                    .ifd ( RebuildLine( buffer, i, tokenarray, edx, ecx, addbrackets ) == ERROR )
+                        .return
+                    .endif
+                    mov rc,STRING_EXPANDED
+                    mov TokenCount,Tokenize( line, 0, tokenarray, TOK_RESCAN )
+                    mov max,eax
                 .endif
             .endif
         .endif
@@ -2395,7 +2421,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
                         tstrcpy(string, buffer)
                         mov TokenCount,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-                        .if ( eax > 2 && rbx == tokenarray && [rbx].flags & T_ISPROC && 
+                        .if ( eax > 2 && rbx == tokenarray && [rbx].flags & T_ISPROC &&
                               [rbx+asm_tok].token == T_OP_BRACKET )
 
                             tstrcat( tstrcpy( buffer, "invoke " ), [rbx].tokpos )

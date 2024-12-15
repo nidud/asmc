@@ -5,6 +5,7 @@
 ;
 ; interface to expression evaluator
 ;
+.pragma list(push, 0)
 ifndef __EXPREVAL_INC
 define __EXPREVAL_INC
 
@@ -125,3 +126,4 @@ ExprEvalInit	proto
 EmitConstError	proto
 
 endif
+.pragma list(pop)

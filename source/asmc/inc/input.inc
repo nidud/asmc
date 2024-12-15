@@ -3,6 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+.pragma list(push, 0)
 ifndef __INPUT_INC
 define __INPUT_INC
 
@@ -69,3 +70,4 @@ GetAlignedPointer proto watcall p:ptr, size:int_t {
     }
 
 endif
+.pragma list(pop)

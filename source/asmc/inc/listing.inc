@@ -5,6 +5,7 @@
 ;
 ; listing interface.
 ;
+.pragma list(push, 0)
 ifndef __LISTING_INC
 define __LISTING_INC
 
@@ -29,3 +30,4 @@ LstNL		proto __ccall
 LstWrite	proto __ccall :int_t, :uint_t, :ptr
 
 endif
+.pragma list(pop)

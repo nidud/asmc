@@ -3,6 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+.pragma list(push, 0)
 
 ifndef ASMC64
 
@@ -307,3 +308,4 @@ res(OPTION,	    option,	 0, DRT_OPTION, 0, P_86, 0)
 res(POPCONTEXT,	    popcontext,	 0, DRT_CONTEXT, 0, P_86, 0)
 res(PUSHCONTEXT,    pushcontext, 0, DRT_CONTEXT, 0, P_86, 0)
 
+.pragma list(pop)

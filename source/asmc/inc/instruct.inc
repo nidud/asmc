@@ -5,6 +5,7 @@
 ;
 ; Description: table of instructions. Other reserved words see special.h
 ;
+.pragma list(push, 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ; The order of items for an opcode (ins + insn) is IMPORTANT!
@@ -2177,4 +2178,4 @@ avxins(PDPBUSDS, VPDPBUSDS, vpdpbusds, RWF_EVEX, VX_RW0 )
 avxins(PDPWSSD,  VPDPWSSD,  vpdpwssd,  RWF_EVEX, VX_RW0 )
 avxins(PDPWSSDS, VPDPWSSDS, vpdpwssds, RWF_EVEX, VX_RW0 )
 
-
+.pragma list(pop)

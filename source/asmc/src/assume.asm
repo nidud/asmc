@@ -223,11 +223,7 @@ ModelAssumeInit proc
     ; Generates codes for assume
 
     mov al,ModuleInfo._model
-    and eax,7
-
-    .switch jmp rax
-
-    .case MODEL_FLAT
+    .if ( al == MODEL_FLAT )
 
         lea rdx,szError
         mov rcx,rdx
@@ -235,23 +231,17 @@ ModelAssumeInit proc
             lea rcx,szNothing
         .endif
         AddLineQueueX( "assume cs:flat,ds:flat,ss:flat,es:flat,fs:%s,gs:%s", rdx, rcx )
-       .endc
-
-    .case MODEL_TINY
-    .case MODEL_SMALL
-    .case MODEL_COMPACT
-    .case MODEL_MEDIUM
-    .case MODEL_LARGE
-    .case MODEL_HUGE
 
 ifndef ASMC64
 
+    .elseif ( al >= MODEL_TINY && al <= MODEL_HUGE &&
+              Options.output_format != OFORMAT_COFF &&
+              Options.output_format != OFORMAT_ELF )
+
         ; v2.03: no DGROUP for COFF/ELF
 
-        .endc .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
-
         lea rdx,szDgroup
-        .if ( ModuleInfo._model != MODEL_TINY )
+        .if ( al != MODEL_TINY )
             mov rdx,SimGetSegName( SIM_CODE )
         .endif
         lea rcx,@CStr("assume cs:%s,ds:%s,ss:%s")
@@ -260,10 +250,8 @@ ifndef ASMC64
         .endif
         lea rax,szDgroup
         AddLineQueueX( rcx, rdx, rax, rax )
-        .endc
 endif
-    .case MODEL_NONE
-    .endsw
+    .endif
     ret
 
 ModelAssumeInit endp

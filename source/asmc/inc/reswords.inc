@@ -5,6 +5,7 @@
 ;
 ; interface to instruction hash table.
 ;
+.pragma list(push, 0)
 ifndef __RESWORDS_INC
 define __RESWORDS_INC
 
@@ -44,3 +45,4 @@ ResWordsInit		proto __ccall
 ResWordsFini		proto __ccall
 
 endif
+.pragma list(pop)

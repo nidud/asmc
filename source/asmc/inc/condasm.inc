@@ -5,6 +5,7 @@
 ;
 ; prototypes for conditional assembly and errors
 ;
+.pragma list(push, 0)
 ifndef __CONDASM_INC
 define __CONDASM_INC
 
@@ -33,4 +34,5 @@ CondCheckOpen   proto __ccall
 CondInit        proto __ccall
 
 endif
+.pragma list(pop)
 

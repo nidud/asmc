@@ -34,7 +34,7 @@ cp_usage \
 ifdef ASMC64
  char_t "64"
 endif
- char_t " [options] filename [ [options] filename] ... [/link link_options]",10
+ char_t " [options] filename [ [options] filename] ... [-link link_options]",10
 ifdef __UNIX__
  char_t "Use option -h for more info" ,10
 else
@@ -47,7 +47,7 @@ cp_options \
 ifdef ASMC64
  char_t "64"
 endif
- char_t " [options] filename [ [options] filename] ... [/link link_options]",10
+ char_t " [options] filename [ [options] filename] ... [-link link_options]",10
  char_t 10
 ifndef ASMC64
  char_t "-<0|1|..|10>[p] Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486,",10

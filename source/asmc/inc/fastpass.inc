@@ -3,6 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+.pragma list(push, 0)
 ifndef __FASTPASS_INC
 define __FASTPASS_INC
 
@@ -75,3 +76,4 @@ FStoreLine proto fastcall flags:abs {
     }
 
 endif
+.pragma list(pop)

@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ;
 ;
 ; Description:	table of non-instruction reserved words:
@@ -370,3 +371,6 @@ res(FASTCALL,	fastcall,	RWT_RES_ID, 0, LANG_FASTCALL,	0, P_86, 0)
 res(VECTORCALL, vectorcall,	RWT_RES_ID, 0, LANG_VECTORCALL, 0, P_86, 0)
 res(WATCALL,	watcall,	RWT_RES_ID, 0, LANG_WATCALL,	0, P_86, 0)
 res(ASMCALL,	asmcall,	RWT_RES_ID, 0, LANG_ASMCALL,	0, P_86, 0)
+
+.pragma list(pop)
+

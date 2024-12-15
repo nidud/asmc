@@ -5,6 +5,7 @@
 ;
 ; Parser items
 ;
+.pragma list(push, 0)
 ifndef __PARSER_INC
 define __PARSER_INC
 
@@ -429,3 +430,4 @@ WritePreprocessedLine	proto __ccall :string_t
 parsevex		proto fastcall :string_t, :ptr uchar_t
 
 endif
+.pragma list(pop)

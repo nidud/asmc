@@ -6,6 +6,7 @@
 ; parser/code generator operand definitions.
 ; This file is included by parser.inc
 ;
+.pragma list(push, 0)
 ifndef OPERANDS_H
 define OPERANDS_H
 
@@ -103,3 +104,4 @@ OP3_R_MS	equ OP3_XMM0
 OP3_XMM_M128	equ OP3_XMM0
 
 endif
+.pragma list(pop)

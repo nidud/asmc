@@ -183,10 +183,10 @@ check_blank endp
 
 check_dif proc __ccall private string1:string_t, string2:string_t, sensitive:int_t
 
-    .if ( sensitive )
-        tstrcmp( string1, string2 )
+    .if ( ldr(sensitive) != 0 )
+        tstrcmp( ldr(string1), ldr(string2) )
     .else
-        tstricmp( string1, string2 )
+        tstricmp( ldr(string1), ldr(string2) )
     .endif
     ret
 

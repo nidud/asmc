@@ -3,6 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+.pragma list(push, 0)
 ifndef __TYPES_INC
 define __TYPES_INC
 
@@ -36,3 +37,4 @@ DeleteType macro t
     endm
 
 endif
+.pragma list(pop)

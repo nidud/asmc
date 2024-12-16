@@ -127,6 +127,7 @@ _fputchar	proto __cdecl :int_t
 _fgetchar	proto __cdecl
 fputc		proto __cdecl :int_t, :LPFILE
 feof		proto __cdecl :LPFILE
+ferror		proto __cdecl :LPFILE
 ftell		proto __cdecl :LPFILE
 perror		proto __cdecl :string_t
 fflush		proto __cdecl :LPFILE
@@ -139,6 +140,7 @@ _getst		proto __cdecl
 _ftbuf		proto __cdecl :int_t, :LPFILE
 _stbuf		proto __cdecl :LPFILE
 _getbuf		proto __cdecl :LPFILE
+setmbuf		proto __cdecl :LPFILE, :int_t
 setvbuf		proto __cdecl :LPFILE, :string_t, :int_t, :size_t
 setbuf		proto __cdecl :LPFILE, :string_t
 ungetc		proto __cdecl :int_t, :LPFILE

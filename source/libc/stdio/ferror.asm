@@ -1,4 +1,4 @@
-; FEOF.ASM--
+; FERROR.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -9,7 +9,7 @@ include errno.inc
 
     .code
 
-feof proc stream:LPFILE
+ferror proc stream:LPFILE
 
     ldr rcx,stream
 
@@ -19,9 +19,9 @@ feof proc stream:LPFILE
         .return( 0 )
     .endif
     mov eax,[rcx]._iobuf._flag
-    and eax,_IOEOF
+    and eax,_IOERR
     ret
 
-feof endp
+ferror endp
 
     end

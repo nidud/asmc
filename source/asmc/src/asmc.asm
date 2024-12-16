@@ -579,9 +579,10 @@ ifdef __UNIX__
            .new exitcode:int_t = -1
 endif
             mov rbx,Options.link_options
+
             .if ( rbx == 0 )
 ifdef __UNIX__
-                ; gcc [-m32 -static] [-nostdlib] -o <name> *.o [-l:[x86/]libasmc.a]
+                ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
 
                 .if ( Options.fctype != FCT_ELF64 )
 
@@ -592,7 +593,10 @@ ifdef __UNIX__
                 .elseif ( Options.pic == 0 )
                     CollectLinkOption("-nostdlib")
                     CollectLinkObject("-l:libasmc.a")
+                .else
+                    CollectLinkOption("-Wl,-z,noexecstack")
                 .endif
+                CollectLinkOption("-s")
                 CollectLinkOption("-o")
                 mov rcx,Options.link_objects
                 .if tstrrchr(tstrcpy(&buffer[32], &[rcx].anode.name), '.')

@@ -218,6 +218,7 @@ endif ; _WSTDIO_DEFINED
 _fopent		proto __cdecl
 _fgetb		proto __cdecl :LPFILE, :int_t
 _fputb		proto __cdecl :LPFILE, :uint_t, :int_t
+_fneedb		proto __cdecl :LPFILE, :int_t
 _fflushb	proto __cdecl :LPFILE
 
 ifdef _UNICODE

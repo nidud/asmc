@@ -592,7 +592,7 @@ define PE_DLL               0x04
     dotname                 db ?    ; -dotname  : option dotname
     dotnamex                db ?    ; -dotnamex : option dotnamex:<on:off>
     sysvregs                db ?    ; -sysvregs : skip RDI and RSI in USES
-    no_linking              db ?    ; -c        ; Assembles only. Does no linking.
+    no_linking              db ?    ; -c        ; assembles only
    .ends
 
 .template module_vars

@@ -8,6 +8,17 @@ define __DEFLATE_INC
 
 include stdio.inc
 
+define ER_ZIP           2
+define ER_BADERR        3
+define ER_MEM           4
+define ER_CRCERR        5
+define ER_NOZIP         9
+define ER_FIND          11
+define ER_OPEN          12
+define ER_DISK          50
+define ER_USERABORT     66
+define ER_READARCH      (-2)
+
 define ZIPLOCALID       0x04034B50  ; signature local file
 define ZIPCENTRALID     0x02014B50  ; signature central file
 define ZIPDIGITALID     0x05054B50  ; digital signature
@@ -70,5 +81,6 @@ externdef crctable:int_t
 externdef compresslevel:int_t
 
 deflate proto __cdecl :string_t, :ptr FILE, :ptr ZipLocal
+inflate proto __cdecl :string_t, :ptr FILE, :ptr ZipLocal
 
 endif

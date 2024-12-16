@@ -1974,6 +1974,7 @@ deflate proc public uses rsi rdi rbx src:string_t, dst:LPFILE, zp:ptr ZipLocal
     mov ecx,HASH_SIZE/2
     xor eax,eax
     rep stosd
+    mov file_method,al
 
     .ifd ct_init()
 
@@ -2016,7 +2017,7 @@ deflate proc public uses rsi rdi rbx src:string_t, dst:LPFILE, zp:ptr ZipLocal
         mov eax,[rbx].crc
         not eax
         mov [rcx].ZipLocal.crc,eax
-        mov eax,compresslevel
+        movzx eax,file_method
         mov [rcx].ZipLocal.method,ax
         mov [rcx].ZipLocal.csize,[rbx].csize
         mov [rcx].ZipLocal.fsize,[rbx].fsize

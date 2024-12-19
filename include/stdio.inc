@@ -18,6 +18,7 @@ define _IOB_ENTRIES	20
 define _MAXIOBUF	0x4000
 define _INTIOBUF	0x1000
 define _MINIOBUF	0x0200
+define _ZIPIOBUF	0x8000
 
 define _IOFBF		0x0000
 define _IOREAD		0x0001
@@ -39,37 +40,28 @@ define _IOLOCKED	0x8000
 
 define _IOMEMBUF	0x10000
 define _IOSNPRINTF	0x20000
+define _IOCRC32		0x40000
+define _IOZIP		0x80000 ; zip-stream
 
 define EOF		(-1)
 
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
 _iobuf		struct size_t
-ifdef _MSVCRT
-_ptr		LPTSTR ?
-_cnt		int_t ?
-_base		string_t ?
-_flag		int_t ?
-_file		int_t ?
-if defined(_WIN64) or not defined(__UNIX__)
-_charbuf	int_t ?
-endif
-_bufsiz		int_t ?
-if defined(__UNIX__) and not defined(_WIN64)
-_ungotten	dw ?
-else
-_tmpfname	LPTSTR ?
-endif
-else
 _ptr		string_t ?
-_base		string_t ?
 _cnt		int_t ?
+_base		string_t ?
 _flag		int_t ?
 _file		int_t ?
-_bufsiz		int_t ?
 _charbuf	int_t ?
-_bitcnt		int_t ?
-endif
+_bufsiz		int_t ?
+union
+ struct
+  _bitcnt	int_t ? ; bits in _charbuf
+  _crc32	int_t ?
+ ends
+ _tmpfname	string_t ?
+ends
 _iobuf		ends
 FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
@@ -140,7 +132,6 @@ _getst		proto __cdecl
 _ftbuf		proto __cdecl :int_t, :LPFILE
 _stbuf		proto __cdecl :LPFILE
 _getbuf		proto __cdecl :LPFILE
-setmbuf		proto __cdecl :LPFILE, :int_t
 setvbuf		proto __cdecl :LPFILE, :string_t, :int_t, :size_t
 setbuf		proto __cdecl :LPFILE, :string_t
 ungetc		proto __cdecl :int_t, :LPFILE
@@ -220,6 +211,12 @@ _fgetb		proto __cdecl :LPFILE, :int_t
 _fputb		proto __cdecl :LPFILE, :uint_t, :int_t
 _fneedb		proto __cdecl :LPFILE, :int_t
 _fflushb	proto __cdecl :LPFILE
+_crc32		proto __cdecl :uint_t, :ptr, :uint_t
+
+_fsetmode proto watcall :LPFILE, :int_t {
+    and [rax]._iobuf._flag,not ( _IOMEMBUF or _IOCRC32 )
+    or	[rax]._iobuf._flag,edx
+    }
 
 ifdef _UNICODE
 define _toutput		<_woutput>

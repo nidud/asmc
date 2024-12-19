@@ -13,3 +13,6 @@ else
 	asmc64 -q -I$(incdir) -ws -peg $*.asm
 endif
 	$@
+
+vs:
+	project -p -w -u wrl

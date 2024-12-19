@@ -1,10 +1,8 @@
-static = 0
-
 glu.exe:
-!if $(static)
-    asmc64 -ws $*.asm
-!else
-    asmc64 -peg -ws $*.asm
-!endif
-    $@
-    pause
+	asmc64 -q -ws -peg $*.asm
+	$@
+	del $@
+
+vs:
+	project -p -w -u glu
+

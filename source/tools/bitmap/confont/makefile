@@ -1,3 +1,11 @@
-confont.exe:
-	asmc64 -pe -ws -frame -Fo ..\..\..\..\bin\$@ $*.asm
-	$@ -?
+confont:
+	asmc64 -q -pe -ws -frame $@.asm
+
+clean:
+	del confont.exe
+
+vs:
+	project -p -u confont
+
+install:
+	move confont.exe ..\..\..\..\bin

@@ -1,10 +1,10 @@
-static = 0
-
 CreateAppx.exe:
-!if $(static)
-    asmc64 -q -ws $*.asm
-!else
-    asmc64 -pe -ws -Zp8 $*.asm
-!endif
-    $@
-    pause
+	asmc64 -q -ws $*.asm
+	$@
+	pause
+	del $*.obj
+	del $@
+
+vs:
+	project -p -u CreateAppx
+

@@ -3,6 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+
 include Windows.inc
 include gdiplus.inc
 
@@ -18,6 +19,7 @@ double typedef real8
 
 define MAXSIZE 1024
 define SAMPLE_INTERVAL 1
+
 
 .class WString
 
@@ -70,6 +72,7 @@ define SAMPLE_INTERVAL 1
     QRecord         proc
     CleanOldRecord  proc
    .ends
+
 
 define CENTER_X 55.0
 define CENTER_Y 580.0

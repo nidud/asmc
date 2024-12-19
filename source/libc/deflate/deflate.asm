@@ -143,13 +143,13 @@ max_chain       dd ?
 dconfig         ENDS
 
 DEFLATE         STRUC
-fpi             LPFILE ?
-fpo             LPFILE ?
+fp              LPFILE ?
+fpz             LPFILE ?
 head            LPSTR ?
 prev            LPSTR ?
-crc             UINT ?
 csize           UINT ?
 fsize           UINT ?
+method          UINT ?
 chain_length    UINT ?
 str_start       UINT ?
 prev_length     UINT ?
@@ -214,7 +214,6 @@ config_table dconfig \
 
 compresslevel   int_t 9
 bl_order        BYTE 16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15
-file_method     BYTE ?
 
 align size_t
 extra_lbits     UINT 0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0
@@ -231,32 +230,20 @@ bl_desc         tree_desc <0,0,extra_blbits,0,BL_CODES,MAX_BL_BITS,0>
 
     assume rbx:PDEFLATE
 
+ifdef _LIN64
 ioread proc uses rsi rdi
-
-    .ifd ( fgetc([rbx].fpi) == -1 )
+else
+ioread proc
+endif
+    .ifd ( fgetc([rbx].fp) == -1 )
 
         .return( 0 )
     .endif
 
-    mov rcx,[rbx].fpi
+    mov rcx,[rbx].fp
     inc [rcx].FILE._cnt
     dec [rcx].FILE._ptr
-    mov eax,[rcx].FILE._cnt
-    lea rsi,crctable
-    mov rdi,[rcx].FILE._base
-    add [rbx].fsize,eax
-
-    .for ( ecx = [rbx].crc, edx = 0 : eax : eax-- )
-
-        mov dl,cl
-        xor dl,[rdi]
-        shr ecx,8
-        xor ecx,[rsi+rdx*4]
-        inc rdi
-    .endf
-    mov [rbx].crc,ecx
-    mov rcx,[rbx].fpi
-    mov eax,[rcx].FILE._cnt
+    add [rbx].fsize,[rcx].FILE._cnt
     ret
 
 ioread endp
@@ -270,7 +257,7 @@ endif
     ldr ecx,c
 
     inc [rbx].csize
-    .ifd ( fputc( ecx, [rbx].fpo ) != -1 )
+    .ifd ( fputc( ecx, [rbx].fpz ) != -1 )
         .return( 1 )
     .endif
     xor eax,eax
@@ -927,7 +914,7 @@ init_block endp
 
 ct_init proc uses rsi rdi
 
-    mov file_method,METHOD_DEFLATE
+    mov [rbx].method,METHOD_DEFLATE
 
     ; Initialize the mapping length (0..255) -> length code (0..28)
 
@@ -1103,7 +1090,7 @@ endif
         mov eax,1
         .if ( len )
 
-            .ifd ( fwrite(buf, 1, len, [rbx].fpo) == len )
+            .ifd ( fwrite(buf, 1, len, [rbx].fpz) == len )
                 .return( 1 )
             .endif
             xor eax,eax
@@ -1232,7 +1219,7 @@ flush_block proc __ccall uses rsi rdi eof:int_t
     xor eax,eax
     .ifs ( [rbx].block_start >= eax )
         mov eax,[rbx].block_start
-        mov rdx,[rbx].fpi
+        mov rdx,[rbx].fp
         add rax,[rdx].FILE._base
     .endif
     mov buf,rax
@@ -1296,7 +1283,7 @@ endif
             .return
         .endif
         mov [rbx].cmpr_bytelen,stored_len
-        mov file_method,METHOD_STORE
+        mov [rbx].method,METHOD_STORE
 
 ifdef FORCE_METHOD
     .elseif ( [rbx].cmpr_level == 2 && buf ) ; force stored file
@@ -1481,7 +1468,7 @@ ct_tally endp
 
 update_hash proc watcall id:int_t
 
-    mov     rcx,[rbx].fpi
+    mov     rcx,[rbx].fp
     mov     rcx,[rcx].FILE._base
     movzx   ecx,BYTE PTR [rcx+rax]
     mov     eax,[rbx].ins_h
@@ -1500,7 +1487,7 @@ update_hash endp
 ;
 insert_string proc
 
-    mov     rcx,[rbx].fpi
+    mov     rcx,[rbx].fp
     mov     rcx,[rcx].FILE._base
     mov     edx,[rbx].str_start
     add     edx,MIN_MATCH-1
@@ -1527,7 +1514,7 @@ endif
 
 longest_match proc uses rsi rdi rbp ; cur_match:int_t
 
-    mov     rdx,[rbx].fpi
+    mov     rdx,[rbx].fp
     mov     rdi,[rdx].FILE._base
     mov     rsi,rdi
     mov     si,ax                   ; match: window + cur_match
@@ -1606,7 +1593,7 @@ fill_window proc uses rsi rdi
 
         .elseif ( [rbx].str_start >= WSIZE+MAX_DIST )
 
-            mov rcx,[rbx].fpi
+            mov rcx,[rbx].fp
             mov rdi,[rcx].FILE._base
             mov rdx,rsi
             lea rsi,[rdi+WSIZE]
@@ -1647,7 +1634,7 @@ fill_window proc uses rsi rdi
 
         mov eax,[rbx].str_start
         add eax,[rbx].lookahead
-        mov rdi,[rbx].fpi
+        mov rdi,[rbx].fp
         mov rdx,[rdi].FILE._base
         mov dx,ax
         mov [rdi].FILE._ptr,rdx
@@ -1740,7 +1727,7 @@ deflate_fast proc uses rsi rdi
                 xor eax,eax
                 mov match_length,eax
                 mov ecx,[rbx].str_start
-                mov rdx,[rbx].fpi
+                mov rdx,[rbx].fp
                 add rcx,[rdx].FILE._base
                 mov al,[rcx]
                 mov [rbx].ins_h,eax
@@ -1754,7 +1741,7 @@ deflate_fast proc uses rsi rdi
         .else
 
             mov ecx,[rbx].str_start
-            mov rdx,[rbx].fpi
+            mov rdx,[rbx].fp
             add rcx,[rdx].FILE._base
             movzx edx,BYTE PTR [rcx]
             mov edi,ct_tally(0, edx)
@@ -1773,7 +1760,7 @@ deflate_fast proc uses rsi rdi
         .continue .if ( [rbx].lookahead >= MIN_LOOKAHEAD )
 
         fill_window()
-        mov rcx,[rbx].fpi
+        mov rcx,[rbx].fp
         .if ( [rcx].FILE._flag & _IOERR )
 
             .return( 0 )
@@ -1785,7 +1772,7 @@ deflate_fast proc uses rsi rdi
 deflate_fast endp
 
 
-_deflate proc uses rsi rdi
+_lk_deflate proc uses rsi rdi
 
    .new len:int_t
    .new mavailable:int_t = 0
@@ -1888,7 +1875,7 @@ _deflate proc uses rsi rdi
             xor eax,eax
             .if ( mavailable != eax )
 
-                mov rdx,[rbx].fpi
+                mov rdx,[rbx].fp
                 mov rcx,[rdx].FILE._base
                 mov cx,word ptr [rbx].str_start
                 movzx edx,byte ptr [rcx-1]
@@ -1909,7 +1896,7 @@ _deflate proc uses rsi rdi
 
         .continue .if ( [rbx].lookahead >= MIN_LOOKAHEAD )
         fill_window()
-        mov rcx,[rbx].fpi
+        mov rcx,[rbx].fp
         .if ( [rcx].FILE._flag & _IOERR )
 
             .return( 0 )
@@ -1919,7 +1906,7 @@ _deflate proc uses rsi rdi
     .if ( mavailable )
 
         mov ecx,[rbx].str_start
-        mov rdx,[rbx].fpi
+        mov rdx,[rbx].fp
         add rcx,[rdx].FILE._base
         movzx edx,BYTE PTR [rcx-1]
         ct_tally(0, edx)
@@ -1927,42 +1914,40 @@ _deflate proc uses rsi rdi
     flush_block(1)
     ret
 
-_deflate endp
+_lk_deflate endp
 
 
-deflate proc public uses rsi rdi rbx src:string_t, dst:LPFILE, zp:ptr ZipLocal
+deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:ptr ZipLocal
 
-    .new fp:LPFILE = fopen(ldr(src), "rb")
     .new retval:int_t = 0
 
-    .if ( rax == NULL )
+    .if ( fopen(ldr(src), "rz") == NULL )
 
        .return
     .endif
+    mov rbx,rax
 
-    .if !malloc(DEFLATE+3*0x10000)
+    .if !malloc(DEFLATE+0x20000)
 
-        fclose(fp)
+        fclose(rbx)
        .return( 0 )
     .endif
-    mov rbx,rax
+    mov rdx,rbx
     mov rdi,rax
-    mov ecx,DEFLATE+3*0x10000
+    mov rbx,rax
+    mov ecx,DEFLATE+0x20000
     xor eax,eax
     rep stosb
 
-    dec [rbx].crc
-    mov [rbx].fpi,fp
-    mov [rbx].fpo,dst
+    mov [rbx].fp,rdx
+    mov [rbx].fpz,fpz
     mov [rbx].compr_level,compresslevel
     mov [rbx].head,&[rbx].head_buf
 
     lea rax,[rbx+DEFLATE]
-    and rax,-65536 ; align block on 64K
-    add rax,65536
-    mov [rbx].prev,rax
+    xor ax,ax ; align block on 64K
     add rax,0x10000
-    setvbuf(fp, rax, _IOFBF, 0x8000)
+    mov [rbx].prev,rax
 
     mov l_desc.dyn_tree,&[rbx].dyn_ltree
     mov l_desc.static_tree,&[rbx].static_ltree
@@ -1974,7 +1959,6 @@ deflate proc public uses rsi rdi rbx src:string_t, dst:LPFILE, zp:ptr ZipLocal
     mov ecx,HASH_SIZE/2
     xor eax,eax
     rep stosd
-    mov file_method,al
 
     .ifd ct_init()
 
@@ -2007,23 +1991,22 @@ deflate proc public uses rsi rdi rbx src:string_t, dst:LPFILE, zp:ptr ZipLocal
         .endif
         update_hash(0)
         update_hash(1)
-        mov retval,_deflate()
+        mov retval,_lk_deflate()
     .endif
 
     mov rcx,zp
     .if ( rcx )
 
-        mov [rcx].ZipLocal.Signature,ZIPLOCALID
-        mov eax,[rbx].crc
+        mov rax,[rbx].fp
+        mov eax,[rax].FILE._crc32
         not eax
         mov [rcx].ZipLocal.crc,eax
-        movzx eax,file_method
-        mov [rcx].ZipLocal.method,ax
+        mov [rcx].ZipLocal.method,[rbx].method
         mov [rcx].ZipLocal.csize,[rbx].csize
         mov [rcx].ZipLocal.fsize,[rbx].fsize
     .endif
 
-    fclose(fp)
+    fclose([rbx].fp)
     free(rbx)
     mov eax,retval
     ret

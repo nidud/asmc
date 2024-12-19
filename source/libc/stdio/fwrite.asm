@@ -69,7 +69,14 @@ fwrite proc uses rsi rdi rbx buf:LPSTR, rsize:int_t, num:int_t, fp:LPFILE
 		sub eax,edx
 	    .endif
 	    mov nbytes,eax
+ifndef NOSTDCRC
+	    .if ( [rbx]._flag & _IOCRC32 )
 
+		_crc32( [rbx]._crc32, [rbx]._base, eax )
+		mov [rbx]._crc32,eax
+		mov eax,nbytes
+	    .endif
+endif
 	    _write( [rbx]._file, buf, eax )
 	    cmp eax,-1
 	    je	error

@@ -16,3 +16,6 @@ else
 	del *.obj
 	del *.exe
 endif
+
+vs:
+	project -p isatty

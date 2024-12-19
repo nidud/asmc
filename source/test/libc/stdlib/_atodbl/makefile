@@ -1,17 +1,26 @@
+all: _atodbl clean
+
 _atodbl:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	@pause
-	@rm -f $@.o
-	@rm -f $@
 else
 	$@
 	asmc -q -8 $*.asm
 	$@
 	asmc64 -q -pe $*.asm
 	$@
-	pause
-	del *.obj
-	del *.exe
 endif
+	@pause
+
+clean:
+ifdef YACC
+	rm ./_atodbl.o
+	rm ./_atodbl
+else
+	del _atodbl.exe
+	del _atodbl.obj
+endif
+
+vs:
+	project -p _atodbl

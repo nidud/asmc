@@ -3,3 +3,6 @@ ProcessorInfo.exe:
 	$@
 	pause
 	del *.exe
+
+vs:
+	project -p ProcessorInfo

@@ -1,3 +1,8 @@
 InputSource.exe:
-    asmc64 -peg -ws -Zp8 $*.asm
-    $@
+	asmc64 -q -peg -ws -frame -I$(inc_dir) $*.asm
+	$@
+	pause
+	del $@
+
+vs:
+	project -p -w -u InputSource

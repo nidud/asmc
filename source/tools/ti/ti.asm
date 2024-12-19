@@ -5,6 +5,7 @@ include time.inc
 include stdio.inc
 include stdlib.inc
 include string.inc
+include tchar.inc
 
     .code
 
@@ -39,4 +40,4 @@ main proc argc:int_t, argv:array_t
 
 main endp
 
-    end
+    end _tstart

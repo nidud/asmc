@@ -1,11 +1,9 @@
 include io.inc
 include direct.inc
 include stdio.inc
+include stdlib.inc
 include string.inc
 include malloc.inc
-ifndef __INIX__
-include winbase.inc
-endif
 include tchar.inc
 
 define BUFSIZE 4096 ; Size of line buffer
@@ -16,6 +14,9 @@ do_subdir   dd 0
 print_line  dd 0
 
 .code
+
+include pe/_tcsfn.asm
+include pe/_tcsfcat.asm
 
 print_usage proc
 
@@ -157,22 +158,21 @@ scanfiles endp
 
 main proc argc:int_t, argv:array_t
 
-   .new path[_MAX_PATH]:char_t = 0
-   .new fmask[_MAX_PATH]:char_t = 0
+    .new path[_MAX_PATH]:char_t = 0
+    .new fmask[_MAX_PATH]:char_t = 0
+    .new i:int_t
 
     .if ( argc == 1 )
 
         .return print_usage()
     .endif
 
-    mov rbx,argv
-    dec argc
+    .for ( i = 1 : i < argc : i++ )
 
-    .while ( argc )
-
-        add rbx,string_t
-        mov rcx,[rbx]
-        mov eax,[rcx]
+        mov ecx,i
+        mov rdx,argv
+        mov rbx,[rdx+rcx*size_t]
+        mov eax,[rbx]
 
         .switch al
 ifndef __UNIX__
@@ -200,38 +200,29 @@ endif
             .gotosw('h')
 
         .default
+            .if !_fullpath(&path, rbx, _MAX_PATH)
 
-            strcpy(&fmask, strfn(strcpy(&path, rcx)))
-            strfn(&path)
+                perror(rbx)
+               .endc
+            .endif
+            mov rbx,strfn(rax)
+            strcpy(&fmask, rax)
             lea rcx,path
 ifdef __UNIX__
-            mov edx,'/'
+            mov eax,'/'
 else
-            mov edx,'\'
+            mov eax,'\'
 endif
-            .if ( rax > rcx && dl == [rax-1] )
-                mov [rax-1],dh
+            .if ( rbx > rcx && [rbx-1] == al )
+                mov [rbx-1],ah
             .else
-                mov [rax],dh
+                mov [rbx],ah
             .endif
+            .endc .if ( fmask == 0 )
+            printf( "%s\n", &fmask )
+            scanfiles(&path, &fmask)
         .endsw
-        dec argc
-    .endw
-
-    .if ( fmask == 0 )
-
-        perror("Nothing to do..")
-       .return( 0 )
-    .endif
-    .if ( path == 0 )
-
-        mov word ptr path,'.'
-    .endif
-ifndef __UNIX__
-    GetFullPathName(&path, _MAX_PATH, &path, 0)
-endif
-    printf( "\nFile(s):   %s\nDirectory: %s\n\n", &fmask, &path)
-    scanfiles(&path, &fmask)
+    .endf
     printf("Total %d file(s)\n", file_count)
    .return( 0 )
 

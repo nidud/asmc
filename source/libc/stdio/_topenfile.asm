@@ -60,6 +60,9 @@ endif
         .case 'R': or  edx,O_RANDOM
         .case 'T': or  edx,O_SHORT_LIVED
         .case 'D': or  edx,O_TEMPORARY
+        .case 'z'
+            or edx,O_BINARY
+            or ecx,_IOZIP or _IOCRC32
         .default
             .break
         .endsw

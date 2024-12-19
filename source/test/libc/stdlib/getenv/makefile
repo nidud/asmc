@@ -1,20 +1,31 @@
+
+all: getenv clean
+
 getenv:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
 	asmc -q -elf $@.asm
 	./$@
-	@pause
-	@rm $@.o
-	@rm $@
 else
+	$@
 	asmc64 -q -ws $@.asm
 	$@
 	asmc -q $@.asm
 	$@
 	asmc -q -ws $@.asm
 	$@
-	pause
-	del $@.obj
-	del $@.exe
 endif
+	@pause
+
+clean:
+ifdef YACC
+	rm ./getenv.o
+	rm ./getenv
+else
+	del getenv.exe
+	del getenv.obj
+endif
+
+vs:
+	project -p getenv

@@ -1,15 +1,25 @@
 flags = -q
 ifndef YACC
-flags += -pe
+flags += -pe -frame
 endif
 
 tounix:
 	asmc64 $(flags) $@.asm
+
 clean:
 ifdef YACC
-	rm -f tounix
-	rm -f tounix.o
+	rm ./tounix.o
+	rm ./tounix
 else
-#	del tounix.obj
 	del tounix.exe
+endif
+
+vs:
+	project -p tounix
+
+install:
+ifdef YACC
+	sudo install ./tounix /usr/bin
+else
+	move tounix.exe ..\..\..\bin
 endif

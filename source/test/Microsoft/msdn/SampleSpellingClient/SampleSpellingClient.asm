@@ -175,7 +175,7 @@ CreateSpellCheckerFactory endp
 
 wmain proc argc:int_t, argv:ptr PCWSTR
 
-    .new originalOutputMode:int_t = _setmode(_fileno(&stdout), _O_U16TEXT)
+    .new originalOutputMode:int_t = _setmode(_fileno(stdout), _O_U16TEXT)
     .new hr:HRESULT = S_OK
 
     .if ( originalOutputMode == -1 )

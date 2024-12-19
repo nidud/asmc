@@ -167,6 +167,8 @@ CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t, p
     fprintf(fp,
         "endif\n"
         "\n"
+        "all: %s clean\n"
+        "\n"
         "%s:\n"
         "\tasmc64 $(flags) $@.asm\n"
         "ifdef YACC\n"
@@ -181,11 +183,25 @@ CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t, p
         "\trm ./%s.o\n"
         "\trm ./%s\n"
         "else\n"
-        "\tdel %s.exe\n", rcx, rcx, rcx, rcx )
+        "\tdel %s.exe\n", rcx, rcx, rcx, rcx, rcx )
     .if ( pe == 0 )
         fprintf(fp, "\tdel %s.obj\n", name)
     .endif
-    fprintf(fp, "endif\n")
+    fprintf(fp, "endif\n\nvs:\n\tproject -p ")
+
+    .if ( pe )
+        fprintf(fp, "-pe ")
+    .endif
+    .if ( Unicode )
+        fprintf(fp, "-u ")
+    .endif
+    .if ( Windows )
+        fprintf(fp, "-w ")
+    .endif
+    .if ( Static )
+        fprintf(fp, "-s ")
+    .endif
+    fprintf(fp, "%s\n", name)
     ret
 
 CreateMakefile endp

@@ -1,20 +1,22 @@
 # Makefile for searchenv
 # Tue Dec 03 18:17:14 2024
 
-flags = -q
+all: searchenv clean
 
 searchenv:
-	asmc64 $(flags) $@.asm
+	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	asmc -elf $(flags) $@.asm
+	asmc -elf $@.asm
 	./$@
 else
 	$@
-	asmc $(flags) $@.asm
+	asmc -q $@.asm
 	$@
 endif
 	@pause
+
+clean:
 ifdef YACC
 	rm ./searchenv.o
 	rm ./searchenv
@@ -22,3 +24,7 @@ else
 	del searchenv.exe
 	del searchenv.obj
 endif
+
+vs:
+	project -p searchenv
+

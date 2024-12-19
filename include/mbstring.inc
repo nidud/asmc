@@ -8,20 +8,20 @@ include crtdefs.inc
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
 _iobuf		struct size_t
-_ptr		LPTSTR ?
-_cnt		SINT ?
-_base		LPSTR ?
-_flag		SINT ?
-_file		SINT ?
-if defined(_WIN64) or not defined(__UNIX__)
-_charbuf	SINT ?
-endif
-_bufsiz		SINT ?
-if defined(__UNIX__) and not defined(_WIN64)
-_ungotten	dw ?
-else
-_tmpfname	LPTSTR ?
-endif
+_ptr		string_t ?
+_cnt		int_t ?
+_base		string_t ?
+_flag		int_t ?
+_file		int_t ?
+_charbuf	int_t ?
+_bufsiz		int_t ?
+union
+ struct
+  _bitcnt	int_t ?
+  _crc32	int_t ?
+ ends
+ _tmpfname	string_t ?
+ends
 _iobuf		ends
 FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf

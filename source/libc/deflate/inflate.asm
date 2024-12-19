@@ -39,11 +39,11 @@ define OSIZE 0x8000
 ;   error in the data.
 ;
 HUFT        struct
-e       db ?        ; number of extra bits or operation
-b       db ?        ; number of bits in this code or subcode
+e           db ?        ; number of extra bits or operation
+b           db ?        ; number of bits in this code or subcode
 union
- n      dw ?        ; literal, length base, or distance base
- t      PVOID ?     ; pointer to next level of table
+ n          dw ?        ; literal, length base, or distance base
+ t          PVOID ?     ; pointer to next level of table
 ends
 HUFT        ends
 PHUFT       typedef ptr HUFT
@@ -93,7 +93,6 @@ align size_t
 STDO    LPFILE 0
 STDI    LPFILE 0
 fsize   uint_t 0
-crc     uint_t 0
 
     .code
 
@@ -133,19 +132,14 @@ endif
 
 getbits endp
 
+ifdef _LIN64
 oputc proc __ccall uses rsi rdi c:int_t
+else
+oputc proc __ccall c:int_t
+endif
+    ldr ecx,c
 
-    ldr     ecx,c
-
-    inc     fsize
-    mov     eax,crc
-    movzx   edx,al
-    xor     dl,cl
-    lea     rsi,crctable
-    shr     eax,8
-    xor     eax,[rsi+rdx*4]
-    mov     crc,eax
-
+    inc fsize
     .ifd ( fputc(ecx, STDO) == -1 )
 
         .return( ER_DISK )
@@ -549,11 +543,6 @@ huft_build endp
 
 inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
 
-    .new index:uint_t
-    .new count:uint_t
-    .new boffs:uint_t
-    .new ldist:uint_t
-
     .while 1 ; do until end of block
 
         mov rbx,tl
@@ -663,41 +652,29 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
                 sub edi,ecx
                 mov eax,edx
                 add [rsi].FILE._ptr,rcx
-                mov count,edi
-                mov edi,[rsi].FILE._bufsiz
-                sub edi,edx
-                sub edi,ecx
-                mov [rsi].FILE._cnt,edi
+                mov edx,[rsi].FILE._bufsiz
+                sub edx,eax
+                sub edx,ecx
+                mov [rsi].FILE._cnt,edx
+                mov edx,edi
                 mov rsi,[rsi].FILE._base
                 lea rdi,[rsi+rax]
                 add rsi,rbx
                 add ebx,ecx
                 add eax,ecx
                 add fsize,ecx
-                mov boffs,eax
-                mov ldist,ebx
-                lea rdx,crctable
+                rep movsb
+                mov edi,edx
 
-                .for ( eax = crc : ecx : ecx-- )
-
-                    movzx   ebx,al
-                    xor     bl,[rsi]
-                    shr     eax,8
-                    xor     eax,[rdx+rbx*4]
-                    movsb
-                .endf
-                mov crc,eax
-                mov edi,count
-                mov ebx,ldist
-
-                .if ( boffs >= OSIZE )
-
+                .if ( eax >= OSIZE )
+ifdef _LIN64
+                    .new count:uint_t = edi
+endif
                     fflush( STDO )
 ifdef _LIN64
                     mov edi,count
 endif
                     .if ( eax )
-
                         .return( ER_DISK )
                     .endif
                 .endif
@@ -965,16 +942,12 @@ inflate_stored endp
 inflate proc public uses rbx file:string_t, fp:ptr FILE, zp:ptr ZipLocal
 
     mov STDI,ldr(fp)
-    .if ( fopen(file, "wb") == NULL )
+    .if ( fopen(file, "wz") == NULL )
 
         dec rax
        .return
     .endif
     mov STDO,rax
-    setvbuf(rax, NULL, _IOFBF, 0x10000)
-    mov rcx,STDO
-    mov [rcx].FILE._bufsiz,0x8000
-    mov crc,-1
     mov fsize,0
 
     .repeat
@@ -1016,7 +989,8 @@ inflate proc public uses rbx file:string_t, fp:ptr FILE, zp:ptr ZipLocal
     mov rcx,zp
     .if ( rcx )
 
-        mov eax,crc
+        mov rax,STDO
+        mov eax,[rax].FILE._crc32
         not eax
         .if ( eax != [rcx].ZipLocal.crc )
             mov ebx,ER_CRCERR

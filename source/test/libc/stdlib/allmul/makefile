@@ -1,19 +1,27 @@
+
+all: allmul clean
+
 allmul:
-	asmc64 -q -fpic $@.asm
+	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	@pause
-	@rm -f $@.o
-	@rm -f $@
 else
 	$@
-	asmc64 -q -ws $@.asm
+	asmc -q $*.asm
 	$@
-	asmc -q $@.asm
+	asmc64 -q -ws $*.asm
 	$@
-	asmc -q -ws $@.asm
-	$@
-	pause
-	del $@.obj
-	del $@.exe
 endif
+	@pause
+
+clean:
+ifdef YACC
+	rm ./allmul.o
+	rm ./allmul
+else
+	del allmul.exe
+	del allmul.obj
+endif
+
+vs:
+	project -p allmul

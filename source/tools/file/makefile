@@ -1,12 +1,13 @@
-# Makefile for file
-# Mon Oct 21 19:18:15 2024
-
-flags = -q -pe
-
 file:
-	asmc64 $(flags) $@.asm
+	asmc64 -q -pe -frame $@.asm
 	$@
 	@pause
 
 clean:
 	del file.exe
+
+vs:
+	project -p file
+
+install:
+	move file.exe ..\..\..\bin

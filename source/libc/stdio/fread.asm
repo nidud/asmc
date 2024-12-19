@@ -6,23 +6,34 @@
 include io.inc
 include stdio.inc
 
+reg macro inst:vararg
+if defined(_WIN64) and defined(__UNIX__)
+    mov inst
+endif
+endm
+
     .code
 
     assume rbx:ptr _iobuf
 
-fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
+if defined(_WIN64) and defined(__UNIX__)
+fread proc uses rbx r12 buffer:LPSTR, size:int_t, num:int_t, fp:LPFILE
+else
+fread proc uses rsi rdi rbx buffer:LPSTR, size:int_t, num:int_t, fp:LPFILE
+endif
 
   local total:UINT   ; total bytes to read
   local count:UINT   ; num bytes left to read
   local bufsize:UINT ; size of stream buffer
-  local p:LPSTR
 
     ldr rdi,buffer
     ldr rbx,fp
-
     ldr eax,size
-    mul num
-    .return .if !eax
+
+    mul ldr(num)
+    .if ( eax == 0 )
+        .return
+    .endif
 
     mov count,eax
     mov total,eax
@@ -50,7 +61,7 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
             sub [rbx]._cnt,ecx
             add [rbx]._ptr,rcx
             rep movsb
-            mov p,rdi
+            reg r12,rdi
 
         .elseif ( eax >= bufsize )
 
@@ -68,7 +79,8 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
                 mov eax,count
                 sub eax,edx
             .endif
-            mov p,rdi
+
+            reg r12,rdi
             .ifsd ( _read( [rbx]._file, rdi, rax ) <= 0 )
 
                 or [rbx]._flag,_IOEOF
@@ -78,14 +90,20 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
                 div size
                .return
             .endif
-
-            mov rdi,p
             sub count,eax
+            reg rdi,r12
+            mov rcx,rdi
             add rdi,rax
+ifndef NOSTDCRC
+            .if ( [rbx]._flag & _IOCRC32 )
 
+                _crc32( [rbx]._crc32, rcx, eax )
+                mov [rbx]._crc32,eax
+            .endif
+endif
         .else
 
-            mov p,rdi
+            reg r12,rdi
             .ifd ( _filbuf( rbx ) == -1 )
 
                 mov eax,total
@@ -94,7 +112,7 @@ fread proc uses rsi rdi rbx buffer:LPSTR, size:SINT, num:SINT, fp:LPFILE
                 div size
                .return
             .endif
-            mov rdi,p
+            reg rdi,r12
             stosb
             dec count
             mov eax,[rbx]._bufsiz

@@ -249,7 +249,26 @@ wmain proc
     .endif
     .if (FAILED(hr))
 
-        wcout << "FindPackagesSample failed, error: " << hr << endl
+       .new szMessage:ptr wchar_t
+        mov edx,hr
+        .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
+
+            mov hr,HRESULT_CODE(edx)
+        .endif
+
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER or \
+            FORMAT_MESSAGE_FROM_SYSTEM or \
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            hr,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            &szMessage,
+            0,
+            NULL)
+
+        wcout << "FindPackagesSample failed, error: " << szMessage << endl
+        LocalFree(szMessage)
     .endif
     CoUninitialize()
    .return 0

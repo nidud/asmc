@@ -9,6 +9,7 @@
 ;  r  : read
 ;  w  : write
 ;  a  : append
+;  z  : zip-stream rz/wx
 ;  r+ : read/write
 ;  w+ : open empty for read/write
 ;  a+ : read/append

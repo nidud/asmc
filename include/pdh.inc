@@ -70,6 +70,8 @@ endif
 H_REALTIME_DATASOURCE	equ NULL
 H_WBEM_DATASOURCE	equ INVALID_HANDLE_VALUE
 
+.pragma pack(push, size_t)
+
 PDH_RAW_COUNTER		STRUC
 CStatus			DWORD ?
 TimeStamp		FILETIME <>
@@ -77,7 +79,7 @@ FirstValue		LONGLONG ?
 SecondValue		LONGLONG ?
 MultiCount		dd ?
 PDH_RAW_COUNTER		ENDS
- PPDH_RAW_COUNTER	typedef ptr PDH_RAW_COUNTER
+PPDH_RAW_COUNTER	typedef ptr PDH_RAW_COUNTER
 
 PDH_RAW_COUNTER_ITEM_A	STRUC
 szName			LPSTR ?
@@ -708,5 +710,6 @@ endif
 
 endif
 
+.pragma pack(pop)
 .pragma list(pop)
 endif

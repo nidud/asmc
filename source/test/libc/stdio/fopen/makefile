@@ -2,12 +2,17 @@ fopen:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	@pause
-	@rm -f $@.o
-	@rm -f $@
 else
 	$@
-	pause
-	del $@.obj
-	del $@.exe
 endif
+	@pause
+ifdef YACC
+	rm ./$@.o
+	rm ./$@
+else
+	del $@.exe
+	del $@.obj
+endif
+
+vs:
+	project -p fopen

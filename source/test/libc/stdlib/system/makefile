@@ -1,12 +1,12 @@
+
+all: system clean
+
 system:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
 	asmc -q -elf $@.asm
 	./$@
-	@pause
-	@rm -f $@.o
-	@rm -f $@
 else
 	$@
 	asmc -q $@.asm
@@ -15,7 +15,18 @@ else
 	$@
 	asmc64 -q -Zp8 -ws -Cs $@.asm
 	$@
-	pause
-	del $@.obj
-	del $@.exe
 endif
+	@pause
+
+clean:
+ifdef YACC
+	rm ./system.o
+	rm ./system
+else
+	del system.exe
+	del system.obj
+endif
+
+vs:
+	project -p system
+

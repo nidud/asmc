@@ -4,16 +4,13 @@
 include io.inc
 include direct.inc
 include stdio.inc
+include stdlib.inc
 include string.inc
-ifndef __UNIX__
-include winbase.inc
-endif
 include tchar.inc
 
-define BUFSIZE 4096 ; Size of line buffer
-
 .data
-file_count  dd 0
+bin_count   dd 0
+txt_count   dd 0
 do_subdir   dd 0
 print_line  dd 0
 
@@ -34,16 +31,19 @@ print_usage endp
 
 scanfile proc uses rbx name:string_t
 
-  .new buffer[BUFSIZE]:sbyte
-  .new fp:LPFILE = fopen(name, "rt")
+  .new fp:LPFILE = fopen(name, "rb")
   .new fo:LPFILE
+  .new rc:int_t
+  .new bin:int_t = 0
+  .new cr:int_t = 0
+  .new lf:int_t = 0
 
     .if ( fp == NULL )
 
         perror(name)
        .return(0)
     .endif
-    .if !fopen("convert.$$$", "wt")
+    .if !fopen("convert.$$$", "wb")
 
         fclose(fp)
         perror("convert.$$$")
@@ -51,15 +51,44 @@ scanfile proc uses rbx name:string_t
     .endif
     mov fo,rax
 
-    .while fgets(&buffer, BUFSIZE, fp)
+    .whiled ( fgetc(fp) != -1 )
 
-        fputs(&buffer, fo)
+        .if ( eax < 9 )
+
+            inc bin
+           .break
+
+        .elseif ( eax == 10 && cr != 13 )
+
+            .ifd ( fputc(13, fo) == -1 )
+
+                inc bin
+               .break
+            .endif
+            inc lf
+            mov eax,10
+        .endif
+
+        mov cr,eax
+        .ifd ( fputc(eax, fo) == -1 )
+
+            inc bin
+           .break
+        .endif
     .endw
+
     fclose(fp)
     fclose(fo)
-    remove(name)
-    rename("convert.$$$", name)
-   .return(1)
+    .if ( bin || lf == 0 )
+
+        inc bin_count
+        remove("convert.$$$")
+    .else
+        inc txt_count
+        remove(name)
+        rename("convert.$$$", name)
+    .endif
+    ret
 
 scanfile endp
 
@@ -72,9 +101,7 @@ scanfiles proc uses rbx directory:string_t, fmask:string_t
         mov rbx,rax
         .repeat
             .if !( ff.attrib & _F_SUBDIR )
-                .ifd ( scanfile(strfcat(&path, directory, &ff.name)) == 1 )
-                    inc file_count
-                .endif
+                scanfile(strfcat(&path, directory, &ff.name))
             .endif
         .until _findnext(rbx, &ff)
         _findclose(rbx)
@@ -124,9 +151,7 @@ ifndef __UNIX__
         .case '/'
 endif
         .case '-'
-            shr eax,8
-            or  eax,202020h
-            .if al == 'r'
+            .if ah == 'r'
                 inc do_subdir
                .endc
             .endif
@@ -135,7 +160,11 @@ ifndef __UNIX__
 endif
             .return print_usage()
         .default
-            strcpy(&path, rbx)
+            .if !_fullpath(&path, rbx, _MAX_PATH)
+
+                perror(rbx)
+               .endc
+            .endif
             mov rbx,strfn(rax)
             strcpy(&fmask, rax)
             lea rcx,path
@@ -149,24 +178,17 @@ endif
             .else
                 mov [rbx],ah
             .endif
+            .endc .if ( fmask == 0 )
+            printf( "%s\n", &fmask )
+            scanfiles(&path, &fmask)
         .endsw
     .endf
 
-    .if ( fmask == 0 )
-
-        perror("Nothing to do..")
-       .return( 0 )
-    .endif
-    .if ( path == 0 )
-        strcpy(&path, ".")
-    .endif
-ifndef __UNIX__
-    GetFullPathName(&path, _MAX_PATH, &path, 0)
-endif
-    printf( "\nFile(s):   %s\nDirectory: %s\n\n", &fmask, &path)
-    scanfiles(&path, &fmask)
-    printf("Total %d file(s)\n", file_count)
-   .return( 0 )
+    mov ecx,txt_count
+    add ecx,bin_count
+    printf("%d file(s) %d ignored\n", ecx, bin_count)
+    xor eax,eax
+    ret
 
 main endp
 

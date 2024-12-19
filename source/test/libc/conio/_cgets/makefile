@@ -1,19 +1,20 @@
+
 _cgets:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	rm -f $@.o
-	rm -f $@
 else
 	$@
-	asmc -q -coff $@.asm
-	$@
-	asmc -q -coff -ws $@.asm
-	$@
-	asmc64 -q -ws $*.asm
-	$@
-	del $@.obj
-	del $@.exe
-	pause
 endif
+	@pause
+ifdef YACC
+	rm ./$@.o
+	rm ./$@
+else
+	del $@.exe
+	del $@.obj
+endif
+
+vs:
+	project -p _cgets
 

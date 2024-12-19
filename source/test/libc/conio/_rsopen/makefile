@@ -1,13 +1,17 @@
 _rsopen:
-	asmc64 -q $@.asm -idd res/OpenFile.idd
+	asmc64 -q -D__TTY__ $@.asm -idd res/OpenFile.idd
 ifdef YACC
 	./$@
-	rm *.o
-	rm *.s
-	rm $@
 else
 	$@
-	del *.obj
-	del *.s
+endif
+	@pause
+ifdef YACC
+	rm ./*.o
+	rm ./$@
+	rm OpenFile.s
+else
 	del $@.exe
+	del *.obj
+	del OpenFile.s
 endif

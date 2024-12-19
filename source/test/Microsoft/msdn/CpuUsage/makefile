@@ -1,5 +1,10 @@
 
 CpuUsage.exe:
-    asmc64 -q -peg -ws -Cs -Zp8 $*.asm
-    $@
+	asmc64 -q -Cs -ws -peg $*.asm
+	$@
+	del $@
+
+vs:
+	project -p -w -u CpuUsage
+
 

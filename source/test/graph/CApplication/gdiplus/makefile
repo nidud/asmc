@@ -1,10 +1,7 @@
-static = 0
-
 gdiplus.exe:
-!if $(static)
-    asmc64 -q -ws $*.asm
-!else
-    asmc64 -peg -ws $*.asm
-!endif
-    $@
-    pause
+	asmc64 -q -ws -peg $*.asm
+	$@
+	del $@
+
+vs:
+	project -p -w -u gdiplus

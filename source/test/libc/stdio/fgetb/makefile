@@ -1,24 +1,23 @@
 # Makefile for fgetb
 # Fri Nov 15 21:20:25 2024
 
-flags = -q
-
 fgetb:
-	asmc64 $(flags) $@.asm
+	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	asmc $(flags) -elf $@.asm
+	asmc -q -elf $@.asm
 	./$@
 else
 	$@
 endif
 	@pause
-
-clean:
 ifdef YACC
-	rm ./fgetb.o
-	rm ./fgetb
+	rm ./$@.o
+	rm ./$@
 else
-	del fgetb.exe
-	del fgetb.obj
+	del $@.exe
+	del $@.obj
 endif
+
+vs:
+	project -p fgetb

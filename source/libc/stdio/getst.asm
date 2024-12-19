@@ -23,6 +23,9 @@ _getst proc
             mov [rcx]._base,rax
             dec eax
             mov [rcx]._file,eax
+ifndef NOSTDCRC
+            mov [rcx]._crc32,eax
+endif
             mov rax,rcx
            .break
         .endif

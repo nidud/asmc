@@ -5,16 +5,21 @@ ifdef YACC
 	@pause
 	asmc -q -elf $@.asm
 	./$@
-	@pause
-	@rm -f $@.o
-	@rm -f $@
 else
 	$@
-	asmc -q $*.asm
+	asmc -q -coff $*.asm
 	$@
 	asmc64 -q -pe $*.asm
 	$@
-	pause
-	del $*.obj
-	del $*.exe
 endif
+	@pause
+ifdef YACC
+	rm ./$@.o
+	rm ./$@
+else
+	del $@.exe
+	del $@.obj
+endif
+
+vs:
+	project -p _aligned_malloc

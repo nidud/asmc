@@ -16,37 +16,38 @@ fflush proc uses rbx fp:LPFILE
    .new retval:size_t = 0
 
     ldr rbx,fp
+
     mov eax,[rbx]._flag
-    and eax,_IOREAD or _IOWRT
+    .if !( eax & _IOMEMBUF )
 
-    .if ( eax == _IOWRT && [rbx]._flag & _IOMYBUF or _IOYOURBUF )
+        and eax,_IOREAD or _IOWRT
+        .if ( eax == _IOWRT && [rbx]._flag & _IOMYBUF or _IOYOURBUF )
 
-        mov rax,[rbx]._ptr
-        sub rax,[rbx]._base
-        mov size,eax
+            mov rax,[rbx]._ptr
+            sub rax,[rbx]._base
+            mov size,eax
+            .ifg
+                .ifd ( _write( [rbx]._file, [rbx]._base, eax ) == size )
 
-        .ifg
-
-            .if ( [rbx]._flag & _IOMEMBUF )
-
-            .elseifd ( _write( [rbx]._file, [rbx]._base, eax ) == size )
-
-                .if ( [rbx]._flag & _IORW )
-
-                    and [rbx]._flag,not _IOWRT
+                    .if ( [rbx]._flag & _IORW )
+                        and [rbx]._flag,not _IOWRT
+                    .endif
+ifndef NOSTDCRC
+                    .if ( [rbx]._flag & _IOCRC32 )
+                        _crc32( [rbx]._crc32, [rbx]._base, size )
+                        mov [rbx]._crc32,eax
+                    .endif
+endif
+                .else
+                    or [rbx]._flag,_IOERR
+                    dec retval
                 .endif
-
-            .else
-
-                or [rbx]._flag,_IOERR
-                dec retval
             .endif
         .endif
+        mov [rbx]._ptr,[rbx]._base
+        mov [rbx]._cnt,0
     .endif
-
-    mov [rbx]._ptr,[rbx]._base
-    mov [rbx]._cnt,0
-   .return( retval )
+    .return( retval )
 
 fflush endp
 

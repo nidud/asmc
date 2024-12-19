@@ -62,8 +62,7 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
         .endif
     .endif
 
-    mov eax,[rbx]._flag
-    .if ( eax & _IOMYBUF or _IOYOURBUF )
+    .if ( [rbx]._flag & _IOMYBUF or _IOYOURBUF )
 
         mov rax,[rbx]._base
         mov rdx,[rbx]._ptr
@@ -79,17 +78,23 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
 
             .if ( [rbx]._flag & _IOMEMBUF )
 
-                mov [rbx]._ptr,rdx
-                .if ( realloc([rbx]._base, &[rax+TCHAR+_INTIOBUF]) == NULL )
+                lea ecx,[rax+_HEAP_GROWSIZE+TCHAR]
+                .if ( ecx < eax )
+
+                    _set_errno( ENOMEM )
+                    or [rbx]._flag,_IOERR
+                   .return
+                .endif
+                .if ( realloc([rbx]._base, rcx) == NULL )
 
                     dec rax
                     or [rbx]._flag,_IOERR
                    .return
                 .endif
                 mov [rbx]._base,rax
-                add [rbx]._bufsiz,_INTIOBUF
+                add [rbx]._bufsiz,_HEAP_GROWSIZE
                 mov edx,[rbx]._bufsiz
-                mov rcx,[rbx]._ptr
+                mov ecx,charcount
                 sub edx,ecx
                 sub edx,TCHAR
                 mov [rbx]._cnt,edx
@@ -98,11 +103,16 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
                 movzx eax,TCHAR ptr char
                 mov [rcx-TCHAR],_tal
                .return
-
-            .else
-
-                mov written,_write( [rbx]._file, [rbx]._base, edx )
             .endif
+ifndef NOSTDCRC
+            .if ( [rbx]._flag & _IOCRC32 )
+
+                _crc32( [rbx]._crc32, [rbx]._base, edx )
+                mov [rbx]._crc32,eax
+                mov edx,charcount
+            .endif
+endif
+            mov written,_write( [rbx]._file, [rbx]._base, edx )
 
         .elseif ( _osfile([rbx]._file) & FAPPEND )
 
@@ -112,19 +122,23 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
                .return
             .endif
         .endif
+
         mov eax,char
         mov rcx,[rbx]._base
         mov [rcx],_tal
+
     .else
+
         mov charcount,TCHAR
         mov written,_write( [rbx]._file, &char, TCHAR )
     .endif
-    mov eax,written
-    .if ( eax != charcount )
+
+    movzx eax,TCHAR ptr char
+    mov ecx,written
+    .if ( ecx != charcount )
+
         or [rbx]._flag,_IOERR
         or rax,-1
-    .else
-        movzx eax,TCHAR ptr char
     .endif
     ret
 

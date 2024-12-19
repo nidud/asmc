@@ -1,5 +1,5 @@
 stat:
-	asmc64 $@.asm
+	asmc64 -q $@.asm
 ifdef YACC
 	./$@
 	asmc -elf $@.asm
@@ -19,3 +19,6 @@ else
 	del *.obj
 	del *.exe
 endif
+
+vs:
+	project -p stat

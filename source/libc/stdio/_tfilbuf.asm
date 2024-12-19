@@ -66,7 +66,13 @@ endif
         dec rax
        .return
     .endif
+ifndef NOSTDCRC
+    .if ( [rbx]._flag & _IOCRC32 )
 
+        _crc32( [rbx]._crc32, [rbx]._base, eax )
+        mov [rbx]._crc32,eax
+    .endif
+endif
     mov edx,[rbx]._flag
     .if ( !( edx & _IOWRT or _IORW ) )
 

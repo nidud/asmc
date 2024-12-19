@@ -1,19 +1,10 @@
-# Makefile for project
-# Mon Oct 21 19:31:07 2024
-
 flags = -q
 ifndef YACC
-flags += -pe
+flags += -pe -frame
 endif
 
 project:
 	asmc64 $(flags) $@.asm
-ifdef YACC
-	./$@
-else
-	$@
-endif
-	@pause
 
 clean:
 ifdef YACC
@@ -21,4 +12,14 @@ ifdef YACC
 	rm ./project
 else
 	del project.exe
+endif
+
+vs:
+	project -p project
+
+install:
+ifdef YACC
+	sudo install ./project /usr/bin
+else
+	move project.exe ..\..\..\bin
 endif

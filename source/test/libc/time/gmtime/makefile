@@ -4,14 +4,20 @@ ifdef YACC
 	./$@
 	asmc64 -q -fpic $@.asm
 	./$@
-	@pause
-	@rm $@.o
-	@rm $@
 else
 	$@
 	asmc64 -q -pe $*.asm
 	$@
-	pause
-	del $@.obj
-	del $@.exe
 endif
+	@pause
+ifdef YACC
+	rm ./$@.o
+	rm ./$@
+else
+	del $@.exe
+	del $@.obj
+endif
+
+vs:
+	project -p gmtime
+

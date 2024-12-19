@@ -77,7 +77,6 @@ define ZIPENDSENTRID    0x06054B50  ; signature end central
 
 .pragma pack(pop)
 
-externdef crctable:int_t
 externdef compresslevel:int_t
 
 deflate proto __cdecl :string_t, :ptr FILE, :ptr ZipLocal

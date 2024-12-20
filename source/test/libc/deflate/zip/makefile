@@ -4,9 +4,9 @@ all: zip clean
 zip:
 	asmc64 -q $@.asm
 ifdef YACC
-	./$@ -r -v include.zip ../../../../include/*.inc
+	./$@ -r -v include.zip "../../../../../include/*.inc"
 else
-	$@ -r -v include.zip ../../../../include/*.inc
+	$@ -r -v include.zip ../../../../../include/*.inc
 endif
 	@pause
 

@@ -1,10 +1,16 @@
-all: test.exe clean
 
-test.exe:
-    asmc64 -nologo $*.asm
-    $@
-    pause
-
-clean:
-    del *.obj
-    del *.exe
+test:
+	asmc64 -q $@.asm
+ifdef YACC
+	./$@
+else
+	$@
+endif
+	@pause
+ifdef YACC
+	rm $@.o
+	rm $@
+else
+	del $@.obj
+	del $@.exe
+endif

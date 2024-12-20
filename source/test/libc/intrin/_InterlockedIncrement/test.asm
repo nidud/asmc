@@ -4,7 +4,7 @@
 ;; compile with: /Oi
 ;;
 
-_CRT_RAND_S equ <>
+define _CRT_RAND_S
 
 include stdlib.inc
 include limits.inc
@@ -48,6 +48,7 @@ main proc uses rsi rdi rbx
     .endf
 
     WaitForMultipleObjects(ebx, &threads, 1, INFINITE)
+    xor eax,eax
     ret
 
 main endp

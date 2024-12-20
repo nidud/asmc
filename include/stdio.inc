@@ -211,6 +211,7 @@ _fgetb		proto __cdecl :LPFILE, :int_t
 _fputb		proto __cdecl :LPFILE, :uint_t, :int_t
 _fneedb		proto __cdecl :LPFILE, :int_t
 _fflushb	proto __cdecl :LPFILE
+_fopenm		proto __cdecl :LPFILE
 _crc32		proto __cdecl :uint_t, :ptr, :uint_t
 
 _fsetmode proto watcall :LPFILE, :int_t {

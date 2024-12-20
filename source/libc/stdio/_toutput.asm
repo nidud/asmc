@@ -199,7 +199,8 @@ endif
             .case ST_NORMAL
                 mov bufferiswide,TCHAR-1
                 mov ecx,edx
-if not defined(__UNIX__) and not defined(_UNICODE)
+if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
+
                 .if isleadbyte( ecx )
 
                     write_char( ecx, fp, &charsout )
@@ -382,7 +383,7 @@ endif
                     mov textlen,1 ; print just a single character
                     mov text,rdx
 
-if not defined(__UNIX__) and not defined(_UNICODE)
+if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
 
                         movzx eax,word ptr [rcx]
@@ -392,7 +393,7 @@ if not defined(__UNIX__) and not defined(_UNICODE)
 endif
                         mov _tal,[rcx]
                         mov [rdx],_tal
-if not defined(__UNIX__) and not defined(_UNICODE)
+if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
                     .endif
 endif
                     .endc
@@ -420,10 +421,13 @@ endif
 
                         lea rax,@CStr("(null)")
 ifndef _UNICODE
+ifndef NOUTF8
                         and flags,not ( FL_LONG or FL_WIDECHAR )
+endif
 endif
                     .endif
                     mov rdx,rax
+ifndef NOUTF8
 ifndef _UNICODE
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
 
@@ -438,14 +442,20 @@ endif
                         sar eax,1
 ifndef _UNICODE
                     .else
-
+endif
+endif
+ifndef _UNICODE
                         .while ( ecx && byte ptr [rax] )
 
                             inc rax
                             dec ecx
                         .endw
                         sub rax,rdx
+endif
+ifndef _UNICODE
+ifndef NOUTF8
                     .endif
+endif
 endif
                     mov text,rdx
                     mov textlen,eax
@@ -825,7 +835,7 @@ endif
 
                     ; write text
 
-if not defined(__UNIX__) and not defined(_UNICODE)
+if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
 
                     .if ( bufferiswide && textlen )
 
@@ -844,7 +854,7 @@ if not defined(__UNIX__) and not defined(_UNICODE)
                     .else
 endif
                         write_string( text, textlen, fp, &charsout )
-if not defined(__UNIX__) and not defined(_UNICODE)
+if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
                     .endif
 endif
 

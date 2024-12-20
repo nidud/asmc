@@ -17,6 +17,7 @@ main proc
     mov __mask,__ull_rshift(__mask, nBit)
 
     printf("%#I64d\n", __mask)
+    xor eax,eax
     ret
 
 main endp

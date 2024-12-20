@@ -19,6 +19,10 @@ include srcpath
 
 flag = -c -Z7 -MT -Cs -I$(inc_dir)
 
+ifdef tiny
+flag += -DNOSTDFLT -DNOSTDCRC -DNOUTF8
+endif
+
 ifdef x86
 path = $(lib_dir)\x86
 name = $(lib_dir)\x86\libc.lib

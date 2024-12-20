@@ -5,9 +5,12 @@
 include stdio.inc
 include intrin.inc
 include tchar.inc
+
 .data
-num sdword 78002
+ num sdword 78002
+
 .code
+
 main proc
 
   local bits[32]:byte
@@ -31,7 +34,9 @@ main proc
         dec ebx
     .endw
     printf("\n")
+    xor eax,eax
     ret
+
 main endp
 
     end _tstart

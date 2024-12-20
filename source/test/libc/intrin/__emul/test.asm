@@ -26,6 +26,7 @@ main proc
     mov uresult,__emulu(ua, ub)
 
     printf("%u * %u = %I64u\n", ua, ub, uresult)
+    xor eax,eax
     ret
 
 main endp

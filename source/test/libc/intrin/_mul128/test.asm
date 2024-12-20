@@ -21,6 +21,7 @@ main proc
     mov d,_mul128(a, b, &c)
 
     printf("%#llx * %#llx = %#llx%llx\n", a, b, c, d)
+    xor eax,eax
     ret
 
 main endp

@@ -16,6 +16,7 @@ main proc
 
     __movsb(&s1, &s2, 100)
     printf("%s %s\n", &s1, &s2)
+    xor eax,eax
     ret
 
 main endp

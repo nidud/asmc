@@ -78,9 +78,9 @@ ifndef __UNIX__
 
         mov rsi,buf     ; start at beginning of buffer
         mov dosretval,0 ; no OS error yet
-
+ifndef NOUTF8
         .if ( [rbx].textmode != __IOINFO_TM_UTF8 )
-
+endif
             .while 1
 
                 mov rax,rsi
@@ -158,7 +158,7 @@ ifndef __UNIX__
                    .break
                 .endif
             .endw
-
+ifndef NOUTF8
         .else ; __IOINFO_TM_UTF8
 
             .while 1
@@ -227,7 +227,7 @@ ifndef __UNIX__
                 .endif
             .endw
         .endif
-
+endif
     .else
 
         ; binary mode, no translation

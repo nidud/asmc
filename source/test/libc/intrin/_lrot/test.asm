@@ -21,7 +21,9 @@ main proc
             val, _lrotl( val, 8 ) )
     printf( "0x%8.8lx rotated right four times is 0x%8.8lx\n",
             val, _lrotr( val, 4 ) )
+    xor eax,eax
     ret
+
 main endp
 
     end _tstart

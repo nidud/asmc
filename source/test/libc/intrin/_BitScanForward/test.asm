@@ -39,6 +39,7 @@ main proc
    .else
       _cprintf( "\r\nNo set bits found.  Mask is zero.\r\n" )
    .endif
+   xor eax,eax
    ret
 
 main endp

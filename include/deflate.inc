@@ -63,7 +63,7 @@ define ZIPENDSENTRID    0x06054B50  ; signature end central
      off_local      dd ?    ; relative offset of local header
     .ends
 
-.template ZipEndCentral
+.template ZipEndCent
 
      Signature      dd ?    ; end of central dir signature
      disk_cur       dw ?    ; number of this disk
@@ -77,7 +77,7 @@ define ZIPENDSENTRID    0x06054B50  ; signature end central
 
 .pragma pack(pop)
 
-externdef compresslevel:int_t
+externdef compresslevel:int_t ; 0-9
 
 deflate proto __cdecl :string_t, :ptr FILE, :ptr ZipLocal
 inflate proto __cdecl :string_t, :ptr FILE, :ptr ZipLocal

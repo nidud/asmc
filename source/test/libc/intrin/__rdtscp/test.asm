@@ -13,6 +13,7 @@ main proc
     mov i,__rdtscp(&ui)
     printf("%I64d ticks\n", i)
     printf("TSC_AUX was %x\n", ui)
+    xor eax,eax
     ret
 
 main endp

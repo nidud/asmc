@@ -77,6 +77,7 @@ else
     mov al,[rbx].textmode
 
     .switch al
+ifndef NOUTF8
     .case __IOINFO_TM_UTF8
 
         ; For UTF8 we want the count to be an even number
@@ -103,7 +104,7 @@ else
         mov dword ptr [ebx].startpos[4],edx
 endif
         .endc
-
+endif
     .case __IOINFO_TM_UTF16LE
 
         ; For UTF16 the count always needs to be an even number
@@ -139,7 +140,7 @@ endif
             inc bytes_read
             dec cnt
             mov al,[rbx].pipech2[1]
-
+ifndef NOUTF8
             .if ( ( [rbx].textmode == __IOINFO_TM_UTF8 ) && ( al != LF ) && cnt )
 
                 stosb
@@ -147,6 +148,7 @@ endif
                 inc bytes_read
                 dec cnt
             .endif
+endif
         .endif
     .endif
 
@@ -340,7 +342,7 @@ endif
             mov rax,rdi
             sub rax,buf
             mov bytes_read,eax
-
+ifndef NOUTF8
             .if ( ( [rbx].textmode == __IOINFO_TM_UTF8 ) && eax )
 
                 ; UTF8 reads need to be converted into UTF16
@@ -460,7 +462,7 @@ endif
                 shl eax,1
                 mov bytes_read,eax
             .endif
-
+endif
         .elseif ( fromConsole )
 
             mov rsi,rdi

@@ -3,7 +3,9 @@
 include stdio.inc
 include intrin.inc
 include tchar.inc
+
 .code
+
 main proc
 
   local u64:qword
@@ -15,7 +17,9 @@ main proc
 
     printf("byteswap of %I64x = %I64x\n", u64, _byteswap_uint64(u64))
     printf("byteswap of %Ix = %Ix\n", ul, _byteswap_ulong(ul))
+    xor eax,eax
     ret
+
 main endp
 
     end _tstart

@@ -21,33 +21,32 @@ _close proc handle:int_t
 
     ldr ecx,handle
 
-    _pioinfo(ecx)
-
-    .if ( ecx < 3 || ecx >= _nfile || !( [rax].osfile & FOPEN ) )
-
+    .if ( ecx < 3 || ecx >= _nfile )
+@@:
         _set_errno( EBADF )
 ifndef __UNIX__
         _set_doserrno( 0 )
 endif
-        xor eax,eax
+        .return( 0 )
+    .endif
 
-    .else
-
-        mov [rax].osfile,0
-        mov [rax].textmode,__IOINFO_TM_ANSI
+    _pioinfo(ecx)
+    test [rax].osfile,FOPEN
+    jz @B
+    mov [rax].osfile,0
+    mov [rax].textmode,__IOINFO_TM_ANSI
 ifdef __UNIX__
-        .ifsd ( sys_close(ecx) < 0 )
+    .ifsd ( sys_close(ecx) < 0 )
 
-            neg eax
-            _set_errno( eax )
+        neg eax
+        _set_errno( eax )
 else
-        .ifd !CloseHandle( [rax].osfhnd )
+    .ifd !CloseHandle( [rax].osfhnd )
 
-            _dosmaperr( GetLastError() )
+        _dosmaperr( GetLastError() )
 endif
-        .else
-            xor eax,eax
-        .endif
+    .else
+        xor eax,eax
     .endif
     ret
 

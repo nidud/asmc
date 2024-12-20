@@ -18,6 +18,7 @@ main proc
     printf("%s\n", &s)
     __stosb(&s[1], x, 6)
     printf("%s\n", &s)
+    xor eax,eax
     ret
 
 main endp

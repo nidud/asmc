@@ -27,7 +27,7 @@ main proc
         mov uir,__popcnt(ui[rbx*4])
         printf("__popcnt(0x%x) = %d\n", ui[rbx*4], uir)
     .endf
-
+    xor eax,eax
     ret
 
 main endp

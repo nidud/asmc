@@ -11,6 +11,7 @@ main proc
 
     mov i,__rdtsc()
     printf("%I64d ticks\n", i)
+    xor eax,eax
     ret
 
 main endp

@@ -30,6 +30,7 @@ main proc
 
     printf("0x%02I64x%016I64x >> 1 = 0x%02I64x%016I64x\n",
              j, i, ResultHighPart, ResultLowPart)
+    xor eax,eax
     ret
 
 main endp

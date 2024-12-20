@@ -148,7 +148,7 @@ copyblock proc private
 
     lea rsi,[rsi].cFileName
     lea rdi,[rdi].name
-    mov rcx,(260/4)*TCHAR
+    mov ecx,(260/4)*TCHAR
     rep movsd
     xor eax,eax
     ret

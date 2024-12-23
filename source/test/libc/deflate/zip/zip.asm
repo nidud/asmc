@@ -41,7 +41,7 @@ endif
 
     Zip         proc
     Release     proc
-    Init        proc :string_t
+    Open        proc :string_t
     AddFile     proc :string_t
     ScanFiles   proc
     Compress    proc :ptr _finddata_t
@@ -363,7 +363,7 @@ endif
     .else
         mov rax,[rbx].file
     .endif
-    mov [rbx].mask,_strdup(rax)
+    strcpy([rbx].mask, rax)
 
     assume rsi:nothing
     assume rdi:nothing
@@ -374,7 +374,7 @@ endif
 Zip::AddFile endp
 
 
-Zip::Init proc uses rbx name:string_t
+Zip::Open proc uses rbx name:string_t
 
     ldr rbx,this
     ldr rcx,name
@@ -396,7 +396,7 @@ Zip::Init proc uses rbx name:string_t
     mov eax,1
     ret
 
-Zip::Init endp
+Zip::Open endp
 
 
 Zip::Release proc uses rbx
@@ -495,8 +495,7 @@ endif
 
         .default
             .if ( a == 0 )
-
-                zip.Init(rcx)
+                zip.Open(rcx)
                 inc a
             .else
                 zip.AddFile(rcx)

@@ -7,9 +7,10 @@
 include stdlib.inc
 include tchar.inc
 
-public _noargv
+externdef c noargv:int_t
+
 .data
-_noargv     label int_t
+noargv      label int_t
 _argvusedA  label int_t
 _argvusedW  int_t 0
 end

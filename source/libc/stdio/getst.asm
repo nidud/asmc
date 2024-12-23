@@ -23,7 +23,7 @@ _getst proc
             mov [rcx]._base,rax
             dec eax
             mov [rcx]._file,eax
-ifndef NOSTDCRC
+ifdef STDZIP
             mov [rcx]._crc32,eax
 endif
             mov rax,rcx

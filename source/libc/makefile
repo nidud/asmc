@@ -1,14 +1,35 @@
 #
 # Makefile for LIBC
 #
-ifdef YACC
 
-libasmc.a:
-	asmc64 -c -fpic -Zp8 -MT -Cs -r *.asm *.s
+flag = -c -MT -Cs
+
+ifdef avx
+flag += -arch:AVX
+endif
+
+ifndef nozip
+flag += -DSTDZIP
+endif
+ifdef noutf
+flag += -DNOUTF8
+endif
+# auto link using -MT
+ifdef noflt
+flag += -DNOSTDFLT
+endif
+
+ifdef YACC
+ifndef name
+name = libasmc
+endif
+
+$(name).a:
+	asmc64 $(flag) -Zp8 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
-	asmc -c -6 -elf -fpic -Zp4 -MT -Cs -r *.asm *.s
+	asmc $(flag) -6 -elf -Zp4 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc/x86
@@ -17,29 +38,26 @@ else
 
 include srcpath
 
-flag = -c -Z7 -MT -Cs -I$(inc_dir)
-
-ifdef tiny
-flag += -DNOSTDFLT -DNOSTDCRC -DNOUTF8
+ifndef name
+name = libc
 endif
 
-ifdef x86
-path = $(lib_dir)\x86
-name = $(lib_dir)\x86\libc.lib
-flag += -6 -coff -Zp4
-else
-path = $(lib_dir)\x64
-name = $(lib_dir)\x64\libc.lib
-flag += -win64 -frame -Zp8
-endif
+flag += -Z7 -I$(inc_dir)
+
 ifdef tty
 flag += -D__TTY__
 endif
-ifdef avx
-flag += -arch:AVX
+ifdef x86
+path = $(lib_dir)\x86
+libn = $(lib_dir)\x86\$(name).lib
+flag += -6 -coff -Zp4
+else
+path = $(lib_dir)\x64
+libn = $(lib_dir)\x64\$(name).lib
+flag += -win64 -frame -Zp8
 endif
 
-$(name):
+$(libn):
 	asmc $(flag) -r $(src_dir)\libc\*.asm
 ifndef tty
 	asmc $(flag) -Fo w* -r -ws $(src_dir)\libc\_t*.asm

@@ -2226,6 +2226,25 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
     .if ( rcx )
 
         mov edx,[rcx].asym.name_size
+
+        ; v2.36.13 -MT - static link option: "main defined" and "argv used"
+
+        .if ( Options.link_mt & LINK_MT && ( edx == 4 || edx == 5 ) )
+
+            mov rdx,[rcx].asym.name
+            mov eax,[rdx]
+            .if ( eax == 'niam' || ( eax == 'iamw' && byte ptr [rdx+4] == 'n' ) )
+
+                or Options.link_mt,LINK_MAIN
+                mov rax,[rcx].dsym.procinfo
+                mov rax,[rax].proc_info.paralist
+                .if ( rax )
+                    or Options.link_mt,LINK_ARGV
+                .endif
+            .endif
+            mov edx,[rcx].asym.name_size
+        .endif
+
         inc edx
         .if ( SymCmpFunc( [rcx].asym.name, [rbx].string_ptr, edx ) == 0 )
             ProcFini( CurrProc )

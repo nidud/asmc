@@ -18,8 +18,10 @@ fflush proc uses rbx fp:LPFILE
     ldr rbx,fp
 
     mov eax,[rbx]._flag
-    .if !( eax & _IOMEMBUF )
 
+ifdef STDZIP
+    .if !( eax & _IOMEMBUF )
+endif
         and eax,_IOREAD or _IOWRT
         .if ( eax == _IOWRT && [rbx]._flag & _IOMYBUF or _IOYOURBUF )
 
@@ -32,7 +34,7 @@ fflush proc uses rbx fp:LPFILE
                     .if ( [rbx]._flag & _IORW )
                         and [rbx]._flag,not _IOWRT
                     .endif
-ifndef NOSTDCRC
+ifdef STDZIP
                     .if ( [rbx]._flag & _IOCRC32 )
                         _crc32( [rbx]._crc32, [rbx]._base, size )
                         mov [rbx]._crc32,eax
@@ -46,7 +48,9 @@ endif
         .endif
         mov [rbx]._ptr,[rbx]._base
         mov [rbx]._cnt,0
+ifdef STDZIP
     .endif
+endif
     .return( retval )
 
 fflush endp

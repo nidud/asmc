@@ -75,7 +75,7 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
         mov charcount,edx
 
         .ifs ( edx > 0 )
-
+ifdef STDZIP
             .if ( [rbx]._flag & _IOMEMBUF )
 
                 lea ecx,[rax+_HEAP_GROWSIZE+TCHAR]
@@ -104,7 +104,7 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
                 mov [rcx-TCHAR],_tal
                .return
             .endif
-ifndef NOSTDCRC
+
             .if ( [rbx]._flag & _IOCRC32 )
 
                 _crc32( [rbx]._crc32, [rbx]._base, edx )

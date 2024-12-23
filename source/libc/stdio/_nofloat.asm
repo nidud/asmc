@@ -1,12 +1,17 @@
-; _FLTINIT.ASM--
+; _NOFLOAT.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+; Asmc will include this symbol if option -MT is used
+; and no float :vararg params used
+;
 include fltintrn.inc
 
-public _nofloat
+externdef c nofloat:int_t
+
 .data
-_nofloat label int_t
+nofloat  label int_t
 _fltused int_t 0
+
 end

@@ -383,7 +383,7 @@ endif
                     mov textlen,1 ; print just a single character
                     mov text,rdx
 
-if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
+if not defined(__UNIX__) and not defined(_UNICODE)
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
 
                         movzx eax,word ptr [rcx]
@@ -393,7 +393,7 @@ if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
 endif
                         mov _tal,[rcx]
                         mov [rdx],_tal
-if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
+if not defined(__UNIX__) and not defined(_UNICODE)
                     .endif
 endif
                     .endc
@@ -421,13 +421,10 @@ endif
 
                         lea rax,@CStr("(null)")
 ifndef _UNICODE
-ifndef NOUTF8
                         and flags,not ( FL_LONG or FL_WIDECHAR )
-endif
 endif
                     .endif
                     mov rdx,rax
-ifndef NOUTF8
 ifndef _UNICODE
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
 
@@ -443,7 +440,6 @@ endif
 ifndef _UNICODE
                     .else
 endif
-endif
 ifndef _UNICODE
                         .while ( ecx && byte ptr [rax] )
 
@@ -453,9 +449,7 @@ ifndef _UNICODE
                         sub rax,rdx
 endif
 ifndef _UNICODE
-ifndef NOUTF8
                     .endif
-endif
 endif
                     mov text,rdx
                     mov textlen,eax
@@ -835,7 +829,7 @@ endif
 
                     ; write text
 
-if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
+if not defined(__UNIX__) and not defined(_UNICODE)
 
                     .if ( bufferiswide && textlen )
 
@@ -854,7 +848,7 @@ if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
                     .else
 endif
                         write_string( text, textlen, fp, &charsout )
-if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
+if not defined(__UNIX__) and not defined(_UNICODE)
                     .endif
 endif
 

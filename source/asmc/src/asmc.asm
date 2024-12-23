@@ -584,15 +584,24 @@ endif
 ifdef __UNIX__
                 ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
 
-                .if ( Options.fctype != FCT_ELF64 )
+                .if ( Options.link_mt & LINK_MT || Options.pic == 0 || Options.fctype != FCT_ELF64 )
+                    inc ebx
+                .endif
+                .if ( ebx )
 
-                    CollectLinkOption("-m32")
                     CollectLinkOption("-static")
                     CollectLinkOption("-nostdlib")
-                    CollectLinkObject("-l:x86/libasmc.a")
-                .elseif ( Options.pic == 0 )
-                    CollectLinkOption("-nostdlib")
-                    CollectLinkObject("-l:libasmc.a")
+                    .if ( Options.link_mt & LINK_MT )
+                        .if !( Options.link_mt & LINK_FLTUSED )
+                            CollectLinkOption("-u _nofloat")
+                        .endif
+                    .endif
+                    .if ( Options.fctype == FCT_ELF64 )
+                        CollectLinkObject("-l:libasmc.a")
+                    .else
+                        CollectLinkOption("-m32")
+                        CollectLinkObject("-l:x86/libasmc.a")
+                    .endif
                 .else
                     CollectLinkOption("-Wl,-z,noexecstack")
                 .endif
@@ -604,6 +613,18 @@ ifdef __UNIX__
                 .endif
                 CollectLinkOption(&buffer[32])
 else
+
+                .if ( Options.link_mt & LINK_MT )
+
+                    .if !( Options.link_mt & LINK_FLTUSED )
+
+                        CollectLinkOption("/INCLUDE:_nofloat")
+                    .endif
+                    .if ( Options.link_mt & LINK_MAIN && !( Options.link_mt & LINK_ARGV ) )
+
+                        CollectLinkOption("/INCLUDE:_noargv")
+                    .endif
+                .endif
 
                 ; Masm use a (Unicode) response file here (mllink$.lnk)
                 ; /OUT:name.exe *.obj

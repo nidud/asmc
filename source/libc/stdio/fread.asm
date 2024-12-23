@@ -94,7 +94,7 @@ endif
             reg rdi,r12
             mov rcx,rdi
             add rdi,rax
-ifndef NOSTDCRC
+ifdef STDZIP
             .if ( [rbx]._flag & _IOCRC32 )
 
                 _crc32( [rbx]._crc32, rcx, eax )

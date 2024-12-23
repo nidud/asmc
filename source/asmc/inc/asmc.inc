@@ -520,6 +520,13 @@ define PE_SUBSYSTEM_CUI     0x03
 define PE_SUBSYSTEM_MASK    0x03
 define PE_DLL               0x04
 
+.enum static_link {
+    LINK_MT      = 0x01,            ; -MT used, -c not used --> use LIBC
+    LINK_MAIN    = 0x02,            ; [w]main proc defined
+    LINK_FLTUSED = 0x04,            ; float used as :vararg param
+    LINK_ARGV    = 0x08,            ; [w]main has params
+    }
+
 .template global_options
     quiet                   db ?    ; -q option
     line_numbers            db ?    ; -Zd option
@@ -593,6 +600,7 @@ define PE_DLL               0x04
     dotnamex                db ?    ; -dotnamex : option dotnamex:<on:off>
     sysvregs                db ?    ; -sysvregs : skip RDI and RSI in USES
     no_linking              db ?    ; -c        ; assembles only
+    link_mt                 db ?    ; -MT = 1, float used |= 2, argv used |= 4
    .ends
 
 .template module_vars

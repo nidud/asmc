@@ -789,6 +789,10 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
         .if ( isfloat )
 
+            .if ( isvararg )
+                or Options.link_mt,LINK_FLTUSED
+            .endif
+
             ; 64 bit value <= USE32
 
             .if ( eax <= 8 )
@@ -1235,10 +1239,14 @@ handle_address:
 
     .if ( isfloat )
 
+        .if ( isvararg )
+            or Options.link_mt,LINK_FLTUSED
+        .endif
+
         mov dl,memtype
         mov ecx,dst_size
 
-        .if ( [rsi].sflags & S_ISVARARG && dl != MT_REAL4 && dl != MT_REAL8 )
+        .if ( isvararg && dl != MT_REAL4 && dl != MT_REAL8 )
 
             mov dl,MT_REAL4
             .if ( src_rsize == 16 || [rdi].kind == EXPR_FLOAT )
@@ -1296,7 +1304,7 @@ handle_address:
 
             .if ( stack )
 
-                .if ( ecx == T_MOVSS && wordsize == 8 && [rsi].sflags & S_ISVARARG )
+                .if ( ecx == T_MOVSS && wordsize == 8 && isvararg )
 
                     mov ecx,T_CVTSS2SD
                     AddLineQueueX( " %r %r, %r", ecx, src_reg, src_reg )
@@ -1306,7 +1314,7 @@ handle_address:
                .return
             .endif
 
-            .if ( wordsize == 8 && [rsi].sflags & S_ISVARARG )
+            .if ( wordsize == 8 && isvararg )
                 .if ( ecx == T_MOVSS )
                     mov ecx,T_CVTSS2SD
                 .elseif ( ecx == T_MOVSD )
@@ -1334,7 +1342,7 @@ handle_address:
 
             ; v2.34.71 - the default size in 64-bit is double..
 
-            .if ( wordsize == 8 && [rsi].sflags & S_ISVARARG && dst_size == 4 )
+            .if ( wordsize == 8 && isvararg && dst_size == 4 )
                 mov dst_size,8
             .endif
             atofloat( rdi, rdx, dst_size, eax, 0 )
@@ -1390,7 +1398,7 @@ handle_address:
                 mov ecx,T_MOV
                 mov reg,T_EAX
 
-                .if ( [rsi].sflags & S_ISVARARG )
+                .if ( isvararg )
 
                     ; v2.34.71 - convert float to double in 64-bit
 
@@ -1422,7 +1430,7 @@ handle_address:
             .endif
 
             mov ecx,T_MOVSS
-            .if ( [rsi].sflags & S_ISVARARG && wordsize == 8 )
+            .if ( isvararg && wordsize == 8 )
                 mov ecx,T_CVTSS2SD
                 .if ( [rdi].kind == EXPR_FLOAT )
                     mov ecx,T_MOVSD
@@ -1537,7 +1545,7 @@ endif
                 ; - this fails for NULL pointers as the upper value is not cleared
                 ; - the default size is 4
                 ;
-                .if ( [rdi].value || !( [rsi].sflags & S_ISVARARG ) )
+                .if ( [rdi].value || !isvararg )
 
                     mov ecx,T_DWORD
                 .endif
@@ -2419,9 +2427,10 @@ endif
 
         .if ( [rdi].asym.sflags & S_ISVARARG )
 
-            mov eax,pushsize
-
-            .if ( asize > eax )
+            .if ( opnd.mem_type & MT_FLOAT )
+                or Options.link_mt,LINK_FLTUSED
+            .endif
+            .if ( asize > pushsize )
 
                 mov eax,asize
             .endif
@@ -2745,9 +2754,23 @@ endif
            .new optype:dword = GetValueSp(eax)
 
             ; v2.11
-            .if ( [rdi].asym.sflags & S_ISVARARG && psize < pushsize )
 
-                mov psize,pushsize
+            .if ( [rdi].asym.sflags & S_ISVARARG )
+
+                .if ( psize < pushsize )
+
+                    mov psize,eax
+                .endif
+if 0
+                .if ( eax >= 4 )
+
+                    ; v2.36.13 - if float param used
+                    ;
+                    ; this "could" be a float, and then it "should" be converted to a double
+                    ;
+                    or Options.link_mt,LINK_FLTUSED
+                .endif
+endif
             .endif
 
             ; v2.06: check if register is valid to be pushed.
@@ -3047,7 +3070,19 @@ endif
                 mov edx,opnd.hvalue
 
                 .if ( opnd.kind == EXPR_FLOAT )
+
                     mov ecx,4
+                    .if ( [rdi].asym.sflags & S_ISVARARG && pushsize >= ecx )
+
+                        or Options.link_mt,LINK_FLTUSED
+                        .if ( psize == 16 )
+
+                            __cvtq_sd(&opnd, &opnd)
+                            mov ecx,8
+                            mov psize,ecx
+                        .endif
+                    .endif
+
                 .elseif ( ( !edx && eax <= 255 ) || ( edx == -1 && sdword ptr eax >= -255 ) )
                     mov ecx,1
                 .elseif ( ( !edx && eax <= 65535 ) || ( edx == -1 && sdword ptr eax >= -65535 ) )

@@ -85,7 +85,8 @@ Options global_options {
         0,                      ; .dotname
         0,                      ; .dotnamex
         0,                      ; .sysvregs
-        0 }                     ; .no_linking
+        0,                      ; .no_linking
+        0 }                     ; .link_mt
 
     align size_t
 
@@ -571,6 +572,7 @@ endif
         .return
     .case 'c'               ; -c
         mov Options.no_linking,1
+        mov Options.link_mt,0
         .return
     .case 'ffoc'            ; -coff
         mov Options.output_format,OFORMAT_COFF
@@ -756,7 +758,10 @@ endif
         define_name( "_DEBUG", "1" )
     .case 'TM'              ; -MT
         define_name( "_MT", "1" )
-       .return
+        .if ( Options.no_linking == 0 )
+            or Options.link_mt,LINK_MT
+        .endif
+        .return
     .case 'dDM'             ; -MDd
         define_name( "_DEBUG", "1" )
     .case 'ilon'            ; -nolib

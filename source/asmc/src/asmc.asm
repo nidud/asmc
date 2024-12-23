@@ -593,7 +593,9 @@ ifdef __UNIX__
                     CollectLinkOption("-nostdlib")
                     .if ( Options.link_mt & LINK_MT )
                         .if !( Options.link_mt & LINK_FLTUSED )
-                            CollectLinkOption("-u _nofloat")
+
+                            CollectLinkOption("-u")
+                            CollectLinkOption("_nofloat")
                         .endif
                     .endif
                     .if ( Options.fctype == FCT_ELF64 )

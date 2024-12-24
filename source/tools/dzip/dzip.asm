@@ -439,7 +439,7 @@ Decompress proc uses rbx
            .break
         .endif
         .break .if ( zl.Signature != ZIPLOCALID )
-        .if ( zl.method != 8 || zl.method != 0 )
+        .if ( zl.method != 8 && zl.method != 0 )
             mov rc,_set_errno( EINVAL )
            .break
         .endif

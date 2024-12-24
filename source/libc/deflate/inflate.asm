@@ -941,8 +941,12 @@ inflate_stored endp
 
 inflate proc public uses rbx file:string_t, fp:ptr FILE, zp:ptr ZipLocal
 
-    mov STDI,ldr(fp)
-    .if ( fopen(file, "wz") == NULL )
+    ldr rbx,fp
+
+    mov [rbx].FILE._bitcnt,0
+    mov STDI,rbx
+
+    .if ( fopen(ldr(file), "wz") == NULL )
 
         dec rax
        .return

@@ -58,8 +58,7 @@ define ZIPENDSENTRID    0x06054B50  ; signature end central
      cmtsize        dw ?    ; file comment length
      disk           dw ?    ; disk number start
      int_attrib     dw ?    ; internal file attributes
-     ext_attrib     dw ?    ; external file attributes
-     ext_attribdx   dw ?
+     ext_attrib     dd ?    ; external file attributes
      off_local      dd ?    ; relative offset of local header
     .ends
 

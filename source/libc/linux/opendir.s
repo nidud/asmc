@@ -11,7 +11,7 @@ include errno.inc
 include fcntl.inc
 include sys/syscall.inc
 
-define MAXDBUF 1024
+define MAXDBUF 4096
 
 .template DIRINF
     fd  int_t ?

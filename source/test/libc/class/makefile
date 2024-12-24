@@ -1,16 +1,16 @@
 class:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
 	asmc -q -elf $@.asm
 	./$@
 else
 	$@
-	asmc64 -q -ws $@.asm
+	asmc64 -q -MT -ws $@.asm
 	$@
-	asmc -q $@.asm
+	asmc -q -MT -coff $@.asm
 	$@
-	asmc -q -ws -Cs $@.asm
+	asmc -q -MT -coff -ws -Cs $@.asm
 	$@
 endif
 	@pause

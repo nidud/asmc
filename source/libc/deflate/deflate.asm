@@ -14,44 +14,29 @@
 ; Change history:
 ; 2012-09-09 - created
 ;
-;
-include string.inc
+
 include malloc.inc
-include errno.inc
 include deflate.inc
 
-ifdef _WIN64
-define __ccall <fastcall>   ; Use fastcall for -elf64
-ifdef __UNIX__
-define _LIN64
-endif
-elseifdef __UNIX__
-define __ccall <syscall>
-else
-define __ccall <c>
-endif
-
-define SEGM64K 0x10000
-
-define MIN_MATCH 3   ; The minimum and maximum match lengths
-define MAX_MATCH 258
+define MIN_MATCH        3   ; The minimum and maximum match lengths
+define MAX_MATCH        258
 
 ; Maximum window size = 32K. If you are really short of memory, compile
 ; with a smaller WSIZE but this reduces the compression ratio for files
 ; of size > WSIZE. WSIZE must be a power of two in the current implementation.
 
-define WSIZE 0x8000
-define WMASK (WSIZE-1)
+define WSIZE            0x8000
+define WMASK            (WSIZE-1)
 
 ; Minimum amount of lookahead, except at the end of the input file.
 ; See deflate.c for comments about the MIN_MATCH+1.
 
-define MIN_LOOKAHEAD (MAX_MATCH+MIN_MATCH+1)
+define MIN_LOOKAHEAD    (MAX_MATCH+MIN_MATCH+1)
 
 ; In order to simplify the code, particularly on 16 bit machines, match
 ; distances are limited to MAX_DIST instead of WSIZE.
 
-define MAX_DIST (WSIZE-MIN_LOOKAHEAD)
+define MAX_DIST         (WSIZE-MIN_LOOKAHEAD)
 
 define FILE_BINARY      0       ; internal file attribute
 define FILE_ASCII       1
@@ -67,32 +52,32 @@ define LIT_BUFSIZE      0x4000
 
 ; HASH_SIZE and WSIZE must be powers of two
 
-define HASH_SIZE (1 shl HASH_BITS)
-define HASH_MASK HASH_SIZE-1
-define H_SHIFT   (HASH_BITS+MIN_MATCH-1)/MIN_MATCH
+define HASH_SIZE        (1 shl HASH_BITS)
+define HASH_MASK        HASH_SIZE-1
+define H_SHIFT          (HASH_BITS+MIN_MATCH-1)/MIN_MATCH
 
-define FAST 4 ; speed options for the general purpose bit flag
-define SLOW 2
+define FAST             4       ; speed options for the general purpose bit flag
+define SLOW             2
 
 ; Matches of length 3 are discarded if their distance exceeds TOO_FAR
 
-define TOO_FAR         4096
-define MAXSEG_64K      1
+define TOO_FAR          4096
+define MAXSEG_64K       1
 
-define MAX_BITS        15   ; All codes must not exceed MAX_BITS bits
-define MAX_BL_BITS     7    ; Bit length codes must not exceed MAX_BL_BITS bits
-define LENGTH_CODES    29   ; number of length codes, not counting the special
-                            ; END_BLOCK code
-define LITERALS        256  ; number of literal bytes 0..255
-define END_BLOCK       256  ; end of block literal code
-define D_CODES         30   ; number of distance codes
-define BL_CODES        19   ; number of codes used to transfer the bit lengths
+define MAX_BITS         15      ; All codes must not exceed MAX_BITS bits
+define MAX_BL_BITS      7       ; Bit length codes must not exceed MAX_BL_BITS bits
+define LENGTH_CODES     29      ; number of length codes, not counting the special
+                                ; END_BLOCK code
+define LITERALS         256     ; number of literal bytes 0..255
+define END_BLOCK        256     ; end of block literal code
+define D_CODES          30      ; number of distance codes
+define BL_CODES         19      ; number of codes used to transfer the bit lengths
 
 ; number of Literal or Length codes, including the END_BLOCK code
 
 define L_CODES         LITERALS+1+LENGTH_CODES
 
-define STORED_BLOCK    0    ; The three kinds of block type
+define STORED_BLOCK    0        ; The three kinds of block type
 define STATIC_TREES    1
 define DYN_TREES       2
 
@@ -101,44 +86,44 @@ define DIST_BUFSIZE    LIT_BUFSIZE
 ; repeat previous bit length 3-6 times (2 bits of repeat count)
 
 define REP_3_6         16
-define REPZ_3_10       17   ; repeat a zero length 3-10 times (3 bits)
-define REPZ_11_138     18   ; repeat a zero length 11-138 times (7 bits)
+define REPZ_3_10       17       ; repeat a zero length 3-10 times (3 bits)
+define REPZ_11_138     18       ; repeat a zero length 11-138 times (7 bits)
 
 define HEAP_SIZE       (2*L_CODES+1) ; maximum heap size
 
-define SMALLEST        1    ; Index within the heap array of least
-                            ; frequent node in the Huffman tree
+define SMALLEST        1        ; Index within the heap array of least
+                                ; frequent node in the Huffman tree
 
 ; Data structure describing a single value and its code string.
 
 ct_data         struct
 union
- Freq           dw ?        ; frequency count
- Code           dw ?        ; bit string
+ Freq           dw ?            ; frequency count
+ Code           dw ?            ; bit string
 ends
 union
- Dad            dw ?        ; father node in Huffman tree
- Len            dw ?        ; length of bit string
+ Dad            dw ?            ; father node in Huffman tree
+ Len            dw ?            ; length of bit string
 ends
 ct_data         ends
 PCTDATA         typedef ptr ct_data
 LPINT           typedef ptr SDWORD
 
 tree_desc       struct
-dyn_tree        PCTDATA ?   ; the dynamic tree
-static_tree     PCTDATA ?   ; corresponding static tree or NULL
-extra_bits      LPINT ?     ; extra bits for each code or NULL
-extra_base      SINT ?      ; base index for extra_bits
-elems           SINT ?      ; max number of elements in the tree
-max_length      SINT ?      ; max bit length for the codes
-max_code        SINT ?      ; largest code with non zero frequency
+dyn_tree        PCTDATA ?       ; the dynamic tree
+static_tree     PCTDATA ?       ; corresponding static tree or NULL
+extra_bits      LPINT ?         ; extra bits for each code or NULL
+extra_base      SINT ?          ; base index for extra_bits
+elems           SINT ?          ; max number of elements in the tree
+max_length      SINT ?          ; max bit length for the codes
+max_code        SINT ?          ; largest code with non zero frequency
 tree_desc       ends
 PTREE           typedef ptr tree_desc
 
 dconfig         STRUC
-good_length     dd ?    ; reduce lazy search above this match length
-max_lazy        dd ?    ; do not perform lazy search above this match length
-nice_length     dd ?    ; quit search above this match length
+good_length     dd ?            ; reduce lazy search above this match length
+max_lazy        dd ?            ; do not perform lazy search above this match length
+nice_length     dd ?            ; quit search above this match length
 max_chain       dd ?
 dconfig         ENDS
 
@@ -268,7 +253,7 @@ oputc endp
 
 putshort proc __ccall w:int_t
 
-    .ifd ( oputc( ldr(w) ) != 0 )
+    .ifd oputc( ldr(w) )
 
         mov ecx,w
         shr ecx,8
@@ -545,6 +530,7 @@ build_tree proc __ccall uses rsi rdi desc:PTREE
    .new node:int_t
 
     ldr rsi,desc ; the tree descriptor
+
     mov tree,[rsi].tree_desc.dyn_tree
     mov stree,[rsi].tree_desc.static_tree
     mov elems,[rsi].tree_desc.elems
@@ -700,6 +686,7 @@ scan_tree proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
 
     ldr rdi,tree
     ldr edx,max_code
+
     mov [rdi+rdx*4+4].ct_data.Len,-1
     movzx eax,[rdi].ct_data.Len
     .if ( eax == 0 )
@@ -757,7 +744,7 @@ send_tree proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
    .new max_count:int_t = 7    ; max repeat count
    .new min_count:int_t = 4    ; min repeat count
 
-    mov rdi,tree
+    ldr rdi,tree
     movzx eax,[rdi].ct_data.Len
     mov nextlen,eax
 
@@ -842,19 +829,17 @@ build_bl_tree proc
     scan_tree(&[rbx].dyn_dtree, d_desc.max_code)
     build_tree(&bl_desc)
 
-    .for ( rdx = &bl_order, ecx = BL_CODES-1 : ecx >= 3 : ecx-- )
+    .for ( rdx = &bl_order, eax = BL_CODES-1 : eax >= 3 : eax-- )
 
-        movzx eax,byte ptr [rdx+rcx]
-        movzx eax,[rbx+rax*4].bl_tree.ct_data.Len
-       .break .if eax
+        movzx ecx,byte ptr [rdx+rax]
+        movzx ecx,[rbx+rcx*4].bl_tree.ct_data.Len
+       .break .if ecx
     .endf
 
-    inc ecx
-    imul eax,ecx,3
-    dec ecx
-    add eax,5+5+4
-    add [rbx].opt_len,eax
-    mov eax,ecx
+    lea  ecx,[rax+1]
+    imul ecx,ecx,3
+    add  ecx,5+5+4
+    add  [rbx].opt_len,ecx
     ret
 
 build_bl_tree endp
@@ -862,8 +847,8 @@ build_bl_tree endp
 
 send_all_trees proc __ccall uses rsi rdi lcodes:int_t, dcodes:int_t, blcodes:int_t
 
-    mov esi,lcodes
-    mov edi,dcodes
+    ldr esi,lcodes
+    ldr edi,dcodes
 
     mov ecx,esi
     sub ecx,257
@@ -1046,29 +1031,22 @@ ct_init proc uses rsi rdi
 
 ct_init endp
 
-;
+
 ; Write out any remaining bits in an incomplete byte.
-;
-bi_windup proc uses rsi rdi
+
+bi_windup proc
 
     xor eax,eax
-    mov ecx,[rbx].bi_valid
-    mov edx,[rbx].bi_buf
+    mov edx,[rbx].bi_valid
+    mov ecx,[rbx].bi_buf
     mov [rbx].bi_buf,eax
     mov [rbx].bi_valid,eax
-    mov esi,ecx
-    mov edi,edx
     inc eax
-    .if ecx
-
-        .ifd oputc(edx)
-
-            .if ( esi > 8 )
-
-                mov ecx,edi
-                movzx ecx,ch
-                oputc(ecx)
-            .endif
+    .if edx
+        .if ( edx > 8 )
+            putshort(ecx)
+        .else
+            oputc(ecx)
         .endif
     .endif
     ret
@@ -1938,7 +1916,7 @@ deflate_slow proc
 deflate_slow endp
 
 
-deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:ptr ZipLocal
+deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:PZIPLOCAL
 
     .new retval:int_t = 0
 
@@ -2026,10 +2004,10 @@ deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:ptr ZipLocal
         mov rax,[rbx].fp
         mov eax,[rax].FILE._crc32
         not eax
-        mov [rcx].ZipLocal.crc,eax
-        mov [rcx].ZipLocal.method,[rbx].method
-        mov [rcx].ZipLocal.csize,[rbx].csize
-        mov [rcx].ZipLocal.fsize,[rbx].fsize
+        mov [rcx].ZIPLOCAL.crc,eax
+        mov [rcx].ZIPLOCAL.method,[rbx].method
+        mov [rcx].ZIPLOCAL.csize,[rbx].csize
+        mov [rcx].ZIPLOCAL.fsize,[rbx].fsize
     .endif
     fclose([rbx].fp)
     free(rbx)

@@ -10,7 +10,7 @@ include deflate.inc
 
 main proc
 
-   .new lz:ZipLocal
+   .new lz:ZIPLOCAL
    .new fp:LPFILE = fopen("deflated", "wb")
    .new rc:int_t = deflate(__FILE__, fp, &lz)
 

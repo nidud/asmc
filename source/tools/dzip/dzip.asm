@@ -16,11 +16,15 @@ include time.inc
 include deflate.inc
 include fltintrn.inc
 
-define __DZIP__     100
+define __DZIP__         101
 
-define MAXPATH      0x8000
-define MAXMASK      0x0200
-define MAXHEAP      0x1000000
+define MAXPATH          0x8000
+define MAXMASK          0x0200
+define MAXHEAP          0x1000000
+
+define METHOD_STORE     0
+define METHOD_DEFLATE   8
+define METHOD_IMPLODE   6
 
 ifdef __UNIX__
 define PC '/'
@@ -41,9 +45,9 @@ endif
     fpc         LPFILE ?
     pbuf        char_t MAXPATH dup(?)
     mbuf        char_t MAXMASK dup(?)
-    zl          ZipLocal <>
-    zc          ZipCentral <>
-    ze          ZipEndCent <>
+    zl          ZIPLOCAL <>
+    zc          ZIPCENTRAL <>
+    ze          ZIPENDCENTRAL <>
     option_x    int_t ?
     option_r    int_t ?
     option_v    int_t ?
@@ -287,7 +291,7 @@ endif
 
         ; write local header
 
-        .break .ifd ( fwrite(&zl, 1, ZipLocal, rbx) != ZipLocal )
+        .break .ifd ( fwrite(&zl, 1, ZIPLOCAL, rbx) != ZIPLOCAL )
         fwrite(&fn, 1, zl.fnsize, rbx)
         .break .if ( ax != zl.fnsize )
 
@@ -302,17 +306,17 @@ endif
         add rcx,[rbx].FILE._base
 
         mov zc.crc,zl.crc
-        mov [rcx].ZipLocal.crc,eax
+        mov [rcx].ZIPLOCAL.crc,eax
         mov zc.csize,zl.csize
-        mov [rcx].ZipLocal.csize,eax
+        mov [rcx].ZIPLOCAL.csize,eax
         mov zc.fsize,zl.fsize
-        mov [rcx].ZipLocal.fsize,eax
+        mov [rcx].ZIPLOCAL.fsize,eax
         mov zc.method,zl.method
-        mov [rcx].ZipLocal.method,ax
+        mov [rcx].ZIPLOCAL.method,ax
 
         ; write central file header
 
-        .break .ifd ( fwrite(&zc, 1, ZipCentral, fpc) != ZipCentral )
+        .break .ifd ( fwrite(&zc, 1, ZIPCENTRAL, fpc) != ZIPCENTRAL )
         fwrite(&fn, 1, zl.fnsize, fpc)
         .break .if ( ax != zl.fnsize )
 
@@ -431,18 +435,14 @@ Decompress proc uses rbx
         mov byte ptr [rbx-1],PC
     .endif
 
-    .while 1
+    .while ( rc == 0 )
 
-        .ifd ( fread(&zl, 1, ZipLocal, fpz) != ZipLocal )
+        .ifd ( fread(&zl, 1, ZIPLOCAL, fpz) != ZIPLOCAL )
 
             mov rc,ER_ZIP
            .break
         .endif
         .break .if ( zl.Signature != ZIPLOCALID )
-        .if ( zl.method != 8 && zl.method != 0 )
-            mov rc,_set_errno( EINVAL )
-           .break
-        .endif
 
         movzx ebx,zl.fnsize
         .ifd ( fread(base, 1, ebx, fpz) != ebx )
@@ -462,10 +462,26 @@ Decompress proc uses rbx
             mov byte ptr [rbx],PC
             inc rbx
         .endw
-        .ifd inflate(path, fpz, &zl)
-            mov rc,eax
-           .break
-        .endif
+        .for ( ebx = 0 : bx < zl.extsize : ebx++ )
+
+            .ifsd ( fgetc(fpz) == -1 )
+
+                mov rc,ER_ZIP
+               .break( 1 )
+            .endif
+        .endf
+
+        .switch zl.method
+        .case METHOD_STORE
+        .case METHOD_DEFLATE
+            mov rc,inflate(path, fpz, &zl)
+           .endc
+        .case METHOD_IMPLODE
+            mov rc,explode(path, fpz, &zl)
+           .endc
+        .default
+            mov rc,_set_errno( ENOSYS )
+        .endsw
     .endw
 
     .if ( rc || zl.Signature != ZIPCENTRALID )
@@ -476,9 +492,9 @@ Decompress proc uses rbx
 
 ifndef __UNIX__
 
-    memcpy(&zc, &zl, ZipLocal)
-    add rax,ZipLocal
-    .ifd ( fread(rax, 1, ZipCentral-ZipLocal, fpz) != ZipCentral-ZipLocal )
+    memcpy(&zc, &zl, ZIPLOCAL)
+    add rax,ZIPLOCAL
+    .ifd ( fread(rax, 1, ZIPCENTRAL-ZIPLOCAL, fpz) != ZIPCENTRAL-ZIPLOCAL )
 
         .return( ER_ZIP )
     .endif
@@ -513,7 +529,7 @@ ifndef __UNIX__
             setfattr(path, zc.ext_attrib)
         .endif
 
-        .ifd ( fread(&zc, 1, ZipCentral, fpz) != ZipCentral )
+        .ifd ( fread(&zc, 1, ZIPCENTRAL, fpz) != ZIPCENTRAL )
 
             mov rc,ER_ZIP
            .break
@@ -548,7 +564,7 @@ Open proc name:string_t
         mov fpc,_fopenm(rax)
         mov zl.Signature,ZIPLOCALID
         mov zc.Signature,ZIPCENTRALID
-        mov ze.Signature,ZIPENDSENTRID
+        mov ze.Signature,ZIPENDCENTRALID
         mov zl.version,20
         mov zc.version_made,20
         mov zc.version_need,10
@@ -599,7 +615,7 @@ Release proc
         mov rax,[rdx].FILE._ptr
         sub rax,[rdx].FILE._base
         mov ze.size_cent,eax
-        fwrite(&ze, 1, ZipEndCent, fpc)
+        fwrite(&ze, 1, ZIPENDCENTRAL, fpc)
 
         _fsetmode(fpz, 0)
         _fsetmode(fpc, 0)

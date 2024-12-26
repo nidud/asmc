@@ -17,10 +17,18 @@ _getbuf proc uses rbx fp:LPFILE
 
     .if ( [rbx]._flag & _IOZIP )
 
-        .if _aligned_malloc( _ZIPIOBUF*2, _ZIPIOBUF*2 )
+        mov ecx,_ZIPIOBUF*2
+        .if ( [rbx]._flag & _IOZIP64 )
+            add ecx,ecx
+        .endif
+        .if _aligned_malloc( ecx, _ZIPIOBUF*2 )
 
+            mov ecx,_ZIPIOBUF
+            .if ( [rbx]._flag & _IOZIP64 )
+                add ecx,ecx
+            .endif
             or  [rbx]._flag,_IOMYBUF
-            mov [rbx]._bufsiz,_ZIPIOBUF
+            mov [rbx]._bufsiz,ecx
         .endif
 
     .elseif malloc( _INTIOBUF )

@@ -78,13 +78,20 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
 ifdef STDZIP
             .if ( [rbx]._flag & _IOMEMBUF )
 
-                lea ecx,[rax+_HEAP_GROWSIZE+TCHAR]
+                add eax,TCHAR
+                lea ecx,[rax+rax]
+                .if ( ecx < _HEAP_GROWSIZE )
+                    mov ecx,_HEAP_GROWSIZE
+                .elseif ( ecx > _HEAP_MAXREGSIZE_S )
+                    lea ecx,[rax+_HEAP_GROWSIZE]
+                .endif
                 .if ( ecx < eax )
 
                     _set_errno( ENOMEM )
                     or [rbx]._flag,_IOERR
                    .return
                 .endif
+                mov [rbx]._bufsiz,ecx
                 .if ( realloc([rbx]._base, rcx) == NULL )
 
                     dec rax
@@ -92,7 +99,6 @@ ifdef STDZIP
                    .return
                 .endif
                 mov [rbx]._base,rax
-                add [rbx]._bufsiz,_HEAP_GROWSIZE
                 mov edx,[rbx]._bufsiz
                 mov ecx,charcount
                 sub edx,ecx

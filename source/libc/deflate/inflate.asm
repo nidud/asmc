@@ -9,44 +9,33 @@
 
 include deflate.inc
 
-define OSIZE 0x8000
-define lbits 9
-define dbits 6
+.data?
+ STDO       LPFILE ?
+ STDI       LPFILE ?
+ fixedtd    PHUFT ?
+ fixedtl    PHUFT ?
+ fixedbd    uint_t ?
+ fixedbl    uint_t ?
+ fsize      uint_t ?
+ wsize      uint_t ?
 
 .data
 
-; Tables for deflate from PKZIP's appnote.txt
+align 2
+; Length codes 257..285 base
+cplens dw 3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227
+lens32 dw 258,0,0
+; Copy offsets for distance codes 0..31
+cpdist dw 1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,
+          4097,6145,8193,12289,16385,24577,32769,49153
+; Extra bits for literal codes 257..285
+cplext dw 0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5
+lext32 dw 0,99,99 ; 99==invalid
+; Extra bits for distance codes
+cpdext dw 0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14
+border db 16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15
 
-border dd \
-    16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15
-
-cplens dw \
-     3, 4, 5, 6, 7, 8, 9,10, 11, 13, 15, 17, 19, 23, 27, 31,
-     35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0
-
-cplext dw \ ; Extra bits for literal codes 257..285
-    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
-    3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 99, 99 ; 99==invalid
-
-cpdist dw \ ; Copy offsets for distance codes 0..29
-    1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
-    257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
-    8193, 12289, 16385, 24577
-
-cpdext dw \ ; Extra bits for distance codes
-    0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
-    7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
-    12, 12, 13, 13
-
-align size_t
-
-fixedtd PHUFT 0
-fixedtl PHUFT 0
-STDO    LPFILE 0
-STDI    LPFILE 0
-fsize   uint_t 0
-
-    .code
+.code
 
     option proc:private, dotname
 
@@ -57,7 +46,7 @@ needbits proc __ccall count:int_t
 endif
     ldr edx,count
 
-    .if ( _fneedb(STDI, edx) == -1 )
+    .ifd ( _fneedb(STDI, edx) == -1 )
         xor eax,eax
     .endif
     ret
@@ -105,6 +94,8 @@ oputc endp
 
 inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
 
+    .new count:int_t
+
     .while 1 ; do until end of block
 
         mov rbx,tl
@@ -138,8 +129,7 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
 
         .if ( esi == 16 ) ; then it's a literal
 
-            movzx ecx,[rbx].HUFT.n
-            .ifd oputc(ecx)
+            .ifd oputc([rbx].HUFT.n)
                 .return
             .endif
 
@@ -152,7 +142,7 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
 
             ; get length of block to copy
 
-            movzx edi,[rbx].HUFT.n
+            mov edi,[rbx].HUFT.n
             add edi,getbits(esi)
 
             ; decode distance of block to copy
@@ -185,7 +175,7 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
             .endif
             dumpbits([rbx].HUFT.b)
 
-            movzx ebx,[rbx].HUFT.n
+            mov ebx,[rbx].HUFT.n
             mov edx,getbits(esi)
 
             mov rcx,STDO
@@ -198,23 +188,33 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
             .repeat
 
                 mov rsi,STDO
+                mov ecx,wsize
                 mov rdx,[rsi].FILE._ptr
                 sub rdx,[rsi].FILE._base
-                and ebx,OSIZE-1
-                mov ecx,OSIZE
+                lea eax,[rcx-1]
+                and ebx,eax
                 mov eax,ebx
+ifdef __P686__
+                cmp eax,edx
+                cmovbe eax,edx
+else
                 .if ( eax <= edx )
                     mov eax,edx
                 .endif
+endif
                 sub ecx,eax
+ifdef __P686__
+                cmp ecx,edi
+                cmova ecx,edi
+else
                 .if ( ecx > edi )
                     mov ecx,edi
                 .endif
-
+endif
                 sub edi,ecx
                 mov eax,edx
                 add [rsi].FILE._ptr,rcx
-                mov edx,[rsi].FILE._bufsiz
+                mov edx,wsize
                 sub edx,eax
                 sub edx,ecx
                 mov [rsi].FILE._cnt,edx
@@ -228,9 +228,9 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
                 rep movsb
                 mov edi,edx
 
-                .if ( eax >= OSIZE )
+                .if ( eax >= wsize )
 ifdef _LIN64
-                    .new count:uint_t = edi
+                    mov count,edi
 endif
                     fflush( STDO )
 ifdef _LIN64
@@ -251,8 +251,6 @@ inflate_codes endp
 
 inflate_fixed proc uses rdi rbx
 
-   .new fixed_bd:DWORD = 0
-   .new fixed_bl:DWORD = 0
    .new ll[288]:DWORD   ; length list for huft_build
 
     lea rdi,ll
@@ -274,20 +272,20 @@ inflate_fixed proc uses rdi rbx
         rep stosd
 
         mov rdi,rbx
-        mov fixed_bl,7
-        .ifd huft_build( rdi, 288, 257, &cplens, &cplext, &fixedtl, &fixed_bl )
+        mov fixedbl,7
+        .ifd huft_build( rdi, 288, 257, &cplens, &cplext, &fixedtl, &fixedbl )
 
             mov fixedtl,NULL
            .return
         .endif
 
         mov rdx,rdi         ; make an incomplete code set
-        mov ecx,30
+        mov ecx,32
         mov eax,5
         rep stosd
-        mov fixed_bd,5
+        mov fixedbd,5
         mov rdi,rdx
-        .ifd huft_build( rdi, 30, 0, &cpdist, &cpdext, &fixedtd, &fixed_bd )
+        .ifd huft_build( rdi, 32, 0, &cpdist, &cpdext, &fixedtd, &fixedbd )
 
             .if ( eax != 1 )
 
@@ -299,10 +297,10 @@ inflate_fixed proc uses rdi rbx
             .endif
         .endif
     .endif
-    ;
+
     ; decompress until an end-of-block code
-    ;
-    .ifd inflate_codes( fixedtl, fixedtd, fixed_bl, fixed_bd )
+
+    .ifd inflate_codes( fixedtl, fixedtd, fixedbl, fixedbd )
 
         mov eax,1
     .endif
@@ -342,13 +340,13 @@ inflate_dynamic proc uses rsi rdi rbx
     .for ( esi = 0 : esi < nb : esi++ )
 
         getbits(3)
-        mov edx,[rbx+rsi*4]
+        movzx edx,byte ptr [rbx+rsi]
         mov ll[rdx*4],eax
     .endf
 
     .for ( : esi < 19 : esi++ )
 
-        mov eax,[rbx+rsi*4]
+        movzx eax,byte ptr [rbx+rsi]
         mov ll[rax*4],0
     .endf
 
@@ -371,14 +369,13 @@ inflate_dynamic proc uses rsi rdi rbx
     .for ( edi = 0, esi = 0 : esi < n : )
 
         needbits(l)
-
-        mov     rbx,tl
-        imul    eax,eax,HUFT
-        add     rbx,rax
-        mov     td,rbx
-
+        mov  rbx,tl
+        imul eax,eax,HUFT
+        add  rbx,rax
+        mov  td,rbx
         dumpbits([rbx].HUFT.b)
-        movzx eax,[rbx].HUFT.n
+
+        mov eax,[rbx].HUFT.n
         .if ( eax < 16 )
 
             mov edi,eax
@@ -428,7 +425,7 @@ inflate_dynamic proc uses rsi rdi rbx
     huft_free( tl )
 
 
-    mov l,lbits
+    mov l,9
     huft_build( &ll, nl, 257, &cplens, &cplext, &tl, &l )
 
     .if ( l == 0 || eax == 1 )
@@ -440,7 +437,7 @@ inflate_dynamic proc uses rsi rdi rbx
         .return
     .endif
 
-    mov d,dbits
+    mov d,6
     mov eax,nl
     lea rcx,ll[rax*4]
     huft_build( rcx, nd, 0, &cpdist, &cpdext, &td, &d )
@@ -477,9 +474,11 @@ inflate_dynamic endp
 
 inflate_stored proc uses rbx
 
-    mov rcx,STDI        ; go to byte boundary
-    and [rcx].FILE._bitcnt,7
-    getbits([rcx].FILE._bitcnt)
+    mov rdx,STDI        ; go to byte boundary
+    mov ecx,[rdx].FILE._bitcnt
+    and ecx,7
+    sub [rdx].FILE._bitcnt,ecx
+    shr [rdx].FILE._charbuf,cl
 
     mov ebx,getbits(16) ; number of bytes in block
     getbits(16)
@@ -521,7 +520,28 @@ inflate proc public uses rbx file:string_t, fp:ptr FILE, zp:PZIPLOCAL
        .return
     .endif
     mov STDO,rax
-    mov fsize,0
+
+    mov wsize,0x8000
+    xor ecx,ecx
+    mov fsize,ecx
+    mov fixedtd,rcx
+    mov fixedtl,rcx
+    mov fixedbd,ecx
+    mov fixedbl,ecx
+    mov lens32,258
+    mov lext32[0],0
+    mov lext32[2],99
+    mov lext32[4],99
+
+    .if ( rbx && [rbx].ZIPLOCAL.method == 9 )
+
+        or [rax].FILE._flag,_IOZIP64
+        mov wsize,0x10000
+        mov lens32,3
+        mov lext32[0],16
+        mov lext32[2],77
+        mov lext32[4],74
+    .endif
 
     .if ( rbx && [rbx].ZIPLOCAL.method == 0 )
 

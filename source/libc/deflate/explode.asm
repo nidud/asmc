@@ -213,7 +213,7 @@ explode_docopy proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, xbl:uint_t, xbd
         .return
     .endif
 
-    movzx edx,[rbx].HUFT.n      ; construct offset
+    mov edx,[rbx].HUFT.n        ; construct offset
     mov rcx,STDO
     mov rax,[rcx].FILE._ptr
     sub rax,[rcx].FILE._base
@@ -226,7 +226,7 @@ explode_docopy proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, xbl:uint_t, xbd
         .return
     .endif
 
-    movzx esi,[rbx].HUFT.n      ; get length extra bits
+    mov esi,[rbx].HUFT.n      ; get length extra bits
     .if ( [rbx].HUFT.e )
 
         add esi,getbits(8)
@@ -317,8 +317,7 @@ explode_lit proc __ccall uses rbx tb:PHUFT, tl:PHUFT, td:PHUFT, xbb:uint_t, xbl:
             .ifd decode_huft(tb, xbb)
                 .return
             .endif
-            movzx ecx,[rbx].HUFT.n
-            .ifd oputc(ecx)
+            .ifd oputc([rbx].HUFT.n)
                 .return
             .endif
 

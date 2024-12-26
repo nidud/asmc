@@ -284,7 +284,7 @@ endif
                 .else
                     mov r.e,15
                 .endif
-                mov r.n,ax          ; simple code is just the value
+                mov r.n,eax         ; simple code is just the value
                 add rbx,4           ;
 
             .else
@@ -292,11 +292,11 @@ endif
                 mov ecx,[rbx]       ; non-simple--look up in lists
                 sub ecx,s
                 mov rdx,e
-                mov al,[rdx+rcx*2]
+                movzx eax,byte ptr [rdx+rcx*2]
                 mov r.e,al
                 mov rdx,d
                 mov ax,[rdx+rcx*2]
-                mov r.n,ax
+                mov r.n,eax
                 add rbx,4
             .endif
             mov p,rbx

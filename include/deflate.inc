@@ -50,7 +50,7 @@ HUFT            struct size_t
 e               db ?    ; number of extra bits or operation
 b               db ?    ; number of bits in this code or subcode
 union
- n              dw ?    ; literal, length base, or distance base
+ n              dd ?    ; literal, length base, or distance base
  t              ptr_t ? ; pointer to next level of table
 ends
 HUFT            ends

@@ -38,10 +38,11 @@ define _IOCTRLZ		0x2000
 define _IOCOMMIT	0x4000
 define _IOLOCKED	0x8000
 
-define _IOMEMBUF	0x10000
-define _IOSNPRINTF	0x20000
-define _IOCRC32		0x40000
-define _IOZIP		0x80000 ; zip-stream
+define _IOMEMBUF	0x010000
+define _IOSNPRINTF	0x020000
+define _IOCRC32		0x040000
+define _IOZIP		0x080000 ; zip-stream
+define _IOZIP64		0x100000
 
 define EOF		(-1)
 

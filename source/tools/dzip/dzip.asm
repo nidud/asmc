@@ -16,7 +16,7 @@ include time.inc
 include deflate.inc
 include fltintrn.inc
 
-define __DZIP__         101
+define __DZIP__         102
 
 define MAXPATH          0x8000
 define MAXMASK          0x0200
@@ -24,6 +24,7 @@ define MAXHEAP          0x1000000
 
 define METHOD_STORE     0
 define METHOD_DEFLATE   8
+define METHOD_DEFLATE64 9
 define METHOD_IMPLODE   6
 
 ifdef __UNIX__
@@ -450,19 +451,7 @@ Decompress proc uses rbx
             mov rc,ER_ZIP
            .break
         .endif
-        mov rcx,base
-        mov byte ptr [rcx+rbx],0
-        mov rbx,rcx
-
-        .while strchr(rbx, '/')
-
-            mov rbx,rax
-            mov byte ptr [rbx],0
-            _mkdir(path)
-            mov byte ptr [rbx],PC
-            inc rbx
-        .endw
-        .for ( ebx = 0 : bx < zl.extsize : ebx++ )
+        .for ( : zl.extsize : zl.extsize-- )
 
             .ifsd ( fgetc(fpz) == -1 )
 
@@ -471,9 +460,24 @@ Decompress proc uses rbx
             .endif
         .endf
 
+        mov rcx,base
+        .continue .if ( byte ptr [rcx+rbx-1] == '/' )
+
+        mov byte ptr [rcx+rbx],0
+        mov rbx,rcx
+        .while strchr(rbx, '/')
+
+            mov rbx,rax
+            mov byte ptr [rbx],0
+            _mkdir(path)
+            mov byte ptr [rbx],PC
+            inc rbx
+        .endw
+
         .switch zl.method
         .case METHOD_STORE
         .case METHOD_DEFLATE
+        .case METHOD_DEFLATE64
             mov rc,inflate(path, fpz, &zl)
            .endc
         .case METHOD_IMPLODE

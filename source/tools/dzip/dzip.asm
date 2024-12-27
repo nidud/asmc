@@ -3,7 +3,12 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; Change history:
+; 2024-12-22 - Added 64K dictionary
+; 2024-12-21 - Added explode
+; 2024-12-20 - Added inflate (-x)
+; 2024-12-19 - Test case for deflate
+;
 include io.inc
 include share.inc
 include fcntl.inc
@@ -16,13 +21,13 @@ include time.inc
 include deflate.inc
 include fltintrn.inc
 
-define __DZIP__         102
+define __DZIP__ 103
 
-define MAXPATH          0x8000
-define MAXMASK          0x0200
-define MAXHEAP          0x1000000
+define MAXPATH  0x8000    ; 32K directory
+define MAXMASK  0x0200    ;
+define MAXHEAP  0x1000000 ; 16M --> zip file
 
-define METHOD_STORE     0
+define METHOD_STORE     0 ; supported method for unzip
 define METHOD_DEFLATE   8
 define METHOD_DEFLATE64 9
 define METHOD_IMPLODE   6
@@ -639,10 +644,11 @@ Release endp
 Usage proc
 
     printf(
-        "DZIP Version %d.%02d - " BUILD_DATE "\n"
+        "DZIP Version %d.%02d " BUILD_DATE "Copyright (c) The Asmc Contributors\n"
         "\n"
         "Usage: dzip [<options>] <archive> [<file(s)>]\n"
         "\n"
+        "-0..9      Compress level (default is 9)\n"
         "-r         Recurse subdirectories\n"
         "-x         Extract files with full paths\n"
         "-o<path>   Set Output directory\n"
@@ -677,6 +683,11 @@ endif
         .case '-'
             shr eax,8
             .switch al
+            .case '0'..'9'
+                sub al,'0'
+                movzx eax,al
+                mov compresslevel,eax
+               .continue
             .case 'x'
                 inc option_x
                .continue

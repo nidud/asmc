@@ -1078,7 +1078,9 @@ endif
         .if ( len )
 
             .ifd ( fwrite(buf, 1, len, [rbx].fpz) == len )
-                .return( 1 )
+
+                add [rbx].csize,eax
+               .return( 1 )
             .endif
             xor eax,eax
         .endif

@@ -86,14 +86,12 @@ ifdef STDZIP
                     lea ecx,[rax+_HEAP_GROWSIZE]
                 .endif
                 .if ( ecx < eax )
-
                     _set_errno( ENOMEM )
                     or [rbx]._flag,_IOERR
                    .return
                 .endif
                 mov [rbx]._bufsiz,ecx
                 .if ( realloc([rbx]._base, rcx) == NULL )
-
                     dec rax
                     or [rbx]._flag,_IOERR
                    .return

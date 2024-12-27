@@ -12,7 +12,9 @@ CredUIPromptForCredentialsA@40
 CredUIPromptForCredentialsW@40
 CredUIPromptForWindowsCredentialsA@36
 CredUIPromptForWindowsCredentialsW@36
+CredUIReadSSOCredA@8
 CredUIReadSSOCredW@8
+CredUIStoreSSOCredA@16
 CredUIStoreSSOCredW@16
 CredUnPackAuthenticationBufferA@36
 CredUnPackAuthenticationBufferW@36

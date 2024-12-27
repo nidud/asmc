@@ -12,32 +12,31 @@ include deflate.inc
 .data?
  STDO       LPFILE ?
  STDI       LPFILE ?
- fixedtd    PHUFT ?
- fixedtl    PHUFT ?
- fixedbd    uint_t ?
- fixedbl    uint_t ?
  fsize      uint_t ?
- wsize      uint_t ?
 
 .data
+ fixed_td   PHUFT 0
+ fixed_tl   PHUFT 0
+ fixed_bd   uint_t 0
+ fixed_bl   uint_t 0
+ wsize      uint_t 0x8000
 
-align 2
-; Length codes 257..285 base
-cplens dw 3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227
-lens32 dw 258,0,0
-; Copy offsets for distance codes 0..31
-cpdist dw 1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,
-          4097,6145,8193,12289,16385,24577,32769,49153
-; Extra bits for literal codes 257..285
-cplext dw 0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5
-lext32 dw 0,99,99 ; 99==invalid
-; Extra bits for distance codes
-cpdext dw 0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14
-border db 16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15
+ ; Length codes 257..285 base
+ cplens dw 3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227
+ lens32 dw 258,0,0
+ ; Copy offsets for distance codes 0..31
+ cpdist dw 1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,
+           4097,6145,8193,12289,16385,24577,32769,49153
+ ; Extra bits for literal codes 257..285
+ cplext dw 0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5
+ lext32 dw 0,99,99 ; 99==invalid
+ ; Extra bits for distance codes
+ cpdext dw 0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14
+ border db 16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15
 
 .code
 
-    option proc:private, dotname
+ option proc:private
 
 ifdef _LIN64
 needbits proc __ccall uses rsi rdi count:int_t
@@ -90,7 +89,7 @@ endif
 
 oputc endp
 
-;************** Decompress the codes in a compressed block
+; Decompress the codes in a compressed block
 
 inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
 
@@ -197,16 +196,14 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
 ifdef __P686__
                 cmp eax,edx
                 cmovbe eax,edx
+                sub ecx,eax
+                cmp ecx,edi
+                cmova ecx,edi
 else
                 .if ( eax <= edx )
                     mov eax,edx
                 .endif
-endif
                 sub ecx,eax
-ifdef __P686__
-                cmp ecx,edi
-                cmova ecx,edi
-else
                 .if ( ecx > edi )
                     mov ecx,edi
                 .endif
@@ -247,7 +244,7 @@ endif
 
 inflate_codes endp
 
-;************** Decompress an inflated type 1 (fixed Huffman codes) block
+; Decompress an inflated type 1 (fixed Huffman codes) block
 
 inflate_fixed proc uses rdi rbx
 
@@ -255,7 +252,7 @@ inflate_fixed proc uses rdi rbx
 
     lea rdi,ll
     xor eax,eax
-    .if ( rax == fixedtl )
+    .if ( rax == fixed_tl )
 
         mov rbx,rdi
         mov ecx,144         ; literal table
@@ -272,10 +269,10 @@ inflate_fixed proc uses rdi rbx
         rep stosd
 
         mov rdi,rbx
-        mov fixedbl,7
-        .ifd huft_build( rdi, 288, 257, &cplens, &cplext, &fixedtl, &fixedbl )
+        mov fixed_bl,7
+        .ifd huft_build( rdi, 288, 257, &cplens, &cplext, &fixed_tl, &fixed_bl )
 
-            mov fixedtl,NULL
+            mov fixed_tl,NULL
            .return
         .endif
 
@@ -283,15 +280,15 @@ inflate_fixed proc uses rdi rbx
         mov ecx,32
         mov eax,5
         rep stosd
-        mov fixedbd,5
+        mov fixed_bd,5
         mov rdi,rdx
-        .ifd huft_build( rdi, 32, 0, &cpdist, &cpdext, &fixedtd, &fixedbd )
+        .ifd huft_build( rdi, 32, 0, &cpdist, &cpdext, &fixed_td, &fixed_bd )
 
             .if ( eax != 1 )
 
                 mov ebx,eax
-                huft_free( fixedtl )
-                mov fixedtl,NULL
+                huft_free( fixed_tl )
+                mov fixed_tl,NULL
                 mov eax,ebx
                .return
             .endif
@@ -300,7 +297,7 @@ inflate_fixed proc uses rdi rbx
 
     ; decompress until an end-of-block code
 
-    .ifd inflate_codes( fixedtl, fixedtd, fixedbl, fixedbd )
+    .ifd inflate_codes( fixed_tl, fixed_td, fixed_bl, fixed_bd )
 
         mov eax,1
     .endif
@@ -308,7 +305,7 @@ inflate_fixed proc uses rdi rbx
 
 inflate_fixed endp
 
-;************** Decompress an inflated type 2 (dynamic Huffman codes) block
+; Decompress an inflated type 2 (dynamic Huffman codes) block
 
 inflate_dynamic proc uses rsi rdi rbx
 
@@ -470,7 +467,7 @@ inflate_dynamic proc uses rsi rdi rbx
 inflate_dynamic endp
 
 
-;****** Decompress an inflated type 0 (stored) block.
+; Decompress an inflated type 0 (stored) block.
 
 inflate_stored proc uses rbx
 
@@ -520,18 +517,7 @@ inflate proc public uses rbx file:string_t, fp:ptr FILE, zp:PZIPLOCAL
        .return
     .endif
     mov STDO,rax
-
-    mov wsize,0x8000
-    xor ecx,ecx
-    mov fsize,ecx
-    mov fixedtd,rcx
-    mov fixedtl,rcx
-    mov fixedbd,ecx
-    mov fixedbl,ecx
-    mov lens32,258
-    mov lext32[0],0
-    mov lext32[2],99
-    mov lext32[4],99
+    mov fsize,0
 
     .if ( rbx && [rbx].ZIPLOCAL.method == 9 )
 
@@ -591,26 +577,38 @@ inflate proc public uses rbx file:string_t, fp:ptr FILE, zp:PZIPLOCAL
             mov rc,eax
 
             xor eax,eax
-            .if ( rax != fixedtl )
+            .if ( rax != fixed_tl )
 
-                huft_free( fixedtd )
-                huft_free( fixedtl )
+                huft_free( fixed_td )
+                huft_free( fixed_tl )
                 xor eax,eax
-                mov fixedtd,rax
-                mov fixedtl,rax
+                mov fixed_td,rax
+                mov fixed_tl,rax
             .endif
         .until 1
     .endif
 
-    .if ( rbx && rc == 0 )
+    .if ( rbx )
 
-        mov rax,STDO
-        mov eax,[rax].FILE._crc32
-        not eax
-        .if ( eax != [rbx].ZIPLOCAL.crc )
-            mov rc,ER_CRCERR
-        .elseif ( fsize != [rbx].ZIPLOCAL.fsize )
-            mov rc,ER_ZIP
+        .if ( [rbx].ZIPLOCAL.method == 9 )
+
+            mov wsize,0x8000
+            mov lens32,258
+            mov lext32[0],0
+            mov lext32[2],99
+            mov lext32[4],99
+        .endif
+
+        .if ( rc == 0 )
+
+            mov rax,STDO
+            mov eax,[rax].FILE._crc32
+            not eax
+            .if ( eax != [rbx].ZIPLOCAL.crc )
+                mov rc,ER_CRCERR
+            .elseif ( fsize != [rbx].ZIPLOCAL.fsize )
+                mov rc,ER_ZIP
+            .endif
         .endif
     .endif
     fclose(STDO)

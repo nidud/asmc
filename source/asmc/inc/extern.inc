@@ -12,7 +12,7 @@ MakeExtern      proto __ccall :string_t, :uchar_t, :ptr asym, :ptr asym, :uchar_
 AddPublicData   proto fastcall :ptr asym
 
 FreePubQueue macro
-    exitm<mov ModuleInfo.PubQueue.head,NULL>
+    exitm<mov MODULE.PubQueue.head,NULL>
     endm
 
 endif

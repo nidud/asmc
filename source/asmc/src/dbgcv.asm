@@ -798,7 +798,7 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:ptr asym, cnt:int_
         .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
             stosw
         .else
-            .if ( ModuleInfo.defOfssize == USE64 ) ;; ...
+            .if ( MODULE.defOfssize == USE64 ) ;; ...
 
                 dec cnt
                 mov ecx,cnt
@@ -1275,7 +1275,7 @@ endif
 
         .for ( i = 0: i < 2: i++ )
 
-            .if ( ModuleInfo.defOfssize == USE64 && i == 0 )
+            .if ( MODULE.defOfssize == USE64 && i == 0 )
                 .for ( j = 0, rcx = locals[0*dsym_t] : rcx : rsi = rcx,
                        rcx = [rcx].dsym.nextparam, j++ )
                 .endf
@@ -1286,7 +1286,7 @@ endif
             .for ( rdi = locals[rcx*dsym_t] : rdi : rdi = [rdi].dsym.nextparam )
 
                 mov ecx,i
-                .if ( !( ModuleInfo.defOfssize == USE64 && ecx == 0 ) )
+                .if ( !( MODULE.defOfssize == USE64 && ecx == 0 ) )
                     mov rsi,rdi
                 .endif
 
@@ -1311,7 +1311,7 @@ endif
                 .endif
 
                 mov [rsi].asym.ext_idx1,typeref
-                .if ( ModuleInfo.defOfssize == USE64 && i == 0 )
+                .if ( MODULE.defOfssize == USE64 && i == 0 )
                     .fors ( ecx = 1, j--, rsi = locals[0]: j > ecx: ecx++,
                             rsi = [rsi].dsym.nextparam )
                     .endf
@@ -1488,7 +1488,7 @@ endif
         .else
             mov rcx,[rsi].asym.segm
             mov eax,1
-            .if ( ( ModuleInfo.cv_opt & CVO_STATICTLS ) && [rcx].seg_info.clsym )
+            .if ( ( MODULE.cv_opt & CVO_STATICTLS ) && [rcx].seg_info.clsym )
                 mov rcx,[rcx].seg_info.clsym
                 .if ( tstrcmp( [rcx].asym.name, "TLS" ) == 0 )
                     mov ecx,S_LTHREAD32_16t
@@ -1580,14 +1580,14 @@ endif
 
         .for ( i = 0: i < 2 : i++ )
 
-            .if ( ModuleInfo.defOfssize == USE64 && i == 0 )
+            .if ( MODULE.defOfssize == USE64 && i == 0 )
                 .for ( j = 0, rcx = locals[0]: rcx: rsi = rcx, rcx = [rcx].dsym.nextparam )
                     inc j
                 .endf
             .endif
             mov ecx,i
             .for ( rdi = locals[rcx*dsym_t] : rdi : rdi = [rdi].dsym.nextparam )
-                .if ( !( ModuleInfo.defOfssize == USE64 && i == 0 ) )
+                .if ( !( MODULE.defOfssize == USE64 && i == 0 ) )
                     mov rsi,rdi
                 .endif
                 ;
@@ -1740,7 +1740,7 @@ endif
                     add [rcx].cvsection.length,eax
                 .endif
 
-                .if ( ModuleInfo.defOfssize == USE64 && i == 0 )
+                .if ( MODULE.defOfssize == USE64 && i == 0 )
                     .for ( ecx = 1, j--, rsi = locals[0] : j > ecx : ecx++,
                            rsi = [rsi].dsym.nextparam )
                     .endf
@@ -2221,13 +2221,13 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:ptr dsym, types:ptr 
 
     .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
 
-        imul ecx,ModuleInfo.cnt_fnames,sizeof( cvfile )
+        imul ecx,MODULE.cnt_fnames,sizeof( cvfile )
         mov cv.files,LclAlloc( ecx )
 
         .for ( rdi = rax,
                eax = 0,
-               rsi = ModuleInfo.FNames,
-               ebx = ModuleInfo.cnt_fnames : ebx : ebx-- )
+               rsi = MODULE.FNames,
+               ebx = MODULE.cnt_fnames : ebx : ebx-- )
 
            .movsd
             stosd
@@ -2255,7 +2255,7 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:ptr dsym, types:ptr 
         ; for each source file
         ;
 
-        .for ( rdi = cv.files, i = 0 : i < ModuleInfo.cnt_fnames : i++, rdi += cvfile )
+        .for ( rdi = cv.files, i = 0 : i < MODULE.cnt_fnames : i++, rdi += cvfile )
 
             mov [rdi].cvfile.offs,[rbx].cvsection.length
             mov rsi,[rdi].cvfile.name
@@ -2296,7 +2296,7 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:ptr dsym, types:ptr 
 
         mov rbx,cv.flush_section( 0x000000F4, 0 )
 
-        .for ( rsi = cv.files, i = 0: i < ModuleInfo.cnt_fnames: i++, rsi += cvfile )
+        .for ( rsi = cv.files, i = 0: i < MODULE.cnt_fnames: i++, rsi += cvfile )
 
             mov rdi,cv.flushps( MD5_LENGTH )
             mov eax,[rsi].cvfile.offs
@@ -2499,10 +2499,10 @@ endif
         mov byte ptr [rdx-1],0
 
         mov [rdi].COMPILESYM3.flags,CV_CFL_MASM
-        mov eax,ModuleInfo.curr_cpu
+        mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
         shr eax,4
-        .if ( ModuleInfo.Ofssize == USE64 )
+        .if ( MODULE.Ofssize == USE64 )
             mov eax,CV_CFL_X64
         .endif
         mov [rdi].COMPILESYM3.machine,     ax
@@ -2598,8 +2598,8 @@ endif
         ;; v2.11: use a valid 64-bit value
 
         mov eax,CV_CFL_X64
-        .if ( ModuleInfo.defOfssize != USE64 )
-             mov eax,ModuleInfo.curr_cpu
+        .if ( MODULE.defOfssize != USE64 )
+             mov eax,MODULE.curr_cpu
              and eax,P_CPU_MASK
              shr eax,4
         .endif
@@ -2613,7 +2613,7 @@ endif
         mov [rdi].CFLAGSYM.language,CV_CFL_MASM
         mov [rdi].CFLAGSYM.flags,0
 
-        mov cl,ModuleInfo._model
+        mov cl,MODULE._model
         .if ( cl )
             mov edx,1
             shl edx,cl

@@ -149,16 +149,16 @@ LstWrite proc __ccall uses rsi rdi rbx type:lsttype, oldofs:uint_t, value:ptr
    .new pll:ptr lstleft
    .new ll:lstleft
 
-    .if ( ModuleInfo.list == FALSE || CurrFile[LST*size_t] == NULL ||
-          ( ModuleInfo.line_flags & LOF_LISTED ) )
+    .if ( MODULE.list == FALSE || CurrFile[LST*size_t] == NULL ||
+          ( MODULE.line_flags & LOF_LISTED ) )
         .return
     .endif
-    .if ( ModuleInfo.GeneratedCode && ( ModuleInfo.list_generated_code == FALSE ) )
+    .if ( MODULE.GeneratedCode && ( MODULE.list_generated_code == FALSE ) )
         .return
     .endif
 
     .if ( MacroLevel )
-        .switch ( ModuleInfo.list_macro )
+        .switch ( MODULE.list_macro )
         .case LM_NOLISTMACRO
             .return
         .case LM_LISTMACRO
@@ -167,15 +167,15 @@ LstWrite proc __ccall uses rsi rdi rbx type:lsttype, oldofs:uint_t, value:ptr
         .endsw
     .endif
 
-    or ModuleInfo.line_flags,LOF_LISTED
+    or MODULE.line_flags,LOF_LISTED
     mov pSrcline,CurrSource
 
     .if ( ( Parse_Pass > PASS_1 ) && UseSavedState )
 
-        .if ( ModuleInfo.GeneratedCode == 0 )
+        .if ( MODULE.GeneratedCode == 0 )
 
             mov rcx,LineStoreCurr
-            .if ( !( ModuleInfo.line_flags & LOF_SKIPPOS ) )
+            .if ( !( MODULE.line_flags & LOF_SKIPPOS ) )
 
                 .if ( Parse_Pass == PASS_2 && Options.first_pass_listing )
                     mov [rcx].line_item.list_pos,list_pos
@@ -347,7 +347,7 @@ endif
     .default ; LSTTYPE_MACRO
         mov rcx,pSrcline
         mov dl,[rcx]
-        .if ( dl == 0 && CurrComment == NULL && srcfile == ModuleInfo.srcfile )
+        .if ( dl == 0 && CurrComment == NULL && srcfile == MODULE.srcfile )
             fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
             add list_pos,NLSIZ
             .return
@@ -356,14 +356,14 @@ endif
     .endsw
 
     mov idx,sizeof( ll.buffer )
-    .if ( ModuleInfo.GeneratedCode )
+    .if ( MODULE.GeneratedCode )
         mov ll.buffer[28],'*'
     .endif
     .if ( MacroLevel )
         mov len,tsprintf( &ll.buffer[29], "%u", MacroLevel )
         mov ll.buffer[rax+29],' '
     .endif
-    .if ( srcfile != ModuleInfo.srcfile )
+    .if ( srcfile != MODULE.srcfile )
         mov ll.buffer[30],'C'
     .endif
     fwrite( &ll.buffer, 1, idx, CurrFile[LST*size_t] )
@@ -440,12 +440,12 @@ LstNL endp
 
 LstSetPosition proc __ccall uses rsi rdi
 
-    .if ( CurrFile[LST*size_t] && Parse_Pass > PASS_1 &&  UseSavedState && ModuleInfo.GeneratedCode == 0 )
+    .if ( CurrFile[LST*size_t] && Parse_Pass > PASS_1 &&  UseSavedState && MODULE.GeneratedCode == 0 )
 
         mov rcx,LineStoreCurr
         mov list_pos,[rcx].line_item.list_pos
         fseek( CurrFile[LST*size_t], list_pos, SEEK_SET )
-        or ModuleInfo.line_flags,LOF_SKIPPOS
+        or MODULE.line_flags,LOF_SKIPPOS
     .endif
     ret
 
@@ -930,7 +930,7 @@ log_group proc __ccall uses rsi rdi grp:ptr asym, segs:ptr dsym
 
     ; the FLAT groups is always empty
 
-    .if ( rsi == ModuleInfo.flat_grp )
+    .if ( rsi == MODULE.flat_grp )
         .for( rdi = segs : rdi : rdi = [rdi].dsym.next )
             log_segment( rdi, rsi )
         .endf
@@ -1072,7 +1072,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
 
         movzx eax,[rsi].asym.langtype
         .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_VECTORCALL ||
-             ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+             ( eax == LANG_FASTCALL && MODULE.Ofssize != USE16 ) )
 
             .new cnt:int_t
 
@@ -1528,21 +1528,21 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
     .switch ( eax )
     .case T_DOT_LIST
         .if ( CurrFile[LST*size_t] )
-            mov ModuleInfo.list,TRUE
+            mov MODULE.list,TRUE
         .endif
         .endc
     .case T_DOT_CREF
-        mov ModuleInfo.cref,TRUE
+        mov MODULE.cref,TRUE
         .endc
     .case T_DOT_NOLIST
     .case T_DOT_XLIST
-        mov ModuleInfo.list,FALSE
+        mov MODULE.list,FALSE
         .endc
     .case T_DOT_NOCREF
     .case T_DOT_XCREF
 
         .if ( esi == TokenCount )
-            mov ModuleInfo.cref,FALSE
+            mov MODULE.cref,FALSE
             .endc
         .endif
 
@@ -1584,20 +1584,20 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
     .case T_DOT_LISTALL ; list false conditionals and generated code
         .if ( CurrFile[LST*size_t] )
-            mov ModuleInfo.list,TRUE
+            mov MODULE.list,TRUE
         .endif
-        mov ModuleInfo.list_generated_code,TRUE
+        mov MODULE.list_generated_code,TRUE
         ; fall through
     .case T_DOT_LISTIF
     .case T_DOT_LFCOND ; .LFCOND is synonym for .LISTIF
-        mov ModuleInfo.listif,TRUE
+        mov MODULE.listif,TRUE
         .endc
     .case T_DOT_NOLISTIF
     .case T_DOT_SFCOND ; .SFCOND is synonym for .NOLISTIF
-        mov ModuleInfo.listif,FALSE
+        mov MODULE.listif,FALSE
         .endc
     .case T_DOT_TFCOND ; .TFCOND toggles .LFCOND, .SFCOND
-        xor ModuleInfo.listif,1
+        xor MODULE.listif,1
         .endc
     .case T_PAGE
     .default ; TITLE, SUBTITLE, SUBTTL
@@ -1639,7 +1639,7 @@ ListMacroDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
     .if ( [rcx+asm_tok].asm_tok.token != T_FINAL )
         .return( asmerr( 2008, [rcx+asm_tok].asm_tok.string_ptr ) )
     .endif
-    mov ModuleInfo.list_macro,GetSflagsSp( [rcx].asm_tok.tokval )
+    mov MODULE.list_macro,GetSflagsSp( [rcx].asm_tok.tokval )
    .return( NOT_ERROR )
 
 ListMacroDirective endp
@@ -1655,7 +1655,7 @@ LstInit proc __ccall
     .if ( Options.write_listing )
 
         tsprintf( &logo, &cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER )
-        mov rdx,GetFName( ModuleInfo.srcfile )
+        mov rdx,GetFName( MODULE.srcfile )
         lea rcx,@CStr("%s  %s %s\n%s\n")
         .if ( Parse_Pass == PASS_1 && Options.first_pass_listing )
             lea rcx,@CStr("%s  %s %s - First Pass\n%s\n")

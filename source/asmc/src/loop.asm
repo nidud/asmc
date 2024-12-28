@@ -39,7 +39,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     imul ebx,i,asm_tok
     add rbx,tokenarray
 
-    .if ( ModuleInfo.list == TRUE )
+    .if ( MODULE.list == TRUE )
         LstWriteSrcLine()
     .endif
 
@@ -96,7 +96,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; v2.02: allow parameter name to begin with a '.'
 
         mov rcx,[rbx].string_ptr
-        .if ( !isdotlabel( [rcx], ModuleInfo.dotname ) )
+        .if ( !isdotlabel( [rcx], MODULE.dotname ) )
             .return( asmerr( 2008, [rbx].tokpos ) )
         .endif
 

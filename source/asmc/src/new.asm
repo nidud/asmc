@@ -73,7 +73,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         mov ecx,T_ECX
         mov reg,T_ECX
 
-        .if ( ModuleInfo.Ofssize == USE64 )
+        .if ( MODULE.Ofssize == USE64 )
 
             mov ecx,T_EDI
             mov reg,T_RDI
@@ -166,7 +166,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
     .if ( [rbx].token == T_COLON ) ; Class() : member(value) [ , member(value) ]
 
         add rbx,asm_tok
-        mov acc,ModuleInfo.accumulator
+        mov acc,MODULE.accumulator
         .if ( reg )
             mov acc,reg
         .endif
@@ -249,7 +249,7 @@ AssignString proc __ccall private uses rsi rdi rbx name:string_t, fp:ptr sfield,
             .endif
         .endif
         .break .if opndx.kind != EXPR_CONST
-        .break .if ebx == 8 && opndx.l64_h == 0 && ModuleInfo.Ofssize == USE64
+        .break .if ebx == 8 && opndx.l64_h == 0 && MODULE.Ofssize == USE64
 
         .switch ebx
         .case 16
@@ -537,7 +537,7 @@ ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
 
     mov edi,[rsi].asym.total_size
 
-    .if ( ModuleInfo.Ofssize == USE64 )
+    .if ( MODULE.Ofssize == USE64 )
 
         .if ( edi > 32 )
 
@@ -843,7 +843,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov ti.is_ptr,0
         mov ti.ptr_memtype,MT_EMPTY
 
-        mov cl,ModuleInfo._model
+        mov cl,MODULE._model
         mov eax,1
         shl eax,cl
 
@@ -853,7 +853,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov ti.is_far,FALSE
         .endif
 
-        mov ti.Ofssize,ModuleInfo.Ofssize
+        mov ti.Ofssize,MODULE.Ofssize
 
         mov creat,0
 
@@ -1082,7 +1082,7 @@ NewDirective proc __ccall i:int_t, tokenarray:token_t
     .endif
 
     mov rc,AddLocalDir( i, tokenarray )
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
     .return( rc )

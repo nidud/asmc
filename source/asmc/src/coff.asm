@@ -123,7 +123,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
     ; calculated file offset for section data, relocs and linenumber info
 
-    imul esi,ModuleInfo.num_segs,sizeof( IMAGE_SECTION_HEADER )
+    imul esi,MODULE.num_segs,sizeof( IMAGE_SECTION_HEADER )
     add  esi,sizeof( IMAGE_FILE_HEADER )
 
     mov rbx,cm
@@ -490,20 +490,20 @@ GetStartLabel proc __ccall uses rbx buffer:string_t, msg:dword
     lea rbx,mangle
     xor eax,eax
 
-    .if ( ModuleInfo.start_label )
+    .if ( MODULE.start_label )
 
-        Mangle( ModuleInfo.start_label, rbx )
+        Mangle( MODULE.start_label, rbx )
 
         .if ( !Options.entry_decorated )
 
-            mov rdx,ModuleInfo.start_label
+            mov rdx,MODULE.start_label
             movzx eax,[rdx].asym.langtype
             .if ( eax != LANG_C && eax != LANG_STDCALL && eax != LANG_SYSCALL )
 
                 mov rdx,[rdx].asym.name
                 .if ( byte ptr [rdx] != '_' )
 
-                    .if ( msg && ( ModuleInfo.defOfssize != USE64 ) )
+                    .if ( msg && ( MODULE.defOfssize != USE64 ) )
 
                         asmerr( 8011, rdx )
                     .endif
@@ -693,7 +693,7 @@ endif
     ; publics and internal symbols. The internal symbols have
     ; been written to the "public" queue inside coff_write_data().
 
-    .for ( rdi = ModuleInfo.PubQueue.head: rdi: rdi = [rdi].qnode.next )
+    .for ( rdi = MODULE.PubQueue.head: rdi: rdi = [rdi].qnode.next )
 
         mov rsi,[rdi].qnode.sym
         mov ebx,Mangle( rsi, &buffer )
@@ -927,9 +927,9 @@ endif
     ; add entries for sections
 
     mov [rbx].sectionstart,esi
-    add esi,ModuleInfo.num_segs
+    add esi,MODULE.num_segs
     .if ( Options.no_section_aux_entry == FALSE )
-        add esi,ModuleInfo.num_segs
+        add esi,MODULE.num_segs
     .endif
 
     ; count externals and protos
@@ -972,7 +972,7 @@ endif
 
     ; count items in public queue
 
-    .for ( rdi = ModuleInfo.PubQueue.head: rdi: rdi = [rdi].qnode.next )
+    .for ( rdi = MODULE.PubQueue.head: rdi: rdi = [rdi].qnode.next )
 
         mov rsi,[rdi].qnode.sym
 
@@ -1185,12 +1185,12 @@ coff_write_data proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
     mov rbx,cm
 
-    .if ( ModuleInfo.SafeSEHQueue.head )
+    .if ( MODULE.SafeSEHQueue.head )
 
         mov rax,[rbx].sxdata
         mov rax,[rax].dsym.seginfo
 
-        .for ( rdx = ModuleInfo.SafeSEHQueue.head, rcx = [rax].seg_info.CodeBuffer : rdx : rcx += 4 )
+        .for ( rdx = MODULE.SafeSEHQueue.head, rcx = [rax].seg_info.CodeBuffer : rdx : rcx += 4 )
 
             mov rax,[rdx].qnode.elmt
             mov eax,[rax].asym.ext_idx
@@ -1407,12 +1407,12 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
     ; - a proc is exported          and/or
     ; - impdefs are to be written (-Zd)
 
-    .if ( ModuleInfo.start_label != NULL ||
-          ModuleInfo.LibQueue.head != NULL ||
-          imp != NULL || exp != NULL || ModuleInfo.LinkQueue.head != NULL )
+    .if ( MODULE.start_label != NULL ||
+          MODULE.LibQueue.head != NULL ||
+          imp != NULL || exp != NULL || MODULE.LinkQueue.head != NULL )
 
          mov rbx,cm
-         mov [rbx].directives,CreateIntSegment( szdrectve, "", MAX_SEGALIGNMENT, ModuleInfo.Ofssize, FALSE )
+         mov [rbx].directives,CreateIntSegment( szdrectve, "", MAX_SEGALIGNMENT, MODULE.Ofssize, FALSE )
 
         .if ( eax )
 
@@ -1442,7 +1442,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 2. defaultlibs
 
-            .for ( rdi = ModuleInfo.LibQueue.head : rdi : rdi = [rdi].qitem.next )
+            .for ( rdi = MODULE.LibQueue.head : rdi : rdi = [rdi].qitem.next )
 
                 tstrlen( &[rdi].qitem.value ) ; sizeof("-defaultlib:")
                 lea rbx,[rbx+rax+13]
@@ -1487,7 +1487,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 5. pragma comment(linker,"/..")
 
-            .for ( rdi = ModuleInfo.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
+            .for ( rdi = MODULE.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
 
                 tstrlen( &[rdi].qitem.value )
                 lea rbx,[rbx+rax+1]
@@ -1522,7 +1522,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 2. libraries
 
-            .for ( rdi = ModuleInfo.LibQueue.head : rdi : rdi = [rdi].qitem.next )
+            .for ( rdi = MODULE.LibQueue.head : rdi : rdi = [rdi].qitem.next )
 
                 .if ( tstrchr( &[rdi].qitem.value, ' ') && [rdi].qitem.value != '"' )
                     add rbx,tsprintf( rbx, "-defaultlib:\"%s\" ", &[rdi].qitem.value )
@@ -1533,7 +1533,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 3. entry
 
-            .if ( ModuleInfo.start_label )
+            .if ( MODULE.start_label )
 
                 GetStartLabel( &buffer, FALSE )
                 add rbx,tsprintf( rbx, "-entry:%s ", &buffer )
@@ -1570,7 +1570,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 5. pragma comment(linker,"/..")
 
-            .for ( rdi = ModuleInfo.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
+            .for ( rdi = MODULE.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
 
                 add rbx,tsprintf( rbx, "%s ", &[rdi].qitem.value )
             .endf
@@ -1663,9 +1663,9 @@ coff_write_module proc uses rsi rdi rbx
 
     ;; if safeSEH procs are defined, add a .sxdata section
 
-    .if ( ModuleInfo.SafeSEHQueue.head )
+    .if ( MODULE.SafeSEHQueue.head )
 
-        mov cm.sxdata,CreateIntSegment( ".sxdata", "", MAX_SEGALIGNMENT, ModuleInfo.Ofssize, FALSE )
+        mov cm.sxdata,CreateIntSegment( ".sxdata", "", MAX_SEGALIGNMENT, MODULE.Ofssize, FALSE )
 
         .if ( rax )
 
@@ -1674,7 +1674,7 @@ coff_write_module proc uses rsi rdi rbx
 
             ; calc the size for this segment
 
-            .for ( rdx = ModuleInfo.SafeSEHQueue.head, ecx = 0 : rdx : rdx = [rdx].qnode.next, ecx++ )
+            .for ( rdx = MODULE.SafeSEHQueue.head, ecx = 0 : rdx : rdx = [rdx].qnode.next, ecx++ )
             .endf
             shl ecx,2
             mov rdx,cm.sxdata
@@ -1687,12 +1687,12 @@ coff_write_module proc uses rsi rdi rbx
 
     coff_create_drectve( &cm )
 
-    .if ( ModuleInfo.defOfssize == USE64 )
+    .if ( MODULE.defOfssize == USE64 )
         mov ifh.Machine,IMAGE_FILE_MACHINE_AMD64
     .else
         mov ifh.Machine,IMAGE_FILE_MACHINE_I386
     .endif
-    mov ifh.NumberOfSections,ModuleInfo.num_segs
+    mov ifh.NumberOfSections,MODULE.num_segs
     time(&ifh.TimeDateStamp)
     mov ifh.SizeOfOptionalHeader,0
     mov ifh.Characteristics,0
@@ -1743,7 +1743,7 @@ coff_write_module endp
 
 coff_init proc public
 
-    mov ModuleInfo.WriteModule,&coff_write_module
+    mov MODULE.WriteModule,&coff_write_module
     ret
 
 coff_init endp

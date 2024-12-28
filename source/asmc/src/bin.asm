@@ -221,7 +221,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
         mov offs,eax
 
     .else
-        .if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
+        .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
 
             ; v2.24
 
@@ -267,7 +267,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
         mov rax,grp
         .if ( rax )
-            .if ( rax != ModuleInfo.flat_grp )
+            .if ( rax != MODULE.flat_grp )
                 mov [rdi].start_loc,0
             .elseif ( tstrchr( [rsi].asym.name, '$' ) )
                 mov [rdi].start_loc,0
@@ -278,7 +278,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
     mov [rdi].fileoffset,[rbx].fileoffset
     mov [rdi].start_offset,offs
 
-    .if ( ModuleInfo.sub_format == SFORMAT_NONE )
+    .if ( MODULE.sub_format == SFORMAT_NONE )
 
         mov eax,[rsi].asym.max_offset
         sub eax,[rdi].start_loc
@@ -595,7 +595,7 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
                     add eax,offs
                     mov value,eax
 
-                    .if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
+                    .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
 
                         mov rcx,cp
                         .if ( [rdi].Ofssize == USE64 )
@@ -679,8 +679,8 @@ endif
 ifndef _WIN64
             xor edx,edx
 endif
-            .if ( ( ModuleInfo.sub_format == SFORMAT_PE && [rdi].Ofssize == USE64 ) ||
-                  ModuleInfo.sub_format == SFORMAT_64BIT )
+            .if ( ( MODULE.sub_format == SFORMAT_PE && [rdi].Ofssize == USE64 ) ||
+                  MODULE.sub_format == SFORMAT_64BIT )
                 .l8 value64
             .endif
             .s8 [rcx]
@@ -703,7 +703,7 @@ endif
                 .endif
             .endif
 
-            .if ( ModuleInfo.sub_format == SFORMAT_MZ )
+            .if ( MODULE.sub_format == SFORMAT_MZ )
 
                 .if ( [rax].asym.state == SYM_GRP )
 
@@ -750,7 +750,7 @@ endif
                 mov [rcx+2],ax
                .endc
             .endif
-            .if ( ModuleInfo.sub_format == SFORMAT_MZ )
+            .if ( MODULE.sub_format == SFORMAT_MZ )
                 mov [rcx],ax
                 add rcx,2
                 .if ( [rbx].frame_type == FRAME_GRP )
@@ -782,7 +782,7 @@ endif
                .endc
             .endif
 
-            .if ( ModuleInfo.sub_format == SFORMAT_MZ )
+            .if ( MODULE.sub_format == SFORMAT_MZ )
 
                 mov [rcx],eax
                 .if ( [rbx].frame_type == FRAME_GRP )
@@ -805,7 +805,7 @@ endif
                 .endc
             .endif
         .default
-            mov rcx,ModuleInfo.fmtopt
+            mov rcx,MODULE.fmtopt
             lea rdx,[rcx].format_options.formatname
             mov rcx,curr
             asmerr( 3019, rdx, [rbx].type, [rcx].asym.name, [rbx].locofs )
@@ -823,11 +823,11 @@ pe_create_MZ_header proc
     .if ( Parse_Pass == PASS_1 )
 
         .if ( SymSearch( hdrname "1" ) == NULL )
-            or ModuleInfo.pe_flags,PEF_MZHDR
+            or MODULE.pe_flags,PEF_MZHDR
         .endif
     .endif
 
-    .if ( ModuleInfo.pe_flags & PEF_MZHDR )
+    .if ( MODULE.pe_flags & PEF_MZHDR )
 
         AddLineQueueX(
             "option dotname\n"
@@ -910,13 +910,13 @@ pe_create_PE_header proc public uses rsi rdi rbx
 
     .if ( Parse_Pass == PASS_1 )
 
-        .if ( ModuleInfo._model != MODEL_FLAT )
+        .if ( MODULE._model != MODEL_FLAT )
             asmerr( 3002 )
         .endif
 
         movzx eax,Options.pe_subsystem
 ifndef ASMC64
-        .if ( ModuleInfo.defOfssize == USE64 )
+        .if ( MODULE.defOfssize == USE64 )
 endif
             mov ebx,IMAGE_PE_HEADER64
             lea rdi,pe64def
@@ -934,11 +934,11 @@ endif
 
         .if !SymSearch( hdrname "2" )
 
-            CreateIntSegment( hdrname "2", "HDR", 2, ModuleInfo.defOfssize, TRUE )
+            CreateIntSegment( hdrname "2", "HDR", 2, MODULE.defOfssize, TRUE )
 
             mov [rax].asym.max_offset,ebx
             mov rsi,[rax].dsym.seginfo
-            mov rcx,ModuleInfo.flat_grp
+            mov rcx,MODULE.flat_grp
             mov [rsi].sgroup,rcx
             mov [rsi].combine,COMB_ADDOFF  ; PUBLIC
             mov [rsi].characteristics,(IMAGE_SCN_MEM_READ shr 24)
@@ -993,9 +993,9 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
         .else
 
             mov bCreated,TRUE
-            mov rdi,CreateIntSegment( hdrname "3", "HDR", 2, ModuleInfo.defOfssize, TRUE )
+            mov rdi,CreateIntSegment( hdrname "3", "HDR", 2, MODULE.defOfssize, TRUE )
             mov rsi,[rdi].dsym.seginfo
-            mov [rsi].sgroup,ModuleInfo.flat_grp
+            mov [rsi].sgroup,MODULE.flat_grp
             mov [rsi].combine,COMB_ADDOFF ;; PUBLIC
         .endif
         mov [rsi].segtype,SEGTYPE_HDR
@@ -1110,7 +1110,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     .return .if ( ebx == 0 )
 
     time( &timedate )
-    lea rsi,ModuleInfo.name
+    lea rsi,MODULE.name
 
     ; create .edata segment
 
@@ -1220,7 +1220,7 @@ pe_emit_import_data proc __ccall uses rsi rdi rbx
     .new cpalign:string_t = "ALIGN(8)"
 
 ifndef ASMC64
-    .if ( ModuleInfo.defOfssize != USE64 )
+    .if ( MODULE.defOfssize != USE64 )
         mov ptrtype,T_DWORD
         mov cpalign,&@CStr("ALIGN(4)")
     .endif
@@ -1228,7 +1228,7 @@ endif
 
     assume rbx:ptr dll_desc
 
-    .for ( rbx = ModuleInfo.DllQueue: rbx: rbx = [rbx].next )
+    .for ( rbx = MODULE.DllQueue: rbx: rbx = [rbx].next )
 
         .if ( [rbx].cnt )
 
@@ -1283,7 +1283,7 @@ endif
                 .if ( [rdi].asym.flags & S_IAT_USED && [rdi].asym.dll == rbx )
                     Mangle( rdi, StringBufferEnd )
                     AddLineQueueX( "%s%s @LPPROC imagerel @%s_name",
-                        ModuleInfo.imp_prefix, StringBufferEnd, [rdi].asym.name )
+                        MODULE.imp_prefix, StringBufferEnd, [rdi].asym.name )
                 .endif
             .endf
 
@@ -1509,7 +1509,7 @@ pe_set_base_relocs endp
 GHF proto watcall x:abs {
     mov rax,pe
 ifndef ASMC64
-    .if ( ModuleInfo.defOfssize == USE64 )
+    .if ( MODULE.defOfssize == USE64 )
 endif
 if sizeof(IMAGE_PE_HEADER64.x) lt 4
         movzx eax,[rax].IMAGE_PE_HEADER64.x
@@ -1579,7 +1579,7 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                     or  edx,num[12]
                     .if ( ecx && !edx && !( eax & 0x0FFF ) )
                         mov edx,num[4]
-                        .if ( ModuleInfo.defOfssize == USE64 )
+                        .if ( MODULE.defOfssize == USE64 )
                             mov dword ptr [rbx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase,eax
                             mov dword ptr [rbx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase[4],edx
                         .elseif ( !edx && eax <= 0xfffff000 )
@@ -1601,7 +1601,7 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                     xor eax,eax
                     stosb
                     .if SymFind( &entry )
-                        mov ModuleInfo.start_label,rax
+                        mov MODULE.start_label,rax
                     .endif
                 .endif
                 .endc
@@ -1653,7 +1653,7 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                 .endif
                 .if ( subsystem != IMAGE_SUBSYSTEM_UNKNOWN )
                     mov eax,subsystem
-                    .if ( ModuleInfo.defOfssize == USE64 )
+                    .if ( MODULE.defOfssize == USE64 )
                         mov [rbx].IMAGE_PE_HEADER64.OptionalHeader.Subsystem,ax
                     .else
                         mov [rbx].IMAGE_PE_HEADER32.OptionalHeader.Subsystem,ax
@@ -1704,14 +1704,14 @@ pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
     mov objtab, SymSearch( hdrname "3" )
 
     ;; make sure all header objects are in FLAT group
-    mov [rsi].sgroup,ModuleInfo.flat_grp
+    mov [rsi].sgroup,MODULE.flat_grp
 
     mov rax,pehdr
     mov rsi,[rax].dsym.seginfo
     mov rcx,[rsi].CodeBuffer
     mov pe,rcx
 ifndef ASMC64
-    .if ( ModuleInfo.defOfssize == USE64 )
+    .if ( MODULE.defOfssize == USE64 )
 endif
         mov ff,[rcx].IMAGE_PE_HEADER64.FileHeader.Characteristics
 ifndef ASMC64
@@ -1722,7 +1722,7 @@ endif
 
     ; .pragma comment(linker, "/..")
 
-    .for ( rdi = ModuleInfo.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
+    .for ( rdi = MODULE.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
 
         tstrlen( &[rdi].qitem.value )
         pe_scan_linker_directives( pe, &[rdi].qitem.value, eax )
@@ -1742,7 +1742,7 @@ endif
 
     .if ( !( eax & IMAGE_FILE_RELOCS_STRIPPED ) )
 
-        mov reloc,CreateIntSegment( ".reloc", "RELOC", 2, ModuleInfo.defOfssize, TRUE )
+        mov reloc,CreateIntSegment( ".reloc", "RELOC", 2, MODULE.defOfssize, TRUE )
 
         .if ( rax )
 
@@ -1751,7 +1751,7 @@ endif
             ; make sure the section isn't empty ( true size will be calculated later )
 
             mov [rax].asym.max_offset,sizeof( IMAGE_BASE_RELOCATION )
-            mov [rsi].sgroup,ModuleInfo.flat_grp
+            mov [rsi].sgroup,MODULE.flat_grp
             mov [rsi].combine,COMB_ADDOFF
             mov [rsi].segtype,SEGTYPE_RELOC
             mov [rsi].characteristics,((IMAGE_SCN_MEM_DISCARDABLE or IMAGE_SCN_MEM_READ) shr 24 )
@@ -1974,16 +1974,16 @@ endif
     assume rcx:nothing
 
 
-    .if ( ModuleInfo.start_label )
+    .if ( MODULE.start_label )
 
-        mov rax,ModuleInfo.start_label
+        mov rax,MODULE.start_label
         mov rdx,[rax].asym.segm
         mov rsi,[rdx].dsym.seginfo
         mov ecx,[rsi].start_offset
         add ecx,[rax].asym.offs
         mov rax,pe
 ifndef ASMC64
-        .if ( ModuleInfo.defOfssize == USE64 )
+        .if ( MODULE.defOfssize == USE64 )
 endif
             mov [rax].IMAGE_PE_HEADER64.OptionalHeader.AddressOfEntryPoint,ecx
 ifndef ASMC64
@@ -1997,7 +1997,7 @@ endif
 
     mov rcx,pe
 ifndef ASMC64
-    .if ( ModuleInfo.defOfssize == USE64 )
+    .if ( MODULE.defOfssize == USE64 )
 endif
 if IMGSIZE_ROUND
         ;; round up the SizeOfImage field to page boundary
@@ -2108,7 +2108,7 @@ endif
     .endif
 
 ifndef ASMC64
-    .if ( ModuleInfo.defOfssize == USE64 )
+    .if ( MODULE.defOfssize == USE64 )
 endif
         .if ( SymSearch( ".pdata" ) )
 
@@ -2176,7 +2176,7 @@ pe_enddirhook proc
     pe_create_MZ_header()
     pe_emit_export_data()
 
-    .if ( ModuleInfo.DllQueue )
+    .if ( MODULE.DllQueue )
         pe_emit_import_data()
     .endif
 
@@ -2223,13 +2223,13 @@ bin_write_module proc uses rsi rdi rbx
 
     ; calculate size of header
 
-    .if ( ModuleInfo.sub_format == SFORMAT_MZ )
+    .if ( MODULE.sub_format == SFORMAT_MZ )
 
         mov reloccnt,GetSegRelocs( NULL )
         shl eax,2
-        movzx edx,ModuleInfo.mz_ofs_fixups
+        movzx edx,MODULE.mz_ofs_fixups
         add eax,edx
-        movzx edx,ModuleInfo.mz_alignment
+        movzx edx,MODULE.mz_alignment
         dec edx
         add eax,edx
         mov ecx,edx
@@ -2250,14 +2250,14 @@ bin_write_module proc uses rsi rdi rbx
     ; set starting offsets for all sections
 
     mov cp.rva,0
-    .if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
+    .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
 
-        .if ( ModuleInfo._model == MODEL_NONE )
+        .if ( MODULE._model == MODEL_NONE )
             .return( asmerr( 2013 ) )
         .endif
         pe_set_values( &cp )
 
-    .elseif ( ModuleInfo.segorder == SEGORDER_DOSSEG )
+    .elseif ( MODULE.segorder == SEGORDER_DOSSEG )
 
         ; for .DOSSEG, regroup segments (CODE, UNDEF, DATA, BSS)
 
@@ -2275,7 +2275,7 @@ bin_write_module proc uses rsi rdi rbx
 
     .else ; segment order .SEQ (default) and .ALPHA
 
-        .if ( ModuleInfo.segorder == SEGORDER_ALPHA )
+        .if ( MODULE.segorder == SEGORDER_ALPHA )
             SortSegments( 1 )
         .endif
 
@@ -2299,16 +2299,16 @@ bin_write_module proc uses rsi rdi rbx
 
     ; v2.04: return if any errors occured during fixup handling
 
-    .if ( ModuleInfo.error_count )
+    .if ( MODULE.error_count )
         .return( ERROR )
     .endif
 
     ; for plain binaries make sure the start label is at
     ; the beginning of the first segment
 
-    .if ( ModuleInfo.sub_format == SFORMAT_NONE )
-        .if ( ModuleInfo.start_label )
-            mov rax,ModuleInfo.start_label
+    .if ( MODULE.sub_format == SFORMAT_NONE )
+        .if ( MODULE.start_label )
+            mov rax,MODULE.start_label
             .if ( cp.entryoffset == -1 || cp.entryseg != [rax].asym.segm )
                 .return( asmerr( 3003 ) )
             .endif
@@ -2319,7 +2319,7 @@ bin_write_module proc uses rsi rdi rbx
 
     ; for MZ|PE format, initialize the header
 
-    .if ( ModuleInfo.sub_format == SFORMAT_MZ )
+    .if ( MODULE.sub_format == SFORMAT_MZ )
 
         ; set fields in MZ header
 
@@ -2349,10 +2349,10 @@ bin_write_module proc uses rsi rdi rbx
             inc eax
         .endif
         mov [rdi].e_minalloc,ax ;; heap min
-        .if ( ax < ModuleInfo.mz_heapmin )
-            mov [rdi].e_minalloc,ModuleInfo.mz_heapmin
+        .if ( ax < MODULE.mz_heapmin )
+            mov [rdi].e_minalloc,MODULE.mz_heapmin
         .endif
-        mov [rdi].e_maxalloc,ModuleInfo.mz_heapmax ;; heap max
+        mov [rdi].e_maxalloc,MODULE.mz_heapmax ;; heap max
         .if ( ax < [rdi].e_minalloc )
             mov [rdi].e_maxalloc,[rdi].e_minalloc
         .endif
@@ -2385,9 +2385,9 @@ bin_write_module proc uses rsi rdi rbx
 
         ; set entry CS:IP if defined
 
-        .if ( ModuleInfo.start_label )
+        .if ( MODULE.start_label )
 
-            mov rcx,ModuleInfo.start_label
+            mov rcx,MODULE.start_label
             mov rdx,[rcx].asym.segm
             mov rsi,[rdx].dsym.seginfo
 
@@ -2417,7 +2417,7 @@ bin_write_module proc uses rsi rdi rbx
             asmerr( 8009 )
         .endif
 
-        mov [rdi].e_lfarlc,ModuleInfo.mz_ofs_fixups
+        mov [rdi].e_lfarlc,MODULE.mz_ofs_fixups
         add rax,hdrbuf
         GetSegRelocs( rax )
     .endif
@@ -2457,7 +2457,7 @@ bin_write_module proc uses rsi rdi rbx
         mov rsi,[rdi].dsym.seginfo
         .continue .if ( [rsi].segtype == SEGTYPE_ABS )
 
-        .if ( ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT ) &&
+        .if ( ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT ) &&
               ( [rsi].segtype == SEGTYPE_BSS || [rsi].info ) )
             xor eax,eax
             .if ( [rsi].info )
@@ -2466,7 +2466,7 @@ bin_write_module proc uses rsi rdi rbx
         .else
             ; v2.19: subtract start_loc only if -bin AND first segment
             mov eax,[rdi].asym.max_offset
-            .if ( first && ModuleInfo.sub_format == SFORMAT_NONE )
+            .if ( first && MODULE.sub_format == SFORMAT_NONE )
                 sub eax,[rsi].start_loc
             .endif
         .endif
@@ -2517,7 +2517,7 @@ endif
         mov first,FALSE
     .endf
 
-    .if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
+    .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
 
         mov size,ftell( CurrFile[OBJ*string_t] )
         mov eax,cp.rawpagesize
@@ -2534,12 +2534,12 @@ endif
     LstPrintf( szSep )
     LstNL()
 
-    .if ( ModuleInfo.sub_format == SFORMAT_MZ )
+    .if ( MODULE.sub_format == SFORMAT_MZ )
 
         mov eax,sizetotal
         sub eax,cp.sizehdr
         add sizeheap,eax
-    .elseif ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
+    .elseif ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
         mov sizeheap,cp.rva
     .else
         mov sizeheap,GetImageSize( TRUE )
@@ -2568,13 +2568,13 @@ bin_check_external endp
 
 bin_init proc public uses rsi rdi rbx
 
-    mov ModuleInfo.WriteModule,&bin_write_module
-    mov ModuleInfo.Pass1Checks,&bin_check_external
-    mov al,ModuleInfo.sub_format
+    mov MODULE.WriteModule,&bin_write_module
+    mov MODULE.Pass1Checks,&bin_check_external
+    mov al,MODULE.sub_format
     .switch al
 ifndef ASMC64
     .case SFORMAT_MZ
-        lea rdi,ModuleInfo.mz_ofs_fixups
+        lea rdi,MODULE.mz_ofs_fixups
         lea rsi,mzdata
         mov ecx,sizeof( MZDATA )
         rep movsb
@@ -2582,7 +2582,7 @@ ifndef ASMC64
 endif
     .case SFORMAT_PE
     .case SFORMAT_64BIT
-        mov ModuleInfo.EndDirHook,&pe_enddirhook ;; v2.11
+        mov MODULE.EndDirHook,&pe_enddirhook ;; v2.11
        .endc
     .endsw
     ret

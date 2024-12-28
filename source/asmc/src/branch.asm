@@ -232,8 +232,8 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             .if rax
                 mov rcx,[rax].dsym.seginfo
             .endif
-            mov dl,ModuleInfo.Ofssize
-            .if ( ModuleInfo.flat_grp && ( rax == NULL || [rcx].seg_info.Ofssize == dl ) )
+            mov dl,MODULE.Ofssize
+            .if ( MODULE.flat_grp && ( rax == NULL || [rcx].seg_info.Ofssize == dl ) )
 
             .elseif ( rax && CurrSeg )
 
@@ -243,7 +243,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 mov rdx,[rax].dsym.seginfo
                 mov rax,[rcx].seg_info.sgroup
 
-                .if ( rax && rax == [rdx].seg_info.sgroup && [rcx].seg_info.Ofssize == ModuleInfo.Ofssize )
+                .if ( rax && rax == [rdx].seg_info.sgroup && [rcx].seg_info.Ofssize == MODULE.Ofssize )
                     ;
                 .elseif ( [rbx].mem_type == MT_NEAR && SegOverride == NULL )
                     .return( asmerr( 2107 ) )
@@ -370,7 +370,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             ; for 386 and above this is not needed, since there exists
             ; an extended version of Jcc
 
-            mov ecx,ModuleInfo.curr_cpu
+            mov ecx,MODULE.curr_cpu
             and ecx,P_CPU_MASK
 
             .if ( ecx < P_386 && IS_JCC( [rsi].token ) )
@@ -379,7 +379,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
 
                 .if ( [rsi].opnd[OPND1].type != OP_I8 )
 
-                    .if( [rsi].mem_type == MT_EMPTY && ModuleInfo.ljmp == TRUE )
+                    .if( [rsi].mem_type == MT_EMPTY && MODULE.ljmp == TRUE )
 
                         jumpExtend( rsi, FALSE )
                         sub adr,1
@@ -600,7 +600,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
 
         ; just Jxx remaining
 
-        mov eax,ModuleInfo.curr_cpu
+        mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
 
         .if( eax >= P_386 )
@@ -653,7 +653,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
 
             .case MT_FAR
 
-                .if ( ModuleInfo.ljmp ) ; OPTION LJMP set?
+                .if ( MODULE.ljmp ) ; OPTION LJMP set?
 
                     .if ( [rbx].Ofssize != USE_EMPTY )
                         mov [rsi].opsiz,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
@@ -708,7 +708,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             .case MT_NEAR ; allow Jxx NEAR if LJMP on
             .case MT_FAR
 
-                .if ( ModuleInfo.ljmp )
+                .if ( MODULE.ljmp )
 
                     .if ( al == MT_FAR )
 

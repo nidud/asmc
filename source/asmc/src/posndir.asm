@@ -127,7 +127,7 @@ fill_in_objfile_space proc __ccall private uses rsi rdi rbx size:dword
 
     .else
         ; output appropriate NOP type instructions to fill in the gap
-        movzx   ebx,ModuleInfo.Ofssize
+        movzx   ebx,MODULE.Ofssize
         lea     rcx,NopLists
         mov     rsi,[rcx+rbx*size_t]
         movzx   ebx,byte ptr [rsi]

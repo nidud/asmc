@@ -233,7 +233,7 @@ store_placeholders proc __ccall private uses rsi rdi rbx line:string_t, mnames:p
                 inc rsi
             .until !islabel( [rsi] )
 
-        .elseif ( islabel( eax ) || ( al == '.' && ModuleInfo.dotname &&
+        .elseif ( islabel( eax ) || ( al == '.' && MODULE.dotname &&
                   ( rsi == line || ( cl != ']' && !ch ) ) ) )
 
             mov rdx,rsi
@@ -377,7 +377,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
             ; Masm accepts reserved words and instructions as parameter
             ; names! So just check that the token is a valid id.
 
-            .if ( !isdotlabel( [rax], ModuleInfo.dotname ) || [rbx].token == T_STRING )
+            .if ( !isdotlabel( [rax], MODULE.dotname ) || [rbx].token == T_STRING )
 
                 asmerr( 2008, token )
                .break
@@ -507,9 +507,9 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
 
         ; add the macro line to the listing file
 
-        .if ( ModuleInfo.list )
+        .if ( MODULE.list )
 
-            and ModuleInfo.line_flags,not LOF_LISTED
+            and MODULE.line_flags,not LOF_LISTED
             LstWrite( LSTTYPE_MACROLINE, 0, ls.start )
         .endif
         mov ls.input,src
@@ -566,9 +566,9 @@ endif
                 mov ls.flags3,0
                 GetToken( &tok[asm_tok], &ls )
 
-                .if ( ( ls.flags3 & TF3_ISCONCAT ) && ModuleInfo.list )
+                .if ( ( ls.flags3 & TF3_ISCONCAT ) && MODULE.list )
 
-                    and ModuleInfo.line_flags,not LOF_LISTED
+                    and MODULE.line_flags,not LOF_LISTED
                     LstWrite( LSTTYPE_MACROLINE, 0, ls.input )
                 .endif
                 mov ls.input,tstrstart(ls.input)
@@ -596,7 +596,7 @@ endif
                 GetToken( &tok[0], &ls )
 
                 mov rcx,StringBufferEnd
-                .if ( !isdotlabel( [rcx], ModuleInfo.dotname ) )
+                .if ( !isdotlabel( [rcx], MODULE.dotname ) )
 
                     asmerr( 2008, rcx )
                    .break
@@ -636,7 +636,7 @@ endif
 
                     inc ls.input
 
-                .elseif ( isdotlabel( ecx, ModuleInfo.dotname ) )
+                .elseif ( isdotlabel( ecx, MODULE.dotname ) )
 
                     asmerr( 2008, ls.input )
                    .break
@@ -827,7 +827,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .if ( [rsi].state != SYM_UNDEFINED )
 
-            .if ( [rsi].state == SYM_EXTERNAL && !ModuleInfo.masm_compat_gencode )
+            .if ( [rsi].state == SYM_EXTERNAL && !MODULE.masm_compat_gencode )
 
                 mov rbx,rdx ; address of symbol from SymSearch()
                 mov [rsi].target_type,SymAlloc(rdi)
@@ -882,7 +882,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov store_data,FALSE
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWriteSrcLine()
     .endif
     inc i
@@ -899,7 +899,7 @@ next    ptr_t ?
 line    char_t 1 dup(?)
 lq_line ends
 
-LineQueue equ <ModuleInfo.line_queue>
+LineQueue equ <MODULE.line_queue>
 
 PreprocessLine proto __ccall :ptr asm_tok
 
@@ -973,14 +973,14 @@ MacroLineQueue proc __ccall
   local tokenarray:token_t
 
     mov tokenarray,PushInputStatus( &oldstat )
-    inc ModuleInfo.GeneratedCode
+    inc MODULE.GeneratedCode
     mov oldline,GetLine
     mov GetLine,&GeLineQueue
     .if GetLine( CurrSource )
         PreprocessLine( tokenarray )
     .endif
     mov GetLine,oldline
-    dec ModuleInfo.GeneratedCode
+    dec MODULE.GeneratedCode
     PopInputStatus( &oldstat )
     ret
 

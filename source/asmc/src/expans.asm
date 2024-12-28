@@ -456,7 +456,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                         .break .if [rbx].token == T_FINAL || [rbx].token == T_COMMA
 
                         mov rcx,[rbx].string_ptr
-                        .if ( isdotlabel( [rcx], ModuleInfo.dotname ) )
+                        .if ( isdotlabel( [rcx], MODULE.dotname ) )
 
                             .if ( [rbx+asm_tok].token == T_OP_BRACKET )
 
@@ -556,25 +556,25 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                             xor eax,eax
                             cmp opndx.hvalue,0
                             setl al
-                            myltoa( opndx.llvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
+                            myltoa( opndx.llvalue, StringBufferEnd, MODULE.radix, eax, FALSE )
 
                         .elseif ( opndx.kind == EXPR_FLOAT && opndx.mem_type == MT_REAL16 )
 
                             .if ( ( opndx.value == 16 && opndx.h64_h == 0 ) )
                                 tstrcpy( StringBufferEnd, "16" )
-                            .elseif ( ModuleInfo.floatformat == 'x' )
+                            .elseif ( MODULE.floatformat == 'x' )
                                 tsprintf( StringBufferEnd, "%16lx%16lx", opndx.hlvalue, opndx.llvalue )
                             .else
 
                                 mov cvt.expchar,'e'
                                 mov cvt.expwidth,3
-                                mov cvt.ndigits,ModuleInfo.floatdigits
+                                mov cvt.ndigits,MODULE.floatdigits
                                 mov cvt.bufsize,MaxLineLength
 
-                                .if ( ModuleInfo.floatformat == 'e' )
+                                .if ( MODULE.floatformat == 'e' )
                                     mov cvt.scale,1
                                     mov cvt.flags,_ST_E
-                                .elseif ( ModuleInfo.floatformat == 'g' )
+                                .elseif ( MODULE.floatformat == 'g' )
                                     mov cvt.scale,1
                                     mov cvt.flags,_ST_G
                                 .else
@@ -983,7 +983,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
                 .if ( [rbx].tokval == T_EXITM || [rbx].tokval == T_RETM )
 
-                    .if ( ModuleInfo.list && ModuleInfo.list_macro == LM_LISTMACROALL )
+                    .if ( MODULE.list && MODULE.list_macro == LM_LISTMACROALL )
                         LstWriteSrcLine()
                     .endif
 
@@ -1237,7 +1237,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
 
         .while ( [rsi] )
 
-            .if ( isdotlabel( [rsi], ModuleInfo.dotname ) && ( substitute || !quoted_string ) )
+            .if ( isdotlabel( [rsi], MODULE.dotname ) && ( substitute || !quoted_string ) )
 
                 mov p,rdi
                 .repeat
@@ -1923,14 +1923,14 @@ if TEVALUE_UNSIGNED
         ; v2.03: Masm compatible: returns an unsigned value
 
         mov opndx.hvalue,0
-        myltoa( opndx.llvalue, StringBufferEnd, ModuleInfo.radix, FALSE, FALSE )
+        myltoa( opndx.llvalue, StringBufferEnd, MODULE.radix, FALSE, FALSE )
 
 else
         xor eax,eax
         .if ( opndx.hvalue < 0 )
             mov eax,1
         .endif
-        myltoa( opndx.llvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
+        myltoa( opndx.llvalue, StringBufferEnd, MODULE.radix, eax, FALSE )
 endif
         ; v2.05: get size of string to be "replaced"
 

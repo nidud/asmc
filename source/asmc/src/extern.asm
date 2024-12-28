@@ -60,7 +60,7 @@ CreateExternal proc fastcall private uses rsi sym:ptr asym, name:string_t, weak:
 
     .if ( rsi )
         mov [rsi].asym.state,SYM_EXTERNAL
-        mov [rsi].asym.segoffsize,ModuleInfo.Ofssize
+        mov [rsi].asym.segoffsize,MODULE.Ofssize
         and [rsi].asym.sflags,not ( S_WEAK or S_ISCOM )
         .if ( weak )
             or [rsi].asym.sflags,S_WEAK
@@ -86,7 +86,7 @@ CreateComm proc fastcall private uses rsi sym:ptr asym, name:string_t
 
     .if ( rsi )
         mov [rsi].asym.state,SYM_EXTERNAL
-        mov [rsi].asym.segoffsize,ModuleInfo.Ofssize
+        mov [rsi].asym.segoffsize,MODULE.Ofssize
         mov [rsi].asym.is_far,0
         and [rsi].asym.sflags,not S_WEAK
         or  [rsi].asym.sflags,S_ISCOM
@@ -163,7 +163,7 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_to
         .ifd ( ParseProc( rsi, i, tokenarray, FALSE, langtype ) == ERROR )
             .return( NULL )
         .endif
-        mov [rsi].asym.dll,ModuleInfo.CurrDll
+        mov [rsi].asym.dll,MODULE.CurrDll
     .else
         or  [rsi].asym.flags,S_ISDEFINED
     .endif
@@ -185,11 +185,11 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .repeat
 
-        mov ti.Ofssize,ModuleInfo.Ofssize
+        mov ti.Ofssize,MODULE.Ofssize
 
         ; get the symbol language type if present
 
-        mov langtype,ModuleInfo.langtype
+        mov langtype,MODULE.langtype
         GetLangType( &i, tokenarray, &langtype )
 
         imul ebx,i,asm_tok
@@ -219,7 +219,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov ti.is_far,FALSE
         mov ti.ptr_memtype,MT_EMPTY
         mov ti.symtype,NULL
-        mov ti.Ofssize,ModuleInfo.Ofssize
+        mov ti.Ofssize,MODULE.Ofssize
 
         mov rcx,[rbx].string_ptr
         mov eax,[rcx]
@@ -289,7 +289,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 ; v2.04: don't inherit current segment for FAR externals
                 ; if -Zg is set.
 
-                .endc .if ( ModuleInfo.masm_compat_gencode )
+                .endc .if ( MODULE.masm_compat_gencode )
 
                 ; fall through
 
@@ -301,7 +301,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov [rsi].asym.Ofssize,ti.Ofssize
             mov al,ti.Ofssize
 
-            .if ( ti.is_ptr == 0 && al != ModuleInfo.Ofssize )
+            .if ( ti.is_ptr == 0 && al != MODULE.Ofssize )
 
                 mov [rsi].asym.segoffsize,al
                 mov rcx,[rsi].asym.segm
@@ -448,7 +448,7 @@ ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
         imul ecx,i,asm_tok
         .return( asmerr( 2008, [rbx+rcx].string_ptr ) )
     .endif
-    .if CreateProto( 2, tokenarray, [rbx].string_ptr, ModuleInfo.langtype )
+    .if CreateProto( 2, tokenarray, [rbx].string_ptr, MODULE.langtype )
         mov eax,NOT_ERROR
     .else
         mov eax,ERROR
@@ -567,7 +567,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; get the symbol language type if present
 
-        mov langtype,ModuleInfo.langtype
+        mov langtype,MODULE.langtype
         GetLangType( &i, tokenarray, &langtype )
 
         imul ebx,i,asm_tok
@@ -618,7 +618,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov ti.is_far,FALSE
         mov ti.ptr_memtype,MT_EMPTY
         mov ti.symtype,NULL
-        mov ti.Ofssize,ModuleInfo.Ofssize
+        mov ti.Ofssize,MODULE.Ofssize
 
         xor eax,eax
         .if ( [rbx].token == T_ID )
@@ -665,7 +665,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
             movzx edx,ti.Ofssize
             .if ( ti.is_ptr )
-                mov dl,ModuleInfo.Ofssize
+                mov dl,MODULE.Ofssize
             .endif
 
             .if ( MakeExtern( token, ti.mem_type, rcx, rdi, dl ) == NULL )
@@ -732,7 +732,7 @@ endif
         or  [rdi].asym.flags,S_ISDEFINED
         mov [rdi].asym.Ofssize,ti.Ofssize
 
-        .if ( ti.is_ptr == 0 && al != ModuleInfo.Ofssize )
+        .if ( ti.is_ptr == 0 && al != MODULE.Ofssize )
 
             mov [rdi].asym.segoffsize,al
             mov rcx,[rdi].asym.segm
@@ -797,7 +797,7 @@ MakeComm proc __ccall private uses rdi name:string_t, sym:ptr asym, size:dword, 
     ; v2.04: warning added ( Masm emits an error )
     ; v2.05: code active for 16-bit only
 
-    .if ( ModuleInfo.Ofssize == USE16 )
+    .if ( MODULE.Ofssize == USE16 )
         mov eax,size
         mul count
         .if ( eax > 0x10000 )
@@ -835,7 +835,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; get the symbol language type if present
 
-        mov langtype,ModuleInfo.langtype
+        mov langtype,MODULE.langtype
         GetLangType( &i, tokenarray, &langtype )
 
         imul ebx,i,asm_tok
@@ -853,7 +853,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .case T_FAR16
             .case T_FAR32
 
-                .if ( ModuleInfo._model == MODEL_FLAT )
+                .if ( MODULE._model == MODEL_FLAT )
                     asmerr( 2178 )
                 .else
                     mov isfar,TRUE
@@ -996,7 +996,7 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; read the optional language type
 
-        mov langtype,ModuleInfo.langtype
+        mov langtype,MODULE.langtype
         GetLangType( &i, tokenarray, &langtype )
 
         imul ebx,i,asm_tok

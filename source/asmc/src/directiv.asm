@@ -98,7 +98,7 @@ IncludeLibrary proc __ccall uses rsi rbx name:string_t
     ; then 2 defaultlib entries are added. If this is to be changed for
     ; JWasm, activate the _stricmp() below.
 
-    .for ( rbx = ModuleInfo.LibQueue.head : rbx : rbx = [rbx].qitem.next )
+    .for ( rbx = MODULE.LibQueue.head : rbx : rbx = [rbx].qitem.next )
 
         .if ( tstrcmp( &[rbx].qitem.value, rsi ) == 0 )
 
@@ -108,7 +108,7 @@ IncludeLibrary proc __ccall uses rsi rbx name:string_t
 
     mov rbx,LclAlloc( &[tstrlen( rsi ) + sizeof( qitem )] )
     tstrcpy( &[rbx].qitem.value, rsi )
-    QEnqueue( &ModuleInfo.LibQueue, rbx )
+    QEnqueue( &MODULE.LibQueue, rbx )
     lea rax,[rbx].qitem.value
     ret
 
@@ -316,7 +316,7 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     ; v2.04: tell assembler that data is emitted
 
-    .if ( ModuleInfo.CommentDataInCode )
+    .if ( MODULE.CommentDataInCode )
         omf_OutSelect( TRUE )
     .endif
 
@@ -498,14 +498,14 @@ RadixDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ; to get the .radix parameter, enforce radix 10 and retokenize!
 
-    mov radix,ModuleInfo.radix
-    mov ModuleInfo.radix,10
+    mov radix,MODULE.radix
+    mov MODULE.radix,10
 
     inc  i ; skip directive token
     imul ecx,i,asm_tok
 
     Tokenize( [rbx+rcx].tokpos, i, rbx, TOK_RESCAN )
-    mov ModuleInfo.radix,radix
+    mov MODULE.radix,radix
 
     ; v2.11: flag NOUNDEF added - no forward ref possible
 
@@ -525,7 +525,7 @@ RadixDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
         asmerr( 2113 )
     .else
-        mov ModuleInfo.radix,opndx.value
+        mov MODULE.radix,opndx.value
         mov eax,NOT_ERROR
     .endif
     ret
@@ -547,12 +547,12 @@ SegOrderDirective proc __ccall i:int_t, tokenarray:token_t
         .return( asmerr(2008, [rcx+asm_tok].asm_tok.tokpos ) )
     .endif
     .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF ||
-         ( Options.output_format == OFORMAT_BIN && ModuleInfo.sub_format == SFORMAT_PE ) )
+         ( Options.output_format == OFORMAT_BIN && MODULE.sub_format == SFORMAT_PE ) )
         .if ( Parse_Pass == PASS_1 )
             asmerr( 3006, tstrupr( [rcx].asm_tok.string_ptr ) )
         .endif
     .else
-        mov ModuleInfo.segorder,GetSflagsSp( [rcx].asm_tok.tokval )
+        mov MODULE.segorder,GetSflagsSp( [rcx].asm_tok.tokval )
     .endif
     .return( NOT_ERROR )
 

@@ -150,7 +150,7 @@ MAX_LEDATA_THRESHOLD equ 1024 - 10
 
 OutputByte proc __ccall uses rsi rdi rbx char:int_t
 
-    mov rsi,ModuleInfo.currseg
+    mov rsi,MODULE.currseg
     mov rdi,[rsi].dsym.seginfo
 
     .if ( write_to_file )
@@ -194,7 +194,7 @@ OutputByte endp
 
 FillDataBytes proc __ccall char:byte, len:int_t
 
-    .if ( ModuleInfo.CommentDataInCode )
+    .if ( MODULE.CommentDataInCode )
         omf_OutSelect(1)
     .endif
     .while len
@@ -208,7 +208,7 @@ FillDataBytes endp
 
 OutputBytes proc __ccall uses rsi rdi rbx pbytes:ptr byte, len:int_t, fxptr:ptr fixup
 
-    mov rsi,ModuleInfo.currseg
+    mov rsi,MODULE.currseg
     mov rdi,[rsi].dsym.seginfo
 
     .if ( write_to_file )
@@ -273,14 +273,14 @@ SetCurrOffset proc __ccall uses rsi rdi rbx dseg:dsym_t, value:uint_t, relative:
         add ebx,[rdi].seg_info.current_loc
     .endif
     .if Options.output_format == OFORMAT_OMF
-        .if rsi == ModuleInfo.currseg
+        .if rsi == MODULE.currseg
             .if ecx
                 omf_FlushCurrSeg()
             .endif
             ;
             ; for debugging, tell if data is located in code sections
             ;
-            .if select_data && ModuleInfo.CommentDataInCode
+            .if select_data && MODULE.CommentDataInCode
                 omf_OutSelect(1)
             .endif
             mov LastCodeBufSize,ebx
@@ -324,7 +324,7 @@ WriteModule proc private uses rsi rdi rbx
         mov rbx,[rbx].dsym.next
     .endw
 
-    ModuleInfo.WriteModule()
+    MODULE.WriteModule()
 
     mov rbx,Options.names[OPTN_LNKDEF_FN*string_t]
     .if rbx
@@ -501,71 +501,65 @@ WritePreprocessedLine proc __ccall string:string_t
 
 WritePreprocessedLine endp
 
-    assume rcx:ptr module_info
 
 SetMasm510 proc __ccall value:int_t
 
     ldr eax,value
 
-    lea rcx,ModuleInfo
-    mov [rcx].m510,al
-    mov [rcx].oldstructs,al
-    mov [rcx].dotname,al
-    mov [rcx].setif2,al
+    mov MODULE.m510,al
+    mov MODULE.oldstructs,al
+    mov MODULE.dotname,al
+    mov MODULE.setif2,al
 
-    .if ( eax && [rcx]._model == MODEL_NONE )
+    .if ( eax && MODULE._model == MODEL_NONE )
 
         ;
         ; if no model is specified, set OFFSET:SEGMENT
         ;
-        mov [rcx].offsettype,OT_SEGMENT
+        mov MODULE.offsettype,OT_SEGMENT
 
-        .if ( [rcx].langtype == LANG_NONE )
+        .if ( MODULE.langtype == LANG_NONE )
 
-            mov [rcx].scoped,0
-            mov [rcx].procs_private,0
+            mov MODULE.scoped,0
+            mov MODULE.procs_private,0
         .endif
     .endif
     ret
 
 SetMasm510 endp
 
-    assume rcx:nothing
-
-    assume rbx:ptr module_info
     assume rdi:ptr global_options
 
 ModulePassInit proc __ccall private uses rsi rdi rbx
 
     lea rdi,Options
-    lea rbx,ModuleInfo
 
     mov ecx,[rdi].cpu
     mov esi,[rdi]._model
     ;
     ; set default values not affected by the masm 5.1 compat switch
     ;
-    mov [rbx].procs_private,0
-    mov [rbx].procs_export,0
-    mov [rbx].offsettype,OT_GROUP
-    mov [rbx].scoped,1
+    mov MODULE.procs_private,0
+    mov MODULE.procs_export,0
+    mov MODULE.offsettype,OT_GROUP
+    mov MODULE.scoped,1
 ifdef ASMC64
-    mov [rbx].accumulator,T_RAX
+    mov MODULE.accumulator,T_RAX
 else
-    mov [rbx].accumulator,T_AX
+    mov MODULE.accumulator,T_AX
 endif
 
     .if ( !UseSavedState )
 
         mov eax,[rdi].langtype
-        mov [rbx].langtype,al
+        mov MODULE.langtype,al
         mov eax,[rdi].fctype
-        mov [rbx].fctype,al
+        mov MODULE.fctype,al
         mov eax,ecx
         and eax,P_CPU_MASK
 
 ifndef ASMC64
-        .if ( [rbx].sub_format == SFORMAT_64BIT )
+        .if ( MODULE.sub_format == SFORMAT_64BIT )
 endif
             ;
             ; v2.06: force cpu to be at least P_64, without side effect to Options.cpu
@@ -579,16 +573,16 @@ endif
             ; there's no other model than FLAT possible.
             ;
             mov esi,MODEL_FLAT
-            .if ( [rbx].langtype == LANG_NONE )
+            .if ( MODULE.langtype == LANG_NONE )
                 ;
                 ; v2.27.38: asmc -pe -win64
                 ;           asmc -win64 -pe
                 ;           asmc64 -pe
                 ;
                 .if ( [rdi].output_format == OFORMAT_COFF || [rdi].output_format == OFORMAT_BIN )
-                    mov [rbx].langtype,LANG_FASTCALL
+                    mov MODULE.langtype,LANG_FASTCALL
                 .elseif ( [rdi].output_format == OFORMAT_ELF )
-                    mov [rbx].langtype,LANG_SYSCALL
+                    mov MODULE.langtype,LANG_SYSCALL
                 .endif
             .endif
 ifndef ASMC64
@@ -619,47 +613,47 @@ endif
     movzx eax,[rdi].masm51_compat
     SetMasm510( eax )
 ifndef ASMC64
-    mov [rbx].defOfssize,USE16
+    mov MODULE.defOfssize,USE16
 else
-    mov [rbx].defOfssize,USE64
+    mov MODULE.defOfssize,USE64
 endif
-    mov [rbx].ljmp,1
-    mov [rbx].list,[rdi].write_listing
-    mov [rbx].cref,1
-    mov [rbx].listif,[rdi].listif
-    mov [rbx].list_generated_code,[rdi].list_generated_code
-    mov [rbx].list_macro,[rdi].list_macro
-    mov [rbx].case_sensitive,[rdi].case_sensitive
-    mov [rbx].convert_uppercase,[rdi].convert_uppercase
+    mov MODULE.ljmp,1
+    mov MODULE.list,[rdi].write_listing
+    mov MODULE.cref,1
+    mov MODULE.listif,[rdi].listif
+    mov MODULE.list_generated_code,[rdi].list_generated_code
+    mov MODULE.list_macro,[rdi].list_macro
+    mov MODULE.case_sensitive,[rdi].case_sensitive
+    mov MODULE.convert_uppercase,[rdi].convert_uppercase
     SymSetCmpFunc()
-    mov [rbx].segorder,SEGORDER_SEQ
-    mov [rbx].radix,10
-    mov [rbx].fieldalign,[rdi].fieldalign
-    mov [rbx].procalign,0
-    mov al,[rbx].xflag
+    mov MODULE.segorder,SEGORDER_SEQ
+    mov MODULE.radix,10
+    mov MODULE.fieldalign,[rdi].fieldalign
+    mov MODULE.procalign,0
+    mov al,MODULE.xflag
     and al,OPT_LSTRING
     or  al,[rdi].xflag
-    mov [rbx].xflag,al
-    mov [rbx].loopalign,[rdi].loopalign
-    mov [rbx].casealign,[rdi].casealign
-    mov [rbx].codepage,[rdi].codepage
-    mov [rbx].win64_flags,[rdi].win64_flags
-    mov [rbx].frame_auto,[rdi].frame_auto
-    mov [rbx].floatformat,[rdi].floatformat
-    mov [rbx].floatdigits,[rdi].floatdigits
-    mov [rbx].flt_size,[rdi].flt_size
-    mov [rbx].pic,[rdi].pic
-    mov [rbx].endbr,[rdi].endbr
-    mov [rbx].dotname,[rdi].dotname
-    mov [rbx].dotnamex,[rdi].dotnamex
-    mov [rbx].sysvregs,[rdi].sysvregs
-    mov [rbx].masm_compat_gencode,[rdi].masm_compat_gencode
-    mov [rbx].avxencoding,0
+    mov MODULE.xflag,al
+    mov MODULE.loopalign,[rdi].loopalign
+    mov MODULE.casealign,[rdi].casealign
+    mov MODULE.codepage,[rdi].codepage
+    mov MODULE.win64_flags,[rdi].win64_flags
+    mov MODULE.frame_auto,[rdi].frame_auto
+    mov MODULE.floatformat,[rdi].floatformat
+    mov MODULE.floatdigits,[rdi].floatdigits
+    mov MODULE.flt_size,[rdi].flt_size
+    mov MODULE.pic,[rdi].pic
+    mov MODULE.endbr,[rdi].endbr
+    mov MODULE.dotname,[rdi].dotname
+    mov MODULE.dotnamex,[rdi].dotnamex
+    mov MODULE.sysvregs,[rdi].sysvregs
+    mov MODULE.masm_compat_gencode,[rdi].masm_compat_gencode
+    mov MODULE.avxencoding,0
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
     ;
-    .if ( [rbx].DllQueue )
+    .if ( MODULE.DllQueue )
 
         mov rax,SymTables[TAB_EXT*symbol_queue].head
         .while rax
@@ -672,7 +666,6 @@ endif
 
 ModulePassInit endp
 
-    assume rbx:nothing
     assume rdi:nothing
 
 ; checks after pass one has been finished without errors
@@ -690,7 +683,7 @@ PassOneChecks proc __ccall private uses rsi rdi
     ClassCheckOpen()
     PragmaCheckOpen()
 
-    .if ( !ModuleInfo.EndDirFound )
+    .if ( !MODULE.EndDirFound )
 
         asmerr( 2088 )
     .endif
@@ -704,7 +697,7 @@ PassOneChecks proc __ccall private uses rsi rdi
     ; was previously done in GetPublicSymbols() ]
     ;
 
-    lea rdx,ModuleInfo.PubQueue
+    lea rdx,MODULE.PubQueue
     mov rcx,[rdx].qdesc.head
 
     .while rcx
@@ -746,7 +739,7 @@ PassOneChecks proc __ccall private uses rsi rdi
     ; internal proc, make a full second pass to emit a proper
     ; error msg at the .SAFESEH directive
     ;
-    mov rax,ModuleInfo.SafeSEHQueue.head
+    mov rax,MODULE.SafeSEHQueue.head
     .while rax
         .if [rax].asym.state != SYM_INTERNAL || !( [rax].asym.flags & S_ISPROC )
 
@@ -829,7 +822,7 @@ aliases:
         .endif
     .endw
 
-    .if ( !ModuleInfo.error_count )
+    .if ( !MODULE.error_count )
         ;
         ; make all symbols of type SYM_INTERNAL, which aren't
         ; a constant, public.
@@ -844,8 +837,8 @@ aliases:
             mov write_to_file,1
         .endif
 
-        .if ( ModuleInfo.Pass1Checks )
-            ModuleInfo.Pass1Checks()
+        .if ( MODULE.Pass1Checks )
+            MODULE.Pass1Checks()
         .endif
     .endif
     ret
@@ -883,10 +876,10 @@ OnePass proc __ccall private uses rsi rdi
     CmdlParamsInit(Parse_Pass)
 
     xor eax,eax
-    mov ModuleInfo.EndDirFound,al
-    mov ModuleInfo.PhaseError,al
+    mov MODULE.EndDirFound,al
+    mov MODULE.PhaseError,al
     LinnumInit()
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
 
@@ -897,13 +890,13 @@ OnePass proc __ccall private uses rsi rdi
         mov LineStoreCurr,rax
         mov rsi,rax
 
-        .while ( rsi && !ModuleInfo.EndDirFound )
+        .while ( rsi && !MODULE.EndDirFound )
 
 if ( USELSLINE eq 0 )
             tstrcpy( CurrSource, &[rsi].line_item.line )
 endif
             set_curr_srcfile([rsi].line_item.srcfile, [rsi].line_item.lineno)
-            mov ModuleInfo.line_flags,0
+            mov MODULE.line_flags,0
             mov MacroLevel,[rsi].line_item.macro_level
             mov CurrComment,0
 if USELSLINE
@@ -947,19 +940,19 @@ get_module_name proc __ccall private uses rsi rdi
     mov rsi,Options.names[OPTN_MODULE_NAME*string_t]
     .if rsi
 
-        tstrncpy( &ModuleInfo.name, rsi, sizeof(ModuleInfo.name) )
-        mov ModuleInfo.name[sizeof(ModuleInfo.name)-1],0
+        tstrncpy( &MODULE.name, rsi, sizeof(ModuleInfo.name) )
+        mov MODULE.name[sizeof(ModuleInfo.name)-1],0
 
     .else
 
-        GetFNamePart( ModuleInfo.curr_fname[ASM*string_t] )
+        GetFNamePart( MODULE.curr_fname[ASM*string_t] )
         mov rsi,rax
         .if ( GetExtPart( rax ) == rsi )
             tstrlen(rsi)
             add rax,rsi
         .endif
         sub rax,rsi
-        lea rcx,ModuleInfo.name
+        lea rcx,MODULE.name
         mov byte ptr [rcx+rax],0
         tmemcpy( rcx, rsi, eax )
     .endif
@@ -967,7 +960,7 @@ get_module_name proc __ccall private uses rsi rdi
     ; the module name must be a valid identifier, because it's used
     ; as part of a segment name in certain memory models.
     ;
-    lea rsi,ModuleInfo.name
+    lea rsi,MODULE.name
     tstrupr( rsi )
     xor eax,eax
     .while 1
@@ -979,9 +972,9 @@ get_module_name proc __ccall private uses rsi rdi
     ;
     ; first character can't be a digit either
     ;
-    .if ( ModuleInfo.name <= '9' && ModuleInfo.name >= '0' )
+    .if ( MODULE.name <= '9' && MODULE.name >= '0' )
 
-        mov ModuleInfo.name,'_'
+        mov MODULE.name,'_'
     .endif
     ret
 
@@ -991,13 +984,13 @@ get_module_name endp
 ModuleInit proc private
 
     mov eax,Options.sub_format
-    mov ModuleInfo.sub_format,al
+    mov MODULE.sub_format,al
     mov eax,Options.output_format
     mov ecx,format_options
     mul ecx
     lea rdx,formatoptions
     add rax,rdx
-    mov ModuleInfo.fmtopt,rax
+    mov MODULE.fmtopt,rax
    .new fm:ptr format_options = rax
 
     xor eax,eax
@@ -1005,15 +998,15 @@ ModuleInit proc private
         inc eax
     .endif
 
-    mov ModuleInfo.CommentDataInCode,al
-    mov ModuleInfo.error_count,0
-    mov ModuleInfo.warning_count,0
-    mov ModuleInfo._model,MODEL_NONE
-    mov ModuleInfo.ostype,OPSYS_DOS
-    mov ModuleInfo.emulator,0
+    mov MODULE.CommentDataInCode,al
+    mov MODULE.error_count,0
+    mov MODULE.warning_count,0
+    mov MODULE._model,MODEL_NONE
+    mov MODULE.ostype,OPSYS_DOS
+    mov MODULE.emulator,0
 
     .if ( Options.floating_point == FPO_EMULATION )
-        inc ModuleInfo.emulator
+        inc MODULE.emulator
     .endif
 
     get_module_name()
@@ -1060,27 +1053,27 @@ ReswTableInit endp
 
 open_files proc __ccall private uses rsi rdi
 
-    .if !fopen( ModuleInfo.curr_fname[ASM*string_t], "rb" )
+    .if !fopen( MODULE.curr_fname[ASM*string_t], "rb" )
         ;
         ; will not return..
         ;
-        asmerr( 1000, ModuleInfo.curr_fname[ASM*string_t] )
+        asmerr( 1000, MODULE.curr_fname[ASM*string_t] )
     .endif
-    mov ModuleInfo.curr_file[ASM*string_t],rax
+    mov MODULE.curr_file[ASM*string_t],rax
 
     .if ( !Options.syntax_check_only )
 
-        .if !fopen( ModuleInfo.curr_fname[OBJ*string_t], "wb" )
+        .if !fopen( MODULE.curr_fname[OBJ*string_t], "wb" )
 
-            asmerr( 1000, ModuleInfo.curr_fname[OBJ*string_t] )
+            asmerr( 1000, MODULE.curr_fname[OBJ*string_t] )
         .endif
-        mov ModuleInfo.curr_file[OBJ*string_t],rax
+        mov MODULE.curr_file[OBJ*string_t],rax
     .endif
     .if ( Options.write_listing )
-        .if !fopen( ModuleInfo.curr_fname[LST*string_t],"wb" )
-            asmerr( 1000, ModuleInfo.curr_fname[LST*string_t] )
+        .if !fopen( MODULE.curr_fname[LST*string_t],"wb" )
+            asmerr( 1000, MODULE.curr_fname[LST*string_t] )
         .endif
-        mov ModuleInfo.curr_file[LST*string_t],rax
+        mov MODULE.curr_file[LST*string_t],rax
     .endif
     ret
 
@@ -1131,44 +1124,44 @@ close_files proc __ccall uses rsi rdi
     ; That's because Fatal() may cause close_files() to be
     ; reentered and thus cause an endless loop.
 
-    mov rax,ModuleInfo.curr_file[ASM*string_t]
+    mov rax,MODULE.curr_file[ASM*string_t]
     .if rax
 
         .if fclose( rax )
 
-            asmerr( 3021, ModuleInfo.curr_fname[ASM*string_t] )
+            asmerr( 3021, MODULE.curr_fname[ASM*string_t] )
         .endif
     .endif
 
-    mov rax,ModuleInfo.curr_file[OBJ*string_t]
+    mov rax,MODULE.curr_file[OBJ*string_t]
     .if rax
         .if fclose( rax )
 
-            asmerr( 3021, ModuleInfo.curr_fname[OBJ*string_t] )
+            asmerr( 3021, MODULE.curr_fname[OBJ*string_t] )
         .endif
     .endif
 
-    .if ( ( !Options.syntax_check_only && ModuleInfo.error_count ) || remove_obj )
+    .if ( ( !Options.syntax_check_only && MODULE.error_count ) || remove_obj )
 
         mov remove_obj,0
-        remove( ModuleInfo.curr_fname[OBJ*string_t] )
+        remove( MODULE.curr_fname[OBJ*string_t] )
     .endif
 
-    mov rax,ModuleInfo.curr_file[LST*string_t]
+    mov rax,MODULE.curr_file[LST*string_t]
     .if rax
 
         fclose( rax )
-        mov ModuleInfo.curr_file[LST*string_t],0
+        mov MODULE.curr_file[LST*string_t],0
     .endif
 
-    mov rax,ModuleInfo.curr_file[ERR*string_t]
+    mov rax,MODULE.curr_file[ERR*string_t]
     .if rax
 
         fclose( rax )
-        mov ModuleInfo.curr_file[ERR*string_t],0
-    .elseif ( ModuleInfo.curr_fname[ERR*string_t] )
+        mov MODULE.curr_file[ERR*string_t],0
+    .elseif ( MODULE.curr_fname[ERR*string_t] )
 
-        remove( ModuleInfo.curr_fname[ERR*string_t] )
+        remove( MODULE.curr_fname[ERR*string_t] )
     .endif
     ret
 
@@ -1223,7 +1216,7 @@ SetFilenames proc __ccall private uses rsi rdi rbx fn:string_t
 
    .new path[260]:byte
 
-    mov ModuleInfo.curr_fname[ASM*string_t],LclDup( fn )
+    mov MODULE.curr_fname[ASM*string_t],LclDup( fn )
 
     mov rsi,GetFNamePart( rax )
     mov edi,ASM+1
@@ -1301,12 +1294,12 @@ AssembleFini proc __ccall private
 
     SegmentFini()
     ResWordsFini()
-    mov ModuleInfo.PubQueue.head,0
+    mov MODULE.PubQueue.head,0
     InputFini()
     close_files()
     xor eax,eax
     mov ecx,NUM_FILE_TYPES
-    lea rdx,ModuleInfo.curr_fname
+    lea rdx,MODULE.curr_fname
     .repeat
         mov [rdx+rcx*string_t-string_t],rax
     .untilcxz
@@ -1323,11 +1316,11 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
     xor eax,eax
     mov MacroLocals,eax
-    mov ModuleInfo.StrStack,rax ; reset string label counter
+    mov MODULE.StrStack,rax ; reset string label counter
     lea rdi,ModuleInfo
     mov ecx,sizeof(ModuleInfo)
     rep stosb
-    mov ModuleInfo.radix,10
+    mov MODULE.radix,10
     dec eax
     mov prev_written,eax
 
@@ -1352,7 +1345,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
         .else
 
-            .if ( ModuleInfo.src_stack )
+            .if ( MODULE.src_stack )
 
                 ClearSrcStack()
             .endif
@@ -1373,7 +1366,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
         OnePass()
 
         xor eax,eax
-        .break .if ( ModuleInfo.error_count > eax )
+        .break .if ( MODULE.error_count > eax )
 
         ;
         ; calculate total size of segments
@@ -1390,7 +1383,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
         ; if there's no phase error and size of segments didn't change, we're done
         ;
         mov eax,curr_written
-        .break .if ( !ModuleInfo.PhaseError && eax == prev_written )
+        .break .if ( !MODULE.PhaseError && eax == prev_written )
 
         mov prev_written,eax
         .if ( Parse_Pass >= 199 )
@@ -1421,17 +1414,17 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
             .endif
         .endif
 
-        rewind( ModuleInfo.curr_file[ASM*string_t] )
+        rewind( MODULE.curr_file[ASM*string_t] )
         .if ( write_to_file && Options.output_format == OFORMAT_OMF )
             omf_set_filepos()
         .endif
 
         inc Parse_Pass
-        .if ( ModuleInfo.curr_file[LST*string_t] )
+        .if ( MODULE.curr_file[LST*string_t] )
 
             .if ( !UseSavedState )
 
-                rewind( ModuleInfo.curr_file[LST*string_t] )
+                rewind( MODULE.curr_file[LST*string_t] )
                 LstInit()
 
             .elseif ( Parse_Pass == PASS_2 && Options.first_pass_listing )
@@ -1451,7 +1444,7 @@ done:
 
     AssembleFini()
     xor eax,eax
-    .if ( eax == ModuleInfo.error_count )
+    .if ( eax == MODULE.error_count )
         inc eax
     .endif
     ret

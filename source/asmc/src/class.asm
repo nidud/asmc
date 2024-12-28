@@ -249,7 +249,7 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov langtype,0
     mov name,[rbx-asm_tok].string_ptr
     mov retval,NOT_ERROR
-    mov rsi,ModuleInfo.ComStack
+    mov rsi,MODULE.ComStack
 
     .if ( rsi )
 
@@ -294,16 +294,16 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .endif
 
-    inc ModuleInfo.class_label
+    inc MODULE.class_label
 
-    tsprintf( &T$, "T$%04X", ModuleInfo.class_label )
-    tsprintf( &P$, "P$%04X", ModuleInfo.class_label )
+    tsprintf( &T$, "T$%04X", MODULE.class_label )
+    tsprintf( &P$, "P$%04X", MODULE.class_label )
 
     tstrcat( tstrcpy( rdi, &T$ ), " typedef proto" )
 
     .if ( rsi && [rsi].com_item.cmd == T_DOT_COMDEF )
 
-        .if ( ModuleInfo.Ofssize == USE32 && ModuleInfo.langtype != LANG_STDCALL )
+        .if ( MODULE.Ofssize == USE32 && MODULE.langtype != LANG_STDCALL )
 
             tstrcat(rdi, " stdcall")
         .endif
@@ -346,9 +346,9 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
         .endf
 
-    .elseif ( IsCom && ModuleInfo.ComStack )
+    .elseif ( IsCom && MODULE.ComStack )
 
-        mov rax,ModuleInfo.ComStack
+        mov rax,MODULE.ComStack
         mov ecx,[rax].com_item.langtype
         .if ecx
 
@@ -359,7 +359,7 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
 
 
-    mov rax,ModuleInfo.ComStack
+    mov rax,MODULE.ComStack
     .if ( rax )
         .if ( [rax].com_item.method != T_DOT_STATIC )
 
@@ -370,13 +370,13 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( IsCom && !rax )
 
         tstrcat(rdi, " :ptr")
-        mov rax,ModuleInfo.ComStack
+        mov rax,MODULE.ComStack
         .if ( rax )
 
             .if ( [rax].com_item.cmd == T_DOT_CLASS )
 
                 tstrcat(rdi, " ")
-                mov rax,ModuleInfo.ComStack
+                mov rax,MODULE.ComStack
                 tstrcat(rdi, [rax].com_item.class)
             .endif
         .endif
@@ -396,10 +396,10 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
 done:
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
 
@@ -486,7 +486,7 @@ MacroInline proc __ccall uses rsi rdi rbx name:string_t, count:int_t, args:strin
 
     mov mac,0
     lea rdi,mac
-    mov rbx,ModuleInfo.tokenarray
+    mov rbx,MODULE.tokenarray
 
     .if ( [rbx+asm_tok].tokval == T_PROTO )
 
@@ -590,7 +590,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     .switch eax
       .case T_DOT_ENDS
-        mov rdi,ModuleInfo.ComStack
+        mov rdi,MODULE.ComStack
         mov rsi,CurrStruct
         .if !rdi
             .if rsi
@@ -622,7 +622,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
       .case T_DOT_OPERATOR
 
         mov this_ptr,NULL
-        mov rsi,ModuleInfo.ComStack
+        mov rsi,MODULE.ComStack
         mov rcx,CurrStruct
         .if ( !rcx || !rsi )
             .return asmerr( 1011 )
@@ -728,7 +728,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         tsprintf( &token, "%s_%s", class_ptr, &name )
 
-        .if ModuleInfo.list
+        .if MODULE.list
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
         .endif
         RunLineQueue()
@@ -760,7 +760,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
       .case T_DOT_CLASS
       .case T_DOT_TEMPLATE
 
-        .if ModuleInfo.ComStack
+        .if MODULE.ComStack
             .return asmerr( 1011 )
         .endif
         ;
@@ -776,7 +776,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             add rbx,5*asm_tok
         .endif
 
-        mov ModuleInfo.ComStack,LclAlloc( com_item )
+        mov MODULE.ComStack,LclAlloc( com_item )
         mov ecx,cmd
         xor edx,edx
         mov [rax].com_item.cmd,ecx
@@ -786,7 +786,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov [rax].com_item.sym,rdx
 
         mov rsi,NameSpace([rbx].string_ptr, NULL)
-        mov rcx,ModuleInfo.ComStack
+        mov rcx,MODULE.ComStack
         mov [rcx].com_item.class,rax
 
         ; v2.32.20 - removed typedefs
@@ -811,7 +811,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov edx,[rbx].tokval
         .if ( [rbx].token != T_FINAL && edx >= T_CCALL && edx <= T_ASMCALL )
 
-            mov rcx,ModuleInfo.ComStack
+            mov rcx,MODULE.ComStack
             mov [rcx].com_item.langtype,edx
             add rbx,asm_tok
         .endif
@@ -825,7 +825,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     .return asmerr( 2006, rbx )
                 .endif
 
-                mov rcx,ModuleInfo.ComStack
+                mov rcx,MODULE.ComStack
                 mov [rcx].com_item.publsym,rax
             .else
                 asmerr( 2006, [rbx+asm_tok].string_ptr )
@@ -834,9 +834,9 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .if ( cmd == T_DOT_CLASS )
 
-            movzx eax,ModuleInfo.Ofssize
+            movzx eax,MODULE.Ofssize
             shl eax,2
-            mov cl,ModuleInfo.fieldalign
+            mov cl,MODULE.fieldalign
             mov edx,1
             shl edx,cl
             .if ( eax && edx < eax )
@@ -848,7 +848,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             AddLineQueueX( "%s struct", rsi )
         .endif
 
-        mov rcx,ModuleInfo.ComStack
+        mov rcx,MODULE.ComStack
         mov rsi,[rcx].com_item.publsym
         .if rsi
             .if ( cmd != T_DOT_TEMPLATE )
@@ -862,14 +862,14 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .endsw
 
-    .if ModuleInfo.list
+    .if MODULE.list
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
-    .if ModuleInfo.line_queue.head
+    .if MODULE.line_queue.head
         RunLineQueue()
     .endif
     .if ( vector )
-        mov rcx,ModuleInfo.ComStack
+        mov rcx,MODULE.ComStack
         mov rsi,[rcx].com_item.sym
         .if ( rsi )
             movzx eax,vector
@@ -881,7 +881,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .endif
     .if close_directive
-        mov ModuleInfo.ComStack,0
+        mov MODULE.ComStack,0
     .endif
     mov eax,rc
     ret
@@ -890,14 +890,14 @@ ClassDirective endp
 
 ClassInit proc __ccall
 
-    mov ModuleInfo.class_label,0 ; init class label counter
+    mov MODULE.class_label,0 ; init class label counter
     ret
 
 ClassInit endp
 
 ClassCheckOpen proc __ccall
 
-    .if ModuleInfo.ComStack
+    .if MODULE.ComStack
 
         asmerr( 1010, ".comdef-.classdef-.ends" )
     .endif

@@ -16,10 +16,10 @@ include listing.inc
 
 ; v2.10: static variables moved to ModuleInfo
 
-define contextStack     <ModuleInfo.ContextStack>
-define contextFree      <ModuleInfo.ContextFree>
-define cntsavedContexts <ModuleInfo.cntSavedContexts>
-define savedContexts    <ModuleInfo.SavedContexts>
+define contextStack     <MODULE.ContextStack>
+define contextFree      <MODULE.ContextFree>
+define cntsavedContexts <MODULE.cntSavedContexts>
+define savedContexts    <MODULE.SavedContexts>
 
 .enum context_type {
     CONT_ASSUMES   = 0x01,
@@ -185,25 +185,25 @@ ContextDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     SetSegAssumeTable( &[rdi].ac.SegAssumeTable )
                     SetStdAssumeTable( &[rdi].ac.StdAssumeTable, &[rdi].ac.type_content )
                 .case CONT_RADIX
-                    mov ModuleInfo.radix,       [rdi].rc.radix
+                    mov MODULE.radix,       [rdi].rc.radix
                 .case CONT_ALIGNMENT
-                    mov ModuleInfo.fieldalign,  [rdi].alc.fieldalign
-                    mov ModuleInfo.procalign,   [rdi].alc.procalign
+                    mov MODULE.fieldalign,  [rdi].alc.fieldalign
+                    mov MODULE.procalign,   [rdi].alc.procalign
                 .case CONT_LISTING
-                    mov ModuleInfo.list_macro,  [rdi].lc.list_macro
-                    mov ModuleInfo.list,        [rdi].lc.list
-                    mov ModuleInfo.cref,        [rdi].lc.cref
-                    mov ModuleInfo.listif,      [rdi].lc.listif
-                    mov ModuleInfo.list_generated_code, [rdi].lc.list_generated_code
+                    mov MODULE.list_macro,  [rdi].lc.list_macro
+                    mov MODULE.list,        [rdi].lc.list
+                    mov MODULE.cref,        [rdi].lc.cref
+                    mov MODULE.listif,      [rdi].lc.listif
+                    mov MODULE.list_generated_code, [rdi].lc.list_generated_code
                 .case CONT_CPU
-                    mov ModuleInfo.cpu,         [rdi].cc.cpu
+                    mov MODULE.cpu,         [rdi].cc.cpu
 ifndef ASMC64
                     mov rcx,sym_Cpu
                     .if ( rcx )
                         mov [rcx].asym.value,   [rdi].cc.cpu
                     .endif
 endif
-                    mov ModuleInfo.curr_cpu,    [rdi].cc.curr_cpu
+                    mov MODULE.curr_cpu,    [rdi].cc.curr_cpu
                 .endsw
             .endf
             .if ( type )
@@ -240,19 +240,19 @@ endif
                         GetSegAssumeTable( &[rdi].ac.SegAssumeTable )
                         GetStdAssumeTable( &[rdi].ac.StdAssumeTable, &[rdi].ac.type_content )
                     .case CONT_RADIX
-                        mov [rdi].rc.radix,         ModuleInfo.radix
+                        mov [rdi].rc.radix,         MODULE.radix
                     .case CONT_ALIGNMENT
-                        mov [rdi].alc.fieldalign,   ModuleInfo.fieldalign
-                        mov [rdi].alc.procalign,    ModuleInfo.procalign
+                        mov [rdi].alc.fieldalign,   MODULE.fieldalign
+                        mov [rdi].alc.procalign,    MODULE.procalign
                     .case CONT_LISTING
-                        mov [rdi].lc.list_macro,    ModuleInfo.list_macro
-                        mov [rdi].lc.list,          ModuleInfo.list
-                        mov [rdi].lc.cref,          ModuleInfo.cref
-                        mov [rdi].lc.listif,        ModuleInfo.listif
-                        mov [rdi].lc.list_generated_code, ModuleInfo.list_generated_code
+                        mov [rdi].lc.list_macro,    MODULE.list_macro
+                        mov [rdi].lc.list,          MODULE.list
+                        mov [rdi].lc.cref,          MODULE.cref
+                        mov [rdi].lc.listif,        MODULE.listif
+                        mov [rdi].lc.list_generated_code, MODULE.list_generated_code
                     .case CONT_CPU
-                        mov [rdi].cc.cpu,           ModuleInfo.cpu
-                        mov [rdi].cc.curr_cpu,      ModuleInfo.curr_cpu
+                        mov [rdi].cc.cpu,           MODULE.cpu
+                        mov [rdi].cc.curr_cpu,      MODULE.curr_cpu
                     .endsw
                 .endif
             .endf

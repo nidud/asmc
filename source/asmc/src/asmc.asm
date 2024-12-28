@@ -521,6 +521,7 @@ endif
     mov _pgmptr,rdx
     mov [rcx],rax
 ifdef _WIN64
+    lea r14,ModuleInfo
     lea r15,_ltype
 endif
 
@@ -567,7 +568,7 @@ ifdef _EXEC_LINK
 ifdef __UNIX__
     .elseif ( rc == 1 && Options.output_format == OFORMAT_ELF && !Options.no_linking )
 else
-    .elseif ( rc == 1 && Options.output_format == OFORMAT_COFF && ModuleInfo._model == MODEL_FLAT && !Options.no_linking )
+    .elseif ( rc == 1 && Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT && !Options.no_linking )
 endif
 
 ifndef _AUTO_LINK

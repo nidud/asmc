@@ -49,7 +49,7 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, 
                         ;
                         ; v2.33.05 - assign member by offset
                         ;
-                        movzx eax,ModuleInfo.Ofssize
+                        movzx eax,MODULE.Ofssize
                         shl eax,2
                         AddLineQueueX( "mov [%r+%d*%d], %r", reg, i, eax, ebx )
                     .endif
@@ -114,11 +114,11 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     .if ( [rbx+asm_tok].token == T_COMMA && [rbx+asm_tok*3].token == T_CL_BRACKET )
         mov table,[rbx+asm_tok*2].string_ptr
     .endif
-    .if ModuleInfo.line_queue.head
+    .if MODULE.line_queue.head
         RunLineQueue()
     .endif
 
-    mov edi,ModuleInfo.accumulator
+    mov edi,MODULE.accumulator
     .if ( table )
         AddLineQueueX( "mov %r,malloc(%s)", &[rdi+T_ECX-T_EAX], name )
     .else

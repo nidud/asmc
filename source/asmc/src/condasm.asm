@@ -201,16 +201,16 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local directive:int_t
 
     .if ( CurrIfState != BLOCK_ACTIVE )
-        .if ( i || ModuleInfo.listif )
+        .if ( i || MODULE.listif )
             LstWriteSrcLine()
         .endif
         .return( NOT_ERROR )
     .endif
 
-    .if ( ModuleInfo.list == TRUE )
+    .if ( MODULE.list == TRUE )
         .if ( MacroLevel == 0 ||
-              ModuleInfo.list_macro == LM_LISTMACROALL ||
-              ModuleInfo.listif )
+              MODULE.list_macro == LM_LISTMACROALL ||
+              MODULE.listif )
             LstWriteSrcLine()
         .endif
     .endif
@@ -360,7 +360,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endc
 
     .case CC_PASS2 ; [ELSE]IF2
-        .if ( ModuleInfo.setif2 == FALSE )
+        .if ( MODULE.setif2 == FALSE )
             asmerr( 2061 )
             .endc
         .endif
@@ -419,7 +419,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             ; v2.09: special treatment of FLAT added
 
-            mov rax,ModuleInfo.flat_grp
+            mov rax,MODULE.flat_grp
             .if ( rax && [rax].asym.flags & S_ISDEFINED )
                 mov esi,BLOCK_ACTIVE
             .else
@@ -705,7 +705,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         .endc
     .case CC_PASS2  ; .ERR2
-        .if ( ModuleInfo.setif2 == FALSE )
+        .if ( MODULE.setif2 == FALSE )
             .return( asmerr( 2061 ) )
         .endif
     .case CC_PASS1  ; .ERR1

@@ -80,7 +80,7 @@ GetCodeClass endp
 AddToDgroup proc fastcall private segm:sim_seg, name:string_t
 
     ; no DGROUP for FLAT or COFF/ELF
-    .if ( ModuleInfo._model == MODEL_FLAT || Options.output_format == OFORMAT_COFF ||
+    .if ( MODULE._model == MODEL_FLAT || Options.output_format == OFORMAT_COFF ||
           Options.output_format == OFORMAT_ELF )
 
         .return
@@ -134,15 +134,15 @@ SetSimSeg proc __ccall private uses rsi rdi rbx segm:sim_seg, name:string_t
         mov pAlignSt,&calign
     .endif
 
-    .if ( ModuleInfo.defOfssize > USE16 )
+    .if ( MODULE.defOfssize > USE16 )
 
-        .if ( ModuleInfo._model == MODEL_FLAT )
+        .if ( MODULE._model == MODEL_FLAT )
             mov pUse,&T("FLAT")
         .else
             mov pUse,&T("USE32")
         .endif
 
-        mov eax,ModuleInfo.curr_cpu
+        mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
 
         .if ( Options.segmentalign != 4 )
@@ -179,11 +179,11 @@ SetSimSeg proc __ccall private uses rsi rdi rbx segm:sim_seg, name:string_t
         mov ecx,esi
         shl ebx,cl
 
-        .if ( ModuleInfo.simseg_init & bl )
+        .if ( MODULE.simseg_init & bl )
             mov pFmt,&T("%s %r")
         .else
 
-            or ModuleInfo.simseg_init,bl
+            or MODULE.simseg_init,bl
 
             ; v2.05: if segment exists already, use the current attribs.
             ; This allows a better mix of full and simplified segment
@@ -197,10 +197,10 @@ SetSimSeg proc __ccall private uses rsi rdi rbx segm:sim_seg, name:string_t
                 ; v2.12: check 'isdefined' member instead of 'lname_idx'
 
                 .if ( rax && [rax].asym.state == SYM_SEG && [rax].asym.flags & S_ISDEFINED )
-                    or ModuleInfo.simseg_defd,bl
+                    or MODULE.simseg_defd,bl
                 .endif
             .endif
-            .if ( ModuleInfo.simseg_defd & bl )
+            .if ( MODULE.simseg_defd & bl )
                 mov pFmt,&T("%s %r")
             .endif
         .endif
@@ -239,7 +239,7 @@ GetCodeGroupName proc fastcall private name:string_t
 
     ldr rax,name
 
-    .if ( ModuleInfo._model == MODEL_FLAT ||
+    .if ( MODULE._model == MODEL_FLAT ||
           Options.output_format == OFORMAT_COFF ||
           Options.output_format == OFORMAT_ELF )
 
@@ -264,7 +264,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .new init:char_t
     .new opndx:expr
 
-    .return( ERROR ) .if ( ModuleInfo._model == MODEL_NONE )
+    .return( ERROR ) .if ( MODULE._model == MODEL_NONE )
 
     LstWrite( LSTTYPE_DIRECTIVE, 0, NULL )
 
@@ -314,7 +314,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov ecx,esi
         mov edx,1
         shl edx,cl
-        and dl,ModuleInfo.simseg_init
+        and dl,MODULE.simseg_init
         mov init,dl
     .endif
 
@@ -323,7 +323,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         SetSimSeg( SIM_CODE, rdi )
 
-        .if ( ModuleInfo._model == MODEL_TINY )
+        .if ( MODULE._model == MODEL_TINY )
 
             ; v2.34.61 - v2.05: add the named code segment to DGROUP
 
@@ -337,7 +337,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     mov rax,[rax].dsym.seginfo
                     mov al,[rax].seg_info.Ofssize
 
-                    .if ( al == ModuleInfo.defOfssize )
+                    .if ( al == MODULE.defOfssize )
 
                         AddToDgroup( SIM_CODE, rdi )
                         mov rdi,GetCodeGroupName( rdi )
@@ -347,7 +347,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov rdi,GetCodeGroupName( rdi )
             .endif
 
-        .elseif ( ModuleInfo._model == MODEL_FLAT )
+        .elseif ( MODULE._model == MODEL_FLAT )
 
             lea rdi,T("FLAT")
 
@@ -380,7 +380,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         EndSimSeg( SIM_STACK )
         ; add stack to dgroup for some segmented models
         .if ( !init )
-            .if ( ModuleInfo.distance != STACK_FAR )
+            .if ( MODULE.distance != STACK_FAR )
                 AddToDgroup( SIM_STACK, NULL )
             .endif
         .endif
@@ -427,7 +427,7 @@ SetModelDefaultSegNames proc __ccall uses rsi
     .else
 
         mov eax,1
-        mov cl,ModuleInfo._model
+        mov cl,MODULE._model
         shl eax,cl
 
         .if ( eax & SIZE_CODEPTR )
@@ -435,10 +435,10 @@ SetModelDefaultSegNames proc __ccall uses rsi
             ; for some models, the code segment contains the module name
 
             mov esi,tstrlen( SegmNamesDef[SIM_CODE*size_t] )
-            add esi,tstrlen( &ModuleInfo.name )
+            add esi,tstrlen( &MODULE.name )
             inc esi
             mov SegmNames[SIM_CODE*size_t],LclAlloc( esi )
-            tstrcpy( SegmNames[SIM_CODE*size_t], &ModuleInfo.name )
+            tstrcpy( SegmNames[SIM_CODE*size_t], &MODULE.name )
             tstrcat( SegmNames[SIM_CODE*size_t], SegmNamesDef[SIM_CODE*size_t] )
         .endif
     .endif
@@ -461,7 +461,7 @@ ModelSimSegmInit proc __ccall model:int_t
 
   local buffer[20]:char_t
 
-    mov ModuleInfo.simseg_init,0; ; v2.09: reset init flags
+    mov MODULE.simseg_init,0; ; v2.09: reset init flags
 
     ; create default code segment (_TEXT)
     SetSimSeg( SIM_CODE, NULL )

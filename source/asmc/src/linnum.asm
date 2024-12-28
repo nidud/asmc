@@ -114,8 +114,8 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
 
             SetSymSegOfs( rsi )
 
-            mov [rsi].asym.Ofssize,ModuleInfo.Ofssize
-            mov [rsi].asym.langtype,ModuleInfo.langtype
+            mov [rsi].asym.Ofssize,MODULE.Ofssize
+            mov [rsi].asym.langtype,MODULE.langtype
 
             .if ( write_to_file == TRUE )
 

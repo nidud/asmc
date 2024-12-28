@@ -38,7 +38,7 @@ externdef NoLineStore:int_t
     head        ptr equ_item ?  ; the list of modified assembly time variables
     tail        ptr equ_item ?
     state       InputState <>
-    modinfo     uchar_t sizeof(module_info) - sizeof(module_vars) dup(?)
+    modinfo     uchar_t module_info.tokenarray dup(?)
    .ends
 
 ; source lines start to be "stored" when one of the following is detected:

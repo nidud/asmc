@@ -56,7 +56,7 @@ SaveState proc __ccall private uses rsi rdi
     mov UseSavedState,1
     mov modstate.init,1
     mov ecx,sizeof(modstate.modinfo)
-    lea rsi,ModuleInfo.proc_prologue
+    lea rsi,ModuleInfo
     lea rdi,modstate.modinfo
     rep movsb
     GetInputState(&modstate.state)
@@ -75,7 +75,7 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t, flags:int_t, lst_positio
 
     ; don't store generated lines!
 
-    .if ( ModuleInfo.GeneratedCode == eax )
+    .if ( MODULE.GeneratedCode == eax )
 
         .if StoreState == eax   ; line store already started?
             SaveState()
@@ -214,17 +214,17 @@ RestoreState proc
 
         ; v2.23: save L"Unicode" flag
 
-        test ModuleInfo.xflag,OPT_LSTRING
+        test MODULE.xflag,OPT_LSTRING
         mov rax,rsi
         mov rdx,rdi
         mov ecx,sizeof(modstate.modinfo)
         lea rsi,modstate.modinfo
-        lea rdi,ModuleInfo.proc_prologue
+        lea rdi,ModuleInfo
         rep movsb
         mov rdi,rdx
         mov rsi,rax
         .ifnz
-            or ModuleInfo.xflag,OPT_LSTRING
+            or MODULE.xflag,OPT_LSTRING
         .endif
         SetInputState(&modstate.state)
         SetOfssize()

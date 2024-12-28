@@ -50,6 +50,8 @@ endif
 endif
 
 ifdef _WIN64
+define MODULE <[r14]>
+assume r14:ptr module_info
 ifdef __UNIX__
 define _LIN64
 endif
@@ -66,6 +68,7 @@ define .movsd <movsq>
     mov mem,reg
     endm
 else
+define MODULE <ModuleInfo>
 define .lodsd <lodsd>
 define .stosd <stosd>
 define .movsd <movsd>
@@ -603,29 +606,121 @@ define PE_DLL               0x04
     link_mt                 db ?    ; -MT = 1, float used |= 2, argv used |= 4
    .ends
 
-.template module_vars
-    error_count             uint_t ?        ; total of errors so far
-    warning_count           uint_t ?        ; total of warnings so far
-    num_segs                uint_t ?        ; number of segments in module
+
+.template module_info
+    _model                  db ?    ; memory model
+    Ofssize                 db ?    ; current offset size (USE16,USE32,USE64)
+    defOfssize              db ?    ; default segment offset size (16,32 [,64]-bit)
+    wordsize                db ?    ; current word size (2,4,8)
+    fctype                  db ?    ; fastcall type
+    radix                   db ?    ; current .RADIX setting
+    langtype                db ?    ; language
+    fieldalign              db ?    ; -Zp, OPTION:FIELDALIGN setting
+    sub_format              db ?    ; sub-output format
+    list                    db ?    ; .list/.nolist
+    line_flags              db ?    ; current line has been printed
+    xflag                   db ?    ; extended option
+    case_sensitive          db ?    ; option casemap
+    offsettype              db ?    ; OFFSET:GROUP|FLAT|SEGMENT
+    inside_comment          db ?    ; v2.10: moved from tokenize.c
+    segorder                db ?    ; .alpha, .seq, .dosseg
+    cpu                     dd ?    ; cpu setting (value @cpu symbol);
+    curr_cpu                dd ?    ; cpu setting (OW stylex);
+    srcfile                 dd ?    ; main source file - is an index for FNames[]
+    hll_label               dd ?    ; hll directive label counter
+    distance                db ?    ; stack distance
+    procalign               db ?    ; current OPTION:PROCALIGN setting
+    procs_private           db ?    ; option proc:private
+    procs_export            db ?    ; option proc:export
+    convert_uppercase       db ?    ; option casemap
+    ostype                  db ?    ; operating system
+    dotname                 db ?    ; option dotname
+    ljmp                    db ?    ; option ljmp
+    m510                    db ?    ; option m510
+    scoped                  db ?    ; option scoped
+    oldstructs              db ?    ; option oldstructs
+    emulator                db ?    ; option emulator
+    setif2                  db ?    ; option setif2
+    cref                    db ?    ; .cref/.nocref
+    listif                  db ?    ; .listif/.nolistif
+    list_generated_code     db ?    ; .listall, -Sa, -Sg
+    StartupDirectiveFound   db ?
+    EndDirFound             db ?
+    frame_auto              db ?    ; win64 only
+    NoSignExtend            db ?    ; option nosignextend
+    simseg_init             db ?    ; simplified segm dir flags
+    simseg_defd             db ?            ; v2.09: flag if seg was defined before simseg dir
+    PhaseError              db ?            ; phase error flag
+    CommentDataInCode       db ?            ; OMF: emit coment records about data in code segs
+    prologuemode            db ?            ; current PEM_ enum value for OPTION PROLOGUE
+    epiloguemode            db ?            ; current PEM_ enum value for OPTION EPILOGUE
+    invoke_exprparm         db ?            ; flag: forward refs for INVOKE params ok?
+    cv_opt                  db ?            ; option codeview
+    loopalign               db ?            ; OPTION:LOOPALIGN setting
+    casealign               db ?            ; OPTION:CASEALIGN setting
+    masm_compat_gencode     db ?            ; -Zg option
+    floatformat             db ?            ; option floatformat:<e|f|g>
+    flt_size                db ?            ; option float:<4|8>
+    pic                     db ?            ; -fpic | -fno-pic
+    endbr                   db ?            ; -endbr
+    dotnamex                db ?            ; -dotnamex : option dotnamex:<on:off>
+    sysvregs                db ?            ; -sysvregs : skip RDI and RSI in USES
+    avxencoding             db ?            ; option avxencoding:<>
+    unused1                 db ?
+    unused2                 db ?
+    union
+     struct
+      elf_osabi             db ?    ; for ELF
+      win64_flags           db ?    ; for WIN64 + PE(32+)
+     ends
+     struct
+      mz_ofs_fixups         dw ?    ; for MZ
+      mz_alignment          dw ?
+      mz_heapmin            dw ?
+      mz_heapmax            dw ?
+     ends
+    ends
+    currseg                 ptr dsym ?      ; currently active segment - dsym *
+    flat_grp                ptr dsym ?      ; magic FLAT group - dsym *
+    pCodeBuff               ptr byte ?
+    currcomment             string_t ?      ; current comment
+    accumulator             int_t ?         ; AX/EAX/RAX
+    GeneratedCode           dd ?            ; nesting level generated code
+    token_count             int_t ?         ; number of tokens in curr line
+    basereg                 dd 3 dup(?)     ; stack base register (16-, 32-, 64-bit
+    name                    db 260 dup(?)   ; name of module
+    assert_proc             string_t ?      ; .assert:<proc/macro name>
+    proc_prologue           string_t ?      ; prologue macro if PEM_MACRO
+    proc_epilogue           string_t ?      ; epilogue macro if PEM_MACRO
+    CurrDll                 ptr dll_desc ?  ; OPTION DLLIMPORT dll
+    fmtopt                  ptr format_options ? ; v2.07: added
+    codepage                dd ?
+    class_label             dd ?
+    floatdigits             int_t ?         ; option floatdigits:<value>
+    list_macro              dd ?            ; current .LISTMACRO setting
+;--------
+    tokenarray              ptr asm_tok ?   ; start token buffer
+    currsource              string_t ?      ; current source line
+    stringbufferend         string_t ?      ; start free space in string buffer
+    curr_file               LPFILE NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST
+    curr_fname              string_t NUM_FILE_TYPES dup(?)
+    FNames                  array_t ?       ; array of input files
+    cnt_fnames              dd ?            ; items in FNames array
+    maxlinelen              dd ?
     PubQueue                qdesc <>        ; PUBLIC items
     LnameQueue              qdesc <>        ; LNAME items (segments, groups and classes)
     SafeSEHQueue            qdesc <>        ; list of safeseh handlers
     LibQueue                qdesc <>        ; includelibs
     LinkQueue               qdesc <>        ; .pragma comment(linker,"/..")
     DllQueue                ptr dll_desc ?  ; dlls of OPTION DLLIMPORT
-    imp_prefix              string_t ?              ;
-    curr_file               LPFILE NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST
-    curr_fname              string_t NUM_FILE_TYPES dup(?)
-    FNames                  array_t ?       ; array of input files
-    cnt_fnames              uint_t ?        ; items in FNames array
-    IncludePath             string_t ?              ;
+    imp_prefix              string_t ?      ;
+    IncludePath             string_t ?      ;
     line_queue              qdesc <>        ; line queue
     src_stack               ptr src_item ?  ; source item (files & macros) stack
     union
      start_fixup            ptr fixup ?     ; OMF only
      start_label            ptr asym ?      ; non-OMF only: start label
     ends
-    start_displ             uint_t ?        ; OMF only, optional displ for start label
     StrStack                ptr str_item ?  ; v2.20 String stack
     HllStack                ptr hll_item ?  ; for .WHILE, .IF, .REPEAT
     HllFree                 ptr hll_item ?  ; v2.06: stack of free <struct hll>-items
@@ -644,113 +739,22 @@ define PE_DLL               0x04
     EndDirHook              proc local
     Pass1Checks             proc local
     pe_flags                uint_t ?
-    maxlinelen              uint_t ?
-    currsource              string_t ?      ; current source line
-    tokenarray              ptr asm_tok ?   ; start token buffer
-    stringbufferend         string_t ?      ; start free space in string buffer
+    error_count             uint_t ?        ; total of errors so far
+    warning_count           uint_t ?        ; total of warnings so far
+    num_segs                uint_t ?        ; number of segments in module
+    start_displ             uint_t ?        ; OMF only, optional displ for start label
    .ends
 
-.template module_info : public module_vars
-    proc_prologue           string_t ?      ; prologue macro if PEM_MACRO
-    proc_epilogue           string_t ?      ; epilogue macro if PEM_MACRO
-    CurrDll                 ptr dll_desc ?  ; OPTION DLLIMPORT dll
-    fmtopt                  ptr format_options ? ; v2.07: added
-    hll_label               dd ?    ; hll directive label counter
-    distance                db ?    ; stack distance
-    _model                  db ?    ; memory model
-    langtype                db ?    ; language
-    ostype                  db ?    ; operating system
-    sub_format              db ?    ; sub-output format
-    fctype                  db ?    ; fastcall type
-    segorder                db ?    ; .alpha, .seq, .dosseg
-    offsettype              db ?    ; OFFSET:GROUP|FLAT|SEGMENT
-    cpu                     dd ?    ; cpu setting (value @cpu symbol);
-    curr_cpu                dd ?    ; cpu setting (OW stylex);
-    radix                   db ?    ; current .RADIX setting
-    fieldalign              db ?    ; -Zp, OPTION:FIELDALIGN setting
-    line_flags              db ?    ; current line has been printed
-    procalign               db ?    ; current OPTION:PROCALIGN setting
-    list_macro              dd ?    ; current .LISTMACRO setting
-    Ofssize                 db ?    ; current offset size (USE16,USE32,USE64)
-    defOfssize              db ?    ; default segment offset size (16,32 [,64]-bit)
-    wordsize                db ?    ; current word size (2,4,8)
-    inside_comment          db ?    ; v2.10: moved from tokenize.c
-    case_sensitive          db ?    ; option casemap
-    convert_uppercase       db ?    ; option casemap
-    procs_private           db ?    ; option proc:private
-    procs_export            db ?    ; option proc:export
-    dotname                 db ?    ; option dotname
-    ljmp                    db ?    ; option ljmp
-    m510                    db ?    ; option m510
-    scoped                  db ?    ; option scoped
-    oldstructs              db ?    ; option oldstructs
-    emulator                db ?    ; option emulator
-    setif2                  db ?    ; option setif2
-    list                    db ?    ; .list/.nolist
-    cref                    db ?    ; .cref/.nocref
-    listif                  db ?    ; .listif/.nolistif
-    list_generated_code     db ?    ; .listall, -Sa, -Sg
-    StartupDirectiveFound   db ?
-    EndDirFound             db ?
-    frame_auto              db ?    ; win64 only
-    NoSignExtend            db ?    ; option nosignextend
-    simseg_init             db ?    ; simplified segm dir flags
-    union
-     struct
-      elf_osabi             db ?    ; for ELF
-      win64_flags           db ?    ; for WIN64 + PE(32+)
-     ends
-     struct
-      mz_ofs_fixups         dw ?    ; for MZ
-      mz_alignment          dw ?
-      mz_heapmin            dw ?
-      mz_heapmax            dw ?
-     ends
-    ends
-    simseg_defd             db ?            ; v2.09: flag if seg was defined before simseg dir
-    PhaseError              db ?            ; phase error flag
-    CommentDataInCode       db ?            ; OMF: emit coment records about data in code segs
-    prologuemode            db ?            ; current PEM_ enum value for OPTION PROLOGUE
-    epiloguemode            db ?            ; current PEM_ enum value for OPTION EPILOGUE
-    invoke_exprparm         db ?            ; flag: forward refs for INVOKE params ok?
-    cv_opt                  db ?            ; option codeview
-    srcfile                 uint_t ?        ; main source file - is an index for FNames[]
-    currseg                 ptr dsym ?      ; currently active segment - dsym *
-    flat_grp                ptr dsym ?      ; magic FLAT group - dsym *
-    pCodeBuff               ptr byte ?
-    GeneratedCode           uint_t ?        ; nesting level generated code
-    currcomment             string_t ?      ; current comment
-    token_count             int_t ?         ; number of tokens in curr line
-    basereg                 uint_t 3 dup(?) ; stack base register (16-, 32-, 64-bit
-    name                    db 260 dup(?)   ; name of module
-    xflag                   db ?            ; extended option
-    loopalign               db ?            ; OPTION:LOOPALIGN setting
-    casealign               db ?            ; OPTION:CASEALIGN setting
-    masm_compat_gencode     db ?            ; -Zg option
-    assert_proc             string_t ?      ; .assert:<proc/macro name>
-    accumulator             int_t ?         ; AX/EAX/RAX
-    codepage                uint_t ?
-    class_label             uint_t ?
-    floatdigits             int_t ?         ; option floatdigits:<value>
-    floatformat             db ?            ; option floatformat:<e|f|g>
-    flt_size                db ?            ; option float:<4|8>
-    pic                     db ?            ; -fpic | -fno-pic
-    endbr                   db ?            ; -endbr
-    dotnamex                db ?            ; -dotnamex : option dotnamex:<on:off>
-    sysvregs                db ?            ; -sysvregs : skip RDI and RSI in USES
-    avxencoding             db ?            ; option avxencoding:<>
-   .ends
-
-TokenCount              equ <ModuleInfo.token_count>
-TokenArray              equ <ModuleInfo.tokenarray>
-CurrSource              equ <ModuleInfo.currsource>
-CurrWordSize            equ <ModuleInfo.wordsize>
-CurrFile                equ <ModuleInfo.curr_file>
-CurrSeg                 equ <ModuleInfo.currseg>
-CurrFName               equ <ModuleInfo.curr_fname>
-StringBufferEnd         equ <ModuleInfo.stringbufferend>
-CurrComment             equ <ModuleInfo.currcomment>
-MaxLineLength           equ <ModuleInfo.maxlinelen>
+TokenCount              equ <MODULE.token_count>
+TokenArray              equ <MODULE.tokenarray>
+CurrSource              equ <MODULE.currsource>
+CurrWordSize            equ <MODULE.wordsize>
+CurrFile                equ <MODULE.curr_file>
+CurrSeg                 equ <MODULE.currseg>
+CurrFName               equ <MODULE.curr_fname>
+StringBufferEnd         equ <MODULE.stringbufferend>
+CurrComment             equ <MODULE.currcomment>
+MaxLineLength           equ <MODULE.maxlinelen>
 
 externdef               StringBuffer    : string_t
 externdef               CommentBuffer   : string_t

@@ -118,7 +118,7 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr as
     imul ebx,[rsi],asm_tok
     add rbx,rdx
     lea rdi,buffer
-    mov reg,ModuleInfo.accumulator
+    mov reg,MODULE.accumulator
     mov op,T_MOV
 
     .ifd ( ExpandHllProc( rdi, [rsi], tokenarray ) != ERROR )
@@ -376,12 +376,12 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .return asmerr( 2012 )
     .endif
 
-    mov rsi,ModuleInfo.RetStack
+    mov rsi,MODULE.RetStack
 
     .if ( !rsi )
 
         mov rsi,LclAlloc(hll_item)
-        mov ModuleInfo.RetStack,rax
+        mov MODULE.RetStack,rax
         xor eax,eax
         mov [rsi].next,rax
         mov [rsi].labels[LSTART*4],eax
@@ -425,10 +425,10 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         AddLineQueueX( "jmp %s", rdi )
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
     .return( NOT_ERROR )

@@ -67,12 +67,12 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     mov [rdx],rbx
 
     xor eax,eax
-    .if ( ModuleInfo.xflag & OPT_WSTRING )
+    .if ( MODULE.xflag & OPT_WSTRING )
         mov eax,1
     .endif
 
     .if ( W[rsi] == '"L' )
-        or  ModuleInfo.xflag,OPT_LSTRING
+        or  MODULE.xflag,OPT_LSTRING
         mov eax,1
         add rsi,1
     .endif
@@ -316,7 +316,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     sub rdx,rax
     mov rbx,rdx
 
-    .for ( edi = 0, rsi = ModuleInfo.StrStack : rsi : edi++, rsi = [rsi].next )
+    .for ( edi = 0, rsi = MODULE.StrStack : rsi : edi++, rsi = [rsi].next )
 
         mov cl,[rsi].unicode
         mov eax,[rsi].count
@@ -361,9 +361,9 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     mov cl,Unicode
     mov [rax].str_item.unicode,cl
     mov [rax].str_item.flags,0
-    mov rcx,ModuleInfo.StrStack
+    mov rcx,MODULE.StrStack
     mov [rax].str_item.next,rcx
-    mov ModuleInfo.StrStack,rax
+    mov MODULE.StrStack,rax
     lea rcx,[rax+str_item]
     mov [rax].str_item.string,rcx
     tmemcpy(rcx, sbuf, &[rbx+1])
@@ -377,19 +377,19 @@ ParseCString endp
 
 GetCurrentSegment proc __ccall private buffer:string_t
 
-    mov rax,ModuleInfo.currseg
+    mov rax,MODULE.currseg
     .if ( rax )
         mov rdx,[rax].asym.name
         tstrcat( tstrcpy( buffer, rdx ), " segment" )
     .else
         tstrcpy( buffer, ".code" )
     .endif
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
-        and ModuleInfo.line_flags,NOT LOF_LISTED
+        and MODULE.line_flags,NOT LOF_LISTED
     .endif
     ret
 
@@ -501,7 +501,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         xor eax,eax
     .endif
     mov equal,eax
-    mov lineflags,ModuleInfo.line_flags
+    mov lineflags,MODULE.line_flags
 
     .while ( [rbx].asm_tok.token != T_FINAL )
 
@@ -686,13 +686,13 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .if ( equal == 0 )
         StoreLine( CurrSource, list_pos, 0 )
     .else
-        mov ebx,ModuleInfo.GeneratedCode
-        mov ModuleInfo.GeneratedCode,0
+        mov ebx,MODULE.GeneratedCode
+        mov MODULE.GeneratedCode,0
         StoreLine( b_line, list_pos, 0 )
-        mov ModuleInfo.GeneratedCode,ebx
+        mov MODULE.GeneratedCode,ebx
         mov rcx,CurrSource
     .endif
-    mov ModuleInfo.line_flags,lineflags
+    mov MODULE.line_flags,lineflags
     free_line(buffer)
    .return( rc )
 
@@ -782,7 +782,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
         ; allow @CStr(-1) --> last index + 1
         ;
         mov ecx,opnd.value
-        mov rdx,ModuleInfo.StrStack
+        mov rdx,MODULE.StrStack
 
         .if ( [rbx-asm_tok].token == '-' )
             xor eax,eax
@@ -832,7 +832,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
 
             mov esi,eax
             .if edi
-                ;.if ( ModuleInfo.Ofssize != USE64 )
+                ;.if ( MODULE.Ofssize != USE64 )
                 ;    tstrcpy( buffer, "offset " )
                 ;.endif
                 tstrcat( buffer, dlabel )
@@ -869,14 +869,14 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
 
                 ; v2.24 skip .data/.code if already in .data segment
 
-                .if ( ModuleInfo.line_queue.head )
+                .if ( MODULE.line_queue.head )
                     RunLineQueue()
                 .endif
 
                 assume rbx:ptr asym
 
                 xor esi,esi
-                mov rbx,ModuleInfo.currseg
+                mov rbx,MODULE.currseg
                 .if rbx
                     .ifd tstricmp( [rbx].name, "_DATA" )
                         inc esi
@@ -956,7 +956,7 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
         .endc
     .endsw
 
-    .for ( edi = 0, rsi = ModuleInfo.FltStack : rsi : edi++, rsi = [rsi].next )
+    .for ( edi = 0, rsi = MODULE.FltStack : rsi : edi++, rsi = [rsi].next )
 
         .if ( size == [rsi].count )
 
@@ -986,9 +986,9 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
         mov [rax].flt_item.index,edi
         mov ecx,size
         mov [rax].flt_item.count,ecx
-        mov rcx,ModuleInfo.FltStack
+        mov rcx,MODULE.FltStack
         mov [rax].flt_item.next,rcx
-        mov ModuleInfo.FltStack,rax
+        mov MODULE.FltStack,rax
         lea rcx,[rax+flt_item]
         mov [rax].flt_item.string,rcx
         tmemcpy(rcx, &opc, 16)
@@ -1141,7 +1141,7 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endf
     mov B[rdi],0
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_TMACRO, 0, sym )
     .endif
     .return( NOT_ERROR )
@@ -1740,10 +1740,10 @@ InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
             sub rax,rbx
             lea rcx,[rax+1]
 ifdef _WIN64
-            myltoa( rcx, buffer, ModuleInfo.radix, FALSE, TRUE )
+            myltoa( rcx, buffer, MODULE.radix, FALSE, TRUE )
 else
             xor edx,edx
-            myltoa( edx::ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
+            myltoa( edx::ecx, buffer, MODULE.radix, FALSE, TRUE )
 endif
         .endif
     .endif
@@ -1766,10 +1766,10 @@ SizeStrFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenar
         mov ecx,tstrlen( rcx )
 
 ifdef _WIN64
-        myltoa( rcx, buffer, ModuleInfo.radix, FALSE, TRUE )
+        myltoa( rcx, buffer, MODULE.radix, FALSE, TRUE )
 else
         xor edx,edx
-        myltoa( edx::ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
+        myltoa( edx::ecx, buffer, MODULE.radix, FALSE, TRUE )
 endif
     .else
 

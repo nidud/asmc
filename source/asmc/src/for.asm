@@ -229,7 +229,7 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
                 mov ax,[rax]
                 .if ( dh == T_NUM && ax == '0' &&
                       ( ( [rbx].tokval >= T_AL && [rbx].tokval <= T_EDI ) ||
-                      ( ModuleInfo.Ofssize == USE64 && [rbx].tokval >= T_R8B && [rbx].tokval <= T_R15 ) ) )
+                      ( MODULE.Ofssize == USE64 && [rbx].tokval >= T_R8B && [rbx].tokval <= T_R15 ) ) )
                     Assignopc( rdi, "xor", [rbx].string_ptr, [rbx].string_ptr )
                 .else
                     Assignopc( rdi, "mov", [rbx].tokpos, rcx )
@@ -367,16 +367,16 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .if ( eax == T_DOT_ENDF )
 
-        mov rsi,ModuleInfo.HllStack
+        mov rsi,MODULE.HllStack
         .if !rsi
             .return asmerr( 1011 )
         .endif
 
         mov rdx,[rsi].next
-        mov rcx,ModuleInfo.HllFree
-        mov ModuleInfo.HllStack,rdx
+        mov rcx,MODULE.HllFree
+        mov MODULE.HllStack,rdx
         mov [rsi].next,rcx
-        mov ModuleInfo.HllFree,rsi
+        mov MODULE.HllFree,rsi
 
         .if ( [rsi].cmd != HLL_FOR )
             .return asmerr( 1011 )
@@ -409,7 +409,7 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .else
 
-        mov rsi,ModuleInfo.HllFree
+        mov rsi,MODULE.HllFree
         .if !rsi
             mov rsi,LclAlloc(hll_item)
         .endif
@@ -502,19 +502,19 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov rdi,q
         .endw
 
-        .if ( rsi == ModuleInfo.HllFree )
+        .if ( rsi == MODULE.HllFree )
             mov rax,[rsi].next
-            mov ModuleInfo.HllFree,rax
+            mov MODULE.HllFree,rax
         .endif
-        mov rax,ModuleInfo.HllStack
+        mov rax,MODULE.HllStack
         mov [rsi].next,rax
-        mov ModuleInfo.HllStack,rsi
+        mov MODULE.HllStack,rsi
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
     .return( rc )

@@ -527,7 +527,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .if CurrStruct
             .return fnasmerr( 2034 )
         .endif
-        .if ModuleInfo.currseg == NULL
+        .if MODULE.currseg == NULL
             .return asmerr( 2034 )
         .endif
         mov rbx,thissym
@@ -612,7 +612,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 imul eax,[rax].asm_tok.tokval,special_item
                 lea rcx,SpecialTable
                 .if ( ( [rcx+rax].special_item.value & OP_RGT8 ) && [rsi].mem_type == MT_EMPTY &&
-                      byte ptr [rsi].value == ModuleInfo.wordsize )
+                      byte ptr [rsi].value == MODULE.wordsize )
                     mov rax,[rdi].base_reg
                     mov rbx,GetStdAssumeEx([rax].asm_tok.bytval)
                 .else
@@ -895,7 +895,7 @@ get_precedence proc fastcall item:token_t
         ;             mov ax,-5[bx]
 
         mov eax,1
-        .if ( ModuleInfo.m510 )
+        .if ( MODULE.m510 )
             mov eax,9
         .endif
         .return
@@ -934,7 +934,7 @@ GetTypeSize proc fastcall mem_type:byte, ofssize:int_t
         .return ecx
     .endif
     .if ( edx == USE_EMPTY )
-        movzx edx,ModuleInfo.Ofssize
+        movzx edx,MODULE.Ofssize
     .endif
     .if ( cl == MT_NEAR )
         mov eax,2
@@ -1069,7 +1069,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
         imul eax,[rbx].tokval,special_item
         lea rcx,SpecialTable
         movzx eax,[rcx+rax].special_item.cpu
-        mov ecx,ModuleInfo.curr_cpu
+        mov ecx,MODULE.curr_cpu
         mov edx,ecx
         and ecx,P_EXT_MASK
         and edx,P_CPU_MASK
@@ -1215,11 +1215,11 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                     .if ( [rax].asym.state == SYM_TYPE )
 
                         mov rcx,[rdi].type
-                        .if !( rax == rcx || ( rcx && !( [rcx].asym.flags & S_ISDEFINED ) ) || ModuleInfo.oldstructs )
+                        .if !( rax == rcx || ( rcx && !( [rcx].asym.flags & S_ISDEFINED ) ) || MODULE.oldstructs )
                             xor eax,eax
                         .endif
 
-                    .elseif !( ModuleInfo.oldstructs && ( [rax].asym.state == SYM_STRUCT_FIELD ||
+                    .elseif !( MODULE.oldstructs && ( [rax].asym.state == SYM_STRUCT_FIELD ||
                               [rax].asym.state == SYM_EXTERNAL || [rax].asym.state == SYM_INTERNAL ) )
                         xor eax,eax
                     .endif
@@ -1484,12 +1484,12 @@ endif
         .if ( [rbx].tokval == T_FLAT )
             .if !( flags & EXPF_NOUNDEF )
 
-                mov eax,ModuleInfo.curr_cpu
+                mov eax,MODULE.curr_cpu
                 and eax,P_CPU_MASK
                 .return fnasmerr(2085) .if eax < P_386
                 DefineFlatGroup()
             .endif
-            mov [rdi].sym,ModuleInfo.flat_grp
+            mov [rdi].sym,MODULE.flat_grp
             .return(ERROR) .if !eax
             mov [rdi].label_tok,rbx
             mov [rdi].kind,EXPR_ADDR
@@ -1986,7 +1986,7 @@ dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
 
     .if ( [rsi].kind == EXPR_ADDR && [rdi].kind == EXPR_ADDR )
 
-        .if ( [rdi].mbr == NULL && !ModuleInfo.oldstructs )
+        .if ( [rdi].mbr == NULL && !MODULE.oldstructs )
             .return( struct_field_error( rsi ) )
         .endif
         .ifd ( index_connect( rsi, rdi ) == ERROR )
@@ -2027,7 +2027,7 @@ dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             mov [rsi].hvalue,0
         .endif
 
-        .if ( ( !ModuleInfo.oldstructs ) && ( !( [rsi].flags & E_IS_TYPE ) && [rsi].mbr == NULL ) )
+        .if ( ( !MODULE.oldstructs ) && ( !( [rsi].flags & E_IS_TYPE ) && [rsi].mbr == NULL ) )
             .return( struct_field_error( rsi ) )
         .endif
 
@@ -2048,7 +2048,7 @@ dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
 
     .elseif ( [rsi].kind == EXPR_ADDR && [rdi].kind == EXPR_CONST )
 
-        .if ( !ModuleInfo.oldstructs && ( [rdi].type == NULL || !( [rdi].flags & E_IS_TYPE ) ) &&
+        .if ( !MODULE.oldstructs && ( [rdi].type == NULL || !( [rdi].flags & E_IS_TYPE ) ) &&
               [rdi].mbr == NULL )
             .return( struct_field_error( rsi ) )
         .endif
@@ -2093,7 +2093,7 @@ endif
 
     .elseif ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST )
 
-        .if ( [rdi].mbr == NULL && !ModuleInfo.oldstructs )
+        .if ( [rdi].mbr == NULL && !MODULE.oldstructs )
             .return( struct_field_error( rsi ) )
         .endif
 
@@ -2479,7 +2479,7 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
     .if ( ( [rdi].h64_l || [rdi].h64_h ) && [rdi].mem_type != MT_REAL16 )
 
         .if ( !( [rbx].token == T_UNARY_OPERATOR && [rdi].kind == EXPR_CONST &&
-              ModuleInfo.Ofssize == USE64 ) )
+              MODULE.Ofssize == USE64 ) )
 
             .if ( !( [rdi].flags & E_IS_OPEATTR || ( ( [rbx].token == '+' ||
                   [rbx].token == '-' ) && [rbx].specval == 0 ) ) )
@@ -2660,7 +2660,7 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
                     and eax,SFR_SIZMSK
                     .ifz
                         mov eax,4 ; CRx, DRx, TRx remaining
-                        .if ( ModuleInfo.Ofssize == USE64 )
+                        .if ( MODULE.Ofssize == USE64 )
                             mov eax,8
                         .endif
                     .endif
@@ -2922,11 +2922,11 @@ endif
             mov eax,64
             .if ( [rsi].kind == EXPR_FLOAT )
                 mov eax,128
-            .elseif ( ModuleInfo.Ofssize == USE32 )
+            .elseif ( MODULE.Ofssize == USE32 )
                 mov eax,32
             .endif
             __shlo( rsi, [rdi].value, eax )
-            .if ( ModuleInfo.m510 )
+            .if ( MODULE.m510 )
                 xor eax,eax
                 mov [rsi].hvalue,eax
                 .z8 [rsi].hlvalue,rax
@@ -2942,7 +2942,7 @@ endif
             mov eax,64
             .if ( [rsi].kind == EXPR_FLOAT )
                 mov eax,128
-            .elseif ( ModuleInfo.Ofssize == USE32 )
+            .elseif ( MODULE.Ofssize == USE32 )
                 mov eax,32
             .endif
             __shro( rsi, [rdi].value, eax )
@@ -2957,7 +2957,7 @@ endif
             mov eax,64
             .if ( [rsi].kind == EXPR_FLOAT )
                 mov eax,128
-            .elseif ( ModuleInfo.Ofssize == USE32 )
+            .elseif ( MODULE.Ofssize == USE32 )
                 mov eax,32
             .endif
             __saro( rsi, [rdi].value, eax )
@@ -3192,7 +3192,7 @@ PrepareOp proc fastcall opnd:expr_t, old:expr_t, oper:token_t
         .if ( [rdx].type )
             mov [rcx].type,[rdx].type
             or  [rcx].flags,E_IS_DOT
-        .elseif ( !ModuleInfo.oldstructs && rax && [rax].asym.state == SYM_UNDEFINED )
+        .elseif ( !MODULE.oldstructs && rax && [rax].asym.state == SYM_UNDEFINED )
             mov [rcx].type,NULL
             or  [rcx].flags,E_IS_DOT
 ifdef USE_INDIRECTION
@@ -3504,7 +3504,7 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
                 ; v2.06: avoid to use ST_PROC
                 ; item->bytval = ST_PROC;
 
-                mov  dl,ModuleInfo._model
+                mov  dl,MODULE._model
                 mov  eax,1
                 xchg ecx,edx
                 shl  eax,cl

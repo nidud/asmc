@@ -222,12 +222,12 @@ ModelAssumeInit proc
 
     ; Generates codes for assume
 
-    mov al,ModuleInfo._model
+    mov al,MODULE._model
     .if ( al == MODEL_FLAT )
 
         lea rdx,szError
         mov rcx,rdx
-        .if ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 )
+        .if ( MODULE.fctype == FCT_WIN64 || MODULE.fctype == FCT_VEC64 )
             lea rcx,szNothing
         .endif
         AddLineQueueX( "assume cs:flat,ds:flat,ss:flat,es:flat,fs:%s,gs:%s", rdx, rcx )
@@ -245,7 +245,7 @@ ifndef ASMC64
             mov rdx,SimGetSegName( SIM_CODE )
         .endif
         lea rcx,@CStr("assume cs:%s,ds:%s,ss:%s")
-        .if ( ModuleInfo.distance == STACK_FAR )
+        .if ( MODULE.distance == STACK_FAR )
             lea rcx,@CStr("assume cs:%s,ds:%s")
         .endif
         lea rax,szDgroup
@@ -361,7 +361,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .return( asmerr(2008, [rbx].string_ptr ) )
         .endif
 
-        mov ecx,ModuleInfo.curr_cpu
+        mov ecx,MODULE.curr_cpu
         and ecx,P_CPU_MASK
         .if ( ( cx ) < GetCpuSp(reg) )
             .return( asmerr( 2085 ) )
@@ -419,7 +419,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov ti.mem_type,MT_EMPTY
             mov ti.ptr_memtype,MT_EMPTY
             mov ti.symtype,NULL
-            mov ti.Ofssize,ModuleInfo.Ofssize
+            mov ti.Ofssize,MODULE.Ofssize
 
             .return .ifd GetQualifiedType( &i, tokenarray, &ti ) == ERROR
 
@@ -497,7 +497,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     .return( asmerr( 2096 ) )
                 .endif
                 xor eax,eax
-                mov rcx,ModuleInfo.flat_grp
+                mov rcx,MODULE.flat_grp
                 .if ( [rdi].symbol == rcx )
                     inc eax
                 .endif
@@ -578,7 +578,7 @@ search_assume proc __ccall uses rsi rdi rbx sym:asym_t, def:int_t, search_grps:i
         .return .if ( rdi == [rdx].symbol )
         .if ( search_grps && rsi )
 
-            .return .if ( [rdx].is_flat && rsi == ModuleInfo.flat_grp )
+            .return .if ( [rdx].is_flat && rsi == MODULE.flat_grp )
             .return .if ( rsi == [rdx].symbol )
         .endif
     .endif
@@ -603,7 +603,7 @@ search_assume proc __ccall uses rsi rdi rbx sym:asym_t, def:int_t, search_grps:i
             mov eax,[rbx+rcx*4]
             imul edx,eax,assume_info
 
-            .return .if ( [rdi+rdx].is_flat && rsi == ModuleInfo.flat_grp )
+            .return .if ( [rdi+rdx].is_flat && rsi == MODULE.flat_grp )
             .return .if ( rsi == [rdi+rdx].symbol )
         .endf
     .endif
@@ -623,7 +623,7 @@ GetOverrideAssume proc fastcall override:int_t
     lea rcx,SegAssumeTable
     mov rax,[rdx+rcx].symbol
     .if ( [rdx+rcx].is_flat )
-        mov rax,ModuleInfo.flat_grp
+        mov rax,MODULE.flat_grp
     .endif
     ret
 
@@ -651,7 +651,7 @@ GetOfssizeAssume proc fastcall segno:int_t
            .return
         .endif
     .endif
-    movzx eax,ModuleInfo.Ofssize
+    movzx eax,MODULE.Ofssize
     ret
 
 GetOfssizeAssume endp
@@ -675,7 +675,7 @@ GetAssume proc __ccall override:asym_t, sym:asym_t, def:int_t, passume:ptr asym_
 
     .if ( ( eax != ASSUME_NOTHING ) && [rdx].is_flat )
 
-        mov rdx,ModuleInfo.flat_grp
+        mov rdx,MODULE.flat_grp
         mov rcx,passume
         mov [rcx],rdx
        .return

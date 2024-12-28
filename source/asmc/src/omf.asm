@@ -523,13 +523,13 @@ omf_write_ledata proc fastcall private uses rsi rdi rbx s:ptr dsym
             ; low 4-bits is allocation type
             ;
             .if ( [rsi].seg_info.segtype == SEGTYPE_CODE )
-                .if ( ModuleInfo._model == MODEL_FLAT )
+                .if ( MODULE._model == MODEL_FLAT )
                     mov obj.d.comdat.attributes,COMDAT_CODE32
                 .else
                     mov obj.d.comdat.attributes,COMDAT_FAR_CODE
                 .endif
             .else
-                .if ( ModuleInfo._model == MODEL_FLAT )
+                .if ( MODULE._model == MODEL_FLAT )
                     mov obj.d.comdat.attributes,COMDAT_DATA32
                 .else
                     mov obj.d.comdat.attributes,COMDAT_FAR_DATA
@@ -762,7 +762,7 @@ omf_write_lib proc private uses rsi rdi rbx
 
   local obj:omf_rec
 
-    .for ( rsi = ModuleInfo.LibQueue.head: rsi: rsi = rdi )
+    .for ( rsi = MODULE.LibQueue.head: rsi: rsi = rdi )
 
         mov rdi,[rsi].qitem.next
         lea rbx,[rsi].qitem.value
@@ -809,7 +809,7 @@ omf_write_export proc private uses rsi rdi rbx
                 mov len,[rsi].asym.name_size
             .endif
             ; v2.11: case mapping was missing
-            .if ( ModuleInfo.convert_uppercase )
+            .if ( MODULE.convert_uppercase )
                 tstrupr( &[rdi+3] )
             .endif
 if MAX_ID_LEN gt 255
@@ -1007,7 +1007,7 @@ omf_write_lnames proc private uses rsi rdi rbx
     mov items,1
     mov startitem,1
 
-    .for ( rsi = ModuleInfo.LnameQueue.head : : rsi = [rsi].qnode.next )
+    .for ( rsi = MODULE.LnameQueue.head : : rsi = [rsi].qnode.next )
 
         xor ebx,ebx
         xor ecx,ecx
@@ -1051,7 +1051,7 @@ omf_write_lnames proc private uses rsi rdi rbx
 
         ; lnames are converted for casemaps ALL and NOTPUBLIC
 
-        .if ( ModuleInfo.case_sensitive == FALSE )
+        .if ( MODULE.case_sensitive == FALSE )
             tstrupr( rdi )
         .endif
 
@@ -1169,7 +1169,7 @@ if MAX_ID_LEN gt 255
                 mov len,255 ; length is 1 byte only
             .endif
 endif
-            .if ( ModuleInfo.convert_uppercase )
+            .if ( MODULE.convert_uppercase )
                 tstrupr( &buffer )
             .endif
 
@@ -1344,11 +1344,11 @@ if MAX_ID_LEN gt 255
 endif
             ; v2.11: case mapping was missing
 
-            .if ( ModuleInfo.convert_uppercase )
+            .if ( MODULE.convert_uppercase )
                 tstrupr( &buffer )
             .endif
 
-            mov varsize,SizeFromMemtype( [rsi].asym.mem_type, ModuleInfo.Ofssize, [rsi].asym.type )
+            mov varsize,SizeFromMemtype( [rsi].asym.mem_type, MODULE.Ofssize, [rsi].asym.type )
 
             mov [rsi].asym.ext_idx,index ; v2.09: set external index here
             inc index
@@ -1475,13 +1475,13 @@ omf_write_autodep proc private uses rsi rdi rbx
   local len:dword
 
     mov rbx,StringBufferEnd
-    .for ( esi = 0: esi < ModuleInfo.cnt_fnames: esi++ )
+    .for ( esi = 0: esi < MODULE.cnt_fnames: esi++ )
 
         omf_InitRec( &obj, CMD_COMENT )
 
         mov obj.d.coment.attr,CMT_TNP
         mov obj.d.coment.cmt_class,CMT_DEPENDENCY; ;; 0xE9
-        mov rdx,ModuleInfo.FNames
+        mov rdx,MODULE.FNames
         mov rdi,[rdx+rsi*string_t]
         tstrlen( rdi )
 
@@ -1582,7 +1582,7 @@ omf_write_pubdef proc private uses rsi rdi rbx
     ; v2.11: now the data matches exactly the OMF PUBDEF record
     ; and is just attached.
 
-    mov rsi,ModuleInfo.PubQueue.head
+    mov rsi,MODULE.PubQueue.head
 
     .while ( rsi )
 
@@ -1625,7 +1625,7 @@ omf_write_pubdef proc private uses rsi rdi rbx
                     inc rdi
                     mov len,Mangle( sym, rdi )
                     mov [rdi-1],al
-                    .if ( ModuleInfo.case_sensitive == FALSE )
+                    .if ( MODULE.case_sensitive == FALSE )
                         tstrupr( rdi )
                     .endif
                     mov ecx,len
@@ -1678,7 +1678,7 @@ if MAX_ID_LEN gt MAX_ID_LEN_OMF
             .endif
 endif
             mov len,eax
-            .if ( ModuleInfo.convert_uppercase )
+            .if ( MODULE.convert_uppercase )
                 tstrupr( rdi )
             .endif
             mov curr_seg,[rbx].asym.segm
@@ -1863,7 +1863,7 @@ endif
     .if ( Options.debug_symbols )
         omf_write_debug_tables()
     .endif
-    omf_write_modend( ModuleInfo.start_fixup, ModuleInfo.start_displ )
+    omf_write_modend( MODULE.start_fixup, MODULE.start_displ )
 
 if TRUNCATE
 
@@ -1921,9 +1921,9 @@ omf_write_header_initial proc private uses rsi rdi rbx
     .if ( Options.line_numbers )
         omf_write_autodep() ; write dependency COMENT records ( known by Borland & OW )
     .endif
-    .if ( ModuleInfo.segorder == SEGORDER_DOSSEG )
+    .if ( MODULE.segorder == SEGORDER_DOSSEG )
         omf_write_dosseg() ; write dosseg COMENT records
-    .elseif ( ModuleInfo.segorder == SEGORDER_ALPHA )
+    .elseif ( MODULE.segorder == SEGORDER_ALPHA )
         SortSegments( 1 )
     .endif
     omf_write_lib()    ; write default lib COMENT records
@@ -1953,7 +1953,7 @@ omf_write_header_initial proc private uses rsi rdi rbx
     ; comment record is NOT to be present if
     ; the MODEND record contains a starting address!
 
-    .if ( !ModuleInfo.start_fixup )
+    .if ( !MODULE.start_fixup )
         omf_end_of_pass1()
     .endif
     mov end_of_header,ftell( CurrFile[OBJ*size_t] )
@@ -1970,12 +1970,12 @@ omf_init proc
 
 ifndef ASMC64
 
-    mov ModuleInfo.WriteModule,&omf_write_module
-    mov ModuleInfo.Pass1Checks,&omf_write_header_initial
+    mov MODULE.WriteModule,&omf_write_module
+    mov MODULE.Pass1Checks,&omf_write_header_initial
     mov SymDebSeg[DBGS_SYMBOLS*size_t],NULL
     mov SymDebSeg[DBGS_TYPES*size_t],NULL
 if MULTIHDR
-    mov ln_srcfile,ModuleInfo.srcfile
+    mov ln_srcfile,MODULE.srcfile
 endif
     mov ln_size,0
 endif

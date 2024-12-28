@@ -182,7 +182,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
     .if StoreState == FALSE
         .return NOT_ERROR
     .endif
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
 
@@ -204,11 +204,11 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
         movzx edx,[rax].asym.regist[2]
         movzx eax,[rax].asym.regist
         .if ( eax == 0 )
-            mov eax,ModuleInfo.accumulator
+            mov eax,MODULE.accumulator
         .endif
         .if ( edx == 0 )
             mov edx,T_DWORD
-            .if ( ModuleInfo.Ofssize == USE64 )
+            .if ( MODULE.Ofssize == USE64 )
                 mov edx,T_QWORD
             .endif
         .else
@@ -292,7 +292,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
                     tstrcat( rdi, "ptrword" )
                     add i,2
                 .elseif ( [rcx].asm_tok.flags & T_ISPROC )
-                    .if ( ModuleInfo.Ofssize == USE64 )
+                    .if ( MODULE.Ofssize == USE64 )
                         tstrcat( rdi, "qword" )
                     .else
                         tstrcat( rdi, "dword" )
@@ -311,7 +311,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
 
                         mov rcx,opnd.quoted_string
                         .if ( rcx && [rcx].asm_tok.token == T_STRING )
-                            .if ( ModuleInfo.xflag & OPT_WSTRING )
+                            .if ( MODULE.xflag & OPT_WSTRING )
                                 tstrcat( rdi, "ptrword" )
                             .else
                                 tstrcat( rdi, "ptrsbyte" )
@@ -332,7 +332,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
             AddLineQueueX( "%s(%s)", &func, &args )
         .endif
     .endw
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         InsertLineQueue()
     .endif
     .return NOT_ERROR
@@ -468,11 +468,11 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
     movzx eax,[rcx].asym.regist
     movzx edx,[rcx].asym.regist[2]
     .if ( eax == 0 )
-        mov eax,ModuleInfo.accumulator
+        mov eax,MODULE.accumulator
     .endif
     .if ( edx == 0 )
         mov edx,T_DWORD
-        .if ( ModuleInfo.Ofssize == USE64 )
+        .if ( MODULE.Ofssize == USE64 )
             mov edx,T_QWORD
         .endif
     .endif
@@ -489,7 +489,7 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
         .case EXPR_CONST
             mov rcx,[rbx].op2.quoted_string
             .if ( rcx && [rcx].asm_tok.token == T_STRING )
-                .if ( ModuleInfo.xflag & OPT_WSTRING )
+                .if ( MODULE.xflag & OPT_WSTRING )
                     tstrcat( rdi, "ptrword" )
                 .else
                     tstrcat( rdi, "ptrsbyte" )
@@ -547,7 +547,7 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
         tstrcat( rdi, ")" )
         AddLineQueue( &buffer )
     .endf
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
     .return NOT_ERROR

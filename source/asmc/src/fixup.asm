@@ -189,7 +189,7 @@ store_fixup proc __ccall uses rsi rbx fixp:ptr fixup, s:ptr dsym, pdata:ptr int_
             ; Also, in 64-bit, pdata may be a int_64 pointer (FIX_OFF64)!
 
             mov eax,[rsi]
-            .if ( ModuleInfo.defOfssize == USE64 )
+            .if ( MODULE.defOfssize == USE64 )
 
                 xor eax,eax ; added v2.33.46 - @Hello71
 
@@ -220,7 +220,7 @@ endif
 
             mov eax,[rcx].asym.offs ; added v2.33.48
             .if ( !( Options.output_format == OFORMAT_ELF &&
-                     ModuleInfo.defOfssize == USE64 ) )
+                     MODULE.defOfssize == USE64 ) )
                 add [rsi],eax
             .endif
             add [rbx].offs,eax

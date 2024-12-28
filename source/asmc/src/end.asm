@@ -99,11 +99,11 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_t
 
     LstWriteSrcLine()
 
-    .if ( ModuleInfo._model == MODEL_NONE )
+    .if ( MODULE._model == MODEL_NONE )
         .return( asmerr( 2013 ) )
     .endif
 
-    .if ( ModuleInfo.Ofssize > USE16 )
+    .if ( MODULE.Ofssize > USE16 )
         .return( asmerr( 2199 ) )
     .endif
 
@@ -111,16 +111,16 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_t
     .case T_DOT_STARTUP
         xor edi,edi
         ;; for tiny model, set current PC to 100h.
-        .if ( ModuleInfo._model == MODEL_TINY )
+        .if ( MODULE._model == MODEL_TINY )
             AddLineQueue( "org 100h" )
         .endif
         AddLineQueueX( "%s::", szStartAddr )
-        .if ( ModuleInfo.ostype == OPSYS_DOS )
-            .if ( ModuleInfo._model == MODEL_TINY )
+        .if ( MODULE.ostype == OPSYS_DOS )
+            .if ( MODULE._model == MODEL_TINY )
 
             .else
-                .if ( ModuleInfo.distance == STACK_NEAR )
-                    mov eax,ModuleInfo.cpu
+                .if ( MODULE.distance == STACK_NEAR )
+                    mov eax,MODULE.cpu
                     and eax,M_CPUMSK
                     .if ( eax  <= M_8086 )
                         lea rsi,StartupDosNear0
@@ -139,11 +139,11 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_t
                 .endf
             .endif
         .endif
-        mov ModuleInfo.StartupDirectiveFound,TRUE
+        mov MODULE.StartupDirectiveFound,TRUE
         add rbx,asm_tok ; skip directive token
         .endc
     .case T_DOT_EXIT
-        .if ( ModuleInfo.ostype == OPSYS_DOS )
+        .if ( MODULE.ostype == OPSYS_DOS )
             lea rsi,ExitDos
             mov edi,lengthof( ExitDos )
         .else
@@ -153,7 +153,7 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_t
         add rbx,asm_tok ; skip directive token
         .if ( [rbx].token != T_FINAL )
 
-            .if ( ModuleInfo.ostype == OPSYS_OS2 )
+            .if ( MODULE.ostype == OPSYS_OS2 )
                 AddLineQueueX( "mov ax,%s", [rbx].tokpos )
                 imul ebx,TokenCount,asm_tok
             .else
@@ -210,7 +210,7 @@ EndDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
     ; SegmentModuleExit() later to run generated code.
 
 ifndef ASMC64
-    .if ( ModuleInfo.StartupDirectiveFound )
+    .if ( MODULE.StartupDirectiveFound )
         ; start label behind END ignored if .STARTUP has been found
         mov esi,TokenCount
         .if ( i < esi && Parse_Pass == PASS_1 )
@@ -266,14 +266,14 @@ endif
             mov CodeInfo.flags,0
             mov CodeInfo.mem_type,MT_EMPTY
             idata_fixup( &CodeInfo, 0, &opndx )
-            mov ModuleInfo.start_fixup,CodeInfo.opnd[0].InsFixup
-            mov ModuleInfo.start_displ,opndx.value
+            mov MODULE.start_fixup,CodeInfo.opnd[0].InsFixup
+            mov MODULE.start_displ,opndx.value
         .else
             .if ( [rsi].asym.state != SYM_EXTERNAL && !( [rsi].asym.flags & S_ISPUBLIC ) )
                 or [rsi].asym.flags,S_ISPUBLIC
                 AddPublicData(rsi)
             .endif
-            mov ModuleInfo.start_label,rsi
+            mov MODULE.start_label,rsi
         .endif
     .elseif ( opndx.kind != EXPR_EMPTY )
         .return( asmerr( 2094 ) )
@@ -283,20 +283,20 @@ endif
 
     SegmentModuleExit()
 
-    .if ( ModuleInfo.EndDirHook )
+    .if ( MODULE.EndDirHook )
 
-        ModuleInfo.EndDirHook()
+        MODULE.EndDirHook()
 
 ifdef _EXEC_LINK
     .elseif ( Parse_Pass == PASS_1 )
-        mov rcx,ModuleInfo.curr_fname[OBJ*string_t]
+        mov rcx,MODULE.curr_fname[OBJ*string_t]
         .if ( rcx )
             CollectLinkObject(rcx)
         .endif
 endif
     .endif
 
-    mov ModuleInfo.EndDirFound,TRUE
+    mov MODULE.EndDirFound,TRUE
    .return( NOT_ERROR )
 
 EndDirective endp

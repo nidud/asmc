@@ -115,7 +115,7 @@ SetDefaultOfssize proc fastcall private size:int_t
     ; outside any segments?
 
     .if( CurrSeg == NULL )
-        mov ModuleInfo.defOfssize,cl
+        mov MODULE.defOfssize,cl
     .endif
     .return( SetOfssize() )
 
@@ -141,10 +141,10 @@ SetModel proc __ccall private uses rsi rdi rbx
 
     ;; if model is set, it disables OT_SEGMENT of -Zm switch
 
-    .if ( ModuleInfo._model == MODEL_FLAT )
+    .if ( MODULE._model == MODEL_FLAT )
 
-        mov ModuleInfo.offsettype,OT_FLAT
-        mov esi,ModuleInfo.curr_cpu
+        mov MODULE.offsettype,OT_FLAT
+        mov esi,MODULE.curr_cpu
         and esi,P_CPU_MASK
         mov eax,USE32
         .if ( esi >= P_64 )
@@ -157,35 +157,35 @@ SetModel proc __ccall private uses rsi rdi rbx
         ;; This is rather hackish, but currently there's no other possibility
         ;; to enable the win64 ABI from the source.
 
-        mov al,ModuleInfo.langtype
-        mov ah,ModuleInfo.fctype
+        mov al,MODULE.langtype
+        mov cl,MODULE.fctype
         .if ( esi >= P_64 )
 
             .if ( al == LANG_FASTCALL || al == LANG_SYSCALL || al == LANG_VECTORCALL )
 
                 .if ( al == LANG_VECTORCALL )
-                    mov ah,FCT_VEC64
+                    mov cl,FCT_VEC64
                 .elseif ( Options.output_format != OFORMAT_ELF )
-                    mov ah,FCT_WIN64
+                    mov cl,FCT_WIN64
                 .else
-                    mov ah,FCT_ELF64
+                    mov cl,FCT_ELF64
                 .endif
             .endif
         .elseif ( al == LANG_VECTORCALL )
-            mov ah,FCT_VEC32
+            mov cl,FCT_VEC32
         .endif
-        mov ModuleInfo.fctype,ah
+        mov MODULE.fctype,cl
 
         ;; v2.11: define symbol FLAT - after default offset size has been set!
         DefineFlatGroup()
     .else
-        mov ModuleInfo.offsettype,OT_GROUP
+        mov MODULE.offsettype,OT_GROUP
     .endif
 
-    ModelSimSegmInit( ModuleInfo._model ) ;; create segments in first pass
+    ModelSimSegmInit( MODULE._model ) ;; create segments in first pass
     ModelAssumeInit()
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWriteSrcLine()
     .endif
 
@@ -195,7 +195,7 @@ SetModel proc __ccall private uses rsi rdi rbx
 
     ;; Set @CodeSize
     mov eax,1
-    mov cl,ModuleInfo._model
+    mov cl,MODULE._model
     shl eax,cl
     and eax,SIZE_CODEPTR
     setnz al
@@ -204,7 +204,7 @@ SetModel proc __ccall private uses rsi rdi rbx
     AddPredefinedText( "@code", SimGetSegName( SIM_CODE ) )
 
     ;; Set @DataSize
-    mov cl,ModuleInfo._model
+    mov cl,MODULE._model
     xor eax,eax
     .switch( cl )
     .case MODEL_COMPACT
@@ -218,28 +218,28 @@ SetModel proc __ccall private uses rsi rdi rbx
     mov sym_DataSize,AddPredefinedConstant( "@DataSize", eax )
 
     lea rsi,szDgroup
-    .if ( ModuleInfo._model == MODEL_FLAT )
+    .if ( MODULE._model == MODEL_FLAT )
         lea rsi,@CStr("FLAT")
     .endif
     AddPredefinedText( "@data", rsi )
 
-    .if ( ModuleInfo.distance == STACK_FAR )
+    .if ( MODULE.distance == STACK_FAR )
         lea rsi,@CStr("STACK")
     .endif
     AddPredefinedText( "@stack", rsi )
 
     ;; Set @Model and @Interface
-    mov sym_Model,     AddPredefinedConstant( "@Model", ModuleInfo._model )
-    mov sym_Interface, AddPredefinedConstant( "@Interface", ModuleInfo.langtype )
+    mov sym_Model,     AddPredefinedConstant( "@Model", MODULE._model )
+    mov sym_Interface, AddPredefinedConstant( "@Interface", MODULE.langtype )
 
-    .if ( ModuleInfo.defOfssize == USE64 &&
-         ( ModuleInfo.fctype == FCT_WIN64 ||
-           ModuleInfo.fctype == FCT_VEC64 ||
-           ModuleInfo.fctype == FCT_ELF64 ) ) ; v2.28: added
+    .if ( MODULE.defOfssize == USE64 &&
+         ( MODULE.fctype == FCT_WIN64 ||
+           MODULE.fctype == FCT_VEC64 ||
+           MODULE.fctype == FCT_ELF64 ) ) ; v2.28: added
         mov sym_ReservedStack,AddPredefinedConstant( "@ReservedStack", 0 )
     .endif
-    .if ( ModuleInfo.sub_format == SFORMAT_PE ||
-         ( ModuleInfo.sub_format == SFORMAT_64BIT &&
+    .if ( MODULE.sub_format == SFORMAT_PE ||
+         ( MODULE.sub_format == SFORMAT_64BIT &&
            Options.output_format == OFORMAT_BIN ) )
         pe_create_PE_header()
     .endif
@@ -272,7 +272,7 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; this may have caused errors because contents of the ModuleInfo
     ; structure was saved before the .MODEL directive.
 
-    .if ( Parse_Pass != PASS_1 && ModuleInfo._model != MODEL_NONE )
+    .if ( Parse_Pass != PASS_1 && MODULE._model != MODEL_NONE )
 
         ; just set the model with SetModel() if pass is != 1.
         ; This won't set the language ( which can be modified by
@@ -302,7 +302,7 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         lea esi,[rax+1] ; model is one-base ( 0 is MODEL_NONE )
         add rbx,asm_tok
         inc edi
-        .if ( ModuleInfo._model != MODEL_NONE )
+        .if ( MODULE._model != MODEL_NONE )
             asmerr( 4011 )
         .endif
     .else
@@ -369,7 +369,7 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .if ( esi == MODEL_FLAT )
 
-        mov eax,ModuleInfo.curr_cpu
+        mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
 
         .if ( eax < P_386 )
@@ -377,24 +377,24 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         .if ( eax >= P_64 ) ;; cpu 64-bit?
             .if ( Options.output_format == OFORMAT_COFF )
-                mov ModuleInfo.fmtopt,&coff64_fmtopt
+                mov MODULE.fmtopt,&coff64_fmtopt
             .elseif ( Options.output_format == OFORMAT_ELF )
-                mov ModuleInfo.fmtopt,&elf64_fmtopt
+                mov MODULE.fmtopt,&elf64_fmtopt
             .endif
         .endif
     .endif
 
     mov eax,esi
-    mov ModuleInfo._model,al
+    mov MODULE._model,al
     mov cl,init
     .if ( cl & INIT_LANG )
-        mov ModuleInfo.langtype,language
+        mov MODULE.langtype,language
     .endif
     .if ( cl & INIT_STACK )
-        mov ModuleInfo.distance,distance
+        mov MODULE.distance,distance
     .endif
     .if ( cl & INIT_OS )
-        mov ModuleInfo.ostype,ostype
+        mov MODULE.ostype,ostype
     .endif
 
     SetModelDefaultSegNames()
@@ -414,7 +414,7 @@ ModelDirective endp
 SetCPU proc __ccall newcpu:cpu_info
 
     ldr edx,newcpu
-    mov ecx,ModuleInfo.curr_cpu
+    mov ecx,MODULE.curr_cpu
 
     .if ( edx == P_86 || ( edx & P_CPU_MASK ) )
 
@@ -468,7 +468,7 @@ SetCPU proc __ccall newcpu:cpu_info
         or  ecx,edx
     .endif
 
-    mov ModuleInfo.curr_cpu,ecx
+    mov MODULE.curr_cpu,ecx
     mov eax,ecx
     and eax,P_CPU_MASK
 
@@ -498,9 +498,9 @@ SetCPU proc __ccall newcpu:cpu_info
     .case P_287: or eax,M_8087 or M_287 : .endc
     .case P_387: or eax,M_8087 or M_287 or M_387 : .endc
     .endsw
-    mov ModuleInfo.cpu,eax
+    mov MODULE.cpu,eax
 
-    .if ( ModuleInfo._model == MODEL_NONE )
+    .if ( MODULE._model == MODEL_NONE )
 
         and ecx,P_CPU_MASK
         .if ( ecx >= P_64 )
@@ -517,7 +517,7 @@ SetCPU proc __ccall newcpu:cpu_info
     ; Set @Cpu
     ; differs from Codeinfo cpu setting
 
-    mov sym_Cpu,CreateVariable( "@Cpu", ModuleInfo.cpu )
+    mov sym_Cpu,CreateVariable( "@Cpu", MODULE.cpu )
    .return( NOT_ERROR )
 
 SetCPU endp
@@ -561,7 +561,7 @@ AddPredefinedConstant endp
 SetCPU proc __ccall newcpu:cpu_info
 
     ldr edx,newcpu
-    mov ecx,ModuleInfo.curr_cpu
+    mov ecx,MODULE.curr_cpu
 
     .if ( edx == P_86 || ( edx & P_CPU_MASK ) )
 
@@ -594,7 +594,7 @@ SetCPU proc __ccall newcpu:cpu_info
         and edx,P_EXT_MASK
         or  ecx,edx
     .endif
-    mov ModuleInfo.curr_cpu,ecx
+    mov MODULE.curr_cpu,ecx
 
     ;; set the Masm compatible @Cpu value
 
@@ -604,8 +604,8 @@ SetCPU proc __ccall newcpu:cpu_info
     .endif
 
     or edx,M_8087 or M_287 or M_387
-    mov ModuleInfo._model,MODEL_FLAT
-    mov ModuleInfo.cpu,edx
+    mov MODULE._model,MODEL_FLAT
+    mov MODULE.cpu,edx
 
     ;; Set @Cpu
     ;; differs from Codeinfo cpu setting
@@ -616,32 +616,32 @@ SetCPU proc __ccall newcpu:cpu_info
     .else
         lea rax,coff64_fmtopt
     .endif
-    mov ModuleInfo.fmtopt,rax
+    mov MODULE.fmtopt,rax
 
     SetModelDefaultSegNames()
 
-    mov ModuleInfo.offsettype,OT_FLAT
+    mov MODULE.offsettype,OT_FLAT
 
     .if ( CurrSeg == NULL )
-        mov ModuleInfo.defOfssize,USE64
+        mov MODULE.defOfssize,USE64
     .endif
     SetOfssize()
 
-    .if ( ModuleInfo.langtype == LANG_VECTORCALL )
+    .if ( MODULE.langtype == LANG_VECTORCALL )
         mov al,FCT_VEC64
     .elseif ( Options.output_format != OFORMAT_ELF )
         mov al,FCT_WIN64
     .else
         mov al,FCT_ELF64
     .endif
-    mov ModuleInfo.fctype,al
+    mov MODULE.fctype,al
 
     DefineFlatGroup()
 
-    ModelSimSegmInit( ModuleInfo._model ) ;; create segments in first pass
+    ModelSimSegmInit( MODULE._model ) ;; create segments in first pass
     ModelAssumeInit()
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWriteSrcLine()
     .endif
 
@@ -658,16 +658,16 @@ SetCPU proc __ccall newcpu:cpu_info
 
     ;; Set @Model and @Interface
 
-    AddPredefinedConstant( "@Model", ModuleInfo._model );
-    mov sym_Interface,AddPredefinedConstant( "@Interface", ModuleInfo.langtype )
+    AddPredefinedConstant( "@Model", MODULE._model );
+    mov sym_Interface,AddPredefinedConstant( "@Interface", MODULE.langtype )
 
-    mov al,ModuleInfo.fctype
+    mov al,MODULE.fctype
     .if ( al == FCT_WIN64 || al == FCT_VEC64  || al == FCT_ELF64 ) ;; v2.28: added
         mov sym_ReservedStack,AddPredefinedConstant( "@ReservedStack", 0 )
     .endif
 
-    .if ( ModuleInfo.sub_format == SFORMAT_PE ||
-        ( ModuleInfo.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
+    .if ( MODULE.sub_format == SFORMAT_PE ||
+        ( MODULE.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
         pe_create_PE_header()
     .endif
 

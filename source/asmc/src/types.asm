@@ -170,7 +170,7 @@ AreStructsEqual proc __ccall private uses rdi rbx newstr:ptr dsym, oldstr:ptr ds
         ; for global member names, don't check the name if it's ""
         mov rax,[rdi].name
 
-        .if ( ModuleInfo.oldstructs && byte ptr [rax] == 0 )
+        .if ( MODULE.oldstructs && byte ptr [rax] == 0 )
             ;
         .elseifd ( tstrcmp( [rbx].name, [rdi].name ) )
             .return( FALSE )
@@ -226,7 +226,7 @@ StructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     mov eax,1
-    mov cl,ModuleInfo.fieldalign
+    mov cl,MODULE.fieldalign
     shl eax,cl
     mov alignment,eax
 
@@ -326,7 +326,7 @@ endif
         mov edi,NULL ; anonymous struct
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         mov rcx,CurrStruct
         .if ( rcx )
             LstWrite( LSTTYPE_STRUCT, [rcx].asym.total_size, NULL )
@@ -426,9 +426,9 @@ endif
 
     mov [rdi].dsym.next,CurrStruct
 
-    .if ( ModuleInfo.ComStack )
+    .if ( MODULE.ComStack )
 
-        mov rbx,ModuleInfo.ComStack
+        mov rbx,MODULE.ComStack
         assume rbx:ptr com_item
 
         mov  ecx,tstrlen( [rbx].class )
@@ -741,10 +741,10 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_to
 
                     mov esi,[rax].asym.uvalue
 ifdef _WIN64
-                    myltoa( rsi, rdi, ModuleInfo.radix, ecx, TRUE )
+                    myltoa( rsi, rdi, MODULE.radix, ecx, TRUE )
 else
                     xor edx,edx
-                    myltoa( edx::esi, edi, ModuleInfo.radix, ecx, TRUE )
+                    myltoa( edx::esi, edi, MODULE.radix, ecx, TRUE )
 endif
                     add rdi,tstrlen( rdi )
                     mov al,' '
@@ -795,7 +795,7 @@ endif
         mov [rdi].name,&@CStr("")
     .endif
     mov [rdi].state,SYM_STRUCT_FIELD
-    .if ( ModuleInfo.cref )
+    .if ( MODULE.cref )
         or [rdi].flags,S_LIST
     .endif
     or  [rdi].flags,S_ISDEFINED
@@ -803,7 +803,7 @@ endif
     mov [rdi].type,vartype
     mov [rdi].next,NULL
 
-    
+
     mov rsi,s
     mov rcx,[rsi].head
     .if ( [rsi].head == NULL )
@@ -883,7 +883,7 @@ endif
     ; if -Zm is on, create a global symbol
 
     mov rdx,name
-    .if ( ModuleInfo.oldstructs == TRUE && byte ptr [rdx] )
+    .if ( MODULE.oldstructs == TRUE && byte ptr [rdx] )
 
         SymLookup( name )
         .if ( [rax].asym.state == SYM_UNDEFINED )
@@ -1022,7 +1022,7 @@ GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:ptr asm_
 
             ; v2.06: avoid to use ST_PROC
 
-            mov cl,ModuleInfo._model
+            mov cl,MODULE._model
             mov eax,1
             shl eax,cl
             and eax,SIZE_CODEPTR
@@ -1294,7 +1294,7 @@ endif
 
         inc i
         mov rsi,rax
-        .return .ifd ( ParseProc( rsi, i, tokenarray, FALSE, ModuleInfo.langtype ) == ERROR )
+        .return .ifd ( ParseProc( rsi, i, tokenarray, FALSE, MODULE.langtype ) == ERROR )
 
         assume rsi:nothing
 
@@ -1321,7 +1321,7 @@ endif
     mov ti.size,0
     mov ti.is_ptr,0
     mov ti.is_far,FALSE
-    mov cl,ModuleInfo._model
+    mov cl,MODULE._model
     mov eax,1
     shl eax,cl
     .if eax & SIZE_DATAPTR
@@ -1331,7 +1331,7 @@ endif
     mov ti.mem_type,MT_EMPTY
     mov ti.ptr_memtype,MT_EMPTY
     mov ti.symtype,NULL
-    mov ti.Ofssize,ModuleInfo.Ofssize
+    mov ti.Ofssize,MODULE.Ofssize
 
     ; "empty" type is ok for TYPEDEF
 
@@ -1357,7 +1357,7 @@ endif
         .for( : rdx && [rdx].asym.type : rdx = [rdx].asym.type )
         .endf
 
-        mov bl,ModuleInfo.Ofssize
+        mov bl,MODULE.Ofssize
         mov bh,bl
         .if ( [rdi].asym.Ofssize != USE_EMPTY )
             mov bl,[rdi].asym.Ofssize
@@ -1526,7 +1526,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov ecx,opndx.value
         add ecx,cntBits
         mov eax,32
-        .if ( ModuleInfo.Ofssize == USE64 )
+        .if ( MODULE.Ofssize == USE64 )
             mov eax,64
         .endif
         .if ( opndx.value == 0 )
@@ -1604,7 +1604,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov [rdi].name_size,len
             mov [rdi].name,LclDup( rsi )
             and [rdi].flags,not S_LIST
-            .if ( ModuleInfo.cref )
+            .if ( MODULE.cref )
                 or [rdi].flags,S_LIST
             .endif
             mov [rdi].state,SYM_STRUCT_FIELD

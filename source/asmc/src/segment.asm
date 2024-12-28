@@ -139,7 +139,7 @@ UpdateCurPC endp
 
 AddLnameItem proc fastcall private sym:ptr asym
 
-    QAddItem( &ModuleInfo.LnameQueue, rcx )
+    QAddItem( &MODULE.LnameQueue, rcx )
     ret
 
 AddLnameItem endp
@@ -152,7 +152,7 @@ AddLnameItem endp
 
 FreeLnameQueue proc private uses rsi rdi
 
-    .for ( rdi = ModuleInfo.LnameQueue.head: rdi: rdi = rsi )
+    .for ( rdi = MODULE.LnameQueue.head: rdi: rdi = rsi )
         mov rsi,[rdi].qnode.next
 
         ; the class name symbols are not part of the
@@ -196,7 +196,7 @@ UpdateCurrSegVars proc private uses rsi rdi
         .if ( [rdx].seg_info.sgroup != NULL )
 
             mov [rsi].assume_info.symbol,[rdx].seg_info.sgroup
-            .if ( rax == ModuleInfo.flat_grp )
+            .if ( rax == MODULE.flat_grp )
                 mov [rsi].assume_info.is_flat,TRUE
             .endif
         .else
@@ -336,7 +336,7 @@ CreateSegment proc fastcall private uses rdi s:ptr dsym, name:string_t, add_glob
         mov [rdi].asym.state,SYM_SEG
         mov [rdi].dsym.seginfo,LclAlloc( sizeof( seg_info ) )
         mov rcx,rax;tmemset( rax, 0, sizeof( seg_info ) )
-        mov [rcx].seg_info.Ofssize,ModuleInfo.defOfssize
+        mov [rcx].seg_info.Ofssize,MODULE.defOfssize
         mov [rcx].seg_info.alignment,4 ; this is PARA (2^4)
         mov [rcx].seg_info.combine,COMB_INVALID
 
@@ -383,7 +383,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; GROUP isn't valid for COFF/ELF/BIN-PE
 
     .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF ||
-         ( Options.output_format == OFORMAT_BIN && ModuleInfo.sub_format == SFORMAT_PE ) )
+         ( Options.output_format == OFORMAT_BIN && MODULE.sub_format == SFORMAT_PE ) )
 
         .return( asmerr( 2214 ) )
     .endif
@@ -437,7 +437,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 ; v2.09: allow segments in FLAT magic group be moved to a "real" group
 
             .elseif ( [rcx].seg_info.sgroup != NULL &&
-                      [rcx].seg_info.sgroup != ModuleInfo.flat_grp &&
+                      [rcx].seg_info.sgroup != MODULE.flat_grp &&
                       [rcx].seg_info.sgroup != rdi )
 
                 ; segment is in another group
@@ -520,16 +520,16 @@ SetOfssize proc
     mov rcx,CurrSeg
     .if ( rcx == NULL )
 
-        mov ModuleInfo.Ofssize,ModuleInfo.defOfssize
+        mov MODULE.Ofssize,MODULE.defOfssize
     .else
 
         mov rax,[rcx].dsym.seginfo
         movzx ecx,[rax].seg_info.Ofssize
-        mov ModuleInfo.Ofssize,cl
+        mov MODULE.Ofssize,cl
         lea rax,min_cpu
         movzx eax,word ptr [rax+rcx*2]
 
-        .if ( ModuleInfo.curr_cpu < eax )
+        .if ( MODULE.curr_cpu < eax )
 
             mov eax,16
             shl eax,cl
@@ -537,16 +537,16 @@ SetOfssize proc
         .endif
     .endif
     mov eax,2
-    mov cl,ModuleInfo.Ofssize
+    mov cl,MODULE.Ofssize
     shl eax,cl
     mov CurrWordSize,al
     xor eax,eax
-    mov ModuleInfo.accumulator,T_AX
+    mov MODULE.accumulator,T_AX
     .if ( cl == USE64 )
         inc eax
-        mov ModuleInfo.accumulator,T_RAX
+        mov MODULE.accumulator,T_RAX
     .elseif ( cl == USE32 )
-        mov ModuleInfo.accumulator,T_EAX
+        mov MODULE.accumulator,T_EAX
     .endif
     Set64Bit( eax )
    .return( NOT_ERROR )
@@ -585,13 +585,13 @@ CloseSeg endp
 
 DefineFlatGroup proc
 
-    mov rax,ModuleInfo.flat_grp
+    mov rax,MODULE.flat_grp
     .if ( rax == NULL )
 
         ; can't fail because <FLAT> is a reserved word
 
-        mov ModuleInfo.flat_grp,CreateGroup( "FLAT" )
-        mov cl,ModuleInfo.defOfssize
+        mov MODULE.flat_grp,CreateGroup( "FLAT" )
+        mov cl,MODULE.defOfssize
         mov [rax].asym.Ofssize,cl
     .endif
     or [rax].asym.flags,S_ISDEFINED ; v2.09
@@ -658,7 +658,7 @@ GetSymOfssize proc fastcall sym:ptr asym
         mov rax,[rax].dsym.seginfo
        .return( [rax].seg_info.Ofssize )
     .endif
-    movzx eax,ModuleInfo.Ofssize
+    movzx eax,MODULE.Ofssize
     ret
 
 GetSymOfssize endp
@@ -739,7 +739,7 @@ TypeFromClassName endp
 FindClass proc fastcall private uses rsi rdi rbx classname:string_t, len:int_t
 
     .for ( rbx = rcx, esi = edx,
-           rdi = ModuleInfo.LnameQueue.head : rdi : rdi = [rdi].qnode.next )
+           rdi = MODULE.LnameQueue.head : rdi : rdi = [rdi].qnode.next )
 
         mov rcx,[rdi].qnode.sym
         .if ( [rcx].asym.state == SYM_CLASS_LNAME )
@@ -824,9 +824,9 @@ CreateIntSegment proc __ccall uses rdi name:string_t, classname:string_t, alignm
         mov rdi,rax
         .if ( !( [rdi].asym.flags & S_ISDEFINED ) )
 
-            inc ModuleInfo.num_segs
+            inc MODULE.num_segs
             mov rcx,[rdi].dsym.seginfo
-            mov [rcx].seg_info.seg_idx,ModuleInfo.num_segs
+            mov [rcx].seg_info.seg_idx,MODULE.num_segs
             AddLnameItem( rdi )
             or [rdi].asym.flags,S_ISDEFINED ; v2.12: added
         .endif
@@ -857,7 +857,7 @@ EndsDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
         .return( asmerr( 2008, [rbx+rcx].string_ptr ) )
     .endif
     .if ( Parse_Pass != PASS_1 )
-        .if ( ModuleInfo.list )
+        .if ( MODULE.list )
             LstWrite( LSTTYPE_LABEL, 0, NULL )
         .endif
     .endif
@@ -900,7 +900,7 @@ endif
     push_seg( rdi )
     mov ebx,SetOfssize() ; v2.18: set offset size BEFORE listing, so it shows correctly
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
 
         LstWrite( LSTTYPE_LABEL, 0, NULL )
     .endif
@@ -1011,7 +1011,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; v2.14: set a default ofsset size
 
             .if ( al == USE_EMPTY )
-                mov [rcx].seg_info.Ofssize,ModuleInfo.Ofssize
+                mov [rcx].seg_info.Ofssize,MODULE.Ofssize
             .endif
         .else
 
@@ -1236,7 +1236,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov [rdi].seg_info.combine,[rcx].typeinfo.value
            .endc
         .case INIT_OFSSIZE_FLAT
-            .if ( ModuleInfo.defOfssize == USE16 )
+            .if ( MODULE.defOfssize == USE16 )
 
                 asmerr( 2085 )
                .endc
@@ -1247,13 +1247,13 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; v2.09: make sure ofssize is at least USE32 for FLAT
             ; v2.14: USE16 doesn't need to be handled here anymore
 
-            mov [rdi].seg_info.Ofssize,ModuleInfo.defOfssize
+            mov [rdi].seg_info.Ofssize,MODULE.defOfssize
 
             ; put the segment into the FLAT group.
             ; this is not quite Masm-compatible, because trying to put
             ; the segment into another group will cause an error.
 
-            mov [rdi].seg_info.sgroup,ModuleInfo.flat_grp
+            mov [rdi].seg_info.sgroup,MODULE.flat_grp
            .endc
         .case INIT_OFSSIZE
             mov rcx,type
@@ -1262,8 +1262,8 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; v2.17: if .model FLAT, put USE64 segments into flat group.
             ; be aware that the "flat" attribute affects fixups of non-flat items for -pe format.
 
-            .if ( [rcx].typeinfo.value == USE64 && ModuleInfo._model == MODEL_FLAT )
-                mov [rdi].seg_info.sgroup,ModuleInfo.flat_grp
+            .if ( [rcx].typeinfo.value == USE64 && MODULE._model == MODEL_FLAT )
+                mov [rdi].seg_info.sgroup,MODULE.flat_grp
             .endif
             .endc
         .case INIT_CHAR_INFO
@@ -1272,7 +1272,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .case INIT_CHAR
             ; characteristics are restricted to COFF/ELF/BIN-PE
             .if ( Options.output_format == OFORMAT_OMF || ( Options.output_format == OFORMAT_BIN &&
-                ( ModuleInfo.sub_format != SFORMAT_PE && ModuleInfo.sub_format != SFORMAT_64BIT ) ) )
+                ( MODULE.sub_format != SFORMAT_PE && MODULE.sub_format != SFORMAT_64BIT ) ) )
 
                 asmerr( 3006, [rbx].string_ptr )
             .else
@@ -1282,7 +1282,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .case INIT_ALIAS
             ; alias() is restricted to COFF/ELF/BIN-PE
             .if ( Options.output_format == OFORMAT_OMF || ( Options.output_format == OFORMAT_BIN &&
-                ( ModuleInfo.sub_format != SFORMAT_PE && ModuleInfo.sub_format != SFORMAT_64BIT ) ) )
+                ( MODULE.sub_format != SFORMAT_PE && MODULE.sub_format != SFORMAT_64BIT ) ) )
                 asmerr( 3006, [rbx].string_ptr )
                 mov i,TokenCount ; stop further parsing of this line
                .endc
@@ -1412,7 +1412,7 @@ if 1    ; v2.34.61
 
                 .elseif ( [rdx].asym.Ofssize != [rdi].seg_info.Ofssize )
 
-                    .if ( rdx == ModuleInfo.flat_grp && [rdi].seg_info.Ofssize >= USE32 )
+                    .if ( rdx == MODULE.flat_grp && [rdi].seg_info.Ofssize >= USE32 )
                         ; v2.17: allow both 32- and 64-bit segments in FLAT group
                     .else
                         asmerr( 2015, [rcx].asym.name, "segment word size" )
@@ -1426,8 +1426,8 @@ endif
         .if ( [rdi].seg_info.comdatselection && Options.output_format == OFORMAT_OMF )
 
         .else
-            inc ModuleInfo.num_segs
-            mov [rdi].seg_info.seg_idx,ModuleInfo.num_segs
+            inc MODULE.num_segs
+            mov [rdi].seg_info.seg_idx,MODULE.num_segs
             AddLnameItem( sym )
         .endif
 
@@ -1457,7 +1457,7 @@ endif
             mov [rax].asym.offs,-0x1000
         .endif
     .endif
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_LABEL, 0, NULL )
     .endif
     .return( esi )
@@ -1537,7 +1537,7 @@ SortSegments endp
 
 SegmentModuleExit proc uses rdi
 
-    .if ( ModuleInfo._model != MODEL_NONE )
+    .if ( MODULE._model != MODEL_NONE )
         ModelSimSegmExit()
     .endif
 
@@ -1589,7 +1589,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
 
     ; alloc a buffer for the contents
 
-    .if ( ModuleInfo.pCodeBuff == NULL && Options.output_format != OFORMAT_OMF )
+    .if ( MODULE.pCodeBuff == NULL && Options.output_format != OFORMAT_OMF )
 
         .for ( rdi = SymTables[TAB_SEG*symbol_queue].head,
                 buffer_size = 0: rdi: rdi = [rdi].dsym.next )
@@ -1621,7 +1621,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
         .endf
 
         .if ( buffer_size )
-            mov ModuleInfo.pCodeBuff,LclAlloc( buffer_size )
+            mov MODULE.pCodeBuff,LclAlloc( buffer_size )
         .endif
     .endif
 
@@ -1629,7 +1629,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
     ; set start of segment buffers.
 
     .for ( rdi = SymTables[TAB_SEG*symbol_queue].head,
-           rsi = ModuleInfo.pCodeBuff: rdi: rdi = [rdi].dsym.next )
+           rsi = MODULE.pCodeBuff: rdi: rdi = [rdi].dsym.next )
 
         mov rcx,[rdi].dsym.seginfo
         mov [rcx].seg_info.current_loc,0
@@ -1662,7 +1662,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
         mov [rcx].seg_info.tail,NULL
     .endf
 
-    mov ModuleInfo.Ofssize,USE16
+    mov MODULE.Ofssize,USE16
     .if ( ebx != PASS_1 && UseSavedState == TRUE )
 
         mov CurrSeg,saved_CurrSeg

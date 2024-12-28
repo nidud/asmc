@@ -16,7 +16,7 @@ InsertLineQueue proto __ccall
 QueueTestLines  equ <AddLineQueue>
 
 is_linequeue_populated macro
-    exitm<ModuleInfo.line_queue.head>
+    exitm<MODULE.line_queue.head>
     endm
 
 endif

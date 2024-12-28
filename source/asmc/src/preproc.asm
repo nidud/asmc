@@ -44,7 +44,7 @@ WriteCodeLabel proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t
     ;
     ; ensure the listing is written with the FULL source line
     ;
-    .if ( ModuleInfo.curr_file[LST*size_t] )
+    .if ( MODULE.curr_file[LST*size_t] )
 
         LstWrite(LSTTYPE_LABEL, 0, 0)
     .endif
@@ -80,7 +80,7 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
 
     xor eax,eax
     .if ( !( [rcx].flags & T_HLLCODE ) ||
-           al != ModuleInfo.masm_compat_gencode ||
+           al != MODULE.masm_compat_gencode ||
           eax != Parse_Pass ||
           eax != NoLineStore )
         .return
@@ -158,7 +158,7 @@ PreprocessLine proc __ccall uses rsi rbx tokenarray:token_t
     ;
     ; v2.06: moved here from Tokenize()
     ;
-    mov ModuleInfo.line_flags,0
+    mov MODULE.line_flags,0
     ;
     ; TokenCount is the number of tokens scanned
     ;
@@ -166,7 +166,7 @@ PreprocessLine proc __ccall uses rsi rbx tokenarray:token_t
     mov rbx,TokenArray
 
 if REMOVECOMENT eq 0
-    .if ( ( TokenCount == 0 ) && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif ) )
+    .if ( ( TokenCount == 0 ) && ( CurrIfState == BLOCK_ACTIVE || MODULE.listif ) )
 
         LstWriteSrcLine()
     .endif
@@ -284,7 +284,7 @@ endif
                 ;
                 ; v2.03: LstWrite() must be called AFTER StoreLine()!
                 ;
-                .if ModuleInfo.list
+                .if MODULE.list
                     mov eax,LSTTYPE_TMACRO
                     .if [rsi].asym.state == SYM_INTERNAL
                         mov eax,LSTTYPE_EQUATE

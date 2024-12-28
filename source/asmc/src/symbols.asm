@@ -116,7 +116,7 @@ FindDefinedName proc fastcall private uses rsi rdi rbx name:string_t
 
         .lodsd
         .if !tstrcmp( rbx, rax )
-            
+
             inc edi
            .return( edi )
         .endif
@@ -167,7 +167,7 @@ undef_name endp
 SymSetCmpFunc proc __ccall
 
     lea rax,tmemicmp
-    .if ( ModuleInfo.case_sensitive )
+    .if ( MODULE.case_sensitive )
         lea rax,tmemcmp
     .endif
     mov SymCmpFunc,rax
@@ -269,7 +269,7 @@ SymAlloc proc __ccall uses rsi rdi name:string_t
     lea rdx,[rax+dsym]
     mov [rax].asym.name,rdx
 
-    .if ( ModuleInfo.cref )
+    .if ( MODULE.cref )
         or [rax].asym.flags,S_LIST
     .endif
 
@@ -387,7 +387,7 @@ endif
     mov     rax,[rdx]
     test    rax,rax
     jz      .end_l
-    cmp     ModuleInfo.case_sensitive,0
+    cmp     MODULE.case_sensitive,0
     je      .cmp_li
 .cmp_l:
     cmp     r8d,[rax].asym.name_size
@@ -459,7 +459,7 @@ endif
     mov     rax,[rdx]
     test    rax,rax
     jz      .end_g
-    cmp     ModuleInfo.case_sensitive,0
+    cmp     MODULE.case_sensitive,0
     je      .cmp_gi
 .cmp_g:
     cmp     r8d,[rax].asym.name_size
@@ -564,7 +564,7 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
     test    eax,eax
     jz      .end_l
 
-    cmp     ModuleInfo.case_sensitive,0
+    cmp     MODULE.case_sensitive,0
     je      .cmp_li
 .cmp_l:
     cmp     ecx,[eax].asym.name_size
@@ -636,7 +636,7 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
     mov     eax,[edx]
     test    eax,eax
     jz      .end_g
-    cmp     ModuleInfo.case_sensitive,0
+    cmp     MODULE.case_sensitive,0
     je      .cmp_gi
 .cmp_g:
     cmp     ecx,[eax].asym.name_size
@@ -1211,7 +1211,7 @@ QAddItem endp
 
 AddPublicData proc fastcall sym:asym_t
 
-    QAddItem( &ModuleInfo.PubQueue, rcx )
+    QAddItem( &MODULE.PubQueue, rcx )
     ret
 
 AddPublicData endp

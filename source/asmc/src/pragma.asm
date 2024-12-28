@@ -144,9 +144,9 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             shr wstringfl,1
             .ifc
-                or  ModuleInfo.xflag,OPT_WSTRING
+                or  MODULE.xflag,OPT_WSTRING
             .else
-                and ModuleInfo.xflag,not OPT_WSTRING
+                and MODULE.xflag,not OPT_WSTRING
             .endif
             .endc
         .endif
@@ -174,13 +174,13 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                .endc
             .endif
             shl wstringfl,1
-            .if ( ModuleInfo.xflag & OPT_WSTRING )
+            .if ( MODULE.xflag & OPT_WSTRING )
                 or wstringfl,1
             .endif
             .if ( eax )
-                or  ModuleInfo.xflag,OPT_WSTRING
+                or  MODULE.xflag,OPT_WSTRING
             .else
-                and ModuleInfo.xflag,not OPT_WSTRING
+                and MODULE.xflag,not OPT_WSTRING
             .endif
             add rbx,asm_tok
             .if [rbx].token == T_CL_BRACKET
@@ -193,7 +193,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .endc .if ( [rbx].token != T_REG )
 
-        mov rdx,get_fasttype(ModuleInfo.Ofssize, LANG_ASMCALL)
+        mov rdx,get_fasttype(MODULE.Ofssize, LANG_ASMCALL)
         mov rdi,[rdx].fc_info.regpack
         xor eax,eax
         mov ecx,fc_regs
@@ -212,13 +212,13 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov rdx,[rdi].fc_info.regpack
             mov [rdx].fc_regs.gpr_dw[rsi],al
 
-            .if ( ModuleInfo.Ofssize )
+            .if ( MODULE.Ofssize )
 
                 get_register([rbx].tokval, 4)
                 mov rdx,[rdi].fc_info.regpack
                 mov [rdx].fc_regs.gpr_dd[rsi],al
             .endif
-            .if ( ModuleInfo.Ofssize == USE64 )
+            .if ( MODULE.Ofssize == USE64 )
 
                 get_register([rbx].tokval, 8)
                 mov rdx,[rdi].fc_info.regpack
@@ -509,7 +509,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 add rdi,qitem
                 mov rdi,LclAlloc( edi )
                 tstrcpy( &[rdi].qitem.value, &dynlib )
-                QEnqueue( &ModuleInfo.LinkQueue, rdi )
+                QEnqueue( &MODULE.LinkQueue, rdi )
             .else
                 .while [rbx].token == T_STRING
                     add rbx,asm_tok
@@ -530,7 +530,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; .pragma exit(<proc>, <priority>)
 
         mov edi,eax
-        .if !ModuleInfo.dotname
+        .if !MODULE.dotname
             AddLineQueueX(" %r dotname", T_OPTION)
         .endif
         .if Options.output_format == OFORMAT_ELF
@@ -557,7 +557,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
 
         mov eax,2
-        .if ( ModuleInfo.Ofssize >= USE32 )
+        .if ( MODULE.Ofssize >= USE32 )
             mov eax,8
         .endif
         AddLineQueueX( " %s %r %r(%d) 'CONST'", rsi, T_SEGMENT, T_ALIGN, eax )
@@ -566,7 +566,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if [rbx].token == T_COMMA
             add rbx,asm_tok
         .endif
-        .if ModuleInfo.Ofssize == USE64
+        .if MODULE.Ofssize == USE64
             .if Options.output_format == OFORMAT_ELF
                 AddLineQueueX(" dq %r %s", T_IMAGEREL, rdx)
             .else
@@ -599,7 +599,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov eax,PackCount
             lea rcx,PackStack
             mov al,[rcx+rax]
-            mov ModuleInfo.fieldalign,al
+            mov MODULE.fieldalign,al
             .endc
         .endif
 
@@ -608,7 +608,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov edx,PackCount
         inc PackCount
-        mov al,ModuleInfo.fieldalign
+        mov al,MODULE.fieldalign
         lea rcx,PackStack
         mov [rcx+rdx],al
         add rbx,asm_tok
@@ -631,7 +631,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         lea rcx,ListCount
         lea rdx,ListStack
-        lea rdi,ModuleInfo.list
+        lea rdi,MODULE.list
 
         .if [rbx].tokval == T_POP
 
@@ -648,7 +648,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         lea rcx,CrefCount
         lea rdx,CrefStack
-        lea rdi,ModuleInfo.cref
+        lea rdi,MODULE.cref
 
         .if [rbx].tokval == T_POP
 
@@ -692,7 +692,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov [rdi],al
         .if al && list_directive
 
-            or ModuleInfo.line_flags,LOF_LISTED
+            or MODULE.line_flags,LOF_LISTED
         .endif
         add rbx,asm_tok
         .if [rbx].token == T_CL_BRACKET
@@ -709,7 +709,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov al,[rdx+rax]
         mov [rdi],al
         .if al && list_directive
-            or ModuleInfo.line_flags,LOF_LISTED
+            or MODULE.line_flags,LOF_LISTED
         .endif
         add rbx,asm_tok
         .if [rbx].token == T_CL_BRACKET
@@ -726,10 +726,10 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
 
     .if !list_directive
-        .if ModuleInfo.list
+        .if MODULE.list
             LstWrite(LSTTYPE_DIRECTIVE, GetCurrOffset(), 0)
         .endif
-        .if ModuleInfo.line_queue.head
+        .if MODULE.line_queue.head
             RunLineQueue()
         .endif
     .endif

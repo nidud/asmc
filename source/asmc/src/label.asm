@@ -30,7 +30,7 @@ endif
 
 LabelInit proc __ccall
 
-    mov ModuleInfo.anonymous_label,0
+    mov MODULE.anonymous_label,0
     ret
 
 LabelInit endp
@@ -38,7 +38,7 @@ LabelInit endp
 
 GetAnonymousLabel proc __ccall buffer:string_t, value:int_t
 
-    mov eax,ModuleInfo.anonymous_label
+    mov eax,MODULE.anonymous_label
     add eax,value
     tsprintf( buffer, "L&_%04u", eax )
    .return( buffer )
@@ -85,8 +85,8 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
     .if ( eax == '@@' )
 
         lea rsi,buffer
-        inc ModuleInfo.anonymous_label
-        tsprintf( rsi, "L&_%04u", ModuleInfo.anonymous_label )
+        inc MODULE.anonymous_label
+        tsprintf( rsi, "L&_%04u", MODULE.anonymous_label )
     .endif
 
     .if ( bLocal )
@@ -139,7 +139,7 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
         ; a possible language type set by EXTERNDEF must be kept!
 
         .if ( [rdi].asym.langtype == LANG_NONE )
-            mov [rdi].asym.langtype,ModuleInfo.langtype
+            mov [rdi].asym.langtype,MODULE.langtype
         .endif
 
         assume rbx:ptr qualified_type
@@ -196,7 +196,7 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
     SetSymSegOfs( rdi )
 
     .if ( Parse_Pass != PASS_1 && [rdi].asym.offs != adr )
-        mov ModuleInfo.PhaseError,TRUE
+        mov MODULE.PhaseError,TRUE
     .endif
 
     BackPatch( rdi )
@@ -230,7 +230,7 @@ endif
     mov ti.mem_type,MT_EMPTY
     mov ti.ptr_memtype,MT_EMPTY
     mov ti.symtype,NULL
-    mov ti.Ofssize,ModuleInfo.Ofssize
+    mov ti.Ofssize,MODULE.Ofssize
 
     .ifd ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
         .return
@@ -252,7 +252,7 @@ endif
 
         ; dont allow near16/far16/near32/far32 if size won't match
 
-        .if ( ti.Ofssize != USE_EMPTY && ModuleInfo.Ofssize != ti.Ofssize )
+        .if ( ti.Ofssize != USE_EMPTY && MODULE.Ofssize != ti.Ofssize )
             .return( asmerr( 2098 ) )
         .endif
 
@@ -290,7 +290,7 @@ endif
         .return( asmerr( 2008, [rbx].tokpos ) ) ; v2.10: display tokpos
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_LABEL, 0, NULL )
     .endif
 

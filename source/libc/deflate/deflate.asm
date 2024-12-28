@@ -1512,25 +1512,110 @@ endif
 
     mov     edx,[rbx].str_start
     mov     di,dx                   ; scan: window + start
+ifdef __P686__
+    xor     ecx,ecx
+    sub     edx,MAX_DIST            ; limit: start - MAX_DIST : 0
+    cmovb   edx,ecx
+else
     sub     edx,MAX_DIST            ; limit: start - MAX_DIST : 0
     jae     .0
     xor     edx,edx
 .0:
+endif
 ifdef _WIN64
-    mov     r8d,[rbx].prev_length   ; best_len: prev_length
-    mov     eax,[rbx].max_chain_len
-    cmp     r8d,[rbx].good_match
-    jb      .1
-    shr     eax,2
-.1:
-    mov     rcx,[rbx].prev
-    mov     [rbx].chain_length,eax
-    mov     cx,[rdi]
-    mov     ax,[rdi+r8-1]
-    add     rdi,2
-.2:
-    cmp     ax,[rsi+r8-1]
+    mov         r8d,[rbx].prev_length   ; best_len: prev_length
+    mov         eax,[rbx].max_chain_len
+    cmp         r8d,[rbx].good_match
+    sbb         ecx,ecx
+    and         ecx,2
+    shr         eax,cl
+    mov         [rbx].chain_length,eax
+    mov         r9d,edi
+ifdef __AVX__
+    and         r9d,32-1
+    neg         r9d
+    add         r9d,32
+    vmovups     ymm1,[rdi]
 else
+    and         r9d,16-1
+    neg         r9d
+    add         r9d,16
+    movups      xmm1,[rdi]
+endif
+.1:
+ifdef __AVX__
+    vmovups     ymm0,[rsi]
+    vpcmpeqb    ymm0,ymm0,ymm1
+    vpmovmskb   ecx,ymm0
+    mov         eax,32
+    xor         ecx,-1
+    jz          .5
+    bsf         ecx,ecx
+    lea         eax,[rcx+rax-32]
+else
+    movups      xmm0,[rsi]
+    pcmpeqb     xmm0,xmm1
+    pmovmskb    ecx,xmm0
+    mov         eax,16
+    xor         cx,-1
+    jz          .5
+    bsf         ecx,ecx
+    lea         eax,[rcx+rax-16]
+endif
+.2:
+    cmp         eax,r8d
+    jle         .3
+    mov         word ptr [rbx].match_start,si
+    mov         r8d,eax
+    cmp         eax,[rbx].nice_match
+    jge         .4
+.3:
+    mov         r11,[rbx].prev
+    add         si,si
+    mov         r11w,si
+    mov         si,[r11]
+    dec         [rbx].chain_length
+    jz          .4
+    cmp         si,dx
+    ja          .1
+.4:
+    mov         eax,r8d
+    ret
+.5:
+    mov         eax,r9d
+.6:
+ifdef __AVX__
+    vmovups     ymm0,[rsi+rax]
+    vpcmpeqb    ymm0,ymm0,[rdi+rax]
+    vpmovmskb   ecx,ymm0
+    add         eax,32
+    xor         ecx,-1
+    jnz         .7
+    cmp         eax,MAX_MATCH+32
+    jb          .6
+.7:
+    bsf         ecx,ecx
+    lea         eax,[rcx+rax-32]
+else
+    movups      xmm0,[rsi+rax]
+    pcmpeqb     xmm0,[rdi+rax]
+    pmovmskb    ecx,xmm0
+    add         eax,16
+    xor         cx,-1
+    jnz         .7
+    cmp         eax,MAX_MATCH+16
+    jb          .6
+.7:
+    bsf         ecx,ecx
+    lea         eax,[rcx+rax-16]
+endif
+    mov         ecx,MAX_MATCH
+    cmp         eax,ecx
+    cmova       eax,ecx
+    jmp         .2
+
+else
+
     mov     ebp,[ebx].prev_length   ; best_len: prev_length
     mov     eax,[ebx].max_chain_len
     cmp     ebp,[ebx].good_match
@@ -1544,7 +1629,6 @@ else
     add     rdi,2
 .2:
     cmp     ax,[esi+ebp-1]
-endif
     jne     .4
     cmp     cx,[rsi]
     jne     .4
@@ -1558,16 +1642,6 @@ endif
     sub     rsi,rax
     sub     rsi,2
     inc     eax
-ifdef _WIN64
-    cmp     eax,r8d
-    jle     .3
-    mov     word ptr [rbx].match_start,si
-    mov     r8d,eax
-    cmp     eax,[rbx].nice_match
-    jge     .5
-.3:
-    mov     ax,[rdi+r8-3]
-else
     cmp     eax,ebp
     jle     .3
     mov     word ptr [ebx].match_start,si
@@ -1576,7 +1650,6 @@ else
     jge     .5
 .3:
     mov     ax,[edi+ebp-3]
-endif
 .4:
     add     si,si
     mov     cx,si
@@ -1587,13 +1660,10 @@ endif
     cmp     si,dx
     ja      .2
 .5:
-ifdef _WIN64
-    mov     eax,r8d
-else
     mov     eax,ebp
     pop     ebp
-endif
     ret
+endif
 
 longest_match endp
 

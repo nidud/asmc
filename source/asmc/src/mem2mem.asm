@@ -26,7 +26,7 @@ include qfloat.inc
 
 InlineCopy proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
 
-    movzx   eax,ModuleInfo.Ofssize
+    movzx   eax,MODULE.Ofssize
     shl     eax,2
     lea     rbx,ofss
     add     rax,rbx
@@ -55,7 +55,7 @@ InlineMove proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
 
   local type:uint_t
 
-    movzx   edi,ModuleInfo.Ofssize
+    movzx   edi,MODULE.Ofssize
     lea     rbx,ofss
     movzx   esi,byte ptr [rbx+rdi+12]
     movzx   eax,byte ptr [rbx+rdi+16]
@@ -92,7 +92,7 @@ InlineMove endp
 
 RetLineQueue proc __ccall
 
-    .if ModuleInfo.list
+    .if MODULE.list
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
     RunLineQueue()
@@ -156,7 +156,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     ldr ebx,op1
     ldr edi,op2
 
-    .if ( !( ebx & OP_M_ANY ) || !( edi & OP_M_ANY ) || ModuleInfo.masm_compat_gencode == 1 )
+    .if ( !( ebx & OP_M_ANY ) || !( edi & OP_M_ANY ) || MODULE.masm_compat_gencode == 1 )
         .return asmerr( 2070 )
     .endif
 
@@ -165,7 +165,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     mov reg,T_EAX
     mov regz,4
 
-    .if ( ModuleInfo.Ofssize == USE64 )
+    .if ( MODULE.Ofssize == USE64 )
 
         mov reg,T_RAX
         mov regz,8

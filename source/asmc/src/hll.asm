@@ -168,7 +168,7 @@ RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:int_t, start1:uint_
     ; v2.30 - test if second operand starts with '&'
 
     mov ecx,start2
-    .if ( ecx != EMPTY && ModuleInfo.Ofssize != USE16 )
+    .if ( ecx != EMPTY && MODULE.Ofssize != USE16 )
 
         imul ecx,ecx,asm_tok
         .if ( [rbx+rcx].token == T_STRING )
@@ -176,7 +176,7 @@ RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:int_t, start1:uint_
             mov rax,[rbx+rcx].string_ptr
             .if ( word ptr [rax] == '&' )
 
-                mov reg,ModuleInfo.accumulator
+                mov reg,MODULE.accumulator
                 imul edx,end2,asm_tok
                 mov rsi,[rbx+rdx].tokpos
                 mov dl,[rsi]
@@ -406,7 +406,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
             .if ( GetValueSp( [rax].asm_tok.tokval ) & ( OP_XMM or OP_YMM or OP_ZMM ) )
 
                 mov eax,T_COMISD
-                .if ( ModuleInfo.flt_size == 4 )
+                .if ( MODULE.flt_size == 4 )
                     mov eax,T_COMISS
                 .endif
                 mov inst_cmp,eax
@@ -490,7 +490,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
             .if ( !( op1.flags & E_INDIRECT ) && is_float == 0 )
 
                 mov edx,T_TEST
-                .if ( ModuleInfo.masm_compat_gencode )
+                .if ( MODULE.masm_compat_gencode )
                     mov edx,T_OR
                 .endif
                 RenderInstr( buffer, edx, op1_pos, op1_end,
@@ -586,7 +586,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         ; v2.22 - switch /Zg to OR
         ;
         mov edx,T_TEST
-        .if ModuleInfo.masm_compat_gencode
+        .if MODULE.masm_compat_gencode
             mov edx,T_OR
         .endif
         RenderInstr( buffer, edx, op1_pos, op1_end, op2_pos, op2_end, rbx )
@@ -608,7 +608,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
             ; v2.22 - switch /Zg to OR
             ;
             mov edx,T_TEST
-            .if ( ModuleInfo.masm_compat_gencode )
+            .if ( MODULE.masm_compat_gencode )
                 mov edx,T_OR
             .endif
             RenderInstr( buffer, edx, op1_pos, op1_end, op1_pos, op1_end, rbx )
@@ -1131,7 +1131,7 @@ GetParamId proc fastcall private uses rsi rdi rbx id:int_t, sym:asym_t
 
     mov bl,[rdx].asym.langtype
     .if ( bl == LANG_STDCALL || bl == LANG_C || bl == LANG_SYSCALL || bl == LANG_VECTORCALL ||
-          ( bl == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+          ( bl == LANG_FASTCALL && MODULE.Ofssize != USE16 ) )
 
         mov rbx,rax
         .while ecx
@@ -1319,12 +1319,12 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:p
                   .case 2: mov esi,T_AX : .endc
                   .case 4
                     mov esi,T_EAX
-                    .if ModuleInfo.Ofssize == USE64 && [rcx].asym.mem_type & MT_FLOAT
+                    .if MODULE.Ofssize == USE64 && [rcx].asym.mem_type & MT_FLOAT
                         mov esi,T_XMM0
                     .endif
                     .endc
                   .case 8
-                    .if ModuleInfo.Ofssize == USE64
+                    .if MODULE.Ofssize == USE64
                         .if [rcx].asym.mem_type & MT_FLOAT
                             mov esi,T_XMM0
                         .else
@@ -1343,7 +1343,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:p
                   .case 16
                     .if ( [rcx].asym.mem_type & MT_FLOAT )
                         mov esi,T_XMM0
-                    .elseif ( ModuleInfo.Ofssize == USE64 )
+                    .elseif ( MODULE.Ofssize == USE64 )
                         mov esi,T_RDX
                         mov reg2,T_RAX
                     .endif
@@ -1366,7 +1366,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:p
     .if !esi
 
 ifndef ASMC64
-        mov esi,ModuleInfo.accumulator
+        mov esi,MODULE.accumulator
 else
         mov esi,T_RAX
 endif
@@ -1390,7 +1390,7 @@ endif
 
                     ; movsd id,cos(..)
 
-                    .if ( ModuleInfo.Ofssize == USE64 &&
+                    .if ( MODULE.Ofssize == USE64 &&
                           ( [rax].asym.mem_type == MT_REAL4 || [rax].asym.mem_type == MT_REAL8 ) )
                         mov eax,16
                     .else
@@ -1457,7 +1457,7 @@ endif
                       .case 2: mov esi,T_AX  : .endc
                       .case 4: mov esi,T_EAX : .endc
                       .case 8
-                        .if ModuleInfo.Ofssize == USE64
+                        .if MODULE.Ofssize == USE64
                             mov esi,T_RAX
                         .endif
                         .endc
@@ -1762,7 +1762,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
 
     .if ( comptr )
 
-        .if ( ModuleInfo.Ofssize == USE64 && !constructor )
+        .if ( MODULE.Ofssize == USE64 && !constructor )
 
             mov rax,method
             .if rax ; v2.28: Added for undefined symbol error..
@@ -1978,7 +1978,7 @@ done:
 
             .if ( rcx && ( [rcx].asym.langtype == LANG_FASTCALL ||
                   [rcx].asym.langtype == LANG_VECTORCALL ) &&
-                  ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+                  MODULE.Ofssize == USE64 && ( MODULE.win64_flags & W64F_AUTOSTACKSP ) )
 
                 mov rdx,CurrProc
                 .if ( rdx )
@@ -2011,11 +2011,11 @@ LKRenderHllProc endp
 
 RenderHllProc proc __ccall private dst:string_t, i:uint_t, tokenarray:ptr asm_tok
 
-   .new lineflags:byte = ModuleInfo.line_flags
+   .new lineflags:byte = MODULE.line_flags
 
     LKRenderHllProc( dst, i, tokenarray )
     mov cl,lineflags
-    mov ModuleInfo.line_flags,cl
+    mov MODULE.line_flags,cl
     ret
 
 RenderHllProc endp
@@ -2070,10 +2070,10 @@ ExpandHllProcEx proc __ccall public  uses rsi rdi buffer:string_t, i:int_t, toke
         mov rc,STRING_EXPANDED
     .until 1
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
     .return( rc )
@@ -2177,7 +2177,7 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
                       .case HLLF_IFD
                         mov ax,[rdx]
 ifndef ASMC64
-                        .if ( ModuleInfo.Ofssize == USE64 )
+                        .if ( MODULE.Ofssize == USE64 )
 endif
                             mov B[rdx],'e'
                             .if ( !ecx && ax == [rbx] ) ; v2.27 - .ifd foo() & imm --> test eax,emm
@@ -2185,7 +2185,7 @@ endif
                             .endif
 
 ifndef ASMC64
-                        .elseif ( ModuleInfo.Ofssize == USE16 )
+                        .elseif ( MODULE.Ofssize == USE16 )
 
                             .if ( B[rdx+2] != ' ' )
 
@@ -2207,7 +2207,7 @@ endif
 
                       .case HLLF_IFW
 ifndef ASMC64
-                        .if ( ModuleInfo.Ofssize != USE16 )
+                        .if ( MODULE.Ofssize != USE16 )
 endif
                             mov ax,[rdx]
                             mov byte ptr [rdx],' '
@@ -2222,7 +2222,7 @@ endif
                       .case HLLF_IFB
                         mov ax,[rdx]
 ifndef ASMC64
-                        .if ( ModuleInfo.Ofssize == USE16 )
+                        .if ( MODULE.Ofssize == USE16 )
                             mov byte ptr [rdx+1],'l'
                             .if ( !ecx && ax == [rbx] )
                                 mov byte ptr [rbx+1],'l'
@@ -2299,7 +2299,7 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr
 
     .if ( Parse_Pass == PASS_1 )
 
-        .if ( ModuleInfo.line_queue.head )
+        .if ( MODULE.line_queue.head )
             RunLineQueue()
         .endif
         .if ( delayed )
@@ -2315,7 +2315,7 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr
         QueueTestLines( buffer )
 
     .else
-        .if ( ModuleInfo.list )
+        .if ( MODULE.list )
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
         .endif
 
@@ -2429,7 +2429,7 @@ RenderUntilXX proc __ccall private uses rdi hll:ptr hll_item, cmd:uint_t
     ldr eax,cmd
     mov ecx,T_CX - T_AX
 ifndef ASMC64
-    add ecx,ModuleInfo.accumulator
+    add ecx,MODULE.accumulator
 else
     add ecx,T_RAX
 endif
@@ -2583,7 +2583,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ;
     ; v2.06: is there an item on the free stack?
     ;
-    mov rsi,ModuleInfo.HllFree
+    mov rsi,MODULE.HllFree
     .if !rsi
         mov rsi,LclAlloc( hll_item )
     .endif
@@ -2730,7 +2730,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov [rsi].cmd,HLL_REPEAT
         .endif
 
-        mov cl,ModuleInfo.loopalign
+        mov cl,MODULE.loopalign
         .if cl
             mov eax,1
             shl eax,cl
@@ -2789,18 +2789,18 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ;
     ; v2.06: remove the item from the free stack
     ;
-    .if ( rsi == ModuleInfo.HllFree )
+    .if ( rsi == MODULE.HllFree )
         mov rax,[rsi].next
-        mov ModuleInfo.HllFree,rax
+        mov MODULE.HllFree,rax
     .endif
-    mov rax,ModuleInfo.HllStack
+    mov rax,MODULE.HllStack
     mov [rsi].next,rax
-    mov ModuleInfo.HllStack,rsi
+    mov MODULE.HllStack,rsi
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
-    .if ( ModuleInfo.line_queue.head ) ; might be NULL! (".if 1")
+    .if ( MODULE.line_queue.head ) ; might be NULL! (".if 1")
         RunLineQueue()
     .endif
     .return rc
@@ -2817,16 +2817,16 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new cmd:int_t
    .new buffer[MAX_LINE_LEN]:char_t
 
-    mov rsi,ModuleInfo.HllStack
+    mov rsi,MODULE.HllStack
     .if ( rsi == NULL )
         .return asmerr( 1011 )
     .endif
 
     mov rax,[rsi].next
-    mov rcx,ModuleInfo.HllFree
-    mov ModuleInfo.HllStack,rax
+    mov rcx,MODULE.HllFree
+    mov MODULE.HllStack,rax
     mov [rsi].next,rcx
-    mov ModuleInfo.HllFree,rsi
+    mov MODULE.HllFree,rsi
 
     lea rdi,buffer
     mov rbx,tokenarray
@@ -2912,7 +2912,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .if ( eax == NOT_ERROR )
 
-                .if ( ModuleInfo.masm_compat_gencode == 1 && cmd == T_DOT_UNTILCXZ )
+                .if ( MODULE.masm_compat_gencode == 1 && cmd == T_DOT_UNTILCXZ )
 
                     mov rc,CheckCXZLines( rdi )
                 .endif
@@ -2922,7 +2922,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     ; write condition lines
                     ;
                     QueueTestLines( rdi )
-                    .if ( ModuleInfo.masm_compat_gencode == 0 )
+                    .if ( MODULE.masm_compat_gencode == 0 )
                         RenderUntilXX( rsi, cmd )
                     .endif
                 .else
@@ -2930,7 +2930,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
         .else
-            .if ( ModuleInfo.masm_compat_gencode == 1 )
+            .if ( MODULE.masm_compat_gencode == 1 )
 
                 AddLineQueueX( "loop %s", GetLabelStr( [rsi].labels[LSTART*4], rdi ) )
             .else
@@ -3017,13 +3017,13 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov rc,ERROR
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
     ;
     ; v2.11: always run line-queue if it's not empty.
     ;
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
     .return( rc )
@@ -3154,7 +3154,7 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new cmd:int_t
    .new buff[16]:char_t
    .new buffer[MAX_LINE_LEN]:char_t
-   .new hll:ptr hll_item = ModuleInfo.HllStack
+   .new hll:ptr hll_item = MODULE.HllStack
 
     mov rsi,rax
     .if ( rsi == NULL )
@@ -3311,13 +3311,13 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov rc,ERROR
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
     ;
     ; v2.11: always run line-queue if it's not empty.
     ;
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
     .return( rc )
@@ -3329,10 +3329,10 @@ HllExitDir endp
 
 HllCheckOpen proc __ccall
 
-    .if ( ModuleInfo.HllStack )
+    .if ( MODULE.HllStack )
         asmerr( 1010, ".if-.repeat-.while" )
     .endif
-    .if ( ModuleInfo.NspStack )
+    .if ( MODULE.NspStack )
         asmerr( 1010, ".namespace" )
     .endif
     ret
@@ -3344,7 +3344,7 @@ HllCheckOpen endp
 
 HllInit proc __ccall pass:int_t
 
-    mov ModuleInfo.hll_label,0      ; init hll label counter
+    mov MODULE.hll_label,0      ; init hll label counter
     ret
 
 HllInit endp

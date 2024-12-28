@@ -108,8 +108,8 @@ hll_opnd	ends
 ; currently no limit.
 
 GetHllLabel macro
-    inc ModuleInfo.hll_label
-    mov eax,ModuleInfo.hll_label
+    inc MODULE.hll_label
+    mov eax,MODULE.hll_label
     exitm<eax>
     endm
 

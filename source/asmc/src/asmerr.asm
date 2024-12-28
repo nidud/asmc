@@ -438,20 +438,20 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
     ;
     ; open .err file if not already open and a name is given
     ;
-    mov rbx,ModuleInfo.curr_fname[ERR*string_t]
-    mov rcx,ModuleInfo.curr_file[ERR*string_t]
+    mov rbx,MODULE.curr_fname[ERR*string_t]
+    mov rcx,MODULE.curr_file[ERR*string_t]
 
     .if ( !rcx && rbx )
 
         .if fopen( rbx, "w" )
 
-            mov ModuleInfo.curr_file[ERR*string_t],rax
+            mov MODULE.curr_file[ERR*string_t],rax
         .else
             ;
             ; v2.06: no fatal error anymore if error file cannot be written
             ; set to NULL before asmerr()!
             ;
-            mov ModuleInfo.curr_fname[ERR*string_t],rax
+            mov MODULE.curr_fname[ERR*string_t],rax
             ;
             ; disable -eq!
             ;
@@ -460,13 +460,13 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
         .endif
     .endif
 
-    mov rbx,ModuleInfo.curr_file[ERR*string_t]
+    mov rbx,MODULE.curr_file[ERR*string_t]
     .if rbx
 
         fwrite( erbuf, 1, tstrlen(erbuf), rbx )
         fwrite( "\n", 1, 1, rbx )
 
-        .if ( Parse_Pass == PASS_1 && ModuleInfo.curr_file[LST*string_t] )
+        .if ( Parse_Pass == PASS_1 && MODULE.curr_file[LST*string_t] )
 
             GetCurrOffset()
             LstWrite( LSTTYPE_DIRECTIVE, eax, 0 )
@@ -481,16 +481,16 @@ print_err endp
 
 errexit proc __ccall private
 
-    .if ModuleInfo.curr_fname[ASM*string_t]
+    .if MODULE.curr_fname[ASM*string_t]
 
         longjmp( &jmpenv, 3 )
     .endif
 
-    mov rcx,ModuleInfo.curr_file[OBJ*string_t]
+    mov rcx,MODULE.curr_file[OBJ*string_t]
     .if rcx
 
         fclose( rcx )
-        remove( ModuleInfo.curr_fname[OBJ*string_t] )
+        remove( MODULE.curr_fname[OBJ*string_t] )
     .endif
     exit(1)
 
@@ -521,18 +521,18 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
             .endif
 
             tstrcpy( rdi, "ASMC : " )
-            mov rdx,ModuleInfo.src_stack
+            mov rdx,MODULE.src_stack
 
             .while rdx
 
                 movzx   eax,[rdx].src_item.srcfile
-                mov     rcx,ModuleInfo.FNames
+                mov     rcx,MODULE.FNames
                 mov     rcx,[rcx+rax*string_t]
                 mov     eax,[rdx].src_item.line_num
                 cmp     [rdx].src_item.type,SIT_FILE
                 mov     rdx,[rdx].src_item.next
                 .ifz
-                    .if ( ModuleInfo.EndDirFound )
+                    .if ( MODULE.EndDirFound )
                         tsprintf( rdi, "%s : ", rcx )
                     .else
                         tsprintf( rdi, "%s(%u) : ", rcx, eax )
@@ -610,18 +610,18 @@ endif
             .if ( ebx >= 4000 )
 
                 .if ( !Options.warning_error )
-                    inc ModuleInfo.warning_count
+                    inc MODULE.warning_count
                 .else
-                    inc ModuleInfo.error_count
+                    inc MODULE.error_count
                 .endif
             .else
-                inc ModuleInfo.error_count
+                inc MODULE.error_count
             .endif
 
             mov eax,Options.error_limit
             .if ( eax != -1 )
                 inc eax
-                .if ( ModuleInfo.error_count >= eax )
+                .if ( MODULE.error_count >= eax )
                     asmerr( 1012 )
                 .endif
             .endif
@@ -643,7 +643,7 @@ asmerr endp
 
 WriteError proc __ccall
 
-    .return( asmerr( 1002, ModuleInfo.curr_fname[OBJ*string_t] ) )
+    .return( asmerr( 1002, MODULE.curr_fname[OBJ*string_t] ) )
 
 WriteError endp
 

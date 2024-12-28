@@ -79,11 +79,11 @@ output_opc proc __ccall uses rdi rbx
 
     .if ( rflags & RWF_EVEX )
 
-        .if !( ModuleInfo.avxencoding & PREFER_VEX or PREFER_VEX3 or NO_EVEX )
+        .if !( MODULE.avxencoding & PREFER_VEX or PREFER_VEX3 or NO_EVEX )
 
             mov [rsi].evex,1
         .endif
-    .elseif ( ModuleInfo.avxencoding == PREFER_EVEX )
+    .elseif ( MODULE.avxencoding == PREFER_EVEX )
         mov [rsi].evex,1
     .endif
 
@@ -112,7 +112,7 @@ output_opc proc __ccall uses rdi rbx
 
     ;; Check if CPU, FPU and extensions are within the limits
 
-    mov edx,ModuleInfo.curr_cpu
+    mov edx,MODULE.curr_cpu
     mov ecx,edx
     mov eax,ebx
     and ecx,P_CPU_MASK
@@ -156,7 +156,7 @@ output_opc proc __ccall uses rdi rbx
     mov al,[rdi].flags
     and eax,II_ALLOWED_PREFIX
 
-    .if ( ModuleInfo.emulator == TRUE &&
+    .if ( MODULE.emulator == TRUE &&
           [rsi].Ofssize == USE16 && ( ebx & P_FPU_MASK ) && eax != AP_NO_FWAIT )
 
         mov fpfix,TRUE
@@ -191,7 +191,7 @@ output_opc proc __ccall uses rdi rbx
         ; instruction prefix must be ok. However, with -Zm, the plain REP
         ; is also ok for instructions which expect REPxx.
 
-        .if ( ModuleInfo.m510 == TRUE && eax == AP_REP && ecx == AP_REPxx )
+        .if ( MODULE.m510 == TRUE && eax == AP_REP && ecx == AP_REPxx )
             mov eax,ecx
         .endif
         mov rmbyte,al
@@ -228,7 +228,7 @@ output_opc proc __ccall uses rdi rbx
 
             ;; implicit FWAIT synchronization for 8087 (CPU 8086/80186)
 
-            mov eax,ModuleInfo.curr_cpu
+            mov eax,MODULE.curr_cpu
             and eax,P_CPU_MASK
             .if ( eax < P_286 )
                OutputByte(OP_WAIT)
@@ -304,7 +304,7 @@ output_opc proc __ccall uses rdi rbx
     .endif
     .if ( [rsi].opsiz )
 
-        mov eax,ModuleInfo.curr_cpu
+        mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
         .if ( eax < P_386 )
             asmerr(2087)
@@ -1257,12 +1257,12 @@ output_data proc __ccall uses rdi rbx determinant:int_t, index:int_t
                 mov rdx,[rsi].opnd[rbx].InsFixup
                 mov cl,[rdx].fixup.type
                 shl eax,cl
-                mov rcx,ModuleInfo.fmtopt
+                mov rcx,MODULE.fmtopt
                 movzx ecx,[rcx].format_options.invalid_fixup_type
 
                 .if ( eax & ecx )
 
-                    mov rcx,ModuleInfo.fmtopt
+                    mov rcx,MODULE.fmtopt
                     lea rax,[rcx].format_options.formatname
                     lea rcx,szNull
                     .if [rdx].fixup.sym
@@ -1464,7 +1464,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
             .if ( [rax].asym.langtype == LANG_VECTORCALL )
                 or ebx,OP_M128
             .endif
-        .elseif ( ModuleInfo.langtype == LANG_VECTORCALL )
+        .elseif ( MODULE.langtype == LANG_VECTORCALL )
             or ebx,OP_M128
         .endif
     .endif
@@ -1593,7 +1593,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
 
             mov edx,eax
             movzx eax,[rsi].token
-            .endc .if ModuleInfo.NoSignExtend && ( eax == T_AND || eax == T_OR || eax == T_XOR )
+            .endc .if MODULE.NoSignExtend && ( eax == T_AND || eax == T_OR || eax == T_XOR )
 
             mov rax,[rsi].opnd[OPNI2].InsFixup
             .if rax
@@ -1814,7 +1814,7 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
     ;;
     mov ax,[rdi].cpu
     and eax,P_PM
-    mov ecx,ModuleInfo.curr_cpu
+    mov ecx,MODULE.curr_cpu
     and ecx,P_PM
 
     .if ( eax > ecx )
@@ -1872,7 +1872,7 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
         .if ( ecx == OP_NONE && ebx == OP_NONE )
 
             output_opc()
-            .if ( ModuleInfo.curr_file[LST*string_t] )
+            .if ( MODULE.curr_file[LST*string_t] )
                 LstWrite(LSTTYPE_CODE, oldofs, NULL)
             .endif
             .return NOT_ERROR
@@ -1907,7 +1907,7 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
                 check_operand_2( [rsi].opnd[OPND1].type )
             .endsw
             .if ( eax == NOT_ERROR )
-                .if ( ModuleInfo.curr_file[LST*string_t] )
+                .if ( MODULE.curr_file[LST*string_t] )
                     LstWrite( LSTTYPE_CODE, oldofs, NULL )
                 .endif
                 .return NOT_ERROR

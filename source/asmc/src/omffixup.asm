@@ -395,7 +395,7 @@ ifndef ASMC64
         mov locat1,( LOC_MS_BASE_OFFSET_32 shl 2 )
         .endc
     .default ; shouldn't happen. Check for valid fixup has already happened
-        mov rcx,ModuleInfo.fmtopt
+        mov rcx,MODULE.fmtopt
         lea rax,szNull
         .if ( [rbx].sym )
             mov rax,[rbx].sym

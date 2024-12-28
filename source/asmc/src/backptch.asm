@@ -62,7 +62,7 @@ BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
                 ; convert near call to push cs + near call,
                 ; (only at first pass)
 
-                mov ModuleInfo.PhaseError,TRUE
+                mov MODULE.PhaseError,TRUE
                 inc [rsi].offs ; a PUSH CS will be added
 
                 ; todo: insert LABELOPT block here
@@ -119,7 +119,7 @@ BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
 
               patch:
 
-                mov ModuleInfo.PhaseError,TRUE
+                mov MODULE.PhaseError,TRUE
 
                 ; ok, the standard case is: there's a forward jump which
                 ; was assumed to be SHORT, but it must be NEAR instead.

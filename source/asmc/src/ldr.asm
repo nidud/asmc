@@ -111,10 +111,10 @@ LdrDirective proc __ccall i:int_t, tokenarray:token_t
 
     mov rc,LoadRegister( i, tokenarray )
 
-    .if ModuleInfo.list
+    .if MODULE.list
         LstWrite(LSTTYPE_DIRECTIVE, GetCurrOffset(), 0)
     .endif
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif
     .return( rc )

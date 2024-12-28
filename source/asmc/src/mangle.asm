@@ -215,9 +215,9 @@ Mangle proc __ccall uses rsi rdi sym:asym_t, buffer:string_t
         lea rsi,ow_decorate
         .endc
     .case LANG_FASTCALL ; registers passing parameters
-        .if ( ModuleInfo.Ofssize == USE64 )
+        .if ( MODULE.Ofssize == USE64 )
             lea rsi,ms64_decorate
-        .elseif ( ModuleInfo.fctype == FCT_WATCOMC )
+        .elseif ( MODULE.fctype == FCT_WATCOMC )
             lea rsi,ow_decorate
         .else
             lea rsi,ms32_decorate

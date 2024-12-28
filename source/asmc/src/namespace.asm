@@ -16,7 +16,7 @@ include memalloc.inc
 
 NameSpace proc watcall uses rsi rdi rbx Name:string_t, retval:string_t
 
-    mov rsi,ModuleInfo.NspStack
+    mov rsi,MODULE.NspStack
     .if ( rsi || rax != rdx )
 
        .new buffer[256]:char_t
@@ -51,7 +51,7 @@ NameSpace endp
 NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
     ldr rbx,tokenarray
-    mov rsi,ModuleInfo.NspStack
+    mov rsi,MODULE.NspStack
 
     .if ( [rbx].tokval == T_DOT_ENDN )
 
@@ -69,7 +69,7 @@ NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
             .endw
             mov [rsi].next,NULL
         .else
-            mov ModuleInfo.NspStack,NULL
+            mov MODULE.NspStack,NULL
         .endif
         .return NOT_ERROR
     .endif
@@ -81,14 +81,14 @@ NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
     tstrcpy( [rsi].name, [rbx+asm_tok].string_ptr )
 
-    .if ( ModuleInfo.NspStack == NULL )
+    .if ( MODULE.NspStack == NULL )
 
-        mov ModuleInfo.NspStack,rsi
+        mov MODULE.NspStack,rsi
 
     .else
 
         mov rax,rsi
-        mov rsi,ModuleInfo.NspStack
+        mov rsi,MODULE.NspStack
 
         .while ( [rsi].next )
             mov rsi,[rsi].next

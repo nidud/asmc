@@ -273,7 +273,7 @@ SizeFromRegister proc fastcall registertoken:int_t
             ; CRx, DRx, TRx remaining
 
             mov eax,4
-            .if ( ModuleInfo.Ofssize == USE64 )
+            .if ( MODULE.Ofssize == USE64 )
                 mov eax,8
             .endif
         .endif
@@ -305,7 +305,7 @@ SizeFromMemtype proc fastcall mem_type:uchar_t, _Ofssize:int_t, type:asym_t
 
     mov ecx,edx
     .if ( ecx == USE_EMPTY )
-        movzx ecx,ModuleInfo.Ofssize
+        movzx ecx,MODULE.Ofssize
     .endif
     mov edx,2
     shl edx,cl
@@ -341,7 +341,7 @@ if 0
         .endif
 endif
         mov     eax,edx
-        movzx   ecx,ModuleInfo._model
+        movzx   ecx,MODULE._model
         mov     edx,1
         shl     edx,cl
         and     edx,SIZE_DATAPTR
@@ -581,7 +581,7 @@ seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:as
                 ; v2.01: if -Zm, then use current CS offset size.
                 ; This isn't how Masm v6 does it, but it matches Masm v5.
                 ;
-                .if ModuleInfo.m510
+                .if MODULE.m510
                     mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, ModuleInfo.Ofssize )
                 .else
                     mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, ModuleInfo.defOfssize )
@@ -598,7 +598,7 @@ if 1
         ; todo: check if this isn't generally the wrong place to modify the adrsiz prefix.
         ; Also, the ADDRSIZE() macro should really be removed/replaced.
 
-        .if ( sym == NULL && SegOverride && SegOverride != ModuleInfo.flat_grp && [rbx].Ofssize != USE64 )
+        .if ( sym == NULL && SegOverride && SegOverride != MODULE.flat_grp && [rbx].Ofssize != USE64 )
 else
         .if ( sym == NULL && SegOverride )
 endif
@@ -1159,7 +1159,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
     .switch [rsi].token
     .case T_OR
     .case T_TEST
-       .endc .if ( [rdi].hvalue || ModuleInfo.masm_compat_gencode )
+       .endc .if ( [rdi].hvalue || MODULE.masm_compat_gencode )
         ;
         ; Optimization for mem,CONST
         ;
@@ -1586,7 +1586,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
     ; set frame type in variables Frame_Type and Frame_Datum for fixup creation
 
-    .if ( ModuleInfo.offsettype == OT_SEGMENT && ( [rdi].inst == T_OFFSET || [rdi].inst == T_SEG ) )
+    .if ( MODULE.offsettype == OT_SEGMENT && ( [rdi].inst == T_OFFSET || [rdi].inst == T_SEG ) )
         set_frame2([rdi].sym)
     .else
         set_frame([rdi].sym)
@@ -1683,13 +1683,13 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .endif
         .endif
     .else
-        mov cl,ModuleInfo._model
+        mov cl,MODULE._model
         mov eax,1
         shl eax,cl
         .if cl & SIZE_DATAPTR
             mov ebx,2
         .endif
-        mov cl,ModuleInfo.defOfssize
+        mov cl,MODULE.defOfssize
         mov eax,2
         shl eax,cl
         add ebx,eax
@@ -1930,7 +1930,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
 
             ; with -Zm, no size needed for indirect CALL/JMP
 
-            .if ( ModuleInfo.m510 == FALSE && Parse_Pass > PASS_1 && [rdi].sym == NULL )
+            .if ( MODULE.m510 == FALSE && Parse_Pass > PASS_1 && [rdi].sym == NULL )
                 .return asmerr( 2023 )
             .endif
             mov eax,MT_WORD
@@ -2091,7 +2091,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .if ( ( cl == USE16 && [rsi].adrsiz == 1 ) || cl == USE64  ||
               ( cl == USE32 && [rsi].adrsiz == 0 ) )
 
-            mov eax,ModuleInfo.curr_cpu
+            mov eax,MODULE.curr_cpu
             and eax,P_CPU_MASK
             .if ( eax >= P_386 )
 
@@ -2152,7 +2152,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
 
                 ; v2.03: override with a segment assumed != FLAT?
 
-                .if ( [rdi].override && SegOverride != ModuleInfo.flat_grp )
+                .if ( [rdi].override && SegOverride != MODULE.flat_grp )
                     mov fixup_type,FIX_OFF32
                 .else
                     mov fixup_type,FIX_RELOFF32
@@ -2266,7 +2266,7 @@ process_address proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         ; it always emits error "constant value too large".
 if 0
         .if ( [rdi].hvalue && ( [rdi].hvalue != -1 || [rdi].value >= 0 ) )
-            .if ( ModuleInfo.Ofssize == USE64 )
+            .if ( MODULE.Ofssize == USE64 )
                 .return EmitConstError()
             .endif
             asmerr( 8008, [rdi].value64 )
@@ -2336,7 +2336,7 @@ endif
 
             ; v2.0: don't assume immediate operand if cpu is 8086
 
-            mov eax,ModuleInfo.curr_cpu
+            mov eax,MODULE.curr_cpu
             and eax,P_CPU_MASK
             .if eax > P_86
                 .return idata_fixup( rsi, ebx, rdi )
@@ -2620,7 +2620,7 @@ endif
             ; TR6+TR7 are available on 386-586
             ; v2.11: simplified.
 
-            mov eax,ModuleInfo.curr_cpu
+            mov eax,MODULE.curr_cpu
             and eax,P_CPU_MASK
 
             .if ( eax >= P_686 )
@@ -3208,7 +3208,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
     .case T_LAR ; v2.04: added
     .case T_LSL ; 19-sep-93
         and edx,OP_M
-        .if ( ModuleInfo.Ofssize != USE64 || ( edx == 0 ) )
+        .if ( MODULE.Ofssize != USE64 || ( edx == 0 ) )
             jmp def_check
         .endif
 
@@ -3308,12 +3308,12 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
     .case T_MOV
         .if ( op1 & OP_SR ) ; segment register as op1?
             mov op2_size,OperandSize(op2, rsi)
-            .if ( eax == 2 || eax == 4 || ( eax == 8 && ModuleInfo.Ofssize == USE64 ) )
+            .if ( eax == 2 || eax == 4 || ( eax == 8 && MODULE.Ofssize == USE64 ) )
                 .return NOT_ERROR
             .endif
         .elseif ( op2 & OP_SR )
             mov op1_size,OperandSize(op1, rsi)
-            .if ( eax == 2 || eax == 4 || ( eax == 8 && ModuleInfo.Ofssize == USE64 ) )
+            .if ( eax == 2 || eax == 4 || ( eax == 8 && MODULE.Ofssize == USE64 ) )
                 .return NOT_ERROR
             .endif
         .elseif ( ( op1 & OP_M ) && ( op2 & OP_A ) ) ; 1. operand memory reference, 2. AL|AX|EAX|RAX?
@@ -3484,10 +3484,10 @@ endif
                     .else
 
                         or [rsi].flags,CI_ISWIDE
-                        .if ModuleInfo.Ofssize == USE16 && op2_size > 2 && InWordRange([rsi].opnd[OPNI2].data32l)
+                        .if MODULE.Ofssize == USE16 && op2_size > 2 && InWordRange([rsi].opnd[OPNI2].data32l)
                             mov op2_size,2
                         .endif
-                        .ifs op2_size <= 2 && eax > SHRT_MIN && ModuleInfo.Ofssize == USE16
+                        .ifs op2_size <= 2 && eax > SHRT_MIN && MODULE.Ofssize == USE16
                             mov [rsi].mem_type,MT_WORD
                             mov [rsi].opnd[OPNI2].type,OP_I16
                         .else
@@ -3719,8 +3719,8 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
            .return(ERROR)
         .endif
 
-        .if ModuleInfo.list ; v2.26 -- missing line from list file (wiesl)
-            and ModuleInfo.line_flags,not LOF_LISTED
+        .if MODULE.list ; v2.26 -- missing line from list file (wiesl)
+            and MODULE.line_flags,not LOF_LISTED
         .endif
 
         ; parse macro or hll function
@@ -3749,7 +3749,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         ; create a global or local code label
         ;
         xor eax,eax
-        .if ( ModuleInfo.scoped && CurrProc && [rbx+asm_tok].token != T_DBL_COLON )
+        .if ( MODULE.scoped && CurrProc && [rbx+asm_tok].token != T_DBL_COLON )
             inc eax
         .endif
         .if CreateLabel( [rbx].string_ptr, MT_NEAR, NULL, eax ) == NULL
@@ -3759,7 +3759,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         ;
         ; v2.26: make label:: public
         ;
-        .if ( [rbx+asm_tok].token == T_DBL_COLON && ModuleInfo.scoped && !CurrProc )
+        .if ( [rbx+asm_tok].token == T_DBL_COLON && MODULE.scoped && !CurrProc )
 
             mov [rbx+asm_tok].token,T_FINAL
             mov TokenCount,1
@@ -3793,7 +3793,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
     mov j,0
 
-    .if ( ModuleInfo.ComStack )
+    .if ( MODULE.ComStack )
 
         .if ( [rbx].token == T_STYPE &&
               [rbx+asm_tok].token == T_DIRECTIVE &&
@@ -3870,15 +3870,15 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                     .return( asmerr( 2037 ) )
                 .endif
                 .if StoreState
-                    .if ( ( dirflags & DF_CGEN ) && CurrComment && ModuleInfo.list_generated_code )
+                    .if ( ( dirflags & DF_CGEN ) && CurrComment && MODULE.list_generated_code )
                         FStoreLine(1)
                     .else
                         FStoreLine(0)
                     .endif
                 .endif
                 mov edi,ProcType( i, tokenarray )
-                .if ( ModuleInfo.list &&
-                      ( Parse_Pass == PASS_1 || ModuleInfo.GeneratedCode || UseSavedState == FALSE ) )
+                .if ( MODULE.list &&
+                      ( Parse_Pass == PASS_1 || MODULE.GeneratedCode || UseSavedState == FALSE ) )
                     LstWriteSrcLine()
                 .endif
                 .return( edi )
@@ -3905,7 +3905,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                 ; if a listing (with -Sg) is to be written and
                 ; the directive will generate lines
 
-                .if ( ( dirflags & DF_CGEN ) && CurrComment && ModuleInfo.list_generated_code )
+                .if ( ( dirflags & DF_CGEN ) && CurrComment && MODULE.list_generated_code )
                     FStoreLine(1)
                 .else
                     FStoreLine(0)
@@ -3953,8 +3953,8 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             ; written in ALL passes, to update file position!
             ; v2.08: UseSavedState == FALSE added
             ;
-            .if ( ModuleInfo.list && ( Parse_Pass == PASS_1 ||
-                  ModuleInfo.GeneratedCode || UseSavedState == FALSE ) )
+            .if ( MODULE.list && ( Parse_Pass == PASS_1 ||
+                  MODULE.GeneratedCode || UseSavedState == FALSE ) )
                 LstWriteSrcLine()
             .endif
             .return( edi )
@@ -4027,7 +4027,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
     mov CodeInfo.inst,EMPTY
     mov CodeInfo.RegOverride,EMPTY
     mov CodeInfo.mem_type,MT_EMPTY
-    mov CodeInfo.Ofssize,ModuleInfo.Ofssize
+    mov CodeInfo.Ofssize,MODULE.Ofssize
 
     ;; instruction prefix?
 
@@ -4065,13 +4065,13 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         .case T_IRETD
         .case T_IRETQ
 
-            .if ( !( ProcStatus & PRST_INSIDE_EPILOGUE ) && ModuleInfo.epiloguemode != PEM_NONE )
+            .if ( !( ProcStatus & PRST_INSIDE_EPILOGUE ) && MODULE.epiloguemode != PEM_NONE )
 
                 ;
                 ; v2.07: special handling for RET/IRET
                 ;
                 xor eax,eax
-                .if ( CurrComment && ModuleInfo.list_generated_code )
+                .if ( CurrComment && MODULE.list_generated_code )
                     inc eax
                 .endif
                 FStoreLine( eax )
@@ -4148,7 +4148,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
     .if ( [rax].seg_info.segtype == SEGTYPE_UNDEF )
         mov [rax].seg_info.segtype,SEGTYPE_CODE
     .endif
-    .if ( ModuleInfo.CommentDataInCode )
+    .if ( MODULE.CommentDataInCode )
         omf_OutSelect( FALSE )
     .endif
 
@@ -4265,7 +4265,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                 mov rsi,rax
                 mov rdi,rbx
                 rep movsb
-                .if ( ModuleInfo.Ofssize == USE64 )
+                .if ( MODULE.Ofssize == USE64 )
                     mov eax,"xar"
                 .else
                     mov eax,"xae"
@@ -4576,7 +4576,7 @@ endif
         ;
         ; v2.31.24: immediate operand to XMM
         ;
-        .if ( ModuleInfo.masm_compat_gencode == 0 && CodeInfo.token == T_MOVSD )
+        .if ( MODULE.masm_compat_gencode == 0 && CodeInfo.token == T_MOVSD )
             .if ( CodeInfo.opnd[OPND1].type == OP_XMM &&
                 ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
                 .return imm2xmm( tokenarray, &opndx[expr], 8 )
@@ -4708,7 +4708,7 @@ endif
             .case T_UCOMISS
             .case T_MOVD
             .case T_MOVSS
-                .endc .if ( ModuleInfo.masm_compat_gencode != 0 )
+                .endc .if ( MODULE.masm_compat_gencode != 0 )
                 .endc .if ( CodeInfo.opnd[OPND1].type != OP_XMM )
                 .endc .if !( CodeInfo.opnd[OPNI2].type & OP_I_ANY )
                 .return imm2xmm( tokenarray, &opndx[expr], ecx )
@@ -4721,7 +4721,7 @@ endif
             .endsw
         .endif
 
-        .if ( CodeInfo.Ofssize > USE16 && !ModuleInfo.masm_compat_gencode )
+        .if ( CodeInfo.Ofssize > USE16 && !MODULE.masm_compat_gencode )
 
             movzx eax,CodeInfo.token
             mov ecx,CodeInfo.opnd[OPND1].type
@@ -4803,7 +4803,7 @@ ProcessFile proc __ccall tokenarray:ptr asm_tok
 
     UNREFERENCED_PARAMETER(tokenarray)
 
-    .if ( ModuleInfo.EndDirFound == FALSE && GetTextLine( CurrSource ) )
+    .if ( MODULE.EndDirFound == FALSE && GetTextLine( CurrSource ) )
 
         mov rcx,CurrSource ;; v2.23 - BOM UFT-8 test
         mov eax,[rcx]
@@ -4819,7 +4819,7 @@ ProcessFile proc __ccall tokenarray:ptr asm_tok
                     WritePreprocessedLine( CurrSource )
                 .endif
             .endif
-        .until !( ModuleInfo.EndDirFound == FALSE && GetTextLine( CurrSource ) )
+        .until !( MODULE.EndDirFound == FALSE && GetTextLine( CurrSource ) )
     .endif
     ret
 

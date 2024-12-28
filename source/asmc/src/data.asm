@@ -107,7 +107,7 @@ InitializeArray proc __ccall uses rsi rdi rbx f:ptr sfield, pi:ptr int_t, tokena
             .elseif ( [rbx].token == T_RES_ID && [rbx].tokval == T_DUP )
                 mov bArray,TRUE
             .elseif ( ( no_of_bytes == 1 || ; added @v2.34.51
-                      ( no_of_bytes == 2 && ModuleInfo.xflag & OPT_WSTRING or OPT_LSTRING ) ) &&
+                      ( no_of_bytes == 2 && MODULE.xflag & OPT_WSTRING or OPT_LSTRING ) ) &&
                       [rbx].token == T_STRING &&
                       ( [rbx].string_delim == '"' || [rbx].string_delim == "'" ) )
                 mov bArray,TRUE
@@ -643,7 +643,7 @@ next_item:
             .endif
             mov ecx,opndx.value
             mov eax,32
-            .if ( ModuleInfo.Ofssize == USE64 )
+            .if ( MODULE.Ofssize == USE64 )
                 mov eax,64
             .endif
             .if ( ecx == 0 )
@@ -855,7 +855,7 @@ next_item:
                         ; v2.23 - use L"Unicode"
 
                         .if ( inside_struct == TRUE || !( ( Options.strict_masm_compat == 0 ) &&
-                              ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
+                              ( MODULE.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
                               no_of_bytes == 2 ) )
 
                             .return( asmerr( 2071 ) )
@@ -869,7 +869,7 @@ next_item:
                     .if ( no_of_bytes == 1 && eax > 1 )
                         inc ecx
                     .elseif ( ( Options.strict_masm_compat == 0 ) &&
-                              ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
+                              ( MODULE.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
                               no_of_bytes == 2 && eax > 1 )
                         mov ecx,2
                     .endif
@@ -893,14 +893,14 @@ next_item:
                     ; v2.23 - use L"Unicode"
 
                     .if ( ( Options.strict_masm_compat == 0 ) &&
-                          ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
+                          ( MODULE.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
                             string_len > 1 && no_of_bytes == 2 )
 ifndef __UNIX__
                         mov ecx,string_len
                         lea ecx,[rcx+rcx+8]
                         mov rdi,alloca(ecx)
                         ;; v2.24 - Unicode CodePage
-                        .if ( MultiByteToWideChar( ModuleInfo.codepage, 0,
+                        .if ( MultiByteToWideChar( MODULE.codepage, 0,
                                 rsi, string_len, rdi, string_len ) )
                             add eax,eax
                             OutputBytes( rdi, eax, NULL )
@@ -1007,7 +1007,7 @@ endif
                 asmerr( 2032 )
                 .endc
             .endif
-            .if ( ModuleInfo.Ofssize != USE64 )
+            .if ( MODULE.Ofssize != USE64 )
                 .if ( opndx.hvalue && ( opndx.hvalue != -1 || opndx.value >= 0 ) )
                     .return EmitConstError()
                 .endif
@@ -1052,7 +1052,7 @@ endif
                     mov edi,FIX_OFF16
                     .endc
                 .case 8
-                    .if ( ModuleInfo.Ofssize == USE64 )
+                    .if ( MODULE.Ofssize == USE64 )
                         mov edi,FIX_OFF64
                         .endc
                     .endif
@@ -1179,7 +1179,7 @@ endif
                         ; A better strategy is to choose fixup type depending
                         ; on the symbol's offset size.
 
-                        .if ( ModuleInfo.Ofssize == USE16 )
+                        .if ( MODULE.Ofssize == USE16 )
                             .if ( opndx.mem_type == MT_NEAR &&
                                 ( Options.output_format == OFORMAT_COFF ||
                                   Options.output_format == OFORMAT_ELF ) )
@@ -1218,9 +1218,9 @@ endif
                     .if ( opndx.flags & E_EXPLICIT && opndx.mem_type == MT_FAR &&
                           opndx.Ofssize == USE32 )
                         mov edi,FIX_PTR32
-                    .elseif( ModuleInfo.Ofssize == USE32 )
+                    .elseif( MODULE.Ofssize == USE32 )
                         mov edi,FIX_OFF32
-                    .elseif( ModuleInfo.Ofssize == USE64 )
+                    .elseif( MODULE.Ofssize == USE64 )
                         mov edi,FIX_OFF64
                     .else
                         mov edi,FIX_PTR16
@@ -1235,7 +1235,7 @@ endif
             mov eax,1
             mov ecx,edi
             shl eax,cl
-            mov rcx,ModuleInfo.fmtopt
+            mov rcx,MODULE.fmtopt
             movzx edx,[rcx].format_options.invalid_fixup_type
             .if ( eax & edx )
                  lea rdx,@CStr("")
@@ -1257,7 +1257,7 @@ endif
                 ; set global vars Frame and Frame_Datum
                 ; opndx.sym may be NULL, then SegOverride is set.
 
-                .if ( ModuleInfo.offsettype == OT_SEGMENT &&
+                .if ( MODULE.offsettype == OT_SEGMENT &&
                     ( opndx.inst == T_OFFSET || opndx.inst == T_SEG ))
                     set_frame2( opndx.sym )
                 .else
@@ -1374,7 +1374,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
 
     ; v2.05: the previous test in parser.c wasn't fool-proved
 
-    .if ( i > 1 && ModuleInfo.m510 == FALSE )
+    .if ( i > 1 && MODULE.m510 == FALSE )
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
     .if ( [rbx+asm_tok].token == T_FINAL )
@@ -1520,11 +1520,11 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
 
         FStoreLine(0)
 
-        .if ( ModuleInfo.CommentDataInCode )
+        .if ( MODULE.CommentDataInCode )
             omf_OutSelect( TRUE )
         .endif
 
-        .if ( ModuleInfo.list )
+        .if ( MODULE.list )
             mov currofs,GetCurrOffset()
         .endif
 
@@ -1557,7 +1557,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
                     ; Problem: Masm doesn't do this - might be a bug.
 
                     .if ( [rsi].asym.langtype == LANG_NONE )
-                        mov [rsi].asym.langtype,ModuleInfo.langtype
+                        mov [rsi].asym.langtype,MODULE.langtype
                     .endif
                 .elseif ( [rsi].asym.state == SYM_INTERNAL)
 
@@ -1602,7 +1602,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
 
             SetSymSegOfs( rsi )
             .if( Parse_Pass != PASS_1 && [rsi].asym.offs != old_offset )
-                mov ModuleInfo.PhaseError,TRUE
+                mov MODULE.PhaseError,TRUE
             .endif
             or  [rsi].asym.flags,S_ISDEFINED or S_ISDATA
             mov [rsi].asym.mem_type,mem_type
@@ -1648,7 +1648,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
         UpdateStructSize( rsi )
     .endif
 
-    .if ( ModuleInfo.list )
+    .if ( MODULE.list )
         mov ecx,LSTTYPE_DATA
         .if ( CurrStruct )
             mov ecx,LSTTYPE_STRUCT

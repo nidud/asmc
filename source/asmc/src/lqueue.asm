@@ -24,7 +24,7 @@ next    ptr_t ?
 line    char_t 1 dup(?)
 lq_line ends
 
-LineQueue equ <ModuleInfo.line_queue>
+LineQueue equ <MODULE.line_queue>
 
     .code
 
@@ -366,7 +366,7 @@ RunLineQueue proc __ccall uses rsi rdi
     ; v2.03: ensure the current source buffer is still aligned
 
     mov tokenarray,PushInputStatus( &oldstat )
-    inc ModuleInfo.GeneratedCode
+    inc MODULE.GeneratedCode
 
     ; v2.11: line queues are no longer pushed onto the file stack.
     ; Instead, the queue is processed directly here.
@@ -382,7 +382,7 @@ RunLineQueue proc __ccall uses rsi rdi
         mov rsi,[rsi].lq_line.next
         MemFree( rcx )
     .endf
-    dec ModuleInfo.GeneratedCode
+    dec MODULE.GeneratedCode
     PopInputStatus( &oldstat )
     ret
 
@@ -394,10 +394,10 @@ InsertLineQueue proc __ccall uses rsi rdi rbx
   local oldstat:input_status
   local tokenarray:token_t
 
-    mov ebx,ModuleInfo.GeneratedCode
+    mov ebx,MODULE.GeneratedCode
     mov tokenarray,PushInputStatus( &oldstat )
 
-    mov ModuleInfo.GeneratedCode,0
+    mov MODULE.GeneratedCode,0
     .for ( rsi = LineQueue.head, LineQueue.head = NULL : rsi : )
 
         tstrcpy( CurrSource, &[rsi].lq_line.line )
@@ -409,7 +409,7 @@ InsertLineQueue proc __ccall uses rsi rdi rbx
         mov rsi,[rsi].lq_line.next
         MemFree( rcx )
     .endf
-    mov ModuleInfo.GeneratedCode,ebx
+    mov MODULE.GeneratedCode,ebx
     PopInputStatus( &oldstat )
     ret
 

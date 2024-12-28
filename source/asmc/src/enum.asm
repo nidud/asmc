@@ -122,7 +122,7 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
         .endif
-        .if ModuleInfo.list
+        .if MODULE.list
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
         .endif
     .endsw
@@ -209,7 +209,7 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .return asmerr( 2008, [rbx].tokpos )
     .endif
 
-    .if ( ModuleInfo.line_queue.head )
+    .if ( MODULE.line_queue.head )
 
         mov rsi,CurrEnum
         mov CurrEnum,NULL

@@ -97,11 +97,11 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
     .if [rcx].flags & S_VARIABLE
         mov [rcx].offs,eax
         .if Parse_Pass == PASS_2 && ( [rcx].flags & S_FWDREF )
-            mov ModuleInfo.PhaseError,TRUE
+            mov MODULE.PhaseError,TRUE
         .endif
     .else
         .if Parse_Pass != PASS_1 && [rcx].offs != eax
-            mov ModuleInfo.PhaseError,TRUE
+            mov MODULE.PhaseError,TRUE
         .endif
         mov [rcx].offs,eax
         BackPatch(rcx)
@@ -144,7 +144,7 @@ endif
 
         .if ( !rax )
 
-            movzx   ecx,ModuleInfo.Ofssize
+            movzx   ecx,MODULE.Ofssize
             lea     rsi,minintvalues
             lea     rdi,maxintvalues
           ifdef _WIN64
@@ -295,7 +295,7 @@ EqualSgnDirective proc __ccall i:int_t, tokenarray:token_t
         .return asmerr( 2008, [rdx].string_ptr )
     .endif
     .if CreateAssemblyTimeVariable(rdx)
-        .if ( ModuleInfo.list == TRUE )
+        .if ( MODULE.list == TRUE )
             LstWrite(LSTTYPE_EQUATE, 0, rax)
         .endif
         .return NOT_ERROR
@@ -459,7 +459,7 @@ endif
 
         .if ( !rax )
 
-            movzx   ecx,ModuleInfo.Ofssize
+            movzx   ecx,MODULE.Ofssize
           ifdef _WIN64
             mov     rdx,opnd.llvalue
             lea     r8,minintvalues
@@ -634,7 +634,7 @@ EquDirective proc __ccall i:int_t, tokenarray:token_t
         .return asmerr( 2008, [rcx].string_ptr )
     .endif
     .if CreateConstant( rcx )
-        .if ( ModuleInfo.list == TRUE )
+        .if ( MODULE.list == TRUE )
             LstWrite( LSTTYPE_EQUATE, 0, rax )
         .endif
         .return NOT_ERROR

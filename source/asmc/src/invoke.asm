@@ -251,7 +251,7 @@ fast_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
         .endif
         mul ecx
 
-        .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+        .if ( MODULE.win64_flags & W64F_AUTOSTACKSP )
 
             mov rdx,CurrProc
             .if ( eax && rdx )
@@ -292,7 +292,7 @@ fast_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
         mul wordsize
         mov [rcx],eax
 
-        .if ( eax & 15 && ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+        .if ( eax & 15 && MODULE.win64_flags & W64F_AUTOSTACKSP )
 
             add eax,8
             mov [rcx],eax
@@ -433,7 +433,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     ; Use SIMD if 64-bit or CPU >= SSE2
 
     mov cl,Ofssize
-    mov eax,ModuleInfo.curr_cpu
+    mov eax,MODULE.curr_cpu
     and eax,P_CPU_MASK
     mov cpu,eax
     movzx edx,[rbx].asym.sys_size
@@ -737,7 +737,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
         lea     rdx,stackreg
         mov     eax,[rdx+rax*4]
         mov     sreg,eax
-        mov     ebx,ModuleInfo.accumulator
+        mov     ebx,MODULE.accumulator
         mov     eax,ebx
         mov     edx,wordsize
 
@@ -1937,7 +1937,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
     inc eax
     mov ParamId,eax
 
-    mov eax,ModuleInfo.curr_cpu
+    mov eax,MODULE.curr_cpu
     and eax,P_CPU_MASK
     mov curr_cpu,eax
 
@@ -2000,7 +2000,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
 
         ; v2.06: don't handle forward refs if -Zne is set
 
-        .ifd ( EvalOperand( &j, tokenarray, TokenCount, &opnd, ModuleInfo.invoke_exprparm ) == ERROR )
+        .ifd ( EvalOperand( &j, tokenarray, TokenCount, &opnd, MODULE.invoke_exprparm ) == ERROR )
             .return
         .endif
 
@@ -2044,10 +2044,10 @@ ifndef ASMC64
                 .endif
             .endif
 endif
-            AddLineQueueX( " lea %r, %s", ModuleInfo.accumulator, &fullparam )
+            AddLineQueueX( " lea %r, %s", MODULE.accumulator, &fullparam )
             mov rcx,r0flags
             or  byte ptr [rcx],R0_USED
-            AddLineQueueX( " push %r", ModuleInfo.accumulator )
+            AddLineQueueX( " push %r", MODULE.accumulator )
 
         .else
 
@@ -2074,7 +2074,7 @@ ifndef ASMC64
                     ; problem: "pushw ds" is not accepted, so just emit a size prefix.
 
                     .new reg:int_t = eax
-                    .if ( Ofssize != ModuleInfo.Ofssize || ( [rdi].asym.Ofssize == USE16 && CurrWordSize > 2 ) )
+                    .if ( Ofssize != MODULE.Ofssize || ( [rdi].asym.Ofssize == USE16 && CurrWordSize > 2 ) )
 
                         AddLineQueue( " db 66h" )
                     .endif
@@ -2193,7 +2193,7 @@ ifndef ASMC64
             ; v2.11: if target and current src have different offset sizes,
             ; the push of the segment register must be 66h-prefixed!
 
-            .if ( Ofssize != ModuleInfo.Ofssize || ( [rdi].asym.Ofssize == USE16 && CurrWordSize > 2 ) )
+            .if ( Ofssize != MODULE.Ofssize || ( [rdi].asym.Ofssize == USE16 && CurrWordSize > 2 ) )
 
                 AddLineQueue( " db 66h" )
             .endif
@@ -2245,7 +2245,7 @@ endif
         .else
 
             .return .ifd EvalOperand( &j, tokenarray, TokenCount, &opnd,
-                            ModuleInfo.invoke_exprparm ) == ERROR
+                            MODULE.invoke_exprparm ) == ERROR
 
             imul ebx,j,asm_tok
             add  rbx,tokenarray
@@ -2359,7 +2359,7 @@ endif
                 ; v2.16: init opnd.Ofssize only if NOT MT_PTR!
 
                 .if ( opnd.Ofssize == USE_EMPTY )
-                    mov opnd.Ofssize,ModuleInfo.Ofssize
+                    mov opnd.Ofssize,MODULE.Ofssize
                 .endif
                 SizeFromMemtype( opnd.mem_type, opnd.Ofssize, opnd.type )
             .endif
@@ -2464,7 +2464,7 @@ ifndef ASMC64
 
                     ; ensure the stack remains dword-aligned in 32bit
 
-                    .if ( ModuleInfo.Ofssize > USE16 )
+                    .if ( MODULE.Ofssize > USE16 )
 
                         ; v2.05: better push a 0 word?
                         ; ASMC v1.12: ensure the stack remains dword-aligned in 32bit
@@ -2473,7 +2473,7 @@ ifndef ASMC64
 
                             add size_vararg,2
                         .endif
-                        movzx ecx,ModuleInfo.Ofssize
+                        movzx ecx,MODULE.Ofssize
                         lea rdx,stackreg
                         mov edx,[rdx+rcx*4]
                         AddLineQueueX( " sub %r, 2", edx )
@@ -2486,7 +2486,7 @@ ifndef ASMC64
 
                     ; v2.23 if stack base is ESP
 
-                    movzx ecx,ModuleInfo.Ofssize
+                    movzx ecx,MODULE.Ofssize
                     lea rdx,ModuleInfo
                     mov ecx,[rdx].module_info.basereg[rcx*4]
                     mov edx,asize
@@ -2531,7 +2531,7 @@ endif
 
                         AddLineQueueX(
                             " mov al, %s\n"
-                            " push %r", &fullparam, ModuleInfo.accumulator )
+                            " push %r", &fullparam, MODULE.accumulator )
 ifndef ASMC64
                     .elseif ( pushsize == 2 ) ; 16-bit code?
 
@@ -2599,7 +2599,7 @@ endif
                 .case MT_WORD
                 .case MT_SWORD
 
-                    .if ( opnd.mem_type == MT_WORD && ( ModuleInfo.masm_compat_gencode || psize == 2 ))
+                    .if ( opnd.mem_type == MT_WORD && ( MODULE.masm_compat_gencode || psize == 2 ))
 
                         .if ( pushsize == 8 )
 
@@ -2615,7 +2615,7 @@ ifndef ASMC64
                                 AddLineQueue( " pushw 0" )
                             .else
 
-                                movzx ecx,ModuleInfo.Ofssize
+                                movzx ecx,MODULE.Ofssize
                                 lea rdx,stackreg
                                 mov edx,[rdx+rcx*4]
                                 AddLineQueueX( " sub %r, 2", edx )
@@ -2676,7 +2676,7 @@ endif
 
             .if ( psize == 8 && asize == 4 )
 
-                .if ( ModuleInfo.masm_compat_gencode == 1 )
+                .if ( MODULE.masm_compat_gencode == 1 )
 
                     asmerr( 2114, ParamId )
 
@@ -2802,7 +2802,7 @@ endif
 
                 .if ( psize > 4 && pushsize < 8 )
 
-                    .if ( psize != 8 || ModuleInfo.masm_compat_gencode == 1 )
+                    .if ( psize != 8 || MODULE.masm_compat_gencode == 1 )
 
                         asmerr( 2114, ParamId )
 
@@ -2894,7 +2894,7 @@ ifndef ASMC64
 
                             .elseif ( psize <= 2 )
 
-                                movzx ecx,ModuleInfo.Ofssize
+                                movzx ecx,MODULE.Ofssize
                                 lea rdx,stackreg
                                 mov edx,[rdx+rcx*4]
                                 AddLineQueueX( " sub %r, 2", edx )
@@ -2984,7 +2984,7 @@ endif
 
                             mov rdx,r0flags
                             mov [rdx],al
-                            AddLineQueueX( " %r %r, %s", ecx, ModuleInfo.accumulator, &fullparam )
+                            AddLineQueueX( " %r %r, %s", ecx, MODULE.accumulator, &fullparam )
 
                         .else
 
@@ -3012,7 +3012,7 @@ endif
                                 .endif
                             .endif
                         .endif
-                        mov reg,ModuleInfo.accumulator
+                        mov reg,MODULE.accumulator
 
                     .else
 
@@ -3622,7 +3622,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
 
-            movzx eax,ModuleInfo.Ofssize
+            movzx eax,MODULE.Ofssize
             lea rcx,ModuleInfo
             mov eax,[rcx].module_info.basereg[rax*4]
             .if ( CurrProc && eax == T_ESP )
@@ -3685,7 +3685,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov rdx,info
     mov rcx,pproc
     .if ( !pmacro && [rcx].asym.langtype == LANG_SYSCALL &&
-          [rdx].proc_info.flags & PROC_HAS_VARARG && ModuleInfo.Ofssize == USE64 )
+          [rdx].proc_info.flags & PROC_HAS_VARARG && MODULE.Ofssize == USE64 )
 
          .if ( porder )
             AddLineQueueX( " mov eax, %d", porder )
@@ -3710,7 +3710,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .if ( !pmacro && [rsi].state == SYM_EXTERNAL && [rsi].dll )
 
        .new iatname:ptr = p
-        tstrcpy( p, ModuleInfo.imp_prefix )
+        tstrcpy( p, MODULE.imp_prefix )
         add p,tstrlen( p )
         add p,Mangle( rsi, p )
         inc namepos
@@ -3718,7 +3718,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             or [rsi].flags,S_IAT_USED
             mov rcx,[rsi].dll
             inc [rcx].dll_desc.cnt
-            .if ( [rsi].langtype != LANG_NONE && [rsi].langtype != ModuleInfo.langtype )
+            .if ( [rsi].langtype != LANG_NONE && [rsi].langtype != MODULE.langtype )
                 movzx eax,[rsi].langtype
                 add eax,T_CCALL - 1
                 AddLineQueueX( " externdef %r %s: ptr proc", eax, iatname )
@@ -3819,7 +3819,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if struct_ptr
 ifndef ASMC64
             mov edi,T_EAX
-            .if ( ModuleInfo.Ofssize == USE64 )
+            .if ( MODULE.Ofssize == USE64 )
 endif
                 mov edi,T_RAX
                 .if ( [rsi].langtype == LANG_SYSCALL )
@@ -3860,7 +3860,7 @@ endif
             imul ebx,parmpos,asm_tok
             add rbx,tokenarray
 
-            .if ( ModuleInfo.Ofssize == USE64 )
+            .if ( MODULE.Ofssize == USE64 )
 
                 .if ( [rsi].langtype == LANG_SYSCALL )
                     AddLineQueue( " mov r10, [rdi]" )
@@ -3868,7 +3868,7 @@ endif
                     AddLineQueue( " mov rax, [rcx]" )
                 .endif
 ifndef ASMC64
-            .elseif ( ModuleInfo.Ofssize == USE32 )
+            .elseif ( MODULE.Ofssize == USE32 )
 
                 .new reg:int_t = T_EAX ; v2.31 - skip mov eax,reg
 
@@ -3928,8 +3928,8 @@ endif
         ; v2.17: if stackbase is active, use the ofssize of the assumed SS;
         ; however, do this in 16-bit code only ( don't generate "add SP, x" in 32-bit )
 
-        movzx eax,ModuleInfo.Ofssize
-        .if ( ModuleInfo.Ofssize == USE16 && ModuleInfo.StackBase )
+        movzx eax,MODULE.Ofssize
+        .if ( MODULE.Ofssize == USE16 && MODULE.StackBase )
             GetOfssizeAssume( ASSUME_SS )
         .endif
         lea rdx,stackreg

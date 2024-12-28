@@ -146,7 +146,7 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
             mov eax,T_CX - T_AX
         .case LANG_WATCALL
         .case LANG_ASMCALL
-            add eax,ModuleInfo.accumulator
+            add eax,MODULE.accumulator
         .endsw
 
         .if ( eax )
@@ -244,7 +244,7 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm
         mov dest,[rbx-2*asm_tok].tokval
     .endif
 
-    mov reg,ModuleInfo.accumulator
+    mov reg,MODULE.accumulator
     AddLineQueueX( " mov %r, %s", eax, [rbx].string_ptr )
 
     add rbx,asm_tok

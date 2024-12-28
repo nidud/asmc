@@ -332,7 +332,7 @@ endif
 
     ; 6. PUBLIC entries
 
-    .for ( rsi = ModuleInfo.PubQueue.head: rsi: rsi = [rsi].qnode.next )
+    .for ( rsi = MODULE.PubQueue.head: rsi: rsi = [rsi].qnode.next )
 
         mov rbx,[rsi].qnode.sym
         mov len,Mangle( rbx, &buffer )
@@ -365,7 +365,7 @@ endif
     .endf
 
 if ADDSTARTLABEL
-    mov rbx,ModuleInfo.start_label
+    mov rbx,MODULE.start_label
     .if ( rbx )
         mov len,Mangle( rbx, &buffer )
         mov [rdi].st_name,strsize
@@ -514,7 +514,7 @@ endif
 
     ; 6. PUBLIC entries
 
-    .for ( rsi = ModuleInfo.PubQueue.head: rsi: rsi = [rsi].qnode.next )
+    .for ( rsi = MODULE.PubQueue.head: rsi: rsi = [rsi].qnode.next )
 
         mov rbx,[rsi].qnode.sym
         mov len,Mangle( rbx, &buffer )
@@ -545,7 +545,7 @@ endif
     .endf
 
 if ADDSTARTLABEL
-    mov rbx,ModuleInfo.start_label
+    mov rbx,MODULE.start_label
     .if ( rbx )
         mov len,Mangle( rbx, &buffer )
         mov [rdi].st_name,strsize
@@ -660,7 +660,7 @@ endif
 
     ; count publics
 
-    .for ( rcx = ModuleInfo.PubQueue.head: rcx: rcx = [rcx].qnode.next )
+    .for ( rcx = MODULE.PubQueue.head: rcx: rcx = [rcx].qnode.next )
 
         mov rdx,[rcx].qnode.sym
         mov [rdx].asym.ext_idx,[rbx].symindex
@@ -672,12 +672,12 @@ endif
     mov entries,[rbx].symindex
 
 if ADDSTARTLABEL
-    .if ( ModuleInfo.start_label )
+    .if ( MODULE.start_label )
         inc entries
     .endif
 endif
 
-    .if ( ModuleInfo.defOfssize == USE64 )
+    .if ( MODULE.defOfssize == USE64 )
         mov strsize,set_symtab64( rbx, entries, l.head )
 ifndef ASMC64
     .else
@@ -715,13 +715,13 @@ if ELFALIAS
     .endf
 endif
 
-    .for ( rsi = ModuleInfo.PubQueue.head: rsi: rsi = [rsi].qnode.next )
+    .for ( rsi = MODULE.PubQueue.head: rsi: rsi = [rsi].qnode.next )
         mov rcx,[rsi].qnode.sym
         lea rdi,[rdi+Mangle( rcx, rdi ) + 1]
     .endf
 if ADDSTARTLABEL
-    .if ( ModuleInfo.g.start_label )
-        Mangle( ModuleInfo.start_label, rdi )
+    .if ( MODULE.g.start_label )
+        Mangle( MODULE.start_label, rdi )
     .endif
 endif
     ret
@@ -763,7 +763,7 @@ set_shstrtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
 
         .if ( [rbx].seg_info.head )
             add size,tstrlen( rdi )
-            .if ( ModuleInfo.defOfssize == USE64 )
+            .if ( MODULE.defOfssize == USE64 )
                 add size,6;sizeof(".rela")
             .else
                 add size,5;sizeof(".rel")
@@ -824,7 +824,7 @@ set_shstrtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
         mov rcx,[rsi].dsym.seginfo
         .if ( [rcx].seg_info.head )
 
-            .if ( ModuleInfo.defOfssize == USE64 )
+            .if ( MODULE.defOfssize == USE64 )
                 tstrcpy( rdi, ".rela" )
             .else
                 tstrcpy( rdi, ".rel" )
@@ -1003,7 +1003,7 @@ endif
 
         .if ( esi == SYMTAB_IDX )
 
-            mov eax,ModuleInfo.num_segs
+            mov eax,MODULE.num_segs
             add eax,1 + STRTAB_IDX
             mov shdr32.sh_link,eax
             mov shdr32.sh_info,[rbx].start_globals
@@ -1061,7 +1061,7 @@ endif
         mul [rcx].seg_info.num_relocs
         mov shdr32.sh_size,eax
 
-        mov eax,ModuleInfo.num_segs
+        mov eax,MODULE.num_segs
         add eax,1 + SYMTAB_IDX
         mov shdr32.sh_link,eax
 
@@ -1218,7 +1218,7 @@ endif
 
         .if ( esi == SYMTAB_IDX )
 
-            mov eax,ModuleInfo.num_segs
+            mov eax,MODULE.num_segs
             add eax,1 + STRTAB_IDX
             mov shdr64.sh_link,eax
             mov shdr64.sh_info,[rbx].start_globals
@@ -1276,7 +1276,7 @@ endif
         mul [rcx].seg_info.num_relocs
         mov dword ptr shdr64.sh_size,eax
 
-        mov eax,ModuleInfo.num_segs
+        mov eax,MODULE.num_segs
         add eax,SYMTAB_IDX + 1
         mov shdr64.sh_link,eax
 
@@ -1329,7 +1329,7 @@ write_relocs32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, curr:ptr dsy
         .case FIX_RELOFF32
             mov elftype,R_386_PC32
             mov rcx,[rsi].sym
-            .if ( ModuleInfo.pic && [rcx].asym.state == SYM_EXTERNAL )
+            .if ( MODULE.pic && [rcx].asym.state == SYM_EXTERNAL )
                 .if ( [rcx].asym.flags & S_ISPROC ) ; added v2.34.25
                     mov elftype,R_386_PLT32
                 .endif
@@ -1347,7 +1347,7 @@ endif
             mov elftype,R_386_NONE
             mov rcx,curr
             .if ( [rsi].type < FIX_LAST )
-                mov rdx,ModuleInfo.fmtopt
+                mov rdx,MODULE.fmtopt
                 asmerr( 3019, [rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .else
                 asmerr( 3014, [rsi].type, [rcx].asym.name, [rsi].locofs )
@@ -1406,7 +1406,7 @@ endif
         .switch ( eax )
         .case FIX_RELOFF32
             mov ebx,R_X86_64_PC32
-            .if ( ModuleInfo.pic && [rcx].asym.state == SYM_EXTERNAL )
+            .if ( MODULE.pic && [rcx].asym.state == SYM_EXTERNAL )
                 .if ( [rcx].asym.flags & S_ISPROC ) ; added v2.34.25
                     mov ebx,R_X86_64_PLT32
                 .endif
@@ -1423,7 +1423,7 @@ endif
             mov rcx,curr
             mov ebx,R_X86_64_NONE
             .if ( [rsi].type < FIX_LAST )
-                mov rdx,ModuleInfo.fmtopt
+                mov rdx,MODULE.fmtopt
                 asmerr( 3019, &[rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .else
                 asmerr( 3014, [rsi].type, [rcx].asym.name, [rsi].locofs )
@@ -1528,7 +1528,7 @@ ifdef _LIN64
             mov rsi,_rsi
             mov rdi,_rdi
 endif
-            .if ( ModuleInfo.defOfssize == USE64 )
+            .if ( MODULE.defOfssize == USE64 )
                 write_relocs64( rsi )
             .else
                 write_relocs32( rbx, rsi )
@@ -1571,14 +1571,14 @@ elf_write_module proc private uses rsi rdi rbx
     fseek( CurrFile[OBJ*size_t], 0, SEEK_SET )
 
 ifndef ASMC64
-    .switch ( ModuleInfo.defOfssize )
+    .switch ( MODULE.defOfssize )
     .case USE64
 endif
         tmemcpy( &em.ehdr64.e_ident, ELF_SIGNATURE, ELF_SIGNATURE_LEN )
         mov em.ehdr64.e_ident[EI_CLASS],ELFCLASS64
         mov em.ehdr64.e_ident[EI_DATA],ELFDATA2LSB
         mov em.ehdr64.e_ident[EI_VERSION],EV_CURRENT
-        mov em.ehdr64.e_ident[EI_OSABI],ModuleInfo.elf_osabi
+        mov em.ehdr64.e_ident[EI_OSABI],MODULE.elf_osabi
 
         ; v2.07: set abiversion to 0
 
@@ -1597,11 +1597,11 @@ endif
         ; - n .rela<xxx> sections
 
         get_num_reloc_sections()
-        add eax,ModuleInfo.num_segs
+        add eax,MODULE.num_segs
         add eax,1 + 3
         mov em.ehdr64.e_shnum,ax
 
-        mov eax,ModuleInfo.num_segs
+        mov eax,MODULE.num_segs
         add eax,1 + SHSTRTAB_IDX
         mov em.ehdr64.e_shstrndx,ax ; set index of .shstrtab section
 
@@ -1622,7 +1622,7 @@ ifndef ASMC64
         mov em.ehdr32.e_ident[EI_CLASS],ELFCLASS32
         mov em.ehdr32.e_ident[EI_DATA],ELFDATA2LSB
         mov em.ehdr32.e_ident[EI_VERSION],EV_CURRENT
-        mov em.ehdr32.e_ident[EI_OSABI],ModuleInfo.elf_osabi
+        mov em.ehdr32.e_ident[EI_OSABI],MODULE.elf_osabi
 
         ; v2.07: set abiversion to 0
 
@@ -1641,11 +1641,11 @@ ifndef ASMC64
         ; - n .rel<xxx> entries
 
         get_num_reloc_sections()
-        add eax,ModuleInfo.num_segs
+        add eax,MODULE.num_segs
         add eax,1 + 3
         mov em.ehdr32.e_shnum,ax
 
-        mov eax,ModuleInfo.num_segs
+        mov eax,MODULE.num_segs
         add eax,1 + SHSTRTAB_IDX
         mov em.ehdr32.e_shstrndx,ax ; set index of .shstrtab section
 
@@ -1669,8 +1669,8 @@ elf_write_module endp
 
 elf_init proc
 
-    mov ModuleInfo.elf_osabi,ELFOSABI_SYSV
-    mov ModuleInfo.WriteModule,&elf_write_module
+    mov MODULE.elf_osabi,ELFOSABI_SYSV
+    mov MODULE.WriteModule,&elf_write_module
     ret
 
 elf_init endp

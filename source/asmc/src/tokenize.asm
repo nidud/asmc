@@ -1104,7 +1104,7 @@ endif
 
     .default
 
-        mov cl,ModuleInfo.radix
+        mov cl,MODULE.radix
         mov eax,1
         shl eax,cl
         dec rdx
@@ -1137,14 +1137,14 @@ endif
         .endif
 
         inc rdx
-        mov cl,ModuleInfo.radix
+        mov cl,MODULE.radix
         mov eax,1
         shl eax,cl
         cmp edi,eax
         mov eax,0
         mov rcx,rdx
         .ifc
-            movzx eax,ModuleInfo.radix
+            movzx eax,MODULE.radix
         .endif
     .endsw
 
@@ -1249,7 +1249,7 @@ continue_scan:
     ; within the name (though not as last char). OPTION DOTNAMEX
     ; must be on.
     ;
-    .if ( al == '.' && ModuleInfo.dotnamex )
+    .if ( al == '.' && MODULE.dotnamex )
 
         mov rcx,[rdx].output
         .if ( al == [rcx] )
@@ -1302,7 +1302,7 @@ continue_scan:
         mov rax,[rdx].output
         mov al,[rax]
 
-        .if ( al == '.' && !ModuleInfo.dotname )
+        .if ( al == '.' && !MODULE.dotname )
 
             mov [rbx].token,T_DOT
             lea rax,stokstr1[('.' - '(') * 2]
@@ -1336,7 +1336,7 @@ continue_scan:
 
     .if ( eax >= SPECIAL_LAST )
 
-        .if ( ModuleInfo.m510 )
+        .if ( MODULE.m510 )
 
             mov     eax,[rbx].tokval
             sub     eax,SPECIAL_LAST
@@ -1347,7 +1347,7 @@ continue_scan:
             mov     eax,ecx
             and     eax,P_CPU_MASK
             and     ecx,P_EXT_MASK
-            mov     edi,ModuleInfo.curr_cpu
+            mov     edi,MODULE.curr_cpu
             mov     esi,edi
             and     edi,P_CPU_MASK
             and     esi,P_EXT_MASK
@@ -1409,10 +1409,10 @@ StartComment proc fastcall p:string_t
 
     tstrstart(rcx)
     .if ecx
-        mov ModuleInfo.inside_comment,cl
+        mov MODULE.inside_comment,cl
         inc rax
         .if tstrchr(rax, ecx)
-            mov ModuleInfo.inside_comment,0
+            mov MODULE.inside_comment,0
         .endif
     .else
         asmerr( 2110 )
@@ -1562,11 +1562,11 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
         .if ( start == 0 )
 
             mov p.output,StringBuffer
-            .if ( ModuleInfo.inside_comment )
+            .if ( MODULE.inside_comment )
 
-                .if tstrchr( p.start, ModuleInfo.inside_comment )
+                .if tstrchr( p.start, MODULE.inside_comment )
 
-                    mov ModuleInfo.inside_comment,0
+                    mov MODULE.inside_comment,0
                 .endif
                 .break
             .endif
@@ -1689,7 +1689,7 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
                         .if ( ecx == T_DOT_ASSERT )
 
                             dec edx
-                            .if ( !( ModuleInfo.xflag & OPT_ASSERT ) )
+                            .if ( !( MODULE.xflag & OPT_ASSERT ) )
 
                                 mov rax,p.input
                                 mov cl,[rax]

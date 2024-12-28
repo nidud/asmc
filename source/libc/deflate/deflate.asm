@@ -1796,11 +1796,11 @@ deflate_fast proc
 
             .if ( eax <= [rbx].max_lazy_match && [rbx].lookahead >= MIN_MATCH )
 
-                .repeat
+                .for ( --match_length : match_length : match_length-- )
+
                     inc [rbx].str_start
                     mov prev_length,insert_string()
-                    dec match_length
-                .untilz
+                .endf
                 inc [rbx].str_start
 
             .else

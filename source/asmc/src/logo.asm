@@ -63,7 +63,7 @@ endif
  char_t "-eq Don't display error messages           -Fd[file] Write import definition file",10
  char_t "-Fi<file> Force <file> to be included      -Fl[file] Generate listing",10
  char_t "-Fo<file> Name object file                 -Fw<file> Set errors file name",10
- char_t "-fpic, -fno-pic Position Independed Code   -frame Auto generate unwind information",10
+ char_t "-fpic, -fno-pic Position Independent Code  -frame Auto generate unwind information",10
 ifndef ASMC64
  char_t "-FPi Generate 80x87 emulator encoding      -FPi87 80x87 instructions (default)",10
  char_t "-fpc Disallow floating-point instructions  -fp<n> Set FPU: 0=8087, 2=80287, 3=80387",10

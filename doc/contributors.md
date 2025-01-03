@@ -15,14 +15,14 @@ These people contributed to Asmc (additions, bugfixes, bug reports):
 - Greenhorn70
 - Gunther Ilzig
 - habran
-- Ismail Dönmez
+- Ismail DÃ¶nmez
 - jj2007
 - jklwn4
 - jloqfjgk
 - John Hankinson
 - Michele Pes
 - nidud
-- Petr Laštovicka
+- Petr LaÅ¡tovicka
 - Ramon Sala
 - teoberi
 - wiesl

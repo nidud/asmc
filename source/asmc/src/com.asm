@@ -10,15 +10,41 @@ include parser.inc
 
 ifdef USE_COMALLOC
 
+; v3.36.16 - link to nearest public class
+;
+; C1 : public IUnknown
+; C2 : public C1
+;
+; ifndef (C2::Release)
+;  ifdef (C1::Release)
+;   C2::Release = C1::Release
+;  elseifdef (IUnknown::Release)
+;   C2::Release = IUnknown::Release
+;  else
+;   error
+;  endif
+; endif
+;
+.template node
+    sym  asym_t ?
+    next ptr_t ?
+   .ends
+
     .code
 
     assume rdi:ptr sfield
 
-AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, reg:int_t, i:int_t
+AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, reg:int_t, i:int_t, level:ptr node
 
    .new q[256]:char_t
+   .new t[256]:char_t
+   .new n:node
+   .new m:int_t
 
     ldr rsi,sym
+
+    mov n.sym,rsi
+    mov n.next,level
 
     .if ( [rsi].asym.total_size )
 
@@ -30,19 +56,42 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, 
                 mov rdx,[rdi].type
                 .if ( [rdx].asym.typekind == TYPE_STRUCT )
 
-                    mov i,AssignVTable(name, rdx, reg, i)
+                    mov i,AssignVTable(name, rdx, reg, i, &n)
 
                 .else
 
-                    tstrcat( tstrcpy( &q, name ), "_" )
+                    mov m,0
+                    .if ( SymFind( tstrcat( tstrcat( tstrcpy( &q, name ), "_" ), [rdi].name ) ) )
 
-                    mov ebx,1
-                    .if ( SymFind( tstrcat( rax, [rdi].name ) ) )
                         .if ( [rax].asym.state == SYM_MACRO || [rax].asym.state == SYM_TMACRO )
-                            xor ebx,ebx
+                            mov m,1
                         .endif
+
+                    .else
+
+                        .for ( rbx = &n : rbx : rbx = [rbx].node.next )
+
+                            mov rcx,[rbx].node.sym
+                            .if ( [rcx].asym.name_size > 4 )
+
+                                tstrcpy( &t, [rcx].asym.name )
+                                mov rcx,[rbx].node.sym
+                                mov edx,[rcx].asym.name_size
+                                mov t[rdx-4],'_'
+                                mov t[rdx-3],0
+
+                                .if ( SymFind( tstrcat( rax, [rdi].name ) ) )
+
+                                    .if ( [rax].asym.state != SYM_MACRO && [rax].asym.state != SYM_TMACRO )
+                                        tstrcpy( &q, &t )
+                                    .endif
+                                .endif
+                            .endif
+                        .endf
                     .endif
-                    .if ( ebx )
+
+                    .if ( m == 0 )
+
                         mov ebx,reg
                         dec ebx
                         AddLineQueueX( "lea %r, %s", ebx, &q )
@@ -144,7 +193,7 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     .else
         AddLineQueueX( "add %r, %s", &[rdi+T_ECX-T_EAX], name )
         AddLineQueueX( "mov [%r], %r", edi, &[rdi+T_ECX-T_EAX] )
-        AssignVTable( name, [rsi].asym.vtable, &[rdi+T_ECX-T_EAX], 0 )
+        AssignVTable( name, [rsi].asym.vtable, &[rdi+T_ECX-T_EAX], 0, 0 )
         AddLineQueueX( "lea %r, [%r-%s]", edi, &[rdi+T_ECX-T_EAX], name )
     .endif
     InsertLineQueue()

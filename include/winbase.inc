@@ -3686,40 +3686,40 @@ if MICROSOFT_WINDOWS_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS
 
 ;ifdef __cplusplus
 
-InterlockedIncrement proto fastcall :ptr {
-    lock    inc dword ptr [rcx]
-    mov     eax,[rcx]
+InterlockedIncrement proto watcall :ptr {
+    lock    inc dword ptr [rax]
+    mov     eax,[rax]
     }
 
 if (defined(_WIN64) and not defined(_ARM64_)) or ((_WIN32_WINNT ge 0x0502) and defined(_WINBASE_) and not defined(_MANAGED))
-InterlockedIncrement64 proto fastcall :ptr {
-    lock    inc qword ptr [rcx]
-    mov     rax,[rcx]
+InterlockedIncrement64 proto watcall :ptr {
+    lock    inc qword ptr [rax]
+    mov     rax,[rax]
     }
 endif
 
-InterlockedDecrement proto fastcall :ptr {
-    lock    dec dword ptr [rcx]
-    mov     eax,[rcx]
+InterlockedDecrement proto watcall :ptr {
+    lock    dec dword ptr [rax]
+    mov     eax,[rax]
     }
 
 if (defined(_WIN64) and not defined(_ARM64_)) or ((_WIN32_WINNT ge 0x0502) and defined(_WINBASE_) and not defined(_MANAGED))
-InterlockedDecrement64 proto fastcall :ptr {
-    lock dec qword ptr [rcx]
-    mov rax,[rcx]
+InterlockedDecrement64 proto watcall :ptr {
+    lock dec qword ptr [rax]
+    mov rax,[rax]
     }
 endif
 
 ifndef _M_CEE_PURE
 
-InterlockedExchange proto fastcall :ptr, :ptr {
-    xchg    [rcx],edx
+InterlockedExchange proto watcall :ptr, :ptr {
+    xchg    [rax],edx
     mov     eax,edx
     }
 
 if defined(_WIN64) or ((_WIN32_WINNT ge 0x0502) and defined(_WINBASE_) and not defined(_MANAGED))
-InterlockedExchange64 proto fastcall :ptr, :ptr {
-    xchg    [rcx],rdx
+InterlockedExchange64 proto watcall :ptr, :ptr {
+    xchg    [rax],rdx
     mov     rax,rdx
     }
 endif

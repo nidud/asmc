@@ -2989,44 +2989,19 @@ FAILED proto watcall hr:sdword {
 IS_ERROR macro Status
 	exitm <( ( Status ) shr 31 == SEVERITY_ERROR ) >
 	endm
-
-HRESULT_CODE macro hr
-    ifidn typeid(hr),<imm>
-	exitm <( ( hr ) and 0xFFFF )>
-    else
-	ifdif <hr>,<eax>
-	    mov eax,hr
-	endif
+HRESULT_CODE proto watcall :sdword {
 	and eax,0xFFFF
 	retm<eax>
-    endif
-    endm
-
-SCODE_CODE macro sc
-    ifidn typeid(sc),<imm>
-	exitm <( ( sc ) and 0xFFFF )>
-    else
-	ifdif <sc>,<eax>
-	    mov eax,sc
-	endif
+	}
+SCODE_CODE proto watcall :sdword {
 	and eax,0xFFFF
 	retm<eax>
-    endif
-    endm
-
-HRESULT_FACILITY macro hr
-    ifidn typeid(hr),<imm>
-	exitm<(((hr) shr 16) and 0x1fff)>
-    else
-	ifdif <hr>,<eax>
-	    mov eax,hr
-	endif
+	}
+HRESULT_FACILITY proto watcall :sdword {
 	shr eax,16
 	and eax,0x1FFF
 	retm<eax>
-    endif
-    endm
-
+	}
 
 SCODE_FACILITY macro sc
 	exitm <( ( ( sc ) shr 16 ) and 0x1fff ) >

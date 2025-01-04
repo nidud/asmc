@@ -452,7 +452,7 @@ add_incpaths endp
 
 CmdlParamsInit proc __ccall private pass:int_t
 
-    .if ( pass == PASS_1 )
+    .if ( ldr(pass) == PASS_1 )
 
         add_cmdline_tmacros()
         add_incpaths()
@@ -1085,7 +1085,7 @@ iddc_file proc __ccall private uses rsi rdi rbx source:string_t
    .new file:string_t
    .new fp:ptr FILE
 
-    mov rbx,tstrcpy(&iddc, GetFNamePart( source ) )
+    mov rbx,tstrcpy(&iddc, GetFNamePart( ldr(source) ) )
 
     .if ( GetExtPart( rbx ) == rbx )
 
@@ -1216,7 +1216,7 @@ SetFilenames proc __ccall private uses rsi rdi rbx fn:string_t
 
    .new path[260]:byte
 
-    mov MODULE.curr_fname[ASM*string_t],LclDup( fn )
+    mov MODULE.curr_fname[ASM*string_t],LclDup( ldr(fn) )
 
     mov rsi,GetFNamePart( rax )
     mov edi,ASM+1

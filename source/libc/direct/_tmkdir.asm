@@ -40,7 +40,7 @@ else
     mkdir( ldr(directory), S_IRWXU or S_IRWXG or S_IROTH or S_IXOTH )
 endif
 else
-    .if CreateDirectory( ldr(directory), 0 )
+    .ifd CreateDirectory( ldr(directory), 0 )
         xor eax,eax
     .else
         _dosmaperr( GetLastError() )

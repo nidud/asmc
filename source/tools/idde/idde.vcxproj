@@ -39,7 +39,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup>
-    <IncludePath>$(AsmcDir)\include;</IncludePath>
+    <IncludePath>$(AsmcDir)\include;$(AsmcDir)\include\h;</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -96,9 +96,6 @@
     <IDDC Include="res/RCQuickMenu.idd" />
     <IDDC Include="res/RCSave.idd" />
     <IDDC Include="res/RCTOBJ.idd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="idde.rc" />

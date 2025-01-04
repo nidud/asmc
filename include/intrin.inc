@@ -101,46 +101,46 @@ _InterlockedCompareExchange64 proto :ptr, :qword, :qword {
 
 _InterlockedCompareExchangePointer equ <_InterlockedCompareExchange64>
 
-_InterlockedDecrement16 proto fastcall :ptr {
-    lock    dec word ptr [rcx]
-    mov     ax,[rcx]
+_InterlockedDecrement16 proto watcall :ptr {
+    lock    dec word ptr [rax]
+    mov     ax,[rax]
     }
 
-_InterlockedDecrement proto fastcall :ptr {
-    lock    dec dword ptr [rcx]
-    mov     eax,[rcx]
-    }
-
-ifdef __MACHINEX64
-
-_InterlockedDecrement64 proto fastcall :ptr {
-    lock dec qword ptr [rcx]
-    mov rax,[rcx]
-    }
-
-endif
-
-_InterlockedIncrement16 proto fastcall :ptr {
-    lock    inc word ptr [rcx]
-    mov     ax,[rcx]
-    }
-
-_InterlockedIncrement proto fastcall :ptr {
-    lock    inc dword ptr [rcx]
-    mov     eax,[rcx]
+_InterlockedDecrement proto watcall :ptr {
+    lock    dec dword ptr [rax]
+    mov     eax,[rax]
     }
 
 ifdef __MACHINEX64
 
-_InterlockedIncrement64 proto fastcall :ptr {
-    lock    inc qword ptr [rcx]
-    mov     rax,[rcx]
+_InterlockedDecrement64 proto watcall :ptr {
+    lock dec qword ptr [rax]
+    mov rax,[rax]
     }
 
 endif
 
-_InterlockedExchangePointer proto fastcall :ptr, :ptr {
-    xchg    [rcx],rdx
+_InterlockedIncrement16 proto watcall :ptr {
+    lock    inc word ptr [rax]
+    mov     ax,[rax]
+    }
+
+_InterlockedIncrement proto watcall :ptr {
+    lock    inc dword ptr [rax]
+    mov     eax,[rax]
+    }
+
+ifdef __MACHINEX64
+
+_InterlockedIncrement64 proto watcall :ptr {
+    lock    inc qword ptr [rax]
+    mov     rax,[rax]
+    }
+
+endif
+
+_InterlockedExchangePointer proto watcall :ptr, :ptr {
+    xchg    [rax],rdx
     mov     rax,rdx
     }
 
@@ -178,18 +178,15 @@ _interlockedbittestandreset proto fastcall :ptr, :abs {
     setb    al
     }
 
-_byteswap_ulong proto fastcall :dword {
-    mov     eax,ecx
+_byteswap_ulong proto watcall :dword {
     bswap   eax
     }
 
-_byteswap_uint64 proto fastcall :qword {
-    mov     rax,rcx
+_byteswap_uint64 proto watcall :qword {
     bswap   rax
     }
 
-_byteswap_ushort proto fastcall :word {
-    mov     ax,cx
+_byteswap_ushort proto watcall :word {
     ror     ax,8
     }
 
@@ -234,10 +231,10 @@ _rotr64 proto watcall :uint64_t, :abs {
 
 ifdef __MACHINEX86
 
-_InterlockedAddLargeStatistic proto fastcall :ptr, :uint_t {
-    lock add [ecx],edx
+_InterlockedAddLargeStatistic proto watcall :ptr, :uint_t {
+    lock add [rax],edx
     .ifc
-        lock add [ecx+4],0
+        lock add [rax+4],0
     .endif
     mov eax,edx
     }
@@ -331,50 +328,50 @@ endif ;; __MACHINEX64
 
 ifdef __MACHINEX86
 
-__addfsbyte proto fastcall :ptr, :byte {
+__addfsbyte proto watcall :ptr, :byte {
     assume  fs:nothing
-    add     fs:[rcx],dl
+    add     fs:[rax],dl
     assume  fs:error
     }
 
-__addfsword proto fastcall :ptr, :word {
+__addfsword proto watcall :ptr, :word {
     assume  fs:nothing
-    add     fs:[rcx],dx
+    add     fs:[rax],dx
     assume  fs:error
     }
 
-__addfsdword proto fastcall :ptr, :dword {
+__addfsdword proto watcall :ptr, :dword {
     assume  fs:nothing
-    add     fs:[rcx],edx
+    add     fs:[rax],edx
     assume  fs:error
     }
 
-__readfsbyte proto fastcall :ptr {
+__readfsbyte proto watcall :ptr {
     assume  fs:nothing
-    mov al, fs:[rcx]
+    mov al, fs:[rax]
     assume  fs:error
     }
 
-__readfsdword proto fastcall :ptr {
+__readfsdword proto watcall :ptr {
     assume  fs:nothing
-    mov     eax,fs:[rcx]
+    mov     eax,fs:[rax]
     assume  fs:error
     }
 
-__readfsqword proto fastcall :ptr {
+__readfsqword proto watcall :ptr {
     assume  fs:nothing
 ifdef _WIN64
-    mov     rax,fs:[rcx]
+    mov     rax,fs:[rax]
 else
-    mov     eax,fs:[rcx]
-    mov     edx,fs:[rcx+4]
+    mov     edx,fs:[rax+4]
+    mov     eax,fs:[rax]
 endif
     assume  fs:error
     }
 
-__readfsword proto fastcall :ptr {
+__readfsword proto watcall :ptr {
     assume  fs:nothing
-    mov     ax,fs:[rcx]
+    mov     ax,fs:[rax]
     assume  fs:error
     }
 
@@ -382,61 +379,61 @@ endif
 
 ifdef __MACHINEX64
 
-__addgsbyte proto fastcall :ptr, :byte {
-    add     gs:[rcx],dl
+__addgsbyte proto watcall :ptr, :byte {
+    add     gs:[rax],dl
     }
-__addgsword proto fastcall :ptr, :word {
-    add     gs:[rcx],dx
+__addgsword proto watcall :ptr, :word {
+    add     gs:[rax],dx
     }
-__addgsdword proto fastcall :ptr, :dword {
-    add     gs:[rcx],edx
+__addgsdword proto watcall :ptr, :dword {
+    add     gs:[rax],edx
     }
-__addgsqword proto fastcall :ptr, :qword {
-    add     gs:[rcx],rdx
-    }
-
-__incgsbyte proto fastcall :ptr {
-    inc     byte ptr gs:[rcx]
-    }
-__incgsdword proto fastcall :ptr {
-    inc     dword ptr gs:[rcx]
-    }
-__incgsqword proto fastcall :ptr {
-    inc     qword ptr gs:[rcx]
-    }
-__incgsword proto fastcall :ptr {
-    inc     word ptr gs:[rcx]
+__addgsqword proto watcall :ptr, :qword {
+    add     gs:[rax],rdx
     }
 
-__readgsbyte proto fastcall :ptr {
-    movzx   eax,byte ptr gs:[rcx]
+__incgsbyte proto watcall :ptr {
+    inc     byte ptr gs:[rax]
     }
-__readgsword proto fastcall :ptr {
-    movzx   eax,word ptr gs:[rcx]
+__incgsdword proto watcall :ptr {
+    inc     dword ptr gs:[rax]
     }
-__readgsdword proto fastcall :ptr {
-    mov     eax,gs:[rcx]
+__incgsqword proto watcall :ptr {
+    inc     qword ptr gs:[rax]
     }
-__readgsqword proto fastcall :ptr {
-    mov     rax,gs:[rcx]
+__incgsword proto watcall :ptr {
+    inc     word ptr gs:[rax]
+    }
+
+__readgsbyte proto watcall :ptr {
+    movzx   eax,byte ptr gs:[rax]
+    }
+__readgsword proto watcall :ptr {
+    movzx   eax,word ptr gs:[rax]
+    }
+__readgsdword proto watcall :ptr {
+    mov     eax,gs:[rax]
+    }
+__readgsqword proto watcall :ptr {
+    mov     rax,gs:[rax]
     }
 endif
 
 ifdef __MACHINEX86
 
-__incfsbyte proto fastcall :ptr {
+__incfsbyte proto watcall :ptr {
     assume  fs:nothing
-    inc     byte ptr fs:[rcx]
+    inc     byte ptr fs:[rax]
     assume  fs:error
     }
-__incfsdword proto fastcall :ptr {
+__incfsdword proto watcall :ptr {
     assume  fs:nothing
-    inc     dword ptr fs:[rcx]
+    inc     dword ptr fs:[rax]
     assume  fs:error
     }
-__incfsword proto fastcall :ptr {
+__incfsword proto watcall :ptr {
     assume  fs:nothing
-    inc     word ptr fs:[rcx]
+    inc     word ptr fs:[rax]
     assume  fs:error
     }
 endif

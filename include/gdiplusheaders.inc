@@ -378,9 +378,9 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
     .static Font :abs, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :abs=<NULL> {
       ifb <_2>
         GdipCreateFontFromDC(_1, addr this.nativeFont)
-      elseifidn <ptrtagLOGFONTA>,typeid(_2)
+      elseifidn <ptrLOGFONTA>,typeid(_2)
         GdipCreateFontFromLogfontA(_1, _2, addr this.nativeFont)
-      elseifidn <ptrtagLOGFONTW>,typeid(_2)
+      elseifidn <ptrLOGFONTW>,typeid(_2)
         GdipCreateFontFromLogfontW(_1, _2, addr this.nativeFont)
       elseifidn <ptrHFONT__>,typeid(_2)
         .new lf:LOGFONTA

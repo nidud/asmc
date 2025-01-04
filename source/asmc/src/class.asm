@@ -125,7 +125,9 @@ AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:ptr asym
                         .if [rax].asym.state == SYM_TMACRO
                             mov rdx,[rax].asym.string_ptr
                         .endif
-                        AddLineQueueX( "%s_%s equ <%s>", [rsi].class, [rdi].name, rdx )
+                        .if ( [rax].asym.flags & ( S_VMACRO or S_ISINLINE ) || [rax].asym.state == SYM_MACRO )
+                            AddLineQueueX( "%s_%s equ <%s>", [rsi].class, [rdi].name, rdx )
+                        .endif
                     .endif
                 .endif
             .endif

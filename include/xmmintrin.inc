@@ -149,8 +149,8 @@ _mm_getcsr proto fastcall {
     mov	    eax,[rsp]
     }
 
-_mm_setcsr proto fastcall :dword {
-    mov	    [rsp],ecx
+_mm_setcsr proto watcall :dword {
+    mov	    [rsp],eax
     ldmxcsr [rsp]
     }
 

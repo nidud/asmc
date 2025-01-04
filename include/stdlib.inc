@@ -342,17 +342,14 @@ endif
 qsort		proto __cdecl :ptr, :size_t, :size_t, :LPQSORTCMD
 endif
 
-_byteswap_ushort proto fastcall :word {
-    mov	    ax,cx
+_byteswap_ushort proto watcall :word {
     ror	    ax,8
     }
-_byteswap_ulong proto fastcall :dword {
-    mov	    eax,ecx
+_byteswap_ulong proto watcall :dword {
     bswap   eax
     }
 ifdef _WIN64
-_byteswap_uint64 proto fastcall :qword {
-    mov	    rax,rcx
+_byteswap_uint64 proto watcall :qword {
     bswap   rax
     }
 endif

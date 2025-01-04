@@ -747,20 +747,20 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__popcnt proto fastcall :dword {
-    popcnt  eax,ecx
+__popcnt proto watcall :dword {
+    popcnt  eax,eax
     }
 
-__popcnt16 proto fastcall :word {
-    popcnt  ax,cx
+__popcnt16 proto watcall :word {
+    popcnt  ax,ax
     }
 
 endif
 
 ifdef __MACHINEX64
 
-__popcnt64 proto fastcall :qword {
-    popcnt  rax,rcx
+__popcnt64 proto watcall :qword {
+    popcnt  rax,rax
     }
 
 endif
@@ -799,20 +799,20 @@ __readcr8 proto :abs {
     mov     rax,cr8
     }
 
-__writecr0 proto fastcall :ptr {
-    mov     cr0,rcx
+__writecr0 proto watcall :ptr {
+    mov     cr0,rax
     }
-__writecr2 proto fastcall :ptr {
-    mov     cr2,rcx
+__writecr2 proto watcall :ptr {
+    mov     cr2,rax
     }
-__writecr3 proto fastcall :ptr {
-    mov     cr3,rcx
+__writecr3 proto watcall :ptr {
+    mov     cr3,rax
     }
-__writecr4 proto fastcall :ptr {
-    mov     cr4,rcx
+__writecr4 proto watcall :ptr {
+    mov     cr4,rax
     }
-__writecr8 proto fastcall :ptr {
-    mov     cr8,rcx
+__writecr8 proto watcall :ptr {
+    mov     cr8,rax
     }
 
 __readdr proto :abs {
@@ -833,8 +833,8 @@ endif
     retm   <rax>
     endm
 
-__writeeflags proto fastcall :ptr {
-    push    rcx
+__writeeflags proto watcall :ptr {
+    push    rax
     popfq
     }
 
@@ -892,22 +892,20 @@ __segmentlimit proto watcall :dword {
     lsl     eax,eax
     }
 
-__sidt proto fastcall :ptr {
-    sidt    qword ptr [rcx]
+__sidt proto watcall :ptr {
+    sidt    qword ptr [rax]
     }
 
 __svm_clgi proto :abs {
     clgi
     }
 
-__svm_invlpga proto :qword, :dword {
-    mov     rax,rcx
+__svm_invlpga proto watcall :qword, :dword {
     mov     ecx,edx
     invlpga rax,ecx
     }
 
-__svm_skinit proto fastcall :dword {
-    mov     eax,ecx
+__svm_skinit proto watcall :dword {
     skinit  eax
     }
 
@@ -915,18 +913,15 @@ __svm_stgi proto :abs {
     stgi
     }
 
-__svm_vmload proto fastcall :dword {
-    mov     eax,ecx
+__svm_vmload proto watcall :dword {
     vmload  rax
     }
 
-__svm_vmrun proto fastcall :dword {
-    mov     eax,ecx
+__svm_vmrun proto watcall :dword {
     vmrun   rax
     }
 
-__svm_vmsave proto fastcall :dword {
-    mov     eax,ecx
+__svm_vmsave proto watcall :dword {
     vmsave  rax
     }
 
@@ -942,24 +937,23 @@ endif
 
 ifdef __MACHINEX64
 
-__vmx_on proto fastcall :ptr {
-    vmxon   qword ptr [rcx]
+__vmx_on proto watcall :ptr {
+    vmxon   qword ptr [rax]
     }
 
-__vmx_vmclear proto fastcall :ptr {
-    vmclear qword ptr [rcx]
+__vmx_vmclear proto watcall :ptr {
+    vmclear qword ptr [rax]
     }
 
 __vmx_vmlaunch proto :abs {
     vmlaunch
     }
 
-__vmx_vmptrld proto fastcall :ptr {
-    vmptrld qword ptr [rcx]
+__vmx_vmptrld proto watcall :ptr {
+    vmptrld qword ptr [rax]
     }
 
-__vmx_vmread proto fastcall :ptr, :ptr {
-    mov     rax,rcx
+__vmx_vmread proto watcall :ptr, :ptr {
     mov     rcx,rdx
     vmread  rax,rcx
     }
@@ -968,8 +962,7 @@ __vmx_vmresume proto :abs {
     vmresume
     }
 
-__vmx_vmwrite proto fastcall :ptr, :ptr {
-    mov     rax,rcx
+__vmx_vmwrite proto watcall :ptr, :ptr {
     mov     rcx,rdx
     vmwrite rax,rcx
     }
@@ -978,8 +971,8 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__vmx_vmptrst proto fastcall :ptr {
-    vmptrst qword ptr [rcx]
+__vmx_vmptrst proto watcall :ptr {
+    vmptrst qword ptr [rax]
     }
 
 endif
@@ -994,27 +987,27 @@ endif
 
 ifdef __MACHINEX86
 
-__writefsbyte proto fastcall :ptr, :byte {
+__writefsbyte proto watcall :ptr, :byte {
     assume  fs:nothing
-    mov     fs:[rcx],dl
+    mov     fs:[rax],dl
     assume  fs:error
     }
 
-__writefsdword proto fastcall :ptr, :dword {
+__writefsdword proto watcall :ptr, :dword {
     assume  fs:nothing
-    mov     fs:[rcx],edx
+    mov     fs:[rax],edx
     assume  fs:error
     }
 
-__writefsqword proto fastcall :ptr, :qword {
+__writefsqword proto watcall :ptr, :qword {
     assume  fs:nothing
-    mov     fs:[rcx],rdx
+    mov     fs:[rax],rdx
     assume  fs:error
     }
 
-__writefsword proto fastcall :ptr, :word {
+__writefsword proto watcall :ptr, :word {
     assume  fs:nothing
-    mov     fs:[rcx],dx
+    mov     fs:[rax],dx
     assume  fs:error
     }
 
@@ -1022,25 +1015,24 @@ endif
 
 ifdef __MACHINEX64
 
-__writegsbyte proto fastcall :ptr, :byte {
-    mov     gs:[rcx],dl
+__writegsbyte proto watcall :ptr, :byte {
+    mov     gs:[rax],dl
     }
-__writegsdword proto fastcall :ptr, :dword {
-    mov     gs:[rcx],edx
+__writegsdword proto watcall :ptr, :dword {
+    mov     gs:[rax],edx
     }
-__writegsqword proto fastcall :ptr, :qword {
-    mov     gs:[rcx],rdx
+__writegsqword proto watcall :ptr, :qword {
+    mov     gs:[rax],rdx
     }
-__writegsword proto fastcall :ptr, :word {
-    mov     gs:[rcx],dx
+__writegsword proto watcall :ptr, :word {
+    mov     gs:[rax],dx
     }
 
 endif
 
 ifdef __MACHINEX86_X64
 
-__writemsr proto fastcall :ptr, :ptr {
-    mov     rax,rdx
+__writemsr proto watcall :ptr, :ptr {
     shr     rdx,32
     wrmsr
     }
@@ -1049,12 +1041,12 @@ _rsm proto :abs {
     rsm
     }
 
-_lgdt proto fastcall :ptr {
-    lgdt    qword ptr [rcx]
+_lgdt proto watcall :ptr {
+    lgdt    qword ptr [rax]
     }
 
-_sgdt proto fastcall :ptr {
-    sgdt    qword ptr [rcx]
+_sgdt proto watcall :ptr {
+    sgdt    qword ptr [rax]
     }
 
 _clac proto :abs {

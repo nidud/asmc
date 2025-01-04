@@ -383,27 +383,23 @@ PDWORDLONG	typedef PTR DWORDLONG
 
 
 if defined(MIDL_PASS) OR defined(_M_CEE_PURE) OR defined(_68K_) OR defined(_MPPC_) OR defined(_M_IA64) OR defined(_M_AMD64)
-Int32x32To64 proto fastcall :int_t, :int_t {
-	movsxd	rax, ecx
+Int32x32To64 proto watcall :int_t, :int_t {
+	movsxd	rax, eax
 	movsxd	rdx, edx
 	imul	rax, rdx
 	}
-UInt32x32To64 proto fastcall :ULONG, :ULONG {
-	mov	eax, ecx
+UInt32x32To64 proto watcall :ULONG, :ULONG {
 	imul	rax, rdx
 	}
-Int64ShllMod32 proto fastcall :ULONGLONG, :ULONG {
-	mov	rax, rcx
+Int64ShllMod32 proto watcall :ULONGLONG, :ULONG {
 	mov	ecx, edx
 	shl	rax, cl
 	}
-Int64ShraMod32 proto fastcall :LONGLONG, :ULONG {
-	mov	rax, rcx
+Int64ShraMod32 proto watcall :LONGLONG, :ULONG {
 	mov	ecx, edx
 	sar	rax, cl
 	}
-Int64ShrlMod32 proto fastcall :ULONGLONG, :ULONG {
-	mov	rax, rcx
+Int64ShrlMod32 proto watcall :ULONGLONG, :ULONG {
 	mov	ecx, edx
 	shr	rax, cl
 	}
@@ -567,8 +563,8 @@ RTL_BITS_OF_FIELD macro x, field
 	endm
 
 
-CONTAINING_RECORD proto fastcall :ptr, type:abs, field:abs {
-	lea rax,[rcx-type.field]
+CONTAINING_RECORD proto watcall :ptr, type:abs, field:abs {
+	lea rax,[rax-type.field]
 	}
 
 ifndef __EXCPT_INC
@@ -1482,8 +1478,8 @@ _mm_getcsr proto fastcall {
     mov	    eax,[rsp]
     }
 
-_mm_setcsr proto fastcall :dword {
-    mov	    [rsp],ecx
+_mm_setcsr proto watcall :dword {
+    mov	    [rsp],eax
     ldmxcsr [rsp]
     }
 
@@ -1646,59 +1642,59 @@ define UnsignedMultiply128 <_mul128>
 define _umul128 <_mul128>
 endif
 
-__readgsbyte proto fastcall :ptr {
-    movzx   eax,byte ptr gs:[rcx]
+__readgsbyte proto watcall :ptr {
+    movzx   eax,byte ptr gs:[rax]
     }
-__readgsword proto fastcall :ptr {
-    movzx   eax,word ptr gs:[rcx]
+__readgsword proto watcall :ptr {
+    movzx   eax,word ptr gs:[rax]
     }
-__readgsdword proto fastcall :ptr {
-    mov	    eax,gs:[rcx]
+__readgsdword proto watcall :ptr {
+    mov	    eax,gs:[rax]
     }
-__readgsqword proto fastcall :ptr {
-    mov	    rax,gs:[rcx]
+__readgsqword proto watcall :ptr {
+    mov	    rax,gs:[rax]
     }
 
-__writegsbyte proto fastcall :ptr, :byte {
-    mov	    gs:[rcx],dl
+__writegsbyte proto watcall :ptr, :byte {
+    mov	    gs:[rax],dl
     }
-__writegsword proto fastcall :ptr, :word {
-    mov	    gs:[rcx],dx
+__writegsword proto watcall :ptr, :word {
+    mov	    gs:[rax],dx
     }
-__writegsdword proto fastcall :ptr, :dword {
-    mov	    gs:[rcx],edx
+__writegsdword proto watcall :ptr, :dword {
+    mov	    gs:[rax],edx
     }
-__writegsqword proto fastcall :ptr, :qword {
-    mov	    gs:[rcx],rdx
+__writegsqword proto watcall :ptr, :qword {
+    mov	    gs:[rax],rdx
     }
 
 
 ifndef _MANAGED
 
-__addgsbyte proto fastcall :ptr, :byte {
-    add	    gs:[rcx],dl
+__addgsbyte proto watcall :ptr, :byte {
+    add	    gs:[rax],dl
     }
-__addgsword proto fastcall :ptr, :word {
-    add	    gs:[rcx],dx
+__addgsword proto watcall :ptr, :word {
+    add	    gs:[rax],dx
     }
-__addgsdword proto fastcall :ptr, :dword {
-    add	    gs:[rcx],edx
+__addgsdword proto watcall :ptr, :dword {
+    add	    gs:[rax],edx
     }
-__addgsqword proto fastcall :ptr, :qword {
-    add	    gs:[rcx],rdx
+__addgsqword proto watcall :ptr, :qword {
+    add	    gs:[rax],rdx
     }
 
-__incgsbyte proto fastcall :ptr {
-    inc	    byte ptr gs:[rcx]
+__incgsbyte proto watcall :ptr {
+    inc	    byte ptr gs:[rax]
     }
-__incgsword proto fastcall :ptr {
-    inc	    word ptr gs:[rcx]
+__incgsword proto watcall :ptr {
+    inc	    word ptr gs:[rax]
     }
-__incgsdword proto fastcall :ptr {
-    inc	    dword ptr gs:[rcx]
+__incgsdword proto watcall :ptr {
+    inc	    dword ptr gs:[rax]
     }
-__incgsqword proto fastcall :ptr {
-    inc	    qword ptr gs:[rcx]
+__incgsqword proto watcall :ptr {
+    inc	    qword ptr gs:[rax]
     }
 
 endif
@@ -1980,21 +1976,21 @@ endif
 if (_MSC_FULL_VER GE 13012035) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 
-__writefsbyte proto fastcall :ptr, :byte {
+__writefsbyte proto watcall :ptr, :byte {
     assume  fs:nothing
-    mov	    fs:[rcx],dl
+    mov	    fs:[rax],dl
     assume  fs:error
     }
 
-__writefsword proto fastcall :ptr, :word {
+__writefsword proto watcall :ptr, :word {
     assume  fs:nothing
-    mov	    fs:[rcx],dx
+    mov	    fs:[rax],dx
     assume  fs:error
     }
 
-__writefsdword proto fastcall :ptr, :dword {
+__writefsdword proto watcall :ptr, :dword {
     assume  fs:nothing
-    mov	    fs:[rcx],edx
+    mov	    fs:[rax],edx
     assume  fs:error
     }
 
@@ -2004,35 +2000,35 @@ if (_MSC_FULL_VER GE 140050727) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 ifndef _MANAGED
 
-__addfsbyte proto fastcall :ptr, :byte {
+__addfsbyte proto watcall :ptr, :byte {
     assume  fs:nothing
-    add	    fs:[rcx],dl
+    add	    fs:[rax],dl
     assume  fs:error
     }
-__addfsword proto fastcall :ptr, :word {
+__addfsword proto watcall :ptr, :word {
     assume  fs:nothing
-    add	    fs:[rcx],dx
+    add	    fs:[rax],dx
     assume  fs:error
     }
-__addfsdword proto fastcall :ptr, :dword {
+__addfsdword proto watcall :ptr, :dword {
     assume  fs:nothing
-    add	    fs:[rcx],edx
+    add	    fs:[rax],edx
     assume  fs:error
     }
 
-__incfsbyte proto fastcall :ptr {
+__incfsbyte proto watcall :ptr {
     assume  fs:nothing
-    inc	    byte ptr fs:[rcx]
+    inc	    byte ptr fs:[rax]
     assume  fs:error
     }
-__incfsword proto fastcall :ptr {
+__incfsword proto watcall :ptr {
     assume  fs:nothing
-    inc	    word ptr fs:[rcx]
+    inc	    word ptr fs:[rax]
     assume  fs:error
     }
-__incfsdword proto fastcall :ptr {
+__incfsdword proto watcall :ptr {
     assume  fs:nothing
-    inc	    dword ptr fs:[rcx]
+    inc	    dword ptr fs:[rax]
     assume  fs:error
     }
 

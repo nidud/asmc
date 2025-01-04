@@ -2,11 +2,9 @@ include srcpath
 
 DesktopDuplication.exe:
 if 1
-	asmc -c -8 -I$(inc_dir) *.asm
-	linkw op map name $@ system gui_32 file { *.obj }
+	asmc -q -coff -8 -I$(inc_dir) *.asm
 else
-	asmc64 -c -I$(inc_dir) *.asm
-	linkw name $@ system gui_64 file { *.obj }
+	asmc64 -q -I$(inc_dir) *.asm
 endif
 	del *.obj
 	$@

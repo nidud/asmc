@@ -87,6 +87,7 @@ CCALLBACK(cv_enum_func, :ptr dbgcv, :ptr dsym, :ptr asym, :ptr counters)
     write_type proc __ccall :ptr asym
     write_type_procedure proc __ccall :ptr asym, :int_t
     write_symbol proc __ccall :ptr asym
+    add_type proc __ccall :ptr asym
 
     cntproc proc __ccall :ptr dsym, :ptr asym, :ptr counters
     memberproc proc __ccall :ptr dsym, :ptr asym, :ptr counters
@@ -182,7 +183,7 @@ GetTyperef proc fastcall uses rsi rdi _sym:ptr asym, _Ofssize:byte
                 .case MT_OWORD:  .return ST_64PUINT8
                 .case MT_REAL16: .return ST_64PUINT8
                 .endsw
-                .return ST_PVOID
+                .return ST_PFCHAR;ST_PVOID
             .endsw
             .endc
         .case MT_BITS
@@ -1762,6 +1763,53 @@ endif
 dbgcv::write_symbol endp
 
 
+dbgcv::add_type proc __ccall uses rsi rdi sym:ptr asym
+
+    ldr rsi,sym
+
+    .if ( [rsi].asym.cvtyperef != 0 || [rsi].asym.flags & S_CVDEFINED )
+        .return
+    .endif
+    or [rsi].asym.flags,S_CVDEFINED
+
+    .if ( [rsi].asym.total_size )
+
+        .for ( rdx = [rsi].dsym.structinfo,
+               rdi = [rdx].struct_info.head : rdi : rdi = [rdi].sfield.next )
+
+            mov rdx,[rdi].sfield.type
+            .if ( rdx )
+
+                .if ( [rdx].asym.state == SYM_TYPE && !( [rdx].asym.flags & S_CVDEFINED ) )
+
+                    .if ( [rdx].asym.typekind == TYPE_STRUCT || [rdx].asym.typekind == TYPE_UNION )
+
+                        this.add_type(rdx)
+
+                    .elseif ( [rdx].asym.typekind == TYPE_TYPEDEF && [rdx].asym.mem_type == MT_PTR &&
+                              [rdx].asym.ptr_memtype == MT_EMPTY )
+
+                        mov rdx,[rdx].asym.target_type
+                        .if ( rdx && [rdx].asym.state == SYM_TYPE &&
+                              ( [rdx].asym.typekind == TYPE_STRUCT || [rdx].asym.typekind == TYPE_UNION ) )
+
+                            this.add_type(rdx)
+                        .endif
+                    .endif
+                .endif
+            .endif
+        .endf
+        xor eax,eax
+        mov rcx,[rsi].asym.name
+        .if ( al != [rcx] && ax == [rsi].asym.cvtyperef )
+
+            this.write_type( rsi )
+        .endif
+    .endif
+    ret
+
+dbgcv::add_type endp
+
 ; flush section header and return memory address
 
 dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
@@ -2176,6 +2224,7 @@ vtable dbgcvVtbl {
     dbgcv_write_type,
     dbgcv_write_type_procedure,
     dbgcv_write_symbol,
+    dbgcv_add_type,
     dbgcv_cntproc,
     dbgcv_memberproc,
     dbgcv_enum_fields
@@ -2567,6 +2616,22 @@ endif
         sub rdi,start
         add [rbx].cvsection.length,edi
 
+        ; v2.36.18 - recurse typedefs in structure
+        ;
+        ;  struct
+        ;   pStruct --> not defined.. --> void ** (now char **)
+        ;
+        ; This scans struct fields for undefined types
+        ;
+        xor esi,esi
+        .while SymEnum( rsi, &i )
+            mov rsi,rax
+            .if ( [rsi].asym.state == SYM_TYPE &&
+                  ( [rsi].asym.typekind == TYPE_STRUCT || [rsi].asym.typekind == TYPE_UNION ) )
+                cv.add_type( rsi )
+            .endif
+        .endw
+
     .else
 
         ;; 1. symbol record: object name
@@ -2643,7 +2708,7 @@ endif
     xor esi,esi
     .while ( SymEnum( rsi, &i ) )
         mov rsi,rax
-        .if ( [rsi].asym.state == SYM_TYPE &&
+        .if ( [rsi].asym.state == SYM_TYPE && !( [rsi].asym.flags & S_CVDEFINED ) &&
               [rsi].asym.typekind != TYPE_TYPEDEF && [rsi].asym.cvtyperef == 0 )
             cv.write_type( rsi )
         .endif

@@ -123,6 +123,7 @@ S_VPARRAY       equ 0x00400000 ; p.p.proc() -- nested function call
 S_OPERATOR      equ 0x00800000
 S_REGPARAM      equ 0x01000000 ; syscall: regist[0] = reg, 1 = index
 S_REGPAIR       equ 0x02000000 ; reg::reg param
+S_CVDEFINED     equ 0x04000000 ; cv.add_type() - recurse typedefs in structure
 
 S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02

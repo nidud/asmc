@@ -202,7 +202,9 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr as
                 mov eax,opnd.value
                 mov edx,opnd.hvalue
 
-                .ifs ( !edx && eax > 0 )
+                ; v2.36.18 - removed sign test
+
+                .if ( !edx && eax )
 
                     mov ecx,reg
                     .if ecx == T_RAX

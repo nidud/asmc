@@ -1533,6 +1533,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
    .new sym1:asym_t
    .new comptr:string_t = NULL
    .new constructor:int_t = 0 ; Class(..)
+   .new defconstructor:int_t = 0 ; Class(..) not defined
    .new vtable:int_t = 0
    .new brcount:int_t = 0
    .new sqcount:int_t = 0
@@ -1753,6 +1754,12 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
             .if ( tstrcmp( [rsi].asym.name, name ) == 0 )
                 inc vtable
                 inc constructor
+                .if ( type )
+                    .if ( !SymFind( tstrcat( tstrcat( tstrcpy( &ClassVtbl, name ), "_" ), name ) ) )
+                        inc defconstructor
+                        mov sym,rsi
+                    .endif
+                .endif
             .endif
         .elseif ( vparray )
             mov rax,method
@@ -2000,6 +2007,14 @@ done:
     mov rax,dst
     .if ( B[rax] != 0 )
         tstrcat(rax, &EOLSTR)
+    .endif
+    .if ( defconstructor )
+        mov eax,j
+        sub eax,i
+        .if ( eax == 3 ) ; ( 0 )
+            mov b,0
+            DefaultConstructor(sym, 0)
+        .endif
     .endif
     tstrcat(dst, &b)
     StripSource(i, j, tokenarray)

@@ -15,8 +15,8 @@ include fastpass.inc
 
 SIZE_DATAPTR    equ 0x68
 
-SymLCreate      proto __ccall :string_t
-GetQualifiedType proto __ccall :ptr int_t, :token_t, :ptr qualified_type
+SymLCreate          proto __ccall :string_t
+GetQualifiedType    proto __ccall :ptr int_t, :token_t, :ptr qualified_type
 
 qualified_type  struc
 size            int_t ?
@@ -44,13 +44,14 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
 
   local acc     : int_t,
         reg     : int_t,
+        csym    : ptr dsym,
         cltype  : ClType,
         callid  : int_t,
         cc[256] : char_t            ; class_class
 
     mov rsi,tstrcat( tstrcat( tstrcpy( &cc, class ), "_" ), class )
 
-    SymFind( rsi )
+    mov csym,SymFind( rsi )
 
     .if ( Parse_Pass > PASS_1 && rax )
 
@@ -145,13 +146,51 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         .case 5 : AddLineQueueX( " %s(%r,%s)",       rsi, ecx, rdi )
         .endsw
     .else
-        .switch pascal eax
-        .case 0 : AddLineQueueX( " %s(&%s)",         rsi, rdx )
-        .case 1 : AddLineQueueX( " mov %s,%s(0)",    rdx, rsi )
-        .case 2 : AddLineQueueX( " %s(0)",           rsi )
-        .case 3 : AddLineQueueX( " %s(&%s,%s)",      rsi, rdx, rdi )
-        .case 4 : AddLineQueueX( " mov %s,%s(0,%s)", rdx, rsi, rdi )
-        .case 5 : AddLineQueueX( " %s(0,%s)",        rsi, rdi )
+        .switch eax
+        .case 0
+            AddLineQueueX( " %s(&%s)", rsi, rdx )
+           .endc
+        .case 1
+        .case 2
+            mov edi,eax
+            .if ( csym == NULL )
+
+                ; v2.36.20 -- use a default constructor if not defined
+
+                mov rax,sym
+                .if ( rax && [rax].asym.state == SYM_TMACRO )
+                    SymFind( [rax].asym.string_ptr )
+                .endif
+                .if ( rax )
+                    .if ( [rax].asym.state == SYM_TYPE )
+                        .while ( [rax].asym.type )
+                            mov rax,[rax].asym.type
+                        .endw
+                    .endif
+                    .if ( [rax].asym.flags & S_VTABLE )
+                        DefaultConstructor(rax, 0)
+                        .if ( edi == 1 )
+                            AddLineQueueX( " mov %s,%r", name, eax )
+                        .endif
+                        .endc
+                    .endif
+                .endif
+            .endif
+            .if ( edi == 1 )
+                AddLineQueueX( " mov %s,%s(0)", rdx, rsi )
+            .else
+                AddLineQueueX( " %s(0)", rsi )
+            .endif
+            .endc
+        .case 3
+            AddLineQueueX( " %s(&%s,%s)", rsi, rdx, rdi )
+           .endc
+        .case 4
+            AddLineQueueX( " mov %s,%s(0,%s)", rdx, rsi, rdi )
+           .endc
+        .case 5
+            AddLineQueueX( " %s(0,%s)", rsi, rdi )
+           .endc
         .endsw
     .endif
 

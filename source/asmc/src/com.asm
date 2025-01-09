@@ -113,18 +113,72 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, 
 AssignVTable endp
 
 
-    assume rbx:ptr asm_tok
+DefaultConstructor proc __ccall uses rsi rdi rbx sym:ptr dsym, table:string_t
 
-ClearStruct proto __ccall :string_t, :asym_t
+   .new r_di:int_t
+   .new size:int_t
+   .new wsize:int_t
+
+    ldr rsi,sym
+    ldr rbx,table
+
+    movzx eax,MODULE.Ofssize
+    shl eax,2
+    mov wsize,eax
+    mov edi,MODULE.accumulator
+    mov ecx,[rsi].asym.total_size
+
+    .if ( rbx )
+        mov size,ecx
+        AddLineQueueX( "malloc(%d)", ecx )
+    .else
+        neg eax
+        dec ecx
+        add ecx,[rsi].asym.total_size
+        and ecx,eax
+        mov size,ecx
+        AddLineQueueX( "malloc(%d + %sVtbl)", size, [rsi].asym.name )
+    .endif
+
+    .if ( size > wsize )
+
+        mov ecx,eax
+        lea eax,[rdi+T_EDI-T_EAX]
+        lea edx,[rdi+T_EDX-T_EAX]
+        mov r_di,eax
+        AddLineQueueX(
+            " mov %r, %r\n"
+            " lea %r, [%r+%d]\n"
+            " mov ecx, %d-%d\n"
+            " xor eax, eax\n"
+            " rep stosb\n"
+            " lea %r, [%r-%d]\n"
+            " xchg %r, %r",
+            edx, r_di,
+            r_di, edi, ecx,
+            size, ecx,
+            edi, r_di, size,
+            r_di, edx )
+    .elseif ( rbx )
+        AddLineQueueX( " lea %r, %s", &[rdi+T_EDX-T_EAX], rbx )
+    .else
+        AddLineQueueX( " lea %r, [%r+%d]", &[rdi+T_EDX-T_EAX], edi, size )
+    .endif
+    AddLineQueueX( " mov [%r], %r", edi, &[rdi+T_EDX-T_EAX] )
+    .if ( !rbx )
+        AssignVTable( [rsi].asym.name, [rsi].asym.vtable, &[rdi+T_EDX-T_EAX], 0, 0 )
+    .endif
+    mov eax,edi
+    ret
+
+DefaultConstructor endp
+
+    assume rbx:ptr asm_tok
 
 ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 
-   .new adr[16]:sbyte
-   .new name:string_t
-   .new r_di:int_t
-   .new size:int_t
-
     ldr rbx,tokenarray
+
     mov edi,tstricmp( [rbx].string_ptr, "@ComAlloc" )
     .if edi
         .while [rbx].token != T_FINAL
@@ -154,84 +208,18 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
             mov rax,[rax].asym.type
         .endw
     .endif
-
     .if ( !( [rax].asym.flags & S_VTABLE ) )
         .return 0
     .endif
     mov rsi,rax
-    mov name,[rsi].asym.name
-
-    .new table:string_t = NULL
+    xor edi,edi
     .if ( [rbx+asm_tok].token == T_COMMA && [rbx+asm_tok*3].token == T_CL_BRACKET )
-        mov table,[rbx+asm_tok*2].string_ptr
+        mov rdi,[rbx+asm_tok*2].string_ptr
     .endif
     .if MODULE.line_queue.head
         RunLineQueue()
     .endif
-
-    mov edi,MODULE.accumulator
-    .if ( table )
-        AddLineQueueX( "malloc(%s)", name )
-    .else
-        AddLineQueueX( "malloc(%s + %sVtbl)", name, name )
-    .endif
-    mov ecx,4
-    .if ( edi == T_RAX )
-        mov ecx,8
-    .endif
-    mov eax,[rsi].asym.total_size
-    .if ( eax > ecx )
-
-        sub eax,ecx
-        mov size,eax
-
-        .if ( eax <= 16 )
-
-            mov r_di,ecx
-
-            lea edx,[rdi+T_EDX-T_EAX]
-            AddLineQueueX( " xor %r, %r", edx, edx )
-
-            .for ( edi = r_di : edi < size : edi += r_di )
-
-                mov ecx,MODULE.accumulator
-                lea edx,[rcx+T_EDX-T_EAX]
-
-                AddLineQueueX(" mov [%r+%d], %r", ecx, edi, edx )
-            .endf
-            mov edi,MODULE.accumulator
-
-        .else
-
-            lea eax,[rdi+T_EDI-T_EAX]
-            lea edx,[rdi+T_EDX-T_EAX]
-            mov r_di,eax
-            AddLineQueueX(
-                " mov %r, %r\n"
-                " lea %r, [%r+%d]\n"
-                " mov ecx, %d\n"
-                " xor eax, eax\n"
-                " rep stosb\n"
-                " lea %r, [%r-%d]\n"
-                " mov %r, %r\n",
-                edx, r_di,
-                r_di, edi, ecx,
-                size,
-                edi, r_di, [rsi].asym.total_size,
-                r_di, edx )
-        .endif
-    .endif
-
-    .if ( table )
-
-        AddLineQueueX( "lea %r, %s", &[rdi+T_ECX-T_EAX], table )
-        AddLineQueueX( "mov [%r], %r", edi, &[rdi+T_ECX-T_EAX] )
-    .else
-        AddLineQueueX( "lea %r, [%r+%s]", &[rdi+T_ECX-T_EAX], edi, name )
-        AddLineQueueX( "mov [%r], %r", edi, &[rdi+T_ECX-T_EAX] )
-        AssignVTable( name, [rsi].asym.vtable, &[rdi+T_ECX-T_EAX], 0, 0 )
-        AddLineQueueX( "lea %r, [%r-%s]", edi, &[rdi+T_ECX-T_EAX], name )
-    .endif
+    mov edi,DefaultConstructor(rsi, rdi)
     InsertLineQueue()
     sub rbx,asm_tok*2
     .if ( rbx != tokenarray )

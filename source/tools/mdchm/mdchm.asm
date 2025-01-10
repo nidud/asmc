@@ -29,6 +29,23 @@ include tchar.inc
    .data
     files   pmd 0
     count   int_t 0
+    utf_8   db \
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 00
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 10
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 20
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 30
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 40
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 50
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 60
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 70
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 80
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 90
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; A0
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; B0
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ; C0
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ; D0
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ; E0
+        3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0  ; F0
 
    .data?
     lbuf    char_t 0x8000 dup(?)
@@ -501,10 +518,43 @@ makehtm proc uses rsi rdi rbx pm:pmd
             .endsw
 
             .if ( ecx == 0 )
-                fprintf(fp, "%c", eax)
+
+                lea     rcx,utf_8
+                movzx   ecx,byte ptr [rcx+rax]
+                inc     ecx
+
+                .if ( ecx == 1 )
+
+                    fprintf(fp, "%c", eax)
+
+                .elseif ( ecx == 2 )
+
+                    and     eax,0x1F
+                    shl     eax,6
+                    movzx   edx,byte ptr [rbx]
+                    and     edx,0x3F
+                    or      eax,edx
+                    inc     rbx
+
+                    fprintf(fp, "&#x%04X;", eax)
+
+                .elseif ( ecx == 3 )
+
+                    and     eax,0x0F
+                    shl     eax,12
+                    movzx   ecx,byte ptr [rbx]
+                    and     ecx,0x3F
+                    shl     ecx,6
+                    or      eax,ecx
+                    movzx   edx,byte ptr [rbx+1]
+                    and     edx,0x3F
+                    or      eax,edx
+                    add     rbx,2
+
+                    fprintf(fp, "&#x%04X;", eax)
+                .endif
             .endif
         .endw
-
 
         .if ( b )
             fprintf(fp, "</b>")

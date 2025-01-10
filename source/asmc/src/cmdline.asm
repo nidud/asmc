@@ -700,6 +700,7 @@ ifdef __UNIX__
 else
     .case '?'
 endif
+    .case 'pleh'
     .case 'h'
         write_options()
         exit(0)

@@ -30,24 +30,31 @@ cp_copyright \
  char_t 0
 
 cp_usage \
- char_t "USAGE: ASMC"
+ char_t "Usage: asmc"
 ifdef ASMC64
  char_t "64"
 endif
- char_t " [options] filename [ [options] filename] ... [-link link_options]",10
-ifdef __UNIX__
- char_t "Use option -h for more info" ,10
-else
- char_t "Use option -? for more info" ,10
+ char_t " [ options ] filelist [ -link linkoptions]",10
+ char_t "Run ",'"',"asmc"
+ifdef ASMC64
+ char_t "64"
 endif
- char_t 0
+ char_t " -help",'"'
+ifndef __UNIX__
+ char_t " or ",'"',"asmc"
+ifdef ASMC64
+ char_t "64"
+endif
+ char_t " -?",'"'
+endif
+ char_t " for more info" ,10,0
 
 cp_options \
- char_t "        ASMC"
+ char_t "        asmc"
 ifdef ASMC64
  char_t "64"
 endif
- char_t " [options] filename [ [options] filename] ... [-link link_options]",10
+ char_t " [ options ] filelist [ -link link_options]",10
  char_t 10
 ifndef ASMC64
  char_t "-<0|1|..|10>[p] Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486,",10

@@ -4,7 +4,11 @@ Asmc Macro Assembler Reference
 
 Assembles and links one or more assembly-language source files. The command-line options are case sensitive.
 
-**ASMC** [_options_] _filename_ [ [_options_] _filename_] ... [[**/link**](option-link.md) _link\_options_]
+## Syntax
+
+**asmc**[64] [_options_] _filename_ [ [_options_] _filename_] ... [[**-link**](option-link.md) _link\_options_]
+
+### Parameters
 
 _options_
 
@@ -47,6 +51,7 @@ The options listed in the following table.
 - **-Ge** - Emit a conditional _chkstk() inside the prologue.
 - **-Gv** - Specifies use of VECTORCALL-style function calling and naming conventions.
 - **-Gz** - Specifies use of STDCALL-style function calling and naming conventions. Defines _STDCALL_SUPPORTED.
+- **-help** - Displays a summary of Asmc command-line syntax and options.
 - **-homeparams** - Forces parameters passed in registers to be written to their locations on the stack upon function entry.
 - **-I**_pathname_ - Sets path for include file.
 - [**-idd**](option-idd.md) Assemble source as binary data.

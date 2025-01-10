@@ -3,6 +3,12 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+; Change history:
+; 2025-01-10 - added UTF-8 to Wide Char support
+; 2024-12-04 - added Linux version using chmcmd
+; 2024-10-27 - <table> fixup
+; 2024-10-10 - created to build asmc.chm from .md files
+;
 include stdio.inc
 include stdlib.inc
 include string.inc
@@ -17,6 +23,8 @@ endif
 include process.inc
 include tchar.inc
 
+define __MDHTM__ 104
+
 .template md
 
     next string_t ?
@@ -27,29 +35,12 @@ include tchar.inc
     pmd typedef ptr md
 
    .data
-    files   pmd 0
-    count   int_t 0
-    utf_8   db \
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 00
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 10
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 20
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 30
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 40
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 50
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 60
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 70
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 80
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; 90
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; A0
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ; B0
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ; C0
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ; D0
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ; E0
-        3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0  ; F0
+    files pmd 0
+    count int_t 0
 
    .data?
-    lbuf    char_t 0x8000 dup(?)
-    ltmp    char_t 0x8000 dup(?)
+    lbuf char_t 0x8000 dup(?)
+    ltmp char_t 0x8000 dup(?)
 
    .code
 
@@ -259,6 +250,63 @@ a_href proc uses rbx fp:LPFILE, line:string_t
     ret
 
 a_href endp
+
+
+_utftow proc utf:string_t
+
+    ldr rdx,utf
+
+    movzx eax,byte ptr [rdx]
+    .if ( eax > 0xBF && eax < 0xF8 )
+
+        .if ( eax < 0xE0 )
+
+            and     eax,0x1F ; C0 and C1
+            shl     eax,6
+            movzx   edx,byte ptr [rdx+1]
+            and     edx,0x3F
+            or      eax,edx
+            mov     ecx,2
+
+        .elseif ( eax < 0xF0 )
+
+            and     eax,0x0F
+            shl     eax,12
+            movzx   ecx,byte ptr [rdx+1]
+            and     ecx,0x3F
+            shl     ecx,6
+            or      eax,ecx
+            movzx   edx,byte ptr [rdx+2]
+            and     edx,0x3F
+            or      eax,edx
+            mov     ecx,3
+
+        .else
+
+            and     eax,0x07 ; F5 to F7
+            shl     eax,18
+            movzx   ecx,byte ptr [rdx+1]
+            and     ecx,0x3F
+            shl     ecx,12
+            or      eax,ecx
+            movzx   ecx,byte ptr [rdx+2]
+            and     ecx,0x3F
+            shl     ecx,6
+            or      eax,ecx
+            movzx   ecx,byte ptr [rdx+3]
+            and     ecx,0x3F
+            or      eax,ecx
+            mov     ecx,4
+        .endif
+
+    .else
+
+        and eax,0x7F ; F8 to FF
+        mov ecx,1
+    .endif
+    ret
+
+_utftow endp
 
 
 makehtm proc uses rsi rdi rbx pm:pmd
@@ -519,38 +567,12 @@ makehtm proc uses rsi rdi rbx pm:pmd
 
             .if ( ecx == 0 )
 
-                lea     rcx,utf_8
-                movzx   ecx,byte ptr [rcx+rax]
-                inc     ecx
+                _utftow(&[rbx-1])
 
+                lea rbx,[rbx+rcx-1]
                 .if ( ecx == 1 )
-
                     fprintf(fp, "%c", eax)
-
-                .elseif ( ecx == 2 )
-
-                    and     eax,0x1F
-                    shl     eax,6
-                    movzx   edx,byte ptr [rbx]
-                    and     edx,0x3F
-                    or      eax,edx
-                    inc     rbx
-
-                    fprintf(fp, "&#x%04X;", eax)
-
-                .elseif ( ecx == 3 )
-
-                    and     eax,0x0F
-                    shl     eax,12
-                    movzx   ecx,byte ptr [rbx]
-                    and     ecx,0x3F
-                    shl     ecx,6
-                    or      eax,ecx
-                    movzx   edx,byte ptr [rbx+1]
-                    and     edx,0x3F
-                    or      eax,edx
-                    add     rbx,2
-
+                .else
                     fprintf(fp, "&#x%04X;", eax)
                 .endif
             .endif
@@ -993,7 +1015,9 @@ makehhk endp
 exit_usage proc
 
     printf(
-        "Usage: MDCHM [options] <name>\n"
+        "Asmc Markdown to HTML Help File Format Version %d.%d\n"
+        "Copyright (C) The Asmc Contributors. All Rights Reserved.\n\n"
+        "Usage: mdchm [options] <name>\n"
         "\n"
         "-clean -- delete files on exit\n"
         "-css   -- keep the style.css file: no overwrite or delete on exit\n"
@@ -1013,8 +1037,7 @@ exit_usage proc
         "<description>\n"
         "\n"
         "## <index>\n"
-        "\n"
-        )
+        "\n", __MDHTM__ / 100, __MDHTM__ mod 100)
     exit(0)
 
 exit_usage endp

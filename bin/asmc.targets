@@ -92,6 +92,7 @@
       ForseIncludeFile="%(ASMC.ForseIncludeFile)"
       AssembledCodeListingFile="%(ASMC.AssembledCodeListingFile)"
       IncludePaths="%(ASMC.IncludePaths)"
+      AdditionalIncludeDirectories="%(ASMC.AdditionalIncludeDirectories)"
       BrowseFile="%(ASMC.BrowseFile)"
       PreserveIdentifierCase="%(ASMC.PreserveIdentifierCase)"
       WarningLevel="%(ASMC.WarningLevel)"

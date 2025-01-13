@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ASMC>
-      <IncludePaths>$(AsmcDir)\include;$(AsmcDir)\include\winrt;$(AsmcDir)\include\DirectX</IncludePaths>
+      <AdditionalIncludeDirectories>$(AsmcDir)\include;$(AsmcDir)\include\winrt;$(AsmcDir)\include\DirectX</AdditionalIncludeDirectories>
       <NoLogo>true</NoLogo>
       <ObjectFileName>$(IntDir)%(FileName).obj</ObjectFileName>
       <WarningLevel>2</WarningLevel>

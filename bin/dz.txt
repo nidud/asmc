@@ -1,10 +1,10 @@
 DZ.TXT--
-Copyright (C) 2024 Doszip Developers.
+Copyright (C) 2025 Doszip Developers.
 
 DOSZIP COMMANDER
-Version 3.76
+Version 3.83
 
-Welcome to Doszip Commander Version 3.76!
+Welcome to Doszip Commander Version 3.83!
 =========================================
 
 
@@ -39,13 +39,10 @@ Welcome to Doszip Commander Version 3.76!
 
     DZSRCXXX.ZIP: Source code
 
-    LIB		- Library headers and source files are contained here
+    SRC		- The source files are contained here
     HISTORY.TXT - Changelog file for Doszip
 
-    The version of the source code and binary files is the date and
-    time in the .ZIP file (1:00 == v1.00)
-
-    The date format is (Norwegian) dd.mm.yy[yy]
+    The date format is dd.mm.yy[yy]
 
     The first time you run DZ.EXE, it creates a default configuration
     file (DZ.INI).
@@ -56,8 +53,9 @@ Welcome to Doszip Commander Version 3.76!
     Command	Description
     ---------	------------------------------------------------------
     /C<path>	Set Configuration PATH to <path>
-    /N<count>	Maximum number of files in each panel
-		Default is 5000.
+    /cmd	Start DZ and show only command prompt
+    /E:<file>	Save environment block to <file>
+    /nologo	Suppress copyright message
 
       DZ <filename> command starts DZ and forces it to show <filename>
     contents if it is an archive or show folder contents if <filename>
@@ -661,8 +659,8 @@ Welcome to Doszip Commander Version 3.76!
 	[x] Use Mouse
 	[ ] Use Short File Names
 	[x] Use System Clipboard
-	[ ] Use Ascii Symbols
-	    - for system fonts
+	[ ] Use Network Config
+	    - add and use \\network paths to dz.ini
 	[x] Use NT Prompt
 	    - Use [Comspec] if set
 	    - runs assosiated programs on Enter if set
@@ -733,16 +731,35 @@ Welcome to Doszip Commander Version 3.76!
 
 <> Additional Resources
 
-   For more information about DOSZIP, visit the Web site at:
-   http://sourceforge.net/projects/doszip/
+   For more information about Doszip, visit the Web site at:
+   - https://github.com/nidud/doszip
+   - https://sourceforge.net/projects/doszip
 
-   Open Watcom is a project of the open source community to maintain
-   and enhance the Watcom C, C++, and Fortran cross compilers and tools.
-   http://www.openwatcom.org/
+   For tools and libraries to build Doszip from source:
+   - https://github.com/nidud/asmc
 
-   7ZA.EXE is a standalone command line version of 7-Zip.
-   Supported formats: 7z, xz, ZIP, GZIP, BZIP2 and TAR
-   http://sourceforge.net/projects/sevenzip/files/
+   Doszip use 7z.dll for additional support (.7z, .xz, .gz, .tar, ..)
+   For more information about 7-Zip, visit the Web site at:
+   - https://www.7-zip.org
+   - https://github.com/ip7z/7zip
+   - https://sourceforge.net/p/sevenzip
+
+   The formats handled by 7z.dll are defined in dz.ini:
+
+   [7z.dll]
+   <ext>=<id> ; example: rar=0x03
+
+   The <id> value is the Handler GUID
+   - See: https://github.com/ip7z/7zip/blob/main/CPP/7zip/Guid.txt#L166
+
+   To install the 7-Zip Plugin:
+   - copy the DLL file to the DZ (or a %PATH%) folder
+   - or use the DllFile = <dll_file> option in dz.ini
+
+   Note that there a many versions of the DLL file and the default name
+   is 7z.dll (full support). For other versions use the DllFile option.
+
+   You can create a 7-Zip archive by pressing Shift-F7 and use [<name>.7z]
 
 
 <> Contributors

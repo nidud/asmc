@@ -26,7 +26,7 @@ The options listed in the following table.
 - **-Cp** - Preserves case of all user identifiers.
 - **-Cu** - Maps all identifiers to upper case (default).
 - **-Cx** - Preserves case in public and extern symbols.
-- **-D**_symbol_[[=_value_]] - Defines a text macro with the given name. If value is missing, it is blank. Multiple tokens separated by spaces must be enclosed in quotation marks. |
+- **-D**_symbol_[[=_value_]] - Defines a text macro with the given name. If value is missing, it is blank. Multiple tokens separated by spaces must be enclosed in quotation marks.
 - **-dotname** - Allows names of identifiers to begin with a period.
 - **-e**_number_ - Set error limit number.
 - **-elf** - Generate 32-bit ELF object file.
@@ -41,7 +41,7 @@ The options listed in the following table.
 - **-fpc** - Disallow floating-point instructions.
 - **-FPi** - Generates emulator fix-ups for floating-point arithmetic (mixed language only).
 - **-FPi87** - 80x87 instructions (default).
-- **-fpic**, **-fno-pic** - Enables or disables the generation of position-independent code for ELF64. Defualt is **-fno-pic**.
+- **-fpic**, **-fno-pic** - Enables or disables the generation of position-independent code for ELF64. Default is **-fno-pic**.
 - **-fp**_n_ - Set FPU: 0=8087, 2=80287, 3=80387.
 - **-frame** - Auto generate unwind information.
 - **-Fw**_filename_ - Set errors file name.

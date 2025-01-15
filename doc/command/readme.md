@@ -32,11 +32,11 @@ The options listed in the following table.
 - **-elf** - Generate 32-bit ELF object file.
 - **-elf64** - Generate 64-bit ELF object file.
 - **-endbr** - Insert ENDBR instruction at function entry.
-- **-EP** - Generates a preprocessed source listing (sent to STDOUT). See -Sf.
+- **-EP** - Generates a preprocessed source listing (sent to STDOUT). See **-Sf**.
 - **-eq** - Don't display error messages.
 - **-Fd**[_file_] - Write import definition file.
 - **-Fi**_file_ - Force _file_ to be included.
-- **-Fl**[[_filename_]] - Generates an assembled code listing. See -Sf.
+- **-Fl**[[_filename_]] - Generates an assembled code listing. See **-Sf**.
 - **-Fo**_filename_ - Names an object file. In case of wildcard '*' may be used for current file.
 - **-fpc** - Disallow floating-point instructions.
 - **-FPi** - Generates emulator fix-ups for floating-point arithmetic (mixed language only).

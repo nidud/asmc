@@ -1,0 +1,3244 @@
+ifndef _INC_SETUPAPI
+define _INC_SETUPAPI
+
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+ifndef _SETUPAPI_VER
+if defined(_WIN32_WINNT) and ( not defined(_WIN32_WINDOWS) or (_WIN32_WINNT lt _WIN32_WINDOWS))
+define _SETUPAPI_VER _WIN32_WINNT
+elseif defined(_WIN32_WINDOWS)
+if _WIN32_WINDOWS ge 0x0490
+define _SETUPAPI_VER _WIN32_WINNT_WIN2K
+elseif _WIN32_WINDOWS ge 0x0410
+define _SETUPAPI_VER 0x0410
+else
+define _SETUPAPI_VER _WIN32_WINNT_NT4
+endif
+else
+define _SETUPAPI_VER _WIN32_WINNT_WINXP
+endif
+endif
+
+if _SETUPAPI_VER lt _WIN32_WINNT_WINXP
+define USE_SP_ALTPLATFORM_INFO_V1 1
+elseif NTDDI_VERSION ge NTDDI_WIN10_RS1
+define USE_SP_ALTPLATFORM_INFO_V3 1
+define USE_SP_ALTPLATFORM_INFO_V1 0
+else
+define USE_SP_ALTPLATFORM_INFO_V3 0
+define USE_SP_ALTPLATFORM_INFO_V1 0
+endif
+if _SETUPAPI_VER lt _WIN32_WINNT_WIN2K
+define USE_SP_DRVINFO_DATA_V1 1
+else
+define USE_SP_DRVINFO_DATA_V1 0
+endif
+if _SETUPAPI_VER lt _WIN32_WINNT_WINXP
+define USE_SP_BACKUP_QUEUE_PARAMS_V1 1
+else
+define USE_SP_BACKUP_QUEUE_PARAMS_V1 0
+endif
+
+ifndef __LPGUID_DEFINED__
+define __LPGUID_DEFINED__
+LPGUID typedef ptr GUID
+endif
+
+include windows.inc
+include winreg.inc
+
+include spapidef.inc
+include commctrl.inc
+include devpropdef.inc
+
+ifdef _WIN64
+.pragma pack(push, 8)
+else
+.pragma pack(push, 1)
+endif
+.pragma comment(lib, setupapi)
+
+define LINE_LEN                    256
+define MAX_INF_STRING_LENGTH      4096
+define MAX_INF_SECTION_NAME_LENGTH 255
+
+define MAX_TITLE_LEN                60
+define MAX_INSTRUCTION_LEN         256
+define MAX_LABEL_LEN                30
+define MAX_SERVICE_NAME_LEN        256
+define MAX_SUBTITLE_LEN            256
+
+define SP_MAX_MACHINENAME_LENGTH   (MAX_PATH + 3)
+
+HINF                    typedef ptr
+
+INFCONTEXT              struct
+Inf                     PVOID ?
+CurrentInf              PVOID ?
+Section                 UINT ?
+Line                    UINT ?
+INFCONTEXT              ends
+PINFCONTEXT             typedef ptr INFCONTEXT
+
+SP_INF_INFORMATION      struct
+InfStyle                DWORD ?
+InfCount                DWORD ?
+VersionData             BYTE ANYSIZE_ARRAY dup(?)
+SP_INF_INFORMATION      ends
+PSP_INF_INFORMATION     typedef ptr SP_INF_INFORMATION
+
+SP_ALTPLATFORM_INFO_V3  struct
+cbSize                  DWORD ?
+Platform                DWORD ?
+MajorVersion            DWORD ?
+MinorVersion            DWORD ?
+ProcessorArchitecture   WORD ?
+union
+ Reserved               WORD ?
+ Flags                  WORD ?
+ends
+FirstValidatedMajorVersion DWORD ?
+FirstValidatedMinorVersion DWORD ?
+ProductType             BYTE ?
+SuiteMask               WORD ?
+BuildNumber             DWORD ?
+SP_ALTPLATFORM_INFO_V3  ends
+PSP_ALTPLATFORM_INFO_V3 typedef ptr SP_ALTPLATFORM_INFO_V3
+
+SP_ALTPLATFORM_INFO_V2  struct
+cbSize                  DWORD ?
+Platform                DWORD ?
+MajorVersion            DWORD ?
+MinorVersion            DWORD ?
+ProcessorArchitecture   WORD ?
+union
+ Reserved               WORD ?
+ Flags                  WORD ?
+ends
+FirstValidatedMajorVersion DWORD ?
+FirstValidatedMinorVersion DWORD ?
+SP_ALTPLATFORM_INFO_V2  ends
+PSP_ALTPLATFORM_INFO_V2 typedef ptr SP_ALTPLATFORM_INFO_V2
+
+SP_ALTPLATFORM_INFO_V1  struct
+cbSize                  DWORD ?
+Platform                DWORD ?
+MajorVersion            DWORD ?
+MinorVersion            DWORD ?
+ProcessorArchitecture   WORD ?
+Reserved                WORD ?
+SP_ALTPLATFORM_INFO_V1  ends
+PSP_ALTPLATFORM_INFO_V1 typedef ptr SP_ALTPLATFORM_INFO_V1
+
+if USE_SP_ALTPLATFORM_INFO_V1 or (_SETUPAPI_VER lt _WIN32_WINNT_WINXP)
+SP_ALTPLATFORM_INFO     typedef SP_ALTPLATFORM_INFO_V1
+PSP_ALTPLATFORM_INFO    typedef PSP_ALTPLATFORM_INFO_V1
+elseif USE_SP_ALTPLATFORM_INFO_V3 and (NTDDI_VERSION ge NTDDI_WIN10_RS1)
+SP_ALTPLATFORM_INFO     typedef SP_ALTPLATFORM_INFO_V3
+PSP_ALTPLATFORM_INFO    typedef PSP_ALTPLATFORM_INFO_V3
+else
+SP_ALTPLATFORM_INFO     typedef SP_ALTPLATFORM_INFO_V2
+PSP_ALTPLATFORM_INFO    typedef PSP_ALTPLATFORM_INFO_V2
+endif
+
+if _WIN32_WINNT ge _WIN32_WINNT_WINXP
+define SP_ALTPLATFORM_FLAGS_VERSION_RANGE 0x0001
+endif
+if NTDDI_VERSION ge NTDDI_WIN10_RS1
+define SP_ALTPLATFORM_FLAGS_SUITE_MASK    0x0002
+endif
+
+SP_ORIGINAL_FILE_INFO_A struct
+cbSize                  DWORD ?
+OriginalInfName         CHAR MAX_PATH dup(?)
+OriginalCatalogName     CHAR MAX_PATH dup(?)
+SP_ORIGINAL_FILE_INFO_A ends
+PSP_ORIGINAL_FILE_INFO_A typedef ptr SP_ORIGINAL_FILE_INFO_A
+
+SP_ORIGINAL_FILE_INFO_W struct
+cbSize                  DWORD ?
+OriginalInfName         WCHAR MAX_PATH dup(?)
+OriginalCatalogName     WCHAR MAX_PATH dup(?)
+SP_ORIGINAL_FILE_INFO_W ends
+PSP_ORIGINAL_FILE_INFO_W typedef ptr SP_ORIGINAL_FILE_INFO_W
+
+ifdef _UNICODE
+SP_ORIGINAL_FILE_INFO   typedef SP_ORIGINAL_FILE_INFO_W
+PSP_ORIGINAL_FILE_INFO  typedef PSP_ORIGINAL_FILE_INFO_W
+else
+SP_ORIGINAL_FILE_INFO   typedef SP_ORIGINAL_FILE_INFO_A
+PSP_ORIGINAL_FILE_INFO  typedef PSP_ORIGINAL_FILE_INFO_A
+endif
+
+define INF_STYLE_NONE           0x00000000
+define INF_STYLE_OLDNT          0x00000001
+define INF_STYLE_WIN4           0x00000002
+
+define INF_STYLE_CACHE_ENABLE   0x00000010
+define INF_STYLE_CACHE_DISABLE  0x00000020
+if _SETUPAPI_VER ge _WIN32_WINNT_WS03
+define INF_STYLE_CACHE_IGNORE   0x00000040
+endif
+
+define DIRID_ABSOLUTE          -1
+define DIRID_ABSOLUTE_16BIT     0xffff
+define DIRID_NULL               0
+define DIRID_SRCPATH            1
+define DIRID_WINDOWS           10
+define DIRID_SYSTEM            11
+define DIRID_DRIVERS           12
+define DIRID_IOSUBSYS          DIRID_DRIVERS
+define DIRID_DRIVER_STORE      13
+define DIRID_INF               17
+define DIRID_HELP              18
+define DIRID_FONTS             20
+define DIRID_VIEWERS           21
+define DIRID_COLOR             23
+define DIRID_APPS              24
+define DIRID_SHARED            25
+define DIRID_BOOT              30
+
+define DIRID_SYSTEM16          50
+define DIRID_SPOOL             51
+define DIRID_SPOOLDRIVERS      52
+define DIRID_USERPROFILE       53
+define DIRID_LOADER            54
+define DIRID_PRINTPROCESSOR    55
+
+define DIRID_DEFAULT           DIRID_SYSTEM
+
+define DIRID_COMMON_STARTMENU        16406
+define DIRID_COMMON_PROGRAMS         16407
+define DIRID_COMMON_STARTUP          16408
+define DIRID_COMMON_DESKTOPDIRECTORY 16409
+define DIRID_COMMON_FAVORITES        16415
+define DIRID_COMMON_APPDATA          16419
+
+define DIRID_PROGRAM_FILES           16422
+define DIRID_SYSTEM_X86              16425
+define DIRID_PROGRAM_FILES_X86       16426
+define DIRID_PROGRAM_FILES_COMMON    16427
+define DIRID_PROGRAM_FILES_COMMONX86 16428
+
+define DIRID_COMMON_TEMPLATES        16429
+define DIRID_COMMON_DOCUMENTS        16430
+
+define DIRID_USER              0x8000
+
+CALLBACK(PSP_FILE_CALLBACK_A, :PVOID, :UINT, :UINT_PTR, :UINT_PTR)
+CALLBACK(PSP_FILE_CALLBACK_W, :PVOID, :UINT, :UINT_PTR, :UINT_PTR)
+
+ifdef _UNICODE
+define PSP_FILE_CALLBACK <PSP_FILE_CALLBACK_W>
+else
+define PSP_FILE_CALLBACK <PSP_FILE_CALLBACK_A>
+endif
+
+define SPFILENOTIFY_STARTQUEUE         0x00000001
+define SPFILENOTIFY_ENDQUEUE           0x00000002
+define SPFILENOTIFY_STARTSUBQUEUE      0x00000003
+define SPFILENOTIFY_ENDSUBQUEUE        0x00000004
+define SPFILENOTIFY_STARTDELETE        0x00000005
+define SPFILENOTIFY_ENDDELETE          0x00000006
+define SPFILENOTIFY_DELETEERROR        0x00000007
+define SPFILENOTIFY_STARTRENAME        0x00000008
+define SPFILENOTIFY_ENDRENAME          0x00000009
+define SPFILENOTIFY_RENAMEERROR        0x0000000a
+define SPFILENOTIFY_STARTCOPY          0x0000000b
+define SPFILENOTIFY_ENDCOPY            0x0000000c
+define SPFILENOTIFY_COPYERROR          0x0000000d
+define SPFILENOTIFY_NEEDMEDIA          0x0000000e
+define SPFILENOTIFY_QUEUESCAN          0x0000000f
+define SPFILENOTIFY_CABINETINFO        0x00000010
+define SPFILENOTIFY_FILEINCABINET      0x00000011
+define SPFILENOTIFY_NEEDNEWCABINET     0x00000012
+define SPFILENOTIFY_FILEEXTRACTED      0x00000013
+define SPFILENOTIFY_FILEOPDELAYED      0x00000014
+define SPFILENOTIFY_STARTBACKUP        0x00000015
+define SPFILENOTIFY_BACKUPERROR        0x00000016
+define SPFILENOTIFY_ENDBACKUP          0x00000017
+define SPFILENOTIFY_QUEUESCAN_EX       0x00000018
+
+define SPFILENOTIFY_STARTREGISTRATION  0x00000019
+define SPFILENOTIFY_ENDREGISTRATION    0x00000020
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SPFILENOTIFY_QUEUESCAN_SIGNERINFO 0x00000040
+endif
+
+define SPFILENOTIFY_LANGMISMATCH       0x00010000
+define SPFILENOTIFY_TARGETEXISTS       0x00020000
+define SPFILENOTIFY_TARGETNEWER        0x00040000
+
+define FILEOP_COPY                     0
+define FILEOP_RENAME                   1
+define FILEOP_DELETE                   2
+define FILEOP_BACKUP                   3
+
+define FILEOP_ABORT                    0
+define FILEOP_DOIT                     1
+define FILEOP_SKIP                     2
+define FILEOP_RETRY                    FILEOP_DOIT
+define FILEOP_NEWPATH                  4
+
+define COPYFLG_WARN_IF_SKIP            0x00000001
+define COPYFLG_NOSKIP                  0x00000002
+define COPYFLG_NOVERSIONCHECK          0x00000004
+define COPYFLG_FORCE_FILE_IN_USE       0x00000008
+define COPYFLG_NO_OVERWRITE            0x00000010
+define COPYFLG_NO_VERSION_DIALOG       0x00000020
+define COPYFLG_OVERWRITE_OLDER_ONLY    0x00000040
+define COPYFLG_PROTECTED_WINDOWS_DRIVER_FILE 0x00000100
+
+define COPYFLG_REPLACEONLY             0x00000400
+define COPYFLG_NODECOMP                0x00000800
+define COPYFLG_REPLACE_BOOT_FILE       0x00001000
+define COPYFLG_NOPRUNE                 0x00002000
+define COPYFLG_IN_USE_TRY_RENAME       0x00004000
+
+define DELFLG_IN_USE                   0x00000001
+define DELFLG_IN_USE1                  0x00010000
+
+FILEPATHS_A             struct
+Target                  PCSTR ?
+Source                  PCSTR ?
+Win32Error              UINT ?
+Flags                   DWORD ?
+FILEPATHS_A             ends
+PFILEPATHS_A            typedef ptr FILEPATHS_A
+
+FILEPATHS_W             struct
+Target                  PCWSTR ?
+Source                  PCWSTR ?
+Win32Error              UINT ?
+Flags                   DWORD ?
+FILEPATHS_W             ends
+PFILEPATHS_W            typedef ptr FILEPATHS_W
+
+ifdef _UNICODE
+FILEPATHS               typedef FILEPATHS_W
+PFILEPATHS              typedef PFILEPATHS_W
+else
+FILEPATHS               typedef FILEPATHS_A
+PFILEPATHS              typedef PFILEPATHS_A
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+FILEPATHS_SIGNERINFO_A  struct
+Target                  PCSTR ?
+Source                  PCSTR ?
+Win32Error              UINT ?
+Flags                   DWORD ?
+DigitalSigner           PCSTR ?
+Version                 PCSTR ?
+CatalogFile             PCSTR ?
+FILEPATHS_SIGNERINFO_A  ends
+PFILEPATHS_SIGNERINFO_A typedef ptr FILEPATHS_SIGNERINFO_A
+
+FILEPATHS_SIGNERINFO_W  struct
+Target                  PCWSTR ?
+Source                  PCWSTR ?
+Win32Error              UINT ?
+Flags                   DWORD ?
+DigitalSigner           PCWSTR ?
+Version                 PCWSTR ?
+CatalogFile             PCWSTR ?
+FILEPATHS_SIGNERINFO_W  ends
+PFILEPATHS_SIGNERINFO_W typedef ptr FILEPATHS_SIGNERINFO_W
+
+ifdef _UNICODE
+FILEPATHS_SIGNERINFO    typedef FILEPATHS_SIGNERINFO_W
+PFILEPATHS_SIGNERINFO   typedef PFILEPATHS_SIGNERINFO_W
+else
+FILEPATHS_SIGNERINFO    typedef FILEPATHS_SIGNERINFO_A
+PFILEPATHS_SIGNERINFO   typedef PFILEPATHS_SIGNERINFO_A
+endif
+
+endif
+
+SOURCE_MEDIA_A          struct
+Reserved                PCSTR ?
+Tagfile                 PCSTR ?
+Description             PCSTR ?
+SourcePath              PCSTR ?
+SourceFile              PCSTR ?
+Flags                   DWORD ?
+SOURCE_MEDIA_A          ends
+PSOURCE_MEDIA_A         typedef ptr SOURCE_MEDIA_A
+
+SOURCE_MEDIA_W          struct
+Reserved                PCWSTR ?
+Tagfile                 PCWSTR ?
+Description             PCWSTR ?
+SourcePath              PCWSTR ?
+SourceFile              PCWSTR ?
+Flags                   DWORD ?
+SOURCE_MEDIA_W          ends
+PSOURCE_MEDIA_W         typedef ptr SOURCE_MEDIA_W
+
+ifdef _UNICODE
+SOURCE_MEDIA            typedef SOURCE_MEDIA_W
+PSOURCE_MEDIA           typedef PSOURCE_MEDIA_W
+else
+SOURCE_MEDIA            typedef SOURCE_MEDIA_A
+PSOURCE_MEDIA           typedef PSOURCE_MEDIA_A
+endif
+
+CABINET_INFO_A          struct
+CabinetPath             PCSTR ?
+CabinetFile             PCSTR ?
+DiskName                PCSTR ?
+SetId                   USHORT ?
+CabinetNumber           USHORT ?
+CABINET_INFO_A          ends
+PCABINET_INFO_A         typedef ptr CABINET_INFO_A
+
+CABINET_INFO_W          struct
+CabinetPath             PCWSTR ?
+CabinetFile             PCWSTR ?
+DiskName                PCWSTR ?
+SetId                   USHORT ?
+CabinetNumber           USHORT ?
+CABINET_INFO_W          ends
+PCABINET_INFO_W         typedef ptr CABINET_INFO_W
+
+ifdef _UNICODE
+CABINET_INFO            typedef CABINET_INFO_W
+PCABINET_INFO           typedef PCABINET_INFO_W
+else
+CABINET_INFO            typedef CABINET_INFO_A
+PCABINET_INFO           typedef PCABINET_INFO_A
+endif
+
+FILE_IN_CABINET_INFO_A  struct
+NameInCabinet           PCSTR ?
+FileSize                DWORD ?
+Win32Error              DWORD ?
+DosDate                 WORD ?
+DosTime                 WORD ?
+DosAttribs              WORD ?
+FullTargetName          CHAR MAX_PATH dup(?)
+FILE_IN_CABINET_INFO_A  ends
+PFILE_IN_CABINET_INFO_A typedef ptr FILE_IN_CABINET_INFO_A
+
+FILE_IN_CABINET_INFO_W  struct
+NameInCabinet           PCWSTR ?
+FileSize                DWORD ?
+Win32Error              DWORD ?
+DosDate                 WORD ?
+DosTime                 WORD ?
+DosAttribs              WORD ?
+FullTargetName          WCHAR MAX_PATH dup(?)
+FILE_IN_CABINET_INFO_W  ends
+PFILE_IN_CABINET_INFO_W typedef ptr FILE_IN_CABINET_INFO_W
+
+ifdef _UNICODE
+FILE_IN_CABINET_INFO    typedef FILE_IN_CABINET_INFO_W
+PFILE_IN_CABINET_INFO   typedef PFILE_IN_CABINET_INFO_W
+else
+FILE_IN_CABINET_INFO    typedef FILE_IN_CABINET_INFO_A
+PFILE_IN_CABINET_INFO   typedef PFILE_IN_CABINET_INFO_A
+endif
+
+SP_REGISTER_CONTROL_STATUSA struct
+cbSize                  DWORD ?
+FileName                PCSTR ?
+Win32Error              DWORD ?
+FailureCode             DWORD ?
+SP_REGISTER_CONTROL_STATUSA ends
+PSP_REGISTER_CONTROL_STATUSA typedef ptr SP_REGISTER_CONTROL_STATUSA
+
+SP_REGISTER_CONTROL_STATUSW struct
+cbSize                  DWORD ?
+FileName                PCWSTR ?
+Win32Error              DWORD ?
+FailureCode             DWORD ?
+SP_REGISTER_CONTROL_STATUSW ends
+PSP_REGISTER_CONTROL_STATUSW typedef ptr SP_REGISTER_CONTROL_STATUSW
+
+ifdef _UNICODE
+SP_REGISTER_CONTROL_STATUS typedef SP_REGISTER_CONTROL_STATUSW
+PSP_REGISTER_CONTROL_STATUS typedef PSP_REGISTER_CONTROL_STATUSW
+else
+SP_REGISTER_CONTROL_STATUS typedef SP_REGISTER_CONTROL_STATUSA
+PSP_REGISTER_CONTROL_STATUS typedef PSP_REGISTER_CONTROL_STATUSA
+endif
+
+define SPREG_SUCCESS        0x00000000
+define SPREG_LOADLIBRARY    0x00000001
+define SPREG_GETPROCADDR    0x00000002
+define SPREG_REGSVR         0x00000003
+define SPREG_DLLINSTALL     0x00000004
+define SPREG_TIMEOUT        0x00000005
+define SPREG_UNKNOWN        0xFFFFFFFF
+
+HSPFILEQ                typedef PVOID
+
+SP_FILE_COPY_PARAMS_A   struct
+cbSize                  DWORD ?
+QueueHandle             HSPFILEQ ?
+SourceRootPath          PCSTR ?
+SourcePath              PCSTR ?
+SourceFilename          PCSTR ?
+SourceDescription       PCSTR ?
+SourceTagfile           PCSTR ?
+TargetDirectory         PCSTR ?
+TargetFilename          PCSTR ?
+CopyStyle               DWORD ?
+LayoutInf               HINF ?
+SecurityDescriptor      PCSTR ?
+SP_FILE_COPY_PARAMS_A   ends
+PSP_FILE_COPY_PARAMS_A  typedef ptr SP_FILE_COPY_PARAMS_A
+
+SP_FILE_COPY_PARAMS_W   struct
+cbSize                  DWORD ?
+QueueHandle             HSPFILEQ ?
+SourceRootPath          PCWSTR ?
+SourcePath              PCWSTR ?
+SourceFilename          PCWSTR ?
+SourceDescription       PCWSTR ?
+SourceTagfile           PCWSTR ?
+TargetDirectory         PCWSTR ?
+TargetFilename          PCWSTR ?
+CopyStyle               DWORD ?
+LayoutInf               HINF ?
+SecurityDescriptor      PCWSTR ?
+SP_FILE_COPY_PARAMS_W   ends
+PSP_FILE_COPY_PARAMS_W  typedef ptr SP_FILE_COPY_PARAMS_W
+
+ifdef _UNICODE
+SP_FILE_COPY_PARAMS     typedef SP_FILE_COPY_PARAMS_W
+PSP_FILE_COPY_PARAMS    typedef PSP_FILE_COPY_PARAMS_W
+else
+SP_FILE_COPY_PARAMS     typedef SP_FILE_COPY_PARAMS_A
+PSP_FILE_COPY_PARAMS    typedef PSP_FILE_COPY_PARAMS_A
+endif
+
+HDSKSPC                 typedef PVOID
+HDEVINFO                typedef PVOID
+
+SP_DEVINFO_DATA         struct
+cbSize                  DWORD ?
+ClassGuid               GUID <>
+DevInst                 DWORD ?
+Reserved                ULONG_PTR ?
+SP_DEVINFO_DATA         ends
+PSP_DEVINFO_DATA        typedef ptr SP_DEVINFO_DATA
+
+SP_DEVICE_INTERFACE_DATA struct
+cbSize                  DWORD ?
+InterfaceClassGuid      GUID <>
+Flags                   DWORD ?
+Reserved                ULONG_PTR ?
+SP_DEVICE_INTERFACE_DATA ends
+PSP_DEVICE_INTERFACE_DATA typedef ptr SP_DEVICE_INTERFACE_DATA
+
+define SPINT_ACTIVE  0x00000001
+define SPINT_DEFAULT 0x00000002
+define SPINT_REMOVED 0x00000004
+
+SP_INTERFACE_DEVICE_DATA typedef SP_DEVICE_INTERFACE_DATA
+PSP_INTERFACE_DEVICE_DATA typedef PSP_DEVICE_INTERFACE_DATA
+define SPID_ACTIVE               SPINT_ACTIVE
+define SPID_DEFAULT              SPINT_DEFAULT
+define SPID_REMOVED              SPINT_REMOVED
+
+SP_DEVICE_INTERFACE_DETAIL_DATA_A struct
+cbSize                  DWORD ?
+DevicePath              CHAR ANYSIZE_ARRAY dup(?)
+SP_DEVICE_INTERFACE_DETAIL_DATA_A ends
+PSP_DEVICE_INTERFACE_DETAIL_DATA_A typedef ptr SP_DEVICE_INTERFACE_DETAIL_DATA_A
+
+SP_DEVICE_INTERFACE_DETAIL_DATA_W struct
+cbSize                  DWORD ?
+DevicePath              WCHAR ANYSIZE_ARRAY dup(?)
+SP_DEVICE_INTERFACE_DETAIL_DATA_W ends
+PSP_DEVICE_INTERFACE_DETAIL_DATA_W typedef ptr SP_DEVICE_INTERFACE_DETAIL_DATA_W
+
+ifdef _UNICODE
+SP_DEVICE_INTERFACE_DETAIL_DATA typedef SP_DEVICE_INTERFACE_DETAIL_DATA_W
+PSP_DEVICE_INTERFACE_DETAIL_DATA typedef PSP_DEVICE_INTERFACE_DETAIL_DATA_W
+else
+SP_DEVICE_INTERFACE_DETAIL_DATA typedef SP_DEVICE_INTERFACE_DETAIL_DATA_A
+PSP_DEVICE_INTERFACE_DETAIL_DATA typedef PSP_DEVICE_INTERFACE_DETAIL_DATA_A
+endif
+
+SP_INTERFACE_DEVICE_DETAIL_DATA_W typedef SP_DEVICE_INTERFACE_DETAIL_DATA_W
+PSP_INTERFACE_DEVICE_DETAIL_DATA_W typedef PSP_DEVICE_INTERFACE_DETAIL_DATA_W
+SP_INTERFACE_DEVICE_DETAIL_DATA_A typedef SP_DEVICE_INTERFACE_DETAIL_DATA_A
+PSP_INTERFACE_DEVICE_DETAIL_DATA_A typedef PSP_DEVICE_INTERFACE_DETAIL_DATA_A
+ifdef _UNICODE
+SP_INTERFACE_DEVICE_DETAIL_DATA typedef SP_INTERFACE_DEVICE_DETAIL_DATA_W
+PSP_INTERFACE_DEVICE_DETAIL_DATA typedef PSP_INTERFACE_DEVICE_DETAIL_DATA_W
+else
+SP_INTERFACE_DEVICE_DETAIL_DATA typedef SP_INTERFACE_DEVICE_DETAIL_DATA_A
+PSP_INTERFACE_DEVICE_DETAIL_DATA typedef PSP_INTERFACE_DEVICE_DETAIL_DATA_A
+endif
+
+SP_DEVINFO_LIST_DETAIL_DATA_A struct
+cbSize                  DWORD ?
+ClassGuid               GUID <>
+RemoteMachineHandle     HANDLE ?
+RemoteMachineName       CHAR SP_MAX_MACHINENAME_LENGTH dup(?)
+SP_DEVINFO_LIST_DETAIL_DATA_A ends
+PSP_DEVINFO_LIST_DETAIL_DATA_A typedef ptr SP_DEVINFO_LIST_DETAIL_DATA_A
+
+SP_DEVINFO_LIST_DETAIL_DATA_W struct
+cbSize                  DWORD ?
+ClassGuid               GUID <>
+RemoteMachineHandle     HANDLE ?
+RemoteMachineName       WCHAR SP_MAX_MACHINENAME_LENGTH dup(?)
+SP_DEVINFO_LIST_DETAIL_DATA_W ends
+PSP_DEVINFO_LIST_DETAIL_DATA_W typedef ptr SP_DEVINFO_LIST_DETAIL_DATA_W
+
+ifdef _UNICODE
+SP_DEVINFO_LIST_DETAIL_DATA typedef SP_DEVINFO_LIST_DETAIL_DATA_W
+PSP_DEVINFO_LIST_DETAIL_DATA typedef PSP_DEVINFO_LIST_DETAIL_DATA_W
+else
+SP_DEVINFO_LIST_DETAIL_DATA typedef SP_DEVINFO_LIST_DETAIL_DATA_A
+PSP_DEVINFO_LIST_DETAIL_DATA typedef PSP_DEVINFO_LIST_DETAIL_DATA_A
+endif
+
+define DIF_SELECTDEVICE                    0x00000001
+define DIF_INSTALLDEVICE                   0x00000002
+define DIF_ASSIGNRESOURCES                 0x00000003
+define DIF_PROPERTIES                      0x00000004
+define DIF_REMOVE                          0x00000005
+define DIF_FIRSTTIMESETUP                  0x00000006
+define DIF_FOUNDDEVICE                     0x00000007
+define DIF_SELECTCLASSDRIVERS              0x00000008
+define DIF_VALIDATECLASSDRIVERS            0x00000009
+define DIF_INSTALLCLASSDRIVERS             0x0000000A
+define DIF_CALCDISKSPACE                   0x0000000B
+define DIF_DESTROYPRIVATEDATA              0x0000000C
+define DIF_VALIDATEDRIVER                  0x0000000D
+define DIF_DETECT                          0x0000000F
+define DIF_INSTALLWIZARD                   0x00000010
+define DIF_DESTROYWIZARDDATA               0x00000011
+define DIF_PROPERTYCHANGE                  0x00000012
+define DIF_ENABLECLASS                     0x00000013
+define DIF_DETECTVERIFY                    0x00000014
+define DIF_INSTALLDEVICEFILES              0x00000015
+define DIF_UNREMOVE                        0x00000016
+define DIF_SELECTBESTCOMPATDRV             0x00000017
+define DIF_ALLOW_INSTALL                   0x00000018
+define DIF_REGISTERDEVICE                  0x00000019
+define DIF_NEWDEVICEWIZARD_PRESELECT       0x0000001A
+define DIF_NEWDEVICEWIZARD_SELECT          0x0000001B
+define DIF_NEWDEVICEWIZARD_PREANALYZE      0x0000001C
+define DIF_NEWDEVICEWIZARD_POSTANALYZE     0x0000001D
+define DIF_NEWDEVICEWIZARD_FINISHINSTALL   0x0000001E
+define DIF_UNUSED1                         0x0000001F
+define DIF_INSTALLINTERFACES               0x00000020
+define DIF_DETECTCANCEL                    0x00000021
+define DIF_REGISTER_COINSTALLERS           0x00000022
+define DIF_ADDPROPERTYPAGE_ADVANCED        0x00000023
+define DIF_ADDPROPERTYPAGE_BASIC           0x00000024
+define DIF_RESERVED1                       0x00000025
+define DIF_TROUBLESHOOTER                  0x00000026
+define DIF_POWERMESSAGEWAKE                0x00000027
+define DIF_ADDREMOTEPROPERTYPAGE_ADVANCED  0x00000028
+define DIF_UPDATEDRIVER_UI                 0x00000029
+define DIF_FINISHINSTALL_ACTION            0x0000002A
+define DIF_RESERVED2                       0x00000030
+
+define DIF_MOVEDEVICE                      0x0000000E
+
+DI_FUNCTION             typedef UINT
+
+SP_DEVINSTALL_PARAMS_A  struct
+cbSize                  DWORD ?
+Flags                   DWORD ?
+FlagsEx                 DWORD ?
+hwndParent              HWND ?
+InstallMsgHandler       PSP_FILE_CALLBACK ?
+InstallMsgHandlerContext PVOID ?
+FileQueue               HSPFILEQ ?
+ClassInstallReserved    ULONG_PTR ?
+Reserved                DWORD ?
+DriverPath              CHAR MAX_PATH dup(?)
+SP_DEVINSTALL_PARAMS_A  ends
+PSP_DEVINSTALL_PARAMS_A typedef ptr SP_DEVINSTALL_PARAMS_A
+
+SP_DEVINSTALL_PARAMS_W  struct
+cbSize                  DWORD ?
+Flags                   DWORD ?
+FlagsEx                 DWORD ?
+hwndParent              HWND ?
+InstallMsgHandler       PSP_FILE_CALLBACK ?
+InstallMsgHandlerContext PVOID ?
+FileQueue               HSPFILEQ ?
+ClassInstallReserved    ULONG_PTR ?
+Reserved                DWORD ?
+DriverPath              WCHAR MAX_PATH dup(?)
+SP_DEVINSTALL_PARAMS_W  ends
+PSP_DEVINSTALL_PARAMS_W typedef ptr SP_DEVINSTALL_PARAMS_W
+
+ifdef _UNICODE
+SP_DEVINSTALL_PARAMS    typedef SP_DEVINSTALL_PARAMS_W
+PSP_DEVINSTALL_PARAMS   typedef PSP_DEVINSTALL_PARAMS_W
+else
+SP_DEVINSTALL_PARAMS    typedef SP_DEVINSTALL_PARAMS_A
+PSP_DEVINSTALL_PARAMS   typedef PSP_DEVINSTALL_PARAMS_A
+endif
+
+define DI_SHOWOEM                  0x00000001
+define DI_SHOWCOMPAT               0x00000002
+define DI_SHOWCLASS                0x00000004
+define DI_SHOWALL                  0x00000007
+define DI_NOVCP                    0x00000008
+define DI_DIDCOMPAT                0x00000010
+define DI_DIDCLASS                 0x00000020
+define DI_AUTOASSIGNRES            0x00000040
+define DI_NEEDRESTART              0x00000080
+define DI_NEEDREBOOT               0x00000100
+define DI_NOBROWSE                 0x00000200
+define DI_MULTMFGS                 0x00000400
+define DI_DISABLED                 0x00000800
+define DI_GENERALPAGE_ADDED        0x00001000
+define DI_RESOURCEPAGE_ADDED       0x00002000
+define DI_PROPERTIES_CHANGE        0x00004000
+define DI_INF_IS_SORTED            0x00008000
+define DI_ENUMSINGLEINF            0x00010000
+define DI_DONOTCALLCONFIGMG        0x00020000
+define DI_INSTALLDISABLED          0x00040000
+define DI_COMPAT_FROM_CLASS        0x00080000
+define DI_CLASSINSTALLPARAMS       0x00100000
+define DI_NODI_DEFAULTACTION       0x00200000
+define DI_QUIETINSTALL             0x00800000
+define DI_NOFILECOPY               0x01000000
+define DI_FORCECOPY                0x02000000
+define DI_DRIVERPAGE_ADDED         0x04000000
+define DI_USECI_SELECTSTRINGS      0x08000000
+define DI_OVERRIDE_INFFLAGS        0x10000000
+define DI_PROPS_NOCHANGEUSAGE      0x20000000
+define DI_NOSELECTICONS            0x40000000
+define DI_NOWRITE_IDS              0x80000000
+
+define DI_FLAGSEX_RESERVED2                0x00000001
+define DI_FLAGSEX_RESERVED3                0x00000002
+define DI_FLAGSEX_CI_FAILED                0x00000004
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define DI_FLAGSEX_FINISHINSTALL_ACTION     0x00000008
+endif
+
+define DI_FLAGSEX_DIDINFOLIST              0x00000010
+define DI_FLAGSEX_DIDCOMPATINFO            0x00000020
+
+define DI_FLAGSEX_FILTERCLASSES            0x00000040
+define DI_FLAGSEX_SETFAILEDINSTALL         0x00000080
+define DI_FLAGSEX_DEVICECHANGE             0x00000100
+define DI_FLAGSEX_ALWAYSWRITEIDS           0x00000200
+define DI_FLAGSEX_PROPCHANGE_PENDING       0x00000400
+define DI_FLAGSEX_ALLOWEXCLUDEDDRVS        0x00000800
+define DI_FLAGSEX_NOUIONQUERYREMOVE        0x00001000
+define DI_FLAGSEX_USECLASSFORCOMPAT        0x00002000
+
+define DI_FLAGSEX_RESERVED4                0x00004000
+
+define DI_FLAGSEX_NO_DRVREG_MODIFY         0x00008000
+define DI_FLAGSEX_IN_SYSTEM_SETUP          0x00010000
+define DI_FLAGSEX_INET_DRIVER              0x00020000
+define DI_FLAGSEX_APPENDDRIVERLIST         0x00040000
+define DI_FLAGSEX_PREINSTALLBACKUP         0x00080000
+define DI_FLAGSEX_BACKUPONREPLACE          0x00100000
+define DI_FLAGSEX_DRIVERLIST_FROM_URL      0x00200000
+define DI_FLAGSEX_RESERVED1                0x00400000
+define DI_FLAGSEX_EXCLUDE_OLD_INET_DRIVERS 0x00800000
+define DI_FLAGSEX_POWERPAGE_ADDED          0x01000000
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define DI_FLAGSEX_FILTERSIMILARDRIVERS     0x02000000
+define DI_FLAGSEX_INSTALLEDDRIVER          0x04000000
+define DI_FLAGSEX_NO_CLASSLIST_NODE_MERGE  0x08000000
+define DI_FLAGSEX_ALTPLATFORM_DRVSEARCH    0x10000000
+define DI_FLAGSEX_RESTART_DEVICE_ONLY      0x20000000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define DI_FLAGSEX_RECURSIVESEARCH          0x40000000
+define DI_FLAGSEX_SEARCH_PUBLISHED_INFS    0x80000000
+endif
+
+SP_CLASSINSTALL_HEADER  struct
+cbSize                  DWORD ?
+InstallFunction         DI_FUNCTION ?
+SP_CLASSINSTALL_HEADER  ends
+PSP_CLASSINSTALL_HEADER typedef ptr SP_CLASSINSTALL_HEADER
+
+SP_ENABLECLASS_PARAMS   struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+ClassGuid               GUID <>
+EnableMessage           DWORD ?
+SP_ENABLECLASS_PARAMS   ends
+PSP_ENABLECLASS_PARAMS  typedef ptr SP_ENABLECLASS_PARAMS
+
+define ENABLECLASS_QUERY   0
+define ENABLECLASS_SUCCESS 1
+define ENABLECLASS_FAILURE 2
+
+define DICS_ENABLE      0x00000001
+define DICS_DISABLE     0x00000002
+define DICS_PROPCHANGE  0x00000003
+define DICS_START       0x00000004
+define DICS_STOP        0x00000005
+define DICS_FLAG_GLOBAL         0x00000001
+define DICS_FLAG_CONFIGSPECIFIC 0x00000002
+define DICS_FLAG_CONFIGGENERAL  0x00000004
+SP_PROPCHANGE_PARAMS    struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+StateChange             DWORD ?
+Scope                   DWORD ?
+HwProfile               DWORD ?
+SP_PROPCHANGE_PARAMS    ends
+PSP_PROPCHANGE_PARAMS   typedef ptr SP_PROPCHANGE_PARAMS
+
+SP_REMOVEDEVICE_PARAMS  struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+Scope                   DWORD ?
+HwProfile               DWORD ?
+SP_REMOVEDEVICE_PARAMS  ends
+PSP_REMOVEDEVICE_PARAMS typedef ptr SP_REMOVEDEVICE_PARAMS
+
+define DI_REMOVEDEVICE_GLOBAL                  0x00000001
+define DI_REMOVEDEVICE_CONFIGSPECIFIC          0x00000002
+
+SP_UNREMOVEDEVICE_PARAMS struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+Scope                   DWORD ?
+HwProfile               DWORD ?
+SP_UNREMOVEDEVICE_PARAMS ends
+PSP_UNREMOVEDEVICE_PARAMS typedef ptr SP_UNREMOVEDEVICE_PARAMS
+
+define DI_UNREMOVEDEVICE_CONFIGSPECIFIC        0x00000002
+
+SP_SELECTDEVICE_PARAMS_A struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+Title                   CHAR MAX_TITLE_LEN dup(?)
+Instructions            CHAR MAX_INSTRUCTION_LEN dup(?)
+ListLabel               CHAR MAX_LABEL_LEN dup(?)
+_SubTitle               CHAR MAX_SUBTITLE_LEN dup(?)
+Reserved                BYTE 2 dup(?)
+SP_SELECTDEVICE_PARAMS_A ends
+PSP_SELECTDEVICE_PARAMS_A typedef ptr SP_SELECTDEVICE_PARAMS_A
+
+SP_SELECTDEVICE_PARAMS_W struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+Title                   WCHAR MAX_TITLE_LEN dup(?)
+Instructions            WCHAR MAX_INSTRUCTION_LEN dup(?)
+ListLabel               WCHAR MAX_LABEL_LEN dup(?)
+_SubTitle               WCHAR MAX_SUBTITLE_LEN dup(?)
+SP_SELECTDEVICE_PARAMS_W ends
+PSP_SELECTDEVICE_PARAMS_W typedef ptr SP_SELECTDEVICE_PARAMS_W
+
+ifdef _UNICODE
+SP_SELECTDEVICE_PARAMS  typedef SP_SELECTDEVICE_PARAMS_W
+PSP_SELECTDEVICE_PARAMS typedef PSP_SELECTDEVICE_PARAMS_W
+else
+SP_SELECTDEVICE_PARAMS  typedef SP_SELECTDEVICE_PARAMS_A
+PSP_SELECTDEVICE_PARAMS typedef PSP_SELECTDEVICE_PARAMS_A
+endif
+
+CALLBACK(PDETECT_PROGRESS_NOTIFY, :PVOID, :DWORD)
+
+SP_DETECTDEVICE_PARAMS  struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+DetectProgressNotify    PDETECT_PROGRESS_NOTIFY ?
+ProgressNotifyParam     PVOID ?
+SP_DETECTDEVICE_PARAMS  ends
+PSP_DETECTDEVICE_PARAMS typedef ptr SP_DETECTDEVICE_PARAMS
+
+define MAX_INSTALLWIZARD_DYNAPAGES 20
+
+SP_INSTALLWIZARD_DATA   struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+Flags                   DWORD ?
+DynamicPages            HPROPSHEETPAGE MAX_INSTALLWIZARD_DYNAPAGES dup(?)
+NumDynamicPages         DWORD ?
+DynamicPageFlags        DWORD ?
+PrivateFlags            DWORD ?
+PrivateData             LPARAM ?
+hwndWizardDlg           HWND ?
+SP_INSTALLWIZARD_DATA   ends
+PSP_INSTALLWIZARD_DATA  typedef ptr SP_INSTALLWIZARD_DATA
+
+define NDW_INSTALLFLAG_DIDFACTDEFS         0x00000001
+define NDW_INSTALLFLAG_HARDWAREALLREADYIN  0x00000002
+define NDW_INSTALLFLAG_NEEDRESTART         DI_NEEDRESTART
+define NDW_INSTALLFLAG_NEEDREBOOT          DI_NEEDREBOOT
+define NDW_INSTALLFLAG_NEEDSHUTDOWN        0x00000200
+define NDW_INSTALLFLAG_EXPRESSINTRO        0x00000400
+define NDW_INSTALLFLAG_SKIPISDEVINSTALLED  0x00000800
+define NDW_INSTALLFLAG_NODETECTEDDEVS      0x00001000
+define NDW_INSTALLFLAG_INSTALLSPECIFIC     0x00002000
+define NDW_INSTALLFLAG_SKIPCLASSLIST       0x00004000
+define NDW_INSTALLFLAG_CI_PICKED_OEM       0x00008000
+define NDW_INSTALLFLAG_PCMCIAMODE          0x00010000
+define NDW_INSTALLFLAG_PCMCIADEVICE        0x00020000
+define NDW_INSTALLFLAG_USERCANCEL          0x00040000
+define NDW_INSTALLFLAG_KNOWNCLASS          0x00080000
+
+define DYNAWIZ_FLAG_PAGESADDED             0x00000001
+define DYNAWIZ_FLAG_ANALYZE_HANDLECONFLICT 0x00000008
+define DYNAWIZ_FLAG_INSTALLDET_NEXT        0x00000002
+define DYNAWIZ_FLAG_INSTALLDET_PREV        0x00000004
+
+define MIN_IDD_DYNAWIZ_RESOURCE_ID             10000
+define MAX_IDD_DYNAWIZ_RESOURCE_ID             11000
+
+define IDD_DYNAWIZ_FIRSTPAGE                   10000
+define IDD_DYNAWIZ_SELECT_PREVPAGE             10001
+define IDD_DYNAWIZ_SELECT_NEXTPAGE             10002
+define IDD_DYNAWIZ_ANALYZE_PREVPAGE            10003
+define IDD_DYNAWIZ_ANALYZE_NEXTPAGE            10004
+define IDD_DYNAWIZ_SELECTDEV_PAGE              10009
+define IDD_DYNAWIZ_ANALYZEDEV_PAGE             10010
+define IDD_DYNAWIZ_INSTALLDETECTEDDEVS_PAGE    10011
+define IDD_DYNAWIZ_SELECTCLASS_PAGE            10012
+define IDD_DYNAWIZ_INSTALLDETECTED_PREVPAGE    10006
+define IDD_DYNAWIZ_INSTALLDETECTED_NEXTPAGE    10007
+define IDD_DYNAWIZ_INSTALLDETECTED_NODEVS      10008
+
+SP_NEWDEVICEWIZARD_DATA struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+Flags                   DWORD ?
+DynamicPages            HPROPSHEETPAGE MAX_INSTALLWIZARD_DYNAPAGES dup(?)
+NumDynamicPages         DWORD ?
+hwndWizardDlg           HWND ?
+SP_NEWDEVICEWIZARD_DATA ends
+PSP_NEWDEVICEWIZARD_DATA typedef ptr SP_NEWDEVICEWIZARD_DATA
+
+SP_ADDPROPERTYPAGE_DATA typedef SP_NEWDEVICEWIZARD_DATA
+PSP_ADDPROPERTYPAGE_DATA typedef PSP_NEWDEVICEWIZARD_DATA
+
+SP_TROUBLESHOOTER_PARAMS_A struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+ChmFile                 CHAR MAX_PATH dup(?)
+HtmlTroubleShooter      CHAR MAX_PATH dup(?)
+SP_TROUBLESHOOTER_PARAMS_A ends
+PSP_TROUBLESHOOTER_PARAMS_A typedef ptr SP_TROUBLESHOOTER_PARAMS_A
+
+SP_TROUBLESHOOTER_PARAMS_W struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+ChmFile                 WCHAR MAX_PATH dup(?)
+HtmlTroubleShooter      WCHAR MAX_PATH dup(?)
+SP_TROUBLESHOOTER_PARAMS_W ends
+PSP_TROUBLESHOOTER_PARAMS_W typedef ptr SP_TROUBLESHOOTER_PARAMS_W
+
+ifdef _UNICODE
+SP_TROUBLESHOOTER_PARAMS typedef SP_TROUBLESHOOTER_PARAMS_W
+PSP_TROUBLESHOOTER_PARAMS typedef PSP_TROUBLESHOOTER_PARAMS_W
+else
+SP_TROUBLESHOOTER_PARAMS typedef SP_TROUBLESHOOTER_PARAMS_A
+PSP_TROUBLESHOOTER_PARAMS typedef PSP_TROUBLESHOOTER_PARAMS_A
+endif
+
+SP_POWERMESSAGEWAKE_PARAMS_A struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+PowerMessageWake        CHAR LINE_LEN*2 dup(?)
+SP_POWERMESSAGEWAKE_PARAMS_A ends
+PSP_POWERMESSAGEWAKE_PARAMS_A typedef ptr SP_POWERMESSAGEWAKE_PARAMS_A
+
+SP_POWERMESSAGEWAKE_PARAMS_W struct
+ClassInstallHeader      SP_CLASSINSTALL_HEADER <>
+PowerMessageWake        WCHAR LINE_LEN*2 dup(?)
+SP_POWERMESSAGEWAKE_PARAMS_W ends
+PSP_POWERMESSAGEWAKE_PARAMS_W typedef ptr SP_POWERMESSAGEWAKE_PARAMS_W
+
+ifdef _UNICODE
+SP_POWERMESSAGEWAKE_PARAMS typedef SP_POWERMESSAGEWAKE_PARAMS_W
+PSP_POWERMESSAGEWAKE_PARAMS typedef PSP_POWERMESSAGEWAKE_PARAMS_W
+else
+SP_POWERMESSAGEWAKE_PARAMS typedef SP_POWERMESSAGEWAKE_PARAMS_A
+PSP_POWERMESSAGEWAKE_PARAMS typedef PSP_POWERMESSAGEWAKE_PARAMS_A
+endif
+
+SP_DRVINFO_DATA_V2_A    struct
+cbSize                  DWORD ?
+DriverType              DWORD ?
+Reserved                ULONG_PTR ?
+Description             CHAR LINE_LEN dup(?)
+MfgName                 CHAR LINE_LEN dup(?)
+ProviderName            CHAR LINE_LEN dup(?)
+DriverDate              FILETIME <>
+DriverVersion           DWORDLONG ?
+SP_DRVINFO_DATA_V2_A    ends
+PSP_DRVINFO_DATA_V2_A   typedef ptr SP_DRVINFO_DATA_V2_A
+
+SP_DRVINFO_DATA_V2_W    struct
+cbSize                  DWORD ?
+DriverType              DWORD ?
+Reserved                ULONG_PTR ?
+Description             WCHAR LINE_LEN dup(?)
+MfgName                 WCHAR LINE_LEN dup(?)
+ProviderName            WCHAR LINE_LEN dup(?)
+DriverDate              FILETIME <>
+DriverVersion           DWORDLONG ?
+SP_DRVINFO_DATA_V2_W    ends
+PSP_DRVINFO_DATA_V2_W   typedef ptr SP_DRVINFO_DATA_V2_W
+
+SP_DRVINFO_DATA_V1_A    struct
+cbSize                  DWORD ?
+DriverType              DWORD ?
+Reserved                ULONG_PTR ?
+Description             CHAR LINE_LEN dup(?)
+MfgName                 CHAR LINE_LEN dup(?)
+ProviderName            CHAR LINE_LEN dup(?)
+SP_DRVINFO_DATA_V1_A    ends
+PSP_DRVINFO_DATA_V1_A   typedef ptr SP_DRVINFO_DATA_V1_A
+
+SP_DRVINFO_DATA_V1_W    struct
+cbSize                  DWORD ?
+DriverType              DWORD ?
+Reserved                ULONG_PTR ?
+Description             WCHAR LINE_LEN dup(?)
+MfgName                 WCHAR LINE_LEN dup(?)
+ProviderName            WCHAR LINE_LEN dup(?)
+SP_DRVINFO_DATA_V1_W    ends
+PSP_DRVINFO_DATA_V1_W   typedef ptr SP_DRVINFO_DATA_V1_W
+
+ifdef _UNICODE
+SP_DRVINFO_DATA_V1      typedef SP_DRVINFO_DATA_V1_W
+PSP_DRVINFO_DATA_V1     typedef PSP_DRVINFO_DATA_V1_W
+SP_DRVINFO_DATA_V2      typedef SP_DRVINFO_DATA_V2_W
+PSP_DRVINFO_DATA_V2     typedef PSP_DRVINFO_DATA_V2_W
+else
+SP_DRVINFO_DATA_V1      typedef SP_DRVINFO_DATA_V1_A
+PSP_DRVINFO_DATA_V1     typedef PSP_DRVINFO_DATA_V1_A
+SP_DRVINFO_DATA_V2      typedef SP_DRVINFO_DATA_V2_A
+PSP_DRVINFO_DATA_V2     typedef PSP_DRVINFO_DATA_V2_A
+endif
+
+if USE_SP_DRVINFO_DATA_V1 or (_SETUPAPI_VER lt _WIN32_WINNT_WIN2K)
+SP_DRVINFO_DATA_A       typedef SP_DRVINFO_DATA_V1_A
+PSP_DRVINFO_DATA_A      typedef PSP_DRVINFO_DATA_V1_A
+SP_DRVINFO_DATA_W       typedef SP_DRVINFO_DATA_V1_W
+PSP_DRVINFO_DATA_W      typedef PSP_DRVINFO_DATA_V1_W
+SP_DRVINFO_DATA         typedef SP_DRVINFO_DATA_V1
+PSP_DRVINFO_DATA        typedef PSP_DRVINFO_DATA_V1
+else
+SP_DRVINFO_DATA_A       typedef SP_DRVINFO_DATA_V2_A
+PSP_DRVINFO_DATA_A      typedef PSP_DRVINFO_DATA_V2_A
+SP_DRVINFO_DATA_W       typedef SP_DRVINFO_DATA_V2_W
+PSP_DRVINFO_DATA_W      typedef PSP_DRVINFO_DATA_V2_W
+SP_DRVINFO_DATA         typedef SP_DRVINFO_DATA_V2
+PSP_DRVINFO_DATA        typedef PSP_DRVINFO_DATA_V2
+endif
+
+SP_DRVINFO_DETAIL_DATA_A struct
+cbSize                  DWORD ?
+InfDate                 FILETIME <>
+CompatIDsOffset         DWORD ?
+CompatIDsLength         DWORD ?
+Reserved                ULONG_PTR ?
+SectionName             CHAR LINE_LEN dup(?)
+InfFileName             CHAR MAX_PATH dup(?)
+DrvDescription          CHAR LINE_LEN dup(?)
+HardwareID              CHAR ANYSIZE_ARRAY dup(?)
+SP_DRVINFO_DETAIL_DATA_A ends
+PSP_DRVINFO_DETAIL_DATA_A typedef ptr SP_DRVINFO_DETAIL_DATA_A
+
+SP_DRVINFO_DETAIL_DATA_W struct
+cbSize                  DWORD ?
+InfDate                 FILETIME <>
+CompatIDsOffset         DWORD ?
+CompatIDsLength         DWORD ?
+Reserved                ULONG_PTR ?
+SectionName             WCHAR LINE_LEN dup(?)
+InfFileName             WCHAR MAX_PATH dup(?)
+DrvDescription          WCHAR LINE_LEN dup(?)
+HardwareID              WCHAR ANYSIZE_ARRAY dup(?)
+SP_DRVINFO_DETAIL_DATA_W ends
+PSP_DRVINFO_DETAIL_DATA_W typedef ptr SP_DRVINFO_DETAIL_DATA_W
+
+ifdef _UNICODE
+SP_DRVINFO_DETAIL_DATA  typedef SP_DRVINFO_DETAIL_DATA_W
+PSP_DRVINFO_DETAIL_DATA typedef PSP_DRVINFO_DETAIL_DATA_W
+else
+SP_DRVINFO_DETAIL_DATA  typedef SP_DRVINFO_DETAIL_DATA_A
+PSP_DRVINFO_DETAIL_DATA typedef PSP_DRVINFO_DETAIL_DATA_A
+endif
+
+SP_DRVINSTALL_PARAMS    struct
+cbSize                  DWORD ?
+Rank                    DWORD ?
+Flags                   DWORD ?
+PrivateData             DWORD_PTR ?
+Reserved                DWORD ?
+SP_DRVINSTALL_PARAMS    ends
+PSP_DRVINSTALL_PARAMS   typedef ptr SP_DRVINSTALL_PARAMS
+
+define DNF_DUPDESC             0x00000001
+define DNF_OLDDRIVER           0x00000002
+define DNF_EXCLUDEFROMLIST     0x00000004
+define DNF_NODRIVER            0x00000008
+define DNF_LEGACYINF           0x00000010
+define DNF_CLASS_DRIVER        0x00000020
+define DNF_COMPATIBLE_DRIVER   0x00000040
+define DNF_INET_DRIVER         0x00000080
+define DNF_UNUSED1             0x00000100
+define DNF_UNUSED2             0x00000200
+define DNF_OLD_INET_DRIVER     0x00000400
+define DNF_BAD_DRIVER          0x00000800
+define DNF_DUPPROVIDER         0x00001000
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define DNF_INF_IS_SIGNED         0x00002000
+define DNF_OEM_F6_INF            0x00004000
+define DNF_DUPDRIVERVER          0x00008000
+define DNF_BASIC_DRIVER          0x00010000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WS03
+define DNF_AUTHENTICODE_SIGNED   0x00020000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define DNF_INSTALLEDDRIVER       0x00040000
+define DNF_ALWAYSEXCLUDEFROMLIST 0x00080000
+define DNF_INBOX_DRIVER          0x00100000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WIN7
+define DNF_REQUESTADDITIONALSOFTWARE   0x00200000
+endif
+
+define DNF_UNUSED_22             0x00400000
+define DNF_UNUSED_23             0x00800000
+define DNF_UNUSED_24             0x01000000
+define DNF_UNUSED_25             0x02000000
+define DNF_UNUSED_26             0x04000000
+define DNF_UNUSED_27             0x08000000
+define DNF_UNUSED_28             0x10000000
+define DNF_UNUSED_29             0x20000000
+define DNF_UNUSED_30             0x40000000
+define DNF_UNUSED_31             0x80000000
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define DRIVER_HARDWAREID_RANK  0x00000FFF
+define DRIVER_HARDWAREID_MASK  0x80000FFF
+define DRIVER_UNTRUSTED_RANK   0x80000000
+define DRIVER_W9X_SUSPECT_RANK 0xC0000000
+else
+define DRIVER_HARDWAREID_RANK  0x00000FFF
+define DRIVER_COMPATID_RANK    0x00003FFF
+define DRIVER_UNTRUSTED_RANK   0x00008000
+define DRIVER_UNTRUSTED_HARDWAREID_RANK  0x00008FFF
+define DRIVER_UNTRUSTED_COMPATID_RANK    0x0000BFFF
+define DRIVER_W9X_SUSPECT_RANK            0x0000C000
+define DRIVER_W9X_SUSPECT_HARDWAREID_RANK 0x0000CFFF
+define DRIVER_W9X_SUSPECT_COMPATID_RANK   0x0000FFFF
+endif
+
+CALLBACK(PSP_DETSIG_CMPPROC, :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DEVINFO_DATA, :PVOID)
+
+COINSTALLER_CONTEXT_DATA struct
+PostProcessing          BOOL ?
+InstallResult           DWORD ?
+PrivateData             PVOID ?
+COINSTALLER_CONTEXT_DATA ends
+PCOINSTALLER_CONTEXT_DATA typedef ptr COINSTALLER_CONTEXT_DATA
+
+SP_CLASSIMAGELIST_DATA  struct
+cbSize                  DWORD ?
+ImageList               HIMAGELIST ?
+Reserved                ULONG_PTR ?
+SP_CLASSIMAGELIST_DATA  ends
+PSP_CLASSIMAGELIST_DATA typedef ptr SP_CLASSIMAGELIST_DATA
+
+SP_PROPSHEETPAGE_REQUEST struct
+cbSize                  DWORD ?
+PageRequested           DWORD ?
+DeviceInfoSet           HDEVINFO ?
+DeviceInfoData          PSP_DEVINFO_DATA ?
+SP_PROPSHEETPAGE_REQUEST ends
+PSP_PROPSHEETPAGE_REQUEST typedef ptr SP_PROPSHEETPAGE_REQUEST
+
+define SPPSR_SELECT_DEVICE_RESOURCES      1
+define SPPSR_ENUM_BASIC_DEVICE_PROPERTIES 2
+define SPPSR_ENUM_ADV_DEVICE_PROPERTIES   3
+
+SP_BACKUP_QUEUE_PARAMS_V2_A struct
+cbSize                  DWORD ?
+FullInfPath             CHAR MAX_PATH dup(?)
+FilenameOffset          sdword ?
+ReinstallInstance       CHAR MAX_PATH dup(?)
+SP_BACKUP_QUEUE_PARAMS_V2_A ends
+PSP_BACKUP_QUEUE_PARAMS_V2_A typedef ptr SP_BACKUP_QUEUE_PARAMS_V2_A
+
+SP_BACKUP_QUEUE_PARAMS_V2_W struct
+cbSize                  DWORD ?
+FullInfPath             WCHAR MAX_PATH dup(?)
+FilenameOffset          sdword ?
+ReinstallInstance       WCHAR MAX_PATH dup(?)
+SP_BACKUP_QUEUE_PARAMS_V2_W ends
+PSP_BACKUP_QUEUE_PARAMS_V2_W typedef ptr SP_BACKUP_QUEUE_PARAMS_V2_W
+
+SP_BACKUP_QUEUE_PARAMS_V1_A struct
+cbSize                  DWORD ?
+FullInfPath             CHAR MAX_PATH dup(?)
+FilenameOffset          sdword ?
+SP_BACKUP_QUEUE_PARAMS_V1_A ends
+PSP_BACKUP_QUEUE_PARAMS_V1_A typedef ptr SP_BACKUP_QUEUE_PARAMS_V1_A
+
+SP_BACKUP_QUEUE_PARAMS_V1_W struct
+cbSize                  DWORD ?
+FullInfPath             WCHAR MAX_PATH dup(?)
+FilenameOffset          sdword ?
+SP_BACKUP_QUEUE_PARAMS_V1_W ends
+PSP_BACKUP_QUEUE_PARAMS_V1_W typedef ptr SP_BACKUP_QUEUE_PARAMS_V1_W
+
+ifdef _UNICODE
+SP_BACKUP_QUEUE_PARAMS_V1 typedef SP_BACKUP_QUEUE_PARAMS_V1_W
+PSP_BACKUP_QUEUE_PARAMS_V1 typedef PSP_BACKUP_QUEUE_PARAMS_V1_W
+SP_BACKUP_QUEUE_PARAMS_V2 typedef SP_BACKUP_QUEUE_PARAMS_V2_W
+PSP_BACKUP_QUEUE_PARAMS_V2 typedef PSP_BACKUP_QUEUE_PARAMS_V2_W
+else
+SP_BACKUP_QUEUE_PARAMS_V1 typedef SP_BACKUP_QUEUE_PARAMS_V1_A
+PSP_BACKUP_QUEUE_PARAMS_V1 typedef PSP_BACKUP_QUEUE_PARAMS_V1_A
+SP_BACKUP_QUEUE_PARAMS_V2 typedef SP_BACKUP_QUEUE_PARAMS_V2_A
+PSP_BACKUP_QUEUE_PARAMS_V2 typedef PSP_BACKUP_QUEUE_PARAMS_V2_A
+endif
+
+if USE_SP_BACKUP_QUEUE_PARAMS_V1 or (_SETUPAPI_VER lt _WIN32_WINNT_WINXP)
+SP_BACKUP_QUEUE_PARAMS_A typedef SP_BACKUP_QUEUE_PARAMS_V1_A
+PSP_BACKUP_QUEUE_PARAMS_A typedef PSP_BACKUP_QUEUE_PARAMS_V1_A
+SP_BACKUP_QUEUE_PARAMS_W typedef SP_BACKUP_QUEUE_PARAMS_V1_W
+PSP_BACKUP_QUEUE_PARAMS_W typedef PSP_BACKUP_QUEUE_PARAMS_V1_W
+SP_BACKUP_QUEUE_PARAMS  typedef SP_BACKUP_QUEUE_PARAMS_V1
+PSP_BACKUP_QUEUE_PARAMS typedef PSP_BACKUP_QUEUE_PARAMS_V1
+else
+SP_BACKUP_QUEUE_PARAMS_A typedef SP_BACKUP_QUEUE_PARAMS_V2_A
+PSP_BACKUP_QUEUE_PARAMS_A typedef PSP_BACKUP_QUEUE_PARAMS_V2_A
+SP_BACKUP_QUEUE_PARAMS_W typedef SP_BACKUP_QUEUE_PARAMS_V2_W
+PSP_BACKUP_QUEUE_PARAMS_W typedef PSP_BACKUP_QUEUE_PARAMS_V2_W
+SP_BACKUP_QUEUE_PARAMS  typedef SP_BACKUP_QUEUE_PARAMS_V2
+PSP_BACKUP_QUEUE_PARAMS typedef PSP_BACKUP_QUEUE_PARAMS_V2
+endif
+
+ifndef _SPAPI_ERRORS
+define _SPAPI_ERRORS
+
+define ERROR_EXPECTED_SECTION_NAME  (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0)
+define ERROR_BAD_SECTION_NAME_LINE  (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 1)
+define ERROR_SECTION_NAME_TOO_LONG  (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 2)
+define ERROR_GENERAL_SYNTAX         (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 3)
+define ERROR_WRONG_INF_STYLE        (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x100)
+define ERROR_SECTION_NOT_FOUND      (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x101)
+define ERROR_LINE_NOT_FOUND         (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x102)
+define ERROR_NO_BACKUP              (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x103)
+define ERROR_NO_ASSOCIATED_CLASS                (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x200)
+define ERROR_CLASS_MISMATCH                     (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x201)
+define ERROR_DUPLICATE_FOUND                    (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x202)
+define ERROR_NO_DRIVER_SELECTED                 (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x203)
+define ERROR_KEY_DOES_NOT_EXIST                 (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x204)
+define ERROR_INVALID_DEVINST_NAME               (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x205)
+define ERROR_INVALID_CLASS                      (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x206)
+define ERROR_DEVINST_ALREADY_EXISTS             (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x207)
+define ERROR_DEVINFO_NOT_REGISTERED             (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x208)
+define ERROR_INVALID_REG_PROPERTY               (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x209)
+define ERROR_NO_INF                             (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x20A)
+define ERROR_NO_SUCH_DEVINST                    (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x20B)
+define ERROR_CANT_LOAD_CLASS_ICON               (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x20C)
+define ERROR_INVALID_CLASS_INSTALLER            (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x20D)
+define ERROR_DI_DO_DEFAULT                      (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x20E)
+define ERROR_DI_NOFILECOPY                      (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x20F)
+define ERROR_INVALID_HWPROFILE                  (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x210)
+define ERROR_NO_DEVICE_SELECTED                 (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x211)
+define ERROR_DEVINFO_LIST_LOCKED                (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x212)
+define ERROR_DEVINFO_DATA_LOCKED                (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x213)
+define ERROR_DI_BAD_PATH                        (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x214)
+define ERROR_NO_CLASSINSTALL_PARAMS             (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x215)
+define ERROR_FILEQUEUE_LOCKED                   (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x216)
+define ERROR_BAD_SERVICE_INSTALLSECT            (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x217)
+define ERROR_NO_CLASS_DRIVER_LIST               (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x218)
+define ERROR_NO_ASSOCIATED_SERVICE              (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x219)
+define ERROR_NO_DEFAULT_DEVICE_INTERFACE        (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x21A)
+define ERROR_DEVICE_INTERFACE_ACTIVE            (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x21B)
+define ERROR_DEVICE_INTERFACE_REMOVED           (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x21C)
+define ERROR_BAD_INTERFACE_INSTALLSECT          (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x21D)
+define ERROR_NO_SUCH_INTERFACE_CLASS            (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x21E)
+define ERROR_INVALID_REFERENCE_STRING           (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x21F)
+define ERROR_INVALID_MACHINENAME                (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x220)
+define ERROR_REMOTE_COMM_FAILURE                (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x221)
+define ERROR_MACHINE_UNAVAILABLE                (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x222)
+define ERROR_NO_CONFIGMGR_SERVICES              (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x223)
+define ERROR_INVALID_PROPPAGE_PROVIDER          (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x224)
+define ERROR_NO_SUCH_DEVICE_INTERFACE           (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x225)
+define ERROR_DI_POSTPROCESSING_REQUIRED         (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x226)
+define ERROR_INVALID_COINSTALLER                (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x227)
+define ERROR_NO_COMPAT_DRIVERS                  (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x228)
+define ERROR_NO_DEVICE_ICON                     (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x229)
+define ERROR_INVALID_INF_LOGCONFIG              (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x22A)
+define ERROR_DI_DONT_INSTALL                    (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x22B)
+define ERROR_INVALID_FILTER_DRIVER              (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x22C)
+define ERROR_NON_WINDOWS_NT_DRIVER              (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x22D)
+define ERROR_NON_WINDOWS_DRIVER                 (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x22E)
+define ERROR_NO_CATALOG_FOR_OEM_INF             (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x22F)
+define ERROR_DEVINSTALL_QUEUE_NONNATIVE         (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x230)
+define ERROR_NOT_DISABLEABLE                    (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x231)
+define ERROR_CANT_REMOVE_DEVINST                (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x232)
+define ERROR_INVALID_TARGET                     (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x233)
+define ERROR_DRIVER_NONNATIVE                   (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x234)
+define ERROR_IN_WOW64                           (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x235)
+define ERROR_SET_SYSTEM_RESTORE_POINT           (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x236)
+
+define ERROR_SCE_DISABLED                       (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x238)
+define ERROR_UNKNOWN_EXCEPTION                  (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x239)
+define ERROR_PNP_REGISTRY_ERROR                 (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x23A)
+define ERROR_REMOTE_REQUEST_UNSUPPORTED         (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x23B)
+define ERROR_NOT_AN_INSTALLED_OEM_INF           (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x23C)
+define ERROR_INF_IN_USE_BY_DEVICES              (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x23D)
+define ERROR_DI_FUNCTION_OBSOLETE               (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x23E)
+define ERROR_NO_AUTHENTICODE_CATALOG            (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x23F)
+define ERROR_AUTHENTICODE_DISALLOWED            (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x240)
+define ERROR_AUTHENTICODE_TRUSTED_PUBLISHER     (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x241)
+define ERROR_AUTHENTICODE_TRUST_NOT_ESTABLISHED (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x242)
+define ERROR_AUTHENTICODE_PUBLISHER_NOT_TRUSTED (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x243)
+define ERROR_SIGNATURE_OSATTRIBUTE_MISMATCH     (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x244)
+define ERROR_ONLY_VALIDATE_VIA_AUTHENTICODE     (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x245)
+define ERROR_DEVICE_INSTALLER_NOT_READY         (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x246)
+define ERROR_DRIVER_STORE_ADD_FAILED            (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x247)
+define ERROR_DEVICE_INSTALL_BLOCKED             (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x248)
+define ERROR_DRIVER_INSTALL_BLOCKED             (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x249)
+define ERROR_WRONG_INF_TYPE                     (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x24A)
+define ERROR_FILE_HASH_NOT_IN_CATALOG           (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x24B)
+define ERROR_DRIVER_STORE_DELETE_FAILED         (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x24C)
+
+define ERROR_UNRECOVERABLE_STACK_OVERFLOW (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x300)
+define EXCEPTION_SPAPI_UNRECOVERABLE_STACK_OVERFLOW ERROR_UNRECOVERABLE_STACK_OVERFLOW
+
+define ERROR_NO_DEFAULT_INTERFACE_DEVICE ERROR_NO_DEFAULT_DEVICE_INTERFACE
+define ERROR_INTERFACE_DEVICE_ACTIVE     ERROR_DEVICE_INTERFACE_ACTIVE
+define ERROR_INTERFACE_DEVICE_REMOVED    ERROR_DEVICE_INTERFACE_REMOVED
+define ERROR_NO_SUCH_INTERFACE_DEVICE    ERROR_NO_SUCH_DEVICE_INTERFACE
+
+define ERROR_NOT_INSTALLED (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0x1000)
+
+endif
+
+SetupGetInfInformationA proto WINAPI :LPCVOID, :DWORD, :PSP_INF_INFORMATION, :DWORD, :PDWORD
+SetupGetInfInformationW proto WINAPI :LPCVOID, :DWORD, :PSP_INF_INFORMATION, :DWORD, :PDWORD
+
+define INFINFO_INF_SPEC_IS_HINF        1
+define INFINFO_INF_NAME_IS_ABSOLUTE    2
+define INFINFO_DEFAULT_SEARCH          3
+define INFINFO_REVERSE_DEFAULT_SEARCH  4
+define INFINFO_INF_PATH_LIST_SEARCH    5
+
+ifdef _UNICODE
+define SetupGetInfInformation <SetupGetInfInformationW>
+else
+define SetupGetInfInformation <SetupGetInfInformationA>
+endif
+
+SetupQueryInfFileInformationA proto WINAPI :PSP_INF_INFORMATION, :UINT, :PSTR, :DWORD, :PDWORD
+SetupQueryInfFileInformationW proto WINAPI :PSP_INF_INFORMATION, :UINT, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupQueryInfFileInformation <SetupQueryInfFileInformationW>
+else
+define SetupQueryInfFileInformation <SetupQueryInfFileInformationA>
+endif
+
+SetupQueryInfOriginalFileInformationA proto WINAPI :PSP_INF_INFORMATION, :UINT, :PSP_ALTPLATFORM_INFO, :PSP_ORIGINAL_FILE_INFO_A
+SetupQueryInfOriginalFileInformationW proto WINAPI :PSP_INF_INFORMATION, :UINT, :PSP_ALTPLATFORM_INFO, :PSP_ORIGINAL_FILE_INFO_W
+
+ifdef _UNICODE
+define SetupQueryInfOriginalFileInformation <SetupQueryInfOriginalFileInformationW>
+else
+define SetupQueryInfOriginalFileInformation <SetupQueryInfOriginalFileInformationA>
+endif
+
+SetupQueryInfVersionInformationA proto WINAPI :PSP_INF_INFORMATION, :UINT, :PCSTR, :PSTR, :DWORD, :PDWORD
+SetupQueryInfVersionInformationW proto WINAPI :PSP_INF_INFORMATION, :UINT, :PCWSTR, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupQueryInfVersionInformation <SetupQueryInfVersionInformationW>
+else
+define SetupQueryInfVersionInformation <SetupQueryInfVersionInformationA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+
+SetupGetInfDriverStoreLocationA proto WINAPI :PCSTR, :PSP_ALTPLATFORM_INFO, :PCSTR, :PSTR, :DWORD, :PDWORD
+SetupGetInfDriverStoreLocationW proto WINAPI :PCWSTR, :PSP_ALTPLATFORM_INFO, :PCWSTR, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupGetInfDriverStoreLocation <SetupGetInfDriverStoreLocationW>
+else
+define SetupGetInfDriverStoreLocation <SetupGetInfDriverStoreLocationA>
+endif
+
+SetupGetInfPublishedNameA proto WINAPI :PCSTR, :PSTR, :DWORD, :PDWORD
+SetupGetInfPublishedNameW proto WINAPI :PCWSTR, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupGetInfPublishedName <SetupGetInfPublishedNameW>
+else
+define SetupGetInfPublishedName <SetupGetInfPublishedNameA>
+endif
+
+endif
+
+SetupGetInfFileListA proto WINAPI :PCSTR, :DWORD, :PSTR, :DWORD, :PDWORD
+SetupGetInfFileListW proto WINAPI :PCWSTR, :DWORD, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupGetInfFileList <SetupGetInfFileListW>
+else
+define SetupGetInfFileList <SetupGetInfFileListA>
+endif
+
+SetupOpenInfFileW proto WINAPI :PCWSTR, :PCWSTR, :DWORD, :PUINT
+SetupOpenInfFileA proto WINAPI :PCSTR, :PCSTR, :DWORD, :PUINT
+
+ifdef _UNICODE
+define SetupOpenInfFile <SetupOpenInfFileW>
+else
+define SetupOpenInfFile <SetupOpenInfFileA>
+endif
+
+SetupOpenMasterInf proto
+SetupOpenAppendInfFileW proto WINAPI :PCWSTR, :HINF, :PUINT
+SetupOpenAppendInfFileA proto WINAPI :PCSTR, :HINF, :PUINT
+
+ifdef _UNICODE
+define SetupOpenAppendInfFile <SetupOpenAppendInfFileW>
+else
+define SetupOpenAppendInfFile <SetupOpenAppendInfFileA>
+endif
+
+SetupCloseInfFile proto WINAPI :HINF
+SetupFindFirstLineA proto WINAPI :HINF, :PCSTR, :PCSTR, :PINFCONTEXT
+SetupFindFirstLineW proto WINAPI :HINF, :PCWSTR, :PCWSTR, :PINFCONTEXT
+
+ifdef _UNICODE
+define SetupFindFirstLine <SetupFindFirstLineW>
+else
+define SetupFindFirstLine <SetupFindFirstLineA>
+endif
+
+SetupFindNextLine proto WINAPI :PINFCONTEXT, :PINFCONTEXT
+SetupFindNextMatchLineA proto WINAPI :PINFCONTEXT, :PCSTR, :PINFCONTEXT
+SetupFindNextMatchLineW proto WINAPI :PINFCONTEXT, :PCWSTR, :PINFCONTEXT
+
+ifdef _UNICODE
+define SetupFindNextMatchLine <SetupFindNextMatchLineW>
+else
+define SetupFindNextMatchLine <SetupFindNextMatchLineA>
+endif
+
+SetupGetLineByIndexA proto WINAPI :HINF, :PCSTR, :DWORD, :PINFCONTEXT
+SetupGetLineByIndexW proto WINAPI :HINF, :PCWSTR, :DWORD, :PINFCONTEXT
+
+ifdef _UNICODE
+define SetupGetLineByIndex <SetupGetLineByIndexW>
+else
+define SetupGetLineByIndex <SetupGetLineByIndexA>
+endif
+
+SetupGetLineCountA proto WINAPI :HINF, :PCSTR
+SetupGetLineCountW proto WINAPI :HINF, :PCWSTR
+
+ifdef _UNICODE
+define SetupGetLineCount <SetupGetLineCountW>
+else
+define SetupGetLineCount <SetupGetLineCountA>
+endif
+
+SetupGetLineTextA proto WINAPI :PINFCONTEXT, :HINF, :PCSTR, :PCSTR, :PSTR, :DWORD, :PDWORD
+SetupGetLineTextW proto WINAPI :PINFCONTEXT, :HINF, :PCWSTR, :PCWSTR, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupGetLineText <SetupGetLineTextW>
+else
+define SetupGetLineText <SetupGetLineTextA>
+endif
+
+SetupGetFieldCount proto WINAPI :PINFCONTEXT
+SetupGetStringFieldA proto WINAPI :PINFCONTEXT, :DWORD, :PSTR, :DWORD, :PDWORD
+SetupGetStringFieldW proto WINAPI :PINFCONTEXT, :DWORD, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupGetStringField <SetupGetStringFieldW>
+else
+define SetupGetStringField <SetupGetStringFieldA>
+endif
+
+SetupGetIntField proto WINAPI :PINFCONTEXT, :DWORD, :PINT
+SetupGetMultiSzFieldA proto WINAPI :PINFCONTEXT, :DWORD, :PSTR, :DWORD, :LPDWORD
+SetupGetMultiSzFieldW proto WINAPI :PINFCONTEXT, :DWORD, :PWSTR, :DWORD, :LPDWORD
+
+ifdef _UNICODE
+define SetupGetMultiSzField <SetupGetMultiSzFieldW>
+else
+define SetupGetMultiSzField <SetupGetMultiSzFieldA>
+endif
+
+SetupGetBinaryField proto WINAPI :PINFCONTEXT, :DWORD, :PBYTE, :DWORD, :LPDWORD
+SetupGetFileCompressionInfoA proto WINAPI :PCSTR, :ptr, :PDWORD, :PDWORD, :PUINT
+SetupGetFileCompressionInfoW proto WINAPI :PCWSTR, :ptr, :PDWORD, :PDWORD, :PUINT
+
+ifdef _UNICODE
+define SetupGetFileCompressionInfo <SetupGetFileCompressionInfoW>
+else
+define SetupGetFileCompressionInfo <SetupGetFileCompressionInfoA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SetupGetFileCompressionInfoExA proto WINAPI :PCSTR, :PSTR, :DWORD, :PDWORD, :PDWORD, :PDWORD, :PUINT
+SetupGetFileCompressionInfoExW proto WINAPI :PCWSTR, :PWSTR, :DWORD, :PDWORD, :PDWORD, :PDWORD, :PUINT
+
+ifdef _UNICODE
+define SetupGetFileCompressionInfoEx <SetupGetFileCompressionInfoExW>
+else
+define SetupGetFileCompressionInfoEx <SetupGetFileCompressionInfoExA>
+endif
+
+endif
+
+define FILE_COMPRESSION_NONE       0
+define FILE_COMPRESSION_WINLZA     1
+define FILE_COMPRESSION_MSZIP      2
+define FILE_COMPRESSION_NTCAB      3
+
+SetupDecompressOrCopyFileA proto WINAPI :PCSTR, :PCSTR, :PUINT
+SetupDecompressOrCopyFileW proto WINAPI :PCWSTR, :PCWSTR, :PUINT
+
+ifdef _UNICODE
+define SetupDecompressOrCopyFile <SetupDecompressOrCopyFileW>
+else
+define SetupDecompressOrCopyFile <SetupDecompressOrCopyFileA>
+endif
+
+SetupGetSourceFileLocationA proto WINAPI :HINF, :PINFCONTEXT, :PCSTR, :PUINT, :PSTR, :DWORD, :PDWORD
+SetupGetSourceFileLocationW proto WINAPI :HINF, :PINFCONTEXT, :PCWSTR, :PUINT, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupGetSourceFileLocation <SetupGetSourceFileLocationW>
+else
+define SetupGetSourceFileLocation <SetupGetSourceFileLocationA>
+endif
+
+SetupGetSourceFileSizeA proto WINAPI :HINF, :PINFCONTEXT, :PCSTR, :PCSTR, :PDWORD, :UINT
+SetupGetSourceFileSizeW proto WINAPI :HINF, :PINFCONTEXT, :PCWSTR, :PCWSTR, :PDWORD, :UINT
+
+ifdef _UNICODE
+define SetupGetSourceFileSize <SetupGetSourceFileSizeW>
+else
+define SetupGetSourceFileSize <SetupGetSourceFileSizeA>
+endif
+
+SetupGetTargetPathA proto WINAPI :HINF, :PINFCONTEXT, :PCSTR, :PSTR, :DWORD, :PDWORD
+SetupGetTargetPathW proto WINAPI :HINF, :PINFCONTEXT, :PCWSTR, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupGetTargetPath <SetupGetTargetPathW>
+else
+define SetupGetTargetPath <SetupGetTargetPathA>
+endif
+
+define SRCLIST_TEMPORARY       0x00000001
+define SRCLIST_NOBROWSE        0x00000002
+define SRCLIST_SYSTEM          0x00000010
+define SRCLIST_USER            0x00000020
+define SRCLIST_SYSIFADMIN      0x00000040
+define SRCLIST_SUBDIRS         0x00000100
+define SRCLIST_APPEND          0x00000200
+define SRCLIST_NOSTRIPPLATFORM 0x00000400
+
+SetupSetSourceListA proto WINAPI :DWORD, :ptr, :UINT
+SetupSetSourceListW proto WINAPI :DWORD, :ptr, :UINT
+
+ifdef _UNICODE
+define SetupSetSourceList <SetupSetSourceListW>
+else
+define SetupSetSourceList <SetupSetSourceListA>
+endif
+
+SetupCancelTemporarySourceList proto
+SetupAddToSourceListA proto WINAPI :DWORD, :PCSTR
+SetupAddToSourceListW proto WINAPI :DWORD, :PCWSTR
+
+ifdef _UNICODE
+define SetupAddToSourceList <SetupAddToSourceListW>
+else
+define SetupAddToSourceList <SetupAddToSourceListA>
+endif
+
+SetupRemoveFromSourceListA proto WINAPI :DWORD, :PCSTR
+SetupRemoveFromSourceListW proto WINAPI :DWORD, :PCWSTR
+
+ifdef _UNICODE
+define SetupRemoveFromSourceList <SetupRemoveFromSourceListW>
+else
+define SetupRemoveFromSourceList <SetupRemoveFromSourceListA>
+endif
+
+SetupQuerySourceListA proto WINAPI :DWORD, :ptr ptr, :PUINT
+SetupQuerySourceListW proto WINAPI :DWORD, :ptr ptr, :PUINT
+
+ifdef _UNICODE
+define SetupQuerySourceList <SetupQuerySourceListW>
+else
+define SetupQuerySourceList <SetupQuerySourceListA>
+endif
+
+SetupFreeSourceListA proto WINAPI :ptr ptr, :UINT
+SetupFreeSourceListW proto WINAPI :ptr ptr, :UINT
+
+ifdef _UNICODE
+define SetupFreeSourceList <SetupFreeSourceListW>
+else
+define SetupFreeSourceList <SetupFreeSourceListA>
+endif
+
+SetupPromptForDiskA proto WINAPI :HWND, :PCSTR, :PCSTR, :PCSTR, :PCSTR, :PCSTR, :DWORD, :PSTR, :DWORD, :PDWORD
+SetupPromptForDiskW proto WINAPI :HWND, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupPromptForDisk <SetupPromptForDiskW>
+else
+define SetupPromptForDisk <SetupPromptForDiskA>
+endif
+
+SetupCopyErrorA proto WINAPI :HWND, :PCSTR, :PCSTR, :PCSTR, :PCSTR, :PCSTR, :UINT, :DWORD, :PSTR, :DWORD, :PDWORD
+SetupCopyErrorW proto WINAPI :HWND, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :UINT, :DWORD, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupCopyError <SetupCopyErrorW>
+else
+define SetupCopyError <SetupCopyErrorA>
+endif
+
+SetupRenameErrorA proto WINAPI :HWND, :PCSTR, :PCSTR, :PCSTR, :UINT, :DWORD
+SetupRenameErrorW proto WINAPI :HWND, :PCWSTR, :PCWSTR, :PCWSTR, :UINT, :DWORD
+
+ifdef _UNICODE
+define SetupRenameError <SetupRenameErrorW>
+else
+define SetupRenameError <SetupRenameErrorA>
+endif
+
+SetupDeleteErrorA proto WINAPI :HWND, :PCSTR, :PCSTR, :UINT, :DWORD
+SetupDeleteErrorW proto WINAPI :HWND, :PCWSTR, :PCWSTR, :UINT, :DWORD
+
+ifdef _UNICODE
+define SetupDeleteError <SetupDeleteErrorW>
+else
+define SetupDeleteError <SetupDeleteErrorA>
+endif
+
+SetupBackupErrorA proto WINAPI :HWND, :PCSTR, :PCSTR, :PCSTR, :UINT, :DWORD
+SetupBackupErrorW proto WINAPI :HWND, :PCWSTR, :PCWSTR, :PCWSTR, :UINT, :DWORD
+
+ifdef _UNICODE
+define SetupBackupError <SetupBackupErrorW>
+else
+define SetupBackupError <SetupBackupErrorA>
+endif
+
+define IDF_NOBROWSE                    0x00000001
+define IDF_NOSKIP                      0x00000002
+define IDF_NODETAILS                   0x00000004
+define IDF_NOCOMPRESSED                0x00000008
+define IDF_CHECKFIRST                  0x00000100
+define IDF_NOBEEP                      0x00000200
+define IDF_NOFOREGROUND                0x00000400
+define IDF_WARNIFSKIP                  0x00000800
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define IDF_NOREMOVABLEMEDIAPROMPT      0x00001000
+define IDF_USEDISKNAMEASPROMPT         0x00002000
+define IDF_OEMDISK                     0x80000000
+endif
+
+define DPROMPT_SUCCESS         0
+define DPROMPT_CANCEL          1
+define DPROMPT_SKIPFILE        2
+define DPROMPT_BUFFERTOOSMALL  3
+define DPROMPT_OUTOFMEMORY     4
+
+SetupSetDirectoryIdA proto WINAPI :HINF, :DWORD, :PCSTR
+SetupSetDirectoryIdW proto WINAPI :HINF, :DWORD, :PCWSTR
+
+ifdef _UNICODE
+define SetupSetDirectoryId <SetupSetDirectoryIdW>
+else
+define SetupSetDirectoryId <SetupSetDirectoryIdA>
+endif
+
+SetupSetDirectoryIdExA proto WINAPI :HINF, :DWORD, :PCSTR, :DWORD, :DWORD, :PVOID
+SetupSetDirectoryIdExW proto WINAPI :HINF, :DWORD, :PCWSTR, :DWORD, :DWORD, :PVOID
+
+ifdef _UNICODE
+define SetupSetDirectoryIdEx <SetupSetDirectoryIdExW>
+else
+define SetupSetDirectoryIdEx <SetupSetDirectoryIdExA>
+endif
+
+define SETDIRID_NOT_FULL_PATH      0x00000001
+
+SetupGetSourceInfoA proto WINAPI :HINF, :UINT, :UINT, :PSTR, :DWORD, :PDWORD
+SetupGetSourceInfoW proto WINAPI :HINF, :UINT, :UINT, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupGetSourceInfo <SetupGetSourceInfoW>
+else
+define SetupGetSourceInfo <SetupGetSourceInfoA>
+endif
+
+define SRCINFO_PATH            1
+define SRCINFO_TAGFILE         2
+define SRCINFO_DESCRIPTION     3
+define SRCINFO_FLAGS           4
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SRCINFO_TAGFILE2        5
+define SRC_FLAGS_CABFILE       (0x0010)
+endif
+
+SetupInstallFileA proto WINAPI :HINF, :PINFCONTEXT, :PCSTR, :PCSTR, :PCSTR, :DWORD, :PSP_FILE_CALLBACK_A, :PVOID
+SetupInstallFileW proto WINAPI :HINF, :PINFCONTEXT, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD, :PSP_FILE_CALLBACK_W, :PVOID
+
+ifdef _UNICODE
+define SetupInstallFile <SetupInstallFileW>
+else
+define SetupInstallFile <SetupInstallFileA>
+endif
+
+SetupInstallFileExA proto WINAPI :HINF, :PINFCONTEXT, :PCSTR, :PCSTR, :PCSTR, :DWORD, :PSP_FILE_CALLBACK_A, :PVOID, :PBOOL
+SetupInstallFileExW proto WINAPI :HINF, :PINFCONTEXT, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD, :PSP_FILE_CALLBACK_W, :PVOID, :PBOOL
+
+ifdef _UNICODE
+define SetupInstallFileEx <SetupInstallFileExW>
+else
+define SetupInstallFileEx <SetupInstallFileExA>
+endif
+
+define SP_COPY_DELETESOURCE        0x0000001
+define SP_COPY_REPLACEONLY         0x0000002
+define SP_COPY_NEWER               0x0000004
+define SP_COPY_NEWER_OR_SAME       SP_COPY_NEWER
+define SP_COPY_NOOVERWRITE         0x0000008
+define SP_COPY_NODECOMP            0x0000010
+define SP_COPY_LANGUAGEAWARE       0x0000020
+define SP_COPY_SOURCE_ABSOLUTE     0x0000040
+define SP_COPY_SOURCEPATH_ABSOLUTE 0x0000080
+define SP_COPY_IN_USE_NEEDS_REBOOT 0x0000100
+define SP_COPY_FORCE_IN_USE        0x0000200
+define SP_COPY_NOSKIP              0x0000400
+define SP_FLAG_CABINETCONTINUATION 0x0000800
+define SP_COPY_FORCE_NOOVERWRITE   0x0001000
+define SP_COPY_FORCE_NEWER         0x0002000
+define SP_COPY_WARNIFSKIP          0x0004000
+define SP_COPY_NOBROWSE            0x0008000
+define SP_COPY_NEWER_ONLY          0x0010000
+define SP_COPY_RESERVED            0x0020000
+define SP_COPY_OEMINF_CATALOG_ONLY 0x0040000
+define SP_COPY_REPLACE_BOOT_FILE   0x0080000
+define SP_COPY_NOPRUNE             0x0100000
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SP_COPY_OEM_F6_INF          0x0200000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SP_COPY_ALREADYDECOMP       0x0400000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define SP_COPY_WINDOWS_SIGNED      0x1000000
+define SP_COPY_PNPLOCKED           0x2000000
+define SP_COPY_IN_USE_TRY_RENAME   0x4000000
+define SP_COPY_INBOX_INF           0x8000000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WIN7
+define SP_COPY_HARDLINK            0x10000000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SP_BACKUP_BACKUPPASS        0x00000001
+define SP_BACKUP_DEMANDPASS        0x00000002
+define SP_BACKUP_SPECIAL           0x00000004
+define SP_BACKUP_BOOTFILE          0x00000008
+endif
+
+SetupOpenFileQueue proto
+SetupCloseFileQueue proto WINAPI :HSPFILEQ
+SetupSetFileQueueAlternatePlatformA proto WINAPI :HSPFILEQ, :PSP_ALTPLATFORM_INFO, :PCSTR
+SetupSetFileQueueAlternatePlatformW proto WINAPI :HSPFILEQ, :PSP_ALTPLATFORM_INFO, :PCWSTR
+
+ifdef _UNICODE
+define SetupSetFileQueueAlternatePlatform <SetupSetFileQueueAlternatePlatformW>
+else
+define SetupSetFileQueueAlternatePlatform <SetupSetFileQueueAlternatePlatformA>
+endif
+
+SetupSetPlatformPathOverrideA proto WINAPI :PCSTR
+SetupSetPlatformPathOverrideW proto WINAPI :PCWSTR
+
+ifdef _UNICODE
+define SetupSetPlatformPathOverride <SetupSetPlatformPathOverrideW>
+else
+define SetupSetPlatformPathOverride <SetupSetPlatformPathOverrideA>
+endif
+
+SetupQueueCopyA proto WINAPI :HSPFILEQ, :PCSTR, :PCSTR, :PCSTR, :PCSTR, :PCSTR, :PCSTR, :PCSTR, :DWORD
+SetupQueueCopyW proto WINAPI :HSPFILEQ, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD
+
+ifdef _UNICODE
+define SetupQueueCopy <SetupQueueCopyW>
+else
+define SetupQueueCopy <SetupQueueCopyA>
+endif
+
+SetupQueueCopyIndirectA proto WINAPI :PSP_FILE_COPY_PARAMS_A
+SetupQueueCopyIndirectW proto WINAPI :PSP_FILE_COPY_PARAMS_W
+
+ifdef _UNICODE
+define SetupQueueCopyIndirect <SetupQueueCopyIndirectW>
+else
+define SetupQueueCopyIndirect <SetupQueueCopyIndirectA>
+endif
+
+SetupQueueDefaultCopyA proto WINAPI :HSPFILEQ, :HINF, :PCSTR, :PCSTR, :PCSTR, :DWORD
+SetupQueueDefaultCopyW proto WINAPI :HSPFILEQ, :HINF, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD
+
+ifdef _UNICODE
+define SetupQueueDefaultCopy <SetupQueueDefaultCopyW>
+else
+define SetupQueueDefaultCopy <SetupQueueDefaultCopyA>
+endif
+
+SetupQueueCopySectionA proto WINAPI :HSPFILEQ, :PCSTR, :HINF, :HINF, :PCSTR, :DWORD
+SetupQueueCopySectionW proto WINAPI :HSPFILEQ, :PCWSTR, :HINF, :HINF, :PCWSTR, :DWORD
+
+ifdef _UNICODE
+define SetupQueueCopySection <SetupQueueCopySectionW>
+else
+define SetupQueueCopySection <SetupQueueCopySectionA>
+endif
+
+SetupQueueDeleteA proto WINAPI :HSPFILEQ, :PCSTR, :PCSTR
+SetupQueueDeleteW proto WINAPI :HSPFILEQ, :PCWSTR, :PCWSTR
+
+ifdef _UNICODE
+define SetupQueueDelete <SetupQueueDeleteW>
+else
+define SetupQueueDelete <SetupQueueDeleteA>
+endif
+
+SetupQueueDeleteSectionA proto WINAPI :HSPFILEQ, :HINF, :HINF, :PCSTR
+SetupQueueDeleteSectionW proto WINAPI :HSPFILEQ, :HINF, :HINF, :PCWSTR
+
+ifdef _UNICODE
+define SetupQueueDeleteSection <SetupQueueDeleteSectionW>
+else
+define SetupQueueDeleteSection <SetupQueueDeleteSectionA>
+endif
+
+SetupQueueRenameA proto WINAPI :HSPFILEQ, :PCSTR, :PCSTR, :PCSTR, :PCSTR
+SetupQueueRenameW proto WINAPI :HSPFILEQ, :PCWSTR, :PCWSTR, :PCWSTR, :PCWSTR
+
+ifdef _UNICODE
+define SetupQueueRename <SetupQueueRenameW>
+else
+define SetupQueueRename <SetupQueueRenameA>
+endif
+
+SetupQueueRenameSectionA proto WINAPI :HSPFILEQ, :HINF, :HINF, :PCSTR
+SetupQueueRenameSectionW proto WINAPI :HSPFILEQ, :HINF, :HINF, :PCWSTR
+
+ifdef _UNICODE
+define SetupQueueRenameSection <SetupQueueRenameSectionW>
+else
+define SetupQueueRenameSection <SetupQueueRenameSectionA>
+endif
+
+SetupCommitFileQueueA proto WINAPI :HWND, :HSPFILEQ, :PSP_FILE_CALLBACK_A, :PVOID
+SetupCommitFileQueueW proto WINAPI :HWND, :HSPFILEQ, :PSP_FILE_CALLBACK_W, :PVOID
+
+ifdef _UNICODE
+define SetupCommitFileQueue <SetupCommitFileQueueW>
+else
+define SetupCommitFileQueue <SetupCommitFileQueueA>
+endif
+
+SetupScanFileQueueA proto WINAPI :HSPFILEQ, :DWORD, :HWND, :PSP_FILE_CALLBACK_A, :PVOID, :PDWORD
+SetupScanFileQueueW proto WINAPI :HSPFILEQ, :DWORD, :HWND, :PSP_FILE_CALLBACK_W, :PVOID, :PDWORD
+
+ifdef _UNICODE
+define SetupScanFileQueue <SetupScanFileQueueW>
+else
+define SetupScanFileQueue <SetupScanFileQueueA>
+endif
+
+define SPQ_SCAN_FILE_PRESENCE                  0x00000001
+define SPQ_SCAN_FILE_VALIDITY                  0x00000002
+define SPQ_SCAN_USE_CALLBACK                   0x00000004
+define SPQ_SCAN_USE_CALLBACKEX                 0x00000008
+define SPQ_SCAN_INFORM_USER                    0x00000010
+define SPQ_SCAN_PRUNE_COPY_QUEUE               0x00000020
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SPQ_SCAN_USE_CALLBACK_SIGNERINFO        0x00000040
+define SPQ_SCAN_PRUNE_DELREN                   0x00000080
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define SPQ_SCAN_FILE_PRESENCE_WITHOUT_SOURCE   0x00000100
+define SPQ_SCAN_FILE_COMPARISON                0x00000200
+define SPQ_SCAN_ACTIVATE_DRP                   0x00000400
+endif
+
+define SPQ_DELAYED_COPY                        0x00000001
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SetupGetFileQueueCount proto WINAPI :HSPFILEQ, :UINT, :PUINT
+SetupGetFileQueueFlags proto WINAPI :HSPFILEQ, :PDWORD
+SetupSetFileQueueFlags proto WINAPI :HSPFILEQ, :DWORD, :DWORD
+
+define SPQ_FLAG_BACKUP_AWARE      0x00000001
+
+define SPQ_FLAG_ABORT_IF_UNSIGNED 0x00000002
+
+define SPQ_FLAG_FILES_MODIFIED    0x00000004
+
+define SPQ_FLAG_DO_SHUFFLEMOVE    0x00000008
+
+define SPQ_FLAG_VALID             0x0000000F
+
+endif
+
+define SPOST_NONE  0
+define SPOST_PATH  1
+define SPOST_URL   2
+define SPOST_MAX   3
+
+SetupCopyOEMInfA proto WINAPI :PCSTR, :PCSTR, :DWORD, :DWORD, :PSTR, :DWORD, :PDWORD, :ptr
+SetupCopyOEMInfW proto WINAPI :PCWSTR, :PCWSTR, :DWORD, :DWORD, :PWSTR, :DWORD, :PDWORD, :ptr
+
+ifdef _UNICODE
+define SetupCopyOEMInf <SetupCopyOEMInfW>
+else
+define SetupCopyOEMInf <SetupCopyOEMInfA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SUOI_FORCEDELETE   0x00000001
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define SUOI_INTERNAL1     0x00000002
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+SetupUninstallOEMInfA proto WINAPI :PCSTR, :DWORD, :PVOID
+SetupUninstallOEMInfW proto WINAPI :PCWSTR, :DWORD, :PVOID
+
+ifdef _UNICODE
+define SetupUninstallOEMInf <SetupUninstallOEMInfW>
+else
+define SetupUninstallOEMInf <SetupUninstallOEMInfA>
+endif
+
+SetupUninstallNewlyCopiedInfs proto WINAPI :HSPFILEQ, :DWORD, :PVOID
+
+endif
+
+SetupCreateDiskSpaceListA proto WINAPI :PVOID, :DWORD, :UINT
+SetupCreateDiskSpaceListW proto WINAPI :PVOID, :DWORD, :UINT
+
+ifdef _UNICODE
+define SetupCreateDiskSpaceList <SetupCreateDiskSpaceListW>
+else
+define SetupCreateDiskSpaceList <SetupCreateDiskSpaceListA>
+endif
+
+define SPDSL_IGNORE_DISK              0x00000001
+define SPDSL_DISALLOW_NEGATIVE_ADJUST 0x00000002
+
+SetupDuplicateDiskSpaceListA proto WINAPI :HDSKSPC, :PVOID, :DWORD, :UINT
+SetupDuplicateDiskSpaceListW proto WINAPI :HDSKSPC, :PVOID, :DWORD, :UINT
+
+ifdef _UNICODE
+define SetupDuplicateDiskSpaceList <SetupDuplicateDiskSpaceListW>
+else
+define SetupDuplicateDiskSpaceList <SetupDuplicateDiskSpaceListA>
+endif
+
+SetupDestroyDiskSpaceList proto WINAPI :HDSKSPC
+SetupQueryDrivesInDiskSpaceListA proto WINAPI :HDSKSPC, :PSTR, :DWORD, :PDWORD
+SetupQueryDrivesInDiskSpaceListW proto WINAPI :HDSKSPC, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupQueryDrivesInDiskSpaceList <SetupQueryDrivesInDiskSpaceListW>
+else
+define SetupQueryDrivesInDiskSpaceList <SetupQueryDrivesInDiskSpaceListA>
+endif
+
+SetupQuerySpaceRequiredOnDriveA proto WINAPI :HDSKSPC, :PCSTR, :ptr, :PVOID, :UINT
+SetupQuerySpaceRequiredOnDriveW proto WINAPI :HDSKSPC, :PCWSTR, :ptr, :PVOID, :UINT
+
+ifdef _UNICODE
+define SetupQuerySpaceRequiredOnDrive <SetupQuerySpaceRequiredOnDriveW>
+else
+define SetupQuerySpaceRequiredOnDrive <SetupQuerySpaceRequiredOnDriveA>
+endif
+
+SetupAdjustDiskSpaceListA proto WINAPI :HDSKSPC, :LPCSTR, :LONGLONG, :PVOID, :UINT
+SetupAdjustDiskSpaceListW proto WINAPI :HDSKSPC, :LPCWSTR, :LONGLONG, :PVOID, :UINT
+
+ifdef _UNICODE
+define SetupAdjustDiskSpaceList <SetupAdjustDiskSpaceListW>
+else
+define SetupAdjustDiskSpaceList <SetupAdjustDiskSpaceListA>
+endif
+
+SetupAddToDiskSpaceListA proto WINAPI :HDSKSPC, :PCSTR, :LONGLONG, :UINT, :PVOID, :UINT
+SetupAddToDiskSpaceListW proto WINAPI :HDSKSPC, :PCWSTR, :LONGLONG, :UINT, :PVOID, :UINT
+
+ifdef _UNICODE
+define SetupAddToDiskSpaceList <SetupAddToDiskSpaceListW>
+else
+define SetupAddToDiskSpaceList <SetupAddToDiskSpaceListA>
+endif
+
+SetupAddSectionToDiskSpaceListA proto WINAPI :HDSKSPC, :HINF, :HINF, :PCSTR, :UINT, :PVOID, :UINT
+SetupAddSectionToDiskSpaceListW proto WINAPI :HDSKSPC, :HINF, :HINF, :PCWSTR, :UINT, :PVOID, :UINT
+
+ifdef _UNICODE
+define SetupAddSectionToDiskSpaceList <SetupAddSectionToDiskSpaceListW>
+else
+define SetupAddSectionToDiskSpaceList <SetupAddSectionToDiskSpaceListA>
+endif
+
+SetupAddInstallSectionToDiskSpaceListA proto WINAPI :HDSKSPC, :HINF, :HINF, :PCSTR, :PVOID, :UINT
+SetupAddInstallSectionToDiskSpaceListW proto WINAPI :HDSKSPC, :HINF, :HINF, :PCWSTR, :PVOID, :UINT
+
+ifdef _UNICODE
+define SetupAddInstallSectionToDiskSpaceList <SetupAddInstallSectionToDiskSpaceListW>
+else
+define SetupAddInstallSectionToDiskSpaceList <SetupAddInstallSectionToDiskSpaceListA>
+endif
+
+SetupRemoveFromDiskSpaceListA proto WINAPI :HDSKSPC, :PCSTR, :UINT, :PVOID, :UINT
+SetupRemoveFromDiskSpaceListW proto WINAPI :HDSKSPC, :PCWSTR, :UINT, :PVOID, :UINT
+
+ifdef _UNICODE
+define SetupRemoveFromDiskSpaceList <SetupRemoveFromDiskSpaceListW>
+else
+define SetupRemoveFromDiskSpaceList <SetupRemoveFromDiskSpaceListA>
+endif
+
+SetupRemoveSectionFromDiskSpaceListA proto WINAPI :HDSKSPC, :HINF, :HINF, :PCSTR, :UINT, :PVOID, :UINT
+SetupRemoveSectionFromDiskSpaceListW proto WINAPI :HDSKSPC, :HINF, :HINF, :PCWSTR, :UINT, :PVOID, :UINT
+
+ifdef _UNICODE
+define SetupRemoveSectionFromDiskSpaceList <SetupRemoveSectionFromDiskSpaceListW>
+else
+define SetupRemoveSectionFromDiskSpaceList <SetupRemoveSectionFromDiskSpaceListA>
+endif
+
+SetupRemoveInstallSectionFromDiskSpaceListA proto WINAPI :HDSKSPC, :HINF, :HINF, :PCSTR, :PVOID, :UINT
+SetupRemoveInstallSectionFromDiskSpaceListW proto WINAPI :HDSKSPC, :HINF, :HINF, :PCWSTR, :PVOID, :UINT
+
+ifdef _UNICODE
+define SetupRemoveInstallSectionFromDiskSpaceList <SetupRemoveInstallSectionFromDiskSpaceListW>
+else
+define SetupRemoveInstallSectionFromDiskSpaceList <SetupRemoveInstallSectionFromDiskSpaceListA>
+endif
+
+SetupIterateCabinetA proto WINAPI :PCSTR, :DWORD, :PSP_FILE_CALLBACK_A, :PVOID
+SetupIterateCabinetW proto WINAPI :PCWSTR, :DWORD, :PSP_FILE_CALLBACK_W, :PVOID
+
+ifdef _UNICODE
+define SetupIterateCabinet <SetupIterateCabinetW>
+else
+define SetupIterateCabinet <SetupIterateCabinetA>
+endif
+
+SetupPromptReboot proto WINAPI :HSPFILEQ, :HWND, :BOOL
+
+define SPFILEQ_FILE_IN_USE         0x00000001
+define SPFILEQ_REBOOT_RECOMMENDED  0x00000002
+define SPFILEQ_REBOOT_IN_PROGRESS  0x00000004
+
+SetupInitDefaultQueueCallback proto WINAPI :HWND
+SetupInitDefaultQueueCallbackEx proto WINAPI :HWND, :HWND, :UINT, :DWORD, :PVOID
+SetupTermDefaultQueueCallback proto WINAPI :PVOID
+SetupDefaultQueueCallbackA proto WINAPI :PVOID, :UINT, :UINT_PTR, :UINT_PTR
+SetupDefaultQueueCallbackW proto WINAPI :PVOID, :UINT, :UINT_PTR, :UINT_PTR
+
+ifdef _UNICODE
+define SetupDefaultQueueCallback <SetupDefaultQueueCallbackW>
+else
+define SetupDefaultQueueCallback <SetupDefaultQueueCallbackA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define FLG_ADDREG_DELREG_BIT       ( 0x00008000 )
+endif
+
+define FLG_ADDREG_BINVALUETYPE     ( 0x00000001 )
+define FLG_ADDREG_NOCLOBBER        ( 0x00000002 )
+define FLG_ADDREG_DELVAL           ( 0x00000004 )
+define FLG_ADDREG_APPEND           ( 0x00000008 )
+define FLG_ADDREG_KEYONLY          ( 0x00000010 )
+define FLG_ADDREG_OVERWRITEONLY    ( 0x00000020 )
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define FLG_ADDREG_64BITKEY         ( 0x00001000 )
+define FLG_ADDREG_KEYONLY_COMMON   ( 0x00002000 )
+define FLG_ADDREG_32BITKEY         ( 0x00004000 )
+endif
+
+define FLG_ADDREG_TYPE_MASK        ( 0xFFFF0000 or FLG_ADDREG_BINVALUETYPE )
+define FLG_ADDREG_TYPE_SZ          ( 0x00000000                           )
+define FLG_ADDREG_TYPE_MULTI_SZ    ( 0x00010000                           )
+define FLG_ADDREG_TYPE_EXPAND_SZ   ( 0x00020000                           )
+define FLG_ADDREG_TYPE_BINARY      ( 0x00000000 or FLG_ADDREG_BINVALUETYPE )
+define FLG_ADDREG_TYPE_DWORD       ( 0x00010000 or FLG_ADDREG_BINVALUETYPE )
+define FLG_ADDREG_TYPE_NONE        ( 0x00020000 or FLG_ADDREG_BINVALUETYPE )
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WIN10
+define FLG_ADDREG_TYPE_QWORD       ( 0x000B0000 or FLG_ADDREG_BINVALUETYPE )
+endif
+
+define FLG_DELREG_VALUE            (0x00000000)
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+define FLG_DELREG_TYPE_MASK        FLG_ADDREG_TYPE_MASK
+define FLG_DELREG_TYPE_SZ          FLG_ADDREG_TYPE_SZ
+define FLG_DELREG_TYPE_MULTI_SZ    FLG_ADDREG_TYPE_MULTI_SZ
+define FLG_DELREG_TYPE_EXPAND_SZ   FLG_ADDREG_TYPE_EXPAND_SZ
+define FLG_DELREG_TYPE_BINARY      FLG_ADDREG_TYPE_BINARY
+define FLG_DELREG_TYPE_DWORD       FLG_ADDREG_TYPE_DWORD
+define FLG_DELREG_TYPE_NONE        FLG_ADDREG_TYPE_NONE
+define FLG_DELREG_64BITKEY         FLG_ADDREG_64BITKEY
+define FLG_DELREG_KEYONLY_COMMON   FLG_ADDREG_KEYONLY_COMMON
+define FLG_DELREG_32BITKEY         FLG_ADDREG_32BITKEY
+
+define FLG_DELREG_OPERATION_MASK   (0x000000FE)
+define FLG_DELREG_MULTI_SZ_DELSTRING ( FLG_DELREG_TYPE_MULTI_SZ or FLG_ADDREG_DELREG_BIT or 0x00000002 )
+
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WIN10
+define FLG_DELREG_TYPE_QWORD       FLG_ADDREG_TYPE_QWORD
+endif
+
+define FLG_BITREG_CLEARBITS        ( 0x00000000 )
+define FLG_BITREG_SETBITS          ( 0x00000001 )
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define FLG_BITREG_64BITKEY         ( 0x00001000 )
+define FLG_BITREG_32BITKEY         ( 0x00004000 )
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define FLG_INI2REG_64BITKEY        ( 0x00001000 )
+define FLG_INI2REG_32BITKEY        ( 0x00004000 )
+endif
+
+define FLG_REGSVR_DLLREGISTER      ( 0x00000001 )
+define FLG_REGSVR_DLLINSTALL       ( 0x00000002 )
+
+define FLG_PROFITEM_CURRENTUSER    ( 0x00000001 )
+define FLG_PROFITEM_DELETE         ( 0x00000002 )
+define FLG_PROFITEM_GROUP          ( 0x00000004 )
+define FLG_PROFITEM_CSIDL          ( 0x00000008 )
+
+define FLG_ADDPROPERTY_NOCLOBBER       ( 0x00000001 )
+define FLG_ADDPROPERTY_OVERWRITEONLY   ( 0x00000002 )
+define FLG_ADDPROPERTY_APPEND          ( 0x00000004 )
+define FLG_ADDPROPERTY_OR              ( 0x00000008 )
+define FLG_ADDPROPERTY_AND             ( 0x00000010 )
+
+define FLG_DELPROPERTY_MULTI_SZ_DELSTRING  ( 0x00000001 )
+
+SetupInstallFromInfSectionA proto WINAPI :HWND, :HINF, :PCSTR, :UINT, :HKEY, :PCSTR, :UINT, :PSP_FILE_CALLBACK_A, :PVOID, :HDEVINFO, :PSP_DEVINFO_DATA
+SetupInstallFromInfSectionW proto WINAPI :HWND, :HINF, :PCWSTR, :UINT, :HKEY, :PCWSTR, :UINT, :PSP_FILE_CALLBACK_W, :PVOID, :HDEVINFO, :PSP_DEVINFO_DATA
+
+ifdef _UNICODE
+define SetupInstallFromInfSection <SetupInstallFromInfSectionW>
+else
+define SetupInstallFromInfSection <SetupInstallFromInfSectionA>
+endif
+
+define SPINST_LOGCONFIG                0x00000001
+define SPINST_INIFILES                 0x00000002
+define SPINST_REGISTRY                 0x00000004
+define SPINST_INI2REG                  0x00000008
+define SPINST_FILES                    0x00000010
+define SPINST_BITREG                   0x00000020
+define SPINST_REGSVR                   0x00000040
+define SPINST_UNREGSVR                 0x00000080
+define SPINST_PROFILEITEMS             0x00000100
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+define SPINST_COPYINF                  0x00000200
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define SPINST_PROPERTIES               0x00000400
+define SPINST_ALL                      0x000007ff
+else
+define SPINST_ALL                      0x000003ff
+endif
+else
+define SPINST_ALL                      0x000001ff
+endif
+
+define SPINST_SINGLESECTION            0x00010000
+define SPINST_LOGCONFIG_IS_FORCED      0x00020000
+define SPINST_LOGCONFIGS_ARE_OVERRIDES 0x00040000
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SPINST_REGISTERCALLBACKAWARE    0x00080000
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define SPINST_DEVICEINSTALL            0x00100000
+endif
+
+SetupInstallFilesFromInfSectionA proto WINAPI :HINF, :HINF, :HSPFILEQ, :PCSTR, :PCSTR, :UINT
+SetupInstallFilesFromInfSectionW proto WINAPI :HINF, :HINF, :HSPFILEQ, :PCWSTR, :PCWSTR, :UINT
+
+ifdef _UNICODE
+define SetupInstallFilesFromInfSection <SetupInstallFilesFromInfSectionW>
+else
+define SetupInstallFilesFromInfSection <SetupInstallFilesFromInfSectionA>
+endif
+
+define SPSVCINST_TAGTOFRONT                   (0x00000001)
+define SPSVCINST_ASSOCSERVICE                 (0x00000002)
+define SPSVCINST_DELETEEVENTLOGENTRY          (0x00000004)
+define SPSVCINST_NOCLOBBER_DISPLAYNAME        (0x00000008)
+define SPSVCINST_NOCLOBBER_STARTTYPE          (0x00000010)
+define SPSVCINST_NOCLOBBER_ERRORCONTROL       (0x00000020)
+define SPSVCINST_NOCLOBBER_LOADORDERGROUP     (0x00000040)
+define SPSVCINST_NOCLOBBER_DEPENDENCIES       (0x00000080)
+define SPSVCINST_NOCLOBBER_DESCRIPTION        (0x00000100)
+define SPSVCINST_STOPSERVICE                  (0x00000200)
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+define SPSVCINST_CLOBBER_SECURITY             (0x00000400)
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+define SPSVCINST_STARTSERVICE                 (0x00000800)
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WIN7
+define SPSVCINST_NOCLOBBER_REQUIREDPRIVILEGES (0x00001000)
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WIN10
+define SPSVCINST_NOCLOBBER_TRIGGERS (0x00002000)
+define SPSVCINST_NOCLOBBER_SERVICESIDTYPE (0x00004000)
+define SPSVCINST_NOCLOBBER_DELAYEDAUTOSTART (0x00008000)
+define SPSVCINST_UNIQUE_NAME (0x00010000)
+endif
+
+SetupInstallServicesFromInfSectionA proto WINAPI :HINF, :PCSTR, :DWORD
+SetupInstallServicesFromInfSectionW proto WINAPI :HINF, :PCWSTR, :DWORD
+
+ifdef _UNICODE
+define SetupInstallServicesFromInfSection <SetupInstallServicesFromInfSectionW>
+else
+define SetupInstallServicesFromInfSection <SetupInstallServicesFromInfSectionA>
+endif
+
+SetupInstallServicesFromInfSectionExA proto WINAPI :HINF, :PCSTR, :DWORD, :HDEVINFO, :PSP_DEVINFO_DATA, :PVOID, :PVOID
+SetupInstallServicesFromInfSectionExW proto WINAPI :HINF, :PCWSTR, :DWORD, :HDEVINFO, :PSP_DEVINFO_DATA, :PVOID, :PVOID
+
+ifdef _UNICODE
+define SetupInstallServicesFromInfSectionEx <SetupInstallServicesFromInfSectionExW>
+else
+define SetupInstallServicesFromInfSectionEx <SetupInstallServicesFromInfSectionExA>
+endif
+
+InstallHinfSectionA proto WINAPI :HWND, :HINSTANCE, :PCSTR, :sdword
+InstallHinfSectionW proto WINAPI :HWND, :HINSTANCE, :PCWSTR, :sdword
+
+ifdef _UNICODE
+define InstallHinfSection <InstallHinfSectionW>
+else
+define InstallHinfSection <InstallHinfSectionA>
+endif
+
+HSPFILELOG              typedef PVOID
+
+SetupInitializeFileLogA proto WINAPI :PCSTR, :DWORD
+SetupInitializeFileLogW proto WINAPI :PCWSTR, :DWORD
+
+ifdef _UNICODE
+define SetupInitializeFileLog <SetupInitializeFileLogW>
+else
+define SetupInitializeFileLog <SetupInitializeFileLogA>
+endif
+
+define SPFILELOG_SYSTEMLOG     0x00000001
+define SPFILELOG_FORCENEW      0x00000002
+define SPFILELOG_QUERYONLY     0x00000004
+
+SetupTerminateFileLog proto WINAPI :HSPFILELOG
+SetupLogFileA proto WINAPI :HSPFILELOG, :PCSTR, :PCSTR, :PCSTR, :DWORD, :PCSTR, :PCSTR, :PCSTR, :DWORD
+SetupLogFileW proto WINAPI :HSPFILELOG, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD
+
+ifdef _UNICODE
+define SetupLogFile <SetupLogFileW>
+else
+define SetupLogFile <SetupLogFileA>
+endif
+
+define SPFILELOG_OEMFILE   0x00000001
+
+SetupRemoveFileLogEntryA proto WINAPI :HSPFILELOG, :PCSTR, :PCSTR
+SetupRemoveFileLogEntryW proto WINAPI :HSPFILELOG, :PCWSTR, :PCWSTR
+
+ifdef _UNICODE
+define SetupRemoveFileLogEntry <SetupRemoveFileLogEntryW>
+else
+define SetupRemoveFileLogEntry <SetupRemoveFileLogEntryA>
+endif
+
+.enum SetupFileLogInfo {
+    SetupFileLogSourceFilename,
+    SetupFileLogChecksum,
+    SetupFileLogDiskTagfile,
+    SetupFileLogDiskDescription,
+    SetupFileLogOtherInfo,
+    SetupFileLogMax
+}
+
+SetupQueryFileLogA proto WINAPI :HSPFILELOG, :PCSTR, :PCSTR, :SetupFileLogInfo, :PSTR, :DWORD, :PDWORD
+SetupQueryFileLogW proto WINAPI :HSPFILELOG, :PCWSTR, :PCWSTR, :SetupFileLogInfo, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupQueryFileLog <SetupQueryFileLogW>
+else
+define SetupQueryFileLog <SetupQueryFileLogA>
+endif
+
+LogSeverity typedef DWORD
+define LogSevInformation           0x00000000
+define LogSevWarning               0x00000001
+define LogSevError                 0x00000002
+define LogSevFatalError            0x00000003
+define LogSevMaximum               0x00000004
+
+SetupOpenLog proto WINAPI :BOOL
+SetupLogErrorA proto WINAPI :LPCSTR, :LogSeverity
+SetupLogErrorW proto WINAPI :LPCWSTR, :LogSeverity
+
+ifdef _UNICODE
+define SetupLogError <SetupLogErrorW>
+else
+define SetupLogError <SetupLogErrorA>
+endif
+
+SetupCloseLog proto
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+SetupGetThreadLogToken proto
+SetupSetThreadLogToken proto WINAPI :SP_LOG_TOKEN
+SetupWriteTextLog proto WINAPI :SP_LOG_TOKEN, :DWORD, :DWORD, :PCSTR, :vararg
+SetupWriteTextLogError proto WINAPI :SP_LOG_TOKEN, :DWORD, :DWORD, :DWORD, :PCSTR, :vararg
+SetupWriteTextLogInfLine proto WINAPI :SP_LOG_TOKEN, :DWORD, :HINF, :PINFCONTEXT
+endif
+
+SetupGetBackupInformationA proto WINAPI :HSPFILEQ, :PSP_BACKUP_QUEUE_PARAMS_A
+SetupGetBackupInformationW proto WINAPI :HSPFILEQ, :PSP_BACKUP_QUEUE_PARAMS_W
+
+ifdef _UNICODE
+define SetupGetBackupInformation <SetupGetBackupInformationW>
+else
+define SetupGetBackupInformation <SetupGetBackupInformationA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SetupPrepareQueueForRestoreA proto WINAPI :HSPFILEQ, :PCSTR, :DWORD
+SetupPrepareQueueForRestoreW proto WINAPI :HSPFILEQ, :PCWSTR, :DWORD
+
+ifdef _UNICODE
+define SetupPrepareQueueForRestore <SetupPrepareQueueForRestoreW>
+else
+define SetupPrepareQueueForRestore <SetupPrepareQueueForRestoreA>
+endif
+
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SetupSetNonInteractiveMode proto WINAPI :BOOL
+SetupGetNonInteractiveMode proto
+
+endif
+
+SetupDiCreateDeviceInfoList proto WINAPI :ptr, :HWND
+SetupDiCreateDeviceInfoListExA proto WINAPI :ptr, :HWND, :PCSTR, :PVOID
+SetupDiCreateDeviceInfoListExW proto WINAPI :ptr, :HWND, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiCreateDeviceInfoListEx <SetupDiCreateDeviceInfoListExW>
+else
+define SetupDiCreateDeviceInfoListEx <SetupDiCreateDeviceInfoListExA>
+endif
+
+SetupDiGetDeviceInfoListClass proto WINAPI :HDEVINFO, :LPGUID
+SetupDiGetDeviceInfoListDetailA proto WINAPI :HDEVINFO, :PSP_DEVINFO_LIST_DETAIL_DATA_A
+SetupDiGetDeviceInfoListDetailW proto WINAPI :HDEVINFO, :PSP_DEVINFO_LIST_DETAIL_DATA_W
+
+ifdef _UNICODE
+define SetupDiGetDeviceInfoListDetail <SetupDiGetDeviceInfoListDetailW>
+else
+define SetupDiGetDeviceInfoListDetail <SetupDiGetDeviceInfoListDetailA>
+endif
+
+define DICD_GENERATE_ID        0x00000001
+define DICD_INHERIT_CLASSDRVS  0x00000002
+
+SetupDiCreateDeviceInfoA proto WINAPI :HDEVINFO, :PCSTR, :ptr, :PCSTR, :HWND, :DWORD, :PSP_DEVINFO_DATA
+SetupDiCreateDeviceInfoW proto WINAPI :HDEVINFO, :PCWSTR, :ptr, :PCWSTR, :HWND, :DWORD, :PSP_DEVINFO_DATA
+
+ifdef _UNICODE
+define SetupDiCreateDeviceInfo <SetupDiCreateDeviceInfoW>
+else
+define SetupDiCreateDeviceInfo <SetupDiCreateDeviceInfoA>
+endif
+
+define DIOD_INHERIT_CLASSDRVS  0x00000002
+define DIOD_CANCEL_REMOVE      0x00000004
+
+SetupDiOpenDeviceInfoA proto WINAPI :HDEVINFO, :PCSTR, :HWND, :DWORD, :PSP_DEVINFO_DATA
+SetupDiOpenDeviceInfoW proto WINAPI :HDEVINFO, :PCWSTR, :HWND, :DWORD, :PSP_DEVINFO_DATA
+
+ifdef _UNICODE
+define SetupDiOpenDeviceInfo <SetupDiOpenDeviceInfoW>
+else
+define SetupDiOpenDeviceInfo <SetupDiOpenDeviceInfoA>
+endif
+
+SetupDiGetDeviceInstanceIdA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSTR, :DWORD, :PDWORD
+SetupDiGetDeviceInstanceIdW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiGetDeviceInstanceId <SetupDiGetDeviceInstanceIdW>
+else
+define SetupDiGetDeviceInstanceId <SetupDiGetDeviceInstanceIdA>
+endif
+
+SetupDiDeleteDeviceInfo proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiEnumDeviceInfo proto WINAPI :HDEVINFO, :DWORD, :PSP_DEVINFO_DATA
+SetupDiDestroyDeviceInfoList proto WINAPI :HDEVINFO
+SetupDiEnumDeviceInterfaces proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :ptr, :DWORD, :PSP_DEVICE_INTERFACE_DATA
+
+define SetupDiEnumInterfaceDevice SetupDiEnumDeviceInterfaces
+
+SetupDiCreateDeviceInterfaceA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :ptr, :PCSTR, :DWORD, :PSP_DEVICE_INTERFACE_DATA
+SetupDiCreateDeviceInterfaceW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :ptr, :PCWSTR, :DWORD, :PSP_DEVICE_INTERFACE_DATA
+
+ifdef _UNICODE
+define SetupDiCreateDeviceInterface <SetupDiCreateDeviceInterfaceW>
+else
+define SetupDiCreateDeviceInterface <SetupDiCreateDeviceInterfaceA>
+endif
+
+define SetupDiCreateInterfaceDeviceW SetupDiCreateDeviceInterfaceW
+define SetupDiCreateInterfaceDeviceA SetupDiCreateDeviceInterfaceA
+ifdef _UNICODE
+define SetupDiCreateInterfaceDevice <SetupDiCreateDeviceInterfaceW>
+else
+define SetupDiCreateInterfaceDevice <SetupDiCreateDeviceInterfaceA>
+endif
+
+define DIODI_NO_ADD    0x00000001
+
+SetupDiOpenDeviceInterfaceA proto WINAPI :HDEVINFO, :PCSTR, :DWORD, :PSP_DEVICE_INTERFACE_DATA
+SetupDiOpenDeviceInterfaceW proto WINAPI :HDEVINFO, :PCWSTR, :DWORD, :PSP_DEVICE_INTERFACE_DATA
+
+ifdef _UNICODE
+define SetupDiOpenDeviceInterface <SetupDiOpenDeviceInterfaceW>
+else
+define SetupDiOpenDeviceInterface <SetupDiOpenDeviceInterfaceA>
+endif
+
+define SetupDiOpenInterfaceDeviceW SetupDiOpenDeviceInterfaceW
+define SetupDiOpenInterfaceDeviceA SetupDiOpenDeviceInterfaceA
+ifdef _UNICODE
+define SetupDiOpenInterfaceDevice <SetupDiOpenDeviceInterfaceW>
+else
+define SetupDiOpenInterfaceDevice <SetupDiOpenDeviceInterfaceA>
+endif
+
+SetupDiGetDeviceInterfaceAlias proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :ptr, :PSP_DEVICE_INTERFACE_DATA
+
+define SetupDiGetInterfaceDeviceAlias SetupDiGetDeviceInterfaceAlias
+
+SetupDiDeleteDeviceInterfaceData proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA
+
+define SetupDiDeleteInterfaceDeviceData SetupDiDeleteDeviceInterfaceData
+
+SetupDiRemoveDeviceInterface proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA
+
+define SetupDiRemoveInterfaceDevice SetupDiRemoveDeviceInterface
+
+SetupDiGetDeviceInterfaceDetailA proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :PSP_DEVICE_INTERFACE_DETAIL_DATA_A, :DWORD, :PDWORD, :PSP_DEVINFO_DATA
+SetupDiGetDeviceInterfaceDetailW proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :PSP_DEVICE_INTERFACE_DETAIL_DATA_W, :DWORD, :PDWORD, :PSP_DEVINFO_DATA
+
+ifdef _UNICODE
+define SetupDiGetDeviceInterfaceDetail <SetupDiGetDeviceInterfaceDetailW>
+else
+define SetupDiGetDeviceInterfaceDetail <SetupDiGetDeviceInterfaceDetailA>
+endif
+
+define SetupDiGetInterfaceDeviceDetailW SetupDiGetDeviceInterfaceDetailW
+define SetupDiGetInterfaceDeviceDetailA SetupDiGetDeviceInterfaceDetailA
+ifdef _UNICODE
+define SetupDiGetInterfaceDeviceDetail <SetupDiGetDeviceInterfaceDetailW>
+else
+define SetupDiGetInterfaceDeviceDetail <SetupDiGetDeviceInterfaceDetailA>
+endif
+
+SetupDiInstallDeviceInterfaces proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+
+define SetupDiInstallInterfaceDevices SetupDiInstallDeviceInterfaces
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+SetupDiSetDeviceInterfaceDefault proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :DWORD, :PVOID
+endif
+
+define SPRDI_FIND_DUPS        0x00000001
+
+SetupDiRegisterDeviceInfo proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :PSP_DETSIG_CMPPROC, :PVOID, :PSP_DEVINFO_DATA
+
+define SPDIT_NODRIVER           0x00000000
+define SPDIT_CLASSDRIVER        0x00000001
+define SPDIT_COMPATDRIVER       0x00000002
+
+SetupDiBuildDriverInfoList proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD
+SetupDiCancelDriverInfoSearch proto WINAPI :HDEVINFO
+SetupDiEnumDriverInfoA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :DWORD, :PSP_DRVINFO_DATA_A
+SetupDiEnumDriverInfoW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :DWORD, :PSP_DRVINFO_DATA_W
+
+ifdef _UNICODE
+define SetupDiEnumDriverInfo <SetupDiEnumDriverInfoW>
+else
+define SetupDiEnumDriverInfo <SetupDiEnumDriverInfoA>
+endif
+
+SetupDiGetSelectedDriverA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_A
+SetupDiGetSelectedDriverW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_W
+
+ifdef _UNICODE
+define SetupDiGetSelectedDriver <SetupDiGetSelectedDriverW>
+else
+define SetupDiGetSelectedDriver <SetupDiGetSelectedDriverA>
+endif
+
+SetupDiSetSelectedDriverA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_A
+SetupDiSetSelectedDriverW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_W
+
+ifdef _UNICODE
+define SetupDiSetSelectedDriver <SetupDiSetSelectedDriverW>
+else
+define SetupDiSetSelectedDriver <SetupDiSetSelectedDriverA>
+endif
+
+SetupDiGetDriverInfoDetailA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_A, :PSP_DRVINFO_DETAIL_DATA_A, :DWORD, :PDWORD
+SetupDiGetDriverInfoDetailW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_W, :PSP_DRVINFO_DETAIL_DATA_W, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiGetDriverInfoDetail <SetupDiGetDriverInfoDetailW>
+else
+define SetupDiGetDriverInfoDetail <SetupDiGetDriverInfoDetailA>
+endif
+
+SetupDiDestroyDriverInfoList proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD
+
+define DIGCF_DEFAULT           0x00000001
+define DIGCF_PRESENT           0x00000002
+define DIGCF_ALLCLASSES        0x00000004
+define DIGCF_PROFILE           0x00000008
+define DIGCF_DEVICEINTERFACE   0x00000010
+
+define DIGCF_INTERFACEDEVICE DIGCF_DEVICEINTERFACE
+
+SetupDiGetClassDevsA proto WINAPI :ptr, :PCSTR, :HWND, :DWORD
+SetupDiGetClassDevsW proto WINAPI :ptr, :PCWSTR, :HWND, :DWORD
+
+ifdef _UNICODE
+define SetupDiGetClassDevs <SetupDiGetClassDevsW>
+else
+define SetupDiGetClassDevs <SetupDiGetClassDevsA>
+endif
+
+SetupDiGetClassDevsExA proto WINAPI :ptr, :PCSTR, :HWND, :DWORD, :HDEVINFO, :PCSTR, :PVOID
+SetupDiGetClassDevsExW proto WINAPI :ptr, :PCWSTR, :HWND, :DWORD, :HDEVINFO, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetClassDevsEx <SetupDiGetClassDevsExW>
+else
+define SetupDiGetClassDevsEx <SetupDiGetClassDevsExA>
+endif
+
+SetupDiGetINFClassA proto WINAPI :PCSTR, :LPGUID, :PSTR, :DWORD, :PDWORD
+SetupDiGetINFClassW proto WINAPI :PCWSTR, :LPGUID, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiGetINFClass <SetupDiGetINFClassW>
+else
+define SetupDiGetINFClass <SetupDiGetINFClassA>
+endif
+
+define DIBCI_NOINSTALLCLASS   0x00000001
+define DIBCI_NODISPLAYCLASS   0x00000002
+
+SetupDiBuildClassInfoList proto WINAPI :DWORD, :LPGUID, :DWORD, :PDWORD
+SetupDiBuildClassInfoListExA proto WINAPI :DWORD, :LPGUID, :DWORD, :PDWORD, :PCSTR, :PVOID
+SetupDiBuildClassInfoListExW proto WINAPI :DWORD, :LPGUID, :DWORD, :PDWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiBuildClassInfoListEx <SetupDiBuildClassInfoListExW>
+else
+define SetupDiBuildClassInfoListEx <SetupDiBuildClassInfoListExA>
+endif
+
+SetupDiGetClassDescriptionA proto WINAPI :ptr, :PSTR, :DWORD, :PDWORD
+SetupDiGetClassDescriptionW proto WINAPI :ptr, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiGetClassDescription <SetupDiGetClassDescriptionW>
+else
+define SetupDiGetClassDescription <SetupDiGetClassDescriptionA>
+endif
+
+SetupDiGetClassDescriptionExA proto WINAPI :ptr, :PSTR, :DWORD, :PDWORD, :PCSTR, :PVOID
+SetupDiGetClassDescriptionExW proto WINAPI :ptr, :PWSTR, :DWORD, :PDWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetClassDescriptionEx <SetupDiGetClassDescriptionExW>
+else
+define SetupDiGetClassDescriptionEx <SetupDiGetClassDescriptionExA>
+endif
+
+SetupDiCallClassInstaller proto WINAPI :DI_FUNCTION, :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiSelectDevice proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiSelectBestCompatDrv proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiInstallDevice proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiInstallDriverFiles proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiRegisterCoDeviceInstallers proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiRemoveDevice proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiUnremoveDevice proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WS03
+SetupDiRestartDevices proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+endif
+
+SetupDiChangeState proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiInstallClassA proto WINAPI :HWND, :PCSTR, :DWORD, :HSPFILEQ
+SetupDiInstallClassW proto WINAPI :HWND, :PCWSTR, :DWORD, :HSPFILEQ
+
+ifdef _UNICODE
+define SetupDiInstallClass <SetupDiInstallClassW>
+else
+define SetupDiInstallClass <SetupDiInstallClassA>
+endif
+
+SetupDiInstallClassExA proto WINAPI :HWND, :PCSTR, :DWORD, :HSPFILEQ, :ptr, :PVOID, :PVOID
+SetupDiInstallClassExW proto WINAPI :HWND, :PCWSTR, :DWORD, :HSPFILEQ, :ptr, :PVOID, :PVOID
+
+ifdef _UNICODE
+define SetupDiInstallClassEx <SetupDiInstallClassExW>
+else
+define SetupDiInstallClassEx <SetupDiInstallClassExA>
+endif
+
+SetupDiOpenClassRegKey proto WINAPI :ptr, :REGSAM
+
+define DIOCR_INSTALLER   0x00000001
+define DIOCR_INTERFACE   0x00000002
+
+SetupDiOpenClassRegKeyExA proto WINAPI :ptr, :REGSAM, :DWORD, :PCSTR, :PVOID
+SetupDiOpenClassRegKeyExW proto WINAPI :ptr, :REGSAM, :DWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiOpenClassRegKeyEx <SetupDiOpenClassRegKeyExW>
+else
+define SetupDiOpenClassRegKeyEx <SetupDiOpenClassRegKeyExA>
+endif
+
+SetupDiCreateDeviceInterfaceRegKeyA proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :DWORD, :REGSAM, :HINF, :PCSTR
+SetupDiCreateDeviceInterfaceRegKeyW proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :DWORD, :REGSAM, :HINF, :PCWSTR
+
+ifdef _UNICODE
+define SetupDiCreateDeviceInterfaceRegKey <SetupDiCreateDeviceInterfaceRegKeyW>
+else
+define SetupDiCreateDeviceInterfaceRegKey <SetupDiCreateDeviceInterfaceRegKeyA>
+endif
+
+define SetupDiCreateInterfaceDeviceRegKeyW SetupDiCreateDeviceInterfaceRegKeyW
+define SetupDiCreateInterfaceDeviceRegKeyA SetupDiCreateDeviceInterfaceRegKeyA
+ifdef _UNICODE
+define SetupDiCreateInterfaceDeviceRegKey <SetupDiCreateDeviceInterfaceRegKeyW>
+else
+define SetupDiCreateInterfaceDeviceRegKey <SetupDiCreateDeviceInterfaceRegKeyA>
+endif
+
+SetupDiOpenDeviceInterfaceRegKey proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :DWORD, :REGSAM
+
+define SetupDiOpenInterfaceDeviceRegKey SetupDiOpenDeviceInterfaceRegKey
+
+SetupDiDeleteDeviceInterfaceRegKey proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :DWORD
+
+define SetupDiDeleteInterfaceDeviceRegKey SetupDiDeleteDeviceInterfaceRegKey
+
+define DIREG_DEV       0x00000001
+define DIREG_DRV       0x00000002
+define DIREG_BOTH      0x00000004
+
+SetupDiCreateDevRegKeyA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :DWORD, :DWORD, :HINF, :PCSTR
+SetupDiCreateDevRegKeyW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :DWORD, :DWORD, :HINF, :PCWSTR
+
+ifdef _UNICODE
+define SetupDiCreateDevRegKey <SetupDiCreateDevRegKeyW>
+else
+define SetupDiCreateDevRegKey <SetupDiCreateDevRegKeyA>
+endif
+
+SetupDiOpenDevRegKey proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :DWORD, :DWORD, :REGSAM
+SetupDiDeleteDevRegKey proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :DWORD, :DWORD
+SetupDiGetHwProfileList proto WINAPI :PDWORD, :DWORD, :PDWORD, :PDWORD
+SetupDiGetHwProfileListExA proto WINAPI :PDWORD, :DWORD, :PDWORD, :PDWORD, :PCSTR, :PVOID
+SetupDiGetHwProfileListExW proto WINAPI :PDWORD, :DWORD, :PDWORD, :PDWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetHwProfileListEx <SetupDiGetHwProfileListExW>
+else
+define SetupDiGetHwProfileListEx <SetupDiGetHwProfileListExA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+
+SetupDiGetDevicePropertyKeys proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :ptr, :DWORD, :PDWORD, :DWORD
+SetupDiGetDevicePropertyW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :ptr, :ptr, :PBYTE, :DWORD, :PDWORD, :DWORD
+
+ifdef _UNICODE
+define SetupDiGetDeviceProperty <SetupDiGetDevicePropertyW>
+endif
+
+SetupDiSetDevicePropertyW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :ptr, :DEVPROPTYPE, :PBYTE, :DWORD, :DWORD
+
+ifdef _UNICODE
+define SetupDiSetDeviceProperty <SetupDiSetDevicePropertyW>
+endif
+
+SetupDiGetDeviceInterfacePropertyKeys proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :ptr, :DWORD, :PDWORD, :DWORD
+SetupDiGetDeviceInterfacePropertyW proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :ptr, :ptr, :PBYTE, :DWORD, :PDWORD, :DWORD
+
+ifdef _UNICODE
+define SetupDiGetDeviceInterfaceProperty <SetupDiGetDeviceInterfacePropertyW>
+endif
+
+SetupDiSetDeviceInterfacePropertyW proto WINAPI :HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :ptr, :DEVPROPTYPE, :PBYTE, :DWORD, :DWORD
+
+ifdef _UNICODE
+define SetupDiSetDeviceInterfaceProperty <SetupDiSetDeviceInterfacePropertyW>
+endif
+
+define DICLASSPROP_INSTALLER   0x00000001
+define DICLASSPROP_INTERFACE   0x00000002
+
+SetupDiGetClassPropertyKeys proto WINAPI :ptr, :ptr, :DWORD, :PDWORD, :DWORD
+SetupDiGetClassPropertyKeysExW proto WINAPI :ptr, :ptr, :DWORD, :PDWORD, :DWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetClassPropertyKeysEx <SetupDiGetClassPropertyKeysExW>
+endif
+
+SetupDiGetClassPropertyW proto WINAPI :ptr, :ptr, :ptr, :PBYTE, :DWORD, :PDWORD, :DWORD
+
+ifdef _UNICODE
+define SetupDiGetClassProperty <SetupDiGetClassPropertyW>
+endif
+
+SetupDiGetClassPropertyExW proto WINAPI :ptr, :ptr, :ptr, :PBYTE, :DWORD, :PDWORD, :DWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetClassPropertyEx <SetupDiGetClassPropertyExW>
+endif
+
+SetupDiSetClassPropertyW proto WINAPI :ptr, :ptr, :DEVPROPTYPE, :PBYTE, :DWORD, :DWORD
+
+ifdef _UNICODE
+define SetupDiSetClassProperty <SetupDiSetClassPropertyW>
+endif
+
+SetupDiSetClassPropertyExW proto WINAPI :ptr, :ptr, :DEVPROPTYPE, :PBYTE, :DWORD, :DWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiSetClassPropertyEx <SetupDiSetClassPropertyExW>
+endif
+
+endif
+
+define SPDRP_DEVICEDESC                  (0x00000000)
+define SPDRP_HARDWAREID                  (0x00000001)
+define SPDRP_COMPATIBLEIDS               (0x00000002)
+define SPDRP_UNUSED0                     (0x00000003)
+define SPDRP_SERVICE                     (0x00000004)
+define SPDRP_UNUSED1                     (0x00000005)
+define SPDRP_UNUSED2                     (0x00000006)
+define SPDRP_CLASS                       (0x00000007)
+define SPDRP_CLASSGUID                   (0x00000008)
+define SPDRP_DRIVER                      (0x00000009)
+define SPDRP_CONFIGFLAGS                 (0x0000000A)
+define SPDRP_MFG                         (0x0000000B)
+define SPDRP_FRIENDLYNAME                (0x0000000C)
+define SPDRP_LOCATION_INFORMATION        (0x0000000D)
+define SPDRP_PHYSICAL_DEVICE_OBJECT_NAME (0x0000000E)
+define SPDRP_CAPABILITIES                (0x0000000F)
+define SPDRP_UI_NUMBER                   (0x00000010)
+define SPDRP_UPPERFILTERS                (0x00000011)
+define SPDRP_LOWERFILTERS                (0x00000012)
+define SPDRP_BUSTYPEGUID                 (0x00000013)
+define SPDRP_LEGACYBUSTYPE               (0x00000014)
+define SPDRP_BUSNUMBER                   (0x00000015)
+define SPDRP_ENUMERATOR_NAME             (0x00000016)
+define SPDRP_SECURITY                    (0x00000017)
+define SPDRP_SECURITY_SDS                (0x00000018)
+define SPDRP_DEVTYPE                     (0x00000019)
+define SPDRP_EXCLUSIVE                   (0x0000001A)
+define SPDRP_CHARACTERISTICS             (0x0000001B)
+define SPDRP_ADDRESS                     (0x0000001C)
+define SPDRP_UI_NUMBER_DESC_FORMAT       (0)
+define SPDRP_DEVICE_POWER_DATA           (0x0000001E)
+define SPDRP_REMOVAL_POLICY              (0x0000001F)
+define SPDRP_REMOVAL_POLICY_HW_DEFAULT   (0x00000020)
+define SPDRP_REMOVAL_POLICY_OVERRIDE     (0x00000021)
+define SPDRP_INSTALL_STATE               (0x00000022)
+define SPDRP_LOCATION_PATHS              (0x00000023)
+define SPDRP_BASE_CONTAINERID            (0x00000024)
+
+define SPDRP_MAXIMUM_PROPERTY            (0x00000025)
+
+define SPCRP_UPPERFILTERS                (0x00000011)
+define SPCRP_LOWERFILTERS                (0x00000012)
+define SPCRP_SECURITY                    (0x00000017)
+define SPCRP_SECURITY_SDS                (0x00000018)
+define SPCRP_DEVTYPE                     (0x00000019)
+define SPCRP_EXCLUSIVE                   (0x0000001A)
+define SPCRP_CHARACTERISTICS             (0x0000001B)
+define SPCRP_MAXIMUM_PROPERTY            (0x0000001C)
+
+SetupDiGetDeviceRegistryPropertyA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD
+SetupDiGetDeviceRegistryPropertyW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiGetDeviceRegistryProperty <SetupDiGetDeviceRegistryPropertyW>
+else
+define SetupDiGetDeviceRegistryProperty <SetupDiGetDeviceRegistryPropertyA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SetupDiGetClassRegistryPropertyA proto WINAPI :ptr, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD, :PCSTR, :PVOID
+SetupDiGetClassRegistryPropertyW proto WINAPI :ptr, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetClassRegistryProperty <SetupDiGetClassRegistryPropertyW>
+else
+define SetupDiGetClassRegistryProperty <SetupDiGetClassRegistryPropertyA>
+endif
+
+endif
+
+SetupDiSetDeviceRegistryPropertyA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :ptr, :DWORD
+SetupDiSetDeviceRegistryPropertyW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :ptr, :DWORD
+
+ifdef _UNICODE
+define SetupDiSetDeviceRegistryProperty <SetupDiSetDeviceRegistryPropertyW>
+else
+define SetupDiSetDeviceRegistryProperty <SetupDiSetDeviceRegistryPropertyA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SetupDiSetClassRegistryPropertyA proto WINAPI :ptr, :DWORD, :ptr, :DWORD, :PCSTR, :PVOID
+SetupDiSetClassRegistryPropertyW proto WINAPI :ptr, :DWORD, :ptr, :DWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiSetClassRegistryProperty <SetupDiSetClassRegistryPropertyW>
+else
+define SetupDiSetClassRegistryProperty <SetupDiSetClassRegistryPropertyA>
+endif
+
+endif
+
+SetupDiGetDeviceInstallParamsA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DEVINSTALL_PARAMS_A
+SetupDiGetDeviceInstallParamsW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DEVINSTALL_PARAMS_W
+
+ifdef _UNICODE
+define SetupDiGetDeviceInstallParams <SetupDiGetDeviceInstallParamsW>
+else
+define SetupDiGetDeviceInstallParams <SetupDiGetDeviceInstallParamsA>
+endif
+
+SetupDiGetClassInstallParamsA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_CLASSINSTALL_HEADER, :DWORD, :PDWORD
+SetupDiGetClassInstallParamsW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_CLASSINSTALL_HEADER, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiGetClassInstallParams <SetupDiGetClassInstallParamsW>
+else
+define SetupDiGetClassInstallParams <SetupDiGetClassInstallParamsA>
+endif
+
+SetupDiSetDeviceInstallParamsA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DEVINSTALL_PARAMS_A
+SetupDiSetDeviceInstallParamsW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DEVINSTALL_PARAMS_W
+
+ifdef _UNICODE
+define SetupDiSetDeviceInstallParams <SetupDiSetDeviceInstallParamsW>
+else
+define SetupDiSetDeviceInstallParams <SetupDiSetDeviceInstallParamsA>
+endif
+
+SetupDiSetClassInstallParamsA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_CLASSINSTALL_HEADER, :DWORD
+SetupDiSetClassInstallParamsW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_CLASSINSTALL_HEADER, :DWORD
+
+ifdef _UNICODE
+define SetupDiSetClassInstallParams <SetupDiSetClassInstallParamsW>
+else
+define SetupDiSetClassInstallParams <SetupDiSetClassInstallParamsA>
+endif
+
+SetupDiGetDriverInstallParamsA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_A, :PSP_DRVINSTALL_PARAMS
+SetupDiGetDriverInstallParamsW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_W, :PSP_DRVINSTALL_PARAMS
+
+ifdef _UNICODE
+define SetupDiGetDriverInstallParams <SetupDiGetDriverInstallParamsW>
+else
+define SetupDiGetDriverInstallParams <SetupDiGetDriverInstallParamsA>
+endif
+
+SetupDiSetDriverInstallParamsA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_A, :PSP_DRVINSTALL_PARAMS
+SetupDiSetDriverInstallParamsW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DRVINFO_DATA_W, :PSP_DRVINSTALL_PARAMS
+
+ifdef _UNICODE
+define SetupDiSetDriverInstallParams <SetupDiSetDriverInstallParamsW>
+else
+define SetupDiSetDriverInstallParams <SetupDiSetDriverInstallParamsA>
+endif
+
+SetupDiLoadClassIcon proto WINAPI :ptr, :ptr, :PINT
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+SetupDiLoadDeviceIcon proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :UINT, :UINT, :DWORD, :ptr
+endif
+
+define DMI_MASK      0x00000001
+define DMI_BKCOLOR   0x00000002
+define DMI_USERECT   0x00000004
+
+SetupDiDrawMiniIcon proto WINAPI :HDC, :RECT, :sdword, :DWORD
+SetupDiGetClassBitmapIndex proto WINAPI :ptr, :PINT
+SetupDiGetClassImageList proto WINAPI :PSP_CLASSIMAGELIST_DATA
+SetupDiGetClassImageListExA proto WINAPI :PSP_CLASSIMAGELIST_DATA, :PCSTR, :PVOID
+SetupDiGetClassImageListExW proto WINAPI :PSP_CLASSIMAGELIST_DATA, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetClassImageListEx <SetupDiGetClassImageListExW>
+else
+define SetupDiGetClassImageListEx <SetupDiGetClassImageListExA>
+endif
+
+SetupDiGetClassImageIndex proto WINAPI :PSP_CLASSIMAGELIST_DATA, :ptr, :PINT
+SetupDiDestroyClassImageList proto WINAPI :PSP_CLASSIMAGELIST_DATA
+
+define DIGCDP_FLAG_BASIC           0x00000001
+define DIGCDP_FLAG_ADVANCED        0x00000002
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+define DIGCDP_FLAG_REMOTE_BASIC    0x00000003
+define DIGCDP_FLAG_REMOTE_ADVANCED 0x00000004
+
+endif
+
+SetupDiGetClassDevPropertySheetsA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :LPPROPSHEETHEADERA, :DWORD, :PDWORD, :DWORD
+SetupDiGetClassDevPropertySheetsW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :LPPROPSHEETHEADERW, :DWORD, :PDWORD, :DWORD
+
+ifdef _UNICODE
+define SetupDiGetClassDevPropertySheets <SetupDiGetClassDevPropertySheetsW>
+else
+define SetupDiGetClassDevPropertySheets <SetupDiGetClassDevPropertySheetsA>
+endif
+
+define IDI_RESOURCEFIRST           159
+define IDI_RESOURCE                159
+define IDI_RESOURCELAST            161
+define IDI_RESOURCEOVERLAYFIRST    161
+define IDI_RESOURCEOVERLAYLAST     161
+define IDI_CONFLICT                161
+
+define IDI_CLASSICON_OVERLAYFIRST  500
+define IDI_CLASSICON_OVERLAYLAST   502
+define IDI_PROBLEM_OVL             500
+define IDI_DISABLED_OVL            501
+define IDI_FORCED_OVL              502
+
+SetupDiAskForOEMDisk proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiSelectOEMDrv proto WINAPI :HWND, :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiClassNameFromGuidA proto WINAPI :ptr, :PSTR, :DWORD, :PDWORD
+SetupDiClassNameFromGuidW proto WINAPI :ptr, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiClassNameFromGuid <SetupDiClassNameFromGuidW>
+else
+define SetupDiClassNameFromGuid <SetupDiClassNameFromGuidA>
+endif
+
+SetupDiClassNameFromGuidExA proto WINAPI :ptr, :PSTR, :DWORD, :PDWORD, :PCSTR, :PVOID
+SetupDiClassNameFromGuidExW proto WINAPI :ptr, :PWSTR, :DWORD, :PDWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiClassNameFromGuidEx <SetupDiClassNameFromGuidExW>
+else
+define SetupDiClassNameFromGuidEx <SetupDiClassNameFromGuidExA>
+endif
+
+SetupDiClassGuidsFromNameA proto WINAPI :PCSTR, :LPGUID, :DWORD, :PDWORD
+SetupDiClassGuidsFromNameW proto WINAPI :PCWSTR, :LPGUID, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiClassGuidsFromName <SetupDiClassGuidsFromNameW>
+else
+define SetupDiClassGuidsFromName <SetupDiClassGuidsFromNameA>
+endif
+
+SetupDiClassGuidsFromNameExA proto WINAPI :PCSTR, :LPGUID, :DWORD, :PDWORD, :PCSTR, :PVOID
+SetupDiClassGuidsFromNameExW proto WINAPI :PCWSTR, :LPGUID, :DWORD, :PDWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiClassGuidsFromNameEx <SetupDiClassGuidsFromNameExW>
+else
+define SetupDiClassGuidsFromNameEx <SetupDiClassGuidsFromNameExA>
+endif
+
+SetupDiGetHwProfileFriendlyNameA proto WINAPI :DWORD, :PSTR, :DWORD, :PDWORD
+SetupDiGetHwProfileFriendlyNameW proto WINAPI :DWORD, :PWSTR, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiGetHwProfileFriendlyName <SetupDiGetHwProfileFriendlyNameW>
+else
+define SetupDiGetHwProfileFriendlyName <SetupDiGetHwProfileFriendlyNameA>
+endif
+
+SetupDiGetHwProfileFriendlyNameExA proto WINAPI :DWORD, :PSTR, :DWORD, :PDWORD, :PCSTR, :PVOID
+SetupDiGetHwProfileFriendlyNameExW proto WINAPI :DWORD, :PWSTR, :DWORD, :PDWORD, :PCWSTR, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetHwProfileFriendlyNameEx <SetupDiGetHwProfileFriendlyNameExW>
+else
+define SetupDiGetHwProfileFriendlyNameEx <SetupDiGetHwProfileFriendlyNameExA>
+endif
+
+define SPWPT_SELECTDEVICE      0x00000001
+
+define SPWP_USE_DEVINFO_DATA   0x00000001
+
+SetupDiGetWizardPage proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_INSTALLWIZARD_DATA, :DWORD, :DWORD
+SetupDiGetSelectedDevice proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+SetupDiSetSelectedDevice proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WS03
+
+SetupDiGetActualModelsSectionA proto WINAPI :PINFCONTEXT, :PSP_ALTPLATFORM_INFO, :PSTR, :DWORD, :PDWORD, :PVOID
+SetupDiGetActualModelsSectionW proto WINAPI :PINFCONTEXT, :PSP_ALTPLATFORM_INFO, :PWSTR, :DWORD, :PDWORD, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetActualModelsSection <SetupDiGetActualModelsSectionW>
+else
+define SetupDiGetActualModelsSection <SetupDiGetActualModelsSectionA>
+endif
+
+endif
+
+SetupDiGetActualSectionToInstallA proto WINAPI :HINF, :PCSTR, :PSTR, :DWORD, :PDWORD, :ptr
+SetupDiGetActualSectionToInstallW proto WINAPI :HINF, :PCWSTR, :PWSTR, :DWORD, :PDWORD, :ptr
+
+ifdef _UNICODE
+define SetupDiGetActualSectionToInstall <SetupDiGetActualSectionToInstallW>
+else
+define SetupDiGetActualSectionToInstall <SetupDiGetActualSectionToInstallA>
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SetupDiGetActualSectionToInstallExA proto WINAPI :HINF, :PCSTR, :PSP_ALTPLATFORM_INFO, :PSTR, :DWORD, :PDWORD, :ptr, :PVOID
+SetupDiGetActualSectionToInstallExW proto WINAPI :HINF, :PCWSTR, :PSP_ALTPLATFORM_INFO, :PWSTR, :DWORD, :PDWORD, :ptr, :PVOID
+
+ifdef _UNICODE
+define SetupDiGetActualSectionToInstallEx <SetupDiGetActualSectionToInstallExW>
+else
+define SetupDiGetActualSectionToInstallEx <SetupDiGetActualSectionToInstallExA>
+endif
+
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SetupEnumInfSectionsA proto WINAPI :HINF, :UINT, :PSTR, :UINT, :ptr
+SetupEnumInfSectionsW proto WINAPI :HINF, :UINT, :PWSTR, :UINT, :ptr
+
+ifdef _UNICODE
+define SetupEnumInfSections <SetupEnumInfSectionsW>
+else
+define SetupEnumInfSections <SetupEnumInfSectionsA>
+endif
+
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+SP_INF_SIGNER_INFO_V1_A struct
+cbSize                  DWORD ?
+CatalogFile             CHAR MAX_PATH dup(?)
+DigitalSigner           CHAR MAX_PATH dup(?)
+DigitalSignerVersion    CHAR MAX_PATH dup(?)
+SP_INF_SIGNER_INFO_V1_A ends
+PSP_INF_SIGNER_INFO_V1_A typedef ptr SP_INF_SIGNER_INFO_V1_A
+
+SP_INF_SIGNER_INFO_V1_W struct
+cbSize                  DWORD ?
+CatalogFile             WCHAR MAX_PATH dup(?)
+DigitalSigner           WCHAR MAX_PATH dup(?)
+DigitalSignerVersion    WCHAR MAX_PATH dup(?)
+SP_INF_SIGNER_INFO_V1_W ends
+PSP_INF_SIGNER_INFO_V1_W typedef ptr SP_INF_SIGNER_INFO_V1_W
+
+ifdef _UNICODE
+SP_INF_SIGNER_INFO_V1   typedef SP_INF_SIGNER_INFO_V1_W
+PSP_INF_SIGNER_INFO_V1  typedef PSP_INF_SIGNER_INFO_V1_W
+else
+SP_INF_SIGNER_INFO_V1   typedef SP_INF_SIGNER_INFO_V1_A
+PSP_INF_SIGNER_INFO_V1  typedef PSP_INF_SIGNER_INFO_V1_A
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
+
+SP_INF_SIGNER_INFO_V2_A struct
+cbSize                  DWORD ?
+CatalogFile             CHAR MAX_PATH dup(?)
+DigitalSigner           CHAR MAX_PATH dup(?)
+DigitalSignerVersion    CHAR MAX_PATH dup(?)
+SignerScore             DWORD ?
+SP_INF_SIGNER_INFO_V2_A ends
+PSP_INF_SIGNER_INFO_V2_A typedef ptr SP_INF_SIGNER_INFO_V2_A
+
+SP_INF_SIGNER_INFO_V2_W struct
+cbSize                  DWORD ?
+CatalogFile             WCHAR MAX_PATH dup(?)
+DigitalSigner           WCHAR MAX_PATH dup(?)
+DigitalSignerVersion    WCHAR MAX_PATH dup(?)
+SignerScore             DWORD ?
+SP_INF_SIGNER_INFO_V2_W ends
+PSP_INF_SIGNER_INFO_V2_W typedef ptr SP_INF_SIGNER_INFO_V2_W
+
+ifdef _UNICODE
+SP_INF_SIGNER_INFO_V2   typedef SP_INF_SIGNER_INFO_V2_W
+PSP_INF_SIGNER_INFO_V2  typedef PSP_INF_SIGNER_INFO_V2_W
+else
+SP_INF_SIGNER_INFO_V2   typedef SP_INF_SIGNER_INFO_V2_A
+PSP_INF_SIGNER_INFO_V2  typedef PSP_INF_SIGNER_INFO_V2_A
+endif
+
+define SIGNERSCORE_UNKNOWN         0xFF000000
+define SIGNERSCORE_W9X_SUSPECT     0xC0000000
+define SIGNERSCORE_UNSIGNED        0x80000000
+define SIGNERSCORE_AUTHENTICODE    0x0F000000
+define SIGNERSCORE_WHQL            0x0D000005
+define SIGNERSCORE_UNCLASSIFIED    0x0D000004
+define SIGNERSCORE_INBOX           0x0D000003
+define SIGNERSCORE_LOGO_STANDARD   0x0D000002
+define SIGNERSCORE_LOGO_PREMIUM    0x0D000001
+
+define SIGNERSCORE_MASK            0xFF000000
+define SIGNERSCORE_SIGNED_MASK     0xF0000000
+
+endif
+
+if USE_SP_INF_SIGNER_INFO_V1 or (_SETUPAPI_VER lt _WIN32_WINNT_LONGHORN)
+SP_INF_SIGNER_INFO_A    typedef SP_INF_SIGNER_INFO_V1_A
+PSP_INF_SIGNER_INFO_A   typedef PSP_INF_SIGNER_INFO_V1_A
+SP_INF_SIGNER_INFO_W    typedef SP_INF_SIGNER_INFO_V1_W
+PSP_INF_SIGNER_INFO_W   typedef PSP_INF_SIGNER_INFO_V1_W
+SP_INF_SIGNER_INFO      typedef SP_INF_SIGNER_INFO_V1
+PSP_INF_SIGNER_INFO     typedef PSP_INF_SIGNER_INFO_V1
+else
+SP_INF_SIGNER_INFO_A    typedef SP_INF_SIGNER_INFO_V2_A
+PSP_INF_SIGNER_INFO_A   typedef PSP_INF_SIGNER_INFO_V2_A
+SP_INF_SIGNER_INFO_W    typedef SP_INF_SIGNER_INFO_V2_W
+PSP_INF_SIGNER_INFO_W   typedef PSP_INF_SIGNER_INFO_V2_W
+SP_INF_SIGNER_INFO      typedef SP_INF_SIGNER_INFO_V2
+PSP_INF_SIGNER_INFO     typedef PSP_INF_SIGNER_INFO_V2
+endif
+
+SetupVerifyInfFileA proto WINAPI :PCSTR, :PSP_ALTPLATFORM_INFO, :PSP_INF_SIGNER_INFO_A
+SetupVerifyInfFileW proto WINAPI :PCWSTR, :PSP_ALTPLATFORM_INFO, :PSP_INF_SIGNER_INFO_W
+
+ifdef _UNICODE
+define SetupVerifyInfFile <SetupVerifyInfFileW>
+else
+define SetupVerifyInfFile <SetupVerifyInfFileA>
+endif
+
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
+
+define DICUSTOMDEVPROP_MERGE_MULTISZ    0x00000001
+
+SetupDiGetCustomDevicePropertyA proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PCSTR, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD
+SetupDiGetCustomDevicePropertyW proto WINAPI :HDEVINFO, :PSP_DEVINFO_DATA, :PCWSTR, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD
+
+ifdef _UNICODE
+define SetupDiGetCustomDeviceProperty <SetupDiGetCustomDevicePropertyW>
+else
+define SetupDiGetCustomDeviceProperty <SetupDiGetCustomDevicePropertyA>
+endif
+
+endif
+
+if _SETUPAPI_VER ge _WIN32_WINNT_WS03
+
+define SCWMI_CLOBBER_SECURITY  0x00000001
+
+SetupConfigureWmiFromInfSectionA proto WINAPI :HINF, :PCSTR, :DWORD
+SetupConfigureWmiFromInfSectionW proto WINAPI :HINF, :PCWSTR, :DWORD
+
+ifdef _UNICODE
+define SetupConfigureWmiFromInfSection <SetupConfigureWmiFromInfSectionW>
+else
+define SetupConfigureWmiFromInfSection <SetupConfigureWmiFromInfSectionA>
+endif
+
+endif
+
+.pragma pack(pop)
+
+endif
+
+endif

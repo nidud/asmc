@@ -1663,6 +1663,9 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
         xor ecx,ecx
         .if ( vparray )
             mov rdx,sym1
+            .if ( rdx != rax && [rdx].asym.mem_type == MT_TYPE )
+                mov rdx,[rdx].asym.type ; added v2.36.21
+            .endif
             .if ( rdx != rax && [rdx].asym.mem_type != MT_PTR )
                 .if ( dotcount == 2 )
                     mov vparray,NULL  ; static class.ptr.proc()

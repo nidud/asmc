@@ -98,6 +98,7 @@ ClassProto2 endp
 AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:ptr asym
 
   local q[512]:char_t
+  local n:string_t
 
     ldr rsi,this
     ldr rbx,sym
@@ -126,7 +127,13 @@ AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:ptr asym
                             mov rdx,[rax].asym.string_ptr
                         .endif
                         .if ( [rax].asym.flags & ( S_VMACRO or S_ISINLINE ) || [rax].asym.state == SYM_MACRO )
-                            AddLineQueueX( "%s_%s equ <%s>", [rsi].class, [rdi].name, rdx )
+
+                            ; v2.36.22 -- skip if child.member() exist
+
+                            mov n,rdx
+                            .if !SymFind( tstrcat( tstrcat( tstrcpy( &q, [rsi].class ), "_" ), [rdi].name ) )
+                                AddLineQueueX( "%s equ <%s>", &q, n )
+                            .endif
                         .endif
                     .endif
                 .endif

@@ -3796,11 +3796,21 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     mov rdx,[rbx+asm_tok*2].tokpos
                 .endif
                 tstrcat( p, rdx )
+
            .else
+
+                assume rsi:nothing
+
                 mov esi,1
                 mov rdx,args[0]
                 .if ( [rdi].flags & S_ISSTATIC )
-                    mov rdx,[rbx+asm_tok*2].string_ptr
+
+                    ; v2.36.22 -- a .static func {} may be base.a.b.class.func(...)
+
+                    .for ( esi = asm_tok*2 : [rbx+rsi+asm_tok].token == T_DOT : esi += asm_tok*2 )
+                        tstrcat( tstrcat( p, [rbx+rsi].string_ptr ), "." )
+                    .endf
+                    mov rdx,[rbx+rsi].string_ptr
                     xor esi,esi
                 .endif
                 tstrcat( p, rdx )
@@ -3811,6 +3821,9 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     .endif
                 .endf
                 mov rsi,sym
+
+                assume rsi:ptr asym
+
             .endif
             tstrcat( p, ")" )
 

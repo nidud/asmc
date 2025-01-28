@@ -1,6 +1,7 @@
 ifndef _INC_MEMORY
 define _INC_MEMORY
 
+include stdlib.inc
 include crtdefs.inc
 
 .pragma comment(lib, libc, msvcrt)

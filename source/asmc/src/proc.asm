@@ -2058,7 +2058,8 @@ WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
         mov simplespec,eax
         mov unw_segs_defined,3
     .else
-        mov segname,segnamebuff
+        ; v2.36.23 ...
+        mov segname,&segnamebuff
         tsprintf( segname, ".pdata$%04u", GetSegIdx( [rdi].asym.segm ) )
         mov simplespec,0
         or  unw_segs_defined,2

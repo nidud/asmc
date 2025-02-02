@@ -563,6 +563,7 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr
     .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
         mov eax,sizeof( CV_MEMBER_16t )
     .endif
+
     mov rcx,type
     xor edx,edx
     .if ( [rcx].asym.typekind != TYPE_RECORD )
@@ -570,15 +571,12 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr
         add edx,[rsi].counters.ofs
     .endif
     .if ( edx >= LF_NUMERIC )
-        add edx,DWORD
+        add eax,DWORD ; v2.36.24 ...
     .endif
 
     mov ecx,[rdi].asym.name_size
     lea rax,[rcx+rax+2+1+3]
     and eax,not 3
-    .if ( [rdi].asym.total_size >= LF_NUMERIC )
-        add eax,DWORD
-    .endif
     add [rsi].counters.size,eax
 
     ; field cvtyperef can only be queried from SYM_TYPE items!
@@ -590,6 +588,7 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr
     .elseif ( [rdi].asym.mem_type == MT_BITS && [rdi].asym.cvtyperef == 0 )
         [rbx].write_bitfield( type, rdi )
     .endif
+
     .if ( [rdi].asym.flags & S_ISARRAY )
 
         ; temporarily (mis)use ext_idx1 member to store the type;
@@ -648,6 +647,7 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:
     mov [rdi].CV_MEMBER_16t.leaf,ax
 
     mov rsi,mbr
+
     .if ( [rsi].asym.flags & S_ISARRAY )
 
         movzx eax,[rsi].asym.ext_idx1

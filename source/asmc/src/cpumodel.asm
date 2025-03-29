@@ -67,8 +67,8 @@ define INIT_OS         0x4
 ModelAttr string_t \
     @CStr("NEARSTACK"),
     @CStr("FARSTACK"),
-    @CStr("OS_OS2"),
-    @CStr("OS_DOS")
+    @CStr("OS_DOS"),
+    @CStr("OS_OS2")
 
 ModelAttrValue typeinfo \
     { STACK_NEAR,     INIT_STACK      },

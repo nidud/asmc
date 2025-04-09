@@ -2,9 +2,9 @@ DZ.TXT--
 Copyright (C) 2025 Doszip Developers.
 
 DOSZIP COMMANDER
-Version 3.83
+Version 3.85
 
-Welcome to Doszip Commander Version 3.83!
+Welcome to Doszip Commander Version 3.85!
 =========================================
 
 

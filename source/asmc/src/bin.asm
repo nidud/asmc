@@ -24,6 +24,8 @@ include expreval.inc
 include pespec.inc
 include qfloat.inc
 
+define ADD_MANIFESTFILE ; Add .pragma comment(linker, "/manifestdependency: ..."
+
 define RAWSIZE_ROUND 1 ;; SectionHeader.SizeOfRawData is multiple FileAlign. Required by MS COFF spec
 define IMGSIZE_ROUND 1 ;; OptionalHeader.SizeOfImage is multiple ObjectAlign. Required by MS COFF spec
 
@@ -1542,6 +1544,60 @@ endif
     assume rbx:nothing
     assume rsi:nothing
 
+ifdef ADD_MANIFESTFILE ; v2.36.26 - add manifest file
+
+AddManifestdependency proc __ccall uses rsi rdi rbx dependency:string_t
+
+   .new cp:string_t
+   .new fp:LPFILE
+   .new file[256]:char_t
+
+    ldr rbx,dependency
+    add rbx,16
+
+    .if tstrrchr( tstrcpy( &file, GetFNamePart( MODULE.curr_fname[ASM*string_t] ) ), '.' )
+        mov byte ptr [rax],0
+    .endif
+
+    .if ( fopen( tstrcat( &file, ".exe.manifest" ), "w" ) != NULL )
+
+        mov fp,rax
+        mov cp,tstrrchr( rbx, '"' )
+        .if ( rax )
+            mov byte ptr [rax],0
+        .endif
+
+        tfprintf( fp,
+            "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n"
+            "<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>\n"
+            "  <trustInfo xmlns=\"urn:schemas-microsoft-com:asm.v3\">\n"
+            "    <security>\n"
+            "      <requestedPrivileges>\n"
+            "        <requestedExecutionLevel level='asInvoker' uiAccess='false' />\n"
+            "      </requestedPrivileges>\n"
+            "    </security>\n"
+            "  </trustInfo>\n"
+            "  <dependency>\n"
+            "    <dependentAssembly>\n"
+            "      <assemblyIdentity %s />\n"
+            "    </dependentAssembly>\n"
+            "  </dependency>\n"
+            "</assembly>\n", rbx )
+
+        mov rax,cp
+        .if ( rax )
+
+            mov byte ptr [rax],'"'
+            lea rbx,[rax+1]
+        .endif
+        fclose(fp)
+    .endif
+    mov rax,rbx
+    ret
+
+AddManifestdependency endp
+endif
+
 pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, size:int_t
 
    .new num[4]:dword
@@ -1660,6 +1716,13 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                     .endif
                 .endif
                 .endc
+ifdef ADD_MANIFESTFILE
+            .case 'inam'
+                sub AddManifestdependency(rsi),rsi
+                sub size,eax
+                add rsi,rax
+               .endc
+endif
             .default
                 and eax,0x00FFFFFF
                 .if eax == 'lld'

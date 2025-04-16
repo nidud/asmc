@@ -15,7 +15,7 @@ Option -pe will make Asmc create a binary in Windows PE format.
 
 You can use the [comment](../directive/dot-pragma.md) pragma to specify some linker options.
 
-Valid options are [/BASE](../tools/linkw/base.md), [/ENTRY](../tools/linkw/entry.md), [/FIXED](../tools/linkw/fixed.md), [/LARGEADDRESSAWARE](../tools/linkw/largeaddressaware.md), [/SUBSYSTEM](../tools/linkw/subsystem.md), and [/DLL](../tools/linkw/dll.md).
+Valid options are [/BASE](../tools/linkw/base.md), [/ENTRY](../tools/linkw/entry.md), [/FIXED](../tools/linkw/fixed.md), [/LARGEADDRESSAWARE](../tools/linkw/largeaddressaware.md), [/MANIFESTDEPENDENCY](../tools/linkw/manifestdependency.md), [/SUBSYSTEM](../tools/linkw/subsystem.md), and [/DLL](../tools/linkw/dll.md).
 
 #### See Also
 

@@ -1,13 +1,15 @@
 include stdio.inc
 include stdlib.inc
 include winnt.inc
-ifdef _WIN64
+
+ifdef __PE__
+.pragma comment(linker, "/entry:mainCRTStartup")
+elseifdef _WIN64
 .pragma comment(linker, @CatStr(<!"/defaultlib:>, %@Environ(ASMCDIR), <\lib\x64\msvcrt.lib!">))
 else
 .pragma comment(linker, @CatStr(<!"/defaultlib:>, %@Environ(ASMCDIR), <\lib\x86\msvcrt.lib!">))
 endif
-
-externdef __ImageBase:IMAGE_DOS_HEADER ; created by LINK
+externdef __ImageBase:IMAGE_DOS_HEADER ; created by LINK/ASMC
 
     .code
 

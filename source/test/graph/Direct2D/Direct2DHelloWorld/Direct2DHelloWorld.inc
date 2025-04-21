@@ -46,6 +46,4 @@ ifdef _MSVCRT
 .data
  IID_ID2D1Factory    IID _IID_ID2D1Factory
  IID_IDWriteFactory  IID _IID_IDWriteFactory
-else
-extern __ImageBase:byte
 endif

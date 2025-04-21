@@ -19,10 +19,6 @@ include tchar.inc
 
 option dllimport:none
 
-ifndef _MSVCRT
-extern __ImageBase:IMAGE_DOS_HEADER
-endif
-
 .class DemoApp
 
     m_hwnd HWND ?

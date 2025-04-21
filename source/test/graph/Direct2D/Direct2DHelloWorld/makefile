@@ -7,5 +7,5 @@ Direct2DHelloWorld.exe:
 	del $@
 
 vs:
-	project -p -u Direct2DHelloWorld
+	project -p -w -u Direct2DHelloWorld
 

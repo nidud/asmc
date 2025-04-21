@@ -7,6 +7,6 @@ GdiInteropSample.exe:
 	del $@
 
 vs:
-	project -p -u GdiInteropSample
+	project -p -w -u GdiInteropSample
 
 

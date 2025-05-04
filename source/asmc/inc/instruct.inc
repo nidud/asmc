@@ -1240,6 +1240,16 @@ insa(AESKEYGENASSIST,aeskeygenassist,OpCls(XMM,XMM_M128,I8_U),F_660F3A,1,no_WDS,
 insa(ADCX, adcx,        OpCls( R32,  R32_M32,  NONE ), F_660F38,1,  no_WDS, 0xF6, 0x00, P_686 or P_SSSE3, 0,0)
 insn(ADCX, 1,           OpCls( R64,  R64_M64,  NONE ), F_660F38,1,  no_WDS, 0xF6, 0x00, P_686 or P_SSSE3, 0,0)
 
+; added v2.36.27
+
+insa(SHA1MSG1, sha1msg1, OpCls( XMM, XMM_M128, NONE ), F_0F38, 1,   no_WDS, 0xC9, 0x00, P_686 or P_SSSE3, 0, 0)
+insa(SHA1MSG2, sha1msg2, OpCls( XMM, XMM_M128, NONE ), F_0F38, 1,   no_WDS, 0xCA, 0x00, P_686 or P_SSSE3, 0, 0)
+insa(SHA1NEXTE, sha1nexte, OpCls( XMM, XMM_M128, NONE ), F_0F38, 1, no_WDS, 0xC8, 0x00, P_686 or P_SSSE3, 0, 0)
+insa(SHA1RNDS4, sha1rnds4, OpCls( XMM, XMM_M128, I8_U ), F_0F3A, 1, no_WDS, 0xCC, 0x00, P_686 or P_SSSE3, 0, 0)
+insa(SHA256MSG1, sha256msg1, OpCls( XMM, XMM_M128, NONE ), F_0F38, 1, no_WDS, 0xCC, 0x00, P_686 or P_SSSE3, 0, 0)
+insa(SHA256MSG2, sha256msg2, OpCls( XMM, XMM_M128, NONE ), F_0F38, 1, no_WDS, 0xCD, 0x00, P_686 or P_SSSE3, 0, 0)
+insa(SHA256RNDS2, sha256rnds2, OpCls( XMM, XMM_M128, XMM0 ), F_0F38, 1, no_WDS, 0xCB, 0x00, P_686 or P_SSSE3, 0, 0)
+
 ; added v2.34.59
 
 ; NP 0F 01 EE RDPKRU  ZO  V/V

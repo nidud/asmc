@@ -8,6 +8,8 @@ Asmc Macro Assembler Reference
 - [MUL (bitwise multiply)](operator-mul.md)
 - [NOT (bitwise not)](operator-not.md)
 - [OR (bitwise or)](operator-or.md)
+- [ROL (Rotate bits left)](operator-rol.md)
+- [ROR (Rotate bits right)](operator-ror.md)
 - [SAR (shift bits right)](operator-sar.md)
 - [SAL (shift bits left)](operator-sal.md)
 - [SHL (shift bits left)](operator-shl.md)

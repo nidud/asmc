@@ -2912,55 +2912,45 @@ endif
             .s8 [rsi].llvalue
             .endc
 
+        .case T_ROL
+        .case T_ROR
         .case T_SAL
         .case T_SHL
-            .if ( [rdi].value < 0 )
-
-                fnasmerr( 2092 )
-               .endc
-            .endif
-            mov eax,64
-            .if ( [rsi].kind == EXPR_FLOAT )
-                mov eax,128
-            .elseif ( MODULE.Ofssize == USE32 )
-                mov eax,32
-            .endif
-            __shlo( rsi, [rdi].value, eax )
-            .if ( MODULE.m510 )
-                xor eax,eax
-                mov [rsi].hvalue,eax
-                .z8 [rsi].hlvalue,rax
-            .endif
-            .endc
-
         .case T_SHR
-            .if ( [rdi].value < 0 )
-
-                fnasmerr( 2092 )
-               .endc
-            .endif
-            mov eax,64
-            .if ( [rsi].kind == EXPR_FLOAT )
-                mov eax,128
-            .elseif ( MODULE.Ofssize == USE32 )
-                mov eax,32
-            .endif
-            __shro( rsi, [rdi].value, eax )
-            .endc
-
         .case T_SAR
-            .if ( [rdi].value < 0 )
+            mov edx,[rdi].value
+            .ifs ( edx < 0 )
 
                 fnasmerr( 2092 )
                .endc
             .endif
-            mov eax,64
+            mov ecx,64
             .if ( [rsi].kind == EXPR_FLOAT )
-                mov eax,128
+                mov ecx,128
             .elseif ( MODULE.Ofssize == USE32 )
-                mov eax,32
+                mov ecx,32
             .endif
-            __saro( rsi, [rdi].value, eax )
+            .switch eax
+            .case T_ROL
+                __rolo( rsi, edx, ecx )
+                .endc
+            .case T_ROR
+                __roro( rsi, edx, ecx )
+                .endc
+            .case T_SHR
+                __shro( rsi, edx, ecx )
+                .endc
+            .case T_SAR
+                __saro( rsi, edx, ecx )
+                .endc
+            .default
+                __shlo( rsi, edx, ecx )
+                .if ( MODULE.m510 )
+                    xor eax,eax
+                    mov [rsi].hvalue,eax
+                    .z8 [rsi].hlvalue,rax
+                .endif
+            .endsw
             .endc
 
         .case T_ADD
@@ -3472,6 +3462,8 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
             .case T_SAR
             .case T_SHL
             .case T_SHR
+            .case T_ROL
+            .case T_ROR
                 mov [rbx].token,T_BINARY_OPERATOR
                 mov [rbx].precedence,8
                 .continue

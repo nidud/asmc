@@ -55,6 +55,8 @@ __divo      proto __ccall :ptr uint128_t, :ptr uint128_t, :ptr uint128_t
 __shlo      proto __ccall :ptr uint128_t, :int_t, :int_t
 __shro      proto __ccall :ptr uint128_t, :int_t, :int_t
 __saro      proto __ccall :ptr uint128_t, :int_t, :int_t
+__rolo      proto __ccall :ptr uint128_t, :int_t, :int_t
+__roro      proto __ccall :ptr uint128_t, :int_t, :int_t
 
 ; Convert float, double, long double
 

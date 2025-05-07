@@ -765,6 +765,50 @@ __shro endp
 
 endif
 
+__rolo proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
+
+    ldr rsi,val
+    ldr edi,bits
+
+    .while count
+
+        mov ecx,edi
+        shr ecx,3
+        movzx ebx,byte ptr [rsi+rcx-1]
+        __shlo(rsi, 1, edi)
+
+        shr ebx,7
+        or  [rsi],bl
+        dec count
+    .endw
+    mov rax,rsi
+    ret
+
+__rolo endp
+
+
+__roro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
+
+    ldr rsi,val
+    ldr edi,bits
+
+    .while count
+
+        mov bl,[rsi]
+        __shro(rsi, 1, edi)
+
+        shl ebx,7
+        mov ecx,edi
+        shr ecx,3
+        or  [rsi+rcx-1],bl
+        dec count
+    .endw
+    mov rax,rsi
+    ret
+
+__roro endp
+
+
     assume rsi:ptr U128
 
 __saro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t

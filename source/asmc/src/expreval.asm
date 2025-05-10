@@ -2627,7 +2627,17 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
         .endc
 
     .case T_BINARY_OPERATOR
-        .if ( [rbx].tokval == T_PTR )
+        .if ( [rbx].tokval == T_PTR || [rbx].tokval == T_BCST )
+
+            ; v2.36.29 - added reserved word BCST -- Masm style "embedded broadcast"
+
+            .if ( [rbx].tokval == T_BCST )
+
+                .for ( rax = rbx : [rax+asm_tok].asm_tok.token != T_FINAL : rax+=asm_tok )
+                .endf
+                or [rax].asm_tok.flags,T_EVEX_OPT
+            .endif
+
             .if ( !( [rsi].flags & E_IS_TYPE ) )
                 mov rax,[rsi].sym
                 .if ( rax && [rax].asym.state == SYM_UNDEFINED )

@@ -4177,17 +4177,21 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             mov CodeInfo.evex,1
             lea rbx,[rsi-asm_tok] ; get transform modifiers
 
-            .repeat
-                .if ( !parsevex( [rbx].string_ptr, &CodeInfo.evexP3 ) )
-                    .return asmerr( 2008, [rbx].string_ptr )
+            .if ( [rbx].token == T_STRING )
+                .repeat
+                    .if ( !parsevex( [rbx].string_ptr, &CodeInfo.evexP3 ) )
+                        .return asmerr( 2008, [rbx].string_ptr )
+                    .endif
+                    sub rbx,asm_tok
+                .until !( [rbx].flags & T_EVEX_OPT )
+
+                .if ( opndx[rdi].kind == EXPR_EMPTY )
+
+                    dec j
+                   .continue
                 .endif
-                sub rbx,asm_tok
-            .until !( [rbx].flags & T_EVEX_OPT )
-
-            .if ( opndx[rdi].kind == EXPR_EMPTY )
-
-                dec j
-               .continue
+            .else
+                or CodeInfo.evexP3,0x10
             .endif
         .endif
 

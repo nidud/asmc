@@ -2,6 +2,7 @@ Asmc Macro Assembler Reference
 
 # Type
 
+- [BCST (embedded broadcast type)](operator-bcst.md)
 - [HIGH (high 8 bits of lowest 16 bits)](operator-high.md)
 - [HIGH32 (high 32 bits of 64 bits)](operator-high32.md)
 - [HIGH64 (high 64 bits of 128 bits)](operator-high64.md)

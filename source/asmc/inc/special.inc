@@ -346,8 +346,9 @@ res(GE,		ge,		RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
 res(GT,		gt,		RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
 res(LE,		le,		RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
 res(LT,		lt,		RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
-res(MOD,	mod,		RWT_BINARY_OP, 0,	 8, 0, P_86, 0 )
-res(PTR,	ptr,		RWT_BINARY_OP, 0,	 4, 0, P_86, 0 )
+res(MOD,	mod,		RWT_BINARY_OP, 0,  8, 0, P_86, 0 )
+res(PTR,	ptr,		RWT_BINARY_OP, 0,  4, 0, P_86, 0 )
+res(BCST,	bcst,		RWT_BINARY_OP, 0,  4, 0, P_AVX, 0 )
 res(DEFINED,	defined,	RWT_BINARY_OP, 0, 11, 0, P_86, 0 )
 
 ; DUP is also a binary operator, but must be handled differently.

@@ -83,7 +83,7 @@ output_opc proc __ccall uses rdi rbx
 
             mov [rsi].evex,1
         .endif
-    .elseif ( MODULE.avxencoding == PREFER_EVEX )
+    .elseif ( ( rflags & RWF_VEX ) && MODULE.avxencoding == PREFER_EVEX )
         mov [rsi].evex,1
     .endif
 

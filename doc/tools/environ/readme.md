@@ -17,7 +17,7 @@ You may then use this batch file as an entry to the Asmc environment. However, a
 
 ### Using Asmc with Visual Studio
 
-The project files provided use VS2022. The configuration files are located in the bin directory. This should work out-of-the-box provided you launch VC from within the shell.
+The project files (.vcxproj) provided use VS2022. The configuration files are located in the bin directory. This should work out-of-the-box provided you launch VS from within the shell. Note that most makefiles has a **vs** target that produce a project file: See source/tools/project for details.
 
 #### See Also
 

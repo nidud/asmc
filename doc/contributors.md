@@ -9,6 +9,7 @@ These people contributed to Asmc (additions, bugfixes, bug reports):
 - Andrea Pappacoda
 - Andreas Grech
 - ASMHSE
+- dannycoh
 - darealshinji
 - Dubravko Stanko
 - Erol-2022

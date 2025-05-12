@@ -2419,6 +2419,7 @@ endif
                 mov [rdi].CV_DebugSLinesHeader_t.segCon,0
                 mov [rdi].CV_DebugSLinesHeader_t.flags,0
                 mov [rdi].CV_DebugSLinesHeader_t.cbCon,[rsi].asym.max_offset
+
                 add rdi,sizeof( CV_DebugSLinesHeader_t )
                 mov File,rdi
                 mov [rdi].CV_DebugSLinesFileBlockHeader_t.offFile,0
@@ -2450,7 +2451,7 @@ endif
                     mov [rcx].CV_DebugSLinesFileBlockHeader_t.offFile,[rdx+rax].cvfile.offs
                     mov Prev,NULL
 
-                    .for ( : rbx: rbx = [rbx].next )
+                    .for ( : rbx : rbx = [rbx].next )
 
                         .new fileCur:int_t
                         .new linenum:int_t
@@ -2467,7 +2468,19 @@ endif
                             mov ecx,[rbx].number
                             mov edx,[rbx].line_number
                         .endif
-                        .break .if ( fileStart != eax )
+                        .if ( fileStart != eax )
+
+                            mov File,cv.flushps( sizeof( CV_DebugSLinesFileBlockHeader_t ) )
+                            xor edx,edx
+                            mov ecx,sizeof( CV_DebugSLinesFileBlockHeader_t )
+                            add cv.ps,rcx
+                            mov [rax].CV_DebugSLinesFileBlockHeader_t.offFile,edx
+                            mov [rax].CV_DebugSLinesFileBlockHeader_t.nLines,edx
+                            mov [rax].CV_DebugSLinesFileBlockHeader_t.cbBlock,edx
+                            mov rax,Header
+                            add [rax-4],ecx
+                           .break
+                        .endif
 
                         mov fileCur,eax
                         mov linenum,ecx

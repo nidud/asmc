@@ -292,9 +292,9 @@ endif
 
 ifdef _WIN64
 
-__divo proc __ccall uses rbx dividend:ptr uint128_t, divisor:ptr uint128_t, reminder:ptr uint128_t
+__divo proc __ccall dividend:ptr uint128_t, divisor:ptr uint128_t, reminder:ptr uint128_t
 
-    mov     rbx,[rcx]
+    mov     r9,[rcx]
     mov     rcx,[rcx+size_t]
     mov     r10,[rdx]
     mov     r11,[rdx+size_t]
@@ -304,8 +304,8 @@ __divo proc __ccall uses rbx dividend:ptr uint128_t, divisor:ptr uint128_t, remi
     jnz     .not_zero
     test    r11,r11
     jnz     .not_zero
-    xor     rbx,rbx
-    xor     rcx,rcx
+    xor     r9d,r9d
+    xor     ecx,ecx
     jmp     .done
 
 .not_zero:
@@ -314,7 +314,7 @@ __divo proc __ccall uses rbx dividend:ptr uint128_t, divisor:ptr uint128_t, remi
 
     cmp     r11,rcx
     jne     .is_above
-    cmp     r10,rbx
+    cmp     r10,r9
 
 .is_above:
 
@@ -323,8 +323,8 @@ __divo proc __ccall uses rbx dividend:ptr uint128_t, divisor:ptr uint128_t, remi
 
 .is_equal:  ; if divisor == dividend :
 
-    xor     rbx,rbx ; reminder = 0
-    xor     rcx,rcx
+    xor     r9d,r9d  ; reminder = 0
+    xor     ecx,ecx
     inc     eax     ; quotient = 1
     jmp     .done
 
@@ -340,13 +340,13 @@ __divo proc __ccall uses rbx dividend:ptr uint128_t, divisor:ptr uint128_t, remi
     cmp     r11,rcx
     ja      .1
     jc      .0
-    cmp     r10,rbx
+    cmp     r10,r9
     jc      .0
     jz      .0
 .1:
     rcr     r11,1
     rcr     r10,1
-    sub     rbx,r10
+    sub     r9,r10
     sbb     rcx,r11
     cmc
     jc      .4
@@ -355,13 +355,13 @@ __divo proc __ccall uses rbx dividend:ptr uint128_t, divisor:ptr uint128_t, remi
     adc     rdx,rdx
     dec     r8d
     jns     .3
-    add     rbx,r10
+    add     r9,r10
     adc     rcx,r11
     jmp     .done
 .3:
     shr     r11,1
     rcr     r10,1
-    add     rbx,r10
+    add     r9,r10
     adc     rcx,r11
     jnc     .2
 .4:
@@ -375,7 +375,7 @@ __divo proc __ccall uses rbx dividend:ptr uint128_t, divisor:ptr uint128_t, remi
     test    r10,r10
     jz      .5
 
-    mov     [r10],rbx
+    mov     [r10],r9
     mov     [r10+8],rcx
 
 .5:
@@ -554,9 +554,8 @@ endif
 
 ifdef _WIN64
 
-__shlo proc __ccall uses rbx val:ptr uint128_t, count:int_t, bits:int_t
+__shlo proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
 
-    mov rbx,rcx
     mov r10,rcx
     mov ecx,edx
 
@@ -586,7 +585,7 @@ __shlo proc __ccall uses rbx val:ptr uint128_t, count:int_t, bits:int_t
     .endif
     mov [r10],rax
     mov [r10+8],rdx
-    mov rax,rbx
+    mov rax,r10
 
 else
 
@@ -655,9 +654,8 @@ __shlo endp
 
 ifdef _WIN64
 
-__shro proc __ccall uses rbx val:ptr uint128_t, count:int_t, bits:int_t
+__shro proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
 
-    mov rbx,rcx
     mov r10,rcx
     mov ecx,edx
     mov rax,[r10]
@@ -690,7 +688,7 @@ __shro proc __ccall uses rbx val:ptr uint128_t, count:int_t, bits:int_t
 
     mov [r10],rax
     mov [r10+8],rdx
-    mov rax,rbx
+    mov rax,r10
     ret
 
 __shro endp

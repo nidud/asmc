@@ -769,6 +769,7 @@ ifndef _AUTO_LINK
 endif
 endif
     .endif
+
     mov eax,1
     sub eax,rc
     ret

@@ -491,18 +491,19 @@ define FNVBASE  0x811c9dc5
 
 ifdef _WIN64
 
-    option win64:rsp noauto nosave
+; fastcall..
 
-get_hash proc fastcall private token:string_t, len:byte
+get_hash proc watcall private token:string_t, len:byte
 
-    xor     eax,eax
-    test    edx,edx
+    xor     rax,rax
+    test    rdx,rdx
     jz      .1
     mov     eax,FNVBASE
-    mov     r8d,edx
+    mov     r8,rdx
 .0:
-    mov     rdx,0x2020202020202020
-    or      rdx,[rcx]
+    mov     edx,[rcx]
+    or      edx,0x20202020
+    add     rcx,4
     imul    eax,eax,FNVPRIME
     xor     al,dl
     dec     r8d
@@ -511,35 +512,17 @@ get_hash proc fastcall private token:string_t, len:byte
     xor     al,dh
     dec     r8d
     jz      .1
-    shr     rdx,16
+    shr     edx,16
     imul    eax,eax,FNVPRIME
     xor     al,dl
     dec     r8d
     jz      .1
     imul    eax,eax,FNVPRIME
     xor     al,dh
-    dec     r8d
-    jz      .1
-    shr     rdx,16
-    imul    eax,eax,FNVPRIME
-    xor     al,dl
-    dec     r8d
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dh
-    dec     r8d
-    jz      .1
-    shr     rdx,16
-    imul    eax,eax,FNVPRIME
-    xor     al,dl
-    dec     r8d
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dh
-    add     rcx,8
     dec     r8d
     jnz     .0
 .1:
+    xor     edx,edx
     and     eax,HASH_TABITEMS-1
     ret
 
@@ -554,19 +537,18 @@ if sizeof(ReservedWord) ne 16
 .err @CatStr(%@FileName,<(>,%@Line,<): >, <ReservedWord need to 16 byte!!!!>)
 endif
 
-AddResWord proc fastcall private token:int_t
+AddResWord proc watcall private token:int_t
 
-    mov     r10d,ecx
+    mov     r10d,eax
     lea     r11,ResWordTable
-    shl     ecx,4
-    lea     r9,[r11+rcx]
+    shl     eax,4
+    lea     r9,[r11+rax]
     movzx   edx,[r9].len
     mov     rcx,[r9].name
     call    get_hash
 
     lea     rcx,resw_table
     lea     r8,[rcx+rax*2]
-    xor     edx,edx
 
     ; sort the items of a line by length!
 
@@ -607,7 +589,6 @@ RemoveResWord proc fastcall token:int_t
     movzx   edx,[r11+rcx].len
     mov     rcx,[r11+rcx].name
     call    get_hash
-    xor     edx,edx
 
     lea     rcx,resw_table
     lea     r8,[rcx+rax*2]
@@ -654,7 +635,6 @@ rename_node ends
 
     assume r12:ptr rename_node
     assume rbx:ptr ReservedWord
-    option win64:rbp auto save
 
 RenameKeyword proc fastcall uses rsi rdi rbx r12 token:uint_t, name:string_t, length:byte
 
@@ -1010,116 +990,73 @@ ResWordsFini proc __ccall uses rsi rdi rbx
 
 ResWordsFini endp
 
-    option win64:rsp noauto nosave
-
     align 8
 
-FindResWord proc fastcall name:string_t, size:uint_t
+FindResWord proc watcall name:string_t, size:uint_t
 
     test    edx,edx
-    jz      .skip
+    jz      .6
     cmp     edx,max_resw_len
-    ja      .skip
-    cmp     byte ptr [rcx],'_'
-    je      .skip
+    ja      .6
+    cmp     byte ptr [rax],'_'
+    je      .6
 
-    movzx   eax,byte ptr [rcx]
-    cmp     al,'_'
-    je      .skip
-
-    mov     r8,rcx
-    mov     r9,rcx
-
-    or      al,0x20
-    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
-    inc     r8
-    mov     dh,dl
-    dec     dh
-    jz      .1
+    mov     r8,rax
+    mov     r9,rax
+    mov     rax,FNVBASE
+    mov     r10,rdx
 .0:
-    mov     rcx,0x2020202020202020
-    or      rcx,[r8]
+    mov     ecx,[r8]
+    or      ecx,0x20202020
     imul    eax,eax,FNVPRIME
     xor     al,cl
-    dec     dh
+    dec     edx
     jz      .1
     imul    eax,eax,FNVPRIME
     xor     al,ch
-    dec     dh
+    dec     edx
     jz      .1
-    shr     rcx,16
+    shr     ecx,16
     imul    eax,eax,FNVPRIME
     xor     al,cl
-    dec     dh
+    dec     edx
     jz      .1
     imul    eax,eax,FNVPRIME
     xor     al,ch
-    dec     dh
-    jz      .1
-    shr     rcx,16
-    imul    eax,eax,FNVPRIME
-    xor     al,cl
-    dec     dh
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,ch
-    dec     dh
-    jz      .1
-    shr     rcx,16
-    imul    eax,eax,FNVPRIME
-    xor     al,cl
-    dec     dh
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,ch
-    add     r8,8
-    dec     dh
+    add     r8,4
+    dec     edx
     jnz     .0
 .1:
     and     eax,HASH_TABITEMS-1
+
     lea     r11,ResWordTable
     lea     r8,resw_table
     movzx   eax,word ptr [r8+rax*2]
     test    eax,eax
-    jz      .done
-.2:
+    jz      .7
+.3:
     imul    ecx,eax,ReservedWord
-    cmp     dl,[r11+rcx].len
-    jne     .next
+    cmp     r10b,[r11+rcx].len
+    jne     .5
     mov     r8,[r11+rcx].name
-    movzx   ecx,dl
-if 0
-.dd:
-    test    ecx,-4
-    jz      .db
-    sub     ecx,4
-    mov     r10d,[r9+rcx]
-    cmp     r10d,[r8+rcx]
-    je      .dd
-    add     ecx,4
-.db:
-    test    ecx,ecx
-    jz      .done
+    mov     ecx,r10d
+.4:
     dec     ecx
-else
-.db:
-    dec     ecx
-    jz      .done
-endif
-    mov     r10b,[r9+rcx]
-    cmp     r10b,[r8+rcx]
-    je      .db
-    or      r10b,0x20
-    cmp     r10b,[r8+rcx]
-    je      .db
-.next:
+    jz      .7
+    mov     dl,[r9+rcx]
+    cmp     dl,[r8+rcx]
+    je      .4
+    or      dl,0x20
+    cmp     dl,[r8+rcx]
+    je      .4
+.5:
     shl     eax,4
     movzx   eax,[r11+rax].next
     test    eax,eax
-    jnz     .2
-.skip:
+    jnz     .3
+.6:
     xor     eax,eax
-.done:
+.7:
     ret
 
 FindResWord endp
@@ -1535,29 +1472,22 @@ ResWordsFini endp
 
     align 8
 
-FindResWord proc fastcall w_name:string_t, w_size:uint_t
+FindResWord proc watcall w_name:string_t, w_size:uint_t
 
+    mov     ecx,eax
+    xor     eax,eax
     test    edx,edx
-    jz      .skip
+    jz      .6
     cmp     edx,max_resw_len
-    ja      .skip
+    ja      .6
     cmp     byte ptr [ecx],'_'
-    je      .skip
+    je      .6
 
     push    edi
     push    ebx
-
+    mov     eax,FNVBASE
     mov     edi,ecx
-    movzx   eax,byte ptr [ecx]
-    cmp     al,'_'
-    je      .false
-
-    or      al,0x20
-    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
-    inc     ecx
     mov     dh,dl
-    dec     dh
-    jz      .1
 .0:
     mov     ebx,[ecx]
     or      ebx,0x20202020
@@ -1583,7 +1513,7 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
     and     eax,HASH_TABITEMS-1
     movzx   eax,resw_table[eax*2]
     test    eax,eax
-    jz      .done
+    jz      .5
 .2:
     cmp     dl,ResWordTable[eax*8].len
     jne     .4
@@ -1591,7 +1521,7 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
     movzx   ecx,dl
 .3:
     dec     ecx
-    jz      .done
+    jz      .5
     mov     dh,[edi+ecx]
     cmp     dh,[ebx+ecx]
     je      .3
@@ -1602,17 +1532,10 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
     mov     ax,ResWordTable[eax*8].next
     test    eax,eax
     jnz     .2
-.done:
+.5:
     pop     ebx
     pop     edi
-    ret
-.false:
-    xor     eax,eax
-    pop     ebx
-    pop     edi
-    ret
-.skip:
-    xor     eax,eax
+.6:
     ret
 
 FindResWord endp

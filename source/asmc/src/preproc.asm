@@ -166,7 +166,7 @@ PreprocessLine proc __ccall uses rsi rbx tokenarray:token_t
     mov rbx,TokenArray
 
 if REMOVECOMENT eq 0
-    .if ( ( TokenCount == 0 ) && ( CurrIfState == BLOCK_ACTIVE || MODULE.listif ) )
+    .if ( eax == 0 && ( CurrIfState == BLOCK_ACTIVE || MODULE.listif ) )
 
         LstWriteSrcLine()
     .endif

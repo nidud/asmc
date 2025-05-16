@@ -308,32 +308,45 @@ GetLineNumber endp
 LF equ 10
 CR equ 13
 
-ifdef _LIN64
-my_fgetc proc __ccall uses rsi rdi fp:ptr FILE
-    fgetc(rcx)
-    ret
-my_fgetc endp
-else
-my_fgetc equ <fgetc>
-endif
-
-my_fgets proc __ccall private uses rsi rdi buffer:string_t, max:int_t, fp:LPFILE
+my_fgets proc __ccall private uses rsi rdi rbx buffer:string_t, max:int_t, fp:LPFILE
 
     ldr rdi,buffer
+    ldr rbx,fp
     ldr edx,max
-    lea rsi,[rdi+rdx]
 
-    my_fgetc( ldr(fp) )
+    lea rsi,[rdi+rdx]
 
     .while ( rdi < rsi )
 
+        .if ( [rbx].FILE._cnt > 0 )
+
+            dec [rbx].FILE._cnt
+            mov rdx,[rbx].FILE._ptr
+            inc [rbx].FILE._ptr
+            movzx eax,byte ptr [rdx]
+
+        .else
+ifdef __UNIX__
+ifdef _WIN64
+           .new _rsi:qword = rsi
+           .new _rdi:qword = rdi
+endif
+            fgetc(rbx)
+ifdef _WIN64
+            mov rsi,_rsi
+            mov rdi,_rdi
+endif
+else
+            _filbuf(rbx)
+endif
+        .endif
+
         .switch eax
         .case CR
-            .endc ; don't store CR
+            .continue ; don't store CR
         .case LF
             mov byte ptr [rdi],0
-           .return( buffer )
-
+            .return( buffer )
 if DETECTCTRLZ
         .case 0x1a
 
@@ -348,17 +361,17 @@ endif
             .if ( rdi > buffer )
                 mov rax,buffer
             .endif
-           .return
-        .default
-            stosb
+            .return
         .endsw
-        my_fgetc( fp )
+        stosb
     .endw
     asmerr( 2039 )
     mov byte ptr [rdi-1],0
-   .return( buffer )
+    mov rax,buffer
+    ret
 
 my_fgets endp
+
 
 if FILESEQ
 

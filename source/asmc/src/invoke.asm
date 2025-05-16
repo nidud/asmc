@@ -3529,7 +3529,8 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
 
             or [rsi].flags,S_METHOD
-            .if ( pmacro )
+            mov rax,pmacro
+            .if ( rax )
                 or [rsi].flags,S_ISINLINE
                 .if ( [rax].asym.flags & S_ISSTATIC )
                     or [rsi].flags,S_ISSTATIC

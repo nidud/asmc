@@ -318,29 +318,27 @@ my_fgets proc __ccall private uses rsi rdi rbx buffer:string_t, max:int_t, fp:LP
 
     .while ( rdi < rsi )
 
+ifdef __UNIX__
+ifdef _WIN64
+       .new _rsi:qword = rsi
+       .new _rdi:qword = rdi
+endif
+        fgetc(rbx)
+ifdef _WIN64
+        mov rsi,_rsi
+        mov rdi,_rdi
+endif
+else
         .if ( [rbx].FILE._cnt > 0 )
 
             dec [rbx].FILE._cnt
             mov rdx,[rbx].FILE._ptr
             inc [rbx].FILE._ptr
             movzx eax,byte ptr [rdx]
-
         .else
-ifdef __UNIX__
-ifdef _WIN64
-           .new _rsi:qword = rsi
-           .new _rdi:qword = rdi
-endif
-            fgetc(rbx)
-ifdef _WIN64
-            mov rsi,_rsi
-            mov rdi,_rdi
-endif
-else
             _filbuf(rbx)
-endif
         .endif
-
+endif
         .switch eax
         .case CR
             .continue ; don't store CR

@@ -7,7 +7,7 @@ include float.inc
 
 .code
 
-_controlfp proc __cdecl newval:UINT, unmask:UINT
+_controlfp proc newval:UINT, unmask:UINT
 
     ldr eax,unmask
     and eax,not _EM_DENORMAL

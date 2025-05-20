@@ -48,7 +48,7 @@ extern fltused_:word
         .code
         _1(a)
     endif
-    ifdef __SSE__
+    ifdef _WIN64
         movsd a,xmm0
     else
         fstp a
@@ -71,7 +71,7 @@ extern fltused_:word
         .code
         _1(a)
     endif
-    ifdef __SSE__
+    ifdef _WIN64
         movss a,xmm0
     else
         fstp a
@@ -86,7 +86,7 @@ extern fltused_:word
     .static exp {
         this.__d(exp,  1.0,  2.7182818284590450)
 ifdef _WIN64
-        this.__d(exp, 3.54, 34.46691919085739)
+        this.__d(exp, 3.54, 34.46691919085738)
 endif
         }
     .static floor {
@@ -146,7 +146,7 @@ main proc
 ifdef _WIN64
     this.expf()
     this.round()
-    this.tanh()
+;    this.tanh()
 endif
     this.SetStatus()
     ret

@@ -8,20 +8,18 @@ include math.inc
 
     .code
 
-atan proc x:double
-ifdef __SSE__
-  local a:real8
-
-    movsd   a,xmm0
-    fld     a
+atan proc _x:double
+ifdef _WIN64
+   .new x:double = xmm0
 else
-    fld     x
+    define x _x
 endif
+    fld     x
     fld1
     fpatan
-ifdef __SSE__
-    fstp    a
-    movsd   xmm0,a
+ifdef _WIN64
+    fstp    x
+    movsd   xmm0,x
 endif
     ret
 

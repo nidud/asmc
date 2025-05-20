@@ -21,14 +21,10 @@ include math.inc
     option dotname
 
 pow proc _x:double, _y:double
-  local     z:double
-ifdef __SSE__
-  local     a:double
-  local     b:double
-    movsd   a,xmm0
-    movsd   b,xmm1
-    define  x <a>
-    define  y <b>
+   .new z:double
+ifdef _WIN64
+   .new x:double = xmm0
+   .new y:double = xmm1
 else
     define  x <_x>
     define  y <_y>
@@ -301,11 +297,12 @@ endif
     mov     dword ptr x[4],edx
     fld     x
 .o:
-ifdef __SSE__
+ifdef _WIN64
     fstp    x
     movsd   xmm0,x
 endif
     ret
+
 pow endp
 
     end

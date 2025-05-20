@@ -11,7 +11,7 @@ include intrin.inc
     option dotname
 
 fmod proc x:double, y:double
-ifdef __SSE__
+ifdef _WIN64
     movapd  xmm2,xmm0
     divsd   xmm2,xmm1
     roundsd xmm2,xmm2,_MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC
@@ -29,6 +29,7 @@ else
     fstp    st(1)
 endif
     ret
+
 fmod endp
 
     end

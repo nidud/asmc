@@ -1,0 +1,6 @@
+define FUNC  <ceilf>
+define VALUE <2.5>
+define ISFLOAT
+
+include test.inc
+

@@ -4,13 +4,12 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-
 include math.inc
 
     .code
 
 sqrt proc x:double
-ifdef __SSE__
+ifdef _WIN64
     sqrtsd  xmm0,xmm0
 else
     fld     x

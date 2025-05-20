@@ -5,29 +5,79 @@
 ;
 
 include math.inc
-include intrin.inc
+
+option dotname
 
     .code
 
-roundf proc f:float
-ifdef __SSE__
-    movd    eax,xmm0
-    shl     eax,1
-    sbb     edx,edx
-    shr     eax,1
-    movd    xmm0,eax
-    cvtss2si eax,xmm0
-    cvtsi2ss xmm1,eax
-    subss   xmm0,xmm1
-    .if _mm_comige_ss(xmm0, 0.5)
-        inc eax
-    .endif
-    .if edx
-        neg eax
-    .endif
-    cvtsi2ss xmm0,eax
+roundf proc x:float
+ifdef _WIN64
+    movd        eax,xmm0
+    and         eax,0x7f800000
+    mov         ecx,23
+    mov         edx,1
+    sar         eax,cl
+    sub         eax,0x7e
+    jbe         .1
+    sub         ecx,eax
+    js          .3
+    shl         edx,cl
+    mov         eax,0xfffffffe
+    shl         eax,cl
+    movd        xmm2,edx
+    movd        xmm3,eax
+    cvttps2dq   xmm1,xmm0
+    paddd       xmm0,xmm2
+    pand        xmm0,xmm3
+    jmp         .3
+.1:
+    je          .2
+    mov         eax,0x80000000
+    movd        xmm2,eax
+    cvttps2dq   xmm1,xmm0
+    andps       xmm0,xmm2
+    jmp         .3
+.2:
+    mov         eax,0x00800000
+    mov         edx,0xff800000
+    movd        xmm2,eax
+    movd        xmm3,edx
+    cvttps2dq   xmm1,xmm0
+    paddd       xmm0,xmm2
+    pand        xmm0,xmm3
+.3:
 else
-    int 3
+    mov         eax,x
+ifdef __SSE__
+    movss       xmm0,x
+endif
+    and         eax,0x7f800000
+    mov         ecx,23
+    mov         edx,1
+    sar         eax,cl
+    sub         eax,0x7e
+    jbe         .1
+    sub         ecx,eax
+    js          .4
+    shl         edx,cl
+    mov         eax,0xfffffffe
+    shl         eax,cl
+    add         x,edx
+    and         x,eax
+    jmp         .3
+.1:
+    je          .2
+    and         x,0x80000000
+    jmp         .3
+.2:
+    add         x,0x00800000
+    and         x,0xff800000
+.3:
+ifdef __SSE__
+    cvttps2dq   xmm0,xmm0
+endif
+.4:
+    fld         x
 endif
     ret
 

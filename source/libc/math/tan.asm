@@ -7,21 +7,21 @@ include math.inc
 
     .code
 
-tan proc x:double
-ifdef __SSE__
-  local d:double
-    movsd d,xmm0
-    fld   d
+tan proc _x:double
+ifdef _WIN64
+   .new x:double = xmm0
 else
-    fld   x
+    define x _x
 endif
+    fld     x
     fptan
     fstp    st(0)
-ifdef __SSE__
-    fstp  d
-    movsd xmm0,d
+ifdef _WIN64
+    fstp    x
+    movsd   xmm0,x
 endif
     ret
+
 tan endp
 
     end

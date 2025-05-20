@@ -8,16 +8,20 @@ include math.inc
 
     .code
 
-sinf proc x:float
-ifdef __SSE__
-    cvtss2sd xmm0,xmm0
-    sin(xmm0)
-    cvtsd2ss xmm0,xmm0
+sinf proc _x:float
+ifdef _WIN64
+   .new x:float = xmm0
 else
+    define x _x
+endif
     fld     x
     fsin
+ifdef _WIN64
+    fstp    x
+    movss   xmm0,x
 endif
     ret
+
 sinf endp
 
     end

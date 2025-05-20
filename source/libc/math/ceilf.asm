@@ -8,18 +8,14 @@ include math.inc
 
     .code
 
-ceilf proc x:float
-ifdef __SSE__
-    movd      ecx,xmm0
-    xor       ecx,-0.0
-    movd      xmm0,ecx
-    shr       ecx,31
-    cvttss2si eax,xmm0
-    sub       eax,ecx
-    neg       eax
-    cvtsi2ss  xmm0,eax
+ceilf proc _x:float
+ifdef _WIN64
+   .new x:float = xmm0
 else
-  local w:word, n:word
+    define x _x
+endif
+   .new w:word
+   .new n:word
     fld     x
     fstcw   w
     fclex               ; clear exceptions
@@ -28,8 +24,12 @@ else
     frndint             ; round to integer
     fclex
     fldcw   w
+ifdef _WIN64
+    fstp    x
+    movss   xmm0,x
 endif
     ret
+
 ceilf endp
 
     end

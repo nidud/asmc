@@ -9,7 +9,7 @@ include math.inc
     .code
 
 sqrtf proc x:float
-ifdef __SSE__
+ifdef _WIN64
     sqrtss  xmm0,xmm0
 else
     fld     x

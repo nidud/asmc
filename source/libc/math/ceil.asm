@@ -8,26 +8,15 @@ include math.inc
 
     .code
 
-ceil proc x:double
-ifdef _AMD64_
-    mov       rdx,-0.0
-    movq      rcx,xmm0
-    xor       rcx,rdx
-    movq      xmm0,rcx
-    shr       rcx,63
-    cvttsd2si rax,xmm0
-    sub       rax,rcx
-    neg       rax
-    cvtsi2sd  xmm0,rax
+ceil proc _x:double
+ifdef _WIN64
+   .new x:double = xmm0
 else
-ifdef __SSE__
-  local d:double, w:word, n:word
-    movsd   d,xmm0
-    fld     d
-else
-  local w:word, n:word
-    fld     x
+    define x _x
 endif
+   .new w:word
+   .new n:word
+    fld     x
     fstcw   w
     fclex               ; clear exceptions
     mov     n,0x0B63    ; set new rounding
@@ -35,10 +24,9 @@ endif
     frndint             ; round to integer
     fclex
     fldcw   w
-ifdef __SSE__
-    fstp    d
-    movsd   xmm0,d
-endif
+ifdef _WIN64
+    fstp    x
+    movsd   xmm0,x
 endif
     ret
 

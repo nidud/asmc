@@ -8,23 +8,20 @@ include math.inc
 
     .code
 
-atan2f proc x:float, y:float
-ifdef __SSE__
-  local a:float
-  local b:float
-
-    movss   a,xmm0
-    movss   b,xmm1
-    fld     a
-    fld     b
+atan2f proc _y:float, _x:float
+ifdef _WIN64
+   .new x:float = xmm1
+   .new y:float = xmm0
 else
-    fld     x
-    fld     y
+    define x _x
+    define y _y
 endif
+    fld     y
+    fld     x
     fpatan
-ifdef __SSE__
-    fstp    a
-    movss   xmm0,a
+ifdef _WIN64
+    fstp    x
+    movss   xmm0,x
 endif
     ret
 

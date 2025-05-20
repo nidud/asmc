@@ -65,6 +65,7 @@ endif
 
 acos    proto __cdecl _X:double
 asin    proto __cdecl _X:double
+asinh   proto __cdecl _X:double
 atan    proto __cdecl _X:double
 atan2   proto __cdecl _Y:double, _X:double
 ifndef _SIGN_DEFINED
@@ -125,10 +126,11 @@ _hypotf proto __cdecl _X:float, _Y:float
 
 endif
 
-ifdef _M_IA64
+;ifdef _M_IA64
 
 acosf   proto __cdecl _X:float
 asinf   proto __cdecl _X:float
+asinhf  proto __cdecl _X:float
 atanf   proto __cdecl _X:float
 atan2f  proto __cdecl _X:float, _Y:float
 cosf    proto __cdecl _X:float
@@ -140,6 +142,7 @@ sinhf   proto __cdecl _X:float
 tanhf   proto __cdecl _X:float
 
 expf    proto __cdecl _X:float
+exp2f   proto __cdecl _X:float
 logf    proto __cdecl _X:float
 log10f  proto __cdecl _X:float
 modff   proto __cdecl _X:float, _Y:ptr float
@@ -155,7 +158,7 @@ fmodf   proto __cdecl _X:float, _Y:float
 _hypotf proto __cdecl _X:float, _Y:float
 ldexpf  proto __cdecl _X:float, _Y:int_t
 
-endif
+;endif
 
 roundf  proto __cdecl _X:float
 

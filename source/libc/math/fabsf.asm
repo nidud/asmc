@@ -9,7 +9,7 @@ include math.inc
     .code
 
 _fabsf proc x:float
-ifdef __SSE__
+ifdef _WIN64
     pcmpeqw xmm1,xmm1
     psrld   xmm1,1
     andps   xmm0,xmm1

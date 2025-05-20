@@ -8,7 +8,7 @@ include float.inc
 .code
 
 _chgsign proc x:double
-ifdef __SSE__
+ifdef _WIN64
     pcmpeqw xmm1,xmm1
     psllq   xmm1,63
     xorpd   xmm0,xmm1

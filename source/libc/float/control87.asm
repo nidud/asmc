@@ -7,7 +7,7 @@ include float.inc
 
 .code
 
-_control87 proc __cdecl newval:UINT, unmask:UINT
+_control87 proc newval:UINT, unmask:UINT
 
   local cw:word
 

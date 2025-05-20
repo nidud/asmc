@@ -8,19 +8,18 @@ include math.inc
 
     .code
 
-tanf proc x:float
-ifdef __SSE__
-  local f:float
-
-    movss f,xmm0
-    fld   f
+tanf proc _x:float
+ifdef _WIN64
+   .new x:float = xmm0
 else
-    fld   x
+    define x _x
 endif
+    fld     x
     fptan
-ifdef __SSE__
-    fstp  f
-    movss xmm0,f
+    fstp    st(0)
+ifdef _WIN64
+    fstp    x
+    movss   xmm0,x
 endif
     ret
 

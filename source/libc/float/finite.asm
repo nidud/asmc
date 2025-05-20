@@ -7,14 +7,13 @@ include float.inc
 
 .code
 
-_finite proc d:double
-ifdef __SSE__
-    local x:double
-    movsd x,xmm0
-    mov edx,dword ptr x[4]
+_finite proc _x:double
+ifdef _WIN64
+   .new x:double = xmm0
 else
-    mov edx,dword ptr d[4]
+    define x _x
 endif
+    mov edx,dword ptr x[4]
     xor eax,eax
     shr edx,32 - DBL_EXPBITS - 1
     and edx,DBL_EXPMASK

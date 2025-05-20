@@ -15,15 +15,8 @@ ifdef _WIN64
     sub       rax,rcx
     cvtsi2sd  xmm0,rax
 else
-ifdef __SSE__
-  local     w:word, n:word
-  local     d:double
-    movsd   d,xmm0
-    fld     d
-else
-  local     w:word, n:word
+  local w:word, n:word
     fld     x
-endif
     fstcw   w
     fclex
     mov     n,0x0763
@@ -31,12 +24,9 @@ endif
     frndint
     fclex
     fldcw   w
-ifdef __SSE__
-    fstp    d
-    movsd   xmm0,d
-endif
 endif
     ret
+
 floor endp
 
     end

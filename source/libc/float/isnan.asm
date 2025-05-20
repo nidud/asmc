@@ -7,16 +7,14 @@ include float.inc
 
 .code
 
-_isnan proc d:double
-ifdef __SSE__
-    local x:double
-    movsd x,xmm0
+_isnan proc _x:double
+ifdef _WIN64
+   .new x:double = xmm0
+else
+    define x _x
+endif
     mov eax,dword ptr x
     mov edx,dword ptr x[4]
-else
-    mov eax,dword ptr d
-    mov edx,dword ptr d[4]
-endif
     mov ecx,edx
     shl edx,DBL_EXPBITS
     or  edx,eax

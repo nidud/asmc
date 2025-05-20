@@ -8,12 +8,12 @@ include math.inc
 
     .code
 
-acosf proc x:float
-ifdef __SSE__
-    cvtss2sd xmm0,xmm0
-    acos( xmm0 )
-    cvtsd2ss xmm0,xmm0
+acosf proc _x:float
+ifdef _WIN64
+   .new x:float = xmm0
 else
+    define x _x
+endif
     fld     x
     fmul    st(0),st(0)
     fld1
@@ -21,6 +21,9 @@ else
     fsqrt
     fld     x
     fpatan
+ifdef _WIN64
+    fstp    x
+    movss   xmm0,x
 endif
     ret
 

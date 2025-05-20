@@ -8,7 +8,7 @@ include math.inc
     .code
 
 floorf proc x:float
-ifdef __SSE__
+ifdef _WIN64
     movss       xmm1,1.0
     movss       xmm2,xmm0
     cvttps2dq   xmm0,xmm0
@@ -17,7 +17,8 @@ ifdef __SSE__
     andps       xmm2,xmm1
     subss       xmm0,xmm2
 else
-  local     w:word, n:word
+  local w:word, n:word
+    fld     x
     fstcw   w           ; store fpu control word
     movzx   eax,w
     or      eax,0x0400  ; round towards -oo
@@ -28,6 +29,7 @@ else
     fldcw   w           ; restore original control word
 endif
     ret
+
 floorf endp
 
     end

@@ -8,7 +8,7 @@ include float.inc
 .code
 
 _copysign proc x:double, q:double
-ifdef __SSE__
+ifdef _WIN64
     pcmpeqw xmm2,xmm2
     psrlq   xmm2,1
     andpd   xmm0,xmm2

@@ -10,9 +10,8 @@ ifdef _WIN64
 
     .code
 
-__shlo proc __ccall uses rbx val:ptr uint128_t, count:int_t, bits:int_t
+__shlo proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
 
-    mov rbx,rcx
     mov r10,rcx
     mov ecx,edx
 
@@ -42,7 +41,7 @@ __shlo proc __ccall uses rbx val:ptr uint128_t, count:int_t, bits:int_t
     .endif
     mov [r10],rax
     mov [r10+8],rdx
-    mov rax,rbx
+    mov rax,r10
     ret
 
 __shlo endp

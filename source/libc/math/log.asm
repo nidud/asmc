@@ -3,24 +3,24 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+
 include math.inc
 
     .code
 
-log proc x:double
-ifdef __SSE__
-  local     d:double
-    movsd   d,xmm0
-    fld     d
+log proc _x:double
+ifdef _WIN64
+   .new x:double = xmm0
 else
-    fld     x
+    define x _x
 endif
+    fld     x
     fldln2
     fxch    st(1)
     fyl2x
-ifdef __SSE__
-    fstp    d
-    movsd   xmm0,d
+ifdef _WIN64
+    fstp    x
+    movsd   xmm0,x
 endif
     ret
 

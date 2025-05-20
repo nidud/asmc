@@ -7,16 +7,14 @@ include float.inc
 
 .code
 
-_fpclass proc __cdecl x:double
-ifdef __SSE__
-    local d:double
-    movsd d,xmm0
-    mov eax,dword ptr d
-    mov edx,dword ptr d[4]
+_fpclass proc _x:double
+ifdef _WIN64
+   .new x:double = xmm0
 else
+    define x _x
+endif
     mov eax,dword ptr x
     mov edx,dword ptr x[4]
-endif
     mov ecx,edx
     shl edx,DBL_EXPBITS
     or  edx,eax

@@ -11,7 +11,6 @@ include math.inc
 labs proc x:int_t
 
     ldr     ecx,x
-
     mov     eax,ecx
     neg     eax
     test    ecx,ecx
@@ -23,6 +22,7 @@ else
     .endif
 endif
     ret
+
 labs endp
 
     end

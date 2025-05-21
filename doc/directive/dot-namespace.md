@@ -6,7 +6,7 @@ Asmc Macro Assembler Reference
 
 Declares a namespace.
 
-This includes directives .ENUM, EQU, DEFINE, .CLASS, .COMDEF, .TEMPLATE, and data identifiers.
+This includes directives .ENUM, EQU, .CLASS, .COMDEF, .TEMPLATE, and data identifiers.
 
 Example:
 

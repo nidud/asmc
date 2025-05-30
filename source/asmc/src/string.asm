@@ -684,11 +684,11 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endw
 
     .if ( equal == 0 )
-        StoreLine( CurrSource, list_pos, 0 )
+        StoreLine( CurrSource )
     .else
         mov ebx,MODULE.GeneratedCode
         mov MODULE.GeneratedCode,0
-        StoreLine( b_line, list_pos, 0 )
+        StoreLine( b_line )
         mov MODULE.GeneratedCode,ebx
         mov rcx,CurrSource
     .endif

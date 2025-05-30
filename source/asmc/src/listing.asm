@@ -222,7 +222,7 @@ endif
         lea rdi,ll.buffer[OFSSIZE+2]
         mov rdx,[rbx].dsym.seginfo
 
-        .if ( [rdx].seg_info.CodeBuffer == NULL || [rdx].seg_info.written == FALSE )
+        .if ( [rdx].seg_info.CodeBuffer == NULL || !( [rdx].seg_info.flags & SEG_WRITTEN ) )
 
             mov eax,'00'
             mov ecx,newofs

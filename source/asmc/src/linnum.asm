@@ -206,9 +206,9 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
     mov rbx,CurrSeg
     mov rsi,[rbx].dsym.seginfo
 
-    .if ( [rsi].seg_info.linnum_init == FALSE )
+    .if ( !( [rsi].seg_info.flags & SEG_LINUM ) )
 
-        mov [rsi].seg_info.linnum_init,TRUE
+        or [rsi].seg_info.flags,SEG_LINUM
 
         .if ( TypeFromClassName( rbx, [rsi].seg_info.clsym ) != SEGTYPE_CODE )
             asmerr( 4012, [rbx].asym.name )

@@ -22,10 +22,10 @@ omf_GetGrpIdx proto fastcall :ptr asym
 ; logical data for fixup subrecord creation
 
 .template logref
-    fram            db ? ; see enum frame_methods in omfspec.h
+    frame_meth      db ? ; see enum frame_methods in omfspec.h
     frame_datum     dw ? ; datum for certain frame methods
     is_secondary    db ? ; can write target in a secondary manner
-    target          db ? ; see enum target_methods in omfspec.h
+    target_meth     db ? ; see enum target_methods in omfspec.h
     target_datum    dw ? ; datum for certain target methods
     target_offset   dd ? ; offset of target for target method
    .ends
@@ -113,7 +113,7 @@ TranslateLogref proc __ccall private uses rsi rdi rbx lr:ptr logref, buf:ptr byt
     ; displacement field is 0. So we use the is_secondary field.
 
     ldr rsi,lr
-    mov bl,[rsi].target
+    mov bl,[rsi].target_meth
 
     .if ( [rsi].target_offset == 0 && [rsi].is_secondary )
 
@@ -131,11 +131,11 @@ TranslateLogref proc __ccall private uses rsi rdi rbx lr:ptr logref, buf:ptr byt
     ;         1,no displacement field
     ; tt : target method
 
-    mov al,[rsi].fram
+    mov al,[rsi].frame_meth
     shl al,4
     or  al,bl
     stosb
-    mov rdi,putFrameDatum( rdi, [rsi].fram, [rsi].frame_datum )
+    mov rdi,putFrameDatum( rdi, [rsi].frame_meth, [rsi].frame_datum )
     mov rdi,putTargetDatum( rdi, bl, [rsi].target_datum )
 
     .if ( !( bl & 0x04 ) )
@@ -180,7 +180,7 @@ ifndef ASMC64
 
     .if ( [rdi].asym.state == SYM_EXTERNAL )
 
-        mov lr.target,TARGET_EXT and TARGET_WITH_DISPL
+        mov lr.target_meth,TARGET_EXT and TARGET_WITH_DISPL
         mov lr.target_datum,[rdi].asym.ext_idx1
 
         .if ( [rbx].frame_type == FRAME_GRP && [rbx].frame_datum == 0 )
@@ -191,14 +191,14 @@ ifndef ASMC64
         .endif
     .else ; SYM_INTERNAL
 
-        mov lr.target,TARGET_SEG and TARGET_WITH_DISPL
+        mov lr.target_meth,TARGET_SEG and TARGET_WITH_DISPL
         mov lr.target_datum,GetSegIdx( [rdi].asym.segm )
     .endif
 
     .if ( [rbx].frame_type != FRAME_NONE && [rbx].frame_type != FRAME_SEG )
-        mov lr.fram,[rbx].frame_type
+        mov lr.frame_meth,[rbx].frame_type
     .else
-        mov lr.fram,FRAME_TARG
+        mov lr.frame_meth,FRAME_TARG
     .endif
     .return( TranslateLogref( &lr, buf, type ) )
 else
@@ -212,7 +212,7 @@ OmfFixGenFixModend endp
 
 ifndef ASMC64
 
-omf_fill_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr logref
+omf_set_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr logref
 
     ldr rsi,lr
     ldr rbx,fixp
@@ -222,15 +222,47 @@ omf_fill_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr log
     ; Determine the Target and the Frame
     ;------------------------------------
 
-    .if ( edi == NULL )
+    .if ( rdi == NULL )
 
         .if ( [rbx].frame_type == FRAME_NONE ) ; v1.96: nothing to do without a frame
             .return( 0 )
         .endif
 
-        mov [rsi].target,[rbx].frame_type
+        ; v2.15: do NOT create fixups for FLAT group frame.
+        ; Perhaps never create fixups for GROUP frames? It's useless
+        ; unless the linker does pack groups. And, last but not least, jwlink crashes
+        ; if target datum contains FLAT group index.
+
+        mov rcx,MODULE.flat_grp
+        .if ( rcx )
+            mov rcx,[rcx].dsym.grpinfo
+            .if ( [rbx].frame_type == FRAME_GRP && [rbx].frame_datum == [rcx].grp_info.grp_idx )
+                .return( 0 )
+            .endif
+        .endif
+
+        mov [rsi].target_meth,[rbx].frame_type
         mov [rsi].target_datum,[rbx].frame_datum
-        mov [rsi].fram,FRAME_TARG
+        mov [rsi].frame_meth,FRAME_TARG
+if 1
+        ; v2.15: modify frame if segment (used in override) is in a group; see lea2.asm.
+        ;        note that this mod also affects test offset12.asm!
+
+        .if ( [rbx].frame_type == FRAME_SEG )
+
+            .for ( rcx = SymTables[TAB_SEG*symbol_queue].head : rcx : rcx = [rcx].dsym.next )
+                mov rdx,[rcx].dsym.seginfo
+                .if ( [rdx].seg_info.seg_idx == [rbx].frame_datum )
+                    .if ( [rdx].seg_info.sgroup )
+                        mov [rsi].frame_meth,FRAME_GRP
+                        mov rcx,[rdx].seg_info.sgroup
+                        mov [rsi].frame_datum,[rcx].grp_info.grp_idx
+                    .endif
+                    .break
+                .endif
+            .endf
+        .endif
+endif
 
     .elseif ( [rdi].asym.state == SYM_UNDEFINED )  ; shouldn't happen
 
@@ -239,26 +271,26 @@ omf_fill_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr log
 
     .elseif ( [rdi].asym.state == SYM_GRP )
 
-        mov [rsi].target,TARGET_GRP
+        mov [rsi].target_meth,TARGET_GRP
         mov rcx,[rdi].dsym.grpinfo
         mov [rsi].target_datum,[rcx].grp_info.grp_idx
         .if ( [rbx].frame_type != FRAME_NONE )
-            mov [rsi].fram,[rbx].frame_type
+            mov [rsi].frame_meth,[rbx].frame_type
             mov [rsi].frame_datum,[rbx].frame_datum
         .else
-            mov [rsi].fram,FRAME_GRP
+            mov [rsi].frame_meth,FRAME_GRP
             mov [rsi].frame_datum,[rsi].target_datum
         .endif
 
     .elseif ( [rdi].asym.state == SYM_SEG )
 
-        mov [rsi].target,TARGET_SEG
+        mov [rsi].target_meth,TARGET_SEG
         mov [rsi].target_datum,GetSegIdx( rdi )
         .if ( [rbx].frame_type != FRAME_NONE )
-            mov [rsi].fram,[rbx].frame_type
+            mov [rsi].frame_meth,[rbx].frame_type
             mov [rsi].frame_datum,[rbx].frame_datum
         .else
-            mov [rsi].fram,FRAME_SEG
+            mov [rsi].frame_meth,FRAME_SEG
             mov [rsi].frame_datum,[rsi].target_datum
         .endif
 
@@ -268,7 +300,7 @@ omf_fill_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr log
 
         mov [rsi].frame_datum,[rbx].frame_datum
         .if ( [rdi].asym.state == SYM_EXTERNAL )
-            mov [rsi].target,TARGET_EXT
+            mov [rsi].target_meth,TARGET_EXT
             mov [rsi].target_datum,[rdi].asym.ext_idx1
 
             .if ( [rbx].frame_type == FRAME_GRP && [rbx].frame_datum == 0 )
@@ -276,6 +308,9 @@ omf_fill_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr log
                 mov [rsi].frame_datum,omf_GetGrpIdx( rdi )
             .endif
         .else
+
+if 0 ; v2.19: "isvariable" branch disabled; see label9.asm
+
             .if ( [rdi].asym.flags & S_VARIABLE )
                 mov eax,TARGET_SEG
                 .if ( [rbx].frame_type == FRAME_GRP )
@@ -284,40 +319,42 @@ omf_fill_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr log
                 mov [rsi].target,al
                 mov [rsi].target_datum,[rbx].frame_datum
             .elseif ( [rdi].asym.segm == NULL )  ; shouldn't happen
+else
+            .if ( [rdi].asym.segm == NULL )  ; shouldn't happen
+endif
                 asmerr( 3005, [rdi].asym.name )
-                .return ( 0 )
+               .return( 0 )
             .else
                 mov rcx,[rdi].asym.segm
                 mov rcx,[rcx].dsym.seginfo
                 .if ( [rcx].seg_info.comdatselection )
-                    mov [rsi].target,TARGET_EXT
+                    mov [rsi].target_meth,TARGET_EXT
                     mov [rsi].target_datum,[rcx].seg_info.seg_idx
-                    mov [rsi].fram,FRAME_TARG
+                    mov [rsi].frame_meth,FRAME_TARG
                     .return( 1 )
                 .endif
-                mov [rsi].target,TARGET_SEG
+                mov [rsi].target_meth,TARGET_SEG
                 mov [rsi].target_datum,GetSegIdx( [rdi].asym.segm )
             .endif
         .endif
 
         .if ( [rbx].frame_type != FRAME_NONE )
-            mov [rsi].fram,[rbx].frame_type
+            mov [rsi].frame_meth,[rbx].frame_type
         .else
-            mov [rsi].fram,FRAME_TARG
+            mov [rsi].frame_meth,FRAME_TARG
         .endif
     .endif
 
-    ;--------------------
     ; Optimize the fixup
-    ;--------------------
-    mov al,[rsi].target
+
+    mov al,[rsi].target_meth
     sub al,TARGET_SEG
-    .if ( [rsi].fram == al )
-        mov [rsi].fram,FRAME_TARG
+    .if ( [rsi].frame_meth == al )
+        mov [rsi].frame_meth,FRAME_TARG
     .endif
     .return( 1 )
 
-omf_fill_logref endp
+omf_set_logref endp
 
 endif
 
@@ -410,7 +447,7 @@ ifndef ASMC64
     .endif
     or locat1,al  ; bit 7: 1=is a fixup subrecord
 
-    .if ( omf_fill_logref( rbx, &lr ) == 0 )
+    .ifd ( omf_set_logref( rbx, &lr ) == 0 )
         .return( 0 )
     .endif
 

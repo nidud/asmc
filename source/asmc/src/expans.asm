@@ -1474,15 +1474,21 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
                     rep movsb
                     mov edx,i
                     inc edx
-                    mov i,RunMacro( sym, edx, tokenarray, rdi, 0, &is_exitm )
-                    .if i < 0
-
+                    .ifsd ( RunMacro( sym, edx, tokenarray, rdi, 0, &is_exitm ) < 0 )
                         mov rc,ERROR
-                       .break(1)
+                       .break( 1 )
                     .endif
-                    imul ebx,i,asm_tok
-                    add  rbx,tokenarray
-                    tstrcat( rdi, [rbx].tokpos )
+                    imul ebx,eax,asm_tok
+                    add rbx,tokenarray
+
+                    ; v2.15: don't ignore white space(s) behind closing ')' ; see expans43.asm.
+
+                    mov rdx,[rbx].tokpos
+                    .if ( eax > i && byte ptr [rdx-1] == ' ' )
+                        dec rdx
+                    .endif
+                    mov i,eax
+                    tstrcat( rdi, rdx )
                     tstrcpy( outbuf, buffer )
                     mov expanded,TRUE
                     ; is i to be decremented here?

@@ -26,9 +26,6 @@ extern SegOverride:ptr asym
 
 .code
 
-CreateFixup proc __ccall uses rsi rdi rbx sym:ptr asym, type:fixup_types, options:fixup_options
-
-;
 ; called when an instruction operand or a data item is relocatable:
 ; - Parser.idata_fixup()
 ; - Parser.memory_operand()
@@ -40,19 +37,21 @@ CreateFixup proc __ccall uses rsi rdi rbx sym:ptr asym, type:fixup_types, option
 ; put the correct target offset into the link list when forward reference of
 ; relocatable is resolved;
 ; Global vars Frame_Type and Frame_Datum "should" be set.
-;
 
     assume rbx:ptr fixup
 
+CreateFixup proc __ccall uses rsi rdi rbx sym:ptr asym, type:fixup_types, options:fixup_options
+
+    ldr rsi,sym
+
     mov rbx,LclAlloc( sizeof( fixup ) )
-    mov rsi,sym
 
     ; add the fixup to the symbol's linked list (used for backpatch)
     ; this is done for pass 1 only.
 
     .if ( Parse_Pass == PASS_1 )
 
-        .if ( rbx ) ; changed v1.96
+        .if ( rsi && !( [rsi].asym.flags & S_ISDEFINED ) ) ; changed v1.96
 
             mov [rbx].nextbp,[rsi].asym.bp_fixup
             mov [rsi].asym.bp_fixup,rbx
@@ -86,34 +85,6 @@ CreateFixup proc __ccall uses rsi rdi rbx sym:ptr asym, type:fixup_types, option
    .return( rbx )
 
 CreateFixup endp
-
-
-; remove a fixup from the segment's fixup queue
-
-FreeFixup proc __ccall uses rbx fixp:ptr fixup
-
-    ldr rbx,fixp
-
-    .if ( Parse_Pass == PASS_1 )
-
-        mov rcx,[rbx].def_seg
-        .if ( rcx )
-            mov rdx,[rcx].dsym.seginfo
-            .if ( rbx == [rdx].seg_info.head )
-                mov [rdx].seg_info.head,[rbx].nextrlc
-            .else
-                .for ( rcx = [rdx].seg_info.head : rcx : rcx = [rcx].fixup.nextrlc )
-                    .if ( [rcx].fixup.nextrlc == rbx )
-                        mov [rcx].fixup.nextrlc,[rbx].nextrlc
-                        .break
-                    .endif
-                .endf
-            .endif
-        .endif
-    .endif
-    ret
-
-FreeFixup endp
 
 
 ;

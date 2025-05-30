@@ -327,17 +327,16 @@ ifndef ASMC64
         ; do nothing if it isn't the first data item or
         ; if current segment isn't code
 
-        .if ( [rbx].seg_info.data_in_code ||
-              ( [rbx].seg_info.segtype != SEGTYPE_CODE ) )
+        .if ( [rbx].seg_info.flags & SEG_DATAINCODE || ( [rbx].seg_info.segtype != SEGTYPE_CODE ) )
             .return
         .endif
 
         mov sel_start,GetCurrOffset()
-        mov [rbx].seg_info.data_in_code,TRUE
+        or  [rbx].seg_info.flags,SEG_DATAINCODE
 
-    .elseif ( [rbx].seg_info.data_in_code ) ; data items written?
+    .elseif ( [rbx].seg_info.flags & SEG_DATAINCODE ) ; data items written?
 
-        mov [rbx].seg_info.data_in_code,FALSE
+        and [rbx].seg_info.flags,not SEG_DATAINCODE
 
         .if ( write_to_file == TRUE )
 
@@ -783,10 +782,10 @@ omf_write_export proc private uses rsi rdi rbx
   local obj:omf_rec
   local len:int_t
 
-    .for ( rsi = ProcTable: rsi != NULL: rsi = [rsi].dsym.nextproc )
+    .for ( rbx = MODULE.PubQueue.head : rbx : rbx = [rbx].qnode.next )
 
-        mov rbx,[rsi].dsym.procinfo
-        .if ( [rbx].proc_info.flags & PROC_ISEXPORT )
+        mov rsi,[rbx].qnode.sym
+        .if ( [rsi].asym.flags & S_ISEXPORT )
 
             omf_InitRec( &obj, CMD_COMENT )
             mov obj.d.coment.attr,0x00
@@ -828,7 +827,8 @@ endif
             ; bit 6: resident (name should be kept resident)
             ; bit 7: ordinal ( if 1, 2 byte index must follow name)
 
-            .for ( rdx = [rbx].proc_info.paralist, ecx = 0: rdx: rdx = [rdx].dsym.nextparam, ecx++ )
+            mov rdx,[rsi].dsym.procinfo
+            .for ( rdx = [rdx].proc_info.paralist, ecx = 0: rdx: rdx = [rdx].dsym.nextparam, ecx++ )
             .endf
             and ecx,0x1F       ; ensure bits 5-7 are still 0
             Put8( &obj, cl )   ; v2.01: changed from fix 0x00
@@ -932,7 +932,7 @@ omf_write_segdef proc private uses rsi rdi rbx
         omf_InitRec( &obj, CMD_SEGDEF )
 
         .if ( [rdi].seg_info.Ofssize > USE16 )
-            .if ( [rdi].seg_info.force32 || ( [rsi].asym.max_offset >= 0x10000 ) )
+            .if ( [rdi].seg_info.flags & SEG_FORCE32 || ( [rsi].asym.max_offset >= 0x10000 ) )
                 mov obj.is_32,1
             .else
                 mov obj.is_32,0
@@ -1815,7 +1815,7 @@ omf_write_header_dbgcv proc private uses rdi rbx
             ; without this a 32-bit segdef is emitted only if segsize > 64kB
 
             mov rcx,[rax].dsym.seginfo
-            mov [rcx].seg_info.force32,TRUE
+            or  [rcx].seg_info.flags,SEG_FORCE32
             mov [rcx].seg_info.flushfunc,&omf_cv_flushfunc
         .endif
     .endf

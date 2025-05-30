@@ -443,6 +443,7 @@ define FCT_VEC64    5
     SEGTYPE_STACK,
     SEGTYPE_ABS,
     SEGTYPE_HDR,   ; only used in bin.c for better sorting
+    SEGTYPE_CODE16,; v2.19: only used in bin.c for better sorting
     SEGTYPE_CDATA, ; only used in bin.c for better sorting
     SEGTYPE_RELOC, ; only used in bin.c for better sorting
     SEGTYPE_RSRC,  ; only used in bin.c for better sorting

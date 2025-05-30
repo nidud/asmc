@@ -244,10 +244,18 @@ endif
         .endw
         asmerr( 1010, [rcx].asym.name )
     .endif
+
     ; v2.10: check for open PROCedures
+
     ProcCheckOpen()
 
+    ; v2.19 close open segments before calling idata_fixup(). This sets
+    ; CurrSeg = NULL if simplified segment directives are ON.
+
+    SegmentModuleExit()
+
     ; check type of start label. Must be a symbolic code label, internal or external
+
     mov rsi,opndx.sym
     .if ( opndx.kind == EXPR_ADDR && !( opndx.flags & E_INDIRECT ) &&
          ( opndx.mem_type == MT_NEAR || opndx.mem_type == MT_FAR ||
@@ -281,7 +289,7 @@ endif
 
     ; close open segments
 
-    SegmentModuleExit()
+    ;SegmentModuleExit() - v2.19 moved
 
     .if ( MODULE.EndDirHook )
 

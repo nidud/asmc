@@ -40,6 +40,15 @@ include extern.inc
 
 define MASM_EXTCOND 1 ; 1 is Masm compatible
 
+; There's a deliberate Masm incompatibility in JWasm's implementation of
+; EXTERN(DEF): the current segment is stored in the definition, making the
+; assembler assume that, in case the symbol's distance is FAR, that it's
+; in the current segment ( thus allowing some code optimisation ).
+; To behave exactly like Masm in this regard option -Zg has to be set - or
+; enable the switch below.
+
+define MASM_NOSEGSTORE 0 ; 1 is Masm compatible
+
 szCOMM equ <"COMM">
 
 define mangle_type NULL
@@ -288,13 +297,13 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 ; v2.04: don't inherit current segment for FAR externals
                 ; if -Zg is set.
-
+if MASM_NOSEGSTORE
                 .endc .if ( MODULE.masm_compat_gencode )
-
+else
+                .endc
+endif
                 ; fall through
-
             .default
-
                 mov [rsi].asym.segm,CurrSeg
             .endsw
 
@@ -420,7 +429,6 @@ endif
             .endif
         .endif
     .until ( i >= TokenCount )
-
     .return( NOT_ERROR )
 
 ExterndefDirective endp
@@ -557,7 +565,6 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local ti:qualified_type
   local altname:string_t
   local token:string_t
-
 
     inc i ; skip EXT[E]RN token
 
@@ -768,10 +775,8 @@ endif
                 .return( asmerr( 2008, [rbx].string_ptr ) )
             .endif
         .endif
-
      .until ( i >= TokenCount )
-
-    .return( NOT_ERROR )
+     .return( NOT_ERROR )
 
 ExternDirective endp
 
@@ -989,6 +994,7 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local sym:ptr asym
   local skipitem:sbyte
   local langtype:byte
+  local isexport:byte
 
     inc i ; skip PUBLIC directive
 
@@ -1004,6 +1010,17 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .if ( [rbx].token != T_ID )
             .return( asmerr( 2008, [rbx].string_ptr ) )
+        .endif
+
+        ; v2.19: syntax extension: scan for optional EXPORT attribute
+
+        mov isexport,FALSE
+        .if ( Options.strict_masm_compat == FALSE && [rbx+asm_tok].token == T_ID )
+            .ifd ( tstricmp( [rbx].string_ptr, "EXPORT" ) == 0 )
+                mov isexport,TRUE
+                inc i
+                add rbx,asm_tok
+            .endif
         .endif
 
         ; get the symbol name
@@ -1025,19 +1042,23 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
             mov skipitem,FALSE
-        .else
-            .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
-                asmerr( 2006, token )
-            .endif
+        .elseif ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
+            asmerr( 2006, token )
         .endif
         .if ( rdi )
             .switch ( [rdi].asym.state )
             .case SYM_UNDEFINED
+                .if ( isexport )
+                    or [rdi].asym.flags,S_ISEXPORT
+                .endif
                 .endc
             .case SYM_INTERNAL
                 .if ( [rdi].asym.flags & S_SCOPED )
                     asmerr( 2014, [rdi].asym.name )
                     mov skipitem,TRUE
+                .endif
+                .if ( isexport )
+                    or [rdi].asym.flags,S_ISEXPORT
                 .endif
                 .endc
             .case SYM_EXTERNAL
@@ -1074,7 +1095,6 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .return( asmerr( 2008, [rbx].tokpos ) )
             .endif
         .endif
-
     .until ( i >= TokenCount )
     .return( NOT_ERROR )
 

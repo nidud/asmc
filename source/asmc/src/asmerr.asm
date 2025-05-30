@@ -148,7 +148,7 @@ externdef jmpenv:byte
     A2097 equ <"segment expected : %s">
     A2098 equ <"invalid operand for OFFSET">
     A2099 equ <"invalid use of external absolute">
-    A2100 equ <"segment or group not allowed">
+    A2100 equ <"segment or group not allowed : %s %s">
     A2101 equ <"cannot add two relocatable labels">
     A2102 equ <"cannot add memory expression and code label">
     A2103 equ <"segment exceeds 64K limit: %s">

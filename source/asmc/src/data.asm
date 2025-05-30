@@ -566,6 +566,7 @@ data_item proc __ccall uses rsi rdi rbx start_pos:ptr int_t, tokenarray:ptr asm_
 
     .new i:int_t
     .new string_len:int_t
+    .new orgdup:uint_32 ; v2.19
     .new total:uint_32 = 0
     .new initwarn:int_t = FALSE
     .new pchar:string_t
@@ -574,7 +575,7 @@ data_item proc __ccall uses rsi rdi rbx start_pos:ptr int_t, tokenarray:ptr asm_
     .new fixp:ptr fixup
     .new opndx:expr
 
-    .for ( : _dup : _dup-- )
+    .for ( orgdup = _dup : _dup : _dup-- )
 
         mov rcx,start_pos
         mov i,[rcx]
@@ -619,8 +620,9 @@ next_item:
                     ; sym is ALWAYS != NULL and the symbol's type can be gained from
                     ; there.
                     ; v2.10: aliases are now already skipped here ( see above ).
+                    ; v2.19: added "&& orgdup == dup" to avoid warning being emitted multiple times.
 
-                    .if ( [rsi].asym.typekind == TYPE_TYPEDEF && Parse_Pass == PASS_1 )
+                    .if ( [rsi].asym.typekind == TYPE_TYPEDEF && Parse_Pass == PASS_1 && orgdup == _dup )
                         asmerr( 8001, [rbx].tokpos )
                     .endif
                 .endif
@@ -675,14 +677,15 @@ next_item:
         ; handle DUP operator
 
         .if ( [rbx].token == T_RES_ID && [rbx].tokval == T_DUP )
+
+            ; v2.19: check for undefined symbol - may occur even if kind is EXPR_CONST; struct43.asm
+
+            mov rcx,opndx.sym
+            .if ( rcx && [rcx].asym.state == SYM_UNDEFINED )
+                .return( asmerr( 2006, [rcx].asym.name ) )
+            .endif
             .if ( opndx.kind != EXPR_CONST )
-                mov rcx,opndx.sym
-                .if ( rcx && [rcx].asym.state == SYM_UNDEFINED )
-                    asmerr( 2006, [rcx].asym.name )
-                .else
-                    asmerr( 2026 )
-                .endif
-                .return( ERROR )
+                .return( asmerr( 2026 ) )
             .endif
 
             ; max dup is 0x7fffffff
@@ -1050,6 +1053,14 @@ endif
                     .endc
                 .case 2
                     mov edi,FIX_OFF16
+                    ; v2.19: check if offset size is > 16
+                    ; v2.20: skip error if offset size is EMPTY
+                    .if ( rsi )
+                        GetSymOfssize( rsi )
+                        .if ( eax != USE_EMPTY && eax > USE16 )
+                            asmerr( 2071 )
+                        .endif
+                    .endif
                     .endc
                 .case 8
                     .if ( MODULE.Ofssize == USE64 )

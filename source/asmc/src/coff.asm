@@ -172,7 +172,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
         mov rdx,[rdi].dsym.seginfo
         assume rdx:ptr seg_info
 
-        .if ( [rdx].info )
+        .if ( [rdx].flags & SEG_INFO )
 
             ; v2.09: set "remove" flag for .drectve section, as it was done in v2.06 and earlier
             mov rcx,cm
@@ -211,7 +211,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             .if ( [rdx].segtype == SEGTYPE_CODE )
                 or ish.Characteristics,IMAGE_SCN_CNT_CODE or IMAGE_SCN_MEM_EXECUTE or IMAGE_SCN_MEM_READ
-            .elseif ( [rdx].readonly )
+            .elseif ( [rdx].flags & SEG_RDONLY )
                 or ish.Characteristics,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ
             .elseif ( ecx )
                 or ish.Characteristics,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ
@@ -1243,8 +1243,17 @@ endif
                 ; start with the ORG address. The bytes from
                 ; 0 - ORG must be written by moving the file pointer!
 
-                .if ( [rsi].start_loc )
-                    fseek( CurrFile[OBJ*string_t], [rsi].start_loc, SEEK_CUR )
+                mov eax,[rsi].start_loc
+                .if ( eax )
+
+                    ; v2.19: write null bytes instead of fseek()
+
+                    ;fseek( CurrFile[OBJ*string_t], [rsi].start_loc, SEEK_CUR )
+
+                    .new nullbyt:char_t = NULLC
+                    .for ( i = eax : i : i-- )
+                        fwrite( &nullbyt, 1, 1, CurrFile[OBJ*string_t] )
+                    .endf
 ifdef _LIN64
                     mov rsi,_rsi
 endif
@@ -1376,10 +1385,10 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
     ; does a proc exist with the EXPORT attribute?
 
-    .for ( rdi = ProcTable : rdi != NULL: rdi = [rdi].dsym.nextproc )
+    .for ( rdi = MODULE.PubQueue.head : rdi : rdi = [rdi].qnode.next )
 
-        mov rcx,[rdi].dsym.procinfo
-        .break .if ( [rcx].proc_info.flags & PROC_ISEXPORT )
+        mov rcx,[rdi].qnode.sym
+        .break .if ( [rcx].asym.flags & S_ISEXPORT )
     .endf
     mov exp,rdi
 
@@ -1414,27 +1423,27 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
          mov rbx,cm
          mov [rbx].directives,CreateIntSegment( szdrectve, "", MAX_SEGALIGNMENT, MODULE.Ofssize, FALSE )
 
-        .if ( eax )
+        .if ( rax )
 
             xor ebx,ebx
             mov rdi,[rax].dsym.seginfo
-            mov [rdi].seg_info.info,TRUE
+            or  [rdi].seg_info.flags,SEG_INFO
 
             ; calc the size for this segment
 
             ; 1. exports
 
-            .for ( rdi = exp: rdi: rdi = [rdi].dsym.nextproc )
+            .for ( rdi = exp : rdi : rdi = [rdi].qnode.next )
 
-                mov rcx,[rdi].dsym.procinfo
-                .if ( [rcx].proc_info.flags & PROC_ISEXPORT )
+                mov rcx,[rdi].qnode.sym
+                .if ( [rcx].asym.flags & S_ISEXPORT )
 
-                    Mangle( rdi, &buffer )
+                    Mangle( rcx, &buffer )
                     lea rbx,[rbx+rax+9]
-
                     .if ( Options.no_export_decoration == TRUE )
 
-                        add ebx,[rdi].asym.name_size
+                        mov rcx,[rdi].qnode.sym
+                        add ebx,[rcx].asym.name_size
                         inc ebx
                     .endif
                 .endif
@@ -1463,7 +1472,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 4. impdefs
 
-            .for ( rdi = imp: rdi: rdi = [rdi].dsym.next )
+            .for ( rdi = imp : rdi : rdi = [rdi].dsym.next )
 
                 .if ( [rdi].asym.flags & S_ISPROC &&
                      ( !( [rdi].asym.sflags & S_WEAK ) || [rdi].asym.flags & S_IAT_USED ) &&
@@ -1508,14 +1517,17 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 1. exports
 
-            .for ( rdi = exp: rdi: rdi = [rdi].dsym.nextproc )
-                mov rcx,[rdi].dsym.procinfo
-                .if ( [rcx].proc_info.flags & PROC_ISEXPORT )
-                    Mangle( rdi, &buffer )
+            .for ( rdi = exp : rdi : rdi = [rdi].qnode.next )
+
+                mov rcx,[rdi].qnode.sym
+                .if ( [rcx].asym.flags & S_ISEXPORT )
+
+                    Mangle( rcx, &buffer )
                     .if ( Options.no_export_decoration == FALSE )
                         add rbx,tsprintf( rbx, "-export:%s ", &buffer )
                     .else
-                        add rbx,tsprintf( rbx, "-export:%s=%s ", [rdi].asym.name, &buffer )
+                        mov rcx,[rdi].qnode.sym
+                        add rbx,tsprintf( rbx, "-export:%s=%s ", [rcx].asym.name, &buffer )
                     .endif
                 .endif
             .endf
@@ -1541,7 +1553,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 4. impdefs
 
-            .for ( rdi = imp: rdi: rdi = [rdi].dsym.next )
+            .for ( rdi = imp : rdi : rdi = [rdi].dsym.next )
 
                 .if ( [rdi].asym.flags & S_ISPROC &&
                      ( !( [rdi].asym.sflags & S_WEAK ) || [rdi].asym.flags & S_IAT_USED ) && [rdi].asym.dll )
@@ -1570,7 +1582,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             ; 5. pragma comment(linker,"/..")
 
-            .for ( rdi = MODULE.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
+            .for ( rdi = MODULE.LinkQueue.head : rdi : rdi = [rdi].qitem.next )
 
                 add rbx,tsprintf( rbx, "%s ", &[rdi].qitem.value )
             .endf
@@ -1670,7 +1682,7 @@ coff_write_module proc uses rsi rdi rbx
         .if ( rax )
 
             mov rdi,[rax].dsym.seginfo
-            mov [rdi].seg_info.info,TRUE
+            or  [rdi].seg_info.flags,SEG_INFO
 
             ; calc the size for this segment
 

@@ -57,6 +57,15 @@ ADDRSIZE macro s, x
     exitm<al>
     endm
 
+ADDRSIZE16 proto watcall :byte, :byte {
+    test    _1,_1
+    setnz   _1
+    test    _2,_2
+    setnz   _2
+    cmp     _1,_2
+    setne   _1
+    }
+
 IS_ADDR32 macro s
     xor eax,eax
     cmp [s].Ofssize,al
@@ -519,12 +528,12 @@ check_assume endp
 
 seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:asym_t, direct:int_t
 
+  local default_seg:int_t
+  local assum:asym_t
+
     ; called by set_rm_sib(). determine if segment override is necessary
     ; with the current address mode;
     ; - seg_reg: register index (T_DS, T_BP, T_EBP, T_BX, ... )
-
-  local default_seg:int_t
-  local assum:asym_t
 
     ldr     rbx,CodeInfo
     ldr     ecx,seg_reg
@@ -540,7 +549,19 @@ seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:as
     .if ( [rbx].token == T_LEA )
 
         mov [rbx].RegOverride,ASSUME_NOTHING ;; skip segment override
-        .return SetFixupFrame( sym, FALSE )
+
+        ; v2.15 use SegOverride if set. Without this modification the
+        ; fixup created by LEA <reg>,addr is ignored if sym=NULL; see lea2.asm
+        ; mz:  ok
+        ; omf: ok (also see modification in omffixup.c)
+        ; pe:  ok
+        ; coff: ignores fixup ( coff relocations have to refer to a symbol )
+
+        mov rcx,SegOverride
+        .if ( rcx == NULL )
+            mov rcx,sym
+        .endif
+        .return SetFixupFrame( rcx, FALSE )
     .endif
 
     .switch ecx
@@ -558,12 +579,11 @@ seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:as
 
     .if ( [rbx].RegOverride != EMPTY )
 
-        mov assum,GetOverrideAssume( [rbx].RegOverride )
+        GetOverrideAssume( [rbx].RegOverride )
 
         ; assume now holds assumed SEG/GRP symbol
 
         .if sym
-            mov rax,assum
             .if rax == NULL
                 mov rax,sym
             .endif
@@ -573,18 +593,21 @@ seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:as
 
             ; no label attached (DS:[0]). No fixup is to be created!
 
-            .if assum
-                GetSymOfssize( assum )
-                mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, eax )
+            .if rax
+                ; v2.12: args for ADDRSIZE must be USE16 and "> USE16". The old way
+                ; caused error 'magnitude of offset exceeds 16 bit' to be displayed if
+                ; module contained USE32 & USE64 segments. Todo: Most likely to be adjusted
+                ; in the other ADDRSIZE() locations as well!
+                mov [rbx].adrsiz,ADDRSIZE16( [rbx].Ofssize, GetSymOfssize( rax ) )
             .else
-                ;
+
                 ; v2.01: if -Zm, then use current CS offset size.
                 ; This isn't how Masm v6 does it, but it matches Masm v5.
-                ;
+
                 .if MODULE.m510
                     mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, ModuleInfo.Ofssize )
                 .else
-                    mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, ModuleInfo.defOfssize )
+                    mov [rbx].adrsiz,ADDRSIZE16( [rbx].Ofssize, ModuleInfo.defOfssize )
                 .endif
             .endif
         .endif
@@ -593,6 +616,10 @@ seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:as
 
             check_assume( rbx, sym, default_seg )
         .endif
+
+        ; v2.19: next if() removed, since definitely a bug; see pref67a.asm.
+        ; i.e. ADDRSIZE() will clear prefix.adrsize if both arguments are > 0.
+if 0
 if 1
         ; v2.17: no address prefix in 64-bit or if segoverride is FLAT.
         ; todo: check if this isn't generally the wrong place to modify the adrsiz prefix.
@@ -605,6 +632,7 @@ endif
             GetSymOfssize( SegOverride )
             mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, eax )
         .endif
+endif
     .endif
     .if [rbx].RegOverride == default_seg
         mov [rbx].RegOverride,ASSUME_NOTHING
@@ -1379,9 +1407,8 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
                 .elseif ( ecx == T_LOW32 || ecx == T_HIGH32 )
 
-                    ;
                     ; v2.10:added; LOW32/HIGH32 in expreval.c won't set mem_type anymore.
-                    ;
+
                     mov [rsi].mem_type,MT_DWORD
                 .endif
             .endif
@@ -1394,15 +1421,10 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
         .if ( [rdi].flags & E_IS_ABS )
 
             .if ( [rdi].mem_type != MT_EMPTY )
-
                 mov [rsi].mem_type,[rdi].mem_type
-
             .elseif ( [rsi].token == T_PUSHW ) ; v2.10: special handling PUSHW
-
                 mov [rsi].mem_type,MT_WORD
-
             .else
-
                 mov ecx,MT_WORD
                 .if IS_OPER_32(rsi)
                     mov ecx,MT_DWORD
@@ -1428,40 +1450,48 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
                     .case T_LOWBYTE
                     .case T_HIGHBYTE
                         mov [rdi].mem_type,MT_BYTE
-                        .endc
+                       .endc
+                    .case T_LOWWORD  ; v2.12: added
+                    .case T_HIGHWORD ; v2.12: added
+                        mov [rdi].mem_type,MT_WORD
+                       .endc
                     .case T_LOW32 ;; v2.10: added - low32_op() doesn't set mem_type anymore.
                     .case T_IMAGEREL
                     .case T_SECTIONREL
                         mov [rdi].mem_type,MT_DWORD
-                        .endc
+                       .endc
                     .endsw
                 .endif
 
-                ;
                 ; default: push offset only
                 ; for PUSH + undefined symbol, assume BYTE
-                ;
+
                 .if ( [rdi].mem_type == MT_FAR && !( [rdi].flags & E_EXPLICIT ) )
                     mov [rdi].mem_type,MT_NEAR
                 .endif
-                ;
+
                 ; v2.04: curly brackets added
-                ;
+
                 .if ( [rsi].token == T_PUSHW )
-                    .if SizeFromMemtype( [rdi].mem_type, Ofssize, [rdi].type ) < 2
+                    ; v2.19: calling SizeFromMemtype() for offsets isn't reliable
+                    ; since mem_type is usually MT_EMPTY
+                    .if ( [rdi].inst == T_OFFSET && Ofssize > USE16 && Parse_Pass == PASS_2 )
+                        asmerr( 7009 )
+                    .endif
+                    .ifd ( SizeFromMemtype( [rdi].mem_type, Ofssize, [rdi].type ) < 2 )
                         mov [rdi].mem_type,MT_WORD
                     .endif
                 .elseif ( [rsi].token == T_PUSHD )
-                    .if ( SizeFromMemtype( [rdi].mem_type, Ofssize, [rdi].type ) < 4 )
+                    .ifd ( SizeFromMemtype( [rdi].mem_type, Ofssize, [rdi].type ) < 4 )
                         mov [rdi].mem_type,MT_DWORD
                     .endif
                 .endif
                 .endc
             .endsw
-            ;
+
             ; if a WORD size is given, don't override it with
             ; anything what might look better at first glance
-            ;
+
             mov rcx,[rdi].sym
 
             .if ( [rdi].mem_type != MT_EMPTY )
@@ -2125,7 +2155,6 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .new fixup_type:int_t = 0
 
         .if ( [rdi].flags & E_IS_ABS )
-
             .if IS_ADDR32(rsi)
                 inc Ofssize
             .endif
@@ -2142,6 +2171,18 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         ; the symbol's offset size.
 
         .if ( base == EMPTY && index == EMPTY )
+
+            ; v2.19: For Masm, offsets and fixups generated depend on the used segment register;
+            ; if it's assumed to be flat/32-bit, offsets and fixups will also be 32-bit.
+
+            .if ( !( [rdi].flags & E_IS_ABS ) && sym )
+
+               .new passume:ptr asym
+                GetAssume( SegOverride, sym, ASSUME_DS, &passume )
+                .if ( eax != ASSUME_NOTHING && passume )
+                    mov Ofssize,GetSymOfssize( passume )
+                .endif
+            .endif
 
             mov [rsi].adrsiz,ADDRSIZE( [rsi].Ofssize, Ofssize )
 
@@ -2229,6 +2270,50 @@ endif
 
     .ifd ( set_rm_sib( rsi, CurrOpnd, scale_factor, index, base, sym ) == ERROR )
         .return
+    .endif
+
+    ; v2.19: check if address register is 16-bit; if yes, check if the associated segment register is flat.
+    ; If yes, emit error "cannot use 16-bit register with a 32-bit address". That's what Masm does, with the
+    ; small difference that jwasm won't complain if the expression is behind a LEA!
+    ; If the assumed segment register is 32-bit, but NOT flat, it's no error!?
+    ; this check is behind set_rm_sib(), since the errors detected by that function have a higher priority.
+
+    .if ( !with_fixup && [rsi].token != T_LEA )
+
+        xor edi,edi
+        .if ( base != EMPTY )
+            .if ( GetValueSp( base ) & OP_R16 ) ; 16-bit register used for based addressing?
+
+                lea rcx,SegAssumeTable
+                mov eax,[rsi].RegOverride
+                .if ( eax == EMPTY )
+                    mov eax,ASSUME_DS
+                    .if ( base == T_BP )
+                        mov eax,ASSUME_SS
+                    .endif
+                .endif
+                imul eax,eax,assume_info
+                movzx edi,[rcx+rax].assume_info.is_flat
+            .endif
+        .endif
+        .if ( edi == 0 && index != EMPTY )
+            .if ( GetValueSp( index ) & OP_R16 ) ; 16-bit register used for based addressing?
+
+                lea rcx,SegAssumeTable
+                mov eax,[rsi].RegOverride
+                .if ( eax == EMPTY )
+                    mov eax,ASSUME_DS
+                    .if ( index == T_BP )
+                        mov eax,ASSUME_SS
+                    .endif
+                .endif
+                imul eax,eax,assume_info
+                movzx edi,[rcx+rax].assume_info.is_flat
+            .endif
+        .endif
+        .if ( edi )
+            asmerr( 2155 )
+        .endif
     .endif
 
     ; set frame type/data in fixup if one was created
@@ -3870,11 +3955,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                     .return( asmerr( 2037 ) )
                 .endif
                 .if StoreState
-                    .if ( ( dirflags & DF_CGEN ) && CurrComment && MODULE.list_generated_code )
-                        FStoreLine(1)
-                    .else
-                        FStoreLine(0)
-                    .endif
+                    FStoreLine(0)
                 .endif
                 mov edi,ProcType( i, tokenarray )
                 .if ( MODULE.list &&
@@ -3883,9 +3964,9 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                 .endif
                 .return( edi )
             .endif
-            ;
+
             ; label allowed for directive?
-            ;
+
             .if ( dirflags & DF_LABEL )
                 .if ( i && [rbx].token != T_ID )
                     .return( asmerr(2008, [rbx].string_ptr ) )
@@ -3893,9 +3974,9 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             .elseif ( i && [rsi-asm_tok].token != T_COLON && [rsi-asm_tok].token != T_DBL_COLON )
                 .return( asmerr(2008, [rsi-asm_tok].string_ptr ) )
             .endif
-            ;
+
             ; must be done BEFORE FStoreLine()!
-            ;
+
             .if( ( ProcStatus & PRST_PROLOGUE_NOT_DONE ) && ( dirflags & DF_PROC ) )
                 write_prologue( tokenarray )
             .endif
@@ -3904,12 +3985,9 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                 ; v2.07: the comment must be stored as well
                 ; if a listing (with -Sg) is to be written and
                 ; the directive will generate lines
+                ; v2.19: obsolete, comment is never stored.
 
-                .if ( ( dirflags & DF_CGEN ) && CurrComment && MODULE.list_generated_code )
-                    FStoreLine(1)
-                .else
-                    FStoreLine(0)
-                .endif
+                FStoreLine(0)
             .endif
 
             .if ( [rsi].dirtype > DRT_DATADIR )
@@ -4067,23 +4145,18 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
             .if ( !( ProcStatus & PRST_INSIDE_EPILOGUE ) && MODULE.epiloguemode != PEM_NONE )
 
-                ;
                 ; v2.07: special handling for RET/IRET
-                ;
-                xor eax,eax
-                .if ( CurrComment && MODULE.list_generated_code )
-                    inc eax
-                .endif
-                FStoreLine( eax )
+                ; v2.19: comment is never stored, so flags are obsolete
+                FStoreLine(0)
                 or ProcStatus,PRST_INSIDE_EPILOGUE
                 RetInstr( i, tokenarray, TokenCount )
                 and ProcStatus,not PRST_INSIDE_EPILOGUE
                .return
             .endif
-            ;
+
             ; default translation: just RET to RETF if proc is far
             ; v2.08: this code must run even if PRST_INSIDE_EPILOGUE is set
-            ;
+
             .if ( [rsi].tokval == T_RET )
 
                 mov rax,CurrProc
@@ -4129,9 +4202,8 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
     mov eax,[rsi].tokval
     mov CodeInfo.token,ax
 
-    ;
     ; get the instruction's start position in InstrTable[]
-    ;
+
     movzx eax,IndexFromToken(eax)
     lea rcx,InstrTable
     lea rax,[rcx+rax*8]

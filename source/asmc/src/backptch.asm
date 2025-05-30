@@ -36,9 +36,10 @@ LABELOPT equ 1
 BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
 
    .new next:fixup_t
-    mov rsi,rcx
 
-    .for ( rbx = [rsi].bp_fixup: rbx: rbx = next )
+    .return( NOT_ERROR ) .if ( Parse_Pass != PASS_1 )
+
+    .for ( rsi = rcx, rbx = [rsi].bp_fixup : rbx : rbx = next )
 
         mov next,[rbx].nextbp
 
@@ -55,39 +56,34 @@ BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
         xor edi,edi         ; size
         movzx ecx,[rbx].type
 
-        .if ( Parse_Pass == PASS_1 )
+        .if ( [rsi].mem_type == MT_FAR && [rbx].options == OPTJ_CALL )
 
-            .if ( [rsi].mem_type == MT_FAR && [rbx].options == OPTJ_CALL )
+            ; convert near call to push cs + near call,
+            ; (only at first pass)
 
-                ; convert near call to push cs + near call,
-                ; (only at first pass)
+            mov MODULE.PhaseError,TRUE
+            inc [rsi].offs ; a PUSH CS will be added
 
-                mov MODULE.PhaseError,TRUE
-                inc [rsi].offs ; a PUSH CS will be added
+            ; todo: insert LABELOPT block here
 
-                ; todo: insert LABELOPT block here
+            OutputByte(0) ; it's pass one, nothing is written
+           .continue
 
-                OutputByte(0) ; it's pass one, nothing is written
-                FreeFixup(rbx)
+        .else
+
+            ; forward reference, only at first pass
+
+            .if ( ecx == FIX_RELOFF32 || ecx == FIX_RELOFF16 )
+
                .continue
+            .endif
 
-            .else
+            .if ( ecx == FIX_OFF8 ) ; push <forward reference>
 
-                ; forward reference, only at first pass
+                .if ( [rbx].options == OPTJ_PUSH )
 
-                .if ( ecx == FIX_RELOFF32 || ecx == FIX_RELOFF16 )
-
-                    FreeFixup(rbx)
-                   .continue
-                .endif
-
-                .if ( ecx == FIX_OFF8 ) ; push <forward reference>
-
-                    .if ( [rbx].options == OPTJ_PUSH )
-
-                        mov edi,1 ; size increases from 2 to 3/5
-                        jmp patch
-                    .endif
+                    mov edi,1 ; size increases from 2 to 3/5
+                    jmp patch
                 .endif
             .endif
         .endif
@@ -149,17 +145,14 @@ if LABELOPT
 
                         mov eax,[rbx].locofs
 
-                        .if Parse_Pass == PASS_1
+                        .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
 
-                            .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
+                            .continue(1) .if ( [rcx].fixup.fx_flag & FX_ORGOCCURED )
 
-                                .continue(1) .if ( [rcx].fixup.fx_flag & FX_ORGOCCURED )
+                            ; do this check after the check for ORG!
 
-                                ; do this check after the check for ORG!
-
-                                .break .if ( [rcx].fixup.locofs <= eax )
-                            .endf
-                        .endif
+                            .break .if ( [rcx].fixup.locofs <= eax )
+                        .endf
 
                         ; scan the segment's label list and adjust all labels
                         ; which are between the fixup loc and the current sym.
@@ -177,18 +170,15 @@ if LABELOPT
                         ; label reference and the label. This should reduce the
                         ; number of passes to 2 for not too complex sources.
 
-                        .if ( Parse_Pass == PASS_1 ) ; v2.04: added, just to be safe
+                        .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
 
-                            .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
+                            .if ( [rcx].fixup.sym != rsi )
 
-                                .if ( [rcx].fixup.sym != rsi )
+                                .break .if ( [rcx].fixup.locofs <= eax )
+                                add [rcx].fixup.locofs,edi
+                            .endif
+                        .endf
 
-                                    .break .if ( [rcx].fixup.locofs <= eax )
-                                    add [rcx].fixup.locofs,edi
-                                .endif
-                            .endf
-
-                        .endif
 else
                         add [rsi].offs,edi
 endif
@@ -210,8 +200,6 @@ endif
 
             ; v2.04: fixme: is it ok to remove the fixup?
             ; it might still be needed in a later backpatch.
-
-            FreeFixup(rbx)
         .endsw
     .endf
     xor eax,eax ; NOT_ERROR
@@ -221,4 +209,3 @@ endif
 BackPatch endp
 
     end
-

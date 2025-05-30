@@ -124,6 +124,7 @@ S_OPERATOR      equ 0x00800000
 S_REGPARAM      equ 0x01000000 ; syscall: regist[0] = reg, 1 = index
 S_REGPAIR       equ 0x02000000 ; reg::reg param
 S_CVDEFINED     equ 0x04000000 ; cv.add_type() - recurse typedefs in structure
+S_ISEXPORT      equ 0x08000000 ; v2.19: symbol exported ( SYM_INTERNAL )
 
 S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02
@@ -292,6 +293,15 @@ M_PURGED        equ 0x10
    .ends
     group_t         typedef ptr grp_info
 
+define SEG_RDONLY       0x01    ; if segment is readonly
+define SEG_INFO         0x02    ; if segment is info only (COFF/ELF)
+define SEG_FORCE32      0x04    ; force 32bit segdef (OMF only)
+define SEG_DATAINCODE   0x08    ; data items in code segm (OMF only)
+define SEG_INTERNAL     0x10    ; internal segment with private buffer
+define SEG_WRITTEN      0x20    ; code/data just written
+define SEG_LINUM        0x40    ; v2.10: linnum data emitted for segment?
+define SEG_ALIGNRVA     0x80    ; alignment modifies RVA only, filepos not affected
+
 .template seg_info
     sgroup          ptr asym ?  ; segment's group or NULL
     start_loc       uint_t ?    ; starting offset of current ledata or lidata
@@ -302,6 +312,10 @@ M_PURGED        equ 0x10
     ends
     CodeBuffer      string_t ?  ;
     bytes_written   uint_t ?    ; initialized bytes in segment
+    flags           uchar_t ?
+    Ofssize         uchar_t ?   ; segment's offset size
+    characteristics uchar_t ?   ; used by COFF/ELF/PE
+    alignment       uchar_t ?   ; is value 2^x
     union
      label_list     asym_t ?    ; linked list of labels in this seg
      flushfunc      proc local __ccall :ptr dsym, :ptr byte, :dword, :ptr
@@ -323,37 +337,27 @@ M_PURGED        equ 0x10
      comdat_number  uint_t ?    ; associated COMDAT segno (COFF)
      comdat_idx     uint_t ?    ; lname index of COMDAT symbol (OMF)
     ends
+    combine         uchar_t ?   ; combine type, see omfspec.inc
+    comdatselection uchar_t ?   ; if > 0, it's a COMDAT (COFF/OMF)
     union
      abs_offset     uint_t ?    ; ABS seg, offset (OMF only)
      aliasname      string_t ?  ; ALIAS name (COFF/ELF only)
     ends
-    Ofssize         uchar_t ?   ; segment's offset size
-    characteristics uchar_t ?   ; used by COFF/ELF/PE
-    alignment       uchar_t ?   ; is value 2^x
-    readonly        uchar_t ?   ; if segment is readonly
-    info            uchar_t ?   ; if segment is info only (COFF/ELF)
-    force32         uchar_t ?   ; force 32bit segdef (OMF only)
-    data_in_code    uchar_t ?   ; data items in code segm (OMF only)
-    internal        uchar_t ?   ; internal segment with private buffer
-    written         uchar_t ?   ; code/data just written
-    linnum_init     uchar_t ?   ; v2.10: linnum data emitted for segment?
-    combine         uchar_t ?   ; combine type, see omfspec.inc
-    comdatselection uchar_t ?   ; if > 0, it's a COMDAT (COFF/OMF)
    .ends
     segment_t       typedef ptr seg_info
 
-MAX_SEGALIGNMENT equ 0xFF
+MAX_SEGALIGNMENT    equ 0xFF
 
 ; PROC item
 
-PROC_HAS_VARARG equ 0x01        ; last param is VARARG
-PROC_PE_TYPE    equ 0x02        ; prolog-epilog type, 1=use LEAVE
-PROC_ISEXPORT   equ 0x04        ; EXPORT attribute set
-PROC_FORCEFRAME equ 0x08        ; FORCEFRAME prologuearg?
-PROC_LOADDS     equ 0x10        ; LOADDS prologuearg?
-PROC_STACKPARAM equ 0x20        ; 1=stack params exists ( not just register params )
-PROC_ISFRAME    equ 0x40        ; FRAME attribute set?
-PROC_FPO        equ 0x80
+PROC_HAS_VARARG     equ 0x01        ; last param is VARARG
+PROC_PE_TYPE        equ 0x02        ; prolog-epilog type, 1=use LEAVE
+PROC_ALIGNRVA       equ 0x04        ; alignment modifies RVA only, filepos not affected
+PROC_FORCEFRAME     equ 0x08        ; FORCEFRAME prologuearg?
+PROC_LOADDS         equ 0x10        ; LOADDS prologuearg?
+PROC_STACKPARAM     equ 0x20        ; 1=stack params exists ( not just register params )
+PROC_ISFRAME        equ 0x40        ; FRAME attribute set?
+PROC_FPO            equ 0x80
 
 .template proc_info
     regslist        ptr word ?      ; list of registers to be saved

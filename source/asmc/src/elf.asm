@@ -920,7 +920,7 @@ elf_write_section_table32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, f
         lea rdi,[rdi+tstrlen(rdi) + 1]
 
         mov rcx,[rsi].dsym.seginfo
-        .if ( [rcx].seg_info.info ) ; v2.07:added; v2.12: highest priority
+        .if ( [rcx].seg_info.flags & SEG_INFO ) ; v2.07:added; v2.12: highest priority
             mov shdr32.sh_type,SHT_NOTE
         .else
             .if ( [rcx].seg_info.segtype != SEGTYPE_BSS )
@@ -930,7 +930,7 @@ elf_write_section_table32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, f
             .endif
             .if ( [rcx].seg_info.segtype == SEGTYPE_CODE )
                 mov shdr32.sh_flags,SHF_EXECINSTR or SHF_ALLOC
-            .elseif ( [rcx].seg_info.readonly == TRUE )
+            .elseif ( [rcx].seg_info.flags & SEG_RDONLY )
                 mov shdr32.sh_flags,SHF_ALLOC
             .else
                 mov shdr32.sh_flags,SHF_WRITE or SHF_ALLOC
@@ -1135,7 +1135,7 @@ elf_write_section_table64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, f
         lea rdi,[rdi+tstrlen(rdi)+1]
 
         mov rcx,[rsi].dsym.seginfo
-        .if ( [rcx].seg_info.info == TRUE ) ; v2.07:added; v2.12: highest priority
+        .if ( [rcx].seg_info.flags & SEG_INFO ) ; v2.07:added; v2.12: highest priority
             mov shdr64.sh_type,SHT_NOTE
         .else
             .if ( [rcx].seg_info.segtype != SEGTYPE_BSS )
@@ -1145,7 +1145,7 @@ elf_write_section_table64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, f
              .endif
             .if ( [rcx].seg_info.segtype == SEGTYPE_CODE )
                 mov dword ptr shdr64.sh_flags[0],SHF_EXECINSTR or SHF_ALLOC
-            .elseif ( [rcx].seg_info.readonly == TRUE )
+            .elseif ( [rcx].seg_info.flags & SEG_RDONLY )
                 mov dword ptr shdr64.sh_flags[0],SHF_ALLOC
             .else
                 mov dword ptr shdr64.sh_flags[0],SHF_WRITE or SHF_ALLOC

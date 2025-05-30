@@ -54,7 +54,7 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
         mov ecx,[rbx].tokval
         .if ( reg == 0 )
 
-            AddLineQueueX( " mov %s, %r", string, ecx )
+            AddLineQueueX( " %r %s, %r", T_MOV, string, ecx )
            .return( NOT_ERROR )
 
         .elseif ( ecx == reg )
@@ -72,7 +72,7 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
 
         movzx ecx,[rax].asym.param_reg
         .if ( reg == 0 )
-            AddLineQueueX( " mov %s, %r", string, ecx )
+            AddLineQueueX( " %r %s, %r", T_MOV, string, ecx )
         .elseif ( ecx != reg )
             mov ebx,T_MOV
             .if ( [rax].asym.mem_type & MT_FLOAT )
@@ -94,7 +94,7 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
 
 move_param:
 
-    AddLineQueueX( " mov %s", tokpos )
+    AddLineQueueX( " %r %s", T_MOV, tokpos )
     xor eax,eax
     ret
 

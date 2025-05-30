@@ -281,8 +281,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if( opndx.kind == EXPR_EMPTY )
             mov opndx.value,DEFAULT_STACK_SIZE
         .elseif( opndx.kind != EXPR_CONST )
-            asmerr( 2026 )
-            .return( ERROR )
+            .return( asmerr( 2026 ) )
         .endif
     .else
         ; Masm accepts a name argument for .CODE and .FARDATA[?] only.

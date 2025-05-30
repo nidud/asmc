@@ -47,7 +47,6 @@ define INIT_EXCL_MASK     0x1F   ; exclusive bits
 
 .data
 
-ImageBase   asym_t 0
 CV8Label    asym_t 0 ; Start label for Code View 8
 symCurSeg   asym_t 0 ; @CurSeg symbol
 
@@ -87,6 +86,7 @@ buffer_size     dd 0 ; total size of code buffer
 
 ; min cpu for USE16, USE32 and USE64
 min_cpu         dw P_86, P_386, P_64
+ImageBase       db 0
 
 .code
 
@@ -297,6 +297,7 @@ CreateGroup proc fastcall private uses rsi rdi name:string_t
         sym_add_table( &SymTables[TAB_GRP*symbol_queue], rdi )
 
         or  [rdi].asym.flags,S_LIST
+        mov [rdi].asym.Ofssize, USE_EMPTY ; v2.14: added
         mov rcx,[rdi].dsym.grpinfo
         inc grpdefidx
         mov [rcx].grp_info.grp_idx,grpdefidx
@@ -413,7 +414,12 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( Parse_Pass == PASS_1 )
 
             .if ( rsi )
+                
                 mov rcx,[rsi].dsym.seginfo
+                xor eax,eax
+                .if ( rcx )
+                    mov rax,[rcx].seg_info.sgroup
+                .endif
             .endif
 
             .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED )
@@ -423,11 +429,15 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 ; inherit the offset magnitude from the group
 
                 mov rdx,[rdi].dsym.grpinfo
-
+                mov rcx,[rsi].dsym.seginfo
                 .if ( [rdx].grp_info.seglist )
-
-                    mov rcx,[rsi].dsym.seginfo
                     mov [rcx].seg_info.Ofssize,[rdi].asym.Ofssize
+                .else
+
+                    ; v2.14: reset the default offset size to "undefined", to avoid
+                    ; an error when the segment is actually defined (group5.asm)
+
+                    mov [rcx].seg_info.Ofssize,USE_EMPTY
                 .endif
 
             .elseif ( [rsi].asym.state != SYM_SEG )
@@ -436,9 +446,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 ; v2.09: allow segments in FLAT magic group be moved to a "real" group
 
-            .elseif ( [rcx].seg_info.sgroup != NULL &&
-                      [rcx].seg_info.sgroup != MODULE.flat_grp &&
-                      [rcx].seg_info.sgroup != rdi )
+            .elseif ( rax && rax != MODULE.flat_grp && rax != rdi )
 
                 ; segment is in another group
 
@@ -446,11 +454,9 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
 
             ; the first segment will define the group's word size
+            ; v2.14: set the group's word size until it's != USE_EMPTY
 
-            mov rdx,[rdi].dsym.grpinfo
-            mov rcx,[rsi].dsym.seginfo
-
-            .if ( [rdx].grp_info.seglist == NULL )
+            .if ( [rdi].asym.Ofssize == USE_EMPTY )
                 mov [rdi].asym.Ofssize,[rcx].seg_info.Ofssize
             .elseif ( [rdi].asym.Ofssize != [rcx].seg_info.Ofssize )
                 .return( asmerr( 2100, [rdi].asym.name, [rsi].asym.name ) )
@@ -831,7 +837,7 @@ CreateIntSegment proc __ccall uses rdi name:string_t, classname:string_t, alignm
             or [rdi].asym.flags,S_ISDEFINED ; v2.12: added
         .endif
         mov rcx,[rdi].dsym.seginfo
-        mov [rcx].seg_info.internal,TRUE ; segment has private buffer
+        or  [rcx].seg_info.flags,SEG_INTERNAL ; segment has private buffer
         mov [rdi].asym.segm,rdi
         mov [rcx].seg_info.alignment,alignment
         mov [rcx].seg_info.Ofssize,Ofssize
@@ -1091,7 +1097,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .switch ( edx )
         .case INIT_ATTR
-            mov [rdi].seg_info.readonly,TRUE
+            or [rdi].seg_info.flags,SEG_RDONLY
            .endc
         .case INIT_ALIGN
             mov [rdi].seg_info.alignment,[rcx].typeinfo.value
@@ -1109,10 +1115,30 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                .endc
             .endif
             inc i
-            .endc .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
+            EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 )
+            .endc .ifd ( eax == ERROR )
 
             imul ebx,i,asm_tok
             add rbx,tokenarray
+
+            ; v2.19: if format -bin, accept ALIGN(num,v) syntax
+
+            .if ( Options.output_format == OFORMAT_BIN && MODULE.sub_format == SFORMAT_NONE && [rbx].token == T_COMMA )
+
+                inc i
+                add rbx,asm_tok
+                mov rcx,[rbx].string_ptr
+                movzx eax,word ptr [rcx]
+                or al,0x20
+                .if ( [rbx].token == T_ID && ax == 'v' )
+                    inc i
+                    add rbx,asm_tok
+                    or [rdi].seg_info.flags,SEG_ALIGNRVA
+                .else
+                    asmerr( 2008, rcx )
+                   .endc
+                .endif
+            .endif
 
             .if ( [rbx].token != T_CL_BRACKET )
                 asmerr( 2065, ")" )
@@ -1267,7 +1293,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
             .endc
         .case INIT_CHAR_INFO
-            mov [rdi].seg_info.info,TRUE ; fixme: check that this flag isn't changed
+            or [rdi].seg_info.flags,SEG_INFO ; fixme: check that this flag isn't changed
            .endc
         .case INIT_CHAR
             ; characteristics are restricted to COFF/ELF/BIN-PE
@@ -1446,15 +1472,16 @@ endif
             mov CV8Label,CreateLabel( "$$000000", 0, 0, 0 )
         .endif
 
-        .if ( Options.output_format == OFORMAT_BIN && Options.sub_format != SFORMAT_NONE && ImageBase == NULL )
+        .if ( !ImageBase && Options.output_format == OFORMAT_BIN && Options.sub_format != SFORMAT_NONE )
 
             .new ti:qualified_type
             .if !SymFind("IMAGE_DOS_HEADER")
-                SymCreate("IMAGE_DOS_HEADER")
+               SymCreate("IMAGE_DOS_HEADER")
             .endif
             mov ti.symtype,rax
-            mov ImageBase,CreateLabel( "__ImageBase", MT_TYPE, &ti, 0 )
+            CreateLabel( "__ImageBase", MT_TYPE, &ti, 0 )
             mov [rax].asym.offs,-0x1000
+            inc ImageBase
         .endif
     .endif
     .if ( MODULE.list )
@@ -1570,13 +1597,12 @@ SegmentFini endp
 
 ; init. called for each pass
 
-SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
+SegmentInit proc fastcall uses rsi rdi pass:int_t
 
    .new curr:ptr dsym
    .new i:uint_32
    .new p:string_t
 
-    mov ebx,ecx
     mov CurrSeg,NULL
     mov stkindex,0
 
@@ -1596,7 +1622,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
 
             mov rcx,[rdi].dsym.seginfo
 
-            .if ( [rcx].seg_info.internal )
+            .if ( [rcx].seg_info.flags & SEG_INTERNAL )
                 .continue
             .endif
 
@@ -1633,7 +1659,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
 
         mov rcx,[rdi].dsym.seginfo
         mov [rcx].seg_info.current_loc,0
-        .continue .if ( [rcx].seg_info.internal )
+        .continue .if ( [rcx].seg_info.flags & SEG_INTERNAL )
 
         .if ( [rcx].seg_info.bytes_written )
 
@@ -1654,7 +1680,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
         .if ( Options.output_format == OFORMAT_OMF )  ;; v2.03: do this selectively
 
             mov [rcx].seg_info.start_loc,0
-            mov [rcx].seg_info.data_in_code,FALSE
+            and [rcx].seg_info.flags,not SEG_DATAINCODE
         .endif
 
         mov [rcx].seg_info.bytes_written,0
@@ -1663,7 +1689,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
     .endf
 
     mov MODULE.Ofssize,USE16
-    .if ( ebx != PASS_1 && UseSavedState == TRUE )
+    .if ( UseSavedState == TRUE )
 
         mov CurrSeg,saved_CurrSeg
         mov stkindex,saved_stkindex

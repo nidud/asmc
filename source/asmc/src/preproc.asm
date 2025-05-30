@@ -274,8 +274,8 @@ endif
             .if CreateConstant( rbx )
                 mov rsi,rax
                 .if [rax].asym.state != SYM_TMACRO
-                    .if StoreState && Parse_Pass == PASS_1
-                        StoreLine( CurrSource, 0, 0 )
+                    .if StoreState
+                        FStoreLine(0)
                     .endif
                     .if Options.preprocessor_stdout
                         WritePreprocessedLine( CurrSource )

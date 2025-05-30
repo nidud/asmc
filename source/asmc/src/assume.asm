@@ -484,10 +484,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     ; ensure that directive is rerun in pass 2
                     ; so an error msg can be emitted.
 
-                    .if ( Parse_Pass == PASS_1 )
-                        StoreLine( CurrSource, 0, 0 )
-                    .endif
-
+                    FStoreLine(0)
                     mov [rdi].symbol,rsi
                 .elseif ( ( [rsi].state == SYM_SEG || [rsi].state == SYM_GRP ) && opnd.inst == EMPTY )
                     mov [rdi].symbol,rsi
@@ -650,6 +647,12 @@ GetOfssizeAssume proc fastcall segno:int_t
             movzx eax,[rax].asym.Ofssize
            .return
         .endif
+
+    .else ; v2.19: ModuleInfo.Ofssize has the current CS ofssize - not what we want here
+
+        mov rax,MODULE.flat_grp
+        movzx eax,[rax].asym.Ofssize
+       .return
     .endif
     movzx eax,MODULE.Ofssize
     ret
@@ -673,7 +676,9 @@ GetAssume proc __ccall override:asym_t, sym:asym_t, def:int_t, passume:ptr asym_
     add rdx,rax
     mov eax,def
 
-    .if ( ( eax != ASSUME_NOTHING ) && [rdx].is_flat )
+    ; v2.17: handle case if model isn't flat, but current segment is 64-bit ( flatgrp3.asm )
+
+    .if ( ( eax != ASSUME_NOTHING ) && ( [rdx].is_flat || MODULE.Ofssize == USE64 ) )
 
         mov rdx,MODULE.flat_grp
         mov rcx,passume

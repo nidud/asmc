@@ -29,6 +29,7 @@ include reswords.inc
 include win64seh.inc
 include hllext.inc
 include qfloat.inc
+include assume.inc
 
 define NUMQUAL
 
@@ -997,7 +998,22 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
         ; USE16   +2   +4
         ; USE32   +4   +8
         ; USE64   +8   +16
+if 1
+        ; v2.17: if option stackbase is on, use the size of the base pointer
 
+        xor     eax,eax
+        mov     rcx,p
+        cmp     [rcx].asym.mem_type,MT_FAR
+        sete    al
+        inc     eax
+        movzx   ecx,CurrWordSize
+        mul     ecx
+        mov     offs,eax
+        movzx   ecx,[rsi].basereg
+        mov     eax,GetSflagsSp(ecx)
+        and     eax,SFR_SIZMSK
+        add     offs,eax
+else
         mov eax,2
         mov rcx,p
         .if ( [rcx].asym.mem_type == MT_FAR )
@@ -1006,7 +1022,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
         movzx ecx,CurrWordSize
         mul ecx
         mov offs,eax
-
+endif
         ; now calculate the [E|R]BP offsets
 
         .for ( : cntParam : cntParam-- )
@@ -1069,9 +1085,9 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
 
     .if ( IsPROC )
 
-        and [rsi].flags,not PROC_ISEXPORT
+        and [rdi].asym.flags,not S_ISEXPORT
         .if ( MODULE.procs_export )
-            or [rsi].flags,PROC_ISEXPORT
+            or [rdi].asym.flags,S_ISEXPORT
         .endif
 
         ; don't overwrite a PUBLIC directive for this symbol!
@@ -1215,7 +1231,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
                 .if ( oldpublic )
                     SkipSavedState() ; do a full pass-2 scan
                 .endif
-                and [rsi].flags,not PROC_ISEXPORT
+                and [rdi].asym.flags,not S_ISEXPORT
             .endif
             inc i
 
@@ -1223,7 +1239,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
 
             .if ( IsPROC )
                 or  [rdi].asym.flags,S_ISPUBLIC
-                and [rsi].flags,not PROC_ISEXPORT
+                and [rdi].asym.flags,not S_ISEXPORT
             .endif
             inc i
 
@@ -1232,7 +1248,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
             .if ( IsPROC )  ; v2.11: ignore EXPORT for PROTO
 
                 or [rdi].asym.flags,S_ISPUBLIC
-                or [rsi].flags,PROC_ISEXPORT
+                or [rdi].asym.flags,S_ISEXPORT
 
                 ; v2.11: no export for 16-bit near
 
@@ -1982,8 +1998,8 @@ WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
         AddLineQueueX("%s %r", segname, T_SEGMENT )
     .else
         AddLineQueueX(
-            "%s %r align(%u) flat read 'DATA'\n"
-            "$xdatasym label near", segname, T_SEGMENT, 8 )
+            "%s %r %r(8) %r read 'DATA'\n"
+            "$xdatasym %r %r", segname, T_SEGMENT, T_ALIGN, T_FLAT, T_LABEL, T_NEAR )
     .endif
     mov xdataofs,0
     mov xdata,SymSearch( segname )
@@ -2038,10 +2054,10 @@ WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
     .if ( [rsi].exc_handler )
         mov rcx,[rsi].exc_handler
         AddLineQueueX(
-            "dd IMAGEREL %s\n"
-            "ALIGN 8", [rcx].asym.name )
+            "dd %r %s\n"
+            "%r 8", T_IMAGEREL, [rcx].asym.name, T_ALIGN )
     .endif
-    AddLineQueueX( "%s ENDS", segname )
+    AddLineQueueX( "%s %r", segname, T_ENDS )
 
     ;
     ; v2.07: ensure that .pdata items are sorted
@@ -2066,16 +2082,18 @@ WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
     .endif
 
     .if ( simplespec )
-        AddLineQueueX( "%s SEGMENT", segname )
+        AddLineQueueX( "%s %r", segname, T_SEGMENT )
     .else
-        AddLineQueueX( "%s SEGMENT ALIGN(4) flat read 'DATA'", segname )
+        AddLineQueueX( "%s %r %r(4) %r read 'DATA'", segname, T_SEGMENT, T_ALIGN, T_FLAT )
     .endif
 
     ; write the .pdata stuff ( type IMAGE_RUNTIME_FUNCTION_ENTRY )
 
     AddLineQueueX(
-        "dd IMAGEREL %s, IMAGEREL %s+0%xh, IMAGEREL $xdatasym+0%xh\n"
-        "%s ENDS", [rdi].asym.name, [rdi].asym.name, [rdi].asym.total_size, xdataofs, segname )
+        "dd %r %s, %r %s+0%xh, %r $xdatasym+0%xh\n"
+        "%s %r",
+        T_IMAGEREL, [rdi].asym.name, T_IMAGEREL, [rdi].asym.name, [rdi].asym.total_size, T_IMAGEREL, xdataofs,
+        segname, T_ENDS )
     mov olddotname,MODULE.dotname
     mov MODULE.dotname,TRUE ; set OPTION DOTNAME because .pdata and .xdata
     RunLineQueue()
@@ -2216,8 +2234,7 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
     .if ( MODULE.RetStack )
 
-        AddLineQueue( "org $ - 2" ) ; skip the last jump
-        AddLineQueue( "ret" )
+        AddLineQueue( "org $-2\nret" ) ; skip the last jump
         RunLineQueue()
     .endif
 
@@ -2600,7 +2617,7 @@ write_userdef_prologue proc __ccall private uses rsi rdi rbx tokenarray:ptr asm_
     .if ( !( [rdi].asym.flags & S_ISPUBLIC ) )
         or ebx,0x40
     .endif
-    .if ( [rsi].flags & PROC_ISEXPORT )
+    .if ( [rdi].asym.flags & S_ISEXPORT )
         or ebx,0x80
     .endif
     mov flags,ebx
@@ -2869,7 +2886,7 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:ptr proc_info
                 lea rcx,fast_regs[3*8]
                 movzx ecx,byte ptr [rcx+rbx]
 
-                AddLineQueueX( "mov [rsp+%u], %r", eax, ecx )
+                AddLineQueueX( "%r [rsp+%u], %r", T_MOV, eax, ecx )
             .endif
 
         .elseif ( Parse_Pass == PASS_1 && !( [rdi].asym.sflags & S_ISVARARG ) && size >= 16 )
@@ -2907,7 +2924,7 @@ push_user_registers proc __ccall private uses rsi rdi rbx list:string_t, usefram
                 shl eax,2
                 add [rcx],eax
 
-                AddLineQueueX( "push %r", edi )
+                AddLineQueueX( "%r %r", T_PUSH, edi )
 
                 .if ( useframe )
 
@@ -3062,10 +3079,14 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
 
                 movzx ecx,[rsi].basereg
                 AddLineQueueX(
-                    " push %r\n"
                     " %r %r\n"
-                    " mov %r, %r\n"
-                    " %r %r, 0", ecx, T_DOT_PUSHREG, ecx, ecx, T_RSP, T_DOT_SETFRAME, ecx )
+                    " %r %r\n"
+                    " %r %r, %r\n"
+                    " %r %r, 0",
+                    T_PUSH, ecx,
+                    T_DOT_PUSHREG, ecx,
+                    T_MOV, ecx, T_RSP,
+                    T_DOT_SETFRAME, ecx )
             .endif
 
             ; after the "push rbp", the stack is xmmword aligned
@@ -3098,14 +3119,18 @@ if STACKPROBE
                 .if ( Options.chkstack && ebx > 0x1000 )
 
                     AddLineQueueX(
-                        "mov rax, %d\n"
-                        "externdef _chkstk:PROC\n"
-                        "call _chkstk\n"
-                        "sub rsp, rax", ebx )
+                        "%r %r, %d\n"
+                        "%r _chkstk:%r\n"
+                        "%r _chkstk\n"
+                        "%r %r, %r",
+                        T_MOV, T_RAX, ebx,
+                        T_EXTERNDEF, T_PROC,
+                        T_CALL,
+                        T_SUB, T_RSP, T_RAX )
 
                 .else
 endif
-                    AddLineQueueX( "sub rsp, %d", ebx )
+                    AddLineQueueX( "%r %r, %d", T_SUB, T_RSP, ebx )
 if STACKPROBE
                 .endif
 endif
@@ -3137,7 +3162,7 @@ endif
                             .if ( resstack )
 
                                 mov rcx,sym_ReservedStack
-                                AddLineQueueX( "movdqa [%r+%u+%s], %r", T_RSP, i, [rcx].asym.name, edi )
+                                AddLineQueueX( "%r [%r+%u+%s], %r", T_MOVDQA, T_RSP, i, [rcx].asym.name, edi )
 
                                 mov cl,GetRegNo( edi )
                                 mov eax,1
@@ -3150,7 +3175,7 @@ endif
 
                             .else
 
-                                AddLineQueueX( "movdqa [%r+%u], %r", T_RSP, i, edi )
+                                AddLineQueueX( "%r [%r+%u], %r", T_MOVDQA, T_RSP, i, edi )
                                 mov cl,GetRegNo( edi )
                                 mov eax,1
                                 shl eax,cl
@@ -3225,7 +3250,7 @@ endif
 
     ; default processing. if no params/locals are defined, continue
 
-    .if ( !( [rsi].flags & ( PROC_FORCEFRAME or PROC_STACKPARAM or PROC_HAS_VARARG ) ) &&
+    .if ( !( [rsi].flags & ( PROC_FORCEFRAME or PROC_STACKPARAM or PROC_HAS_VARARG or PROC_LOADDS ) ) &&
           ![rsi].locallist && ![rsi].localsize && !sysstack && !resstack && ![rsi].regslist )
 
         .return( NOT_ERROR )
@@ -3288,6 +3313,11 @@ endif
         .endif
     .endif
 
+    movzx eax,MODULE.Ofssize
+    lea rdx,stackreg
+    mov eax,[rdx+rax*4]
+    mov stkreg,eax
+
     .if ( sysstack || [rsi].locallist || [rsi].flags & ( PROC_STACKPARAM or PROC_HAS_VARARG or PROC_FORCEFRAME ) )
 
         ; write 80386 prolog code
@@ -3295,16 +3325,24 @@ endif
         ; MOV [E|R]BP, [E|R]SP
         ; SUB [E|R]SP, localsize
 
+        ; v2.17: if option stackbase is active and
+        ; SS is assumed to have an offset size != Module's offset size,
+        ; use the appropriate sp register
+
+        .if ( MODULE.StackBase )
+
+            GetOfssizeAssume( ASSUME_SS )
+            lea rdx,stackreg
+            mov eax,[rdx+rax*4]
+            mov stkreg,eax
+        .endif
+
         .if ( !( [rsi].flags & PROC_FPO ) && usestack )
 
             movzx edx,[rsi].basereg
-            movzx ecx,MODULE.Ofssize
-            lea rax,stackreg
-            mov ecx,[rax+rcx*4]
-
             AddLineQueueX(
-                "push %r\n"
-                "mov %r, %r", edx, edx, ecx )
+                "%r %r\n"
+                "%r %r, %r", T_PUSH, edx, T_MOV, edx, stkreg )
         .endif
     .endif
 
@@ -3326,20 +3364,20 @@ if STACKPROBE
         .if ( Options.chkstack && ecx > 0x1000 )
 
             AddLineQueueX(
-                "mov rax, %d\n"
-                "externdef _chkstk:PROC\n"
-                "call _chkstk\n"
-                "sub rsp, rax", ecx )
+                "%r %r, %d\n"
+                "%r _chkstk:%r\n"
+                "%r _chkstk\n"
+                "%r %r, %r",
+                T_MOV, T_RAX, ecx,
+                T_EXTERNDEF, T_PROC,
+                T_CALL,
+                T_SUB, T_RSP, T_RAX )
         .else
 endif
 
             .if ( ecx )
 
-                movzx eax,MODULE.Ofssize
-                lea   rdx,stackreg
-                mov   edx,[rdx+rax*4]
-
-                AddLineQueueX( "sub %r, %d", edx, ecx )
+                AddLineQueueX( "%r %r, %d", T_SUB, stkreg, ecx )
             .endif
 if STACKPROBE
         .endif
@@ -3351,21 +3389,20 @@ endif
         ; it will generate short instructions up to a size of 128.
         ; with SUB, short instructions work up to 127 only.
 
-        movzx ecx,MODULE.Ofssize
-        lea rdx,stackreg
-        mov stkreg,[rdx+rcx*4]
-
 if STACKPROBE
 
         .if ( Options.chkstack && [rsi].localsize > 0x1000 )
 
             AddLineQueueX(
-                "externdef _chkstk:PROC\n"
-                "mov eax, %d\n"
-                "call _chkstk", [rsi].localsize )
+                "%r _chkstk:%r\n"
+                "%r %r, %d\n"
+                "%r _chkstk",
+                T_EXTERNDEF, T_PROC,
+                T_MOV, T_EAX, [rsi].localsize,
+                T_CALL )
 
             .if ( MODULE.Ofssize == USE64 )
-                AddLineQueueX( "sub %r, rax", stkreg )
+                AddLineQueueX( "%r %r, %r", T_SUB, stkreg, T_RAX )
             .endif
         .else
 endif
@@ -3373,9 +3410,9 @@ endif
         sub ecx,[rsi].localsize
 
         .if ( MODULE.masm_compat_gencode || [rsi].localsize == 128 )
-            AddLineQueueX( "add %r, %d", stkreg, ecx )
+            AddLineQueueX( "%r %r, %d", T_ADD, stkreg, ecx )
         .else
-            AddLineQueueX( "sub %r, %d", stkreg, [rsi].localsize )
+            AddLineQueueX( "%r %r, %d", T_SUB, stkreg, [rsi].localsize )
         .endif
 if STACKPROBE
         .endif
@@ -3389,9 +3426,12 @@ endif
             mov ecx,T_EAX
         .endif
         AddLineQueueX(
-            "push ds\n"
-            "mov ax, %s\n"
-            "mov ds, %r", &szDgroup, ecx )
+            "%r %r\n"
+            "%r %r, %s\n"
+            "%r %r, %r",
+            T_PUSH, T_DS,
+            T_MOV, T_AX, &szDgroup,
+            T_MOV, T_DS, ecx )
     .endif
 
     ; Push the USES registers first if stdcall-32
@@ -3428,9 +3468,9 @@ endif
 
                 .if ( resstack )
                     mov rdx,sym_ReservedStack
-                    AddLineQueueX( "movdqa [%r+%u+%s], %r", ecx, i, [rdx].asym.name, edi )
+                    AddLineQueueX( "%r [%r+%u+%s], %r", T_MOVDQA, ecx, i, [rdx].asym.name, edi )
                 .else
-                    AddLineQueueX( "movdqa [%r+%u], %r", ecx, i, edi )
+                    AddLineQueueX( "%r [%r+%u], %r", T_MOVDQA, ecx, i, edi )
                 .endif
                 add i,16
             .endif
@@ -3556,8 +3596,10 @@ runqueue:
             movzx edi,[rsi].basereg
             imul ecx,cnt,16
             AddLineQueueX(
-                "mov DWORD PTR [%r][%d],%d\n"
-                "mov DWORD PTR [%r+4][%d],48+%d", edi, offs, &[rbx*8], edi, offs, ecx )
+                "%r %r %r [%r][%d],%d\n"
+                "%r %r %r [%r+4][%d],48+%d",
+                T_MOV, T_DWORD, T_PTR, edi, offs, &[rbx*8],
+                T_MOV, T_DWORD, T_PTR, edi, offs, ecx )
 
             .for ( : ebx < 6: ebx++ )
 
@@ -3565,9 +3607,9 @@ runqueue:
                 movzx   ecx,byte ptr [rcx+rbx]
                 lea     edx,[rbx*8+0x20]
 
-                AddLineQueueX( "mov [%r+0x%X][%d],%r", edi, edx, offs, ecx )
+                AddLineQueueX( "%r [%r+0x%X][%d],%r", T_MOV, edi, edx, offs, ecx )
             .endf
-            AddLineQueue( ".if al" )
+            AddLineQueueX( "%r %r", T_DOT_IF, T_AL )
 
             mov  ebx,cnt
             imul edi,ebx,16
@@ -3575,28 +3617,37 @@ runqueue:
 
             .for ( : ebx < 8 : ebx++, edi += 16 )
                 movzx ecx,[rsi].basereg
-                AddLineQueueX( "movaps [%r+0x%X][%d],%r", ecx, edi, offs, &[rbx+T_XMM0] )
+                AddLineQueueX( "%r [%r+0x%X][%d],%r", T_MOVAPS, ecx, edi, offs, &[rbx+T_XMM0] )
             .endf
 
-            AddLineQueue( ".endif" )
+            AddLineQueueX( "%r", T_DOT_ENDIF )
             movzx edi,[rsi].basereg
             .if ( Options.chkstack )
                 AddLineQueueX(
-                    "assume fs:nothing\n"
-                    "mov rax,fs:[0x28]\n"
-                    "assume fs:error\n"
-                    "mov [%r+0x18][%d],rax", edi, offs )
+                    "%r %r:nothing\n"
+                    "%r %r,%r:[0x28]\n"
+                    "%r %r:error\n"
+                    "%r [%r+0x18][%d],%r",
+                    T_ASSUME, T_FS,
+                    T_MOV, T_RAX, T_FS,
+                    T_ASSUME, T_FS,
+                    T_MOV, edi, offs, T_RAX )
             .endif
             mov ecx,argoffs
             .if ( edi == T_RSP )
                 add ecx,offs
             .endif
             AddLineQueueX(
-                "lea rax,[%r+0x10][%d]\n"
-                "mov [%r+0x08][%d],rax\n"
-                "lea rax,[%r+0x20][%d]\n"
-                "mov [%r+0x10][%d],rax\n"
-                "lea rax,[%r][%d]", edi, ecx, edi, offs, edi, offs, edi, offs, edi, offs  )
+                "%r %r,[%r+0x10][%d]\n"
+                "%r [%r+0x08][%d],%r\n"
+                "%r %r,[%r+0x20][%d]\n"
+                "%r [%r+0x10][%d],%r\n"
+                "%r %r,[%r][%d]",
+                T_LEA, T_RAX, edi, ecx,
+                T_MOV, edi, offs, T_RAX,
+                T_LEA, T_RAX, edi, offs,
+                T_MOV, edi, offs, T_RAX,
+                T_LEA, T_RAX, edi, offs )
 
         .endif
     .endif
@@ -3969,7 +4020,7 @@ pop_register proc __ccall private uses rsi rdi regist:ptr word
 
         movzx ecx,word ptr [rsi]
         .continue .if ( GetValueSp( ecx ) & OP_XMM )
-        AddLineQueueX( "pop %r", ecx )
+        AddLineQueueX( "%r %r", T_POP, ecx )
     .endf
     ret
 
@@ -4013,9 +4064,9 @@ restore_xmm_registers proc private uses rsi rdi rbx sreg:int_t
                     .if ( MODULE.win64_flags & W64F_AUTOSTACKSP )
 
                         mov rdx,sym_ReservedStack
-                        AddLineQueueX( "movdqa %r, [%r + %u + %s]", ecx, sreg, ebx, [rdx].asym.name )
+                        AddLineQueueX( "%r %r, [%r + %u + %s]", T_MOVDQA, ecx, sreg, ebx, [rdx].asym.name )
                     .else
-                        AddLineQueueX( "movdqa %r, [%r + %u]", ecx, sreg, ebx )
+                        AddLineQueueX( "%r %r, [%r + %u]", T_MOVDQA, ecx, sreg, ebx )
                     .endif
                     add ebx,16
                 .endif
@@ -4090,7 +4141,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
    .new info:ptr proc_info
    .new leav:int_t = 0
    .new resstack:int_t = 0
-   .new sreg:int_t
+   .new stkreg:int_t
    .new usestack:int_t = 1
    .new sysstack:byte = 0
    .new cstack:byte = 0
@@ -4153,9 +4204,17 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
         inc leav
     .endif
 
-    movzx ecx,MODULE.Ofssize
+    ; v2.17: if option stackbase is active and
+    ; SS is assumed to have an offset size != Module's offset size,
+    ; use the appropriate sp register
+
+    movzx eax,MODULE.Ofssize
+    .if ( MODULE.StackBase )
+        GetOfssizeAssume( ASSUME_SS )
+    .endif
     lea rdx,stackreg
-    mov sreg,[rdx+rcx*4]
+    mov eax,[rdx+rax*4]
+    mov stkreg,eax
 
     .if ( [rsi].flags & PROC_ISFRAME )
 
@@ -4165,7 +4224,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
             ; restore non-volatile xmm registers
 
-            restore_xmm_registers(sreg)
+            restore_xmm_registers(stkreg)
 
             .if ( ( leav && [rsi].flags & PROC_PE_TYPE ) &&
                   ( cstack || ( ( sysstack || ![rsi].regslist ) && [rsi].basereg == T_RBP ) ) )
@@ -4183,7 +4242,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
                     .return
                 .endif
                 .if ( usestack )
-                    AddLineQueue( "leave" )
+                    AddLineQueueX( "%r", T_LEAVE )
                 .endif
                 .if ( cstack )
                     pop_register( [rsi].regslist )
@@ -4191,7 +4250,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
             .else
 
-                mov ebx,sreg
+                mov ebx,stkreg
                 .if ( ( MODULE.fctype == FCT_WIN64 || MODULE.fctype == FCT_VEC64 ) &&
                       ( MODULE.win64_flags & W64F_AUTOSTACKSP ) )
 
@@ -4199,11 +4258,10 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
                     mov edx,[rdx].asym.value
                     add edx,[rsi].localsize
                     .ifnz
-                        AddLineQueueX( "add %r, %d", ebx, edx )
+                        AddLineQueueX( "%r %r, %d", T_ADD, ebx, edx )
                     .endif
-
                 .elseif ( [rsi].localsize )
-                    AddLineQueueX( "add %r, %d", ebx, [rsi].localsize )
+                    AddLineQueueX( "%r %r, %d", T_ADD, ebx, [rsi].localsize )
                 .endif
 
                 .if ( cstack == 0 )
@@ -4212,7 +4270,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
                 movzx ecx,[rsi].basereg
                 .if ( ( GetRegNo( ecx ) != 4 && ( [rsi].parasize != 0 || [rsi].locallist != NULL ) ) )
-                    AddLineQueueX( "pop %r", ecx )
+                    AddLineQueueX( "%r %r", T_POP, ecx )
                 .endif
 
                 .if ( cstack )
@@ -4225,7 +4283,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
     .if ( MODULE.Ofssize == USE64 && MODULE.win64_flags & W64F_AUTOSTACKSP )
 
-        restore_xmm_registers(sreg)
+        restore_xmm_registers(stkreg)
     .endif
 
     .if ( MODULE.Ofssize == USE64 &&
@@ -4248,9 +4306,9 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
             ; v2.27: leave will follow..
 
         .elseif ( resstack || [rsi].localsize )
-            mov ecx,sreg
+
             mov rdx,sym_ReservedStack
-            AddLineQueueX( "add %r, %d + %s", ecx, [rsi].localsize, [rdx].asym.name )
+            AddLineQueueX( "%r %r, %d + %s", T_ADD, stkreg, [rsi].localsize, [rdx].asym.name )
         .endif
     .endif
 
@@ -4261,7 +4319,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
         pop_register( [rsi].regslist )
 
         .if ( [rsi].flags & PROC_LOADDS )
-            AddLineQueue( "pop ds" )
+            AddLineQueueX( "%r %r", T_POP, T_DS )
         .endif
     .endif
 
@@ -4298,7 +4356,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
             .elseif ( [rsi].localsize )
 
-                AddLineQueueX( "add %r, %d", sreg, [rsi].localsize )
+                AddLineQueueX( "%r %r, %d", T_ADD, stkreg, [rsi].localsize )
             .endif
 
         .elseif ( usestack )
@@ -4307,9 +4365,9 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
             ; POP [E|R]BP
 
             .if ( [rsi].localsize != 0 )
-                AddLineQueueX( "mov %r, %r", sreg, [rsi].basereg )
+                AddLineQueueX( "%r %r, %r", T_MOV, stkreg, [rsi].basereg )
             .endif
-            AddLineQueueX( "pop %r", [rsi].basereg )
+            AddLineQueueX( "%r %r", T_POP, [rsi].basereg )
         .endif
     .endif
 
@@ -4320,7 +4378,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
         pop_register( [rsi].regslist )
 
         .if ( [rsi].flags & PROC_LOADDS )
-            AddLineQueue( "pop ds" )
+            AddLineQueueX( "%r %r", T_POP, T_DS )
         .endif
     .endif
     ret
@@ -4373,7 +4431,7 @@ write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, to
 
     ; v2.11: set bit 7, the export flag
 
-    .if ( [rsi].flags & PROC_ISEXPORT )
+    .if ( [rdi].asym.flags & S_ISEXPORT )
         or edx,0x80
     .endif
     .if ( flag_iret )

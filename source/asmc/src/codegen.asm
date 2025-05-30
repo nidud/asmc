@@ -1598,7 +1598,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
             mov rax,[rsi].opnd[OPNI2].InsFixup
             .if rax
                 mov rcx,[rax].fixup.sym
-                .endc .if [rcx].asym.state != SYM_UNDEFINED ;; external? then skip
+               .endc .if ( rcx && [rcx].asym.state != SYM_UNDEFINED ) ;; external? then skip
             .endif
 
             .if !( [rsi].flags & CI_CONST_SIZE_FIXED )

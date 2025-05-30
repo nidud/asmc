@@ -243,9 +243,11 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 mov rdx,[rax].dsym.seginfo
                 mov rax,[rcx].seg_info.sgroup
 
+                ; v2.19: no error in pass one ( a GROUP directive might follow that "fixes" the error )
+
                 .if ( rax && rax == [rdx].seg_info.sgroup && [rcx].seg_info.Ofssize == MODULE.Ofssize )
                     ;
-                .elseif ( [rbx].mem_type == MT_NEAR && SegOverride == NULL )
+                .elseif ( Parse_Pass > PASS_1 && [rbx].mem_type == MT_NEAR && SegOverride == NULL )
                     .return( asmerr( 2107 ) )
                 .endif
             .endif
@@ -258,7 +260,6 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
     .elseif ( state != SYM_UNDEFINED )
 
         .return( asmerr( 2076 ) )
-
     .endif
 
     .if ( state != SYM_EXTERNAL )

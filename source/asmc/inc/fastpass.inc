@@ -64,14 +64,16 @@ FastpassInit            proto
 SegmentSaveState        proto
 AssumeSaveState         proto
 ContextSaveState        proto
-StoreLine               proto __ccall :string_t, :int_t, :uint_t
+StoreLine               proto __ccall :string_t
+DefSavedState           proto
 SkipSavedState          proto
 RestoreState            proto
 SaveVariableState       proto fastcall :ptr asym
+FreeLineStore           proto
 
 FStoreLine proto fastcall flags:abs {
     .if ( Parse_Pass == PASS_1 )
-        StoreLine( CurrSource, flags, 0 )
+        StoreLine( CurrSource )
     .endif
     }
 

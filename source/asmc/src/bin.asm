@@ -82,6 +82,7 @@ calc_param          struct
 if RAWSIZE_ROUND
     rawpagesize     uint_32 ?
 endif
+    start_loc       uint_32 ?
 calc_param          ends
 
 dosseg_order seg_type \ ; reorder segments for DOSSEG:
@@ -94,10 +95,13 @@ dosseg_order seg_type \ ; reorder segments for DOSSEG:
 
 flat_order seg_type \
     SEGTYPE_HDR,
+    SEGTYPE_UNDEF,
     SEGTYPE_CODE,
+    SEGTYPE_CODE16,
     SEGTYPE_CDATA,
     SEGTYPE_DATA,
     SEGTYPE_BSS,
+    SEGTYPE_STACK,
     SEGTYPE_RSRC,
     SEGTYPE_RELOC
 
@@ -187,73 +191,75 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
     .if ( [rdi].segtype == SEGTYPE_ABS )
 
-        mov eax,[rdi].abs_frame
-        shl eax,4
+        imul eax,[rdi].abs_frame,16
         mov [rdi].start_offset,eax
        .return
-    .elseif ( [rdi].info )
+    .elseif ( [rdi].flags & SEG_INFO )
        .return
     .endif
 
-    mov edx,1
-    .if ( [rbx].alignment > [rdi].alignment )
-        mov cl,[rbx].alignment
-    .else
+    ; v2.19: mz format and org in first segment (org1.asm).
+
+    .if ( [rbx].first && MODULE.sub_format != SFORMAT_NONE )
+        mov [rbx].start_loc,[rdi].start_loc
+    .elseif ( [rbx].first == FALSE && [rbx].start_loc )
+        add [rbx].fileoffset,[rbx].start_loc
+        mov [rbx].start_loc,0
+    .endif
+
+    mov eax,1
+    mov cl,[rbx].alignment
+    .if ( cl < [rdi].alignment )
         mov cl,[rdi].alignment
     .endif
-    shl edx,cl
-   .new alignment:uint_t = edx
-
-    mov ecx,edx
+    shl eax,cl
+    mov ecx,eax
     neg ecx
-    dec edx
-    add edx,[rbx].fileoffset
-    and edx,ecx
-    sub edx,[rbx].fileoffset
-    add [rbx].fileoffset,edx
+    dec eax
+    add eax,[rbx].fileoffset
+    and eax,ecx
+    sub eax,[rbx].fileoffset
 
-   .new alignbytes:uint_t = edx
-   .new grp:dsym_t = [rdi].sgroup
-   .new offs:uint_t
+    ; v2.19, format -bin: don't align fileoffset for segments with RVA alignment [ALIGN(x,v)]
 
-    .if ( rax == NULL )
+    .if ( !( [rdi].flags & SEG_ALIGNRVA ) )
 
-        mov eax,[rbx].fileoffset
-        sub eax,[rbx].sizehdr
-        mov offs,eax
+        add [rbx].fileoffset,eax
+    .endif
+
+    mov rdx,[rdi].sgroup
+
+    .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
+
+        ; v2.24
+
+        mov ecx,[rbx].rva
+        add [rbx].rva,[rsi].asym.max_offset
+
+    .elseif ( rdx == NULL )
+
+        mov ecx,[rbx].fileoffset
+        sub ecx,[rbx].sizehdr
+
+    .elseif ( [rdx].asym.total_size == 0 )
+
+        mov ecx,[rbx].fileoffset
+        sub ecx,[rbx].sizehdr
+        mov [rdx].asym.offs,ecx
+        or  [rdx].asym.flags,S_INCLUDED
+        xor ecx,ecx
 
     .else
-        .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
 
-            ; v2.24
+        ; v2.12: the old way wasn't correct. if there's a segment between the
+        ; segments of a group, it affects the offset as well ( if it
+        ; occupies space in the file )! the value stored in grp->sym.total_size
+        ; is no longer used (or, more exactly, used as a flag only).
 
-            mov offs,[rbx].rva
-        .else
-
-            .if ( [rax].asym.total_size == 0 )
-
-                mov ecx,[rbx].fileoffset
-                sub ecx,[rbx].sizehdr
-                mov [rax].asym.offs,ecx
-                mov offs,0
-
-            .else
-
-                ;
-                ; v2.12: the old way wasn't correct. if there's a segment between the
-                ; segments of a group, it affects the offset as well ( if it
-                ; occupies space in the file )! the value stored in grp->sym.total_size
-                ; is no longer used (or, more exactly, used as a flag only).
-                ;
-                ; offset = ( cp->fileoffset - cp->sizehdr ) - grp->sym.offset;
-                ;
-
-                mov ecx,[rax].asym.total_size
-                add ecx,alignbytes
-                mov offs,ecx
-            .endif
-        .endif
+        mov ecx,[rdx].asym.total_size
+        add ecx,eax
     .endif
+    mov [rdi].start_offset,ecx
 
     ; v2.04: added
     ; v2.05: this addition did mess sample Win32_5.asm, because the
@@ -267,27 +273,19 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
         ; - segment is in a group and
         ; - group isn't FLAT or segment's name contains '$'
 
-        mov rax,grp
-        .if ( rax )
-            .if ( rax != MODULE.flat_grp )
-                mov [rdi].start_loc,0
-            .elseif ( tstrchr( [rsi].asym.name, '$' ) )
-                mov [rdi].start_loc,0
-            .endif
+        .if ( rdx && rdx != MODULE.flat_grp )
+            mov [rdi].start_loc,0
         .endif
     .endif
 
     mov [rdi].fileoffset,[rbx].fileoffset
-    mov [rdi].start_offset,offs
+    mov eax,[rsi].asym.max_offset
+    sub eax,[rdi].start_loc
 
     .if ( MODULE.sub_format == SFORMAT_NONE )
 
-        mov eax,[rsi].asym.max_offset
-        sub eax,[rdi].start_loc
         add [rbx].fileoffset,eax
-
         .if ( [rbx].first )
-
             mov [rbx].imagestart,[rdi].start_loc
         .endif
 
@@ -296,30 +294,23 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
         .if ( [rbx].entryoffset == -1 )
 
-            mov [rbx].entryoffset,offs
+            mov [rbx].entryoffset,ecx
             mov [rbx].entryseg,rsi
         .endif
-    .else
 
-        mov eax,[rsi].asym.max_offset
-        sub eax,[rdi].start_loc
-        add [rbx].rva,eax
-        .if ( [rdi].segtype != SEGTYPE_BSS )
-            add [rbx].fileoffset,eax
-        .endif
+    .elseif ( [rdi].segtype != SEGTYPE_BSS )
+        add [rbx].fileoffset,eax
     .endif
 
-    add offs,[rsi].asym.max_offset
-    mov rcx,grp
-    .if rcx
+    .if rdx
 
-        mov [rcx].asym.total_size,offs
+        add ecx,[rsi].asym.max_offset
+        mov [rdx].asym.total_size,ecx
 
         ; v2.07: for 16-bit groups, ensure that it fits in 64 kB
 
-        .if ( [rcx].asym.total_size > 0x10000 && [rcx].asym.Ofssize == USE16 )
-
-            asmerr( 8003, [rcx].asym.name )
+        .if ( ecx > 0x10000 && [rdx].asym.Ofssize == USE16 )
+            asmerr( 8003, [rdx].asym.name )
         .endif
     .endif
     mov [rbx].first,FALSE
@@ -370,17 +361,13 @@ GetSegRelocs proc __ccall uses rsi rdi rbx pDst:ptr uint_16
 
                     ; v2.04: fixed
 
-                    mov eax,[rbx].locofs
                     mov ecx,[rdi].start_offset
+                    mov eax,ecx
                     and ecx,0xf
-                    add ecx,eax
-
-                    mov eax,[rdi].start_offset
+                    add ecx,[rbx].locofs
                     shr eax,4
-
-                    .if [rdi].sgroup
-
-                        mov rdx,[rdi].sgroup
+                    mov rdx,[rdi].sgroup
+                    .if rdx
                         mov edx,[rdx].asym.offs
                         and edx,0xf
                         add ecx,edx
@@ -422,15 +409,14 @@ GetSegRelocs endp
 ; memimage=FALSE: get size without uninitialized segments (BSS and STACK)
 ; memimage=TRUE: get full size
 
-GetImageSize proc __ccall uses rsi rdi rbx memimage:int_t
+GetImageSize proc __ccall uses rsi rdi memimage:int_t
 
     .new first:uint_32 = TRUE
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head,
-           eax = 0, ebx = 0 : rsi : rsi = [rsi].dsym.next )
+    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head, eax = 0 : rsi : rsi = [rsi].dsym.next )
 
         mov rdi,[rsi].dsym.seginfo
-        .if ( [rdi].segtype == SEGTYPE_ABS || [rdi].info )
+        .if ( [rdi].segtype == SEGTYPE_ABS || [rdi].flags & SEG_INFO )
             .continue
         .endif
 
@@ -447,18 +433,13 @@ GetImageSize proc __ccall uses rsi rdi rbx memimage:int_t
             .endif
         .endif
 
-        mov ecx,[rsi].asym.max_offset
-        sub ecx,[rdi].start_loc
-        add ecx,[rdi].fileoffset
+        mov eax,[rsi].asym.max_offset
+        add eax,[rdi].fileoffset
 
-        .if ( first == FALSE )
-            add ebx,[rdi].start_loc
-        .endif
-        .if ( memimage )
-            add ecx,ebx
-        .endif
-        .if ( eax < ecx )
-            mov eax,ecx
+        ; for format -bin, skip the first start_loc
+
+        .if ( first && MODULE.sub_format == SFORMAT_NONE )
+            sub eax,[rdi].start_loc
         .endif
         mov first,FALSE
     .endf
@@ -475,6 +456,7 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
    .new value:uint_32
    .new value64:uint_64
+   .new offs:uint_32
 
     ldr rsi,curr
     mov rdi,[rsi].dsym.seginfo
@@ -497,7 +479,6 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
             ; assembly time variable (also $ symbol) in reloc?
             ; v2.07: moved inside if-block, using new local var "offset"
 
-            .new offs:uint_32
             .if ( [rcx].asym.flags & S_VARIABLE )
 
                 mov rsi,[rbx].segment_var
@@ -548,7 +529,7 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
                     .for ( rdx = SymTables[TAB_SEG*symbol_queue].head : rdx : rdx = [rdx].dsym.next )
 
-                        .if ( [rdx].asym.name_size == eax )
+                        .if ( eax == [rdx].asym.name_size )
 
                             push    rsi
                             push    rdi
@@ -587,9 +568,22 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
             .default
 
-                .if ( [rsi].sgroup && [rbx].frame_type != FRAME_SEG )
+                ; v2.19: ensure that all DIR32 offsets have image base added ( even if segment is 16-bit )
+                ; Actually, this "moves" the segment to FLAT - and shows up accordingly in the listing.
+                ; Perhaps there's a better fix possible?
 
-                    mov rcx,[rsi].sgroup
+                .if ( MODULE.sub_format == SFORMAT_PE )
+                    .if ( [rsi].sgroup == NULL )
+                        mov [rsi].sgroup,MODULE.flat_grp
+                    .endif
+                    .if ( [rsi].sgroup == MODULE.flat_grp && [rbx].frame_type == FRAME_SEG )
+                        mov [rbx].frame_type,FRAME_GRP
+                    .endif
+                .endif
+
+                mov rcx,[rsi].sgroup
+                .if ( rcx && [rbx].frame_type != FRAME_SEG )
+
                     mov eax,[rcx].asym.offs
                     and eax,0x0F
                     add eax,[rsi].start_offset
@@ -619,17 +613,84 @@ endif
 
                 .else
 
-                    mov eax,[rsi].start_offset
-                    and eax,0xF
-                    add eax,[rbx].offs
+                    ; v2.13: if frametype == FRAME_GRP, add full segment offset (see fixup5a.asm)
+
+                    mov eax,[rbx].offs
                     add eax,offs
+                    .if ( [rbx].frame_type == FRAME_GRP )
+
+                        add eax,[rsi].start_offset
+
+                    .else ; v2.13: use lower 4 bits of group offset
+
+                        xor edx,edx
+                        .if ( rcx )
+                            mov edx,[rcx].asym.offs
+                            and edx,0xF
+                        .endif
+                        mov ecx,[rsi].start_offset
+                        and ecx,0xF
+                        add eax,edx
+                        add eax,ecx
+                    .endif
                     mov value,eax
                 .endif
                 .endc
             .endsw
+
         .else
+
             mov segm,NULL
             mov value,0
+
+            ; v2.14: use fixup->offset; see flatgrp2.asm. todo: check if this should be done generally
+
+            .if ( [rbx].sym == NULL )
+                mov value,[rbx].offs
+            .endif
+
+            ; v2.14: if a segment is given, find it - we just have the segment index
+
+            .if ( [rbx].frame_type == FRAME_SEG )
+
+                .for ( rcx = SymTables[TAB_SEG*symbol_queue].head : rcx : rcx = [rcx].dsym.next )
+
+                    mov rdx,[rcx].dsym.seginfo
+
+                    .if ( [rdx].seg_info.seg_idx == [rbx].frame_datum )
+
+                        ; if the segment is in a group, add the segment's start offset
+
+                        .if ( [rdx].seg_info.sgroup )
+
+                            add value,[rdx].seg_info.start_offset
+
+                            ; v2.15: add imagebase. see lea3.asm
+
+                            .if ( MODULE.sub_format == SFORMAT_PE )
+
+                                mov rcx,cp
+                                .if ( [rdi].Ofssize == USE64 )
+ifdef _WIN64
+                                    mov eax,value
+                                    add rax,[rcx].calc_param.imagebase64
+                                    mov value64,rax
+else
+                                    mov eax,dword ptr [rcx].calc_param.imagebase64
+                                    mov edx,dword ptr [rcx].calc_param.imagebase64[4]
+                                    add eax,value
+                                    adc edx,0
+                                    mov dword ptr value64,eax
+                                    mov dword ptr value64[4],edx
+endif
+                                .endif
+                                add value,[rcx].calc_param.imagebase
+                            .endif
+                        .endif
+                        .break
+                    .endif
+                .endf
+            .endif
         .endif
 
         mov   rcx,codeptr
@@ -673,6 +734,16 @@ endif
             mov [rcx],ax
            .endc
         .case FIX_OFF32
+if 0
+            .if ( rdi && [rdi].Ofssize == USE64 )
+                mov edx,dword ptr value64[4]
+                .ifs ( edx > 0 || eax < 0 )
+                    mov [rcx],eax
+                    asmerr( 2024 )
+                   .endc
+                .endif
+            .endif
+endif
         .case FIX_OFF32_IMGREL
         .case FIX_OFF32_SECREL
             mov [rcx],eax
@@ -818,7 +889,7 @@ endif
 DoFixup endp
 
 
-    assume rbx:nothing, rdi:nothing
+    assume rbx:nothing, rdi:nothing, rsi:nothing
 
 pe_create_MZ_header proc
 
@@ -834,28 +905,28 @@ pe_create_MZ_header proc
         AddLineQueueX(
             "option dotname\n"
             "IMAGE_DOS_HEADER STRUC\n"
-            "e_magic         dw ?\n"
-            "e_cblp          dw ?\n"
-            "e_cp            dw ?\n"
-            "e_crlc          dw ?\n"
-            "e_cparhdr       dw ?\n"
-            "e_minalloc      dw ?\n"
-            "e_maxalloc      dw ?\n"
-            "e_ss            dw ?\n"
-            "e_sp            dw ?\n"
-            "e_csum          dw ?\n"
-            "e_ip            dw ?\n"
-            "e_cs            dw ?\n"
-            "e_lfarlc        dw ?\n"
-            "e_ovno          dw ?\n"
-            "e_res           dw 4 dup(?)\n"
-            "e_oemid         dw ?\n"
-            "e_oeminfo       dw ?\n"
-            "e_res2          dw 10 dup(?)\n"
-            "e_lfanew        dd ?\n"
+            "e_magic dw ?\n"
+            "e_cblp dw ?\n"
+            "e_cp dw ?\n"
+            "e_crlc dw ?\n"
+            "e_cparhdr dw ?\n"
+            "e_minalloc dw ?\n"
+            "e_maxalloc dw ?\n"
+            "e_ss dw ?\n"
+            "e_sp dw ?\n"
+            "e_csum dw ?\n"
+            "e_ip dw ?\n"
+            "e_cs dw ?\n"
+            "e_lfarlc dw ?\n"
+            "e_ovno dw ?\n"
+            "e_res dw 4 dup(?)\n"
+            "e_oemid dw ?\n"
+            "e_oeminfo dw ?\n"
+            "e_res2 dw 10 dup(?)\n"
+            "e_lfanew dd ?\n"
             "IMAGE_DOS_HEADER ENDS\n"
             "%s1 segment USE16 word %s\n"
-            "IMAGE_DOS_HEADER { 0x5A4D, 0x68, 1, 0, 4, 0, -1, 0, 0xB8, 0, 0, 0, 0x40 }\n"
+            "IMAGE_DOS_HEADER {0x5A4D,0x68,1,0,4,0,-1,0,0xB8,0,0,0,0x40}\n"
             "push cs\n"
             "pop ds\n"
             "mov dx,@F-40h\n"
@@ -864,7 +935,7 @@ pe_create_MZ_header proc
             "mov ax,4C01h\n"
             "int 21h\n"
             "@@:\n"
-            "db 'This is a PE executable',0Dh,0Ah,'$'\n"
+            "db 'This is a PE executable',13,10,'$'\n"
             "%s1 ends", hdrname, hdrattr, hdrname )
 
         RunLineQueue()
@@ -885,22 +956,24 @@ pe_create_MZ_header endp
 
 ; get/set value of @pe_file_flags variable
 
-set_file_flags proc __ccall sym:ptr asym, opnd:ptr expr
+set_file_flags proc fastcall uses rsi rdi sym:ptr asym, opnd:ptr expr
 
-   .return .if !SymSearch( hdrname "2" )
+    mov rsi,rcx
+    mov rdi,rdx
 
-    mov rcx,[rax].dsym.seginfo
-    mov rdx,[rcx].seg_info.CodeBuffer
-    movzx eax,[rdx].IMAGE_PE_HEADER32.FileHeader.Characteristics
+    .if SymSearch( hdrname "2" )
 
-    .if ( opnd ) ; set the value?
+        mov rcx,[rax].dsym.seginfo
+        mov rdx,[rcx].seg_info.CodeBuffer
+        movzx eax,[rdx].IMAGE_PE_HEADER32.FileHeader.Characteristics
 
-        mov rcx,opnd
-        mov eax,[rcx].expr.value
-        mov [rdx].IMAGE_PE_HEADER32.FileHeader.Characteristics,ax
+        .if ( rdi ) ; set the value?
+
+            mov eax,[rdi].expr.value
+            mov [rdx].IMAGE_PE_HEADER32.FileHeader.Characteristics,ax
+        .endif
+        mov [rsi].asym.value,eax
     .endif
-    mov rcx,sym
-    mov [rcx].asym.value,eax
     ret
 
 set_file_flags endp
@@ -944,7 +1017,7 @@ endif
             mov [rsi].sgroup,rcx
             mov [rsi].combine,COMB_ADDOFF  ; PUBLIC
             mov [rsi].characteristics,(IMAGE_SCN_MEM_READ shr 24)
-            mov [rsi].readonly,1
+            or  [rsi].flags,SEG_RDONLY
             mov [rsi].bytes_written,ebx ; ensure that ORG won't set start_loc (assemble.c, SetCurrOffset)
 
         .else
@@ -954,7 +1027,7 @@ endif
             .endif
 
             mov rsi,[rax].dsym.seginfo
-            mov [rsi].internal,TRUE
+            or  [rsi].flags,SEG_INTERNAL
             mov [rsi].start_loc,0
         .endif
 
@@ -980,6 +1053,25 @@ pe_create_PE_header endp
 
 
 define CHAR_READONLY ( IMAGE_SCN_MEM_READ shr 24 )
+
+IsStdCodeName proc fastcall segm:string_t
+
+    ; if segment name starts with _TEXT$ or .text$, assume it should be "mixed"
+
+    xor eax,eax
+    .if ( byte ptr [rcx] == '_' || byte ptr [rcx] == '.' )
+
+        .if ( byte ptr [rcx+5] == '$' )
+
+            mov  ecx,[rcx+1]
+            or   ecx,0x20202020
+            cmp  ecx,'txet'
+            setz al
+        .endif
+    .endif
+    ret
+
+IsStdCodeName endp
 
 pe_create_section_table proc __ccall uses rsi rdi rbx
 
@@ -1020,7 +1112,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
 
             .if ( [rsi].segtype == SEGTYPE_DATA )
 
-                .if ( [rsi].readonly || [rsi].characteristics == CHAR_READONLY )
+                .if ( [rsi].flags & SEG_RDONLY || [rsi].characteristics == CHAR_READONLY )
 
                     mov [rsi].segtype,SEGTYPE_CDATA
 
@@ -1052,16 +1144,30 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
 
         .for ( ebx = 1, esi = 0 : ebx < SIZE_PEFLAT : ebx++ )
 
-            lea rcx,flat_order
             .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
 
                 mov rdx,[rdi].dsym.seginfo
-                .if ( [rdx].seg_info.segtype == [rcx+rbx*4] )
-                    .if ( [rdi].asym.max_offset )
 
-                        inc esi
-                       .break
-                    .endif
+                ; v2.19: skip info sections
+
+                .continue .if ( [rdx].seg_info.flags & SEG_INFO )
+
+                ; v2.12: don't mix 32-bit and 16-bit code segments
+                ; v2.19: use SEGTYPE_CODE16 instead of SEGTYPE_UNDEF so it's behind the .text section;
+                ;        if segment name contains a '$', allow mixing!
+
+                IsStdCodeName( [rdi].asym.name )
+
+                lea rcx,flat_order
+                mov ecx,[rcx+rbx*4]
+                mov ah,ModuleInfo.defOfssize
+
+                .if ( ecx == SEGTYPE_CODE16 && [rdx].seg_info.segtype == SEGTYPE_CODE &&
+                      [rdx].seg_info.Ofssize != ah && !al )
+                    ;nop
+                .elseif ( ecx == [rdx].seg_info.segtype && [rdi].asym.max_offset )
+                    inc esi
+                   .break
                 .endif
             .endf
         .endf
@@ -1103,9 +1209,13 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
   local name:string_t
   local pitems:ptr expitem
 
-    .for ( rdi = SymTables[TAB_PROC*symbol_queue].head, ebx = 0 : rdi : rdi = [rdi].dsym.nextproc )
-        mov rdx,[rdi].dsym.procinfo
-        .if ( [rdx].proc_info.flags & PROC_ISEXPORT )
+    ; v2.19: scan the public queue instead of just PROCs.
+    ; In v2.19, the PUBLIC directive has been extended to allow to export data items;
+    ; masm has the restriction that only PROCs can have the "export" attribute.
+
+    .for ( rdi = MODULE.PubQueue.head, ebx = 0 : rdi : rdi = [rdi].qnode.next )
+        mov rdx,[rdi].qnode.sym
+        .if ( [rdx].asym.flags & S_ISEXPORT )
             inc ebx
         .endif
     .endf
@@ -1116,11 +1226,12 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
 
     ; create .edata segment
 
+    mov ecx,T_IMAGEREL
     AddLineQueueX(
-        "option dotname\n"
-        "%s segment dword %s\n"
-        "DD 0, 0%xh, 0, imagerel @%s_name, %u, %u, %u, imagerel @%s_func, imagerel @%s_names, imagerel @%s_nameord",
-        edataname, edataattr, timedate, rsi, 1, ebx, ebx, rsi, rsi, rsi )
+        "%r DOTNAME\n"
+        "%s %r %r %s\n"
+        "DD 0, 0%xh, 0, %r @%s_name, 1, %u, %u, %r @%s_func, %r @%s_names, %r @%s_nameord",
+        T_OPTION, edataname, T_SEGMENT, T_DWORD, edataattr, timedate, ecx, rsi, ebx, ebx, ecx, rsi, ecx, rsi, ecx, rsi )
 
     mov name,rsi
     mov cnt,ebx
@@ -1132,13 +1243,13 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     mov pitems,alloca(ecx)
 
     assume rsi:ptr expitem
-    .for ( rdi = SymTables[TAB_PROC*symbol_queue].head,
-           rsi = rax, ebx = 0 : rdi : rdi = [rdi].dsym.nextproc )
 
-        mov rdx,[rdi].dsym.procinfo
-        .if ( [rdx].proc_info.flags & PROC_ISEXPORT )
+    .for ( rsi = rax, rdi = MODULE.PubQueue.head, ebx = 0 : rdi : rdi = [rdi].qnode.next )
 
-            mov [rsi].name,[rdi].asym.name
+        mov rdx,[rdi].qnode.sym
+        .if ( [rdx].asym.flags & S_ISEXPORT )
+
+            mov [rsi].name,[rdx].asym.name
             mov [rsi].idx,ebx
             inc ebx
             add rsi,expitem
@@ -1150,32 +1261,34 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     ; would be possible to just use the array of sorted names,
     ; but we want to emit the EAT being sorted by address.
 
-    AddLineQueueX( "@%s_func label dword", name )
+    AddLineQueueX( "@%s_func %r %r", name, T_LABEL, T_DWORD )
 
-    .for ( rdi = SymTables[TAB_PROC*symbol_queue].head : rdi : rdi = [rdi].dsym.nextproc )
+    .for ( rdi = MODULE.PubQueue.head : rdi : rdi = [rdi].qnode.next )
 
-        mov rdx,[rdi].dsym.procinfo
-        .if ( [rdx].proc_info.flags & PROC_ISEXPORT )
+        mov rdx,[rdi].qnode.sym
+        .if ( [rdx].asym.flags & S_ISEXPORT )
 
-            AddLineQueueX( "dd imagerel %s", [rdi].asym.name )
+            AddLineQueueX( "dd %r %s", T_IMAGEREL, [rdi].asym.name )
         .endif
     .endf
 
     ; emit the name pointer table
 
-    AddLineQueueX( "@%s_names label dword", name )
+    AddLineQueueX( "@%s_names %r %r", name, T_LABEL, T_DWORD )
 
     .for ( rsi = pitems, ebx = 0: ebx < cnt: ebx++, rsi += expitem )
-        AddLineQueueX( "dd imagerel @%s", [rsi].name )
+        AddLineQueueX( "dd %r @%s", T_IMAGEREL, [rsi].name )
     .endf
 
     ; ordinal table. each ordinal is an index into the export address table
 
-    AddLineQueueX( "@%s_nameord label word", name )
+    AddLineQueueX( "@%s_nameord %r %r", name, T_LABEL, T_WORD )
 
     .for ( rsi = pitems, ebx = 0: ebx < cnt: ebx++, rsi += expitem )
         AddLineQueueX( "dw %u", [rsi].idx )
     .endf
+
+    assume rsi:nothing
 
     ; v2.10: name+ext of dll
 
@@ -1184,10 +1297,10 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     .endf
     AddLineQueueX( "@%s_name db '%s',0", name, rbx )
 
-    .for ( rdi = SymTables[TAB_PROC*symbol_queue].head : rdi : rdi = [rdi].dsym.nextproc )
+    .for ( rsi = MODULE.PubQueue.head : rsi : rsi = [rsi].qnode.next )
 
-        mov rdx,[rdi].dsym.procinfo
-        .if ( [rdx].proc_info.flags & PROC_ISEXPORT )
+        mov rdi,[rsi].qnode.sym
+        .if ( [rdi].asym.flags & S_ISEXPORT )
 
             Mangle( rdi, StringBufferEnd )
             mov rcx,StringBufferEnd
@@ -1200,7 +1313,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
 
     ; exit .edata segment
 
-    AddLineQueueX( "%s ends", edataname )
+    AddLineQueueX( "%s %r", edataname, T_ENDS )
     RunLineQueue()
     ret
 
@@ -1238,8 +1351,8 @@ endif
 
                 mov type,1
                 AddLineQueueX(
-                    "@LPPROC typedef ptr proc\n"
-                    "option dotname" )
+                    "@LPPROC %r %r %r\n"
+                    "%r dotname", T_TYPEDEF, T_PTR, T_PROC, T_OPTION )
             .endif
 
            .new name[256]:char_t
@@ -1251,7 +1364,6 @@ endif
                 mov B[rax],'_'
             .endw
             .while ( tstrchr( rsi, '-' ) )
-
                 mov B[rax],'_'
             .endw
 
@@ -1259,17 +1371,19 @@ endif
 
             lea rcx,@CStr(idataname)
             lea rdx,@CStr(idataattr)
+            mov edi,T_IMAGEREL
             AddLineQueueX(
-                "%s" IMPDIRSUF " segment dword %s\n"
-                "dd imagerel @%s_ilt, 0, 0, imagerel @%s_name, imagerel @%s_iat\n"
-                "%s" IMPDIRSUF " ends\n"
-                "%s" IMPILTSUF " segment %s %s\n"
-                "@%s_ilt label %r",
-                rcx, rdx, rsi, rsi, rsi, rcx, rcx, cpalign, rdx, rsi, ptrtype )
+                "%s" IMPDIRSUF " %r %r %s\n"
+                "dd %r @%s_ilt, 0, 0, %r @%s_name, %r @%s_iat\n"
+                "%s" IMPDIRSUF " %r\n"
+                "%s" IMPILTSUF " %r %s %s\n"
+                "@%s_ilt %r %r",
+                rcx, T_SEGMENT, T_DWORD, rdx, edi, rsi, edi, rsi, edi, rsi, rcx, T_ENDS,
+                rcx, T_SEGMENT, cpalign, rdx, rsi, T_LABEL, ptrtype )
 
             .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
                 .if ( [rdi].asym.flags & S_IAT_USED && [rdi].asym.dll == rbx )
-                    AddLineQueueX( "@LPPROC imagerel @%s_name", [rdi].asym.name )
+                    AddLineQueueX( "@LPPROC %r @%s_name", T_IMAGEREL, [rdi].asym.name )
                 .endif
             .endf
 
@@ -1277,15 +1391,15 @@ endif
 
             AddLineQueueX(
                 "@LPPROC 0\n"
-                "%s" IMPILTSUF " ends\n"
-                "%s" IMPIATSUF " segment %s %s\n"
-                "@%s_iat label %r", idataname, idataname, cpalign, idataattr, rsi, ptrtype )
+                "%s" IMPILTSUF " %r\n"
+                "%s" IMPIATSUF " %r %s %s\n"
+                "@%s_iat %r %r", idataname, T_ENDS, idataname, T_SEGMENT, cpalign, idataattr, rsi, T_LABEL, ptrtype )
 
             .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
                 .if ( [rdi].asym.flags & S_IAT_USED && [rdi].asym.dll == rbx )
                     Mangle( rdi, StringBufferEnd )
-                    AddLineQueueX( "%s%s @LPPROC imagerel @%s_name",
-                        MODULE.imp_prefix, StringBufferEnd, [rdi].asym.name )
+                    AddLineQueueX( "%s%s @LPPROC %r @%s_name",
+                        MODULE.imp_prefix, StringBufferEnd, T_IMAGEREL, [rdi].asym.name )
                 .endif
             .endf
 
@@ -1293,8 +1407,8 @@ endif
 
             AddLineQueueX(
                 "@LPPROC 0\n"
-                "%s" IMPIATSUF " ends\n"
-                "%s" IMPSTRSUF " segment word %s", idataname, idataname, idataattr )
+                "%s" IMPIATSUF " %r\n"
+                "%s" IMPSTRSUF " %r %r %s", idataname, T_ENDS, idataname, T_SEGMENT, T_WORD, idataattr )
 
             .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
                 .if ( [rdi].asym.flags & S_IAT_USED && [rdi].asym.dll == rbx )
@@ -1310,7 +1424,7 @@ endif
             AddLineQueueX(
                 "@%s_name db '%s',0\n"
                 "even\n"
-                "%s" IMPSTRSUF " ends", rsi, &[rbx].name, idataname )
+                "%s" IMPSTRSUF " %r", rsi, &[rbx].name, idataname, T_ENDS )
 
         .endif
     .endf
@@ -1319,9 +1433,9 @@ endif
         ; import directory NULL entry
 
         AddLineQueueX(
-            "%s" IMPNDIRSUF " segment dword %s\n"
+            "%s" IMPNDIRSUF " %r %r %s\n"
             "DD 0, 0, 0, 0, 0\n"
-            "%s" IMPNDIRSUF " ends", idataname, idataattr, idataname )
+            "%s" IMPNDIRSUF " %r", idataname, T_SEGMENT, T_DWORD, idataattr, idataname, T_ENDS )
         RunLineQueue()
     .endif
     ret
@@ -1357,7 +1471,7 @@ pe_get_characteristics proc fastcall segp:ptr dsym
     .case ( [rcx].seg_info.combine == COMB_STACK && [rcx].seg_info.bytes_written == 0 )
         mov eax,IMAGE_SCN_CNT_UNINITIALIZED_DATA or IMAGE_SCN_MEM_READ or IMAGE_SCN_MEM_WRITE
         .endc
-    .case ( [rcx].seg_info.readonly )
+    .case ( [rcx].seg_info.flags & SEG_RDONLY )
         mov eax,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ
         .endc
     .case ( [rcx].seg_info.clsym )
@@ -1796,7 +1910,7 @@ endif
     .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
 
         mov rsi,[rdi].dsym.seginfo
-        .if ( [rsi].info )
+        .if ( [rsi].flags & SEG_INFO )
             .if ( !tstrcmp( [rdi].asym.name, ".drectve" ) )
                 pe_scan_linker_directives( pe, [rsi].CodeBuffer, [rsi].bytes_written )
             .endif
@@ -1835,12 +1949,30 @@ endif
 
     ; sort: header, executable, readable, read-write segments, resources, relocs
 
-    lea rcx,flat_order
-    .for ( ebx = 0: ebx < SIZE_PEFLAT: ebx++ )
+    .for ( rdx = &flat_order, ebx = 0 : ebx < SIZE_PEFLAT : ebx++ )
         .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
             mov rsi,[rdi].dsym.seginfo
-            .if ( [rsi].segtype == [rcx+rbx*4] )
+            .if ( [rsi].segtype == [rdx+rbx*4] )
+if 1
+                ; v2.12: added to avoid mixing 16-/32-bit code segments;
+                ;        also see code in pe_create_section_table!
+                ;        jwlink DOES mix 16- and 32-bit code segments! MS link does NOT.
+                ; v2.19: allow mixing if 16-bit code segment's name starts with _TEXT$ or .text$.
+
+                IsStdCodeName( [rdi].asym.name )
+                mov ecx,ebx
+                mov ah,ModuleInfo.defOfssize
+
+                .if ( [rsi].segtype == SEGTYPE_CODE && [rsi].Ofssize != ah && !al )
+
+                    ; v2.19: use newly introduced SEGTYPE_CODE16 (so 16-bit code is behind .text
+
+                    inc ecx ; i+1 = SEGTYPE_CODE16
+                .endif
+                mov [rsi].lname_idx,ecx
+else
                 mov [rsi].lname_idx,ebx
+endif
             .endif
         .endf
     .endf
@@ -1915,7 +2047,9 @@ endif
         mov rdx,[rsi].CodeBuffer
         mov rsi,[rcx].dsym.seginfo
         mov eax,[rsi].fileoffset
-        mov [rdx].IMAGE_DOS_HEADER.e_lfanew,eax
+        .if ( [rdx].IMAGE_DOS_HEADER.e_magic == 0x5a4d && [rdx].IMAGE_DOS_HEADER.e_cparhdr >= 4 )
+            mov [rdx].IMAGE_DOS_HEADER.e_lfanew,eax
+        .endif
     .endif
 
     ; set number of sections in PE file header (doesn't matter if it's 32- or 64-bit)
@@ -1956,7 +2090,7 @@ if 1    ; v2.34.61 - jwasm
         ; been called just after step 1 - and worse, inside pe_emit_export_data() it cannot be done
         ; either since at that time there are no section contents available yet!
 
-        .if ( [rsi].info ) ; v2.13: ignore 'info' sections (linker directives)
+        .if ( [rsi].flags & SEG_INFO ) ; v2.13: ignore 'info' sections (linker directives)
 
             ;asmerr( 8017, [rdi].asym.name ) ; v2.15: emit warning
            .continue
@@ -2266,6 +2400,11 @@ bin_write_module proc uses rsi rdi rbx
     .new stackp:ptr dsym = NULL
     .new hdrbuf:ptr uint_8
     .new cp:calc_param = {0}
+ifdef _LIN64
+    .new _rdi:ptr
+    .new _rsi:ptr
+endif
+    .new nullbyt:char_t = 0
 
     mov cp.first,TRUE
     .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
@@ -2286,20 +2425,18 @@ bin_write_module proc uses rsi rdi rbx
 
     ; calculate size of header
 
+    xor eax,eax
     .if ( MODULE.sub_format == SFORMAT_MZ )
 
-        mov reloccnt,GetSegRelocs( NULL )
-        shl eax,2
-        movzx edx,MODULE.mz_ofs_fixups
-        add eax,edx
-        movzx edx,MODULE.mz_alignment
-        dec edx
-        add eax,edx
-        mov ecx,edx
-        not ecx
-        and eax,ecx
-    .else
-        xor eax,eax
+        mov     reloccnt,GetSegRelocs( NULL )
+        shl     eax,2
+        movzx   edx,MODULE.mz_ofs_fixups
+        add     eax,edx
+        movzx   edx,MODULE.mz_alignment
+        dec     edx
+        add     eax,edx
+        not     edx
+        and     eax,edx
     .endif
     mov cp.sizehdr,eax
 
@@ -2458,6 +2595,7 @@ bin_write_module proc uses rsi rdi rbx
 
                 mov rax,[rsi].sgroup
                 mov eax,[rax].asym.offs
+                mov ebx,eax
                 mov edx,eax
                 shr edx,4
                 and eax,0x0F
@@ -2469,12 +2607,21 @@ bin_write_module proc uses rsi rdi rbx
             .else
 
                 mov eax,[rsi].start_offset
+                mov ebx,eax
                 mov edx,eax
                 shr edx,4
                 and eax,0x0F
                 add eax,[rcx].asym.offs
                 mov [rdi].e_ip,ax
                 mov [rdi].e_cs,dx
+            .endif
+            ; v2.19: error if CS:IP doesn't fit in 20-bit
+            .if ( ebx >= 0x100000 || [rcx].asym.offs >= 0x10000 )
+                .return( asmerr( 3003 ) )
+            .endif
+            ; v2.12: warn if entry point is in a 32-/64-bit segment
+            .if ( [rsi].Ofssize > USE16 )
+                asmerr( 7009 )
             .endif
         .else
             asmerr( 8009 )
@@ -2521,9 +2668,9 @@ bin_write_module proc uses rsi rdi rbx
         .continue .if ( [rsi].segtype == SEGTYPE_ABS )
 
         .if ( ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT ) &&
-              ( [rsi].segtype == SEGTYPE_BSS || [rsi].info ) )
+              ( [rsi].segtype == SEGTYPE_BSS || [rsi].flags & SEG_INFO ) )
             xor eax,eax
-            .if ( [rsi].info )
+            .if ( [rsi].flags & SEG_INFO )
                 .continue ; v2.19: info sections shouldn't appear in binary map
             .endif
         .else
@@ -2549,6 +2696,7 @@ bin_write_module proc uses rsi rdi rbx
             .endf
             .if ( !rdx )
                 mov size,edx
+                mov [rsi].fileoffset,edx
             .endif
         .endif
 
@@ -2559,39 +2707,70 @@ bin_write_module proc uses rsi rdi rbx
         LstPrintf( szSegLine, [rdi].asym.name, [rsi].fileoffset, ecx, size, sizemem )
         LstNL()
 
-        .if ( size && [rsi].CodeBuffer )
+        .if ( size ) ; v2.13: write in any case, even if bss segment
 ifdef _LIN64
-            .new _rdi:ptr = rdi
-            .new _rsi:ptr = rsi
+            mov _rdi,rdi
+            mov _rsi,rsi
 endif
             fseek( CurrFile[OBJ*string_t], [rsi].fileoffset, SEEK_SET )
 ifdef _LIN64
-            mov rdi,_rsi
-            fwrite( [rdi].seg_info.CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
+            mov rsi,_rsi
+endif
+            .if ( [rsi].CodeBuffer )
+
+                ; v2.19 write null bytes if start_loc != 0
+
+                .if ( first && MODULE.sub_format == SFORMAT_NONE )
+                    ;
+                .elseif ( [rsi].start_loc )
+
+                    .for ( ebx = [rsi].start_loc : ebx : ebx-- )
+                        fwrite( &nullbyt, 1, 1, CurrFile[OBJ*string_t] )
+                    .endf
+ifdef _LIN64
+                    mov rsi,_rsi
+endif
+                    sub size,[rsi].start_loc
+                .endif
+ifdef _LIN64
+                mov rdi,rsi
+                fwrite( [rdi].seg_info.CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
+else
+                fwrite( [rsi].CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
+endif
+                .if ( eax != size )
+                    WriteError()
+                .endif
+            .else
+                .for ( : size : size-- )
+                    fwrite( &nullbyt, 1, 1, CurrFile[OBJ*string_t] )
+                .endf
+            .endif
+ifdef _LIN64
             mov rsi,_rsi
             mov rdi,_rdi
-else
-            fwrite( [rsi].seg_info.CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
 endif
-            .if ( eax != size )
-                WriteError()
-            .endif
         .endif
         mov first,FALSE
     .endf
 
     .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
 
-        mov size,ftell( CurrFile[OBJ*string_t] )
+        mov ecx,ftell( CurrFile[OBJ*string_t] )
         mov eax,cp.rawpagesize
         dec eax
-        .if ( size & eax )
-            lea ecx,[rax+1]
-            and eax,size
-            sub ecx,eax
-            mov size,ecx
-            tmemset( alloca(ecx), 0, size )
-            fwrite( rax, 1, size, CurrFile[OBJ*string_t] )
+        .if ( ecx & eax )
+            lea ebx,[rax+1]
+            and eax,ecx
+            sub ebx,eax
+if 1
+            .for ( : ebx : ebx-- )
+                fwrite( &nullbyt, 1, 1, CurrFile[OBJ*string_t] )
+            .endf
+else
+            tmemset( alloca(ebx), 0, size )
+            fwrite( rax, 1, ebx, CurrFile[OBJ*string_t] )
+endif
         .endif
     .endif
     LstPrintf( szSep )

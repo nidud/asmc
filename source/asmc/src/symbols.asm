@@ -115,7 +115,7 @@ FindDefinedName proc fastcall private uses rsi rdi rbx name:string_t
     .for ( edi = 0 : edi < dyneqcount : edi++ )
 
         .lodsd
-        .if !tstrcmp( rbx, rax )
+        .ifd !tstrcmp( rbx, rax )
 
             inc edi
            .return( edi )
@@ -128,7 +128,7 @@ FindDefinedName endp
 
 define_name proc __ccall name:string_t, value:string_t
 
-    .if !FindDefinedName( name )
+    .ifd !FindDefinedName( ldr(name) )
 
         mov ecx,dyneqcount
         lea rdx,dyneqtable
@@ -146,7 +146,7 @@ define_name endp
 
 undef_name proc __ccall name:string_t
 
-    .if FindDefinedName( name )
+    .ifd FindDefinedName( ldr(name) )
 
         .for ( ecx = eax : ecx < dyneqcount : ecx++ )
 
@@ -291,13 +291,11 @@ ifdef _WIN64
 
     option win64:rsp noauto nosave
 
-    ;
     ; find a symbol in the local/global symbol table,
     ; return ptr to next free entry in global table if not found.
     ; Note: lsym must be global, thus if the symbol isn't
     ; found and is to be added to the local table, there's no
     ; second scan necessary.
-    ;
 
 SymFind proc fastcall string:string_t
 
@@ -309,58 +307,6 @@ SymFind proc fastcall string:string_t
     or      al,0x20
     xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
     inc     rcx
-if 0
-    mov     r8d,1
-.0:
-    mov     rdx,0x2020202020202020
-    or      rdx,[rcx]
-    cmp     dl,0x20
-    je      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dl
-    inc     r8d
-    cmp     dh,0x20
-    je      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dh
-    inc     r8d
-    shr     rdx,16
-    cmp     dl,0x20
-    je      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dl
-    inc     r8d
-    cmp     dh,0x20
-    je      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dh
-    inc     r8d
-    shr     rdx,16
-    cmp     dl,0x20
-    je      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dl
-    inc     r8d
-    cmp     dh,0x20
-    je      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dh
-    inc     r8d
-    shr     rdx,16
-    cmp     dl,0x20
-    je      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dl
-    inc     r8d
-    cmp     dh,0x20
-    je      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dh
-    inc     r8d
-    add     rcx,8
-    jmp     .0
-.1:
-else
     mov     dl,[rcx]
     test    dl,dl
     jz      .1
@@ -375,7 +321,6 @@ else
 .1:
     sub     rcx,r10
     mov     r8d,ecx
-endif
 
     cmp     CurrProc,0
     je      .global
@@ -721,29 +666,32 @@ SymLookup proc __ccall name:string_t
 SymLookup endp
 
 
-;
 ; SymLookupLocal() creates a local label if it isn't defined yet.
 ; called by LabelCreate() [see labels.c]
-;
+
 SymLookupLocal proc __ccall name:string_t
 
-    .if ( SymFind( name ) == NULL )
+    SymFind( name )
+
+    ; v2.19: don't move a label marked as public if -Zm isn't set
+
+    .if ( rax == NULL || ( ( [rax].asym.flags & S_ISPUBLIC ) && MODULE.m510 == 0 ) )
 
         SymAlloc( name )
         or [rax].asym.flags,S_SCOPED
-        ;
+
         ; add the label to the local hash table
-        ;
+
         mov rcx,lsym
         mov [rcx],rax
 
     .elseif ( [rax].asym.state == SYM_UNDEFINED && !( [rax].asym.flags & S_SCOPED ) )
-        ;
+
         ; if the label was defined due to a FORWARD reference,
         ; its scope is to be changed from global to local.
         ;
         ; remove the label from the global hash table
-        ;
+
         mov rdx,[rax].asym.nextitem
         mov rcx,gsym
         mov [rcx],rdx
@@ -758,12 +706,11 @@ SymLookupLocal proc __ccall name:string_t
 SymLookupLocal endp
 
 
-;
 ; free a symbol.
 ; the symbol is no unlinked from hash tables chains,
 ; hence it is assumed that this is either not needed
 ; or done by the caller.
-;
+
 
 SymFree proc __ccall sym:asym_t
 
@@ -784,10 +731,10 @@ SymFree proc __ccall sym:asym_t
 
         mov rcx,sym
         mov [rcx].asym.first_size,0
-        ;
+
         ; The altname field may contain a symbol (if weak == FALSE).
         ; However, this is an independant item and must not be released here
-        ;
+
         .endc
     .case SYM_MACRO
         ReleaseMacroData( rcx )
@@ -798,12 +745,10 @@ SymFree proc __ccall sym:asym_t
 SymFree endp
 
 
-;
 ; add a symbol to local table and set the symbol's name.
 ; the previous name was "", the symbol wasn't in a symbol table.
 ; Called by:
 ; - ParseParams() in proc.c for procedure parameters.
-;
 
 SymAddLocal proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t
 
@@ -839,11 +784,9 @@ SymAddLocal proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t
 SymAddLocal endp
 
 
-;
 ; add a symbol to the global symbol table.
 ; Called by:
 ; - RecordDirective() in types.c to add bitfield fields (which have global scope).
-;
 
 SymAddGlobal proc __ccall sym:asym_t
 
@@ -866,9 +809,8 @@ SymAddGlobal proc __ccall sym:asym_t
 SymAddGlobal endp
 
 
-;
 ; Create symbol and optionally insert it into the symbol table
-;
+
 SymCreate proc __ccall name:string_t
 
     .if SymFind( name )
@@ -887,20 +829,18 @@ SymCreate proc __ccall name:string_t
 SymCreate endp
 
 
-;
 ; Create symbol and insert it into the local symbol table.
 ; This function is called by LocalDir() and ParseParams()
 ; in proc.c ( for LOCAL directive and PROC parameters ).
-;
 
 SymLCreate proc __ccall name:string_t
 
     .if SymFind( name )
 
         .if ( [rax].asym.state != SYM_UNDEFINED )
-            ;
+
             ; shouldn't happen
-            ;
+
             asmerr( 2005, name )
            .return 0
         .endif
@@ -936,12 +876,12 @@ SymMakeAllSymbolsPublic proc __ccall uses rsi rdi
             .if ( [rdi].asym.state == SYM_INTERNAL )
 
                 mov rcx,[rdi].asym.name
-                ;
+
                 ; no EQU or '=' constants
                 ; no predefined symbols ($)
                 ; v2.09: symbol already added to public queue?
                 ; v2.10: no @@ code labels
-                ;
+
                 mov al,[rcx+1]
                 .if ( !( [rdi].asym.flags & S_ISEQUATE or S_PREDEFINED or S_ISPUBLIC ) &&
                       !( [rdi].asym.flags & S_INCLUDED ) && al != '&' )
@@ -968,9 +908,9 @@ SymInit proc __ccall uses rsi rdi rbx
 
     xor eax,eax
     mov SymCount,eax
-    ;
+
     ; v2.11: ensure CurrProc is NULL - might be a problem if multiple files are assembled
-    ;
+
     mov CurrProc,rax
 
     lea rdi,gsym_table
@@ -1030,9 +970,9 @@ endif
             mov [rcx],rax
         .endif
     .endw
-    ;
+
     ; @WordSize should not be listed
-    ;
+
     and [rax].asym.flags,not S_LIST
 
     xor esi,esi
@@ -1054,9 +994,9 @@ endif
         mov [rax].asym.sfunc_ptr,0
         inc esi
     .endw
-    ;
+
     ; $ is an address (usually). Also, don't add it to the list
-    ;
+
     mov rax,symPC
     and [rax].asym.flags,not S_LIST
     or  [rax].asym.flags,S_VARIABLE
@@ -1110,9 +1050,9 @@ SymGetAll proc __ccall syms:asym_t
 
     ldr rdx,syms
     xor ecx,ecx
-    ;
+
     ; copy symbols to table
-    ;
+
     .repeat
 
         lea rax,gsym_table
@@ -1161,9 +1101,7 @@ SymEnum proc __ccall uses rbx sym:asym_t, pi:ptr int_t
 SymEnum endp
 
 
-;
 ; add a new node to a queue
-;
 
 QEnqueue proc fastcall q:qdesc_t, item:ptr
 

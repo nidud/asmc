@@ -1899,12 +1899,18 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             .endif
             mov [rsi].kind,EXPR_CONST
             .if ( [rbx].asym.state == SYM_UNDEFINED || [rax].asym.state == SYM_UNDEFINED )
+
+                 ; 2.16: returning EXPR_ADDR definitely IS a problem ( see forward9.asm ).
+                 ; Check for equates mentioned for 2.11 isn't implemented ( flag not available here ).
+                 ; However, the problem with equate22.asm is gone by now, so there's no
+                 ; longer any need to return kind EXPR_ADDR.
+
                 mov [rsi].value,1
                 .if ( [rbx].asym.state != SYM_UNDEFINED )
                     mov [rsi].sym,rax
                     mov [rsi].label_tok,[rdi].label_tok
                 .endif
-                mov [rsi].kind,EXPR_ADDR
+                ;mov [rsi].kind,EXPR_ADDR
             .else
                 sub [rsi].value,[rax].asym.offs
                 sbb [rsi].hvalue,0
@@ -3395,9 +3401,9 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
                 .break
             .endif
 
-           .new precedence:int_t = get_precedence( rbx )
-            get_precedence( rsi )
-            .break .if ( precedence >= eax )
+            .new precedence:int_t = get_precedence( rbx )
+
+            .break .ifd ( get_precedence( rsi ) <= precedence )
 
             mov   cl,flags
             or    cl,EXPF_ONEOPND
@@ -3421,7 +3427,16 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
             mov rc,NOT_ERROR
         .endif
         .if ( rc != ERROR )
+
             mov rc,calculate( rdi, &opnd2, rsi )
+            ; v2.15 ensure that any undefined symbol finds its way into the expression.
+            ; this is for assembly-time variables.
+            ; v2.19: the check has been moved here; was inside calculate(), but there
+            ; it was definitely executed in the debug version only!
+            mov rcx,opnd2.sym
+            .if ( eax == NOT_ERROR && rcx && Parse_Pass == PASS_1 && [rcx].asym.state == SYM_UNDEFINED )
+                mov [rdi].sym,rcx
+            .endif
         .endif
         .break .if ( flags & EXPF_ONEOPND )
     .endw

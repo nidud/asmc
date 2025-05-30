@@ -181,7 +181,7 @@ OutputByte proc __ccall uses rsi rdi rbx char:int_t
 
     inc [rdi].seg_info.current_loc
     inc [rdi].seg_info.bytes_written
-    mov [rdi].seg_info.written,1
+    or  [rdi].seg_info.flags,SEG_WRITTEN
     mov eax,[rdi].seg_info.current_loc
 
     .if ( eax > [rsi].dsym.max_offset )
@@ -249,7 +249,7 @@ OutputBytes proc __ccall uses rsi rdi rbx pbytes:ptr byte, len:int_t, fxptr:ptr 
     mov eax,len
     add [rdi].seg_info.current_loc,eax
     add [rdi].seg_info.bytes_written,eax
-    mov [rdi].seg_info.written,1
+    or  [rdi].seg_info.flags,SEG_WRITTEN
     mov eax,[rdi].seg_info.current_loc
     .if eax > [rsi].dsym.max_offset
         mov [rsi].dsym.max_offset,eax
@@ -294,7 +294,7 @@ SetCurrOffset proc __ccall uses rsi rdi rbx dseg:dsym_t, value:uint_t, relative:
         mov [rdi].seg_info.start_loc,ebx
     .endif
     mov [rdi].seg_info.current_loc,ebx
-    mov [rdi].seg_info.written,0
+    and [rdi].seg_info.flags,not SEG_WRITTEN
     mov eax,[rdi].seg_info.current_loc
     .if eax > [rsi].dsym.max_offset
         mov [rsi].dsym.max_offset,eax
@@ -671,13 +671,13 @@ ModulePassInit endp
 ; checks after pass one has been finished without errors
 
 PassOneChecks proc __ccall private uses rsi rdi
-    ;
+
     ; check for open structures and segments has been done inside the
     ; END directive handling already
     ;
     ; v2.10: now done for PROCs as well, since procedures
     ; must be closed BEFORE segments are to be closed.
-    ;
+
     HllCheckOpen()
     CondCheckOpen()
     ClassCheckOpen()
@@ -695,7 +695,6 @@ PassOneChecks proc __ccall private uses rsi rdi
     ; v2.11: moved here ( from inside the "#if FASTPASS"-block )
     ; because the loop will now filter weak externals [ this
     ; was previously done in GetPublicSymbols() ]
-    ;
 
     lea rdx,MODULE.PubQueue
     mov rcx,[rdx].qdesc.head
@@ -712,64 +711,62 @@ PassOneChecks proc __ccall private uses rsi rdi
             mov [rdx].qnode.next,rax
             mov rcx,rdx
         .else
-            mov UseSavedState,0
+            SkipSavedState()
             jmp aliases
         .endif
         mov rcx,[rcx].qnode.next
     .endw
 
-    ;
     ; check if there's an undefined segment reference.
     ; This segment was an argument to a group definition then.
     ; Just do a full second pass, the GROUP directive will report
     ; the error.
-    ;
+
     mov rax,SymTables[TAB_SEG*symbol_queue].head
     .while rax
         .if ![rax].asym.segm
 
-            mov UseSavedState,0
+            SkipSavedState()
             jmp aliases
         .endif
         mov rax,[rax].dsym.next
     .endw
 
-    ;
     ; if there's an item in the safeseh list which is not an
     ; internal proc, make a full second pass to emit a proper
     ; error msg at the .SAFESEH directive
-    ;
+
     mov rax,MODULE.SafeSEHQueue.head
     .while rax
         .if [rax].asym.state != SYM_INTERNAL || !( [rax].asym.flags & S_ISPROC )
 
-            mov UseSavedState,0
+            SkipSavedState()
             jmp aliases
         .endif
         mov rax,[rax].dsym.next
     .endw
 
 aliases:
-    ;
+
     ; scan ALIASes for COFF/ELF
-    ;
+
     .if Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF
 
         mov rcx,SymTables[TAB_ALIAS*symbol_queue].head
         .while rcx
             mov rax,[rcx].asym.substitute
-            ;
+
             ; check if symbol is external or public
-            ;
+
             .if ( !rax || [rax].asym.state != SYM_EXTERNAL
                 && ( [rax].asym.state != SYM_INTERNAL || !( [rax].asym.flags & S_ISPUBLIC ) ) )
 
-                mov UseSavedState,0
+                SkipSavedState()
                .break
             .endif
-            ;
+
             ; make sure it becomes a strong external
-            ;
+
             .if [rax].asym.state == SYM_EXTERNAL
 
                 or [rax].asym.flags,S_USED
@@ -778,9 +775,8 @@ aliases:
         .endw
     .endif
 
-    ;
     ; scan the EXTERN/EXTERNDEF items
-    ;
+
     mov rdi,SymTables[TAB_EXT*symbol_queue].head
 
     .while rdi
@@ -792,19 +788,19 @@ aliases:
             and [rsi].asym.sflags,not S_WEAK
         .endif
         .if ( [rsi].asym.sflags & S_WEAK && !( [rsi].asym.flags & S_IAT_USED ) )
-            ;
+
             ; remove unused EXTERNDEF/PROTO items from queue.
-            ;
+
             sym_remove_table( &SymTables[TAB_EXT*symbol_queue], rsi )
             .continue
         .endif
         .continue .if ( [rsi].asym.sflags & S_ISCOM )
-        ;
+
         ; optional alternate symbol must be INTERNAL or EXTERNAL. COFF (and ELF?)
         ; also wants internal symbols to be public (which is reasonable, since
         ; the linker won't know private symbols and hence will search for a symbol
         ; of that name "elsewhere").
-        ;
+
         mov rax,[rsi].asym.altname
         .if rax
 
@@ -817,16 +813,21 @@ aliases:
                 .endif
             .elseif ( [rax].asym.state != SYM_EXTERNAL )
 
-                mov UseSavedState,0
+                SkipSavedState()
             .endif
         .endif
     .endw
 
+    ; v2.19: modify UseSavedState AFTER pass one only.
+    ; Also, calling DefSavedState() must be done here, AFTER all pass one checks
+
+    DefSavedState()
+
     .if ( !MODULE.error_count )
-        ;
+
         ; make all symbols of type SYM_INTERNAL, which aren't
         ; a constant, public.
-        ;
+
         .if ( Options.all_symbols_public )
 
             SymMakeAllSymbolsPublic()

@@ -1211,8 +1211,22 @@ GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:ptr asm_
         .endif
 
         .if ( [rsi].mem_type == MT_PTR )
+
+            ; v2.16: if pointer to data and no distance entered, use memory model to set pointer distance
+
+            .if ( distance == FALSE && !( [rsi].ptr_memtype &  MT_SPECIAL_MASK ) )
+
+                xor     eax,eax
+                mov     edx,1
+                mov     cl,MODULE._model
+                shl     edx,cl
+                test    edx,SIZE_DATAPTR
+                setnz   al
+                mov     [rsi].is_far,al
+            .endif
+
             mov ecx,MT_NEAR
-            .if ([rsi].is_far )
+            .if ( [rsi].is_far )
                 mov ecx,MT_FAR
             .endif
             mov [rsi].size,SizeFromMemtype( cl, [rsi].Ofssize, NULL )

@@ -25,9 +25,8 @@ include listing.inc
 include fastpass.inc
 include segment.inc
 
-;
 ; current LST file position
-;
+
 externdef list_pos:uint_t
 
     .data?
@@ -36,18 +35,18 @@ externdef list_pos:uint_t
     StoreState      int_t ?
     UseSavedState   int_t ?
     modstate        mod_state <>    ; struct to store assembly status
+    ReqSavedState   int_t ? ; v2.19
 
     .data
     NoLineStore     int_t 0
 
     .code
 
-;
 ; save the current status (happens in pass one only) and
 ; switch to "save precompiled lines" mode.
 ; the status is then restored in further passes,
 ; and the precompiled lines are used for assembly then.
-;
+
 SaveState proc __ccall private uses rsi rdi
 
     mov modstate.head,NULL
@@ -68,25 +67,20 @@ SaveState proc __ccall private uses rsi rdi
 SaveState endp
 
 
-StoreLine proc __ccall uses rsi rdi rbx sline:string_t, flags:int_t, lst_position:uint_t
+StoreLine proc __ccall uses rsi rdi rbx sline:string_t
 
     xor eax,eax
     .return .if ( eax != NoLineStore )
 
     ; don't store generated lines!
 
-    .if ( MODULE.GeneratedCode == eax )
+    .if ( eax == MODULE.GeneratedCode )
 
-        .if StoreState == eax   ; line store already started?
+        .if ( eax == StoreState ) ; line store already started?
             SaveState()
         .endif
         mov ebx,tstrlen(sline)
-        xor eax,eax
-        .if ( flags == 1 && CurrComment != rax )
-            tstrlen( CurrComment )
-        .endif
-        mov edi,eax
-        LclAlloc( &[rax+rbx+line_item] )
+        LclAlloc( &[rbx+line_item] )
         mov rcx,LineStoreCurr
         mov LineStoreCurr,rax
         mov rsi,rax
@@ -98,24 +92,13 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t, flags:int_t, lst_positio
         get_curr_srcfile()
         mov [rsi].line_item.srcfile,eax
         mov [rsi].line_item.macro_level,MacroLevel
-        mov eax,lst_position
-        .if !eax
-            mov eax,list_pos
-        .endif
-        mov [rsi].line_item.list_pos,eax
-        .if edi
-            tmemcpy( &[rsi].line_item.line, sline, ebx )
-            inc edi
-            add rax,rbx
-            tmemcpy( rax, CurrComment, edi )
-        .else
-            inc ebx
-            tmemcpy( &[rsi].line_item.line, sline, ebx )
-        .endif
+        mov [rsi].line_item.list_pos,list_pos
+        inc ebx
+        tmemcpy( &[rsi].line_item.line, sline, ebx )
         lea rcx,[rsi].line_item.line
-        ;
+
         ; v2.08: don't store % operator at pos 0
-        ;
+
         .while islspace( [rcx] )
             inc rcx
         .endw
@@ -145,13 +128,23 @@ StoreLine endp
 
 ; an error has been detected in pass one. it should be
 ; reported in pass 2, so ensure that a full source scan is done then
-;
+
 SkipSavedState proc
 
-    mov UseSavedState,0
+    mov ReqSavedState,0
     ret
 
 SkipSavedState endp
+
+DefSavedState proc
+
+    mov eax,StoreState
+    and eax,ReqSavedState
+    mov UseSavedState,eax
+    mov StoreState,FALSE
+    ret
+
+DefSavedState endp
 
 
 ; for FASTPASS, just pass 1 is a full pass, the other passes
@@ -242,6 +235,7 @@ FastpassInit proc
     mov LineStore.head,NULL
     mov LineStore.tail,NULL
     mov UseSavedState,0
+    mov ReqSavedState,TRUE
     ret
 
 FastpassInit endp

@@ -22,6 +22,7 @@ Asmc Macro Assembler Reference
 
 ## Reference
 
+- [About Asmc](doc/about/readme.md)
 - [Asmc Command-Line Reference](doc/command/readme.md)
 - [Asmc Error Messages](doc/error/readme.md)
 - [Directives Reference](doc/directive/readme.md)

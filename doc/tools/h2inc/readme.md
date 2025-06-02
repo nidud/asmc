@@ -25,6 +25,9 @@ Usage: H2INC [ options ] filename
 <tr><td>-m</td><td>Skip empty macro lines followed by a blank</td></tr>
 <tr><td>-f#</td><td>Strip functon: -f__attribute__</td></tr>
 <tr><td>-Fo#</td><td>Name of output file (default is <i>input</i>.inc)</td></tr>
+<tr><td>-Gd</td><td>C-style functions: LIBC</td></tr>
+<tr><td>-Gs</td><td>SYSCALL-style functions: Linux GLIBC</td></tr>
+<tr><td>-Gz</td><td>STDCALL-style functions: Windows STKs</td></tr>
 <tr><td>-w#</td><td>Strip word (a valid identifier)</td></tr>
 <tr><td>-s#</td><td>Strip string</td></tr>
 <tr><td>-r# #</td><td>Replace string</td></tr>

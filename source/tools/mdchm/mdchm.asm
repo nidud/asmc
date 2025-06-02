@@ -4,6 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 ; Change history:
+; 2025-06-02 - added links in tables
 ; 2025-01-10 - added UTF-8 to Wide Char support
 ; 2024-12-04 - added Linux version using chmcmd
 ; 2024-10-27 - <table> fixup
@@ -323,6 +324,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
    .new img:int_t = 0
    .new t:string_t
    .new q:string_t
+   .new s:string_t
    .new r[64]:char_t
    .new name:string_t
    .new css[64]:char_t
@@ -442,6 +444,48 @@ makehtm proc uses rsi rdi rbx pm:pmd
             .endif
         .endsw
 
+
+        .if ( table )
+
+            .while strstr(rbx, "<a href=")
+
+                .break .if ( byte ptr [rax+8] != '"' )
+
+                mov rcx,rbx
+                lea rbx,[rax+8]
+                mov byte ptr [rbx],0
+                fprintf(fp, rcx)
+                mov byte ptr [rbx],'"'
+
+                .break .if !strchr(rbx, '>')
+
+                mov t,rax
+                mov byte ptr [rax],0
+                .if !strrchr(rbx, '/')
+                    mov rax,rbx
+                .endif
+                inc rax
+                mov s,rax
+
+                .ifd ( memcmp(rax, "readme.md", 9) == 0 )
+
+                    mov rcx,rbx
+                    mov rax,s
+                    mov byte ptr [rax],0
+                    lea rbx,[rax+9]
+                    fprintf(fp, "%sindex.htm", rcx)
+
+                .elseif strrchr(s, '.')
+
+                    mov rcx,rbx
+                    mov byte ptr [rax],0
+                    lea rbx,[rax+3]
+                    fprintf(fp, "%s.htm", rcx)
+                .endif
+                mov rax,t
+                mov byte ptr [rax],'>'
+            .endw
+        .endif
 
         .if ( table || pre )
 

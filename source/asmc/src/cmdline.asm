@@ -907,13 +907,13 @@ endif
         mov Options.syntax_check_only,1
        .return
     .case '0tz'             ; -zt0
-        mov Options.stdcall_decoration,0
+        mov Options.stdcall_decoration,STDCALL_NONE
         .return
     .case '1tz'             ; -zt1
-        mov Options.stdcall_decoration,1
+        mov Options.stdcall_decoration,STDCALL_HALF
         .return
     .case '2tz'             ; -zt2
-        mov Options.stdcall_decoration,2
+        mov Options.stdcall_decoration,STDCALL_FULL
         .return
 ifndef ASMC64
     .case '8vZ'             ; -Zv8

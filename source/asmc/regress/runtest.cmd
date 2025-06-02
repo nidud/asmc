@@ -35,6 +35,9 @@ for %%f in (src\win64\*.asm) do call :cv8 %%f
 for %%f in (src\zne\*.asm) do call :zne %%f
 for %%f in (src\zne64\*.asm) do call :zne %%f
 for %%f in (src\zneomf\*.asm) do call :zneomf %%f
+for %%f in (src\zf0\*.asm) do call :zf0 %%f
+for %%f in (src\zf1\*.asm) do call :zf1 %%f
+for %%f in (src\peerr\*.asm) do call :peerr %%f
 
 call :safeseh
 call :dllimp
@@ -223,6 +226,14 @@ if errorlevel 1 goto end
 del %~n1.EXE
 goto end
 
+:peerr
+%ASMX% -q -pe -eq %1
+fcmp %~n1.err exp\%~n1.err
+if errorlevel 1 goto end
+del %~n1.err
+if exist %~n1.exe del %~n1.exe
+goto end
+
 :zg
 %ASMX% -q -Zg -bin %1
 fcmp %~n1.BIN exp\%~n1.bin
@@ -272,5 +283,18 @@ if errorlevel 1 goto end
 del %~n1.bin
 goto end
 
-:end
+:zf0
+%ASMX% -c -q -coff -Gr -zf0 %1
+fcmp -c %~n1.obj exp\%~n1.obj
+if errorlevel 1 goto end
+del %~n1.obj
+goto end
 
+:zf1
+%ASMX% -c -q -coff -Gr -zf1 %1
+fcmp -c %~n1.obj exp\%~n1.obj
+if errorlevel 1 goto end
+del %~n1.obj
+goto end
+
+:end

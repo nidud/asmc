@@ -132,15 +132,20 @@ endif
             .switch al
 
             .case 'r'
-                lea     rdx,ResWordTable
-                imul    ecx,ecx,ReservedWord
-                mov     rax,[rdx+rcx].ReservedWord.name
-                movzx   ecx,[rdx+rcx].ReservedWord.len
-                xchg    rax,rsi
-                rep     movsb
-                mov     byte ptr [rdi],0
-                mov     rsi,rax
-               .endc
+                .if ( ecx )
+                    lea     rdx,ResWordTable
+                    imul    ecx,ecx,ReservedWord
+                    mov     rax,[rdx+rcx].ReservedWord.name
+                    movzx   ecx,[rdx+rcx].ReservedWord.len
+                    xchg    rax,rsi
+                    rep     movsb
+                    mov     byte ptr [rdi],0
+                    mov     rsi,rax
+                .else
+                    mov eax,'0'
+                    stosb
+                .endif
+                .endc
 
             .case 'c'
                 .if cl

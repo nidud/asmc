@@ -1887,15 +1887,22 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             add [rsi].value,[rbx].asym.offs
             adc [rsi].hvalue,0
             mov rax,[rdi].sym
+            mov rcx,[rbx].asym.segm
             .if ( Parse_Pass > PASS_1 )
-                .if ( ( [rax].asym.state == SYM_EXTERNAL || [rbx].asym.state == SYM_EXTERNAL ) &&
-                    rax != [rsi].sym )
+                .if ( ( [rax].asym.state == SYM_EXTERNAL || [rbx].asym.state == SYM_EXTERNAL ) && rax != [rsi].sym )
                     .return( fnasmerr( 2018, [rbx].asym.name ) )
                 .endif
-                .if ( [rbx].asym.segm != [rax].asym.segm )
+                .if ( rcx != [rax].asym.segm )
                     .return( fnasmerr( 2025 ) )
                 .endif
-                mov rax,[rdi].sym
+            .elseif ( rcx != [rax].asym.segm )
+
+                ; v2.15: for EQU, check segments in pass 1 so the EQU-symbol won't become a constant
+
+                lea rcx,noasmerr
+                .if ( rcx == fnasmerr ) ; this is to find out we're in EQU-mode
+                    .return( ERROR )
+                .endif
             .endif
             mov [rsi].kind,EXPR_CONST
             .if ( [rbx].asym.state == SYM_UNDEFINED || [rax].asym.state == SYM_UNDEFINED )

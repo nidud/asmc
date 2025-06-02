@@ -690,8 +690,10 @@ RenameKeyword proc fastcall uses rsi rdi rbx r12 token:uint_t, name:string_t, le
 
         ; v2.11: search the original name. if the "new" names matches
         ; the original name, restore the name pointer
+        ;
+        ; v2.17: fixed infinite loop ( curr wasn't changed )
 
-        .for ( r12 = renamed_keys.head, rsi = NULL: r12: rsi = r12 )
+        .for ( r12 = renamed_keys.head, rsi = NULL : r12 : rsi = r12, r12 = [r12].next )
             .if ( [r12].token == di )
                 .if ( [r12].length == length )
                     .ifd !tmemcmp( &newname, [r12].name, length )
@@ -1238,7 +1240,7 @@ RenameKeyword proc uses esi edi ebx token:uint_t, name:string_t, length:byte
     .else
         ; v2.11: search the original name. if the "new" names matches
         ; the original name, restore the name pointer
-        .for ( edi = renamed_keys.head, esi = NULL: edi: esi = edi )
+        .for ( edi = renamed_keys.head, esi = NULL : edi : esi = edi, edi = [edi].next )
             .if ( [edi].token == bx )
                 .if ( [edi].length == length )
                     .if !tmemcmp( &newname, [edi].name, length )

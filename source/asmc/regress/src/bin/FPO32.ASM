@@ -23,8 +23,8 @@
 push macro x:vararg
     ??push x
   if (@ProcStatus and 7) eq 4  ;outside prologue/epilogue and fpo?
-    if TYPE(x)
-        @StackBase = @StackBase + TYPE(x)
+    if TYPEOF(x)
+        @StackBase = @StackBase + TYPEOF(x)
     else
         @StackBase = @StackBase + @WordSize
     endif
@@ -47,8 +47,8 @@ endm
 
 pop macro x:vararg
   if (@ProcStatus and 7) eq 4 ;outside prologue/epilogue and fpo?
-    if type (x)
-        @StackBase = @StackBase - TYPE(x)
+    if TYPEOF(x)
+        @StackBase = @StackBase - TYPEOF(x)
     else
         @StackBase = @StackBase - @WordSize
     endif

@@ -1336,7 +1336,26 @@ continue_scan:
 
     .if ( eax >= SPECIAL_LAST )
 
+        ; if -Zm is set, the following from the Masm docs is relevant:
+        ;
+        ; Reserved Keywords Dependent on CPU Mode with OPTION M510
+        ;
+        ; With OPTION M510, keywords and instructions not available in the
+        ; current CPU mode (such as ENTER under .8086) are not treated as
+        ; keywords. This also means the USE32, FLAT, FAR32, and NEAR32 segment
+        ; types and the 80386/486 registers are not keywords with a processor
+        ; selection less than .386.
+        ; If you remove OPTION M510, any reserved word used as an identifier
+        ; generates a syntax error. You can either rename the identifiers or
+        ; use OPTION NOKEYWORD. For more information on OPTION NOKEYWORD, see
+        ; OPTION NOKEYWORD, later in this appendix.
+        ;
+        ; The current implementation of this rule below is likely to be improved.
+
         .if ( MODULE.m510 )
+
+            ; checking the cpu won't give the expected results currently since
+            ; some instructions in the table (i.e. MOV) start with a 386 variant!
 
             mov     eax,[rbx].tokval
             sub     eax,SPECIAL_LAST

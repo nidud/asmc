@@ -128,7 +128,7 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
                     mov rsi,[rcx+rbx].tokpos
                     .if ( byte ptr [rsi] == '<' )
 
-                        asmerr( 7008, rsi )
+                        asmerr( 7008, rsi ) ; cannot delay macro function
                        .break
                     .endif
                 .endif
@@ -190,7 +190,7 @@ endif
 
             xor esi,esi
 
-            .if ( DelayExpand( rbx ) == 0 )
+            .ifd ( DelayExpand( rbx ) == 0 )
 
                 mov esi,ExpandLine( CurrSource, rbx )
 

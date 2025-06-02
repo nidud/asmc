@@ -607,6 +607,9 @@ seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:as
                 .if MODULE.m510
                     mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, ModuleInfo.Ofssize )
                 .else
+
+                    ; v2.15: value of ModuleInfo.defOfssize shouldn't matter; see offset14.asm
+
                     mov [rbx].adrsiz,ADDRSIZE16( [rbx].Ofssize, ModuleInfo.defOfssize )
                 .endif
             .endif
@@ -2043,6 +2046,11 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .case T_POP
             .return asmerr(2070) .if [rdi].mem_type == MT_TYPE
             .endc
+        .case T_PUSHW ; v2.20 see pushwd.asm
+            Set_Memtype( rsi, MT_WORD )
+           .endc
+        .case T_PUSHD ; v2.20 see pushwd.asm
+            Set_Memtype( rsi, MT_DWORD )
         .endsw
     .endif
 
@@ -2089,12 +2097,19 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         mov eax,GetValueSp(index)
         mov cl,[rsi].Ofssize
 
-        .if ( ( ( eax & OP_R32) && cl == USE32 ) ||
-              ( ( eax & OP_R64) && cl == USE64 ) ||
-              ( ( eax & OP_R16) && cl == USE16 ) )
+        .if ( ( ( eax & OP_R32 ) && cl == USE32 ) ||
+              ( ( eax & OP_R64 ) && cl == USE64 ) ||
+              ( ( eax & OP_R16 ) && cl == USE16 ) )
             mov [rsi].adrsiz,FALSE
         .else
             mov [rsi].adrsiz,TRUE
+
+            ; v2.13: check added. see expr6.asm
+            ; 16bit addressing modes don't exist in 64-bit
+
+            .if ( ( eax & OP_R16 ) && cl == USE64 )
+                .return( asmerr( 2032 ) )
+            .endif
         .endif
 
         ; v2.10: register swapping has been moved to expreval.asm, index_connect().
@@ -3783,10 +3798,8 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
     .endif
     mov i,0
 
-    .if ( TokenCount > 2 && [rbx].token == T_ID &&
-          ( [rbx+asm_tok].token == T_COLON ||
-            [rbx+asm_tok].token == T_DBL_COLON ) )
-
+    .if ( [rbx].token == T_ID && TokenCount > 2 &&
+          ( [rbx+asm_tok].token == T_COLON || [rbx+asm_tok].token == T_DBL_COLON ) )
 
         mov rdi,MemAlloc(MaxLineLength)
 
@@ -3820,6 +3833,12 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         .endif
         mov i,0
 
+if 0 ; code labels before data items allowed..
+
+        .if ( MODULE.m510 == FALSE && [rbx].token == T_DIRECTIVE && [rbx].dirtype == DRT_DATADIR )
+            .return( asmerr( 2008, [rbx].string_ptr ) )
+        .endif
+endif
         ; label:
 
     .elseif ( [rbx].token == T_ID && ( [rbx+asm_tok].token == T_COLON || [rbx+asm_tok].token == T_DBL_COLON ) )

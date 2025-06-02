@@ -610,11 +610,15 @@ ifdef __UNIX__
                 .endif
                 CollectLinkOption("-s")
                 CollectLinkOption("-o")
-                mov rcx,Options.link_objects
-                .if tstrrchr(tstrcpy(&buffer[32], &[rcx].anode.name), '.')
-                    mov byte ptr [rax],0
+                mov rcx,Options.link_exename
+                .if ( rcx == NULL )
+                    mov rcx,Options.link_objects
+                    .if tstrrchr(tstrcpy(&buffer[32], &[rcx].anode.name), '.')
+                        mov byte ptr [rax],0
+                    .endif
+                    lea rcx,buffer[32]
                 .endif
-                CollectLinkOption(&buffer[32])
+                CollectLinkOption(rcx)
 else
 
                 .if ( Options.link_mt & LINK_MT )
@@ -629,12 +633,18 @@ else
                     .endif
                 .endif
 
+                lea rbx,ff
+
                 ; Masm use a (Unicode) response file here (mllink$.lnk)
                 ; /OUT:name.exe *.obj
-                ;
+
+                .if ( Options.link_exename )
+
+                    CollectLinkOption(tstrcat(tstrcpy(rbx, "/OUT:"), Options.link_exename))
+                .endif
+
                 ; /LIBPATH and /NOLOGO is added here
-                ;
-                lea rbx,ff
+
                 tstrcpy(rbx, "/LIBPATH:")
                 .if tgetenv("ASMCDIR")
                     tstrcat(rbx, rax)

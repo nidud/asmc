@@ -544,6 +544,7 @@ define PE_DLL               0x04
     process_subdir          db ?    ; -r option
     names                   string_t OPTN_LAST dup(?) ; char *  4
     queues                  ptr_t OPTQ_LAST dup(?)  ; qitem * 4
+    link_exename            string_t ? ; -Fe<exename>
     link_linker             string_t ? ; -link<:linker>
     link_options            string_t ? ; -link <options...>
     link_objects            string_t ? ; -link [options...] <.OBJ files>

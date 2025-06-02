@@ -706,8 +706,10 @@ if MASM_EXTCOND
             .if ( [rdi].asym.state == SYM_INTERNAL && [rdi].asym.mem_type == MT_EMPTY )
             .else
 endif
+                ; v2.16: change error msg to what masm displays
+
                 .if ( [rdi].asym.state != SYM_EXTERNAL )
-                    .return( asmerr( 2005, token ) )
+                    .return( asmerr( 2014, token ) )
                 .endif
 if MASM_EXTCOND
             .endif

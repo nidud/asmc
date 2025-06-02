@@ -35,9 +35,10 @@ The options listed in the following table.
 - **-EP** - Generates a preprocessed source listing (sent to STDOUT). See **-Sf**.
 - **-eq** - Don't display error messages.
 - **-Fd**[_file_] - Write import definition file.
-- **-Fi**_file_ - Force _file_ to be included.
+- **-Fe** _filename_ - Names the executable file.
+- **-Fi** _filename_ - Force _file_ to be included.
 - **-Fl**[[_filename_]] - Generates an assembled code listing. See **-Sf**.
-- **-Fo**_filename_ - Names an object file. In case of wildcard '*' may be used for current file.
+- **-Fo** _filename_ - Names an object file. In case of wildcard '*' may be used for current file.
 - **-fpc** - Disallow floating-point instructions.
 - **-FPi** - Generates emulator fix-ups for floating-point arithmetic (mixed language only).
 - **-FPi87** - 80x87 instructions (default).
@@ -47,9 +48,11 @@ The options listed in the following table.
 - **-Fw**_filename_ - Set errors file name.
 - **-Gc** - Specifies use of FORTRAN- or Pascal-style function calling and naming conventions.
 - **-Gd** - Specifies use of C-style function calling and naming conventions.
-- **-Gs** - Specifies use of SYSCALL (System V)-style function calling and naming conventions.
 - **-Ge** - Emit a conditional _chkstk() inside the prologue.
+- **-Gr** - Specifies use of FASTCALL-style function calling and naming conventions.
+- **-Gs** - Specifies use of SYSCALL (System V)-style function calling and naming conventions.
 - **-Gv** - Specifies use of VECTORCALL-style function calling and naming conventions.
+- **-Gw** - Specifies use of WATCALL-style function calling and naming conventions.
 - **-Gz** - Specifies use of STDCALL-style function calling and naming conventions. Defines _STDCALL_SUPPORTED.
 - **-help** - Displays a summary of Asmc command-line syntax and options.
 - **-homeparams** - Forces parameters passed in registers to be written to their locations on the stack upon function entry.

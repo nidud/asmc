@@ -1841,6 +1841,8 @@ endif
                 and eax,0x00FFFFFF
                 .if eax == 'lld'
                     or [rbx].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_DLL
+                .else
+                    asmerr( 8000, &[rsi-5] ) ; pe8.asm
                 .endif
             .endsw
         .endif

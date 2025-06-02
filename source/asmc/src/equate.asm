@@ -263,6 +263,12 @@ check_float:
            .return NULL
         .endif
 
+        ; v2.15: "redefinition" of EQU by '='? Then leave it as EQU!
+
+        .if ( !( [rdi].flags & S_VARIABLE ) )
+            .return( rdi )
+        .endif
+
         ; v2.04a regression in v2.04. Do not save the variable when it
         ; is defined the first time
         ; v2.10: store state only when variable is changed and has been
@@ -406,10 +412,8 @@ endif
         .return SetTextMacro(rbx, rdi, name, NULL)
 
     .case ( rdi == NULL )
-        .endc
     .case ( [rdi].state == SYM_UNDEFINED )
-    .case ( [rdi].state == SYM_EXTERNAL &&
-           ( [rdi].sflags & S_WEAK ) && !( [rdi].flags & S_ISPROC ) )
+    .case ( [rdi].state == SYM_EXTERNAL && ( [rdi].sflags & S_WEAK ) && !( [rdi].flags & S_ISPROC ) )
         ;
         ; It's a "new" equate.
         ; wait with definition until type of equate is clear

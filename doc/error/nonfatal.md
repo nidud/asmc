@@ -116,6 +116,7 @@ _ML compatible errors_
 - [ML Nonfatal Error A2148](A2148.md)
 - [ML Nonfatal Error A2151](A2151.md)
 - [ML Nonfatal Error A2154](A2154.md)
+- [ML Nonfatal Error A2155](A2155.md)
 - [ML Nonfatal Error A2156](A2156.md)
 - [ML Nonfatal Error A2157](A2157.md)
 - [ML Nonfatal Error A2159](A2159.md)

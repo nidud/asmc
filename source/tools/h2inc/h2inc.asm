@@ -31,7 +31,7 @@ include ltype.inc
 
     option dllimport:none
 
-define __H2INC__    112
+define __H2INC__    113
 
 define MAXLINE      512
 define MAXBUF       0x100000
@@ -362,6 +362,11 @@ exit_options proc
         "-s<string>      -- Strip string\n"
         "-r<old> <new>   -- Replace string\n"
         "-o<old> <new>   -- Replace output string\n"
+        "\n"
+        "-Gd             -- C-style functions: LIBC\n"
+        "-Gs             -- SYSCALL-style functions: Linux GLIBC\n"
+        "-Gz             -- STDCALL-style functions: Windows STKs\n"
+        "\n"
         "@               -- Specifies a response file or %%environ%%\n"
         "\n"
         "Note that \"quotes\" are stripped so use -r\"\\\"old\\\"\" \"\\\"new\\\"\" to replace\n"
@@ -2646,6 +2651,30 @@ endif
         .endif
         mov [r13],get_nametoken(r12, rbx, 256, 1)
         setarg_option(&option_Fo, r12, NULL)
+    .case 'G'
+        add rbx,2
+        mov [r13],rbx
+        .if ( ah == 'z' )
+            setarg_option(&option_w, "_In_", NULL)
+            setarg_option(&option_f, "_Field_range_", NULL)
+            setarg_option(&option_s, "(HANDLE)", NULL)
+            lea rcx,@CStr("WINAPI")
+        .else
+            lea rcx,@CStr("__cdecl")
+        .endif
+        mov option_c,rcx
+        mov al,[rbx-1]
+        .if ( ah == 's' )
+            mov option_m,1
+            setarg_option(&option_f, "G_GNUC_PRINTF", NULL)
+            setarg_option(&option_f, "__attribute__", NULL)
+            setarg_option(&option_o, "(g_", "<g_")
+            setarg_option(&option_o, " ())", "()>")
+        .else
+            setarg_option(&option_s, "(DWORD)", NULL)
+            setarg_option(&option_s, "(WORD)", NULL)
+            setarg_option(&option_s, "(BYTE)", NULL)
+        .endif
     .case 'w'
         inc rbx
         mov [r13],get_nametoken(r12, rbx, 256, 0)

@@ -26,6 +26,7 @@ Options global_options {
         0,                      ; .process_subdir
         {0,0,0,0,0,0,0,0,0},    ; .names
         {0,0,0},                ; .queues
+        0,                      ; .link_exename
         0,                      ; .link_linker
         0,                      ; .link_options
         0,                      ; .link_objects
@@ -689,6 +690,9 @@ endif
     .case 'vG'              ; -Gv
         mov Options.langtype,LANG_VECTORCALL
         .return
+    .case 'wG'              ; -Gw
+        mov Options.langtype,LANG_WATCALL
+        .return
 ifndef ASMC64
     .case 'zG'              ; -Gz
         mov Options.langtype,LANG_STDCALL
@@ -1040,6 +1044,10 @@ endif
         mov eax,j
         .if eax == 'lB'         ; -Bl<file>
             mov Options.link_linker,MemDup(rdi)
+           .return
+        .endif
+        .if eax == 'eF'         ; -Fe<file>
+            mov Options.link_exename,MemDup(rdi)
            .return
         .endif
         .if eax == 'iF'         ; -Fi<file>

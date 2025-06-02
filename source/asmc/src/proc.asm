@@ -130,7 +130,6 @@ user_regs fc_regs {
         { T_EAX, T_EDX, T_ECX, T_R8D, T_R9D, T_R10D,T_R11D,0 },
         { T_RAX, T_RDX, T_RCX, T_R8,  T_R9,  T_R10, T_R11, 0 }}
 
-
 ;         regs        mask    gpr xmm int flags
 
 lang_table fc_info {
@@ -143,7 +142,7 @@ lang_table fc_info {
         NULL,      0x00000000, 0,  0,  0,  0 },{ ; SYSCALL
         NULL,      0x00000000, 0,  0,  0,  _P_CSTACK },{
         sysv_regs, 0x00FF03C6, 6,  8, 16,  _P_SYSTEMV or _P_EXTEND or _P_CSTACK },{
-        NULL,      0x00000000, 0,  0,  0,  _P_CLEANUP },{ ; STDCALL
+        NULL,      0x00000000, 0,  0,  2,  _P_CLEANUP },{ ; STDCALL
         NULL,      0x00000000, 0,  0,  0,  _P_CLEANUP or _P_CSTACK },{
         NULL,      0x00000000, 0,  0,  0,  _P_CLEANUP or _P_CSTACK },{
         NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{ ; PASCAL

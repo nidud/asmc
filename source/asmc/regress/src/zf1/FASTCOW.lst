@@ -1,0 +1,112 @@
+Asmc Macro Assembler Version 2.36.33  06/01/25 02:22:02 - First Pass
+C:\Asmc\source\asmc\regress\src\zf1\FASTCOW.ASM
+
+                                ;--- FASTCALL OW variant (-Gr and -zf1)
+                                ;--- the decoration of the public symbol names are checked here.
+
+                                	.386
+                                	.model flat
+00000000                    *   _TEXT segment DWORD FLAT PUBLIC 'CODE'
+                            *   _TEXT ends
+00000000                    *   _DATA segment DWORD FLAT PUBLIC 'DATA'
+                            *   _DATA ends
+                            *   assume cs:flat,ds:flat,ss:flat,es:flat,fs:ERROR,gs:ERROR
+
+                                	public dwPub1, dwPub2
+
+                                	.data
+00000000                    *   _DATA segment
+                            *   assume cs:ERROR
+
+00000000                        dwPub1	dd 1
+00000004                        dwPub2	dd 2
+
+00000000                        	.code
+                            *   _DATA ends
+00000000                    *   _TEXT segment
+                            *   assume cs:FLAT
+
+00000000                        fproc1 proc a1:dword
+00000000                        	mov eax,ecx
+00000002                        	add eax,dwPub1
+00000008                        	add eax,dwPub2
+0000000E                        	ret
+0000000E                    *   retn 
+0000000F                        fproc1 endp
+
+0000000F                        _start:
+0000000F                        	invoke fproc1, 1
+0000000F                    *    mov ecx, 1
+00000014                    *    call fproc1
+00000019                        	mov ah,4Ch
+0000001B                        	int 21h
+
+                                end _start
+                            *   _TEXT ends
+
+Asmc Macro Assembler Version 2.36.33  06/01/25 02:22:02
+C:\Asmc\source\asmc\regress\src\zf1\FASTCOW.ASM
+
+00000000  01000000              dwPub1	dd 1
+00000004  02000000              dwPub2	dd 2
+00000000                        	.code
+00000008                    *   _DATA ends
+00000000                    *   _TEXT segment
+                            *   assume cs:FLAT
+00000000                        fproc1 proc a1:dword
+00000000  8BC1                  	mov eax,ecx
+00000002  030500000000          	add eax,dwPub1
+00000008  030504000000          	add eax,dwPub2
+0000000E                        	ret
+0000000E  C3                *   retn 
+0000000F                        fproc1 endp
+0000000F                        _start:
+0000000F                        	invoke fproc1, 1
+0000000F  B901000000        *    mov ecx, 1
+00000014  E8E7FFFFFF        *    call fproc1
+00000019  B44C                  	mov ah,4Ch
+0000001B  CD21                  	int 21h
+                                end _start
+0000001D                    *   _TEXT ends
+
+
+Macros:
+
+                N a m e                 Type
+
+@Environ . . . . . . . . . . . .        Func
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .        GROUP
+_DATA  . . . . . . . . . . . . .        32 Bit   00000008 DWord   Public  'DATA'
+_TEXT  . . . . . . . . . . . . .        32 Bit   0000001D DWord   Public  'CODE'
+
+
+Procedures, parameters and locals:
+
+                N a m e                 Type     Value    Segment  Length
+
+fproc1 . . . . . . . . . . . . .        P Near   00000000 _TEXT    *X Public   FASTCALL
+  a1 . . . . . . . . . . . . . .        DWord             ecx
+
+
+Symbols:
+
+                N a m e                 Type       Value     Attr
+
+@CodeSize  . . . . . . . . . . .        Number             0h 
+@DataSize  . . . . . . . . . . .        Number             0h 
+@Interface . . . . . . . . . . .        Number             7h 
+@Model . . . . . . . . . . . . .        Number             7h 
+@code  . . . . . . . . . . . . .        Text   _TEXT
+@data  . . . . . . . . . . . . .        Text   FLAT
+@stack . . . . . . . . . . . . .        Text   FLAT
+_CRTBLD  . . . . . . . . . . . .        Text   
+_start . . . . . . . . . . . . .        L Near             Fh _TEXT FASTCALL
+dwPub1 . . . . . . . . . . . . .        DWord              0h _DATA Public FASTCALL
+dwPub2 . . . . . . . . . . . . .        DWord              4h _DATA Public FASTCALL
+

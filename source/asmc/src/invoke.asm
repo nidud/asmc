@@ -334,28 +334,91 @@ fast_fcend proc __ccall private pp:dsym_t, numparams:int_t, value:int_t
 
 fast_fcend endp
 
+; get segment part of an argument
+; v2.05: extracted from PushInvokeParam(),
+; so it could be used by watc_param() as well.
+
+GetSegmentPart proc __ccall private uses rsi rdi rbx opnd:ptr expr, buffer:string_t, fullparam:string_t
+
+    mov esi,T_NULL
+    ldr rdi,opnd
+    mov rax,[rdi].expr.sym
+    mov rdx,[rdi].expr.override
+
+    .if ( rdx )
+
+        .if ( [rdx].asm_tok.token == T_REG )
+            mov esi,[rdx].asm_tok.tokval
+        .else
+            tstrcpy( rdi, [rdx].asm_tok.string_ptr )
+        .endif
+
+    .elseif ( rax && [rax].asym.segm )
+
+        mov rbx,[rax].asym.segm
+        mov rcx,[rbx].dsym.seginfo
+
+        .if ( [rcx].seg_info.segtype == SEGTYPE_DATA ||
+              [rcx].seg_info.segtype == SEGTYPE_BSS )
+            search_assume( rbx, ASSUME_DS, TRUE )
+        .else
+            search_assume( rbx, ASSUME_CS, TRUE )
+        .endif
+        .if ( eax != ASSUME_NOTHING )
+
+            lea rsi,[rax+T_ES] ; v2.08: T_ES is first seg reg in special.h
+        .else
+            .if !GetGroup([rdi].expr.sym)
+                mov rax,rbx
+            .endif
+            .if rax
+                tstrcpy( buffer, [rax].asym.name )
+            .else
+                tstrcat( tstrcpy( buffer, "seg " ), fullparam )
+            .endif
+        .endif
+    .elseif ( rax && [rax].asym.state == SYM_STACK )
+        mov esi,T_SS
+    .else
+        tstrcat( tstrcpy( buffer, "seg " ), fullparam )
+    .endif
+    .return( rsi )
+
+GetSegmentPart endp
+
+
     assume rdi:expr_t
 
-fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:dsym_t,
-        address:int_t, opnd:ptr expr, paramvalue:string_t, regs_used:ptr uint_t
+fast_param proc __ccall private uses rsi rdi rbx \
+    pp:         dsym_t,
+    index:      int_t,
+    param:      dsym_t,
+    address:    int_t,
+    opnd:       ptr expr,
+    paramvalue: string_t,
+    regs_used:  ptr uint_t,
+    langid:     ptr fc_info
 
-   .new src_size:int_t          ; size of param
-   .new src_reg:int_t = 0       ; register param
-   .new src_rsize:int_t = 0     ; size of register param
-   .new src_regno:int_t         ; register param id
-   .new dst_size:int_t          ; target size
-   .new dst_reg:int_t           ; target register
-   .new dst_flt:int_t = 0       ; target GPR float register
-   .new dst_rsize:int_t         ; target register size
-   .new ext_reg:int_t           ; extended register
-   .new sreg:int_t              ; SP/ESP/RSP
+   .new param_size:int_t        ; size of param
+   .new param_reg:int_t = 0     ; register param
+   .new param_regsize:int_t = 0 ; size of register param
+   .new param_regno:int_t       ; register param id
+
+   .new arg_size:int_t          ; target size
+   .new arg_reg:int_t           ; target register
+   .new arg_regsize:int_t       ; target register size
+   .new arg_flt:int_t = 0       ; target GPR float register
+   .new arg_stksize:int_t       ; 2/4/8/16/32/64
+   .new arg_expandsize:int_t    ; extend register to this size (byte to [d]word)
+   .new arg_offset:int_t = 0    ; current stack offset
+
    .new cpu:int_t               ; current CPU
-   .new wordsize:int_t          ; sizeof(sreg)
-   .new ssize:int_t             ; 2/4/8/16/32/64
-   .new langid:ptr fc_info      ; pointer into lang_table
+   .new stkreg:int_t            ; SP/ESP/RSP
+   .new wordsize:int_t          ; sizeof(stkreg) in proc segment
+
+   .new extended_reg:int_t      ; extended register
    .new maxint:int_t            ; sizeof(reg::reg[::reg::reg])
-   .new expsize:int_t           ; expand size
-   .new argoffs:int_t = 0       ; current stack offset
+
    .new rmask:int_t             ; mask for used registers
    .new reg[4]:int_t            ; temp registers
    .new size:int_t              ; temp size
@@ -372,17 +435,16 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     UNREFERENCED_PARAMETER(param)
     UNREFERENCED_PARAMETER(opnd)
 
-    ldr rbx,pp
-    ldr rsi,param
-    ldr rdi,opnd
+    ldr     rbx,pp
+    ldr     rsi,param
+    ldr     rdi,opnd
 
     movzx   ecx,[rbx].asym.segoffsize
     mov     Ofssize,cl
     mov     eax,2
     shl     eax,cl
     mov     wordsize,eax
-    mov     langid,get_fasttype(ecx, [rbx].asym.langtype)
-    mov     rdx,rax
+    mov     rdx,langid
     xor     eax,eax
     test    [rdx].fc_info.flags,_P_RESSTACK
     setnz   al
@@ -393,7 +455,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     cmp     Ofssize,0
     setnz   cl
     shl     eax,cl
-    mov     expsize,eax
+    mov     arg_expandsize,eax
     mov     al,[rdx].fc_info.maxint
     mov     maxint,eax
     mov     rmask,[rdx].fc_info.regmask
@@ -409,7 +471,6 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
     mov rcx,paramvalue
     .if ( byte ptr [rcx] == 0 || ( [rsi].sflags & S_ISVARARG && [rbx].asym.flags & S_ISINLINE ) )
-
         .return
     .endif
 
@@ -418,14 +479,12 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     mov rdx,[rbx].dsym.procinfo
     .if ( [rdx].proc_info.flags & PROC_HAS_VARARG &&
           [rbx].asym.flags & S_ISINLINE && [rbx].asym.flags & S_METHOD && !index )
-
         .return
     .endif
 
     ; skip arg if :abs
 
     .if ( memtype == MT_ABS )
-
         mov [rsi].name,LclDup( paramvalue )
        .return
     .endif
@@ -437,7 +496,8 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     and eax,P_CPU_MASK
     mov cpu,eax
     movzx edx,[rbx].asym.sys_size
-    mov ssize,edx
+    mov arg_stksize,edx
+
     .if ( resstack )
 
         mov eax,wordsize
@@ -446,7 +506,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
             mov al,dl
         .endif
         mul ecx
-        mov argoffs,eax
+        mov arg_offset,eax
         mov [rsi].param_offs,al
     .endif
 
@@ -456,40 +516,39 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     .if ( eax == 8 && !address && [rdi].inst != T_OFFSET && [rsi].sflags & S_ISVARARG )
         mov eax,4 ; v2.11: default size is 32-bit, not 64-bit
     .endif
-    mov src_size,eax
+    mov param_size,eax
 
     mov cl,[rdi].mem_type
     .if ( cl == 0xF0 ) ; reg::reg
         mov cl,MT_EMPTY
     .endif
+    xor eax,eax
     .if ( address || [rdi].inst == T_OFFSET )
     .elseif ( [rdi].kind == EXPR_REG )
         .if ( [rdi].flags & E_INDIRECT )
             .if ( cl != MT_EMPTY )
-                .ifd SizeFromMemtype( cl, Ofssize, [rdi].type )
-                    mov src_size,eax
-                .endif
+                dec eax
             .elseif ( memtype == MT_PTR || [rsi].sflags & S_ISVARARG )
-                mov src_size,wordsize
+                mov eax,wordsize
             .endif
         .elseif ( cl != MT_EMPTY ) ; type ptr reg
-            .ifd SizeFromMemtype( cl, Ofssize, [rdi].type )
-                mov src_size,eax
-            .endif
+            dec eax
         .endif
     .elseif ( [rdi].kind == EXPR_ADDR )
-        xor eax,eax
         .if ( cl != MT_EMPTY )
             .if ( [rsi].sflags & S_ISVARARG && memtype == MT_EMPTY )
                 mov memtype,cl
             .endif
-            SizeFromMemtype( cl, Ofssize, [rdi].type )
+            dec eax
         .elseif ( memtype == MT_PTR || [rsi].sflags & S_ISVARARG )
             mov eax,wordsize
         .endif
-        .if ( eax )
-            mov src_size,eax
+    .endif
+    .if ( eax )
+        .if ( eax == -1 )
+            SizeFromMemtype( cl, Ofssize, [rdi].type )
         .endif
+        mov param_size,eax
     .endif
 
     ; check register overwrites
@@ -503,14 +562,14 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
         add     rdx,rax
         mov     eax,[rdx].special_item.sflags
         and     eax,SFR_SIZMSK
-        mov     src_rsize,eax
+        mov     param_regsize,eax
         mov     eax,ecx
         movzx   ecx,[rdx].special_item.bytval
         mov     edx,[rdx].special_item.value
-        mov     src_regno,ecx
+        mov     param_regno,ecx
 
         .if ( [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
-            mov src_reg,eax
+            mov param_reg,eax
         .endif
         .if ( edx & ( OP_XMM or OP_YMM or OP_ZMM ) )
             inc isfloat
@@ -531,7 +590,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
                 mov destroyed,TRUE
             .endif
             .if ( edx & OP_R && [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
-                mov src_size,src_rsize
+                mov param_size,param_regsize
             .endif
         .endif
     .endif
@@ -572,14 +631,14 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
     ; get target size
 
-    mov eax,src_size
+    mov eax,param_size
     mov isvararg,1
     .if !( [rsi].sflags & S_ISVARARG )
 
         SizeFromMemtype( [rsi].mem_type, Ofssize, [rsi].type )
         mov isvararg,0
     .endif
-    mov dst_size,eax
+    mov arg_size,eax
 
     ; check float
 
@@ -595,7 +654,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     .if ( [rsi].flags & S_REGPARAM )
 
         movzx ebx,[rsi].param_reg
-        mov dst_reg,ebx
+        mov arg_reg,ebx
 
     .elseif ( [rsi].sflags & S_ISVARARG )
 
@@ -627,7 +686,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
                         add     ecx,eax
                         add     rcx,[rdx].fc_info.regpack
                         movzx   eax,byte ptr [rcx+8]
-                        mov     dst_flt,eax
+                        mov     arg_flt,eax
                     .endif
                 .endif
 
@@ -675,14 +734,14 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
             .ifd ( SizeFromRegister( ebx ) < 16 )
 
                 mov edx,wordsize
-                .if ( eax > dst_size )
+                .if ( eax > arg_size )
                     shr edx,1
-                    .if ( edx >= dst_size )
+                    .if ( edx >= arg_size )
                         mov ebx,get_register(ebx, edx)
                     .endif
                 .endif
             .endif
-            mov dst_reg,ebx
+            mov arg_reg,ebx
         .endif
     .endif
 
@@ -692,7 +751,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
         imul  eax,ebx,special_item
         movzx ecx,[rdx+rax].special_item.bytval
 
-        .if ( dst_flt || !( src_reg && ecx == src_regno ) )
+        .if ( arg_flt || !( param_reg && ecx == param_regno ) )
 
             ; v2.34.65 - a register is only used if written to
 
@@ -708,7 +767,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
                 inc eax
                 shl eax,cl
             .endif
-            mov ecx,dst_flt
+            mov ecx,arg_flt
             .if ( ecx )
 
                 imul  ecx,ecx,special_item
@@ -736,26 +795,26 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
         movzx   eax,Ofssize
         lea     rdx,stackreg
         mov     eax,[rdx+rax*4]
-        mov     sreg,eax
+        mov     stkreg,eax
         mov     ebx,MODULE.accumulator
         mov     eax,ebx
         mov     edx,wordsize
 
-        .if ( edx > dst_size )
+        .if ( edx > arg_size )
             shr edx,1
-            .if ( edx >= dst_size )
+            .if ( edx >= arg_size )
                 get_register(ebx, edx)
             .endif
         .endif
-        mov dst_reg,eax
+        mov arg_reg,eax
     .endif
 
-    mov ext_reg,dst_reg
-    mov dst_rsize,SizeFromRegister( dst_reg )
+    mov extended_reg,arg_reg
+    mov arg_regsize,SizeFromRegister( arg_reg )
     .if ( Ofssize )
-        mov ext_reg,get_register(dst_reg, 4)
+        mov extended_reg,get_register(arg_reg, 4)
     .endif
-    mov eax,dst_size
+    mov eax,arg_size
     mov ecx,wordsize
     mov edx,ecx
     shr edx,1
@@ -768,8 +827,11 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
             mov esi,ebx
             .if ( eax == edx )
-                mov esi,ext_reg
+                mov esi,extended_reg
             .endif
+
+            ; push offset for 16/32 should be added here..
+
             AddLineQueueX( " lea %r, %s", esi, paramvalue )
 
             .if ( stack )
@@ -805,11 +867,11 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
                     .endif
                     .if ( stack )
 
-                        AddLineQueueX( " sub %r, %u\n %r [%r], %r", sreg, src_size, ecx, sreg, src_reg )
+                        AddLineQueueX( " sub %r, %u\n %r [%r], %r", stkreg, param_size, ecx, stkreg, param_reg )
                        .return
                     .endif
-                    .if ( ebx != src_reg )
-                        AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
+                    .if ( ebx != param_reg )
+                        AddLineQueueX( " %r %r, %r", ecx, ebx, param_reg )
                     .endif
                     .return
                 .endif
@@ -840,26 +902,35 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
                 .if ( stack )
 
+push_const_128:
+
                     .if ( Ofssize == USE32 )
 
-                        AddLineQueueX( " push %u\n"
-                                       " push %u\n"
-                                       " push %u\n"
-                                       " push %u", [rdi].h64_h, [rdi].h64_l, [rdi].l64_h, [rdi].l64_l )
+                        AddLineQueueX(
+                            " push %u\n"
+                            " push %u\n"
+                            " push %u\n"
+                            " push %u", [rdi].h64_h, [rdi].h64_l, [rdi].l64_h, [rdi].l64_l )
                         .return
                     .endif
 
+                    mov ebx,stkreg
+                    mov esi,arg_offset
+
                     .if ( !resstack )
-                        AddLineQueueX( " sub %r, 16", sreg )
+                        AddLineQueueX( " sub %r, 16", ebx )
                     .endif
+
                     .if ( Ofssize == USE64 && [rdi].l64_h == 0 && [rdi].l64_l == 0 )
-                        AddLineQueueX( " mov qword ptr [%r+%u], 0", sreg, argoffs )
+                        AddLineQueueX( " mov qword ptr [%r+%u], 0", ebx, esi )
                     .else
-                        AddLineQueueX( " mov dword ptr [%r+%u][0], %u\n"
-                                       " mov dword ptr [%r+%u][4], %u", sreg, argoffs, [rdi].l64_l, sreg, argoffs, [rdi].l64_h )
+                        AddLineQueueX(
+                            " mov dword ptr [%r+%u][0], %u\n"
+                            " mov dword ptr [%r+%u][4], %u", ebx, esi, [rdi].l64_l, ebx, esi, [rdi].l64_h )
                     .endif
-                    AddLineQueueX( " mov dword ptr [%r+%u][8], %u\n"
-                                   " mov dword ptr [%r+%u][12], %u", sreg, argoffs, [rdi].h64_l, sreg, argoffs, [rdi].h64_h )
+                    AddLineQueueX(
+                        " mov dword ptr [%r+%u][8], %u\n"
+                        " mov dword ptr [%r+%u][12], %u", ebx, esi, [rdi].h64_l, ebx, esi, [rdi].h64_h )
                     .return
                 .endif
 
@@ -877,7 +948,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
             ; SIMD reg 16/32/64
 
-            .if ( src_reg )
+            .if ( param_reg )
 
                 .if ( stack )
 
@@ -887,17 +958,17 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
                     .endif
                     .if ( !resstack )
 
-                        AddLineQueueX( " sub %r, %u", sreg, eax )
+                        AddLineQueueX( " sub %r, %u", stkreg, eax )
                     .endif
-                    AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, src_reg )
+                    AddLineQueueX( " %r [%r+%u], %r", ecx, stkreg, arg_offset, param_reg )
 
-                .elseif ( ebx != src_reg )
+                .elseif ( ebx != param_reg )
 
                     mov ecx,T_VMOVAPS
-                    .if ( src_reg < T_XMM16 && eax == 16 )
+                    .if ( param_reg < T_XMM16 && eax == 16 )
                         mov ecx,T_MOVAPS
                     .endif
-                    AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
+                    AddLineQueueX( " %r %r, %r", ecx, ebx, param_reg )
                 .endif
                 .return
             .endif
@@ -920,8 +991,8 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
                     mov edx,T_MOVAPS
                 .endif
                 AddLineQueueX( " %r %r, %r ptr %s", edx, ebx, esi, paramvalue )
-                .if ( dst_flt )
-                    AddLineQueueX( " lea %r, %s", dst_flt, paramvalue )
+                .if ( arg_flt )
+                    AddLineQueueX( " lea %r, %s", arg_flt, paramvalue )
                 .endif
                .return
             .endif
@@ -933,7 +1004,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
         ; register pair
 
-        .if ( src_reg )
+        .if ( param_reg )
 
             ; the base reg is the second - reg::[reg]::reg..
 
@@ -955,14 +1026,34 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
                         .elseif ( ecx == 8 )
                             mov edx,T_QWORD
                         .endif
-                        AddLineQueueX( " mov [%r+%u], %r\n"
-                                       " mov %r ptr [%r+%u+%u], 0", sreg, argoffs, src_reg, edx, sreg, argoffs, wordsize )
+                        AddLineQueueX(
+                            " mov [%r+%u], %r\n"
+                            " mov %r ptr [%r+%u+%u], 0",
+                            stkreg, arg_offset, param_reg,
+                            edx, stkreg, arg_offset, wordsize )
                     .else
-                        AddLineQueueX( " push 0\n push %r", src_reg )
+
+                        .if ( cpu < P_186 || param_regsize < wordsize )
+                            AddLineQueueX( " xor %r, %r\n push %r", ebx, ebx, ebx )
+                            mov rax,regs_used
+                            or  byte ptr [rax],R0_USED
+                        .else
+                            AddLineQueue( " push 0" )
+                        .endif
+                        mov edx,param_reg
+                        .if ( wordsize > param_regsize )
+                            mov ecx,T_AL
+                            .if ( eax == 2 )
+                                mov ecx,T_AX
+                            .endif
+                            AddLineQueueX( " mov %r, %r", ecx, edx )
+                            mov edx,ebx
+                        .endif
+                        AddLineQueueX( " push %r", edx )
                     .endif
                 .else
-                    .if ( ebx != src_reg )
-                        AddLineQueueX( " mov %r, %r", ebx, src_reg )
+                    .if ( ebx != param_reg )
+                        AddLineQueueX( " mov %r, %r", ebx, param_reg )
                     .endif
                     .ifd ( get_nextreg(ebx, langid) == 0 )
                         jmp arg_error
@@ -988,8 +1079,8 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
             .endif
             .if ( stack )
                 .if ( resstack )
-                    .for ( ebx = argoffs : esi : esi--, ebx += wordsize )
-                        AddLineQueueX( " mov [%r+%u], %r", sreg, ebx, reg[rsi*4-4] )
+                    .for ( ebx = arg_offset : esi : esi--, ebx += wordsize )
+                        AddLineQueueX( " mov [%r+%u], %r", stkreg, ebx, reg[rsi*4-4] )
                     .endf
                 .else
                     .for ( ebx = 0 : ebx < esi : ebx++ )
@@ -1038,15 +1129,7 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
             .if ( resstack )
 
-                .if ( [rdi].l64_h == 0 && [rdi].l64_l == 0 )
-                    AddLineQueueX( " mov qword ptr [%r+%u], 0", sreg, argoffs )
-                .else
-                    AddLineQueueX( " mov dword ptr [%r+%u][0], %u\n"
-                                   " mov dword ptr [%r+%u][4], %u", sreg, argoffs, [rdi].l64_l, sreg, argoffs, [rdi].l64_h )
-                .endif
-                AddLineQueueX( " mov dword ptr [%r+%u][8], %u\n"
-                               " mov dword ptr [%r+%u][12], %u", sreg, argoffs, [rdi].h64_l, sreg, argoffs, [rdi].h64_h )
-               .return
+                jmp push_const_128
             .endif
 
             .if ( Ofssize == USE16 )
@@ -1069,33 +1152,15 @@ fast_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
                 .switch eax
                 .case 16
-                    AddLineQueueX( " push %u\n push %u", [rdi].h64_h, [rdi].h64_l )
+                    jmp push_const_128
                 .case 8
                     AddLineQueueX( " push %u\n push %u", [rdi].l64_h, [rdi].l64_l )
                    .return
                 .endsw
-                jmp arg_error
             .endif
-
             cmp eax,16
-            jne arg_error
-            .if ( [rdi].h64_h == 0 )
-                AddLineQueueX( " push %u", [rdi].h64_l )
-            .else
-                mov rax,regs_used
-                or byte ptr [rax],R0_USED
-                AddLineQueueX( " mov %r, %lu", ebx, [rdi].hlvalue )
-                AddLineQueueX( " push %r", ebx )
-            .endif
-            .if ( [rdi].l64_h == 0 )
-                AddLineQueueX( " push %u", [rdi].l64_l )
-            .else
-                mov rax,regs_used
-                or byte ptr [rax],R0_USED
-                AddLineQueueX( " mov %r, %lu", ebx, [rdi].llvalue )
-                AddLineQueueX( " push %r", ebx )
-            .endif
-            .return
+            je  push_const_128
+            jmp arg_error
         .endif
 
         .if ( stack == FALSE )
@@ -1175,7 +1240,7 @@ memory_operand:
         .for ( esi = 1 : ecx < eax : esi+=esi, ecx+=ecx )
         .endf
 
-        .if ( ecx > ssize || ecx > maxint )
+        .if ( ecx > arg_stksize || ecx > maxint )
 
 handle_address:
 
@@ -1198,8 +1263,8 @@ handle_address:
                     AddLineQueueX( " mov %r, %lu", ebx, qword ptr [rdi+rsi*8-8] )
                     .if ( resstack )
                         lea ecx,[rsi*8-8]
-                        add ecx,argoffs
-                        AddLineQueueX( " mov [%r+%u], %r", sreg, ecx, ebx )
+                        add ecx,arg_offset
+                        AddLineQueueX( " mov [%r+%u], %r", stkreg, ecx, ebx )
                     .else
                         AddLineQueueX( " push %r", ebx )
                     .endif
@@ -1225,9 +1290,9 @@ handle_address:
         .case 64 : mov ebx,T_ZMMWORD
         .endsw
         .if ( !resstack )
-            AddLineQueueX( " sub %r, %u", sreg, ecx )
+            AddLineQueueX( " sub %r, %u", stkreg, ecx )
         .endif
-        AddLineQueueX( " mov [%r+%u], %r ptr %s", sreg, argoffs, ebx, paramvalue )
+        AddLineQueueX( " mov [%r+%u], %r ptr %s", stkreg, arg_offset, ebx, paramvalue )
         mov rax,regs_used
         or byte ptr [rax],R0_USED
        .return
@@ -1244,12 +1309,12 @@ handle_address:
         .endif
 
         mov dl,memtype
-        mov ecx,dst_size
+        mov ecx,arg_size
 
         .if ( isvararg && dl != MT_REAL4 && dl != MT_REAL8 )
 
             mov dl,MT_REAL4
-            .if ( src_rsize == 16 || [rdi].kind == EXPR_FLOAT )
+            .if ( param_regsize == 16 || [rdi].kind == EXPR_FLOAT )
                 mov dl,MT_REAL8
             .endif
         .endif
@@ -1262,18 +1327,18 @@ handle_address:
 
         .if ( [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
 
-            .if ( stack == FALSE && ebx == src_reg )
+            .if ( stack == FALSE && ebx == param_reg )
 
-                .if ( dst_flt )
+                .if ( arg_flt )
 
-                    AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+                    AddLineQueueX( " movq %r, %r", arg_flt, ebx )
                 .endif
                 .return
             .endif
 
             mov memtype,dl
             .if ( stack && resstack == FALSE )
-                AddLineQueueX( " sub %r, %u", sreg, ecx )
+                AddLineQueueX( " sub %r, %u", stkreg, ecx )
             .endif
             mov dl,memtype
 
@@ -1283,7 +1348,7 @@ handle_address:
             .elseif ( dl == MT_REAL8 )
                 mov ecx,T_MOVSD
             .endif
-            .if ( src_reg >= T_XMM16 )
+            .if ( param_reg >= T_XMM16 )
                 mov ecx,T_VMOVAPS
                 .if ( dl == MT_REAL4 || dl == MT_REAL2 )
                     mov ecx,T_VMOVSS
@@ -1295,9 +1360,9 @@ handle_address:
             .if ( ecx == T_VMOVSS || ecx == T_VMOVSD )
 
                 .if ( stack )
-                    AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, src_reg )
+                    AddLineQueueX( " %r [%r+%u], %r", ecx, stkreg, arg_offset, param_reg )
                 .else
-                    AddLineQueueX( " %r %r, %r, %r", ecx, ebx, ebx, src_reg )
+                    AddLineQueueX( " %r %r, %r, %r", ecx, ebx, ebx, param_reg )
                 .endif
                 .return
             .endif
@@ -1307,10 +1372,10 @@ handle_address:
                 .if ( ecx == T_MOVSS && wordsize == 8 && isvararg )
 
                     mov ecx,T_CVTSS2SD
-                    AddLineQueueX( " %r %r, %r", ecx, src_reg, src_reg )
+                    AddLineQueueX( " %r %r, %r", ecx, param_reg, param_reg )
                     mov ecx,T_MOVSD
                 .endif
-                AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, src_reg )
+                AddLineQueueX( " %r [%r+%u], %r", ecx, stkreg, arg_offset, param_reg )
                .return
             .endif
 
@@ -1321,9 +1386,9 @@ handle_address:
                     mov ecx,T_MOVAPS
                 .endif
             .endif
-            AddLineQueueX( " %r %r, %r", ecx, ebx, src_reg )
-            .if ( dst_flt )
-                AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+            AddLineQueueX( " %r %r, %r", ecx, ebx, param_reg )
+            .if ( arg_flt )
+                AddLineQueueX( " movq %r, %r", arg_flt, ebx )
             .endif
             .return
         .endif
@@ -1342,14 +1407,14 @@ handle_address:
 
             ; v2.34.71 - the default size in 64-bit is double..
 
-            .if ( wordsize == 8 && isvararg && dst_size == 4 )
-                mov dst_size,8
+            .if ( wordsize == 8 && isvararg && arg_size == 4 )
+                mov arg_size,8
             .endif
-            atofloat( rdi, rdx, dst_size, eax, 0 )
+            atofloat( rdi, rdx, arg_size, eax, 0 )
 
-            AddLineQueueX( " mov dword ptr [%r+%u], %u", sreg, argoffs, [rdi].l64_l )
-            .if ( dst_size == 8 )
-                AddLineQueueX( " mov dword ptr [%r+%u][4], %u", sreg, argoffs, [rdi].l64_h )
+            AddLineQueueX( " mov dword ptr [%r+%u], %u", stkreg, arg_offset, [rdi].l64_l )
+            .if ( arg_size == 8 )
+                AddLineQueueX( " mov dword ptr [%r+%u][4], %u", stkreg, arg_offset, [rdi].l64_h )
             .endif
             .return
         .endif
@@ -1414,7 +1479,7 @@ handle_address:
                         .if ( resstack )
 
                             mov ecx,T_MOVSD
-                            AddLineQueueX( " %r [%r+%u], %r", ecx, sreg, argoffs, esi )
+                            AddLineQueueX( " %r [%r+%u], %r", ecx, stkreg, arg_offset, esi )
                            .return
                         .endif
                         mov ecx,T_MOVQ
@@ -1437,8 +1502,8 @@ handle_address:
                 .endif
             .endif
             AddLineQueueX( " %r %r, %s", ecx, ebx, paramvalue )
-            .if ( dst_flt )
-                AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+            .if ( arg_flt )
+                AddLineQueueX( " movq %r, %r", arg_flt, ebx )
             .endif
             .return
         .endif
@@ -1461,8 +1526,8 @@ handle_address:
            .return
         .endif
         AddLineQueueX( " movsd %r, %s", ebx, rcx )
-        .if ( dst_flt )
-            AddLineQueueX( " movq %r, %r", dst_flt, ebx )
+        .if ( arg_flt )
+            AddLineQueueX( " movq %r, %r", arg_flt, ebx )
         .endif
         .return
     .endif
@@ -1487,7 +1552,7 @@ endif
                 .if ( stack && resstack )
 
                     AddLineQueueX( " mov dword ptr [%r+%u], low32(%s)\n"
-                                   " mov dword ptr [%r+%u+4], high32(%s)", sreg, argoffs, rdx, sreg, argoffs, rdx )
+                                   " mov dword ptr [%r+%u+4], high32(%s)", stkreg, arg_offset, rdx, stkreg, arg_offset, rdx )
                 .else
 
                     AddLineQueueX( " mov %r, %s", ebx, rdx )
@@ -1514,7 +1579,7 @@ endif
 
             .if ( word ptr [rdx] == "0" || ( [rdi].value == 0 && [rdi].hvalue == 0 ) )
 
-                AddLineQueueX( " xor %r, %r", ext_reg, ext_reg )
+                AddLineQueueX( " xor %r, %r", extended_reg, extended_reg )
                .return
             .endif
 
@@ -1533,7 +1598,7 @@ endif
 
         .if ( stack )
 
-            mov eax,dst_size
+            mov eax,arg_size
             mov ecx,T_QWORD
             .if ( eax == 1 )
                 mov ecx,T_BYTE
@@ -1550,10 +1615,10 @@ endif
                     mov ecx,T_DWORD
                 .endif
             .endif
-            AddLineQueueX( " mov %r ptr [%r+%u], %s", ecx, sreg, argoffs, rdx )
+            AddLineQueueX( " mov %r ptr [%r+%u], %s", ecx, stkreg, arg_offset, rdx )
         .else
             .if ( [rdi].hvalue == 0 )
-                mov ebx,ext_reg
+                mov ebx,extended_reg
             .endif
             AddLineQueueX( " mov %r, %s", ebx, rdx )
         .endif
@@ -1562,50 +1627,70 @@ endif
 
     ; register param
 
-    .if ( src_reg )
+    .if ( param_reg )
 
-        mov edx,src_rsize
+        mov edx,param_regsize
         .if ( edx < eax && memtype == MT_PTR )
             jmp arg_error
         .endif
 
-        .if ( edx > dst_rsize )
+        .if ( edx > arg_regsize )
 
-            mov src_reg,get_register( src_reg, dst_rsize )
-            .if ( eax == dst_reg && !stack )
+            mov param_reg,get_register( param_reg, arg_regsize )
+            .if ( eax == arg_reg && !stack )
                 .return
             .endif
-            mov src_rsize,dst_rsize
-            mov src_size,eax
+            mov param_regsize,arg_regsize
+            mov param_size,eax
             mov edx,eax
         .endif
 
         .if ( stack )
 
             .if ( resstack )
-                .if ( isvararg && expsize > edx )
+                .if ( isvararg && arg_expandsize > edx )
                     .if ( cpu >= P_386 )
                         mov esi,T_MOVZX
                         .if ( IS_SIGNED([rdi].mem_type) )
                             mov esi,T_MOVSX
                         .endif
-                        AddLineQueueX( " %r %r, %r", esi, dst_reg, src_reg )
-                        mov src_reg,dst_reg
+                        AddLineQueueX( " %r %r, %r", esi, arg_reg, param_reg )
+                        mov param_reg,arg_reg
                         mov rax,regs_used
                         or byte ptr [rax],R0_USED
                     .endif
                 .endif
-                AddLineQueueX( " mov [%r+%u], %r", sreg, argoffs, src_reg )
+                AddLineQueueX( " mov [%r+%u], %r", stkreg, arg_offset, param_reg )
+
             .else
-                AddLineQueueX( " push %r", get_register( src_reg, wordsize ) )
+
+                mov ecx,param_reg
+                .if ( ecx >= T_AH && ecx <= T_BH )
+
+                    mov rax,regs_used
+                    or byte ptr [rax],R0_USED
+                    mov edx,T_MOVZX
+                    mov eax,ebx
+                    .if ( cpu < P_386 )
+                        AddLineQueueX( " mov ah, 0" )
+                        mov edx,T_MOV
+                        mov eax,T_AL
+                        mov ecx,param_reg
+                    .endif
+                    AddLineQueueX( " %r %r, %r", edx, eax, ecx )
+                    mov eax,ebx
+                .else
+                    get_register( ecx, wordsize )
+                .endif
+                AddLineQueueX( " push %r", eax )
             .endif
             .return
         .endif
 
         mov esi,T_MOV
-        .if ( expsize > edx )
+        .if ( arg_expandsize > edx )
 
-            mov ebx,get_register( dst_reg, expsize )
+            mov ebx,get_register( arg_reg, arg_expandsize )
             .if ( cpu >= P_386 )
                 mov esi,T_MOVZX
                 .if ( IS_SIGNED([rdi].mem_type) )
@@ -1615,7 +1700,7 @@ endif
                 jmp @F
             .endif
 
-        .elseif ( dst_rsize > edx )
+        .elseif ( arg_regsize > edx )
 
             .if ( cpu >= P_386 )
 
@@ -1626,7 +1711,7 @@ endif
                 .if ( edx == 4 )
                     .if ( esi == T_MOVZX )
                         mov esi,T_MOV
-                        mov ebx,get_register( dst_reg, 4 )
+                        mov ebx,get_register( arg_reg, 4 )
                     .else
                         mov esi,T_MOVSXD
                     .endif
@@ -1641,8 +1726,8 @@ endif
                 AddLineQueueX( " mov %r, 0", ecx )
             .endif
         .endif
-        .if ( ebx != src_reg )
-            AddLineQueueX( " %r %r, %r", esi, ebx, src_reg )
+        .if ( ebx != param_reg )
+            AddLineQueueX( " %r %r, %r", esi, ebx, param_reg )
         .endif
         .return
     .endif
@@ -1655,24 +1740,32 @@ endif
 
     .if ( eax == esi )
 
-        .if ( src_size > dst_rsize )
-            mov src_size,eax
+        .if ( param_size > arg_regsize )
+            mov param_size,eax
         .endif
-        mov eax,src_size
+        mov eax,param_size
         .if ( eax == ecx && stack && !resstack )
 
-            AddLineQueueX( " push %s", paramvalue )
-           .return
+            .if ( cpu < P_186 && [rdi].inst == T_OFFSET )
+
+                AddLineQueueX( " mov %r, %s", ebx, paramvalue )
+                AddLineQueueX( " push %r", ebx )
+                mov rax,regs_used
+                or byte ptr [rax],R0_USED
+            .else
+                AddLineQueueX( " push %s", paramvalue )
+            .endif
+            .return
         .endif
 
         mov esi,T_MOV
-        mov edx,dst_rsize
+        mov edx,arg_regsize
 
-        .if ( !stack && expsize > edx )
+        .if ( !stack && arg_expandsize > edx )
 
-            mov dst_reg,get_register( dst_reg, expsize )
-            mov dst_rsize,expsize
-            mov eax,src_size
+            mov arg_reg,get_register( arg_reg, arg_expandsize )
+            mov arg_regsize,arg_expandsize
+            mov eax,param_size
         .endif
         mov ecx,T_BYTE
         .if ( eax == 2 )
@@ -1682,7 +1775,7 @@ endif
         .elseif ( eax == 8 )
             mov ecx,T_QWORD
         .endif
-        .if ( eax < dst_rsize )
+        .if ( eax < arg_regsize )
 
             .if ( cpu >= P_386 )
 
@@ -1690,9 +1783,9 @@ endif
                 .if ( IS_SIGNED([rdi].mem_type) )
                     mov esi,T_MOVSX
                 .endif
-                .if ( src_size == 4 )
+                .if ( param_size == 4 )
                     .if ( esi == T_MOVZX )
-                        mov dst_reg,get_register( dst_reg, 4 )
+                        mov arg_reg,get_register( arg_reg, 4 )
                         mov esi,T_MOV
                         mov ecx,T_DWORD
                     .else
@@ -1705,19 +1798,19 @@ endif
                 lea     rdx,SpecialTable
                 movzx   ecx,[rdx+rax].special_item.bytval
                 lea     eax,[rcx+T_AL]
-                mov     dst_reg,eax
+                mov     arg_reg,eax
                 add     ecx,T_AH
 
                 AddLineQueueX( " mov %r, 0", ecx )
                 mov ecx,T_BYTE
             .endif
         .endif
-        AddLineQueueX( " %r %r, %r ptr %s", esi, dst_reg, ecx, paramvalue )
+        AddLineQueueX( " %r %r, %r ptr %s", esi, arg_reg, ecx, paramvalue )
 
         .if ( stack )
 
             .if ( resstack )
-                mov ebx,dst_reg
+                mov ebx,arg_reg
             .endif
             jmp stack_ebx
         .endif
@@ -1732,7 +1825,7 @@ endif
     ; We can't read beyond the size here (there may be dragons)
     ; so we use register-size chunks + shift
 
-    mov ecx,src_size
+    mov ecx,param_size
     mov edi,T_DWORD     ; read 2 or 4 bytes from the end
     mov esi,1           ; bytes left
     .switch ecx
@@ -1780,7 +1873,7 @@ stack_ebx:
         mov rax,regs_used
         or byte ptr [rax],R0_USED
         .if ( resstack )
-            AddLineQueueX( " mov [%r+%u], %r", sreg, argoffs, ebx )
+            AddLineQueueX( " mov [%r+%u], %r", stkreg, arg_offset, ebx )
         .else
             AddLineQueueX( " push %r", ebx )
         .endif
@@ -1797,61 +1890,6 @@ arg_error:
 fast_param endp
 
     assume rdi:nothing
-
-
-; get segment part of an argument
-; v2.05: extracted from PushInvokeParam(),
-; so it could be used by watc_param() as well.
-
-GetSegmentPart proc __ccall private uses rsi rdi rbx opnd:ptr expr, buffer:string_t, fullparam:string_t
-
-    mov esi,T_NULL
-    ldr rdi,opnd
-    mov rax,[rdi].expr.sym
-    mov rdx,[rdi].expr.override
-
-    .if ( rdx )
-
-        .if ( [rdx].asm_tok.token == T_REG )
-            mov esi,[rdx].asm_tok.tokval
-        .else
-            tstrcpy( rdi, [rdx].asm_tok.string_ptr )
-        .endif
-
-    .elseif ( rax && [rax].asym.segm )
-
-        mov rbx,[rax].asym.segm
-        mov rcx,[rbx].dsym.seginfo
-
-        .if ( [rcx].seg_info.segtype == SEGTYPE_DATA ||
-              [rcx].seg_info.segtype == SEGTYPE_BSS )
-            search_assume( rbx, ASSUME_DS, TRUE )
-        .else
-            search_assume( rbx, ASSUME_CS, TRUE )
-        .endif
-        .if ( eax != ASSUME_NOTHING )
-
-            lea rsi,[rax+T_ES] ; v2.08: T_ES is first seg reg in special.h
-        .else
-            .if !GetGroup([rdi].expr.sym)
-                mov rax,rbx
-            .endif
-            .if rax
-                tstrcpy( buffer, [rax].asym.name )
-            .else
-                tstrcat( tstrcpy( buffer, "seg " ), fullparam )
-            .endif
-        .endif
-    .elseif ( rax && [rax].asym.state == SYM_STACK )
-        mov esi,T_SS
-    .else
-        tstrcat( tstrcpy( buffer, "seg " ), fullparam )
-    .endif
-    .return( rsi )
-
-GetSegmentPart endp
-
-
     assume rbx:ptr asm_tok
 
 SkipTypecast proc fastcall private uses rsi rdi rbx fullparam:string_t, i:int_t, tokenarray:ptr asm_tok
@@ -1909,6 +1947,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
   local ParamId:int_t
   local Ofssize:byte
   local pfastcall:byte
+  local langid:ptr fc_info
 
     imul ebx,i,asm_tok
     add  rbx,tokenarray
@@ -1991,7 +2030,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
     add eax,2
     mov fptrsize,eax
 
-    get_fasttype(Ofssize, [rsi].asym.langtype)
+    mov langid,get_fasttype(Ofssize, [rsi].asym.langtype)
     cmp [rax].fc_info.regpack,NULL
     setnz al
     mov pfastcall,al
@@ -2021,7 +2060,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
 
         .if ( pfastcall )
 
-            fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )
+            fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags, langid )
 
            .return( NOT_ERROR )
         .endif
@@ -2310,9 +2349,7 @@ endif
                     mov asize,SizeFromMemtype( [rcx].asym.mem_type, opnd.Ofssize, [rcx].asym.type )
                 .endif
             .endif
-
-if 0 ; Masm error up to v11, v12+ allow this..
-
+if 1
             ; v2.18: error (vararg param used as argument?)
 
             mov rcx,opnd.sym
@@ -2323,7 +2360,6 @@ if 0 ; Masm error up to v11, v12+ allow this..
                 asmerr( 2114, edx )
             .endif
 endif
-
         .elseif ( opnd.mem_type != MT_TYPE )
 
             .if ( opnd.kind == EXPR_ADDR && !( opnd.flags & E_INDIRECT ) && opnd.sym &&
@@ -2404,7 +2440,7 @@ endif
 
     .if ( pfastcall )
 
-        fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags )
+        fast_param( pproc, reqParam, curr, t_addr, &opnd, &fullparam, r0flags, langid )
        .return( NOT_ERROR )
     .endif
 

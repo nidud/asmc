@@ -108,8 +108,7 @@ InitializeArray proc __ccall uses rsi rdi rbx f:ptr sfield, pi:ptr int_t, tokena
                 mov bArray,TRUE
             .elseif ( ( no_of_bytes == 1 || ; added @v2.34.51
                       ( no_of_bytes == 2 && MODULE.xflag & OPT_WSTRING or OPT_LSTRING ) ) &&
-                      [rbx].token == T_STRING &&
-                      ( [rbx].string_delim == '"' || [rbx].string_delim == "'" ) )
+                      [rbx].token == T_STRING && ( [rbx].string_delim == '"' || [rbx].string_delim == "'" ) )
                 mov bArray,TRUE
             .endif
         .endf
@@ -689,10 +688,18 @@ next_item:
             .endif
 
             ; max dup is 0x7fffffff
+            ; v2.17: check high32(value)
 
-            .if ( opndx.value < 0 )
-                .return( asmerr( 2092 ) )
+            xor ecx,ecx
+            .if ( ecx != opndx.hvalue )
+                mov ecx,2084
+            .elseif ( opndx.value < ecx )
+                mov ecx,2092
             .endif
+            .if ( ecx )
+                .return( asmerr( ecx ) )
+            .endif
+
             inc i
             add rbx,asm_tok
             .if( [rbx].token != T_OP_BRACKET )

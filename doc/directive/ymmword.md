@@ -1,8 +1,8 @@
 Asmc Macro Assembler Reference
 
-## Y[MM]WORD
+## YMMWORD
 
-[[_name_]] Y[MM]WORD _initializer_ [[, _initializer_ ...]]
+[[_name_]] YMMWORD _initializer_ [[, _initializer_ ...]]
 
 Allocates and optionally initializes 32 bytes of storage for each _initializer_.
 

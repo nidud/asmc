@@ -646,7 +646,6 @@ endif
     mov MODULE.endbr,[rdi].endbr
     mov MODULE.dotname,[rdi].dotname
     mov MODULE.dotnamex,[rdi].dotnamex
-    mov MODULE.sysvregs,[rdi].sysvregs
     mov MODULE.masm_compat_gencode,[rdi].masm_compat_gencode
     mov MODULE.avxencoding,0
 

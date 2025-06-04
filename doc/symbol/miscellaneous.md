@@ -7,7 +7,6 @@ Asmc Macro Assembler Reference
 - [@@:](at-at.md)
 - [@B](at-b.md)
 - [@F](at-f.md)
-- [{evex}](evex.md)
 
 #### See Also
 

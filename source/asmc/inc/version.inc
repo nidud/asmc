@@ -5,6 +5,6 @@ define ASMC_VERSION         236
 
 define ASMC_MAJOR_VER       2
 define ASMC_MINOR_VER       36
-define ASMC_SUBMINOR_VER    34
+define ASMC_SUBMINOR_VER    36
 
 endif

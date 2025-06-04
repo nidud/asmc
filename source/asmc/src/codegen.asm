@@ -77,14 +77,17 @@ output_opc proc __ccall uses rdi rbx
     and     al,RWF_MASK
     mov     tuple,al
 
-    .if ( rflags & RWF_EVEX )
+    .if ( [rsi].prefix == 0 )
 
-        .if !( MODULE.avxencoding & PREFER_VEX or PREFER_VEX3 or NO_EVEX )
+        .if ( rflags & RWF_EVEX )
 
-            mov [rsi].evex,1
+            .if !( MODULE.avxencoding & PREFER_VEX or PREFER_VEX3 or NO_EVEX )
+
+                or [rsi].prefix,PREFIX_EVEX
+            .endif
+        .elseif ( ( rflags & RWF_VEX ) && MODULE.avxencoding == PREFER_EVEX )
+            or [rsi].prefix,PREFIX_EVEX
         .endif
-    .elseif ( ( rflags & RWF_VEX ) && MODULE.avxencoding == PREFER_EVEX )
-        mov [rsi].evex,1
     .endif
 
     ;; Output debug info - line numbers
@@ -166,17 +169,15 @@ output_opc proc __ccall uses rdi rbx
         AddFloatingPointEmulationFixup(rsi)
     .endif
 
+    ; Output instruction prefix
 
-    ; Output EVEX instruction prefix
-
-    .if ( [rsi].evex )
+    .if ( [rsi].prefix & PREFIX_EVEX )
 
         mov evex,[rdi].evex
         OutputByte(0x62)
     .endif
 
-
-    ; Output instruction prefix LOCK, REP or REP[N]E|Z
+    ; Output instruction prefix LOCK, REP, or REP[N]E|Z
 
     .if ( [rsi].inst != EMPTY )
 
@@ -196,7 +197,9 @@ output_opc proc __ccall uses rdi rbx
         .endif
         mov rmbyte,al
         .if ( ecx != eax )
-            asmerr( 2068 )
+            .if !( [rsi].inst == T_XRELEASE && [rsi].token == T_MOV )
+                asmerr( 2068 )
+            .endif
         .else
             lea rcx,InstrTable
             OutputByte( [rcx+rdx*instr_item].instr_item.opcode )
@@ -1807,7 +1810,7 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
   local evex:byte
 
     ldr rsi,CodeInfo
-    mov evex,[rsi].evex
+    mov evex,[rsi].prefix
     mov rdi,[rsi].pinstr
     ;;
     ;; privileged instructions ok?
@@ -1903,7 +1906,7 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
                 .endif
                 .endc
             .default
-                .endc .if ( evex && [rdi].evex == 0 )
+                .endc .if ( evex & PREFIX_EVEX && [rdi].evex == 0 )
                 check_operand_2( [rsi].opnd[OPND1].type )
             .endsw
             .if ( eax == NOT_ERROR )

@@ -101,7 +101,8 @@ ProcTable   equ <SymTables[TAB_PROC*symbol_queue].head>
     R_in_OP = 0x3,
 }
 
-; values for <allowed_prefix> (3 bits) */
+; values for <allowed_prefix> (3 bits)
+
 .enum allowed_prefix {
     ; AP_NO_PREFIX= 0x00, ; value 0 means "normal"
     AP_LOCK	= 0x01,
@@ -329,13 +330,22 @@ CI_x64LO_USED	equ 0x20 ; SPL,BPL,SIL,DIL used
 CI_UNDEF_SYM	equ 0x40 ; v2.06b: struct member is forward ref
 CI_BASE_RIP	equ 0x80
 
+; VEX, VEX2, VEX3, EXEX, and {evex} prefix -- not reserved words
+;
+; These may also be set by option avxencoding
+
+define PREFIX_VEX	0x01 ; Encode an AVX instruction using a VEX prefix
+define PREFIX_VEX2	0x02 ; Encode an AVX instruction using a 2-byte VEX prefix
+define PREFIX_VEX3	0x04 ; Encode an AVX instruction using a 3-byte VEX prefix
+define PREFIX_EVEX	0x08 ; Encode an AVX instruction using an EVEX prefix
+
 code_info	STRUC
 inst		int_t ?
 RegOverride	int_t ?
 rex		db ?
 adrsiz		db ?	; address size prefix 0x67 is to be emitted
 opsiz		db ?	; operand size prefix 0x66 is to be emitted
-evex		db ?	; EVEX prefix 0x62 is to be emitted
+prefix		db ?	; VEX prefix to be emitted
 evexP3		db ?
 vflags		db ?
 token		dw ?

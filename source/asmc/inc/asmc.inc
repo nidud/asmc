@@ -603,7 +603,6 @@ define PE_DLL               0x04
     iddc                    db ?    ; -idd
     dotname                 db ?    ; -dotname  : option dotname
     dotnamex                db ?    ; -dotnamex : option dotnamex:<on:off>
-    sysvregs                db ?    ; -sysvregs : skip RDI and RSI in USES
     no_linking              db ?    ; -c        ; assembles only
     link_mt                 db ?    ; -MT = 1, float used |= 2, argv used |= 4
    .ends
@@ -666,7 +665,6 @@ define PE_DLL               0x04
     pic                     db ?            ; -fpic | -fno-pic
     endbr                   db ?            ; -endbr
     dotnamex                db ?            ; -dotnamex : option dotnamex:<on:off>
-    sysvregs                db ?            ; -sysvregs : skip RDI and RSI in USES
     avxencoding             db ?            ; option avxencoding:<>
     unused1                 db ?
     unused2                 db ?

@@ -16,4 +16,5 @@ The first issue is solved by improving and adding HLL extensions, the second by 
 
 #### See Also
 
-[Asmc Reference](../readme.md)
+[Asmc Reference](../readme.md) | [Instruction Format](../directive/instruction-format.md)
+

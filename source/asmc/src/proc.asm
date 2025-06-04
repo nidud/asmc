@@ -1397,13 +1397,6 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
             .new j:int_t
             .new index:int_t
             .new sym:ptr asym
-            .new sysv:int_t = 0 ; @v2.34.49 "uses rsi rdi rbx" --> "uses rbx" in Linux64
-
-            .if ( langtype == LANG_SYSCALL &&
-                  MODULE.Ofssize == USE64 &&
-                  MODULE.sysvregs )
-                inc sysv
-            .endif
 
             .if ( !IsPROC ) ; not for PROTO!
                 asmerr( 2008, [rbx].string_ptr )
@@ -1433,34 +1426,13 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
                      mov [rbx].token,T_REG
                      mov [rbx].tokval,ecx
                      mov [rbx].string_ptr,[rdi].asym.string_ptr
-
-                    .if ( sysv && ( ecx == T_RSI || ecx == T_RDI ) )
-
-                        dec cnt
-                        inc sysv
-                    .endif
-
-                .elseif ( sysv && ( [rbx].tokval == T_RSI || [rbx].tokval == T_RDI ) )
-
-                    dec cnt
-                    inc sysv
                 .endif
             .endf
             mov rbx,tokenarray.tokptr(i)
 
             .if ( cnt == 0 )
 
-                .if ( sysv )
-
-                    mov  eax,sysv
-                    dec  eax
-                    add  i,eax
-                    imul eax,eax,asm_tok
-                    add  rbx,rax
-                .else
-                    asmerr( 2008, [rbx-asm_tok].tokpos )
-                .endif
-
+                asmerr( 2008, [rbx-asm_tok].tokpos )
             .else
 
                 mov ecx,cnt
@@ -1475,15 +1447,12 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
 
                 .for ( : [rbx].token == T_REG: i++, rbx += asm_tok )
 
-                    .if !( sysv && ( [rbx].tokval == T_RSI || [rbx].tokval == T_RDI ) )
+                    .if ( SizeFromRegister( [rbx].tokval ) == 1 )
 
-                        .if ( SizeFromRegister( [rbx].tokval ) == 1 )
-
-                            asmerr( 2032 )
-                        .endif
-                        mov eax,[rbx].tokval
-                        stosw
+                        asmerr( 2032 )
                     .endif
+                    mov eax,[rbx].tokval
+                    stosw
                 .endf
             .endif
         .endif
@@ -1601,8 +1570,7 @@ if 0 ; zero alloc..
         mov [rax].proc_info.flags,cl
 endif
 
-        .switch ( [rdi].asym.state )
-        .case SYM_INTERNAL
+        .if ( [rdi].asym.state == SYM_INTERNAL )
 
             ; v2.04: don't use sym_add_table() and thus
             ; free the <next> member field!
@@ -1613,20 +1581,23 @@ endif
                 mov rcx,SymTables[TAB_PROC*symbol_queue].tail
                 mov [rcx].dsym.nextproc,rdi
             .endif
+
             mov SymTables[TAB_PROC*symbol_queue].tail,rdi
             inc procidx
+
             .if ( Options.line_numbers )
+
                 mov [rdi].asym.debuginfo,LclAlloc( sizeof( debug_info ) )
                 get_curr_srcfile()
                 mov rdx,[rdi].asym.debuginfo
                 mov [rdx].debug_info.file,ax
             .endif
-            .endc
-        .case SYM_EXTERNAL
+
+        .elseif ( [rdi].asym.state == SYM_EXTERNAL )
+
             or [rdi].asym.sflags,S_WEAK
             sym_add_table( &SymTables[TAB_EXT*symbol_queue], rdi )
-           .endc
-        .endsw
+        .endif
     .endif
     .return( rdi )
 

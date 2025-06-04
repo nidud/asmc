@@ -85,7 +85,6 @@ Options global_options {
         0,                      ; .iddc
         0,                      ; .dotname
         0,                      ; .dotnamex
-        0,                      ; .sysvregs
         0,                      ; .no_linking
         0 }                     ; .link_mt
 
@@ -823,9 +822,6 @@ endif
         .return
     .case 'cats'            ; -stackalign
         or Options.win64_flags,W64F_STACKALIGN16
-        .return
-    .case 'vsys'            ; -sysvregs
-        mov Options.sysvregs,1
         .return
     .case 'xS'              ; -Sx
         mov Options.listif,1

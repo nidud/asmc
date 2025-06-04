@@ -1257,18 +1257,15 @@ insa(SHA256RNDS2, sha256rnds2, OpCls( XMM, XMM_M128, XMM0 ), F_0F38, 1, no_WDS, 
 
 ; added v2.34.59
 
-; NP 0F 01 EE RDPKRU  ZO  V/V
-; NP 0F 01 EF WRPKRU  ZO  V/V
-
 insa(RDPKRU,  rdpkru,   OpCls( NONE,     NONE,       NONE ), F_0F,    0, 0,      0x01, 0xEE, P_686,    0,0)
 insa(WRPKRU,  wrpkru,   OpCls( NONE,     NONE,       NONE ), F_0F,    0, 0,      0x01, 0xEF, P_686,    0,0)
-
-; F3 0F 01 EF STUI ZO V/V
-; F3 0F 3A F0 C0 /ib HRESET imm8, <EAX> V/V
-
-
 insa(STUI,    stui,     OpCls( NONE,     NONE,       NONE ), F_F30F,  0, 0,      0x01, 0xEF, P_586,    0,0)
 insa(HRESET,  hreset,   OpCls( I8_U,     EAX,        NONE ), F_F30F3A,0, no_WDS, 0xF0, 0xC0, P_586,    0,0)
+
+; added v2.36.36
+
+insa(XACQUIRE, xacquire, OpCls( NONE,  NONE,       NONE ), 0,      0,  no_RM,  0xF2, 0,    P_686,       AP_LOCK,0)
+insa(XRELEASE, xrelease, OpCls( NONE,  NONE,       NONE ), 0,      0,  no_RM,  0xF3, 0,    P_686,       AP_LOCK,0)
 
 ; CDQE must be first in this group, see reswords.asm
 

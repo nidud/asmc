@@ -1,8 +1,8 @@
 Asmc Macro Assembler Reference
 
-## Z[MM]WORD
+## ZMMWORD
 
-[[_name_]] Z[MM]WORD _initializer_ [[, _initializer_ ...]]
+[[_name_]] ZMMWORD _initializer_ [[, _initializer_ ...]]
 
 Allocates and optionally initializes 64 bytes of storage for each _initializer_.
 

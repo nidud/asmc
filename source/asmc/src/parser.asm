@@ -2587,7 +2587,7 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
     mov [rsi].opnd[rbx].type,eax
 
     .if ( ( ( eax == OP_XMM || eax == OP_YMM ) && regno > 15 ) || eax & OP_ZMM )
-        mov [rsi].evex,1
+        or [rsi].prefix,PREFIX_EVEX
         .if eax == OP_ZMM
             or [rsi].vflags,VX_ZMM
         .endif
@@ -3896,6 +3896,7 @@ endif
     add rsi,rbx
 
     mov j,0
+    mov CodeInfo.prefix,0
 
     .if ( MODULE.ComStack )
 
@@ -4086,7 +4087,31 @@ endif
             .if ( CurrEnum && [rbx].token == T_STRING )
                 .return EnumDirective( 0, rbx )
             .endif
+
             .if ( i == 0 && TokenCount > 1 )
+
+                .if ( [rbx].token == T_ID )
+
+                    mov rcx,[rbx].string_ptr
+                    mov eax,[rcx]
+                    or  eax,0x20202020
+                    mov cl,[rcx+4]
+
+                    .if ( eax == 'xeve' && cl == 0 )
+                        mov eax,PREFIX_EVEX
+                        jmp init_prefix
+                    .elseif ( eax == ' xev' )
+                        mov eax,PREFIX_VEX
+                        jmp init_prefix
+                    .elseif ( eax == '2xev' && cl == 0 )
+                        mov eax,PREFIX_VEX2
+                        jmp init_prefix
+                    .elseif ( eax == '3xev' && cl == 0 )
+                        mov eax,PREFIX_VEX3
+                        jmp init_prefix
+                    .endif
+                .endif
+
                 .if ( GetOperator( &[rbx+asm_tok] ) )
                     .return ProcessOperator( tokenarray )
                 .endif
@@ -4102,6 +4127,21 @@ endif
                 .endif
             .endif
             .return asmerr( 2008, [rsi].string_ptr )
+init_prefix:
+            mov CodeInfo.prefix,al
+            inc i
+            add rsi,asm_tok
+
+        .elseif ( i == 0 && [rbx].dirtype == '{' && [rbx].stringlen == 4 )
+
+            mov rcx,[rbx].string_ptr
+            mov eax,[rcx]
+            or  eax,0x20202020
+            .if ( eax == 'xeve' )
+
+                mov eax,PREFIX_EVEX
+                jmp init_prefix
+            .endif
         .endif
     .endif
 
@@ -4117,6 +4157,7 @@ endif
 
     ; init CodeInfo
 
+    mov dl,CodeInfo.prefix
     xor eax,eax
     mov ecx,sizeof(CodeInfo) / 4
     lea rdi,CodeInfo
@@ -4125,25 +4166,40 @@ endif
     mov CodeInfo.RegOverride,EMPTY
     mov CodeInfo.mem_type,MT_EMPTY
     mov CodeInfo.Ofssize,MODULE.Ofssize
+    mov CodeInfo.prefix,dl
 
-    ;; instruction prefix?
+    ; instruction prefix?
+    ;
+    ; v2.36.36 - added VEX, VEX2, VEX3, EXEX, XACQUIRE, and XRELEASE
+    ;
+    mov eax,[rsi].tokval
+    .if ( eax == T_XACQUIRE || eax == T_XRELEASE )
 
-    .if ( i == 0 && [rbx].dirtype == '{' )
-        .ifd ( !tstricmp( [rbx].string_ptr, "evex" ) )
+        mov edx,eax
 
-            mov CodeInfo.evex,1
+        inc i
+        add rsi,asm_tok
+        mov eax,[rsi].tokval
+
+        .if ( eax == T_LOCK && ( [rsi+asm_tok].tokval == T_MOV || [rsi+asm_tok].tokval == T_XCHG ) )
+
+            ; Masm ignore the LOCK prefix here..
+
             inc i
             add rsi,asm_tok
-        .else
-            .return asmerr( 2008, [rsi].string_ptr )
+            mov eax,[rsi].tokval
+        .endif
+        .if ( eax != T_LOCK )
+            mov eax,edx
+            mov CodeInfo.inst,edx
         .endif
     .endif
 
     ; T_LOCK, T_REP, T_REPE, T_REPNE, T_REPNZ, T_REPZ
 
-    .if ( [rsi].tokval >= T_LOCK && [rsi].tokval <= T_REPZ )
+    .if ( eax >= T_LOCK && eax <= T_REPZ )
 
-        mov CodeInfo.inst,[rsi].tokval
+        mov CodeInfo.inst,eax
         inc i
         add rsi,asm_tok
         ;
@@ -4265,7 +4321,7 @@ endif
 
         .if ( [rsi-asm_tok].flags & T_EVEX_OPT )
 
-            mov CodeInfo.evex,1
+            or CodeInfo.prefix,PREFIX_EVEX
             lea rbx,[rsi-asm_tok] ; get transform modifiers
 
             .if ( [rbx].token == T_STRING )
@@ -4520,7 +4576,7 @@ endif
                     mov CodeInfo.vexregop,al
                     .if ( CodeInfo.vexregop > 16 || edi & OP_ZMM )
 
-                        mov CodeInfo.evex,1
+                        or CodeInfo.prefix,PREFIX_EVEX
                         .if ( CodeInfo.vexregop > 16 )
                             or CodeInfo.vflags,VX_OP2V
                         .endif

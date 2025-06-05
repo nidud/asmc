@@ -635,6 +635,13 @@ next_item:
         mov rsi,CurrStruct
         .if ( rsi && [rsi].asym.typekind == TYPE_RECORD && [rbx].token == T_COLON )
 
+            .if ( [rbx-asm_tok].token == T_DIRECTIVE )
+
+                mov rdx,sym ; v2.36.37 - added
+                mov [rdx].asym.bitf_token,[rbx-asm_tok].tokval
+                or  [rdx].asym.flags,S_CRECORD
+            .endif
+
             inc i ; get width
             mov ecx,_end
             dec ecx
@@ -652,11 +659,20 @@ next_item:
             .elseif ( ecx > eax )
                 .return asmerr( 2089, [rbx-asm_tok*2].string_ptr )
             .endif
-            mov eax,[rsi].asym.offs
-            add [rsi].asym.offs,ecx
             mov rdx,sym
             mov [rdx].asym.mem_type,MT_BITS
-            mov [rdx].asym.offs,eax
+            .if ( [rdx].asym.flags & S_CRECORD )
+                mov al,[rsi].asym.bitf_offs
+                add [rsi].asym.bitf_offs,cl
+                mov [rdx].asym.bitf_offs,al
+                mov [rdx].asym.bitf_bits,cl
+                mov ecx,no_of_bytes
+                ;mov [rdx].asym.offs,ecx
+            .else
+                mov eax,[rsi].asym.offs
+                add [rsi].asym.offs,ecx
+                mov [rdx].asym.offs,eax
+            .endif
             mov [rsi].asym.total_size,no_of_bytes
             mov no_of_bytes,ecx
             imul ebx,i,asm_tok

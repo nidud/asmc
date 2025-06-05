@@ -892,7 +892,7 @@ endif
     .case 'slz'             ; -zls
         mov Options.no_section_aux_entry,1
         .return
-    .case 'enZ'
+    .case 'enZ'             ; -Zne
         mov Options.strict_masm_compat,1
         .return
 ifndef ASMC64

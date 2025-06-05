@@ -352,6 +352,7 @@ endif
         mov rax,[rcx].struct_info.head
         mov [rcx].struct_info.tail,rax
         mov [rdi].asym.offs,0
+        mov [rdi].asym.bitf_offs,0
         or  [rdi].asym.flags,S_ISDEFINED
         mov [rdi].asym.state,SYM_TYPE ; added v2.33.68
         mov [rdi].dsym.next,CurrStruct
@@ -941,6 +942,7 @@ AlignInStruct endp
 UpdateStructSize proc fastcall sym:ptr asym
 
     mov rdx,CurrStruct
+
     .if ( [rdx].asym.typekind == TYPE_RECORD )
         ;
     .elseif ( [rdx].asym.typekind == TYPE_UNION )

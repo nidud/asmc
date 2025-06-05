@@ -3554,7 +3554,24 @@ endif
             ; size == 0 is assumed to mean "undefined", but there
             ; is also the case of an "empty" struct or union. The
             ; latter case isn't handled correctly.
-
+if 1
+            .if ( op1_size == 0 && op1 & OP_M_ANY && [rdi].mem_type == MT_BITS )
+                mov rax,[rdi].mbr
+                .if ( rax )
+                    .if ( [rax].asym.flags & S_CRECORD )
+                        movzx eax,[rax].asym.bitf_bits
+                    .else
+                        mov eax,[rax].asym.total_size
+                    .endif
+                    mov edx,eax
+                    shr eax,3
+                    and edx,7
+                    setnz dl
+                    add eax,edx
+                .endif
+                mov op1_size,eax
+            .endif
+endif
             .if ( op1_size == 0 )
 
                 mov eax,op1
@@ -3771,6 +3788,7 @@ PublicDirective proto __ccall :int_t, :token_t
 mem2mem         proto __ccall :uint_t, :uint_t, :token_t, :ptr expr
 imm2xmm         proto __ccall :token_t, :expr_t, :uint_t
 NewDirective    proto __ccall :int_t, :token_t
+CRecordField    proto __ccall :int_t, :ptr expr, :ptr expr
 
 externdef       CurrEnum:asym_t
 EnumDirective   proto __ccall :int_t, :token_t
@@ -4872,11 +4890,37 @@ endif
             .endsw
         .endif
 
+        assume rbx:nothing
+        assume rsi:nothing
+
         .if ( CodeInfo.Ofssize > USE16 && !MODULE.masm_compat_gencode )
 
             movzx eax,CodeInfo.token
             mov ecx,CodeInfo.opnd[OPND1].type
             mov edx,CodeInfo.opnd[OPNI2].type
+
+            .if ( eax == T_MOV || eax == T_CMP )
+
+                ; v2.36 - Handle C-type RECORD fields
+
+                .if ( ecx & OP_M_ANY && opndx[expr].kind == EXPR_CONST )
+
+                    mov rbx,opndx.mbr
+                    .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.flags & S_CRECORD )
+                        mov ecx,eax
+                       .return( CRecordField(ecx, &opndx, &opndx[expr]) )
+                    .endif
+                .endif
+
+                .if ( eax == T_MOV && edx & OP_M_ANY && opndx.kind == EXPR_REG )
+
+                    mov rbx,opndx[expr].mbr
+                    .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.flags & S_CRECORD )
+                        mov ecx,eax
+                       .return( CRecordField(ecx, &opndx, &opndx[expr]) )
+                    .endif
+                .endif
+            .endif
 
             .if ( ( ecx & OP_M_ANY ) && ( edx & OP_M_ANY ) )
 

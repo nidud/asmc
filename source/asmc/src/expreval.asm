@@ -722,6 +722,10 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 xor edx,edx
                 mov ecx,[rbx].offs
                 mov edi,[rbx].total_size
+                .if ( [rbx].flags & S_CRECORD )
+                    movzx ecx,[rbx].bitf_offs
+                    movzx edi,[rbx].bitf_bits
+                .endif
                 add edi,ecx
                 .for ( : ecx < edi : ecx++ )
                     mov ebx,1
@@ -3098,10 +3102,8 @@ endif
                     .if !( ecx & AT_BF )
                         .return( invalid_operand( rdi, [rbx].string_ptr, rdx ) )
                     .endif
-                .else
-                    .if !( ecx & AT_FIELD )
-                        .return( invalid_operand( rdi, [rbx].string_ptr, rdx ) )
-                    .endif
+                .elseif !( ecx & AT_FIELD )
+                    .return( invalid_operand( rdi, [rbx].string_ptr, rdx ) )
                 .endif
 
             .elseif ( [rdi].flags & E_IS_TYPE )

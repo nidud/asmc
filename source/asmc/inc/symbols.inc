@@ -125,6 +125,7 @@ S_REGPARAM      equ 0x01000000 ; syscall: regist[0] = reg, 1 = index
 S_REGPAIR       equ 0x02000000 ; reg::reg param
 S_CVDEFINED     equ 0x04000000 ; cv.add_type() - recurse typedefs in structure
 S_ISEXPORT      equ 0x08000000 ; v2.19: symbol exported ( SYM_INTERNAL )
+S_CRECORD       equ 0x10000000 ; v2.36.37: new type record (id type:size ?) - type-token in regist[0]
 
 S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02
@@ -228,6 +229,11 @@ M_PURGED        equ 0x10
       param_id      uchar_t ?   ; param index
       param_regs    uchar_t ?   ; number or registers assign to this param
       param_offs    uchar_t ?   ; stack offset used by inline functions
+     ends
+     struct
+      bitf_token    ushort_t ?  ; bit field info for fixed sized records
+      bitf_offs     uchar_t ?
+      bitf_bits     uchar_t ?
      ends
     ends
 

@@ -494,4 +494,207 @@ endif
 
 imm2xmm endp
 
+    assume rdi:nothing
+
+; Handle C-type RECORD fields
+;
+; - mov/cmp mem.field, imm
+; - mov reg, mem.field
+
+CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr expr
+
+   .new name[1024]:char_t
+   .new type:int_t
+   .new bits:int_t
+   .new mask:int_t
+   .new offs:int_t
+   .new dist:int_t
+   .new size:int_t
+   .new isbyte:char_t = 0
+   .new isword:char_t = 0
+
+    UNREFERENCED_PARAMETER(token)
+    UNREFERENCED_PARAMETER(opnd)
+    UNREFERENCED_PARAMETER(opn2)
+
+    ldr eax,token
+    ldr rbx,opnd
+    ldr rdx,opn2
+
+    .if ( [rbx].expr.kind == EXPR_REG )
+        xchg rbx,rdx
+    .endif
+    mov rcx,[rbx].expr.base_reg
+    mov rsi,[rcx].asm_tok.tokpos
+    .for ( : [rcx].asm_tok.token != T_DOT && [rcx].asm_tok.token != T_FINAL : rcx+=asm_tok )
+    .endf
+    .if ( [rcx].asm_tok.token != T_DOT )
+        .return( asmerr( 2008, rsi ) )
+    .endif
+    mov rcx,[rcx].asm_tok.tokpos
+    sub rcx,rsi
+    lea rdi,name
+    rep movsb
+    mov byte ptr [rdi],0
+    mov esi,eax
+
+    mov rdi,[rbx].expr.mbr
+    movzx eax,[rdi].asym.bitf_bits
+    mov bits,eax
+    mov al,[rdi].asym.bitf_offs
+    mov dist,eax
+    mov ecx,[rbx].expr.value
+    mov rax,[rbx].expr.sym
+    sub ecx,[rax].asym.offs
+    mov offs,ecx
+    movzx eax,[rdi].asym.bitf_token
+    .switch eax
+    .case T_BYTE
+    .case T_SBYTE
+    .case T_WORD
+    .case T_SWORD
+    .case T_DWORD
+    .case T_SDWORD
+      .endc
+    .case T_DB
+        mov eax,T_BYTE
+       .endc
+    .case T_DW
+        mov eax,T_WORD
+       .endc
+    .case T_DD
+        mov eax,T_DWORD
+       .endc
+    .default
+        .return( asmerr( 2008, &name ) )
+    .endsw
+    mov type,eax
+    mov al,GetMemtypeSp(eax)
+    and eax,MT_SIZE_MASK
+    inc eax
+    mov ecx,dist
+
+    .if ( bits == 8 )
+
+        .switch ecx
+        .case 24
+            inc offs
+            sub ecx,8
+        .case 16
+            inc offs
+            sub ecx,8
+        .case 8
+            inc offs
+            sub ecx,8
+        .case 0
+            mov eax,1
+            mov type,T_BYTE
+            inc isbyte
+        .endsw
+
+    .elseif ( bits == 16 )
+
+        .switch ecx
+        .case 16
+            add offs,2
+            sub ecx,16
+        .case 0
+            mov eax,2
+            mov type,T_WORD
+            inc isword
+        .endsw
+    .endif
+    mov size,eax
+    mov dist,ecx
+
+    mov eax,1
+    mov ecx,bits
+    shl eax,cl
+    dec eax
+    mov ecx,dist
+    shl eax,cl
+    mov mask,eax
+
+    .if ( [rdx].expr.kind == EXPR_CONST )
+
+        mov edi,[rdx].expr.value
+        xor eax,eax
+        bsr eax,edi
+        .if ( [rdx].expr.hvalue || eax >= bits )
+            .return( asmerr( 2071 ) )
+        .endif
+        mov ebx,edi
+        shl edi,cl
+        cmp esi,T_MOV
+        lea rsi,name
+
+        .ifz
+
+            .if ( isbyte || isword )
+
+                AddLineQueueX( " %r %r ptr %s[%u], %u", T_MOV, type, rsi, offs, edi )
+
+            .else
+
+                mov edx,T_AND
+                mov ecx,T_NOT
+                .if ( bits == 1 || ebx == 0 )
+                    .if ( ebx )
+                        mov edx,T_OR
+                        xor ecx,ecx
+                    .endif
+                .endif
+                AddLineQueueX( " %r %r ptr %s[%u], %r %u", edx, type, rsi, offs, ecx, mask )
+                .if ( bits > 1 && ebx )
+                    AddLineQueueX( " %r %r ptr %s[%u], %u", T_OR, type, rsi, offs, edi )
+                .endif
+            .endif
+
+        .elseif ( bits == 1 || ebx == 0 )
+
+            AddLineQueueX( " %r %r ptr %s[%u], %u", T_TEST, type, rsi, offs, mask )
+
+        .elseif ( isbyte || isword )
+
+            AddLineQueueX( " %r %r ptr %s[%u], %u", T_CMP, type, rsi, offs, edi )
+
+        .else
+
+            mov esi,T_EAX
+            mov ebx,T_CMP
+            mov eax,4
+            mov dist,edi
+            jmp done
+        .endif
+
+    .else
+
+        mov rdx,[rdx].expr.base_reg
+        mov esi,[rdx].asm_tok.tokval
+        lea rdx,SpecialTable
+        imul eax,esi,special_item
+        mov eax,[rdx+rax].special_item.sflags
+        and eax,SFR_SIZMSK
+        mov ebx,T_SHR
+        .if ( isbyte || isword || bits == 32 )
+            mov dist,0
+            mov mask,0
+        .endif
+done:
+        mov ecx,T_MOV
+        .if ( size < eax )
+            mov ecx,T_MOVZX
+        .endif
+        AddLineQueueX( " %r %r, %r ptr %s[%u]", ecx, esi, type, &name, offs )
+        .if ( mask )
+            AddLineQueueX( " %r %r, %u", T_AND, esi, mask )
+        .endif
+        .if ( dist )
+            AddLineQueueX( " %r %r, %u", ebx, esi, dist )
+        .endif
+    .endif
+    .return( RetLineQueue() )
+
+CRecordField endp
+
     end

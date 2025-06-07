@@ -222,7 +222,7 @@ endif
         lea rdi,ll.buffer[OFSSIZE+2]
         mov rdx,[rbx].dsym.seginfo
 
-        .if ( [rdx].seg_info.CodeBuffer == NULL || !( [rdx].seg_info.flags & SEG_WRITTEN ) )
+        .if ( [rdx].seg_info.CodeBuffer == NULL || ![rdx].seg_info.written )
 
             mov eax,'00'
             mov ecx,newofs
@@ -500,7 +500,7 @@ log_macro proc __ccall uses rbx sym:ptr asym
     ldr rcx,sym
     lea rax,strings
     mov rdx,[rax+LS_PROC]
-    .if ( [rcx].asym.mac_flag &  M_ISFUNC )
+    .if ( [rcx].asym.isfunc )
         mov rdx,[rax+LS_FUNC]
     .endif
     mov eax,[rcx].asym.name_size
@@ -727,7 +727,7 @@ log_struct proc __ccall uses rsi rdi rbx sym:ptr asym, name:string_t, ofs:int_32
                 LstPrintf( "%s %s        %8X   ", [rbx].name, pdots, ecx )
                 LstPrintf( "%s", GetMemtypeString( rbx, NULL ) )
 
-                .if ( [rbx].flags & S_ISARRAY )
+                .if ( [rbx].isarray )
                     LstPrintf( "[%u]", [rbx].total_length )
                 .endif
                 LstNL()
@@ -1028,7 +1028,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
     LstPrintf( "%0*X ", ecx, edx )
 
     lea rdx,strings
-    .if ( [rsi].asym.flags & S_ISPUBLIC )
+    .if ( [rsi].asym.ispublic )
         mov rdx,[rdx+LS_PUBLIC]
         LstPrintf( "%-9s", rdx )
     .elseif ( [rsi].asym.state == SYM_INTERNAL )
@@ -1036,7 +1036,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
         LstPrintf( "%-9s", rdx )
     .else
         lea rcx,@CStr("%-9s ")
-        .if ( [rsi].asym.sflags & S_WEAK )
+        .if ( [rsi].asym.weak )
             lea rcx,@CStr("*%-8s ")
         .endif
         mov rdx,[rdx+LS_EXTERNAL]
@@ -1105,7 +1105,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
                     mov rcx,[rsi].dsym.procinfo
                     mov tmp,GetResWName( [rcx].proc_info.basereg, NULL )
                     mov rcx,GetMemtypeString( rdi, NULL )
-                    .if ( [rdi].asym.sflags & S_ISVARARG )
+                    .if ( [rdi].asym.is_vararg )
                         lea rcx,strings
                         mov rcx,[rcx+LS_VARARG]
                     .endif
@@ -1148,7 +1148,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
             .endif
             mov pdots,rcx
 
-            .if ( [rdi].asym.flags & S_ISARRAY )
+            .if ( [rdi].asym.isarray )
                 tsprintf( &buffer, "%s[%u]", GetMemtypeString( rdi, NULL), [rdi].asym.total_length )
             .else
                 tstrcpy( &buffer, GetMemtypeString( rdi, NULL ) )
@@ -1221,12 +1221,12 @@ log_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
     .case SYM_EXTERNAL
         LstPrintf( "%s %s        ", [rdi].asym.name, pdots )
 
-        .if ( [rdi].asym.flags & S_ISARRAY )
+        .if ( [rdi].asym.isarray )
 
             mov ebx,tsprintf( StringBufferEnd, "%s[%u]", GetMemtypeString( rdi, NULL ), [rdi].asym.total_length )
             LstPrintf( "%-10s ", StringBufferEnd )
 
-        .elseif ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.sflags & S_ISCOM )
+        .elseif ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.iscomm )
 
             lea rdx,strings
             mov rdx,[rdx+LS_COMM]
@@ -1237,7 +1237,7 @@ log_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
 
         ; print value
 
-        .if ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.sflags & S_ISCOM )
+        .if ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.iscomm )
 
             mov eax,[rdi].asym.total_size
             cdq
@@ -1271,11 +1271,11 @@ log_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
             LstPrintf( "%s ", get_sym_seg_name( rdi ) )
         .endif
 
-        .if ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.sflags & S_ISCOM )
+        .if ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.iscomm )
             LstPrintf( "%s=%u ", szCount, [rdi].asym.total_length )
         .endif
 
-        .if ( [rdi].asym.flags & S_ISPUBLIC )
+        .if ( [rdi].asym.ispublic )
 
             lea rdx,strings
             mov rdx,[rdx+LS_PUBLIC]
@@ -1285,7 +1285,7 @@ log_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
         .if ( [rdi].asym.state == SYM_EXTERNAL )
 
             lea rcx,@CStr("%s ")
-            .if ( [rdi].asym.sflags & S_WEAK )
+            .if ( [rdi].asym.weak )
                  lea rcx,@CStr("*%s ")
             .endif
 
@@ -1385,7 +1385,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
         mov rcx,syms
         mov rdi,[rcx+rbx*asym_t]
 
-        .continue .if !( [rdi].asym.flags & S_LIST )
+        .continue .if !( [rdi].asym.list )
 
         .switch ( [rdi].asym.state )
         .case SYM_TYPE
@@ -1419,7 +1419,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
             .endc
         .case SYM_INTERNAL
         .case SYM_EXTERNAL ; v2.04: added, since PROTOs are now externals
-            .if ( [rdi].asym.flags & S_ISPROC )
+            .if ( [rdi].asym.isproc )
                 mov ecx,LQ_PROCS
                 .endc
             .endif
@@ -1496,7 +1496,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
         mov rcx,syms
         mov rdi,[rcx+rbx*size_t]
 
-        .if ( [rdi].asym.flags & S_LIST && !( [rdi].asym.flags & S_ISPROC ) )
+        .if ( [rdi].asym.list && !( [rdi].asym.isproc ) )
             log_symbol( rdi )
         .endif
     .endf
@@ -1558,7 +1558,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
             SymLookup( [rbx].string_ptr )
 
-            and [rax].asym.flags,not S_LIST
+            mov [rax].asym.list,0
             inc esi
             add rbx,asm_tok
 

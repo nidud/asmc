@@ -196,7 +196,7 @@ SetSimSeg proc __ccall private uses rsi rdi rbx segm:sim_seg, name:string_t
 
                 ; v2.12: check 'isdefined' member instead of 'lname_idx'
 
-                .if ( rax && [rax].asym.state == SYM_SEG && [rax].asym.flags & S_ISDEFINED )
+                .if ( rax && [rax].asym.state == SYM_SEG && [rax].asym.isdefined )
                     or MODULE.simseg_defd,bl
                 .endif
             .endif
@@ -213,7 +213,7 @@ SetSimSeg proc __ccall private uses rsi rdi rbx segm:sim_seg, name:string_t
         ; check for segment's lname index is needed.
         ; v2.12: check 'isdefined' member instead of 'lname_idx'
 
-        .if ( rax && [rax].asym.state == SYM_SEG && [rax].asym.flags & S_ISDEFINED )
+        .if ( rax && [rax].asym.state == SYM_SEG && [rax].asym.isdefined )
             mov pFmt,&T("%s %r")
         .endif
     .endif

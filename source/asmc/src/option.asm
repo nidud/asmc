@@ -61,11 +61,11 @@ InitStackBase proc fastcall private reg:int_t
 
         mov MODULE.StackBase,CreateVariable( "@StackBase", 0 )
         mov rcx,rax
-        or  [rcx].asym.flags,S_PREDEFINED
+        mov [rcx].asym.predefined,1
         mov [rcx].asym.sfunc_ptr,&UpdateStackBase
         mov MODULE.ProcStatus,CreateVariable( "@ProcStatus", 0 )
         mov rcx,rax
-        mov [rcx].asym.flags,S_PREDEFINED
+        mov [rcx].asym.predefined,1
         mov [rcx].asym.sfunc_ptr,&UpdateProcStatus
     .endif
     ret

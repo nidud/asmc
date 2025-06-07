@@ -198,7 +198,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
         .endif
     .endif
 
-    .if ( rax && [rax].asym.flags & S_CLASS && [rax].asym.flags & S_OPERATOR )
+    .if ( rax && [rax].asym.isclass && [rax].asym.operator )
 
         mov class,rax
         movzx edx,[rax].asym.regist[2]
@@ -363,7 +363,7 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
     .if ( [rax].asym.mem_type == MT_PTR )
         mov rax,[rax].asym.target_type
     .endif
-    .if ( !rax || !( [rax].asym.flags & S_OPERATOR ) )
+    .if ( !rax || !( [rax].asym.operator ) )
         .return ERROR
     .endif
 
@@ -381,7 +381,7 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
         .endif
         mov rcx,rax
     .endif
-    .if ( !rcx || !( [rcx].asym.flags & S_OPERATOR ) )
+    .if ( !rcx || !( [rcx].asym.operator ) )
         .if ( [rsi].kind != EXPR_REG )
             .return ERROR
         .endif

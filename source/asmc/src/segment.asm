@@ -296,7 +296,7 @@ CreateGroup proc fastcall private uses rsi rdi name:string_t
         mov [rax].grp_info.numseg,0
         sym_add_table( &SymTables[TAB_GRP*symbol_queue], rdi )
 
-        or  [rdi].asym.flags,S_LIST
+        mov [rdi].asym.list,1
         mov [rdi].asym.Ofssize, USE_EMPTY ; v2.14: added
         mov rcx,[rdi].dsym.grpinfo
         inc grpdefidx
@@ -309,7 +309,7 @@ CreateGroup proc fastcall private uses rsi rdi name:string_t
        .return( NULL )
     .endif
 
-    or [rdi].asym.flags,S_ISDEFINED
+    mov [rdi].asym.isdefined,1
    .return( rdi )
 
 CreateGroup endp
@@ -414,7 +414,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( Parse_Pass == PASS_1 )
 
             .if ( rsi )
-                
+
                 mov rcx,[rsi].dsym.seginfo
                 xor eax,eax
                 .if ( rcx )
@@ -600,7 +600,7 @@ DefineFlatGroup proc
         mov cl,MODULE.defOfssize
         mov [rax].asym.Ofssize,cl
     .endif
-    or [rax].asym.flags,S_ISDEFINED ; v2.09
+    mov [rax].asym.isdefined,1 ; v2.09
     ret
 
 DefineFlatGroup endp
@@ -828,16 +828,16 @@ CreateIntSegment proc __ccall uses rdi name:string_t, classname:string_t, alignm
 
     .if ( rax )
         mov rdi,rax
-        .if ( !( [rdi].asym.flags & S_ISDEFINED ) )
+        .if ( !( [rdi].asym.isdefined ) )
 
             inc MODULE.num_segs
             mov rcx,[rdi].dsym.seginfo
             mov [rcx].seg_info.seg_idx,MODULE.num_segs
             AddLnameItem( rdi )
-            or [rdi].asym.flags,S_ISDEFINED ; v2.12: added
+            mov [rdi].asym.isdefined,1 ; v2.12: added
         .endif
         mov rcx,[rdi].dsym.seginfo
-        or  [rcx].seg_info.flags,SEG_INTERNAL ; segment has private buffer
+        mov [rcx].seg_info.internal,1 ; segment has private buffer
         mov [rdi].asym.segm,rdi
         mov [rcx].seg_info.alignment,alignment
         mov [rcx].seg_info.Ofssize,Ofssize
@@ -892,7 +892,7 @@ SetCurrSeg proc fastcall private uses rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     ; v2.04: added
 
-    or [rdi].asym.flags,S_ISDEFINED
+    mov [rdi].asym.isdefined,1
 ifndef ASMC64
     .if ( CurrSeg && Options.output_format == OFORMAT_OMF )
 
@@ -985,7 +985,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; segment is not defined (yet)
 
         mov sym,CreateSegment( sym, name, TRUE )
-        or  [rax].asym.flags,S_LIST ; always list segments
+        mov [rax].asym.list,1 ; always list segments
         mov dir,rax
         mov oldOfssize,USE_EMPTY ; v2.13: added
 
@@ -994,7 +994,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov dir,rax
         mov rdi,rax
 
-        .if ( !( [rax].asym.flags & S_ISDEFINED ) )
+        .if ( !( [rax].asym.isdefined ) )
 
             ; segment was forward referenced (in a GROUP directive), but not really set up
             ; the segment list is to be sorted.
@@ -1097,7 +1097,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .switch ( edx )
         .case INIT_ATTR
-            or [rdi].seg_info.flags,SEG_RDONLY
+            mov [rdi].seg_info.readonly,1
            .endc
         .case INIT_ALIGN
             mov [rdi].seg_info.alignment,[rcx].typeinfo.value
@@ -1133,7 +1133,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .if ( [rbx].token == T_ID && ax == 'v' )
                     inc i
                     add rbx,asm_tok
-                    or [rdi].seg_info.flags,SEG_ALIGNRVA
+                    mov [rdi].seg_info.align_rva,1
                 .else
                     asmerr( 2008, rcx )
                    .endc
@@ -1293,7 +1293,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
             .endc
         .case INIT_CHAR_INFO
-            or [rdi].seg_info.flags,SEG_INFO ; fixme: check that this flag isn't changed
+            mov [rdi].seg_info.information,1 ; fixme: check that this flag isn't changed
            .endc
         .case INIT_CHAR
             ; characteristics are restricted to COFF/ELF/BIN-PE
@@ -1412,7 +1412,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; A new definition
 
         mov rcx,sym
-        or  [rcx].asym.flags,S_ISDEFINED
+        mov [rcx].asym.isdefined,1
         mov [rcx].asym.segm,rcx
         mov [rcx].asym.offs,0 ; remains 0 ( =segment's local start offset )
 
@@ -1622,7 +1622,7 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
 
             mov rcx,[rdi].dsym.seginfo
 
-            .if ( [rcx].seg_info.flags & SEG_INTERNAL )
+            .if ( [rcx].seg_info.internal )
                 .continue
             .endif
 
@@ -1659,7 +1659,7 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
 
         mov rcx,[rdi].dsym.seginfo
         mov [rcx].seg_info.current_loc,0
-        .continue .if ( [rcx].seg_info.flags & SEG_INTERNAL )
+        .continue .if ( [rcx].seg_info.internal )
 
         .if ( [rcx].seg_info.bytes_written )
 
@@ -1680,7 +1680,7 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
         .if ( Options.output_format == OFORMAT_OMF )  ;; v2.03: do this selectively
 
             mov [rcx].seg_info.start_loc,0
-            and [rcx].seg_info.flags,not SEG_DATAINCODE
+            mov [rcx].seg_info.data_in_code,0
         .endif
 
         mov [rcx].seg_info.bytes_written,0

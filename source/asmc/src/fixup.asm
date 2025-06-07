@@ -51,7 +51,7 @@ CreateFixup proc __ccall uses rsi rdi rbx sym:ptr asym, type:fixup_types, option
 
     .if ( Parse_Pass == PASS_1 )
 
-        .if ( rsi && !( [rsi].asym.flags & S_ISDEFINED ) ) ; changed v1.96
+        .if ( rsi && !( [rsi].asym.isdefined ) ) ; changed v1.96
 
             mov [rbx].nextbp,[rsi].asym.bp_fixup
             mov [rsi].asym.bp_fixup,rbx
@@ -185,7 +185,7 @@ endif
         ; special handling for assembly time variables needed
 
         mov rcx,[rbx].sym
-        .if ( rcx && [rcx].asym.flags & S_VARIABLE )
+        .if ( rcx && [rcx].asym.isvariable )
 
             ; add symbol's offset to the fixup location and fixup's offset
 

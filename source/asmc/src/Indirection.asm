@@ -135,7 +135,7 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
 
     mov vtable,0
     mov rdi,pclass
-    .if ( rdi && [rdi].asym.flags & S_ISVTABLE )
+    .if ( rdi && [rdi].asym.isvtable )
 
         xor eax,eax
         .switch ( langtype )
@@ -259,8 +259,8 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm
             mov rbx,rax
             AddLineQueueX( " lea %r, [%r]%s", reg, reg, &buffer )
         .endif
-
         .break .if ( [rbx].token != T_DOT )
+
         .if ( pos )
             .if ( [rbx+asm_tok*2].token == T_OP_SQ_BRACKET )
                 .break .if ( !SkipSQBackets( &[rbx+asm_tok*2] ) )
@@ -268,27 +268,27 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm
             .else
                 .break .if ( [rbx+asm_tok*2].token != T_DOT )
             .endif
+        .else
+            .break .if ( [rbx+asm_tok*2].token != T_DOT )
         .endif
-        add rbx,asm_tok
-
         .if ( [rsi].asym.mem_type == MT_TYPE )
             mov rsi,[rsi].asym.type
         .endif
         .if ( [rsi].asym.mem_type == MT_PTR )
             mov rsi,[rsi].asym.target_type
         .endif
-
-        .if ( !SearchNameInStruct( rsi, [rbx].string_ptr, 0, 0 ) )
-            .return asmerr(2166)
+        .if ( !SearchNameInStruct( rsi, [rbx+asm_tok].string_ptr, 0, 0 ) )
+            .return( asmerr( 2166 ) )
         .endif
         mov rdi,rax
-        add rbx,asm_tok
         .break .if ( [rax].asym.mem_type != MT_TYPE )
         mov rax,[rax].asym.type
         .break .if ( [rax].asym.mem_type != MT_PTR )
-        AddLineQueueX( " mov %r, [%r].%s.%s", reg, reg, [rsi].asym.name, [rbx-asm_tok].string_ptr )
+        AddLineQueueX( " mov %r, [%r].%s.%s", reg, reg, [rsi].asym.name, [rbx+asm_tok].string_ptr )
+        add rbx,asm_tok*2
         mov rsi,rdi
     .endw
+
     .if ( [rsi].asym.mem_type == MT_TYPE )
         mov rsi,[rsi].asym.type
     .endif
@@ -298,8 +298,9 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm
     .if ( pos )
         AddLineQueueX( " %r [%r].%s%s", inst, reg, [rsi].asym.name, [rbx].tokpos )
     .else
-        AddLineQueueX( " %r %r, [%r].%s.%s", inst, dest, reg, [rsi].asym.name, [rbx-asm_tok].tokpos )
+        AddLineQueueX( " %r %r, [%r].%s.%s", inst, dest, reg, [rsi].asym.name, [rbx+asm_tok].tokpos )
     .endif
+
     RetLineQueue()
     ret
 

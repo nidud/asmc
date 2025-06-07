@@ -126,7 +126,7 @@ AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:ptr asym
                         .if [rax].asym.state == SYM_TMACRO
                             mov rdx,[rax].asym.string_ptr
                         .endif
-                        .if ( [rax].asym.flags & ( S_VMACRO or S_ISINLINE ) || [rax].asym.state == SYM_MACRO )
+                        .if ( [rax].asym.isvmacro || [rax].asym.isinline || [rax].asym.state == SYM_MACRO )
 
                             ; v2.36.22 -- skip if child.member() exist
 
@@ -418,7 +418,7 @@ done:
         tstrcat( rax, "_" )
         tstrcat( rax, rdi )
         .if SymFind( rax )
-            or [rax].asym.flags,S_METHOD
+            mov [rax].asym.method,1
         .endif
     .endif
     MemFree(buffer)
@@ -745,22 +745,22 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if constructor
             .if SymFind( &token )
                 .if ( cmd != T_DOT_STATIC )
-                    or [rax].asym.flags,S_METHOD
+                    mov [rax].asym.method,1
                 .endif
                 .if ( cmd == T_DOT_STATIC && is_vararg == 0 )
-                    or [rax].asym.flags,S_ISSTATIC
+                    mov [rax].asym.isstatic,1
                 .endif
             .endif
         .elseif ( cmd == T_DOT_OPERATOR )
             mov rax,[rsi].com_item.sym
             .if ( rax )
-                or [rax].asym.flags,S_OPERATOR
+                mov [rax].asym.operator,1
             .endif
         .endif
         MacroInline( &token, args, [rbx].tokpos , context, is_vararg )
         .if !constructor && ( cmd == T_DOT_STATIC && is_vararg == 0 )
             .if SymFind( &token )
-                or [rax].asym.flags,S_ISSTATIC
+                mov [rax].asym.isstatic,1
             .endif
         .endif
         .return rc
@@ -885,7 +885,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             movzx ecx,vector[2]
             mov [rsi].asym.regist[0],ax
             mov [rsi].asym.regist[2],cx
-            or  [rsi].asym.sflags,S_ISVECTOR
+            mov [rsi].asym.is_vector,1
             mov [rsi].asym.mem_type,GetMemtypeSp(ecx)
         .endif
     .endif

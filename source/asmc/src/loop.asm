@@ -235,7 +235,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; EXITM <> is allowed inside a macro loop.
     ; This doesn't make the loop a macro function, reset the bit!
 
-    and [rdi].asym.mac_flag,not M_ISFUNC
+    mov [rdi].asym.isfunc,0
 
     ; now run the just created macro in a loop
 
@@ -354,7 +354,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; take care of a trailing comma, this is to make another
             ; RunMacro() call with a "blank" argument.
 
-            and [rdi].asym.mac_flag,not M_ISVARARG
+            mov [rdi].asym.mac_vararg,0
 
             ; v2.09: flag MF_IGNARGS introduced. This allows RunMacro() to
             ; parse the full argument and trigger macro expansion if necessary.

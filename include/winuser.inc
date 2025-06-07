@@ -119,10 +119,16 @@ DESKTOPENUMPROC		typedef DESKTOPENUMPROCA
 endif
 
 MAKEINTRESOURCEA macro i
+    if ( (OPATTR i) and 4 )
 	exitm<((i) and 0xFFFF)>
+    endif
+	exitm<i>
 	endm
 MAKEINTRESOURCEW macro i
+    if ( (OPATTR i) and 4 )
 	exitm<((i) and 0xFFFF)>
+    endif
+	exitm<i>
 	endm
 ifdef _UNICODE
 MAKEINTRESOURCE		equ <MAKEINTRESOURCEW>

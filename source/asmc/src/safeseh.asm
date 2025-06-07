@@ -51,7 +51,7 @@ SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( Parse_Pass != PASS_1 )
             .return( asmerr( 2006, [rbx].string_ptr ) )
         .endif
-    .elseif ( !( [rsi].asym.flags & S_ISPROC ) )
+    .elseif ( !( [rsi].asym.isproc ) )
         .return( asmerr( 3017, [rbx].string_ptr ) )
     .endif
 
@@ -65,7 +65,7 @@ SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov edi,NULL
         .endif
         .if ( rdi == NULL )
-            or [rsi].asym.flags,S_USED ;; make sure an external reference will become strong
+            mov [rsi].asym.used,1 ;; make sure an external reference will become strong
             QAddItem( &MODULE.SafeSEHQueue, rsi )
         .endif
     .endif

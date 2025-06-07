@@ -167,7 +167,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
                             mov rax,[rax].asym.type
                         .endw
                     .endif
-                    .if ( [rax].asym.flags & S_VTABLE )
+                    .if ( [rax].asym.hasvtable )
                         DefaultConstructor(rax, 0)
                         .if ( edi == 1 )
                             AddLineQueueX( " mov %s,%r", name, eax )
@@ -420,7 +420,7 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
 
                         mov rcx,[rax].asym.string_ptr
 
-                        .if ( byte ptr [rcx] == '{' && !array && [rbx].sfield.flags & S_ISARRAY )
+                        .if ( byte ptr [rcx] == '{' && !array && [rbx].sfield.isarray )
 
                             mov     rdx,rax
                             xor     eax,eax
@@ -527,7 +527,7 @@ AssignId proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, type:a
     .endif
 
     mov rdi,sym
-    .if !( [rdi].asym.flags & S_ISARRAY )
+    .if !( [rdi].asym.isarray )
 
         .return AssignStruct( name, type, string )
     .endif
@@ -654,7 +654,7 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
 
 if 0
     mov rax,[rsi].symtype
-    .if ( rax && [rax].asym.flags & S_OPERATOR )
+    .if ( rax && [rax].asym.operator )
 
         AddLineQueueX( " %s %s", name, [rbx-asm_tok].tokpos )
         imul eax,TokenCount,asm_tok
@@ -908,9 +908,9 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if creat
 
             mov [rax].asym.state,SYM_STACK
-            or  [rax].asym.flags,S_ISDEFINED
+            mov [rax].asym.isdefined,1
             mov [rax].asym.total_length,1
-        .elseif ( [rax].asym.state != SYM_STACK && !( [rax].asym.flags & S_CLASS ) )
+        .elseif ( [rax].asym.state != SYM_STACK && !( [rax].asym.isclass ) )
             .return( asmerr( 2005, [rax].asym.name ) )
         .endif
 
@@ -959,7 +959,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             mov rcx,sym
             mov [rcx].asym.total_length,opndx.value
-            or  [rcx].asym.flags,S_ISARRAY
+            mov [rcx].asym.isarray,1
 
             .if ( [rbx].token == T_CL_SQ_BRACKET )
 

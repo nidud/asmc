@@ -439,7 +439,7 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( [rdi].state == SYM_UNDEFINED )
                 .return( asmerr(2006, subst) )
             .elseif ( [rdi].state != SYM_EXTERNAL &&
-                       ( [rdi].state != SYM_INTERNAL || !( [rdi].flags & S_ISPUBLIC ) ) )
+                       ( [rdi].state != SYM_INTERNAL || !( [rdi].ispublic ) ) )
                 .return( asmerr(2217, subst) )
             .endif
         .endif

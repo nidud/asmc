@@ -203,13 +203,13 @@ sym_ext2int proc __ccall sym:asym_t
     ; v2.07: GlobalQueue has been removed
 
     ldr rcx,sym
-    .if ( !( [rcx].flags & S_ISPROC ) && !( [rcx].flags & S_ISPUBLIC ) )
-        or [rcx].flags,S_ISPUBLIC
+    .if ( !( [rcx].isproc ) && !( [rcx].ispublic ) )
+        mov [rcx].ispublic,1
         AddPublicData( rcx )
     .endif
     sym_remove_table( &SymTables[TAB_EXT*symbol_queue], sym )
     mov rcx,sym
-    .if !( [rcx].flags & S_ISPROC ) ;; v2.01: don't clear flags for PROTO
+    .if !( [rcx].isproc ) ;; v2.01: don't clear flags for PROTO
         mov [rcx].first_size,0
     .endif
     mov [rcx].state,SYM_INTERNAL
@@ -1704,7 +1704,7 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
                 or [rsi].flags,CI_ISFAR
             .endif
         .else
-            .if ( [rdx].asym.flags & S_ISARRAY )
+            .if ( [rdx].asym.isarray )
 
                 mov ecx,[rdx].asym.total_length
                 mov eax,[rdx].asym.total_size
@@ -3558,7 +3558,7 @@ if 1
             .if ( op1_size == 0 && op1 & OP_M_ANY && [rdi].mem_type == MT_BITS )
                 mov rax,[rdi].mbr
                 .if ( rax )
-                    .if ( [rax].asym.flags & S_CRECORD )
+                    .if ( [rax].asym.crecord )
                         movzx eax,[rax].asym.bitf_bits
                     .else
                         mov eax,[rax].asym.total_size
@@ -4906,7 +4906,7 @@ endif
                 .if ( ecx & OP_M_ANY && opndx[expr].kind == EXPR_CONST )
 
                     mov rbx,opndx.mbr
-                    .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.flags & S_CRECORD )
+                    .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.crecord )
                         mov ecx,eax
                        .return( CRecordField(ecx, &opndx, &opndx[expr]) )
                     .endif
@@ -4915,7 +4915,7 @@ endif
                 .if ( eax == T_MOV && edx & OP_M_ANY && opndx.kind == EXPR_REG )
 
                     mov rbx,opndx[expr].mbr
-                    .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.flags & S_CRECORD )
+                    .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.crecord )
                         mov ecx,eax
                        .return( CRecordField(ecx, &opndx, &opndx[expr]) )
                     .endif

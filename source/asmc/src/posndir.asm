@@ -117,7 +117,7 @@ fill_in_objfile_space proc __ccall private uses rsi rdi rbx size:dword
     ; v2.04: no output if nothing has been written yet
     mov rdi,CurrSeg
     mov rsi,[rdi].dsym.seginfo
-    .if ( !( [rsi].seg_info.flags & SEG_WRITTEN ) )
+    .if ( ![rsi].seg_info.written )
 
         SetCurrOffset( rdi, size, TRUE, TRUE )
 

@@ -270,7 +270,7 @@ SymAlloc proc __ccall uses rsi rdi name:string_t
     mov [rax].asym.name,rdx
 
     .if ( MODULE.cref )
-        or [rax].asym.flags,S_LIST
+        mov [rax].asym.list,1
     .endif
 
     .if edi
@@ -675,17 +675,17 @@ SymLookupLocal proc __ccall name:string_t
 
     ; v2.19: don't move a label marked as public if -Zm isn't set
 
-    .if ( rax == NULL || ( ( [rax].asym.flags & S_ISPUBLIC ) && MODULE.m510 == 0 ) )
+    .if ( rax == NULL || ( ( [rax].asym.ispublic ) && MODULE.m510 == 0 ) )
 
         SymAlloc( name )
-        or [rax].asym.flags,S_SCOPED
+        mov [rax].asym.scoped,1
 
         ; add the label to the local hash table
 
         mov rcx,lsym
         mov [rcx],rax
 
-    .elseif ( [rax].asym.state == SYM_UNDEFINED && !( [rax].asym.flags & S_SCOPED ) )
+    .elseif ( [rax].asym.state == SYM_UNDEFINED && !( [rax].asym.scoped ) )
 
         ; if the label was defined due to a FORWARD reference,
         ; its scope is to be changed from global to local.
@@ -696,7 +696,7 @@ SymLookupLocal proc __ccall name:string_t
         mov rcx,gsym
         mov [rcx],rdx
         dec SymCount
-        or  [rax].asym.flags,S_SCOPED
+        mov [rax].asym.scoped,1
         mov [rax].asym.nextitem,0
         mov rcx,lsym
         mov [rcx],rax
@@ -719,13 +719,13 @@ SymFree proc __ccall sym:asym_t
 
     .switch eax
     .case SYM_INTERNAL
-        .if ( [rcx].asym.flags & S_ISPROC )
+        .if ( [rcx].asym.isproc )
             DeleteProc( rcx )
         .endif
         .endc
     .case SYM_EXTERNAL
 
-        .if ( [rcx].asym.flags & S_ISPROC )
+        .if ( [rcx].asym.isproc )
             DeleteProc( rcx )
         .endif
 
@@ -883,10 +883,12 @@ SymMakeAllSymbolsPublic proc __ccall uses rsi rdi
                 ; v2.10: no @@ code labels
 
                 mov al,[rcx+1]
-                .if ( !( [rdi].asym.flags & S_ISEQUATE or S_PREDEFINED or S_ISPUBLIC ) &&
-                      !( [rdi].asym.flags & S_INCLUDED ) && al != '&' )
+                .if ( ![rdi].asym.isequate &&
+                      ![rdi].asym.predefined &&
+                      ![rdi].asym.ispublic &&
+                      ![rdi].asym.included && al != '&' )
 
-                    or [rdi].asym.flags,S_ISPUBLIC
+                    mov [rdi].asym.ispublic,1
                     AddPublicData( rdi )
                 .endif
 
@@ -943,7 +945,8 @@ endif
         SymCreate( [rsi].tmitem.name )
 
         mov [rax].asym.state,SYM_TMACRO
-        or  [rax].asym.flags,S_ISDEFINED or S_PREDEFINED
+        mov [rax].asym.isdefined,1
+        mov [rax].asym.predefined,1
         mov rcx,[rsi].tmitem.value
         mov [rax].asym.string_ptr,rcx
         mov rcx,[rsi].tmitem.store
@@ -959,7 +962,8 @@ endif
         SymCreate( [rsi].eqitem.name )
 
         mov [rax].asym.state,SYM_INTERNAL
-        or  [rax].asym.flags,S_ISDEFINED or S_PREDEFINED
+        mov [rax].asym.isdefined,1
+        mov [rax].asym.predefined,1
         mov rcx,[rsi].eqitem.value
         mov [rax].asym.offs,ecx
         mov rcx,[rsi].eqitem.sfunc_ptr
@@ -973,7 +977,7 @@ endif
 
     ; @WordSize should not be listed
 
-    and [rax].asym.flags,not S_LIST
+    mov [rax].asym.list,0
 
     xor esi,esi
     .while ( esi < dyneqcount )
@@ -982,10 +986,13 @@ endif
         SymCreate( [rax+rsi*string_t] )
 if 0
         mov [rax].asym.state,SYM_INTERNAL
-        or  [rax].asym.flags,S_ISDEFINED or S_ISEQUATE or S_VARIABLE
+        mov [rax].isdefined,1
+        mov [rax].isvariable,1
+        mov [rax].isequate,1
 else
         mov [rax].asym.state,SYM_TMACRO
-        or  [rax].asym.flags,S_ISDEFINED or S_PREDEFINED
+        mov [rax].asym.isdefined,1
+        mov [rax].asym.predefined,1
 endif
         lea rdx,dyneqvalue
         mov rcx,[rdx+rsi*string_t]
@@ -998,10 +1005,10 @@ endif
     ; $ is an address (usually). Also, don't add it to the list
 
     mov rax,symPC
-    and [rax].asym.flags,not S_LIST
-    or  [rax].asym.flags,S_VARIABLE
+    mov [rax].asym.list,0
+    mov [rax].asym.isvariable,1
     mov rax,LineCur
-    and [rax].asym.flags,not S_LIST
+    mov [rax].asym.list,0
     ret
 
 SymInit endp
@@ -1030,8 +1037,8 @@ SymPassInit proc __ccall pass:int_t
 
                 .while ( rax )
 
-                    .if !( [rax].asym.flags & S_PREDEFINED )
-                        and [rax].asym.flags,not S_ISDEFINED
+                    .if !( [rax].asym.predefined )
+                        mov [rax].asym.isdefined,0
                     .endif
                     mov rax,[rax].asym.nextitem
                 .endw

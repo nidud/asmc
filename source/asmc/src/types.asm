@@ -69,10 +69,13 @@ CreateTypeSymbol proc __ccall uses rsi rdi sym:ptr asym, name:string_t, global:i
         mov [rsi].asym.typekind,TYPE_NONE
         mov rdi,LclAlloc( sizeof( struct_info ) )
         mov [rsi].dsym.structinfo,rdi
+if 0 ; zero alloc..
         mov [rdi].struct_info.head,NULL
         mov [rdi].struct_info.tail,NULL
         mov [rdi].struct_info.alignment,0
-        mov [rdi].struct_info.flags,0
+        mov [rdi].struct_info.isOpen,0
+        mov [rdi].struct_info.OrgInside,0
+endif
     .endif
     .return( rsi )
 
@@ -353,7 +356,7 @@ endif
         mov [rcx].struct_info.tail,rax
         mov [rdi].asym.offs,0
         mov [rdi].asym.bitf_offs,0
-        or  [rdi].asym.flags,S_ISDEFINED
+        mov [rdi].asym.isdefined,1
         mov [rdi].asym.state,SYM_TYPE ; added v2.33.68
         mov [rdi].dsym.next,CurrStruct
         mov CurrStruct,rdi
@@ -420,11 +423,12 @@ endif
 
     mov rcx,[rdi].dsym.structinfo
     mov [rcx].struct_info.alignment,alignment
-    or [rcx].struct_info.flags,SI_ISOPEN
+    mov [rcx].struct_info.isOpen,1
+if 0 ; (unused)
     .if ( CurrStruct )
-        or [rcx].struct_info.flags,SI_ISINLINE
+        mov [rcx].struct_info.isInline,1
     .endif
-
+endif
     mov [rdi].dsym.next,CurrStruct
 
     .if ( MODULE.ComStack )
@@ -441,13 +445,13 @@ endif
             mov eax,[rsi]
             .if ( al == 0 )
                 mov [rbx].sym,rdi
-                or  [rdi].asym.flags,S_CLASS
+                mov [rdi].asym.isclass,1
             .elseif ( eax == 'lbtV' && byte ptr [rsi+4] == 0 )
                 mov rcx,[rbx].sym
-                or  [rcx].asym.flags,S_VTABLE
+                mov [rcx].asym.hasvtable,1
                 mov [rcx].asym.vtable,rdi
                 mov [rdi].asym.class,rcx
-                or  [rdi].asym.flags,S_ISVTABLE
+                mov [rdi].asym.isvtable,1
             .endif
         .endif
         assume rbx:ptr asm_tok
@@ -514,7 +518,7 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     mov rsi,[rdi].dsym.structinfo
 
-    .if ( [rsi].struct_info.flags & SI_ORGINSIDE )
+    .if ( [rsi].struct_info.OrgInside )
 
         .for ( ecx = 0, rdx = [rsi].struct_info.head: rdx: rdx = [rdx].sfield.next )
 
@@ -549,8 +553,8 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov [rdi].asym.total_size,eax
     .endif
 
-    and [rsi].struct_info.flags,not SI_ISOPEN
-    or  [rdi].asym.flags,S_ISDEFINED
+    mov [rsi].struct_info.isOpen,0
+    mov [rdi].asym.isdefined,1
 
     ; if there's a negative offset, size will be wrong!
 
@@ -581,7 +585,7 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ;
     ; to allow direct structure access
     ;
-    .if ( [rdi].asym.sflags & S_ISVECTOR )
+    .if ( [rdi].asym.is_vector )
 
         movzx eax,[rdi].asym.regist[2]
         mov [rdi].asym.mem_type,GetMemtypeSp(eax)
@@ -727,9 +731,9 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_to
             .if ( [rbx].token == T_ID )
 
                 mov rsi,SymSearch( [rbx].string_ptr )
-                .if ( eax && [rax].asym.flags & S_VARIABLE )
+                .if ( eax && [rax].asym.isvariable )
 
-                    .if ( [rax].asym.flags & S_PREDEFINED && [rax].asym.sfunc_ptr )
+                    .if ( [rax].asym.predefined && [rax].asym.sfunc_ptr )
 
                         [rax].asym.sfunc_ptr( rax, NULL )
                         mov rax,rsi
@@ -797,9 +801,9 @@ endif
     .endif
     mov [rdi].state,SYM_STRUCT_FIELD
     .if ( MODULE.cref )
-        or [rdi].flags,S_LIST
+        mov [rdi].list,1
     .endif
-    or  [rdi].flags,S_ISDEFINED
+    mov [rdi].isdefined,1
     mov [rdi].mem_type,mem_type
     mov [rdi].type,vartype
     mov [rdi].next,NULL
@@ -905,7 +909,7 @@ endif
             .for ( rdx = [rdx].dsym.next : rdx : rdx = [rdx].dsym.next )
                 add [rcx].asym.offs,[rdx].asym.offs
             .endf
-            or [rcx].asym.flags,S_ISDEFINED
+            mov [rcx].asym.isdefined,1
         .endif
     .endif
     .return( rdi )
@@ -973,7 +977,7 @@ SetStructCurrentOffset proc fastcall off:int_t
     ; if an ORG is inside the struct, it cannot be instanced anymore
 
     mov rax,[rdx].dsym.structinfo
-    or [rax].struct_info.flags,SI_ORGINSIDE
+    mov [rax].struct_info.OrgInside,1
 
     .ifs ( ecx > [rdx].asym.total_size )
         mov [rdx].asym.total_size,ecx
@@ -1286,7 +1290,7 @@ endif
         mov [rcx],rdi
     .endif
 
-    or [rdi].asym.flags,S_ISDEFINED
+    mov [rdi].asym.isdefined,1
     .if ( rcx == NULL && Parse_Pass > PASS_1 )
         .return( NOT_ERROR )
     .endif
@@ -1488,7 +1492,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .return( asmerr( 2005, name ) )
     .endif
 
-    or [rsi].asym.flags,S_ISDEFINED
+    mov [rsi].asym.isdefined,1
 
     .if ( Parse_Pass > PASS_1 )
         .return( NOT_ERROR )
@@ -1619,9 +1623,9 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             mov [rdi].name_size,len
             mov [rdi].name,LclDup( rsi )
-            and [rdi].flags,not S_LIST
+            mov [rdi].list,0
             .if ( MODULE.cref )
-                or [rdi].flags,S_LIST
+                mov [rdi].list,1
             .endif
             mov [rdi].state,SYM_STRUCT_FIELD
             mov [rdi].mem_type,MT_BITS

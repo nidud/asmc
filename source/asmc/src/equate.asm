@@ -39,8 +39,9 @@ include operator.inc
 SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
 
     mov [rcx].state,SYM_INTERNAL
-    or  [rcx].flags,S_ISEQUATE or S_ISDEFINED
-    and [rcx].flags,not S_ISPROC
+    mov [rcx].isdefined,1
+    mov [rcx].isequate,1
+    mov [rcx].isproc,0
 
     .if ( [rdx].kind == EXPR_CONST ||
          ( [rdx].kind == EXPR_FLOAT && [rdx].float_tok == NULL ) )
@@ -59,9 +60,9 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
     ; for a PROC alias, copy the procinfo extension!
 
     mov rdi,[rdx].sym
-    .if [rdi].flags & S_ISPROC
+    .if [rdi].isproc
 
-        or  [rcx].flags,S_ISPROC
+        mov [rcx].isproc,1
         ; v2.12: must be copied as well, or INVOKE won't work correctly
         mov [rcx].langtype,[rdi].langtype
         assume rcx:dsym_t
@@ -94,9 +95,9 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
 
     mov eax,[rdi].offs
     add eax,[rdx].value
-    .if [rcx].flags & S_VARIABLE
+    .if [rcx].isvariable
         mov [rcx].offs,eax
-        .if Parse_Pass == PASS_2 && ( [rcx].flags & S_FWDREF )
+        .if Parse_Pass == PASS_2 && ( [rcx].fwdref )
             mov MODULE.PhaseError,TRUE
         .endif
     .else
@@ -244,20 +245,20 @@ check_float:
             mov rdi,SymCreate(name)
         .else
             sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], rdi)
-            or [rdi].flags,S_FWDREF
+            mov [rdi].fwdref,1
         .endif
-        and [rdi].flags,not S_ISSAVED
+        mov [rdi].issaved,0
         .if StoreState
-            or [rdi].flags,S_ISSAVED
+            mov [rdi].issaved,1
         .endif
-    .elseif ( [rdi].state == SYM_EXTERNAL && [rdi].sflags & S_WEAK && [rdi].mem_type == MT_EMPTY )
+    .elseif ( [rdi].state == SYM_EXTERNAL && [rdi].weak && [rdi].mem_type == MT_EMPTY )
         sym_ext2int(rdi)
-        and [rdi].flags,not S_ISSAVED
+        mov [rdi].issaved,0
         .if StoreState
-            or [rdi].flags,S_ISSAVED
+            mov [rdi].issaved,1
         .endif
     .else
-        .if ( [rdi].state != SYM_INTERNAL || ( !( [rdi].flags & S_VARIABLE ) &&
+        .if ( [rdi].state != SYM_INTERNAL || ( !( [rdi].isvariable ) &&
              ( opnd.uvalue != [rdi].uvalue || opnd.hvalue != [rdi].value3264 ) ) )
             asmerr( 2005, [rdi].name )
            .return NULL
@@ -265,7 +266,7 @@ check_float:
 
         ; v2.15: "redefinition" of EQU by '='? Then leave it as EQU!
 
-        .if ( !( [rdi].flags & S_VARIABLE ) )
+        .if ( !( [rdi].isvariable ) )
             .return( rdi )
         .endif
 
@@ -274,13 +275,13 @@ check_float:
         ; v2.10: store state only when variable is changed and has been
         ; defined BEFORE SaveState() has been called.
 
-        .if ( StoreState && !( [rdi].flags & S_ISSAVED ) )
+        .if ( StoreState && !( [rdi].issaved ) )
             SaveVariableState(rdi)
         .endif
     .endif
-    or byte ptr [rdi].flags,S_VARIABLE
+    mov [rdi].isvariable,1
     ; v2.09: allow internal variables to be set
-    .if ( ( byte ptr [rdi].flags & S_PREDEFINED ) && [rdi].sfunc_ptr )
+    .if ( [rdi].predefined && [rdi].sfunc_ptr )
         [rdi].sfunc_ptr( rdi, &opnd )
     .else
         SetValue( rdi, &opnd )
@@ -321,19 +322,19 @@ CreateVariable proc __ccall uses rdi name:string_t, value:int_t
     mov rdi,SymSearch(name)
     .if rdi == NULL
         mov rdi,SymCreate(name)
-        and [rdi].flags,not S_ISSAVED
+        mov [rdi].issaved,0
         .if StoreState
-            or [rdi].flags,S_ISSAVED
+            mov [rdi].issaved,1
         .endif
     .elseif [rdi].state == SYM_UNDEFINED
         sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rdi)
-        or  [rdi].flags,S_FWDREF
-        and [rdi].flags,not S_ISSAVED
+        mov [rdi].fwdref,1
+        mov [rdi].issaved,0
         .if StoreState
-            or [rdi].flags,S_ISSAVED
+            mov [rdi].issaved,1
         .endif
     .else
-        .if !( [rdi].flags & S_ISEQUATE )
+        .if !( [rdi].isequate )
             asmerr(2005, name)
             .return NULL
         .endif
@@ -343,11 +344,13 @@ CreateVariable proc __ccall uses rdi name:string_t, value:int_t
         ; v2.10: store state only when variable is changed and has been
         ; defined BEFORE SaveState() has been called.
 
-        .if StoreState && !( [rdi].flags & S_ISSAVED )
+        .if StoreState && !( [rdi].issaved )
             SaveVariableState(rdi)
         .endif
     .endif
-    or  [rdi].flags,S_ISDEFINED or S_VARIABLE or S_ISEQUATE
+    mov [rdi].isdefined,1
+    mov [rdi].isvariable,1
+    mov [rdi].isequate,1
     mov [rdi].state,SYM_INTERNAL
     mov [rdi].value,value
    .return(rdi)
@@ -413,7 +416,7 @@ endif
 
     .case ( rdi == NULL )
     .case ( [rdi].state == SYM_UNDEFINED )
-    .case ( [rdi].state == SYM_EXTERNAL && ( [rdi].sflags & S_WEAK ) && !( [rdi].flags & S_ISPROC ) )
+    .case ( [rdi].state == SYM_EXTERNAL && ( [rdi].weak ) && !( [rdi].isproc ) )
         ;
         ; It's a "new" equate.
         ; wait with definition until type of equate is clear
@@ -421,7 +424,7 @@ endif
         .endc
     .case [rdi].state == SYM_TMACRO
         .return SetTextMacro(rbx, rdi, name, [rsi].tokpos)
-    .case !( byte ptr [rdi].flags & S_ISEQUATE )
+    .case !( byte ptr [rdi].isequate )
         asmerr( 2005, name )
         .return NULL
     .default
@@ -583,7 +586,7 @@ endif
             .endc
         .case [rdi].state == SYM_UNDEFINED
             sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], rdi)
-            or [rdi].flags,S_FWDREF
+            mov [rdi].fwdref,1
             .endc
         .case [rdi].state == SYM_EXTERNAL
             sym_ext2int(rdi)
@@ -607,7 +610,7 @@ endif
             .endif
         .endsw
 
-        and byte ptr [rdi].flags,not S_VARIABLE
+        mov [rdi].isvariable,0
         SetValue(rdi, &opnd)
         .return rdi
     .endif

@@ -327,16 +327,16 @@ ifndef ASMC64
         ; do nothing if it isn't the first data item or
         ; if current segment isn't code
 
-        .if ( [rbx].seg_info.flags & SEG_DATAINCODE || ( [rbx].seg_info.segtype != SEGTYPE_CODE ) )
+        .if ( [rbx].seg_info.data_in_code || ( [rbx].seg_info.segtype != SEGTYPE_CODE ) )
             .return
         .endif
 
         mov sel_start,GetCurrOffset()
-        or  [rbx].seg_info.flags,SEG_DATAINCODE
+        mov [rbx].seg_info.data_in_code,1
 
-    .elseif ( [rbx].seg_info.flags & SEG_DATAINCODE ) ; data items written?
+    .elseif ( [rbx].seg_info.data_in_code ) ; data items written?
 
-        and [rbx].seg_info.flags,not SEG_DATAINCODE
+        mov [rbx].seg_info.data_in_code,0
 
         .if ( write_to_file == TRUE )
 
@@ -495,7 +495,7 @@ omf_write_ledata proc fastcall private uses rsi rdi rbx s:ptr dsym
             ; if the COMDAT symbol has been referenced in a FIXUPP,
             ; a CEXTDEF has to be written.
 
-            .if ( [rbx].asym.flags & S_USED )
+            .if ( [rbx].asym.used )
 
                 omf_InitRec( &obj, CMD_CEXTDEF )
                 AttachData( &obj, StringBufferEnd, 2 * sizeof( uint_16 ) )
@@ -785,7 +785,7 @@ omf_write_export proc private uses rsi rdi rbx
     .for ( rbx = MODULE.PubQueue.head : rbx : rbx = [rbx].qnode.next )
 
         mov rsi,[rbx].qnode.sym
-        .if ( [rsi].asym.flags & S_ISEXPORT )
+        .if ( [rsi].asym.isexport )
 
             omf_InitRec( &obj, CMD_COMENT )
             mov obj.d.coment.attr,0x00
@@ -932,7 +932,7 @@ omf_write_segdef proc private uses rsi rdi rbx
         omf_InitRec( &obj, CMD_SEGDEF )
 
         .if ( [rdi].seg_info.Ofssize > USE16 )
-            .if ( [rdi].seg_info.flags & SEG_FORCE32 || ( [rsi].asym.max_offset >= 0x10000 ) )
+            .if ( [rdi].seg_info.force32 || ( [rsi].asym.max_offset >= 0x10000 ) )
                 mov obj.is_32,1
             .else
                 mov obj.is_32,0
@@ -1101,15 +1101,15 @@ GetExt proc fastcall private r:ptr readext
 
             mov rdx,[rcx].readext.p
             mov [rcx].readext.p,[rdx].dsym.next
-            .continue .if ( [rdx].asym.sflags & S_ISCOM )
+            .continue .if ( [rdx].asym.iscomm )
 
             mov rax,[rdx].asym.altname
-            .if ( rax && !( [rax].asym.flags & S_INCLUDED ) )
+            .if ( rax && !( [rax].asym.included ) )
 
                 mov dx,[rcx].readext.index
                 inc [rcx].readext.index
                 mov [rax].asym.ext_idx2,dx
-                or  [rax].asym.flags,S_INCLUDED
+                mov [rax].asym.included,1
                .return
             .endif
         .endf
@@ -1121,7 +1121,7 @@ GetExt proc fastcall private r:ptr readext
 
         mov rdx,[rcx].readext.p
         mov [rcx].readext.p,[rdx].dsym.next
-        .continue .if ( [rdx].asym.sflags & ( S_ISCOM or S_WEAK ) )
+        .continue .if ( [rdx].asym.iscomm || [rdx].asym.weak )
 
         mov ax,[rcx].readext.index
         inc [rcx].readext.index
@@ -1210,7 +1210,7 @@ endif
 
     .for ( rsi = SymTables[TAB_EXT*symbol_queue].head: rsi: rsi = [rsi].dsym.next )
 
-        .if ( !( [rsi].asym.sflags & S_ISCOM ) && [rsi].asym.altname )
+        .if ( !( [rsi].asym.iscomm ) && [rsi].asym.altname )
 
             omf_InitRec( &obj, CMD_COMENT )
             mov obj.d.coment.attr,CMT_TNP
@@ -1233,7 +1233,7 @@ endif
         ; - else an invalid object file will be created!
 
         mov rcx,[rsi].asym.altname
-        .if ( !( [rsi].asym.sflags & S_ISCOM ) && rcx && [rcx].asym.state != SYM_EXTERNAL )
+        .if ( !( [rsi].asym.iscomm ) && rcx && [rcx].asym.state != SYM_EXTERNAL )
             mov [rcx].asym.ext_idx,0
         .endif
     .endf
@@ -1334,7 +1334,7 @@ omf_write_comdef proc __ccall private uses rsi rdi rbx index:word
     mov rsi,SymTables[TAB_EXT*symbol_queue].head
     .while ( rsi )
         .for( num = 0, recsize = 0: rsi : rsi = [rsi].dsym.next )
-            .continue .if ( !( [rsi].asym.sflags & S_ISCOM ) )
+            .continue .if ( !( [rsi].asym.iscomm ) )
 
             mov symsize,Mangle( rsi, &buffer )
 if MAX_ID_LEN gt 255
@@ -1610,11 +1610,11 @@ omf_write_pubdef proc private uses rsi rdi rbx
 
                 .if ( [rdx].seg_info.comdat_idx == 0 )
 
-                    .new obj:omf_rec
+                   .new obj:omf_rec
 
-                    and [rcx].asym.flags,not S_USED
-                    .if ( [rax].asym.flags & S_USED )
-                        or [rcx].asym.flags,S_USED
+                    mov [rcx].asym.used,0
+                    .if ( [rax].asym.used )
+                        mov [rcx].asym.used,1
                     .endif
                     mov [rdx].seg_info.comdat_idx,startitem
                     inc startitem
@@ -1815,7 +1815,7 @@ omf_write_header_dbgcv proc private uses rdi rbx
             ; without this a 32-bit segdef is emitted only if segsize > 64kB
 
             mov rcx,[rax].dsym.seginfo
-            or  [rcx].seg_info.flags,SEG_FORCE32
+            mov [rcx].seg_info.force32,1
             mov [rcx].seg_info.flushfunc,&omf_cv_flushfunc
         .endif
     .endf

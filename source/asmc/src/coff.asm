@@ -172,7 +172,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
         mov rdx,[rdi].dsym.seginfo
         assume rdx:ptr seg_info
 
-        .if ( [rdx].flags & SEG_INFO )
+        .if ( [rdx].information )
 
             ; v2.09: set "remove" flag for .drectve section, as it was done in v2.06 and earlier
             mov rcx,cm
@@ -211,7 +211,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             .if ( [rdx].segtype == SEGTYPE_CODE )
                 or ish.Characteristics,IMAGE_SCN_CNT_CODE or IMAGE_SCN_MEM_EXECUTE or IMAGE_SCN_MEM_READ
-            .elseif ( [rdx].flags & SEG_RDONLY )
+            .elseif ( [rdx].readonly )
                 or ish.Characteristics,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ
             .elseif ( ecx )
                 or ish.Characteristics,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ
@@ -339,7 +339,7 @@ CoffGetType proc fastcall sym:ptr asym
 
     UNREFERENCED_PARAMETER(sym)
 
-    .return( 0x20 ) .if ( [rcx].flags & S_ISPROC )
+    .return( 0x20 ) .if ( [rcx].isproc )
     .return( IMAGE_SYM_TYPE_NULL )
 
 CoffGetType endp
@@ -352,16 +352,16 @@ CoffGetClass proc fastcall sym:ptr asym
     UNREFERENCED_PARAMETER(sym)
 
     .if ( [rcx].state == SYM_EXTERNAL )
-        .if ( !( [rcx].sflags & S_ISCOM ) && [rcx].altname )
+        .if ( !( [rcx].iscomm ) && [rcx].altname )
             .return( IMAGE_SYM_CLASS_WEAK_EXTERNAL )
         .else
             .return( IMAGE_SYM_CLASS_EXTERNAL )
         .endif
-    .elseif ( [rcx].flags & S_ISPUBLIC )
+    .elseif ( [rcx].ispublic )
         .return( IMAGE_SYM_CLASS_EXTERNAL )
 
     ; v2.09: don't declare private procs as label
-    .elseif ( [rcx].mem_type == MT_NEAR && !( [rcx].flags & S_ISPROC ) )
+    .elseif ( [rcx].mem_type == MT_NEAR && !( [rcx].isproc ) )
         .return( IMAGE_SYM_CLASS_LABEL )
     .endif
     .return( IMAGE_SYM_CLASS_STATIC )
@@ -647,14 +647,14 @@ endif
 
         ; skip "weak" (=unused) externdefs
 
-        .continue .if ( !( [rdi].asym.sflags & S_ISCOM ) && [rdi].asym.sflags & S_WEAK )
+        .continue .if ( !( [rdi].asym.iscomm ) && [rdi].asym.weak )
 
         lea rbx,buffer
         mov ecx,Mangle( rdi, rbx )
 
         ; for COMMUNALs, store their size in the Value field
 
-        .if ( [rdi].asym.sflags & S_ISCOM )
+        .if ( [rdi].asym.iscomm )
             mov value,[rdi].asym.total_size
         .else
             mov value,[rdi].asym.offs ;; is always 0
@@ -667,7 +667,7 @@ endif
         mov esi,CoffGetClass( rdi )
         mov ecx,CoffGetType( rdi )
         xor eax,eax
-        .if ( !( [rdi].asym.sflags & S_ISCOM ) && [rdi].asym.altname )
+        .if ( !( [rdi].asym.iscomm ) && [rdi].asym.altname )
             inc eax
         .endif
         coff_write_symbol( rbx, strpos, value, IMAGE_SYM_UNDEFINED, ecx, esi, eax )
@@ -675,7 +675,7 @@ endif
 
         ; for weak externals, write the auxiliary record
 
-        .if ( !( [rdi].asym.sflags & S_ISCOM ) && [rdi].asym.altname )
+        .if ( !( [rdi].asym.iscomm ) && [rdi].asym.altname )
 
             tmemset( &ias, 0, sizeof(ias) )
             mov rcx,[rdi].asym.altname
@@ -700,7 +700,7 @@ endif
         mov rcx,[rsi].asym.debuginfo
 
         .if ( Options.line_numbers && Options.debug_symbols != 4 &&
-              [rsi].asym.flags & S_ISPROC &&
+              [rsi].asym.isproc &&
               [rcx].debug_info.file != lastfile )
 
             mov lastfile,[rcx].debug_info.file
@@ -728,7 +728,7 @@ endif
             mov section,IMAGE_SYM_UNDEFINED
         .endif
         mov aux,0
-        .if ( Options.line_numbers && [rsi].asym.flags & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [rsi].asym.isproc && Options.debug_symbols != 4 )
             inc aux
         .endif
         mov ecx,ebx
@@ -744,7 +744,7 @@ endif
         coff_write_symbol( p, strpos, value, section, ebx, ecx, aux )
         inc cntSymbols
 
-        .if ( Options.line_numbers && [rsi].asym.flags & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [rsi].asym.isproc && Options.debug_symbols != 4 )
 
             ; write:
             ; 1.   the aux for the proc
@@ -936,14 +936,14 @@ endif
 
     .for ( rdi = ExtTable : rdi : rdi = [rdi].dsym.next )
 
-        .continue .if ( !( [rdi].asym.sflags & S_ISCOM ) && [rdi].asym.sflags & S_WEAK )
+        .continue .if ( !( [rdi].asym.iscomm ) && [rdi].asym.weak )
 
         mov [rdi].asym.ext_idx,esi
         inc esi
 
         ; weak externals need an additional aux entry
 
-        .if ( !( [rdi].asym.sflags & S_ISCOM ) && [rdi].asym.altname )
+        .if ( !( [rdi].asym.iscomm ) && [rdi].asym.altname )
 
             inc esi
         .endif
@@ -960,10 +960,10 @@ if STATIC_PROCS
         .for( rdi = ProcTable : rdi : rdi = [rdi].dsym.nextproc )
 
             .if ( [rdi].asym.state == SYM_INTERNAL &&
-                  !( [rdi].asym.flags & S_ISPUBLIC ) &&
-                  !( [rdi].asym.flags & S_INCLUDED ) )
+                  !( [rdi].asym.ispublic ) &&
+                  !( [rdi].asym.included ) )
 
-                or [rdi].asym.flags,S_INCLUDED
+                mov [rdi].asym.included,1
                 AddPublicData( rdi )
             .endif
         .endf
@@ -978,7 +978,7 @@ endif
 
         ; if line numbers are on, co, add 6 entries for procs
 
-        .if ( Options.line_numbers && [rsi].asym.flags & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [rsi].asym.isproc && Options.debug_symbols != 4 )
 
             mov rdx,[rsi].asym.debuginfo
             mov rbx,cm
@@ -1128,7 +1128,7 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
         mov type,cx
         mov rcx,[rbx].sym
 
-        .if ( [rcx].asym.flags & S_VARIABLE )
+        .if ( [rcx].asym.isvariable )
 
             ; just use the segment entry. This approach requires
             ; that the offset is stored inline at the reloc location
@@ -1138,15 +1138,15 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
             mov rcx,rax
 
         .elseif ( ( [rcx].asym.state == SYM_INTERNAL ) &&
-                   !( [rcx].asym.flags & S_ISPUBLIC ) &&
-                   !( [rcx].asym.flags & S_INCLUDED ) )
+                   !( [rcx].asym.ispublic ) &&
+                   !( [rcx].asym.included ) )
 
-            or [rcx].asym.flags,S_INCLUDED
+            mov [rcx].asym.included,1
             AddPublicData( rcx )
             mov rcx,[rbx].sym
             mov [rcx].asym.ext_idx,esi
             inc esi
-            .if ( Options.line_numbers && [rcx].asym.flags & S_ISPROC && Options.debug_symbols != 4 )
+            .if ( Options.line_numbers && [rcx].asym.isproc && Options.debug_symbols != 4 )
                 add esi,6
             .endif
         .endif
@@ -1388,7 +1388,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
     .for ( rdi = MODULE.PubQueue.head : rdi : rdi = [rdi].qnode.next )
 
         mov rcx,[rdi].qnode.sym
-        .break .if ( [rcx].asym.flags & S_ISEXPORT )
+        .break .if ( [rcx].asym.isexport )
     .endf
     mov exp,rdi
 
@@ -1398,8 +1398,8 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
         .for ( rdi = ExtTable: rdi: rdi = [rdi].dsym.next )
 
-            .if ( [rdi].asym.flags & S_ISPROC &&
-                 ( !( [rdi].asym.sflags & S_WEAK ) || [rdi].asym.flags & S_IAT_USED ) )
+            .if ( [rdi].asym.isproc &&
+                 ( !( [rdi].asym.weak ) || [rdi].asym.iat_used ) )
 
                 mov rdx,[rdi].asym.dll
                 .if ( rdx )
@@ -1427,7 +1427,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             xor ebx,ebx
             mov rdi,[rax].dsym.seginfo
-            or  [rdi].seg_info.flags,SEG_INFO
+            mov [rdi].seg_info.information,1
 
             ; calc the size for this segment
 
@@ -1436,7 +1436,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             .for ( rdi = exp : rdi : rdi = [rdi].qnode.next )
 
                 mov rcx,[rdi].qnode.sym
-                .if ( [rcx].asym.flags & S_ISEXPORT )
+                .if ( [rcx].asym.isexport )
 
                     Mangle( rcx, &buffer )
                     lea rbx,[rbx+rax+9]
@@ -1474,8 +1474,8 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             .for ( rdi = imp : rdi : rdi = [rdi].dsym.next )
 
-                .if ( [rdi].asym.flags & S_ISPROC &&
-                     ( !( [rdi].asym.sflags & S_WEAK ) || [rdi].asym.flags & S_IAT_USED ) &&
+                .if ( [rdi].asym.isproc &&
+                     ( !( [rdi].asym.weak ) || [rdi].asym.iat_used ) &&
                       [rdi].asym.dll )
 
                     mov rdx,[rdi].asym.dll
@@ -1520,7 +1520,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             .for ( rdi = exp : rdi : rdi = [rdi].qnode.next )
 
                 mov rcx,[rdi].qnode.sym
-                .if ( [rcx].asym.flags & S_ISEXPORT )
+                .if ( [rcx].asym.isexport )
 
                     Mangle( rcx, &buffer )
                     .if ( Options.no_export_decoration == FALSE )
@@ -1555,8 +1555,8 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             .for ( rdi = imp : rdi : rdi = [rdi].dsym.next )
 
-                .if ( [rdi].asym.flags & S_ISPROC &&
-                     ( !( [rdi].asym.sflags & S_WEAK ) || [rdi].asym.flags & S_IAT_USED ) && [rdi].asym.dll )
+                .if ( [rdi].asym.isproc &&
+                     ( !( [rdi].asym.weak ) || [rdi].asym.iat_used ) && [rdi].asym.dll )
 
                     mov rdx,[rdi].asym.dll
                     .if ( [rdx].dll_desc.name )
@@ -1682,7 +1682,7 @@ coff_write_module proc uses rsi rdi rbx
         .if ( rax )
 
             mov rdi,[rax].dsym.seginfo
-            or  [rdi].seg_info.flags,SEG_INFO
+            mov [rdi].seg_info.information,1
 
             ; calc the size for this segment
 

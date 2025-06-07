@@ -101,7 +101,7 @@ FindToken endp
 AddPredefinedConstant proc fastcall private name:string_t, value:int_t
 
     .if CreateVariable( rcx, edx )
-        or [rax].asym.flags,S_PREDEFINED
+        mov [rax].asym.predefined,1
     .endif
     ret
 
@@ -551,7 +551,7 @@ else
 AddPredefinedConstant proc fastcall private name:string_t, value:int_t
 
     .if CreateVariable( rcx, edx )
-        or [rax].asym.flags,S_PREDEFINED
+        mov [rax].asym.predefined,1
     .endif
     ret
 

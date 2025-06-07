@@ -97,55 +97,42 @@ IS_SIGNED proto watcall :byte {
     debug_t         typedef ptr debug_info
 
 
-S_USED          equ 0x00000001 ; flags
-S_ISDEFINED     equ 0x00000002
-S_SCOPED        equ 0x00000004
-S_IAT_USED      equ 0x00000008
-S_ISEQUATE      equ 0x00000010
-S_PREDEFINED    equ 0x00000020
-S_VARIABLE      equ 0x00000040
-S_ISPUBLIC      equ 0x00000080
-S_LIST          equ 0x00000100
-S_ISARRAY       equ 0x00000200
-S_ISDATA        equ 0x00000400
-S_ISPROC        equ 0x00000800
-S_ISSAVED       equ 0x00001000
-S_FWDREF        equ 0x00002000
-S_INCLUDED      equ 0x00004000
-S_METHOD        equ 0x00008000
-S_CLASS         equ 0x00010000 ;
-S_VTABLE        equ 0x00020000 ; base class - first member = lpVtbl
-S_ISVTABLE      equ 0x00040000 ; vtable struct - classVtbl
-S_VMACRO        equ 0x00080000 ; vtable method is inline - sym->vmacro set
-S_ISINLINE      equ 0x00100000 ; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
-S_ISSTATIC      equ 0x00200000 ; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
-S_VPARRAY       equ 0x00400000 ; p.p.proc() -- nested function call
-S_OPERATOR      equ 0x00800000
-S_REGPARAM      equ 0x01000000 ; syscall: regist[0] = reg, 1 = index
-S_REGPAIR       equ 0x02000000 ; reg::reg param
-S_CVDEFINED     equ 0x04000000 ; cv.add_type() - recurse typedefs in structure
-S_ISEXPORT      equ 0x08000000 ; v2.19: symbol exported ( SYM_INTERNAL )
-S_CRECORD       equ 0x10000000 ; v2.36.37: new type record (id type:size ?) - type-token in regist[0]
-
-S_ISCOM         equ 0x01 ; sflags
-S_WEAK          equ 0x02
-S_ISVARARG      equ 0x04
-S_ISVECTOR      equ 0x08
-S_STKUSED       equ 0x10 ; proc: call stack used
-S_ARGUSED       equ 0x20 ; proc: stack arg used
-S_LOCALGPR      equ 0x40 ; proc: xmm reg saved to local stack
-
-M_ISVARARG      equ 0x01 ; mac_flag
-M_ISFUNC        equ 0x02
-M_LABEL         equ 0x04
-M_MULTILINE     equ 0x08
-M_PURGED        equ 0x10
-
 .template asym
+
     nextitem        ptr asym ?      ; next symbol in hash line
     name            string_t ?      ; symbol name
     name_size       int_t ?
-    flags           uint_t ?        ; bitfield
+    record
+     used           uint_t : 1 ?    ; symbol has been referenced
+     isdefined      uint_t : 1 ?    ; symbol is "defined" in this pass
+     scoped         uint_t : 1 ?    ; symbol is local label or SYM_STACK
+     iat_used       uint_t : 1 ?    ; v2.07: IAT entry of symbol used (SYM_EXTERNAL + isproc==1 only)
+     isequate       uint_t : 1 ?    ; symbol has been defined with EQU
+     predefined     uint_t : 1 ?    ; symbol is predefined
+     isvariable     uint_t : 1 ?    ; symbol is variable (defined by '=' directive)
+     ispublic       uint_t : 1 ?    ; symbol has been added to the publics queue
+     list           uint_t : 1 ?    ; symbol is to be listed
+     isarray        uint_t : 1 ?    ; symbol is an array (total_length is valid)
+     isdata         uint_t : 1 ?    ; field first_size is valid
+     isproc         uint_t : 1 ?    ; symbol is PROC or PROTO; has proc_info extension
+     issaved        uint_t : 1 ?    ; assembly-time variables only: symbol has been saved
+     fwdref         uint_t : 1 ?    ; symbol was forward referenced
+     included       uint_t : 1 ?    ; COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL)
+     method         uint_t : 1 ?    ;
+     isclass        uint_t : 1 ?    ;
+     hasvtable      uint_t : 1 ?    ; base class - first member = lpVtbl
+     isvtable       uint_t : 1 ?    ; vtable struct - classVtbl
+     isvmacro       uint_t : 1 ?    ; vtable method is inline - sym->vmacro set
+     isinline       uint_t : 1 ?    ; SYM_EXTERNAL.target_type == SYM_MACRO
+     isstatic       uint_t : 1 ?    ; SYM_EXTERNAL.target_type == SYM_MACRO
+     vparray        uint_t : 1 ?    ; p.p.proc() - nested function call
+     operator       uint_t : 1 ?    ;
+     regparam       uint_t : 1 ?    ; register param
+     regpair        uint_t : 1 ?    ; reg::reg param
+     cvdefined      uint_t : 1 ?    ; cv::add_type() - recurse typedefs in structure
+     isexport       uint_t : 1 ?    ; v2.19: symbol exported ( SYM_INTERNAL )
+     crecord        uint_t : 1 ?    ; v2.36.37: use bitf_* in records
+    ends
     state           uchar_t ?
     mem_type        uchar_t ?
     langtype        uchar_t ?
@@ -196,9 +183,23 @@ M_PURGED        equ 0x10
        ptr_memtype  uchar_t ?       ; pointer target type
        asmpass      uchar_t ?       ; SYM_INTERNAL (mem_type NEAR|FAR)
       ends
-     sflags         uchar_t ?
+      record
+       iscomm       uchar_t : 1 ?   ; is communal
+       weak         uchar_t : 1 ?   ; 1 if an unused "externdef"
+       is_vararg    uchar_t : 1 ?   ; SYM_STACK, VARARG param
+       is_vector    uchar_t : 1 ?   ; template is vector
+       stkused      uchar_t : 1 ?   ; proc: call stack used
+       argused      uchar_t : 1 ?   ; proc: stack arg used
+       localgpr     uchar_t : 1 ?   ; proc: xmm reg saved to local stack
+      ends
      ends
-     mac_flag       uchar_t ?       ; for SYM_MACRO -- byte
+     record
+      mac_vararg    uchar_t : 1 ?   ; accept additional params
+      isfunc        uchar_t : 1 ?   ; it's a macro function
+      islabel       uchar_t : 1 ?   ; macro is "label-aware"
+      multiline     uchar_t : 1 ?   ; v2.11: vararg arguments may be on multiple lines
+      purged        uchar_t : 1 ?   ; macro has been PURGEd
+     ends
     ends
 
     union
@@ -258,16 +259,17 @@ M_PURGED        equ 0x10
     ends
 
     union
-     total_length   uint_t ?        ; total number of elements (LENGTHOF)
+     struct                         ; SYM_TYPE
+      total_length  uint_t ?        ; total number of elements (LENGTHOF)
+      cvtyperef     ushort_t ?      ; codeview type index (used after assembly steps)
+      typekind      ushort_t ?      ; v2.04: moved from first_length, were it didn't work anymore
+     ends                           ; since the addition of field max_mbr_size.
      altname        ptr asym ?      ; SYM_EXTERNAL (comm==0): alternative name
      debuginfo      ptr debug_info ?; SYM_INTERNAL (isproc==1): debug info (COFF)
                                     ; SYM_INTERNAL+predefined
      sfunc_ptr      proc local fastcall :ptr asym, :ptr
-     struct                         ; SYM_TYPE
-      cvtyperef     ushort_t ?      ; codeview type index (used after assembly steps)
-      typekind      ushort_t ?      ; v2.04: moved from first_length, were it didn't work anymore
-     ends                           ; since the addition of field max_mbr_size.
     ends
+
     union                           ; SYM_INTERNAL, SYM_UNDEFINED, SYM_EXTERNAL: backpatching fixup
      bp_fixup       ptr fixup ?
      ext_idx        uint_t ?        ; for SYM_EXTERNAL: table index ( for coff and elf )
@@ -299,14 +301,6 @@ M_PURGED        equ 0x10
    .ends
     group_t         typedef ptr grp_info
 
-define SEG_RDONLY       0x01    ; if segment is readonly
-define SEG_INFO         0x02    ; if segment is info only (COFF/ELF)
-define SEG_FORCE32      0x04    ; force 32bit segdef (OMF only)
-define SEG_DATAINCODE   0x08    ; data items in code segm (OMF only)
-define SEG_INTERNAL     0x10    ; internal segment with private buffer
-define SEG_WRITTEN      0x20    ; code/data just written
-define SEG_LINUM        0x40    ; v2.10: linnum data emitted for segment?
-define SEG_ALIGNRVA     0x80    ; alignment modifies RVA only, filepos not affected
 
 .template seg_info
     sgroup          ptr asym ?  ; segment's group or NULL
@@ -318,7 +312,16 @@ define SEG_ALIGNRVA     0x80    ; alignment modifies RVA only, filepos not affec
     ends
     CodeBuffer      string_t ?  ;
     bytes_written   uint_t ?    ; initialized bytes in segment
-    flags           uchar_t ?
+    record
+     readonly       uchar_t : 1 ? ; if segment is readonly
+     information    uchar_t : 1 ? ; if segment is info only (COFF/ELF)
+     force32        uchar_t : 1 ? ; force 32bit segdef (OMF only)
+     data_in_code   uchar_t : 1 ? ; data items in code segm (OMF only)
+     internal       uchar_t : 1 ? ; internal segment with private buffer
+     written        uchar_t : 1 ? ; code/data just written
+     linnum_init    uchar_t : 1 ? ; v2.10: linnum data emitted for segment?
+     align_rva      uchar_t : 1 ? ; alignment modifies RVA only, filepos not affected
+    ends
     Ofssize         uchar_t ?   ; segment's offset size
     characteristics uchar_t ?   ; used by COFF/ELF/PE
     alignment       uchar_t ?   ; is value 2^x
@@ -356,16 +359,8 @@ MAX_SEGALIGNMENT    equ 0xFF
 
 ; PROC item
 
-PROC_HAS_VARARG     equ 0x01        ; last param is VARARG
-PROC_PE_TYPE        equ 0x02        ; prolog-epilog type, 1=use LEAVE
-PROC_ALIGNRVA       equ 0x04        ; alignment modifies RVA only, filepos not affected
-PROC_FORCEFRAME     equ 0x08        ; FORCEFRAME prologuearg?
-PROC_LOADDS         equ 0x10        ; LOADDS prologuearg?
-PROC_STACKPARAM     equ 0x20        ; 1=stack params exists ( not just register params )
-PROC_ISFRAME        equ 0x40        ; FRAME attribute set?
-PROC_FPO            equ 0x80
-
 .template proc_info
+
     regslist        ptr word ?      ; list of registers to be saved
     paralist        ptr dsym ?      ; list of parameters
     locallist       ptr dsym ?      ; list of local variables
@@ -376,7 +371,15 @@ PROC_FPO            equ 0x80
     exc_handler     ptr asym ?      ; exc handler set by FRAME
     ReservedStack   int_t ?         ; win64: additional reserved stack
     prolog_list_pos uint_t ?        ; prologue list pos
-    flags           uchar_t ?
+    record
+     has_vararg     uchar_t : 1 ?   ; last param is VARARG
+     pe_type        uchar_t : 1 ?   ; PROC: prolog-epilog type, 1=use LEAVE
+     forceframe     uchar_t : 1 ?   ; PROC: FORCEFRAME prologuearg?
+     loadds         uchar_t : 1 ?   ; PROC: LOADDS prologuearg?
+     stackparam     uchar_t : 1 ?   ; PROC: 1=stack params exists ( not just register params )
+     isframe        uchar_t : 1 ?   ; PROC: FRAME attribute set?
+     fpo            uchar_t : 1 ?   ;
+    ends
     size_prolog     uchar_t ?       ; v2.10: prologue size
     basereg         ushort_t ?      ; v2.11: stack base register
    .ends
@@ -419,21 +422,23 @@ PROC_FPO            equ 0x80
     ivalue          char_t ?        ; v2.09: type changed from char * to char[]
    .ends
 
-TYPE_NONE       equ 0
-TYPE_STRUCT     equ 1
-TYPE_UNION      equ 2
-TYPE_TYPEDEF    equ 3
-TYPE_RECORD     equ 4
-
-SI_ISINLINE     equ 1               ; STRUCT/UNION: inline (unused)
-SI_ISOPEN       equ 2               ; STRUCT/UNION: set until the matching ENDS is found
-SI_ORGINSIDE    equ 4               ; STRUCT: struct contains an ORG
+.enum type_kind {
+    TYPE_NONE,
+    TYPE_STRUCT,
+    TYPE_UNION,
+    TYPE_TYPEDEF,
+    TYPE_RECORD
+    }
 
 .template struct_info
+
     head            ptr sfield ?    ; STRUCT/UNION/RECORD: start of field list
     tail            ptr sfield ?    ; STRUCT/UNION/RECORD: current/next field
     alignment       uchar_t ?       ; STRUCT: 1,2,4,8,16 or 32
-    flags           uchar_t ?
+    record
+     isOpen         uchar_t : 1 ?   ; STRUCT/UNION: set until the matching ENDS is found
+     OrgInside      uchar_t : 1 ?   ; STRUCT: struct contains an ORG
+    ends
    .ends
 
 ; dsym originally was a "directive_node"

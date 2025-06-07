@@ -41,11 +41,11 @@ define MANGLE_BYTES 8 ; extra size required for name decoration
 
 ifdef _WIN64
 IsWeak proto watcall :ptr asym {
-    retm<( !( [rax].asym.sflags & S_ISCOM ) && [rax].asym.altname )>
+    retm<( !( [rax].asym.iscomm ) && [rax].asym.altname )>
     }
 else
 IsWeak proto watcall :ptr asym {
-    retm<( !( [eax].asym.sflags & S_ISCOM ) && [eax].asym.altname )>
+    retm<( !( [eax].asym.iscomm ) && [eax].asym.altname )>
     }
 endif
 ;
@@ -275,14 +275,14 @@ set_symtab32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, entries:uint_t
 
         ; skip "weak" (=unused) externdefs
 
-        .continue .if ( !( [rsi].asym.sflags & S_ISCOM ) && [rsi].asym.sflags & S_WEAK )
+        .continue .if ( !( [rsi].asym.iscomm ) && [rsi].asym.weak )
 
         lea rbx,[Mangle( rsi, &buffer ) + 1]
         mov [rdi].st_name,strsize
 
         ; for COMMUNALs, store their size in the Value field
 
-        .if ( [rsi].asym.sflags & S_ISCOM )
+        .if ( [rsi].asym.iscomm )
 
             mov [rdi].st_info,ELF32_ST_INFO( STB_GLOBAL, STT_COMMON )
             mov [rdi].st_value,[rsi].asym.total_size
@@ -458,14 +458,14 @@ set_symtab64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, entries:uint_t
 
         ; skip "weak" (=unused) externdefs
 
-        .continue .if ( !( [rsi].asym.sflags & S_ISCOM ) && [rsi].asym.sflags & S_WEAK )
+        .continue .if ( !( [rsi].asym.iscomm ) && [rsi].asym.weak )
 
         lea rbx,[Mangle( rsi, &buffer ) + 1]
         mov [rdi].st_name,strsize
 
         ; for COMMUNALs, store their size in the Value field
 
-        .if ( [rsi].asym.sflags & S_ISCOM )
+        .if ( [rsi].asym.iscomm )
 
             mov [rdi].st_info,ELF64_ST_INFO( STB_GLOBAL, STT_COMMON )
             mov dword ptr [rdi].st_value[0],[rsi].asym.total_size
@@ -611,12 +611,12 @@ set_symtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
                 ; use a raw section reference
 
                 mov rcx,[rdi].sym
-                .if ( [rcx].asym.flags & S_VARIABLE )
+                .if ( [rcx].asym.isvariable )
                     mov [rdi].sym,[rdi].segment_var
                 .elseif ( [rcx].asym.state == SYM_INTERNAL &&
-                        !( [rcx].asym.flags & ( S_INCLUDED or S_ISPUBLIC ) ) )
+                         ![rcx].asym.ispublic && ![rcx].asym.included )
 
-                    or [rcx].asym.flags,S_INCLUDED
+                    mov [rcx].asym.included,1
                     LclAlloc( sizeof( localname ) )
                     mov [rax].localname.next,NULL
                     mov rcx,[rdi].sym
@@ -640,7 +640,7 @@ set_symtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
     ; count EXTERNs and used EXTERNDEFs (and PROTOs [since v2.01])
 
     .for ( rcx = SymTables[TAB_EXT*symbol_queue].head : rcx : rcx = [rcx].dsym.next )
-        .if ( !( [rcx].asym.sflags & S_ISCOM ) && [rcx].asym.sflags & S_WEAK )
+        .if ( !( [rcx].asym.iscomm ) && [rcx].asym.weak )
             .continue
         .endif
         mov [rcx].asym.ext_idx,[rbx].symindex
@@ -703,7 +703,7 @@ endif
     .endf
 
     .for ( rsi = SymTables[TAB_EXT*symbol_queue].head : rsi : rsi = [rsi].dsym.next )
-        .if ( !( [rsi].asym.sflags & S_ISCOM ) && [rsi].asym.sflags & S_WEAK )
+        .if ( !( [rsi].asym.iscomm ) && [rsi].asym.weak )
             .continue
         .endif
         lea rdi,[rdi+Mangle( rsi, rdi ) + 1]
@@ -920,7 +920,7 @@ elf_write_section_table32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, f
         lea rdi,[rdi+tstrlen(rdi) + 1]
 
         mov rcx,[rsi].dsym.seginfo
-        .if ( [rcx].seg_info.flags & SEG_INFO ) ; v2.07:added; v2.12: highest priority
+        .if ( [rcx].seg_info.information ) ; v2.07:added; v2.12: highest priority
             mov shdr32.sh_type,SHT_NOTE
         .else
             .if ( [rcx].seg_info.segtype != SEGTYPE_BSS )
@@ -930,7 +930,7 @@ elf_write_section_table32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, f
             .endif
             .if ( [rcx].seg_info.segtype == SEGTYPE_CODE )
                 mov shdr32.sh_flags,SHF_EXECINSTR or SHF_ALLOC
-            .elseif ( [rcx].seg_info.flags & SEG_RDONLY )
+            .elseif ( [rcx].seg_info.readonly )
                 mov shdr32.sh_flags,SHF_ALLOC
             .else
                 mov shdr32.sh_flags,SHF_WRITE or SHF_ALLOC
@@ -1135,7 +1135,7 @@ elf_write_section_table64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, f
         lea rdi,[rdi+tstrlen(rdi)+1]
 
         mov rcx,[rsi].dsym.seginfo
-        .if ( [rcx].seg_info.flags & SEG_INFO ) ; v2.07:added; v2.12: highest priority
+        .if ( [rcx].seg_info.information ) ; v2.07:added; v2.12: highest priority
             mov shdr64.sh_type,SHT_NOTE
         .else
             .if ( [rcx].seg_info.segtype != SEGTYPE_BSS )
@@ -1145,7 +1145,7 @@ elf_write_section_table64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, f
              .endif
             .if ( [rcx].seg_info.segtype == SEGTYPE_CODE )
                 mov dword ptr shdr64.sh_flags[0],SHF_EXECINSTR or SHF_ALLOC
-            .elseif ( [rcx].seg_info.flags & SEG_RDONLY )
+            .elseif ( [rcx].seg_info.readonly )
                 mov dword ptr shdr64.sh_flags[0],SHF_ALLOC
             .else
                 mov dword ptr shdr64.sh_flags[0],SHF_WRITE or SHF_ALLOC
@@ -1330,7 +1330,7 @@ write_relocs32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, curr:ptr dsy
             mov elftype,R_386_PC32
             mov rcx,[rsi].sym
             .if ( MODULE.pic && [rcx].asym.state == SYM_EXTERNAL )
-                .if ( [rcx].asym.flags & S_ISPROC ) ; added v2.34.25
+                .if ( [rcx].asym.isproc ) ; added v2.34.25
                     mov elftype,R_386_PLT32
                 .endif
             .endif
@@ -1407,7 +1407,7 @@ endif
         .case FIX_RELOFF32
             mov ebx,R_X86_64_PC32
             .if ( MODULE.pic && [rcx].asym.state == SYM_EXTERNAL )
-                .if ( [rcx].asym.flags & S_ISPROC ) ; added v2.34.25
+                .if ( [rcx].asym.isproc ) ; added v2.34.25
                     mov ebx,R_X86_64_PLT32
                 .endif
             .endif

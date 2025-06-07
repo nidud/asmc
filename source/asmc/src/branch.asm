@@ -205,7 +205,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
     ; it's located, then assume it is a forward reference (=SYM_UNDEFINED)!
     ; This applies to PROTOs and EXTERNDEFs in Pass 1.
 
-    .if ( ( state == SYM_EXTERNAL ) && [rdi].sflags & S_WEAK )
+    .if ( ( state == SYM_EXTERNAL ) && [rdi].weak )
         mov state,SYM_UNDEFINED
     .endif
 

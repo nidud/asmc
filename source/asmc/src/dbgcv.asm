@@ -244,7 +244,7 @@ GetStructLen proc fastcall sym:ptr asym, Ofssize:byte
         .if ( [rcx].asym.state == SYM_TYPE )
             .return( sizeof( UDTSYM_16t ) - 1 )
         .endif
-        .if ( [rcx].asym.flags & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+        .if ( [rcx].asym.isproc && Options.debug_ext >= CVEX_REDUCED )
             .if ( dl == USE16 )
                 .return sizeof( PROCSYM16 ) - 1
             .endif
@@ -257,7 +257,7 @@ GetStructLen proc fastcall sym:ptr asym, Ofssize:byte
             .return sizeof( LABELSYM32 ) - 1
         .endif
 if EQUATESYMS
-        .if ( [rcx].asym.flags & S_ISEQUATE )
+        .if ( [rcx].asym.isequate )
             mov eax,sizeof( CONSTSYM_16t )
             .if ( [rcx].asym.value3264 || [rcx].asym.uvalue >= LF_NUMERIC )
                 add eax,2
@@ -270,14 +270,14 @@ endif
     .if ( [rcx].asym.state == SYM_TYPE )
         .return( sizeof( UDTSYM ) - 1 )
     .endif
-    .if ( [rcx].asym.flags & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+    .if ( [rcx].asym.isproc && Options.debug_ext >= CVEX_REDUCED )
         .return sizeof( PROCSYM32 ) - 1
     .endif
     .if ( [rcx].asym.mem_type == MT_NEAR || [rcx].asym.mem_type == MT_FAR )
         .return sizeof( LABELSYM32 ) - 1
     .endif
 if EQUATESYMS
-    .if ( [rcx].asym.flags & S_ISEQUATE )
+    .if ( [rcx].asym.isequate )
         mov eax,sizeof( CONSTSYM )
         .if ( [rcx].asym.value3264 || [rcx].asym.uvalue >= LF_NUMERIC )
             add eax,2
@@ -392,8 +392,14 @@ dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:ptr dsym, sym:ptr asym
 
         mov [rdi].CV_BITFIELD.size,( CV_BITFIELD - sizeof(uint_16) )
         mov [rdi].CV_BITFIELD.leaf,LF_BITFIELD
-        mov [rdi].CV_BITFIELD.length,[rcx].asym.total_size
-        mov [rdi].CV_BITFIELD.position,[rcx].asym.offs
+        mov eax,[rcx].asym.total_size
+        mov edx,[rcx].asym.offs
+        .if ( [rcx].asym.crecord )
+            mov al,[rcx].asym.bitf_bits
+            mov dl,[rcx].asym.bitf_offs
+        .endif
+        mov [rdi].CV_BITFIELD.length,al
+        mov [rdi].CV_BITFIELD.position,dl
         mov [rdi].CV_BITFIELD.type,GetTyperef( types, USE16 )
         mov [rdi].CV_BITFIELD.reserved,0xF1F2 ; added for alignment
     .endif
@@ -589,7 +595,7 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr
         [rbx].write_bitfield( type, rdi )
     .endif
 
-    .if ( [rdi].asym.flags & S_ISARRAY )
+    .if ( [rdi].asym.isarray )
 
         ; temporarily (mis)use ext_idx1 member to store the type;
         ; this field usually isn't used by struct fields
@@ -648,7 +654,7 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:
 
     mov rsi,mbr
 
-    .if ( [rsi].asym.flags & S_ISARRAY )
+    .if ( [rsi].asym.isarray )
 
         movzx eax,[rsi].asym.ext_idx1
         mov [rsi].asym.ext_idx1,0 ; reset the temporarily used field
@@ -700,15 +706,41 @@ dbgcv::enum_fields proc __ccall uses rsi rdi rbx symb:ptr dsym, enumfunc:cv_enum
 
     .for ( rdi = [rcx].struct_info.head, ebx = 0: rdi: rdi = [rdi].sfield.next )
 
-        .if ( [rdi].sfield.name_size ) ; has member a name?
+        mov rcx,[rdi].sfield.type
+        mov eax,[rdi].sfield.name_size
+
+        .if ( rcx && eax == 0 && Options.debug_symbols == CV_SIGNATURE_C13 )
+
+            ; v2.36.38 - add a name
+            ;
+            ; this is the "Name" in Visual Studio Watch list
+            ;
+            ;   Name         Type
+            ;
+            ; - record       byte
+            ; - union        qword
+
+            mov eax,6
+            lea rdx,@CStr("struct")
+            .if ( [rcx].asym.typekind == TYPE_UNION )
+                lea rdx,@CStr("union")
+                dec eax
+            .elseif ( [rcx].asym.typekind == TYPE_RECORD )
+                lea rdx,@CStr("record")
+            .endif
+            mov [rdi].sfield.name,rdx
+            mov [rdi].sfield.name_size,eax
+        .endif
+
+        .if ( eax ) ; has member a name?
 
             enumfunc( this, rsi, rdi, cc )
 
-        .elseif ( [rdi].sfield.type )  ; is member a type (struct, union, record)?
+        .elseif ( rcx )  ; is member a type (struct, union, record)?
 
-            mov rcx,cc
-            add [rcx].counters.ofs,[rdi].sfield.offs
-            this.enum_fields( [rdi].sfield.type, enumfunc, rcx )
+            mov rdx,cc
+            add [rdx].counters.ofs,[rdi].sfield.offs
+            this.enum_fields( rcx, enumfunc, rdx )
 
             mov rcx,cc
             sub [rcx].counters.ofs,[rdi].sfield.offs
@@ -879,16 +911,61 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
     .if ( [rbx].level )
         mov property,CV_prop_isnested
     .endif
-    lea rax,@CStr("__unnamed")
-    .if ( [rsi].asym.name_size )
-        mov rax,[rsi].asym.name
+
+    mov rax,[rsi].asym.name
+    mov ecx,[rsi].asym.name_size
+    .if ( ecx == 0 )
+
+        lea rax,@CStr("__unnamed")
+        mov ecx,9 ; 9 is sizeof("__unnamed")
+
+        .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+
+            ; v2.36.38 - add a type name
+
+            mov ecx,6
+            lea rax,@CStr("struct")
+            .if ( [rsi].asym.typekind == TYPE_UNION )
+                lea rax,@CStr("union")
+                dec ecx
+            .elseif ( [rsi].asym.typekind == TYPE_RECORD )
+                lea rax,@CStr("record")
+            .endif
+
+            ; this is the "Type" in Visual Studio Watch list
+            ;
+            ;   Name         Type
+            ;
+            ; - record       byte
+            ; - union        qword
+
+            mov edx,[rsi].asym.total_size
+            .switch edx
+            .case 1
+                lea rax,@CStr("byte")
+                mov ecx,4
+               .endc
+            .case 2
+                lea rax,@CStr("word")
+                mov ecx,4
+               .endc
+            .case 4
+                lea rax,@CStr("dword")
+                mov ecx,5
+               .endc
+            .case 8
+                lea rax,@CStr("qword")
+                mov ecx,5
+               .endc
+            .case 16
+                lea rax,@CStr("oword")
+                mov ecx,5
+               .endc
+            .endsw
+        .endif
     .endif
     mov name,rax
-    mov eax,9
-    .if ( [rsi].asym.name_size )
-        mov eax,[rsi].asym.name_size ; 9 is sizeof("__unnamed")
-    .endif
-    mov namesize,eax
+    mov namesize,ecx
 
     movzx eax,[rsi].asym.typekind
     .switch eax
@@ -1108,7 +1185,7 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
 
 if EQUATESYMS
 
-    .if ( [rsi].asym.flags & S_ISEQUATE )
+    .if ( [rsi].asym.isequate )
 
         mov edi,LF_SHORT
         mov eax,[rsi].asym.value
@@ -1262,7 +1339,7 @@ endif
     ;   - simple labels
     ; - data labels, memtype != MT_NEAR | MT_FAR
 
-    .if ( [rsi].asym.flags & S_ISPROC && Options.debug_ext >= CVEX_REDUCED ) ;; v2.10: no locals for -Zi0
+    .if ( [rsi].asym.isproc && Options.debug_ext >= CVEX_REDUCED ) ;; v2.10: no locals for -Zi0
 
         mov rdx,[rsi].dsym.procinfo
         mov pproc,rdx
@@ -1292,7 +1369,7 @@ endif
                 .endif
 
                 inc cnt[rcx*int_t]
-                .if ( [rsi].asym.mem_type == MT_EMPTY && [rsi].asym.sflags & S_ISVARARG )
+                .if ( [rsi].asym.mem_type == MT_EMPTY && [rsi].asym.is_vararg )
                     mov typeref,ST_PVOID
                 .else
                     .if ( [rsi].asym.mem_type == MT_PTR )
@@ -1303,7 +1380,7 @@ endif
                     mov typeref,ax
                 .endif
 
-                .if ( [rsi].asym.flags & S_ISARRAY )
+                .if ( [rsi].asym.isarray )
 
                     [rbx].write_array_type( rsi, typeref, Ofssize )
                     mov eax,[rbx].currtype
@@ -1329,7 +1406,7 @@ endif
             add eax,sizeof( PROCSYM16 ) - sizeof(uint_16)
             mov [rdi].PROCSYM16.reclen,ax
             mov eax,S_LPROC16
-            .if ( [rsi].asym.flags & S_ISPUBLIC )
+            .if ( [rsi].asym.ispublic )
                 mov eax,S_GPROC16
             .endif
             mov [rdi].PROCSYM16.rectyp,ax
@@ -1355,14 +1432,14 @@ endif
 
             mov size,sizeof( PROCSYM32 )
             mov eax,S_LPROC32
-            .if ( [rsi].asym.flags & S_ISPUBLIC )
+            .if ( [rsi].asym.ispublic )
                 mov eax,S_GPROC32
             .endif
             mov leaf,ax
             .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
                 mov size,sizeof( PROCSYM32_16t )
                 mov eax,S_LPROC32_16t
-                .if ( [rsi].asym.flags & S_ISPUBLIC )
+                .if ( [rsi].asym.ispublic )
                     mov eax,S_GPROC32_16t
                 .endif
                 mov leaf,ax
@@ -1390,7 +1467,7 @@ endif
                     mov [rdi].PROCSYM32_16t.flags,CV_PFLAG_FAR
                 .endif
                 mov rcx,pproc
-                .if ( [rcx].proc_info.flags & PROC_FPO )
+                .if ( [rcx].proc_info.fpo )
                     mov [rdi].PROCSYM32_16t.flags,CV_PFLAG_NOFPO
                 .endif
                 mov ofs,offsetof( PROCSYM32_16t, off )
@@ -1403,7 +1480,7 @@ endif
                     mov [rdi].PROCSYM32.flags,CV_PFLAG_FAR
                 .endif
                 mov rcx,pproc
-                .if ( [rcx].proc_info.flags & PROC_FPO )
+                .if ( [rcx].proc_info.fpo )
                     mov [rdi].PROCSYM32.flags,CV_PFLAG_NOFPO
                 .endif
                 mov ofs,offsetof( PROCSYM32, off )
@@ -1453,7 +1530,7 @@ endif
 
         ; v2.10: set S_GDATA[16|32] if symbol is public
 
-        .if ( [rsi].asym.flags & S_ISARRAY )
+        .if ( [rsi].asym.isarray )
             [rbx].write_array_type( rsi, 0, Ofssize )
             mov eax,[rbx].currtype
             inc [rbx].currtype
@@ -1481,7 +1558,7 @@ endif
         mov [rdi].DATASYM32_16t.reclen,ax
         .if ( Ofssize == USE16 )
             mov eax,S_LDATA16
-            .if ( [rsi].asym.flags & S_ISPUBLIC )
+            .if ( [rsi].asym.ispublic )
                 mov eax,S_GDATA16
             .endif
             mov leaf,ax
@@ -1493,7 +1570,7 @@ endif
                 mov rcx,[rcx].seg_info.clsym
                 .if ( tstrcmp( [rcx].asym.name, "TLS" ) == 0 )
                     mov ecx,S_LTHREAD32_16t
-                    .if ( [rsi].asym.flags & S_ISPUBLIC )
+                    .if ( [rsi].asym.ispublic )
                         mov ecx,S_GTHREAD32_16t
                     .endif
                 .endif
@@ -1501,12 +1578,12 @@ endif
             .if ( eax )
                 .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
                     mov ecx,S_LDATA32_16t
-                    .if ( [rsi].asym.flags & S_ISPUBLIC )
+                    .if ( [rsi].asym.ispublic )
                         mov ecx,S_GDATA32_16t
                     .endif
                 .else
                     mov ecx,S_LDATA32
-                    .if ( [rsi].asym.flags & S_ISPUBLIC )
+                    .if ( [rsi].asym.ispublic )
                         mov ecx,S_GDATA32
                     .endif
                 .endif
@@ -1575,7 +1652,7 @@ endif
 
     ; v2.10: no locals for -Zi0
 
-    .if ( [rsi].asym.flags & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+    .if ( [rsi].asym.isproc && Options.debug_ext >= CVEX_REDUCED )
 
         ; scan local symbols again
 
@@ -1767,10 +1844,10 @@ dbgcv::add_type proc __ccall uses rsi rdi sym:ptr asym
 
     ldr rsi,sym
 
-    .if ( [rsi].asym.cvtyperef != 0 || [rsi].asym.flags & S_CVDEFINED )
+    .if ( [rsi].asym.cvtyperef != 0 || [rsi].asym.cvdefined )
         .return
     .endif
-    or [rsi].asym.flags,S_CVDEFINED
+    mov [rsi].asym.cvdefined,1
 
     .if ( [rsi].asym.total_size )
 
@@ -1780,7 +1857,7 @@ dbgcv::add_type proc __ccall uses rsi rdi sym:ptr asym
             mov rdx,[rdi].sfield.type
             .if ( rdx )
 
-                .if ( [rdx].asym.state == SYM_TYPE && !( [rdx].asym.flags & S_CVDEFINED ) )
+                .if ( [rdx].asym.state == SYM_TYPE && !( [rdx].asym.cvdefined ) )
 
                     .if ( [rdx].asym.typekind == TYPE_STRUCT || [rdx].asym.typekind == TYPE_UNION )
 
@@ -2721,7 +2798,7 @@ endif
     xor esi,esi
     .while ( SymEnum( rsi, &i ) )
         mov rsi,rax
-        .if ( [rsi].asym.state == SYM_TYPE && !( [rsi].asym.flags & S_CVDEFINED ) &&
+        .if ( [rsi].asym.state == SYM_TYPE && !( [rsi].asym.cvdefined ) &&
               [rsi].asym.typekind != TYPE_TYPEDEF && [rsi].asym.cvtyperef == 0 )
             cv.write_type( rsi )
         .endif
@@ -2738,19 +2815,16 @@ endif
             ;; v2.10: no UDTs for -Zi0 and -Zi1
             .break .if ( Options.debug_ext < CVEX_NORMAL )
         .case SYM_INTERNAL
-            mov eax,[rsi].asym.flags
-            mov edx,eax
-            and edx,S_PREDEFINED
+            mov edx,[rsi].asym.predefined
 if EQUATESYMS
             ;; emit constants if -Zi3
-            mov ecx,eax
-            and ecx,S_ISEQUATE
-            and eax,S_VARIABLE
+            mov ecx,[rsi].asym.isequate
+            mov eax,[rsi].asym.isvariable
             .if ( Options.debug_ext < CVEX_MAX )
                 mov eax,ecx
             .endif
 else
-            and eax,S_ISEQUATE
+            mov eax,[rsi].asym.isequate
 endif
             .if ( ( Options.debug_symbols == CV_SIGNATURE_C13 && rsi == CV8Label ) || eax || edx ) ;; EQUates?
                 .endc

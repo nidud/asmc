@@ -194,7 +194,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
         imul eax,[rdi].abs_frame,16
         mov [rdi].start_offset,eax
        .return
-    .elseif ( [rdi].flags & SEG_INFO )
+    .elseif ( [rdi].information )
        .return
     .endif
 
@@ -222,7 +222,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
     ; v2.19, format -bin: don't align fileoffset for segments with RVA alignment [ALIGN(x,v)]
 
-    .if ( !( [rdi].flags & SEG_ALIGNRVA ) )
+    .if ( !( [rdi].align_rva ) )
 
         add [rbx].fileoffset,eax
     .endif
@@ -246,7 +246,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
         mov ecx,[rbx].fileoffset
         sub ecx,[rbx].sizehdr
         mov [rdx].asym.offs,ecx
-        or  [rdx].asym.flags,S_INCLUDED
+        mov [rdx].asym.included,1
         xor ecx,ecx
 
     .else
@@ -416,7 +416,7 @@ GetImageSize proc __ccall uses rsi rdi memimage:int_t
     .for ( rsi = SymTables[TAB_SEG*symbol_queue].head, eax = 0 : rsi : rsi = [rsi].dsym.next )
 
         mov rdi,[rsi].dsym.seginfo
-        .if ( [rdi].segtype == SEGTYPE_ABS || [rdi].flags & SEG_INFO )
+        .if ( [rdi].segtype == SEGTYPE_ABS || [rdi].information )
             .continue
         .endif
 
@@ -474,12 +474,12 @@ DoFixup proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
         .new codeptr:ptr = rax
 
-        .if ( rcx && ( [rcx].asym.segm || [rcx].asym.flags & S_VARIABLE ) )
+        .if ( rcx && ( [rcx].asym.segm || [rcx].asym.isvariable ) )
 
             ; assembly time variable (also $ symbol) in reloc?
             ; v2.07: moved inside if-block, using new local var "offset"
 
-            .if ( [rcx].asym.flags & S_VARIABLE )
+            .if ( [rcx].asym.isvariable )
 
                 mov rsi,[rbx].segment_var
                 mov offs,0
@@ -1017,7 +1017,7 @@ endif
             mov [rsi].sgroup,rcx
             mov [rsi].combine,COMB_ADDOFF  ; PUBLIC
             mov [rsi].characteristics,(IMAGE_SCN_MEM_READ shr 24)
-            or  [rsi].flags,SEG_RDONLY
+            mov [rsi].readonly,1
             mov [rsi].bytes_written,ebx ; ensure that ORG won't set start_loc (assemble.c, SetCurrOffset)
 
         .else
@@ -1027,7 +1027,7 @@ endif
             .endif
 
             mov rsi,[rax].dsym.seginfo
-            or  [rsi].flags,SEG_INTERNAL
+            mov [rsi].internal,1
             mov [rsi].start_loc,0
         .endif
 
@@ -1042,7 +1042,7 @@ endif
 
         .if ( rax )
 
-            or [rax].asym.flags,S_PREDEFINED
+            mov [rax].asym.predefined,1
             lea rcx,set_file_flags
             mov [rax].asym.sfunc_ptr,rcx
         .endif
@@ -1112,7 +1112,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
 
             .if ( [rsi].segtype == SEGTYPE_DATA )
 
-                .if ( [rsi].flags & SEG_RDONLY || [rsi].characteristics == CHAR_READONLY )
+                .if ( [rsi].readonly || [rsi].characteristics == CHAR_READONLY )
 
                     mov [rsi].segtype,SEGTYPE_CDATA
 
@@ -1150,7 +1150,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
 
                 ; v2.19: skip info sections
 
-                .continue .if ( [rdx].seg_info.flags & SEG_INFO )
+                .continue .if ( [rdx].seg_info.information )
 
                 ; v2.12: don't mix 32-bit and 16-bit code segments
                 ; v2.19: use SEGTYPE_CODE16 instead of SEGTYPE_UNDEF so it's behind the .text section;
@@ -1215,7 +1215,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
 
     .for ( rdi = MODULE.PubQueue.head, ebx = 0 : rdi : rdi = [rdi].qnode.next )
         mov rdx,[rdi].qnode.sym
-        .if ( [rdx].asym.flags & S_ISEXPORT )
+        .if ( [rdx].asym.isexport )
             inc ebx
         .endif
     .endf
@@ -1247,7 +1247,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     .for ( rsi = rax, rdi = MODULE.PubQueue.head, ebx = 0 : rdi : rdi = [rdi].qnode.next )
 
         mov rdx,[rdi].qnode.sym
-        .if ( [rdx].asym.flags & S_ISEXPORT )
+        .if ( [rdx].asym.isexport )
 
             mov [rsi].name,[rdx].asym.name
             mov [rsi].idx,ebx
@@ -1266,7 +1266,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     .for ( rdi = MODULE.PubQueue.head : rdi : rdi = [rdi].qnode.next )
 
         mov rdx,[rdi].qnode.sym
-        .if ( [rdx].asym.flags & S_ISEXPORT )
+        .if ( [rdx].asym.isexport )
 
             AddLineQueueX( "dd %r %s", T_IMAGEREL, [rdi].asym.name )
         .endif
@@ -1300,7 +1300,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     .for ( rsi = MODULE.PubQueue.head : rsi : rsi = [rsi].qnode.next )
 
         mov rdi,[rsi].qnode.sym
-        .if ( [rdi].asym.flags & S_ISEXPORT )
+        .if ( [rdi].asym.isexport )
 
             Mangle( rdi, StringBufferEnd )
             mov rcx,StringBufferEnd
@@ -1382,7 +1382,7 @@ endif
                 rcx, T_SEGMENT, cpalign, rdx, rsi, T_LABEL, ptrtype )
 
             .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
-                .if ( [rdi].asym.flags & S_IAT_USED && [rdi].asym.dll == rbx )
+                .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
                     AddLineQueueX( "@LPPROC %r @%s_name", T_IMAGEREL, [rdi].asym.name )
                 .endif
             .endf
@@ -1396,7 +1396,7 @@ endif
                 "@%s_iat %r %r", idataname, T_ENDS, idataname, T_SEGMENT, cpalign, idataattr, rsi, T_LABEL, ptrtype )
 
             .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
-                .if ( [rdi].asym.flags & S_IAT_USED && [rdi].asym.dll == rbx )
+                .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
                     Mangle( rdi, StringBufferEnd )
                     AddLineQueueX( "%s%s @LPPROC %r @%s_name",
                         MODULE.imp_prefix, StringBufferEnd, T_IMAGEREL, [rdi].asym.name )
@@ -1411,7 +1411,7 @@ endif
                 "%s" IMPSTRSUF " %r %r %s", idataname, T_ENDS, idataname, T_SEGMENT, T_WORD, idataattr )
 
             .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
-                .if ( [rdi].asym.flags & S_IAT_USED && [rdi].asym.dll == rbx )
+                .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
                     AddLineQueueX(
                         "@%s_name dw 0\n"
                         "db '%s',0\n"
@@ -1471,7 +1471,7 @@ pe_get_characteristics proc fastcall segp:ptr dsym
     .case ( [rcx].seg_info.combine == COMB_STACK && [rcx].seg_info.bytes_written == 0 )
         mov eax,IMAGE_SCN_CNT_UNINITIALIZED_DATA or IMAGE_SCN_MEM_READ or IMAGE_SCN_MEM_WRITE
         .endc
-    .case ( [rcx].seg_info.flags & SEG_RDONLY )
+    .case ( [rcx].seg_info.readonly )
         mov eax,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ
         .endc
     .case ( [rcx].seg_info.clsym )
@@ -1912,7 +1912,7 @@ endif
     .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].dsym.next )
 
         mov rsi,[rdi].dsym.seginfo
-        .if ( [rsi].flags & SEG_INFO )
+        .if ( [rsi].information )
             .if ( !tstrcmp( [rdi].asym.name, ".drectve" ) )
                 pe_scan_linker_directives( pe, [rsi].CodeBuffer, [rsi].bytes_written )
             .endif
@@ -2092,7 +2092,7 @@ if 1    ; v2.34.61 - jwasm
         ; been called just after step 1 - and worse, inside pe_emit_export_data() it cannot be done
         ; either since at that time there are no section contents available yet!
 
-        .if ( [rsi].flags & SEG_INFO ) ; v2.13: ignore 'info' sections (linker directives)
+        .if ( [rsi].information ) ; v2.13: ignore 'info' sections (linker directives)
 
             ;asmerr( 8017, [rdi].asym.name ) ; v2.15: emit warning
            .continue
@@ -2670,9 +2670,9 @@ endif
         .continue .if ( [rsi].segtype == SEGTYPE_ABS )
 
         .if ( ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT ) &&
-              ( [rsi].segtype == SEGTYPE_BSS || [rsi].flags & SEG_INFO ) )
+              ( [rsi].segtype == SEGTYPE_BSS || [rsi].information ) )
             xor eax,eax
-            .if ( [rsi].flags & SEG_INFO )
+            .if ( [rsi].information )
                 .continue ; v2.19: info sections shouldn't appear in binary map
             .endif
         .else
@@ -2799,8 +2799,8 @@ bin_write_module endp
 bin_check_external proc
 
     .for ( rdx = SymTables[TAB_EXT*symbol_queue].head : rdx : rdx = [rdx].dsym.next )
-        .if ( !( [rdx].asym.sflags & S_WEAK ) || [rdx].asym.flags & S_USED )
-            .if ( !( [rdx].asym.flags & S_ISINLINE ) )
+        .if ( !( [rdx].asym.weak ) || [rdx].asym.used )
+            .if ( !( [rdx].asym.isinline ) )
                 .return( asmerr( 2014, [rdx].asym.name ) )
             .endif
         .endif

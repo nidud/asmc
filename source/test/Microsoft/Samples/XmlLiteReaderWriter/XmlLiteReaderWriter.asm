@@ -13,8 +13,8 @@
 
 include ole2.inc
 include xmllite.inc
-include stdio.inc
 include shlwapi.inc
+include stdio.inc
 include strsafe.inc
 include tchar.inc
 
@@ -63,16 +63,6 @@ endif
     .code
 
     assume rcx:ptr FileStream
-
-FileStream::FileStream proc hFile:HANDLE
-
-    @ComAlloc(FileStream)
-    mov [rax].FileStream._refcount,1
-    mov rdx,hFile
-    mov [rax].FileStream._hFile,rdx
-    ret
-
-FileStream::FileStream endp
 
 FileStream::Close proc
 
@@ -224,6 +214,16 @@ FileStream::Stat proc pStatstg:ptr STATSTG, s:DWORD
     .return S_OK
 
 FileStream::Stat endp
+
+FileStream::FileStream proc hFile:HANDLE
+
+    @ComAlloc(FileStream)
+    mov [rax].FileStream._refcount,1
+    mov rdx,hFile
+    mov [rax].FileStream._hFile,rdx
+    ret
+
+FileStream::FileStream endp
 
 
 wmain proc argc:int_t, argv:ptr ptr WCHAR

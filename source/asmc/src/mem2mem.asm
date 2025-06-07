@@ -126,7 +126,7 @@ SizeFromExpression proc fastcall private opnd:ptr expr
 
             mov eax,[rcx].asym.total_size
 
-            .if [rcx].asym.flags & S_ISARRAY
+            .if [rcx].asym.isarray
 
                 mov ecx,[rcx].asym.total_length
                 xor edx,edx
@@ -495,6 +495,7 @@ endif
 imm2xmm endp
 
     assume rdi:nothing
+    assume rcx:ptr asm_tok
 
 ; Handle C-type RECORD fields
 ;
@@ -525,7 +526,10 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
         xchg rbx,rdx
     .endif
     mov rcx,[rbx].expr.base_reg
-    mov rsi,[rcx].asm_tok.tokpos
+    mov rsi,[rcx].tokpos
+    .if ( [rcx].token == T_REG && [rcx-asm_tok].token == T_OP_SQ_BRACKET )
+        mov rsi,[rcx-asm_tok].tokpos
+    .endif
     .for ( : [rcx].asm_tok.token != T_DOT && [rcx].asm_tok.token != T_FINAL : rcx+=asm_tok )
     .endf
     .if ( [rcx].asm_tok.token != T_DOT )
@@ -545,7 +549,9 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
     mov dist,eax
     mov ecx,[rbx].expr.value
     mov rax,[rbx].expr.sym
-    sub ecx,[rax].asym.offs
+    .if ( rax )
+        sub ecx,[rax].asym.offs
+    .endif
     mov offs,ecx
     movzx eax,[rdi].asym.bitf_token
     .switch eax
@@ -651,7 +657,14 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
             .endif
 
         .elseif ( bits == 1 || ebx == 0 )
+if 0
+            ; cmp bitfield,0 --> test mem,bit -- ok
+            ; cmp bitfield,1 --> test mem,bit -- fail
 
+            .if ( ebx == 1 && MODULE.HllStack == NULL )
+                asmerr( 2008, rsi )
+            .endif
+endif
             AddLineQueueX( " %r %r ptr %s[%u], %u", T_TEST, type, rsi, offs, mask )
 
         .elseif ( isbyte || isword )

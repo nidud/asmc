@@ -70,9 +70,10 @@ CreateExternal proc fastcall private uses rsi sym:ptr asym, name:string_t, weak:
     .if ( rsi )
         mov [rsi].asym.state,SYM_EXTERNAL
         mov [rsi].asym.segoffsize,MODULE.Ofssize
-        and [rsi].asym.sflags,not ( S_WEAK or S_ISCOM )
+        mov [rsi].asym.iscomm,0
+        mov [rsi].asym.weak,0
         .if ( weak )
-            or [rsi].asym.sflags,S_WEAK
+            mov [rsi].asym.weak,1
         .endif
         sym_add_table( &SymTables[TAB_EXT*symbol_queue], rsi ) ; add EXTERNAL
     .endif
@@ -94,11 +95,12 @@ CreateComm proc fastcall private uses rsi sym:ptr asym, name:string_t
     .endif
 
     .if ( rsi )
+
         mov [rsi].asym.state,SYM_EXTERNAL
         mov [rsi].asym.segoffsize,MODULE.Ofssize
         mov [rsi].asym.is_far,0
-        and [rsi].asym.sflags,not S_WEAK
-        or  [rsi].asym.sflags,S_ISCOM
+        mov [rsi].asym.weak,0
+        mov [rsi].asym.iscomm,1
         sym_add_table( &SymTables[TAB_EXT*symbol_queue], rsi ) ; add EXTERNAL
     .endif
     .return( rsi )
@@ -122,15 +124,15 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_to
     ; - SYM_INTERNAL + isproc == TRUE ( previous PROC )
 
     .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED ||
-          ( [rsi].asym.state == SYM_EXTERNAL && ( [rsi].asym.sflags & S_WEAK ) &&
-            !( [rsi].asym.flags & S_ISPROC ) ) )
+          ( [rsi].asym.state == SYM_EXTERNAL && ( [rsi].asym.weak ) &&
+            !( [rsi].asym.isproc ) ) )
 
         .if ( CreateProc( rsi, name, SYM_EXTERNAL ) == NULL )
             .return ; name was probably invalid
         .endif
         mov rsi,rax
 
-    .elseif ( !( [rsi].asym.flags & S_ISPROC ) )
+    .elseif ( !( [rsi].asym.isproc ) )
         asmerr( 2005, [rsi].asym.name )
         .return( NULL )
     .endif
@@ -174,7 +176,7 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_to
         .endif
         mov [rsi].asym.dll,MODULE.CurrDll
     .else
-        or  [rsi].asym.flags,S_ISDEFINED
+        mov [rsi].asym.isdefined,1
     .endif
     .return( rsi )
 
@@ -281,7 +283,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             ; v2.05: added to accept type prototypes
 
-            .if ( ti.is_ptr == 0 && rdi && [rdi].asym.flags & S_ISPROC )
+            .if ( ti.is_ptr == 0 && rdi && [rdi].asym.isproc )
 
                 CreateProc( rsi, NULL, SYM_EXTERNAL )
                 CopyPrototype( rsi, rdi )
@@ -341,7 +343,7 @@ endif
 
             ; v2.05: added to accept type prototypes
 
-            .if ( ti.is_ptr == 0 && rdi && [rdi].asym.flags & S_ISPROC )
+            .if ( ti.is_ptr == 0 && rdi && [rdi].asym.isproc )
 
                 mov ti.mem_type,[rdi].asym.mem_type
                 mov ti.symtype,NULL
@@ -389,14 +391,14 @@ if 1
             ; So if the PROC has been explicitely marked as private, the
             ; externdef doesn't care. But that's what masm (6/8) does...
 
-            .if ( [rsi].asym.state == SYM_INTERNAL && !( [rsi].asym.flags & S_ISPUBLIC ) )
+            .if ( [rsi].asym.state == SYM_INTERNAL && !( [rsi].asym.ispublic ) )
 
-                or [rsi].asym.flags,S_ISPUBLIC
+                mov [rsi].asym.ispublic,1
                 AddPublicData( rsi )
             .endif
 endif
         .endif
-        or [rsi].asym.flags,S_ISDEFINED
+        mov [rsi].asym.isdefined,1
 
 if 0
         ; v2.18: removed, because it's a bug.
@@ -410,9 +412,9 @@ if 0
         ; 3. the EXTERNDEF directive running in pass 2 surely cannot know better than
         ; the PROC directive what the visibility status of the procedure is supposed to be.
 
-        .if ( [rsi].asym.state == SYM_INTERNAL && !( [rsi].asym.flags & S_ISPUBLIC ) )
+        .if ( [rsi].asym.state == SYM_INTERNAL && !( [rsi].asym.ispublic ) )
 
-            or [rsi].asym.flags,S_ISPUBLIC
+            mov [rsi].asym.ispublic,1
             AddPublicData(rsi)
         .endif
 endif
@@ -446,8 +448,8 @@ ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
         ; v2.04: set the "defined" flag
 
         .if ( SymSearch( [rbx].string_ptr ) )
-            .if ( [rax].asym.flags & S_ISPROC )
-                or [rax].asym.flags,S_ISDEFINED
+            .if ( [rax].asym.isproc )
+                mov [rax].asym.isdefined,1
             .endif
         .endif
         .return( NOT_ERROR )
@@ -482,7 +484,7 @@ MakeExtern proc __ccall name:string_t, mem_type:byte, vartype:ptr asym, sym:ptr 
         ( Options.masm_compat_gencode == FALSE || mem_type != MT_FAR ) )
         mov [rcx].asym.segm,CurrSeg
     .endif
-    or  [rcx].asym.flags,S_ISDEFINED
+    mov [rcx].asym.isdefined,1
     mov [rcx].asym.mem_type,mem_type
     mov [rcx].asym.segoffsize,Ofssize
     mov [rcx].asym.type,vartype
@@ -514,7 +516,7 @@ HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:ptr as
             .elseif ( [rdi].asym.state != SYM_INTERNAL && [rdi].asym.state != SYM_EXTERNAL )
                 asmerr( 2004, altname )
             .else
-                .if ( [rdi].asym.state == SYM_INTERNAL && !( [rdi].asym.flags & S_ISPUBLIC ) )
+                .if ( [rdi].asym.state == SYM_INTERNAL && !( [rdi].asym.ispublic ) )
                     .if ( Options.output_format == OFORMAT_COFF ||
                           Options.output_format == OFORMAT_ELF )
                         asmerr( 2217, altname )
@@ -541,7 +543,7 @@ HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:ptr as
             ; v2.11: don't do this for OMF ( maybe neither for COFF/ELF? )
 
             .if ( Options.output_format != OFORMAT_OMF )
-                or [rdi].asym.flags,S_USED
+                mov [rdi].asym.used,1
             .endif
 
             ; symbol inserted in the "weak external" queue?
@@ -650,7 +652,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .return( ERROR )
             .endif
             .if ( [rdi].asym.state == SYM_EXTERNAL )
-                and [rdi].asym.sflags,not S_WEAK
+                mov [rdi].asym.weak,0
                 .return( HandleAltname( altname, rdi ) )
             .else
 
@@ -684,13 +686,13 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             mov rsi,ti.symtype
 
-            .if ( ti.is_ptr == 0 && rsi && [rsi].asym.flags & S_ISPROC )
+            .if ( ti.is_ptr == 0 && rsi && [rsi].asym.isproc )
 
                 CreateProc( rdi, NULL, SYM_EXTERNAL )
 
                 ; v2.09: reset the weak bit that has been set inside CreateProc()
 
-                and [rdi].asym.sflags,not S_WEAK
+                mov [rdi].asym.weak,0
 
                 CopyPrototype( rdi, rsi )
                 mov ti.mem_type,[rsi].asym.mem_type
@@ -717,7 +719,7 @@ endif
             ; v2.05: added to accept type prototypes
 
             mov rsi,ti.symtype
-            .if ( ti.is_ptr == 0 && rsi && [rsi].asym.flags & S_ISPROC )
+            .if ( ti.is_ptr == 0 && rsi && [rsi].asym.isproc )
 
                 mov ti.mem_type,[rsi].asym.mem_type
                 mov ti.symtype,NULL
@@ -738,7 +740,7 @@ endif
             .endif
         .endif
 
-        or  [rdi].asym.flags,S_ISDEFINED
+        mov [rdi].asym.isdefined,1
         mov [rdi].asym.Ofssize,ti.Ofssize
 
         .if ( ti.is_ptr == 0 && al != MODULE.Ofssize )
@@ -963,7 +965,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .return( ERROR )
             .endif
             mov [rdi].asym.type,type ; v2.17 added
-        .elseif ( [rdi].asym.state != SYM_EXTERNAL || !( [rdi].asym.sflags & S_ISCOM ) )
+        .elseif ( [rdi].asym.state != SYM_EXTERNAL || !( [rdi].asym.iscomm ) )
             .return( asmerr( 2005, [rdi].asym.name ) )
         .else
             mov eax,[rdi].asym.total_size
@@ -974,7 +976,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .return( asmerr( 2007, szCOMM, [rdi].asym.name ) )
             .endif
         .endif
-        or [rdi].asym.flags,S_ISDEFINED
+        mov [rdi].asym.isdefined,1
         SetMangler( rdi, langtype, mangle_type )
 
         imul ebx,i,asm_tok
@@ -1051,23 +1053,23 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .switch ( [rdi].asym.state )
             .case SYM_UNDEFINED
                 .if ( isexport )
-                    or [rdi].asym.flags,S_ISEXPORT
+                    mov [rdi].asym.isexport,1
                 .endif
                 .endc
             .case SYM_INTERNAL
-                .if ( [rdi].asym.flags & S_SCOPED )
+                .if ( [rdi].asym.scoped )
                     asmerr( 2014, [rdi].asym.name )
                     mov skipitem,TRUE
                 .endif
                 .if ( isexport )
-                    or [rdi].asym.flags,S_ISEXPORT
+                    mov [rdi].asym.isexport,1
                 .endif
                 .endc
             .case SYM_EXTERNAL
-                .if ( [rdi].asym.sflags & S_ISCOM )
+                .if ( [rdi].asym.iscomm )
                     asmerr( 2014, [rdi].asym.name )
                     mov skipitem,TRUE
-                .elseif ( !( [rdi].asym.sflags & S_WEAK ) )
+                .elseif ( !( [rdi].asym.weak ) )
                     ; for EXTERNs, emit a different error msg
                     asmerr( 2005, [rdi].asym.name )
                     mov skipitem,TRUE
@@ -1078,8 +1080,8 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov skipitem,TRUE
             .endsw
             .if ( Parse_Pass == PASS_1 && skipitem == FALSE )
-                .if ( !( [rdi].asym.flags & S_ISPUBLIC ) )
-                    or [rdi].asym.flags,S_ISPUBLIC
+                .if ( !( [rdi].asym.ispublic ) )
+                    mov [rdi].asym.ispublic,1
                     AddPublicData( rdi ) ; put it into the public table
                 .endif
                 SetMangler( rdi, langtype, mangle_type )

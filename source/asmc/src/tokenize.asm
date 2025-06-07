@@ -97,7 +97,7 @@ IsMultiLine proc fastcall tokenarray:token_t
 
         .if SymFind( [rcx].string_ptr )
 
-            .if ( [rax].asym.state == SYM_MACRO && !( [rax].asym.mac_flag & M_MULTILINE ) )
+            .if ( [rax].asym.state == SYM_MACRO && !( [rax].asym.multiline ) )
 
                 .return( 0 )
             .endif
@@ -709,15 +709,15 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
                 .case ( Options.strict_masm_compat == 1 )
                     .endc .if ( edx != SYM_MACRO )
-                    .endc .if ( !( [rax].asym.mac_flag & M_ISFUNC ) )
+                    .endc .if ( !( [rax].asym.isfunc ) )
                      and [rsi].flags2,not DF_CEXPR
                     .endc
 
                 .case ( edx == SYM_MACRO )
-                    .if ( [rax].asym.mac_flag & M_ISFUNC )
+                    .if ( [rax].asym.isfunc )
 
                         and [rsi].flags2,not DF_CEXPR
-                        .if ( [rax].asym.flags & S_PREDEFINED )
+                        .if ( [rax].asym.predefined )
 
                             mov rdx,[rax].asym.name
                             mov edx,[rdx]
@@ -731,11 +731,11 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                        .endc
                     .endif
 
-                    .endc .if ( [rax].asym.flags & S_PREDEFINED )
+                    .endc .if ( [rax].asym.predefined )
                     .endc .if ( ![rax].asym.string_ptr )
                     .endc .if ( SymFind( [rax].asym.string_ptr ) == NULL )
                      xor ecx,ecx
-                    .endc .if !( [rax].asym.flags & S_ISPROC )
+                    .endc .if !( [rax].asym.isproc )
                      mov ecx,T_ISPROC
                      inc [rsi].cstring
                     .endc
@@ -780,7 +780,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                 .case ( edx == SYM_STACK )
                 .case ( edx == SYM_INTERNAL )
                 .case ( edx == SYM_EXTERNAL )
-                .case ( [rax].asym.flags & S_ISPROC )
+                .case ( [rax].asym.isproc )
                     mov ecx,T_ISPROC
                     inc [rsi].cstring
                    .endc

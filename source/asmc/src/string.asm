@@ -1118,7 +1118,7 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
 
     mov [rdi].asym.state,SYM_TMACRO
-    or  [rdi].asym.flags,S_ISDEFINED
+    mov [rdi].asym.isdefined,1
 
     ; v2.08: reuse string space if fastmem is on
 
@@ -1177,7 +1177,7 @@ SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok, sym:ptr asym,
     .endif
 
     mov [rdi].asym.state,SYM_TMACRO
-    or  [rdi].asym.flags,S_ISDEFINED
+    mov [rdi].asym.isdefined,1
 
     mov rbx,tokenarray
     .if ( [rbx+2*asm_tok].token == T_STRING && [rbx+2*asm_tok].string_delim == '<' )
@@ -1235,7 +1235,8 @@ AddPredefinedText proc __ccall name:string_t, value:string_t
     .endif
 
     mov [rax].asym.state,SYM_TMACRO
-    or  [rax].asym.flags,S_ISDEFINED or S_PREDEFINED
+    mov [rax].asym.isdefined,1
+    mov [rax].asym.predefined,1
     mov rcx,value
     mov [rax].asym.string_ptr,rcx
 
@@ -1379,7 +1380,7 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     mov [rsi].asym.state,SYM_TMACRO
-    or  [rsi].asym.flags,S_ISDEFINED
+    mov [rsi].asym.isdefined,1
     inc edi
     .if ( [rsi].asym.total_size < edi )
         mov [rsi].asym.total_size,edi
@@ -1847,9 +1848,10 @@ ifdef USE_COMALLOC
     ; add @ComAlloc() macro func
 
     mov rdi,CreateMacro( "@ComAlloc" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [rdi].isdefined,1
+    mov [rdi].predefined,1
     mov [rdi].func_ptr,&ComAllocFunc
-    mov [rdi].mac_flag,M_ISFUNC
+    mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,2
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
@@ -1863,9 +1865,10 @@ endif
     ; add typeid() macro func
 
     mov rdi,CreateMacro( "typeid" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [rdi].isdefined,1
+    mov [rdi].predefined,1
     mov [rdi].func_ptr,&TypeIdFunc
-    mov [rdi].mac_flag,M_ISFUNC
+    mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,2
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
@@ -1877,9 +1880,10 @@ endif
     ;; add @CStr() macro func
 
     mov rdi,CreateMacro( "@CStr" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [rdi].isdefined,1
+    mov [rdi].predefined,1
     mov [rdi].func_ptr,&CStringFunc
-    mov [rdi].mac_flag,M_ISFUNC
+    mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
@@ -1889,9 +1893,10 @@ endif
     ;; add @Reg() macro func
 
     mov rdi,CreateMacro( "@Reg" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [rdi].isdefined,1
+    mov [rdi].predefined,1
     mov [rdi].func_ptr,&RegFunc
-    mov [rdi].mac_flag,M_ISFUNC
+    mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,2
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
@@ -1903,9 +1908,11 @@ endif
     ;; add @CatStr() macro func
 
     mov rdi,CreateMacro( "@CatStr" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [rdi].isdefined,1
+    mov [rdi].predefined,1
     mov [rdi].func_ptr,&CatStrFunc
-    mov [rdi].mac_flag,M_ISFUNC or M_ISVARARG
+    mov [rdi].mac_vararg,1
+    mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
@@ -1915,9 +1922,10 @@ endif
     ;; add @InStr() macro func
 
     mov rdi,CreateMacro( "@InStr" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [rdi].isdefined,1
+    mov [rdi].predefined,1
     mov [rdi].func_ptr,&InStrFunc
-    mov [rdi].mac_flag,M_ISFUNC
+    mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,3
     mov [rsi].autoexp,1
@@ -1932,9 +1940,10 @@ endif
     ;; add @SizeStr() macro func
 
     mov rdi,CreateMacro( "@SizeStr" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [rdi].isdefined,1
+    mov [rdi].predefined,1
     mov [rdi].func_ptr,&SizeStrFunc
-    mov [rdi].mac_flag,M_ISFUNC
+    mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
@@ -1944,9 +1953,10 @@ endif
     ;; add @SubStr() macro func
 
     mov rdi,CreateMacro( "@SubStr" )
-    mov [rdi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [rdi].isdefined,1
+    mov [rdi].predefined,1
     mov [rdi].func_ptr,&SubStrFunc
-    mov [rdi].mac_flag,M_ISFUNC
+    mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,3
     mov [rsi].autoexp,2 + 4 ;; param 2 (pos) and 3 (size) are expanded

@@ -157,8 +157,7 @@ check_defd proc fastcall private name:string_t
     .if ( byte ptr [rcx] )
 
         .if SymSearch( rcx )
-            mov eax,[rax].asym.flags
-            and eax,S_ISDEFINED
+            mov eax,[rax].asym.isdefined
         .endif
     .endif
     ret
@@ -420,7 +419,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; v2.09: special treatment of FLAT added
 
             mov rax,MODULE.flat_grp
-            .if ( rax && [rax].asym.flags & S_ISDEFINED )
+            .if ( rax && [rax].asym.isdefined )
                 mov esi,BLOCK_ACTIVE
             .else
                 mov esi,BLOCK_INACTIVE

@@ -331,7 +331,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
                 inc i
             .endif
 
-        .elseif ( [rdi].flags & S_ISARRAY &&
+        .elseif ( [rdi].isarray &&
                   [rbx].token != T_FINAL && [rbx].token != T_COMMA )
 
             .ifd ( InitializeArray( rdi, &i, tokenarray ) == ERROR )
@@ -635,11 +635,27 @@ next_item:
         mov rsi,CurrStruct
         .if ( rsi && [rsi].asym.typekind == TYPE_RECORD && [rbx].token == T_COLON )
 
+            xor eax,eax
             .if ( [rbx-asm_tok].token == T_DIRECTIVE )
+                mov eax,[rbx-asm_tok].tokval
+            .elseif ( first && i == 2 )
+                mov rdx,type_sym
+                .if ( rdx )
+                    .if ( [rdx].asym.mem_type == MT_BYTE )
+                        mov eax,T_BYTE
+                    .elseif ( [rdx].asym.mem_type == MT_WORD )
+                        mov eax,T_WORD
+                    .elseif ( [rdx].asym.mem_type == MT_DWORD )
+                        mov eax,T_DWORD
+                    .endif
+                .endif
+            .endif
+
+            .if ( eax )
 
                 mov rdx,sym ; v2.36.37 - added
-                mov [rdx].asym.bitf_token,[rbx-asm_tok].tokval
-                or  [rdx].asym.flags,S_CRECORD
+                mov [rdx].asym.bitf_token,ax
+                mov [rdx].asym.crecord,1
             .endif
 
             inc i ; get width
@@ -661,7 +677,7 @@ next_item:
             .endif
             mov rdx,sym
             mov [rdx].asym.mem_type,MT_BITS
-            .if ( [rdx].asym.flags & S_CRECORD )
+            .if ( [rdx].asym.crecord )
                 mov al,[rsi].asym.bitf_offs
                 add [rsi].asym.bitf_offs,cl
                 mov [rdx].asym.bitf_offs,al
@@ -726,7 +742,7 @@ next_item:
 
             mov rax,sym
             .if ( rax )
-                or [rax].asym.flags,S_ISARRAY
+                mov [rax].asym.isarray,1
             .endif
 
             .if ( opndx.value == 0 )
@@ -865,7 +881,7 @@ next_item:
                         ; v2.07: don't modify string_len! Instead
                         ; mark field as array!
 
-                        or [rdi].asym.flags,S_ISARRAY
+                        mov [rdi].asym.isarray,1
                     .else
                         .return( asmerr( 2047 ) ) ;; MASM doesn't like ""
                     .endif
@@ -902,7 +918,7 @@ next_item:
                     .if ecx
                         dec eax
                         add total,eax
-                        or [rdi].asym.flags,S_ISARRAY ; v2.07: added
+                        mov [rdi].asym.isarray,1 ; v2.07: added
                         .if ( first )
                             mov [rdi].asym.first_length,1
                             mov [rdi].asym.first_size,ecx
@@ -1327,7 +1343,7 @@ item_done:
             .if ( [rbx].token != T_FINAL && [rbx].token != T_CL_BRACKET )
                 mov first,FALSE
                 .if ( rcx )
-                    or [rcx].asym.flags,S_ISARRAY
+                    mov [rcx].asym.isarray,1
                 .endif
                 jmp next_item
             .endif
@@ -1453,7 +1469,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
         mov mem_type,MT_TYPE
         mov rdi,[rsi].dsym.structinfo
         .if ( [rsi].asym.typekind != TYPE_TYPEDEF &&
-             ( [rsi].asym.total_size == 0 || [rdi].struct_info.flags & SI_ORGINSIDE ) )
+             ( [rsi].asym.total_size == 0 || [rdi].struct_info.OrgInside ) )
             .return( asmerr( 2159 ) )
         .endif
 
@@ -1535,7 +1551,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
                 FStoreLine(0)
             .endif
             mov currofs,[rsi].asym.offs
-            or [rsi].asym.flags,S_ISDATA ; 'first_size' is valid
+            mov [rsi].asym.isdata,1 ; 'first_size' is valid
 
         .else ; v2.04: else branch added
 
@@ -1573,8 +1589,8 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
             .if ( Parse_Pass == PASS_1 )
 
                 .if ( [rsi].asym.state == SYM_EXTERNAL &&
-                      [rsi].asym.sflags & S_WEAK &&
-                      !( [rsi].asym.flags & S_ISPROC ) ) ;; EXTERNDEF?
+                      [rsi].asym.weak &&
+                      !( [rsi].asym.isproc ) ) ;; EXTERNDEF?
                     checktypes( rsi, mem_type, type_sym )
                     sym_ext2int( rsi )
                     mov [rsi].asym.total_size,0
@@ -1638,7 +1654,8 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
             .if( Parse_Pass != PASS_1 && [rsi].asym.offs != old_offset )
                 mov MODULE.PhaseError,TRUE
             .endif
-            or  [rsi].asym.flags,S_ISDEFINED or S_ISDATA
+            mov [rsi].asym.isdefined,1
+            mov [rsi].asym.isdata,1
             mov [rsi].asym.mem_type,mem_type
             mov [rsi].asym.type,type_sym
 

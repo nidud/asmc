@@ -247,7 +247,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
     ; invokation of macro functions requires params enclosed in "()"
 
     mov parm_end_delim,T_FINAL
-    .if ( [rsi].mac_flag & M_ISFUNC )
+    .if ( [rsi].isfunc )
 
         .if ( [rbx].token == T_OP_BRACKET ) ; should be always true
 
@@ -262,7 +262,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
     ; v2.08: if macro is purged, return "void"
 
-    .if ( [rsi].mac_flag & M_PURGED )
+    .if ( [rsi].purged )
 
         .if ( bracket_level > 0 )
 
@@ -310,7 +310,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
     mov rbx,tokenarray
     mov parmidx,0
 
-    .if ( [rsi].mac_flag & M_LABEL )
+    .if ( [rsi].islabel )
 
         .if ( mflags & MF_LABEL )
 
@@ -366,7 +366,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
         .if ( [rbx].token == T_FINAL || [rbx].token == parm_end_delim ||
              ( [rbx].token == T_COMMA &&
-              ( !( [rsi].mac_flag & M_ISVARARG ) || parmidx != ecx ) ) )
+              ( !( [rsi].mac_vararg ) || parmidx != ecx ) ) )
 
             ; it's a blank parm
 
@@ -438,11 +438,8 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                     .if [rbx].token == T_ID
                         mov sym,SymSearch( [rbx].string_ptr )
 
-                        .if ( rax &&
-                              [rax].asym.flags & S_ISDEFINED &&
-                              ( [rax].asym.state == SYM_TMACRO ||
-                                ( [rax].asym.state == SYM_MACRO &&
-                                  [rax].asym.mac_flag & M_ISFUNC &&
+                        .if ( rax && [rax].asym.isdefined && ( [rax].asym.state == SYM_TMACRO ||
+                                ( [rax].asym.state == SYM_MACRO && [rax].asym.isfunc &&
                                   [rbx+asm_tok].token == T_OP_BRACKET ) ) )
 
                             mov cnt_opnum,0
@@ -696,8 +693,8 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
                             mov sym,rax
                             .if ( [rax].asym.state == SYM_MACRO &&
-                                  [rax].asym.flags & S_ISDEFINED &&
-                                  [rax].asym.mac_flag & M_ISFUNC &&
+                                  [rax].asym.isdefined &&
+                                  [rax].asym.isfunc &&
                                   [rbx+asm_tok].token == T_OP_BRACKET )
 
                                 inc idx
@@ -732,14 +729,14 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                                 sub rbx,asm_tok
                                .continue
 
-                            .elseif ( [rax].asym.state == SYM_TMACRO && [rax].asym.flags & S_ISDEFINED )
+                            .elseif ( [rax].asym.state == SYM_TMACRO && [rax].asym.isdefined )
 
                                 mov ecx,parmidx
                                 mov edx,1
                                 shl edx,cl
                                 mov rdi,info
                                 mov rsi,mac
-                                .if ( [rsi].flags & S_PREDEFINED && ( [rdi].autoexp & dx ) )
+                                .if ( [rsi].predefined && ( [rdi].autoexp & dx ) )
 
                                     tstrcpy( p, [rax].asym.string_ptr )
                                     ExpandTMacro( p, tokenarray, FALSE, 0 )
@@ -816,7 +813,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
             dec eax
             mov rdx,currparm
 
-            .if ( [rsi].mac_flag & M_ISVARARG && parmidx == eax )
+            .if ( [rsi].mac_vararg && parmidx == eax )
 
                 .if ( varargcnt == 0 )
 
@@ -826,7 +823,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                 .endif
 
                 mov rax,p
-                .if ( [rsi].flags & S_PREDEFINED )
+                .if ( [rsi].predefined )
 
                     sub rax,currparm
                     GetAlignedPointer( currparm, eax )
@@ -841,9 +838,9 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
                     add rbx,asm_tok
                     mov rdx,rax
 
-                    .if ( !( [rsi].mac_flag & M_ISFUNC ) || [rbx].token != parm_end_delim )
+                    .if ( !( [rsi].isfunc ) || [rbx].token != parm_end_delim )
                         dec parmidx
-                        .if ( !( [rsi].flags & S_PREDEFINED ) )
+                        .if ( !( [rsi].predefined ) )
                             mov byte ptr [rdx],','
                             inc rdx
                             inc currparm
@@ -914,7 +911,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
 
     assume rsi:asym_t
 
-    .if ( [rsi].flags & S_PREDEFINED && [rsi].func_ptr )
+    .if ( [rsi].predefined && [rsi].func_ptr )
 
         mov mi.parmcnt,varargcnt
         [rsi].func_ptr( &mi, _out, tokenarray )
@@ -937,7 +934,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
     .if mi.startline
 
         mov rax,[rsi].name
-        .if ( !( [rsi].mac_flag & M_ISFUNC ) && byte ptr [rax] )
+        .if ( !( [rsi].isfunc ) && byte ptr [rax] )
             LstWriteSrcLine()
         .endif
         .if ( !( mflags & MF_NOSAVE ) )
@@ -1247,7 +1244,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
                 mov [rdi],0
                 mov sym,SymSearch( p )
 
-                .if ( rax && [rax].asym.flags & S_ISDEFINED )
+                .if ( rax && [rax].asym.isdefined )
                     .if ( [rax].asym.state == SYM_TMACRO )
 
                         ;
@@ -1277,7 +1274,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
                         tstrlen( tstrcpy( rsi, [rax].asym.string_ptr ) )
                         mov strpos,GetAlignedPointer( rsi, eax )
 
-                    .elseif ( [rax].asym.state == SYM_MACRO && [rax].asym.mac_flag & M_ISFUNC )
+                    .elseif ( [rax].asym.state == SYM_MACRO && [rax].asym.isfunc )
 
                         ; expand macro functions.
 
@@ -1462,8 +1459,8 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
 
                 .if ( rax &&
                       [rax].asym.state == SYM_MACRO &&
-                      [rax].asym.flags & S_ISDEFINED &&
-                      [rax].asym.mac_flag & M_ISFUNC &&
+                      [rax].asym.isdefined &&
+                      [rax].asym.isfunc &&
                       [rbx+asm_tok].token == T_OP_BRACKET &&
                       equmode == FALSE )
 
@@ -1494,7 +1491,7 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
                     ; is i to be decremented here?
                    .break
 
-                .elseif ( rax && [rax].asym.state == SYM_TMACRO && [rax].asym.flags & S_ISDEFINED )
+                .elseif ( rax && [rax].asym.state == SYM_TMACRO && [rax].asym.isdefined )
 
                     mov rsi,outbuf
                     mov rdi,buffer
@@ -1688,7 +1685,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                     mov ecx,i
                     mov edi,ecx ;; save index of macro name
 
-                    .if ( [rsi].asym.mac_flag & M_ISFUNC )
+                    .if ( [rsi].asym.isfunc )
 
                         ; ignore macro functions without a following '('
 
@@ -1773,7 +1770,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                         mov rcx,tokenarray
                         .if ( edx == 0 || ( edx == 2 && ( [rcx+asm_tok].asm_tok.token == T_COLON ||
                              [rcx+asm_tok].asm_tok.token == T_DBL_COLON ) ) ||
-                             ( edx == 1 && [rsi].asym.mac_flag & M_LABEL ) )
+                             ( edx == 1 && [rsi].asym.islabel ) )
                         .else
                             .continue
                         .endif
@@ -1859,7 +1856,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                     ; v2.36.01 -- extension: pull register from ldr(param)
                     ; v2.36.11 -- moved here
 
-                    .if ( [rsi].asym.flags & S_REGPARAM )
+                    .if ( [rsi].asym.regparam )
                         movzx ecx,[rsi].asym.param_reg
                         GetResWName( ecx, buffer )
                     .else
@@ -2307,7 +2304,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                         ; if 'class::name proto|proc'
 
                         inc edi
-                        .if ( rax && [rax].asym.flags & S_CLASS )
+                        .if ( rax && [rax].asym.isclass )
 
                             ; - add 'this:ptr class' as first argument
 

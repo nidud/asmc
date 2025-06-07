@@ -160,12 +160,12 @@ DefSavedState endp
 SaveVariableState proc fastcall uses rsi rdi _sym:asym_t
 
     mov rsi,rcx
-    or  [rsi].asym.flags,S_ISSAVED
+    mov [rsi].asym.issaved,1
     mov rdi,LclAlloc(equ_item)
     mov [rdi].equ_item.next,0
     mov [rdi].equ_item.sym,rsi
     mov [rdi].equ_item.isdefined,0
-    .if [rsi].asym.flags & S_ISDEFINED
+    .if ( [rsi].asym.isdefined )
         inc [rdi].equ_item.isdefined
     .endif
     mov [rdi].equ_item.lvalue,[rsi].asym.value
@@ -195,9 +195,9 @@ RestoreState proc
             mov rcx,[rdx].equ_item.sym
             mov [rcx].asym.value,[rdx].equ_item.lvalue
             mov [rcx].asym.value3264,[rdx].equ_item.hvalue
-            and [rcx].asym.flags,not S_ISDEFINED
+            mov [rcx].asym.isdefined,0
             .if [rdx].equ_item.isdefined
-                and [rcx].asym.flags,not S_ISDEFINED
+                mov [rcx].asym.isdefined,1
             .endif
             mov rdx,[rdx].equ_item.next
         .endw

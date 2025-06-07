@@ -277,8 +277,8 @@ endif
             mov MODULE.start_fixup,CodeInfo.opnd[0].InsFixup
             mov MODULE.start_displ,opndx.value
         .else
-            .if ( [rsi].asym.state != SYM_EXTERNAL && !( [rsi].asym.flags & S_ISPUBLIC ) )
-                or [rsi].asym.flags,S_ISPUBLIC
+            .if ( [rsi].asym.state != SYM_EXTERNAL && !( [rsi].asym.ispublic ) )
+                mov [rsi].asym.ispublic,1
                 AddPublicData(rsi)
             .endif
             mov MODULE.start_label,rsi

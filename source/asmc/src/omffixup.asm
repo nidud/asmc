@@ -311,7 +311,7 @@ endif
 
 if 0 ; v2.19: "isvariable" branch disabled; see label9.asm
 
-            .if ( [rdi].asym.flags & S_VARIABLE )
+            .if ( [rdi].asym.isvariable )
                 mov eax,TARGET_SEG
                 .if ( [rbx].frame_type == FRAME_GRP )
                     mov eax,TARGET_GRP

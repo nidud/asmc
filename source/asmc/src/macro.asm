@@ -433,7 +433,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
                     ; more parameters can follow
 
                     mov rdx,mac
-                    or [rdx].asym.mac_flag,M_ISVARARG
+                    mov [rdx].asym.mac_vararg,1
 
                     .if ( [rbx+asm_tok].token != T_FINAL )
 
@@ -454,7 +454,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
                     .endif
 
                     mov rdx,mac
-                    or [rdx].asym.mac_flag,M_LABEL
+                    mov [rdx].asym.islabel,1
                     add rbx,asm_tok
 
                 .elseifd !tstricmp( [rbx].string_ptr, "VARARGML" )
@@ -462,7 +462,8 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t
                     ; more parameters can follow, multi lines possible
 
                     mov rdx,mac
-                    or [rdx].asym.mac_flag,M_ISVARARG or M_MULTILINE
+                    mov [rdx].asym.mac_vararg,1
+                    mov [rdx].asym.multiline,1
 
                     .if ( [rbx+asm_tok].token != T_FINAL )
 
@@ -670,7 +671,7 @@ endif
                     .endw
                     .if ( al && al != ';' )
                         mov rdx,mac
-                        or [rdx].asym.mac_flag,M_ISFUNC
+                        mov [rdx].asym.isfunc,1
                     .endif
                 .endif
 
@@ -752,8 +753,8 @@ endif
     .endf
 
     mov rdx,mac
-    or  [rdx].asym.flags,S_ISDEFINED
-    and [rdx].asym.mac_flag,not M_PURGED
+    mov [rdx].asym.isdefined,1
+    mov [rdx].asym.purged,0
     free_line(ls.start)
    .return( NOT_ERROR )
 
@@ -769,17 +770,20 @@ CreateMacro proc fastcall uses rbx name:string_t
     .if ( SymCreate( rcx ) )
 
         mov [rax].asym.state,SYM_MACRO
-        and [rax].asym.mac_flag,not ( M_ISVARARG or M_ISFUNC )
+        mov [rax].asym.mac_vararg,0
+        mov [rax].asym.isfunc,0
         mov rbx,rax
         mov rcx,LclAlloc( sizeof( macro_info ) )
         mov rax,rbx
         mov [rax].dsym.macroinfo,rcx
+if 0 ; zero alloc...
         xor edx,edx
         mov [rcx].parmcnt,dx
         mov [rcx].localcnt,dx
         mov [rcx].parmlist,rdx
         mov [rcx].lines,rdx
         mov [rcx].srcfile,edx
+endif
     .endif
     ret
 
@@ -791,7 +795,7 @@ CreateMacro endp
 ReleaseMacroData proc fastcall mac:dsym_t
 
     mov rax,rcx
-    and [rax].asym.mac_flag,not M_ISVARARG
+    mov [rax].asym.mac_vararg,0
     mov rcx,[rax].dsym.macroinfo
     xor eax,eax
     mov [rcx].parmcnt,ax
@@ -831,10 +835,11 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 mov rbx,rdx ; address of symbol from SymSearch()
                 mov [rsi].target_type,SymAlloc(rdi)
-                or  [rsi].flags,S_ISINLINE
+                mov [rsi].isinline,1
                 mov rsi,rax
                 mov [rsi].altname,rbx
-                and [rsi].mac_flag,not ( M_ISVARARG or M_ISFUNC )
+                mov [rsi].mac_vararg,0
+                mov [rsi].isfunc,0
                 jmp alloc_macroinfo
             .else
                 .return asmerr( 2005, rdi )
@@ -864,7 +869,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov rdi,[rsi].macroinfo
     mov [rdi].srcfile,get_curr_srcfile()
 
-    .if ( ( Parse_Pass == PASS_1 ) || ( [rsi].flags & S_VARIABLE ) )
+    .if ( ( Parse_Pass == PASS_1 ) || ( [rsi].isvariable ) )
 
         ; is the macro redefined?
 
@@ -874,8 +879,8 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             ; v2.07: isfunc isn't reset anymore in ReleaseMacroData()
 
-            and [rsi].mac_flag,not M_ISFUNC
-            or  byte ptr [rsi].flags,S_VARIABLE
+            mov [rsi].isfunc,0
+            mov [rsi].isvariable,1
         .endif
         mov store_data,TRUE
     .else
@@ -1017,8 +1022,8 @@ if TRUEPURGE
         [rsi].defined = FALSE;
 else
         ReleaseMacroData(rsi)
-        or byte ptr [rsi].flags,S_VARIABLE
-        or [rsi].mac_flag,M_PURGED
+        mov [rsi].isvariable,1
+        mov [rsi].purged,1
 endif
         inc i
         add rbx,asm_tok
@@ -1077,8 +1082,9 @@ MacroInit proc __ccall uses rdi pass:int_t
 
         CreateMacro( "@Environ" )
 
-        or  byte ptr [rax].asym.flags,S_ISDEFINED or S_PREDEFINED
-        or  [rax].asym.mac_flag,M_ISFUNC
+        mov [rax].asym.isdefined,1
+        mov [rax].asym.predefined,1
+        mov [rax].asym.isfunc,1
         lea rcx,EnvironFunc
         mov [rax].asym.func_ptr,rcx
         mov rax,[rax].dsym.macroinfo

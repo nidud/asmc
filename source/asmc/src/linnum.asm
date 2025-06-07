@@ -101,7 +101,8 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
 
             mov dmyproc,CreateProc( NULL, &procname, SYM_INTERNAL )
             mov rsi,rax
-            or [rsi].asym.flags,S_ISPROC or S_INCLUDED ; flag is usually set inside ParseProc()
+            mov [rsi].asym.isproc,1 ; flag is usually set inside ParseProc()
+            mov [rsi].asym.included,1
             AddPublicData( rsi )
         .else
             inc procidx ; for passes > 1, adjust procidx
@@ -110,7 +111,7 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
         ; if the symbols isn't a PROC, the symbol name has been used
         ; by the user - bad! A warning should be displayed
 
-        .if ( [rsi].asym.flags & S_ISPROC )
+        .if ( [rsi].asym.isproc )
 
             SetSymSegOfs( rsi )
 
@@ -143,9 +144,9 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
         mov rcx,CurrProc
 
         .if ( Parse_Pass == PASS_1 &&
-            Options.output_format == OFORMAT_COFF && rcx && !( [rcx].asym.flags & S_ISPUBLIC ) )
+            Options.output_format == OFORMAT_COFF && rcx && !( [rcx].asym.ispublic ) )
 
-            or [rcx].asym.flags,S_INCLUDED
+            mov [rcx].asym.included,1
             AddPublicData( rcx )
         .endif
 
@@ -206,9 +207,9 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
     mov rbx,CurrSeg
     mov rsi,[rbx].dsym.seginfo
 
-    .if ( !( [rsi].seg_info.flags & SEG_LINUM ) )
+    .if ( !( [rsi].seg_info.linnum_init ) )
 
-        or [rsi].seg_info.flags,SEG_LINUM
+        mov [rsi].seg_info.linnum_init,1
 
         .if ( TypeFromClassName( rbx, [rsi].seg_info.clsym ) != SEGTYPE_CODE )
             asmerr( 4012, [rbx].asym.name )

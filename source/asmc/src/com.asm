@@ -208,7 +208,7 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
             mov rax,[rax].asym.type
         .endw
     .endif
-    .if ( !( [rax].asym.flags & S_VTABLE ) )
+    .if ( !( [rax].asym.hasvtable ) )
         .return 0
     .endif
     mov rsi,rax

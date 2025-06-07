@@ -181,7 +181,7 @@ OutputByte proc __ccall uses rsi rdi rbx char:int_t
 
     inc [rdi].seg_info.current_loc
     inc [rdi].seg_info.bytes_written
-    or  [rdi].seg_info.flags,SEG_WRITTEN
+    mov [rdi].seg_info.written,1
     mov eax,[rdi].seg_info.current_loc
 
     .if ( eax > [rsi].dsym.max_offset )
@@ -249,7 +249,7 @@ OutputBytes proc __ccall uses rsi rdi rbx pbytes:ptr byte, len:int_t, fxptr:ptr 
     mov eax,len
     add [rdi].seg_info.current_loc,eax
     add [rdi].seg_info.bytes_written,eax
-    or  [rdi].seg_info.flags,SEG_WRITTEN
+    mov [rdi].seg_info.written,1
     mov eax,[rdi].seg_info.current_loc
     .if eax > [rsi].dsym.max_offset
         mov [rsi].dsym.max_offset,eax
@@ -294,7 +294,7 @@ SetCurrOffset proc __ccall uses rsi rdi rbx dseg:dsym_t, value:uint_t, relative:
         mov [rdi].seg_info.start_loc,ebx
     .endif
     mov [rdi].seg_info.current_loc,ebx
-    and [rdi].seg_info.flags,not SEG_WRITTEN
+    mov [rdi].seg_info.written,0
     mov eax,[rdi].seg_info.current_loc
     .if eax > [rsi].dsym.max_offset
         mov [rsi].dsym.max_offset,eax
@@ -342,8 +342,8 @@ WriteModule proc private uses rsi rdi rbx
             .while rbx
 
                 mov rcx,[rbx].asym.dll
-                .if ( [rbx].asym.flags & S_ISPROC && rcx && [rcx].dll_desc.name &&
-                      ( !( [rbx].asym.sflags & S_WEAK) || [rbx].asym.flags & S_IAT_USED ) )
+                .if ( [rbx].asym.isproc && rcx && [rcx].dll_desc.name &&
+                      ( !( [rbx].asym.weak ) || [rbx].asym.iat_used ) )
 
                     Mangle(rbx, StringBufferEnd)
 
@@ -429,7 +429,8 @@ add_cmdline_tmacros proc __ccall private uses rsi rdi rbx
             asmerr( 2005, rdi )
            .break
         .endif
-        or  [rax].asym.flags,S_ISDEFINED or S_PREDEFINED
+        mov [rax].asym.isdefined,1
+        mov [rax].asym.predefined,1
         mov [rax].asym.string_ptr,rbx
         mov rsi,[rsi].qitem.next
     .endw
@@ -657,7 +658,7 @@ endif
         mov rax,SymTables[TAB_EXT*symbol_queue].head
         .while rax
 
-            and [rax].asym.flags,not S_IAT_USED
+            mov [rax].asym.iat_used,0
             mov rax,[rax].dsym.next
         .endw
     .endif
@@ -704,7 +705,7 @@ PassOneChecks proc __ccall private uses rsi rdi
         .if ( [rax].asym.state == SYM_INTERNAL )
 
             mov rdx,rcx
-        .elseif ( [rax].asym.state == SYM_EXTERNAL && [rax].asym.sflags & S_WEAK )
+        .elseif ( [rax].asym.state == SYM_EXTERNAL && [rax].asym.weak )
 
             mov rax,[rcx].qnode.next
             mov [rdx].qnode.next,rax
@@ -737,7 +738,7 @@ PassOneChecks proc __ccall private uses rsi rdi
 
     mov rax,MODULE.SafeSEHQueue.head
     .while rax
-        .if [rax].asym.state != SYM_INTERNAL || !( [rax].asym.flags & S_ISPROC )
+        .if [rax].asym.state != SYM_INTERNAL || !( [rax].asym.isproc )
 
             SkipSavedState()
             jmp aliases
@@ -758,7 +759,7 @@ aliases:
             ; check if symbol is external or public
 
             .if ( !rax || [rax].asym.state != SYM_EXTERNAL
-                && ( [rax].asym.state != SYM_INTERNAL || !( [rax].asym.flags & S_ISPUBLIC ) ) )
+                && ( [rax].asym.state != SYM_INTERNAL || !( [rax].asym.ispublic ) ) )
 
                 SkipSavedState()
                .break
@@ -768,7 +769,7 @@ aliases:
 
             .if [rax].asym.state == SYM_EXTERNAL
 
-                or [rax].asym.flags,S_USED
+                mov [rax].asym.used,1
             .endif
             mov rcx,[rcx].dsym.next
         .endw
@@ -782,18 +783,18 @@ aliases:
 
         mov rsi,rdi
         mov rdi,[rsi].dsym.next
-        .if ( [rsi].asym.flags & S_USED )
+        .if ( [rsi].asym.used )
 
-            and [rsi].asym.sflags,not S_WEAK
+            mov [rsi].asym.weak,0
         .endif
-        .if ( [rsi].asym.sflags & S_WEAK && !( [rsi].asym.flags & S_IAT_USED ) )
+        .if ( [rsi].asym.weak && !( [rsi].asym.iat_used ) )
 
             ; remove unused EXTERNDEF/PROTO items from queue.
 
             sym_remove_table( &SymTables[TAB_EXT*symbol_queue], rsi )
             .continue
         .endif
-        .continue .if ( [rsi].asym.sflags & S_ISCOM )
+        .continue .if ( [rsi].asym.iscomm )
 
         ; optional alternate symbol must be INTERNAL or EXTERNAL. COFF (and ELF?)
         ; also wants internal symbols to be public (which is reasonable, since
@@ -805,7 +806,7 @@ aliases:
 
             .if ( [rax].asym.state == SYM_INTERNAL )
 
-                .if ( !( [rax].asym.flags & S_ISPUBLIC ) &&
+                .if ( !( [rax].asym.ispublic ) &&
                      ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF ) )
 
                     SkipSavedState()

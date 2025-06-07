@@ -97,6 +97,7 @@ snprintf	proto __Cdecl :string_t, :size_t, :string_t, :vararg
 printf		proto __Cdecl :string_t, :vararg
 fprintf		proto __Cdecl :LPFILE, :string_t, :vararg
 scanf		proto __Cdecl :string_t, :vararg
+vscanf		proto __cdecl :string_t, :ptr
 puts		proto __cdecl :string_t
 getc		proto __cdecl :LPFILE
 fopen		proto __cdecl :string_t, :string_t
@@ -191,6 +192,7 @@ fwscanf		proto __Cdecl :LPFILE, :wstring_t, :vararg
 swscanf		proto __Cdecl :wstring_t, :wstring_t, :vararg
 swscanf_s	proto __Cdecl :wstring_t, :wstring_t, :vararg
 wscanf		proto __Cdecl :wstring_t, :vararg
+vwscanf		proto __cdecl :wstring_t, :ptr
 _wfdopen	proto __cdecl :int_t, :wstring_t
 _wfopen		proto __cdecl :wstring_t, :wstring_t
 _wfreopen	proto __cdecl :wstring_t, :wstring_t, :LPFILE

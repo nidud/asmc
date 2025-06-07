@@ -68,7 +68,7 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
 
         .return asmerr( 2008, [rbx].string_ptr )
 
-    .elseif ( [rax].asym.flags & S_REGPARAM )
+    .elseif ( [rax].asym.regparam )
 
         movzx ecx,[rax].asym.param_reg
         .if ( reg == 0 )

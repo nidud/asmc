@@ -394,7 +394,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 or [rsi].value,OPATTR_SIGNED
             .endif
         .endif
-        .if ( [rdi].kind != EXPR_ERROR && [rdi].kind != EXPR_FLOAT && ( ebx == NULL || [rbx].flags & S_ISDEFINED ) )
+        .if ( [rdi].kind != EXPR_ERROR && [rdi].kind != EXPR_FLOAT && ( ebx == NULL || [rbx].isdefined ) )
             or [rsi].value,OPATTR_DEFINED
         .endif
         mov rax,[rdi].idx_reg
@@ -444,7 +444,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .endif
         .switch eax
         .case T_LENGTH
-            .if ( [rbx].flags & S_ISDATA )
+            .if ( [rbx].isdata )
                 mov [rsi].value,[rbx].first_length
             .else
                 mov [rsi].value,1
@@ -454,7 +454,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             .if ( [rdi].kind == EXPR_CONST )
                 mov rbx,[rdi].mbr
                 mov [rsi].value,[rbx].total_length
-            .elseif ( [rbx].state == SYM_EXTERNAL && !( [rbx].sflags & S_ISCOM ) )
+            .elseif ( [rbx].state == SYM_EXTERNAL && !( [rbx].iscomm ) )
                 mov [rsi].value,1
             .else
                 mov [rsi].value,[rbx].total_length
@@ -472,7 +472,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 .else
                     mov [rsi].value,[rdi].value
                 .endif
-            .case ( [rbx].flags & S_ISDATA )
+            .case ( [rbx].isdata )
                 mov [rsi].value,[rbx].first_size
             .case ( [rbx].state == SYM_STACK )
                 GetSizeValue(rbx)
@@ -503,7 +503,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 .else
                     mov [rsi].value,[rdi].value
                 .endif
-            .elseif ( [rbx].state == SYM_EXTERNAL && !( [rbx].sflags & S_ISCOM ) )
+            .elseif ( [rbx].state == SYM_EXTERNAL && !( [rbx].iscomm ) )
                 GetSizeValue(rbx)
                 mov [rsi].value,eax
             .else
@@ -535,7 +535,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             mov thissym,SymAlloc("")
             mov rbx,rax
             mov [rbx].state,SYM_INTERNAL
-            or  [rbx].flags,S_ISDEFINED
+            mov [rbx].isdefined,1
         .endif
         mov [rsi].kind,EXPR_ADDR
         mov [rsi].sym,rbx
@@ -722,7 +722,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 xor edx,edx
                 mov ecx,[rbx].offs
                 mov edi,[rbx].total_size
-                .if ( [rbx].flags & S_CRECORD )
+                .if ( [rbx].crecord )
                     movzx ecx,[rbx].bitf_offs
                     movzx edi,[rbx].bitf_bits
                 .endif
@@ -1219,7 +1219,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                     .if ( [rax].asym.state == SYM_TYPE )
 
                         mov rcx,[rdi].type
-                        .if !( rax == rcx || ( rcx && !( [rcx].asym.flags & S_ISDEFINED ) ) || MODULE.oldstructs )
+                        .if !( rax == rcx || ( rcx && !( [rcx].asym.isdefined ) ) || MODULE.oldstructs )
                             xor eax,eax
                         .endif
 
@@ -1280,7 +1280,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
 
                         .if ( [rax].asym.state == SYM_UNDEFINED )
 
-                            .if !( [rax].asym.flags & S_USED )
+                            .if !( [rax].asym.used )
 
                                 ; don't add undefined symbols multiple times!
 
@@ -1325,12 +1325,12 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
 
 method_ptr:
 
-        or [rax].asym.flags,S_USED
+        mov [rax].asym.used,1
         .switch [rax].asym.state
 
         .case SYM_TYPE
             mov rcx,[rax].dsym.structinfo
-            .if ( [rax].asym.typekind != TYPE_TYPEDEF && [rcx].struct_info.flags & SI_ISOPEN )
+            .if ( [rax].asym.typekind != TYPE_TYPEDEF && [rcx].struct_info.isOpen )
 
                 mov [rdi].kind,EXPR_ERROR
                .endc
@@ -1402,7 +1402,7 @@ endif
             assume rsi:asym_t
 
             mov [rdi].kind,EXPR_ADDR
-            .if ( [rsi].flags & S_PREDEFINED && [rsi].sfunc_ptr )
+            .if ( [rsi].predefined && [rsi].sfunc_ptr )
                 [rsi].sfunc_ptr(rsi, NULL)
             .endif
             .if ( [rsi].state == SYM_INTERNAL && [rsi].segm == NULL )
@@ -1421,7 +1421,7 @@ endif
                 .endif
 
             .elseif ( [rsi].state == SYM_EXTERNAL && [rsi].mem_type == MT_EMPTY &&
-                     !( [rsi].sflags & S_ISCOM ) )
+                     !( [rsi].iscomm ) )
 
                 or  [rdi].flags,E_IS_ABS
                 mov [rdi].sym,rsi
@@ -1638,7 +1638,7 @@ MakeConst proc fastcall opnd:expr_t
 
         mov rax,[rcx].sym
         .if ( !( ( [rax].asym.state == SYM_UNDEFINED && [rcx].inst == EMPTY ) ||
-                 ( [rax].asym.state == SYM_EXTERNAL && [rax].asym.sflags & S_WEAK &&
+                 ( [rax].asym.state == SYM_EXTERNAL && [rax].asym.weak &&
                  [rcx].flags & E_IS_ABS ) ) )
             .return
         .endif

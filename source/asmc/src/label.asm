@@ -98,11 +98,11 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
 
     .if ( Parse_Pass == PASS_1 )
 
-        .if( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.sflags & S_WEAK )
+        .if( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.weak )
 
             ; don't accept EXTERNDEF for a local label!
 
-            .if ( [rdi].asym.flags & S_ISPROC || ( bLocal && CurrProc ) )
+            .if ( [rdi].asym.isproc || ( bLocal && CurrProc ) )
 
                 asmerr( 2005, name )
                .return( NULL )
@@ -149,7 +149,7 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
 
         .if ( mem_type == MT_PROC )
 
-            .if ( !( [rdi].asym.flags & S_ISPROC ) )
+            .if ( !( [rdi].asym.isproc ) )
 
                 CreateProc( rdi, NULL, SYM_INTERNAL )
                 CopyPrototype( rdi, [rbx].symtype )
@@ -184,13 +184,13 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
         mov adr,[rdi].asym.offs
     .endif
 
-    or [rdi].asym.flags,S_ISDEFINED
+    mov [rdi].asym.isdefined,1
 
     ; v2.05: the label may be "data" - due to the way struct initialization
     ; is handled. Then fields first_size and first_length must not be
     ; touched!
 
-    .if ( !( [rdi].asym.flags & S_ISDATA ) )
+    .if ( !( [rdi].asym.isdata ) )
         mov [rdi].asym.asmpass,Parse_Pass
     .endif
     SetSymSegOfs( rdi )
@@ -307,7 +307,7 @@ endif
         mov al,[rcx].asym.mem_type
         and al,MT_SPECIAL_MASK
 
-        .if ( !( [rcx].asym.flags & S_ISDATA ) && al != MT_ADDRESS )
+        .if ( !( [rcx].asym.isdata ) && al != MT_ADDRESS )
 
 if LABELARRAY
             .if ( length != -1 )
@@ -316,7 +316,7 @@ if LABELARRAY
                 mul length
                 mov [rcx].asym.total_size,eax
                 mov [rcx].asym.total_length,length
-                or  [rcx].asym.flags,S_ISARRAY
+                mov [rcx].asym.isarray,1
             .else
                 mov [rcx].asym.total_size,ti.size
                 mov [rcx].asym.total_length,1

@@ -397,7 +397,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         .return
     .endif
 
-    .if ( op1.kind == EXPR_REG && !( op1.flags & E_INDIRECT ) )
+    .if ( op1.kind == EXPR_REG && !( op1.indirect ) )
 
         mov rax,op1.base_reg
 
@@ -487,7 +487,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
 
         .switch eax
         .case EXPR_REG
-            .if ( !( op1.flags & E_INDIRECT ) && is_float == 0 )
+            .if ( !( op1.indirect ) && is_float == 0 )
 
                 mov edx,T_TEST
                 .if ( MODULE.masm_compat_gencode )
@@ -602,7 +602,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         ; v2.11: use op2.value64 instead of op2.value
         ;
         .if ( !op2.l64_l && !op2.l64_h && ( ecx == COP_EQ || ecx == COP_NE ) &&
-              op1.kind == EXPR_REG && !( op1.flags & E_INDIRECT ) &&
+              op1.kind == EXPR_REG && !( op1.indirect ) &&
               op2.kind == EXPR_CONST && !is_float )
             ;
             ; v2.22 - switch /Zg to OR
@@ -1439,7 +1439,7 @@ endif
                     .ifd EvalOperand( &i, tokenarray, edx, &opnd, EXPF_NOERRMSG ) != ERROR
 
                         xor eax,eax
-                        .if ( opnd.kind == EXPR_ADDR || ( opnd.flags & E_INDIRECT ) )
+                        .if ( opnd.kind == EXPR_ADDR || ( opnd.indirect ) )
                             mov cl,opnd.mem_type
                             .switch cl
                             .case MT_BYTE

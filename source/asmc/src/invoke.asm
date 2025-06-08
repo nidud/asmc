@@ -525,7 +525,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
     xor eax,eax
     .if ( address || [rdi].inst == T_OFFSET )
     .elseif ( [rdi].kind == EXPR_REG )
-        .if ( [rdi].flags & E_INDIRECT )
+        .if ( [rdi].indirect )
             .if ( cl != MT_EMPTY )
                 dec eax
             .elseif ( memtype == MT_PTR || [rsi].is_vararg )
@@ -568,7 +568,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
         mov     edx,[rdx].special_item.value
         mov     param_regno,ecx
 
-        .if ( [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
+        .if ( [rdi].kind == EXPR_REG && !( [rdi].indirect ) )
             mov param_reg,eax
         .endif
         .if ( edx & ( OP_XMM or OP_YMM or OP_ZMM ) )
@@ -589,7 +589,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
             .elseif ( byte ptr [rcx] & R0_USED && ( edx & OP_A || reg == T_AH ) )
                 mov destroyed,TRUE
             .endif
-            .if ( edx & OP_R && [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
+            .if ( edx & OP_R && [rdi].kind == EXPR_REG && !( [rdi].indirect ) )
                 mov param_size,param_regsize
             .endif
         .endif
@@ -859,7 +859,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
 
             .if ( eax <= 8 )
 
-                .if ( [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
+                .if ( [rdi].kind == EXPR_REG && !( [rdi].indirect ) )
 
                     mov ecx,T_MOVSD
                     .if ( eax == 4 )
@@ -880,7 +880,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
                 .if ( [rdi].kind == EXPR_FLOAT ) ; added v2.34.70
 
                     xor eax,eax
-                    .if ( [rdi].flags & E_NEGATIVE )
+                    .if ( [rdi].negative )
                         inc eax
                     .endif
                     mov rcx,[rdi].float_tok
@@ -1207,7 +1207,7 @@ push_const_128:
                         or  eax,[rdi+8]
                         or  eax,[rdi+12]
 
-                        .if ( eax && [rdi].flags & E_NEGATIVE && wordsize == 8 )
+                        .if ( eax && [rdi].negative && wordsize == 8 )
 
                             AddLineQueueX( " mov %r, -1", reg )
                         .else
@@ -1325,7 +1325,7 @@ handle_address:
             mov ecx,wordsize
         .endif
 
-        .if ( [rdi].kind == EXPR_REG && !( [rdi].flags & E_INDIRECT ) )
+        .if ( [rdi].kind == EXPR_REG && !( [rdi].indirect ) )
 
             .if ( stack == FALSE && ebx == param_reg )
 
@@ -1397,7 +1397,7 @@ handle_address:
 
             xor eax,eax
             mov rdx,paramvalue
-            .if ( [rdi].flags & E_NEGATIVE )
+            .if ( [rdi].negative )
                 inc eax
             .endif
             mov rcx,[rdi].float_tok
@@ -1445,7 +1445,7 @@ handle_address:
 
                         xor eax,eax
                         mov rdx,paramvalue
-                        .if ( [rdi].flags & E_NEGATIVE )
+                        .if ( [rdi].negative )
                             inc eax
                         .endif
                         mov rcx,[rdi].float_tok
@@ -1534,7 +1534,7 @@ handle_address:
 
     ; const param
 
-    .if ( [rdi].kind == EXPR_CONST || ( [rdi].kind == EXPR_ADDR && !( [rdi].flags & E_INDIRECT ) &&
+    .if ( [rdi].kind == EXPR_CONST || ( [rdi].kind == EXPR_ADDR && !( [rdi].indirect ) &&
           [rdi].mem_type == MT_EMPTY && [rdi].inst != T_OFFSET ) )
 
         ; v2.06: support 64-bit constants for params > 4
@@ -2065,7 +2065,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr as
            .return( NOT_ERROR )
         .endif
 
-        .if ( opnd.kind == EXPR_REG || opnd.flags & E_INDIRECT )
+        .if ( opnd.kind == EXPR_REG || opnd.indirect )
 
 ifndef ASMC64
 
@@ -2277,7 +2277,7 @@ endif
         tstrcpy( &fullparam, [rbx+asm_tok*2].string_ptr )
 
         mov opnd.kind,EXPR_REG
-        and opnd.flags,not E_INDIRECT
+        mov opnd.indirect,0
         mov opnd.sym,NULL
         mov opnd.base_reg,&[rbx+asm_tok*2] ; for error msg 'eax overwritten...'
 
@@ -2305,7 +2305,7 @@ endif
 
         ; for a simple register, get its size
 
-        .if ( opnd.kind == EXPR_REG && !( opnd.flags & E_INDIRECT ) )
+        .if ( opnd.kind == EXPR_REG && !( opnd.indirect ) )
 
             mov rcx,opnd.base_reg
             mov asize,SizeFromRegister([rcx].asm_tok.tokval)
@@ -2314,7 +2314,7 @@ endif
             ; because if "indirect" is false, the checks may be too simple.
 
             .if ( j < TokenCount && [rbx].token != T_COMMA )
-                or opnd.flags,E_INDIRECT
+                mov opnd.indirect,1
             .endif
 
         .elseif ( opnd.kind == EXPR_CONST || opnd.mem_type == MT_EMPTY )
@@ -2362,7 +2362,7 @@ if 1
 endif
         .elseif ( opnd.mem_type != MT_TYPE )
 
-            .if ( opnd.kind == EXPR_ADDR && !( opnd.flags & E_INDIRECT ) && opnd.sym &&
+            .if ( opnd.kind == EXPR_ADDR && !( opnd.indirect ) && opnd.sym &&
                      opnd.inst == EMPTY && ( opnd.mem_type == MT_NEAR || opnd.mem_type == MT_FAR ) )
 
                 jmp push_address
@@ -2456,7 +2456,7 @@ endif
     .endif
 
     .if ( ( opnd.kind == EXPR_ADDR && opnd.inst != T_OFFSET ) ||
-          ( opnd.kind == EXPR_REG && opnd.flags & E_INDIRECT ) )
+          ( opnd.kind == EXPR_REG && opnd.indirect ) )
 
         ;; catch the case when EAX has been used for ADDR,
         ;; and is later used as addressing register!
@@ -2499,10 +2499,10 @@ endif
             ; in params like "qword ptr [rax]" the typecast
             ; has to be removed
 
-            .if ( opnd.flags & E_EXPLICIT )
+            .if ( opnd.explicit )
 
                 SkipTypecast( &fullparam, i, tokenarray )
-                and opnd.flags,not E_EXPLICIT
+                mov opnd.explicit,0
             .endif
 
 ifndef ASMC64

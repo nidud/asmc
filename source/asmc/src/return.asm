@@ -224,7 +224,7 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr as
                 .endif
             .endif
 
-        .elseif ( opnd.kind == EXPR_REG && !( opnd.flags & E_INDIRECT ) )
+        .elseif ( opnd.kind == EXPR_REG && !( opnd.indirect ) )
 
             mov rbx,opnd.base_reg
             mov eax,[rbx].tokval

@@ -50,15 +50,6 @@ define __EXPREVAL_INC
 
 ; expression, returned by expression evaluator
 
-define E_INDIRECT	0x01 ; indirect addressing used
-define E_EXPLICIT	0x02 ; Whether expression type explicitly given (to be removed!)
-define E_IS_ABS		0x04 ; external ABS
-define E_IS_TYPE	0x08 ; constant is a type
-define E_IS_OPEATTR	0x10 ; current operator is OPATTR
-define E_NEGATIVE	0x20 ; for EXPR_FLOAT only
-define E_ASSUMECHECK	0x40 ; v2.07: for ASSUMEd std registers
-define E_IS_DOT		0x80 ; v2.10: see regression test dotop5.asm
-
 expr		struct
 union		; value of expression
  struct
@@ -104,7 +95,19 @@ kind		int_t ?		; Type of expression
 mem_type	uchar_t ?
 scale		uchar_t ?	; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
 Ofssize		uchar_t ?	; 16,32,64 bit if MT_NEAR, MT_FAR
-flags		uchar_t ?	; bit-flag
+union
+ flags		uchar_t ?	; bit-flag
+ record
+  indirect	uchar_t : 1 ?	; indirect addressing used
+  explicit	uchar_t : 1 ?	; Whether expression type explicitly given (to be removed!)
+  is_abs	uchar_t : 1 ?	; external ABS
+  is_type	uchar_t : 1 ?	; constant is a type
+  is_opattr	uchar_t : 1 ?	; current operator is OPATTR
+  negative	uchar_t : 1 ?	; for EXPR_FLOAT only
+  assumecheck	uchar_t : 1 ?	; v2.07: for ASSUMEd std registers
+  is_dot	uchar_t : 1 ?	; v2.10: see regression test dotop5.asm
+ ends
+ends
 op		ptr opinfo ?
 sym		asym_t ?	; label used
 mbr		asym_t ?	; struct member

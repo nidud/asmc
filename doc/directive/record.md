@@ -20,7 +20,56 @@ RECORD [[ name ]]
 ENDS
 name ENDS
 ```
-Note that the record field names here are not global (Masm design flaw) and there are no packing as the size is predefined similar to C bit-fields, and the first field in the declaration always goes into the least significant bits of the record.
+Note that the record field names here are not global (Masm design flaw) and there are no packing as the size is predefined similar to C bit-fields, and the first field in the declaration always goes into the least significant bits of the record. Asmc support accessing record fields as follows:
+
+```
+.template T
+    x   dd ?
+    record
+     a  dd :  1 ?
+     b  dd :  7 ?
+     c  dd :  8 ?
+     d  dd : 16 ?
+    ends
+   .ends
+
+```
+<table>
+<tr><td><b>Instruction</b></td><td><b>Op1</b></td><td><b>Op2</b></td><td><b>Action</b></td></tr>
+<tr><td>CMP</td><td>a</td><td>0</td><td>TEST a, 1</td></tr>
+<tr><td>CMP</td><td>a</td><td>1</td><td>TEST a, 1</td></tr>
+<tr><td><i>expression</i></td><td>a</td><td></td><td>TEST/JZ</td></tr>
+<tr><td><i>expression</i></td><td>a ==</td><td>0</td><td>TEST/JNZ</td></tr>
+<tr><td><i>expression</i></td><td>a ==</td><td>1</td><td>TEST/JZ</td></tr>
+<tr><td>CMP</td><td>b</td><td>0</td><td>TEST</td></tr>
+<tr><td>CMP</td><td>b</td><td>1</td><td>MOV/AND/CMP</td></tr>
+<tr><td>CMP</td><td>c</td><td>1</td><td>CMP</td></tr>
+<tr><td>TEST</td><td>a</td><td>1</td><td>TEST</td></tr>
+<tr><td>TEST</td><td>b</td><td>1</td><td>TEST</td></tr>
+<tr><td>TEST</td><td>c</td><td>1</td><td>TEST</td></tr>
+<tr><td>OR</td><td>a</td><td>1</td><td>OR</td></tr>
+<tr><td>OR</td><td>b</td><td>1</td><td>OR</td></tr>
+<tr><td>OR</td><td>c</td><td>1</td><td>OR</td></tr>
+<tr><td>XOR</td><td>a</td><td>1</td><td>XOR</td></tr>
+<tr><td>XOR</td><td>b</td><td>1</td><td>XOR</td></tr>
+<tr><td>XOR</td><td>c</td><td>1</td><td>XOR</td></tr>
+<tr><td>MOV</td><td>a</td><td>0</td><td>AND</td></tr>
+<tr><td>MOV</td><td>a</td><td>1</td><td>OR</td></tr>
+<tr><td>MOV</td><td>b</td><td>1</td><td>AND/OR</td></tr>
+<tr><td>MOV</td><td>c</td><td>1</td><td>MOV</td></tr>
+<tr><td>MOV</td><td>a</td><td>EAX</td><td>AND/OR</td></tr>
+<tr><td>MOV</td><td>b</td><td>EAX</td><td>SHL/AND/OR</td></tr>
+<tr><td>MOV</td><td>c</td><td>EAX</td><td>MOV</td></tr>
+<tr><td>MOV</td><td>d</td><td>EAX</td><td>MOV</td></tr>
+<tr><td>MOV</td><td>EAX</td><td>a</td><td>MOV/AND</td></tr>
+<tr><td>MOV</td><td>EAX</td><td>b</td><td>MOV/AND/SHR</td></tr>
+<tr><td>MOV</td><td>EAX</td><td>c</td><td>MOVZX</td></tr>
+<tr><td>MOV</td><td>EAX</td><td>d</td><td>MOVZX</td></tr>
+<tr><td>MOV</td><td>a</td><td>a</td><td>MOV/AND/AND/OR</td></tr>
+<tr><td>MOV</td><td>b</td><td>b</td><td>MOV/AND/SHR/SHL/AND/OR</td></tr>
+<tr><td>MOV</td><td>c</td><td>c</td><td>MOVZX/MOV</td></tr>
+<tr><td>MOV</td><td>d</td><td>d</td><td>MOVZX/MOV</td></tr>
+</table>
 
 #### See Also
 

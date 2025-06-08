@@ -147,7 +147,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
 
     .return( asmerr( 2070 ) ) .if ( CurrOpnd != OPND1 )
 
-    .if ( [rbx].flags & E_EXPLICIT && [rbx].inst != T_SHORT )
+    .if ( [rbx].explicit && [rbx].inst != T_SHORT )
         mov [rsi].mem_type,[rbx].mem_type
     .endif
 
@@ -273,8 +273,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 mov [rsi].mem_type,MT_FAR
             .endif
         .endif
-        .if ( ( [rsi].mem_type == MT_EMPTY || [rsi].mem_type == MT_NEAR ) &&
-             !( [rsi].flags & CI_ISFAR ) )
+        .if ( ( [rsi].mem_type == MT_EMPTY || [rsi].mem_type == MT_NEAR ) && !( [rsi].isfar ) )
 
             ; if the label is FAR - or there is a segment override
             ; which equals assumed value of CS - and there is no type cast,
@@ -457,7 +456,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
         .switch al
         .case MT_FAR
             .if( IS_JMPCALL( [rsi].token ) )
-                or [rsi].flags,CI_ISFAR
+                mov [rsi].isfar,1
             .endif
         .case MT_NEAR
             ; v2.04: 'if' added
@@ -474,14 +473,14 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
 
     mov al,[rsi].mem_type
 
-    .if ( IS_JMPCALL( [rsi].token ) && ( [rsi].flags & CI_ISFAR || al == MT_FAR ) )
+    .if ( IS_JMPCALL( [rsi].token ) && ( [rsi].isfar || al == MT_FAR ) )
 
-        or [rsi].flags,CI_ISFAR ; flag isn't set if explicit is true
+        mov [rsi].isfar,1 ; flag isn't set if explicit is true
 
         .switch al
         .case MT_NEAR
 
-            .if( [rbx].flags & E_EXPLICIT || [rbx].inst == T_SHORT )
+            .if( [rbx].explicit || [rbx].inst == T_SHORT )
                 .return( asmerr( 2077 ) )
             .endif
 
@@ -665,7 +664,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                     ; destination is FAR (externdef <dest>:far
 
                     jumpExtend( rsi, TRUE )
-                    or [rsi].flags,CI_ISFAR
+                    mov [rsi].isfar,1
 
                     .if( IS_OPER_32( rsi ) )
                         mov fixup_type,FIX_PTR32
@@ -715,7 +714,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
 
                         jumpExtend( rsi, TRUE )
                         mov fixup_type,FIX_PTR16
-                        or  [rsi].flags,CI_ISFAR
+                        mov [rsi].isfar,1
                         mov [rsi].opnd[OPND1].type,OP_I32
 
                     .else

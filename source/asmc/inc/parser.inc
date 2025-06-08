@@ -321,15 +321,6 @@ VX_XMMI		equ 0x08 ; XMM register used as index
 VX_NV0		equ 0x04 ; P2: V0=0
 VX_W1		equ 0x02 ; P2: W=1
 
-CI_ISWIDE	equ 0x01 ; 0=byte, 1=word/dword/qword
-CI_ISDIRECT	equ 0x02 ; 1=direct addressing mode
-CI_ISFAR	equ 0x04 ; CALL/JMP far
-CI_CONST_SIZE_FIXED equ 0x08 ; v2.01
-CI_X86HI_USED	equ 0x10 ; AH,BH,CH,DH used
-CI_x64LO_USED	equ 0x20 ; SPL,BPL,SIL,DIL used
-CI_UNDEF_SYM	equ 0x40 ; v2.06b: struct member is forward ref
-CI_BASE_RIP	equ 0x80
-
 ; VEX, VEX2, VEX3, EXEX, and {evex} prefix -- not reserved words
 ;
 ; These may also be set by option avxencoding
@@ -357,7 +348,19 @@ sib		db ?
 Ofssize		db ?
 opc_or		db ?
 vexregop	db ?	; in based-1 format (0=empty)
-flags		db ?
+union
+ flags		db ?
+ record
+  iswide	db :1 ? ; 0=byte, 1=word/dword/qword
+  isdirect	db :1 ? ; 1=direct addressing mode
+  isfar		db :1 ? ; CALL/JMP far
+  constsizefixed db :1 ? ; v2.01
+  x86hi_used	db :1 ? ; AH,BH,CH,DH used
+  x64lo_used	db :1 ? ; SPL,BPL,SIL,DIL used
+  undef_sym	db :1 ? ; v2.06b: struct member is forward ref
+  base_rip	db :1 ?
+ ends
+ends
 code_info	ENDS
 
 OPND1		equ 0

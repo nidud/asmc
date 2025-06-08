@@ -921,30 +921,31 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
   local opc:expr
 
     ldr rbx,opnd
+
     mov opc.llvalue,[rbx].llvalue
     mov opc.hlvalue,[rbx].hlvalue
+    mov opc.flags,0
+
     .switch size
     .case 4
         .endc .if [rbx].mem_type == MT_REAL4
-        mov opc.flags,0
         .if ( [rbx].chararray[15] & 0x80 )
-            mov opc.flags,E_NEGATIVE
+            mov opc.negative,1
             and opc.chararray[15],0x7F
         .endif
         __cvtq_ss(&opc, rbx)
-        .if ( opc.flags == E_NEGATIVE )
+        .if ( opc.negative )
             or opc.chararray[3],0x80
         .endif
         .endc
     .case 8
         .endc .if [rbx].mem_type == MT_REAL8
-        mov opc.flags,0
         .if ( [rbx].chararray[15] & 0x80 )
-            mov opc.flags,E_NEGATIVE
+            mov opc.negative,1
             and opc.chararray[15],0x7F
         .endif
         __cvtq_sd(&opc, rbx)
-        .if ( opc.flags == E_NEGATIVE )
+        .if ( opc.negative )
             or opc.chararray[7],0x80
         .endif
         .endc

@@ -46,7 +46,7 @@ GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
        .return 1
     .endif
 
-    .if ( eax == EXPR_REG && !( [rbx].flags & E_INDIRECT ) )
+    .if ( eax == EXPR_REG && !( [rbx].indirect ) )
 
         mov rcx,[rbx].base_reg
         SizeFromRegister( [rcx].asm_tok.tokval )

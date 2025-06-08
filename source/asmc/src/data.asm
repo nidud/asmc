@@ -994,9 +994,7 @@ endif
                         .if ( no_of_bytes > sizeof( int_64 ) )
                             ;; set __int128 to negative
                             xor eax,eax
-                            .if ( opndx.flags & E_NEGATIVE &&
-                                  opndx.chararray[7] & 0x80 &&
-                                  opndx.h64_l == eax && opndx.h64_h == eax )
+                            .if ( opndx.negative && opndx.chararray[7] & 0x80 && opndx.h64_l == eax && opndx.h64_h == eax )
                                 dec eax
                                 mov opndx.h64_l,eax
                                 mov opndx.h64_h,eax
@@ -1045,7 +1043,7 @@ endif
 
             ; indirect addressing (incl. stack variables) is invalid
 
-            .if ( opndx.flags & E_INDIRECT )
+            .if ( opndx.indirect )
                 asmerr( 2032 )
                 .endc
             .endif
@@ -1161,7 +1159,7 @@ endif
                     .if ( Parse_Pass == PASS_1 && rsi && [rsi].asym.state == SYM_UNDEFINED )
                         ;
                     .else
-                        .if ( rsi && [rsi].asym.state == SYM_EXTERNAL && opndx.flags & E_IS_ABS )
+                        .if ( rsi && [rsi].asym.state == SYM_EXTERNAL && opndx.is_abs )
                         .else
                             asmerr( 2071 )
                         .endif
@@ -1183,12 +1181,12 @@ endif
                     ; accept "near16" override, else complain
                     ; if symbol's offset is 32bit
 
-                    .if ( opndx.flags & E_EXPLICIT )
+                    .if ( opndx.explicit )
                         SizeFromMemtype( opndx.mem_type, opndx.Ofssize, opndx.type )
                         .if ( eax > no_of_bytes )
                             AsmerrSymName( 2071, rsi )
                         .endif
-                    .elseif ( rsi && [rsi].asym.state == SYM_EXTERNAL && opndx.flags & E_IS_ABS )
+                    .elseif ( rsi && [rsi].asym.state == SYM_EXTERNAL && opndx.is_abs )
                     .elseif ( rsi && [rsi].asym.state != SYM_UNDEFINED )
                         .if ( GetSymOfssize( rsi ) > USE16 )
                             AsmerrSymName( 2071, rsi )
@@ -1206,7 +1204,7 @@ endif
                     ; format isn't OMF, error 'symbol type conflict'
                     ; is displayed
 
-                    .if ( opndx.flags & E_EXPLICIT )
+                    .if ( opndx.explicit )
                         .if ( opndx.mem_type == MT_FAR )
                             .if ( opndx.Ofssize != USE_EMPTY && opndx.Ofssize != USE16 )
                                 AsmerrSymName( 2071, rsi )
@@ -1265,7 +1263,7 @@ endif
                     ; JWasm additionally accepts a FAR32 PTR override
                     ; and generates a ptr32 fixup then
 
-                    .if ( opndx.flags & E_EXPLICIT && opndx.mem_type == MT_FAR &&
+                    .if ( opndx.explicit && opndx.mem_type == MT_FAR &&
                           opndx.Ofssize == USE32 )
                         mov edi,FIX_PTR32
                     .elseif( MODULE.Ofssize == USE32 )

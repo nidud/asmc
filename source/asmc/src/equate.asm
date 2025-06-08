@@ -80,7 +80,7 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
     ; which is a bad idea in this case. So the original mem_type of the
     ; label is used instead.
 
-    .if ( [rdi].mem_type == MT_TYPE && !( [rdx].flags & E_EXPLICIT ) )
+    .if ( [rdi].mem_type == MT_TYPE && !( [rdx].explicit ) )
 
         mov [rcx].mem_type,[rdi].mem_type
         mov [rcx].type,[rdi].type
@@ -190,14 +190,14 @@ endif
 
         mov rcx,opnd.sym
         .if ( opnd.kind != EXPR_CONST &&
-             ( opnd.kind != EXPR_ADDR || ( opnd.flags & E_INDIRECT ) ) ||
+             ( opnd.kind != EXPR_ADDR || ( opnd.indirect ) ) ||
              ( rcx != NULL && [rcx].state != SYM_INTERNAL ) )
 
             ; v2.09: no error if argument is a forward reference,
             ; but don't create the variable either. Will enforce an
             ; error if referenced symbol is still undefined in pass 2.
 
-            .if ( rcx && [rcx].state == SYM_UNDEFINED && !( opnd.flags & E_INDIRECT ) )
+            .if ( rcx && [rcx].state == SYM_UNDEFINED && !( opnd.indirect ) )
                 .if StoreState == FALSE
                     FStoreLine(0) ;; make sure this line is evaluated in pass two
                 .endif
@@ -575,7 +575,7 @@ endif
 
     .if ( rc != ERROR && [rbx+rax].token == T_FINAL && opnd.inst == EMPTY &&
           ( ( opnd.kind == EXPR_CONST && rdx == 0 ) ||
-            ( opnd.kind == EXPR_ADDR && !( opnd.flags & E_INDIRECT ) &&
+            ( opnd.kind == EXPR_ADDR && !( opnd.indirect ) &&
               rcx != NULL && [rcx].state == SYM_INTERNAL ) ) )
 
         .switch

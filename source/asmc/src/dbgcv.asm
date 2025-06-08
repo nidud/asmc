@@ -2565,11 +2565,8 @@ endif
 
                         mov rcx,Prev
                         .if ( rcx )
-                            mov eax,[rcx].CV_Line_t.flags
-                            and eax,CV_lineflags_linenumStart
-                            .if ( edx < [rcx].CV_Line_t.offs ||
-                                  edx == [rcx].CV_Line_t.offs &&
-                                  linenum == eax )
+                            mov eax,[rcx].CV_Line_t.flags.linenumStart
+                            .if ( edx < [rcx].CV_Line_t.offs || edx == [rcx].CV_Line_t.offs && eax == linenum )
                                 .continue
                             .endif
                         .endif
@@ -2585,15 +2582,12 @@ endif
 
                         mov rcx,Line
                         mov [rcx].CV_Line_t.offs,offs
-                        mov eax,linenum
-                        or  eax,CV_lineflags_fStatement
-                        mov [rcx].CV_Line_t.flags,eax
+                        mov [rcx].CV_Line_t.flags,linenum
+                        mov [rcx].CV_Line_t.flags.fStatement,1
                         mov Prev,rcx
                     .endf
                 .endw
-
                 assume rbx:nothing
-
             .endif
         .endf
         .if ( cv.section )

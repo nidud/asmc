@@ -714,7 +714,7 @@ set_rm_sib proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:uint_t
     imul ebx,CurrOpnd,opnd_item
 
     .if base == T_RIP
-        or [rsi].flags,CI_BASE_RIP
+        mov [rsi].base_rip,1
     .endif
     .if [rsi].opnd[rbx].InsFixup ; symbolic displacement given?
         mov mod_field,MOD_10
@@ -731,7 +731,7 @@ set_rm_sib proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:uint_t
         ; direct memory.
         ; clear the rightmost 3 bits
 
-        or [rsi].flags,CI_ISDIRECT
+        mov [rsi].isdirect,1
         mov mod_field,MOD_00
 
         ; default is DS:[], DS: segment override is not needed
@@ -1120,7 +1120,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
 
     .if ( size || [rsi].Ofssize == USE64 && [rsi].token == T_MOV &&
           CurrOpnd == OPND2 && [rsi].opnd[OPND1].type & OP_R64 &&
-          ( ecx || ( [rdi].flags & E_EXPLICIT &&
+          ( ecx || ( [rdi].explicit &&
               ( [rdi].mem_type == MT_QWORD || [rdi].mem_type == MT_SQWORD ) ) ) )
 
         ; CodeInfo->iswide = 1 -- has been set by first operand already
@@ -1154,11 +1154,11 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
     ; signed and unsigned arguments (ADD, CMP, ... ).
 
 
-    .if ( [rdi].flags & E_EXPLICIT )
+    .if ( [rdi].explicit )
 
         ; size coercion for immediate value
 
-        or [rsi].flags,CI_CONST_SIZE_FIXED
+        mov [rsi].constsizefixed,1
 
         ; don't check if size and value are compatible.
 
@@ -1197,7 +1197,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
         ; mem16[2],0x100 --> mem8[3],0x01
         ;
         mov edx,[rsi].opnd.type
-        .if ( !( [rdi].flags & E_EXPLICIT ) && [rsi].Ofssize > USE16 &&
+        .if ( !( [rdi].explicit ) && [rsi].Ofssize > USE16 &&
                ( edx == OP_M16 || edx == OP_M32  || edx == OP_M64 ) )
 
             sub rdi,expr
@@ -1246,7 +1246,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
         .endif
         .endc
     .case T_PUSH
-        .if !( [rdi].flags & E_EXPLICIT )
+        .if !( [rdi].explicit )
             .if [rsi].Ofssize > USE16 && op_type == OP_I16
                 mov op_type,OP_I32
             .endif
@@ -1280,7 +1280,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
 
     .if ( CurrOpnd == OPND2 )
         .if ( !([rsi].mem_type & MT_SPECIAL) && ( [rsi].mem_type & MT_SIZE_MASK ) )
-            or [rsi].flags,CI_ISWIDE
+            mov [rsi].iswide,1
         .endif
     .endif
     mov [rsi].opnd[rbx].type,op_type
@@ -1331,7 +1331,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
         .endif
     .elseif ( [rcx].asym.state == SYM_SEG || [rcx].asym.state == SYM_GRP || [rdi].inst == T_SEG )
         mov Ofssize,USE16
-    .elseif ( [rdi].flags & E_IS_ABS ) ; an (external) absolute symbol?
+    .elseif ( [rdi].is_abs ) ; an (external) absolute symbol?
         mov Ofssize,USE16
     .else
         mov Ofssize,GetSymOfssize( rcx )
@@ -1350,8 +1350,8 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     ;   fixup type, of course.
     ; - check if Codeinfo->mem_type really has to be set here!
 
-    .if ( [rdi].flags & E_EXPLICIT ) && !( [rdi].flags & E_IS_ABS )
-        or [rsi].flags,CI_CONST_SIZE_FIXED
+    .if ( [rdi].explicit && !( [rdi].is_abs ) )
+        mov [rsi].constsizefixed,1
         .if ( [rsi].mem_type == MT_EMPTY )
             mov [rsi].mem_type,[rdi].mem_type
         .endif
@@ -1388,12 +1388,12 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
         .switch eax
         .case 1
-            .if ( [rdi].flags & E_IS_ABS || ecx == T_LOW || ecx == T_HIGH || ecx == T_LOWBYTE || ecx == T_HIGHBYTE )
+            .if ( [rdi].is_abs || ecx == T_LOW || ecx == T_HIGH || ecx == T_LOWBYTE || ecx == T_HIGHBYTE )
                 mov [rsi].mem_type,MT_BYTE
             .endif
             .endc
         .case 2
-            .if ( [rdi].flags & E_IS_ABS || [rsi].Ofssize == USE16 || ecx == T_LOWWORD || ecx == T_HIGHWORD )
+            .if ( [rdi].is_abs || [rsi].Ofssize == USE16 || ecx == T_LOWWORD || ecx == T_HIGHWORD )
                 mov [rsi].mem_type,MT_WORD
             .endif
             .endc
@@ -1421,7 +1421,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
 
     .if ( [rsi].mem_type == MT_EMPTY )
 
-        .if ( [rdi].flags & E_IS_ABS )
+        .if ( [rdi].is_abs )
 
             .if ( [rdi].mem_type != MT_EMPTY )
                 mov [rsi].mem_type,[rdi].mem_type
@@ -1469,7 +1469,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
                 ; default: push offset only
                 ; for PUSH + undefined symbol, assume BYTE
 
-                .if ( [rdi].mem_type == MT_FAR && !( [rdi].flags & E_EXPLICIT ) )
+                .if ( [rdi].mem_type == MT_FAR && !( [rdi].explicit ) )
                     mov [rdi].mem_type,MT_NEAR
                 .endif
 
@@ -1549,7 +1549,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
         .endif
         setl ch
 
-        .if ( ecx || ( [rdi].flags & E_EXPLICIT && eax == 7 ) )
+        .if ( ecx || ( [rdi].explicit && eax == 7 ) )
 
             mov [rsi].opnd[rbx].type,OP_I64
             mov [rsi].opnd[rbx].data32h,[rdi].hvalue
@@ -1592,7 +1592,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
                 ; v2.06: added branch for PTR16 fixup.
                 ; it's only done if type coercion is FAR (Masm-compat)
 
-                .if ( [rdi].flags & E_EXPLICIT && Ofssize == USE16 && [rdi].mem_type == MT_FAR )
+                .if ( [rdi].explicit && Ofssize == USE16 && [rdi].mem_type == MT_FAR )
                     mov fixup_type,FIX_PTR16
                 .else
                     mov fixup_type,FIX_OFF32
@@ -1613,7 +1613,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     ; and first operand is a memory reference with size > 1
 
     .if ( CurrOpnd == OPND2 && size != 1 )
-        or [rsi].flags,CI_ISWIDE
+        mov [rsi].iswide,1
     .endif
     segm_override(rdi, NULL) ;; set SegOverride global var
 
@@ -1659,14 +1659,14 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         mov rdx,[rdi].mbr
     .endif
 
-    .if ( [rdi].flags & E_EXPLICIT && [rdi].type )
+    .if ( [rdi].explicit && [rdi].type )
 
         mov rcx,[rdi].type
         mov ebx,[rcx].asym.total_size
         .if [rcx].asym.is_far
-            or [rsi].flags,CI_ISFAR
+            mov [rsi].isfar,1
         .else
-            and [rsi].flags,not CI_ISFAR
+            mov [rsi].isfar,0
         .endif
 
     .elseif ( rdx )
@@ -1676,9 +1676,9 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             mov rcx,[rdx].asym.type
             mov ebx,[rcx].asym.total_size
             .if [rcx].asym.is_far
-                or [rsi].flags,CI_ISFAR
+                mov [rsi].isfar,1
             .else
-                and [rsi].flags,not CI_ISFAR
+                mov [rsi].isfar,0
             .endif
 
             ; there's an ambiguity with pointers of size DWORD,
@@ -1698,10 +1698,10 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
 
             mov sym,rdx
             mov ebx,SizeFromMemtype( cl, [rdx].asym.Ofssize, NULL )
-            and [rsi].flags,not CI_ISFAR
+            mov [rsi].isfar,0
             mov rdx,sym
             .if [rdx].asym.is_far
-                or [rsi].flags,CI_ISFAR
+                mov [rsi].isfar,1
             .endif
         .else
             .if ( [rdx].asym.isarray )
@@ -1942,7 +1942,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .endif
         mov rcx,[rdi].mbr
         .if ( [rcx].asym.state == SYM_UNDEFINED )
-            or [rsi].flags,CI_UNDEF_SYM
+            mov [rsi].undef_sym,1
         .endif
     .endif
 
@@ -1990,7 +1990,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
               ( ( [rsi].Ofssize == USE16 && [rdi].Ofssize != USE32 ) ||
                 ( [rsi].Ofssize == USE32 && [rdi].Ofssize == USE16 ) ) ) )
 
-            or [rsi].flags,CI_ISFAR
+            mov [rsi].isfar,1
         .endif
         .endc
     .endsw
@@ -2169,7 +2169,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .new Ofssize:byte = 0
         .new fixup_type:int_t = 0
 
-        .if ( [rdi].flags & E_IS_ABS )
+        .if ( [rdi].is_abs )
             .if IS_ADDR32(rsi)
                 inc Ofssize
             .endif
@@ -2190,7 +2190,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
             ; v2.19: For Masm, offsets and fixups generated depend on the used segment register;
             ; if it's assumed to be flat/32-bit, offsets and fixups will also be 32-bit.
 
-            .if ( !( [rdi].flags & E_IS_ABS ) && sym )
+            .if ( !( [rdi].is_abs ) && sym )
 
                .new passume:ptr asym
                 GetAssume( SegOverride, sym, ASSUME_DS, &passume )
@@ -2277,7 +2277,7 @@ if 1
 
     .if ( [rdi].hvalue && ( [rdi].hvalue != -1 || [rdi].value >= 0 ) )
 
-        .if ( [rsi].Ofssize != USE64 || [rdi].flags & E_INDIRECT )
+        .if ( [rsi].Ofssize != USE64 || [rdi].indirect )
             .return EmitConstError()
         .endif
     .endif
@@ -2355,7 +2355,7 @@ process_address proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
     ldr ebx,CurrOpnd
 
     mov rcx,[rdi].sym
-    .if [rdi].flags & E_INDIRECT ;; indirect register operand or stack var
+    .if ( [rdi].indirect ) ;; indirect register operand or stack var
 
         ; if displacement doesn't fit in 32-bits:
         ; Masm (both ML and ML64) just truncates.
@@ -2417,7 +2417,7 @@ endif
             .return idata_nofixup( rsi, ebx, rdi )
         .endif
 
-    .elseif ( [rcx].asym.state == SYM_UNDEFINED && !( [rdi].flags & E_EXPLICIT ) )
+    .elseif ( [rcx].asym.state == SYM_UNDEFINED && !( [rdi].explicit ) )
 
         ; undefined symbol, it's not possible to determine
         ; operand type and size currently. However, for backpatching
@@ -2487,7 +2487,7 @@ endif
 
         ; symbol external, but absolute?
 
-        .if ( [rdi].flags & E_IS_ABS )
+        .if ( [rdi].is_abs )
             .return idata_fixup( rsi, ebx, rdi )
         .endif
 
@@ -2609,7 +2609,7 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
         ; it's probably better to not reset the wide bit at all
         ;
         .if ( eax != OP_CL ) ; problem: SHL AX|AL, CL
-            and [rsi].flags,not CI_ISWIDE
+            mov [rsi].iswide,0
         .endif
 
         .if ( [rsi].Ofssize == USE64 && regno >=4 && regno <= 7 )
@@ -2619,9 +2619,9 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
             lea rcx,SpecialTable
 
             .if ( [rcx+rax].special_item.cpu == P_86 )
-                or [rsi].flags,CI_X86HI_USED ;; it's AH,BH,CH,DH
+                mov [rsi].x86hi_used,1 ;; it's AH,BH,CH,DH
             .else
-                or [rsi].flags,CI_x64LO_USED ;; it's SPL,BPL,SIL,DIL
+                mov [rsi].x64lo_used,1 ;; it's SPL,BPL,SIL,DIL
             .endif
         .endif
 
@@ -2638,7 +2638,7 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
 
     .elseif ( eax & OP_R ) ; 16-, 32- or 64-bit GPR?
 
-        or [rsi].flags,CI_ISWIDE
+        mov [rsi].iswide,1
         imul ecx,regno,assume_info
         and al,OP_R
 
@@ -3055,7 +3055,7 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
 
     .if ( [rdx].opnd_class.opnd_type[rcx] == OP_NONE )
 
-        and [rsi].flags,not CI_ISWIDE
+        mov [rsi].iswide,0
         mov [rsi].opsiz,FALSE
     .endif
 
@@ -3089,11 +3089,11 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
         .endif
         .switch op_size
         .case 1
-            and [rsi].flags,not CI_ISWIDE
+            mov [rsi].iswide,0
             mov [rsi].opsiz,FALSE
            .endc
         .case 2
-            or  [rsi].flags,CI_ISWIDE
+            mov [rsi].iswide,1
             xor eax,eax
             .if ( [rsi].Ofssize )
                 inc eax
@@ -3101,7 +3101,7 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
             mov [rsi].opsiz,al
            .endc
         .case 4
-            or  [rsi].flags,CI_ISWIDE
+            mov [rsi].iswide,1
             xor eax,eax
             .if ( ![rsi].Ofssize )
                 inc eax
@@ -3111,7 +3111,7 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
         .case 8
             .if ( [rsi].Ofssize == USE64 )
 
-                or  [rsi].flags,CI_ISWIDE
+                mov [rsi].iswide,1
                 mov [rsi].opsiz,FALSE
                 mov [rsi].rex,REX_W
             .endif
@@ -3168,7 +3168,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .case OP_AX
                 .endc
             .case OP_AL
-                and [rsi].flags,not CI_ISWIDE ; clear w-bit
+                mov [rsi].iswide,0 ; clear w-bit
             .case OP_EAX
                 .if ( [rsi].Ofssize )
                     mov [rsi].opsiz,FALSE
@@ -3183,7 +3183,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .case OP_AX
                 .endc
             .case OP_AL
-                and [rsi].flags,not CI_ISWIDE ; clear w-bit
+                mov [rsi].iswide,0 ; clear w-bit
             .case OP_EAX
                 .if [rsi].Ofssize
                     mov [rsi].opsiz,FALSE
@@ -3205,7 +3205,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         ; v2.11: added
 
         mov rcx,[rdi].sym
-        .if ( [rsi].opnd[OPND1].type == OP_M && !( [rsi].flags & CI_UNDEF_SYM ) &&
+        .if ( [rsi].opnd[OPND1].type == OP_M && !( [rsi].undef_sym ) &&
               ( rcx == NULL || [rcx].asym.state != SYM_UNDEFINED ) )
 
             asmerr( 2023 )
@@ -3218,8 +3218,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
 
         mov rcx,[rdi+expr].sym
         .if ( [rdi+expr].kind == EXPR_ADDR && Parse_Pass == PASS_1 &&
-              !( [rdi+expr].flags & E_INDIRECT ) &&
-              rcx && [rcx].asym.state == SYM_UNDEFINED )
+              !( [rdi+expr].indirect ) && rcx && [rcx].asym.state == SYM_UNDEFINED )
 
             mov [rsi].opnd[OPNI2].type,OP_I8
             mov [rsi].opnd[OPNI2].data32l,1
@@ -3229,7 +3228,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         ; isn't set!)
 
         .if ( OperandSize( op1, rsi ) > 1 )
-            or [rsi].flags,CI_ISWIDE
+            mov [rsi].iswide,1
         .endif
 
         ; v2.06: makes the OP_CL_ONLY case in codegen.c obsolete
@@ -3259,7 +3258,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         .endc
     .case T_MOVSX
     .case T_MOVZX
-        and [rsi].flags,not CI_ISWIDE
+        mov [rsi].iswide,0
         mov op1_size,OperandSize(op1, rsi)
         mov op2_size,OperandSize(op2, rsi)
         .if ( op2_size == 0 && Parse_Pass == PASS_2 )
@@ -3275,7 +3274,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .if ( op2_size < 2 )
                 ;
             .elseif ( op2_size == 2 )
-                or [rsi].flags,CI_ISWIDE
+                mov [rsi].iswide,1
             .else
                 mov rc,asmerr( 2024 )
             .endif
@@ -3367,7 +3366,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
     .case T_VCVTPD2DQ
     .case T_VCVTTPD2DQ
     .case T_VCVTPD2PS
-        .if ( edx == OP_M && ( [rdi+expr].flags & E_INDIRECT ) )
+        .if ( edx == OP_M && ( [rdi+expr].indirect ) )
             .return asmerr( 2023 )
         .endif
         .endc
@@ -3418,7 +3417,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .endif
         .elseif ( ( op1 & OP_M ) && ( op2 & OP_A ) ) ; 1. operand memory reference, 2. AL|AX|EAX|RAX?
 
-            .if !( [rsi].flags & CI_ISDIRECT )
+            .if !( [rsi].isdirect )
 
                 ; address mode is indirect.
                 ; don't use the short format (opcodes A0-A3) - it exists for direct
@@ -3460,7 +3459,7 @@ endif
 
         .elseif ( ( op1 & OP_A ) && ( op2 & OP_M ) ) ; 2. operand memory reference, 1. AL|AX|EAX|RAX?
 
-            .if ( !( [rsi].flags & CI_ISDIRECT ) )
+            .if ( !( [rsi].isdirect ) )
 
                 and [rsi].opnd[OPND1].type,not OP_A
 
@@ -3581,26 +3580,26 @@ endif
 
                     ; changed in v2.33.56
                     mov eax,[rsi].opnd[OPNI2].data32l
-                    .ifs ( op2_size == 1 || ( op1 == OP_M && !( [rdi+expr].flags & E_EXPLICIT ) &&
+                    .ifs ( op2_size == 1 || ( op1 == OP_M && !( [rdi+expr].explicit ) &&
                         !( ( eax < 0 && eax < CHAR_MIN ) || eax > UCHAR_MAX ) ) )
 
                         mov [rsi].mem_type,MT_BYTE
                         mov [rsi].opnd[OPNI2].type,OP_I8
                         lea rcx,@CStr("BYTE")
-                        .if ( op1 == OP_M && !( [rdi+expr].flags & E_EXPLICIT ) )
+                        .if ( op1 == OP_M && !( [rdi+expr].explicit ) )
                             mov [rsi].opnd[OPND1].type,OP_M08
                         .endif
 
                     .elseifs ( op2_size == 2 && !( ( eax < 0 && eax < SHRT_MIN ) || eax > USHRT_MAX ) )
 
                         mov [rsi].mem_type,MT_WORD
-                        or  [rsi].flags,CI_ISWIDE
+                        mov [rsi].iswide,1
                         mov [rsi].opnd[OPNI2].type,OP_I16
                         lea rcx,@CStr("WORD")
 
                     .else
 
-                        or [rsi].flags,CI_ISWIDE
+                        mov [rsi].iswide,1
                         .if MODULE.Ofssize == USE16 && op2_size > 2 && InWordRange([rsi].opnd[OPNI2].data32l)
                             mov op2_size,2
                         .endif
@@ -3614,13 +3613,13 @@ endif
                         .endif
                     .endif
 
-                    .if !( [rdi+expr].flags & E_EXPLICIT )
+                    .if !( [rdi+expr].explicit )
 
                         ; v2.06: emit warning at pass one if mem op isn't a forward ref
                         ; v2.06b: added "undefined" check
 
                         mov rax,[rsi].opnd[OPND1].InsFixup
-                        .if ( ( rax  == NULL && Parse_Pass == PASS_1 && !( [rsi].flags & CI_UNDEF_SYM ) ) ||
+                        .if ( ( rax  == NULL && Parse_Pass == PASS_1 && !( [rsi].undef_sym ) ) ||
                             ( rax && Parse_Pass == PASS_2 ) )
                             asmerr( 8019, rcx )
                         .endif
@@ -3646,7 +3645,7 @@ endif
                         .endc
                     .case 2
                         mov [rsi].mem_type,MT_WORD
-                        or [rsi].flags,CI_ISWIDE
+                        mov [rsi].iswide,1
                         .if ( Parse_Pass == PASS_1 && ( op2 & OP_I ) )
                             asmerr( 8019, "WORD" )
                         .endif
@@ -3656,7 +3655,7 @@ endif
                         .endc
                     .case 4
                         mov [rsi].mem_type,MT_DWORD
-                        or [rsi].flags,CI_ISWIDE
+                        mov [rsi].iswide,1
                         .if ( Parse_Pass == PASS_1 && ( op2 & OP_I ) )
                             asmerr( 8019, "DWORD" )
                         .endif
@@ -4377,7 +4376,7 @@ init_prefix:
 
                         .if ( j )
 
-                            .if ( opndx[rdi-expr].kind == EXPR_REG && !( opndx[rdi-expr].flags & E_INDIRECT ) )
+                            .if ( opndx[rdi-expr].kind == EXPR_REG && !( opndx[rdi-expr].indirect ) )
 
                                 mov rax,opndx[rdi-expr].base_reg
                                 SizeFromRegister( [rax].asm_tok.tokval )
@@ -4489,13 +4488,13 @@ init_prefix:
             .elseif ( edi & VX_NND )
             .elseif ( ( edi & VX_IMM ) && ( opndx[expr*2].kind == EXPR_CONST ) && ( j > 2 ) )
             .elseif ( ( edi & VX_HALF ) && ( ( ecx & ( OP_XMM or OP_YMM or OP_ZMM ) ) &&
-                      ( opndx[rdx].flags & E_INDIRECT ) ) )
+                      ( opndx[rdx].indirect ) ) )
 
                 mov CodeInfo.rm_byte,0
 
             .elseif ( ( edi & VX_NMEM ) && ( ( ecx & OP_M ) ||
                      ( ( eax == T_VMOVSD || eax == T_VMOVSS ) &&
-                     ( opndx[expr].kind != EXPR_REG || opndx[expr].flags & E_INDIRECT ) ) ) )
+                     ( opndx[expr].kind != EXPR_REG || opndx[expr].indirect ) ) ) )
 
                 ; v2.11: VMOVSD and VMOVSS always have 2 ops if a memory op is involved
 
@@ -4631,7 +4630,7 @@ init_prefix:
             .endc
         .case EXPR_REG
 
-            .if ( opndx[rdx].flags & E_INDIRECT ) ; indirect operand ( "[EBX+...]" )?
+            .if ( opndx[rdx].indirect ) ; indirect operand ( "[EBX+...]" )?
 
                 .ifd ( process_address( &CodeInfo, ebx, &opndx[rdx] ) == ERROR )
                     .return
@@ -4686,7 +4685,7 @@ ifdef USE_INDIRECTION
         mov rax,[rdi].sym
         mov rdx,[rdi].mbr
 
-        .if ( rbx && rax && rdx && [rdi].flags & E_IS_DOT )
+        .if ( rbx && rax && rdx && [rdi].is_dot )
 
             mov rdx,[rax].asym.target_type
 
@@ -4726,7 +4725,7 @@ endif
     ; the "near" entries, that's why it's needed to skip all items
     ; until the next "first" item is found.
     ;
-    .if ( CodeInfo.flags & CI_ISFAR )
+    .if ( CodeInfo.isfar )
         .if ( CodeInfo.token == T_CALL || CodeInfo.token == T_JMP )
 
             .repeat
@@ -4820,7 +4819,7 @@ endif
 
         .if ( CodeInfo.Ofssize == USE64 )
 
-            .if ( CodeInfo.flags & CI_X86HI_USED && CodeInfo.rex )
+            .if ( CodeInfo.x86hi_used && CodeInfo.rex )
                 asmerr( 3012 )
             .endif
 
@@ -4899,26 +4898,29 @@ endif
             mov ecx,CodeInfo.opnd[OPND1].type
             mov edx,CodeInfo.opnd[OPNI2].type
 
-            .if ( eax == T_MOV || eax == T_CMP )
+            .if ( ecx & OP_M_ANY || edx & OP_M_ANY )
 
                 ; v2.36 - Handle C-type RECORD fields
 
-                .if ( ecx & OP_M_ANY && opndx[expr].kind == EXPR_CONST )
-
+                xor ebx,ebx
+                .switch eax
+                .case T_OR
+                .case T_XOR
+                .case T_TEST
+                .case T_CMP
+                   .endc .if !( edx & OP_I )
                     mov rbx,opndx.mbr
-                    .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.crecord )
-                        mov ecx,eax
-                       .return( CRecordField(ecx, &opndx, &opndx[expr]) )
+                   .endc
+                .case T_MOV
+                    .if ( ecx & OP_R )
+                        mov rbx,opndx[expr].mbr
+                    .elseif ( edx & ( OP_I or OP_R ) )
+                        mov rbx,opndx.mbr
                     .endif
-                .endif
-
-                .if ( eax == T_MOV && edx & OP_M_ANY && opndx.kind == EXPR_REG )
-
-                    mov rbx,opndx[expr].mbr
-                    .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.crecord )
-                        mov ecx,eax
-                       .return( CRecordField(ecx, &opndx, &opndx[expr]) )
-                    .endif
+                .endsw
+                .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.crecord )
+                    mov ecx,eax
+                   .return( CRecordField(ecx, &opndx, &opndx[expr]) )
                 .endif
             .endif
 

@@ -243,7 +243,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .if ( opndx.kind == EXPR_CONST )
             ;
-        .elseif ( opndx.kind == EXPR_ADDR && !( opndx.flags & E_INDIRECT ) )
+        .elseif ( opndx.kind == EXPR_ADDR && !( opndx.indirect ) )
             mov rdx,opndx.sym
             add opndx.value,[rdx].asym.offs
 
@@ -516,7 +516,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         mov rdx,opndx.sym
         .if ( opndx.kind == EXPR_CONST )
-        .elseif ( opndx.kind == EXPR_ADDR && !( opndx.flags & E_INDIRECT ) && \
+        .elseif ( opndx.kind == EXPR_ADDR && !( opndx.indirect ) && \
             rdx && [rdx].asym.state == SYM_UNDEFINED )
         .else
             .return( asmerr( 2026 ) )

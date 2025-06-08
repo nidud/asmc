@@ -8,4 +8,4 @@ Asmc Macro Assembler Reference
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Operators Reference](readme.md) | [Directive RECORD](../directive/record.md)

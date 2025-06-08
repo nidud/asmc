@@ -257,7 +257,7 @@ endif
     ; check type of start label. Must be a symbolic code label, internal or external
 
     mov rsi,opndx.sym
-    .if ( opndx.kind == EXPR_ADDR && !( opndx.flags & E_INDIRECT ) &&
+    .if ( opndx.kind == EXPR_ADDR && !( opndx.indirect ) &&
          ( opndx.mem_type == MT_NEAR || opndx.mem_type == MT_FAR ||
          ( opndx.mem_type == MT_EMPTY && opndx.inst == T_OFFSET ) ) &&
          rsi && ( [rsi].asym.state == SYM_INTERNAL || [rsi].asym.state == SYM_EXTERNAL ) )

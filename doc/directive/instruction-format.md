@@ -32,7 +32,7 @@ The remaining prefixes control how AVX instructions are encoded.
 
 The Enhanced Vector Extension (EVEX) encoding prefix will be omitted by using an EVEX exclusive instruction or any of the extended SIMD registers. A preceding prefix may be used for EVEX encoding of other instructions.
 
-```assembly
+```
   vaddps xmm1 {k1}, xmm2, xmm3            ; merge-masking
   vsubps ymm0 {k4}{z}, ymm1, ymm2         ; zero-masking
   vmulps zmm0, zmm1, dword bcst [rcx]     ; embedded broadcast

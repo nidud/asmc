@@ -477,7 +477,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .switch ( opnd.kind )
             .case EXPR_ADDR
-                .if ( rsi == NULL || opnd.flags & E_INDIRECT || opnd.value )
+                .if ( rsi == NULL || opnd.indirect || opnd.value )
                     .return( asmerr( 2096 ) );
                 .elseif ( [rsi].state == SYM_UNDEFINED )
 

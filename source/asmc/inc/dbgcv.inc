@@ -3205,85 +3205,81 @@ endif
     CV_AMB_HUGE		= 2,
     }
 
-.enum CV_cflags : WORD {
-    CV_cflags_pcode	= 0x0001, ; true if pcode present
-    CV_cflags_floatprec = 0x0006, ; floating precision
-    CV_cflags_floatpkg	= 0x0018, ; float package
-    CV_cflags_ambdata	= 0x00E0, ; ambient data model
-    CV_cflags_ambcode	= 0x0700, ; ambient code model
-    CV_cflags_mode32	= 0x0800, ; true if compiled 32 bit mode
-    CV_cflags_pad	= 0xF000  ; reserved
-    }
-
 .template CFLAGSYM
-    reclen	dw ?		; Record length
-    rectyp	dw ?		; S_COMPILE
-    machine	db ?		; target processor
-    language	db ?		; language index
-    flags	CV_cflags ?
-    ver		db 1 dup(?)	; Length-prefixed compiler version string
+    reclen		dw ?		; Record length
+    rectyp		dw ?		; S_COMPILE
+    machine		db ?		; target processor
+    language		db ?		; language index
+    record flags
+     language		dw : 8 ?	; language index
+     pcode		dw : 1 ?	; true if pcode present
+     floatprec		dw : 2 ?	; floating precision
+     floatpkg		dw : 2 ?	; float package
+     ambdata		dw : 3 ?	; ambient data model
+     ambcode		dw : 3 ?	; ambient code model
+     mode32		dw : 1 ?	; true if compiled 32 bit mode
+     pad		dw : 4 ?	; reserved
+    ends
+    ver			db 1 dup(?)	; Length-prefixed compiler version string
    .ends
 
-.enum CV_compflags : DWORD {
-    CV_comp_iLanguage		= 0x000000FF, ; language index
-    CV_comp_fEC			= 0x00000100, ; compiled for E/C
-    CV_comp_fNoDbgInfo		= 0x00000200, ; not compiled with debug info
-    CV_comp_fLTCG		= 0x00000400, ; compiled with LTCG
-    CV_comp_fNoDataAlign	= 0x00000800, ; compiled with -Bzalign
-    CV_comp_fManagedPresent	= 0x00001000, ; managed code/data present
-    CV_comp_fSecurityChecks	= 0x00002000, ; compiled with /GS
-    CV_comp_fHotPatch		= 0x00004000, ; compiled with /hotpatch
-    CV_comp_fCVTCIL		= 0x00008000, ; converted with CVTCIL
-    CV_comp_fMSILModule		= 0x00010000, ; MSIL netmodule
-    CV_comp_pad			= 0xFFFE0000, ; reserved, must be 0
-    }
 
 .template COMPILESYM
-    reclen	dw ?		; Record length
-    rectyp	dw ?		; S_COMPILE2
-    flags	CV_compflags ?
-    machine	dw ?		; target processor
-    verFEMajor	dw ?		; front end major version #
-    verFEMinor	dw ?		; front end minor version #
-    verFEBuild	dw ?		; front end build version #
-    verMajor	dw ?		; back end major version #
-    verMinor	dw ?		; back end minor version #
-    verBuild	dw ?		; back end build version #
-    verSt	db 1 dup(?)
+    reclen		dw ?		; Record length
+    rectyp		dw ?		; S_COMPILE2
+    record flags
+     iLanguage		dd :  8 ?	; language index
+     fEC		dd :  1 ?	; compiled for E/C
+     fNoDbgInfo		dd :  1 ?	; not compiled with debug info
+     fLTCG		dd :  1 ?	; compiled with LTCG
+     fNoDataAlign	dd :  1 ?	; compiled with -Bzalign
+     fManagedPresent	dd :  1 ?	; managed code/data present
+     fSecurityChecks	dd :  1 ?	; compiled with /GS
+     fHotPatch		dd :  1 ?	; compiled with /hotpatch
+     fCVTCIL		dd :  1 ?	; converted with CVTCIL
+     fMSILModule	dd :  1 ?	; MSIL netmodule
+     pad		dd : 15 ?	; reserved, must be 0
+    ends
+    machine		dw ?		; target processor
+    verFEMajor		dw ?		; front end major version #
+    verFEMinor		dw ?		; front end minor version #
+    verFEBuild		dw ?		; front end build version #
+    verMajor		dw ?		; back end major version #
+    verMinor		dw ?		; back end minor version #
+    verBuild		dw ?		; back end build version #
+    verSt		db 1 dup(?)
    .ends
 
 
-.enum CV_compflags3 : DWORD {
-    CV_comp3_iLanguage		= 0x000000FF, ; language index
-    CV_comp3_fEC		= 0x00000100, ; compiled for E/C
-    CV_comp3_fNoDbgInfo		= 0x00000200, ; not compiled with debug info
-    CV_comp3_fLTCG		= 0x00000400, ; compiled with LTCG
-    CV_comp3_fNoDataAlign	= 0x00000800, ; compiled with -Bzalign
-    CV_comp3_fManagedPresent	= 0x00001000, ; managed code/data present
-    CV_comp3_fSecurityChecks	= 0x00002000, ; compiled with /GS
-    CV_comp3_fHotPatch		= 0x00004000, ; compiled with /hotpatch
-    CV_comp3_fCVTCIL		= 0x00008000, ; converted with CVTCIL
-    CV_comp3_fMSILModule	= 0x00010000, ; MSIL netmodule
-    CV_comp3_fSdl		= 0x00020000, ; compiled with /sdl
-    CV_comp3_fPGO		= 0x00040000, ; compiled with /ltcg:pgo or pgu
-    CV_comp3_fExp		= 0x00080000, ; .exp module
-    CV_comp3_pad		= 0xFFF00000, ; reserved, must be 0
-    }
-
 .template COMPILESYM3
-    reclen	dw ?		; Record length
-    rectyp	dw ?		; S_COMPILE2
-    flags	CV_compflags3 ?
-    machine	dw ?		; target processor
-    verFEMajor	dw ?		; front end major version
-    verFEMinor	dw ?		; front end minor version
-    verFEBuild	dw ?		; front end build version
-    verFEQFE	dw ?		; front end QFE version
-    verMajor	dw ?		; back end major version
-    verMinor	dw ?		; back end minor version
-    verBuild	dw ?		; back end build version
-    verQFE	dw ?		; back end QFE version
-    verSz	db 1 dup(?)	; Zero terminated compiler version string
+    reclen		dw ?		; Record length
+    rectyp		dw ?		; S_COMPILE2
+    record flags
+     iLanguage		dd :  8 ?	; language index
+     fEC		dd :  1 ?	; compiled for E/C
+     fNoDbgInfo		dd :  1 ?	; not compiled with debug info
+     fLTCG		dd :  1 ?	; compiled with LTCG
+     fNoDataAlign	dd :  1 ?	; compiled with -Bzalign
+     fManagedPresent	dd :  1 ?	; managed code/data present
+     fSecurityChecks	dd :  1 ?	; compiled with /GS
+     fHotPatch		dd :  1 ?	; compiled with /hotpatch
+     fCVTCIL		dd :  1 ?	; converted with CVTCIL
+     fMSILModule	dd :  1 ?	; MSIL netmodule
+     fSdl		dd :  1 ?	; compiled with /sdl
+     fPGO		dd :  1 ?	; compiled with /ltcg:pgo or pgu
+     fExp		dd :  1 ?	; .exp module
+     pad		dd : 12 ?	; reserved, must be 0
+    ends
+    machine		dw ?		; target processor
+    verFEMajor		dw ?		; front end major version
+    verFEMinor		dw ?		; front end minor version
+    verFEBuild		dw ?		; front end build version
+    verFEQFE		dw ?		; front end QFE version
+    verMajor		dw ?		; back end major version
+    verMinor		dw ?		; back end minor version
+    verBuild		dw ?		; back end build version
+    verQFE		dw ?		; back end QFE version
+    verSz		db 1 dup(?)	; Zero terminated compiler version string
    .ends
 
 
@@ -3348,15 +3344,13 @@ endif
 
 define CV_LINES_HAVE_COLUMNS 0x0001
 
-.enum CV_lineflags {
-    CV_lineflags_linenumStart	= 0x00FFFFFF, ; line where statement/expression starts
-    CV_lineflags_deltaLineEnd	= 0x7F000000, ; delta to line where statement ends (optional)
-    CV_lineflags_fStatement	= 0x80000000  ; true if a statement linenumber, else an expression line num
-    }
-
 .template CV_Line_t
-    offs	dd ?		; Offset to start of code bytes for line number
-    flags	CV_lineflags ?
+    offs		dd ?		; Offset to start of code bytes for line number
+    record flags
+     linenumStart	dd :24 ?	; line where statement/expression starts
+     deltaLineEnd	dd : 7 ?	; delta to line where statement ends (optional)
+     fStatement		dd : 1 ?	; true if a statement linenumber, else an expression line num
+    ends
    .ends
 
 CV_columnpos_t		typedef WORD
@@ -3364,6 +3358,41 @@ CV_columnpos_t		typedef WORD
 .template CV_Column_t
     offColumnStart	CV_columnpos_t ?
     offColumnEnd	CV_columnpos_t ?
+   .ends
+
+.template FRAMEPROCSYM
+    reclen		dw ?		; Record length
+    rectyp		dw ?		; S_FRAMEPROC
+    cbFrame		dd ?		; count of bytes of total frame of procedure
+    cbPad		dd ?		; count of bytes of padding in the frame
+    offPad		dd ?		; offset (relative to frame poniter) to where padding starts
+    cbSaveRegs		dd ?		; count of bytes of callee save registers
+    offExHdlr		dd ?		; offset of exception handler
+    sectExHdlr		dw ?		; section id of exception handler
+    record flags
+     fHasAlloca		dd : 1 ?	; function uses _alloca()
+     fHasSetJmp		dd : 1 ?	; function uses setjmp()
+     fHasLongJmp	dd : 1 ?	; function uses longjmp()
+     fHasInlAsm		dd : 1 ?	; function uses inline asm
+     fHasEH		dd : 1 ?	; function has EH states
+     fInlSpec		dd : 1 ?	; function was speced as inline
+     fHasSEH		dd : 1 ?	; function has SEH
+     fNaked		dd : 1 ?	; function is __declspec(naked)
+     fSecurityChecks	dd : 1 ?	; function has buffer security check introduced by /GS.
+     fAsyncEH		dd : 1 ?	; function compiled with /EHa
+     fGSNoStackOrdering dd : 1 ?	; function has /GS buffer checks, but stack ordering couldn't be done
+     fWasInlined	dd : 1 ?	; function was inlined within another function
+     fGSCheck		dd : 1 ?	; function is __declspec(strict_gs_check)
+     fSafeBuffers	dd : 1 ?	; function is __declspec(safebuffers)
+     encodedLocalBasePointer dd : 2 ?	; record function's local pointer explicitly.
+     encodedParamBasePointer dd : 2 ?	; record function's parameter pointer explicitly.
+     fPogoOn		dd : 1 ?	; function was compiled with PGO/PGU
+     fValidCounts	dd : 1 ?	; Do we have valid Pogo counts?
+     fOptSpeed		dd : 1 ?	; Did we optimize for speed?
+     fGuardCF		dd : 1 ?	; function contains CFG checks (and no write checks)
+     fGuardCFW		dd : 1 ?	; function contains CFW checks and/or instrumentation
+     pad		dd : 9 ?	; must be zero
+    ends
    .ends
 
 .pragma pack(pop)

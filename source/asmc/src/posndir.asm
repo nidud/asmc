@@ -95,7 +95,7 @@ OrgDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
 
         .if ( opndx.kind == EXPR_CONST )
             .return( SetCurrOffset( CurrSeg, opndx.value, FALSE, FALSE ) )
-        .elseif ( opndx.kind == EXPR_ADDR && !( opndx.flags & E_INDIRECT ) )
+        .elseif ( opndx.kind == EXPR_ADDR && !( opndx.indirect ) )
             mov rcx,opndx.sym
             mov edx,[rcx].asym.offs
             add edx,opndx.value

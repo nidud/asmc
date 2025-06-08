@@ -4459,33 +4459,33 @@ quad_resize proc __ccall uses rsi rbx opnd:ptr expr, size:int_t
         .endc
     .case 8
         .if ( [rbx].chararray[15] & 0x80 )
-            or  [rbx].flags,E_NEGATIVE
+            mov [rbx].negative,1
             and [rbx].chararray[15],0x7F
         .endif
         __cvtq_sd(rbx, rbx)
-        .if ( [rbx].flags & E_NEGATIVE )
+        .if ( [rbx].negative )
             or [rbx].chararray[7],0x80
         .endif
         mov [rbx].mem_type,MT_REAL8
         .endc
     .case 4
         .if ( [rbx].chararray[15] & 0x80 )
-            or  [rbx].flags,E_NEGATIVE
+            mov [rbx].negative,1
             and [rbx].chararray[15],0x7F
         .endif
         __cvtq_ss(rbx, rbx)
-        .if ( [rbx].flags & E_NEGATIVE )
+        .if ( [rbx].negative )
             or [rbx].chararray[3],0x80
         .endif
         mov [rbx].mem_type,MT_REAL4
         .endc
     .case 2
         .if ( [rbx].chararray[15] & 0x80 )
-            or  [rbx].flags,E_NEGATIVE
+            mov [rbx].negative,1
             and [rbx].chararray[15],0x7F
         .endif
         __cvtq_h(rbx, rbx)
-        .if ( [rbx].flags & E_NEGATIVE )
+        .if ( [rbx].negative )
             or [rbx].chararray[1],0x80
         .endif
         mov [rbx].mem_type,MT_REAL2

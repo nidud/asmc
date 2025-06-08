@@ -302,7 +302,7 @@ output_opc proc __ccall uses rdi rbx
     ;; by either a segment prefix or the opcode byte.
     ;; Neither Masm nor JWasm emit a warning, though.
 
-    .if ( [rsi].adrsiz && !( [rsi].flags & CI_BASE_RIP ) && !( [rdi].evex & VX_XMMI ) )
+    .if ( [rsi].adrsiz && !( [rsi].base_rip ) && !( [rdi].evex & VX_XMMI ) )
         OutputByte(ADRSIZ)
     .endif
     .if ( [rsi].opsiz )
@@ -1042,7 +1042,7 @@ output_opc proc __ccall uses rdi rbx
     .endif
 
     xor ecx,ecx
-    .if ( [rsi].flags & CI_ISWIDE )
+    .if ( [rsi].iswide )
         inc ecx
     .endif
 
@@ -1082,7 +1082,7 @@ output_opc proc __ccall uses rdi rbx
 
         mov bl,[rdi].rm_byte
         or  bl,[rsi].rm_byte
-        .if ( [rsi].flags & CI_BASE_RIP ) ;; @RIP
+        .if ( [rsi].base_rip ) ;; @RIP
 
             and bl,not MOD_10
         .endif
@@ -1565,7 +1565,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
 
             .if ( ebx & eax )
 
-                .endc .if ( [rsi].flags & CI_CONST_SIZE_FIXED ) && ebx != OP_I8
+                .endc .if ( [rsi].constsizefixed ) && ebx != OP_I8
 
                 ;; v2.03: lower bound wasn't checked
                 ;; range of unsigned 8-bit is -128 - +255
@@ -1604,7 +1604,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
                .endc .if ( rcx && [rcx].asym.state != SYM_UNDEFINED ) ;; external? then skip
             .endif
 
-            .if !( [rsi].flags & CI_CONST_SIZE_FIXED )
+            .if !( [rsi].constsizefixed )
 
                 movsx eax,byte ptr [rsi].opnd[OPNI2].data32l
                 movsx ecx,word ptr [rsi].opnd[OPNI2].data32l
@@ -1673,7 +1673,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
                 .endif
                 .if [rdi].byte1_info == F_0F0F ;; output 3dNow opcode?
                     movzx eax,[rdi].opcode
-                    .if [rsi].flags & CI_ISWIDE
+                    .if [rsi].iswide
                         or eax,1
                     .endif
                     OutputByte(eax)
@@ -1766,7 +1766,7 @@ check_operand_2 proc __ccall uses rdi rbx opnd1:int_t
                     .endif
                 .endif
 
-                .if ( !( [rsi].flags & CI_UNDEF_SYM ) && ( !eax || !rdx || ecx != SYM_UNDEFINED ) )
+                .if ( !( [rsi].undef_sym ) && ( !eax || !rdx || ecx != SYM_UNDEFINED ) )
 
                     asmerr(2023)
                 .endif

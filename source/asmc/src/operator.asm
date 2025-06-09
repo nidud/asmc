@@ -291,7 +291,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
                 .if ( ax == 'L' && [rcx+asm_tok].asm_tok.token == T_STRING )
                     tstrcat( rdi, "ptrword" )
                     add i,2
-                .elseif ( [rcx].asm_tok.flags & T_ISPROC )
+                .elseif ( [rcx].asm_tok.IsProc )
                     .if ( MODULE.Ofssize == USE64 )
                         tstrcat( rdi, "qword" )
                     .else
@@ -311,7 +311,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
 
                         mov rcx,opnd.quoted_string
                         .if ( rcx && [rcx].asm_tok.token == T_STRING )
-                            .if ( MODULE.xflag & OPT_WSTRING )
+                            .if ( MODULE.wstring )
                                 tstrcat( rdi, "ptrword" )
                             .else
                                 tstrcat( rdi, "ptrsbyte" )
@@ -489,7 +489,7 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
         .case EXPR_CONST
             mov rcx,[rbx].op2.quoted_string
             .if ( rcx && [rcx].asm_tok.token == T_STRING )
-                .if ( MODULE.xflag & OPT_WSTRING )
+                .if ( MODULE.wstring )
                     tstrcat( rdi, "ptrword" )
                 .else
                     tstrcat( rdi, "ptrsbyte" )
@@ -513,18 +513,18 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
         .if ( rdx == NULL )
             mov rdx,[rbx].op2.base_reg
         .endif
-        .if ( rcx && [rcx].asm_tok.flags & T_EXPR )
+        .if ( rcx && [rcx].asm_tok.Operator )
 
             .if ( rdx )
-                or [rdx].asm_tok.flags,T_EXPR
+                mov [rdx].asm_tok.Operator,1
             .endif
             add rdi,tsprintf( rdi, "%r, ", vector )
             GetArgs2( &[rbx].op2 )
 
-        .elseif ( rdx && [rdx].asm_tok.flags & T_EXPR )
+        .elseif ( rdx && [rdx].asm_tok.Operator )
 
             .if ( rcx )
-                or [rcx].asm_tok.flags,T_EXPR
+                mov [rcx].asm_tok.Operator,1
             .endif
             GetArgs2( &[rbx].op1 )
             add rdi,tstrlen( rdi )
@@ -533,10 +533,10 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
         .else
 
             .if ( rdx )
-                or [rdx].asm_tok.flags,T_EXPR
+                mov [rdx].asm_tok.Operator,1
             .endif
             .if ( rcx )
-                or [rcx].asm_tok.flags,T_EXPR
+                mov [rcx].asm_tok.Operator,1
             .endif
 
             GetArgs2(&[rbx].op1)

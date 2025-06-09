@@ -416,11 +416,12 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ExpandCStrings( tokenarray )
 
         xor eax,eax
+        mov [rsi].flags,eax
         mov [rsi].labels[LEXIT*4],eax
         .if ( cmd == T_DOT_FORS )
-            or eax,HLLF_IFS
+            mov [rsi].Signed,1
         .endif
-        mov [rsi].flags,eax
+
         mov [rsi].cmd,HLL_FOR
 
         ; create the loop labels

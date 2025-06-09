@@ -332,8 +332,8 @@ SymFind proc fastcall string:string_t
     mov     rax,[rdx]
     test    rax,rax
     jz      .end_l
-    cmp     MODULE.case_sensitive,0
-    je      .cmp_li
+    test    MODULE.case_sensitive,1
+    jz      .cmp_li
 .cmp_l:
     cmp     r8d,[rax].asym.name_size
     jne     .next_l
@@ -404,8 +404,8 @@ SymFind proc fastcall string:string_t
     mov     rax,[rdx]
     test    rax,rax
     jz      .end_g
-    cmp     MODULE.case_sensitive,0
-    je      .cmp_gi
+    test    MODULE.case_sensitive,1
+    jz      .cmp_gi
 .cmp_g:
     cmp     r8d,[rax].asym.name_size
     jne     .next_g

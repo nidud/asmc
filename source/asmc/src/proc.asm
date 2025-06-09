@@ -404,7 +404,7 @@ LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     inc i ; go past LOCAL
-    mov rbx,tokenarray.tokptr(i)
+    tokptr(i)
 
     .repeat
 
@@ -480,7 +480,7 @@ if 1 ; v2.34.61 - jwasm v2.17
 endif
             ; zero is allowed as value!
 
-            mov rbx,tokenarray.tokptr(i)
+            tokptr(i)
             mov rcx,loc
             mov [rcx].asym.total_length,opndx.value
             mov [rcx].asym.isarray,1
@@ -500,7 +500,7 @@ endif
             inc i
             .return .ifd ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
 
-            mov rbx,tokenarray.tokptr(i)
+            tokptr(i)
             mov rcx,loc
             mov [rcx].asym.mem_type,ti.mem_type
             .if ( ti.mem_type == MT_TYPE )
@@ -665,7 +665,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
     mov eax,[rcx].asym.isproc
     mov init_done,eax
 
-    mov rbx,tokenarray.tokptr(i)
+    tokptr(i)
     .for ( cntParam = 0 : [rbx].token != T_FINAL : cntParam++ )
 
         .if ( [rbx].token == T_ID )
@@ -939,7 +939,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
             .endif
         .endif
 
-        mov rbx,tokenarray.tokptr(i)
+        tokptr(i)
 
         .if ( [rbx].token != T_FINAL )
             .if ( [rbx].token != T_COMMA )
@@ -1129,7 +1129,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
 
     ; 1. attribute is <distance>
 
-    mov rbx,tokenarray.tokptr(i)
+    tokptr(i)
     .if ( [rbx].token == T_STYPE &&
           [rbx].tokval >= T_NEAR && [rbx].tokval <= T_FAR32 )
 
@@ -1210,7 +1210,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
     ; PROTO does NOT accept PUBLIC! However,
     ; PROTO accepts PRIVATE and EXPORT, but these attributes are just ignored!
 
-    mov rbx,tokenarray.tokptr(i)
+    tokptr(i)
 
     .if ( [rbx].token == T_ID || [rbx].token == T_DIRECTIVE )
 
@@ -1285,7 +1285,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
 
             .for ( : edi < max: edi++ )
 
-                mov rbx,tokenarray.tokptr(edi)
+                tokptr(edi)
 
                 .if ( [rbx].token == T_ID )
 
@@ -1426,7 +1426,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
                      mov [rbx].string_ptr,[rdi].asym.string_ptr
                 .endif
             .endf
-            mov rbx,tokenarray.tokptr(i)
+            tokptr(i)
 
             .if ( cnt == 0 )
 
@@ -1491,7 +1491,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
 
         mov ebx,TokenCount ; v2.31: proto :vararg {
         dec ebx
-        mov rbx,tokenarray.tokptr(ebx)
+        tokptr(ebx)
 
         .if ( [rbx].token == T_STRING && [rbx].string_delim == '{' )
             sub rbx,asm_tok
@@ -2062,10 +2062,12 @@ WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
         "%s %r",
         T_IMAGEREL, [rdi].asym.name, T_IMAGEREL, [rdi].asym.name, [rdi].asym.total_size, T_IMAGEREL, xdataofs,
         segname, T_ENDS )
-    mov olddotname,MODULE.dotname
+    mov esi,MODULE.dotname
     mov MODULE.dotname,TRUE ; set OPTION DOTNAME because .pdata and .xdata
     RunLineQueue()
-    mov MODULE.dotname,olddotname
+    .if ( esi == 0 )
+        mov MODULE.dotname,0
+    .endif
     ret
 
 WriteSEHData endp
@@ -2215,17 +2217,17 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
         ; v2.36.13 -MT - static link option: "main defined" and "argv used"
 
-        .if ( Options.link_mt & LINK_MT && ( edx == 4 || edx == 5 ) )
+        .if ( Options.link_mt && ( edx == 4 || edx == 5 ) )
 
             mov rdx,[rcx].asym.name
             mov eax,[rdx]
             .if ( eax == 'niam' || ( eax == 'iamw' && byte ptr [rdx+4] == 'n' ) )
 
-                or Options.link_mt,LINK_MAIN
+                mov Options.main_found,1
                 mov rax,[rcx].dsym.procinfo
                 mov rax,[rax].proc_info.paralist
                 .if ( rax )
-                    or Options.link_mt,LINK_ARGV
+                    mov Options.argv_used,1
                 .endif
             .endif
             mov edx,[rcx].asym.name_size
@@ -2268,7 +2270,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new puc:ptr UNWIND_CODE
 
     mov rdi,CurrProc
-    mov rbx,tokenarray.tokptr(i)
+    tokptr(i)
 
     ; v2.05: accept directives for windows only
 
@@ -2303,7 +2305,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .case T_DOT_ALLOCSTACK ; syntax: .ALLOCSTACK size
         .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
 
-        mov rbx,tokenarray.tokptr(i)
+        tokptr(i)
         mov rcx,opndx.sym
         .if ( opndx.kind == EXPR_ADDR && [rcx].asym.state == SYM_UNDEFINED )
             ; v2.11: allow forward references
@@ -2432,7 +2434,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         inc i
         .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
 
-        mov rbx,tokenarray.tokptr(i)
+        tokptr(i)
         mov rcx,opndx.sym
         .if ( opndx.kind == EXPR_ADDR && [rcx].asym.state == SYM_UNDEFINED )
             ; v2.11: allow forward references
@@ -2961,7 +2963,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
     get_fasttype([rdi].asym.segoffsize, [rdi].asym.langtype)
     mov flags,[rax].fc_info.flags
 
-    .if ( al & _P_CSTACK && MODULE.xflag & OPT_CSTACK )
+    .if ( al & _P_CSTACK && MODULE.cstack )
         inc cstack
     .endif
     .if ( al & _P_SYSTEMV && [rsi].paralist && MODULE.win64_flags & W64F_AUTOSTACKSP )
@@ -3643,11 +3645,12 @@ runqueue:
     ; because current line number is the first true src line
     ; IN the proc.
 
-    mov oldlinenumbers,Options.line_numbers
+    mov ebx,Options.line_numbers
     mov Options.line_numbers,FALSE ; temporarily disable line numbers
-
     RunLineQueue()
-    mov Options.line_numbers,oldlinenumbers
+    .if ( ebx )
+        mov Options.line_numbers,1
+    .endif
 
     .if ( MODULE.list && UseSavedState && ( Parse_Pass > PASS_1 ) )
 
@@ -3711,7 +3714,7 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
     mov rdi,CurrProc
 
     get_fasttype([rdi].asym.segoffsize, [rdi].asym.langtype)
-    .if ( [rax].fc_info.flags & _P_CSTACK && MODULE.xflag & OPT_CSTACK )
+    .if ( [rax].fc_info.flags & _P_CSTACK && MODULE.cstack )
         inc cstack
     .endif
 
@@ -4130,7 +4133,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
     get_fasttype([rdi].asym.segoffsize, [rdi].asym.langtype)
     mov al,[rax].fc_info.flags
-    .if ( al & _P_CSTACK && MODULE.xflag & OPT_CSTACK )
+    .if ( al & _P_CSTACK && MODULE.cstack )
         inc cstack
     .endif
     .if ( al & _P_SYSTEMV && [rsi].paralist && MODULE.win64_flags & W64F_AUTOSTACKSP )

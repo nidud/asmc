@@ -455,7 +455,7 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
             ;
             ; disable -eq!
             ;
-            mov Options.no_error_disp,al
+            mov Options.no_error_disp,0
             asmerr( 4910, rbx )
         .endif
     .endif

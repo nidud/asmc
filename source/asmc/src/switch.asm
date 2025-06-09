@@ -26,8 +26,8 @@ RenderCase proc __ccall uses rsi rdi rbx hll:ptr hll_item, case:ptr hll_item, bu
     ldr rsi,hll
     ldr rbx,case
     ldr rdi,buffer
-    mov rcx,[rbx].hll_item.condlines
 
+    mov rcx,[rbx].hll_item.condlines
     .if ( rcx == NULL )
 
         AddLineQueueX( " jmp @C%04X", [rbx].hll_item.labels[LSTART*4] )
@@ -85,7 +85,7 @@ GetLowCount proc fastcall hll:ptr hll_item, min:intptr_t, dist:intptr_t
     mov rcx,[rcx].caselist
 
     .while rcx
-        .ifs ( [rcx].flags & HLLF_TABLE && rdx >= [rcx].value )
+        .ifs ( [rcx].CaseInTable && rdx >= [rcx].value )
             add eax,1
         .endif
         mov rcx,[rcx].caselist
@@ -101,7 +101,7 @@ GetHighCount proc fastcall hll:ptr hll_item, max:intptr_t, dist:intptr_t
     xor eax,eax
     mov rcx,[rcx].caselist
     .while rcx
-        .ifs ( [rcx].flags & HLLF_TABLE && rdx <= [rcx].value )
+        .ifs ( [rcx].CaseInTable && rdx <= [rcx].value )
             add eax,1
         .endif
         mov rcx,[rcx].caselist
@@ -118,9 +118,9 @@ SetLowCount proc fastcall uses rbx hll:ptr hll_item, count:ptr int_t, min:intptr
     xor eax,eax
     mov rcx,[rcx].caselist
     .while rcx
-        .ifs ( [rcx].flags & HLLF_TABLE && rbx < [rcx].value )
+        .ifs ( [rcx].CaseInTable && rbx < [rcx].value )
 
-            and [rcx].flags,NOT HLLF_TABLE
+            mov [rcx].CaseInTable,0
             dec int_t ptr [rdx]
             inc eax
         .endif
@@ -139,9 +139,9 @@ SetHighCount proc fastcall uses rbx hll:ptr hll_item, count:ptr int_t, max:intpt
     xor eax,eax
     mov rcx,[rcx].caselist
     .while rcx
-        .ifs ( [rcx].flags & HLLF_TABLE && rbx > [rcx].value )
+        .ifs ( [rcx].CaseInTable && rbx > [rcx].value )
 
-            and [rcx].flags,NOT HLLF_TABLE
+            mov [rcx].CaseInTable,0
             dec int_t ptr [rdx]
             inc eax
         .endif
@@ -159,7 +159,7 @@ GetCaseVal proc fastcall hll:ptr hll_item, val:intptr_t
 
     mov rax,[rcx].hll_item.caselist
     .while rax
-        .if ( [rax].hll_item.flags & HLLF_TABLE && [rax].hll_item.value == rdx )
+        .if ( [rax].hll_item.CaseInTable && [rax].hll_item.value == rdx )
             .break
         .endif
         mov rcx,rax
@@ -174,7 +174,7 @@ RemoveVal proc fastcall private hll:ptr hll_item, val:intptr_t
 
     .if GetCaseVal()
 
-        and [rax].hll_item.flags,NOT HLLF_TABLE
+        mov [rax].hll_item.CaseInTable,0
         mov eax,1
     .endif
     ret
@@ -189,20 +189,18 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
    .new oldtok:string_t
    .new size:byte = 1
 
+    ldr rsi,hll
+    ldr rdx,tokenarray
+
     xor edi,edi ; dynamic count
     xor ebx,ebx ; static count
-
-    ldr rdx,tokenarray
     mov oldtok,[rdx].asm_tok.tokpos
-    mov rsi,hll
-    mov eax,[rsi].flags
-    and eax,HLLF_ARG16 or HLLF_ARG32 or HLLF_ARG64
 
-    .if ( eax == HLLF_ARG16 )
+    .if ( [rsi].Switch16 )
         inc size
-    .elseif ( eax == HLLF_ARG32 )
+    .elseif ( [rsi].Switch32 )
         mov size,4
-    .elseif ( eax == HLLF_ARG64 )
+    .elseif ( [rsi].Switch64 )
         mov size,8
     .endif
 
@@ -210,9 +208,9 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
 
     .while rsi
 
-        .if ( [rsi].flags & HLLF_NUM )
+        .if ( [rsi].CaseIsConst )
 
-            or [rsi].flags,HLLF_TABLE
+            mov [rsi].CaseInTable,1
             Tokenize( [rsi].condlines, 0, tokenarray, TOK_DEFAULT )
             mov TokenCount,eax
             mov i,0
@@ -279,7 +277,7 @@ endif
 
         .while rdi
 
-            .if ( [rsi].flags & HLLF_NUM )
+            .if ( [rsi].CaseIsConst )
 
                 .if GetCaseVal( rsi, [rsi].labels )
 
@@ -313,7 +311,7 @@ endif
 
     .while rsi
 
-        .if ( [rsi].flags & HLLF_TABLE )
+        .if ( [rsi].CaseInTable )
 
             inc   edi
             mov   rcx,[rsi].value
@@ -346,20 +344,20 @@ endif
     mov rsi,hll
     mov ecx,1
     mov eax,MIN_JTABLE
-    .if ( [rsi].flags & HLLF_NOTEST )
+    .if ( [rsi].SwitchJump )
 
         ; v2.30 - allow small jump tables
 
         mov eax,1
 
-    .elseif !( [rsi].flags & HLLF_ARGREG )
+    .elseif !( [rsi].SwitchReg )
 
         add eax,2
         add ecx,1
-        .if !( [rsi].flags & HLLF_ARG16 or HLLF_ARG32 or HLLF_ARG64 )
+        .if ( ![rsi].Switch16 && ![rsi].Switch32 && ![rsi].Switch64 )
 
             add eax,1
-            .if !( MODULE.xflag & OPT_REGAX )
+            .if !( MODULE.switch_regax )
 
                 add eax,10
             .endif
@@ -486,15 +484,14 @@ RenderMultiCase proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, buf
         mov rsi,hll
         assume rsi:ptr hll_item
 
-        .if ( [rsi].flags & HLLF_PASCAL )
+        .if ( [rsi].Structured )
 
-            and [rsi].flags,NOT HLLF_PASCAL
-
+            mov [rsi].Structured,0
             .if ( MODULE.list )
                 LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
             .endif
             RunLineQueue()
-            or [rsi].flags,HLLF_PASCAL
+            mov [rsi].Structured,1
         .endif
         mov eax,1
     .endif
@@ -518,90 +515,102 @@ CompareMaxMin endp
 ; Move .SWITCH <arg> to [R|E]AX
 ;
 
-GetSwitchArg proc __ccall uses rbx reg:int_t, flags:int_t, arg:string_t
+GetSwitchArg proc __ccall uses rsi rdi rbx reg:int_t, hll:ptr hll_item, arg:string_t
 
-  local buffer[64]:sbyte
+   .new buffer[64]:sbyte
 
-    .if !( MODULE.xflag & OPT_REGAX )
+    ldr edi,reg
+    ldr rsi,hll
+    ldr rbx,arg
 
-        AddLineQueueX( "push %r", reg )
+    .if !( MODULE.switch_regax )
+
+        AddLineQueueX( "%r %r", T_PUSH, edi )
     .endif
-    GetResWName( reg, &buffer )
+    GetResWName( edi, &buffer )
 
-    mov eax,flags
-    mov edx,reg
-    mov rbx,arg
+    xor ecx,ecx
+    mov edx,T_MOV
 
-    .if !( eax & HLLF_ARG16 or HLLF_ARG32 or HLLF_ARG64 )
+    .if ( ![rsi].Switch16 && ![rsi].Switch32 && ![rsi].Switch64 )
         ;
         ; BYTE value
         ;
 ifndef ASMC64
-        mov ecx,MODULE.curr_cpu
-        and ecx,P_CPU_MASK
-        .if ( ecx >= P_386 )
+        mov eax,MODULE.curr_cpu
+        and eax,P_CPU_MASK
+        .if ( eax >= P_386 )
 endif
-            .if ( eax & HLLF_ARGMEM )
-
-                AddLineQueueX( " movsx %r, byte ptr %s", edx, rbx )
-            .else
-                AddLineQueueX( " movsx %r, %s", edx, rbx )
+            mov edx,T_MOVSX
+            .if ( [rsi].SwitchMem )
+                mov ecx,T_BYTE
             .endif
 ifndef ASMC64
         .else
             .ifd tstricmp( "al", rbx )
-                AddLineQueueX( " mov al, %s", rbx )
+                AddLineQueueX( " %r %r, %s", T_MOV, T_AL, rbx )
             .endif
-            AddLineQueue ( " cbw" )
+            AddLineQueueX( " %r", T_CBW )
+            xor edx,edx
+            xor ecx,ecx
         .endif
 endif
-    .elseif ( eax & HLLF_ARG16 )
+    .elseif ( [rsi].Switch16 )
         ;
         ; WORD value
         ;
 ifndef ASMC64
         .if ( MODULE.Ofssize == USE16 )
 
-            .if ( eax & HLLF_ARGMEM )
-
-                AddLineQueueX( " mov %r, word ptr %s", edx, rbx )
-            .elseifd tstricmp( rbx, &buffer )
-
-                AddLineQueueX( " mov %r,%s", edx, rbx )
+            .if ( [rsi].SwitchMem )
+                mov ecx,T_WORD
             .endif
-        .elseif ( eax & HLLF_ARGMEM )
+        .elseif ( [rsi].SwitchMem )
 else
-        .if ( eax & HLLF_ARGMEM )
+        .if ( [rsi].SwitchMem )
 endif
-            AddLineQueueX( " movsx %r, word ptr %s", edx, rbx )
+            mov ecx,T_WORD
+            mov edx,T_MOVSX
         .else
-            AddLineQueueX( " movsx %r, %s", edx, rbx )
+            mov edx,T_MOVSX
         .endif
 
-    .elseif ( eax & HLLF_ARG32 )
+    .elseif ( [rsi].Switch32 )
         ;
         ; DWORD value
         ;
 ifndef ASMC64
         .if ( MODULE.Ofssize == USE32 )
-            .if ( eax & HLLF_ARGMEM )
-                AddLineQueueX( " mov %r, dword ptr %s", edx, rbx )
+            .if ( [rsi].SwitchMem )
+                mov ecx,T_DWORD
             .elseifd tstricmp( rbx, &buffer )
-                AddLineQueueX( " mov %r, %s", edx, rbx )
+                mov edx,T_MOV
+                xor ecx,ecx
+            .else
+                xor edx,edx
+                xor ecx,ecx
             .endif
-        .elseif ( eax & HLLF_ARGMEM )
+        .elseif ( [rsi].SwitchMem )
 else
-        .if ( eax & HLLF_ARGMEM )
+        .if ( [rsi].SwitchMem )
 endif
-            AddLineQueueX( " movsxd %r, dword ptr %s", edx, rbx )
+            mov ecx,T_DWORD
+            mov edx,T_MOVSXD
         .else
-            AddLineQueueX( " movsxd %r, %s", edx, rbx )
+            mov edx,T_MOVSXD
         .endif
     .else
         ;
         ; QWORD value
         ;
-        AddLineQueueX( " mov %r, qword ptr %s", edx, rbx )
+        mov ecx,T_QWORD
+    .endif
+    .if ( edx )
+        .if ( ecx )
+            AddLineQueueX( " %r %r, %r ptr %s", edx, edi, ecx, rbx )
+        .else
+            AddLineQueueX( " %r %r, %s", edx, edi, rbx )
+        .endif
     .endif
     ret
 
@@ -649,14 +658,14 @@ RenderSwitch proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
     .new dynamic:uint_t      ; number of dynmaic cases
     .new static:uint_t       ; number of static const values
 
-    .ifd ( GetCaseValue( rsi, tokenarray, &dynamic, &static ) && [rsi].flags & HLLF_NOTEST )
+    .ifd ( GetCaseValue( rsi, tokenarray, &dynamic, &static ) && [rsi].SwitchJump )
 
         ; create a small table
 
         add eax,MIN_JTABLE
     .endif
 
-    .if ( MODULE.xflag & OPT_NOTABLE || eax < MIN_JTABLE )
+    .if ( MODULE.switch_notable || eax < MIN_JTABLE )
         ;
         ; Time NOTABLE/TABLE
         ;
@@ -682,11 +691,11 @@ endif
 
     .new case_default:ptr hll_item = NULL
 
-    .if ( [rsi].flags & HLLF_ELSEOCCURED )
+    .if ( [rsi].ElseOccured )
 
         .for ( rax = rsi, rbx = [rsi].caselist: rbx: rax = rbx, rbx = [rbx].caselist )
 
-            .if ( [rbx].flags & HLLF_DEFAULT )
+            .if ( [rbx].DefaultCase )
 
                 mov [rax].hll_item.caselist,0
                 mov case_default,rbx
@@ -696,16 +705,16 @@ endif
         .endf
     .endif
 
-    .if ( MODULE.casealign && !( [rsi].flags & HLLF_JTDATA ) )
+    .if ( MODULE.casealign && !( [rsi].SwitchTData ) )
 
         mov cl,MODULE.casealign
         mov eax,1
         shl eax,cl
         AddLineQueueX( " ALIGN %d", eax )
 
-    .elseif ( [rsi].flags & HLLF_NOTEST && [rsi].flags & HLLF_JTABLE )
+    .elseif ( [rsi].SwitchJump && [rsi].SwitchTable )
 
-        .if ( MODULE.Ofssize == USE64 && !( [rsi].flags & HLLF_JTDATA ) )
+        .if ( MODULE.Ofssize == USE64 && !( [rsi].SwitchTData ) )
 
             AddLineQueue( " ALIGN 8" )
         .endif
@@ -716,7 +725,7 @@ endif
 
         .for ( rax = rsi, rbx = [rsi].caselist: rbx: rax = rbx, rbx = [rbx].caselist )
 
-            .if !( [rbx].flags & HLLF_NUM )
+            .if !( [rbx].CaseIsConst )
 
                 mov rcx,[rbx].caselist
                 mov [rax].hll_item.caselist,rcx
@@ -778,7 +787,7 @@ endif
 
         ; Create the jump table lable
 
-        .if ( [rsi].flags & HLLF_NOTEST && [rsi].flags & HLLF_JTABLE )
+        .if ( [rsi].SwitchJump && [rsi].SwitchTable )
 
             tstrcpy( table_addr, start_addr )
             AddLineQueueX( "MIN%s equ %d", rax, min )
@@ -791,14 +800,14 @@ endif
             mov rdi,GetLabelStr( GetHllLabel(), start_addr )
         .endif
         mov rbx,[rsi].condlines
-        .if !( [rsi].flags & HLLF_NOTEST )
+        .if !( [rsi].SwitchJump )
             CompareMaxMin(rbx, max, min, rdi)
         .endif
 
         mov cl,MODULE.Ofssize
-        .if ( [rsi].flags & HLLF_NOTEST && [rsi].flags & HLLF_JTABLE )
+        .if ( [rsi].SwitchJump && [rsi].SwitchTable )
 
-            .if ( [rsi].flags & HLLF_JTDATA )
+            .if ( [rsi].SwitchTData )
 
                 AddLineQueueX(
                     ".data\n"
@@ -815,11 +824,11 @@ endif
 ifndef ASMC64
             .if ( cl == USE16 )
 
-                .if !( MODULE.xflag & OPT_REGAX )
+                .if !( MODULE.switch_regax )
                     AddLineQueue(" push ax")
                 .endif
-                .if [rsi].flags & HLLF_ARGREG
-                    .if MODULE.xflag & OPT_REGAX
+                .if [rsi].SwitchReg
+                    .if MODULE.switch_regax
                         .ifd tstricmp("ax", rbx)
                             AddLineQueueX(" mov ax, %s", rbx)
                         .endif
@@ -833,11 +842,11 @@ ifndef ASMC64
                         .endif
                     .endif
                 .else
-                    .if !( MODULE.xflag & OPT_REGAX )
+                    .if !( MODULE.switch_regax )
                         AddLineQueue( " push bx" )
                     .endif
-                    GetSwitchArg(T_AX, [rsi].flags, rbx)
-                    .if MODULE.xflag & OPT_REGAX
+                    GetSwitchArg(T_AX, rsi, rbx)
+                    .if MODULE.switch_regax
                         AddLineQueue(" xchg ax, bx")
                     .else
                         AddLineQueue(" mov bx, ax")
@@ -847,7 +856,7 @@ ifndef ASMC64
                     AddLineQueueX(" sub bx, %d", min)
                 .endif
                 AddLineQueue(" add bx, bx")
-                .if MODULE.xflag & OPT_REGAX
+                .if MODULE.switch_regax
                     AddLineQueueX(
                         " mov bx, cs:[bx+%s]\n"
                         " xchg ax, bx\n"
@@ -864,26 +873,26 @@ ifndef ASMC64
 
             .elseif ( cl == USE32 )
 
-                .if !( [rsi].flags & HLLF_ARGREG )
+                .if !( [rsi].SwitchReg )
 
-                    GetSwitchArg(T_EAX, [rsi].flags, rbx)
+                    GetSwitchArg(T_EAX, rsi, rbx)
                     .if ( use_index )
                         .if ( dist < 256 )
                             AddLineQueueX( " movzx eax, byte ptr [eax+IT%s-(%d)]", table_addr, min )
                         .else
                             AddLineQueueX( " movzx eax, word ptr [eax*2+IT%s-(%d*2)]", table_addr, min )
                         .endif
-                        .if ( MODULE.xflag & OPT_REGAX )
+                        .if ( MODULE.switch_regax )
                             AddLineQueueX( " jmp [eax*4+%s]", table_addr )
                         .else
                             AddLineQueueX( " mov eax, [eax*4+%s]", table_addr )
                         .endif
-                    .elseif ( MODULE.xflag & OPT_REGAX )
+                    .elseif ( MODULE.switch_regax )
                         AddLineQueueX( " jmp [eax*4+%s-(%d*4)]", table_addr, min )
                     .else
                         AddLineQueueX( " mov eax, [eax*4+%s-(%d*4)]", table_addr, min )
                     .endif
-                    .if !( MODULE.xflag & OPT_REGAX )
+                    .if !( MODULE.switch_regax )
                         AddLineQueue(
                             " xchg eax, [esp]\n"
                             " retn" )
@@ -891,7 +900,7 @@ ifndef ASMC64
 
                 .elseif ( use_index )
 
-                    .if !( MODULE.xflag & OPT_REGAX )
+                    .if !( MODULE.switch_regax )
                         AddLineQueueX( " push %s", rbx )
                     .endif
                     .if ( dist < 256 )
@@ -901,7 +910,7 @@ ifndef ASMC64
                         AddLineQueueX( " movzx %s, word ptr [%s*2+IT%s-(%d*2)]",
                             rbx, rbx, table_addr, min )
                     .endif
-                    .if ( MODULE.xflag & OPT_REGAX )
+                    .if ( MODULE.switch_regax )
                         AddLineQueueX( " jmp [%s*4+%s]", rbx, table_addr )
                     .else
                         AddLineQueueX(
@@ -920,7 +929,7 @@ endif
             .new tmp:ptr = rsi
             .for ( rsi = [rsi].caselist: rsi: rsi = [rsi].caselist )
 
-                .if ( [rsi].flags & HLLF_TABLE )
+                .if ( [rsi].CaseInTable )
 
                     .if SymFind( GetLabelStr( [rsi].labels[LSTART*4], &labelx ) )
                         mov case_offset,[rax].asym.offs
@@ -954,7 +963,7 @@ endif
                 .endif
             .endif
 
-            .if ( !use_index && ( [rsi].flags & ( HLLF_ARGREG or HLLF_ARG3264 ) ) && ( MODULE.xflag & OPT_REGAX ) )
+            .if ( !use_index && [rsi].SwitchReg && [rsi].Switch3264 && MODULE.switch_regax )
 
                 mov ebx,[rsi].tokval
                 .if ( ebx == T_R11 || ebx == T_R11D )
@@ -962,7 +971,7 @@ endif
                 .endif
                 AddLineQueue( " push rax" )
 
-                .if ( [rsi].flags & HLLF_ARG3264 )
+                .if ( [rsi].Switch3264 )
                     ;
                     ; Sign-extend argument if minimum case value is < 0
                     ;
@@ -989,19 +998,19 @@ endif
 
             .else
 
-                .if ( MODULE.xflag & OPT_REGAX )
+                .if ( MODULE.switch_regax )
 
                     AddLineQueue( " push rax" )
 
                     mov rcx,rbx
                     mov ebx,[rsi].tokval
 
-                    .if !( [rsi].flags & ( HLLF_ARGREG or HLLF_ARG3264 ) )
+                    .if ( ![rsi].SwitchReg && ![rsi].Switch3264 )
 
-                        GetSwitchArg( T_RAX, [rsi].flags, rcx )
+                        GetSwitchArg( T_RAX, rsi, rcx )
                         mov ebx,T_RAX
 
-                    .elseif ( [rsi].flags & HLLF_ARG3264 )
+                    .elseif ( [rsi].Switch3264 )
 
                         mov rax,min
                         .ifs ( rax < 0 )
@@ -1041,16 +1050,16 @@ endif
                     mov rcx,rbx
                     mov ebx,[rsi].tokval
 
-                    .if !( [rsi].flags & ( HLLF_ARGREG or HLLF_ARG3264 ) )
+                    .if ( ![rsi].SwitchReg && ![rsi].Switch3264 )
 
-                        GetSwitchArg( T_RAX, [rsi].flags, rcx )
+                        GetSwitchArg( T_RAX, rsi, rcx )
                         mov ebx,T_RAX
 
                     .else
 
                         AddLineQueue(" push rax")
 
-                        .if ( [rsi].flags & HLLF_ARG3264 )
+                        .if ( [rsi].Switch3264 )
 
                             mov rax,min
                             .ifs ( rax < 0 )
@@ -1113,7 +1122,7 @@ endif
                    edi = -1, ; table index
                    rsi = [rsi].caselist: rsi: rsi = [rsi].caselist )
 
-                .if ( [rsi].flags & HLLF_TABLE )
+                .if ( [rsi].CaseInTable )
 
                     .break .if !SymFind(GetLabelStr([rsi].labels[LSTART*4], &labelx))
 
@@ -1136,7 +1145,7 @@ endif
             .for ( rsi = hll, ebx = -1,
                    rsi = [rsi].caselist: rsi: rsi = [rsi].caselist )
 
-                .if ( [rsi].flags & HLLF_TABLE && rbx != [rsi].next )
+                .if ( [rsi].CaseInTable && rbx != [rsi].next )
 
 ifndef ASMC64
                     .if ( MODULE.Ofssize == USE64 )
@@ -1259,7 +1268,7 @@ endif
             .endf
         .endif
 
-        .if ( [rsi].flags & HLLF_JTDATA )
+        .if ( [rsi].SwitchTData )
 
             AddLineQueue( ".code" )
         .endif
@@ -1272,7 +1281,7 @@ endif
 
             .for ( rbx = [rsi].caselist: rbx: rbx = [rbx].caselist )
 
-                or [rbx].flags,HLLF_TABLE
+                mov [rbx].CaseInTable,1
             .endf
         .endif
     .endw
@@ -1318,7 +1327,7 @@ ifndef ASMC64
     mov cl,MODULE.Ofssize
     .if cl == USE16
 
-        .if MODULE.xflag & OPT_REGAX
+        .if MODULE.switch_regax
             .ifd ( ebx != T_AX )
                 AddLineQueueX( " mov ax, %r", ebx )
             .endif
@@ -1348,7 +1357,7 @@ ifndef ASMC64
 
     .elseif cl == USE32
 
-        .if ( [rsi].flags & HLLF_JTDATA )
+        .if ( [rsi].SwitchTData )
             AddLineQueueX( " jmp [%r*4+DT%s-(MIN%s*4)]", ebx, rdi, rdi )
         .else
             AddLineQueueX( " jmp [%r*4+%s-(MIN%s*4)]", ebx, rdi, rdi )
@@ -1356,7 +1365,7 @@ ifndef ASMC64
 
     .else
 endif
-        .if ( [rsi].flags & HLLF_ARG3264 )
+        .if ( [rsi].Switch3264 )
            ;
            ; Sign-extend argument if minimum case value is < 0
            ;
@@ -1380,7 +1389,7 @@ endif
             .endif
         .endif
 
-        .if ( MODULE.xflag & OPT_REGAX ) ; defualt for 64-bit
+        .if ( MODULE.switch_regax ) ; defualt for 64-bit
 
             .ifd ( ebx == T_R11 || ebx == T_R11D )
                 asmerr( 2008, "register r11 overwritten by .SWITCH" )
@@ -1445,7 +1454,10 @@ SwitchStart proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; v2.27.38: .SWITCH [NOTEST] [C|PASCAL] ...
     ; v2.30.07: .SWITCH [JMP] [C|PASCAL] ...
 
-    .for ( eax = HLLF_WHILE, brackets = 0 : [rbx].token == T_OP_BRACKET : )
+    mov [rsi].flags,0
+    mov [rsi].WhileMode,1
+
+    .for ( brackets = 0 : [rbx].token == T_OP_BRACKET : )
 
         inc i
         inc brackets
@@ -1456,7 +1468,7 @@ SwitchStart proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         inc i
         add rbx,asm_tok
-        or eax,HLLF_NOTEST
+        mov [rsi].SwitchJump,1
     .endif
 
     .if ( [rbx].token == T_ID )
@@ -1478,11 +1490,10 @@ SwitchStart proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .elseif ( [rbx].tokval == T_PASCAL )
         inc i
         add rbx,asm_tok
-        or eax,HLLF_PASCAL
-    .elseif ( MODULE.xflag & OPT_PASCAL )
-        or eax,HLLF_PASCAL
+        mov [rsi].Structured,1
+    .elseif ( MODULE.switch_structured )
+        mov [rsi].Structured,1
     .endif
-    mov [rsi].flags,eax
 
     .if ( [rbx].token != T_FINAL )
 
@@ -1499,61 +1510,65 @@ SwitchStart proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         mov [rsi].tokval,[rbx].tokval
 
-        .switch eax
-        .case T_R8W .. T_R15W
-        .case T_AX .. T_DI
-            or  [rsi].flags,HLLF_ARG16
+        .if ( [rbx].token == T_REG )
+
+            lea rcx,SpecialTable
+            imul eax,eax,special_item
+            mov eax,[rcx+rax].special_item.sflags
+            and eax,SFR_SIZMSK
+
+            .if ( eax == 2 )
+
+                mov [rsi].Switch16,1
 ifndef ASMC64
-            .if ( MODULE.Ofssize == USE16 )
-                or [rsi].flags,HLLF_ARGREG
-                .if [rsi].flags & HLLF_NOTEST
-                    or [rsi].flags,HLLF_JTABLE
-                .endif
-            .endif
-endif
-        .case T_SPL .. T_R15B
-        .case T_AL .. T_BH
-            .endc
-        .case T_R8D .. T_R15D
-        .case T_EAX .. T_EDI
-            or  [rsi].flags,HLLF_ARG32
-ifndef ASMC64
-            .if MODULE.Ofssize == USE32
-                or [rsi].flags,HLLF_ARGREG
-                .if [rsi].flags & HLLF_NOTEST
-                    or [rsi].flags,HLLF_JTABLE
-                    .if !( [rsi].flags & HLLF_PASCAL )
-                        or [rsi].flags,HLLF_JTDATA
+                .if ( MODULE.Ofssize == USE16 )
+                    mov [rsi].SwitchReg,1
+                    .if [rsi].SwitchJump
+                        mov [rsi].SwitchTable,1
                     .endif
                 .endif
-            .endif
-            .if MODULE.Ofssize == USE64
 endif
-                or [rsi].flags,HLLF_ARG3264
-                .if [rsi].flags & HLLF_NOTEST
-                    or [rsi].flags,HLLF_JTABLE or HLLF_ARGREG
-                .endif
+            .elseif ( eax == 4 )
+
+                mov [rsi].Switch32,1
 ifndef ASMC64
-            .endif
-endif
-            .endc
+                .if MODULE.Ofssize == USE32
+                    mov [rsi].SwitchReg,1
+                    .if [rsi].SwitchJump
+                        mov [rsi].SwitchTable,1
+                        .if !( [rsi].Structured )
+                            mov [rsi].SwitchTData,1
+                        .endif
+                    .endif
+                .endif
 
-        .case T_RAX .. T_R15
-            or  [rsi].flags,HLLF_ARG64
-            .if ( MODULE.Ofssize == USE64 )
-                or [rsi].flags,HLLF_ARGREG
-                .if [rsi].flags & HLLF_NOTEST
-                    or [rsi].flags,HLLF_JTABLE
+                .if MODULE.Ofssize == USE64
+endif
+                    mov [rsi].Switch3264,1
+                    .if [rsi].SwitchJump
+                        mov [rsi].SwitchReg,1
+                        mov [rsi].SwitchTable,1
+                    .endif
+ifndef ASMC64
+                .endif
+endif
+            .elseif ( eax == 8 )
+
+                mov [rsi].Switch64,1
+                mov [rsi].SwitchReg,1
+                .if [rsi].SwitchJump
+                    mov [rsi].SwitchTable,1
                 .endif
             .endif
-            .endc
 
-        .default
+        .else
+
            .new j:int_t = i
-            or [rsi].flags,HLLF_ARGMEM
-            EvalOperand(&j, tokenarray, TokenCount, &opnd, EXPF_NOERRMSG)
 
-            .if ( eax != ERROR )
+            mov [rsi].SwitchMem,1
+
+            .ifd ( EvalOperand(&j, tokenarray, TokenCount, &opnd, EXPF_NOERRMSG) != ERROR )
+
                 mov eax,8
 ifndef ASMC64
                 .if ( MODULE.Ofssize == USE16 )
@@ -1566,14 +1581,14 @@ endif
                     SizeFromMemtype( opnd.mem_type, opnd.Ofssize, opnd.type )
                 .endif
                 .if ( eax == 2 )
-                    or [rsi].flags,HLLF_ARG16
+                    mov [rsi].Switch16,1
                 .elseif ( eax == 4 )
-                    or [rsi].flags,HLLF_ARG32
+                    mov [rsi].Switch32,1
                 .elseif ( eax == 8 )
-                    or [rsi].flags,HLLF_ARG64
+                    mov [rsi].Switch64,1
                 .endif
             .endif
-        .endsw
+        .endif
 
         imul ecx,TokenCount,asm_tok
         add rcx,tokenarray
@@ -1653,8 +1668,8 @@ SwitchEnd proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .while ( [rax].hll_item.caselist )
             mov rax,[rax].hll_item.caselist
         .endw
-        .if ( rax != rsi && !( [rax].hll_item.flags & HLLF_ENDCOCCUR ) )
-            .if !( [rsi].flags & HLLF_JTDATA )
+        .if ( rax != rsi && !( [rax].hll_item.EndOccured ) )
+            .if !( [rsi].SwitchTData )
                 AddLineQueueX( " jmp @C%04X", [rsi].labels[LEXIT*4] )
             .endif
         .endif
@@ -1678,9 +1693,9 @@ SwitchEnd proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .if ( ![rbx].condlines )
 
                     AddLineQueueX( " jmp @C%04X", [rbx].labels[LSTART*4] )
-                .elseif ( [rbx].flags & HLLF_EXPRESSION )
+                .elseif ( [rbx].Expression )
                     mov i,1
-                    or  [rbx].flags,HLLF_WHILE
+                    mov [rbx].WhileMode,1
                     ExpandHllExpression( rbx, &i, tokenarray, LSTART, 1, rdi )
                 .else
                     QueueTestLines( [rbx].condlines )
@@ -1731,13 +1746,13 @@ SwitchExit proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .switch eax
 
     .case T_DOT_DEFAULT
-        .if ( [rsi].flags & HLLF_ELSEOCCURED )
+        .if ( [rsi].ElseOccured )
             .return asmerr( 2142 )
         .endif
         .if ( [rbx+asm_tok].token != T_FINAL )
             .return asmerr( 2008, [rbx].tokpos )
         .endif
-        or [rsi].flags,HLLF_ELSEOCCURED
+        mov [rsi].ElseOccured,1
 
     .case T_DOT_CASE
 
@@ -1756,13 +1771,13 @@ SwitchExit proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             mov [rsi].labels[LSTART*4],GetHllLabel()
 
-            .if ( [rsi].flags & HLLF_NOTEST && [rsi].flags & HLLF_JTABLE )
+            .if ( [rsi].SwitchJump && [rsi].SwitchTable )
                 RenderJTable(rsi)
             .else
                 AddLineQueueX( " jmp @C%04X", eax )
             .endif
 
-        .elseif ( [rsi].flags & HLLF_PASCAL )
+        .elseif ( [rsi].Structured )
 
             .if ( [rsi].labels[LEXIT*4] == 0 )
                 mov [rsi].labels[LEXIT*4],GetHllLabel()
@@ -1771,7 +1786,7 @@ SwitchExit proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .while ( [rax].hll_item.caselist )
                 mov rax,[rax].hll_item.caselist
             .endw
-            .if ( rax != rsi && !( [rax].hll_item.flags & HLLF_ENDCOCCUR ) )
+            .if ( rax != rsi && !( [rax].hll_item.EndOccured ) )
                 AddLineQueueX( " jmp @C%04X", [rsi].labels[LEXIT*4] )
             .endif
 if 0
@@ -1784,7 +1799,7 @@ if 0
                     mov rax,[rax].hll_item.caselist
                 .endw
 
-                .if ( rax != rsi && !( [rax].hll_item.flags & HLLF_ENDCOCCUR ) )
+                .if ( rax != rsi && !( [rax].hll_item.EndOccured ) )
                     asmerr( 7007 )
                 .endif
 endif
@@ -1887,7 +1902,7 @@ endif
 
                         .if [rbx+asm_tok].token == T_FINAL
 
-                            or [rsi].flags,HLLF_NUM
+                            mov [rsi].CaseIsConst,1
                             .break
                         .endif
                     .endif
@@ -1906,7 +1921,7 @@ endif
                   .case T_STRING
                     .if [rbx+asm_tok].token == T_FINAL
 
-                        or [rsi].flags,HLLF_NUM
+                        mov [rsi].CaseIsConst,1
                         .break
                     .endif
                     .endc
@@ -1957,7 +1972,7 @@ endif
 
         .if ( cmd == T_DOT_DEFAULT )
 
-            or [rsi].flags,HLLF_DEFAULT
+            mov [rsi].DefaultCase,1
 
         .else
 

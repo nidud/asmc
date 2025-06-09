@@ -109,7 +109,7 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new p:line_status
 
     inc i ; skip OPTION directive
-    mov rbx,tokenarray.tokptr(i)
+    tokptr(i)
 
     .while ( [rbx].token != T_FINAL )
 
@@ -420,7 +420,7 @@ endif
                                  [rdx].asm_tok.token == T_DBL_COLON )
                 .endf
                 .return .ifd ( EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR )
-                mov rbx,tokenarray.tokptr(i)
+                tokptr(i)
                 .if ( opnd.kind == EXPR_EMPTY )
                 .elseif ( opnd.kind == EXPR_CONST )
                     .if ( opnd.value > 0xFFFF )
@@ -615,9 +615,9 @@ endif
             inc i
         .case OP_CSTACK ;; ON | OFF
             .ifd ( !tstricmp( rsi, "ON" ) )
-                or  MODULE.xflag,OPT_CSTACK
+                mov MODULE.cstack,1
             .elseifd ( !tstricmp( rsi, "OFF" ) )
-                and MODULE.xflag,not OPT_CSTACK
+                mov MODULE.cstack,0
             .else
                 .break
             .endif
@@ -633,17 +633,17 @@ endif
             inc i
         .case OP_SWITCH ;; C | PASCAL | TABLE | NOTABLE | REGAX | NOREGS
             .ifd ( !tstricmp( rsi, "C" ) )
-                and MODULE.xflag,not OPT_PASCAL
+                mov MODULE.switch_structured,0
             .elseifd ( !tstricmp( rsi, "PASCAL" ) )
-                or  MODULE.xflag,OPT_PASCAL
+                mov MODULE.switch_structured,1
             .elseifd ( !tstricmp( rsi, "TABLE" ) )
-                and MODULE.xflag,not OPT_NOTABLE
+                mov MODULE.switch_notable,0
             .elseifd ( !tstricmp( rsi, "NOTABLE" ) )
-                or  MODULE.xflag,OPT_NOTABLE
+                mov  MODULE.switch_notable,1
             .elseifd ( !tstricmp( rsi, "REGAX" ) )
-                or  MODULE.xflag,OPT_REGAX
+                mov MODULE.switch_regax,1
             .elseifd ( !tstricmp( rsi, "NOREGS" ) )
-                and MODULE.xflag,not OPT_REGAX
+                mov MODULE.switch_regax,0
             .else
                 .break
             .endif
@@ -654,9 +654,9 @@ endif
             .return .ifd SetAlignment( &i, tokenarray, MAX_CASE_ALIGN, &MODULE.casealign ) == ERROR
         .case OP_WSTRING ;; ON | OFF
             .ifd ( !tstricmp( rsi, "ON" ) )
-                or  MODULE.xflag,OPT_WSTRING
+                mov MODULE.wstring,1
             .elseifd ( !tstricmp( rsi, "OFF" ) )
-                and MODULE.xflag,not OPT_WSTRING
+                mov MODULE.wstring,0
             .else
                 .break
             .endif
@@ -730,7 +730,7 @@ endif
                 .return( asmerr( 2026 ) )
             .endif
         .endsw
-        mov rbx,tokenarray.tokptr(i)
+        tokptr(i)
         .break .if ( [rbx].token != T_COMMA )
         inc i
         add rbx,asm_tok

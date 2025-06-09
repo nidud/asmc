@@ -634,13 +634,8 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         ;
         ; v2.22 - signed compare S, SB, SW, SD
         ;
-        mov rdx,hll
-        xor edi,edi
-        mov ecx,[rdx].hll_item.flags
-        .if ( ecx & HLLF_IFS )
-            inc edi
-        .endif
-
+        mov     rdx,hll
+        mov     edi,[rdx].hll_item.Signed
         mov     ecx,op
         movzx   edx,op1.mem_type
         movzx   eax,op2.mem_type
@@ -964,12 +959,12 @@ ExpandCStrings proc __ccall public uses rdi rbx tokenarray:ptr asm_tok
     ldr rcx,tokenarray
 
     xor eax,eax
-    .return .if ( !( [rcx].asm_tok.flags & T_EXPAND ) )
+    .return .if ( [rcx].asm_tok.Expand == 0 )
     .return .if ( Options.strict_masm_compat == 1 )
 
     .for ( edi = 0, rbx = rcx: [rbx].token != T_FINAL: rbx += asm_tok, edi++ )
 
-        .if ( [rbx].flags & T_ISPROC )
+        .if ( [rbx].IsProc )
 
             .return .if GenerateCString( edi, tokenarray )
 
@@ -1274,7 +1269,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:p
     .for ( rdi = &b, rbx = tokenarray, edx = 0 : edx < i : edx++, rbx += asm_tok )
 
         .if ( edx )
-            .if ( [rbx].flags & T_ISPROC )
+            .if ( [rbx].IsProc )
                 mov proc_id,rbx
                 mov parg_id,0
             .endif
@@ -1566,7 +1561,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
 
             .for ( sqcount++, rbx+=asm_tok, j++ : sqcount && [rbx].token != T_FINAL : rbx+=asm_tok, j++ )
 
-                .if ( [rbx].flags & T_ISPROC )
+                .if ( [rbx].IsProc )
                     .return .ifd LKRenderHllProc( dst, j, tokenarray ) == ERROR
                 .elseif ( [rbx].token == T_OP_BRACKET )
                     inc brcount
@@ -1923,7 +1918,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
 
     .for ( brcount = 1 : [rbx].token != T_FINAL : )
 
-        .if ( [rbx].flags & T_ISPROC )
+        .if ( [rbx].IsProc )
             .return .ifd LKRenderHllProc(dst, j, tokenarray) == ERROR
         .endif
 
@@ -2067,7 +2062,7 @@ ExpandHllProc proc __ccall public uses rsi rdi dst:string_t, i:int_t, tokenarray
 
         .while ( esi < TokenCount )
 
-            .if ( [rdi].asm_tok.flags & T_ISPROC )
+            .if ( [rdi].asm_tok.IsProc )
 
                 ExpandCStrings( tokenarray )
                 mov rc,RenderHllProc( dst, esi, tokenarray )
@@ -2119,31 +2114,30 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
 
     ldr rsi,i
     ldr rbx,tokenarray
+    ldr rdx,hll
+
+    UNREFERENCED_PARAMETER(i)
+    UNREFERENCED_PARAMETER(hll)
+    UNREFERENCED_PARAMETER(tokenarray)
 
     mov hllop.lastjmp,NULL
     mov hllop.lasttruelabel,0
 
-    ldr rdx,hll
-    mov eax,[rdx].hll_item.flags
-    and eax,HLLF_EXPRESSION
-
-    .if ( ( Options.strict_masm_compat == 0 ) && !eax && [rbx].asm_tok.flags & T_HLLCODE )
+    .if ( ( Options.strict_masm_compat == 0 ) && ![rdx].hll_item.Expression && [rbx].asm_tok.HllCode )
 
         mov edi,[rsi]
         .while ( edi < TokenCount )
 
             imul eax,edi,asm_tok
-            .if ( [rbx+rax].asm_tok.flags & T_ISFUNC )
+            .if ( [rbx+rax].asm_tok.IsFunc )
 
                 tstrcpy( buffer, [rbx].asm_tok.tokpos )
+
                 mov rax,hll
-                or  [rax].hll_item.flags,HLLF_EXPRESSION
-
-                .if ( [rbx].asm_tok.flags & T_DELAYED )
-
-                    or [rax].hll_item.flags,HLLF_DELAYED
+                mov [rax].hll_item.Expression,1
+                .if ( [rbx].asm_tok.Delayed )
+                    mov [rax].hll_item.ExpDelayed,1
                 .endif
-
                 .return NOT_ERROR
             .endif
             add edi,1
@@ -2168,10 +2162,7 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
             .endif
 
             mov rax,hll
-            mov eax,[rax].hll_item.flags
-            and eax,HLLF_IFD or HLLF_IFW or HLLF_IFB
-
-            .if ( eax && B[rdi] )
+            .if ( B[rdi] && ( [rax].hll_item.SizeDB || [rax].hll_item.SizeDW || [rax].hll_item.SizeDD ) )
                 ;
                 ; Parse a "cmp ax" or "test ax,ax" and resize
                 ; to B/W/D ([r|e]ax).
@@ -2203,9 +2194,9 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
                         inc rbx
                     .endw
 
-                    .switch eax
+                    mov rax,hll
+                    .if ( [rax].hll_item.SizeDD )
 
-                      .case HLLF_IFD
                         mov ax,[rdx]
 ifndef ASMC64
                         .if ( MODULE.Ofssize == USE64 )
@@ -2234,9 +2225,8 @@ ifndef ASMC64
                             .endif
                         .endif
 endif
-                        .endc
 
-                      .case HLLF_IFW
+                    .elseif ( [rax].hll_item.SizeDW )
 ifndef ASMC64
                         .if ( MODULE.Ofssize != USE16 )
 endif
@@ -2248,9 +2238,8 @@ endif
 ifndef ASMC64
                         .endif
 endif
-                        .endc
+                    .elseif ( [rax].hll_item.SizeDB )
 
-                      .case HLLF_IFB
                         mov ax,[rdx]
 ifndef ASMC64
                         .if ( MODULE.Ofssize == USE16 )
@@ -2270,8 +2259,7 @@ endif
 ifndef ASMC64
                         .endif
 endif
-                        .endc
-                    .endsw
+                    .endif
                 .endif
             .endif
 
@@ -2305,11 +2293,11 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr
     UNREFERENCED_PARAMETER(hll)
     UNREFERENCED_PARAMETER(tokenarray)
 
-    .if ( [rsi].hll_item.flags & HLLF_WHILE )
+    .if ( [rsi].hll_item.WhileMode )
 
         mov rdi,[rsi].hll_item.condlines
         inc delayed
-    .elseif ( [rsi].hll_item.flags & HLLF_DELAYED )
+    .elseif ( [rsi].hll_item.ExpDelayed )
         inc delayed
     .else
 
@@ -2340,7 +2328,7 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr
            .return .if ( eax != NOT_ERROR )
         .endif
 
-        and [rsi].hll_item.flags,not HLLF_WHILE
+        mov [rsi].hll_item.WhileMode,0
         EvaluateHllExpression( hll, p, rbx, ilabel, is_true, buffer )
         mov rc,eax
         QueueTestLines( buffer )
@@ -2356,9 +2344,7 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr
 
         .if ( eax == NOT_ERROR )
 
-            .if ( [rsi].hll_item.flags & HLLF_WHILE )
-                and [rsi].hll_item.flags,not HLLF_WHILE
-            .endif
+            mov [rsi].hll_item.WhileMode,0
             EvaluateHllExpression( rsi, p, rbx, ilabel, is_true, buffer )
             mov rc,eax
             QueueTestLines( buffer )
@@ -2369,7 +2355,7 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr
     Tokenize( [rbx].asm_tok.tokpos, 0, tokenarray, TOK_DEFAULT )
     mov TokenCount,eax
     mov rax,hll
-    and [rax].hll_item.flags,not HLLF_EXPRESSION
+    mov [rax].hll_item.Expression,0
    .return( rc )
 
 ExpandHllExpression endp
@@ -2681,7 +2667,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
       .case T_DOT_WHILE
 
-        or [rsi].flags,HLLF_WHILE
+        mov [rsi].WhileMode,1
       .case T_DOT_REPEAT
         ;
         ; create the label to start of loop
@@ -2700,30 +2686,27 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .if ( [rbx+rax].asm_tok.token != T_FINAL )
 
-                mov ecx,[rsi].flags
                 mov eax,cmd
 
                 .switch eax
-                  .case T_DOT_WHILESB
-                    or ecx,HLLF_IFS
-                  .case T_DOT_WHILEB
-                    or ecx,HLLF_IFB
-                    .endc
-                  .case T_DOT_WHILESW
-                    or ecx,HLLF_IFS
-                  .case T_DOT_WHILEW
-                    or ecx,HLLF_IFW
-                    .endc
-                  .case T_DOT_WHILESD
-                    or ecx,HLLF_IFS
-                  .case T_DOT_WHILED
-                    or ecx,HLLF_IFD
-                    .endc
-                  .case T_DOT_WHILES
-                    or ecx,HLLF_IFS
-                    .endc
+                .case T_DOT_WHILESB
+                    mov [rsi].Signed,1
+                .case T_DOT_WHILEB
+                    mov [rsi].SizeDB,1
+                   .endc
+                .case T_DOT_WHILESW
+                    mov [rsi].Signed,1
+                .case T_DOT_WHILEW
+                    mov [rsi].SizeDW,1
+                   .endc
+                .case T_DOT_WHILESD
+                    mov [rsi].Signed,1
+                .case T_DOT_WHILED
+                    mov [rsi].SizeDD,1
+                   .endc
+                .case T_DOT_WHILES
+                    mov [rsi].Signed,1
                 .endsw
-                mov [rsi].flags,ecx
                 EvaluateHllExpression( rsi, &i, rbx, LSTART, 1, rdi )
                 mov rc,eax
 
@@ -2773,14 +2756,14 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
       .case T_DOT_IFS
         .if ecx != T_FINAL
 
-            or [rsi].flags,HLLF_IFS
+            mov [rsi].Signed,1
             .gotosw(T_DOT_IF)
         .endif
       .case T_DOT_IFB
       .case T_DOT_IFC
         .if ecx != T_FINAL
 
-            or [rsi].flags,HLLF_IFB
+            mov [rsi].SizeDB,1
             .gotosw(T_DOT_IF)
         .endif
       .case T_DOT_IFA .. T_DOT_IFNZ
@@ -2796,20 +2779,21 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         .endc
 
-      .case T_DOT_IFSD
-        or  [rsi].flags,HLLF_IFS
-      .case T_DOT_IFD
-        or  [rsi].flags,HLLF_IFD
-        .gotosw(T_DOT_IF)
-      .case T_DOT_IFSW
-        or  [rsi].flags,HLLF_IFS
-      .case T_DOT_IFW
-        or  [rsi].flags,HLLF_IFW
-        .gotosw(T_DOT_IF)
-      .case T_DOT_IFSB
-        or  [rsi].flags,HLLF_IFB OR HLLF_IFS
-        .gotosw(T_DOT_IF)
-      .case T_DOT_WHILEA .. T_DOT_WHILESD
+    .case T_DOT_IFSD
+        mov [rsi].Signed,1
+    .case T_DOT_IFD
+        mov [rsi].SizeDD,1
+       .gotosw(T_DOT_IF)
+    .case T_DOT_IFSW
+        mov [rsi].Signed,1
+    .case T_DOT_IFW
+        mov [rsi].SizeDW,1
+       .gotosw(T_DOT_IF)
+    .case T_DOT_IFSB
+        mov [rsi].Signed,1
+        mov [rsi].SizeDB,1
+       .gotosw(T_DOT_IF)
+    .case T_DOT_WHILEA .. T_DOT_WHILESD
         .gotosw(T_DOT_WHILE)
     .endsw
 
@@ -2897,7 +2881,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
 
         inc i
-        .if ( [rsi].flags & HLLF_EXPRESSION )
+        .if ( [rsi].Expression )
             ExpandHllExpression( rsi, &i, tokenarray, LSTART, 1, rdi )
         .else
             QueueTestLines( [rsi].condlines )
@@ -2990,30 +2974,27 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ;
         .if ( [rbx].token != T_FINAL )
 
-            mov ecx,[rsi].flags
             mov eax,cmd
 
             .switch eax
-              .case T_DOT_UNTILSB
-                or ecx,HLLF_IFS
-              .case T_DOT_UNTILB
-                or ecx,HLLF_IFB
-                .endc
-              .case T_DOT_UNTILSW
-                or ecx,HLLF_IFS
-              .case T_DOT_UNTILW
-                or ecx,HLLF_IFW
-                .endc
-              .case T_DOT_UNTILSD
-                or ecx,HLLF_IFS
-              .case T_DOT_UNTILD
-                or ecx,HLLF_IFD
-                .endc
-              .case T_DOT_UNTILS
-                or ecx,HLLF_IFS
-                .endc
+            .case T_DOT_UNTILSB
+                mov [rsi].Signed,1
+            .case T_DOT_UNTILB
+                mov [rsi].SizeDB,1
+               .endc
+            .case T_DOT_UNTILSW
+                mov [rsi].Signed,1
+            .case T_DOT_UNTILW
+                mov [rsi].SizeDW,1
+               .endc
+            .case T_DOT_UNTILSD
+                mov [rsi].Signed,1
+            .case T_DOT_UNTILD
+                mov [rsi].SizeDD,1
+               .endc
+            .case T_DOT_UNTILS
+                mov [rsi].Signed,1
             .endsw
-            mov [rsi].flags,ecx
 
             EvaluateHllExpression(rsi, &i, tokenarray, LSTART, 0, rdi)
             mov rc,eax
@@ -3065,9 +3046,12 @@ HllEndDir endp
 HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
     labelid:int_t, hll1:ptr hll_item, is_true:int_t
 
-   .new rc:int_t = NOT_ERROR
    .new buff[16]:char_t
    .new buffer[256]:char_t
+   .new flags:uint_t
+   .new cmd:uint_t
+   .new condlines:ptr
+   .new rc:int_t = NOT_ERROR
 
     lea  rdi,buffer
     mov  ecx,labelid
@@ -3080,20 +3064,18 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
 
         .if ( [rbx].token == T_DIRECTIVE )
 
-            xor edx,edx
+            mov flags,[rsi].flags
+            mov [rsi].flags,0
             mov eax,[rbx].tokval
 
             .switch eax
-              .case T_DOT_IFSD
-                or edx,HLLF_IFS
-              .case T_DOT_IFD
-                or edx,HLLF_IFD
-              .case T_DOT_IF
-
-               .new cmd:uint_t = [rsi].cmd
-               .new condlines:ptr = [rsi].condlines
-               .new flags:uint_t = [rsi].flags
-                mov [rsi].flags,edx
+            .case T_DOT_IFSD
+                mov [rsi].Signed,1
+            .case T_DOT_IFD
+                mov [rsi].SizeDD,1
+            .case T_DOT_IF
+                mov cmd,[rsi].cmd
+                mov condlines,[rsi].condlines
                 mov [rsi].cmd,HLL_BREAK
                 mov rdx,i
                 inc D[rdx]
@@ -3104,30 +3086,28 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
                 .endif
                 mov [rsi].cmd,cmd
                 mov [rsi].condlines,condlines
-                mov [rsi].flags,flags
                .endc
-
-              .case T_DOT_IFSB
-                or edx,HLLF_IFS or HLLF_IFB
+            .case T_DOT_IFSB
+                mov [rsi].Signed,1
+                mov [rsi].SizeDB,1
                .gotosw(T_DOT_IF)
-              .case T_DOT_IFSW
-                or edx,HLLF_IFS
-              .case T_DOT_IFW
-                or edx,HLLF_IFW
+            .case T_DOT_IFSW
+                mov [rsi].Signed,1
+            .case T_DOT_IFW
+                mov [rsi].SizeDW,1
                .gotosw(T_DOT_IF)
-              .case T_DOT_IFS
+            .case T_DOT_IFS
                 .if ( [rbx+asm_tok].token != T_FINAL )
-                    or edx,HLLF_IFS
+                    mov [rsi].Signed,1
                    .gotosw(T_DOT_IF)
                 .endif
-              .case T_DOT_IFB
-              .case T_DOT_IFC
+            .case T_DOT_IFB
+            .case T_DOT_IFC
                 .if ( [rbx+asm_tok].token != T_FINAL )
-                    or edx,HLLF_IFB
+                    mov [rsi].SizeDB,1
                    .gotosw(T_DOT_IF)
                 .endif
-              .case T_DOT_IFA .. T_DOT_IFNZ
-
+            .case T_DOT_IFA .. T_DOT_IFNZ
                 mov rax,i
                 inc D[rax]
                 GetLabelStr([rsi].labels[rcx*4], &buff)
@@ -3138,8 +3118,8 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
                     InvertJump(rdi)
                 .endif
                 AddLineQueue(rdi)
-               .endc
             .endsw
+            mov [rsi].flags,flags
         .endif
 
     .else
@@ -3159,7 +3139,7 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
                 mov rsi,[rsi].caselist
             .endw
             .if ( rax != rsi )
-                or [rsi].flags,HLLF_ENDCOCCUR
+                mov [rsi].EndOccured,1
             .endif
         .endif
     .endif
@@ -3201,11 +3181,10 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .switch eax
     .case T_DOT_ELSEIFSD
-        or  [rsi].flags,HLLF_IFD
+        mov [rsi].SizeDD,1
     .case T_DOT_ELSEIFS
-        or  [rsi].flags,HLLF_IFS
+        mov [rsi].Signed,1
     .case T_DOT_ELSEIF
-        or  [rsi].flags,HLLF_ELSEIF
     .case T_DOT_ELSE
 
         .if ( [rsi].cmd != HLL_IF )
@@ -3214,7 +3193,7 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ;
         ; v2.08: check for multiple ELSE clauses
         ;
-        .if ( [rsi].flags & HLLF_ELSEOCCURED )
+        .if ( [rsi].ElseOccured )
             .return asmerr( 2142 )
         .endif
 
@@ -3244,7 +3223,7 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .if ( eax == NOT_ERROR )
 
-                .if ( [rsi].flags & HLLF_EXPRESSION )
+                .if ( [rsi].Expression )
 
                     ExpandHllExpression( rsi, &i, tokenarray, LTEST, 0, rdi )
                     mov eax,TokenCount
@@ -3254,16 +3233,16 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
         .else
-            or [rsi].flags,HLLF_ELSEOCCURED
+            mov [rsi].ElseOccured,1
         .endif
         .endc
 
-      .case T_DOT_ELSEIFD
-        or [rsi].flags,HLLF_IFD
-        .gotosw(T_DOT_ELSEIF)
+    .case T_DOT_ELSEIFD
+        mov [rsi].SizeDD,1
+       .gotosw(T_DOT_ELSEIF)
 
-      .case T_DOT_BREAK
-      .case T_DOT_CONTINUE
+    .case T_DOT_BREAK
+    .case T_DOT_CONTINUE
 
         .if ( [rbx+asm_tok].token == T_OP_BRACKET && [rbx+asm_tok*3].token == T_CL_BRACKET )
 

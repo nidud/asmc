@@ -507,10 +507,18 @@ SetMasm510 proc __ccall value:int_t
 
     ldr eax,value
 
-    mov MODULE.m510,al
-    mov MODULE.oldstructs,al
-    mov MODULE.dotname,al
-    mov MODULE.setif2,al
+    .if ( eax )
+
+        mov MODULE.m510,1
+        mov MODULE.oldstructs,1
+        mov MODULE.dotname,1
+        mov MODULE.setif2,1
+    .else
+        mov MODULE.m510,0
+        mov MODULE.oldstructs,0
+        mov MODULE.dotname,0
+        mov MODULE.setif2,0
+    .endif
 
     .if ( eax && MODULE._model == MODEL_NONE )
 
@@ -535,11 +543,18 @@ ModulePassInit proc __ccall private uses rsi rdi rbx
 
     lea rdi,Options
 
+    mov ecx,MODULE.lstring
+    mov MODULE.flags,[rdi].flags
+    .if ( ecx )
+        mov MODULE.lstring,1
+    .endif
+
     mov ecx,[rdi].cpu
     mov esi,[rdi]._model
     ;
     ; set default values not affected by the masm 5.1 compat switch
     ;
+
     mov MODULE.procs_private,0
     mov MODULE.procs_export,0
     mov MODULE.offsettype,OT_GROUP
@@ -611,44 +626,31 @@ ifndef ASMC64
 endif
     .endif
 
-    movzx eax,[rdi].masm51_compat
+    mov eax,[rdi].masm51_compat
     SetMasm510( eax )
 ifndef ASMC64
     mov MODULE.defOfssize,USE16
 else
     mov MODULE.defOfssize,USE64
 endif
+
     mov MODULE.ljmp,1
-    mov MODULE.list,[rdi].write_listing
     mov MODULE.cref,1
-    mov MODULE.listif,[rdi].listif
-    mov MODULE.list_generated_code,[rdi].list_generated_code
     mov MODULE.list_macro,[rdi].list_macro
-    mov MODULE.case_sensitive,[rdi].case_sensitive
-    mov MODULE.convert_uppercase,[rdi].convert_uppercase
     SymSetCmpFunc()
     mov MODULE.segorder,SEGORDER_SEQ
     mov MODULE.radix,10
     mov MODULE.fieldalign,[rdi].fieldalign
     mov MODULE.procalign,0
-    mov al,MODULE.xflag
-    and al,OPT_LSTRING
-    or  al,[rdi].xflag
-    mov MODULE.xflag,al
     mov MODULE.loopalign,[rdi].loopalign
     mov MODULE.casealign,[rdi].casealign
     mov MODULE.codepage,[rdi].codepage
     mov MODULE.win64_flags,[rdi].win64_flags
-    mov MODULE.frame_auto,[rdi].frame_auto
     mov MODULE.floatformat,[rdi].floatformat
     mov MODULE.floatdigits,[rdi].floatdigits
     mov MODULE.flt_size,[rdi].flt_size
-    mov MODULE.pic,[rdi].pic
-    mov MODULE.endbr,[rdi].endbr
-    mov MODULE.dotname,[rdi].dotname
-    mov MODULE.dotnamex,[rdi].dotnamex
-    mov MODULE.masm_compat_gencode,[rdi].masm_compat_gencode
     mov MODULE.avxencoding,0
+    mov MODULE.frame_auto,[rdi].frame_auto
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
@@ -876,9 +878,8 @@ OnePass proc __ccall private uses rsi rdi
     AssumeInit(Parse_Pass)
     CmdlParamsInit(Parse_Pass)
 
-    xor eax,eax
-    mov MODULE.EndDirFound,al
-    mov MODULE.PhaseError,al
+    mov MODULE.EndDirFound,0
+    mov MODULE.PhaseError,0
     LinnumInit()
     .if ( MODULE.line_queue.head )
         RunLineQueue()
@@ -1005,9 +1006,8 @@ ModuleInit proc private
     mov MODULE._model,MODEL_NONE
     mov MODULE.ostype,OPSYS_DOS
     mov MODULE.emulator,0
-
     .if ( Options.floating_point == FPO_EMULATION )
-        inc MODULE.emulator
+        mov MODULE.emulator,1
     .endif
 
     get_module_name()

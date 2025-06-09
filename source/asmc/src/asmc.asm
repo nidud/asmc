@@ -585,15 +585,15 @@ endif
 ifdef __UNIX__
                 ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
 
-                .if ( Options.link_mt & LINK_MT || Options.pic == 0 || Options.fctype != FCT_ELF64 )
+                .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
                     inc ebx
                 .endif
                 .if ( ebx )
 
                     CollectLinkOption("-static")
                     CollectLinkOption("-nostdlib")
-                    .if ( Options.link_mt & LINK_MT )
-                        .if !( Options.link_mt & LINK_FLTUSED )
+                    .if ( Options.link_mt )
+                        .if !( Options.float_used )
 
                             CollectLinkOption("-u")
                             CollectLinkOption("_nofloat")
@@ -621,13 +621,13 @@ ifdef __UNIX__
                 CollectLinkOption(rcx)
 else
 
-                .if ( Options.link_mt & LINK_MT )
+                .if ( Options.link_mt )
 
-                    .if !( Options.link_mt & LINK_FLTUSED )
+                    .if !( Options.float_used )
 
                         CollectLinkOption("/INCLUDE:_nofloat")
                     .endif
-                    .if ( Options.link_mt & LINK_MAIN && !( Options.link_mt & LINK_ARGV ) )
+                    .if ( Options.main_found && !( Options.argv_used ) )
 
                         CollectLinkOption("/INCLUDE:_noargv")
                     .endif

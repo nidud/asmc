@@ -79,10 +79,7 @@ WriteCodeLabel endp
 DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
 
     xor eax,eax
-    .if ( !( [rcx].flags & T_HLLCODE ) ||
-           al != MODULE.masm_compat_gencode ||
-          eax != Parse_Pass ||
-          eax != NoLineStore )
+    .if ( [rcx].HllCode == 0 || MODULE.masm_compat_gencode || eax != Parse_Pass || eax != NoLineStore )
         .return
     .endif
 
@@ -90,20 +87,19 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
 
         .repeat
             .ifs ( eax >= TokenCount )
-                or [rcx].flags,T_DELAYED
+                mov [rcx].Delayed,1
                .return 1
             .endif
             imul edx,eax,asm_tok
             inc  eax
-            test [rcx+rdx].flags,T_ISFUNC
-           .continue(0) .ifz
+           .continue( 0 ) .if ( [rcx+rdx].IsFunc == 0 )
         .until ( [rcx+rdx].token == T_OP_BRACKET )
 
-        mov edx,1   ; one open bracket found
+        mov edx,1 ; one open bracket found
         .while 1
 
             .ifs ( eax >= TokenCount )
-                or [rcx].flags,T_DELAYED
+                mov [rcx].Delayed,1
                 .return 1
             .endif
 

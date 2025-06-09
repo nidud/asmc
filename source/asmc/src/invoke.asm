@@ -852,7 +852,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
         .if ( isfloat )
 
             .if ( isvararg )
-                or Options.link_mt,LINK_FLTUSED
+                mov Options.float_used,1
             .endif
 
             ; 64 bit value <= USE32
@@ -1305,7 +1305,7 @@ handle_address:
     .if ( isfloat )
 
         .if ( isvararg )
-            or Options.link_mt,LINK_FLTUSED
+            mov Options.float_used,1
         .endif
 
         mov dl,memtype
@@ -2477,7 +2477,7 @@ endif
         .if ( [rdi].asym.is_vararg )
 
             .if ( opnd.mem_type & MT_FLOAT )
-                or Options.link_mt,LINK_FLTUSED
+                mov Options.float_used,1
             .endif
             .if ( asize > pushsize )
 
@@ -2813,7 +2813,7 @@ if 0
                     ;
                     ; this "could" be a float, and then it "should" be converted to a double
                     ;
-                    or Options.link_mt,LINK_FLTUSED
+                    mov Options.float_used,1
                 .endif
 endif
             .endif
@@ -3119,7 +3119,7 @@ endif
                     mov ecx,4
                     .if ( [rdi].asym.is_vararg && pushsize >= ecx )
 
-                        or Options.link_mt,LINK_FLTUSED
+                        mov Options.float_used,1
                         .if ( psize == 16 )
 
                             __cvtq_sd(&opnd, &opnd)

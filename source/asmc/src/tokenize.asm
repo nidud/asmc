@@ -569,13 +569,14 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
     ldr rbx,buf
     ldr rsi,p
+
     mov rdi,[rsi].input
     mov eax,[rdi]
     mov [rbx].tokval,0
 
     .switch al
 
-      .case ':' ; T_COLON binary operator (0x3A)
+    .case ':' ; T_COLON binary operator (0x3A)
 
         inc [rsi].input
         lea rcx,__dcolon
@@ -593,7 +594,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
         .endif
         .endc
 
-      .case '%' ; T_PERCENT (0x25)
+    .case '%' ; T_PERCENT (0x25)
 
         shr eax,8
         or  eax,0x202020
@@ -631,11 +632,11 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
         mov [rbx].string_ptr,rax
        .endc
 
-      .case '('
+    .case '('
         ;
         ; 0x28: T_OP_BRACKET operator - needs a matching ')'
         ; v2.11: reset c-expression flag if a macro function call is detected
-        ; v2.20: set _cstring to allow escape chars (\") in @CStr( string )
+        ; v2.20: set cstring to allow escape chars (\") in @CStr( string )
         ; v2.20: removed auto off switch for asmc_syntax in macros
         ; v2.20: added more test code for label() calls
         ; v2.30: added invocation for reg(...) if typedef
@@ -652,18 +653,17 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
             ;
             ; REG() expans as CALL REG
             ;
-            or [rbx-asm_tok].flags,T_ISPROC
+            mov [rbx-asm_tok].IsProc,1
 
         .elseif ( [rsi].index && [rbx-asm_tok].token == T_REG )
 
             mov ecx,[rbx-asm_tok].tokval
-            .new tmp:int_t = eax
             .if ( GetValueSp( ecx ) & OP_RGT8 )
                 .if ( GetStdAssume( GetRegNo( ecx ) ) )
-                    or [rbx-asm_tok].flags,T_ISPROC
+                    mov [rbx-asm_tok].IsProc,1
                 .endif
             .endif
-            mov eax,tmp
+            mov eax,[rdi]
             xor ecx,ecx
 
         .elseif ( [rsi].index && ( [rbx-asm_tok].token == T_ID || [rbx-asm_tok].token == T_REG ) )
@@ -681,15 +681,12 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                     inc eax
                     mov edx,SYM_TYPE
                 .else
-
                     .while ( [rdi-asm_tok].asm_tok.token == T_DOT && [rdi-2*asm_tok].asm_tok.token == T_ID )
                         lea rdi,[rdi-2*asm_tok]
                     .endw
-
                     SymFind( [rdi].asm_tok.string_ptr )
                     xor edx,edx
                 .endif
-
             .else
 
                 lea rdi,[rbx-asm_tok]
@@ -699,6 +696,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                 .endif
                 xor edx,edx
             .endif
+
             xor ecx,ecx
             .if ( rax )
 
@@ -706,40 +704,34 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                     movzx edx,[rax].asym.state
                 .endif
                 .switch
-
                 .case ( Options.strict_masm_compat == 1 )
                     .endc .if ( edx != SYM_MACRO )
                     .endc .if ( !( [rax].asym.isfunc ) )
                      and [rsi].flags2,not DF_CEXPR
                     .endc
-
                 .case ( edx == SYM_MACRO )
                     .if ( [rax].asym.isfunc )
-
                         and [rsi].flags2,not DF_CEXPR
                         .if ( [rax].asym.predefined )
-
                             mov rdx,[rax].asym.name
                             mov edx,[rdx]
                             .if ( edx == "tSC@" )
-
                                 inc [rsi].cstring
                                .endc
                             .endif
                         .endif
-                        mov ecx,T_ISFUNC
+                        mov [rdi].asm_tok.IsFunc,1
                        .endc
                     .endif
-
                     .endc .if ( [rax].asym.predefined )
                     .endc .if ( ![rax].asym.string_ptr )
-                    .endc .if ( SymFind( [rax].asym.string_ptr ) == NULL )
-                     xor ecx,ecx
-                    .endc .if !( [rax].asym.isproc )
-                     mov ecx,T_ISPROC
-                     inc [rsi].cstring
+                    SymFind( [rax].asym.string_ptr )
+                    xor ecx,ecx
+                    .if ( rax && [rax].asym.isproc )
+                        mov [rdi].asm_tok.IsProc,1
+                        inc [rsi].cstring
+                    .endif
                     .endc
-
                 .case ( edx == SYM_TYPE ) ;  structure, union, typedef, record
                     ;
                     ; [...].type.x(...)
@@ -776,26 +768,26 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                             sub rdi,asm_tok
                         .endif
                     .endif
-
                 .case ( edx == SYM_STACK )
                 .case ( edx == SYM_INTERNAL )
                 .case ( edx == SYM_EXTERNAL )
                 .case ( [rax].asym.isproc )
-                    mov ecx,T_ISPROC
+                    mov [rdi].asm_tok.IsProc,1
                     inc [rsi].cstring
                    .endc
-
                 .case ( edx == SYM_UNDEFINED )
-                     mov rdx,[rsi].input
-                    .endc .if ( B[rdx+1] != ')' )
-                     mov ecx,T_ISPROC
+                    mov rdx,[rsi].input
+                    .if ( byte ptr [rdx+1] == ')' )
+                        mov [rdi].asm_tok.IsProc,1
+                    .endif
                     .endc
                 .endsw
-                or [rdi].asm_tok.flags,cl
+                mov ecx,[rdi].asm_tok.IsProc
 
             .else
+
                 mov rdi,[rsi].input
-                .if ( B[rdi+1] == ')' ) ; && [rbx-2*asm_tok].token == T_DIRECTIVE
+                .if ( byte ptr [rdi+1] == ')' )
                     ;
                     ; undefined code label..
                     ;
@@ -803,29 +795,28 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                     ; ...
                     ; label:
                     ;
-                    or [rbx-asm_tok].flags,T_ISPROC
+                    mov [rbx-asm_tok].IsProc,1
                 .endif
             .endif
             mov rdi,[rsi].input
             mov eax,[rdi]
         .endif
-        or cl,[rbx-asm_tok].flags
-        .if ( cl & T_ISPROC && !Options.strict_masm_compat )
+        .if ( ( ecx || [rbx-asm_tok].IsProc ) && !Options.strict_masm_compat )
 
             mov rcx,[rsi].tokenarray
-            or  [rcx].asm_tok.flags,T_EXPAND
+            mov [rcx].asm_tok.Expand,1
         .endif
         ;
         ; no break
         ;
-      .case ')'
+    .case ')'
         .if ( al == ')' && [rsi].brachets )
 
             dec [rsi].brachets
             dec [rsi].cstring
         .endif
 
-      .case '*'..'/'
+    .case '*'..'/'
         ;
         ; ')' : 0x29: T_CL_BRACKET
         ; '*' : 0x2A: binary operator
@@ -847,8 +838,8 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
         mov [rbx].string_ptr,rax
        .endc
 
-      .case '[' ; T_OP_SQ_BRACKET operator - needs a matching ']' (0x5B)
-      .case ']' ; T_CL_SQ_BRACKET (0x5D)
+    .case '[' ; T_OP_SQ_BRACKET operator - needs a matching ']' (0x5B)
+    .case ']' ; T_CL_SQ_BRACKET (0x5D)
 
         inc [rsi].input
         mov [rbx].token,al
@@ -1329,7 +1320,7 @@ continue_scan:
       .case T_DOT_ELSEIF
       .case T_DOT_WHILE
       .case T_DOT_CASE
-        mov [rbx].flags,T_HLLCODE
+        mov [rbx].HllCode,1
        .endc
     .endsw
     mov [rbx].tokval,eax
@@ -1679,7 +1670,7 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
             .case ( [rbx].token == T_DBL_COLON )
                 .if ( !Options.strict_masm_compat )
                     mov rax,p.tokenarray
-                    or [rax].asm_tok.flags,T_EXPAND
+                    mov [rax].asm_tok.Expand,1
                 .endif
                .endc
             .endsw
@@ -1708,7 +1699,7 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
                         .if ( ecx == T_DOT_ASSERT )
 
                             dec edx
-                            .if ( !( MODULE.xflag & OPT_ASSERT ) )
+                            .if ( !( MODULE.assert ) )
 
                                 mov rax,p.input
                                 mov cl,[rax]

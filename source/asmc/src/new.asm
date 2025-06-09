@@ -644,7 +644,6 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
 
   local cc[256]:char_t
   local l2[256]:char_t
-  local flag:byte
   local opndx:expr
 
     inc  i
@@ -663,7 +662,6 @@ if 0
     .endif
 endif
 
-    mov flag,[rbx].flags
     mov l2,0
 
     .if ( [rbx].token == T_STRING && [rbx].bytval == '{' )
@@ -723,7 +721,7 @@ endif
 
         mov rdx,[rbx].string_ptr
 
-        .if ( eax == 8 && [rsi].Ofssize == USE32 && flag & T_ISPROC &&
+        .if ( eax == 8 && [rsi].Ofssize == USE32 && [rbx].IsProc &&
               ( [rsi].mem_type == MT_QWORD || [rsi].mem_type == MT_SQWORD ) )
 
             tstrcat( rdi, "dword ptr " )
@@ -731,7 +729,7 @@ endif
             tstrcat( tstrcat( rax, name ), "[4], edx" )
 
         .elseif ( eax == 8 && [rsi].Ofssize == USE64 &&
-                  ( flag & T_ISPROC || word ptr [rdx] == '&' ) )
+                  ( [rbx].IsProc || word ptr [rdx] == '&' ) )
 
         .elseifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) != ERROR )
 

@@ -185,25 +185,37 @@ ContextDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     SetSegAssumeTable( &[rdi].ac.SegAssumeTable )
                     SetStdAssumeTable( &[rdi].ac.StdAssumeTable, &[rdi].ac.type_content )
                 .case CONT_RADIX
-                    mov MODULE.radix,       [rdi].rc.radix
+                    mov MODULE.radix,[rdi].rc.radix
                 .case CONT_ALIGNMENT
-                    mov MODULE.fieldalign,  [rdi].alc.fieldalign
-                    mov MODULE.procalign,   [rdi].alc.procalign
+                    mov MODULE.fieldalign,[rdi].alc.fieldalign
+                    mov MODULE.procalign,[rdi].alc.procalign
                 .case CONT_LISTING
-                    mov MODULE.list_macro,  [rdi].lc.list_macro
-                    mov MODULE.list,        [rdi].lc.list
-                    mov MODULE.cref,        [rdi].lc.cref
-                    mov MODULE.listif,      [rdi].lc.listif
-                    mov MODULE.list_generated_code, [rdi].lc.list_generated_code
+                    mov MODULE.list_macro,[rdi].lc.list_macro
+                    mov MODULE.list,0
+                    mov MODULE.cref,0
+                    mov MODULE.listif,0
+                    mov MODULE.list_generated_code,0
+                    .if ( [rdi].lc.list )
+                        mov MODULE.list,1
+                    .endif
+                    .if ( [rdi].lc.cref )
+                        mov MODULE.cref,1
+                    .endif
+                    .if ( [rdi].lc.listif )
+                        mov MODULE.listif,1
+                    .endif
+                    .if ( [rdi].lc.list_generated_code )
+                        mov MODULE.list_generated_code,1
+                    .endif
                 .case CONT_CPU
-                    mov MODULE.cpu,         [rdi].cc.cpu
+                    mov MODULE.cpu,[rdi].cc.cpu
 ifndef ASMC64
                     mov rcx,sym_Cpu
                     .if ( rcx )
-                        mov [rcx].asym.value,   [rdi].cc.cpu
+                        mov [rcx].asym.value,[rdi].cc.cpu
                     .endif
 endif
-                    mov MODULE.curr_cpu,    [rdi].cc.curr_cpu
+                    mov MODULE.curr_cpu,[rdi].cc.curr_cpu
                 .endsw
             .endf
             .if ( type )
@@ -240,19 +252,31 @@ endif
                         GetSegAssumeTable( &[rdi].ac.SegAssumeTable )
                         GetStdAssumeTable( &[rdi].ac.StdAssumeTable, &[rdi].ac.type_content )
                     .case CONT_RADIX
-                        mov [rdi].rc.radix,         MODULE.radix
+                        mov [rdi].rc.radix,MODULE.radix
                     .case CONT_ALIGNMENT
-                        mov [rdi].alc.fieldalign,   MODULE.fieldalign
-                        mov [rdi].alc.procalign,    MODULE.procalign
+                        mov [rdi].alc.fieldalign,MODULE.fieldalign
+                        mov [rdi].alc.procalign,MODULE.procalign
                     .case CONT_LISTING
-                        mov [rdi].lc.list_macro,    MODULE.list_macro
-                        mov [rdi].lc.list,          MODULE.list
-                        mov [rdi].lc.cref,          MODULE.cref
-                        mov [rdi].lc.listif,        MODULE.listif
-                        mov [rdi].lc.list_generated_code, MODULE.list_generated_code
+                        mov [rdi].lc.list_macro,MODULE.list_macro
+                        mov [rdi].lc.list,0
+                        mov [rdi].lc.cref,0
+                        mov [rdi].lc.listif,0
+                        mov [rdi].lc.list_generated_code,0
+                        .if ( MODULE.list )
+                            mov [rdi].lc.list,1
+                        .endif
+                        .if ( MODULE.cref )
+                            mov [rdi].lc.cref,1
+                        .endif
+                        .if ( MODULE.listif )
+                            mov [rdi].lc.listif,1
+                        .endif
+                        .if ( MODULE.list_generated_code )
+                            mov [rdi].lc.list_generated_code,1
+                        .endif
                     .case CONT_CPU
-                        mov [rdi].cc.cpu,           MODULE.cpu
-                        mov [rdi].cc.curr_cpu,      MODULE.curr_cpu
+                        mov [rdi].cc.cpu,MODULE.cpu
+                        mov [rdi].cc.curr_cpu,MODULE.curr_cpu
                     .endsw
                 .endif
             .endf

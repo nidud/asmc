@@ -51,34 +51,6 @@ define EOLCHAR 10 ; line termination char in generated source
     LSTARTSW,	; switch start
     }
 
-; values for struct hll_item.flags
-
-.enum hll_flags {
-    HLLF_ELSEOCCURED	= 0x01,
-    HLLF_ELSEIF		= 0x02,
-    HLLF_WHILE		= 0x04,
-    HLLF_EXPRESSION	= 0x08,
-    HLLF_DEFAULT	= 0x10,
-    HLLF_DELAYED	= 0x20, ; set by DelayExpand()
-    HLLF_NOTEST		= 0x40, ; direct jump..
-    HLLF_ARGREG		= 0x80, ; register 16/32/64-bit size_t
-    HLLF_ARGMEM	       = 0x100, ; memory if set, else register
-    HLLF_ARG16	       = 0x200, ; size: 8/16/32/64
-    HLLF_ARG32	       = 0x400,
-    HLLF_ARG64	       = 0x800,
-    HLLF_ARG3264      = 0x1000, ; .switch eax in 64-bit assumend rax
-    HLLF_NUM	      = 0x2000, ; .case arg is const
-    HLLF_TABLE	      = 0x4000, ; .case is in jump table
-    HLLF_ENDCOCCUR    = 0x8000, ; jmp exit in .case omitted
-    HLLF_IFB	     = 0x10000, ; .ifb proc() --> al
-    HLLF_IFW	     = 0x20000, ; .ifw proc() --> ax
-    HLLF_IFD	     = 0x40000, ; .ifd proc() --> eax
-    HLLF_IFS	     = 0x80000, ; Signed compare --> CMP REG,val
-    HLLF_PASCAL	    = 0x100000, ; .continue(0) [.if]
-    HLLF_JTABLE	    = 0x200000, ; if HLLF_NOTEST direct .case jump
-    HLLF_JTDATA	    = 0x400000	; Jump table in data segment -- HLLF_NOTEST
-    }
-
 hll_item	struct
 next		ptr hll_item ?
 caselist	ptr hll_item ?
@@ -95,8 +67,35 @@ endif
 ends
 condlines	string_t ?	; .WHILE/ELSEIF/CASE-blocks only: lines to add after 'test' label
 cmd		int_t ?		; start cmd (IF, WHILE, REPEAT)
-flags		int_t ?		; v2.08: added
 tokval		int_t ?		; v2.33.67: added
+
+union				; values for struct hll_item.flags
+ flags		dd ?		; v2.08: added
+ record				; v2.36.40: added
+  ElseOccured	dd : 1 ?
+  WhileMode	dd : 1 ?	; Expression delayed
+  Expression	dd : 1 ?	; Has expression
+  DefaultCase	dd : 1 ?	; Case is .default
+  ExpDelayed	dd : 1 ?	; Expansion delayed - see DelayExpand()
+  SwitchJump	dd : 1 ?	; Direct jump (no test)
+  SwitchReg	dd : 1 ?	; Switch arg is register
+  SwitchMem	dd : 1 ?	; Switch arg is memory
+  Switch16	dd : 1 ?	; Switch Arg size
+  Switch32	dd : 1 ?
+  Switch64	dd : 1 ?
+  Switch3264	dd : 1 ?
+  CaseIsConst	dd : 1 ?	; Case arg is const
+  CaseInTable	dd : 1 ?	; Case is in jump table
+  EndOccured	dd : 1 ?	; Jump exit in .case omitted
+  SizeDB	dd : 1 ?	; Flag Extension B - BYTE
+  SizeDW	dd : 1 ?	; Flag Extension W - WORD
+  SizeDD	dd : 1 ?	; Flag Extension D - DWORD
+  Signed	dd : 1 ?	; Flag Extension S - Signed
+  Structured	dd : 1 ?	; Structured (Pascal) switch where each .CASE is a closed branch
+  SwitchTable	dd : 1 ?	; If SwitchJump direct .case jump
+  SwitchTData	dd : 1 ?	; Jump table in data segment -- SwitchJump
+ ends
+ends
 hll_item	ends
 
 hll_opnd	struct		; v2.08: struct added

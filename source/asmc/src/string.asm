@@ -67,12 +67,12 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     mov [rdx],rbx
 
     xor eax,eax
-    .if ( MODULE.xflag & OPT_WSTRING )
+    .if ( MODULE.wstring )
         mov eax,1
     .endif
 
     .if ( W[rsi] == '"L' )
-        or  MODULE.xflag,OPT_LSTRING
+        mov MODULE.lstring,1
         mov eax,1
         add rsi,1
     .endif
@@ -1156,6 +1156,8 @@ CatStrDir endp
 ; - value: value of text macro ( original line, BEFORE expansion )
 
 SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok, sym:ptr asym, name:string_t, value:string_t
+
+    UNREFERENCED_PARAMETER(sym)
 
     ldr rdi,sym
     .if ( rdi == NULL )

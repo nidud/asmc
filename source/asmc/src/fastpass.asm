@@ -207,7 +207,7 @@ RestoreState proc
 
         ; v2.23: save L"Unicode" flag
 
-        test MODULE.xflag,OPT_LSTRING
+        test MODULE.lstring,1
         mov rax,rsi
         mov rdx,rdi
         mov ecx,sizeof(modstate.modinfo)
@@ -217,7 +217,7 @@ RestoreState proc
         mov rdi,rdx
         mov rsi,rax
         .ifnz
-            or MODULE.xflag,OPT_LSTRING
+            mov MODULE.lstring,1
         .endif
         SetInputState(&modstate.state)
         SetOfssize()

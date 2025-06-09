@@ -14,47 +14,17 @@ externdef banner_printed:byte
     .data
 
 Options global_options {
-        0,                      ; .quiet
-        0,                      ; .line_numbers
-        0,                      ; .debug_symbols
-        0,                      ; .debug_ext
+        { 0 },                  ; .flags
+        { 0 },                  ; .flags(2)
         FPO_NO_EMULATION,       ; .floating_point
         50,                     ; .error_limit
-        0,                      ; .no_error_disp
-        2,                      ; .warning_level
-        0,                      ; .warning_error
-        0,                      ; .process_subdir
         {0,0,0,0,0,0,0,0,0},    ; .names
         {0,0,0},                ; .queues
         0,                      ; .link_exename
         0,                      ; .link_linker
         0,                      ; .link_options
         0,                      ; .link_objects
-        0,                      ; .link
-        0,                      ; .no_comment_in_code_rec
-        0,                      ; .no_opt_farcall
-        0,                      ; .no_file_entry
-        0,                      ; .no_static_procs
-        0,                      ; .no_section_aux_entry
-        0,                      ; .no_cdecl_decoration
-        STDCALL_FULL,           ; .stdcall_decoration
-        0,                      ; .no_export_decoration
-        0,                      ; .entry_decorated
-        0,                      ; .write_listing
-        0,                      ; .write_impdef
-        0,                      ; .case_sensitive
-        0,                      ; .convert_uppercase
-        0,                      ; .preprocessor_stdout
-        0,                      ; .masm51_compat
-        0,                      ; .masm_compat_gencode
-        0,                      ; .masm8_proc_visibility
-        0,                      ; .listif
-        0,                      ; .list_generated_code
         LM_LISTMACRO,           ; .list_macro
-        0,                      ; .do_symbol_listing
-        0,                      ; .first_pass_listing
-        0,                      ; .all_symbols_public
-        0,                      ; .safeseh
         OFORMAT_OMF,            ; .output_format
         SFORMAT_NONE,           ; .sub_format
         LANG_NONE,              ; .langtype
@@ -63,30 +33,22 @@ Options global_options {
         FCT_MSC,                ; .fctype
         0,                      ; .codepage
         1,                      ; .floatdigits
+        0,                      ; .frame_auto
+        0,                      ; .debug_symbols
+        0,                      ; .debug_ext
+        2,                      ; .warning_level
+        0,                      ; .link
+        STDCALL_FULL,           ; .stdcall_decoration
         0,                      ; .floatformat
         4,                      ; .flt_size
-        0,                      ; .strict_masm_compat
-        0,                      ; .ignore_include
         0,                      ; .fieldalign
-        0,                      ; .syntax_check_only
-        0,                      ; .xflag
         0,                      ; .loopalign
         0,                      ; .casealign
         4,                      ; .segmentalign
         3,                      ; .pe_subsystem
-        0,                      ; .pe_dll
         0,                      ; .win64_flags
-        0,                      ; .chkstack
-        0,                      ; .nolib
         0,                      ; .arch
-        0,                      ; .frame_auto
-        0,                      ; .pic
-        0,                      ; .endbr
-        0,                      ; .iddc
-        0,                      ; .dotname
-        0,                      ; .dotnamex
-        0,                      ; .no_linking
-        0 }                     ; .link_mt
+        0 }                     ; .iddc
 
     align size_t
 
@@ -155,7 +117,7 @@ init_win64 proc public
 
     mov Options.sub_format,SFORMAT_64BIT
     mov Options._model,MODEL_FLAT
-    or  Options.xflag,OPT_REGAX
+    mov Options.switch_regax,1
 
 ifdef __UNIX__
     define_name( "__UNIX__", "1" )
@@ -563,7 +525,7 @@ endif
         mov Options.arch,bl
         .return
     .case 'essa'            ; -assert
-        or Options.xflag,OPT_ASSERT
+        mov Options.assert,1
         .return
     .case 'otua'            ; -autostack -- v2.35.02 -win64 needs to come first!
         .if ( Options.sub_format == SFORMAT_64BIT )
@@ -596,7 +558,7 @@ endif
         mov Options.convert_uppercase,0
         .return
     .case 'sC'              ; -Cs
-        or Options.xflag,OPT_CSTACK
+        mov Options.cstack,1
         .return
     .case 'uC'              ; -Cu
         mov Options.case_sensitive,0
@@ -619,7 +581,7 @@ endif
         set_cpu( CPU_64, 1 )
         define_name( "__UNIX__", "1" )
         define_name( "_WIN64",   "1" )
-        or  Options.xflag,OPT_REGAX
+        mov Options.switch_regax,1
         mov Options._model,MODEL_FLAT
         mov Options.output_format,OFORMAT_ELF
         mov Options.sub_format,SFORMAT_64BIT
@@ -763,7 +725,7 @@ endif
     .case 'TM'              ; -MT
         define_name( "_MT", "1" )
         .if ( Options.no_linking == 0 )
-            or Options.link_mt,LINK_MT
+            mov Options.link_mt,1
         .endif
         .return
     .case 'dDM'             ; -MDd
@@ -833,7 +795,7 @@ endif
         mov Options.warning_level,0
         .return
     .case 'sw'              ; -ws
-        or Options.xflag,OPT_WSTRING
+        mov Options.wstring,1
         define_name( "_UNICODE", "1" )
         .return
     .case 'XW'              ; -WX
@@ -949,7 +911,7 @@ endif
     .switch j
     .case 'sw'          ; -ws<number>
         mov Options.codepage,OptValue
-        or  Options.xflag,OPT_WSTRING
+        mov Options.wstring,1
         define_name( "_UNICODE", "1" )
         .return
     .case 'pS'          ; -Zp<number>

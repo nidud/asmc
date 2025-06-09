@@ -4083,7 +4083,7 @@ endif
                 ;
                 ; v2.31.25: Type() -- constructor
                 ;
-                .endc .if [rsi].flags & T_ISPROC
+                .endc .if [rsi].IsProc
                 .return data_dir( i, rbx, rax )
             .endif
             .endc
@@ -4259,12 +4259,12 @@ init_prefix:
         .endsw
     .endif
 
-    .if ( [rbx].flags & T_EXPAND )
+    .if ( [rbx].Expand )
 
         lea rsi,[rbx+asm_tok]
         .for ( j = 1 : [rsi].token != T_FINAL : j++, rsi += asm_tok )
 
-            .if ( [rsi].flags & T_ISPROC )
+            .if ( [rsi].IsProc )
 
                 mov rdi,alloc_line()
                 ;
@@ -4336,7 +4336,7 @@ init_prefix:
         imul esi,i,asm_tok
         add rsi,tokenarray
 
-        .if ( [rsi-asm_tok].flags & T_EVEX_OPT )
+        .if ( [rsi-asm_tok].Modifier )
 
             or CodeInfo.prefix,PREFIX_EVEX
             lea rbx,[rsi-asm_tok] ; get transform modifiers
@@ -4347,7 +4347,7 @@ init_prefix:
                         .return asmerr( 2008, [rbx].string_ptr )
                     .endif
                     sub rbx,asm_tok
-                .until !( [rbx].flags & T_EVEX_OPT )
+                .until !( [rbx].Modifier )
 
                 .if ( opndx[rdi].kind == EXPR_EMPTY )
 

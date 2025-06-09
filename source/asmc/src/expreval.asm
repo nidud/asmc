@@ -982,7 +982,7 @@ SetEvexOpt proc fastcall tok:token_t
             .endif
         .endif
     .endif
-    or  [rcx].asm_tok.flags,T_EVEX_OPT
+    mov [rcx].asm_tok.Modifier,1
    .return( true )
 
 SetEvexOpt endp
@@ -2650,7 +2650,7 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
 
                 .for ( rax = rbx : [rax+asm_tok].asm_tok.token != T_FINAL : rax+=asm_tok )
                 .endf
-                or [rax].asm_tok.flags,T_EVEX_OPT
+                mov [rax].asm_tok.Modifier,1
             .endif
 
             .if ( !( [rsi].is_type ) )

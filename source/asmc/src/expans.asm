@@ -2268,9 +2268,9 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
         .endif
 
         mov rbx,tokenarray
-        .if ( TokenCount > 2 && [rbx].flags & T_EXPAND )
+        .if ( TokenCount > 2 && [rbx].Expand )
 
-            .if ( [rbx].flags & T_ISPROC )
+            .if ( [rbx].IsProc )
 
                 lea rsi,@CStr( "invoke " )
                 SymSearch( [rbx].string_ptr )
@@ -2424,7 +2424,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
                         tstrcpy(string, buffer)
                         mov TokenCount,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-                        .if ( eax > 2 && rbx == tokenarray && [rbx].flags & T_ISPROC &&
+                        .if ( eax > 2 && rbx == tokenarray && [rbx].IsProc &&
                               [rbx+asm_tok].token == T_OP_BRACKET )
 
                             tstrcat( tstrcpy( buffer, "invoke " ), [rbx].tokpos )

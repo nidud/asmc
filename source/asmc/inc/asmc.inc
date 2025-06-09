@@ -524,55 +524,73 @@ define PE_SUBSYSTEM_CUI     0x03
 define PE_SUBSYSTEM_MASK    0x03
 define PE_DLL               0x04
 
-.enum static_link {
-    LINK_MT      = 0x01,            ; -MT used, -c not used --> use LIBC
-    LINK_MAIN    = 0x02,            ; [w]main proc defined
-    LINK_FLTUSED = 0x04,            ; float used as :vararg param
-    LINK_ARGV    = 0x08,            ; [w]main has params
-    }
-
 .template global_options
-    quiet                   db ?    ; -q option
-    line_numbers            db ?    ; -Zd option
-    debug_symbols           db ?    ; -Zi option
-    debug_ext               db ?    ; -Zi option numeric argument
+    union
+     flags                  dd ?    ; v2.36.40
+     record
+      case_sensitive        dd: 1 ? ; option casemap
+      convert_uppercase     dd: 1 ? ; option casemap
+      dotname               dd: 1 ? ; option dotname
+      dotnamex              dd: 1 ? ; option dotnamex:<on:off>
+      write_listing         dd: 1 ? ; .list/.nolist
+      listif                dd: 1 ? ; .listif/.nolistif
+      list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
+      pic                   dd: 1 ? ; -fpic | -fno-pic
+      endbr                 dd: 1 ? ; -endbr
+      masm_compat_gencode   dd: 1 ? ; -Zg option
+      cstack                dd: 1 ? ; -Cs
+      wstring               dd: 1 ? ; -ws convert "string" to unicode
+      lstring               dd: 1 ? ; L"Unicode" used --> allow dw "string"
+      switch_structured     dd: 1 ? ; auto insert break after cases
+      switch_notable        dd: 1 ? ; no indexed jump table
+      switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
+      assert                dd: 1 ? ; -assert Generate .assert code
+      assert_pushf          dd: 1 ? ; Push/Pop flags
+     ends
+    ends
+    record
+     quiet                  dd: 1 ? ; -q option
+     line_numbers           dd: 1 ? ; -Zd option
+     warning_error          dd: 1 ? ; -WX option
+     no_error_disp          dd: 1 ? ; -eq option
+     process_subdir         dd: 1 ? ; -r option
+     no_comment_in_code_rec dd: 1 ? ; -zlc option
+     no_opt_farcall         dd: 1 ? ; -zld option
+     no_file_entry          dd: 1 ? ; -zlf option
+     no_static_procs        dd: 1 ? ; -zlp option
+     no_section_aux_entry   dd: 1 ? ; -zls option
+     no_cdecl_decoration    dd: 1 ? ; -zcw & -zcm option
+     no_export_decoration   dd: 1 ? ; -zze option
+     entry_decorated        dd: 1 ? ; -zzs option
+     write_impdef           dd: 1 ? ; -Fd option
+     preprocessor_stdout    dd: 1 ? ; -EP option
+     masm51_compat          dd: 1 ? ; -Zm option
+     masm8_proc_visibility  dd: 1 ? ; -Zv8 option
+     no_symbol_listing      dd: 1 ? ; -Sn option
+     first_pass_listing     dd: 1 ? ; -Sf option
+     all_symbols_public     dd: 1 ? ; -Zf option
+     safeseh                dd: 1 ? ; -safeseh option
+     strict_masm_compat     dd: 1 ? ; -Zne option
+     ignore_include         dd: 1 ? ; -X option
+     syntax_check_only      dd: 1 ? ; -Zs option
+     pe_dll                 dd: 1 ? ; -dll
+     chkstack               dd: 1 ? ; _chkstk()
+     nolib                  dd: 1 ? ; skip includelib directives
+     no_linking             dd: 1 ? ; -c        ; assembles only
+     link_mt                dd: 1 ? ; -MT used, -c not used --> use LIBC
+     float_used             dd: 1 ? ; float used as :vararg param
+     main_found             dd: 1 ? ; [w]main proc defined
+     argv_used              dd: 1 ? ; [w]main has params
+    ends
     floating_point          dd ?    ; -FPi, -FPi87
     error_limit             dd ?    ; -e option
-    no_error_disp           db ?    ; -eq option
-    warning_level           db ?    ; -Wn option
-    warning_error           db ?    ; -WX option
-    process_subdir          db ?    ; -r option
     names                   string_t OPTN_LAST dup(?) ; char *  4
     queues                  ptr_t OPTQ_LAST dup(?)  ; qitem * 4
     link_exename            string_t ? ; -Fe<exename>
     link_linker             string_t ? ; -link<:linker>
     link_options            string_t ? ; -link <options...>
     link_objects            string_t ? ; -link [options...] <.OBJ files>
-    link                    db ?    ; -link option
-    no_comment_in_code_rec  db ?    ; -zlc option
-    no_opt_farcall          db ?    ; -zld option
-    no_file_entry           db ?    ; -zlf option
-    no_static_procs         db ?    ; -zlp option
-    no_section_aux_entry    db ?    ; -zls option
-    no_cdecl_decoration     db ?    ; -zcw & -zcm option
-    stdcall_decoration      db ?    ; -zt<0|1|2> option
-    no_export_decoration    db ?    ; -zze option
-    entry_decorated         db ?    ; -zzs option
-    write_listing           db ?    ; -Fl option
-    write_impdef            db ?    ; -Fd option
-    case_sensitive          db ?    ; -C<p|x|u> options
-    convert_uppercase       db ?    ; -C<p|x|u> options
-    preprocessor_stdout     db ?    ; -EP option
-    masm51_compat           db ?    ; -Zm option
-    masm_compat_gencode     db ?    ; -Zg option
-    masm8_proc_visibility   db ?    ; -Zv8 option
-    listif                  db ?    ; -Sx, -Sa option
-    list_generated_code     db ?    ; -Sg, -Sa option
     list_macro              dd ?    ; -Sa option
-    no_symbol_listing       db ?    ; -Sn option
-    first_pass_listing      db ?    ; -Sf option
-    all_symbols_public      db ?    ; -Zf option
-    safeseh                 db ?    ; -safeseh option
     output_format           dd ?    ; -bin, -omf, -coff, -elf options
     sub_format              dd ?    ; -mz, -pe, -win64, -elf64 options
     langtype                dd ?    ; -Gc|d|z option
@@ -581,35 +599,68 @@ define PE_DLL               0x04
     fctype                  dd ?    ; -zf0 & -zf1 option
     codepage                dd ?    ; Unicode code page
     floatdigits             dd ?    ; option floatdigits:<value>
+    frame_auto              db ?    ; win64 only
+    debug_symbols           db ?    ; -Zi option
+    debug_ext               db ?    ; -Zi option numeric argument
+    warning_level           db ?    ; -Wn option
+    link                    db ?    ; -link option
+    stdcall_decoration      db ?    ; -zt<0|1|2> option
     floatformat             db ?    ; option floatformat:<e|f|g>
     flt_size                db ?    ; option float:<4|8>
-    strict_masm_compat      db ?    ; -Zne option
-    ignore_include          db ?    ; -X option
     fieldalign              db ?    ; -Zp option
-    syntax_check_only       db ?    ; -Zs option
-    xflag                   db ?    ; extended option
     loopalign               db ?    ; OPTION:LOOPALIGN setting
     casealign               db ?    ; OPTION:CASEALIGN setting
     segmentalign            db ?    ; -Sp[n] Set segment alignment
     pe_subsystem            db ?    ; -cui, -gui
-    pe_dll                  db ?    ; -dll
     win64_flags             db ?    ; -homeparams, -autostack, -stackalign
-    chkstack                db ?    ; _chkstk()
-    nolib                   db ?    ; skip includelib directives
     arch                    db ?    ; -arch:AVX[2|512]
-    frame_auto              db ?    ; -frame
-    pic                     db ?    ; -fpic | -fno-pic
-    endbr                   db ?    ; -endbr
     iddc                    db ?    ; -idd
-    dotname                 db ?    ; -dotname  : option dotname
-    dotnamex                db ?    ; -dotnamex : option dotnamex:<on:off>
-    no_linking              db ?    ; -c        ; assembles only
-    link_mt                 db ?    ; -MT = 1, float used |= 2, argv used |= 4
    .ends
 
 
 .template module_info
-    _model                  db ?    ; memory model
+    union
+     flags                  dd ?    ; v2.36.40
+     record
+      case_sensitive        dd: 1 ? ; option casemap
+      convert_uppercase     dd: 1 ? ; option casemap
+      dotname               dd: 1 ? ; option dotname
+      dotnamex              dd: 1 ? ; option dotnamex:<on:off>
+      list                  dd: 1 ? ; .list/.nolist
+      listif                dd: 1 ? ; .listif/.nolistif
+      list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
+      pic                   dd: 1 ? ; -fpic | -fno-pic
+      endbr                 dd: 1 ? ; -endbr
+      masm_compat_gencode   dd: 1 ? ; -Zg option
+      cstack                dd: 1 ? ; -Cs
+      wstring               dd: 1 ? ; -ws convert "string" to unicode
+      lstring               dd: 1 ? ; L"Unicode" used --> allow dw "string"
+      switch_structured     dd: 1 ? ; auto insert break after cases
+      switch_notable        dd: 1 ? ; no indexed jump table
+      switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
+      assert                dd: 1 ? ; -assert Generate .assert code
+      assert_pushf          dd: 1 ? ; Push/Pop flags
+if 0
+     ends
+    ends
+    record
+endif
+      procs_private         dd: 1 ? ; option proc:private
+      procs_export          dd: 1 ? ; option proc:export
+      ljmp                  dd: 1 ? ; option ljmp
+      m510                  dd: 1 ? ; option m510
+      scoped                dd: 1 ? ; option scoped
+      oldstructs            dd: 1 ? ; option oldstructs
+      oldmacros             dd: 1 ? ; v2.19: option oldmacros
+      setif2                dd: 1 ? ; option setif2
+      cref                  dd: 1 ? ; .cref/.nocref
+
+      StartupDirectiveFound dd: 1 ? ;
+      EndDirFound           dd: 1 ? ;
+      NoSignExtend          dd: 1 ? ; option nosignextend
+     ends
+    ends
+
     Ofssize                 db ?    ; current offset size (USE16,USE32,USE64)
     defOfssize              db ?    ; default segment offset size (16,32 [,64]-bit)
     wordsize                db ?    ; current word size (2,4,8)
@@ -618,56 +669,33 @@ define PE_DLL               0x04
     langtype                db ?    ; language
     fieldalign              db ?    ; -Zp, OPTION:FIELDALIGN setting
     sub_format              db ?    ; sub-output format
-    list                    db ?    ; .list/.nolist
-    line_flags              db ?    ; current line has been printed
-    xflag                   db ?    ; extended option
-    case_sensitive          db ?    ; option casemap
-    offsettype              db ?    ; OFFSET:GROUP|FLAT|SEGMENT
-    inside_comment          db ?    ; v2.10: moved from tokenize.c
-    segorder                db ?    ; .alpha, .seq, .dosseg
     cpu                     dd ?    ; cpu setting (value @cpu symbol);
     curr_cpu                dd ?    ; cpu setting (OW stylex);
     srcfile                 dd ?    ; main source file - is an index for FNames[]
     hll_label               dd ?    ; hll directive label counter
+    _model                  db ?    ; memory model
+    line_flags              db ?    ; current line has been printed
+    offsettype              db ?    ; OFFSET:GROUP|FLAT|SEGMENT
+    inside_comment          db ?    ; v2.10: moved from tokenize.c
+    segorder                db ?    ; .alpha, .seq, .dosseg
     distance                db ?    ; stack distance
     procalign               db ?    ; current OPTION:PROCALIGN setting
-    procs_private           db ?    ; option proc:private
-    procs_export            db ?    ; option proc:export
-    convert_uppercase       db ?    ; option casemap
     ostype                  db ?    ; operating system
-    dotname                 db ?    ; option dotname
-    ljmp                    db ?    ; option ljmp
-    m510                    db ?    ; option m510
-    scoped                  db ?    ; option scoped
-    oldstructs              db ?    ; option oldstructs
-    emulator                db ?    ; option emulator
-    setif2                  db ?    ; option setif2
-    cref                    db ?    ; .cref/.nocref
-    listif                  db ?    ; .listif/.nolistif
-    list_generated_code     db ?    ; .listall, -Sa, -Sg
-    StartupDirectiveFound   db ?
-    EndDirFound             db ?
-    frame_auto              db ?    ; win64 only
-    NoSignExtend            db ?    ; option nosignextend
     simseg_init             db ?    ; simplified segm dir flags
-    simseg_defd             db ?            ; v2.09: flag if seg was defined before simseg dir
-    PhaseError              db ?            ; phase error flag
-    CommentDataInCode       db ?            ; OMF: emit coment records about data in code segs
-    prologuemode            db ?            ; current PEM_ enum value for OPTION PROLOGUE
-    epiloguemode            db ?            ; current PEM_ enum value for OPTION EPILOGUE
-    invoke_exprparm         db ?            ; flag: forward refs for INVOKE params ok?
-    cv_opt                  db ?            ; option codeview
-    loopalign               db ?            ; OPTION:LOOPALIGN setting
-    casealign               db ?            ; OPTION:CASEALIGN setting
-    masm_compat_gencode     db ?            ; -Zg option
-    floatformat             db ?            ; option floatformat:<e|f|g>
-    flt_size                db ?            ; option float:<4|8>
-    pic                     db ?            ; -fpic | -fno-pic
-    endbr                   db ?            ; -endbr
-    dotnamex                db ?            ; -dotnamex : option dotnamex:<on:off>
-    avxencoding             db ?            ; option avxencoding:<>
-    unused1                 db ?
-    unused2                 db ?
+    simseg_defd             db ?    ; v2.09: flag if seg was defined before simseg dir
+    PhaseError              db ?    ; phase error flag
+    CommentDataInCode       db ?    ; OMF: emit coment records about data in code segs
+    prologuemode            db ?    ; current PEM_ enum value for OPTION PROLOGUE
+    epiloguemode            db ?    ; current PEM_ enum value for OPTION EPILOGUE
+    invoke_exprparm         db ?    ; flag: forward refs for INVOKE params ok?
+    cv_opt                  db ?    ; option codeview
+    emulator                db ?    ; option emulator
+    frame_auto              db ?    ; win64 only
+    loopalign               db ?    ; OPTION:LOOPALIGN setting
+    casealign               db ?    ; OPTION:CASEALIGN setting
+    floatformat             db ?    ; option floatformat:<e|f|g>
+    flt_size                db ?    ; option float:<4|8>
+    avxencoding             db ?    ; option avxencoding:<>
     union
      struct
       elf_osabi             db ?    ; for ELF

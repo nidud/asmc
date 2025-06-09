@@ -144,9 +144,9 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             shr wstringfl,1
             .ifc
-                or  MODULE.xflag,OPT_WSTRING
+                mov MODULE.wstring,1
             .else
-                and MODULE.xflag,not OPT_WSTRING
+                mov MODULE.wstring,0
             .endif
             .endc
         .endif
@@ -174,13 +174,13 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                .endc
             .endif
             shl wstringfl,1
-            .if ( MODULE.xflag & OPT_WSTRING )
+            .if ( MODULE.wstring )
                 or wstringfl,1
             .endif
             .if ( eax )
-                or  MODULE.xflag,OPT_WSTRING
+                mov MODULE.wstring,1
             .else
-                and MODULE.xflag,not OPT_WSTRING
+                mov MODULE.wstring,0
             .endif
             add rbx,asm_tok
             .if [rbx].token == T_CL_BRACKET
@@ -628,13 +628,10 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; .pragma(list(pop))
 
         inc list_directive
-
         lea rcx,ListCount
         lea rdx,ListStack
-        lea rdi,MODULE.list
-
+        mov edi,1
         .if [rbx].tokval == T_POP
-
             .gotosw(T_POP)
         .endif
         .gotosw(T_PUSH)
@@ -645,13 +642,10 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; .pragma(cref(pop))
 
         inc list_directive
-
         lea rcx,CrefCount
         lea rdx,CrefStack
-        lea rdi,MODULE.cref
-
+        xor edi,edi
         .if [rbx].tokval == T_POP
-
             .gotosw(T_POP)
         .endif
 
@@ -664,12 +658,15 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endc .if eax >= MAXSTACK
 
         mov [rcx],eax
-        mov cl,[rdi]
+        .if ( edi )
+            mov ecx,MODULE.list
+        .else
+            mov ecx,MODULE.cref
+        .endif
         mov [rdx+rax-1],cl
 
         inc i
         .if ( [rbx+asm_tok].token == T_COMMA )
-
             inc i
         .endif
         .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
@@ -677,21 +674,20 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         imul ebx,i,asm_tok
         add rbx,tokenarray
         .if opndx.kind != EXPR_CONST
-
             asmerr(2026)
-            .endc
+           .endc
         .endif
-
         mov eax,opndx.uvalue
         .if eax > 1
-
             asmerr(2084)
-            .endc
+           .endc
         .endif
-
-        mov [rdi],al
-        .if al && list_directive
-
+        .if ( edi )
+            mov MODULE.list,eax
+        .else
+            mov MODULE.cref,eax
+        .endif
+        .if ( eax && list_directive )
             or MODULE.line_flags,LOF_LISTED
         .endif
         add rbx,asm_tok
@@ -707,8 +703,12 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         dec eax
         mov [rcx],eax
         mov al,[rdx+rax]
-        mov [rdi],al
-        .if al && list_directive
+        .if ( edi )
+            mov MODULE.list,eax
+        .else
+            mov MODULE.cref,eax
+        .endif
+        .if ( al && list_directive )
             or MODULE.line_flags,LOF_LISTED
         .endif
         add rbx,asm_tok

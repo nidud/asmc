@@ -50,7 +50,7 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     .switch eax
 
-      .case T_DOT_ASSERT
+    .case T_DOT_ASSERT
 
         imul edx,i,asm_tok
         mov al,[rbx+rdx].asm_tok.token
@@ -73,7 +73,7 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .ifd !tstricmp( rdi, "CODE" )
 
-                .if !( MODULE.xflag & OPT_ASSERT )
+                .if !( MODULE.assert )
 
                     CondPrepare( T_IF )
                     mov CurrIfState,BLOCK_DONE
@@ -90,7 +90,10 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .ifd !tstricmp( rdi, "PUSH" )
 
-                mov al,MODULE.xflag
+                mov eax,MODULE.assert
+                mov ecx,MODULE.assert_pushf
+                shl ecx,1
+                or  eax,ecx
                 mov ecx,assert_stid
                 .if ( ecx < MAXSAVESTACK )
 
@@ -106,7 +109,12 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov ecx,assert_stid
                 lea rdx,assert_stack
                 mov al,[rdx+rcx]
-                mov MODULE.xflag,al
+                .if ( al & 1 )
+                    mov MODULE.assert,1
+                .endif
+                .if ( al & 2 )
+                    mov MODULE.assert_pushf,1
+                .endif
                 .if ecx
                     dec assert_stid
                 .endif
@@ -114,30 +122,28 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
 
             .ifd !tstricmp( rdi, "ON" )
-
-                or  MODULE.xflag,OPT_ASSERT
+                mov MODULE.assert,1
                .endc
             .endif
             .ifd !tstricmp( rdi, "OFF" )
-
-                and MODULE.xflag,NOT OPT_ASSERT
+                mov MODULE.assert,0
                .endc
             .endif
             .ifd !tstricmp( rdi, "PUSHF" )
 
-                or  MODULE.xflag,OPT_PUSHF
+                mov MODULE.assert_pushf,1
                .endc
             .endif
             .ifd !tstricmp( rdi, "POPF" )
 
-                and MODULE.xflag,NOT OPT_PUSHF
+                mov MODULE.assert_pushf,0
                .endc
             .endif
 
             asmerr( 2008, rdi )
            .endc
 
-        .elseif ( al == T_FINAL || !( MODULE.xflag & OPT_ASSERT ) )
+        .elseif ( al == T_FINAL || !( MODULE.assert ) )
 
             ;.if !Options.quiet
             ;.endif
@@ -147,7 +153,7 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         imul edx,i,asm_tok
         tstrcpy( &cmdstr, [rbx+rdx].tokpos )
 
-        .if ( MODULE.xflag & OPT_PUSHF )
+        .if ( MODULE.assert_pushf )
 
             .if ( MODULE.Ofssize == USE64 )
 
@@ -169,7 +175,7 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         QueueTestLines( rdi )
 
-        .if ( MODULE.xflag & OPT_PUSHF )
+        .if ( MODULE.assert_pushf )
 
             .if ( MODULE.Ofssize == USE64 )
 
@@ -185,7 +191,7 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             "jmp %s\n"
             "%s%s", &buff, GetLabelStr( [rsi].labels[LTEST*4], rdi ), LABELQUAL )
 
-        .if ( MODULE.xflag & OPT_PUSHF )
+        .if ( MODULE.assert_pushf )
 
             .if ( MODULE.Ofssize == USE64 )
 
@@ -228,25 +234,21 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             "db 0\n"
             "%s%s", &buff, LABELQUAL )
         .endc
-
-      .case T_DOT_ASSERTD
-        mov [rsi].flags,HLLF_IFD
-        .gotosw(T_DOT_ASSERT)
-      .case T_DOT_ASSERTW
-        mov [rsi].flags,HLLF_IFW
-        .gotosw(T_DOT_ASSERT)
-      .case T_DOT_ASSERTB
-        mov [rsi].flags,HLLF_IFB
-        .gotosw(T_DOT_ASSERT)
+    .case T_DOT_ASSERTD
+        mov [rsi].SizeDD,1
+       .gotosw(T_DOT_ASSERT)
+    .case T_DOT_ASSERTW
+        mov [rsi].SizeDW,1
+       .gotosw(T_DOT_ASSERT)
+    .case T_DOT_ASSERTB
+        mov [rsi].SizeDB,1
+       .gotosw(T_DOT_ASSERT)
     .endsw
 
     .if ( MODULE.list )
-
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
-
     .if ( MODULE.line_queue.head )
-
         RunLineQueue()
     .endif
     .return( rc )

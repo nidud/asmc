@@ -2351,13 +2351,15 @@ endif
             .endif
 if 1
             ; v2.18: error (vararg param used as argument?)
+            ; v2.36.41 - warning
 
             mov rcx,opnd.sym
-            .if ( rcx && [rcx].asym.state == SYM_STACK && [rcx].asym.is_vararg )
+            .if ( rcx && [rcx].asym.state == SYM_STACK && [rcx].asym.is_vararg && Parse_Pass == PASS_2 )
 
                 mov edx,reqParam
                 inc edx
-                asmerr( 2114, edx )
+                asmerr( 8022, edx )
+                ;asmerr( 2114, edx )
             .endif
 endif
         .elseif ( opnd.mem_type != MT_TYPE )

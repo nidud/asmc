@@ -9,6 +9,8 @@ include tchar.inc
 
 if defined(__UNIX__) and defined(_WIN64)
 option win64:noauto ; skip the vararg stack
+elseifndef _WIN64
+.pragma warning(disable: 8022)
 endif
 
 .code

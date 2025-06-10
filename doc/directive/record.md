@@ -25,7 +25,7 @@ Note that the record field names here are not global (Masm design flaw) and ther
 ```
 .template T
     x   dd ?
-    record
+    record q
      a  dd :  1 ?
      b  dd :  7 ?
      c  dd :  8 ?
@@ -34,6 +34,17 @@ Note that the record field names here are not global (Masm design flaw) and ther
    .ends
 
 ```
+Record fields are bit offsets from RECORD and Record names byte offsets from Type.
+
+<table>
+<tr><td><b>Const</b></td><td><b>Value</b></td><td></td></tr>
+<tr><td><b>T.q</b></td><td>4</td><td>Byte offset from T</td></tr>
+<tr><td><b>T.q.b</b></td><td>1</td><td>Bit offset from q</td></tr>
+<tr><td><b>maskof(T.q.c)</b></td><td>0000FF00</td><td></td></tr>
+</table>
+
+Memory operands are optimized for expression evaluation so the CMP instruction should not be used directly for testing bit-flags.
+
 <table>
 <tr><td><b>Instruction</b></td><td><b>Op1</b></td><td><b>Op2</b></td><td><b>Action</b></td></tr>
 <tr><td>CMP</td><td>a</td><td>0</td><td>TEST a, 1</td></tr>
@@ -65,10 +76,6 @@ Note that the record field names here are not global (Masm design flaw) and ther
 <tr><td>MOV</td><td>EAX</td><td>b</td><td>MOV/AND/SHR</td></tr>
 <tr><td>MOV</td><td>EAX</td><td>c</td><td>MOVZX</td></tr>
 <tr><td>MOV</td><td>EAX</td><td>d</td><td>MOVZX</td></tr>
-<tr><td>MOV</td><td>a</td><td>a</td><td>MOV/AND/AND/OR</td></tr>
-<tr><td>MOV</td><td>b</td><td>b</td><td>MOV/AND/SHR/SHL/AND/OR</td></tr>
-<tr><td>MOV</td><td>c</td><td>c</td><td>MOVZX/MOV</td></tr>
-<tr><td>MOV</td><td>d</td><td>d</td><td>MOVZX/MOV</td></tr>
 </table>
 
 #### See Also

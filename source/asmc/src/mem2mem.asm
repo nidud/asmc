@@ -71,7 +71,6 @@ InlineMove proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
     .endf
 
     mov esi,count
-
     .if ( edi == 8 && esi >= 4 )
 
         AddLineQueueX(
@@ -80,7 +79,6 @@ InlineMove proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
         sub esi,4
         add ebx,4
     .endif
-
     .for ( : esi : esi--, ebx++ )
         AddLineQueueX(
             " mov al, byte ptr %s[%d]\n"
@@ -331,7 +329,9 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
         .elseif ( size == 8 && ecx == 4 )
 
             mov rbx,src
-            .switch op
+            mov edi,op
+            mov esi,edi
+            .switch edi
             .case T_CMP
                 lea rdx,buffer
                 GetLabelStr( GetHllLabel(), rdx )
@@ -344,26 +344,19 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
                     "%s:", rbx, dst, &buffer, rbx, dst, &buffer )
                 .endc
             .case T_ADD
-                AddLineQueueX(
-                    " add dword ptr %s, dword ptr %s\n"
-                    " adc dword ptr %s[4], dword ptr %s[4]", dst, rbx, dst, rbx )
-                .endc
+                mov esi,T_ADC
             .case T_SUB
-                AddLineQueueX(
-                    " sub dword ptr %s, dword ptr %s\n"
-                    " sbb dword ptr %s[4], dword ptr %s[4]", dst, rbx, dst, rbx )
-                .endc
+                .if ( edi == T_SUB )
+                    mov esi,T_SBB
+                .endif
             .default
                 AddLineQueueX(
                     " %r dword ptr %s, dword ptr %s\n"
-                    " %r dword ptr %s[4], dword ptr %s[4]", op, dst, rbx, op, dst, rbx )
-                .endc
+                    " %r dword ptr %s[4], dword ptr %s[4]", edi, dst, rbx, esi, dst, rbx )
             .endsw
-
             mov eax,','
             mov [rbx-1],al
             xor ebx,ebx
-
         .else
             .return asmerr( 2070 )
         .endif
@@ -470,7 +463,7 @@ endif
         .if ( !rax )
 
             mov esi,T_XORPS
-            AddLineQueueX( " %r %r,%r", esi, [rdi+asm_tok].tokval, [rdi+asm_tok].tokval )
+            AddLineQueueX( " %r %r, %r", esi, [rdi+asm_tok].tokval, [rdi+asm_tok].tokval )
 
            .return( RetLineQueue() )
         .endif
@@ -478,7 +471,7 @@ endif
     CreateFloat( size, opnd, &flabel )
 
     .if ( [rdi+asm_tok].token == T_REG )
-        AddLineQueueX( " %r %r,%s", esi, [rdi+asm_tok].tokval, &flabel )
+        AddLineQueueX( " %r %r, %s", esi, [rdi+asm_tok].tokval, &flabel )
     .else
         mov rbx,[rdi+asm_tok].tokpos
         mov i,1
@@ -487,7 +480,7 @@ endif
         add rdi,tokenarray
         mov rdi,[rdi].tokpos
         mov byte ptr [rdi],0
-        AddLineQueueX( " %r %s,%s", esi, rbx, &flabel )
+        AddLineQueueX( " %r %s, %s", esi, rbx, &flabel )
         mov byte ptr [rdi],','
     .endif
     RetLineQueue()

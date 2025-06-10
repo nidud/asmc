@@ -37,18 +37,23 @@ main proc
 
    local r:T
 
-    mov eax,typeof T
-    mov eax,typeof r
-    mov eax,sizeof T
-    mov eax,sizeof T.q
+    mov eax,typeof T	; 12
+    mov eax,typeof r	; 12
+    mov eax,sizeof T	; 12
+    mov eax,sizeof T.q	; 1
 
-    mov eax,maskof T.a
-    mov eax,maskof T.b
-    mov eax,maskof T.c
+    mov eax,maskof T.a	; 0000FFFF
+    mov eax,maskof T.b	; 7FFF0000
+    mov eax,maskof T.c	; 80000000
 
-    mov eax,T.a	    ; 4 - same offset
-    mov eax,T.b	    ; 4
-    mov eax,T.c	    ; 4
+    mov eax,T.a		; 0 - offset from record (bits)
+    mov eax,T.b		; 16
+    mov eax,T.c		; 31
+
+    mov eax,T.q		; 9 - offset from T (byte)
+    mov eax,T.q.d	; 0 - offset from record q (bits)
+    mov eax,T.q.e	; 1
+    mov eax,T.q.f	; 2
 
 
     ; bit-field to register

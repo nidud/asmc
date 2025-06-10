@@ -2114,16 +2114,27 @@ endif
 
         .if ( [rsi].type != NULL )
 
-            .if ( [rsi].mbr != NULL )
-                add [rsi].llvalue,[rdi].llvalue
-            .else
-                mov [rsi].llvalue,[rdi].llvalue
-            .endif
+            assume rcx:nothing
 
-            mov [rsi].mbr,[rdi].mbr
+            mov rcx,[rdi].mbr
+            mov eax,[rdi].value
+            mov edx,[rdi].hvalue
+            .if ( rcx && [rcx].asym.mem_type == MT_BITS && [rcx].asym.crecord )
+                movzx eax,[rcx].asym.bitf_offs
+                mov [rsi].value,0
+                mov [rsi].hvalue,0
+            .endif
+            .if ( [rsi].mbr != NULL )
+                add [rsi].value,eax
+                adc [rsi].value,edx
+            .else
+                mov [rsi].value,eax
+                mov [rsi].hvalue,edx
+            .endif
+            assume rcx:expr_t
+            mov [rsi].mbr,rcx
             mov [rsi].mem_type,[rdi].mem_type
             mov [rsi].is_type,0
-
             .if ( [rdi].is_type )
                 mov [rsi].is_type,1
             .endif

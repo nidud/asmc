@@ -6,8 +6,6 @@ Asmc Macro Assembler Reference
 
 Returns the low byte of _expression_.
 
-_Note: **LOW** is disable by default in Asmc. Use [LOWBYTE](operator-lowbyte.md) or [switch -Zne](../command/option-zne.md) to enable Masm compatible opeators._
-
 #### See Also
 
-[Type](type.md) | [Operators Reference](readme.md)
+[Operators Reference](readme.md) | [Type](type.md) | [Masm Compatible Opeators](../command/option-zne.md)

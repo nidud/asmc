@@ -8,4 +8,4 @@ Returns the type of _expression_.
 
 #### See Also
 
-[Type](type.md) | [Operators Reference](readme.md)
+[Operators Reference](readme.md) | [Type](type.md) | [Masm Compatible Opeators](../command/option-zne.md)

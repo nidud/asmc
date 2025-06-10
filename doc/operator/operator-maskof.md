@@ -10,4 +10,5 @@ Returns a bit mask in which the bits in _recordfieldname_ or _record_ are set an
 
 #### See Also
 
-[Record](record.md) | [Operators Reference](readme.md)
+[Operators Reference](readme.md) | [Record](record.md) | [Masm Compatible Opeators](../command/option-zne.md)
+

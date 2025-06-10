@@ -90,7 +90,6 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-Sn</b></td><td>Turns off symbol table when producing a listing.</td></tr>
 <tr><td><b>-Sp</b> <i>alignment</i></td><td>Set segment alignment.</td></tr>
 <tr><td><b>-stackalign</b></td><td>Align stack variables to 16-byte.</td></tr>
-<tr><td><b>-sysvregs</b></td><td>Ignore RDI and RSI in USES for Linux64.</td></tr>
 <tr><td><b>-Sx</b></td><td>Turns on false conditionals in listing.</td></tr>
 <tr><td><b>-w</b></td><td>Same as /W0.</td></tr>
 <tr><td><b>-W</b>&lt;<i>level</i>&gt;</td><td>Sets the warning level, where <i>level</i> = 0, 1, 2, or 3.</td></tr>

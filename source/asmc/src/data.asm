@@ -641,11 +641,11 @@ next_item:
             .elseif ( first && i == 2 )
                 mov rdx,type_sym
                 .if ( rdx )
-                    .if ( [rdx].asym.mem_type == MT_BYTE )
+                    .if ( [rdx].asym.total_size == 1 )
                         mov eax,T_BYTE
-                    .elseif ( [rdx].asym.mem_type == MT_WORD )
+                    .elseif ( [rdx].asym.total_size == 2 )
                         mov eax,T_WORD
-                    .elseif ( [rdx].asym.mem_type == MT_DWORD )
+                    .elseif ( [rdx].asym.total_size == 4 )
                         mov eax,T_DWORD
                     .endif
                 .endif

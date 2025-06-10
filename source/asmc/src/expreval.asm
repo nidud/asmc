@@ -147,6 +147,10 @@ GetRecordMask proc fastcall uses rsi rdi rbx rec:dsym_t
 
         mov ecx,[rbx].sfield.offs
         mov edi,[rbx].sfield.total_size
+        .if ( [rbx].sfield.crecord )
+            movzx ecx,[rbx].sfield.bitf_offs
+            movzx edi,[rbx].sfield.bitf_bits
+        .endif
         add edi,ecx
 
         .for ( : ecx < edi : ecx++ )
@@ -220,6 +224,10 @@ tofloat endp
 
 unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         opnd1:expr_t, opnd2:expr_t, sym:asym_t, oper:int_t, name:string_t
+
+    UNREFERENCED_PARAMETER(uot)
+    UNREFERENCED_PARAMETER(opnd1)
+    UNREFERENCED_PARAMETER(opnd2)
 
     ldr rsi,opnd1
     ldr rdi,opnd2
@@ -702,8 +710,18 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .return( NOT_ERROR )
     .case UOT_MASK
     .case UOT_WIDTH
+        mov ecx,[rdi].is_type
+        .if ( ecx == 0 && [rdi].kind == EXPR_CONST )
+            mov rbx,[rdi].mbr
+            .if ( [rbx].state == SYM_STRUCT_FIELD && [rbx].mem_type == MT_TYPE )
+                mov rbx,[rbx].type
+                .if ( rbx && [rbx].typekind == TYPE_RECORD )
+                    inc ecx
+                .endif
+            .endif
+        .endif
         .switch pascal
-        .case ( [rdi].is_type )
+        .case ( ecx )
             mov rbx,[rdi].type
             .if ( [rbx].typekind != TYPE_RECORD )
                 .return fnasmerr( 2019 )
@@ -715,7 +733,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .endsw
         .if ( oper == T_MASK || oper == T_MASKOF )
             mov [rsi].value,0
-            .if ( [rdi].is_type )
+            .if ( ecx )
                 GetRecordMask(rbx)
             .else
                 xor eax,eax
@@ -742,16 +760,23 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             .endif
             mov [rsi].value,eax
             mov [rsi].hvalue,edx
-
-        .elseif ( [rdi].is_type )
-
+        .elseif ( ecx )
             mov rax,[rbx].structinfo
             mov rcx,[rax].struct_info.head
-            .for ( : rcx : rcx = [rcx].sfield.next )
-                add [rsi].value,[rcx].sfield.total_size
+            .for ( eax = 0 : rcx : rcx = [rcx].sfield.next )
+                .if ( [rcx].sfield.crecord )
+                    add al,[rcx].sfield.bitf_bits
+                .else
+                    add eax,[rcx].sfield.total_size
+                .endif
             .endf
+            mov [rsi].value,eax
         .else
-            mov [rsi].value,[rbx].total_size
+            mov eax,[rbx].total_size
+            .if ( [rbx].mem_type == MT_BITS && [rbx].crecord )
+                movzx eax,[rbx].bitf_bits
+            .endif
+            mov [rsi].value,eax
         .endif
         mov [rsi].kind,EXPR_CONST
        .return( NOT_ERROR )

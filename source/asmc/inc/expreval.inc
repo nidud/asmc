@@ -41,6 +41,7 @@ define __EXPREVAL_INC
     AT_TLF	= AT_TYPE or AT_LABEL or AT_FIELD,
     AT_TLFN	= AT_TYPE or AT_LABEL or AT_FIELD or AT_NUM,
     AT_TBF	= AT_TYPE or AT_BF,
+    AT_TBFF	= AT_TYPE or AT_BF or AT_FIELD, ; added for MASKOF and WIDTHOF
     AT_LF	= AT_LABEL or AT_FIELD,
     AT_LIF	= AT_LABEL or AT_IND or AT_FIELD,
     AT_LFN	= AT_LABEL or AT_FIELD or AT_NUM,

@@ -3520,8 +3520,29 @@ endif
             ;
             ; if one or more are !defined, set them appropriately
             ;
-            mov eax,op1
-            or  eax,op2
+            xor ecx,ecx
+            .if ( op1 & OP_M_ANY )
+                mov rcx,[rdi].mbr
+            .elseif ( op2 & OP_M_ANY )
+                mov rcx,[rdi+expr].mbr
+                mov eax,op1_size
+            .endif
+            .if ( rcx && [rcx].asym.mem_type == MT_BITS && [rcx].asym.crecord )
+                .if ( op1 & OP_R || op2 & OP_R )
+                    .return rc
+                .endif
+                mov edx,[rcx].asym.total_size
+                .if ( op1 & OP_M_ANY )
+                    mov op1_size,edx
+                .else
+                    mov op2_size,edx
+                .endif
+                mov eax,OP_MMX
+            .else
+                mov eax,op1
+                or  eax,op2
+            .endif
+
             .if ( eax & ( OP_MMX or OP_XMM or OP_YMM or OP_ZMM or OP_K ) || [rsi].token >= VEX_START )
 
             .elseif ( op1_size != 0 && op2_size != 0 )
@@ -3546,31 +3567,14 @@ endif
                     .endsw
                 .endif
                 .if eax
-                    mov rc,asmerr(2022, op1_size, op2_size)
+                    mov rc,asmerr( 2022, op1_size, op2_size )
                 .endif
             .endif
 
             ; size == 0 is assumed to mean "undefined", but there
             ; is also the case of an "empty" struct or union. The
             ; latter case isn't handled correctly.
-if 1
-            .if ( op1_size == 0 && op1 & OP_M_ANY && [rdi].mem_type == MT_BITS )
-                mov rax,[rdi].mbr
-                .if ( rax )
-                    .if ( [rax].asym.crecord )
-                        movzx eax,[rax].asym.bitf_bits
-                    .else
-                        mov eax,[rax].asym.total_size
-                    .endif
-                    mov edx,eax
-                    shr eax,3
-                    and edx,7
-                    setnz dl
-                    add eax,edx
-                .endif
-                mov op1_size,eax
-            .endif
-endif
+
             .if ( op1_size == 0 )
 
                 mov eax,op1

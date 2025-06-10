@@ -6,4 +6,4 @@ See [SIZEOF](operator-sizeof.md).
 
 #### See Also
 
-[Type](type.md) | [Operators Reference](readme.md)
+[Operators Reference](readme.md) | [Type](type.md) | [Masm Compatible Opeators](../command/option-zne.md)

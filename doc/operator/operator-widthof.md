@@ -1,8 +1,8 @@
 Asmc Macro Assembler Reference
 
-## operator WIDTH
+## operator WIDTHOF
 
-**WIDTH {_recordfieldname_ | _record_}**
+**WIDTHOF {_recordfieldname_ | _record_}**
 
 Returns the width in bits of the current _recordfieldname_ or _record_.
 

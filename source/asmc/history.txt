@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.37 - xx xxx 2025
+- added WIDTHOF
 - added [X]OR/TEST and MOV mem,reg to C-type RECORD fields - see record6.asm
 - added more debug support for anonymous STRUCT/UNION/RECORD
 - added MOV/CMP to C-type RECORD fields - see record5.asm

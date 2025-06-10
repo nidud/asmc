@@ -14,6 +14,8 @@ The first issue is solved by improving and adding HLL extensions, the second by 
 .return( strcmp( rbx, strcat( strcat( strcpy( &buffer, rax ), "\\" ), rsi ) ) )
 ```
 
+This approach enables implementing new features without breaking any compatibility with Masm. There is however a clear break in regards to the naming convention where, I guess in assemblers in general, the most commonly used names used as identifiers [ends up as directives](../command/option-zne.md). As the stated goal here is an attempt to create a _functional programming language_ some of these keywords was renamed or removed.
+
 #### See Also
 
 [Asmc Reference](../readme.md) | [Instruction Format](../directive/instruction-format.md)

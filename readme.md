@@ -1,6 +1,6 @@
 # Asmc Macro Assembler
 
-## About
+## About Asmc
 
 Asmc is technically a slow-burning design project to make a functional programming language out of assembly. It started as a modified version of JWasm in 2011 with some simple but specific goals:
 

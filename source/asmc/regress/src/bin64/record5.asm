@@ -88,7 +88,7 @@ main proc
     cmp r.b,15	    ; MOV/AND/CMP
     cmp r.c,1	    ; TEST
 
-    cmp r.q.d,1	    ; TEST
+    cmp r.q.d,1	    ; MOV/AND/CMP
     cmp r.q.e,0	    ; TEST
     cmp r.q.f,0x3F  ; MOVZX/AND/CMP
 

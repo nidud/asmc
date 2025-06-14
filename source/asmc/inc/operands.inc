@@ -76,6 +76,7 @@ OP_I		equ OP_I8 or OP_I16 or OP_I32
 OP_IGE8		equ OP_I8 or OP_I16 or OP_I32
 OP_IGE16	equ OP_I16 or OP_I32
 OP_I_ANY	equ OP_I or OP_I64 or OP_I48
+OP_IS		equ OP_I or OP_I64 ; crecord
 
 OP_MGT8		equ OP_M16 or OP_M32 or OP_M64
 OP_MGT16	equ OP_M32 or OP_M64

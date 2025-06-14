@@ -2,6 +2,9 @@
 ;--- operator SIZEOF, SIZE, LENGTHOF, LENGTH
 ;--- for EXTERNALS
 
+ifdef __ASMC__
+option masm:on
+endif
 	.286
 	.model small,stdcall
 	.stack 100h

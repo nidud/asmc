@@ -31,7 +31,6 @@ for %%f in (src\vec64\*.asm) do call :vec64 %%f
 for %%f in (src\bin64\*.asm) do call :cv8bin %%f
 for %%f in (src\vec64\*.asm) do call :cv8Gv %%f
 for %%f in (src\win64\*.asm) do call :cv8 %%f
-for %%f in (src\zneomf\*.asm) do call :zneomf %%f
 for %%f in (src\zf0\*.asm) do call :zf0 %%f
 for %%f in (src\zf1\*.asm) do call :zf1 %%f
 for %%f in (src\peerr\*.asm) do call :peerr %%f
@@ -61,22 +60,6 @@ fcmp %~n1.err exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.err
 if exist %~n1.obj del %~n1.obj
-goto end
-
-:zneomf
-%ASMX% -c -q -Zne -omf %1
-if errorlevel 1 goto end
-fcmp %~n1.obj exp\%~n1.obj
-if errorlevel 1 goto end
-del %~n1.obj
-if (%OWLINK%) == () goto end
-%ASMX% -c -q -Zne -omf %1
-if errorlevel 1 goto end
-%OWLINK% op q,nofar format dos LIBPath src\omf file %~n1.obj
-fcmp %~n1.exe exp\%~n1.exe
-if errorlevel 1 goto end
-del %~n1.obj
-del %~n1.exe
 goto end
 
 :cmpomf

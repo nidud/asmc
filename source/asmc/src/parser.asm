@@ -1130,19 +1130,19 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
        .return NOT_ERROR
     .endif
 
-    mov eax,[rdi].value
-    mov edx,[rdi].hvalue
-    add eax,0
-    adc edx,1
-    .if ( edx > 1 )
+    .if ( [rdi].hvalue > 0 )
 
-        ; compare mem_float,imm_float64
+        ; COMISD mem_float,imm_float64
+        ; MOV mem.field,imm64 - record7.asm
 
-        .if ( [rsi].Ofssize >= USE32 && [rsi].token == T_COMISD &&
-                  CurrOpnd == OPND2 && [rsi].opnd[OPND1].type == OP_M64 )
-            mov [rsi].opnd[rbx].type,OP_I64
-            mov [rsi].opnd[rbx].data32h,[rdi].hvalue
-           .return NOT_ERROR
+        .if ( [rsi].Ofssize >= USE32 && CurrOpnd == OPND2 && [rsi].opnd[OPND1].type == OP_M64 )
+
+            .if ( [rsi].token == T_COMISD || ( [rsi].token == T_MOV && [rsi].mem_type == MT_BITS ) )
+
+                mov [rsi].opnd[rbx].type,OP_I64
+                mov [rsi].opnd[rbx].data32h,[rdi].hvalue
+               .return( NOT_ERROR )
+            .endif
         .endif
         .return EmitConstError()
     .endif
@@ -2028,7 +2028,23 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
             mov [rsi].opnd[rbx].type,ecx
         .endif
 
-    .elseif [rsi].mem_type == MT_EMPTY
+    .elseif ( [rsi].mem_type == MT_BITS )
+
+        mov rdx,[rdi].mbr
+        .if ( rdx && [rdx].asym.crecord )
+
+            mov eax,[rdx].asym.total_size
+            mov ecx,[rsi].opnd[rbx].type
+            .switch pascal eax
+            .case  1: mov ecx,OP_M08
+            .case  2: mov ecx,OP_M16
+            .case  4: mov ecx,OP_M32
+            .case  8: mov ecx,OP_M64
+            .endsw
+            mov [rsi].opnd[rbx].type,ecx
+        .endif
+
+    .elseif ( [rsi].mem_type == MT_EMPTY )
 
         ; v2.05: added
 
@@ -3523,39 +3539,20 @@ endif
         .endif
 
         .if ( op1_size != op2_size )
-            ;
-            ; if one or more are !defined, set them appropriately
-            ;
-            xor ecx,ecx
-            .if ( op1 & OP_M_ANY )
-                mov rcx,[rdi].mbr
-            .elseif ( op2 & OP_M_ANY )
-                mov rcx,[rdi+expr].mbr
-                mov eax,op1_size
-            .endif
-            .if ( rcx && [rcx].asym.mem_type == MT_BITS && [rcx].asym.crecord )
-                .if ( op1 & OP_R || op2 & OP_R )
-                    .return rc
-                .endif
-                mov edx,[rcx].asym.total_size
-                .if ( op1 & OP_M_ANY )
-                    mov op1_size,edx
-                .else
-                    mov op2_size,edx
-                .endif
-                mov eax,OP_MMX
-            .else
-                mov eax,op1
-                or  eax,op2
-            .endif
 
+            ; if one or more are !defined, set them appropriately
+
+            mov eax,op1
+            or  eax,op2
             .if ( eax & ( OP_MMX or OP_XMM or OP_YMM or OP_ZMM or OP_K ) || [rsi].token >= VEX_START )
 
             .elseif ( op1_size != 0 && op2_size != 0 )
 
                 mov eax,1
                 .if ( [rsi].Ofssize > USE16 && ( op1 & OP_M_ANY ) && ( op2 & OP_M_ANY ) )
-                    ;; v2.30 - Memory to memory operands.
+
+                    ; v2.30 - Memory to memory operands.
+
                     movzx ecx,[rsi].token
                     .switch ecx
                     .case T_MOV
@@ -3569,8 +3566,23 @@ endif
                     .case T_OR
                     .case T_XOR
                         xor eax,eax
-                        .endc
+                       .endc
                     .endsw
+
+                .elseif ( op1 & OP_MS || op2 & OP_MS )
+
+                    ; mov reg,field | field,reg - record5.asm and record7.asm
+                    ; the op-size should be correct here
+
+                    xor ecx,ecx
+                    .if ( op1 & OP_MS && op2 & OP_R )
+                        mov rcx,[rdi].mbr
+                    .elseif ( op2 & OP_MS && op1 & OP_R )
+                        mov rcx,[rdi+expr].mbr
+                    .endif
+                    .if ( rcx && [rcx].asym.crecord )
+                        xor eax,eax
+                    .endif
                 .endif
                 .if eax
                     mov rc,asmerr( 2022, op1_size, op2_size )
@@ -4933,7 +4945,7 @@ endif
                     .case T_MOVZX
                         .if ( ecx & OP_R )
                             xor ebx,ebx
-                        .elseif ( edx & ( OP_I or OP_R ) )
+                        .elseif ( edx & ( OP_IS or OP_R ) )
                             xor ebx,ebx
                         .endif
                     .endsw
@@ -4941,7 +4953,7 @@ endif
                 .if ( rbx == 0 )
                     mov ecx,eax
                    .return( CRecordField(ecx, &opndx, &opndx[expr]) )
-                .elseif !( ( ecx & OP_M_ANY ) && ( edx & OP_M_ANY ) )
+                .elseif !( ecx & OP_MS && edx & OP_MS )
                     .return( asmerr( 2166 ) )
                 .endif
             .endif

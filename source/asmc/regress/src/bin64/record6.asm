@@ -24,7 +24,7 @@ option casemap:none
     define  mem <[rcx]>
 
     cmp     mem.a, 0        ; TEST a,1
-    cmp     mem.a, 1        ; TEST a,1
+    cmp     mem.a, 1        ; MOV/AND/CMP
     cmp     mem.b, 0        ; TEST
     cmp     mem.b, 1        ; MOV/AND/CMP
     cmp     mem.c, 1        ; CMP

@@ -38,9 +38,9 @@ Record fields are bit offsets from RECORD and Record names byte offsets from Typ
 
 <table>
 <tr><td><b>Const</b></td><td><b>Value</b></td><td></td></tr>
-<tr><td><b>T.q</b></td><td>4</td><td>Byte offset from T</td></tr>
-<tr><td><b>T.q.b</b></td><td>1</td><td>Bit offset from q</td></tr>
-<tr><td><b>maskof(T.q.c)</b></td><td>0000FF00</td><td></td></tr>
+<tr><td>T.q</td><td>4</td><td>Byte offset from T</td></tr>
+<tr><td>T.q.b</td><td>1</td><td>Bit offset from q</td></tr>
+<tr><td>maskof T.q.c</td><td>0000FF00</td><td></td></tr>
 </table>
 
 Memory operands are optimized for expression evaluation.

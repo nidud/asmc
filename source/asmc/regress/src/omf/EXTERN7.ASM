@@ -1,6 +1,9 @@
 
 ;--- SIZE, LENGTH operators with externals
 ;--- also external prototypes and function pointers
+ifdef __ASMC__
+option masm:on
+endif
 
 	.286
 	.model small, stdcall

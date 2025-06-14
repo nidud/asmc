@@ -12,7 +12,6 @@ for %%f in (src\bin\*.asm) do call :cmpbin %%f
 for %%f in (src\bin64\*.asm) do call :cmpbin %%f
 for %%f in (src\mz\*.asm)  do call :cmpmz  %%f
 for %%f in (src\err\*.asm) do call :cmperr %%f
-for %%f in (src\zneerr\*.asm) do call :zneerr %%f
 for %%f in (src\omf\*.asm) do call :lnkomf %%f
 for %%f in (src\omf\*.asm) do call :cmpomf %%f
 for %%f in (src\coff\*.asm) do call :coff %%f
@@ -32,8 +31,6 @@ for %%f in (src\vec64\*.asm) do call :vec64 %%f
 for %%f in (src\bin64\*.asm) do call :cv8bin %%f
 for %%f in (src\vec64\*.asm) do call :cv8Gv %%f
 for %%f in (src\win64\*.asm) do call :cv8 %%f
-for %%f in (src\zne\*.asm) do call :zne %%f
-for %%f in (src\zne64\*.asm) do call :zne %%f
 for %%f in (src\zneomf\*.asm) do call :zneomf %%f
 for %%f in (src\zf0\*.asm) do call :zf0 %%f
 for %%f in (src\zf1\*.asm) do call :zf1 %%f
@@ -60,14 +57,6 @@ goto end
 
 :cmperr
 %ASMX% -c -q -W3 -omf %1 >NUL
-fcmp %~n1.err exp\%~n1.err
-if errorlevel 1 goto end
-del %~n1.err
-if exist %~n1.obj del %~n1.obj
-goto end
-
-:zneerr
-%ASMX% -c -q -Zne -W3 -omf %1 >NUL
 fcmp %~n1.err exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.err
@@ -274,13 +263,6 @@ goto end
 fcmp -coff %~n1.obj exp64\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj
-goto end
-
-:zne
-%ASMX% -q -Zne -bin %1
-fcmp %~n1.bin exp\%~n1.bin
-if errorlevel 1 goto end
-del %~n1.bin
 goto end
 
 :zf0

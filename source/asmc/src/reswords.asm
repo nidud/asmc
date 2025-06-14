@@ -130,6 +130,8 @@ include opndcls.inc
 }
 undef OpCls
 
+intbuff char_t 256 dup(?)
+
 ; the tables to handle "reserved words" are now generated:
 ; 1. InstrTable: contains info for instructions.
 ;    instructions may need multiple rows!
@@ -144,7 +146,6 @@ undef OpCls
 ; - SpecialTable
 ; - optable_idx ( needs adjustment, better use macro IndexFromToken() )
 ; - ResWordTable
-
 
 ; create InstrTable.
 
@@ -466,6 +467,8 @@ patchtabr replace_ins \
     { T_VMWRITE - SPECIAL_LAST, T_VMWRITE_I,  T_VMWRITE_I64 }
 
 
+masmkeywords instr_token T_NAME, T_TITLE, T_PAGE, T_SIZE, T_LENGTH, T_THIS, T_MASK, T_WIDTH, T_TYPE, T_HIGH, T_LOW, 0
+
 align 8
 
 renamed_keys qdesc { NULL, NULL }
@@ -487,39 +490,114 @@ b64bit int_t FALSE ; resw tables in 64bit mode?
 define FNVPRIME 0x01000193
 define FNVBASE  0x811c9dc5
 
+if sizeof(ReservedWord) ne size_t*2
+.err @CatStr(%@FileName,<(>,%@Line,<): >, <ReservedWord need to size_t*2 byte!!!!>)
+endif
+define RWSHIFT ((size_t shr 3) + 3)
+
     .code
 
-ifdef _WIN64
+    assume rbx:ptr ReservedWord
 
-; fastcall..
+; add reserved word to hash table
 
-get_hash proc watcall private token:string_t, len:byte
+FindResWord proc watcall uses rsi rdi rbx _name:string_t, size:uint_t
 
-    xor     rax,rax
-    test    rdx,rdx
+    test    edx,edx
+    jz      .6
+    cmp     edx,max_resw_len
+    ja      .6
+    cmp     byte ptr [rax],'_'
+    je      .6
+
+    mov     rdi,rax
+    mov     rsi,rax
+    mov     eax,FNVBASE
+    mov     ebx,edx
+.0:
+    mov     ecx,[rdi]
+    or      ecx,0x20202020
+    imul    eax,eax,FNVPRIME
+    xor     al,cl
+    dec     edx
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,ch
+    dec     edx
+    jz      .1
+    shr     ecx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,cl
+    dec     edx
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,ch
+    add     rdi,4
+    dec     edx
+    jnz     .0
+.1:
+    and     eax,HASH_TABITEMS-1
+    mov     dh,bl
+    lea     rbx,ResWordTable
+    lea     rdi,resw_table
+    movzx   eax,word ptr [rdi+rax*2]
+    shl     eax,RWSHIFT
+    jz      .7
+.3:
+    cmp     dh,[rbx+rax].len
+    jne     .5
+    mov     rdi,[rbx+rax].name
+    movzx   ecx,dh
+    shr     eax,RWSHIFT
+.4:
+    dec     ecx
+    jz      .7
+    mov     dl,[rsi+rcx]
+    cmp     dl,[rdi+rcx]
+    je      .4
+    or      dl,0x20
+    cmp     dl,[rdi+rcx]
+    je      .4
+    shl     eax,RWSHIFT
+.5:
+    movzx   eax,[rbx+rax].next
+    shl     eax,RWSHIFT
+    jnz     .3
+.6:
+    xor     eax,eax
+.7:
+    ret
+
+FindResWord endp
+
+
+get_hash proc fastcall private uses rsi token:string_t, len:byte
+
+    xor     eax,eax
+    test    edx,edx
     jz      .1
     mov     eax,FNVBASE
-    mov     r8,rdx
+    mov     esi,edx
 .0:
     mov     edx,[rcx]
     or      edx,0x20202020
     add     rcx,4
     imul    eax,eax,FNVPRIME
     xor     al,dl
-    dec     r8d
+    dec     esi
     jz      .1
     imul    eax,eax,FNVPRIME
     xor     al,dh
-    dec     r8d
+    dec     esi
     jz      .1
     shr     edx,16
     imul    eax,eax,FNVPRIME
     xor     al,dl
-    dec     r8d
+    dec     esi
     jz      .1
     imul    eax,eax,FNVPRIME
     xor     al,dh
-    dec     r8d
+    dec     esi
     jnz     .0
 .1:
     xor     edx,edx
@@ -528,90 +606,84 @@ get_hash proc watcall private token:string_t, len:byte
 
 get_hash endp
 
-; add reserved word to hash table
 
-    assume r11:ptr ReservedWord
-    assume r9: ptr ReservedWord
+AddResWord proc fastcall private uses rsi rdi rbx token:int_t
 
-if sizeof(ReservedWord) ne 16
-.err @CatStr(%@FileName,<(>,%@Line,<): >, <ReservedWord need to 16 byte!!!!>)
-endif
-
-AddResWord proc watcall private token:int_t
-
-    mov     r10d,eax
-    lea     r11,ResWordTable
-    shl     eax,4
-    lea     r9,[r11+rax]
-    movzx   edx,[r9].len
-    mov     rcx,[r9].name
+    mov     esi,ecx
+    lea     rbx,ResWordTable
+    shl     ecx,RWSHIFT
+    movzx   edx,[rbx+rcx].ReservedWord.len
+    mov     rcx,[rbx+rcx].ReservedWord.name
     call    get_hash
 
     lea     rcx,resw_table
-    lea     r8,[rcx+rax*2]
+    lea     rdi,[rcx+rax*2]
 
     ; sort the items of a line by length!
 
-    movzx   ecx,word ptr [r8]
-    shl     ecx,4
+    movzx   ecx,word ptr [rdi]
+    shl     ecx,RWSHIFT
     jz      .1
-    mov     al,[r9].len
+    mov     eax,esi
+    shl     eax,RWSHIFT
+    mov     al,[rbx+rax].ReservedWord.len
 .0:
-    cmp     [r11+rcx].len,al
-    ja      .1
+    cmp     al,[rbx+rcx].len
+    jbe     .1
     mov     edx,ecx
-    movzx   ecx,[r11+rcx].next
-    shl     ecx,4
+    movzx   ecx,[rbx+rcx].next
+    shl     ecx,RWSHIFT
     jnz     .0
 .1:
+    mov     ecx,esi
+    shl     ecx,RWSHIFT
     test    edx,edx
     jnz     .2
-    mov     [r9].next,[r8]
-    mov     [r8],r10w
+    mov     [rbx+rcx].ReservedWord.next,[rdi]
+    mov     [rdi],si
     jmp     .3
 .2:
-    mov     [r9].next,[r11+rdx].next
-    mov     [r11+rdx].next,r10w
+    mov     [rbx+rcx].ReservedWord.next,[rbx+rdx].next
+    mov     [rbx+rdx].next,si
 .3:
     ret
 
 AddResWord endp
 
-    assume r9:nothing
 
 ; remove a reserved word from the hash table.
 
-RemoveResWord proc fastcall token:int_t
+RemoveResWord proc fastcall uses rsi rdi rbx token:int_t
 
-    mov     r9d,ecx
-    lea     r11,ResWordTable
-    shl     ecx,4
-    movzx   edx,[r11+rcx].len
-    mov     rcx,[r11+rcx].name
+    mov     esi,ecx
+    lea     rbx,ResWordTable
+    shl     ecx,RWSHIFT
+    movzx   edx,[rbx+rcx].len
+    mov     rcx,[rbx+rcx].name
     call    get_hash
 
     lea     rcx,resw_table
-    lea     r8,[rcx+rax*2]
-    movzx   ecx,word ptr [r8]
+    lea     rdi,[rcx+rax*2]
+    movzx   ecx,word ptr [rdi]
     test    ecx,ecx
     jz      .3
 .0:
-    cmp     ecx,r9d
+    cmp     ecx,esi
     jne     .2
-    shl     ecx,4
-    shl     edx,4
+    shl     ecx,RWSHIFT
+    shl     edx,RWSHIFT
     jz      .1
-    mov     [r11+rdx].next,[r11+rcx].next
+    mov     [rbx+rdx].next,[rbx+rcx].next
     mov     eax,TRUE
     jmp     .4
 .1:
-    mov     [r8],[r11+rcx].next
+    mov     [rdi],[rbx+rcx].next
     mov     eax,TRUE
     jmp     .4
 .2:
     mov     edx,ecx
-    shl     ecx,4
-    movzx   ecx,[r11+rcx].next
+    shl     ecx,RWSHIFT
+    movzx   ecx,[rbx+rcx].next
     test    ecx,ecx
     jnz     .0
 .3:
@@ -620,6 +692,7 @@ RemoveResWord proc fastcall token:int_t
     ret
 
 RemoveResWord endp
+
 
 rename_node struct
 next        ptr rename_node ?
@@ -633,12 +706,12 @@ rename_node ends
 ; - name:   new name of keyword
 ; - length: length of new name
 
-    assume r12:ptr rename_node
-    assume rbx:ptr ReservedWord
-
-RenameKeyword proc fastcall uses rsi rdi rbx r12 token:uint_t, name:string_t, length:byte
+RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:byte
 
   local newname[64]:char_t ; added v2.26
+
+    ldr ecx,token
+    ldr rdx,name
 
     .for ( rdi = &newname, rsi = rdx :: )
 
@@ -653,12 +726,12 @@ RenameKeyword proc fastcall uses rsi rdi rbx r12 token:uint_t, name:string_t, le
 
     mov edi,ecx
     lea rbx,ResWordTable
-    shl ecx,4
+    shl ecx,RWSHIFT
     add rbx,rcx
 
-    .if ( [rbx].len == r8b )
-
-        .return .ifd !tmemicmp( &newname, [rbx].name, r8d )
+    movzx ecx,length
+    .if ( [rbx].len == cl )
+        .return .ifd !tmemicmp( &newname, [rbx].name, ecx )
     .endif
     RemoveResWord( edi )
 
@@ -671,19 +744,19 @@ RenameKeyword proc fastcall uses rsi rdi rbx r12 token:uint_t, name:string_t, le
 
     .if ( rsi >= rax && rsi < rcx )
 
-        mov r12,LclAlloc( sizeof( rename_node ) )
-        mov [r12].next,NULL
-        mov [r12].name,rsi
-        mov [r12].token,di
-        mov [r12].length,[rbx].len
+        mov rcx,LclAlloc( sizeof( rename_node ) )
+        mov [rcx].rename_node.next,NULL
+        mov [rcx].rename_node.name,rsi
+        mov [rcx].rename_node.token,di
+        mov [rcx].rename_node.length,[rbx].len
 
         .if renamed_keys.head == NULL
-            mov renamed_keys.head,r12
-            mov renamed_keys.tail,r12
+            mov renamed_keys.head,rcx
+            mov renamed_keys.tail,rcx
         .else
             mov rdx,renamed_keys.tail
-            mov [rdx].rename_node.next,r12
-            mov renamed_keys.tail,r12
+            mov [rdx].rename_node.next,rcx
+            mov renamed_keys.tail,rcx
         .endif
 
     .else
@@ -693,220 +766,48 @@ RenameKeyword proc fastcall uses rsi rdi rbx r12 token:uint_t, name:string_t, le
         ;
         ; v2.17: fixed infinite loop ( curr wasn't changed )
 
-        .for ( r12 = renamed_keys.head, rsi = NULL : r12 : rsi = r12, r12 = [r12].next )
-            .if ( [r12].token == di )
-                .if ( [r12].length == length )
-                    .ifd !tmemcmp( &newname, [r12].name, length )
+        assume rdi:ptr rename_node
+
+        .for ( rdi = renamed_keys.head, rsi = NULL : rdi : rsi = rdi, rdi = [rdi].next )
+
+            mov eax,token
+            .if ( ax == [rdi].token )
+                .if ( [rdi].length == length )
+                    .ifd !tmemcmp( &newname, [rdi].name, length )
                         .if rsi
-                            mov [rsi].rename_node.next,[r12].next
+                            mov [rsi].rename_node.next,[rdi].next
                         .else
-                            mov renamed_keys.head,[r12].next
+                            mov renamed_keys.head,[rdi].next
                         .endif
-                        .if renamed_keys.tail == r12
+                        .if renamed_keys.tail == rdi
                             mov renamed_keys.tail,rsi
                         .endif
-                        mov [rbx].name,[r12].name
-                        mov [rbx].len,[r12].length
-                        AddResWord(edi)
+                        mov [rbx].name,[rdi].name
+                        mov [rbx].len,[rdi].length
+                        AddResWord(token)
                        .return
                     .endif
                 .endif
                 .break
             .endif
         .endf
+        assume rdi:nothing
     .endif
-
-    movzx esi,length
-    mov [rbx].len,sil
-    mov [rbx].name,LclAlloc(esi)
+    movzx ecx,length
+    mov [rbx].len,cl
+    mov esi,ecx
+    mov [rbx].name,LclAlloc(ecx)
     ; convert to lowercase?
     tmemcpy(rax, &newname, esi)
-    AddResWord(edi)
+    AddResWord(token)
     ret
 
 RenameKeyword endp
 
-    assume r12:nothing
+; ResWordsInit() initializes the reserved words hash array ( resw_table[] )
+; and also the reserved words string pointers ( ResWordTable[].name + ResWordTable[].len )
 
-; depending on 64bit on or off, some instructions must be added,
-; some removed. Currently this is a bit hackish.
-
-Set64Bit proc fastcall uses rsi rdi rbx r12 newmode:int_t
-
-    .if ( ecx != b64bit )
-
-        lea r12,ResWordTable
-
-        .if ( ecx != FALSE )
-
-            inc optable_idx[(T_INC-SPECIAL_LAST)*2] ; skip the one-byte register INC
-            inc optable_idx[(T_DEC-SPECIAL_LAST)*2] ; skip the one-byte register DEC
-
-            .for ( esi = 0: esi < lengthof(patchtab64): esi++ )
-
-                lea  rcx,patchtab64
-                mov  edi,[rcx+rsi*4]
-                imul ebx,edi,ReservedWord
-                add  rbx,r12
-
-                .for ( : [rbx].flags & RWF_X64 : rbx+=ReservedWord, edi++ )
-                    .if ( !( [rbx].flags & RWF_DISABLED ) )
-                        AddResWord(edi)
-                    .endif
-                .endf
-            .endf
-
-            .for ( esi = 0: esi < lengthof(patchtab32): esi++ )
-
-                lea  rcx,patchtab32
-                mov  edi,[rcx+rsi*4]
-                imul ebx,edi,ReservedWord
-                add  rbx,r12
-
-                .for ( : [rbx].flags & RWF_IA32 : rbx+=ReservedWord, edi++ )
-                    .if ( !( [rbx].flags & RWF_DISABLED ) )
-                        RemoveResWord(edi)
-                    .endif
-                .endf
-            .endf
-
-            .for ( r8 = &patchtabr,
-                   r9 = &optable_idx,
-                   edi = 0 : edi < sizeof(patchtabr) : edi+=replace_ins )
-                movzx edx,[r8+rdi].replace_ins.tok
-                mov eax,[r8+rdi].replace_ins.idx64
-                mov [r9+rdx*2],ax
-            .endf
-
-        .else
-
-            dec optable_idx[(T_INC - SPECIAL_LAST)*2] ;; restore the one-byte register INC
-            dec optable_idx[(T_DEC - SPECIAL_LAST)*2] ;; restore the one-byte register DEC
-
-            .for ( esi = 0: esi < lengthof(patchtab64): esi++ )
-
-                lea  rcx,patchtab64
-                mov  edi,[rcx+rsi*4]
-                imul ebx,edi,ReservedWord
-                add  rbx,r12
-
-                .for ( : [rbx].flags & RWF_X64 : rbx+=ReservedWord, edi++ )
-                    .if ( !( [rbx].flags & RWF_DISABLED ) )
-                        RemoveResWord(edi)
-                    .endif
-                .endf
-            .endf
-
-            .for ( esi = 0: esi < lengthof(patchtab32): esi++ )
-
-                lea  rcx,patchtab32
-                mov  edi,[rcx+rsi*4]
-                imul ebx,edi,ReservedWord
-                add  rbx,r12
-
-                .for ( : [rbx].flags & RWF_IA32 : rbx+=ReservedWord, edi++ )
-                    .if ( !( [rbx].flags & RWF_DISABLED ) )
-                        AddResWord(edi)
-                    .endif
-                .endf
-            .endf
-
-            .for ( r8 = &patchtabr,
-                   r9 = &optable_idx,
-                   edi = 0 : edi < sizeof(patchtabr): edi+=replace_ins )
-                movzx edx,[r8+rdi].replace_ins.tok
-                mov eax,[r8+rdi].replace_ins.idx32
-                mov [r9+rdx*2],ax
-            .endf
-
-        .endif
-        mov b64bit,newmode
-    .endif
-    ret
-
-Set64Bit endp
-
-DisableKeyword proc fastcall uses rdi rbx token:uint_t
-
-    mov edi,ecx
-    lea rbx,ResWordTable
-    shl edi,4
-
-    .if ( !( [rbx+rdi].flags & RWF_DISABLED ) )
-
-        RemoveResWord(ecx)
-
-        mov [rbx+rdi].next,0
-        or  [rbx+rdi].flags,RWF_DISABLED
-        shr edi,4
-        .if Removed.Head == 0
-            mov Removed.Head,di
-        .else
-            movzx ecx,Removed.Tail
-            shl ecx,4
-            mov [rbx+rcx].next,di
-        .endif
-        mov Removed.Tail,di
-    .endif
-    ret
-
-DisableKeyword endp
-
-;; check if a keyword is in the list of disabled words.
-
-IsKeywordDisabled proc __ccall uses rdi rbx name:string_t, len:int_t
-
-    movzx edi,Removed.Head
-    .for ( : edi : )
-
-        lea rbx,ResWordTable
-        imul ecx,edi,ReservedWord
-        add rbx,rcx
-        mov rdx,[rbx].name
-        mov r8d,len
-        .if byte ptr [rdx+r8] == 0
-            .return(TRUE) .ifd !tmemicmp( name, rdx, r8d )
-        .endif
-        mov di,[rbx].next
-    .endf
-    .return(FALSE)
-
-IsKeywordDisabled endp
-
-
-; get current name of a reserved word.
-; max size is 255.
-
-GetResWName proc __ccall resword:uint_t, buff:string_t
-
-    .data?
-    intbuff char_t 256 dup(?)
-    .code
-
-    lea     rax,intbuff
-    test    rdx,rdx
-    cmovnz  rax,rdx
-    lea     r11,ResWordTable
-    shl     ecx,4
-    mov     r10,rdi
-    mov     rdx,rsi
-    mov     rdi,rax
-    mov     rsi,[r11+rcx].name
-    movzx   ecx,[r11+rcx].len
-    rep     movsb
-    mov     byte ptr [rdi],0
-
-    mov     rsi,rdx
-    mov     rdi,r10
-    ret
-
-GetResWName endp
-
-
-;; ResWordsInit() initializes the reserved words hash array ( resw_table[] )
-;; and also the reserved words string pointers ( ResWordTable[].name + ResWordTable[].len )
-
-ResWordsInit proc __ccall uses rsi rdi rbx
+ResWordsInit proc uses rsi rdi rbx
 
     ; exit immediately if table is already initialized
 
@@ -930,8 +831,7 @@ ResWordsInit proc __ccall uses rsi rdi rbx
     ; v2.09: start with index = 1, since index 0 is now T_NULL
 
     .for ( rsi = &resw_strings,
-           rbx = &ResWordTable,
-           rbx += ReservedWord,
+           rbx = &ResWordTable[ReservedWord],
            edi = 1: edi < ResWordCount: edi++, rbx += ReservedWord )
 
         mov [rbx].name,rsi
@@ -948,10 +848,9 @@ ResWordsInit endp
 ; ResWordsFini() is called once per module
 ; it restores the resword table
 
-    assume rsi:ptr rename_node
-    assume rdi:ptr rename_node
+    assume rsi:ptr rename_node, rdi:ptr rename_node
 
-ResWordsFini proc __ccall uses rsi rdi rbx
+ResWordsFini proc uses rsi rdi rbx
 
     ; restore renamed keywords.
     ; the keyword has to removed ( and readded ) from the hash table,
@@ -966,8 +865,9 @@ ResWordsFini proc __ccall uses rsi rdi rbx
         ; v2.06: this is the correct name to free
 
         imul ecx,ebx,ReservedWord
-        mov [r11+rcx].name,[rdi].name
-        mov [r11+rcx].len,[rdi].length
+        lea rdx,ResWordTable
+        mov [rdx+rcx].ReservedWord.name,[rdi].name
+        mov [rdx+rcx].ReservedWord.len,[rdi].length
 
         AddResWord(ebx)
     .endf
@@ -992,337 +892,186 @@ ResWordsFini proc __ccall uses rsi rdi rbx
 
 ResWordsFini endp
 
-    align 8
+    assume rsi:nothing, rdi:nothing
 
-FindResWord proc watcall name:string_t, size:uint_t
 
-    test    edx,edx
-    jz      .6
-    cmp     edx,max_resw_len
-    ja      .6
-    cmp     byte ptr [rax],'_'
-    je      .6
+DisableKeyword proc fastcall uses rsi rdi rbx token:uint_t
 
-    mov     r8,rax
-    mov     r9,rax
-    mov     rax,FNVBASE
-    mov     r10,rdx
-.0:
-    mov     ecx,[r8]
-    or      ecx,0x20202020
-    imul    eax,eax,FNVPRIME
-    xor     al,cl
-    dec     edx
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,ch
-    dec     edx
-    jz      .1
-    shr     ecx,16
-    imul    eax,eax,FNVPRIME
-    xor     al,cl
-    dec     edx
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,ch
-    add     r8,4
-    dec     edx
-    jnz     .0
-.1:
-    and     eax,HASH_TABITEMS-1
+    mov  esi,ecx
+    imul edi,ecx,ReservedWord
+    lea  rbx,ResWordTable
 
-    lea     r11,ResWordTable
-    lea     r8,resw_table
-    movzx   eax,word ptr [r8+rax*2]
-    test    eax,eax
-    jz      .7
-.3:
-    imul    ecx,eax,ReservedWord
-    cmp     r10b,[r11+rcx].len
-    jne     .5
-    mov     r8,[r11+rcx].name
-    mov     ecx,r10d
-.4:
-    dec     ecx
-    jz      .7
-    mov     dl,[r9+rcx]
-    cmp     dl,[r8+rcx]
-    je      .4
-    or      dl,0x20
-    cmp     dl,[r8+rcx]
-    je      .4
-.5:
-    shl     eax,4
-    movzx   eax,[r11+rax].next
-    test    eax,eax
-    jnz     .3
-.6:
-    xor     eax,eax
-.7:
-    ret
+    .if ( !( [rbx+rdi].flags & RWF_DISABLED ) )
 
-FindResWord endp
+        RemoveResWord(ecx)
 
-else
-
-get_hash proc fastcall private token:string_t, len:byte
-
-    xor     eax,eax
-    test    edx,edx
-    jz      .1
-    mov     eax,FNVBASE
-.0:
-    mov     ebx,[ecx]
-    or      ebx,0x20202020
-    imul    eax,eax,FNVPRIME
-    xor     al,bl
-    dec     edx
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,bh
-    dec     edx
-    jz      .1
-    shr     ebx,16
-    imul    eax,eax,FNVPRIME
-    xor     al,bl
-    dec     edx
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,bh
-    add     ecx,4
-    dec     edx
-    jnz     .0
-.1:
-    and     eax,HASH_TABITEMS-1
-    ret
-
-get_hash endp
-
-; add reserved word to hash table
-
-    assume esi:ptr ReservedWord
-
-AddResWord proc fastcall private uses esi edi ebx token:int_t
-
-    mov     edi,ecx
-    lea     esi,ResWordTable
-    movzx   edx,[esi+edi*8].len
-    mov     ecx,[esi+edi*8].name
-    call    get_hash
-    lea     ebx,resw_table[eax*2]
-
-    ; sort the items of a line by length!
-
-    movzx   ecx,word ptr [ebx]
-    shl     ecx,3
-    jz      .1
-    mov     al,[esi+edi*8].len
-.0:
-    cmp     [esi+ecx].len,al
-    ja      .1
-    mov     edx,ecx
-    movzx   ecx,[esi+ecx].next
-    shl     ecx,3
-    jnz     .0
-.1:
-    test    edx,edx
-    jnz     .2
-    mov     [esi+edi*8].next,[ebx]
-    mov     [ebx],di
-    jmp     .3
-.2:
-    mov     [esi+edi*8].next,[esi+edx].next
-    mov     [esi+edx].next,di
-.3:
-    ret
-
-AddResWord endp
-
-; remove a reserved word from the hash table.
-
-RemoveResWord proc fastcall uses esi edi ebx token:int_t
-
-    mov     edi,ecx
-    lea     esi,ResWordTable
-    movzx   edx,[esi+edi*8].len
-    mov     ecx,[esi+edi*8].name
-    call    get_hash
-    lea     ebx,resw_table[eax*2]
-
-    movzx   ecx,word ptr [ebx]
-    test    ecx,ecx
-    jz      .3
-.0:
-    cmp     ecx,edi
-    jne     .2
-    shl     edx,3
-    jz      .1
-    mov     [esi+edx].next,[esi+ecx*8].next
-    mov     eax,TRUE
-    jmp     .4
-.1:
-    mov     [ebx],[esi+ecx*8].next
-    mov     eax,TRUE
-    jmp     .4
-.2:
-    mov     edx,ecx
-    movzx   ecx,[esi+ecx*8].next
-    test    ecx,ecx
-    jnz     .0
-.3:
-    xor     eax,eax
-.4:
-    ret
-
-RemoveResWord endp
-
-    assume esi:nothing
-
-rename_node struct
-next        ptr_t ?
-name        string_t ?  ;  the original name in resw_strings[]
-token       dw ?        ; is either enum instr_token or enum special_token
-length      db ?
-rename_node ends
-
-; Rename a keyword - used by OPTION RENAMEKEYWORD.
-; - token: keyword to rename
-; - name: new name of keyword
-; - length: length of new name
-
-    assume edi:ptr rename_node
-
-RenameKeyword proc uses esi edi ebx token:uint_t, name:string_t, length:byte
-
-    local newname[64]:char_t ;; added v2.26
-
-    .for ( edi = &newname, esi = name :: )
-
-        lodsb
-        .break .if !al
-        or al,0x20 ;; '@' --> 'ï'..
-        stosb
-    .endf
-    stosb
-
-    ; v2.11: do nothing if new name matches current name
-    mov ebx,token
-
-    .if ( ResWordTable[ebx*8].len == length )
-
-        .return .if !tmemicmp( &newname, ResWordTable[ebx*8].name, length )
-    .endif
-
-    RemoveResWord( ebx )
-
-    ; if it is the first rename action for this keyword,
-    ; the original name must be saved.
-
-    lea eax,resw_strings
-    lea ecx,[eax+size_resw_strings]
-    mov esi,ResWordTable[ebx*8].name
-
-    .if (  esi >= eax && esi < ecx )
-        mov edi,LclAlloc( sizeof( rename_node ) )
-        mov [edi].next,NULL
-        mov [edi].name,esi
-        mov [edi].token,bx
-        mov [edi].length,ResWordTable[ebx*8].len
-
-        .if renamed_keys.head == NULL
-            mov renamed_keys.head,edi
-            mov renamed_keys.tail,edi
+        mov [rbx+rdi].next,0
+        or  [rbx+rdi].flags,RWF_DISABLED
+        .if Removed.Head == 0
+            mov Removed.Head,si
         .else
-            mov edx,renamed_keys.tail
-            mov [edx].rename_node.next,edi
-            mov renamed_keys.tail,edi
+            movzx ecx,Removed.Tail
+            imul ecx,ecx,ReservedWord
+            mov [rbx+rcx].next,si
         .endif
-    .else
-        ; v2.11: search the original name. if the "new" names matches
-        ; the original name, restore the name pointer
-        .for ( edi = renamed_keys.head, esi = NULL : edi : esi = edi, edi = [edi].next )
-            .if ( [edi].token == bx )
-                .if ( [edi].length == length )
-                    .if !tmemcmp( &newname, [edi].name, length )
-                        .if esi
-                            mov [esi].rename_node.next,[edi].next
-                        .else
-                            mov renamed_keys.head,[edi].next
-                        .endif
-                        .if renamed_keys.tail == edi
-                            mov renamed_keys.tail,esi
-                        .endif
-                        mov ResWordTable[ebx*8].name,[edi].name
-                        mov ResWordTable[ebx*8].len,[edi].length
-                        AddResWord(ebx)
-                        .return
-                    .endif
-                .endif
-                .break
-            .endif
-        .endf
+        mov Removed.Tail,si
     .endif
-    movzx esi,length
-    mov ResWordTable[ebx*8].name,LclAlloc(esi)
-    ; convert to lowercase?
-    tmemcpy(ResWordTable[ebx*8].name, &newname, esi)
-    mov ResWordTable[ebx*8].len,length
-    AddResWord(ebx)
     ret
 
-RenameKeyword endp
+DisableKeyword endp
+
+
+EnableKeyword proc fastcall uses rsi rdi rbx token:uint_t
+
+    lea rbx,ResWordTable
+    imul edx,ecx,ReservedWord
+
+    .if ( ( [rbx+rdx].flags & RWF_DISABLED ) )
+
+        .if ( Removed.Head == cx )
+            mov Removed.Head,[rbx+rdx].next
+        .else
+            movzx edi,Removed.Head
+            .for ( : edi : edi = esi )
+                imul edi,edi,ReservedWord
+                movzx esi,[rbx+rdi].next
+                .if esi == ecx
+                    mov [rbx+rdi].next,[rbx+rdx].next
+                   .break
+                .endif
+            .endf
+        .endif
+        .if Removed.Tail == cx
+            mov Removed.Tail,Removed.Head
+        .endif
+        and [rbx+rdx].flags,not RWF_DISABLED
+        AddResWord(ecx)
+    .endif
+    ret
+
+EnableKeyword endp
+
+
+; check if a keyword is in the list of disabled words.
+
+IsKeywordDisabled proc fastcall uses rsi rdi rbx _name:string_t, len:int_t
+
+    mov rbx,rcx
+    mov esi,edx
+    movzx edi,Removed.Head
+
+    .while ( edi )
+
+        lea  rdx,ResWordTable
+        imul ecx,edi,ReservedWord
+        mov  di,[rdx+rcx].ReservedWord.next
+        mov  rdx,[rdx+rcx].ReservedWord.name
+
+        .if ( byte ptr [rdx+rsi] == 0 )
+            .ifd !tmemicmp( rbx, rdx, esi )
+                .return( TRUE )
+            .endif
+        .endif
+    .endw
+    .return( FALSE )
+
+IsKeywordDisabled endp
 
 ; depending on 64bit on or off, some instructions must be added,
 ; some removed. Currently this is a bit hackish.
 
-Set64Bit proc uses esi edi ebx newmode:int_t
+Set64Bit proc __ccall uses rsi rdi rbx newmode:int_t
 
-    .if ( newmode != b64bit )
-        .if ( newmode != FALSE )
+    ldr ecx,newmode
+
+    .if ( ecx != b64bit )
+
+        .if ( ecx != FALSE )
+
             inc optable_idx[(T_INC-SPECIAL_LAST)*2] ; skip the one-byte register INC
             inc optable_idx[(T_DEC-SPECIAL_LAST)*2] ; skip the one-byte register DEC
 
-            .for ( edi = 0: edi < lengthof(patchtab64): edi++ )
-                .for( ebx = patchtab64[edi*4]: ResWordTable[ebx*8].flags & RWF_X64: ebx++ )
-                    .if ( !( ResWordTable[ebx*8].flags & RWF_DISABLED ) )
-                        AddResWord(ebx)
+            .for ( esi = 0 : esi < lengthof(patchtab64) : esi++ )
+
+                lea  rcx,patchtab64
+                lea  rbx,ResWordTable
+                mov  edi,[rcx+rsi*4]
+                imul eax,edi,ReservedWord
+                add  rbx,rax
+
+                .for ( : [rbx].flags & RWF_X64 : rbx+=ReservedWord, edi++ )
+                    .if ( !( [rbx].flags & RWF_DISABLED ) )
+                        AddResWord(edi)
                     .endif
                 .endf
             .endf
-            .for ( edi = 0: edi < lengthof(patchtab32): edi++ )
-                .for( ebx = patchtab32[edi*4]: ResWordTable[ebx*8].flags & RWF_IA32: ebx++ )
-                    .if ( !( ResWordTable[ebx*8].flags & RWF_DISABLED ) )
-                        RemoveResWord(ebx)
+
+            .for ( esi = 0: esi < lengthof(patchtab32): esi++ )
+
+                lea  rcx,patchtab32
+                lea  rbx,ResWordTable
+                mov  edi,[rcx+rsi*4]
+                imul eax,edi,ReservedWord
+                add  rbx,rax
+
+                .for ( : [rbx].flags & RWF_IA32 : rbx+=ReservedWord, edi++ )
+                    .if ( !( [rbx].flags & RWF_DISABLED ) )
+                        RemoveResWord(edi)
                     .endif
                 .endf
             .endf
-            .for ( edi = 0: edi < lengthof(patchtabr): edi++ )
-                imul ecx,edi,replace_ins
-                movzx edx,patchtabr[ecx].tok
-                mov optable_idx[edx*2],patchtabr[ecx].idx64
+
+            assume rbx:nothing
+
+            .for ( rbx = &patchtabr, rcx = &optable_idx, edi = 0 : edi < sizeof(patchtabr) : edi+=replace_ins )
+
+                movzx edx,[rbx+rdi].replace_ins.tok
+                mov eax,[rbx+rdi].replace_ins.idx64
+                mov [rcx+rdx*2],ax
             .endf
+
         .else
+
             dec optable_idx[(T_INC - SPECIAL_LAST)*2] ;; restore the one-byte register INC
             dec optable_idx[(T_DEC - SPECIAL_LAST)*2] ;; restore the one-byte register DEC
 
-            .for ( edi = 0: edi < lengthof(patchtab64): edi++ )
-                .for( ebx = patchtab64[edi*4]: ResWordTable[ebx*8].flags & RWF_X64: ebx++ )
-                    .if ( !( ResWordTable[ebx*8].flags & RWF_DISABLED ) )
-                        RemoveResWord(ebx)
+            assume rbx:ptr ReservedWord
+            .for ( esi = 0 : esi < lengthof(patchtab64) : esi++ )
+
+                lea  rcx,patchtab64
+                lea  rbx,ResWordTable
+                mov  edi,[rcx+rsi*4]
+                imul eax,edi,ReservedWord
+                add  rbx,rax
+
+                .for ( : [rbx].flags & RWF_X64 : rbx+=ReservedWord, edi++ )
+                    .if ( !( [rbx].flags & RWF_DISABLED ) )
+                        RemoveResWord(edi)
                     .endif
                 .endf
             .endf
-            .for ( edi = 0: edi < lengthof( patchtab32 ): edi++ )
-                .for( ebx = patchtab32[edi*4]: ResWordTable[ebx*8].flags & RWF_IA32: ebx++ )
-                    .if ( !( ResWordTable[ebx*8].flags & RWF_DISABLED ) )
-                        AddResWord(ebx)
+
+            .for ( esi = 0 : esi < lengthof(patchtab32) : esi++ )
+
+                lea  rcx,patchtab32
+                lea  rbx,ResWordTable
+                mov  edi,[rcx+rsi*4]
+                imul eax,edi,ReservedWord
+                add  rbx,rax
+
+                .for ( : [rbx].flags & RWF_IA32 : rbx+=ReservedWord, edi++ )
+                    .if ( !( [rbx].flags & RWF_DISABLED ) )
+                        AddResWord(edi)
                     .endif
                 .endf
             .endf
-            .for ( edi = 0: edi < lengthof(patchtabr): edi++ )
-                imul ecx,edi,replace_ins
-                movzx edx,patchtabr[ecx].tok
-                mov optable_idx[edx*2],patchtabr[ecx].idx32
+
+            assume rbx:nothing
+            .for ( rbx = &patchtabr, rcx = &optable_idx, edi = 0 : edi < sizeof(patchtabr) : edi+=replace_ins )
+
+                movzx edx,[rbx+rdi].replace_ins.tok
+                mov eax,[rbx+rdi].replace_ins.idx32
+                mov [rcx+rdx*2],ax
             .endf
         .endif
         mov b64bit,newmode
@@ -1331,217 +1080,50 @@ Set64Bit proc uses esi edi ebx newmode:int_t
 
 Set64Bit endp
 
-DisableKeyword proc uses ebx token:uint_t
-    mov ebx,token
-    .if ( !( ResWordTable[ebx*8].flags & RWF_DISABLED ) )
-        RemoveResWord(ebx)
-        mov ResWordTable[ebx*8].next,0
-        or  ResWordTable[ebx*8].flags,RWF_DISABLED
-        .if Removed.Head == 0
-            mov Removed.Head,bx
-            mov Removed.Tail,bx
-        .else
-            movzx ecx,Removed.Tail
-            mov ResWordTable[ecx*8].next,bx
-            mov Removed.Tail,bx
-        .endif
-    .endif
-    ret
-
-DisableKeyword endp
-
-; check if a keyword is in the list of disabled words.
-
-IsKeywordDisabled proc uses ebx name:string_t, len:int_t
-
-    xor ebx,ebx
-    .for ( bx = Removed.Head : ebx : bx = ResWordTable[ebx*8].next )
-        mov ecx,ResWordTable[ebx*8].name
-        mov eax,len
-        .if byte ptr [ecx+eax] == 0
-            .return(TRUE) .if !tmemicmp( name, ecx, eax )
-        .endif
-    .endf
-    mov eax,FALSE
-    ret
-
-IsKeywordDisabled endp
-
-
 ; get current name of a reserved word.
 ; max size is 255.
 
-GetResWName proc resword:uint_t, buff:string_t
+GetResWName proc fastcall uses rsi rdi resword:uint_t, buff:string_t
 
-    .data?
-    intbuff char_t 256 dup(?)
-    .code
-
-    lea edx,intbuff
-    .if buff
-        mov edx,buff
-    .endif
-
-    push    edx
-    mov     eax,resword
-    movzx   ecx,ResWordTable[eax*8].len
-    mov     eax,ResWordTable[eax*8].name
-    xchg    eax,esi
-    xchg    edx,edi
+    lea     rdi,intbuff
+    test    rdx,rdx
+ifdef __P686__
+    cmovnz  rdi,rdx
+else
+    jz      @F
+    mov     rdi,rdx
+@@:
+endif
+    lea     rax,ResWordTable
+    imul    ecx,ecx,ReservedWord
+    mov     rsi,[rax+rcx].ReservedWord.name
+    movzx   ecx,[rax+rcx].ReservedWord.len
+    mov     rax,rdi
     rep     movsb
-    mov     byte ptr [edi],0
-    mov     esi,eax
-    mov     edi,edx
-    pop     eax
+    mov     byte ptr [rdi],0
     ret
 
 GetResWName endp
 
+; option masm:on|off
 
-; ResWordsInit() initializes the reserved words hash array ( resw_table[] )
-; and also the reserved words string pointers ( ResWordTable[].name + ResWordTable[].len )
+SetMasmKeywords proc fastcall uses rsi enable:int_t
 
-ResWordsInit proc uses esi edi
-
-    ; exit immediately if table is already initialized
-    .return .if ResWordTable[1*8].name
-
-    ; clear hash table
-    lea edi,resw_table
-    mov ecx,sizeof(resw_table)/4
-    xor eax,eax
-    rep stosd
-
-    ; currently these flags must be set manually, since the
-    ; RWF_ flags aren't contained in instravx.h
-    or ResWordTable[T_VPEXTRQ*8].flags,RWF_X64
-    or ResWordTable[T_VPINSRQ*8].flags,RWF_X64
-
-    ; initialize ResWordTable[].name and .len.
-    ; add keyword to hash table ( unless it is 64-bit only ).
-    ; v2.09: start with index = 1, since index 0 is now T_NULL
-    lea esi,resw_strings
-    .for ( edi = 1: edi < ResWordCount: edi++ )
-        mov ResWordTable[edi*8].name,esi
-        movzx eax,ResWordTable[edi*8].len
-        add esi,eax
-        .if ( !( ResWordTable[edi*8].flags & RWF_X64 ) )
-            AddResWord(edi)
-        .endif
-    .endf
+    lea rsi,masmkeywords
+    lodsd
+    .if ( ecx )
+        .while eax
+            EnableKeyword( eax )
+            lodsd
+        .endw
+    .else
+        .while eax
+            DisableKeyword( eax )
+            lodsd
+        .endw
+    .endif
     ret
 
-ResWordsInit endp
-
-; ResWordsFini() is called once per module
-; it restores the resword table
-
-ResWordsFini proc uses esi edi ebx
-
-    assume esi:ptr rename_node
-    assume edi:ptr rename_node
-
-    ; restore renamed keywords.
-    ; the keyword has to removed ( and readded ) from the hash table,
-    ; since its position most likely will change.
-
-    .for ( edi = renamed_keys.head: edi: )
-        mov esi,[edi].next
-        movzx ebx,[edi].token
-        RemoveResWord(ebx)
-        ; v2.06: this is the correct name to free
-        mov ResWordTable[ebx*8].name,[edi].name
-        mov ResWordTable[ebx*8].len,[edi].length
-        AddResWord(ebx)
-        mov edi,esi
-    .endf
-    mov renamed_keys.head,NULL
-
-    ; reenter disabled keywords
-    xor ebx,ebx
-    .for ( bx = Removed.Head: ebx != 0: bx = si )
-        mov si,ResWordTable[ebx*8].next
-        and ResWordTable[ebx*8].flags,not RWF_DISABLED
-        .if ( !( ResWordTable[ebx*8].flags & RWF_X64 ) )
-            AddResWord(ebx)
-        .endif
-    .endf
-    mov Removed.Head,0
-    mov Removed.Tail,0
-    ret
-
-ResWordsFini endp
-
-    align 8
-
-FindResWord proc watcall w_name:string_t, w_size:uint_t
-
-    mov     ecx,eax
-    xor     eax,eax
-    test    edx,edx
-    jz      .6
-    cmp     edx,max_resw_len
-    ja      .6
-    cmp     byte ptr [ecx],'_'
-    je      .6
-
-    push    edi
-    push    ebx
-    mov     eax,FNVBASE
-    mov     edi,ecx
-    mov     dh,dl
-.0:
-    mov     ebx,[ecx]
-    or      ebx,0x20202020
-    imul    eax,eax,FNVPRIME
-    xor     al,bl
-    dec     dh
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,bh
-    dec     dh
-    jz      .1
-    shr     ebx,16
-    imul    eax,eax,FNVPRIME
-    xor     al,bl
-    dec     dh
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,bh
-    add     ecx,4
-    dec     dh
-    jnz     .0
-.1:
-    and     eax,HASH_TABITEMS-1
-    movzx   eax,resw_table[eax*2]
-    test    eax,eax
-    jz      .5
-.2:
-    cmp     dl,ResWordTable[eax*8].len
-    jne     .4
-    mov     ebx,ResWordTable[eax*8].name
-    movzx   ecx,dl
-.3:
-    dec     ecx
-    jz      .5
-    mov     dh,[edi+ecx]
-    cmp     dh,[ebx+ecx]
-    je      .3
-    or      dh,0x20
-    cmp     dh,[ebx+ecx]
-    je      .3
-.4:
-    mov     ax,ResWordTable[eax*8].next
-    test    eax,eax
-    jnz     .2
-.5:
-    pop     ebx
-    pop     edi
-.6:
-    ret
-
-FindResWord endp
-
-endif
+SetMasmKeywords endp
 
     end

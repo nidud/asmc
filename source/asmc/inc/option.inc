@@ -62,3 +62,4 @@ opt( FLOATDIGITS )      ; : <value>
 opt( LINESIZE )         ; : <value>
 opt( FLOAT )            ; : <value>
 opt( DOTNAMEX )         ; : <ON|OFF>
+opt( MASM )             ; : <ON|OFF>

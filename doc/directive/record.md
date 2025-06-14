@@ -43,39 +43,32 @@ Record fields are bit offsets from RECORD and Record names byte offsets from Typ
 <tr><td><b>maskof(T.q.c)</b></td><td>0000FF00</td><td></td></tr>
 </table>
 
-Memory operands are optimized for expression evaluation so the CMP instruction should not be used directly for testing bit-flags.
+Memory operands are optimized for expression evaluation.
 
 <table>
-<tr><td><b>Instruction</b></td><td><b>Op1</b></td><td><b>Op2</b></td><td><b>Action</b></td></tr>
-<tr><td>CMP</td><td>a</td><td>0</td><td>TEST a, 1</td></tr>
-<tr><td>CMP</td><td>a</td><td>1</td><td>TEST a, 1</td></tr>
+<tr><td><b>Instruction</b></td><td><b>Op 1</b></td><td><b>Op 2</b></td><td><b>Action</b></td></tr>
+<tr><td>CMP</td><td>a</td><td>0</td><td>TEST</td></tr>
+<tr><td>CMP</td><td>a</td><td>1</td><td>MOV/AND/CMP</td></tr>
 <tr><td><i>expression</i></td><td>a</td><td></td><td>TEST/JZ</td></tr>
 <tr><td><i>expression</i></td><td>a ==</td><td>0</td><td>TEST/JNZ</td></tr>
 <tr><td><i>expression</i></td><td>a ==</td><td>1</td><td>TEST/JZ</td></tr>
-<tr><td>CMP</td><td>b</td><td>0</td><td>TEST</td></tr>
-<tr><td>CMP</td><td>b</td><td>1</td><td>MOV/AND/CMP</td></tr>
-<tr><td>CMP</td><td>c</td><td>1</td><td>CMP</td></tr>
-<tr><td>TEST</td><td>a</td><td>1</td><td>TEST</td></tr>
-<tr><td>TEST</td><td>b</td><td>1</td><td>TEST</td></tr>
-<tr><td>TEST</td><td>c</td><td>1</td><td>TEST</td></tr>
-<tr><td>OR</td><td>a</td><td>1</td><td>OR</td></tr>
-<tr><td>OR</td><td>b</td><td>1</td><td>OR</td></tr>
-<tr><td>OR</td><td>c</td><td>1</td><td>OR</td></tr>
-<tr><td>XOR</td><td>a</td><td>1</td><td>XOR</td></tr>
-<tr><td>XOR</td><td>b</td><td>1</td><td>XOR</td></tr>
-<tr><td>XOR</td><td>c</td><td>1</td><td>XOR</td></tr>
-<tr><td>MOV</td><td>a</td><td>0</td><td>AND</td></tr>
-<tr><td>MOV</td><td>a</td><td>1</td><td>OR</td></tr>
-<tr><td>MOV</td><td>b</td><td>1</td><td>AND/OR</td></tr>
-<tr><td>MOV</td><td>c</td><td>1</td><td>MOV</td></tr>
-<tr><td>MOV</td><td>a</td><td>EAX</td><td>AND/OR</td></tr>
-<tr><td>MOV</td><td>b</td><td>EAX</td><td>SHL/AND/OR</td></tr>
-<tr><td>MOV</td><td>c</td><td>EAX</td><td>MOV</td></tr>
-<tr><td>MOV</td><td>d</td><td>EAX</td><td>MOV</td></tr>
-<tr><td>MOV</td><td>EAX</td><td>a</td><td>MOV/AND</td></tr>
-<tr><td>MOV</td><td>EAX</td><td>b</td><td>MOV/AND/SHR</td></tr>
-<tr><td>MOV</td><td>EAX</td><td>c</td><td>MOVZX</td></tr>
-<tr><td>MOV</td><td>EAX</td><td>d</td><td>MOVZX</td></tr>
+</table>
+
+#### Supported memory-operands instructions.
+
+<table>
+<tr><td><b>Instruction</b></td><td><b>64-Bit</b></td><td><b>32-bit</b></td><td><b>Description</b></td></tr>
+<tr><td>MOV mem, imm</td><td>Valid</td><td>Valid</td><td>Move imm to m.field</td></tr>
+<tr><td>MOV m64, i64</td><td>Valid</td><td>Valid</td><td>Move i64 to m64.field</td></tr>
+<tr><td>MOV mem, reg</td><td>Valid</td><td>Valid</td><td>Move register to m.field</td></tr>
+<tr><td>MOV m64, r64</td><td>Valid</td><td>N.E.</td><td>Move r64 to m64.field</td></tr>
+<tr><td>MOV reg, mem</td><td>Valid</td><td>Valid</td><td>Move m.field to register</td></tr>
+<tr><td>MOV r64, m64</td><td>Valid</td><td>N.E.</td><td>Move m64.field to r64</td></tr>
+<tr><td>MOV mem, mem</td><td>Valid</td><td>Valid</td><td>Move m.field to m.field</td></tr>
+<tr><td>CMP mem, imm</td><td>Valid</td><td>Valid</td><td>Compare imm to m.field</td></tr>
+<tr><td>TEST mem, imm</td><td>Valid</td><td>Valid</td><td>Logical Compare m.field</td></tr>
+<tr><td>OR mem, imm</td><td>Valid</td><td>Valid</td><td>Logical Inclusive OR on m.field</td></tr>
+<tr><td>XOR mem, imm</td><td>Valid</td><td>Valid</td><td>Logical Exclusive OR on m.field</td></tr>
 </table>
 
 #### See Also

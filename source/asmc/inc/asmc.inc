@@ -640,11 +640,6 @@ define PE_DLL               0x04
       switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
       assert                dd: 1 ? ; -assert Generate .assert code
       assert_pushf          dd: 1 ? ; Push/Pop flags
-if 0
-     ends
-    ends
-    record
-endif
       procs_private         dd: 1 ? ; option proc:private
       procs_export          dd: 1 ? ; option proc:export
       ljmp                  dd: 1 ? ; option ljmp
@@ -654,7 +649,6 @@ endif
       oldmacros             dd: 1 ? ; v2.19: option oldmacros
       setif2                dd: 1 ? ; option setif2
       cref                  dd: 1 ? ; .cref/.nocref
-
       StartupDirectiveFound dd: 1 ? ;
       EndDirFound           dd: 1 ? ;
       NoSignExtend          dd: 1 ? ; option nosignextend

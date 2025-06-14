@@ -29,6 +29,7 @@ Enables and disables features of the assembler. Available options include:
 - [LINESIZE](option-linesize.md)
 - [LJMP](option-ljmp.md)
 - [LOOPALIGN](option-loopalign.md)
+- [MASM](option-masm.md)
 - [M510](option-m510.md)
 - [MZ](option-mz.md)
 - [NODOTNAME](option-nodotname.md)

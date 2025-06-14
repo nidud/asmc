@@ -1,5 +1,16 @@
 # Asmc Macro Assembler
 
+## About
+
+Asmc is technically a slow-burning design project to make a functional programming language out of assembly. It started as a modified version of JWasm in 2011 with some simple but specific goals:
+
+- Remove the necessity of labels.
+- Merge macro and function calls.
+- Enable data declaration where you need it.
+- Enhanced compatibility with Masm.
+
+Asmc supports AVX-512 instructions (Masm v14) but the [Version](doc/symbol/at-version.md) macro is currently set to v10.
+
 ## Change Log
 - [source/asmc/history.txt](source/asmc/history.txt)
 
@@ -22,7 +33,6 @@ Asmc Macro Assembler Reference
 
 ## Reference
 
-- [About Asmc](doc/about/readme.md)
 - [Asmc Command-Line Reference](doc/command/readme.md)
 - [Asmc Error Messages](doc/error/readme.md)
 - [Directives Reference](doc/directive/readme.md)

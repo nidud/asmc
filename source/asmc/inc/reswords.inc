@@ -35,13 +35,15 @@ ReservedWord	ends
 
 FindResWord		proto watcall :string_t, :uint_t
 RemoveResWord		proto fastcall :int_t
-GetResWName		proto __ccall :uint_t, :string_t
-IsKeywordDisabled	proto __ccall :string_t, :int_t
-DisableKeyword		proto __ccall :uint_t
+GetResWName		proto fastcall :uint_t, :string_t
+IsKeywordDisabled	proto fastcall :string_t, :int_t
+EnableKeyword		proto fastcall :uint_t
+DisableKeyword		proto fastcall :uint_t
 RenameKeyword		proto __ccall :uint_t, :string_t, :uchar_t
 Set64Bit		proto __ccall :int_t
-ResWordsInit		proto __ccall
-ResWordsFini		proto __ccall
+ResWordsInit		proto
+ResWordsFini		proto
+SetMasmKeywords		proto fastcall :int_t
 
 endif
 .pragma list(pop)

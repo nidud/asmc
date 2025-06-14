@@ -132,6 +132,7 @@ IS_SIGNED proto watcall :byte {
      cvdefined      uint_t : 1 ?    ; cv::add_type() - recurse typedefs in structure
      isexport       uint_t : 1 ?    ; v2.19: symbol exported ( SYM_INTERNAL )
      crecord        uint_t : 1 ?    ; v2.36.37: use bitf_* in records
+     bitexpr        uint_t : 1 ?    ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
     ends
     state           uchar_t ?
     mem_type        uchar_t ?

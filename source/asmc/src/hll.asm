@@ -623,6 +623,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
                 .if ( rcx && [rcx].asym.crecord && [rcx].asym.bitf_bits == 1 )
                     .if ( op2.value == 1 )
                         xor is_true,1
+                        mov [rcx].asym.bitexpr,1
                     .endif
                 .endif
             .endif

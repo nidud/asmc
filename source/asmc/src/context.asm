@@ -191,22 +191,14 @@ ContextDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     mov MODULE.procalign,[rdi].alc.procalign
                 .case CONT_LISTING
                     mov MODULE.list_macro,[rdi].lc.list_macro
-                    mov MODULE.list,0
-                    mov MODULE.cref,0
-                    mov MODULE.listif,0
-                    mov MODULE.list_generated_code,0
-                    .if ( [rdi].lc.list )
-                        mov MODULE.list,1
-                    .endif
-                    .if ( [rdi].lc.cref )
-                        mov MODULE.cref,1
-                    .endif
-                    .if ( [rdi].lc.listif )
-                        mov MODULE.listif,1
-                    .endif
-                    .if ( [rdi].lc.list_generated_code )
-                        mov MODULE.list_generated_code,1
-                    .endif
+                    movzx eax,[rdi].lc.list
+                    mov MODULE.list,eax
+                    movzx eax,[rdi].lc.cref
+                    mov MODULE.cref,eax
+                    movzx eax,[rdi].lc.listif
+                    mov MODULE.listif,eax
+                    movzx eax,[rdi].lc.list_generated_code
+                    mov MODULE.list_generated_code,eax
                 .case CONT_CPU
                     mov MODULE.cpu,[rdi].cc.cpu
 ifndef ASMC64
@@ -258,22 +250,14 @@ endif
                         mov [rdi].alc.procalign,MODULE.procalign
                     .case CONT_LISTING
                         mov [rdi].lc.list_macro,MODULE.list_macro
-                        mov [rdi].lc.list,0
-                        mov [rdi].lc.cref,0
-                        mov [rdi].lc.listif,0
-                        mov [rdi].lc.list_generated_code,0
-                        .if ( MODULE.list )
-                            mov [rdi].lc.list,1
-                        .endif
-                        .if ( MODULE.cref )
-                            mov [rdi].lc.cref,1
-                        .endif
-                        .if ( MODULE.listif )
-                            mov [rdi].lc.listif,1
-                        .endif
-                        .if ( MODULE.list_generated_code )
-                            mov [rdi].lc.list_generated_code,1
-                        .endif
+                        mov eax,MODULE.list
+                        mov [rdi].lc.list,al
+                        mov eax,MODULE.cref
+                        mov [rdi].lc.cref,1
+                        mov eax,MODULE.listif
+                        mov [rdi].lc.listif,al
+                        mov eax,MODULE.list_generated_code
+                        mov [rdi].lc.list_generated_code,al
                     .case CONT_CPU
                         mov [rdi].cc.cpu,MODULE.cpu
                         mov [rdi].cc.curr_cpu,MODULE.curr_cpu

@@ -1935,7 +1935,9 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
     mov rcx,[rdi].mbr
 
     .if ( rcx != NULL )
+
         .if ( [rcx].asym.mem_type == MT_TYPE && [rdi].mem_type == MT_EMPTY )
+
             .ifd ( MemtypeFromSize([rcx].asym.total_size, &mem_type) == NOT_ERROR )
                 Set_Memtype(rsi, mem_type)
             .endif
@@ -2345,6 +2347,10 @@ memory_operand endp
 
 process_address proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         CurrOpnd:uint_t, opndx:expr_t
+
+    UNREFERENCED_PARAMETER(CodeInfo)
+    UNREFERENCED_PARAMETER(CurrOpnd)
+    UNREFERENCED_PARAMETER(opndx)
 
     ; parse the memory reference operand
     ; CurrOpnd is 0 for first operand, 1 for second, ...
@@ -4896,37 +4902,52 @@ endif
         assume rbx:nothing
         assume rsi:nothing
 
-        .if ( CodeInfo.Ofssize > USE16 && !MODULE.masm_compat_gencode )
+        movzx eax,CodeInfo.token
+        mov ecx,CodeInfo.opnd[OPND1].type
+        mov edx,CodeInfo.opnd[OPNI2].type
 
-            movzx eax,CodeInfo.token
-            mov ecx,CodeInfo.opnd[OPND1].type
-            mov edx,CodeInfo.opnd[OPNI2].type
+        .if ( ( ecx & OP_M_ANY ) || ( edx & OP_M_ANY ) )
 
-            .if ( ecx & OP_M_ANY || edx & OP_M_ANY )
+            mov rbx,opndx[expr].mbr
+            .if ( ecx & OP_M_ANY )
+                mov rbx,opndx.mbr
+            .endif
+            .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.mem_type == MT_BITS )
 
-                ; v2.36 - Handle C-type RECORD fields
+                ; v2.36.44 - Handle Masm RECORD fields errors
 
-                xor ebx,ebx
-                .switch eax
-                .case T_OR
-                .case T_XOR
-                .case T_TEST
-                .case T_CMP
-                   .endc .if !( edx & OP_I )
-                    mov rbx,opndx.mbr
-                   .endc
-                .case T_MOV
-                    .if ( ecx & OP_R )
-                        mov rbx,opndx[expr].mbr
-                    .elseif ( edx & ( OP_I or OP_R ) )
-                        mov rbx,opndx.mbr
-                    .endif
-                .endsw
-                .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.crecord )
+                .if ( !MODULE.masm_compat_gencode && [rbx].asym.crecord )
+
+                    ; v2.36.39 - Handle C-type RECORD fields
+
+                    .switch eax
+                    .case T_OR
+                    .case T_XOR
+                    .case T_TEST
+                    .case T_CMP
+                        .if ( edx & OP_I )
+                            xor ebx,ebx
+                        .endif
+                        .endc
+                    .case T_MOV
+                    .case T_MOVZX
+                        .if ( ecx & OP_R )
+                            xor ebx,ebx
+                        .elseif ( edx & ( OP_I or OP_R ) )
+                            xor ebx,ebx
+                        .endif
+                    .endsw
+                .endif
+                .if ( rbx == 0 )
                     mov ecx,eax
                    .return( CRecordField(ecx, &opndx, &opndx[expr]) )
+                .elseif !( ( ecx & OP_M_ANY ) && ( edx & OP_M_ANY ) )
+                    .return( asmerr( 2166 ) )
                 .endif
             .endif
+        .endif
+
+        .if ( CodeInfo.Ofssize > USE16 && !MODULE.masm_compat_gencode )
 
             .if ( ( ecx & OP_M_ANY ) && ( edx & OP_M_ANY ) )
 

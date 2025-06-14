@@ -87,12 +87,10 @@ PNET_IF_ALIAS_LH	typedef ptr NET_IF_ALIAS_LH
 
 NET_LUID_LH		UNION
 Value			ULONG64 ?
-struct Info
- record
-  Reserved		ULONG64 : 24 ?
-  NetLuidIndex		ULONG64 : 24 ?
-  IfType		ULONG64 : 16 ?
- ends
+record
+ Reserved		ULONG64 : 24 ?
+ NetLuidIndex		ULONG64 : 24 ?
+ IfType			ULONG64 : 16 ?
 ends
 NET_LUID_LH		ENDS
 PNET_LUID_LH		typedef ptr NET_LUID_LH

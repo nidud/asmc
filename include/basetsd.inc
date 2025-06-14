@@ -62,69 +62,54 @@ ifdef _WIN64
 
 ADDRESS_TAG_BIT		equ 0x40000000000
 
-SHANDLE_PTR		typedef sqword ; __int64
-HANDLE_PTR		typedef qword  ; unsigned __int64
-UHALF_PTR		typedef dword  ; unsigned int
+SHANDLE_PTR		typedef sqword
+HANDLE_PTR		typedef qword
+UHALF_PTR		typedef dword
 PUHALF_PTR		typedef ptr dword
-HALF_PTR		typedef sdword ; int
+HALF_PTR		typedef sdword
 PHALF_PTR		typedef ptr sdword
 
 ifndef __midl
-;__inline
-;unsigned long
-HandleToULong macro h ; const void *h
+HandleToULong macro h
     exitm<ULONG ptr h>
     endm
-;long
-HandleToLong macro h ; const void *h
+HandleToLong macro h
     exitm<LONG ptr h>
     endm
-;void *
-ULongToHandle macro h ; const unsigned long h
+ULongToHandle macro h
     exitm<PVOID ptr h>
     endm
-;void *
-LongToHandle macro h ; const long h
+LongToHandle macro h
     exitm<PVOID ptr h>
     endm
-;unsigned long
-PtrToUlong macro p ; const void *p
+PtrToUlong macro p
     exitm<p>
     endm
-;unsigned int
-PtrToUint macro p ; const void *p
+PtrToUint macro p
     exitm<UINT ptr p>
     endm
-;unsigned short
-PtrToUshort macro p ; const void *p
+PtrToUshort macro p
     exitm<WORD ptr p>
     endm
-;long
-PtrToLong macro p ; const void *p
+PtrToLong macro p
     exitm<LONG ptr p>
     endm
-;int
-PtrToInt macro p ; const void *p
+PtrToInt macro p
     exitm<SINT ptr p>
     endm
-;short
-PtrToShort macro p ; const void *p
+PtrToShort macro p
     exitm<SWORD ptr p>
     endm
-;void *
-IntToPtr macro i ; const int i
+IntToPtr macro i
     exitm<PVOID ptr i>
     endm
-;void *
-UIntToPtr macro ui ; const unsigned int ui
+UIntToPtr macro ui
     exitm<PVOID ptr ui>
     endm
-;void *
-LongToPtr macro l ; const long l
+LongToPtr macro l
     exitm<PVOID ptr l>
     endm
-;void *
-ULongToPtr macro ui ; const unsigned long ui
+ULongToPtr macro ui
     exitm<PVOID ptr ul>
     endm
 PtrToPtr64 macro p
@@ -139,16 +124,13 @@ HandleToHandle64 macro h
 Handle64ToHandle macro h
     exitm<Ptr64ToPtr( h )>
     endm
-;void *
-Ptr32ToPtr macro p ; const void * POINTER_32 p
+Ptr32ToPtr macro p
     exitm<ptr p>
     endm
-;void *
-Handle32ToHandle macro h ; const void * POINTER_32 h
+Handle32ToHandle macro h
     exitm<ptr h>
     endm
-;void * POINTER_32
-PtrToPtr32 macro p ; const void *p
+PtrToPtr32 macro p
     exitm<ptr p>
     endm
 HandleToHandle32 macro h
@@ -161,73 +143,58 @@ else
 
 ADDRESS_TAG_BIT		equ 0x80000000
 
-UHALF_PTR		typedef word  ; unsigned short
+UHALF_PTR		typedef word
 PUHALF_PTR		typedef ptr word
-HALF_PTR		typedef sword ; short
+HALF_PTR		typedef sword
 PHALF_PTR		typedef ptr sword
 
-SHANDLE_PTR		typedef sdword ; long
-HANDLE_PTR		typedef dword  ; unsigned long
+SHANDLE_PTR		typedef sdword
+HANDLE_PTR		typedef dword
 
-;unsigned long
-HandleToULong macro h ; const void *h
+HandleToULong macro h
     exitm<ULONG ptr h>
     endm
-;long
-HandleToLong macro h ; const void *h
+HandleToLong macro h
     exitm<LONG ptr h>
     endm
-;void *
-ULongToHandle macro h ; const unsigned long h
+ULongToHandle macro h
     exitm<PVOID ptr h>
     endm
-;void *
-LongToHandle macro h ; const long h
+LongToHandle macro h
     exitm<PVOID ptr h>
     endm
-;unsigned long
-PtrToUlong macro p ; const void *p
+PtrToUlong macro p
     exitm<ULONG ptr p>
     endm
-;unsigned int
-PtrToUint macro p ; const void *p
+PtrToUint macro p
     exitm<UINT ptr p>
     endm
-;unsigned short
-PtrToUshort macro p ; const void *p
+PtrToUshort macro p
     exitm<WORD ptr p>
     endm
-;long
-PtrToLong macro p ; const void *p
+PtrToLong macro p
     exitm<LONG ptr p>
     endm
-;int
-PtrToInt macro p ; const void *p
+PtrToInt macro p
     exitm<SINT ptr p>
     endm
-;short
-PtrToShort macro p ; const void *p
+PtrToShort macro p
     exitm<SWORD ptr p>
     endm
-;void *
-IntToPtr macro i ; const int i
+IntToPtr macro i
     exitm<PVOID ptr i>
     endm
-;void *
-UIntToPtr macro ui ; const unsigned int ui
+UIntToPtr macro ui
     exitm<PVOID ptr ui>
     endm
-;void *
-LongToPtr macro l ; const long l
+LongToPtr macro l
     exitm<PVOID ptr l>
     endm
-;void *
-ULongToPtr macro ui ; const unsigned long ui
+ULongToPtr macro ui
     exitm<PVOID ptr ul>
     endm
 
 ifndef __midl
-;__inline
 PtrToPtr64 macro p
     exitm<ptr p>
     endm
@@ -242,16 +209,13 @@ Handle64ToHandle macro h
     endm
 endif
 
-;void *
-Ptr32ToPtr macro p ; const void * POINTER_32 p
+Ptr32ToPtr macro p
     exitm<ptr p>
     endm
-;void *
-Handle32ToHandle macro h ; const void * POINTER_32 h
+Handle32ToHandle macro h
     exitm<ptr h>
     endm
-;void * POINTER_32
-PtrToPtr32 macro p ; const void *p
+PtrToPtr32 macro p
     exitm<ptr p>
     endm
 HandleToHandle32 macro h
@@ -259,11 +223,6 @@ HandleToHandle32 macro h
     endm
 
 endif
-
-HandleToUlong	equ <HandleToULong>
-UlongToHandle	equ <ULongToHandle>
-UlongToPtr	equ <ULongToPtr>
-UintToPtr	equ <UIntToPtr>
 
 ifdef _WIN64
 MAXUHALF_PTR	equ 0xffffffff
@@ -289,7 +248,7 @@ PSIZE_T		typedef ptr ULONG_PTR
 SSIZE_T		typedef LONG_PTR
 PSSIZE_T	typedef ptr LONG_PTR
 
-if _WIN32_WINNT GE 0x0600 ;|| (defined(__cplusplus) && defined(WINDOWS_ENABLE_CPLUSPLUS))
+if _WIN32_WINNT GE 0x0600
 
 MAXUINT8	equ 0xff
 MAXINT8		equ MAXUINT8 shr 1

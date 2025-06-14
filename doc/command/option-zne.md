@@ -23,4 +23,4 @@ Asmc allows in addition to C the following keywords to be used as identifiers:
 
 #### See Also
 
-[Asmc Command-Line Reference](readme.md)
+[Asmc Command-Line Reference](readme.md) | [Option MASM](../directive/option-masm.md)

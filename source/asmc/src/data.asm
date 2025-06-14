@@ -641,16 +641,14 @@ next_item:
             .elseif ( first && i == 2 )
                 mov rdx,type_sym
                 .if ( rdx )
-                    .if ( [rdx].asym.total_size == 1 )
-                        mov eax,T_BYTE
-                    .elseif ( [rdx].asym.total_size == 2 )
-                        mov eax,T_WORD
-                    .elseif ( [rdx].asym.total_size == 4 )
-                        mov eax,T_DWORD
-                    .endif
+                    .switch pascal [rdx].asym.total_size
+                    .case 1: mov eax,T_BYTE
+                    .case 2: mov eax,T_WORD
+                    .case 4: mov eax,T_DWORD
+                    .case 8: mov eax,T_QWORD
+                    .endsw
                 .endif
             .endif
-
             .if ( eax )
 
                 mov rdx,sym ; v2.36.37 - added

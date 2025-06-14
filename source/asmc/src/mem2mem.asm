@@ -112,7 +112,17 @@ SizeFromExpression proc fastcall private opnd:ptr expr
 
     .elseif ( rcx && [rcx].asym.state == SYM_STRUCT_FIELD )
 
-        jmp symbol_size
+        .if ( [rcx].asym.crecord )
+
+            movzx   eax,[rcx].asym.bitf_bits
+            mov     edx,eax
+            shr     eax,3
+            and     edx,7
+            setnz   dl
+            add     eax,edx
+        .else
+            jmp symbol_size
+        .endif
 
     .else
 
@@ -224,8 +234,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     mov rdx,tokenarray
     mov op,[rdx].asm_tok.tokval
 
-    .if ( eax != T_MOV &&
-          ( [rsi].expr.mem_type & MT_FLOAT || [rsi+expr].expr.mem_type & MT_FLOAT ) )
+    .if ( eax != T_MOV && ( [rsi].expr.mem_type & MT_FLOAT || [rsi+expr].expr.mem_type & MT_FLOAT ) )
 
         mov isfloat,1
         .if ( size != 4 && size != 8 )
@@ -491,24 +500,44 @@ imm2xmm endp
     assume rdi:nothing
 
 ; Handle C-type RECORD fields
-;
-; - mov reg, mem.field
-; - mov mem.field, imm
-; - cmp mem.field, imm
-; - xor mem.field, imm
+
+Const64Field proc __ccall private uses rsi rdi rbx inst:uint_t, type:uint_t, name:string_t, offs:uint_t, value:qword
+
+   .new notinst:int_t = 0
+
+    ldr ebx,inst
+    ldr rsi,name
+    ldr edi,offs
+
+    .if ( ebx == T_AND )
+        mov notinst,T_NOT
+    .endif
+    mov ecx,dword ptr value
+    .if ( ecx )
+        AddLineQueueX( " %r %r ptr %s[%d], %r 0x%x", ebx, type, rsi, edi, notinst, ecx )
+    .endif
+    mov ecx,dword ptr value[4]
+    .if ( ecx )
+        add edi,4
+        AddLineQueueX( " %r %r ptr %s[%d], %r 0x%x", ebx, type, rsi, edi, notinst, ecx )
+    .endif
+    ret
+
+Const64Field endp
 
 CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr expr
 
    .new name[1024]:char_t
    .new type:int_t
    .new bits:int_t
-   .new mask:int_t
+   .new mask:qword
    .new offs:int_t
    .new dist:int_t
    .new size:int_t
-   .new isbyte:char_t = 0
-   .new isword:char_t = 0
+   .new regsize:int_t
    .new reverse:char_t = 0
+   .new aligned:char_t = 0
+   .new bitexpr:char_t = 0
 
     UNREFERENCED_PARAMETER(token)
     UNREFERENCED_PARAMETER(opnd)
@@ -539,145 +568,195 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
 
     mov rdx,rdi
     mov rdi,[rbx].expr.mbr
+    .if ( [rdi].asym.bitexpr )
+        mov bitexpr,1
+        mov [rdi].asym.bitexpr,0
+    .endif
     movzx eax,[rdi].asym.bitf_bits
     mov bits,eax
     mov al,[rdi].asym.bitf_offs
     mov dist,eax
     mov offs,[rbx].expr.value
-    movzx eax,[rdi].asym.bitf_token
-
-    .switch eax
-    .case T_BYTE
-    .case T_SBYTE
-    .case T_WORD
-    .case T_SWORD
-    .case T_DWORD
-    .case T_SDWORD
-      .endc
-    .case T_DB
-        mov eax,T_BYTE
-       .endc
-    .case T_DW
-        mov eax,T_WORD
-       .endc
-    .case T_DD
-        mov eax,T_DWORD
-       .endc
+    mov eax,[rdi].asym.total_size
+    .switch pascal eax
+    .case 1: mov ecx,T_BYTE
+    .case 2: mov ecx,T_WORD
+    .case 4: mov ecx,T_DWORD
+    .case 8: mov ecx,T_QWORD
     .default
         .return( asmerr( 2008, &name ) )
     .endsw
-    mov type,eax
-    mov al,GetMemtypeSp(eax)
-    and eax,MT_SIZE_MASK
-    inc eax
+    mov type,ecx
     mov ecx,dist
 
-    .if ( bits == 8 )
+    .if ( bits == 8 || bits == 16 || bits == 32 )
 
-        .switch ecx
-        .case 24
-            inc offs
-            sub ecx,8
-        .case 16
-            inc offs
-            sub ecx,8
-        .case 8
-            inc offs
-            sub ecx,8
-        .case 0
-            mov eax,1
-            mov type,T_BYTE
-            inc isbyte
-        .endsw
+        .for ( edi = 0 : edi < ecx : edi+=bits )
+        .endf
+        .if ( ecx == edi )
 
-    .elseif ( bits == 16 )
-
-        .switch ecx
-        .case 16
-            add offs,2
-            sub ecx,16
-        .case 0
-            mov eax,2
-            mov type,T_WORD
-            inc isword
-        .endsw
+            mov eax,bits
+            shr eax,3
+            shr ecx,3
+            add offs,ecx
+            mov ecx,T_BYTE
+            .if ( eax == 2 )
+                mov ecx,T_WORD
+            .elseif ( eax == 4 )
+                mov ecx,T_DWORD
+            .endif
+            mov type,ecx
+            xor ecx,ecx
+            inc aligned
+        .endif
     .endif
     mov size,eax
     mov dist,ecx
 
+    .if ( !aligned )
+
+        mov eax,ecx
+        and ecx,-8
+        sub eax,ecx
+        add eax,bits
+        .if ( eax <= 32 )
+
+            sub dist,ecx
+            shr ecx,3
+            add offs,ecx
+            mov size,4
+            mov type,T_DWORD
+            .if ( eax <= 8 )
+                mov size,1
+                mov type,T_BYTE
+            .elseif ( eax <= 16 )
+                .if ( ecx > 4 )
+                    mov size,2
+                    mov type,T_WORD
+                .endif
+            .endif
+        .endif
+    .endif
+
     mov eax,1
     mov ecx,bits
-    shl eax,cl
-    dec eax
+ifdef _WIN64
+    shl rax,cl
+    dec rax
+else
+    xor edi,edi
+    .if ( cl < 32 )
+        shld edi,eax,cl
+        shl eax,cl
+    .else
+        and ecx,31
+        mov edi,eax
+        xor eax,eax
+        shl edi,cl
+    .endif
+    sub eax,1
+    sbb edi,0
+endif
     mov ecx,dist
-    shl eax,cl
-    mov mask,eax
-
+ifdef _WIN64
+    shl rax,cl
+    mov mask,rax
+else
+    .if ( cl < 32 )
+        shld edi,eax,cl
+        shl eax,cl
+    .else
+        and ecx,31
+        mov edi,eax
+        xor eax,eax
+        shl edi,cl
+    .endif
+    mov dword ptr mask[0],eax
+    mov dword ptr mask[4],edi
+endif
     .if ( [rdx].expr.kind == EXPR_CONST )
 
-        mov edi,[rdx].expr.value
         xor eax,eax
-        bsr eax,edi
-        .if ( [rdx].expr.hvalue || eax >= bits )
+        xchg rdx,rsi
+ifdef _WIN64
+        mov rdi,[rsi].expr.llvalue
+        bsr rax,rdi
+else
+        mov edi,[rsi].expr.value
+        mov esi,[rsi].expr.hvalue
+        .if ( esi )
+            bsr eax,esi
+            add eax,32
+        .else
+            bsr eax,edi
+        .endif
+endif
+        .if ( eax >= bits )
             .return( asmerr( 2071 ) )
         .endif
-        mov edx,esi
-        mov ebx,edi
-        shl edi,cl
-        lea rsi,name
+        mov rbx,rdi
+ifdef _WIN64
+        shl rdi,cl
+else
+        mov ecx,dist
+        .if ( cl < 32 )
+            shld esi,edi,cl
+            shl edi,cl
+        .else
+            and ecx,31
+            mov esi,edi
+            xor edi,edi
+            shl esi,cl
+        .endif
+endif
 
         .if ( edx == T_MOV )
 
-            .if ( isbyte || isword )
-
-                AddLineQueueX( " %r %r ptr %s[%d], %u", edx, type, rsi, offs, edi )
-
-            .else
-
+            .switch
+            .case ( aligned )
+                jmp mem_const
+            .case ( size > 4 )
+                Const64Field( T_AND, T_DWORD, &name, offs, mask )
+ifdef _WIN64
+                Const64Field( T_OR, T_DWORD, &name, offs, rdi )
+else
+                Const64Field( T_OR, T_DWORD, &name, offs, esi::edi )
+endif
+                .endc
+            .default
                 mov edx,T_AND
                 mov ecx,T_NOT
-                .if ( bits == 1 || ebx == 0 )
-                    .if ( ebx )
-                        mov edx,T_OR
-                        xor ecx,ecx
-                    .endif
+                .if ( bits == 1 && ebx )
+                    mov edx,T_OR
+                    xor ecx,ecx
                 .endif
-                AddLineQueueX( " %r %r ptr %s[%d], %r %u", edx, type, rsi, offs, ecx, mask )
+                AddLineQueueX( " %r %r ptr %s[%d], %r %u", edx, type, &name, offs, ecx, mask )
                 .if ( bits > 1 && ebx )
-                    AddLineQueueX( " %r %r ptr %s[%d], %u", T_OR, type, rsi, offs, edi )
+                    mov edx,T_OR
+                    jmp mem_const
                 .endif
-            .endif
+            .endsw
 
         .elseif ( bits == 1 || ebx == 0 )
 
-            .if ( edx != T_CMP )
-                mov mask,edi
-            .else
+            .if ( edx == T_CMP )
+
+                mov edi,dword ptr mask
                 mov edx,T_TEST
+                .if ( !bitexpr && ebx )
+                    jmp compare_reg
+                .endif
             .endif
-if 0
-            .if ( edx == T_TEST && ebx == 1 )
-
-                mov  rcx,MODULE.HllStack
-                test rcx,rcx
-                jz   compare
-
-                ; cmp field,0 --> test mem,bit -- ok
-                ; cmp field,1 --> test mem,bit -- fail
-            .endif
-endif
-            AddLineQueueX( " %r %r ptr %s[%d], %u", edx, type, rsi, offs, mask )
-
-        .elseif ( isbyte || isword || edx != T_CMP )
-
-            AddLineQueueX( " %r %r ptr %s[%d], %u", edx, type, rsi, offs, edi )
-
+            jmp mem_const
+        .elseif ( aligned || edx != T_CMP )
+            jmp mem_const
         .else
 
-compare:
-            mov esi,T_EAX
+compare_reg:
+
+            mov esi,get_register( T_EAX, size )
             mov ebx,T_CMP
-            mov eax,4
+            mov regsize,size
             mov dist,edi
             jmp usereg
         .endif
@@ -690,54 +769,103 @@ compare:
         imul eax,esi,special_item
         mov eax,[rcx+rax].special_item.sflags
         and eax,SFR_SIZMSK
+        mov regsize,eax
 
         .if ( !reverse )
 
-            .if ( isbyte || isword )
-                mov edx,1
-                .if ( isword )
-                    inc edx
-                .endif
-                AddLineQueueX( " %r %r ptr %s[%d], %r", T_MOV, type, &name, offs, get_register(esi, edx) )
-                jmp done
+            .if ( eax > size )
+                mov esi,get_register( esi, size )
+            .elseif ( eax < size )
+                mov esi,get_register( esi, size )
             .endif
-            .if ( eax != size )
-                .return( asmerr( 2008, [rdx].asm_tok.string_ptr ) )
+            .if ( aligned )
+                mov edx,T_MOV
+                jmp mem_reg
             .endif
-
             .if ( dist )
                 AddLineQueueX( " %r %r, %u", T_SHL, esi, dist )
             .endif
-            mov ecx,mask
-            not ecx
-            AddLineQueueX( " %r %r ptr %s[%d], %u", T_AND, type, &name, offs, ecx )
-            AddLineQueueX( " %r %r ptr %s[%d], %r", T_OR, type, &name, offs, esi )
-            jmp done
+            mov edx,type
+            .if ( size == 8 )
+                mov edx,T_DWORD
+            .endif
+            Const64Field( T_AND, edx, &name, offs, mask )
+            mov edx,T_OR
+            jmp mem_reg
         .endif
 
         mov ebx,T_SHR
-        .if ( isbyte || isword || bits == 32 )
-            mov dist,0
-            mov mask,0
-        .endif
-usereg:
-        mov ecx,T_MOV
-        .if ( size < eax )
-            mov ecx,T_MOVZX
-        .endif
-        AddLineQueueX( " %r %r, %r ptr %s[%d]", ecx, esi, type, &name, offs )
+        .if ( aligned )
 
-        imul eax,size,8
-        sub eax,dist
-        .if ( mask && eax != bits )
-            AddLineQueueX( " %r %r, %u", T_AND, esi, mask )
+            mov dist,0
+ifdef _WIN64
+            mov mask,0
+else
+            mov dword ptr mask[0],0
+            mov dword ptr mask[4],0
+endif
         .endif
-        .if ( dist )
+
+        .if ( eax < size )
+
+            mov esi,get_register( esi, 4 )
+            mov regsize,4
+            mov eax,4
+        .endif
+
+usereg:
+
+        mov edx,T_MOV
+        .if ( size < eax )
+
+            mov edx,T_MOVZX
+            .if ( eax == 8 )
+                mov esi,get_register( esi, 4 )
+                mov regsize,4
+                mov edx,T_MOVZX
+                .if ( size == 4 )
+                    mov edx,T_MOV
+                .endif
+            .endif
+        .endif
+        AddLineQueueX( " %r %r, %r ptr %s[%d]", edx, esi, type, &name, offs )
+
+        mov  ecx,dword ptr mask[0]
+        mov  edx,dword ptr mask[4]
+        .if ( ecx || edx )
+
+            imul edi,regsize,8
+            sub  edi,dist
+            .if ( edx == 0 )
+                .if !( edi == bits && ebx == T_SHR )
+                    AddLineQueueX( " %r %r, %u", T_AND, esi, ecx )
+                .endif
+            .else
+                sub edi,bits
+                .if ( edi )
+                    AddLineQueueX( " %r %r, %u", T_SHL, esi, edi )
+                .endif
+                add edi,dist
+                .if ( edi )
+                    AddLineQueueX( " %r %r, %u", T_SHR, esi, edi )
+                .endif
+                cmp ebx,T_CMP
+                jne done
+            .endif
+        .endif
+        .if ( dist || ebx == T_CMP )
             AddLineQueueX( " %r %r, %u", ebx, esi, dist )
         .endif
     .endif
 done:
-    .return( RetLineQueue() )
+    RetLineQueue()
+    ret
+mem_const:
+    AddLineQueueX( " %r %r ptr %s[%d], %u", edx, type, &name, offs, edi )
+    jmp done
+mem_reg:
+    AddLineQueueX( " %r %r ptr %s[%d], %r", edx, type, &name, offs, esi )
+    jmp done
 
 CRecordField endp
 

@@ -1025,7 +1025,7 @@ ModuleInit proc private
 ModuleInit endp
 
 
-ReswTableInit proc __ccall private
+ReswTableInit proc private
 
     ResWordsInit()
     .if ( Options.output_format == OFORMAT_OMF )
@@ -1034,25 +1034,14 @@ ReswTableInit proc __ccall private
         DisableKeyword( T_SECTIONREL )
     .endif
     .if ( Options.strict_masm_compat == 0 )
-
-        DisableKeyword( T_NAME )
-        DisableKeyword( T_TITLE )
-        DisableKeyword( T_PAGE )
-        DisableKeyword( T_SIZE )
-        DisableKeyword( T_LENGTH )
-        DisableKeyword( T_THIS )
-        DisableKeyword( T_MASK )
-        DisableKeyword( T_WIDTH )
-        DisableKeyword( T_TYPE )
-        DisableKeyword( T_HIGH )
-        DisableKeyword( T_LOW )
+        SetMasmKeywords( 0 )
     .endif
     ret
 
 ReswTableInit endp
 
 
-open_files proc __ccall private uses rsi rdi
+open_files proc private uses rsi rdi
 
     .if !fopen( MODULE.curr_fname[ASM*string_t], "rb" )
         ;

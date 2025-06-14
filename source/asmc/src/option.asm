@@ -661,6 +661,15 @@ endif
                 .break
             .endif
             inc i
+        .case OP_MASM ;; ON | OFF
+            .ifd ( !tstricmp( rsi, "ON" ) )
+                SetMasmKeywords( 1 )
+            .elseifd ( !tstricmp( rsi, "OFF" ) )
+                SetMasmKeywords( 0 )
+            .else
+                .break
+            .endif
+            inc i
         .case OP_CODEPAGE ;; <value>
             .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )

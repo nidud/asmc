@@ -726,7 +726,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             .if ( [rbx].typekind != TYPE_RECORD )
                 .return fnasmerr( 2019 )
             .endif
-        .case ( [rdi].kind == EXPR_CONST )
+        .case ( [rdi].kind == EXPR_CONST || [rdi].mem_type == MT_BITS )
             mov rbx,[rdi].mbr
         .default
             mov rbx,[rdi].sym
@@ -3163,18 +3163,8 @@ endif
                 .if !( ecx & AT_IND )
                     .return invalid_operand( rdi, [rbx].string_ptr, rdx )
                 .endif
-            .else
-                .if !( ecx & AT_LABEL )
-                    .return ERROR .if ( [rdi].is_opattr )
-                    .if ( [rbx].tokval == T_HIGHWORD && [rdi].flags != 4 )
-                        .return fnasmerr( 2105 )
-                    .endif
-                    .if [rdi].flags == 4
-                        .return fnasmerr( 2026 )
-                    .else
-                        .return fnasmerr( 2009 )
-                    .endif
-                .endif
+            .elseif ( !( ecx & AT_LABEL ) )
+                .return( asmerr( 2026 ) )
             .endif
             .endc
 

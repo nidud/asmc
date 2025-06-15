@@ -97,7 +97,7 @@ remove_obj      dd 0
 ; CONST -> .rdata
 ; _BSS   -> .bss
 
-ConvertSectionName proc __ccall uses rsi rdi rbx sym:ptr asym, pst:ptr dword, buffer:string_t
+ConvertSectionName proc __ccall uses rsi rdi rbx sym:asym_t, pst:ptr dword, buffer:string_t
 
     assume rbx:ptr conv_section
 
@@ -115,7 +115,7 @@ ConvertSectionName proc __ccall uses rsi rdi rbx sym:ptr asym, pst:ptr dword, bu
             mov rcx,pst
             .if rcx
 
-                mov rax,[rdi].dsym.seginfo
+                mov rax,[rdi].asym.seginfo
                 .if !( esi == CSI_BSS + 1 && [rax].seg_info.bytes_written )
                     ;
                     ; don't set segment type to BSS if the segment
@@ -151,7 +151,7 @@ MAX_LEDATA_THRESHOLD equ 1024 - 10
 OutputByte proc __ccall uses rsi rdi rbx char:int_t
 
     mov rsi,MODULE.currseg
-    mov rdi,[rsi].dsym.seginfo
+    mov rdi,[rsi].asym.seginfo
 
     .if ( write_to_file )
 
@@ -184,9 +184,9 @@ OutputByte proc __ccall uses rsi rdi rbx char:int_t
     mov [rdi].seg_info.written,1
     mov eax,[rdi].seg_info.current_loc
 
-    .if ( eax > [rsi].dsym.max_offset )
+    .if ( eax > [rsi].asym.max_offset )
 
-        mov [rsi].dsym.max_offset,eax
+        mov [rsi].asym.max_offset,eax
     .endif
     ret
 OutputByte endp
@@ -209,7 +209,7 @@ FillDataBytes endp
 OutputBytes proc __ccall uses rsi rdi rbx pbytes:ptr byte, len:int_t, fxptr:ptr fixup
 
     mov rsi,MODULE.currseg
-    mov rdi,[rsi].dsym.seginfo
+    mov rdi,[rsi].asym.seginfo
 
     .if ( write_to_file )
 
@@ -251,8 +251,8 @@ OutputBytes proc __ccall uses rsi rdi rbx pbytes:ptr byte, len:int_t, fxptr:ptr 
     add [rdi].seg_info.bytes_written,eax
     mov [rdi].seg_info.written,1
     mov eax,[rdi].seg_info.current_loc
-    .if eax > [rsi].dsym.max_offset
-        mov [rsi].dsym.max_offset,eax
+    .if eax > [rsi].asym.max_offset
+        mov [rsi].asym.max_offset,eax
     .endif
     ret
 
@@ -261,13 +261,13 @@ OutputBytes endp
 ;
 ; set current offset in a segment (usually CurrSeg) without to write anything
 ;
-SetCurrOffset proc __ccall uses rsi rdi rbx dseg:dsym_t, value:uint_t, relative:int_t, select_data:int_t
+SetCurrOffset proc __ccall uses rsi rdi rbx dseg:asym_t, value:uint_t, relative:int_t, select_data:int_t
 
     ldr ebx,value
     ldr rsi,dseg
     ldr eax,relative
     mov ecx,write_to_file
-    mov rdi,[rsi].dsym.seginfo
+    mov rdi,[rsi].asym.seginfo
 
     .if eax
         add ebx,[rdi].seg_info.current_loc
@@ -296,8 +296,8 @@ SetCurrOffset proc __ccall uses rsi rdi rbx dseg:dsym_t, value:uint_t, relative:
     mov [rdi].seg_info.current_loc,ebx
     mov [rdi].seg_info.written,0
     mov eax,[rdi].seg_info.current_loc
-    .if eax > [rsi].dsym.max_offset
-        mov [rsi].dsym.max_offset,eax
+    .if eax > [rsi].asym.max_offset
+        mov [rsi].asym.max_offset,eax
     .endif
     .return(NOT_ERROR)
 
@@ -312,16 +312,16 @@ WriteModule proc private uses rsi rdi rbx
 
     .while rbx
 
-        mov rax,[rbx].dsym.seginfo
+        mov rax,[rbx].asym.seginfo
 
-        .if ( [rax].seg_info.Ofssize == USE16 && [rbx].dsym.max_offset > 0x10000 )
+        .if ( [rax].seg_info.Ofssize == USE16 && [rbx].asym.max_offset > 0x10000 )
 
             .if Options.output_format == OFORMAT_OMF
 
-                asmerr( 2103, [rbx].dsym.name )
+                asmerr( 2103, [rbx].asym.name )
             .endif
         .endif
-        mov rbx,[rbx].dsym.next
+        mov rbx,[rbx].asym.next
     .endw
 
     MODULE.WriteModule()
@@ -361,7 +361,7 @@ WriteModule proc private uses rsi rdi rbx
                         WriteError()
                     .endif
                 .endif
-                mov rbx,[rbx].dsym.next
+                mov rbx,[rbx].asym.next
             .endw
             fclose(fp)
         .endif
@@ -661,7 +661,7 @@ endif
         .while rax
 
             mov [rax].asym.iat_used,0
-            mov rax,[rax].dsym.next
+            mov rax,[rax].asym.next
         .endw
     .endif
     ret
@@ -731,7 +731,7 @@ PassOneChecks proc __ccall private uses rsi rdi
             SkipSavedState()
             jmp aliases
         .endif
-        mov rax,[rax].dsym.next
+        mov rax,[rax].asym.next
     .endw
 
     ; if there's an item in the safeseh list which is not an
@@ -745,7 +745,7 @@ PassOneChecks proc __ccall private uses rsi rdi
             SkipSavedState()
             jmp aliases
         .endif
-        mov rax,[rax].dsym.next
+        mov rax,[rax].asym.next
     .endw
 
 aliases:
@@ -773,7 +773,7 @@ aliases:
 
                 mov [rax].asym.used,1
             .endif
-            mov rcx,[rcx].dsym.next
+            mov rcx,[rcx].asym.next
         .endw
     .endif
 
@@ -784,7 +784,7 @@ aliases:
     .while rdi
 
         mov rsi,rdi
-        mov rdi,[rsi].dsym.next
+        mov rdi,[rsi].asym.next
         .if ( [rsi].asym.used )
 
             mov [rsi].asym.weak,0
@@ -1367,7 +1367,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
             mov eax,[rsi].asym.max_offset
             add curr_written,eax
-            mov rsi,[rsi].dsym.next
+            mov rsi,[rsi].asym.next
         .endw
         ;
         ; if there's no phase error and size of segments didn't change, we're done
@@ -1389,14 +1389,14 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
                 .while rsi
 
-                    mov rbx,[rsi].dsym.seginfo
+                    mov rbx,[rsi].asym.seginfo
                     .if rbx
                         .if [rbx].seg_info.LinnumQueue
                             QueueDeleteLinnum( [rbx].seg_info.LinnumQueue )
                         .endif
                         mov [rbx].seg_info.LinnumQueue,0
                     .endif
-                    mov rsi,[rsi].dsym.next
+                    mov rsi,[rsi].asym.next
                 .endw
             .else
                 QueueDeleteLinnum( &LinnumQueue )

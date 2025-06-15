@@ -68,7 +68,7 @@ DOS_DATETIME union
 DOS_DATETIME ends
 
 
-cv_write_debug_tables proto __ccall :ptr dsym, :ptr dsym, :ptr
+cv_write_debug_tables proto __ccall :asym_t, :asym_t, :ptr
 SortSegments proto __ccall :int_t
 
 externdef LinnumQueue:qdesc ; queue of line_num_info items
@@ -117,7 +117,7 @@ SymDebParm dbg_section \
     { @CStr("$$SYMBOLS"), @CStr("DEBSYM") },
     { @CStr("$$TYPES"),   @CStr("DEBTYP") }
 align size_t
-SymDebSeg dsym_t DBGS_MAX dup(0)
+SymDebSeg asym_t DBGS_MAX dup(0)
 endif
 
     .code
@@ -290,11 +290,11 @@ TruncRec proto fastcall objr:ptr omf_rec {
 
 ; return a group's index
 
-omf_GetGrpIdx proc fastcall sym:ptr asym
+omf_GetGrpIdx proc fastcall sym:asym_t
 
     xor eax,eax
     .if rcx
-        mov rdx,[rcx].dsym.grpinfo
+        mov rdx,[rcx].asym.grpinfo
         mov eax,[rdx].grp_info.grp_idx
     .endif
     ret
@@ -320,7 +320,7 @@ ifndef ASMC64
     .code
 
     mov rbx,CurrSeg
-    mov rbx,[rbx].dsym.seginfo
+    mov rbx,[rbx].asym.seginfo
 
     .if ( ecx )
 
@@ -411,7 +411,7 @@ omf_write_linnum proc fastcall private uses rsi rdi rbx is32:byte
         mov obj.is_32,al
         AttachData( &obj, StringBufferEnd, rdi )
         mov rbx,CurrSeg
-        mov rdi,[rbx].dsym.seginfo
+        mov rdi,[rbx].asym.seginfo
         omf_GetGrpIdx( GetGroup( rbx ) )
         mov obj.d.linnum.base.grp_idx,ax ; fixme ?
         mov obj.d.linnum.base.seg_idx,[rdi].seg_info.seg_idx
@@ -423,7 +423,7 @@ omf_write_linnum proc fastcall private uses rsi rdi rbx is32:byte
 omf_write_linnum endp
 
 
-omf_write_fixupp proc fastcall private uses rsi rdi rbx s:ptr dsym, _is32:char_t
+omf_write_fixupp proc fastcall private uses rsi rdi rbx s:asym_t, _is32:char_t
 
    .new size:uint_t
    .new type:fixgen_types = FIX_GEN_INTEL
@@ -435,7 +435,7 @@ omf_write_fixupp proc fastcall private uses rsi rdi rbx s:ptr dsym, _is32:char_t
     .endif
 
     mov rbx,rcx
-    mov rsi,[rbx].dsym.seginfo
+    mov rsi,[rbx].asym.seginfo
     mov rbx,[rsi].seg_info.head
 
     .while ( rbx )
@@ -476,12 +476,12 @@ get_omfalign proto fastcall private alignment:byte
 
 ; write an LEDATA record, optionally write fixups
 
-omf_write_ledata proc fastcall private uses rsi rdi rbx s:ptr dsym
+omf_write_ledata proc fastcall private uses rsi rdi rbx s:asym_t
 
    .new obj:omf_rec
 
     mov rbx,rcx
-    mov rsi,[rbx].dsym.seginfo
+    mov rsi,[rbx].asym.seginfo
 
     mov edi,[rsi].seg_info.current_loc
     sub edi,[rsi].seg_info.start_loc
@@ -827,8 +827,8 @@ endif
             ; bit 6: resident (name should be kept resident)
             ; bit 7: ordinal ( if 1, 2 byte index must follow name)
 
-            mov rdx,[rsi].dsym.procinfo
-            .for ( rdx = [rdx].proc_info.paralist, ecx = 0: rdx: rdx = [rdx].dsym.nextparam, ecx++ )
+            mov rdx,[rsi].asym.procinfo
+            .for ( rdx = [rdx].proc_info.paralist, ecx = 0: rdx: rdx = [rdx].asym.nextparam, ecx++ )
             .endf
             and ecx,0x1F       ; ensure bits 5-7 are still 0
             Put8( &obj, cl )   ; v2.01: changed from fix 0x00
@@ -847,18 +847,18 @@ omf_write_export endp
 
 omf_write_grpdef proc private uses rsi rdi rbx
 
-    local curr:ptr dsym
-    local segminfo:ptr dsym
-    local s:ptr seg_item
+    local curr:asym_t
+    local segminfo:asym_t
+    local s:segitem_t
     local grp:omf_rec
 
     ; size of group records may exceed 1024!
 
-    .for ( rsi = SymTables[TAB_GRP*symbol_queue].head: rsi: rsi = [rsi].dsym.next )
+    .for ( rsi = SymTables[TAB_GRP*symbol_queue].head: rsi: rsi = [rsi].asym.next )
 
         omf_InitRec( &grp, CMD_GRPDEF )
 
-        mov rdi,[rsi].dsym.grpinfo
+        mov rdi,[rsi].asym.grpinfo
         mov grp.d.grpdef.idx,[rdi].grp_info.grp_idx
 
         ; we might need:
@@ -878,7 +878,7 @@ omf_write_grpdef proc private uses rsi rdi rbx
 
             Put8( &grp, GRP_SEGIDX )
             mov rcx,[rdi].seg_item.iseg
-            mov rcx,[rcx].dsym.seginfo
+            mov rcx,[rcx].asym.seginfo
             PutIndex( &grp, [rcx].seg_info.seg_idx )
 
             ; truncate the group record if it comes near output buffer limit!
@@ -921,12 +921,12 @@ get_omfalign endp
 
 omf_write_segdef proc private uses rsi rdi rbx
 
-  local curr:ptr dsym
+  local curr:asym_t
   local obj:omf_rec
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head: rsi: rsi = [rsi].dsym.next )
+    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head: rsi: rsi = [rsi].asym.next )
 
-        mov rdi,[rsi].dsym.seginfo
+        mov rdi,[rsi].asym.seginfo
         .continue .if ( [rdi].seg_info.comdatselection )
 
         omf_InitRec( &obj, CMD_SEGDEF )
@@ -1064,11 +1064,11 @@ omf_write_lnames proc private uses rsi rdi rbx
         mov eax,items
         .switch ( [rbx].asym.state )
         .case SYM_SEG
-            mov rcx,[rbx].dsym.seginfo
+            mov rcx,[rbx].asym.seginfo
             mov [rcx].seg_info.lname_idx,eax
             .endc
         .case SYM_GRP
-            mov rcx,[rbx].dsym.grpinfo
+            mov rcx,[rbx].asym.grpinfo
             mov [rcx].grp_info.lname_idx,eax
             .endc
         .default
@@ -1082,7 +1082,7 @@ omf_write_lnames endp
 
 
 .template readext
-    p       dsym_t ?
+    p       asym_t ?
     index   dw ?
     method  db ?
    .ends
@@ -1100,7 +1100,7 @@ GetExt proc fastcall private r:ptr readext
         .for ( : [rcx].readext.p : )
 
             mov rdx,[rcx].readext.p
-            mov [rcx].readext.p,[rdx].dsym.next
+            mov [rcx].readext.p,[rdx].asym.next
             .continue .if ( [rdx].asym.iscomm )
 
             mov rax,[rdx].asym.altname
@@ -1120,7 +1120,7 @@ GetExt proc fastcall private r:ptr readext
     .for ( : [rcx].readext.p : )
 
         mov rdx,[rcx].readext.p
-        mov [rcx].readext.p,[rdx].dsym.next
+        mov [rcx].readext.p,[rdx].asym.next
         .continue .if ( [rdx].asym.iscomm || [rdx].asym.weak )
 
         mov ax,[rcx].readext.index
@@ -1141,8 +1141,8 @@ GetExt endp
 omf_write_extdef proc private uses rsi rdi rbx
 
   local obj:omf_rec
-  local sym:ptr asym
-  local symext:ptr dsym
+  local sym:asym_t
+  local symext:asym_t
   local rec_size:dword
   local len:dword
   local r:readext
@@ -1208,7 +1208,7 @@ endif
     ; After the records have been written, the indices in
     ; altname are no longer needed.
 
-    .for ( rsi = SymTables[TAB_EXT*symbol_queue].head: rsi: rsi = [rsi].dsym.next )
+    .for ( rsi = SymTables[TAB_EXT*symbol_queue].head: rsi: rsi = [rsi].asym.next )
 
         .if ( !( [rsi].asym.iscomm ) && [rsi].asym.altname )
 
@@ -1227,7 +1227,7 @@ endif
     ; v2.05: reset the indices - this must be done only after ALL WKEXT
     ; records have been written!
 
-    .for ( rsi = SymTables[TAB_EXT*symbol_queue].head: rsi: rsi = [rsi].dsym.next )
+    .for ( rsi = SymTables[TAB_EXT*symbol_queue].head: rsi: rsi = [rsi].asym.next )
 
         ; v2.09: don't touch the index if the alternate name is an external
         ; - else an invalid object file will be created!
@@ -1319,7 +1319,7 @@ put_comdef_number endp
 omf_write_comdef proc __ccall private uses rsi rdi rbx index:word
 
   local obj:omf_rec
-  local curr:ptr dsym
+  local curr:asym_t
   local num:dword
   local recsize:dword
   local numsize:dword
@@ -1333,7 +1333,7 @@ omf_write_comdef proc __ccall private uses rsi rdi rbx index:word
     mov start,0
     mov rsi,SymTables[TAB_EXT*symbol_queue].head
     .while ( rsi )
-        .for( num = 0, recsize = 0: rsi : rsi = [rsi].dsym.next )
+        .for( num = 0, recsize = 0: rsi : rsi = [rsi].asym.next )
             .continue .if ( !( [rsi].asym.iscomm ) )
 
             mov symsize,Mangle( rsi, &buffer )
@@ -1518,11 +1518,11 @@ omf_write_alias proc private uses rsi rdi rbx
   local p:string_t
   local len1:dword
   local len2:dword
-  local curr:ptr dsym
+  local curr:asym_t
   local tmp[MAX_ID_LEN+MANGLE_BYTES+1]:char_t
   local buff[2*MAX_ID_LEN_OMF+2]:byte
 
-    .for ( rbx = SymTables[TAB_ALIAS*symbol_queue].head: rbx: rbx = [rbx].dsym.next )
+    .for ( rbx = SymTables[TAB_ALIAS*symbol_queue].head: rbx: rbx = [rbx].asym.next )
 
         ; output an alias record for this alias
 
@@ -1586,7 +1586,7 @@ omf_write_pubdef proc private uses rsi rdi rbx
 
     .while ( rsi )
 
-        .new curr_seg:ptr asym
+        .new curr_seg:asym_t
         .new data:ptr byte
         .new size:dword
         .new curr32:uint_8
@@ -1596,7 +1596,7 @@ omf_write_pubdef proc private uses rsi rdi rbx
 
             .new recsize:dword
             .new len:dword
-            .new sym:ptr asym
+            .new sym:asym_t
 
             mov sym,[rsi].qnode.sym
 
@@ -1604,7 +1604,7 @@ omf_write_pubdef proc private uses rsi rdi rbx
 
             mov rcx,[rax].asym.segm
             .if ( rcx )
-                mov rdx,[rcx].dsym.seginfo
+                mov rdx,[rcx].asym.seginfo
             .endif
             .if ( rcx && [rdx].seg_info.comdatselection )
 
@@ -1761,13 +1761,13 @@ omf_write_modend endp
 
 ; this callback function is called during codeview debug info generation
 
-omf_cv_flushfunc proc __ccall private uses rbx segm:ptr dsym, curr:ptr uint_8, size:dword, pv:ptr
+omf_cv_flushfunc proc __ccall private uses rbx segm:asym_t, curr:ptr uint_8, size:dword, pv:ptr
 
     ldr rcx,segm
     ldr rbx,curr
     ldr eax,size
 
-    mov rdx,[rcx].dsym.seginfo
+    mov rdx,[rcx].asym.seginfo
     sub rbx,[rdx].seg_info.CodeBuffer
     add eax,ebx
 
@@ -1814,7 +1814,7 @@ omf_write_header_dbgcv proc private uses rdi rbx
 
             ; without this a 32-bit segdef is emitted only if segsize > 64kB
 
-            mov rcx,[rax].dsym.seginfo
+            mov rcx,[rax].asym.seginfo
             mov [rcx].seg_info.force32,1
             mov [rcx].seg_info.flushfunc,&omf_cv_flushfunc
         .endif
@@ -1833,9 +1833,9 @@ omf_write_debug_tables proc private
 
     .if ( rax && rdx )
 
-        mov rcx,[rax].dsym.seginfo
+        mov rcx,[rax].asym.seginfo
         mov [rcx].seg_info.CodeBuffer,CurrSource
-        mov rcx,[rdx].dsym.seginfo
+        mov rcx,[rdx].asym.seginfo
         add rax,1024
         mov [rcx].seg_info.CodeBuffer,rax
 

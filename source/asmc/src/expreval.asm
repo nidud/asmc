@@ -41,7 +41,7 @@ externdef StackAdj:uint_t
 
 CCALLBACK(lpfnasmerr, :int_t, :vararg)
 
-FindDotSymbol proto fastcall :ptr asm_tok
+FindDotSymbol proto fastcall :token_t
 
     .data
 
@@ -116,7 +116,7 @@ invalid_operand proc fastcall uses rbx opnd:expr_t, oprtr:string_t, operand:stri
 invalid_operand endp
 
 
-    assume rcx:dsym_t
+    assume rcx:asym_t
 
 GetSizeValue proc fastcall sym:asym_t
 
@@ -136,20 +136,20 @@ GetSizeValue proc fastcall sym:asym_t
 GetSizeValue endp
 
 
-GetRecordMask proc fastcall uses rsi rdi rbx rec:dsym_t
+GetRecordMask proc fastcall uses rsi rdi rbx rec:asym_t
 
     xor eax,eax
     xor edx,edx
     mov rbx,[rcx].structinfo
     mov rbx,[rbx].struct_info.head
 
-    .for ( : rbx : rbx = [rbx].sfield.next )
+    .for ( : rbx : rbx = [rbx].asym.next )
 
-        mov ecx,[rbx].sfield.offs
-        mov edi,[rbx].sfield.total_size
-        .if ( [rbx].sfield.crecord )
-            movzx ecx,[rbx].sfield.bitf_offs
-            movzx edi,[rbx].sfield.bitf_bits
+        mov ecx,[rbx].asym.offs
+        mov edi,[rbx].asym.total_size
+        .if ( [rbx].asym.crecord )
+            movzx ecx,[rbx].asym.bitf_offs
+            movzx edi,[rbx].asym.bitf_bits
         .endif
         add edi,ecx
 
@@ -220,7 +220,7 @@ tofloat endp
 
     assume rdx:nothing
     assume rcx:nothing
-    assume rbx:dsym_t
+    assume rbx:asym_t
 
 unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         opnd1:expr_t, opnd2:expr_t, sym:asym_t, oper:int_t, name:string_t
@@ -763,11 +763,11 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .elseif ( ecx )
             mov rax,[rbx].structinfo
             mov rcx,[rax].struct_info.head
-            .for ( eax = 0 : rcx : rcx = [rcx].sfield.next )
-                .if ( [rcx].sfield.crecord )
-                    add al,[rcx].sfield.bitf_bits
+            .for ( eax = 0 : rcx : rcx = [rcx].asym.next )
+                .if ( [rcx].asym.crecord )
+                    add al,[rcx].asym.bitf_bits
                 .else
-                    add eax,[rcx].sfield.total_size
+                    add eax,[rcx].asym.total_size
                 .endif
             .endf
             mov [rsi].value,eax
@@ -1353,7 +1353,7 @@ method_ptr:
         .switch [rax].asym.state
 
         .case SYM_TYPE
-            mov rcx,[rax].dsym.structinfo
+            mov rcx,[rax].asym.structinfo
             .if ( [rax].asym.typekind != TYPE_TYPEDEF && [rcx].struct_info.isOpen )
 
                 mov [rdi].kind,EXPR_ERROR
@@ -1471,7 +1471,7 @@ endif
                     mov [rdi].indirect,1
                     mov [rdi].base_reg,rbx
                     mov rcx,CurrProc
-                    mov rcx,[rcx].dsym.procinfo
+                    mov rcx,[rcx].asym.procinfo
                     movzx eax,[rcx].proc_info.basereg
                     mov [rbx].tokval,eax
                     imul eax,eax,special_item
@@ -3279,7 +3279,7 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
    .new rc          : int_t = NOT_ERROR
    .new opnd2       : expr
    .new exp_token   : int_t
-   .new last        : ptr asm_tok
+   .new last        : token_t
 
     ldr  rdi,opnd1
     ldr  rdx,i

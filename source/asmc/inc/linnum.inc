@@ -17,7 +17,7 @@ define __LINNUM_INC
     ends
     union
      srcfile        dd ?
-     sym            ptr asym ? ; used if number is 0 ( COFF only )
+     sym            asym_t ? ; used if number is 0 ( COFF only )
     ends
    .ends
 

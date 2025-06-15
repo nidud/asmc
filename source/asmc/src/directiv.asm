@@ -115,7 +115,7 @@ IncludeLibrary proc __ccall uses rsi rbx name:string_t
 IncludeLibrary endp
 
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
 ; INCLUDE directive.
 

@@ -58,7 +58,7 @@ NopLists ptr byte NopList16, NopList32, NopList64
 
     .code
 
-OrgDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
+OrgDirective proc __ccall i:int_t, tokenarray:token_t
 
   local opndx:expr
 
@@ -87,10 +87,10 @@ OrgDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
         .endif
         ; v2.04: added
         mov rcx,CurrSeg
-        mov rcx,[rcx].dsym.seginfo
+        mov rcx,[rcx].asym.seginfo
         .if ( Parse_Pass == PASS_1 && [rcx].seg_info.head )
             mov rdx,[rcx].seg_info.head
-            or [rdx].fixup.fx_flag,FX_ORGOCCURED
+            mov [rdx].fixup.orgoccured,1
         .endif
 
         .if ( opndx.kind == EXPR_CONST )
@@ -116,7 +116,7 @@ fill_in_objfile_space proc __ccall private uses rsi rdi rbx size:dword
 
     ; v2.04: no output if nothing has been written yet
     mov rdi,CurrSeg
-    mov rsi,[rdi].dsym.seginfo
+    mov rsi,[rdi].asym.seginfo
     .if ( ![rsi].seg_info.written )
 
         SetCurrOffset( rdi, size, TRUE, TRUE )
@@ -175,7 +175,7 @@ AlignCurrOffset endp
 
 define align_value <opndx.value>
 
-AlignDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
+AlignDirective proc __ccall i:int_t, tokenarray:token_t
 
   local opndx:expr
   local CurrAddr:uint_t
@@ -201,7 +201,7 @@ AlignDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
             ; v2.03: special STRUCT handling was missing
             .if ( CurrStruct )
                 mov rcx,CurrStruct
-                mov rcx,[rcx].dsym.structinfo
+                mov rcx,[rcx].asym.structinfo
                 mov align_value,[rcx].struct_info.alignment
             .else
                 mov align_value,GetCurrSegAlign()
@@ -243,10 +243,10 @@ AlignDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
     .if ( Parse_Pass == PASS_1 && CurrSeg )
 
         mov rcx,CurrSeg
-        mov rcx,[rcx].dsym.seginfo
+        mov rcx,[rcx].asym.seginfo
         mov rcx,[rcx].seg_info.head
         .if rcx
-            or  [rcx].fixup.fx_flag,FX_ORGOCCURED
+            mov [rcx].fixup.orgoccured,1
         .endif
     .endif
     ; find out how many bytes past alignment we are & add the remainder

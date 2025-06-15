@@ -93,7 +93,7 @@ AddFloatingPointEmulationFixup proc __ccall uses rsi rdi rbx CodeInfo:ptr code_i
     ; fixup covers bytes $+1 and $+2.
 
     mov rdi,CurrSeg
-    mov rdx,[rdi].dsym.seginfo
+    mov rdx,[rdi].asym.seginfo
     mov eax,[rdx].seg_info.current_loc
     sub eax,[rdx].seg_info.start_loc
     add eax,3

@@ -11,9 +11,9 @@
     type    int_t ?
    .ends
 
-GetOperator     proto __ccall :ptr asm_tok
-GetOpType       proto __ccall :ptr asm_tok, :string_t
-OperatorParam   proto __ccall :ptr asm_tok, :string_t
-ProcessOperator proto __ccall :ptr asm_tok
-EvalOperator    proto __ccall :ptr expr, :ptr expr, :ptr asm_tok
-ParseOperator   proto __ccall :ptr asm_tok, :ptr opinfo
+GetOperator     proto __ccall :token_t
+GetOpType       proto __ccall :token_t, :string_t
+OperatorParam   proto __ccall :token_t, :string_t
+ProcessOperator proto __ccall :token_t
+EvalOperator    proto __ccall :ptr expr, :ptr expr, :token_t
+ParseOperator   proto __ccall :token_t, :ptr opinfo

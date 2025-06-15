@@ -16,7 +16,7 @@ PragmaInit	proto __ccall
 PragmaCheckOpen proto __ccall
 
 InvertJump	proto fastcall :string_t
-GetExpression	proto __ccall :ptr hll_item, :ptr int_t, :ptr asm_tok, :int_t, :uint_t, :string_t, :ptr hll_opnd
-ForDirective	proto __ccall :int_t, :ptr asm_tok
+GetExpression	proto __ccall :ptr hll_item, :ptr int_t, :token_t, :int_t, :uint_t, :string_t, :ptr hll_opnd
+ForDirective	proto __ccall :int_t, :token_t
 
 endif

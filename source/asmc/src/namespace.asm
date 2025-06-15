@@ -46,7 +46,7 @@ NameSpace proc watcall uses rsi rdi rbx Name:string_t, retval:string_t
 NameSpace endp
 
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
 NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
@@ -75,10 +75,7 @@ NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
     .endif
 
     mov rsi,LclAlloc( &[tstrlen( [rbx+asm_tok].string_ptr ) + nsp_item + 1] )
-
-    mov [rsi].next,NULL
     mov [rsi].name,&[rax+nsp_item]
-
     tstrcpy( [rsi].name, [rbx+asm_tok].string_ptr )
 
     .if ( MODULE.NspStack == NULL )

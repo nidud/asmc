@@ -21,9 +21,9 @@ include types.inc
 
     .code
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-SkipSQBackets proc fastcall private uses rbx tok:ptr asm_tok
+SkipSQBackets proc fastcall private uses rbx tok:token_t
 
     .for ( rbx = rcx,
            edx = 0, ; brackets
@@ -50,7 +50,7 @@ SkipSQBackets proc fastcall private uses rbx tok:ptr asm_tok
 SkipSQBackets endp
 
 
-GetSQBackets proc fastcall private uses rsi rdi tok:ptr asm_tok, buffer:string_t
+GetSQBackets proc fastcall private uses rsi rdi tok:token_t, buffer:string_t
 
     mov rdi,rdx
     mov rsi,rcx
@@ -68,7 +68,7 @@ GetSQBackets proc fastcall private uses rsi rdi tok:ptr asm_tok, buffer:string_t
 GetSQBackets endp
 
 
-FindDotSymbol proc fastcall uses rsi rdi rbx tok:ptr asm_tok
+FindDotSymbol proc fastcall uses rsi rdi rbx tok:token_t
 
     mov rbx,rcx
 
@@ -112,8 +112,8 @@ FindDotSymbol proc fastcall uses rsi rdi rbx tok:ptr asm_tok
 FindDotSymbol endp
 
 
-AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm_tok,
-        pclass:ptr asym, langtype:int_t, pmacro:ptr asym
+AssignPointer proc __ccall uses rsi rdi rbx sym:asym_t, reg:int_t, tok:token_t,
+        pclass:asym_t, langtype:int_t, pmacro:asym_t
 
   local buffer[128]:sbyte
   local vreg:int_t
@@ -229,7 +229,7 @@ AssignPointer endp
 
 ifdef USE_INDIRECTION
 
-HandleIndirection proc __ccall uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm_tok, pos:int_t
+HandleIndirection proc __ccall uses rsi rdi rbx sym:asym_t, tokenarray:token_t, pos:int_t
 
   local reg:uint_t
   local inst:uint_t

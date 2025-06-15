@@ -387,7 +387,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
 
 mem2mem endp
 
-    assume rdi:ptr asm_tok
+    assume rdi:token_t
 
 immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
 

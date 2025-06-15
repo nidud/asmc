@@ -58,7 +58,7 @@ define mangle_type NULL
 ; create external.
 ; sym must be NULL or of state SYM_UNDEFINED!
 
-CreateExternal proc fastcall private uses rsi sym:ptr asym, name:string_t, weak:char_t
+CreateExternal proc fastcall private uses rsi sym:asym_t, name:string_t, weak:char_t
 
     mov rsi,rcx
     .if ( rsi == NULL )
@@ -85,7 +85,7 @@ CreateExternal endp
 ; create communal.
 ; sym must be NULL or of state SYM_UNDEFINED!
 
-CreateComm proc fastcall private uses rsi sym:ptr asym, name:string_t
+CreateComm proc fastcall private uses rsi sym:asym_t, name:string_t
 
     mov rsi,rcx
     .if ( rsi == NULL )
@@ -111,9 +111,9 @@ CreateComm endp
 ; create a prototype.
 ; used by PROTO, EXTERNDEF and EXT[E]RN directives.
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, name:string_t, langtype:byte
+CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, name:string_t, langtype:byte
 
     mov rsi,SymSearch(name)
 
@@ -185,7 +185,7 @@ CreateProto endp
 
 ; externdef [ attr ] symbol:type [, symbol:type,...]
 
-ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local token:string_t
   local langtype:byte
@@ -317,7 +317,7 @@ endif
                 mov [rsi].asym.segoffsize,al
                 mov rcx,[rsi].asym.segm
                 .if ( rcx )
-                    mov rdx,[rcx].dsym.seginfo
+                    mov rdx,[rcx].asym.seginfo
                     .if ( al != [rdx].seg_info.Ofssize )
                         mov [rsi].asym.segm,NULL
                     .endif
@@ -440,7 +440,7 @@ ExterndefDirective endp
 ; <name> PROTO <params> is semantically identical to:
 ; EXTERNDEF <name>: PROTO <params>
 
-ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
+ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ldr rbx,tokenarray
     .if ( Parse_Pass != PASS_1 )
@@ -472,7 +472,7 @@ ProtoDirective endp
 ; also used to create 16-bit floating-point fixups.
 ; sym must be NULL or of state SYM_UNDEFINED!
 
-MakeExtern proc __ccall name:string_t, mem_type:byte, vartype:ptr asym, sym:ptr asym, Ofssize:byte
+MakeExtern proc __ccall name:string_t, mem_type:byte, vartype:asym_t, sym:asym_t, Ofssize:byte
 
     .if ( CreateExternal( sym, name, FALSE ) == NULL )
 
@@ -496,7 +496,7 @@ MakeExtern endp
 
 ; handle optional alternate names in EXTERN directive
 
-HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:ptr asym
+HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:asym_t
 
     mov rsi,sym
 
@@ -561,7 +561,7 @@ HandleAltname endp
 
 ; syntax: EXT[E]RN [lang_type] name (altname) :type [, ...]
 
-ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local langtype:byte
   local ti:qualified_type
@@ -748,7 +748,7 @@ endif
             mov [rdi].asym.segoffsize,al
             mov rcx,[rdi].asym.segm
             .if ( rcx )
-                mov rdx,[rcx].dsym.seginfo
+                mov rdx,[rcx].asym.seginfo
             .endif
             .if ( rcx && [rdx].seg_info.Ofssize != al )
                 mov [rdi].asym.segm,NULL
@@ -787,7 +787,7 @@ ExternDirective endp
 
 ; helper for COMM directive
 
-MakeComm proc __ccall private uses rdi name:string_t, sym:ptr asym, size:dword, count:dword, isfar:uchar_t
+MakeComm proc __ccall private uses rdi name:string_t, sym:asym_t, size:dword, count:dword, isfar:uchar_t
 
     mov rdi,CreateComm( sym, name )
     .return .if ( rdi == NULL )
@@ -826,15 +826,15 @@ MakeComm endp
 ; COMM [langtype] [NEAR|FAR] label:type[:count] [, ... ]
 ; the size & count values must NOT be forward references!
 
-CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local token:string_t
   local isfar:byte
   local tmp:int_t
   local size:uint_32  ; v2.12: changed from 'int' to 'uint_32'
   local count:uint_32 ; v2.12: changed from 'int' to 'uint_32'
-  local sym:ptr asym
-  local type:ptr asym ; v2.17: remember type in case one was given
+  local sym:asym_t
+  local type:asym_t ; v2.17: remember type in case one was given
   local opndx:expr
   local langtype:byte
 
@@ -992,10 +992,10 @@ CommDirective endp
 
 ; syntax: PUBLIC [lang_type] name [, ...]
 
-PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local token:string_t
-  local sym:ptr asym
+  local sym:asym_t
   local skipitem:sbyte
   local langtype:byte
   local isexport:byte

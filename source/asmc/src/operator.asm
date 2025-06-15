@@ -79,7 +79,7 @@ GetOpType endp
 
     assume rbx:token_t
 
-OperatorParam proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok, param:string_t
+OperatorParam proc __ccall uses rsi rdi rbx tokenarray:token_t, param:string_t
 
     ldr rbx,tokenarray
     mov rdi,tstrcat( param, "_" )
@@ -132,7 +132,7 @@ OperatorParam proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok, param:string
 OperatorParam endp
 
 
-GetArgs proc __ccall private uses rsi rbx tokenarray:ptr asm_tok
+GetArgs proc __ccall private uses rsi rbx tokenarray:token_t
 
     mov rsi,rbx
     .for ( : [rbx].token != T_FINAL : rbx += asm_tok )
@@ -169,9 +169,9 @@ GetArgs proc __ccall private uses rsi rbx tokenarray:ptr asm_tok
 GetArgs endp
 
 
-ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
+ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:token_t
 
-   .new class:ptr asym
+   .new class:asym_t
    .new name:string_t
    .new isptr:byte = 0
    .new vector:int_t = 0
@@ -388,7 +388,6 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
     .endif
     mov [rsi].type,rcx
     mov rbx,LclAlloc( opinfo )
-    mov [rbx].next,NULL
     mov [rbx].type,GetOperator(oper)
    .return ERROR .if ( rax == 0 )
 

@@ -16,10 +16,10 @@ include parser.inc
 
     .code
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
     assume rdi:ptr qnode
 
-SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     ldr ecx,i
     ldr rdx,tokenarray

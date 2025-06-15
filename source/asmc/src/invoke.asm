@@ -102,7 +102,7 @@ get_nextreg endp
 
     assume rsi:asym_t
 
-fast_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, start:int_t,
+fast_fcstart proc __ccall private uses rsi rdi rbx pp:asym_t, numparams:int_t, start:int_t,
     tokenarray:token_t, value:ptr int_t
 
    .new opnd:expr
@@ -127,8 +127,8 @@ fast_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
     shl eax,cl
     mov wordsize,eax
 
-    mov rdx,[rbx].dsym.procinfo
-    .for ( rdi = [rdx].proc_info.paralist : rdi : rdi = [rdi].dsym.prev )
+    mov rdx,[rbx].asym.procinfo
+    .for ( rdi = [rdx].proc_info.paralist : rdi : rdi = [rdi].asym.prev )
 
         .if ( [rdi].asym.regparam || [rdi].asym.mem_type == MT_ABS )
 
@@ -314,7 +314,7 @@ fast_fcstart endp
     assume rdi:nothing
 
 
-fast_fcend proc __ccall private pp:dsym_t, numparams:int_t, value:int_t
+fast_fcend proc __ccall private pp:asym_t, numparams:int_t, value:int_t
 
     ldr rcx,pp
     ldr edx,value
@@ -356,7 +356,7 @@ GetSegmentPart proc __ccall private uses rsi rdi rbx opnd:ptr expr, buffer:strin
     .elseif ( rax && [rax].asym.segm )
 
         mov rbx,[rax].asym.segm
-        mov rcx,[rbx].dsym.seginfo
+        mov rcx,[rbx].asym.seginfo
 
         .if ( [rcx].seg_info.segtype == SEGTYPE_DATA ||
               [rcx].seg_info.segtype == SEGTYPE_BSS )
@@ -390,9 +390,9 @@ GetSegmentPart endp
     assume rdi:expr_t
 
 fast_param proc __ccall private uses rsi rdi rbx \
-    pp:         dsym_t,
+    pp:         asym_t,
     index:      int_t,
-    param:      dsym_t,
+    param:      asym_t,
     address:    int_t,
     opnd:       ptr expr,
     paramvalue: string_t,
@@ -476,7 +476,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
 
     ; skip loading class pointer if :vararg and inline
 
-    mov rdx,[rbx].dsym.procinfo
+    mov rdx,[rbx].asym.procinfo
     .if ( [rdx].proc_info.has_vararg &&
           [rbx].asym.isinline && [rbx].asym.method && !index )
         .return
@@ -1890,9 +1890,9 @@ arg_error:
 fast_param endp
 
     assume rdi:nothing
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-SkipTypecast proc fastcall private uses rsi rdi rbx fullparam:string_t, i:int_t, tokenarray:ptr asm_tok
+SkipTypecast proc fastcall private uses rsi rdi rbx fullparam:string_t, i:int_t, tokenarray:token_t
 
     mov  rdi,rcx
     imul ebx,edx,asm_tok
@@ -1929,8 +1929,8 @@ SkipTypecast endp
 ;; psize,asize: size of parameter/argument in bytes.
 ;;
 
-PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, pproc:ptr dsym,
-        curr:ptr dsym, reqParam:int_t, r0flags:ptr uint_t
+PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, pproc:asym_t,
+        curr:asym_t, reqParam:int_t, r0flags:ptr uint_t
 
   local currParm:int_t
   local psize:int_t
@@ -3367,11 +3367,11 @@ endif
 
 ; generate a call for a prototyped procedure
 
-InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-   .new sym:ptr asym
-   .new pproc:ptr dsym
-   .new arg:ptr dsym
+   .new sym:asym_t
+   .new pproc:asym_t
+   .new arg:asym_t
    .new p:string_t
    .new q:string_t
    .new numParam:int_t
@@ -3382,13 +3382,13 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new porder:int_t
    .new j:int_t
    .new r0flags:uint_t = 0
-   .new info:ptr proc_info
-   .new curr:ptr dsym
+   .new info:proc_t
+   .new curr:asym_t
    .new opnd:expr
    .new buffer[MAX_LINE_LEN]:char_t
-   .new pmacro:ptr asym = NULL
-   .new pclass:ptr asym
-   .new struct_ptr:ptr asm_tok = NULL
+   .new pmacro:asym_t = NULL
+   .new pclass:asym_t
+   .new struct_ptr:token_t = NULL
    .new flags:byte
 
     inc i ; skip INVOKE directive
@@ -3411,7 +3411,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     imul ebx,i,asm_tok
     add rbx,tokenarray
 
-    assume rsi:ptr asym
+    assume rsi:asym_t
 
     ; if there is more than just an ID item describing the invoke target,
     ; use the expression evaluator to get it
@@ -3493,7 +3493,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov rsi,sym
     mov pproc,rsi
     mov rcx,rsi
-    mov info,[rcx].dsym.procinfo
+    mov info,[rcx].asym.procinfo
 
     .if ( Options.strict_masm_compat == 0 )
 
@@ -3576,7 +3576,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     mov rdx,info
-    .for ( rcx = [rdx].proc_info.paralist, numParam = 0 : rcx : rcx = [rcx].dsym.nextparam, numParam++ )
+    .for ( rcx = [rdx].proc_info.paralist, numParam = 0 : rcx : rcx = [rcx].asym.nextparam, numParam++ )
     .endf
 
     mov j,i
@@ -3603,7 +3603,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     mov rdx,info
-    assume rdi:ptr dsym
+    assume rdi:asym_t
     mov rdi,[rdx].proc_info.paralist
     mov parmpos,i
 
@@ -3684,9 +3684,9 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 ; Update arguments in the current proc if any
 
                 mov rcx,CurrProc
-                mov rdx,[rcx].dsym.procinfo
+                mov rdx,[rcx].asym.procinfo
                 mov rdx,[rdx].proc_info.paralist
-                .for ( : rdx : rdx = [rdx].dsym.nextparam )
+                .for ( : rdx : rdx = [rdx].asym.nextparam )
                     .if ( [rdx].asym.state != SYM_TMACRO )
                         add [rdx].asym.offs,eax
                     .endif
@@ -3697,10 +3697,10 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .if ( total )
 
             mov rcx,CurrProc
-            mov rax,[rcx].dsym.procinfo
+            mov rax,[rcx].asym.procinfo
             mov rdx,[rax].proc_info.paralist
 
-            .for ( : rdx : rdx = [rdx].dsym.nextparam )
+            .for ( : rdx : rdx = [rdx].asym.nextparam )
                 .if ( [rdx].asym.state != SYM_TMACRO )
                     sub [rdx].asym.offs,total
                 .endif
@@ -3859,7 +3859,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endf
                 mov rsi,sym
 
-                assume rsi:ptr asym
+                assume rsi:asym_t
 
             .endif
             tstrcat( p, ")" )
@@ -3970,7 +3970,7 @@ endif
     mov rdi,info
     mov rsi,sym
 
-    assume rdi:ptr proc_info
+    assume rdi:proc_t
 
     .if ( ( [rsi].langtype == LANG_C || ( [rsi].langtype == LANG_SYSCALL && !( flags & _P_FASTCALL ) ) ) &&
           ( [rdi].parasize || ( [rdi].has_vararg && size_vararg ) ) )

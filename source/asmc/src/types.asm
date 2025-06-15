@@ -24,8 +24,8 @@ define TYPEOPT 0
 
 .data
 
-CurrStruct ptr dsym 0
-redef_struct ptr dsym 0
+CurrStruct asym_t 0
+redef_struct asym_t 0
 
 ; text constants for 'Non-benign <x> redefinition' error msg
 
@@ -49,7 +49,7 @@ TypesInit endp
 ; <name> and <global> are only used if <sym> is NULL.
 ; <name> might be an empty string.
 
-CreateTypeSymbol proc __ccall uses rsi rdi sym:ptr asym, name:string_t, global:int_t
+CreateTypeSymbol proc __ccall uses rsi rdi sym:asym_t, name:string_t, global:int_t
 
     ldr rsi,sym
     .if ( rsi )
@@ -68,14 +68,7 @@ CreateTypeSymbol proc __ccall uses rsi rdi sym:ptr asym, name:string_t, global:i
         mov [rsi].asym.state,SYM_TYPE
         mov [rsi].asym.typekind,TYPE_NONE
         mov rdi,LclAlloc( sizeof( struct_info ) )
-        mov [rsi].dsym.structinfo,rdi
-if 0 ; zero alloc..
-        mov [rdi].struct_info.head,NULL
-        mov [rdi].struct_info.tail,NULL
-        mov [rdi].struct_info.alignment,0
-        mov [rdi].struct_info.isOpen,0
-        mov [rdi].struct_info.OrgInside,0
-endif
+        mov [rsi].asym.structinfo,rdi
     .endif
     .return( rsi )
 
@@ -84,16 +77,16 @@ CreateTypeSymbol endp
 
 ; search a name in a struct's fieldlist
 
-    assume rbx:ptr sfield
+    assume rbx:asym_t
 
-SearchNameInStruct proc __ccall uses rsi rdi rbx tstruct:ptr asym, name:string_t,
+SearchNameInStruct proc __ccall uses rsi rdi rbx tstruct:asym_t, name:string_t,
         poffset:ptr uint_32, level:int_t
 
     mov edi,tstrlen( name )
     xor esi,esi
 
     mov rcx,tstruct
-    mov rdx,[rcx].dsym.structinfo
+    mov rdx,[rcx].asym.structinfo
     mov rbx,[rdx].struct_info.head
 
     .if ( level >= MAX_STRUCT_NESTING )
@@ -149,16 +142,16 @@ SearchNameInStruct endp
 
 ; check if a struct has changed
 
-    assume rdi:ptr sfield
+    assume rdi:asym_t
 
-AreStructsEqual proc __ccall private uses rdi rbx newstr:ptr dsym, oldstr:ptr dsym
+AreStructsEqual proc __ccall private uses rdi rbx newstr:asym_t, oldstr:asym_t
 
     ldr rcx,newstr
     ldr rdx,oldstr
 
-    mov rax,[rdx].dsym.structinfo
+    mov rax,[rdx].asym.structinfo
     mov rbx,[rax].struct_info.head
-    mov rcx,[rcx].dsym.structinfo
+    mov rcx,[rcx].asym.structinfo
     mov rdi,[rcx].struct_info.head
 
     ; kind of structs must be identical
@@ -196,10 +189,10 @@ AreStructsEqual endp
 ; handle STRUCT, STRUC, UNION directives
 ; i = index of directive token
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
     assume rdi:nothing
 
-StructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+StructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local alignment:uint_t
   local offs:uint_t
@@ -346,19 +339,19 @@ endif
 
         mov rcx,CurrStruct
         .if ( rcx )
-            mov rcx,[rcx].dsym.structinfo
+            mov rcx,[rcx].asym.structinfo
             mov rdx,[rcx].struct_info.tail
-            mov rdi,[rdx].sfield.type
-            mov [rcx].struct_info.tail,[rdx].sfield.next
+            mov rdi,[rdx].asym.type
+            mov [rcx].struct_info.tail,[rdx].asym.next
         .endif
-        mov rcx,[rdi].dsym.structinfo
+        mov rcx,[rdi].asym.structinfo
         mov rax,[rcx].struct_info.head
         mov [rcx].struct_info.tail,rax
         mov [rdi].asym.offs,0
         mov [rdi].asym.bitf_offs,0
         mov [rdi].asym.isdefined,1
         mov [rdi].asym.state,SYM_TYPE ; added v2.33.68
-        mov [rdi].dsym.next,CurrStruct
+        mov [rdi].asym.next,CurrStruct
         mov CurrStruct,rdi
        .return( NOT_ERROR )
     .endif
@@ -380,7 +373,7 @@ endif
             ; structure must be read in ( because of alignment issues
 
             mov rcx,CurrStruct
-            mov rcx,[rcx].dsym.structinfo
+            mov rcx,[rcx].asym.structinfo
 
             mov alignment,[rcx].struct_info.alignment
         .endif
@@ -421,7 +414,7 @@ endif
     mov [rdi].asym.offs,0
     mov [rdi].asym.typekind,typekind
 
-    mov rcx,[rdi].dsym.structinfo
+    mov rcx,[rdi].asym.structinfo
     mov [rcx].struct_info.alignment,alignment
     mov [rcx].struct_info.isOpen,1
 if 0 ; (unused)
@@ -429,7 +422,7 @@ if 0 ; (unused)
         mov [rcx].struct_info.isInline,1
     .endif
 endif
-    mov [rdi].dsym.next,CurrStruct
+    mov [rdi].asym.next,CurrStruct
 
     .if ( MODULE.ComStack )
 
@@ -454,7 +447,7 @@ endif
                 mov [rdi].asym.isvtable,1
             .endif
         .endif
-        assume rbx:ptr asm_tok
+        assume rbx:token_t
     .endif
     mov CurrStruct,rdi
 
@@ -465,7 +458,7 @@ StructDirective endp
 
 ; handle ENDS directive when a struct/union definition is active
 
-EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     mov rdi,CurrStruct ; cannot be NULL
 
@@ -475,7 +468,7 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         mov [rdi].asym.offs,0
         mov ebx,[rdi].asym.total_size
-        mov CurrStruct,[rdi].dsym.next
+        mov CurrStruct,[rdi].asym.next
         .if ( CurrStruct )
             UpdateStructSize( rdi )
         .endif
@@ -489,8 +482,8 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; first case must be top level (next=NULL), latter case must NOT be top level (next!=NULL)
 
     mov rbx,tokenarray
-    .if ( ( i == 1 && [rdi].dsym.next == NULL ) ||
-          ( i == 0 && [rdi].dsym.next != NULL ) )
+    .if ( ( i == 1 && [rdi].asym.next == NULL ) ||
+          ( i == 0 && [rdi].asym.next != NULL ) )
 
     .else
         lea rdx,@CStr("")
@@ -516,14 +509,14 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; v2.07: if ORG was used inside the struct, the struct's size
     ; has to be calculated now - there may exist negative offsets.
 
-    mov rsi,[rdi].dsym.structinfo
+    mov rsi,[rdi].asym.structinfo
 
     .if ( [rsi].struct_info.OrgInside )
 
-        .for ( ecx = 0, rdx = [rsi].struct_info.head: rdx: rdx = [rdx].sfield.next )
+        .for ( ecx = 0, rdx = [rsi].struct_info.head: rdx: rdx = [rdx].asym.next )
 
-            .if ( [rdx].sfield.offs < ecx )
-                mov ecx,[rdx].sfield.offs
+            .if ( [rdx].asym.offs < ecx )
+                mov ecx,[rdx].asym.offs
             .endif
         .endf
 
@@ -564,7 +557,7 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     mov [rdi].asym.offs,0
 
-    mov CurrStruct,[rdi].dsym.next
+    mov CurrStruct,[rdi].asym.next
     .if ( i == 1 )
 
         mov rcx,[rdi].asym.name
@@ -632,11 +625,11 @@ EndstructDirective endp
 
 ; v2.06: new function to check fields of anonymous struct members
 
-    assume rdi:ptr sfield
+    assume rdi:asym_t
 
-CheckAnonymousStruct proc fastcall private uses rdi type_ptr:ptr dsym
+CheckAnonymousStruct proc fastcall private uses rdi type_ptr:asym_t
 
-    mov rcx,[rcx].dsym.structinfo
+    mov rcx,[rcx].asym.structinfo
     .for ( rdi = [rcx].struct_info.head : rdi : rdi = [rdi].next )
 
         mov rax,[rdi].name
@@ -672,14 +665,14 @@ CheckAnonymousStruct endp
 ; - vartype: user-defined type of item if memtype is MT_TYPE
 ; - size: size of type - used for alignment only
 
-    assume rsi:ptr struct_info
+    assume rsi:struct_t
 
-CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
-        name:string_t, mem_type:byte, vartype:ptr asym, size:uint_t
+CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:token_t,
+        name:string_t, mem_type:byte, vartype:asym_t, size:uint_t
 
   local offs:int_32
   local len:int_t
-  local s:ptr struct_info
+  local s:struct_t
   local bitfield:int_t ; don't align bitfields..
 
     mov bitfield,0
@@ -687,7 +680,7 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_to
     .if ( [rcx].asym.typekind == TYPE_RECORD )
         mov bitfield,1
     .endif
-    mov s,[rcx].dsym.structinfo
+    mov s,[rcx].asym.structinfo
     mov offs,[rcx].asym.offs
 
     .if ( name )
@@ -767,28 +760,17 @@ endif
         mov byte ptr [rdi],0
         mov rcx,rdi
         sub rcx,StringBufferEnd
-        mov rsi,rcx
-        add ecx,sizeof( sfield )
-        mov rdi,LclAlloc( ecx )
-        xor eax,eax
-        mov ecx,sizeof( sfield )
-        mov rdx,rdi
-        rep stosb
-        lea rdi,[rdx].sfield.ivalue
-        mov rcx,rsi
+        mov esi,ecx
+        add ecx,sizeof( asym )
+        mov rdx,LclAlloc( ecx )
+        lea rdi,[rdx].asym.ivalue
+        mov ecx,esi
         mov rsi,StringBufferEnd
         inc ecx
         rep movsb
         mov rdi,rdx
-
     .else
-
-        mov rdi,LclAlloc( sizeof( sfield ) )
-        xor eax,eax
-        mov ecx,sizeof( sfield )
-        mov rdx,rdi
-        rep stosb
-        mov rdi,rdx
+        mov rdi,LclAlloc( sizeof( asym ) )
     .endif
 
     ; create the struct field symbol
@@ -817,7 +799,7 @@ endif
         mov [rsi].tail,rdi
     .else
         mov rcx,[rsi].tail
-        mov [rcx].sfield.next,rdi
+        mov [rcx].asym.next,rdi
         mov [rsi].tail,rdi
     .endif
 
@@ -906,7 +888,7 @@ endif
             ; (there's still a problem if alignment is > 1!)
 
             mov rdx,CurrStruct
-            .for ( rdx = [rdx].dsym.next : rdx : rdx = [rdx].dsym.next )
+            .for ( rdx = [rdx].asym.next : rdx : rdx = [rdx].asym.next )
                 add [rcx].asym.offs,[rdx].asym.offs
             .endf
             mov [rcx].asym.isdefined,1
@@ -943,7 +925,7 @@ AlignInStruct endp
 
 ; called by data_dir() when a structure field has been created.
 
-UpdateStructSize proc fastcall sym:ptr asym
+UpdateStructSize proc fastcall sym:asym_t
 
     mov rdx,CurrStruct
 
@@ -976,7 +958,7 @@ SetStructCurrentOffset proc fastcall off:int_t
 
     ; if an ORG is inside the struct, it cannot be instanced anymore
 
-    mov rax,[rdx].dsym.structinfo
+    mov rax,[rdx].asym.structinfo
     mov [rax].struct_info.OrgInside,1
 
     .ifs ( ecx > [rdx].asym.total_size )
@@ -999,7 +981,7 @@ SetStructCurrentOffset endp
     assume rsi:ptr qualified_type
     assume rdi:nothing
 
-GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:ptr asm_tok,
+GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:token_t,
         pti:ptr qualified_type
 
    .new type:int_t
@@ -1256,7 +1238,7 @@ GetQualifiedType endp
 ; TYPEDEF directive. Syntax is:
 ; <type name> TYPEDEF [proto|[far|near [ptr]]<qualified type>]
 
-CreateType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, name:string_t, pp:ptr asym
+CreateType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, name:string_t, pp:asym_t
 
   local ti:qualified_type
 
@@ -1270,7 +1252,7 @@ CreateType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, name:s
 
 if TYPEOPT
         ; release the structinfo data extension
-        mov [rdi].dsym.structinfo,NULL
+        mov [rdi].asym.structinfo,NULL
 endif
 
     .else
@@ -1423,7 +1405,7 @@ endif
 CreateType endp
 
 
-TypedefDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
+TypedefDirective proc __ccall i:int_t, tokenarray:token_t
 
     ldr ecx,i
     ldr rdx,tokenarray
@@ -1442,17 +1424,17 @@ TypedefDirective endp
 ; defines a RECORD type (state=SYM_TYPE).
 ; the memtype will be MT_BYTE, MT_WORD, MT_DWORD [, MT_QWORD in 64-bit].
 
-RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new name:string_t
-   .new newr:ptr dsym
-   .new oldr:ptr dsym = NULL
+   .new newr:asym_t
+   .new oldr:asym_t = NULL
    .new cntBits:int_t
    .new def:int_t
    .new len:int_t
    .new redef_err:int_t
    .new count:int_t
-   .new init_loc:ptr asm_tok
+   .new init_loc:token_t
    .new opndx:expr
    .new offs:uint_t
 
@@ -1613,20 +1595,11 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov rsi,[rdi].asm_tok.string_ptr
             add cntBits,opndx.value
             mov ecx,count
-            mov rdx,LclAlloc( &[rcx+sizeof( sfield )] )
-            mov ecx,sizeof( sfield )
-            mov rdi,rax
-            xor eax,eax
-            rep stosb
-            mov rdi,rdx
-            assume rdi:ptr sfield
-
+            mov rdi,LclAlloc( &[rcx+sizeof( asym )] )
+            assume rdi:asym_t
             mov [rdi].name_size,len
             mov [rdi].name,LclDup( rsi )
-            mov [rdi].list,0
-            .if ( MODULE.cref )
-                mov [rdi].list,1
-            .endif
+            mov [rdi].list,MODULE.cref
             mov [rdi].state,SYM_STRUCT_FIELD
             mov [rdi].mem_type,MT_BITS
             mov [rdi].total_size,opndx.value
@@ -1636,18 +1609,14 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
 
             mov [rdi].next,NULL
-            mov [rdi].ivalue[0],0
             mov rcx,newr
-            mov rcx,[rcx].dsym.structinfo
-
+            mov rcx,[rcx].asym.structinfo
             .if ( [rcx].struct_info.head == NULL )
-
                 mov [rcx].struct_info.head,rdi
                 mov [rcx].struct_info.tail,rdi
             .else
-
                 mov rdx,[rcx].struct_info.tail
-                mov [rdx].sfield.next,rdi
+                mov [rdx].asym.next,rdi
                 mov [rcx].struct_info.tail,rdi
             .endif
 
@@ -1659,7 +1628,6 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 lea rdi,[rdi].ivalue
                 mov ecx,count
                 rep movsb
-                mov byte ptr [rdi],0
                 mov rdi,rdx
             .endif
         .endif
@@ -1706,7 +1674,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; if the BYTE/WORD/DWORD isn't used fully, shift bits to the right!
     ; set the bit position
 
-    mov rcx,[rsi].dsym.structinfo
+    mov rcx,[rsi].asym.structinfo
     .for ( rdi = [rcx].struct_info.head: rdi: rdi = [rdi].next )
 
         sub eax,[rdi].total_size

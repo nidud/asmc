@@ -26,7 +26,7 @@ include proc.inc
 
 externdef list_pos:DWORD
 
-GetTypeId proto __ccall :string_t, :ptr asm_tok
+GetTypeId proto __ccall :string_t, :token_t
 
 ; Stact for "quoted strings" and floats
 
@@ -396,7 +396,7 @@ GetCurrentSegment proc __ccall private buffer:string_t
 GetCurrentSegment endp
 
 
-GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new rc:             int_t
    .new equal:          int_t
@@ -726,7 +726,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
     mov string,rcx
     mov dlabel,rdx
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
     ; find first instance of macro in line
 
@@ -873,7 +873,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                     RunLineQueue()
                 .endif
 
-                assume rbx:ptr asym
+                assume rbx:asym_t
 
                 xor esi,esi
                 mov rbx,MODULE.currseg
@@ -1024,9 +1024,9 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
 CreateFloat ENDP
 
 
-    assume rsi:nothing, rbx:ptr asm_tok
+    assume rsi:nothing, rbx:token_t
 
-TextItemError proc __ccall uses rbx item:ptr asm_tok
+TextItemError proc __ccall uses rbx item:token_t
 
     ldr rbx,item
     mov rax,[rbx].string_ptr
@@ -1055,9 +1055,9 @@ TextItemError endp
 ; syntax <name> CATSTR [<string>,...]
 ; TEXTEQU is an alias for CATSTR
 
-CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-  local sym:ptr asym
+  local sym:asym_t
 
     ldr  edi,i
     ldr  rdx,tokenarray
@@ -1155,7 +1155,7 @@ CatStrDir endp
 ; - name:  identifer ( if sym == NULL )
 ; - value: value of text macro ( original line, BEFORE expansion )
 
-SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok, sym:ptr asym, name:string_t, value:string_t
+SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:token_t, sym:asym_t, name:string_t, value:string_t
 
     UNREFERENCED_PARAMETER(sym)
 
@@ -1255,7 +1255,7 @@ AddPredefinedText endp
 ; defines a text equate.
 ; syntax: name SUBSTR <string>, pos [, size]
 
-SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new name:string_t
    .new p:string_t
@@ -1401,7 +1401,7 @@ SubStrDir endp
 ; SizeStr()
 ; defines a numeric variable which contains size of a string
 
-SizeStrDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
+SizeStrDir proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ldr ecx,i
     ldr rdx,tokenarray
@@ -1435,7 +1435,7 @@ SizeStrDir endp
 ; syntax:
 ; name INSTR [pos,]string, substr
 
-InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local opndx:expr
   local start:int_t
@@ -1539,7 +1539,7 @@ InStrDir endp
 ; internal @CatStr macro function
 ; syntax: @CatStr( literal [, literal ...] )
 
-CatStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+CatStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
     ldr rdi,mi
     .for ( rsi = [rdi].macro_instance.parm_array,
@@ -1561,7 +1561,7 @@ ifdef USE_COMALLOC
 
 ComAlloc proto __ccall :string_t, :token_t
 
-ComAllocFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+ComAllocFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
     .if ( ComAlloc( buffer, tokenarray ) == 0 )
 
@@ -1576,7 +1576,7 @@ ComAllocFunc endp
 endif
 
 
-TypeIdFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+TypeIdFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
     .if ( GetTypeId( buffer, tokenarray ) == 0 )
 
@@ -1592,7 +1592,7 @@ TypeIdFunc endp
 ; internal @CStr macro function
 ; syntax:  @CStr( "\tstring\n" )
 
-CStringFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+CStringFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
     .if ( CString( buffer, tokenarray ) == 0 )
 
@@ -1609,7 +1609,7 @@ CStringFunc endp
 ; @Reg( reg )
 ; @Reg( reg, size )
 
-RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
    .new opnd:expr
    .new i:int_t
@@ -1671,7 +1671,7 @@ RegFunc endp
 ; used by @SubStr() for arguments 2 and 3 (start and size),
 ; and by @InStr() for argument 1 ( start )
 
-GetNumber proc __ccall private string:string_t, pi:ptr int_t, tokenarray:ptr asm_tok
+GetNumber proc __ccall private string:string_t, pi:ptr int_t, tokenarray:token_t
 
   local opndx:expr
   local i:int_t
@@ -1702,7 +1702,7 @@ GetNumber endp
 ; the result is returned as string in current radix
 
 InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
-        buffer:string_t, tokenarray:ptr asm_tok
+        buffer:string_t, tokenarray:token_t
 
    .new pos:int_t = 1
 
@@ -1760,7 +1760,7 @@ InStrFunc endp
 ; syntax: @SizeStr( literal )
 ; the result is returned as string in current radix
 
-SizeStrFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+SizeStrFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
     ldr rcx,mi
     mov rdx,[rcx].macro_instance.parm_array
@@ -1789,7 +1789,7 @@ SizeStrFunc endp
 ; internal @SubStr macro function
 ; syntax: @SubStr( literal, num [, num ] )
 
-SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
   local pos:int_t
   local size:int_t
@@ -1842,7 +1842,7 @@ SubStrFunc endp
 ; string macro initialization
 ; this proc is called once per module
 
-    assume rdi:ptr dsym, rsi:ptr macro_info
+    assume rdi:asym_t, rsi:macro_t
 
 StringInit proc __ccall uses rsi rdi
 
@@ -1858,10 +1858,7 @@ ifdef USE_COMALLOC
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,2
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
-    mov [rax].mparm_list.deflt,NULL
     mov [rax].mparm_list.required,TRUE
-    mov [rax].mparm_list[mparm_list].deflt,NULL
-    mov [rax].mparm_list[mparm_list].required,FALSE
 
 endif
 
@@ -1875,10 +1872,6 @@ endif
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,2
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
-    mov [rax].mparm_list.deflt,NULL
-    mov [rax].mparm_list.required,FALSE
-    mov [rax].mparm_list[mparm_list].deflt,NULL
-    mov [rax].mparm_list[mparm_list].required,FALSE
 
     ;; add @CStr() macro func
 
@@ -1890,7 +1883,6 @@ endif
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
-    mov [rax].mparm_list.deflt,NULL
     mov [rax].mparm_list.required,TRUE
 
     ;; add @Reg() macro func
@@ -1903,10 +1895,7 @@ endif
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,2
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
-    mov [rax].mparm_list.deflt,NULL
     mov [rax].mparm_list.required,TRUE
-    mov [rax].mparm_list[mparm_list].deflt,NULL
-    mov [rax].mparm_list[mparm_list].required,FALSE
 
     ;; add @CatStr() macro func
 
@@ -1919,8 +1908,6 @@ endif
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
-    mov [rax].mparm_list.deflt,NULL
-    mov [rax].mparm_list.required,FALSE
 
     ;; add @InStr() macro func
 
@@ -1933,11 +1920,7 @@ endif
     mov [rsi].parmcnt,3
     mov [rsi].autoexp,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 3 )
-    mov [rax].mparm_list.deflt,NULL
-    mov [rax].mparm_list.required,FALSE
-    mov [rax].mparm_list[mparm_list].deflt,NULL
     mov [rax].mparm_list[mparm_list].required,TRUE
-    mov [rax].mparm_list[mparm_list*2].deflt,NULL
     mov [rax].mparm_list[mparm_list*2].required,TRUE
 
     ;; add @SizeStr() macro func
@@ -1950,8 +1933,6 @@ endif
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
-    mov [rax].mparm_list.deflt,NULL
-    mov [rax].mparm_list.required,FALSE
 
     ;; add @SubStr() macro func
 
@@ -1964,12 +1945,8 @@ endif
     mov [rsi].parmcnt,3
     mov [rsi].autoexp,2 + 4 ;; param 2 (pos) and 3 (size) are expanded
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 3 )
-    mov [rax].mparm_list.deflt,NULL
     mov [rax].mparm_list.required,TRUE
-    mov [rax].mparm_list[mparm_list].deflt,NULL
     mov [rax].mparm_list[mparm_list].required,TRUE
-    mov [rax].mparm_list[mparm_list*2].deflt,NULL
-    mov [rax].mparm_list[mparm_list*2].required,FALSE
     ret
 
 StringInit endp

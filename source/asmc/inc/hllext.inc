@@ -113,13 +113,13 @@ GetHllLabel macro
     endm
 
 GetLabelStr		proto __ccall :int_t, :string_t
-ExpandLine		proto __ccall :string_t, :ptr asm_tok
-ExpandCStrings		proto __ccall :ptr asm_tok
-EvaluateHllExpression	proto __ccall :ptr hll_item, :ptr int_t, :ptr asm_tok, :int_t, :int_t, :string_t
-ExpandHllProc		proto __ccall :string_t, :int_t, :ptr asm_tok
-ExpandHllExpression	proto __ccall :ptr hll_item, :ptr int_t, :ptr asm_tok, :int_t, :int_t, :string_t
-HllContinueIf		proto __ccall :ptr hll_item, :ptr int_t, :ptr asm_tok, :int_t, :ptr hll_item, :int_t
-GenerateCString		proto __ccall :int_t, :ptr asm_tok
-DefaultConstructor	proto __ccall :ptr asym, :string_t
+ExpandLine		proto __ccall :string_t, :token_t
+ExpandCStrings		proto __ccall :token_t
+EvaluateHllExpression	proto __ccall :ptr hll_item, :ptr int_t, :token_t, :int_t, :int_t, :string_t
+ExpandHllProc		proto __ccall :string_t, :int_t, :token_t
+ExpandHllExpression	proto __ccall :ptr hll_item, :ptr int_t, :token_t, :int_t, :int_t, :string_t
+HllContinueIf		proto __ccall :ptr hll_item, :ptr int_t, :token_t, :int_t, :ptr hll_item, :int_t
+GenerateCString		proto __ccall :int_t, :token_t
+DefaultConstructor	proto __ccall :asym_t, :string_t
 
 endif

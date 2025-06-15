@@ -31,9 +31,9 @@ include omf.inc
 include qfloat.inc
 
 segm_override   proto __ccall :ptr expr, :ptr code_info
-data_item       proto __ccall :ptr int_t, :ptr asm_tok, :ptr asym, :uint_32, :ptr asym, :uint_32, :int_t, :int_t, :int_t, :int_t
+data_item       proto __ccall :ptr int_t, :token_t, :asym_t, :uint_32, :asym_t, :uint_32, :int_t, :int_t, :int_t, :int_t
 
-externdef SegOverride:ptr asym
+externdef SegOverride:asym_t
 externdef szNull:char_t
 
 OutputDataBytes macro x, y
@@ -53,7 +53,7 @@ OutputDataBytes macro x, y
     option proc:private
 
 
-AsmerrSymName proc fastcall error:int_t, sym:ptr asym
+AsmerrSymName proc fastcall error:int_t, sym:asym_t
 
     lea rax,@CStr("")
     .if rdx
@@ -65,10 +65,10 @@ AsmerrSymName proc fastcall error:int_t, sym:ptr asym
 AsmerrSymName endp
 
 
-    assume rbx:ptr asm_tok
-    assume rdi:ptr sfield
+    assume rbx:token_t
+    assume rdi:asym_t
 
-InitializeArray proc __ccall uses rsi rdi rbx f:ptr sfield, pi:ptr int_t, tokenarray:ptr asm_tok
+InitializeArray proc __ccall uses rsi rdi rbx f:asym_t, pi:ptr int_t, tokenarray:token_t
 
   local oldofs:uint_32
   local no_of_bytes:uint_32
@@ -176,7 +176,7 @@ InitializeArray proc __ccall uses rsi rdi rbx f:ptr sfield, pi:ptr int_t, tokena
        .new filler:char_t = 0
         mov rcx,CurrSeg
         .if rcx
-            mov rcx,[rcx].dsym.seginfo
+            mov rcx,[rcx].asym.seginfo
         .endif
         .if ( rcx && [rcx].seg_info.segtype == SEGTYPE_BSS )
 
@@ -214,8 +214,8 @@ InitializeArray endp
 ; Since this function may be reentered, it's necessary to save/restore
 ; global variable TokenCount.
 
-InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_tok,
-        symtype:ptr dsym, embedded:ptr asym
+InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:token_t,
+        symtype:asym_t, embedded:asym_t
 
    .new nextofs:int_32
    .new i:int_t
@@ -269,14 +269,14 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
 
     ;; scan the STRUCT/UNION/RECORD's members
 
-    mov rdx,[rsi].dsym.structinfo
+    mov rdx,[rsi].asym.structinfo
     .for ( rdi = [rdx].struct_info.head: rdi: rdi = [rdi].next )
 
         ; is it a RECORD field?
 
         .if ( [rdi].mem_type == MT_BITS )
             .if ( [rbx].token == T_COMMA || [rbx].token == T_FINAL )
-                .if ( [rdi].ivalue[0] && [rdi].ivalue[0] != ':' )
+                .if ( [rdi].ivalue && [rdi].ivalue != ':' )
                     mov j,TokenCount
                     inc j
                     mov ecx,Tokenize( &[rdi].ivalue, j, tokenarray, TOK_RESCAN )
@@ -324,7 +324,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
                 or dword ptr dwRecInit[4],edx
             .endif
 
-        .elseif ( [rdi].ivalue[0] == 0 )  ;; embedded struct?
+        .elseif ( [rdi].ivalue == 0 )  ;; embedded struct?
 
             InitStructuredVar( i, tokenarray, [rdi].type, rdi )
             .if ( [rbx].token == T_STRING )
@@ -412,7 +412,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
                 mov nextofs,[rsi].asym.total_size
             .else
                 mov rcx,[rdi].next
-                mov nextofs,[rcx].sfield.offs
+                mov nextofs,[rcx].asym.offs
             .endif
             mov ecx,[rdi].offs
             add ecx,[rdi].total_size
@@ -559,8 +559,8 @@ output_float endp
 ; 3. item size is 1 and a quoted string with len > 1 is used as initializer
 ;
 
-data_item proc __ccall uses rsi rdi rbx start_pos:ptr int_t, tokenarray:ptr asm_tok, sym:ptr asym,
-        no_of_bytes:uint_32, type_sym:ptr asym, _dup:uint_32,
+data_item proc __ccall uses rsi rdi rbx start_pos:ptr int_t, tokenarray:token_t, sym:asym_t,
+        no_of_bytes:uint_32, type_sym:asym_t, _dup:uint_32,
         inside_struct:int_t, is_float:int_t, first:int_t, _end:int_t
 
     .new i:int_t
@@ -825,7 +825,7 @@ next_item:
         .if ( Parse_Pass == PASS_2 && inside_struct == FALSE && initwarn == FALSE )
 
             mov rcx,CurrSeg
-            mov rcx,[rcx].dsym.seginfo
+            mov rcx,[rcx].asym.seginfo
             .if ( [rcx].seg_info.segtype == SEGTYPE_BSS ||
                   [rcx].seg_info.segtype == SEGTYPE_ABS )
 
@@ -1359,7 +1359,7 @@ item_done:
 data_item endp
 
 
-checktypes proc __ccall sym:ptr asym, mem_type:byte, type_sym:ptr asym
+checktypes proc __ccall sym:asym_t, mem_type:byte, type_sym:asym_t
 
     ; for EXTERNDEF, check type changes
 
@@ -1402,7 +1402,7 @@ checktypes endp
 
     option proc:public
 
-data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asym
+data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, type_sym:asym_t
 
    .new no_of_bytes:uint_32
    .new old_offset:uint_32
@@ -1461,7 +1461,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
         ; if the parser found a TYPE id, type_sym is != NULL
 
         mov mem_type,MT_TYPE
-        mov rdi,[rsi].dsym.structinfo
+        mov rdi,[rsi].asym.structinfo
         .if ( [rsi].asym.typekind != TYPE_TYPEDEF &&
              ( [rsi].asym.total_size == 0 || [rdi].struct_info.OrgInside ) )
             .return( asmerr( 2159 ) )
@@ -1550,10 +1550,10 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
         .else ; v2.04: else branch added
 
             mov rdx,CurrStruct
-            mov rdi,[rdx].dsym.structinfo
+            mov rdi,[rdx].asym.structinfo
             mov rsi,[rdi].struct_info.tail
             mov currofs,[rsi].asym.offs
-            mov [rdi].struct_info.tail,[rsi].sfield.next
+            mov [rdi].struct_info.tail,[rsi].asym.next
         .endif
 
     .else
@@ -1634,9 +1634,9 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
                 ; this allows to reduce the number of passes (see Fixup.c)
 
                 mov rcx,CurrSeg
-                mov rdx,[rcx].dsym.seginfo
+                mov rdx,[rcx].asym.seginfo
                 mov rax,[rdx].seg_info.label_list
-                mov [rsi].dsym.next,rax
+                mov [rsi].asym.next,rax
                 mov [rdx].seg_info.label_list,rsi
             .else
                 mov old_offset,[rsi].asym.offs

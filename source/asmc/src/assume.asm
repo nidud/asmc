@@ -640,7 +640,7 @@ GetOfssizeAssume proc fastcall segno:int_t
 
             .if ( [rax].asym.state == SYM_SEG )
 
-                mov rax,[rax].dsym.seginfo
+                mov rax,[rax].asym.seginfo
                 movzx eax,[rax].seg_info.Ofssize
                .return
             .endif

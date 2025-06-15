@@ -12,7 +12,7 @@ endif
 include asmc.inc
 ;
 ; what items are stored in the heap?
-; - symbols + symbol names ( asym, dsym; symbol.c )
+; - symbols + symbol names ( asym, asym; symbol.c )
 ; - macro lines ( StoreMacro(); macro.c )
 ; - file names ( CurrFName[]; assemble.c )
 ; - temp items + buffers ( omf.c, bin.c, coff.c, elf.c )

@@ -65,8 +65,8 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
         mov [rcx].isproc,1
         ; v2.12: must be copied as well, or INVOKE won't work correctly
         mov [rcx].langtype,[rdi].langtype
-        assume rcx:dsym_t
-        assume rdi:dsym_t
+        assume rcx:asym_t
+        assume rdi:asym_t
         mov [rcx].procinfo,[rdi].procinfo
         assume rcx:asym_t
         assume rdi:asym_t

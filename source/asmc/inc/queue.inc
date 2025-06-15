@@ -9,22 +9,23 @@
 ifndef __QUEUE_INC
 define __QUEUE_INC
 
-qnode	struct
-next	ptr ?
-union
- elmt	ptr ?
- sym	ptr asym ?
-ends
-qnode	ends
 qnode_t typedef ptr qnode
-
-qdesc	struct
-head	ptr ?
-tail	ptr ?
-qdesc	ends
 qdesc_t typedef ptr qdesc
 
-QEnqueue proto fastcall :ptr qdesc, :ptr
-QAddItem proto fastcall :ptr qdesc, :ptr
+qnode	struct
+next	qnode_t ?
+union
+ elmt	qnode_t ?
+ sym	asym_t ?
+ends
+qnode	ends
+
+qdesc	struct
+head	qdesc_t ?
+tail	qdesc_t ?
+qdesc	ends
+
+QEnqueue proto fastcall :qdesc_t, :ptr
+QAddItem proto fastcall :qdesc_t, :ptr
 
 endif

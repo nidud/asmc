@@ -18,7 +18,7 @@ define GNURELOCS 1
 public Frame_Type
 public Frame_Datum
 
-extern SegOverride:ptr asym
+extern SegOverride:asym_t
 
 .data
  Frame_Type  db 0 ; curr fixup frame type: SEG|GRP|EXT|ABS|NONE; see omfspec.inc
@@ -40,7 +40,7 @@ extern SegOverride:ptr asym
 
     assume rbx:ptr fixup
 
-CreateFixup proc __ccall uses rsi rdi rbx sym:ptr asym, type:fixup_types, options:fixup_options
+CreateFixup proc __ccall uses rsi rdi rbx sym:asym_t, type:fixup_types, options:fixup_options
 
     ldr rsi,sym
 
@@ -64,7 +64,7 @@ CreateFixup proc __ccall uses rsi rdi rbx sym:ptr asym, type:fixup_types, option
 
         mov rcx,CurrSeg
         .if ( rcx )
-            mov rdx,[rcx].dsym.seginfo
+            mov rdx,[rcx].asym.seginfo
             mov [rbx].nextrlc,[rdx].seg_info.head
             mov [rdx].seg_info.head,rbx
         .endif
@@ -94,7 +94,7 @@ CreateFixup endp
 ; symbol has type SYM_SEG/SYM_GRP.
 ;
 
-SetFixupFrame proc __ccall uses rsi rdi sym:ptr asym, ign_grp:char_t
+SetFixupFrame proc __ccall uses rsi rdi sym:asym_t, ign_grp:char_t
 
     ldr rsi,sym
     .if ( rsi )
@@ -104,7 +104,7 @@ SetFixupFrame proc __ccall uses rsi rdi sym:ptr asym, ign_grp:char_t
         .case SYM_EXTERNAL
             .if( [rsi].asym.segm != NULL )
                 .if( ign_grp == FALSE && GetGroup( rsi ) )
-                    mov rcx,[rax].dsym.grpinfo
+                    mov rcx,[rax].asym.grpinfo
                     mov Frame_Type,FRAME_GRP
                     mov Frame_Datum,[rcx].grp_info.grp_idx
                 .else
@@ -119,7 +119,7 @@ SetFixupFrame proc __ccall uses rsi rdi sym:ptr asym, ign_grp:char_t
             .endc
         .case SYM_GRP
             mov Frame_Type,FRAME_GRP
-            mov rcx,[rsi].dsym.grpinfo
+            mov rcx,[rsi].asym.grpinfo
             mov Frame_Datum,[rcx].grp_info.grp_idx
             .endc
         .endsw
@@ -135,7 +135,7 @@ SetFixupFrame endp
 ; they no longer exist when store_fixup() is called.
 ;
 
-store_fixup proc __ccall uses rsi rbx fixp:ptr fixup, s:ptr dsym, pdata:ptr int_t
+store_fixup proc __ccall uses rsi rbx fixp:ptr fixup, s:asym_t, pdata:ptr int_t
 
     ldr rbx,fixp
     ldr rsi,pdata
@@ -203,7 +203,7 @@ endif
     .endif
 
     mov rsi,s
-    mov rsi,[rsi].dsym.seginfo
+    mov rsi,[rsi].asym.seginfo
     .if ( [rsi].seg_info.head == NULL )
         mov [rsi].seg_info.tail,rbx
         mov [rsi].seg_info.head,rbx

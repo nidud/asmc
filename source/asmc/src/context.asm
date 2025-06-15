@@ -101,22 +101,22 @@ define NUM_STDREGS 16
    .ends
 
 ifndef ASMC64
-extern sym_Cpu:ptr asym
+extern sym_Cpu:asym_t
 endif
 
 .code
 
 ; v2.10: major rewrite of this function
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
     assume rdi:ptr context
 
-ContextDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ContextDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     imul ebx,i,asm_tok
     add rbx,tokenarray
 
-   .new start:ptr asm_tok = rbx
+   .new start:token_t = rbx
    .new directive:int_t = [rbx].tokval
    .new k:int_t
 

@@ -195,7 +195,7 @@ SymClearLocal endp
 SymGetLocal proc __ccall uses rbx psym:asym_t
 
     ldr rcx,psym
-    mov rdx,[rcx].dsym.procinfo
+    mov rdx,[rcx].asym.procinfo
     lea rdx,[rdx].proc_info.labellist
     xor ecx,ecx
     lea rbx,lsym_table
@@ -206,7 +206,7 @@ SymGetLocal proc __ccall uses rbx psym:asym_t
         inc ecx
         .continue .if !rax
         mov [rdx],rax
-        lea rdx,[rax].dsym.nextll
+        lea rdx,[rax].asym.nextll
     .endw
     xor eax,eax
     mov [rdx],eax
@@ -233,7 +233,7 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
     rep .stosd
     mov rdi,rdx
 
-    mov rsi,[rsi].dsym.procinfo
+    mov rsi,[rsi].asym.procinfo
     mov rsi,[rsi].proc_info.labellist
 
     .while rsi
@@ -250,7 +250,7 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
         .endw
         and eax,LHASH_TABLE_SIZE - 1
         mov [rdi+rax*size_t],rsi
-        mov rsi,[rsi].dsym.nextll
+        mov rsi,[rsi].asym.nextll
     .endw
     ret
 
@@ -261,12 +261,12 @@ SymAlloc proc __ccall uses rsi rdi name:string_t
 
     ldr rsi,name
     mov edi,tstrlen( rsi )
-    LclAlloc( &[rdi+dsym+1] )
+    LclAlloc( &[rdi+asym+1] )
 
     mov [rax].asym.name_size,edi
     mov [rax].asym.mem_type,MT_EMPTY
 
-    lea rdx,[rax+dsym]
+    lea rdx,[rax+asym]
     mov [rax].asym.name,rdx
 
     .if ( MODULE.cref )

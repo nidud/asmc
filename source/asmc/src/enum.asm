@@ -17,13 +17,13 @@ include parser.inc
 public CurrEnum
 
     .data
-    CurrEnum ptr asym 0
+    CurrEnum asym_t 0
     .code
 
-    assume rbx:ptr asm_tok
-    assume rsi:ptr asym
+    assume rbx:token_t
+    assume rsi:asym_t
 
-EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local name:string_t
   local opndx:expr
@@ -47,11 +47,11 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov rsi,LclAlloc(asym)
         mov CurrEnum,rax
         mov [rsi].nextitem,rdi
-        mov [rsi].name,0
-        mov [rsi].value,0
+        ;mov [rsi].name,0
+        ;mov [rsi].value,0
         mov [rsi].total_size,4
         mov [rsi].mem_type,MT_SDWORD
-        mov [rsi].total_length,0
+        ;mov [rsi].total_length,0
         .if [rbx].tokval == T_DOT_ENUMT
             inc [rsi].total_length
         .endif

@@ -4,12 +4,25 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 .pragma list(push, 0)
+
 ifndef __SYMBOLS_INC
 define __SYMBOLS_INC
 
-; defines symbol structures asym and dsym,
-; and prototypes of functions in symbols.c.
+; defines symbol structure asym,
+; and prototypes of functions in symbols.asm.
 ; This file is included by parser.inc
+;
+; v2.36.46 - removed dsym and sfield --> asym
+
+    asym_t          typedef ptr asym
+    segment_t       typedef ptr seg_info
+    segitem_t       typedef ptr seg_item
+    group_t         typedef ptr grp_info
+    proc_t          typedef ptr proc_info
+    struct_t        typedef ptr struct_info
+    macro_t         typedef ptr macro_info
+    debug_t         typedef ptr debug_info
+
 
 ; SYM_LIB  - library paths are no longer added to the symbol table
 ; SYM_LNAME has been removed. It was used for the null-entry in the LNAME table only
@@ -94,12 +107,10 @@ IS_SIGNED proto watcall :byte {
     next_proc       dd ? ; index next proc
     next_file       dd ? ; index next file
    .ends
-    debug_t         typedef ptr debug_info
-
 
 .template asym
 
-    nextitem        ptr asym ?      ; next symbol in hash line
+    nextitem        asym_t ?        ; next symbol in hash line
     name            string_t ?      ; symbol name
     name_size       int_t ?
     record
@@ -129,7 +140,6 @@ IS_SIGNED proto watcall :byte {
      operator       uint_t : 1 ?    ;
      regparam       uint_t : 1 ?    ; register param
      regpair        uint_t : 1 ?    ; reg::reg param
-     cvdefined      uint_t : 1 ?    ; cv::add_type() - recurse typedefs in structure
      isexport       uint_t : 1 ?    ; v2.19: symbol exported ( SYM_INTERNAL )
      crecord        uint_t : 1 ?    ; v2.36.37: use bitf_* in records
      bitexpr        uint_t : 1 ?    ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
@@ -142,26 +152,26 @@ IS_SIGNED proto watcall :byte {
     sys_rcnt        uchar_t ?       ; syscall: register count
     sys_xcnt        uchar_t ?       ; syscall: SIMD registers
     sys_size        uchar_t ?       ; syscall: max size 8/16/32/64
-    type            ptr asym ?      ; set if memtype is MT_TYPE
+    type            asym_t ?        ; set if memtype is MT_TYPE
 
     union
      offs           int_t ?         ; used by SYM_INTERNAL (labels), SYM_TYPE, SYM_STACK, SYM_SEG
      value          int_t ?         ; used by SYM_INTERNAL (equates)
      uvalue         uint_t ?        ; v2.01: equates (they are 33-bit!)
      string_ptr     string_t ?      ; used by SYM_TMACRO
-     substitute     ptr asym ?      ; v2.04b: used by SYM_ALIAS
+     substitute     asym_t ?        ; v2.04b: used by SYM_ALIAS
      ;
      ; used by SYM_MACRO if predefined==1
      ;
-     func_ptr       proc local __ccall :ptr macro_instance, :string_t, :ptr asm_tok
+     func_ptr       proc local __ccall :ptr macro_instance, :string_t, :token_t
      classlnameidx  int_t ?         ; used by SYM_CLASS_LNAME
     ends
 
     union
-     segm           ptr asym ?      ; used by SYM_INTERNAL, SYM_EXTERNAL
-     class          ptr asym ?      ; used by SYM_TYPE
-     vtable         ptr asym ?      ; used by SYM_TYPE
-     vmacro         ptr asym ?      ; used by SYM_TYPE
+     segm           asym_t ?        ; used by SYM_INTERNAL, SYM_EXTERNAL
+     class          asym_t ?        ; used by SYM_TYPE
+     vtable         asym_t ?        ; used by SYM_TYPE
+     vmacro         asym_t ?        ; used by SYM_TYPE
     ends
 
     union
@@ -219,7 +229,7 @@ IS_SIGNED proto watcall :byte {
      ; SYM_INTERNAL (code labels)
      ; set if ptr_memtype is MT_TYPE
      ;
-     target_type    ptr asym ?
+     target_type    asym_t ?
     ends
     ;
     ; SYM_TMACRO (if it's a register variable for FASTCALL)
@@ -251,7 +261,7 @@ IS_SIGNED proto watcall :byte {
      ; high bits for equates
      ;
      value3264      int_t ?
-     dll            ptr dll_desc ? ; SYM_EXTERNAL (isproc=1)
+     dll            ptr dll_desc ?  ; SYM_EXTERNAL (isproc=1)
      ;
      ; for SYM_SEG offset field contain "local start offset" (=0)
      ; SYM_INTERNAL, SYM_STRUCT_FIELD, SYM_STACK, SYM_EXTERNAL (comm==1):
@@ -265,10 +275,10 @@ IS_SIGNED proto watcall :byte {
       cvtyperef     ushort_t ?      ; codeview type index (used after assembly steps)
       typekind      ushort_t ?      ; v2.04: moved from first_length, were it didn't work anymore
      ends                           ; since the addition of field max_mbr_size.
-     altname        ptr asym ?      ; SYM_EXTERNAL (comm==0): alternative name
-     debuginfo      ptr debug_info ?; SYM_INTERNAL (isproc==1): debug info (COFF)
+     altname        asym_t ?        ; SYM_EXTERNAL (comm==0): alternative name
+     debuginfo      debug_t ?       ; SYM_INTERNAL (isproc==1): debug info (COFF)
                                     ; SYM_INTERNAL+predefined
-     sfunc_ptr      proc local fastcall :ptr asym, :ptr
+     sfunc_ptr      proc local fastcall :asym_t, :ptr
     ends
 
     union                           ; SYM_INTERNAL, SYM_UNDEFINED, SYM_EXTERNAL: backpatching fixup
@@ -279,9 +289,47 @@ IS_SIGNED proto watcall :byte {
       ext_idx2      ushort_t ?      ; omf: (external definition) index for weak external
      ends
     ends
-   .ends
-    asym_t          typedef ptr asym
 
+; dsym originally was a "directive_node"
+; However, currently all symbols except SYM_STRUCT_FIELDs are allocated as a dsym.
+; the additional 3 fields are used differently depending on symbol's type.
+
+    union
+     seginfo        segitem_t ?     ; SYM_SEG (segments)
+     grpinfo        group_t ?       ; SYM_GRP (groups)
+     procinfo       proc_t ?        ; SYM_INTERNAL|SYM_EXTERNAL (procs, isproc=1)
+     structinfo     struct_t ?      ; SYM_TYPE (structs, unions, records [, typedefs])
+     macroinfo      macro_t ?       ; SYM_MACRO (macros)
+     nextll         asym_t ?        ; SYM_STACK, SYM_INTERNAL (code labels, isproc=0)
+    ends                            ; used to save the local hash table (contains
+                                    ; PROC locals: params, locals, labels). Details
+                                    ; see SymGetLocal(), SymSetLocal() in symbols.asm
+
+    next            asym_t ?        ; next item in linked lists of certain symbol types.
+                                    ; - SYM_UNDEFINED -> TAB_UNDEF
+                                    ; - SYM_EXTERNAL  -> TAB_EXT
+                                    ; - SYM_SEG       -> TAB_SEG
+                                    ; - SYM_GRP       -> TAB_GRP
+                                    ; - SYM_ALIAS:    -> TAB_ALIAS
+                                    ; for SYM_INTERNAL:
+                                    ; linked list of labels for current segment
+                                    ; (used for BackPatch)
+                                    ; next field in STRUCT,UNION,RECORD
+
+; for SYM_UNDEFINED, SYM_EXTERNAL, SYM_ALIAS and SYM_GRP:
+; predecessor of current symbol with the same state, to allow fast removes.
+; Actually, the only symbols which may change the state and thus
+; have a chance to be removed are SYM_UNDEFINED and SYM_EXTERNAL ( weak=TRUE )
+; during pass one.
+
+    union
+     prev           asym_t ?        ; used by PROC symbols (SYM_INTERNAL) for linked list, TAB_PROC
+     nextproc       asym_t ?        ; used by PROC locals (SYM_STACK) for linked list
+     nextlocal      asym_t ?        ; used by PROC params (SYM_STACK) for linked list
+     nextparam      asym_t ?        ; used by SYM_EXTERNAL (weak=FALSE) if altname is set
+     ivalue         char_t ?        ; v2.09: type changed from char * to char[]
+    ends
+   .ends
 
 ;---------------------------------------------------------------------------
 ; Structures for grpdef, segdef, externdef, pubdef, included library,
@@ -289,72 +337,69 @@ IS_SIGNED proto watcall :byte {
 ;---------------------------------------------------------------------------
 
 .template seg_item
-    next            ptr seg_item ?
-    iseg            ptr dsym ?
+    next            segitem_t ?
+    iseg            asym_t ?
    .ends
-    segitem_t       typedef ptr seg_item
 
 .template grp_info
-    seglist         ptr seg_item ?  ; list of segments in the group
+    seglist         segitem_t ?     ; list of segments in the group
     grp_idx         int_t ?         ; its group index (OMF)
     lname_idx       int_t ?         ; LNAME index (OMF only)
     numseg          uint_t ?        ; OMF: number of segments in the group
    .ends
-    group_t         typedef ptr grp_info
 
 
 .template seg_info
-    sgroup          ptr asym ?  ; segment's group or NULL
-    start_loc       uint_t ?    ; starting offset of current ledata or lidata
+    sgroup          asym_t ?        ; segment's group or NULL
+    start_loc       uint_t ?        ; starting offset of current ledata or lidata
     union
-     current_loc    uint_t ?    ; current offset in current ledata or lidata
-     reloc_offset   uint_t ?    ; ELF: reloc file offset
-     start_offset   uint_t ?    ; BIN: start offset in group
+     current_loc    uint_t ?        ; current offset in current ledata or lidata
+     reloc_offset   uint_t ?        ; ELF: reloc file offset
+     start_offset   uint_t ?        ; BIN: start offset in group
     ends
-    CodeBuffer      string_t ?  ;
-    bytes_written   uint_t ?    ; initialized bytes in segment
+    CodeBuffer      string_t ?      ;
+    bytes_written   uint_t ?        ; initialized bytes in segment
     record
-     readonly       uchar_t : 1 ? ; if segment is readonly
-     information    uchar_t : 1 ? ; if segment is info only (COFF/ELF)
-     force32        uchar_t : 1 ? ; force 32bit segdef (OMF only)
-     data_in_code   uchar_t : 1 ? ; data items in code segm (OMF only)
-     internal       uchar_t : 1 ? ; internal segment with private buffer
-     written        uchar_t : 1 ? ; code/data just written
-     linnum_init    uchar_t : 1 ? ; v2.10: linnum data emitted for segment?
-     align_rva      uchar_t : 1 ? ; alignment modifies RVA only, filepos not affected
+     readonly       uchar_t : 1 ?   ; if segment is readonly
+     information    uchar_t : 1 ?   ; if segment is info only (COFF/ELF)
+     force32        uchar_t : 1 ?   ; force 32bit segdef (OMF only)
+     data_in_code   uchar_t : 1 ?   ; data items in code segm (OMF only)
+     internal       uchar_t : 1 ?   ; internal segment with private buffer
+     written        uchar_t : 1 ?   ; code/data just written
+     linnum_init    uchar_t : 1 ?   ; v2.10: linnum data emitted for segment?
+     align_rva      uchar_t : 1 ?   ; alignment modifies RVA only, filepos not affected
     ends
-    Ofssize         uchar_t ?   ; segment's offset size
-    characteristics uchar_t ?   ; used by COFF/ELF/PE
-    alignment       uchar_t ?   ; is value 2^x
+    Ofssize         uchar_t ?       ; segment's offset size
+    characteristics uchar_t ?       ; used by COFF/ELF/PE
+    alignment       uchar_t ?       ; is value 2^x
     union
-     label_list     asym_t ?    ; linked list of labels in this seg
-     flushfunc      proc local __ccall :ptr dsym, :ptr byte, :dword, :ptr
+     label_list     asym_t ?        ; linked list of labels in this seg
+     flushfunc      proc local __ccall :asym_t, :ptr byte, :dword, :ptr
     ends
-    head            ptr fixup ? ; fixup queue head
-    tail            ptr fixup ? ; fixup queue tail
+    head            ptr fixup ?     ; fixup queue head
+    tail            ptr fixup ?     ; fixup queue tail
     union
-     LinnumQueue    ptr_t ?     ; for COFF line numbers
-     fileoffset     uint_t ?    ; used by BIN + ELF
-     num_linnums    uint_t ?    ; used by COFF (after LinnumQueue has been read)
+     LinnumQueue    ptr_t ?         ; for COFF line numbers
+     fileoffset     uint_t ?        ; used by BIN + ELF
+     num_linnums    uint_t ?        ; used by COFF (after LinnumQueue has been read)
     ends
-    num_relocs      uint_t ?    ; used by COFF/ELF
-    seg_idx         uint_t ?    ; segment #; v2.12: changed from short to unsigned
-    segtype         uint_t ?    ; segment's type (code, data, ...)
-    lname_idx       int_t ?     ; segment's name LNAME index (OMF only)
-    clsym           ptr asym ?  ; segment's class name (stored in an asym item)
+    num_relocs      uint_t ?        ; used by COFF/ELF
+    seg_idx         uint_t ?        ; segment #; v2.12: changed from short to unsigned
+    segtype         uint_t ?        ; segment's type (code, data, ...)
+    lname_idx       int_t ?         ; segment's name LNAME index (OMF only)
+    clsym           asym_t ?        ; segment's class name (stored in an asym item)
     union
-     abs_frame      uint_t ?    ; ABS seg, frame number (OMF,BIN)
-     comdat_number  uint_t ?    ; associated COMDAT segno (COFF)
-     comdat_idx     uint_t ?    ; lname index of COMDAT symbol (OMF)
+     abs_frame      uint_t ?        ; ABS seg, frame number (OMF,BIN)
+     comdat_number  uint_t ?        ; associated COMDAT segno (COFF)
+     comdat_idx     uint_t ?        ; lname index of COMDAT symbol (OMF)
     ends
-    combine         uchar_t ?   ; combine type, see omfspec.inc
-    comdatselection uchar_t ?   ; if > 0, it's a COMDAT (COFF/OMF)
+    combine         uchar_t ?       ; combine type, see omfspec.inc
+    comdatselection uchar_t ?       ; if > 0, it's a COMDAT (COFF/OMF)
     union
-     abs_offset     uint_t ?    ; ABS seg, offset (OMF only)
-     aliasname      string_t ?  ; ALIAS name (COFF/ELF only)
+     abs_offset     uint_t ?        ; ABS seg, offset (OMF only)
+     aliasname      string_t ?      ; ALIAS name (COFF/ELF only)
     ends
    .ends
-    segment_t       typedef ptr seg_info
 
 MAX_SEGALIGNMENT    equ 0xFF
 
@@ -363,13 +408,13 @@ MAX_SEGALIGNMENT    equ 0xFF
 .template proc_info
 
     regslist        ptr word ?      ; list of registers to be saved
-    paralist        ptr dsym ?      ; list of parameters
-    locallist       ptr dsym ?      ; list of local variables
-    labellist       ptr dsym ?      ; list of local labels
+    paralist        asym_t ?        ; list of parameters
+    locallist       asym_t ?        ; list of local variables
+    labellist       asym_t ?        ; list of local labels
     parasize        uint_t ?        ; total no. of bytes used by parameters
     localsize       uint_t ?        ; total no. of bytes used by local variables
     prologuearg     string_t ?      ; prologuearg attribute
-    exc_handler     ptr asym ?      ; exc handler set by FRAME
+    exc_handler     asym_t ?        ; exc handler set by FRAME
     ReservedStack   int_t ?         ; win64: additional reserved stack
     prolog_list_pos uint_t ?        ; prologue list pos
     record
@@ -384,7 +429,6 @@ MAX_SEGALIGNMENT    equ 0xFF
     size_prolog     uchar_t ?       ; v2.10: prologue size
     basereg         ushort_t ?      ; v2.11: stack base register
    .ends
-    proc_t          typedef ptr proc_info
 
 ; macro parameter
 
@@ -396,12 +440,13 @@ MAX_SEGALIGNMENT    equ 0xFF
 
 ; macro line
 
+    srcline_t       typedef ptr srcline
+
 .template srcline
-    next            ptr srcline ?
+    next            srcline_t ?
     ph_count        uchar_t ?       ; placeholders contained in this line
     line            char_t 1 dup(?)
    .ends
-    srcline_t       typedef ptr srcline
 
 ; macro item
 
@@ -411,17 +456,12 @@ MAX_SEGALIGNMENT    equ 0xFF
      localcnt       ushort_t ?      ; no of locals
      autoexp        ushort_t ?      ; auto-expansion flags if predefined macro
     ends
-    parmlist        ptr mparm_list ?; array of parameter items
-    lines           ptr srcline ?   ; prepared macro source lines
+    parmlist        mparm_t ?       ; array of parameter items
+    lines           srcline_t ?     ; prepared macro source lines
     srcfile         uint_t ?        ; sourcefile index
    .ends
 
 ; STRUCT field
-
-.template sfield : public asym      ; field symbol ( state=SYM_STRUCT_FIELD )
-    next            ptr sfield ?    ; next field in STRUCT,UNION,RECORD
-    ivalue          char_t ?        ; v2.09: type changed from char * to char[]
-   .ends
 
 .enum type_kind {
     TYPE_NONE,
@@ -432,9 +472,8 @@ MAX_SEGALIGNMENT    equ 0xFF
     }
 
 .template struct_info
-
-    head            ptr sfield ?    ; STRUCT/UNION/RECORD: start of field list
-    tail            ptr sfield ?    ; STRUCT/UNION/RECORD: current/next field
+    head            asym_t ?        ; STRUCT/UNION/RECORD: start of field list
+    tail            asym_t ?        ; STRUCT/UNION/RECORD: current/next field
     alignment       uchar_t ?       ; STRUCT: 1,2,4,8,16 or 32
     record
      isOpen         uchar_t : 1 ?   ; STRUCT/UNION: set until the matching ENDS is found
@@ -442,54 +481,12 @@ MAX_SEGALIGNMENT    equ 0xFF
     ends
    .ends
 
-; dsym originally was a "directive_node"
-; However, currently all symbols except SYM_STRUCT_FIELDs are allocated as a dsym.
-; the additional 3 fields are used differently depending on symbol's type.
-
-.template dsym : public asym
-
-    union
-     seginfo        ptr seg_item ?  ; SYM_SEG (segments)
-     grpinfo        ptr grp_info ?  ; SYM_GRP (groups)
-     procinfo       ptr proc_info ? ; SYM_INTERNAL|SYM_EXTERNAL (procs, isproc=1)
-     structinfo     ptr struct_info ?; SYM_TYPE (structs, unions, records [, typedefs])
-     macroinfo      ptr macro_info ?; SYM_MACRO (macros)
-     nextll         ptr dsym ?      ; SYM_STACK, SYM_INTERNAL (code labels, isproc=0)
-    ends                            ; used to save the local hash table (contains
-                                    ; PROC locals: params, locals, labels). Details
-                                    ; see SymGetLocal(), SymSetLocal() in symbols.asm
-
-    next            ptr dsym ?      ; next item in linked lists of certain symbol types.
-                                    ; - SYM_UNDEFINED -> TAB_UNDEF
-                                    ; - SYM_EXTERNAL  -> TAB_EXT
-                                    ; - SYM_SEG       -> TAB_SEG
-                                    ; - SYM_GRP       -> TAB_GRP
-                                    ; - SYM_ALIAS:    -> TAB_ALIAS
-                                    ; for SYM_INTERNAL:
-                                    ; linked list of labels for current segment
-                                    ; (used for BackPatch)
-
-; for SYM_UNDEFINED, SYM_EXTERNAL, SYM_ALIAS and SYM_GRP:
-; predecessor of current symbol with the same state, to allow fast removes.
-; Actually, the only symbols which may change the state and thus
-; have a chance to be removed are SYM_UNDEFINED and SYM_EXTERNAL ( weak=TRUE )
-; during pass one.
-
-    union
-     prev           ptr dsym ?      ; used by PROC symbols (SYM_INTERNAL) for linked list, TAB_PROC
-     nextproc       ptr dsym ?      ; used by PROC locals (SYM_STACK) for linked list
-     nextlocal      ptr dsym ?      ; used by PROC params (SYM_STACK) for linked list
-     nextparam      ptr dsym ?      ; used by SYM_EXTERNAL (weak=FALSE) if altname is set
-    ends
-   .ends
-    dsym_t          typedef ptr dsym
-
 SymAlloc        proto __ccall :string_t
-SymFree         proto __ccall :ptr asym
+SymFree         proto __ccall :asym_t
 SymCreate       proto __ccall :string_t
 SymLCreate      proto __ccall :string_t
-SymAddGlobal    proto __ccall :ptr asym
-SymAddLocal     proto __ccall :ptr asym, :string_t
+SymAddGlobal    proto __ccall :asym_t
+SymAddLocal     proto __ccall :asym_t, :string_t
 SymLookup       proto __ccall :string_t
 SymLookupLocal  proto __ccall :string_t
 SymFind         proto fastcall :string_t
@@ -501,8 +498,8 @@ SymSearch macro x
 SymInit         proto __ccall
 SymPassInit     proto __ccall :int_t
 SymMakeAllSymbolsPublic proto __ccall
-SymGetAll       proto __ccall :ptr ptr asym
-SymEnum         proto __ccall :ptr asym, :ptr int_t
+SymGetAll       proto __ccall :ptr asym_t
+SymEnum         proto __ccall :asym_t, :ptr int_t
 SymGetCount     proto __ccall
 
 StrCmpFunc_t    typedef proto fastcall :ptr, :ptr, :size_t
@@ -512,8 +509,8 @@ externdef       SymCmpFunc:StrCmpFunc
 
 SymSetCmpFunc   proto __ccall
 SymClearLocal   proto __ccall
-SymSetLocal     proto __ccall :ptr asym
-SymGetLocal     proto __ccall :ptr asym
+SymSetLocal     proto __ccall :asym_t
+SymGetLocal     proto __ccall :asym_t
 
 endif
 .pragma list(pop)

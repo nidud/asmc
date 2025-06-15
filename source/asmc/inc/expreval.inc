@@ -124,7 +124,7 @@ expr_t		typedef ptr expr
     EXPF_IN_SQBR   = 8	 ; private flag, used inside expreval.c only
     }
 
-EvalOperand	proto __ccall :ptr int_t, :ptr asm_tok, :int_t, :ptr expr, :uchar_t
+EvalOperand	proto __ccall :ptr int_t, :token_t, :int_t, :ptr expr, :uchar_t
 ExprEvalInit	proto
 EmitConstError	proto
 

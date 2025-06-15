@@ -8,31 +8,31 @@ define __SEGMENT_INC
 
 ; segment related prototypes & externals
 
-GetSegm proto fastcall :ptr asym {
+GetSegm proto fastcall :asym_t {
     mov rax,[rcx].asym.segm
     }
 
-SetSymSegOfs		proto fastcall :ptr asym
-GetSymOfssize		proto fastcall :ptr asym
+SetSymSegOfs		proto fastcall :asym_t
+GetSymOfssize		proto fastcall :asym_t
 
 ; Get current segment's offset
 
 GetCurrOffset		proto
-SetCurrOffset		proto __ccall :ptr dsym, :uint_t, :int_t, :int_t
+SetCurrOffset		proto __ccall :asym_t, :uint_t, :int_t, :int_t
 CreateIntSegment	proto __ccall :string_t, :string_t, :uchar_t, :uchar_t, :int_t
 
 ; get symbol's segment index, from the symbol itself
 
-GetSegIdx		proto fastcall :ptr asym
+GetSegIdx		proto fastcall :asym_t
 SegmentInit		proto fastcall :int_t	; init segments
 SegmentFini		proto			; exit segments
-GetGroup		proto fastcall :ptr asym
+GetGroup		proto fastcall :asym_t
 GetCurrSegAlign		proto
 SetOfssize		proto
-TypeFromClassName	proto fastcall :ptr dsym, :ptr asym
+TypeFromClassName	proto fastcall :asym_t, :asym_t
 DefineFlatGroup		proto
 SegmentModuleExit	proto
-DeleteGroup		proto __ccall :ptr dsym
+DeleteGroup		proto __ccall :asym_t
 
 ; simplified segment functions
 

@@ -162,9 +162,9 @@ SaveVariableState proc fastcall uses rsi rdi _sym:asym_t
     mov rsi,rcx
     mov [rsi].asym.issaved,1
     mov rdi,LclAlloc(equ_item)
-    mov [rdi].equ_item.next,0
+    ;mov [rdi].equ_item.next,0
     mov [rdi].equ_item.sym,rsi
-    mov [rdi].equ_item.isdefined,0
+    ;mov [rdi].equ_item.isdefined,0
     .if ( [rsi].asym.isdefined )
         inc [rdi].equ_item.isdefined
     .endif

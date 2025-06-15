@@ -11,7 +11,7 @@ include input.inc
 
 .template equ_item
     next            ptr equ_item ?
-    sym             ptr asym ?
+    sym             asym_t ?
     lvalue          int_t ?
     hvalue          int_t ?
     mem_type        uchar_t ?
@@ -68,7 +68,7 @@ StoreLine               proto __ccall :string_t
 DefSavedState           proto
 SkipSavedState          proto
 RestoreState            proto
-SaveVariableState       proto fastcall :ptr asym
+SaveVariableState       proto fastcall :asym_t
 FreeLineStore           proto
 
 FStoreLine proto fastcall flags:abs {

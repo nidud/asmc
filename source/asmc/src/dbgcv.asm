@@ -22,7 +22,7 @@ ifndef __UNIX__
 define USEMD5
 endif
 
-extern CV8Label:ptr asym
+extern CV8Label:asym_t
 
 define SIZE_CV_SEGBUF ( MAX_LINE_LEN * 2 )
 
@@ -59,7 +59,7 @@ szCVCompiler equ <"Asmc Macro Assembler">
 
 ; type of field enumeration callback function
 
-CCALLBACK(cv_enum_func, :ptr dbgcv, :ptr dsym, :ptr asym, :ptr counters)
+CCALLBACK(cv_enum_func, :ptr dbgcv, :asym_t, :asym_t, :ptr counters)
 
 .class dbgcv
 
@@ -67,8 +67,8 @@ CCALLBACK(cv_enum_func, :ptr dbgcv, :ptr dsym, :ptr asym, :ptr counters)
     pt ptr byte ?
 
     section ptr cvsection ?
-    symbols ptr dsym ?
-    types ptr dsym ?
+    symbols asym_t ?
+    types asym_t ?
     param ptr ?
     level dd ?          ; nesting level
     currtype dd ?       ; current type ( starts with 0x1000 )
@@ -81,17 +81,17 @@ CCALLBACK(cv_enum_func, :ptr dbgcv, :ptr dsym, :ptr asym, :ptr counters)
     alignps proc fastcall
     flush_section proc __ccall :dword, :dword
 
-    write_bitfield proc __ccall :ptr dsym, :ptr asym
-    write_array_type proc __ccall :ptr asym, :dword, :byte
-    write_ptr_type proc __ccall :ptr asym
-    write_type proc __ccall :ptr asym
-    write_type_procedure proc __ccall :ptr asym, :int_t
-    write_symbol proc __ccall :ptr asym
-    add_type proc __ccall :ptr asym
+    write_bitfield proc __ccall :asym_t, :asym_t
+    write_array_type proc __ccall :asym_t, :dword, :byte
+    write_ptr_type proc __ccall :asym_t
+    write_type proc __ccall :asym_t
+    write_type_procedure proc __ccall :asym_t, :int_t
+    write_symbol proc __ccall :asym_t
+    add_type proc __ccall :asym_t
 
-    cntproc proc __ccall :ptr dsym, :ptr asym, :ptr counters
-    memberproc proc __ccall :ptr dsym, :ptr asym, :ptr counters
-    enum_fields proc __ccall :ptr dsym, :cv_enum_func, :ptr counters
+    cntproc proc __ccall :asym_t, :asym_t, :ptr counters
+    memberproc proc __ccall :asym_t, :asym_t, :ptr counters
+    enum_fields proc __ccall :asym_t, :cv_enum_func, :ptr counters
    .ends
 
    .data
@@ -105,7 +105,7 @@ reg64  db 0, 2, 3, 1, 7, 6, 4, 5
 
 ; translate symbol's mem_type to a codeview typeref
 
-GetTyperef proc fastcall uses rsi rdi _sym:ptr asym, _Ofssize:byte
+GetTyperef proc fastcall uses rsi rdi _sym:asym_t, _Ofssize:byte
 
     mov rsi,rcx
     movzx edi,dl
@@ -234,7 +234,7 @@ SetPrefixName endp
 
 ; calc size of a codeview item in symbols segment
 
-GetStructLen proc fastcall sym:ptr asym, Ofssize:byte
+GetStructLen proc fastcall sym:asym_t, Ofssize:byte
 
     UNREFERENCED_PARAMETER(sym)
     UNREFERENCED_PARAMETER(Ofssize)
@@ -303,7 +303,7 @@ dbgcv::flushpt proc fastcall uses rbx size:dword
 
     mov rbx,rcx
     mov rcx,[rbx].types
-    mov rax,[rcx].dsym.seginfo
+    mov rax,[rcx].asym.seginfo
     mov [rbx].pt,[rax].seg_info.flushfunc( rcx, [rbx].pt, edx, [rbx].param )
     ret
 
@@ -314,7 +314,7 @@ dbgcv::flushps proc fastcall uses rbx size:dword
 
     mov rbx,rcx
     mov rcx,[rbx].symbols
-    mov rax,[rcx].dsym.seginfo
+    mov rax,[rcx].asym.seginfo
     mov [rbx].ps,[rax].seg_info.flushfunc( rcx, [rbx].ps, edx, [rbx].param )
     ret
 
@@ -324,7 +324,7 @@ dbgcv::flushps endp
 dbgcv::padbytes proc fastcall uses rbx curr:ptr byte
 
     mov rcx,[rcx].dbgcv.types
-    mov rcx,[rcx].dsym.seginfo
+    mov rcx,[rcx].asym.seginfo
     mov rcx,[rcx].seg_info.CodeBuffer
 
     .for ( :: rdx++ )
@@ -368,7 +368,7 @@ dbgcv::alignps endp
 
 ; write a bitfield to $$TYPES
 
-dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:ptr dsym, sym:ptr asym
+dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:asym_t, sym:asym_t
 
     ldr rbx,this
     mov esi,CV_BITFIELD
@@ -411,7 +411,7 @@ dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:ptr dsym, sym:ptr asym
 dbgcv::write_bitfield endp
 
 
-dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:ptr asym, elemtype:dword, Ofssize:byte
+dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:asym_t, elemtype:dword, Ofssize:byte
 
     ldr rbx,this
     ldr rdi,sym
@@ -472,7 +472,7 @@ dbgcv::write_array_type endp
 ; create a pointer type for procedure params and locals.
 ; the symbol's mem_type is MT_PTR.
 
-dbgcv::write_ptr_type proc __ccall uses rsi rdi rbx sym:ptr asym
+dbgcv::write_ptr_type proc __ccall uses rsi rdi rbx sym:asym_t
 
     ldr rbx,this
     ldr rsi,sym
@@ -558,7 +558,7 @@ dbgcv::write_ptr_type endp
 ; - calculate the size LF_MEMBER records inside the field list
 ; - create types ( array, structure ) if not defined yet
 
-dbgcv::cntproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr counters
+dbgcv::cntproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr counters
 
     ldr rbx,this
     ldr rdi,mbr
@@ -612,7 +612,7 @@ dbgcv::cntproc endp
 ; field enumeration callback, does:
 ; - create LF_MEMBER record
 
-dbgcv::memberproc proc __ccall uses rsi rdi rbx type:ptr dsym, mbr:ptr asym, cc:ptr counters
+dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr counters
 
    .new offs:int_t
    .new typelen:int_t
@@ -699,15 +699,15 @@ dbgcv::memberproc endp
 ; in this function.
 
 
-dbgcv::enum_fields proc __ccall uses rsi rdi rbx symb:ptr dsym, enumfunc:cv_enum_func, cc:ptr counters
+dbgcv::enum_fields proc __ccall uses rsi rdi rbx symb:asym_t, enumfunc:cv_enum_func, cc:ptr counters
 
     ldr rsi,symb
-    mov rcx,[rsi].dsym.structinfo
+    mov rcx,[rsi].asym.structinfo
 
-    .for ( rdi = [rcx].struct_info.head, ebx = 0: rdi: rdi = [rdi].sfield.next )
+    .for ( rdi = [rcx].struct_info.head, ebx = 0: rdi: rdi = [rdi].asym.next )
 
-        mov rcx,[rdi].sfield.type
-        mov eax,[rdi].sfield.name_size
+        mov rcx,[rdi].asym.type
+        mov eax,[rdi].asym.name_size
 
         .if ( rcx && eax == 0 && Options.debug_symbols == CV_SIGNATURE_C13 )
 
@@ -728,8 +728,8 @@ dbgcv::enum_fields proc __ccall uses rsi rdi rbx symb:ptr dsym, enumfunc:cv_enum
             .elseif ( [rcx].asym.typekind == TYPE_RECORD )
                 lea rdx,@CStr("record")
             .endif
-            mov [rdi].sfield.name,rdx
-            mov [rdi].sfield.name_size,eax
+            mov [rdi].asym.name,rdx
+            mov [rdi].asym.name_size,eax
         .endif
 
         .if ( eax ) ; has member a name?
@@ -739,11 +739,11 @@ dbgcv::enum_fields proc __ccall uses rsi rdi rbx symb:ptr dsym, enumfunc:cv_enum
         .elseif ( rcx )  ; is member a type (struct, union, record)?
 
             mov rdx,cc
-            add [rdx].counters.ofs,[rdi].sfield.offs
+            add [rdx].counters.ofs,[rdi].asym.offs
             this.enum_fields( rcx, enumfunc, rdx )
 
             mov rcx,cc
-            sub [rcx].counters.ofs,[rdi].sfield.offs
+            sub [rcx].counters.ofs,[rdi].asym.offs
 
         .elseif ( [rsi].asym.typekind == TYPE_UNION )
 
@@ -751,16 +751,16 @@ dbgcv::enum_fields proc __ccall uses rsi rdi rbx symb:ptr dsym, enumfunc:cv_enum
             ; to make the MS debugger work with those members, they must have a name -
             ; a temporary name is generated below which starts with "@@".
 
-           .new pold:string_t = [rdi].sfield.name
+           .new pold:string_t = [rdi].asym.name
            .new tmpname[8]:char_t
 
             tsprintf( &tmpname, "@@%u", ebx )
-            mov [rdi].sfield.name_size,eax
+            mov [rdi].asym.name_size,eax
             inc ebx
-            mov [rdi].sfield.name,&tmpname
+            mov [rdi].asym.name,&tmpname
             enumfunc( this, rsi, rdi, cc )
-            mov [rdi].sfield.name,pold
-            mov [rdi].sfield.name_size,0
+            mov [rdi].asym.name,pold
+            mov [rdi].asym.name_size,0
         .endif
     .endf
     ret
@@ -770,7 +770,7 @@ dbgcv::enum_fields endp
 
 ; write a LF_PROCEDURE & LF_ARGLIST type for procedures
 
-dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:ptr asym, cnt:int_t
+dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
 
     ldr rbx,this
     mov esi,sizeof( CV_PROCEDURE )
@@ -823,9 +823,9 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:ptr asym, cnt:int_
     ; fixme: order might be wrong ( is "push" order )
 
     mov rsi,sym
-    mov rsi,[rsi].dsym.procinfo
+    mov rsi,[rsi].asym.procinfo
 
-    .for ( rsi = [rsi].proc_info.paralist: rsi: rsi = [rsi].dsym.nextparam )
+    .for ( rsi = [rsi].proc_info.paralist: rsi: rsi = [rsi].asym.nextparam )
 
         movzx eax,[rsi].asym.ext_idx1
         .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
@@ -851,7 +851,7 @@ dbgcv::write_type_procedure endp
 ;    cv: debug state
 ;   sym: type to dump
 
-dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
+dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
 
   local name:LPSTR
   local namesize:dword
@@ -963,6 +963,8 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
                .endc
             .endsw
         .endif
+    .elseif ( [rsi].asym.cvtyperef == 0 && [rsi].asym.fwdref )
+        or property,CV_prop_fwdref
     .endif
     mov name,rax
     mov namesize,ecx
@@ -1012,8 +1014,10 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
     mov count.size,0
     mov count.ofs,0
 
-    mov rcx,[rbx]
-    [rbx].enum_fields( rsi, [rcx].dbgcvVtbl.cntproc, &count )
+    .if !( property & CV_prop_fwdref )
+        mov rcx,[rbx]
+        [rbx].enum_fields( rsi, [rcx].dbgcvVtbl.cntproc, &count )
+    .endif
 
     ; write the fieldlist record
 
@@ -1032,8 +1036,10 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
     ; add the struct's members to the fieldlist.
 
     mov count.ofs,0
-    mov rcx,[rbx]
-    [rbx].enum_fields( rsi, [rcx].dbgcvVtbl.memberproc, &count )
+    .if !( property & CV_prop_fwdref )
+        mov rcx,[rbx]
+        [rbx].enum_fields( rsi, [rcx].dbgcvVtbl.memberproc, &count )
+    .endif
 
     mov rdi,[rbx].flushpt(size)
     mov eax,size
@@ -1059,7 +1065,6 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
     .case TYPE_RECORD
     .case TYPE_STRUCT
         .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-
             mov [rdi].CV_STRUCT_16t.field,[rbx].currtype
             mov [rdi].CV_STRUCT_16t.property,property
             mov [rdi].CV_STRUCT_16t.derived,0
@@ -1101,7 +1106,7 @@ dbgcv::write_type endp
 
 ; get register values for S_REGISTER
 
-getregister proc fastcall uses rsi rdi rbx sym:ptr asym
+getregister proc fastcall uses rsi rdi rbx sym:asym_t
 
     mov rsi,rcx
     .for ( edi = 0, ebx = 0: ebx < 2: ebx++ )
@@ -1160,19 +1165,19 @@ get_x64_regno endp
 ;   sym: symbol to write
 ; the symbol has either state SYM_INTERNAL or SYM_TYPE.
 
-dbgcv::write_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
+dbgcv::write_symbol proc __ccall uses rsi rdi rbx sym:asym_t
 
   local len:int_t
   local ofs:dword
   local rlctype:fixup_types
   local Ofssize:byte
   local fixp:ptr fixup
-  local pproc:ptr dsym
-  local lcl:ptr dsym
+  local pproc:asym_t
+  local lcl:asym_t
   local i:int_t, j:int_t, k:int_t
   local cnt[2]:int_t
-  local locals[2]:ptr dsym
-  local q:ptr dsym
+  local locals[2]:asym_t
+  local q:asym_t
   local size:dword
   local leaf:word
   local typeref:uint_16
@@ -1341,27 +1346,27 @@ endif
 
     .if ( [rsi].asym.isproc && Options.debug_ext >= CVEX_REDUCED ) ;; v2.10: no locals for -Zi0
 
-        mov rdx,[rsi].dsym.procinfo
+        mov rdx,[rsi].asym.procinfo
         mov pproc,rdx
 
         ; for PROCs, scan parameters and locals and create their types.
 
         ; scan local symbols
 
-        mov locals[0*dsym_t],[rdx].proc_info.paralist
-        mov locals[1*dsym_t],[rdx].proc_info.locallist
+        mov locals[0*asym_t],[rdx].proc_info.paralist
+        mov locals[1*asym_t],[rdx].proc_info.locallist
 
         .for ( i = 0: i < 2: i++ )
 
             .if ( MODULE.defOfssize == USE64 && i == 0 )
-                .for ( j = 0, rcx = locals[0*dsym_t] : rcx : rsi = rcx,
-                       rcx = [rcx].dsym.nextparam, j++ )
+                .for ( j = 0, rcx = locals[0*asym_t] : rcx : rsi = rcx,
+                       rcx = [rcx].asym.nextparam, j++ )
                 .endf
             .endif
 
             mov ecx,i
             mov cnt[rcx*int_t],0
-            .for ( rdi = locals[rcx*dsym_t] : rdi : rdi = [rdi].dsym.nextparam )
+            .for ( rdi = locals[rcx*asym_t] : rdi : rdi = [rdi].asym.nextparam )
 
                 mov ecx,i
                 .if ( !( MODULE.defOfssize == USE64 && ecx == 0 ) )
@@ -1391,7 +1396,7 @@ endif
                 mov [rsi].asym.ext_idx1,typeref
                 .if ( MODULE.defOfssize == USE64 && i == 0 )
                     .fors ( ecx = 1, j--, rsi = locals[0]: j > ecx: ecx++,
-                            rsi = [rsi].dsym.nextparam )
+                            rsi = [rsi].asym.nextparam )
                     .endf
                 .endif
             .endf
@@ -1415,7 +1420,7 @@ endif
             mov [rdi].PROCSYM16.pEnd,0     ;; filled by CVPACK
             mov [rdi].PROCSYM16.pNext,0    ;; filled by CVPACK
             mov [rdi].PROCSYM16.len,[rsi].asym.total_size
-            mov rcx,[rsi].dsym.procinfo
+            mov rcx,[rsi].asym.procinfo
             mov [rdi].PROCSYM16.DbgStart,[rcx].proc_info.size_prolog
             mov [rdi].PROCSYM16.DbgEnd,[rsi].asym.total_size
             mov [rdi].PROCSYM16.off,0
@@ -1454,7 +1459,7 @@ endif
             mov [rdi].PROCSYM32_16t.pEnd,0      ; filled by CVPACK
             mov [rdi].PROCSYM32_16t.pNext,0     ; filled by CVPACK
             mov [rdi].PROCSYM32_16t.len,[rsi].asym.total_size
-            mov rcx,[rsi].dsym.procinfo
+            mov rcx,[rsi].asym.procinfo
             movzx eax,[rcx].proc_info.size_prolog
             mov [rdi].PROCSYM32_16t.DbgStart,eax
             mov [rdi].PROCSYM32_16t.DbgEnd,[rsi].asym.total_size
@@ -1601,7 +1606,7 @@ endif
     .endif
 
     mov rax,[rbx].symbols
-    mov rdi,[rax].dsym.seginfo
+    mov rdi,[rax].asym.seginfo
     mov rax,[rbx].ps
     sub rax,[rdi].seg_info.CodeBuffer
     add eax,[rdi].seg_info.start_loc
@@ -1659,12 +1664,12 @@ endif
         .for ( i = 0: i < 2 : i++ )
 
             .if ( MODULE.defOfssize == USE64 && i == 0 )
-                .for ( j = 0, rcx = locals[0]: rcx: rsi = rcx, rcx = [rcx].dsym.nextparam )
+                .for ( j = 0, rcx = locals[0]: rcx: rsi = rcx, rcx = [rcx].asym.nextparam )
                     inc j
                 .endf
             .endif
             mov ecx,i
-            .for ( rdi = locals[rcx*dsym_t] : rdi : rdi = [rdi].dsym.nextparam )
+            .for ( rdi = locals[rcx*asym_t] : rdi : rdi = [rdi].asym.nextparam )
                 .if ( !( MODULE.defOfssize == USE64 && i == 0 ) )
                     mov rsi,rdi
                 .endif
@@ -1820,7 +1825,7 @@ endif
 
                 .if ( MODULE.defOfssize == USE64 && i == 0 )
                     .for ( ecx = 1, j--, rsi = locals[0] : j > ecx : ecx++,
-                           rsi = [rsi].dsym.nextparam )
+                           rsi = [rsi].asym.nextparam )
                     .endf
                 .endif
             .endf
@@ -1840,24 +1845,24 @@ endif
 dbgcv::write_symbol endp
 
 
-dbgcv::add_type proc __ccall uses rsi rdi sym:ptr asym
+dbgcv::add_type proc __ccall uses rsi rdi sym:asym_t
 
     ldr rsi,sym
 
-    .if ( [rsi].asym.cvtyperef != 0 || [rsi].asym.cvdefined )
+    .if ( [rsi].asym.cvtyperef != 0 || [rsi].asym.fwdref )
         .return
     .endif
-    mov [rsi].asym.cvdefined,1
+    mov [rsi].asym.fwdref,1
 
     .if ( [rsi].asym.total_size )
 
-        .for ( rdx = [rsi].dsym.structinfo,
-               rdi = [rdx].struct_info.head : rdi : rdi = [rdi].sfield.next )
+        .for ( rdx = [rsi].asym.structinfo,
+               rdi = [rdx].struct_info.head : rdi : rdi = [rdi].asym.next )
 
-            mov rdx,[rdi].sfield.type
+            mov rdx,[rdi].asym.type
             .if ( rdx )
 
-                .if ( [rdx].asym.state == SYM_TYPE && !( [rdx].asym.cvdefined ) )
+                .if ( [rdx].asym.state == SYM_TYPE && !( [rdx].asym.fwdref ) )
 
                     .if ( [rdx].asym.typekind == TYPE_STRUCT || [rdx].asym.typekind == TYPE_UNION )
 
@@ -1894,7 +1899,7 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
     ldr rbx,this
     mov rdi,[rbx].symbols
     mov rsi,[rbx].ps
-    mov rcx,[rdi].dsym.seginfo
+    mov rcx,[rdi].asym.seginfo
     mov [rbx].ps,[rcx].seg_info.CodeBuffer
     sub rsi,rax
     mov eax,ex
@@ -1939,7 +1944,7 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
     .endif
 
     mov rdx,[rbx].symbols
-    mov rcx,[rdx].dsym.seginfo
+    mov rcx,[rdx].asym.seginfo
     mov eax,[rcx].seg_info.start_loc
     lea rax,[rsi+rax+sizeof(cvsection)]
     add eax,ex
@@ -2317,7 +2322,7 @@ vtable dbgcvVtbl {
 
     option proc:public
 
-cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:ptr dsym, types:ptr dsym, pv:ptr
+cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:asym_t, types:asym_t, pv:ptr
 
   local i:int_t
   local len:int_t
@@ -2328,11 +2333,11 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:ptr dsym, types:ptr 
     mov cv.lpVtbl,&vtable
     ldr rsi,symbols
     mov cv.symbols,rsi
-    mov rcx,[rsi].dsym.seginfo
+    mov rcx,[rsi].asym.seginfo
     mov rsi,[rcx].seg_info.CodeBuffer
     mov rdi,types
     mov cv.types,rdi
-    mov rcx,[rdi].dsym.seginfo
+    mov rcx,[rdi].asym.seginfo
     mov rdi,[rcx].seg_info.CodeBuffer
 
     mov cv.currtype,0x1000          ; user-defined types start at 0x1000
@@ -2453,7 +2458,7 @@ endif
         xor eax,eax
         .if ( rcx )
             mov rcx,[rcx].asym.segm
-            mov rcx,[rcx].dsym.seginfo
+            mov rcx,[rcx].asym.seginfo
             mov eax,[rcx].seg_info.bytes_written
         .endif
         .if ( eax )
@@ -2473,9 +2478,9 @@ endif
 
         mov cv.section,NULL
 
-        .for ( rsi = SegTable: rsi: rsi = [rsi].dsym.next )
+        .for ( rsi = SegTable: rsi: rsi = [rsi].asym.next )
 
-            mov rbx,[rsi].dsym.seginfo
+            mov rbx,[rsi].asym.seginfo
 
             .if ( [rbx].seg_info.LinnumQueue )
 
@@ -2702,8 +2707,8 @@ endif
 
         ; v2.36.18 - recurse typedefs in structure
         ;
-        ;  struct
-        ;   pStruct --> not defined.. --> void ** (now char **)
+        ; asym struct
+        ; type ptr asym ? ; char ** --> asym *
         ;
         ; This scans struct fields for undefined types
         ;
@@ -2792,11 +2797,22 @@ endif
     xor esi,esi
     .while ( SymEnum( rsi, &i ) )
         mov rsi,rax
-        .if ( [rsi].asym.state == SYM_TYPE && !( [rsi].asym.cvdefined ) &&
+        .if ( [rsi].asym.state == SYM_TYPE &&
               [rsi].asym.typekind != TYPE_TYPEDEF && [rsi].asym.cvtyperef == 0 )
             cv.write_type( rsi )
         .endif
     .endw
+
+    .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+        xor esi,esi
+        .while ( SymEnum( rsi, &i ) )
+            mov rsi,rax
+            .if ( [rsi].asym.state == SYM_TYPE &&
+                  [rsi].asym.typekind != TYPE_TYPEDEF && [rsi].asym.cvtyperef && [rsi].asym.fwdref )
+                cv.write_type( rsi )
+            .endif
+        .endw
+    .endif
 
     ;; scan symbol table for SYM_TYPE, SYM_INTERNAL
 
@@ -2837,12 +2853,12 @@ endif
     cv.flushps( SIZE_CV_SEGBUF )
 
     mov rdi,types
-    mov rdx,[rdi].dsym.seginfo
+    mov rdx,[rdi].asym.seginfo
     mov eax,[rdx].seg_info.current_loc
     mov [rdi].asym.max_offset,eax
     mov [rdx].seg_info.start_loc,0 ; required for COFF
     mov rdi,symbols
-    mov rdx,[rdi].dsym.seginfo
+    mov rdx,[rdi].asym.seginfo
     mov eax,[rdx].seg_info.current_loc
     mov [rdi].asym.max_offset,eax
     mov [rdx].seg_info.start_loc,0 ; required for COFF

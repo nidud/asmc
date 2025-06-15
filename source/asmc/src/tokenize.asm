@@ -160,10 +160,10 @@ ConcatLine proc __ccall uses rsi rdi rbx src:string_t, cnt:int_t, o:string_t, ls
 ConcatLine endp
 
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
     assume rdx:ptr line_status
 
-get_string proc fastcall uses rsi rdi rbx buf:ptr asm_tok, _p:ptr line_status
+get_string proc fastcall uses rsi rdi rbx buf:token_t, _p:ptr line_status
 
    .new symbol_c:   char_t
    .new symbol_o:   char_t
@@ -744,7 +744,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                         .endc .if ( [rdi-asm_tok].asm_tok.token == T_ID )
                         .endc .if ( CurrSeg == NULL )
                          mov rdx,CurrSeg
-                         mov rdx,[rdx].dsym.seginfo
+                         mov rdx,[rdx].asym.seginfo
                         .endc .if ( [rdx].seg_info.segtype != SEGTYPE_CODE )
                     .else
                         .endc .if ( eax < 5 )

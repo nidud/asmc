@@ -119,7 +119,7 @@ SetSimSeg proc __ccall private uses rsi rdi rbx segm:sim_seg, name:string_t
     .new pAlignSt:string_t = "PARA"
     .new pUse:string_t = ""
     .new calign[16]:char_t
-    .new sym:ptr asym
+    .new sym:asym_t
     .new pFmt:string_t
     .new pClass:string_t
 
@@ -254,9 +254,9 @@ GetCodeGroupName proc fastcall private name:string_t
 GetCodeGroupName endp
 
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
  ; Handles simplified segment directives:
  ; .CODE, .STACK, .DATA, .DATA?, .FARDATA, .FARDATA?, .CONST
@@ -333,7 +333,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 .if ( SymSearch( rdi ) && [rax].asym.state == SYM_SEG )
 
-                    mov rax,[rax].dsym.seginfo
+                    mov rax,[rax].asym.seginfo
                     mov al,[rax].seg_info.Ofssize
 
                     .if ( al == MODULE.defOfssize )
@@ -359,7 +359,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .if ( SymSearch( rdi ) && [rax].asym.state == SYM_SEG )
 
-                mov rax,[rax].dsym.seginfo
+                mov rax,[rax].asym.seginfo
                 mov rax,[rax].seg_info.sgroup
                 .if ( rax )
                     mov rdi,[rax].asym.name

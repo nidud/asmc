@@ -24,7 +24,7 @@ OPSIZE proto fastcall s:byte, x:abs {
     }
 
 segm_override proto __ccall :ptr expr, :ptr code_info
-externdef SegOverride:ptr asym
+externdef SegOverride:asym_t
 
 ;
 ; "short jump extension": extend a (conditional) jump.
@@ -124,7 +124,7 @@ FarCallToNear endp
 ;
 
     assume rbx:ptr expr
-    assume rdi:ptr asym
+    assume rdi:asym_t
 
 process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dword, opndx:ptr expr
 
@@ -133,7 +133,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
   local fixup_option:int_32
   local state:int_32
   local mem_type:byte
-  local symseg:ptr dsym
+  local symseg:asym_t
   local opidx:dword
 
     ldr rsi,CodeInfo
@@ -164,7 +164,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
         .if ( rax && rcx && [rcx].asym.segm )
 
             mov rdx,[rcx].asym.segm
-            mov rdx,[rdx].dsym.seginfo
+            mov rdx,[rdx].asym.seginfo
             mov rdx,[rdx].seg_info.sgroup
 
             .if ( rax != [rcx].asym.segm &&  rax != rdx )
@@ -175,7 +175,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             ; v2.05: switch to far jmp/call
 
             mov rcx,CurrSeg
-            mov rdx,[rcx].dsym.seginfo
+            mov rdx,[rcx].asym.seginfo
             mov rdx,[rdx].seg_info.sgroup
 
             .if ( rax != rcx && rax != rdx )
@@ -230,7 +230,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             ; report an error
 
             .if rax
-                mov rcx,[rax].dsym.seginfo
+                mov rcx,[rax].asym.seginfo
             .endif
             mov dl,MODULE.Ofssize
             .if ( MODULE.flat_grp && ( rax == NULL || [rcx].seg_info.Ofssize == dl ) )
@@ -240,7 +240,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 ; if the segments belong to the same group, it's ok
 
                 mov rax,CurrSeg
-                mov rdx,[rax].dsym.seginfo
+                mov rdx,[rax].asym.seginfo
                 mov rax,[rcx].seg_info.sgroup
 
                 ; v2.19: no error in pass one ( a GROUP directive might follow that "fixes" the error )
@@ -431,13 +431,13 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
         xor ecx,ecx
 
         .if rax
-            mov rcx,[rax].dsym.seginfo
+            mov rcx,[rax].asym.seginfo
             .if rcx
                 mov rcx,[rcx].seg_info.sgroup
             .endif
         .endif
         mov rdx,CurrSeg
-        mov rdx,[rdx].dsym.seginfo
+        mov rdx,[rdx].asym.seginfo
 
         .if ( rax == CurrSeg ||
              ( rax != NULL && rcx != NULL && rcx == [rdx].seg_info.sgroup ) )

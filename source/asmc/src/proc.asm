@@ -71,12 +71,12 @@ unw_segs_defined    db ?
 ; - MS fastcall 32-bit: registers ecx,edx (default for 32bit)
 ; - Win64: registers rcx, rdx, r8, r9 (default for 64bit)
 
-CurrProc            ptr dsym 0  ; current procedure
-ProcStack           ptr proc_info 0
+CurrProc            asym_t 0  ; current procedure
+ProcStack           proc_t 0
 
 ; @ReservedStack symbol; used when option W64F_AUTOSTACKSP has been set
 
-sym_ReservedStack   ptr asym 0  ; max stack space required by INVOKE
+sym_ReservedStack   asym_t 0  ; max stack space required by INVOKE
 
 procidx             int_t 0     ; procedure index
 
@@ -198,7 +198,7 @@ get_fasttype endp
     assume rsi:asym_t
     assume rbx:ptr fc_info
 
-fast_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t, used:ptr int_t
+fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t, used:ptr int_t
 
    .new regname[32]:sbyte
    .new wordsize:int_t
@@ -373,12 +373,12 @@ fast_pcheck endp
 ; count: number of array elements, default is 1
 ; type:  qualified type [simple type, structured type, ptr to simple/structured type]
 ;
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local name  : string_t
-  local loc   : ptr dsym
+  local loc   : asym_t
   local ti    : qualified_type
 
     .if ( Parse_Pass != PASS_1 ) ;; everything is done in pass 1
@@ -390,8 +390,8 @@ LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     mov rsi,CurrProc
-    mov rsi,[rsi].dsym.procinfo
-    assume rsi:ptr proc_info
+    mov rsi,[rsi].asym.procinfo
+    assume rsi:proc_t
 
     ; ensure the fpo bit is set - it's too late to set it in write_prologue().
     ; Note that the fpo bit is set only IF there are locals or arguments.
@@ -523,9 +523,9 @@ endif
         .if ( [rsi].locallist == NULL )
             mov [rsi].locallist,rcx
         .else
-            .for( rdx = [rsi].locallist: [rdx].dsym.nextlocal : rdx = [rdx].dsym.nextlocal )
+            .for( rdx = [rsi].locallist: [rdx].asym.nextlocal : rdx = [rdx].asym.nextlocal )
             .endf
-            mov [rdx].dsym.nextlocal,rcx
+            mov [rdx].asym.nextlocal,rcx
         .endif
 
         .if ( [rbx].token != T_FINAL )
@@ -549,7 +549,7 @@ LocalDir endp
 ; read/write value of @StackBase variable
 ;
 
-UpdateStackBase proc fastcall sym:ptr asym, opnd:ptr expr
+UpdateStackBase proc fastcall sym:asym_t, opnd:ptr expr
 
     .if ( rdx )
         mov StackAdj,[rdx].expr.uvalue
@@ -565,7 +565,7 @@ UpdateStackBase endp
 ; read value of @ProcStatus variable
 ;
 
-UpdateProcStatus proc fastcall sym:ptr asym, opnd:ptr expr
+UpdateProcStatus proc fastcall sym:asym_t, opnd:ptr expr
 
     xor eax,eax
     .if ( CurrProc )
@@ -582,7 +582,7 @@ UpdateProcStatus endp
 ; i=start parameters
 ;
 
-ParseInline proc __ccall private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, tokenarray:ptr asm_tok
+ParseInline proc __ccall private uses rsi rbx sym:asym_t, curr:token_t, tokenarray:token_t
 
     .if ( Parse_Pass == PASS_1 )
 
@@ -632,29 +632,29 @@ ParseInline proc __ccall private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, to
 ParseInline endp
 
 
-ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t, flags:byte
+ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, IsPROC:int_t, flags:byte
 
    .new name:string_t
-   .new sym:ptr dsym
+   .new sym:asym_t
    .new cntParam:int_t
    .new offs:int_t
    .new fcint:int_t = 0
    .new ti:qualified_type
    .new is_vararg:int_t
    .new init_done:int_t
-   .new paranode:ptr dsym
-   .new paracurr:ptr dsym
+   .new paranode:asym_t
+   .new paracurr:asym_t
    .new curr:int_t
 
     ldr rcx,p
-    mov rsi,[rcx].dsym.procinfo
+    mov rsi,[rcx].asym.procinfo
     movzx edi,[rcx].asym.langtype
 
     ; find "first" parameter ( that is, the first to be pushed in INVOKE )
 
     mov rdi,[rsi].paralist
     .if !( flags & _P_LEFT )
-        .for ( : rdi && [rdi].dsym.nextparam : rdi = [rdi].dsym.nextparam )
+        .for ( : rdi && [rdi].asym.nextparam : rdi = [rdi].asym.nextparam )
         .endf
     .endif
     mov paracurr,rdi
@@ -780,8 +780,8 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
 
         .if ( paracurr )
 
-            .new to:ptr asym
-            .new tn:ptr asym
+            .new to:asym_t
+            .new tn:asym_t
             .new oo:char_t
             .new on:char_t
             .new fast_type:char_t = 0
@@ -844,10 +844,10 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
             ; set paracurr to next parameter
 
             .if !( flags & _P_LEFT )
-                .for ( rcx = [rsi].paralist: rcx && [rcx].dsym.nextparam != rdi : rcx = [rcx].dsym.nextparam )
+                .for ( rcx = [rsi].paralist: rcx && [rcx].asym.nextparam != rdi : rcx = [rcx].asym.nextparam )
                 .endf
             .else
-                mov rcx,[rdi].dsym.nextparam
+                mov rcx,[rdi].asym.nextparam
             .endif
             mov paracurr,rcx
 
@@ -923,17 +923,17 @@ ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarra
 
             .if !( flags & _P_LEFT )
 
-                mov [rdi].dsym.nextparam,[rsi].paralist
+                mov [rdi].asym.nextparam,[rsi].paralist
                 mov [rsi].paralist,rdi
             .else
-                mov [rdi].dsym.nextparam,NULL
+                mov [rdi].asym.nextparam,NULL
                 .if ( [rsi].paralist == NULL )
                     mov [rsi].paralist,rdi
                 .else
-                    .for ( rdx = [rsi].paralist: rdx: rdx = [rdx].dsym.nextparam )
-                        .break .if ( [rdx].dsym.nextparam == NULL )
+                    .for ( rdx = [rsi].paralist: rdx: rdx = [rdx].asym.nextparam )
+                        .break .if ( [rdx].asym.nextparam == NULL )
                     .endf
-                    mov [rdx].dsym.nextparam,rdi
+                    mov [rdx].asym.nextparam,rdi
                     mov paracurr,NULL
                 .endif
             .endif
@@ -1024,7 +1024,7 @@ endif
         ; now calculate the [E|R]BP offsets
 
         .for ( : cntParam : cntParam-- )
-            .for ( ebx = 1, rdi = [rsi].paralist: ebx < cntParam : rdi = [rdi].dsym.nextparam, ebx++ )
+            .for ( ebx = 1, rdi = [rsi].paralist: ebx < cntParam : rdi = [rdi].asym.nextparam, ebx++ )
             .endf
             .if ( [rdi].asym.state != SYM_TMACRO ) ; register param?
 
@@ -1062,7 +1062,7 @@ ParseParams endp
 ; 3. if no segment is set, use cpu setting
 ;
 
-ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t, langtype:byte
+ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, IsPROC:int_t, langtype:byte
 
   .new token:string_t
   .new regist:ptr word
@@ -1074,7 +1074,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
   .new flags:byte
 
     ldr rdi,p
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     mov eax,[rdi].asym.ispublic
     mov oldpublic,eax
 
@@ -1394,7 +1394,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_
             .new cnt:int_t
             .new j:int_t
             .new index:int_t
-            .new sym:ptr asym
+            .new sym:asym_t
 
             .if ( !IsPROC ) ; not for PROTO!
                 asmerr( 2008, [rbx].string_ptr )
@@ -1525,7 +1525,7 @@ ParseProc endp
 ; - ExternDirective ( state == SYM_EXTERNAL )
 ; - TypedefDirective ( state == SYM_TYPE, sym==NULL )
 
-CreateProc proc __ccall uses rdi sym:ptr asym, name:string_t, state:sym_state
+CreateProc proc __ccall uses rdi sym:asym_t, name:string_t, state:sym_state
 
     ldr rdi,sym
 
@@ -1553,21 +1553,7 @@ CreateProc proc __ccall uses rdi sym:ptr asym, name:string_t, state:sym_state
     .if ( rdi )
 
         mov [rdi].asym.state,state
-        mov [rdi].dsym.procinfo,LclAlloc( sizeof( proc_info ) )
-
-if 0 ; zero alloc..
-
-        xor ecx,ecx
-        mov [rax].proc_info.regslist,ecx
-        mov [rax].proc_info.paralist,ecx
-        mov [rax].proc_info.locallist,ecx
-        mov [rax].proc_info.labellist,ecx
-        mov [rax].proc_info.parasize,ecx
-        mov [rax].proc_info.localsize,ecx
-        mov [rax].proc_info.prologuearg,ecx
-        mov [rax].proc_info.flags,cl
-endif
-
+        mov [rdi].asym.procinfo,LclAlloc( sizeof( proc_info ) )
         .if ( [rdi].asym.state == SYM_INTERNAL )
 
             ; v2.04: don't use sym_add_table() and thus
@@ -1577,7 +1563,7 @@ endif
                 mov SymTables[TAB_PROC*symbol_queue].head,rdi
             .else
                 mov rcx,SymTables[TAB_PROC*symbol_queue].tail
-                mov [rcx].dsym.nextproc,rdi
+                mov [rcx].asym.nextproc,rdi
             .endif
 
             mov SymTables[TAB_PROC*symbol_queue].tail,rdi
@@ -1604,18 +1590,18 @@ CreateProc endp
 
 ; delete a PROC item
 
-DeleteProc proc __ccall uses rsi rdi p:ptr dsym
+DeleteProc proc __ccall uses rsi rdi p:asym_t
 
     ldr rdi,p
     .if ( [rdi].asym.state == SYM_INTERNAL )
 
-        mov rsi,[rdi].dsym.procinfo
+        mov rsi,[rdi].asym.procinfo
 
         ; delete all local symbols ( params, locals, labels )
 
         .for ( rdi = [rsi].labellist : rdi : )
 
-            mov rsi,[rdi].dsym.nextll
+            mov rsi,[rdi].asym.nextll
             SymFree( rdi )
             mov rdi,rsi
         .endf
@@ -1627,14 +1613,14 @@ DeleteProc endp
 
 ; PROC directive.
 
-ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-  local sym:ptr dsym
+  local sym:asym_t
   local ofs:uint_t
   local name:string_t
   local oldpubstate:int_t
   local is_global:int_t
-  local p:ptr proc_info
+  local p:proc_t
 
     ldr rbx,tokenarray
     ldr ecx,i
@@ -1666,7 +1652,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; this is not needed for JWasm, but Masm will reject nested
         ; procs if there are params, locals or used registers.
 
-        mov rsi,[rdi].dsym.procinfo
+        mov rsi,[rdi].asym.procinfo
         .if ( [rsi].paralist || [rsi].isframe || [rsi].locallist || [rsi].regslist )
 
             .return( asmerr( 2144, name ) )
@@ -1743,7 +1729,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; v2.11: added. Note that fpo flag is only set if there ARE params!
 
-        mov rsi,[rdi].dsym.procinfo
+        mov rsi,[rdi].asym.procinfo
         movzx ecx,MODULE.Ofssize
         lea rdx,ModuleInfo
         mov ecx,[rdx].module_info.basereg[rcx*4]
@@ -1779,7 +1765,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov SymTables[TAB_PROC*symbol_queue].head,rdi
             .else
                 mov rcx,SymTables[TAB_PROC*symbol_queue].tail
-                mov [rcx].dsym.nextproc,rdi
+                mov [rcx].asym.nextproc,rdi
             .endif
             mov SymTables[TAB_PROC*symbol_queue].tail,rdi
         .endif
@@ -1788,7 +1774,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; v2.11: Note that fpo flag is only set if there ARE params ( or locals )!
 
         mov rcx,CurrProc
-        mov rsi,[rcx].dsym.procinfo
+        mov rsi,[rcx].asym.procinfo
         movzx ecx,[rsi].basereg
         .if ( [rsi].paralist && GetRegNo( ecx ) == 4 )
             mov [rsi].fpo,1
@@ -1817,8 +1803,8 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; this allows to reduce the number of passes (see fixup.asm)
 
         mov rcx,CurrSeg
-        mov rdx,[rcx].dsym.seginfo
-        mov [rdi].dsym.next,[rdx].seg_info.label_list
+        mov rdx,[rcx].asym.seginfo
+        mov [rdi].asym.next,[rdx].seg_info.label_list
         mov [rdx].seg_info.label_list,rdi
 
     .else
@@ -1847,7 +1833,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; check if the exception handler set by FRAME is defined
 
-        mov rsi,[rdi].dsym.procinfo
+        mov rsi,[rdi].asym.procinfo
         mov rcx,[rsi].exc_handler
         .if ( [rsi].isframe && rcx && [rcx].asym.state == SYM_UNDEFINED )
             asmerr( 2006, [rcx].asym.name )
@@ -1855,7 +1841,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     mov rcx,CurrProc
-    mov rsi,[rcx].dsym.procinfo
+    mov rsi,[rcx].asym.procinfo
 
     ; v2.11: init @ProcStatus - prologue not written yet, optionally set FPO flag
 
@@ -1904,15 +1890,15 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 ProcDir endp
 
 
-CopyPrototype proc __ccall uses rsi rdi p:ptr dsym, src:ptr dsym
+CopyPrototype proc __ccall uses rsi rdi p:asym_t, src:asym_t
 
     ldr rdi,p
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     mov rcx,src
     .if ( !( [rcx].asym.isproc ) )
         .return( ERROR )
     .endif
-    tmemcpy( rsi, [rcx].dsym.procinfo, sizeof( proc_info ) )
+    tmemcpy( rsi, [rcx].asym.procinfo, sizeof( proc_info ) )
     mov rcx,src
     mov [rdi].asym.mem_type,[rcx].asym.mem_type
     mov [rdi].asym.langtype,[rcx].asym.langtype
@@ -1927,16 +1913,16 @@ CopyPrototype proc __ccall uses rsi rdi p:ptr dsym, src:ptr dsym
     mov [rdi].asym.isproc,1
     mov [rsi].paralist,NULL
 
-    mov rdx,[rcx].dsym.procinfo
-    .for ( rdi = [rdx].proc_info.paralist: rdi : rdi = [rdi].dsym.nextparam )
-        tmemcpy( LclAlloc( sizeof( dsym ) ), rdi, sizeof( dsym ) )
-        mov [rax].dsym.nextparam,NULL
+    mov rdx,[rcx].asym.procinfo
+    .for ( rdi = [rdx].proc_info.paralist: rdi : rdi = [rdi].asym.nextparam )
+        tmemcpy( LclAlloc( sizeof( asym ) ), rdi, sizeof( asym ) )
+        mov [rax].asym.nextparam,NULL
         .if ( ![rsi].paralist )
             mov [rsi].paralist,rax
         .else
-            .for ( rcx = [rsi].paralist : [rcx].dsym.nextparam: rcx = [rcx].dsym.nextparam )
+            .for ( rcx = [rsi].paralist : [rcx].asym.nextparam: rcx = [rcx].asym.nextparam )
             .endf
-            mov [rcx].dsym.nextparam,rax
+            mov [rcx].asym.nextparam,rax
         .endif
     .endf
     .return( NOT_ERROR )
@@ -1947,9 +1933,9 @@ CopyPrototype endp
 ; for FRAME procs, write .pdata and .xdata SEH unwind information
 ;
 
-WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
+WriteSEHData proc __ccall private uses rsi rdi rbx p:asym_t
 
-   .new xdata:ptr dsym
+   .new xdata:asym_t
    .new segname:string_t = ".xdata"
    .new i:int_t
    .new simplespec:int_t
@@ -2018,7 +2004,7 @@ WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
     AddLineQueue( "ALIGN 4" )
 
     mov rdi,p
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     .if ( [rsi].exc_handler )
         mov rcx,[rsi].exc_handler
         AddLineQueueX(
@@ -2075,7 +2061,7 @@ WriteSEHData endp
 ;
 ; close a PROC
 ;
-ProcFini proc __ccall private uses rsi rdi p:ptr dsym
+ProcFini proc __ccall private uses rsi rdi p:asym_t
 
     ;
     ; v2.06: emit an error if current segment isn't equal to
@@ -2102,16 +2088,16 @@ ProcFini proc __ccall private uses rsi rdi p:ptr dsym
     ;
     ; v2.03: for W3+, check for unused params and locals
     ;
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     .if ( Options.warning_level > 2 && Parse_Pass == PASS_1 )
 
-        .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam )
+        .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].asym.nextparam )
             .if ( !( [rdi].asym.used ) )
                 asmerr( 6004, [rdi].asym.name )
             .endif
         .endf
 
-        .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].dsym.nextlocal )
+        .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].asym.nextlocal )
             .if ( !( [rdi].asym.used ) )
                 asmerr( 6004, [rdi].asym.name )
             .endif
@@ -2130,10 +2116,10 @@ ProcFini proc __ccall private uses rsi rdi p:ptr dsym
         mov ecx,[rcx].asym.value
         mov [rsi].ReservedStack,ecx
         .if ( [rsi].fpo )
-            .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].dsym.nextlocal )
+            .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].asym.nextlocal )
                 add [rdi].asym.offs,ecx
             .endf
-            .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam )
+            .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].asym.nextparam )
                 add [rdi].asym.offs,ecx
             .endf
         .endif
@@ -2157,7 +2143,7 @@ ProcFini proc __ccall private uses rsi rdi p:ptr dsym
         ;
         .if ( ProcStatus & PRST_PROLOGUE_NOT_DONE )
             mov rcx,CurrProc
-            mov rcx,[rcx].dsym.procinfo
+            mov rcx,[rcx].asym.procinfo
             SetLocalOffsets( rcx )
         .endif
         SymGetLocal( CurrProc )
@@ -2190,7 +2176,7 @@ ProcFini endp
 ; ENDP directive
 ;
 
-EndpDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
+EndpDir proc __ccall uses rbx i:int_t, tokenarray:token_t
 
   local buffer[128]:char_t
 
@@ -2224,7 +2210,7 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
             .if ( eax == 'niam' || ( eax == 'iamw' && byte ptr [rdx+4] == 'n' ) )
 
                 mov Options.main_found,1
-                mov rax,[rcx].dsym.procinfo
+                mov rax,[rcx].asym.procinfo
                 mov rax,[rax].proc_info.paralist
                 .if ( rax )
                     mov Options.argv_used,1
@@ -2259,7 +2245,7 @@ EndpDir endp
 ; .setframe
 ;
 
-ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new opndx:expr
    .new token:int_t
@@ -2283,7 +2269,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .return( asmerr( 3008 ) )
     .endif
 
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     .if ( [rsi].isframe == 0 )
         .return( asmerr( 3009 ) )
     .endif
@@ -2543,14 +2529,14 @@ ProcCheckOpen proc __ccall uses rdi
 ProcCheckOpen endp
 
 
-write_userdef_prologue proc __ccall private uses rsi rdi rbx tokenarray:ptr asm_tok
+write_userdef_prologue proc __ccall private uses rsi rdi rbx tokenarray:token_t
 
-   .new info:ptr proc_info
+   .new info:proc_t
    .new len:int_t
    .new i:int_t
    .new p:string_t
    .new is_exitm:int_t
-   .new dir:ptr dsym
+   .new dir:asym_t
    .new regs:ptr word
    .new reglst[128]:char_t
    .new buffer[MAX_LINE_LEN]:char_t
@@ -2561,7 +2547,7 @@ write_userdef_prologue proc __ccall private uses rsi rdi rbx tokenarray:ptr asm_
     .endif
 
     mov rdi,CurrProc
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     movzx ebx,[rdi].asym.langtype ; set bits 0-2
     mov info,rsi
 
@@ -2647,7 +2633,7 @@ write_userdef_prologue proc __ccall private uses rsi rdi rbx tokenarray:ptr asm_
         mov ebx,_atoqw( &buffer )
         sub ebx,[rsi].localsize
 
-        .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].dsym.nextlocal )
+        .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].asym.nextlocal )
             sub [rdi].asym.offs,ebx
         .endf
     .endif
@@ -2660,7 +2646,7 @@ write_userdef_prologue endp
 ; v2.27 - save up to 6 register parameters for WIN64 vectorcall
 ; v2.30 - reverse direction of args + vectorcall stack 8/16
 
-win64_MoveRegParam proc __ccall private uses rsi rdi rbx i:int_t, size:int_t, param:ptr dsym
+win64_MoveRegParam proc __ccall private uses rsi rdi rbx i:int_t, size:int_t, param:asym_t
 
   local langtype:byte
 
@@ -2748,7 +2734,7 @@ endif
 win64_MoveRegParam endp
 
 
-win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size:ptr inr_t, param:ptr dsym
+win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size:ptr inr_t, param:asym_t
 
     ldr rsi,size
     ldr rdi,param
@@ -2767,7 +2753,7 @@ win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size
     .endif
     mov dword ptr [rdx],0
 
-    .for ( ebx = 0: rdi: rdi = [rdi].dsym.nextparam )
+    .for ( ebx = 0: rdi: rdi = [rdi].asym.nextparam )
 
         mov eax,[rsi]
         .if ( [rdi].asym.total_size > eax )
@@ -2795,7 +2781,7 @@ win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size
 win64_GetRegParams endp
 
 
-win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:ptr proc_info
+win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:proc_t
 
    .new size:int_t
    .new varargs:int_t
@@ -2812,7 +2798,7 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:ptr proc_info
 
     .if ( varargs )
         .for ( eax = 0, rdi = [rsi].paralist : rdi && eax < ebx :
-                rdi = [rdi].dsym.nextparam, eax++ )
+                rdi = [rdi].asym.nextparam, eax++ )
         .endf
         mov varargs,eax
     .endif
@@ -2824,7 +2810,7 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:ptr proc_info
         .for ( rdi = [rsi].paralist, ecx = params, ecx -= ebx, ecx-- : ecx : ecx-- )
 
             .break .if ( ecx <= varargs )
-            mov rdi,[rdi].dsym.nextparam
+            mov rdi,[rdi].asym.nextparam
         .endf
         ;
         ; __int128 "eats" 2 registers
@@ -2939,7 +2925,7 @@ push_user_registers endp
 
 write_default_prologue proc __ccall private uses rsi rdi rbx
 
-   .new info:ptr proc_info
+   .new info:proc_t
    .new regist:ptr word
    .new oldlinenumbers:byte
    .new ppfmt:array_t
@@ -2957,7 +2943,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
    .new flags:byte
 
     mov rdi,CurrProc
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     mov info,rsi
 
     get_fasttype([rdi].asym.segoffsize, [rdi].asym.langtype)
@@ -3014,8 +3000,8 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
                     mov cntxmm,push_user_registers( rsi, 1, &offs )
 
                     mov rsi,info
-                    .for ( rdi = [rsi].paralist : rdi : rdi = [rdi].dsym.nextparam )
-                        .break .if ( ![rdi].dsym.nextparam )
+                    .for ( rdi = [rsi].paralist : rdi : rdi = [rdi].asym.nextparam )
+                        .break .if ( ![rdi].asym.nextparam )
                     .endf
 
                     .if ( rdi )
@@ -3029,7 +3015,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
                         .if ( ( [rdi].asym.offs == 8 && ecx == T_EBP ) ||
                               ( [rdi].asym.offs == 16 && ecx == T_RBP ) )
 
-                            .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam )
+                            .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].asym.nextparam )
 
                                 .if ( [rdi].asym.state != SYM_TMACRO )
                                     add [rdi].asym.offs,offs
@@ -3192,7 +3178,7 @@ endif
                 add al,[rdi].asym.sys_xcnt
                 .if ( eax )
 
-                    .for ( ebx = 8, eax = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+                    .for ( ebx = 8, eax = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].asym.nextparam )
 
                         .if ( [rdx].asym.used && [rdx].asym.regparam )
 
@@ -3247,10 +3233,10 @@ endif
 
             ; set param offset to 16
 
-            .for ( eax = 0, ecx = 16, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam, eax++, ecx += 16 )
-                .break .if ( ![rdx].dsym.nextparam )
+            .for ( eax = 0, ecx = 16, rdx = [rsi].paralist : rdx : rdx = [rdx].asym.nextparam, eax++, ecx += 16 )
+                .break .if ( ![rdx].asym.nextparam )
             .endf
-            .for ( rdx = [rsi].paralist : rdx && eax : rdx = [rdx].dsym.nextparam, eax--, ecx -= 16 )
+            .for ( rdx = [rsi].paralist : rdx && eax : rdx = [rdx].asym.nextparam, eax--, ecx -= 16 )
                 mov [rdx].asym.offs,ecx
             .endf
         .endif
@@ -3265,8 +3251,8 @@ endif
         mov regist,NULL
         add argoffs,offs
 
-        .for ( rdi = [rsi].paralist : rdi : rdi = [rdi].dsym.nextparam )
-            .break .if ( ![rdi].dsym.nextparam )
+        .for ( rdi = [rsi].paralist : rdi : rdi = [rdi].asym.nextparam )
+            .break .if ( ![rdi].asym.nextparam )
         .endf
 
         .if ( rdi )
@@ -3280,7 +3266,7 @@ endif
             .if ( ( [rdi].asym.offs == 8 && ecx == T_EBP ) ||
                   ( [rdi].asym.offs == 16 && ecx == T_RBP ) )
 
-                .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam )
+                .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].asym.nextparam )
 
                     .if ( [rdi].asym.state != SYM_TMACRO )
                         add [rdi].asym.offs,offs
@@ -3485,10 +3471,10 @@ runqueue:
 
             mov rdi,[rsi].paralist
             .if ( rdi && [rsi].has_vararg )
-                mov rdi,[rdi].dsym.nextparam
+                mov rdi,[rdi].asym.nextparam
             .endif
 
-            .for ( : rdi : rdi = [rdi].dsym.nextparam )
+            .for ( : rdi : rdi = [rdi].asym.nextparam )
 
                 .if ( [rdi].asym.regparam && [rdi].asym.used )
 
@@ -3511,7 +3497,7 @@ runqueue:
                     mov [rdi].asym.state,SYM_STACK
                     mov [rdi].asym.offs,ebx
                     movzx eax,[rsi].basereg
-                    movzx ecx,[rdi].dsym.param_reg
+                    movzx ecx,[rdi].asym.param_reg
                     AddLineQueueX( "%r [%r][%d],%r", edx, eax, ebx, ecx )
                     add ebx,cnt
                 .endif
@@ -3557,11 +3543,11 @@ runqueue:
 
             mov rdi,[rsi].paralist
             .if ( rdi )
-                mov [rdi].dsym.offs,ebx
-                mov rdi,[rdi].dsym.nextparam
+                mov [rdi].asym.offs,ebx
+                mov rdi,[rdi].asym.nextparam
             .endif
 
-            .for ( ebx = 0, cnt = 0 : rdi : rdi = [rdi].dsym.nextparam )
+            .for ( ebx = 0, cnt = 0 : rdi : rdi = [rdi].asym.nextparam )
 
                 .if ( [rdi].asym.mem_type & MT_FLOAT )
                     inc cnt
@@ -3699,9 +3685,9 @@ write_default_prologue endp
 ; will also work only in those cases!
 ;
 
-SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
+SetLocalOffsets proc __ccall uses rsi rdi rbx info:proc_t
 
-   .new curr:ptr dsym
+   .new curr:asym_t
    .new cntxmm:int_t = 0
    .new cntstd:int_t = 0
    .new start:int_t = 0
@@ -3813,7 +3799,7 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
 
     ; scan the locals list and set member sym.offset
 
-    .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].dsym.nextlocal )
+    .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].asym.nextlocal )
 
         xor eax,eax
         .if ( [rdi].asym.total_size )
@@ -3873,10 +3859,10 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
         ; subtract CurrWordSize value for params, since no space is required
         ; to save the frame pointer value
 
-        .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].dsym.nextlocal )
+        .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].asym.nextlocal )
             add [rdi].asym.offs,ecx
         .endf
-        .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam )
+        .for ( rdi = [rsi].paralist: rdi: rdi = [rdi].asym.nextparam )
             ; added v2.33.25
             .if ( [rdi].asym.state != SYM_TMACRO )
                 add [rdi].asym.offs,ebx
@@ -3900,10 +3886,10 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
 SetLocalOffsets endp
 
 
-write_prologue proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
+write_prologue proc __ccall uses rsi rdi rbx tokenarray:token_t
 
     mov rdi,CurrProc
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
 
     .if ( Parse_Pass == PASS_1 )
 
@@ -3938,12 +3924,12 @@ write_prologue proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
             .elseif ( dl == LANG_SYSCALL )
                 mov [rcx].asym.value,0
                 .if ( MODULE.win64_flags & W64F_AUTOSTACKSP )
-                    .for ( ecx = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+                    .for ( ecx = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].asym.nextparam )
                         .if ( [rdx].asym.regparam )
                             add ecx,8
                         .endif
                     .endf
-                    .for ( rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+                    .for ( rdx = [rsi].paralist : rdx : rdx = [rdx].asym.nextparam )
                         .if !( [rdx].asym.regparam )
                             sub [rdx].asym.offs,ecx
                         .endif
@@ -4119,7 +4105,7 @@ restore_xmm_registers endp
 
 write_default_epilogue proc __ccall private uses rsi rdi rbx
 
-   .new info:ptr proc_info
+   .new info:proc_t
    .new leav:int_t = 0
    .new resstack:int_t = 0
    .new stkreg:int_t
@@ -4128,7 +4114,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
    .new cstack:byte = 0
 
     mov rdi,CurrProc
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     mov info,rsi
 
     get_fasttype([rdi].asym.segoffsize, [rdi].asym.langtype)
@@ -4147,7 +4133,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
         .if ( [rsi].has_vararg )
             mov [rdi].asym.argused,1
         .else
-            .for ( rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+            .for ( rdx = [rsi].paralist : rdx : rdx = [rdx].asym.nextparam )
                 .if ( [rdx].asym.used )
                     mov [rdi].asym.argused,1
                 .endif
@@ -4167,7 +4153,7 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
 
                 .if ( MODULE.basereg[USE64*4] == T_RSP ) ; adjust stack params ?
 
-                    .for ( rdx = [rsi].paralist : rdx : rdx = [rdx].dsym.nextparam )
+                    .for ( rdx = [rsi].paralist : rdx : rdx = [rdx].asym.nextparam )
                         .if ( [rdx].asym.state != SYM_TMACRO )
                             sub [rdx].asym.offs,8
                         .endif
@@ -4379,20 +4365,20 @@ write_default_epilogue endp
 ; if a RET/IRET instruction has been found inside a PROC.
 ;
 
-write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, tokenarray:ptr asm_tok
+write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, tokenarray:token_t
 
    .new regs:ptr word
    .new i:int_t
    .new p:string_t
    .new is_exitm:int_t
-   .new info:ptr proc_info
+   .new info:proc_t
    .new flags:int_t
-   .new dir:ptr dsym
+   .new dir:asym_t
    .new reglst[128]:char_t
    .new buffer[MAX_LINE_LEN]:char_t ; stores string for RunMacro()
 
     mov rdi,CurrProc
-    mov rsi,[rdi].dsym.procinfo
+    mov rsi,[rdi].asym.procinfo
     mov info,rsi
 
     mov dir,SymSearch( MODULE.proc_epilogue )
@@ -4480,11 +4466,11 @@ write_userdef_epilogue endp
 ; it's ensured already that ModuleInfo.proc_epilogue isn't NULL.
 ;
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:int_t
+RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, count:int_t
 
-   .new info:ptr proc_info
+   .new info:proc_t
    .new p:string_t
    .new buffer[MAX_LINE_LEN]:char_t ; stores modified RETN/RETF/IRET instruction
    .new is_iret:int_t = FALSE
@@ -4532,7 +4518,7 @@ RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:in
     write_default_epilogue()
 
     mov rcx,CurrProc
-    mov rsi,[rcx].dsym.procinfo
+    mov rsi,[rcx].asym.procinfo
 
     ;
     ; skip this part for IRET
@@ -4587,7 +4573,7 @@ RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:in
 
                 .if ( [rax].fc_info.flags & _P_CLEANUP )
 
-                    .for ( ecx = 0, rdx = [rsi].paralist: rdx: rdx = [rdx].dsym.nextparam )
+                    .for ( ecx = 0, rdx = [rsi].paralist: rdx: rdx = [rdx].asym.nextparam )
 
                         .if ( [rdx].asym.state != SYM_TMACRO ) ; v2.34.35: used by ms32..
 

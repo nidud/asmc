@@ -29,8 +29,8 @@ public sym_Interface
 
 .data
 
-sym_Interface   ptr asym 0 ; numeric. requires model
-sym_Cpu         ptr asym 0 ; numeric. This is ALWAYS set
+sym_Interface   asym_t 0 ; numeric. requires model
+sym_Cpu         asym_t 0 ; numeric. This is ALWAYS set
 
 coff64_fmtopt format_options { NULL, COFF64_DISALLOWED, "PE32+" }
 elf64_fmtopt  format_options { NULL, ELF64_DISALLOWED,  "ELF64" }
@@ -77,9 +77,9 @@ ModelAttrValue typeinfo \
     { OPSYS_OS2,      INIT_OS         }
 
 
-sym_CodeSize  ptr asym 0 ; numeric. requires model
-sym_DataSize  ptr asym 0 ; numeric. requires model
-sym_Model     ptr asym 0 ; numeric. requires model
+sym_CodeSize  asym_t 0 ; numeric. requires model
+sym_DataSize  asym_t 0 ; numeric. requires model
+sym_Model     asym_t 0 ; numeric. requires model
 
 .code
 
@@ -258,9 +258,9 @@ SetModel endp
 ; if model is FLAT, defines FLAT pseudo-group
 ; set default segment names for code and data
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local distance:byte
   local language:byte
@@ -530,7 +530,7 @@ SetCPU endp
 ; .[2|3]87,
 ; .NO87, .MMX, .K3D, .XMM directives.
 
-CpuDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
+CpuDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     imul ebx,i,asm_tok
     add rbx,tokenarray

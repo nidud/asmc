@@ -85,11 +85,11 @@ endif
 
 ; .STARTUP and .EXIT directives
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
 ifndef ASMC64
 
-StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new rc:int_t = NOT_ERROR
    .new opndx:expr
@@ -196,7 +196,7 @@ endif
 
 ; END directive
 
-EndDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
+EndDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
   local opndx:expr
 
@@ -239,8 +239,8 @@ endif
     .endif
     mov rcx,CurrStruct
     .if ( rcx )
-        .while ( [rcx].dsym.next )
-            mov rcx,[rcx].dsym.next
+        .while ( [rcx].asym.next )
+            mov rcx,[rcx].asym.next
         .endw
         asmerr( 1010, [rcx].asym.name )
     .endif

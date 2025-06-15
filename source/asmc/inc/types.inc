@@ -11,7 +11,7 @@ define __TYPES_INC
 
 .template qualified_type
     size		int_t ?
-    symtype		ptr asym ?
+    symtype		asym_t ?
     mem_type		db ?
     is_ptr		db ?	; contains level of indirection
     is_far		db ?
@@ -19,19 +19,19 @@ define __TYPES_INC
     ptr_memtype		db ?
    .ends
 
-externdef CurrStruct:ptr dsym	; start of current STRUCT list
+externdef CurrStruct:asym_t ; start of current STRUCT list
 
-CreateType		proto __ccall :int_t, :token_t, :string_t, :ptr ptr asym
-CreateTypeSymbol	proto __ccall :ptr asym, :string_t, :int_t
-SearchNameInStruct	proto __ccall :ptr asym, :string_t, :ptr uint_t, :int_t
-GetQualifiedType	proto __ccall :ptr int_t, :ptr asm_tok, :ptr qualified_type
-CreateStructField	proto __ccall :int_t, :ptr asm_tok, :string_t, :uchar_t, :ptr asym, :uint_t
-UpdateStructSize	proto fastcall :ptr asym
+CreateType		proto __ccall :int_t, :token_t, :string_t, :ptr asym_t
+CreateTypeSymbol	proto __ccall :asym_t, :string_t, :int_t
+SearchNameInStruct	proto __ccall :asym_t, :string_t, :ptr uint_t, :int_t
+GetQualifiedType	proto __ccall :ptr int_t, :token_t, :ptr qualified_type
+CreateStructField	proto __ccall :int_t, :token_t, :string_t, :uchar_t, :asym_t, :uint_t
+UpdateStructSize	proto fastcall :asym_t
 SetStructCurrentOffset	proto fastcall :int_t
 AlignInStruct		proto fastcall :int_t
 TypesInit		proto
-StructDirective		proto __ccall :int_t, :ptr asm_tok
-EndstructDirective	proto __ccall :int_t, :ptr asm_tok
+StructDirective		proto __ccall :int_t, :token_t
+EndstructDirective	proto __ccall :int_t, :token_t
 
 DeleteType macro t
     endm

@@ -82,7 +82,7 @@ define CHARS_OR    ('|' + ( '|' shl 8 ))
 
     option proc:private
 
-GetCOp proc fastcall item:ptr asm_tok
+GetCOp proc fastcall item:token_t
 
     mov rdx,[rcx].asm_tok.string_ptr
 
@@ -154,10 +154,10 @@ GetCOp endp
 ; render an instruction
 ;
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
 RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:int_t, start1:uint_t,
-        end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:ptr asm_tok
+        end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:token_t
 
    .new reg:int_t = 0
    .new b:byte
@@ -274,7 +274,7 @@ RenderJcc endp
 ;
 ; a "token" in a C expression actually is an assembly expression
 ;
-LGetToken proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok, opnd:ptr expr
+LGetToken proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t, opnd:ptr expr
     ;
     ; scan for the next C operator in the token array.
     ; because the ASM evaluator may report an error if such a thing
@@ -326,7 +326,7 @@ GetLabel proto watcall hll:ptr hll_item, index:int_t {
 GetSimpleExpression proc __ccall private uses rsi rdi rbx \
         hll:        ptr hll_item,
         i:          ptr int_t,
-        tokenarray: ptr asm_tok,
+        tokenarray: token_t,
         ilabel:     int_t,
         is_true:    uint_t,
         buffer:     string_t,
@@ -763,7 +763,7 @@ ReplaceLabel endp
 
 ; operator &&, which has the second lowest precedence, is handled here
 
-GetAndExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
+GetAndExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t,
     ilabel:uint_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
   local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
@@ -838,7 +838,7 @@ GetAndExpression endp
 
 ; operator ||, which has the lowest precedence, is handled here
 
-GetExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
+GetExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t,
     ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
   local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
@@ -951,11 +951,11 @@ GetExpression endp
 ;   .CONT .IF: TRUE
 ;
 
-GenerateFloat proto __ccall :int_t, :ptr asm_tok
+GenerateFloat proto __ccall :int_t, :token_t
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-ExpandCStrings proc __ccall public uses rdi rbx tokenarray:ptr asm_tok
+ExpandCStrings proc __ccall public uses rdi rbx tokenarray:token_t
 
     ldr rcx,tokenarray
 
@@ -1034,7 +1034,7 @@ ExpandCStrings proc __ccall public uses rdi rbx tokenarray:ptr asm_tok
 ExpandCStrings endp
 
 
-GetProcVtbl proc fastcall private sym:ptr asym, name:ptr sbyte
+GetProcVtbl proc fastcall private sym:asym_t, name:ptr sbyte
 
     xor eax,eax
     .if ( [rcx].asym.mem_type == MT_TYPE && [rcx].asym.type )
@@ -1052,7 +1052,7 @@ GetProcVtbl proc fastcall private sym:ptr asym, name:ptr sbyte
 GetProcVtbl endp
 
 
-GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, opnd:ptr expr
+GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, opnd:ptr expr
 
     imul ebx,i,asm_tok
     add rbx,tokenarray
@@ -1124,14 +1124,14 @@ GetProc endp
 
 GetParamId proc fastcall private uses rsi rdi rbx id:int_t, sym:asym_t
 
-    mov rsi,[rdx].dsym.procinfo
+    mov rsi,[rdx].asym.procinfo
     mov rax,[rsi].proc_info.paralist
     .if ( rax == NULL )
         .return
     .endif
     xor edi,edi
-    .while ( [rax].dsym.nextparam )
-        mov rax,[rax].dsym.nextparam
+    .while ( [rax].asym.nextparam )
+        mov rax,[rax].asym.nextparam
         inc edi
     .endw
     .if ( edi < ecx )
@@ -1144,13 +1144,13 @@ GetParamId proc fastcall private uses rsi rdi rbx id:int_t, sym:asym_t
 
         mov rbx,rax
         .while ecx
-            .for ( rax = [rsi].proc_info.paralist : rbx != [rax].dsym.nextparam : rax = [rax].dsym.nextparam )
+            .for ( rax = [rsi].proc_info.paralist : rbx != [rax].asym.nextparam : rax = [rax].asym.nextparam )
             .endf
             mov rbx,rax
             dec ecx
         .endw
     .else
-        .for ( rax = [rsi].proc_info.paralist : ecx : rax = [rax].dsym.nextparam )
+        .for ( rax = [rsi].proc_info.paralist : ecx : rax = [rax].asym.nextparam )
             dec ecx
         .endf
     .endif
@@ -1163,7 +1163,7 @@ GetParamId proc fastcall private uses rsi rdi rbx id:int_t, sym:asym_t
 GetParamId endp
 
 
-GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:ptr asm_tok
+GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:token_t
 
   local mac_name[512]:char_t
   local opnd:expr
@@ -1223,7 +1223,7 @@ GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
    .return .if ( [rcx].asym.state != SYM_MACRO )
 
-    mov rcx,[rcx].dsym.macroinfo
+    mov rcx,[rcx].asym.macroinfo
     mov rcx,[rcx].macro_info.lines
    .return .if !rcx
 
@@ -1256,11 +1256,11 @@ GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 GetMacroReturn endp
 
 
-StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:ptr asm_tok
+StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:token_t
 
    .new mac:string_t = NULL
    .new curr:asym_t
-   .new proc_id:ptr asm_tok = NULL ; foo( 1, bar(...), ...)
+   .new proc_id:token_t = NULL ; foo( 1, bar(...), ...)
    .new parg_id:int_t = 0 ; foo.paralist[1] = return type[al|ax|eax|[rdx::eax|rax|xmm0]]
    .new opnd:expr
    .new bracket:int_t = 0
@@ -1526,14 +1526,14 @@ macro_args:
 StripSource endp
 
 
-LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, tokenarray:ptr asm_tok
+LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, tokenarray:token_t
 
    .new opnd:expr
    .new b[MAX_LINE_LEN]:char_t
    .new name:string_t
-   .new id:ptr asm_tok
-   .new args:ptr asm_tok
-   .new dots[10]:ptr asm_tok
+   .new id:token_t
+   .new args:token_t
+   .new dots[10]:token_t
    .new static_struct:int_t = 0
    .new ClassVtbl[256]:char_t
    .new sym:asym_t = NULL
@@ -1547,7 +1547,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
    .new brcount:int_t = 0
    .new sqcount:int_t = 0
    .new dotcount:int_t = 0
-   .new sqbrend:ptr asm_tok = NULL
+   .new sqbrend:token_t = NULL
    .new j:int_t = i
    .new vparray:asym_t = NULL
 
@@ -2036,7 +2036,7 @@ LKRenderHllProc endp
 
     assume rbx: NOTHING
 
-RenderHllProc proc __ccall private dst:string_t, i:uint_t, tokenarray:ptr asm_tok
+RenderHllProc proc __ccall private dst:string_t, i:uint_t, tokenarray:token_t
 
    .new lineflags:byte = MODULE.line_flags
 
@@ -2048,7 +2048,7 @@ RenderHllProc proc __ccall private dst:string_t, i:uint_t, tokenarray:ptr asm_to
 RenderHllProc endp
 
 
-ExpandHllProc proc __ccall public uses rsi rdi dst:string_t, i:int_t, tokenarray:ptr asm_tok
+ExpandHllProc proc __ccall public uses rsi rdi dst:string_t, i:int_t, tokenarray:token_t
 
    .new rc:int_t = NOT_ERROR
     mov rax,dst
@@ -2077,7 +2077,7 @@ ExpandHllProc proc __ccall public uses rsi rdi dst:string_t, i:int_t, tokenarray
 ExpandHllProc endp
 
 
-ExpandHllProcEx proc __ccall public  uses rsi rdi buffer:string_t, i:int_t, tokenarray:ptr asm_tok
+ExpandHllProcEx proc __ccall public  uses rsi rdi buffer:string_t, i:int_t, tokenarray:token_t
 
   local rc:int_t
 
@@ -2109,7 +2109,7 @@ ExpandHllProcEx endp
 
 
 EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
-    i:ptr int_t, tokenarray:ptr asm_tok, ilabel:int_t, is_true:int_t, buffer:string_t
+    i:ptr int_t, tokenarray:token_t, ilabel:int_t, is_true:int_t, buffer:string_t
 
   local hllop:hll_opnd, b[MAX_LINE_LEN]:char_t
 
@@ -2279,7 +2279,7 @@ endif
 EvaluateHllExpression endp
 
 
-ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr int_t, tokenarray:ptr asm_tok,
+ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item, p:ptr int_t, tokenarray:token_t,
         ilabel:int_t, is_true:int_t, buffer:string_t
 
    .new rc:int_t = NOT_ERROR
@@ -2567,12 +2567,12 @@ GetJumpString endp
 
     option proc:public
 
-    assume rbx: ptr asm_tok
+    assume rbx: token_t
     assume rsi: ptr hll_item
 
 ; .IF, .WHILE, .SWITCH or .REPEAT directive
 
-HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   .new rc:int_t = NOT_ERROR
   .new cmd:uint_t
@@ -2827,7 +2827,7 @@ HllStartDir endp
 ; .ENDIF, .ENDW, .UNTIL and .UNTILCXZ directives.
 ; These directives end a .IF, .WHILE or .REPEAT block.
 ;
-HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new rc:int_t = NOT_ERROR
    .new cmd:int_t
@@ -3044,7 +3044,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 HllEndDir endp
 
 
-HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
+HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t,
     labelid:int_t, hll1:ptr hll_item, is_true:int_t
 
    .new buff[16]:char_t
@@ -3159,7 +3159,7 @@ HllContinueIf endp
 ;    - jump to test / exit label of innermost .WHILE/.REPEAT block
 ;
 
-HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new rc:int_t = NOT_ERROR
    .new cont0:int_t = 0 ; exit level 0,1,2,3

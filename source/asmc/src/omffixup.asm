@@ -17,7 +17,7 @@ include omfspec.inc
 ifndef ASMC64
 
 externdef szNull:char_t
-omf_GetGrpIdx proto fastcall :ptr asym
+omf_GetGrpIdx proto fastcall :asym_t
 
 ; logical data for fixup subrecord creation
 
@@ -235,7 +235,7 @@ omf_set_logref proc __ccall private uses rsi rdi rbx fixp:ptr fixup, lr:ptr logr
 
         mov rcx,MODULE.flat_grp
         .if ( rcx )
-            mov rcx,[rcx].dsym.grpinfo
+            mov rcx,[rcx].asym.grpinfo
             .if ( [rbx].frame_type == FRAME_GRP && [rbx].frame_datum == [rcx].grp_info.grp_idx )
                 .return( 0 )
             .endif
@@ -250,8 +250,8 @@ if 1
 
         .if ( [rbx].frame_type == FRAME_SEG )
 
-            .for ( rcx = SymTables[TAB_SEG*symbol_queue].head : rcx : rcx = [rcx].dsym.next )
-                mov rdx,[rcx].dsym.seginfo
+            .for ( rcx = SymTables[TAB_SEG*symbol_queue].head : rcx : rcx = [rcx].asym.next )
+                mov rdx,[rcx].asym.seginfo
                 .if ( [rdx].seg_info.seg_idx == [rbx].frame_datum )
                     .if ( [rdx].seg_info.sgroup )
                         mov [rsi].frame_meth,FRAME_GRP
@@ -272,7 +272,7 @@ endif
     .elseif ( [rdi].asym.state == SYM_GRP )
 
         mov [rsi].target_meth,TARGET_GRP
-        mov rcx,[rdi].dsym.grpinfo
+        mov rcx,[rdi].asym.grpinfo
         mov [rsi].target_datum,[rcx].grp_info.grp_idx
         .if ( [rbx].frame_type != FRAME_NONE )
             mov [rsi].frame_meth,[rbx].frame_type
@@ -326,7 +326,7 @@ endif
                .return( 0 )
             .else
                 mov rcx,[rdi].asym.segm
-                mov rcx,[rcx].dsym.seginfo
+                mov rcx,[rcx].asym.seginfo
                 .if ( [rcx].seg_info.comdatselection )
                     mov [rsi].target_meth,TARGET_EXT
                     mov [rsi].target_datum,[rcx].seg_info.seg_idx
@@ -404,7 +404,7 @@ ifndef ASMC64
         ; no break
     .case FIX_OFF16
         mov al,LOC_OFFSET shl 2
-        .if ( [rbx].fx_flag & FX_LOADER_RESOLVED )
+        .if ( [rbx].lresolved )
             mov al,LOC_MS_LINK_OFFSET shl 2
         .endif
         mov locat1,al
@@ -414,7 +414,7 @@ ifndef ASMC64
         ; no break
     .case FIX_OFF32
         mov al,LOC_MS_OFFSET_32 shl 2
-        .if ( [rbx].fx_flag & FX_LOADER_RESOLVED )
+        .if ( [rbx].lresolved )
             mov al,LOC_MS_LINK_OFFSET_32 shl 2
         .endif
         mov locat1,al

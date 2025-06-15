@@ -377,10 +377,8 @@ AddFileSeq proc __ccall file:uint_t
 
     LclAlloc( ldr(file) )
 
-    mov [rax].file_seq.next,NULL
     mov ecx,file
     mov [rax].file_seq.file,ecx
-
     .if ( FileSeq.head == NULL )
 
         mov FileSeq.head,rax
@@ -535,7 +533,7 @@ print_source_nesting_structure proc __ccall uses rsi rdi rbx
             .else
 
                 mov name,rax
-                mov rdx,[rcx].dsym.macroinfo
+                mov rdx,[rcx].asym.macroinfo
                 mov eax,[rdx].macro_info.srcfile
                 GetFNamePart( GetFName( eax ) )
                 PrintNote( NOTE_MACRO_CALLED_FROM, edi, "", name, [rbx].line_num, rax )
@@ -1102,7 +1100,7 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
         imul ebx,ebx,MAX_MACRO_NESTING+1
         add rbx,rax
 
-        assume rdx:ptr asm_tok
+        assume rdx:token_t
 
         .for ( ecx = 0 : ecx <= index : ecx++, rdx += asm_tok )
 

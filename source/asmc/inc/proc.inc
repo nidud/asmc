@@ -53,21 +53,21 @@ ROUND_UP proto watcall i:uint_t, r:uint_t {
     and eax,edx
     }
 
-externdef	CurrProc:ptr dsym		; current procedure
-externdef	sym_ReservedStack:ptr asym	; max stack space required by INVOKE
+externdef	CurrProc:asym_t		 ; current procedure
+externdef	sym_ReservedStack:asym_t ; max stack space required by INVOKE
 
-ParseProc	proto __ccall :ptr dsym, :int_t, :ptr asm_tok, :int_t, :uchar_t
-CreateProc	proto __ccall :ptr asym, :string_t, :int_t
-DeleteProc	proto __ccall :ptr dsym
-CopyPrototype	proto __ccall :ptr dsym, :ptr dsym
+ParseProc	proto __ccall :asym_t, :int_t, :token_t, :int_t, :uchar_t
+CreateProc	proto __ccall :asym_t, :string_t, :int_t
+DeleteProc	proto __ccall :asym_t
+CopyPrototype	proto __ccall :asym_t, :asym_t
 RetInstr	proto __ccall :int_t, :token_t, :int_t ; handle RET/IRET within procedures
-write_prologue	proto __ccall :ptr asm_tok
+write_prologue	proto __ccall :token_t
 ProcInit	proto __ccall
 ProcCheckOpen	proto __ccall
 get_regname	proto __ccall :int_t, :int_t
 get_register	proto __ccall :int_t, :int_t
 get_fasttype	proto fastcall :int_t, :int_t
 MacroInline	proto __ccall :string_t, :int_t, :string_t, :string_t, :int_t
-SetLocalOffsets proto __ccall :ptr proc_info
+SetLocalOffsets proto __ccall :proc_t
 
 endif

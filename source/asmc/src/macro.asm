@@ -315,13 +315,13 @@ store_placeholders endp
 ; store a macro's parameter, local and content list.
 ; i = start index of macro params in token buffer.
 
-    assume rsi:dsym_t
-    assume rdi:ptr macro_info
+    assume rsi:asym_t
+    assume rdi:macro_t
     assume rbx:token_t
 
-StoreMacro proc __ccall uses rsi rdi rbx mac:dsym_t, i:int_t, tokenarray:token_t, store_data:int_t
+StoreMacro proc __ccall uses rsi rdi rbx mac:asym_t, i:int_t, tokenarray:token_t, store_data:int_t
 
-   .new info:ptr macro_info
+   .new info:macro_t
    .new src:string_t
    .new token:string_t
    .new mindex:int_t
@@ -529,9 +529,6 @@ if STORE_EMPTY_LINES
             .if ( store_data )
 
                 LclAlloc( srcline )
-                mov [rax].srcline.next,NULL
-                mov [rax].srcline.ph_count,0
-                mov [rax].srcline.line,0
                 mov rdx,nextline
                 mov [rdx],rax
                 mov nextline,rax
@@ -763,7 +760,7 @@ StoreMacro endp
 
 ; create a macro symbol
 
-    assume rcx:ptr macro_info
+    assume rcx:macro_t
 
 CreateMacro proc fastcall uses rbx name:string_t
 
@@ -775,15 +772,7 @@ CreateMacro proc fastcall uses rbx name:string_t
         mov rbx,rax
         mov rcx,LclAlloc( sizeof( macro_info ) )
         mov rax,rbx
-        mov [rax].dsym.macroinfo,rcx
-if 0 ; zero alloc...
-        xor edx,edx
-        mov [rcx].parmcnt,dx
-        mov [rcx].localcnt,dx
-        mov [rcx].parmlist,rdx
-        mov [rcx].lines,rdx
-        mov [rcx].srcfile,edx
-endif
+        mov [rax].asym.macroinfo,rcx
     .endif
     ret
 
@@ -792,11 +781,11 @@ CreateMacro endp
 
 ; clear macro data
 
-ReleaseMacroData proc fastcall mac:dsym_t
+ReleaseMacroData proc fastcall mac:asym_t
 
     mov rax,rcx
     mov [rax].asym.mac_vararg,0
-    mov rcx,[rax].dsym.macroinfo
+    mov rcx,[rax].asym.macroinfo
     xor eax,eax
     mov [rcx].parmcnt,ax
     mov [rcx].localcnt,ax
@@ -813,7 +802,7 @@ ReleaseMacroData endp
 ; MACRO directive: define a macro
 ; i: directive token ( is to be 1 )
 
-    assume rsi:dsym_t
+    assume rsi:asym_t
 
 MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
@@ -859,10 +848,6 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             mov [rsi].state,SYM_MACRO
             mov [rsi].macroinfo,LclAlloc(macro_info)
-            mov rdi,rax
-            mov ecx,macro_info
-            xor eax,eax
-            rep stosb
         .endif
     .endif
 
@@ -906,7 +891,7 @@ lq_line ends
 
 LineQueue equ <MODULE.line_queue>
 
-PreprocessLine proto __ccall :ptr asm_tok
+PreprocessLine proto __ccall :token_t
 
 GeLineQueue proc __ccall private uses rsi rdi rbx buffer:string_t
 
@@ -1087,14 +1072,12 @@ MacroInit proc __ccall uses rdi pass:int_t
         mov [rax].asym.isfunc,1
         lea rcx,EnvironFunc
         mov [rax].asym.func_ptr,rcx
-        mov rax,[rax].dsym.macroinfo
+        mov rax,[rax].asym.macroinfo
         mov [rax].macro_info.parmcnt,1
         mov rdi,rax
 
         LclAlloc( sizeof( mparm_list ) )
-
         mov [rdi].macro_info.parmlist,rax
-        mov [rax].mparm_list.deflt,NULL
         mov [rax].mparm_list.required,TRUE
     .endif
     .return( NOT_ERROR )

@@ -6,7 +6,7 @@
 ifndef __DATA_INC
 define __DATA_INC
 
-data_dir proto __ccall :int_t, :ptr asm_tok, :ptr asym
+data_dir proto __ccall :int_t, :token_t, :asym_t
 
 endif
 

@@ -37,14 +37,6 @@ define __TOKEN_INC
     T_PERCENT       = '%',
     }
 
-define T_HLLCODE    0x01    ; [0]: ELSEIF/WHILE/CASE
-define T_DELAYED    0x02    ; [0]: delayed expansion
-define T_ISFUNC     0x04    ; -- macro(args)
-define T_ISPROC     0x08    ; -- proc(args)
-define T_EVEX_OPT   0x10    ; {T_STRING} -- {k1}{z}..
-define T_EXPR       0x20    ; .operator exression --> count << "string"
-define T_EXPAND     0x40    ; class (:: --> _), proc()
-
 .template asm_tok
     token           uchar_t ?
     union
@@ -78,7 +70,7 @@ define T_EXPAND     0x40    ; class (:: --> _), proc()
     string_ptr      string_t ?
     tokpos          string_t ?  ; points to item in CurrSource
    .ends
-    token_t typedef ptr asm_tok
+    token_t         typedef ptr asm_tok
 
 tokptr proto fastcall :abs {
     imul ebx,_1,asm_tok

@@ -22,11 +22,11 @@ define MAX_LOOP_ALIGN 16
 define MAX_CASE_ALIGN 16
 
 ifndef ASMC64
-extern sym_Interface:ptr asym
+extern sym_Interface:asym_t
 endif
 
-UpdateStackBase  proto fastcall :ptr asym, :ptr
-UpdateProcStatus proto fastcall :ptr asym, :ptr
+UpdateStackBase  proto fastcall :asym_t, :ptr
+UpdateProcStatus proto fastcall :asym_t, :ptr
 
 opt macro value
     exitm<OP_&value&,>
@@ -73,9 +73,9 @@ InitStackBase proc fastcall private reg:int_t
 InitStackBase endp
 
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-SetAlignment proc __ccall private i:ptr int_t, tokenarray:ptr asm_tok, max:int_t, dest:ptr byte
+SetAlignment proc __ccall private i:ptr int_t, tokenarray:token_t, max:int_t, dest:ptr byte
 
   local opnd:expr
 
@@ -102,7 +102,7 @@ SetAlignment proc __ccall private i:ptr int_t, tokenarray:ptr asm_tok, max:int_t
 SetAlignment endp
 
 
-OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new opnd:expr
    .new idx:int_t = -1

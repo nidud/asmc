@@ -35,16 +35,16 @@ qualified_type  ends
     assume rbx:token_t
 
 ConstructorCall proc __ccall private uses rsi rdi rbx \
-        name    : string_t,         ; id name
-        endtok  : ptr ptr asm_tok,  ; past ')' of call
-        argtok  : ptr asm_tok,      ; past '(' of call
+        name    : string_t,     ; id name
+        endtok  : ptr token_t,  ; past ')' of call
+        argtok  : token_t,      ; past '(' of call
         class   : string_t,         ; class name
         type    : string_t,         ; name:<type>
-        sym     : ptr asym
+        sym     : asym_t
 
   local acc     : int_t,
         reg     : int_t,
-        csym    : ptr dsym,
+        csym    : asym_t,
         cltype  : ClType,
         callid  : int_t,
         cc[256] : char_t            ; class_class
@@ -256,14 +256,14 @@ ConstructorCall endp
 
     assume rbx:nothing
 
-AssignString proc __ccall private uses rsi rdi rbx name:string_t, fp:ptr sfield, string:string_t
+AssignString proc __ccall private uses rsi rdi rbx name:string_t, fp:asym_t, string:string_t
 
   local i:int_t
   local opndx:expr
 
     ldr rdx,fp
-    mov ebx,[rdx].sfield.total_size
-    mov rdi,[rdx].sfield.name
+    mov ebx,[rdx].asym.total_size
+    mov rdi,[rdx].asym.name
 
     .repeat
 
@@ -331,7 +331,7 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
             mov rdx,[rdx].asym.type
         .endw
 
-        mov rcx,[rdx].dsym.structinfo
+        mov rcx,[rdx].asym.structinfo
         mov rbx,[rcx].struct_info.head
     .else
         inc array
@@ -352,15 +352,15 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
         .if ( byte ptr [rsi] == '{' )
 
             tstrcpy( rdi, name )
-            mov rcx,[rbx].sfield.name
+            mov rcx,[rbx].asym.name
 
             .if ( byte ptr [rcx] )
 
                 tstrcat( rdi, "." )
-                tstrcat( rdi, [rbx].sfield.name )
+                tstrcat( rdi, [rbx].asym.name )
             .endif
 
-            mov rsi,AssignStruct( rdi, [rbx].sfield.type, rsi )
+            mov rsi,AssignStruct( rdi, [rbx].asym.type, rsi )
 
             .break .if !eax
             .while ( byte ptr [rsi] == ' ' || byte ptr [rsi] == 9 )
@@ -420,7 +420,7 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
 
                         mov rcx,[rax].asym.string_ptr
 
-                        .if ( byte ptr [rcx] == '{' && !array && [rbx].sfield.isarray )
+                        .if ( byte ptr [rcx] == '{' && !array && [rbx].asym.isarray )
 
                             mov     rdx,rax
                             xor     eax,eax
@@ -466,9 +466,9 @@ endif
 
                 .if ( array )
 
-                    mov eax,[rbx].sfield.total_size
+                    mov eax,[rbx].asym.total_size
                     xor edx,edx
-                    div [rbx].sfield.total_length
+                    div [rbx].asym.total_length
                     mov ecx,array
                     dec ecx
                     mul ecx
@@ -480,7 +480,7 @@ endif
                     .if ( array )
                         AddLineQueueX( " mov %s[%d], &@CStr(%s)", name, ecx, &val )
                     .else
-                        AddLineQueueX( " mov %s.%s, &@CStr(%s)", name, [rbx].sfield.name, &val )
+                        AddLineQueueX( " mov %s.%s, &@CStr(%s)", name, [rbx].asym.name, &val )
                     .endif
 
                 .elseif ( array )
@@ -499,7 +499,7 @@ endif
         .if ( array )
             inc array
         .else
-            mov rbx,[rbx].sfield.next
+            mov rbx,[rbx].asym.next
         .endif
         .break .if !rbx
     .endw
@@ -512,7 +512,7 @@ AssignStruct endp
 
 AssignId proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, type:asym_t, string:string_t
 
-  local Id[128]:char_t, size:int_t, f:sfield
+  local Id[128]:char_t, size:int_t, f:asym
 
     .if ( type == NULL )
 
@@ -856,7 +856,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local name  : string_t,
         type  : string_t,
-        sym   : dsym_t,
+        sym   : asym_t,
         creat : int_t,
         ti    : qualified_type,
         opndx : expr,
@@ -914,12 +914,12 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .if ti.Ofssize == USE16
             .if creat
-                mov [rax].dsym.mem_type,MT_WORD
+                mov [rax].asym.mem_type,MT_WORD
             .endif
             mov ti.size,word
         .else
             .if creat
-                mov [rax].dsym.mem_type,MT_DWORD
+                mov [rax].asym.mem_type,MT_DWORD
             .endif
             mov ti.size,dword
         .endif
@@ -1014,7 +1014,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( creat && Parse_Pass == PASS_1 )
 
             mov rax,CurrProc
-            mov rdx,[rax].dsym.procinfo
+            mov rdx,[rax].asym.procinfo
 
             .if ( [rdx].proc_info.locallist == NULL )
 
@@ -1024,9 +1024,9 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 mov rcx,[rdx].proc_info.locallist
 
-                .for ( : [rcx].dsym.nextlocal : rcx = [rcx].dsym.nextlocal )
+                .for ( : [rcx].asym.nextlocal : rcx = [rcx].asym.nextlocal )
                 .endf
-                mov [rcx].dsym.nextlocal,rsi
+                mov [rcx].asym.nextlocal,rsi
             .endif
         .endif
 
@@ -1101,7 +1101,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( creat && Parse_Pass == PASS_1 )
 
         mov rax,CurrProc
-        mov rcx,[rax].dsym.procinfo
+        mov rcx,[rax].asym.procinfo
         mov [rcx].proc_info.localsize,0
         SetLocalOffsets(rcx)
     .endif

@@ -116,15 +116,15 @@ Assignopc proc __ccall private uses rdi buffer:string_t, opc1:string_t, opc2:str
 Assignopc endp
 
 
-ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarray:ptr asm_tok
+ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarray:token_t
 
   local bracket:byte ; assign value: [rdx+8]=rax - @v2.28.15
 
     ldr rdi,buffer
     ldr rbx,tokenarray
 
-    assume rbx:ptr asm_tok
-    assume rsi:ptr asm_tok
+    assume rbx:token_t
+    assume rsi:token_t
 
     mov rdx,[rbx].string_ptr
     mov cl,[rbx].token
@@ -307,7 +307,7 @@ ParseAssignment endp
 
 
 RenderAssignment proc __ccall private uses rsi rdi rbx dest:ptr sbyte,
-    source:ptr sbyte, tokenarray:ptr asm_tok
+    source:ptr sbyte, tokenarray:token_t
 
   local buffer[MAX_LINE_LEN]:char_t
   local tokbuf[MAX_LINE_LEN]:char_t
@@ -343,10 +343,10 @@ RenderAssignment proc __ccall private uses rsi rdi rbx dest:ptr sbyte,
 RenderAssignment endp
 
 
-    assume  rbx:ptr asm_tok
+    assume  rbx:token_t
     assume  rsi:ptr hll_item
 
-ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new rc:int_t = NOT_ERROR
    .new cmd:uint_t

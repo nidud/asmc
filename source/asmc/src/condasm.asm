@@ -192,9 +192,9 @@ check_dif proc __ccall private string1:string_t, string2:string_t, sensitive:int
 check_dif endp
 
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local opndx:expr
   local directive:int_t
@@ -461,7 +461,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 CondAsmDirective endp
 
 
-GetErrText proc __ccall private uses rbx i:int_t, tokenarray:ptr asm_tok
+GetErrText proc __ccall private uses rbx i:int_t, tokenarray:token_t
 
     imul ebx,i,asm_tok
     add rbx,tokenarray
@@ -490,13 +490,13 @@ GetErrText endp
 ; - .err[n]b    text_literal [, <text>]
 ; - .err[n]def  symbol [, <text>]
 
-ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local opndx:expr
   local direct:dword
   local errmsg:string_t
   local erridx:int_t
-  local sym:ptr asym
+  local sym:asym_t
 
     imul ebx,i,asm_tok
     add rbx,tokenarray

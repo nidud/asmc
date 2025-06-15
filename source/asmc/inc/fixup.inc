@@ -61,21 +61,23 @@ ELF64_DISALLOWED	equ 0x0F00 ; exclude SEG, PTR16, PTR32, HIBYTE
 FX_ORGOCCURED		equ 0x02
 FX_LOADER_RESOLVED	equ 0x01
 
-fixup struct
- nextbp		ptr fixup ?	; PASS 1: linked list backpatch
- nextrlc	ptr fixup ?	; PASS >1: linked list relocs
+fixup_t		typedef ptr fixup
+
+fixup		struct
+ nextbp		fixup_t ?	; PASS 1: linked list backpatch
+ nextrlc	fixup_t ?	; PASS >1: linked list relocs
  offs		dd ?		; symbol's offset
  locofs		dd ?		; location of fixup
  type		db ?
  options	db ?
  union
   flags		dw ?
-  struct			; the IP relative addressing needs to know
-				; where the instruction ends.
+  struct			; the IP relative addressing needs to know where instruction ends.
    addbytes	db ?		; the result <end of instruction> - <fixup location> is stored here.
-   fx_flag	db ?
-   ; loader_resolved db ?; : 1	; operator LROFFSET
-   ; orgoccured uchar_t	 : 1	; v2.04 ORG occured behind this fix
+   record
+    lresolved	db: 1 ?		; operator LROFFSET
+    orgoccured	db: 1 ?		; v2.04 ORG occured behind this fix
+   ends
   ends
  ends
  union
@@ -83,17 +85,16 @@ fixup struct
    frame_type	char_t ?	; frame specifier (SEG=0,GRP=1,,...)
    frame_datum	ushort_t ?	; additional data, usually index
   ends
-  segment_var	ptr asym ?	; symbol's segment if assembly time var
+  segment_var	asym_t ?	; symbol's segment if assembly time var
  ends
- def_seg	ptr dsym ?	; segment the fixup is in - pass 1 only
- sym		ptr asym ?
-fixup ends
-fixup_t		typedef ptr fixup
+ def_seg	asym_t ?	; segment the fixup is in - pass 1 only
+ sym		asym_t ?
+fixup		ends
 
-CreateFixup	proto __ccall :ptr asym, :fixup_types, :fixup_options
-SetFixupFrame	proto __ccall :ptr asym, :char_t
-store_fixup	proto __ccall :ptr fixup, :ptr dsym, :ptr int_t
-BackPatch	proto fastcall :ptr asym
+CreateFixup	proto __ccall :asym_t, :fixup_types, :fixup_options
+SetFixupFrame	proto __ccall :asym_t, :char_t
+store_fixup	proto __ccall :ptr fixup, :asym_t, :ptr int_t
+BackPatch	proto fastcall :asym_t
 
 endif
 .pragma list(pop)

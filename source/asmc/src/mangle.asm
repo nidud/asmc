@@ -14,7 +14,7 @@ include mangle.inc
     .code
 
     option proc:private
-    assume rcx:dsym_t
+    assume rcx:asym_t
 
 ; VoidMangler: no change to symbol name
 
@@ -68,7 +68,7 @@ StdcallMangler proc fastcall sym:asym_t, buffer:string_t
     .if ( Options.stdcall_decoration == STDCALL_FULL && [rcx].isproc )
 
         mov rax,rdx
-        mov rdx,[rcx].dsym.procinfo
+        mov rdx,[rcx].asym.procinfo
         .if rdx
             mov edx,[rdx].proc_info.parasize
         .endif
@@ -176,7 +176,7 @@ vect_decorate proc fastcall sym:asym_t, buffer:string_t
         tstrcpy( rdi, [rcx].name )
         mov eax,[rsi].asym.name_size
     .else
-        mov rdx,[rsi].dsym.procinfo
+        mov rdx,[rsi].asym.procinfo
         .if rdx
             mov edx,[rdx].proc_info.parasize
         .endif

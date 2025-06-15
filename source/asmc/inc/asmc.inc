@@ -28,7 +28,7 @@ define _ASMC_LINK <"linkw.exe">
 endif
 
 .template anode
-    next string_t ?
+    next ptr anode ?
     name char_t ?
    .ends
 
@@ -472,35 +472,38 @@ define SIT_MACRO        1
     NO_EVEX         = 0x08,    ; Don't encode using EVEX.
     }
 
+    qitem_t         typedef ptr qitem
+    qditem_t        typedef ptr qditem
+    dlldesc_t       typedef ptr dll_desc
+    srcitem_t       typedef ptr src_item
+
 .template qditem
-    next            ptr qditem ?
+    next            qditem_t ?
     size            uint_t ?
    .ends
 
 .template dll_desc
-    next            ptr dll_desc ?
+    next            dlldesc_t ?
     cnt             int_t ?
     name            char_t ?
    .ends
-    dlldesc_t       typedef ptr dll_desc
 
 .template qitem
-    next            ptr qitem ?
+    next            qitem_t ?
     value           db ?
    .ends
 
 .template src_item
-    next            ptr src_item ?
-    type            dw ?    ; item type ( see enum src_item_type )
-    srcfile         dw ?    ; index of file in ModuleInfo.FNames
+    next            srcitem_t ?
+    type            dw ?        ; item type ( see enum src_item_type )
+    srcfile         dw ?        ; index of file in ModuleInfo.FNames
     union
-     content        ptr_t ? ; generic
-     file           ptr_t ? ; if item is a file
-     mi             ptr_t ? ; if item is a macro
+     content        ptr_t ?     ; generic
+     file           ptr FILE ?  ; if item is a file
+     mi             ptr macro_instance ? ; if item is a macro
     ends
-    line_num        uint_t ? ; current line #
+    line_num        uint_t ?    ; current line #
    .ends
-    srcitem_t       typedef ptr src_item
 
 
 .template format_options
@@ -513,9 +516,9 @@ define SIT_MACRO        1
     cmd             dd ?
     class           string_t ?
     langtype        dd ?
-    publsym         ptr asym ?  ; .class name : public class
-    method          dd ?        ; .INLINE/.OPERATOR/.STATIC
-    sym             ptr asym ?  ; set by StructDirective()
+    publsym         asym_t ?  ; .class name : public class
+    method          dd ?      ; .INLINE/.OPERATOR/.STATIC
+    sym             asym_t ?  ; set by StructDirective()
    .ends
 
 define PE_SUBSYSTEM_NATIVE  0x01
@@ -702,8 +705,8 @@ define PE_DLL               0x04
       mz_heapmax            dw ?
      ends
     ends
-    currseg                 ptr dsym ?      ; currently active segment - dsym *
-    flat_grp                ptr dsym ?      ; magic FLAT group - dsym *
+    currseg                 asym_t ?        ; currently active segment - asym *
+    flat_grp                asym_t ?        ; magic FLAT group - asym *
     pCodeBuff               ptr byte ?
     currcomment             string_t ?      ; current comment
     accumulator             int_t ?         ; AX/EAX/RAX
@@ -721,7 +724,7 @@ define PE_DLL               0x04
     floatdigits             int_t ?         ; option floatdigits:<value>
     list_macro              dd ?            ; current .LISTMACRO setting
 ;--------
-    tokenarray              ptr asm_tok ?   ; start token buffer
+    tokenarray              token_t ?       ; start token buffer
     currsource              string_t ?      ; current source line
     stringbufferend         string_t ?      ; start free space in string buffer
     curr_file               LPFILE NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST
@@ -741,7 +744,7 @@ define PE_DLL               0x04
     src_stack               ptr src_item ?  ; source item (files & macros) stack
     union
      start_fixup            ptr fixup ?     ; OMF only
-     start_label            ptr asym ?      ; non-OMF only: start label
+     start_label            asym_t ?        ; non-OMF only: start label
     ends
     StrStack                ptr str_item ?  ; v2.20 String stack
     HllStack                ptr hll_item ?  ; for .WHILE, .IF, .REPEAT
@@ -755,8 +758,8 @@ define PE_DLL               0x04
     SavedContexts           ptr byte ?
     cntSavedContexts        int_t ?
     anonymous_label         uint_t ?        ; "anonymous label" counter
-    StackBase               ptr asym ?
-    ProcStatus              ptr asym ?
+    StackBase               asym_t ?
+    ProcStatus              asym_t ?
     WriteModule             proc local
     EndDirHook              proc local
     Pass1Checks             proc local
@@ -812,7 +815,7 @@ OutputBytes             proto __ccall :ptr byte, :int_t, :ptr fixup
 AddLinnumDataRef        proto __ccall :uint_t, :uint_t
 myltoa                  proto __ccall :qword, :string_t, :uint_t, :int_t, :int_t
 write_options           proto __ccall
-ConvertSectionName      proto __ccall :ptr asym, :ptr dword, :string_t
+ConvertSectionName      proto __ccall :asym_t, :ptr dword, :string_t
 SetMasm510              proto __ccall :int_t
 GetType                 proto __ccall :string_t, :ptr expr, :string_t, :int_t
 RetLineQueue            proto __ccall

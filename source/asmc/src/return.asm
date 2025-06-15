@@ -16,12 +16,12 @@ include qfloat.inc
 
     .code
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
 GetValue proc __ccall private uses rsi rdi rbx \
         i           : ptr int_t,
-        tokenarray  : ptr asm_tok,
-        type        : ptr asm_tok,
+        tokenarray  : token_t,
+        type        : token_t,
         count       : ptr int_t,
         directive   : ptr int_t,
         retval      : ptr int_t
@@ -102,7 +102,7 @@ GetValue proc __ccall private uses rsi rdi rbx \
 
 GetValue endp
 
-AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr asm_tok, type:ptr asm_tok, count:int_t
+AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:token_t, type:token_t, count:int_t
 
   local opnd        : expr
   local reg         : int_t
@@ -366,11 +366,11 @@ AssignValue endp
 
     assume rsi:ptr hll_item
 
-ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local count       : int_t
   local retval      : int_t
-  local type        : ptr asm_tok
+  local type        : token_t
   local directive   : int_t
   local buffer[128] : char_t
 
@@ -384,12 +384,6 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         mov rsi,LclAlloc(hll_item)
         mov MODULE.RetStack,rax
-        xor eax,eax
-        mov [rsi].next,rax
-        mov [rsi].labels[LSTART*4],eax
-        mov [rsi].labels[LTEST*4],eax
-        mov [rsi].condlines,rax
-        mov [rsi].caselist,rax
         mov [rsi].cmd,HLL_RETURN
         mov [rsi].labels[LEXIT*4],GetHllLabel()
     .endif

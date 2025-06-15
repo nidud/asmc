@@ -20,7 +20,7 @@ externdef LinnumQueue:qdesc ; queue of line_num_info items ( OMF only )
 externdef procidx:int_t
 
 .data
-dmyproc ptr asym 0
+dmyproc asym_t 0
 lastLineNumber uint_t 0
 
 .code
@@ -28,7 +28,7 @@ lastLineNumber uint_t 0
 AddLinnumData proc __ccall private uses rsi rdi rbx data:ptr line_num_info
 
     mov rbx,CurrSeg
-    mov rdi,[rbx].dsym.seginfo
+    mov rdi,[rbx].asym.seginfo
 
     .if ( Options.output_format == OFORMAT_COFF )
         mov rsi,[rdi].seg_info.LinnumQueue
@@ -84,7 +84,7 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
         .if ( rsi )
 
             mov rcx,[rsi].asym.segm
-            mov rcx,[rcx].dsym.seginfo
+            mov rcx,[rcx].asym.seginfo
             mov eax,[rcx].seg_info.current_loc
             sub eax,[rsi].asym.offs
             mov [rsi].asym.total_size,eax
@@ -167,7 +167,7 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
         .if ( rsi )
 
             mov rcx,[rsi].asym.segm
-            mov rcx,[rcx].dsym.seginfo
+            mov rcx,[rcx].asym.seginfo
             mov eax,[rcx].seg_info.current_loc
             sub eax,[rsi].asym.offs
             mov [rsi].asym.total_size,eax
@@ -177,7 +177,7 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
         ; v2.11: write a 0x7fff line item if prologue exists
 
         mov rcx,CurrProc
-        mov rdx,[rcx].dsym.procinfo
+        mov rdx,[rcx].asym.procinfo
 
         .if ( ecx && [rdx].proc_info.size_prolog )
 
@@ -205,7 +205,7 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
 
     ; v2.10: warning if line-numbers for segments without class code!
     mov rbx,CurrSeg
-    mov rsi,[rbx].dsym.seginfo
+    mov rsi,[rbx].asym.seginfo
 
     .if ( !( [rsi].seg_info.linnum_init ) )
 
@@ -243,7 +243,7 @@ LinnumFini proc __ccall
     .if ( rax )
 
         mov rcx,[rax].asym.segm
-        mov rcx,[rcx].dsym.seginfo
+        mov rcx,[rcx].asym.seginfo
         mov edx,[rcx].seg_info.current_loc
         sub edx,[rax].asym.offs
         mov [rax].asym.total_size,edx

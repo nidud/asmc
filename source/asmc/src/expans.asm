@@ -185,11 +185,11 @@ ExpandTMacro proto __ccall :string_t, :token_t, :int_t, :int_t
 ; - is_exitm: returns TRUE if EXITM has been hit
 ; returns index of token not processed or -1 on errors
 
-    assume rsi:dsym_t
-    assume rdi:ptr macro_info
+    assume rsi:asym_t
+    assume rdi:macro_t
     assume rbx:token_t
 
-RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t,
+RunMacro proc __ccall uses rsi rdi rbx mac:asym_t, idx:int_t, tokenarray:token_t,
         _out:string_t, mflags:int_t, is_exitm:ptr int_t
 
     local currparm          :string_t
@@ -203,7 +203,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:dsym_t, idx:int_t, tokenarray:token_t
     local parm_end_delim    :int_t      ;; parameter end delimiter
     local p                 :string_t
     local parmstrings       :string_t
-    local info              :ptr macro_info
+    local info              :macro_t
     local lnode             :srcline_t
     local sym               :asym_t
     local opndx             :expr

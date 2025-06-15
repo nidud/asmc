@@ -745,7 +745,6 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
     .if ( rsi >= rax && rsi < rcx )
 
         mov rcx,LclAlloc( sizeof( rename_node ) )
-        mov [rcx].rename_node.next,NULL
         mov [rcx].rename_node.name,rsi
         mov [rcx].rename_node.token,di
         mov [rcx].rename_node.length,[rbx].len

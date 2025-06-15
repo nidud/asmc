@@ -70,13 +70,13 @@ undef sitem
 align 4
 grpdefidx   dd 0    ; Number of group definitions
 align 8
-SegStack    dsym_t MAX_SEG_NESTING dup(0) ; stack of open segments
+SegStack    asym_t MAX_SEG_NESTING dup(0) ; stack of open segments
 stkindex    int_t 0 ; current top of stack
 
 ; saved state
 align 8
-saved_CurrSeg   dsym_t 0
-saved_SegStack  ptr dsym_t 0
+saved_CurrSeg   asym_t 0
+saved_SegStack  ptr asym_t 0
 saved_stkindex  int_t 0
 
 ; generic byte buffer, used for OMF LEDATA records only
@@ -109,7 +109,7 @@ FindToken endp
 
 ; set value of $ symbol
 
-UpdateCurPC proc fastcall sym:ptr asym, p:ptr
+UpdateCurPC proc fastcall sym:asym_t, p:ptr
 
     mov rdx,CurrStruct
 
@@ -118,8 +118,8 @@ UpdateCurPC proc fastcall sym:ptr asym, p:ptr
         mov [rcx].asym.mem_type,MT_EMPTY
         mov [rcx].asym.segm,NULL ; v2.07: needed again
         mov eax,[rdx].asym.offs
-        .if [rdx].dsym.next
-            mov rdx,[rdx].dsym.next
+        .if [rdx].asym.next
+            mov rdx,[rdx].asym.next
             add eax,[rdx].asym.offs
         .endif
         mov [rcx].asym.offs,eax
@@ -137,7 +137,7 @@ UpdateCurPC proc fastcall sym:ptr asym, p:ptr
 UpdateCurPC endp
 
 
-AddLnameItem proc fastcall private sym:ptr asym
+AddLnameItem proc fastcall private sym:asym_t
 
     QAddItem( &MODULE.LnameQueue, rcx )
     ret
@@ -191,7 +191,7 @@ UpdateCurrSegVars proc private uses rsi rdi
 
         ; fixme: OPTION OFFSET:SEGMENT?
 
-        mov rdx,[rdi].dsym.seginfo
+        mov rdx,[rdi].asym.seginfo
 
         .if ( [rdx].seg_info.sgroup != NULL )
 
@@ -209,7 +209,7 @@ UpdateCurrSegVars proc private uses rsi rdi
 UpdateCurrSegVars endp
 
 
-push_seg proc fastcall private s:ptr dsym
+push_seg proc fastcall private s:asym_t
 
     ; Push a segment into the current segment stack
 
@@ -252,7 +252,7 @@ GetCurrOffset proc
 
     mov rax,CurrSeg
     .if rax
-        mov rax,[rax].dsym.seginfo
+        mov rax,[rax].asym.seginfo
         mov eax,[rax].seg_info.current_loc
     .endif
     ret
@@ -265,7 +265,7 @@ GetCurrSegAlign proc
     mov rax,CurrSeg
     .return .if ( rax == NULL )
 
-    mov rcx,[rax].dsym.seginfo
+    mov rcx,[rax].asym.seginfo
     .if ( [rcx].seg_info.alignment == MAX_SEGALIGNMENT ) ; ABS?
         .return( 0x10 ) ; assume PARA alignment for AT segments
     .endif
@@ -291,14 +291,12 @@ CreateGroup proc fastcall private uses rsi rdi name:string_t
         .endif
 
         mov [rdi].asym.state,SYM_GRP
-        mov [rdi].dsym.grpinfo,LclAlloc( sizeof( grp_info ) )
-        mov [rax].grp_info.seglist,NULL
-        mov [rax].grp_info.numseg,0
+        mov [rdi].asym.grpinfo,LclAlloc( sizeof( grp_info ) )
         sym_add_table( &SymTables[TAB_GRP*symbol_queue], rdi )
 
         mov [rdi].asym.list,1
         mov [rdi].asym.Ofssize, USE_EMPTY ; v2.14: added
-        mov rcx,[rdi].dsym.grpinfo
+        mov rcx,[rdi].asym.grpinfo
         inc grpdefidx
         mov [rcx].grp_info.grp_idx,grpdefidx
         AddLnameItem( rdi )
@@ -315,7 +313,7 @@ CreateGroup proc fastcall private uses rsi rdi name:string_t
 CreateGroup endp
 
 
-CreateSegment proc fastcall private uses rdi s:ptr dsym, name:string_t, add_global:int_t
+CreateSegment proc fastcall private uses rdi s:asym_t, name:string_t, add_global:int_t
 
     mov rdi,rcx
     .if ( rcx == NULL )
@@ -335,15 +333,15 @@ CreateSegment proc fastcall private uses rdi s:ptr dsym, name:string_t, add_glob
     .if ( rdi )
 
         mov [rdi].asym.state,SYM_SEG
-        mov [rdi].dsym.seginfo,LclAlloc( sizeof( seg_info ) )
-        mov rcx,rax;tmemset( rax, 0, sizeof( seg_info ) )
+        mov [rdi].asym.seginfo,LclAlloc( sizeof( seg_info ) )
+        mov rcx,rax
         mov [rcx].seg_info.Ofssize,MODULE.defOfssize
         mov [rcx].seg_info.alignment,4 ; this is PARA (2^4)
         mov [rcx].seg_info.combine,COMB_INVALID
 
         ; null class name, in case none is mentioned
 
-        mov [rdi].dsym.next,NULL
+        mov [rdi].asym.next,NULL
 
         ; don't use sym_add_table(). Thus the "prev" member
         ; becomes free for another use.
@@ -355,7 +353,7 @@ CreateSegment proc fastcall private uses rdi s:ptr dsym, name:string_t, add_glob
         .else
 
             mov rcx,SymTables[TAB_SEG*symbol_queue].tail
-            mov [rcx].dsym.next,rdi
+            mov [rcx].asym.next,rdi
             mov SymTables[TAB_SEG*symbol_queue].tail,rdi
         .endif
     .endif
@@ -366,9 +364,9 @@ CreateSegment endp
 
 ; handle GROUP directive
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local name:string_t
 
@@ -415,7 +413,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .if ( rsi )
 
-                mov rcx,[rsi].dsym.seginfo
+                mov rcx,[rsi].asym.seginfo
                 xor eax,eax
                 .if ( rcx )
                     mov rax,[rcx].seg_info.sgroup
@@ -428,8 +426,8 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 ; inherit the offset magnitude from the group
 
-                mov rdx,[rdi].dsym.grpinfo
-                mov rcx,[rsi].dsym.seginfo
+                mov rdx,[rdi].asym.grpinfo
+                mov rcx,[rsi].asym.seginfo
                 .if ( [rdx].grp_info.seglist )
                     mov [rcx].seg_info.Ofssize,[rdi].asym.Ofssize
                 .else
@@ -469,7 +467,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; insert segment in group if it's not there already
 
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[rsi].asym.seginfo
         .if ( [rcx].seg_info.sgroup == NULL )
 
             ; set the segment's grp
@@ -478,8 +476,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             LclAlloc( sizeof( seg_item ) )
             mov [rax].seg_item.iseg,rsi
-            mov [rax].seg_item.next,NULL
-            mov rdx,[rdi].dsym.grpinfo
+            mov rdx,[rdi].asym.grpinfo
             inc [rdx].grp_info.numseg
 
             ; insert the segment at the end of linked list
@@ -511,7 +508,7 @@ GrpDir endp
 
 ; get/set value of predefined symbol @WordSize
 
-UpdateWordSize proc fastcall sym:ptr asym, p:ptr
+UpdateWordSize proc fastcall sym:asym_t, p:ptr
 
     mov [rcx].asym.value,CurrWordSize
     ret
@@ -529,7 +526,7 @@ SetOfssize proc
         mov MODULE.Ofssize,MODULE.defOfssize
     .else
 
-        mov rax,[rcx].dsym.seginfo
+        mov rax,[rcx].asym.seginfo
         movzx ecx,[rax].seg_info.Ofssize
         mov MODULE.Ofssize,cl
         lea rax,min_cpu
@@ -606,13 +603,13 @@ DefineFlatGroup proc
 DefineFlatGroup endp
 
 
-GetSegIdx proc fastcall sym:ptr asym
+GetSegIdx proc fastcall sym:asym_t
 
     ; get idx to sym's segment
 
     mov rax,rcx
     .if ( rax )
-        mov rax,[rax].dsym.seginfo
+        mov rax,[rax].asym.seginfo
         .return( [rax].seg_info.seg_idx )
     .endif
     ret
@@ -620,13 +617,13 @@ GetSegIdx proc fastcall sym:ptr asym
 GetSegIdx endp
 
 
-GetGroup proc fastcall sym:ptr asym
+GetGroup proc fastcall sym:asym_t
 
     ; get a symbol's group
 
     .if ( GetSegm( rcx ) != NULL )
 
-        mov rax,[rax].dsym.seginfo
+        mov rax,[rax].asym.seginfo
        .return( [rax].seg_info.sgroup )
     .endif
     ret
@@ -634,7 +631,7 @@ GetGroup proc fastcall sym:ptr asym
 GetGroup endp
 
 
-GetSymOfssize proc fastcall sym:ptr asym
+GetSymOfssize proc fastcall sym:asym_t
 
     ; get sym's offset size (64=2, 32=1, 16=0)
 
@@ -651,7 +648,7 @@ GetSymOfssize proc fastcall sym:ptr asym
             .return( [rax].asym.Ofssize )
         .endif
         .if ( [rax].asym.state == SYM_SEG  )
-            mov rax,[rax].dsym.seginfo
+            mov rax,[rax].asym.seginfo
             .return( [rax].seg_info.Ofssize )
         .endif
 
@@ -661,7 +658,7 @@ GetSymOfssize proc fastcall sym:ptr asym
             .return( USE16 )
         .endif
     .else
-        mov rax,[rax].dsym.seginfo
+        mov rax,[rax].asym.seginfo
        .return( [rax].seg_info.Ofssize )
     .endif
     movzx eax,MODULE.Ofssize
@@ -670,7 +667,7 @@ GetSymOfssize proc fastcall sym:ptr asym
 GetSymOfssize endp
 
 
-SetSymSegOfs proc fastcall sym:ptr asym
+SetSymSegOfs proc fastcall sym:asym_t
 
     mov [rcx].asym.segm,CurrSeg
     mov [rcx].asym.offs,GetCurrOffset()
@@ -681,11 +678,11 @@ SetSymSegOfs endp
 
 ; get segment type from alignment, combine type or class name
 
-TypeFromClassName proc fastcall uses rsi rdi s:ptr dsym, clname:ptr asym
+TypeFromClassName proc fastcall uses rsi rdi s:asym_t, clname:asym_t
 
   local uname[MAX_ID_LEN+1]:char_t
 
-    mov rax,[rcx].dsym.seginfo
+    mov rax,[rcx].asym.seginfo
     .if ( [rax].seg_info.alignment == MAX_SEGALIGNMENT )
         .return( SEGTYPE_ABS )
     .endif
@@ -794,14 +791,14 @@ CreateClassLname endp
 ; set the segment's class. report an error if the class has been set
 ; already and the new value differs.
 
-SetSegmentClass proc fastcall private uses rsi s:ptr dsym, name:string_t
+SetSegmentClass proc fastcall private uses rsi s:asym_t, name:string_t
 
     mov rsi,rcx
     .if ( CreateClassLname( rdx ) == NULL )
         .return( ERROR )
     .endif
 
-    mov rcx,[rsi].dsym.seginfo
+    mov rcx,[rsi].asym.seginfo
     mov [rcx].seg_info.clsym,rax
    .return( NOT_ERROR )
 
@@ -831,12 +828,12 @@ CreateIntSegment proc __ccall uses rdi name:string_t, classname:string_t, alignm
         .if ( !( [rdi].asym.isdefined ) )
 
             inc MODULE.num_segs
-            mov rcx,[rdi].dsym.seginfo
+            mov rcx,[rdi].asym.seginfo
             mov [rcx].seg_info.seg_idx,MODULE.num_segs
             AddLnameItem( rdi )
             mov [rdi].asym.isdefined,1 ; v2.12: added
         .endif
-        mov rcx,[rdi].dsym.seginfo
+        mov rcx,[rdi].asym.seginfo
         mov [rcx].seg_info.internal,1 ; segment has private buffer
         mov [rdi].asym.segm,rdi
         mov [rcx].seg_info.alignment,alignment
@@ -851,7 +848,7 @@ CreateIntSegment endp
 
 ; ENDS directive
 
-EndsDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
+EndsDir proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ldr rbx,tokenarray
     .if ( CurrStruct != NULL )
@@ -882,7 +879,7 @@ EndsDir endp
 
 ; SEGMENT directive if pass is > 1
 
-SetCurrSeg proc fastcall private uses rdi rbx i:int_t, tokenarray:ptr asm_tok
+SetCurrSeg proc fastcall private uses rdi rbx i:int_t, tokenarray:token_t
 
     mov rbx,rdx
     mov rdi,SymSearch( [rbx].string_ptr )
@@ -915,23 +912,23 @@ endif
 SetCurrSeg endp
 
 
-UnlinkSeg proc fastcall private uses rdi dir:ptr dsym
+UnlinkSeg proc fastcall private uses rdi dir:asym_t
 
-    .for ( rdx = SymTables[TAB_SEG*symbol_queue].head, rdi = NULL : rdx : rdi = rdx, rdx = [rdx].dsym.next )
+    .for ( rdx = SymTables[TAB_SEG*symbol_queue].head, rdi = NULL : rdx : rdi = rdx, rdx = [rdx].asym.next )
 
         .if ( rdx == rcx )
 
             ; if segment is first, set a new head
 
             .if ( rdi == NULL )
-                mov SymTables[TAB_SEG*symbol_queue].head,[rdx].dsym.next
+                mov SymTables[TAB_SEG*symbol_queue].head,[rdx].asym.next
             .else
-                mov [rdi].dsym.next,[rdx].dsym.next
+                mov [rdi].asym.next,[rdx].asym.next
             .endif
 
             ; if segment is last, set a new tail
 
-            .if ( [rdx].dsym.next == NULL )
+            .if ( [rdx].asym.next == NULL )
                 mov SymTables[TAB_SEG*symbol_queue].tail,rdi
             .endif
         .endif
@@ -943,7 +940,7 @@ UnlinkSeg endp
 
 ; SEGMENT directive
 
-SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new is_old:char_t = FALSE
    .new token:string_t
@@ -957,9 +954,9 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new oldalign:char_t
    .new oldcombine:char_t
    .new newcharacteristics:uint_8 = 0
-   .new dir:ptr dsym
+   .new dir:asym_t
    .new name:string_t
-   .new sym:ptr asym
+   .new sym:asym_t
    .new opndx:expr
 
     ldr rbx,tokenarray
@@ -1001,17 +998,17 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             ; So unlink the segment and add it at the end.
 
             UnlinkSeg( rdi )
-            mov [rdi].dsym.next,NULL
+            mov [rdi].asym.next,NULL
             .if ( SymTables[TAB_SEG*symbol_queue].head == NULL )
 
                 mov SymTables[TAB_SEG*symbol_queue].head,rdi
                 mov SymTables[TAB_SEG*symbol_queue].tail,rdi
             .else
                 mov rcx,SymTables[TAB_SEG*symbol_queue].tail
-                mov [rcx].dsym.next,rdi
+                mov [rcx].asym.next,rdi
                 mov SymTables[TAB_SEG*symbol_queue].tail,rdi
             .endif
-            mov rcx,[rdi].dsym.seginfo
+            mov rcx,[rdi].asym.seginfo
             mov oldOfssize,[rcx].seg_info.Ofssize ; v2.13: check segment's word size
 
             ; v2.14: set a default ofsset size
@@ -1022,7 +1019,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .else
 
             mov is_old,TRUE
-            mov rcx,[rdi].dsym.seginfo
+            mov rcx,[rdi].asym.seginfo
             mov oldOfssize,  [rcx].seg_info.Ofssize
             mov oldalign,    [rcx].seg_info.alignment
             mov oldcombine,  [rcx].seg_info.combine
@@ -1092,7 +1089,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         or initstate,edx ; mark it initialized
         mov rcx,dir
-        mov rdi,[rcx].dsym.seginfo
+        mov rdi,[rcx].asym.seginfo
         mov rcx,type
 
         .switch ( edx )
@@ -1238,7 +1235,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     ; associated segment must be COMDAT, but not associative
 
                     .if SymSearch( [rbx].string_ptr )
-                        mov rcx,[rax].dsym.seginfo
+                        mov rcx,[rax].asym.seginfo
                     .endif
                     .if ( rax == NULL || [rax].asym.state != SYM_SEG ||
                         [rcx].seg_info.comdatselection == 0 ||
@@ -1376,7 +1373,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; make a guess about the segment's type
 
     mov rcx,dir
-    mov rdi,[rcx].dsym.seginfo
+    mov rdi,[rcx].asym.seginfo
 
     .if ( [rdi].seg_info.segtype != SEGTYPE_CODE )
 
@@ -1503,7 +1500,7 @@ SortSegments proc __ccall uses rsi rdi rbx type:int_t
 
     .new changed:int_t = TRUE
     .new swap:int_t
-    .new curr:ptr dsym
+    .new curr:asym_t
     .new index:int_t = 1
 
     .while ( changed == TRUE )
@@ -1511,28 +1508,28 @@ SortSegments proc __ccall uses rsi rdi rbx type:int_t
         xor esi,esi
         mov changed,FALSE
 
-        .for ( rdi = SymTables[TAB_SEG*symbol_queue].head: rdi && [rdi].dsym.next : rsi = rdi, rdi = [rdi].dsym.next )
+        .for ( rdi = SymTables[TAB_SEG*symbol_queue].head: rdi && [rdi].asym.next : rsi = rdi, rdi = [rdi].asym.next )
 
             mov swap,FALSE
-            mov rbx,[rdi].dsym.seginfo
+            mov rbx,[rdi].asym.seginfo
 
             .switch (type )
             .case 0
-                mov rcx,[rdi].dsym.next
-                mov rcx,[rcx].dsym.seginfo
+                mov rcx,[rdi].asym.next
+                mov rcx,[rcx].asym.seginfo
                 .if ( [rbx].seg_info.fileoffset > [rcx].seg_info.fileoffset )
                     mov swap,TRUE
                 .endif
                 .endc
             .case 1
-                mov rcx,[rdi].dsym.next
+                mov rcx,[rdi].asym.next
                 .ifsd ( tstrcmp( [rdi].asym.name, [rcx].asym.name ) > 0 )
                     mov swap,TRUE
                 .endif
                 .endc
             .case 2
-                mov rdx,[rdi].dsym.next
-                mov rcx,[rdx].dsym.seginfo
+                mov rdx,[rdi].asym.next
+                mov rcx,[rdx].asym.seginfo
                 .if ( [rbx].seg_info.lname_idx > [rcx].seg_info.lname_idx )
                     mov swap,TRUE
                 .elseif ( [rbx].seg_info.lname_idx == [rcx].seg_info.lname_idx )
@@ -1543,15 +1540,15 @@ SortSegments proc __ccall uses rsi rdi rbx type:int_t
                 .endc
             .endsw
             .if ( swap )
-                mov rdx,[rdi].dsym.next
+                mov rdx,[rdi].asym.next
                 mov changed,TRUE
                 .if ( rsi == NULL )
                     mov SymTables[TAB_SEG*symbol_queue].head,rdx
                 .else
-                    mov [rsi].dsym.next,rdx
+                    mov [rsi].asym.next,rdx
                 .endif
-                mov [rdi].dsym.next,[rdx].dsym.next
-                mov [rdx].dsym.next,rdi
+                mov [rdi].asym.next,[rdx].asym.next
+                mov [rdx].asym.next,rdi
             .endif
         .endf
     .endw
@@ -1599,7 +1596,7 @@ SegmentFini endp
 
 SegmentInit proc fastcall uses rsi rdi pass:int_t
 
-   .new curr:ptr dsym
+   .new curr:asym_t
    .new i:uint_32
    .new p:string_t
 
@@ -1618,9 +1615,9 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
     .if ( MODULE.pCodeBuff == NULL && Options.output_format != OFORMAT_OMF )
 
         .for ( rdi = SymTables[TAB_SEG*symbol_queue].head,
-                buffer_size = 0: rdi: rdi = [rdi].dsym.next )
+                buffer_size = 0: rdi: rdi = [rdi].asym.next )
 
-            mov rcx,[rdi].dsym.seginfo
+            mov rcx,[rdi].asym.seginfo
 
             .if ( [rcx].seg_info.internal )
                 .continue
@@ -1655,9 +1652,9 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
     ; set start of segment buffers.
 
     .for ( rdi = SymTables[TAB_SEG*symbol_queue].head,
-           rsi = MODULE.pCodeBuff: rdi: rdi = [rdi].dsym.next )
+           rsi = MODULE.pCodeBuff: rdi: rdi = [rdi].asym.next )
 
-        mov rcx,[rdi].dsym.seginfo
+        mov rcx,[rdi].asym.seginfo
         mov [rcx].seg_info.current_loc,0
         .continue .if ( [rcx].seg_info.internal )
 
@@ -1696,7 +1693,7 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
 
         .if ( stkindex )
 
-            imul ecx,stkindex,sizeof(dsym_t)
+            imul ecx,stkindex,sizeof(asym_t)
             tmemcpy( &SegStack, saved_SegStack, ecx )
         .endif
         UpdateCurrSegVars()
@@ -1713,9 +1710,9 @@ SegmentSaveState proc
 
     .if ( stkindex )
 
-        imul ecx,stkindex,sizeof(dsym_t)
+        imul ecx,stkindex,sizeof(asym_t)
         mov saved_SegStack,LclAlloc( ecx )
-        imul ecx,stkindex,sizeof(dsym_t)
+        imul ecx,stkindex,sizeof(asym_t)
         tmemcpy( saved_SegStack, &SegStack, ecx )
     .endif
     ret

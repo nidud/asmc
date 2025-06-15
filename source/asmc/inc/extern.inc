@@ -8,8 +8,8 @@
 ifndef __EXTERN_INC
 define __EXTERN_INC
 
-MakeExtern      proto __ccall :string_t, :uchar_t, :ptr asym, :ptr asym, :uchar_t
-AddPublicData   proto fastcall :ptr asym
+MakeExtern      proto __ccall :string_t, :uchar_t, :asym_t, :asym_t, :uchar_t
+AddPublicData   proto fastcall :asym_t
 
 FreePubQueue macro
     exitm<mov MODULE.PubQueue.head,NULL>

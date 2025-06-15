@@ -32,9 +32,9 @@ ifdef USE_COMALLOC
 
     .code
 
-    assume rdi:ptr sfield
+    assume rdi:asym_t
 
-AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, reg:int_t, i:int_t, level:ptr node
+AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, reg:int_t, i:int_t, level:ptr node
 
    .new q[256]:char_t
    .new t[256]:char_t
@@ -48,7 +48,7 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, 
 
     .if ( [rsi].asym.total_size )
 
-        .for ( rdx = [rsi].dsym.structinfo,
+        .for ( rdx = [rsi].asym.structinfo,
                rdi = [rdx].struct_info.head : rdi : rdi = [rdi].next, i++ )
 
             .if ( [rdi].type )
@@ -113,7 +113,7 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, 
 AssignVTable endp
 
 
-DefaultConstructor proc __ccall uses rsi rdi rbx sym:ptr dsym, table:string_t
+DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:string_t
 
    .new r_di:int_t
    .new size:int_t
@@ -173,7 +173,7 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:ptr dsym, table:string_t
 
 DefaultConstructor endp
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
 ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 

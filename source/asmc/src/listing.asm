@@ -43,13 +43,13 @@ externdef szTime:char_t
 
 public list_pos
 
-log_macro   proto __ccall :ptr asym
-log_struct  proto __ccall :ptr asym, :ptr sbyte, :sdword
-log_record  proto __ccall :ptr asym
-log_typedef proto __ccall :ptr asym
-log_segment proto __ccall :ptr asym, :ptr asym
-log_group   proto __ccall :ptr asym, :ptr dsym
-log_proc    proto __ccall :ptr asym
+log_macro   proto __ccall :asym_t
+log_struct  proto __ccall :asym_t, :ptr sbyte, :sdword
+log_record  proto __ccall :asym_t
+log_typedef proto __ccall :asym_t
+log_segment proto __ccall :asym_t, :asym_t
+log_group   proto __ccall :asym_t, :asym_t
+log_proc    proto __ccall :asym_t
 
 .data
 
@@ -98,7 +98,7 @@ define szCount <"count">
     type dw ?
     flags dw ?
     capitems ptr word ?
-    function proc local __ccall :ptr asym, :ptr asym, :int_32
+    function proc local __ccall :asym_t, :asym_t, :int_32
    .ends
 
 
@@ -138,7 +138,7 @@ cr print_item \
 LstWrite proc __ccall uses rsi rdi rbx type:lsttype, oldofs:uint_t, value:ptr
 
    .new newofs:uint_t
-   .new sym:ptr asym = value
+   .new sym:asym_t = value
    .new len:int_t
    .new len2:int_t
    .new idx:int_t
@@ -220,7 +220,7 @@ endif
 
         mov len,CODEBYTES
         lea rdi,ll.buffer[OFSSIZE+2]
-        mov rdx,[rbx].dsym.seginfo
+        mov rdx,[rbx].asym.seginfo
 
         .if ( [rdx].seg_info.CodeBuffer == NULL || ![rdx].seg_info.written )
 
@@ -267,7 +267,7 @@ endif
             mov idx,0
         .endif
 
-        mov rdx,[rbx].dsym.seginfo
+        mov rdx,[rbx].asym.seginfo
         mov rsi,[rdx].seg_info.CodeBuffer
         mov eax,idx
         add rsi,rax
@@ -454,7 +454,7 @@ LstSetPosition endp
 
     option proc: private
 
-get_seg_align proc __ccall s:ptr seg_info, buffer:string_t
+get_seg_align proc __ccall s:segment_t, buffer:string_t
 
     ldr   rcx,s
     movzx ecx,[rcx].seg_info.alignment
@@ -480,7 +480,7 @@ get_seg_align proc __ccall s:ptr seg_info, buffer:string_t
 get_seg_align endp
 
 
-get_seg_combine proc fastcall s:ptr seg_info
+get_seg_combine proc fastcall s:segment_t
 
     lea rdx,strings
     .switch( [rcx].seg_info.combine )
@@ -495,7 +495,7 @@ get_seg_combine proc fastcall s:ptr seg_info
 get_seg_combine endp
 
 
-log_macro proc __ccall uses rbx sym:ptr asym
+log_macro proc __ccall uses rbx sym:asym_t
 
     ldr rcx,sym
     lea rax,strings
@@ -546,7 +546,7 @@ SimpleTypeString endp
 ; that is, the symbol is ensured to be a TYPE!
 ; argument 'buffer' is either NULL or "very" large ( StringBufferEnd ).
 
-GetMemtypeString proc __ccall uses rsi rdi rbx sym:ptr asym, buffer:string_t
+GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
 
   local i:int_t
   local mem_type:byte
@@ -639,7 +639,7 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:ptr asym, buffer:string_t
 GetMemtypeString endp
 
 
-GetLanguage proc fastcall sym:ptr asym
+GetLanguage proc fastcall sym:asym_t
 
     movzx eax,[rcx].asym.langtype
     .if ( eax <= LANG_ASMCALL )
@@ -653,7 +653,7 @@ GetLanguage endp
 
 ; display STRUCTs and UNIONs
 
-log_struct proc __ccall uses rsi rdi rbx sym:ptr asym, name:string_t, ofs:int_32
+log_struct proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t, ofs:int_32
 
   local pdots:string_t
 
@@ -662,7 +662,7 @@ log_struct proc __ccall uses rsi rdi rbx sym:ptr asym, name:string_t, ofs:int_32
     .code
 
     ldr rdi,sym
-    mov rsi,[rdi].dsym.structinfo
+    mov rsi,[rdi].asym.structinfo
 
     .if ( !name )
         mov name,[rdi].asym.name
@@ -686,11 +686,11 @@ log_struct proc __ccall uses rsi rdi rbx sym:ptr asym, name:string_t, ofs:int_32
     LstNL()
     add prefix,2
 
-    assume rbx:ptr sfield
+    assume rbx:asym_t
 
     .for( rbx = [rsi].struct_info.head : rbx : rbx = [rbx].next )
 
-        .if ( [rbx].mem_type == MT_TYPE && [rbx].ivalue[0] == NULLC )
+        .if ( [rbx].mem_type == MT_TYPE && [rbx].ivalue == 0 )
 
             mov ecx,[rbx].offs
             add ecx,ofs
@@ -740,7 +740,7 @@ log_struct proc __ccall uses rsi rdi rbx sym:ptr asym, name:string_t, ofs:int_32
 log_struct endp
 
 
-log_record proc __ccall uses rsi rdi rbx sym:ptr asym
+log_record proc __ccall uses rsi rdi rbx sym:asym_t
 
   local mask:qword
   local pdots:string_t
@@ -753,7 +753,7 @@ log_record proc __ccall uses rsi rdi rbx sym:ptr asym
         lea rax,@CStr("")
     .endif
     mov pdots,rax
-    mov rsi,[rdi].dsym.structinfo
+    mov rsi,[rdi].asym.structinfo
 
     .for ( edx = 0, rbx = [rsi].struct_info.head: rbx: rbx = [rbx].next, edx++ )
     .endf
@@ -815,7 +815,7 @@ log_record endp
 
 ; a typedef is a simple with no fields. Size might be 0.
 
-log_typedef proc __ccall uses rsi rdi rbx sym:ptr asym
+log_typedef proc __ccall uses rsi rdi rbx sym:asym_t
 
   local pdots:string_t
 
@@ -871,12 +871,12 @@ log_typedef proc __ccall uses rsi rdi rbx sym:ptr asym
 log_typedef endp
 
 
-log_segment proc __ccall uses rsi rdi rbx sym:ptr asym, grp:ptr asym
+log_segment proc __ccall uses rsi rdi rbx sym:asym_t, grp:asym_t
 
   local buffer[32]:sbyte
 
     ldr rsi,sym
-    mov rdi,[rsi].dsym.seginfo
+    mov rdi,[rsi].asym.seginfo
 
     .if ( [rdi].seg_info.sgroup == grp )
 
@@ -912,7 +912,7 @@ log_segment proc __ccall uses rsi rdi rbx sym:ptr asym, grp:ptr asym
 log_segment endp
 
 
-log_group proc __ccall uses rsi rdi grp:ptr asym, segs:ptr dsym
+log_group proc __ccall uses rsi rdi grp:asym_t, segs:asym_t
 
     ldr rsi,grp
     mov eax,[rsi].asym.name_size
@@ -931,11 +931,11 @@ log_group proc __ccall uses rsi rdi grp:ptr asym, segs:ptr dsym
     ; the FLAT groups is always empty
 
     .if ( rsi == MODULE.flat_grp )
-        .for( rdi = segs : rdi : rdi = [rdi].dsym.next )
+        .for( rdi = segs : rdi : rdi = [rdi].asym.next )
             log_segment( rdi, rsi )
         .endf
     .else
-        mov rdi,[rsi].dsym.grpinfo
+        mov rdi,[rsi].asym.grpinfo
         .for( rdi = [rdi].grp_info.seglist : rdi : rdi = [rdi].seg_item.next )
             log_segment( [rdi].seg_item.iseg, rsi )
         .endf
@@ -945,7 +945,7 @@ log_group proc __ccall uses rsi rdi grp:ptr asym, segs:ptr dsym
 log_group endp
 
 
-get_proc_type proc fastcall sym:ptr asym
+get_proc_type proc fastcall sym:asym_t
 
     ; if there's no segment associated with the symbol,
     ; add the symbol's offset size to the distance
@@ -973,7 +973,7 @@ get_proc_type proc fastcall sym:ptr asym
 get_proc_type endp
 
 
-get_sym_seg_name proc fastcall sym:ptr asym
+get_sym_seg_name proc fastcall sym:asym_t
 
     .if ( [rcx].asym.segm )
         mov rcx,[rcx].asym.segm
@@ -989,7 +989,7 @@ get_sym_seg_name endp
 
 ; list Procedures and Prototypes
 
-log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
+log_proc proc __ccall uses rsi rdi rbx sym:asym_t
 
   local Ofssize:byte
   local p:string_t
@@ -1078,14 +1078,14 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
 
             ; position f2 to last param
 
-            mov rcx,[rsi].dsym.procinfo
-            .for ( cnt = 0, rcx = [rcx].proc_info.paralist: rcx: rcx = [rcx].dsym.nextparam )
+            mov rcx,[rsi].asym.procinfo
+            .for ( cnt = 0, rcx = [rcx].proc_info.paralist: rcx: rcx = [rcx].asym.nextparam )
                 inc cnt
             .endf
             .for ( : cnt: cnt-- )
 
-                mov rdi,[rsi].dsym.procinfo
-                .for ( ecx = 1, rdi = [rdi].proc_info.paralist: ecx < cnt: rdi = [rdi].dsym.nextparam, ecx++ )
+                mov rdi,[rsi].asym.procinfo
+                .for ( ecx = 1, rdi = [rdi].proc_info.paralist: ecx < cnt: rdi = [rdi].asym.nextparam, ecx++ )
                 .endf
                 mov eax,[rdi].asym.name_size
                 lea rdx,dots
@@ -1102,7 +1102,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
                     LstPrintf( "  %s %s        %-17s %s",
                         [rdi].asym.name, pdots, rcx, [rdi].asym.string_ptr )
                 .else
-                    mov rcx,[rsi].dsym.procinfo
+                    mov rcx,[rsi].asym.procinfo
                     mov tmp,GetResWName( [rcx].proc_info.basereg, NULL )
                     mov rcx,GetMemtypeString( rdi, NULL )
                     .if ( [rdi].asym.is_vararg )
@@ -1116,8 +1116,8 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
 
         .else
 
-            mov rdi,[rsi].dsym.procinfo
-            .for ( rdi = [rdi].proc_info.paralist: rdi : rdi = [rdi].dsym.nextparam )
+            mov rdi,[rsi].asym.procinfo
+            .for ( rdi = [rdi].proc_info.paralist: rdi : rdi = [rdi].asym.nextparam )
 
                 mov eax,[rdi].asym.name_size
                 lea rdx,dots
@@ -1126,7 +1126,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
                     lea rcx,@CStr("")
                 .endif
                 mov pdots,rcx
-                mov rcx,[rsi].dsym.procinfo
+                mov rcx,[rsi].asym.procinfo
                 mov rbx,GetResWName( [rcx].proc_info.basereg, NULL )
                 mov rdx,GetMemtypeString( rdi, NULL )
                 LstPrintf( szFmtProcStk, [rdi].asym.name, pdots, rdx,
@@ -1137,8 +1137,8 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
 
         ; print the procedure's locals
 
-        mov rdi,[rsi].dsym.procinfo
-        .for ( rdi = [rdi].proc_info.locallist: rdi : rdi = [rdi].dsym.nextlocal )
+        mov rdi,[rsi].asym.procinfo
+        .for ( rdi = [rdi].proc_info.locallist: rdi : rdi = [rdi].asym.nextlocal )
 
             mov eax,[rdi].asym.name_size
             lea rdx,dots
@@ -1153,7 +1153,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
             .else
                 tstrcpy( &buffer, GetMemtypeString( rdi, NULL ) )
             .endif
-            mov rcx,[rsi].dsym.procinfo
+            mov rcx,[rsi].asym.procinfo
             mov rbx,GetResWName( [rcx].proc_info.basereg, NULL )
             mov ecx,'+'
             mov edx,[rdi].asym.offs
@@ -1165,8 +1165,8 @@ log_proc proc __ccall uses rsi rdi rbx sym:ptr asym
             LstNL()
         .endf
 
-        mov rdi,[rsi].dsym.procinfo
-        .for ( rdi = [rdi].proc_info.labellist: rdi : rdi = [rdi].dsym.nextll )
+        mov rdi,[rsi].asym.procinfo
+        .for ( rdi = [rdi].proc_info.labellist: rdi : rdi = [rdi].asym.nextll )
 
             .for ( rbx = rdi: rbx: rbx = [rbx].asym.nextitem )
 
@@ -1202,7 +1202,7 @@ log_proc endp
 
 ; list symbols
 
-log_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
+log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
 
   local pdots:string_t
 
@@ -1354,9 +1354,9 @@ compare_syms endp
 
 LstWriteCRef proc __ccall uses rsi rdi rbx
 
-  local syms:ptr ptr asym
-  local dir:ptr dsym
-  local s:ptr struct_info
+  local syms:ptr asym_t
+  local dir:asym_t
+  local s:struct_t
   local idx:int_t
   local i:uint_32
   local SymCount:uint_32
@@ -1390,7 +1390,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
         .switch ( [rdi].asym.state )
         .case SYM_TYPE
 
-            mov s,[rdi].dsym.structinfo
+            mov s,[rdi].asym.structinfo
 
             .switch ( [rdi].asym.typekind )
             .case TYPE_RECORD
@@ -1436,10 +1436,10 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
             mov [rdx].qdesc.head,rdi
         .else
             mov rax,[rdx].qdesc.tail
-            mov [rax].dsym.next,rdi
+            mov [rax].asym.next,rdi
         .endif
         mov [rdx].qdesc.tail,rdi
-        mov [rdi].dsym.next,NULL
+        mov [rdi].asym.next,NULL
     .endf
 
     assume rdi:ptr print_item
@@ -1471,7 +1471,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
             imul ecx,ecx,qdesc
             lea rax,queues
 
-            .for ( rsi = [rax+rcx].qdesc.head: rsi : rsi = [rsi].dsym.next )
+            .for ( rsi = [rax+rcx].qdesc.head: rsi : rsi = [rsi].asym.next )
 
                 xor ecx,ecx
                 .if ( [rdi].print_item.flags & PRF_ADDSEG )
@@ -1514,9 +1514,9 @@ LstWriteCRef endp
 ; .[NO]LISTIF, .[LF|SF|TF]COND,
 ; PAGE, TITLE, SUBTITLE, SUBTTL directives
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
+ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
     ldr  esi,i
     imul ebx,esi,asm_tok
@@ -1632,7 +1632,7 @@ ListingDirective endp
 
 ; directives .[NO]LISTMACRO, .LISTMACROALL, .[X|L|S]ALL
 
-ListMacroDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
+ListMacroDirective proc __ccall i:int_t, tokenarray:token_t
 
     imul ecx,i,asm_tok
     add rcx,tokenarray

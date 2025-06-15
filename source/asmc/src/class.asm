@@ -93,9 +93,9 @@ ClassProto2 proc __ccall uses rsi rdi rbx class:string_t, method:string_t,
 ClassProto2 endp
 
 
-    assume rdi:ptr sfield
+    assume rdi:asym_t
 
-AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:ptr asym
+AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:asym_t
 
   local q[512]:char_t
   local n:string_t
@@ -105,7 +105,7 @@ AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:ptr asym
 
     .if ( [rbx].asym.total_size && Parse_Pass == 0 )
 
-        .for ( rdx = [rbx].dsym.structinfo,
+        .for ( rdx = [rbx].asym.structinfo,
                rdi = [rdx].struct_info.head : rdi : rdi = [rdi].next )
 
             .if [rdi].type
@@ -173,7 +173,7 @@ OpenVtbl endp
     assume rsi:nothing
     assume rdi:nothing
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
 get_param_name proc __ccall uses rsi rdi rbx tokenarray:token_t, token:string_t,
         count:ptr int_t, isid:ptr int_t, context:ptr string_t, langtype:ptr int_t
@@ -787,13 +787,7 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov MODULE.ComStack,LclAlloc( com_item )
         mov ecx,cmd
-        xor edx,edx
         mov [rax].com_item.cmd,ecx
-        mov [rax].com_item.langtype,edx
-        mov [rax].com_item.publsym,rdx
-        mov [rax].com_item.method,edx
-        mov [rax].com_item.sym,rdx
-
         mov rsi,NameSpace([rbx].string_ptr, NULL)
         mov rcx,MODULE.ComStack
         mov [rcx].com_item.class,rax

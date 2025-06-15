@@ -13,9 +13,9 @@ include parser.inc
 
     .code
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
-UndefDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
+UndefDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
     ldr  esi,i
     ldr  rbx,tokenarray

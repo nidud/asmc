@@ -123,10 +123,10 @@ ExpandHllProcEx proto __ccall :string_t, :int_t, :token_t
 
     ; add item to linked list of symbols
 
-    assume rdx:dsym_t
+    assume rdx:asym_t
     assume rcx:ptr symbol_queue
 
-sym_add_table proc fastcall queue:ptr symbol_queue, item:dsym_t
+sym_add_table proc fastcall queue:ptr symbol_queue, item:asym_t
 
     UNREFERENCED_PARAMETER(queue)
     UNREFERENCED_PARAMETER(item)
@@ -141,7 +141,7 @@ sym_add_table proc fastcall queue:ptr symbol_queue, item:dsym_t
     .else
 
         mov [rdx].prev,[rcx].tail
-        mov [rax].dsym.next,rdx
+        mov [rax].asym.next,rdx
         mov [rcx].tail,rdx
         mov [rdx].next,NULL
     .endif
@@ -154,7 +154,7 @@ sym_add_table endp
 ; this is called only for TAB_UNDEF and TAB_EXT,
 ; segments, groups, procs or aliases never change their state.
 
-sym_remove_table proc fastcall uses rbx queue:ptr symbol_queue, item:dsym_t
+sym_remove_table proc fastcall uses rbx queue:ptr symbol_queue, item:asym_t
 
     UNREFERENCED_PARAMETER(queue)
     UNREFERENCED_PARAMETER(item)
@@ -165,14 +165,14 @@ sym_remove_table proc fastcall uses rbx queue:ptr symbol_queue, item:dsym_t
 
         mov rax,[rdx].next
         mov rbx,[rdx].prev
-        mov [rbx].dsym.next,rax
+        mov [rbx].asym.next,rax
     .endif
 
     .if ( [rdx].next )
 
         mov rax,[rdx].prev
         mov rbx,[rdx].next
-        mov [rbx].dsym.prev,rax
+        mov [rbx].asym.prev,rax
     .endif
 
     .if ( [rcx].head == rdx )
@@ -1628,7 +1628,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     mov [rsi].opnd[rbx].InsFixup,CreateFixup( [rdi].sym, fixup_type, fixup_option )
 
     .if ( [rdi].inst == T_LROFFSET )
-        or [rax].fixup.fx_flag,FX_LOADER_RESOLVED
+        mov [rax].fixup.lresolved,1
     .endif
     .if ( [rdi].inst == T_IMAGEREL && fixup_type == FIX_OFF32 )
         mov [rax].fixup.type,FIX_OFF32_IMGREL
@@ -2210,7 +2210,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
 
             .if ( !( [rdi].is_abs ) && sym )
 
-               .new passume:ptr asym
+               .new passume:asym_t
                 GetAssume( SegOverride, sym, ASSUME_DS, &passume )
                 .if ( eax != ASSUME_NOTHING && passume )
                     mov Ofssize,GetSymOfssize( passume )
@@ -2836,7 +2836,7 @@ process_register endp
 
 ; v2.14: check if variable is accessible thru ES
 
-IsAccessible proc fastcall uses rbx sym:ptr asym, sr:int_t
+IsAccessible proc fastcall uses rbx sym:asym_t, sr:int_t
 
     imul edx,edx,assume_info
     lea  rax,SegAssumeTable
@@ -4329,7 +4329,7 @@ init_prefix:
     mov rax,CurrSeg
     .return asmerr(2034) .if rax == NULL
 
-    mov rax,[rax].dsym.seginfo
+    mov rax,[rax].asym.seginfo
 
     .if ( [rax].seg_info.segtype == SEGTYPE_UNDEF )
         mov [rax].seg_info.segtype,SEGTYPE_CODE
@@ -5033,7 +5033,7 @@ ParseLine endp
 
 ;; process a file. introduced in v2.11
 
-ProcessFile proc __ccall tokenarray:ptr asm_tok
+ProcessFile proc __ccall tokenarray:token_t
 
     UNREFERENCED_PARAMETER(tokenarray)
 

@@ -18,19 +18,19 @@ MF_IGNARGS		equ 0x04 ; ignore additional arguments (for FOR directive)
 ; functions in expans.asm
 
 GetLiteralValue		proto __ccall :string_t, :string_t
-RunMacro		proto __ccall :ptr dsym, :int_t, :ptr asm_tok, :string_t, :int_t, :ptr int_t
+RunMacro		proto __ccall :asym_t, :int_t, :token_t, :string_t, :int_t, :ptr int_t
 ExpandText		proto __ccall :string_t, :token_t, :uint_t
-ExpandLineItems		proto __ccall :string_t, :int_t, :ptr asm_tok, :int_t, :int_t
-ExpandLine		proto __ccall :string_t, :ptr asm_tok
-ExpandLiterals		proto __ccall :int_t, :ptr asm_tok
+ExpandLineItems		proto __ccall :string_t, :int_t, :token_t, :int_t, :int_t
+ExpandLine		proto __ccall :string_t, :token_t
+ExpandLiterals		proto __ccall :int_t, :token_t
 
 ; functions in macro.asm
 
 CreateMacro		proto fastcall :string_t ; create a macro symbol
-ReleaseMacroData	proto fastcall :dsym_t
+ReleaseMacroData	proto fastcall :asym_t
 fill_placeholders	proto __ccall :string_t, :string_t, :uint_t, :uint_t, :array_t
-SkipCurrentQueue	proto __ccall :ptr asm_tok
-StoreMacro		proto __ccall :ptr dsym, :int_t, :ptr asm_tok, :int_t ;; store macro content
+SkipCurrentQueue	proto __ccall :token_t
+StoreMacro		proto __ccall :asym_t, :int_t, :token_t, :int_t ;; store macro content
 MacroInit		proto __ccall :int_t
 
 ; functions in string.asm

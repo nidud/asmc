@@ -66,8 +66,8 @@ VEX_START equ T_VBROADCASTSS ; first VEX encoded item
 ; queue of symbols
 
 .template symbol_queue
-    head ptr dsym ?
-    tail ptr dsym ?
+    head asym_t ?
+    tail asym_t ?
    .ends
 
 
@@ -427,18 +427,18 @@ IndexFromToken macro tok
 %   exitm<typeid(IndexFromToken_,tok)(tok)>
     endm
 
-SizeFromMemtype		proto fastcall :uchar_t, :int_t, :ptr asym
+SizeFromMemtype		proto fastcall :uchar_t, :int_t, :asym_t
 MemtypeFromSize		proto fastcall :int_t, :ptr uchar_t
 SizeFromRegister	proto fastcall :int_t
-GetLangType		proto __ccall :ptr int_t, :ptr asm_tok, :ptr uchar_t
-sym_add_table		proto fastcall :ptr symbol_queue, :ptr dsym
-sym_remove_table	proto fastcall :ptr symbol_queue, :ptr dsym
-sym_ext2int		proto __ccall :ptr asym
+GetLangType		proto __ccall :ptr int_t, :token_t, :ptr uchar_t
+sym_add_table		proto fastcall :ptr symbol_queue, :asym_t
+sym_remove_table	proto fastcall :ptr symbol_queue, :asym_t
+sym_ext2int		proto __ccall :asym_t
 OperandSize		proto fastcall :int_t, :ptr code_info
-set_frame		proto fastcall :ptr asym
-set_frame2		proto fastcall :ptr asym
-ParseLine		proto __ccall :ptr asm_tok
-ProcessFile		proto __ccall :ptr asm_tok
+set_frame		proto fastcall :asym_t
+set_frame2		proto fastcall :asym_t
+ParseLine		proto __ccall :token_t
+ProcessFile		proto __ccall :token_t
 WritePreprocessedLine	proto __ccall :string_t
 parsevex		proto fastcall :string_t, :ptr uchar_t
 

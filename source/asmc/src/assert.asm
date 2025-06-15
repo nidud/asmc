@@ -19,7 +19,7 @@ MAXSAVESTACK equ 124
 
     .code
 
-    assume rbx: ptr asm_tok
+    assume rbx: token_t
     assume rsi: ptr hll_item
 
 AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t

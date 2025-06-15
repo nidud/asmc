@@ -106,7 +106,7 @@ GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
 
         mov rcx,[rbx].sym
         mov eax,[rbx].kind
-        assume rbx:ptr asym
+        assume rbx:asym_t
         .if ( rsi && rcx == NULL )
 
             .if ( eax == EXPR_ADDR )
@@ -234,7 +234,7 @@ GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
 GetType endp
 
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
 GetTypeId proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 

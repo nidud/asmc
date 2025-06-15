@@ -131,9 +131,9 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
         ; this allows to reduce the number of passes (see fixup.c)
 
         mov rcx,CurrSeg
-        mov rcx,[rcx].dsym.seginfo
+        mov rcx,[rcx].asym.seginfo
 
-        mov [rdi].dsym.next,[rcx].seg_info.label_list
+        mov [rdi].asym.next,[rcx].seg_info.label_list
         mov [rcx].seg_info.label_list,rdi
 
         ; a possible language type set by EXTERNDEF must be kept!
@@ -208,7 +208,7 @@ CreateLabel endp
 ; LABEL directive.
 ; syntax: <label_name> LABEL <qualified type>
 
-LabelDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
+LabelDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
   local ti:qualified_type
 if LABELARRAY
@@ -217,7 +217,7 @@ endif
 
     imul ebx,i,asm_tok
     add rbx,tokenarray
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
 
     .if ( i != 1 ) ; LABEL must be preceded by an ID
         .return( asmerr( 2008, [rbx].string_ptr ) )

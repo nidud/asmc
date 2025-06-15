@@ -133,7 +133,7 @@ BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
                         inc edi         ; fall through
                     .default            ; normal JMP (and PUSH)
                         mov rdx,[rsi].segm
-                        mov rdx,[rdx].dsym.seginfo
+                        mov rdx,[rdx].asym.seginfo
                         assume rdx:segment_t
                         .if ( [rdx].Ofssize )
                             add edi,2 ; NEAR32 instead of NEAR16
@@ -147,7 +147,7 @@ if LABELOPT
 
                         .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
 
-                            .continue(1) .if ( [rcx].fixup.fx_flag & FX_ORGOCCURED )
+                            .continue( 1 ) .if ( [rcx].fixup.orgoccured )
 
                             ; do this check after the check for ORG!
 
@@ -157,9 +157,9 @@ if LABELOPT
                         ; scan the segment's label list and adjust all labels
                         ; which are between the fixup loc and the current sym.
                         ; ( PROCs are NOT contained in this list because they
-                        ; use the <next>-field of dsym already!)
+                        ; use the <next>-field of asym already!)
 
-                        .for ( rcx = [rdx].label_list: rcx: rcx = [rcx].dsym.next )
+                        .for ( rcx = [rdx].label_list: rcx: rcx = [rcx].asym.next )
 
                             .break .if ( [rcx].asym.offs <= eax )
 

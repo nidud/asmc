@@ -15,21 +15,21 @@ define __COFF_INC
     }
 
 .template qditem
-    next ptr byte ?
+    next ptr qditem ?
     size dd ?
    .ends
 
 .template dbg_section
-    s ptr dsym ?
+    s asym_t ?
     q qdesc <>
    .ends
 
 ; v2.12: all coff global variables replaced by struct coffmod
 
 .template coffmod
-    directives      ptr dsym ?  ; .drectve section, contains linker directives
-    sxdata          ptr dsym ?  ; section for safe exception handler data
-    lastproc        ptr asym ?  ; used if -Zd is set
+    directives      asym_t ?    ; .drectve section, contains linker directives
+    sxdata          asym_t ?    ; section for safe exception handler data
+    lastproc        asym_t ?    ; used if -Zd is set
     dot_file_value  ptr sbyte ? ; value of .file symbol (isn't written by Masm v8+)
     start_data      dd ?        ; file position of start section data
     size_data       dd ?        ; total of section contents (incl relocs + linnums)

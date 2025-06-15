@@ -21,10 +21,10 @@ include reswords.inc
 
     .code
 
-    assume rbx:ptr asm_tok
+    assume rbx:token_t
     B equ <byte ptr>
 
-LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local directive:int_t
   local arg_loc:int_t
@@ -32,7 +32,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local is_exitm:int_t
   local opnd:expr
   local macinfo:macro_info
-  local tmpmacro:dsym
+  local tmpmacro:asym
   local buffer[4]:char_t
 
     inc i ; skip directive

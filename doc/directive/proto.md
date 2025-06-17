@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## PROTO
 
-label **PROTO** [[distance]] [[langtype]] [[, [[parameter]]:tag]]... [{...}]
+label **PROTO** [[distance]] [[langtype]] [[, [[parameter]]:tag]]... [\{...\}]
 
 Prototypes a function or an _inline function_.
 

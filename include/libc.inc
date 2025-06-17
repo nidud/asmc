@@ -242,7 +242,7 @@ int8_t		typedef sbyte
 int16_t		typedef sword
 int32_t		typedef sdword
 int64_t		typedef sqword
-int128_t	typedef oword
+int128_t	typedef soword
 
 uint8_t		typedef byte
 uint16_t	typedef word

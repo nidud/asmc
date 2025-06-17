@@ -9,6 +9,7 @@ Asmc Macro Assembler Reference
 - [Conditional Error](conditional-error.md)
 - [Data Allocation](data-allocation.md)
 - [Equates](equates.md)
+- [Inline Functions](inline-functions.md)
 - [Instruction Format](instruction-format.md)
 - [Listing Control](listing-control.md)
 - [Macros](macros.md)

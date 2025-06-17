@@ -18,4 +18,4 @@ Asmc Macro Assembler Reference
 
 #### See Also
 
-[Directives Reference](readme.md)
+[Directives Reference](readme.md) | [Inline functions](inline-functions.md)

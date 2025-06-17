@@ -254,7 +254,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:token_t,
     .elseif ( rsi && ( [rbx].token == T_COMMA || [rbx].token == T_FINAL ) )
         mov i,TokenCount
     .else
-        .return( AsmerrSymName( 2181, rsi ) )
+        .return( asmerr( 2181 ) )
     .endif
     imul ebx,i,asm_tok
     add rbx,tokenarray
@@ -270,7 +270,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:token_t,
     ;; scan the STRUCT/UNION/RECORD's members
 
     mov rdx,[rsi].asym.structinfo
-    .for ( rdi = [rdx].struct_info.head: rdi: rdi = [rdi].next )
+    .for ( rdi = [rdx].struct_info.head : rdi : rdi = [rdi].next )
 
         ; is it a RECORD field?
 
@@ -297,16 +297,16 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:token_t,
 
             ; fixme: max bits in 64-bit is 64 - see MAXRECBITS!
 
-            mov ecx,[rdi].total_size
+            movzx ecx,[rdi].bitf_bits
             .if ( ecx < 32 )
                 mov eax,1
                 shl eax,cl
                 .if ( opndx.uvalue >= eax )
-                    asmerr( 2071, [rdi].name )
+                    asmerr( 2071 )
                 .endif
             .endif
 
-            mov ecx,[rdi].offs
+            movzx ecx,[rdi].bitf_offs
             .if ( ecx < 64 )
 
                 mov eax,opndx.value
@@ -331,14 +331,13 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:token_t,
                 inc i
             .endif
 
-        .elseif ( [rdi].isarray &&
-                  [rbx].token != T_FINAL && [rbx].token != T_COMMA )
+        .elseif ( [rdi].isarray && [rbx].token != T_FINAL && [rbx].token != T_COMMA )
 
             .ifd ( InitializeArray( rdi, &i, tokenarray ) == ERROR )
 
                 imul ebx,i,asm_tok
                 add rbx,tokenarray
-                .break
+               .break
             .endif
 
         .elseif ( [rdi].total_size == [rdi].total_length &&
@@ -362,16 +361,14 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:token_t,
                 mov TokenCount,Tokenize( &[rdi].ivalue, eax, tokenarray, TOK_RESCAN )
                 mov cl,[rdi].mem_type
                 and ecx,MT_FLOAT
-                data_item( &j, tokenarray, NULL, no_of_bytes, [rdi].type, 1,
-                    FALSE, ecx, FALSE, TokenCount )
+                data_item( &j, tokenarray, NULL, no_of_bytes, [rdi].type, 1, FALSE, ecx, FALSE, TokenCount )
                 mov TokenCount,token
 
             .else
 
                 ; ignore commas enclosed in () ( might occur inside DUP argument! ).
 
-                .for ( j = i, rax = rbx, edx = 0,
-                      ecx = 0: [rbx].token != T_FINAL: rbx += asm_tok, i++ )
+                .for ( j = i, rax = rbx, edx = 0, ecx = 0: [rbx].token != T_FINAL: rbx += asm_tok, i++ )
 
                     .if ( [rbx].token == T_OP_BRACKET )
                         inc edx
@@ -663,32 +660,23 @@ next_item:
             .if ( opndx.kind != EXPR_CONST )
                 .return asmerr( 2026 )
             .endif
+            mov rdx,sym
             mov ecx,opndx.value
-            mov eax,32
-            .if ( MODULE.Ofssize == USE64 )
-                mov eax,64
+            mov eax,64
+            .if ( MODULE.Ofssize <= USE64 && [rdx].asym.crecord == 0 )
+                mov eax,32
             .endif
             .if ( ecx == 0 )
                 .return asmerr( 2172, [rbx-asm_tok*2].string_ptr )
             .elseif ( ecx > eax )
                 .return asmerr( 2089, [rbx-asm_tok*2].string_ptr )
             .endif
-            mov rdx,sym
             mov [rdx].asym.mem_type,MT_BITS
-            .if ( [rdx].asym.crecord )
-                mov al,[rsi].asym.bitf_offs
-                add [rsi].asym.bitf_offs,cl
-                mov [rdx].asym.bitf_offs,al
-                mov [rdx].asym.bitf_bits,cl
-                mov ecx,no_of_bytes
-                ;mov [rdx].asym.offs,ecx
-            .else
-                mov eax,[rsi].asym.offs
-                add [rsi].asym.offs,ecx
-                mov [rdx].asym.offs,eax
-            .endif
+            mov al,[rsi].asym.bitf_offs
+            add [rsi].asym.bitf_offs,cl
+            mov [rdx].asym.bitf_offs,al
+            mov [rdx].asym.bitf_bits,cl
             mov [rsi].asym.total_size,no_of_bytes
-            mov no_of_bytes,ecx
             imul ebx,i,asm_tok
             add rbx,tokenarray
         .endif
@@ -1012,13 +1000,13 @@ endif
                             mov eax,opndx.l64_l
                             mov edx,opndx.l64_h
                             .if ( ( eax || edx ) && eax != -1 && edx != -1 )
-                                .return( AsmerrSymName( 2071, opndx.sym ) )
+                                .return( asmerr( 2071 ) )
                             .endif
                         .elseif ( no_of_bytes == 10 )
                             .if ( ( opndx.h64_h != 0 || opndx.h64_l > 0xffff ) &&
                                   opndx.h64_h <= -1 && opndx.h64_l < -0xffff )
 
-                                .return( AsmerrSymName( 2071, opndx.sym ) )
+                                .return( asmerr( 2071 ) )
                             .endif
                         .endif
                     .endif
@@ -1180,12 +1168,12 @@ endif
                     .if ( opndx.explicit )
                         SizeFromMemtype( opndx.mem_type, opndx.Ofssize, opndx.type )
                         .if ( eax > no_of_bytes )
-                            AsmerrSymName( 2071, rsi )
+                            asmerr( 2071 )
                         .endif
                     .elseif ( rsi && [rsi].asym.state == SYM_EXTERNAL && opndx.is_abs )
                     .elseif ( rsi && [rsi].asym.state != SYM_UNDEFINED )
                         .if ( GetSymOfssize( rsi ) > USE16 )
-                            AsmerrSymName( 2071, rsi )
+                            asmerr( 2071 )
                         .endif
                     .endif
                     mov edi,FIX_OFF16
@@ -1203,7 +1191,7 @@ endif
                     .if ( opndx.explicit )
                         .if ( opndx.mem_type == MT_FAR )
                             .if ( opndx.Ofssize != USE_EMPTY && opndx.Ofssize != USE16 )
-                                AsmerrSymName( 2071, rsi )
+                                asmerr( 2071 )
                             .endif
                             mov edi,FIX_PTR16
                         .elseif ( opndx.mem_type == MT_NEAR )

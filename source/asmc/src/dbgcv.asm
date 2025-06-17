@@ -371,39 +371,28 @@ dbgcv::alignps endp
 dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:asym_t, sym:asym_t
 
     ldr rbx,this
+
     mov esi,CV_BITFIELD
     .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
         mov esi,CV_BITFIELD_16t
     .endif
     mov rdi,[rbx].flushpt( esi )
-
     mov rcx,sym
     mov [rcx].asym.cvtyperef,[rbx].currtype
-
     .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-
         mov [rdi].CV_BITFIELD_16t.size,( CV_BITFIELD_16t - sizeof(uint_16) )
         mov [rdi].CV_BITFIELD_16t.leaf,LF_BITFIELD_16t
-        mov [rdi].CV_BITFIELD_16t.length,[rcx].asym.total_size
-        mov [rdi].CV_BITFIELD_16t.position,[rcx].asym.offs
+        mov [rdi].CV_BITFIELD_16t.length,[rcx].asym.bitf_bits
+        mov [rdi].CV_BITFIELD_16t.position,[rcx].asym.bitf_offs
         mov [rdi].CV_BITFIELD_16t.type,GetTyperef( types, USE16 )
-
     .else
-
         mov [rdi].CV_BITFIELD.size,( CV_BITFIELD - sizeof(uint_16) )
         mov [rdi].CV_BITFIELD.leaf,LF_BITFIELD
-        mov eax,[rcx].asym.total_size
-        mov edx,[rcx].asym.offs
-        .if ( [rcx].asym.crecord )
-            mov al,[rcx].asym.bitf_bits
-            mov dl,[rcx].asym.bitf_offs
-        .endif
-        mov [rdi].CV_BITFIELD.length,al
-        mov [rdi].CV_BITFIELD.position,dl
+        mov [rdi].CV_BITFIELD.length,[rcx].asym.bitf_bits
+        mov [rdi].CV_BITFIELD.position,[rcx].asym.bitf_offs
         mov [rdi].CV_BITFIELD.type,GetTyperef( types, USE16 )
         mov [rdi].CV_BITFIELD.reserved,0xF1F2 ; added for alignment
     .endif
-
     inc [rbx].currtype
     add [rbx].pt,rsi
     ret
@@ -830,15 +819,12 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
         movzx eax,[rsi].asym.ext_idx1
         .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
             stosw
+        .elseif ( MODULE.defOfssize == USE64 ) ;; ...
+            dec cnt
+            mov ecx,cnt
+            mov [rdi+rcx*4],eax
         .else
-            .if ( MODULE.defOfssize == USE64 ) ;; ...
-
-                dec cnt
-                mov ecx,cnt
-                mov [rdi+rcx*4],eax
-            .else
-                stosd
-            .endif
+            stosd
         .endif
     .endf
     inc [rbx].currtype
@@ -2253,7 +2239,6 @@ MD5Final endp
 
     assume rbx:nothing
 
-
 calc_md5 proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
 
    .new ctx:MD5_CTX
@@ -2289,7 +2274,9 @@ calc_md5 proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
 calc_md5 endp
 
 else
+
 define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + sizeof( uint_16 ) )
+
 endif
 
 .data

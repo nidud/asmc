@@ -21,6 +21,7 @@ include listing.inc
 include input.inc
 include types.inc
 include omfspec.inc
+include expreval.inc
 
 define CODEBYTES 9
 define OFSSIZE 8
@@ -43,41 +44,7 @@ externdef szTime:char_t
 
 public list_pos
 
-log_macro   proto __ccall :asym_t
-log_struct  proto __ccall :asym_t, :ptr sbyte, :sdword
-log_record  proto __ccall :asym_t
-log_typedef proto __ccall :asym_t
-log_segment proto __ccall :asym_t, :asym_t
-log_group   proto __ccall :asym_t, :asym_t
-log_proc    proto __ccall :asym_t
-
-.data
-
-list_pos uint_t 0 ; current pos in LST file
-
-define DOTSMAX 32
-dots db " . . . . . . . . . . . . . . . .",0
-
-define szFmtProcStk <"  %s %s        %-17s %s %c %04X">
-
-ltext macro index, string
-  exitm<LS_&index&,>
-  endm
-.enumt list_strings : string_t {
-include ltext.inc
-}
-undef ltext
-
-ltext macro index, string
-  exitm<string_t @CStr(string)>
-  endm
-strings label string_t
-include ltext.inc
-undef ltext
-
-define szCount <"count">
-
-;; cref definitions
+; cref definitions
 
 .enum list_queues {
     LQ_MACROS,
@@ -90,34 +57,15 @@ define szCount <"count">
     LQ_LAST
     }
 
-.enum pr_flags {
-    PRF_ADDSEG = 0x01
-    }
+.data?
+mtbuf char_t 256 dup(?)
 
-.template print_item
-    type dw ?
-    flags dw ?
-    capitems ptr word ?
-    function proc local __ccall :asym_t, :asym_t, :int_32
-   .ends
+.data
 
+list_pos uint_t 0 ; current pos in LST file
 
-maccap dw LS_TXT_MACROS,  LS_TXT_MACROCAP  ,0
-strcap dw LS_TXT_STRUCTS, LS_TXT_STRUCTCAP, 0
-reccap dw LS_TXT_RECORDS, LS_TXT_RECORDCAP, 0
-tdcap  dw LS_TXT_TYPEDEFS,LS_TXT_TYPEDEFCAP, 0
-segcap dw LS_TXT_SEGS,    LS_TXT_SEGCAP, 0
-prccap dw LS_TXT_PROCS,   LS_TXT_PROCCAP, 0
-
-cr print_item \
-    { LQ_MACROS,          0, maccap, log_macro   },
-    { LQ_STRUCTS,         0, strcap, log_struct  },
-    { LQ_RECORDS,         0, reccap, log_record  },
-    { LQ_TYPEDEFS,        0, tdcap,  log_typedef },
-    { LQ_SEGS,            0, segcap, log_segment },
-    { LQ_GRPS,   PRF_ADDSEG, NULL,   log_group   },
-    { LQ_PROCS,           0, prccap, log_proc    }
-
+define DOTSMAX 32
+dots db " . . . . . . . . . . . . . . . .",0
 
 .template lstleft
     next    ptr lstleft ?
@@ -454,90 +402,105 @@ LstSetPosition endp
 
     option proc: private
 
-get_seg_align proc __ccall s:segment_t, buffer:string_t
+log_dots proc watcall size:uint_t, name:string_t
 
-    ldr   rcx,s
-    movzx ecx,[rcx].seg_info.alignment
-    lea   rdx,strings
-
-    .switch( ecx )
-    .case 0: .return( [rdx+LS_BYTE]  )
-    .case 1: .return( [rdx+LS_WORD]  )
-    .case 2: .return( [rdx+LS_DWORD] )
-    .case 3: .return( [rdx+LS_QWORD] )
-    .case 4: .return( [rdx+LS_PARA]  )
-    .case 8: .return( [rdx+LS_PAGE]  )
-    .case MAX_SEGALIGNMENT
-        .return( [rdx+LS_ABS] )
-    .default
-        mov eax,1
-        shl eax,cl
-        tsprintf( buffer, "%u", eax )
-        mov rax,buffer
-    .endsw
+    .if ( eax >= DOTSMAX )
+        xor eax,eax
+        xor ecx,ecx
+    .else
+        lea rcx,dots
+        lea rcx,[rcx+rax+1]
+        lea eax,[rax-DOTSMAX-7]
+    .endif
+    LstPrintf( "%s %*s", rdx, eax, rcx )
     ret
 
-get_seg_align endp
+log_dots endp
 
+log_dots2 proc watcall size:uint_t, name:string_t
 
-get_seg_combine proc fastcall s:segment_t
+    add eax,2
+    .if ( eax >= DOTSMAX )
+        xor eax,eax
+        xor ecx,ecx
+    .else
+        lea rcx,dots
+        lea rcx,[rcx+rax+1]
+        lea eax,[rax-DOTSMAX-7]
+    .endif
+    LstPrintf( "  %s %*s", rdx, eax, rcx )
+    ret
 
-    lea rdx,strings
-    .switch( [rcx].seg_info.combine )
-    .case COMB_INVALID:    .return( [rdx+LS_PRIVATE] )
-    .case COMB_STACK:      .return( [rdx+LS_STACK]   )
-    .case COMB_ADDOFF:     .return( [rdx+LS_PUBLIC]  )
-    ; v2.06: added
-    .case COMB_COMMON:     .return( [rdx+LS_COMMON]  )
-    .endsw
-    .return( "?" )
-
-get_seg_combine endp
+log_dots2 endp
 
 
 log_macro proc __ccall uses rbx sym:asym_t
 
-    ldr rcx,sym
-    lea rax,strings
-    mov rdx,[rax+LS_PROC]
-    .if ( [rcx].asym.isfunc )
-        mov rdx,[rax+LS_FUNC]
+    ldr rbx,sym
+
+    log_dots([rbx].asym.name_size, [rbx].asym.name)
+    mov edx,T_PROC
+    .if ( [rbx].asym.isfunc )
+        mov edx,T_MACRO
     .endif
-    mov eax,[rcx].asym.name_size
-    .if ( eax >= DOTSMAX )
-        lea rax,@CStr("")
-    .else
-        lea rbx,dots
-        lea rax,[rbx+rax+1]
-    .endif
-    LstPrintf( "%s %s        %s", [rcx].asym.name, rax, rdx )
+    LstPrintf( "%r", edx )
     LstNL()
     ret
 
 log_macro endp
 
 
+SimpleSizeString proc fastcall size:uint_t
+
+    xor eax,eax
+    .switch pascal ecx
+    .case  1: mov eax,T_BYTE
+    .case  2: mov eax,T_WORD
+    .case  4: mov eax,T_DWORD
+    .case  6: mov eax,T_FWORD
+    .case  8: mov eax,T_QWORD
+    .case 10: mov eax,T_TBYTE
+    .case 16: mov eax,T_OWORD
+    .case 32: mov eax,T_YWORD
+    .case 64: mov eax,T_ZWORD
+    .endsw
+    ret
+
+SimpleSizeString endp
+
+
 SimpleTypeString proc fastcall mem_type:byte
 
+    mov eax,ecx
     .if ecx == MT_ZWORD
         mov ecx,64
     .else
         and ecx,MT_SIZE_MASK
         inc ecx
     .endif
-    lea rdx,strings
-    .switch ecx
-    .case  1:   .return( [rdx+LS_BYTE] )
-    .case  2:   .return( [rdx+LS_WORD] )
-    .case  4:   .return( [rdx+LS_DWORD] )
-    .case  6:   .return( [rdx+LS_FWORD] )
-    .case  8:   .return( [rdx+LS_QWORD] )
-    .case 10:   .return( [rdx+LS_TBYTE] )
-    .case 16:   .return( [rdx+LS_OWORD] )
-    .case 32:   .return( [rdx+LS_YWORD] )
-    .case 64:   .return( [rdx+LS_ZWORD] )
-    .endsw
-    .return( "" )
+    .if ( !( eax & ( MT_SIGNED or MT_FLOAT ) ) || ecx > 16 )
+        .return( SimpleSizeString( ecx ) )
+    .endif
+    .if ( eax & MT_FLOAT )
+        xor eax,eax
+        .switch pascal ecx
+        .case  2: mov eax,T_REAL2
+        .case  4: mov eax,T_REAL4
+        .case  8: mov eax,T_REAL8
+        .case 10: mov eax,T_REAL10
+        .case 16: mov eax,T_REAL16
+        .endsw
+    .else
+        xor eax,eax
+        .switch pascal ecx
+        .case  1: mov eax,T_SBYTE
+        .case  2: mov eax,T_SWORD
+        .case  4: mov eax,T_SDWORD
+        .case  8: mov eax,T_SQWORD
+        .case 16: mov eax,T_SOWORD
+        .endsw
+    .endif
+    ret
 
 SimpleTypeString endp
 
@@ -552,9 +515,10 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
   local mem_type:byte
 
     ldr rsi,sym
+    ldr rbx,buffer
 
     .if ( !( [rsi].asym.mem_type & MT_SPECIAL) )
-        .return( SimpleTypeString( [rsi].asym.mem_type ) )
+        .return( GetResWName( SimpleTypeString( [rsi].asym.mem_type ), rbx ) )
     .endif
 
     ; v2.05: improve display of stack vars
@@ -563,78 +527,72 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
         mov mem_type,MT_PTR
     .endif
 
-    lea rdx,strings
+    lea rdx,mtbuf
     .switch ( mem_type )
     .case MT_PTR
-
-        .if ( [rsi].asym.Ofssize == USE64 )
-            mov rdi,[rdx+LS_NEAR]
-        .else
-            movzx ecx,[rsi].asym.Ofssize
+        mov edi,T_NEAR
+        movzx ecx,[rsi].asym.Ofssize
+        .if ( ecx < USE64 )
             .if ( [rsi].asym.is_far )
-                mov rdi,[rdx+LS_FAR16+rcx*string_t]
+                lea edi,[rcx+T_FAR16]
             .else
-                mov rdi,[rdx+LS_NEAR16+rcx*string_t]
+                mov edi,[rcx+T_NEAR16]
             .endif
         .endif
-
-        .if ( buffer ) ; Currently, 'buffer' is only != NULL for typedefs
-
-            mov rbx,buffer
+        .if ( rbx ) ; Currently, 'buffer' is only != NULL for typedefs
 
             ; v2.10: improved pointer TYPEDEF display
 
             .for ( i = [rsi].asym.is_ptr: i: i-- )
-                lea rdx,strings
-                add rbx,tsprintf( rbx, "%s %s ", rdi, string_t ptr [rdx+LS_PTR] )
+                add rbx,tsprintf( rbx, "%r %r ", edi, T_PTR )
             .endf
 
             ; v2.05: added.
 
             .if ( [rsi].asym.state == SYM_TYPE && [rsi].asym.typekind == TYPE_TYPEDEF )
-
                 .if ( [rsi].asym.target_type )
-
                     mov rcx,[rsi].asym.target_type
                     tstrcpy( rbx, [rcx].asym.name )
-
                 .elseif ( !( [rsi].asym.ptr_memtype & MT_SPECIAL ) )
-
-                    tstrcpy( rbx, SimpleTypeString( [rsi].asym.ptr_memtype ) )
+                    tsprintf( rbx, "%r", SimpleTypeString( [rsi].asym.ptr_memtype ) )
                 .endif
             .endif
-            .return( buffer )
+            .return( rbx )
         .endif
-        .return( rdi )
-
+        .return( GetResWName( edi, rdx ) )
     .case MT_FAR
-        .if ( [rsi].asym.segm )
-            .return( [rdx+LS_LFAR] )
-        .endif
+        mov rbx,rdx
         mov ecx,GetSymOfssize( rsi )
-        lea rdx,strings
-       .return( [rdx+LS_LFAR16+rcx*string_t] )
-
+        .if ( ecx >= USE64 || [rsi].asym.segm )
+            mov ecx,T_FAR
+        .else
+            lea ecx,[rcx+T_FAR16]
+        .endif
+        tsprintf( rbx, "L %r", ecx )
+       .return( rbx )
     .case MT_NEAR
-        .if ( [rsi].asym.segm )
-            .return( [rdx+LS_LNEAR] )
-        .endif
+        mov rbx,rdx
         mov ecx,GetSymOfssize( rsi )
-        lea rdx,strings
-       .return( [rdx+LS_LNEAR16+rcx*string_t] )
-
+        .if ( ecx >= USE64 || [rsi].asym.segm )
+            mov ecx,T_NEAR
+        .else
+            lea ecx,[rcx+T_NEAR16]
+        .endif
+        tsprintf( rbx, "L %r", ecx )
+       .return( rbx )
     .case MT_TYPE
         mov rcx,[rsi].asym.type
         mov rax,[rcx].asym.name
         .if ( byte ptr [rax] )  ;; there are a lot of unnamed types
             .return( rax )
         .endif
-        .return( GetMemtypeString( [rsi].asym.type, buffer ) )
-
+        .return( GetMemtypeString( [rsi].asym.type, rdx ) )
+    .case MT_BITS
+        .return( "bits" )
     .case MT_EMPTY ; number = via EQU or directive
-        .return( [rdx+LS_NUMBER] )
+        .return( "number" )
     .endsw
-    .return("?")
+    .return( "?" )
 
 GetMemtypeString endp
 
@@ -643,10 +601,9 @@ GetLanguage proc fastcall sym:asym_t
 
     movzx eax,[rcx].asym.langtype
     .if ( eax <= LANG_ASMCALL )
-        lea rdx,strings
-        .return( [rdx+rax*string_t+LS_VOID] )
+        .return( &[rax+T_CCALL-1] )
     .endif
-    .return( "?" )
+    .return( 0 )
 
 GetLanguage endp
 
@@ -655,32 +612,22 @@ GetLanguage endp
 
 log_struct proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t, ofs:int_32
 
-  local pdots:string_t
-
     .data
      prefix int_t 0
     .code
 
     ldr rdi,sym
+    ldr rbx,name
+
     mov rsi,[rdi].asym.structinfo
-
-    .if ( !name )
-        mov name,[rdi].asym.name
+    .if ( !rbx )
+        mov rbx,[rdi].asym.name
     .endif
-
-    .if ( tstrlen( name ) >= DOTSMAX )
-        lea rcx,@CStr("")
-    .else
-        lea rcx,dots
-        lea rcx,[rcx+rax+1]
-    .endif
-
+    log_dots(tstrlen(rbx), rbx)
     .if ( [rsi].struct_info.alignment > 1 )
-
-        LstPrintf( "%s %s        %8X (%u)",
-            name, rcx, [rdi].asym.total_size, [rsi].struct_info.alignment )
+        LstPrintf( "%8X (%u)", [rdi].asym.total_size, [rsi].struct_info.alignment )
     .else
-        LstPrintf( "%s %s        %8X", name, rcx, [rdi].asym.total_size )
+        LstPrintf( "%8X", [rdi].asym.total_size )
     .endif
 
     LstNL()
@@ -705,28 +652,20 @@ log_struct proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t, ofs:int_32
 
             .if ( byte ptr [rcx] || ( [rbx].mem_type == MT_TYPE ) )
 
-                mov eax,[rbx].name_size
-                add eax,prefix
-                mov ecx,eax
-                lea rdx,dots
-                lea rax,[rax+rdx+1]
-
-                .if ( ( ecx >= DOTSMAX ) )
-                    lea rax,@CStr("")
-                .endif
-                mov pdots,rax
-
-                .for ( esi = 0: esi < prefix: esi++ )
-                    LstPrintf(" ")
-                .endf
-
+                mov edx,prefix
+                neg edx
+                LstPrintf( "%*s", edx, NULL )
+                mov ecx,[rbx].name_size
+                add ecx,prefix
+                log_dots(ecx, [rbx].name)
+                GetMemtypeString( rbx, NULL )
                 mov ecx,[rbx].offs
                 add ecx,[rdi].asym.offs
                 add ecx,ofs
-
-                LstPrintf( "%s %s        %8X   ", [rbx].name, pdots, ecx )
-                LstPrintf( "%s", GetMemtypeString( rbx, NULL ) )
-
+                .if ( [rbx].mem_type == MT_BITS )
+                    movzx ecx,[rbx].asym.bitf_bits
+                .endif
+                LstPrintf( "%8X   %s", ecx, rax )
                 .if ( [rbx].isarray )
                     LstPrintf( "[%u]", [rbx].total_length )
                 .endif
@@ -743,66 +682,29 @@ log_struct endp
 log_record proc __ccall uses rsi rdi rbx sym:asym_t
 
   local mask:qword
-  local pdots:string_t
 
     ldr rdi,sym
-    lea rdx,dots
-    lea rax,[rdx+1]
 
-    .if ( [rdi].asym.name_size >= DOTSMAX )
-        lea rax,@CStr("")
-    .endif
-    mov pdots,rax
+    log_dots([rdi].asym.name_size, [rdi].asym.name)
     mov rsi,[rdi].asym.structinfo
-
     .for ( edx = 0, rbx = [rsi].struct_info.head: rbx: rbx = [rbx].next, edx++ )
     .endf
-
     imul ecx,[rdi].asym.total_size,8
-    LstPrintf( "%s %s      %6X  %7X", [rdi].asym.name, pdots, ecx, edx )
+    LstPrintf( "%6X  %7X", ecx, edx )
     LstNL()
 
     .for ( rbx = [rsi].struct_info.head: rbx: rbx = [rbx].next )
 
-        mov eax,[rbx].name_size
-        add eax,2
-        mov ecx,eax
-        lea rdx,dots
-        lea rax,[rdx+rax+1]
-        .if ( ( ecx >= DOTSMAX ) )
-            lea rax,@CStr("")
-        .endif
-        mov pdots,rax
-
-        xor eax,eax
-        .z8 mask,rax
-        mov esi,[rbx].offs
-        add esi,[rbx].total_size
-
-        .for ( ecx = [rbx].offs, edx = 0: ecx < esi: ecx++ )
-
-            mov eax,1
-            .if ecx >= 32
-                sub ecx,32
-                shl eax,cl
-                or  dword ptr mask[4],eax
-                add ecx,32
-            .else
-                shl eax,cl
-                or  dword ptr mask[0],eax
-            .endif
-        .endf
-
-        lea rcx,@CStr("?")
-        .if ( [rbx].ivalue )
-            lea rcx,[rbx].ivalue
+        log_dots2([rbx].name_size, [rbx].name)
+        SetBitMask(rbx, &mask)
+        lea rcx,[rbx].ivalue
+        .if ( [rbx].ivalue == 0 )
+            mov rcx,GetResWName( SimpleSizeString( [rdi].asym.total_size ), NULL )
         .endif
         .if ( [rdi].asym.total_size > 4 )
-            LstPrintf( "  %s %s      %6X  %7X  %016lX %s",
-                [rbx].name, pdots, [rbx].offs, [rbx].total_size, mask, rcx )
+            LstPrintf( "%6X  %7X  %016lX %s", [rbx].bitf_offs, [rbx].bitf_bits, mask, rcx )
         .else
-            LstPrintf( "  %s %s      %6X  %7X  %08X %s",
-                [rbx].name, pdots, [rbx].offs, [rbx].total_size, mask, rcx )
+            LstPrintf( "%6X  %7X  %08X %s", [rbx].bitf_offs, [rbx].bitf_bits, mask, rcx )
         .endif
         LstNL()
     .endf
@@ -817,16 +719,9 @@ log_record endp
 
 log_typedef proc __ccall uses rsi rdi rbx sym:asym_t
 
-  local pdots:string_t
-
     ldr rsi,sym
-    mov ecx,[rsi].asym.name_size
-    lea rdx,dots
-    lea rax,[rdx+rcx+1]
-    .if ( ecx >= DOTSMAX )
-        lea rax,@CStr("")
-    .endif
-    mov pdots,rax
+
+    log_dots([rsi].asym.name_size, [rsi].asym.name)
 
     mov rdi,StringBufferEnd
     mov byte ptr [rdi],NULLC
@@ -834,37 +729,31 @@ log_typedef proc __ccall uses rsi rdi rbx sym:asym_t
 
     .if ( [rsi].asym.mem_type == MT_PROC && rbx ) ; typedef proto?
 
-        lea rdx,strings
-        tstrcat( rdi, [rdx+LS_PROC] )
-        tstrcat( rdi, " " )
-
+        add rdi,tsprintf( rdi, "%r ", T_PROC )
         mov rcx,[rbx].asym.name
         .if ( byte ptr [rcx] ) ; the name may be ""
-
-            tstrcat( rdi, rcx )
-            tstrcat( rdi, " ")
+            add rdi,tsprintf( rdi, "%s ", rcx )
         .endif
 
         ; v2.11: target_type has state SYM_TYPE (since v2.09).
         ; This state isn't handled properly by GetSymOfsSize(),
         ; which is called by GetMemtypeString(), so get the strings here.
 
-        mov ecx,LS_LFAR16
-        .if ( [rbx].asym.mem_type == MT_NEAR )
-            mov ecx,LS_LNEAR16
+        GetLanguage( [rsi].asym.target_type )
+        movzx edx,[rsi].asym.Ofssize
+        mov ecx,T_NEAR
+        .if ( edx < USE64 )
+            mov ecx,T_FAR16
+            .if ( [rbx].asym.mem_type == MT_NEAR )
+                mov ecx,T_NEAR16
+            .endif
+            lea ecx,[rcx+rdx]
         .endif
-
-        movzx eax,[rsi].asym.Ofssize
-        lea rcx,[rcx+rax*size_t]
-        lea rdx,strings
-
-        tstrcat( rdi, [rdx+rcx] )
-        tstrcat( rdi, " " )
-        tstrcat( rdi, GetLanguage( [rsi].asym.target_type ) )
+        tsprintf( rdi, "L %r %r", ecx, eax )
     .else
-        mov rdi,GetMemtypeString( rsi, rdi )
+        GetMemtypeString( rsi, rdi )
     .endif
-    LstPrintf( "%s %s    %8u  %s", [rsi].asym.name, pdots, [rsi].asym.total_size, rdi )
+    LstPrintf( "%8u  %s", [rsi].asym.total_size, StringBufferEnd )
     LstNL()
     ret
 
@@ -880,29 +769,64 @@ log_segment proc __ccall uses rsi rdi rbx sym:asym_t, grp:asym_t
 
     .if ( [rdi].seg_info.sgroup == grp )
 
-        mov eax,[rsi].asym.name_size
-        lea rdx,dots
-        lea rcx,[rdx+rax+1]
-        .if ( eax >= DOTSMAX )
-            lea rcx,@CStr("")
-        .endif
-        LstPrintf( "%s %s        ", [rsi].asym.name, rcx )
+        log_dots([rsi].asym.name_size, [rsi].asym.name)
 
-        .if ( [rdi].seg_info.Ofssize == USE32 )
-            LstPrintf( "32 Bit   %08X ", [rsi].asym.max_offset )
-        .elseif ( [rdi].seg_info.Ofssize == USE64 )
-            LstPrintf( "64 Bit   %08X ", [rsi].asym.max_offset )
+        mov edx,16
+        mov cl,[rdi].seg_info.Ofssize
+        shl edx,cl
+        LstPrintf( "%u bit   ", edx )
+        mov edx,[rsi].asym.max_offset
+        .if ( [rdi].seg_info.Ofssize >= USE32 )
+            LstPrintf( "%08X ", edx )
         .else
-            LstPrintf( "16 Bit   %04X     ", [rsi].asym.max_offset )
+            LstPrintf( "%04X     ", edx )
         .endif
 
-        mov rbx,get_seg_align( rdi, &buffer )
-        LstPrintf( "%-7s %-8s", rbx, get_seg_combine( rdi ) )
+        xor ecx,ecx
+        xor edx,edx
+        movzx eax,[rdi].seg_info.alignment
+        .switch pascal eax
+        .case 0: mov edx,T_BYTE
+        .case 1: mov edx,T_WORD
+        .case 2: mov edx,T_DWORD
+        .case 3: mov edx,T_QWORD
+        .case 4: lea rcx,@CStr("para")
+        .case 8: mov edx,T_PAGE
+        .case MAX_SEGALIGNMENT
+            lea rcx,@CStr("abs")
+        .default
+            mov ecx,eax
+            mov edx,1
+            shl edx,cl
+            tsprintf( &buffer, "%u", edx )
+            lea rcx,buffer
+            xor edx,edx
+        .endsw
+        .if ( edx )
+            LstPrintf( "%-7r ", edx )
+        .else
+            LstPrintf( "%-7s ", rcx )
+        .endif
 
-        lea rcx,@CStr("")
-        mov rdx,[rdi].seg_info.clsym
-        .if ( rdx )
-            mov rcx,[rdx].asym.name
+        xor edx,edx
+        movzx eax,[rdi].seg_info.combine
+        .switch pascal eax
+        .case COMB_INVALID: lea rcx,@CStr("private")
+        .case COMB_STACK:   lea rcx,@CStr("stack")
+        .case COMB_ADDOFF:  mov edx,T_PUBLIC
+        ; v2.06: added
+        .case COMB_COMMON:  lea rcx,@CStr("common")
+        .default
+            lea rcx,@CStr("?")
+        .endsw
+        .if ( edx )
+            LstPrintf( "%-8r", edx )
+        .else
+            LstPrintf( "%-8s", rcx )
+        .endif
+        mov rcx,[rdi].seg_info.clsym
+        .if ( rcx )
+            mov rcx,[rcx].asym.name
         .endif
         LstPrintf( "'%s'", rcx )
         LstNL()
@@ -915,17 +839,9 @@ log_segment endp
 log_group proc __ccall uses rsi rdi grp:asym_t, segs:asym_t
 
     ldr rsi,grp
-    mov eax,[rsi].asym.name_size
 
-    lea rcx,dots
-    lea rdx,[rcx+rax+1]
-    .if ( eax >= DOTSMAX )
-        lea rdx,@CStr("")
-    .endif
-
-    lea rdi,strings
-    mov rdi,[rdi+LS_GROUP]
-    LstPrintf( "%s %s        %s", [rsi].asym.name, rdx, rdi )
+    log_dots([rsi].asym.name_size, [rsi].asym.name)
+    LstPrintf( "%r", T_GROUP )
     LstNL()
 
     ; the FLAT groups is always empty
@@ -945,42 +861,39 @@ log_group proc __ccall uses rsi rdi grp:asym_t, segs:asym_t
 log_group endp
 
 
-get_proc_type proc fastcall sym:asym_t
+get_proc_type proc fastcall uses rbx sym:asym_t
 
     ; if there's no segment associated with the symbol,
     ; add the symbol's offset size to the distance
 
-    .switch( [rcx].asym.mem_type )
+    mov rbx,rcx
+    mov ecx,GetSymOfssize(rcx)
+    xor eax,eax
+    .switch [rbx].asym.mem_type
     .case MT_NEAR
-        .if ( [rcx].asym.segm == NULL )
-            GetSymOfssize( rcx )
-            lea rdx,strings
-            .return( [rdx+rax*string_t+LS_NEAR16] )
+        mov eax,T_NEAR
+        .if ( [rbx].asym.segm == NULL && ecx < USE64 )
+            lea eax,[rcx+T_NEAR16]
         .endif
-        lea rdx,strings
-        .return( [rdx+LS_NEAR] )
+        .endc
     .case MT_FAR
-        .if ( [rcx].asym.segm == NULL )
-            GetSymOfssize( rcx )
-            lea rdx,strings
-            .return( [rdx+rax*string_t+LS_FAR16] )
+        mov eax,T_FAR
+        .if ( [rbx].asym.segm == NULL && ecx < USE64 )
+            lea eax,[rcx+T_FAR16]
         .endif
-        lea rdx,strings
-        .return( [rdx+LS_FAR] )
     .endsw
-    .return( " " )
+    ret
 
 get_proc_type endp
 
 
-get_sym_seg_name proc fastcall sym:asym_t
+get_sym_seg_name proc watcall sym:asym_t
 
-    .if ( [rcx].asym.segm )
-        mov rcx,[rcx].asym.segm
-        .return( [rcx].asym.name )
+    mov rax,[rax].asym.segm
+    .if ( rax )
+        mov rax,[rax].asym.name
     .else
-        lea rdx,strings
-        .return( [rdx+LS_NOSEG] )
+        lea rax,@CStr("no seg")
     .endif
     ret
 
@@ -991,29 +904,24 @@ get_sym_seg_name endp
 
 log_proc proc __ccall uses rsi rdi rbx sym:asym_t
 
-  local Ofssize:byte
   local p:string_t
   local pdots:string_t
+  local tmp:string_t
   local buffer[MAX_ID_LEN+1]:char_t
+  local type:uint_t
+  local Ofssize:byte
 
     ldr rsi,sym
+
+    log_dots([rsi].asym.name_size, [rsi].asym.name)
     mov Ofssize,GetSymOfssize( rsi )
-
-    mov eax,[rsi].asym.name_size
-    lea rdx,dots
-    lea rcx,[rdx+rax+1]
-    .if ( eax >= DOTSMAX )
-        lea rcx,@CStr("")
-    .endif
-    mov pdots,rcx
-
-    lea rdi,@CStr("%s %s        P %-6s %04X     %-8s ")
+    lea rdi,@CStr("P %-6r %04X     %-8s ")
     .if ( Ofssize )
-        lea rdi,@CStr("%s %s        P %-6s %08X %-8s ")
+        lea rdi,@CStr("P %-6r %08X %-8s ")
     .endif
     mov p,rdi
-    mov rbx,get_proc_type( rsi )
-    LstPrintf( rdi, [rsi].asym.name, pdots, rbx, [rsi].asym.offs, get_sym_seg_name( rsi ) )
+    mov ebx,get_proc_type( rsi )
+    LstPrintf( rdi, ebx, [rsi].asym.offs, get_sym_seg_name( rsi ) )
 
     ; externals (PROTO) don't have a size. Masm always prints 0000 or 00000000
 
@@ -1026,53 +934,47 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
         mov edx,[rsi].asym.total_size
     .endif
     LstPrintf( "%0*X ", ecx, edx )
-
-    lea rdx,strings
-    .if ( [rsi].asym.ispublic )
-        mov rdx,[rdx+LS_PUBLIC]
-        LstPrintf( "%-9s", rdx )
+    .if ( [rsi].asym.ispublic || ( [rsi].asym.isinline && ![rsi].asym.weak ) )
+        LstPrintf( "%-8r ", T_PUBLIC )
     .elseif ( [rsi].asym.state == SYM_INTERNAL )
-        mov rdx,[rdx+LS_PRIVATE]
-        LstPrintf( "%-9s", rdx )
+        LstPrintf( "private  " )
     .else
-        lea rcx,@CStr("%-9s ")
-        .if ( [rsi].asym.weak )
-            lea rcx,@CStr("*%-8s ")
+        lea rcx,@CStr("*%*r ")
+        mov edx,-7
+        .if !( [rsi].asym.weak )
+            inc rcx
+            dec edx
         .endif
-        mov rdx,[rdx+LS_EXTERNAL]
-        LstPrintf( rcx, rdx )
+        LstPrintf( rcx, edx, T_EXTERN )
         mov rcx,[rsi].asym.dll
         .if ( rcx )
             LstPrintf( "(%.8s) ", &[rcx].dll_desc.name )
         .endif
     .endif
 
-    LstPrintf( "%s", GetLanguage( rsi ) )
+    LstPrintf( "%r", GetLanguage( rsi ) )
     LstNL()
 
     ; for PROTOs, list optional altname
 
     .if ( [rsi].asym.state == SYM_EXTERNAL && [rsi].asym.altname )
 
-        LstPrintf( "  ")
         mov rbx,[rsi].asym.altname
-       .new tmp:ptr = get_proc_type( rbx )
-        get_sym_seg_name( rbx )
-        mov rdx,pdots
-        add rdx,2
-        LstPrintf( rdi, [rbx].asym.name, rdx, tmp, [rbx].asym.offs, rax )
+        log_dots2([rbx].asym.name_size, [rbx].asym.name)
+        mov type,get_proc_type( rbx )
+        LstPrintf( rdi, type, [rbx].asym.offs, get_sym_seg_name( rbx ) )
         LstNL()
     .endif
 
     ; for PROCs, list parameters and locals
 
-    .if ( [rsi].asym.state == SYM_INTERNAL )
+    .if ( [rsi].asym.state == SYM_INTERNAL || ( [rsi].asym.isinline && ![rsi].asym.weak ) )
 
         ; print the procedure's parameters
 
         movzx eax,[rsi].asym.langtype
         .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_VECTORCALL ||
-             ( eax == LANG_FASTCALL && MODULE.Ofssize != USE16 ) )
+             eax == LANG_WATCALL || eax == LANG_ASMCALL || ( eax == LANG_FASTCALL && MODULE.Ofssize != USE16 ) )
 
             .new cnt:int_t
 
@@ -1087,29 +989,27 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                 mov rdi,[rsi].asym.procinfo
                 .for ( ecx = 1, rdi = [rdi].proc_info.paralist: ecx < cnt: rdi = [rdi].asym.nextparam, ecx++ )
                 .endf
-                mov eax,[rdi].asym.name_size
-                lea rdx,dots
-                lea rcx,[rdx+rax+1+2]
-                .if ( eax >= DOTSMAX-2 )
-                    lea rcx,@CStr("")
-                .endif
-                mov pdots,rcx
+
+                log_dots2([rdi].asym.name_size, [rdi].asym.name)
 
                 ; FASTCALL: parameter may be a text macro (=register name)
 
-                .if ( [rdi].asym.state == SYM_TMACRO )
-                    mov rcx,GetMemtypeString( rdi, NULL )
-                    LstPrintf( "  %s %s        %-17s %s",
-                        [rdi].asym.name, pdots, rcx, [rdi].asym.string_ptr )
+                .if ( [rdi].asym.regparam )
+                    LstPrintf( "%-8s ", GetMemtypeString( rdi, NULL ) )
+                    .if ( [rdi].asym.state == SYM_STACK )
+                        mov rcx,[rsi].asym.procinfo
+                        movzx ebx,[rcx].proc_info.basereg
+                        LstPrintf( "[%r+%02X] ", ebx, [rdi].asym.offs )
+                    .endif
+                    LstPrintf( "%r", [rdi].asym.param_reg )
                 .else
                     mov rcx,[rsi].asym.procinfo
-                    mov tmp,GetResWName( [rcx].proc_info.basereg, NULL )
+                    movzx ebx,[rcx].proc_info.basereg
                     mov rcx,GetMemtypeString( rdi, NULL )
                     .if ( [rdi].asym.is_vararg )
-                        lea rcx,strings
-                        mov rcx,[rcx+LS_VARARG]
+                        mov rcx,GetResWName( T_VARARG, rcx )
                     .endif
-                    LstPrintf( szFmtProcStk, [rdi].asym.name, pdots, rcx, tmp, '+', [rdi].asym.offs )
+                    LstPrintf( "%-8s [%r+%02X]", rcx, ebx, [rdi].asym.offs )
                 .endif
                 LstNL()
             .endf
@@ -1119,18 +1019,12 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
             mov rdi,[rsi].asym.procinfo
             .for ( rdi = [rdi].proc_info.paralist: rdi : rdi = [rdi].asym.nextparam )
 
-                mov eax,[rdi].asym.name_size
-                lea rdx,dots
-                lea rcx,[rdx+rax+1+2]
-                .if ( eax >= DOTSMAX-2 )
-                    lea rcx,@CStr("")
-                .endif
-                mov pdots,rcx
+                log_dots2([rdi].asym.name_size, [rdi].asym.name)
+
                 mov rcx,[rsi].asym.procinfo
-                mov rbx,GetResWName( [rcx].proc_info.basereg, NULL )
+                movzx ebx,[rcx].proc_info.basereg
                 mov rdx,GetMemtypeString( rdi, NULL )
-                LstPrintf( szFmtProcStk, [rdi].asym.name, pdots, rdx,
-                          rbx, '+', [rdi].asym.offs )
+                LstPrintf( "%-8s [%r%c%02X]", rdx, ebx, '+', [rdi].asym.offs )
                 LstNL()
             .endf
         .endif
@@ -1140,13 +1034,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
         mov rdi,[rsi].asym.procinfo
         .for ( rdi = [rdi].proc_info.locallist: rdi : rdi = [rdi].asym.nextlocal )
 
-            mov eax,[rdi].asym.name_size
-            lea rdx,dots
-            lea rcx,[rdx+rax+1+2]
-            .if ( eax >= DOTSMAX-2 )
-                lea rcx,@CStr("")
-            .endif
-            mov pdots,rcx
+            log_dots2([rdi].asym.name_size, [rdi].asym.name)
 
             .if ( [rdi].asym.isarray )
                 tsprintf( &buffer, "%s[%u]", GetMemtypeString( rdi, NULL), [rdi].asym.total_length )
@@ -1154,14 +1042,14 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                 tstrcpy( &buffer, GetMemtypeString( rdi, NULL ) )
             .endif
             mov rcx,[rsi].asym.procinfo
-            mov rbx,GetResWName( [rcx].proc_info.basereg, NULL )
+            movzx ebx,[rcx].proc_info.basereg
             mov ecx,'+'
             mov edx,[rdi].asym.offs
             .ifs ( edx < 0 )
                 mov ecx,'-'
                 neg edx
             .endif
-            LstPrintf( szFmtProcStk, [rdi].asym.name, pdots, &buffer, rbx, ecx, edx )
+            LstPrintf( "%-8s [%r%c%02X]", &buffer, ebx, ecx, edx )
             LstNL()
         .endf
 
@@ -1175,22 +1063,16 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                 .if ( [rbx].asym.state == SYM_STACK || [rbx].asym.state == SYM_TMACRO )
                     .continue
                 .endif
-                mov eax,[rdi].asym.name_size
-                lea rdx,dots
-                lea rcx,[rdx+rax+1+2]
-                .if ( eax >= DOTSMAX-2 )
-                    lea rcx,@CStr("")
-                .endif
-                mov pdots,rcx
+
+                log_dots2([rbx].asym.name_size, [rbx].asym.name)
+                mov type,get_proc_type( rbx )
+                mov tmp,get_sym_seg_name( rbx )
                 .if ( Ofssize )
-                    lea rax,@CStr("  %s %s        L %-6s %08X %s")
+                    lea rcx,@CStr("L %-6r %08X %s")
                 .else
-                    lea rax,@CStr("  %s %s        L %-6s %04X     %s")
+                    lea rcx,@CStr("L %-6r %04X %s")
                 .endif
-                mov p,rax
-                mov tmp,get_proc_type( rbx )
-                get_sym_seg_name( rbx )
-                LstPrintf( p, [rbx].asym.name, pdots, tmp, [rbx].asym.offs, eax )
+                LstPrintf( rcx, type, [rbx].asym.offs, tmp )
                 LstNL()
             .endf
         .endf
@@ -1207,32 +1089,20 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
   local pdots:string_t
 
     ldr rdi,sym
-    mov eax,[rdi].asym.name_size
-    lea rdx,dots
-    lea rcx,[rdx+rax+1]
-    .if ( eax >= DOTSMAX )
-        lea rcx,@CStr("")
-    .endif
-    mov pdots,rcx
 
     .switch ( [rdi].asym.state )
     .case SYM_UNDEFINED
     .case SYM_INTERNAL
     .case SYM_EXTERNAL
-        LstPrintf( "%s %s        ", [rdi].asym.name, pdots )
 
+        log_dots([rdi].asym.name_size, [rdi].asym.name)
         .if ( [rdi].asym.isarray )
-
             mov ebx,tsprintf( StringBufferEnd, "%s[%u]", GetMemtypeString( rdi, NULL ), [rdi].asym.total_length )
-            LstPrintf( "%-10s ", StringBufferEnd )
-
+            LstPrintf( "%-8s ", StringBufferEnd )
         .elseif ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.iscomm )
-
-            lea rdx,strings
-            mov rdx,[rdx+LS_COMM]
-            LstPrintf( "%-10s ", rdx )
+            LstPrintf( "%-8r ", T_COMM )
         .else
-            LstPrintf( "%-10s ", GetMemtypeString( rdi, NULL ) )
+            LstPrintf( "%-8s ", GetMemtypeString( rdi, NULL ) )
         .endif
 
         ; print value
@@ -1242,7 +1112,7 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
             mov eax,[rdi].asym.total_size
             cdq
             div [rdi].asym.total_length
-            LstPrintf( " %8Xh ", eax )
+            LstPrintf( "%08X ", eax )
 
         .elseif ( [rdi].asym.mem_type == MT_EMPTY )
 
@@ -1250,19 +1120,14 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
 
             .if ( [rdi].asym.value3264 != 0 && [rdi].asym.value3264 != -1 )
 
-                LstPrintf( " %lXh ", [rdi].asym.uvalue, [rdi].asym.value3264 )
-
+                LstPrintf( "%08X%08X ", [rdi].asym.value3264, [rdi].asym.uvalue )
             .elseif ( [rdi].asym.value3264 < 0 )
-
-                xor ecx,ecx
-                sub ecx,[rdi].asym.uvalue
-                LstPrintf( "-%08Xh ", ecx )
+                LstPrintf( "%08X ", [rdi].asym.uvalue )
             .else
-
-                LstPrintf( " %8Xh ", [rdi].asym.offs )
+                LstPrintf( "%08X ", [rdi].asym.offs )
             .endif
         .else
-            LstPrintf( " %8Xh ", [rdi].asym.offs )
+            LstPrintf( "%08X ", [rdi].asym.offs )
         .endif
 
         ; print segment
@@ -1270,52 +1135,35 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
         .if ( [rdi].asym.segm )
             LstPrintf( "%s ", get_sym_seg_name( rdi ) )
         .endif
-
         .if ( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.iscomm )
-            LstPrintf( "%s=%u ", szCount, [rdi].asym.total_length )
+            LstPrintf( "count=%u ", [rdi].asym.total_length )
         .endif
-
-        .if ( [rdi].asym.ispublic )
-
-            lea rdx,strings
-            mov rdx,[rdx+LS_PUBLIC]
-            LstPrintf( "%s ", rdx )
+        .if ( [rdi].asym.ispublic || ( [rdi].asym.isinline && ![rdi].asym.weak ) )
+            LstPrintf( "%r ", T_PUBLIC )
         .endif
-
         .if ( [rdi].asym.state == SYM_EXTERNAL )
-
-            lea rcx,@CStr("%s ")
-            .if ( [rdi].asym.weak )
-                 lea rcx,@CStr("*%s ")
+            lea rcx,@CStr("*%r ")
+            .if ( ![rdi].asym.weak )
+                 inc rcx
             .endif
-
-            lea rdx,strings
-            mov rdx,[rdx+LS_EXTERNAL]
-            LstPrintf( rcx, rdx )
-
+            LstPrintf( rcx, T_EXTERN )
         .elseif ( [rdi].asym.state == SYM_UNDEFINED )
-
-            lea rdx,strings
-            mov rdx,[rdx+LS_UNDEFINED]
-            LstPrintf( "%s ", rdx )
+            LstPrintf( "un%r ", T_DEFINED )
         .endif
-
-        LstPrintf( "%s", GetLanguage( rdi ) )
+        LstPrintf( "%r", GetLanguage( rdi ) )
         LstNL()
        .endc
 
     .case SYM_TMACRO
-        lea rdx,strings
-        mov rdx,[rdx+LS_TEXT]
-        LstPrintf( "%s %s        %s   %s", [rdi].asym.name, pdots, rdx, [rdi].asym.string_ptr )
+        log_dots([rdi].asym.name_size, [rdi].asym.name)
+        LstPrintf( "text     %s", [rdi].asym.string_ptr )
         LstNL()
        .endc
 
     .case SYM_ALIAS
+        log_dots([rdi].asym.name_size, [rdi].asym.name)
         mov rcx,[rdi].asym.substitute
-        lea rdx,strings
-        mov rdx,[rdx+LS_ALIAS]
-        LstPrintf( "%s %s        %s  %s", [rdi].asym.name, pdots, rdx, [rcx].asym.name )
+        LstPrintf( "%r  %s", T_ALIAS, [rcx].asym.name )
         LstNL()
        .endc
     .endsw
@@ -1442,54 +1290,60 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
         mov [rdi].asym.next,NULL
     .endf
 
-    assume rdi:ptr print_item
+    .if ( queues[qdesc*LQ_MACROS].qdesc.head )
+        LstCaption( "Macros:", 2 )
+        LstCaption( "                N a m e                 Type", 0 )
+        .for ( rsi = queues[qdesc*LQ_MACROS].qdesc.head: rsi : rsi = [rsi].asym.next )
+            log_macro( rsi )
+        .endf
+    .endif
+    .if ( queues[qdesc*LQ_STRUCTS].qdesc.head )
+        LstCaption( "Structures and Unions:", 2 )
+        LstCaption( "                N a m e                 Size/Ofs   Type", 0 )
+        .for ( rsi = queues[qdesc*LQ_STRUCTS].qdesc.head: rsi : rsi = [rsi].asym.next )
+            log_struct( rsi, 0, 0 )
+        .endf
+    .endif
+    .if ( queues[qdesc*LQ_RECORDS].qdesc.head )
+        LstCaption( "Records:", 2 )
+        LstCaption( "                N a m e                 Width   # fields\n"
+                    "                                        Shift   Width    Mask   Initial", 0 )
+        .for ( rsi = queues[qdesc*LQ_RECORDS].qdesc.head: rsi : rsi = [rsi].asym.next )
+            log_record( rsi )
+        .endf
+    .endif
+    .if ( queues[qdesc*LQ_TYPEDEFS].qdesc.head )
+        LstCaption( "Types:", 2 )
+        LstCaption( "                N a m e                 Size    Attr", 0 )
+        .for ( rsi = queues[qdesc*LQ_TYPEDEFS].qdesc.head: rsi : rsi = [rsi].asym.next )
+            log_typedef( rsi )
+        .endf
+    .endif
+    .if ( queues[qdesc*LQ_SEGS].qdesc.head )
+        LstCaption( "Segments and Groups:", 2 )
+        LstCaption( "                N a m e                 Size     Length   Align   Combine Class", 0 )
+        .for ( rsi = queues[qdesc*LQ_SEGS].qdesc.head: rsi : rsi = [rsi].asym.next )
+            log_segment( rsi, 0 )
+        .endf
+    .endif
+    .if ( queues[qdesc*LQ_GRPS].qdesc.head )
+        .for ( rsi = queues[qdesc*LQ_GRPS].qdesc.head: rsi : rsi = [rsi].asym.next )
+            log_group( rsi, queues[LQ_SEGS*qdesc].head )
+        .endf
+    .endif
+    .if ( queues[qdesc*LQ_PROCS].qdesc.head )
+        LstCaption( "Procedures, parameters and locals:", 2 )
+        LstCaption( "                N a m e                 Type     Value    Segment  Length", 0 )
+        .for ( rsi = queues[qdesc*LQ_PROCS].qdesc.head: rsi : rsi = [rsi].asym.next )
+            log_proc( rsi )
+        .endf
+    .endif
 
-    .for ( rdi = &cr, ebx = 0 : ebx < lengthof(cr) : ebx++, rdi += print_item )
-
-        movzx   ecx,[rdi].type
-        imul    ecx,ecx,qdesc
-        lea     rax,queues
-
-        .if ( [rax+rcx].qdesc.head )
-
-            .if ( [rdi].capitems )
-
-                .for ( rsi = [rdi].capitems : word ptr [rsi] : rsi += 2 )
-
-                    mov eax,2
-                    .if ( rsi != [rdi].capitems )
-                        xor eax,eax
-                    .endif
-                    movzx ecx,word ptr [rsi]
-                    lea rdx,strings
-                    mov rcx,[rdx+rcx]
-                    LstCaption( rcx, eax )
-                .endf
-            .endif
-
-            movzx ecx,[rdi].type
-            imul ecx,ecx,qdesc
-            lea rax,queues
-
-            .for ( rsi = [rax+rcx].qdesc.head: rsi : rsi = [rsi].asym.next )
-
-                xor ecx,ecx
-                .if ( [rdi].print_item.flags & PRF_ADDSEG )
-                    mov rcx,queues[LQ_SEGS*qdesc].head
-                .endif
-                [rdi].function( rsi, rcx, 0 )
-            .endf
-        .endif
-    .endf
-
-    assume rdi:nothing
 
     ; write out symbols
 
-    lea rcx,strings
-    LstCaption( [ rcx + LS_TXT_SYMBOLS ], 2 )
-    lea rcx,strings
-    LstCaption( [ rcx + LS_TXT_SYMCAP ], 0 )
+    LstCaption( "Symbols:", 2 )
+    LstCaption( "                N a m e                 Type       Value     Attr", 0 )
 
     .for ( ebx = 0: ebx < SymCount: ++ebx )
 

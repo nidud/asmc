@@ -115,7 +115,6 @@ invalid_operand proc fastcall uses rbx opnd:expr_t, oprtr:string_t, operand:stri
 
 invalid_operand endp
 
-
     assume rcx:asym_t
 
 GetSizeValue proc fastcall sym:asym_t
@@ -136,40 +135,78 @@ GetSizeValue proc fastcall sym:asym_t
 GetSizeValue endp
 
 
-GetRecordMask proc fastcall uses rsi rdi rbx rec:asym_t
+    assume rcx:nothing
+    assume rdx:nothing
 
-    xor eax,eax
-    xor edx,edx
-    mov rbx,[rcx].structinfo
-    mov rbx,[rbx].struct_info.head
+SetRecordMask proc fastcall rec:asym_t, opnd:expr_t
 
-    .for ( : rbx : rbx = [rbx].asym.next )
-
-        mov ecx,[rbx].asym.offs
-        mov edi,[rbx].asym.total_size
-        .if ( [rbx].asym.crecord )
-            movzx ecx,[rbx].asym.bitf_offs
-            movzx edi,[rbx].asym.bitf_bits
-        .endif
-        add edi,ecx
-
-        .for ( : ecx < edi : ecx++ )
-
-            mov esi,1
-            .if ecx < 32
-                shl esi,cl
-                or  eax,esi
-            .else
-                sub ecx,32
-                shl esi,cl
-                or  edx,esi
-                add ecx,32
-            .endif
-        .endf
+    .for ( rax = [rcx].asym.structinfo,
+           rax = [rax].struct_info.head,
+           ecx = 64 : rax : rax = [rax].asym.next )
+        sub cl,[rax].asym.bitf_bits
     .endf
+    dec rax
+ifdef _WIN64
+    shr rax,cl
+    mov [rdx],rax
+else
+    push edx
+    .if ( ecx >= 32 )
+        sub ecx,32
+        shr eax,cl
+        cdq
+    .else
+        cdq
+        shr edx,cl
+    .endif
+    pop ecx
+    mov [ecx],eax
+    mov [ecx+4],edx
+endif
     ret
 
-GetRecordMask endp
+SetRecordMask endp
+
+
+SetBitMask proc fastcall public uses rbx rec:asym_t, opnd:expr_t
+
+    mov rbx,rcx
+    xor eax,eax
+    mov ecx,64
+    sub cl,[rbx].asym.bitf_bits
+    dec rax
+ifdef _WIN64
+    shr rax,cl
+    mov cl,[rbx].asym.bitf_offs
+    shl rax,cl
+    mov [rdx],rax
+else
+    mov ch,[ebx].asym.bitf_offs
+    mov ebx,edx
+    .if ( cl >= 32 )
+        sub cl,32
+        shr eax,cl
+        cdq
+    .else
+        cdq
+        shr edx,cl
+    .endif
+    mov cl,ch
+    .if ( cl < 32 )
+        shld edx,eax,cl
+        shl eax,cl
+    .else
+        sub ecx,32
+        mov edx,eax
+        xor eax,eax
+        shl edx,cl
+    .endif
+    mov [ebx],eax
+    mov [ebx+4],edx
+endif
+    ret
+
+SetBitMask endp
 
 
     assume rcx:expr_t
@@ -195,6 +232,8 @@ IsOffset endp
 ;--------------------------------------------------------------------------------
 ; unaryop.inc
 ;--------------------------------------------------------------------------------
+
+    assume rdx:expr_t
 
 tofloat proc fastcall opnd1:expr_t, opnd2:expr_t, size:int_t
 
@@ -732,43 +771,16 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             mov rbx,[rdi].sym
         .endsw
         .if ( oper == T_MASK || oper == T_MASKOF )
-            mov [rsi].value,0
             .if ( ecx )
-                GetRecordMask(rbx)
+                SetRecordMask(rbx, rsi)
             .else
-                xor eax,eax
-                xor edx,edx
-                mov ecx,[rbx].offs
-                mov edi,[rbx].total_size
-                .if ( [rbx].crecord )
-                    movzx ecx,[rbx].bitf_offs
-                    movzx edi,[rbx].bitf_bits
-                .endif
-                add edi,ecx
-                .for ( : ecx < edi : ecx++ )
-                    mov ebx,1
-                    .if ecx < 32
-                        shl ebx,cl
-                        or  eax,ebx
-                    .else
-                        sub ecx,32
-                        shl ebx,cl
-                        or  edx,ebx
-                        add ecx,32
-                    .endif
-                .endf
+                SetBitMask(rbx, rsi)
             .endif
-            mov [rsi].value,eax
-            mov [rsi].hvalue,edx
         .elseif ( ecx )
             mov rax,[rbx].structinfo
             mov rcx,[rax].struct_info.head
             .for ( eax = 0 : rcx : rcx = [rcx].asym.next )
-                .if ( [rcx].asym.crecord )
-                    add al,[rcx].asym.bitf_bits
-                .else
-                    add eax,[rcx].asym.total_size
-                .endif
+                add al,[rcx].asym.bitf_bits
             .endf
             mov [rsi].value,eax
         .else
@@ -1372,9 +1384,7 @@ method_ptr:
 
             .if ( [rax].asym.typekind == TYPE_RECORD )
 
-                GetRecordMask(rax)
-                mov [rdi].value,eax
-                mov [rdi].hvalue,edx
+                SetRecordMask(rax, rdi)
 
             .elseif ( ecx == MT_ADDRESS )
 

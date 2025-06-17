@@ -127,6 +127,7 @@ expr_t		typedef ptr expr
 EvalOperand	proto __ccall :ptr int_t, :token_t, :int_t, :ptr expr, :uchar_t
 ExprEvalInit	proto
 EmitConstError	proto
+SetBitMask	proto fastcall :asym_t, :expr_t
 
 endif
 .pragma list(pop)

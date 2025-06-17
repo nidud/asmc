@@ -9,7 +9,7 @@ include stdlib.inc
 
 ifdef _WIN64
 
-__umodti3 proc dividend:int128_t, divisor:int128_t
+__umodti3 proc dividend:uint128_t, divisor:uint128_t
 
     call    __udivti3
     xchg    r9,rdx

@@ -785,16 +785,17 @@ aliases:
 
         mov rsi,rdi
         mov rdi,[rsi].asym.next
+
         .if ( [rsi].asym.used )
 
             mov [rsi].asym.weak,0
         .endif
-        .if ( [rsi].asym.weak && !( [rsi].asym.iat_used ) )
+        .if ( [rsi].asym.isinline || ( [rsi].asym.weak && !( [rsi].asym.iat_used ) ) )
 
             ; remove unused EXTERNDEF/PROTO items from queue.
 
             sym_remove_table( &SymTables[TAB_EXT*symbol_queue], rsi )
-            .continue
+           .continue
         .endif
         .continue .if ( [rsi].asym.iscomm )
 

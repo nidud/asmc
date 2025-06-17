@@ -130,51 +130,43 @@ endif
             mov ebx,16  ; radix & signed
 
             .switch al
-
             .case 'r'
+s_null:
                 lea     rdx,ResWordTable
+                cmp     ecx,T_CCALL
                 imul    ecx,ecx,ReservedWord
                 mov     rax,[rdx+rcx].ReservedWord.name
                 movzx   ecx,[rdx+rcx].ReservedWord.len
+                jz      c_call
+s_print:
                 xchg    rax,rsi
+                mov     rdx,rdi
                 rep     movsb
-                mov     byte ptr [rdi],0
                 mov     rsi,rax
-               .endc
-
-            .case 'c'
-                .if cl
-                    mov al,cl
-                    stosb
-                .endif
-               .endc
-
-            .case 's'
-                .if ( rcx == NULL )
-                    lea rcx,@CStr("(null)")
-                .endif
-                mov rdx,rdi
-                .repeat
-                    mov al,[rcx]
-                    stosb
-                    inc rcx
-                .until !al
-                dec rdi
                 .if ( sign || rdi == rdx )
-
                     mov rax,rdi
                     sub rax,rdx
-
                     .if ( eax < fldwidth )
-
                         mov ecx,fldwidth
                         sub ecx,eax
                         mov al,char
                         rep stosb
                     .endif
                 .endif
-               .endc
-
+                .endc
+            .case 's'
+                test    rcx,rcx
+                jz      s_null
+                mov     rax,rcx
+                xor     ecx,ecx
+s_loop:
+                cmp     byte ptr [rax+rcx],0
+                jz      s_print
+                inc     ecx
+                jmp     s_loop
+c_call:
+                mov     ecx,1
+                jmp     s_print
             .case 'd'
 ifdef _WIN64
                 test rcx,rcx
@@ -232,6 +224,12 @@ endif
                 mov fldwidth,size_t*2
                 mov char,'0'
                .gotosw('X')
+            .case 'c'
+                .if cl
+                    mov al,cl
+                    stosb
+                .endif
+                .endc
             .default
                 stosb
             .endsw

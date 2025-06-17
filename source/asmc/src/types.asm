@@ -1577,7 +1577,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( oldr )
 
             .if ( rsi == NULL || [rsi].asym.state != SYM_STRUCT_FIELD ||
-                  [rsi].asym.mem_type != MT_BITS || [rsi].asym.total_size != opndx.value )
+                  [rsi].asym.mem_type != MT_BITS || [rsi].asym.bitf_bits != opndx.value )
 
                 asmerr( 2007, szRecord, [rdi].asm_tok.string_ptr )
                 inc redef_err
@@ -1602,7 +1602,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov [rdi].list,MODULE.cref
             mov [rdi].state,SYM_STRUCT_FIELD
             mov [rdi].mem_type,MT_BITS
-            mov [rdi].total_size,opndx.value
+            mov [rdi].bitf_bits,opndx.value
 
             .if ( !oldr )
                 SymAddGlobal( rdi )
@@ -1649,36 +1649,31 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     mov rsi,newr
     mov eax,cntBits
-
+    mov ecx,BYTE
+    mov edx,MT_BYTE
     .if ( eax > 16 )
-
         .if ( eax > 32 )
-            mov [rsi].asym.total_size,QWORD
-            mov [rsi].asym.mem_type,MT_QWORD
+            mov ecx,QWORD
+            mov edx,MT_QWORD
         .else
-            mov [rsi].asym.total_size,DWORD
-            mov [rsi].asym.mem_type,MT_DWORD
+            mov ecx,DWORD
+            mov edx,MT_DWORD
         .endif
-
     .elseif ( eax > 8 )
-
-        mov [rsi].asym.total_size,WORD
-        mov [rsi].asym.mem_type,MT_WORD
-
-    .else
-
-        mov [rsi].asym.total_size,BYTE
-        mov [rsi].asym.mem_type,MT_BYTE
+        mov ecx,WORD
+        mov edx,MT_WORD
     .endif
+    mov [rsi].asym.total_size,ecx
+    mov [rsi].asym.mem_type,dl
 
     ; if the BYTE/WORD/DWORD isn't used fully, shift bits to the right!
     ; set the bit position
 
     mov rcx,[rsi].asym.structinfo
-    .for ( rdi = [rcx].struct_info.head: rdi: rdi = [rdi].next )
+    .for ( rdi = [rcx].struct_info.head : rdi : rdi = [rdi].next )
 
-        sub eax,[rdi].total_size
-        mov [rdi].offs,eax
+        sub al,[rdi].bitf_bits
+        mov [rdi].bitf_offs,al
     .endf
 
     .if ( oldr )

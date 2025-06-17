@@ -3777,6 +3777,8 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
            .new args[64]:string_t
            .new regname[16]:sbyte
 
+            mov [rsi].asym.weak,0 ; v2.36.47 - added for listing: *extern | public
+
             mov rcx,StringBufferEnd
             inc rcx
             mov p,rcx

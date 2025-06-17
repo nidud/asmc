@@ -536,7 +536,7 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
             .if ( [rsi].asym.is_far )
                 lea edi,[rcx+T_FAR16]
             .else
-                mov edi,[rcx+T_NEAR16]
+                lea edi,[rcx+T_NEAR16]
             .endif
         .endif
         .if ( rbx ) ; Currently, 'buffer' is only != NULL for typedefs

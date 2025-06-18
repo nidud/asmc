@@ -133,8 +133,8 @@ endif
             .case 'r'
 s_null:
                 lea     rdx,ResWordTable
-                cmp     ecx,T_CCALL
                 imul    ecx,ecx,ReservedWord
+                cmp     ecx,T_CCALL*ReservedWord
                 mov     rax,[rdx+rcx].ReservedWord.name
                 movzx   ecx,[rdx+rcx].ReservedWord.len
                 jz      c_call

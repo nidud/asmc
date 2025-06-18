@@ -402,52 +402,23 @@ LstSetPosition endp
 
     option proc: private
 
-log_dots proc watcall size:uint_t, name:string_t
+log_dots proc __ccall size:uint_t, name:string_t, offs:int_t
 
-    .if ( eax >= DOTSMAX )
+    ldr ecx,size
+    ldr rdx,name
+
+    add ecx,offs
+    .if ( ecx >= DOTSMAX )
         xor eax,eax
-        xor ecx,ecx
     .else
-        lea rcx,dots
-        lea rcx,[rcx+rax+1]
-        lea eax,[rax-DOTSMAX-7]
+        lea rax,dots
+        lea rax,[rax+rcx+1]
     .endif
-    LstPrintf( "%s %*s", rdx, eax, rcx )
+    lea ecx,[rcx-DOTSMAX-7]
+    LstPrintf( "%*s%s %*s", offs, 0, rdx, ecx, rax )
     ret
 
 log_dots endp
-
-log_dots2 proc watcall size:uint_t, name:string_t
-
-    add eax,2
-    .if ( eax >= DOTSMAX )
-        xor eax,eax
-        xor ecx,ecx
-    .else
-        lea rcx,dots
-        lea rcx,[rcx+rax+1]
-        lea eax,[rax-DOTSMAX-7]
-    .endif
-    LstPrintf( "  %s %*s", rdx, eax, rcx )
-    ret
-
-log_dots2 endp
-
-
-log_macro proc __ccall uses rbx sym:asym_t
-
-    ldr rbx,sym
-
-    log_dots([rbx].asym.name_size, [rbx].asym.name)
-    mov edx,T_PROC
-    .if ( [rbx].asym.isfunc )
-        mov edx,T_MACRO
-    .endif
-    LstPrintf( "%r", edx )
-    LstNL()
-    ret
-
-log_macro endp
 
 
 SimpleSizeString proc fastcall size:uint_t
@@ -531,13 +502,8 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
     .switch ( mem_type )
     .case MT_PTR
         mov edi,T_NEAR
-        movzx ecx,[rsi].asym.Ofssize
-        .if ( ecx < USE64 )
-            .if ( [rsi].asym.is_far )
-                lea edi,[rcx+T_FAR16]
-            .else
-                lea edi,[rcx+T_NEAR16]
-            .endif
+        .if ( [rsi].asym.Ofssize < USE64 && [rsi].asym.is_far )
+            mov edi,T_FAR
         .endif
         .if ( rbx ) ; Currently, 'buffer' is only != NULL for typedefs
 
@@ -562,23 +528,11 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
         .return( GetResWName( edi, rdx ) )
     .case MT_FAR
         mov rbx,rdx
-        mov ecx,GetSymOfssize( rsi )
-        .if ( ecx >= USE64 || [rsi].asym.segm )
-            mov ecx,T_FAR
-        .else
-            lea ecx,[rcx+T_FAR16]
-        .endif
-        tsprintf( rbx, "L %r", ecx )
+        tsprintf( rbx, "L %r", T_FAR )
        .return( rbx )
     .case MT_NEAR
         mov rbx,rdx
-        mov ecx,GetSymOfssize( rsi )
-        .if ( ecx >= USE64 || [rsi].asym.segm )
-            mov ecx,T_NEAR
-        .else
-            lea ecx,[rcx+T_NEAR16]
-        .endif
-        tsprintf( rbx, "L %r", ecx )
+        tsprintf( rbx, "L %r", T_NEAR )
        .return( rbx )
     .case MT_TYPE
         mov rcx,[rsi].asym.type
@@ -600,12 +554,28 @@ GetMemtypeString endp
 GetLanguage proc fastcall sym:asym_t
 
     movzx eax,[rcx].asym.langtype
-    .if ( eax <= LANG_ASMCALL )
+    .if ( eax > LANG_NONE && eax <= LANG_ASMCALL )
         .return( &[rax+T_CCALL-1] )
     .endif
     .return( 0 )
 
 GetLanguage endp
+
+
+log_macro proc __ccall uses rbx sym:asym_t
+
+    ldr rbx,sym
+
+    log_dots( [rbx].asym.name_size, [rbx].asym.name, 0 )
+    mov edx,T_PROC
+    .if ( [rbx].asym.isfunc )
+        mov edx,T_MACRO
+    .endif
+    LstPrintf( "%r", edx )
+    LstNL()
+    ret
+
+log_macro endp
 
 
 ; display STRUCTs and UNIONs
@@ -623,7 +593,7 @@ log_struct proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t, ofs:int_32
     .if ( !rbx )
         mov rbx,[rdi].asym.name
     .endif
-    log_dots(tstrlen(rbx), rbx)
+    log_dots( tstrlen(rbx), rbx, 0 )
     .if ( [rsi].struct_info.alignment > 1 )
         LstPrintf( "%8X (%u)", [rdi].asym.total_size, [rsi].struct_info.alignment )
     .else
@@ -652,12 +622,7 @@ log_struct proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t, ofs:int_32
 
             .if ( byte ptr [rcx] || ( [rbx].mem_type == MT_TYPE ) )
 
-                mov edx,prefix
-                neg edx
-                LstPrintf( "%*s", edx, NULL )
-                mov ecx,[rbx].name_size
-                add ecx,prefix
-                log_dots(ecx, [rbx].name)
+                log_dots( [rbx].name_size, [rbx].name, prefix )
                 GetMemtypeString( rbx, NULL )
                 mov ecx,[rbx].offs
                 add ecx,[rdi].asym.offs
@@ -685,7 +650,7 @@ log_record proc __ccall uses rsi rdi rbx sym:asym_t
 
     ldr rdi,sym
 
-    log_dots([rdi].asym.name_size, [rdi].asym.name)
+    log_dots( [rdi].asym.name_size, [rdi].asym.name, 0 )
     mov rsi,[rdi].asym.structinfo
     .for ( edx = 0, rbx = [rsi].struct_info.head: rbx: rbx = [rbx].next, edx++ )
     .endf
@@ -695,8 +660,8 @@ log_record proc __ccall uses rsi rdi rbx sym:asym_t
 
     .for ( rbx = [rsi].struct_info.head: rbx: rbx = [rbx].next )
 
-        log_dots2([rbx].name_size, [rbx].name)
-        SetBitMask(rbx, &mask)
+        log_dots( [rbx].name_size, [rbx].name, 2 )
+        SetBitMask( rbx, &mask )
         lea rcx,[rbx].ivalue
         .if ( [rbx].ivalue == 0 )
             mov rcx,GetResWName( SimpleSizeString( [rdi].asym.total_size ), NULL )
@@ -721,7 +686,7 @@ log_typedef proc __ccall uses rsi rdi rbx sym:asym_t
 
     ldr rsi,sym
 
-    log_dots([rsi].asym.name_size, [rsi].asym.name)
+    log_dots( [rsi].asym.name_size, [rsi].asym.name, 0 )
 
     mov rdi,StringBufferEnd
     mov byte ptr [rdi],NULLC
@@ -739,15 +704,10 @@ log_typedef proc __ccall uses rsi rdi rbx sym:asym_t
         ; This state isn't handled properly by GetSymOfsSize(),
         ; which is called by GetMemtypeString(), so get the strings here.
 
-        GetLanguage( [rsi].asym.target_type )
-        movzx edx,[rsi].asym.Ofssize
+        GetLanguage( rbx )
         mov ecx,T_NEAR
-        .if ( edx < USE64 )
-            mov ecx,T_FAR16
-            .if ( [rbx].asym.mem_type == MT_NEAR )
-                mov ecx,T_NEAR16
-            .endif
-            lea ecx,[rcx+rdx]
+        .if ( [rsi].asym.Ofssize < USE64 && [rbx].asym.is_far )
+            mov ecx,T_FAR
         .endif
         tsprintf( rdi, "L %r %r", ecx, eax )
     .else
@@ -769,7 +729,7 @@ log_segment proc __ccall uses rsi rdi rbx sym:asym_t, grp:asym_t
 
     .if ( [rdi].seg_info.sgroup == grp )
 
-        log_dots([rsi].asym.name_size, [rsi].asym.name)
+        log_dots( [rsi].asym.name_size, [rsi].asym.name, 0 )
 
         mov edx,16
         mov cl,[rdi].seg_info.Ofssize
@@ -840,7 +800,7 @@ log_group proc __ccall uses rsi rdi grp:asym_t, segs:asym_t
 
     ldr rsi,grp
 
-    log_dots([rsi].asym.name_size, [rsi].asym.name)
+    log_dots([rsi].asym.name_size, [rsi].asym.name, 0)
     LstPrintf( "%r", T_GROUP )
     LstNL()
 
@@ -861,27 +821,17 @@ log_group proc __ccall uses rsi rdi grp:asym_t, segs:asym_t
 log_group endp
 
 
-get_proc_type proc fastcall uses rbx sym:asym_t
+get_proc_type proc fastcall sym:asym_t
 
     ; if there's no segment associated with the symbol,
     ; add the symbol's offset size to the distance
 
-    mov rbx,rcx
-    mov ecx,GetSymOfssize(rcx)
     xor eax,eax
-    .switch [rbx].asym.mem_type
-    .case MT_NEAR
+    .if ( [rcx].asym.mem_type == MT_NEAR )
         mov eax,T_NEAR
-        .if ( [rbx].asym.segm == NULL && ecx < USE64 )
-            lea eax,[rcx+T_NEAR16]
-        .endif
-        .endc
-    .case MT_FAR
+    .elseif ( [rcx].asym.mem_type == MT_FAR )
         mov eax,T_FAR
-        .if ( [rbx].asym.segm == NULL && ecx < USE64 )
-            lea eax,[rcx+T_FAR16]
-        .endif
-    .endsw
+    .endif
     ret
 
 get_proc_type endp
@@ -913,7 +863,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
 
     ldr rsi,sym
 
-    log_dots([rsi].asym.name_size, [rsi].asym.name)
+    log_dots( [rsi].asym.name_size, [rsi].asym.name, 0 )
     mov Ofssize,GetSymOfssize( rsi )
     lea rdi,@CStr("P %-6r %04X     %-8s ")
     .if ( Ofssize )
@@ -960,7 +910,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
     .if ( [rsi].asym.state == SYM_EXTERNAL && [rsi].asym.altname )
 
         mov rbx,[rsi].asym.altname
-        log_dots2([rbx].asym.name_size, [rbx].asym.name)
+        log_dots( [rbx].asym.name_size, [rbx].asym.name, 2 )
         mov type,get_proc_type( rbx )
         LstPrintf( rdi, type, [rbx].asym.offs, get_sym_seg_name( rbx ) )
         LstNL()
@@ -990,7 +940,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                 .for ( ecx = 1, rdi = [rdi].proc_info.paralist: ecx < cnt: rdi = [rdi].asym.nextparam, ecx++ )
                 .endf
 
-                log_dots2([rdi].asym.name_size, [rdi].asym.name)
+                log_dots( [rdi].asym.name_size, [rdi].asym.name, 2 )
 
                 ; FASTCALL: parameter may be a text macro (=register name)
 
@@ -1019,7 +969,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
             mov rdi,[rsi].asym.procinfo
             .for ( rdi = [rdi].proc_info.paralist: rdi : rdi = [rdi].asym.nextparam )
 
-                log_dots2([rdi].asym.name_size, [rdi].asym.name)
+                log_dots( [rdi].asym.name_size, [rdi].asym.name, 2 )
 
                 mov rcx,[rsi].asym.procinfo
                 movzx ebx,[rcx].proc_info.basereg
@@ -1034,7 +984,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
         mov rdi,[rsi].asym.procinfo
         .for ( rdi = [rdi].proc_info.locallist: rdi : rdi = [rdi].asym.nextlocal )
 
-            log_dots2([rdi].asym.name_size, [rdi].asym.name)
+            log_dots( [rdi].asym.name_size, [rdi].asym.name, 2 )
 
             .if ( [rdi].asym.isarray )
                 tsprintf( &buffer, "%s[%u]", GetMemtypeString( rdi, NULL), [rdi].asym.total_length )
@@ -1064,7 +1014,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                     .continue
                 .endif
 
-                log_dots2([rbx].asym.name_size, [rbx].asym.name)
+                log_dots( [rbx].asym.name_size, [rbx].asym.name, 2 )
                 mov type,get_proc_type( rbx )
                 mov tmp,get_sym_seg_name( rbx )
                 .if ( Ofssize )
@@ -1086,8 +1036,6 @@ log_proc endp
 
 log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
 
-  local pdots:string_t
-
     ldr rdi,sym
 
     .switch ( [rdi].asym.state )
@@ -1095,7 +1043,7 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
     .case SYM_INTERNAL
     .case SYM_EXTERNAL
 
-        log_dots([rdi].asym.name_size, [rdi].asym.name)
+        log_dots([rdi].asym.name_size, [rdi].asym.name, 0)
         .if ( [rdi].asym.isarray )
             mov ebx,tsprintf( StringBufferEnd, "%s[%u]", GetMemtypeString( rdi, NULL ), [rdi].asym.total_length )
             LstPrintf( "%-8s ", StringBufferEnd )
@@ -1155,13 +1103,13 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
        .endc
 
     .case SYM_TMACRO
-        log_dots([rdi].asym.name_size, [rdi].asym.name)
+        log_dots([rdi].asym.name_size, [rdi].asym.name, 0)
         LstPrintf( "text     %s", [rdi].asym.string_ptr )
         LstNL()
        .endc
 
     .case SYM_ALIAS
-        log_dots([rdi].asym.name_size, [rdi].asym.name)
+        log_dots([rdi].asym.name_size, [rdi].asym.name, 0)
         mov rcx,[rdi].asym.substitute
         LstPrintf( "%r  %s", T_ALIAS, [rcx].asym.name )
         LstNL()
@@ -1343,7 +1291,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
     ; write out symbols
 
     LstCaption( "Symbols:", 2 )
-    LstCaption( "                N a m e                 Type       Value     Attr", 0 )
+    LstCaption( "                N a m e                 Type     Value     Attr", 0 )
 
     .for ( ebx = 0: ebx < SymCount: ++ebx )
 

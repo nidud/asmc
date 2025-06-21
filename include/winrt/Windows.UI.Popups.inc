@@ -34,10 +34,10 @@ DEFINE_IIDX(__FIIterator_1_Windows__CUI__CPopups__CIUICommand, "f45db3d3-7299-57
 
 .comdef __FIIterator_1_Windows__CUI__CPopups__CIUICommand : public IInspectable
 
-    get_Current		proc :ptr ptr
+    get_Current		proc :ptr
     get_HasCurrent	proc :ptr
     MoveNext		proc :ptr
-    GetMany		proc :SINT, :ptr ptr, :ptr
+    GetMany		proc :SINT, :ptr, :ptr
    .ends
 
 endif
@@ -49,7 +49,7 @@ DEFINE_IIDX(__FIIterable_1_Windows__CUI__CPopups__CIUICommand, "e63de42b-53c3-5e
 
 .comdef __FIIterable_1_Windows__CUI__CPopups__CIUICommand : public IInspectable
 
-    First proc :ptr ptr
+    First proc :ptr
    .ends
 
 endif
@@ -61,10 +61,10 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CUI__CPopups__CIUICommand, "ed1165e6-f377-
 
 .comdef __FIVectorView_1_Windows__CUI__CPopups__CIUICommand : public IInspectable
 
-    GetAt	proc :SINT, :ptr ptr
+    GetAt	proc :SINT, :ptr
     get_Size	proc :ptr
     IndexOf	proc :ptr, :ptr, :ptr
-    GetMany	proc :SINT, :SINT, :ptr ptr, :ptr
+    GetMany	proc :SINT, :SINT, :ptr, :ptr
    .ends
 
 endif
@@ -76,9 +76,9 @@ DEFINE_IIDX(__FIVector_1_Windows__CUI__CPopups__CIUICommand, "105139a1-dcb8-5f65
 
 .comdef __FIVector_1_Windows__CUI__CPopups__CIUICommand : public IInspectable
 
-    GetAt	proc :SINT, :ptr ptr
+    GetAt	proc :SINT, :ptr
     get_Size	proc :ptr
-    GetView	proc :ptr ptr
+    GetView	proc :ptr
     IndexOf	proc :ptr, :ptr, :ptr
     SetAt	proc :UINT, :ptr
     InsertAt	proc :UINT, :ptr
@@ -86,8 +86,8 @@ DEFINE_IIDX(__FIVector_1_Windows__CUI__CPopups__CIUICommand, "105139a1-dcb8-5f65
     Append	proc :ptr
     RemoveAtEnd proc
     Clear	proc
-    GetMany	proc :UINT, :UINT, :ptr ptr, :ptr
-    ReplaceAll	proc :UINT, :ptr ptr
+    GetMany	proc :UINT, :UINT, :ptr, :ptr
+    ReplaceAll	proc :UINT, :ptr
    .ends
 
 endif
@@ -112,8 +112,8 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CUI__CPopups__CIUICommand, "b8770535-6
 .comdef __FIAsyncOperation_1_Windows__CUI__CPopups__CIUICommand : public IInspectable
 
     put_Completed proc :ptr
-    get_Completed proc :ptr ptr
-    GetResults proc :ptr ptr
+    get_Completed proc :ptr
+    GetResults proc :ptr
    .ends
 
 endif
@@ -163,14 +163,14 @@ DEFINE_IIDX(IMessageDialog, "33F59B01-5325-43AB-9AB3-BDAE440E4121")
 
     get_Title proc :ptr
     put_Title proc :HSTRING
-    get_Commands proc :ptr ptr
+    get_Commands proc :ptr
     get_DefaultCommandIndex proc :ptr
     put_DefaultCommandIndex proc :UINT32
     get_CancelCommandIndex proc :ptr
     put_CancelCommandIndex proc :UINT32
     get_Content proc :ptr
     put_Content proc :HSTRING
-    ShowAsync proc :ptr ptr
+    ShowAsync proc :ptr
     get_Options proc :ptr
     put_Options proc :SINT
    .ends
@@ -185,8 +185,8 @@ DEFINE_IIDX(IMessageDialogFactory, "2D161777-A66F-4EA5-BB87-793FFA4941F2")
 
 .comdef IMessageDialogFactory : public IInspectable
 
-    Create proc :HSTRING, :ptr ptr
-    CreateWithTitle proc :HSTRING, :HSTRING, :ptr ptr
+    Create proc :HSTRING, :ptr
+    CreateWithTitle proc :HSTRING, :HSTRING, :ptr
    .ends
 
 endif
@@ -201,9 +201,9 @@ DEFINE_IIDX(IUICommand, "4FF93A75-4145-47FF-AC7F-DFF1C1FA5B0F")
 
     get_Label proc :ptr
     put_Label proc :HSTRING
-    get_Invoked proc :ptr ptr
+    get_Invoked proc :ptr
     put_Invoked proc :ptr
-    get_Id proc :ptr ptr
+    get_Id proc :ptr
     put_Id proc :ptr
    .ends
 
@@ -217,9 +217,9 @@ DEFINE_IIDX(IUICommandFactory, "A21A8189-26B0-4676-AE94-54041BC125E8")
 
 .comdef IUICommandFactory : public IInspectable
 
-    Create proc :HSTRING, :ptr ptr
-    CreateWithHandler proc :HSTRING, :ptr, :ptr ptr
-    CreateWithHandlerAndId proc :HSTRING, :ptr, :ptr, :ptr ptr
+    Create proc :HSTRING, :ptr
+    CreateWithHandler proc :HSTRING, :ptr, :ptr
+    CreateWithHandlerAndId proc :HSTRING, :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -232,10 +232,10 @@ DEFINE_IIDX(IPopupMenu, "4E9BC6DC-880D-47FC-A0A1-72B639E62559")
 
 .comdef IPopupMenu : public IInspectable
 
-    get_Commands proc :ptr ptr
-    ShowAsync proc :ptr, :ptr ptr
-    ShowAsyncWithRect proc :ptr, :ptr ptr
-    ShowAsyncWithRectAndPlacement proc :ptr, :ptr, :ptr ptr
+    get_Commands proc :ptr
+    ShowAsync proc :ptr, :ptr
+    ShowAsyncWithRect proc :ptr, :ptr
+    ShowAsyncWithRectAndPlacement proc :ptr, :ptr, :ptr
    .ends
 
 endif

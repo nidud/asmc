@@ -214,11 +214,11 @@ DEFINE_GUID(IID_ID3DXMatrixStack, 0xc7885ba7, 0xf990, 0x4fe7, 0x92, 0x2d, 0x85, 
     _Pop		proc
     _Push		proc
     LoadIdentity	proc
-    LoadMatrix		proc :ptr D3DXMATRIX
-    MultMatrix		proc :ptr D3DXMATRIX
-    MultMatrixLocal	proc :ptr D3DXMATRIX
-    RotateAxis		proc :ptr D3DXVECTOR3, :FLOAT
-    RotateAxisLocal	proc :ptr D3DXVECTOR3, :FLOAT
+    LoadMatrix		proc :ptr
+    MultMatrix		proc :ptr
+    MultMatrixLocal	proc :ptr
+    RotateAxis		proc :ptr, :FLOAT
+    RotateAxisLocal	proc :ptr, :FLOAT
     RotateYawPitchRoll	proc :FLOAT, :FLOAT, :FLOAT
     RotateYawPitchRollLocal proc :FLOAT, :FLOAT, :FLOAT
     Scale		proc :FLOAT, :FLOAT, :FLOAT

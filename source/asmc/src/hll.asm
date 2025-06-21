@@ -2644,7 +2644,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     .switch eax
 
-      .case T_DOT_IF
+    .case T_DOT_IF
 
         mov [rsi].cmd,HLL_IF
         mov [rsi].labels[LSTART*4],0 ; not used by .IF
@@ -2666,10 +2666,10 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-      .case T_DOT_WHILE
+    .case T_DOT_WHILE
 
         mov [rsi].WhileMode,1
-      .case T_DOT_REPEAT
+    .case T_DOT_REPEAT
         ;
         ; create the label to start of loop
         ;
@@ -2736,7 +2736,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ; optimisation: if line at 'test' label is just a jump,
             ; dont create label and don't jump!
             ;
-            .ifd tmemicmp(rdi, "jmp", 3)
+            .ifd tmemicmp( rdi, "jmp", 3 )
 
                 mov [rsi].labels[LTEST],GetHllLabel()
                 AddLineQueueX("jmp %s", GetLabelStr([rsi].labels[LTEST*4], &buff))
@@ -2747,27 +2747,27 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov cl,MODULE.loopalign
         .if cl
-            mov eax,1
-            shl eax,cl
-            AddLineQueueX("ALIGN %d", eax)
+            mov edx,1
+            shl edx,cl
+            AddLineQueueX( "ALIGN %d", edx )
         .endif
         AddLineQueueX("%s%s", GetLabelStr([rsi].labels[LSTART*4], &buff), LABELQUAL)
-        .endc
+       .endc
 
-      .case T_DOT_IFS
+    .case T_DOT_IFS
         .if ecx != T_FINAL
 
             mov [rsi].Signed,1
             .gotosw(T_DOT_IF)
         .endif
-      .case T_DOT_IFB
-      .case T_DOT_IFC
+    .case T_DOT_IFB
+    .case T_DOT_IFC
         .if ecx != T_FINAL
 
             mov [rsi].SizeDB,1
             .gotosw(T_DOT_IF)
         .endif
-      .case T_DOT_IFA .. T_DOT_IFNZ
+    .case T_DOT_IFA .. T_DOT_IFNZ
         mov [rsi].cmd,HLL_IF
         mov [rsi].labels[LSTART*4],0
         mov [rsi].labels[LTEST*4],GetHllLabel()

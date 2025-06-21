@@ -61,7 +61,7 @@ DEFINE_IIDX(IXMLDOMImplementation, "2933BF8F-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMImplementation : public IDispatch
 
-    hasFeature		proc :BSTR, :BSTR, :ptr VARIANT_BOOL
+    hasFeature		proc :BSTR, :BSTR, :ptr
    .ends
 endif
 
@@ -72,42 +72,42 @@ DEFINE_IIDX(IXMLDOMNode, "2933BF80-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMNode : public IDispatch
 
-    get_nodeName	proc :ptr BSTR
-    get_nodeValue	proc :ptr VARIANT
+    get_nodeName	proc :ptr
+    get_nodeValue	proc :ptr
     put_nodeValue	proc :VARIANT
-    get_nodeType	proc :ptr DOMNodeType
-    get_parentNode	proc :ptr ptr
-    get_childNodes	proc :ptr ptr IXMLDOMNodeList
-    get_firstChild	proc :ptr ptr IXMLDOMNode
-    get_lastChild	proc :ptr ptr IXMLDOMNode
-    get_previousSibling proc :ptr ptr IXMLDOMNode
-    get_nextSibling	proc :ptr ptr IXMLDOMNode
-    get_attributes	proc :ptr ptr IXMLDOMNamedNodeMap
-    insertBefore	proc :ptr IXMLDOMNode, :VARIANT, :ptr ptr IXMLDOMNode
-    replaceChild	proc :ptr IXMLDOMNode, :ptr IXMLDOMNode, :ptr ptr IXMLDOMNode
-    removeChild		proc :ptr IXMLDOMNode, :ptr ptr IXMLDOMNode
-    appendChild		proc :ptr IXMLDOMNode, :ptr ptr IXMLDOMNode
-    hasChildNodes	proc :ptr VARIANT_BOOL
-    get_ownerDocument	proc :ptr ptr IXMLDOMDocument
-    cloneNode		proc :VARIANT_BOOL, :ptr ptr IXMLDOMNode
-    get_nodeTypeString	proc :ptr BSTR
-    get_text		proc :ptr BSTR
+    get_nodeType	proc :ptr
+    get_parentNode	proc :ptr
+    get_childNodes	proc :ptr
+    get_firstChild	proc :ptr
+    get_lastChild	proc :ptr
+    get_previousSibling proc :ptr
+    get_nextSibling	proc :ptr
+    get_attributes	proc :ptr
+    insertBefore	proc :ptr, :VARIANT, :ptr
+    replaceChild	proc :ptr, :ptr, :ptr
+    removeChild		proc :ptr, :ptr
+    appendChild		proc :ptr, :ptr
+    hasChildNodes	proc :ptr
+    get_ownerDocument	proc :ptr
+    cloneNode		proc :VARIANT_BOOL, :ptr
+    get_nodeTypeString	proc :ptr
+    get_text		proc :ptr
     put_text		proc :BSTR
-    get_specified	proc :ptr VARIANT_BOOL
-    get_definition	proc :ptr ptr IXMLDOMNode
-    get_nodeTypedValue	proc :ptr VARIANT
+    get_specified	proc :ptr
+    get_definition	proc :ptr
+    get_nodeTypedValue	proc :ptr
     put_nodeTypedValue	proc :VARIANT
-    get_dataType	proc :ptr VARIANT
+    get_dataType	proc :ptr
     put_dataType	proc :BSTR
-    get_xml		proc :ptr BSTR
-    transformNode	proc :ptr IXMLDOMNode, :ptr BSTR
-    selectNodes		proc :BSTR, :ptr ptr IXMLDOMNodeList
-    selectSingleNode	proc :BSTR, :ptr ptr IXMLDOMNode
-    get_parsed		proc :ptr VARIANT_BOOL
-    get_namespaceURI	proc :ptr BSTR
-    get_prefix		proc :ptr BSTR
-    get_baseName	proc :ptr BSTR
-    transformNodeToObject proc :ptr IXMLDOMNode, :VARIANT
+    get_xml		proc :ptr
+    transformNode	proc :ptr, :ptr
+    selectNodes		proc :BSTR, :ptr
+    selectSingleNode	proc :BSTR, :ptr
+    get_parsed		proc :ptr
+    get_namespaceURI	proc :ptr
+    get_prefix		proc :ptr
+    get_baseName	proc :ptr
+    transformNodeToObject proc :ptr, :VARIANT
    .ends
 endif
 
@@ -128,35 +128,35 @@ DEFINE_IIDX(IXMLDOMDocument, "2933BF81-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMDocument : public IXMLDOMNode
 
-    get_doctype			proc :ptr ptr IXMLDOMDocumentType
-    get_implementation		proc :ptr ptr IXMLDOMImplementation
-    get_documentElement		proc :ptr ptr IXMLDOMElement
-    putref_documentElement	proc :ptr IXMLDOMElement
-    createElement		proc :BSTR, :ptr ptr IXMLDOMElement
-    createDocumentFragment	proc :ptr ptr IXMLDOMDocumentFragment
-    createTextNode		proc :BSTR, :ptr ptr IXMLDOMText
-    createComment		proc :BSTR, :ptr ptr IXMLDOMComment
-    createCDATASection		proc :BSTR, :ptr ptr IXMLDOMCDATASection
-    createProcessingInstruction proc :BSTR, :BSTR, :ptr ptr IXMLDOMProcessingInstruction
-    createAttribute		proc :BSTR, :ptr ptr IXMLDOMAttribute
-    createEntityReference	proc :BSTR, :ptr ptr IXMLDOMEntityReference
-    getElementsByTagName	proc :BSTR, :ptr ptr IXMLDOMNodeList
-    createNode			proc :VARIANT,	:BSTR, :BSTR, :ptr ptr IXMLDOMNode
-    nodeFromID			proc :BSTR,  :ptr ptr IXMLDOMNode
-    load			proc :VARIANT, :ptr VARIANT_BOOL
+    get_doctype			proc :ptr
+    get_implementation		proc :ptr
+    get_documentElement		proc :ptr
+    putref_documentElement	proc :ptr
+    createElement		proc :BSTR, :ptr
+    createDocumentFragment	proc :ptr
+    createTextNode		proc :BSTR, :ptr
+    createComment		proc :BSTR, :ptr
+    createCDATASection		proc :BSTR, :ptr
+    createProcessingInstruction proc :BSTR, :BSTR, :ptr
+    createAttribute		proc :BSTR, :ptr
+    createEntityReference	proc :BSTR, :ptr
+    getElementsByTagName	proc :BSTR, :ptr
+    createNode			proc :VARIANT,	:BSTR, :BSTR, :ptr
+    nodeFromID			proc :BSTR,  :ptr
+    load			proc :VARIANT, :ptr
     get_readyState		proc :ptr
-    get_parseError		proc :ptr ptr IXMLDOMParseError
-    get_url			proc :ptr BSTR
-    get_async			proc :ptr VARIANT_BOOL
+    get_parseError		proc :ptr
+    get_url			proc :ptr
+    get_async			proc :ptr
     put_async			proc :VARIANT_BOOL
     abort			proc
-    loadXML			proc :BSTR, :ptr VARIANT_BOOL
+    loadXML			proc :BSTR, :ptr
     save			proc :VARIANT
-    get_validateOnParse		proc :ptr VARIANT_BOOL
+    get_validateOnParse		proc :ptr
     put_validateOnParse		proc :VARIANT_BOOL
-    get_resolveExternals	proc :ptr VARIANT_BOOL
+    get_resolveExternals	proc :ptr
     put_resolveExternals	proc :VARIANT_BOOL
-    get_preserveWhiteSpace	proc :ptr VARIANT_BOOL
+    get_preserveWhiteSpace	proc :ptr
     put_preserveWhiteSpace	proc :VARIANT_BOOL
     put_onreadystatechange	proc :VARIANT
     put_ondataavailable		proc :VARIANT
@@ -171,11 +171,11 @@ DEFINE_IIDX(IXMLDOMNodeList, "2933BF82-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMNodeList : public IDispatch
 
-    get_item		proc :sdword, :ptr ptr IXMLDOMNode
+    get_item		proc :sdword, :ptr
     get_length		proc :ptr
-    nextNode		proc :ptr ptr IXMLDOMNode
+    nextNode		proc :ptr
     reset		proc
-    get__newEnum	proc :ptr ptr IUnknown
+    get__newEnum	proc :ptr
    .ends
 endif
 
@@ -186,16 +186,16 @@ DEFINE_IIDX(IXMLDOMNamedNodeMap, "2933BF83-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMNamedNodeMap : public IDispatch
 
-    getNamedItem	proc :BSTR, :ptr ptr IXMLDOMNode
-    setNamedItem	proc :ptr IXMLDOMNode, :ptr ptr IXMLDOMNode
-    removeNamedItem	proc :BSTR, :ptr ptr IXMLDOMNode
-    get_item		proc :sdword, :ptr ptr IXMLDOMNode
+    getNamedItem	proc :BSTR, :ptr
+    setNamedItem	proc :ptr, :ptr
+    removeNamedItem	proc :BSTR, :ptr
+    get_item		proc :sdword, :ptr
     get_length		proc :ptr
-    getQualifiedItem	proc :BSTR, :BSTR, :ptr ptr IXMLDOMNode
-    removeQualifiedItem proc :BSTR, :BSTR, :ptr ptr IXMLDOMNode
-    nextNode		proc :ptr ptr IXMLDOMNode
+    getQualifiedItem	proc :BSTR, :BSTR, :ptr
+    removeQualifiedItem proc :BSTR, :BSTR, :ptr
+    nextNode		proc :ptr
     reset		proc
-    get__newEnum	proc :ptr ptr IUnknown
+    get__newEnum	proc :ptr
    .ends
 endif
 
@@ -206,10 +206,10 @@ DEFINE_IIDX(IXMLDOMCharacterData, "2933BF84-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMCharacterData : public IXMLDOMNode
 
-    get_data		proc :ptr BSTR
+    get_data		proc :ptr
     put_data		proc :BSTR
     get_length		proc :ptr
-    substringData	proc :sdword, :sdword, :ptr BSTR
+    substringData	proc :sdword, :sdword, :ptr
     appendData		proc :BSTR
     insertData		proc :sdword, :BSTR
     deleteData		proc :sdword, :sdword
@@ -224,8 +224,8 @@ DEFINE_IIDX(IXMLDOMAttribute, "2933BF85-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMAttribute : public IXMLDOMNode
 
-    get_name		proc :ptr BSTR
-    get_value		proc :ptr VARIANT
+    get_name		proc :ptr
+    get_value		proc :ptr
     put_value		proc :VARIANT
    .ends
 endif
@@ -237,14 +237,14 @@ DEFINE_IIDX(IXMLDOMElement, "2933BF86-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMElement : public IXMLDOMNode
 
-    get_tagName		 proc :ptr BSTR
-    getAttribute	 proc :BSTR, :ptr VARIANT
+    get_tagName		 proc :ptr
+    getAttribute	 proc :BSTR, :ptr
     setAttribute	 proc :BSTR, :VARIANT
     removeAttribute	 proc :BSTR
-    getAttributeNode	 proc :BSTR, :ptr ptr IXMLDOMAttribute
-    setAttributeNode	 proc :ptr IXMLDOMAttribute, :ptr ptr IXMLDOMAttribute
-    removeAttributeNode	 proc :ptr IXMLDOMAttribute, :ptr ptr IXMLDOMAttribute
-    getElementsByTagName proc :BSTR, :ptr ptr IXMLDOMNodeList
+    getAttributeNode	 proc :BSTR, :ptr
+    setAttributeNode	 proc :ptr, :ptr
+    removeAttributeNode	 proc :ptr, :ptr
+    getElementsByTagName proc :BSTR, :ptr
     normalize		 proc
    .ends
 endif
@@ -256,7 +256,7 @@ DEFINE_IIDX(IXMLDOMText, "2933BF87-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMText : public IXMLDOMCharacterData
 
-    splitText		proc :LONG, :ptr ptr IXMLDOMText
+    splitText		proc :LONG, :ptr
    .ends
 endif
 
@@ -277,8 +277,8 @@ DEFINE_IIDX(IXMLDOMProcessingInstruction, "2933BF89-7B36-11d2-B20E-00C04F983E60"
 
 .comdef IXMLDOMProcessingInstruction : public IXMLDOMNode
 
-    get_target		proc :ptr BSTR
-    get_data		proc :ptr BSTR
+    get_target		proc :ptr
+    get_data		proc :ptr
     put_data		proc :BSTR
    .ends
 endif
@@ -300,9 +300,9 @@ DEFINE_IIDX(IXMLDOMDocumentType, "2933BF8B-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMDocumentType : public IXMLDOMNode
 
-    get_name		proc :ptr BSTR
-    get_entities	proc :ptr ptr IXMLDOMNamedNodeMap
-    get_notations	proc :ptr ptr IXMLDOMNamedNodeMap
+    get_name		proc :ptr
+    get_entities	proc :ptr
+    get_notations	proc :ptr
    .ends
 endif
 
@@ -313,8 +313,8 @@ DEFINE_IIDX(IXMLDOMNotation, "2933BF8C-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMNotation : public IXMLDOMNode
 
-    get_publicId	proc :ptr VARIANT
-    get_systemId	proc :ptr VARIANT
+    get_publicId	proc :ptr
+    get_systemId	proc :ptr
    .ends
 endif
 
@@ -325,9 +325,9 @@ DEFINE_IIDX(IXMLDOMEntity, "2933BF8D-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMEntity : public IXMLDOMNode
 
-    get_publicId	proc :ptr VARIANT
-    get_systemId	proc :ptr VARIANT
-    get_notationName	proc :ptr BSTR
+    get_publicId	proc :ptr
+    get_systemId	proc :ptr
+    get_notationName	proc :ptr
    .ends
 endif
 
@@ -348,13 +348,13 @@ DEFINE_IIDX(IXMLDOMParseError, "3efaa426-272f-11d2-836f-0000f87a7782")
 
 .comdef IXMLDOMParseError : public IDispatch
 
-    get_errorCode	proc :ptr LONG
-    get_url		proc :ptr BSTR
-    get_reason		proc :ptr BSTR
-    get_srcText		proc :ptr BSTR
-    get_line		proc :ptr LONG
-    get_linepos		proc :ptr LONG
-    get_filepos		proc :ptr LONG
+    get_errorCode	proc :ptr
+    get_url		proc :ptr
+    get_reason		proc :ptr
+    get_srcText		proc :ptr
+    get_line		proc :ptr
+    get_linepos		proc :ptr
+    get_filepos		proc :ptr
    .ends
 endif
 
@@ -365,15 +365,15 @@ DEFINE_IIDX(IXTLRuntime, "3efaa425-272f-11d2-836f-0000f87a7782")
 
 .comdef IXTLRuntime : public IXMLDOMNode
 
-    uniqueID		proc :ptr IXMLDOMNode, :ptr LONG
-    depth		proc :ptr IXMLDOMNode, :ptr LONG
-    childNumber		proc :ptr IXMLDOMNode, :ptr LONG
-    ancestorChildNumber proc :BSTR, :ptr IXMLDOMNode, :ptr LONG
-    absoluteChildNumber proc :ptr IXMLDOMNode, :ptr LONG
-    formatIndex		proc :LONG, :BSTR, :ptr BSTR
-    formatNumber	proc :real8, :BSTR, :ptr BSTR
-    formatDate		proc :VARIANT, :BSTR, :VARIANT, :ptr BSTR
-    formatTime		proc :VARIANT, :BSTR, :VARIANT, :ptr BSTR
+    uniqueID		proc :ptr, :ptr
+    depth		proc :ptr, :ptr
+    childNumber		proc :ptr, :ptr
+    ancestorChildNumber proc :BSTR, :ptr, :ptr
+    absoluteChildNumber proc :ptr, :ptr
+    formatIndex		proc :LONG, :BSTR, :ptr
+    formatNumber	proc :real8, :BSTR, :ptr
+    formatDate		proc :VARIANT, :BSTR, :VARIANT, :ptr
+    formatTime		proc :VARIANT, :BSTR, :VARIANT, :ptr
    .ends
 endif
 
@@ -410,18 +410,18 @@ DEFINE_IIDX(IXMLHttpRequest, "ED8C108D-4349-11D2-91A4-00C04F7969E8")
 
     open		proc :BSTR, :BSTR, :VARIANT, :VARIANT, :VARIANT
     setRequestHeader	proc :BSTR, :BSTR
-    getResponseHeader	proc :BSTR, :ptr BSTR
-    getAllResponseHeaders proc :ptr BSTR
+    getResponseHeader	proc :BSTR, :ptr
+    getAllResponseHeaders proc :ptr
     send		proc :VARIANT
     abort		proc
-    get_status		proc :ptr LONG
-    get_statusText	proc :ptr BSTR
-    get_responseXML	proc :ptr ptr IDispatch
-    get_responseText	proc :ptr BSTR
-    get_responseBody	proc :ptr VARIANT
-    get_responseStream	proc :ptr VARIANT
+    get_status		proc :ptr
+    get_statusText	proc :ptr
+    get_responseXML	proc :ptr
+    get_responseText	proc :ptr
+    get_responseBody	proc :ptr
+    get_responseStream	proc :ptr
     get_readyState	proc :ptr
-    put_onreadystatechange proc :ptr IDispatch
+    put_onreadystatechange proc :ptr
    .ends
 
 endif
@@ -433,11 +433,11 @@ DEFINE_IIDX(IXMLDSOControl, "310afa62-0575-11d2-9ca9-0060b0ec3d39")
 
 .comdef IXMLDSOControl : public IDispatch
 
-    get_XMLDocument	proc :ptr ptr IXMLDOMDocument
-    put_XMLDocument	proc :ptr MLDOMDocument
-    get_JavaDSOCompatible proc :ptr BOOL
+    get_XMLDocument	proc :ptr
+    put_XMLDocument	proc :ptr
+    get_JavaDSOCompatible proc :ptr
     put_JavaDSOCompatible proc :BOOL
-    get_readyState	proc :ptr LONG
+    get_readyState	proc :ptr
    .ends
 endif
 

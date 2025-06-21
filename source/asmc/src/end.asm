@@ -162,6 +162,7 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     .return( ERROR )
                 .endif
                 .if ( opndx.kind == EXPR_CONST && opndx.value < 0x100 )
+
                     AddLineQueueX( "mov ax,4C00h + %u", opndx.value )
                 .else
                     AddLineQueueX(

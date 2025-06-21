@@ -217,23 +217,23 @@ D3D12_PARAMETER_DESC	ENDS
 
 .comdef ID3D12ShaderReflectionType
 
-    GetDesc		proc :ptr D3D12_SHADER_TYPE_DESC
+    GetDesc		proc :ptr
     GetMemberTypeByIndex proc :UINT
     GetMemberTypeByName proc :LPCSTR
     GetMemberTypeName	proc :UINT
-    IsEqual		proc :ptr ID3D12ShaderReflectionType
+    IsEqual		proc :ptr
     GetSubType		proc
     GetBaseClass	proc
     GetNumInterfaces	proc
     GetInterfaceByIndex proc :UINT
-    IsOfType		proc :ptr ID3D12ShaderReflectionType
-    ImplementsInterface proc :ptr ID3D12ShaderReflectionType
+    IsOfType		proc :ptr
+    ImplementsInterface proc :ptr
     .ends
 
 
 .comdef ID3D12ShaderReflectionVariable
 
-    GetDesc		proc :ptr D3D12_SHADER_VARIABLE_DESC
+    GetDesc		proc :ptr
     GetType		proc
     GetBuffer		proc
     GetInterfaceSlot	proc :UINT
@@ -242,7 +242,7 @@ D3D12_PARAMETER_DESC	ENDS
 
 .comdef ID3D12ShaderReflectionConstantBuffer
 
-    GetDesc		proc :ptr D3D12_SHADER_BUFFER_DESC
+    GetDesc		proc :ptr
     GetVariableByIndex	proc :UINT
     GetVariableByName	proc :LPCSTR
     .ends
@@ -250,15 +250,15 @@ D3D12_PARAMETER_DESC	ENDS
 
 .comdef ID3D12ShaderReflection : public IUnknown
 
-    GetDesc		proc :ptr D3D12_PARAMETER_DESC
+    GetDesc		proc :ptr
     GetConstantBufferByIndex proc :UINT
     GetConstantBufferByName proc :LPCSTR
-    GetResourceBindingDesc proc :UINT, :ptr D3D12_SHADER_INPUT_BIND_DESC
-    GetInputParameterDesc proc :UINT, :ptr D3D12_SIGNATURE_PARAMETER_DESC
-    GetOutputParameterDesc proc :UINT, :ptr D3D12_SIGNATURE_PARAMETER_DESC
-    GetPatchConstantParameterDesc proc :UINT, :ptr D3D12_SIGNATURE_PARAMETER_DESC
+    GetResourceBindingDesc proc :UINT, :ptr
+    GetInputParameterDesc proc :UINT, :ptr
+    GetOutputParameterDesc proc :UINT, :ptr
+    GetPatchConstantParameterDesc proc :UINT, :ptr
     GetVariableByName	proc :LPCSTR
-    GetResourceBindingDescByName proc :LPCSTR, :ptr D3D12_SHADER_INPUT_BIND_DESC
+    GetResourceBindingDescByName proc :LPCSTR, :ptr
     GetMovInstructionCount proc
     GetMovcInstructionCount proc
     GetConversionInstructionCount proc
@@ -266,34 +266,34 @@ D3D12_PARAMETER_DESC	ENDS
     GetGSInputPrimitive proc
     IsSampleFrequencyShader proc
     GetNumInterfaceSlots proc
-    GetMinFeatureLevel	proc :ptr D3D_FEATURE_LEVEL
-    GetThreadGroupSize	proc :ptr UINT, :ptr UINT, :ptr UINT
+    GetMinFeatureLevel	proc :ptr
+    GetThreadGroupSize	proc :ptr, :ptr, :ptr
     GetRequiresFlags	proc
     .ends
 
 
 .comdef ID3D12LibraryReflection : public IUnknown
 
-    GetDesc		proc :ptr D3D12_PARAMETER_DESC
+    GetDesc		proc :ptr
     GetFunctionByIndex	proc :SINT
     .ends
 
 
 .comdef ID3D12FunctionReflection
 
-    GetDesc		proc :ptr D3D12_PARAMETER_DESC
+    GetDesc		proc :ptr
     GetConstantBufferByIndex proc :UINT
     GetConstantBufferByName proc :LPCSTR
-    GetResourceBindingDesc proc :UINT, :ptr D3D12_SHADER_INPUT_BIND_DESC
+    GetResourceBindingDesc proc :UINT, :ptr
     GetVariableByName	proc :LPCSTR
-    GetResourceBindingDescByName proc :LPCSTR, :ptr D3D12_SHADER_INPUT_BIND_DESC
+    GetResourceBindingDescByName proc :LPCSTR, :ptr
     GetFunctionParameter proc :SINT
     .ends
 
 
 .comdef ID3D12FunctionParameterReflection
 
-    GetDesc		proc :ptr D3D12_PARAMETER_DESC
+    GetDesc		proc :ptr
     .ends
 
 endif

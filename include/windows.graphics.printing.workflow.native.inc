@@ -47,7 +47,7 @@ DEFINE_IIDX(IPrintWorkflowObjectModelSourceFileContentNative, "68C9E477-993E-405
 
 .comdef IPrintWorkflowObjectModelSourceFileContentNative : public IUnknown
     StartXpsOMGeneration proc :ptr
-    get_ObjectFactory   proc :ptr ptr
+    get_ObjectFactory   proc :ptr
    .ends
 
 endif
@@ -58,7 +58,7 @@ define __IPrintWorkflowXpsObjectModelTargetPackageNative_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrintWorkflowXpsObjectModelTargetPackageNative, "7D96BC74-9B54-4CA1-AD3A-979C3D44DDAC")
 
 .comdef IPrintWorkflowXpsObjectModelTargetPackageNative : public IUnknown
-    get_DocumentPackageTarget proc :ptr ptr
+    get_DocumentPackageTarget proc :ptr
    .ends
 
 endif
@@ -69,9 +69,9 @@ define __IPrintWorkflowConfigurationNative_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrintWorkflowConfigurationNative, "C056BE0A-9EE2-450A-9823-964F0006F2BB")
 
 .comdef IPrintWorkflowConfigurationNative : public IUnknown
-    get_PrinterQueue    proc :ptr ptr
-    get_DriverProperties proc :ptr ptr
-    get_UserProperties  proc :ptr ptr
+    get_PrinterQueue    proc :ptr
+    get_DriverProperties proc :ptr
+    get_UserProperties  proc :ptr
    .ends
 
 endif

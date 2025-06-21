@@ -43,17 +43,17 @@ Direct3DCreate8 proto WINAPI SDKVersion:UINT
 
     RegisterSoftwareDevice	proc :ptr
     GetAdapterCount		proc
-    GetAdapterIdentifier	proc :UINT, :DWORD, :ptr D3DADAPTER_IDENTIFIER8
+    GetAdapterIdentifier	proc :UINT, :DWORD, :ptr
     GetAdapterModeCount		proc :UINT
-    EnumAdapterModes		proc :UINT, :UINT, :ptr D3DDISPLAYMODE
-    GetAdapterDisplayMode	proc :UINT, :ptr D3DDISPLAYMODE
+    EnumAdapterModes		proc :UINT, :UINT, :ptr
+    GetAdapterDisplayMode	proc :UINT, :ptr
     CheckDeviceType		proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :BOOL
     CheckDeviceFormat		proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :DWORD, :D3DRESOURCETYPE, :D3DFORMAT
     CheckDeviceMultiSampleType	proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :BOOL, :D3DMULTISAMPLE_TYPE
     CheckDepthStencilMatch	proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :D3DFORMAT
-    GetDeviceCaps		proc :UINT, :D3DDEVTYPE, :ptr D3DCAPS8
+    GetDeviceCaps		proc :UINT, :D3DDEVTYPE, :ptr
     GetAdapterMonitor		proc :UINT
-    CreateDevice		proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr D3DPRESENT_PARAMETERS, :ptr ptr IDirect3DDevice8
+    CreateDevice		proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
 
     .ends
 
@@ -65,34 +65,34 @@ LPDIRECT3D8	typedef ptr IDirect3D8
     TestCooperativeLevel	proc
     GetAvailableTextureMem	proc
     ResourceManagerDiscardBytes proc :DWORD
-    GetDirect3D			proc :ptr ptr IDirect3D8
-    GetDeviceCaps		proc :ptr D3DCAPS8
-    GetDisplayMode		proc :ptr D3DDISPLAYMODE
-    GetCreationParameters	proc :ptr D3DDEVICE_CREATION_PARAMETERS
-    SetCursorProperties		proc :UINT, :UINT, :ptr IDirect3DSurface8
+    GetDirect3D			proc :ptr
+    GetDeviceCaps		proc :ptr
+    GetDisplayMode		proc :ptr
+    GetCreationParameters	proc :ptr
+    SetCursorProperties		proc :UINT, :UINT, :ptr
     SetCursorPosition		proc :SINT, :SINT, :DWORD
     ShowCursor			proc :BOOL
-    CreateAdditionalSwapChain	proc :ptr D3DPRESENT_PARAMETERS, :ptr ptr IDirect3DSwapChain8
-    Reset			proc :ptr D3DPRESENT_PARAMETERS
-    Present			proc :ptr RECT* pSourceRect, :ptr RECT, :HWND, :ptr RGNDATA
-    GetBackBuffer		proc :UINT, D3DBACKBUFFER_TYPE, :ptr ptr IDirect3DSurface8
-    GetRasterStatus		proc :ptr D3DRASTER_STATUS
-    SetGammaRamp		proc :DWORD, :ptr D3DGAMMARAMP
-    GetGammaRamp		proc :ptr D3DGAMMARAMP
-    CreateTexture		proc :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DTexture8
-    CreateVolumeTexture		proc :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DVolumeTexture8
-    CreateCubeTexture		proc :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL Pool, :ptr ptr IDirect3DCubeTexture8
-    CreateVertexBuffer		proc :UINT, :DWORD, :DWORD, :D3DPOOL, :ptr ptr IDirect3DVertexBuffer8
-    CreateIndexBuffer		proc :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DIndexBuffer8
-    CreateRenderTarget		proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :BOOL, :ptr ptr IDirect3DSurface8
-    CreateDepthStencilSurface	proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :ptr ptr IDirect3DSurface8
-    CreateImageSurface		proc :UINT, :UINT, :D3DFORMAT, :ptr ptr IDirect3DSurface8
-    CopyRects			proc :ptr IDirect3DSurface8, :ptr RECT, :UINT, :ptr IDirect3DSurface8, :ptr POINT
-    UpdateTexture		proc :ptr IDirect3DBaseTexture8, :ptr IDirect3DBaseTexture8
-    GetFrontBuffer		proc :ptr IDirect3DSurface8
-    SetRenderTarget		proc :ptr IDirect3DSurface8, :ptr IDirect3DSurface8
-    GetRenderTarget		proc :ptr ptr IDirect3DSurface8
-    GetDepthStencilSurface	proc :ptr ptr IDirect3DSurface8
+    CreateAdditionalSwapChain	proc :ptr, :ptr
+    Reset			proc :ptr
+    Present			proc :ptr, :ptr, :HWND, :ptr
+    GetBackBuffer		proc :UINT, D3DBACKBUFFER_TYPE, :ptr
+    GetRasterStatus		proc :ptr
+    SetGammaRamp		proc :DWORD, :ptr
+    GetGammaRamp		proc :ptr
+    CreateTexture		proc :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr
+    CreateVolumeTexture		proc :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr
+    CreateCubeTexture		proc :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL Pool, :ptr
+    CreateVertexBuffer		proc :UINT, :DWORD, :DWORD, :D3DPOOL, :ptr
+    CreateIndexBuffer		proc :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr
+    CreateRenderTarget		proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :BOOL, :ptr
+    CreateDepthStencilSurface	proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :ptr
+    CreateImageSurface		proc :UINT, :UINT, :D3DFORMAT, :ptr
+    CopyRects			proc :ptr, :ptr, :UINT, :ptr, :ptr
+    UpdateTexture		proc :ptr, :ptr
+    GetFrontBuffer		proc :ptr
+    SetRenderTarget		proc :ptr, :ptr
+    GetRenderTarget		proc :ptr
+    GetDepthStencilSurface	proc :ptr
     BeginScene			proc
     EndScene			proc
     Clear			proc :DWORD Count,CONST D3DRECT* pRects,DWORD Flags,D3DCOLOR Color,float Z,DWORD Stencil
@@ -123,38 +123,38 @@ LPDIRECT3D8	typedef ptr IDirect3D8
     SetTexture			proc :DWORD Stage,IDirect3DBaseTexture8* pTexture
     GetTextureStageState	proc :DWORD Stage,D3DTEXTURESTAGESTATETYPE Type,DWORD* pValue
     SetTextureStageState	proc :DWORD Stage,D3DTEXTURESTAGESTATETYPE Type,DWORD Value
-    ValidateDevice		proc :ptr DWORD
+    ValidateDevice		proc :ptr
     GetInfo			proc :DWORD, :ptr, :DWORD
-    SetPaletteEntries		proc :UINT, :ptr PALETTEENTRY
-    GetPaletteEntries		proc :UINT, :ptr PALETTEENTRY
+    SetPaletteEntries		proc :UINT, :ptr
+    GetPaletteEntries		proc :UINT, :ptr
     SetCurrentTexturePalette	proc :UINT
-    GetCurrentTexturePalette	proc :ptr UINT
+    GetCurrentTexturePalette	proc :ptr
     DrawPrimitive		proc :D3DPRIMITIVETYPE, :UINT, :UINT
     DrawIndexedPrimitive	proc :D3DPRIMITIVETYPE, :UINT, :UINT, :UINT, :UINT
     DrawPrimitiveUP		proc :D3DPRIMITIVETYPE, :UINT, :ptr, :UINT
     DrawIndexedPrimitiveUP	proc :D3DPRIMITIVETYPE, :UINT, :UINT, :UINT, :ptr, :D3DFORMAT, :ptr, :UINT
-    ProcessVertices		proc :UINT, :UINT, :UINT, :ptr IDirect3DVertexBuffer8, :DWORD
-    CreateVertexShader		proc :ptr DWORD, :ptr DWORD, :ptr DWORD, :DWORD
+    ProcessVertices		proc :UINT, :UINT, :UINT, :ptr, :DWORD
+    CreateVertexShader		proc :ptr, :ptr, :ptr, :DWORD
     SetVertexShader		proc :DWORD
-    GetVertexShader		proc :ptr DWORD
+    GetVertexShader		proc :ptr
     DeleteVertexShader		proc :DWORD
     SetVertexShaderConstant	proc :DWORD, :ptr, :DWORD
     GetVertexShaderConstant	proc :DWORD, :ptr, :DWORD
-    GetVertexShaderDeclaration	proc :DWORD, :ptr, :ptr DWORD
-    GetVertexShaderFunction	proc :DWORD, :ptr, :ptr DWORD
-    SetStreamSource		proc :UINT, :ptr IDirect3DVertexBuffer8, :UINT
-    GetStreamSource		proc :UINT, :ptr ptr IDirect3DVertexBuffer8, :ptr UINT
-    SetIndices			proc :ptr IDirect3DIndexBuffer8, :UINT
-    GetIndices			proc :ptr IDirect3DIndexBuffer8, :ptr UINT
-    CreatePixelShader		proc :ptr DWORD, :ptr DWORD
+    GetVertexShaderDeclaration	proc :DWORD, :ptr, :ptr
+    GetVertexShaderFunction	proc :DWORD, :ptr, :ptr
+    SetStreamSource		proc :UINT, :ptr, :UINT
+    GetStreamSource		proc :UINT, :ptr, :ptr
+    SetIndices			proc :ptr, :UINT
+    GetIndices			proc :ptr, :ptr
+    CreatePixelShader		proc :ptr, :ptr
     SetPixelShader		proc :DWORD
-    GetPixelShader		proc :ptr DWORD
+    GetPixelShader		proc :ptr
     DeletePixelShader		proc :DWORD
     SetPixelShaderConstant	proc :DWORD, :ptr, :DWORD
     GetPixelShaderConstant	proc :DWORD, :ptr, :DWORD
-    GetPixelShaderFunction	proc :DWORD, :ptr, :ptr DWORD
-    DrawRectPatch		proc :UINT, :ptr float, :ptr D3DRECTPATCH_INFO
-    DrawTriPatch		proc :UINT, :ptr float, :ptr D3DTRIPATCH_INFO
+    GetPixelShaderFunction	proc :DWORD, :ptr, :ptr
+    DrawRectPatch		proc :UINT, :ptr, :ptr
+    DrawTriPatch		proc :UINT, :ptr, :ptr
     DeletePatch			proc :UINT
 
     .ends
@@ -165,8 +165,8 @@ PDIRECT3DDEVICE8	typedef ptr IDirect3DDevice8
 .comdef IDirect3DSwapChain8 : public IUnknown
 
 
-    Present		proc :ptr RECT, :ptr RECT, :HWND, :ptr RGNDATA
-    GetBackBuffer	proc :UINT, :D3DBACKBUFFER_TYPE, :ptr ptr IDirect3DSurface8
+    Present		proc :ptr, :ptr, :HWND, :ptr
+    GetBackBuffer	proc :UINT, :D3DBACKBUFFER_TYPE, :ptr
     .ENDS
 
 LPDIRECT3DSWAPCHAIN8	typedef ptr IDirect3DSwapChain8
@@ -174,9 +174,9 @@ PDIRECT3DSWAPCHAIN8	typedef ptr IDirect3DSwapChain8
 
 .comdef IDirect3DResource8 : public IUnknown
 
-    GetDevice		proc :ptr ptr IDirect3DDevice8
+    GetDevice		proc :ptr
     SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
     FreePrivateData	proc :REFGUID
     SetPriority		proc :DWORD
     GetPriority		proc
@@ -198,11 +198,11 @@ LPDIRECT3DBASETEXTURE8, *PDIRECT3DBASETEXTURE8 typedef ptr IDirect3DBaseTexture8
 
 .comdef IDirect3DTexture8 : public IDirect3DBaseTexture8
 
-    GetLevelDesc	proc :UINT, :ptr D3DSURFACE_DESC
-    GetSurfaceLevel	proc :UINT, :ptr ptr IDirect3DSurface8
-    LockRect		proc :UINT, :ptr D3DLOCKED_RECT, :ptr RECT, :DWORD
+    GetLevelDesc	proc :UINT, :ptr
+    GetSurfaceLevel	proc :UINT, :ptr
+    LockRect		proc :UINT, :ptr, :ptr, :DWORD
     UnlockRect		proc :UINT
-    AddDirtyRect	proc :ptr RECT
+    AddDirtyRect	proc :ptr
     .ENDS
 
 LPDIRECT3DTEXTURE8	typedef ptr IDirect3DTexture8
@@ -210,11 +210,11 @@ PDIRECT3DTEXTURE8	typedef ptr IDirect3DTexture8
 
 .comdef IDirect3DVolumeTexture8 : public IDirect3DBaseTexture8
 
-    GetLevelDesc	proc :UINT, :ptr D3DVOLUME_DESC
-    GetVolumeLevel	proc :UINT, :ptr ptr IDirect3DVolume8
-    LockBox		proc :UINT, :ptr D3DLOCKED_BOX, :ptr D3DBOX, :DWORD
+    GetLevelDesc	proc :UINT, :ptr
+    GetVolumeLevel	proc :UINT, :ptr
+    LockBox		proc :UINT, :ptr, :ptr, :DWORD
     UnlockBox		proc :UINT
-    AddDirtyBox		proc :ptr D3DBOX
+    AddDirtyBox		proc :ptr
     .ENDS
 
 LPDIRECT3DVOLUMETEXTURE8 typedef ptr IDirect3DVolumeTexture8
@@ -222,11 +222,11 @@ PDIRECT3DVOLUMETEXTURE8 typedef ptr IDirect3DVolumeTexture8
 
 .comdef IDirect3DCubeTexture8 : public IDirect3DBaseTexture8
 
-    GetLevelDesc	proc :UINT, :ptr D3DSURFACE_DESC
-    GetCubeMapSurface	proc :D3DCUBEMAP_FACES, :UINT, :ptr ptr IDirect3DSurface8
-    LockRect		proc :D3DCUBEMAP_FACES, :UINT, :ptr D3DLOCKED_RECT, :ptr RECT, :DWORD
+    GetLevelDesc	proc :UINT, :ptr
+    GetCubeMapSurface	proc :D3DCUBEMAP_FACES, :UINT, :ptr
+    LockRect		proc :D3DCUBEMAP_FACES, :UINT, :ptr, :ptr, :DWORD
     UnlockRect		proc :D3DCUBEMAP_FACES, :UINT
-    AddDirtyRect	proc :D3DCUBEMAP_FACES, :ptr RECT
+    AddDirtyRect	proc :D3DCUBEMAP_FACES, :ptr
     .ENDS
 
 LPDIRECT3DCUBETEXTURE8	typedef ptr IDirect3DCubeTexture8
@@ -234,9 +234,9 @@ PDIRECT3DCUBETEXTURE8	typedef ptr IDirect3DCubeTexture8
 
 .comdef IDirect3DVertexBuffer8 : public IDirect3DResource8
 
-    _Lock		proc:UINT, :UINT, :ptr ptr BYTE, :DWORD
+    _Lock		proc:UINT, :UINT, :ptr, :DWORD
     Unlock		proc
-    GetDesc		proc :ptr D3DVERTEXBUFFER_DESC
+    GetDesc		proc :ptr
     .ENDS
 
 LPDIRECT3DVERTEXBUFFER8 typedef ptr IDirect3DVertexBuffer8
@@ -244,9 +244,9 @@ PDIRECT3DVERTEXBUFFER8	typedef ptr IDirect3DVertexBuffer8
 
 .comdef IDirect3DIndexBuffer8 : public IDirect3DResource8
 
-    _Lock		proc :UINT, :UINT, :ptr ptr BYTE, :DWORD
+    _Lock		proc :UINT, :UINT, :ptr, :DWORD
     Unlock		proc
-    GetDesc		proc :ptr D3DINDEXBUFFER_DESC
+    GetDesc		proc :ptr
     .ENDS
 
 LPDIRECT3DINDEXBUFFER8	typedef ptr IDirect3DIndexBuffer8
@@ -254,13 +254,13 @@ PDIRECT3DINDEXBUFFER8	typedef ptr IDirect3DIndexBuffer8
 
 .comdef IDirect3DSurface8 : public IUnknown
 
-    GetDevice		proc :ptr ptr IDirect3DDevice8
+    GetDevice		proc :ptr
     SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
     FreePrivateData	proc :REFGUID
-    GetContainer	proc :REFIID, :ptr ptr
-    GetDesc		proc :ptr D3DSURFACE_DESC
-    LockRect		proc :ptr D3DLOCKED_RECT, :ptr RECT, :DWORD
+    GetContainer	proc :REFIID, :ptr
+    GetDesc		proc :ptr
+    LockRect		proc :ptr, :ptr, :DWORD
     UnlockRect		proc
     .ENDS
 
@@ -269,13 +269,13 @@ PDIRECT3DSURFACE8	typedef ptr IDirect3DSurface8
 
 .comdef IDirect3DVolume8 : public IUnknown
 
-    GetDevice		proc :ptr ptr IDirect3DDevice8
+    GetDevice		proc :ptr
     SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
     FreePrivateData	proc :REFGUID
-    GetContainer	proc :REFIID, :ptr ptr
-    GetDesc		proc :ptr D3DVOLUME_DESC
-    LockBox		proc :ptr D3DLOCKED_BOX, :ptr D3DBOX, :DWORD
+    GetContainer	proc :REFIID, :ptr
+    GetDesc		proc :ptr
+    LockBox		proc :ptr, :ptr, :DWORD
     UnlockBox		proc
     .ENDS
 

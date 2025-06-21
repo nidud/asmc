@@ -88,21 +88,21 @@ DEFINE_IIDX(IDocHostUIHandlerDispatch, "425B5AF0-65F1-11d1-9611-0000F81E0D0D")
 
 .comdef IDocHostUIHandlerDispatch : public IDispatch
 
-    ShowContextMenu	proc :DWORD, :DWORD, :DWORD, :ptr IUnknown, :ptr IDispatch, :ptr HRESULT
-    GetHostInfo		proc :ptr DWORD, :ptr DWORD
-    ShowUI		proc :DWORD, :ptr IUnknown, :ptr IUnknown, :ptr IUnknown, :ptr IUnknown, :ptr HRESULT
+    ShowContextMenu	proc :DWORD, :DWORD, :DWORD, :ptr, :ptr, :ptr
+    GetHostInfo		proc :ptr, :ptr
+    ShowUI		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
     HideUI		proc
     UpdateUI		proc
     EnableModeless	proc :VARIANT_BOOL
     OnDocWindowActivate proc :VARIANT_BOOL
     OnFrameWindowActivate proc :VARIANT_BOOL
-    ResizeBorder	proc :LONG, :LONG, :LONG, :LONG, :ptr IUnknown, :VARIANT_BOOL
-    TranslateAccelerator proc :DWORD_PTR, :DWORD, :DWORD_PTR, :DWORD_PTR, :BSTR, :DWORD, :ptr HRESULT
-    GetOptionKeyPath	proc :ptr BSTR, :DWORD
-    GetDropTarget	proc :ptr IUnknown, :ptr ptr IUnknown
-    GetExternal		proc :ptr ptr IDispatch
-    TranslateUrl	proc :DWORD, :BSTR, :ptr BSTR
-    FilterDataObject	proc :ptr IUnknown, :ptr ptr IUnknown
+    ResizeBorder	proc :LONG, :LONG, :LONG, :LONG, :ptr, :VARIANT_BOOL
+    TranslateAccelerator proc :DWORD_PTR, :DWORD, :DWORD_PTR, :DWORD_PTR, :BSTR, :DWORD, :ptr
+    GetOptionKeyPath	proc :ptr, :DWORD
+    GetDropTarget	proc :ptr, :ptr
+    GetExternal		proc :ptr
+    TranslateUrl	proc :DWORD, :BSTR, :ptr
+    FilterDataObject	proc :ptr, :ptr
    .ENDS
 
 endif
@@ -115,12 +115,12 @@ DEFINE_IIDX(IAxWinHostWindow, "B6EA2050-048A-11d1-82B9-00C04FB9942E")
 
 .comdef IAxWinHostWindow : public IUnknown
 
-    CreateControl	proc :LPCOLESTR, :HWND, :ptr IStream
-    CreateControlEx	proc :LPCOLESTR, :HWND, :ptr IStream, :ptr ptr IUnknown, :REFIID, :ptr IUnknown
-    AttachControl	proc :ptr IUnknown, :HWND
-    QueryControl	proc :REFIID, :ptr ptr
-    SetExternalDispatch proc :ptr IDispatch
-    SetExternalUIHandler proc :ptr IDocHostUIHandlerDispatch
+    CreateControl	proc :LPCOLESTR, :HWND, :ptr
+    CreateControlEx	proc :LPCOLESTR, :HWND, :ptr, :ptr, :REFIID, :ptr
+    AttachControl	proc :ptr, :HWND
+    QueryControl	proc :REFIID, :ptr
+    SetExternalDispatch proc :ptr
+    SetExternalUIHandler proc :ptr
    .ENDS
 
 endif
@@ -133,8 +133,8 @@ DEFINE_IIDX(IAxWinHostWindowLic, "3935BDA8-4ED9-495c-8650-E01FC1E38A4B")
 
 .comdef IAxWinHostWindowLic : public IAxWinHostWindow
 
-    CreateControlLic	proc :LPCOLESTR, :HWND, :ptr IStream, :BSTR
-    CreateControlLicEx	proc :LPCOLESTR, :HWND, :ptr IStream, :ptr ptr IUnknown, :REFIID, :ptr IUnknown, :BSTR
+    CreateControlLic	proc :LPCOLESTR, :HWND, :ptr, :BSTR
+    CreateControlLicEx	proc :LPCOLESTR, :HWND, :ptr, :ptr, :REFIID, :ptr, :BSTR
    .ENDS
 
 endif
@@ -148,33 +148,33 @@ DEFINE_IIDX(IAxWinAmbientDispatch, "B6EA2051-048A-11d1-82B9-00C04FB9942E")
 .comdef IAxWinAmbientDispatch : public IDispatch
 
     put_AllowWindowlessActivation proc :VARIANT_BOOL
-    get_AllowWindowlessActivation proc :ptr VARIANT_BOOL
+    get_AllowWindowlessActivation proc :ptr
     put_BackColor	proc :OLE_COLOR
-    get_BackColor	proc :ptr OLE_COLOR
+    get_BackColor	proc :ptr
     put_ForeColor	proc :OLE_COLOR
-    get_ForeColor	proc :ptr OLE_COLOR
+    get_ForeColor	proc :ptr
     put_LocaleID	proc :LCID
-    get_LocaleID	proc :ptr LCID
+    get_LocaleID	proc :ptr
     put_UserMode	proc :VARIANT_BOOL
-    get_UserMode	proc :ptr VARIANT_BOOL
+    get_UserMode	proc :ptr
     put_DisplayAsDefault proc :VARIANT_BOOL
-    get_DisplayAsDefault proc :ptr VARIANT_BOOL
-    put_Font		proc :ptr IFontDisp
-    get_Font		proc :ptr ptr IFontDisp
+    get_DisplayAsDefault proc :ptr
+    put_Font		proc :ptr
+    get_Font		proc :ptr
     put_MessageReflect	proc :VARIANT_BOOL
-    get_MessageReflect	proc :ptr VARIANT_BOOL
-    get_ShowGrabHandles proc :ptr VARIANT_BOOL
-    get_ShowHatching	proc :ptr VARIANT_BOOL
+    get_MessageReflect	proc :ptr
+    get_ShowGrabHandles proc :ptr
+    get_ShowHatching	proc :ptr
     put_DocHostFlags	proc :DWORD
-    get_DocHostFlags	proc :ptr DWORD
+    get_DocHostFlags	proc :ptr
     put_DocHostDoubleClickFlags proc :DWORD
-    get_DocHostDoubleClickFlags proc :ptr DWORD
+    get_DocHostDoubleClickFlags proc :ptr
     put_AllowContextMenu proc :VARIANT_BOOL
-    get_AllowContextMenu proc :ptr VARIANT_BOOL
+    get_AllowContextMenu proc :ptr
     put_AllowShowUI	proc :VARIANT_BOOL
-    get_AllowShowUI	proc :ptr VARIANT_BOOL
+    get_AllowShowUI	proc :ptr
     put_OptionKeyPath	proc :BSTR
-    get_OptionKeyPath	proc :ptr BSTR
+    get_OptionKeyPath	proc :ptr
    .ENDS
 
 endif
@@ -186,7 +186,7 @@ DEFINE_IIDX(IAxWinAmbientDispatchEx, "B2D0778B-AC99-4c58-A5C8-E7724E5316B5")
 
 .comdef IAxWinAmbientDispatchEx : public IAxWinAmbientDispatch
 
-    SetAmbientDispatch	proc :ptr IDispatch
+    SetAmbientDispatch	proc :ptr
    .ENDS
 
 endif
@@ -248,7 +248,7 @@ DEFINE_IIDX(IAccessibleProxy, "7A7D9DCF-B7A1-4019-9031-258268846980")
 
 .comdef IAccessibleProxy : public IUnknown
 
-    SetServer		proc :ptr IAccessible, :ptr IAccessibleServer
+    SetServer		proc :ptr, :ptr
    .ENDS
 
 endif
@@ -261,9 +261,9 @@ DEFINE_IIDX(IAccessibleServer, "52C8FB5E-D779-4e77-AE9F-F611FA7E9D7A")
 
 .comdef IAccessibleServer : public IUnknown
 
-    SetProxy		proc :ptr IAccessibleProxy
-    GetHWND		proc :ptr HWND
-    GetEnumVariant	proc :ptr ptr IEnumVARIANT
+    SetProxy		proc :ptr
+    GetHWND		proc :ptr
+    GetEnumVariant	proc :ptr
    .ENDS
 
 endif

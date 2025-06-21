@@ -169,12 +169,12 @@ DEFINE_IIDX(IEvalRat, "C5C5C5B1-3ABC-11D6-B25B-00C04FA0C026")
 
 .comdef IEvalRat : public IDispatch
 
-    get_BlockedRatingAttributes proc :EnTvRat_System, :EnTvRat_GenericLevel, :ptr LONG
+    get_BlockedRatingAttributes proc :EnTvRat_System, :EnTvRat_GenericLevel, :ptr
     put_BlockedRatingAttributes proc :EnTvRat_System, :EnTvRat_GenericLevel, :LONG
-    get_BlockUnRated	proc :ptr BOOL
+    get_BlockUnRated	proc :ptr
     put_BlockUnRated	proc :BOOL
     MostRestrictiveRating proc :EnTvRat_System, :EnTvRat_GenericLevel, :LONG, :EnTvRat_System,
-	:EnTvRat_GenericLevel, :LONG, :ptr EnTvRat_System, :ptr EnTvRat_GenericLevel, :ptr LONG
+	:EnTvRat_GenericLevel, :LONG, :ptr, :ptr, :ptr
     TestRating proc :EnTvRat_System, :EnTvRat_GenericLevel, :LONG
    .ends
 

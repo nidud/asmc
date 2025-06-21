@@ -47,7 +47,7 @@ DEFINE_IIDX(IDisplayDeviceInterop, "64338358-366A-471B-BD56-DD8EF48E439B")
 
 .comdef IDisplayDeviceInterop : public IUnknown
     CreateSharedHandle  proc :ptr, :ptr, :DWORD, :HSTRING, :ptr
-    OpenSharedHandle    proc :HANDLE, :IID, :ptr ptr
+    OpenSharedHandle    proc :HANDLE, :IID, :ptr
    .ends
 
 endif

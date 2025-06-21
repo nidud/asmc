@@ -175,8 +175,8 @@ DEFINE_IIDX(IMFTransform, "bf94c121-5b05-4e6f-8000-ba598961414d")
     SetOutputBounds	proc :LONGLONG, :LONGLONG
     ProcessEvent	proc :DWORD, :ptr
     ProcessMessage	proc :MFT_MESSAGE_TYPE, :ULONG_PTR
-    ProcessInput	proc :DWORD, :ptr IMFSample, :DWORD
-    ProcessOutput	proc :DWORD, :DWORD, :ptr MFT_OUTPUT_DATA_BUFFER, :ptr DWORD
+    ProcessInput	proc :DWORD, :ptr, :DWORD
+    ProcessOutput	proc :DWORD, :DWORD, :ptr, :ptr
     .ends
 
 endif

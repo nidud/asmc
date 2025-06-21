@@ -2168,9 +2168,9 @@ define _IKsControl_
 
 .comdef IKsControl : public IUnknown
 
-	KsProperty	proc :ULONG, :PVOID, :ULONG, :ptr ULONG
-	KsMethod	proc :ULONG, :PVOID, :ULONG, :ptr ULONG
-	KsEvent		proc :ULONG, :PVOID, :ULONG, :ptr ULONG
+	KsProperty	proc :ULONG, :PVOID, :ULONG, :ptr
+	KsMethod	proc :ULONG, :PVOID, :ULONG, :ptr
+	KsEvent		proc :ULONG, :PVOID, :ULONG, :ptr
        .ends
 
 .comdef IKsReferenceClock : public IUnknown

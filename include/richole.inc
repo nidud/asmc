@@ -56,11 +56,11 @@ RECO_DRAG		equ 0x00000004
 
 .comdef IRichEditOle : public IUnknown
 
-    GetClientSite	proc :ptr LPOLECLIENTSITE
+    GetClientSite	proc :ptr
     GetObjectCount	proc
     GetLinkCount	proc
-    GetObject		proc :LONG, :ptr REOBJECT, :DWORD
-    InsertObject	proc :ptr REOBJECT
+    GetObject		proc :LONG, :ptr, :DWORD
+    InsertObject	proc :ptr
     ConvertObject	proc :LONG, :REFCLSID, :LPCSTR
     ActivateAs		proc :REFCLSID, :REFCLSID
     SetHostNames	proc :LPCSTR, :LPCSTR
@@ -70,7 +70,7 @@ RECO_DRAG		equ 0x00000004
     SaveCompleted	proc :LONG, :LPSTORAGE
     InPlaceDeactivate	proc
     ContextSensitiveHelp proc :BOOL
-    GetClipboardData	proc :ptr CHARRANGE, :DWORD, :ptr LPDATAOBJECT
+    GetClipboardData	proc :ptr, :DWORD, :ptr
     ImportDataObject	proc :LPDATAOBJECT, :CLIPFORMAT, :HGLOBAL
 
     .ends
@@ -78,16 +78,16 @@ RECO_DRAG		equ 0x00000004
 
 .comdef IRichEditOleCallback : public IUnknown
 
-    GetNewStorage	proc :ptr LPSTORAGE
-    GetInPlaceContext	proc :ptr LPOLEINPLACEFRAME, :ptr LPOLEINPLACEUIWINDOW, :LPOLEINPLACEFRAMEINFO
+    GetNewStorage	proc :ptr
+    GetInPlaceContext	proc :ptr, :ptr, :LPOLEINPLACEFRAMEINFO
     ShowContainerUI	proc :BOOL
     QueryInsertObject	proc :LPCLSID, :LPSTORAGE, :LONG
     DeleteObject	proc :LPOLEOBJECT
-    QueryAcceptData	proc :LPDATAOBJECT, :ptr CLIPFORMAT, :DWORD, :BOOL, :HGLOBAL
+    QueryAcceptData	proc :LPDATAOBJECT, :ptr, :DWORD, :BOOL, :HGLOBAL
     ContextSensitiveHelp proc :BOOL
-    GetClipboardData	proc :ptr CHARRANGE, :DWORD, :ptr LPDATAOBJECT
+    GetClipboardData	proc :ptr, :DWORD, :ptr
     GetDragDropEffect	proc :BOOL, :DWORD, :LPDWORD
-    GetContextMenu	proc :WORD, :LPOLEOBJECT, :ptr CHARRANGE, :ptr HMENU
+    GetContextMenu	proc :WORD, :LPOLEOBJECT, :ptr, :ptr
 
     .ends
     LPRICHEDITOLECALLBACK typedef ptr IRichEditOleCallback

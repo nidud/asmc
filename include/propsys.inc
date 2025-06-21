@@ -160,7 +160,7 @@ DEFINE_IIDX(IPropertyChangeArray, "380f5cad-1b5e-42f2-805d-637fd392d31e")
 
 .comdef IPropertyChangeArray : public IUnknown
     GetCount		proc :ptr
-    GetAt		proc :UINT, :REFIID, :ptr ptr
+    GetAt		proc :UINT, :REFIID, :ptr
     InsertAt		proc :UINT, :ptr
     Append		proc :ptr
     AppendOrReplace	proc :ptr
@@ -242,8 +242,8 @@ DEFINE_IIDX(IPropertyEnumTypeList, "a99400f4-3d84-4557-94ba-1242fb2cc9a6")
 
 .comdef IPropertyEnumTypeList : public IUnknown
     GetCount		proc :ptr
-    GetAt		proc :UINT, :REFIID, :ptr ptr
-    GetConditionAt	proc :UINT, :REFIID, :ptr ptr
+    GetAt		proc :UINT, :REFIID, :ptr
+    GetConditionAt	proc :UINT, :REFIID, :ptr
     FindMatchingIndex	proc :REFPROPVARIANT, :ptr
    .ends
 
@@ -387,7 +387,7 @@ DEFINE_IIDX(IPropertyDescription, "6f79d558-3e96-4549-a1d1-7d75d2288814")
     GetSortDescriptionLabel proc :BOOL, :ptr
     GetAggregationType	proc :ptr
     GetConditionType	proc :ptr, :ptr
-    GetEnumTypeList	proc :REFIID, :ptr ptr
+    GetEnumTypeList	proc :REFIID, :ptr
     CoerceToCanonicalValue proc :ptr
     FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
     IsValueCanonical	proc :REFPROPVARIANT
@@ -416,8 +416,8 @@ define __IPropertyDescriptionAliasInfo_INTERFACE_DEFINED__
 DEFINE_IIDX(IPropertyDescriptionAliasInfo, "f67104fc-2af9-46fd-b32d-243c1404f3d1")
 
 .comdef IPropertyDescriptionAliasInfo : public IPropertyDescription
-    GetSortByAlias	proc :REFIID, :ptr ptr
-    GetAdditionalSortByAliases proc :REFIID, :ptr ptr
+    GetSortByAlias	proc :REFIID, :ptr
+    GetAdditionalSortByAliases proc :REFIID, :ptr
    .ends
 
 endif
@@ -460,7 +460,7 @@ define __IPropertyDescriptionRelatedPropertyInfo_INTERFACE_DEFINED__
 DEFINE_IIDX(IPropertyDescriptionRelatedPropertyInfo, "507393f4-2a3d-4a60-b59e-d9c75716c2dd")
 
 .comdef IPropertyDescriptionRelatedPropertyInfo : public IPropertyDescription
-    GetRelatedProperty	proc :LPCWSTR, :REFIID, :ptr ptr
+    GetRelatedProperty	proc :LPCWSTR, :REFIID, :ptr
    .ends
 
 endif
@@ -481,10 +481,10 @@ define __IPropertySystem_INTERFACE_DEFINED__
 DEFINE_IIDX(IPropertySystem, "ca724e8a-c3e6-442b-88a4-6fb0db8035a3")
 
 .comdef IPropertySystem : public IUnknown
-    GetPropertyDescription proc :REFPROPERTYKEY, :REFIID, :ptr ptr
-    GetPropertyDescriptionByName proc :LPCWSTR, :REFIID, :ptr ptr
-    GetPropertyDescriptionListFromString proc :LPCWSTR, :REFIID, :ptr ptr
-    EnumeratePropertyDescriptions proc :PROPDESC_ENUMFILTER, :REFIID, :ptr ptr
+    GetPropertyDescription proc :REFPROPERTYKEY, :REFIID, :ptr
+    GetPropertyDescriptionByName proc :LPCWSTR, :REFIID, :ptr
+    GetPropertyDescriptionListFromString proc :LPCWSTR, :REFIID, :ptr
+    EnumeratePropertyDescriptions proc :PROPDESC_ENUMFILTER, :REFIID, :ptr
     FormatForDisplay	proc :REFPROPERTYKEY, :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :LPWSTR, :DWORD
     FormatForDisplayAlloc proc :REFPROPERTYKEY, :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
     RegisterPropertySchema proc :LPCWSTR
@@ -501,7 +501,7 @@ DEFINE_IIDX(IPropertyDescriptionList, "1f9fc1d0-c39b-4b26-817f-011967d3440e")
 
 .comdef IPropertyDescriptionList : public IUnknown
     GetCount		proc :ptr
-    GetAt		proc :UINT, :REFIID, :ptr ptr
+    GetAt		proc :UINT, :REFIID, :ptr
    .ends
 
 endif
@@ -512,8 +512,8 @@ define __IPropertyStoreFactory_INTERFACE_DEFINED__
 DEFINE_IIDX(IPropertyStoreFactory, "bc110b6d-57e8-4148-a9c6-91015ab2f3a5")
 
 .comdef IPropertyStoreFactory : public IUnknown
-    GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr ptr
-    GetPropertyStoreForKeys proc :ptr, :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr ptr
+    GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
+    GetPropertyStoreForKeys proc :ptr, :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
    .ends
 
 endif
@@ -524,7 +524,7 @@ define __IDelayedPropertyStoreFactory_INTERFACE_DEFINED__
 DEFINE_IIDX(IDelayedPropertyStoreFactory, "40d4577f-e237-4bdb-bd69-58f089431b6a")
 
 .comdef IDelayedPropertyStoreFactory : public IPropertyStoreFactory
-    GetDelayedPropertyStore proc :GETPROPERTYSTOREFLAGS, :DWORD, :REFIID, :ptr ptr
+    GetDelayedPropertyStore proc :GETPROPERTYSTOREFLAGS, :DWORD, :REFIID, :ptr
    .ends
 
 endif
@@ -548,7 +548,7 @@ DEFINE_IIDX(IPersistSerializedPropStorage, "e318ad57-0aa0-450f-aca5-6fab7103d917
 .comdef IPersistSerializedPropStorage : public IUnknown
     SetFlags		proc :PERSIST_SPROPSTORE_FLAGS
     SetPropertyStorage	proc :PCUSERIALIZEDPROPSTORAGE, :DWORD
-    GetPropertyStorage	proc :ptr ptr, :ptr
+    GetPropertyStorage	proc :ptr, :ptr
    .ends
 
 endif
@@ -582,7 +582,7 @@ define __ICreateObject_INTERFACE_DEFINED__
 DEFINE_IIDX(ICreateObject, "75121952-e0d0-43e5-9380-1d80483acf72")
 
 .comdef ICreateObject : public IUnknown
-    CreateObject	proc :REFCLSID, :ptr, :REFIID, :ptr ptr
+    CreateObject	proc :REFCLSID, :ptr, :REFIID, :ptr
    .ends
 
 endif

@@ -80,20 +80,20 @@ DEFINE_IIDX(IDateTimeFormatter, "95EECA10-73E0-4E4B-A183-3D6AD0BA35EC")
     get_GeographicRegion proc :ptr
     get_Calendar        proc :ptr
     get_Clock           proc :ptr
-    get_NumeralSystem   proc :ptr HSTRING
+    get_NumeralSystem   proc :ptr
     put_NumeralSystem   proc :HSTRING
-    get_Patterns        proc :ptr ptr
-    get_Template        proc :ptr HSTRING
-    Format              proc :Windows::Foundation::DateTime, :ptr HSTRING
-    get_IncludeYear     proc :ptr Windows::Globalization::DateTimeFormatting::YearFormat
-    get_IncludeMonth    proc :ptr Windows::Globalization::DateTimeFormatting::MonthFormat
-    get_IncludeDayOfWeek proc :ptr Windows::Globalization::DateTimeFormatting::DayOfWeekFormat
-    get_IncludeDay      proc :ptr Windows::Globalization::DateTimeFormatting::DayFormat
-    get_IncludeHour     proc :ptr Windows::Globalization::DateTimeFormatting::HourFormat
-    get_IncludeMinute   proc :ptr Windows::Globalization::DateTimeFormatting::MinuteFormat
-    get_IncludeSecond   proc :ptr Windows::Globalization::DateTimeFormatting::SecondFormat
-    get_ResolvedLanguage proc :ptr HSTRING
-    get_ResolvedGeographicRegion proc :ptr HSTRING
+    get_Patterns        proc :ptr
+    get_Template        proc :ptr
+    Format              proc :Windows::Foundation::DateTime, :ptr
+    get_IncludeYear     proc :ptr
+    get_IncludeMonth    proc :ptr
+    get_IncludeDayOfWeek proc :ptr
+    get_IncludeDay      proc :ptr
+    get_IncludeHour     proc :ptr
+    get_IncludeMinute   proc :ptr
+    get_IncludeSecond   proc :ptr
+    get_ResolvedLanguage proc :ptr
+    get_ResolvedGeographicRegion proc :ptr
    .ends
 
 endif
@@ -105,20 +105,20 @@ DEFINE_IIDX(IDateTimeFormatterFactory, "EC8D8A53-1A2E-412D-8815-3B745FB1A2A0")
 
 .comdef IDateTimeFormatterFactory : public IInspectable
 
-    CreateDateTimeFormatter proc :HSTRING, :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
-    CreateDateTimeFormatterLanguages proc :HSTRING, :ptr, :ptr ptr
-    CreateDateTimeFormatterContext proc :HSTRING, :ptr, :HSTRING, :HSTRING, :HSTRING, :ptr ptr
+    CreateDateTimeFormatter proc :HSTRING, :ptr
+    CreateDateTimeFormatterLanguages proc :HSTRING, :ptr, :ptr
+    CreateDateTimeFormatterContext proc :HSTRING, :ptr, :HSTRING, :HSTRING, :HSTRING, :ptr
     CreateDateTimeFormatterDate proc \
             :Windows::Globalization::DateTimeFormatting::YearFormat,
             :Windows::Globalization::DateTimeFormatting::MonthFormat,
             :Windows::Globalization::DateTimeFormatting::DayFormat,
             :Windows::Globalization::DateTimeFormatting::DayOfWeekFormat,
-            :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
+            :ptr
     CreateDateTimeFormatterTime proc \
             :Windows::Globalization::DateTimeFormatting::HourFormat,
             :Windows::Globalization::DateTimeFormatting::MinuteFormat,
             :Windows::Globalization::DateTimeFormatting::SecondFormat,
-            :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
+            :ptr
     CreateDateTimeFormatterDateTimeLanguages proc \
             :Windows::Globalization::DateTimeFormatting::YearFormat,
             :Windows::Globalization::DateTimeFormatting::MonthFormat,
@@ -127,8 +127,8 @@ DEFINE_IIDX(IDateTimeFormatterFactory, "EC8D8A53-1A2E-412D-8815-3B745FB1A2A0")
             :Windows::Globalization::DateTimeFormatting::HourFormat,
             :Windows::Globalization::DateTimeFormatting::MinuteFormat,
             :Windows::Globalization::DateTimeFormatting::SecondFormat,
-            :ptr __FIIterable_1_HSTRING,
-            :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
+            :ptr,
+            :ptr
     CreateDateTimeFormatterDateTimeContext proc \
             :Windows::Globalization::DateTimeFormatting::YearFormat,
             :Windows::Globalization::DateTimeFormatting::MonthFormat,
@@ -137,8 +137,8 @@ DEFINE_IIDX(IDateTimeFormatterFactory, "EC8D8A53-1A2E-412D-8815-3B745FB1A2A0")
             :Windows::Globalization::DateTimeFormatting::HourFormat,
             :Windows::Globalization::DateTimeFormatting::MinuteFormat,
             :Windows::Globalization::DateTimeFormatting::SecondFormat,
-            :ptr __FIIterable_1_HSTRING, :HSTRING, :HSTRING, :HSTRING,
-            :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
+            :ptr, :HSTRING, :HSTRING, :HSTRING,
+            :ptr
    .ends
 
 endif
@@ -150,10 +150,10 @@ DEFINE_IIDX(IDateTimeFormatterStatics, "BFCDE7C0-DF4C-4A2E-9012-F47DAF3F1212")
 
 .comdef IDateTimeFormatterStatics : public IInspectable
 
-    get_LongDate        proc :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
-    get_LongTime        proc :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
-    get_ShortDate       proc :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
-    get_ShortTime       proc :ptr ptr Windows::Globalization::DateTimeFormatting::IDateTimeFormatter
+    get_LongDate        proc :ptr
+    get_LongTime        proc :ptr
+    get_ShortDate       proc :ptr
+    get_ShortTime       proc :ptr
    .ends
 endif
 
@@ -165,7 +165,7 @@ DEFINE_IIDX(IDateTimeFormatter2, "27C91A86-BDAA-4FD0-9E36-671D5AA5EE03")
 
 .comdef IDateTimeFormatter2 : public IInspectable
 
-    FormatUsingTimeZone proc :Windows::Foundation::DateTime, :HSTRING, :ptr HSTRING
+    FormatUsingTimeZone proc :Windows::Foundation::DateTime, :HSTRING, :ptr
    .ends
 
 endif

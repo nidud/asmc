@@ -12,6 +12,7 @@ include limits.inc
 include asmc.inc
 include token.inc
 include hllext.inc
+include proc.inc
 
     .code
 
@@ -628,7 +629,7 @@ GetJumpDist proc __ccall table_type:int_t, reg:int_t, min:intptr_t, table_addr:s
         mov edx,2
         mov ecx,T_MOVZX
     .endif
-    AddLineQueueX(" %r eax, %r ptr [r11+%r*%d-(%d*%d)+(%s-%s)]",
+    AddLineQueueX(" %r r10, %r ptr [r11+%r*%d-(%d*%d)+(%s-%s)]",
         ecx, table_type, reg, edx, min, edx, table_addr, base_addr )
     ret
 
@@ -966,20 +967,18 @@ endif
             .if ( !use_index && [rsi].SwitchReg && [rsi].Switch3264 && MODULE.switch_regax )
 
                 mov ebx,[rsi].tokval
-                .if ( ebx == T_R11 || ebx == T_R11D )
-                    asmerr( 2008, "register r11 overwritten by .SWITCH" )
+                get_register( ebx, 8 )
+                .if ( eax == T_R10 || eax == T_R11 )
+                    asmerr( 2008, "register r10/r11 overwritten by .SWITCH" )
                 .endif
-                AddLineQueue( " push rax" )
-
                 .if ( [rsi].Switch3264 )
                     ;
                     ; Sign-extend argument if minimum case value is < 0
                     ;
                     mov rax,min
                     .ifs ( rax < 0 )
-
-                        AddLineQueueX( " movsxd rax, %r", ebx )
-                        mov ebx,T_RAX
+                        AddLineQueueX( " movsxd r10, %r", ebx )
+                        mov ebx,T_R10
                     .else
                         mov ecx,ebx
                         lea ebx,[rbx+T_RAX-T_EAX]
@@ -992,30 +991,27 @@ endif
                 AddLineQueueX( " lea r11, %s", base_addr )
                 GetJumpDist( table_type, ebx, min, table_addr, base_addr )
                 AddLineQueueX(
-                    " sub r11, rax\n"
-                    " pop rax\n"
+                    " sub r11, r10\n"
                     " jmp r11" )
 
             .else
 
                 .if ( MODULE.switch_regax )
 
-                    AddLineQueue( " push rax" )
-
                     mov rcx,rbx
                     mov ebx,[rsi].tokval
 
                     .if ( ![rsi].SwitchReg && ![rsi].Switch3264 )
 
-                        GetSwitchArg( T_RAX, rsi, rcx )
-                        mov ebx,T_RAX
+                        GetSwitchArg( T_R10, rsi, rcx )
+                        mov ebx,T_R10
 
                     .elseif ( [rsi].Switch3264 )
 
                         mov rax,min
                         .ifs ( rax < 0 )
 
-                            AddLineQueueX(" movsxd rax, %r", ebx)
+                            AddLineQueueX(" movsxd r10, %r", ebx)
                             mov ebx,T_RAX
                         .else
                             mov ecx,ebx
@@ -1030,19 +1026,18 @@ endif
                     mov rcx,min
                     .if ( use_index )
                         .if ( dist < 256 )
-                            AddLineQueueX( " movzx eax, byte ptr [r11+%r-(%d)+(IT%s-%s)]",
+                            AddLineQueueX( " movzx r10, byte ptr [r11+%r-(%d)+(IT%s-%s)]",
                                 ebx, rcx, table_addr, base_addr )
                         .else
-                            AddLineQueueX( " movzx eax, word ptr [r11+%r*2-(%d*2)+(IT%s-%s)]",
+                            AddLineQueueX( " movzx r10, word ptr [r11+%r*2-(%d*2)+(IT%s-%s)]",
                                 ebx, rcx, table_addr, base_addr )
                         .endif
                         xor ecx,ecx
-                        mov ebx,T_RAX
+                        mov ebx,T_R10
                     .endif
                     GetJumpDist( table_type, ebx, rcx, table_addr, base_addr )
                     AddLineQueue(
-                        " sub r11, rax\n"
-                        " pop rax\n"
+                        " sub r11, r10\n"
                         " jmp r11" )
 
                 .else

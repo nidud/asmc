@@ -547,7 +547,7 @@ DEFINE_IIDX(IToastNotification, "997E2675-059E-4E60-8B06-1760917C8B80")
     get_ExpirationTime	proc :ptr
     add_Dismissed	proc :ptr, :ptr
     remove_Dismissed	proc :EventRegistrationToken
-    add_Activated	proc :ptr IInspectable, :ptr EventRegistrationToken
+    add_Activated	proc :ptr, :ptr
     remove_Activated	proc :EventRegistrationToken
     add_Failed		proc :ptr, :ptr
     remove_Failed	proc :EventRegistrationToken

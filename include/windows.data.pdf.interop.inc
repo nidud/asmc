@@ -52,8 +52,8 @@ DEFINE_IIDX(IPdfRendererNative, "7d9dcd91-d277-4947-8527-07a0daeda94a")
 
 .comdef IPdfRendererNative : public IUnknown
 
-    RenderPageToSurface proc :ptr IUnknown, :ptr IDXGISurface, :POINT, :ptr  PDF_RENDER_PARAMS
-    RenderPageToDeviceContext proc :ptr IUnknown, :ptr ID2D1DeviceContext, :ptr PDF_RENDER_PARAMS
+    RenderPageToSurface proc :ptr, :ptr, :POINT, :ptr
+    RenderPageToDeviceContext proc :ptr, :ptr, :ptr
    .ends
 
 endif

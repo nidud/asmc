@@ -22,14 +22,14 @@ D3DX11CheckVersion proto WINAPI :UINT, :UINT
 .comdef ID3DX11DataLoader
 
     Load		proc
-    Decompress		proc :ptr ptr, :ptr SIZE_T
+    Decompress		proc :ptr, :ptr
     Destroy		proc
    .ENDS
 
 .comdef ID3DX11DataProcessor
 
     Process		proc :ptr, :SIZE_T
-    CreateDeviceObject	proc :ptr ptr
+    CreateDeviceObject	proc :ptr
     Destroy		proc
    .ENDS
 
@@ -37,12 +37,12 @@ DEFINE_GUID(IID_ID3DX11ThreadPump, 0xc93fecfa, 0x6967, 0x478a, 0xab, 0xbc, 0x40,
 
 .comdef ID3DX11ThreadPump : public IUnknown
 
-    AddWorkItem		proc :ptr ID3DX11DataLoader, :ptr ID3DX11DataProcessor, :ptr HRESULT, :ptr ptr
+    AddWorkItem		proc :ptr, :ptr, :ptr, :ptr
     GetWorkItemCount	proc
     WaitForAllItems	proc
     ProcessDeviceWorkItems proc :UINT
     PurgeAllItems	proc
-    GetQueueStatus	proc :ptr UINT, :ptr UINT, :ptr UINT
+    GetQueueStatus	proc :ptr, :ptr, :ptr
    .ENDS
 
 D3DX11CreateThreadPump proto WINAPI :UINT, :UINT, :ptr

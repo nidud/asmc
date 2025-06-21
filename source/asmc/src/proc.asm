@@ -2723,10 +2723,10 @@ endif
 
         imul ecx,size
         lea edi,[rcx+8]
-        AddLineQueueX( "%r [rsp+%u], %r", esi, edi, edx )
+        AddLineQueueX( " %r [rsp+%u], %r", esi, edi, edx )
         .if ( ebx )
             add edi,8
-            AddLineQueueX( "%r [rsp+%u], %r", esi, edi, ebx )
+            AddLineQueueX( " %r [rsp+%u], %r", esi, edi, ebx )
         .endif
     .endif
     .return( i )

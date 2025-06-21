@@ -36,7 +36,7 @@ DEFINE_IIDX(IHtmlUtilities, "FEC00ADD-2399-4FAC-B5A7-05E9ACD7181D")
 
 .comdef IHtmlUtilities : public IInspectable
 
-    ConvertToText       proc :HSTRING, :ptr HSTRING
+    ConvertToText       proc :HSTRING, :ptr
    .ends
 
 endif

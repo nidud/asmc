@@ -547,7 +547,7 @@ DEFINE_IIDX(IWICPalette, "00000040-a8f2-4877-ba0a-fd2b6645fb94")
     InitializeFromPalette proc :ptr
     GetType		proc :ptr
     GetColorCount	proc :ptr
-    GetColors		proc :UINT, :ptr WICColor, :ptr UINT
+    GetColors		proc :UINT, :ptr, :ptr
     IsBlackWhite	proc :ptr
     IsGrayscale		proc :ptr
     HasAlpha		proc :ptr
@@ -567,7 +567,7 @@ DEFINE_IIDX(IWICBitmapSource, "00000120-a8f2-4877-ba0a-fd2b6645fb94")
     GetPixelFormat	proc :ptr
     GetResolution	proc :ptr, :ptr
     CopyPalette		proc :ptr
-    CopyPixels		proc :ptr WICRect, :UINT, :UINT, :ptr byte
+    CopyPixels		proc :ptr, :UINT, :UINT, :ptr
    .ends
 
 endif
@@ -593,8 +593,8 @@ DEFINE_IIDX(IWICPlanarFormatConverter, "BEBEE9CB-83B0-4DCC-8132-B0AAA55EAC96")
 
 .comdef IWICPlanarFormatConverter : public IWICBitmapSource
 
-    Initialize		proc :ptr ptr IWICBitmapSource, :UINT, :REFWICPixelFormatGUID, :WICBitmapDitherType, :ptr IWICPalette, :real8, :WICBitmapPaletteType
-    CanConvert		proc :ptr WICPixelFormatGUID, :UINT, :REFWICPixelFormatGUID, :ptr BOOL
+    Initialize		proc :ptr, :UINT, :REFWICPixelFormatGUID, :WICBitmapDitherType, :ptr, :real8, :WICBitmapPaletteType
+    CanConvert		proc :ptr, :UINT, :REFWICPixelFormatGUID, :ptr
    .ends
 
 endif
@@ -618,7 +618,7 @@ DEFINE_IIDX(IWICBitmapClipper, "E4FBCF03-223D-4e81-9333-D635556DD1B5")
 
 .comdef IWICBitmapClipper : public IWICBitmapSource
 
-    Initialize		proc :ptr, :ptr WICRect
+    Initialize		proc :ptr, :ptr
    .ends
 
 endif
@@ -657,7 +657,7 @@ DEFINE_IIDX(IWICBitmap, "00000121-a8f2-4877-ba0a-fd2b6645fb94")
 
 .comdef IWICBitmap : public IWICBitmapSource
 
-    _Lock		proc :ptr WICRect, :DWORD, :ptr
+    _Lock		proc :ptr, :DWORD, :ptr
     SetPalette		proc :ptr
     SetResolution	proc :real8, :real8
    .ends
@@ -713,10 +713,10 @@ DEFINE_IIDX(IWICStream, "135FF860-22B7-4ddf-B0F6-218F4F299A43")
 
 .comdef IWICStream : public IStream
 
-    InitializeFromIStream proc :ptr IStream
+    InitializeFromIStream proc :ptr
     InitializeFromFilename proc :LPCWSTR, :DWORD
     InitializeFromMemory proc :WICInProcPointer, :DWORD
-    InitializeFromIStreamRegion proc :ptr IStream, :ULARGE_INTEGER, :ULARGE_INTEGER
+    InitializeFromIStreamRegion proc :ptr, :ULARGE_INTEGER, :ULARGE_INTEGER
    .ends
 
 endif
@@ -758,7 +758,7 @@ DEFINE_IIDX(IWICMetadataQueryWriter, "A721791A-0DEF-4d06-BD91-2118BF1DB10B")
 
 .comdef IWICMetadataQueryWriter : public IWICMetadataQueryReader
 
-    SetMetadataByName	proc :LPCWSTR, :ptr PROPVARIANT
+    SetMetadataByName	proc :LPCWSTR, :ptr
     RemoveMetadataByName proc :LPCWSTR
    .ends
 
@@ -866,7 +866,7 @@ DEFINE_IIDX(IWICBitmapSourceTransform, "3B16811B-6A43-4ec9-B713-3D5A0C13B940")
 
 .comdef IWICBitmapSourceTransform : public IUnknown
 
-    CopyPixels		proc :ptr WICRect, :UINT, :UINT, :ptr, :WICBitmapTransformOptions, :UINT, :UINT, :ptr
+    CopyPixels		proc :ptr, :UINT, :UINT, :ptr, :WICBitmapTransformOptions, :UINT, :UINT, :ptr
     GetClosestSize	proc :ptr, :ptr
     GetClosestPixelFormat proc :ptr
     DoesSupportTransform proc :WICBitmapTransformOptions, :ptr
@@ -882,7 +882,7 @@ DEFINE_IIDX(IWICPlanarBitmapSourceTransform, "3AFF9CCE-BE95-4303-B927-E7D16FF4A6
 .comdef IWICPlanarBitmapSourceTransform : public IUnknown
 
     DoesSupportTransform proc :ptr, :ptr, :WICBitmapTransformOptions, :WICPlanarOptions, :ptr, :UINT, :ptr
-    CopyPixels		proc :ptr WICRect, :UINT, :UINT, :WICBitmapTransformOptions, :WICPlanarOptions, :ptr WICBitmapPlane, :UINT
+    CopyPixels		proc :ptr, :UINT, :UINT, :WICBitmapTransformOptions, :WICPlanarOptions, :ptr, :UINT
    .ends
 
 endif
@@ -1016,7 +1016,7 @@ DEFINE_IIDX(IWICBitmapDecoderInfo, "D8CD007F-D08F-4191-9BFC-236EA7F0E4B5")
 
 .comdef IWICBitmapDecoderInfo : public IWICBitmapCodecInfo
 
-    GetPatterns		proc :UINT, :ptr WICBitmapPattern, :ptr UINT, :ptr UINT
+    GetPatterns		proc :UINT, :ptr, :ptr, :ptr
     MatchesPattern	proc :ptr, :ptr
     CreateInstance	proc :ptr
    .ends
@@ -1270,7 +1270,7 @@ DEFINE_IIDX(IWICDevelopRaw, "fbec5e44-f7be-4b65-b7f8-c0c81fef026d")
 
 .comdef IWICDevelopRaw : public IWICBitmapFrameDecode
 
-    QueryRawCapabilitiesInfo proc :ptr WICRawCapabilitiesInfo
+    QueryRawCapabilitiesInfo proc :ptr
     LoadParameterSet	proc :WICRawParameterSet
     GetCurrentParameterSet proc :ptr
     SetExposureCompensation proc :real8
@@ -1295,8 +1295,8 @@ DEFINE_IIDX(IWICDevelopRaw, "fbec5e44-f7be-4b65-b7f8-c0c81fef026d")
     SetNoiseReduction	proc :real8
     GetNoiseReduction	proc :ptr
     SetDestinationColorContext proc :ptr
-    SetToneCurve	proc :UINT, :ptr WICRawToneCurve
-    GetToneCurve	proc :UINT, :ptr WICRawToneCurve, :ptr UINT
+    SetToneCurve	proc :UINT, :ptr
+    GetToneCurve	proc :UINT, :ptr, :ptr
     SetRotation		proc :real8
     GetRotation		proc :ptr
     SetRenderMode	proc :WICRawRenderMode
@@ -1377,7 +1377,7 @@ DEFINE_IIDX(IWICDdsFrameDecode, "3d4c0c61-18a4-41e4-bd80-481a4fc9f464")
 
     GetSizeInBlocks	proc :ptr, :ptr
     GetFormatInfo	proc :ptr
-    CopyBlocks		proc :ptr WICRect, :UINT, :UINT, :ptr byte
+    CopyBlocks		proc :ptr, :UINT, :UINT, :ptr
    .ends
 
 endif

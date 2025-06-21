@@ -232,8 +232,8 @@ DEFINE_IIDX(IMFMediaType, "44ae0fa8-ea31-4109-8d2e-4cae4997c555")
     GetMajorType	proc :ptr
     IsCompressedFormat	proc :ptr
     IsEqual		proc :ptr, :ptr
-    GetRepresentation	proc :ptr GUID, :ptr
-    FreeRepresentation	proc :ptr GUID, :ptr
+    GetRepresentation	proc :ptr, :ptr
+    FreeRepresentation	proc :ptr, :ptr
    .ends
 
 endif

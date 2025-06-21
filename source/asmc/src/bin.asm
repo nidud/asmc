@@ -1267,7 +1267,6 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
 
         mov rdx,[rdi].qnode.sym
         .if ( [rdx].asym.isexport )
-
             AddLineQueueX( "dd %r %s", T_IMAGEREL, [rdi].asym.name )
         .endif
     .endf

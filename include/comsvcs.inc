@@ -39,9 +39,9 @@ DEFINE_IIDX(ISecurityIdentityColl, "CAFC823C-B441-11d1-B82B-0000F8757E2A")
 
 .comdef ISecurityIdentityColl : public IDispatch
 
-    get_Count		proc :ptr LONG
-    get_Item		proc :BSTR, :ptr VARIANT
-    get__NewEnum	proc :ptr ptr IUnknown
+    get_Count		proc :ptr
+    get_Item		proc :BSTR, :ptr
+    get__NewEnum	proc :ptr
    .ends
 
 endif
@@ -53,9 +53,9 @@ DEFINE_IIDX(ISecurityCallersColl, "CAFC823D-B441-11d1-B82B-0000F8757E2A")
 
 .comdef ISecurityCallersColl : public IDispatch
 
-    get_Count		proc :ptr LONG
-    get_Item		proc :LONG, :ptr ptr ISecurityIdentityColl
-    get__NewEnum	proc :ptr ptr IUnknown
+    get_Count		proc :ptr
+    get_Item		proc :LONG, :ptr
+    get__NewEnum	proc :ptr
    .ends
 
 endif
@@ -67,12 +67,12 @@ DEFINE_IIDX(ISecurityCallContext, "CAFC823E-B441-11d1-B82B-0000F8757E2A")
 
 .comdef ISecurityCallContext : public IDispatch
 
-    get_Count		proc :ptr LONG
-    get_Item		proc :BSTR, :ptr VARIANT
-    get__NewEnum	proc :ptr ptr IUnknown
-    IsCallerInRole	proc :BSTR, :ptr VARIANT_BOOL
-    IsSecurityEnabled	proc :ptr VARIANT_BOOL
-    IsUserInRole	proc :ptr VARIANT, :BSTR, :ptr VARIANT_BOOL
+    get_Count		proc :ptr
+    get_Item		proc :BSTR, :ptr
+    get__NewEnum	proc :ptr
+    IsCallerInRole	proc :BSTR, :ptr
+    IsSecurityEnabled	proc :ptr
+    IsUserInRole	proc :ptr, :BSTR, :ptr
    .ends
 
 endif
@@ -84,7 +84,7 @@ DEFINE_IIDX(IGetSecurityCallContext, "CAFC823F-B441-11d1-B82B-0000F8757E2A")
 
 .comdef IGetSecurityCallContext : public IDispatch
 
-    GetSecurityCallContext proc :ptr ptr ISecurityCallContext
+    GetSecurityCallContext proc :ptr
    .ends
 
 endif
@@ -96,10 +96,10 @@ DEFINE_IIDX(SecurityProperty, "E74A7215-014D-11d1-A63C-00A0C911B4E0")
 
 .comdef SecurityProperty : public IDispatch
 
-    GetDirectCallerName proc :ptr BSTR
-    GetDirectCreatorName proc :ptr BSTR
-    GetOriginalCallerName proc :ptr BSTR
-    GetOriginalCreatorName proc :ptr BSTR
+    GetDirectCallerName proc :ptr
+    GetDirectCreatorName proc :ptr
+    GetOriginalCallerName proc :ptr
+    GetOriginalCreatorName proc :ptr
    .ends
 
 endif
@@ -111,11 +111,11 @@ DEFINE_IIDX(ContextInfo, "19A5A02C-0AC8-11d2-B286-00C04F8EF934")
 
 .comdef ContextInfo : public IDispatch
 
-    IsInTransaction	proc :ptr VARIANT_BOOL
-    GetTransaction	proc :ptr ptr IUnknown
-    GetTransactionId	proc :ptr BSTR
-    GetActivityId	proc :ptr BSTR
-    GetContextId	proc :ptr BSTR
+    IsInTransaction	proc :ptr
+    GetTransaction	proc :ptr
+    GetTransactionId	proc :ptr
+    GetActivityId	proc :ptr
+    GetContextId	proc :ptr
    .ends
 
 endif
@@ -127,9 +127,9 @@ DEFINE_IIDX(ContextInfo2, "c99d6e75-2375-11d4-8331-00c04f605588")
 
 .comdef ContextInfo2 : public ContextInfo
 
-    GetPartitionId	proc :ptr BSTR
-    GetApplicationId	proc :ptr BSTR
-    GetApplicationInstanceId proc :ptr BSTR
+    GetPartitionId	proc :ptr
+    GetApplicationId	proc :ptr
+    GetApplicationInstanceId proc :ptr
    .ends
 
 endif
@@ -141,19 +141,19 @@ DEFINE_IIDX(ObjectContext, "74C08646-CEDB-11CF-8B49-00AA00B8A790")
 
 .comdef ObjectContext : public IDispatch
 
-    CreateInstance	proc :BSTR, :ptr VARIANT
+    CreateInstance	proc :BSTR, :ptr
     SetComplete		proc
     SetAbort		proc
     EnableCommit	proc
     DisableCommit	proc
-    IsInTransaction	proc :ptr VARIANT_BOOL
-    IsSecurityEnabled	proc :ptr VARIANT_BOOL
-    IsCallerInRole	proc :BSTR, :ptr VARIANT_BOOL
-    get_Count		proc :ptr LONG
-    get_Item		proc :BSTR, :ptr VARIANT
-    get__NewEnum	proc :ptr ptr IUnknown
-    get_Security	proc :ptr ptr SecurityProperty
-    get_ContextInfo	proc :ptr ptr ContextInfo
+    IsInTransaction	proc :ptr
+    IsSecurityEnabled	proc :ptr
+    IsCallerInRole	proc :BSTR, :ptr
+    get_Count		proc :ptr
+    get_Item		proc :BSTR, :ptr
+    get__NewEnum	proc :ptr
+    get_Security	proc :ptr
+    get_ContextInfo	proc :ptr
    .ends
 
 endif
@@ -165,7 +165,7 @@ DEFINE_IIDX(ITransactionContextEx, "7999FC22-D3C6-11CF-ACAB-00A024A55AEF")
 
 .comdef ITransactionContextEx : public IUnknown
 
-    CreateInstance	proc :REFCLSID, :REFIID, :ptr ptr
+    CreateInstance	proc :REFCLSID, :REFIID, :ptr
     Commit		proc
     Abort		proc
    .ends
@@ -179,7 +179,7 @@ DEFINE_IIDX(ITransactionContext, "7999FC21-D3C6-11CF-ACAB-00A024A55AEF")
 
 .comdef ITransactionContext : public IDispatch
 
-    CreateInstance	proc :BSTR, :ptr VARIANT
+    CreateInstance	proc :BSTR, :ptr
     Commit		proc
     Abort		proc
    .ends
@@ -193,7 +193,7 @@ DEFINE_IIDX(ICreateWithTransactionEx, "455ACF57-5345-11d2-99CF-00C04F797BC9")
 
 .comdef ICreateWithTransactionEx : public IUnknown
 
-    CreateInstance	proc :ptr ITransaction, :REFCLSID, :REFIID, :ptr ptr
+    CreateInstance	proc :ptr, :REFCLSID, :REFIID, :ptr
    .ends
 
 endif
@@ -205,7 +205,7 @@ DEFINE_IIDX(ICreateWithLocalTransaction, "227AC7A8-8423-42ce-B7CF-03061EC9AAA3")
 
 .comdef ICreateWithLocalTransaction : public IUnknown
 
-    CreateInstanceWithSysTx proc :ptr IUnknown, :REFCLSID, :REFIID, :ptr ptr
+    CreateInstanceWithSysTx proc :ptr, :REFCLSID, :REFIID, :ptr
    .ends
 
 endif
@@ -217,7 +217,7 @@ DEFINE_IIDX(ICreateWithTipTransactionEx, "455ACF59-5345-11d2-99CF-00C04F797BC9")
 
 .comdef ICreateWithTipTransactionEx : public IUnknown
 
-    CreateInstance	proc :BSTR, :REFCLSID, :REFIID, :ptr ptr
+    CreateInstance	proc :BSTR, :REFCLSID, :REFIID, :ptr
    .ends
 
 endif
@@ -505,7 +505,7 @@ DEFINE_IIDX(ILBEvents, "683130B4-2E50-11d2-98A5-00C04F8EE1C4")
 
     TargetUp		proc :BSTR, :BSTR
     TargetDown		proc :BSTR, :BSTR
-    EngineDefined	proc :BSTR, :ptr VARIANT, :BSTR
+    EngineDefined	proc :BSTR, :ptr, :BSTR
    .ends
 
 endif
@@ -517,21 +517,21 @@ DEFINE_IIDX(IComCRMEvents, "683130B5-2E50-11d2-98A5-00C04F8EE1C4")
 
 .comdef IComCRMEvents : public IUnknown
 
-    OnCRMRecoveryStart	proc :ptr, :ptr GUID
-    OnCRMRecoveryDone	proc :ptr, :ptr GUID
-    OnCRMCheckpoint	proc :ptr, :ptr GUID
-    OnCRMBegin		proc :ptr, :ptr GUID, :ptr GUID, :ptr GUID, :ptr WCHAR, :ptr WCHAR
-    OnCRMPrepare	proc :ptr, :ptr GUID
-    OnCRMCommit		proc :ptr, :ptr GUID
-    OnCRMAbort		proc :ptr, :ptr GUID
-    OnCRMIndoubt	proc :ptr, :ptr GUID
-    OnCRMDone		proc :ptr, :ptr GUID
-    OnCRMRelease	proc :ptr, :ptr GUID
-    OnCRMAnalyze	proc :ptr, :ptr GUID, :DWORD, :DWORD
-    OnCRMWrite		proc :ptr, :ptr GUID, :BOOL, :DWORD
-    OnCRMForget		proc :ptr, :ptr GUID
-    OnCRMForce		proc :ptr, :ptr GUID
-    OnCRMDeliver	proc :ptr, :ptr GUID, :BOOL, :DWORD
+    OnCRMRecoveryStart	proc :ptr, :ptr
+    OnCRMRecoveryDone	proc :ptr, :ptr
+    OnCRMCheckpoint	proc :ptr, :ptr
+    OnCRMBegin		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    OnCRMPrepare	proc :ptr, :ptr
+    OnCRMCommit		proc :ptr, :ptr
+    OnCRMAbort		proc :ptr, :ptr
+    OnCRMIndoubt	proc :ptr, :ptr
+    OnCRMDone		proc :ptr, :ptr
+    OnCRMRelease	proc :ptr, :ptr
+    OnCRMAnalyze	proc :ptr, :ptr, :DWORD, :DWORD
+    OnCRMWrite		proc :ptr, :ptr, :BOOL, :DWORD
+    OnCRMForget		proc :ptr, :ptr
+    OnCRMForce		proc :ptr, :ptr
+    OnCRMDeliver	proc :ptr, :ptr, :BOOL, :DWORD
    .ends
 
 endif
@@ -698,11 +698,11 @@ DEFINE_IIDX(IMtsEvents, "BACEDF4D-74AB-11D0-B162-00AA00BA3258")
 
 .comdef IMtsEvents : public IDispatch
 
-    get_PackageName	proc :ptr BSTR
-    get_PackageGuid	proc :ptr BSTR
-    PostEvent		proc :ptr VARIANT
-    get_FireEvents	proc :ptr VARIANT_BOOL
-    GetProcessID	proc :ptr LONG
+    get_PackageName	proc :ptr
+    get_PackageGuid	proc :ptr
+    PostEvent		proc :ptr
+    get_FireEvents	proc :ptr
+    GetProcessID	proc :ptr
    .ends
 
 endif
@@ -714,11 +714,11 @@ DEFINE_IIDX(IMtsEventInfo, "D56C3DC1-8482-11d0-B170-00AA00BA3258")
 
 .comdef IMtsEventInfo : public IDispatch
 
-    get_Names		proc :ptr ptr IUnknown
-    get_DisplayName	proc :ptr BSTR
-    get_EventID		proc :ptr BSTR
-    get_Count		proc :ptr LONG
-    get_Value		proc :BSTR, :ptr VARIANT
+    get_Names		proc :ptr
+    get_DisplayName	proc :ptr
+    get_EventID		proc :ptr
+    get_Count		proc :ptr
+    get_Value		proc :BSTR, :ptr
    .ends
 
 endif
@@ -730,7 +730,7 @@ DEFINE_IIDX(IMTSLocator, "D19B8BFD-7F88-11D0-B16E-00AA00BA3258")
 
 .comdef IMTSLocator : public IDispatch
 
-    GetEventDispatcher	proc :ptr ptr IUnknown
+    GetEventDispatcher	proc :ptr
    .ends
 
 endif
@@ -742,8 +742,8 @@ DEFINE_IIDX(IMtsGrp, "4B2E958C-0393-11D1-B1AB-00AA00BA3258")
 
 .comdef IMtsGrp : public IDispatch
 
-    get_Count		proc :ptr LONG
-    Item		proc :LONG, :ptr ptr IUnknown
+    get_Count		proc :ptr
+    Item		proc :LONG, :ptr
     Refresh		proc
    .ends
 
@@ -756,13 +756,13 @@ DEFINE_IIDX(IMessageMover, "588A085A-B795-11D1-8054-00C04FC340EE")
 
 .comdef IMessageMover : public IDispatch
 
-    get_SourcePath	proc :ptr BSTR
+    get_SourcePath	proc :ptr
     put_SourcePath	proc :BSTR
-    get_DestPath	proc :ptr BSTR
+    get_DestPath	proc :ptr
     put_DestPath	proc :BSTR
-    get_CommitBatchSize proc :ptr LONG
+    get_CommitBatchSize proc :ptr
     put_CommitBatchSize proc :LONG
-    MoveMessages	proc :ptr LONG
+    MoveMessages	proc :ptr
    .ends
 
 endif
@@ -776,7 +776,7 @@ DEFINE_IIDX(IEventServerTrace, "9A9F12B8-80AF-47ab-A579-35EA57725370")
 
     StartTraceGuid	proc :BSTR, :BSTR, :LONG
     StopTraceGuid	proc :BSTR, :BSTR, :LONG
-    EnumTraceGuid	proc :ptr LONG, :ptr BSTR
+    EnumTraceGuid	proc :ptr, :ptr
    .ends
 
 endif
@@ -953,13 +953,13 @@ DEFINE_IIDX(IGetAppTrackerData, "507C3AC8-3E12-4cb0-9366-653D3E050638")
 
 .comdef IGetAppTrackerData : public IUnknown
 
-    GetApplicationProcesses proc :REFGUID, :REFGUID, :DWORD, :ptr ULONG, :ptr ptr ApplicationProcessSummary
-    GetApplicationProcessDetails proc :REFGUID, :DWORD, :DWORD, :ptr ApplicationProcessSummary, :ptr ApplicationProcessStatistics, :ptr ApplicationProcessRecycleInfo, :ptr BOOL
-    GetApplicationsInProcess proc :REFGUID, :DWORD, :REFGUID, :DWORD, :ptr ULONG, :ptr ptr ApplicationSummary
-    GetComponentsInProcess proc :REFGUID, :DWORD, :REFGUID, :REFGUID, :DWORD, :ptr LONG, :ptr ptr ComponentSummary
-    GetComponentDetails proc :REFGUID, :DWORD, :REFCLSID, :DWORD, :ptr ComponentSummary, :ptr ComponentStatistics,  :ptr ComponentHangMonitorInfo
-    GetTrackerDataAsCollectionObject proc :ptr ptr IUnknown
-    GetSuggestedPollingInterval proc :ptr DWORD
+    GetApplicationProcesses proc :REFGUID, :REFGUID, :DWORD, :ptr, :ptr
+    GetApplicationProcessDetails proc :REFGUID, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
+    GetApplicationsInProcess proc :REFGUID, :DWORD, :REFGUID, :DWORD, :ptr, :ptr
+    GetComponentsInProcess proc :REFGUID, :DWORD, :REFGUID, :REFGUID, :DWORD, :ptr, :ptr
+    GetComponentDetails proc :REFGUID, :DWORD, :REFCLSID, :DWORD, :ptr, :ptr,  :ptr
+    GetTrackerDataAsCollectionObject proc :ptr
+    GetSuggestedPollingInterval proc :ptr
    .ends
 
 IGetAppTrackerData_RemoteGetApplicationProcessDetails_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
@@ -1161,7 +1161,7 @@ DEFINE_IIDX(ObjectControl, "7DC41850-0C31-11d0-8B79-00AA00B8A790")
 
     Activate		proc
     Deactivate		proc
-    CanBePooled		proc :ptr VARIANT_BOOL
+    CanBePooled		proc :ptr
    .ends
 
 endif
@@ -1173,7 +1173,7 @@ DEFINE_IIDX(ISharedProperty, "2A005C01-A5DE-11CF-9E66-00AA00A3F464")
 
 .comdef ISharedProperty : public IDispatch
 
-    get_Value		proc :ptr VARIANT
+    get_Value		proc :ptr
     put_Value		proc :VARIANT
    .ends
 
@@ -1186,10 +1186,10 @@ DEFINE_IIDX(ISharedPropertyGroup, "2A005C07-A5DE-11CF-9E66-00AA00A3F464")
 
 .comdef ISharedPropertyGroup : public IDispatch
 
-    CreatePropertyByPosition proc :SINT, :ptr VARIANT_BOOL, :ptr ptr ISharedProperty
-    get_PropertyByPosition proc :SINT, :ptr ptr ISharedProperty
-    CreateProperty	proc :BSTR, :ptr VARIANT_BOOL, :ptr ptr ISharedProperty
-    get_Property	proc :BSTR, :ptr ptr ISharedProperty
+    CreatePropertyByPosition proc :SINT, :ptr, :ptr
+    get_PropertyByPosition proc :SINT, :ptr
+    CreateProperty	proc :BSTR, :ptr, :ptr
+    get_Property	proc :BSTR, :ptr
    .ends
 
 endif
@@ -1201,9 +1201,9 @@ DEFINE_IIDX(ISharedPropertyGroupManager, "2A005C0D-A5DE-11CF-9E66-00AA00A3F464")
 
 .comdef ISharedPropertyGroupManager : public IDispatch
 
-    CreatePropertyGroup proc :BSTR, :ptr LONG, :ptr LONG, :ptr VARIANT_BOOL, :ptr ptr ISharedPropertyGroup
-    get_Group		proc :BSTR, :ptr ptr ISharedPropertyGroup
-    get__NewEnum	proc :ptr ptr IUnknown
+    CreatePropertyGroup proc :BSTR, :ptr, :ptr, :ptr, :ptr
+    get_Group		proc :BSTR, :ptr
+    get__NewEnum	proc :ptr
    .ends
 
 endif
@@ -1227,7 +1227,7 @@ DEFINE_IIDX(IObjectConstructString, "41C4F8B2-7439-11D2-98CB-00C04F8EE1C4")
 
 .comdef IObjectConstructString : public IDispatch
 
-    get_ConstructString proc :ptr BSTR
+    get_ConstructString proc :ptr
    .ends
 
 endif
@@ -1267,9 +1267,9 @@ DEFINE_IIDX(IObjectContextInfo2, "594BE71A-4BC4-438b-9197-CFD176248B09")
 
 .comdef IObjectContextInfo2 : public IObjectContextInfo
 
-    GetPartitionId	proc :ptr GUID
-    GetApplicationId	proc :ptr GUID
-    GetApplicationInstanceId proc :ptr GUID
+    GetPartitionId	proc :ptr
+    GetApplicationId	proc :ptr
+    GetApplicationInstanceId proc :ptr
    .ends
 
 endif
@@ -1380,8 +1380,8 @@ DEFINE_IIDX(ICOMLBArguments, "3a0f150f-8ee5-4b94-b40e-aef2f9e42ed2")
 
     GetCLSID		proc :ptr
     SetCLSID		proc :ptr
-    GetMachineName	proc :ULONG, :ptr WCHAR
-    SetMachineName	proc :ULONG, :ptr WCHAR
+    GetMachineName	proc :ULONG, :ptr
+    SetMachineName	proc :ULONG, :ptr
    .ends
 
 endif
@@ -1407,9 +1407,9 @@ DEFINE_IIDX(ICrmLogControl, "A0E174B3-D26E-11d2-8F84-00805FC7BCD9")
 
 .comdef ICrmLogControl : public IUnknown
 
-    get_TransactionUOW	proc :ptr BSTR
+    get_TransactionUOW	proc :ptr
     RegisterCompensator proc :LPCWSTR, :LPCWSTR, :LONG
-    WriteLogRecordVariants proc :ptr VARIANT
+    WriteLogRecordVariants proc :ptr
     ForceLog		proc
     ForgetLogRecord	proc
     ForceTransactionToAbort proc
@@ -1425,15 +1425,15 @@ DEFINE_IIDX(ICrmCompensatorVariants, "F0BAF8E4-7804-11d1-82E9-00A0C91EEDE9")
 
 .comdef ICrmCompensatorVariants : public IUnknown
 
-    SetLogControlVariants proc :ptr ICrmLogControl
+    SetLogControlVariants proc :ptr
     BeginPrepareVariants proc
-    PrepareRecordVariants proc :ptr VARIANT, :ptr VARIANT_BOOL
-    EndPrepareVariants	proc :ptr VARIANT_BOOL
+    PrepareRecordVariants proc :ptr, :ptr
+    EndPrepareVariants	proc :ptr
     BeginCommitVariants proc :VARIANT_BOOL
-    CommitRecordVariants proc :ptr VARIANT, :ptr VARIANT_BOOL
+    CommitRecordVariants proc :ptr, :ptr
     EndCommitVariants	proc
     BeginAbortVariants	proc :VARIANT_BOOL
-    AbortRecordVariants proc :ptr VARIANT, :ptr VARIANT_BOOL
+    AbortRecordVariants proc :ptr, :ptr
     EndAbortVariants	proc
    .ends
 
@@ -1487,10 +1487,10 @@ DEFINE_IIDX(ICrmMonitorLogRecords, "70C8E441-C7ED-11d1-82FB-00A0C91EEDE9")
 
 .comdef ICrmMonitorLogRecords : public IUnknown
 
-    get_Count		proc :ptr LONG
-    get_TransactionState proc :ptr CrmTransactionState
-    get_StructuredRecords proc :ptr VARIANT_BOOL
-    GetLogRecord	proc :DWORD, :ptr CrmLogRecordRead
+    get_Count		proc :ptr
+    get_TransactionState proc :ptr
+    get_StructuredRecords proc :ptr
+    GetLogRecord	proc :DWORD, :ptr
     GetLogRecordVariants proc :VARIANT, :LPVARIANT
    .ends
 
@@ -1504,8 +1504,8 @@ DEFINE_IIDX(ICrmMonitorClerks, "70C8E442-C7ED-11d1-82FB-00A0C91EEDE9")
 .comdef ICrmMonitorClerks : public IDispatch
 
     Item		proc :VARIANT, :LPVARIANT
-    get__NewEnum	proc :ptr LPUNKNOWN
-    get_Count		proc :ptr LONG
+    get__NewEnum	proc :ptr
+    get_Count		proc :ptr
     ProgIdCompensator	proc :VARIANT, :LPVARIANT
     Description		proc :VARIANT, :LPVARIANT
     TransactionUOW	proc :VARIANT, :LPVARIANT
@@ -1521,7 +1521,7 @@ DEFINE_IIDX(ICrmMonitor, "70C8E443-C7ED-11d1-82FB-00A0C91EEDE9")
 
 .comdef ICrmMonitor : public IUnknown
 
-    GetClerks		proc :ptr ptr ICrmMonitorClerks
+    GetClerks		proc :ptr
     HoldClerk		proc :VARIANT, :LPVARIANT
    .ends
 
@@ -1534,7 +1534,7 @@ DEFINE_IIDX(ICrmFormatLogRecords, "9C51D821-C98B-11d1-82FB-00A0C91EEDE9")
 
 .comdef ICrmFormatLogRecords : public IUnknown
 
-    GetColumnCount	proc :ptr LONG
+    GetColumnCount	proc :ptr
     GetColumnHeaders	proc :VARIANT
     GetColumn		proc :CrmLogRecordRead, :LPVARIANT
     GetColumnVariants	proc :VARIANT, :LPVARIANT
@@ -1891,15 +1891,15 @@ DEFINE_IIDX(IServicePoolConfig, "a9690656-5bca-470c-8451-250c1f43a33e")
 .comdef IServicePoolConfig : public IUnknown
 
     put_MaxPoolSize	proc :DWORD
-    get_MaxPoolSize	proc :ptr DWORD
+    get_MaxPoolSize	proc :ptr
     put_MinPoolSize	proc :DWORD
-    get_MinPoolSize	proc :ptr DWORD
+    get_MinPoolSize	proc :ptr
     put_CreationTimeout proc :DWORD
-    get_CreationTimeout proc :ptr DWORD
+    get_CreationTimeout proc :ptr
     put_TransactionAffinity proc :BOOL
-    get_TransactionAffinity proc :ptr BOOL
-    put_ClassFactory	proc :ptr IClassFactory
-    get_ClassFactory	proc :ptr ptr IClassFactory
+    get_TransactionAffinity proc :ptr
+    put_ClassFactory	proc :ptr
+    get_ClassFactory	proc :ptr
    .ends
 
 endif

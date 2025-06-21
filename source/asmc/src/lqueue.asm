@@ -26,7 +26,7 @@ lq_line ends
 
 LineQueue equ <MODULE.line_queue>
 
-    .code
+.code
 
 ; free items of current line queue
 
@@ -47,146 +47,152 @@ DeleteLineQueue endp
 
 tvsprintf proc __ccall uses rsi rdi rbx buffer:string_t, format:string_t, argptr:ptr
 
-    .new numbuf[64]:char_t
     .new fldwidth:uint_t
     .new radix:uint_t
+    .new count:uint_t
     .new sign:char_t
     .new char:char_t
+    .new long:char_t
+    .new hexoff:char_t
+    .new tmpbuf[64]:char_t
 
-    .for ( rsi = format, rdi = buffer : byte ptr [rsi] : )
+    UNREFERENCED_PARAMETER(format)
+    UNREFERENCED_PARAMETER(argptr)
+
+    .for ( rdi = ldr(buffer), rsi = ldr(format), rbx = ldr(argptr) : byte ptr [rsi] : )
 
         lodsb
+
         .if ( al == '%' )
 
             mov char,' '
             mov fldwidth,0
             mov sign,0
-            mov rbx,argptr
+            mov long,0
+            mov radix,10
 
             lodsb
-            .if ( al == '*' )
-
-                mov eax,[rbx]
-                add rbx,size_t
-
-                .ifs ( eax < 0 )
-
-                    mov sign,'-'
-                    neg eax
-                .endif
-                mov fldwidth,eax
-                lodsb
-            .endif
-
-            .if ( al == '-' )
-
-                mov sign,al
-                lodsb
-            .endif
-
-            .if ( al == '0' || al == '.' )
-
-                mov char,al
-                lodsb
-            .endif
-
-            .while ( al >= '0' && al <= '9' )
-
-                movsx   eax,al
-                imul    edx,fldwidth,10
-                add     eax,edx
-                add     eax,-48
-                mov     fldwidth,eax
-                lodsb
-            .endw
-
-            xor edx,edx
-            mov ecx,[rbx]
-
-            .if ( al == 'l' )
-                lodsb
-                .if ( al == 'l' )
-                    lodsb
-                .endif
-ifdef _WIN64
-                mov rcx,[rbx]
-            .elseif ( al == 's' )
-                mov rcx,[rbx]
-else
-                add ebx,4
-                mov edx,[ebx]
-endif
-            .elseif ( al == 'd' )
-ifdef _WIN64
-                movsxd rcx,ecx
-else
-                mov eax,ecx
-                cdq
-                mov eax,'d'
-endif
-            .endif
-            add rbx,size_t
-            mov argptr,rbx
-            mov ebx,16  ; radix & signed
-
             .switch al
+            .case 's'
+                mov rdx,[rbx]
+                .if ( rdx )
+                    xchg    rdx,rdi
+                    mov     ecx,-1
+                    xor     eax,eax
+                    repnz   scasb
+                    mov     eax,ecx
+                    mov     rdi,rdx
+                    not     eax
+                    dec     eax
+                    mov     rdx,[rbx]
+                    add     rbx,size_t
+                    jmp     .1
+                .endif
             .case 'r'
-s_null:
+                mov     ecx,[rbx]
+                add     rbx,size_t
                 lea     rdx,ResWordTable
                 imul    ecx,ecx,ReservedWord
                 cmp     ecx,T_CCALL*ReservedWord
-                mov     rax,[rdx+rcx].ReservedWord.name
-                movzx   ecx,[rdx+rcx].ReservedWord.len
-                jz      c_call
-s_print:
-                xchg    rax,rsi
-                mov     rdx,rdi
-                rep     movsb
-                mov     rsi,rax
-                .if ( sign || rdi == rdx )
-                    mov rax,rdi
-                    sub rax,rdx
-                    .if ( eax < fldwidth )
-                        mov ecx,fldwidth
-                        sub ecx,eax
-                        mov al,char
-                        rep stosb
-                    .endif
-                .endif
-                .endc
-            .case 's'
-                test    rcx,rcx
-                jz      s_null
-                mov     rax,rcx
-                xor     ecx,ecx
-s_loop:
-                cmp     byte ptr [rax+rcx],0
-                jz      s_print
-                inc     ecx
-                jmp     s_loop
-c_call:
+                movzx   eax,[rdx+rcx].ReservedWord.len
+                mov     rdx,[rdx+rcx].ReservedWord.name
+                jnz     .1
                 mov     ecx,1
-                jmp     s_print
+                jmp     .1
+
             .case 'd'
+                mov rax,[rbx]
+                add rbx,size_t
 ifdef _WIN64
-                test rcx,rcx
+                .if ( !long )
+                    movsxd rax,eax
+                .endif
+                test rax,rax
 else
+                cdq
+                .if ( long )
+                    add ebx,4
+                    mov edx,[ebx]
+                .endif
                 test edx,edx
 endif
-                sets bh
-            .case 'u'
-                mov bl,10 ; radix
-            .case 'x'
-            .case 'X'
-
-                movzx eax,bl
-                mov radix,eax
-                shr ebx,8
-ifdef _WIN64
-                mov ebx,myltoa( rcx, &numbuf, eax, ebx, FALSE )
-else
-                mov ebx,myltoa( edx::ecx, &numbuf, eax, ebx, FALSE )
+                .ifs
+                    mov byte ptr [rdi],'-'
+                    inc rdi
+                    neg rax
+ifndef _WIN64
+                    neg edx
+                    sbb edx,0
 endif
+                .endif
+
+            .case 'D'
+
+                mov ecx,63
+ifdef _WIN64
+                .if ( rax <= 9 )
+else
+                .if ( eax <= 9 && edx == 0 )
+endif
+                    add al,'0'
+                    mov tmpbuf[rcx],al
+                .else
+ifdef _WIN64
+                    .for ( r8d = radix : rax : ecx-- )
+
+                        xor edx,edx
+                        div r8
+                        add dl,'0'
+                        .if dl > '9'
+                            add dl,hexoff
+                        .endif
+                        mov tmpbuf[rcx],dl
+                    .endf
+else
+                    push esi
+                    push edi
+                    push ebx
+
+                    .for ( esi = ecx : eax || edx : esi-- )
+
+                        .if ( edx == 0 )
+
+                            div radix
+                            mov ecx,edx
+                            xor edx,edx
+                        .else
+                            .for ( ebx = 64, ecx = 0, edi = 0 : ebx : ebx-- )
+
+                                add eax,eax
+                                adc edx,edx
+                                adc ecx,ecx
+                                adc edi,edi
+                                .if ( edi || ecx >= radix )
+                                    sub ecx,radix
+                                    sbb edi,0
+                                    inc eax
+                                .endif
+                            .endf
+                        .endif
+                        add cl,'0'
+                        .if cl > '9'
+                            add cl,hexoff
+                        .endif
+                        mov tmpbuf[esi],cl
+                    .endf
+                    mov ecx,esi
+                    pop ebx
+                    pop edi
+                    pop esi
+endif
+                    inc ecx
+                .endif
+
+                mov eax,64
+                sub eax,ecx
+                lea rdx,tmpbuf[rcx]
+            .1:
+                mov count,eax
                 .if ( !sign && eax < fldwidth )
 
                     mov ecx,fldwidth
@@ -195,41 +201,122 @@ endif
                     rep stosb
                 .endif
 
-                mov ecx,ebx
-                mov rdx,rsi
-                lea rsi,numbuf
-                rep movsb
+                mov  ecx,count
+                xchg rsi,rdx
+                mov  eax,ecx
+                rep  movsb
+                mov  rsi,rdx
 
-                .if ( sign && ebx < fldwidth )
+                .if ( sign && eax < fldwidth )
 
                     mov ecx,fldwidth
-                    sub ecx,ebx
+                    sub ecx,eax
                     mov al,char
                     rep stosb
                 .endif
-                mov rsi,rdx
-                mov al,[rsi-1]
 
                 ; v2.07: add a 't' suffix if radix is != 10
 
-               .endc .if ( radix == 10 )
-               .endc .if ( al != 'd' && al != 'u' )
-                mov al,'t'
-                stosb
-               .endc
-
-            .case 'p'
-                mov rax,argptr
-                mov rcx,[rax-size_t]
-                mov fldwidth,size_t*2
-                mov char,'0'
-               .gotosw('X')
-            .case 'c'
-                .if cl
-                    mov al,cl
+                mov al,[rsi-1]
+                .if ( radix != 10 && ( al == 'd' || al == 'u' ) )
+                    mov al,'t'
                     stosb
                 .endif
                 .endc
+
+            .case 'u'
+                mov rax,[rbx]
+                add rbx,size_t
+ifdef _WIN64
+                .if ( !long )
+                    mov eax,eax
+                .endif
+else
+                xor edx,edx
+                .if ( long )
+                    mov edx,[ebx]
+                    add ebx,4
+                .endif
+endif
+                .gotosw('D')
+
+            .case 'x'
+                mov hexoff,'a'-'9'-1
+            .case 'X'
+                .if ( al == 'X' )
+                    mov hexoff,'A'-'9'-1
+                .endif
+                mov radix,16
+                mov rax,[rbx]
+                add rbx,size_t
+ifdef _WIN64
+                .if ( !long )
+                    mov eax,eax
+                .endif
+else
+                xor edx,edx
+                .if ( long )
+                    mov edx,[ebx]
+                    add ebx,4
+                .endif
+endif
+                .gotosw('D')
+
+            .case 'p'
+                mov al,'X'
+                mov fldwidth,size_t*2
+                mov char,'0'
+               .gotosw('X')
+
+            .case '*'
+                mov eax,[rbx]
+                add rbx,size_t
+                .ifs ( eax < 0 )
+                    mov sign,'-'
+                    neg eax
+                .endif
+                mov fldwidth,eax
+                lodsb
+               .gotosw
+            .case '-'
+                mov sign,al
+                lodsb
+               .gotosw
+            .case '.'
+                mov char,al
+                lodsb
+               .gotosw
+            .case '0'
+                .gotosw('.') .if ( char == ' ' )
+            .case '1'
+            .case '2'
+            .case '3'
+            .case '4'
+            .case '5'
+            .case '6'
+            .case '7'
+            .case '8'
+            .case '9'
+                .while ( al >= '0' && al <= '9' )
+                    movsx   eax,al
+                    imul    edx,fldwidth,10
+                    add     eax,edx
+                    add     eax,-48
+                    mov     fldwidth,eax
+                    lodsb
+                .endw
+                .gotosw
+            .case 'l'
+                mov long,al
+                lodsb
+                .if ( al == 'l' )
+                    lodsb
+                .endif
+                .gotosw
+            .case 'c'
+                mov eax,[rbx]
+                add rbx,size_t
+               .endc .if ( al == 0 )
             .default
                 stosb
             .endsw
@@ -258,7 +345,7 @@ tvfprintf endp
 
 tfprintf proc __ccall file:ptr FILE, format:string_t, argptr:vararg
 
-    tvfprintf( file, format, &argptr )
+    tvfprintf( ldr(file), ldr(format), &argptr )
     ret
 
 tfprintf endp
@@ -266,7 +353,7 @@ tfprintf endp
 
 tsprintf proc __ccall buffer:string_t, format:string_t, argptr:vararg
 
-    tvsprintf( buffer, format, &argptr )
+    tvsprintf( ldr(buffer), ldr(format), &argptr )
     ret
 
 tsprintf endp

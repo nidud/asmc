@@ -413,7 +413,7 @@ DEFINE_IIDX(IFileSyncMergeHandler, "d97b5aac-c792-433c-975d-35c4eadc7a9d")
 
 .comdef IFileSyncMergeHandler : public IUnknown
 
-    Merge		proc :LPCWSTR, :LPCWSTR, :ptr MERGE_UPDATE_STATUS
+    Merge		proc :LPCWSTR, :LPCWSTR, :ptr
     ShowResolveConflictUIAsync proc :LPCWSTR, :HMONITOR
    .ends
 
@@ -4892,20 +4892,20 @@ DEFINE_IIDX(IDesktopWallpaper, "B92B56A9-8B55-4E14-9A89-0199BBB6F93B")
 .comdef IDesktopWallpaper : public IUnknown
 
     SetWallpaper	proc :LPCWSTR, :LPCWSTR
-    GetWallpaper	proc :LPCWSTR, :ptr LPWSTR
-    GetMonitorDevicePathAt proc :UINT, :ptr LPWSTR
-    GetMonitorDevicePathCount proc :ptr UINT
-    GetMonitorRECT	proc :LPCWSTR, :ptr RECT
+    GetWallpaper	proc :LPCWSTR, :ptr
+    GetMonitorDevicePathAt proc :UINT, :ptr
+    GetMonitorDevicePathCount proc :ptr
+    GetMonitorRECT	proc :LPCWSTR, :ptr
     SetBackgroundColor	proc :COLORREF
-    GetBackgroundColor	proc :ptr COLORREF
+    GetBackgroundColor	proc :ptr
     SetPosition		proc :DESKTOP_WALLPAPER_POSITION
     GetPosition		proc :DESKTOP_WALLPAPER_POSITION
-    SetSlideshow	proc :ptr IShellItemArray
-    GetSlideshow	proc :ptr ptr IShellItemArray
+    SetSlideshow	proc :ptr
+    GetSlideshow	proc :ptr
     SetSlideshowOptions proc :DESKTOP_SLIDESHOW_OPTIONS, :UINT
-    GetSlideshowOptions proc :ptr DESKTOP_SLIDESHOW_OPTIONS, :ptr UINT
+    GetSlideshowOptions proc :ptr, :ptr
     AdvanceSlideshow	proc :LPCWSTR, :DESKTOP_SLIDESHOW_DIRECTION
-    GetStatus		proc :ptr DESKTOP_SLIDESHOW_STATE
+    GetStatus		proc :ptr
     Enable		proc :BOOL
    .ends
 
@@ -5035,7 +5035,7 @@ DEFINE_IIDX(IDefaultFolderMenuInitialize, "7690aa79-f8fc-4615-a327-36f7d18f5d91"
 
     Initialize		proc :HWND, :ptr, :ptr, :ptr, :UINT, :ptr, :ptr, :UINT, :ptr
     SetMenuRestrictions proc :DEFAULT_FOLDER_MENU_RESTRICTIONS
-    GetMenuRestrictions proc :DEFAULT_FOLDER_MENU_RESTRICTIONS, :ptr DEFAULT_FOLDER_MENU_RESTRICTIONS
+    GetMenuRestrictions proc :DEFAULT_FOLDER_MENU_RESTRICTIONS, :ptr
     SetHandlerClsid	proc :REFCLSID
    .ends
 
@@ -5058,9 +5058,9 @@ DEFINE_IIDX(IApplicationActivationManager, "2e941141-7f97-4756-ba1d-9decde894a3d
 
 .comdef IApplicationActivationManager : public IUnknown
 
-    ActivateApplication proc :LPCWSTR, :LPCWSTR, :ACTIVATEOPTIONS, :ptr DWORD
-    ActivateForFile	proc :LPCWSTR, :ptr IShellItemArray, :LPCWSTR, :ptr DWORD
-    ActivateForProtocol proc :LPCWSTR, :ptr IShellItemArray, :ptr DWORD
+    ActivateApplication proc :LPCWSTR, :LPCWSTR, :ACTIVATEOPTIONS, :ptr
+    ActivateForFile	proc :LPCWSTR, :ptr, :LPCWSTR, :ptr
+    ActivateForProtocol proc :LPCWSTR, :ptr, :ptr
    .ends
 
 endif
@@ -5235,8 +5235,8 @@ DEFINE_IIDX(IDataObjectProvider, "3D25F6D6-4B2A-433c-9184-7C33AD35D001")
 
 .comdef IDataObjectProvider : public IUnknown
 
-    GetDataObject	proc :ptr ptr IDataObject
-    SetDataObject	proc :ptr IDataObject
+    GetDataObject	proc :ptr
+    SetDataObject	proc :ptr
    .ends
 
 endif
@@ -5248,7 +5248,7 @@ DEFINE_IIDX(IDataTransferManagerInterop, "3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")
 
 .comdef IDataTransferManagerInterop : public IUnknown
 
-    GetForWindow	proc :HWND, :REFIID, :ptr ptr
+    GetForWindow	proc :HWND, :REFIID, :ptr
     ShowShareUIForWindow proc :HWND
    .ends
 
@@ -5265,7 +5265,7 @@ DEFINE_IIDX(IFrameworkInputPaneHandler, "226C537B-1E76-4D9E-A760-33DB29922F18")
 
 .comdef IFrameworkInputPaneHandler : public IUnknown
 
-    Showing		proc :ptr RECT, :BOOL
+    Showing		proc :ptr, :BOOL
     Hiding		proc :BOOL
    .ends
 
@@ -5278,10 +5278,10 @@ DEFINE_IIDX(IFrameworkInputPane, "5752238B-24F0-495A-82F1-2FD593056796")
 
 .comdef IFrameworkInputPane : public IUnknown
 
-    Advise		proc :ptr IUnknown, :ptr IFrameworkInputPaneHandler, :ptr DWORD
-    AdviseWithHWND	proc :HWND, :ptr IFrameworkInputPaneHandler, :ptr DWORD
+    Advise		proc :ptr, :ptr, :ptr
+    AdviseWithHWND	proc :HWND, :ptr, :ptr
     Unadvise		proc :DWORD
-    Location		proc :ptr RECT
+    Location		proc :ptr
    .ends
 
 endif
@@ -5331,8 +5331,8 @@ DEFINE_IIDX(IAccessibilityDockingService, "8849DC22-CEDF-4C95-998D-051419DD3F76"
 
 .comdef IAccessibilityDockingService : public IUnknown
 
-    GetAvailableSize	proc :HMONITOR, :ptr UINT, :ptr UINT
-    DockWindow		proc :HWND, :HMONITOR, :UINT, :ptr IAccessibilityDockingServiceCallback
+    GetAvailableSize	proc :HMONITOR, :ptr, :ptr
+    DockWindow		proc :HWND, :HMONITOR, :UINT, :ptr
     UndockWindow	proc :HWND
    .ends
 
@@ -5364,9 +5364,9 @@ DEFINE_IIDX(IAppVisibility, "2246EA2D-CAEA-4444-A3C4-6DE827E44313")
 
 .comdef IAppVisibility : public IUnknown
 
-    GetAppVisibilityOnMonitor proc :HMONITOR, :ptr MONITOR_APP_VISIBILITY
-    IsLauncherVisible	proc :ptr BOOL
-    Advise		proc :ptr IAppVisibilityEvents, :ptr DWORD
+    GetAppVisibilityOnMonitor proc :HMONITOR, :ptr
+    IsLauncherVisible	proc :ptr
+    Advise		proc :ptr, :ptr
     Unadvise		proc :DWORD
    .ends
 

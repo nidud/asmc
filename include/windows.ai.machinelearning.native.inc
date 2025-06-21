@@ -31,8 +31,8 @@ define __ITensorNative_INTERFACE_DEFINED__
 DEFINE_IIDX(ITensorNative, "52f547ef-5b03-49b5-82d6-565f1ee0dd49")
 
 .comdef ITensorNative : public IUnknown
-    GetBuffer           proc :ptr ptr, :ptr
-    GetD3D12Resource    proc :ptr ptr
+    GetBuffer           proc :ptr, :ptr
+    GetD3D12Resource    proc :ptr
    .ends
 
 endif
@@ -43,7 +43,7 @@ define __ITensorStaticsNative_INTERFACE_DEFINED__
 DEFINE_IIDX(ITensorStaticsNative, "39d055a4-66f6-4ebc-95d9-7a29ebe7690a")
 
 .comdef ITensorStaticsNative : public IUnknown
-    CreateFromD3D12Resource proc :ptr, :ptr, :int_t, :ptr ptr
+    CreateFromD3D12Resource proc :ptr, :ptr, :int_t, :ptr
    .ends
 
 endif
@@ -54,7 +54,7 @@ define __ILearningModelDeviceFactoryNative_INTERFACE_DEFINED__
 DEFINE_IIDX(ILearningModelDeviceFactoryNative, "1e9b31a1-662e-4ae0-af67-f63bb337e634")
 
 .comdef ILearningModelDeviceFactoryNative : public IUnknown
-    CreateFromD3D12CommandQueue proc :ptr, :ptr ptr
+    CreateFromD3D12CommandQueue proc :ptr, :ptr
    .ends
 
 endif

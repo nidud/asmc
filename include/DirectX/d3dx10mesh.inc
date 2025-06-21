@@ -57,7 +57,7 @@ LPD3DX10_INTERSECT_INFO typedef ptr D3DX10_INTERSECT_INFO
 
 .comdef ID3DX10MeshBuffer : public IUnknown
 
-    Map			proc :ptr ptr, :ptr SIZE_T
+    Map			proc :ptr, :ptr
     Unmap		proc
     GetSize		proc
     .ENDS
@@ -69,32 +69,32 @@ LPD3DX10_INTERSECT_INFO typedef ptr D3DX10_INTERSECT_INFO
     GetVertexCount	proc
     GetVertexBufferCount proc
     GetFlags		proc
-    GetVertexDescription proc :ptr ptr D3D10_INPUT_ELEMENT_DESC, :ptr UINT
+    GetVertexDescription proc :ptr, :ptr
     SetVertexData	proc :UINT, :ptr
-    GetVertexBuffer	proc :UINT, :ptr ptr ID3DX10MeshBuffer
-    SetIndexData	proc :ptr , :UINT
-    GetIndexBuffer	proc :ptr ptr ID3DX10MeshBuffer
-    SetAttributeData	proc :ptr UINT
-    GetAttributeBuffer	proc :ptr ptr ID3DX10MeshBuffer
-    SetAttributeTable	proc :ptr D3DX10_ATTRIBUTE_RANGE, :UINT
-    GetAttributeTable	proc :ptr D3DX10_ATTRIBUTE_RANGE, :ptr UINT
+    GetVertexBuffer	proc :UINT, :ptr
+    SetIndexData	proc :ptr, :UINT
+    GetIndexBuffer	proc :ptr
+    SetAttributeData	proc :ptr
+    GetAttributeBuffer	proc :ptr
+    SetAttributeTable	proc :ptr, :UINT
+    GetAttributeTable	proc :ptr, :ptr
     GenerateAdjacencyAndPointReps proc :FLOAT
     GenerateGSAdjacency proc
-    SetAdjacencyData	proc :ptr UINT
-    GetAdjacencyBuffer	proc :ptr ptr ID3DX10MeshBuffer
-    SetPointRepData	proc :ptr UINT
-    GetPointRepBuffer	proc :ptr ptr ID3DX10MeshBuffer
+    SetAdjacencyData	proc :ptr
+    GetAdjacencyBuffer	proc :ptr
+    SetPointRepData	proc :ptr
+    GetPointRepBuffer	proc :ptr
     Discard		proc :D3DX10_MESH_DISCARD_FLAGS
-    CloneMesh		proc :UINT, :LPCSTR, :ptr D3D10_INPUT_ELEMENT_DESC, :UINT, :ptr ptr ID3DX10Mesh
-    Optimize		proc :UINT, :ptr UINT, :ptr LPD3D10BLOB
+    CloneMesh		proc :UINT, :LPCSTR, :ptr, :UINT, :ptr
+    Optimize		proc :UINT, :ptr, :ptr
     GenerateAttributeBufferFromTable proc
-    Intersect		proc :ptr D3DXVECTOR3, :ptr D3DXVECTOR3, :ptr UINT, :ptr UINT, :ptr float, :ptr float, :ptr float, :ptr ptr ID3D10Blob
-    IntersectSubset	proc :UINT, :ptr D3DXVECTOR3, :ptr D3DXVECTOR3, :ptr UINT, :ptr UINT, :ptr float, :ptr float, :ptr float, :ptr ptr ID3D10Blob
+    Intersect		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    IntersectSubset	proc :UINT, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     CommitToDevice	proc
     DrawSubset		proc :UINT
     DrawSubsetInstanced proc :UINT, :UINT, :UINT
-    GetDeviceVertexBuffer proc :UINT, :ptr ptr ID3D10Buffer
-    GetDeviceIndexBuffer proc :ptr ptr ID3D10Buffer
+    GetDeviceVertexBuffer proc :UINT, :ptr
+    GetDeviceIndexBuffer proc :ptr
    .ENDS
 
 D3DX10CreateMesh proto WINAPI :ptr, :ptr, :UINT, :LPCSTR, :UINT, :UINT, :UINT, :ptr
@@ -128,19 +128,19 @@ LPD3DX10SKININFO	typedef ptr ID3DX10SkinInfo
     GetNumBones		proc
     GetMaxBoneInfluences proc
     AddVertices		proc :UINT
-    RemapVertices	proc :UINT, :ptr UINT
+    RemapVertices	proc :UINT, :ptr
     AddBones		proc :UINT
     RemoveBone		proc :UINT
-    RemapBones		proc :UINT, :ptr UINT
-    AddBoneInfluences	proc :UINT, :UINT, :ptr UINT, :ptr float
+    RemapBones		proc :UINT, :ptr
+    AddBoneInfluences	proc :UINT, :UINT, :ptr, :ptr
     ClearBoneInfluences proc :UINT
     GetBoneInfluenceCount proc :UINT
-    GetBoneInfluences	proc :UINT, :UINT, :UINT, :ptr UINT, :ptr float
-    FindBoneInfluenceIndex proc :UINT, :UINT, :ptr UINT
+    GetBoneInfluences	proc :UINT, :UINT, :UINT, :ptr, :ptr
+    FindBoneInfluenceIndex proc :UINT, :UINT, :ptr
     SetBoneInfluence	proc :UINT, :UINT, :float
-    GetBoneInfluence	proc :UINT, :UINT, :ptr float
+    GetBoneInfluence	proc :UINT, :UINT, :ptr
     Compact		proc :UINT, :UINT, :float
-    DoSoftwareSkinning	proc :UINT, :UINT, :ptr, :UINT, :ptr, :UINT, :ptr D3DXMATRIX, :ptr D3DXMATRIX, :ptr D3DX10_SKINNING_CHANNEL, :UINT
+    DoSoftwareSkinning	proc :UINT, :UINT, :ptr, :UINT, :ptr, :UINT, :ptr, :ptr, :ptr, :UINT
    .ENDS
 
 D3DX10CreateSkinInfo proto WINAPI :ptr

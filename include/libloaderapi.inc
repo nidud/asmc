@@ -204,6 +204,7 @@ endif
 LockResource proto WINAPI :HGLOBAL
 SizeofResource proto WINAPI :HMODULE, :HRSRC
 
+DLL_DIRECTORY_COOKIE    typedef ptr
 PDLL_DIRECTORY_COOKIE   typedef ptr DLL_DIRECTORY_COOKIE
 
 AddDllDirectory proto WINAPI :PCWSTR

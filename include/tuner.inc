@@ -151,9 +151,9 @@ DEFINE_IIDX(ITuningSpaces, "901284E4-33FE-4b69-8D63-634A596F3756")
 .comdef ITuningSpaces : public IDispatch
 
     get_Count		proc :ptr
-    get__NewEnum	proc :ptr ptr
-    get_Item		proc :VARIANT, :ptr ptr
-    get_EnumTuningSpaces proc :ptr ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    get_EnumTuningSpaces proc :ptr
    .ends
 
 endif
@@ -167,15 +167,15 @@ DEFINE_IIDX(ITuningSpaceContainer, "5B692E84-E2F1-11d2-9493-00C04F72D980")
 .comdef ITuningSpaceContainer : public IDispatch
 
     get_Count		proc :ptr
-    get__NewEnum	proc :ptr ptr
-    get_Item		proc :VARIANT, :ptr ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
     put_Item		proc :VARIANT, :ptr
-    TuningSpacesForCLSID proc :BSTR, :ptr ptr ITuningSpaces
-    _TuningSpacesForCLSID proc :REFCLSID, :ptr ptr ITuningSpaces
-    TuningSpacesForName proc :BSTR, :ptr ptr
-    FindID		proc :ptr ITuningSpace, :ptr
-    _Add		proc :ptr ITuningSpace, :ptr VARIANT
-    get_EnumTuningSpaces proc :ptr ptr IEnumTuningSpaces
+    TuningSpacesForCLSID proc :BSTR, :ptr
+    _TuningSpacesForCLSID proc :REFCLSID, :ptr
+    TuningSpacesForName proc :BSTR, :ptr
+    FindID		proc :ptr, :ptr
+    _Add		proc :ptr, :ptr
+    get_EnumTuningSpaces proc :ptr
     Remove		proc :VARIANT
     get_MaxCount	proc :ptr
     put_MaxCount	proc :int_t
@@ -191,24 +191,24 @@ DEFINE_IIDX(ITuningSpace, "061C6E30-E622-11d2-9493-00C04F72D980")
 
 .comdef ITuningSpace : public IDispatch
 
-    get_UniqueName	proc :ptr BSTR
+    get_UniqueName	proc :ptr
     put_UniqueName	proc :BSTR
-    get_FriendlyName	proc :ptr BSTR
+    get_FriendlyName	proc :ptr
     put_FriendlyName	proc :BSTR
-    get_CLSID		proc :ptr BSTR
-    get_NetworkType	proc :ptr BSTR
+    get_CLSID		proc :ptr
+    get_NetworkType	proc :ptr
     put_NetworkType	proc :BSTR
-    get__NetworkType	proc :ptr GUID
+    get__NetworkType	proc :ptr
     put__NetworkType	proc :REFCLSID
-    CreateTuneRequest	proc :ptr ptr ITuneRequest
-    EnumCategoryGUIDs	proc :ptr ptr IEnumGUID
-    EnumDeviceMonikers	proc :ptr ptr IEnumMoniker
-    get_DefaultPreferredComponentTypes proc :ptr ptr IComponentTypes
-    put_DefaultPreferredComponentTypes proc :ptr IComponentTypes
-    get_FrequencyMapping proc :ptr BSTR
+    CreateTuneRequest	proc :ptr
+    EnumCategoryGUIDs	proc :ptr
+    EnumDeviceMonikers	proc :ptr
+    get_DefaultPreferredComponentTypes proc :ptr
+    put_DefaultPreferredComponentTypes proc :ptr
+    get_FrequencyMapping proc :ptr
     put_FrequencyMapping proc :BSTR
-    get_DefaultLocator	proc :ptr ptr ILocator
-    put_DefaultLocator	proc :ptr ILocator
+    get_DefaultLocator	proc :ptr
+    put_DefaultLocator	proc :ptr
     Clone		proc :ptr
    .ends
 
@@ -236,7 +236,7 @@ DEFINE_IIDX(IDVBTuningSpace, "ADA0B268-3B19-4e5b-ACC4-49F852BE13BA")
 
 .comdef IDVBTuningSpace : public ITuningSpace
 
-    get_SystemType	proc :ptr DVBSystemType
+    get_SystemType	proc :ptr
     put_SystemType	proc :DVBSystemType
    .ends
 
@@ -268,9 +268,9 @@ DEFINE_IIDX(IDVBSTuningSpace, "CDF7BE60-D954-42fd-A972-78971958E470")
     put_HighOscillator	proc :LONG
     get_LNBSwitch	proc :ptr
     put_LNBSwitch	proc :LONG
-    get_InputRange	proc :ptr BSTR
+    get_InputRange	proc :ptr
     put_InputRange	proc :BSTR
-    get_SpectralInversion proc :ptr SpectralInversion
+    get_SpectralInversion proc :ptr
     put_SpectralInversion proc :SpectralInversion
    .ends
 
@@ -311,7 +311,7 @@ DEFINE_IIDX(IAnalogTVTuningSpace, "2A6E293C-2595-11d3-B64C-00C04F79498E")
     put_MinChannel	proc :LONG
     get_MaxChannel	proc :ptr
     put_MaxChannel	proc :LONG
-    get_InputType	proc :ptr TunerInputType
+    get_InputType	proc :ptr
     put_InputType	proc :TunerInputType
     get_CountryCode	proc :ptr
     put_CountryCode	proc :LONG
@@ -394,11 +394,11 @@ DEFINE_IIDX(ITuneRequest, "07DDC146-FC3D-11d2-9D8C-00C04F72D980")
 
 .comdef ITuneRequest : public IDispatch
 
-    get_TuningSpace	proc :ptr ptr ITuningSpace
-    get_Components	proc :ptr ptr IComponents
-    Clone		proc :ptr ptr ITuneRequest
-    get_Locator		proc :ptr ptr ILocator
-    put_Locator		proc :ptr ILocator
+    get_TuningSpace	proc :ptr
+    get_Components	proc :ptr
+    Clone		proc :ptr
+    get_Locator		proc :ptr
+    put_Locator		proc :ptr
    .ends
 
 endif
@@ -410,7 +410,7 @@ DEFINE_IIDX(IChannelIDTuneRequest, "156EFF60-86F4-4e28-89FC-109799FD57EE")
 
 .comdef IChannelIDTuneRequest : public ITuneRequest
 
-    get_ChannelID	proc :ptr BSTR
+    get_ChannelID	proc :ptr
     put_ChannelID	proc :BSTR
    .ends
 
@@ -496,7 +496,7 @@ DEFINE_IIDX(IMPEG2TuneRequestFactory, "14E11ABD-EE37-4893-9EA1-6964DE933E39")
 
 .comdef IMPEG2TuneRequestFactory : public IDispatch
 
-    CreateTuneRequest	proc :ptr ITuningSpace, :ptr ptr IMPEG2TuneRequest
+    CreateTuneRequest	proc :ptr, :ptr
    .ends
 
 endif
@@ -518,9 +518,9 @@ DEFINE_IIDX(ITunerCap, "E60DFA45-8D56-4e65-A8AB-D6BE9412C249")
 
 .comdef ITunerCap : public IUnknown
 
-    get_SupportedNetworkTypes proc :ULONG, :ptr ULONG, :ptr GUID
-    get_SupportedVideoFormats proc :ptr ULONG, :ptr ULONG
-    get_AuxInputCount	proc :ptr ULONG, :ptr ULONG
+    get_SupportedNetworkTypes proc :ULONG, :ptr, :ptr
+    get_SupportedVideoFormats proc :ptr, :ptr
+    get_AuxInputCount	proc :ptr, :ptr
    .ends
 
 endif
@@ -532,7 +532,7 @@ DEFINE_IIDX(ITunerCapEx, "ed3e0c66-18c8-4ea6-9300-f6841fdd35dc")
 
 .comdef ITunerCapEx : public IUnknown
 
-    get_Has608_708Caption proc :ptr VARIANT_BOOL
+    get_Has608_708Caption proc :ptr
    .ends
 
 endif
@@ -544,14 +544,14 @@ DEFINE_IIDX(ITuner, "28C52640-018A-11d3-9D8E-00C04F72D980")
 
 .comdef ITuner : public IUnknown
 
-    get_TuningSpace	proc :ptr ptr ITuningSpace
-    put_TuningSpace	proc :ptr ITuningSpace
-    EnumTuningSpaces	proc :ptr ptr IEnumTuningSpaces
-    get_TuneRequest	proc :ptr ptr ITuneRequest
-    put_TuneRequest	proc :ptr ITuneRequest
-    Validate		proc :ptr ITuneRequest
-    get_PreferredComponentTypes proc :ptr ptr IComponentTypes
-    put_PreferredComponentTypes proc :ptr IComponentTypes
+    get_TuningSpace	proc :ptr
+    put_TuningSpace	proc :ptr
+    EnumTuningSpaces	proc :ptr
+    get_TuneRequest	proc :ptr
+    put_TuneRequest	proc :ptr
+    Validate		proc :ptr
+    get_PreferredComponentTypes proc :ptr
+    put_PreferredComponentTypes proc :ptr
     get_SignalStrength	proc :ptr
     TriggerSignalEvents proc :LONG
    .ends
@@ -581,11 +581,11 @@ DEFINE_IIDX(IScanningTunerEx, "04BBD195-0E2D-4593-9BD5-4F908BC33CF5")
 
 .comdef IScanningTunerEx : public IScanningTuner
 
-    GetCurrentLocator	proc :ptr ptr ILocator
+    GetCurrentLocator	proc :ptr
     PerformExhaustiveScan proc :LONG, :LONG, :VARIANT_BOOL, :HEVENT
     TerminateCurrentScan proc :ptr
     ResumeCurrentScan	proc :HEVENT
-    GetTunerScanningCapability proc :ptr, :ptr, :ptr GUID
+    GetTunerScanningCapability proc :ptr, :ptr, :ptr
     GetTunerStatus	proc :ptr, :ptr, :ptr, :ptr
     GetCurrentTunerStandardCapability proc :GUID, :ptr, :ptr
     SetScanSignalTypeFilter proc :LONG, :LONG
@@ -602,21 +602,21 @@ DEFINE_IIDX(IComponentType, "6A340DC0-0311-11d3-9D8E-00C04F72D980")
 
     get_Category	proc :ptr
     put_Category	proc :ComponentCategory
-    get_MediaMajorType	proc :ptr BSTR
+    get_MediaMajorType	proc :ptr
     put_MediaMajorType	proc :BSTR
-    get__MediaMajorType proc :ptr GUID
+    get__MediaMajorType proc :ptr
     put__MediaMajorType proc :REFCLSID
-    get_MediaSubType	proc :ptr BSTR
+    get_MediaSubType	proc :ptr
     put_MediaSubType	proc :BSTR
-    get__MediaSubType	proc :ptr GUID
+    get__MediaSubType	proc :ptr
     put__MediaSubType	proc :REFCLSID
-    get_MediaFormatType proc :ptr BSTR
+    get_MediaFormatType proc :ptr
     put_MediaFormatType proc :BSTR
-    get__MediaFormatType proc :ptr GUID
+    get__MediaFormatType proc :ptr
     put__MediaFormatType proc :REFCLSID
-    get_MediaType	proc :ptr AM_MEDIA_TYPE
-    put_MediaType	proc :ptr AM_MEDIA_TYPE
-    Clone		proc :ptr ptr IComponentType
+    get_MediaType	proc :ptr
+    put_MediaType	proc :ptr
+    Clone		proc :ptr
    .ends
 
 endif
@@ -641,7 +641,7 @@ DEFINE_IIDX(IMPEG2ComponentType, "2C073D84-B51C-48c9-AA9F-68971E1F6E38")
 
 .comdef IMPEG2ComponentType : public ILanguageComponentType
 
-    get_StreamType	proc :ptr MPEG2StreamType
+    get_StreamType	proc :ptr
     put_StreamType	proc :MPEG2StreamType
    .ends
 
@@ -683,13 +683,13 @@ DEFINE_IIDX(IComponentTypes, "0DC13D4A-0313-11d3-9D8E-00C04F72D980")
 .comdef IComponentTypes : public IDispatch
 
     get_Count		proc :ptr
-    get__NewEnum	proc :ptr ptr IEnumVARIANT
-    EnumComponentTypes	proc :ptr ptr IEnumComponentTypes
-    get_Item		proc :VARIANT, :ptr ptr IComponentType
-    put_Item		proc :VARIANT, :ptr IComponentType
-    _Add		proc :ptr IComponentType, :ptr VARIANT
+    get__NewEnum	proc :ptr
+    EnumComponentTypes	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    put_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr, :ptr
     Remove		proc :VARIANT
-    Clone		proc :ptr ptr IComponentTypes
+    Clone		proc :ptr
    .ends
 
 endif
@@ -701,15 +701,15 @@ DEFINE_IIDX(IComponent, "1A5576FC-0E19-11d3-9D8E-00C04F72D980")
 
 .comdef IComponent : public IDispatch
 
-    get_Type		proc :ptr ptr IComponentType
-    put_Type		proc :ptr IComponentType
+    get_Type		proc :ptr
+    put_Type		proc :ptr
     get_DescLangID	proc :ptr
     put_DescLangID	proc :LONG
-    get_Status		proc :ptr ComponentStatus
+    get_Status		proc :ptr
     put_Status		proc :ComponentStatus
-    get_Description	proc :ptr BSTR
+    get_Description	proc :ptr
     put_Description	proc :BSTR
-    Clone		proc :ptr ptr IComponent
+    Clone		proc :ptr
    .ends
 
 endif
@@ -721,7 +721,7 @@ DEFINE_IIDX(IAnalogAudioComponentType, "2CFEB2A8-1787-4A24-A941-C6EAEC39C842")
 
 .comdef IAnalogAudioComponentType : public IComponentType
 
-    get_AnalogAudioMode proc :ptr TVAudioMode
+    get_AnalogAudioMode proc :ptr
     put_AnalogAudioMode proc :TVAudioMode
    .ends
 
@@ -734,11 +734,11 @@ DEFINE_IIDX(IMPEG2Component, "1493E353-1EB6-473c-802D-8E6B8EC9D2A9")
 
 .comdef IMPEG2Component : public IComponent
 
-    get_PID		proc :ptr LONG
+    get_PID		proc :ptr
     put_PID		proc :LONG
-    get_PCRPID		proc :ptr LONG
+    get_PCRPID		proc :ptr
     put_PCRPID		proc :LONG
-    get_ProgramNumber	proc :ptr LONG
+    get_ProgramNumber	proc :ptr
     put_ProgramNumber	proc :LONG
    .ends
 
@@ -767,13 +767,13 @@ DEFINE_IIDX(IComponents, "39A48091-FFFE-4182-A161-3FF802640E26")
 .comdef IComponents : public IDispatch
 
     get_Count		proc :ptr
-    get__NewEnum	proc :ptr ptr IEnumVARIANT
-    EnumComponents	proc :ptr ptr IEnumComponents
-    get_Item		proc :VARIANT, :ptr ptr IComponent
-    _Add		proc :ptr IComponent, :ptr VARIANT
+    get__NewEnum	proc :ptr
+    EnumComponents	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr, :ptr
     Remove		proc :VARIANT
-    Clone		proc :ptr ptr IComponents
-    put_Item		proc :VARIANT, :ptr IComponent
+    Clone		proc :ptr
+    put_Item		proc :VARIANT, :ptr
    .ends
 
 endif
@@ -786,12 +786,12 @@ DEFINE_IIDX(IComponentsOld, "FCD01846-0E19-11d3-9D8E-00C04F72D980")
 .comdef IComponentsOld : public IDispatch
 
     get_Count		proc :ptr
-    get__NewEnum	proc :ptr ptr IEnumVARIANT
-    EnumComponents	proc :ptr ptr IEnumComponents
-    get_Item		proc :VARIANT, :ptr ptr IComponent
-    _Add		proc :ptr IComponent, :ptr VARIANT
+    get__NewEnum	proc :ptr
+    EnumComponents	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr, :ptr
     Remove		proc :VARIANT
-    Clone		proc :ptr ptr IComponents
+    Clone		proc :ptr
    .ends
 
 endif
@@ -805,19 +805,19 @@ DEFINE_IIDX(ILocator, "286D7F89-760C-4F89-80C4-66841D2507AA")
 
     get_CarrierFrequency proc :ptr
     put_CarrierFrequency proc :LONG
-    get_InnerFEC	proc :ptr FECMethod
+    get_InnerFEC	proc :ptr
     put_InnerFEC	proc :FECMethod
-    get_InnerFECRate	proc :ptr BinaryConvolutionCodeRate
+    get_InnerFECRate	proc :ptr
     put_InnerFECRate	proc :BinaryConvolutionCodeRate
-    get_OuterFEC	proc :ptr FECMethod
+    get_OuterFEC	proc :ptr
     put_OuterFEC	proc :FECMethod
-    get_OuterFECRate	proc :ptr BinaryConvolutionCodeRate
+    get_OuterFECRate	proc :ptr
     put_OuterFECRate	proc :BinaryConvolutionCodeRate
-    get_Modulation	proc :ptr ModulationType
+    get_Modulation	proc :ptr
     put_Modulation	proc :ModulationType
     get_SymbolRate	proc :ptr
     put_SymbolRate	proc :LONG
-    Clone		proc :ptr ptr ILocator
+    Clone		proc :ptr
    .ends
 
 endif
@@ -829,7 +829,7 @@ DEFINE_IIDX(IAnalogLocator, "34D1F26B-E339-430D-ABCE-738CB48984DC")
 
 .comdef IAnalogLocator : public ILocator
 
-    get_VideoStandard	proc :ptr AnalogVideoStandard
+    get_VideoStandard	proc :ptr
     put_VideoStandard	proc :AnalogVideoStandard
    .ends
 
@@ -892,17 +892,17 @@ DEFINE_IIDX(IDVBTLocator, "8664DA16-DDA2-42ac-926A-C18F9127C302")
 
     get_Bandwidth	proc :ptr
     put_Bandwidth	proc :LONG
-    get_LPInnerFEC	proc :ptr FECMethod
+    get_LPInnerFEC	proc :ptr
     put_LPInnerFEC	proc :FECMethod
-    get_LPInnerFECRate	proc :ptr BinaryConvolutionCodeRate
+    get_LPInnerFECRate	proc :ptr
     put_LPInnerFECRate	proc :BinaryConvolutionCodeRate
-    get_HAlpha		proc :ptr HierarchyAlpha
+    get_HAlpha		proc :ptr
     put_HAlpha		proc :HierarchyAlpha
-    get_Guard		proc :ptr GuardInterval
+    get_Guard		proc :ptr
     put_Guard		proc :GuardInterval
-    get_Mode		proc :ptr TransmissionMode
+    get_Mode		proc :ptr
     put_Mode		proc :TransmissionMode
-    get_OtherFrequencyInUse proc :ptr VARIANT_BOOL
+    get_OtherFrequencyInUse proc :ptr
     put_OtherFrequencyInUse proc :VARIANT_BOOL
    .ends
 
@@ -930,7 +930,7 @@ DEFINE_IIDX(IDVBSLocator, "3D7C353C-0D04-45f1-A742-F97CC1188DC8")
 
     get_SignalPolarisation proc :ptr
     put_SignalPolarisation proc :Polarisation
-    get_WestPosition	proc :ptr VARIANT_BOOL
+    get_WestPosition	proc :ptr
     put_WestPosition	proc :VARIANT_BOOL
     get_OrbitalPosition proc :ptr
     put_OrbitalPosition proc :LONG
@@ -949,7 +949,7 @@ DEFINE_IIDX(IDVBSLocator2, "6044634A-1733-4f99-B982-5FB12AFCE4F0")
 
 .comdef IDVBSLocator2 : public IDVBSLocator
 
-    get_DiseqLNBSource	proc :ptr LNB_Source
+    get_DiseqLNBSource	proc :ptr
     put_DiseqLNBSource	proc :LNB_Source
     get_LocalOscillatorOverrideLow proc :ptr
     put_LocalOscillatorOverrideLow proc :LONG
@@ -957,11 +957,11 @@ DEFINE_IIDX(IDVBSLocator2, "6044634A-1733-4f99-B982-5FB12AFCE4F0")
     put_LocalOscillatorOverrideHigh proc :LONG
     get_LocalLNBSwitchOverride proc :ptr
     put_LocalLNBSwitchOverride proc :LONG
-    get_LocalSpectralInversionOverride proc :ptr SpectralInversion
+    get_LocalSpectralInversionOverride proc :ptr
     put_LocalSpectralInversionOverride proc :SpectralInversion
     get_SignalRollOff	proc :ptr
     put_SignalRollOff	proc :RollOff
-    get_SignalPilot	proc :ptr Pilot
+    get_SignalPilot	proc :ptr
     put_SignalPilot	proc :Pilot
    .ends
 
@@ -1091,7 +1091,7 @@ DEFINE_IIDX(IESEventFactory, "506A09B8-7F86-4e04-AC05-3303BFE8FC49")
 
 .comdef IESEventFactory : public IUnknown
 
-    CreateESEvent	proc :ptr, :DWORD, :ptr GUID, :DWORD, :ptr, :BSTR, :ptr,:ptr ptr
+    CreateESEvent	proc :ptr, :DWORD, :ptr, :DWORD, :ptr, :BSTR, :ptr,:ptr
    .ends
 
 endif

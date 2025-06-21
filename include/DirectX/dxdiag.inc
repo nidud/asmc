@@ -27,19 +27,19 @@ pReserved               PVOID ?
 DXDIAG_INIT_PARAMS      ENDS
 
 .comdef IDxDiagProvider : public IUnknown
-    Initialize          proc :ptr DXDIAG_INIT_PARAMS
-    GetRootContainer    proc :ptr ptr IDxDiagContainer
+    Initialize          proc :ptr
+    GetRootContainer    proc :ptr
     .ENDS
 
 
 .comdef IDxDiagContainer : public IUnknown
 
-    GetNumberOfChildContainers proc :ptr DWORD
+    GetNumberOfChildContainers proc :ptr
     EnumChildContainerNames proc :DWORD, :LPWSTR, :DWORD
-    GetChildContainer       proc :LPCWSTR, :ptr ptr IDxDiagContainer
-    GetNumberOfProps        proc :ptr DWORD
+    GetChildContainer       proc :LPCWSTR, :ptr
+    GetNumberOfProps        proc :ptr
     EnumPropNames           proc :DWORD, :LPWSTR, :DWORD
-    GetProp                 proc :LPCWSTR, :ptr VARIANT
+    GetProp                 proc :LPCWSTR, :ptr
     .ENDS
 
 

@@ -356,7 +356,7 @@ DEFINE_IIDX(IPropertyStorage, "00000138-0000-0000-C000-000000000046")
     DeletePropertyNames proc :ULONG, :PROPID
     Commit		proc :DWORD
     Revert		proc
-    Enum		proc :ptr ptr
+    Enum		proc :ptr
     SetTimes		proc :ptr, :ptr, :ptr
     SetClass		proc :REFCLSID
     Stat		proc :ptr
@@ -371,10 +371,10 @@ DEFINE_IIDX(IPropertySetStorage, "0000013A-0000-0000-C000-000000000046")
 
 .comdef IPropertySetStorage : public IUnknown
 
-    Create		proc :REFFMTID, :ptr, :DWORD, :DWORD, :ptr ptr
-    Open		proc :REFFMTID, :DWORD, :ptr ptr
+    Create		proc :REFFMTID, :ptr, :DWORD, :DWORD, :ptr
+    Open		proc :REFFMTID, :DWORD, :ptr
     Delete		proc :REFFMTID
-    Enum		proc :ptr ptr
+    Enum		proc :ptr
    .ends
 
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
@@ -391,7 +391,7 @@ DEFINE_IIDX(IEnumSTATPROPSTG, "00000139-0000-0000-C000-000000000046")
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr
+    Clone		proc :ptr
    .ends
 
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
@@ -411,7 +411,7 @@ DEFINE_IIDX(IEnumSTATPROPSETSTG, "0000013B-0000-0000-C000-000000000046")
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr
+    Clone		proc :ptr
    .ends
 
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG

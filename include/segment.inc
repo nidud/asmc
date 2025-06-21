@@ -352,17 +352,17 @@ DEFINE_IIDX(IMSVidRect, "7F5000A6-A440-47ca-8ACC-C0E75531A2C2")
 
 .comdef IMSVidRect : public IDispatch
 
-    get_Top		proc :ptr LONG
+    get_Top		proc :ptr
     put_Top		proc :LONG
-    get_Left		proc :ptr LONG
+    get_Left		proc :ptr
     put_Left		proc :LONG
-    get_Width		proc :ptr LONG
+    get_Width		proc :ptr
     put_Width		proc :LONG
-    get_Height		proc :ptr LONG
+    get_Height		proc :ptr
     put_Height		proc :LONG
-    get_HWnd		proc :ptr HWND
+    get_HWnd		proc :ptr
     put_HWnd		proc :HWND
-    put_Rect		proc :ptr IMSVidRect
+    put_Rect		proc :ptr
    .ends
 
 endif
@@ -374,14 +374,14 @@ DEFINE_IIDX(IMSVidGraphSegmentContainer, "3DD2903D-E0AA-11d2-B63A-00C04F79498E")
 
 .comdef IMSVidGraphSegmentContainer : public IUnknown
 
-    get_Graph		proc :ptr ptr
-    get_Input		proc :ptr ptr
-    get_Outputs		proc :ptr ptr
-    get_VideoRenderer	proc :ptr ptr
-    get_AudioRenderer	proc :ptr ptr
-    get_Features	proc :ptr ptr
-    get_Composites	proc :ptr ptr
-    get_ParentContainer proc :ptr ptr
+    get_Graph		proc :ptr
+    get_Input		proc :ptr
+    get_Outputs		proc :ptr
+    get_VideoRenderer	proc :ptr
+    get_AudioRenderer	proc :ptr
+    get_Features	proc :ptr
+    get_Composites	proc :ptr
+    get_ParentContainer proc :ptr
     Decompose		proc :ptr
     IsWindowless	proc
     GetFocus		proc
@@ -402,13 +402,13 @@ DEFINE_IIDX(IMSVidGraphSegment, "238DEC54-ADEB-4005-A349-F772B9AFEBC4")
 
 .comdef IMSVidGraphSegment : public IPersist
 
-    get_Init		proc :ptr ptr IUnknown
-    put_Init		proc :ptr IUnknown
-    EnumFilters		proc :ptr ptr IEnumFilters
-    get_Container	proc :ptr ptr IMSVidGraphSegmentContainer
-    put_Container	proc :ptr IMSVidGraphSegmentContainer
-    get_Type		proc :ptr MSVidSegmentType
-    get_Category	proc :ptr GUID
+    get_Init		proc :ptr
+    put_Init		proc :ptr
+    EnumFilters		proc :ptr
+    get_Container	proc :ptr
+    put_Container	proc :ptr
+    get_Type		proc :ptr
+    get_Category	proc :ptr
     Build		proc
     PostBuild		proc
     PreRun		proc
@@ -460,8 +460,8 @@ DEFINE_IIDX(IMSVidCompositionSegment, "1C15D483-911D-11d2-B632-00C04F79498E")
 .comdef IMSVidCompositionSegment : public IMSVidGraphSegment
 
     Compose		proc :ptr, :ptr
-    get_Up		proc :ptr ptr IMSVidGraphSegment
-    get_Down		proc :ptr ptr IMSVidGraphSegment
+    get_Up		proc :ptr
+    get_Down		proc :ptr
    .ends
 
 endif
@@ -490,21 +490,21 @@ DEFINE_IIDX(IMSVidVRGraphSegment, "DD47DE3F-9874-4f7b-8B22-7CB2688461E7")
 
     put__VMRendererMode proc :LONG
     put_Owner		proc :HWND
-    get_Owner		proc :ptr HWND
-    get_UseOverlay	proc :ptr VARIANT_BOOL
+    get_Owner		proc :ptr
+    get_UseOverlay	proc :ptr
     put_UseOverlay	proc :VARIANT_BOOL
-    get_Visible		proc :ptr VARIANT_BOOL
+    get_Visible		proc :ptr
     put_Visible		proc :VARIANT_BOOL
-    get_ColorKey	proc :ptr OLE_COLOR
+    get_ColorKey	proc :ptr
     put_ColorKey	proc :OLE_COLOR
     get_Source		proc :LPRECT
     put_Source		proc :RECT
     get_Destination	proc :LPRECT
     put_Destination	proc :RECT
     get_NativeSize	proc :LPSIZE, :LPSIZE
-    get_BorderColor	proc :ptr OLE_COLOR
+    get_BorderColor	proc :ptr
     put_BorderColor	proc :OLE_COLOR
-    get_MaintainAspectRatio proc :ptr VARIANT_BOOL
+    get_MaintainAspectRatio proc :ptr
     put_MaintainAspectRatio proc :VARIANT_BOOL
     Refresh		proc
     DisplayChange	proc
@@ -520,15 +520,15 @@ DEFINE_IIDX(IMSVidDevice, "1C15D47C-911D-11d2-B632-00C04F79498E")
 
 .comdef IMSVidDevice : public IDispatch
 
-    get_Name		proc :ptr BSTR
+    get_Name		proc :ptr
     get_Status		proc :ptr
     put_Power		proc :VARIANT_BOOL
-    get_Power		proc :ptr VARIANT_BOOL
-    get_Category	proc :ptr BSTR
-    get_ClassID		proc :ptr BSTR
-    get__Category	proc :ptr GUID
-    get__ClassID	proc :ptr GUID
-    IsEqualDevice	proc :ptr IMSVidDevice, :ptr VARIANT_BOOL
+    get_Power		proc :ptr
+    get_Category	proc :ptr
+    get_ClassID		proc :ptr
+    get__Category	proc :ptr
+    get__ClassID	proc :ptr
+    IsEqualDevice	proc :ptr, :ptr
    .ends
 
 endif
@@ -540,7 +540,7 @@ DEFINE_IIDX(IMSVidDevice2, "87BD2783-EBC0-478C-B4A0-E8E7F43AB78E")
 
 .comdef IMSVidDevice2 : public IUnknown
 
-    get_DevicePath	proc :ptr BSTR
+    get_DevicePath	proc :ptr
    .ends
 
 endif
@@ -552,8 +552,8 @@ DEFINE_IIDX(IMSVidInputDevice, "37B0353D-A4C8-11d2-B634-00C04F79498E")
 
 .comdef IMSVidInputDevice : public IMSVidDevice
 
-    IsViewable		proc :ptr VARIANT, :ptr VARIANT_BOOL
-    View		proc :ptr VARIANT
+    IsViewable		proc :ptr, :ptr
+    View		proc :ptr
    .ends
 
 endif
@@ -565,7 +565,7 @@ DEFINE_IIDX(IMSVidDeviceEvent, "1C15D480-911D-11d2-B632-00C04F79498E")
 
 .comdef IMSVidDeviceEvent : public IDispatch
 
-    StateChange		proc :ptr IMSVidDevice, :LONG, :LONG
+    StateChange		proc :ptr, :LONG, :LONG
    .ends
 
 endif
@@ -599,20 +599,20 @@ DEFINE_IIDX(IMSVidPlayback, "37B03538-A4C8-11d2-B634-00C04F79498E")
 
 .comdef IMSVidPlayback : public IMSVidInputDevice
 
-    get_EnableResetOnStop proc :ptr VARIANT_BOOL
+    get_EnableResetOnStop proc :ptr
     put_EnableResetOnStop proc :VARIANT_BOOL
     Run			proc
     _Pause		proc
     Stop		proc
-    get_CanStep		proc :VARIANT_BOOL, :ptr VARIANT_BOOL
+    get_CanStep		proc :VARIANT_BOOL, :ptr
     Step		proc :LONG
     put_Rate		proc :real8
-    get_Rate		proc :ptr real8
+    get_Rate		proc :ptr
     put_CurrentPosition proc :LONG
-    get_CurrentPosition proc :ptr LONG
+    get_CurrentPosition proc :ptr
     put_PositionMode	proc :PositionModeList
-    get_PositionMode	proc :ptr PositionModeList
-    get_Length		proc :ptr LONG
+    get_PositionMode	proc :ptr
+    get_Length		proc :ptr
    .ends
 
 endif
@@ -624,7 +624,7 @@ DEFINE_IIDX(IMSVidPlaybackEvent, "37B0353B-A4C8-11d2-B634-00C04F79498E")
 
 .comdef IMSVidPlaybackEvent : public IMSVidInputDeviceEvent
 
-    EndOfMedia		proc :ptr IMSVidPlayback
+    EndOfMedia		proc :ptr
    .ends
 
 endif
@@ -636,10 +636,10 @@ DEFINE_IIDX(IMSVidTuner, "1C15D47D-911D-11d2-B632-00C04F79498E")
 
 .comdef IMSVidTuner : public IMSVidVideoInputDevice
 
-    get_Tune		proc :ptr ptr ITuneRequest
-    put_Tune		proc :ptr ITuneRequest
-    get_TuningSpace	proc :ptr ptr ITuningSpace
-    put_TuningSpace	proc :ptr ITuningSpace
+    get_Tune		proc :ptr
+    put_Tune		proc :ptr
+    get_TuningSpace	proc :ptr
+    put_TuningSpace	proc :ptr
    .ends
 
 endif
@@ -651,7 +651,7 @@ DEFINE_IIDX(IMSVidTunerEvent, "1C15D485-911D-11d2-B632-00C04F79498E")
 
 .comdef IMSVidTunerEvent : public IMSVidInputDeviceEvent
 
-    TuneChanged		proc :ptr IMSVidTuner
+    TuneChanged		proc :ptr
    .ends
 
 endif
@@ -663,15 +663,15 @@ DEFINE_IIDX(IMSVidAnalogTuner, "1C15D47E-911D-11d2-B632-00C04F79498E")
 
 .comdef IMSVidAnalogTuner : public IMSVidTuner
 
-    get_Channel		proc :ptr LONG
+    get_Channel		proc :ptr
     put_Channel		proc :LONG
-    get_VideoFrequency	proc :ptr LONG
-    get_AudioFrequency	proc :ptr LONG
-    get_CountryCode	proc :ptr LONG
+    get_VideoFrequency	proc :ptr
+    get_AudioFrequency	proc :ptr
+    get_CountryCode	proc :ptr
     put_CountryCode	proc :LONG
-    get_SAP		proc :ptr VARIANT_BOOL
+    get_SAP		proc :ptr
     put_SAP		proc :VARIANT_BOOL
-    ChannelAvailable	proc :LONG, :ptr LONG, :ptr VARIANT_BOOL
+    ChannelAvailable	proc :LONG, :ptr, :ptr
    .ends
 
 endif
@@ -683,9 +683,9 @@ DEFINE_IIDX(IMSVidAnalogTuner2, "37647BF7-3DDE-4cc8-A4DC-0D534D3D0037")
 
 .comdef IMSVidAnalogTuner2 : public IMSVidAnalogTuner
 
-    get_TVFormats	proc :ptr LONG
-    get_TunerModes	proc :ptr LONG
-    get_NumAuxInputs	proc :ptr LONG
+    get_TVFormats	proc :ptr
+    get_TunerModes	proc :ptr
+    get_NumAuxInputs	proc :ptr
    .ends
 
 endif
@@ -708,7 +708,7 @@ DEFINE_IIDX(IMSVidFilePlayback, "37B03539-A4C8-11d2-B634-00C04F79498E")
 
 .comdef IMSVidFilePlayback : public IMSVidPlayback
 
-    get_FileName	proc :ptr BSTR
+    get_FileName	proc :ptr
     put_FileName	proc :BSTR
    .ends
 
@@ -722,7 +722,7 @@ DEFINE_IIDX(IMSVidFilePlayback2, "2F7E44AF-6E52-4660-BC08-D8D542587D72")
 .comdef IMSVidFilePlayback2 : public IMSVidFilePlayback
 
     put__SourceFilter	proc :BSTR
-    put___SourceFilter	proc :ptr GUID
+    put___SourceFilter	proc :ptr
    .ends
 
 endif
@@ -823,12 +823,12 @@ DEFINE_IIDX(IMSVidWebDVD, "CF45F88B-AC56-4EE2-A73A-ED04E2885D3C")
     PlayPrevChapter	proc
     PlayNextChapter	proc
     StillOff		proc
-    get_AudioLanguage	proc :LONG, :VARIANT_BOOL, :ptr BSTR
+    get_AudioLanguage	proc :LONG, :VARIANT_BOOL, :ptr
     ShowMenu		proc :DVDMenuIDConstants
     Resume		proc
     ReturnFromSubmenu	proc
-    get_ButtonsAvailable proc :ptr LONG
-    get_CurrentButton	proc :ptr LONG
+    get_ButtonsAvailable proc :ptr
+    get_CurrentButton	proc :ptr
     SelectAndActivateButton proc :LONG
     ActivateButton	proc
     SelectRightButton	proc
@@ -837,75 +837,75 @@ DEFINE_IIDX(IMSVidWebDVD, "CF45F88B-AC56-4EE2-A73A-ED04E2885D3C")
     SelectUpperButton	proc
     ActivateAtPosition	proc :LONG, :LONG
     SelectAtPosition	proc :LONG, :LONG
-    get_ButtonAtPosition proc :LONG, :LONG, :ptr LONG
-    get_NumberOfChapters proc :LONG, :ptr LONG
-    get_TotalTitleTime	proc :ptr BSTR
-    get_TitlesAvailable proc :ptr LONG
-    get_VolumesAvailable proc :ptr LONG
-    get_CurrentVolume	proc :ptr LONG
-    get_CurrentDiscSide proc :ptr LONG
-    get_CurrentDomain	proc :ptr LONG
-    get_CurrentChapter	proc :ptr LONG
-    get_CurrentTitle	proc :ptr LONG
-    get_CurrentTime	proc :ptr BSTR
-    DVDTimeCode2bstr	proc :LONG, :ptr BSTR
-    get_DVDDirectory	proc :ptr BSTR
+    get_ButtonAtPosition proc :LONG, :LONG, :ptr
+    get_NumberOfChapters proc :LONG, :ptr
+    get_TotalTitleTime	proc :ptr
+    get_TitlesAvailable proc :ptr
+    get_VolumesAvailable proc :ptr
+    get_CurrentVolume	proc :ptr
+    get_CurrentDiscSide proc :ptr
+    get_CurrentDomain	proc :ptr
+    get_CurrentChapter	proc :ptr
+    get_CurrentTitle	proc :ptr
+    get_CurrentTime	proc :ptr
+    DVDTimeCode2bstr	proc :LONG, :ptr
+    get_DVDDirectory	proc :ptr
     put_DVDDirectory	proc :BSTR
-    IsSubpictureStreamEnabled proc :LONG, :ptr VARIANT_BOOL
-    IsAudioStreamEnabled proc :LONG, :ptr VARIANT_BOOL
-    get_CurrentSubpictureStream proc :ptr LONG
+    IsSubpictureStreamEnabled proc :LONG, :ptr
+    IsAudioStreamEnabled proc :LONG, :ptr
+    get_CurrentSubpictureStream proc :ptr
     put_CurrentSubpictureStream proc :LONG
-    get_SubpictureLanguage proc :LONG, :ptr BSTR
-    get_CurrentAudioStream proc :ptr LONG
+    get_SubpictureLanguage proc :LONG, :ptr
+    get_CurrentAudioStream proc :ptr
     put_CurrentAudioStream proc :LONG
-    get_AudioStreamsAvailable proc :ptr LONG
-    get_AnglesAvailable proc :ptr LONG
-    get_CurrentAngle	proc :ptr LONG
+    get_AudioStreamsAvailable proc :ptr
+    get_AnglesAvailable proc :ptr
+    get_CurrentAngle	proc :ptr
     put_CurrentAngle	proc :LONG
-    get_SubpictureStreamsAvailable proc :ptr LONG
-    get_SubpictureOn	proc :ptr VARIANT_BOOL
+    get_SubpictureStreamsAvailable proc :ptr
+    get_SubpictureOn	proc :ptr
     put_SubpictureOn	proc :VARIANT_BOOL
-    get_DVDUniqueID	proc :ptr BSTR
+    get_DVDUniqueID	proc :ptr
     AcceptParentalLevelChange proc :VARIANT_BOOL, :BSTR, :BSTR
     NotifyParentalLevelChange proc :VARIANT_BOOL
     SelectParentalCountry proc :LONG, :BSTR, :BSTR
     SelectParentalLevel proc :LONG, :BSTR, :BSTR
-    get_TitleParentalLevels proc :LONG, :ptr LONG
-    get_PlayerParentalCountry proc :ptr LONG
-    get_PlayerParentalLevel proc :ptr LONG
+    get_TitleParentalLevels proc :LONG, :ptr
+    get_PlayerParentalCountry proc :ptr
+    get_PlayerParentalLevel proc :ptr
     Eject		proc
-    UOPValid		proc :LONG, :ptr VARIANT_BOOL
-    get_SPRM		proc :LONG, :ptr sword
-    get_GPRM		proc :LONG, :ptr sword
+    UOPValid		proc :LONG, :ptr
+    get_SPRM		proc :LONG, :ptr
+    get_GPRM		proc :LONG, :ptr
     put_GPRM		proc :LONG, :sword
-    get_DVDTextStringType proc :LONG, :LONG, :ptr DVDTextStringType
-    get_DVDTextString	proc :LONG, :LONG, :ptr BSTR
-    get_DVDTextNumberOfStrings proc :LONG, :ptr LONG
-    get_DVDTextNumberOfLanguages proc :ptr LONG
-    get_DVDTextLanguageLCID proc :ptr sword, :ptr LONG
+    get_DVDTextStringType proc :LONG, :LONG, :ptr
+    get_DVDTextString	proc :LONG, :LONG, :ptr
+    get_DVDTextNumberOfStrings proc :LONG, :ptr
+    get_DVDTextNumberOfLanguages proc :ptr
+    get_DVDTextLanguageLCID proc :ptr, :ptr
     RegionChange	proc
-    get_DVDAdm		proc :ptr ptr IDispatch
+    get_DVDAdm		proc :ptr
     DeleteBookmark	proc
     RestoreBookmark	proc
     SaveBookmark	proc
     SelectDefaultAudioLanguage	proc :LONG, :LONG
     SelectDefaultSubpictureLanguage proc :LONG, :DVDSPExt
-    get_PreferredSubpictureStream proc :ptr LONG
-    get_DefaultMenuLanguage	proc :ptr LONG
+    get_PreferredSubpictureStream proc :ptr
+    get_DefaultMenuLanguage	proc :ptr
     put_DefaultMenuLanguage	proc :LONG
-    get_DefaultSubpictureLanguage proc :ptr LONG
-    get_DefaultAudioLanguage	proc :ptr LONG
-    get_DefaultSubpictureLanguageExt proc :ptr DVDSPExt
-    get_DefaultAudioLanguageExt proc :ptr LONG
-    get_LanguageFromLCID	proc :LONG, :ptr BSTR
-    get_KaraokeAudioPresentationMode proc :ptr LONG
+    get_DefaultSubpictureLanguage proc :ptr
+    get_DefaultAudioLanguage	proc :ptr
+    get_DefaultSubpictureLanguageExt proc :ptr
+    get_DefaultAudioLanguageExt proc :ptr
+    get_LanguageFromLCID	proc :LONG, :ptr
+    get_KaraokeAudioPresentationMode proc :ptr
     put_KaraokeAudioPresentationMode proc :LONG
-    get_KaraokeChannelContent	proc :LONG, :LONG, :ptr LONG
-    get_KaraokeChannelAssignment proc :LONG, :ptr LONG
+    get_KaraokeChannelContent	proc :LONG, :LONG, :ptr
+    get_KaraokeChannelAssignment proc :LONG, :ptr
     RestorePreferredSettings proc
-    get_ButtonRect	proc :LONG, :ptr ptr IMSVidRect
-    get_DVDScreenInMouseCoordinates proc :ptr ptr IMSVidRect
-    put_DVDScreenInMouseCoordinates proc :ptr IMSVidRect
+    get_ButtonRect	proc :LONG, :ptr
+    get_DVDScreenInMouseCoordinates proc :ptr
+    put_DVDScreenInMouseCoordinates proc :ptr
    .ends
 
 endif
@@ -917,8 +917,8 @@ DEFINE_IIDX(IMSVidWebDVD2, "7027212F-EE9A-4a7c-8B67-F023714CDAFF")
 
 .comdef IMSVidWebDVD2 : public IMSVidWebDVD
 
-    get_Bookmark	proc :ptr ptr BYTE, :ptr DWORD
-    put_Bookmark	proc :ptr BYTE, :DWORD
+    get_Bookmark	proc :ptr, :ptr
+    put_Bookmark	proc :ptr, :DWORD
    .ends
 
 
@@ -969,16 +969,16 @@ DEFINE_IIDX(IMSVidWebDVDAdm, "B8BE681A-EB2C-47f0-B415-94D5452F0E05")
     ChangePassword	proc :BSTR, :BSTR, :BSTR
     SaveParentalLevel	proc :LONG, :BSTR, :BSTR
     SaveParentalCountry proc :LONG, :BSTR, :BSTR
-    ConfirmPassword	proc :BSTR, :BSTR, :ptr VARIANT_BOOL
-    GetParentalLevel	proc :ptr LONG
-    GetParentalCountry	proc :ptr LONG
-    get_DefaultAudioLCID proc :ptr LONG
+    ConfirmPassword	proc :BSTR, :BSTR, :ptr
+    GetParentalLevel	proc :ptr
+    GetParentalCountry	proc :ptr
+    get_DefaultAudioLCID proc :ptr
     put_DefaultAudioLCID proc :LONG
-    get_DefaultSubpictureLCID proc :ptr LONG
+    get_DefaultSubpictureLCID proc :ptr
     put_DefaultSubpictureLCID proc :LONG
-    get_DefaultMenuLCID proc :ptr LONG
+    get_DefaultMenuLCID proc :ptr
     put_DefaultMenuLCID proc :LONG
-    get_BookmarkOnStop	proc :ptr VARIANT_BOOL
+    get_BookmarkOnStop	proc :ptr
     put_BookmarkOnStop	proc :VARIANT_BOOL
    .ends
 
@@ -1035,8 +1035,8 @@ DEFINE_IIDX(IMSVidEncoder, "C0020FD4-BEE7-43d9-A495-9F213117103D")
 
 .comdef IMSVidEncoder : public IMSVidFeature
 
-    get_VideoEncoderInterface proc :ptr ptr IUnknown
-    get_AudioEncoderInterface proc :ptr ptr IUnknown
+    get_VideoEncoderInterface proc :ptr
+    get_AudioEncoderInterface proc :ptr
    .ends
 
 endif
@@ -1048,7 +1048,7 @@ DEFINE_IIDX(IMSVidClosedCaptioning, "99652EA1-C1F7-414f-BB7B-1C967DE75983")
 
 .comdef IMSVidClosedCaptioning : public IMSVidFeature
 
-    get_Enable		proc :ptr VARIANT_BOOL
+    get_Enable		proc :ptr
     put_Enable		proc :VARIANT_BOOL
    .ends
 
@@ -1061,7 +1061,7 @@ DEFINE_IIDX(IMSVidClosedCaptioning2, "E00CB864-A029-4310-9987-A873F5887D97")
 
 .comdef IMSVidClosedCaptioning2 : public IMSVidClosedCaptioning
 
-    get_Service		proc :ptr MSVidCCService
+    get_Service		proc :ptr
     put_Service		proc :MSVidCCService
    .ends
 
@@ -1074,7 +1074,7 @@ DEFINE_IIDX(IMSVidClosedCaptioning3, "C8638E8A-7625-4c51-9366-2F40A9831FC0")
 
 .comdef IMSVidClosedCaptioning3 : public IMSVidClosedCaptioning2
 
-    get_TeleTextFilter	proc :ptr ptr IUnknown
+    get_TeleTextFilter	proc :ptr
    .ends
 
 endif
@@ -1086,7 +1086,7 @@ DEFINE_IIDX(IMSVidXDS, "11EBC158-E712-4d1f-8BB3-01ED5274C4CE")
 
 .comdef IMSVidXDS : public IMSVidFeature
 
-    get_ChannelChangeInterface proc :ptr ptr IUnknown
+    get_ChannelChangeInterface proc :ptr
    .ends
 
 endif
@@ -1139,35 +1139,35 @@ DEFINE_IIDX(IMSVidVideoRenderer, "37B03540-A4C8-11d2-B634-00C04F79498E")
 
 .comdef IMSVidVideoRenderer : public IMSVidOutputDevice
 
-    get_CustomCompositorClass proc :ptr BSTR
+    get_CustomCompositorClass proc :ptr
     put_CustomCompositorClass proc :BSTR
-    get__CustomCompositorClass proc :ptr GUID
+    get__CustomCompositorClass proc :ptr
     put__CustomCompositorClass proc :REFCLSID
-    get__CustomCompositor proc :ptr ptr IVMRImageCompositor
-    put__CustomCompositor proc :ptr IVMRImageCompositor
-    get_MixerBitmap	proc :ptr ptr IPictureDisp
-    get__MixerBitmap	proc :ptr ptr IVMRMixerBitmap
-    put_MixerBitmap	proc :ptr IPictureDisp
-    put__MixerBitmap	proc :ptr VMRALPHABITMAP
-    get_MixerBitmapPositionRect proc :ptr ptr IMSVidRect
-    put_MixerBitmapPositionRect proc :ptr IMSVidRect
-    get_MixerBitmapOpacity proc :ptr SINT
+    get__CustomCompositor proc :ptr
+    put__CustomCompositor proc :ptr
+    get_MixerBitmap	proc :ptr
+    get__MixerBitmap	proc :ptr
+    put_MixerBitmap	proc :ptr
+    put__MixerBitmap	proc :ptr
+    get_MixerBitmapPositionRect proc :ptr
+    put_MixerBitmapPositionRect proc :ptr
+    get_MixerBitmapOpacity proc :ptr
     put_MixerBitmapOpacity proc :SINT
-    SetupMixerBitmap	proc :ptr IPictureDisp, :LONG, :ptr IMSVidRect
-    get_SourceSize	proc :ptr SourceSizeList
+    SetupMixerBitmap	proc :ptr, :LONG, :ptr
+    get_SourceSize	proc :ptr
     put_SourceSize	proc :SourceSizeList
-    get_OverScan	proc :ptr LONG
+    get_OverScan	proc :ptr
     put_OverScan	proc :LONG
-    get_AvailableSourceRect proc :ptr ptr IMSVidRect
-    get_MaxVidRect	proc :ptr ptr IMSVidRect
-    get_MinVidRect	proc :ptr ptr IMSVidRect
-    get_ClippedSourceRect proc :ptr ptr IMSVidRect
-    put_ClippedSourceRect proc :ptr IMSVidRect
-    get_UsingOverlay	proc :ptr VARIANT_BOOL
+    get_AvailableSourceRect proc :ptr
+    get_MaxVidRect	proc :ptr
+    get_MinVidRect	proc :ptr
+    get_ClippedSourceRect proc :ptr
+    put_ClippedSourceRect proc :ptr
+    get_UsingOverlay	proc :ptr
     put_UsingOverlay	proc :VARIANT_BOOL
-    Capture		proc :ptr ptr IPictureDisp
-    get_FramesPerSecond proc :ptr LONG
-    get_DecimateInput	proc :ptr VARIANT_BOOL
+    Capture		proc :ptr
+    get_FramesPerSecond proc :ptr
+    get_DecimateInput	proc :ptr
     put_DecimateInput	proc :VARIANT_BOOL
    .ends
 
@@ -1193,7 +1193,7 @@ DEFINE_IIDX(IMSVidGenericSink, "6C29B41D-455B-4c33-963A-0D28E5E555EA")
 .comdef IMSVidGenericSink : public IMSVidOutputDevice
 
     SetSinkFilter	proc :BSTR
-    get_SinkStreams	proc :ptr MSVidSinkStreams
+    get_SinkStreams	proc :ptr
     put_SinkStreams	proc :MSVidSinkStreams
    .ends
 
@@ -1219,14 +1219,14 @@ DEFINE_IIDX(IMSVidStreamBufferRecordingControl, "160621AA-BBBC-4326-A824-C395AEB
 
 .comdef IMSVidStreamBufferRecordingControl : public IDispatch
 
-    get_StartTime	proc :ptr LONG
+    get_StartTime	proc :ptr
     put_StartTime	proc :LONG
-    get_StopTime	proc :ptr LONG
+    get_StopTime	proc :ptr
     put_StopTime	proc :LONG
-    get_RecordingStopped proc :ptr VARIANT_BOOL
-    get_RecordingStarted proc :ptr VARIANT_BOOL
-    get_RecordingType	proc :ptr RecordingType
-    get_RecordingAttribute proc :ptr ptr IUnknown
+    get_RecordingStopped proc :ptr
+    get_RecordingStarted proc :ptr
+    get_RecordingType	proc :ptr
+    get_RecordingAttribute proc :ptr
    .ends
 
 endif
@@ -1238,12 +1238,12 @@ DEFINE_IIDX(IMSVidStreamBufferSink, "159DBB45-CD1B-4dab-83EA-5CB1F4F21D07")
 
 .comdef IMSVidStreamBufferSink : public IMSVidOutputDevice
 
-    get_ContentRecorder proc :BSTR, :ptr ptr IMSVidStreamBufferRecordingControl
-    get_ReferenceRecorder proc :BSTR, :ptr ptr IMSVidStreamBufferRecordingControl
-    get_SinkName	proc :ptr BSTR
+    get_ContentRecorder proc :BSTR, :ptr
+    get_ReferenceRecorder proc :BSTR, :ptr
+    get_SinkName	proc :ptr
     put_SinkName	proc :BSTR
     NameSetLock		proc
-    get_SBESink		proc :ptr ptr IUnknown
+    get_SBESink		proc :ptr
    .ends
 
 endif
@@ -1267,24 +1267,24 @@ DEFINE_IIDX(IMSVidStreamBufferSink3, "4F8721D7-7D59-4D8B-99F5-A77775586BD5")
 
 .comdef IMSVidStreamBufferSink3 : public IMSVidStreamBufferSink2
 
-    SetMinSeek		proc :ptr LONG
-    get_AudioCounter	proc :ptr ptr IUnknown
-    get_VideoCounter	proc :ptr ptr IUnknown
-    get_CCCounter	proc :ptr ptr IUnknown
-    get_WSTCounter	proc :ptr ptr IUnknown
+    SetMinSeek		proc :ptr
+    get_AudioCounter	proc :ptr
+    get_VideoCounter	proc :ptr
+    get_CCCounter	proc :ptr
+    get_WSTCounter	proc :ptr
     put_AudioAnalysisFilter proc :BSTR
-    get_AudioAnalysisFilter proc :ptr BSTR
-    put__AudioAnalysisFilter proc :ptr GUID
-    get__AudioAnalysisFilter proc :ptr GUID
+    get_AudioAnalysisFilter proc :ptr
+    put__AudioAnalysisFilter proc :ptr
+    get__AudioAnalysisFilter proc :ptr
     put_VideoAnalysisFilter proc :BSTR
-    get_VideoAnalysisFilter proc :ptr BSTR
-    put__VideoAnalysisFilter proc :ptr GUID
-    get__VideoAnalysisFilter proc :ptr GUID
+    get_VideoAnalysisFilter proc :ptr
+    put__VideoAnalysisFilter proc :ptr
+    get__VideoAnalysisFilter proc :ptr
     put_DataAnalysisFilter proc :BSTR
-    get_DataAnalysisFilter proc :ptr BSTR
-    put__DataAnalysisFilter proc :ptr GUID
-    get__DataAnalysisFilter proc :ptr GUID
-    get_LicenseErrorCode proc :ptr HRESULT
+    get_DataAnalysisFilter proc :ptr
+    put__DataAnalysisFilter proc :ptr
+    get__DataAnalysisFilter proc :ptr
+    get_LicenseErrorCode proc :ptr
    .ends
 
 endif
@@ -1347,13 +1347,13 @@ DEFINE_IIDX(IMSVidStreamBufferSource, "EB0C8CF9-6950-4772-87B1-47D11CF3A02F")
 
 .comdef IMSVidStreamBufferSource : public IMSVidFilePlayback
 
-    get_Start		proc :ptr LONG
-    get_RecordingAttribute proc :ptr ptr IUnknown
-    CurrentRatings	proc :ptr EnTvRat_System, :ptr EnTvRat_GenericLevel, :ptr LONG
+    get_Start		proc :ptr
+    get_RecordingAttribute proc :ptr
+    CurrentRatings	proc :ptr, :ptr, :ptr
     MaxRatingsLevel	proc :EnTvRat_System, :EnTvRat_GenericLevel, :LONG
     put_BlockUnrated	proc :VARIANT_BOOL
     put_UnratedDelay	proc :LONG
-    get_SBESource	proc :ptr ptr IUnknown
+    get_SBESource	proc :ptr
    .ends
 
 endif
@@ -1366,10 +1366,10 @@ DEFINE_IIDX(IMSVidStreamBufferSource2, "E4BA9059-B1CE-40D8-B9A0-D4EA4A9989D3")
 .comdef IMSVidStreamBufferSource2 : public IMSVidStreamBufferSource
 
     put_RateEx		proc :real8, :DWORD
-    get_AudioCounter	proc :ptr ptr IUnknown
-    get_VideoCounter	proc :ptr ptr IUnknown
-    get_CCCounter	proc :ptr ptr IUnknown
-    get_WSTCounter	proc :ptr ptr IUnknown
+    get_AudioCounter	proc :ptr
+    get_VideoCounter	proc :ptr
+    get_CCCounter	proc :ptr
+    get_WSTCounter	proc :ptr
    .ends
 
 endif
@@ -1449,13 +1449,13 @@ DEFINE_IIDX(IMSVidVideoRenderer2, "6BDD5C1E-2810-4159-94BC-05511AE8549B")
 
 .comdef IMSVidVideoRenderer2 : public IMSVidVideoRenderer
 
-    get_Allocator	proc :ptr ptr IUnknown
-    get__Allocator	proc :ptr ptr IVMRSurfaceAllocator
-    get_Allocator_ID	proc :ptr LONG
-    SetAllocator	proc :ptr IUnknown, :LONG
-    _SetAllocator	proc :ptr IVMRSurfaceAllocator, :LONG
+    get_Allocator	proc :ptr
+    get__Allocator	proc :ptr
+    get_Allocator_ID	proc :ptr
+    SetAllocator	proc :ptr, :LONG
+    _SetAllocator	proc :ptr, :LONG
     put_SuppressEffects proc :VARIANT_BOOL
-    get_SuppressEffects proc :ptr VARIANT_BOOL
+    get_SuppressEffects proc :ptr
    .ends
 
 endif
@@ -1479,11 +1479,11 @@ DEFINE_IIDX(IMSVidVMR9, "D58B0015-EBEF-44bb-BBDD-3F3699D76EA1")
 
 .comdef IMSVidVMR9 : public IMSVidVideoRenderer
 
-    get_Allocator_ID	proc :ptr LONG
-    SetAllocator	proc :ptr IUnknown, :LONG
+    get_Allocator_ID	proc :ptr
+    SetAllocator	proc :ptr, :LONG
     put_SuppressEffects proc :VARIANT_BOOL
-    get_SuppressEffects proc :ptr VARIANT_BOOL
-    get_Allocator	proc :ptr ptr IUnknown
+    get_SuppressEffects proc :ptr
+    get_Allocator	proc :ptr
    .ends
 
 endif
@@ -1495,10 +1495,10 @@ DEFINE_IIDX(IMSVidEVR, "15E496AE-82A8-4cf9-A6B6-C561DC60398F")
 
 .comdef IMSVidEVR : public IMSVidVideoRenderer
 
-    get_Presenter	proc :ptr ptr IMFVideoPresenter
-    put_Presenter	proc :ptr IMFVideoPresenter
+    get_Presenter	proc :ptr
+    put_Presenter	proc :ptr
     put_SuppressEffects proc :VARIANT_BOOL
-    get_SuppressEffects proc :ptr VARIANT_BOOL
+    get_SuppressEffects proc :ptr
    .ends
 
 endif
@@ -1523,9 +1523,9 @@ DEFINE_IIDX(IMSVidAudioRenderer, "37B0353F-A4C8-11d2-B634-00C04F79498E")
 .comdef IMSVidAudioRenderer : public IMSVidOutputDevice
 
     put_Volume		proc :LONG
-    get_Volume		proc :ptr LONG
+    get_Volume		proc :ptr
     put_Balance		proc :LONG
-    get_Balance		proc :ptr LONG
+    get_Balance		proc :ptr
    .ends
 
 endif
@@ -1567,10 +1567,10 @@ DEFINE_IIDX(IMSVidInputDevices, "C5702CD1-9B79-11d3-B654-00C04F79498E")
 
 .comdef IMSVidInputDevices : public IDispatch
 
-    get_Count		proc :ptr LONG
-    get__NewEnum	proc :ptr ptr IEnumVARIANT
-    get_Item		proc :VARIANT, :ptr ptr IMSVidInputDevice
-    _Add		proc :ptr IMSVidInputDevice
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
     Remove		proc :VARIANT
    .ends
 
@@ -1583,10 +1583,10 @@ DEFINE_IIDX(IMSVidOutputDevices, "C5702CD2-9B79-11d3-B654-00C04F79498E")
 
 .comdef IMSVidOutputDevices : public IDispatch
 
-    get_Count		proc :ptr LONG
-    get__NewEnum	proc :ptr ptr IEnumVARIANT
-    get_Item		proc :VARIANT, :ptr ptr IMSVidOutputDevice
-    _Add		proc :ptr IMSVidOutputDevice
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
     Remove		proc :VARIANT
    .ends
 
@@ -1599,10 +1599,10 @@ DEFINE_IIDX(IMSVidVideoRendererDevices, "C5702CD3-9B79-11d3-B654-00C04F79498E")
 
 .comdef IMSVidVideoRendererDevices : public IDispatch
 
-    get_Count		proc :ptr LONG
-    get__NewEnum	proc :ptr ptr IEnumVARIANT
-    get_Item		proc :VARIANT, :ptr ptr IMSVidVideoRenderer
-    _Add		proc :ptr IMSVidVideoRenderer
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
     Remove		proc :VARIANT
    .ends
 
@@ -1615,10 +1615,10 @@ DEFINE_IIDX(IMSVidAudioRendererDevices, "C5702CD4-9B79-11d3-B654-00C04F79498E")
 
 .comdef IMSVidAudioRendererDevices : public IDispatch
 
-    get_Count		proc :ptr LONG
-    get__NewEnum	proc :ptr ptr IEnumVARIANT
-    get_Item		proc :VARIANT, :ptr ptr IMSVidAudioRenderer
-    _Add		proc :ptr IMSVidAudioRenderer
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
     Remove		proc :VARIANT
    .ends
 
@@ -1631,10 +1631,10 @@ DEFINE_IIDX(IMSVidFeatures, "C5702CD5-9B79-11d3-B654-00C04F79498E")
 
 .comdef IMSVidFeatures : public IDispatch
 
-    get_Count		proc :ptr LONG
-    get__NewEnum	proc :ptr ptr IEnumVARIANT
-    get_Item		proc :VARIANT, :ptr ptr IMSVidFeature
-    _Add		proc :ptr IMSVidFeature
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
     Remove		proc :VARIANT
    .ends
 

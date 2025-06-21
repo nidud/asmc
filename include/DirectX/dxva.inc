@@ -1574,20 +1574,20 @@ DXVABufferInfo		ENDS
 
 .comdef IDirect3DVideoDevice9 : public IUnknown
 
-    CreateSurface	proc :UINT, :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :DWORD, :ptr ptr IDirect3DSurface9, :ptr HANDLE
-    GetDXVACompressedBufferInfo proc :ptr, :ptr, :ptr DWORD, :ptr DXVACompBufferInfo
-    GetDXVAGuids	proc :ptr DWORD, :ptr GUID
-    GetDXVAInternalInfo proc :ptr GUID, :ptr DXVAUncompDataInfo, :ptr DWORD
-    GetUncompressedDXVAFormats proc :ptr GUID, :ptr DWORD, :ptr D3DFORMAT
-    CreateDXVADevice	proc :ptr GUID, :ptr DXVAUncompDataInfo, :LPVOID, :DWORD, :ptr ptr IDirect3DDXVADevice9
+    CreateSurface	proc :UINT, :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :DWORD, :ptr, :ptr
+    GetDXVACompressedBufferInfo proc :ptr, :ptr, :ptr, :ptr
+    GetDXVAGuids	proc :ptr, :ptr
+    GetDXVAInternalInfo proc :ptr, :ptr, :ptr
+    GetUncompressedDXVAFormats proc :ptr, :ptr, :ptr
+    CreateDXVADevice	proc :ptr, :ptr, :LPVOID, :DWORD, :ptr
     .ends
 
 .comdef IDirect3DDXVADevice9 : public IUnknown
 
-    BeginFrame		proc :ptr IDirect3DSurface9, :DWORD, :ptr, :ptr DWORD, :ptr
+    BeginFrame		proc :ptr, :DWORD, :ptr, :ptr, :ptr
     EndFrame		proc :DWORD, :ptr
-    Execute		proc :DWORD, :ptr, :DWORD, :ptr, :DWORD, :DWORD, :ptr DXVABufferInfo
-    QueryStatus		proc :ptr IDirect3DSurface9, :DWORD
+    Execute		proc :DWORD, :ptr, :DWORD, :ptr, :DWORD, :DWORD, :ptr
+    QueryStatus		proc :ptr, :DWORD
     .ends
 
 endif

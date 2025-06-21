@@ -44,15 +44,15 @@ DEFINE_IIDX(IUrlAccessor, "0b63e318-9ccc-11d0-bcdb-00805fccce04")
 .comdef IUrlAccessor : public IUnknown
 
     AddRequestParameter proc :ptr, :ptr
-    GetDocFormat	proc :ptr WCHAR, :DWORD, :ptr
+    GetDocFormat	proc :ptr, :DWORD, :ptr
     GetCLSID		proc :ptr
-    GetHost		proc :ptr WCHAR, :DWORD, :ptr
+    GetHost		proc :ptr, :DWORD, :ptr
     IsDirectory		proc
     GetSize		proc :ptr
     GetLastModified	proc :ptr
-    GetFileName		proc :ptr WCHAR, :DWORD, :ptr
+    GetFileName		proc :ptr, :DWORD, :ptr
     GetSecurityDescriptor proc
-    GetRedirectedURL	proc :ptr WCHAR, :DWORD, :ptr
+    GetRedirectedURL	proc :ptr, :DWORD, :ptr
     GetSecurityProvider proc :ptr
     BindToStream	proc :ptr
     BindToFilter	proc :ptr
@@ -68,9 +68,9 @@ DEFINE_IIDX(IUrlAccessor2, "c7310734-ac80-11d1-8df3-00c04fb6ef4f")
 
 .comdef IUrlAccessor2 : public IUrlAccessor
 
-    GetDisplayUrl	proc :ptr WCHAR, :DWORD, :ptr
+    GetDisplayUrl	proc :ptr, :DWORD, :ptr
     IsDocument		proc
-    GetCodePage		proc :ptr WCHAR, :DWORD, :ptr
+    GetCodePage		proc :ptr, :DWORD, :ptr
    .ends
 
 endif
@@ -232,27 +232,27 @@ DEFINE_IIDX(ISearchRoot, "04C18CCF-1F57-4CBD-88CC-3900F5195CE3")
 .comdef ISearchRoot : public IUnknown
 
     put_Schedule	proc :LPCWSTR
-    get_Schedule	proc :ptr LPWSTR
+    get_Schedule	proc :ptr
     put_RootURL		proc :LPCWSTR
-    get_RootURL		proc :ptr LPWSTR
+    get_RootURL		proc :ptr
     put_IsHierarchical	proc :BOOL
-    get_IsHierarchical	proc :ptr BOOL
+    get_IsHierarchical	proc :ptr
     put_ProvidesNotifications proc :BOOL
-    get_ProvidesNotifications proc :ptr BOOL
+    get_ProvidesNotifications proc :ptr
     put_UseNotificationsOnly proc :BOOL
-    get_UseNotificationsOnly proc :ptr BOOL
+    get_UseNotificationsOnly proc :ptr
     put_EnumerationDepth proc :DWORD
-    get_EnumerationDepth proc :ptr DWORD
+    get_EnumerationDepth proc :ptr
     put_HostDepth	proc :DWORD
-    get_HostDepth	proc :ptr DWORD
+    get_HostDepth	proc :ptr
     put_FollowDirectories proc :BOOL
-    get_FollowDirectories proc :ptr BOOL
+    get_FollowDirectories proc :ptr
     put_AuthenticationType proc :AUTH_TYPE
-    get_AuthenticationType proc :ptr AUTH_TYPE
+    get_AuthenticationType proc :ptr
     put_User		proc :LPCWSTR
-    get_User		proc :ptr LPWSTR
+    get_User		proc :ptr
     put_Password	proc :LPCWSTR
-    get_Password	proc :ptr LPWSTR
+    get_Password	proc :ptr
    .ends
 
 endif
@@ -265,10 +265,10 @@ DEFINE_IIDX(IEnumSearchRoots, "AB310581-AC80-11D1-8DF3-00C04FB6EF52")
 
 .comdef IEnumSearchRoots : public IUnknown
 
-    Next		proc :ULONG, :ptr ptr ISearchRoot, :ptr ULONG
+    Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr IEnumSearchRoots
+    Clone		proc :ptr
    .ends
 
 endif
@@ -286,10 +286,10 @@ DEFINE_IIDX(ISearchScopeRule, "AB310581-AC80-11D1-8DF3-00C04FB6EF53")
 
 .comdef ISearchScopeRule : public IUnknown
 
-    get_PatternOrURL	proc :ptr LPWSTR
-    get_IsIncluded	proc :ptr BOOL
-    get_IsDefault	proc :ptr BOOL
-    get_FollowFlags	proc :ptr DWORD
+    get_PatternOrURL	proc :ptr
+    get_IsIncluded	proc :ptr
+    get_IsDefault	proc :ptr
+    get_FollowFlags	proc :ptr
    .ends
 
 endif
@@ -302,7 +302,7 @@ DEFINE_IIDX(IEnumSearchScopeRules, "AB310581-AC80-11D1-8DF3-00C04FB6EF54")
 
 .comdef IEnumSearchScopeRules : public IUnknown
 
-    Next		proc :ULONG, :ptr ptr ISearchScopeRule, :ptr ULONG
+    Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
@@ -352,7 +352,7 @@ DEFINE_IIDX(ISearchCrawlScopeManager2, "6292F7AD-4E19-4717-A534-8FC22BCD5CCD")
 
 .comdef ISearchCrawlScopeManager2 : public ISearchCrawlScopeManager
 
-    GetVersion		proc :ptr ptr LONG, :ptr HANDLE
+    GetVersion		proc :ptr, :ptr
    .ends
 
 endif
@@ -389,7 +389,7 @@ DEFINE_IIDX(ISearchItemsChangedSink, "AB310581-AC80-11D1-8DF3-00C04FB6EF58")
 
     StartedMonitoringScope proc :LPCWSTR
     StoppedMonitoringScope proc :LPCWSTR
-    OnItemsChanged	proc :DWORD, :ptr SEARCH_ITEM_CHANGE, :ptr DWORD, :ptr HRESULT
+    OnItemsChanged	proc :DWORD, :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -411,7 +411,7 @@ DEFINE_IIDX(ISearchPersistentItemsChangedSink, "A2FFDF9B-4758-4F84-B729-DF81A1A0
 
     StartedMonitoringScope proc :LPCWSTR
     StoppedMonitoringScope proc :LPCWSTR
-    OnItemsChanged	proc :DWORD, :ptr SEARCH_ITEM_PERSISTENT_CHANGE, :ptr HRESULT
+    OnItemsChanged	proc :DWORD, :ptr, :ptr
    .ends
 
 endif
@@ -485,7 +485,7 @@ DEFINE_IIDX(ISearchCatalogManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF50")
 
 .comdef ISearchCatalogManager : public IUnknown
 
-    get_Name		proc :ptr LPWSTR
+    get_Name		proc :ptr
     GetParameter	proc :LPCWSTR, :ptr
     SetParameter	proc :LPCWSTR, :ptr
     GetCatalogStatus	proc :ptr, :ptr
@@ -494,9 +494,9 @@ DEFINE_IIDX(ISearchCatalogManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF50")
     ReindexMatchingURLs proc :LPCWSTR
     ReindexSearchRoot	proc :LPCWSTR
     put_ConnectTimeout	proc :DWORD
-    get_ConnectTimeout	proc :ptr DWORD
+    get_ConnectTimeout	proc :ptr
     put_DataTimeout	proc :DWORD
-    get_DataTimeout	proc :ptr DWORD
+    get_DataTimeout	proc :ptr
     NumberOfItems	proc :ptr
     NumberOfItemsToIndex proc :ptr, :ptr, :ptr
     URLBeingIndexed	proc :ptr
@@ -509,7 +509,7 @@ DEFINE_IIDX(ISearchCatalogManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF50")
     EnumerateExcludedExtensions proc :ptr
     GetQueryHelper	proc :ptr
     put_DiacriticSensitivity proc :BOOL
-    get_DiacriticSensitivity proc :ptr BOOL
+    get_DiacriticSensitivity proc :ptr
     GetCrawlScopeManager proc :ptr
     .ends
 
@@ -560,27 +560,27 @@ DEFINE_IIDX(ISearchQueryHelper, "AB310581-AC80-11D1-8DF3-00C04FB6EF63")
 
 .comdef ISearchQueryHelper : public IUnknown
 
-    get_ConnectionString proc :ptr LPWSTR
+    get_ConnectionString proc :ptr
     put_QueryContentLocale proc :LCID
-    get_QueryContentLocale proc :ptr LCID
+    get_QueryContentLocale proc :ptr
     put_QueryKeywordLocale proc :LCID
-    get_QueryKeywordLocale proc :ptr LCID
+    get_QueryKeywordLocale proc :ptr
     put_QueryTermExpansion proc :SEARCH_TERM_EXPANSION
-    get_QueryTermExpansion proc :ptr SEARCH_TERM_EXPANSION
+    get_QueryTermExpansion proc :ptr
     put_QuerySyntax	proc :SEARCH_QUERY_SYNTAX
-    get_QuerySyntax	proc :ptr SEARCH_QUERY_SYNTAX
+    get_QuerySyntax	proc :ptr
     put_QueryContentProperties proc :LPCWSTR
-    get_QueryContentProperties proc :ptr LPWSTR
+    get_QueryContentProperties proc :ptr
     put_QuerySelectColumns proc :LPCWSTR
-    get_QuerySelectColumns proc :ptr LPWSTR
+    get_QuerySelectColumns proc :ptr
     put_QueryWhereRestrictions proc :LPCWSTR
-    get_QueryWhereRestrictions proc :ptr LPWSTR
+    get_QueryWhereRestrictions proc :ptr
     put_QuerySorting	proc :LPCWSTR
-    get_QuerySorting	proc :ptr LPWSTR
+    get_QuerySorting	proc :ptr
     GenerateSQLFromUserQuery proc :LPCWSTR, :ptr
     WriteProperties	proc :ITEMID, :DWORD, :ptr, :ptr, :ptr
     put_QueryMaxResults proc :LONG
-    get_QueryMaxResults proc :ptr LONG
+    get_QueryMaxResults proc :ptr
     .ends
 
 endif
@@ -644,15 +644,15 @@ DEFINE_IIDX(ISearchManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF69")
     GetIndexerVersion	proc :ptr, :ptr
     GetParameter	proc :LPCWSTR, :ptr
     SetParameter	proc :LPCWSTR, :ptr
-    get_ProxyName	proc :ptr LPWSTR
-    get_BypassList	proc :ptr LPWSTR
+    get_ProxyName	proc :ptr
+    get_BypassList	proc :ptr
     SetProxy		proc :PROXY_ACCESS, :BOOL, :DWORD, :LPCWSTR, :LPCWSTR
     GetCatalog		proc :LPCWSTR, :ptr
-    get_UserAgent	proc :ptr LPWSTR
+    get_UserAgent	proc :ptr
     put_UserAgent	proc :LPCWSTR
-    get_UseProxy	proc :ptr PROXY_ACCESS
-    get_LocalBypass	proc :ptr BOOL
-    get_PortNumber	proc :ptr DWORD
+    get_UseProxy	proc :ptr
+    get_LocalBypass	proc :ptr
+    get_PortNumber	proc :ptr
    .ends
 
 endif

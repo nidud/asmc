@@ -2169,8 +2169,8 @@ DEFINE_IIDX(IRowsetLocate, "0c733a7d-2a1c-11ce-ade5-00aa0044773d")
 
     Compare		proc :HCHAPTER, :DBBKMARK, :ptr, :DBBKMARK, :ptr, :ptr
     GetRowsAt		proc :HWATCHREGION, :HCHAPTER, :DBBKMARK, :ptr, :DBROWOFFSET, :DBROWCOUNT, :ptr, :ptr
-    GetRowsByBookmark	proc :HCHAPTER, :DBCOUNTITEM, :ptr, :ptr, :ptr HROW, :ptr DBROWSTATUS
-    Hash		proc :HCHAPTER, :DBBKMARK, :ptr, :ptr, :ptr DBHASHVALUE, :ptr DBROWSTATUS
+    GetRowsByBookmark	proc :HCHAPTER, :DBCOUNTITEM, :ptr, :ptr, :ptr, :ptr
+    Hash		proc :HCHAPTER, :DBBKMARK, :ptr, :ptr, :ptr, :ptr
     .ends
 
 endif

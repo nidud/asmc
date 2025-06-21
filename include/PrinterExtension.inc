@@ -35,7 +35,7 @@ define __IPrintSchemaElement_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrintSchemaElement, "724c1646-e64b-4bbf-8eb4-d45e4fd580da")
 
 .comdef IPrintSchemaElement : public IDispatch
-    get_XmlNode		proc :ptr ptr
+    get_XmlNode		proc :ptr
     get_Name		proc :ptr
     get_NamespaceUri	proc :ptr
    .ends
@@ -68,7 +68,7 @@ DEFINE_IIDX(IPrintSchemaOption, "66bb2f51-5844-4997-8d70-4b7cc221cf92")
 .comdef IPrintSchemaOption : public IPrintSchemaDisplayableElement
     get_Selected	proc :ptr
     get_Constrained	proc :ptr
-    GetPropertyValue	proc :BSTR, :BSTR, :ptr ptr
+    GetPropertyValue	proc :BSTR, :BSTR, :ptr
    .ends
 
 endif
@@ -108,8 +108,8 @@ DEFINE_IIDX(IPrintSchemaOptionCollection, "baecb0bd-a946-4771-bc30-e8b24f8d45c1"
 
 .comdef IPrintSchemaOptionCollection : public IDispatch
     get_Count		proc :ptr
-    GetAt		proc :ULONG, :ptr ptr
-    get__NewEnum	proc :ptr ptr
+    GetAt		proc :ULONG, :ptr
+    get__NewEnum	proc :ptr
    .ends
 
 endif
@@ -120,10 +120,10 @@ define __IPrintSchemaFeature_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrintSchemaFeature, "ef189461-5d62-4626-8e57-ff83583c4826")
 
 .comdef IPrintSchemaFeature : public IPrintSchemaDisplayableElement
-    get_SelectedOption	proc :ptr ptr
+    get_SelectedOption	proc :ptr
     put_SelectedOption	proc :ptr
     get_SelectionType	proc :ptr
-    GetOption		proc :BSTR, :BSTR, :ptr ptr
+    GetOption		proc :BSTR, :BSTR, :ptr
     get_DisplayUI	proc :ptr
    .ends
 
@@ -187,13 +187,13 @@ define __IPrintSchemaCapabilities_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrintSchemaCapabilities, "5a577640-501d-4927-bcd0-5ef57a7ed175")
 
 .comdef IPrintSchemaCapabilities : public IPrintSchemaElement
-    GetFeatureByKeyName proc :BSTR, :ptr ptr
-    GetFeature		proc :BSTR, :BSTR, :ptr ptr
-    get_PageImageableSize proc :ptr ptr
+    GetFeatureByKeyName proc :BSTR, :ptr
+    GetFeature		proc :BSTR, :BSTR, :ptr
+    get_PageImageableSize proc :ptr
     get_JobCopiesAllDocumentsMinValue proc :ptr
     get_JobCopiesAllDocumentsMaxValue proc :ptr
-    GetSelectedOptionInPrintTicket proc :ptr, :ptr ptr
-    GetOptions		proc :ptr, :ptr ptr
+    GetSelectedOptionInPrintTicket proc :ptr, :ptr
+    GetOptions		proc :ptr, :ptr
    .ends
 
 endif
@@ -206,7 +206,7 @@ define __IPrintSchemaCapabilities2_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrintSchemaCapabilities2, "b58845f4-9970-4d87-a636-169fb82ed642")
 
 .comdef IPrintSchemaCapabilities2 : public IPrintSchemaCapabilities
-    GetParameterDefinition proc :BSTR, :BSTR, :ptr ptr
+    GetParameterDefinition proc :BSTR, :BSTR, :ptr
    .ends
 
 endif
@@ -231,12 +231,12 @@ define __IPrintSchemaTicket_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrintSchemaTicket, "e480b861-4708-4e6d-a5b4-a2b4eeb9baa4")
 
 .comdef IPrintSchemaTicket : public IPrintSchemaElement
-    GetFeatureByKeyName proc :BSTR, :ptr ptr
-    GetFeature		proc :BSTR, :BSTR, :ptr ptr
-    ValidateAsync	proc :ptr ptr
-    CommitAsync		proc :ptr, :ptr ptr
+    GetFeatureByKeyName proc :BSTR, :ptr
+    GetFeature		proc :BSTR, :BSTR, :ptr
+    ValidateAsync	proc :ptr
+    CommitAsync		proc :ptr, :ptr
     NotifyXmlChanged	proc
-    GetCapabilities	proc :ptr ptr
+    GetCapabilities	proc :ptr
     get_JobCopiesAllDocuments proc :ptr
     put_JobCopiesAllDocuments proc :ULONG
    .ends
@@ -251,7 +251,7 @@ define __IPrintSchemaTicket2_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrintSchemaTicket2, "2ec1f844-766a-47a1-91f4-2eeb6190f80c")
 
 .comdef IPrintSchemaTicket2 : public IPrintSchemaTicket
-    GetParameterInitializer proc :BSTR, :BSTR, :ptr ptr
+    GetParameterInitializer proc :BSTR, :BSTR, :ptr
    .ends
 
 endif
@@ -280,7 +280,7 @@ define __IPrinterScriptableSequentialStream_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrinterScriptableSequentialStream, "2072838a-316f-467a-a949-27f68c44a854")
 
 .comdef IPrinterScriptableSequentialStream : public IDispatch
-    Read		proc :LONG, :ptr ptr
+    Read		proc :LONG, :ptr
     Write		proc :ptr, :ptr
    .ends
 
@@ -316,10 +316,10 @@ DEFINE_IIDX(IPrinterPropertyBag, "fea77364-df95-4a23-a905-019b79a8e481")
     SetInt32		proc :BSTR, :LONG
     GetString		proc :BSTR, :ptr
     SetString		proc :BSTR, :BSTR
-    GetBytes		proc :BSTR, :ptr, :ptr ptr
+    GetBytes		proc :BSTR, :ptr, :ptr
     SetBytes		proc :BSTR, :DWORD, :ptr
-    GetReadStream	proc :BSTR, :ptr ptr
-    GetWriteStream	proc :BSTR, :ptr ptr
+    GetReadStream	proc :BSTR, :ptr
+    GetWriteStream	proc :BSTR, :ptr
    .ends
 
 endif
@@ -341,10 +341,10 @@ DEFINE_IIDX(IPrinterScriptablePropertyBag, "91c7765f-ed57-49ad-8b01-dc24816a5294
     SetInt32		proc :BSTR, :LONG
     GetString		proc :BSTR, :ptr
     SetString		proc :BSTR, :BSTR
-    GetBytes		proc :BSTR, :ptr ptr
+    GetBytes		proc :BSTR, :ptr
     SetBytes		proc :BSTR, :ptr
-    GetReadStream	proc :BSTR, :ptr ptr
-    GetWriteStream	proc :BSTR, :ptr ptr
+    GetReadStream	proc :BSTR, :ptr
+    GetWriteStream	proc :BSTR, :ptr
    .ends
 
 endif
@@ -361,7 +361,7 @@ define __IPrinterScriptablePropertyBag2_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrinterScriptablePropertyBag2, "2A1C53C4-8638-4B3E-B518-2773C94556A3")
 
 .comdef IPrinterScriptablePropertyBag2 : public IPrinterScriptablePropertyBag
-    GetReadStreamAsXML	proc :BSTR, :ptr ptr
+    GetReadStreamAsXML	proc :BSTR, :ptr
    .ends
 
 endif
@@ -381,7 +381,7 @@ DEFINE_IIDX(IPrinterQueue, "3580a828-07fe-4b94-ac1a-757d9d2d3056")
     get_Handle		proc :ptr
     get_Name		proc :ptr
     SendBidiQuery	proc :BSTR
-    GetProperties	proc :ptr ptr
+    GetProperties	proc :ptr
    .ends
 
 endif
@@ -428,8 +428,8 @@ DEFINE_IIDX(IPrintJobCollection, "72b82a24-a598-4e87-895f-cdb23a49e9dc")
 
 .comdef IPrintJobCollection : public IDispatch
     get_Count		proc :ptr
-    GetAt		proc :ULONG, :ptr ptr
-    get__NewEnum	proc :ptr ptr
+    GetAt		proc :ULONG, :ptr
+    get__NewEnum	proc :ptr
    .ends
 
 endif
@@ -499,8 +499,8 @@ define __IPrinterQueue2_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrinterQueue2, "8cd444e8-c9bb-49b3-8e38-e03209416131")
 
 .comdef IPrinterQueue2 : public IPrinterQueue
-    SendBidiSetRequestAsync proc :BSTR, :ptr, :ptr ptr
-    GetPrinterQueueView proc :ULONG, :ULONG, :ptr ptr
+    SendBidiSetRequestAsync proc :BSTR, :ptr, :ptr
+    GetPrinterQueueView proc :ULONG, :ULONG, :ptr
    .ends
 
 endif
@@ -513,10 +513,10 @@ define __IPrinterExtensionContext_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrinterExtensionContext, "39843bf2-c4d2-41fd-b4b2-aedbee5e1900")
 
 .comdef IPrinterExtensionContext : public IDispatch
-    get_PrinterQueue	proc :ptr ptr
-    get_PrintSchemaTicket proc :ptr ptr
-    get_DriverProperties proc :ptr ptr
-    get_UserProperties	proc :ptr ptr
+    get_PrinterQueue	proc :ptr
+    get_PrintSchemaTicket proc :ptr
+    get_DriverProperties proc :ptr
+    get_UserProperties	proc :ptr
    .ends
 
 endif
@@ -546,7 +546,7 @@ DEFINE_IIDX(IPrinterExtensionEventArgs, "39843bf4-c4d2-41fd-b4b2-aedbee5e1900")
 .comdef IPrinterExtensionEventArgs : public IPrinterExtensionContext
     get_BidiNotification proc :ptr
     get_ReasonId	proc :ptr
-    get_Request		proc :ptr ptr
+    get_Request		proc :ptr
     get_SourceApplication proc :ptr
     get_DetailedReasonId proc :ptr
     get_WindowModal	proc :ptr
@@ -562,8 +562,8 @@ DEFINE_IIDX(IPrinterExtensionContextCollection, "fb476970-9bab-4861-811e-3e98b0c
 
 .comdef IPrinterExtensionContextCollection : public IDispatch
     get_Count		proc :ptr
-    GetAt		proc :ULONG, :ptr ptr
-    get__NewEnum	proc :ptr ptr
+    GetAt		proc :ULONG, :ptr
+    get__NewEnum	proc :ptr
    .ends
 
 endif
@@ -598,9 +598,9 @@ define __IPrinterScriptContext_INTERFACE_DEFINED__
 DEFINE_IIDX(IPrinterScriptContext, "066ACBCA-8881-49C9-BB98-FAE16B4889E1")
 
 .comdef IPrinterScriptContext : public IDispatch
-    get_DriverProperties proc :ptr ptr
-    get_QueueProperties proc :ptr ptr
-    get_UserProperties	proc :ptr ptr
+    get_DriverProperties proc :ptr
+    get_QueueProperties proc :ptr
+    get_UserProperties	proc :ptr
    .ends
 
 endif

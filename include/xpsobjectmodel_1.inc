@@ -45,14 +45,14 @@ DEFINE_IIDX(IXpsOMObjectFactory1, "0a91b617-d612-4181-bf7c-be5824e9cc8f")
     GetDocumentTypeFromStream proc :ptr, :ptr
     ConvertHDPhotoToJpegXR proc :ptr
     ConvertJpegXRToHDPhoto proc :ptr
-    CreatePackageWriterOnFile1 proc :LPCWSTR, :LPSECURITY_ATTRIBUTES, :DWORD, :BOOL, :XPS_INTERLEAVING, :ptr, :ptr, :ptr, :ptr, :ptr, :XPS_DOCUMENT_TYPE, :ptr ptr
-    CreatePackageWriterOnStream1 proc :ptr, :BOOL, :XPS_INTERLEAVING, :ptr, :ptr, :ptr, :ptr, :ptr, :XPS_DOCUMENT_TYPE, :ptr ptr
-    CreatePackage1	proc :ptr ptr
-    CreatePackageFromStream1 proc :ptr, :BOOL, :ptr ptr
-    CreatePackageFromFile1 proc :LPCWSTR, :BOOL, :ptr ptr
-    CreatePage1		proc :ptr, :LPCWSTR, :ptr, :ptr ptr
-    CreatePageFromStream1 proc :ptr, :ptr, :ptr, :BOOL, :ptr ptr
-    CreateRemoteDictionaryResourceFromStream1 proc :ptr, :ptr, :ptr, :ptr ptr
+    CreatePackageWriterOnFile1 proc :LPCWSTR, :LPSECURITY_ATTRIBUTES, :DWORD, :BOOL, :XPS_INTERLEAVING, :ptr, :ptr, :ptr, :ptr, :ptr, :XPS_DOCUMENT_TYPE, :ptr
+    CreatePackageWriterOnStream1 proc :ptr, :BOOL, :XPS_INTERLEAVING, :ptr, :ptr, :ptr, :ptr, :ptr, :XPS_DOCUMENT_TYPE, :ptr
+    CreatePackage1	proc :ptr
+    CreatePackageFromStream1 proc :ptr, :BOOL, :ptr
+    CreatePackageFromFile1 proc :LPCWSTR, :BOOL, :ptr
+    CreatePage1		proc :ptr, :LPCWSTR, :ptr, :ptr
+    CreatePageFromStream1 proc :ptr, :ptr, :ptr, :BOOL, :ptr
+    CreateRemoteDictionaryResourceFromStream1 proc :ptr, :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -88,8 +88,8 @@ define __IXpsDocumentPackageTarget_INTERFACE_DEFINED__
 DEFINE_IIDX(IXpsDocumentPackageTarget, "3b0b6d38-53ad-41da-b212-d37637a6714e")
 
 .comdef IXpsDocumentPackageTarget : public IUnknown
-    GetXpsOMPackageWriter proc :ptr, :ptr, :ptr ptr
-    GetXpsOMFactory	proc :ptr ptr
+    GetXpsOMPackageWriter proc :ptr, :ptr, :ptr
+    GetXpsOMFactory	proc :ptr
     GetXpsType		proc :ptr
    .ends
 

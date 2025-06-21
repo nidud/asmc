@@ -14,7 +14,7 @@ DEFINE_IIDX(ID2D1EffectContext1, "84ab595a-fc81-4546-bacd-e8ef4d8abe7a")
 
 .comdef ID2D1EffectContext1 : public ID2D1EffectContext
 
-    CreateLookupTable3D proc :D2D1_BUFFER_PRECISION, :LPBYTE, :UINT32, :ptr UINT32, :ptr ptr ID2D1LookupTable3D
+    CreateLookupTable3D proc :D2D1_BUFFER_PRECISION, :LPBYTE, :UINT32, :ptr, :ptr
     .ends
 
 
@@ -24,8 +24,8 @@ DEFINE_IIDX(ID2D1EffectContext2, "577ad2a0-9fc7-4dda-8b18-dab810140052")
 
 .comdef ID2D1EffectContext2  : public ID2D1EffectContext1
 
-    CreateColorContextFromDxgiColorSpace proc :DXGI_COLOR_SPACE_TYPE, :ptr ptr ID2D1ColorContext1
-    CreateColorContextFromSimpleColorProfile proc :ptr D2D1_SIMPLE_COLOR_PROFILE, :ptr ptr ID2D1ColorContext1
+    CreateColorContextFromDxgiColorSpace proc :DXGI_COLOR_SPACE_TYPE, :ptr
+    CreateColorContextFromSimpleColorProfile proc :ptr, :ptr
     .ends
 
 

@@ -145,7 +145,7 @@ DEFINE_IIDX(IDXGIDebug, "119E7452-DE9E-40fe-8806-88F90C12B441")
 
 .comdef IDXGIDebug : public IUnknown
 
-    ReportLiveObjects	proc :ptr GUID, :DXGI_DEBUG_RLO_FLAGS
+    ReportLiveObjects	proc :ptr, :DXGI_DEBUG_RLO_FLAGS
    .ends
 
 endif

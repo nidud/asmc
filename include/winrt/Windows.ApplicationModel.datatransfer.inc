@@ -59,10 +59,10 @@ define ____FIVectorView_1_Windows__CApplicationModel__CDataTransfer__CClipboardH
 
 .comdef __FIVectorView_1_Windows__CApplicationModel__CDataTransfer__CClipboardHistoryItem : public IInspectable
 
-    GetAt       proc :UINT32, :ptr ptr Windows::ApplicationModel::DataTransfer::IClipboardHistoryItem
-    get_Size    proc :ptr UINT32
-    IndexOf     proc :ptr Windows::ApplicationModel::DataTransfer::IClipboardHistoryItem, :ptr UINT32, :ptr boolean
-    GetMany     proc :UINT32, :UINT32, :ptr ptr Windows::ApplicationModel::DataTransfer::IClipboardHistoryItem, :ptr UINT32
+    GetAt       proc :UINT32, :ptr
+    get_Size    proc :ptr
+    IndexOf     proc :ptr, :ptr, :ptr
+    GetMany     proc :UINT32, :UINT32, :ptr, :ptr
    .ends
 
 endif
@@ -73,9 +73,9 @@ define ____FIAsyncOperation_1_Windows__CApplicationModel__CDataTransfer__CClipbo
 
 .comdef __FIAsyncOperation_1_Windows__CApplicationModel__CDataTransfer__CClipboardHistoryItemsResult : public IInspectable
 
-    put_Completed   proc :ptr __FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CDataTransfer__CClipboardHistoryItemsResult
-    get_Completed   proc :ptr ptr __FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CDataTransfer__CClipboardHistoryItemsResult
-    GetResults      proc :ptr ptr Windows::ApplicationModel::DataTransfer::IClipboardHistoryItemsResult
+    put_Completed   proc :ptr
+    get_Completed   proc :ptr
+    GetResults      proc :ptr
    .ends
 
 endif
@@ -123,7 +123,7 @@ DEFINE_IIDX(IDataProviderHandler, "e7ecd720-f2f4-4a2d-920e-170a2f482a27")
 
 .comdef IDataProviderHandler : public IUnknown
 
-    IInvoke proc :ptr Windows::ApplicationModel::DataTransfer::IDataProviderRequest
+    IInvoke proc :ptr
    .ends
 
 endif
@@ -137,7 +137,7 @@ DEFINE_IIDX(IShareProviderHandler, "e7f9d9ba-e1ba-4e4d-bd65-d43845d3212f")
 
 .comdef IShareProviderHandler : public IUnknown
 
-    IInvoke proc :ptr Windows::ApplicationModel::DataTransfer::IShareProviderOperation
+    IInvoke proc :ptr
    .ends
 
 endif
@@ -156,8 +156,8 @@ DEFINE_IIDX(IClipboardContentOptions, "e888a98c-ad4b-5447-a056-ab3556276d2b")
     put_IsRoamable proc :boolean
     get_IsAllowedInHistory proc :ptr
     put_IsAllowedInHistory proc :boolean
-    get_RoamingFormats proc :ptr ptr __FIVector_1_HSTRING
-    get_HistoryFormats proc :ptr ptr __FIVector_1_HSTRING
+    get_RoamingFormats proc :ptr
+    get_HistoryFormats proc :ptr
    .ends
 
 endif
@@ -186,9 +186,9 @@ DEFINE_IIDX(IClipboardHistoryItem, "0173bd8a-afff-5c50-ab92-3d19f481ec58")
 
 .comdef IClipboardHistoryItem : public IInspectable
 
-    get_Id proc :ptr HSTRING
-    get_Timestamp proc :ptr Windows::Foundation::DateTime
-    get_Content proc :ptr ptr Windows::ApplicationModel::DataTransfer::IDataPackageView
+    get_Id proc :ptr
+    get_Timestamp proc :ptr
+    get_Content proc :ptr
    .ends
 
 endif
@@ -204,7 +204,7 @@ DEFINE_IIDX(IClipboardHistoryItemsResult, "e6dfdee6-0ee2-52e3-852b-f295db65939a"
 .comdef IClipboardHistoryItemsResult : public IInspectable
 
     get_Status proc :ptr
-    get_Items proc :ptr ptr __FIVectorView_1_Windows__CApplicationModel__CDataTransfer__CClipboardHistoryItem
+    get_Items proc :ptr
    .ends
 
 endif
@@ -219,7 +219,7 @@ DEFINE_IIDX(IClipboardStatics, "c627e291-34e2-4963-8eed-93cbb0ea3d70")
 
 .comdef IClipboardStatics : public IInspectable
 
-    GetContent proc :ptr ptr
+    GetContent proc :ptr
     SetContent proc :ptr
     Flush proc
     Clear proc
@@ -239,7 +239,7 @@ DEFINE_IIDX(IClipboardStatics2, "d2ac1b6a-d29f-554b-b303-f0452345fe02")
 
 .comdef IClipboardStatics2 : public IInspectable
 
-    GetHistoryItemsAsync proc :ptr ptr __FIAsyncOperation_1_Windows__CApplicationModel__CDataTransfer__CClipboardHistoryItemsResult
+    GetHistoryItemsAsync proc :ptr
     ClearHistory proc :ptr
     DeleteItemFromHistory proc :ptr, :ptr
     SetHistoryItemAsContent proc :ptr, :ptr
@@ -266,8 +266,8 @@ DEFINE_IIDX(IDataPackage, "61ebf5c7-efea-4346-9554-981d7e198ffe")
 
 .comdef IDataPackage : public IInspectable
 
-    GetView proc :ptr ptr
-    get_Properties proc :ptr ptr
+    GetView proc :ptr
+    get_Properties proc :ptr
     get_RequestedOperation proc :ptr
     put_RequestedOperation proc :Windows::ApplicationModel::DataTransfer::DataPackageOperation
     add_OperationCompleted proc :ptr, :ptr
@@ -282,7 +282,7 @@ if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x10000
 endif
     SetUri proc :ptr
     SetHtmlFormat proc :HSTRING
-    get_ResourceMap proc :ptr ptr
+    get_ResourceMap proc :ptr
     SetRtf proc :HSTRING
     SetBitmap proc :ptr
     SetStorageItemsReadOnly proc :ptr
@@ -353,12 +353,12 @@ DEFINE_IIDX(IDataPackagePropertySet, "cd1c93eb-4c4c-443a-a8d3-f5c241e91689")
     put_Title proc :HSTRING
     get_Description proc :ptr
     put_Description proc :HSTRING
-    get_Thumbnail proc :ptr ptr
+    get_Thumbnail proc :ptr
     put_Thumbnail proc :ptr
-    get_FileTypes proc :ptr ptr
+    get_FileTypes proc :ptr
     get_ApplicationName proc :ptr
     put_ApplicationName proc :HSTRING
-    get_ApplicationListingUri proc :ptr ptr
+    get_ApplicationListingUri proc :ptr
     put_ApplicationListingUri proc :ptr
    .ends
 
@@ -374,13 +374,13 @@ DEFINE_IIDX(IDataPackagePropertySet2, "eb505d4a-9800-46aa-b181-7b6f0f2b919a")
 
 .comdef IDataPackagePropertySet2 : public IInspectable
 
-    get_ContentSourceWebLink proc :ptr ptr
+    get_ContentSourceWebLink proc :ptr
     put_ContentSourceWebLink proc :ptr
-    get_ContentSourceApplicationLink proc :ptr ptr
+    get_ContentSourceApplicationLink proc :ptr
     put_ContentSourceApplicationLink proc :ptr
     get_PackageFamilyName proc :ptr
     put_PackageFamilyName proc :HSTRING
-    get_Square30x30Logo proc :ptr ptr
+    get_Square30x30Logo proc :ptr
     put_Square30x30Logo proc :ptr
     get_LogoBackgroundColor proc :ptr
     put_LogoBackgroundColor proc :Windows::UI::Color
@@ -432,10 +432,10 @@ DEFINE_IIDX(IDataPackagePropertySetView, "b94cec01-0c1a-4c57-be55-75d01289735d")
 
     get_Title proc :ptr
     get_Description proc :ptr
-    get_Thumbnail proc :ptr ptr
-    get_FileTypes proc :ptr ptr
+    get_Thumbnail proc :ptr
+    get_FileTypes proc :ptr
     get_ApplicationName proc :ptr
-    get_ApplicationListingUri proc :ptr ptr
+    get_ApplicationListingUri proc :ptr
    .ends
 
 endif
@@ -451,9 +451,9 @@ DEFINE_IIDX(IDataPackagePropertySetView2, "6054509b-8ebe-4feb-9c1e-75e69de54b84"
 .comdef IDataPackagePropertySetView2 : public IInspectable
 
     get_PackageFamilyName proc :ptr
-    get_ContentSourceWebLink proc :ptr ptr
-    get_ContentSourceApplicationLink proc :ptr ptr
-    get_Square30x30Logo proc :ptr ptr
+    get_ContentSourceWebLink proc :ptr
+    get_ContentSourceApplicationLink proc :ptr
+    get_Square30x30Logo proc :ptr
     get_LogoBackgroundColor proc :ptr
    .ends
 
@@ -514,22 +514,22 @@ DEFINE_IIDX(IDataPackageView, "7b840471-5900-4d85-a90b-10cb85fe3552")
 
 .comdef IDataPackageView : public IInspectable
 
-    get_Properties proc :ptr ptr
+    get_Properties proc :ptr
     get_RequestedOperation proc :ptr
     ReportOperationCompleted proc :Windows::ApplicationModel::DataTransfer::DataPackageOperation
-    get_AvailableFormats proc :ptr ptr
+    get_AvailableFormats proc :ptr
     Contains proc :HSTRING, :ptr
-    GetDataAsync proc :HSTRING, :ptr ptr
-    GetTextAsync proc :ptr ptr
-    GetCustomTextAsync proc :HSTRING, :ptr ptr
+    GetDataAsync proc :HSTRING, :ptr
+    GetTextAsync proc :ptr
+    GetCustomTextAsync proc :HSTRING, :ptr
 if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x10000
 endif
-    GetUriAsync proc :ptr ptr
-    GetHtmlFormatAsync proc :ptr ptr
-    GetResourceMapAsync proc :ptr ptr
-    GetRtfAsync proc :ptr ptr
-    GetBitmapAsync proc :ptr ptr
-    GetStorageItemsAsync proc :ptr ptr
+    GetUriAsync proc :ptr
+    GetHtmlFormatAsync proc :ptr
+    GetResourceMapAsync proc :ptr
+    GetRtfAsync proc :ptr
+    GetBitmapAsync proc :ptr
+    GetStorageItemsAsync proc :ptr
    .ends
 
 endif
@@ -544,8 +544,8 @@ DEFINE_IIDX(IDataPackageView2, "40ecba95-2450-4c1d-b6b4-ed45463dee9c")
 
 .comdef IDataPackageView2 : public IInspectable
 
-    GetApplicationLinkAsync proc :ptr ptr
-    GetWebLinkAsync proc :ptr ptr
+    GetApplicationLinkAsync proc :ptr
+    GetWebLinkAsync proc :ptr
    .ends
 
 endif
@@ -560,8 +560,8 @@ DEFINE_IIDX(IDataPackageView3, "d37771a8-ddad-4288-8428-d1cae394128b")
 
 .comdef IDataPackageView3 : public IInspectable
 
-    RequestAccessAsync proc :ptr ptr
-    RequestAccessWithEnterpriseIdAsync proc :HSTRING, :ptr ptr
+    RequestAccessAsync proc :ptr
+    RequestAccessWithEnterpriseIdAsync proc :HSTRING, :ptr
     UnlockAndAssumeEnterpriseIdentity proc :ptr
    .ends
 
@@ -609,7 +609,7 @@ DEFINE_IIDX(IDataProviderRequest, "ebbc7157-d3c8-47da-acde-f82388d5f716")
 
     get_FormatId proc :ptr
     get_Deadline proc :ptr
-    GetDeferral proc :ptr ptr
+    GetDeferral proc :ptr
     SetData proc :ptr
    .ends
 
@@ -625,11 +625,11 @@ DEFINE_IIDX(IDataRequest, "4341ae3b-fc12-4e53-8c02-ac714c415a27")
 
 .comdef IDataRequest : public IInspectable
 
-    get_Data proc :ptr ptr
+    get_Data proc :ptr
     put_Data proc :ptr
     get_Deadline proc :ptr
     FailWithDisplayText proc :HSTRING
-    GetDeferral proc :ptr ptr
+    GetDeferral proc :ptr
    .ends
 
 endif
@@ -659,7 +659,7 @@ DEFINE_IIDX(IDataRequestedEventArgs, "cb8ba807-6ac5-43c9-8ac5-9ba232163182")
 
 .comdef IDataRequestedEventArgs : public IInspectable
 
-    get_Request proc :ptr ptr
+    get_Request proc :ptr
    .ends
 
 endif
@@ -709,7 +709,7 @@ DEFINE_IIDX(IDataTransferManagerStatics, "a9da01aa-e00e-4cfe-aa44-2dd932dca3d8")
 .comdef IDataTransferManagerStatics : public IInspectable
 
     ShowShareUI proc
-    GetForCurrentView proc :ptr ptr
+    GetForCurrentView proc :ptr
    .ends
 
 endif
@@ -800,7 +800,7 @@ DEFINE_IIDX(IShareCompletedEventArgs, "4574c442-f913-4f60-9df7-cc4060ab1916")
 
 .comdef IShareCompletedEventArgs : public IInspectable
 
-    get_ShareTarget proc :ptr ptr
+    get_ShareTarget proc :ptr
    .ends
 
 endif
@@ -816,9 +816,9 @@ DEFINE_IIDX(IShareProvider, "2fabe026-443e-4cda-af25-8d81070efd80")
 .comdef IShareProvider : public IInspectable
 
     get_Title proc :ptr
-    get_DisplayIcon proc :ptr ptr
+    get_DisplayIcon proc :ptr
     get_BackgroundColor proc :ptr
-    get_Tag proc :ptr ptr
+    get_Tag proc :ptr
     put_Tag proc :ptr
    .ends
 
@@ -834,7 +834,7 @@ DEFINE_IIDX(IShareProviderFactory, "172a174c-e79e-4f6d-b07d-128f469e0296")
 
 .comdef IShareProviderFactory : public IInspectable
 
-    Create proc :HSTRING, :ptr, :Windows::UI::Color, :ptr, :ptr ptr
+    Create proc :HSTRING, :ptr, :Windows::UI::Color, :ptr, :ptr
    .ends
 
 endif
@@ -849,8 +849,8 @@ DEFINE_IIDX(IShareProviderOperation, "19cef937-d435-4179-b6af-14e0492b69f6")
 
 .comdef IShareProviderOperation : public IInspectable
 
-    get_Data proc :ptr ptr
-    get_Provider proc :ptr ptr
+    get_Data proc :ptr
+    get_Provider proc :ptr
     ReportCompleted proc
    .ends
 
@@ -866,9 +866,9 @@ DEFINE_IIDX(IShareProvidersRequestedEventArgs, "f888f356-a3f8-4fce-85e4-8826e63b
 
 .comdef IShareProvidersRequestedEventArgs : public IInspectable
 
-    get_Providers proc :ptr ptr
-    get_Data proc :ptr ptr
-    GetDeferral proc :ptr ptr
+    get_Providers proc :ptr
+    get_Data proc :ptr
+    GetDeferral proc :ptr
    .ends
 
 endif
@@ -884,7 +884,7 @@ DEFINE_IIDX(IShareTargetInfo, "385be607-c6e8-4114-b294-28f3bb6f9904")
 .comdef IShareTargetInfo : public IInspectable
 
     get_AppUserModelId proc :ptr
-    get_ShareProvider proc :ptr ptr
+    get_ShareProvider proc :ptr
    .ends
 
 endif
@@ -901,7 +901,7 @@ DEFINE_IIDX(IShareUIOptions, "72fa8a80-342f-4d90-9551-2ae04e37680c")
 
     get_Theme proc :ptr
     put_Theme proc :Windows::ApplicationModel::DataTransfer::ShareUITheme
-    get_SelectionRect proc :ptr ptr
+    get_SelectionRect proc :ptr
     put_SelectionRect proc :ptr
    .ends
 
@@ -918,7 +918,7 @@ DEFINE_IIDX(ISharedStorageAccessManagerStatics, "c6132ada-34b1-4849-bd5f-d09fee3
 .comdef ISharedStorageAccessManagerStatics : public IInspectable
 
     AddFile proc :ptr, :ptr
-    RedeemTokenForFileAsync proc :HSTRING, :ptr ptr
+    RedeemTokenForFileAsync proc :HSTRING, :ptr
     RemoveFile proc :HSTRING
    .ends
 

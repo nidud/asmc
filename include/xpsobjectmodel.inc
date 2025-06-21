@@ -960,7 +960,7 @@ DEFINE_IIDX(IXpsOMCanvas, "221D1452-331E-47c6-87E9-6CCEFB9B5BA3")
 
 .comdef IXpsOMCanvas : public IXpsOMVisual
 
-    GetVisuals		proc :ptr ptr
+    GetVisuals		proc :ptr
     GetUseAliasedEdgeMode proc :ptr
     SetUseAliasedEdgeMode proc :BOOL
     GetAccessibilityShortDescription proc :ptr
@@ -1019,8 +1019,8 @@ DEFINE_IIDX(IXpsOMPageReference, "ED360180-6F92-4998-890D-2F208531A0A0")
 
 .comdef IXpsOMPageReference : public IUnknown
 
-    GetOwner		proc :ptr ptr
-    GetPage		proc :ptr ptr
+    GetOwner		proc :ptr
+    GetPage		proc :ptr
     SetPage		proc :ptr
     DiscardPage		proc
     IsPageLoaded	proc :ptr
@@ -1105,7 +1105,7 @@ DEFINE_IIDX(IXpsOMDocumentSequence, "56492EB4-D8D5-425e-8256-4C2B64AD0264")
 .comdef IXpsOMDocumentSequence : public IXpsOMPart
 
     GetOwner		proc :ptr
-    GetDocuments	proc :ptr ptr
+    GetDocuments	proc :ptr
     GetPrintTicketResource proc :ptr
     SetPrintTicketResource proc :ptr
    .ends
@@ -1166,7 +1166,7 @@ DEFINE_IIDX(IXpsOMPackage, "18C3DF65-81E1-4674-91DC-FC452F5A416F")
 
 .comdef IXpsOMPackage : public IUnknown
 
-    GetDocumentSequence proc :ptr ptr
+    GetDocumentSequence proc :ptr
     SetDocumentSequence proc :ptr
     GetCoreProperties	proc :ptr
     SetCoreProperties	proc :ptr

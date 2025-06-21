@@ -713,7 +713,7 @@ log_typedef proc __ccall uses rsi rdi rbx sym:asym_t
     .else
         GetMemtypeString( rsi, rdi )
     .endif
-    LstPrintf( "%8u  %s", [rsi].asym.total_size, StringBufferEnd )
+    LstPrintf( "%08X %s", [rsi].asym.total_size, StringBufferEnd )
     LstNL()
     ret
 
@@ -1262,7 +1262,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
     .endif
     .if ( queues[qdesc*LQ_TYPEDEFS].qdesc.head )
         LstCaption( "Types:", 2 )
-        LstCaption( "                N a m e                 Size    Attr", 0 )
+        LstCaption( "                N a m e                 Size     Attr", 0 )
         .for ( rsi = queues[qdesc*LQ_TYPEDEFS].qdesc.head: rsi : rsi = [rsi].asym.next )
             log_typedef( rsi )
         .endf

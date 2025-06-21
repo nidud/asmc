@@ -512,47 +512,47 @@ DEFINE_IIDX(IDWriteFactory1, "30572f99-dac6-41db-a16e-0486307e606a")
 
 .comdef IDWriteFactory1 : public IUnknown
 ; 0
-    GetSystemFontCollection0	proc :ptr ptr IDWriteFontCollection, :BOOL
-    CreateCustomFontCollection	proc :ptr IDWriteFontCollectionLoader, :UINT32, :ptr ptr IDWriteFontCollection
-    RegisterFontCollectionLoader proc :ptr IDWriteFontCollectionLoader
-    UnregisterFontCollectionLoader proc :ptr IDWriteFontCollectionLoader
-    CreateFontFileReference	proc :ptr WCHAR, :ptr FILETIME, :ptr ptr IDWriteFontFile
-    CreateCustomFontFileReference proc :UINT32, :ptr IDWriteFontFileLoader, :ptr ptr IDWriteFontFile
-    CreateFontFace		proc :DWRITE_FONT_FACE_TYPE, :UINT32, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFace
-    CreateRenderingParams	proc :ptr ptr IDWriteRenderingParams
-    CreateMonitorRenderingParams proc :HMONITOR, :ptr ptr IDWriteRenderingParams
-    CreateCustomRenderingParams0 proc :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr ptr IDWriteRenderingParams
-    RegisterFontFileLoader	proc :ptr IDWriteFontFileLoader
-    UnregisterFontFileLoader	proc :ptr IDWriteFontFileLoader
-    CreateTextFormat		proc :ptr ptr WCHAR, :ptr IDWriteFontCollection, :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STYLE, :DWRITE_FONT_STRETCH, :FLOAT, :ptr WCHAR, :ptr ptr IDWriteTextFormat
-    CreateTypography		proc :ptr ptr IDWriteTypography
-    GetGdiInterop		proc :ptr ptr IDWriteGdiInterop
-    CreateTextLayout		proc :ptr WCHAR, :UINT32, :ptr IDWriteTextFormat,  :FLOAT, :FLOAT, :ptr ptr IDWriteTextLayout
-    CreateGdiCompatibleTextLayout proc :UINT32, :ptr IDWriteTextFormat, :FLOAT, :FLOAT, :FLOAT, :ptr DWRITE_MATRIX, :BOOL, :ptr ptr IDWriteTextLayout
-    CreateEllipsisTrimmingSign	proc :ptr IDWriteTextFormat, :ptr ptr IDWriteInlineObject
-    CreateTextAnalyzer		proc :ptr ptr IDWriteTextAnalyzer
-    CreateNumberSubstitution	proc :DWRITE_NUMBER_SUBSTITUTION_METHOD, :ptr WCHAR, :BOOL, :ptr ptr IDWriteNumberSubstitution
-    CreateGlyphRunAnalysis	proc :ptr DWRITE_GLYPH_RUN, :FLOAT, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE, :DWRITE_MEASURING_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
+    GetSystemFontCollection0	proc :ptr, :BOOL
+    CreateCustomFontCollection	proc :ptr, :UINT32, :ptr
+    RegisterFontCollectionLoader proc :ptr
+    UnregisterFontCollectionLoader proc :ptr
+    CreateFontFileReference	proc :ptr, :ptr, :ptr
+    CreateCustomFontFileReference proc :UINT32, :ptr, :ptr
+    CreateFontFace		proc :DWRITE_FONT_FACE_TYPE, :UINT32, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr
+    CreateRenderingParams	proc :ptr
+    CreateMonitorRenderingParams proc :HMONITOR, :ptr
+    CreateCustomRenderingParams0 proc :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr
+    RegisterFontFileLoader	proc :ptr
+    UnregisterFontFileLoader	proc :ptr
+    CreateTextFormat		proc :ptr, :ptr, :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STYLE, :DWRITE_FONT_STRETCH, :FLOAT, :ptr, :ptr
+    CreateTypography		proc :ptr
+    GetGdiInterop		proc :ptr
+    CreateTextLayout		proc :ptr, :UINT32, :ptr,  :FLOAT, :FLOAT, :ptr
+    CreateGdiCompatibleTextLayout proc :UINT32, :ptr, :FLOAT, :FLOAT, :FLOAT, :ptr, :BOOL, :ptr
+    CreateEllipsisTrimmingSign	proc :ptr, :ptr
+    CreateTextAnalyzer		proc :ptr
+    CreateNumberSubstitution	proc :DWRITE_NUMBER_SUBSTITUTION_METHOD, :ptr, :BOOL, :ptr
+    CreateGlyphRunAnalysis	proc :ptr, :FLOAT, :ptr, :DWRITE_RENDERING_MODE, :DWRITE_MEASURING_MODE, :FLOAT, :FLOAT, :ptr
 ; 1
-    GetEudcFontCollection	proc :ptr ptr IDWriteFontCollection, :BOOL
-    CreateCustomRenderingParams proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr ptr IDWriteRenderingParams1
+    GetEudcFontCollection	proc :ptr, :BOOL
+    CreateCustomRenderingParams proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr
     .ENDS
 
 DEFINE_IIDX(IDWriteFontFace1, "a71efdb4-9fdb-4838-ad90-cfc3be8c3daf")
 
 .comdef IDWriteFontFace1 : public IDWriteFontFace
 
-    GetMetrics2		proc :ptr DWRITE_FONT_METRICS1
-    GetGdiCompatibleMetrics2 proc :FLOAT, :FLOAT, :ptr DWRITE_MATRIX, :ptr DWRITE_FONT_METRICS1
-    GetCaretMetrics	proc :ptr DWRITE_CARET_METRICS
-    GetUnicodeRanges	proc :UINT32, :ptr DWRITE_UNICODE_RANGE, :ptr UINT32
+    GetMetrics2		proc :ptr
+    GetGdiCompatibleMetrics2 proc :FLOAT, :FLOAT, :ptr, :ptr
+    GetCaretMetrics	proc :ptr
+    GetUnicodeRanges	proc :UINT32, :ptr, :ptr
     IsMonospacedFont	proc
-    GetDesignGlyphAdvances proc :UINT32, :ptr UINT16, :ptr INT32, :BOOL
-    GetGdiCompatibleGlyphAdvances proc :FLOAT, :FLOAT, :ptr DWRITE_MATRIX, :BOOL, :BOOL, :UINT32, :ptr INT32
-    GetKerningPairAdjustments proc :UINT32, :ptr INT32
+    GetDesignGlyphAdvances proc :UINT32, :ptr, :ptr, :BOOL
+    GetGdiCompatibleGlyphAdvances proc :FLOAT, :FLOAT, :ptr, :BOOL, :BOOL, :UINT32, :ptr
+    GetKerningPairAdjustments proc :UINT32, :ptr
     HasKerningPairs	proc
-    GetRecommendedRenderingMode2 proc :FLOAT, :FLOAT, :FLOAT, :ptr DWRITE_MATRIX, :BOOL, :DWRITE_OUTLINE_THRESHOLD, :DWRITE_MEASURING_MODE, :ptr DWRITE_RENDERING_MODE
-    GetVerticalGlyphVariants proc :UINT32, :ptr UINT16
+    GetRecommendedRenderingMode2 proc :FLOAT, :FLOAT, :FLOAT, :ptr, :BOOL, :DWRITE_OUTLINE_THRESHOLD, :DWRITE_MEASURING_MODE, :ptr
+    GetVerticalGlyphVariants proc :UINT32, :ptr
     HasVerticalGlyphVariants proc
     .ENDS
 
@@ -561,9 +561,9 @@ DEFINE_IIDX(IDWriteFont1, "acd16696-8c14-4f5d-877e-fe3fc1d32738")
 
 .comdef IDWriteFont1 : public IDWriteFont
 
-    GetMetrics2		proc :ptr DWRITE_FONT_METRICS1
-    GetPanose		proc :ptr DWRITE_PANOSE
-    GetUnicodeRanges	proc :UINT32, :ptr DWRITE_UNICODE_RANGE, :ptr UINT32
+    GetMetrics2		proc :ptr
+    GetPanose		proc :ptr
+    GetUnicodeRanges	proc :UINT32, :ptr, :ptr
     IsMonospacedFont	proc
     .ENDS
 
@@ -579,15 +579,15 @@ DEFINE_IIDX(IDWriteTextAnalyzer1, "80DAD800-E21F-4E83-96CE-BFCCE500DB7C")
 
 .comdef IDWriteTextAnalyzer1 : public IDWriteTextAnalyzer
 
-    ApplyCharacterSpacing	proc :FLOAT, :FLOAT, :FLOAT, :UINT32, :UINT32, :ptr UINT16, :ptr FLOAT, :ptr DWRITE_GLYPH_OFFSET, :ptr DWRITE_SHAPING_GLYPH_PROPERTIES, :ptr FLOAT, :ptr DWRITE_GLYPH_OFFSET
-    GetBaseline			proc :ptr IDWriteFontFace, :DWRITE_BASELINE, :BOOL, :BOOL, :DWRITE_SCRIPT_ANALYSIS, :ptr WCHAR, :ptr INT32, :ptr BOOL
-    AnalyzeVerticalGlyphOrientation proc :ptr IDWriteTextAnalysisSource1, :UINT32, :UINT32, :ptr IDWriteTextAnalysisSink1
-    GetGlyphOrientationTransform proc :DWRITE_GLYPH_ORIENTATION_ANGLE, :BOOL, :ptr DWRITE_MATRIX
-    GetScriptProperties		proc :DWRITE_SCRIPT_ANALYSIS, :ptr DWRITE_SCRIPT_PROPERTIES
-    GetTextComplexity		proc :UINT32, :ptr IDWriteFontFace, :ptr BOOL, :ptr UINT32, :ptr UINT16
-    GetJustificationOpportunities proc :ptr IDWriteFontFace, :FLOAT, :DWRITE_SCRIPT_ANALYSIS, :UINT32, :UINT32, :ptr UINT16, :ptr DWRITE_SHAPING_GLYPH_PROPERTIES, :ptr DWRITE_JUSTIFICATION_OPPORTUNITY
-    JustifyGlyphAdvances	proc :FLOAT, :UINT32, :ptr FLOAT, :ptr DWRITE_GLYPH_OFFSET, :ptr FLOAT, :ptr DWRITE_GLYPH_OFFSET
-    GetJustifiedGlyphs		proc :ptr IDWriteFontFace, :FLOAT, :DWRITE_SCRIPT_ANALYSIS, :UINT32, :UINT32, :UINT32, :ptr UINT16, :ptr FLOAT, :ptr FLOAT, :ptr DWRITE_GLYPH_OFFSET, :ptr DWRITE_SHAPING_GLYPH_PROPERTIES, :ptr UINT32, :ptr UINT16, :ptr UINT16, :ptr FLOAT, :ptr DWRITE_GLYPH_OFFSET
+    ApplyCharacterSpacing	proc :FLOAT, :FLOAT, :FLOAT, :UINT32, :UINT32, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    GetBaseline			proc :ptr, :DWRITE_BASELINE, :BOOL, :BOOL, :DWRITE_SCRIPT_ANALYSIS, :ptr, :ptr, :ptr
+    AnalyzeVerticalGlyphOrientation proc :ptr, :UINT32, :UINT32, :ptr
+    GetGlyphOrientationTransform proc :DWRITE_GLYPH_ORIENTATION_ANGLE, :BOOL, :ptr
+    GetScriptProperties		proc :DWRITE_SCRIPT_ANALYSIS, :ptr
+    GetTextComplexity		proc :UINT32, :ptr, :ptr, :ptr, :ptr
+    GetJustificationOpportunities proc :ptr, :FLOAT, :DWRITE_SCRIPT_ANALYSIS, :UINT32, :UINT32, :ptr, :ptr, :ptr
+    JustifyGlyphAdvances	proc :FLOAT, :UINT32, :ptr, :ptr, :ptr, :ptr
+    GetJustifiedGlyphs		proc :ptr, :FLOAT, :DWRITE_SCRIPT_ANALYSIS, :UINT32, :UINT32, :UINT32, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     .ENDS
 
 
@@ -595,7 +595,7 @@ DEFINE_IIDX(IDWriteTextAnalysisSource1, "639CFAD8-0FB4-4B21-A58A-067920120009")
 
 .comdef IDWriteTextAnalysisSource1 : public IDWriteTextAnalysisSource
 
-    GetVerticalGlyphOrientation proc :UINT32, :ptr UINT32, :ptr DWRITE_VERTICAL_GLYPH_ORIENTATION, :ptr UINT8
+    GetVerticalGlyphOrientation proc :UINT32, :ptr, :ptr, :ptr
     .ENDS
 
 
@@ -612,9 +612,9 @@ DEFINE_IIDX(IDWriteTextLayout1, "9064D822-80A7-465C-A986-DF65F78B8FEB")
 .comdef IDWriteTextLayout1 : public IDWriteTextLayout
 
     SetPairKerning proc :BOOL, :DWRITE_TEXT_RANGE
-    GetPairKerning proc :UINT32, :ptr isPairKerningEnabled, :ptr DWRITE_TEXT_RANGE
+    GetPairKerning proc :UINT32, :ptr, :ptr
     SetCharacterSpacing proc :FLOAT, :FLOAT, :FLOAT, :DWRITE_TEXT_RANGE
-    GetCharacterSpacing proc :UINT32, :ptr FLOAT, :ptr FLOAT, :ptr FLOAT, :ptr DWRITE_TEXT_RANGE
+    GetCharacterSpacing proc :UINT32, :ptr, :ptr, :ptr, :ptr
     .ENDS
 
 .enum DWRITE_TEXT_ANTIALIAS_MODE {

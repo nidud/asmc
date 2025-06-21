@@ -133,13 +133,13 @@ define __FolderItem_INTERFACE_DEFINED__
 DEFINE_IIDX(FolderItem, "FAC32C80-CBE4-11CE-8350-444553540000")
 
 .comdef FolderItem : public IDispatch
-    get_Application	proc :ptr ptr
-    get_Parent		proc :ptr ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
     get_Path		proc :ptr
-    get_GetLink		proc :ptr ptr
-    get_GetFolder	proc :ptr ptr
+    get_GetLink		proc :ptr
+    get_GetFolder	proc :ptr
     get_IsLink		proc :ptr
     get_IsFolder	proc :ptr
     get_IsFileSystem	proc :ptr
@@ -148,7 +148,7 @@ DEFINE_IIDX(FolderItem, "FAC32C80-CBE4-11CE-8350-444553540000")
     put_ModifyDate	proc :DATE
     get_Size		proc :ptr
     get_Type		proc :ptr
-    Verbs		proc :ptr ptr
+    Verbs		proc :ptr
     InvokeVerb		proc :VARIANT
    .ends
 
@@ -163,10 +163,10 @@ DEFINE_IIDX(FolderItems, "744129E0-CBE5-11CE-8350-444553540000")
 
 .comdef FolderItems : public IDispatch
     get_Count		proc :ptr
-    get_Application	proc :ptr ptr
-    get_Parent		proc :ptr ptr
-    Item		proc :VARIANT, :ptr ptr
-    _NewEnum		proc :ptr ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    Item		proc :VARIANT, :ptr
+    _NewEnum		proc :ptr
    .ends
 
 endif
@@ -177,8 +177,8 @@ define __FolderItemVerb_INTERFACE_DEFINED__
 DEFINE_IIDX(FolderItemVerb, "08EC3E00-50B0-11CF-960C-0080C7F4EE85")
 
 .comdef FolderItemVerb : public IDispatch
-    get_Application	proc :ptr ptr
-    get_Parent		proc :ptr ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
     get_Name		proc :ptr
     DoIt		proc
    .ends
@@ -192,10 +192,10 @@ DEFINE_IIDX(FolderItemVerbs, "1F8352C0-50B0-11CF-960C-0080C7F4EE85")
 
 .comdef FolderItemVerbs : public IDispatch
     get_Count		proc :ptr
-    get_Application	proc :ptr ptr
-    get_Parent		proc :ptr ptr
-    Item		proc :VARIANT, :ptr ptr
-    _NewEnum		proc :ptr ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    Item		proc :VARIANT, :ptr
+    _NewEnum		proc :ptr
    .ends
 
 endif
@@ -207,11 +207,11 @@ DEFINE_IIDX(Folder, "BBCBDE60-C3FF-11CE-8350-444553540000")
 
 .comdef Folder : public IDispatch
     get_Title		proc :ptr
-    get_Application	proc :ptr ptr
-    get_Parent		proc :ptr ptr
-    get_ParentFolder	proc :ptr ptr
-    Items		proc :ptr ptr
-    ParseName		proc :BSTR, :ptr ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_ParentFolder	proc :ptr
+    Items		proc :ptr
+    ParseName		proc :BSTR, :ptr
     NewFolder		proc :BSTR, :VARIANT
     MoveHere		proc :VARIANT, :VARIANT
     CopyHere		proc :VARIANT, :VARIANT
@@ -226,7 +226,7 @@ define __Folder2_INTERFACE_DEFINED__
 DEFINE_IIDX(Folder2, "f0d2d8ef-3890-11d2-bf8b-00c04fb93661")
 
 .comdef Folder2 : public Folder
-    get_Self		proc :ptr ptr
+    get_Self		proc :ptr
     get_OfflineStatus	proc :ptr
     Synchronize		proc
     get_HaveToShowWebViewBarricade proc :ptr
@@ -279,7 +279,7 @@ DEFINE_IIDX(FolderItems3, "eaa7c309-bbec-49d5-821d-64d966cb667f")
 
 .comdef FolderItems3 : public FolderItems2
     Filter		proc :LONG, :BSTR
-    get_Verbs		proc :ptr ptr
+    get_Verbs		proc :ptr
    .ends
 
 endif
@@ -316,7 +316,7 @@ define __IShellLinkDual2_INTERFACE_DEFINED__
 DEFINE_IIDX(IShellLinkDual2, "317EE249-F12E-11d2-B1E4-00C04F8EEB3E")
 
 .comdef IShellLinkDual2 : public IShellLinkDual
-    get_Target		proc :ptr ptr
+    get_Target		proc :ptr
    .ends
 
 endif
@@ -329,14 +329,14 @@ define __IShellFolderViewDual_INTERFACE_DEFINED__
 DEFINE_IIDX(IShellFolderViewDual, "E7A1AF80-4D96-11CF-960C-0080C7F4EE85")
 
 .comdef IShellFolderViewDual : public IDispatch
-    get_Application	proc :ptr ptr
-    get_Parent		proc :ptr ptr
-    get_Folder		proc :ptr ptr
-    SelectedItems	proc :ptr ptr
-    get_FocusedItem	proc :ptr ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Folder		proc :ptr
+    SelectedItems	proc :ptr
+    get_FocusedItem	proc :ptr
     SelectItem		proc :ptr, :int_t
     PopupItemMenu	proc :ptr, :VARIANT, :VARIANT, :ptr
-    get_Script		proc :ptr ptr
+    get_Script		proc :ptr
     get_ViewOptions	proc :ptr
    .ends
 
@@ -382,11 +382,11 @@ define __IShellDispatch_INTERFACE_DEFINED__
 DEFINE_IIDX(IShellDispatch, "D8F015C0-C278-11CE-A49E-444553540000")
 
 .comdef IShellDispatch : public IDispatch
-    get_Application	proc :ptr ptr
-    get_Parent		proc :ptr ptr
-    NameSpace		proc :VARIANT, :ptr ptr
-    BrowseForFolder	proc :LONG, :BSTR, :LONG, :VARIANT, :ptr ptr
-    Windows		proc :ptr ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    NameSpace		proc :VARIANT, :ptr
+    BrowseForFolder	proc :LONG, :BSTR, :LONG, :VARIANT, :ptr
+    Windows		proc :ptr
     Open		proc :VARIANT
     Explore		proc :VARIANT
     MinimizeAll		proc

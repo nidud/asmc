@@ -59,7 +59,7 @@ DEFINE_IIDX(IServiceDeviceStatics, "A88214E1-59C7-4A20-ABA6-9F6707937230")
 .comdef IServiceDeviceStatics : public IInspectable
 
     GetDeviceSelector   proc :Windows::Devices::Portable::ServiceDeviceType, :ptr
-    GetDeviceSelectorFromServiceId proc :ptr GUID, :ptr
+    GetDeviceSelectorFromServiceId proc :ptr, :ptr
    .ends
 
 endif

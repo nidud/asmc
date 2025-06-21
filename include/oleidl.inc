@@ -27,7 +27,7 @@ DEFINE_IIDX(IOleAdviseHolder, "00000111-0000-0000-C000-000000000046")
 
     Advise		proc :ptr, :ptr
     Unadvise		proc :DWORD
-    EnumAdvise		proc :ptr ptr
+    EnumAdvise		proc :ptr
     SendOnRename	proc :ptr
     SendOnSave		proc
     SendOnClose		proc
@@ -233,13 +233,12 @@ endif
 ifndef __IOLETypes_INTERFACE_DEFINED__
 define __IOLETypes_INTERFACE_DEFINED__
 
-;typedef enum tagOLERENDER
-
-OLERENDER_NONE		equ 0
-OLERENDER_DRAW		equ 1
-OLERENDER_FORMAT	equ 2
-OLERENDER_ASIS		equ 3
-
+.enum OLERENDER {
+    OLERENDER_NONE,
+    OLERENDER_DRAW,
+    OLERENDER_FORMAT,
+    OLERENDER_ASIS,
+    }
 LPOLERENDER		typedef ptr OLERENDER
 
 OBJECTDESCRIPTOR	STRUC
@@ -278,10 +277,10 @@ endif
 ifndef __IOleLink_INTERFACE_DEFINED__
 define __IOleLink_INTERFACE_DEFINED__
 
-;typedef enum tagOLEUPDATE
-
-OLEUPDATE_ALWAYS	equ 1
-OLEUPDATE_ONCALL	equ 3
+.enum OLEUPDATE {
+    OLEUPDATE_ALWAYS = 1,
+    OLEUPDATE_ONCALL = 3,
+    }
 
 LPOLEUPDATE		typedef ptr OLEUPDATE
 POLEUPDATE		typedef ptr OLEUPDATE
@@ -474,9 +473,9 @@ DEFINE_IIDX(IViewObject, "0000010d-0000-0000-C000-000000000046")
 
 .comdef IViewObject : public IUnknown
 
-    Draw		proc :DWORD, :SDWORD, :ptr ,:ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :ptr, :DWORD
-    GetColorSet		proc :DWORD, :SDWORD, :ptr ,:ptr, :HDC, :ptr
-    Freeze		proc :DWORD, :SDWORD, :ptr ,:ptr
+    Draw		proc :DWORD, :SDWORD, :ptr,:ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :ptr, :DWORD
+    GetColorSet		proc :DWORD, :SDWORD, :ptr,:ptr, :HDC, :ptr
+    Freeze		proc :DWORD, :SDWORD, :ptr,:ptr
     Unfreeze		proc :DWORD
     SetAdvise		proc :DWORD, :DWORD, :ptr
     GetAdvise		proc :ptr, :ptr, :ptr

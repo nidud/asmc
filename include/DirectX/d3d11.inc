@@ -2018,12 +2018,12 @@ DEFINE_IIDX(ID3D11VideoProcessorEnumerator, "31627037-53AB-4200-9061-05FAA9AB45F
 
 .comdef ID3D11VideoProcessorEnumerator : public ID3D11DeviceChild
 
-    GetVideoProcessorContentDesc proc :ptr D3D11_VIDEO_PROCESSOR_CONTENT_DESC
-    CheckVideoProcessorFormat proc :DXGI_FORMAT, :ptr UINT
-    GetVideoProcessorCaps proc :ptr D3D11_VIDEO_PROCESSOR_CAPS
-    GetVideoProcessorRateConversionCaps proc :UINT, :ptr D3D11_VIDEO_PROCESSOR_RATE_CONVERSION_CAPS
-    GetVideoProcessorCustomRate proc :UINT, :UINT, :ptr D3D11_VIDEO_PROCESSOR_CUSTOM_RATE
-    GetVideoProcessorFilterRange proc :D3D11_VIDEO_PROCESSOR_FILTER, :ptr D3D11_VIDEO_PROCESSOR_FILTER_RANGE
+    GetVideoProcessorContentDesc proc :ptr
+    CheckVideoProcessorFormat proc :DXGI_FORMAT, :ptr
+    GetVideoProcessorCaps proc :ptr
+    GetVideoProcessorRateConversionCaps proc :UINT, :ptr
+    GetVideoProcessorCustomRate proc :UINT, :UINT, :ptr
+    GetVideoProcessorFilterRange proc :D3D11_VIDEO_PROCESSOR_FILTER, :ptr
    .ends
 endif
 
@@ -2034,64 +2034,64 @@ DEFINE_IIDX(ID3D11VideoContext, "61F21C45-3C0E-4a74-9CEA-67100D9AD5E4")
 
 .comdef ID3D11VideoContext : public ID3D11DeviceChild
 
-    GetDecoderBuffer	proc :ptr ID3D11VideoDecoder, :D3D11_VIDEO_DECODER_BUFFER_TYPE, :ptr UINT, :ptr ptr
-    ReleaseDecoderBuffer proc :ptr ID3D11VideoDecoder, :D3D11_VIDEO_DECODER_BUFFER_TYPE
-    DecoderBeginFrame	proc :ptr ID3D11VideoDecoder, :ptr ID3D11VideoDecoderOutputView, :UINT, :ptr
-    DecoderEndFrame	proc :ptr ID3D11VideoDecoder
-    SubmitDecoderBuffers proc :ptr ID3D11VideoDecoder, :UINT, :ptr D3D11_VIDEO_DECODER_BUFFER_DESC
-    DecoderExtension	proc :ptr ID3D11VideoDecoder, :ptr D3D11_VIDEO_DECODER_EXTENSION
-    VideoProcessorSetOutputTargetRect proc :ptr ID3D11VideoProcessor, :BOOL, :ptr RECT
-    VideoProcessorSetOutputBackgroundColor proc :ptr ID3D11VideoProcessor, :BOOL, :ptr D3D11_VIDEO_COLOR
-    VideoProcessorSetOutputColorSpace proc :ptr ID3D11VideoProcessor, :ptr D3D11_VIDEO_PROCESSOR_COLOR_SPACE
-    VideoProcessorSetOutputAlphaFillMode proc :ptr ID3D11VideoProcessor, :D3D11_VIDEO_PROCESSOR_ALPHA_FILL_MODE, :UINT
-    VideoProcessorSetOutputConstriction proc :ptr ID3D11VideoProcessor, :BOOL, :SIZEL
-    VideoProcessorSetOutputStereoMode proc :ptr ID3D11VideoProcessor, :BOOL
-    VideoProcessorSetOutputExtension proc :ptr ID3D11VideoProcessor, :ptr GUID, :UINT, :ptr
-    VideoProcessorGetOutputTargetRect proc :ptr ID3D11VideoProcessor, :ptr BOOL, :ptr RECT
-    VideoProcessorGetOutputBackgroundColor proc :ptr ID3D11VideoProcessor, :ptr BOOL, :ptr D3D11_VIDEO_COLOR
-    VideoProcessorGetOutputColorSpace proc :ptr ID3D11VideoProcessor, :ptr D3D11_VIDEO_PROCESSOR_COLOR_SPACE
-    VideoProcessorGetOutputAlphaFillMode proc :ptr ID3D11VideoProcessor, :ptr D3D11_VIDEO_PROCESSOR_ALPHA_FILL_MODE, :ptr UINT
-    VideoProcessorGetOutputConstriction proc :ptr ID3D11VideoProcessor, :ptr BOOL, :ptr SIZE
-    VideoProcessorGetOutputStereoMode proc :ptr ID3D11VideoProcessor, :ptr BOOL
-    VideoProcessorGetOutputExtension proc :ptr ID3D11VideoProcessor, :ptr GUID, :UINT, :ptr
-    VideoProcessorSetStreamFrameFormat proc :ptr ID3D11VideoProcessor, :UINT, :D3D11_VIDEO_FRAME_FORMAT
-    VideoProcessorSetStreamColorSpace proc :ptr ID3D11VideoProcessor, :UINT, :ptr D3D11_VIDEO_PROCESSOR_COLOR_SPACE
-    VideoProcessorSetStreamOutputRate proc :ptr ID3D11VideoProcessor, :UINT, :D3D11_VIDEO_PROCESSOR_OUTPUT_RATE, :BOOL, :ptr DXGI_RATIONAL
-    VideoProcessorSetStreamSourceRect proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :ptr RECT
-    VideoProcessorSetStreamDestRect proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :ptr RECT
-    VideoProcessorSetStreamAlpha proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :FLOAT
-    VideoProcessorSetStreamPalette proc :ptr ID3D11VideoProcessor, :UINT, :UINT, :ptr UINT
-    VideoProcessorSetStreamPixelAspectRatio proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :ptr DXGI_RATIONAL, :ptr DXGI_RATIONAL
-    VideoProcessorSetStreamLumaKey proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :FLOAT, :FLOAT
-    VideoProcessorSetStreamStereoFormat proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :D3D11_VIDEO_PROCESSOR_STEREO_FORMAT, :BOOL, :BOOL, :D3D11_VIDEO_PROCESSOR_STEREO_FLIP_MODE, :SINT
-    VideoProcessorSetStreamAutoProcessingMode proc :ptr ID3D11VideoProcessor, :UINT, :BOOL
-    VideoProcessorSetStreamFilter proc :ptr ID3D11VideoProcessor, :UINT, :D3D11_VIDEO_PROCESSOR_FILTER, :BOOL, :SINT
-    VideoProcessorSetStreamExtension proc :ptr ID3D11VideoProcessor, :UINT, :ptr GUID, :UINT, :ptr
-    VideoProcessorGetStreamFrameFormat proc :ptr ID3D11VideoProcessor, :UINT, :ptr D3D11_VIDEO_FRAME_FORMAT
-    VideoProcessorGetStreamColorSpace proc :ptr ID3D11VideoProcessor, :UINT, :ptr D3D11_VIDEO_PROCESSOR_COLOR_SPACE
-    VideoProcessorGetStreamOutputRate proc :ptr ID3D11VideoProcessor, :UINT, :ptr D3D11_VIDEO_PROCESSOR_OUTPUT_RATE, :ptr BOOL, :ptr DXGI_RATIONAL
-    VideoProcessorGetStreamSourceRect proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL, :ptr RECT
-    VideoProcessorGetStreamDestRect proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL, :ptr RECT
-    VideoProcessorGetStreamAlpha proc :ptr ID3D11VideoProcessor, :UINT,	 :ptr BOOL, :ptr FLOAT
-    VideoProcessorGetStreamPalette proc :ptr ID3D11VideoProcessor, :UINT, :UINT, :ptr UINT
-    VideoProcessorGetStreamPixelAspectRatio proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL, :ptr DXGI_RATIONAL, :ptr DXGI_RATIONAL
-    VideoProcessorGetStreamLumaKey proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL, :ptr FLOAT, :ptr FLOAT
-    VideoProcessorGetStreamStereoFormat proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL, :ptr D3D11_VIDEO_PROCESSOR_STEREO_FORMAT, :ptr BOOL, :ptr BOOL, :ptr D3D11_VIDEO_PROCESSOR_STEREO_FLIP_MODE, :ptr
-    VideoProcessorGetStreamAutoProcessingMode proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL
-    VideoProcessorGetStreamFilter proc :ptr ID3D11VideoProcessor, :UINT, :D3D11_VIDEO_PROCESSOR_FILTER, :ptr BOOL, :ptr
-    VideoProcessorGetStreamExtension proc :ptr ID3D11VideoProcessor, :UINT, :ptr GUID, :UINT, :ptr
-    VideoProcessorBlt	proc :ptr ID3D11VideoProcessor, :ptr ID3D11VideoProcessorOutputView, :UINT, :UINT, :ptr D3D11_VIDEO_PROCESSOR_STREAM
-    NegotiateCryptoSessionKeyExchange proc :ptr ID3D11CryptoSession, :UINT, :ptr
-    EncryptionBlt	proc :ptr ID3D11CryptoSession, :ptr ID3D11Texture2D,  :ptr ID3D11Texture2D, :UINT, :ptr
-    DecryptionBlt	proc :ptr ID3D11CryptoSession, :ptr ID3D11Texture2D, :ptr ID3D11Texture2D, :ptr D3D11_ENCRYPTED_BLOCK_INFO, :UINT, :ptr, :UINT, :ptr
-    StartSessionKeyRefresh proc :ptr ID3D11CryptoSession, :UINT, :ptr
-    FinishSessionKeyRefresh proc :ptr ID3D11CryptoSession
-    GetEncryptionBltKey proc :ptr ID3D11CryptoSession, :UINT, :ptr
-    NegotiateAuthenticatedChannelKeyExchange proc :ptr ID3D11AuthenticatedChannel, :UINT,  :ptr
-    QueryAuthenticatedChannel proc :ptr ID3D11AuthenticatedChannel, :UINT, :ptr, :UINT, :ptr
-    ConfigureAuthenticatedChannel proc :ptr ID3D11AuthenticatedChannel, :UINT, :ptr, :ptr
-    VideoProcessorSetStreamRotation proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :D3D11_VIDEO_PROCESSOR_ROTATION
-    VideoProcessorGetStreamRotation proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL, :ptr D3D11_VIDEO_PROCESSOR_ROTATION
+    GetDecoderBuffer	proc :ptr, :D3D11_VIDEO_DECODER_BUFFER_TYPE, :ptr, :ptr
+    ReleaseDecoderBuffer proc :ptr, :D3D11_VIDEO_DECODER_BUFFER_TYPE
+    DecoderBeginFrame	proc :ptr, :ptr, :UINT, :ptr
+    DecoderEndFrame	proc :ptr
+    SubmitDecoderBuffers proc :ptr, :UINT, :ptr
+    DecoderExtension	proc :ptr, :ptr
+    VideoProcessorSetOutputTargetRect proc :ptr, :BOOL, :ptr
+    VideoProcessorSetOutputBackgroundColor proc :ptr, :BOOL, :ptr
+    VideoProcessorSetOutputColorSpace proc :ptr, :ptr
+    VideoProcessorSetOutputAlphaFillMode proc :ptr, :D3D11_VIDEO_PROCESSOR_ALPHA_FILL_MODE, :UINT
+    VideoProcessorSetOutputConstriction proc :ptr, :BOOL, :SIZEL
+    VideoProcessorSetOutputStereoMode proc :ptr, :BOOL
+    VideoProcessorSetOutputExtension proc :ptr, :ptr, :UINT, :ptr
+    VideoProcessorGetOutputTargetRect proc :ptr, :ptr, :ptr
+    VideoProcessorGetOutputBackgroundColor proc :ptr, :ptr, :ptr
+    VideoProcessorGetOutputColorSpace proc :ptr, :ptr
+    VideoProcessorGetOutputAlphaFillMode proc :ptr, :ptr, :ptr
+    VideoProcessorGetOutputConstriction proc :ptr, :ptr, :ptr
+    VideoProcessorGetOutputStereoMode proc :ptr, :ptr
+    VideoProcessorGetOutputExtension proc :ptr, :ptr, :UINT, :ptr
+    VideoProcessorSetStreamFrameFormat proc :ptr, :UINT, :D3D11_VIDEO_FRAME_FORMAT
+    VideoProcessorSetStreamColorSpace proc :ptr, :UINT, :ptr
+    VideoProcessorSetStreamOutputRate proc :ptr, :UINT, :D3D11_VIDEO_PROCESSOR_OUTPUT_RATE, :BOOL, :ptr
+    VideoProcessorSetStreamSourceRect proc :ptr, :UINT, :BOOL, :ptr
+    VideoProcessorSetStreamDestRect proc :ptr, :UINT, :BOOL, :ptr
+    VideoProcessorSetStreamAlpha proc :ptr, :UINT, :BOOL, :FLOAT
+    VideoProcessorSetStreamPalette proc :ptr, :UINT, :UINT, :ptr
+    VideoProcessorSetStreamPixelAspectRatio proc :ptr, :UINT, :BOOL, :ptr, :ptr
+    VideoProcessorSetStreamLumaKey proc :ptr, :UINT, :BOOL, :FLOAT, :FLOAT
+    VideoProcessorSetStreamStereoFormat proc :ptr, :UINT, :BOOL, :D3D11_VIDEO_PROCESSOR_STEREO_FORMAT, :BOOL, :BOOL, :D3D11_VIDEO_PROCESSOR_STEREO_FLIP_MODE, :SINT
+    VideoProcessorSetStreamAutoProcessingMode proc :ptr, :UINT, :BOOL
+    VideoProcessorSetStreamFilter proc :ptr, :UINT, :D3D11_VIDEO_PROCESSOR_FILTER, :BOOL, :SINT
+    VideoProcessorSetStreamExtension proc :ptr, :UINT, :ptr, :UINT, :ptr
+    VideoProcessorGetStreamFrameFormat proc :ptr, :UINT, :ptr
+    VideoProcessorGetStreamColorSpace proc :ptr, :UINT, :ptr
+    VideoProcessorGetStreamOutputRate proc :ptr, :UINT, :ptr, :ptr, :ptr
+    VideoProcessorGetStreamSourceRect proc :ptr, :UINT, :ptr, :ptr
+    VideoProcessorGetStreamDestRect proc :ptr, :UINT, :ptr, :ptr
+    VideoProcessorGetStreamAlpha proc :ptr, :UINT,	 :ptr, :ptr
+    VideoProcessorGetStreamPalette proc :ptr, :UINT, :UINT, :ptr
+    VideoProcessorGetStreamPixelAspectRatio proc :ptr, :UINT, :ptr, :ptr, :ptr
+    VideoProcessorGetStreamLumaKey proc :ptr, :UINT, :ptr, :ptr, :ptr
+    VideoProcessorGetStreamStereoFormat proc :ptr, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    VideoProcessorGetStreamAutoProcessingMode proc :ptr, :UINT, :ptr
+    VideoProcessorGetStreamFilter proc :ptr, :UINT, :D3D11_VIDEO_PROCESSOR_FILTER, :ptr, :ptr
+    VideoProcessorGetStreamExtension proc :ptr, :UINT, :ptr, :UINT, :ptr
+    VideoProcessorBlt	proc :ptr, :ptr, :UINT, :UINT, :ptr
+    NegotiateCryptoSessionKeyExchange proc :ptr, :UINT, :ptr
+    EncryptionBlt	proc :ptr, :ptr,  :ptr, :UINT, :ptr
+    DecryptionBlt	proc :ptr, :ptr, :ptr, :ptr, :UINT, :ptr, :UINT, :ptr
+    StartSessionKeyRefresh proc :ptr, :UINT, :ptr
+    FinishSessionKeyRefresh proc :ptr
+    GetEncryptionBltKey proc :ptr, :UINT, :ptr
+    NegotiateAuthenticatedChannelKeyExchange proc :ptr, :UINT,  :ptr
+    QueryAuthenticatedChannel proc :ptr, :UINT, :ptr, :UINT, :ptr
+    ConfigureAuthenticatedChannel proc :ptr, :UINT, :ptr, :ptr
+    VideoProcessorSetStreamRotation proc :ptr, :UINT, :BOOL, :D3D11_VIDEO_PROCESSOR_ROTATION
+    VideoProcessorGetStreamRotation proc :ptr, :UINT, :ptr, :ptr
    .ends
 
 endif
@@ -2103,23 +2103,23 @@ DEFINE_IIDX(ID3D11VideoDevice, "10EC4D5B-975A-4689-B9E4-D0AAC30FE333")
 
 .comdef ID3D11VideoDevice : public IUnknown
 
-    CreateVideoDecoder proc:ptr D3D11_VIDEO_DECODER_DESC, :ptr D3D11_VIDEO_DECODER_CONFIG, :ptr ptr ID3D11VideoDecoder
-    CreateVideoProcessor proc :ptr ID3D11VideoProcessorEnumerator, :UINT, :ptr ptr ID3D11VideoProcessor
-    CreateAuthenticatedChannel proc :D3D11_AUTHENTICATED_CHANNEL_TYPE, :ptr ptr ID3D11AuthenticatedChannel
-    CreateCryptoSession proc :ptr GUID, :ptr GUID, :ptr GUID, :ptr ptr ID3D11CryptoSession
-    CreateVideoDecoderOutputView proc :ptr ID3D11Resource, :ptr D3D11_VIDEO_DECODER_OUTPUT_VIEW_DESC, :ptr ptr ID3D11VideoDecoderOutputView
-    CreateVideoProcessorInputView proc :ptr ID3D11Resource, :ptr ID3D11VideoProcessorEnumerator, :ptr D3D11_VIDEO_PROCESSOR_INPUT_VIEW_DESC, :ptr ptr ID3D11VideoProcessorInputView
-    CreateVideoProcessorOutputView proc :ptr ID3D11Resource, :ptr ID3D11VideoProcessorEnumerator, :ptr D3D11_VIDEO_PROCESSOR_OUTPUT_VIEW_DESC, :ptr ptr ID3D11VideoProcessorOutputView
-    CreateVideoProcessorEnumerator proc :ptr D3D11_VIDEO_PROCESSOR_CONTENT_DESC, :ptr ptr ID3D11VideoProcessorEnumerator
+    CreateVideoDecoder proc:ptr, :ptr, :ptr
+    CreateVideoProcessor proc :ptr, :UINT, :ptr
+    CreateAuthenticatedChannel proc :D3D11_AUTHENTICATED_CHANNEL_TYPE, :ptr
+    CreateCryptoSession proc :ptr, :ptr, :ptr, :ptr
+    CreateVideoDecoderOutputView proc :ptr, :ptr, :ptr
+    CreateVideoProcessorInputView proc :ptr, :ptr, :ptr, :ptr
+    CreateVideoProcessorOutputView proc :ptr, :ptr, :ptr, :ptr
+    CreateVideoProcessorEnumerator proc :ptr, :ptr
     GetVideoDecoderProfileCount proc
-    GetVideoDecoderProfile proc :UINT, :ptr GUID
-    CheckVideoDecoderFormat proc :ptr GUID, :DXGI_FORMAT, :ptr BOOL
-    GetVideoDecoderConfigCount proc :ptr D3D11_VIDEO_DECODER_DESC, :ptr UINT
-    GetVideoDecoderConfig proc :ptr D3D11_VIDEO_DECODER_DESC, :UINT, :ptr D3D11_VIDEO_DECODER_CONFIG
-    GetContentProtectionCaps proc :ptr GUID, :ptr GUID, :ptr D3D11_VIDEO_CONTENT_PROTECTION_CAPS
-    CheckCryptoKeyExchange proc :ptr GUID, :ptr GUID, :UINT, :ptr GUID
+    GetVideoDecoderProfile proc :UINT, :ptr
+    CheckVideoDecoderFormat proc :ptr, :DXGI_FORMAT, :ptr
+    GetVideoDecoderConfigCount proc :ptr, :ptr
+    GetVideoDecoderConfig proc :ptr, :UINT, :ptr
+    GetContentProtectionCaps proc :ptr, :ptr, :ptr
+    CheckCryptoKeyExchange proc :ptr, :ptr, :UINT, :ptr
     SetPrivateData proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr IUnknown
+    SetPrivateDataInterface proc :REFGUID, :ptr
    .ends
 
 endif
@@ -2237,8 +2237,8 @@ DEFINE_IIDX(ID3D11VideoDecoder, "3C9C5B51-995D-48d1-9B8D-FA5CAEDED65C")
 
 .comdef ID3D11VideoDecoder : public ID3D11DeviceChild
 
-    GetCreationParameters proc :ptr D3D11_VIDEO_DECODER_DESC, :ptr D3D11_VIDEO_DECODER_CONFIG
-    GetDriverHandle	proc :ptr HANDLE
+    GetCreationParameters proc :ptr, :ptr
+    GetDriverHandle	proc :ptr
    .ends
 
 endif

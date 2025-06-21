@@ -388,7 +388,7 @@ DEFINE_IIDX(__FIAsyncOperationProgressHandler_2_Windows__CWeb__CHttp__CHttpRespo
 
 .comdef __FIAsyncOperationProgressHandler_2_Windows__CWeb__CHttp__CHttpResponseMessage_Windows__CWeb__CHttp__CHttpProgress : public IUnknown
 
-    IInvoke		proc :ptr, :ptr Windows::Web::Http::HttpProgress
+    IInvoke		proc :ptr, :ptr
    .ends
 
 endif
@@ -414,7 +414,7 @@ DEFINE_IIDX(__FIAsyncOperationWithProgress_2_Windows__CWeb__CHttp__CHttpResponse
     get_Progress	proc :ptr
     put_Completed	proc :ptr
     get_Completed	proc :ptr
-    GetResults		proc :ptr ptr Windows::Web::Http::IHttpResponseMessage
+    GetResults		proc :ptr
    .ends
 
 endif
@@ -465,16 +465,16 @@ define InterfaceName_Windows_Web_Http_IHttpClient2 <"Windows.Web.Http.IHttpClien
 DEFINE_IIDX(IHttpClient2, "cdd83348-e8b7-4cec-b1b0-dc455fe72c92")
 
 .comdef IHttpClient2 : public IInspectable
-    TryDeleteAsync	proc :ptr, :ptr ptr
-    TryGetAsync		proc :ptr, :ptr ptr
-    TryGetAsync2	proc :ptr, :Windows::Web::Http::HttpCompletionOption, :ptr ptr
-    TryGetBufferAsync	proc :ptr, :ptr ptr
-    TryGetInputStreamAsync proc :ptr, :ptr ptr
-    TryGetStringAsync	proc :ptr, :ptr ptr
-    TryPostAsync	proc :ptr, :ptr, :ptr ptr
-    TryPutAsync		proc :ptr, :ptr, :ptr ptr
-    TrySendRequestAsync proc :ptr, :ptr ptr
-    TrySendRequestAsync2 proc :ptr, :Windows::Web::Http::HttpCompletionOption, :ptr ptr
+    TryDeleteAsync	proc :ptr, :ptr
+    TryGetAsync		proc :ptr, :ptr
+    TryGetAsync2	proc :ptr, :Windows::Web::Http::HttpCompletionOption, :ptr
+    TryGetBufferAsync	proc :ptr, :ptr
+    TryGetInputStreamAsync proc :ptr, :ptr
+    TryGetStringAsync	proc :ptr, :ptr
+    TryPostAsync	proc :ptr, :ptr, :ptr
+    TryPutAsync		proc :ptr, :ptr, :ptr
+    TrySendRequestAsync proc :ptr, :ptr
+    TrySendRequestAsync2 proc :ptr, :Windows::Web::Http::HttpCompletionOption, :ptr
    .ends
 endif
 endif
@@ -655,8 +655,8 @@ DEFINE_IIDX(IHttpRequestResult, "6acf4da8-b5eb-4a35-a902-4217fbe820c5")
 
 .comdef IHttpRequestResult : public IInspectable
     get_ExtendedError	proc :ptr
-    get_RequestMessage	proc :ptr ptr
-    get_ResponseMessage proc :ptr ptr
+    get_RequestMessage	proc :ptr
+    get_ResponseMessage proc :ptr
     get_Succeeded	proc :ptr
    .ends
 endif
@@ -747,10 +747,10 @@ DEFINE_IIDX(IHttpGetBufferResult, "53d08e7c-e209-404e-9a49-742d8236fd3a")
 
 .comdef IHttpGetBufferResult : public IInspectable
     get_ExtendedError	proc :ptr
-    get_RequestMessage	proc :ptr ptr
-    get_ResponseMessage proc :ptr ptr
+    get_RequestMessage	proc :ptr
+    get_ResponseMessage proc :ptr
     get_Succeeded	proc :ptr
-    get_Value		proc :ptr ptr
+    get_Value		proc :ptr
    .ends
 endif
 endif
@@ -763,10 +763,10 @@ DEFINE_IIDX(IHttpGetInputStreamResult, "d5d63463-13aa-4ee0-be95-a0c39fe91203")
 
 .comdef IHttpGetInputStreamResult : public IInspectable
     get_ExtendedError	proc :ptr
-    get_RequestMessage	proc :ptr ptr
-    get_ResponseMessage proc :ptr ptr
+    get_RequestMessage	proc :ptr
+    get_ResponseMessage proc :ptr
     get_Succeeded	proc :ptr
-    get_Value		proc :ptr ptr
+    get_Value		proc :ptr
    .ends
 endif
 endif
@@ -779,8 +779,8 @@ DEFINE_IIDX(IHttpGetStringResult, "9bac466d-8509-4775-b16d-8953f47a7f5f")
 
 .comdef IHttpGetStringResult : public IInspectable
     get_ExtendedError	proc :ptr
-    get_RequestMessage	proc :ptr ptr
-    get_ResponseMessage proc :ptr ptr
+    get_RequestMessage	proc :ptr
+    get_ResponseMessage proc :ptr
     get_Succeeded	proc :ptr
     get_Value		proc :ptr
    .ends

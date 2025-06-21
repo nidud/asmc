@@ -86,7 +86,7 @@ DEFINE_IIDX(IPdfPageRenderOptions, "3C98056F-B7CF-4C29-9A04-52D90267F425")
 .comdef IPdfPageRenderOptions : public IInspectable
 
     get_SourceRect	proc :ptr
-    put_SourceRect	proc :ptr Windows::Foundation::Rect
+    put_SourceRect	proc :ptr
     get_DestinationWidth proc :ptr
     put_DestinationWidth proc :UINT32
     get_DestinationHeight proc :ptr
@@ -96,7 +96,7 @@ DEFINE_IIDX(IPdfPageRenderOptions, "3C98056F-B7CF-4C29-9A04-52D90267F425")
     get_IsIgnoringHighContrast proc :ptr
     put_IsIgnoringHighContrast proc :boolean
     get_BitmapEncoderId proc :ptr
-    put_BitmapEncoderId proc :ptr GUID
+    put_BitmapEncoderId proc :ptr
    .ends
 
 endif

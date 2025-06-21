@@ -523,7 +523,7 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CStorage__CApplicationData_IInspect
 
 .comdef __FITypedEventHandler_2_Windows__CStorage__CApplicationData_IInspectable : public IUnknown
 
-    _Invoke		proc :ptr IApplicationData, :ptr IInspectable
+    _Invoke		proc :ptr, :ptr
     .ends
 
 endif
@@ -770,8 +770,8 @@ DEFINE_IIDX(IStorageItem, "4207A996-CA2F-42F7-BDE8-8B10457A7F30")
     DeleteAsyncOverloadDefaultOptions proc :ptr
     DeleteAsync		proc :ptr, :ptr
     GetBasicPropertiesAsync proc :ptr
-    get_Name		proc :ptr HSTRING
-    get_Path		proc :ptr HSTRING
+    get_Name		proc :ptr
+    get_Path		proc :ptr
     get_Attributes	proc :ptr
     get_DateCreated	proc :ptr
     IsOfType		proc :ptr, :ptr
@@ -786,16 +786,16 @@ DEFINE_IIDX(IStorageFolder, "72D1CB78-B3EF-4F75-A80B-6FD9DAE2944B")
 
 .comdef IStorageFolder : public IInspectable
 
-    CreateFileAsyncOverloadDefaultOptions proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFile
-    CreateFileAsync	proc :HSTRING, :Windows::Storage::CreationCollisionOption, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFile
-    CreateFolderAsyncOverloadDefaultOptions proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFolder
-    CreateFolderAsync	proc :HSTRING, :Windows::Storage::CreationCollisionOption, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFolder
-    GetFileAsync	proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFile
-    GetFolderAsync	proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFolder
-    GetItemAsync	proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CIStorageItem
-    GetFilesAsyncOverloadDefaultOptionsStartAndCount proc :ptr ptr __FIAsyncOperation_1___FIVectorView_1_Windows__CStorage__CStorageFile
-    GetFoldersAsyncOverloadDefaultOptionsStartAndCount proc :ptr ptr __FIAsyncOperation_1___FIVectorView_1_Windows__CStorage__CStorageFolder
-    GetItemsAsyncOverloadDefaultStartAndCount proc :ptr ptr __FIAsyncOperation_1___FIVectorView_1_Windows__CStorage__CIStorageItem
+    CreateFileAsyncOverloadDefaultOptions proc :HSTRING, :ptr
+    CreateFileAsync	proc :HSTRING, :Windows::Storage::CreationCollisionOption, :ptr
+    CreateFolderAsyncOverloadDefaultOptions proc :HSTRING, :ptr
+    CreateFolderAsync	proc :HSTRING, :Windows::Storage::CreationCollisionOption, :ptr
+    GetFileAsync	proc :HSTRING, :ptr
+    GetFolderAsync	proc :HSTRING, :ptr
+    GetItemAsync	proc :HSTRING, :ptr
+    GetFilesAsyncOverloadDefaultOptionsStartAndCount proc :ptr
+    GetFoldersAsyncOverloadDefaultOptionsStartAndCount proc :ptr
+    GetItemsAsyncOverloadDefaultStartAndCount proc :ptr
    .ends
 
 endif

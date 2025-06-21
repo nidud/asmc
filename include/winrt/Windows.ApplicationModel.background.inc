@@ -68,7 +68,7 @@ DEFINE_IIDX(__FIMapView_2_GUID_Windows__CApplicationModel__CBackground__CIBackgr
 
 .comdef __FIMapView_2_GUID_Windows__CApplicationModel__CBackground__CIBackgroundTaskRegistration : public IInspectable
 
-    Lookup		proc :ptr GUID, :ptr
+    Lookup		proc :ptr, :ptr
     get_Size		proc :ptr
     HasKey		proc :GUID, :ptr
     Split		proc :ptr, :ptr

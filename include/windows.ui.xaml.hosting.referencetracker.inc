@@ -47,7 +47,7 @@ DEFINE_IIDX(IReferenceTracker, "11d3b13a-180e-4789-a8be-7712882893e6")
     ConnectFromTrackerSource proc
     DisconnectFromTrackerSource proc
     FindTrackerTargets	proc :ptr
-    GetReferenceTrackerManager proc :ptr ptr
+    GetReferenceTrackerManager proc :ptr
     AddRefFromTrackerSource proc
     ReleaseFromTrackerSource proc
     PegFromTrackerSource proc
@@ -94,7 +94,7 @@ DEFINE_IIDX(IReferenceTrackerHost, "29a71c6a-3c42-4416-a39d-e2825a07a773")
     DisconnectUnusedReferenceSources proc :XAML_REFERENCETRACKER_DISCONNECT
     ReleaseDisconnectedReferenceSources proc
     NotifyEndOfReferenceTrackingOnThread proc
-    GetTrackerTarget	proc :ptr, :ptr ptr
+    GetTrackerTarget	proc :ptr, :ptr
     AddMemoryPressure	proc :UINT64
     RemoveMemoryPressure proc :UINT64
    .ends
@@ -128,7 +128,7 @@ DEFINE_IIDX(ITrackerOwner, "eb24c20b-9816-4ac7-8cff-36f67a118f4e")
     CreateTrackerHandle proc :ptr
     DeleteTrackerHandle proc :TrackerHandle
     SetTrackerValue	proc :TrackerHandle, :ptr
-    TryGetSafeTrackerValue proc :TrackerHandle, :ptr ptr
+    TryGetSafeTrackerValue proc :TrackerHandle, :ptr
    .ends
 
 endif

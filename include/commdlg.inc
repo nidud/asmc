@@ -777,15 +777,15 @@ ifdef __IUnknown_INTERFACE_DEFINED__
 
     InitDone		proc
     SelectionChange	proc
-    HandleMessage	proc hDlg:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM, pResult:ptr LRESULT
+    HandleMessage	proc hDlg:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM, pResult:ptr
    .ends
 
 
 .comdef IPrintDialogServices : public IUnknown
 
-    GetCurrentDevMode	proc pDevMode:LPDEVMODE, pcbSize:ptr UINT
-    GetCurrentPrinterName proc pPrinterName:LPWSTR, pcchSize:ptr UINT
-    GetCurrentPortName	proc pPortName:LPWSTR, pcchSize:ptr UINT
+    GetCurrentDevMode	proc pDevMode:LPDEVMODE, pcbSize:ptr
+    GetCurrentPrinterName proc pPrinterName:LPWSTR, pcchSize:ptr
+    GetCurrentPortName	proc pPortName:LPWSTR, pcchSize:ptr
    .ends
 
 

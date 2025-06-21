@@ -77,12 +77,12 @@ DEFINE_IIDX(IDXGIOutputDuplication, "191cfac3-a341-470d-b26e-a864f428319c")
 
 .comdef IDXGIOutputDuplication : public IDXGIObject
 
-    GetDesc		proc :ptr DXGI_OUTDUPL_DESC
-    AcquireNextFrame	proc :UINT, :ptr DXGI_OUTDUPL_FRAME_INFO, :ptr ptr IDXGIResource
-    GetFrameDirtyRects	proc :UINT, :ptr RECT, :ptr UINT
-    GetFrameMoveRects	proc :UINT, :ptr DXGI_OUTDUPL_MOVE_RECT, :ptr UINT
-    GetFramePointerShape proc :UINT, :ptr, :ptr UINT, :ptr DXGI_OUTDUPL_POINTER_SHAPE_INFO
-    MapDesktopSurface	proc :ptr DXGI_MAPPED_RECT
+    GetDesc		proc :ptr
+    AcquireNextFrame	proc :UINT, :ptr, :ptr
+    GetFrameDirtyRects	proc :UINT, :ptr, :ptr
+    GetFrameMoveRects	proc :UINT, :ptr, :ptr
+    GetFramePointerShape proc :UINT, :ptr, :ptr, :ptr
+    MapDesktopSurface	proc :ptr
     UnMapDesktopSurface proc
     ReleaseFrame	proc
    .ends
@@ -111,7 +111,7 @@ DEFINE_IIDX(IDXGISurface2, "aba496dd-b617-4cb8-a866-bc44d7eb1fa2")
 
 .comdef IDXGISurface2 : public IDXGISurface1
 
-    GetResource		proc :REFIID, :ptr, :ptr UINT
+    GetResource		proc :REFIID, :ptr, :ptr
    .ends
 
 endif
@@ -123,8 +123,8 @@ DEFINE_IIDX(IDXGIResource1, "30961379-4609-4a41-998e-54fe567ee0c1")
 
 .comdef IDXGIResource1 : public IDXGIResource
 
-    CreateSubresourceSurface proc :UINT, :ptr ptr IDXGISurface2
-    CreateSharedHandle	proc :ptr SECURITY_ATTRIBUTES, :DWORD, :LPCWSTR, :ptr HANDLE
+    CreateSubresourceSurface proc :UINT, :ptr
+    CreateSharedHandle	proc :ptr, :DWORD, :LPCWSTR, :ptr
    .ends
 
 endif
@@ -286,10 +286,10 @@ DEFINE_IIDX(IDXGIOutput1, "00cddea8-939b-4b83-a340-a685226666cc")
 
 .comdef IDXGIOutput1 : public IDXGIOutput
 
-    GetDisplayModeList1 proc :DXGI_FORMAT, :UINT, :ptr UINT, :ptr DXGI_MODE_DESC1
-    FindClosestMatchingMode1 proc :ptr DXGI_MODE_DESC1, :ptr DXGI_MODE_DESC1, :ptr IUnknown
-    GetDisplaySurfaceData1 proc :ptr IDXGIResource
-    DuplicateOutput	proc :ptr IUnknown, :ptr ptr IDXGIOutputDuplication
+    GetDisplayModeList1 proc :DXGI_FORMAT, :UINT, :ptr, :ptr
+    FindClosestMatchingMode1 proc :ptr, :ptr, :ptr
+    GetDisplaySurfaceData1 proc :ptr
+    DuplicateOutput	proc :ptr, :ptr
    .ends
 
 endif

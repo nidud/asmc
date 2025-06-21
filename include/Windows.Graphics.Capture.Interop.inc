@@ -8,8 +8,8 @@ DEFINE_IIDX(IGraphicsCaptureItemInterop, "3628E81B-3CAC-4C60-B7F4-23CE0E0C3356")
 
 .comdef IGraphicsCaptureItemInterop : public IUnknown
 
-    CreateForWindow     proc :HWND, :REFIID, :ptr ptr
-    CreateForMonitor    proc :HMONITOR, :REFIID, :ptr ptr
+    CreateForWindow     proc :HWND, :REFIID, :ptr
+    CreateForMonitor    proc :HMONITOR, :REFIID, :ptr
    .ends
 
 endif

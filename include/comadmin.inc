@@ -35,11 +35,11 @@ DEFINE_IIDX(ICOMAdminCatalog, "DD662187-DFC2-11d1-A2CF-00805FC79235")
 
 .comdef ICOMAdminCatalog : public IDispatch
 
-    GetCollection	proc :BSTR, :ptr ptr IDispatch
-    Connect		proc :BSTR, :ptr ptr IDispatch
-    get_MajorVersion	proc :ptr LONG
-    get_MinorVersion	proc :ptr LONG
-    GetCollectionByQuery proc :BSTR, :ptr ptr SAFEARRAY, :ptr ptr IDispatch
+    GetCollection	proc :BSTR, :ptr
+    Connect		proc :BSTR, :ptr
+    get_MajorVersion	proc :ptr
+    get_MinorVersion	proc :ptr
+    GetCollectionByQuery proc :BSTR, :ptr, :ptr
     ImportComponent	proc :BSTR, :BSTR
     InstallComponent	proc :BSTR, :BSTR, :BSTR, :BSTR
     ShutdownApplication proc :BSTR
@@ -50,17 +50,17 @@ DEFINE_IIDX(ICOMAdminCatalog, "DD662187-DFC2-11d1-A2CF-00805FC79235")
     StartRouter		proc
     Reserved1		proc
     Reserved2		proc
-    InstallMultipleComponents proc :BSTR, :ptr ptr SAFEARRAY, :ptr ptr SAFEARRAY
-    GetMultipleComponentsInfo proc :BSTR, :ptr SAFEARRAY, :ptr ptr SAFEARRAY, :ptr ptr SAFEARRAY, :ptr ptr SAFEARRAY, :ptr ptr SAFEARRAY
+    InstallMultipleComponents proc :BSTR, :ptr, :ptr
+    GetMultipleComponentsInfo proc :BSTR, :ptr, :ptr, :ptr, :ptr, :ptr
     RefreshComponents	proc
     BackupREGDB		proc :BSTR
     RestoreREGDB	proc :BSTR
-    QueryApplicationFile proc :BSTR, :ptr BSTR, :ptr BSTR, :ptr VARIANT_BOOL, :ptr VARIANT_BOOL, :ptr SAFEARRAY
+    QueryApplicationFile proc :BSTR, :ptr, :ptr, :ptr, :ptr, :ptr
     StartApplication	proc :BSTR
-    ServiceCheck	proc :LONG, :ptr LONG
-    InstallMultipleEventClasses proc :BSTR, :ptr SAFEARRAY, :ptr SAFEARRAY
+    ServiceCheck	proc :LONG, :ptr
+    InstallMultipleEventClasses proc :BSTR, :ptr, :ptr
     InstallEventClass	proc :BSTR, :BSTR, :BSTR, :BSTR
-    GetEventClassesForIID proc :BSTR, :ptr SAFEARRAY, :ptr SAFEARRAY, :ptr SAFEARRAY
+    GetEventClassesForIID proc :BSTR, :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -81,37 +81,37 @@ DEFINE_IIDX(ICOMAdminCatalog2, "790C6E0B-9194-4cc9-9426-A48A63185696")
 
 .comdef ICOMAdminCatalog2 : public ICOMAdminCatalog
 
-    GetCollectionByQuery2 proc :BSTR, :ptr VARIANT, :ptr ptr IDispatch
-    GetApplicationInstanceIDFromProcessID proc :LONG, :ptr BSTR
-    ShutdownApplicationInstances proc :ptr VARIANT
-    PauseApplicationInstances proc :ptr VARIANT
-    ResumeApplicationInstances proc :ptr VARIANT
-    RecycleApplicationInstances proc :ptr VARIANT, :LONG
-    AreApplicationInstancesPaused proc :ptr VARIANT, :ptr VARIANT_BOOL
-    DumpApplicationInstance proc :BSTR, :BSTR, :LONG, :ptr BSTR
-    get_IsApplicationInstanceDumpSupported proc :ptr VARIANT_BOOL
+    GetCollectionByQuery2 proc :BSTR, :ptr, :ptr
+    GetApplicationInstanceIDFromProcessID proc :LONG, :ptr
+    ShutdownApplicationInstances proc :ptr
+    PauseApplicationInstances proc :ptr
+    ResumeApplicationInstances proc :ptr
+    RecycleApplicationInstances proc :ptr, :LONG
+    AreApplicationInstancesPaused proc :ptr, :ptr
+    DumpApplicationInstance proc :BSTR, :BSTR, :LONG, :ptr
+    get_IsApplicationInstanceDumpSupported proc :ptr
     CreateServiceForApplication proc :BSTR, :BSTR, :BSTR, :BSTR, :BSTR, :BSTR, :BSTR, :VARIANT_BOOL
     DeleteServiceForApplication proc :BSTR
-    GetPartitionID	proc :BSTR, :ptr BSTR
-    GetPartitionName	proc :BSTR, :ptr BSTR
+    GetPartitionID	proc :BSTR, :ptr
+    GetPartitionName	proc :BSTR, :ptr
     put_CurrentPartition proc :BSTR
-    get_CurrentPartitionID proc :ptr BSTR
-    get_CurrentPartitionName proc :ptr BSTR
-    get_GlobalPartitionID proc :ptr BSTR
+    get_CurrentPartitionID proc :ptr
+    get_CurrentPartitionName proc :ptr
+    get_GlobalPartitionID proc :ptr
     FlushPartitionCache proc
-    CopyApplications	proc :BSTR, :ptr VARIANT, :BSTR
-    CopyComponents	proc :BSTR, :ptr VARIANT, :BSTR
-    MoveComponents	proc :BSTR, :ptr VARIANT, :BSTR
+    CopyApplications	proc :BSTR, :ptr, :BSTR
+    CopyComponents	proc :BSTR, :ptr, :BSTR
+    MoveComponents	proc :BSTR, :ptr, :BSTR
     AliasComponent	proc :BSTR, :BSTR, :BSTR, :BSTR, :BSTR
-    IsSafeToDelete	proc :BSTR, :ptr COMAdminInUse
-    ImportUnconfiguredComponents proc :BSTR, :ptr VARIANT, :ptr VARIANT
-    PromoteUnconfiguredComponents proc :BSTR, :ptr VARIANT, :ptr VARIANT
-    ImportComponents	proc :BSTR, :ptr VARIANT, :ptr VARIANT
-    get_Is64BitCatalogServer proc :ptr VARIANT_BOOL
+    IsSafeToDelete	proc :BSTR, :ptr
+    ImportUnconfiguredComponents proc :BSTR, :ptr, :ptr
+    PromoteUnconfiguredComponents proc :BSTR, :ptr, :ptr
+    ImportComponents	proc :BSTR, :ptr, :ptr
+    get_Is64BitCatalogServer proc :ptr
     ExportPartition	proc :BSTR, :BSTR, :LONG
     InstallPartition	proc :BSTR, :BSTR, :LONG, :BSTR, :BSTR, :BSTR
-    QueryApplicationFile2 proc :BSTR, :ptr ptr IDispatch
-    GetComponentVersionCount proc :BSTR, :ptr LONG
+    QueryApplicationFile2 proc :BSTR, :ptr
+    GetComponentVersionCount proc :BSTR, :ptr
    .ends
 
 endif
@@ -123,13 +123,13 @@ DEFINE_IIDX(ICatalogObject, "6eb22871-8a19-11d0-81b6-00a0c9231c29")
 
 .comdef ICatalogObject : public IDispatch
 
-    get_Value		proc :BSTR, :ptr VARIANT
+    get_Value		proc :BSTR, :ptr
     put_Value		proc :BSTR, :VARIANT
-    get_Key		proc :ptr VARIANT
-    get_Name		proc :ptr VARIANT
-    IsPropertyReadOnly	proc :BSTR, :ptr VARIANT_BOOL
-    get_Valid		proc :ptr VARIANT_BOOL
-    IsPropertyWriteOnly proc :BSTR, :ptr VARIANT_BOOL
+    get_Key		proc :ptr
+    get_Name		proc :ptr
+    IsPropertyReadOnly	proc :BSTR, :ptr
+    get_Valid		proc :ptr
+    IsPropertyWriteOnly proc :BSTR, :ptr
    .ends
 
 endif
@@ -141,21 +141,21 @@ DEFINE_IIDX(ICatalogCollection, "6eb22872-8a19-11d0-81b6-00a0c9231c29")
 
 .comdef ICatalogCollection : public IDispatch
 
-    get__NewEnum	proc :ptr ptr IUnknown
-    get_Item		proc :LONG, :ptr ptr IDispatch
-    get_Count		proc :ptr LONG
+    get__NewEnum	proc :ptr
+    get_Item		proc :LONG, :ptr
+    get_Count		proc :ptr
     Remove		proc :LONG
-    _Add		proc :ptr ptr IDispatch
+    _Add		proc :ptr
     Populate		proc
-    SaveChanges		proc :ptr LONG
-    GetCollection	proc :BSTR, :VARIANT, :ptr ptr IDispatch
-    get_Name		proc :ptr VARIANT
-    get_AddEnabled	proc :ptr VARIANT_BOOL
-    get_RemoveEnabled	proc :ptr VARIANT_BOOL
-    GetUtilInterface	proc :ptr ptr IDispatch
-    get_DataStoreMajorVersion proc :ptr LONG
-    get_DataStoreMinorVersion proc :ptr LONG
-    PopulateByKey	proc :ptr SAFEARRAY
+    SaveChanges		proc :ptr
+    GetCollection	proc :BSTR, :VARIANT, :ptr
+    get_Name		proc :ptr
+    get_AddEnabled	proc :ptr
+    get_RemoveEnabled	proc :ptr
+    GetUtilInterface	proc :ptr
+    get_DataStoreMajorVersion proc :ptr
+    get_DataStoreMinorVersion proc :ptr
+    PopulateByKey	proc :ptr
     PopulateByQuery	proc :BSTR, :LONG
    .ends
 

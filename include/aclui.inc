@@ -86,10 +86,10 @@ DEFINE_IIDX(ISecurityInformation, "965FC360-16FF-11d0-91CB-00AA00BBB723")
 .comdef ISecurityInformation : public IUnknown
 
     GetObjectInformation proc :PSI_OBJECT_INFO
-    GetSecurity		proc :SECURITY_INFORMATION, :ptr PSECURITY_DESCRIPTOR, :BOOL
+    GetSecurity		proc :SECURITY_INFORMATION, :ptr, :BOOL
     SetSecurity		proc :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR
-    GetAccessRights	proc :ptr GUID, :DWORD, :ptr PSI_ACCESS, :ptr, :ptr
-    MapGeneric		proc :ptr GUID, :ptr UCHAR, :ptr ACCESS_MASK
+    GetAccessRights	proc :ptr, :DWORD, :ptr, :ptr, :ptr
+    MapGeneric		proc :ptr, :ptr, :ptr
     GetInheritTypes	proc :PSI_INHERIT_TYPE, :ULONG
     PropertySheetPageCallback proc :HWND, :UINT, :SI_PAGE_TYPE
 
@@ -102,7 +102,7 @@ DEFINE_IIDX(ISecurityInformation2, "c3ccfdb4-6f88-11d2-a3ce-00c04fb1782a")
 .comdef ISecurityInformation2 : public IUnknown
 
     IsDaclCanonical	proc :PACL
-    LookupSids		proc :ULONG, :ptr PSID, :ptr LPDATAOBJECT
+    LookupSids		proc :ULONG, :ptr, :ptr
 
     .ends
 
@@ -127,7 +127,7 @@ DEFINE_IIDX(IEffectivePermission, "3853DC76-9F35-407c-88A1-D19344365FBC")
 
 .comdef IEffectivePermission : public IUnknown
 
-    GetEffectivePermission proc :ptr GUID, :PSID, :LPCWSTR, :PSECURITY_DESCRIPTOR, :ptr POBJECT_TYPE_LIST, :ptr ULONG, :ptr PACCESS_MASK, :ULONG
+    GetEffectivePermission proc :ptr, :PSID, :LPCWSTR, :PSECURITY_DESCRIPTOR, :ptr, :ptr, :ptr, :ULONG
     .ends
     LPEFFECTIVEPERMISSION typedef ptr IEffectivePermission
 
@@ -135,7 +135,7 @@ DEFINE_IIDX(ISecurityObjectTypeInfo, "FC3066EB-79EF-444b-9111-D18A75EBF2FA")
 
 .comdef ISecurityObjectTypeInfo : public IUnknown
 
-    GetInheritSource proc :SECURITY_INFORMATION, :PACL, :ptr PINHERITED_FROM
+    GetInheritSource proc :SECURITY_INFORMATION, :PACL, :ptr
     .ends
     LPSecurityObjectTypeInfo typedef ptr ISecurityObjectTypeInfo
 
@@ -145,7 +145,7 @@ DEFINE_IIDX(ISecurityInformation3, "E2CDC9CC-31BD-4f8f-8C8B-B641AF516A1A")
 
 .comdef ISecurityInformation3 : public IUnknown
 
-    GetFullResourceName proc :ptr LPWSTR
+    GetFullResourceName proc :ptr
     OpenElevatedEditor proc :HWND, :SI_PAGE_TYPE
 
     .ends

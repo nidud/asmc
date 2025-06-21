@@ -148,7 +148,7 @@ DEFINE_IIDX(IDirectManipulationManager, "FBF5D3B4-70C7-4163-9322-5A6F660D6FBC")
     Activate		proc :HWND
     Deactivate		proc :HWND
     RegisterHitTestTarget proc :HWND, :HWND, :DIRECTMANIPULATION_HITTEST_TYPE
-    ProcessInput	proc :ptr MSG, :ptr BOOL
+    ProcessInput	proc :ptr, :ptr
     GetUpdateManager	proc :REFIID, :ptr
     CreateViewport	proc :ptr, :HWND, :REFIID, :ptr
     CreateContent	proc :ptr, :REFCLSID, :REFIID, :ptr
@@ -184,10 +184,10 @@ DEFINE_IIDX(IDirectManipulationViewport, "952121DA-D69F-45F9-B0F9-F23944321A6D")
     GetTag		proc :REFIID, :ptr, :ptr
     SetTag		proc :ptr, :UINT32
     GetViewportRect	proc :ptr
-    SetViewportRect	proc :ptr RECT
+    SetViewportRect	proc :ptr
     ZoomToRect		proc :real4, :real4, :real4, :real4, :BOOL
-    SetViewportTransform proc :ptr real4, :DWORD
-    SyncDisplayTransform proc :ptr real4, :DWORD
+    SetViewportTransform proc :ptr, :DWORD
+    SyncDisplayTransform proc :ptr, :DWORD
     GetPrimaryContent	proc :REFIID, :ptr
     AddContent		proc :ptr
     RemoveContent	proc :ptr

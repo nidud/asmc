@@ -36,7 +36,7 @@ DEFINE_IIDX(ISurfaceImageSourceNative, "f2e9edc1-d307-4525-9886-0fafaa44163c")
 
 .comdef ISurfaceImageSourceNative : public IUnknown
     SetDevice           proc :ptr
-    BeginDraw           proc :ptr RECT, :ptr ptr, :ptr
+    BeginDraw           proc :ptr, :ptr, :ptr
     EndDraw             proc
    .ends
 
@@ -103,7 +103,7 @@ DEFINE_IIDX(ISurfaceImageSourceNativeWithD2D, "54298223-41e1-4a41-9c08-02e825686
 
 .comdef ISurfaceImageSourceNativeWithD2D : public IUnknown
     SetDevice           proc :ptr
-    BeginDraw           proc :REFRECT, :REFIID, :ptr ptr, :ptr
+    BeginDraw           proc :REFRECT, :REFIID, :ptr, :ptr
     EndDraw             proc
     SuspendDraw         proc
     ResumeDraw          proc

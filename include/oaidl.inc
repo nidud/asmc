@@ -931,7 +931,7 @@ DEFINE_IIDX(IRecordInfo, "0000002F-0000-0000-C000-000000000046")
     GetTypeInfo		proc :ptr
     GetField		proc :PVOID, :LPCOLESTR, :ptr
     GetFieldNoCopy	proc :PVOID, :LPCOLESTR, :ptr, :ptr
-    PutField		proc :DWORD, :PVOID, :LPCOLESTR, :ptr VARIANT
+    PutField		proc :DWORD, :PVOID, :LPCOLESTR, :ptr
     PutFieldNoCopy	proc :DWORD, :PVOID, :LPCOLESTR, :ptr
     GetFieldNames	proc :ptr, :ptr
     IsMatchingType	proc :ptr
@@ -961,8 +961,8 @@ DEFINE_IIDX(IPropertyBag, "55272A00-42CB-11CE-8135-00AA004BB851")
 
 .comdef IPropertyBag : public IUnknown
 
-    Read		proc :LPCOLESTR, :ptr VARIANT, :ptr IErrorLog
-    Write		proc :LPCOLESTR, :ptr VARIANT
+    Read		proc :LPCOLESTR, :ptr, :ptr
+    Write		proc :LPCOLESTR, :ptr
    .ends
     LPPROPERTYBAG	typedef ptr IPropertyBag
 endif

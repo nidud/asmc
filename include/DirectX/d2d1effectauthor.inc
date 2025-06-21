@@ -187,7 +187,7 @@ DEFINE_IIDX(ID2D1VertexBuffer, "9b8b1336-00a5-4668-92b7-ced5d8bf9b7b")
 
 .comdef ID2D1VertexBuffer : public IUnknown
 
-    Map			proc :ptr LPBYTE, :UINT32
+    Map			proc :ptr, :UINT32
     Unmap		proc
 
     .ends
@@ -197,7 +197,7 @@ DEFINE_IIDX(ID2D1ResourceTexture, "688d15c3-02b0-438d-b13a-d1b44c32c39a")
 
 .comdef ID2D1ResourceTexture : public IUnknown
 
-    Update		proc :ptr UINT32, :ptr UINT32, :ptr UINT32, :UINT32, :LPBYTE, :UINT32
+    Update		proc :ptr, :ptr, :ptr, :UINT32, :LPBYTE, :UINT32
     .ends
 
 
@@ -218,10 +218,10 @@ DEFINE_IIDX(ID2D1DrawInfo, "693ce632-7f2f-45de-93fe-18d88b37aa21")
 .comdef ID2D1DrawInfo : public ID2D1RenderInfo
 
     SetPixelShaderConstantBuffer proc :LPBYTE, :UINT32
-    SetResourceTexture	proc :UINT32, :ptr D2D1ResourceTexture
+    SetResourceTexture	proc :UINT32, :ptr
     SetVertexShaderConstantBuffer proc :LPBYTE, :UINT32
     SetPixelShader	proc :REFGUID, :D2D1_PIXEL_OPTIONS
-    SetVertexProcessing proc :ptr ID2D1VertexBuffer, :D2D1_VERTEX_OPTIONS, :ptr D2D1_BLEND_DESCRIPTION, :ptr D2D1_VERTEX_RANGE, :ptr GUID
+    SetVertexProcessing proc :ptr, :D2D1_VERTEX_OPTIONS, :ptr, :ptr, :ptr
 
     .ends
 
@@ -232,7 +232,7 @@ DEFINE_IIDX(ID2D1ComputeInfo, "5598b14b-9fd7-48b7-9bdb-8f0964eb38bc")
 
     SetComputeShaderConstantBuffer proc :LPBYTE, :UINT32
     SetComputeShader	proc :REFGUID
-    SetResourceTexture	proc :UINT32, :ptr ID2D1ResourceTexture
+    SetResourceTexture	proc :UINT32, :ptr
 
     .ends
 
@@ -251,12 +251,12 @@ DEFINE_IIDX(ID2D1TransformGraph, "13d29038-c3e6-4034-9081-13b53a417992")
 .comdef ID2D1TransformGraph : public IUnknown
 
     GetInputCount	proc
-    SetSingleTransformNode proc :ptr ID2D1TransformNode
-    AddNode		proc :ptr ID2D1TransformNode
-    RemoveNode		proc :ptr ID2D1TransformNode
-    SetOutputNode	proc :ptr ID2D1TransformNode
-    ConnectNode		proc :ptr ID2D1TransformNode, :ptr ID2D1TransformNode, :UINT32
-    ConnectToEffectInput proc :UINT32, :ptr ID2D1TransformNode, :UINT32
+    SetSingleTransformNode proc :ptr
+    AddNode		proc :ptr
+    RemoveNode		proc :ptr
+    SetOutputNode	proc :ptr
+    ConnectNode		proc :ptr, :ptr, :UINT32
+    ConnectToEffectInput proc :UINT32, :ptr, :UINT32
     Clear		proc
     SetPassthroughGraph proc :UINT32
 
@@ -267,9 +267,9 @@ DEFINE_IIDX(ID2D1Transform, "ef1a287d-342a-4f76-8fdb-da0d6ea9f92b")
 
 .comdef ID2D1Transform : public ID2D1TransformNode
 
-    MapOutputRectToInputRects proc :ptr D2D1_RECT_L, :ptr D2D1_RECT_L, :UINT32
-    MapInputRectsToOutputRect proc :ptr D2D1_RECT_L, :ptr D2D1_RECT_L, :UINT32, :ptr D2D1_RECT_L, :ptr D2D1_RECT_L
-    MapInvalidRect	proc :UINT32, :D2D1_RECT_L, :ptr D2D1_RECT_L
+    MapOutputRectToInputRects proc :ptr, :ptr, :UINT32
+    MapInputRectsToOutputRect proc :ptr, :ptr, :UINT32, :ptr, :ptr
+    MapInvalidRect	proc :UINT32, :D2D1_RECT_L, :ptr
 
     .ends
 
@@ -278,7 +278,7 @@ DEFINE_IIDX(ID2D1DrawTransform, "36bfdcb6-9739-435d-a30d-a653beff6a6f")
 
 .comdef ID2D1DrawTransform : public ID2D1Transform
 
-    SetDrawInfo		proc :ptr ID2D1DrawInfo
+    SetDrawInfo		proc :ptr
 
     .ends
 
@@ -287,8 +287,8 @@ DEFINE_IIDX(ID2D1ComputeTransform, "0d85573c-01e3-4f7d-bfd9-0d60608bf3c3")
 
 .comdef ID2D1ComputeTransform : public ID2D1Transform
 
-    SetComputeInfo	proc :ptr ID2D1ComputeInfo
-    CalculateThreadgroups proc :ptr D2D1_RECT_L, :ptr UINT32, :ptr UINT32, :ptr UINT32
+    SetComputeInfo	proc :ptr
+    CalculateThreadgroups proc :ptr, :ptr, :ptr, :ptr
 
     .ends
 
@@ -306,8 +306,8 @@ DEFINE_IIDX(ID2D1SourceTransform, "db1800dd-0c34-4cf9-be90-31cc0a5653e1")
 
 .comdef ID2D1SourceTransform : public ID2D1Transform
 
-    SetRenderInfo	proc :ptr ID2D1RenderInfo
-    Draw		proc :ptr ID2D1Bitmap1, :ptr D2D1_RECT_L, :D2D1_POINT_2U
+    SetRenderInfo	proc :ptr
+    Draw		proc :ptr, :ptr, :D2D1_POINT_2U
 
     .ends
 
@@ -326,8 +326,8 @@ DEFINE_IIDX(ID2D1BlendTransform, "63ac0b32-ba44-450f-8806-7f4ca1ff2f1b")
 
 .comdef ID2D1BlendTransform : public ID2D1ConcreteTransform
 
-    SetDescription	proc :ptr D2D1_BLEND_DESCRIPTION
-    GetDescription	proc :ptr D2D1_BLEND_DESCRIPTION
+    SetDescription	proc :ptr
+    GetDescription	proc :ptr
 
     .ends
 
@@ -358,8 +358,8 @@ DEFINE_IIDX(ID2D1BoundsAdjustmentTransform, "90f732e2-5092-4606-a819-8651970bacc
 
 .comdef ID2D1BoundsAdjustmentTransform : public ID2D1TransformNode
 
-    SetOutputBounds	proc :ptr D2D1_RECT_L
-    GetOutputBounds	proc :ptr D2D1_RECT_L
+    SetOutputBounds	proc :ptr
+    GetOutputBounds	proc :ptr
 
     .ends
 
@@ -368,9 +368,9 @@ DEFINE_IIDX(ID2D1EffectImpl, "a248fd3f-3e6c-4e63-9f03-7f68ecc91db9")
 
 .comdef ID2D1EffectImpl : public IUnknown
 
-    Initialize		proc :ptr ID2D1EffectContext, :ptr ID2D1TransformGraph
+    Initialize		proc :ptr, :ptr
     PrepareForRender	proc :D2D1_CHANGE_TYPE
-    SetGraph		proc :ptr ID2D1TransformGraph
+    SetGraph		proc :ptr
 
     .ends
 
@@ -379,25 +379,25 @@ DEFINE_IIDX(ID2D1EffectContext, "3d9f916b-27dc-4ad7-b4f1-64945340f563")
 
 .comdef ID2D1EffectContext : public IUnknown
 
-    GetDpi		proc :ptr FLOAT, :ptr FLOAT
-    CreateEffect	proc :REFCLSID, :ptr ptr ID2D1Effect
-    GetMaximumSupportedFeatureLevel proc :ptr D3D_FEATURE_LEVEL, :UINT32, :ptr D3D_FEATURE_LEVEL
-    CreateTransformNodeFromEffect proc :ptr ID2D1Effect, :ptr ptr ID2D1TransformNode
-    CreateBlendTransform proc :UINT32, :ptr D2D1_BLEND_DESCRIPTION, :ptr ptr ID2D1BlendTransform
-    CreateBorderTransform proc :D2D1_EXTEND_MODE, :D2D1_EXTEND_MODE, :ptr ptr ID2D1BorderTransform
-    CreateOffsetTransform proc :D2D1_POINT_2L, :ptr ptr ID2D1OffsetTransform
-    CreateBoundsAdjustmentTransform proc :ptr D2D1_RECT_L, :ptr ptr ID2D1BoundsAdjustmentTransform
+    GetDpi		proc :ptr, :ptr
+    CreateEffect	proc :REFCLSID, :ptr
+    GetMaximumSupportedFeatureLevel proc :ptr, :UINT32, :ptr
+    CreateTransformNodeFromEffect proc :ptr, :ptr
+    CreateBlendTransform proc :UINT32, :ptr, :ptr
+    CreateBorderTransform proc :D2D1_EXTEND_MODE, :D2D1_EXTEND_MODE, :ptr
+    CreateOffsetTransform proc :D2D1_POINT_2L, :ptr
+    CreateBoundsAdjustmentTransform proc :ptr, :ptr
     LoadPixelShader	proc :REFGUID, :LPBYTE, :UINT32
     LoadVertexShader	proc :REFGUID, :LPBYTE, :UINT32
     LoadComputeShader	proc :REFGUID, :LPBYTE, :UINT32
     IsShaderLoaded	proc :REFGUID
-    CreateResourceTexture proc :ptr GUID, :ptr D2D1_RESOURCE_TEXTURE_PROPERTIES, :LPBYTE, :ptr UINT32, :UINT32, :ptr ptr ID2D1ResourceTexture
-    FindResourceTexture proc :ptr GUID, :ptr ptr ID2D1ResourceTexture
-    CreateVertexBuffer	proc :ptr D2D1_VERTEX_BUFFER_PROPERTIES, :ptr GUID, :ptr D2D1_CUSTOM_VERTEX_BUFFER_PROPERTIES, :ptr ptr ID2D1VertexBuffer
-    FindVertexBuffer	proc :ptr GUID, :ptr ptr ID2D1VertexBuffer
-    CreateColorContext	proc :D2D1_COLOR_SPACE, :LPBYTE, :UINT32, :ptr ptr ID2D1ColorContext
-    CreateColorContextFromFilename proc :PCWSTR, :ptr ptr ID2D1ColorContext
-    CreateColorContextFromWicColorContext proc :ptr IWICColorContext, :ptr ptr ID2D1ColorContext
+    CreateResourceTexture proc :ptr, :ptr, :LPBYTE, :ptr, :UINT32, :ptr
+    FindResourceTexture proc :ptr, :ptr
+    CreateVertexBuffer	proc :ptr, :ptr, :ptr, :ptr
+    FindVertexBuffer	proc :ptr, :ptr
+    CreateColorContext	proc :D2D1_COLOR_SPACE, :LPBYTE, :UINT32, :ptr
+    CreateColorContextFromFilename proc :PCWSTR, :ptr
+    CreateColorContextFromWicColorContext proc :ptr, :ptr
     CheckFeatureSupport proc :D2D1_FEATURE, :ptr, :UINT32
     IsBufferPrecisionSupported proc :D2D1_BUFFER_PRECISION
 

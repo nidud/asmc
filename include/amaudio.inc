@@ -6,14 +6,14 @@ include dsound.inc
 
 .comdef IAMDirectSound : public IUnknown
 
-	GetDirectSoundInterface proc :ptr LPDIRECTSOUND
-	GetPrimaryBufferInterface proc :ptr LPDIRECTSOUNDBUFFER
-	GetSecondaryBufferInterface proc :ptr LPDIRECTSOUNDBUFFER
+	GetDirectSoundInterface proc :ptr
+	GetPrimaryBufferInterface proc :ptr
+	GetSecondaryBufferInterface proc :ptr
 	ReleaseDirectSoundInterface proc :LPDIRECTSOUND
 	ReleasePrimaryBufferInterface proc :LPDIRECTSOUNDBUFFER
 	ReleaseSecondaryBufferInterface proc :LPDIRECTSOUNDBUFFER
 	SetFocusWindow	proc :HWND, :BOOL
-	GetFocusWindow	proc :ptr HWND, :ptr BOOL
+	GetFocusWindow	proc :ptr, :ptr
 	.ends
 
 .pragma list(pop)

@@ -119,9 +119,9 @@ include d3dcaps.inc
 
     Initialize		proc :REFCLSID
     EnumDevices		proc :LPD3DENUMDEVICESCALLBACK, :LPVOID
-    CreateLight		proc :ptr LPDIRECT3DLIGHT, :ptr IUnknown
-    CreateMaterial	proc :ptr LPDIRECT3DMATERIAL, :ptr IUnknown
-    CreateViewport	proc :ptr LPDIRECT3DVIEWPORT, :ptr IUnknown
+    CreateLight		proc :ptr, :ptr
+    CreateMaterial	proc :ptr, :ptr
+    CreateViewport	proc :ptr, :ptr
     FindDevice		proc :LPD3DFINDDEVICESEARCH, :LPD3DFINDDEVICERESULT
 
     .ends
@@ -133,11 +133,11 @@ if(DIRECT3D_VERSION GE 0x0500)
 .comdef IDirect3D2 : public IUnknown
 
     EnumDevices		proc :LPD3DENUMDEVICESCALLBACK, :LPVOID
-    CreateLight		proc :ptr LPDIRECT3DLIGHT, :ptr IUnknown
-    CreateMaterial	proc :ptr LPDIRECT3DMATERIAL2, :ptr IUnknown
-    CreateViewport	proc :ptr LPDIRECT3DVIEWPORT2, :ptr IUnknown
+    CreateLight		proc :ptr, :ptr
+    CreateMaterial	proc :ptr, :ptr
+    CreateViewport	proc :ptr, :ptr
     FindDevice		proc :LPD3DFINDDEVICESEARCH, :LPD3DFINDDEVICERESULT
-    CreateDevice	proc :REFCLSID, :LPDIRECTDRAWSURFACE, :ptr LPDIRECT3DDEVICE2
+    CreateDevice	proc :REFCLSID, :LPDIRECTDRAWSURFACE, :ptr
 
     .ends
 
@@ -150,12 +150,12 @@ if(DIRECT3D_VERSION GE 0x0600)
 .comdef IDirect3D3 : public IUnknown
 
     EnumDevices		proc :LPD3DENUMDEVICESCALLBACK, :LPVOID
-    CreateLight		proc :ptr LPDIRECT3DLIGHT, :LPUNKNOWN
-    CreateMaterial	proc :ptr LPDIRECT3DMATERIAL3, :LPUNKNOWN
-    CreateViewport	proc :ptr LPDIRECT3DVIEWPORT3, :LPUNKNOWN
+    CreateLight		proc :ptr, :LPUNKNOWN
+    CreateMaterial	proc :ptr, :LPUNKNOWN
+    CreateViewport	proc :ptr, :LPUNKNOWN
     FindDevice		proc :LPD3DFINDDEVICESEARCH, :LPD3DFINDDEVICERESULT
-    CreateDevice	proc :REFCLSID, :LPDIRECTDRAWSURFACE4, :ptr LPDIRECT3DDEVICE3, :LPUNKNOWN
-    CreateVertexBuffer	proc :LPD3DVERTEXBUFFERDESC, :ptr LPDIRECT3DVERTEXBUFFER, :DWORD, :LPUNKNOWN
+    CreateDevice	proc :REFCLSID, :LPDIRECTDRAWSURFACE4, :ptr, :LPUNKNOWN
+    CreateVertexBuffer	proc :LPD3DVERTEXBUFFERDESC, :ptr, :DWORD, :LPUNKNOWN
     EnumZBufferFormats	proc :REFCLSID, :LPD3DENUMPIXELFORMATSCALLBACK, :LPVOID
     EvictManagedTextures proc
 
@@ -170,8 +170,8 @@ if(DIRECT3D_VERSION GE 0x0700)
 .comdef IDirect3D7 : public IUnknown
 
     EnumDevices		proc :LPD3DENUMDEVICESCALLBACK7, :LPVOID
-    CreateDevice	proc :REFCLSID, :LPDIRECTDRAWSURFACE7, :ptr LPDIRECT3DDEVICE7
-    CreateVertexBuffer	proc :LPD3DVERTEXBUFFERDESC, :ptr LPDIRECT3DVERTEXBUFFER7, :DWORD
+    CreateDevice	proc :REFCLSID, :LPDIRECTDRAWSURFACE7, :ptr
+    CreateVertexBuffer	proc :LPD3DVERTEXBUFFERDESC, :ptr, :DWORD
     EnumZBufferFormats	proc :REFCLSID, :LPD3DENUMPIXELFORMATSCALLBACK, :LPVOID
     EvictManagedTexture proc
 
@@ -186,12 +186,12 @@ endif
     Initialize		proc :LPDIRECT3D, :LPGUID, :LPD3DDEVICEDESC
     GetCaps		proc :LPD3DDEVICEDESC, :LPD3DDEVICEDESC
     SwapTextureHandles	proc :LPDIRECT3DTEXTURE, :LPDIRECT3DTEXTURE
-    CreateExecuteBuffer proc :LPD3DEXECUTEBUFFERDESC, :ptr LPDIRECT3DEXECUTEBUFFER, :ptr IUnknown
+    CreateExecuteBuffer proc :LPD3DEXECUTEBUFFERDESC, :ptr, :ptr
     GetStats		proc :LPD3DSTATS
     Execute		proc :LPDIRECT3DEXECUTEBUFFER, :LPDIRECT3DVIEWPORT, :DWORD
     AddViewport		proc :LPDIRECT3DVIEWPORT
     DeleteViewport	proc :LPDIRECT3DVIEWPORT
-    NextViewport	proc :LPDIRECT3DVIEWPORT, :ptr LPDIRECT3DVIEWPORT, :DWORD
+    NextViewport	proc :LPDIRECT3DVIEWPORT, :ptr, :DWORD
     Pick		proc :LPDIRECT3DEXECUTEBUFFER, :LPDIRECT3DVIEWPORT, :DWORD, :LPD3DRECT
     GetPickRecords	proc :LPDWORD, :LPD3DPICKRECORD
     EnumTextureFormats	proc :LPD3DENUMTEXTUREFORMATSCALLBACK, :LPVOID
@@ -201,7 +201,7 @@ endif
     DeleteMatrix	proc :D3DMATRIXHANDLE
     BeginScene		proc
     EndScene		proc
-    GetDirect3D		proc :ptr LPDIRECT3D
+    GetDirect3D		proc :ptr
 
     .ends
 
@@ -216,15 +216,15 @@ if(DIRECT3D_VERSION GE 0x0500)
     GetStats		proc :LPD3DSTATS
     AddViewport		proc :LPDIRECT3DVIEWPORT2
     DeleteViewport	proc :LPDIRECT3DVIEWPORT2
-    NextViewport	proc :LPDIRECT3DVIEWPORT2, :ptr LPDIRECT3DVIEWPORT2, :DWORD
+    NextViewport	proc :LPDIRECT3DVIEWPORT2, :ptr, :DWORD
     EnumTextureFormats	proc :LPD3DENUMTEXTUREFORMATSCALLBACK, :LPVOID
     BeginScene		proc
     EndScene		proc
-    GetDirect3D		proc :ptr LPDIRECT3D2
+    GetDirect3D		proc :ptr
     SetCurrentViewport	proc :LPDIRECT3DVIEWPORT2
-    GetCurrentViewport	proc :ptr LPDIRECT3DVIEWPORT2
+    GetCurrentViewport	proc :ptr
     SetRenderTarget	proc :LPDIRECTDRAWSURFACE, :DWORD
-    GetRenderTarget	proc :ptr LPDIRECTDRAWSURFACE
+    GetRenderTarget	proc :ptr
     Begin		proc :D3DPRIMITIVETYPE, :D3DVERTEXTYPE, :DWORD
     BeginIndexed	proc :D3DPRIMITIVETYPE, :D3DVERTEXTYPE, :LPVOID, :DWORD, :DWORD
     Vertex		proc :LPVOID
@@ -256,15 +256,15 @@ if(DIRECT3D_VERSION GE 0x0600)
     GetStats		proc :LPD3DSTATS
     AddViewport		proc :LPDIRECT3DVIEWPORT3
     DeleteViewport	proc :LPDIRECT3DVIEWPORT3
-    NextViewport	proc :LPDIRECT3DVIEWPORT3, :ptr LPDIRECT3DVIEWPORT3, :DWORD
+    NextViewport	proc :LPDIRECT3DVIEWPORT3, :ptr, :DWORD
     EnumTextureFormats	proc :LPD3DENUMPIXELFORMATSCALLBACK, :LPVOID
     BeginScene		proc
     EndScene		proc
-    GetDirect3D		proc :ptr LPDIRECT3D3
+    GetDirect3D		proc :ptr
     SetCurrentViewport	proc :LPDIRECT3DVIEWPORT3
-    GetCurrentViewport	proc :ptr LPDIRECT3DVIEWPORT3
+    GetCurrentViewport	proc :ptr
     SetRenderTarget	proc :LPDIRECTDRAWSURFACE4, :DWORD
-    GetRenderTarget	proc :ptr LPDIRECTDRAWSURFACE4
+    GetRenderTarget	proc :ptr
     Begin		proc :D3DPRIMITIVETYPE, :DWORD, :DWORD
     BeginIndexed	proc :D3DPRIMITIVETYPE, :DWORD, :LPVOID, :DWORD, :DWORD
     Vertex		proc :LPVOID
@@ -286,7 +286,7 @@ if(DIRECT3D_VERSION GE 0x0600)
     DrawPrimitiveVB	proc :D3DPRIMITIVETYPE, :LPDIRECT3DVERTEXBUFFER, :DWORD, :DWORD, :DWORD
     DrawIndexedPrimitiveVB proc :D3DPRIMITIVETYPE, :LPDIRECT3DVERTEXBUFFER, :LPWORD, :DWORD, :DWORD
     ComputeSphereVisibility proc :LPD3DVECTOR, :LPD3DVALUE, :DWORD, :DWORD, :LPDWORD
-    GetTexture		proc :DWORD, :ptr LPDIRECT3DTEXTURE2
+    GetTexture		proc :DWORD, :ptr
     SetTexture		proc :DWORD, :LPDIRECT3DTEXTURE2
     GetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :LPDWORD
     SetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
@@ -306,9 +306,9 @@ if(DIRECT3D_VERSION GE 0x0700)
     EnumTextureFormats	proc :LPD3DENUMPIXELFORMATSCALLBACK, :LPVOID
     BeginScene		proc
     EndScene		proc
-    GetDirect3D		proc :ptr LPDIRECT3D7
+    GetDirect3D		proc :ptr
     SetRenderTarget	proc :LPDIRECTDRAWSURFACE7, :DWORD
-    GetRenderTarget	proc :ptr LPDIRECTDRAWSURFACE7
+    GetRenderTarget	proc :ptr
     Clear		proc :DWORD, :LPD3DRECT, :DWORD, :D3DCOLOR, :D3DVALUE, :DWORD
     SetTransform	proc :D3DTRANSFORMSTATETYPE, :LPD3DMATRIX
     GetTransform	proc :D3DTRANSFORMSTATETYPE, :LPD3DMATRIX
@@ -333,7 +333,7 @@ if(DIRECT3D_VERSION GE 0x0700)
     DrawPrimitiveVB	proc :D3DPRIMITIVETYPE, :LPDIRECT3DVERTEXBUFFER7, :DWORD, :DWORD, :DWORD
     DrawIndexedPrimitiveVB proc :D3DPRIMITIVETYPE, :LPDIRECT3DVERTEXBUFFER7, :DWORD, :DWORD, :LPWORD, :DWORD, :DWORD
     ComputeSphereVisibility proc :LPD3DVECTOR, :LPD3DVALUE, :DWORD, :DWORD, :LPDWORD
-    GetTexture		proc :DWORD, :ptr LPDIRECTDRAWSURFACE7
+    GetTexture		proc :DWORD, :ptr
     SetTexture		proc :DWORD, :LPDIRECTDRAWSURFACE7
     GetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :LPDWORD
     SetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
@@ -344,9 +344,9 @@ if(DIRECT3D_VERSION GE 0x0700)
     CreateStateBlock	proc :D3DSTATEBLOCKTYPE, :LPDWORD
     Load		proc :LPDIRECTDRAWSURFACE7, :LPPOINT, :LPDIRECTDRAWSURFACE7, :LPRECT, :DWORD
     LightEnable		proc :DWORD, :BOOL
-    GetLightEnable	proc :DWORD, :ptr BOOL
-    SetClipPlane	proc :DWORD, :ptr D3DVALUE
-    GetClipPlane	proc :DWORD, :ptr D3DVALUE
+    GetLightEnable	proc :DWORD, :ptr
+    SetClipPlane	proc :DWORD, :ptr
+    GetClipPlane	proc :DWORD, :ptr
     GetInfo		proc :DWORD, :LPVOID, :DWORD
 
     .ends
@@ -459,11 +459,11 @@ endif
     SetBackground	proc :D3DMATERIALHANDLE
     GetBackground	proc :LPD3DMATERIALHANDLE, :LPBOOL
     SetBackgroundDepth	proc :LPDIRECTDRAWSURFACE
-    GetBackgroundDepth	proc :ptr LPDIRECTDRAWSURFACE, :LPBOOL
+    GetBackgroundDepth	proc :ptr, :LPBOOL
     Clear		proc :DWORD, :LPD3DRECT, :DWORD
     AddLight		proc :LPDIRECT3DLIGHT
     DeleteLight		proc :LPDIRECT3DLIGHT
-    NextLight		proc :LPDIRECT3DLIGHT, :ptr LPDIRECT3DLIGHT, :DWORD
+    NextLight		proc :LPDIRECT3DLIGHT, :ptr, :DWORD
 
     .ends
 
@@ -487,7 +487,7 @@ if(DIRECT3D_VERSION GE 0x0600)
 .comdef IDirect3DViewport3 : public IDirect3DViewport2
 
     SetBackgroundDepth2 proc :LPDIRECTDRAWSURFACE4
-    GetBackgroundDepth2 proc :ptr LPDIRECTDRAWSURFACE4, :LPBOOL
+    GetBackgroundDepth2 proc :ptr, :LPBOOL
     Clear2		proc :DWORD, :LPD3DRECT, :DWORD, :D3DCOLOR, :D3DVALUE, :DWORD
 
     .ends
@@ -500,7 +500,7 @@ if(DIRECT3D_VERSION GE 0x0600)
 
 .comdef IDirect3DVertexBuffer : public IUnknown
 
-    _Lock		proc :DWORD, :ptr LPVOID, :LPDWORD
+    _Lock		proc :DWORD, :ptr, :LPDWORD
     Unlock		proc
     ProcessVertices	proc :DWORD, :DWORD, :DWORD, :LPDIRECT3DVERTEXBUFFER, :DWORD, :LPDIRECT3DDEVICE3, :DWORD
     GetVertexBufferDesc proc :LPD3DVERTEXBUFFERDESC
@@ -516,7 +516,7 @@ if(DIRECT3D_VERSION GE 0x0700)
 
 .comdef IDirect3DVertexBuffer7 : public IUnknown
 
-    _Lock		proc :DWORD, :ptr LPVOID, :LPDWORD
+    _Lock		proc :DWORD, :ptr, :LPDWORD
     Unlock		proc
     ProcessVertices	proc :DWORD, :DWORD, :DWORD, :LPDIRECT3DVERTEXBUFFER7, :DWORD, :LPDIRECT3DDEVICE7, :DWORD
     GetVertexBufferDesc proc :LPD3DVERTEXBUFFERDESC

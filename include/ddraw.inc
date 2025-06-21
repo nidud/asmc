@@ -670,21 +670,21 @@ if defined( _WIN32 ) AND NOT defined( _NO_COM )
 .comdef IDirectDraw : public IUnknown
 
 	_Compact		proc
-	CreateClipper		proc :DWORD, :ptr LPDIRECTDRAWCLIPPER, :ptr
-	CreatePalette		proc :DWORD, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr
-	CreateSurface		proc :LPDDSURFACEDESC, :ptr LPDIRECTDRAWSURFACE, :ptr
-	DuplicateSurface	proc :LPDIRECTDRAWSURFACE, :ptr LPDIRECTDRAWSURFACE
+	CreateClipper		proc :DWORD, :ptr, :ptr
+	CreatePalette		proc :DWORD, :LPPALETTEENTRY, :ptr, :ptr
+	CreateSurface		proc :LPDDSURFACEDESC, :ptr, :ptr
+	DuplicateSurface	proc :LPDIRECTDRAWSURFACE, :ptr
 	EnumDisplayModes	proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMMODESCALLBACK
 	EnumSurfaces		proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMSURFACESCALLBACK
 	FlipToGDISurface	proc
 	GetCaps			proc :LPDDCAPS, :LPDDCAPS
 	GetDisplayMode		proc :LPDDSURFACEDESC
 	GetFourCCCodes		proc :LPDWORD, :LPDWORD
-	GetGDISurface		proc :ptr LPDIRECTDRAWSURFACE
+	GetGDISurface		proc :ptr
 	GetMonitorFrequency	proc :LPDWORD
 	GetScanLine		proc :LPDWORD
 	GetVerticalBlankStatus	proc :LPBOOL
-	Initialize		proc :ptr GUID
+	Initialize		proc :ptr
 	RestoreDisplayMode	proc
 	SetCooperativeLevel	proc :HWND, :DWORD
 	SetDisplayMode		proc :DWORD, :DWORD, :DWORD
@@ -702,7 +702,7 @@ if defined( _WIN32 ) AND NOT defined( _NO_COM )
 
 .comdef IDirectDraw4 : public IDirectDraw2
 
-	GetSurfaceFromDC	proc :HDC, :ptr LPDIRECTDRAWSURFACE4
+	GetSurfaceFromDC	proc :HDC, :ptr
 	RestoreAllSurfaces	proc
 	TestCooperativeLevel	proc
 	GetDeviceIdentifier	proc :LPDDDEVICEIDENTIFIER, :DWORD
@@ -730,9 +730,9 @@ if defined( _WIN32 ) AND NOT defined( _NO_COM )
 .comdef IDirectDrawClipper : public IUnknown
 
 	GetClipList		proc :LPRECT, :LPRGNDATA, :LPDWORD
-	GetHWnd			proc :ptr HWND
+	GetHWnd			proc :ptr
 	Initialize		proc :LPDIRECTDRAW, :DWORD
-	IsClipListChanged	proc :ptr BOOL
+	IsClipListChanged	proc :ptr
 	SetClipList		proc :LPRGNDATA, :DWORD
 	SetHWnd			proc :DWORD, :HWND
 
@@ -749,15 +749,15 @@ if defined( _WIN32 ) AND NOT defined( _NO_COM )
 	EnumAttachedSurfaces	proc :PVOID, :LPDDENUMSURFACESCALLBACK
 	EnumOverlayZOrders	proc :DWORD, :LPVOID, :LPDDENUMSURFACESCALLBACK
 	Flip			proc :LPDIRECTDRAWSURFACE, :DWORD
-	GetAttachedSurface	proc :LPDDSCAPS, :ptr LPDIRECTDRAWSURFACE
+	GetAttachedSurface	proc :LPDDSCAPS, :ptr
 	GetBltStatus		proc :DWORD
 	GetCaps			proc :LPDDSCAPS
-	GetClipper		proc :ptr LPDIRECTDRAWCLIPPER
+	GetClipper		proc :ptr
 	GetColorKey		proc :DWORD, :LPDDCOLORKEY
-	GetDC			proc :ptr HDC
+	GetDC			proc :ptr
 	GetFlipStatus		proc :DWORD
 	GetOverlayPosition	proc :LPLONG, :LPLONG
-	GetPalette		proc :ptr LPDIRECTDRAWPALETTE
+	GetPalette		proc :ptr
 	GetPixelFormat		proc :LPDDPIXELFORMAT
 	GetSurfaceDesc		proc :LPDDSURFACEDESC
 	Initialize		proc :LPDIRECTDRAW, :LPDDSURFACEDESC
@@ -779,7 +779,7 @@ if defined( _WIN32 ) AND NOT defined( _NO_COM )
 
 .comdef IDirectDrawSurface2 : public IDirectDrawSurface
 
-	GetDDInterface		proc :ptr LPVOID
+	GetDDInterface		proc :ptr
 	PageLock		proc :DWORD
 	PageUnlock		proc :DWORD
 

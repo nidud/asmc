@@ -49,7 +49,7 @@ DEFINE_IIDX(IService, "06210E88-01F5-11D1-B512-0080C781C384")
 
 .comdef IService : public IUnknown
 
-    InvokeService	proc :ptr IUnknown
+    InvokeService	proc :ptr
    .ends
 
 endif
@@ -73,7 +73,7 @@ DEFINE_IIDX(IDBPromptInitialize, "2206CCB0-19C1-11D1-89E0-00C04FD7A829")
 
 .comdef IDBPromptInitialize : public IUnknown
 
-    PromptDataSource	proc :ptr IUnknown, :HWND, :DBPROMPTOPTIONS, :ULONG, :ptr DBSOURCETYPE, :LPCOLESTR, :REFIID, :ptr ptr IUnknown
+    PromptDataSource	proc :ptr, :HWND, :DBPROMPTOPTIONS, :ULONG, :ptr, :LPCOLESTR, :REFIID, :ptr
     PromptFileName	proc :HWND, :DBPROMPTOPTIONS, :LPCOLESTR, :LPCOLESTR, :ptr
    .ends
 

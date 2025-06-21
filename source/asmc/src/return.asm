@@ -210,7 +210,7 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:token_
                     .if ecx == T_RAX
                         mov ecx,T_EAX
                     .endif
-                    AddLineQueueX( "mov %r,%d", ecx, eax )
+                    AddLineQueueX( " mov %r, %d", ecx, eax )
                     dec esi
 
                 .elseif ( !eax && !edx )
@@ -219,7 +219,7 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:token_
                     .if eax == T_RAX
                         mov eax,T_EAX
                     .endif
-                    AddLineQueueX( "xor %r,%r", eax, eax )
+                    AddLineQueueX( " xor %r, %r", eax, eax )
                     dec esi
                 .endif
             .endif

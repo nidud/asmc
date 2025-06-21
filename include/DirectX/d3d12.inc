@@ -3618,7 +3618,7 @@ DEFINE_IIDX(ID3D12GraphicsCommandList4, "8754318e-d3a9-4541-98cf-645b50dc4874")
     InitializeMetaCommand proc :ptr
     ExecuteMetaCommand	proc :ptr
     BuildRaytracingAccelerationStructure proc :ptr, :UINT, :ptr
-    EmitRaytracingAccelerationStructurePostbuildInfo proc :ptr, :UINT, :ptr D3D12_GPU_VIRTUAL_ADDRESS
+    EmitRaytracingAccelerationStructurePostbuildInfo proc :ptr, :UINT, :ptr
     CopyRaytracingAccelerationStructure proc :D3D12_GPU_VIRTUAL_ADDRESS, :D3D12_GPU_VIRTUAL_ADDRESS, :D3D12_RAYTRACING_ACCELERATION_STRUCTURE_COPY_MODE
     SetPipelineState1	proc :ptr
     DispatchRays	proc :ptr

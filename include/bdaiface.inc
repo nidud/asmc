@@ -499,12 +499,12 @@ DEFINE_IIDX(IFrequencyMap, "06FB45C1-693C-4ea7-B79F-7A6A54D8DEF2")
 
 .comdef IFrequencyMap : public IUnknown
 
-    get_FrequencyMapping proc :ptr ULONG, :ptr ptr ULONG
-    put_FrequencyMapping proc :ULONG, :ptr ULONG
-    get_CountryCode	proc :ptr ULONG
+    get_FrequencyMapping proc :ptr, :ptr
+    put_FrequencyMapping proc :ULONG, :ptr
+    get_CountryCode	proc :ptr
     put_CountryCode	proc :ULONG
-    get_DefaultFrequencyMapping proc :ULONG, :ptr ULONG, :ptr ptr ULONG
-    get_CountryCodeList proc :ptr ULONG, :ptr ptr ULONG
+    get_DefaultFrequencyMapping proc :ULONG, :ptr, :ptr
+    get_CountryCodeList proc :ptr, :ptr
    .ends
 
 endif
@@ -516,7 +516,7 @@ DEFINE_IIDX(IBDA_EasMessage, "D806973D-3EBE-46de-8FBB-6358FE784208")
 
 .comdef IBDA_EasMessage : public IUnknown
 
-    get_EasMessage	proc :ULONG, :ptr ptr IUnknown
+    get_EasMessage	proc :ULONG, :ptr
    .ends
 
 endif
@@ -529,7 +529,7 @@ DEFINE_IIDX(IBDA_TransportStreamInfo, "8E882535-5F86-47AB-86CF-C281A72A0549")
 
 .comdef IBDA_TransportStreamInfo : public IUnknown
 
-    get_PatTableTickCount proc :ptr ULONG
+    get_PatTableTickCount proc :ptr
    .ends
 
 endif
@@ -543,13 +543,13 @@ DEFINE_IIDX(IBDA_ConditionalAccess, "CD51F1E0-7BE9-4123-8482-A2A796C0A6B0")
 
     get_SmartCardStatus proc :ptr, :ptr, :ptr, :ptr
     get_SmartCardInfo	proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-    get_SmartCardApplications proc :ptr ULONG, :ULONG, :ptr SmartCardApplication
-    get_Entitlement	proc :USHORT, :ptr EntitlementType
+    get_SmartCardApplications proc :ptr, :ULONG, :ptr
+    get_Entitlement	proc :USHORT, :ptr
     TuneByChannel	proc :USHORT
     SetProgram		proc :USHORT
     AddProgram		proc :USHORT
     RemoveProgram	proc :USHORT
-    GetModuleUI		proc :BYTE, :ptr BSTR
+    GetModuleUI		proc :BYTE, :ptr
     InformUIClosed	proc :BYTE, :UICloseReasonType
    .ends
 
@@ -585,8 +585,8 @@ DEFINE_IIDX(IBDA_NameValueService, "7F0B3150-7B81-4ad4-98E3-7E9097094301")
 
 .comdef IBDA_NameValueService : public IUnknown
 
-    GetValueNameByIndex proc :ULONG, :ptr BSTR
-    GetValue		proc :BSTR, :BSTR, :ptr BSTR
+    GetValueNameByIndex proc :ULONG, :ptr
+    GetValue		proc :BSTR, :BSTR, :ptr
     SetValue		proc :ULONG, :BSTR, :BSTR, :BSTR, :ULONG
    .ends
 
@@ -599,11 +599,11 @@ DEFINE_IIDX(IBDA_ConditionalAccessEx, "497C3418-23CB-44ba-BB62-769F506FCEA7")
 
 .comdef IBDA_ConditionalAccessEx : public IUnknown
 
-    CheckEntitlementToken proc :ULONG, :BSTR, :BDA_CONDITIONALACCESS_REQUESTTYPE, :LONG, :ptr BYTE, :ptr ULONG
-    SetCaptureToken	proc :ULONG, :ptr BYTE
+    CheckEntitlementToken proc :ULONG, :BSTR, :BDA_CONDITIONALACCESS_REQUESTTYPE, :LONG, :ptr, :ptr
+    SetCaptureToken	proc :ULONG, :ptr
     OpenBroadcastMmi	proc :ULONG, :BSTR, :ULONG
-    CloseMmiDialog	proc :ULONG, :BSTR, :ULONG, :BDA_CONDITIONALACCESS_MMICLOSEREASON, :ptr ULONG
-    CreateDialogRequestNumber proc :ptr ULONG
+    CloseMmiDialog	proc :ULONG, :BSTR, :ULONG, :BDA_CONDITIONALACCESS_MMICLOSEREASON, :ptr
+    CreateDialogRequestNumber proc :ptr
    .ends
 
 endif
@@ -615,7 +615,7 @@ DEFINE_IIDX(IBDA_ISDBConditionalAccess, "5E68C627-16C2-4e6c-B1E2-D00170CDAA0F")
 
 .comdef IBDA_ISDBConditionalAccess : public IUnknown
 
-    SetIsdbCasRequest	proc :ULONG, :ULONG, :ptr BYTE
+    SetIsdbCasRequest	proc :ULONG, :ULONG, :ptr
    .ends
 
 endif
@@ -639,8 +639,8 @@ DEFINE_IIDX(IBDA_AUX, "7DEf4C09-6E66-4567-A819-F0E17F4A81AB")
 
 .comdef IBDA_AUX : public IUnknown
 
-    QueryCapabilities	proc :ptr DWORD
-    EnumCapability	proc :DWORD, :ptr DWORD, :ptr GUID, :ptr DWORD, :ptr DWORD, :ptr ULONGLONG
+    QueryCapabilities	proc :ptr
+    EnumCapability	proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -656,11 +656,11 @@ DEFINE_IIDX(IBDA_Encoder, "3a8bad59-59fe-4559-a0ba-396cfaa98ae3")
 
 .comdef IBDA_Encoder : public IUnknown
 
-    QueryCapabilities	proc :ptr DWORD, :ptr DWORD
-    EnumAudioCapability proc :DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD
-    EnumVideoCapability proc :DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD
+    QueryCapabilities	proc :ptr, :ptr
+    EnumAudioCapability proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+    EnumVideoCapability proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     SetParameters	proc :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
-    GetState		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr ULONGLONG, :ptr BOOL, :ptr LONG, :ptr DWORD
+    GetState		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -685,13 +685,13 @@ DEFINE_IIDX(IBDA_FDC, "138adc7e-58ae-437f-b0b4-c9fe19d5b4ac")
 
 .comdef IBDA_FDC : public IUnknown
 
-    GetStatus		proc :ptr DWORD, :ptr BOOL, :ptr DWORD, :ptr BOOL, :ptr BSTR, :ptr BSTR, :ptr BOOL
+    GetStatus		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     RequestTables	proc :BSTR
-    AddPid		proc :BSTR, :ptr DWORD
+    AddPid		proc :BSTR, :ptr
     RemovePid		proc :BSTR
-    AddTid		proc :BSTR, :ptr BSTR
+    AddTid		proc :BSTR, :ptr
     RemoveTid		proc :BSTR
-    GetTableSection	proc :ptr DWORD, :DWORD, :ptr DWORD, :ptr BYTE
+    GetTableSection	proc :ptr, :DWORD, :ptr, :ptr
    .ends
 
 endif
@@ -703,12 +703,12 @@ DEFINE_IIDX(IBDA_GuideDataDeliveryService, "C0AFCB73-23E7-4bc6-BAFA-FDC167B4719F
 
 .comdef IBDA_GuideDataDeliveryService : public IUnknown
 
-    GetGuideDataType	proc :ptr GUID
-    GetGuideData	proc :ptr ULONG, :ptr BYTE, :ptr ULONG
+    GetGuideDataType	proc :ptr
+    GetGuideData	proc :ptr, :ptr, :ptr
     RequestGuideDataUpdate proc
-    GetTuneXmlFromServiceIdx proc :ULONG64, :ptr BSTR
-    GetServices		proc :ptr ULONG, :ptr BYTE
-    GetServiceInfoFromTuneXml proc :BSTR, :ptr BSTR
+    GetTuneXmlFromServiceIdx proc :ULONG64, :ptr
+    GetServices		proc :ptr, :ptr
+    GetServiceInfoFromTuneXml proc :BSTR, :ptr
    .ends
 
 endif
@@ -722,8 +722,8 @@ DEFINE_IIDX(IBDA_DRMService, "BFF6B5BB-B0AE-484c-9DCA-73528FB0B46E")
 
 .comdef IBDA_DRMService : public IUnknown
 
-    SetDRM		proc :ptr GUID
-    GetDRMStatus	proc :ptr BSTR, :ptr GUID
+    SetDRM		proc :ptr
+    GetDRMStatus	proc :ptr, :ptr
    .ends
 
 endif
@@ -735,14 +735,14 @@ DEFINE_IIDX(IBDA_WMDRMSession, "4BE6FA3D-07CD-4139-8B80-8C18BA3AEC88")
 
 .comdef IBDA_WMDRMSession : public IUnknown
 
-    GetStatus		proc :ptr ULONG, :ptr ULONG, :ptr ULONG, :ptr ULONG, :ptr ULONG, :ptr ULONGLONG, :ptr ULONG, :ptr ULONG, :ptr ULONG
-    SetRevInfo		proc :ULONG, :ptr BYTE
-    SetCrl		proc :ULONG, :ptr BYTE
-    TransactMessage	proc :ULONG, :ptr BYTE, :ptr ULONG, :ptr BYTE
-    GetLicense		proc :ptr GUID, :ptr ULONG, :ptr BYTE
-    ReissueLicense	proc :ptr GUID
-    RenewLicense	proc :ULONG, :ptr BYTE, :ULONG, :ptr BYTE, :ptr ULONG, :ptr ULONG, :ptr BYTE
-    GetKeyInfo		proc :ptr ULONG, :ptr BYTE
+    GetStatus		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    SetRevInfo		proc :ULONG, :ptr
+    SetCrl		proc :ULONG, :ptr
+    TransactMessage	proc :ULONG, :ptr, :ptr, :ptr
+    GetLicense		proc :ptr, :ptr, :ptr
+    ReissueLicense	proc :ptr
+    RenewLicense	proc :ULONG, :ptr, :ULONG, :ptr, :ptr, :ptr, :ptr
+    GetKeyInfo		proc :ptr, :ptr
    .ends
 
 endif
@@ -754,12 +754,12 @@ DEFINE_IIDX(IBDA_WMDRMTuner, "86D979CF-A8A7-4f94-B5FB-14C0ACA68FE6")
 
 .comdef IBDA_WMDRMTuner : public IUnknown
 
-    PurchaseEntitlement proc :ULONG, :BSTR, :ULONG, :ptr BYTE, :ptr ULONG, :ptr ULONG, :ptr BYTE
-    CancelCaptureToken	proc :ULONG, :ptr BYTE
-    SetPidProtection	proc :ULONG, :ptr GUID
-    GetPidProtection	proc :ULONG, :ptr GUID
+    PurchaseEntitlement proc :ULONG, :BSTR, :ULONG, :ptr, :ptr, :ptr, :ptr
+    CancelCaptureToken	proc :ULONG, :ptr
+    SetPidProtection	proc :ULONG, :ptr
+    GetPidProtection	proc :ULONG, :ptr
     SetSyncValue	proc :ULONG
-    GetStartCodeProfile proc :ptr ULONG, :ptr BYTE
+    GetStartCodeProfile proc :ptr, :ptr
    .ends
 
 endif
@@ -772,8 +772,8 @@ DEFINE_IIDX(IBDA_DRIDRMService, "1F9BC2A5-44A3-4c52-AAB1-0BBCE5A1381D")
 .comdef IBDA_DRIDRMService : public IUnknown
 
     SetDRM		proc :BSTR
-    GetDRMStatus	proc :ptr BSTR, :ptr GUID
-    GetPairingStatus	proc :ptr BDA_DrmPairingError
+    GetDRMStatus	proc :ptr, :ptr
+    GetPairingStatus	proc :ptr
    .ends
 
 endif
@@ -786,12 +786,12 @@ DEFINE_IIDX(IBDA_DRIWMDRMSession, "05C690F8-56DB-4bb2-B053-79C12098BB26")
 .comdef IBDA_DRIWMDRMSession : public IUnknown
 
     AcknowledgeLicense	proc :HRESULT
-    ProcessLicenseChallenge proc :DWORD, :ptr BYTE, :ptr DWORD, :ptr ptr BYTE
-    ProcessRegistrationChallenge proc :DWORD, :ptr BYTE, :ptr DWORD, :ptr ptr BYTE
-    SetRevInfo		proc :DWORD, :ptr BYTE, :ptr DWORD
-    SetCrl		proc :DWORD, :ptr BYTE, :ptr DWORD
+    ProcessLicenseChallenge proc :DWORD, :ptr, :ptr, :ptr
+    ProcessRegistrationChallenge proc :DWORD, :ptr, :ptr, :ptr
+    SetRevInfo		proc :DWORD, :ptr, :ptr
+    SetCrl		proc :DWORD, :ptr, :ptr
     GetHMSAssociationData proc
-    GetLastCardeaError	proc :ptr DWORD
+    GetLastCardeaError	proc :ptr
    .ends
 
 endif
@@ -803,8 +803,8 @@ DEFINE_IIDX(IBDA_MUX, "942AAFEC-4C05-4c74-B8EB-8706C2A4943F")
 
 .comdef IBDA_MUX : public IUnknown
 
-    SetPidList		proc :ULONG, :ptr BDA_MUX_PIDLISTITEM
-    GetPidList		proc :ptr ULONG, :ptr BDA_MUX_PIDLISTITEM
+    SetPidList		proc :ULONG, :ptr
+    GetPidList		proc :ptr, :ptr
    .ends
 
 endif
@@ -817,7 +817,7 @@ DEFINE_IIDX(IBDA_TransportStreamSelector, "1DCFAFE9-B45E-41b3-BB2A-561EB129AE98"
 .comdef IBDA_TransportStreamSelector : public IUnknown
 
     SetTSID		proc :USHORT
-    GetTSInformation	proc :ptr ULONG, :ptr BYTE
+    GetTSInformation	proc :ptr, :ptr
    .ends
 
 endif
@@ -830,7 +830,7 @@ DEFINE_IIDX(IBDA_UserActivityService, "53B14189-E478-4b7a-A1FF-506DB4B99DFE")
 .comdef IBDA_UserActivityService : public IUnknown
 
     SetCurrentTunerUseReason proc :DWORD
-    GetUserActivityInterval proc :ptr DWORD
+    GetUserActivityInterval proc :ptr
     UserActivityDetected proc
    .ends
 

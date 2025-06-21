@@ -57,7 +57,7 @@ DEFINE_IIDX(IMallocSpy, "0000001d-0000-0000-C000-000000000046")
     PostAlloc		proc :ptr
     PreFree		proc :ptr, :BOOL
     PostFree		proc :BOOL
-    PreRealloc		proc :ptr, :SIZE_T, :ptr ptr, :BOOL
+    PreRealloc		proc :ptr, :SIZE_T, :ptr, :BOOL
     PostRealloc		proc :ptr, :BOOL
     PreGetSize		proc :ptr, :BOOL
     PostGetSize		proc :SIZE_T, :BOOL
@@ -129,10 +129,10 @@ DEFINE_IIDX(IBindCtx, "0000000e-0000-0000-C000-000000000046")
     ReleaseBoundObjects proc
     SetBindOptions	proc :ptr
     GetBindOptions	proc :ptr
-    GetRunningObjectTable proc :ptr ptr
+    GetRunningObjectTable proc :ptr
     RegisterObjectParam proc :LPOLESTR, :ptr
-    GetObjectParam	proc :LPOLESTR, :ptr ptr
-    EnumObjectParam	proc :ptr ptr
+    GetObjectParam	proc :LPOLESTR, :ptr
+    EnumObjectParam	proc :ptr
     RevokeObjectParam	proc :LPOLESTR
    .ends
 
@@ -152,10 +152,10 @@ DEFINE_IIDX(IEnumMoniker, "00000102-0000-0000-C000-000000000046")
 
 .comdef IEnumMoniker : public IUnknown
 
-    Next		proc :ULONG, :ptr ptr, :ptr
+    Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr
+    Clone		proc :ptr
    .ends
 
 IEnumMoniker_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr ptr, :ptr
@@ -200,10 +200,10 @@ DEFINE_IIDX(IRunningObjectTable, "00000010-0000-0000-C000-000000000046")
     Register		proc :DWORD, :ptr, :ptr, :ptr
     Revoke		proc :DWORD
     IsRunning		proc :ptr
-    GetObject		proc :ptr, :ptr ptr
+    GetObject		proc :ptr, :ptr
     NoteChangeTime	proc :DWORD, :ptr
     GetTimeOfLastChange proc :ptr, :ptr
-    EnumRunning		proc :ptr ptr
+    EnumRunning		proc :ptr
    .ends
 
 endif
@@ -272,20 +272,20 @@ DEFINE_IIDX(IMoniker, "0000000f-0000-0000-C000-000000000046")
 
 .comdef IMoniker : public IPersistStream
 
-    BindToObject	proc :ptr, :ptr, :REFIID, :ptr ptr
-    BindToStorage	proc :ptr, :ptr, :REFIID, :ptr ptr
-    Reduce		proc :ptr, :DWORD, :ptr ptr, :ptr ptr
-    ComposeWith		proc :ptr, :BOOL, :ptr ptr
-    Enum		proc :BOOL, :ptr ptr
+    BindToObject	proc :ptr, :ptr, :REFIID, :ptr
+    BindToStorage	proc :ptr, :ptr, :REFIID, :ptr
+    Reduce		proc :ptr, :DWORD, :ptr, :ptr
+    ComposeWith		proc :ptr, :BOOL, :ptr
+    Enum		proc :BOOL, :ptr
     IsEqual		proc :ptr
     Hash		proc :ptr
     IsRunning		proc :ptr, :ptr, :ptr
     GetTimeOfLastChange proc :ptr, :ptr, :ptr
-    Inverse		proc :ptr ptr
-    CommonPrefixWith	proc :ptr, :ptr ptr
-    RelativePathTo	proc :ptr, :ptr ptr
+    Inverse		proc :ptr
+    CommonPrefixWith	proc :ptr, :ptr
+    RelativePathTo	proc :ptr, :ptr
     GetDisplayName	proc :ptr, :ptr, :ptr
-    ParseDisplayName	proc :ptr, :ptr, :LPOLESTR, :ptr, :ptr ptr
+    ParseDisplayName	proc :ptr, :ptr, :LPOLESTR, :ptr, :ptr
     IsSystemMoniker	proc :ptr
    .ends
 
@@ -328,7 +328,7 @@ DEFINE_IIDX(IEnumSTATSTG, "0000000d-0000-0000-C000-000000000046")
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr
+    Clone		proc :ptr
    .ends
 
 IEnumSTATSTG_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
@@ -356,15 +356,15 @@ DEFINE_IIDX(IStorage, "0000000b-0000-0000-C000-000000000046")
 
 .comdef IStorage : public IUnknown
 
-    CreateStream	proc :ptr, :DWORD, :DWORD, :DWORD, :ptr ptr
-    OpenStream		proc :ptr, :ptr, :DWORD, :DWORD, :ptr ptr
-    CreateStorage	proc :ptr, :DWORD, :DWORD, :DWORD, :ptr ptr
-    OpenStorage		proc :ptr, :ptr, :DWORD, :SNB, :DWORD, :ptr ptr
+    CreateStream	proc :ptr, :DWORD, :DWORD, :DWORD, :ptr
+    OpenStream		proc :ptr, :ptr, :DWORD, :DWORD, :ptr
+    CreateStorage	proc :ptr, :DWORD, :DWORD, :DWORD, :ptr
+    OpenStorage		proc :ptr, :ptr, :DWORD, :SNB, :DWORD, :ptr
     CopyTo		proc :DWORD, :ptr, :SNB, :ptr
     MoveElementTo	proc :ptr, :ptr, :ptr, :DWORD
     Commit		proc :DWORD
     Revert		proc
-    EnumElements	proc :DWORD, :ptr, :DWORD, :ptr ptr
+    EnumElements	proc :DWORD, :ptr, :DWORD, :ptr
     DestroyElement	proc :ptr
     RenameElement	proc :ptr, :ptr
     SetElementTimes	proc :ptr, :ptr, :ptr, :ptr
@@ -485,7 +485,7 @@ DEFINE_IIDX(IEnumFORMATETC, "00000103-0000-0000-C000-000000000046")
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr
+    Clone		proc :ptr
    .ends
 
 IEnumFORMATETC_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
@@ -523,7 +523,7 @@ DEFINE_IIDX(IEnumSTATDATA, "00000105-0000-0000-C000-000000000046")
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr
+    Clone		proc :ptr
    .ends
 
 IEnumSTATDATA_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
@@ -757,10 +757,10 @@ DEFINE_IIDX(IDataObject, "0000010e-0000-0000-C000-000000000046")
     QueryGetData	proc :ptr
     GetCanonicalFormatEtc proc :ptr, :ptr
     SetData		proc :ptr, :ptr, :BOOL
-    EnumFormatEtc	proc :DWORD, :ptr ptr
+    EnumFormatEtc	proc :DWORD, :ptr
     DAdvise		proc :ptr, :DWORD, :ptr, :ptr
     DUnadvise		proc :DWORD
-    EnumDAdvise		proc :ptr ptr
+    EnumDAdvise		proc :ptr
    .ends
 
 LPDATAOBJECT		typedef ptr IDataObject
@@ -787,7 +787,7 @@ DEFINE_IIDX(IDataAdviseHolder, "00000110-0000-0000-C000-000000000046")
 
     Advise		proc :ptr, :ptr, :DWORD, :ptr, :ptr
     Unadvise		proc :DWORD
-    EnumAdvise		proc :ptr ptr
+    EnumAdvise		proc :ptr
     SendOnDataChange	proc :ptr, :DWORD, :DWORD
    .ends
 
@@ -860,7 +860,7 @@ DEFINE_IIDX(IClassActivator, "00000140-0000-0000-C000-000000000046")
 
 .comdef IClassActivator : public IUnknown
 
-    GetClassObject	proc :REFCLSID, :DWORD, :LCID, :REFIID, :ptr ptr
+    GetClassObject	proc :REFCLSID, :DWORD, :LCID, :REFIID, :ptr
    .ends
 
 endif
@@ -969,8 +969,8 @@ DEFINE_IIDX(IOplockStorage, "8d19c834-8879-11d1-83e9-00c04fc2c6d4")
 
 .comdef IOplockStorage : public IUnknown
 
-    CreateStorageEx	proc :LPCWSTR, :DWORD, :DWORD, :DWORD, :REFIID, :ptr ptr
-    OpenStorageEx	proc :LPCWSTR, :DWORD, :DWORD, :DWORD, :REFIID, :ptr ptr
+    CreateStorageEx	proc :LPCWSTR, :DWORD, :DWORD, :DWORD, :REFIID, :ptr
+    OpenStorageEx	proc :LPCWSTR, :DWORD, :DWORD, :DWORD, :REFIID, :ptr
    .ends
 
 endif

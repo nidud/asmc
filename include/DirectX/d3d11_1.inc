@@ -135,20 +135,20 @@ DEFINE_IIDX(ID3D11VideoContext1, "A7F026DA-A5F8-4487-A564-15E34357651E")
 
 .comdef ID3D11VideoContext1 : public ID3D11VideoContext
 
-    SubmitDecoderBuffers1 proc :ptr ID3D11VideoDecoder, :UINT, :ptr D3D11_VIDEO_DECODER_BUFFER_DESC1
-    GetDataForNewHardwareKey proc :ptr ID3D11CryptoSession, :UINT, :ptr, :ptr UINT64
-    CheckCryptoSessionStatus proc :ptr ID3D11CryptoSession, :ptr D3D11_CRYPTO_SESSION_STATUS
-    DecoderEnableDownsampling proc :ptr ID3D11VideoDecoder, :DXGI_COLOR_SPACE_TYPE, :ptr D3D11_VIDEO_SAMPLE_DESC, :UINT
-    DecoderUpdateDownsampling proc :ptr ID3D11VideoDecode, :ptr D3D11_VIDEO_SAMPLE_DESC
-    VideoProcessorSetOutputColorSpace1 proc :ptr ID3D11VideoProcessor, :DXGI_COLOR_SPACE_TYPE
-    VideoProcessorSetOutputShaderUsage proc :ptr ID3D11VideoProcessor, :BOOL
-    VideoProcessorGetOutputColorSpace1 proc :ptr ID3D11VideoProcessor, :ptr DXGI_COLOR_SPACE_TYPE
-    VideoProcessorGetOutputShaderUsage proc :ptr ID3D11VideoProcessor, :ptr BOOL
-    VideoProcessorSetStreamColorSpace1 proc :ptr ID3D11VideoProcessor, :UINT, :DXGI_COLOR_SPACE_TYPE
-    VideoProcessorSetStreamMirror proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :BOOL, :BOOL
-    VideoProcessorGetStreamColorSpace1 proc :ptr ID3D11VideoProcessor, :UINT, :ptr DXGI_COLOR_SPACE_TYPE
-    VideoProcessorGetStreamMirror proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL, :ptr BOOL, :ptr BOOL
-    VideoProcessorGetBehaviorHints proc :ptr ID3D11VideoProcessor, :UINT, :UINT, :DXGI_FORMAT, :UINT, :ptr D3D11_VIDEO_PROCESSOR_STREAM_BEHAVIOR_HINT, :ptr UINT
+    SubmitDecoderBuffers1 proc :ptr, :UINT, :ptr
+    GetDataForNewHardwareKey proc :ptr, :UINT, :ptr, :ptr
+    CheckCryptoSessionStatus proc :ptr, :ptr
+    DecoderEnableDownsampling proc :ptr, :DXGI_COLOR_SPACE_TYPE, :ptr, :UINT
+    DecoderUpdateDownsampling proc :ptr, :ptr
+    VideoProcessorSetOutputColorSpace1 proc :ptr, :DXGI_COLOR_SPACE_TYPE
+    VideoProcessorSetOutputShaderUsage proc :ptr, :BOOL
+    VideoProcessorGetOutputColorSpace1 proc :ptr, :ptr
+    VideoProcessorGetOutputShaderUsage proc :ptr, :ptr
+    VideoProcessorSetStreamColorSpace1 proc :ptr, :UINT, :DXGI_COLOR_SPACE_TYPE
+    VideoProcessorSetStreamMirror proc :ptr, :UINT, :BOOL, :BOOL, :BOOL
+    VideoProcessorGetStreamColorSpace1 proc :ptr, :UINT, :ptr
+    VideoProcessorGetStreamMirror proc :ptr, :UINT, :ptr, :ptr, :ptr
+    VideoProcessorGetBehaviorHints proc :ptr, :UINT, :UINT, :DXGI_FORMAT, :UINT, :ptr, :ptr
    .ends
 
 endif
@@ -160,10 +160,10 @@ DEFINE_IIDX(ID3D11VideoDevice1, "29DA1D51-1321-4454-804B-F5FC9F861F0F")
 
 .comdef ID3D11VideoDevice1 : public ID3D11VideoDevice
 
-    GetCryptoSessionPrivateDataSize proc :ptr GUID, :ptr GUID, :ptr GUID, :ptr UINT, :ptr UINT
-    GetVideoDecoderCaps proc :ptr GUID, :UINT, :UINT, :ptr DXGI_RATIONAL, :UINT, :ptr GUID, :ptr UINT
-    CheckVideoDecoderDownsampling proc :ptr D3D11_VIDEO_DECODER_DESC, :DXGI_COLOR_SPACE_TYPE, :ptr D3D11_VIDEO_DECODER_CONFIG, :ptr DXGI_RATIONAL, :ptr D3D11_VIDEO_SAMPLE_DESC, :ptr BOOL, :ptr BOOL
-    RecommendVideoDecoderDownsampleParameters proc :ptr D3D11_VIDEO_DECODER_DESC, :DXGI_COLOR_SPACE_TYPE, :ptr D3D11_VIDEO_DECODER_CONFIG, :ptr DXGI_RATIONAL, :ptr D3D11_VIDEO_SAMPLE_DESC
+    GetCryptoSessionPrivateDataSize proc :ptr, :ptr, :ptr, :ptr, :ptr
+    GetVideoDecoderCaps proc :ptr, :UINT, :UINT, :ptr, :UINT, :ptr, :ptr
+    CheckVideoDecoderDownsampling proc :ptr, :DXGI_COLOR_SPACE_TYPE, :ptr, :ptr, :ptr, :ptr, :ptr
+    RecommendVideoDecoderDownsampleParameters proc :ptr, :DXGI_COLOR_SPACE_TYPE, :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -175,7 +175,7 @@ DEFINE_IIDX(ID3D11VideoProcessorEnumerator1, "465217F2-5568-43CF-B5B9-F61D54531C
 
 .comdef ID3D11VideoProcessorEnumerator1 : public ID3D11VideoProcessorEnumerator
 
-    CheckVideoProcessorFormatConversion proc :DXGI_FORMAT, :DXGI_COLOR_SPACE_TYPE, :DXGI_FORMAT, :DXGI_COLOR_SPACE_TYPE, :ptr BOOL
+    CheckVideoProcessorFormatConversion proc :DXGI_FORMAT, :DXGI_COLOR_SPACE_TYPE, :DXGI_FORMAT, :DXGI_COLOR_SPACE_TYPE, :ptr
    .ends
 
 endif

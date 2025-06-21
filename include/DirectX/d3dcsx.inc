@@ -38,8 +38,8 @@ DEFINE_GUID(IID_ID3DX11Scan, 0x5089b68f, 0xe71d, 0x4d38, 0xbe, 0x8e, 0xf3, 0x63,
 .comdef ID3DX11Scan : public IUnknown
 
     SetScanDirection	proc :D3DX11_SCAN_DIRECTION
-    Scan		proc :D3DX11_SCAN_DATA_TYPE, :D3DX11_SCAN_OPCODE, :UINT, :ptr ID3D11UnorderedAccessView, :ptr ID3D11UnorderedAccessView
-    Multiscan		proc :D3DX11_SCAN_DATA_TYPE, :D3DX11_SCAN_OPCODE, :UINT, :UINT, :UINT, :ptr ID3D11UnorderedAccessView, :ptr ID3D11UnorderedAccessView
+    Scan		proc :D3DX11_SCAN_DATA_TYPE, :D3DX11_SCAN_OPCODE, :UINT, :ptr, :ptr
+    Multiscan		proc :D3DX11_SCAN_DATA_TYPE, :D3DX11_SCAN_OPCODE, :UINT, :UINT, :UINT, :ptr, :ptr
     .ENDS
 
 
@@ -50,7 +50,7 @@ DEFINE_GUID(IID_ID3DX11SegmentedScan, 0xa915128c, 0xd954, 0x4c79, 0xbf, 0xe1, 0x
 .comdef ID3DX11SegmentedScan : public IUnknown
 
     SetScanDirection	proc :D3DX11_SCAN_DIRECTION
-    SegScan		proc :D3DX11_SCAN_DATA_TYPE, :D3DX11_SCAN_OPCODE, :UINT, :ptr ID3D11UnorderedAccessView, :ptr ID3D11UnorderedAccessView, :ptr ID3D11UnorderedAccessView
+    SegScan		proc :D3DX11_SCAN_DATA_TYPE, :D3DX11_SCAN_OPCODE, :UINT, :ptr, :ptr, :ptr
     .ENDS
 
 D3DX11CreateSegmentedScan proto WINAPI :ptr, :UINT, :ptr
@@ -67,9 +67,9 @@ DEFINE_GUID(IID_ID3DX11FFT, 0xb3f7a938, 0x4c93, 0x4310, 0xa6, 0x75, 0xb3, 0x0d, 
     GetForwardScale	proc
     SetInverseScale	proc :FLOAT
     GetInverseScale	proc
-    AttachBuffersAndPrecompute proc :ptr ID3D11UnorderedAccessView, :UINT, :ptr ID3D11UnorderedAccessView
-    ForwardTransform	proc :ID3D11UnorderedAccessView, :ptr ptr ID3D11UnorderedAccessView
-    InverseTransform	proc :ID3D11UnorderedAccessView, :ptr ptr ID3D11UnorderedAccessView
+    AttachBuffersAndPrecompute proc :ptr, :UINT, :ptr
+    ForwardTransform	proc :ID3D11UnorderedAccessView, :ptr
+    InverseTransform	proc :ID3D11UnorderedAccessView, :ptr
     .ENDS
 
 .enum D3DX11_FFT_DATA_TYPE {

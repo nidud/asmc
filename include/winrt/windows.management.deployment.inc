@@ -34,7 +34,7 @@ DEFINE_IIDX(__FIIterator_1_Windows__CManagement__CDeployment__CPackageUserInform
 
 .comdef __FIIterator_1_Windows__CManagement__CDeployment__CPackageUserInformation : public IInspectable
 
-    get_Current		proc :ptr ptr Windows::Management::Deployment::IPackageUserInformation
+    get_Current		proc :ptr
     get_HasCurrent	proc :ptr
     MoveNext		proc :ptr
     GetMany		proc :SINT, :ptr, :dword
@@ -162,8 +162,8 @@ DEFINE_IIDX(IPackageUserInformation, "F6383423-FA09-4CBC-9055-15CA275E2E7E")
 
 .comdef IPackageUserInformation : public IInspectable
 
-    get_UserSecurityId	proc :ptr HSTRING
-    get_InstallState	proc :ptr Windows::Management::Deployment::PackageInstallState
+    get_UserSecurityId	proc :ptr
+    get_InstallState	proc :ptr
    .ends
 
 endif
@@ -180,11 +180,11 @@ DEFINE_IIDX(IPackageManager, "9A7D4B65-5E8F-4FC7-A2E5-7F6925CB8B53")
     RemovePackageAsync	proc :HSTRING, :ptr
     StagePackageAsync	proc :ptr, :ptr, :ptr
     RegisterPackageAsync proc :ptr, :ptr, :LONG, :ptr
-    FindPackages	proc :ptr ptr __FIIterable_1_Windows__CApplicationModel__CPackage
+    FindPackages	proc :ptr
     FindPackagesByUserSecurityId proc :HSTRING, :ptr
     FindPackagesByNamePublisher proc :HSTRING, :HSTRING, :ptr
     FindPackagesByUserSecurityIdNamePublisher proc :HSTRING, :HSTRING, :HSTRING, :ptr
-    FindUsers		proc :HSTRING, :ptr __FIIterable_1_Windows__CManagement__CDeployment__CPackageUserInformation
+    FindUsers		proc :HSTRING, :ptr
     SetPackageState	proc :HSTRING, :LONG
     FindPackageByPackageFullName proc :HSTRING, :ptr
     CleanupPackageForUserAsync proc :HSTRING, :HSTRING, :ptr

@@ -25,11 +25,11 @@ DECLARE_HANDLE(ROPARAMIIDHANDLE)
 
     SetWinRtInterface   proc :GUID
     SetDelegate         proc :GUID
-    SetInterfaceGroupSimpleDefault proc :PCWSTR, :PCWSTR, :ptr GUID
-    SetInterfaceGroupParameterizedDefault proc :PCWSTR, :UINT32, :ptr PCWSTR
-    SetRuntimeClassSimpleDefault proc :PCWSTR, :PCWSTR, :ptr GUID
-    SetRuntimeClassParameterizedDefault proc :PCWSTR, :UINT32, :ptr PCWSTR
-    SetStruct           proc :PCWSTR, :UINT32, :ptr PCWSTR
+    SetInterfaceGroupSimpleDefault proc :PCWSTR, :PCWSTR, :ptr
+    SetInterfaceGroupParameterizedDefault proc :PCWSTR, :UINT32, :ptr
+    SetRuntimeClassSimpleDefault proc :PCWSTR, :PCWSTR, :ptr
+    SetRuntimeClassParameterizedDefault proc :PCWSTR, :UINT32, :ptr
+    SetStruct           proc :PCWSTR, :UINT32, :ptr
     SetEnum             proc :PCWSTR, :PCWSTR
     SetParameterizedInterface proc :GUID, :UINT32
     SetParameterizedDelegate proc :GUID, :UINT32
@@ -37,7 +37,7 @@ DECLARE_HANDLE(ROPARAMIIDHANDLE)
 
 .comdef IRoMetaDataLocator
 
-    Locate              proc :PCWSTR, :ptr IRoSimpleMetaDataBuilder
+    Locate              proc :PCWSTR, :ptr
    .ends
 
 RoGetParameterizedTypeInstanceIID proto WINAPI :UINT32, :ptr, :ptr, :ptr, :ptr

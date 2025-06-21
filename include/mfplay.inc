@@ -75,7 +75,7 @@ DEFINE_IIDX(IMFPMediaPlayer, "A714590A-58AF-430a-85BF-44F5EC838D85")
     _Pause		proc
     Stop		proc
     FrameStep		proc
-    SetPosition		proc :REFGUID, :ptr PROPVARIANT
+    SetPosition		proc :REFGUID, :ptr
     GetPosition		proc :REFGUID, :ptr
     GetDuration		proc :REFGUID, :ptr
     SetRate		proc :real4
@@ -95,7 +95,7 @@ DEFINE_IIDX(IMFPMediaPlayer, "A714590A-58AF-430a-85BF-44F5EC838D85")
     SetMute		proc :BOOL
     GetNativeVideoSize	proc :ptr, :ptr
     GetIdealVideoSize	proc :ptr, :ptr
-    SetVideoSourceRect	proc :ptr MFVideoNormalizedRect
+    SetVideoSourceRect	proc :ptr
     GetVideoSourceRect	proc :ptr
     SetAspectRatioMode	proc :DWORD
     GetAspectRatioMode	proc :ptr
@@ -128,7 +128,7 @@ DEFINE_IIDX(IMFPMediaItem, "90EB3E6B-ECBF-45cc-B1DA-C6FE3EA70D57")
     GetUserData		proc :ptr
     SetUserData		proc :DWORD_PTR
     GetStartStopPosition proc :ptr, :ptr, :ptr, :ptr
-    SetStartStopPosition proc :ptr GUID, :ptr PROPVARIANT, :ptr GUID, :ptr PROPVARIANT
+    SetStartStopPosition proc :ptr, :ptr, :ptr, :ptr
     HasVideo		proc :ptr, :ptr
     HasAudio		proc :ptr, :ptr
     IsProtected		proc :ptr

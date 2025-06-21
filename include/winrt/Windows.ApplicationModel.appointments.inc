@@ -35,10 +35,10 @@ DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CAppointments__CAppointme
 
 .comdef __FIIterator_1_Windows__CApplicationModel__CAppointments__CAppointmentInvitee : public IInspectable
 
-    get_Current		proc :ptr ptr
+    get_Current		proc :ptr
     get_HasCurrent	proc :ptr
     MoveNext		proc :ptr
-    GetMany		proc :UINT, :ptr ptr, :ptr
+    GetMany		proc :UINT, :ptr, :ptr
    .ends
 
 endif
@@ -50,7 +50,7 @@ DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CAppointments__CAppointme
 
 .comdef __FIIterable_1_Windows__CApplicationModel__CAppointments__CAppointmentInvitee : public IInspectable
 
-    First		proc :ptr ptr
+    First		proc :ptr
    .ends
 
 endif
@@ -62,10 +62,10 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CAppointments__CAppoint
 
 .comdef __FIVectorView_1_Windows__CApplicationModel__CAppointments__CAppointmentInvitee : public IInspectable
 
-    GetAt		proc :SINT, :ptr ptr
+    GetAt		proc :SINT, :ptr
     get_Size		proc :ptr
     IndexOf		proc :ptr, :ptr, :ptr
-    GetMany		proc :SINT, :SINT, :ptr ptr, :ptr
+    GetMany		proc :SINT, :SINT, :ptr, :ptr
    .ends
 
 endif
@@ -77,9 +77,9 @@ DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CAppointments__CAppointment
 
 .comdef __FIVector_1_Windows__CApplicationModel__CAppointments__CAppointmentInvitee : public IInspectable
 
-     GetAt		proc :SINT, :ptr ptr
+     GetAt		proc :SINT, :ptr
      get_Size		proc :ptr
-     GetView		proc :ptr ptr
+     GetView		proc :ptr
      IndexOf		proc :ptr, :ptr, :ptr
      SetAt		proc :SINT, :ptr
      InsertAt		proc :SINT, :ptr
@@ -88,7 +88,7 @@ DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CAppointments__CAppointment
      RemoveAtEnd	proc
      Clear		proc
      GetMany		proc :SINT, :SINT, :ptr, :ptr
-     ReplaceAll		proc :SINT, :ptr ptr
+     ReplaceAll		proc :SINT, :ptr
     .ends
 
 endif
@@ -160,15 +160,15 @@ DEFINE_IIDX(IAppointmentManagerStatics, "3A30FA01-5C40-499D-B33F-A43050F74FC4")
 
 .comdef IAppointmentManagerStatics : public IInspectable
 
-    ShowAddAppointmentAsync proc :ptr, :LONG, :ptr ptr
-    ShowAddAppointmentWithPlacementAsync proc :ptr, :ptr, :ptr, :ptr ptr
-    ShowReplaceAppointmentAsync proc :HSTRING, :ptr, :ptr, :ptr ptr
-    ShowReplaceAppointmentWithPlacementAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
-    ShowReplaceAppointmentWithPlacementAndDateAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
-    ShowRemoveAppointmentAsync proc :HSTRING, :ptr,	 :ptr ptr
-    ShowRemoveAppointmentWithPlacementAsync proc :HSTRING, :ptr, :ptr, :ptr ptr
-    ShowRemoveAppointmentWithPlacementAndDateAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
-    ShowTimeFrameAsync proc :ptr, :ptr, :ptr ptr
+    ShowAddAppointmentAsync proc :ptr, :LONG, :ptr
+    ShowAddAppointmentWithPlacementAsync proc :ptr, :ptr, :ptr, :ptr
+    ShowReplaceAppointmentAsync proc :HSTRING, :ptr, :ptr, :ptr
+    ShowReplaceAppointmentWithPlacementAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr
+    ShowReplaceAppointmentWithPlacementAndDateAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr
+    ShowRemoveAppointmentAsync proc :HSTRING, :ptr,	 :ptr
+    ShowRemoveAppointmentWithPlacementAsync proc :HSTRING, :ptr, :ptr, :ptr
+    ShowRemoveAppointmentWithPlacementAndDateAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr
+    ShowTimeFrameAsync proc :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -181,9 +181,9 @@ DEFINE_IIDX(IAppointmentParticipant, "615E2902-9718-467B-83FB-B293A19121DE")
 
 .comdef IAppointmentParticipant : public IInspectable
 
-    get_DisplayName	proc :ptr HSTRING
+    get_DisplayName	proc :ptr
     put_DisplayName	proc :HSTRING
-    get_Address		proc :ptr HSTRING
+    get_Address		proc :ptr
     put_Address		proc :HSTRING
    .ends
 
@@ -215,19 +215,19 @@ DEFINE_IIDX(IAppointmentRecurrence, "D87B3E83-15A6-487B-B959-0C361E60E954")
 
     get_Unit		proc :ptr
     put_Unit		proc :LONG
-    get_Occurrences	proc :ptr ptr
+    get_Occurrences	proc :ptr
     put_Occurrences	proc :ptr
-    get_Until		proc :ptr ptr
+    get_Until		proc :ptr
     put_Until		proc :ptr
-    get_Interval	proc :ptr UINT32
+    get_Interval	proc :ptr
     put_Interval	proc :UINT32
     get_DaysOfWeek	proc :ptr
     put_DaysOfWeek	proc :ptr
     get_WeekOfMonth	proc :ptr
     put_WeekOfMonth	proc :ptr
-    get_Month		proc :ptr UINT32
+    get_Month		proc :ptr
     put_Month		proc :UINT32
-    get_Day		proc :ptr UINT32
+    get_Day		proc :ptr
     put_Day		proc :UINT32
    .ends
 
@@ -245,18 +245,18 @@ DEFINE_IIDX(IAppointment, "DD002F2F-2BDD-4076-90A3-22C275312965")
     put_StartTime	proc :LONG
     get_Duration	proc :ptr
     put_Duration	proc :LONG
-    get_Location	proc :ptr HSTRING
+    get_Location	proc :ptr
     put_Location	proc :HSTRING
-    get_Subject		proc :ptr HSTRING
+    get_Subject		proc :ptr
     put_Subject		proc :HSTRING
-    get_Details		proc :ptr HSTRING
+    get_Details		proc :ptr
     put_Details		proc :HSTRING
-    get_Reminder	proc :ptr ptr
+    get_Reminder	proc :ptr
     put_Reminder	proc :ptr
-    get_Organizer	proc :ptr ptr
+    get_Organizer	proc :ptr
     put_Organizer	proc :ptr
-    get_Invitees	proc :ptr ptr
-    get_Recurrence	proc :ptr ptr
+    get_Invitees	proc :ptr
+    get_Recurrence	proc :ptr
     put_Recurrence	proc :ptr
     get_BusyStatus	proc :ptr
     put_BusyStatus	proc :LONG
@@ -264,7 +264,7 @@ DEFINE_IIDX(IAppointment, "DD002F2F-2BDD-4076-90A3-22C275312965")
     put_AllDay		proc :BOOL
     get_Sensitivity	proc :ptr
     put_Sensitivity	proc :LONG
-    get_Uri		proc :ptr ptr
+    get_Uri		proc :ptr
     put_Uri		proc :ptr
    .ends
 

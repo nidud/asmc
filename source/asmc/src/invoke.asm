@@ -387,6 +387,40 @@ GetSegmentPart proc __ccall private uses rsi rdi rbx opnd:ptr expr, buffer:strin
 GetSegmentPart endp
 
 
+LQPush2U proc fastcall private opnd:ptr, size:uint_t
+
+    .if ( edx == 2 )
+        movzx eax,word ptr [rcx]
+        movzx edx,word ptr [rcx+2]
+    .else
+        mov eax,[rcx]
+        mov edx,[rcx+4]
+    .endif
+    AddLineQueueX( " push %u\n push %u", edx, eax )
+    ret
+
+LQPush2U endp
+
+
+LQPush2M proc fastcall private mem:string_t, size:uint_t
+
+    .if ( edx == 2 )
+        mov eax,2
+        mov edx,T_WORD
+    .elseif ( edx == 4 )
+        mov eax,4
+        mov edx,T_DWORD
+    .else
+        mov eax,8
+        mov edx,T_QWORD
+    .endif
+    AddLineQueueX(
+        " push %r ptr %s[%u]\n"
+        " push %r ptr %s[0]", edx, rcx, eax, edx, rcx )
+    ret
+
+LQPush2M endp
+
     assume rdi:expr_t
 
 fast_param proc __ccall private uses rsi rdi rbx \
@@ -876,24 +910,21 @@ fast_param proc __ccall private uses rsi rdi rbx \
                     .return
                 .endif
 
-                mov rdx,paramvalue
+                mov rcx,paramvalue
                 .if ( [rdi].kind == EXPR_FLOAT ) ; added v2.34.70
 
                     xor eax,eax
                     .if ( [rdi].negative )
                         inc eax
                     .endif
-                    mov rcx,[rdi].float_tok
-                    .if rcx
-                        mov rdx,[rcx].asm_tok.string_ptr
+                    mov rdx,[rdi].float_tok
+                    .if rdx
+                        mov rcx,[rdx].asm_tok.string_ptr
                     .endif
-                    atofloat( rdi, rdx, 8, eax, 0 )
-                    AddLineQueueX( " push %u\n push %u", [rdi].hvalue, [rdi].value )
-                   .return
+                    atofloat( rdi, rcx, 8, eax, 0 )
+                   .return( LQPush2U( rdi, 4 ) )
                 .endif
-                AddLineQueueX( " push dword ptr %s[4]\n"
-                               " push dword ptr %s[0]", rdx, rdx )
-               .return
+                .return( LQPush2M( rcx, 4 ) )
             .endif
 
             ; constant value is 128 bit
@@ -906,12 +937,8 @@ push_const_128:
 
                     .if ( Ofssize == USE32 )
 
-                        AddLineQueueX(
-                            " push %u\n"
-                            " push %u\n"
-                            " push %u\n"
-                            " push %u", [rdi].h64_h, [rdi].h64_l, [rdi].l64_h, [rdi].l64_l )
-                        .return
+                        LQPush2U( &[rdi+8], 4 )
+                       .return( LQPush2U( rdi, 4 ) )
                     .endif
 
                     mov ebx,stkreg
@@ -935,14 +962,13 @@ push_const_128:
                 .endif
 
                 .if ( [rdi].l64_l == 0 && [rdi].l64_h == 0 && [rdi].h64_l == 0 && [rdi].h64_h == 0 )
-
-                    AddLineQueueX( " %r %r, %r", T_XORPS, ebx, ebx )
+                    AddLineQueueX( " xorps %r, %r", ebx, ebx )
                    .return
                 .endif
 
                 lea rsi,buffer
                 CreateFloat( eax, rdi, rsi )
-                AddLineQueueX( " %r %r, xmmword ptr %s", T_MOVAPS, ebx, rsi )
+                AddLineQueueX( " movaps %r, xmmword ptr %s", ebx, rsi )
                .return
             .endif
 
@@ -952,15 +978,15 @@ push_const_128:
 
                 .if ( stack )
 
-                    mov ecx,T_MOVAPS
+                    mov ebx,T_MOVAPS
                     .if ( eax > 16 )
-                        mov ecx,T_VMOVAPS
+                        mov ebx,T_VMOVAPS
                     .endif
                     .if ( !resstack )
 
                         AddLineQueueX( " sub %r, %u", stkreg, eax )
                     .endif
-                    AddLineQueueX( " %r [%r+%u], %r", ecx, stkreg, arg_offset, param_reg )
+                    AddLineQueueX( " %r [%r+%u], %r", ebx, stkreg, arg_offset, param_reg )
 
                 .elseif ( ebx != param_reg )
 
@@ -977,15 +1003,15 @@ push_const_128:
 
             .if ( stack == FALSE )
 
-                mov ecx,GetValueSp( ebx )
-                .if !( ecx & ( OP_XMM or OP_YMM or OP_ZMM ) )
+                mov eax,GetValueSp( ebx )
+                .if !( eax & ( OP_XMM or OP_YMM or OP_ZMM ) )
                     jmp arg_error
                 .endif
                 mov edx,T_VMOVAPS
                 mov esi,T_XMMWORD
-                .if ( ecx & OP_ZMM )
+                .if ( eax & OP_ZMM )
                     mov esi,T_ZMMWORD
-                .elseif ( ecx & OP_YMM )
+                .elseif ( eax & OP_YMM )
                     mov esi,T_YMMWORD
                 .elseif ( ebx < T_XMM16 )
                     mov edx,T_MOVAPS
@@ -994,7 +1020,7 @@ push_const_128:
                 .if ( arg_flt )
                     AddLineQueueX( " lea %r, %s", arg_flt, paramvalue )
                 .endif
-               .return
+                .return
             .endif
 
             ; param is memory operand
@@ -1136,14 +1162,9 @@ push_const_128:
 
                 .switch eax
                 .case 8
-                    movzx ecx,word ptr [rdi].hvalue[2]
-                    movzx edx,word ptr [rdi].hvalue[0]
-                    AddLineQueueX( " push %u\n push %u", ecx, edx )
+                    LQPush2U( &[rdi].hvalue, 2 )
                 .case 4
-                    movzx ecx,word ptr [rdi].value[2]
-                    movzx edx,word ptr [rdi].value[0]
-                    AddLineQueueX( " push %u\n push %u", ecx, edx )
-                   .return
+                    .return( LQPush2U( rdi, 2 ) )
                 .endsw
                 jmp arg_error
             .endif
@@ -1152,10 +1173,9 @@ push_const_128:
 
                 .switch eax
                 .case 16
-                    jmp push_const_128
+                    LQPush2U( &[rdi].hlvalue, 4 )
                 .case 8
-                    AddLineQueueX( " push %u\n push %u", [rdi].l64_h, [rdi].l64_l )
-                   .return
+                    .return( LQPush2U( rdi, 4 ) )
                 .endsw
             .endif
             cmp eax,16
@@ -1222,8 +1242,8 @@ push_const_128:
                         AddLineQueueX( " mov %r, %u", reg, eax )
                     .elseif ( !edx )
                         mov reg[4],eax
-                        mov ecx,get_register(reg, 4)
-                        AddLineQueueX( " mov %r, %u", ecx, reg[4] )
+                        mov edx,get_register(reg, 4)
+                        AddLineQueueX( " mov %r, %u", edx, reg[4] )
                     .else
                         AddLineQueueX( " mov %r, %lu", reg, qword ptr [rdi+rcx] )
                     .endif
@@ -1375,8 +1395,7 @@ handle_address:
                     AddLineQueueX( " %r %r, %r", ecx, param_reg, param_reg )
                     mov ecx,T_MOVSD
                 .endif
-                AddLineQueueX( " %r [%r+%u], %r", ecx, stkreg, arg_offset, param_reg )
-               .return
+                .return( AddLineQueueX( " %r [%r+%u], %r", ecx, stkreg, arg_offset, param_reg ) )
             .endif
 
             .if ( wordsize == 8 && isvararg )
@@ -1411,7 +1430,6 @@ handle_address:
                 mov arg_size,8
             .endif
             atofloat( rdi, rdx, arg_size, eax, 0 )
-
             AddLineQueueX( " mov dword ptr [%r+%u], %u", stkreg, arg_offset, [rdi].l64_l )
             .if ( arg_size == 8 )
                 AddLineQueueX( " mov dword ptr [%r+%u][4], %u", stkreg, arg_offset, [rdi].l64_h )
@@ -1460,9 +1478,7 @@ handle_address:
                     .return
                 .endif
 
-                mov ecx,T_MOV
                 mov reg,T_EAX
-
                 .if ( isvararg )
 
                     ; v2.34.71 - convert float to double in 64-bit
@@ -1470,24 +1486,17 @@ handle_address:
                     mov reg,T_RAX
                     .if ( [rdi].kind != EXPR_FLOAT )
 
-                        mov ecx,T_CVTSS2SD
-                        mov esi,T_XMM0
-                        AddLineQueueX( " %r %r, %s", ecx, esi, paramvalue )
+                        AddLineQueueX( " cvtss2sd xmm0, %s", paramvalue )
                         mov rax,regs_used
                         or byte ptr [rax+2],R0_USED
-
                         .if ( resstack )
-
-                            mov ecx,T_MOVSD
-                            AddLineQueueX( " %r [%r+%u], %r", ecx, stkreg, arg_offset, esi )
-                           .return
+                            .return( AddLineQueueX( " movsd [%r+%u], xmm0", stkreg, arg_offset ) )
                         .endif
-                        mov ecx,T_MOVQ
-                        AddLineQueueX( " %r %r, %r", ecx, ebx, esi )
+                        AddLineQueueX( " movq %r, xmm0", ebx )
                         jmp stack_ebx
                     .endif
                 .endif
-                AddLineQueueX( " %r %r, %s", ecx, reg, paramvalue )
+                AddLineQueueX( " mov %r, %s", reg, paramvalue )
                 .if ( resstack )
                     mov ebx,reg
                 .endif
@@ -1518,12 +1527,9 @@ handle_address:
                 jmp stack_ebx
             .endif
             .if ( [rdi].kind == EXPR_FLOAT )
-
-                AddLineQueueX( " push %u\n push %u", [rdi].l64_h, [rdi].l64_l )
-               .return
+                .return( LQPush2U( rdi, 4 ) )
             .endif
-            AddLineQueueX( " push dword ptr %s[4]\n push dword ptr %s", rcx, rcx )
-           .return
+            .return( LQPush2M( rcx, 4 ) )
         .endif
         AddLineQueueX( " movsd %r, %s", ebx, rcx )
         .if ( arg_flt )
@@ -1556,9 +1562,7 @@ endif
                 .else
 
                     AddLineQueueX( " mov %r, %s", ebx, rdx )
-
                     .if ( stack )
-
                         jmp stack_ebx
                     .endif
                 .endif
@@ -1578,9 +1582,7 @@ endif
         .if ( stack == FALSE )
 
             .if ( word ptr [rdx] == "0" || ( [rdi].value == 0 && [rdi].hvalue == 0 ) )
-
-                AddLineQueueX( " xor %r, %r", extended_reg, extended_reg )
-               .return
+                .return( AddLineQueueX( " xor %r, %r", extended_reg, extended_reg ) )
             .endif
 
         .elseif ( resstack == FALSE )
@@ -1611,7 +1613,6 @@ endif
                 ; - the default size is 4
                 ;
                 .if ( [rdi].value || !isvararg )
-
                     mov ecx,T_DWORD
                 .endif
             .endif
@@ -1669,13 +1670,15 @@ endif
 
                     mov rax,regs_used
                     or byte ptr [rax],R0_USED
-                    mov edx,T_MOVZX
+
+                    mov ecx,edx
+                    mov ecx,T_MOVZX
                     mov eax,ebx
                     .if ( cpu < P_386 )
                         AddLineQueueX( " mov ah, 0" )
-                        mov edx,T_MOV
+                        mov ecx,T_MOV
                         mov eax,T_AL
-                        mov ecx,param_reg
+                        mov edx,param_reg
                     .endif
                     AddLineQueueX( " %r %r, %r", edx, eax, ecx )
                     mov eax,ebx
@@ -1747,9 +1750,9 @@ endif
         .if ( eax == ecx && stack && !resstack )
 
             .if ( cpu < P_186 && [rdi].inst == T_OFFSET )
-
-                AddLineQueueX( " mov %r, %s", ebx, paramvalue )
-                AddLineQueueX( " push %r", ebx )
+                AddLineQueueX(
+                    " mov %r, %s\n"
+                    " push %r", ebx, paramvalue, ebx )
                 mov rax,regs_used
                 or byte ptr [rax],R0_USED
             .else
@@ -1845,9 +1848,7 @@ endif
     sub ecx,esi
     mov ecx,get_register(ebx, ecx)
     mov edx,T_MOV
-
     .if ( edi == T_WORD )
-
         mov edx,T_MOVZX ; clear upper part if reg32
         mov ecx,ebx
     .endif
@@ -2072,26 +2073,25 @@ ifndef ASMC64
             .if ( [rdi].asym.is_far || psize == fptrsize ||
                 ( [rdi].asym.is_vararg && opnd.mem_type == MT_FAR ) )
 
-                lea rcx,@CStr(" %r %r")
                 mov eax,T_DS
                 mov rdx,opnd.sym
                 .if ( rdx && [rdx].asym.state == SYM_STACK )
                     mov eax,T_SS
                 .elseif ( opnd.override != NULL )
-                    lea rcx,@CStr(" %r %s")
                     mov rdx,opnd.override
-                    mov rax,[rdx].asm_tok.string_ptr
+                    mov eax,[rdx].asm_tok.tokval
                 .endif
-                AddLineQueueX( rcx, T_PUSH, rax )
+                AddLineQueueX( " push %r", eax )
                 .if ( [rdi].asym.is_vararg )
                     add size_vararg,CurrWordSize
                 .endif
             .endif
 endif
-            AddLineQueueX( " %r %r, %s", T_LEA, MODULE.accumulator, &fullparam )
+            AddLineQueueX(
+                " lea %r, %s\n"
+                " push %r", MODULE.accumulator, &fullparam, MODULE.accumulator )
             mov rcx,r0flags
             or  byte ptr [rcx],R0_USED
-            AddLineQueueX( " %r %r", T_PUSH, MODULE.accumulator )
 
         .else
 
@@ -2112,7 +2112,7 @@ ifndef ASMC64
                 ( [rdi].asym.is_vararg && opnd.mem_type == MT_FAR ) )
 
                 GetSegmentPart( &opnd, &buffer, &fullparam )
-                lea rcx,@CStr(" %r %s")
+                lea rcx,@CStr(" push %s")
                 lea rdx,buffer
                 .if ( eax )
 
@@ -2121,13 +2121,12 @@ ifndef ASMC64
 
                     .new reg:int_t = eax
                     .if ( Ofssize != MODULE.Ofssize || ( [rdi].asym.Ofssize == USE16 && CurrWordSize > 2 ) )
-
                         AddLineQueue( " db 66h" )
                     .endif
-                    lea rcx,@CStr(" %r %r")
+                    lea rcx,@CStr(" push %r")
                     mov edx,reg
                 .endif
-                AddLineQueueX( rcx, T_PUSH, rdx )
+                AddLineQueueX( rcx, rdx )
                 .if ( [rdi].asym.is_vararg )
                     add size_vararg,CurrWordSize
                 .endif
@@ -2192,10 +2191,10 @@ ifndef ASMC64
                         .if ( [rdi].asym.Ofssize == USE64 )
 
                             AddLineQueueX(
-                                " %r %r, %s\n"
-                                " %r %r", T_LEA, T_RAX, &fullparam, T_PUSH, T_RAX )
-                            mov rcx,r0flags
-                            or  byte ptr [rcx],R0_USED
+                                " lea rax, %s\n"
+                                " push rax", &fullparam )
+                            mov rax,r0flags
+                            or  byte ptr [rax],R0_USED
                             xor edx,edx
                         .else
                             mov edx,T_PUSH
@@ -2209,7 +2208,7 @@ ifndef ASMC64
                     .endif
                 .endif
                 .if ( edx )
-                    AddLineQueueX( " %r %r %s", edx, T_OFFSET, &fullparam )
+                    AddLineQueueX( " %r offset %s", edx, &fullparam )
                 .endif
             .endif
 endif
@@ -2262,7 +2261,7 @@ endif
 
         .if ( asize2 != 8 && !pfastcall )
 
-            AddLineQueueX( " %r %r", T_PUSH, [rbx].tokval )
+            AddLineQueueX( " push %r", [rbx].tokval )
         .endif
 
         ; v2.04: changed
@@ -2552,7 +2551,7 @@ ifndef ASMC64
                     .endif
                     mov ecx,t_dw
                 .endif
-                AddLineQueueX( " %r %r %r %s+%u", T_PUSH, ecx, T_PTR, &fullparam, edx )
+                AddLineQueueX( " push %r ptr %s+%u", ecx, &fullparam, edx )
             .endw
 endif
         .elseif ( asize < pushsize )
@@ -2569,7 +2568,6 @@ endif
                 AddLineQueueX(
                     " movsx eax, %s\n"
                     " push %r", &fullparam, r_ax )
-
                 mov rcx,r0flags
                 mov byte ptr [rcx],R0_USED ; reset R0_H_CLEARED
 
@@ -2618,7 +2616,6 @@ ifndef ASMC64
                             mov rcx,r0flags
                             mov byte ptr [rcx],0 ; reset AH_CLEARED
                             AddLineQueueX( " mov al, %s\n cbw", &fullparam )
-
                             .if ( psize == 4 )
 
                                 AddLineQueue( " cwd\n push dx" )
@@ -2641,7 +2638,7 @@ endif
 
                     mov rcx,r0flags
                     or byte ptr [rcx],R0_USED
-                    .endc
+                   .endc
 
                 .case MT_WORD
                 .case MT_SWORD
@@ -2661,7 +2658,6 @@ ifndef ASMC64
 
                                 AddLineQueue( " pushw 0" )
                             .else
-
                                 movzx ecx,MODULE.Ofssize
                                 lea rdx,stackreg
                                 mov edx,[rdx+rcx*4]
@@ -2672,13 +2668,13 @@ endif
                         .endif
                     .else
 
-                        mov ecx,T_MOVSX
+                        mov edx,T_MOVSX
                         .if ( opnd.mem_type == MT_WORD )
-                            mov ecx,T_MOVZX
+                            mov edx,T_MOVZX
                         .endif
                         AddLineQueueX(
                             " %r eax, %s\n"
-                            " push %r", ecx, &fullparam, r_ax )
+                            " push %r", edx, &fullparam, r_ax )
                         mov rcx,r0flags
                         or byte ptr [rcx],R0_USED
                     .endif
@@ -2709,9 +2705,7 @@ endif
                                 " mov ax, word ptr %s\n"
                                 " push %r", &fullparam, &fullparam, r_ax )
                         .else
-                            AddLineQueueX(
-                                " push word ptr %s[2]\n"
-                                " push word ptr %s", &fullparam, &fullparam )
+                            LQPush2M( &fullparam, 2 )
                         .endif
                     .else
                         AddLineQueueX( " push %s", &fullparam )
@@ -2774,7 +2768,6 @@ ifndef ASMC64
 
                         mov rcx,r0flags
                         .if ( !( byte ptr [rcx] & R0_X_CLEARED ) )
-
                             AddLineQueue( " xor ax, ax" )
                         .endif
                         AddLineQueue( " push ax" )
@@ -2789,7 +2782,7 @@ endif
             .endif
         .endif
 
-    .else  ; the parameter is a register or constant value!
+    .else ; the parameter is a register or constant value!
 
         .if ( opnd.kind == EXPR_REG )
 
@@ -2857,7 +2850,7 @@ endif
 
                         .if ( reg != T_EAX )
 
-                            AddLineQueueX( " mov eax,%r", reg )
+                            AddLineQueueX( " mov eax, %r", reg )
                             mov rcx,r0flags
                             mov byte ptr [rcx],R0_USED
                             mov reg,T_EAX
@@ -2920,14 +2913,12 @@ ifndef ASMC64
                                 .endif
                                 AddLineQueue( " cbw" )
                             .elseif ( reg != T_AX )
-
                                 AddLineQueueX( " mov ax, %s", &fullparam )
                             .endif
                             AddLineQueue(
                                 " cwd\n"
                                 " push dx" )
                             mov reg,T_AX
-
                         .endif
                         mov asize,2 ; done
 
@@ -2972,7 +2963,6 @@ ifndef ASMC64
                             .endif
                             AddLineQueue( " xor ax, ax" )
                         .endif
-
                         AddLineQueue( " push ax" )
                         mov rcx,r0flags
                         mov byte ptr [rcx],R0_USED or R0_H_CLEARED or R0_X_CLEARED
@@ -3022,23 +3012,22 @@ endif
                             ; v2.10: consider signed type coercion!
 
                             mov eax,R0_USED or R0_H_CLEARED
-                            mov ecx,T_MOVZX
+                            mov edx,T_MOVZX
                             .if IS_SIGNED(opnd.mem_type)
 
-                                mov ecx,T_MOVSX
+                                mov edx,T_MOVSX
                                 mov eax,R0_USED
                             .endif
 
-                            mov rdx,r0flags
-                            mov [rdx],al
-                            AddLineQueueX( " %r %r, %s", ecx, MODULE.accumulator, &fullparam )
+                            mov rcx,r0flags
+                            mov [rcx],al
+                            AddLineQueueX( " %r %r, %s", edx, MODULE.accumulator, &fullparam )
 
                         .else
 
                             .if ( eax != T_AL )
 
                                 AddLineQueueX( " mov al, %s", &fullparam )
-
                                 mov rcx,r0flags
                                 or  byte ptr [rcx],R0_USED
                                 and byte ptr [rcx],not R0_X_CLEARED
@@ -3180,10 +3169,8 @@ ifndef ASMC64p
                         AddLineQueueX( " mov ax, %s", &fullparam )
                     .else
                         .if ( !( byte ptr [rcx] & R0_X_CLEARED ) )
-
                             AddLineQueue( " xor ax, ax" )
                         .endif
-
                         mov rcx,r0flags
                         or byte ptr [rcx],R0_H_CLEARED or R0_X_CLEARED
                     .endif
@@ -3191,7 +3178,6 @@ ifndef ASMC64p
 
                 .case 4
                     .if ( opnd.uvalue <= 0xFFFF )
-
                         AddLineQueue( " xor ax, ax" )
                     .else
                         AddLineQueueX( " mov ax, highword (%s)", &fullparam )
@@ -3199,7 +3185,6 @@ ifndef ASMC64p
                     AddLineQueue( " push ax" )
 
                     .if ( opnd.uvalue != 0 || opnd.kind == EXPR_ADDR )
-
                         AddLineQueueX( " mov ax, lowword (%s)", &fullparam )
                     .else
                         mov rcx,r0flags
@@ -3277,16 +3262,12 @@ ifndef ASMC64
 
                             mov ebx,T_PUSHD
                             AddLineQueueX(
-                                " %r %r (0x%lx)\n"
-                                " %r %r (0x%lx)",
-                                ebx, T_HIGH32, opnd.hlvalue,
-                                ebx, T_LOW32, opnd.hlvalue )
+                                " %r HIGH32 (0x%lx)\n"
+                                " %r LOW32 (0x%lx)", ebx, opnd.hlvalue, ebx, opnd.hlvalue )
 pushd_ll_32:
                             AddLineQueueX(
-                                " %r %r (0x%lx)\n"
-                                " %r %r (0x%lx)",
-                                ebx, T_HIGH32, opnd.llvalue,
-                                ebx, T_LOW32, opnd.llvalue )
+                                " %r HIGH32 (0x%lx)\n"
+                                " %r LOW32 (0x%lx)", ebx, opnd.llvalue, ebx, opnd.llvalue )
                             jmp skip_push
                         .endif
 endif

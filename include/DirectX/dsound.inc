@@ -482,12 +482,12 @@ DEFINE_GUID(IID_IDirectSound3DListener, 0x279AFA84, 0x4981, 0x11CE, 0xA5, 0x21, 
 .comdef IDirectSound3DListener : public IUnknown
 
     GetAllParameters	proc :LPDS3DLISTENER
-    GetDistanceFactor	proc :ptr D3DVALUE
-    GetDopplerFactor	proc :ptr D3DVALUE
-    GetOrientation	proc :ptr D3DVECTOR, :ptr D3DVECTOR
-    GetPosition		proc :ptr D3DVECTOR
-    GetRolloffFactor	proc :ptr D3DVALUE
-    GetVelocity		proc :ptr D3DVECTOR
+    GetDistanceFactor	proc :ptr
+    GetDopplerFactor	proc :ptr
+    GetOrientation	proc :ptr, :ptr
+    GetPosition		proc :ptr
+    GetRolloffFactor	proc :ptr
+    GetVelocity		proc :ptr
     SetAllParameters	proc :LPCDS3DLISTENER, :DWORD
     SetDistanceFactor	proc :D3DVALUE, :DWORD
     SetDopplerFactor	proc :D3DVALUE, :DWORD
@@ -504,13 +504,13 @@ DEFINE_GUID(IID_IDirectSound3DBuffer, 0x279AFA86, 0x4981, 0x11CE, 0xA5, 0x21, 0x
 
     GetAllParameters	proc :LPDS3DLISTENER
     GetConeAngles	proc :LPDWORD, :LPDWORD
-    GetConeOrientation	proc :ptr D3DVECTOR
+    GetConeOrientation	proc :ptr
     GetConeOutsideVolume proc :LPLONG
-    GetMaxDistance	proc :ptr D3DVALUE
-    GetMinDistance	proc :ptr D3DVALUE
+    GetMaxDistance	proc :ptr
+    GetMinDistance	proc :ptr
     GetMode		proc :LPDWORD
-    GetPosition		proc :ptr D3DVECTOR
-    GetVelocity		proc :ptr D3DVECTOR
+    GetPosition		proc :ptr
+    GetVelocity		proc :ptr
     SetAllParameters	proc :LPCDS3DBUFFER, :DWORD
     SetConeAngles	proc :DWORD, :DWORD, :DWORD
     SetConeOrientation	proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
@@ -540,7 +540,7 @@ DEFINE_GUID(IID_IDirectSoundCaptureBuffer, 0xb0210782, 0x89cd, 0x11d0, 0xaf, 0x8
     GetFormat		proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
     GetStatus		proc :LPDWORD
     Initialize		proc :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
-    _Lock		proc :DWORD, :DWORD, :ptr PVOID, :LPDWORD, :DWORD
+    _Lock		proc :DWORD, :DWORD, :ptr, :LPDWORD, :DWORD
     Start		proc :DWORD
     Stop		proc
     Unlock		proc :LPVOID, :DWORD, :LPVOID, :DWORD

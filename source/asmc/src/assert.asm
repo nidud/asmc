@@ -186,7 +186,6 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 AddLineQueue( " popfd" )
             .endif
         .endif
-
         AddLineQueueX(
             "jmp %s\n"
             "%s%s", &buff, GetLabelStr( [rsi].labels[LTEST*4], rdi ), LABELQUAL )

@@ -360,7 +360,7 @@ DEFINE_IIDX(IRawElementProviderSimple, "d6dd68d1-86fd-4332-8666-9abedea2d24c")
 
 .comdef IRawElementProviderSimple : public IUnknown
 
-    get_ProviderOptions proc :ptr LONG
+    get_ProviderOptions proc :ptr
     GetPatternProvider	proc :PATTERNID, :ptr
     GetPropertyValue	proc :PROPERTYID, :ptr
     get_HostRawElementProvider proc :ptr
@@ -522,7 +522,7 @@ DEFINE_IIDX(IDockProvider, "159bc72c-4ad3-485e-9637-d7052edf0146")
 .comdef IDockProvider : public IUnknown
 
     SetDockPosition	proc :DockPosition
-    get_DockPosition	proc :ptr LONG
+    get_DockPosition	proc :ptr
    .ends
 
 endif
@@ -536,7 +536,7 @@ DEFINE_IIDX(IExpandCollapseProvider, "d847d3a5-cab0-4a98-8c32-ecb45c59ad24")
 
     Expand		proc
     Collapse		proc
-    get_ExpandCollapseState proc :ptr LONG
+    get_ExpandCollapseState proc :ptr
    .ends
 
 endif
@@ -699,7 +699,7 @@ DEFINE_IIDX(ITableProvider, "9c860395-97b3-490a-b52a-858cc22af166")
 
     GetRowHeaders	proc :ptr
     GetColumnHeaders	proc :ptr
-    get_RowOrColumnMajor proc :ptr LONG
+    get_RowOrColumnMajor proc :ptr
    .ends
 
 endif
@@ -725,7 +725,7 @@ DEFINE_IIDX(IToggleProvider, "56d00bd0-c4f4-433c-a836-1a52a57e0892")
 .comdef IToggleProvider : public IUnknown
 
     Toggle		proc
-    get_ToggleState	proc :ptr LONG
+    get_ToggleState	proc :ptr
    .ends
 
 endif
@@ -774,8 +774,8 @@ DEFINE_IIDX(IWindowProvider, "987df77b-db06-4d77-8f8a-86a9c3bb90b9")
     get_CanMaximize	proc :ptr
     get_CanMinimize	proc :ptr
     get_IsModal		proc :ptr
-    get_WindowVisualState proc :ptr LONG
-    get_WindowInteractionState proc :ptr LONG
+    get_WindowVisualState proc :ptr
+    get_WindowInteractionState proc :ptr
     get_IsTopmost	proc :ptr
    .ends
 
@@ -988,7 +988,7 @@ DEFINE_IIDX(ITextProvider, "3589c92c-63f3-4367-99bb-ada653b77cf2")
     RangeFromChild	proc :ptr, :ptr
     RangeFromPoint	proc :UiaPoint, :ptr
     get_DocumentRange	proc :ptr
-    get_SupportedTextSelection proc :ptr LONG
+    get_SupportedTextSelection proc :ptr
    .ends
 
 endif

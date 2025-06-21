@@ -76,7 +76,7 @@ DEFINE_GUID(IID_ID3D10StateBlock,0x803425a,0x57f5,0x4dd6,0x94,0x65,0xa8,0x75,0x7
     Capture		proc
     Apply		proc
     ReleaseAllDeviceObjects proc
-    GetDevice		proc :ptr ptr ID3D10Device
+    GetDevice		proc :ptr
    .ends
 
 D3D10StateBlockMaskUnion proto WINAPI :ptr, :ptr, :ptr
@@ -115,7 +115,7 @@ DEFINE_GUID(IID_ID3D10EffectType,0x4e9e1ddc,0xcd9d,0x4772,0xa8,0x37,0x0,0x18,0xb
 .comdef ID3D10EffectType
 
     IsValid			proc
-    GetDesc			proc :ptr D3D10_EFFECT_TYPE_DESC
+    GetDesc			proc :ptr
     GetMemberTypeByIndex	proc :UINT
     GetMemberTypeByName		proc :LPCSTR
     GetMemberTypeBySemantic	proc :LPCSTR
@@ -138,7 +138,7 @@ DEFINE_GUID(IID_ID3D10EffectVariable,0xae897105,0xe6,0x45bf,0xbb,0x8e,0x28,0x1d,
 
     IsValid			proc
     GetType			proc
-    GetDesc			proc :ptr D3D10_EFFECT_VARIABLE_DESC
+    GetDesc			proc :ptr
     GetAnnotationByIndex	proc :UINT
     GetAnnotationByName		proc :LPCSTR
     GetMemberByIndex		proc :UINT
@@ -225,40 +225,40 @@ DEFINE_GUID(IID_ID3D10EffectShaderResourceVariable,0xc0a7157b,0xd872,0x4b1d,0x80
 
 .comdef ID3D10EffectShaderResourceVariable : public ID3D10EffectVariable
 
-    SetResource			proc :ptr ID3D10ShaderResourceView
-    GetResource			proc :ptr ptr ID3D10ShaderResourceView
-    SetResourceArray		proc :ptr ptr ID3D10ShaderResourceView, :UINT, :UINT
-    GetResourceArray		proc :ptr ptr ID3D10ShaderResourceView, :UINT, :UINT
+    SetResource			proc :ptr
+    GetResource			proc :ptr
+    SetResourceArray		proc :ptr, :UINT, :UINT
+    GetResourceArray		proc :ptr, :UINT, :UINT
    .ends
 
 DEFINE_GUID(IID_ID3D10EffectRenderTargetViewVariable,0x28ca0cc3,0xc2c9,0x40bb,0xb5,0x7f,0x67,0xb7,0x37,0x12,0x2b,0x17)
 
 .comdef ID3D10EffectRenderTargetViewVariable : public ID3D10EffectVariable
 
-    SetRenderTarget		proc :ptr ID3D10RenderTargetView
-    GetRenderTarget		proc :ptr ptr ID3D10RenderTargetView
-    SetRenderTargetArray	proc :ptr ptr ID3D10RenderTargetView, :UINT, :UINT
-    GetRenderTargetArray	proc :ptr ptr ID3D10RenderTargetView, :UINT, :UINT
+    SetRenderTarget		proc :ptr
+    GetRenderTarget		proc :ptr
+    SetRenderTargetArray	proc :ptr, :UINT, :UINT
+    GetRenderTargetArray	proc :ptr, :UINT, :UINT
    .ends
 
 DEFINE_GUID(IID_ID3D10EffectDepthStencilViewVariable,0x3e02c918,0xcc79,0x4985,0xb6,0x22,0x2d,0x92,0xad,0x70,0x16,0x23)
 
 .comdef ID3D10EffectDepthStencilViewVariable : public ID3D10EffectVariable
 
-    SetDepthStencil		proc :ptr ID3D10DepthStencilView
-    GetDepthStencil		proc :ptr ptr ID3D10DepthStencilView
-    SetDepthStencilArray	proc :ptr ptr ID3D10DepthStencilView, :UINT, :UINT
-    GetDepthStencilArray	proc :ptr ptr ID3D10DepthStencilView, :UINT, :UINT
+    SetDepthStencil		proc :ptr
+    GetDepthStencil		proc :ptr
+    SetDepthStencilArray	proc :ptr, :UINT, :UINT
+    GetDepthStencilArray	proc :ptr, :UINT, :UINT
    .ends
 
 DEFINE_GUID(IID_ID3D10EffectConstantBuffer,0x56648f4d,0xcc8b,0x4444,0xa5,0xad,0xb5,0xa3,0xd7,0x6e,0x91,0xb3)
 
 .comdef ID3D10EffectConstantBuffer : public ID3D10EffectVariable
 
-    SetConstantBuffer		proc :ptr ID3D10Buffer
-    GetConstantBuffer		proc :ptr ptr ID3D10Buffer
-    SetTextureBuffer		proc :ptr ID3D10ShaderResourceView
-    GetTextureBuffer		proc :ptr ptr ID3D10ShaderResourceView
+    SetConstantBuffer		proc :ptr
+    GetConstantBuffer		proc :ptr
+    SetTextureBuffer		proc :ptr
+    GetTextureBuffer		proc :ptr
    .ends
 
 D3D10_EFFECT_SHADER_DESC	STRUC
@@ -275,44 +275,44 @@ DEFINE_GUID(IID_ID3D10EffectShaderVariable,0x80849279,0xc799,0x4797,0x8c,0x33,0x
 
 .comdef ID3D10EffectShaderVariable : public ID3D10EffectVariable
 
-    GetShaderDesc		proc :UINT, :ptr D3D10_EFFECT_SHADER_DESC
-    GetVertexShader		proc :UINT, :ptr ptr ID3D10VertexShader
-    GetGeometryShader		proc :UINT, :ptr ptr ID3D10GeometryShader
-    GetPixelShader		proc :UINT, :ptr ptr ID3D10PixelShader
-    GetInputSignatureElementDesc proc :UINT, :UINT, :ptr D3D10_SIGNATURE_PARAMETER_DESC
-    GetOutputSignatureElementDesc proc :UINT, :UINT, :ptr D3D10_SIGNATURE_PARAMETER_DESC
+    GetShaderDesc		proc :UINT, :ptr
+    GetVertexShader		proc :UINT, :ptr
+    GetGeometryShader		proc :UINT, :ptr
+    GetPixelShader		proc :UINT, :ptr
+    GetInputSignatureElementDesc proc :UINT, :UINT, :ptr
+    GetOutputSignatureElementDesc proc :UINT, :UINT, :ptr
    .ends
 
 DEFINE_GUID(IID_ID3D10EffectBlendVariable,0x1fcd2294,0xdf6d,0x4eae,0x86,0xb3,0xe,0x91,0x60,0xcf,0xb0,0x7b)
 
 .comdef ID3D10EffectBlendVariable : public ID3D10EffectVariable
 
-    GetBlendState		proc :UINT, :ptr ptr ID3D10BlendState
-    GetBackingStore		proc :UINT, :ptr D3D10_BLEND_DESC
+    GetBlendState		proc :UINT, :ptr
+    GetBackingStore		proc :UINT, :ptr
    .ends
 
 DEFINE_GUID(IID_ID3D10EffectDepthStencilVariable,0xaf482368,0x330a,0x46a5,0x9a,0x5c,0x1,0xc7,0x1a,0xf2,0x4c,0x8d)
 
 .comdef ID3D10EffectDepthStencilVariable : public ID3D10EffectVariable
 
-    GetDepthStencilState	proc :UINT, :ptr ptr ID3D10DepthStencilState
-    GetBackingStore		proc :UINT, :ptr D3D10_DEPTH_STENCIL_DESC
+    GetDepthStencilState	proc :UINT, :ptr
+    GetBackingStore		proc :UINT, :ptr
    .ends
 
 DEFINE_GUID(IID_ID3D10EffectRasterizerVariable,0x21af9f0e,0x4d94,0x4ea9,0x97,0x85,0x2c,0xb7,0x6b,0x8c,0xb,0x34)
 
 .comdef ID3D10EffectRasterizerVariable : public ID3D10EffectVariable
 
-    GetRasterizerState		proc :UINT, :ptr ptr ID3D10RasterizerState
-    GetBackingStore		proc :UINT, :ptr D3D10_RASTERIZER_DESC
+    GetRasterizerState		proc :UINT, :ptr
+    GetBackingStore		proc :UINT, :ptr
    .ends
 
 DEFINE_GUID(IID_ID3D10EffectSamplerVariable,0x6530d5c7,0x7e9,0x4271,0xa4,0x18,0xe7,0xce,0x4b,0xd1,0xe4,0x80)
 
 .comdef ID3D10EffectSamplerVariable : public ID3D10EffectVariable
 
-    GetSampler			proc :UINT, :ptr ptr ID3D10SamplerState
-    GetBackingStore		proc :UINT, :ptr D3D10_SAMPLER_DESC
+    GetSampler			proc :UINT, :ptr
+    GetBackingStore		proc :UINT, :ptr
    .ends
 
 LPID3D10EffectShaderVariable	typedef ptr ID3D10EffectShaderVariable
@@ -337,14 +337,14 @@ DEFINE_GUID(IID_ID3D10EffectPass,0x5cfbeb89,0x1a06,0x46e0,0xb2,0x82,0xe3,0xf9,0x
 .comdef ID3D10EffectPass
 
     IsValid			proc
-    GetDesc			proc :ptr D3D10_PASS_DESC
-    GetVertexShaderDesc		proc :ptr D3D10_PASS_SHADER_DESC
-    GetGeometryShaderDesc	proc :ptr D3D10_PASS_SHADER_DESC
-    GetPixelShaderDesc		proc :ptr D3D10_PASS_SHADER_DESC
+    GetDesc			proc :ptr
+    GetVertexShaderDesc		proc :ptr
+    GetGeometryShaderDesc	proc :ptr
+    GetPixelShaderDesc		proc :ptr
     GetAnnotationByIndex	proc :UINT
     GetAnnotationByName		proc :LPCSTR
     Apply			proc :UINT
-    ComputeStateBlockMask	proc :ptr D3D10_STATE_BLOCK_MASK
+    ComputeStateBlockMask	proc :ptr
    .ends
 
 D3D10_TECHNIQUE_DESC	STRUC
@@ -358,12 +358,12 @@ DEFINE_GUID(IID_ID3D10EffectTechnique,0xdb122ce8,0xd1c9,0x4292,0xb2,0x37,0x24,0x
 .comdef ID3D10EffectTechnique
 
     IsValid			proc
-    GetDesc			proc :ptr D3D10_TECHNIQUE_DESC
+    GetDesc			proc :ptr
     GetAnnotationByIndex	proc :UINT
     GetAnnotationByName		proc :LPCSTR
     GetPassByIndex		proc :UINT
     GetPassByName		proc :LPCSTR
-    ComputeStateBlockMask	proc :ptr D3D10_STATE_BLOCK_MASK
+    ComputeStateBlockMask	proc :ptr
    .ends
 
 D3D10_EFFECT_DESC	STRUC
@@ -381,8 +381,8 @@ DEFINE_GUID(IID_ID3D10Effect,0x51b0ca8b,0xec0b,0x4519,0x87,0xd,0x8e,0xe1,0xcb,0x
 
     IsValid			proc
     IsPool			proc
-    GetDevice			proc :ptr ptr ID3D10Device
-    GetDesc			proc :ptr D3D10_EFFECT_DESC
+    GetDevice			proc :ptr
+    GetDesc			proc :ptr
     GetConstantBufferByIndex	proc :UINT
     GetConstantBufferByName	proc :LPCSTR
     GetVariableByIndex		proc :UINT

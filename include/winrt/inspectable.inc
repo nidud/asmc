@@ -37,9 +37,9 @@ DEFINE_IIDX(IInspectable, "AF86E2E0-B12D-4c6a-9C5A-D7AA65101E90")
 
 .comdef IInspectable : public IUnknown
 
-    GetIids proc :ptr ULONG, :ptr ptr IID
-    GetRuntimeClassName proc :ptr HSTRING
-    GetTrustLevel proc :ptr TrustLevel
+    GetIids proc :ptr, :ptr
+    GetRuntimeClassName proc :ptr
+    GetTrustLevel proc :ptr
    .ends
     LPINSPECTABLE typedef ptr IInspectable
 

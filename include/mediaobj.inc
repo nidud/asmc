@@ -123,8 +123,8 @@ DEFINE_IIDX(IMediaObject, "d8ad0f58-5494-4102-97c5-ec798e59bcf4")
     GetOutputStreamInfo proc :DWORD, :ptr
     GetInputType	proc :DWORD, :DWORD, :ptr
     GetOutputType	proc :DWORD, :DWORD, :ptr
-    SetInputType	proc :DWORD, :ptr DMO_MEDIA_TYPE, :DWORD
-    SetOutputType	proc :DWORD, :ptr DMO_MEDIA_TYPE, :DWORD
+    SetInputType	proc :DWORD, :ptr, :DWORD
+    SetOutputType	proc :DWORD, :ptr, :DWORD
     GetInputCurrentType proc :DWORD, :ptr
     GetOutputCurrentType proc :DWORD, :ptr
     GetInputSizeInfo	proc :DWORD, :ptr, :ptr, :ptr

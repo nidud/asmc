@@ -261,7 +261,7 @@ DEFINE_GUID(IID_ID3D10ShaderReflectionVariable, 0x1bf63c95, 0x2650, 0x405d, 0x99
 
 .comdef ID3D10ShaderReflectionVariable
 
-    GetDesc		proc :ptr D3D10_SHADER_VARIABLE_DESC
+    GetDesc		proc :ptr
     GetType		proc
    .ends
 
@@ -269,7 +269,7 @@ DEFINE_GUID(IID_ID3D10ShaderReflectionConstantBuffer,0x66c66a94, 0xdddd, 0x4b62,
 
 .comdef ID3D10ShaderReflectionConstantBuffer
 
-    GetDesc		proc :ptr D3D10_SHADER_BUFFER_DESC
+    GetDesc		proc :ptr
     GetVariableByIndex	proc :UINT
     GetVariableByName	proc :LPCSTR
    .ends
@@ -278,12 +278,12 @@ DEFINE_GUID(IID_ID3D10ShaderReflection,0xd40e20b6, 0xf8f7, 0x42ad, 0xab, 0x20, 0
 
 .comdef ID3D10ShaderReflection : public IUnknown
 
-    GetDesc		proc :ptr D3D10_SHADER_DESC
+    GetDesc		proc :ptr
     GetConstantBufferByIndex proc :UINT
     GetConstantBufferByName proc :LPCSTR
-    GetResourceBindingDesc proc :UINT, :ptr D3D10_SHADER_INPUT_BIND_DESC
-    GetInputParameterDesc proc :UINT, :ptr D3D10_SIGNATURE_PARAMETER_DESC
-    GetOutputParameterDesc proc :UINT, :ptr D3D10_SIGNATURE_PARAMETER_DESC
+    GetResourceBindingDesc proc :UINT, :ptr
+    GetInputParameterDesc proc :UINT, :ptr
+    GetOutputParameterDesc proc :UINT, :ptr
    .ends
 
 D3D10CompileShader proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :ptr, :ptr

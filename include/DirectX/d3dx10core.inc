@@ -45,15 +45,15 @@ DEFINE_GUID(IID_ID3DX10Sprite, 0xba0b762d, 0x8d28, 0x43ec, 0xb9, 0xdc, 0x2f, 0x8
 .comdef ID3DX10Sprite : public IUnknown
 
     Begin		proc :UINT
-    DrawSpritesBuffered proc :ptr D3DX10_SPRITE, :UINT
+    DrawSpritesBuffered proc :ptr, :UINT
     Flush		proc
-    DrawSpritesImmediate proc :ptr D3DX10_SPRITE, :UINT, :UINT, :UINT
+    DrawSpritesImmediate proc :ptr, :UINT, :UINT, :UINT
     _End		proc
-    GetViewTransform	proc :ptr D3DXMATRIX
-    SetViewTransform	proc :ptr D3DXMATRIX
-    GetProjectionTransform proc :ptr D3DXMATRIX
-    SetProjectionTransform proc :ptr D3DXMATRIX
-    GetDevice		proc :ptr ptr ID3D10Device
+    GetViewTransform	proc :ptr
+    SetViewTransform	proc :ptr
+    GetProjectionTransform proc :ptr
+    SetProjectionTransform proc :ptr
+    GetDevice		proc :ptr
    .ENDS
 
 
@@ -62,14 +62,14 @@ D3DX10CreateSprite proto WINAPI :ptr, :UINT, :ptr
 .comdef ID3DX10DataLoader
 
     Load		proc
-    Decompress		proc :ptr ptr, :ptr SIZE_T
+    Decompress		proc :ptr, :ptr
     Destroy		proc
    .ENDS
 
 .comdef ID3DX10DataProcessor
 
     Process		proc :ptr, :SIZE_T
-    CreateDeviceObject	proc :ptr ptr
+    CreateDeviceObject	proc :ptr
     Destroy		proc
    .ENDS
 
@@ -77,12 +77,12 @@ DEFINE_GUID(IID_ID3DX10ThreadPump, 0xc93fecfa, 0x6967, 0x478a, 0xab, 0xbc, 0x40,
 
 .comdef ID3DX10ThreadPump : public IUnknown
 
-    AddWorkItem		proc :ptr ID3DX10DataLoader, :ptr ID3DX10DataProcessor, :ptr HRESULT, :ptr ptr
+    AddWorkItem		proc :ptr, :ptr, :ptr, :ptr
     GetWorkItemCount	proc
     WaitForAllItems	proc
     ProcessDeviceWorkItems proc :UINT
     PurgeAllItems	proc
-    GetQueueStatus	proc :ptr UINT, :ptr UINT, :ptr UINT
+    GetQueueStatus	proc :ptr, :ptr, :ptr
    .ENDS
 
 D3DX10CreateThreadPump proto WINAPI :UINT, :UINT, :ptr
@@ -127,13 +127,13 @@ DEFINE_GUID(IID_ID3DX10Font, 0xd79dbb70, 0x5f21, 0x4d36, 0xbb, 0xc2, 0xff, 0x52,
 
 .comdef ID3DX10Font : public IUnknown
 
-    GetDevice		proc :ptr ptr ID3D10Device
-    GetDescA		proc :ptr D3DX10_FONT_DESCA
-    GetDescW		proc :ptr D3DX10_FONT_DESCW
-    GetTextMetricsA	proc :ptr TEXTMETRICA
-    GetTextMetricsW	proc :ptr TEXTMETRICW
+    GetDevice		proc :ptr
+    GetDescA		proc :ptr
+    GetDescW		proc :ptr
+    GetTextMetricsA	proc :ptr
+    GetTextMetricsW	proc :ptr
     GetDC		proc
-    GetGlyphData	proc :UINT, :ptr ptr ID3D10ShaderResourceView, :ptr RECT, :ptr POINT
+    GetGlyphData	proc :UINT, :ptr, :ptr, :ptr
     PreloadCharacters	proc :UINT, :UINT
     PreloadGlyphs	proc :UINT, :UINT
     PreloadTextA	proc :LPCSTR, :SINT

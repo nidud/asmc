@@ -129,7 +129,7 @@ LPD3DXEVENTHANDLE	typedef ptr DWORD
 .comdef ID3DXAllocateHierarchy
 
     CreateFrame		proc :ptr, :ptr
-    CreateMeshContainer proc :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr ptr
+    CreateMeshContainer proc :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr
     DestroyFrame	proc :LPD3DXFRAME
     DestroyMeshContainer proc :LPD3DXMESHCONTAINER
    .ends

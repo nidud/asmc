@@ -1608,7 +1608,7 @@ DEFINE_IIDX(IVdsAdmin, "d188e97d-85aa-4d33-abc6-26299a10ffc1")
 
 .comdef IVdsAdmin : public IUnknown
 
-    RegisterProvider	proc :VDS_OBJECT_ID, :CLSID, :LPWSTR, :VDS_PROVIDER_TYPE, :LPWSTR, :LPWSTR, :ptr GUID
+    RegisterProvider	proc :VDS_OBJECT_ID, :CLSID, :LPWSTR, :VDS_PROVIDER_TYPE, :LPWSTR, :LPWSTR, :ptr
     UnregisterProvider	proc :VDS_OBJECT_ID
    .ends
 

@@ -132,7 +132,7 @@ DEFINE_IIDX(IMetaDataAssemblyImport, "EE62470B-E94B-424E-9B7C-2F00C9249F93")
     FindExportedTypeByName proc :LPCWSTR, :mdToken, :ptr
     FindManifestResourceByName proc :LPCWSTR, :ptr
     CloseEnum           proc :HCORENUM
-    FindAssembliesByName proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr ptr, :ULONG, :ptr
+    FindAssembliesByName proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr, :ULONG, :ptr
    .ends
 
 endif

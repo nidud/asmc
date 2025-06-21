@@ -234,21 +234,132 @@ get_param_name proc __ccall uses rsi rdi rbx tokenarray:token_t, token:string_t,
 
 get_param_name endp
 
+; Create a type name to reduce number of types
+;  DesktopToastsSample.asm: 4298 -->  519
+
+define FNVPRIME 0x01000193
+define FNVBASE  0x811c9dc5
+
+    assume rbx:nothing, rdi:token_t
+
+GetTypeName proc __ccall uses rsi rdi rbx type:string_t, string:string_t, tokenarray:token_t, langtype:int_t
+
+   .new i:int_t = 3
+   .new ti:qualified_type
+   .new lang:int_t
+   .new args:int_t = 0
+
+    ldr rsi,type
+    ldr rcx,string
+    ldr rdi,tokenarray
+    ldr edx,langtype
+
+    xor ebx,ebx
+    mov lang,edx
+    mov TokenCount,Tokenize( rcx, 0, tokenarray, TOK_RESCAN )
+    add rdi,asm_tok*3
+
+    .if ( [rdi].token == T_RES_ID && [rdi].tokval >= T_CCALL && [rdi].tokval <= T_ASMCALL )
+
+        mov eax,[rdi].tokval
+        lea eax,[rax-T_CCALL+1]
+        mov lang,eax
+        inc i
+        add rdi,asm_tok
+    .endif
+
+    .for ( : i < TokenCount && [rdi].token != T_FINAL : rdi+=asm_tok, i++ )
+
+        .if ( [rdi].token == T_COLON )
+
+            inc i
+            add rdi,asm_tok
+            inc args
+
+            .if ( [rdi].token == T_RES_ID && [rdi].tokval == T_VARARG )
+
+                imul ebx,ebx,FNVPRIME
+                xor bl,'V'
+               .break
+            .endif
+
+            xor eax,eax
+            .if ( [rdi].token == T_ID )
+                mov rcx,[rdi].string_ptr
+                mov eax,[rcx]
+                or  eax,0x202020
+            .endif
+            .if ( eax == 'sba' )
+                imul ebx,ebx,FNVPRIME
+                xor bl,'A'
+                inc i
+                add rdi,asm_tok
+            .else
+                mov ti.symtype,NULL
+                mov ti.mem_type,MT_EMPTY
+                mov ti.ptr_memtype,MT_EMPTY
+                mov ti.is_ptr,0
+                .ifd ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
+                    .break
+                .endif
+                .if ( ti.is_ptr )
+                    imul ebx,ebx,FNVPRIME
+                    xor bl,'P'
+                .endif
+                mov rdx,ti.symtype
+                .if ( rdx )
+                    mov al,[rdx].asym.mem_type
+                    .if ( !ti.is_ptr && ti.mem_type == MT_TYPE && !( al & MT_SPECIAL ) )
+
+                        xor edx,edx
+                        mov ti.mem_type,al
+                    .else
+                        .for ( ecx = [rdx].asym.name_size, rdx = [rdx].asym.name : ecx : ecx--, rdx++ )
+
+                            imul ebx,ebx,FNVPRIME
+                            xor bl,[rdx]
+                        .endf
+                    .endif
+                .endif
+                movzx ecx,ti.mem_type
+                .if ( ecx == MT_PTR && ti.ptr_memtype != MT_EMPTY )
+                    mov cl,ti.ptr_memtype
+                .endif
+                .if ( !rdx && !( ecx & MT_SPECIAL ) )
+                    imul ebx,ebx,FNVPRIME
+                    xor bl,cl
+                .endif
+                imul edi,i,asm_tok
+                add rdi,tokenarray
+            .endif
+        .endif
+    .endf
+    mov edx,args
+    .if ( edx > 9 )
+        add edx,7
+    .endif
+    add edx,'0'
+    and ebx,0x7FFF
+    tsprintf( rsi, "T$%u%c%X", lang, edx, ebx )
+    ret
+
+GetTypeName endp
+
+    assume rbx:token_t, rdi:nothing
 
     option proc: public
 
 
 ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-  local retval:int_t
-  local name:string_t
-  local IsCom:uchar_t
-  local language[32]:char_t
-  local langtype:int_t
-  local P$[16]:char_t
-  local T$[16]:char_t
-  local constructor:int_t
   local buffer:string_t
+  local name[256]:char_t
+  local type[256]:char_t
+  local language[32]:char_t
+  local retval:int_t
+  local langtype:int_t
+  local constructor:int_t
+  local IsCom:uchar_t
 
     mov buffer,MemAlloc(MaxLineLength)
 
@@ -256,14 +367,15 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     add rbx,tokenarray
     mov constructor,0
     mov langtype,0
-    mov name,[rbx-asm_tok].string_ptr
     mov retval,NOT_ERROR
     mov rsi,MODULE.ComStack
+
+    tstrcpy( &name, [rbx-asm_tok].string_ptr )
 
     .if ( rsi )
 
         mov langtype,[rsi].com_item.langtype
-        mov rdi,NameSpace( name, name )
+        mov rdi,NameSpace( &name, &name )
 
         .if ( tstrcmp( rdi, [rsi].com_item.class ) == 0 )
 
@@ -303,12 +415,7 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .endif
 
-    inc MODULE.class_label
-
-    tsprintf( &T$, "T$%04X", MODULE.class_label )
-    tsprintf( &P$, "P$%04X", MODULE.class_label )
-
-    tstrcat( tstrcpy( rdi, &T$ ), " typedef proto" )
+    tstrcpy( rdi, "T$0000 typedef proto" )
 
     .if ( rsi && [rsi].com_item.cmd == T_DOT_COMDEF )
 
@@ -330,7 +437,7 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 inc esi
             .endif
 
-            .if ( [rbx+asm_tok].token == T_FINAL || esi || \
+            .if ( [rbx+asm_tok].token == T_FINAL || esi ||
                 ( [rbx].token != T_COLON && [rbx+asm_tok].token != T_COLON ) )
 
                 tstrcat(rdi, " ")
@@ -399,9 +506,12 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         tstrcat(rdi, [rbx].tokpos)
     .endif
 
-    AddLineQueue( rdi )
-    AddLineQueueX( "%s typedef ptr %s", &P$, &T$ )
-    AddLineQueueX( "%s %s ?", name, &P$ )
+    GetTypeName( &type, rdi, tokenarray, langtype )
+    .if !SymFind( &type )
+        AddLineQueueX( "%s%s", &type, &[rdi+6] )
+        AddLineQueueX( "P%s typedef ptr %s", &type[1], &type )
+    .endif
+    AddLineQueueX( "%s P%s ?", &name, &type[1] )
 
 done:
 

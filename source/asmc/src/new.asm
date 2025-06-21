@@ -125,7 +125,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
     .endif
     mov rdx,name
 
-    .if rcx
+    .if ecx
         mov callid,eax
         .switch eax
         .case 0, 3
@@ -570,11 +570,11 @@ AssignId endp
 
 ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
 
-    ldr rsi,sym
+    ldr rsi,name
+    ldr rdx,sym
 
+    mov edi,[rdx].asym.total_size
     AddLineQueue( " xor eax, eax" )
-
-    mov edi,[rsi].asym.total_size
 
     .if ( MODULE.Ofssize == USE64 )
 
@@ -587,25 +587,24 @@ ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
                 " mov ecx, %d\n"
                 " rep stosb\n"
                 " pop rcx\n"
-                " pop rdi", name, edi )
+                " pop rdi", rsi, edi )
 
         .else
 
             .for ( ebx = 0 : edi >= 8 : edi -= 8, ebx += 8 )
-
-                AddLineQueueX( " mov qword ptr %s[%d], rax", name, ebx )
+                AddLineQueueX( " mov qword ptr %s[%d], rax", rsi, ebx )
             .endf
 
             .if ( edi >= 4 )
 
-                AddLineQueueX( " mov dword ptr %s[%d], eax", name, ebx )
+                AddLineQueueX( " mov dword ptr %s[%d], eax", rsi, ebx )
                 sub edi,4
                 add ebx,4
             .endif
 
             .for ( : edi : edi--, ebx++ )
 
-                AddLineQueueX( " mov byte ptr %s[%d], al", name, ebx )
+                AddLineQueueX( " mov byte ptr %s[%d], al", rsi, ebx )
             .endf
         .endif
 
@@ -618,18 +617,15 @@ ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
             " mov ecx, %d\n"
             " rep stosb\n"
             " pop ecx\n"
-            " pop edi", name, edi )
+            " pop edi", rsi, edi )
 
     .else
 
         .for ( ebx = 0 : edi >= 4 : edi -= 4, ebx += 4 )
-
-            AddLineQueueX( " mov dword ptr %s[%d], eax", name, ebx )
+            AddLineQueueX( " mov dword ptr %s[%d], eax", rsi, ebx )
         .endf
-
         .for ( : edi : edi--, ebx++ )
-
-            AddLineQueueX( " mov byte ptr %s[%d], al", name, ebx )
+            AddLineQueueX( " mov byte ptr %s[%d], al", rsi, ebx )
         .endf
     .endif
     ret

@@ -1088,6 +1088,7 @@ SHREGSET_HKLM		equ 0x00000004
 SHREGSET_FORCE_HKLM	equ 0x00000008
 SHREGSET_DEFAULT	equ (SHREGSET_FORCE_HKCU OR SHREGSET_HKLM)
 
+HUSKEY			typedef HANDLE
 PHUSKEY			typedef ptr HUSKEY
 ifndef REGSAM
 REGSAM			typedef ACCESS_MASK
@@ -1218,9 +1219,9 @@ DEFINE_IIDX(IQueryAssociations, "c46ca590-3c3f-11d2-bee6-0000f805ca57")
 .comdef IQueryAssociations : public IUnknown
 
     Init		proc :ASSOCF, :LPCWSTR, :HKEY, :HWND
-    GetString		proc :ASSOCF, :ASSOCSTR, :LPCWSTR, :LPWSTR, :ptr DWORD
-    GetKey		proc :ASSOCF, :ASSOCKEY, :LPCWSTR, :ptr HKEY
-    GetData		proc :ASSOCF, :ASSOCDATA, :LPCWSTR, :PVOID, :ptr DWORD
+    GetString		proc :ASSOCF, :ASSOCSTR, :LPCWSTR, :LPWSTR, :ptr
+    GetKey		proc :ASSOCF, :ASSOCKEY, :LPCWSTR, :ptr
+    GetData		proc :ASSOCF, :ASSOCDATA, :LPCWSTR, :PVOID, :ptr
     GetEnum		proc :ASSOCF, :ASSOCENUM, :LPCWSTR, :REFIID, :PVOID
    .ends
 

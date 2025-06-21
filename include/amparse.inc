@@ -5,7 +5,7 @@ DEFINE_GUID(IID_IAMParse, 0xc47a3420, 0x005c, 0x11d2, 0x90, 0x38, 0x00, 0xa0, 0x
 
 .comdef IAMParse : public IUnknown
 
-    GetParseTime	proc :ptr REFERENCE_TIME
+    GetParseTime	proc :ptr
     SetParseTime	proc :REFERENCE_TIME
     Flush		proc
    .ends

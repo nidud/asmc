@@ -41,10 +41,10 @@ DEFINE_IIDX(IAppointmentsProviderLaunchActionVerbsStatics, "36DBBA28-9E2E-49C6-8
 
 .comdef IAppointmentsProviderLaunchActionVerbsStatics : public IInspectable
 
-    get_AddAppointment proc :ptr HSTRING
-    get_ReplaceAppointment proc :ptr HSTRING
-    get_RemoveAppointment proc :ptr HSTRING
-    get_ShowTimeFrame proc :ptr HSTRING
+    get_AddAppointment proc :ptr
+    get_ReplaceAppointment proc :ptr
+    get_RemoveAppointment proc :ptr
+    get_ShowTimeFrame proc :ptr
    .ends
 
 endif
@@ -56,11 +56,11 @@ DEFINE_IIDX(IAddAppointmentOperation, "EC4A9AF3-620D-4C69-ADD7-9794E918081F")
 
 .comdef IAddAppointmentOperation : public IInspectable
 
-    get_AppointmentInformation proc :ptr ptr
-    get_SourcePackageFamilyName proc :ptr HSTRING
-    ReportCompleted proc :ptr HSTRING
+    get_AppointmentInformation proc :ptr
+    get_SourcePackageFamilyName proc :ptr
+    ReportCompleted proc :ptr
     ReportCanceled proc
-    ReportError proc :ptr HSTRING
+    ReportError proc :ptr
     DismissUI proc
    .ends
 
@@ -73,11 +73,11 @@ DEFINE_IIDX(IReplaceAppointmentOperation, "F4903D9B-9E61-4DE2-A732-2687C07D1DE8"
 
 .comdef IReplaceAppointmentOperation : public IInspectable
 
-    get_AppointmentId proc :ptr HSTRING
-    get_AppointmentInformation proc :ptr ptr
-    get_InstanceStartDate proc :ptr ptr
-    get_SourcePackageFamilyName proc :ptr HSTRING
-    ReportCompleted proc :ptr HSTRING
+    get_AppointmentId proc :ptr
+    get_AppointmentInformation proc :ptr
+    get_InstanceStartDate proc :ptr
+    get_SourcePackageFamilyName proc :ptr
+    ReportCompleted proc :ptr
     ReportCanceled proc
     ReportError proc :HSTRING
     DismissUI proc
@@ -92,9 +92,9 @@ DEFINE_IIDX(IRemoveAppointmentOperation, "08B66ABA-FE33-46CD-A50C-A8FFB3260537")
 
 .comdef IRemoveAppointmentOperation : public IInspectable
 
-    get_AppointmentId proc :ptr HSTRING
-    get_InstanceStartDate proc :ptr ptr
-    get_SourcePackageFamilyName proc :ptr HSTRING
+    get_AppointmentId proc :ptr
+    get_InstanceStartDate proc :ptr
+    get_SourcePackageFamilyName proc :ptr
     ReportCompleted proc
     ReportCanceled proc
     ReportError proc :HSTRING

@@ -384,26 +384,19 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov eax,[rsi].labels[LTEST*4]
         .if eax
-
             AddLineQueueX( "%s%s", GetLabelStr( eax, rdi ), LABELQUAL )
         .endif
-
         .if ( [rsi].condlines )
-
             QueueTestLines( [rsi].condlines )
         .endif
-
         AddLineQueueX( "jmp %s", GetLabelStr( [rsi].labels[LSTART*4], rdi ) )
-
         mov eax,[rsi].labels[LEXIT*4]
         .if eax
-
             AddLineQueueX( "%s%s", GetLabelStr( eax, rdi ), LABELQUAL )
         .endif
         imul eax,i,asm_tok
         add rbx,rax
         .if ( [rbx].token != T_FINAL && rc == NOT_ERROR )
-
             mov rc,asmerr( 2008, [rbx].tokpos )
         .endif
 

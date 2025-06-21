@@ -114,7 +114,7 @@ DEFINE_IIDX(IIOControlCodeFactory, "856A7CF0-4C11-44AE-AFC6-B8D4A212788F")
 
 .comdef IIOControlCodeFactory : public IInspectable
 
-    CreateIOControlCode proc :UINT16, :UINT16, :Windows::Devices::Custom::IOControlAccessMode, :Windows::Devices::Custom::IOControlBufferingMethod, :ptr ptr
+    CreateIOControlCode proc :UINT16, :UINT16, :Windows::Devices::Custom::IOControlAccessMode, :Windows::Devices::Custom::IOControlBufferingMethod, :ptr
    .ends
 
 endif

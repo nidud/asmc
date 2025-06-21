@@ -23,6 +23,9 @@ multi4 proto __inline :dword, :abs, :ptr {
     imul    eax,_1,_2
     mov     [_3],eax
     }
+_mm256_mpsadbw_epu8 proto vectorcall :yword, :yword, i:abs {
+    vmpsadbw _1, _1, _2, i
+    }
 ```
 
 #### See Also

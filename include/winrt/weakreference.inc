@@ -29,7 +29,7 @@ DEFINE_IIDX(IWeakReference, "00000037-0000-0000-C000-000000000046")
 
 .comdef IWeakReference : public IUnknown
 
-    Resolve proc :REFIID, :ptr ptr IInspectable
+    Resolve proc :REFIID, :ptr
    .ends
 
 endif
@@ -41,7 +41,7 @@ DEFINE_IIDX(IWeakReferenceSource, "00000038-0000-0000-C000-000000000046")
 
 .comdef IWeakReferenceSource : public IUnknown
 
-    GetWeakReference proc :ptr ptr IWeakReference
+    GetWeakReference proc :ptr
    .ends
 
 endif

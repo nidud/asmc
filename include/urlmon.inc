@@ -449,31 +449,31 @@ define __IUri_INTERFACE_DEFINED__
 DEFINE_IIDX(IUri, "A39EE748-6A27-4817-A6F2-13914BEF5890")
 
 .comdef IUri : public IUnknown
-    GetPropertyBSTR	proc :Uri_PROPERTY, :ptr BSTR, :DWORD
-    GetPropertyLength	proc :Uri_PROPERTY, :ptr DWORD, :DWORD
-    GetPropertyDWORD	proc :Uri_PROPERTY, :ptr DWORD, :DWORD
-    HasProperty		proc :Uri_PROPERTY, :ptr BOOL
-    GetAbsoluteUri	proc :ptr BSTR
-    GetAuthority	proc :ptr BSTR
-    GetDisplayUri	proc :ptr BSTR
-    GetDomain		proc :ptr BSTR
-    GetExtension	proc :ptr BSTR
-    GetFragment		proc :ptr BSTR
-    GetHost		proc :ptr BSTR
-    GetPassword		proc :ptr BSTR
-    GetPath		proc :ptr BSTR
-    GetPathAndQuery	proc :ptr BSTR
-    GetQuery		proc :ptr BSTR
-    GetRawUri		proc :ptr BSTR
-    GetSchemeName	proc :ptr BSTR
-    GetUserInfo		proc :ptr BSTR
-    GetUserName		proc :ptr BSTR
-    GetHostType		proc :ptr DWORD
-    GetPort		proc :ptr DWORD
-    GetScheme		proc :ptr DWORD
-    GetZone		proc :ptr DWORD
-    GetProperties	proc :ptr LPWORD
-    IsEqual		proc :ptr IUri, :ptr BOOL
+    GetPropertyBSTR	proc :Uri_PROPERTY, :ptr, :DWORD
+    GetPropertyLength	proc :Uri_PROPERTY, :ptr, :DWORD
+    GetPropertyDWORD	proc :Uri_PROPERTY, :ptr, :DWORD
+    HasProperty		proc :Uri_PROPERTY, :ptr
+    GetAbsoluteUri	proc :ptr
+    GetAuthority	proc :ptr
+    GetDisplayUri	proc :ptr
+    GetDomain		proc :ptr
+    GetExtension	proc :ptr
+    GetFragment		proc :ptr
+    GetHost		proc :ptr
+    GetPassword		proc :ptr
+    GetPath		proc :ptr
+    GetPathAndQuery	proc :ptr
+    GetQuery		proc :ptr
+    GetRawUri		proc :ptr
+    GetSchemeName	proc :ptr
+    GetUserInfo		proc :ptr
+    GetUserName		proc :ptr
+    GetHostType		proc :ptr
+    GetPort		proc :ptr
+    GetScheme		proc :ptr
+    GetZone		proc :ptr
+    GetProperties	proc :ptr
+    IsEqual		proc :ptr, :ptr
    .ends
 
 endif
@@ -544,7 +544,7 @@ DEFINE_IIDX(IUriContainer, "a158a630-ed6f-45fb-b987-f68676f57752")
 
 .comdef IUriContainer : public IUnknown
 
-    GetIUri		proc :ptr ptr
+    GetIUri		proc :ptr
    .ends
 
 endif
@@ -556,19 +556,19 @@ DEFINE_IIDX(IUriBuilder, "4221B2E1-8955-46c0-BD5B-DE9897565DE7")
 
 .comdef IUriBuilder : public IUnknown
 
-    CreateUriSimple	proc :DWORD, :DWORD_PTR, :ptr ptr IUri
-    CreateUri		proc :DWORD, :DWORD, :DWORD_PTR, :ptr ptr IUri
-    CreateUriWithFlags	proc :DWORD, :DWORD, :DWORD, :DWORD_PTR, :ptr ptr IUri
-    GetIUri		proc :ptr ptr IUri
-    SetIUri		proc :ptr IUri
-    GetFragment		proc :ptr DWORD, :ptr LPCWSTR
-    GetHost		proc :ptr DWORD, :ptr LPCWSTR
-    GetPassword		proc :ptr DWORD, :ptr LPCWSTR
-    GetPath		proc :ptr DWORD, :ptr LPCWSTR
-    GetPort		proc :ptr BOOL, :ptr DWORD
-    GetQuery		proc :ptr DWORD, :ptr LPCWSTR
-    GetSchemeName	proc :ptr DWORD, :ptr LPCWSTR
-    GetUserName		proc :ptr DWORD, :ptr LPCWSTR
+    CreateUriSimple	proc :DWORD, :DWORD_PTR, :ptr
+    CreateUri		proc :DWORD, :DWORD, :DWORD_PTR, :ptr
+    CreateUriWithFlags	proc :DWORD, :DWORD, :DWORD, :DWORD_PTR, :ptr
+    GetIUri		proc :ptr
+    SetIUri		proc :ptr
+    GetFragment		proc :ptr, :ptr
+    GetHost		proc :ptr, :ptr
+    GetPassword		proc :ptr, :ptr
+    GetPath		proc :ptr, :ptr
+    GetPort		proc :ptr, :ptr
+    GetQuery		proc :ptr, :ptr
+    GetSchemeName	proc :ptr, :ptr
+    GetUserName		proc :ptr, :ptr
     SetFragment		proc :LPCWSTR
     SetHost		proc :LPCWSTR
     SetPassword		proc :LPCWSTR
@@ -578,7 +578,7 @@ DEFINE_IIDX(IUriBuilder, "4221B2E1-8955-46c0-BD5B-DE9897565DE7")
     SetSchemeName	proc :LPCWSTR
     SetUserName		proc :LPCWSTR
     RemoveProperties	proc :DWORD
-    HasBeenModified	proc :ptr BOOL
+    HasBeenModified	proc :ptr
    .ends
 
 endif
@@ -590,8 +590,8 @@ DEFINE_IIDX(IUriBuilderFactory, "E982CE48-0B96-440c-BC37-0C869B27A29E")
 
 .comdef IUriBuilderFactory : public IUnknown
 
-    CreateIUriBuilder	proc :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
-    CreateInitializedIUriBuilder proc :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
+    CreateIUriBuilder	proc :DWORD, :DWORD_PTR, :ptr
+    CreateInitializedIUriBuilder proc :DWORD, :DWORD_PTR, :ptr
    .ends
 
 endif

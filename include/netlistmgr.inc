@@ -169,10 +169,10 @@ define __INetworkListManager_INTERFACE_DEFINED__
 DEFINE_IIDX(INetworkListManager, "DCB00000-570F-4A9B-8D69-199FDBA5723B")
 
 .comdef INetworkListManager : public IDispatch
-    GetNetworks		proc :NLM_ENUM_NETWORK, :ptr ptr
-    GetNetwork		proc :ptr GUID, :ptr ptr
-    GetNetworkConnections proc :ptr ptr
-    GetNetworkConnection proc :ptr GUID, :ptr ptr
+    GetNetworks		proc :NLM_ENUM_NETWORK, :ptr
+    GetNetwork		proc :ptr, :ptr
+    GetNetworkConnections proc :ptr
+    GetNetworkConnection proc :ptr, :ptr
     get_IsConnectedToInternet proc :ptr
     get_IsConnected	proc :ptr
     GetConnectivity	proc :ptr
@@ -211,7 +211,7 @@ DEFINE_IIDX(INetwork, "DCB00002-570F-4A9B-8D69-199FDBA5723B")
     SetDescription	proc :BSTR
     GetNetworkId	proc :ptr
     GetDomainType	proc :ptr
-    GetNetworkConnections proc :ptr ptr
+    GetNetworkConnections proc :ptr
     GetTimeCreatedAndConnected proc :ptr, :ptr, :ptr, :ptr
     get_IsConnectedToInternet proc :ptr
     get_IsConnected	proc :ptr
@@ -228,11 +228,11 @@ define __IEnumNetworks_INTERFACE_DEFINED__
 DEFINE_IIDX(IEnumNetworks, "DCB00003-570F-4A9B-8D69-199FDBA5723B")
 
 .comdef IEnumNetworks : public IDispatch
-    get__NewEnum	proc :ptr ptr
-    Next		proc :ULONG, :ptr ptr, :ptr
+    get__NewEnum	proc :ptr
+    Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr
+    Clone		proc :ptr
    .ends
 
 endif
@@ -251,10 +251,10 @@ define __INetworkEvents_INTERFACE_DEFINED__
 DEFINE_IIDX(INetworkEvents, "DCB00004-570F-4A9B-8D69-199FDBA5723B")
 
 .comdef INetworkEvents : public IUnknown
-    NetworkAdded	proc :ptr GUID
-    NetworkDeleted	proc :ptr GUID
-    NetworkConnectivityChanged proc :ptr GUID, :NLM_CONNECTIVITY
-    NetworkPropertyChanged proc :ptr GUID, :NLM_NETWORK_PROPERTY_CHANGE
+    NetworkAdded	proc :ptr
+    NetworkDeleted	proc :ptr
+    NetworkConnectivityChanged proc :ptr, :NLM_CONNECTIVITY
+    NetworkPropertyChanged proc :ptr, :NLM_NETWORK_PROPERTY_CHANGE
    .ends
 
 endif
@@ -265,7 +265,7 @@ define __INetworkConnection_INTERFACE_DEFINED__
 DEFINE_IIDX(INetworkConnection, "DCB00005-570F-4A9B-8D69-199FDBA5723B")
 
 .comdef INetworkConnection : public IDispatch
-    GetNetwork		proc :ptr ptr
+    GetNetwork		proc :ptr
     get_IsConnectedToInternet proc :ptr
     get_IsConnected	proc :ptr
     GetConnectivity	proc :ptr
@@ -282,11 +282,11 @@ define __IEnumNetworkConnections_INTERFACE_DEFINED__
 DEFINE_IIDX(IEnumNetworkConnections, "DCB00006-570F-4A9B-8D69-199FDBA5723B")
 
 .comdef IEnumNetworkConnections : public IDispatch
-    get__NewEnum	proc :ptr ptr
-    Next		proc :ULONG, :ptr ptr, :ptr
+    get__NewEnum	proc :ptr
+    Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
-    Clone		proc :ptr ptr
+    Clone		proc :ptr
    .ends
 
 endif
@@ -301,8 +301,8 @@ define __INetworkConnectionEvents_INTERFACE_DEFINED__
 DEFINE_IIDX(INetworkConnectionEvents, "DCB00007-570F-4A9B-8D69-199FDBA5723B")
 
 .comdef INetworkConnectionEvents : public IUnknown
-    NetworkConnectionConnectivityChanged proc :ptr GUID, :NLM_CONNECTIVITY
-    NetworkConnectionPropertyChanged proc :ptr GUID, :NLM_CONNECTION_PROPERTY_CHANGE
+    NetworkConnectionConnectivityChanged proc :ptr, :NLM_CONNECTIVITY
+    NetworkConnectionPropertyChanged proc :ptr, :NLM_CONNECTION_PROPERTY_CHANGE
    .ends
 
 endif
@@ -350,8 +350,8 @@ define __INetworkConnectionCostEvents_INTERFACE_DEFINED__
 DEFINE_IIDX(INetworkConnectionCostEvents, "DCB0000b-570F-4A9B-8D69-199FDBA5723B")
 
 .comdef INetworkConnectionCostEvents : public IUnknown
-    ConnectionCostChanged proc :ptr GUID, :DWORD
-    ConnectionDataPlanStatusChanged proc :ptr GUID
+    ConnectionCostChanged proc :ptr, :DWORD
+    ConnectionDataPlanStatusChanged proc :ptr
    .ends
 
 endif

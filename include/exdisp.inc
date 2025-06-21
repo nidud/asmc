@@ -331,20 +331,20 @@ DEFINE_IIDX(IShellUIHelper4, "B36E6A53-8073-499E-824C-D776330A333E")
     msSiteModeShowThumbBar proc
     msSiteModeAddThumbBarButton proc :BSTR, :BSTR, :ptr
     msSiteModeUpdateThumbBarButton proc :VARIANT, :VARIANT_BOOL, :VARIANT_BOOL
-    msSiteModeSetIconOverlay proc :BSTR, :ptr VARIANT
+    msSiteModeSetIconOverlay proc :BSTR, :ptr
     msSiteModeClearIconOverlay proc
     msAddSiteMode	proc
     msSiteModeCreateJumpList proc :BSTR
-    msSiteModeAddJumpListItem proc :BSTR, :BSTR, :BSTR, :ptr VARIANT
+    msSiteModeAddJumpListItem proc :BSTR, :BSTR, :BSTR, :ptr
     msSiteModeClearJumpList proc
     msSiteModeShowJumpList proc
-    msSiteModeAddButtonStyle proc :VARIANT, :BSTR, :BSTR, :ptr VARIANT
+    msSiteModeAddButtonStyle proc :VARIANT, :BSTR, :BSTR, :ptr
     msSiteModeShowButtonStyle proc :VARIANT, :VARIANT
     msSiteModeActivate	proc
-    msIsSiteModeFirstRun proc :VARIANT_BOOL, :ptr VARIANT
+    msIsSiteModeFirstRun proc :VARIANT_BOOL, :ptr
     msAddTrackingProtectionList proc :BSTR, :BSTR
-    msTrackingProtectionEnabled proc :ptr VARIANT_BOOL
-    msActiveXFilteringEnabled proc :ptr VARIANT_BOOL
+    msTrackingProtectionEnabled proc :ptr
+    msActiveXFilteringEnabled proc :ptr
    .ends
 
 endif
@@ -356,7 +356,7 @@ DEFINE_IIDX(IShellUIHelper5, "A2A08B09-103D-4D3F-B91C-EA455CA82EFA")
 
 .comdef IShellUIHelper5 : public IShellUIHelper4
 
-    msProvisionNetworks proc :BSTR, :ptr VARIANT
+    msProvisionNetworks proc :BSTR, :ptr
     msReportSafeUrl  proc
     msSiteModeRefreshBadge  proc
     msSiteModeClearBadge  proc

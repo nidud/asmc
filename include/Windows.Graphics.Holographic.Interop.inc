@@ -34,8 +34,8 @@ define __IHolographicCameraInterop_INTERFACE_DEFINED__
 DEFINE_IIDX(IHolographicCameraInterop, "7cc1f9c5-6d02-41fa-9500-e1809eb48eec")
 
 .comdef IHolographicCameraInterop : public IInspectable
-    CreateDirect3D12BackBufferResource proc :ptr, :ptr, :ptr ptr
-    CreateDirect3D12HardwareProtectedBackBufferResource proc :ptr, :ptr, :ptr, :ptr ptr
+    CreateDirect3D12BackBufferResource proc :ptr, :ptr, :ptr
+    CreateDirect3D12HardwareProtectedBackBufferResource proc :ptr, :ptr, :ptr, :ptr
     AcquireDirect3D12BufferResource proc :ptr, :ptr
     AcquireDirect3D12BufferResourceWithTimeout proc :ptr, :ptr, :UINT64
     UnacquireDirect3D12BufferResource proc :ptr
@@ -61,8 +61,8 @@ define __IHolographicQuadLayerInterop_INTERFACE_DEFINED__
 DEFINE_IIDX(IHolographicQuadLayerInterop, "cfa688f0-639e-4a47-83d7-6b7f5ebf7fed")
 
 .comdef IHolographicQuadLayerInterop : public IInspectable
-    CreateDirect3D12ContentBufferResource proc :ptr, :ptr, :ptr ptr
-    CreateDirect3D12HardwareProtectedContentBufferResource proc :ptr, :ptr, :ptr, :ptr ptr
+    CreateDirect3D12ContentBufferResource proc :ptr, :ptr, :ptr
+    CreateDirect3D12HardwareProtectedContentBufferResource proc :ptr, :ptr, :ptr, :ptr
     AcquireDirect3D12BufferResource proc :ptr, :ptr
     AcquireDirect3D12BufferResourceWithTimeout proc :ptr, :ptr, :UINT64
     UnacquireDirect3D12BufferResource proc :ptr

@@ -205,13 +205,13 @@ DEFINE_IIDX(IXmlReader, "7279FC81-709D-4095-B63D-69FE4B0D9030")
     MoveToNextAttribute proc
     MoveToAttributeByName proc :LPCWSTR, :LPCWSTR
     MoveToElement	proc
-    GetQualifiedName	proc :LPCWSTR, :ptr UINT
-    GetNamespaceUri	proc :LPCWSTR, :ptr UINT
-    GetLocalName	proc :LPCWSTR, :ptr UINT
-    GetPrefix		proc :LPCWSTR, :ptr UINT
-    GetValue		proc :LPCWSTR, :ptr UINT
+    GetQualifiedName	proc :LPCWSTR, :ptr
+    GetNamespaceUri	proc :LPCWSTR, :ptr
+    GetLocalName	proc :LPCWSTR, :ptr
+    GetPrefix		proc :LPCWSTR, :ptr
+    GetValue		proc :LPCWSTR, :ptr
     ReadValueChunk	proc :ptr, :UINT, :ptr
-    GetBaseUri		proc :LPCWSTR, :ptr UINT
+    GetBaseUri		proc :LPCWSTR, :ptr
     IsDefault		proc
     IsEmptyElement	proc
     GetLineNumber	proc :ptr
@@ -249,7 +249,7 @@ DEFINE_IIDX(IXmlWriter, "7279FC88-709D-4095-B63D-69FE4B0D9030")
     WriteAttributeString proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
     WriteCData		proc :LPCWSTR
     WriteCharEntity	proc :WCHAR
-    WriteChars		proc :ptr WCHAR, :UINT
+    WriteChars		proc :ptr, :UINT
     WriteComment	proc :LPCWSTR
     WriteDocType	proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
     WriteElementString	proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
@@ -264,7 +264,7 @@ DEFINE_IIDX(IXmlWriter, "7279FC88-709D-4095-B63D-69FE4B0D9030")
     WriteProcessingInstruction proc :LPCWSTR, :LPCWSTR
     WriteQualifiedName	proc :LPCWSTR, :LPCWSTR
     WriteRaw		proc :LPCWSTR
-    WriteRawChars	proc :ptr WCHAR, :UINT
+    WriteRawChars	proc :ptr, :UINT
     WriteStartDocument	proc :XmlStandalone
     WriteStartElement	proc :LPCWSTR, :LPCWSTR, :LPCWSTR
     WriteString		proc :LPCWSTR

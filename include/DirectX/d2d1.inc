@@ -442,7 +442,7 @@ DEFINE_IIDX(ID2D1Resource, "2cd90691-12e2-11dc-9fed-001143a055f9")
 
 .comdef ID2D1Resource : public IUnknown
 
-    GetFactory		proc :ptr ptr ID2D1Factory
+    GetFactory		proc :ptr
     .ends
 
 DEFINE_IIDX(ID2D1Image, "65019f75-8da2-497c-b32c-dfa34e48ede6")
@@ -455,9 +455,9 @@ DEFINE_IIDX(ID2D1Bitmap, "a2296057-ea42-4099-983b-539fb6505426")
 
 .comdef ID2D1Bitmap : public ID2D1Resource
 
-    GetSize		proc :ptr D2D1_SIZE_F
-    GetPixelSize	proc :ptr D2D1_SIZE_U
-    GetPixelFormat	proc :ptr D2D1_PIXEL_FORMAT
+    GetSize		proc :ptr
+    GetPixelSize	proc :ptr
+    GetPixelFormat	proc :ptr
     GetDpi		proc :ptr, :ptr
     CopyFromBitmap	proc :ptr, :ptr, :ptr
     CopyFromRenderTarget proc :ptr, :ptr, :ptr
@@ -698,7 +698,7 @@ DEFINE_IIDX(ID2D1RenderTarget, "2cd90694-12e2-11dc-9fed-001143a055f9")
     CreateSolidColorBrush	proc :ptr, :ptr, :ptr
     CreateGradientStopCollection proc :ptr, :UINT, :D2D1_GAMMA, :D2D1_EXTEND_MODE, :ptr
     CreateLinearGradientBrush	proc :ptr, :ptr, :ptr, :ptr
-    CreateRadialGradientBrush	proc :ptr D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES, :ptr D2D1_BRUSH_PROPERTIES, :ptr ID2D1GradientStopCollection, :ptr ptr ID2D1RadialGradientBrush
+    CreateRadialGradientBrush	proc :ptr, :ptr, :ptr, :ptr
     CreateCompatibleRenderTarget proc :ptr, :ptr, :ptr, :D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS, :ptr
     CreateLayer			proc :ptr, :ptr
     CreateMesh			proc :ptr
@@ -707,8 +707,8 @@ DEFINE_IIDX(ID2D1RenderTarget, "2cd90694-12e2-11dc-9fed-001143a055f9")
     FillRectangle		proc :ptr, :ptr
     DrawRoundedRectangle	proc :ptr, :ptr, :FLOAT, :ptr
     FillRoundedRectangle	proc :ptr, :ptr
-    DrawEllipse			proc :ptr D2D1_ELLIPSE, :ptr ID2D1Brush, :FLOAT, :ptr ID2D1StrokeStyle
-    FillEllipse			proc :ptr D2D1_ELLIPSE, :ptr ID2D1Brush
+    DrawEllipse			proc :ptr, :ptr, :FLOAT, :ptr
+    FillEllipse			proc :ptr, :ptr
     DrawGeometry		proc :ptr, :ptr, :FLOAT, :ptr
     FillGeometry		proc :ptr, :ptr, :ptr
     FillMesh			proc :ptr, :ptr
@@ -740,8 +740,8 @@ DEFINE_IIDX(ID2D1RenderTarget, "2cd90694-12e2-11dc-9fed-001143a055f9")
     GetPixelFormat		proc
     SetDpi			proc :FLOAT, :FLOAT
     GetDpi			proc :ptr, :ptr
-    GetSize			proc :ptr D2D1_SIZE_F
-    GetPixelSize		proc :ptr D2D1_SIZE_U
+    GetSize			proc :ptr
+    GetPixelSize		proc :ptr
     GetMaximumBitmapSize	proc
     IsSupported			proc :ptr
     .ends

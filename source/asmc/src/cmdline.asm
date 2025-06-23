@@ -682,7 +682,7 @@ endif
         mov Options.link,1
         .return
     .case 'ogol'            ; -logo
-        tprintf( &cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER )
+        tprintf( &cp_logo, ASMC_MAJOR, ASMC_MINOR, ASMC_SUBVER )
         tprintf( "\n" )
         exit(0)
 ifndef ASMC64
@@ -735,6 +735,11 @@ endif
     .case 'DM'              ; -MD
         define_name( "_MSVCRT", "1" )
        .return
+    .case 'rcsm'            ; -mscrt
+        mov Options.mscrt,1
+        define_name( "__MSCRT__", "1" )
+       .return
+
 ifndef ASMC64
     .case 'fmo'             ; -omf
         mov Options.output_format,OFORMAT_OMF

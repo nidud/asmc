@@ -86,3 +86,14 @@ uninstall:
 	sudo rm -f -R /usr/lib/asmc
 	sudo rm -f /etc/profile.d/asmc-profile.sh
 
+linux32:
+	md $@
+	asmc -c -6 -mscrt -MT -elf -Zp4 -Cs -r ..\libc\*.asm ..\libc\*.s
+	libw -q -b -n -c asmc.a *.o
+	del *.o
+	asmc -c -Iinc -elf -Zp4 -Cs src\*.asm
+	linkw N $@\asmc. FORM elf RU LIN L asmc.a OP start=_start, Q, NOR, ST=0x300000 F { *.o }
+	asmc -DASMC64 -Iinc -elf -Zp4 -Cs src\*.asm
+	linkw N $@\asmc64. FORM elf RU LIN L asmc.a OP start=_start, Q, NOR, ST=0x300000 F { *.o }
+	del *.o
+	del asmc.a

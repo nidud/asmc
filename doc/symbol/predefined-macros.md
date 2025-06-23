@@ -27,6 +27,7 @@ The macros listed in the following table.
 <tr><td><b>__LARGE__</b></td><td>Defined as 1 when the /ml option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>_M_IX86_FP</b></td><td>Defined as 1 when the /arch:IA32 option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__MEDIUM__</b></td><td>Defined as 1 when the /mm option is set. Otherwise, undefined.</td></tr>
+<tr><td><b>__MSCRT__</b></td><td>Defined as 1 when the /mscrt option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>_MSVCRT</b></td><td>Defined as 1 when the /nolib option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__PE__</b></td><td>Defined as 1 when the /pe option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__P186__</b></td><td>Defined as 1 when the /1 option is set. Otherwise, undefined.</td></tr>

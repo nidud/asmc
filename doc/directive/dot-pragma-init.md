@@ -10,7 +10,7 @@ Specifies a functions that runs before the program starts.
 .pragma init(foo, 3)
 ```
 
-Windows:
+Windows (or option -mscrt):
 ```
 option dotname
 .CRT$XIA segment align(8) 'CONST'

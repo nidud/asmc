@@ -271,12 +271,12 @@ externdef jmpenv:byte
     A3011 equ <"too many unwind codes in FRAME procedure">
     A3012 equ <"registers AH-DH may not be used with SPL-DIL or R8-R15">
     A3013 equ <"multiple overrides">
-    A3014 equ <"unknown fixup type: %u at %s.%x">
+    A3014 equ <"unknown fixup type: %u at %s.%X">
     A3015 equ <"filename parameter must be enclosed in <> or quotes">
     A3016 equ <"literal expected after '='">
     A3017 equ <".SAFESEH argument must be a PROC">
     A3018 equ <"invalid operand for %s : %s">
-    A3019 equ <"invalid fixup type for %s : %u at location %s:%x">
+    A3019 equ <"invalid fixup type for %s : %u at location %s:%X">
     A3020 equ <"cannot open file : %s">
     A3021 equ <"I/O error closing file : %s">
     A3022 equ <".CASE redefinition : %s(%d) : %s(%d)">

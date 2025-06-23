@@ -18,12 +18,13 @@ StringCchCatN proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszSrc:LPTSTR, cchToA
 
             mov eax,STRSAFE_E_INVALID_PARAMETER
         .else
-            sub cchDest,cchDestLength
+            mov rcx,cchDestLength
+            sub cchDest,rcx
 ifdef _UNICODE
-            add rax,rax
+            add rcx,rcx
 endif
-            add pszDest,rax
-            StringCopyWorker(pszDest, cchDest, NULL, pszSrc, cchToAppend)
+            add rcx,pszDest
+            StringCopyWorker(rcx, cchDest, NULL, pszSrc, cchToAppend)
         .endif
     .endif
     ret

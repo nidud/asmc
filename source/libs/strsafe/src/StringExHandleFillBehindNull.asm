@@ -10,17 +10,21 @@ include strsafe.inc
 
 StringExHandleFillBehindNull proc _CRTIMP pszDestEnd:LPTSTR, cbRemaining:size_t, dwFlags:DWORD
 
-    ldr rcx,pszDestEnd
     ldr eax,dwFlags
+    ldr rcx,pszDestEnd
     ldr rdx,cbRemaining
 
     .if ( rdx > TCHAR )
 
-        add rcx,TCHAR
-        sub rdx,TCHAR
-        memset(rcx, STRSAFE_GET_FILL_PATTERN(eax), rdx)
+        add  rcx,TCHAR
+        sub  rdx,TCHAR
+        xchg rcx,rdx
+        xchg rdx,rdi
+        rep  stosb
+        mov  rdi,rdx
     .endif
-    .return( S_OK )
+    xor eax,eax
+    ret
 
 StringExHandleFillBehindNull endp
 

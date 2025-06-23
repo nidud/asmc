@@ -11,10 +11,12 @@ include tchar.inc
 
 _tmain proto __cdecl :dword, :ptr, :ptr
 
-ifdef __UNIX__
+ifndef _MSVCRT
+externdef _CRTINIT_S:ptr ; pointers to initialization sections
+externdef _CRTINIT_E:ptr
+endif
 
-externdef __init_array_start:ptr
-externdef __init_array_end:ptr
+ifdef __UNIX__
 
     .data
      __argv         array_t NULL
@@ -23,18 +25,13 @@ externdef __init_array_end:ptr
      __argc         int_t 0
      public         __ImageBase
 
-else
+elseifdef _MSVCRT
 
-ifdef _MSVCRT
     .data
      __targv    tarray_t 0
      _tenviron  tarray_t 0
      _startup   _startupinfo { 0 }
      __argc     int_t 0
-else
-externdef __xi_a:ptr ; pointers to initialization sections
-externdef __xi_z:ptr
-endif
 
 endif
 
@@ -59,7 +56,7 @@ ifdef _WIN64
     mov __ImageBase,rax
     and spl,-16
 endif
-    _initterm( &__init_array_start, &__init_array_end )
+    _initterm( &_CRTINIT_S, &_CRTINIT_E )
     xor eax,eax
     exit( _tmain( __argc, __argv, _environ ) )
 
@@ -76,7 +73,7 @@ else
 ifndef _WIN64
     .new _exception_registration[2]:dword
 endif
-    _initterm( &__xi_a, &__xi_z )
+    _initterm( &_CRTINIT_S, &_CRTINIT_E )
     exit( _tmain( __argc, _targvcrt, _tenvironcrt ) )
 endif
 

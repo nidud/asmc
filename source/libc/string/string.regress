@@ -186,7 +186,7 @@ main proc
     .assert strcmp(rdi,"abc") == 0
     .assert strcmp(rdi,"abc ") == -1
     .assert _stricmp(rdi,"aBc") == 0
-    .assert _stricmp(rdi,"abc ") == -1
+    .assert _stricmp(rdi,"abc ") == -32
     .assert strcmp(rdi,"abcd") == -1
     .assert strcmp(rdi,"ab") == 1
     .assert memcmp(rdi,rdi,3) == 0
@@ -195,7 +195,7 @@ main proc
     .assert strncmp(rdi,"abc",3) == 0
     .assert _strnicmp(rdi,"AbC",3) == 0
     .assert strncmp(rdi,"abc ",4) == -1
-    .assert _strnicmp(rdi,"abc ",4) == -1
+    .assert _strnicmp(rdi,"abc ",4) == -32
     .assert strcat(rdi,"\\abc") == rdi
     .assert strcpy(rdi,"%doszip%, C:/doszip, strstr") == rdi
     lea rsi,[rdi+21]
@@ -221,13 +221,13 @@ main proc
     .assertd wcscmp(rdi,L"abc") == 0
     .assertd wcscmp(rdi,L"abc ") == -1
     .assertd _wcsicmp(rdi,L"aBc") == 0
-    .assertd _wcsicmp(rdi,L"abc ") == -1
+    .assertd _wcsicmp(rdi,L"abc ") == -32
     .assertd wcscmp(rdi,L"abcd") == -1
     .assertd wcscmp(rdi,L"ab") == 1
     .assertd wcsncmp(rdi,L"abc",3) == 0
     .assertd _wcsnicmp(rdi,L"AbC",3) == 0
     .assertd wcsncmp(rdi,L"abc ",4) == -1
-    .assertd _wcsnicmp(rdi,L"abc ",4) == -1
+    .assertd _wcsnicmp(rdi,L"abc ",4) == -32
     .assert wcscat(rdi,L"\\abc") == rdi
     .assert wcscpy(rdi,L"%doszip%, C:/doszip, strstr") == rdi
     lea rsi,[rdi+42]

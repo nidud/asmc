@@ -7,7 +7,8 @@
 include time.inc
 include winbase.inc
 
-    .code
+.code
+
 TimeToFileTime proc Time:time_t, lpFileTime:ptr FILETIME
 ifdef __UNIX__
     int 3

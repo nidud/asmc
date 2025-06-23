@@ -54,8 +54,7 @@ endif
     cmp     al,[reg+rgq]
     je      .0
 .1:
-    sbb     rax,rax
-    sbb     rax,-1
+    sub     rax,rgq
 .2:
     ret
 ifdef _UNICODE

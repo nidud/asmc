@@ -2,7 +2,8 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.37 - xx xxx 2025
+Changes in 2.37 - 23 Jun 2025
+- added option -mscrt - generate MSCRT pragma(init/exit) segments for ELF
 - fixed forward referenced symbols in codeview - name struct { next ptr name ? }
 - added support for 64-bit C-type RECORD fields
 - added WIDTHOF

@@ -8,7 +8,7 @@ include stdlib.inc
 
 option dotname
 
-ifndef __UNIX__
+if not defined(__UNIX__) or defined(__MSCRT__)
 
 public __xi_a ; init
 public __xi_z

@@ -2631,9 +2631,9 @@ endif
         mov [rdi].COMPILESYM3.verFEMinor,  0
         mov [rdi].COMPILESYM3.verFEBuild,  0
         mov [rdi].COMPILESYM3.verFEQFE,    0
-        mov [rdi].COMPILESYM3.verMajor,    ASMC_MAJOR_VER
-        mov [rdi].COMPILESYM3.verMinor,    ASMC_MINOR_VER
-        mov [rdi].COMPILESYM3.verBuild,    0;ASMC_SUBMINOR_VER*100
+        mov [rdi].COMPILESYM3.verMajor,    ASMC_MAJOR
+        mov [rdi].COMPILESYM3.verMinor,    ASMC_MINOR
+        mov [rdi].COMPILESYM3.verBuild,    0
         mov [rdi].COMPILESYM3.verQFE,      0
 
         mov rdi,cv.ps

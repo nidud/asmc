@@ -71,6 +71,7 @@ MAXSTACK equ 16
         { 8018, 0 },
         { 8019, 0 },
         { 8020, 0 },
+        { 8022, 0 },
         { 7000, 0 },
         { 7001, 0 },
         { 7002, 0 },
@@ -533,7 +534,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if !MODULE.dotname
             AddLineQueueX(" %r dotname", T_OPTION)
         .endif
-        .if Options.output_format == OFORMAT_ELF
+        .if ( Options.output_format == OFORMAT_ELF && Options.mscrt == 0 )
 
             inc i
             .if ( [rbx+asm_tok].token == T_COMMA )

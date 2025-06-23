@@ -3,50 +3,18 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-ifdef __UNIX__
-
 include stdlib.inc
 
-externdef __ImageBase:size_t
+if not defined(__UNIX__) or defined(__MSCRT__)
 
-    .code
-
-_initterm proc uses rbx pfbegin:ptr, pfend:ptr
-
-   .new count:int_t
-
-    ldr rbx,pfbegin
-    ldr rax,pfend
-    sub rax,rbx
-    shr rax,3
-    .ifnz
-
-        .for ( count = eax : count : count--, rbx+=8 )
-
-            mov rax,[rbx]
-            .break .if !rax
-
-ifdef _WIN64
-            add  rax,__ImageBase
-endif
-            call rax
-        .endf
-    .endif
-    ret
-
-_initterm endp
-
-else
-
-include winbase.inc
-
-MAXENTRIES equ 256
+define MAXENTRIES 256
 
     .code
 
 _initterm proc uses rsi rdi rbx pfbegin:ptr, pfend:ptr
 
    .new entries[MAXENTRIES]:uint64_t
+   .new count:int_t
 
     ldr rcx,pfbegin
     ldr rdx,pfend
@@ -76,17 +44,17 @@ _initterm proc uses rsi rdi rbx pfbegin:ptr, pfend:ptr
             .endif
         .endf
 
-        .for ( rsi = &entries, edi = edx :: )
+        .for ( rbx = &entries, count = edx :: )
 
             .for ( ecx = MAXENTRIES,
-                   rbx = rsi,
+                   rsi = rbx,
                    edx = 0,
-                   eax = edi : eax : eax--, rbx+=8 )
+                   eax = count : eax : eax--, rsi+=8 )
 
-                .if ( dword ptr [rbx] != 0 && ecx >= [rbx+4] )
+                .if ( dword ptr [rsi] != 0 && ecx >= [rsi+4] )
 
-                    mov ecx,[rbx+4]
-                    mov rdx,rbx
+                    mov ecx,[rsi+4]
+                    mov rdx,rsi
                 .endif
             .endf
             .break .if !rdx
@@ -105,5 +73,37 @@ endif
     ret
 
 _initterm endp
+
+else
+
+externdef __ImageBase:size_t
+
+    .code
+
+_initterm proc uses rbx pfbegin:ptr, pfend:ptr
+
+   .new count:int_t
+
+    ldr rbx,pfbegin
+    ldr rax,pfend
+    sub rax,rbx
+    shr rax,3
+    .ifnz
+
+        .for ( count = eax : count : count--, rbx+=8 )
+
+            mov rax,[rbx]
+            .break .if !rax
+
+ifdef _WIN64
+            add  rax,__ImageBase
 endif
+            call rax
+        .endf
+    .endif
+    ret
+
+_initterm endp
+endif
+
     end

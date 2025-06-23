@@ -10,7 +10,7 @@ Specifies a functions that runs after the main program exits.
 .pragma exit(foo, 3)
 ```
 
-Windows:
+Windows (or option -mscrt):
 ```
 option dotname
 .CRT$XTA segment align(8) 'CONST'

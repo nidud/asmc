@@ -72,16 +72,17 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-m</b>&lt;<i>model</i>&gt;</td><td>Set <a href="option-m.md">memory model</a>. Not available in ASMC64.</td></tr>
 <tr><td><b>-MD[d]</b></td><td>Defines _MSVCRT [_DEBUG].</td></tr>
 <tr><td><b>-MT[d]</b></td><td>Defines _MT [_DEBUG].</td></tr>
+<tr><td><b>-mscrt</b></td><td>Generate MSCRT init/exit segments for ELF.</td></tr>
 <tr><td><b>-mz</b></td><td>Generate DOS MZ binary file. Not available in ASMC64.</td></tr>
 <tr><td><b>-nc</b> <i>name</i></td><td>Set class name of code segment.</td></tr>
 <tr><td><b>-nd</b> <i>name</i></td><td>Set name of data segment.</td></tr>
 <tr><td><b>-nm</b> <i>name</i></td><td>Set name of module.</td></tr>
 <tr><td><b>-nt</b> <i>name</i></td><td>Set name of text segment.</td></tr>
 <tr><td><b>-nolib</b></td><td>Ignore INCLUDELIB directive.</td></tr>
-<tr><td><b>-nologo</b></td><td>Suppresses messages for successful assembly.</td></tr>
+<tr><td><b>-nologo</b></td><td>Suppress copyright message.</td></tr>
 <tr><td><b>-omf</b></td><td>Generates object module file format (OMF) type of object module.</td></tr>
 <tr><td><b>-pe</b></td><td>Generate <a href="option-pe.md">PE</a> binary file, 32/64-bit.</td></tr>
-<tr><td><b>-q</b></td><td>Suppress copyright message.</td></tr>
+<tr><td><b>-q</b></td><td>Operate quietly.</td></tr>
 <tr><td><b>-r</b></td><td>Recurse subdirectories with use of wildcards.</td></tr>
 <tr><td><b>-Sa</b></td><td>Turns on listing of all available information.</td></tr>
 <tr><td><b>-safeseh</b></td><td>Marks the object as either containing no exception handlers or containing exception handlers that are all declared with SAFESEH.</td></tr>

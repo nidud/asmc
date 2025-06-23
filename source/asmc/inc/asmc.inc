@@ -5,12 +5,18 @@
 ;
 .pragma list(push, 0)
 
-ifndef __ASMC_INC
-define __ASMC_INC
+ifndef ASMC_VERSION
+define ASMC_VERSION 237
+ifdef SUBVERSION
+define ASMC_SUBVER SUBVERSION
+else
+define ASMC_SUBVER 0
+endif
+define ASMC_MAJOR (ASMC_VERSION / 100)
+define ASMC_MINOR (ASMC_VERSION MOD 100)
 
 option dotname
 
-include version.inc
 include stdio.inc
 include stdlib.inc
 include string.inc
@@ -23,6 +29,8 @@ define _AUTO_LINK   ; Spawn linker if /c not set
 
 ifdef __UNIX__
 define _ASMC_LINK <"/usr/bin/gcc">
+elseifdef MSLINK
+define _ASMC_LINK <"link.exe">
 else
 define _ASMC_LINK <"linkw.exe">
 endif
@@ -549,6 +557,8 @@ define PE_DLL               0x04
       switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
       assert                dd: 1 ? ; -assert Generate .assert code
       assert_pushf          dd: 1 ? ; Push/Pop flags
+      ; ----
+      mscrt                 dd: 1 ? ; pragma init/exit option
      ends
     ends
     record
@@ -643,6 +653,7 @@ define PE_DLL               0x04
       switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
       assert                dd: 1 ? ; -assert Generate .assert code
       assert_pushf          dd: 1 ? ; Push/Pop flags
+      ; ----
       procs_private         dd: 1 ? ; option proc:private
       procs_export          dd: 1 ? ; option proc:export
       ljmp                  dd: 1 ? ; option ljmp

@@ -7,13 +7,12 @@
 include stdlib.inc
 ifdef __UNIX__
 include sys/syscall.inc
-externdef __fini_array_start:ptr
-externdef __fini_array_end:ptr
 else
 include winbase.inc
-externdef __xt_a:ptr
-externdef __xt_z:ptr
 endif
+
+externdef _CRTFINI_S:ptr
+externdef _CRTFINI_E:ptr
 externdef _exitflag:char_t
 
     .data
@@ -30,11 +29,7 @@ doexit proc code:int_t, quick:int_t, retcaller:int_t
 
         ldr eax,retcaller
         mov _exitflag,al
-ifdef __UNIX__
-        _initterm(&__fini_array_start, &__fini_array_end)
-else
-        _initterm(&__xt_a, &__xt_z)
-endif
+        _initterm(&_CRTFINI_S, &_CRTFINI_E)
     .endif
 
     .if ( !retcaller )

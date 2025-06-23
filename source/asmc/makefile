@@ -86,14 +86,37 @@ uninstall:
 	sudo rm -f -R /usr/lib/asmc
 	sudo rm -f /etc/profile.d/asmc-profile.sh
 
+# Build Asmc using LINKW
+
+release:
+	del *.obj
+	make x86=1 asmc
+	make asmc64
+	del *.obj
+	copy asmc.exe ..\..\bin
+	copy asmc64.exe ..\..\bin
+
+asmc32:
+	make x86=1 asmc
+	make x86=1 asmc64
+	del *.obj
+
 linux32:
 	md $@
 	asmc -c -6 -mscrt -MT -elf -Zp4 -Cs -r ..\libc\*.asm ..\libc\*.s
 	libw -q -b -n -c asmc.a *.o
 	del *.o
 	asmc -c -Iinc -elf -Zp4 -Cs src\*.asm
-	linkw N $@\asmc. FORM elf RU LIN L asmc.a OP start=_start, Q, NOR, ST=0x300000 F { *.o }
+	linkw N $@\asmc. FORM elf RU LIN L asmc.a OP NOR, ST=0x300000 F { *.o }
 	asmc -DASMC64 -Iinc -elf -Zp4 -Cs src\*.asm
-	linkw N $@\asmc64. FORM elf RU LIN L asmc.a OP start=_start, Q, NOR, ST=0x300000 F { *.o }
+	linkw N $@\asmc64. FORM elf RU LIN L asmc.a OP NOR, ST=0x300000 F { *.o }
 	del *.o
 	del asmc.a
+
+owlinux:
+	md $@
+	asmc -c -Iinc -elf -Zp4 -Cs src\*.asm
+	linkw N $@\asmc. FORM elf RU LIN L \watcom\lib386\linux\clib3s.lib OP NOR, ST=0x300000 F { *.o }
+	asmc -c -DASMC64 -Iinc -elf -Zp4 -Cs src\*.asm
+	linkw N $@\asmc64. FORM elf RU LIN L \watcom\lib386\linux\clib3s.lib OP NOR, ST=0x300000 F { *.o }
+	del *.o

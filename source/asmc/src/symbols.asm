@@ -110,12 +110,9 @@ dyneqcount int_t 0
 
 FindDefinedName proc fastcall private uses rsi rdi rbx name:string_t
 
-    mov rbx,rcx
-    lea rsi,dyneqtable
-    .for ( edi = 0 : edi < dyneqcount : edi++ )
+    .for ( rbx = rcx, rsi = &dyneqtable, edi = 0 : edi < dyneqcount : edi++, rsi+=string_t )
 
-        .lodsd
-        .ifd !tstrcmp( rbx, rax )
+        .ifd !tstrcmp( rbx, [rsi] )
 
             inc edi
            .return( edi )
@@ -182,9 +179,9 @@ SymClearLocal proc __ccall
 
     xor  eax,eax
     lea  rdx,lsym_table
-    mov  ecx,sizeof(lsym_table) / size_t
+    mov  ecx,sizeof(lsym_table) / 4
     xchg rdx,rdi
-    rep  .stosd
+    rep  stosd
     mov  rdi,rdx
     ret
 
@@ -229,8 +226,8 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
     ldr rsi,psym
     lea rdx,lsym_table
     mov rdi,rdx
-    mov ecx,sizeof(lsym_table) / size_t
-    rep .stosd
+    mov ecx,sizeof(lsym_table) / 4
+    rep stosd
     mov rdi,rdx
 
     mov rsi,[rsi].asym.procinfo

@@ -34,6 +34,20 @@ endif
 
 include limits.inc
 
+ifdef _CRTBLD
+if not defined(__UNIX__) or defined(__MSCRT__)
+define _CRTINIT_S <__xi_a>
+define _CRTINIT_E <__xi_z>
+define _CRTFINI_S <__xt_a>
+define _CRTFINI_E <__xt_z>
+else
+define _CRTINIT_S <__init_array_start>
+define _CRTINIT_E <__init_array_end>
+define _CRTFINI_S <__fini_array_start>
+define _CRTFINI_E <__fini_array_end>
+endif
+endif
+
 .pragma comment(lib, libc, msvcrt)
 
 ifndef _ONEXIT_T_DEFINED

@@ -24,13 +24,8 @@ include input.inc
 init_win64 proto
 
 .data
-ifdef __UNIX__
-ifdef __WATCOM__
-extern _cstart_: byte
-endif
-endif
-_pgmptr string_t 0
-my_environ array_t 0
+ _pgmptr string_t 0
+ my_environ array_t 0
 
 .code
 
@@ -790,11 +785,13 @@ main endp
 tgetenv proc fastcall uses rsi rdi rbx enval:string_t
 
     mov rbx,rcx
+
     .ifd tstrlen(rcx)
 
         mov edi,eax
         mov rsi,my_environ
-        .lodsd
+        mov rax,[rsi]
+        add rsi,string_t
 
         .while rax
 
@@ -808,7 +805,8 @@ tgetenv proc fastcall uses rsi rdi rbx enval:string_t
                     .return( &[rax+1] )
                 .endif
             .endif
-            .lodsd
+            mov rax,[rsi]
+            add rsi,string_t
         .endw
     .endif
     ret

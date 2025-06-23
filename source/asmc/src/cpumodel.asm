@@ -87,9 +87,8 @@ sym_Model     asym_t 0 ; numeric. requires model
 
 FindToken proc __ccall private uses rsi rdi token:string_t, table:ptr string_t, size:int_t
 
-    .for( rsi = table, edi = 0: edi < size: edi++ )
-        .lodsd
-        .ifd ( tstricmp( rax, token ) == 0 )
+    .for ( rsi = table, edi = 0 : edi < size : edi++, rsi+=string_t )
+        .ifd ( tstricmp( [rsi], token ) == 0 )
             .return( edi )
         .endif
     .endf

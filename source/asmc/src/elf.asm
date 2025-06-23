@@ -1371,21 +1371,21 @@ write_relocs64 proc __ccall private uses rsi rdi rbx curr:asym_t
         mov rcx,[rsi].sym
         mov edi,[rcx].asym.ext_idx
         mov eax,[rsi].locofs
+        mov size_t ptr reloc64.r_offset,rax
 ifndef _WIN64
-        xor edx,edx
+        mov dword ptr reloc64.r_offset[4],0
 endif
-        .s8 reloc64.r_offset
         mov edx,[rsi].offs
         movzx rax,[rsi].addbytes
         sub rax,rdx
         neg rax
+        mov size_t ptr reloc64.r_addend,rax
 ifndef _WIN64
         cdq
+        mov dword ptr reloc64.r_addend[4],edx
 endif
-        .s8 reloc64.r_addend
-
-         movzx eax,[rsi].type
-        .switch ( eax )
+        movzx eax,[rsi].type
+        .switch eax
         .case FIX_RELOFF32
             mov ebx,R_X86_64_PC32
             .if ( MODULE.pic && [rcx].asym.state == SYM_EXTERNAL )

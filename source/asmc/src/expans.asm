@@ -85,7 +85,8 @@ ifdef _WIN64
 else
 
     mov edi,buffer
-    .l8 value
+    mov eax,dword ptr value
+    mov edx,dword ptr value[4]
 
     .if ( sign )
 

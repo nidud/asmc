@@ -95,10 +95,9 @@ ImageBase       db 0
 FindToken proc __ccall private uses rsi rdi token:string_t, table:ptr, size:int_t
 
     ldr rsi,table
-    .for ( edi = 0 : edi < size : edi++ )
 
-        .lodsd
-        .ifd ( tstricmp( rax, token ) == 0 )
+    .for ( edi = 0 : edi < size : edi++, rsi+=string_t )
+        .ifd ( tstricmp( [rsi], token ) == 0 )
             .return( edi )
         .endif
     .endf

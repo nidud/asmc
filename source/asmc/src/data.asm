@@ -263,7 +263,10 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:token_t,
     .if ( [rsi].asym.typekind == TYPE_RECORD )
 
         xor eax,eax
-        .z8 dwRecInit,rax
+        mov size_t ptr dwRecInit,rax
+ifndef _WIN64
+        mov dword ptr dwRecInit,eax
+endif
         mov is_record_set,eax
     .endif
 

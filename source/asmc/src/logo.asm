@@ -84,11 +84,12 @@ endif
 ifndef ASMC64
  char_t "-m<t|s|c|m|l|h|f> Set memory model        -mz Generate DOS MZ binary file",10
 endif
- char_t "-MD[d] Dynamic - Defines _MSVCRT [_DEBUG] -MT[d] Static - Defines _MT [_DEBUG]",10
- char_t "-nc<name> Set class name of code segment  -nd<name> Set name of data segment",10
- char_t "-nm<name> Set name of module              -nolib Ignore INCLUDELIB directive",10
+ char_t "-MD[d] Dynamic - Defines _MSVCRT [_DEBUG] -mscrt Use MSCRT segments for ELF",10
+ char_t "-MT[d] Static - Defines _MT [_DEBUG]      -nc<name> Set name of code segment",10
+ char_t "-nd<name> Set name of data segment        -nm<name> Set name of module",10
+ char_t "-nolib Ignore INCLUDELIB directive        -nologo Suppress copyright message",10
  char_t "-nt<name> Set name of text segment        -pe[c|g|d] Generate PE binary file",10
- char_t "-q, -nologo Suppress copyright message    -r Recurse subdirectories",10
+ char_t "-q Operate quietly                        -r Recurse subdirectories",10
  char_t "-Sa Maximize source listing               -safeseh Assert exception handlers",10
  char_t "-Sf Generate first pass listing           -Sg Display generated code in listing",10
  char_t "-Sn Suppress symbol-table listing         -Sp[n] Set segment alignment",10

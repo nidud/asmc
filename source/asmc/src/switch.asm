@@ -218,8 +218,12 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
             mov ecx,eax
             EvalOperand( &i, tokenarray, ecx, &opnd, EXPF_NOERRMSG )
             .break .if eax != NOT_ERROR
-
-            .l8 opnd.llvalue
+ifdef _WIN64
+            mov rax,opnd.llvalue
+else
+            mov eax,opnd.l64_l
+            mov edx,opnd.l64_h
+endif
             .if ( size == 1 )
                 movsx rax,al
 ifndef _WIN64
@@ -228,7 +232,6 @@ endif
             .elseif ( size == 2 )
                 movsx rax,ax
 ifndef _WIN64
-
                 cdq
 endif
             .elseif ( size == 4 )

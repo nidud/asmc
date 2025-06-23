@@ -2342,8 +2342,11 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:asym_t, types:asym_t
                eax = 0,
                rsi = MODULE.FNames,
                ebx = MODULE.cnt_fnames : ebx : ebx-- )
-
-           .movsd
+ifdef _WIN64
+            movsq
+else
+            movsd
+endif
             stosd
         .endf
 

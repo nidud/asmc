@@ -754,9 +754,17 @@ ifndef _WIN64
 endif
             .if ( ( MODULE.sub_format == SFORMAT_PE && [rdi].Ofssize == USE64 ) ||
                   MODULE.sub_format == SFORMAT_64BIT )
-                .l8 value64
+ifdef _WIN64
+                mov rax,value64
+else
+                mov eax,dword ptr value64
+                mov edx,dword ptr value64[4]
+endif
             .endif
-            .s8 [rcx]
+            mov [rcx],rax
+ifndef _WIN64
+            mov [ecx+4],edx
+endif
             .endc
         .case FIX_HIBYTE
             mov al,ah
@@ -1630,8 +1638,11 @@ if sizeof(IMAGE_PE_HEADER64.x) lt 4
         movzx eax,[rax].IMAGE_PE_HEADER64.x
 elseif sizeof(IMAGE_PE_HEADER64.x) eq 4
         mov eax,[rax].IMAGE_PE_HEADER64.x
+elseifdef _WIN64
+        mov rax,[rax].IMAGE_PE_HEADER64.x
 else
-        .l8 [rax].IMAGE_PE_HEADER64.x
+        mov edx,dword ptr [rax].IMAGE_PE_HEADER64.x[4]
+        mov eax,dword ptr [rax].IMAGE_PE_HEADER64.x
 endif
 ifndef ASMC64
     .else

@@ -63,35 +63,8 @@ assume r14:ptr module_info
 ifdef __UNIX__
 define _LIN64
 endif
-define .lodsd <lodsq>
-define .stosd <stosq>
-define .movsd <movsq>
-.l8 macro mem
-    mov rax,mem
-    endm
-.s8 macro mem
-    mov mem,rax
-    endm
-.z8 macro mem, reg
-    mov mem,reg
-    endm
 else
 define MODULE <ModuleInfo>
-define .lodsd <lodsd>
-define .stosd <stosd>
-define .movsd <movsd>
-.l8 macro mem
-    mov edx,dword ptr mem[4]
-    mov eax,dword ptr mem
-    endm
-.s8 macro mem
-    mov dword ptr mem,eax
-    mov dword ptr mem[4],edx
-    endm
-.z8 macro mem, reg
-    mov dword ptr mem,reg
-    mov dword ptr mem[4],reg
-    endm
 endif
 
 define USE_COMALLOC

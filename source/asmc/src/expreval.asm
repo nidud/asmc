@@ -1978,7 +1978,10 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
         .endif
         mov [rsi].kind,EXPR_ADDR
         __mul64( -1, [rdi].llvalue )
-        .s8 [rsi].expr.llvalue
+        mov size_t ptr [rsi].expr.llvalue,rax
+ifndef _WIN64
+        mov [rsi].expr.l64_h,edx
+endif
     .default
         .return ConstError( rsi, rdi )
     .endsw
@@ -2632,8 +2635,10 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
         .if ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST )
 
             __mul64( [rdi].llvalue, [rsi].llvalue )
-            .s8 [rsi].llvalue
-
+            mov size_t ptr [rsi].expr.llvalue,rax
+ifndef _WIN64
+            mov [rsi].expr.l64_h,edx
+endif
         .elseif check_both( rsi, rdi, EXPR_REG, EXPR_CONST )
 
             .ifd ( check_direct_reg( rsi, rdi ) == ERROR )
@@ -2684,7 +2689,10 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
             .return( fnasmerr( 2169 ) )
         .endif
         __div64( [rsi].llvalue, [rdi].llvalue )
-        .s8 [rsi].llvalue
+        mov size_t ptr [rsi].expr.llvalue,rax
+ifndef _WIN64
+        mov [rsi].expr.l64_h,edx
+endif
         .endc
 
     .case T_BINARY_OPERATOR
@@ -2893,7 +2901,10 @@ endif
                 xor ecx,ecx
                 mov [rsi].kind,EXPR_CONST
                 mov [rsi].mem_type,MT_EMPTY
-                .z8 [rsi].hlvalue,rcx
+                mov size_t ptr [rsi].hlvalue,rcx
+ifndef _WIN64
+                mov [rsi].h64_h,ecx
+endif
                 .if ( eax == -1 )
                     dec rcx
                 .endif
@@ -2905,7 +2916,10 @@ endif
                     dec rcx
                 .endif
             .endif
-            .z8 [rsi].llvalue,rcx
+            mov size_t ptr [rsi].llvalue,rcx
+ifndef _WIN64
+            mov [rsi].l64_h,ecx
+endif
             .endc
 
         .case T_LE
@@ -2913,7 +2927,10 @@ endif
 
                 __cmpq( rsi, rdi )
                 xor ecx,ecx
-                .z8 [rsi].hlvalue,rcx
+                mov size_t ptr [rsi].hlvalue,rcx
+ifndef _WIN64
+                mov [rsi].h64_h,ecx
+endif
                 mov [rsi].kind,EXPR_CONST
                 mov [rsi].mem_type,MT_EMPTY
                 .if ( eax != 1 )
@@ -2925,7 +2942,10 @@ endif
                     dec rcx
                 .endif
             .endif
-            .z8 [rsi].llvalue,rcx
+            mov size_t ptr [rsi].llvalue,rcx
+ifndef _WIN64
+            mov [rsi].l64_h,ecx
+endif
             .endc
 
         .case T_GT
@@ -2933,7 +2953,10 @@ endif
 
                 __cmpq(rsi, rdi)
                 xor ecx,ecx
-                .z8 [rsi].hlvalue,rcx
+                mov size_t ptr [rsi].hlvalue,rcx
+ifndef _WIN64
+                mov [rsi].h64_h,ecx
+endif
                 mov [rsi].kind,EXPR_CONST
                 mov [rsi].mem_type,MT_EMPTY
                 .if ( eax == 1 )
@@ -2945,7 +2968,10 @@ endif
                     dec rcx
                 .endif
             .endif
-            .z8 [rsi].llvalue,rcx
+            mov size_t ptr [rsi].llvalue,rcx
+ifndef _WIN64
+            mov [rsi].l64_h,ecx
+endif
             .endc
 
         .case T_GE
@@ -2953,7 +2979,10 @@ endif
 
                 __cmpq(rsi, rdi)
                 xor ecx,ecx
-                .z8 [rsi].hlvalue,rcx
+                mov size_t ptr [rsi].hlvalue,rcx
+ifndef _WIN64
+                mov [rsi].h64_h,ecx
+endif
                 mov [rsi].kind,EXPR_CONST
                 mov [rsi].mem_type,MT_EMPTY
                 .if ( eax != -1 )
@@ -2965,7 +2994,10 @@ endif
                     dec rcx
                 .endif
             .endif
-            .z8 [rsi].llvalue,rcx
+            mov size_t ptr [rsi].llvalue,rcx
+ifndef _WIN64
+            mov [rsi].l64_h,ecx
+endif
             .endc
 
         .case T_MOD
@@ -2980,7 +3012,10 @@ endif
                .endc
             .endif
             __rem64( [rsi].llvalue, [rdi].llvalue )
-            .s8 [rsi].llvalue
+            mov size_t ptr [rsi].expr.llvalue,rax
+ifndef _WIN64
+            mov [rsi].expr.l64_h,edx
+endif
             .endc
 
         .case T_ROL
@@ -3019,7 +3054,10 @@ endif
                 .if ( MODULE.m510 )
                     xor eax,eax
                     mov [rsi].hvalue,eax
-                    .z8 [rsi].hlvalue,rax
+                    mov size_t ptr [rsi].hlvalue,rax
+ifndef _WIN64
+                    mov [rsi].h64_h,eax
+endif
                 .endif
             .endsw
             .endc

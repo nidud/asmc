@@ -587,7 +587,9 @@ if 0
 
                 .while 1
 
-                    .lodsd
+                    mov rax,[rsi]
+                    add rsi,string_t
+
                     .break .if !rax
 
                     .ifd ( tstricmp( rax, rbx ) == 0 )

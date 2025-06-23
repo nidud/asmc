@@ -136,23 +136,21 @@ init_win64 endp
 
 ; current cmdline string is done, get the next one!
 
-getnextcmdstring proc fastcall uses rsi rdi cmdline:array_t
+getnextcmdstring proc fastcall cmdline:array_t
 
-    .for ( rdi = rcx,
-           rsi = &[rdi+string_t] : string_t ptr [rsi] : )
-        .movsd
+    .for ( rdx = [rcx+string_t], rax = rdx : rdx : rcx += string_t )
+        mov [rcx],rdx
+        mov rdx,[rcx+string_t*2]
     .endf
-    .movsd
-    .return( [rcx] )
+    mov [rcx],rdx
+    ret
 
 getnextcmdstring endp
 
 
 GetNumber proc fastcall p:string_t
 
-    .for( eax = 0,
-          edx = 0,
-          al = [rcx] : al >= '0' && al <= '9' : rcx++, al = [rcx] )
+    .for ( eax = 0, edx = 0, al = [rcx] : al >= '0' && al <= '9' : rcx++, al = [rcx] )
 
         imul edx,edx,10
         sub al,'0'

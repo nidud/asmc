@@ -137,9 +137,11 @@ check_number:
 
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
-        .l8 opnd.hlvalue
-ifndef _WIN64
-        or eax,edx
+ifdef _WIN64
+        mov rax,opnd.hlvalue
+else
+        mov eax,opnd.h64_h
+        or  eax,opnd.h64_l
 endif
         ; v2.08: check added. the number must be 32-bit
 
@@ -399,11 +401,12 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
         ; define name
         ;
         xor eax,eax
+        mov size_t ptr opnd.llvalue,rax
+        mov size_t ptr opnd.hlvalue,rax
 ifndef _WIN64
-        cdq
+        mov dword ptr opnd.llvalue[4],eax
+        mov dword ptr opnd.hlvalue[4],eax
 endif
-        .s8 opnd.llvalue
-        .s8 opnd.hlvalue
         mov opnd.sym,rax
         dec i
         jmp check_single_number
@@ -454,10 +457,11 @@ endif
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
         mov opnd.flags,0
-
-        .l8 opnd.hlvalue
-ifndef _WIN64
-        or eax,edx
+ifdef _WIN64
+        mov rax,opnd.hlvalue
+else
+        mov eax,opnd.h64_h
+        or  eax,opnd.h64_l
 endif
         mov rc,NOT_ERROR
         inc i
@@ -489,7 +493,6 @@ endif
             pop     ebx
             pop     edi
           endif
-
         .endif
         .if rax
             .return SetTextMacro( rbx, rdi, name, p )

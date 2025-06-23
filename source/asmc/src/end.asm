@@ -133,9 +133,8 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     lea rsi,StartupDosFar
                     mov edi,lengthof( StartupDosFar )
                 .endif
-                .for ( : edi : edi-- )
-                    .lodsd
-                    AddLineQueue( rax )
+                .for ( : edi : edi--, rsi+=string_t )
+                    AddLineQueue( [rsi] )
                 .endf
             .endif
         .endif
@@ -172,14 +171,12 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 imul ebx,i,asm_tok
             .endif
             add rbx,tokenarray
-           .lodsd
+            add rsi,string_t
             dec edi
         .endif
 
-        .for ( : edi : edi-- )
-
-            .lodsd
-            AddLineQueue(rax)
+        .for ( : edi : edi--, rsi+=string_t )
+            AddLineQueue([rsi])
         .endf
         .endc
     .endsw

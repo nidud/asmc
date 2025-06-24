@@ -138,14 +138,37 @@ init_win64 endp
 
 getnextcmdstring proc fastcall cmdline:array_t
 
-    .for ( rdx = [rcx+string_t], rax = rdx : rdx : rcx += string_t )
+    mov rax,[rcx+string_t]
+    .if ( rax )
+
+        .for ( rdx = rax : rdx : rcx += string_t )
+
+            mov [rcx],rdx
+            mov rdx,[rcx+string_t*2]
+        .endf
         mov [rcx],rdx
-        mov rdx,[rcx+string_t*2]
-    .endf
-    mov [rcx],rdx
+    .endif
     ret
 
 getnextcmdstring endp
+
+
+getfilearg proc fastcall args:array_t, p:string_t ; -Fo<file> or -Fo <file>
+
+    mov rax,rdx
+    mov rdx,[rcx]
+
+    .if ( byte ptr [rax] == 0 )
+         getnextcmdstring( rcx )
+    .elseif ( byte ptr [rax] == '=' )
+        inc rax
+    .endif
+    .if ( !rax || byte ptr [rax] == 0 )
+        asmerr( 1006, rdx )
+    .endif
+    ret
+
+getfilearg endp
 
 
 GetNumber proc fastcall p:string_t
@@ -160,29 +183,6 @@ GetNumber proc fastcall p:string_t
    .return rcx
 
 GetNumber endp
-
-
-getfilearg proc fastcall uses rsi rdi rbx args:array_t, p:string_t ; -Fo<file> or -Fo <file>
-
-    mov rsi,rdx
-    mov rdi,rcx
-
-    .if ( byte ptr [rsi] == 0 )
-        mov rbx,getnextcmdstring(rdi)
-        .if ( rbx != NULL )
-            mov rsi,rbx
-        .endif
-    .elseif ( byte ptr [rsi] == '=' )
-        inc rsi
-    .endif
-    .if ( byte ptr [rsi] == 0 )
-        asmerr( 1006, [rdi] )
-       .return NULL
-    .endif
-    .return rsi
-
-getfilearg endp
-
 
 ;
 ; queue a text macro, include path or "forced" include files.
@@ -946,11 +946,17 @@ endif
     .case 'iZ'          ; -Zi[0|1|2|3]
         define_name( "__DEBUG__", "1" )
         mov Options.line_numbers,1
+ifdef MASMCOMPAT
+        mov Options.debug_symbols,4 ; C13 (vc7.x) zero terminated names
+        mov Options.no_file_entry,1
+else
         mov Options.debug_symbols,1
+endif
         mov Options.debug_ext,CVEX_NORMAL
         mov eax,OptValue
         .if eax
             .if eax > CVEX_MAX
+ifndef MASMCOMPAT
                 .if byte ptr [rbx+3] != 0
                     .if byte ptr [rbx+4] != 0
                         asmerr(1006, rbx)
@@ -966,8 +972,11 @@ endif
                     mov Options.debug_symbols,4 ; C13 (vc7.x) zero terminated names
                     mov Options.no_file_entry,1
                 .else
+endif
                     asmerr(1006, rbx)
+ifndef MASMCOMPAT
                 .endif
+endif
             .else
                 mov Options.debug_ext,al
             .endif
@@ -975,7 +984,7 @@ endif
         .return
     .endsw
 
-    mov [rsi],GetNameToken(rdi, &[rbx+2], 256, '$')
+    mov [rsi],GetNameToken( rdi, &[rbx+2], 256, '$' )
     mov eax,j
     .switch eax
     .case 'cn'          ; -nc<name>
@@ -1000,8 +1009,8 @@ endif
     .endsw
 
     .if getfilearg(cmdline, &[rbx+2])
-        mov rbx,rax
-        mov [rsi],GetNameToken(rdi, rbx, 256, '@')
+
+        mov [rsi],GetNameToken( rdi, rax, 256, '@' )
         mov eax,j
         .if eax == 'lB'         ; -Bl<file>
             mov Options.link_linker,MemDup(rdi)
@@ -1021,7 +1030,7 @@ endif
             .return get_fname(OPTN_ERR_FN, rdi)
         .endif
     .endif
-    asmerr(1006, &[rbx-3])
+    asmerr( 1006, &[rbx-1] )
     ret
 
 ProcessOption endp

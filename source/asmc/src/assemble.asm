@@ -1034,9 +1034,11 @@ ReswTableInit proc private
         DisableKeyword( T_IMAGEREL )
         DisableKeyword( T_SECTIONREL )
     .endif
+ifndef MASMCOMPAT
     .if ( Options.strict_masm_compat == 0 )
         SetMasmKeywords( 0 )
     .endif
+endif
     ret
 
 ReswTableInit endp

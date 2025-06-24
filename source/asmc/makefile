@@ -3,6 +3,9 @@
 #
 
 flags = -Cs -Iinc -I../../include
+ifdef MASM
+flags += -DMASMCOMPAT
+endif
 
 ifdef YACC
 link = -o $@ -s
@@ -95,6 +98,11 @@ release:
 	del *.obj
 	copy asmc.exe ..\..\bin
 	copy asmc64.exe ..\..\bin
+
+masm_compat:
+	make MASM=1 asmc
+	make MASM=1 asmc64
+	del *.obj
 
 asmc32:
 	make x86=1 asmc

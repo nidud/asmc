@@ -958,8 +958,11 @@ endif
 
             .if ( case_offset && eax )
 
-                sub eax,case_offset
-
+                .if ( eax > case_offset )
+                    sub eax,case_offset
+                .else
+                    xor eax,eax
+                .endif
                 .if !( eax & 0xFFFFFF00 )
                     mov table_type,T_BYTE
                 .elseif !( eax & 0xFFFF0000 )

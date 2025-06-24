@@ -113,6 +113,18 @@ linux32:
 	del *.o
 	del asmc.a
 
+linux64:
+	md $@
+	asmc -c -mscrt -MT -elf64 -Zp8 -Cs -r ..\libc\*.asm ..\libc\*.s
+	libw -q -b -n -c asmc.a *.o
+	del *.o
+	asmc -c -Iinc -elf64 -Zp8 -Cs src\*.asm
+	linkw N $@\asmc. FORM elf RU LIN L asmc.a OP NOR, ST=0x300000 F { *.o }
+	asmc -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm
+	linkw N $@\asmc64. FORM elf RU LIN L asmc.a OP NOR, ST=0x300000 F { *.o }
+	del *.o
+	del asmc.a
+
 owlinux:
 	md $@
 	asmc -c -Iinc -elf -Zp4 -Cs src\*.asm

@@ -29,7 +29,7 @@ define _AUTO_LINK   ; Spawn linker if /c not set
 
 ifdef __UNIX__
 define _ASMC_LINK <"/usr/bin/gcc">
-elseifdef MSLINK
+elseifdef MASMCOMPAT
 define _ASMC_LINK <"link.exe">
 else
 define _ASMC_LINK <"linkw.exe">

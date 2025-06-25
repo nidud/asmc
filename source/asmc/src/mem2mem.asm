@@ -56,12 +56,13 @@ InlineMove proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
 
   local type:uint_t
 
-    movzx   edi,MODULE.Ofssize
+    movzx   ecx,MODULE.Ofssize
     lea     rbx,ofss
-    movzx   esi,byte ptr [rbx+rdi+12]
-    movzx   eax,byte ptr [rbx+rdi+16]
+    movzx   esi,byte ptr [rbx+rcx+12]
+    movzx   eax,byte ptr [rbx+rcx+16]
     mov     type,eax
-    shl     edi,2
+    mov     edi,2
+    shl     edi,cl
 
     .for ( ebx = 0 : count >= edi : count -= edi, ebx += edi )
 
@@ -171,14 +172,12 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
 
     and ebx,OP_MS
     and edi,OP_MS
-    mov reg,T_EAX
-    mov regz,4
-
-    .if ( MODULE.Ofssize == USE64 )
-
-        mov reg,T_RAX
-        mov regz,8
-    .endif
+    mov reg,MODULE.accumulator
+    lea rcx,SpecialTable
+    imul eax,eax,special_item
+    mov eax,[rcx+rax].special_item.sflags
+    and eax,SFR_SIZMSK
+    mov regz,eax
 
     mov rcx,tokenarray
     add rcx,asm_tok
@@ -252,14 +251,24 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     .case OP_MS
     .case OP_M08: mov edi,T_AL  : .endc
     .case OP_M16: mov edi,T_AX  : .endc
-    .case OP_M32: mov edi,T_EAX : .endc
+    .case OP_M32
+        mov edi,T_AX
+        .if ( regz > 2 )
+            mov edi,T_EAX
+        .endif
+        .endc
     .endsw
 
     .switch edx
     .case OP_MS
     .case OP_M08: mov esi,T_AL  : .endc
     .case OP_M16: mov esi,T_AX  : .endc
-    .case OP_M32: mov esi,T_EAX : .endc
+    .case OP_M32
+        mov esi,T_AX
+        .if ( regz > 2 )
+            mov esi,T_EAX
+        .endif
+        .endc
     .endsw
 
     .if ( esi > edi && ebx == OP_MS )

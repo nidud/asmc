@@ -4959,7 +4959,7 @@ endif
             .endif
         .endif
 
-        .if ( CodeInfo.Ofssize > USE16 && !MODULE.masm_compat_gencode )
+        .if ( !MODULE.masm_compat_gencode )
 
             .if ( ( ecx & OP_M_ANY ) && ( edx & OP_M_ANY ) )
 

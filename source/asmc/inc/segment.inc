@@ -53,5 +53,6 @@ GetCodeClass		proto __ccall
 ModelSimSegmInit	proto __ccall :int_t
 ModelSimSegmExit	proto __ccall
 SetModelDefaultSegNames proto __ccall
+SetSimSeg		proto __ccall :sim_seg, :string_t
 
 endif

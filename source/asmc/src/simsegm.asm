@@ -113,7 +113,7 @@ close_currseg endp
 ; translate a simplified segment directive to
 ; a standard segment directive line
 
-SetSimSeg proc __ccall private uses rsi rdi rbx segm:sim_seg, name:string_t
+SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
 
     .new pAlign:string_t = "WORD"
     .new pAlignSt:string_t = "PARA"

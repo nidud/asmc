@@ -97,7 +97,7 @@ tvsprintf proc __ccall uses rsi rdi rbx buffer:string_t, format:string_t, argptr
                 movzx   eax,[rdx+rcx].ReservedWord.len
                 mov     rdx,[rdx+rcx].ReservedWord.name
                 jnz     .1
-                mov     ecx,1
+                mov     eax,1
                 jmp     .1
 
             .case 'd'

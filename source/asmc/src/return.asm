@@ -407,7 +407,7 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             HllContinueIf(rsi, &i, tokenarray, LSTART, rsi, 0)
             mov i,ebx
             AssignValue( &i, tokenarray, type, count )
-            AddLineQueueX( "jmp %s", rdi )
+            AddLineQueueX( " %r %s", T_JMP, rdi )
             AddLineQueueX( "%s:", GetLabelStr( [rsi].labels[LSTART*4], rdi ) )
         .else
             add i,count
@@ -417,8 +417,17 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( retval )
 
             AssignValue( &i, tokenarray, type, count )
+            RunLineQueue()
         .endif
-        AddLineQueueX( "jmp %s", rdi )
+        .if ( SymFind( rdi ) ) ; v2.37.3: added - removed ORG 2 + RET
+
+            mov ebx,[rax].asym.offs
+            cmp ebx,GetCurrOffset()
+            seta al
+        .endif
+        .if ( al )
+            AddLineQueueX( " %r %s", T_JMP, rdi )
+        .endif
     .endif
 
     .if ( MODULE.list )

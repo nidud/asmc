@@ -54,6 +54,17 @@ ifdef __UNIX__
 define __Ctype	<syscall>
 define __Cdecl	<syscall>
 define __cdecl	<syscall>
+elseif defined(__TINY__) or defined(__SMALL__) or defined(__COMPACT__)
+define __Cdecl	<c>
+define __cdecl	<c>
+define __Ctype	<stdcall>
+option proc:public, language:__cdecl, dotname
+elseif defined(__MEDIUM__) or defined(__LARGE__) or defined(__HUGE__)
+define __Cdecl	<far c>
+define __cdecl	<far c>
+define __Ctype	<far stdcall>
+define __fastcall <far fastcall>
+option proc:public, language:c, dotname
 elseifdef _STDCALL_SUPPORTED
 define __Cdecl	<c>
 define __Ctype	<stdcall>
@@ -65,6 +76,10 @@ ifdef __PE__	; asmc /pe
 ifndef _MSVCRT	; msvcrt.lib
 define _MSVCRT
 endif
+endif
+
+ifndef __fastcall
+define __fastcall <fastcall>
 endif
 
 ifndef __Cdecl	; vararg (...) type
@@ -124,15 +139,24 @@ ifndef _WIN32
 define _WIN32 ; default
 endif
 
-ifdef _WIN64
-option	win64:3
-ifdef __UNIX__
-option	cstack:on
-else
-option	frame:auto
-endif
-SIZE_T	typedef QWORD
-else
+if defined(__TINY__) or defined(__SMALL__) or defined(__MEDIUM__)
+int_t  typedef sword
+uint_t typedef word
+SIZE_T typedef word
+movl macro args:vararg
+endm
+pushl macro args:vararg
+endm
+popl macro args:vararg
+endm
+elseif defined(__COMPACT__) or defined(__LARGE__) or defined(__HUGE__)
+int_t  typedef sword
+uint_t typedef word
+SIZE_T typedef dword
+define movl <mov>
+define pushl <push>
+define popl <pop>
+elseifndef _WIN64
 ifdef __SSE__
 .686
 .xmm
@@ -146,8 +170,20 @@ endif
 ifdef _AMD64
 .x64
 endif
-.model	flat, __Ctype
-SIZE_T	typedef dword
+ifdef __FLAT__
+option language:__Ctype
+else
+.model flat, __Ctype
+endif
+SIZE_T typedef dword
+else
+option win64:3
+ifdef __UNIX__
+option cstack:on
+else
+option frame:auto
+endif
+SIZE_T typedef qword
 endif
 
 ifndef _WCHAR_T_DEFINED
@@ -214,8 +250,10 @@ else
 short_t		typedef sword
 ushort_t	typedef word
 endif
+ifndef int_t
 int_t		typedef sdword
 uint_t		typedef dword
+endif
 if LONG_IS_INT
 long_t		typedef sdword
 ulong_t		typedef dword
@@ -223,7 +261,6 @@ else
 long_t		typedef sqword
 ulong_t		typedef qword
 endif
-
 half_t		typedef real2
 float_t		typedef real4
 double_t	typedef real8

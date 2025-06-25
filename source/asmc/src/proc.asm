@@ -2190,7 +2190,7 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     .if ( MODULE.RetStack )
 
-        AddLineQueue( "org $-2\nret" ) ; skip the last jump
+        AddLineQueue( " ret" ) ; skip the last jump
         RunLineQueue()
     .endif
 

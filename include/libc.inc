@@ -54,17 +54,18 @@ ifdef __UNIX__
 define __Ctype	<syscall>
 define __Cdecl	<syscall>
 define __cdecl	<syscall>
-elseif defined(__TINY__) or defined(__SMALL__) or defined(__COMPACT__)
+elseif defined(@Model) and (@Model le 6)
 define __Cdecl	<c>
+ifndef __cdecl
 define __cdecl	<c>
+endif
+ifndef __Ctype
 define __Ctype	<stdcall>
-option proc:public, language:__cdecl, dotname
-elseif defined(__MEDIUM__) or defined(__LARGE__) or defined(__HUGE__)
-define __Cdecl	<far c>
-define __cdecl	<far c>
-define __Ctype	<far stdcall>
-define __fastcall <far fastcall>
-option proc:public, language:c, dotname
+endif
+option proc:public, language:__Ctype, dotname
+int_t  typedef sword
+uint_t typedef word
+SIZE_T typedef word
 elseifdef _STDCALL_SUPPORTED
 define __Cdecl	<c>
 define __Ctype	<stdcall>
@@ -139,23 +140,19 @@ ifndef _WIN32
 define _WIN32 ; default
 endif
 
-if defined(__TINY__) or defined(__SMALL__) or defined(__MEDIUM__)
-int_t  typedef sword
-uint_t typedef word
-SIZE_T typedef word
+if defined(@Model) and (@Model le 6)
+if @DataSize
+define movl <mov>
+define pushl <push>
+define popl <pop>
+else
 movl macro args:vararg
 endm
 pushl macro args:vararg
 endm
 popl macro args:vararg
 endm
-elseif defined(__COMPACT__) or defined(__LARGE__) or defined(__HUGE__)
-int_t  typedef sword
-uint_t typedef word
-SIZE_T typedef dword
-define movl <mov>
-define pushl <push>
-define popl <pop>
+endif
 elseifndef _WIN64
 ifdef __SSE__
 .686

@@ -730,6 +730,7 @@ endif
         define_name( "_DEBUG", "1" )
     .case 'ilon'            ; -nolib
         mov Options.nolib,TRUE
+       .return ; v2.37.04: added
     .case 'DM'              ; -MD
         define_name( "_MSVCRT", "1" )
        .return

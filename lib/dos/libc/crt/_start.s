@@ -11,12 +11,31 @@ include stdlib.inc
 
 main proto __cdecl :int_t, :ptr, :ptr
 
-externdef __xi_a:ptr ; pointers to initialization sections
-externdef __xi_z:ptr
-externdef _argvcrt:ptr
-externdef _environcrt:ptr
+public __xi_a ; init
+public __xi_z
+public __xt_a ; terminators
+public __xt_z
 
 .dosseg
+
+.CRT$XI0 SEGMENT WORD PUBLIC 'CONST'
+__xi_a   label byte
+.CRT$XI0 ENDS
+.CRT$XIA SEGMENT WORD PUBLIC 'CONST'
+.CRT$XIA ENDS
+.CRT$XIZ SEGMENT WORD PUBLIC 'CONST'
+__xi_z   label byte
+.CRT$XIZ ENDS
+.CRT$XT0 SEGMENT WORD PUBLIC 'CONST'
+__xt_a   label byte
+.CRT$XT0 ENDS
+.CRT$XTA SEGMENT WORD PUBLIC 'CONST'
+.CRT$XTA ENDS
+.CRT$XTZ SEGMENT WORD PUBLIC 'CONST'
+__xt_z   label byte
+.CRT$XTZ ENDS
+DGROUP GROUP .CRT$XI0,.CRT$XIA,.CRT$XIZ,.CRT$XT0,.CRT$XTA,.CRT$XTZ
+
 .data
  _null      dd 0
  _psp       dw 0
@@ -27,9 +46,7 @@ externdef _environcrt:ptr
  _heapbase  dw 0
  _heapfree  dw 0
  _brklvl    dw 0
-.const
-.data?
-.stack 128
+
 .code
 
 ifdef __TINY__
@@ -101,5 +118,7 @@ endif
     invoke  exit, ax
 .1:
     invoke  abort
+
+.stack 128
 
     end _start

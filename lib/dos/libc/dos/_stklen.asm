@@ -7,6 +7,6 @@
 include dos.inc
 
 .data
- _stklen uint_t 1024
+ _stklen uint_t 2*1024
 
  end

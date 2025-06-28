@@ -564,7 +564,7 @@ ifdef __UNIX__
     .elseif ( rc == 1 && !Options.no_linking && Options.output_format == OFORMAT_ELF )
 else
     .elseif ( rc == 1 && !Options.no_linking && ( Options.link_linker || Options.link_exename ||
-        ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT ) ) )
+        Options.link_options || ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT ) ) )
 endif
 
        .new args:array_t
@@ -685,6 +685,22 @@ else
                 CollectLinkOption("/NOLOGO")
             .endif
 endif
+        .elseif ( Options.link_exename )
+
+            ; insert name...
+
+            mov Options.link_options,NULL
+ifdef __UNIX__
+            CollectLinkOption("-o")
+            CollectLinkOption(Options.link_exename)
+else
+            CollectLinkOption(tstrcat(tstrcpy(&ff, "/OUT:"), Options.link_exename))
+endif
+            .for ( rcx = Options.link_options : rcx && [rcx].anode.next : rcx = [rcx].anode.next )
+            .endf
+            .if ( rcx )
+                mov [rcx].anode.next,rbx
+            .endif
         .endif
 
 ifdef __UNIX__

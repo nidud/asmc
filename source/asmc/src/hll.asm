@@ -1328,13 +1328,27 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
                   .case 2: mov esi,T_AX : .endc
                   .case 4
                     mov esi,T_EAX
-                    .if MODULE.Ofssize == USE64 && [rcx].asym.mem_type & MT_FLOAT
-                        mov esi,T_XMM0
+                    .if ( MODULE.Ofssize == USE64 )
+                        .if ( [rcx].asym.mem_type & MT_FLOAT )
+                            mov esi,T_XMM0
+                        .endif
+                    .elseif ( MODULE.Ofssize == USE16 )
+                        mov eax,MODULE.curr_cpu ; v2.37.07: added
+                        and eax,P_CPU_MASK
+                        .if ( eax < P_386 )
+                            .if ( [rbx-asm_tok].token == T_DBL_COLON )
+                                ; reg::func()
+                                mov esi,T_AX
+                            .else
+                                mov esi,T_DX
+                                mov reg2,T_AX
+                            .endif
+                        .endif
                     .endif
                     .endc
                   .case 8
-                    .if MODULE.Ofssize == USE64
-                        .if [rcx].asym.mem_type & MT_FLOAT
+                    .if ( MODULE.Ofssize == USE64 )
+                        .if ( [rcx].asym.mem_type & MT_FLOAT )
                             mov esi,T_XMM0
                         .else
                             mov esi,T_RAX

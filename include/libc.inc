@@ -21,6 +21,7 @@ option casemap:none
 ;     _IA64_
 ;
 ; Machine Architectures:
+;     _M_IX86_16
 ;     _M_IX86
 ;     _M_AMD64
 ;     _M_IA64
@@ -36,6 +37,9 @@ define _M_X64	100
 else
 define _X86_
 define _M_IX86	600
+if defined(@Model) and (@Model le 6)
+define _M_IX86_16
+endif
 endif
 
 ifdef _MT
@@ -60,7 +64,7 @@ ifndef __cdecl
 define __cdecl	<c>
 endif
 ifndef __Ctype
-define __Ctype	<stdcall>
+define __Ctype	<c>
 endif
 option proc:public, language:__Ctype, dotname
 int_t  typedef sword
@@ -142,10 +146,16 @@ endif
 
 if defined(@Model) and (@Model le 6)
 if @DataSize
+define ldsl <lds>
+define lesl <les>
+define esl <es:>
 define movl <mov>
 define pushl <push>
 define popl <pop>
 else
+define ldsl <mov>
+define lesl <mov>
+define esl <>
 movl macro args:vararg
 endm
 pushl macro args:vararg
@@ -207,11 +217,6 @@ PTCHAR	typedef ptr sbyte
 LPTSTR	typedef ptr sbyte
 PTBYTE	typedef ptr byte
 endif
-endif
-
-ifndef _ERRNO_T_DEFINED
-define _ERRNO_T_DEFINED
-errno_t typedef sdword
 endif
 
 ; the following should be set depending on the sizes of various types
@@ -284,6 +289,11 @@ uint32_t	typedef dword
 uint64_t	typedef qword
 uint128_t	typedef oword
 
+ifndef _ERRNO_T_DEFINED
+define _ERRNO_T_DEFINED
+errno_t typedef int_t
+endif
+
 ifdef __DEBUG__
 .template array_type
     base string_t ?
@@ -314,12 +324,17 @@ define _INTPTR_T_DEFINED
 ifdef _WIN64
 intptr_t	typedef sqword
 else
-intptr_t	typedef sdword
+intptr_t	typedef int_t
 endif
 endif
 
-SINT		typedef sdword
-UINT		typedef dword
+ifndef _SIZE_T_DEFINED
+define _SIZE_T_DEFINED
+size_t		typedef SIZE_T
+endif
+
+SINT		typedef int_t
+UINT		typedef uint_t
 ULONG		typedef dword
 PVOID		typedef ptr
 HANDLE		typedef ptr
@@ -334,9 +349,7 @@ define TRUE	1
 define FALSE	0
 define NULL	0
 
-size_t typedef SIZE_T
-
-bool	typedef sdword
+bool	typedef int_t
 define	true	1
 define	false	0
 define	nullptr 0
@@ -344,6 +357,15 @@ define	nullptr 0
 ifndef _REGS6432
 define _REGS6432
 ifndef _WIN64
+ifdef _M_IX86_16
+if @DataSize
+define rax <dx::ax>
+define rbx <es::bx>
+else
+define rax <ax>
+define rbx <bx>
+endif
+else
 define rax <eax>
 define rdx <edx>
 define rbx <ebx>
@@ -352,6 +374,7 @@ define rdi <edi>
 define rsi <esi>
 define rbp <ebp>
 define rsp <esp>
+endif
 endif
 endif
 

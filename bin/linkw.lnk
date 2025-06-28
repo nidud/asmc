@@ -187,3 +187,38 @@ system begin gtk_msvcrt
 system begin dos
     system  286
     end
+
+system begin t
+    system  286
+    option  quiet
+    library libct
+    file    %AsmCDir%\lib\dos\_startt.obj
+    end
+
+system begin s
+    system  286
+    option  quiet
+    library libcs
+    file    %AsmCDir%\lib\dos\_starts.obj
+    end
+
+system begin c
+    system  286
+    option  quiet
+    library libcc
+    file    %AsmCDir%\lib\dos\_startc.obj
+    end
+
+system begin m
+    system  286
+    option  quiet
+    library libcm
+    file    %AsmCDir%\lib\dos\_startm.obj
+    end
+
+system begin l
+    system  286
+    option  quiet
+    library libcl
+    file    %AsmCDir%\lib\dos\_startl.obj
+    end

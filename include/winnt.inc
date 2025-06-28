@@ -506,7 +506,7 @@ RTL_FIELD_SIZE macro x, field
 	endm
 
 RTL_SIZEOF_THROUGH_FIELD macro x, field
-	exitm<FIELD_OFFSET(x, field) + RTL_FIELD_SIZE(x, field)>
+	exitm<x.field + RTL_FIELD_SIZE(x, field)>
 	endm
 
 RTL_CONTAINS_FIELD macro x, z, Field
@@ -547,10 +547,10 @@ RTL_NUMBER_OF_FIELD macro x, field
 	endm
 
 RTL_PADDING_BETWEEN_FIELDS macro T, F1, F2
-	if FIELD_OFFSET(T, F2) GT FIELD_OFFSET(T, F1)
-	    exitm<(FIELD_OFFSET(T, F2) - FIELD_OFFSET(T, F1) - RTL_FIELD_SIZE(T, F1))>
+	if T.F2 GT T.F1
+	    exitm<(T.F2 - T.F1 - RTL_FIELD_SIZE(T, F1))>
 	else
-	    exitm<(FIELD_OFFSET(T, F1) - FIELD_OFFSET(T, F2) - RTL_FIELD_SIZE(T, F2))>
+	    exitm<(T.F1 - T.F2 - RTL_FIELD_SIZE(T, F2))>
 	endif
 	endm
 
@@ -1310,39 +1310,18 @@ PCONTEXT_EX		typedef ptr CONTEXT_EX
 
 CONTEXT_EX_LENGTH	equ ALIGN_UP_BY(CONTEXT_EX, STACK_AIGN)
 
-
-RTL_CONTEXT_EX_OFFSET macro ContextEx, Chunk
-	endm
-
-RTL_CONTEXT_EX_LENGTH macro ContextEx, Chunk
-	endm
-
-RTL_CONTEXT_EX_CHUNK macro Base, Layout, Chunk
-	endm
-
-RTL_CONTEXT_OFFSET macro Context, Chunk
-	endm
-
-RTL_CONTEXT_LENGTH macro Context, Chunk
-	endm
-
-RTL_CONTEXT_CHUNK macro Context, Chunk
-	endm
-
 if NOT defined(__midl) AND NOT defined(MIDL_PASS)
 
 C_ASSERT macro exp
-    if (exp)
-	exitm<>
-    else
-	.err<exp>
-    endif
-    endm
-
+if (exp)
+exitm<>
+else
+.err<exp>
+endif
+endm
 
 C_ASSERT((XSAVE_FORMAT and (XSAVE_ALIGN - 1)) eq 0)
-C_ASSERT((FIELD_OFFSET(XSAVE_AREA, Header) and (XSAVE_ALIGN - 1)) eq 0)
-
+C_ASSERT( ( XSAVE_AREA.Header and (XSAVE_ALIGN - 1) ) eq 0 )
 C_ASSERT(MINIMAL_XSTATE_AREA_LENGTH eq 512 + 64)
 
 endif
@@ -1350,61 +1329,6 @@ endif
 ifdef _AMD64_
 
 if defined(_M_AMD64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
-
-if 0
-BitTest			equ <_bittest>
-BitTestAndComplement	equ <_bittestandcomplement>
-BitTestAndSet		equ <_bittestandset>
-BitTestAndReset		equ <_bittestandreset>
-InterlockedBitTestAndSet equ <_interlockedbittestandset>
-InterlockedBitTestAndReset equ <_interlockedbittestandreset>
-
-BitTest64		equ <_bittest64>
-BitTestAndComplement64	equ <_bittestandcomplement64>
-BitTestAndSet64		equ <_bittestandset64>
-BitTestAndReset64	equ <_bittestandreset64>
-InterlockedBitTestAndSet64 equ <_interlockedbittestandset64>
-InterlockedBitTestAndReset64 equ <_interlockedbittestandreset64>
-
-BitScanForward		equ <_BitScanForward>
-BitScanReverse		equ <_BitScanReverse>
-BitScanForward64	equ <_BitScanForward64>
-BitScanReverse64	equ <_BitScanReverse64>
-
-InterlockedIncrement16	equ <_InterlockedIncrement16>
-InterlockedDecrement16	equ <_InterlockedDecrement16>
-InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
-
-InterlockedAnd		equ <_InterlockedAnd>
-InterlockedAndAcquire	equ <_InterlockedAnd>
-InterlockedAndRelease	equ <_InterlockedAnd>
-InterlockedOr		equ <_InterlockedOr>
-InterlockedOrAcquire	equ <_InterlockedOr>
-InterlockedOrRelease	equ <_InterlockedOr>
-InterlockedXor		equ <_InterlockedXor>
-InterlockedIncrement	equ <_InterlockedIncrement>
-InterlockedDecrement	equ <_InterlockedDecrement>
-InterlockedAdd		equ <_InterlockedAdd>
-InterlockedExchange	equ <_InterlockedExchange>
-InterlockedExchangeAdd	equ <_InterlockedExchangeAdd>
-InterlockedCompareExchange equ <_InterlockedCompareExchange>
-
-InterlockedAnd64	equ <_InterlockedAnd64>
-InterlockedAndAffinity	equ <InterlockedAnd64>
-InterlockedOr64		equ <_InterlockedOr64>
-InterlockedOrAffinity	equ <InterlockedOr64>
-InterlockedXor64	equ <_InterlockedXor64>
-InterlockedIncrement64	equ <_InterlockedIncrement64>
-InterlockedDecrement64	equ <_InterlockedDecrement64>
-InterlockedAdd64	equ <_InterlockedAdd64>
-InterlockedExchange64	equ <_InterlockedExchange64>
-InterlockedExchangeAcquire64 equ <InterlockedExchange64>
-InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
-InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
-
-InterlockedExchangePointer equ <_InterlockedExchangePointer>
-InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
-endif
 
 InterlockedExchangeAddSizeT macro a, b
 	exitm<InterlockedExchangeAdd64(a, b)>
@@ -5147,7 +5071,7 @@ ENDS
 REPARSE_DATA_BUFFER	ENDS
 PREPARSE_DATA_BUFFER	typedef ptr REPARSE_DATA_BUFFER
 
-REPARSE_DATA_BUFFER_HEADER_SIZE equ FIELD_OFFSET(REPARSE_DATA_BUFFER, GenericReparseBuffer)
+REPARSE_DATA_BUFFER_HEADER_SIZE equ (REPARSE_DATA_BUFFER.GenericReparseBuffer)
 
 REPARSE_GUID_DATA_BUFFER STRUC
 ReparseTag		dd ?
@@ -5160,7 +5084,7 @@ ENDS
 REPARSE_GUID_DATA_BUFFER ENDS
 PREPARSE_GUID_DATA_BUFFER typedef ptr REPARSE_GUID_DATA_BUFFER
 
-REPARSE_GUID_DATA_BUFFER_HEADER_SIZE   equ FIELD_OFFSET(REPARSE_GUID_DATA_BUFFER, GenericReparseBuffer)
+REPARSE_GUID_DATA_BUFFER_HEADER_SIZE   equ (REPARSE_GUID_DATA_BUFFER.GenericReparseBuffer)
 
 REPARSE_POINT_INFORMATION	STRUC
 ReparseDataLength		dw ?
@@ -6119,7 +6043,7 @@ endif
 
 IMAGE_FIRST_SECTION macro ntheader
 	movzx	eax,[ntheader].FileHeader.SizeOfOptionalHeader
-	add	eax,FIELD_OFFSET( IMAGE_NT_HEADERS, OptionalHeader )
+	add	eax,IMAGE_NT_HEADERS.OptionalHeader
 	add	rax,ntheader
 	retm	<rax>
 	endm
@@ -8879,10 +8803,10 @@ CALLBACK(PTP_WAIT_CALLBACK, :PTP_CALLBACK_INSTANCE, :ptr, :PTP_WAIT, :TP_WAIT_RE
 
 if defined(_M_AMD64) or defined(_WIN64)
 NtCurrentTeb macro
-	exitm<__readgsqword(FIELD_OFFSET(NT_TIB, Self))>
+	exitm<__readgsqword(NT_TIB.Self)>
 	endm
 GetCurrentFiber macro
-	exitm<__readgsqword(FIELD_OFFSET(NT_TIB, FiberData))>
+	exitm<__readgsqword(NT_TIB.FiberData)>
 	endm
 GetFiberData macro
 	exitm<GetCurrentFiber()>

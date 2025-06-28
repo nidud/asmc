@@ -12,7 +12,11 @@ define SEEK_CUR		1
 define SEEK_END		2
 define SEEK_SET		0
 
+ifdef _M_IX86_16
+define _NSTREAM_	10
+else
 define _NSTREAM_	64
+endif
 define _IOB_ENTRIES	20
 
 define _MAXIOBUF	0x4000
@@ -56,6 +60,7 @@ _flag		int_t ?
 _file		int_t ?
 _charbuf	int_t ?
 _bufsiz		int_t ?
+ifndef _M_IX86_16
 union
  struct
   _bitcnt	int_t ? ; bits in _charbuf
@@ -63,6 +68,7 @@ union
  ends
  _tmpfname	string_t ?
 ends
+endif
 _iobuf		ends
 FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
@@ -71,9 +77,9 @@ endif
 if not defined(_MSVCRT) or defined(_CRTBLD)
 externdef	_nstream:int_t
 externdef	_bufin:BYTE
-externdef	stdin:ptr _iobuf
-externdef	stdout:ptr _iobuf
-externdef	stderr:ptr _iobuf
+externdef	stdin:LPFILE
+externdef	stdout:LPFILE
+externdef	stderr:LPFILE
 elseifdef _LIBCMT
 stdin		equ <__acrt_iob_func(0)>
 stdout		equ <__acrt_iob_func(1)>

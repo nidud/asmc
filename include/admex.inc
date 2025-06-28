@@ -22,8 +22,8 @@ include unknwn.inc
 include objidl.inc
 include ocidl.inc
 
-MIDL_user_allocate proto WINAPI :SIZE_T
-MIDL_user_free proto WINAPI :PVOID
+MIDL_user_allocate proto WINAPI :size_t
+MIDL_user_free proto WINAPI :ptr
 
 ifndef _ADMEX_IADM_
 define _ADMEX_IADM_

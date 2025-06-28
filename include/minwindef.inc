@@ -61,7 +61,9 @@ PDWORD	typedef ptr DWORD
 LPDWORD typedef ptr DWORD
 LPVOID	typedef ptr
 LPCVOID typedef ptr
+ifndef UINT
 UINT	typedef DWORD
+endif
 PUINT	typedef ptr DWORD
 
 ifndef _WINNT_

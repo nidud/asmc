@@ -5,7 +5,7 @@ include libc.inc
 
 ifndef _ERRNO_T_DEFINED
 define _ERRNO_T_DEFINED
-errno_t typedef sdword
+errno_t typedef int_t
 endif
 
 ifndef _INTPTR_T_DEFINED
@@ -13,7 +13,7 @@ define _INTPTR_T_DEFINED
 ifdef _WIN64
 intptr_t typedef sqword
 else
-intptr_t typedef sdword
+intptr_t typedef int_t
 endif
 endif
 
@@ -22,7 +22,7 @@ define _UINTPTR_T_DEFINED
 ifdef _WIN64
 uintptr_t typedef qword
 else
-uintptr_t typedef dword
+uintptr_t typedef uint_t
 endif
 endif
 

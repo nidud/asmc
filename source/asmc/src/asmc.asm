@@ -561,60 +561,82 @@ endif
 ifdef _EXEC_LINK
 
 ifdef __UNIX__
-    .elseif ( rc == 1 && Options.output_format == OFORMAT_ELF && !Options.no_linking )
+    .elseif ( rc == 1 && !Options.no_linking && Options.output_format == OFORMAT_ELF )
 else
-    .elseif ( rc == 1 && Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT && !Options.no_linking )
+    .elseif ( rc == 1 && !Options.no_linking && ( Options.link_linker || Options.link_exename ||
+        ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT ) ) )
 endif
 
-ifndef _AUTO_LINK
-        .if ( Options.link_linker || Options.link )
-endif
-           .new args:array_t
+       .new args:array_t
 ifdef __UNIX__
-           .new pid:pid_t
-           .new exitcode:int_t = -1
+       .new pid:pid_t
+       .new exitcode:int_t = -1
 endif
-            mov rbx,Options.link_options
+        mov rbx,Options.link_options
 
-            .if ( rbx == 0 )
+        .if ( rbx == 0 )
+
 ifdef __UNIX__
-                ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
 
-                .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
-                    inc ebx
+            ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
+
+            .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
+                inc ebx
+            .endif
+            .if ( ebx )
+
+                CollectLinkOption("-static")
+                CollectLinkOption("-nostdlib")
+                .if ( Options.link_mt )
+                    .if !( Options.float_used )
+
+                        CollectLinkOption("-u")
+                        CollectLinkOption("_nofloat")
+                    .endif
                 .endif
-                .if ( ebx )
-
-                    CollectLinkOption("-static")
-                    CollectLinkOption("-nostdlib")
-                    .if ( Options.link_mt )
-                        .if !( Options.float_used )
-
-                            CollectLinkOption("-u")
-                            CollectLinkOption("_nofloat")
-                        .endif
-                    .endif
-                    .if ( Options.fctype == FCT_ELF64 )
-                        CollectLinkObject("-l:libasmc.a")
-                    .else
-                        CollectLinkOption("-m32")
-                        CollectLinkObject("-l:x86/libasmc.a")
-                    .endif
+                .if ( Options.fctype == FCT_ELF64 )
+                    CollectLinkObject("-l:libasmc.a")
                 .else
-                    CollectLinkOption("-Wl,-z,noexecstack")
+                    CollectLinkOption("-m32")
+                    CollectLinkObject("-l:x86/libasmc.a")
                 .endif
-                CollectLinkOption("-s")
-                CollectLinkOption("-o")
-                mov rcx,Options.link_exename
-                .if ( rcx == NULL )
-                    mov rcx,Options.link_objects
-                    .if tstrrchr(tstrcpy(&buffer[32], &[rcx].anode.name), '.')
-                        mov byte ptr [rax],0
-                    .endif
-                    lea rcx,buffer[32]
+            .else
+                CollectLinkOption("-Wl,-z,noexecstack")
+            .endif
+            CollectLinkOption("-s")
+            CollectLinkOption("-o")
+            mov rcx,Options.link_exename
+            .if ( rcx == NULL )
+                mov rcx,Options.link_objects
+                .if tstrrchr(tstrcpy(&buffer[32], &[rcx].anode.name), '.')
+                    mov byte ptr [rax],0
                 .endif
-                CollectLinkOption(rcx)
+                lea rcx,buffer[32]
+            .endif
+            CollectLinkOption(rcx)
 else
+
+            lea rbx,ff
+
+            ; Masm use a (Unicode) response file here (mllink$.lnk)
+            ; /OUT:name.exe *.obj
+
+            .if ( Options.link_exename )
+
+                CollectLinkOption(tstrcat(tstrcpy(rbx, "/OUT:"), Options.link_exename))
+            .endif
+
+            mov eax,1
+            mov rcx,Options.link_linker
+            .if ( rcx )
+
+                mov ecx,[rcx]
+                or  ecx,0x20202020
+                cmp ecx,'KNIL'
+                sete al
+            .endif
+
+            .if ( eax )
 
                 .if ( Options.link_mt )
 
@@ -626,16 +648,6 @@ else
 
                         CollectLinkOption("/INCLUDE:_noargv")
                     .endif
-                .endif
-
-                lea rbx,ff
-
-                ; Masm use a (Unicode) response file here (mllink$.lnk)
-                ; /OUT:name.exe *.obj
-
-                .if ( Options.link_exename )
-
-                    CollectLinkOption(tstrcat(tstrcpy(rbx, "/OUT:"), Options.link_exename))
                 .endif
 
                 ; /LIBPATH and /NOLOGO is added here
@@ -657,6 +669,7 @@ else
                         mov byte ptr [rbx],0
                     .endif
                 .endif
+
                 .if ( byte ptr [rbx] )
                     tstrcat(rbx, "\\lib")
                     .if ( Options.fctype == FCT_WIN64 )
@@ -666,115 +679,96 @@ else
                     .endif
                     CollectLinkOption(rbx)
                 .endif
-                .if ( Options.quiet )
-                    CollectLinkOption("/NOLOGO")
-                .endif
-endif
             .endif
+
+            .if ( Options.quiet )
+                CollectLinkOption("/NOLOGO")
+            .endif
+endif
+        .endif
 
 ifdef __UNIX__
-            lea rax,@CStr(_ASMC_LINK)
-            .if ( Options.link_linker )
-                mov rax,Options.link_linker
-            .endif
-            mov path,rax
+        lea rax,@CStr(_ASMC_LINK)
+        .if ( Options.link_linker )
+            mov rax,Options.link_linker
+        .endif
+        mov path,rax
 else
-           .new linker[_MAX_PATH]:char_t
-            tstrcpy(&linker, _ASMC_LINK)
-            .if ( Options.link_linker )
-                tstrcpy( rax, Options.link_linker )
-                .if ( !tstrchr( rax, '.' ) )
-                    tstrcat( &linker, ".exe" )
-                .endif
+       .new linker[_MAX_PATH]:char_t
+        tstrcpy(&linker, _ASMC_LINK)
+        .if ( Options.link_linker )
+            tstrcpy( rax, Options.link_linker )
+            .if ( !tstrchr( rax, '.' ) )
+                tstrcat( &linker, ".exe" )
             .endif
-            .ifd ( SearchPathA( 0, &linker, 0, _MAX_PATH, path, 0 ) == 0 )
-                mov path,&linker
-            .endif
-endif
-            .for ( ebx = 2,
-                   rcx = Options.link_options : rcx : rcx = [rcx].anode.next, ebx++ )
-            .endf
-            .for ( rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, ebx++ )
-            .endf
-            mov args,MemAlloc( &[rbx*string_t] )
-ifdef __UNIX__
-            .for ( rcx = path, [rax] = rcx, rbx = &[rax+string_t],
-                   rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, rbx+=string_t )
-                mov [rbx],&[rcx].anode.name
-            .endf
-            .for ( rcx = Options.link_options : rcx : rcx = [rcx].anode.next, rbx+=string_t )
-                mov [rbx],&[rcx].anode.name
-            .endf
-else
-            .for ( rcx = path, [rax] = rcx, rbx = &[rax+string_t],
-                   rcx = Options.link_options : rcx : rcx = [rcx].anode.next, rbx+=string_t )
-                mov [rbx],&[rcx].anode.name
-            .endf
-            .for ( rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, rbx+=string_t )
-                mov [rbx],&[rcx].anode.name
-            .endf
-endif
-            xor eax,eax
-            mov [rbx],rax
-
-ifdef __UNIX__
-if 0
-            .if ( !Options.quiet )
-                .for ( rbx = args : string_t ptr [rbx] : rbx+=string_t )
-                    tprintf( " %s\n", [rbx] )
-                .endf
-            .endif
-endif
-            mov pid,sys_fork()
-            .if ( pid == 0 )
-
-                ; child process
-
-                sys_execve(path, args, environ)
-                sys_exit(EXIT_SUCCESS)
-
-            .elseif ( pid > 0 )
-
-                ; parent process
-ifdef _WIN64
-                sys_wait4(pid, &exitcode, 0, NULL)
-else
-                sys_waitpid(pid, &exitcode, 0)
-endif
-                .ifs ( eax < 0 )
-                    mov eax,-1
-                .else
-                    mov eax,exitcode
-                .endif
-            .else
-                mov eax,-1
-            .endif
-else
-            _spawnve(P_WAIT, path, args, environ)
-endif
-            .if ( eax == -1 )
-                asmerr( 2018, path )
-                mov rc,0
-            .endif
-if 0
-            MemFree(args)
-            .for ( rbx = Options.link_options : rbx : )
-                mov rcx,rbx
-                mov rbx,[rbx].anode.next
-                MemFree(rcx)
-            .endf
-            .for ( rbx = Options.link_objects : rbx : )
-                mov rcx,rbx
-                mov rbx,[rbx].anode.next
-                MemFree(rcx)
-            .endf
-endif
-ifndef _AUTO_LINK
+        .endif
+        .ifd ( SearchPathA( 0, &linker, 0, _MAX_PATH, path, 0 ) == 0 )
+            mov path,&linker
         .endif
 endif
+
+        .for ( ebx = 2, rcx = Options.link_options : rcx : rcx = [rcx].anode.next, ebx++ )
+        .endf
+        .for ( rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, ebx++ )
+        .endf
+        mov args,MemAlloc( &[rbx*string_t] )
+
+ifdef __UNIX__
+        .for ( rcx = path, [rax] = rcx, rbx = &[rax+string_t],
+               rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, rbx+=string_t )
+            mov [rbx],&[rcx].anode.name
+        .endf
+        .for ( rcx = Options.link_options : rcx : rcx = [rcx].anode.next, rbx+=string_t )
+            mov [rbx],&[rcx].anode.name
+        .endf
+else
+        .for ( rcx = path, [rax] = rcx, rbx = &[rax+string_t],
+               rcx = Options.link_options : rcx : rcx = [rcx].anode.next, rbx+=string_t )
+            mov [rbx],&[rcx].anode.name
+        .endf
+        .for ( rcx = Options.link_objects : rcx : rcx = [rcx].anode.next, rbx+=string_t )
+            mov [rbx],&[rcx].anode.name
+        .endf
+endif
+        xor eax,eax
+        mov [rbx],rax
+
+ifdef __UNIX__
+
+        mov pid,sys_fork()
+        .if ( pid == 0 )
+
+            ; child process
+
+            sys_execve(path, args, environ)
+            sys_exit(EXIT_SUCCESS)
+
+        .elseif ( pid > 0 )
+
+            ; parent process
+ifdef _WIN64
+            sys_wait4(pid, &exitcode, 0, NULL)
+else
+            sys_waitpid(pid, &exitcode, 0)
+endif
+            .ifs ( eax < 0 )
+                mov eax,-1
+            .else
+                mov eax,exitcode
+            .endif
+        .else
+            mov eax,-1
+        .endif
+else
+        _spawnve(P_WAIT, path, args, environ)
+endif
+        .if ( eax == -1 )
+
+            asmerr( 2018, path )
+            mov rc,0
+        .endif
 endif
     .endif
-
     mov eax,1
     sub eax,rc
     ret

@@ -45,9 +45,14 @@ _pioinfo proto fastcall fh:abs {
     imul eax,fh,ioinfo
     add	 rax,__pioinfo
     }
+
+ifdef _M_IX86_16
+externdef _osfile:char_t
+else
 _osfile macro fh
     exitm <[_pioinfo(fh)].ioinfo.osfile>
     endm
+endif
 _textmode macro fh
     exitm <[_pioinfo(fh)].ioinfo.textmode>
     endm
@@ -78,7 +83,11 @@ _dbcsBufferUsed macro fh
 
 endif
 
+ifdef _M_IX86_16
+define _NFILE_		20
+else
 define _NFILE_		64
+endif
 
 ; File Attribute Constants for _findfirst()
 
@@ -187,7 +196,7 @@ endif
 
 .pragma pack(pop)
 
-externdef	_nfile:DWORD
+externdef	_nfile:uint_t
 
 
 define __IOINFO_TM_ANSI	   0
@@ -228,7 +237,11 @@ _sopen		proto __Cdecl :string_t, :int_t, :int_t, :vararg
 _read		proto __cdecl :int_t, :ptr, :size_t
 _creat		proto __cdecl :string_t, :int_t
 _close		proto __cdecl :int_t
+ifdef _WIN64
 _lseek		proto __cdecl :int_t, :size_t, :uint_t
+else
+_lseek		proto __cdecl :int_t, :dword, :uint_t
+endif
 _write		proto __cdecl :int_t, :ptr, :uint_t
 _access		proto __cdecl :string_t, :int_t
 _chmod		proto __cdecl :string_t, :int_t

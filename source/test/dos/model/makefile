@@ -1,11 +1,5 @@
 model:
-	asmc -q -c -mt -Fo tiny $*.asm
-	asmc -q -c -ms -Fo small $*.asm
-	asmc -q -c -mc -Fo compact $*.asm
-	asmc -q -c -mm -Fo medium $*.asm
-	asmc -q -c -ml -Fo large $*.asm
-	asmc -q -c -mh -Fo huge $*.asm
-	asmc -q -c -mf -Fo flat $*.asm
+	for %%q in (t s c m l h) do asmc -q -c -m%%q -1 $@.asm
 	pause
 	del *.obj
 

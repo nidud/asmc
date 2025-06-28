@@ -92,7 +92,7 @@ endif
 
 ifndef _ERRNO_T_DEFINED
 define _ERRNO_T_DEFINED
-errno_t typedef sdword
+errno_t typedef int_t
 endif
 ifndef _TIME32_T_DEFINED
 define _TIME32_T_DEFINED

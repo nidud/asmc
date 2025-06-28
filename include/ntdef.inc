@@ -820,11 +820,11 @@ RTL_BITS_OF macro sizeOfArg
 	endm
 
 RTL_BITS_OF_FIELD macro type, field
-	exitm<(RTL_BITS_OF(RTL_FIELD_TYPE(type, field)))>
+	exitm<RTL_BITS_OF(RTL_FIELD_TYPE(type, field))>
 	endm
 
-.inline CONTAINING_RECORD fastcall address:ptr, type:abs, field:abs {
-	lea rax,[rcx+type.field]
+CONTAINING_RECORD proto fastcall :ptr, :abs, :abs {
+	lea rax,[rcx+_2._3]
 	}
 
 include excpt.inc

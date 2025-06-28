@@ -24,8 +24,7 @@ include inttype.inc
 
 ifndef NOSPAWN
 
-define _EXEC_LINK   ; Spawn linker if /link [ /args ] or
-define _AUTO_LINK   ; Spawn linker if /c not set
+define _EXEC_LINK   ; Spawn linker
 
 ifdef __UNIX__
 define _ASMC_LINK <"/usr/bin/gcc">

@@ -25,7 +25,6 @@ strrchr proc uses di s1:string_t, char:int_t
     inc     ax
 .0:
     cld
-    test    ax,ax
     ret
 
 strrchr endp

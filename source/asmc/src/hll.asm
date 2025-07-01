@@ -1265,6 +1265,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
    .new opnd:expr
    .new bracket:int_t = 0
    .new reg2:int_t = 0
+   .new size:int_t
    .new b[MAX_LINE_LEN]:char_t
 
     .for ( rdi = &b, rbx = tokenarray, edx = 0 : edx < i : edx++, rbx += asm_tok )
@@ -1450,45 +1451,49 @@ endif
 
                         xor eax,eax
                         .if ( opnd.kind == EXPR_ADDR || ( opnd.indirect ) )
-                            mov cl,opnd.mem_type
-                            .switch cl
-                            .case MT_BYTE
-                            .case MT_SBYTE  : mov eax,1 : .endc
-                            .case MT_WORD
-                            .case MT_SWORD  : mov eax,2 : .endc
-                            .case MT_DWORD
-                            .case MT_SDWORD : mov eax,4 : .endc
-                            .case MT_OWORD
-                            .case MT_SOWORD
-                            .case MT_REAL2
-                            .case MT_REAL4
-                            .case MT_REAL8
-                            .case MT_REAL10
-                            .case MT_REAL16 : mov eax,16 : .endc
-                            .case MT_YWORD  : mov eax,32 : .endc
-                            .case MT_ZWORD  : mov eax,64 : .endc
-                            .endsw
+                            .if ( MODULE.Ofssize == USE64 && ( opnd.mem_type == MT_REAL4 || opnd.mem_type == MT_REAL8 ) )
+                                mov eax,16
+                            .else
+                                SizeFromMemtype( opnd.mem_type, USE_EMPTY, opnd.type )
+                            .endif
+                            .if ( eax == 10 )
+                                mov eax,16
+                            .endif
                         .endif
                     .else
                         xor eax,eax
                     .endif
                 .endif
+                mov size,eax
+                .switch eax
+                .case 1: mov esi,T_AL  : .endc
+                .case 2: mov esi,T_AX  : .endc
+                .case 4
+                    mov esi,T_EAX
+                    .if ( MODULE.Ofssize == USE16 )
 
-                .if eax
-                    .switch eax
-                      .case 1: mov esi,T_AL  : .endc
-                      .case 2: mov esi,T_AX  : .endc
-                      .case 4: mov esi,T_EAX : .endc
-                      .case 8
-                        .if MODULE.Ofssize == USE64
-                            mov esi,T_RAX
-                        .endif
-                        .endc
-                      .case 16 : mov esi,T_XMM0 : .endc
-                      .case 32 : mov esi,T_YMM0 : .endc
-                      .case 64 : mov esi,T_ZMM0 : .endc
-                    .endsw
-                .endif
+                        mov esi,T_DX
+                        mov reg2,T_AX
+                    .endif
+                    .endc
+                .case 8
+                    .if ( MODULE.Ofssize == USE64 )
+                        mov esi,T_RAX
+                    .elseif ( MODULE.Ofssize == USE32 )
+                        mov esi,T_EDX
+                        mov reg2,T_EAX
+                    .endif
+                    .endc
+                .case 16
+                    mov esi,T_XMM0
+                    .if ( [rdi].asm_tok.tokval == T_MOV )
+                        mov esi,T_RDX
+                        mov reg2,T_RAX
+                    .endif
+                    .endc
+                .case 32 : mov esi,T_YMM0 : .endc
+                .case 64 : mov esi,T_ZMM0 : .endc
+                .endsw
 
             .elseif ( [rbx+asm_tok].token == T_COMMA && [rbx].token == T_CL_SQ_BRACKET )
 
@@ -1521,9 +1526,43 @@ macro_args:
     .else
         tstrcat(rsi, rbx)
     .endif
+
     .if reg2
-        tstrcat(rsi, "::")
-        tstrcat(rsi, GetResWName(reg2, 0))
+
+        imul ebx,e,asm_tok
+        .if ( [rbx+rdi].token == T_FINAL && [rdi].asm_tok.tokval == T_MOV )
+
+            ; mov mem,func()
+
+            .fors ( ebx = asm_tok*2 : [rbx+rdi].token != T_FINAL : ebx += asm_tok )
+                .break .if ( [rbx+rdi].token == T_COMMA )
+            .endf
+            .if ( [rbx+rdi].token != T_COMMA )
+                .return( asmerr( 2008, rsi ) )
+            .endif
+            mov rbx,[rbx+rdi].tokpos
+            mov byte ptr [rbx],0
+            mov edx,size
+            shr edx,1
+            mov ecx,T_WORD
+            mov eax,T_DX
+            .if ( reg2 == T_EAX )
+                mov ecx,T_DWORD
+                mov eax,T_EDX
+            .elseif ( reg2 == T_RAX )
+                mov ecx,T_QWORD
+                mov eax,T_RDX
+            .endif
+            tsprintf( rsi,
+                "mov %r ptr %s,%r\n"
+                "mov %r ptr %s+%d,%r",
+                ecx, [rdi+asm_tok].asm_tok.tokpos, reg2,
+                ecx, [rdi+asm_tok].asm_tok.tokpos, edx, eax )
+            mov byte ptr [rbx],','
+        .else
+            tstrcat(rsi, "::")
+            tstrcat(rsi, GetResWName(reg2, 0))
+        .endif
     .endif
 
     imul ebx,e,asm_tok

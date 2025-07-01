@@ -73,6 +73,11 @@ endif
 	libw -q -b -n -c -fac $(path)\msvcrt0.lib *.obj
 	del *.obj
 
+linux:
+	asmc -BlLIBW -6 -mscrt -MT -elf -Zp4 -Cs -r *.asm *.s -link -q -b -n -c $(lib_dir)\x86\libc.a
+	asmc -BlLIBW -mscrt -MT -elf64 -Zp8 -Cs -r *.asm *.s -link -q -b -n -c $(lib_dir)\x64\libc.a
+	del *.o
+
 regress:
 	make -s regress32
 	make -s regress64

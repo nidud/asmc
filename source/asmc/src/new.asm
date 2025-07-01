@@ -570,60 +570,67 @@ AssignId endp
 
 ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
 
+   .new type:int_t
+   .new chunk:int_t
+
     ldr rsi,name
     ldr rdx,sym
 
     mov edi,[rdx].asym.total_size
-    AddLineQueue( " xor eax, eax" )
+    mov eax,MODULE.accumulator
+    .if ( eax == T_RAX )
+        mov eax,T_EAX
+    .endif
+    AddLineQueueX( " xor %r, %r", eax, eax )
 
+    mov eax,16
     .if ( MODULE.Ofssize == USE64 )
+        mov eax,32
+    .endif
 
-        .if ( edi > 32 )
+    .if ( edi > eax && MODULE.Ofssize != USE16 )
 
-            AddLineQueueX(
-                " push rdi\n"
-                " push rcx\n"
-                " lea rdi, %s\n"
-                " mov ecx, %d\n"
-                " rep stosb\n"
-                " pop rcx\n"
-                " pop rdi", rsi, edi )
-
-        .else
-
-            .for ( ebx = 0 : edi >= 8 : edi -= 8, ebx += 8 )
-                AddLineQueueX( " mov qword ptr %s[%d], rax", rsi, ebx )
-            .endf
-
-            .if ( edi >= 4 )
-
-                AddLineQueueX( " mov dword ptr %s[%d], eax", rsi, ebx )
-                sub edi,4
-                add ebx,4
-            .endif
-
-            .for ( : edi : edi--, ebx++ )
-
-                AddLineQueueX( " mov byte ptr %s[%d], al", rsi, ebx )
-            .endf
+        mov ecx,T_CX
+        mov edx,T_DI
+        mov ebx,ecx
+        .if ( MODULE.Ofssize == USE32 )
+            mov ecx,T_ECX
+            mov edx,T_EDI
+            mov ebx,T_ECX
+        .elseif ( MODULE.Ofssize == USE64 )
+            mov ecx,T_RCX
+            mov edx,T_RDI
+            mov ebx,T_ECX
         .endif
 
-    .elseif ( edi > 16 )
-
         AddLineQueueX(
-            " push edi\n"
-            " push ecx\n"
-            " lea edi, %s\n"
-            " mov ecx, %d\n"
+            " push %r\n"
+            " push %r\n"
+            " lea %r, %s\n"
+            " mov %r, %d\n"
             " rep stosb\n"
-            " pop ecx\n"
-            " pop edi", rsi, edi )
+            " pop %r\n"
+            " pop %r", edx, ecx, edx, rsi, ebx, edi, ecx, edx )
 
     .else
 
-        .for ( ebx = 0 : edi >= 4 : edi -= 4, ebx += 4 )
-            AddLineQueueX( " mov dword ptr %s[%d], eax", rsi, ebx )
+        mov chunk,2
+        mov type,T_WORD
+        .if ( MODULE.Ofssize == USE32 )
+            mov chunk,4
+            mov type,T_DWORD
+        .elseif ( MODULE.Ofssize == USE64 )
+            mov chunk,8
+            mov type,T_QWORD
+        .endif
+        .for ( ebx = 0 : edi >= chunk : edi -= chunk, ebx += chunk )
+            AddLineQueueX( " mov %r ptr %s[%d], %r", type, rsi, ebx, MODULE.accumulator )
         .endf
+        .if ( edi >= 4 )
+            AddLineQueueX( " mov dword ptr %s[%d], eax", rsi, ebx )
+            add ebx,4
+            sub edi,4
+        .endif
         .for ( : edi : edi--, ebx++ )
             AddLineQueueX( " mov byte ptr %s[%d], al", rsi, ebx )
         .endf
@@ -719,11 +726,8 @@ endif
 
         .if ( eax == 8 && [rsi].Ofssize == USE32 && [rbx].IsProc &&
               ( [rsi].mem_type == MT_QWORD || [rsi].mem_type == MT_SQWORD ) )
-
-            tstrcat( rdi, "dword ptr " )
-            tstrcpy( &l2, "mov dword ptr " )
-            tstrcat( tstrcat( rax, name ), "[4], edx" )
-
+        .elseif ( eax == 16 && [rsi].Ofssize == USE64 && [rbx].IsProc &&
+              ( [rsi].mem_type == MT_OWORD || [rsi].mem_type == MT_SOWORD ) )
         .elseif ( eax == 8 && [rsi].Ofssize == USE64 &&
                   ( [rbx].IsProc || word ptr [rdx] == '&' ) )
 

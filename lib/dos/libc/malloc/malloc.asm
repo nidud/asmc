@@ -96,6 +96,10 @@ endif
             mov ax,es
             mov _heapfree,ax
         .endif
+if (@DataSize eq 0)
+        mov ax,ds
+        mov es,ax
+endif
     .else
         xor ax,ax
     .endif
@@ -209,6 +213,7 @@ else
     mov     es,dx   ; ds:[offset]
     mov     es:[bx].mb.used,dx
     mov     ax,ds
+    mov     es,ax
     xchg    ax,dx
     sub     ax,dx
     test    ah,0xF0

@@ -16,17 +16,16 @@ define CMASK 0644O
 
 _topenfile proc uses bx file:LPTSTR, mode:LPTSTR, shflag:SINT, stream:LPFILE
 
-   .new oflag:int_t
    .new fileflag:int_t
 
     lesl bx,mode
-    .while ( TCHAR ptr esl[bx] == ' ' )
-        add bx,TCHAR
+    .while ( byte ptr esl[bx] == ' ' )
+        inc bx
     .endw
     mov al,esl[bx]
     add bx,1
 
-    .switch pascal ax
+    .switch pascal al
     .case 'r': mov cx,_IOREAD : mov dx,O_RDONLY
     .case 'w': mov cx,_IOWRT  : mov dx,O_WRONLY or O_CREAT or O_TRUNC
     .case 'a': mov cx,_IOWRT  : mov dx,O_WRONLY or O_CREAT or O_APPEND
@@ -37,7 +36,6 @@ _topenfile proc uses bx file:LPTSTR, mode:LPTSTR, shflag:SINT, stream:LPFILE
 
     mov al,esl[bx]
     .while al
-
         .switch pascal al
         .case ' '
         .case '+'
@@ -45,11 +43,7 @@ _topenfile proc uses bx file:LPTSTR, mode:LPTSTR, shflag:SINT, stream:LPFILE
             and dx,not (O_RDONLY or O_WRONLY)
             or  cx,_IORW
             and cx,not (_IOREAD or _IOWRT)
-
-        .case 't'
-ifndef __UNIX__
-            or  dx,O_TEXT
-endif
+        .case 't': or  dx,O_TEXT
         .case 'b': or  dx,O_BINARY
         .case 'c': or  cx,_IOCOMMIT
         .case 'n': and cx,not _IOCOMMIT
@@ -57,37 +51,18 @@ endif
         .case 'R': or  dx,O_RANDOM
         .case 'T': or  dx,O_SHORT_LIVED
         .case 'D': or  dx,O_TEMPORARY
-        .case 'z'
-            or dx,O_BINARY
+        .case 'z': or  dx,O_BINARY
         .default
             .break
         .endsw
-        add bx,TCHAR
+        inc bx
         mov al,esl[bx]
     .endw
     mov fileflag,cx
 
-    xor cx,cx
-    .while al
-        .switch al
-        .case ','   ; ", ccs=UNICODE"   _O_WTEXT
-        .case 'c'   ; ", ccs=UTF-16LE"  _O_U16TEXT
-        .case 's'   ; ", ccs=UTF-8"     _O_U8TEXT
-        .case '='
-            inc cx
-        .case ' '
-            .endc
-        .default
-            .break
-        .endsw
-        add bx,TCHAR
-        mov al,TCHAR ptr esl[bx]
-    .endw
+    .if ( _tsopen(file, dx, shflag, CMASK) != -1 )
 
-    mov oflag,dx
-    lesl bx,stream
-    .if ( _tsopen(file, oflag, shflag, CMASK) != -1 )
-
+        lesl bx,stream
         mov esl[bx]._iobuf._file,ax
         xor ax,ax
         mov esl[bx]._iobuf._cnt,ax
@@ -95,8 +70,10 @@ endif
         mov word ptr esl[bx]._iobuf._base,ax
         mov esl[bx]._iobuf._flag,fileflag
         mov ax,bx
+        movl dx,es
     .else
         xor ax,ax
+        cwd
     .endif
     ret
 

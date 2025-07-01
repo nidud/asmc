@@ -12,9 +12,21 @@ include sys/stat.inc
 include errno.inc
 include winbase.inc
 
-define F_OPEN      0x0001
-define F_TRUNC     0x0002
-define F_CREATE    0x0010
+define EXIST_FAIL       0x00 ; DL - action
+define EXIST_OPEN       0x01
+define EXIST_TRUNC      0x02
+define NOFILE_FAIL      0x00
+define NOFILE_CREATE    0x10
+
+define M_OPEN_EXISTING  (EXIST_OPEN or NOFILE_FAIL)
+define M_OPEN_ALWAYS    (EXIST_OPEN or NOFILE_CREATE)
+define M_CREATE_NEW     (EXIST_FAIL or NOFILE_CREATE)
+define M_CREATE_ALWAYS  (EXIST_TRUNC or NOFILE_CREATE)
+define M_TRUNCATE       (EXIST_TRUNC or NOFILE_FAIL)
+
+define ACCESS_RDONLY    0x00 ; AL (BL) - open mode
+define ACCESS_WRONLY    0x01
+define ACCESS_RDWR      0x02
 
 externdef _umaskval:uint_t
 
@@ -22,7 +34,6 @@ externdef _umaskval:uint_t
 
 _sopen proc uses si di bx fname:LPSTR, oflag:int_t, shflag:int_t, args:vararg
 
-   .new mode:uint_t
    .new action:uint_t
    .new attrib:uint_t
    .new fh:int_t
@@ -43,58 +54,56 @@ _sopen proc uses si di bx fname:LPSTR, oflag:int_t, shflag:int_t, args:vararg
     .endif
     mov fileflags,al
 
-    mov dx,FILE_ATTRIBUTE_NORMAL
+    xor cx,cx
     .if ( di & O_CREAT )
 
         mov ax,_umaskval
         not ax
         and ax,args
-        mov dx,FILE_ATTRIBUTE_NORMAL
         .if !( ax & _S_IWRITE )
-            mov dx,FILE_ATTRIBUTE_READONLY
+            mov cx,FILE_ATTRIBUTE_READONLY
         .endif
     .endif
-    mov attrib,dx
+    mov attrib,cx
 
+    mov bx,shflag
     mov ax,di
     and ax,O_RDONLY or O_WRONLY or O_RDWR
     .switch pascal ax
-    .case O_RDONLY  ; read access
-        mov ax,0x0000
-    .case O_WRONLY  ; write access
-        mov ax,0x0001
-    .case O_RDWR    ; read and write access
-        mov ax,0x0002
-        .endc
+    .case O_RDONLY: or bx,ACCESS_RDONLY ; read access
+    .case O_WRONLY: or bx,ACCESS_WRONLY ; write access
+    .case O_RDWR:   or bx,ACCESS_RDWR   ; read and write access
     .default
         mov errno,EINVAL
        .return( -1 )
     .endsw
-    mov mode,ax
 
     mov ax,di
     and ax,O_CREAT or O_EXCL or O_TRUNC
-    .switch pascal ax
+    .switch ax
     .case 0
     .case O_EXCL
-        mov cx,F_OPEN
+        mov dx,M_OPEN_EXISTING
+       .endc
     .case O_CREAT
-        mov cx,F_CREATE
+        mov dx,M_OPEN_ALWAYS
+       .endc
     .case O_CREAT or O_EXCL
-        mov cx,F_OPEN or F_CREATE
     .case O_CREAT or O_EXCL or O_TRUNC
-        mov cx,F_CREATE or F_OPEN or F_TRUNC
+        mov dx,M_CREATE_NEW
+       .endc
     .case O_CREAT or O_TRUNC
-        mov cx,F_CREATE or F_TRUNC
+        mov dx,M_CREATE_ALWAYS
+       .endc
     .case O_TRUNC
-        mov cx,F_TRUNC
     .case O_TRUNC or O_EXCL
-        mov cx,F_OPEN or F_TRUNC
+        mov dx,M_TRUNCATE
+       .endc
     .default
         mov errno,EINVAL
        .return( -1 )
     .endsw
-    mov action,cx
+    mov action,dx
 
 ifdef __LFN__
     stc
@@ -103,9 +112,6 @@ ifdef __LFN__
 endif
     pushl   ds
     ldsl    si,fname
-    mov     bx,mode
-    mov     cx,attrib
-    mov     dx,action
 ifdef __LFN__
     jnz     .21
 endif
@@ -114,7 +120,7 @@ endif
     jae     .21
     mov     ah,0x3D     ; DOS 2+ - OPEN EXISTING FILE
     mov     al,bl
-    test    dl,A_TRUNC or A_CREATE
+    test    di,O_TRUNC or O_CREAT
     xchg    dx,si
     jz      .21
     dec     ah          ; DOS 2+ - CREATE OR TRUNCATE FILE
@@ -143,8 +149,17 @@ endif
         .return( -1 )
     .endif
     mov bx,ax
+    mov ax,0x4400
+    int 0x21
     mov cl,fileflags
+    .if ( !CARRY? && dl & 0x80 )
+        or cl,FDEV
+    .endif
+    .if ( !( cl & FDEV or FPIPE ) && di & O_APPEND )
+        or cl,FAPPEND
+    .endif
     mov _osfile[bx],cl
+    mov ax,bx
     ret
 
 _sopen endp

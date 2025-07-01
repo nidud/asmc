@@ -192,33 +192,33 @@ system begin t
     system  286
     option  quiet
     library libct
-    file    %AsmCDir%\lib\dos\_startt.obj
+    file    %AsmCDir%\lib\dos\crt0t.obj
     end
 
 system begin s
     system  286
     option  quiet
     library libcs
-    file    %AsmCDir%\lib\dos\_starts.obj
+    file    %AsmCDir%\lib\dos\crt0s.obj
     end
 
 system begin c
     system  286
     option  quiet
     library libcc
-    file    %AsmCDir%\lib\dos\_startc.obj
+    file    %AsmCDir%\lib\dos\crt0c.obj
     end
 
 system begin m
     system  286
     option  quiet
     library libcm
-    file    %AsmCDir%\lib\dos\_startm.obj
+    file    %AsmCDir%\lib\dos\crt0m.obj
     end
 
 system begin l
     system  286
     option  quiet
     library libcl
-    file    %AsmCDir%\lib\dos\_startl.obj
+    file    %AsmCDir%\lib\dos\crt0l.obj
     end

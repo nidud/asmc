@@ -21,6 +21,24 @@ include memalloc.inc
 include symbols.inc
 include input.inc
 
+.enum LNK_OPTIONS {
+    O_EXENAME       = 0x01,
+    O_DEFAULTLIB    = 0x02,
+    O_NODEFAULTLIB  = 0x04,
+ifdef __UNIX__
+    O_STATIC        = 0x08,
+    O_STRIP         = 0x10,
+else
+    O_MACHINE       = 0x08,
+    O_NOLOGO        = 0x10,
+    O_SUBSYSTEM     = 0x20,
+    O_LINK          = 0x40,
+    O_LIB           = 0x80,
+    O_LINKW         = 0x100,
+    O_LIBW          = 0x200,
+endif
+    }
+
 init_win64 proto
 
 .data
@@ -572,20 +590,101 @@ ifdef __UNIX__
        .new pid:pid_t
        .new exitcode:int_t = -1
 endif
+       .new flags:LNK_OPTIONS
+
         mov rbx,Options.link_options
 
-        .if ( rbx == 0 )
+        .for ( ecx = 0, rbx = Options.link_options : rbx : rbx = [rbx].anode.next )
+
+            mov eax,dword ptr [rbx].anode.name[1]
+            or  eax,0x20202020
+
+            .switch al
+ifdef __UNIX__
+            .case 'o'
+                .if ( ax == ' o' )
+                    or ecx,O_EXENAME
+                .endif
+                .endc
+            .case 's'
+                .if ( eax == 'tats' )
+                    or ecx,O_STATIC
+                .elseif ( ax == ' s' || ax == ' g' )
+                    or ecx,O_STRIP
+                .endif
+            .case 'l'
+                .if ( ax == ':l' )
+                    or ecx,O_DEFAULTLIB
+                .endif
+                .endc
+            .case 'n'
+                .if ( eax == 'tson' )
+                    or ecx,O_NODEFAULTLIB
+                .endif
+                .endc
+else
+            .case 'o'
+                .if ( eax == ':tuo' || ax == ':o' )
+                    or ecx,O_EXENAME
+                .endif
+                .endc
+            .case 'm'
+                .if ( eax == 'hcam' || eax == ':cam' )
+                    or ecx,O_MACHINE
+                .endif
+                .endc
+            .case 'd'
+                .if ( eax == 'afed' || ax == ':d' )
+                    or ecx,O_DEFAULTLIB
+                .endif
+                .endc
+            .case 'n'
+                .if ( eax == 'olon' )
+                    or ecx,O_NOLOGO
+                .elseif ( eax == 'edon' )
+                    or ecx,O_NODEFAULTLIB
+                .endif
+                .endc
+            .case 's'
+                .if ( eax == 'sbus' )
+                    or ecx,O_SUBSYSTEM
+                .endif
+endif
+            .endsw
+        .endf
+
+ifndef __UNIX__
+
+        mov eax,O_LINK or O_LINKW
+        mov rdx,Options.link_linker
+        .if ( rdx )
+
+            xor eax,eax
+            mov edx,[rdx]
+            or  edx,0x20202020
+            .if ( edx == 'knil' )
+                mov eax,O_LINK
+            .elseif ( edx == 'wbil' )
+                mov eax,O_LIB or O_LIBW
+            .elseif ( edx == ' bil' )
+                mov eax,O_LIB
+            .endif
+        .endif
+        or ecx,eax
+endif
+        mov flags,ecx
 
 ifdef __UNIX__
 
-            ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
+        ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
 
-            .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
-                inc ebx
-            .endif
-            .if ( ebx )
+        .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
 
-                CollectLinkOption("-static")
+            .if ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
+
+                .if ( !( ecx & O_STATIC ) )
+                    CollectLinkOption("-static")
+                .endif
                 CollectLinkOption("-nostdlib")
                 .if ( Options.link_mt )
                     .if !( Options.float_used )
@@ -600,10 +699,16 @@ ifdef __UNIX__
                     CollectLinkOption("-m32")
                     CollectLinkObject("-l:x86/libasmc.a")
                 .endif
-            .else
-                CollectLinkOption("-Wl,-z,noexecstack")
             .endif
+        .elseif ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
+            CollectLinkOption("-Wl,-z,noexecstack")
+        .endif
+
+        .if ( !( flags & O_STRIP ) )
             CollectLinkOption("-s")
+        .endif
+        .if ( !( flags & O_EXENAME ) )
+
             CollectLinkOption("-o")
             mov rcx,Options.link_exename
             .if ( rcx == NULL )
@@ -614,94 +719,114 @@ ifdef __UNIX__
                 lea rcx,buffer[32]
             .endif
             CollectLinkOption(rcx)
+        .endif
+
 else
 
-            lea rbx,ff
+        ; insert options
+
+        lea rdi,ff
+        mov rbx,Options.link_options
+        mov Options.link_options,NULL
+
+        .if ( flags & O_LINK or O_LIB )
+
+            .if ( Options.quiet && !( flags & O_NOLOGO ) )
+                CollectLinkOption("-nologo")
+            .endif
+
+            .if ( !( flags & O_MACHINE ) )
+
+                .if ( MODULE.Ofssize == USE64 )
+                    CollectLinkOption("-machine:x64")
+                .elseif ( MODULE.Ofssize == USE32 )
+                    CollectLinkOption("-machine:x86")
+                .else
+                    CollectLinkOption("-machine:dos")
+                .endif
+            .endif
+
+            .if ( flags & O_LINK && !( flags & O_SUBSYSTEM ) )
+
+                tstrcpy(rdi, "-subsystem:")
+                .if ( Options.output_format == OFORMAT_ELF )
+                    tstrcat(rdi, "linux")
+                .elseif ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )
+                    .if ( Options.main_found )
+                        tstrcat(rdi, "console")
+                    .else
+                        tstrcat(rdi, "windows")
+                    .endif
+                .else
+                    tstrcat(rdi, "dos")
+                .endif
+                CollectLinkOption(rdi)
+            .endif
+
+            .if ( flags & O_LINK && Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )
+
+                .if ( Options.link_mt )
+                    .if !( Options.float_used )
+                        CollectLinkOption("-include:_nofloat")
+                    .endif
+                    .if ( Options.main_found && !( Options.argv_used ) )
+                        CollectLinkOption("-include:_noargv")
+                    .endif
+                .endif
+            .endif
+        .endif
+
+        .if ( !( flags & O_EXENAME ) )
 
             ; Masm use a (Unicode) response file here (mllink$.lnk)
             ; /OUT:name.exe *.obj
 
             .if ( Options.link_exename )
 
-                CollectLinkOption(tstrcat(tstrcpy(rbx, "/OUT:"), Options.link_exename))
-            .endif
-
-            mov eax,1
-            mov rcx,Options.link_linker
-            .if ( rcx )
-
-                mov ecx,[rcx]
-                or  ecx,0x20202020
-                cmp ecx,'KNIL'
-                sete al
-            .endif
-
-            .if ( eax )
-
-                .if ( Options.link_mt )
-
-                    .if !( Options.float_used )
-
-                        CollectLinkOption("/INCLUDE:_nofloat")
-                    .endif
-                    .if ( Options.main_found && !( Options.argv_used ) )
-
-                        CollectLinkOption("/INCLUDE:_noargv")
-                    .endif
-                .endif
-
-                ; /LIBPATH and /NOLOGO is added here
-
-                tstrcpy(rbx, "/LIBPATH:")
-                .if tgetenv("ASMCDIR")
-                    tstrcat(rbx, rax)
-                .else
-                    mov rcx,_pgmptr
-                    .if ( byte ptr [rcx+1] == ':' && byte ptr [rcx+2] == '\' )
-                        tstrrchr(tstrcat(rbx, rcx), '\' )
-                        mov ecx,[rax-4]
-                        .if ( ecx == '\nib' )
-                            mov byte ptr [rax-4],0
-                        .else
-                            mov byte ptr [rbx],0
-                        .endif
-                    .else
-                        mov byte ptr [rbx],0
-                    .endif
-                .endif
-
-                .if ( byte ptr [rbx] )
-                    tstrcat(rbx, "\\lib")
-                    .if ( Options.fctype == FCT_WIN64 )
-                        tstrcat(rbx, "\\x64")
-                    .else
-                        tstrcat(rbx, "\\x86")
-                    .endif
-                    CollectLinkOption(rbx)
-                .endif
-            .endif
-
-            .if ( Options.quiet )
-                CollectLinkOption("/NOLOGO")
-            .endif
-endif
-        .elseif ( Options.link_exename )
-
-            ; insert name...
-
-            mov Options.link_options,NULL
-ifdef __UNIX__
-            CollectLinkOption("-o")
-            CollectLinkOption(Options.link_exename)
-else
-            CollectLinkOption(tstrcat(tstrcpy(&ff, "/OUT:"), Options.link_exename))
-endif
-            .for ( rcx = Options.link_options : rcx && [rcx].anode.next : rcx = [rcx].anode.next )
-            .endf
-            .if ( rcx )
-                mov [rcx].anode.next,rbx
+                CollectLinkOption(tstrcat(tstrcpy(rdi, "-out:"), Options.link_exename))
             .endif
         .endif
+
+        mov rcx,Options.link_options
+        .if ( rcx )
+            .while ( [rcx].anode.next )
+                mov rcx,[rcx].anode.next
+            .endw
+            mov [rcx].anode.next,rbx
+        .else
+            mov Options.link_options,rbx
+        .endif
+
+        .if ( MODULE.Ofssize == USE16 && flags & O_LINKW &&
+             !( flags & ( O_SUBSYSTEM or O_MACHINE or O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
+
+            xor ebx,ebx
+            mov eax,Options._model
+            .switch eax
+            .case MODEL_TINY
+                mov ebx,'t'
+               .endc
+            .case MODEL_SMALL
+                mov ebx,'s'
+               .endc
+            .case MODEL_COMPACT
+                mov ebx,'c'
+               .endc
+            .case MODEL_MEDIUM
+                mov ebx,'m'
+               .endc
+            .case MODEL_LARGE
+                mov ebx,'l'
+            .endsw
+            .if ( ebx )
+                tsprintf( rdi, "-d:libc%c", ebx )
+                CollectLinkOption(rdi)
+                tsprintf( rdi, "crt0%c.obj", ebx )
+                CollectLinkOption(rdi)
+            .endif
+        .endif
+
+endif
 
 ifdef __UNIX__
         lea rax,@CStr(_ASMC_LINK)
@@ -720,6 +845,15 @@ else
         .endif
         .ifd ( SearchPathA( 0, &linker, 0, _MAX_PATH, path, 0 ) == 0 )
             mov path,&linker
+        .endif
+
+        .if ( !Options.quiet && !( flags & O_NOLOGO ) )
+
+            tprintf( "    Linking:" )
+            .for ( rbx = Options.link_options : rbx : rbx = [rbx].anode.next )
+                tprintf( " %s", &[rbx].anode.name )
+            .endf
+            tprintf( "\n" )
         .endif
 endif
 

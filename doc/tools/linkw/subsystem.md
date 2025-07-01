@@ -2,7 +2,7 @@ Asmc Linker Reference
 
 ## /SUBSYSTEM
 
-**/SUBSYSTEM**:{ CONSOLE | WINDOWS }
+**/SUBSYSTEM**:{ CONSOLE | WINDOWS | LINUX | DOS }
 
 The /SUBSYSTEM option specifies the environment for the executable.
 

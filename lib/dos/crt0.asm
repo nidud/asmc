@@ -1,4 +1,4 @@
-; _START.S--
+; CRT0.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -108,6 +108,7 @@ if (@DataSize eq 0)
     sub     dx,ax
     add     di,dx
     mov     ss,ax
+    mov     es,ax
 endif
     dec     di
     shl     di,4

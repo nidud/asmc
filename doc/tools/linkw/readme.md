@@ -4,12 +4,13 @@ Asmc Macro Assembler Reference
 
 ### In This Section
 
-- About LINKW
+- About Linkw
+- Asmc and Linkw
 - Linker options
 
-### About LINKW
+## About Linkw
 
-LINKW is a fork of JWlink:
+Linkw is a fork of JWlink:
 - https://github.com/Baron-von-Riedesel/jwlink
 
 The changes in the JWlink sources are:
@@ -21,41 +22,74 @@ The changes in the JWlink sources are:
 - changed the default name of the linker directive file to **linkw.lnk**
 - changed the default environment variable to **LINKW_LNK**
 
-### Linker options
+## Asmc and Linkw
 
-- @ Specifies a response file.
-- [/ALIGN](align.md) Specifies the alignment of each section.
-- [/BASE](base.md) Sets a base address for the program.
-- [/DEF](def.md) Passes a module-definition (.def) file to the linker.
-- [/DEFAULTLIB](defaultlib.md) Searches the specified library when external references are resolved.
-- [/DLL](dll.md) Builds a DLL.
-- [/ENTRY](entry.md) Sets the starting address.
-- [/EXPORT](export.md) Exports a function.
-- [/FILEALIGN](filealign.md) Aligns sections within the output file on multiples of a specified value.
-- [/FIXED](fixed.md) Creates a program that can be loaded only at its preferred base address.
-- [/FORCE](force.md) Forces a link to complete even with unresolved symbols or symbols defined more than once.
-- [/HEAP](heap.md) Sets the size of the heap, in bytes.
-- [/IMPLIB](implib.md) Overrides the default import library name.
-- [/INCLUDE](include.md) Forces symbol references.
-- [/LARGEADDRESSAWARE](largeaddressaware.md) Tells the compiler that the application supports addresses larger than 2 gigabytes
-- [/LIBPATH](libpath.md) Specifies a path to search before the environmental library path.
-- [/MACHINE](machine.md) Specifies the target platform.
-- [/MANIFEST](manifest.md) Creates a side-by-side manifest file and optionally embeds it in the binary.
-- [/MANIFESTDEPENDENCY](manifestdependency.md) Specifies a _dependentAssembly_ section in the manifest file.
-- [/MANIFESTFILE](manifestfile.md) Changes the default name of the manifest file.
-- [/MAP](map.md) Creates a mapfile.
-- [/MERGE](merge.md) Combines sections.
-- [/NODEFAULTLIB](nodefaultlib.md) Ignores all (or the specified) default libraries when external references are resolved.
-- [/NOLOGO](nologo.md) Suppresses the startup banner.
-- [/NXCOMPAT](nxcompat.md) Marks an executable as verified to be compatible with the Windows Data Execution Prevention feature.
-- [/OUT](out.md) Specifies the output file name.
-- [/SECTION](section.md) Overrides the attributes of a section.
-- [/STACK](stack.md) Sets the size of the stack in bytes.
-- [/STUB](stub.md) Attaches an MS-DOS stub program to a Win32 program.
-- [/SUBSYSTEM](subsystem.md) Tells the operating system how to run the .exe file.
-- [/VERBOSE](verbose.md) Prints linker progress messages.
-- [/VERSION](version.md) Assigns a version number.
+Asmc will spawn Linkw if the -c option is omitted or if the -Fe, -Bl, or -link option is used. If option -q is used -nologo is added. The options -machine and -subsystem is added if not defined.
 
+## Linker options
+
+### Syntax
+
+The normal command line syntax is continues:
+
+**linkw** [_options_] [[_option_] _file_, ...] [[_option_] \{ _files_ \}] ... [_options_]
+
+As the additional syntax is _options files_ it breaks with the above logic as follows:
+```
+while options
+    if /option
+        while /option
+            process option
+        endw
+        process files
+        break
+    endif
+    process option
+endw
+```
+
+_options_
+
+Options may be preceded by both a forward slash (/) and a dash (-). The options are listed in the following table:
+
+### Parameters
+
+<table>
+<tr><td><b>Option</b></td><td><b>Action</b></td></tr>
+<tr><td>@</td><td>Specifies a response file.</td></tr>
+<tr><td><a href="align.md">/Align</a></td><td>Specifies the alignment of each section.</td></tr>
+<tr><td><a href="base.md">/Base</a></td><td>Sets a base address for the program.</td></tr>
+<tr><td><a href="def.md">/DEF</a></td><td>Passes a module-definition (.def) file to the linker.</td></tr>
+<tr><td><a href="defaultlib.md">/Defaultlib</a></td><td>Searches the specified library when external references are resolved.</td></tr>
+<tr><td><a href="dll.md">/DLL</a></td><td>Builds a DLL.</td></tr>
+<tr><td><a href="entry.md">/Entry</a></td><td>Sets the starting address.</td></tr>
+<tr><td><a href="export.md">/EXport</a></td><td>Exports a function.</td></tr>
+<tr><td><a href="filealign.md">/FILEALIGN</a></td><td>Aligns sections within the output file on multiples of a specified value.</td></tr>
+<tr><td><a href="fixed.md">/FIXED</a></td><td>Creates a program that can be loaded only at its preferred base address.</td></tr>
+<tr><td><a href="force.md">/FORCE</a></td><td>Forces a link to complete even with unresolved symbols or symbols defined more than once.</td></tr>
+<tr><td><a href="heap.md">/Heap</a></td><td>Sets the size of the heap, in bytes.</td></tr>
+<tr><td><a href="implib.md">/IMPLIB</a></td><td>Overrides the default import library name.</td></tr>
+<tr><td><a href="include.md">/Include</a></td><td>Forces symbol references.</td></tr>
+<tr><td><a href="largeaddressaware.md">/LArgeaddressaware</a></td><td>Tells the compiler that the application supports addresses larger than 2 gigabytes.</td></tr>
+<tr><td><a href="libpath.md">/Libpath</a></td><td>Specifies a path to search before the environmental library path.</td></tr>
+<tr><td><a href="machine.md">/MAChine</a></td><td>Specifies the target platform.</td></tr>
+<tr><td><a href="manifest.md">/MANIFEST</a></td><td>Creates a side-by-side manifest file and optionally embeds it in the binary.</td></tr>
+<tr><td><a href="manifestdependency.md">/MANIFESTDEPENDENCY</a></td><td>Specifies a _dependentAssembly_ section in the manifest file.</td></tr>
+<tr><td><a href="manifestfile.md">/MANIFESTFILE</a></td><td>Changes the default name of the manifest file.</td></tr>
+<tr><td><a href="map.md">/Map</a></td><td>Creates a mapfile.</td></tr>
+<tr><td><a href="merge.md">/MERGE</a></td><td>Combines sections.</td></tr>
+<tr><td><a href="nodefaultlib.md">/NODefaultlib</a></td><td>Ignores all (or the specified) default libraries when external references are resolved.</td></tr>
+<tr><td><a href="nologo.md">/NOLogo</a></td><td>Suppresses the startup banner.</td></tr>
+<tr><td><a href="norelocs.md">/NORelocs</a></td><td>ELF option.</td></tr>
+<tr><td><a href="nxcompat.md">/NXCOMPAT</a></td><td>Marks an executable as verified to be compatible with the Windows Data Execution Prevention feature.</td></tr>
+<tr><td><a href="out.md">/Out</a></td><td>Specifies the output file name.</td></tr>
+<tr><td><a href="section.md">/SECTION</a></td><td>Overrides the attributes of a section.</td></tr>
+<tr><td><a href="stack.md">/STack</a></td><td>Sets the size of the stack in bytes.</td></tr>
+<tr><td><a href="stub.md">/STUB</a></td><td>Attaches an MS-DOS stub program to a Win32 program.</td></tr>
+<tr><td><a href="subsystem.md">/SUBsystem</a></td><td>Tells the operating system how to run the .exe file.</td></tr>
+<tr><td><a href="verbose.md">/Verbose</a></td><td>Prints linker progress messages.</td></tr>
+<tr><td><a href="version.md">/VERSION</a></td><td>Assigns a version number.</td></tr>
+</table>
 The Open Watcom Linker User’s Guide
 
 - https://open-watcom.github.io/open-watcom-v2-wikidocs/lguide.pdf

@@ -2201,9 +2201,10 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:token_t
 
         mov edx,[rcx].asym.name_size
 
-        ; v2.36.13 -MT - static link option: "main defined" and "argv used"
+        ; v2.36.13: -MT - static link option: "main defined" and "argv used"
+        ; v2.37.09: used by main() for /SUBSYSTEM:{...}
 
-        .if ( Options.link_mt && ( edx == 4 || edx == 5 ) )
+        .if ( edx == 4 || edx == 5 )
 
             mov rdx,[rcx].asym.name
             mov eax,[rdx]
@@ -2220,7 +2221,7 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:token_t
         .endif
 
         inc edx
-        .if ( SymCmpFunc( [rcx].asym.name, [rbx].string_ptr, edx ) == 0 )
+        .ifd ( SymCmpFunc( [rcx].asym.name, [rbx].string_ptr, edx ) == 0 )
             ProcFini( CurrProc )
             mov ecx,1
         .else

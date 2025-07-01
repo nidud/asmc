@@ -111,32 +111,18 @@ asmc32:
 
 linux32:
 	md $@
-	asmc -c -6 -mscrt -MT -elf -Zp4 -Cs -r ..\libc\*.asm ..\libc\*.s
-	libw -q -b -n -c asmc.a *.o
+	asmc -Iinc -elf -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
+	asmc -DASMC64 -Iinc -elf -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
 	del *.o
-	asmc -c -Iinc -elf -Zp4 -Cs src\*.asm
-	linkw N $@\asmc. FORM elf RU LIN L asmc.a OP NOR, ST=0x300000 F { *.o }
-	asmc -DASMC64 -Iinc -elf -Zp4 -Cs src\*.asm
-	linkw N $@\asmc64. FORM elf RU LIN L asmc.a OP NOR, ST=0x300000 F { *.o }
-	del *.o
-	del asmc.a
 
 linux64:
 	md $@
-	asmc -c -mscrt -MT -elf64 -Zp8 -Cs -r ..\libc\*.asm ..\libc\*.s
-	libw -q -b -n -c asmc.a *.o
+	asmc -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
+	asmc -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
 	del *.o
-	asmc -c -Iinc -elf64 -Zp8 -Cs src\*.asm
-	linkw N $@\asmc. FORM elf RU LIN L asmc.a OP NOR, ST=0x300000 F { *.o }
-	asmc -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm
-	linkw N $@\asmc64. FORM elf RU LIN L asmc.a OP NOR, ST=0x300000 F { *.o }
-	del *.o
-	del asmc.a
 
 owlinux:
 	md $@
-	asmc -c -Iinc -elf -Zp4 -Cs src\*.asm
-	linkw N $@\asmc. FORM elf RU LIN L \watcom\lib386\linux\clib3s.lib OP NOR, ST=0x300000 F { *.o }
-	asmc -c -DASMC64 -Iinc -elf -Zp4 -Cs src\*.asm
-	linkw N $@\asmc64. FORM elf RU LIN L \watcom\lib386\linux\clib3s.lib OP NOR, ST=0x300000 F { *.o }
+	asmc -Fe$@\asmc. -Iinc -elf -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:\watcom\lib386\linux\clib3s.lib
+	asmc -DASMC64 -Fe$@\asmc64. -Iinc -elf -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:\watcom\lib386\linux\clib3s.lib
 	del *.o

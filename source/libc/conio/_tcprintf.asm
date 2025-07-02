@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_tcprintf proc format:LPTSTR, argptr:vararg
+_tcprintf proc format:tstring_t, argptr:vararg
 
   local o:_iobuf
 
@@ -21,7 +21,7 @@ _tcprintf proc format:LPTSTR, argptr:vararg
     mov o._base,rax
     _toutput(&o, format, &argptr)
     mov rax,o._ptr
-    mov TCHAR ptr [rax],0
+    mov tchar_t ptr [rax],0
     _cputts(&_bufin)
     ret
 

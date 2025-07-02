@@ -15,7 +15,7 @@ endif
 
 .code
 
-_topen proc path:LPTSTR, oflag:SINT, args:VARARG
+_topen proc path:tstring_t, oflag:int_t, args:VARARG
 if defined(__UNIX__) and defined(_WIN64)
     _tsopen( rdi, esi, SH_DENYNO, edx )
 elseifdef _WIN64

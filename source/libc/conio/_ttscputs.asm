@@ -8,7 +8,7 @@ include conio.inc
 
 .code
 
-scputs proc uses rsi rdi rbx x:int_t, y:int_t, a:int_t, maxlen:int_t, string:LPTSTR
+scputs proc uses rsi rdi rbx x:int_t, y:int_t, a:int_t, maxlen:int_t, string:tstring_t
 
    .new q:byte
 
@@ -20,9 +20,9 @@ scputs proc uses rsi rdi rbx x:int_t, y:int_t, a:int_t, maxlen:int_t, string:LPT
         dec maxlen
     .endif
 
-    .for ( rbx = string : maxlen && TCHAR ptr [rbx] : maxlen--, rbx+=TCHAR, q++ )
+    .for ( rbx = string : maxlen && tchar_t ptr [rbx] : maxlen--, rbx+=tchar_t, q++ )
 
-        movzx ecx,TCHAR ptr [rbx]
+        movzx ecx,tchar_t ptr [rbx]
         .if ( ecx == 10 )
 
             inc y

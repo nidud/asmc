@@ -38,9 +38,9 @@ D3D_DISASM_ENABLE_INSTRUCTION_CYCLE equ 0x00000008
 D3D_DISASM_DISABLE_DEBUG_INFO equ 0x00000010
 
 D3DCompileFromFile proto WINAPI :LPCWSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :UINT, :ptr, :ptr
-D3DCompile proto WINAPI :ptr, :SIZE_T, :ptr, :ptr, :ptr, :ptr, :ptr, :UINT, :UINT, :ptr, :ptr
+D3DCompile proto WINAPI :ptr, :size_t, :ptr, :ptr, :ptr, :ptr, :ptr, :UINT, :UINT, :ptr, :ptr
 
-CALLBACK(pD3DCompile, :ptr, :SIZE_T, :ptr, :ptr, :ptr, :ptr, :ptr, :UINT, :UINT, :ptr, :ptr)
+CALLBACK(pD3DCompile, :ptr, :size_t, :ptr, :ptr, :ptr, :ptr, :ptr, :UINT, :UINT, :ptr, :ptr)
 
 D3DCOMPILER_STRIP_FLAGS typedef SDWORD
 D3DCOMPILER_STRIP_REFLECTION_DATA equ 1
@@ -48,7 +48,7 @@ D3DCOMPILER_STRIP_DEBUG_INFO equ 2
 D3DCOMPILER_STRIP_TEST_BLOBS equ 4
 D3DCOMPILER_STRIP_FORCE_DWORD equ 0x7fffffff
 
-D3DStripShader proto WINAPI :ptr, :SIZE_T, :UINT, :ptr
+D3DStripShader proto WINAPI :ptr, :size_t, :UINT, :ptr
 
 D3D_BLOB_PART           typedef SDWORD
 D3D_BLOB_INPUT_SIGNATURE_BLOB equ 0
@@ -64,22 +64,22 @@ D3D_BLOB_TEST_ALTERNATE_SHADER equ 0x8000
 D3D_BLOB_TEST_COMPILE_DETAILS equ 10
 D3D_BLOB_TEST_COMPILE_PERF equ 11
 
-D3DDisassemble proto WINAPI :ptr, :SIZE_T, :UINT, :LPSTR, :ptr
+D3DDisassemble proto WINAPI :ptr, :size_t, :UINT, :LPSTR, :ptr
 
-CALLBACK(pD3DDisassemble, :ptr, :SIZE_T, :UINT, :ptr, :ptr)
+CALLBACK(pD3DDisassemble, :ptr, :size_t, :UINT, :ptr, :ptr)
 
-D3DGetBlobPart proto WINAPI :ptr, :SIZE_T, :D3D_BLOB_PART, :UINT, :ptr
-D3DGetInputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
-D3DGetOutputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
-D3DGetInputAndOutputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
-D3DGetDebugInfo proto WINAPI :ptr, :SIZE_T, :ptr
+D3DGetBlobPart proto WINAPI :ptr, :size_t, :D3D_BLOB_PART, :UINT, :ptr
+D3DGetInputSignatureBlob proto WINAPI :ptr, :size_t, :ptr
+D3DGetOutputSignatureBlob proto WINAPI :ptr, :size_t, :ptr
+D3DGetInputAndOutputSignatureBlob proto WINAPI :ptr, :size_t, :ptr
+D3DGetDebugInfo proto WINAPI :ptr, :size_t, :ptr
 D3DReadFileToBlob proto WINAPI :ptr, :ptr
 D3DWriteBlobToFile proto WINAPI :ptr, :ptr, :BOOL
-D3DReflect proto WINAPI :ptr, :SIZE_T, :REFIID, :ptr
-D3DCreateBlob proto WINAPI :SIZE_T, :ptr
-D3DPreprocess proto WINAPI :ptr, :SIZE_T, :LPSTR, :ptr, :ptr, :ptr, :ptr
+D3DReflect proto WINAPI :ptr, :size_t, :REFIID, :ptr
+D3DCreateBlob proto WINAPI :size_t, :ptr
+D3DPreprocess proto WINAPI :ptr, :size_t, :LPSTR, :ptr, :ptr, :ptr, :ptr
 
-CALLBACK(pD3DPreprocess, :ptr, :SIZE_T, :ptr, :ptr, :ptr, :ptr, :ptr)
+CALLBACK(pD3DPreprocess, :ptr, :size_t, :ptr, :ptr, :ptr, :ptr, :ptr)
 
 .pragma list(pop)
 endif

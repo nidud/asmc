@@ -21,21 +21,21 @@ define CP_CONTINUE  <"C&ontinue">
 
    .data
 
-cp_ok       TCHAR CP_OK,0
-cp_cancel   TCHAR CP_CANCEL,0
-cp_abort    TCHAR CP_ABORT,0
-cp_retry    TCHAR CP_RETRY,0
-cp_ignore   TCHAR CP_IGNORE,0
-cp_yes      TCHAR CP_YES,0
-cp_no       TCHAR CP_NO,0
-cp_tryagain TCHAR CP_TRYAGAIN,0
-cp_continue TCHAR CP_CONTINUE,0
+cp_ok       tchar_t CP_OK,0
+cp_cancel   tchar_t CP_CANCEL,0
+cp_abort    tchar_t CP_ABORT,0
+cp_retry    tchar_t CP_RETRY,0
+cp_ignore   tchar_t CP_IGNORE,0
+cp_yes      tchar_t CP_YES,0
+cp_no       tchar_t CP_NO,0
+cp_tryagain tchar_t CP_TRYAGAIN,0
+cp_continue tchar_t CP_CONTINUE,0
 
 .template PBINFO
     count   db ?
     col     db 3 dup(?)
     id      db 3 dup(?)
-    name    LPTSTR 3 dup(?)
+    name    tstring_t 3 dup(?)
    .ends
 
 INFO PBINFO {
@@ -71,7 +71,7 @@ INFO PBINFO {
 
     .code
 
-WndProc proc private hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc private hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
 
     ldr eax,uiMsg
     .if ( eax == WM_CREATE || eax == WM_CLOSE )
@@ -90,7 +90,7 @@ WndProc endp
     assume rbx:THWND
     assume rcx:THWND
 
-_vmsgbox proc uses rbx flags:UINT, title:LPTSTR, string:LPTSTR
+_vmsgbox proc uses rbx flags:uint_t, title:tstring_t, string:tstring_t
 
    .new width:int_t
    .new line:int_t
@@ -98,8 +98,8 @@ _vmsgbox proc uses rbx flags:UINT, title:LPTSTR, string:LPTSTR
    .new rc:TRECT
    .new hwnd:THWND
    .new pb:PBINFO
-   .new p:LPTSTR
-   .new q:LPTSTR
+   .new p:tstring_t
+   .new q:tstring_t
    .new attrib:word = 0
 
     mov rbx,_console
@@ -130,7 +130,7 @@ _vmsgbox proc uses rbx flags:UINT, title:LPTSTR, string:LPTSTR
     mov width,_tcslen(title)
     mov rbx,string
 
-    .if TCHAR ptr [rbx]
+    .if tchar_t ptr [rbx]
 
         .repeat
             .break .if !_tcschr(rbx, 10)
@@ -139,7 +139,7 @@ _vmsgbox proc uses rbx flags:UINT, title:LPTSTR, string:LPTSTR
 ifdef _UNICODE
             shr edx,1
 endif
-            lea rbx,[rax+TCHAR]
+            lea rbx,[rax+tchar_t]
             .if edx >= width
                 mov width,edx
             .endif
@@ -213,7 +213,7 @@ endif
     mov rc.x,al
 
     movzx eax,pb.count
-    .new count:SINT = eax
+    .new count:int_t = eax
 
     .for ( edx = 0, ecx = 0 : ecx < count : ecx++ )
 
@@ -236,7 +236,7 @@ endif
         mov [rbx].flags,W_CHILD or W_WNDPROC or O_DEXIT
         mov [rbx].oindex,pb.id[rcx]
         mov [rbx].retval,al
-        mov [rbx].buffer,pb.name[rcx*LPTSTR]
+        mov [rbx].buffer,pb.name[rcx*tstring_t]
         mov [rbx].winproc,&_defwinproc
         mov al,rc.col
         add al,3
@@ -271,11 +271,11 @@ endif
 
     .repeat
 
-        .break .if !TCHAR ptr [rax]
+        .break .if !tchar_t ptr [rax]
         .if ( _tcschr(rax, 10) != NULL )
 
-            mov TCHAR ptr [rax],0
-            add rax,TCHAR
+            mov tchar_t ptr [rax],0
+            add rax,tchar_t
         .endif
         mov q,rax
         _rccenter([rbx].rc, [rbx].window, rc, attrib, p)

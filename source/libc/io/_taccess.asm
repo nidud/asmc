@@ -13,7 +13,7 @@ endif
 
 .code
 
-_taccess proc file:LPTSTR, mode:SINT
+_taccess proc file:tstring_t, mode:int_t
 ifdef __UNIX__
     .ifsd ( sys_access( ldr(file), ldr(mode) ) < 0 )
 

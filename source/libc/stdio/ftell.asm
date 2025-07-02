@@ -15,10 +15,10 @@ include winbase.inc
 
 ftell proc uses rbx fp:LPFILE
 
-  local filepos:SINT
-  local rdcnt:UINT
+  local filepos:int_t
+  local rdcnt:uint_t
   local osfile:BYTE
-  local offs:UINT
+  local offs:uint_t
 
     ldr rbx,fp
     .if ( [rbx]._cnt < 0 )

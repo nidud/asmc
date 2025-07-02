@@ -26,9 +26,9 @@ _tsetenvp proc uses rsi rdi rbx envp:tarray_t
            rsi = rdi,
            eax = 0,
            ebx = 0,
-           ecx = -1 : TCHAR ptr [rdi] && ebx < MAXCOUNT : )
+           ecx = -1 : tchar_t ptr [rdi] && ebx < MAXCOUNT : )
 
-        .if ( TCHAR ptr [rdi] != '=' )
+        .if ( tchar_t ptr [rdi] != '=' )
 
             mov  rdx,rdi
             sub  rdx,rsi

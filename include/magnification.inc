@@ -41,7 +41,7 @@ height			UINT ?
 format			GUID <> ; WICPixelFormatGUID <>
 stride			UINT ?
 offs			UINT ?
-cbSize			SIZE_T ?
+cbSize			size_t ?
 MAGIMAGEHEADER		ENDS
 PMAGIMAGEHEADER		typedef ptr MAGIMAGEHEADER
 

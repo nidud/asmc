@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_tcsstr proc uses rdi rbx dst:LPTSTR, src:LPTSTR
+_tcsstr proc uses rdi rbx dst:tstring_t, src:tstring_t
 
    .new len:size_t
 
@@ -37,12 +37,12 @@ _tcsstr proc uses rdi rbx dst:LPTSTR, src:LPTSTR
                     .break .if ( rcx < len )
                      mov rdx,len
                     .repeat
-                        mov _tal,[rbx+rdx*TCHAR]
-                        .continue(01) .if ( _tal != [rdi+rdx*TCHAR-TCHAR] )
+                        mov _tal,[rbx+rdx*tchar_t]
+                        .continue(01) .if ( _tal != [rdi+rdx*tchar_t-tchar_t] )
                         dec rdx
                     .untilz
                 .endif
-                lea rax,[rdi-TCHAR]
+                lea rax,[rdi-tchar_t]
             .until 1
         .endif
     .endif

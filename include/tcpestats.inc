@@ -73,13 +73,13 @@ PTCP_ESTATS_DATA_RW_v0  typedef ptr _TCP_ESTATS_DATA_RW_v0
 _TCP_ESTATS_SND_CONG_ROD_v0 struct
 SndLimTransRwin         ULONG ?
 SndLimTimeRwin          ULONG ?
-SndLimBytesRwin         SIZE_T ?
+SndLimBytesRwin         size_t ?
 SndLimTransCwnd         ULONG ?
 SndLimTimeCwnd          ULONG ?
-SndLimBytesCwnd         SIZE_T ?
+SndLimBytesCwnd         size_t ?
 SndLimTransSnd          ULONG ?
 SndLimTimeSnd           ULONG ?
-SndLimBytesSnd          SIZE_T ?
+SndLimBytesSnd          size_t ?
 SlowStart               ULONG ?
 CongAvoid               ULONG ?
 OtherReductions         ULONG ?
@@ -157,10 +157,10 @@ TCP_ESTATS_PATH_RW_v0   typedef _TCP_ESTATS_PATH_RW_v0
 PTCP_ESTATS_PATH_RW_v0  typedef ptr _TCP_ESTATS_PATH_RW_v0
 
 _TCP_ESTATS_SEND_BUFF_ROD_v0 struct
-CurRetxQueue            SIZE_T ?
-MaxRetxQueue            SIZE_T ?
-CurAppWQueue            SIZE_T ?
-MaxAppWQueue            SIZE_T ?
+CurRetxQueue            size_t ?
+MaxRetxQueue            size_t ?
+CurAppWQueue            size_t ?
+MaxAppWQueue            size_t ?
 _TCP_ESTATS_SEND_BUFF_ROD_v0 ends
 TCP_ESTATS_SEND_BUFF_ROD_v0 typedef _TCP_ESTATS_SEND_BUFF_ROD_v0
 PTCP_ESTATS_SEND_BUFF_ROD_v0 typedef ptr _TCP_ESTATS_SEND_BUFF_ROD_v0
@@ -183,8 +183,8 @@ EcnSent                 ULONG ?
 EcnNoncesRcvd           ULONG ?
 CurReasmQueue           ULONG ?
 MaxReasmQueue           ULONG ?
-CurAppRQueue            SIZE_T ?
-MaxAppRQueue            SIZE_T ?
+CurAppRQueue            size_t ?
+MaxAppRQueue            size_t ?
 WinScaleSent            UCHAR ?
 _TCP_ESTATS_REC_ROD_v0  ends
 TCP_ESTATS_REC_ROD_v0   typedef _TCP_ESTATS_REC_ROD_v0

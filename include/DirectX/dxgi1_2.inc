@@ -258,9 +258,9 @@ VendorId		UINT ?
 DeviceId		UINT ?
 SubSysId		UINT ?
 Revision		UINT ?
-DedicatedVideoMemory	SIZE_T ?
-DedicatedSystemMemory	SIZE_T ?
-SharedSystemMemory	SIZE_T ?
+DedicatedVideoMemory	size_t ?
+DedicatedSystemMemory	size_t ?
+SharedSystemMemory	size_t ?
 AdapterLuid		LUID <>
 Flags			UINT ?
 GraphicsPreemptionGranularity DXGI_GRAPHICS_PREEMPTION_GRANULARITY ?

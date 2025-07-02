@@ -16,7 +16,7 @@ include tchar.inc
     assume rcx:THWND
     assume rbx:PTEDIT
 
-_tcontrol proc uses rbx hwnd:THWND, count:UINT, string:LPTSTR
+_tcontrol proc uses rbx hwnd:THWND, count:uint_t, string:tstring_t
 
     ldr rcx,hwnd
 
@@ -43,7 +43,7 @@ endif
         .if !( [rdx].flags & O_MYBUF )
             add [rcx].buffer,rax
         .endif
-        shr eax,3+TCHAR
+        shr eax,3+tchar_t
         mov [rdx].count,al
     .endif
 

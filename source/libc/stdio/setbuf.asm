@@ -8,7 +8,7 @@ include stdio.inc
 
     .code
 
-setbuf proc fp:LPFILE, buf:LPSTR
+setbuf proc fp:LPFILE, buf:string_t
 
     setvbuf( buf, fp, _IOFBF, _MINIOBUF )
     ret

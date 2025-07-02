@@ -8,7 +8,7 @@ include io.inc
 
     .code
 
-_tell proc handle:SINT
+_tell proc handle:int_t
 
     _lseek( ldr(handle), 0, SEEK_CUR )
     ret

@@ -12,15 +12,15 @@ include tchar.inc
 
 .code
 
-_tputenv proc uses rsi rbx string:LPTSTR
+_tputenv proc uses rsi rbx string:tstring_t
 
-   .new envp:LPTSTR
+   .new envp:tstring_t
 
     xor ebx,ebx
     .if ( _tcschr(string, '=') != NULL )
 
-        mov TCHAR ptr [rax],0
-        lea rbx,[rax+TCHAR]
+        mov tchar_t ptr [rax],0
+        lea rbx,[rax+tchar_t]
     .endif
 ifdef __UNIX__
     xor eax,eax
@@ -28,7 +28,7 @@ else
     SetEnvironmentVariable(string, rbx)
 endif
     .if ( rbx )
-        mov TCHAR ptr [rbx-TCHAR],'='
+        mov tchar_t ptr [rbx-tchar_t],'='
     .endif
     .if ( !eax )
 

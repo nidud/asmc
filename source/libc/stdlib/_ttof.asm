@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_ttof proc string:LPTSTR
+_ttof proc string:tstring_t
 
     ldr rcx,string
 ifdef _UNICODE

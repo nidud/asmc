@@ -13,7 +13,7 @@ include tchar.inc
 
     option dotname
 
-_tcsncat proc uses rdi rbx dst:LPTSTR, src:LPTSTR, cnt:size_t
+_tcsncat proc uses rdi rbx dst:tstring_t, src:tstring_t, cnt:size_t
 
     ldr     rcx,dst
     ldr     rdx,src
@@ -23,7 +23,7 @@ _tcsncat proc uses rdi rbx dst:LPTSTR, src:LPTSTR, cnt:size_t
 .0:
     cmp     _tal,[rcx]
     je      .1
-    add     rcx,TCHAR
+    add     rcx,tchar_t
     jmp     .0
 .1:
     test    ebx,ebx
@@ -31,12 +31,12 @@ _tcsncat proc uses rdi rbx dst:LPTSTR, src:LPTSTR, cnt:size_t
     dec     ebx
     mov     _tal,[rdx]
     mov     [rcx],_tal
-    add     rcx,TCHAR
-    add     rdx,TCHAR
+    add     rcx,tchar_t
+    add     rdx,tchar_t
     test    eax,eax
     jnz     .1
     mov     ebx,eax
-    sub     rcx,TCHAR
+    sub     rcx,tchar_t
 .2:
     mov     [rcx],_tbl
     mov     rax,rdi

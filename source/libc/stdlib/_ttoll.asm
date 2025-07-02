@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_ttoll proc string:LPTSTR
+_ttoll proc string:tstring_t
 
     _ttoi64( ldr(string) )
     ret

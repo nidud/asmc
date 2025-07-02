@@ -12,7 +12,7 @@ include tchar.inc
 
     assume rbx:PDIRENT
 
-_dsearch proc uses rbx d:PDIRENT, name:LPTSTR
+_dsearch proc uses rbx d:PDIRENT, name:tstring_t
 
    .new i:int_t
     ldr rbx,d

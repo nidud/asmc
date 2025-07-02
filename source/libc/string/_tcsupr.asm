@@ -10,12 +10,12 @@ include tchar.inc
 
     .code
 
-_tcsupr proc uses rbx string:LPTSTR
+_tcsupr proc uses rbx string:tstring_t
 
     ldr rbx,string
-    .for ( : TCHAR ptr [rbx] : rbx+=TCHAR )
+    .for ( : tchar_t ptr [rbx] : rbx+=tchar_t )
 
-        movzx ecx,TCHAR ptr [rbx]
+        movzx ecx,tchar_t ptr [rbx]
         _totupper(ecx)
         mov [rbx],_tal
     .endf

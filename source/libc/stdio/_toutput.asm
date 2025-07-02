@@ -77,13 +77,13 @@ write_char proc private uses rbx c:int_t, fp:LPFILE, pnumwritten:ptr int_t
 
 write_char endp
 
-write_string proc private uses rbx string:LPTSTR, len:SINT, fp:LPFILE, pnumwritten:ptr int_t
+write_string proc private uses rbx string:tstring_t, len:int_t, fp:LPFILE, pnumwritten:ptr int_t
 
     ldr rbx,string
     .for ( : len > 0 : len-- )
 
-        movzx ecx,TCHAR ptr [rbx]
-        add rbx,TCHAR
+        movzx ecx,tchar_t ptr [rbx]
+        add rbx,tchar_t
 
        .break .ifd ( write_char( ecx, fp, pnumwritten ) == -1 )
     .endf
@@ -91,7 +91,7 @@ write_string proc private uses rbx string:LPTSTR, len:SINT, fp:LPFILE, pnumwritt
 
 write_string endp
 
-write_multi_char proc private c:SINT, num:SINT, fp:LPFILE, pnumwritten:ptr int_t
+write_multi_char proc private c:int_t, num:int_t, fp:LPFILE, pnumwritten:ptr int_t
 
     .for ( : num > 0 : num-- )
 
@@ -116,20 +116,20 @@ endif
 
 ifdef _WIN64
 ifdef __UNIX__
-_toutput proc uses rbx r12 r13 r14 r15 fp:LPFILE, format:LPTSTR, argptr:ptr
+_toutput proc uses rbx r12 r13 r14 r15 fp:LPFILE, format:tstring_t, argptr:ptr
 define flags        <r14d>
 define precision    <r15d>
 define arglist      <r12>
    .new argxmm      : ptr
    .new argcnt      : int_t     ; regargs + 1
 else
-_toutput proc uses rsi rdi rbx r12 fp:LPFILE, format:LPTSTR, argptr:ptr
+_toutput proc uses rsi rdi rbx r12 fp:LPFILE, format:tstring_t, argptr:ptr
 define flags        <edi>
 define precision    <esi>
 define arglist      <r12>
 endif
 else
-_toutput proc uses esi edi ebx fp:LPFILE, format:LPTSTR, arglist:ptr
+_toutput proc uses esi edi ebx fp:LPFILE, format:tstring_t, arglist:ptr
 define flags        <edi>
 define precision    <esi>
 endif
@@ -138,16 +138,16 @@ endif
    .new hexoff              : uint_t
    .new state               : uint_t = 0
    .new curadix             : uint_t
-   .new prefix[2]           : TCHAR
+   .new prefix[2]           : tchar_t
    .new textlen             : uint_t = 0
    .new prefixlen           : uint_t
    .new no_output           : uint_t
    .new fldwidth            : uint_t
    .new bufferiswide        : uint_t = 0
    .new padding             : uint_t
-   .new text                : LPTSTR
+   .new text                : tstring_t
    .new mbuf[MB_LEN_MAX+1]  : wint_t
-   .new buffer[BUFFERSIZE]  : TCHAR
+   .new buffer[BUFFERSIZE]  : tchar_t
 
 ifdef _WIN64
 ifdef __UNIX__
@@ -172,8 +172,8 @@ endif
 
         lea   rcx,__lookuptable
         mov   rax,format
-        add   format,TCHAR
-        movzx eax,TCHAR ptr [rax]
+        add   format,tchar_t
+        movzx eax,tchar_t ptr [rax]
         mov   edx,eax
 
         .break .if ( !eax || charsout > INT_MAX )
@@ -197,7 +197,7 @@ endif
 
             .switch eax
             .case ST_NORMAL
-                mov bufferiswide,TCHAR-1
+                mov bufferiswide,tchar_t-1
                 mov ecx,edx
 if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
 
@@ -298,22 +298,22 @@ ifdef _WIN64
                     or  flags,FL_I64 ; 'I' => __int64 on WIN64 systems
 endif
                     mov rax,format
-                    movzx ecx,TCHAR ptr [rax]
+                    movzx ecx,tchar_t ptr [rax]
                     .switch ecx
                     .case '6'
-                        .if ( TCHAR ptr [rax+TCHAR] != '4' )
+                        .if ( tchar_t ptr [rax+tchar_t] != '4' )
                             .gotosw(2:ST_NORMAL)
                         .endif
                         or  flags,FL_I64
-                        add rax,2*TCHAR
+                        add rax,2*tchar_t
                         mov format,rax
                        .endc
                     .case '3'
-                        .if ( TCHAR ptr [rax+TCHAR] != '2' )
+                        .if ( tchar_t ptr [rax+tchar_t] != '2' )
                             .gotosw(2:ST_NORMAL)
                         .endif
                         and flags,not FL_I64
-                        add rax,2*TCHAR
+                        add rax,2*tchar_t
                         mov format,rax
                        .endc
                     .case 'd','i','o','u','x','X'
@@ -358,7 +358,7 @@ endif
                         ; alternate form means '0b' prefix
                         ;
                         mov prefix,'0'
-                        mov prefix[TCHAR],_tal
+                        mov prefix[tchar_t],_tal
                         mov prefixlen,2
                     .endif
                     jmp COMMON_INT
@@ -376,7 +376,7 @@ endif
                     ;
                     ; print a single character specified by int argument
                     ;
-                    mov bufferiswide,TCHAR-1
+                    mov bufferiswide,tchar_t-1
                     _va_arg(arglist)
                     mov rcx,rax
                     lea rdx,buffer
@@ -594,7 +594,7 @@ endif
                         ;mov eax,'x' - 'a' + '9' + 1
                         ;add eax,hexoff
                         mov prefix,'0'
-                        mov prefix[TCHAR],'x';_tal
+                        mov prefix[tchar_t],'x';_tal
                         mov prefixlen,2
                     .endif
                     jmp COMMON_INT
@@ -692,7 +692,7 @@ endif
                         .endif
                     .endif
 
-                    lea rbx,buffer[BUFFERSIZE*TCHAR-TCHAR]
+                    lea rbx,buffer[BUFFERSIZE*tchar_t-tchar_t]
 ifdef _WIN64
                     mov ecx,curadix
                     shl rdx,32
@@ -707,7 +707,7 @@ ifdef _WIN64
                             add dl,byte ptr hexoff
                         .endif
                         mov [rbx],_tdl
-                        sub rbx,TCHAR
+                        sub rbx,tchar_t
                     .endf
 
 else
@@ -749,18 +749,18 @@ else
                             add ecx,hexoff
                         .endif
                         mov [ebx],_tcl
-                        sub ebx,TCHAR
+                        sub ebx,tchar_t
                     .endf
 
 endif
                     ; compute length of number
 
-                    lea rax,buffer[BUFFERSIZE*TCHAR-TCHAR]
+                    lea rax,buffer[BUFFERSIZE*tchar_t-tchar_t]
                     sub rax,rbx
 ifdef _UNICODE
                     shr eax,1
 endif
-                    add rbx,TCHAR
+                    add rbx,tchar_t
 
                     ; text points to first digit now
 
@@ -768,10 +768,10 @@ endif
 
                     .if ( flags & FL_FORCEOCTAL )
 
-                        .if ( TCHAR ptr [rbx] != '0' || eax == 0 )
+                        .if ( tchar_t ptr [rbx] != '0' || eax == 0 )
 
-                            sub rbx,TCHAR
-                            mov TCHAR ptr [rbx],'0'
+                            sub rbx,tchar_t
+                            mov tchar_t ptr [rbx],'0'
                             inc eax
                         .endif
                     .endif

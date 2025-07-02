@@ -22,7 +22,7 @@ endif
 
 .code
 
-_clipset proc uses rbx string:LPTSTR, len:UINT
+_clipset proc uses rbx string:tstring_t, len:uint_t
 
     ldr rbx,string
     inc len

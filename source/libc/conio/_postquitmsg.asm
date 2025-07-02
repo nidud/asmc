@@ -8,7 +8,7 @@ include conio.inc
 
     .code
 
-_postquitmsg proc hwnd:THWND, retval:UINT
+_postquitmsg proc hwnd:THWND, retval:uint_t
 
     ldr rax,hwnd
     ldr edx,retval

@@ -9,14 +9,14 @@ include tchar.inc
 
     .code
 
-_ttol proc string:LPTSTR
+_ttol proc string:tstring_t
 
     ldr rcx,string
 
     .repeat
 
-        movzx eax,TCHAR ptr [rcx]
-        add rcx,TCHAR
+        movzx eax,tchar_t ptr [rcx]
+        add rcx,tchar_t
        .continue(0) .if eax == ' '
     .until 1
 
@@ -28,8 +28,8 @@ endif
 
     .if ( eax == '-' || eax == '+' )
 
-        movzx eax,TCHAR ptr [rcx]
-        add rcx,TCHAR
+        movzx eax,tchar_t ptr [rcx]
+        add rcx,tchar_t
     .endif
 
     mov edx,eax
@@ -44,8 +44,8 @@ endif
 
         lea edx,[rax*8+rdx]
         lea eax,[rax*2+rdx]
-        movzx edx,TCHAR ptr [rcx]
-        add rcx,TCHAR
+        movzx edx,tchar_t ptr [rcx]
+        add rcx,tchar_t
     .endw
 
 ifdef _WIN64

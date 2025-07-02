@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_tcstod proc string:LPTSTR, endptr:tarray_t
+_tcstod proc string:tstring_t, endptr:tarray_t
 
     ldr rcx,string
 

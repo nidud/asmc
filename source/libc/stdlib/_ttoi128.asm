@@ -15,14 +15,14 @@ ifdef _WIN64
     ldr r10,string
     .repeat
 
-        movzx eax,TCHAR ptr [r10]
-        add r10,TCHAR
+        movzx eax,tchar_t ptr [r10]
+        add r10,tchar_t
     .until eax != ' '
 
     mov r11d,eax
     .if ( eax == '-' || eax == '+' )
-        movzx eax,TCHAR ptr [r10]
-        add r10,TCHAR
+        movzx eax,tchar_t ptr [r10]
+        add r10,tchar_t
     .endif
 
     mov ecx,eax
@@ -46,8 +46,8 @@ ifdef _WIN64
         adc     rdx,r9
         add     rax,rcx
         adc     rdx,0
-        movzx   ecx,TCHAR ptr [r10]
-        add     r10,TCHAR
+        movzx   ecx,tchar_t ptr [r10]
+        add     r10,tchar_t
     .endw
 
     .if ( r11d == '-' )
@@ -70,15 +70,15 @@ else
 
     mov esi,string
     .repeat
-        movzx eax,TCHAR ptr [esi]
-        add esi,TCHAR
+        movzx eax,tchar_t ptr [esi]
+        add esi,tchar_t
     .until eax != ' '
 
     push eax
     .if ( eax == '-' || eax == '+' )
 
-        movzx eax,TCHAR ptr [esi]
-        add esi,TCHAR
+        movzx eax,tchar_t ptr [esi]
+        add esi,tchar_t
     .endif
 
     mov ecx,eax
@@ -115,8 +115,8 @@ else
         adc     edx,0
         adc     ebx,0
         adc     edi,0
-        movzx   ecx,TCHAR ptr [esi]
-        add     esi,TCHAR
+        movzx   ecx,tchar_t ptr [esi]
+        add     esi,tchar_t
     .endw
 
     pop ecx

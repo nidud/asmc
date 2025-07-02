@@ -59,13 +59,13 @@ ifdef _UNICODE
     movzx ecx,cx
 endif
 
-    sub [rdx]._iobuf._cnt,TCHAR
+    sub [rdx]._iobuf._cnt,tchar_t
     .ifl
         _tflsbuf( ecx, rdx )
     .else
         mov eax,ecx
         mov rcx,[rdx]._iobuf._ptr
-        add [rdx]._iobuf._ptr,TCHAR
+        add [rdx]._iobuf._ptr,tchar_t
         mov [rcx],_tal
     .endif
     ret

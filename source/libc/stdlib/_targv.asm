@@ -11,7 +11,7 @@ endif
 include tchar.inc
 
 .data
- __targv LPTSTR 0
+ __targv tstring_t 0
 
 .code
 
@@ -19,32 +19,32 @@ ifndef __UNIX__
 
 __initargv proc private
 
-  local pgname[260]:TCHAR
+  local pgname[260]:tchar_t
 
     mov __targv,_tsetargv(&__argc, GetCommandLine())
 
     mov rax,[rax]
 
-    .if ( TCHAR ptr [rax+TCHAR] != ':' )
+    .if ( tchar_t ptr [rax+tchar_t] != ':' )
 
 	free(rax)
 
 	; Get the program name pointer from Win32 Base
 
-	mov rcx,malloc(&[GetModuleFileName(0, &pgname, 260)*TCHAR+TCHAR])
+	mov rcx,malloc(&[GetModuleFileName(0, &pgname, 260)*tchar_t+tchar_t])
 	_tcscpy(rcx, &pgname)
 
 	mov rcx,__targv
 	mov [rcx],rax
 
-	.if ( TCHAR ptr [rax] == '"' )
+	.if ( tchar_t ptr [rax] == '"' )
 
-	    .for ( rdx = rax : TCHAR ptr [rdx] : rdx+=TCHAR )
+	    .for ( rdx = rax : tchar_t ptr [rdx] : rdx+=tchar_t )
 
-		mov [rdx],TCHAR ptr [rdx+TCHAR]
+		mov [rdx],tchar_t ptr [rdx+tchar_t]
 	    .endf
-	    .if ( TCHAR ptr [rdx-TCHAR*2] == '"' )
-		mov TCHAR ptr [rdx-TCHAR*2],0
+	    .if ( tchar_t ptr [rdx-tchar_t*2] == '"' )
+		mov tchar_t ptr [rdx-tchar_t*2],0
 	    .endif
 	    mov rax,[rcx]
 	.endif

@@ -11,7 +11,7 @@ include tchar.inc
 
     .code
 
-_tcsext proc uses rbx string:LPTSTR
+_tcsext proc uses rbx string:tstring_t
 
     mov rbx,_tcsfn( ldr(string) )
 

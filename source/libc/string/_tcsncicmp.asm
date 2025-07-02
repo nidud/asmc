@@ -26,7 +26,7 @@ endif
 
     option dotname
 
-_tcsncicmp proc use_regs a:LPTSTR, b:LPTSTR, size:size_t
+_tcsncicmp proc use_regs a:tstring_t, b:tstring_t, size:size_t
 
     ldr     rga,a
     ldr     rcx,size
@@ -40,10 +40,10 @@ _tcsncicmp proc use_regs a:LPTSTR, b:LPTSTR, size:size_t
     test    ecx,ecx
     jz      .2
     dec     ecx
-    movzx   eax,TCHAR ptr [rga]
-    movzx   rgd,TCHAR ptr [rdx]
-    add     rga,TCHAR
-    add     rdx,TCHAR
+    movzx   eax,tchar_t ptr [rga]
+    movzx   rgd,tchar_t ptr [rdx]
+    add     rga,tchar_t
+    add     rdx,tchar_t
 ifdef _UNICODE
     cmp     eax,255
     ja      .3

@@ -15,7 +15,7 @@ include tchar.inc
 
     .code
 
-_tgetcwd proc uses rbx buffer:LPTSTR, maxlen:SINT
+_tgetcwd proc uses rbx buffer:tstring_t, maxlen:int_t
 
     ldr rbx,buffer
     ldr edx,maxlen

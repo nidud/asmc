@@ -11,7 +11,7 @@ _tcsfxcat proc path:LPTSTR, ext:LPTSTR
 
     .if _tcsext(path)
 
-        mov TCHAR ptr [rax],0
+        mov tchar_t ptr [rax],0
     .endif
     _tcscat(path, ext)
     ret

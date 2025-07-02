@@ -13,13 +13,13 @@ include tchar.inc
 
 .code
 
-_tcsesc proc uses rsi rdi buffer:LPTSTR, string:LPTSTR
+_tcsesc proc uses rsi rdi buffer:tstring_t, string:tstring_t
 
     ldr rsi,string
     ldr rdi,buffer
 
     xor eax,eax
-    .while ( TCHAR ptr [rsi] )
+    .while ( tchar_t ptr [rsi] )
 
         _tlodsb
         .if ( eax == '\' )   ; escape char ?
@@ -58,10 +58,10 @@ ifndef _UNICODE
                 add ecx,2
 endif
             .case 'x'        ; 2/4 hexadecimal digits (BYTE/WORD)
-                add ecx,2*TCHAR
+                add ecx,2*tchar_t
                 xor edx,edx
                 .repeat
-                    movzx eax,TCHAR ptr [rsi]
+                    movzx eax,tchar_t ptr [rsi]
                     or al,0x20
                     .if ( eax >= '0' && eax <= '9' )
                         sub al,'0'
@@ -70,7 +70,7 @@ endif
                     .else
                         .break
                     .endif
-                    add rsi,TCHAR
+                    add rsi,tchar_t
                     shl edx,4
                     add edx,eax
                 .untilcxz
@@ -78,26 +78,26 @@ endif
                 .if ( eax != edx )
 
                     _tstosb
-                    shr edx,8*TCHAR
+                    shr edx,8*tchar_t
                     mov _tal,_tdl
                 .endif
                 .endc
             .case '0'..'7'  ; ooo
                 sub eax,'0'
-                movzx ecx,TCHAR ptr [rsi]
+                movzx ecx,tchar_t ptr [rsi]
                 .if ( ecx >= '0' && ecx <= '7' )
 
                     sub ecx,'0'
                     shl eax,3
                     add eax,ecx
-                    add rsi,TCHAR
-                    movzx ecx,TCHAR ptr [rsi]
+                    add rsi,tchar_t
+                    movzx ecx,tchar_t ptr [rsi]
                     .if ( ecx >= '0' && ecx <= '7' )
 
                         sub ecx,'0'
                         shl eax,3
                         add eax,ecx
-                        add rsi,TCHAR
+                        add rsi,tchar_t
                     .endif
                 .endif
                 .endc
@@ -116,7 +116,7 @@ endif
         .endif
         _tstosb
     .endw
-    mov TCHAR ptr [rdi],0
+    mov tchar_t ptr [rdi],0
     mov rax,rdi
     sub rax,buffer
 ifdef _UNICODE

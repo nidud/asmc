@@ -17,15 +17,15 @@ include tchar.inc
 
 .code
 
-_tsearchenv_s proc uses rbx fname:LPTSTR, env_var:LPTSTR, path:LPTSTR, size:size_t
+_tsearchenv_s proc uses rbx fname:tstring_t, env_var:tstring_t, path:tstring_t, size:size_t
 
-   .new p:LPTSTR
-   .new envbuf:LPTSTR = NULL
-   .new env_p:LPTSTR
-   .new save_env_p:LPTSTR
+   .new p:tstring_t
+   .new envbuf:tstring_t = NULL
+   .new env_p:tstring_t
+   .new save_env_p:tstring_t
    .new len:size_t
-   .new pathbuf[_MAX_PATH + 4]:TCHAR
-   .new pbuf:LPTSTR = NULL
+   .new pathbuf[_MAX_PATH + 4]:tchar_t
+   .new pbuf:tstring_t = NULL
    .new fnamelen:size_t
    .new buflen:size_t
    .new save_errno:errno_t
@@ -43,14 +43,14 @@ _tsearchenv_s proc uses rbx fname:LPTSTR, env_var:LPTSTR, path:LPTSTR, size:size
     ldr rcx,fname
     .if ( !rcx )
 
-        mov TCHAR ptr [rbx],0
+        mov tchar_t ptr [rbx],0
         _set_errno(EINVAL)
         .return( EINVAL )
     .endif
 
-    .if ( TCHAR ptr [rcx] == 0 )
+    .if ( tchar_t ptr [rcx] == 0 )
 
-        mov TCHAR ptr [rbx],0
+        mov tchar_t ptr [rbx],0
         _set_errno(ENOENT)
         .return( ENOENT )
     .endif
@@ -63,7 +63,7 @@ _tsearchenv_s proc uses rbx fname:LPTSTR, env_var:LPTSTR, path:LPTSTR, size:size
 
         .if ( _tfullpath(rbx, fname, size) == NULL )
 
-            mov TCHAR ptr [rbx],0
+            mov tchar_t ptr [rbx],0
             .return( _get_errno( NULL ) )
         .endif
         .return( 0 )
@@ -71,7 +71,7 @@ _tsearchenv_s proc uses rbx fname:LPTSTR, env_var:LPTSTR, path:LPTSTR, size:size
 
     .if ( _tdupenv_s(&envbuf, NULL, env_var) || envbuf == NULL )
 
-        mov TCHAR ptr [rbx],0
+        mov tchar_t ptr [rbx],0
         _set_errno(ENOENT)
         .return( ENOENT )
     .endif
@@ -87,11 +87,11 @@ _tsearchenv_s proc uses rbx fname:LPTSTR, env_var:LPTSTR, path:LPTSTR, size:size
         add rax,fnamelen
         add rax,2
         mov buflen,rax
-        mov pbuf,calloc( buflen, sizeof(TCHAR) )
+        mov pbuf,calloc( buflen, sizeof(tchar_t) )
 
         .if ( rax == NULL )
 
-            mov TCHAR ptr [rbx],0
+            mov tchar_t ptr [rbx],0
             mov retvalue,ENOMEM
             jmp cleanup
         .endif
@@ -113,11 +113,11 @@ _tsearchenv_s proc uses rbx fname:LPTSTR, env_var:LPTSTR, path:LPTSTR, size:size
             add rax,fnamelen
             add rax,2
             mov buflen,rax
-            mov pbuf,calloc( buflen, sizeof(TCHAR) )
+            mov pbuf,calloc( buflen, sizeof(tchar_t) )
 
             .if ( rax == NULL )
 
-                mov TCHAR ptr [rbx],0
+                mov tchar_t ptr [rbx],0
                 mov retvalue,ENOMEM
                 jmp cleanup
             .endif
@@ -127,7 +127,7 @@ _tsearchenv_s proc uses rbx fname:LPTSTR, env_var:LPTSTR, path:LPTSTR, size:size
         .endif
 
         mov rcx,pbuf
-        .if ( env_p == NULL || TCHAR ptr [rcx] == 0 )
+        .if ( env_p == NULL || tchar_t ptr [rcx] == 0 )
             .break
         .endif
 
@@ -136,7 +136,7 @@ ifdef _UNICODE
         add rax,rax
 endif
         add rax,pbuf
-        mov _tdl,[rax-TCHAR]
+        mov _tdl,[rax-tchar_t]
 ifdef __UNIX__
         .if ( _tdl != '/' )
             mov _tdl,'/'
@@ -145,7 +145,7 @@ else
             mov _tdl,'\'
 endif
             mov [rax],_tdl
-            add rax,TCHAR
+            add rax,tchar_t
             inc rcx
         .endif
         mov len,rcx
@@ -162,7 +162,7 @@ endif
             add rax,fnamelen
             .if ( rax >= size )
 
-                mov TCHAR ptr [rbx],0
+                mov tchar_t ptr [rbx],0
                 _set_errno(ERANGE)
                 mov retvalue,ERANGE
                 jmp cleanup
@@ -174,7 +174,7 @@ endif
         .endif
     .endw
 
-    mov TCHAR ptr [rbx],0
+    mov tchar_t ptr [rbx],0
     _set_errno(ENOENT)
     mov retvalue,ENOENT
 
@@ -190,7 +190,7 @@ cleanup:
 _tsearchenv_s endp
 
 
-_tsearchenv proc fname:LPTSTR, env_var:LPTSTR, path:LPTSTR
+_tsearchenv proc fname:tstring_t, env_var:tstring_t, path:tstring_t
 
     _tsearchenv_s(ldr(fname), ldr(env_var), ldr(path), _MAX_PATH)
     ret

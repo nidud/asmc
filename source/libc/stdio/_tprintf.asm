@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_tprintf proc uses rbx format:LPTSTR, argptr:VARARG
+_tprintf proc uses rbx format:tstring_t, argptr:VARARG
 
     mov ebx,_stbuf( stdout )
     xchg ebx,_toutput( stdout, format, &argptr )

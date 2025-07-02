@@ -3,29 +3,6 @@ ifndef __STDLIB_INC
 define __STDLIB_INC
 include libc.inc
 
-ifndef _ERRNO_T_DEFINED
-define _ERRNO_T_DEFINED
-errno_t typedef int_t
-endif
-
-ifndef _INTPTR_T_DEFINED
-define _INTPTR_T_DEFINED
-ifdef _WIN64
-intptr_t typedef sqword
-else
-intptr_t typedef int_t
-endif
-endif
-
-ifndef _UINTPTR_T_DEFINED
-define _UINTPTR_T_DEFINED
-ifdef _WIN64
-uintptr_t typedef qword
-else
-uintptr_t typedef uint_t
-endif
-endif
-
 include threadlocinfo.inc
 
 ifndef __STDC_WANT_SECURE_LIB__
@@ -461,17 +438,6 @@ endif
 
 ifndef _WSTDLIB_DEFINED
 define _WSTDLIB_DEFINED
-
-ifndef _WCHAR_T_DEFINED
-define _WCHAR_T_DEFINED
-wchar_t		typedef word
-endif
-
-ifndef _WCTYPE_T_DEFINED
-define _WCTYPE_T_DEFINED
-wint_t		typedef wchar_t
-wctype_t	typedef wchar_t
-endif
 
 _itow		proto __cdecl :int_t, :wstring_t, :int_t
 _itow_s		proto __cdecl :int_t, :wstring_t, :size_t, :int_t

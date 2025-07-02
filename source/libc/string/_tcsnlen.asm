@@ -11,7 +11,7 @@ include tchar.inc
 
 .code
 
-_tcsnlen proc string:LPTSTR, maxsize:size_t
+_tcsnlen proc string:tstring_t, maxsize:size_t
 
     ldr rcx,string
     ldr rdx,maxsize
@@ -19,7 +19,7 @@ _tcsnlen proc string:LPTSTR, maxsize:size_t
     ; Note that we do not check if string == NULL, because we do not
     ; return errno_t...
 
-    .for ( eax = 0 : rax < rdx && TCHAR ptr [rcx] : rax++, rcx += TCHAR )
+    .for ( eax = 0 : rax < rdx && tchar_t ptr [rcx] : rax++, rcx += tchar_t )
     .endf
     ret
 

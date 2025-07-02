@@ -42,7 +42,7 @@ else
    .new StartupInfo:STARTUPINFO
    .new ProcessInformation:PROCESS_INFORMATION
    .new CreateProcessStatus:BOOL
-   .new dosretval:ULONG
+   .new dosretval:uint_t
 ifdef _UNICODE
    .new fdwCreate:DWORD = CREATE_UNICODE_ENVIRONMENT
 else
@@ -81,7 +81,7 @@ ifndef __UNIX__
     .for ( rsi = rbx, edi = 1 : tarray_t ptr [rsi] : rsi+=tarray_t )
         lea rdi,[rdi+_tcslen([rsi])+1]
     .endf
-    lea rax,[rdi*TCHAR+15]
+    lea rax,[rdi*tchar_t+15]
     and eax,-16
     mov cmd_size,eax
     mov rsi,envp
@@ -89,7 +89,7 @@ ifndef __UNIX__
         .for ( edi = 2 : tarray_t ptr [rsi] : rsi+=tarray_t )
             lea rdi,[rdi+_tcslen([rsi])+1]
         .endf
-        lea rax,[rdi*TCHAR+15]
+        lea rax,[rdi*tchar_t+15]
         and eax,-16
         mov env_size,eax
     .endif

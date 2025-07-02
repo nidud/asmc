@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-wcenter proc uses rbx p:PCHAR_INFO, maxlen:int_t, string:LPTSTR
+wcenter proc uses rbx p:PCHAR_INFO, maxlen:int_t, string:tstring_t
 
     ldr rbx,string
 
@@ -18,7 +18,7 @@ wcenter proc uses rbx p:PCHAR_INFO, maxlen:int_t, string:LPTSTR
 
     .if ( ecx > maxlen )
 
-        lea rbx,[rbx+rcx*TCHAR]
+        lea rbx,[rbx+rcx*tchar_t]
         mov ecx,maxlen
         sub rbx,rcx
 ifdef _UNICODE
@@ -44,10 +44,10 @@ endif
             lea rdx,[rdx+rax*4]
         .endif
         .repeat
-            movzx eax,TCHAR ptr [rbx]
+            movzx eax,tchar_t ptr [rbx]
             mov [rdx],ax
             add rdx,4
-            add rbx,TCHAR
+            add rbx,tchar_t
         .untilcxz
     .endif
     ret

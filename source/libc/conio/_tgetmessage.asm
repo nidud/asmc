@@ -12,7 +12,7 @@ define MOUSE_WHEEL_UP       0x0040
 define MOUSE_WHEEL_DOWN     0x0080
 
     .data
-     msbuttons UINT 0
+     msbuttons uint_t 0
 
     .code
 
@@ -106,7 +106,7 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
             movzx   edi,Input.Event.KeyEvent.wVirtualKeyCode
             mov     eax,ecx
             or      ecx,KEY_WMCHAR
-            movzx   edx,TCHAR ptr Input.Event.KeyEvent.uChar.UnicodeChar
+            movzx   edx,tchar_t ptr Input.Event.KeyEvent.uChar.UnicodeChar
             test    ecx,ENHANCED_KEY or RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED
             cmovnz  edx,edi
             cmovnz  ecx,eax
@@ -116,7 +116,7 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
 
             _postmessage(rbx, esi, rdx, rcx)
 
-            movzx   edx,TCHAR ptr Input.Event.KeyEvent.uChar.UnicodeChar
+            movzx   edx,tchar_t ptr Input.Event.KeyEvent.uChar.UnicodeChar
             mov     ecx,Input.Event.KeyEvent.dwControlKeyState
 
             .endc .if ( Input.Event.KeyEvent.bKeyDown == 0 )

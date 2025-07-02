@@ -12,13 +12,13 @@ include tchar.inc
 _gettc proc fp:ptr FILE
 
     ldr rcx,fp
-    sub [rcx]._iobuf._cnt,TCHAR
+    sub [rcx]._iobuf._cnt,tchar_t
     .ifl
         _tfilbuf(rcx)
     .else
         mov rax,[rcx]._iobuf._ptr
-        add [rcx]._iobuf._ptr,TCHAR
-        movzx eax,TCHAR ptr [rax]
+        add [rcx]._iobuf._ptr,tchar_t
+        movzx eax,tchar_t ptr [rax]
     .endif
     ret
 

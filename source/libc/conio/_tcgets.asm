@@ -9,12 +9,12 @@ include tchar.inc
 
     .code
 
-    assume rbx:LPTSTR
+    assume rbx:tstring_t
 
-_cgetts proc uses rbx string:LPTSTR
+_cgetts proc uses rbx string:tstring_t
 
-   .new len:TCHAR = 0
-   .new maxlen:TCHAR
+   .new len:tchar_t = 0
+   .new maxlen:tchar_t
 
     ldr rbx,string
     .if ( rbx == NULL )
@@ -22,7 +22,7 @@ _cgetts proc uses rbx string:LPTSTR
     .endif
 
     mov maxlen,[rbx]
-    lea rbx,[rbx+2*TCHAR]
+    lea rbx,[rbx+2*tchar_t]
     dec maxlen
 
     .while ( len < maxlen )
@@ -35,7 +35,7 @@ _cgetts proc uses rbx string:LPTSTR
             .ifs ( len > 0 )
                 _cputts( "\b \b" ) ; go back, clear char on screen with space
                 dec len
-                mov [rbx+rcx*TCHAR-TCHAR],0
+                mov [rbx+rcx*tchar_t-tchar_t],0
             .endif
             .endc
 ifdef __UNIX__
@@ -43,15 +43,15 @@ ifdef __UNIX__
 else
         .case eax == 13 ; '\r'
 endif
-            mov [rbx+rcx*TCHAR],0
+            mov [rbx+rcx*tchar_t],0
            .break
         .case eax == 0
-            mov [rbx+rcx*TCHAR],0
+            mov [rbx+rcx*tchar_t],0
             _ungetch(0)
            .break
         .default
 ifdef _UNICODE
-            mov [rbx+rcx*TCHAR],ax
+            mov [rbx+rcx*tchar_t],ax
 else
             mov [rbx+rcx],al
 endif
@@ -61,12 +61,12 @@ endif
     .endw
 
     movzx ecx,maxlen
-    mov [rbx+rcx*TCHAR],0
+    mov [rbx+rcx*tchar_t],0
     movzx ecx,len
 ifdef _UNICODE
-    mov [rbx-TCHAR],cx
+    mov [rbx-tchar_t],cx
 else
-    mov [rbx-TCHAR],cl
+    mov [rbx-tchar_t],cl
 endif
     mov rax,rbx
     ret

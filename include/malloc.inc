@@ -42,7 +42,7 @@ endif
 
 .enum { _HEAP_FREE, _HEAP_LOCAL, _HEAP_GLOBAL, _HEAP_ALIGNED }
 
-HEAP    struct size_t   ; Memory Block Header: 16/32 byte
+HEAP    struct size_t   ; Memory Block Header: 8/16/32 byte
 size    size_t ?
 type    uchar_t ?
 prev    ptr_t ?
@@ -50,7 +50,7 @@ next    ptr_t ?
 HEAP    ends
 heap_t  typedef ptr HEAP
 
-externdef _amblksiz:dword
+externdef _amblksiz:uint_t
 externdef _heap_base:heap_t
 externdef _heap_free:heap_t
 
@@ -108,12 +108,12 @@ define GMEM_MOVEABLE    0x0002
 define GMEM_DDESHARE    0x2000
 define HEAP_ZERO_MEMORY 0x00000008
 
-GlobalAlloc     proto WINAPI uFlags:UINT, dwBytes:SIZE_T
+GlobalAlloc     proto WINAPI uFlags:UINT, dwBytes:size_t
 GlobalFree      proto WINAPI :HANDLE
 GlobalLock      proto WINAPI :HANDLE
 GlobalUnlock    proto WINAPI :HANDLE
 GetProcessHeap  proto WINAPI
-HeapAlloc       proto WINAPI :HANDLE, dwFlags:DWORD, dwBytes:SIZE_T
+HeapAlloc       proto WINAPI :HANDLE, dwFlags:DWORD, dwBytes:size_t
 HeapFree        proto WINAPI :HANDLE, dwFlags:DWORD, lpMem:PVOID
 
 .pragma list(pop)

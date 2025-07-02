@@ -67,10 +67,10 @@ _tflsbuf proc uses bx char:int_t, fp:LPFILE
         mov ax,word ptr esl[bx]._base
         mov dx,word ptr esl[bx]._ptr
         sub dx,ax
-        add ax,TCHAR
+        add ax,tchar_t
         mov word ptr esl[bx]._ptr,ax
         mov ax,esl[bx]._bufsiz
-        sub ax,TCHAR
+        sub ax,tchar_t
         mov esl[bx]._cnt,ax
         mov charcount,dx
         mov cx,bx
@@ -97,8 +97,8 @@ _tflsbuf proc uses bx char:int_t, fp:LPFILE
 
     .else
 
-        mov charcount,TCHAR
-        mov written,_write( esl[bx]._file, &char, TCHAR )
+        mov charcount,tchar_t
+        mov written,_write( esl[bx]._file, &char, tchar_t )
     .endif
 
     xor ax,ax

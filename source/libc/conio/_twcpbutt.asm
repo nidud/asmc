@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-wcpbutt proc uses rsi rdi rbx wp:PCHAR_INFO, l:int_t, x:int_t, string:LPTSTR
+wcpbutt proc uses rsi rdi rbx wp:PCHAR_INFO, l:int_t, x:int_t, string:tstring_t
 
     ldr rdi,wp
     ldr ecx,x

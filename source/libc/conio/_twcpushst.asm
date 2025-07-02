@@ -11,7 +11,7 @@ include conio.inc
 
     .code
 
-wcpushst proc uses rbx p:PCHAR_INFO, cp:LPTSTR
+wcpushst proc uses rbx p:PCHAR_INFO, cp:tstring_t
 
     ldr     rbx,p
 

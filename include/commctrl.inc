@@ -2810,7 +2810,7 @@ if (_WIN32_WINNT GE 0x0501)
 
 define INVALID_LINK_INDEX	(-1)
 define MAX_LINKID_TEXT		48
-define L_MAX_URL_LENGTH		(2048 + 32 + TCHAR*4)
+define L_MAX_URL_LENGTH		(2048 + 32 + tchar_t*4)
 define WC_LINK			<"SysLink">
 
 define LWS_TRANSPARENT		0x0001

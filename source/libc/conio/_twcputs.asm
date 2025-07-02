@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-wcputs proc uses rsi rdi rbx p:PCHAR_INFO, l:int_t, m:int_t, string:LPTSTR
+wcputs proc uses rsi rdi rbx p:PCHAR_INFO, l:int_t, m:int_t, string:tstring_t
 
     ldr     rsi,string
     ldr     rdi,p

@@ -28,7 +28,7 @@ D3DX11CheckVersion proto WINAPI :UINT, :UINT
 
 .comdef ID3DX11DataProcessor
 
-    Process		proc :ptr, :SIZE_T
+    Process		proc :ptr, :size_t
     CreateDeviceObject	proc :ptr
     Destroy		proc
    .ENDS

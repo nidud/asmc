@@ -5,15 +5,6 @@ define _INC_VADEFS
 define _CRT_PACKING size_t
 .pragma pack(push, _CRT_PACKING)
 
-ifndef _UINTPTR_T_DEFINED
-define _UINTPTR_T_DEFINED
-ifdef _WIN64
-uintptr_t typedef qword
-else
-uintptr_t typedef dword
-endif
-endif
-
 ifndef _VA_LIST_DEFINED
 define _VA_LIST_DEFINED
 va_list typedef ptr sbyte

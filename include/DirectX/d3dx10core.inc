@@ -68,7 +68,7 @@ D3DX10CreateSprite proto WINAPI :ptr, :UINT, :ptr
 
 .comdef ID3DX10DataProcessor
 
-    Process		proc :ptr, :SIZE_T
+    Process		proc :ptr, :size_t
     CreateDeviceObject	proc :ptr
     Destroy		proc
    .ENDS

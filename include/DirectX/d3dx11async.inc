@@ -19,10 +19,10 @@ else
 D3DX11CompileFromResource equ <D3DX11CompileFromResourceA>
 endif
 
-D3DX11CompileFromMemory proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
+D3DX11CompileFromMemory proto WINAPI :LPCSTR, :size_t, :LPCSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
 D3DX11PreprocessShaderFromFileA proto WINAPI :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX11PreprocessShaderFromFileW proto WINAPI :LPCWSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-D3DX11PreprocessShaderFromMemory proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DX11PreprocessShaderFromMemory proto WINAPI :LPCSTR, :size_t, :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX11PreprocessShaderFromResourceA proto WINAPI :HMODULE, :LPCSTR, :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX11PreprocessShaderFromResourceW proto WINAPI :HMODULE, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
@@ -37,7 +37,7 @@ D3DX11CreateAsyncCompilerProcessor proto WINAPI :LPCSTR, :ptr, :ptr, :LPCSTR, :L
 D3DX11CreateAsyncShaderPreprocessProcessor proto WINAPI :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX11CreateAsyncFileLoaderW proto WINAPI :LPCWSTR, :ptr
 D3DX11CreateAsyncFileLoaderA proto WINAPI :LPCSTR, :ptr
-D3DX11CreateAsyncMemoryLoader proto WINAPI :ptr, :SIZE_T, :ptr
+D3DX11CreateAsyncMemoryLoader proto WINAPI :ptr, :size_t, :ptr
 D3DX11CreateAsyncResourceLoaderW proto WINAPI :HMODULE, :LPCWSTR, :ptr
 D3DX11CreateAsyncResourceLoaderA proto WINAPI :HMODULE, :LPCSTR, :ptr
 ifdef _UNICODE

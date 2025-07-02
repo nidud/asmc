@@ -2,88 +2,65 @@ ifndef _INC_TCHAR
 define _INC_TCHAR
 .pragma list(push, 0)
 ifndef __LIBC_INC
- include libc.inc
+include libc.inc
 endif
 
-_ftcscat		equ <_tcscat>
-_ftcschr		equ <_tcschr>
-_ftcscpy		equ <_tcscpy>
-_ftcscspn		equ <_tcscspn>
-_ftcslen		equ <_tcslen>
-_ftcsncat		equ <_tcsncat>
-_ftcsncpy		equ <_tcsncpy>
-_ftcspbrk		equ <_tcspbrk>
-_ftcsrchr		equ <_tcsrchr>
-_ftcsspn		equ <_tcsspn>
-_ftcsstr		equ <_tcsstr>
-_ftcstok		equ <_tcstok>
+_ftcscat	equ <_tcscat>
+_ftcschr	equ <_tcschr>
+_ftcscpy	equ <_tcscpy>
+_ftcscspn	equ <_tcscspn>
+_ftcslen	equ <_tcslen>
+_ftcsncat	equ <_tcsncat>
+_ftcsncpy	equ <_tcsncpy>
+_ftcspbrk	equ <_tcspbrk>
+_ftcsrchr	equ <_tcsrchr>
+_ftcsspn	equ <_tcsspn>
+_ftcsstr	equ <_tcsstr>
+_ftcstok	equ <_tcstok>
 
-_ftcsdup		equ <_tcsdup>
-_ftcsnset		equ <_tcsnset>
-_ftcsrev		equ <_tcsrev>
-_ftcsset		equ <_tcsset>
+_ftcsdup	equ <_tcsdup>
+_ftcsnset	equ <_tcsnset>
+_ftcsrev	equ <_tcsrev>
+_ftcsset	equ <_tcsset>
 
-_ftcscmp		equ <_tcscmp>
-_ftcsicmp		equ <_tcsicmp>
-_ftcsnccmp		equ <_tcsnccmp>
-_ftcsncmp		equ <_tcsncmp>
-_ftcsncicmp		equ <_tcsncicmp>
-_ftcsnicmp		equ <_tcsnicmp>
+_ftcscmp	equ <_tcscmp>
+_ftcsicmp	equ <_tcsicmp>
+_ftcsnccmp	equ <_tcsnccmp>
+_ftcsncmp	equ <_tcsncmp>
+_ftcsncicmp	equ <_tcsncicmp>
+_ftcsnicmp	equ <_tcsnicmp>
 
-_ftcscoll		equ <_tcscoll>
-_ftcsicoll		equ <_tcsicoll>
-_ftcsnccoll		equ <_tcsnccoll>
-_ftcsncoll		equ <_tcsncoll>
-_ftcsncicoll		equ <_tcsncicoll>
-_ftcsnicoll		equ <_tcsnicoll>
+_ftcscoll	equ <_tcscoll>
+_ftcsicoll	equ <_tcsicoll>
+_ftcsnccoll	equ <_tcsnccoll>
+_ftcsncoll	equ <_tcsncoll>
+_ftcsncicoll	equ <_tcsncicoll>
+_ftcsnicoll	equ <_tcsnicoll>
 
+_ftcsclen	equ <_tcsclen>
+_ftcsnccat	equ <_tcsnccat>
+_ftcsnccpy	equ <_tcsnccpy>
+_ftcsncset	equ <_tcsncset>
 
-_ftcsclen		equ <_tcsclen>
-_ftcsnccat		equ <_tcsnccat>
-_ftcsnccpy		equ <_tcsnccpy>
-_ftcsncset		equ <_tcsncset>
+_ftcsdec	equ <_tcsdec>
+_ftcsinc	equ <_tcsinc>
+_ftcsnbcnt	equ <_tcsnbcnt>
+_ftcsnccnt	equ <_tcsnccnt>
+_ftcsnextc	equ <_tcsnextc>
+_ftcsninc	equ <_tcsninc>
+_ftcsspnp	equ <_tcsspnp>
 
-_ftcsdec		equ <_tcsdec>
-_ftcsinc		equ <_tcsinc>
-_ftcsnbcnt		equ <_tcsnbcnt>
-_ftcsnccnt		equ <_tcsnccnt>
-_ftcsnextc		equ <_tcsnextc>
-_ftcsninc		equ <_tcsninc>
-_ftcsspnp		equ <_tcsspnp>
+_ftcslwr	equ <_tcslwr>
+_ftcsupr	equ <_tcsupr>
 
-_ftcslwr		equ <_tcslwr>
-_ftcsupr		equ <_tcsupr>
-
-_ftclen			equ <_tclen>
-_ftccpy			equ <_tccpy>
-_ftccmp			equ <_tccmp>
+_ftclen		equ <_tclen>
+_ftccpy		equ <_tccpy>
+_ftccmp		equ <_tccmp>
 
 
 ifdef  _UNICODE
 
 include wchar.inc
-
-ifndef _WCTYPE_T_DEFINED
-define _WCTYPE_T_DEFINED
-wint_t		typedef wchar_t
-wctype_t	typedef wchar_t
-endif
-
-ifndef __TCHAR_DEFINED
-define __TCHAR_DEFINED
-_TCHAR		typedef wchar_t
-_TSCHAR		typedef wchar_t
-_TUCHAR		typedef wchar_t
-_TXCHAR		typedef wchar_t
-_TINT		typedef wint_t
-endif
-
-ifndef _TCHAR_DEFINED
-define _TCHAR_DEFINED
-if NOT __STDC__
-TCHAR		typedef wchar_t
-endif
-endif
 
 define _tal		<ax>
 define _tbl		<bx>
@@ -1128,23 +1105,6 @@ ifdef  _MBCS
 
 include mbstring.inc
 
-ifndef __TCHAR_DEFINED
-_TCHAR			typedef sbyte
-_TSCHAR			typedef sbyte
-_TUCHAR			typedef byte
-_TXCHAR			typedef byte
-_TINT			typedef dword
-__TCHAR_DEFINED		equ 1
-endif
-
-ifndef _TCHAR_DEFINED
-if NOT __STDC__
-TCHAR			typedef sbyte
-endif
-_TCHAR_DEFINED		equ 1
-endif
-
-
 ifdef  _MB_MAP_DIRECT
 
 _tcschr			equ <_mbschr>
@@ -1415,22 +1375,6 @@ _istlead		equ <_ismbblead>
 _istleadbyte		equ <isleadbyte>
 
 else
-
-ifndef __TCHAR_DEFINED
-define __TCHAR_DEFINED
-_TCHAR			typedef sbyte
-_TSCHAR			typedef sbyte
-_TUCHAR			typedef byte
-_TXCHAR			typedef sbyte
-_TINT			typedef sdword
-endif
-
-ifndef _TCHAR_DEFINED
-define _TCHAR_DEFINED
-if NOT __STDC__
-TCHAR			typedef sbyte
-endif
-endif
 
 ifdef _MB_MAP_DIRECT
 
@@ -1767,20 +1711,7 @@ endif
 endif
 
 
-if 0
-_T	macro x
-	exitm<__T(x)>
-	endm
-_TEXT	macro x
-	exitm<__T(x)>
-	endm
-endif
-
 ifdef __PE__
-
-ifdef _WIN64
-option win64:3
-endif
 
 ifdef __GUI__
 

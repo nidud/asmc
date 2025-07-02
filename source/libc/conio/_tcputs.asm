@@ -10,11 +10,11 @@ include tchar.inc
 
     .code
 
-_cputts proc uses rbx string:LPTSTR
+_cputts proc uses rbx string:tstring_t
 
-    .for ( rbx = string : : rbx+=TCHAR )
+    .for ( rbx = string : : rbx+=tchar_t )
 
-        movzx ecx,TCHAR ptr [rbx]
+        movzx ecx,tchar_t ptr [rbx]
         .break .if ( ecx == 0 )
         .break .ifd ( _puttch( ecx ) == WEOF )
     .endf

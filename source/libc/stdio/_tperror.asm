@@ -11,7 +11,7 @@ include tchar.inc
 
     .code
 
-_tperror proc message:LPTSTR
+_tperror proc message:tstring_t
 
     ldr rcx,message
 

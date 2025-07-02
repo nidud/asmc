@@ -19,7 +19,7 @@ ifdef __UNIX__
     ret
 else
    .new len:int_t
-   .new codePage:UINT = CP_ACP
+   .new codePage:uint_t = CP_ACP
 
     ldr rcx,path
     ldr rdx,outPath

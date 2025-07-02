@@ -727,7 +727,6 @@ FORWARD_WM_KEYUP macro hwnd, vk, cRepeat, flags, fn
 	exitm<fn(hwnd, WM_KEYUP, vk, MAKELPARAM(cRepeat, flags))>
 	endm
 
-;; void Cls_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 HANDLE_WM_CHAR macro hwnd, wParam, lParam, fn
 	exitm<fn(hwnd, wParam, LOWORD(lParam), 0)>
 	endm
@@ -736,7 +735,6 @@ FORWARD_WM_CHAR macro hwnd, h, cRepeat, fn
 	exitm<fn(hwnd, WM_CHAR, h, MAKELPARAM(cRepeat, 0))>
 	endm
 
-;; void Cls_OnDeadChar(HWND hwnd, TCHAR ch, int cRepeat)
 HANDLE_WM_DEADCHAR macro hwnd, wParam, lParam, fn
 	exitm<fn(hwnd, wParam, LOWORD(lParam), 0)>
 	endm
@@ -763,7 +761,6 @@ FORWARD_WM_SYSKEYUP macro hwnd, vk, cRepeat, flags, fn
 	exitm<fn(hwnd, WM_SYSKEYUP, vk, MAKELPARAM(cRepeat, flags))>
 	endm
 
-;; void Cls_OnSysChar(HWND hwnd, TCHAR ch, int cRepeat)
 HANDLE_WM_SYSCHAR macro hwnd, wParam, lParam, fn
 	exitm<fn(hwnd, wParam, LOWORD(lParam), 0)>
 	endm
@@ -772,7 +769,6 @@ FORWARD_WM_SYSCHAR macro hwnd, h, cRepeat, fn
 	exitm<fn(hwnd, WM_SYSCHAR, h, MAKELPARAM(cRepeat, 0))>
 	endm
 
-;; void Cls_OnSysDeadChar(HWND hwnd, TCHAR ch, int cRepeat)
 HANDLE_WM_SYSDEADCHAR macro hwnd, wParam, lParam, fn
 	exitm<fn(hwnd, wParam, LOWORD(lParam), 0)>
 	endm
@@ -1703,7 +1699,7 @@ Edit_SetReadOnly macro hwndCtl, fReadOnly
 	endm
 
 Edit_GetPasswordChar macro hwndCtl
-	exitm<((TCHAR)SNDMSG((hwndCtl), EM_GETPASSWORDCHAR, 0, 0))>
+	exitm<(SNDMSG((hwndCtl), EM_GETPASSWORDCHAR, 0, 0))>
 	endm
 
 Edit_SetWordBreakProc macro hwndCtl, lpfnWordBreak

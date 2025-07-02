@@ -11,7 +11,7 @@ include conio.inc
 
     assume rbx:PCONSOLE
 
-_dlmove proc uses rsi rdi rbx hwnd:THWND, direction:SINT
+_dlmove proc uses rsi rdi rbx hwnd:THWND, direction:int_t
 
    .new rc:TRECT
    .new wc:TRECT

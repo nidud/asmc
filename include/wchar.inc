@@ -22,20 +22,8 @@ time_t typedef sdword
 endif
 endif
 
-ifndef _WCHAR_T_DEFINED
-define _WCHAR_T_DEFINED
-wchar_t typedef WORD
-endif
-
 WCHAR_MIN	equ 0
 WCHAR_MAX	equ 0xFFFF
-
-ifndef _WCTYPE_T_DEFINED
-define _WCTYPE_T_DEFINED
-wint_t		typedef wchar_t
-wctype_t	typedef wchar_t
-endif
-
 
 ifndef _VA_LIST_DEFINED
 define _VA_LIST_DEFINED

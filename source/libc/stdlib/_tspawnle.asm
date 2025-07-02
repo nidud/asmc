@@ -20,10 +20,10 @@ endif
 _tspawnle proc mode:int_t, name:tstring_t, arg0:tstring_t, argptr:vararg
 
     ldr rax,name
-    .if ( rax && TCHAR ptr [rax] )
+    .if ( rax && tchar_t ptr [rax] )
         ldr rax,arg0
     .endif
-    .if ( !rax || TCHAR ptr [rax] == 0 )
+    .if ( !rax || tchar_t ptr [rax] == 0 )
         .return( _set_errno(EINVAL) )
     .endif
 

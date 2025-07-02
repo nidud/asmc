@@ -11,9 +11,9 @@ include tchar.inc
     .code
 
     option dotname
-    assume rcx:ptr TCHAR
+    assume rcx:ptr tchar_t
 
-_tcscat_s proc uses rbx dst:LPTSTR, cnt:size_t, src:LPTSTR
+_tcscat_s proc uses rbx dst:tstring_t, cnt:size_t, src:tstring_t
 
     ldr     rcx,dst
     ldr     rbx,cnt
@@ -31,7 +31,7 @@ endif
 .0:
     cmp     _tal,[rcx]
     je      .1
-    add     rcx,TCHAR
+    add     rcx,tchar_t
     dec     rbx
     jnz     .0
     jmp     .4
@@ -42,8 +42,8 @@ endif
     jz      .7
     test    eax,eax
     jz      .3
-    add     rcx,TCHAR
-    add     rdx,TCHAR
+    add     rcx,tchar_t
+    add     rdx,tchar_t
     mov     [rcx],[rdx]
     jmp     .2
 .3:

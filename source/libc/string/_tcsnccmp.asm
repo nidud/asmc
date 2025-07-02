@@ -14,22 +14,22 @@ include tchar.inc
 
     option dotname
 
-_tcsnccmp proc uses rbx a:LPTSTR, b:LPTSTR, count:size_t
+_tcsnccmp proc uses rbx a:tstring_t, b:tstring_t, count:size_t
 
     ldr     rcx,a
     ldr     rbx,count
     ldr     rdx,b
     mov     eax,1
-    sub     rcx,TCHAR
-    sub     rdx,TCHAR
+    sub     rcx,tchar_t
+    sub     rdx,tchar_t
 .0:
     test    eax,eax
     jz      .2
     test    ebx,ebx
     jz      .1
     dec     rbx
-    add     rcx,TCHAR
-    add     rdx,TCHAR
+    add     rcx,tchar_t
+    add     rdx,tchar_t
     mov     _tal,[rcx]
     cmp     _tal,[rdx]
     je      .0

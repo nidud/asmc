@@ -19,7 +19,7 @@ endif
 
 .code
 
-_tmakepath proc uses rsi rdi rbx path:LPTSTR, drive:LPTSTR, dir:LPTSTR, fname:LPTSTR, ext:LPTSTR
+_tmakepath proc uses rsi rdi rbx path:tstring_t, drive:tstring_t, dir:tstring_t, fname:tstring_t, ext:tstring_t
 
     ldr rdi,path
     ldr rsi,drive
@@ -41,7 +41,7 @@ _tmakepath proc uses rsi rdi rbx path:LPTSTR, drive:LPTSTR, dir:LPTSTR, fname:LP
     ldr rsi,dir
     .if ( rsi )
 
-        movzx eax,TCHAR ptr [rsi]
+        movzx eax,tchar_t ptr [rsi]
         .if ( eax != '\' && eax != '/' && ebx )
 ifdef __UNIX__
             mov eax,'/'
@@ -64,7 +64,7 @@ endif
 
         .if ( ebx )
 
-            movzx eax,TCHAR ptr [rdi-TCHAR]
+            movzx eax,tchar_t ptr [rdi-tchar_t]
             .if ( eax != '\' && eax != '/' )
 ifdef __UNIX__
                 mov eax,'/'
@@ -85,7 +85,7 @@ endif
     ldr rsi,ext
     .if ( rsi )
 
-        movzx eax,TCHAR ptr [rsi]
+        movzx eax,tchar_t ptr [rsi]
         .if ( eax != '.' )
 
             mov eax,'.'
@@ -98,7 +98,7 @@ endif
             .stosb
         .endw
     .endif
-    mov TCHAR ptr [rdi],0
+    mov tchar_t ptr [rdi],0
     mov rax,path
     ret
 

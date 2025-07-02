@@ -19,10 +19,10 @@ else
 D3DX10CompileFromResource equ <D3DX10CompileFromResourceA>
 endif
 
-D3DX10CompileFromMemory proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
+D3DX10CompileFromMemory proto WINAPI :LPCSTR, :size_t, :LPCSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
 D3DX10CreateEffectFromFileA proto WINAPI :LPCSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10CreateEffectFromFileW proto WINAPI :LPCWSTR, :ptr, :ptr, :LPCSTR,:UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-D3DX10CreateEffectFromMemory proto WINAPI :ptr, :SIZE_T, :LPCSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DX10CreateEffectFromMemory proto WINAPI :ptr, :size_t, :LPCSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10CreateEffectFromResourceA proto WINAPI :HMODULE, :LPCSTR, :LPCSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10CreateEffectFromResourceW proto WINAPI :HMODULE, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 
@@ -36,7 +36,7 @@ endif
 
 D3DX10CreateEffectPoolFromFileA proto WINAPI :LPCSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10CreateEffectPoolFromFileW proto WINAPI :LPCWSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr
-D3DX10CreateEffectPoolFromMemory proto WINAPI :ptr, :SIZE_T, :LPCSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DX10CreateEffectPoolFromMemory proto WINAPI :ptr, :size_t, :LPCSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10CreateEffectPoolFromResourceA proto WINAPI :HMODULE, :LPCSTR, :LPCSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10CreateEffectPoolFromResourceW proto WINAPI :HMODULE, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :LPCSTR, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
@@ -49,7 +49,7 @@ endif
 
 D3DX10PreprocessShaderFromFileA proto WINAPI :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10PreprocessShaderFromFileW proto WINAPI :LPCWSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-D3DX10PreprocessShaderFromMemory proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+D3DX10PreprocessShaderFromMemory proto WINAPI :LPCSTR, :size_t, :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10PreprocessShaderFromResourceA proto WINAPI :HMODULE, :LPCSTR, :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10PreprocessShaderFromResourceW proto WINAPI :HMODULE, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 
@@ -67,7 +67,7 @@ D3DX10CreateAsyncEffectPoolCreateProcessor proto WINAPI :LPCSTR, :ptr, :ptr, :LP
 D3DX10CreateAsyncShaderPreprocessProcessor proto WINAPI :LPCSTR, :ptr, :ptr, :ptr, :ptr, :ptr
 D3DX10CreateAsyncFileLoaderW proto WINAPI :LPCWSTR, :ptr
 D3DX10CreateAsyncFileLoaderA proto WINAPI :LPCSTR, :ptr
-D3DX10CreateAsyncMemoryLoader proto WINAPI :ptr, :SIZE_T, :ptr
+D3DX10CreateAsyncMemoryLoader proto WINAPI :ptr, :size_t, :ptr
 D3DX10CreateAsyncResourceLoaderW proto WINAPI :HMODULE, :LPCWSTR, :ptr
 D3DX10CreateAsyncResourceLoaderA proto WINAPI :HMODULE, :LPCSTR, :ptr
 

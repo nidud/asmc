@@ -25,7 +25,7 @@ D3DXF_FILELOADRESOURCE	ENDS
 
 D3DXF_FILELOADMEMORY	STRUC
 lpMemory		PVOID ?
-dSize			SIZE_T ?
+dSize			size_t ?
 D3DXF_FILELOADMEMORY	ENDS
 
 ifndef _NO_COM
@@ -43,14 +43,14 @@ D3DXFileCreate proto WINAPI :ptr
 
     CreateEnumObject	proc :ptr, :D3DXF_FILELOADOPTIONS, :ptr
     CreateSaveObject	proc :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
-    RegisterTemplates	proc :ptr, :SIZE_T
+    RegisterTemplates	proc :ptr, :size_t
     RegisterEnumTemplates proc :ptr
    .ends
 
 .comdef ID3DXFileSaveObject : public IUnknown
 
     GetFile		proc :ptr
-    AddDataObject	proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
+    AddDataObject	proc :REFGUID, :ptr, :ptr, :size_t, :ptr, :ptr
     Save		proc
    .ends
 
@@ -60,7 +60,7 @@ D3DXFileCreate proto WINAPI :ptr
     GetName		proc :ptr, :ptr
     GetId		proc :LPGUID
     GetType		proc :ptr
-    AddDataObject	proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
+    AddDataObject	proc :REFGUID, :ptr, :ptr, :size_t, :ptr, :ptr
     AddDataReference	proc :ptr, :ptr
    .ends
 
@@ -68,7 +68,7 @@ D3DXFileCreate proto WINAPI :ptr
 
     GetFile		proc :ptr
     GetChildren		proc :ptr
-    GetChild		proc :SIZE_T, :ptr
+    GetChild		proc :size_t, :ptr
     GetDataObjectById	proc :REFGUID, :ptr
     GetDataObjectByName proc :ptr, :ptr
    .ends
@@ -83,7 +83,7 @@ D3DXFileCreate proto WINAPI :ptr
     GetType		proc :ptr
     IsReference		proc
     GetChildren		proc :ptr
-    GetChild		proc :SIZE_T, :ptr
+    GetChild		proc :size_t, :ptr
    .ends
 
 _FACD3DXF		equ 0x876

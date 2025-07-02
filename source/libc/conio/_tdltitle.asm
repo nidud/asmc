@@ -10,7 +10,7 @@ include conio.inc
 
     assume rbx:THWND
 
-_dltitle proc uses rbx hwnd:THWND, string:LPTSTR
+_dltitle proc uses rbx hwnd:THWND, string:tstring_t
 
     mov rbx,hwnd
    .new rc:TRECT = { 0, 0, [rbx].rc.col, 1}

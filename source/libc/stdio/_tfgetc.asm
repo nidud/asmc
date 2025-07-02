@@ -76,12 +76,12 @@ ifdef _UNICODE
 binary_mode:
 endif
 
-    .if ( [rcx]._iobuf._cnt >= TCHAR )
+    .if ( [rcx]._iobuf._cnt >= tchar_t )
 
-        sub [rcx]._iobuf._cnt,TCHAR
+        sub [rcx]._iobuf._cnt,tchar_t
         mov rdx,[rcx]._iobuf._ptr
-        add [rcx]._iobuf._ptr,TCHAR
-        movzx eax,TCHAR ptr [rdx]
+        add [rcx]._iobuf._ptr,tchar_t
+        movzx eax,tchar_t ptr [rdx]
     .else
         _tfilbuf(rcx)
     .endif

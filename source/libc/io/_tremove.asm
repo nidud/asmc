@@ -15,7 +15,7 @@ include tchar.inc
 
 .code
 
-_tremove proc file:LPTSTR
+_tremove proc file:tstring_t
 
     ldr rcx,file
 

@@ -32,7 +32,7 @@ endif
 
     .code
 
-_isatty proc handle:SINT
+_isatty proc handle:int_t
 
     ldr ecx,handle
 

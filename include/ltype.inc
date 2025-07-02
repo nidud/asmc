@@ -56,9 +56,9 @@ endif
 
 .pragma warning(disable: 8019) ; assume byte..
 
-islascii    proto watcall :TCHAR { retm<(eax !< 128)> }
-islprint    proto watcall :TCHAR { retm<(eax !>= 0x20 && eax !<= 0x7e)> }
-islgraph    proto watcall :TCHAR { retm<(eax !>= 0x21 && eax !<= 0x7e)> }
+islascii    proto watcall :tchar_t { retm<(eax !< 128)> }
+islprint    proto watcall :tchar_t { retm<(eax !>= 0x20 && eax !<= 0x7e)> }
+islgraph    proto watcall :tchar_t { retm<(eax !>= 0x21 && eax !<= 0x7e)> }
 
 ifdef _WIN64
 ;
@@ -123,7 +123,7 @@ endif
 
 ltokstartc proto fastcall string:LPTSTR {
     .while ( islspace( [rcx] ) )
-        add rcx,TCHAR
+        add rcx,tchar_t
     .endw
     }
 
@@ -134,25 +134,25 @@ ltokstart proto fastcall string:LPTSTR {
 
 lprevtokc proto fastcall string_pos:LPTSTR, start_pos:LPTSTR {
     .while ( rcx > rdx && !islabel( [rcx] ) )
-        sub rcx,TCHAR
+        sub rcx,tchar_t
     .endw
     .while ( rcx > rdx && islabel( [rcx] ) )
-        sub rcx,TCHAR
+        sub rcx,tchar_t
     .endw
     .if ( !islabel( eax ) )
-        .if ( islabel( [rcx+TCHAR] ) )
-            add rcx,TCHAR
+        .if ( islabel( [rcx+tchar_t] ) )
+            add rcx,tchar_t
         .endif
-        movzx eax,TCHAR ptr[rcx]
+        movzx eax,tchar_t ptr[rcx]
     .endif
     }
 
 lnexttokc proto fastcall string_pos:LPTSTR {
     .while ( islabel( [rcx] ) )
-        add rcx,TCHAR
+        add rcx,tchar_t
     .endw
     .while ( eax && !islabel( [rcx] ) )
-        add rcx,TCHAR
+        add rcx,tchar_t
     .endw
     }
 

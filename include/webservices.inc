@@ -2996,8 +2996,8 @@ WsSetFaultErrorProperty proto WINAPI :ptr, :WS_FAULT_ERROR_PROPERTY_ID, :ptr, :U
 WsCreateFaultFromError proto WINAPI :ptr, :HRESULT, :WS_FAULT_DISCLOSURE, :ptr, :ptr
 WsSetFaultErrorDetail proto WINAPI :ptr, :ptr, :WS_WRITE_OPTION, :ptr, :ULONG
 WsGetFaultErrorDetail proto WINAPI :ptr, :ptr, :WS_READ_OPTION, :ptr, :ptr, :ULONG
-WsCreateHeap proto WINAPI :SIZE_T, :SIZE_T, :ptr, :ULONG, :ptr, :ptr
-WsAlloc proto WINAPI :ptr, :SIZE_T, :ptr, :ptr
+WsCreateHeap proto WINAPI :size_t, :size_t, :ptr, :ULONG, :ptr, :ptr
+WsAlloc proto WINAPI :ptr, :size_t, :ptr, :ptr
 WsGetHeapProperty proto WINAPI :ptr, :WS_HEAP_PROPERTY_ID, :ptr, :ULONG, :ptr
 WsResetHeap proto WINAPI :ptr, :ptr
 WsFreeHeap proto WINAPI :ptr

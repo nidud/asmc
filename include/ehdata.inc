@@ -81,22 +81,16 @@ EH_EMPTY_STATE		equ -1
 ifndef ONLY_VALUES
 
 PMD			STRUC
-ifdef _WIN64
-mdisp			SINT ?
-pdisp			SINT ?
-vdisp			SINT ?
-else
 mdisp			ptrdiff_t ?
 pdisp			ptrdiff_t ?
 vdisp			ptrdiff_t ?
-endif
 PMD			ENDS
 
 ifndef WANT_NO_TYPES
 if _EH_RELATIVE_OFFSETS AND NOT defined(VERSP_IA64) AND NOT defined(_M_CEE_PURE)
 PMFN typedef sdword
 else
-CALLBACK(PMFN, :LPVOID)
+CALLBACK(PMFN, :ptr)
 endif
 endif
 

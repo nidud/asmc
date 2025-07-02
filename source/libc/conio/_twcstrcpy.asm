@@ -16,7 +16,7 @@ endif
 
     .code
 
-wcstrcpy proc uses rsi rdi rbx cp:LPTSTR, wc:PCHAR_INFO, count:int_t
+wcstrcpy proc uses rsi rdi rbx cp:tstring_t, wc:PCHAR_INFO, count:int_t
 
     ldr rdi,cp
     ldr rsi,wc
@@ -52,7 +52,7 @@ wcstrcpy proc uses rsi rdi rbx cp:LPTSTR, wc:PCHAR_INFO, count:int_t
             _tstosb
         .untilcxz
     .until 1
-    mov TCHAR ptr [rdi],0
+    mov tchar_t ptr [rdi],0
     _tcstrim(cp)
     ret
 

@@ -1,31 +1,23 @@
-.pragma list(push, 0)
-ifndef __LIBC_INC
-define __LIBC_INC
+; LIBC.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; Master include file for the Asmc Run Time library.
 ;
+.pragma list(push, 0)
+
+ifndef __LIBC_INC
+define __LIBC_INC
 define __STDC__
 define __LIBC__ 236
-ifdef __ASMC__
+
+option casemap:none
+
 if ( __ASMC__ LT __LIBC__ )
 .err <incorrect version. Use the header that matches with the Asmc Assembler.>
 endif
-endif
-option casemap:none
 
-;
-; Architecture kinds:
-;     _WIN64 (#define symbols)
-;     _X86_
-;     _AMD64_
-;     _IA64_
-;
-; Machine Architectures:
-;     _M_IX86_16
-;     _M_IX86
-;     _M_AMD64
-;     _M_IA64
-;
 ifdef _WIN64
 ifdef _IA64_
 define _M_IA64
@@ -58,7 +50,7 @@ ifdef __UNIX__
 define __Ctype	<syscall>
 define __Cdecl	<syscall>
 define __cdecl	<syscall>
-elseif defined(@Model) and (@Model le 6)
+elseifdef _M_IX86_16
 define __Cdecl	<c>
 ifndef __cdecl
 define __cdecl	<c>
@@ -67,9 +59,6 @@ ifndef __Ctype
 define __Ctype	<c>
 endif
 option proc:public, language:__Ctype, dotname
-int_t  typedef sword
-uint_t typedef word
-SIZE_T typedef word
 elseifdef _STDCALL_SUPPORTED
 define __Cdecl	<c>
 define __Ctype	<stdcall>
@@ -144,7 +133,7 @@ ifndef _WIN32
 define _WIN32 ; default
 endif
 
-if defined(@Model) and (@Model le 6)
+ifdef _M_IX86_16
 if @DataSize
 define ldsl <lds>
 define lesl <les>
@@ -182,7 +171,6 @@ option language:__Ctype
 else
 .model flat, __Ctype
 endif
-SIZE_T typedef dword
 else
 option win64:3
 ifdef __UNIX__
@@ -190,92 +178,76 @@ option cstack:on
 else
 option frame:auto
 endif
-SIZE_T typedef qword
 endif
+
+ifndef _SIZE_T_DEFINED
+define _SIZE_T_DEFINED
+ifdef _M_X64
+size_t		typedef qword
+ssize_t		typedef sqword
+elseifndef _M_IX86_16
+size_t		typedef dword
+ssize_t		typedef sdword
+else
+size_t		typedef word
+ssize_t		typedef sword
+endif
+endif
+psize_t		typedef ptr size_t
+pssize_t	typedef ptr ssize_t
+
+ifndef _M_IX86_16
+int_t		typedef sdword
+uint_t		typedef dword
+else
+int_t		typedef sword
+uint_t		typedef word
+endif
+SINT		typedef int_t
+UINT		typedef uint_t
+ifndef _ERRNO_T_DEFINED
+define _ERRNO_T_DEFINED
+errno_t		typedef int_t
+endif
+
+if defined(__UNIX__) and defined(_WIN64)
+long_t		typedef sqword
+ulong_t		typedef qword
+else
+long_t		typedef sdword
+ulong_t		typedef dword
+endif
+ULONG		typedef dword
 
 ifndef _WCHAR_T_DEFINED
 define _WCHAR_T_DEFINED
-wchar_t typedef word
+wchar_t		typedef word
 endif
 
 ifndef _WCTYPE_T_DEFINED
 define _WCTYPE_T_DEFINED
-wint_t typedef wchar_t
-wctype_t typedef wchar_t
+wint_t		typedef word
+wctype_t	typedef word
 endif
 
 ifndef _TCHAR_DEFINED
 define _TCHAR_DEFINED
 ifdef _UNICODE
-TCHAR	typedef wchar_t
-PTCHAR	typedef ptr wchar_t
-PTBYTE	typedef ptr wchar_t
-LPTSTR	typedef ptr wchar_t
+tchar_t		typedef word
+tstring_t	typedef ptr word
 else
-TCHAR	typedef sbyte
-PTCHAR	typedef ptr sbyte
-LPTSTR	typedef ptr sbyte
-PTBYTE	typedef ptr byte
+tchar_t		typedef sbyte
+tstring_t	typedef ptr sbyte
 endif
-endif
-
-; the following should be set depending on the sizes of various types
-
-ifndef LONGDOUBLE_IS_DOUBLE
-define LONGDOUBLE_IS_DOUBLE 0
-if defined(__UNIX__) and defined(_WIN64)
-define LONG_IS_INT     0
-else
-define LONG_IS_INT     1
-endif
-define SHORT_IS_INT    0
-ifdef _WIN64
-define PTR_IS_INT      0
-ifdef __UNIX__
-define PTR_IS_LONG     1
-else
-define PTR_IS_LONG     0
-endif
-else
-define PTR_IS_INT      1
-define PTR_IS_LONG     1
-endif
+TCHAR		typedef tchar_t
+LPTSTR		typedef tstring_t
 endif
 
 ptr_t		typedef ptr
 char_t		typedef sbyte
 uchar_t		typedef byte
-if SHORT_IS_INT
-short_t		typedef sdword
-ushort_t	typedef dword
-else
 short_t		typedef sword
 ushort_t	typedef word
-endif
-ifndef int_t
-int_t		typedef sdword
-uint_t		typedef dword
-endif
-if LONG_IS_INT
-long_t		typedef sdword
-ulong_t		typedef dword
-else
-long_t		typedef sqword
-ulong_t		typedef qword
-endif
-half_t		typedef real2
-float_t		typedef real4
-double_t	typedef real8
-if LONGDOUBLE_IS_DOUBLE
-ldouble_t	typedef real8
-else
-ldouble_t	typedef real10
-endif
-qfloat_t	typedef real16
-
-string_t	typedef ptr sbyte
-ustring_t	typedef ptr byte
-wstring_t	typedef ptr word
 
 int8_t		typedef sbyte
 int16_t		typedef sword
@@ -289,9 +261,38 @@ uint32_t	typedef dword
 uint64_t	typedef qword
 uint128_t	typedef oword
 
-ifndef _ERRNO_T_DEFINED
-define _ERRNO_T_DEFINED
-errno_t typedef int_t
+half_t		typedef real2
+float_t		typedef real4
+double_t	typedef real8
+ldouble_t	typedef real10
+qfloat_t	typedef real16
+
+string_t	typedef ptr sbyte
+ustring_t	typedef ptr byte
+wstring_t	typedef ptr word
+
+PVOID		typedef ptr
+HANDLE		typedef ptr
+LPSTR		typedef ptr sbyte
+LPWSTR		typedef ptr word
+LPBYTE		typedef ptr byte
+LPWORD		typedef ptr word
+LPDWORD		typedef ptr dword
+LPQWORD		typedef ptr qword
+
+ifndef _INTPTR_T_DEFINED
+define _INTPTR_T_DEFINED
+intptr_t	typedef ssize_t
+endif
+
+ifndef _UINTPTR_T_DEFINED
+define _UINTPTR_T_DEFINED
+uintptr_t	typedef size_t
+endif
+
+ifndef _PTRDIFF_T_DEFINED
+define _PTRDIFF_T_DEFINED
+ptrdiff_t typedef ssize_t
 endif
 
 ifdef __DEBUG__
@@ -310,40 +311,10 @@ array_t		typedef ptr ptr sbyte
 warray_t	typedef ptr ptr word
 endif
 ifdef _UNICODE
-tchar_t		typedef word
 tarray_t	typedef warray_t
-tstring_t	typedef ptr word
 else
-tchar_t		typedef sbyte
 tarray_t	typedef array_t
-tstring_t	typedef ptr sbyte
 endif
-
-ifndef _INTPTR_T_DEFINED
-define _INTPTR_T_DEFINED
-ifdef _WIN64
-intptr_t	typedef sqword
-else
-intptr_t	typedef int_t
-endif
-endif
-
-ifndef _SIZE_T_DEFINED
-define _SIZE_T_DEFINED
-size_t		typedef SIZE_T
-endif
-
-SINT		typedef int_t
-UINT		typedef uint_t
-ULONG		typedef dword
-PVOID		typedef ptr
-HANDLE		typedef ptr
-LPSTR		typedef ptr sbyte
-LPWSTR		typedef ptr wchar_t
-LPBYTE		typedef ptr byte
-LPWORD		typedef ptr word
-LPDWORD		typedef ptr dword
-LPQWORD		typedef ptr qword
 
 define TRUE	1
 define FALSE	0
@@ -407,4 +378,3 @@ endif
 endif
 endif
 .pragma list(pop)
-

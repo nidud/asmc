@@ -60,20 +60,6 @@ endif
 
 endif
 
-ifndef _WCHAR_T_DEFINED
-wchar_t			typedef WORD
-_WCHAR_T_DEFINED	equ 1
-endif
-
-ifndef _SIZE_T_DEFINED
-ifdef _WIN64
-size_t			typedef QWORD
-else
-size_t			typedef DWORD
-endif
-_SIZE_T_DEFINED		equ 1
-endif
-
 ifdef __RPC_WIN32__
 if   (_MSC_VER GE 800) OR defined(_STDCALL_SUPPORTED)
 __RPC_CALLEE		equ <stdcall>

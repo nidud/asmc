@@ -29,7 +29,7 @@ _tgetpath proc uses rbx src:tstring_t, dst:tstring_t, maxlen:size_t
     ldr rdx,dst
 
     .while ( [rbx] == DELIM )
-        add rbx,TCHAR
+        add rbx,tchar_t
     .endw
     mov src,rbx
     dec rcx
@@ -43,40 +43,40 @@ ifdef _HPFS_
 
             mov _tal,[rbx]
             mov [rdx],_tal
-            add rdx,TCHAR
-            add rbx,TCHAR
+            add rdx,tchar_t
+            add rbx,tchar_t
             dec rcx
             jz  error
 
         .else
 
-            add rbx,TCHAR
+            add rbx,tchar_t
             .while ( [rbx] && [rbx] != '"' )
 
                 mov _tal,[rbx]
                 mov [rdx],_tal
-                add rdx,TCHAR
-                add rbx,TCHAR
+                add rdx,tchar_t
+                add rbx,tchar_t
                 dec rcx
                 jz  error
             .endw
             .if ( [rbx] )
-                add rbx,TCHAR
+                add rbx,tchar_t
             .endif
         .endif
 
 else
         mov _tal,[rbx]
         mov [rdx],_tal
-        add rdx,TCHAR
-        add rbx,TCHAR
+        add rdx,tchar_t
+        add rbx,tchar_t
         dec rcx
         jz  error
 endif
     .endw
 
     .while ( [rbx] == DELIM )
-        add rbx,TCHAR
+        add rbx,tchar_t
     .endw
 
 appendnull:

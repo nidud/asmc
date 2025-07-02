@@ -826,7 +826,7 @@ Category		D3D11_MESSAGE_CATEGORY ?
 Severity		D3D11_MESSAGE_SEVERITY ?
 ID			D3D11_MESSAGE_ID ?
 pDescription		LPSTR ?
-DescriptionByteLength	SIZE_T ?
+DescriptionByteLength	size_t ?
 D3D11_MESSAGE		ENDS
 
 LPD3D11_MESSAGE_CATEGORY typedef ptr D3D11_MESSAGE_CATEGORY

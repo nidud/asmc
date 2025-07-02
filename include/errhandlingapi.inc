@@ -55,6 +55,6 @@ endif
 GetThreadErrorMode proto WINAPI
 SetThreadErrorMode proto WINAPI :DWORD, :LPDWORD
 
-TerminateProcessOnMemoryExhaustion proto WINAPI :SIZE_T
+TerminateProcessOnMemoryExhaustion proto WINAPI :size_t
 
 endif

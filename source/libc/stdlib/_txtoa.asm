@@ -11,9 +11,9 @@ include tchar.inc
 
 ifdef _WIN64
 
-_txtoa proc val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
+_txtoa proc val:qword, buffer:tstring_t, radix:int_t, is_neg:int_t
 
-   .new convbuf[256]:TCHAR
+   .new convbuf[256]:tchar_t
 
     ldr r8d,radix
     ldr r9d,is_neg
@@ -25,19 +25,19 @@ _txtoa proc val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
 
     .if ( r9d )
 
-        mov TCHAR ptr [rdx],'-'
-        add rdx,TCHAR
+        mov tchar_t ptr [rdx],'-'
+        add rdx,tchar_t
         neg rax
     .endif
 
     .if ( rax == 0 )
 
-        mov TCHAR ptr [rdx],'0'
-        mov TCHAR ptr [rdx+TCHAR],0
+        mov tchar_t ptr [rdx],'0'
+        mov tchar_t ptr [rdx+tchar_t],0
        .return( r10 )
     .endif
 
-    mov ecx,sizeof(convbuf)-TCHAR
+    mov ecx,sizeof(convbuf)-tchar_t
     mov convbuf[rcx],0
 
     .fors ( r9 = rdx : rax && ecx : )
@@ -48,15 +48,15 @@ _txtoa proc val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
         .ifs ( dl > '9' )
             add dl,('A' - '9' - 1)
         .endif
-        sub ecx,TCHAR
+        sub ecx,tchar_t
         mov convbuf[rcx],_tdl
     .endf
 
     .repeat
         mov _tal,convbuf[rcx]
-        add ecx,TCHAR
+        add ecx,tchar_t
         mov [r9],_tal
-        add r9,TCHAR
+        add r9,tchar_t
     .until ( _tal == 0 )
     .return( r10 )
 
@@ -64,9 +64,9 @@ _txtoa endp
 
 else
 
-_txtoa proc uses esi edi ebx val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
+_txtoa proc uses esi edi ebx val:qword, buffer:tstring_t, radix:int_t, is_neg:int_t
 
-   .new convbuf[128]:TCHAR
+   .new convbuf[128]:tchar_t
 
     mov eax,dword ptr val[0]
     mov edx,dword ptr val[4]
@@ -75,8 +75,8 @@ _txtoa proc uses esi edi ebx val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
 
     .ifs ( is_neg )
 
-        mov TCHAR ptr [edi],'-'
-        add edi,TCHAR
+        mov tchar_t ptr [edi],'-'
+        add edi,tchar_t
 
         neg edx
         neg eax
@@ -85,12 +85,12 @@ _txtoa proc uses esi edi ebx val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
 
     .if ( eax == 0 && edx == 0 )
 
-        mov TCHAR ptr [edi],'0'
-        mov TCHAR ptr [edi+TCHAR],0
+        mov tchar_t ptr [edi],'0'
+        mov tchar_t ptr [edi+tchar_t],0
        .return( buffer )
     .endif
 
-    mov ecx,sizeof(convbuf)-TCHAR
+    mov ecx,sizeof(convbuf)-tchar_t
     mov convbuf[ecx],0
 
     push edi
@@ -126,16 +126,16 @@ _txtoa proc uses esi edi ebx val:qword, buffer:LPTSTR, radix:int_t, is_neg:int_t
         .ifs ( ebx > '9' )
             add bl,('A' - '9' - 1)
         .endif
-        sub ecx,TCHAR
+        sub ecx,tchar_t
         mov convbuf[ecx],_tbl
     .endf
     pop edi
 
     .repeat
         mov _tal,convbuf[ecx]
-        add ecx,TCHAR
+        add ecx,tchar_t
         mov [edi],_tal
-        add edi,TCHAR
+        add edi,tchar_t
     .until ( _tal == 0 )
     .return( buffer )
 

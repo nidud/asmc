@@ -7,8 +7,8 @@ include minwindef.inc
 include minwinbase.inc
 
 IsEnclaveTypeSupported proto WINAPI :DWORD
-CreateEnclave proto WINAPI :HANDLE, :LPVOID, :SIZE_T, :SIZE_T, :DWORD, :LPCVOID, :DWORD, :LPDWORD
-LoadEnclaveData proto WINAPI :HANDLE, :LPVOID, :LPCVOID, :SIZE_T, :DWORD, :LPCVOID, :DWORD, :PSIZE_T, :LPDWORD
+CreateEnclave proto WINAPI :HANDLE, :LPVOID, :size_t, :size_t, :DWORD, :LPCVOID, :DWORD, :LPDWORD
+LoadEnclaveData proto WINAPI :HANDLE, :LPVOID, :LPCVOID, :size_t, :DWORD, :LPCVOID, :DWORD, :psize_t, :LPDWORD
 InitializeEnclave proto WINAPI :HANDLE, :LPVOID, :LPCVOID, :DWORD, :LPDWORD
 
 LoadEnclaveImageA proto WINAPI :LPVOID, :LPCSTR

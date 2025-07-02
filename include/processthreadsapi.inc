@@ -81,9 +81,9 @@ ExitProcess proto WINAPI :UINT
 TerminateProcess proto WINAPI :HANDLE, :UINT
 GetExitCodeProcess proto WINAPI :HANDLE, :LPDWORD
 SwitchToThread proto WINAPI
-CreateThread proto WINAPI :LPSECURITY_ATTRIBUTES, :SIZE_T, :LPTHREAD_START_ROUTINE, :LPVOID, :DWORD, :LPDWORD
+CreateThread proto WINAPI :LPSECURITY_ATTRIBUTES, :size_t, :LPTHREAD_START_ROUTINE, :LPVOID, :DWORD, :LPDWORD
 
-CreateRemoteThread proto WINAPI :HANDLE, :LPSECURITY_ATTRIBUTES, :SIZE_T, :LPTHREAD_START_ROUTINE, :LPVOID, :DWORD, :LPDWORD
+CreateRemoteThread proto WINAPI :HANDLE, :LPSECURITY_ATTRIBUTES, :size_t, :LPTHREAD_START_ROUTINE, :LPVOID, :DWORD, :LPDWORD
 
 GetCurrentThread proto WINAPI
 GetCurrentThreadId proto WINAPI
@@ -167,12 +167,12 @@ endif
 if (_WIN32_WINNT ge 0x0600)
 
 GetProcessIdOfThread proto WINAPI :HANDLE
-InitializeProcThreadAttributeList proto WINAPI :LPPROC_THREAD_ATTRIBUTE_LIST, :DWORD, :DWORD, :PSIZE_T
+InitializeProcThreadAttributeList proto WINAPI :LPPROC_THREAD_ATTRIBUTE_LIST, :DWORD, :DWORD, :psize_t
 DeleteProcThreadAttributeList proto WINAPI :LPPROC_THREAD_ATTRIBUTE_LIST
 
 define PROC_THREAD_ATTRIBUTE_REPLACE_VALUE     0x00000001
 
-UpdateProcThreadAttribute proto WINAPI :LPPROC_THREAD_ATTRIBUTE_LIST, :DWORD, :DWORD_PTR, :PVOID, :SIZE_T, :PVOID, :PSIZE_T
+UpdateProcThreadAttribute proto WINAPI :LPPROC_THREAD_ATTRIBUTE_LIST, :DWORD, :DWORD_PTR, :ptr, :size_t, :ptr, :psize_t
 if (NTDDI_VERSION ge NTDDI_WIN10_VB)
 SetProcessDynamicEHContinuationTargets proto WINAPI :HANDLE, :USHORT, :PPROCESS_DYNAMIC_EH_CONTINUATION_TARGET
 endif
@@ -187,7 +187,7 @@ define PROCESS_AFFINITY_ENABLE_AUTO_UPDATE 0x00000001
 SetProcessAffinityUpdateMode proto WINAPI :HANDLE, :DWORD
 QueryProcessAffinityUpdateMode proto WINAPI :HANDLE, :LPDWORD
 
-CreateRemoteThreadEx proto WINAPI :HANDLE, :LPSECURITY_ATTRIBUTES, :SIZE_T, :LPTHREAD_START_ROUTINE, :LPVOID, :DWORD, :LPPROC_THREAD_ATTRIBUTE_LIST, :LPDWORD
+CreateRemoteThreadEx proto WINAPI :HANDLE, :LPSECURITY_ATTRIBUTES, :size_t, :LPTHREAD_START_ROUTINE, :ptr, :DWORD, :LPPROC_THREAD_ATTRIBUTE_LIST, :LPDWORD
 
 ifndef MIDL_PASS
 if (_WIN32_WINNT ge 0x0602)
@@ -197,16 +197,16 @@ GetThreadContext proto WINAPI :HANDLE, :LPCONTEXT
 endif
 
 if (_WIN32_WINNT ge 0x0602)
-GetProcessMitigationPolicy proto WINAPI :HANDLE, :PROCESS_MITIGATION_POLICY, :PVOID, :SIZE_T
+GetProcessMitigationPolicy proto WINAPI :HANDLE, :PROCESS_MITIGATION_POLICY, :ptr, :size_t
 endif
 
 SetThreadContext proto WINAPI :HANDLE, :ptr
 
 if (_WIN32_WINNT ge 0x0602)
-SetProcessMitigationPolicy proto WINAPI :PROCESS_MITIGATION_POLICY, :PVOID, :SIZE_T
+SetProcessMitigationPolicy proto WINAPI :PROCESS_MITIGATION_POLICY, :ptr, :size_t
 endif
 
-FlushInstructionCache proto WINAPI :HANDLE, :LPCVOID, :SIZE_T
+FlushInstructionCache proto WINAPI :HANDLE, :ptr, :size_t
 
 GetThreadTimes proto WINAPI :HANDLE, :LPFILETIME, :LPFILETIME, :LPFILETIME, :LPFILETIME
 OpenProcess proto WINAPI :DWORD, :BOOL, :DWORD

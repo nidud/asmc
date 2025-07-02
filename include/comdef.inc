@@ -202,14 +202,14 @@ _com_dispatch_raw_method proto :ptr IDispatch, :DISPID, :WORD, :VARTYPE, :ptr, :
             strlen(rcx)
           endif
             mov rcx,this.m_pszMsg
-            .if rax > 1 && TCHAR ptr [rcx+rax - 1*TCHAR] == '\n'
-                mov TCHAR ptr [rcx+rax - 1*TCHAR],0
-                .if TCHAR ptr [rcx+rax - 2*TCHAR] == '\r'
-                    mov TCHAR ptr [rcx+rax - 2*TCHAR],0
+            .if rax > 1 && tchar_t ptr [rcx+rax - 1*tchar_t] == '\n'
+                mov tchar_t ptr [rcx+rax - 1*tchar_t],0
+                .if tchar_t ptr [rcx+rax - 2*tchar_t] == '\r'
+                    mov tchar_t ptr [rcx+rax - 2*tchar_t],0
                 .endif
             .endif
         .else
-            mov this.m_pszMsg,LocalAlloc(0, 32 * sizeof(TCHAR))
+            mov this.m_pszMsg,LocalAlloc(0, 32 * sizeof(tchar_t))
             .if rax
                 .new wCode:WORD = this.WCode()
                 .if wCode != 0

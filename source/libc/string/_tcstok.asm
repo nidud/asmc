@@ -8,11 +8,11 @@ include string.inc
 include tchar.inc
 
     .data
-     s0 LPTSTR ?
+     s0 tstring_t ?
 
     .code
 
-_tcstok proc uses rbx s1:LPTSTR, s2:LPTSTR
+_tcstok proc uses rbx s1:tstring_t, s2:tstring_t
 
    .new p:ptr
 
@@ -25,7 +25,7 @@ _tcstok proc uses rbx s1:LPTSTR, s2:LPTSTR
         mov rbx,s0
     .endif
 
-    .while ( TCHAR ptr [rbx] )
+    .while ( tchar_t ptr [rbx] )
 
         mov rcx,rdx
         mov _tal,[rcx]
@@ -34,11 +34,11 @@ _tcstok proc uses rbx s1:LPTSTR, s2:LPTSTR
 
             .break .if ( _tal == [rbx] )
 
-            add rcx,TCHAR
+            add rcx,tchar_t
             mov _tal,[rcx]
         .endw
         .break .if ( !_tal )
-        add rbx,TCHAR
+        add rbx,tchar_t
     .endw
 
     .repeat
@@ -47,7 +47,7 @@ _tcstok proc uses rbx s1:LPTSTR, s2:LPTSTR
         .break .if ( _tal == [rbx] )
 
         mov p,rbx
-        .while ( TCHAR ptr [rbx] )
+        .while ( tchar_t ptr [rbx] )
 
             mov rcx,rdx
             mov _tal,[rcx]
@@ -56,15 +56,15 @@ _tcstok proc uses rbx s1:LPTSTR, s2:LPTSTR
 
                 .if ( _tal == [rbx] )
 
-                    mov TCHAR ptr [rbx],0
-                    add rbx,TCHAR
+                    mov tchar_t ptr [rbx],0
+                    add rbx,tchar_t
                    .break( 1 )
                 .endif
 
-                add rcx,TCHAR
+                add rcx,tchar_t
                 mov _tal,[rcx]
             .endw
-            add rbx,TCHAR
+            add rbx,tchar_t
         .endw
         mov rax,p
     .until 1

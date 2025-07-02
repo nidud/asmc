@@ -8,13 +8,13 @@ include conio.inc
 
     .code
 
-_rcputs proc uses rbx rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, string:LPTSTR
+_rcputs proc uses rbx rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, string:tstring_t
 
     .new retval:int_t = 0
     .new pos:TRECT = { x, y, 1, 1 }
-    .for ( rbx = string : TCHAR ptr [rbx] : rbx+=TCHAR, pos.x++, retval++ )
+    .for ( rbx = string : tchar_t ptr [rbx] : rbx+=tchar_t, pos.x++, retval++ )
 
-        movzx ecx,TCHAR ptr [rbx]
+        movzx ecx,tchar_t ptr [rbx]
         _rcputc(rc, pos, p, cx)
         .if ( attrib )
             _rcputa(rc, pos, p, attrib)

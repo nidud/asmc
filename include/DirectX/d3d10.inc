@@ -1234,11 +1234,11 @@ define __ID3D10Device_INTERFACE_DEFINED__
     CreateShaderResourceView proc :ptr, :ptr, :ptr
     CreateRenderTargetView proc :ptr, :ptr, :ptr
     CreateDepthStencilView proc :ptr, :ptr, :ptr
-    CreateInputLayout	proc :UINT, :ptr, :SIZE_T, :ptr
-    CreateVertexShader	proc :ptr, :SIZE_T, :ptr
-    CreateGeometryShader proc :ptr, :SIZE_T, :ptr
-    CreateGeometryShaderWithStreamOutput proc :ptr, :SIZE_T, :UINT, :UINT, :ptr
-    CreatePixelShader	proc :ptr, :SIZE_T, :ptr
+    CreateInputLayout	proc :UINT, :ptr, :size_t, :ptr
+    CreateVertexShader	proc :ptr, :size_t, :ptr
+    CreateGeometryShader proc :ptr, :size_t, :ptr
+    CreateGeometryShaderWithStreamOutput proc :ptr, :size_t, :UINT, :UINT, :ptr
+    CreatePixelShader	proc :ptr, :size_t, :ptr
     CreateBlendState	proc :ptr, :ptr
     CreateDepthStencilState proc :ptr, :ptr
     CreateRasterizerState proc :ptr, :ptr

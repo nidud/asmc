@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_ttoi proc string:LPTSTR
+_ttoi proc string:tstring_t
 
    .return( _ttol( ldr(string) ) )
 

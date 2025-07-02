@@ -17,22 +17,22 @@ define MAXARGSIZE  0x8000  ; Max argument size: 32K
 
     .code
 
-_tsetargv proc uses rsi rdi rbx argc:ptr int_t, cmdline:LPTSTR
+_tsetargv proc uses rsi rdi rbx argc:ptr int_t, cmdline:tstring_t
 ifdef __UNIX__
     int 3
 else
-  local argv[MAXARGCOUNT]:LPTSTR
-  local buffer:LPTSTR
+  local argv[MAXARGCOUNT]:tstring_t
+  local buffer:tstring_t
   local i:int_t
 
     ldr rcx,argc
     ldr rsi,cmdline
 
     mov dword ptr [rcx],0
-    mov buffer,malloc(MAXARGSIZE*TCHAR)
+    mov buffer,malloc(MAXARGSIZE*tchar_t)
     mov rdi,rax
-    movzx eax,TCHAR ptr [rsi]
-    add rsi,TCHAR
+    movzx eax,tchar_t ptr [rsi]
+    add rsi,tchar_t
 
     .while eax
 
@@ -62,7 +62,7 @@ else
                 .if ecx
                     dec ecx
                 .elseif edx
-                    movzx eax,TCHAR ptr [rsi]
+                    movzx eax,tchar_t ptr [rsi]
                     .break .if ( eax == ' ' )
                     .break .if ( eax >= 9 && eax <= 13 )
                     dec edx
@@ -77,9 +77,9 @@ else
 
         xor ecx,ecx
         mov [rdi],ecx
-        lea rbx,[rdi+TCHAR]
+        lea rbx,[rdi+tchar_t]
         mov rdi,buffer
-        movzx ecx,TCHAR ptr [rdi]
+        movzx ecx,tchar_t ptr [rdi]
        .break .if !ecx
 
         mov i,eax

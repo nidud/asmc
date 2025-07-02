@@ -121,13 +121,6 @@ PCNZCH			typedef ptr CHAR
 
 ifdef  _UNICODE
 
-ifndef _TCHAR_DEFINED
-define _TCHAR_DEFINED
-TCHAR			typedef word
-PTCHAR			typedef ptr word
-PTBYTE			typedef ptr word
-endif
-
 PTCH			typedef LPWCH
 LPTCH			typedef LPWCH
 PCTCH			typedef LPCWCH
@@ -155,13 +148,6 @@ __TEXT macro quote
 	endm
 
 else
-
-ifndef _TCHAR_DEFINED
-define _TCHAR_DEFINED
-TCHAR			typedef sbyte
-PTCHAR			typedef ptr sbyte
-PTBYTE			typedef ptr sbyte
-endif
 
 PTCH			typedef LPCH
 LPTCH			typedef LPCH

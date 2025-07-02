@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_tcstold proc string:LPTSTR, endptr:tarray_t
+_tcstold proc string:tstring_t, endptr:tarray_t
 
     ldr rcx,string
 ifdef _UNICODE

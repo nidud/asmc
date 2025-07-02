@@ -46,7 +46,7 @@ endif
         .if ( rax > maxlen )
             mov maxlen,rax
         .endif
-        calloc( maxlen, TCHAR )
+        calloc( maxlen, tchar_t )
         .if ( rax == NULL )
             .return
         .endif

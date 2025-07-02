@@ -3088,7 +3088,7 @@ ColorFrameServo		LONG ?
 ServoRef		LONG ?
 WarnGenlock		LONG ?
 SetTracking		LONG ?
-VolumeName		TCHAR 40 dup(?)
+VolumeName		tchar_t 40 dup(?)
 Ballistic		LONG 20 dup(?)
 Speed			LONG ?
 CounterFormat		LONG ?

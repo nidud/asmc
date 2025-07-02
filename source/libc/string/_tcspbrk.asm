@@ -13,7 +13,7 @@ include tchar.inc
 
     .code
 
-_tcspbrk proc uses rsi rdi rbx string:LPTSTR, CharSet:LPTSTR
+_tcspbrk proc uses rsi rdi rbx string:tstring_t, CharSet:tstring_t
 
     ldr     rcx,string
     ldr     rdx,CharSet
@@ -26,7 +26,7 @@ _tcspbrk proc uses rsi rdi rbx string:LPTSTR, CharSet:LPTSTR
     dec     ecx
    .return .ifz
 
-    .for ( esi = ecx, _tal = [rbx] : eax : rbx += TCHAR, _tal = [rbx] )
+    .for ( esi = ecx, _tal = [rbx] : eax : rbx += tchar_t, _tal = [rbx] )
 
         mov rdi,rdx
         mov ecx,esi

@@ -521,11 +521,11 @@ ConvertCompartmentGuidToId proto :ptr, :PNET_IF_COMPARTMENT_ID
 ConvertCompartmentIdToGuid proto :NET_IF_COMPARTMENT_ID, :ptr
 ConvertInterfaceNameToLuidA proto :ptr, :ptr
 ConvertInterfaceNameToLuidW proto :ptr, :ptr
-ConvertInterfaceLuidToNameA proto :ptr, :PSTR, :SIZE_T
-ConvertInterfaceLuidToNameW proto :ptr, :PWSTR, :SIZE_T
+ConvertInterfaceLuidToNameA proto :ptr, :PSTR, :size_t
+ConvertInterfaceLuidToNameW proto :ptr, :PWSTR, :size_t
 ConvertInterfaceLuidToIndex proto :ptr, :PNET_IFINDEX
 ConvertInterfaceIndexToLuid proto :NET_IFINDEX, :PNET_LUID
-ConvertInterfaceLuidToAlias proto :ptr, :PWSTR, :SIZE_T
+ConvertInterfaceLuidToAlias proto :ptr, :PWSTR, :size_t
 ConvertInterfaceAliasToLuid proto :ptr, :PNET_LUID
 ConvertInterfaceLuidToGuid proto :ptr, :ptr
 ConvertInterfaceGuidToLuid proto :ptr, :PNET_LUID

@@ -19,7 +19,7 @@ include tchar.inc
 
 if defined(__UNIX__) and not defined(_UNICODE)
 
-mkdir proc directory:LPSTR, mode:int_t
+mkdir proc directory:string_t, mode:int_t
 
     .ifsd ( sys_mkdir( ldr(directory), ldr(mode) ) < 0 )
 
@@ -32,7 +32,7 @@ mkdir endp
 
 endif
 
-_tmkdir proc directory:LPTSTR
+_tmkdir proc directory:tstring_t
 ifdef __UNIX__
 ifdef _UNICODE
     _set_errno( ENOSYS )

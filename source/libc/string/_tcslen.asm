@@ -11,7 +11,7 @@ include tchar.inc
 
     option dotname
 
-_tcslen proc string:LPTSTR
+_tcslen proc string:tstring_t
 
     ldr         rcx,string
 

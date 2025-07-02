@@ -405,9 +405,9 @@ CALLBACK(LPFNCANUNLOADNOW,)
 
 DllGetClassObject proto WINAPI :REFCLSID, :REFIID, :ptr
 DllCanUnloadNow proto WINAPI
-CoTaskMemAlloc proto WINAPI :SIZE_T
-CoTaskMemRealloc proto WINAPI :LPVOID, :SIZE_T
-CoTaskMemFree proto WINAPI :LPVOID
+CoTaskMemAlloc proto WINAPI :size_t
+CoTaskMemRealloc proto WINAPI :ptr, :size_t
+CoTaskMemFree proto WINAPI :ptr
 
 endif
 

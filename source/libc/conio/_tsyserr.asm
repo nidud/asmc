@@ -17,13 +17,13 @@ _syserr proc title:tstring_t, format:tstring_t, argptr:vararg
 
     _vstprintf(&_bufin, format, &argptr)
     lea rcx,_bufin
-    lea rcx,[rcx+rax*TCHAR]
+    lea rcx,[rcx+rax*tchar_t]
     mov eax,10
     mov [rcx],_tal
-    mov [rcx+TCHAR],_tal
-    add rcx,TCHAR*2
+    mov [rcx+tchar_t],_tal
+    add rcx,tchar_t*2
 
-    .for ( rdx = msg : eax : rdx++, rcx+=TCHAR )
+    .for ( rdx = msg : eax : rdx++, rcx+=tchar_t )
 
         mov al,[rdx]
         mov [rcx],_tal

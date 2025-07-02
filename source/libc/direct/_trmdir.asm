@@ -15,7 +15,7 @@ include tchar.inc
 
     .code
 
-_trmdir proc directory:LPTSTR
+_trmdir proc directory:tstring_t
 ifdef __UNIX__
 ifdef _UNICODE
     _set_errno( ENOSYS )

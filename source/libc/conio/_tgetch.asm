@@ -255,7 +255,7 @@ _gettch proc uses rbx
 
     .if ( chbuf != EOF )
 
-        movzx eax,TCHAR ptr chbuf
+        movzx eax,tchar_t ptr chbuf
         mov chbuf,EOF
        .return
     .endif
@@ -279,7 +279,7 @@ _gettch proc uses rbx
 
         .if ( ConInpRec.EventType == KEY_EVENT && ConInpRec.Event.KeyEvent.bKeyDown )
 
-            movzx eax,TCHAR ptr ConInpRec.Event.KeyEvent.uChar.UnicodeChar
+            movzx eax,tchar_t ptr ConInpRec.Event.KeyEvent.uChar.UnicodeChar
             .if ( eax )
 
                 mov c,eax

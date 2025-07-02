@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_rccenter proc wc:TRECT, p:PCHAR_INFO, rc:TRECT, attrib:WORD, string:LPTSTR
+_rccenter proc wc:TRECT, p:PCHAR_INFO, rc:TRECT, attrib:WORD, string:tstring_t
 
     _tcslen( string )
     movzx ecx,rc.col

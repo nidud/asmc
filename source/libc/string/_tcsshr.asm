@@ -15,14 +15,14 @@ include tchar.inc
 
     option dotname
 
-_tcsshr proc string:LPTSTR, chr:int_t
+_tcsshr proc string:tstring_t, chr:int_t
 
     ldr     rcx,string
     ldr     eax,chr
 .0:
     mov     _tdl,[rcx]
     mov     [rcx],_tal
-    add     rcx,TCHAR
+    add     rcx,tchar_t
     test    _tal,_tal
     mov     eax,edx
     jnz     .0

@@ -8,7 +8,7 @@ include winbase.inc
 
     .code
 
-FileDateToString proc string:LPTSTR, ft:ptr FILETIME
+FileDateToString proc string:tstring_t, ft:ptr FILETIME
 
   local ftime:FILETIME, stime:SYSTEMTIME
 

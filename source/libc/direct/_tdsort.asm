@@ -18,8 +18,8 @@ include tchar.inc
 
 compare proc private uses rsi rdi rbx a:PFILENT, b:PFILENT
 
-   .new name_a:LPTSTR
-   .new name_b:LPTSTR
+   .new name_a:tstring_t
+   .new name_b:tstring_t
 
     ldr rax,b
     mov rsi,[rax]
@@ -37,10 +37,10 @@ compare proc private uses rsi rdi rbx a:PFILENT, b:PFILENT
     mov eax,'.'
     cmp [rbx],_tal
     jne .0
-    cmp [rbx+TCHAR],_tal
+    cmp [rbx+tchar_t],_tal
     jne .0
     xor eax,eax
-    cmp [rbx+TCHAR*2],_tal
+    cmp [rbx+tchar_t*2],_tal
     je  .9
 .0:
     mov eax,ecx

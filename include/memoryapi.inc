@@ -15,17 +15,17 @@ define FILE_MAP_RESERVE          0x80000000
 define FILE_MAP_TARGETS_INVALID  0x40000000
 define FILE_MAP_LARGE_PAGES      0x20000000
 
-VirtualAlloc proto WINAPI :LPVOID, :SIZE_T, :DWORD, :DWORD
-VirtualProtect proto WINAPI :LPVOID, :SIZE_T, :DWORD, :PDWORD
+VirtualAlloc proto WINAPI :LPVOID, :size_t, :DWORD, :DWORD
+VirtualProtect proto WINAPI :LPVOID, :size_t, :DWORD, :PDWORD
 
-VirtualFree proto WINAPI :LPVOID, :SIZE_T, :DWORD
-VirtualQuery proto WINAPI :LPCVOID, :PMEMORY_BASIC_INFORMATION, :SIZE_T
-VirtualAllocEx proto WINAPI :HANDLE, :LPVOID, :SIZE_T, :DWORD, :DWORD
-VirtualProtectEx proto WINAPI :HANDLE, :LPVOID, :SIZE_T, :DWORD, :PDWORD
+VirtualFree proto WINAPI :LPVOID, :size_t, :DWORD
+VirtualQuery proto WINAPI :LPCVOID, :PMEMORY_BASIC_INFORMATION, :size_t
+VirtualAllocEx proto WINAPI :HANDLE, :LPVOID, :size_t, :DWORD, :DWORD
+VirtualProtectEx proto WINAPI :HANDLE, :LPVOID, :size_t, :DWORD, :PDWORD
 
-VirtualQueryEx proto WINAPI :HANDLE, :LPCVOID, :PMEMORY_BASIC_INFORMATION, :SIZE_T
-ReadProcessMemory proto WINAPI :HANDLE, :LPCVOID, :LPVOID, :SIZE_T, :ptr
-WriteProcessMemory proto WINAPI :HANDLE, :LPVOID, :LPCVOID, :SIZE_T, :ptr
+VirtualQueryEx proto WINAPI :HANDLE, :LPCVOID, :PMEMORY_BASIC_INFORMATION, :size_t
+ReadProcessMemory proto WINAPI :HANDLE, :LPCVOID, :LPVOID, :size_t, :ptr
+WriteProcessMemory proto WINAPI :HANDLE, :LPVOID, :LPCVOID, :size_t, :ptr
 CreateFileMappingW proto WINAPI :HANDLE, :LPSECURITY_ATTRIBUTES, :DWORD, :DWORD, :DWORD, :LPCWSTR
 ifdef _UNICODE
 define CreateFileMapping <CreateFileMappingW>
@@ -36,22 +36,22 @@ ifdef _UNICODE
 define OpenFileMapping <OpenFileMappingW>
 endif
 
-MapViewOfFile proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :SIZE_T
-MapViewOfFileEx proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :SIZE_T, :LPVOID
-VirtualFreeEx proto WINAPI :HANDLE, :LPVOID, :SIZE_T, :DWORD
-FlushViewOfFile proto WINAPI :LPCVOID, :SIZE_T
+MapViewOfFile proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :size_t
+MapViewOfFileEx proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :size_t, :LPVOID
+VirtualFreeEx proto WINAPI :HANDLE, :LPVOID, :size_t, :DWORD
+FlushViewOfFile proto WINAPI :LPCVOID, :size_t
 
 UnmapViewOfFile proto WINAPI :LPCVOID
 
 GetLargePageMinimum proto WINAPI
-GetProcessWorkingSetSizeEx proto WINAPI :HANDLE, :PSIZE_T, :PSIZE_T, :PDWORD
-SetProcessWorkingSetSizeEx proto WINAPI :HANDLE, :SIZE_T, :SIZE_T, :DWORD
+GetProcessWorkingSetSizeEx proto WINAPI :HANDLE, :psize_t, :psize_t, :PDWORD
+SetProcessWorkingSetSizeEx proto WINAPI :HANDLE, :size_t, :size_t, :DWORD
 
-VirtualLock proto WINAPI :LPVOID, :SIZE_T
-VirtualUnlock proto WINAPI :LPVOID, :SIZE_T
+VirtualLock proto WINAPI :ptr, :size_t
+VirtualUnlock proto WINAPI :ptr, :size_t
 
-GetWriteWatch proto WINAPI :DWORD, :PVOID, :SIZE_T, :ptr, :ptr, :LPDWORD
-ResetWriteWatch proto WINAPI :LPVOID, :SIZE_T
+GetWriteWatch proto WINAPI :DWORD, :ptr, :size_t, :ptr, :ptr, :LPDWORD
+ResetWriteWatch proto WINAPI :ptr, :size_t
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WINXP)
 
@@ -73,8 +73,8 @@ define FILE_CACHE_MAX_HARD_DISABLE     0x00000002
 define FILE_CACHE_MIN_HARD_ENABLE      0x00000004
 define FILE_CACHE_MIN_HARD_DISABLE     0x00000008
 
-GetSystemFileCacheSize proto WINAPI :PSIZE_T, :PSIZE_T, :PDWORD
-SetSystemFileCacheSize proto WINAPI :SIZE_T, :SIZE_T, :DWORD
+GetSystemFileCacheSize proto WINAPI :psize_t, :psize_t, :PDWORD
+SetSystemFileCacheSize proto WINAPI :size_t, :size_t, :DWORD
 
 endif
 
@@ -88,7 +88,7 @@ endif
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
 _WIN32_MEMORY_RANGE_ENTRY struct
 VirtualAddress          PVOID ?
-NumberOfBytes           SIZE_T ?
+NumberOfBytes           size_t ?
 _WIN32_MEMORY_RANGE_ENTRY ends
 WIN32_MEMORY_RANGE_ENTRY typedef _WIN32_MEMORY_RANGE_ENTRY
 PWIN32_MEMORY_RANGE_ENTRY typedef ptr _WIN32_MEMORY_RANGE_ENTRY
@@ -98,7 +98,7 @@ endif
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
 CreateFileMappingFromApp proto WINAPI :HANDLE, :PSECURITY_ATTRIBUTES, :ULONG, :ULONG64, :PCWSTR
-MapViewOfFileFromApp proto WINAPI :HANDLE, :ULONG, :ULONG64, :SIZE_T
+MapViewOfFileFromApp proto WINAPI :HANDLE, :ULONG, :ULONG64, :size_t
 UnmapViewOfFileEx proto WINAPI :PVOID, :ULONG
 endif
 
@@ -110,7 +110,7 @@ endif
 
 if (_WIN32_WINNT ge _WIN32_WINNT_VISTA)
 AllocateUserPhysicalPagesNuma proto WINAPI :HANDLE, :PULONG_PTR, :PULONG_PTR, :DWORD
-VirtualAllocExNuma proto WINAPI :HANDLE, :LPVOID, :SIZE_T, :DWORD, :DWORD, :DWORD
+VirtualAllocExNuma proto WINAPI :HANDLE, :LPVOID, :size_t, :DWORD, :DWORD, :DWORD
 endif
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
@@ -137,18 +137,18 @@ if ((NTDDI_VERSION gt NTDDI_WINBLUE) or (NTDDI_VERSION eq NTDDI_WINBLUE and defi
     VmOfferPriorityNormal
     }
 
-OfferVirtualMemory proto WINAPI :PVOID, :SIZE_T, :OFFER_PRIORITY
-ReclaimVirtualMemory proto WINAPI :ptr, :SIZE_T
-DiscardVirtualMemory proto WINAPI :PVOID, :SIZE_T
+OfferVirtualMemory proto WINAPI :ptr, :size_t, :OFFER_PRIORITY
+ReclaimVirtualMemory proto WINAPI :ptr, :size_t
+DiscardVirtualMemory proto WINAPI :ptr, :size_t
 
 endif
 endif
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
-SetProcessValidCallTargets proto WINAPI :HANDLE, :PVOID, :SIZE_T, :ULONG, :PCFG_CALL_TARGET_INFO
-SetProcessValidCallTargetsForMappedView proto WINAPI :HANDLE, :PVOID, :SIZE_T, :ULONG, :PCFG_CALL_TARGET_INFO, :HANDLE, :ULONG64
-VirtualAllocFromApp proto WINAPI :PVOID, :SIZE_T, :ULONG, :ULONG
-VirtualProtectFromApp proto WINAPI :PVOID, :SIZE_T, :ULONG, :PULONG
+SetProcessValidCallTargets proto WINAPI :HANDLE, :ptr, :size_t, :ULONG, :PCFG_CALL_TARGET_INFO
+SetProcessValidCallTargetsForMappedView proto WINAPI :HANDLE, :PVOID, :size_t, :ULONG, :PCFG_CALL_TARGET_INFO, :HANDLE, :ULONG64
+VirtualAllocFromApp proto WINAPI :PVOID, :size_t, :ULONG, :ULONG
+VirtualProtectFromApp proto WINAPI :PVOID, :size_t, :ULONG, :PULONG
 OpenFileMappingFromApp proto WINAPI :ULONG, :BOOL, :PCWSTR
 endif
 
@@ -176,28 +176,28 @@ union
   ends
  ends
 ends
-RegionSize              SIZE_T ?
-CommitSize              SIZE_T ?
+RegionSize              size_t ?
+CommitSize              size_t ?
 WIN32_MEMORY_REGION_INFORMATION ends
 
-QueryVirtualMemoryInformation proto WINAPI :HANDLE, :ptr, :WIN32_MEMORY_INFORMATION_CLASS, :PVOID, :SIZE_T, :PSIZE_T
+QueryVirtualMemoryInformation proto WINAPI :HANDLE, :ptr, :WIN32_MEMORY_INFORMATION_CLASS, :ptr, :size_t, :psize_t
 
 endif
 
 if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
-MapViewOfFileNuma2 proto WINAPI :HANDLE, :HANDLE, :ULONG64, :PVOID, :SIZE_T, :ULONG, :ULONG, :ULONG
+MapViewOfFileNuma2 proto WINAPI :HANDLE, :HANDLE, :ULONG64, :ptr, :size_t, :ULONG, :ULONG, :ULONG
 endif
 
-UnmapViewOfFile2 proto WINAPI :HANDLE, :PVOID, :ULONG
-VirtualUnlockEx proto WINAPI :HANDLE, :LPVOID, :SIZE_T
+UnmapViewOfFile2 proto WINAPI :HANDLE, :ptr, :ULONG
+VirtualUnlockEx proto WINAPI :HANDLE, :ptr, :size_t
 
 if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
 
-VirtualAlloc2 proto WINAPI :HANDLE, :PVOID, :SIZE_T, :ULONG, :ULONG, :ptr, :ULONG
-MapViewOfFile3 proto WINAPI :HANDLE, :HANDLE, :PVOID, :ULONG64, :SIZE_T, :ULONG, :ULONG, :ptr, :ULONG
+VirtualAlloc2 proto WINAPI :HANDLE, :PVOID, :size_t, :ULONG, :ULONG, :ptr, :ULONG
+MapViewOfFile3 proto WINAPI :HANDLE, :HANDLE, :PVOID, :ULONG64, :size_t, :ULONG, :ULONG, :ptr, :ULONG
 
-VirtualAlloc2FromApp proto WINAPI :HANDLE, :PVOID, :SIZE_T, :ULONG, :ULONG, :ptr, :ULONG
-MapViewOfFile3FromApp proto WINAPI :HANDLE, :HANDLE, :PVOID, :ULONG64, :SIZE_T, :ULONG, :ULONG, :ptr, :ULONG
+VirtualAlloc2FromApp proto WINAPI :HANDLE, :ptr, :size_t, :ULONG, :ULONG, :ptr, :ULONG
+MapViewOfFile3FromApp proto WINAPI :HANDLE, :HANDLE, :ptr, :ULONG64, :size_t, :ULONG, :ULONG, :ptr, :ULONG
 
 endif
 

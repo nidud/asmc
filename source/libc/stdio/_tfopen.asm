@@ -38,7 +38,7 @@ include tchar.inc
 
     .code
 
-_tfopen proc file:LPTSTR, mode:LPTSTR
+_tfopen proc file:tstring_t, mode:tstring_t
 
     .if _getst()
 

@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_rcputf proc rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, format:LPTSTR, argptr:vararg
+_rcputf proc rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE, attrib:WORD, format:tstring_t, argptr:vararg
 
     _vstprintf( &_bufin, format, &argptr )
     _rcputs( rc, p, x, y, attrib, &_bufin )

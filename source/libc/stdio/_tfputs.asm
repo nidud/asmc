@@ -12,7 +12,7 @@ include tchar.inc
 
     .code
 
-_fputts proc uses rbx string:LPTSTR, fp:LPFILE
+_fputts proc uses rbx string:tstring_t, fp:LPFILE
 
    .new length:int_t
 

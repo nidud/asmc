@@ -1,10 +1,6 @@
 .pragma list(push, 0)
 ifdef __UNIX__
 include libc.inc
-ifndef _ERRNO_T_DEFINED
-define _ERRNO_T_DEFINED
-errno_t typedef int_t
-endif
 else
 include crtdefs.inc
 endif

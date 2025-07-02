@@ -13,7 +13,7 @@ include string.inc
 
     assume rbx:LPFILE
 
-fwrite proc uses rsi rdi rbx buf:LPSTR, rsize:int_t, num:int_t, fp:LPFILE
+fwrite proc uses rsi rdi rbx buf:string_t, rsize:int_t, num:int_t, fp:LPFILE
 
    .new total:int_t
    .new bufsize:int_t

@@ -32,7 +32,7 @@ include tchar.inc
 
 .code
 
-_tsopen proc uses rsi rdi rbx path:LPTSTR, oflag:int_t, shflag:int_t, args:vararg
+_tsopen proc uses rsi rdi rbx path:tstring_t, oflag:int_t, shflag:int_t, args:vararg
 
 ifdef __UNIX__
 
@@ -225,20 +225,25 @@ else
 
     mov eax,edi
     and eax,O_CREAT or O_EXCL or O_TRUNC
-    .switch pascal eax
+    .switch eax
     .case 0
     .case O_EXCL
         mov ecx,OPEN_EXISTING
+       .endc
     .case O_CREAT
         mov ecx,OPEN_ALWAYS
+       .endc
     .case O_CREAT or O_EXCL
     .case O_CREAT or O_EXCL or O_TRUNC
         mov ecx,CREATE_NEW
+       .endc
     .case O_CREAT or O_TRUNC
         mov ecx,CREATE_ALWAYS
+       .endc
     .case O_TRUNC
     .case O_TRUNC or O_EXCL
         mov ecx,TRUNCATE_EXISTING
+       .endc
     .default
        .return( _set_errno( EINVAL ) )
     .endsw

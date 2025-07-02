@@ -13,15 +13,15 @@ include tchar.inc
 
 .code
 
-_tcsdos proc string:LPTSTR
+_tcsdos proc string:tstring_t
 
     ldr rax,string
 
-    .for ( : TCHAR ptr [rax] : rax+=TCHAR )
+    .for ( : tchar_t ptr [rax] : rax+=tchar_t )
 
-        .if ( TCHAR ptr [rax] == '/' )
+        .if ( tchar_t ptr [rax] == '/' )
 
-            mov TCHAR ptr [rax],'\'
+            mov tchar_t ptr [rax],'\'
         .endif
     .endf
     ldr rax,string

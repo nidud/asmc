@@ -321,7 +321,7 @@ D3D10_PASS_DESC		STRUC
 Name			LPCSTR ?
 Annotations		UINT ?
 pIAInputSignature	LPBYTE ?
-IAInputSignatureSize	SIZE_T ?
+IAInputSignatureSize	size_t ?
 StencilRef		UINT ?
 SampleMask		UINT ?
 BlendFactor		FLOAT 4 dup(?)
@@ -401,9 +401,9 @@ DEFINE_GUID(IID_ID3D10EffectPool,0x9537ab04,0x3250,0x412e,0x82,0x13,0xfc,0xd2,0x
     AsEffect		proc
    .ends
 
-D3D10CompileEffectFromMemory proto WINAPI :ptr, :SIZE_T, :LPCSTR, :ptr, :ptr, :UINT, :UINT, :ptr, :ptr
-D3D10CreateEffectFromMemory proto WINAPI :ptr, :SIZE_T, :UINT, :ptr, :ptr, :ptr
-D3D10CreateEffectPoolFromMemory proto WINAPI :ptr, :SIZE_T, :UINT, :ptr, :ptr
+D3D10CompileEffectFromMemory proto WINAPI :ptr, :size_t, :LPCSTR, :ptr, :ptr, :UINT, :UINT, :ptr, :ptr
+D3D10CreateEffectFromMemory proto WINAPI :ptr, :size_t, :UINT, :ptr, :ptr, :ptr
+D3D10CreateEffectPoolFromMemory proto WINAPI :ptr, :size_t, :UINT, :ptr, :ptr
 D3D10DisassembleEffect proto WINAPI :ptr, :BOOL, :ptr
 
 endif

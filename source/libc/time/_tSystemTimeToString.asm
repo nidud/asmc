@@ -8,7 +8,7 @@ include winnls.inc
 
     .code
 
-SystemTimeToString proc uses rbx string:LPTSTR, stime:ptr SYSTEMTIME
+SystemTimeToString proc uses rbx string:tstring_t, stime:ptr SYSTEMTIME
 
     ldr rbx,string
 

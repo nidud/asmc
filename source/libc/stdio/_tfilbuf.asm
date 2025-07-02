@@ -54,7 +54,7 @@ endif
     _read([rbx]._file, [rbx]._base, [rbx]._bufsiz)
     mov [rbx]._cnt,eax
 
-    .ifs ( eax < TCHAR )
+    .ifs ( eax < tchar_t )
         .if ( eax )
             mov eax,_IOERR
         .else
@@ -103,9 +103,9 @@ ifdef _UNICODE
 
     .else
 endif
-        sub [rbx]._cnt,TCHAR
-        add [rbx]._ptr,TCHAR
-        movzx eax,TCHAR ptr [rcx]
+        sub [rbx]._cnt,tchar_t
+        add [rbx]._ptr,tchar_t
+        movzx eax,tchar_t ptr [rcx]
 ifdef _UNICODE
     .endif
 endif

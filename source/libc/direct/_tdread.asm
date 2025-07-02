@@ -36,7 +36,7 @@ endif
     mov rcx,_tcsfcat([rbx].path, NULL, rdx)
     mov h,_tfindfirsti64(rcx, &ff)
     mov rcx,fp
-    mov TCHAR ptr [rcx],0
+    mov tchar_t ptr [rcx],0
 
     .if ( h == -1 )
 
@@ -45,7 +45,7 @@ endif
 
     .while ( eax != -1 )
 
-        .if ( ff.name == '.' && ff.name[TCHAR] == 0 )
+        .if ( ff.name == '.' && ff.name[tchar_t] == 0 )
 
             _tfindnexti64(h, &ff)
             .continue
@@ -61,7 +61,7 @@ endif
         .endif
 
         _tcslen(&ff.name)
-        .if !malloc(&[rax*TCHAR+FILENT])
+        .if !malloc(&[rax*tchar_t+FILENT])
 
             .break
         .endif

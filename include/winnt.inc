@@ -179,14 +179,6 @@ PCNZCH		typedef ptr CHAR
 
 ifdef _UNICODE
 
-ifndef _TCHAR_DEFINED
-define _TCHAR_DEFINED
-TBYTE		typedef WCHAR
-TCHAR		typedef WCHAR
-PTCHAR		typedef ptr WCHAR
-PTBYTE		typedef ptr WCHAR
-endif
-
 PTCH		typedef LPWCH
 LPTCH		typedef LPWCH
 PCTCH		typedef LPCWCH
@@ -214,14 +206,6 @@ __TEXT macro quote
 	endm
 
 else ; _UNICODE
-
-ifndef _TCHAR_DEFINED
-define _TCHAR_DEFINED
-TBYTE		typedef CHAR
-TCHAR		typedef CHAR
-PTCHAR		typedef ptr CHAR
-PTBYTE		typedef ptr CHAR
-endif
 
 PTCH		typedef LPCH
 LPTCH		typedef LPCH
@@ -574,7 +558,7 @@ endif
 define EXCEPTION_MAXIMUM_PARAMETERS 15 ; maximum number of exception parameters
 
 
-EXCEPTION_RECORD	STRUC SIZE_T
+EXCEPTION_RECORD	STRUC size_t
 ExceptionCode		dd ?
 ExceptionFlags		dd ?
 ExceptionRecord		PVOID ? ; EXCEPTION_RECORD *
@@ -2074,7 +2058,7 @@ CONTEXT_XSTATE		equ CONTEXT_i386 OR 0x00000040
 
 MAXIMUM_SUPPORTED_EXTENSION equ 512
 
-FLOATING_SAVE_AREA	STRUC SIZE_T
+FLOATING_SAVE_AREA	STRUC size_t
 ControlWord		dd ?
 StatusWord		dd ?
 TagWord			dd ?
@@ -2878,9 +2862,9 @@ ContextRecord		PCONTEXT ?
 EXCEPTION_POINTERS	ENDS
 PEXCEPTION_POINTERS	typedef ptr EXCEPTION_POINTERS
 
-EXCEPTION_REGISTRATION	STRUC SIZE_T
-prev			SIZE_T ?
-handler			SIZE_T ?
+EXCEPTION_REGISTRATION	STRUC size_t
+prev			size_t ?
+handler			size_t ?
 EXCEPTION_REGISTRATION	ENDS
 PEXCEPTION_REGISTRATION typedef ptr EXCEPTION_REGISTRATION
 
@@ -4197,11 +4181,11 @@ UMS_CREATE_THREAD_ATTRIBUTES	ENDS
 PUMS_CREATE_THREAD_ATTRIBUTES	typedef ptr UMS_CREATE_THREAD_ATTRIBUTES
 
 QUOTA_LIMITS			STRUC
-PagedPoolLimit			SIZE_T ?
-NonPagedPoolLimit		SIZE_T ?
-MinimumWorkingSetSize		SIZE_T ?
-MaximumWorkingSetSize		SIZE_T ?
-PagefileLimit			SIZE_T ?
+PagedPoolLimit			size_t ?
+NonPagedPoolLimit		size_t ?
+MinimumWorkingSetSize		size_t ?
+MaximumWorkingSetSize		size_t ?
+PagefileLimit			size_t ?
 TimeLimit			LARGE_INTEGER <>
 QUOTA_LIMITS			ENDS
 PQUOTA_LIMITS			typedef ptr QUOTA_LIMITS
@@ -4222,16 +4206,16 @@ RATE_QUOTA_LIMIT		ENDS
 PRATE_QUOTA_LIMIT		typedef ptr RATE_QUOTA_LIMIT
 
 QUOTA_LIMITS_EX			STRUC
-PagedPoolLimit			SIZE_T ?
-NonPagedPoolLimit		SIZE_T ?
-MinimumWorkingSetSize		SIZE_T ?
-MaximumWorkingSetSize		SIZE_T ?
-PagefileLimit			SIZE_T ?
+PagedPoolLimit			size_t ?
+NonPagedPoolLimit		size_t ?
+MinimumWorkingSetSize		size_t ?
+MaximumWorkingSetSize		size_t ?
+PagefileLimit			size_t ?
 TimeLimit			LARGE_INTEGER <>
-WorkingSetLimit			SIZE_T ?
-Reserved2			SIZE_T ?
-Reserved3			SIZE_T ?
-Reserved4			SIZE_T ?
+WorkingSetLimit			size_t ?
+Reserved2			size_t ?
+Reserved3			size_t ?
+Reserved4			size_t ?
 Flags				dd ?
 CpuRateLimit			RATE_QUOTA_LIMIT <>
 QUOTA_LIMITS_EX			ENDS
@@ -4349,8 +4333,8 @@ JOBOBJECT_BASIC_LIMIT_INFORMATION STRUC
 PerProcessUserTimeLimit		LARGE_INTEGER <>
 PerJobUserTimeLimit		LARGE_INTEGER <>
 LimitFlags			dd ?
-MinimumWorkingSetSize		SIZE_T ?
-MaximumWorkingSetSize		SIZE_T ?
+MinimumWorkingSetSize		size_t ?
+MaximumWorkingSetSize		size_t ?
 ActiveProcessLimit		dd ?
 Affinity			ULONG_PTR ?
 PriorityClass			dd ?
@@ -4360,10 +4344,10 @@ PJOBOBJECT_BASIC_LIMIT_INFORMATION typedef ptr JOBOBJECT_BASIC_LIMIT_INFORMATION
 JOBOBJECT_EXTENDED_LIMIT_INFORMATION STRUC
 BasicLimitInformation		JOBOBJECT_BASIC_LIMIT_INFORMATION <>
 IoInfo				IO_COUNTERS <>
-ProcessMemoryLimit		SIZE_T ?
-JobMemoryLimit			SIZE_T ?
-PeakProcessMemoryUsed		SIZE_T ?
-PeakJobMemoryUsed		SIZE_T ?
+ProcessMemoryLimit		size_t ?
+JobMemoryLimit			size_t ?
+PeakProcessMemoryUsed		size_t ?
+PeakJobMemoryUsed		size_t ?
 JOBOBJECT_EXTENDED_LIMIT_INFORMATION ENDS
 PJOBOBJECT_EXTENDED_LIMIT_INFORMATION typedef ptr JOBOBJECT_EXTENDED_LIMIT_INFORMATION
 
@@ -4824,11 +4808,11 @@ PXSTATE_CONFIGURATION	typedef ptr XSTATE_CONFIGURATION
 SYSTEM_FLAG_REMOTE_BOOT_CLIENT	equ 0x00000001
 SYSTEM_FLAG_DISKLESS_CLIENT	equ 0x00000002
 
-MEMORY_BASIC_INFORMATION	STRUC SIZE_T
+MEMORY_BASIC_INFORMATION	STRUC size_t
 BaseAddress			PVOID ?
 AllocationBase			PVOID ?
 AllocationProtect		dd ?
-RegionSize			SIZE_T ?
+RegionSize			size_t ?
 State				dd ?
 Protect				dd ?
 Type				dd ?
@@ -7563,7 +7547,7 @@ endif
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
-RtlCompareMemory proto WINAPI :ptr, :ptr, :SIZE_T
+RtlCompareMemory proto WINAPI :ptr, :ptr, :size_t
 endif
 
 RtlEqualMemory macro Destination, Source, L
@@ -7844,7 +7828,7 @@ define WAITORTIMERCALLBACK <WAITORTIMERCALLBACKFUNC>
 
 CALLBACK(APC_CALLBACK_FUNCTION, :DWORD, :PVOID, :PVOID)
 CALLBACK(PFLS_CALLBACK_FUNCTION, :PVOID)
-CALLBACK(PSECURE_MEMORY_CACHE_CALLBACK, :PVOID, :SIZE_T)
+CALLBACK(PSECURE_MEMORY_CACHE_CALLBACK, :PVOID, :size_t)
 
 WT_SET_MAX_THREADPOOL_THREADS macro Flags, Limit
 	exitm<(((Flags) OR ((Limit) SHL 16)))>
@@ -8648,8 +8632,8 @@ PTP_POOL		typedef ptr TP_POOL
     }
 
 TP_POOL_STACK_INFORMATION STRUC
-StackReserve		SIZE_T ?
-StackCommit		SIZE_T ?
+StackReserve		size_t ?
+StackCommit		size_t ?
 TP_POOL_STACK_INFORMATION ENDS
 PTP_POOL_STACK_INFORMATION typedef ptr TP_POOL_STACK_INFORMATION
 

@@ -113,10 +113,10 @@ tree_desc       struct
 dyn_tree        PCTDATA ?       ; the dynamic tree
 static_tree     PCTDATA ?       ; corresponding static tree or NULL
 extra_bits      LPINT ?         ; extra bits for each code or NULL
-extra_base      SINT ?          ; base index for extra_bits
-elems           SINT ?          ; max number of elements in the tree
-max_length      SINT ?          ; max bit length for the codes
-max_code        SINT ?          ; largest code with non zero frequency
+extra_base      int_t ?         ; base index for extra_bits
+elems           int_t ?         ; max number of elements in the tree
+max_length      int_t ?         ; max bit length for the codes
+max_code        int_t ?         ; largest code with non zero frequency
 tree_desc       ends
 PTREE           typedef ptr tree_desc
 
@@ -130,52 +130,52 @@ dconfig         ENDS
 DEFLATE         STRUC
 fp              LPFILE ?
 fpz             LPFILE ?
-head            LPSTR ?
-prev            LPSTR ?
-csize           UINT ?
-fsize           UINT ?
-method          UINT ?
-chain_length    UINT ?
-str_start       UINT ?
-prev_length     UINT ?
-max_chain_len   UINT ?
-good_match      UINT ?
-match_start     UINT ?
-nice_match      UINT ?
+head            string_t ?
+prev            string_t ?
+csize           uint_t ?
+fsize           uint_t ?
+method          uint_t ?
+chain_length    uint_t ?
+str_start       uint_t ?
+prev_length     uint_t ?
+max_chain_len   uint_t ?
+good_match      uint_t ?
+match_start     uint_t ?
+nice_match      uint_t ?
 flags           BYTE ?
 flag_bit        BYTE ?
-block_start     UINT ?
-ins_h           UINT ?
-eofile          UINT ?
-lookahead       UINT ?
-max_lazy_match  UINT ?
-heap_len        UINT ?
-heap_max        UINT ?
-last_lit        UINT ?
-last_dist       UINT ?
-last_flags      UINT ?
-opt_len         UINT ?
-static_len      UINT ?
-cmpr_bytelen    UINT ?
-cmpr_lenbits    UINT ?
-bi_buf          UINT ?
-bi_valid        UINT ?
-compr_level     UINT ?
-compr_flags     UINT ?
-bl_count        UINT MAX_BITS+1 dup(?)
+block_start     uint_t ?
+ins_h           uint_t ?
+eofile          uint_t ?
+lookahead       uint_t ?
+max_lazy_match  uint_t ?
+heap_len        uint_t ?
+heap_max        uint_t ?
+last_lit        uint_t ?
+last_dist       uint_t ?
+last_flags      uint_t ?
+opt_len         uint_t ?
+static_len      uint_t ?
+cmpr_bytelen    uint_t ?
+cmpr_lenbits    uint_t ?
+bi_buf          uint_t ?
+bi_valid        uint_t ?
+compr_level     uint_t ?
+compr_flags     uint_t ?
+bl_count        uint_t MAX_BITS+1 dup(?)
 dyn_ltree       ct_data 2*L_CODES+1  dup(<>)   ; literal and length tree
 dyn_dtree       ct_data 2*D_CODES+1  dup(<>)   ; distance tree
 static_ltree    ct_data L_CODES+2    dup(<>)   ; the static literal tree
 static_dtree    ct_data D_CODES      dup(<>)   ; the static distance tree
 bl_tree         ct_data 2*BL_CODES+1 dup(<>)
-heap            UINT HEAP_SIZE dup(?)     ; heap used to build the Huffman trees
-depth           BYTE HEAP_SIZE dup(?)     ; Depth of each subtree
-base_length     UINT LENGTH_CODES dup(?)  ; First normalized length for each code
+heap            uint_t HEAP_SIZE dup(?)     ; heap used to build the Huffman trees
+depth           BYTE HEAP_SIZE dup(?)       ; Depth of each subtree
+base_length     uint_t LENGTH_CODES dup(?)  ; First normalized length for each code
 length_code     BYTE MAX_MATCH-MIN_MATCH+1 dup(?)
 d_code          BYTE 512 dup(?)
-base_dist       UINT D_CODES dup(?)       ; First normalized distance for each code
-l_buf           BYTE LIT_BUFSIZE dup(?)   ; buffer for literals/lengths
-d_buf           UINT DIST_BUFSIZE dup(?)  ; buffer for distances
+base_dist       uint_t D_CODES dup(?)       ; First normalized distance for each code
+l_buf           BYTE LIT_BUFSIZE dup(?)     ; buffer for literals/lengths
+d_buf           uint_t DIST_BUFSIZE dup(?)  ; buffer for distances
 flag_buf        BYTE LIT_BUFSIZE/8 dup(?)
 head_buf        WORD HASH_SIZE dup(?)
 DEFLATE         ENDS
@@ -201,9 +201,9 @@ compresslevel   int_t 9
 bl_order        BYTE 16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15
 
 align size_t
-extra_lbits     UINT 0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0
-extra_dbits     UINT 0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13
-extra_blbits    UINT 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7
+extra_lbits     uint_t 0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0
+extra_dbits     uint_t 0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13
+extra_blbits    uint_t 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7
 align size_t
 l_desc          tree_desc <0,0,extra_lbits,LITERALS+1,L_CODES,MAX_BITS,0>
 d_desc          tree_desc <0,0,extra_dbits,0,D_CODES,MAX_BITS,0>
@@ -417,7 +417,7 @@ gen_bitlen endp
 
 gen_codes proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
 
-   .new next_code[MAX_BITS+1]:UINT
+   .new next_code[MAX_BITS+1]:uint_t
 
     ldr rsi,tree ; the tree to decorate
 
@@ -1055,9 +1055,9 @@ bi_windup endp
 
 
 ifdef _LIN64
-copy_block proc __ccall uses rsi rdi buf:LPSTR, len:UINT, header:int_t
+copy_block proc __ccall uses rsi rdi buf:string_t, len:uint_t, header:int_t
 else
-copy_block proc __ccall buf:LPSTR, len:UINT, header:int_t
+copy_block proc __ccall buf:string_t, len:uint_t, header:int_t
 endif
 
     .ifd bi_windup()
@@ -1092,14 +1092,14 @@ copy_block endp
 
 compress_block proc __ccall uses rsi rdi ltree:PCTDATA, dtree:PCTDATA
 
-   .new dist:UINT       ; distance of matched string
-   .new lc:SINT         ; match length or unmatched char (if dist == 0)
-   .new lx:UINT = 0     ; running index in l_buf
-   .new _dx:UINT = 0    ; running index in d_buf
-   .new fx:UINT = 0     ; running index in flag_buf
+   .new dist:uint_t     ; distance of matched string
+   .new lc:int_t        ; match length or unmatched char (if dist == 0)
+   .new lx:uint_t = 0   ; running index in l_buf
+   .new _dx:uint_t = 0  ; running index in d_buf
+   .new fx:uint_t = 0   ; running index in flag_buf
    .new flag:BYTE = 0   ; current flags
-   .new code:UINT       ; the code to send
-   .new extra:SINT      ; number of extra bits to send
+   .new code:uint_t     ; the code to send
+   .new extra:int_t     ; number of extra bits to send
 
     ldr rsi,ltree
     ldr rdi,dtree
@@ -1199,11 +1199,11 @@ compress_block endp
 
 flush_block proc eof:int_t
 
-   .new opt_lenb:UINT       ; opt_len in bytes
-   .new static_lenb:UINT    ; static_len in bytes
-   .new stored_len:UINT     ; length of input block
-   .new max_blindex:UINT    ; index of last bit length code of non zero freq
-   .new buf:LPSTR           ; input block, or NULL if too old
+   .new opt_lenb:uint_t     ; opt_len in bytes
+   .new static_lenb:uint_t  ; static_len in bytes
+   .new stored_len:uint_t   ; length of input block
+   .new max_blindex:uint_t  ; index of last bit length code of non zero freq
+   .new buf:string_t        ; input block, or NULL if too old
 
     xor eax,eax
     .ifs ( [rbx].block_start >= eax )

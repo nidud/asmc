@@ -86,8 +86,10 @@ write_string proc stdcall private uses bx string:LPTSTR, len:SINT, fp:LPFILE, pn
 
         mov cl,esl[bx]
         inc bx
-
-       .break .if ( write_char( cx, fp, pnumwritten ) == -1 )
+        pushl es
+        write_char( cx, fp, pnumwritten )
+        popl es
+       .break .if ( ax == -1 )
     .endf
     ret
 
@@ -248,7 +250,7 @@ _toutput proc uses si di bx fp:LPFILE, format:LPTSTR, arglist:ptr
                         .if ( byte ptr esl[bx+1] != '2' )
                             .gotosw(2:ST_NORMAL)
                         .endif
-                        add bx,2*TCHAR
+                        add bx,2*tchar_t
                         mov word ptr format,bx
                        .endc
                     .case 'd','i','o','u','x','X'
@@ -283,7 +285,7 @@ _toutput proc uses si di bx fp:LPFILE, format:LPTSTR, arglist:ptr
                         ; alternate form means '0b' prefix
                         ;
                         mov prefix,'0'
-                        mov prefix[TCHAR],_tal
+                        mov prefix[tchar_t],_tal
                         mov prefixlen,2
                     .endif
                     jmp COMMON_INT
@@ -388,7 +390,7 @@ _toutput proc uses si di bx fp:LPFILE, format:LPTSTR, arglist:ptr
                         ;mov eax,'x' - 'a' + '9' + 1
                         ;add eax,hexoff
                         mov prefix,'0'
-                        mov prefix[TCHAR],'x';_tal
+                        mov prefix[tchar_t],'x';_tal
                         mov prefixlen,2
                     .endif
                     jmp COMMON_INT

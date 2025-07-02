@@ -10,28 +10,28 @@ include tchar.inc
 
 .code
 
-_tsplitpath proc uses rsi rdi rbx path:LPTSTR, drive:LPTSTR, dir:LPTSTR, fname:LPTSTR, ext:LPTSTR
+_tsplitpath proc uses rsi rdi rbx path:tstring_t, drive:tstring_t, dir:tstring_t, fname:tstring_t, ext:tstring_t
 
     ldr rbx,path
 
     ldr rcx,drive
-    .if ( TCHAR ptr [rbx+TCHAR] == ':' )
+    .if ( tchar_t ptr [rbx+tchar_t] == ':' )
 
         .if ( rcx )
 
-            mov [rcx],TCHAR ptr [rbx]
-            mov TCHAR ptr [rcx+TCHAR],':'
-            add rcx,TCHAR*2
+            mov [rcx],tchar_t ptr [rbx]
+            mov tchar_t ptr [rcx+tchar_t],':'
+            add rcx,tchar_t*2
         .endif
-        add rbx,TCHAR*2
+        add rbx,tchar_t*2
     .endif
     .if ( rcx )
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
 
-    .for ( edx=0, edi=0, esi=0, rcx=rbx :: rcx+=TCHAR )
+    .for ( edx=0, edi=0, esi=0, rcx=rbx :: rcx+=tchar_t )
 
-        movzx eax,TCHAR ptr [rcx]
+        movzx eax,tchar_t ptr [rcx]
 
         .break .if eax == 0
         .if ( eax == '\' || eax == '/' )
@@ -51,15 +51,15 @@ _tsplitpath proc uses rsi rdi rbx path:LPTSTR, drive:LPTSTR, dir:LPTSTR, fname:L
 
         .while ( rdi < rsi )
 
-            mov [rcx],TCHAR ptr [rdi]
-            add rdi,TCHAR
-            add rcx,TCHAR
+            mov [rcx],tchar_t ptr [rdi]
+            add rdi,tchar_t
+            add rcx,tchar_t
         .endw
         .if ( rsi )
-            mov [rcx],TCHAR ptr [rsi]
-            add rcx,TCHAR
+            mov [rcx],tchar_t ptr [rsi]
+            add rcx,tchar_t
         .endif
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
 
     mov rcx,ext
@@ -67,13 +67,13 @@ _tsplitpath proc uses rsi rdi rbx path:LPTSTR, drive:LPTSTR, dir:LPTSTR, fname:L
 
         .if ( rdx )
 
-            .for ( rdi = rdx :: rdi+=TCHAR, rcx+=TCHAR )
+            .for ( rdi = rdx :: rdi+=tchar_t, rcx+=tchar_t )
 
-                mov [rcx],TCHAR ptr [rdi]
+                mov [rcx],tchar_t ptr [rdi]
                .break .if ( eax == 0 )
             .endf
         .endif
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
 
     mov rcx,fname
@@ -83,16 +83,16 @@ _tsplitpath proc uses rsi rdi rbx path:LPTSTR, drive:LPTSTR, dir:LPTSTR, fname:L
             dec rdx
         .endif
         .if ( rsi >= rbx )
-            lea rbx,[rsi+TCHAR]
+            lea rbx,[rsi+tchar_t]
         .endif
         .while ( rbx < rdx )
 
-            mov [rcx],TCHAR ptr [rbx]
+            mov [rcx],tchar_t ptr [rbx]
            .break .if ( eax == 0 )
-            add rcx,TCHAR
-            add rbx,TCHAR
+            add rcx,tchar_t
+            add rbx,tchar_t
         .endw
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
     ret
 

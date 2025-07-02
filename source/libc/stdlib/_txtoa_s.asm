@@ -10,9 +10,9 @@ include tchar.inc
 
     .code
 
-_txtoa_s proc val:qword, buf:LPTSTR , sizeInTChars:size_t, radix:uint_t, is_neg:int_t
+_txtoa_s proc val:qword, buf:tstring_t , sizeInTChars:size_t, radix:uint_t, is_neg:int_t
 
-  local convbuf[256]:TCHAR
+  local convbuf[256]:tchar_t
 
 ifdef _WIN64
 
@@ -54,22 +54,22 @@ endif
 ifdef _WIN64
     .if ( is_neg )
 
-        mov TCHAR ptr [rdx],'-'
-        add rdx,TCHAR
+        mov tchar_t ptr [rdx],'-'
+        add rdx,tchar_t
         neg rax
     .endif
 
     .if ( rax == 0 )
 
-        mov TCHAR ptr [rdx],'0'
-        mov TCHAR ptr [rdx+TCHAR],0
+        mov tchar_t ptr [rdx],'0'
+        mov tchar_t ptr [rdx+tchar_t],0
 else
 
     mov ecx,buf
     .if ( is_neg )
 
-        mov TCHAR ptr [ecx],'-'
-        add ecx,TCHAR
+        mov tchar_t ptr [ecx],'-'
+        add ecx,tchar_t
         neg edx
         neg eax
         sbb edx,0
@@ -77,8 +77,8 @@ else
 
     .if ( eax == 0 && edx == 0 )
 
-        mov TCHAR ptr [ecx],'0'
-        mov TCHAR ptr [ecx+TCHAR],0
+        mov tchar_t ptr [ecx],'0'
+        mov tchar_t ptr [ecx+tchar_t],0
 endif
        .return
     .endif
@@ -86,7 +86,7 @@ endif
 ifdef _WIN64
 
     mov r10,rdx
-    mov ecx,sizeof(convbuf)-TCHAR
+    mov ecx,sizeof(convbuf)-tchar_t
     mov convbuf[rcx],0
 
     .while ( rax && ecx )
@@ -97,11 +97,11 @@ ifdef _WIN64
         .ifs dl > '9'
             add dl,('A' - '9' - 1)
         .endif
-        sub ecx,TCHAR
+        sub ecx,tchar_t
         mov convbuf[rcx],_tdl
     .endw
 
-    .for ( rdx = r10, eax = 1 : eax && r8 : r8--, ecx+=TCHAR, rdx+=TCHAR )
+    .for ( rdx = r10, eax = 1 : eax && r8 : r8--, ecx+=tchar_t, rdx+=tchar_t )
 
         mov [rdx],convbuf[rcx]
     .endf
@@ -110,7 +110,7 @@ else
 
     push ecx
 
-    mov ecx,sizeof(convbuf)-TCHAR
+    mov ecx,sizeof(convbuf)-tchar_t
     mov convbuf[ecx],0
 
     push esi
@@ -148,7 +148,7 @@ else
         .ifs ( ebx > '9' )
             add bl,('A' - '9' - 1)
         .endif
-        sub ecx,TCHAR
+        sub ecx,tchar_t
         mov convbuf[ecx],_tbl
     .endf
 
@@ -159,9 +159,9 @@ else
 
     .repeat
         mov _tal,convbuf[ecx]
-        add ecx,TCHAR
+        add ecx,tchar_t
         mov [edx],_tal
-        add edx,TCHAR
+        add edx,tchar_t
         dec sizeInTChars
     .until ( _tal == 0 || sizeInTChars == 0 )
 
@@ -171,7 +171,7 @@ endif
 
     .if ( eax )
 
-        mov TCHAR ptr [rdx],0
+        mov tchar_t ptr [rdx],0
 
         _set_errno(ERANGE)
         .return ERANGE

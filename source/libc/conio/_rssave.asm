@@ -14,7 +14,7 @@ include string.inc
     assume rbx:THWND
     assume rcx:THWND
 
-_rssave proc uses rbx hwnd:THWND, file:LPSTR
+_rssave proc uses rbx hwnd:THWND, file:string_t
 
    .new     d:RIDD
    .new     o:ROBJ

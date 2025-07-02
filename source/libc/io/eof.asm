@@ -8,7 +8,7 @@ include io.inc
 
     .code
 
-_eof proc handle:SINT
+_eof proc handle:int_t
 
    .new current_offset:qword
 

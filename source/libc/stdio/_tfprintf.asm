@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_ftprintf proc uses rbx file:LPFILE, format:LPTSTR, argptr:VARARG
+_ftprintf proc uses rbx file:LPFILE, format:tstring_t, argptr:VARARG
 
     mov  rbx,_stbuf( ldr(file) )
     xchg rbx,_toutput( file, format, &argptr )

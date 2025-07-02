@@ -17,14 +17,14 @@ include tchar.inc
 
 .code
 
-_tosopen proc uses rsi rbx file:LPTSTR, attrib:UINT, mode:UINT, action:UINT
+_tosopen proc uses rsi rbx file:tstring_t, attrib:uint_t, mode:uint_t, action:uint_t
 
 ifdef __UNIX__
     mov eax,-1
 else
 
-   .new fd:SINT
-   .new share:SINT = 0
+   .new fd:int_t
+   .new share:int_t = 0
     ldr rbx,file
 
     .if ( mode == M_RDONLY )

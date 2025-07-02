@@ -11,8 +11,7 @@ include time.inc
 PST char_t "PST",_TZ_STRINGS_SIZE-3 dup(0)
 PDT char_t "PDT",_TZ_STRINGS_SIZE-3 dup(0)
 
-_tzname LPSTR PST
-        LPSTR PDT
+_tzname string_t PST, PDT
 
 _timezone int_t 8*3600  ; Pacific Time Zone
 _daylight int_t 1       ; Daylight Saving Time (DST) in timezone

@@ -9,11 +9,6 @@ endif
 .pragma comment(lib, libc, msvcrt)
 .pragma pack(push, size_t)
 
-ifndef _WCHAR_T_DEFINED
-define _WCHAR_T_DEFINED
-wchar_t typedef ushort_t
-endif
-
 ifndef _TIME32_T_DEFINED
 define _TIME32_T_DEFINED
 __time32_t typedef int_t	;; 32-bit time value
@@ -36,15 +31,6 @@ endif
 ifndef _CLOCK_T_DEFINED
 define _CLOCK_T_DEFINED
 clock_t typedef int_t
-endif
-
-ifndef _SIZE_T_DEFINED
-define _SIZE_T_DEFINED
-ifdef _WIN64
-size_t typedef uint64_t
-else
-size_t typedef uint_t
-endif
 endif
 
 ;

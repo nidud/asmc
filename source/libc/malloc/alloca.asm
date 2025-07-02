@@ -12,7 +12,7 @@ ifndef _WIN64
 
     option stackbase:esp
 
-alloca proc byte_count:UINT
+alloca proc byte_count:uint_t
 
     mov     ecx,[esp]   ; return address
     mov     eax,[esp+4] ; size to probe

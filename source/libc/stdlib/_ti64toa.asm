@@ -11,7 +11,7 @@ include tchar.inc
 
     .code
 
-_i64tot proc val:int64_t, buffer:LPTSTR, radix:int_t
+_i64tot proc val:int64_t, buffer:tstring_t, radix:int_t
 
 ifdef _WIN64
 ifdef __UNIX__

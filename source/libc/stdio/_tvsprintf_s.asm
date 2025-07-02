@@ -11,7 +11,7 @@ include tchar.inc
 
     .code
 
-_vstprintf_s proc string:LPTSTR, sizeInBytes:size_t, format:LPTSTR, vargs:ptr
+_vstprintf_s proc string:tstring_t, sizeInBytes:size_t, format:tstring_t, vargs:ptr
 
   local o:_iobuf
 
@@ -41,10 +41,10 @@ endif
         mov rcx,o._ptr
         .if ( o._cnt <= 0 )
             .if ( rcx > o._base )
-                mov TCHAR ptr [rcx-TCHAR],0
+                mov tchar_t ptr [rcx-tchar_t],0
             .endif
         .else
-            mov TCHAR ptr [rcx],0
+            mov tchar_t ptr [rcx],0
         .endif
     .endif
     ret

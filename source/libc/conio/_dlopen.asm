@@ -9,7 +9,7 @@ include malloc.inc
 
     .code
 
-_dlopen proc uses rbx rc:TRECT, count:UINT, flags:UINT, size:UINT
+_dlopen proc uses rbx rc:TRECT, count:uint_t, flags:uint_t, size:uint_t
 
    .new     hwnd:THWND
    .new     rsize:int_t

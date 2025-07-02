@@ -94,8 +94,8 @@ DEFINE_IIDX(IMalloc, "00000002-0000-0000-C000-000000000046")
 
 .comdef IMalloc : public IUnknown
 
-    Alloc		proc :SIZE_T
-    Realloc		proc :ptr, :SIZE_T
+    Alloc		proc :size_t
+    Realloc		proc :ptr, :size_t
     Free		proc :ptr
     GetSize		proc :ptr
     DidAlloc		proc :ptr

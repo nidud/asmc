@@ -432,12 +432,12 @@ define GMEM_LOCKCOUNT      0x00FF
 MEMORYSTATUS            struct
 dwLength                DWORD ?
 dwMemoryLoad            DWORD ?
-dwTotalPhys             SIZE_T ?
-dwAvailPhys             SIZE_T ?
-dwTotalPageFile         SIZE_T ?
-dwAvailPageFile         SIZE_T ?
-dwTotalVirtual          SIZE_T ?
-dwAvailVirtual          SIZE_T ?
+dwTotalPhys             size_t ?
+dwAvailPhys             size_t ?
+dwTotalPageFile         size_t ?
+dwAvailPageFile         size_t ?
+dwTotalVirtual          size_t ?
+dwAvailVirtual          size_t ?
 MEMORYSTATUS            ends
 LPMEMORYSTATUS          typedef ptr MEMORYSTATUS
 
@@ -733,8 +733,8 @@ ifdef __PE__
 .pragma comment(lib, kernel32)
 endif
 
-GlobalAlloc proto WINAPI :UINT, :SIZE_T
-GlobalReAlloc proto WINAPI :HGLOBAL, :SIZE_T, :UINT
+GlobalAlloc proto WINAPI :UINT, :size_t
+GlobalReAlloc proto WINAPI :HGLOBAL, :size_t, :UINT
 
 GlobalSize proto WINAPI :HGLOBAL
 GlobalUnlock proto WINAPI :HGLOBAL
@@ -752,8 +752,8 @@ GlobalWire proto WINAPI :HGLOBAL
 GlobalUnWire proto WINAPI :HGLOBAL
 GlobalMemoryStatus proto WINAPI :LPMEMORYSTATUS
 
-LocalAlloc proto WINAPI :UINT, :SIZE_T
-LocalReAlloc proto WINAPI :HLOCAL, :SIZE_T, :UINT
+LocalAlloc proto WINAPI :UINT, :size_t
+LocalReAlloc proto WINAPI :HLOCAL, :size_t, :UINT
 LocalLock proto WINAPI :HLOCAL
 LocalHandle proto WINAPI :LPCVOID
 LocalUnlock proto WINAPI :HLOCAL
@@ -805,8 +805,8 @@ endif
 GetProcessAffinityMask proto WINAPI :HANDLE, :PDWORD_PTR, :PDWORD_PTR
 SetProcessAffinityMask proto WINAPI :HANDLE, :DWORD_PTR
 GetProcessIoCounters proto WINAPI :HANDLE, :PIO_COUNTERS
-GetProcessWorkingSetSize proto WINAPI :HANDLE, :PSIZE_T, :PSIZE_T
-SetProcessWorkingSetSize proto WINAPI :HANDLE, :SIZE_T, :SIZE_T
+GetProcessWorkingSetSize proto WINAPI :HANDLE, :psize_t, :psize_t
+SetProcessWorkingSetSize proto WINAPI :HANDLE, :size_t, :size_t
 FatalExit proto WINAPI :sdword
 
 SetEnvironmentStringsA proto WINAPI :LPCH
@@ -825,10 +825,10 @@ if (_WIN32_WINNT ge 0x0501)
 ConvertFiberToThread proto WINAPI
 endif
 
-CreateFiberEx proto WINAPI :SIZE_T, :SIZE_T, :DWORD, :LPFIBER_START_ROUTINE, :LPVOID
+CreateFiberEx proto WINAPI :size_t, :size_t, :DWORD, :LPFIBER_START_ROUTINE, :LPVOID
 ConvertThreadToFiberEx proto WINAPI :LPVOID, :DWORD
 
-CreateFiber proto WINAPI :SIZE_T, :LPFIBER_START_ROUTINE, :LPVOID
+CreateFiber proto WINAPI :size_t, :LPFIBER_START_ROUTINE, :LPVOID
 ConvertThreadToFiber proto WINAPI :LPVOID
 
 if (_WIN32_WINNT ge 0x0601) and not defined(MIDL_PASS)
@@ -2591,7 +2591,7 @@ endif
 endif
 
 if _WIN32_WINNT ge 0x0600
-MapViewOfFileExNuma proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :SIZE_T, :LPVOID, :DWORD
+MapViewOfFileExNuma proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :size_t, :LPVOID, :DWORD
 endif
 
 .pragma comment(lib, kernel32)
@@ -3229,8 +3229,8 @@ define QUERY_ACTCTX_FLAG_ACTCTX_IS_HMODULE (0x00000008)
 define QUERY_ACTCTX_FLAG_ACTCTX_IS_ADDRESS (0x00000010)
 define QUERY_ACTCTX_FLAG_NO_ADDREF         (0x80000000)
 
-QueryActCtxW proto WINAPI :DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :SIZE_T, :ptr
-CALLBACK(PQUERYACTCTXW_FUNC, :DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :SIZE_T, :ptr SIZE_T)
+QueryActCtxW proto WINAPI :DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :size_t, :ptr
+CALLBACK(PQUERYACTCTXW_FUNC, :DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :size_t, :ptr size_t)
 
 endif
 
@@ -3606,7 +3606,7 @@ endif
 endif
 
 if (_WIN32_WINNT ge 0x0600)
-QueryActCtxSettingsW proto WINAPI :DWORD, :HANDLE, :PCWSTR, :PCWSTR, :PWSTR, :SIZE_T, :ptr
+QueryActCtxSettingsW proto WINAPI :DWORD, :HANDLE, :PCWSTR, :PCWSTR, :PWSTR, :size_t, :ptr
 endif
 
 if (_WIN32_WINNT ge 0x0600)

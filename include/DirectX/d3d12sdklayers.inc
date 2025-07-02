@@ -1499,7 +1499,7 @@ Category		D3D12_MESSAGE_CATEGORY ?
 Severity		D3D12_MESSAGE_SEVERITY ?
 ID			D3D12_MESSAGE_ID ?
 pDescription		LPSTR ?
-DescriptionByteLength	SIZE_T ?
+DescriptionByteLength	size_t ?
 D3D12_MESSAGE		ENDS
 
 D3D12_INFO_QUEUE_FILTER_DESC STRUC

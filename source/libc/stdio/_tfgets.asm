@@ -11,7 +11,7 @@ include tchar.inc
 
     assume rbx:ptr _iobuf
 
-_fgetts proc uses rbx buf:LPTSTR, count:SINT, fp:LPFILE
+_fgetts proc uses rbx buf:tstring_t, count:int_t, fp:LPFILE
 
     ldr rbx,buf
     xor eax,eax
@@ -32,7 +32,7 @@ _fgetts proc uses rbx buf:LPTSTR, count:SINT, fp:LPFILE
         .endif
 
         mov [rbx],_tal
-        add rbx,TCHAR
+        add rbx,tchar_t
        .break .if ( eax == 10 )
     .endf
     xor eax,eax

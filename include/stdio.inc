@@ -151,17 +151,6 @@ __acrt_iob_func proto __cdecl :dword
 ifndef _WSTDIO_DEFINED
 define _WSTDIO_DEFINED
 
-ifndef _WCHAR_T_DEFINED
-define _WCHAR_T_DEFINED
-wchar_t		typedef WORD
-endif
-
-ifndef _WCTYPE_T_DEFINED
-define _WCTYPE_T_DEFINED
-wint_t		typedef wchar_t
-wctype_t	typedef wchar_t
-endif
-
 ifdef  _POSIX_
 _wfsopenproto	proto __cdecl :wstring_t, :wstring_t
 else

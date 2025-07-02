@@ -11,13 +11,13 @@ include tchar.inc
 
 .code
 
-_tsplitpath_s proc uses rsi rdi rbx path:LPTSTR,
-    drive:LPTSTR, max_drive:size_t,
-    dir:LPTSTR,   max_dir:size_t,
-    fname:LPTSTR, max_fname:size_t,
-    ext:LPTSTR,   max_ext:size_t
+_tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
+    drive:tstring_t, max_drive:size_t,
+    dir:tstring_t,   max_dir:size_t,
+    fname:tstring_t, max_fname:size_t,
+    ext:tstring_t,   max_ext:size_t
 
-   .new endptr:LPTSTR
+   .new endptr:tstring_t
    .new bEinval:int_t = 0
 
     ldr rbx,path
@@ -50,23 +50,23 @@ _tsplitpath_s proc uses rsi rdi rbx path:LPTSTR,
         jmp error_erange
     .endif
 
-    .if ( TCHAR ptr [rbx+TCHAR] == ':' )
+    .if ( tchar_t ptr [rbx+tchar_t] == ':' )
 
         .if ( rcx )
 
-            mov [rcx],TCHAR ptr [rbx]
-            mov TCHAR ptr [rcx+TCHAR],':'
-            add rcx,TCHAR*2
+            mov [rcx],tchar_t ptr [rbx]
+            mov tchar_t ptr [rcx+tchar_t],':'
+            add rcx,tchar_t*2
         .endif
-        add rbx,TCHAR*2
+        add rbx,tchar_t*2
     .endif
     .if ( rcx )
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
 
-    .for ( edx=0, edi=0, esi=0, rcx=rbx :: rcx+=TCHAR )
+    .for ( edx=0, edi=0, esi=0, rcx=rbx :: rcx+=tchar_t )
 
-        movzx eax,TCHAR ptr [rcx]
+        movzx eax,tchar_t ptr [rcx]
 
         .break .if eax == 0
         .if ( eax == '\' || eax == '/' )
@@ -88,48 +88,48 @@ _tsplitpath_s proc uses rsi rdi rbx path:LPTSTR,
 
         mov rax,rsi
         sub rax,rdi
-        add eax,TCHAR*2
-        shr eax,TCHAR-1
+        add eax,tchar_t*2
+        shr eax,tchar_t-1
         .if ( rax > max_dir )
             jmp error_erange
         .endif
         .while ( rdi < rsi )
 
-            mov [rcx],TCHAR ptr [rdi]
-            add rdi,TCHAR
-            add rcx,TCHAR
+            mov [rcx],tchar_t ptr [rdi]
+            add rdi,tchar_t
+            add rcx,tchar_t
         .endw
         .if ( rsi )
-            mov [rcx],TCHAR ptr [rsi]
-            add rcx,TCHAR
+            mov [rcx],tchar_t ptr [rsi]
+            add rcx,tchar_t
         .endif
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
 
     mov rcx,ext
     .if ( rcx )
 
-        mov eax,TCHAR
+        mov eax,tchar_t
         .if ( rdx )
 
             mov rax,endptr
             sub rax,rdx
-            add eax,TCHAR
+            add eax,tchar_t
         .endif
-        shr eax,TCHAR-1
+        shr eax,tchar_t-1
         .if ( rax > max_ext )
             jmp error_erange
         .endif
 
         .if ( rdx )
 
-            .for ( eax=0, rdi=rdx :: rdi+=TCHAR, rcx+=TCHAR )
+            .for ( eax=0, rdi=rdx :: rdi+=tchar_t, rcx+=tchar_t )
 
-                mov [rcx],TCHAR ptr [rdi]
+                mov [rcx],tchar_t ptr [rdi]
                .break .if ( eax == 0 )
             .endf
         .endif
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
 
     mov rcx,fname
@@ -139,13 +139,13 @@ _tsplitpath_s proc uses rsi rdi rbx path:LPTSTR,
             mov rdx,endptr
         .endif
         .if ( rsi >= rbx )
-            lea rbx,[rsi+TCHAR]
+            lea rbx,[rsi+tchar_t]
         .endif
 
         mov rax,rdx
         sub rax,rbx
-        add eax,TCHAR
-        shr eax,TCHAR-1
+        add eax,tchar_t
+        shr eax,tchar_t-1
         .if ( rax > max_fname )
             jmp error_erange
         .endif
@@ -153,12 +153,12 @@ _tsplitpath_s proc uses rsi rdi rbx path:LPTSTR,
         xor eax,eax
         .while ( rbx < rdx )
 
-            mov [rcx],TCHAR ptr [rbx]
+            mov [rcx],tchar_t ptr [rbx]
            .break .if ( eax == 0 )
-            add rcx,TCHAR
-            add rbx,TCHAR
+            add rcx,tchar_t
+            add rbx,tchar_t
         .endw
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
     .return( 0 )
 

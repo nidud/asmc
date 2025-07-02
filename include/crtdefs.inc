@@ -27,56 +27,9 @@ endif
 
 define _SECURECRT_FILL_BUFFER_PATTERN 0xFE
 
-ifndef _SIZE_T_DEFINED
-define _SIZE_T_DEFINED
-ifdef _WIN64
-size_t typedef qword
-else
-size_t typedef dword
-endif
-endif
-
 ifndef _RSIZE_T_DEFINED
 define _RSIZE_T_DEFINED
 rsize_t typedef size_t
-endif
-
-ifndef _INTPTR_T_DEFINED
-define _INTPTR_T_DEFINED
-ifdef _WIN64
-intptr_t typedef sqword
-else
-intptr_t typedef sdword
-endif
-endif
-
-ifndef _UINTPTR_T_DEFINED
-define _UINTPTR_T_DEFINED
-ifdef _WIN64
-uintptr_t typedef qword
-else
-uintptr_t typedef dword
-endif
-endif
-
-ifndef _PTRDIFF_T_DEFINED
-define _PTRDIFF_T_DEFINED
-ifdef _WIN64
-ptrdiff_t typedef sqword
-else
-ptrdiff_t typedef sdword
-endif
-endif
-
-ifndef _WCHAR_T_DEFINED
-define _WCHAR_T_DEFINED
-wchar_t typedef word
-endif
-
-ifndef _WCTYPE_T_DEFINED
-define _WCTYPE_T_DEFINED
-wint_t typedef word
-wctype_t typedef word
 endif
 
 ifndef _VA_LIST_DEFINED
@@ -90,10 +43,6 @@ ifdef _WIN64
 endif
 endif
 
-ifndef _ERRNO_T_DEFINED
-define _ERRNO_T_DEFINED
-errno_t typedef int_t
-endif
 ifndef _TIME32_T_DEFINED
 define _TIME32_T_DEFINED
 __time32_t typedef sdword

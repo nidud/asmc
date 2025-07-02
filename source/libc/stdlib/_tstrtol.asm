@@ -36,11 +36,11 @@ strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
         .return( 0 )
     .endif
 
-    movzx eax,TCHAR ptr [rbx]
+    movzx eax,tchar_t ptr [rbx]
     .while ( eax == ' ' || eax == 9 )
 
-        add rbx,TCHAR
-        movzx eax,TCHAR ptr [rbx]
+        add rbx,tchar_t
+        movzx eax,tchar_t ptr [rbx]
     .endw
 
     .if ( eax == '-' || eax == '+' )
@@ -49,15 +49,15 @@ strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
 
             or flags,FL_NEG
         .endif
-        add rbx,TCHAR
-        movzx eax,TCHAR ptr [rbx]
+        add rbx,tchar_t
+        movzx eax,tchar_t ptr [rbx]
     .endif
 
     .if ( edi == 0 )
 
         ; determine base based on first two chars of string
 
-        movzx ecx,TCHAR ptr [rbx+TCHAR]
+        movzx ecx,tchar_t ptr [rbx+tchar_t]
         .if ( eax != '0' )
             mov edi,10
         .elseif ( ecx == 'x' || ecx == 'X' )
@@ -69,16 +69,16 @@ strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
 
     .if ( edi == 16 && eax == '0' )
 
-        movzx eax,TCHAR ptr [rbx+TCHAR]
+        movzx eax,tchar_t ptr [rbx+tchar_t]
         .if ( eax == 'x' || eax == 'X' )
-            add rbx,2*TCHAR
+            add rbx,2*tchar_t
         .endif
     .endif
 
     xor eax,eax
     .while 1
 
-        movzx ecx,TCHAR ptr [rbx]
+        movzx ecx,tchar_t ptr [rbx]
         .if ( ecx >= '0' && ecx <= '9' )
             sub cl,'0'
         .elseif ( ecx >= 'A' && ecx <= 'z' )
@@ -99,7 +99,7 @@ strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
             or flags,FL_OVERFLOW
            .break .if ( !rsi )
         .endif
-        add rbx,TCHAR
+        add rbx,tchar_t
     .endw
 
     .if ( !( flags & FL_READDIGIT ) )

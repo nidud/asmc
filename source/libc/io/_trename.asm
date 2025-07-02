@@ -15,7 +15,7 @@ include tchar.inc
 
     .code
 
-_trename proc Oldname:LPTSTR, Newname:LPTSTR
+_trename proc Oldname:tstring_t, Newname:tstring_t
 
     ldr rcx,Oldname
     ldr rdx,Newname

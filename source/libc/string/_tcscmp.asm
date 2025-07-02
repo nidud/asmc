@@ -11,7 +11,7 @@ include tchar.inc
 
     option dotname
 
-_tcscmp proc a:LPTSTR, b:LPTSTR
+_tcscmp proc a:tstring_t, b:tstring_t
 
     ldr     rcx,a
     ldr     rdx,b
@@ -21,31 +21,31 @@ _tcscmp proc a:LPTSTR, b:LPTSTR
     jz      .5
     sub     _tal,[rdx]
     jnz     .1
-    xor     _tal,[rcx+1*TCHAR]
+    xor     _tal,[rcx+1*tchar_t]
     jz      .4
-    sub     _tal,[rdx+1*TCHAR]
+    sub     _tal,[rdx+1*tchar_t]
     jnz     .1
-    xor     _tal,[rcx+2*TCHAR]
+    xor     _tal,[rcx+2*tchar_t]
     jz      .3
-    sub     _tal,[rdx+2*TCHAR]
+    sub     _tal,[rdx+2*tchar_t]
     jnz     .1
-    xor     _tal,[rcx+3*TCHAR]
+    xor     _tal,[rcx+3*tchar_t]
     jz      .2
-    sub     _tal,[rdx+3*TCHAR]
+    sub     _tal,[rdx+3*tchar_t]
     jnz     .1
-    add     rcx,4*TCHAR
-    add     rdx,4*TCHAR
+    add     rcx,4*tchar_t
+    add     rdx,4*tchar_t
     jmp     .0
 .1:
     sbb     rax,rax
     sbb     rax,-1
     jmp     .6
 .2:
-    add     rdx,TCHAR
+    add     rdx,tchar_t
 .3:
-    add     rdx,TCHAR
+    add     rdx,tchar_t
 .4:
-    add     rdx,TCHAR
+    add     rdx,tchar_t
 .5:
     sub     _tal,[rdx]
     jnz     .1

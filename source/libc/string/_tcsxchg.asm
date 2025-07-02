@@ -9,7 +9,7 @@ include tchar.inc
 
 .code
 
-_tcsxchg proc uses rbx dst:LPTSTR, old:LPTSTR, new:LPTSTR
+_tcsxchg proc uses rbx dst:tstring_t, old:tstring_t, new:tstring_t
 
    .new lnew:int_t
    .new lold:int_t
@@ -35,7 +35,7 @@ endif
         add rdx,rax
         _tcsmove(rcx, rdx)      ; move($ + len(new), $ + len(old))
         memmove(rbx, new, lnew) ; copy($, new, len(new))
-        add rbx,TCHAR
+        add rbx,tchar_t
     .endw                       ; $++
     mov rax,dst
     ret

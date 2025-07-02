@@ -10,9 +10,9 @@ include tchar.inc
 
 .code
 
-_tdupenv_s proc uses rbx pBuffer:tarray_t, pBufferSizeInTChars:ptr size_t, varname:LPTSTR
+_tdupenv_s proc uses rbx pBuffer:tarray_t, pBufferSizeInTChars:ptr size_t, varname:tstring_t
 
-   .new string:LPTSTR
+   .new string:tstring_t
    .new size:size_t
 
     ldr rbx,pBuffer
@@ -38,7 +38,7 @@ _tdupenv_s proc uses rbx pBuffer:tarray_t, pBufferSizeInTChars:ptr size_t, varna
     mov string,rax
 
     mov size,&[_tcslen(rax)+1]
-    mov [rbx],calloc(rax, TCHAR)
+    mov [rbx],calloc(rax, tchar_t)
 
     .if ( rax == NULL )
 

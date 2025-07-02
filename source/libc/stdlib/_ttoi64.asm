@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_ttoi64 proc string:LPTSTR
+_ttoi64 proc string:tstring_t
 ifndef _WIN64
     push esi
     push edi
@@ -19,8 +19,8 @@ endif
     ldr rcx,string
     .repeat
 
-        movzx eax,TCHAR ptr [rcx]
-        add rcx,TCHAR
+        movzx eax,tchar_t ptr [rcx]
+        add rcx,tchar_t
        .continue(0) .if eax == ' '
     .until 1
 
@@ -31,8 +31,8 @@ else
 endif
     .if ( eax == '-' || eax == '+' )
 
-        movzx eax,TCHAR ptr [rcx]
-        add rcx,TCHAR
+        movzx eax,tchar_t ptr [rcx]
+        add rcx,tchar_t
     .endif
 
 ifdef _WIN64
@@ -54,7 +54,7 @@ ifdef _WIN64
 
         lea rdx,[rax*8+rdx]
         lea rax,[rax*2+rdx]
-        movzx edx,TCHAR ptr [rcx]
+        movzx edx,tchar_t ptr [rcx]
 else
         sub ebx,'0'
 
@@ -71,9 +71,9 @@ else
         adc edx,esi
         add eax,ebx
         adc edx,0
-        movzx ebx,TCHAR ptr [rcx]
+        movzx ebx,tchar_t ptr [rcx]
 endif
-        add rcx,TCHAR
+        add rcx,tchar_t
     .endw
 
 ifdef _WIN64

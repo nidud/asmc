@@ -68,9 +68,9 @@ VendorId		UINT ?
 DeviceId		UINT ?
 SubSysId		UINT ?
 Revision		UINT ?
-DedicatedVideoMemory	SIZE_T ?
-DedicatedSystemMemory	SIZE_T ?
-SharedSystemMemory	SIZE_T ?
+DedicatedVideoMemory	size_t ?
+DedicatedSystemMemory	size_t ?
+SharedSystemMemory	size_t ?
 AdapterLuid		LUID <>
 DXGI_ADAPTER_DESC	ENDS
 
@@ -316,9 +316,9 @@ VendorId		UINT ?
 DeviceId		UINT ?
 SubSysId		UINT ?
 Revision		UINT ?
-DedicatedVideoMemory	SIZE_T ?
-DedicatedSystemMemory	SIZE_T ?
-SharedSystemMemory	SIZE_T ?
+DedicatedVideoMemory	size_t ?
+DedicatedSystemMemory	size_t ?
+SharedSystemMemory	size_t ?
 AdapterLuid		LUID <>
 Flags			UINT ?
 DXGI_ADAPTER_DESC1	ENDS

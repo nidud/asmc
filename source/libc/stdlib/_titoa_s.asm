@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_itot_s proc val:int_t, buffer:LPTSTR, sizeInTChars:size_t, radix:int_t
+_itot_s proc val:int_t, buffer:tstring_t, sizeInTChars:size_t, radix:int_t
 
 ifdef _WIN64
     xor eax,eax

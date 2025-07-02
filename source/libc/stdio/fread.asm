@@ -17,14 +17,14 @@ endm
     assume rbx:ptr _iobuf
 
 if defined(_WIN64) and defined(__UNIX__)
-fread proc uses rbx r12 buffer:LPSTR, size:int_t, num:int_t, fp:LPFILE
+fread proc uses rbx r12 buffer:string_t, size:int_t, num:int_t, fp:LPFILE
 else
-fread proc uses rsi rdi rbx buffer:LPSTR, size:int_t, num:int_t, fp:LPFILE
+fread proc uses rsi rdi rbx buffer:string_t, size:int_t, num:int_t, fp:LPFILE
 endif
 
-  local total:UINT   ; total bytes to read
-  local count:UINT   ; num bytes left to read
-  local bufsize:UINT ; size of stream buffer
+  local total:uint_t   ; total bytes to read
+  local count:uint_t   ; num bytes left to read
+  local bufsize:uint_t ; size of stream buffer
 
     ldr rdi,buffer
     ldr rbx,fp

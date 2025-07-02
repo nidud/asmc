@@ -98,7 +98,7 @@ else
 D3DX11GetImageInfoFromResource equ <D3DX11GetImageInfoFromResourceA>
 endif
 
-D3DX11GetImageInfoFromMemory proto WINAPI :ptr, :SIZE_T, :ptr, :ptr, :ptr
+D3DX11GetImageInfoFromMemory proto WINAPI :ptr, :size_t, :ptr, :ptr, :ptr
 D3DX11CreateShaderResourceViewFromFileA proto WINAPI :ptr, :LPCSTR, :ptr, :ptr, :ptr, :ptr
 D3DX11CreateShaderResourceViewFromFileW proto WINAPI :ptr, :LPCWSTR, :ptr, :ptr, :ptr, :ptr
 ifdef _UNICODE
@@ -131,8 +131,8 @@ else
 D3DX11CreateTextureFromResource equ <D3DX11CreateTextureFromResourceA>
 endif
 
-D3DX11CreateShaderResourceViewFromMemory proto WINAPI :ptr, :ptr, :SIZE_T, :ptr, :ptr, :ptr, :ptr
-D3DX11CreateTextureFromMemory proto WINAPI :ptr, :ptr, :SIZE_T, :ptr, :ptr, :ptr, :ptr
+D3DX11CreateShaderResourceViewFromMemory proto WINAPI :ptr, :ptr, :size_t, :ptr, :ptr, :ptr, :ptr
+D3DX11CreateTextureFromMemory proto WINAPI :ptr, :ptr, :size_t, :ptr, :ptr, :ptr, :ptr
 
 LPD3D11_BOX		typedef ptr D3D11_BOX
 D3DX11_TEXTURE_LOAD_INFO STRUC

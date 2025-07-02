@@ -17,17 +17,17 @@ externdef _umaskval:dword
 
     .code
 
-_topenfile proc uses rbx file:LPTSTR, mode:LPTSTR, shflag:SINT, stream:LPFILE
+_topenfile proc uses rbx file:tstring_t, mode:tstring_t, shflag:int_t, stream:LPFILE
 
    .new oflag:int_t
    .new fileflag:int_t
 
     ldr rbx,mode
-    .while ( TCHAR ptr [rbx] == ' ' )
-        add rbx,TCHAR
+    .while ( tchar_t ptr [rbx] == ' ' )
+        add rbx,tchar_t
     .endw
-    movzx eax,TCHAR ptr [rbx]
-    add rbx,TCHAR
+    movzx eax,tchar_t ptr [rbx]
+    add rbx,tchar_t
 
     .switch pascal eax
     .case 'r': mov ecx,_IOREAD : mov edx,O_RDONLY
@@ -38,7 +38,7 @@ _topenfile proc uses rbx file:LPTSTR, mode:LPTSTR, shflag:SINT, stream:LPFILE
         .return(NULL)
     .endsw
 
-    movzx eax,TCHAR ptr [rbx]
+    movzx eax,tchar_t ptr [rbx]
     .while eax
 
         .switch pascal eax
@@ -66,8 +66,8 @@ endif
         .default
             .break
         .endsw
-        add rbx,TCHAR
-        movzx eax,TCHAR ptr [rbx]
+        add rbx,tchar_t
+        movzx eax,tchar_t ptr [rbx]
     .endw
     mov fileflag,ecx
 
@@ -84,14 +84,14 @@ endif
         .default
             .break
         .endsw
-        add rbx,TCHAR
-        movzx eax,TCHAR ptr [rbx]
+        add rbx,tchar_t
+        movzx eax,tchar_t ptr [rbx]
     .endw
 
     .if ( ecx == 5 && eax == 'U' )
 
-        movzx eax,TCHAR ptr [rbx+TCHAR]
-        movzx ecx,TCHAR ptr [rbx+TCHAR*4]
+        movzx eax,tchar_t ptr [rbx+tchar_t]
+        movzx ecx,tchar_t ptr [rbx+tchar_t*4]
         .if ( eax == 'N' && ecx == 'O' )
             or edx,_O_WTEXT
         .elseif ( eax == 'T' && ecx == '1' )

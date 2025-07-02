@@ -53,14 +53,14 @@ DEFINE_IIDX(IMallocSpy, "0000001d-0000-0000-C000-000000000046")
 
 .comdef IMallocSpy : public IUnknown
 
-    PreAlloc		proc :SIZE_T
+    PreAlloc		proc :size_t
     PostAlloc		proc :ptr
     PreFree		proc :ptr, :BOOL
     PostFree		proc :BOOL
-    PreRealloc		proc :ptr, :SIZE_T, :ptr, :BOOL
+    PreRealloc		proc :ptr, :size_t, :ptr, :BOOL
     PostRealloc		proc :ptr, :BOOL
     PreGetSize		proc :ptr, :BOOL
-    PostGetSize		proc :SIZE_T, :BOOL
+    PostGetSize		proc :size_t, :BOOL
     PreDidAlloc		proc :ptr, :BOOL
     PostDidAlloc	proc :ptr, :BOOL, :int_t
     PreHeapMinimize	proc

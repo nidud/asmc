@@ -10,7 +10,7 @@ include conio.inc
 
     assume rbx:THWND
 
-_sendmessage proc uses rbx hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
+_sendmessage proc uses rbx hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
 
     ldr rbx,hwnd
     .if ( [rbx].flags & W_WNDPROC && [rbx].flags & W_CHILD )

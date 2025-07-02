@@ -27,11 +27,11 @@ _tcsfcat proc uses rsi rdi rbx buffer:LPTSTR, path:LPTSTR, file:LPTSTR
         mov   rdi,rdx ; length of buffer
         repne _tscasb
     .endif
-    sub rdi,TCHAR
+    sub rdi,tchar_t
 
     .if ( rdi != rdx ) ; add slash if missing
 
-        movzx eax,TCHAR ptr [rdi-TCHAR]
+        movzx eax,tchar_t ptr [rdi-tchar_t]
 ifdef __UNIX__
         .if ( eax != '/' )
 

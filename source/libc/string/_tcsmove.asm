@@ -9,7 +9,7 @@ include tchar.inc
 
 .code
 
-_tcsmove proc dst:LPTSTR, src:LPTSTR
+_tcsmove proc dst:tstring_t, src:tstring_t
 
     _tcslen(src)
     inc eax

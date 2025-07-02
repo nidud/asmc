@@ -80,7 +80,7 @@ endif
 _tfindnexti64 endp
 
 
-_tfindfirsti64 proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddatai64_t
+_tfindfirsti64 proc uses rbx lpFileName:tstring_t, ff:ptr _tfinddatai64_t
 
    .new dir:ptr DIR
 
@@ -152,7 +152,7 @@ copyblock proc private
 
     lea rsi,[rsi].cFileName
     lea rdi,[rdi].name
-    mov rcx,(260/4)*TCHAR
+    mov rcx,(260/4)*tchar_t
     rep movsd
     xor eax,eax
     ret
@@ -177,7 +177,7 @@ _tfindnexti64 proc uses rsi rdi handle:ptr, ff:ptr _tfinddatai64_t
 _tfindnexti64 endp
 
 
-_tfindfirsti64 proc uses rsi rdi rbx lpFileName:LPTSTR, ff:ptr _tfinddatai64_t
+_tfindfirsti64 proc uses rsi rdi rbx lpFileName:tstring_t, ff:ptr _tfinddatai64_t
 
   local FindFileData:WIN32_FIND_DATA
 

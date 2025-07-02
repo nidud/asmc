@@ -66,36 +66,7 @@ endif
 _VCRT_ALIGN macro x
     endm
 
-ifdef _WIN64
-    ptrdiff_t typedef sqword
-    intptr_t  typedef sqword
-else
-    ptrdiff_t typedef sdword
-    intptr_t  typedef sdword
-endif
-
 __vcrt_bool typedef sdword;_Bool
-
-ifndef _SIZE_T_DEFINED
-    _SIZE_T_DEFINED equ <>
-endif
-
-ifndef _PTRDIFF_T_DEFINED
-    _PTRDIFF_T_DEFINED equ <>
-endif
-
-ifndef _INTPTR_T_DEFINED
-    _INTPTR_T_DEFINED equ <>
-endif
-
-ifndef _WCHAR_T_DEFINED
-    _WCHAR_T_DEFINED equ <>
-    wchar_t typedef word
-endif
-
-ifndef NULL
-    NULL equ 0
-endif
 
 __crt_countof macro _Array
     exitm<(lengthof(_Array))>

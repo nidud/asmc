@@ -10,9 +10,9 @@ include tchar.inc
     .code
 
     option dotname
-    assume rdx:ptr TCHAR
+    assume rdx:ptr tchar_t
 
-_tcscat proc dst:LPTSTR, src:LPTSTR
+_tcscat proc dst:tstring_t, src:tstring_t
 
     ldr     rcx,dst
     ldr     rdx,src
@@ -23,12 +23,12 @@ endif
 .0:
     cmp     _tal,[rcx]
     je      .1
-    add     rcx,TCHAR
+    add     rcx,tchar_t
     jmp     .0
 .1:
     mov     [rcx],[rdx]
-    add     rcx,TCHAR
-    add     rdx,TCHAR
+    add     rcx,tchar_t
+    add     rdx,tchar_t
     test    eax,eax
     jnz     .1
 ifdef _WIN64

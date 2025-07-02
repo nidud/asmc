@@ -162,18 +162,18 @@ Reserved2               PVOID ?
 HandleCount             ULONG ?
 SessionId               ULONG ?
 Reserved3               PVOID ?
-PeakVirtualSize         SIZE_T ?
-VirtualSize             SIZE_T ?
+PeakVirtualSize         size_t ?
+VirtualSize             size_t ?
 Reserved4               ULONG ?
-PeakWorkingSetSize      SIZE_T ?
-WorkingSetSize          SIZE_T ?
+PeakWorkingSetSize      size_t ?
+WorkingSetSize          size_t ?
 Reserved5               PVOID ?
-QuotaPagedPoolUsage     SIZE_T ?
+QuotaPagedPoolUsage     size_t ?
 Reserved6               PVOID ?
-QuotaNonPagedPoolUsage  SIZE_T ?
-PagefileUsage           SIZE_T ?
-PeakPagefileUsage       SIZE_T ?
-PrivatePageCount        SIZE_T ?
+QuotaNonPagedPoolUsage  size_t ?
+PagefileUsage           size_t ?
+PeakPagefileUsage       size_t ?
+PrivatePageCount        size_t ?
 Reserved7               LARGE_INTEGER 6 dup(<>)
 SYSTEM_PROCESS_INFORMATION ends
 PSYSTEM_PROCESS_INFORMATION typedef ptr SYSTEM_PROCESS_INFORMATION

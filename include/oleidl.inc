@@ -442,7 +442,7 @@ DEFINE_IIDX(IOleInPlaceSite, "00000119-0000-0000-C000-000000000046")
     OnInPlaceActivate	proc
     OnUIActivate	proc
     GetWindowContext	proc :ptr, :ptr, :LPRECT, :LPRECT, :LPOLEINPLACEFRAMEINFO
-    Scroll		proc :SIZE_T
+    Scroll		proc :size_t
     OnUIDeactivate	proc :BOOL
     OnInPlaceDeactivate proc
     DiscardUndoState	proc

@@ -9,7 +9,7 @@ include fltintrn.inc
 
     .code
 
-_cropzeros proc uses rbx buffer:LPSTR
+_cropzeros proc uses rbx buffer:string_t
 
     ldr rbx,buffer
 

@@ -1679,14 +1679,14 @@ define __ID3D11Device_INTERFACE_DEFINED__
     CreateUnorderedAccessView proc :ptr, :ptr, :ptr
     CreateRenderTargetView proc :ptr, :ptr, :ptr
     CreateDepthStencilView proc :ptr, :ptr, :ptr
-    CreateInputLayout	proc :ptr, :UINT, :ptr, :SIZE_T, :ptr
-    CreateVertexShader	proc :ptr, :SIZE_T, :ptr, :ptr
-    CreateGeometryShader proc :ptr, :SIZE_T, :ptr, :ptr
-    CreateGeometryShaderWithStreamOutput proc :ptr, :SIZE_T, :UINT, :UINT, :UINT, :ptr, :ptr
-    CreatePixelShader	proc :ptr, :SIZE_T, :ptr, :ptr
-    CreateHullShader	proc :ptr, :SIZE_T, :ptr, :ptr
-    CreateDomainShader	proc :ptr, :SIZE_T, :ptr, :ptr
-    CreateComputeShader proc :ptr, :SIZE_T, :ptr, :ptr
+    CreateInputLayout	proc :ptr, :UINT, :ptr, :size_t, :ptr
+    CreateVertexShader	proc :ptr, :size_t, :ptr, :ptr
+    CreateGeometryShader proc :ptr, :size_t, :ptr, :ptr
+    CreateGeometryShaderWithStreamOutput proc :ptr, :size_t, :UINT, :UINT, :UINT, :ptr, :ptr
+    CreatePixelShader	proc :ptr, :size_t, :ptr, :ptr
+    CreateHullShader	proc :ptr, :size_t, :ptr, :ptr
+    CreateDomainShader	proc :ptr, :size_t, :ptr, :ptr
+    CreateComputeShader proc :ptr, :size_t, :ptr, :ptr
     CreateClassLinkage	proc :ptr
     CreateBlendState	proc :ptr, :ptr
     CreateDepthStencilState proc :ptr, :ptr
@@ -2087,7 +2087,7 @@ DEFINE_IIDX(ID3D11VideoContext, "61F21C45-3C0E-4a74-9CEA-67100D9AD5E4")
     StartSessionKeyRefresh proc :ptr, :UINT, :ptr
     FinishSessionKeyRefresh proc :ptr
     GetEncryptionBltKey proc :ptr, :UINT, :ptr
-    NegotiateAuthenticatedChannelKeyExchange proc :ptr, :UINT,  :ptr
+    NegotiateAuthenticatedChannelKeyExchange proc :ptr, :UINT,	:ptr
     QueryAuthenticatedChannel proc :ptr, :UINT, :ptr, :UINT, :ptr
     ConfigureAuthenticatedChannel proc :ptr, :UINT, :ptr, :ptr
     VideoProcessorSetStreamRotation proc :ptr, :UINT, :BOOL, :D3D11_VIDEO_PROCESSOR_ROTATION

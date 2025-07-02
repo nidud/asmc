@@ -187,7 +187,7 @@ EnterSynchronizationBarrier proto WINAPI :LPSYNCHRONIZATION_BARRIER, :DWORD
 InitializeSynchronizationBarrier proto WINAPI :LPSYNCHRONIZATION_BARRIER, :LONG, :LONG
 DeleteSynchronizationBarrier proto WINAPI :LPSYNCHRONIZATION_BARRIER
 Sleep proto WINAPI :DWORD
-WaitOnAddress proto WINAPI :ptr, :PVOID, :SIZE_T, :DWORD
+WaitOnAddress proto WINAPI :ptr, :ptr, :size_t, :DWORD
 WakeByAddressSingle proto WINAPI :PVOID
 WakeByAddressAll proto WINAPI :PVOID
 

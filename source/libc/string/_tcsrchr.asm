@@ -11,15 +11,15 @@ include tchar.inc
 
     option dotname
 
-_tcsrchr proc string:LPTSTR, chr:int_t
+_tcsrchr proc string:tstring_t, chr:int_t
 
     ldr     rcx,string
     ldr     edx,chr
-    sub     rcx,TCHAR
+    sub     rcx,tchar_t
     xor     eax,eax
 .0:
-    add     rcx,TCHAR
-    cmp     TCHAR ptr [rcx],0
+    add     rcx,tchar_t
+    cmp     tchar_t ptr [rcx],0
     jz      .1
     cmp     _tdl,[rcx]
     jnz     .0

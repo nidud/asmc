@@ -12,11 +12,11 @@ include tchar.inc
 
     .code
 
-_tsystem proc cmd:LPTSTR
+_tsystem proc cmd:tstring_t
 ifdef __UNIX__
     _tspawnl( _P_WAIT, "/bin/sh", "sh", "-c", cmd, 0 )
 else
-   .new com[_MAX_PATH]:TCHAR
+   .new com[_MAX_PATH]:tchar_t
 
     _tcscpy( &com, "cmd.exe" )
     .if !GetEnvironmentVariable( "Comspec", &com, _MAX_PATH )

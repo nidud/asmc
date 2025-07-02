@@ -13,7 +13,7 @@ include tchar.inc
     assume rbx:THWND
     assume rsi:THWND
 
-_dlinit proc uses rsi rdi rbx hwnd:THWND, name:LPTSTR
+_dlinit proc uses rsi rdi rbx hwnd:THWND, name:tstring_t
 
    .new type:int_t
 

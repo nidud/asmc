@@ -91,7 +91,7 @@ oputc endp
 
 ; Decompress the codes in a compressed block
 
-inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:SINT, d:SINT
+inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:int_t, d:int_t
 
     .new count:int_t
 

@@ -5,15 +5,6 @@ include libc.inc
 
 .pragma comment(lib, libc, msvcrt)
 
-ifndef _INTPTR_T_DEFINED
-define _INTPTR_T_DEFINED
-ifdef _WIN64
-intptr_t typedef sqword
-else
-intptr_t typedef sdword
-endif
-endif
-
 ifndef _TIME64_T_DEFINED
 define _TIME64_T_DEFINED
 __time64_t typedef sqword

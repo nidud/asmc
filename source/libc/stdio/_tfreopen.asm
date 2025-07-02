@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_tfreopen proc file:LPTSTR, mode:LPTSTR, fp:LPFILE
+_tfreopen proc file:tstring_t, mode:tstring_t, fp:LPFILE
 
     fclose(fp)
     _topenfile(file, mode, SH_DENYNO, fp)

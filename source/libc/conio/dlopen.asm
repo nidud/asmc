@@ -10,7 +10,7 @@ include conio.inc
 
     assume rbx:PDOBJ
 
-dlopen proc uses rbx dobj:PDOBJ, at:uint_t, ttl:LPSTR
+dlopen proc uses rbx dobj:PDOBJ, at:uint_t, ttl:string_t
 
     ldr rbx,dobj
     ldr edx,at

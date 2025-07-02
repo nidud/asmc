@@ -15,7 +15,7 @@ include tchar.inc
 
     .code
 
-_tchdir proc directory:LPTSTR
+_tchdir proc directory:tstring_t
 
 ifdef __UNIX__
     .ifsd ( sys_chdir( ldr(directory) ) < 0 )
@@ -24,14 +24,14 @@ ifdef __UNIX__
         _set_errno(eax)
     .endif
 else
-    .new abspath[_MAX_PATH]:TCHAR
-    .new result[4]:TCHAR
+    .new abspath[_MAX_PATH]:tchar_t
+    .new result[4]:tchar_t
 
     .ifd SetCurrentDirectory( ldr(directory) )
 
         .ifd GetCurrentDirectory( _MAX_PATH, &abspath )
 
-            .if ( abspath[TCHAR] != ':' )
+            .if ( abspath[tchar_t] != ':' )
                 .return( 0 )
             .endif
 
@@ -41,9 +41,9 @@ else
             .endif
 
             mov result[0],'='
-            mov result[TCHAR],_tal
-            mov result[TCHAR*2],':'
-            mov result[TCHAR*3],0
+            mov result[tchar_t],_tal
+            mov result[tchar_t*2],':'
+            mov result[tchar_t*3],0
             .ifd SetEnvironmentVariable( &result, &abspath )
                 .return( 0 )
             .endif

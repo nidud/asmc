@@ -9,7 +9,7 @@ include tchar.inc
 
 .code
 
-_tfilexist proc file:LPTSTR
+_tfilexist proc file:tstring_t
 
     _tgetfattr( ldr(file) )
     inc eax

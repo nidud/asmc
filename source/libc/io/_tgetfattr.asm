@@ -15,7 +15,7 @@ include tchar.inc
 
     .code
 
-_tgetfattr proc file:LPTSTR
+_tgetfattr proc file:tstring_t
 
 ifdef __UNIX__
 

@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-WndProc proc private hwnd:THWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc private hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
 
     ldr eax,uiMsg
     .if ( eax == WM_CREATE || eax == WM_CLOSE )

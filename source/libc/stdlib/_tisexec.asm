@@ -11,11 +11,11 @@ include tchar.inc
 
     .code
 
-_tisexec proc uses rbx path:LPTSTR
+_tisexec proc uses rbx path:tstring_t
 
     .if _tcsext( ldr(path) )
 
-        lea rbx,[rax+TCHAR]
+        lea rbx,[rax+tchar_t]
         .if ( _tcsicmp(rbx, "cmd") == 0 )
             .return( _EXEC_CMD )
         .endif

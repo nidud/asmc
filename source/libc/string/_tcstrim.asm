@@ -14,18 +14,18 @@ include tchar.inc
 
     .code
 
-_tcstrim proc uses rdi rbx string:LPTSTR
+_tcstrim proc uses rdi rbx string:tstring_t
 
     ldr rbx,string
 
-    .for ( rdi = &[rbx+_tcslen(rbx)*TCHAR-TCHAR], rcx = _pctype : eax : eax--, rdi-=TCHAR )
+    .for ( rdi = &[rbx+_tcslen(rbx)*tchar_t-tchar_t], rcx = _pctype : eax : eax--, rdi-=tchar_t )
 
-        movzx edx,TCHAR ptr [rdi]
+        movzx edx,tchar_t ptr [rdi]
 ifdef _UNICODE
        .break .if ( edx > ' ' )
 endif
        .break .if !( byte ptr [rcx+rdx*2] & _SPACE )
-        mov TCHAR ptr [rdi],0
+        mov tchar_t ptr [rdi],0
     .endf
     mov rcx,rbx
     ret

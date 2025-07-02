@@ -67,10 +67,10 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
         mov rax,[rbx]._base
         mov rdx,[rbx]._ptr
         sub rdx,rax
-        add rax,TCHAR
+        add rax,tchar_t
         mov [rbx]._ptr,rax
         mov eax,[rbx]._bufsiz
-        sub eax,TCHAR
+        sub eax,tchar_t
         mov [rbx]._cnt,eax
         mov charcount,edx
 
@@ -78,7 +78,7 @@ _tflsbuf proc uses rbx char:int_t, fp:LPFILE
 ifdef STDZIP
             .if ( [rbx]._flag & _IOMEMBUF )
 
-                add eax,TCHAR
+                add eax,tchar_t
                 lea ecx,[rax+rax]
                 .if ( ecx < _HEAP_GROWSIZE )
                     mov ecx,_HEAP_GROWSIZE
@@ -100,12 +100,12 @@ ifdef STDZIP
                 mov edx,[rbx]._bufsiz
                 mov ecx,charcount
                 sub edx,ecx
-                sub edx,TCHAR
+                sub edx,tchar_t
                 mov [rbx]._cnt,edx
-                lea rcx,[rax+rcx+TCHAR]
+                lea rcx,[rax+rcx+tchar_t]
                 mov [rbx]._ptr,rcx
-                movzx eax,TCHAR ptr char
-                mov [rcx-TCHAR],_tal
+                movzx eax,tchar_t ptr char
+                mov [rcx-tchar_t],_tal
                .return
             .endif
 
@@ -133,11 +133,11 @@ endif
 
     .else
 
-        mov charcount,TCHAR
-        mov written,_write( [rbx]._file, &char, TCHAR )
+        mov charcount,tchar_t
+        mov written,_write( [rbx]._file, &char, tchar_t )
     .endif
 
-    movzx eax,TCHAR ptr char
+    movzx eax,tchar_t ptr char
     mov ecx,written
     .if ( ecx != charcount )
 

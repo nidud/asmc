@@ -9,9 +9,9 @@ include tchar.inc
 
     .code
 
-_scpath proc uses rbx x:BYTE, y:BYTE, maxlen:BYTE, string:LPTSTR
+_scpath proc uses rbx x:BYTE, y:BYTE, maxlen:BYTE, string:tstring_t
 
-  local b[16]:TCHAR
+  local b[16]:tchar_t
 
     ldr rbx,string
     _tcslen(rbx)
@@ -19,7 +19,7 @@ _scpath proc uses rbx x:BYTE, y:BYTE, maxlen:BYTE, string:LPTSTR
     .ifd ( eax > edx )
 
         mov ecx,[rbx]
-        lea rbx,[rbx+rax*TCHAR]
+        lea rbx,[rbx+rax*tchar_t]
         sub rbx,rdx
 ifdef _UNICODE
         sub rbx,rdx
@@ -56,8 +56,8 @@ else
         .endif
 endif
 
-        mov b[rdx*TCHAR],0
-        lea rbx,[rbx+rdx*TCHAR]
+        mov b[rdx*tchar_t],0
+        lea rbx,[rbx+rdx*tchar_t]
         mov cl,x
         add x,dl
         _scputs(cl, y, &b)

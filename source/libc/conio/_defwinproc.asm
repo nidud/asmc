@@ -353,7 +353,7 @@ wm_killfocus endp
 
     assume rcx:THWND
 
-wm_syschar proc hwnd:THWND, wParam:UINT
+wm_syschar proc hwnd:THWND, wParam:uint_t
 
     ldr eax,wParam
     .if ( ah || !eax )
@@ -379,7 +379,7 @@ wm_syschar proc hwnd:THWND, wParam:UINT
 wm_syschar endp
 
 
-wm_char proc uses rbx hwnd:THWND, wParam:UINT
+wm_char proc uses rbx hwnd:THWND, wParam:uint_t
 
     .new rc:TRECT
     .new x:byte
@@ -473,7 +473,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:UINT
 wm_char endp
 
 
-wm_keydown proc uses rbx hwnd:THWND, wParam:UINT, lParam:UINT
+wm_keydown proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
 
     ldr eax,lParam
 

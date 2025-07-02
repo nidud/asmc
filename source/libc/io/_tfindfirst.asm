@@ -79,7 +79,7 @@ _tfindnext proc uses rbx handle:ptr, ff:ptr _tfinddata_t
 _tfindnext endp
 
 
-_tfindfirst proc uses rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
+_tfindfirst proc uses rbx lpFileName:tstring_t, ff:ptr _tfinddata_t
 
    .new dir:ptr DIR
 
@@ -148,7 +148,7 @@ copyblock proc private
 
     lea rsi,[rsi].cFileName
     lea rdi,[rdi].name
-    mov ecx,(260/4)*TCHAR
+    mov ecx,(260/4)*tchar_t
     rep movsd
     xor eax,eax
     ret
@@ -173,7 +173,7 @@ _tfindnext proc uses rsi rdi handle:ptr, ff:ptr _tfinddata_t
 _tfindnext endp
 
 
-_tfindfirst proc uses rsi rdi rbx lpFileName:LPTSTR, ff:ptr _tfinddata_t
+_tfindfirst proc uses rsi rdi rbx lpFileName:tstring_t, ff:ptr _tfinddata_t
 
   local FindFileData:WIN32_FIND_DATA
 

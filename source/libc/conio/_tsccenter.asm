@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_sccenter proc uses rbx x:BYTE, y:BYTE, lsize:BYTE, string:LPTSTR
+_sccenter proc uses rbx x:BYTE, y:BYTE, lsize:BYTE, string:tstring_t
 
     movzx ebx,lsize
     .ifd ( _tcslen( string ) > ebx )

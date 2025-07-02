@@ -8,13 +8,13 @@ include conio.inc
 
     .code
 
-_scputs proc uses rbx x:BYTE, y:BYTE, string:LPTSTR
+_scputs proc uses rbx x:BYTE, y:BYTE, string:tstring_t
 
     .new retval:int_t = 0
      ldr rbx,string
-    .for ( : TCHAR ptr [rbx] : rbx+=TCHAR, x++, retval++ )
+    .for ( : tchar_t ptr [rbx] : rbx+=tchar_t, x++, retval++ )
 
-        movzx ecx,TCHAR ptr [rbx]
+        movzx ecx,tchar_t ptr [rbx]
         _scputc(x, y, 1, cx)
     .endf
     .return( retval )

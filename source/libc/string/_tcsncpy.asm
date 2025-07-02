@@ -11,7 +11,7 @@ include tchar.inc
 
     option dotname
 
-_tcsncpy proc uses rdi rbx dst:LPTSTR, src:LPTSTR, count:size_t
+_tcsncpy proc uses rdi rbx dst:tstring_t, src:tstring_t, count:size_t
 
     ldr     rdi,dst
     ldr     rcx,count
@@ -23,8 +23,8 @@ _tcsncpy proc uses rdi rbx dst:LPTSTR, src:LPTSTR, count:size_t
     dec     ecx
     mov     _tal,[rdx]
     mov     [rdi],_tal
-    add     rdx,TCHAR
-    add     rdi,TCHAR
+    add     rdx,tchar_t
+    add     rdi,tchar_t
     test    _tal,_tal
     jnz     .0
     rep     _tstosb

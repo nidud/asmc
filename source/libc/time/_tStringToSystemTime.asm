@@ -12,14 +12,14 @@ include tchar.inc
 
     assume rbx:ptr SYSTEMTIME
 
-StringToSystemTime proc uses rbx string:LPTSTR, lpSystemTime:ptr SYSTEMTIME
+StringToSystemTime proc uses rbx string:tstring_t, lpSystemTime:ptr SYSTEMTIME
 
     ldr rcx,string
     ldr rbx,lpSystemTime
     mov rdx,rcx
     .repeat
-        movzx eax,TCHAR ptr [rdx]
-        add rdx,TCHAR
+        movzx eax,tchar_t ptr [rdx]
+        add rdx,tchar_t
     .until ( eax > '9' || eax < '0' )
     mov string,rdx
     _tstol(rcx)
@@ -28,8 +28,8 @@ StringToSystemTime proc uses rbx string:LPTSTR, lpSystemTime:ptr SYSTEMTIME
     mov [rbx].wMinute,ax
     mov rcx,string
     .repeat
-        movzx eax,TCHAR ptr [rcx]
-        add rcx,TCHAR
+        movzx eax,tchar_t ptr [rcx]
+        add rcx,tchar_t
     .until ( eax > '9' || eax < '0' )
     _tstol(rcx)
     mov [rbx].wSecond,ax

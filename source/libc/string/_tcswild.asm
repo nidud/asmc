@@ -19,17 +19,17 @@ _tcswild proc uses rsi rdi rbx wild:tstring_t, path:tstring_t
 
     .while 1
 
-        movzx eax,TCHAR ptr [rsi]
-        movzx ebx,TCHAR ptr [rdi]
-        add rsi,TCHAR
-        add rdi,TCHAR
+        movzx eax,tchar_t ptr [rsi]
+        movzx ebx,tchar_t ptr [rdi]
+        add rsi,tchar_t
+        add rdi,tchar_t
 
         .if ( ebx == '*' )
 
             .while 1
 
-                movzx ebx,TCHAR ptr [rdi]
-                add rdi,TCHAR
+                movzx ebx,tchar_t ptr [rdi]
+                add rdi,tchar_t
 
                 .if ( ebx == 0 )
 
@@ -50,8 +50,8 @@ _tcswild proc uses rsi rdi rbx wild:tstring_t, path:tstring_t
                 mov rsi,rdx
                 .continue( 1 ) .if rdx
 
-                movzx ebx,TCHAR ptr [rdi]
-                add rdi,TCHAR
+                movzx ebx,tchar_t ptr [rdi]
+                add rdi,tchar_t
                 .continue .if ( ebx == '*' )
 
                 or eax,ebx

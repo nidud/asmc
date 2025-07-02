@@ -25,11 +25,6 @@ _RTC_ILLEGAL                equ 5
 _RTC_ERRTYPE_IGNORE         equ -1
 _RTC_ERRTYPE_ASK            equ -2
 
-ifndef _WCHAR_T_DEFINED
-define _WCHAR_T_DEFINED
-wchar_t typedef word
-endif
-
     CALLBACKC(_RTC_error_fn, :int_t, :string_t, :int_t, :string_t, :string_t, :vararg)
     CALLBACKC(_RTC_error_fnW, :int_t, :wstring_t, :int_t, :wstring_t, :wstring_t, :vararg)
 

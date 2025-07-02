@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_vstprintf proc string:LPTSTR, format:LPTSTR, vargs:ptr
+_vstprintf proc string:tstring_t, format:tstring_t, vargs:ptr
 
   local o:_iobuf
 
@@ -22,7 +22,7 @@ _vstprintf proc string:LPTSTR, format:LPTSTR, vargs:ptr
     mov o._base,rcx
     _toutput(&o, rax, vargs)
     mov rcx,o._ptr
-    mov TCHAR PTR [rcx],0
+    mov tchar_t PTR [rcx],0
     ret
 
 _vstprintf endp

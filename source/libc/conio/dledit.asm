@@ -71,19 +71,19 @@ endif
 tinocando endp
 
 
-tistripend proc fastcall uses rbx string:LPTSTR
+tistripend proc fastcall uses rbx string:tstring_t
 
     mov rbx,rcx
     .ifd _tcsclen(rcx)
 
         mov ecx,eax
-        lea rbx,[rbx+rax*TCHAR]
+        lea rbx,[rbx+rax*tchar_t]
         .repeat
 
-            sub rbx,TCHAR
-            movzx eax,TCHAR ptr [rbx]
+            sub rbx,tchar_t
+            movzx eax,tchar_t ptr [rbx]
             .break .if ( eax != ' ' && eax != 9 )
-            mov TCHAR ptr [rbx],0
+            mov tchar_t ptr [rbx],0
         .untilcxz
         mov rax,rcx
     .endif
@@ -103,11 +103,11 @@ getline proc fastcall uses rdi rbx ti:PTEDIT
         mov     edx,[rcx].bcols     ; terminate line
         xor     eax,eax             ; set length of line
         mov     ecx,-1
-        mov     [rdi+rdx*TCHAR-TCHAR],_tal
+        mov     [rdi+rdx*tchar_t-tchar_t],_tal
         repne   _tscasb
         not     ecx
         dec     ecx
-        sub     rdi,TCHAR
+        sub     rdi,tchar_t
         mov     [rbx].bcount,ecx
         sub     ecx,[rbx].bcols     ; clear rest of line
         neg     ecx
@@ -127,7 +127,7 @@ curlptr proc fastcall ti:PTEDIT
 
         mov edx,[rcx].boffs
         add edx,[rcx].xoffs
-        lea rax,[rax+rdx*TCHAR]
+        lea rax,[rax+rdx*tchar_t]
     .endif
     ret
 
@@ -210,7 +210,7 @@ event_right proc fastcall uses rbx ti:PTEDIT
     .if curlptr(rcx)
 
         mov rcx,rax
-        movzx eax,TCHAR ptr [rax]
+        movzx eax,tchar_t ptr [rax]
         mov edx,[rbx].xoffs
         shl edx,1
         sub rcx,rdx
@@ -245,10 +245,10 @@ event_delete proc fastcall uses rbx ti:PTEDIT
         .if ( ecx )
 
             curlptr(rbx)
-            .if TCHAR ptr [rax]
+            .if tchar_t ptr [rax]
                 dec [rbx].bcount
                 mov rcx,rax
-                _tcscpy(rcx, &[rax+TCHAR])
+                _tcscpy(rcx, &[rax+tchar_t])
                 or  [rbx].flags,TE_MODIFIED
                .return( 1 )
             .endif
@@ -327,7 +327,7 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
                 mov     eax,[rbx].boffs
                 add     eax,[rbx].xoffs
                 mov     rcx,[rbx].base
-                lea     rdi,[rcx+rax*TCHAR-TCHAR]
+                lea     rdi,[rcx+rax*tchar_t-tchar_t]
                 mov     edx,esi
                 mov     ecx,-1
                 xor     eax,eax
@@ -335,7 +335,7 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
                 not     ecx
                 inc     ecx
                 mov     rsi,rdi
-                add     rdi,TCHAR
+                add     rdi,tchar_t
                 std
                 rep     _tmovsb
                 mov     [rdi],_tdl
@@ -362,24 +362,24 @@ event_nextword proc fastcall uses rsi rbx ti:PTEDIT
     lea rsi,_ltype
     mov rdx,rax
     mov rcx,rax
-    movzx eax,TCHAR ptr [rcx]
+    movzx eax,tchar_t ptr [rcx]
 
     .while ( ah || byte ptr [rsi+rax] & _LABEL )
 
-        add rcx,TCHAR
-        movzx eax,TCHAR ptr [rcx]
+        add rcx,tchar_t
+        movzx eax,tchar_t ptr [rcx]
     .endw
 
     .while ( eax && !ah && !( byte ptr [rsi+rax] & _LABEL ) )
 
-        add rcx,TCHAR
-        movzx eax,TCHAR ptr [rcx]
+        add rcx,tchar_t
+        movzx eax,tchar_t ptr [rcx]
     .endw
 
    .return .ifd !eax
 
     sub rcx,rdx
-    shr ecx,TCHAR-1
+    shr ecx,tchar_t-1
 
     mov eax,[rbx].boffs
     add eax,[rbx].xoffs
@@ -412,39 +412,39 @@ event_prevword proc fastcall uses rsi rbx ti:PTEDIT
    .return .ifz
 
     lea rsi,_ltype
-    movzx eax,TCHAR ptr [rcx]
+    movzx eax,tchar_t ptr [rcx]
 
     .if ( ah || byte ptr [rsi+rax] & _LABEL )
 
-        sub rcx,TCHAR
+        sub rcx,tchar_t
     .endif
 
     mov rdx,[rbx].base
-    movzx eax,TCHAR ptr [rcx]
+    movzx eax,tchar_t ptr [rcx]
 
     .while ( rcx > rdx && !( ah || byte ptr [rsi+rax] & _LABEL ) )
 
-        sub rcx,TCHAR
-        movzx eax,TCHAR ptr [rcx]
+        sub rcx,tchar_t
+        movzx eax,tchar_t ptr [rcx]
     .endw
 
     .while ( rcx > rdx && ( ah || byte ptr [rsi+rax] & _LABEL ) )
 
-        sub rcx,TCHAR
-        movzx eax,TCHAR ptr [rcx]
+        sub rcx,tchar_t
+        movzx eax,tchar_t ptr [rcx]
     .endw
 
     .if ( !( ah || byte ptr [rsi+rax] & _LABEL ) )
 
-        movzx eax,TCHAR ptr [rcx+TCHAR]
+        movzx eax,tchar_t ptr [rcx+tchar_t]
         .if ( ah || byte ptr [rsi+rax] & _LABEL )
-            add rcx,TCHAR
+            add rcx,tchar_t
         .endif
-        movzx eax,TCHAR ptr [rcx]
+        movzx eax,tchar_t ptr [rcx]
     .endif
 
     sub rcx,[rbx].base
-    shr ecx,TCHAR-1
+    shr ecx,tchar_t-1
 
     .if ( ecx > [rbx].xoffs )
 
@@ -492,8 +492,8 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
         mov rdi,[rcx].base
         mov eax,[rcx].clip_so
         mov edx,[rcx].clip_eo
-        lea rax,[rdi+rax*TCHAR]
-        lea rdx,[rdi+rdx*TCHAR]
+        lea rax,[rdi+rax*tchar_t]
+        lea rdx,[rdi+rdx*tchar_t]
         mov rsi,rcx
 
         _tcscpy(rax, rdx)
@@ -514,7 +514,7 @@ ClipCopy proc uses rbx ti:PTEDIT, Cut:BOOL
         mov edx,eax
         mov eax,[rbx].clip_so
         mov rcx,[rbx].base
-        lea rcx,[rcx+rax*TCHAR]
+        lea rcx,[rcx+rax*tchar_t]
 
         .if _clipset(rcx, edx)
             .if Cut
@@ -556,8 +556,8 @@ ClipPaste proc fastcall uses rbx ti:PTEDIT
         .for ( : n > 0 : n-- )
 
             mov rax,p
-            movzx edx,TCHAR ptr [rax]
-            add p,TCHAR
+            movzx edx,tchar_t ptr [rax]
+            add p,tchar_t
             .break .if !event_add(rbx, edx)
         .endf
         mov [rbx].boffs,bo
@@ -604,15 +604,15 @@ putline proc uses rsi rdi rbx ti:PTEDIT
     .if ( eax > [rbx].boffs )
 
         mov eax,[rbx].boffs
-        lea rsi,[rsi+rax*TCHAR]
+        lea rsi,[rsi+rax*tchar_t]
         mov ecx,[rbx].scols
         lea rdi,ci
 
         .repeat
-            movzx eax,TCHAR ptr [rsi]
+            movzx eax,tchar_t ptr [rsi]
             .break .if !eax
             mov [rdi],ax
-            add rsi,TCHAR
+            add rsi,tchar_t
             add rdi,4
         .untilcxz
     .endif
@@ -899,7 +899,7 @@ modal endp
 
 define tclrascii 0xB7
 
-dledit proc uses rdi rbx b:LPSTR, rc:TRECT, bz:int_t, oflag:uint_t
+dledit proc uses rdi rbx b:string_t, rc:TRECT, bz:int_t, oflag:uint_t
 
   local t:TEDIT
   local cursor:CURSOR

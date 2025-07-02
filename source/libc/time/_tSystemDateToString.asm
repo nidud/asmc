@@ -9,7 +9,7 @@ include winnls.inc
 
     .code
 
-SystemDateToString proc uses rbx string:LPTSTR, date:ptr SYSTEMTIME
+SystemDateToString proc uses rbx string:tstring_t, date:ptr SYSTEMTIME
 
     ldr rbx,string
 

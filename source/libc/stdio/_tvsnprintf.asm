@@ -9,7 +9,7 @@ include tchar.inc
 
     .code
 
-_vsntprintf proc string:LPTSTR, count:size_t, format:LPTSTR, args:ptr
+_vsntprintf proc string:tstring_t, count:size_t, format:tstring_t, args:ptr
 
   local o:_iobuf
 
@@ -28,10 +28,10 @@ endif
     mov rcx,o._ptr
     .if ( o._cnt <= 0 )
         .if ( rcx > o._base )
-            mov TCHAR ptr [rcx-TCHAR],0
+            mov tchar_t ptr [rcx-tchar_t],0
         .endif
     .else
-        mov TCHAR ptr [rcx],0
+        mov tchar_t ptr [rcx],0
     .endif
     ret
 

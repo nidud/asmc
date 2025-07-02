@@ -511,7 +511,7 @@ _WSACMSGHDR		equ cmsghdr
 endif
 
 WSACMSGHDR		STRUC
-cmsg_len		SIZE_T ?
+cmsg_len		size_t ?
 cmsg_level		SINT ?
 cmsg_type		SINT ?
 WSACMSGHDR		ENDS

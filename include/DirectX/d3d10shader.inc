@@ -286,16 +286,16 @@ DEFINE_GUID(IID_ID3D10ShaderReflection,0xd40e20b6, 0xf8f7, 0x42ad, 0xab, 0x20, 0
     GetOutputParameterDesc proc :UINT, :ptr
    .ends
 
-D3D10CompileShader proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :ptr, :ptr
-D3D10DisassembleShader proto WINAPI :ptr, :SIZE_T, :BOOL, :LPCSTR, :ptr
+D3D10CompileShader proto WINAPI :LPCSTR, :size_t, :LPCSTR, :ptr, :ptr, :LPCSTR, :LPCSTR, :UINT, :ptr, :ptr
+D3D10DisassembleShader proto WINAPI :ptr, :size_t, :BOOL, :LPCSTR, :ptr
 D3D10GetPixelShaderProfile proto WINAPI :ptr
 D3D10GetVertexShaderProfile proto WINAPI :ptr
 D3D10GetGeometryShaderProfile proto WINAPI :ptr
-D3D10ReflectShader proto WINAPI :ptr, :SIZE_T, :ptr
-D3D10PreprocessShader proto WINAPI :LPCSTR, :SIZE_T, :LPCSTR, :ptr, :ptr, :ptr, :ptr
-D3D10GetInputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
-D3D10GetOutputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
-D3D10GetInputAndOutputSignatureBlob proto WINAPI :ptr, :SIZE_T, :ptr
-D3D10GetShaderDebugInfo proto WINAPI :ptr, :SIZE_T, :ptr
+D3D10ReflectShader proto WINAPI :ptr, :size_t, :ptr
+D3D10PreprocessShader proto WINAPI :LPCSTR, :size_t, :LPCSTR, :ptr, :ptr, :ptr, :ptr
+D3D10GetInputSignatureBlob proto WINAPI :ptr, :size_t, :ptr
+D3D10GetOutputSignatureBlob proto WINAPI :ptr, :size_t, :ptr
+D3D10GetInputAndOutputSignatureBlob proto WINAPI :ptr, :size_t, :ptr
+D3D10GetShaderDebugInfo proto WINAPI :ptr, :size_t, :ptr
 
 endif

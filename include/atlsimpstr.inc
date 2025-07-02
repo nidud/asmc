@@ -25,8 +25,8 @@ include intrin.inc
 	pStringMgr	ptr IAtlStringMgr ?
 	nDataLength	int_t ?
 	nAllocLength	int_t ?
-	nRefs		LONG ?
-	_data		TCHAR ?
+	nRefs		int_t ?
+	_data		tchar_t ?
 
 	.inline _data {
 		lea rax,[this+CStringData]
@@ -87,9 +87,9 @@ include intrin.inc
 
 .template CStaticString
 
-	m_psz PTCHAR ?
+	m_psz ptr tchar_t ?
 
-	.inline CStaticString :ptr TCHAR {
+	.inline CStaticString :ptr tchar_t {
 		mov [this].CStaticString.m_psz,_1
 		}
 	.inline BaseType {

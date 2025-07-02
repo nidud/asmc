@@ -13,7 +13,7 @@ include tchar.inc
 
     .code
 
-_tsetfattr proc file:LPTSTR, attrib:UINT
+_tsetfattr proc file:tstring_t, attrib:uint_t
 ifdef __UNIX__
     mov eax,-1
 else

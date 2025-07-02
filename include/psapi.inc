@@ -188,14 +188,14 @@ endif
 PROCESS_MEMORY_COUNTERS	 STRUC
 cb			dd ?
 PageFaultCount		dd ?
-PeakWorkingSetSize	SIZE_T ?
-WorkingSetSize		SIZE_T ?
-QuotaPeakPagedPoolUsage SIZE_T ?
-QuotaPagedPoolUsage	SIZE_T ?
-QuotaPeakNonPagedPoolUsage SIZE_T ?
-QuotaNonPagedPoolUsage	SIZE_T ?
-PagefileUsage		SIZE_T ?
-PeakPagefileUsage	SIZE_T ?
+PeakWorkingSetSize	size_t ?
+WorkingSetSize		size_t ?
+QuotaPeakPagedPoolUsage size_t ?
+QuotaPagedPoolUsage	size_t ?
+QuotaPeakNonPagedPoolUsage size_t ?
+QuotaNonPagedPoolUsage	size_t ?
+PagefileUsage		size_t ?
+PeakPagefileUsage	size_t ?
 PROCESS_MEMORY_COUNTERS ENDS
 PPROCESS_MEMORY_COUNTERS typedef ptr PROCESS_MEMORY_COUNTERS
 
@@ -203,15 +203,15 @@ if (_WIN32_WINNT GE 0x0501)
 PROCESS_MEMORY_COUNTERS_EX  STRUC
 cb			dd ?
 PageFaultCount		dd ?
-PeakWorkingSetSize	SIZE_T ?
-WorkingSetSize		SIZE_T ?
-QuotaPeakPagedPoolUsage SIZE_T ?
-QuotaPagedPoolUsage	SIZE_T ?
-QuotaPeakNonPagedPoolUsage SIZE_T ?
-QuotaNonPagedPoolUsage	SIZE_T ?
-PagefileUsage		SIZE_T ?
-PeakPagefileUsage	SIZE_T ?
-PrivateUsage		SIZE_T ?
+PeakWorkingSetSize	size_t ?
+WorkingSetSize		size_t ?
+QuotaPeakPagedPoolUsage size_t ?
+QuotaPagedPoolUsage	size_t ?
+QuotaPeakNonPagedPoolUsage size_t ?
+QuotaNonPagedPoolUsage	size_t ?
+PagefileUsage		size_t ?
+PeakPagefileUsage	size_t ?
+PrivateUsage		size_t ?
 PROCESS_MEMORY_COUNTERS_EX ENDS
 PPROCESS_MEMORY_COUNTERS_EX typedef ptr PROCESS_MEMORY_COUNTERS_EX
 endif
@@ -220,16 +220,16 @@ GetProcessMemoryInfo proto WINAPI :HANDLE, :PPROCESS_MEMORY_COUNTERS, :DWORD
 
 PERFORMANCE_INFORMATION	 STRUC
 cb			dd ?
-CommitTotal		SIZE_T ?
-CommitLimit		SIZE_T ?
-CommitPeak		SIZE_T ?
-PhysicalTotal		SIZE_T ?
-PhysicalAvailable	SIZE_T ?
-SystemCache		SIZE_T ?
-KernelTotal		SIZE_T ?
-KernelPaged		SIZE_T ?
-KernelNonpaged		SIZE_T ?
-PageSize		SIZE_T ?
+CommitTotal		size_t ?
+CommitLimit		size_t ?
+CommitPeak		size_t ?
+PhysicalTotal		size_t ?
+PhysicalAvailable	size_t ?
+SystemCache		size_t ?
+KernelTotal		size_t ?
+KernelPaged		size_t ?
+KernelNonpaged		size_t ?
+PageSize		size_t ?
 HandleCount		dd ?
 ProcessCount		dd ?
 ThreadCount		dd ?
@@ -243,9 +243,9 @@ GetPerformanceInfo proto WINAPI :PPERFORMANCE_INFORMATION, :DWORD
 ENUM_PAGE_FILE_INFORMATION  STRUC
 cb			dd ?
 Reserved		dd ?
-TotalSize		SIZE_T ?
-TotalInUse		SIZE_T ?
-PeakUsage		SIZE_T ?
+TotalSize		size_t ?
+TotalInUse		size_t ?
+PeakUsage		size_t ?
 ENUM_PAGE_FILE_INFORMATION ENDS
 PENUM_PAGE_FILE_INFORMATION typedef ptr ENUM_PAGE_FILE_INFORMATION
 

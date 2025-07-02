@@ -72,12 +72,12 @@ _lk_getltime proc private ft:PVOID
 
 _lk_getltime endp
 
-_lk_stat proc private file:LPTSTR, buf:PSTAT, b64:int_t
+_lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
 
-   .new path:LPTSTR
+   .new path:tstring_t
    .new drive:int_t
    .new ff:WIN32_FIND_DATA
-   .new pathbuf[_MAX_PATH]:TCHAR
+   .new pathbuf[_MAX_PATH]:tchar_t
    .new m_time:uint_t
    .new a_time:uint_t
    .new c_time:uint_t
@@ -90,11 +90,11 @@ _lk_stat proc private file:LPTSTR, buf:PSTAT, b64:int_t
         .break .if _tcschr( rsi, '?' )
         .break .if _tcschr( rsi, '*' )
 
-        .if ( TCHAR ptr [rsi+TCHAR] == ':' )
+        .if ( tchar_t ptr [rsi+tchar_t] == ':' )
 
-            .break .if ( TCHAR ptr [rsi+TCHAR*2] == 0 )
+            .break .if ( tchar_t ptr [rsi+tchar_t*2] == 0 )
 
-            movzx eax,TCHAR ptr [rsi]
+            movzx eax,tchar_t ptr [rsi]
             or    al,0x20
             sub   al,'a' - 1
         .else
@@ -142,18 +142,18 @@ _lk_stat proc private file:LPTSTR, buf:PSTAT, b64:int_t
             mov c_time,eax
         .endif
 
-        movzx eax,TCHAR ptr [rsi]
+        movzx eax,tchar_t ptr [rsi]
         mov edx,ff.dwFileAttributes
         mov ecx,_S_IFDIR or _S_IEXEC
         mov ebx,_S_IREAD
 
-        .if ( TCHAR ptr [rsi+TCHAR] == ':' )
-            add rsi,2*TCHAR
-            movzx eax,TCHAR ptr [rsi]
+        .if ( tchar_t ptr [rsi+tchar_t] == ':' )
+            add rsi,2*tchar_t
+            movzx eax,tchar_t ptr [rsi]
         .endif
 
         .if ( eax && !( dl & A_D ) )
-            .if ( TCHAR ptr [rsi+TCHAR] || eax != '\' && eax != '/' )
+            .if ( tchar_t ptr [rsi+tchar_t] || eax != '\' && eax != '/' )
                 mov ecx,_S_IFREG
             .endif
         .endif
@@ -208,7 +208,7 @@ endif
 
 _lk_stat endp
 
-_tstat proc uses rsi rdi rbx file:LPTSTR, buf:PSTAT
+_tstat proc uses rsi rdi rbx file:tstring_t, buf:PSTAT
 
     ldr rcx,file
     ldr rdx,buf
@@ -225,7 +225,7 @@ _tstat endp
 
 ifdef _WIN64
 
-_tstat64 proc uses rsi rdi rbx file:LPTSTR, buf:PSTAT64
+_tstat64 proc uses rsi rdi rbx file:tstring_t, buf:PSTAT64
 
     ldr rcx,file
     ldr rdx,buf

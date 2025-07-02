@@ -94,15 +94,6 @@ _vcwprintf	proto __cdecl :LPWSTR, :PVOID
 
 ;;;;;;;;;;;;;;; crtl
 
-ifndef _INTPTR_T_DEFINED
-define _INTPTR_T_DEFINED
-ifdef _WIN64
-intptr_t typedef sqword
-else
-intptr_t typedef sdword
-endif
-endif
-
 if defined(_MSVCRT) or not defined(__TTY__)
 define _getconsolecursorinfo		<GetConsoleCursorInfo>
 define _setconsolecursorinfo		<SetConsoleCursorInfo>

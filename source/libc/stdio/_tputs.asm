@@ -15,15 +15,15 @@ include tchar.inc
 
     .code
 
-_putts proc uses rbx string:LPTSTR
+_putts proc uses rbx string:tstring_t
 
    .new retval:int_t = 0
 
     ldr rbx,string
 ifdef _UNICODE
-    .for ( : TCHAR ptr [rbx] : rbx+=TCHAR, retval++ )
+    .for ( : tchar_t ptr [rbx] : rbx+=tchar_t, retval++ )
 
-        movzx ecx,TCHAR ptr [rbx]
+        movzx ecx,tchar_t ptr [rbx]
         .if ( _puttch( ecx ) == WEOF )
 
            .return

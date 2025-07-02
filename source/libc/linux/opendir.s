@@ -44,7 +44,7 @@ readblk proc private uses rbx dirp:ptr DIR
 readblk endp
 
 
-opendir proc uses rbx name:LPSTR
+opendir proc uses rbx name:string_t
 
    .new fd:int_t
 

@@ -13,13 +13,13 @@ include tchar.inc
 
     assume rbx:PDIRENT
 
-_dopen proc uses rbx d:PDIRENT, path:LPTSTR, mask:LPTSTR, flags:UINT
+_dopen proc uses rbx d:PDIRENT, path:tstring_t, mask:tstring_t, flags:uint_t
 
     ldr rbx,d
 
     .if ( rbx == NULL )
 
-        mov rbx,malloc(DIRENT+DMAXPATH*TCHAR)
+        mov rbx,malloc(DIRENT+DMAXPATH*tchar_t)
         .if ( rax == NULL )
             .return
         .endif
@@ -27,7 +27,7 @@ _dopen proc uses rbx d:PDIRENT, path:LPTSTR, mask:LPTSTR, flags:UINT
         mov [rbx].path,rax
         or flags,_D_MALLOC
     .else
-        mov [rbx].path,malloc(DMAXPATH*TCHAR)
+        mov [rbx].path,malloc(DMAXPATH*tchar_t)
         .if ( rax == NULL )
             .return
         .endif

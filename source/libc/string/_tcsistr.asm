@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_tcsistr proc uses rsi rdi rbx dst:LPTSTR, src:LPTSTR
+_tcsistr proc uses rsi rdi rbx dst:tstring_t, src:tstring_t
 
    .new len:int_t
    .new tmp:int_t
@@ -30,7 +30,7 @@ _tcsistr proc uses rsi rdi rbx dst:LPTSTR, src:LPTSTR
 
             .repeat
 
-                movzx edx,TCHAR ptr [rbx]
+                movzx edx,tchar_t ptr [rbx]
 ifdef _UNICODE
                 .if ( edx < 256 )
 endif
@@ -40,11 +40,11 @@ ifdef _UNICODE
 endif
                 .while 1
 
-                    movzx eax,TCHAR ptr [rdi]
+                    movzx eax,tchar_t ptr [rdi]
                     .if ( eax == 0 )
                         .return
                     .endif
-                    add rdi,TCHAR
+                    add rdi,tchar_t
 ifdef _UNICODE
                     .if ( eax < 256 )
 endif
@@ -64,7 +64,7 @@ endif
                     mov edx,len
                     .repeat
 
-                        movzx eax,TCHAR ptr [rbx+rdx*TCHAR]
+                        movzx eax,tchar_t ptr [rbx+rdx*tchar_t]
 ifdef _UNICODE
                         .if ( eax < 256 )
 endif
@@ -73,7 +73,7 @@ ifdef _UNICODE
                         .endif
 endif
                         mov tmp,edx
-                        movzx edx,TCHAR ptr [rdi+rdx*TCHAR-TCHAR]
+                        movzx edx,tchar_t ptr [rdi+rdx*tchar_t-tchar_t]
 ifdef _UNICODE
                         .if ( edx < 256 )
 endif
@@ -87,7 +87,7 @@ endif
                         dec edx
                     .untilz
                 .endif
-                lea rax,[rdi-TCHAR]
+                lea rax,[rdi-tchar_t]
             .until 1
         .endif
     .endif

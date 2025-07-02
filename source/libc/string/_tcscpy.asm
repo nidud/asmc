@@ -11,7 +11,7 @@ include tchar.inc
 
     option dotname
 
-_tcscpy proc dst:LPTSTR, src:LPTSTR
+_tcscpy proc dst:tstring_t, src:tstring_t
 
     ldr         rcx,dst
     ldr         rdx,src
@@ -210,8 +210,8 @@ endif
 .0:
     mov     _tal,[rdx]
     mov     [rcx],_tal
-    add     rdx,TCHAR
-    add     rcx,TCHAR
+    add     rdx,tchar_t
+    add     rcx,tchar_t
     test    _tal,_tal
     jnz     .0
 

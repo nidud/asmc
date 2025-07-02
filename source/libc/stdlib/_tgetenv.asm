@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_tgetenv proc uses rbx enval:LPTSTR
+_tgetenv proc uses rbx enval:tstring_t
 
    .new len:int_t
 
@@ -32,11 +32,11 @@ ifdef _UNICODE
 endif
             add rax,[rbx]
 
-            .if ( TCHAR ptr [rax] == '=' )
-                .return( &[rax+TCHAR] )
+            .if ( tchar_t ptr [rax] == '=' )
+                .return( &[rax+tchar_t] )
             .endif
         .endif
-        add rbx,LPTSTR
+        add rbx,tstring_t
         mov rax,[rbx]
     .endw
     ret

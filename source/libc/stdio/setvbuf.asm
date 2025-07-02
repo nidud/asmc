@@ -12,7 +12,7 @@ include limits.inc
 
     assume rbx:LPFILE
 
-setvbuf proc uses rbx fp:LPFILE, buf:LPSTR, type:int_t, bsize:size_t
+setvbuf proc uses rbx fp:LPFILE, buf:string_t, type:int_t, bsize:size_t
 
     ldr rbx,fp
     ldr edx,type

@@ -11,7 +11,7 @@ include tchar.inc
 
     option dotname
 
-_tcschr proc string:LPTSTR, chr:int_t
+_tcschr proc string:tstring_t, chr:int_t
 
     ldr     rax,string
     ldr     edx,chr
@@ -64,25 +64,25 @@ else
 .3:
     cmp     _tdl,[rax]
     je      .0
-    cmp     TCHAR ptr [rax],0
+    cmp     tchar_t ptr [rax],0
     je      .4
-    cmp     _tdl,[rax+TCHAR]
+    cmp     _tdl,[rax+tchar_t]
     je      .1
-    cmp     TCHAR ptr [rax+TCHAR],0
+    cmp     tchar_t ptr [rax+tchar_t],0
     je      .4
-    cmp     _tdl,[rax+2*TCHAR]
+    cmp     _tdl,[rax+2*tchar_t]
     je      .2
-    cmp     TCHAR ptr [rax+2*TCHAR],0
+    cmp     tchar_t ptr [rax+2*tchar_t],0
     je      .4
-    add     rax,3*TCHAR
+    add     rax,3*tchar_t
     jmp     .3
 .4:
     xor     eax,eax
     jmp     .0
 .2:
-    add     rax,TCHAR
+    add     rax,tchar_t
 .1:
-    add     rax,TCHAR
+    add     rax,tchar_t
 .0:
 
 endif

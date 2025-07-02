@@ -15,14 +15,14 @@ include tchar.inc
 
     .code
 
-_tgetdcwd proc uses rbx drive:int_t, buffer:LPTSTR, maxlen:int_t
+_tgetdcwd proc uses rbx drive:int_t, buffer:tstring_t, maxlen:int_t
 ifdef __UNIX__
     _set_errno( ENOSYS )
     xor eax,eax
 else
 
     ldr eax,maxlen
-    imul ecx,eax,TCHAR
+    imul ecx,eax,tchar_t
     mov rbx,malloc( ecx )
     ;
     ; GetCurrentDirectory only works for the default drive
@@ -47,17 +47,17 @@ else
         ;
         ; Get the current directory string on that drive and its length
         ;
-       .new path[4]:TCHAR
+       .new path[4]:tchar_t
 
         add cl,'A'-1
 ifdef _UNICODE
-        mov path[TCHAR*0],cx
+        mov path[tchar_t*0],cx
 else
-        mov path[TCHAR*0],cl
+        mov path[tchar_t*0],cl
 endif
-        mov path[TCHAR*1],':'
-        mov path[TCHAR*2],'.'
-        mov path[TCHAR*3],0
+        mov path[tchar_t*1],':'
+        mov path[tchar_t*2],'.'
+        mov path[tchar_t*3],0
 
         GetFullPathName( &path, maxlen, rbx, 0 )
     .endif

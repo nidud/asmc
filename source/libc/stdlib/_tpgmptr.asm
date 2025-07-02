@@ -8,7 +8,7 @@ include stdlib.inc
 include tchar.inc
 
 .data
-_tpgmptr LPTSTR 0
+_tpgmptr tstring_t 0
 
 .code
 

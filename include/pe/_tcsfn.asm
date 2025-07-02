@@ -12,7 +12,7 @@
 _tcsfn proc path:LPTSTR
 
     ldr rcx,path
-    movzx edx,TCHAR ptr [rcx]
+    movzx edx,tchar_t ptr [rcx]
 
     .for ( rax = rcx : edx : )
 ifdef __UNIX__
@@ -20,13 +20,13 @@ ifdef __UNIX__
 else
         .if ( edx == '\' || edx == '/' )
 endif
-            .if ( TCHAR ptr [rcx+TCHAR] )
+            .if ( tchar_t ptr [rcx+tchar_t] )
 
-                lea rax,[rcx+TCHAR]
+                lea rax,[rcx+tchar_t]
             .endif
         .endif
-        add rcx,TCHAR
-        movzx edx,TCHAR ptr [rcx]
+        add rcx,tchar_t
+        movzx edx,tchar_t ptr [rcx]
     .endf
     ret
 

@@ -17,7 +17,7 @@ include conio.inc
 
 .code
 
-_scframe proc rc:TRECT, type:SINT, attrib:WORD
+_scframe proc rc:TRECT, type:int_t, attrib:WORD
 
    .new ft:BoxChars
    .new cols:byte

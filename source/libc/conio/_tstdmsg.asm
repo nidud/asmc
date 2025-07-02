@@ -10,7 +10,7 @@ include tchar.inc
 
     .code
 
-_stdmsg proc title:LPTSTR, format:LPTSTR, argptr:vararg
+_stdmsg proc title:tstring_t, format:tstring_t, argptr:vararg
 
     _vstprintf(&_bufin, format, &argptr)
     _vmsgbox(MB_OK, title, &_bufin)

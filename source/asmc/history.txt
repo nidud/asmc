@@ -2,6 +2,12 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.38 - xx xxx 2025
+- fixed .for -- for segments (DOS) ( seg:[..] :: )
+- fixed .return without RET -- removed ORG over last jump..
+- fixup for mem2mem and pragma (16-bit)
+- removed _MSVCRT from -nolib
+
 Changes in 2.37 - 23 Jun 2025
 - added option -mscrt - generate MSCRT pragma(init/exit) segments for ELF
 - fixed forward referenced symbols in codeview - name struct { next ptr name ? }

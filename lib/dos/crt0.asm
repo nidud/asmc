@@ -66,24 +66,23 @@ _start::
 
     mov     es,bx
     xor     di,di
-    mov     bx,di
+    xor     bx,bx
     mov     cx,0x7FFF
     cld
 .0:
     mov     al,0
     repnz   scasb
-    or      cx,cx
+    test    cx,cx
     jz      .1
     inc     bx
     cmp     es:[di],al
     jnz     .0
-    or      ch,80h
+    or      ch,0x80
     neg     cx
     mov     _envlen,cx
-
     shl     bx,2
     add     bx,0x10
-    and     bl,0xF0
+    or      bl,0xF0
     mov     _envsize,bx
 
     mov     dx,ss

@@ -306,8 +306,7 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
 ParseAssignment endp
 
 
-RenderAssignment proc __ccall private uses rsi rdi rbx dest:ptr sbyte,
-    source:ptr sbyte, tokenarray:token_t
+RenderAssignment proc __ccall private uses rsi rdi rbx dest:string_t, source:string_t, tokenarray:token_t
 
   local buffer[MAX_LINE_LEN]:char_t
   local tokbuf[MAX_LINE_LEN]:char_t
@@ -430,28 +429,63 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             add rbx,asm_tok
         .endif
 
-        .if !tstrchr( tstrcpy( rdi, [rbx].tokpos ), ':' )
-            .return asmerr( 2206 )
-        .endif
-        .if ( BYTE PTR [rax+1] == "'" )
-            .if !tstrchr( &[rax+1], ':' )
-                .return asmerr( 2206 )
+        ; v2.37.10 - added for segments:[] ::
+
+        tstrcpy( rdi, [rbx].tokpos )
+        .for ( ecx = 0, rdx = rbx : [rbx].token != T_FINAL : rbx += asm_tok )
+
+            .if ( [rbx].token == T_COLON || [rbx].token == T_DBL_COLON )
+
+                .if ( [rbx].token != T_DBL_COLON && [rbx-asm_tok].token == T_REG )
+                    .if ( GetValueSp([rbx-asm_tok].tokval) & OP_SR )
+                        .continue .if ( [rbx+asm_tok].token == T_OP_SQ_BRACKET || [rbx+asm_tok].token == T_ID )
+                    .endif
+                .endif
+                mov rcx,[rbx].tokpos
+                sub rcx,[rdx].asm_tok.tokpos
+                add rcx,rdi
+                mov byte ptr [rcx],0
+                .if ( [rbx].token == T_DBL_COLON )
+                    mov p,rcx
+                    inc rcx
+                    jmp dbl_colon
+                .endif
+                add rbx,asm_tok
+                mov rax,[rbx].tokpos
+                sub rax,[rdx].asm_tok.tokpos
+                add rax,rdi
+                mov p,rax
+                inc ecx
+               .break
             .endif
-        .endif
-
-        mov BYTE PTR [rax],0
-        inc rax
-        mov p,tstrstart( rax )
-        .if !tstrchr( rax, ':' )
+        .endf
+        .if ( ecx == 0 )
             .return asmerr( 2206 )
         .endif
-
-        mov BYTE PTR [rax],0
-        inc rax
-        mov q,tstrstart( rax )
+        .for ( ecx = 0 : [rbx].token != T_FINAL : rbx += asm_tok )
+            .if ( [rbx].token == T_COLON )
+                .if ( [rbx-asm_tok].token == T_REG )
+                    .if ( GetValueSp([rbx-asm_tok].tokval) & OP_SR )
+                        .continue .if ( [rbx+asm_tok].token == T_OP_SQ_BRACKET || [rbx+asm_tok].token == T_ID )
+                    .endif
+                .endif
+                mov rcx,[rbx].tokpos
+               .break
+            .endif
+        .endf
+        .if ( rcx == NULL )
+            .return asmerr( 2206 )
+        .endif
+        sub rcx,[rdx].asm_tok.tokpos
+        add rcx,rdi
+dbl_colon:
+        mov byte ptr [rcx],0
+        mov rax,[rbx+asm_tok].tokpos
+        sub rax,[rdx].asm_tok.tokpos
+        add rax,rdi
+        mov q,rax
+        mov rbx,rdx
         tstrtrim( rax )
-        mov rdi,tstrstart( rdi )
-        tstrtrim( rdi )
         tstrtrim( p )
 
         .if ( [rbx-asm_tok].token == T_OP_BRACKET )

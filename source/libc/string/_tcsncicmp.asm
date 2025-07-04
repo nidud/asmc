@@ -31,36 +31,38 @@ _tcsncicmp proc use_regs a:tstring_t, b:tstring_t, size:size_t
     ldr     rga,a
     ldr     rcx,size
     ldr     rdx,b
+
     mov     reg,_pclmap
     mov     eax,1
 .0:
     test    eax,eax
-    jz      .2
-    xor     eax,eax
+    jz      .1
+    mov     eax,ecx
     test    ecx,ecx
-    jz      .2
+    jz      .1
     dec     ecx
     movzx   eax,tchar_t ptr [rga]
     movzx   rgd,tchar_t ptr [rdx]
     add     rga,tchar_t
     add     rdx,tchar_t
 ifdef _UNICODE
-    cmp     eax,255
-    ja      .3
-    cmp     rgd,255
-    ja      .3
+    test    eax,0xFF00
+    jnz     .2
+    test    rgd,0xFF00
+    jnz     .2
 endif
     mov     al,[reg+rax]
     cmp     al,[reg+rgq]
     je      .0
+    sub     al,[reg+rgq]
+    movsx   rax,al
 .1:
-    sub     rax,rgq
-.2:
     ret
 ifdef _UNICODE
-.3:
+.2:
     cmp     eax,rgd
-    je      .0
+    jz      .0
+    sub     rax,rgq
     jmp     .1
 endif
 

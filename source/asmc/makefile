@@ -3,6 +3,9 @@
 #
 
 flags = -Cs -Iinc -I../../include
+ifdef SUBVERSION
+flags += -DSUBVERSION=$(SUBVERSION)
+endif
 ifdef MASM
 flags += -DMASMCOMPAT
 endif
@@ -75,10 +78,9 @@ install:
 	sudo cp ./asmc-profile.sh /etc/profile.d
 	rm ./asmc
 	rm ./asmc64
-	@echo -------------------------------------------
-	@echo Note: These changes needs a reboot, or run:
-	@echo export INCLUDE=/usr/lib/asmc/include
-	@echo -------------------------------------------
+	@echo ----------------------------------------------------
+	@echo These changes may need a reboot: see asmc-profile.sh
+	@echo ----------------------------------------------------
 
 uninstall:
 	sudo rm -f /usr/bin/asmc
@@ -96,14 +98,14 @@ release:
 	copy asmc.exe ..\..\bin
 	copy asmc64.exe ..\..\bin
 
-masm_compat:
-	make MASM=1 asmc
-	make MASM=1 asmc64
-	del *.obj
-
 asmc32:
 	make x86=1 asmc
 	make x86=1 asmc64
+	del *.obj
+
+masm_compat:
+	make MASM=1 asmc
+	make MASM=1 asmc64
 	del *.obj
 
 linux32:

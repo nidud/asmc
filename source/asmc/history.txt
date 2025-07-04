@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.38 - xx xxx 2025
+- regression from v2.37 - Linux init/exit segment alignment
+- regression from v2.37 - _stricmp and _strnicmp
 - fixed .for -- for segments (DOS) ( seg:[..] :: )
 - fixed .return without RET -- removed ORG over last jump..
 - fixup for mem2mem and pragma (16-bit)

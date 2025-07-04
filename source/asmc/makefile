@@ -72,9 +72,6 @@ install:
 	sudo mkdir /usr/lib/asmc
 	sudo mkdir /usr/lib/asmc/x86
 	sudo cp -R ../../include /usr/lib/asmc/include
-	sudo rm -f /usr/lib/asmc/include/*.h
-	sudo rm -f /usr/lib/asmc/include/*.rh
-	sudo rm -f /usr/lib/asmc/include/sys/*.h
 	sudo cp ./asmc-profile.sh /etc/profile.d
 	rm ./asmc
 	rm ./asmc64
@@ -93,8 +90,8 @@ uninstall:
 
 release:
 	del *.obj
-	make x86=1 asmc
-	make asmc64
+	make SUBVERSION=11 x86=1 asmc
+	make SUBVERSION=11 asmc64
 	del *.obj
 	copy asmc.exe ..\..\bin
 	copy asmc64.exe ..\..\bin

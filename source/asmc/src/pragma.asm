@@ -549,14 +549,17 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             tsprintf(&stdlib, "%s.%05d", rsi, opndx.uvalue)
             lea rsi,stdlib
-
         .else
             lea rsi,@CStr(".CRT$XTA")
             .if edi == "init"
                 lea rsi,@CStr(".CRT$XIA")
             .endif
         .endif
-        SetSimSeg( SIM_CONST, rsi )
+        .if ( MODULE.Ofssize == USE16 )
+            SetSimSeg( SIM_CONST, rsi )
+        .else
+            AddLineQueueX( " %s %r %r(8) 'CONST'", rsi, T_SEGMENT, T_ALIGN )
+        .endif
         mov rdx,[rbx].string_ptr
         add rbx,asm_tok
         .if [rbx].token == T_COMMA

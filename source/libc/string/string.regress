@@ -187,6 +187,9 @@ main proc
     .assert strcmp(rdi,"abc ") == -1
     .assert _stricmp(rdi,"aBc") == 0
     .assert _stricmp(rdi,"abc ") == -32
+    .assert _stricmp(rdi,"abc ") == -32
+    .assert _stricmp("a","ab") == -98
+    .assert _stricmp("a","aB") == -98
     .assert strcmp(rdi,"abcd") == -1
     .assert strcmp(rdi,"ab") == 1
     .assert memcmp(rdi,rdi,3) == 0

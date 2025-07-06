@@ -1,0 +1,24 @@
+; MEMCPY.D--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+
+include string.inc
+
+    .code
+
+memcpy proc uses si di s1:ptr, s2:ptr, count:size_t
+
+    pushl   ds
+    ldr     di,s1
+    ldr     si,s2
+    mov     cx,count
+    mov     ax,di
+    movl    dx,es
+    rep     movsb
+    popl    ds
+    ret
+
+memcpy endp
+
+    end

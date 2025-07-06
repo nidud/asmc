@@ -50,17 +50,7 @@ ifdef __UNIX__
 define __Ctype	<syscall>
 define __Cdecl	<syscall>
 define __cdecl	<syscall>
-elseifdef _M_IX86_16
-define __Cdecl	<c>
-ifndef __cdecl
-define __cdecl	<c>
-endif
-ifndef __Ctype
-define __Ctype	<c>
-endif
-option proc:public, language:__Ctype, dotname
 elseifdef _STDCALL_SUPPORTED
-define __Cdecl	<c>
 define __Ctype	<stdcall>
 define __cdecl	<stdcall>
 define WINAPI	<stdcall>
@@ -134,26 +124,12 @@ define _WIN32 ; default
 endif
 
 ifdef _M_IX86_16
-if @DataSize
-define ldsl <lds>
-define lesl <les>
-define esl <es:>
-define movl <mov>
-define pushl <push>
-define popl <pop>
-else
-define ldsl <mov>
-define lesl <mov>
-define esl <>
-movl macro args:vararg
-endm
-pushl macro args:vararg
-endm
-popl macro args:vararg
-endm
-endif
+include dos.inc
 elseifndef _WIN64
-ifdef __SSE__
+
+ifdef _AMD64
+.x64
+elseifdef __SSE__
 .686
 .xmm
 elseifdef __P686__
@@ -163,15 +139,15 @@ elseifdef __P586__
 else
 .486
 endif
-ifdef _AMD64
-.x64
-endif
+
 ifdef __FLAT__
 option language:__Ctype
 else
 .model flat, __Ctype
 endif
-else
+
+else ; _WIN64
+
 option win64:3
 ifdef __UNIX__
 option cstack:on
@@ -185,14 +161,12 @@ define _SIZE_T_DEFINED
 ifdef _M_X64
 size_t		typedef qword
 ssize_t		typedef sqword
-elseifndef _M_IX86_16
+else
 size_t		typedef dword
 ssize_t		typedef sdword
-else
-size_t		typedef word
-ssize_t		typedef sword
 endif
 endif
+
 psize_t		typedef ptr size_t
 pssize_t	typedef ptr ssize_t
 
@@ -205,6 +179,7 @@ uint_t		typedef word
 endif
 SINT		typedef int_t
 UINT		typedef uint_t
+
 ifndef _ERRNO_T_DEFINED
 define _ERRNO_T_DEFINED
 errno_t		typedef int_t
@@ -328,15 +303,6 @@ define	nullptr 0
 ifndef _REGS6432
 define _REGS6432
 ifndef _WIN64
-ifdef _M_IX86_16
-if @DataSize
-define rax <dx::ax>
-define rbx <es::bx>
-else
-define rax <ax>
-define rbx <bx>
-endif
-else
 define rax <eax>
 define rdx <edx>
 define rbx <ebx>
@@ -345,7 +311,6 @@ define rdi <edi>
 define rsi <esi>
 define rbp <ebp>
 define rsp <esp>
-endif
 endif
 endif
 

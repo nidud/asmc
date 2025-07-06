@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; int _stricmp(char *, char *);
+; int _wcsicmp(wchar_t *, wchar_t *);
+;
 include string.inc
 include ctype.inc
 include tchar.inc
@@ -28,6 +30,7 @@ _tcsicmp proc use_regs a:tstring_t, b:tstring_t
 
     ldr     rcx,a
     ldr     rdx,b
+
     mov     reg,_pclmap
     mov     eax,1
 .0:

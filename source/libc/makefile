@@ -20,6 +20,7 @@ flag += -DNOSTDFLT
 endif
 
 ifdef YACC
+
 ifndef name
 name = libasmc
 endif
@@ -73,6 +74,17 @@ endif
 	libw -q -b -n -c -fac $(path)\msvcrt0.lib *.obj
 	del *.obj
 
+dos:
+	for %%q in (t s c m l) do asmc -q -m%%q -1 -MT -BlLIBW -r *.d -link $(lib_dir)\dos\libc%%q.lib
+	del *.obj
+
+
+# Test library for the Windows 10 Virtual Terminal
+
+terminal:
+#	make tty=1 x86=1
+	make tty=1
+
 linux:
 	asmc -BlLIBW -6 -mscrt -MT -elf -Zp4 -Cs -r *.asm *.s -link -q -b -n -c $(lib_dir)\x86\libc.a
 	asmc -BlLIBW -mscrt -MT -elf64 -Zp8 -Cs -r *.asm *.s -link -q -b -n -c $(lib_dir)\x64\libc.a
@@ -105,4 +117,5 @@ regress64:
 	%~n1.exe
 	if errorlevel 1 exit
 	cmd /C del %~n1.obj %~n1.exe
+
 endif

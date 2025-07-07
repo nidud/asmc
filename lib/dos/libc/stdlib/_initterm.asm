@@ -18,7 +18,7 @@ _initterm proc uses si di bx pfbegin:ptr, pfend:ptr
    .new priority[MAXENTRIES]:uint_t
    .new function[MAXENTRIES]:func_p
 
-    lesl bx,pfbegin
+    ldr bx,pfbegin
     mov dx,word ptr pfend
 
     ; walk the table of function pointers from the bottom up, until

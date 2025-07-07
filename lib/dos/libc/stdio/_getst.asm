@@ -12,7 +12,7 @@ include stdio.inc
 
 _getst proc uses bx
 
-    lesl bx,stdin
+    ldr bx,stdin
 
     .for ( ax = 0, dx = 0 : dx < _nstream : dx++, bx+=FILE )
 

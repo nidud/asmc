@@ -111,7 +111,7 @@ ifdef __LFN__
     mov     ax,0x716C
 endif
     pushl   ds
-    ldsl    si,fname
+    ldr     si,fname
 ifdef __LFN__
     jnz     .21
 endif

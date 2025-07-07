@@ -7,20 +7,20 @@ include string.inc
 
     .code
 
-strchr proc uses di s1:string_t, char:int_t
+strchr proc <usesds> uses si s1:string_t, char:int_t
 
+    ldr     si,s1
     xor     ax,ax
     movl    dx,ax
-    lesl    di,s1
 .0:
-    mov     al,esl[di]
+    mov     al,[si]
     test    al,al
     jz      .1
-    inc     di
+    inc     si
     cmp     al,BYTE PTR char
     jne     .0
-    movl    dx,es
-    mov     ax,di
+    movl    dx,ds
+    mov     ax,si
     dec     ax
 .1:
     ret

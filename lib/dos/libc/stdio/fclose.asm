@@ -13,7 +13,7 @@ fclose proc uses bx fp:LPFILE
 
    .new retval:size_t
 
-    lesl bx,fp
+    ldr bx,fp
     mov ax,esl[bx]._iobuf._flag
     and ax,_IOREAD or _IOWRT or _IORW
     .ifz
@@ -23,7 +23,7 @@ fclose proc uses bx fp:LPFILE
     mov retval,fflush( fp )
     _freebuf( fp )
 
-    lesl bx,fp
+    ldr bx,fp
     xor ax,ax
     mov esl[bx]._iobuf._flag,ax
     mov cx,esl[bx]._iobuf._file

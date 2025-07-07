@@ -7,10 +7,10 @@ include string.inc
 
     .code
 
-_strupr proc uses si string:string_t
+_strupr proc <usesds> uses si string:string_t
 
-    pushl   ds
-    ldsl    si,string
+    ldr     si,string
+    mov     dx,si
 .0:
     mov     al,[si]
     test    al,al
@@ -23,9 +23,8 @@ _strupr proc uses si string:string_t
     and     byte ptr [si-1],not 0x20
     jmp     .0
 .1:
+    mov     ax,dx
     movl    dx,ds
-    mov     ax,word ptr string
-    popl    ds
     ret
 
 _strupr endp

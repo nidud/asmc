@@ -7,12 +7,11 @@ include string.inc
 
     .code
 
-strrev proc uses si di string:string_t
+strrev proc <usesds> uses si di string:string_t
 
-    pushl   ds
     ldr     si,string
     ldr     di,string
-    movl    dx,es
+    mov     dx,di
     mov     al,0
     mov     cx,-1
     repnz   scasb
@@ -22,18 +21,18 @@ strrev proc uses si di string:string_t
     xchg    si,di
     jmp     .1
 .0:
-    mov     al,[di]
+    mov     al,esl[di]
     mov     ah,[si]
     mov     [si],al
-    mov     [di],ah
+    mov     esl[di],ah
     inc     di
     dec     si
 .1:
     cmp     di,si
     jb      .0
 .2:
-    mov     ax,word ptr string
-    popl    ds
+    mov     ax,dx
+    movl    dx,es
     ret
 
 strrev endp

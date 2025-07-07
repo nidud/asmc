@@ -18,7 +18,7 @@ _flsbuf proc uses bx char:int_t, fp:LPFILE
    .new charcount:int_t = 0
    .new written:int_t = 0
 
-    lesl bx,fp
+    ldr bx,fp
 
     xor ax,ax
     mov dx,esl[bx]._flag
@@ -91,7 +91,7 @@ _flsbuf proc uses bx char:int_t, fp:LPFILE
         .endif
 
         mov ax,char
-        lesl bx,esl[bx]._base
+        ldr bx,esl[bx]._base
         mov esl[bx],al
 
     .else
@@ -105,7 +105,7 @@ _flsbuf proc uses bx char:int_t, fp:LPFILE
     mov cx,written
     .if ( cx != charcount )
 
-        lesl bx,fp
+        ldr bx,fp
         or esl[bx]._flag,_IOERR
         or ax,-1
     .endif

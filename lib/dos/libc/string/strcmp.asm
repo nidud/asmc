@@ -7,11 +7,10 @@ include string.inc
 
     .code
 
-strcmp proc uses si di s1:string_t, s2:string_t
+strcmp proc <usesds> uses si di s1:string_t, s2:string_t
 
-    pushl   ds
-    ldsl    si,s2
-    lesl    di,s1
+    ldr     si,s2
+    ldr     di,s1
     mov     al,-1
 .0:
     test    al,al
@@ -26,7 +25,6 @@ strcmp proc uses si di s1:string_t, s2:string_t
     sbb     al,-1
 .1:
     cbw
-    popl    ds
     ret
 
 strcmp endp

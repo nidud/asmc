@@ -7,10 +7,10 @@ include string.inc
 
     .code
 
-_strlwr proc uses si string:string_t
+_strlwr proc <usesds> uses si string:string_t
 
-    pushl   ds
-    ldsl    si,string
+    ldr     si,string
+    mov     dx,si
 .0:
     mov     al,[si]
     test    al,al
@@ -23,9 +23,8 @@ _strlwr proc uses si string:string_t
     or      byte ptr [si-1],0x20
     jmp     .0
 .1:
-    mov     ax,word ptr string
+    mov     ax,dx
     movl    dx,ds
-    popl    ds
     ret
 
 _strlwr endp

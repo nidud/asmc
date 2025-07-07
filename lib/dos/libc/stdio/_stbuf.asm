@@ -18,7 +18,7 @@ _stbuf proc uses si bx fp:LPFILE
 
    .new p:string_t
 
-    lesl bx,fp
+    ldr bx,fp
 
     .if _isatty( esl[bx]._file )
 
@@ -46,7 +46,7 @@ _stbuf proc uses si bx fp:LPFILE
             malloc( _INTIOBUF )
             mov [si],ax
             movl [si+2],dx
-            lesl bx,fp
+            ldr bx,fp
         .endif
 
         mov cx,_INTIOBUF

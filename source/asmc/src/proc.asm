@@ -1298,11 +1298,21 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
                         .if ( MODULE.Ofssize != USE64 )
 
                             .ifd ( tstricmp( [rbx].string_ptr, "LOADDS") == 0 )
+                                mov eax,1
+                            .elseifd ( tstricmp( [rbx].string_ptr, "uSESDS") == 0 )
+                                mov eax,2
+                            .else
+                                xor eax,eax
+                            .endif
+                            .if ( eax )
 
                                 .if ( MODULE._model == MODEL_FLAT )
                                     asmerr( 8014 )
                                 .else
                                     mov [rsi].loadds,1
+                                    .if ( eax == 2 )
+                                        mov [rsi].usesds,1
+                                    .endif
                                 .endif
                             .else
                                 .return( asmerr( 4005, [rbx].string_ptr ) )
@@ -3385,17 +3395,39 @@ endif
 
     .if ( [rsi].loadds )
 
-        mov ecx,T_AX
-        .if ( MODULE.Ofssize )
-            mov ecx,T_EAX
+        xor ebx,ebx
+        .if ( [rsi].usesds )
+            mov al,MODULE._model
+            .if ( al == MODEL_TINY || al == MODEL_SMALL || al == MODEL_MEDIUM )
+                mov ebx,2
+            .else
+                mov rdx,[rsi].regslist
+                .if ( rdx )
+                    movzx ecx,word ptr [rdx]
+                    .for ( rdx += 2 : ecx : ecx--, rdx += 2 )
+                        movzx eax,word ptr [rdx]
+                        .if ( eax == T_SI )
+                            inc ebx
+                           .break
+                        .endif
+                    .endf
+                .endif
+                .if ( ebx == 0 )
+                    mov [rsi].loadds,0
+                .endif
+            .endif
+        .else
+            mov ebx,3
         .endif
-        AddLineQueueX(
-            "%r %r\n"
-            "%r %r, %s\n"
-            "%r %r, %r",
-            T_PUSH, T_DS,
-            T_MOV, T_AX, &szDgroup,
-            T_MOV, T_DS, ecx )
+        .if ( ebx )
+            AddLineQueueX( " %r %r", T_PUSH, T_DS )
+            .if ( ebx == 2 )
+                AddLineQueueX( " %r %r", T_POP, T_ES )
+            .elseif ( ebx == 3 )
+                AddLineQueueX( " %r %r, %s", T_MOV, T_AX, &szDgroup )
+                AddLineQueueX( " %r %r, %r", T_MOV, T_DS, MODULE.accumulator )
+            .endif
+        .endif
     .endif
 
     ; Push the USES registers first if stdcall-32
@@ -4291,7 +4323,17 @@ write_default_epilogue proc __ccall private uses rsi rdi rbx
         pop_register( [rsi].regslist )
 
         .if ( [rsi].loadds )
-            AddLineQueueX( "%r %r", T_POP, T_DS )
+
+            mov ecx,1
+            .if ( [rsi].usesds )
+                mov al,MODULE._model
+                .if ( al == MODEL_TINY || al == MODEL_SMALL || al == MODEL_MEDIUM )
+                    xor ecx,ecx
+                .endif
+            .endif
+            .if ( ecx )
+                AddLineQueueX( "%r %r", T_POP, T_DS )
+            .endif
         .endif
     .endif
 

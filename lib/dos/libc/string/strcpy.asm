@@ -7,9 +7,8 @@ include string.inc
 
     .code
 
-strcpy proc uses si di s1:string_t, s2:string_t
+strcpy proc <usesds> uses si di s1:string_t, s2:string_t
 
-    pushl   ds
     ldr     di,s2
     mov     si,di
     movl    ax,es
@@ -17,12 +16,11 @@ strcpy proc uses si di s1:string_t, s2:string_t
     xor     ax,ax
     mov     cx,-1
     repne   scasb
-    lesl    di,s1
+    ldr     di,s1
     mov     ax,di
     not     cx
     rep     movsb
     movl    dx,es
-    popl    ds
     ret
 
 strcpy endp

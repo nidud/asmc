@@ -7,11 +7,10 @@ include string.inc
 
     .code
 
-_strnicmp proc uses si di s1:string_t, s2:string_t, count:uint_t
+_strnicmp proc <usesds> uses si di s1:string_t, s2:string_t, count:uint_t
 
-    pushl   ds
-    ldsl    si,s1
-    lesl    di,s2
+    ldr     si,s1
+    ldr     di,s2
     mov     cx,count
 .0:
     mov     al,[si]
@@ -30,7 +29,6 @@ _strnicmp proc uses si di s1:string_t, s2:string_t, count:uint_t
     sbb     al,-1
 .1:
     cbw
-    popl    ds
     ret
 
 _strnicmp endp

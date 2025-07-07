@@ -61,17 +61,18 @@ _sys_nerr int_t lengthof(sys_errlist) - 1
 
     .code
 
-_sys_err_msg proc uses bx m:int_t
+_sys_err_msg proc m:int_t
 
-    lesl bx,_sys_errlist
     mov ax,m
     .ifs ( ax < 0 || ax > _sys_nerr )
         mov ax,_sys_nerr
     .endif
-    shl ax,string_t/2
-    add bx,ax
-    mov ax,esl[bx]
-    movl dx,esl[bx+2]
+    shl  ax,string_t/2
+    add  ax,offset sys_errlist
+    xchg ax,si
+    movl dx,[si+2]
+    mov  si,[si]
+    xchg ax,si
     ret
 
 _sys_err_msg endp

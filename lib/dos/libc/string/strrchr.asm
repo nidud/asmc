@@ -7,7 +7,7 @@ include string.inc
 
     .code
 
-strrchr proc uses di s1:string_t, char:int_t
+strrchr proc <usesds> uses di s1:string_t, char:int_t
 
     ldr     di,s1
     xor     ax,ax

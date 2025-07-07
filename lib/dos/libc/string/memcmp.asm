@@ -7,9 +7,8 @@ include string.inc
 
     .code
 
-memcmp proc uses si di s1:ptr, s2:ptr, len:size_t
+memcmp proc <usesds> uses si di s1:ptr, s2:ptr, len:size_t
 
-    pushl   ds
     ldr     di,s1
     ldr     si,s2
     mov     cx,len
@@ -19,7 +18,6 @@ memcmp proc uses si di s1:ptr, s2:ptr, len:size_t
     sbb     ax,ax
     sbb     ax,-1
 .0:
-    popl    ds
     ret
 
 memcmp endp

@@ -12,7 +12,7 @@ include io.inc
 
 perror proc uses bx message:string_t
 
-    lesl bx,message
+    ldr bx,message
 
     .if ( bx )
 

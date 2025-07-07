@@ -7,10 +7,10 @@ include string.inc
 
     .code
 
-strlen proc uses di string:string_t
+strlen proc <usesds> uses di string:string_t
 
-    xor     ax,ax
     ldr     di,string
+    xor     ax,ax
     mov     cx,-1
     repne   scasb
     mov     ax,cx

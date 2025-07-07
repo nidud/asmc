@@ -7,9 +7,8 @@ include string.inc
 
     .code
 
-strcat proc uses si di s1:string_t, s2:string_t
+strcat proc <usesds> uses si di s1:string_t, s2:string_t
 
-    pushl   ds
     ldr     di,s1
     ldr     si,s2
     mov     dx,di
@@ -26,7 +25,6 @@ strcat proc uses si di s1:string_t, s2:string_t
     inc     si
     test    cl,cl
     jnz     .0
-    popl    ds
     ret
 
 strcat endp

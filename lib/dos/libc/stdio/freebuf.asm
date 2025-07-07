@@ -13,7 +13,7 @@ include malloc.inc
 
 _freebuf proc uses bx fp:LPFILE
 
-    lesl bx,fp
+    ldr bx,fp
 
     mov ax,esl[bx]._flag
     .if ( ax & _IOREAD or _IOWRT or _IORW )

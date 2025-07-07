@@ -12,15 +12,11 @@ ssize_t typedef sword
 endif
 
 if @DataSize
-define ldsl     <lds>
-define lesl     <les>
 define esl      <es:>
 define movl     <mov>
 define pushl    <push>
 define popl     <pop>
 else
-define ldsl     <mov>
-define lesl     <mov>
 define esl      <>
 movl    macro args:vararg
         endm

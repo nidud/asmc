@@ -425,6 +425,7 @@ MAX_SEGALIGNMENT    equ 0xFF
      stackparam     uchar_t : 1 ?   ; PROC: 1=stack params exists ( not just register params )
      isframe        uchar_t : 1 ?   ; PROC: FRAME attribute set?
      fpo            uchar_t : 1 ?   ;
+     usesds         uchar_t : 1 ?   ; PROC: USESDS prologuearg?
     ends
     size_prolog     uchar_t ?       ; v2.10: prologue size
     basereg         ushort_t ?      ; v2.11: stack base register

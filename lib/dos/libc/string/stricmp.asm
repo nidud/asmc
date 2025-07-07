@@ -7,9 +7,8 @@ include string.inc
 
     .code
 
-stricmp proc uses si di s1:string_t, s2:string_t
+stricmp proc <usesds> uses si di s1:string_t, s2:string_t
 
-    pushl   ds
     ldr     di,s1
     ldr     si,s2
     mov     al,-1
@@ -39,7 +38,6 @@ stricmp proc uses si di s1:string_t, s2:string_t
     sbb     al,-1
 .1:
     cbw
-    popl    ds
     ret
 
 stricmp endp

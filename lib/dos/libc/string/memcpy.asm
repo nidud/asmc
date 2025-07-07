@@ -7,16 +7,15 @@ include string.inc
 
     .code
 
-memcpy proc uses si di s1:ptr, s2:ptr, count:size_t
+memcpy proc <usesds> uses si di s1:ptr, s2:ptr, count:size_t
 
-    pushl   ds
     ldr     di,s1
     ldr     si,s2
+
     mov     cx,count
     mov     ax,di
-    movl    dx,es
     rep     movsb
-    popl    ds
+    movl    dx,es
     ret
 
 memcpy endp

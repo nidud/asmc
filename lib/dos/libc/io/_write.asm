@@ -48,7 +48,7 @@ _write proc uses di si bx fh:int_t, buf:ptr, cnt:uint_t
     .if ( _osfile[bx] & FTEXT )
 
         pushl ds
-        ldsl si,buf     ; start at beginning of buffer
+        ldr si,buf      ; start at beginning of buffer
         mov dosretval,0 ; no OS error yet
 
         .while 1
@@ -101,7 +101,7 @@ _write proc uses di si bx fh:int_t, buf:ptr, cnt:uint_t
 
         pushl   ds
         mov     cx,cnt
-        ldsl    dx,buf
+        ldr     dx,buf
         mov     ax,0x4000
         int     0x21
         popl    ds
@@ -119,7 +119,7 @@ _write proc uses di si bx fh:int_t, buf:ptr, cnt:uint_t
         ; otherwise we return -1 and set errno to ENOSPC,
         ; unless a device and first char was CTRL-Z
 
-        lesl di,buf
+        ldr di,buf
 
         .if ( dosretval != 0 )
 

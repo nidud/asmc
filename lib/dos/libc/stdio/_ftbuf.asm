@@ -13,14 +13,14 @@ include stdio.inc
 _ftbuf proc uses bx flag:int_t, fp:LPFILE
 
     mov cx,flag
-    lesl bx,fp
+    ldr bx,fp
 
     mov dx,esl[bx]._flag
     .if ( cx && dx & _IOFLRTN )
 
         fflush( ldr(bx) )
 
-        lesl bx,fp
+        ldr bx,fp
         and esl[bx]._flag,not (_IOYOURBUF or _IOFLRTN)
         xor ax,ax
         mov word ptr esl[bx]._ptr,ax

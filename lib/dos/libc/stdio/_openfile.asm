@@ -17,7 +17,7 @@ _openfile proc uses bx file:string_t, mode:string_t, shflag:int_t, stream:LPFILE
 
    .new fileflag:int_t
 
-    lesl bx,mode
+    ldr bx,mode
     .while ( byte ptr esl[bx] == ' ' )
         inc bx
     .endw
@@ -61,7 +61,7 @@ _openfile proc uses bx file:string_t, mode:string_t, shflag:int_t, stream:LPFILE
 
     .if ( _sopen(file, dx, shflag, CMASK) != -1 )
 
-        lesl bx,stream
+        ldr bx,stream
         mov esl[bx]._iobuf._file,ax
         xor ax,ax
         mov esl[bx]._iobuf._cnt,ax

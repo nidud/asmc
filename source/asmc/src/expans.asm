@@ -1672,6 +1672,28 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
            .continue
         .endif
 
+        .if ( [rbx].token == T_REG && i > 2 && [rbx-asm_tok].token == T_OP_BRACKET &&
+              [rbx-asm_tok*2].tokval == T_LDR && MODULE.Ofssize == USE16 )
+
+            ; v2.37.12 -- added for DOS near/far param -- assume dx:ax, ds:si and es:r16
+
+            mov al,MODULE._model
+            .if ( al == MODEL_COMPACT || al == MODEL_LARGE || al == MODEL_HUGE )
+
+                mov edx,T_ES
+                mov ecx,[rbx].tokval
+                .if ( ecx == T_AX )
+                    mov edx,T_DX
+                .elseif ( ecx == T_SI )
+                    mov edx,T_DS
+                .endif
+                tsprintf( buffer, "%r::%r", edx, ecx )
+            .else
+                tstrcpy( buffer, [rbx].string_ptr )
+            .endif
+            jmp render_ldr
+        .endif
+
         .if ( [rbx].token == T_ID )
 
             mov rsi,SymSearch( [rbx].string_ptr )
@@ -1863,6 +1885,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                     .else
                         tstrcpy( buffer, [rbx].string_ptr )
                     .endif
+render_ldr:
                     sub rbx,asm_tok*2
                     sub i,2
                     mov rcx,[rbx+asm_tok*4].tokpos

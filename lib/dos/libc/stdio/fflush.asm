@@ -16,7 +16,7 @@ fflush proc uses bx fp:LPFILE
    .new size:uint_t
    .new retval:int_t = 0
 
-    lesl bx,fp
+    ldr bx,fp
     mov ax,esl[bx]._flag
 
     and ax,_IOREAD or _IOWRT
@@ -28,7 +28,7 @@ fflush proc uses bx fp:LPFILE
         .ifg
 
             _write( esl[bx]._file, esl[bx]._base, ax )
-            lesl bx,fp
+            ldr bx,fp
             .ifd ( ax == size )
                 .if ( esl[bx]._flag & _IORW )
                     and esl[bx]._flag,not _IOWRT

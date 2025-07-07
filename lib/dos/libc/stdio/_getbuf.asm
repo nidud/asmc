@@ -14,7 +14,7 @@ include malloc.inc
 _getbuf proc uses bx fp:LPFILE
 
     malloc( _INTIOBUF )
-    lesl bx,fp
+    ldr bx,fp
     .if ( ax )
         or  esl[bx]._flag,_IOMYBUF
         mov esl[bx]._bufsiz,_INTIOBUF

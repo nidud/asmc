@@ -7,9 +7,8 @@ include string.inc
 
     .code
 
-strncmp proc uses si di s1:string_t, s2:string_t, count:size_t
+strncmp proc <usesds> uses si di s1:string_t, s2:string_t, count:size_t
 
-    pushl   ds
     mov     cx,count
     test    cx,cx
     jz      .1
@@ -33,7 +32,6 @@ strncmp proc uses si di s1:string_t, s2:string_t, count:size_t
     not     cx
 .1:
     mov     ax,cx
-    popl    ds
     ret
 
 strncmp endp

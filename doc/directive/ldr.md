@@ -32,7 +32,6 @@ Special action taken on 16-bit pointers:
 <table>
 <tr><td><b>Register</b></td><td><b>Near</b></td><td><b>Far</b></td></tr>
 <tr><td>ldr si,p</td><td>mov si,p</td><td>lds si,p</td></tr>
-<tr><td>ldr di,p</td><td>mov di,ds<br>mov es,di<br>mov di,p</td><td>les di,p</td></tr>
 <tr><td>ldr reg,p</td><td>mov reg,p</td><td>les reg,p</td></tr>
 </table>
 

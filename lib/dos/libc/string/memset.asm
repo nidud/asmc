@@ -7,13 +7,14 @@ include string.inc
 
     .code
 
-memset proc uses di string:ptr, char:int_t, count:size_t
+memset proc <usesds> uses di string:ptr, char:int_t, count:size_t
 
-    mov     cx,count
     ldr     di,string
+    mov     cx,count
+    mov     dx,di
     mov     ax,char
     rep     stosb
-    mov     ax,word ptr string
+    mov     ax,dx
     movl    dx,es
     ret
 

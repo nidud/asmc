@@ -7,13 +7,12 @@ include string.inc
 
     .code
 
-memmove proc uses si di s1:ptr, s2:ptr, cnt:size_t
+memmove proc <usesds> uses si di s1:ptr, s2:ptr, cnt:size_t
 
-    pushl   ds
     ldr     di,s1
     ldr     si,s2
+
     mov     cx,cnt
-    movl    dx,es
     mov     ax,di
     cmp     ax,si
     ja      .0
@@ -28,7 +27,7 @@ memmove proc uses si di s1:ptr, s2:ptr, cnt:size_t
     rep     movsb
     cld
 .1:
-    popl    ds
+    movl    dx,es
     ret
 
 memmove endp

@@ -51,21 +51,21 @@ externdef __lookuptable:byte
 
 write_char proc stdcall private uses bx c:int_t, fp:LPFILE, pnumwritten:ptr int_t
 
-    lesl bx,fp
+    ldr bx,fp
     mov cx,c
 
     .if ( ( esl[bx]._iobuf._flag & _IOSTRG ) && word ptr esl[bx]._iobuf._base == NULL )
 
         mov ax,1
-        lesl bx,pnumwritten
+        ldr bx,pnumwritten
         add esl[bx],ax
 
     .elseif ( fputc( cx, ldr(bx) ) == -1 )
 
-        lesl bx,pnumwritten
+        ldr bx,pnumwritten
         mov esl[bx],ax
     .else
-        lesl bx,pnumwritten
+        ldr bx,pnumwritten
         inc int_t ptr esl[bx]
     .endif
     ret
@@ -74,7 +74,7 @@ write_char endp
 
 write_string proc stdcall private uses bx string:LPTSTR, len:SINT, fp:LPFILE, pnumwritten:ptr int_t
 
-    lesl bx,string
+    ldr bx,string
     .for ( : len > 0 : len-- )
 
         mov cl,esl[bx]
@@ -100,7 +100,7 @@ write_multi_char endp
 
 
 _va_arg macro ap
-    lesl bx,ap
+    ldr bx,ap
     add word ptr ap,size_t
     retm<esl[bx]>
     endm
@@ -131,7 +131,7 @@ _output proc uses si di bx fp:LPFILE, format:string_t, arglist:ptr
 
     .while 1
 
-        lesl bx,format
+        ldr bx,format
         inc word ptr format
         xor ax,ax
         mov al,esl[bx]
@@ -235,7 +235,7 @@ _output proc uses si di bx fp:LPFILE, format:string_t, arglist:ptr
                     or flags,FL_LONG
                    .endc
                 .case 'I'
-                    lesl bx,format
+                    ldr bx,format
                     xor cx,cx
                     mov cl,esl[bx]
                     .switch cx

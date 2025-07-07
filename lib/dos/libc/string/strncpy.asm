@@ -7,11 +7,11 @@ include string.inc
 
     .code
 
-strncpy proc uses si di s1:string_t, s2:string_t, count:size_t
+strncpy proc <usesds> uses si di s1:string_t, s2:string_t, count:size_t
 
-    pushl   ds
     ldr     si,s2
     ldr     di,s1
+    mov     dx,di
     xor     ax,ax
     mov     cx,count
 .0:
@@ -21,9 +21,8 @@ strncpy proc uses si di s1:string_t, s2:string_t, count:size_t
     cmp     [si-1],al
     jne     .0
 .1:
+    mov     ax,dx
     movl    dx,es
-    mov     ax,word ptr s1
-    popl    ds
     ret
 
 strncpy endp

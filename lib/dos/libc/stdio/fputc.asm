@@ -13,14 +13,14 @@ include io.inc
 
 fputc proc uses bx c:int_t, fp:LPFILE
 
-    lesl bx,fp
+    ldr bx,fp
     dec esl[bx]._cnt
     .ifl
         _flsbuf( c, ldr(bx) )
     .else
         mov ax,c
         inc word ptr esl[bx]._ptr
-        lesl bx,esl[bx]._ptr
+        ldr bx,esl[bx]._ptr
         mov esl[bx-1],al
     .endif
     ret

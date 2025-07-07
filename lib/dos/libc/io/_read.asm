@@ -26,7 +26,7 @@ _read proc uses si di bx fh:int_t, inputbuf:ptr, cnt:size_t
 
     mov bx,fh
     mov ax,cnt
-    lesl di,inputbuf
+    ldr di,inputbuf
 
     .return .if !ax             ; nothing to read
 
@@ -112,7 +112,7 @@ _read proc uses si di bx fh:int_t, inputbuf:ptr, cnt:size_t
 
         ; set CRLF flag to indicate LF at beginning of buffer
 
-        lesl di,inputbuf
+        ldr di,inputbuf
         and al,not FCRLF
 
         .if ( byte ptr esl[di] == LF )

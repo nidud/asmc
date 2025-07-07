@@ -20,14 +20,14 @@ getenv proc uses si di bx enval:string_t
 
     .for ( bx = 0 : ax : bx += 4 )
 
-        lesl di,_environ
+        ldr di,_environ
         mov ax,esl[bx+di]
         mov dx,esl[bx+di+2]
 
         .if ( ax )
 
             pushl ds
-            ldsl si,enval
+            ldr si,enval
             .for ( es = dx, di = ax, cx = 0 : cx < len : cx++, si++, di++ )
 
                 mov al,[si]

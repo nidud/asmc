@@ -28,7 +28,13 @@ include string.inc
 
 include asmc.inc
 include proc.inc
-include hllext.inc
+include parser.inc
+include segment.inc
+include listing.inc
+include memalloc.inc
+include expreval.inc
+include lqueue.inc
+include hll.inc
 
 warning struct
 id      short_t ?

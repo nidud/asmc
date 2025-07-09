@@ -2,13 +2,12 @@ Asmc Macro Assembler Reference
 
 # Arithmetic
 
-- [* (multiply)](operator-multiply.md)
-- [+ (add)](operator-add.md)
-- [- (subtract or negate)](operator-subtract.md)
-- [. (field)](operator-field.md)
-- [/ (divide)](operator-divide.md)
-- [\[\] (index)](operator-index.md)
-- [MOD (remainder)](operator-remainder.md)
+<table>
+<tr><td><a href="operator-multiply.md">* (multiply)</a></td><td><a href="operator-field.md">. (field)</td></tr>
+<tr><td><a href="operator-index.md">[] (index)</a></td><td><a href="operator-add.md">+ (add)</a></td></tr>
+<tr><td><a href="operator-divide.md">/ (divide)</a></td><td><a href="operator-subtract.md">- (subtract or negate)</a></td></tr>
+<tr><td><a href="operator-remainder.md">MOD (remainder)</a></td></tr>
+</table>
 
 #### See Also
 

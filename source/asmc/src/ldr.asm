@@ -6,12 +6,17 @@
 
 include stdio.inc
 include string.inc
+
 include asmc.inc
 include proc.inc
-include hllext.inc
+include segment.inc
+include hll.inc
+include lqueue.inc
+include listing.inc
 include expreval.inc
 include qfloat.inc
 include fastpass.inc
+include parser.inc
 
     .code
 

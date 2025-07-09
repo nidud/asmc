@@ -28,24 +28,6 @@ externdef list_pos:DWORD
 
 GetTypeId proto __ccall :string_t, :token_t
 
-; Stact for "quoted strings" and floats
-
-str_item    struc byte
-string      string_t ?
-count       dd ?
-next        ptr str_item ?
-index       dw ?
-unicode     db ?
-flags       db ?
-str_item    ends
-
-flt_item    struc
-string      string_t ?
-count       int_t ?
-next        ptr_t ?
-index       int_t ?
-flt_item    ends
-
     .code
 
     B equ <byte ptr>
@@ -336,7 +318,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
 
             .if ( eax == 0 )
 
-                movzx eax,[rsi].index
+                mov eax,[rsi].index
                 sub rdx,[rsi].string
 
                 .if ( edx )
@@ -357,10 +339,9 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     tsprintf(lbuf, "DS%04X", edi)
     LclAlloc(&[rbx+str_item+1])
     mov [rax].str_item.count,ebx
-    mov [rax].str_item.index,di
+    mov [rax].str_item.index,edi
     mov cl,Unicode
     mov [rax].str_item.unicode,cl
-    mov [rax].str_item.flags,0
     mov rcx,MODULE.StrStack
     mov [rax].str_item.next,rcx
     mov MODULE.StrStack,rax
@@ -787,7 +768,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
         .if ( [rbx-asm_tok].token == '-' )
             xor eax,eax
             .if ( rdx )
-                movzx eax,[rdx].str_item.index
+                mov eax,[rdx].str_item.index
             .endif
             add eax,ecx
         .else
@@ -799,7 +780,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                 asmerr( 2156 )
                .return 0
             .endif
-            movzx eax,[rdx].str_item.index
+            mov eax,[rdx].str_item.index
         .endif
 
         tsprintf( buffer, "DS%04X", eax )
@@ -913,7 +894,7 @@ CString endp
 
 
     ;option cstack:off
-    assume rbx:ptr expr, rsi:ptr flt_item
+    assume rbx:expr_t, rsi:stritem_t
 
 CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string_t
 
@@ -983,15 +964,15 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
     tsprintf( buffer, "F%04X", edi )
     .if ( Parse_Pass == PASS_1 )
 
-        LclAlloc( flt_item+16 )
-        mov [rax].flt_item.index,edi
+        LclAlloc( str_item+16 )
+        mov [rax].str_item.index,edi
         mov ecx,size
-        mov [rax].flt_item.count,ecx
+        mov [rax].str_item.count,ecx
         mov rcx,MODULE.FltStack
-        mov [rax].flt_item.next,rcx
+        mov [rax].str_item.next,rcx
         mov MODULE.FltStack,rax
-        lea rcx,[rax+flt_item]
-        mov [rax].flt_item.string,rcx
+        lea rcx,[rax+str_item]
+        mov [rax].str_item.string,rcx
         tmemcpy(rcx, &opc, 16)
 
         GetCurrentSegment( &segm )

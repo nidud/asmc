@@ -27,7 +27,7 @@ include listing.inc
 include posndir.inc
 include reswords.inc
 include win64seh.inc
-include hllext.inc
+include hll.inc
 include qfloat.inc
 include assume.inc
 
@@ -2198,15 +2198,17 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ; v2.30: .return without RET ?
 
+    mov rcx,CurrProc
     .if ( MODULE.RetStack )
 
+        mov [rcx].asym.EndpOccured,1
         AddLineQueue( " ret" ) ; skip the last jump
         RunLineQueue()
+        mov rcx,CurrProc
     .endif
 
     ; v2.10: "+ 1" added to CurrProc->sym.name_size
 
-    mov rcx,CurrProc
     .if ( rcx )
 
         mov edx,[rcx].asym.name_size

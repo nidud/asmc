@@ -8,9 +8,14 @@
 
 include stdio.inc
 include string.inc
+
 include asmc.inc
+include memalloc.inc
 include proc.inc
-include hllext.inc
+include segment.inc
+include hll.inc
+include listing.inc
+include lqueue.inc
 include parser.inc
 include qfloat.inc
 
@@ -379,7 +384,6 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
 
     mov rsi,MODULE.RetStack
-
     .if ( !rsi )
 
         mov rsi,LclAlloc(hll_item)
@@ -421,8 +425,18 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .if ( SymFind( rdi ) ) ; v2.37.3: added - removed ORG 2 + RET
 
+            ; this need a fix:
+
             mov ebx,[rax].asym.offs
-            cmp ebx,GetCurrOffset()
+            GetCurrOffset()
+            mov rcx,CurrProc
+            .if ( [rcx].asym.EndpOccured )
+                lea ecx,[rbx-2]
+                .if ( ecx == eax && Parse_Pass == 2 )
+                    mov ebx,eax
+                .endif
+            .endif
+            cmp ebx,eax
             seta al
         .endif
         .if ( al )

@@ -806,6 +806,59 @@ __roro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
 
 __roro endp
 
+ifdef _WIN64
+
+__saro proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
+
+    ldr r10,val
+    ldr ecx,count
+    ldr r8d,bits
+
+    mov rax,[r10]
+    mov rdx,[r10+8]
+
+    .if ( ecx >= 64 && r8d <= 64 )
+
+        xor eax,eax
+        xor edx,edx
+
+    .elseif ( ecx >= 128 && r8d == 128 )
+
+        sar rdx,63
+        mov rax,rdx
+
+    .elseif ( r8d == 128 )
+
+        .if ( ecx >= 64 )
+
+            mov rax,rdx
+            sar rdx,63
+            sub ecx,64
+        .endif
+
+        shrd rax,rdx,cl
+        sar rdx,cl
+
+    .else
+
+        .if ( eax == -1 && r8d == 32 )
+            mov eax,eax
+        .endif
+        .if ( r8d == 32 )
+            sar eax,cl
+        .else
+            sar rax,cl
+        .endif
+    .endif
+
+    mov [r10],rax
+    mov [r10+8],rdx
+    mov rax,r10
+    ret
+
+__saro endp
+
+else
 
     assume rsi:ptr U128
 
@@ -884,6 +937,8 @@ __saro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
 __saro endp
 
     assume rsi:nothing
+
+endif
 
 
 ; Convert HALF, float, double, long double, int, __int64, string

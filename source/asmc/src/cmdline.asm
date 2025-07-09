@@ -947,37 +947,28 @@ endif
     .case 'iZ'          ; -Zi[0|1|2|3]
         define_name( "__DEBUG__", "1" )
         mov Options.line_numbers,1
-ifdef MASMCOMPAT
         mov Options.debug_symbols,4 ; C13 (vc7.x) zero terminated names
         mov Options.no_file_entry,1
-else
-        mov Options.debug_symbols,1
-endif
         mov Options.debug_ext,CVEX_NORMAL
         mov eax,OptValue
         .if eax
             .if eax > CVEX_MAX
-ifndef MASMCOMPAT
                 .if byte ptr [rbx+3] != 0
-                    .if byte ptr [rbx+4] != 0
-                        asmerr(1006, rbx)
+                    .if ( byte ptr [rbx+4] != 0 )
+                        asmerr( 1006, rbx )
                     .endif
                     movzx eax,word ptr [rbx+2]
                     sub eax,'00'
                     mov Options.debug_ext,al
                     shr eax,8
                 .endif
-                .if eax == 5
+                mov Options.no_file_entry,0
+                mov Options.debug_symbols,1 ; CV4
+                .if ( eax == 5 )
                     mov Options.debug_symbols,2 ; C11 (vc5.x) 32-bit types
-                .elseif eax == 8
-                    mov Options.debug_symbols,4 ; C13 (vc7.x) zero terminated names
-                    mov Options.no_file_entry,1
-                .else
-endif
-                    asmerr(1006, rbx)
-ifndef MASMCOMPAT
+                .elseif ( eax != 4 )
+                    asmerr( 1006, rbx )
                 .endif
-endif
             .else
                 mov Options.debug_ext,al
             .endif

@@ -456,6 +456,63 @@ define SIT_MACRO        1
     qditem_t        typedef ptr qditem
     dlldesc_t       typedef ptr dll_desc
     srcitem_t       typedef ptr src_item
+    hllitem_t       typedef ptr hll_item
+    stritem_t       typedef ptr str_item
+
+
+.template hll_item
+    next            hllitem_t ?
+    caselist        hllitem_t ?
+    union
+ifdef _WIN64
+     value          int64_t ?
+else
+     struct
+      value         int_t ?
+      hvalue        int_t ?
+     ends
+endif
+     labels         uint_t 4 dup(?) ; labels for LTEST, LEXIT, LSTART
+    ends
+    condlines       string_t ?  ; .WHILE/ELSEIF/CASE-blocks only: lines to add after 'test' label
+    cmd             int_t ?     ; start cmd (IF, WHILE, REPEAT)
+    tokval          int_t ?     ; v2.33.67: added
+    union
+     flags          dd ?        ; v2.08: added
+     record                     ; v2.36.40: added
+      ElseOccured   dd : 1 ?
+      WhileMode     dd : 1 ?    ; Expression delayed
+      Expression    dd : 1 ?    ; Has expression
+      DefaultCase   dd : 1 ?    ; Case is .default
+      ExpDelayed    dd : 1 ?    ; Expansion delayed - see DelayExpand()
+      SwitchJump    dd : 1 ?    ; Direct jump (no test)
+      SwitchReg     dd : 1 ?    ; Switch arg is register
+      SwitchMem     dd : 1 ?    ; Switch arg is memory
+      Switch16      dd : 1 ?    ; Switch Arg size
+      Switch32      dd : 1 ?
+      Switch64      dd : 1 ?
+      Switch3264    dd : 1 ?
+      CaseIsConst   dd : 1 ?    ; Case arg is const
+      CaseInTable   dd : 1 ?    ; Case is in jump table
+      EndOccured    dd : 1 ?    ; Jump exit in .case omitted
+      SizeDB        dd : 1 ?    ; Flag Extension B - BYTE
+      SizeDW        dd : 1 ?    ; Flag Extension W - WORD
+      SizeDD        dd : 1 ?    ; Flag Extension D - DWORD
+      Signed        dd : 1 ?    ; Flag Extension S - Signed
+      Structured    dd : 1 ?    ; Structured (Pascal) switch where each .CASE is a closed branch
+      SwitchTable   dd : 1 ?    ; If SwitchJump direct .case jump
+      SwitchTData   dd : 1 ?    ; Jump table in data segment -- SwitchJump
+     ends
+    ends
+   .ends
+
+.template str_item
+    string          string_t ?
+    next            stritem_t ?
+    count           int_t ?
+    index           int_t ?
+    unicode         db ?
+   .ends
 
 .template qditem
     next            qditem_t ?
@@ -729,12 +786,12 @@ define PE_DLL               0x04
      start_fixup            ptr fixup ?     ; OMF only
      start_label            asym_t ?        ; non-OMF only: start label
     ends
-    StrStack                ptr str_item ?  ; v2.20 String stack
-    HllStack                ptr hll_item ?  ; for .WHILE, .IF, .REPEAT
-    HllFree                 ptr hll_item ?  ; v2.06: stack of free <struct hll>-items
+    StrStack                stritem_t ?     ; v2.20 String stack
+    HllStack                hllitem_t ?     ; for .WHILE, .IF, .REPEAT
+    HllFree                 hllitem_t ?     ; v2.06: stack of free <struct hll>-items
     ComStack                ptr com_item ?  ; v2.27: .CLASSDEF, .COMDEF, .ENDS
-    RetStack                ptr hll_item ?  ; v2.30: .return info
-    FltStack                ptr flt_item ?  ; v2.31 float stack
+    RetStack                hllitem_t ?     ; v2.30: .return info
+    FltStack                stritem_t ?     ; v2.31 float stack
     NspStack                ptr nsp_item ?  ; v2.33 namespace stack
     ContextStack            ptr byte ?
     ContextFree             ptr byte ?      ; v2.10: "free items" heap implemented.

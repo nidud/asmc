@@ -143,6 +143,7 @@ IS_SIGNED proto watcall :byte {
      isexport       uint_t : 1 ?    ; v2.19: symbol exported ( SYM_INTERNAL )
      crecord        uint_t : 1 ?    ; v2.36.37: use bitf_* in records
      bitexpr        uint_t : 1 ?    ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
+     EndpOccured    uint_t : 1 ?    ; v2.37.15: set by EndpDir() - .return without RET
     ends
     state           uchar_t ?
     mem_type        uchar_t ?
@@ -327,7 +328,7 @@ IS_SIGNED proto watcall :byte {
      nextproc       asym_t ?        ; used by PROC locals (SYM_STACK) for linked list
      nextlocal      asym_t ?        ; used by PROC params (SYM_STACK) for linked list
      nextparam      asym_t ?        ; used by SYM_EXTERNAL (weak=FALSE) if altname is set
-     ivalue         char_t ?        ; v2.09: type changed from char * to char[]
+     ivalue         char_t 1 dup(?) ; v2.09: type changed from char * to char[]
     ends
    .ends
 

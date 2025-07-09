@@ -11,8 +11,16 @@ include limits.inc
 
 include asmc.inc
 include token.inc
-include hllext.inc
+include hll.inc
+include memalloc.inc
+include segment.inc
 include proc.inc
+include parser.inc
+include lqueue.inc
+include tokenize.inc
+include expreval.inc
+include listing.inc
+include reswords.inc
 
     .code
 

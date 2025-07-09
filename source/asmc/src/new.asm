@@ -6,10 +6,14 @@
 
 include stdio.inc
 include string.inc
+
 include asmc.inc
+include parser.inc
 include proc.inc
-include hllext.inc
+include hll.inc
+include lqueue.inc
 include expreval.inc
+include tokenize.inc
 include qfloat.inc
 include fastpass.inc
 

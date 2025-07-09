@@ -228,21 +228,21 @@ del %~n1.ERR
 goto end
 
 :cv8
-%ASMX% -c -q -win64 -Zi8 %1
+%ASMX% -c -q -win64 -Zi %1
 fcmp -coff %~n1.obj exp64\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj
 goto end
 
 :cv8bin
-%ASMX% -c -q -win64 -D__ASMC64__ -Zi8 %1
+%ASMX% -c -q -win64 -D__ASMC64__ -Zi %1
 fcmp -coff %~n1.obj exp64\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj
 goto end
 
 :cv8Gv
-%ASMX% -c -q -win64 -Zi8 -Gv %1
+%ASMX% -c -q -win64 -Zi -Gv %1
 fcmp -coff %~n1.obj exp64\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj

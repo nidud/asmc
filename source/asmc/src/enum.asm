@@ -9,10 +9,17 @@
 
 include stdio.inc
 include string.inc
+
 include asmc.inc
+include memalloc.inc
+include segment.inc
 include proc.inc
-include hllext.inc
+include hll.inc
+include listing.inc
+include lqueue.inc
 include parser.inc
+include tokenize.inc
+include expreval.inc
 
 public CurrEnum
 

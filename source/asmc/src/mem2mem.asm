@@ -13,8 +13,8 @@ include listing.inc
 include lqueue.inc
 include segment.inc
 include expreval.inc
-include hllext.inc
 include qfloat.inc
+include tokenize.inc
 
     .data
      ofss   db T_SI,    T_DI,    T_CX,    T_CX

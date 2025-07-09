@@ -18,7 +18,8 @@ include qfloat.inc
 include types.inc
 include indirect.inc
 include fastpass.inc
-include hllext.inc
+include reswords.inc
+include hll.inc
 
 define NUMQUAL
 

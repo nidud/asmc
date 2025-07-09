@@ -378,59 +378,60 @@ endif
 ; - WORD/DWORD, Target Displacement
 
 
-OmfFixGenFix proc __ccall uses rsi rdi rbx fixp:ptr fixup,
-    start_loc:dword, buf:ptr byte, type:fixgen_types
+OmfFixGenFix proc __ccall uses rsi rdi rbx fixp:ptr fixup, start_loc:dword, buf:ptr byte, type:fixgen_types
 
 ifndef ASMC64
 
-    .new locat1:byte
-    .new self_relative:byte = FALSE
-    .new data_rec_offset:dword
-    .new lr:logref
+   .new lr:logref
+   .new locat1:byte
+
+    ldr rbx,fixp
+    ldr rdi,buf
+    ldr esi,start_loc
 
     mov lr.is_secondary,TRUE
     mov lr.target_offset,0
-    ldr rbx,fixp
 
-    .switch( [rbx].type )
+    movzx eax,[rbx].type
+    xor ecx,ecx
+
+    .switch eax
     .case FIX_RELOFF8
-        mov self_relative,TRUE
+        mov ch,TRUE
         ; no break
     .case FIX_OFF8
-        mov locat1,( LOC_OFFSET_LO shl 2 )
-        .endc
+        mov cl,LOC_OFFSET_LO shl 2
+       .endc
     .case FIX_RELOFF16
-        mov self_relative,TRUE
+        mov ch,TRUE
         ; no break
     .case FIX_OFF16
-        mov al,LOC_OFFSET shl 2
+        mov cl,LOC_OFFSET shl 2
         .if ( [rbx].lresolved )
-            mov al,LOC_MS_LINK_OFFSET shl 2
+            mov cl,LOC_MS_LINK_OFFSET shl 2
         .endif
-        mov locat1,al
-        .endc
+       .endc
     .case FIX_RELOFF32
-        mov self_relative,TRUE
+        mov ch,TRUE
         ; no break
     .case FIX_OFF32
-        mov al,LOC_MS_OFFSET_32 shl 2
+        mov cl,LOC_MS_OFFSET_32 shl 2
         .if ( [rbx].lresolved )
-            mov al,LOC_MS_LINK_OFFSET_32 shl 2
+            mov cl,LOC_MS_LINK_OFFSET_32 shl 2
         .endif
-        mov locat1,al
         .endc
     .case FIX_HIBYTE
-        mov locat1,( LOC_OFFSET_HI shl 2 )
-        .endc
+        mov cl,LOC_OFFSET_HI shl 2
+       .endc
     .case FIX_SEG
-        mov locat1,( LOC_BASE shl 2 )
-        .endc
+        mov cl,LOC_BASE shl 2
+       .endc
     .case FIX_PTR16
-        mov locat1,( LOC_BASE_OFFSET shl 2 )
-        .endc
+        mov cl,LOC_BASE_OFFSET shl 2
+       .endc
     .case FIX_PTR32
-        mov locat1,( LOC_MS_BASE_OFFSET_32 shl 2 )
-        .endc
+        mov cl,LOC_MS_BASE_OFFSET_32 shl 2
+       .endc
     .default ; shouldn't happen. Check for valid fixup has already happened
         mov rcx,MODULE.fmtopt
         lea rax,szNull
@@ -441,30 +442,29 @@ ifndef ASMC64
         asmerr( 3001, &[rcx].format_options.formatname, rax )
         .return( 0 )
     .endsw
+
     mov al,0xc0
-    .if ( self_relative )
+    .if ( ch )
         mov al,0x80
     .endif
-    or locat1,al  ; bit 7: 1=is a fixup subrecord
+    or al,cl  ; bit 7: 1=is a fixup subrecord
+    mov locat1,al
 
     .ifd ( omf_set_logref( rbx, &lr ) == 0 )
-        .return( 0 )
+        .return
     .endif
 
     ; calculate the fixup's position in current LEDATA
-    mov eax,[rbx].locofs
-    sub eax,start_loc
-    mov data_rec_offset,eax
-    or  locat1,ah
-    mov rcx,buf
-    mov [rcx+1],al
+
+    mov ecx,[rbx].locofs
+    sub ecx,esi
     mov al,locat1
-    mov [rcx],al
-    add rcx,2
-    TranslateLogref( &lr, rcx, type )
-    .return( &[rax+2] )
+    or  al,ch
+    mov ah,cl
+    stosw
+   .return( &[TranslateLogref( &lr, rdi, type )+2] )
 else
-    .return 0
+   .return 0
 endif
 
 OmfFixGenFix endp

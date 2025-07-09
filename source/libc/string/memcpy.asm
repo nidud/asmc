@@ -145,10 +145,10 @@ ifdef __AVX__
 
 else
 
-    movups xmm2,[rdx]
-    movups xmm3,[rdx+16]
-    movups xmm4,[rdx+reg-16]
-    movups xmm5,[rdx+reg-32]
+    movups  xmm2,[rdx]
+    movups  xmm3,[rdx+16]
+    movups  xmm4,[rdx+reg-16]
+    movups  xmm5,[rdx+reg-32]
     cmp     reg,64
     jbe     .2
     mov     rd2,-32
@@ -168,16 +168,16 @@ else
     neg     rd1
 .1:
     add     rd1,rd2
-    movups xmm0,[rdx+rd1]
-    movups xmm1,[rdx+rd1+16]
-    movaps [rcx+rd1],xmm0
-    movaps [rcx+rd1+16],xmm1
+    movups  xmm0,[rdx+rd1]
+    movups  xmm1,[rdx+rd1+16]
+    movaps  [rcx+rd1],xmm0
+    movaps  [rcx+rd1+16],xmm1
     jnz     .1
 .2:
-    movups [rax],xmm2
-    movups [rax+16],xmm3
-    movups [rax+reg-16],xmm4
-    movups [rax+reg-32],xmm5
+    movups  [rax],xmm2
+    movups  [rax+16],xmm3
+    movups  [rax+reg-16],xmm4
+    movups  [rax+reg-32],xmm5
 
 endif
 

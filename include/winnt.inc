@@ -566,9 +566,13 @@ ExceptionAddress	PVOID ?
 NumberParameters	dd ?
 ExceptionInformation	PVOID EXCEPTION_MAXIMUM_PARAMETERS dup(?)
 EXCEPTION_RECORD	ENDS
+ifdef _M_IX86_16
+PEXCEPTION_RECORD	TYPEDEF FAR PTR EXCEPTION_RECORD
+else
 PEXCEPTION_RECORD	TYPEDEF PTR EXCEPTION_RECORD
+endif
 
-CALLBACK(PEXCEPTION_ROUTINE, :PEXCEPTION_RECORD, :PVOID, :ptr CONTEXT, :PVOID)
+CALLBACK(PEXCEPTION_ROUTINE, :PEXCEPTION_RECORD, :ptr, :ptr CONTEXT, :ptr)
 
 VER_SERVER_NT		equ 0x80000000
 VER_WORKSTATION_NT	equ 0x40000000
@@ -2080,6 +2084,20 @@ endif
 .pragma pack(push, 4)
 
 CONTEXT		STRUC
+ifdef _M_IX86_16
+_ax		dw ?
+_bx		dw ?
+_cx		dw ?
+_dx		dw ?
+_si		dw ?
+_di		dw ?
+_bp		dw ?
+_ds		dw ?
+_es		dw ?
+_ip		dw ?
+_cs		dw ?
+_flags		dw ?
+else
 ContextFlags	dd ?
 _Dr0		dd ?
 _Dr1		dd ?
@@ -2105,9 +2123,14 @@ EFlags		dd ? ; MUST BE SANITIZED
 _Esp		dd ?
 SegSs		dd ?
 ExtendedRegisters db MAXIMUM_SUPPORTED_EXTENSION dup(?)
+endif
 CONTEXT		ENDS
 
+ifdef _M_IX86_16
+PCONTEXT typedef far ptr CONTEXT
+else
 PCONTEXT typedef ptr CONTEXT
+endif
 
 .pragma pack(pop)
 
@@ -2143,99 +2166,6 @@ ENDS
 LDT_ENTRY	ENDS
 PLDT_ENTRY	typedef ptr LDT_ENTRY
 
-endif
-
-;if defined(_M_IA64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
-if defined(_M_IA64) AND NOT defined(MIDL_PASS)
-
-if 0
-BitTest			equ <_bittest>
-BitTestAndComplement	equ <_bittestandcomplement>
-BitTestAndSet		equ <_bittestandset>
-BitTestAndReset		equ <_bittestandreset>
-
-BitTest64		equ <_bittest64>
-BitTestAndComplement64	equ <_bittestandcomplement64>
-BitTestAndSet64		equ <_bittestandset64>
-BitTestAndReset64	equ <_bittestandreset64>
-
-BitScanForward		equ <_BitScanForward>
-BitScanReverse		equ <_BitScanReverse>
-BitScanForward64	equ <_BitScanForward64>
-BitScanReverse64	equ <_BitScanReverse64>
-
-InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
-
-InterlockedAdd		equ <_InterlockedAdd>
-InterlockedIncrement	equ <_InterlockedIncrement>
-InterlockedDecrement	equ <_InterlockedDecrement>
-InterlockedExchange	equ <_InterlockedExchange>
-InterlockedExchangeAdd	equ <_InterlockedExchangeAdd>
-InterlockedAdd64	equ <_InterlockedAdd64>
-InterlockedIncrement64	equ <_InterlockedIncrement64>
-InterlockedDecrement64	equ <_InterlockedDecrement64>
-InterlockedExchange64	equ <_InterlockedExchange64>
-InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
-InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
-InterlockedCompare64Exchange128 equ <_InterlockedCompare64Exchange128>
-InterlockedCompareExchange equ <_InterlockedCompareExchange>
-InterlockedExchangePointer equ <_InterlockedExchangePointer>
-InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
-
-InterlockedExchangeAddSizeT macro a, b
-	exitm<InterlockedExchangeAdd64(a, b)>
-	endm
-InterlockedIncrementSizeT macro a
-	exitm<InterlockedIncrement64(a)>
-	endm
-InterlockedDecrementSizeT macro a
-	exitm<InterlockedDecrement64(a)>
-	endm
-
-InterlockedOr		equ <_InterlockedOr>
-InterlockedOr8		equ <_InterlockedOr8>
-InterlockedOr16		equ <_InterlockedOr16>
-InterlockedOr64		equ <_InterlockedOr64>
-InterlockedXor		equ <_InterlockedXor>
-InterlockedXor8		equ <_InterlockedXor8>
-InterlockedXor16	equ <_InterlockedXor16>
-InterlockedXor64	equ <_InterlockedXor64>
-InterlockedAnd		equ <_InterlockedAnd>
-InterlockedAnd8		equ <_InterlockedAnd8>
-InterlockedAnd16	equ <_InterlockedAnd16>
-InterlockedAnd64	equ <_InterlockedAnd64>
-
-ifndef InterlockedAnd64
-InterlockedAnd64	equ <_InterlockedAnd64>
-endif
-InterlockedAndAffinity	equ <InterlockedAnd64>
-ifndef InterlockedOr64
-InterlockedOr64		equ <_InterlockedOr64>
-endif
-InterlockedOrAffinity	equ <_InterlockedOr64>
-ifndef InterlockedXor64
-InterlockedXor64	equ <_InterlockedXor64>
-endif
-ifndef InterlockedBitTestAndSet
-InterlockedBitTestAndSet equ <_InterlockedBitTestAndSet>
-endif
-ifndef InterlockedBitTestAndReset
-InterlockedBitTestAndReset equ <_InterlockedBitTestAndReset>
-endif
-ifndef InterlockedBitTestAndSet64
-InterlockedBitTestAndSet64 equ <_InterlockedBitTestAndSet64>
-endif
-ifndef InterlockedBitTestAndReset64
-InterlockedBitTestAndReset64 equ <_InterlockedBitTestAndReset64>
-endif
-ifndef InterlockedBitTestAndComplement
-InterlockedBitTestAndComplement equ <_InterlockedBitTestAndComplement>
-endif
-ifndef InterlockedBitTestAndComplement64
-InterlockedBitTestAndComplement64 equ <_InterlockedBitTestAndComplement64>
-endif
-
-endif
 endif
 
 if NOT defined(__midl) AND NOT defined(GENUTIL) AND NOT defined(_GENIA64_) AND defined(_IA64_)
@@ -2833,6 +2763,22 @@ IS_DISPATCHING macro Flag
 IS_TARGET_UNWIND macro Flag
 	exitm<(Flag & EXCEPTION_TARGET_UNWIND)>
 	endm
+
+define EXCEPT16_STDIN	0x0001
+define EXCEPT16_STDOUT	0x0002
+define EXCEPT16_NULL	0x0004
+define EXCEPT16_CLOCK	0x0008
+define EXCEPT16_IOCTL	0x4000
+define EXCEPT16_CHDEV	0x8000
+
+EXCEPTION_RECORD16	STRUC 1
+NextException		dd ?
+ExceptionAttributes	dw ?
+ExceptionStrategy	dw ?
+ExceptionInterrupt	dw ?
+ExceptionInformation	db 8 dup(?)
+EXCEPTION_RECORD16	ENDS
+PEXCEPTION_RECORD16	typedef ptr EXCEPTION_RECORD16
 
 EXCEPTION_RECORD32	STRUC
 ExceptionCode		dd ?

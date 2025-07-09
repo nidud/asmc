@@ -23,12 +23,12 @@ endif
 
 ;; Keywords and intrinsics for SEH
 
-GetExceptionCode	    equ <_exception_code>
-exception_code		    equ <_exception_code>
-GetExceptionInformation	    equ <_exception_info>
-exception_info		    equ <_exception_info>
-AbnormalTermination	    equ <_abnormal_termination>
-abnormal_termination	    equ <_abnormal_termination>
+define GetExceptionCode		<_exception_code>
+define exception_code		<_exception_code>
+define GetExceptionInformation	<_exception_info>
+define exception_info		<_exception_info>
+define AbnormalTermination	<_abnormal_termination>
+define abnormal_termination	<_abnormal_termination>
 
 ifdef _MSC_VER
 _exception_code		proto
@@ -36,24 +36,24 @@ _exception_info		proto
 _abnormal_termination	proto
 endif
 
-EXCEPTION_EXECUTE_HANDLER	equ 1
-EXCEPTION_CONTINUE_SEARCH	equ 0
-EXCEPTION_CONTINUE_EXECUTION	equ -1
+define EXCEPTION_EXECUTE_HANDLER	1
+define EXCEPTION_CONTINUE_SEARCH	0
+define EXCEPTION_CONTINUE_EXECUTION	(-1)
 
 ifndef _INTERNAL_IFSTRIP_
 
-CALLBACK(_PHNDLR, :SINT)
+CALLBACK(_PHNDLR, :int_t)
 
 _XCPT_ACTION	STRUC
-XcptNum		dd ?
-SigNum		dd ?
+XcptNum		int_t ?
+SigNum		int_t ?
 XcptAction	_PHNDLR ?
 _XCPT_ACTION	ENDS
 
 externdef _XcptActTab:_XCPT_ACTION
-externdef _XcptActTabCount:SINT
-externdef _XcptActTabSize:SINT
-externdef _First_FPE_Indx:SINT
+externdef _XcptActTabCount:int_t
+externdef _XcptActTabSize:int_t
+externdef _First_FPE_Indx:int_t
 externdef _Num_FPE:SINT
 
 _XcptFilter proto WINAPI :ULONG, :ptr ; PEXCEPTION_POINTERS

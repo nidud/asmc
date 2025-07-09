@@ -6,9 +6,13 @@
 
 include malloc.inc
 include asmc.inc
+include memalloc.inc
 include condasm.inc
+include listing.inc
+include lqueue.inc
 include hll.inc
-include hllext.inc
+include parser.inc
+include segment.inc
 
 MAXSAVESTACK equ 124
 

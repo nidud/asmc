@@ -91,7 +91,7 @@ goto end
 goto end
 
 :coffdbg
-%MLBASE% -c -q -coff -Zi -Fo exp\%~n1.obj %1
+%MLBASE% -c -q -coff -Zi4 -Fo exp\%~n1.obj %1
 goto end
 
 :dllimp

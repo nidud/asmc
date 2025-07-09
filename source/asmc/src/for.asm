@@ -8,10 +8,13 @@
 
 include string.inc
 include asmc.inc
+include memalloc.inc
 include tokenize.inc
+include listing.inc
+include segment.inc
 include hll.inc
 include parser.inc
-include hllext.inc
+include lqueue.inc
 
     .code
 

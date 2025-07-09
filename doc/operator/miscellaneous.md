@@ -2,14 +2,12 @@ Asmc Macro Assembler Reference
 
 # Miscellaneous
 
-- [' ' (treat as string)](operator-single-quote.md)
-- [" " (treat as string)](operator-duoble-quote.md)
-- [: (local label definition)](operator-colon.md)
-- [:: (register segment and offset)](operator-double-colon.md)
-- [:: (global label definition)](operator-double-colon.md)
-- [; (treat as comment)](operator-semicolon.md)
-- [ADDR (address of)](operator-addr.md)
-- [DUP (repeat declaration)](operator-dup.md)
+<table>
+<tr><td><a href="operator-single-quote.md">' ' (treat as string)</a></td><td><a href="operator-duoble-quote.md">" " (treat as string)</a></td></tr>
+<tr><td><a href="operator-colon.md">: (local label definition)</a></td><td><a href="operator-double-colon.md">:: (register segment and offset)</a></td></tr>
+<tr><td><a href="operator-double-colon.md">:: (global label definition)</a></td><td><a href="operator-semicolon.md">; (treat as comment)</a></td></tr>
+<tr><td><a href="operator-addr.md">ADDR (address of)</a></td><td><a href="operator-dup.md">DUP (repeat declaration)</a></td></tr>
+</table>
 
 #### See Also
 

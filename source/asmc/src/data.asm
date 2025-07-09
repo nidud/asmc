@@ -265,7 +265,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:token_t,
         xor eax,eax
         mov size_t ptr dwRecInit,rax
 ifndef _WIN64
-        mov dword ptr dwRecInit,eax
+        mov dword ptr dwRecInit[4],eax
 endif
         mov is_record_set,eax
     .endif

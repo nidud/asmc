@@ -11,17 +11,24 @@ include malloc.inc
 
 include asmc.inc
 include hll.inc
-include hllext.inc
+include memalloc.inc
 include parser.inc
+include expreval.inc
+include segment.inc
 include types.inc
+include lqueue.inc
 include assume.inc
 include fastpass.inc
 include proc.inc
+include tokenize.inc
+include listing.inc
+include reswords.inc
 
 define B <BYTE PTR>
 define W <WORD PTR>
 define D <DWORD PTR>
 
+GetExpression proto __ccall private :hllitem_t, :ptr int_t, :token_t, :int_t, :uint_t, :string_t, :ptr hll_opnd
 
 .pragma warning(disable: 6004)
 

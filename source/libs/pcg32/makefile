@@ -17,16 +17,9 @@ else
 
 include srcpath
 
-all: $(lib_dir)/x64/pcg32.lib $(lib_dir)/x86/pcg32.lib
-
-$(lib_dir)/x86/pcg32.lib:
-	asmc -c -coff -Cs src/*.asm
-	libw -q -b -n -c -fac $@ *.obj
-	del *.obj
-
-$(lib_dir)/x64/pcg32.lib:
-	asmc64 -c -Cs src/*.asm
-	libw -q -b -n -c -fac $@ *.obj
+pcg32.lib:
+	asmc -BlLIBW -coff -Cs -r src\*.asm -link -q -b -n -c -fac $(lib_dir)\x86\$@
+	asmc -BlLIBW -win6 -Cs -r src\*.asm -link -q -b -n -c -fac $(lib_dir)\x64\$@
 	del *.obj
 
 endif

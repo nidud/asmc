@@ -1,16 +1,12 @@
-!include srcpath
-
-AFLAGS = -c -frame -Zi8 -Cs -I$(inc_dir)
+include srcpath
 
 $(lib_dir)\x64\directxmath.lib:
-    asmc64 $(AFLAGS) /r *.asm
-    libw /q /b /n /c /fac $@ *.obj
-    del *.obj
+	asmc64 -I$(inc_dir) -BlLIBW -Cs -Zi -frame -r *.asm -link -q -b -n -c -fac $@
+	del *.obj
 
-directx.x64:
-    asmc -c -q -win64 -I$(inc_dir) $*.regress
-    linkw sys con_64 f $*
-    if not exist $*.exe exit
-    $*.exe
-    if errorlevel 1 exit
-    cmd /C del $*.obj $*.exe
+regress:
+	asmc64 -q -I$(inc_dir) directx.regress
+	if not exist directx.exe exit
+	directx.exe
+	if errorlevel 1 exit
+	cmd /C del directx.obj directx.exe

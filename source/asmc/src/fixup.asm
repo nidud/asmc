@@ -99,7 +99,8 @@ SetFixupFrame proc __ccall uses rsi rdi sym:asym_t, ign_grp:char_t
     ldr rsi,sym
     .if ( rsi )
 
-        .switch [rsi].asym.state
+        movzx eax,[rsi].asym.state
+        .switch eax
         .case SYM_INTERNAL
         .case SYM_EXTERNAL
             .if( [rsi].asym.segm != NULL )

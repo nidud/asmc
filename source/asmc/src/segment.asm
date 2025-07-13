@@ -704,7 +704,7 @@ TypeFromClassName proc fastcall uses rsi rdi s:asym_t, clname:asym_t
     lea ecx,[rsi+1]
     mov rdi,tstrupr( tmemcpy( &uname, [rdi].asym.name, ecx ) )
 
-    .switch( esi )
+    .switch esi
     .case 5
         .ifd ( tmemcmp( rdi, "CONST", 6 ) == 0 )
             .return( SEGTYPE_DATA )
@@ -1091,7 +1091,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov rdi,[rcx].asym.seginfo
         mov rcx,type
 
-        .switch ( edx )
+        .switch edx
         .case INIT_ATTR
             mov [rdi].seg_info.readonly,1
            .endc
@@ -1512,7 +1512,7 @@ SortSegments proc __ccall uses rsi rdi rbx type:int_t
             mov swap,FALSE
             mov rbx,[rdi].asym.seginfo
 
-            .switch (type )
+            .switch type
             .case 0
                 mov rcx,[rdi].asym.next
                 mov rcx,[rcx].asym.seginfo

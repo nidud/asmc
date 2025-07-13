@@ -901,13 +901,14 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
   local segm[64]:char_t
   local opc:expr
 
+    ldr ecx,size
     ldr rbx,opnd
 
     mov opc.llvalue,[rbx].llvalue
     mov opc.hlvalue,[rbx].hlvalue
     mov opc.flags,0
 
-    .switch size
+    .switch ecx
     .case 4
         .endc .if [rbx].mem_type == MT_REAL4
         .if ( [rbx].chararray[15] & 0x80 )
@@ -983,7 +984,8 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
             mov ecx,16
         .endif
         AddLineQueueX( "align %d", ecx )
-        .switch size
+        mov eax,size
+        .switch eax
         .case 4
             AddLineQueueX( "%s dd 0x%x", buffer, opc.value )
             .endc

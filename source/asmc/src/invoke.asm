@@ -2574,7 +2574,8 @@ endif
 
             .else
 
-                .switch ( opnd.mem_type )
+                movzx eax,opnd.mem_type
+                .switch eax
                 .case MT_BYTE
                 .case MT_SBYTE
 
@@ -3201,10 +3202,11 @@ endif
 
                 mov ebx,T_PUSH
                 mov esi,EMPTY
+                mov eax,psize
 
-                .if ( psize != pushsize )
+                .if ( eax != pushsize )
 
-                    .switch psize
+                    .switch eax
                     .case 2
                         mov ebx,T_PUSHW
                        .endc

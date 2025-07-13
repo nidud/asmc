@@ -151,8 +151,9 @@ endif
     tmemset( &ll.buffer, ' ', sizeof( ll.buffer ) )
     mov srcfile,get_curr_srcfile()
     mov rbx,CurrSeg
+    mov eax,type
 
-    .switch ( type )
+    .switch eax
     .case LSTTYPE_DATA
         .endc .if ( Parse_Pass == PASS_1 && Options.first_pass_listing == FALSE )
 
@@ -483,7 +484,6 @@ SimpleTypeString endp
 GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
 
   local i:int_t
-  local mem_type:byte
 
     ldr rsi,sym
     ldr rbx,buffer
@@ -493,13 +493,13 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
     .endif
 
     ; v2.05: improve display of stack vars
-    mov mem_type,[rsi].asym.mem_type
+    movzx eax,[rsi].asym.mem_type
     .if ( [rsi].asym.state == SYM_STACK && [rsi].asym.is_ptr )
-        mov mem_type,MT_PTR
+        mov al,MT_PTR
     .endif
-
     lea rdx,mtbuf
-    .switch ( mem_type )
+
+    .switch eax
     .case MT_PTR
         mov edi,T_NEAR
         .if ( [rsi].asym.Ofssize < USE64 && [rsi].asym.is_far )
@@ -1038,7 +1038,8 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
 
     ldr rdi,sym
 
-    .switch ( [rdi].asym.state )
+    movzx eax,[rdi].asym.state
+    .switch eax
     .case SYM_UNDEFINED
     .case SYM_INTERNAL
     .case SYM_EXTERNAL
@@ -1183,12 +1184,13 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
 
         .continue .if !( [rdi].asym.list )
 
-        .switch ( [rdi].asym.state )
+        movzx eax,[rdi].asym.state
+        .switch eax
         .case SYM_TYPE
 
             mov s,[rdi].asym.structinfo
-
-            .switch ( [rdi].asym.typekind )
+            movzx eax,[rdi].asym.typekind
+            .switch eax
             .case TYPE_RECORD
                 mov ecx,LQ_RECORDS
                 .endc
@@ -1204,15 +1206,15 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
             .endsw
             .endc
 
-        .case SYM_MACRO:
+        .case SYM_MACRO
             mov ecx,LQ_MACROS
-            .endc
-        .case SYM_SEG:
+           .endc
+        .case SYM_SEG
             mov ecx,LQ_SEGS
-            .endc
-        .case SYM_GRP:
+           .endc
+        .case SYM_GRP
             mov ecx,LQ_GRPS
-            .endc
+           .endc
         .case SYM_INTERNAL
         .case SYM_EXTERNAL ; v2.04: added, since PROTOs are now externals
             .if ( [rdi].asym.isproc )
@@ -1327,7 +1329,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
     inc  esi
     add  rbx,asm_tok
 
-    .switch ( eax )
+    .switch eax
     .case T_DOT_LIST
         .if ( CurrFile[LST*size_t] )
             mov MODULE.list,TRUE

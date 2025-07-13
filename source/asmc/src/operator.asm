@@ -421,27 +421,27 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
 EvalOperator endp
 
 
-GetArgs2 proc fastcall private uses rsi opnd:ptr expr
+GetArgs2 proc fastcall private opnd:ptr expr
 
-    mov rsi,rcx
-    .switch ( [rsi].expr.kind )
+    mov eax,[rcx].expr.kind
+    .switch eax
     .case EXPR_FLOAT
-        mov rcx,[rsi].expr.float_tok
-        tstrcpy(rdi, [rcx].asm_tok.string_ptr )
-        .endc
+        mov rdx,[rcx].expr.float_tok
+        tstrcpy(rdi, [rdx].asm_tok.string_ptr )
+       .endc
     .case EXPR_CONST
-        tsprintf(rdi, "%d", [rsi].expr.value)
-        .endc
+        tsprintf(rdi, "%d", [rcx].expr.value)
+       .endc
     .case EXPR_ADDR
-        mov rcx,[rsi].expr.sym
+        mov rdx,[rcx].expr.sym
         .if ( rcx )
-            tstrcpy(rdi, [rcx].asym.name)
+            tstrcpy(rdi, [rdx].asym.name)
         .endif
         .endc
     .case EXPR_REG
-        mov rdx,[rsi].expr.base_reg
+        mov rdx,[rcx].expr.base_reg
         tsprintf(rdi, "%r", [rdx].asm_tok.tokval)
-        .endc
+       .endc
     .endsw
     ret
 

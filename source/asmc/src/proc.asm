@@ -727,7 +727,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
                 mov rcx,p
                 movzx eax,[rcx].asym.langtype
 
-                .switch( eax )
+                .switch eax
                 .case LANG_NONE
                 .case LANG_BASIC
                 .case LANG_FORTRAN
@@ -2293,14 +2293,15 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov ecx,GetCurrOffset()
     sub ecx,[rdi].asym.offs
     mov ofs,cl
-    mov token,[rbx].tokval
+    mov eax,[rbx].tokval
     inc i
     add rbx,asm_tok
+    mov token,eax
 
     ; note: since the codes will be written from "right to left",
     ; the opcode item has to be written last!
 
-    .switch ( token )
+    .switch eax
     .case T_DOT_ALLOCSTACK ; syntax: .ALLOCSTACK size
         .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
 
@@ -2445,7 +2446,8 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( opndx.value & eax )
             .return( asmerr( 2189, size ) )
         .endif
-        .switch ( token )
+        mov eax,token
+        .switch eax
         .case T_DOT_SAVEREG
             puc.set_OpInfo(reg)
             imul ecx,size,65536
@@ -2771,7 +2773,8 @@ win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size
         mov eax,[rsi]
         .if ( [rdi].asym.total_size > eax )
 
-            .switch ( [rdi].asym.mem_type )  ; limit to float/vector..
+            movzx ecx,[rdi].asym.mem_type
+            .switch ecx ; limit to float/vector..
             .case MT_REAL10 ; v2.32.32 - REAL10
             .case MT_OWORD
             .case MT_SOWORD

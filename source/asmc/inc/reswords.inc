@@ -33,7 +33,7 @@ flags		db ?		; see enum reservedword_flags
 name		string_t ?	; reserved word (char[])
 ReservedWord	ends
 
-FindResWord		proto watcall :string_t, :uint_t
+FindResWord		proto fastcall :string_t, :uint_t
 RemoveResWord		proto fastcall :int_t
 GetResWName		proto fastcall :uint_t, :string_t
 IsKeywordDisabled	proto fastcall :string_t, :int_t

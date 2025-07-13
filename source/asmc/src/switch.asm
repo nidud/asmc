@@ -514,11 +514,20 @@ RenderMultiCase endp
 
 CompareMaxMin proc __ccall reg:string_t, max:intptr_t, min:intptr_t, around:string_t
 
-    AddLineQueueX(
-        " cmp %s,%d\n"
-        " jl  %s\n"
-        " cmp %s,%d\n"
-        " jg  %s", reg, min, around, reg, max, around )
+    ldr rdx,max
+    ldr rcx,min
+
+    .ifs ( rcx == 0 && rdx >= 0 )
+        AddLineQueueX(
+            "cmp %s, %d\n"
+            "ja  %s", reg, rdx, around )
+    .else
+        AddLineQueueX(
+            "cmp %s, %d\n"
+            "jl  %s\n"
+            "cmp %s, %d\n"
+            "jg  %s", reg, rcx, around, reg, rdx, around )
+    .endif
     ret
 
 CompareMaxMin endp

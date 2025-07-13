@@ -584,7 +584,7 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov [rdi].asym.mem_type,GetMemtypeSp(eax)
     .else
         mov eax,[rdi].asym.total_size
-        .switch ( eax )
+        .switch eax
         .case 1:  mov [rdi].asym.mem_type,MT_BYTE   : .endc
         .case 2:  mov [rdi].asym.mem_type,MT_WORD   : .endc
         .case 4:  mov [rdi].asym.mem_type,MT_DWORD  : .endc

@@ -1054,12 +1054,12 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
 
     .for ( rbx = [rdi].seg_info.head: rbx: rbx = [rbx].nextrlc )
 
-        mov al,[rbx].type
+        movzx eax,[rbx].type
         xor ecx,ecx
 
         .if ( [rdi].seg_info.Ofssize == USE64 )
 
-            .switch ( al )
+            .switch eax
             .case FIX_VOID
                 .continue
             .case FIX_RELOFF32  ; 32bit offset
@@ -1087,7 +1087,7 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
 
         .else
 
-            .switch ( al )
+            .switch eax
             .case FIX_VOID
                 .continue
             .case FIX_RELOFF16  ; 16bit offset

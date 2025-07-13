@@ -317,7 +317,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov init,dl
     .endif
 
-    .switch( esi )
+    .switch esi
     .case SIM_CODE ; .code
 
         SetSimSeg( SIM_CODE, rdi )

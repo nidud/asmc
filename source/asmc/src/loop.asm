@@ -247,7 +247,8 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     .if ( macinfo.lines ) ; added in v2.01
 
-        .switch ( directive )
+        mov eax,directive
+        .switch eax
         .case T_REPEAT
         .case T_REPT
 

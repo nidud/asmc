@@ -710,23 +710,28 @@ set_rm_sib proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:uint_t
    .new bit3_idx  :uchar_t = 0
    .new rex       :uchar_t = 0
 
-    mov rsi,CodeInfo
-    imul ebx,CurrOpnd,opnd_item
+    ldr rsi,CodeInfo
+    ldr edx,CurrOpnd
+    ldr edi,index
+    mov ecx,base
 
-    .if base == T_RIP
+    imul ebx,edx,opnd_item
+
+    .if ( ecx == T_RIP )
         mov [rsi].base_rip,1
     .endif
-    .if [rsi].opnd[rbx].InsFixup ; symbolic displacement given?
-        mov mod_field,MOD_10
-    .elseif [rsi].opnd[rbx].data32l == 0 || base == T_RIP ; no displacement (or 0)
-        mov mod_field,MOD_00
-    .elseif [rsi].opnd[rbx].data32l > SCHAR_MAX || [rsi].opnd[rbx].data32l < SCHAR_MIN
-        mov mod_field,MOD_10 ; full size displacement
-    .else
-        mov mod_field,MOD_01 ; byte size displacement
-    .endif
 
-    .if ( index == EMPTY && base == EMPTY )
+    mov al,MOD_01 ; byte size displacement
+    .if ( [rsi].opnd[rbx].InsFixup ) ; symbolic displacement given?
+        mov al,MOD_10
+    .elseif ( [rsi].opnd[rbx].data32l == 0 || ecx == T_RIP ) ; no displacement (or 0)
+        mov al,MOD_00
+    .elseif ( [rsi].opnd[rbx].data32l > SCHAR_MAX || [rsi].opnd[rbx].data32l < SCHAR_MIN )
+        mov al,MOD_10 ; full size displacement
+    .endif
+    mov mod_field,al
+
+    .if ( edi == EMPTY && ecx == EMPTY )
 
         ; direct memory.
         ; clear the rightmost 3 bits
@@ -741,7 +746,7 @@ ifndef ASMC64
         .if ( ( [rsi].Ofssize == USE16 && [rsi].adrsiz == 0 ) ||
               ( [rsi].Ofssize == USE32 && [rsi].adrsiz == 1 ) )
 
-            .if !InWordRange( [rsi].opnd[rbx].data32l )
+            .ifd !InWordRange( [rsi].opnd[rbx].data32l )
 
                 ; v2.16: accept 32-bit offset for 16-bit, i.e. "mov ax,es:[10000000h]", but
                 ; generate a warning level 3 ( Masm just truncates to 16-bit ); see offset15.asm.
@@ -776,45 +781,47 @@ ifndef ASMC64
         .endif
 endif
 
-    .elseif ( index == EMPTY && base != EMPTY )
+    .elseif ( edi == EMPTY && ecx != EMPTY )
 
         ; for SI, DI and BX: default is DS:[],
         ; DS: segment override is not needed
         ; for BP: default is SS:[], SS: segment override is not needed
 
-        .switch base
+        .switch ecx
         .case T_SI
             mov rm_field,RM_SI ; 4
-            .endc
+           .endc
         .case T_DI
             mov rm_field,RM_DI ; 5
-            .endc
+           .endc
         .case T_BP
             mov rm_field,RM_BP ; 6
-            .if mod_field == MOD_00 && base != T_RIP
+            .if ( mod_field == MOD_00 && ecx != T_RIP )
                 mov mod_field,MOD_01
             .endif
             .endc
         .case T_BX
             mov rm_field,RM_BX ; 7
-            .endc
+           .endc
         .default ; for 386 and up
             mov base_reg,5
-            .if base != T_RIP
-                mov base_reg,GetRegNo(base)
+            .if ( ecx != T_RIP )
+                mov base_reg,GetRegNo(ecx)
             .endif
+
             mov al,base_reg
             shr al,3
             mov bit3_base,al
             and base_reg,BIT_012
             mov rm_field,base_reg
-            .if base_reg == 4
+
+            .if ( base_reg == 4 )
 
                 ; 4 is RSP/ESP or R12/R12D, which must use SIB encoding.
                 ; SSIIIBBB, ss = 00, index = 100b ( no index ), base = 100b ( ESP )
 
                 mov [rsi].sib,0x24
-            .elseif base_reg == 5 && mod_field == MOD_00 && base != T_RIP
+            .elseif ( base_reg == 5 && mod_field == MOD_00 && ecx != T_RIP )
 
                 ; 5 is [E|R]BP or R13[D]. Needs displacement
 
@@ -822,11 +829,11 @@ endif
             .endif
             mov rex,bit3_base ; set REX_R
         .endsw
-        seg_override(rsi, base, sym, FALSE)
+        seg_override(rsi, ecx, sym, FALSE)
 
-    .elseif ( index != EMPTY && base == EMPTY )
+    .elseif ( edi != EMPTY && ecx == EMPTY )
 
-        mov idx_reg,GetRegNo(index)
+        mov idx_reg,GetRegNo(edi)
         mov al,idx_reg
         shr al,3
         mov bit3_idx,al
@@ -856,20 +863,21 @@ endif
         seg_override(rsi, T_DS, sym, FALSE)
 
         mov rax,[rsi].pinstr
-        .if [rax].instr_item.evex & VX_XMMI
+        .if ( [rax].instr_item.evex & VX_XMMI )
             mov [rsi].opc_or,GetRegNo(index)
-            .if GetValueSp(index) > 16
+            .if GetValueSp(edi) > 16
                 or [rsi].opc_or,0x40 ; YMM/ZMM
             .endif
         .endif
 
     .else ; base != EMPTY && index != EMPTY
 
+        mov ebx,ecx
         mov base_reg,5
-        .if base != T_RIP
-            mov base_reg,GetRegNo(base)
+        .if ( ecx != T_RIP )
+            mov base_reg,GetRegNo(ecx)
         .endif
-        mov idx_reg,GetRegNo(index)
+        mov idx_reg,GetRegNo(edi)
         mov al,base_reg
         shr al,3
         mov bit3_base,al
@@ -877,15 +885,15 @@ endif
         shr al,3
         mov bit3_idx,al
         and base_reg,BIT_012
-        mov ecx,GetSflagsSp(base)
-        and ecx,GetSflagsSp(index)
+        mov ecx,GetSflagsSp(ebx)
+        and ecx,GetSflagsSp(edi)
         and ecx,SFR_SIZMSK
 
         .if ecx == 0
             mov rcx,[rsi].pinstr
-            .if GetValueSp(index) > 8 && [rcx].instr_item.evex & VX_XMMI
+            .if ( GetValueSp(edi) > 8 && [rcx].instr_item.evex & VX_XMMI )
                 mov [rsi].opc_or,idx_reg
-                .if GetValueSp(index) > 16
+                .if ( GetValueSp(edi) > 16 )
                     or [rsi].opc_or,0x40 ;; YMM/ZMM
                 .endif
             .else
@@ -894,26 +902,26 @@ endif
         .endif
         and idx_reg,BIT_012
 
-        .switch index
+        .switch edi
         .case T_BX
         .case T_BP
-            .return .ifd comp_mem16( index, base ) == ERROR
+            .return .ifd comp_mem16( edi, ebx ) == ERROR
             mov rm_field,al
-            seg_override( rsi, index, sym, FALSE )
+            seg_override( rsi, edi, sym, FALSE )
             .endc
         .case T_SI
         .case T_DI
-            .return .ifd comp_mem16( base, index ) == ERROR
+            .return .ifd comp_mem16( ebx, edi ) == ERROR
             mov rm_field,al
-            seg_override( rsi, base, sym, FALSE )
+            seg_override( rsi, ebx, sym, FALSE )
             .endc
         .case T_RSP
         .case T_RIP
         .case T_ESP
             .return( asmerr( 2032 ) )
         .default
-            .if base_reg == 5 && base != T_RIP ; v2.03: EBP/RBP/R13/R13D?
-                .if mod_field == MOD_00
+            .if ( base_reg == 5 && ebx != T_RIP ) ; v2.03: EBP/RBP/R13/R13D?
+                .if ( mod_field == MOD_00 )
                     mov mod_field,MOD_01
                 .endif
             .endif
@@ -930,14 +938,14 @@ endif
             shl al,1
             add al,bit3_base
             mov rex,al ; set REX_X + REX_B
-            seg_override( rsi, base, sym, FALSE )
+            seg_override( rsi, ebx, sym, FALSE )
         .endsw
     .endif
 
-    .if base == T_RIP
+    .if ( base == T_RIP )
         and mod_field,BIT_012
     .endif
-    .if CurrOpnd == OPND2
+    .if ( CurrOpnd == OPND2 )
 
         ; shift the register field to left by 3 bit
 
@@ -959,7 +967,7 @@ endif
         or al,dl
         or [rsi].rex,al
 
-    .elseif CurrOpnd == OPND1
+    .elseif ( CurrOpnd == OPND1 )
 
         mov al,mod_field
         or  al,rm_field
@@ -1187,7 +1195,8 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
         .endif
     .endif
 
-    .switch [rsi].token
+    movzx eax,[rsi].token
+    .switch eax
     .case T_OR
     .case T_TEST
        .endc .if ( [rdi].hvalue || MODULE.masm_compat_gencode )
@@ -3089,11 +3098,9 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
 
     .if ( [rdx].opnd_class.opnd_type[rcx] != OP_NONE && [rsi].opnd[rbx].type != OP_NONE )
 
-        mov op_size,OperandSize( [rsi].opnd[rbx].type, rsi )
-
         ; v2.06: added. if memory operand has no size
 
-        .if ( op_size == 0 )
+        .ifd ( OperandSize( [rsi].opnd[rbx].type, rsi ) == 0 )
 
             mov rdx,[rsi].opnd[rbx].InsFixup
             xor eax,eax
@@ -3107,9 +3114,9 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
             .if ( rdx == NULL || eax )
                 asmerr( 2023 )
             .endif
-            mov op_size,1 ; assume shortest format
+            mov eax,1 ; assume shortest format
         .endif
-        .switch op_size
+        .switch eax
         .case 1
             mov [rsi].iswide,0
             mov [rsi].opsiz,FALSE
@@ -3726,7 +3733,7 @@ parsevex proc fastcall string:string_t, result:ptr uchar_t
 
     mov eax,[rcx]
 
-    .switch ( al )
+    .switch al
 
       .case 9
       .case ' '
@@ -3745,7 +3752,7 @@ parsevex proc fastcall string:string_t, result:ptr uchar_t
       .case '1' ; {1to2} {1to4} {1to8} {1to16}
         .endc .if ah != 't'
         shr eax,24
-        .switch ( al )
+        .switch al
           .case '1'
             .endc .if byte ptr [rcx+4] != '6'
           .case '2'
@@ -3765,7 +3772,7 @@ parsevex proc fastcall string:string_t, result:ptr uchar_t
         .endc .if byte ptr [rcx+2] != '-'
         .endc .if byte ptr [rcx+3] != 's'
         mov ecx,0x2000
-        .switch ( ah )
+        .switch ah
           .case 'u'
             or cl,0x50  ; B|L1
             .endc
@@ -4251,7 +4258,8 @@ init_prefix:
 
     .if ( CurrProc )
 
-        .switch [rsi].tokval
+        mov eax,[rsi].tokval
+        .switch eax
         .case T_RET
         .case T_IRET  ;; IRET is always 16-bit; OTOH, IRETW doesn't exist
         .case T_IRETD
@@ -4271,7 +4279,7 @@ init_prefix:
             ; default translation: just RET to RETF if proc is far
             ; v2.08: this code must run even if PRST_INSIDE_EPILOGUE is set
 
-            .if ( [rsi].tokval == T_RET )
+            .if ( eax == T_RET )
 
                 mov rax,CurrProc
                 .if ( [rax].asym.mem_type == MT_FAR )
@@ -4381,7 +4389,8 @@ init_prefix:
             .endif
         .endif
 
-        .switch opndx[rdi].kind
+        mov eax,opndx[rdi].kind
+        .switch eax
         .case EXPR_FLOAT
             ;
             ; v2.06: accept float constants for PUSH
@@ -4639,7 +4648,8 @@ init_prefix:
         .endif
 
         imul edx,ebx,expr
-        .switch opndx[rdx].kind
+        mov eax,opndx[rdx].kind
+        .switch eax
         .case EXPR_ADDR
             .ifd ( process_address( &CodeInfo, ebx, &opndx[rdx] ) == ERROR )
                 .return

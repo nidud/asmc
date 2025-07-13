@@ -501,21 +501,35 @@ define RWSHIFT ((size_t shr 3) + 3)
 
 ; add reserved word to hash table
 
-FindResWord proc watcall uses rsi rdi rbx _name:string_t, size:uint_t
-
+FindResWord proc fastcall _name:string_t, size:uint_t
+ifdef _WIN64
+    mov     r10,rbx
+    define  rqs <r8>
+    define  rgn <r9>
+else
+    push    esi
+    push    edi
+    push    ebx
+    define  rqs <esi>
+    define  rgn <edi>
+endif
     test    edx,edx
     jz      .6
     cmp     edx,max_resw_len
     ja      .6
-    cmp     byte ptr [rax],'_'
+    mov     rgn,rcx
+    mov     rqs,rcx
+    movzx   eax,byte ptr [rgn]
+    cmp     al,'_'
     je      .6
-
-    mov     rdi,rax
-    mov     rsi,rax
-    mov     eax,FNVBASE
     mov     ebx,edx
+    or      al,0x20
+    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    dec     edx
+    jz      .1
+    inc     rgn
 .0:
-    mov     ecx,[rdi]
+    mov     ecx,[rgn]
     or      ecx,0x20202020
     imul    eax,eax,FNVPRIME
     xor     al,cl
@@ -532,31 +546,31 @@ FindResWord proc watcall uses rsi rdi rbx _name:string_t, size:uint_t
     jz      .1
     imul    eax,eax,FNVPRIME
     xor     al,ch
-    add     rdi,4
+    add     rgn,4
     dec     edx
     jnz     .0
 .1:
     and     eax,HASH_TABITEMS-1
     mov     dh,bl
     lea     rbx,ResWordTable
-    lea     rdi,resw_table
-    movzx   eax,word ptr [rdi+rax*2]
+    lea     rgn,resw_table
+    movzx   eax,word ptr [rgn+rax*2]
     shl     eax,RWSHIFT
     jz      .7
 .3:
     cmp     dh,[rbx+rax].len
     jne     .5
-    mov     rdi,[rbx+rax].name
+    mov     rgn,[rbx+rax].name
     movzx   ecx,dh
     shr     eax,RWSHIFT
 .4:
     dec     ecx
     jz      .7
-    mov     dl,[rsi+rcx]
-    cmp     dl,[rdi+rcx]
+    mov     dl,[rqs+rcx]
+    cmp     dl,[rgn+rcx]
     je      .4
     or      dl,0x20
-    cmp     dl,[rdi+rcx]
+    cmp     dl,[rgn+rcx]
     je      .4
     shl     eax,RWSHIFT
 .5:
@@ -566,6 +580,13 @@ FindResWord proc watcall uses rsi rdi rbx _name:string_t, size:uint_t
 .6:
     xor     eax,eax
 .7:
+ifdef _WIN64
+    mov     rbx,r10
+else
+    pop     ebx
+    pop     edi
+    pop     esi
+endif
     ret
 
 FindResWord endp

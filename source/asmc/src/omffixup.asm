@@ -70,7 +70,7 @@ put32 endp
 
 putFrameDatum proc fastcall private p:ptr byte, method:byte, datum:word
 
-    .switch( dl )
+    .switch dl
     .case FRAME_SEG
     .case FRAME_GRP
     .case FRAME_EXT

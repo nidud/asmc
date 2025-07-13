@@ -225,7 +225,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov directive,eax
     mov eax,GetSflagsSp(eax)
 
-    .switch( eax )
+    .switch eax
 
     .case CC_NUMARG ; [ELSE]IF[E]
 
@@ -294,7 +294,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         add rbx,asm_tok
         mov eax,directive
 
-        .switch ( eax )
+        .switch eax
         .case T_IFDIF
         .case T_ELSEIFDIF
             .if check_dif( rsi, rdi, TRUE )
@@ -508,7 +508,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     ; get an expression if necessary
 
     mov eax,GetSflagsSp(edi)
-    .switch( eax )
+    .switch eax
 
     .case CC_NUMARG ; .ERR[E|NZ]
 
@@ -678,7 +678,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov eax,edi
         xor edi,edi
         mov errmsg,rdx
-        .switch ( eax )
+        .switch eax
         .case T_DOT_ERRDIF
             .if ( check_dif( rsi, rdx, TRUE ) )
                 mov edi,2060

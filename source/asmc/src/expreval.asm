@@ -610,7 +610,9 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .switch pascal
         .case ( [rdi].inst != EMPTY )
             .if ( [rdi].sym )
-                .switch [rdi].inst
+
+                mov eax,[rdi].inst
+                .switch eax
                 .case T_LOW
                 .case T_HIGH
                 .case T_LOWBYTE

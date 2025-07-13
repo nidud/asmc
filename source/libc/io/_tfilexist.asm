@@ -5,19 +5,19 @@
 ;
 
 include io.inc
+include direct.inc
 include tchar.inc
 
 .code
 
 _tfilexist proc file:tstring_t
 
-    _tgetfattr( ldr(file) )
-    inc eax
-    .ifnz
-        dec eax             ; 1 = file
-        and eax,_A_SUBDIR   ; 2 = subdir
-        shr eax,4
-        inc eax
+    .ifd ( _tgetfattr( ldr(file) ) == -1 )
+        xor eax,eax
+    .elseif ( eax & _F_SUBDIR )
+        mov eax,2 ; 2 = subdir
+    .else
+        mov eax,1 ; 1 = file
     .endif
     ret
 

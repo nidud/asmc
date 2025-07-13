@@ -676,49 +676,52 @@ endif
 
 ifdef __UNIX__
 
-        ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
+        .if ( Options.link_linker == NULL )
 
-        .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
+            ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
 
-            .if ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
+            .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
 
-                .if ( !( ecx & O_STATIC ) )
-                    CollectLinkOption("-static")
-                .endif
-                CollectLinkOption("-nostdlib")
-                .if ( Options.link_mt )
-                    .if !( Options.float_used )
+                .if ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
 
-                        CollectLinkOption("-u")
-                        CollectLinkOption("_nofloat")
+                    .if ( !( ecx & O_STATIC ) )
+                        CollectLinkOption("-static")
+                    .endif
+                    CollectLinkOption("-nostdlib")
+                    .if ( Options.link_mt )
+                        .if !( Options.float_used )
+
+                            CollectLinkOption("-u")
+                            CollectLinkOption("_nofloat")
+                        .endif
+                    .endif
+                    .if ( Options.fctype == FCT_ELF64 )
+                        CollectLinkObject("-l:libasmc.a")
+                    .else
+                        CollectLinkOption("-m32")
+                        CollectLinkObject("-l:x86/libasmc.a")
                     .endif
                 .endif
-                .if ( Options.fctype == FCT_ELF64 )
-                    CollectLinkObject("-l:libasmc.a")
-                .else
-                    CollectLinkOption("-m32")
-                    CollectLinkObject("-l:x86/libasmc.a")
-                .endif
+            .elseif ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
+                CollectLinkOption("-Wl,-z,noexecstack")
             .endif
-        .elseif ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
-            CollectLinkOption("-Wl,-z,noexecstack")
-        .endif
 
-        .if ( !( flags & O_STRIP ) )
-            CollectLinkOption("-s")
-        .endif
-        .if ( !( flags & O_EXENAME ) )
-
-            CollectLinkOption("-o")
-            mov rcx,Options.link_exename
-            .if ( rcx == NULL )
-                mov rcx,Options.link_objects
-                .if tstrrchr(tstrcpy(&buffer[32], &[rcx].anode.name), '.')
-                    mov byte ptr [rax],0
-                .endif
-                lea rcx,buffer[32]
+            .if ( !( flags & O_STRIP ) )
+                CollectLinkOption("-s")
             .endif
-            CollectLinkOption(rcx)
+            .if ( !( flags & O_EXENAME ) )
+
+                CollectLinkOption("-o")
+                mov rcx,Options.link_exename
+                .if ( rcx == NULL )
+                    mov rcx,Options.link_objects
+                    .if tstrrchr(tstrcpy(&buffer[32], &[rcx].anode.name), '.')
+                        mov byte ptr [rax],0
+                    .endif
+                    lea rcx,buffer[32]
+                .endif
+                CollectLinkOption(rcx)
+            .endif
         .endif
 
 else
@@ -828,17 +831,20 @@ else
 
 endif
 
-ifdef __UNIX__
-        lea rax,@CStr(_ASMC_LINK)
+        lea rbx,@CStr(_ASMC_LINK)
         .if ( Options.link_linker )
-            mov rax,Options.link_linker
+            mov rbx,Options.link_linker
         .endif
-        mov path,rax
+        tstrcpy(path, rbx)
+
+ifdef __UNIX__
+
+        .if ( !Options.quiet )
 else
-       .new linker[_MAX_PATH]:char_t
-        tstrcpy(&linker, _ASMC_LINK)
+        .new linker[_MAX_PATH]:char_t
+
+        tstrcpy(&linker, rbx)
         .if ( Options.link_linker )
-            tstrcpy( rax, Options.link_linker )
             .if ( !tstrchr( rax, '.' ) )
                 tstrcat( &linker, ".exe" )
             .endif
@@ -849,13 +855,13 @@ else
 
         .if ( !Options.quiet && !( flags & O_NOLOGO ) )
 
+endif
             tprintf( "    Linking:" )
             .for ( rbx = Options.link_options : rbx : rbx = [rbx].anode.next )
                 tprintf( " %s", &[rbx].anode.name )
             .endf
             tprintf( "\n" )
         .endif
-endif
 
         .for ( ebx = 2, rcx = Options.link_options : rcx : rcx = [rcx].anode.next, ebx++ )
         .endf

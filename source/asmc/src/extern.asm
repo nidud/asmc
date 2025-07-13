@@ -856,7 +856,8 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .if ( [rbx].token == T_STYPE )
 
-            .switch ( [rbx].tokval )
+            mov eax,[rbx].tokval
+            .switch eax
 
             .case T_FAR
             .case T_FAR16
@@ -1050,7 +1051,8 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             asmerr( 2006, token )
         .endif
         .if ( rdi )
-            .switch ( [rdi].asym.state )
+            movzx eax,[rdi].asym.state
+            .switch eax
             .case SYM_UNDEFINED
                 .if ( isexport )
                     mov [rdi].asym.isexport,1

@@ -830,7 +830,7 @@ next_item:
         .endif
 
         mov eax,opndx.kind
-        .switch( eax )
+        .switch eax
         .case EXPR_EMPTY
             .if ( [rbx].token != T_FINAL )
                 asmerr( 2008, [rbx].tokpos )
@@ -1056,7 +1056,7 @@ endif
             mov eax,opndx.inst
             xor edi,edi
             mov rsi,opndx.sym
-            .switch ( eax )
+            .switch eax
             .case T_SEG
                 .if ( no_of_bytes < 2 )
                     asmerr( 2071 )
@@ -1065,7 +1065,7 @@ endif
                 .endc
             .case T_OFFSET
                 mov eax,no_of_bytes
-                .switch ( eax )
+                .switch eax
                 .case 1
                     ; forward reference?
                     .if ( Parse_Pass == PASS_1 && rsi && [rsi].asym.state == SYM_UNDEFINED )

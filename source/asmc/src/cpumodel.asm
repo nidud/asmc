@@ -205,7 +205,7 @@ SetModel proc __ccall private uses rsi rdi rbx
     ;; Set @DataSize
     mov cl,MODULE._model
     xor eax,eax
-    .switch( cl )
+    .switch cl
     .case MODEL_COMPACT
     .case MODEL_LARGE
         mov eax,1
@@ -473,17 +473,29 @@ SetCPU proc __ccall newcpu:cpu_info
 
     ;; set the Masm compatible @Cpu value
 
-    .switch ( eax )
-    .case P_186: mov eax,M_8086 or M_186 : .endc
-    .case P_286: mov eax,M_8086 or M_186 or M_286 : .endc
-    .case P_386: mov eax,M_8086 or M_186 or M_286 or M_386 : .endc
-    .case P_486: mov eax,M_8086 or M_186 or M_286 or M_386 or M_486 : .endc
-    .case P_586: mov eax,M_8086 or M_186 or M_286 or M_386 or M_486 or M_586 : .endc
-    .case P_64:
-    .case P_686: mov eax,M_8086 or M_186 or M_286 or M_386 or M_486 or M_686 : .endc
+    .switch eax
+    .case P_186
+        mov eax,M_8086 or M_186
+       .endc
+    .case P_286
+        mov eax,M_8086 or M_186 or M_286
+       .endc
+    .case P_386
+        mov eax,M_8086 or M_186 or M_286 or M_386
+       .endc
+    .case P_486
+        mov eax,M_8086 or M_186 or M_286 or M_386 or M_486
+       .endc
+    .case P_586
+        mov eax,M_8086 or M_186 or M_286 or M_386 or M_486 or M_586
+       .endc
+    .case P_64
+    .case P_686
+        mov eax,M_8086 or M_186 or M_286 or M_386 or M_486 or M_686
+       .endc
     .default
         mov eax,M_8086
-        .endc
+       .endc
     .endsw
 
     .if ( ecx & P_PM )
@@ -493,9 +505,15 @@ SetCPU proc __ccall newcpu:cpu_info
     and edx,P_FPU_MASK
 
     .switch edx
-    .case P_87:  or eax,M_8087 : .endc
-    .case P_287: or eax,M_8087 or M_287 : .endc
-    .case P_387: or eax,M_8087 or M_287 or M_387 : .endc
+    .case P_87
+        or eax,M_8087
+       .endc
+    .case P_287
+        or eax,M_8087 or M_287
+       .endc
+    .case P_387
+        or eax,M_8087 or M_287 or M_387
+       .endc
     .endsw
     mov MODULE.cpu,eax
 

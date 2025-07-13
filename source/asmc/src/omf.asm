@@ -1273,7 +1273,7 @@ put_comdef_number proc fastcall private uses rsi rdi rbx buffer:ptr byte, value:
     mov esi,edx
     mov ebx,get_size_of_comdef_number( esi )
 
-    .switch( ebx )
+    .switch ebx
     .case 1
         mov eax,esi
         mov [rdi],al

@@ -798,7 +798,9 @@ endif
     assume rsi:nothing
 
     .while 1
-        .switch [rbx].token
+
+        movzx eax,[rbx].token
+        .switch eax
         .case T_FINAL
             .break
         .case T_COMMA
@@ -806,13 +808,12 @@ endif
             .endc
         .case T_OP_BRACKET
             inc esi
-            .endc
+           .endc
         .case T_CL_BRACKET
             dec esi
-            .endc
+           .endc
         .endsw
-
-        .if ( [rbx].token == T_INSTRUCTION )
+        .if ( eax == T_INSTRUCTION )
             tstrcat(rdi, " ")
         .endif
 
@@ -826,7 +827,7 @@ endif
                     tstrcat(rdi, [rbx].string_ptr)
                     tstrcat(rdi, ")")
                     add rbx,asm_tok
-                    .break
+                   .break
                 .endif
             .endif
         .endif

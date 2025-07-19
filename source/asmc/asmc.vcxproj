@@ -116,7 +116,7 @@
     <ASMC Include="src\for.asm" />
     <ASMC Include="src\fpfixup.asm" />
     <ASMC Include="src\hll.asm" />
-    <ASMC Include="src\Indirection.asm" />
+    <ASMC Include="src\Indirect.asm" />
     <ASMC Include="src\input.asm" />
     <ASMC Include="src\invoke.asm" />
     <ASMC Include="src\label.asm" />

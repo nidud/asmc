@@ -957,7 +957,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                     movzx ebx,[rcx].proc_info.basereg
                     mov rcx,GetMemtypeString( rdi, NULL )
                     .if ( [rdi].asym.is_vararg )
-                        mov rcx,GetResWName( T_VARARG, rcx )
+                        mov rcx,GetResWName( T_VARARG, 0 )
                     .endif
                     LstPrintf( "%-8s [%r+%02X]", rcx, ebx, [rdi].asym.offs )
                 .endif

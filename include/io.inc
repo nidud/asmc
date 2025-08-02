@@ -252,6 +252,7 @@ _telli64	proto __cdecl :int_t
 _filelengthi64	proto __cdecl :int_t
 _findfirsti64	proto __cdecl :string_t, :ptr _finddatai64_t
 _findnexti64	proto __cdecl :ptr, :ptr _finddatai64_t
+_pipe		proto __cdecl :ptr int_t, :uint_t, :int_t
 
 ifndef _WIO_DEFINED
 define _WIO_DEFINED
@@ -303,6 +304,7 @@ endif ;; _CRTBLD
 _get_osfhandle	proto __cdecl :int_t
 _open_osfhandle proto __cdecl :intptr_t, :int_t
 _alloc_osfhnd	proto __cdecl
+_set_osfhnd	proto __cdecl :int_t, :intptr_t
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
 

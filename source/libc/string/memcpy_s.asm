@@ -11,19 +11,19 @@ include errno.inc
 
 memcpy_s proc dst:ptr, sizeInBytes:size_t, src:ptr, count:size_t
 
-    .if ( count == 0 )
+    .if ( ldr(count) == 0 )
         .return( 0 )
     .endif
 
-    .if ( dst == NULL )
+    .if ( ldr(dst) == NULL )
 
         _set_errno(EINVAL)
         .return( EINVAL )
     .endif
 
-    .if ( src == NULL || sizeInBytes < count )
+    .if ( ldr(src) == NULL || ldr(sizeInBytes) < ldr(count) )
 
-        memset( dst, 0, sizeInBytes )
+        memset( ldr(dst), 0, ldr(sizeInBytes) )
         .if ( src != NULL )
             _set_errno(EINVAL)
             .return( EINVAL )
@@ -35,7 +35,7 @@ memcpy_s proc dst:ptr, sizeInBytes:size_t, src:ptr, count:size_t
         _set_errno(EINVAL)
         .return( EINVAL )
     .endif
-    memcpy( dst, src, count )
+    memcpy( ldr(dst), src, ldr(count) )
    .return( 0 )
 
 memcpy_s endp

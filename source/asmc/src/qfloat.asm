@@ -3815,7 +3815,7 @@ ifdef _WIN64
 ; 64-bit DIV
 ;-------------------------------------------------------------------------------
 
-__udiv64 proc watcall private dividend:uint64_t, divisor:uint64_t
+__udiv64 proc watcall dividend:uint64_t, divisor:uint64_t
 
     mov     rcx,rdx
     xor     edx,edx
@@ -4021,7 +4021,7 @@ __mul64 endp
 ; 64-bit DIV
 ;-------------------------------------------------------------------------------
 
-__udiv64 proc watcall private dividend:qword, divisor:qword
+__udiv64 proc watcall dividend:qword, divisor:qword
 
     .repeat
 

@@ -17,19 +17,22 @@ _tcspbrk proc uses rsi rdi rbx string:tstring_t, CharSet:tstring_t
 
     ldr     rcx,string
     ldr     rdx,CharSet
+
     mov     rbx,rcx
-    xor     eax,eax
     mov     rdi,rdx
-    mov     ecx,-1
+
+    xor     ecx,ecx
+    xor     eax,eax
+    dec     rcx
     repnz   _tscasb
-    not     ecx
-    dec     ecx
+    not     rcx
+    dec     rcx
    .return .ifz
 
-    .for ( esi = ecx, _tal = [rbx] : eax : rbx += tchar_t, _tal = [rbx] )
+    .for ( rsi = rcx, _tal = [rbx] : eax : rbx += tchar_t, _tal = [rbx] )
 
         mov rdi,rdx
-        mov ecx,esi
+        mov rcx,rsi
         repnz _tscasb
         .ifz
             .return( rbx )

@@ -10,24 +10,20 @@ include string.inc
 
 memchr proc p:ptr, c:int_t, count:size_t
 
-ifdef _WIN64
-    ldr     rcx,p
-    ldr     r8,count
-    ldr     edx,c
-    xchg    rcx,rdi
-    xchg    rcx,r8
-    mov     eax,edx
+    ldr     eax,c
+if defined(_WIN64) and defined(__UNIX__)
+    mov     rcx,rdx
     repnz   scasb
     lea     rax,[rdi-1]
-    mov     rdi,r8
 else
-    mov     edx,edi
-    mov     ecx,count
-    mov     edi,p
-    mov     eax,c
+    ldr     rdx,count
+    ldr     rcx,p
+
+    xchg    rcx,rdi
+    xchg    rcx,rdx
     repnz   scasb
-    lea     eax,[edi-1]
-    mov     edi,edx
+    lea     rax,[rdi-1]
+    mov     rdi,rdx
 endif
 ifdef __SSE__
     cmovnz  rax,rcx

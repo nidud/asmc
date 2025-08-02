@@ -181,7 +181,7 @@ __termconsole proc uses rbx
 
 __termconsole endp
 
-.pragma(init(__initconsole, 100))
-.pragma(exit(__termconsole, 2))
+.pragma init(__initconsole, 100)
+.pragma exit(__termconsole, 2)
 
     end

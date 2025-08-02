@@ -13,12 +13,12 @@ include stdlib.inc
 
 ifndef __UNIX__
 
-init_envptr proc private
+__initenvptr proc private
     mov _tenvptr,_tgetenvs()
     ret
-init_envptr endp
+__initenvptr endp
 
-.pragma init(init_envptr, 4)
+.pragma init(__initenvptr, 4)
 
 endif
 

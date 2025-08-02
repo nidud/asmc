@@ -75,6 +75,7 @@ LPFILE		typedef ptr _iobuf
 endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
+externdef	_commode:int_t
 externdef	_nstream:int_t
 externdef	_bufin:BYTE
 externdef	stdin:LPFILE
@@ -144,6 +145,9 @@ setvbuf		proto __cdecl :LPFILE, :string_t, :int_t, :size_t
 setbuf		proto __cdecl :LPFILE, :string_t
 ungetc		proto __cdecl :int_t, :LPFILE
 _openfile	proto __cdecl :string_t, :string_t, :int_t, :LPFILE
+_popen		proto __cdecl :string_t, :string_t
+_pclose		proto __cdecl :LPFILE
+_fdopen		proto __cdecl :int_t, :string_t
 
 __iob_func	proto __cdecl
 __acrt_iob_func proto __cdecl :dword
@@ -201,6 +205,8 @@ _flswbuf	proto __cdecl :int_t, :LPFILE
 _filwbuf	proto __cdecl :LPFILE
 _woutput	proto __cdecl :LPFILE, :wstring_t, :ptr
 _wopenfile	proto __cdecl :wstring_t, :wstring_t, :int_t, :LPFILE
+_wpopen		proto __cdecl :wstring_t, :wstring_t
+_wfdopen	proto __cdecl :int_t, :wstring_t
 
 endif ; _WSTDIO_DEFINED
 

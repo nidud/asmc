@@ -263,7 +263,7 @@ endif
 __crtExceptionHandler endp
 
 
-Install proc private
+__initsignal proc private
 
 ifdef _WIN64
 
@@ -286,10 +286,10 @@ else
 endif
     ret
 
-Install endp
+__initsignal endp
 
 
-Remove proc private
+__exitsignal proc private
 ifdef _WIN64
     RemoveVectoredContinueHandler( __crtExceptionReg )
 else
@@ -300,10 +300,10 @@ else
     assume  fs:ERROR
 endif
     ret
-Remove endp
+__exitsignal endp
 
-.pragma init( Install,  1 )
-.pragma exit( Remove, 200 )
+.pragma init(__initsignal,  1 )
+.pragma exit(__exitsignal, 200 )
 
 endif
     end

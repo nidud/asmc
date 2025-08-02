@@ -19,16 +19,16 @@ abort proc
 
 abort endp
 
-Install proc private
+__initabort proc private
 
-    .if _setjmp(&jmp_exit)
+    .ifd _setjmp(&jmp_exit)
 
         exit(eax)
     .endif
     ret
 
-Install endp
+__initabort endp
 
-.pragma init(Install, 1)
+.pragma init(__initabort, 1)
 
     end

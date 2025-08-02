@@ -38,10 +38,10 @@ endif
 .1:
     mov     [rcx],[rdx]
 .2:
-    dec     rbx
-    jz      .7
     test    eax,eax
     jz      .3
+    dec     rbx
+    jz      .7
     add     rcx,tchar_t
     add     rdx,tchar_t
     mov     [rcx],[rdx]

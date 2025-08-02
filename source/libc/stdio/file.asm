@@ -9,6 +9,7 @@ include malloc.inc
 include rterr.inc
 
 .data
+__piob  label LPFILE
 stdin   LPFILE NULL
 stdout  LPFILE NULL
 stderr  LPFILE NULL

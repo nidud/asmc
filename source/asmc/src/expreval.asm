@@ -2690,7 +2690,18 @@ endif
         .if ( [rdi].l64_l == 0 && [rdi].l64_h == 0 )
             .return( fnasmerr( 2169 ) )
         .endif
-        __div64( [rsi].llvalue, [rdi].llvalue )
+        ;
+        ; v2.37.18 - use unsigned divide
+        ;
+        ;       -1 / 16 = 00000000
+        ; FFFFFFFF / 16 = 0FFFFFFF
+        ; FFFFFFFF /-16 = 00000001 -- Masm: F0000001 ?
+        ;
+        .if ( [rsi].negative )
+            __div64( [rsi].llvalue, [rdi].llvalue )
+        .else
+            __udiv64( [rsi].llvalue, [rdi].llvalue )
+        .endif
         mov size_t ptr [rsi].expr.llvalue,rax
 ifndef _WIN64
         mov [rsi].expr.l64_h,edx

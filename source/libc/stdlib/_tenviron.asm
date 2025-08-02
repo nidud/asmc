@@ -14,12 +14,12 @@ include tchar.inc
 
 ifndef __UNIX__
 
-init_environ proc private
+__initenviron proc private
     _tsetenvp( &_tenviron )
     ret
-init_environ endp
+__initenviron endp
 
-.pragma init(init_environ, 5)
+.pragma init(__initenviron, 5)
 
 endif
 

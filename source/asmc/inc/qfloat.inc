@@ -83,6 +83,7 @@ __mul64     proto watcall :int64_t, :int64_t
 endif
 __div64     proto watcall :int64_t, :int64_t
 __rem64     proto watcall :int64_t, :int64_t
+__udiv64    proto watcall :uint64_t, :uint64_t
 
 quad_resize proto __ccall :ptr expr, :int_t
 _atoqw      proto fastcall :string_t

@@ -15,13 +15,8 @@
 ;       to save such lines during pass one.
 ;
 
-include stdio.inc
-include string.inc
-include malloc.inc
-
 include asmc.inc
 include memalloc.inc
-include listing.inc
 include fastpass.inc
 include segment.inc
 

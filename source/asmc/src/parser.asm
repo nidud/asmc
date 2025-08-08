@@ -6,34 +6,24 @@
 ; Parser
 ;
 
-include limits.inc
-include malloc.inc
-
 include asmc.inc
 include memalloc.inc
 include parser.inc
 include preproc.inc
-include reswords.inc
 include codegen.inc
-include expreval.inc
-include fixup.inc
 include types.inc
 include label.inc
 include segment.inc
 include assume.inc
 include proc.inc
-include input.inc
 include tokenize.inc
 include listing.inc
-include data.inc
 include fastpass.inc
 include omf.inc
 include omfspec.inc
-include condasm.inc
 include extern.inc
 include qfloat.inc
 include reswords.inc
-include indirect.inc
 include operator.inc
 
 public SegOverride
@@ -98,9 +88,11 @@ extern directive_tab:fpDirective
 
 ; parsing of branch instructions with imm operand is found in branch.asm
 
-process_branch  proto __ccall :ptr code_info, :uint_t, :expr_t
-ExpandLine      proto __ccall :string_t, :token_t
-ExpandHllProcEx proto __ccall :string_t, :int_t, :token_t
+data_dir            proto __ccall :int_t, :token_t, :asym_t
+process_branch      proto __ccall :ptr code_info, :uint_t, :expr_t
+ExpandLine          proto __ccall :string_t, :token_t
+ExpandHllProcEx     proto __ccall :string_t, :int_t, :token_t
+HandleIndirection   proto __ccall :asym_t, :token_t, :int_t
 
     .data
     SegOverride asym_t 0

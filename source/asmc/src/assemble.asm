@@ -4,7 +4,6 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include malloc.inc
 include io.inc
 include setjmp.inc
 
@@ -14,25 +13,25 @@ include segment.inc
 include reswords.inc
 include types.inc
 include omf.inc
-include mangle.inc
 include input.inc
-include lqueue.inc
-include context.inc
 include hll.inc
 include macro.inc
 include assume.inc
 include tokenize.inc
 include memalloc.inc
 include linnum.inc
-include bin.inc
 include coff.inc
-include elf.inc
 include fastpass.inc
 include condasm.inc
 include label.inc
 include proc.inc
 include expreval.inc
 include listing.inc
+include lqueue.inc
+
+bin_init proto
+elf_init proto
+ContextInit proto __ccall :int_t
 
 define USELSLINE 1 ; must match switch in listing.asm!
 

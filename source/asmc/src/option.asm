@@ -14,7 +14,6 @@ include memalloc.inc
 include parser.inc
 include reswords.inc
 include expreval.inc
-include equate.inc
 include tokenize.inc
 include input.inc
 

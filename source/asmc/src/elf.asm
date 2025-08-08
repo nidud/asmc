@@ -6,16 +6,12 @@
 ; ELF output routines
 ;
 
-include time.inc
-
 include asmc.inc
 include memalloc.inc
 include parser.inc
-include mangle.inc
 include fixup.inc
 include segment.inc
 include extern.inc
-include elf.inc
 include elfspec.inc
 
 ; v2.03: create weak externals for ALIAS symbols.

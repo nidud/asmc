@@ -23,8 +23,6 @@
 ; 2024-06-27 - .pragma aux(push, <language>, <fixed>, <regs>)
 ;              .pragma aux(pop)
 ;
-include malloc.inc
-include string.inc
 
 include asmc.inc
 include proc.inc
@@ -34,7 +32,6 @@ include listing.inc
 include memalloc.inc
 include expreval.inc
 include lqueue.inc
-include hll.inc
 
 warning struct
 id      short_t ?

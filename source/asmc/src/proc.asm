@@ -11,25 +11,20 @@ include memalloc.inc
 include parser.inc
 include segment.inc
 include extern.inc
-include equate.inc
-include fixup.inc
-include label.inc
-include input.inc
-include lqueue.inc
 include tokenize.inc
-include expreval.inc
 include types.inc
-include condasm.inc
 include macro.inc
 include proc.inc
 include fastpass.inc
 include listing.inc
-include posndir.inc
 include reswords.inc
 include win64seh.inc
 include hll.inc
 include qfloat.inc
 include assume.inc
+include lqueue.inc
+
+AlignCurrOffset proto __ccall :int_t
 
 define NUMQUAL
 

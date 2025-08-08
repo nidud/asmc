@@ -8,12 +8,10 @@
 
 include asmc.inc
 include memalloc.inc
-include parser.inc
 include macro.inc
 include input.inc
-include lqueue.inc
 include tokenize.inc
-include malloc.inc
+include lqueue.inc
 
 public FileCur
 public LineCur

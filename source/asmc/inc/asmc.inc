@@ -95,8 +95,6 @@ include ltype.inc
 include token.inc
 include symbols.inc
 include errmsg.inc      ; must be located AFTER #defines lines
-include queue.inc
-include namespace.inc
 
 define EMPTY            (-2) ; function return values
 define ERROR            (-1)
@@ -452,12 +450,15 @@ define SIT_MACRO        1
     NO_EVEX         = 0x08,    ; Don't encode using EVEX.
     }
 
+    qnode_t         typedef ptr qnode
+    qdesc_t         typedef ptr qdesc
     qitem_t         typedef ptr qitem
     qditem_t        typedef ptr qditem
     dlldesc_t       typedef ptr dll_desc
     srcitem_t       typedef ptr src_item
     hllitem_t       typedef ptr hll_item
     stritem_t       typedef ptr str_item
+    nspace_t        typedef ptr nsp_item
 
 
 .template hll_item
@@ -506,6 +507,11 @@ endif
     ends
    .ends
 
+.template nsp_item
+    next            nspace_t ?
+    name            string_t ?
+   .ends
+
 .template str_item
     string          string_t ?
     next            stritem_t ?
@@ -528,6 +534,19 @@ endif
 .template qitem
     next            qitem_t ?
     value           db ?
+   .ends
+
+.template qnode
+    next            qnode_t ?
+    union
+     elmt           qnode_t ?
+     sym            asym_t ?
+    ends
+   .ends
+
+.template qdesc
+    head            qdesc_t ?
+    tail            qdesc_t ?
    .ends
 
 .template src_item
@@ -889,6 +908,17 @@ PQSORTCMDT              typedef proto fastcall :ptr, :ptr
 PQSORTCMD               typedef ptr PQSORTCMDT
 
 tqsort                  proto __ccall :ptr, :int_t, :int_t, :PQSORTCMD
+QEnqueue                proto fastcall :qdesc_t, :ptr
+QAddItem                proto fastcall :qdesc_t, :ptr
+
+NameSpace               proto watcall :string_t, :string_t
+NameSpaceDirective      proto __ccall :int_t, :token_t
+
+CreateConstant          proto __ccall :token_t
+CreateVariable          proto __ccall :string_t, :int_t
+
+Mangle                  proto __ccall :asym_t, :string_t
+SetMangler              proto __ccall :asym_t, :int_t, :string_t
 
 endif
 .pragma list(pop)

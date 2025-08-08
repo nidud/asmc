@@ -9,15 +9,10 @@
 include asmc.inc
 include memalloc.inc
 include parser.inc
-include segment.inc
 include proc.inc
-include input.inc
-include tokenize.inc
 include types.inc
 include expreval.inc
-include label.inc
 include listing.inc
-include fastpass.inc
 
 define ANYNAME 0
 define TYPEOPT 0

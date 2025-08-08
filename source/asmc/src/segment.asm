@@ -20,7 +20,6 @@ include coffspec.inc
 include assume.inc
 include listing.inc
 include types.inc
-include fixup.inc
 include label.inc
 
 public CV8Label

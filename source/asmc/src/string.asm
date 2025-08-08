@@ -6,23 +6,18 @@
 ; string macro processing routines.
 ;
 
-include malloc.inc
 include asmc.inc
 include memalloc.inc
 include parser.inc
-include expreval.inc
-include equate.inc
-include input.inc
 include tokenize.inc
 include macro.inc
-include condasm.inc
 include fastpass.inc
 include listing.inc
 include segment.inc
-include lqueue.inc
 include qfloat.inc
 include reswords.inc
 include proc.inc
+include lqueue.inc
 
 externdef list_pos:DWORD
 

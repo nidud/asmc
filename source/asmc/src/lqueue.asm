@@ -8,7 +8,6 @@
 ;
 
 include io.inc
-include malloc.inc
 
 include asmc.inc
 include memalloc.inc

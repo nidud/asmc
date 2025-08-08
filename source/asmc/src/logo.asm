@@ -4,7 +4,6 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdio.inc
 include asmc.inc
 
 public cp_logo

@@ -4,25 +4,21 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include malloc.inc
-include stddef.inc
 include time.inc
+
 include asmc.inc
 include memalloc.inc
 include parser.inc
 include fixup.inc
 include omfspec.inc
-include bin.inc
 include listing.inc
-include lqueue.inc
 include coffspec.inc
 include input.inc
-include mangle.inc
 include segment.inc
-include equate.inc
 include expreval.inc
 include pespec.inc
 include qfloat.inc
+include lqueue.inc
 
 define ADD_MANIFESTFILE ; Add .pragma comment(linker, "/manifestdependency: ..."
 

@@ -9,7 +9,6 @@
 ;       - arbitrary types
 ;
 
-include malloc.inc
 include float.inc
 ifndef __UNIX__
 include stringapiset.inc ; MultiByteToWideChar()

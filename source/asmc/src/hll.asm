@@ -4,11 +4,6 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
-include stdio.inc
-include stdlib.inc
-include malloc.inc
-
 include asmc.inc
 include hll.inc
 include memalloc.inc
@@ -16,17 +11,13 @@ include parser.inc
 include expreval.inc
 include segment.inc
 include types.inc
-include lqueue.inc
 include assume.inc
 include fastpass.inc
 include proc.inc
 include tokenize.inc
 include listing.inc
 include reswords.inc
-
-define B <BYTE PTR>
-define W <WORD PTR>
-define D <DWORD PTR>
+include lqueue.inc
 
 GetExpression proto __ccall private :hllitem_t, :ptr int_t, :token_t, :int_t, :uint_t, :string_t, :ptr hll_opnd
 
@@ -125,13 +116,13 @@ GetCOp proc fastcall item:token_t
         .return COP_NONE
     .endif
 
-    .for ( eax = 0 : B[rdx+rax] : eax++ )
+    .for ( eax = 0 : byte ptr [rdx+rax] : eax++ )
     .endf
 
     ;
     ; a valid "flag" string must end with a question mark
     ;
-    .if ( B[rdx+rax-1] == '?' )
+    .if ( byte ptr [rdx+rax-1] == '?' )
 
         mov ecx,[rdx]
         and ecx,not 0x20202020
@@ -188,7 +179,7 @@ RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:int_t, start1:uint_
                 mov rsi,[rbx+rdx].tokpos
                 mov dl,[rsi]
                 mov b,dl
-                mov B[rsi],0
+                mov byte ptr [rsi],0
                 add rdi,tsprintf(rdi, "lea %r, %s\n", eax, [rbx+rcx+asm_tok].tokpos)
                 mov al,b
                 mov [rsi],al
@@ -231,7 +222,7 @@ RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:int_t, start1:uint_
     .elseif ecx != EMPTY
         add rdi,tsprintf(rdi, ", %d", ecx)
     .endif
-    mov W[rdi],EOLCHAR
+    mov word ptr [rdi],EOLCHAR
     lea rax,[rdi+1]
     ret
 
@@ -272,7 +263,7 @@ RenderJcc proc __ccall uses rdi dst:string_t, cc:int_t, _neg:int_t, _label:int_t
 
     tsprintf( rdi, "@C%04X", _label )
     lea rax,[rdi+rax+1]
-    mov W[rax-1],EOLCHAR
+    mov word ptr [rax-1],EOLCHAR
     ret
 
 RenderJcc endp
@@ -528,7 +519,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
             .if ( ( is_true && op1.value ) || ( edx && op1.value == 0 ) )
                 tsprintf( buffer, "jmp @C%04X%s", jcclabel, &EOLSTR )
             .else
-                mov B[rax],NULLC
+                mov byte ptr [rax],NULLC
             .endif
             .endc
         .endsw
@@ -686,7 +677,7 @@ GetSimpleExpression endp
 
 InvertJump proc fastcall private p:string_t
 
-    .if ( B[rcx] == NULLC ) ; v2.11: convert 0 to "jmp"
+    .if ( byte ptr [rcx] == NULLC ) ; v2.11: convert 0 to "jmp"
 
         .return tstrcpy( rcx, "jmp " )
     .endif
@@ -701,24 +692,24 @@ InvertJump proc fastcall private p:string_t
       .case 's'
       .case 'p'
       .case 'o'
-        mov B[rcx+1],al
-        mov B[rcx],'n'
+        mov byte ptr [rcx+1],al
+        mov byte ptr [rcx],'n'
         ret
       .case 'n'
-        mov B[rcx],ah
-        mov B[rcx+1],' '
+        mov byte ptr [rcx],ah
+        mov byte ptr [rcx+1],' '
         ret
       .case 'a'
-        mov B[rcx],'b'
+        mov byte ptr [rcx],'b'
         .endc
       .case 'b'
-        mov B[rcx],'a'
+        mov byte ptr [rcx],'a'
         .endc
       .case 'g'
-        mov B[rcx],'l'
+        mov byte ptr [rcx],'l'
         .endc
       .case 'l'
-        mov B[rcx],'g'
+        mov byte ptr [rcx],'g'
         .endc
       .default
         ;
@@ -727,14 +718,14 @@ InvertJump proc fastcall private p:string_t
         .if al == 'm'
 
             dec rcx
-            mov B[rcx],NULLC
+            mov byte ptr [rcx],NULLC
         .endif
         ret
     .endsw
     .if ah == 'e'
-        mov B[rcx+1],' '
+        mov byte ptr [rcx+1],' '
     .else
-        mov B[rcx+1],'e'
+        mov byte ptr [rcx+1],'e'
     .endif
     ret
 
@@ -790,7 +781,7 @@ GetAndExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr i
 
         .break .if GetCOp(rax) != COP_AND
 
-        inc D[rbx]
+        inc dword ptr [rbx]
         mov rbx,[rdi].hll_opnd.lastjmp
         .if rbx && is_true
 
@@ -803,7 +794,7 @@ GetAndExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr i
 
             ; v2.11: there might be a 0 at lastjmp
 
-            .if B[rbx]
+            .if ( byte ptr [rbx] )
 
                 tstrcat(GetLabelStr(truelabel, &[rbx+4]), &EOLSTR)
             .endif
@@ -874,7 +865,7 @@ GetExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_
         ; 4a. create a new label
         ; 4b. replace the "false" label in the generated code by the new label
         ;
-        inc D[rbx]
+        inc dword ptr [rbx]
         mov rbx,[rdi].hll_opnd.lastjmp
 
         .if ( rbx && !is_true )
@@ -886,7 +877,7 @@ GetExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_
                 mov truelabel,GetHllLabel()
             .endif
 
-            .if ( B[rbx] )
+            .if ( byte ptr [rbx] )
 
                 tstrcat( GetLabelStr( truelabel, &[rbx+4] ), &EOLSTR )
             .endif
@@ -926,7 +917,7 @@ GetExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_
 
             ReplaceLabel(rsi, [rdi].hll_opnd.lasttruelabel, truelabel)
             tstrchr(rbx, EOLCHAR)
-            mov B[rax+1],0
+            mov byte ptr [rax+1],0
         .endif
 
         tstrlen(rsi)
@@ -1017,7 +1008,7 @@ ExpandCStrings proc __ccall public uses rdi rbx tokenarray:token_t
             .for ( : [rbx].token != T_FINAL : rbx += asm_tok )
 
                 mov rdx,[rbx].string_ptr
-                movzx eax,B[rdx]
+                movzx eax,byte ptr [rdx]
 
                 .switch eax
                   .case '"'
@@ -2077,7 +2068,7 @@ done:
     .endif
 
     mov rax,dst
-    .if ( B[rax] != 0 )
+    .if ( byte ptr [rax] != 0 )
         tstrcat(rax, &EOLSTR)
     .endif
     .if ( defconstructor )
@@ -2112,7 +2103,7 @@ ExpandHllProc proc __ccall public uses rsi rdi dst:string_t, i:int_t, tokenarray
 
    .new rc:int_t = NOT_ERROR
     mov rax,dst
-    mov B[rax],0
+    mov byte ptr [rax],0
 
     .if ( Options.strict_masm_compat == 0 )
 
@@ -2210,7 +2201,7 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
     .ifd ( ExpandHllProc( rdi, [rsi], rbx ) != ERROR )
 
         mov rcx,buffer
-        mov B[rcx],0
+        mov byte ptr [rcx],0
 
         .ifd ( GetExpression( hll, rsi, rbx, ilabel, is_true, rcx, &hllop ) != ERROR )
 
@@ -2223,17 +2214,17 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
             .endif
 
             mov rax,hll
-            .if ( B[rdi] && ( [rax].hll_item.SizeDB || [rax].hll_item.SizeDW || [rax].hll_item.SizeDD ) )
+            .if ( byte ptr [rdi] && ( [rax].hll_item.SizeDB || [rax].hll_item.SizeDW || [rax].hll_item.SizeDD ) )
                 ;
                 ; Parse a "cmp ax" or "test ax,ax" and resize
                 ; to B/W/D ([r|e]ax).
                 ;
                 mov rdx,buffer
                 mov ecx,[rdx]
-                .while ( B[rdx] > ' ' )
+                .while ( byte ptr [rdx] > ' ' )
                     add rdx,1
                 .endw
-                .while ( B[rdx] == ' ' )
+                .while ( byte ptr [rdx] == ' ' )
                     add rdx,1
                 .endw
 
@@ -2262,27 +2253,27 @@ EvaluateHllExpression proc __ccall public uses rsi rdi rbx hll:ptr hll_item,
 ifndef ASMC64
                         .if ( MODULE.Ofssize == USE64 )
 endif
-                            mov B[rdx],'e'
+                            mov byte ptr [rdx],'e'
                             .if ( !ecx && ax == [rbx] ) ; v2.27 - .ifd foo() & imm --> test eax,emm
-                                mov B[rbx],'e'
+                                mov byte ptr [rbx],'e'
                             .endif
 
 ifndef ASMC64
                         .elseif ( MODULE.Ofssize == USE16 )
 
-                            .if ( B[rdx+2] != ' ' )
+                            .if ( byte ptr [rdx+2] != ' ' )
 
                                 .if ecx
-                                    mov D[rdx-4],'ro '
+                                    mov dword ptr [rdx-4],'ro '
                                 .else
-                                    mov D[rdx-5],' dna'
+                                    mov dword ptr [rdx-5],' dna'
                                 .endif
                                 dec rdx
                             .endif
                             mov [rdx+1],ax
-                            mov B[rdx],'e'
+                            mov byte ptr [rdx],'e'
                             .if ( !ecx )
-                                mov B[rbx-1],'e'
+                                mov byte ptr [rbx-1],'e'
                             .endif
                         .endif
 endif
@@ -2324,10 +2315,10 @@ endif
                 .endif
             .endif
 
-            .if ( B[rdi] )
+            .if ( byte ptr [rdi] )
 
                 tstrlen(rdi)
-                mov W[rdi+rax],EOLCHAR
+                mov word ptr [rdi+rax],EOLCHAR
                 tstrcat(rdi, buffer)
                 tstrcpy(buffer, rdi)
             .endif
@@ -2482,7 +2473,7 @@ CheckCXZLines proc fastcall private uses rsi rdi rbx p:string_t
                 mov [rsi],eax
                 .if edx == 2
 
-                    mov B[rsi+4],'e'
+                    mov byte ptr [rsi+4],'e'
                 .endif
             .endif
         .endif
@@ -2720,7 +2711,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ;
             ; if no lines have been created, the LTEST label isn't needed
             ;
-            .if ( B[rdi] == NULLC )
+            .if ( byte ptr [rdi] == NULLC )
                 mov [rsi].labels[LTEST*4],0
             .endif
         .endif
@@ -2783,7 +2774,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 ;
                 ; just ".while" without expression is accepted
                 ;
-                mov B[rdi],NULLC
+                mov byte ptr [rdi],NULLC
                 mov eax,ERROR
             .endif
 
@@ -3139,7 +3130,7 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
                 mov condlines,[rsi].condlines
                 mov [rsi].cmd,HLL_BREAK
                 mov rdx,i
-                inc D[rdx]
+                inc dword ptr [rdx]
                 EvaluateHllExpression(rsi, rdx, tokenarray, labelid, is_true, rdi)
                 mov rc,eax
                 .if eax == NOT_ERROR
@@ -3170,7 +3161,7 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
                 .endif
             .case T_DOT_IFA .. T_DOT_IFNZ
                 mov rax,i
-                inc D[rax]
+                inc dword ptr [rax]
                 GetLabelStr([rsi].labels[rcx*4], &buff)
                 tstrcpy(rdi, GetJumpString( [rbx].tokval))
                 tstrcat(rdi, " ")

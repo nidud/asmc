@@ -4,10 +4,8 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
 include asmc.inc
 include parser.inc
-include types.inc
 include memalloc.inc
 
     .code

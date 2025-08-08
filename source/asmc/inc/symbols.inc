@@ -144,6 +144,7 @@ IS_SIGNED proto watcall :byte {
      crecord        uint_t : 1 ?    ; v2.36.37: use bitf_* in records
      bitexpr        uint_t : 1 ?    ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
      EndpOccured    uint_t : 1 ?    ; v2.37.15: set by EndpDir() - .return without RET
+     negative       uint_t : 1 ?    ; v2.37.19: set by SetValue() - EXPR_CONST
     ends
     state           uchar_t ?
     mem_type        uchar_t ?

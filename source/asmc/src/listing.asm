@@ -6,19 +6,13 @@
 ; listing support
 ;
 
-include stdarg.inc
-include malloc.inc
-
 include asmc.inc
 include memalloc.inc
 include parser.inc
 include reswords.inc
 include segment.inc
-include tokenize.inc
-include macro.inc
 include fastpass.inc
 include listing.inc
-include input.inc
 include types.inc
 include omfspec.inc
 include expreval.inc

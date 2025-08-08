@@ -6,19 +6,14 @@
 ; handles ASSUME
 ;
 
-include string.inc
-include malloc.inc
 include asmc.inc
-include token.inc
-include hll.inc
 include assume.inc
 include types.inc
 include segment.inc
 include parser.inc
-include operands.inc
-include lqueue.inc
 include expreval.inc
 include fastpass.inc
+include lqueue.inc
 
 OperandSize proto fastcall :int_t, :ptr code_info
 

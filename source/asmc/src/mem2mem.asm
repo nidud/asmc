@@ -10,11 +10,11 @@ include proc.inc
 include hll.inc
 include operands.inc
 include listing.inc
-include lqueue.inc
 include segment.inc
 include expreval.inc
 include qfloat.inc
 include tokenize.inc
+include lqueue.inc
 
     .data
      ofss   db T_SI,    T_DI,    T_CX,    T_CX

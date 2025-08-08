@@ -9,10 +9,10 @@ include expreval.inc
 include parser.inc
 include reswords.inc
 include memalloc.inc
-include lqueue.inc
 include types.inc
 include operator.inc
 include fastpass.inc
+include lqueue.inc
 
     .code
 

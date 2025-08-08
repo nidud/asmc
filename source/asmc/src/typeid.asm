@@ -8,7 +8,6 @@ include asmc.inc
 include expreval.inc
 include parser.inc
 include reswords.inc
-include lqueue.inc
 
     .code
 

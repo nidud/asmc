@@ -103,7 +103,7 @@ union
   is_abs	uchar_t : 1 ?	; external ABS
   is_type	uchar_t : 1 ?	; constant is a type
   is_opattr	uchar_t : 1 ?	; current operator is OPATTR
-  negative	uchar_t : 1 ?	; for EXPR_FLOAT only
+  negative	uchar_t : 1 ?	; for EXPR_FLOAT and EXPR_CONST
   assumecheck	uchar_t : 1 ?	; v2.07: for ASSUMEd std registers
   is_dot	uchar_t : 1 ?	; v2.10: see regression test dotop5.asm
  ends

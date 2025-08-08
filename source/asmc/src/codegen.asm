@@ -6,19 +6,18 @@
 ; instruction encoding, scans opcode table and emits code.
 ;
 
-include limits.inc
 include asmc.inc
 include fixup.inc
 include parser.inc
 include codegen.inc
-include fpfixup.inc
 include segment.inc
 include reswords.inc
-include token.inc
 include operands.inc
 include listing.inc
 include input.inc
 include proc.inc
+
+AddFloatingPointEmulationFixup proto __ccall :ptr code_info
 
 public  szNull
 

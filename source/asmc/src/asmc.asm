@@ -5,7 +5,6 @@
 ;
 
 include io.inc
-include stdlib.inc
 include signal.inc
 ifdef __UNIX__
 include direct.inc
@@ -18,7 +17,6 @@ include process.inc
 endif
 include asmc.inc
 include memalloc.inc
-include symbols.inc
 include input.inc
 
 .enum LNK_OPTIONS {

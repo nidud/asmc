@@ -7,8 +7,6 @@
 ;
 
 include asmc.inc
-include memalloc.inc
-include parser.inc
 
 ; .SAFESEH works for coff format only.
 ; syntax is: .SAFESEH handler

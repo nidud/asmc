@@ -6,6 +6,8 @@
 ifndef __MEMALLOC_INC
 define __MEMALLOC_INC
 
+include malloc.inc
+
 MemAlloc    proto fastcall :uint_t
 MemFree     proto fastcall :ptr
 LclAlloc    proto fastcall :uint_t

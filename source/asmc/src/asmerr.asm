@@ -5,16 +5,13 @@
 ;
 
 include io.inc
-include stdio.inc
-include stdlib.inc
-include string.inc
 include limits.inc
 include setjmp.inc
 
 include asmc.inc
-include symbols.inc
 include input.inc
 include listing.inc
+include lqueue.inc
 
 warning_disable proto __ccall :int_t
 GetCurrOffset   proto __ccall

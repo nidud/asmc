@@ -119,20 +119,20 @@ res(CR2,  cr2,	RWT_REG,    OP_RIP,	2,	 0,   P_386,   0)
 res(CR3,  cr3,	RWT_REG,    OP_RSPEC,	3,	 0,   P_386,   0)
 res(CR4,  cr4,	RWT_REG,    OP_RSPEC,	4,	 0,   P_586,   0)
 
-res(DR0,  dr0,	RWT_REG,    OP_RSPEC,	0 or 0x10,	 0,   P_386,   0)
-res(DR1,  dr1,	RWT_REG,    OP_RSPEC,	1 or 0x10,	 0,   P_386,   0)
-res(DR2,  dr2,	RWT_REG,    OP_RSPEC,	2 or 0x10,	 0,   P_386,   0)
-res(DR3,  dr3,	RWT_REG,    OP_RSPEC,	3 or 0x10,	 0,   P_386,   0)
-res(DR6,  dr6,	RWT_REG,    OP_RSPEC,	6 or 0x10,	 0,   P_386,   0)
-res(DR7,  dr7,	RWT_REG,    OP_RSPEC,	7 or 0x10,	 0,   P_386,   0)
+res(DR0,  dr0,	RWT_REG,    OP_RSPEC,	0 or 0x10, 0, P_386,   0)
+res(DR1,  dr1,	RWT_REG,    OP_RSPEC,	1 or 0x10, 0, P_386,   0)
+res(DR2,  dr2,	RWT_REG,    OP_RSPEC,	2 or 0x10, 0, P_386,   0)
+res(DR3,  dr3,	RWT_REG,    OP_RSPEC,	3 or 0x10, 0, P_386,   0)
+res(DR6,  dr6,	RWT_REG,    OP_RSPEC,	6 or 0x10, 0, P_386,   0)
+res(DR7,  dr7,	RWT_REG,    OP_RSPEC,	7 or 0x10, 0, P_386,   0)
 
 ; v2.11: add RWF_IA32 to TRx registers
 
-res(TR3,  tr3,	RWT_REG,    OP_RSPEC,	3 or 0x20,RWF_IA32,P_486, 0)
-res(TR4,  tr4,	RWT_REG,    OP_RSPEC,	4 or 0x20,RWF_IA32,P_486, 0)
-res(TR5,  tr5,	RWT_REG,    OP_RSPEC,	5 or 0x20,RWF_IA32,P_486, 0)
-res(TR6,  tr6,	RWT_REG,    OP_RSPEC,	6 or 0x20,RWF_IA32,P_386, 0)
-res(TR7,  tr7,	RWT_REG,    OP_RSPEC,	7 or 0x20,RWF_IA32,P_386, 0)
+res(TR3,  tr3,	RWT_REG,    OP_RSPEC,	3 or 0x20, RWF_IA32, P_486, 0)
+res(TR4,  tr4,	RWT_REG,    OP_RSPEC,	4 or 0x20, RWF_IA32, P_486, 0)
+res(TR5,  tr5,	RWT_REG,    OP_RSPEC,	5 or 0x20, RWF_IA32, P_486, 0)
+res(TR6,  tr6,	RWT_REG,    OP_RSPEC,	6 or 0x20, RWF_IA32, P_386, 0)
+res(TR7,  tr7,	RWT_REG,    OP_RSPEC,	7 or 0x20, RWF_IA32, P_386, 0)
 
 ; for simplicity, all x64 reserved words must be consecutive
 ; ( see Set64Bit() in parser.asm ).

@@ -4,15 +4,14 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include malloc.inc
 include asmc.inc
 include memalloc.inc
 include condasm.inc
 include listing.inc
-include lqueue.inc
 include hll.inc
 include parser.inc
 include segment.inc
+include lqueue.inc
 
 MAXSAVESTACK equ 124
 

@@ -1447,13 +1447,17 @@ endif
                 mov [rdi].uvalue,[rsi].uvalue
                 mov [rdi].hvalue,[rsi].value3264
                 mov [rdi].mem_type,[rsi].mem_type
-
+        
                 .if ( al == MT_REAL16 && !Options.strict_masm_compat )
 
                     mov [rdi].kind,EXPR_FLOAT
                     mov [rdi].float_tok,NULL
                     mov dword ptr [rdi].hlvalue,[rsi].total_length
                     mov dword ptr [rdi].hlvalue[4],[rsi].ext_idx
+                .endif
+
+                .if ( [rsi].negative )
+                    mov [rdi].negative,1 ; v2.37.19: added
                 .endif
 
             .elseif ( [rsi].state == SYM_EXTERNAL && [rsi].mem_type == MT_EMPTY &&

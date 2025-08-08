@@ -6,7 +6,6 @@
 ; Description: handles line numbers if -Zd or -Zi is set.
 ;
 
-include time.inc
 include asmc.inc
 include memalloc.inc
 include input.inc

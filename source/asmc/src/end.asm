@@ -7,20 +7,14 @@
 ;
 
 include asmc.inc
-include memalloc.inc
 include parser.inc
 include segment.inc
 include extern.inc
-include fixup.inc
-include lqueue.inc
-include tokenize.inc
 include expreval.inc
 include types.inc
 include listing.inc
 include proc.inc
-include omf.inc
-include mangle.inc
-include bin.inc
+include lqueue.inc
 
 ; prototypes
 

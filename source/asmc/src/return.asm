@@ -6,18 +6,15 @@
 ; .return [val] [.if ...]
 ;
 
-include stdio.inc
-include string.inc
-
 include asmc.inc
 include memalloc.inc
 include proc.inc
 include segment.inc
 include hll.inc
 include listing.inc
-include lqueue.inc
 include parser.inc
 include qfloat.inc
+include lqueue.inc
 
     .code
 

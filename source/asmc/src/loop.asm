@@ -9,15 +9,12 @@
 include malloc.inc
 
 include asmc.inc
-include memalloc.inc
 include parser.inc
 include input.inc
-include equate.inc
 include expreval.inc
 include tokenize.inc
 include macro.inc
 include listing.inc
-include reswords.inc
 
     .code
 

@@ -12,7 +12,6 @@ include segment.inc
 include expreval.inc
 include types.inc
 include listing.inc
-include posndir.inc
 include fastpass.inc
 include fixup.inc
 

@@ -7,19 +7,14 @@
 ; .enumt [name][:type] [{]
 ;
 
-include stdio.inc
-include string.inc
-
 include asmc.inc
 include memalloc.inc
 include segment.inc
-include proc.inc
-include hll.inc
 include listing.inc
-include lqueue.inc
 include parser.inc
 include tokenize.inc
 include expreval.inc
+include lqueue.inc
 
 public CurrEnum
 

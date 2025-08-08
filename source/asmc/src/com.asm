@@ -5,8 +5,8 @@
 ;
 
 include asmc.inc
-include lqueue.inc
 include parser.inc
+include lqueue.inc
 
 ifdef USE_COMALLOC
 

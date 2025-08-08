@@ -4,24 +4,18 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdio.inc
-include malloc.inc
-include string.inc
 include asmc.inc
-include symbols.inc
 include segment.inc
 include parser.inc
-include hll.inc
-include lqueue.inc
 include reswords.inc
 include listing.inc
 include memalloc.inc
 include types.inc
 include macro.inc
-include input.inc
 include tokenize.inc
 include expreval.inc
 include operator.inc
+include lqueue.inc
 
     .code
 

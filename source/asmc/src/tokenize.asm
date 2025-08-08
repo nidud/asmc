@@ -4,14 +4,10 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
-
 include asmc.inc
-include token.inc
 include parser.inc
 include reswords.inc
 include operands.inc
-include symbols.inc
 include input.inc
 include tokenize.inc
 include condasm.inc

@@ -6,18 +6,11 @@
 ; Handles the unary indirection operator (.) accesses a value
 ; indirectly through a pointer.
 ;
+
 include asmc.inc
-include memalloc.inc
 include parser.inc
-include expreval.inc
-include lqueue.inc
-include assume.inc
-include segment.inc
-include listing.inc
-include mangle.inc
-include proc.inc
-include qfloat.inc
 include types.inc
+include lqueue.inc
 
     .code
 

@@ -5,16 +5,12 @@
 ;
 
 include io.inc
-include stdio.inc
-include stdlib.inc
-include string.inc
 
 include asmc.inc
 include parser.inc
 include listing.inc
 include tokenize.inc
 include fastpass.inc
-include equate.inc
 include condasm.inc
 include macro.inc
 

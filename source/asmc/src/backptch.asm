@@ -7,7 +7,6 @@
 ;
 
 include asmc.inc
-include symbols.inc
 include fixup.inc
 include segment.inc
 

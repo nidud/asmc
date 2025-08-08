@@ -6,7 +6,6 @@
 ; .for <initialization>: <condition>: <increment/decrement>
 ;
 
-include string.inc
 include asmc.inc
 include memalloc.inc
 include tokenize.inc

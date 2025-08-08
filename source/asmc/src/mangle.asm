@@ -7,9 +7,6 @@
 ;
 
 include asmc.inc
-include memalloc.inc
-include parser.inc
-include mangle.inc
 
     .code
 

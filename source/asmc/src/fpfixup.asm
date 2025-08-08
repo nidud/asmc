@@ -12,7 +12,6 @@ include asmc.inc
 include parser.inc
 include extern.inc
 include fixup.inc
-include mangle.inc
 include segment.inc
 include omf.inc
 include omfspec.inc

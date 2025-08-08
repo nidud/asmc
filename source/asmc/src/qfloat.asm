@@ -4,8 +4,8 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
 include errno.inc
+
 include asmc.inc
 include qfloat.inc
 include expreval.inc

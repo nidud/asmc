@@ -5,7 +5,6 @@
 ;
 
 include malloc.inc
-include string.inc
 ifndef __UNIX__
 include winbase.inc
 endif

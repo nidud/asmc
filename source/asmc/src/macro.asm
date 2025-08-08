@@ -17,13 +17,10 @@
 include asmc.inc
 include memalloc.inc
 include parser.inc
-include input.inc
 include tokenize.inc
 include macro.inc
 include fastpass.inc
 include listing.inc
-include malloc.inc
-include ltype.inc
 
 CCALLBACK(GETLINE, :string_t)
 

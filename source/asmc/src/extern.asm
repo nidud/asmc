@@ -12,19 +12,9 @@
 ;
 
 include asmc.inc
-include memalloc.inc
 include parser.inc
-include segment.inc
-include fastpass.inc
-include listing.inc
-include equate.inc
-include fixup.inc
-include mangle.inc
-include label.inc
-include input.inc
 include expreval.inc
 include types.inc
-include condasm.inc
 include proc.inc
 include extern.inc
 

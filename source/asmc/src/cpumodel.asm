@@ -11,8 +11,6 @@ include memalloc.inc
 include parser.inc
 include segment.inc
 include assume.inc
-include equate.inc
-include lqueue.inc
 include tokenize.inc
 include expreval.inc
 include fastpass.inc
@@ -20,7 +18,9 @@ include listing.inc
 include proc.inc
 include macro.inc
 include fixup.inc
-include bin.inc
+include lqueue.inc
+
+pe_create_PE_header proto
 
 define DOT_XMMARG 0 ;; 1=optional argument for .XMM directive
 

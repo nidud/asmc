@@ -7,19 +7,16 @@
 include asmc.inc
 include memalloc.inc
 include parser.inc
-include expreval.inc
-include lqueue.inc
 include assume.inc
 include segment.inc
 include listing.inc
-include mangle.inc
 include proc.inc
 include qfloat.inc
-include types.inc
-include indirect.inc
-include fastpass.inc
 include reswords.inc
 include hll.inc
+include lqueue.inc
+
+AssignPointer proto __ccall :asym_t, :int_t, :token_t, :asym_t, :int_t, :asym_t
 
 define NUMQUAL
 

@@ -11,11 +11,9 @@ include asmc.inc
 include memalloc.inc
 include parser.inc
 include segment.inc
-include lqueue.inc
 include expreval.inc
-include fastpass.inc
 include listing.inc
-include tokenize.inc
+include lqueue.inc
 
 define DEFAULT_STACK_SIZE 1024
 define T <@CStr>

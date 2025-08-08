@@ -10,7 +10,6 @@ include time.inc
 
 include asmc.inc
 include memalloc.inc
-include mangle.inc
 include parser.inc
 include fixup.inc
 include segment.inc

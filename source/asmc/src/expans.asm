@@ -16,19 +16,14 @@
 
 include asmc.inc
 include memalloc.inc
-include malloc.inc
 include parser.inc
 include preproc.inc
-include expreval.inc
-include equate.inc
 include input.inc
 include tokenize.inc
 include macro.inc
 include condasm.inc
 include listing.inc
 include qfloat.inc
-include lqueue.inc
-include types.inc
 include reswords.inc
 
 public MacroLocals

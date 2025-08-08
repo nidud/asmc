@@ -6,7 +6,6 @@
 ; Description:  handle OMF output format.
 ;
 
-include limits.inc
 include time.inc
 ifdef __UNIX__
 include sys/stat.inc
@@ -15,17 +14,10 @@ include winbase.inc
 endif
 
 include asmc.inc
-include memalloc.inc
 include parser.inc
 include segment.inc
-include mangle.inc
-include extern.inc
-include fixup.inc
-include omf.inc
 include omfint.inc
 include omfspec.inc
-include fastpass.inc
-include tokenize.inc ;; needed because of StringBufferEnd usage
 include input.inc
 include linnum.inc
 

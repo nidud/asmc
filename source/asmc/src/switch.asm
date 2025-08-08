@@ -3,24 +3,18 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-include string.inc
-include stdio.inc
-include stdlib.inc
-include malloc.inc
-include limits.inc
 
 include asmc.inc
-include token.inc
 include hll.inc
 include memalloc.inc
 include segment.inc
 include proc.inc
 include parser.inc
-include lqueue.inc
 include tokenize.inc
 include expreval.inc
 include listing.inc
 include reswords.inc
+include lqueue.inc
 
     .code
 

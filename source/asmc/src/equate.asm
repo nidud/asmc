@@ -7,21 +7,12 @@
 ;
 
 include asmc.inc
-include memalloc.inc
 include parser.inc
-include expreval.inc
-include equate.inc
-include tokenize.inc
 include macro.inc
 include fastpass.inc
 include listing.inc
-include input.inc
-include fixup.inc
 include qfloat.inc
 include operator.inc
-
-;public maxintvalues
-;public minintvalues
 
     .data
      maxintvalues int64_t 0x00000000ffffffff, 0x00000000ffffffff, 0x7fffffffffffffff
@@ -46,10 +37,13 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
     .if ( [rdx].kind == EXPR_CONST ||
          ( [rdx].kind == EXPR_FLOAT && [rdx].float_tok == NULL ) )
 
+        .if ( [rdx].negative )
+            mov [rcx].negative,1 ; v2.37.19: added for const input
+        .endif
         mov [rcx].uvalue,[rdx].uvalue
         mov [rcx].value3264,[rdx].hvalue
         mov [rcx].mem_type,[rdx].mem_type
-        .if al == MT_REAL16 && !Options.strict_masm_compat
+        .if ( al == MT_REAL16 && !Options.strict_masm_compat )
             mov [rcx].total_length,dword ptr [rdx].hlvalue
             mov [rcx].ext_idx,dword ptr [rdx].hlvalue[4]
         .endif

@@ -40,11 +40,7 @@ LLONG_MIN	equ (-9223372036854775807-1)
 ULLONG_MAX	equ 0xFFFFFFFFFFFFFFFF
 
 ifndef SIZE_MAX
-ifdef _WIN64
-SIZE_MAX	equ _UI64_MAX
-else
 SIZE_MAX	equ UINT_MAX
-endif
 endif
 
 .pragma list(pop)

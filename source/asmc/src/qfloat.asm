@@ -3811,66 +3811,6 @@ _strtoflt endp
 
 ifdef _WIN64
 
-;-------------------------------------------------------------------------------
-; 64-bit DIV
-;-------------------------------------------------------------------------------
-
-__udiv64 proc watcall dividend:uint64_t, divisor:uint64_t
-
-    mov     rcx,rdx
-    xor     edx,edx
-    test    rcx,rcx
-    jz      .0
-    div     rcx
-    jmp     .1
-.0:
-    xor     eax,eax
-.1:
-    ret
-
-__udiv64 endp
-
-;-------------------------------------------------------------------------------
-; 64-bit IDIV
-;-------------------------------------------------------------------------------
-
-__div64 proc watcall dividend:int64_t, divisor:int64_t
-
-    test    rax,rax ; dividend signed ?
-    js      .0
-    test    rdx,rdx ; divisor signed ?
-    js      .0
-    call    __udiv64
-    jmp     .2
-.0:
-    neg     rax
-    test    rdx,rdx
-    jns     .1
-    neg     rdx
-    call    __udiv64
-    neg     rdx
-    jmp     .2
-.1:
-    call    __udiv64
-    neg     rdx
-    neg     rax
-.2:
-    ret
-
-__div64 endp
-
-;-------------------------------------------------------------------------------
-; 64-bit REM
-;-------------------------------------------------------------------------------
-
-__rem64 proc watcall dividend:int64_t, divisor:int64_t
-
-    call    __div64
-    mov     rax,rdx
-    ret
-
-__rem64 endp
-
 _atoow proc fastcall dst:string_t, src:string_t, radix:int_t, bsize:int_t
 
     mov     r10,rcx
@@ -4124,65 +4064,6 @@ __udiv64 proc watcall dividend:qword, divisor:qword
     pop ebp
     ret
 __udiv64 endp
-
-;-------------------------------------------------------------------------------
-; 64-bit IDIV
-;-------------------------------------------------------------------------------
-
-__div64 proc watcall dividend:int64_t, divisor:int64_t
-
-    or edx,edx     ; hi word of dividend signed ?
-    .ifns
-        or ecx,ecx ; hi word of divisor signed ?
-        .ifns
-            jmp __udiv64
-        .endif
-        neg ecx
-        neg ebx
-        sbb ecx,0
-        __udiv64()
-        neg edx
-        neg eax
-        sbb edx,0
-        ret
-    .endif
-    neg edx
-    neg eax
-    sbb edx,0
-    or ecx,ecx
-    .ifs
-        neg ecx
-        neg ebx
-        sbb ecx,0
-        __udiv64()
-        neg ecx
-        neg ebx
-        sbb ecx,0
-        ret
-    .endif
-    __udiv64()
-    neg ecx
-    neg ebx
-    sbb ecx,0
-    neg edx
-    neg eax
-    sbb edx,0
-    ret
-
-__div64 endp
-
-;-------------------------------------------------------------------------------
-; 64-bit REM
-;-------------------------------------------------------------------------------
-
-__rem64 proc watcall dividend:int64_t, divisor:int64_t
-
-    __div64()
-    mov eax,ebx
-    mov edx,ecx
-    ret
-
-__rem64 endp
 
 
 _atoow proc uses esi edi ebx dst:string_t, src:string_t, radix:int_t, bsize:int_t

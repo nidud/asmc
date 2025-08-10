@@ -1447,7 +1447,7 @@ endif
                 mov [rdi].uvalue,[rsi].uvalue
                 mov [rdi].hvalue,[rsi].value3264
                 mov [rdi].mem_type,[rsi].mem_type
-        
+
                 .if ( al == MT_REAL16 && !Options.strict_masm_compat )
 
                     mov [rdi].kind,EXPR_FLOAT
@@ -2691,26 +2691,56 @@ endif
         .if ( !( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST ) )
             .return( ConstError( rsi, rdi ) )
         .endif
-        .if ( [rdi].l64_l == 0 && [rdi].l64_h == 0 )
+ifdef _WIN64
+        mov rcx,[rdi].llvalue
+        .if ( rcx == 0 )
+else
+        mov ebx,[edi].l64_l
+        mov ecx,[edi].l64_h
+        .if ( ecx == 0 && ebx == 0 )
+endif
             .return( fnasmerr( 2169 ) )
         .endif
         ;
-        ; v2.37.18 - use unsigned divide
+        ; v2.37.18/19/20 - [un]signed divide: see const.asm
         ;
-        ;       -1 / 16 = 00000000
-        ; FFFFFFFF / 16 = 0FFFFFFF
-        ; FFFFFFFF /-16 = 00000001 -- Masm: F0000001 ?
-        ;
+ifdef _WIN64
+        mov rax,[rsi].llvalue
         .if ( [rsi].negative )
-            __div64( [rsi].llvalue, [rdi].llvalue )
-        .else
-            __udiv64( [rsi].llvalue, [rdi].llvalue )
+            neg rax
         .endif
-        mov size_t ptr [rsi].expr.llvalue,rax
-ifndef _WIN64
-        mov [rsi].expr.l64_h,edx
+        .if ( [rdi].negative )
+            neg rcx
+        .endif
+        xor edx,edx
+        div rcx
+        .if ( [rsi].negative || [rdi].negative )
+            neg rax
+        .endif
+        mov [rsi].llvalue,rax
+else
+        mov eax,[esi].l64_l
+        mov edx,[esi].l64_h
+        .if ( [esi].negative )
+            neg edx
+            neg eax
+            sbb edx,0
+        .endif
+        .if ( [edi].negative )
+            neg ecx
+            neg ebx
+            sbb ecx,0
+        .endif
+        __udiv64( edx::eax, ecx::ebx )
+        .if ( [esi].negative || [edi].negative )
+            neg edx
+            neg eax
+            sbb edx,0
+        .endif
+        mov [esi].l64_l,eax
+        mov [esi].l64_h,edx
 endif
-        .endc
+       .endc
 
     .case T_BINARY_OPERATOR
         .if ( [rbx].tokval == T_PTR || [rbx].tokval == T_BCST )
@@ -3028,12 +3058,46 @@ endif
                 mov [rsi].hlvalue,opnd.hlvalue
                .endc
             .endif
-            __rem64( [rsi].llvalue, [rdi].llvalue )
-            mov size_t ptr [rsi].expr.llvalue,rax
-ifndef _WIN64
-            mov [rsi].expr.l64_h,edx
+ifdef _WIN64
+            mov rcx,[rdi].llvalue
+            mov rax,[rsi].llvalue
+            .if ( [rsi].negative )
+                neg rax
+            .endif
+            .if ( [rdi].negative )
+                neg rcx
+            .endif
+            xor edx,edx
+            div rcx
+            .if ( [rsi].negative || [rdi].negative )
+                neg rdx
+            .endif
+            mov [rsi].llvalue,rdx
+else
+            mov eax,[esi].l64_l
+            mov edx,[esi].l64_h
+            mov ebx,[edi].l64_l
+            mov ecx,[edi].l64_h
+            .if ( [esi].negative )
+                neg edx
+                neg eax
+                sbb edx,0
+            .endif
+            .if ( [edi].negative )
+                neg ecx
+                neg ebx
+                sbb ecx,0
+            .endif
+            __udiv64( edx::eax, ecx::ebx )
+            .if ( [esi].negative || [edi].negative )
+                neg ecx
+                neg ebx
+                sbb ecx,0
+            .endif
+            mov [esi].l64_l,ebx
+            mov [esi].l64_h,ecx
 endif
-            .endc
+           .endc
 
         .case T_ROL
         .case T_ROR

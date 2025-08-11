@@ -32,7 +32,11 @@ endif
 _cexit  proto __cdecl
 _c_exit proto __cdecl
 
+ifdef __UNIX__
+define _getpid <getpid>
+else
 _getpid     proto __cdecl
+endif
 _cwait      proto __cdecl :ptr int_t, :intptr_t, :int_t
 
 ifdef __UNIX__
@@ -125,7 +129,9 @@ define P_DETACH        _P_DETACH
 define WAIT_CHILD      _WAIT_CHILD
 define WAIT_GRANDCHILD _WAIT_GRANDCHILD
 
+ifndef __UNIX__
 getpid      proto __cdecl
+endif
 cwait       proto __cdecl :ptr int_t, :intptr_t, :int_t
 
 execl       proto __Cdecl :string_t, :string_t, :vararg

@@ -253,6 +253,8 @@ _filelengthi64	proto __cdecl :int_t
 _findfirsti64	proto __cdecl :string_t, :ptr _finddatai64_t
 _findnexti64	proto __cdecl :ptr, :ptr _finddatai64_t
 _pipe		proto __cdecl :ptr int_t, :uint_t, :int_t
+_dup		proto __cdecl :int_t
+_dup2		proto __cdecl :int_t, :int_t
 
 ifndef _WIO_DEFINED
 define _WIO_DEFINED

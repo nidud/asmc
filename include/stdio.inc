@@ -135,6 +135,7 @@ fflush		proto __cdecl :LPFILE
 rewind		proto __cdecl :LPFILE
 _flsbuf		proto __cdecl :int_t, :LPFILE
 _flushall	proto __cdecl
+_fcloseall	proto __cdecl
 _freebuf	proto __cdecl :LPFILE
 _filbuf		proto __cdecl :LPFILE
 _getst		proto __cdecl

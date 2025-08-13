@@ -476,7 +476,7 @@ endif
                     mov ecx,eax
                 .endif
 
-                .if ( val == '"' || ( val == 'L' &&  val[1] == '"' ) )
+                .if ( val == '"' || ( val == 'L' && val[1] == '"' ) )
 
                     .if ( array )
                         AddLineQueueX( " mov %s[%d], &@CStr(%s)", name, ecx, &val )
@@ -486,7 +486,15 @@ endif
 
                 .elseif ( array )
 
-                    AddLineQueueX( " mov %s[%d], %s", name, ecx, &val )
+                    mov edx,T_MOV ; v2.37.21 added
+                    .if ( [rbx].asym.mem_type == MT_REAL4 )
+                        mov edx,T_MOVSS
+                    .elseif ( [rbx].asym.mem_type == MT_REAL8 )
+                        mov edx,T_MOVSD
+                    .elseif ( [rbx].asym.mem_type == MT_REAL16 )
+                        mov edx,T_MOVAPS
+                    .endif
+                    AddLineQueueX( " %r %s[%d], %s", edx, name, ecx, &val )
                 .else
                     AssignString( name, rbx, &val )
                 .endif

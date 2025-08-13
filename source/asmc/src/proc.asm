@@ -2949,10 +2949,18 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
    .new argstack:int_t = 0
    .new stkreg:int_t
    .new argoffs:int_t = 0
+   .new chkstk_size:uint_t
    .new sysstack:byte = 0
    .new cstack:byte = 0
    .new flags:byte
 
+if STACKPROBE
+    mov eax,0x1000
+    .if ( MODULE.Ofssize == USE64 )
+        add eax,eax
+    .endif
+    mov chkstk_size,eax
+endif
     mov rdi,CurrProc
     mov rsi,[rdi].asym.procinfo
     mov info,rsi
@@ -3083,7 +3091,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
                 ; .ALLOCSTACK localsize
                 ;
 if STACKPROBE
-                .if ( Options.chkstack && ebx > 0x1000 )
+                .if ( Options.chkstack && ebx > chkstk_size )
 
                     AddLineQueueX(
                         "%r %r, %d\n"
@@ -3335,7 +3343,7 @@ endif
 
 if STACKPROBE
 
-        .if ( Options.chkstack && ecx > 0x1000 )
+        .if ( Options.chkstack && ecx > chkstk_size )
 
             AddLineQueueX(
                 "%r %r, %d\n"
@@ -3365,7 +3373,7 @@ endif
 
 if STACKPROBE
 
-        .if ( Options.chkstack && [rsi].localsize > 0x1000 )
+        .if ( Options.chkstack && [rsi].localsize > chkstk_size )
 
             AddLineQueueX(
                 "%r _chkstk:%r\n"

@@ -10,19 +10,22 @@ include stdio.inc
 
 _flushall proc uses rbx
 
-    .if ( stdin != NULL )
+   .new i:int_t = 0
+   .new count:int_t = 0
 
-        .for ( ebx = 3 : ebx < _nstream : ebx++ )
+    mov rbx,stdin
+    .if ( rbx != NULL )
 
-            imul ecx,ebx,_iobuf
-            add rcx,stdin
+        .for ( : i < _nstream : i++, rbx+=_iobuf )
 
-            .if ( [rcx]._iobuf._file != -1 )
-                fclose(rcx)
+            .if ( [rbx]._iobuf._file != -1 )
+
+                fflush(rbx)
+                inc count
             .endif
         .endf
     .endif
-    ret
+    .return( count )
 
 _flushall endp
 

@@ -7,6 +7,9 @@ endif
 
 .pragma comment(lib, libc, msvcrt)
 
+ifndef float
+float  typedef real4
+endif
 ifndef double
 double typedef REAL8
 endif
@@ -114,10 +117,6 @@ _y1     proto __cdecl _X:double
 _yn     proto __cdecl _X:int_t, _Y:double
 
 round   proto __cdecl _X:double
-
-ifndef float
-float  typedef real4
-endif
 
 ifdef _M_IX86
 

@@ -1439,7 +1439,10 @@ endif
                             sub rbx,asm_tok
                         .endw
                     .endif
-                    .if ( [rbx-asm_tok].tokval == T_PTR )
+                    .if ( [rbx].token == T_OP_SQ_BRACKET && [rbx-asm_tok].token == T_ID )
+                        sub rbx,asm_tok ; v2.37.21 added
+                        dec i
+                    .elseif ( [rbx-asm_tok].tokval == T_PTR )
                         sub rbx,asm_tok*2
                         sub i,2
                     .endif
@@ -1449,7 +1452,17 @@ endif
 
                         xor eax,eax
                         .if ( opnd.kind == EXPR_ADDR || ( opnd.indirect ) )
+if 0
+                            xor edx,edx
+                            mov ecx,MODULE.curr_cpu ; ??
+                            and ecx,P_CPU_MASK
+                            .if ( ecx > P_686 || ( ecx == P_686 && MODULE.curr_cpu & P_SSEALL ) )
+                                inc edx
+                            .endif
+                            .if ( edx && ( opnd.mem_type == MT_REAL4 || opnd.mem_type == MT_REAL8 ) )
+else
                             .if ( MODULE.Ofssize == USE64 && ( opnd.mem_type == MT_REAL4 || opnd.mem_type == MT_REAL8 ) )
+endif
                                 mov eax,16
                             .else
                                 SizeFromMemtype( opnd.mem_type, USE_EMPTY, opnd.type )

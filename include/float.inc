@@ -2,6 +2,9 @@
 
 include libc.inc
 
+ifndef float
+float  typedef real4
+endif
 ifndef double
 double typedef real8
 endif

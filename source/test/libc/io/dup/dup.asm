@@ -51,7 +51,7 @@ _tmain proc
    puts( "The file 'data' contains:" )
    _flushall()
    system( "type data" )
-  .return( 0 )
+   ret
 
 _tmain endp
 

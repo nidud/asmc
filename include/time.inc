@@ -102,6 +102,7 @@ csftime		proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
 strdate		proto __cdecl :ptr sbyte
 strtime		proto __cdecl :ptr sbyte
 difftime	proto __cdecl :time_t, :time_t
+difftm64	proto __cdecl :__time64_t, :__time64_t
 
 gmtime		proto __cdecl :ptr time_t
 _gmtime		proto __cdecl :ptr time_t, :ptr tm

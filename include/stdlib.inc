@@ -633,8 +633,6 @@ externdef	_argvcrt:string_t
 externdef	_wargvcrt:wstring_t
 externdef	_environcrt:string_t
 externdef	_wenvironcrt:wstring_t
-externdef	_argvusedA:int_t
-externdef	_argvusedW:int_t
 
 _agetenvs	proto __cdecl
 _wgetenvs	proto __cdecl
@@ -672,7 +670,6 @@ define _txtoa_s	 <_xtow_s>
 define _tisexec	 <_wisexec>
 define _ttoqf	 <_wtoqf>
 define _ttoi128	 <_wtoi128>
-define _argvused <_argvusedW>
 else
 define _tenvptr	 <_aenvptr>
 define _tsetargv <_asetargv>
@@ -683,7 +680,6 @@ define _txtoa_s	 <_xtoa_s>
 define _tisexec	 <_aisexec>
 define _ttoqf	 <_atoqf>
 define _ttoi128	 <_atoi128>
-define _argvused <_argvusedA>
 endif
 
 alldiv		proto watcall :int64_t, :int64_t

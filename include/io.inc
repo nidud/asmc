@@ -255,6 +255,9 @@ _findnexti64	proto __cdecl :ptr, :ptr _finddatai64_t
 _pipe		proto __cdecl :ptr int_t, :uint_t, :int_t
 _dup		proto __cdecl :int_t
 _dup2		proto __cdecl :int_t, :int_t
+_commit		proto __cdecl :int_t
+_mktemp		proto __cdecl :string_t
+_mktemp_s	proto __cdecl :string_t, :size_t
 
 ifndef _WIO_DEFINED
 define _WIO_DEFINED
@@ -269,6 +272,7 @@ _wrename	proto __cdecl :wstring_t, :wstring_t
 _wopen		proto __Cdecl :wstring_t, :int_t, :vararg
 _wsopen		proto __Cdecl :wstring_t, :int_t, :int_t, :vararg
 _wmktemp	proto __cdecl :wstring_t
+_wmktemp_s	proto __cdecl :wstring_t, :size_t
 if _INTEGRAL_MAX_BITS GE 64
 _wfindfirsti64	proto __cdecl :wstring_t, :ptr _wfinddatai64_t
 _wfindnexti64	proto __cdecl :ptr, :ptr _wfinddatai64_t

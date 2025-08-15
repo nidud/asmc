@@ -59,6 +59,8 @@ flag += -win64 -frame -Zp8
 endif
 
 $(libn):
+	asmc $(flag) -Fo $(path)\noarg $(lib_dir)\noarg.asm
+	asmc $(flag) -Fo $(path)\noflt $(lib_dir)\noflt.asm
 	asmc $(flag) -r $(src_dir)\libc\*.asm
 ifndef tty
 	asmc $(flag) -Fo w* -r -ws $(src_dir)\libc\_t*.asm
@@ -74,7 +76,6 @@ endif
 	libw -q -b -n -c -fac $(path)\msvcrt0.lib *.obj
 	del *.obj
 
-
 # Test library for the Windows 10 Virtual Terminal
 
 terminal:
@@ -82,6 +83,8 @@ terminal:
 	make tty=1
 
 linux:
+	asmc -c -q -mscrt -elf -Fo $(lib_dir)\x86\noflt $(lib_dir)\noflt.asm
+	asmc -c -q -mscrt -elf64 -Fo $(lib_dir)\x64\noflt $(lib_dir)\noflt.asm
 	asmc -BlLIBW -6 -mscrt -MT -elf -Zp4 -Cs -r *.asm *.s -link -q -b -n -c $(lib_dir)\x86\libc.a
 	asmc -BlLIBW -mscrt -MT -elf64 -Zp8 -Cs -r *.asm *.s -link -q -b -n -c $(lib_dir)\x64\libc.a
 	del *.o

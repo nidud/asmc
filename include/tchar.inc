@@ -307,6 +307,7 @@ _tcscpy			equ <wcscpy>
 _tcscpy_s		equ <wcscpy_s>
 _tcscspn		equ <wcscspn>
 _tcslen			equ <wcslen>
+_tcsnlen		equ <wcsnlen>
 _tcsncat		equ <wcsncat>
 _tcsncat_s		equ <wcsncat_s>
 _tcsncat_l		equ <_wcsncat_l>

@@ -1,4 +1,4 @@
-; FSEEK.ASM--
+; _FSEEKI64.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -12,7 +12,7 @@ include stdio.inc
 
     assume rbx:LPFILE
 
-fseek proc uses rbx fp:LPFILE, offs:size_t, whence:int_t
+_fseeki64 proc uses rbx fp:LPFILE, offs:int64_t, whence:int_t
 
     ldr rbx,fp
     ldr edx,whence
@@ -24,7 +24,8 @@ fseek proc uses rbx fp:LPFILE, offs:size_t, whence:int_t
     and [rbx]._flag,not _IOEOF
     .if ( edx == SEEK_CUR )
 
-        add offs,ftell( rbx )
+        _ftelli64( rbx )
+        add size_t ptr offs,rax
         mov whence,SEEK_SET
     .endif
 
@@ -36,11 +37,12 @@ fseek proc uses rbx fp:LPFILE, offs:size_t, whence:int_t
     .elseif ( eax & _IOREAD && eax & _IOMYBUF && !( eax & _IOSETVBUF ) )
         mov [rbx]._bufsiz,_MINIOBUF
     .endif
-    .if ( _lseek( [rbx]._file, offs, whence ) != -1 )
+
+    .if ( _lseeki64( [rbx]._file, offs, whence ) != -1 )
         xor eax,eax
     .endif
     ret
 
-fseek endp
+_fseeki64 endp
 
     end

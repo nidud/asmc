@@ -50,6 +50,11 @@ define _IOZIP64		0x100000
 
 define EOF		(-1)
 
+ifndef _FPOS_T_DEFINED
+define _FPOS_T_DEFINED
+fpos_t typedef sqword
+endif
+
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
 _iobuf		struct size_t
@@ -118,10 +123,11 @@ vsnprintf	proto __cdecl :string_t, :size_t, :string_t, :ptr
 vscprintf	proto __cdecl :string_t, :ptr
 _vsnprintf	proto __cdecl :string_t, :size_t, :string_t, :ptr
 _vscprintf	proto __cdecl :string_t, :ptr
-vfprintf	proto __cdecl :LPFILE,:string_t, :ptr
+vfprintf	proto __cdecl :LPFILE, :string_t, :ptr
 fread		proto __cdecl :string_t, :int_t, :int_t, :LPFILE
 fwrite		proto __cdecl :string_t, :int_t, :int_t, :LPFILE
-fseek		proto __cdecl :LPFILE,:size_t, :size_t
+fseek		proto __cdecl :LPFILE, :size_t, :int_t
+_fseeki64	proto __cdecl :LPFILE, :int64_t, :int_t
 fgets		proto __cdecl :string_t, :int_t, :LPFILE
 fputs		proto __cdecl :string_t, :LPFILE
 _fputchar	proto __cdecl :int_t
@@ -130,6 +136,7 @@ fputc		proto __cdecl :int_t, :LPFILE
 feof		proto __cdecl :LPFILE
 ferror		proto __cdecl :LPFILE
 ftell		proto __cdecl :LPFILE
+_ftelli64	proto __cdecl :LPFILE
 perror		proto __cdecl :string_t
 fflush		proto __cdecl :LPFILE
 rewind		proto __cdecl :LPFILE
@@ -149,6 +156,8 @@ _openfile	proto __cdecl :string_t, :string_t, :int_t, :LPFILE
 _popen		proto __cdecl :string_t, :string_t
 _pclose		proto __cdecl :LPFILE
 _fdopen		proto __cdecl :int_t, :string_t
+fsetpos		proto __cdecl :LPFILE, :ptr fpos_t
+
 
 __iob_func	proto __cdecl
 __acrt_iob_func proto __cdecl :dword
@@ -195,6 +204,7 @@ wscanf		proto __Cdecl :wstring_t, :vararg
 vwscanf		proto __cdecl :wstring_t, :ptr
 _wfdopen	proto __cdecl :int_t, :wstring_t
 _wfopen		proto __cdecl :wstring_t, :wstring_t
+_wfopen_s	proto __cdecl :ptr LPFILE, :wstring_t, :wstring_t
 _wfreopen	proto __cdecl :wstring_t, :wstring_t, :LPFILE
 _wperror	proto __cdecl :wstring_t
 _wpopen		proto __cdecl :wstring_t, :wstring_t

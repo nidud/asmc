@@ -580,7 +580,8 @@ ifdef __UNIX__
     .elseif ( rc == 1 && !Options.no_linking && Options.output_format == OFORMAT_ELF )
 else
     .elseif ( rc == 1 && !Options.no_linking && ( Options.link_linker || Options.link_exename ||
-        Options.link_options || ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT ) ) )
+        Options.link_options || Options.output_format == OFORMAT_ELF ||
+        ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT ) ) )
 endif
 
        .new args:array_t
@@ -686,13 +687,6 @@ ifdef __UNIX__
                         CollectLinkOption("-static")
                     .endif
                     CollectLinkOption("-nostdlib")
-                    .if ( Options.link_mt )
-                        .if !( Options.float_used )
-
-                            CollectLinkOption("-u")
-                            CollectLinkOption("_nofloat")
-                        .endif
-                    .endif
                     .if ( Options.fctype == FCT_ELF64 )
                         CollectLinkObject("-l:libasmc.a")
                     .else
@@ -747,31 +741,45 @@ else
                 .endif
             .endif
 
-            .if ( flags & O_LINK && !( flags & O_SUBSYSTEM ) )
+            .if ( flags & O_LINK )
 
-                tstrcpy(rdi, "-subsystem:")
-                .if ( Options.output_format == OFORMAT_ELF )
-                    tstrcat(rdi, "linux")
-                .elseif ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )
-                    .if ( Options.main_found )
-                        tstrcat(rdi, "console")
+                .if ( !( flags & O_SUBSYSTEM ) )
+
+                    tstrcpy(rdi, "-subsystem:")
+                    .if ( Options.output_format == OFORMAT_ELF )
+                        tstrcat(rdi, "linux")
+                        .if ( !( flags & O_DEFAULTLIB ) )
+                            CollectLinkOption("-d:libc.a")
+                            CollectLinkOption("-nor")
+                        .endif
+                    .elseif ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )
+                        .if ( Options.main_found )
+                            tstrcat(rdi, "console")
+                        .else
+                            tstrcat(rdi, "windows")
+                        .endif
                     .else
-                        tstrcat(rdi, "windows")
+                        tstrcat(rdi, "dos")
                     .endif
-                .else
-                    tstrcat(rdi, "dos")
+                    CollectLinkOption(rdi)
                 .endif
-                CollectLinkOption(rdi)
-            .endif
 
-            .if ( flags & O_LINK && Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )
+                .if ( ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT ) ||
+                      ( Options.output_format == OFORMAT_ELF ) )
 
-                .if ( Options.link_mt )
-                    .if !( Options.float_used )
-                        CollectLinkOption("-include:_nofloat")
-                    .endif
-                    .if ( Options.main_found && !( Options.argv_used ) )
-                        CollectLinkOption("-include:_noargv")
+                    .if ( Options.link_mt )
+                        .if !( Options.float_used )
+                            lea rcx,@CStr("noflt.obj")
+                            .if ( Options.output_format == OFORMAT_ELF )
+                                lea rcx,@CStr("noflt.o")
+                            .endif
+                            CollectLinkObject(rcx)
+                        .endif
+                        .if ( Options.main_found && !( Options.argv_used ) )
+                            .if ( Options.output_format != OFORMAT_ELF )
+                                CollectLinkObject("noarg.obj")
+                            .endif
+                        .endif
                     .endif
                 .endif
             .endif
@@ -785,6 +793,13 @@ else
             .if ( Options.link_exename )
 
                 CollectLinkOption(tstrcat(tstrcpy(rdi, "-out:"), Options.link_exename))
+            .elseif ( Options.output_format == OFORMAT_ELF )
+                tstrcpy(rdi, "-out:")
+                mov rcx,Options.link_objects
+                .if tstrrchr(tstrcat(rdi, &[rcx].anode.name), '.')
+                    mov byte ptr [rax],0
+                .endif
+                CollectLinkOption(tstrcat(rdi, "."))
             .endif
         .endif
 

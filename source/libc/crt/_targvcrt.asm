@@ -14,8 +14,11 @@ _tenvironcrt tstring_t NULL
 .code
 
 _initargv proc private
-    mov eax,_argvused
+    mov _targvcrt,__targv
+    mov _tenvironcrt,_tenviron
     ret
 _initargv endp
+
+.pragma init(_initargv, 10)
 
     end

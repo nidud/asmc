@@ -249,7 +249,6 @@ define _cfltcvt <_cfltcvt_tab>
 
 CALLBACKC(PF0, :ptr, :ptr, :int_t, :int_t, :int_t)
 externdef _cfltcvt_tab:PF0
-externdef _fltused:int_t
 externdef _fltpowtable:EXTFLOAT
 externdef qerrno:errno_t
 

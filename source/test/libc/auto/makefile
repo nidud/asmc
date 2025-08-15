@@ -1,6 +1,6 @@
 # Makefile for auto link
 
-flags = -q -MT
+flags = -MT
 ifdef YACC
 fl32 = -elf
 else

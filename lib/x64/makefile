@@ -206,8 +206,6 @@ targets = \
 build: $(targets)
 
 import:
-	asmc -nologo -c -win64 ../noarg.asm
-	asmc -nologo -c -win64 ../noenv.asm
 	if not exist def\kernel32.def (
 	   md def
 	   asmc -nologo -win64 -pe -Fo..\..\bin\impdef64.exe ..\..\source\tools\impdef\impdef.asm

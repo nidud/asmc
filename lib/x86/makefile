@@ -126,8 +126,6 @@ targets = \
 build: $(targets)
 
 import:
-	asmc -nologo -c -coff ../noarg.asm
-	asmc -nologo -c -coff ../noenv.asm
 	if not exist ..\..\bin\impdef32.exe (
 	   asmc -pe -Fo..\..\bin\impdef32.exe ..\..\source\tools\impdef\impdef.asm
 	)

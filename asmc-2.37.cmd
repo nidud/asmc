@@ -39,6 +39,7 @@ goto end
 cd %AsmcDir%\source\libc
 make x86=1
 make
+make linux
 cd %AsmcDir%
 echo.
 goto end

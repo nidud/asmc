@@ -654,9 +654,10 @@ ClearStruct endp
 AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
         tokenarray:token_t, ti:ptr qualified_type
 
-  local cc[256]:char_t
+  local cc[512]:char_t
   local l2[256]:char_t
   local opndx:expr
+  local brackets:char_t
 
     inc  i
     imul ebx,i,asm_tok
@@ -797,8 +798,8 @@ endif
         .endif
     .endif
 
-    tstrcat( tstrcat( rdi, name ), ", " )
-    xor esi,esi
+    add rdi,tstrlen( tstrcat( tstrcat( rdi, name ), ", " ) )
+    mov brackets,0
 
     assume rsi:nothing
 
@@ -809,51 +810,39 @@ endif
         .case T_FINAL
             .break
         .case T_COMMA
-            .break .if !esi
+            .break .if !brackets
             .endc
         .case T_OP_BRACKET
-            inc esi
+            inc brackets
            .endc
         .case T_CL_BRACKET
-            dec esi
+            dec brackets
            .endc
         .endsw
-        .if ( eax == T_INSTRUCTION )
-            tstrcat(rdi, " ")
-        .endif
 
-        .if ( !esi && [rbx].token == T_STRING && [rbx].bytval == '"' )
+        .if ( !brackets && [rbx].token == T_STRING && [rbx].bytval == '"' )
 
             .if SymSearch( name )
 
                 .if ( [rax].asym.mem_type & MT_PTR )
 
-                    tstrcat(rdi, "&@CStr(")
-                    tstrcat(rdi, [rbx].string_ptr)
-                    tstrcat(rdi, ")")
+                    tsprintf(rdi, "&@CStr(%s)", [rbx].string_ptr)
                     add rbx,asm_tok
                    .break
                 .endif
             .endif
         .endif
-
-        tstrcat(rdi, [rbx].string_ptr)
-
-        mov al,[rbx].token
-        .switch al
-        .case T_RES_ID
-            .endc .if [rbx].tokval != T_ADDR
-        .case T_BINARY_OPERATOR
-        .case T_INSTRUCTION
-        .case T_NUM
-            tstrcat(rdi, " ")
-        .endsw
+        mov rsi,[rbx].tokpos
+        mov rcx,[rbx+asm_tok].tokpos
+        sub rcx,rsi
+        rep movsb
+        mov byte ptr [rdi],0
         add rbx,asm_tok
     .endw
-    .if esi
+    .if brackets
         asmerr( 2157 )
     .endif
-    AddLineQueue( rdi )
+    AddLineQueue( &cc )
     .if l2
         AddLineQueue( &l2 )
     .endif

@@ -13,7 +13,7 @@ include tchar.inc
 
 _syserr proc title:tstring_t, format:tstring_t, argptr:vararg
 
-   .new msg:string_t = _sys_err_msg(_get_errno(NULL))
+   .new msg:string_t = _sys_err_msg(errno)
 
     _vstprintf(&_bufin, format, &argptr)
     lea rcx,_bufin

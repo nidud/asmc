@@ -23,7 +23,7 @@ _texecvpe proc path:tstring_t, argv:tarray_t, envp:tarray_t
 
 if 0
    .new retval:int_t = eax
-    _get_errno(NULL)
+    mov eax,errno
     .if ( retval != -1 || eax != ENOENT && eax != EINVAL )
 
         .return( retval )

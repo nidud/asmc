@@ -203,7 +203,7 @@ endif
     .until 1
 
     _set_errno( ENOENT )
-    _set_doserrno( ERROR_PATH_NOT_FOUND )
+    mov _doserrno,ERROR_PATH_NOT_FOUND
     .return( -1 )
 
 _lk_stat endp

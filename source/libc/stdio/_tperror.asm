@@ -45,7 +45,7 @@ endif
             _write( 2, ": ", 2 )
         .endif
 
-        mov message,_get_sys_err_msg( _get_errno( 0 ) )
+        mov message,_get_sys_err_msg( errno )
         _write( 2, message, strlen( rax ) )
         _write( 2, "\n", 1 )
     .endif

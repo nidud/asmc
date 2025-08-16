@@ -40,7 +40,7 @@ else
         .ifnc
 
             free( rbx )
-            _set_doserrno(ERROR_INVALID_DRIVE)
+            mov _doserrno,ERROR_INVALID_DRIVE
             _set_errno(EACCES)
            .return 0
         .endif

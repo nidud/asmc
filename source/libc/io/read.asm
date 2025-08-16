@@ -49,7 +49,7 @@ endif
     .if ( ecx >= _NFILE_ )      ; validate handle
                                 ; out of range -- return error
 ifndef __UNIX__
-        _set_doserrno( 0 )      ; not o.s. error
+        mov _doserrno,0         ; not o.s. error
 endif
        .return( _set_errno( EBADF ) )
     .endif
@@ -194,7 +194,7 @@ endif
 
                ; wrong read/write mode should return EBADF, not EACCES
 
-                _set_doserrno( eax )
+                mov _doserrno,ERROR_ACCESS_DENIED
                 mov retval,_set_errno( EBADF )
                 jmp error_return
 

@@ -25,7 +25,7 @@ _close proc handle:int_t
 @@:
         _set_errno( EBADF )
 ifndef __UNIX__
-        _set_doserrno( 0 )
+        mov _doserrno,0
 endif
         .return( 0 )
     .endif

@@ -45,7 +45,7 @@ else
     .ifd ( _alloc_osfhnd() == -1 )
 
         CloseHandle( new_osfhandle )
-        _set_doserrno( 0 )
+        mov _doserrno,0
         .return( _set_errno( EMFILE ) )
     .endif
     mov rdx,new_osfhandle

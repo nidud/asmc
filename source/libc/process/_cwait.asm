@@ -20,7 +20,6 @@ ifndef __UNIX__
 
    .new retval:intptr_t
    .new retstatus:int_t
-   .new oserror:ulong_t
 
     DBG_UNREFERENCED_PARAMETER(action_code)
 
@@ -54,11 +53,11 @@ ifndef __UNIX__
         ; return failure. note the invalid handle error is mapped in-
         ; line to ECHILD
 
-        mov oserror,GetLastError()
-        .if ( eax == ERROR_INVALID_HANDLE )
+        mov ecx,GetLastError()
+        .if ( ecx == ERROR_INVALID_HANDLE )
 
+            mov _doserrno,ecx
             _set_errno(ECHILD)
-            _set_doserrno(oserror)
         .else
             _dosmaperr(eax)
         .endif

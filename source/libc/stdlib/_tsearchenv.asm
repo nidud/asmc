@@ -64,7 +64,7 @@ _tsearchenv_s proc uses rbx fname:tstring_t, env_var:tstring_t, path:tstring_t, 
         .if ( _tfullpath(rbx, fname, size) == NULL )
 
             mov tchar_t ptr [rbx],0
-            .return( _get_errno( NULL ) )
+            .return( _get_errno(0) )
         .endif
         .return( 0 )
     .endif
@@ -105,7 +105,7 @@ _tsearchenv_s proc uses rbx fname:tstring_t, env_var:tstring_t, path:tstring_t, 
         sub rcx,fnamelen
         dec rcx
         mov env_p,_tgetpath(env_p, pbuf, rcx)
-        mov ecx,_get_errno( NULL )
+        mov ecx,errno
         lea rax,pathbuf
         .if ( env_p == NULL && rax == pbuf && ecx == ERANGE )
 

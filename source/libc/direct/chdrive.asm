@@ -20,7 +20,7 @@ else
     ldr eax,drive
     .ifs ( eax < 1 || eax > 31 )
 
-        _set_doserrno( ERROR_INVALID_DRIVE )
+        mov _doserrno,ERROR_INVALID_DRIVE
         .return( _set_errno( EACCES ) )
     .endif
 

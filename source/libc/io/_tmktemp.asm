@@ -66,13 +66,14 @@ endif
     mov [rsi],_tal
     mov string,rsi
 
-    _get_errno( &save_errno )
+    mov eax,errno
+    mov save_errno,eax
     _set_errno( 0 )
 
     .while 1
 
         .ifd _taccess(rbx, 0)
-            .break .ifd ( _get_errno(NULL) != EACCES )
+            .break .ifd ( errno != EACCES )
         .endif
         .if ( letter == 'z' + 1 )
 

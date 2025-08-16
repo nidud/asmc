@@ -38,7 +38,7 @@ ifndef __UNIX__
 ;       .endif
         xor eax,eax
     .else
-        _set_doserrno( 0 )
+        mov _doserrno,0
 endif
         _set_errno( EBADF )
 ifndef __UNIX__

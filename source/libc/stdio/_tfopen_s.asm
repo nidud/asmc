@@ -12,9 +12,9 @@ include tchar.inc
 
 _tfopen_s proc pFile:ptr LPFILE, filename:tstring_t, mode:tstring_t
 
-    .if ( _tfopen( filename, mode ) == NULL )
+    .if ( _tfopen( filename, ldr(mode) ) == NULL )
 
-        _get_errno( 0 )
+        mov eax,errno
     .else
         mov rcx,pFile
         mov [rcx],rax

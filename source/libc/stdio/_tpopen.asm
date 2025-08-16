@@ -435,7 +435,7 @@ _pclose proc uses rbx pstream:LPFILE
     mov rbx,rax
     .ifd ( _cwait(&termstat, [rbx].IDpair.prochnd, _WAIT_GRANDCHILD) != -1 )
         mov retval,termstat
-    .elseifd ( _get_errno(NULL) == EINTR )
+    .elseifd ( errno == EINTR )
         mov retval,termstat
     .endif
     _set_errno(save_errno)

@@ -21,23 +21,4 @@ __doserrno proc
 
 __doserrno endp
 
-_set_doserrno proc value:uint_t
-
-    ldr ecx,value
-    mov DoserrorNoMem,ecx
-    ret
-
-_set_doserrno endp
-
-_get_doserrno proc pValue:ptr uint_t
-
-    ldr rcx,pValue
-    mov eax,DoserrorNoMem
-    .if rcx
-        mov [rcx],eax
-    .endif
-    ret
-
-_get_doserrno endp
-
     end

@@ -39,7 +39,7 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
     .if ( ecx >= _NFILE_ )      ; validate handle
                                 ; out of range -- return error
 ifndef __UNIX__
-        _set_doserrno(0)        ; not o.s. error
+        mov _doserrno,0         ; not o.s. error
 endif
         .return( _set_errno( EBADF ) )
     .endif
@@ -258,18 +258,19 @@ endif
 
         mov rdx,buf
 ifndef __UNIX__
-        .if ( dosretval != 0 )
+        mov ecx,dosretval
+        .if ( ecx != 0 )
 
             ; o.s. error happened, map error
 
-            .if ( dosretval == ERROR_ACCESS_DENIED )
+            .if ( ecx == ERROR_ACCESS_DENIED )
 
                 ; wrong read/write mode should return EBADF, not EACCES
 
-                _set_doserrno(dosretval)
+                mov _doserrno,ecx
                 _set_errno(EBADF)
             .else
-                _dosmaperr(dosretval)
+                _dosmaperr( ecx )
             .endif
             .return
 
@@ -282,7 +283,7 @@ endif
         .endif
 
 ifndef __UNIX__
-        _set_doserrno(0)
+        mov _doserrno,0
 endif
         _set_errno(ENOSPC)
         .return

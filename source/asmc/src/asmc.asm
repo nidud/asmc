@@ -793,7 +793,7 @@ else
             .if ( Options.link_exename )
 
                 CollectLinkOption(tstrcat(tstrcpy(rdi, "-out:"), Options.link_exename))
-            .elseif ( Options.output_format == OFORMAT_ELF )
+            .elseif ( Options.output_format == OFORMAT_ELF && flags & O_LINK )
                 tstrcpy(rdi, "-out:")
                 mov rcx,Options.link_objects
                 .if tstrrchr(tstrcat(rdi, &[rcx].anode.name), '.')

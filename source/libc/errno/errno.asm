@@ -33,15 +33,4 @@ _set_errno proc value:int_t
 
 _set_errno endp
 
-_get_errno proc pValue:ptr int_t
-
-    ldr rcx,pValue
-    mov eax,ErrorNoMem
-    .if rcx
-        mov [rcx],eax
-    .endif
-    ret
-
-_get_errno endp
-
     end

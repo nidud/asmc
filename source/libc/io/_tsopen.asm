@@ -154,7 +154,7 @@ else
 
     ldr edi,oflag
 
-    _set_doserrno(0)
+    mov _doserrno,0
     _get_fmode(&fmode)
 
     .if ( edi & O_NOINHERIT )
@@ -381,7 +381,7 @@ else
                 jmp error
             .endif
 
-        .elseif ( _get_doserrno( 0 ) != ERROR_NEGATIVE_SEEK )
+        .elseif ( _doserrno != ERROR_NEGATIVE_SEEK )
 
             jmp error
         .endif

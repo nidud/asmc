@@ -172,7 +172,7 @@ ifndef __UNIX__
     SetErrorMode(_ermode)
     mov rbx,GetStdHandle(STD_INPUT_HANDLE)
     GetConsoleMode(rbx, &ConsoleMode)
-    _set_doserrno(0)
+    mov _doserrno,0
     mov CreateProcessStatus,CreateProcess(name, cmd, NULL, NULL, TRUE, fdwCreate, env, NULL, &StartupInfo, &ProcessInformation)
     mov dosretval,GetLastError()
     free( cmd )

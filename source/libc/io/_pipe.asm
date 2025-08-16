@@ -120,7 +120,7 @@ _pipe proc uses rsi rdi rbx phandles:ptr int_t, psize:uint_t, textmode:int_t
 
         CloseHandle(ReadHandle)
         CloseHandle(WriteHandle)
-        _set_doserrno( 0 ) ; not an o.s. error
+        mov _doserrno,0 ; not an o.s. error
         .return( _set_errno( EMFILE ) )
     .endif
 

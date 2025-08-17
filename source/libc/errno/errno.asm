@@ -7,15 +7,17 @@
 include errno.inc
 
     .data
-ifndef _WIN64
-ifndef __UNIX__
+if not defined(_WIN64) and not defined(__UNIX__)
      errno label errno_t
-endif
 endif
      ErrorNoMem errno_t ENOMEM
 
     .code
 
+__errno_location::
+ifndef _WIN64
+__get_errno_ptr::
+endif
 _errno proc
 
     lea rax,ErrorNoMem

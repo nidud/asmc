@@ -7,25 +7,32 @@ endif
 include winerror.inc
 .pragma comment(lib, libc, msvcrt)
 
-;; Declare reference to errno
+; Declare reference to errno
 
 ifndef _CRT_ERRNO_DEFINED
 define _CRT_ERRNO_DEFINED
-_errno		proto __cdecl
+if defined(__UNIX__) and not defined(__MSCRT__)
+ifdef _WIN64
+__errno_location proto __cdecl
+define _errno <__errno_location>
+else
+__get_errno_ptr proto __cdecl
+define _errno <__get_errno_ptr>
+endif
+else
+_errno proto __cdecl
+endif
+_get_errno proto __cdecl :ptr int_t
 ifdef __UNIX__
 __set_errno proto :int_t
-_set_errno equ <__set_errno>
+define _set_errno <__set_errno>
 else
-_set_errno	proto __cdecl :int_t
+_set_errno proto __cdecl :int_t
 endif
-_get_errno	proto __cdecl :ptr int_t
-ifdef __UNIX__
-__get_errno_ptr proto __cdecl
-errno		equ <errno_t ptr [__get_errno_ptr()]>
-elseif defined(_WIN64) or defined(_MSVCRT)
-errno		equ <errno_t ptr [_errno()]>
+if defined(__UNIX__) or defined(_WIN64) or defined(_MSVCRT)
+define errno <errno_t ptr [_errno()]>
 else
-externdef	errno:errno_t
+externdef errno:errno_t
 endif
 endif
 

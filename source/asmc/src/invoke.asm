@@ -694,7 +694,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
 
             mov memtype,[rdi].mem_type
             and al,0xE0
-            .if ( al == MT_FLOAT )
+            .if ( al == MT_FLOAT && address == 0 )
                 inc isfloat
             .endif
         .endif

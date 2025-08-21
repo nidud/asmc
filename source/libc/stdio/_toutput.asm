@@ -382,34 +382,34 @@ endif
                     lea rdx,buffer
                     mov textlen,1 ; print just a single character
                     mov text,rdx
+ifdef _UNICODE
+                    .if ( flags & FL_SHORT )
 
-if not defined(__UNIX__) and not defined(_UNICODE)
+                        MultiByteToWideChar( CP_ACP, 0, rcx, 1, rdx, 1 )
+                    .else
+elseifndef __UNIX__
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
 
-                        movzx eax,word ptr [rcx]
-                        mov [rdx],eax
-                        WideCharToMultiByte( 0, 0, rdx, 1, rdx, 1, 0, 0 )
+                        WideCharToMultiByte( CP_ACP, 0, rcx, 1, rdx, 1, 0, 0 )
                     .else
 endif
                         mov _tal,[rcx]
                         mov [rdx],_tal
-if not defined(__UNIX__) and not defined(_UNICODE)
+ifndef __UNIX__
                     .endif
 endif
                     .endc
 
                 .case 'S' ; ISO wide character string
                     .if ( !( flags & ( FL_SHORT or FL_LONG or FL_WIDECHAR ) ) )
-
+ifdef _UNICODE
                         or flags,FL_WIDECHAR
+else
+                        or flags,FL_SHORT
+endif
                     .endif
-                .case 's'
 
-                    ; print a string --
-                    ; ANSI rules on how much of string to print:
-                    ;   all if precision is default,
-                    ;   min(precision, length) if precision given.
-                    ; prints '(null)' if a null string is passed
+                .case 's'
 
                     mov rax,_va_arg(arglist)
                     mov ecx,precision
@@ -425,7 +425,9 @@ ifndef _UNICODE
 endif
                     .endif
                     mov rdx,rax
-ifndef _UNICODE
+ifdef _UNICODE
+                    .if ( !( flags & FL_SHORT ) )
+else
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
 
                         mov bufferiswide,1
@@ -437,22 +439,32 @@ endif
                         .endw
                         sub rax,rdx
                         sar eax,1
-ifndef _UNICODE
+
                     .else
-endif
-ifndef _UNICODE
+
                         .while ( ecx && byte ptr [rax] )
 
                             inc rax
                             dec ecx
                         .endw
                         sub rax,rdx
+ifdef _UNICODE
+                        mov text,rdx
+                        mov textlen,eax
+                        .for ( ebx = 0 : ebx < textlen && ebx < lengthof(buffer)-1 : ebx++ )
+
+                            mov rcx,text
+                            add rcx,rbx
+                            MultiByteToWideChar( CP_ACP, 0, rcx, 1, &buffer[rbx*2], 1 )
+                        .endf
+                        mov textlen,ebx
+                        lea rdx,buffer
 endif
-ifndef _UNICODE
                     .endif
-endif
                     mov text,rdx
+ifndef _UNICODE
                     mov textlen,eax
+endif
                    .endc
 
                 .case 'n'

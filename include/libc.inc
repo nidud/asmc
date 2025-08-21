@@ -209,9 +209,11 @@ ifndef _TCHAR_DEFINED
 define _TCHAR_DEFINED
 ifdef _UNICODE
 tchar_t		typedef word
+tuchar_t	typedef word
 tstring_t	typedef ptr word
 else
 tchar_t		typedef sbyte
+tuchar_t	typedef byte
 tstring_t	typedef ptr sbyte
 endif
 TCHAR		typedef tchar_t

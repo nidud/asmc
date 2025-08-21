@@ -101,6 +101,7 @@ define _fileno	<fileno>
 endif
 _fileno		proto __cdecl :LPFILE
 
+_input		proto __cdecl :LPFILE, :string_t, :ptr
 _output		proto __cdecl :LPFILE, :string_t, :ptr
 sprintf		proto __Cdecl :string_t, :string_t, :vararg
 sprintf_s	proto __Cdecl :string_t, :size_t, :string_t, :vararg
@@ -215,6 +216,7 @@ _wtmpnam	proto __cdecl :wstring_t
 _flswbuf	proto __cdecl :int_t, :LPFILE
 _filwbuf	proto __cdecl :LPFILE
 _woutput	proto __cdecl :LPFILE, :wstring_t, :ptr
+_winput		proto __cdecl :LPFILE, :wstring_t, :ptr
 _wopenfile	proto __cdecl :wstring_t, :wstring_t, :int_t, :LPFILE
 _wpopen		proto __cdecl :wstring_t, :wstring_t
 _wfdopen	proto __cdecl :int_t, :wstring_t
@@ -233,18 +235,6 @@ _fsetmode proto watcall :LPFILE, :int_t {
     and [rax]._iobuf._flag,not ( _IOMEMBUF or _IOCRC32 )
     or	[rax]._iobuf._flag,edx
     }
-
-ifdef _UNICODE
-define _toutput		<_woutput>
-define _tfilbuf		<_filwbuf>
-define _tflsbuf		<_flswbuf>
-define _topenfile	<_wopenfile>
-else
-define _toutput		<_output>
-define _tfilbuf		<_filbuf>
-define _tflsbuf		<_flsbuf>
-define _topenfile	<_openfile>
-endif
 
 .pragma list(pop)
 endif

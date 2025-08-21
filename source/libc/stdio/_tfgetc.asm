@@ -72,8 +72,6 @@ ifdef _UNICODE
             .return( _set_errno( EILSEQ ) )
         .endif
     .endif
-
-binary_mode:
 endif
 
     .if ( [rcx]._iobuf._cnt >= tchar_t )

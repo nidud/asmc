@@ -91,6 +91,11 @@ define _tosopen		<_wosopen>
 define _tgetfattr	<_wgetfattr>
 define _tsetfattr	<_wsetfattr>
 define _tfilexist	<_wfilexist>
+define _tinput		<_winput>
+define _toutput		<_woutput>
+define _tfilbuf		<_filwbuf>
+define _tflsbuf		<_flswbuf>
+define _topenfile	<_wopenfile>
 
 define _tgetpath	<_wgetpath>
 
@@ -721,6 +726,11 @@ define _tosopen		<osopen>
 define _tgetfattr	<getfattr>
 define _tsetfattr	<setfattr>
 define _tfilexist	<filexist>
+define _tinput		<_input>
+define _toutput		<_output>
+define _tfilbuf		<_filbuf>
+define _tflsbuf		<_flsbuf>
+define _topenfile	<_openfile>
 
 define _tgetpath	<_getpath>
 

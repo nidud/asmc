@@ -451,7 +451,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:asym_t, i:int_t, tokenarray:token_t
                     .endif
 
                     mov rdx,mac
-                    mov [rdx].asym.islabel,1
+                    mov [rdx].asym.IsLabel,1
                     add rbx,asm_tok
 
                 .elseifd !tstricmp( [rbx].string_ptr, "VARARGML" )

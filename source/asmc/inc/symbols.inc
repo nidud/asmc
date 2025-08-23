@@ -209,7 +209,7 @@ IS_SIGNED proto watcall :byte {
      record
       mac_vararg    uchar_t : 1 ?   ; accept additional params
       isfunc        uchar_t : 1 ?   ; it's a macro function
-      islabel       uchar_t : 1 ?   ; macro is "label-aware"
+      IsLabel       uchar_t : 1 ?   ; macro is "label-aware"
       multiline     uchar_t : 1 ?   ; v2.11: vararg arguments may be on multiple lines
       purged        uchar_t : 1 ?   ; macro has been PURGEd
      ends

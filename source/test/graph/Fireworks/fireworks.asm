@@ -6,66 +6,69 @@
 ; Source:
 ;  - http://www.ronybc.com/firecode.php
 ;
+
 include windows.inc
 include tchar.inc
 
-EXX         equ 4
-EXY         equ 8
-AIR         equ 12
-SPARC       equ 16
+define EXX      4
+define EXY      8
+define AIR      12
+define SPARC    16
 
 .data
-hwnd        HANDLE 0
-Bitmap1     PVOID 0
-Bitmap2     PVOID 0
-hFShells    PVOID 0
-EventStop   BOOL FALSE
-maxx        UINT 123
-maxy        UINT 123
-lightx      UINT 123
-lighty      UINT 123
-flash       UINT 123
-motion      UINT 16
-GMode       UINT 1
-CMode       UINT 0
-EMode       UINT 1
-click       UINT 0
-chemtable   UINT 00e0a0ffh, 00f08030h, 00e6c080h, 0040b070h,  00aad580h
-bminf       BITMAPINFO <<40,0,0,1,24,0,0,0,0,0,0>>
+ hwnd       HANDLE 0
+ Bitmap1    PVOID 0
+ Bitmap2    PVOID 0
+ hFShells   PVOID 0
+ pHeap      PVOID 0
+ ProcessH   PVOID 0
+ EventStop  UINT 0
+ maxx       UINT 123
+ maxy       UINT 123
+ lightx     UINT 123
+ lighty     UINT 123
+ flash      UINT 123
+ motion     UINT 16
+ GMode      UINT 1
+ CMode      UINT 0
+ EMode      UINT 1
+ click      UINT 0
+ chemtable  UINT 00e0a0ffh, 00f08030h, 00e6c080h, 0040b070h,  00aad580h
+ bminf      BITMAPINFO <<40,0,0,1,24,0,0,0,0,0,0>>
 
 .code
 
-Blur proc
+Blur proc uses rsi rdi rbx
 
-    mov     r9,Bitmap2
-    mov     r8,Bitmap1
-    mov     Bitmap1,r9
-    mov     Bitmap2,r8
+    mov     rdi,Bitmap2
+    mov     rsi,Bitmap1
+    mov     Bitmap1,rdi
+    mov     Bitmap2,rsi
     pxor    xmm7,xmm7
     mov     rax,0x0001000100010001
     movq    xmm6,rax
     mov     eax,maxx
     lea     rax,[rax+rax*2]
-    mov     r10,rax
+    mov     rbx,rax
     imul    maxy
-    lea     rcx,[rax+r9]
-    lea     rdx,[r10-3]
-    add     r10,3
+    lea     rcx,[rax+rdi]
+    lea     rdx,[rbx-3]
+    add     rbx,3
     neg     rdx
-    sub     r8,3
+    sub     rsi,3
 
     .repeat
 
-        movd        xmm0,[r8]
+        movd        xmm0,[rsi]
         punpcklbw   xmm0,xmm7
-        movd        xmm1,[r8+8]
-        movd        xmm2,[r8+16]
+        movd        xmm1,[rsi+8]
+        movd        xmm2,[rsi+16]
         punpcklbw   xmm1,xmm7
         punpcklbw   xmm2,xmm7
 
-        movd        xmm3,[r8+6]
-        movd        xmm4,[r8+14]
-        movd        xmm5,[r8+22]
+        movd        xmm3,[rsi+6]
+        movd        xmm4,[rsi+14]
+        movd        xmm5,[rsi+22]
         punpcklbw   xmm3,xmm7
         paddw       xmm0,xmm3
         punpcklbw   xmm4,xmm7
@@ -73,21 +76,21 @@ Blur proc
         punpcklbw   xmm5,xmm7
         paddw       xmm2,xmm5
 
-        movd        xmm3,[r8+r10]
+        movd        xmm3,[rsi+rbx]
         punpcklbw   xmm3,xmm7
         paddw       xmm0,xmm3
-        movd        xmm4,[r8+r10+8]
-        movd        xmm5,[r8+r10+16]
+        movd        xmm4,[rsi+rbx+8]
+        movd        xmm5,[rsi+rbx+16]
         punpcklbw   xmm4,xmm7
         paddw       xmm1,xmm4
         punpcklbw   xmm5,xmm7
         paddw       xmm2,xmm5
 
-        movd        xmm3,[r8+rdx]
+        movd        xmm3,[rsi+rdx]
         punpcklbw   xmm3,xmm7
         paddw       xmm0,xmm3
-        movd        xmm4,[r8+rdx+8]
-        movd        xmm5,[r8+rdx+16]
+        movd        xmm4,[rsi+rdx+8]
+        movd        xmm5,[rsi+rdx+16]
         punpcklbw   xmm4,xmm7
         paddw       xmm1,xmm4
         punpcklbw   xmm5,xmm7
@@ -102,24 +105,30 @@ Blur proc
         packuswb    xmm0,xmm7
         packuswb    xmm1,xmm7
         packuswb    xmm2,xmm7
-        movd        [r9],xmm0
-        movd        [r9+8],xmm1
-        movd        [r9+16],xmm2
-        add         r8,12
-        add         r9,12
-    .until r9 > rcx
+        movd        [rdi],xmm0
+        movd        [rdi+8],xmm1
+        movd        [rdi+16],xmm2
+        add         rsi,12
+        add         rdi,12
+
+    .until ( rdi > rcx )
     ret
 
 Blur endp
 
+
 Recycle proc uses rdi rbx hb:ptr, x:UINT, y:UINT
 
-    mov         rdi,rcx
-    mov         [rdi+EXX],edx
-    mov         [rdi+EXY],r8d
-    mov         lightx,edx
-    mov         lighty,r8d
-    add         flash,3200
+    ldr     rdi,rcx
+    ldr     edx,x
+    ldr     eax,y
+
+    mov     [rdi+EXX],edx
+    mov     [rdi+EXY],eax
+    mov     lightx,edx
+    mov     lighty,eax
+    add     flash,3200
+
     rdrand      eax
     xor         ecx,ecx
     and         eax,31
@@ -133,6 +142,7 @@ Recycle proc uses rdi rbx hb:ptr, x:UINT, y:UINT
     div         ecx
     add         edx,ebx
     mov         [rdi],edx
+
     rdrand      eax
     and         eax,31
     add         eax,10
@@ -143,6 +153,7 @@ Recycle proc uses rdi rbx hb:ptr, x:UINT, y:UINT
     movss       [rdi+AIR],xmm0
     cvtsi2ss    xmm4,y
     cvtsi2ss    xmm3,x
+
     rdrand      eax
     xor         ecx,ecx
     and         eax,7
@@ -152,7 +163,9 @@ Recycle proc uses rdi rbx hb:ptr, x:UINT, y:UINT
     movss       xmm2,1000.0
     mov         ebx,(400 - 1) * SPARC
     add         rdi,SPARC
+
     .repeat
+
         rdrand      eax
         and         eax,2047
         cvtsi2ss    xmm0,eax
@@ -165,6 +178,7 @@ Recycle proc uses rdi rbx hb:ptr, x:UINT, y:UINT
         mulss       xmm0,xmm0
         subss       xmm5,xmm0
         sqrtss      xmm0,xmm5
+
         rdrand      eax
         and         eax,2047
         cvtsi2ss    xmm5,eax
@@ -180,19 +194,12 @@ Recycle proc uses rdi rbx hb:ptr, x:UINT, y:UINT
 
 Recycle endp
 
+
 ThrdProc proc uses rsi rdi rbx
 
-  local hdc:HDC, pHeap:PVOID, color:UINT
+  local hdc:HDC, color:UINT
 
     mov hdc,GetDC(hwnd)
-    mov pHeap,HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, 0x800000*2 + (5 * ((400 shl 4) + SPARC)))
-
-    lea rdx,[rax+0x800000+4096]
-    lea rcx,[rax+0x1000000]
-    mov hFShells,rcx
-    add rax,4096
-    mov Bitmap1,rax
-    mov Bitmap2,rdx
 
     .while !EventStop
 
@@ -219,8 +226,9 @@ ThrdProc proc uses rsi rdi rbx
 
                 .repeat
 
-                    movss xmm0,[rcx+r9+4]
-                    andps xmm0,{ 0000000000000000000000007FFFFFFFr }
+                    mov eax,[rcx+r9+4]
+                    and eax,0x7FFFFFFF
+                    movd xmm0,eax
                     .if ( xmm0 > 0.00064 )
 
                         cvtss2si edx,[rcx+r9]
@@ -390,37 +398,60 @@ ThrdProc proc uses rsi rdi rbx
 
         Sleep(5)
     .endw
-
     ReleaseDC(hwnd, hdc)
-    HeapFree(GetProcessHeap(), 0, pHeap)
+    mov EventStop,0
     ret
 
 ThrdProc endp
+
 
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch edx
     .case WM_MOUSEMOVE
         .endc .if r8d != MK_CONTROL
-        xor edx,edx
-        mov flash,2400
-        mov eax,r9d
-        movzx r9d,r9w
-        shr eax,16
-        mov lightx,r9d
-        mov lighty,eax
+        mov     flash,2400
+        mov     eax,r9d
+        movzx   r9d,r9w
+        shr     eax,16
+        mov     lightx,r9d
+        mov     lighty,eax
        .endc
     .case WM_SIZE
         .endc .if r8d == SIZE_MINIMIZED
-        mov eax,r9d
-        movzx edx,ax
-        shr eax,16
-        and edx,-4
-        mov maxx,edx
-        mov maxy,eax
-        mov bminf.bmiHeader.biWidth,edx
-        neg eax
-        mov bminf.bmiHeader.biHeight,eax
+        mov     eax,r9d
+        movzx   edx,ax
+        shr     eax,16
+        and     edx,-4
+        mov     maxx,edx
+        mov     maxy,eax
+        mov     bminf.bmiHeader.biWidth,edx
+        neg     eax
+        mov     bminf.bmiHeader.biHeight,eax
+        .if ( ProcessH )
+            lock inc EventStop
+            .while 1
+                Sleep(5)
+               .break .if ( EventStop == 0 )
+            .endw
+            HeapFree(ProcessH, 0, pHeap)
+        .else
+            mov ProcessH,GetProcessHeap()
+        .endif
+        mov eax,maxy
+        mul maxx
+        lea ebx,[rax*4]
+        lea ecx,[rbx*2][(5 * ((400 shl 4) + SPARC))]
+        mov pHeap,HeapAlloc(ProcessH, HEAP_ZERO_MEMORY, rcx)
+        lea rcx,[rax+rbx*2]
+        mov hFShells,rcx
+        imul ecx,maxx,4
+        lea rdx,[rax+rbx]
+        add rax,rcx
+        add rdx,rcx
+        mov Bitmap1,rax
+        mov Bitmap2,rdx
+        CloseHandle(CreateThread(NULL, NULL, &ThrdProc, NULL, NORMAL_PRIORITY_CLASS, NULL))
        .endc
     .case WM_KEYDOWN
         .switch r8d
@@ -458,22 +489,20 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
             "Fireworks", MB_OK)
         .endc
     .case WM_LBUTTONDOWN
-        xor     r10d,r10d
-        mov     r10w,r9w
+        movzx   edx,r9w
         shr     r9d,16
-        mov     r8d,5 - 1
+        mov     eax,5 - 1
         mov     ecx,click
         dec     ecx
-        cmovs   ecx,r8d
+        cmovs   ecx,eax
         mov     click,ecx
-        mov     eax,((400 shl 4) + SPARC)
-        imul    ecx
-        add     rax,hFShells
-        Recycle(rax, r10d, r9d)
+        imul    ecx,ecx,((400 shl 4) + SPARC)
+        add     rcx,hFShells
+        Recycle(rcx, edx, r9d)
        .endc
     .case WM_CLOSE
     .case WM_DESTROY
-        mov EventStop,1
+        lock inc EventStop
         Sleep(10)
         PostQuitMessage(0)
        .endc
@@ -485,9 +514,10 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
 WndProc endp
 
+
 _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
-  local wc:WNDCLASSEX, msg:MSG, idThread:UINT, rc:RECT
+  local wc:WNDCLASSEX, msg:MSG, rc:RECT
 
     xor eax,eax
     mov wc.cbSize,          WNDCLASSEX
@@ -524,8 +554,6 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
 
     ShowWindow(hwnd, SW_SHOWNORMAL)
     UpdateWindow(hwnd)
-    CreateThread(NULL, NULL, &ThrdProc, NULL, NORMAL_PRIORITY_CLASS, &idThread)
-    CloseHandle(rax)
 
     .while GetMessage(&msg,0,0,0)
 

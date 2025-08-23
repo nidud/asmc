@@ -1,5 +1,5 @@
 fireworks.exe:
-	asmc64 -Cs -peg $*.asm
+	asmc64 -frame -Cs -peg $*.asm
 	$@
 	del $@
 

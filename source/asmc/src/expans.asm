@@ -306,7 +306,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:asym_t, idx:int_t, tokenarray:token_t
     mov rbx,tokenarray
     mov parmidx,0
 
-    .if ( [rsi].islabel )
+    .if ( [rsi].IsLabel )
 
         .if ( mflags & MF_LABEL )
 
@@ -1788,7 +1788,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                         mov rcx,tokenarray
                         .if ( edx == 0 || ( edx == 2 && ( [rcx+asm_tok].asm_tok.token == T_COLON ||
                              [rcx+asm_tok].asm_tok.token == T_DBL_COLON ) ) ||
-                             ( edx == 1 && [rsi].asym.islabel ) )
+                             ( edx == 1 && [rsi].asym.IsLabel ) )
                         .else
                             .continue
                         .endif

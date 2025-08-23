@@ -15,7 +15,7 @@ foo proc
 foo endp
 
 bar proc
-   .new a[3]:real4  = { foo(), foo(), foo() }
+   .new a[3]:real4  = { 1.0, foo(), foo() }
    .new b[3]:real8  = { foo(), foo(), foo() }
    .new c[3]:real16 = { foo(), foo(), foo() }
    .new q[3]:qword  = { foo(), foo(), foo() }

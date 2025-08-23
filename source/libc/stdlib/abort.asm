@@ -29,6 +29,6 @@ __initabort proc private
 
 __initabort endp
 
-.pragma init(__initabort, 1)
+.pragma init(__initabort, 2)
 
     end

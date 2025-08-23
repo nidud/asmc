@@ -197,7 +197,7 @@ endif
 
 _ioterm endp
 
-.pragma init(_ioinit, 1)
+.pragma init(_ioinit, 2)
 .pragma exit(_ioterm, 100)
 
     end

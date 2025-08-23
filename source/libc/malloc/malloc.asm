@@ -16,12 +16,9 @@ undef _aligned_free
 alias <_aligned_free>=<free>
 endif
 
-public _crtheap
-
 CreateHeap proto private :size_t
 
 .data
- _crtheap label HANDLE
  _heap_base heap_t 0 ; address of main memory block
  _heap_free heap_t 0 ; address of free memory block
 
@@ -108,8 +105,8 @@ malloc endp
 free proc memblock:ptr
 
     ldr rcx,memblock
-    sub rcx,HEAP
 
+    sub rcx,HEAP
     .ifns
 
         ; If memblock is NULL, the pointer is ignored. Attempting to free an
@@ -173,8 +170,7 @@ ifdef __UNIX__
                             sys_munmap(rcx, rdx)
                         .endif
 else
-                        mov memblock,rcx
-                        HeapFree( GetProcessHeap(), 0, memblock )
+                        HeapFree( _crtheap, 0, rcx )
 endif
                     .endif
                 .endif
@@ -204,7 +200,7 @@ CreateHeap proc private uses rbx size:size_t
 ifdef __UNIX__
     .if ( CALL_MMAP(rbx) == MAP_FAILED )
 else
-    .if ( HeapAlloc( GetProcessHeap(), 0, rbx ) == NULL )
+    .if ( HeapAlloc( _crtheap, 0, rbx ) == NULL )
 endif
         _set_errno( ENOMEM )
        .return( NULL )

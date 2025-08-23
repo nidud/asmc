@@ -42,14 +42,18 @@ endif
 
 .enum { _HEAP_FREE, _HEAP_LOCAL, _HEAP_GLOBAL, _HEAP_ALIGNED }
 
+heap_t  typedef ptr HEAP
+
 HEAP    struct size_t   ; Memory Block Header: 8/16/32 byte
 size    size_t ?
 type    uchar_t ?
-prev    ptr_t ?
-next    ptr_t ?
+prev    heap_t ?
+next    heap_t ?
 HEAP    ends
-heap_t  typedef ptr HEAP
 
+ifndef __UNIX__
+externdef _crtheap:HANDLE
+endif
 externdef _amblksiz:uint_t
 externdef _heap_base:heap_t
 externdef _heap_free:heap_t
@@ -76,6 +80,16 @@ define _mm_free     <_aligned_free>
 define _mm_malloc   <_aligned_malloc>
 endif
 
+ifndef _HEAPINFO_DEFINED
+define _HEAPINFO_DEFINED
+_heapinfo       struct
+_pentry         intptr_t ?
+_size           size_t ?
+_useflag        int_t ?
+_heapinfo       ends
+_HEAPINFO       typedef _heapinfo
+endif
+
 _msize proto __cdecl :ptr
 _resetstkoflw proto __cdecl
 
@@ -99,6 +113,24 @@ _calloca proto watcall :uint_t, :uint_t {
 if not defined(_MSVCRT) or defined(_CRTBLD)
 _coreleft       proto __cdecl
 endif
+
+define _HEAPEMPTY       (-1)
+define _HEAPOK          (-2)
+define _HEAPBADBEGIN    (-3)
+define _HEAPBADNODE     (-4)
+define _HEAPEND         (-5)
+define _HEAPBADPTR      (-6)
+define _FREEENTRY       0
+define _USEDENTRY       1
+
+_heapwalk proto __cdecl :ptr _HEAPINFO
+_get_heap_handle proto __cdecl
+
+_heapadd proto __cdecl :ptr, :size_t
+_heapchk proto __cdecl
+_heapmin proto __cdecl
+_heapset proto __cdecl :uint_t
+_heapused proto __cdecl :ptr size_t, :ptr size_t
 
 ;;;;;;;;;;;;;;; kernel32
 

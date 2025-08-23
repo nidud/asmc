@@ -317,7 +317,12 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
 
    .new val[256]:char_t
    .new array:int_t = 0
+   .new index:int_t
+   .new fltproc:byte
    .new brackets:byte
+
+    UNREFERENCED_PARAMETER(sym)
+    UNREFERENCED_PARAMETER(string)
 
     ldr rdx,sym
     ldr rax,string
@@ -486,15 +491,37 @@ endif
 
                 .elseif ( array )
 
-                    mov edx,T_MOV ; v2.37.21 added
-                    .if ( [rbx].asym.mem_type == MT_REAL4 )
-                        mov edx,T_MOVSS
-                    .elseif ( [rbx].asym.mem_type == MT_REAL8 )
-                        mov edx,T_MOVSD
-                    .elseif ( [rbx].asym.mem_type == MT_REAL16 )
-                        mov edx,T_MOVAPS
+                    mov index,ecx
+                    mov fltproc,0 ; v2.37.26 ...
+
+                    .if ( [rbx].asym.mem_type & MT_FLOAT && islabel0( val ) )
+
+                        lea rdi,val[1]
+                        .while islabel( [rdi] )
+                            inc rdi
+                        .endw
+                        .if ( byte ptr [rdi] == '(' )
+
+                            mov byte ptr [rdi],0
+                            SymSearch( &val )
+                            mov byte ptr [rdi],'('
+                            .if ( rax && [rax].asym.isproc )
+                                mov fltproc,1
+                            .endif
+                        .endif
                     .endif
-                    AddLineQueueX( " %r %s[%d], %s", edx, name, ecx, &val )
+
+                    mov edx,T_MOV ; v2.37.21 added
+                    .if ( fltproc )
+                        .if ( [rbx].asym.mem_type == MT_REAL4 )
+                            mov edx,T_MOVSS
+                        .elseif ( [rbx].asym.mem_type == MT_REAL8 )
+                            mov edx,T_MOVSD
+                        .elseif ( [rbx].asym.mem_type == MT_REAL16 )
+                            mov edx,T_MOVAPS
+                        .endif
+                    .endif
+                    AddLineQueueX( " %r %s[%d], %s", edx, name, index, &val )
                 .else
                     AssignString( name, rbx, &val )
                 .endif

@@ -7,8 +7,6 @@
 include stdio.inc
 include stdlib.inc
 include errno.inc
-include limits.inc
-include wchar.inc
 include fltintrn.inc
 include winnls.inc
 include tchar.inc

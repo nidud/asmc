@@ -302,8 +302,8 @@ endif
     ret
 __exitsignal endp
 
-.pragma init(__initsignal,  1 )
-.pragma exit(__exitsignal, 200 )
+.pragma init(__initsignal, 2)
+.pragma exit(__exitsignal, 200)
 
 endif
     end

@@ -12,8 +12,6 @@ include gdk/gdkframeclock.inc
 include gdk/gdkmonitor.inc
 include gdk/gdkpopuplayout.inc
 
-;GdkSurfaceClass         typedef _GdkSurfaceClass
-
 define GDK_TYPE_SURFACE <gdk_surface_get_type ()>
 GDK_SURFACE macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_SURFACE, GdkSurface))>

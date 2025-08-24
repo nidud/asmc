@@ -48,14 +48,13 @@ define G_SIGNAL_FLAGS_MASK  0x1ff
 define G_SIGNAL_MATCH_MASK  0x3f
 define	G_SIGNAL_TYPE_STATIC_SCOPE (G_TYPE_FLAG_RESERVED_ID_BIT)
 
-_GSignalInvocationHint	struct
+GSignalInvocationHint	struct
 signal_id		guint ?
 detail			GQuark ?
 run_type		GSignalFlags ?
-_GSignalInvocationHint	ends
-GSignalInvocationHint	typedef _GSignalInvocationHint
+GSignalInvocationHint	ends
 
-_GSignalQuery		struct
+GSignalQuery		struct
 signal_id		guint ?
 signal_name		ptr gchar ?
 itype			GType ?
@@ -63,8 +62,7 @@ signal_flags		GSignalFlags ?
 return_type		GType ?
 n_params		guint ?
 param_types		ptr GType ?
-_GSignalQuery		ends
-GSignalQuery		typedef _GSignalQuery
+GSignalQuery		ends
 
 g_signal_newv proto :ptr, :GType, :GSignalFlags, :ptr, :GSignalAccumulator, :gpointer, :GSignalCMarshaller, :GType, :guint, :ptr
 g_signal_new_valist proto :ptr, :GType, :GSignalFlags, :ptr, :GSignalAccumulator, :gpointer, :GSignalCMarshaller, :GType, :guint, :va_list

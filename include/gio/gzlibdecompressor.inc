@@ -25,10 +25,9 @@ G_ZLIB_DECOMPRESSOR_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_ZLIB_DECOMPRESSOR, GZlibDecompressorClass))>
   endm
 
-_GZlibDecompressorClass struct
+GZlibDecompressorClass  struct
 parent_class            GObjectClass <>
-_GZlibDecompressorClass ends
-GZlibDecompressorClass  typedef _GZlibDecompressorClass
+GZlibDecompressorClass  ends
 
 g_zlib_decompressor_get_type proto
 g_zlib_decompressor_new proto :GZlibCompressorFormat

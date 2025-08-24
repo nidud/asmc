@@ -6,16 +6,15 @@ include apisetcconv.inc
 include minwindef.inc
 include minwinbase.inc
 
-_HEAP_SUMMARY           struct
+HEAP_SUMMARY            struct
 cb                      DWORD ?
 cbAllocated             size_t ?
 cbCommitted             size_t ?
 cbReserved              size_t ?
 cbMaxReserve            size_t ?
-_HEAP_SUMMARY           ends
-HEAP_SUMMARY            typedef _HEAP_SUMMARY
-PHEAP_SUMMARY           typedef ptr _HEAP_SUMMARY
-LPHEAP_SUMMARY          typedef PHEAP_SUMMARY
+HEAP_SUMMARY            ends
+PHEAP_SUMMARY           typedef ptr HEAP_SUMMARY
+LPHEAP_SUMMARY          typedef ptr HEAP_SUMMARY
 
 HeapCreate proto WINAPI :DWORD, :size_t, :size_t
 HeapDestroy proto WINAPI :HANDLE

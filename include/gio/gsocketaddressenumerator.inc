@@ -25,18 +25,16 @@ G_SOCKET_ADDRESS_ENUMERATOR_GET_CLASS macro o
   endm
 
 
-_GSocketAddressEnumerator struct
+GSocketAddressEnumerator struct
 parent_instance         GObject <>
-_GSocketAddressEnumerator ends
-GSocketAddressEnumerator typedef _GSocketAddressEnumerator
+GSocketAddressEnumerator ends
 
-_GSocketAddressEnumeratorClass struct
+GSocketAddressEnumeratorClass struct
 parent_class            GObjectClass <>
 next                    proc :ptr, :ptr, :ptr
 next_async              proc :ptr, :ptr, :GAsyncReadyCallback, :gpointer
 next_finish             proc :ptr, :ptr, :ptr
-_GSocketAddressEnumeratorClass ends
-GSocketAddressEnumeratorClass typedef _GSocketAddressEnumeratorClass
+GSocketAddressEnumeratorClass ends
 
 g_socket_address_enumerator_get_type proto
 g_socket_address_enumerator_next proto :ptr, :ptr, :ptr

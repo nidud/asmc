@@ -20,20 +20,16 @@ G_UNIX_CREDENTIALS_MESSAGE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_UNIX_CREDENTIALS_MESSAGE, GUnixCredentialsMessageClass))>
   endm
 
-;GUnixCredentialsMessagePrivate typedef _GUnixCredentialsMessagePrivate
-
-_GUnixCredentialsMessageClass struct
+GUnixCredentialsMessageClass struct
 parent_class            GSocketControlMessageClass <>
 _g_reserved1            proc
 _g_reserved2            proc
-_GUnixCredentialsMessageClass ends
-GUnixCredentialsMessageClass typedef _GUnixCredentialsMessageClass
+GUnixCredentialsMessageClass ends
 
-_GUnixCredentialsMessage struct
+GUnixCredentialsMessage struct
 parent_instance         GSocketControlMessage <>
 priv                    ptr GUnixCredentialsMessagePrivate ?
-_GUnixCredentialsMessage ends
-GUnixCredentialsMessage typedef _GUnixCredentialsMessage
+GUnixCredentialsMessage ends
 
 g_unix_credentials_message_get_type proto
 g_unix_credentials_message_new proto

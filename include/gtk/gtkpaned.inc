@@ -15,8 +15,6 @@ GTK_IS_PANED macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_PANED))>
   endm
 
-;GtkPaned                typedef _GtkPaned
-
 gtk_paned_get_type proto
 gtk_paned_new proto :GtkOrientation
 gtk_paned_set_start_child proto :ptr, :ptr

@@ -20,18 +20,14 @@ G_UNIX_CONNECTION_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_UNIX_CONNECTION, GUnixConnectionClass))>
   endm
 
-;GUnixConnectionPrivate  typedef _GUnixConnectionPrivate
-
-_GUnixConnectionClass   struct
+GUnixConnectionClass    struct
 parent_class            GSocketConnectionClass <>
-_GUnixConnectionClass   ends
-GUnixConnectionClass    typedef _GUnixConnectionClass
+GUnixConnectionClass    ends
 
-_GUnixConnection        struct
+GUnixConnection         struct
 parent_instance         GSocketConnection <>
 priv                    ptr GUnixConnectionPrivate ?
-_GUnixConnection        ends
-GUnixConnection         typedef _GUnixConnection
+GUnixConnection         ends
 
 g_unix_connection_get_type proto
 g_unix_connection_send_fd proto :ptr, :gint, :ptr, :ptr

@@ -9,8 +9,6 @@ include gdk/gdkmonitor.inc
 include gdk/gdktypes.inc
 include gdk/gdkversionmacros.inc
 
-;GdkToplevelLayout       typedef _GdkToplevelLayout
-
 define GDK_TYPE_TOPLEVEL_LAYOUT <gdk_toplevel_layout_get_type ()>
 
 gdk_toplevel_layout_get_type proto

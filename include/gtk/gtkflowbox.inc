@@ -15,8 +15,6 @@ GTK_IS_FLOW_BOX macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FLOW_BOX))>
   endm
 
-;GtkFlowBox              typedef _GtkFlowBox
-
 define GTK_TYPE_FLOW_BOX_CHILD <gtk_flow_box_child_get_type ()>
 GTK_FLOW_BOX_CHILD macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChild))>
@@ -34,17 +32,15 @@ GTK_FLOW_BOX_CHILD_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), EG_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChildClass))>
   endm
 
-_GtkFlowBoxChild        struct
+GtkFlowBoxChild         struct
 parent_instance         GtkWidget <>
-_GtkFlowBoxChild        ends
-GtkFlowBoxChild         typedef _GtkFlowBoxChild
+GtkFlowBoxChild         ends
 
-_GtkFlowBoxChildClass   struct
+GtkFlowBoxChildClass    struct
 parent_class            GtkWidgetClass <>
 activate                proc :ptr
 padding                 gpointer 8 dup(?)
-_GtkFlowBoxChildClass   ends
-GtkFlowBoxChildClass    typedef _GtkFlowBoxChildClass
+GtkFlowBoxChildClass    ends
 
 CALLBACK(GtkFlowBoxCreateWidgetFunc, :gpointer, :gpointer)
 

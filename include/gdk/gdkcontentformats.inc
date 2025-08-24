@@ -34,8 +34,6 @@ gdk_content_formats_contain_mime_type proto :ptr, :ptr
 
 define GDK_TYPE_CONTENT_FORMATS_BUILDER <gdk_content_formats_builder_get_type ()>
 
-;GdkContentFormatsBuilder typedef _GdkContentFormatsBuilder
-
 gdk_content_formats_builder_get_type proto
 
 gdk_content_formats_builder_new proto
@@ -50,9 +48,6 @@ gdk_content_formats_builder_add_gtype proto :ptr, :GType
 
 define GDK_TYPE_FILE_LIST <gdk_file_list_get_type ()>
 gdk_file_list_get_type proto
-
-;GdkFileList             typedef _GdkFileList
-
 gdk_file_list_get_files proto :ptr
 
 endif

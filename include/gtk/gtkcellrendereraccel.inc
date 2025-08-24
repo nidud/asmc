@@ -15,8 +15,6 @@ GTK_IS_CELL_RENDERER_ACCEL macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CELL_RENDERER_ACCEL))>
   endm
 
-;GtkCellRendererAccel    typedef _GtkCellRendererAccel
-
 .enum GtkCellRendererAccelMode {
   GTK_CELL_RENDERER_ACCEL_MODE_GTK,
   GTK_CELL_RENDERER_ACCEL_MODE_OTHER

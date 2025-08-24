@@ -24,18 +24,14 @@ G_NETWORK_SERVICE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_NETWORK_SERVICE, GNetworkServiceClass))>
   endm
 
-;GNetworkServicePrivate  typedef _GNetworkServicePrivate
-
-_GNetworkService        struct
+GNetworkService         struct
 parent_instance         GObject <>
 priv                    ptr GNetworkServicePrivate ?
-_GNetworkService        ends
-GNetworkService         typedef _GNetworkService
+GNetworkService         ends
 
-_GNetworkServiceClass   struct
+GNetworkServiceClass    struct
 parent_class            GObjectClass <>
-_GNetworkServiceClass   ends
-GNetworkServiceClass    typedef _GNetworkServiceClass
+GNetworkServiceClass    ends
 
 g_network_service_get_type proto
 g_network_service_new proto :ptr, :ptr, :ptr

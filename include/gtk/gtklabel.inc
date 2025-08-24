@@ -15,8 +15,6 @@ GTK_IS_LABEL macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_LABEL))>
   endm
 
-;GtkLabel		 typedef _GtkLabel
-
 gtk_label_get_type proto
 gtk_label_new proto :ptr
 gtk_label_new_with_mnemonic proto :ptr

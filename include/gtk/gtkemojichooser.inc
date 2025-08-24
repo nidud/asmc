@@ -24,9 +24,6 @@ GTK_EMOJI_CHOOSER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_EMOJI_CHOOSER, GtkEmojiChooserClass))>
   endm
 
-;GtkEmojiChooser         typedef _GtkEmojiChooser
-;GtkEmojiChooserClass    typedef _GtkEmojiChooserClass
-
 gtk_emoji_chooser_get_type proto
 gtk_emoji_chooser_new proto
 

@@ -20,9 +20,7 @@ G_TLS_BACKEND_GET_INTERFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_TLS_BACKEND, GTlsBackendInterface))>
   endm
 
-;GTlsBackend             typedef _GTlsBackend
-
-_GTlsBackendInterface   struct
+GTlsBackendInterface    struct
 g_iface                 GTypeInterface <>
 supports_tls            proc :ptr
 get_certificate_type    proc
@@ -33,8 +31,7 @@ get_default_database    proc :ptr
 supports_dtls           proc :ptr
 get_dtls_client_connection_type proc
 get_dtls_server_connection_type proc
-_GTlsBackendInterface   ends
-GTlsBackendInterface    typedef _GTlsBackendInterface
+GTlsBackendInterface    ends
 
 g_tls_backend_get_type proto
 g_tls_backend_get_default proto

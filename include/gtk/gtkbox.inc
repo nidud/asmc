@@ -24,17 +24,14 @@ GTK_BOX_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_BOX, GtkBoxClass))>
   endm
 
-_GtkBox                 struct
+GtkBox                  struct
 parent_instance         GtkWidget <>
-_GtkBox                 ends
-GtkBox                  typedef _GtkBox
+GtkBox                  ends
 
-_GtkBoxClass            struct
+GtkBoxClass             struct
 parent_class            GtkWidgetClass <>
 padding                 gpointer 8 dup(?)
-_GtkBoxClass            ends
-GtkBoxClass             typedef _GtkBoxClass
-
+GtkBoxClass             ends
 
 gtk_box_get_type proto
 gtk_box_new proto :GtkOrientation, :sdword

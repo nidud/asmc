@@ -25,15 +25,12 @@ G_FILE_INPUT_STREAM_GET_CLASS macro o
   endm
 
 
-;GFileInputStreamPrivate typedef _GFileInputStreamPrivate
-
-_GFileInputStream       struct
+GFileInputStream        struct
 parent_instance         GInputStream <>
 priv                    ptr GFileInputStreamPrivate ?
-_GFileInputStream       ends
-GFileInputStream        typedef _GFileInputStream
+GFileInputStream        ends
 
-_GFileInputStreamClass  struct
+GFileInputStreamClass   struct
 parent_class            GInputStreamClass <>
 tell                    proc :ptr
 can_seek                proc :ptr
@@ -46,8 +43,7 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GFileInputStreamClass  ends
-GFileInputStreamClass   typedef _GFileInputStreamClass
+GFileInputStreamClass   ends
 
 g_file_input_stream_get_type proto
 g_file_input_stream_query_info proto :ptr, :ptr, :ptr, :ptr

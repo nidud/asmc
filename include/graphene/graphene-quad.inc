@@ -4,10 +4,9 @@ define __GRAPHENE_QUAD_H__
 include graphene/graphene-types.inc
 include graphene/graphene-point.inc
 
-_graphene_quad_t        STRUC
+graphene_quad_t         STRUC
 points                  graphene_point_t 4 dup(<>)
-_graphene_quad_t        ENDS
-graphene_quad_t         typedef _graphene_quad_t
+graphene_quad_t         ENDS
 
 graphene_quad_alloc proto
 graphene_quad_free proto :ptr

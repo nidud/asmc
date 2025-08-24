@@ -24,10 +24,6 @@ GDK_FRAME_CLOCK_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_FRAME_CLOCK, GdkFrameClockClass))>
   endm
 
-;GdkFrameClock           typedef _GdkFrameClock
-;GdkFrameClockPrivate    typedef _GdkFrameClockPrivate
-;GdkFrameClockClass      typedef _GdkFrameClockClass
-
 .enum GdkFrameClockPhase {
   GDK_FRAME_CLOCK_PHASE_NONE          = 0,
   GDK_FRAME_CLOCK_PHASE_FLUSH_EVENTS  = 1 shl 0,

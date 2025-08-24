@@ -24,14 +24,10 @@ G_RESOLVER_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_RESOLVER, GResolverClass))>
   endm
 
-;GResolverPrivate        typedef _GResolverPrivate
-
-_GResolver              struct
+GResolver               struct
 parent_instance         GObject <>
 priv                    ptr GResolverPrivate ?
-_GResolver              ends
-GResolver               typedef _GResolver
-
+GResolver               ends
 
 .enum GResolverNameLookupFlags {
   G_RESOLVER_NAME_LOOKUP_FLAGS_DEFAULT = 0,
@@ -39,7 +35,7 @@ GResolver               typedef _GResolver
   G_RESOLVER_NAME_LOOKUP_FLAGS_IPV6_ONLY = 1 shl 1,
 }
 
-_GResolverClass         struct
+GResolverClass          struct
 parent_class            GObjectClass <>
 reload                  proc :ptr
 lookup_by_name          proc :ptr, :ptr, :ptr, :ptr
@@ -57,8 +53,7 @@ lookup_records_finish   proc :ptr, :ptr, :ptr
 lookup_by_name_with_flags_async proc :ptr, :ptr, :GResolverNameLookupFlags, :ptr, :GAsyncReadyCallback, :gpointer
 lookup_by_name_with_flags_finish proc :ptr, :ptr, :ptr
 lookup_by_name_with_flags proc :ptr, :ptr, :GResolverNameLookupFlags, :ptr, :ptr
-_GResolverClass         ends
-GResolverClass          typedef _GResolverClass
+GResolverClass          ends
 
 g_resolver_get_type proto
 g_resolver_get_default proto

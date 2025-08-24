@@ -15,8 +15,6 @@ GTK_IS_CELL_RENDERER_SPIN macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CELL_RENDERER_SPIN))>
   endm
 
-;GtkCellRendererSpin	 typedef _GtkCellRendererSpin
-
 gtk_cell_renderer_spin_get_type proto
 gtk_cell_renderer_spin_new proto
 

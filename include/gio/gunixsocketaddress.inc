@@ -20,19 +20,15 @@ G_UNIX_SOCKET_ADDRESS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_UNIX_SOCKET_ADDRESS, GUnixSocketAddressClass))>
   endm
 
-;GUnixSocketAddressPrivate typedef _GUnixSocketAddressPrivate
-
-_GUnixSocketAddress     struct
+GUnixSocketAddress      struct
 parent_instance         GSocketAddress <>
 priv                    ptr GUnixSocketAddressPrivate ?
-_GUnixSocketAddress     ends
-GUnixSocketAddress      typedef _GUnixSocketAddress
+GUnixSocketAddress      ends
 
-_GUnixSocketAddressClass struct
+GUnixSocketAddressClass struct
 parent_class            GSocketAddressClass <>
-_GUnixSocketAddressClass ends
+GUnixSocketAddressClass ends
 g_unix_socket_address_get_type proto
-GUnixSocketAddressClass typedef _GUnixSocketAddressClass
 
 g_unix_socket_address_new proto :ptr
 g_unix_socket_address_new_abstract proto :ptr, :gint

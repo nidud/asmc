@@ -3,10 +3,6 @@ define __G_SETTINGS_SCHEMA_H__
 
 include glib-object.inc
 
-;GSettingsSchemaSource   typedef _GSettingsSchemaSource
-;GSettingsSchema         typedef _GSettingsSchema
-;GSettingsSchemaKey      typedef _GSettingsSchemaKey
-
 define G_TYPE_SETTINGS_SCHEMA_SOURCE                   <g_settings_schema_source_get_type ()>
 g_settings_schema_source_get_type proto
 

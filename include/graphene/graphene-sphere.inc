@@ -8,11 +8,10 @@ endif
 include graphene/graphene-types.inc
 include graphene/graphene-vec3.inc
 
-_graphene_sphere_t      STRUC
+graphene_sphere_t       STRUC
 center                  graphene_vec3_t <>
 radius                  real4 ?
-_graphene_sphere_t      ENDS
-graphene_sphere_t       typedef _graphene_sphere_t
+graphene_sphere_t       ENDS
 
 graphene_sphere_alloc proto
 graphene_sphere_free proto :ptr

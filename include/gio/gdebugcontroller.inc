@@ -22,10 +22,9 @@ G_DEBUG_CONTROLLER_GET_INTERFACE macro o
   endm
 
 
-_GDebugControllerInterface struct
+GDebugControllerInterface struct
 g_iface                 GTypeInterface <>
-_GDebugControllerInterface ends
-GDebugControllerInterface typedef _GDebugControllerInterface
+GDebugControllerInterface ends
 
 g_debug_controller_get_debug_enabled proto :ptr
 g_debug_controller_set_debug_enabled proto :ptr, :gboolean

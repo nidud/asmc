@@ -32,8 +32,6 @@ define GTK_INPUT_ERROR -1
   GTK_SPIN_USER_DEFINED
 }
 
-;GtkSpinButton           typedef _GtkSpinButton
-
 gtk_spin_button_get_type proto
 gtk_spin_button_configure proto :ptr, :ptr, :real8, :guint
 gtk_spin_button_new proto :ptr, :real8, :guint

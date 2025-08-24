@@ -25,19 +25,15 @@ G_SIMPLE_ACTION_GROUP_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_SIMPLE_ACTION_GROUP, GSimpleActionGroupClass))>
   endm
 
-;GSimpleActionGroupPrivate typedef _GSimpleActionGroupPrivate
-
-_GSimpleActionGroup     struct
+GSimpleActionGroup      struct
 parent_instance         GObject <>
 priv                    ptr GSimpleActionGroupPrivate ?
-_GSimpleActionGroup     ends
-GSimpleActionGroup      typedef _GSimpleActionGroup
+GSimpleActionGroup      ends
 
-_GSimpleActionGroupClass struct
+GSimpleActionGroupClass struct
 parent_class            GObjectClass <>
 padding                 gpointer 12 dup(?)
-_GSimpleActionGroupClass ends
-GSimpleActionGroupClass typedef _GSimpleActionGroupClass
+GSimpleActionGroupClass ends
 
 g_simple_action_group_get_type proto
 g_simple_action_group_new proto

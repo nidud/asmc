@@ -17,8 +17,6 @@ G_IS_BINDING_GROUP macro obj
   endm
 define G_TYPE_BINDING_GROUP    (g_binding_group_get_type())
 
-;GBindingGroup           typedef _GBindingGroup
-
 g_binding_group_get_type proto
 g_binding_group_new proto
 g_binding_group_dup_source proto :ptr

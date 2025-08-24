@@ -24,17 +24,15 @@ GTK_SCALE_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_SCALE, GtkScaleClass))>
   endm
 
-_GtkScale               struct
+GtkScale                struct
 parent_instance         GtkRange <>
-_GtkScale               ends
-GtkScale                typedef _GtkScale
+GtkScale                ends
 
-_GtkScaleClass          struct
+GtkScaleClass           struct
 parent_class            GtkRangeClass <>
 get_layout_offsets      proc :ptr, :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GtkScaleClass          ends
-GtkScaleClass           typedef _GtkScaleClass
+GtkScaleClass           ends
 
 CALLBACK(GtkScaleFormatValueFunc, :ptr, :real8, :gpointer)
 

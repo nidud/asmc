@@ -22,15 +22,14 @@ G_TYPE_IS_DATAGRAM_BASED macro type
   exitm<(g_type_is_aype), G_TYPE_DATAGRAM_BASED))>
   endm
 
-_GDatagramBasedInterface struct
+GDatagramBasedInterface struct
 g_iface                 GTypeInterface <>
 receive_messages        proc :ptr, :ptr, :guint, :gint, :gint64, :ptr, :ptr
 send_messages           proc :ptr, :ptr, :guint, :gint, :gint64, :ptr, :ptr
 create_source           proc :ptr, :GIOCondition, :ptr
 condition_check         proc :ptr, :GIOCondition
 condition_wait          proc :ptr, :GIOCondition, :gint64, :ptr, :ptr
-_GDatagramBasedInterface ends
-GDatagramBasedInterface typedef _GDatagramBasedInterface
+GDatagramBasedInterface ends
 
 g_datagram_based_get_type proto
 

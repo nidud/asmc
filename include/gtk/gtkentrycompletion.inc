@@ -20,8 +20,6 @@ GTK_IS_ENTRY_COMPLETION macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_ENTRY_COMPLETION))>
   endm
 
-;GtkEntryCompletion      typedef _GtkEntryCompletion
-
 CALLBACK(GtkEntryCompletionMatchFunc, :ptr, :ptr, :ptr, :gpointer)
 
 gtk_entry_completion_get_type proto

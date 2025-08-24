@@ -16,8 +16,6 @@ GTK_IS_APP_CHOOSER_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_APP_CHOOSER_BUTTON))>
   endm
 
-;GtkAppChooserButton     typedef _GtkAppChooserButton
-
 gtk_app_chooser_button_get_type proto
 
 gtk_app_chooser_button_new proto :ptr

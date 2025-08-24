@@ -26,9 +26,6 @@ GTK_EVENT_CONTROLLER_KEY_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_EVENT_CONTROLLER_KEY, GtkEventControllerKeyClass))>
   endm
 
-;GtkEventControllerKey   typedef _GtkEventControllerKey
-;GtkEventControllerKeyClass typedef _GtkEventControllerKeyClass
-
 gtk_event_controller_key_get_type proto
 gtk_event_controller_key_new proto
 gtk_event_controller_key_set_im_context proto :ptr, :ptr

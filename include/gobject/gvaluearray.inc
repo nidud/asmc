@@ -9,12 +9,11 @@ include gobject/gvalue.inc
 
 define G_TYPE_VALUE_ARRAY <g_value_array_get_type ()>
 
-_GValueArray            struct
+GValueArray             struct
 n_values                guint ?
 values                  ptr GValue ?
 n_prealloced            guint ?
-_GValueArray            ends
-GValueArray             typedef _GValueArray
+GValueArray             ends
 
 g_value_array_get_type proto
 g_value_array_get_nth proto :ptr, :guint

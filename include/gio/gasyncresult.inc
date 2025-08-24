@@ -18,13 +18,12 @@ G_ASYNC_RESULT_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_ASYNC_RESULT, GAsyncResultIface))>
   endm
 
-_GAsyncResultIface      struct
+GAsyncResultIface       struct
 g_iface                 GTypeInterface <>
 get_user_data           proc :ptr
 get_source_object       proc :ptr
 is_tagged               proc :ptr, :gpointer
-_GAsyncResultIface      ends
-GAsyncResultIface       typedef _GAsyncResultIface
+GAsyncResultIface       ends
 
 g_async_result_get_type proto
 g_async_result_get_user_data proto :ptr

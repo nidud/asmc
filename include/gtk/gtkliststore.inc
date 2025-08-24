@@ -26,20 +26,15 @@ GTK_LIST_STORE_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_LIST_STORE, GtkListStoreClass))>
   endm
 
-;GtkListStorePrivate	 typedef _GtkListStorePrivate
-
-_GtkListStore		struct
+GtkListStore		struct
 parent			GObject <>
 priv			ptr GtkListStorePrivate ?
-_GtkListStore		ends
-GtkListStore		typedef _GtkListStore
+GtkListStore		ends
 
-_GtkListStoreClass	struct
+GtkListStoreClass	struct
 parent_class		GObjectClass <>
 padding			gpointer 8 dup(?)
-_GtkListStoreClass	ends
-GtkListStoreClass	typedef _GtkListStoreClass
-
+GtkListStoreClass	ends
 
 gtk_list_store_get_type proto
 gtk_list_store_new proto :sdword, :vararg

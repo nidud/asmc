@@ -18,13 +18,12 @@ G_LOADABLE_ICON_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_LOADABLE_ICON, GLoadableIconIface))>
   endm
 
-_GLoadableIconIface     struct
+GLoadableIconIface      struct
 g_iface                 GTypeInterface <>
 load                    proc :ptr, :sdword, :ptr, :ptr, :ptr
 load_async              proc :ptr, :sdword, :ptr, :GAsyncReadyCallback, :gpointer
 load_finish             proc :ptr, :ptr, :ptr, :ptr
-_GLoadableIconIface     ends
-GLoadableIconIface      typedef _GLoadableIconIface
+GLoadableIconIface      ends
 
 g_loadable_icon_get_type proto
 g_loadable_icon_load proto :ptr, :sdword, :ptr, :ptr, :ptr

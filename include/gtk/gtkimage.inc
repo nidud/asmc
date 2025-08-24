@@ -16,9 +16,6 @@ GTK_IS_IMAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_IMAGE))>
   endm
 
-;GtkImage                typedef _GtkImage
-
-
 .enum GtkImageType {
   GTK_IMAGE_EMPTY,
   GTK_IMAGE_ICON_NAME,

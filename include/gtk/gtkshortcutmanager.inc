@@ -10,11 +10,10 @@ include gtk/gtkwidget.inc
 
 define GTK_TYPE_SHORTCUT_MANAGER <gtk_shortcut_manager_get_type ()>
 
-_GtkShortcutManagerInterface struct
+GtkShortcutManagerInterface struct
 g_iface                 GTypeInterface <>
 add_controller          proc :ptr, :ptr
 remove_controller       proc :ptr, :ptr
-_GtkShortcutManagerInterface ends
-GtkShortcutManagerInterface typedef _GtkShortcutManagerInterface
+GtkShortcutManagerInterface ends
 
 endif

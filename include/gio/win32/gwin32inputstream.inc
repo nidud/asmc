@@ -20,23 +20,19 @@ G_WIN32_INPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_WIN32_INPUT_STREAM, GWin32InputStreamClass))>
   endm
 
-;GWin32InputStreamPrivate typedef _GWin32InputStreamPrivate
-
-_GWin32InputStream      struct
+GWin32InputStream       struct
 parent_instance         GInputStream <>
 priv                    ptr GWin32InputStreamPrivate ?
-_GWin32InputStream      ends
-GWin32InputStream       typedef _GWin32InputStream
+GWin32InputStream       ends
 
-_GWin32InputStreamClass struct
+GWin32InputStreamClass  struct
 parent_class            GInputStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GWin32InputStreamClass ends
-GWin32InputStreamClass  typedef _GWin32InputStreamClass
+GWin32InputStreamClass  ends
 
 g_win32_input_stream_get_type proto
 

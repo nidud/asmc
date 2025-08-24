@@ -34,18 +34,16 @@ GTK_ENTRY_GET_CLASS macro obj
   GTK_ENTRY_ICON_SECONDARY
 }
 
-_GtkEntry               struct
+GtkEntry                struct
 parent_instance         GtkWidget <>
-_GtkEntry               ends
-GtkEntry                typedef _GtkEntry
+GtkEntry                ends
 
 
-_GtkEntryClass          struct
+GtkEntryClass           struct
 parent_class            GtkWidgetClass <>
 activate                proc :ptr
 padding                 gpointer 8 dup(?)
-_GtkEntryClass          ends
-GtkEntryClass           typedef _GtkEntryClass
+GtkEntryClass           ends
 
 gtk_entry_get_type proto
 gtk_entry_new proto

@@ -20,14 +20,13 @@ G_PROXY_RESOLVER_GET_IFACE macro o
 
 define G_PROXY_RESOLVER_EXTENSION_POINT_NAME <"gio-proxy-resolver">
 
-_GProxyResolverInterface struct
+GProxyResolverInterface struct
 g_iface                 GTypeInterface <>
 is_supported            proc :ptr
 lookup                  proc :ptr, :ptr, :ptr, :ptr
 lookup_async            proc :ptr, :ptr, :ptr, :GAsyncReadyCallback, :gpointer
 lookup_finish           proc :ptr, :ptr, :ptr
-_GProxyResolverInterface ends
-GProxyResolverInterface typedef _GProxyResolverInterface
+GProxyResolverInterface ends
 
 g_proxy_resolver_get_type proto
 g_proxy_resolver_get_default proto

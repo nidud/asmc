@@ -25,9 +25,6 @@ GTK_GESTURE_DRAG_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_DRAG, GtkGestureDragClass))>
   endm
 
-;GtkGestureDrag          typedef _GtkGestureDrag
-;GtkGestureDragClass     typedef _GtkGestureDragClass
-
 gtk_gesture_drag_get_type proto
 gtk_gesture_drag_new proto
 gtk_gesture_drag_get_start_point proto :ptr, :ptr, :ptr

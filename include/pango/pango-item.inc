@@ -8,7 +8,7 @@ define PANGO_ANALYSIS_FLAG_CENTERED_BASELINE (1 shl 0)
 define PANGO_ANALYSIS_FLAG_IS_ELLIPSIS (1 shl 1)
 define PANGO_ANALYSIS_FLAG_NEED_HYPHEN (1 shl 2)
 
-_PangoAnalysis          struct
+PangoAnalysis           struct
 ifndef __GI_SCANNER__
 shape_engine            ptr PangoEngineShape ?
 lang_engine             ptr PangoEngineLang ?
@@ -23,17 +23,14 @@ flags                   guint8 ?
 script                  guint8 ?
 language                ptr PangoLanguage ?
 extra_attrs             ptr GSList ?
-_PangoAnalysis          ends
-PangoAnalysis           typedef _PangoAnalysis
+PangoAnalysis           ends
 
-
-_PangoItem              struct
+PangoItem               struct
 offs                    sdword ?
 length                  sdword ?
 num_chars               sdword ?
 analysis                PangoAnalysis <>
-_PangoItem              ends
-PangoItem               typedef _PangoItem
+PangoItem               ends
 
 define PANGO_TYPE_ITEM <pango_item_get_type ()>
 

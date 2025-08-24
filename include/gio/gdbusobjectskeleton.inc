@@ -20,20 +20,16 @@ G_IS_DBUS_OBJECT_SKELETON_CLASS macro k
   exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_DBUS_OBJECT_SKELETON))>
   endm
 
-;GDBusObjectSkeletonPrivate typedef _GDBusObjectSkeletonPrivate
-
-_GDBusObjectSkeleton    struct
+GDBusObjectSkeleton     struct
 parent_instance         GObject <>
 priv                    ptr GDBusObjectSkeletonPrivate ?
-_GDBusObjectSkeleton    ends
-GDBusObjectSkeleton     typedef _GDBusObjectSkeleton
+GDBusObjectSkeleton     ends
 
-_GDBusObjectSkeletonClass struct
+GDBusObjectSkeletonClass struct
 parent_class            GObjectClass <>
 authorize_method        proc :ptr, :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GDBusObjectSkeletonClass ends
-GDBusObjectSkeletonClass typedef _GDBusObjectSkeletonClass
+GDBusObjectSkeletonClass ends
 
 g_dbus_object_skeleton_get_type proto
 g_dbus_object_skeleton_new proto :ptr

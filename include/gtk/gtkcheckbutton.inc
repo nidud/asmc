@@ -26,18 +26,16 @@ GTK_CHECK_BUTTON_GET_CLASS macro obj
   endm
 
 
-_GtkCheckButton         struct
+GtkCheckButton          struct
 parent_instance         GtkWidget <>
-_GtkCheckButton         ends
-GtkCheckButton          typedef _GtkCheckButton
+GtkCheckButton          ends
 
-_GtkCheckButtonClass    struct
+GtkCheckButtonClass     struct
 parent_class            GtkWidgetClass <>
 toggled                 proc :ptr
 activate                proc :ptr
 padding                 gpointer 7 dup(?)
-_GtkCheckButtonClass    ends
-GtkCheckButtonClass     typedef _GtkCheckButtonClass
+GtkCheckButtonClass     ends
 
 
 gtk_check_button_get_type proto

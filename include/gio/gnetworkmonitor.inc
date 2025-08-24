@@ -20,14 +20,13 @@ G_NETWORK_MONITOR_GET_INTERFACE macro o
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((o), G_TYPE_NETWORK_MONITOR, GNetworkMonitorInterface))>
   endm
 
-_GNetworkMonitorInterface struct
+GNetworkMonitorInterface struct
 g_iface                 GTypeInterface <>
 network_changed         proc :ptr, :gboolean
 can_reach               proc :ptr, :ptr, :ptr, :ptr
 can_reach_async         proc :ptr, :ptr, :ptr, :GAsyncReadyCallback, :gpointer
 can_reach_finish        proc :ptr, :ptr, :ptr
-_GNetworkMonitorInterface ends
-GNetworkMonitorInterface typedef _GNetworkMonitorInterface
+GNetworkMonitorInterface ends
 
 g_network_monitor_get_type proto
 g_network_monitor_get_default proto

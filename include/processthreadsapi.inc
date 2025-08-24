@@ -8,66 +8,65 @@ include apisetcconv.inc
 include minwindef.inc
 include minwinbase.inc
 
-_PROCESS_INFORMATION    struct
-hProcess                HANDLE ?
-hThread                 HANDLE ?
-dwProcessId             DWORD ?
-dwThreadId              DWORD ?
-_PROCESS_INFORMATION    ends
-PROCESS_INFORMATION     typedef _PROCESS_INFORMATION
-PPROCESS_INFORMATION    typedef ptr _PROCESS_INFORMATION
-LPPROCESS_INFORMATION   typedef ptr _PROCESS_INFORMATION
+PROCESS_INFORMATION	struct
+hProcess		HANDLE ?
+hThread			HANDLE ?
+dwProcessId		DWORD ?
+dwThreadId		DWORD ?
+PROCESS_INFORMATION	ends
+PPROCESS_INFORMATION	typedef ptr PROCESS_INFORMATION
+LPPROCESS_INFORMATION	typedef ptr PROCESS_INFORMATION
 
-_STARTUPINFOA           struct
-cb                      DWORD ?
-lpReserved              LPSTR ?
-lpDesktop               LPSTR ?
-lpTitle                 LPSTR ?
-dwX                     DWORD ?
-dwY                     DWORD ?
-dwXSize                 DWORD ?
-dwYSize                 DWORD ?
-dwXCountChars           DWORD ?
-dwYCountChars           DWORD ?
-dwFillAttribute         DWORD ?
-dwFlags                 DWORD ?
-wShowWindow             WORD ?
-cbReserved2             WORD ?
-lpReserved2             LPBYTE ?
-hStdInput               HANDLE ?
-hStdOutput              HANDLE ?
-hStdError               HANDLE ?
-_STARTUPINFOA           ends
-STARTUPINFOA            typedef _STARTUPINFOA
-LPSTARTUPINFOA          typedef ptr _STARTUPINFOA
-_STARTUPINFOW           struct
-cb                      DWORD ?
-lpReserved              LPWSTR ?
-lpDesktop               LPWSTR ?
-lpTitle                 LPWSTR ?
-dwX                     DWORD ?
-dwY                     DWORD ?
-dwXSize                 DWORD ?
-dwYSize                 DWORD ?
-dwXCountChars           DWORD ?
-dwYCountChars           DWORD ?
-dwFillAttribute         DWORD ?
-dwFlags                 DWORD ?
-wShowWindow             WORD ?
-cbReserved2             WORD ?
-lpReserved2             LPBYTE ?
-hStdInput               HANDLE ?
-hStdOutput              HANDLE ?
-hStdError               HANDLE ?
-_STARTUPINFOW           ends
-STARTUPINFOW            typedef _STARTUPINFOW
-LPSTARTUPINFOW          typedef ptr _STARTUPINFOW
+STARTUPINFOA		struct
+cb			DWORD ?
+lpReserved		LPSTR ?
+lpDesktop		LPSTR ?
+lpTitle			LPSTR ?
+dwX			DWORD ?
+dwY			DWORD ?
+dwXSize			DWORD ?
+dwYSize			DWORD ?
+dwXCountChars		DWORD ?
+dwYCountChars		DWORD ?
+dwFillAttribute		DWORD ?
+dwFlags			DWORD ?
+wShowWindow		WORD ?
+cbReserved2		WORD ?
+lpReserved2		LPBYTE ?
+hStdInput		HANDLE ?
+hStdOutput		HANDLE ?
+hStdError		HANDLE ?
+STARTUPINFOA		ends
+LPSTARTUPINFOA		typedef ptr STARTUPINFOA
+
+STARTUPINFOW		struct
+cb			DWORD ?
+lpReserved		LPWSTR ?
+lpDesktop		LPWSTR ?
+lpTitle			LPWSTR ?
+dwX			DWORD ?
+dwY			DWORD ?
+dwXSize			DWORD ?
+dwYSize			DWORD ?
+dwXCountChars		DWORD ?
+dwYCountChars		DWORD ?
+dwFillAttribute		DWORD ?
+dwFlags			DWORD ?
+wShowWindow		WORD ?
+cbReserved2		WORD ?
+lpReserved2		LPBYTE ?
+hStdInput		HANDLE ?
+hStdOutput		HANDLE ?
+hStdError		HANDLE ?
+STARTUPINFOW		ends
+LPSTARTUPINFOW		typedef ptr STARTUPINFOW
+
 ifdef _UNICODE
-STARTUPINFO             typedef STARTUPINFOW
-LPSTARTUPINFO           typedef LPSTARTUPINFOW
+STARTUPINFO		typedef STARTUPINFOW
+LPSTARTUPINFO		typedef LPSTARTUPINFOW
 else
-STARTUPINFO             typedef STARTUPINFOA
-LPSTARTUPINFO           typedef LPSTARTUPINFOA
+STARTUPINFO		typedef STARTUPINFOA
+LPSTARTUPINFO		typedef LPSTARTUPINFOA
 endif
 
 if (_WIN32_WINNT ge 0x0400) or (_WIN32_WINDOWS gt 0x0400)
@@ -248,11 +247,10 @@ endif
     }
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
-_MEMORY_PRIORITY_INFORMATION struct
-MemoryPriority          ULONG ?
-_MEMORY_PRIORITY_INFORMATION ends
-MEMORY_PRIORITY_INFORMATION typedef _MEMORY_PRIORITY_INFORMATION
-PMEMORY_PRIORITY_INFORMATION typedef ptr _MEMORY_PRIORITY_INFORMATION
+MEMORY_PRIORITY_INFORMATION struct
+MemoryPriority		ULONG ?
+MEMORY_PRIORITY_INFORMATION ends
+PMEMORY_PRIORITY_INFORMATION typedef ptr MEMORY_PRIORITY_INFORMATION
 
 GetThreadInformation proto WINAPI :HANDLE, :THREAD_INFORMATION_CLASS, :LPVOID, :DWORD
 SetThreadInformation proto WINAPI :HANDLE, :THREAD_INFORMATION_CLASS, :LPVOID, :DWORD
@@ -265,12 +263,11 @@ define THREAD_POWER_THROTTLING_CURRENT_VERSION 1
 define THREAD_POWER_THROTTLING_EXECUTION_SPEED 0x1
 define THREAD_POWER_THROTTLING_VALID_FLAGS (THREAD_POWER_THROTTLING_EXECUTION_SPEED)
 
-_THREAD_POWER_THROTTLING_STATE struct
-Version                 ULONG ?
-ControlMask             ULONG ?
-StateMask               ULONG ?
-_THREAD_POWER_THROTTLING_STATE ends
-THREAD_POWER_THROTTLING_STATE typedef _THREAD_POWER_THROTTLING_STATE
+THREAD_POWER_THROTTLING_STATE struct
+Version			ULONG ?
+ControlMask		ULONG ?
+StateMask		ULONG ?
+THREAD_POWER_THROTTLING_STATE ends
 
 endif
 
@@ -297,16 +294,15 @@ SetThreadIdealProcessor proto WINAPI :HANDLE, :DWORD
     ProcessInformationClassMax
     }
 
-_APP_MEMORY_INFORMATION struct
-AvailableCommit         ULONG64 ?
-PrivateCommitUsage      ULONG64 ?
-PeakPrivateCommitUsage  ULONG64 ?
-TotalCommitUsage        ULONG64 ?
-_APP_MEMORY_INFORMATION ends
-APP_MEMORY_INFORMATION  typedef _APP_MEMORY_INFORMATION
-PAPP_MEMORY_INFORMATION typedef ptr _APP_MEMORY_INFORMATION
+APP_MEMORY_INFORMATION	struct
+AvailableCommit		ULONG64 ?
+PrivateCommitUsage	ULONG64 ?
+PeakPrivateCommitUsage	ULONG64 ?
+TotalCommitUsage	ULONG64 ?
+APP_MEMORY_INFORMATION	ends
+PAPP_MEMORY_INFORMATION typedef ptr APP_MEMORY_INFORMATION
 
-define PME_CURRENT_VERSION                      1
+define PME_CURRENT_VERSION			1
 
 .enum PROCESS_MEMORY_EXHAUSTION_TYPE {
     PMETypeFailFastOnCommitFailure,
@@ -316,40 +312,37 @@ define PME_CURRENT_VERSION                      1
 define PME_FAILFAST_ON_COMMIT_FAIL_DISABLE    0x0
 define PME_FAILFAST_ON_COMMIT_FAIL_ENABLE     0x1
 
-_PROCESS_MEMORY_EXHAUSTION_INFO struct
-Version                 USHORT ?
-Reserved                USHORT ?
-Type                    PROCESS_MEMORY_EXHAUSTION_TYPE ?
-Value                   ULONG_PTR ?
-_PROCESS_MEMORY_EXHAUSTION_INFO ends
-PROCESS_MEMORY_EXHAUSTION_INFO typedef _PROCESS_MEMORY_EXHAUSTION_INFO
-PPROCESS_MEMORY_EXHAUSTION_INFO typedef ptr _PROCESS_MEMORY_EXHAUSTION_INFO
+PROCESS_MEMORY_EXHAUSTION_INFO struct
+Version			USHORT ?
+Reserved		USHORT ?
+Type			PROCESS_MEMORY_EXHAUSTION_TYPE ?
+Value			ULONG_PTR ?
+PROCESS_MEMORY_EXHAUSTION_INFO ends
+PPROCESS_MEMORY_EXHAUSTION_INFO typedef ptr PROCESS_MEMORY_EXHAUSTION_INFO
 
 define PROCESS_POWER_THROTTLING_CURRENT_VERSION 1
 define PROCESS_POWER_THROTTLING_EXECUTION_SPEED 0x1
 define PROCESS_POWER_THROTTLING_VALID_FLAGS (PROCESS_POWER_THROTTLING_EXECUTION_SPEED)
 
-_PROCESS_POWER_THROTTLING_STATE struct
-Version                 ULONG ?
-ControlMask             ULONG ?
-StateMask               ULONG ?
-_PROCESS_POWER_THROTTLING_STATE ends
-PROCESS_POWER_THROTTLING_STATE typedef _PROCESS_POWER_THROTTLING_STATE
-PPROCESS_POWER_THROTTLING_STATE typedef ptr _PROCESS_POWER_THROTTLING_STATE
+PROCESS_POWER_THROTTLING_STATE struct
+Version			ULONG ?
+ControlMask		ULONG ?
+StateMask		ULONG ?
+PROCESS_POWER_THROTTLING_STATE ends
+PPROCESS_POWER_THROTTLING_STATE typedef ptr PROCESS_POWER_THROTTLING_STATE
 
 PROCESS_PROTECTION_LEVEL_INFORMATION struct
-ProtectionLevel         DWORD ?
+ProtectionLevel		DWORD ?
 PROCESS_PROTECTION_LEVEL_INFORMATION ends
 
 define PROCESS_LEAP_SECOND_INFO_FLAG_ENABLE_SIXTY_SECOND   0x1
-define PROCESS_LEAP_SECOND_INFO_VALID_FLAGS                (PROCESS_LEAP_SECOND_INFO_FLAG_ENABLE_SIXTY_SECOND)
+define PROCESS_LEAP_SECOND_INFO_VALID_FLAGS		   (PROCESS_LEAP_SECOND_INFO_FLAG_ENABLE_SIXTY_SECOND)
 
-_PROCESS_LEAP_SECOND_INFO struct
-Flags                   ULONG ?
-Reserved                ULONG ?
-_PROCESS_LEAP_SECOND_INFO ends
-PROCESS_LEAP_SECOND_INFO typedef _PROCESS_LEAP_SECOND_INFO
-PPROCESS_LEAP_SECOND_INFO typedef ptr _PROCESS_LEAP_SECOND_INFO
+PROCESS_LEAP_SECOND_INFO struct
+Flags			ULONG ?
+Reserved		ULONG ?
+PROCESS_LEAP_SECOND_INFO ends
+PPROCESS_LEAP_SECOND_INFO typedef ptr PROCESS_LEAP_SECOND_INFO
 
 if (_WIN32_WINNT ge 0x0602)
 SetProcessInformation proto WINAPI :HANDLE, :PROCESS_INFORMATION_CLASS, :LPVOID, :DWORD

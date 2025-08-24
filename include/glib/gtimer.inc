@@ -7,8 +7,6 @@ endif
 
 include glib/gtypes.inc
 
-;GTimer                  typedef _GTimer
-
 define G_USEC_PER_SEC 1000000
 
 g_timer_new proto

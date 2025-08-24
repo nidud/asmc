@@ -26,18 +26,15 @@ GTK_DRAWING_AREA_GET_CLASS macro obj
 
 CALLBACK(GtkDrawingAreaDrawFunc, :ptr, :ptr, :sdword, :sdword, :gpointer)
 
-_GtkDrawingArea         struct
+GtkDrawingArea          struct
 widget                  GtkWidget <>
-_GtkDrawingArea         ends
-GtkDrawingArea          typedef _GtkDrawingArea
+GtkDrawingArea          ends
 
-_GtkDrawingAreaClass    struct
+GtkDrawingAreaClass     struct
 parent_class            GtkWidgetClass <>
 resize                  proc :ptr, :sdword, :sdword
 padding                 gpointer 8 dup(?)
-_GtkDrawingAreaClass    ends
-GtkDrawingAreaClass     typedef _GtkDrawingAreaClass
-
+GtkDrawingAreaClass     ends
 
 gtk_drawing_area_get_type proto
 gtk_drawing_area_new proto

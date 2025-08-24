@@ -19,9 +19,7 @@ GTK_PRINT_OPERATION_PREVIEW_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_PRINT_OPERATION_PREVIEW, GtkPrintOperationPreviewIface))>
   endm
 
-;GtkPrintOperationPreview typedef _GtkPrintOperationPreview
-
-_GtkPrintOperationPreviewIface struct
+GtkPrintOperationPreviewIface struct
 g_iface                 GTypeInterface <>
 ready                   proc :ptr, :ptr
 got_page_size           proc :ptr, :ptr, :ptr
@@ -36,8 +34,7 @@ _gtk_reserved5          proc
 _gtk_reserved6          proc
 _gtk_reserved7          proc
 _gtk_reserved8          proc
-_GtkPrintOperationPreviewIface ends
-GtkPrintOperationPreviewIface typedef _GtkPrintOperationPreviewIface
+GtkPrintOperationPreviewIface ends
 
 gtk_print_operation_preview_get_type proto
 gtk_print_operation_preview_render_page proto :ptr, :sdword

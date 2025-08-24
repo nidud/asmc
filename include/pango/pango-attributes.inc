@@ -67,10 +67,10 @@ include glib-object.inc
 
 
 .enum PangoShowFlags {
-  PANGO_SHOW_NONE        = 0,
-  PANGO_SHOW_SPACES      = 1 shl 0,
+  PANGO_SHOW_NONE	 = 0,
+  PANGO_SHOW_SPACES	 = 1 shl 0,
   PANGO_SHOW_LINE_BREAKS = 1 shl 1,
-  PANGO_SHOW_IGNORABLES  = 1 shl 2
+  PANGO_SHOW_IGNORABLES	 = 1 shl 2
 }
 
 
@@ -101,86 +101,75 @@ define PANGO_ATTR_INDEX_FROM_TEXT_BEGINNING (0)
 define PANGO_ATTR_INDEX_TO_TEXT_END ((G_MAXUINT + 0))
 
 
-_PangoAttribute         struct
-klass                   ptr PangoAttrClass ?
-start_index             guint ?
-end_index               guint ?
-_PangoAttribute         ends
-PangoAttribute          typedef _PangoAttribute
+PangoAttribute		struct
+klass			ptr PangoAttrClass ?
+start_index		guint ?
+end_index		guint ?
+PangoAttribute		ends
 
 CALLBACK(PangoAttrFilterFunc, :ptr, :gpointer)
 CALLBACK(PangoAttrDataCopyFunc, :gconstpointer)
 
-_PangoAttrClass         struct
-type                    PangoAttrType ?
-copy                    proc :ptr
-destroy                 proc :ptr
-equal                   proc :ptr, :ptr
-_PangoAttrClass         ends
-PangoAttrClass          typedef _PangoAttrClass
+PangoAttrClass		struct
+type			PangoAttrType ?
+copy			proc :ptr
+destroy			proc :ptr
+equal			proc :ptr, :ptr
+PangoAttrClass		ends
 
-_PangoAttrString        struct
-attr                    PangoAttribute <>
-value                   ptr sbyte ?
-_PangoAttrString        ends
-PangoAttrString         typedef _PangoAttrString
+PangoAttrString		struct
+attr			PangoAttribute <>
+value			ptr sbyte ?
+PangoAttrString		ends
 
-_PangoAttrLanguage      struct
-attr                    PangoAttribute <>
-value                   ptr PangoLanguage ?
-_PangoAttrLanguage      ends
-PangoAttrLanguage       typedef _PangoAttrLanguage
+PangoAttrLanguage	struct
+attr			PangoAttribute <>
+value			ptr PangoLanguage ?
+PangoAttrLanguage	ends
 
-_PangoAttrInt           struct
-attr                    PangoAttribute <>
-value                   sdword ?
-_PangoAttrInt           ends
-PangoAttrInt            typedef _PangoAttrInt
+PangoAttrInt		struct
+attr			PangoAttribute <>
+value			sdword ?
+PangoAttrInt		ends
 
-_PangoAttrFloat         struct
-attr                    PangoAttribute <>
-value                   real8 ?
-_PangoAttrFloat         ends
-PangoAttrFloat          typedef _PangoAttrFloat
+PangoAttrFloat		struct
+attr			PangoAttribute <>
+value			real8 ?
+PangoAttrFloat		ends
 
-_PangoAttrColor         struct
-attr                    PangoAttribute <>
-color                   PangoColor <>
-_PangoAttrColor         ends
-PangoAttrColor          typedef _PangoAttrColor
+PangoAttrColor		struct
+attr			PangoAttribute <>
+color			PangoColor <>
+PangoAttrColor		ends
 
-_PangoAttrSize          struct
-attr                    PangoAttribute <>
-size                    sdword ?
+PangoAttrSize		struct
+attr			PangoAttribute <>
+size			sdword ?
 RECORD
-absolute                guint :  1 ?
+absolute		guint :	 1 ?
 ENDS
-_PangoAttrSize          ends
-PangoAttrSize           typedef _PangoAttrSize
+PangoAttrSize		ends
 
-_PangoAttrShape         struct
-attr                    PangoAttribute <>
-ink_rect                PangoRectangle <>
-logical_rect            PangoRectangle <>
-data                    gpointer ?
-copy_func               PangoAttrDataCopyFunc ?
-destroy_func            GDestroyNotify ?
-_PangoAttrShape         ends
-PangoAttrShape          typedef _PangoAttrShape
+PangoAttrShape		struct
+attr			PangoAttribute <>
+ink_rect		PangoRectangle <>
+logical_rect		PangoRectangle <>
+data			gpointer ?
+copy_func		PangoAttrDataCopyFunc ?
+destroy_func		GDestroyNotify ?
+PangoAttrShape		ends
 
 
-_PangoAttrFontDesc      struct
-attr                    PangoAttribute <>
-desc                    ptr PangoFontDescription ?
-_PangoAttrFontDesc      ends
-PangoAttrFontDesc       typedef _PangoAttrFontDesc
+PangoAttrFontDesc	struct
+attr			PangoAttribute <>
+desc			ptr PangoFontDescription ?
+PangoAttrFontDesc	ends
 
 
-_PangoAttrFontFeatures  struct
-attr                    PangoAttribute <>
-features                ptr gchar ?
-_PangoAttrFontFeatures  ends
-PangoAttrFontFeatures   typedef _PangoAttrFontFeatures
+PangoAttrFontFeatures	struct
+attr			PangoAttribute <>
+features		ptr gchar ?
+PangoAttrFontFeatures	ends
 
 pango_attribute_get_type proto
 
@@ -242,9 +231,6 @@ pango_attribute_as_color proto :ptr
 pango_attribute_as_font_desc proto :ptr
 pango_attribute_as_shape proto :ptr
 pango_attribute_as_font_features proto :ptr
-
-;PangoAttrList           typedef _PangoAttrList
-;PangoAttrIterator       typedef _PangoAttrIterator
 
 define PANGO_TYPE_ATTR_LIST <pango_attr_list_get_type ()>
 

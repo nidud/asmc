@@ -15,16 +15,13 @@ GTK_ACTIONABLE_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), GTK_TYPE_ACTIONABLE, GtkActionableInterface))>
   endm
 
-;GtkActionable           typedef _GtkActionable
-
-_GtkActionableInterface struct
+GtkActionableInterface  struct
 g_iface                 GTypeInterface <>
 get_action_name         proc :ptr
 set_action_name         proc :ptr, :ptr
 get_action_target_value proc :ptr
 set_action_target_value proc :ptr, :ptr
-_GtkActionableInterface ends
-GtkActionableInterface  typedef _GtkActionableInterface
+GtkActionableInterface  ends
 
 gtk_actionable_get_type proto
 

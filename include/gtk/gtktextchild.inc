@@ -26,20 +26,18 @@ GTK_TEXT_CHILD_ANCHOR_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TEXT_CHILD_ANCHOR, GtkTextChildAnchorClass))>
   endm
 
-_GtkTextChildAnchor     struct
+GtkTextChildAnchor      struct
 parent_instance         GObject <>
 _segment                gpointer ?
-_GtkTextChildAnchor     ends
-GtkTextChildAnchor      typedef _GtkTextChildAnchor
+GtkTextChildAnchor      ends
 
-_GtkTextChildAnchorClass struct
+GtkTextChildAnchorClass struct
 parent_class            GObjectClass <>
 _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkTextChildAnchorClass ends
-GtkTextChildAnchorClass typedef _GtkTextChildAnchorClass
+GtkTextChildAnchorClass ends
 
 gtk_text_child_anchor_get_type proto
 gtk_text_child_anchor_new proto

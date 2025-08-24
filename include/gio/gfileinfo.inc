@@ -25,8 +25,6 @@ G_FILE_INFO_GET_CLASS macro o
   endm
 
 
-;GFileInfoClass          typedef _GFileInfoClass
-
 define G_FILE_ATTRIBUTE_STANDARD_TYPE <"standard::type">
 define G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN <"standard::is-hidden">
 define G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP <"standard::is-backup">

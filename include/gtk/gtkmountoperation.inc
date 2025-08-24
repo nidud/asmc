@@ -22,22 +22,19 @@ GTK_MOUNT_OPERATION_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_MOUNT_OPERATION, GtkMountOperationClass))>
   endm
 
-;GtkMountOperationPrivate typedef _GtkMountOperationPrivate
 if 0
-_GtkMountOperation      struct
+GtkMountOperation       struct
 parent_instance         GMountOperation <>
 priv                    ptr GtkMountOperationPrivate ?
-_GtkMountOperation      ends
-GtkMountOperation       typedef _GtkMountOperation
+GtkMountOperation       ends
 
-_GtkMountOperationClass struct
+GtkMountOperationClass  struct
 parent_class            GMountOperationClass <>
 _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkMountOperationClass ends
-GtkMountOperationClass  typedef _GtkMountOperationClass
+GtkMountOperationClass  ends
 endif
 
 gtk_mount_operation_get_type proto

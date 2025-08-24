@@ -25,8 +25,6 @@ G_SIMPLE_ASYNC_RESULT_GET_CLASS macro o
   endm
 
 
-;GSimpleAsyncResultClass typedef _GSimpleAsyncResultClass
-
 g_simple_async_result_get_type proto
 
 g_simple_async_result_new proto :ptr, :GAsyncReadyCallback, :gpointer, :gpointer

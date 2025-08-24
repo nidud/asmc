@@ -17,6 +17,7 @@ define SPARC    16
 
 .data
  hwnd       HANDLE 0
+ rect       RECT <>
  Bitmap1    PVOID 0
  Bitmap2    PVOID 0
  hFShells   PVOID 0
@@ -33,6 +34,7 @@ define SPARC    16
  CMode      UINT 0
  EMode      UINT 1
  click      UINT 0
+ FullScreen UINT 0
  chemtable  UINT 00e0a0ffh, 00f08030h, 00e6c080h, 0040b070h,  00aad580h
  bminf      BITMAPINFO <<40,0,0,1,24,0,0,0,0,0,0>>
 
@@ -405,6 +407,69 @@ ThrdProc proc uses rsi rdi rbx
 ThrdProc endp
 
 
+GoFullScreen proc
+
+   .new hdc:HDC
+   .new xSpan:int_t
+   .new ySpan:int_t
+   .new xBorder:int_t
+   .new yCaption:int_t
+   .new yBorder:int_t
+   .new xOrigin:int_t
+   .new yOrigin:int_t
+
+    GetClientRect(hwnd, &rect)
+
+    mov FullScreen,TRUE
+
+    SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED)
+    SetWindowLong(hwnd, GWL_STYLE,  WS_CAPTION or WS_SYSMENU)
+
+    mov hdc,GetDC(hwnd)
+    mov xSpan,GetSystemMetrics(SM_CXSCREEN)
+    mov ySpan,GetSystemMetrics(SM_CYSCREEN)
+    ReleaseDC(hwnd, hdc)
+
+    ; Calculate the size of system elements.
+
+    mov xBorder,GetSystemMetrics(SM_CXFRAME)
+    mov yCaption,GetSystemMetrics(SM_CYCAPTION)
+    mov yBorder,GetSystemMetrics(SM_CYFRAME)
+
+    ; Calculate the window origin and span for full-screen mode.
+
+    mov     eax,xBorder
+    neg     eax
+    mov     xOrigin,eax
+    mov     eax,yBorder
+    neg     eax
+    sub     eax,yCaption
+    mov     yOrigin,eax
+    imul    eax,xBorder,2
+    add     xSpan,eax
+    imul    eax,yBorder,2
+    add     eax,yCaption
+    add     ySpan,eax
+
+    SetWindowPos(hwnd, HWND_TOPMOST, xOrigin, yOrigin, xSpan, ySpan, SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
+    ret
+
+GoFullScreen endp
+
+
+; Makes the host window resizable and focusable.
+
+GoPartialScreen proc
+
+    mov FullScreen,FALSE
+    SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED)
+    SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW)
+    SetWindowPos(hwnd, HWND_TOPMOST, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
+    ret
+
+GoPartialScreen endp
+
+
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch edx
@@ -419,15 +484,6 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
        .endc
     .case WM_SIZE
         .endc .if r8d == SIZE_MINIMIZED
-        mov     eax,r9d
-        movzx   edx,ax
-        shr     eax,16
-        and     edx,-4
-        mov     maxx,edx
-        mov     maxy,eax
-        mov     bminf.bmiHeader.biWidth,edx
-        neg     eax
-        mov     bminf.bmiHeader.biHeight,eax
         .if ( ProcessH )
             lock inc EventStop
             .while 1
@@ -438,19 +494,27 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .else
             mov ProcessH,GetProcessHeap()
         .endif
-        mov eax,maxy
-        mul maxx
-        lea ebx,[rax*4]
-        lea ecx,[rbx*2][(5 * ((400 shl 4) + SPARC))]
-        mov pHeap,HeapAlloc(ProcessH, HEAP_ZERO_MEMORY, rcx)
-        lea rcx,[rax+rbx*2]
-        mov hFShells,rcx
-        imul ecx,maxx,4
-        lea rdx,[rax+rbx]
-        add rax,rcx
-        add rdx,rcx
-        mov Bitmap1,rax
-        mov Bitmap2,rdx
+        movzx   edx,word ptr lParam
+        movzx   eax,word ptr lParam[2]
+        and     edx,-4
+        mov     maxx,edx
+        mov     maxy,eax
+        mov     bminf.bmiHeader.biWidth,edx
+        neg     eax
+        mov     bminf.bmiHeader.biHeight,eax
+        mov     eax,maxy
+        mul     maxx
+        lea     ebx,[rax*4]
+        lea     ecx,[rbx*2][(5 * ((400 shl 4) + SPARC))]
+        mov     pHeap,HeapAlloc(ProcessH, HEAP_ZERO_MEMORY, rcx)
+        lea     rcx,[rax+rbx*2]
+        mov     hFShells,rcx
+        imul    ecx,maxx,4
+        lea     rdx,[rax+rbx]
+        add     rax,rcx
+        add     rdx,rcx
+        mov     Bitmap1,rax
+        mov     Bitmap2,rdx
         CloseHandle(CreateThread(NULL, NULL, &ThrdProc, NULL, NORMAL_PRIORITY_CLASS, NULL))
        .endc
     .case WM_KEYDOWN
@@ -477,6 +541,13 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .case VK_RIGHT
             xor CMode,1
            .endc
+        .case VK_F11
+            .if ( FullScreen )
+                GoPartialScreen()
+            .else
+                GoFullScreen()
+            .endif
+            .endc
         .endsw
         .endc
     .case WM_RBUTTONDOWN
@@ -485,7 +556,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
             "'Light and Smoke' effects respectively.\n"
             "And clicks explode..! close clicks produce more light\n"
             "UP/DOWN & RIGHT for motion speed and color shift.\n"
-            "Use ESC to exit.",
+            "Use F11 to toggle full screen and ESC to exit.",
             "Fireworks", MB_OK)
         .endc
     .case WM_LBUTTONDOWN
@@ -534,33 +605,31 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
     mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
 
 
-    .return .ifd !RegisterClassEx(&wc)
-    .return .if !CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, "WndClass", "Fireworks",
-                    WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                    CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, 0)
+    .ifd RegisterClassEx( &wc )
 
-    mov hwnd,rax
-    GetClientRect(hwnd, &rc)
-    mov eax,rc.right
-    sub eax,rc.left
-    mov edx,rc.bottom
-    sub edx,rc.top
-    and edx,-4
-    mov maxx,edx
-    mov maxy,eax
-    mov bminf.bmiHeader.biWidth,edx
-    neg eax
-    mov bminf.bmiHeader.biHeight,eax
+        mov hwnd,CreateWindowEx(
+                WS_EX_OVERLAPPEDWINDOW,
+                "WndClass",
+                "Fireworks",
+                WS_OVERLAPPEDWINDOW,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                NULL, NULL, hInstance, 0 )
 
-    ShowWindow(hwnd, SW_SHOWNORMAL)
-    UpdateWindow(hwnd)
+        .if ( rax )
 
-    .while GetMessage(&msg,0,0,0)
+            ShowWindow( rax, SW_SHOWNORMAL )
 
-        TranslateMessage(&msg)
-        DispatchMessage(&msg)
-    .endw
-    mov rax,msg.wParam
+            .while GetMessage( &msg, 0, 0, 0 )
+
+                TranslateMessage( &msg )
+                DispatchMessage( &msg )
+            .endw
+            mov rax,msg.wParam
+        .endif
+    .endif
     ret
 
 _tWinMain endp

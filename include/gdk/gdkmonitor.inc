@@ -17,9 +17,6 @@ GDK_IS_MONITOR macro object
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_MONITOR))>
   endm
 
-;GdkMonitor              typedef _GdkMonitor
-;GdkMonitorClass         typedef _GdkMonitorClass
-
 
 .enum GdkSubpixelLayout {
   GDK_SUBPIXEL_LAYOUT_UNKNOWN,

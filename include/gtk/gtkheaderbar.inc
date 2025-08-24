@@ -15,8 +15,6 @@ GTK_IS_HEADER_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_HEADER_BAR))>
   endm
 
-;GtkHeaderBar            typedef _GtkHeaderBar
-
 gtk_header_bar_get_type proto
 gtk_header_bar_new proto
 

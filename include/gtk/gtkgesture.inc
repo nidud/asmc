@@ -25,8 +25,6 @@ GTK_GESTURE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE, GtkGestureClass))>
   endm
 
-;GtkGestureClass         typedef _GtkGestureClass
-
 gtk_gesture_get_type proto
 gtk_gesture_get_device proto :ptr
 gtk_gesture_set_state proto :ptr, :GtkEventSequenceState

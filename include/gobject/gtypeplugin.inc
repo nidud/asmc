@@ -30,14 +30,13 @@ CALLBACK(GTypePluginUnuse, :ptr)
 CALLBACK(GTypePluginCompleteTypeInfo, :ptr, :GType, :ptr, :ptr)
 CALLBACK(GTypePluginCompleteInterfaceInfo, :ptr, :GType, :GType, :ptr)
 
-_GTypePluginClass	struct
+GTypePluginClass	struct
 base_iface		GTypeInterface <>
 use_plugin		GTypePluginUse ?
 unuse_plugin		GTypePluginUnuse ?
 complete_type_info	GTypePluginCompleteTypeInfo ?
 complete_interface_info GTypePluginCompleteInterfaceInfo ?
-_GTypePluginClass	ends
-GTypePluginClass	typedef _GTypePluginClass
+GTypePluginClass	ends
 
 
 g_type_plugin_get_type proto

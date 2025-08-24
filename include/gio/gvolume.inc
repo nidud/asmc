@@ -26,7 +26,7 @@ G_VOLUME_GET_IFACE macro obj
   endm
 
 
-_GVolumeIface           struct
+GVolumeIface            struct
 g_iface                 GTypeInterface <>
 changed                 proc :ptr
 removed                 proc :ptr
@@ -49,8 +49,7 @@ eject_with_operation    proc :ptr, :GMountUnmountFlags, :ptr, :ptr, :GAsyncReady
 eject_with_operation_finish proc :ptr, :ptr, :ptr
 get_sort_key            proc :ptr
 get_symbolic_icon       proc :ptr
-_GVolumeIface           ends
-GVolumeIface            typedef _GVolumeIface
+GVolumeIface            ends
 
 
 g_volume_get_type proto

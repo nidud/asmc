@@ -3,10 +3,9 @@ define __GRAPHENE_MATRIX_H__
 
 include graphene/graphene-types.inc
 
-_graphene_matrix_t      STRUC
+graphene_matrix_t       STRUC
 value                   real4 4 dup(?)
-_graphene_matrix_t      ENDS
-graphene_matrix_t       typedef _graphene_matrix_t
+graphene_matrix_t       ENDS
 
 graphene_matrix_alloc proto
 graphene_matrix_free proto :ptr

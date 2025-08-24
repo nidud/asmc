@@ -15,8 +15,6 @@ GTK_IS_CELL_AREA_BOX macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CELL_AREA_BOX))>
   endm
 
-;GtkCellAreaBox          typedef _GtkCellAreaBox
-
 gtk_cell_area_box_get_type proto
 gtk_cell_area_box_new proto
 gtk_cell_area_box_pack_start proto :ptr, :ptr, :gboolean, :gboolean, :gboolean

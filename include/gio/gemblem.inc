@@ -24,10 +24,6 @@ G_EMBLEM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_EMBLEM, GEmblemClass))>
   endm
 
-
-;GEmblem                 typedef _GEmblem
-;GEmblemClass            typedef _GEmblemClass
-
 g_emblem_get_type proto
 
 g_emblem_new proto :ptr

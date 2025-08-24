@@ -18,8 +18,6 @@ GTK_IS_TREE_VIEW_COLUMN macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TREE_VIEW_COLUMN))>
   endm
 
-;GtkTreeViewColumn	 typedef _GtkTreeViewColumn
-
 .enum GtkTreeViewColumnSizing {
   GTK_TREE_VIEW_COLUMN_GROW_ONLY,
   GTK_TREE_VIEW_COLUMN_AUTOSIZE,

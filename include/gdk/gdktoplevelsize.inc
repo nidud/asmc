@@ -8,8 +8,6 @@ endif
 include gdk/gdktypes.inc
 include gdk/gdkversionmacros.inc
 
-;GdkToplevelSize         typedef _GdkToplevelSize
-
 define GDK_TYPE_TOPLEVEL_SIZE <gdk_toplevel_size_get_type ()>
 
 gdk_toplevel_size_get_type proto

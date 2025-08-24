@@ -22,17 +22,15 @@ GTK_TEXT_MARK_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TEXT_MARK, GtkTextMarkClass))>
   endm
 
-_GtkTextMark            struct
+GtkTextMark             struct
 parent_instance         GObject <>
 segm                    gpointer ?
-_GtkTextMark            ends
-GtkTextMark             typedef _GtkTextMark
+GtkTextMark             ends
 
-_GtkTextMarkClass       struct
+GtkTextMarkClass        struct
 parent_class            GObjectClass <>
 padding                 gpointer 8 dup(?)
-_GtkTextMarkClass       ends
-GtkTextMarkClass        typedef _GtkTextMarkClass
+GtkTextMarkClass        ends
 
 gtk_text_mark_get_type proto
 gtk_text_mark_new proto :ptr, :gboolean

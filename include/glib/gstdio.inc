@@ -28,128 +28,28 @@ define g_fsync   <fsync>
 define g_utime   <utime>
 endif
 
-;int
-g_access proto __cdecl \
-              filename: ptr gchar,
-                  mode: SINT
-
-
-;int
-g_chdir proto __cdecl \
-                  path: ptr gchar
-
-
-;int
-g_unlink proto __cdecl \
-              filename: ptr gchar
-
-
-;int
-g_rmdir proto __cdecl \
-              filename: ptr gchar
-
-
+g_access proto __cdecl :ptr, :SINT
+g_chdir proto __cdecl :ptr
+g_unlink proto __cdecl :ptr
+g_rmdir proto __cdecl :ptr
 else
-
-
-;int
-g_access proto __cdecl \
-              filename: ptr gchar,
-                  mode: SINT
-
-
-;int
-g_chmod proto __cdecl \
-              filename: ptr gchar,
-                  mode: SINT
-
-
-;int
-g_open proto __cdecl \
-              filename: ptr gchar,
-                 flags: SINT,
-                  mode: SINT
-
-
-;int
-g_creat proto __cdecl \
-              filename: ptr gchar,
-                  mode: SINT
-
-
-;int
-g_rename proto __cdecl \
-           oldfilename: ptr gchar,
-           newfilename: ptr gchar
-
-
-;int
-g_mkdir proto __cdecl \
-              filename: ptr gchar,
-                  mode: SINT
-
-
-;int
-g_chdir proto __cdecl \
-                  path: ptr gchar
-
-
-;int
-g_stat proto __cdecl \
-              filename: ptr gchar,
-                   buf: ptr GStatBuf
-
-
-;int
-g_lstat proto __cdecl \
-              filename: ptr gchar,
-                   buf: ptr GStatBuf
-
-
-;int
-g_unlink proto __cdecl \
-              filename: ptr gchar
-
-
-;int
-g_remove proto __cdecl \
-              filename: ptr gchar
-
-
-;int
-g_rmdir proto __cdecl \
-              filename: ptr gchar
-
-
-;FILE
-g_fopen proto __cdecl \
-              filename: ptr gchar,
-                  mode: ptr gchar
-
-
-;FILE
-g_freopen proto __cdecl \
-              filename: ptr gchar,
-                  mode: ptr gchar,
-                stream: ptr FILE
-
-
-;gint
-g_fsync proto __cdecl \
-                    fd: gint
-
-;int
-g_utime proto __cdecl \
-              filename: ptr gchar,
-                   utb: ptr utimbuf
-
-
+g_access proto __cdecl :ptr, :SINT
+g_chmod proto __cdecl :ptr, :SINT
+g_open proto __cdecl :ptr, :SINT, :SINT
+g_creat proto __cdecl :ptr, :SINT
+g_rename proto __cdecl :ptr, :ptr
+g_mkdir proto __cdecl :ptr, :SINT
+g_chdir proto __cdecl :ptr
+g_stat proto __cdecl :ptr, :ptr
+g_lstat proto __cdecl :ptr, :ptr
+g_unlink proto __cdecl :ptr
+g_remove proto __cdecl :ptr
+g_rmdir proto __cdecl :ptr
+g_fopen proto __cdecl :ptr, :ptr
+g_freopen proto __cdecl :ptr, :ptr, :ptr
+g_fsync proto __cdecl :gint
+g_utime proto __cdecl :ptr, :ptr
 endif
-
-;gboolean
-g_close proto __cdecl \
-                    fd: gint,
-                 error: ptr GError
-
+g_close proto __cdecl :gint, :ptr
 
 endif

@@ -17,8 +17,6 @@ GDK_IS_DEVICE_TOOL macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GDK_TYPE_DEVICE_TOOL))>
   endm
 
-;GdkDeviceTool           typedef _GdkDeviceTool
-
 .enum GdkDeviceToolType {
   GDK_DEVICE_TOOL_TYPE_UNKNOWN,
   GDK_DEVICE_TOOL_TYPE_PEN,

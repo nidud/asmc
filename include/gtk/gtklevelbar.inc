@@ -20,8 +20,6 @@ define GTK_LEVEL_BAR_OFFSET_LOW  <"low">
 define GTK_LEVEL_BAR_OFFSET_HIGH <"high">
 define GTK_LEVEL_BAR_OFFSET_FULL <"full">
 
-;GtkLevelBar             typedef _GtkLevelBar
-
 gtk_level_bar_get_type proto
 gtk_level_bar_new proto
 gtk_level_bar_new_for_interval proto :real8, :real8

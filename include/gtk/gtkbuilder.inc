@@ -27,9 +27,6 @@ GTK_BUILDER_GET_CLASS macro obj
 
 define GTK_BUILDER_ERROR <gtk_builder_error_quark ()>
 
-;GtkBuilderClass	 typedef _GtkBuilderClass
-
-
 .enum GtkBuilderError {
   GTK_BUILDER_ERROR_INVALID_TYPE_FUNCTION,
   GTK_BUILDER_ERROR_UNHANDLED_TAG,

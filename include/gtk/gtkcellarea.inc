@@ -26,8 +26,6 @@ GTK_CELL_AREA_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CELL_AREA, GtkCellAreaClass))>
   endm
 
-;GtkCellAreaContext      typedef _GtkCellAreaContext
-
 GTK_CELL_AREA_WARN_INVALID_CELL_PROPERTY_ID macro object, property_id, pspec
   exitm<G_OBJECT_WARN_INVALID_PSPEC ((object), "cell property id", (property_id), (pspec))>
   endm
@@ -36,12 +34,11 @@ GTK_CELL_AREA_WARN_INVALID_CELL_PROPERTY_ID macro object, property_id, pspec
 CALLBACK(GtkCellCallback, :ptr, :gpointer)
 CALLBACK(GtkCellAllocCallback, :ptr, :ptr, :ptr, :gpointer)
 
-_GtkCellArea            struct
+GtkCellArea             struct
 parent_instance         GInitiallyUnowned <>
-_GtkCellArea            ends
-GtkCellArea             typedef _GtkCellArea
+GtkCellArea             ends
 
-_GtkCellAreaClass       struct
+GtkCellAreaClass        struct
 parent_class            GInitiallyUnownedClass <>
 _add                    proc :ptr, :ptr
 remove                  proc :ptr, :ptr
@@ -63,8 +60,7 @@ focus                   proc :ptr, :GtkDirectionType
 is_activatable          proc :ptr
 activate                proc :ptr, :ptr, :ptr, :ptr, :GtkCellRendererState, :gboolean
 padding                 gpointer 8 dup(?)
-_GtkCellAreaClass       ends
-GtkCellAreaClass        typedef _GtkCellAreaClass
+GtkCellAreaClass        ends
 
 gtk_cell_area_get_type proto
 

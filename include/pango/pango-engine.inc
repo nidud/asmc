@@ -29,15 +29,13 @@ PANGO_ENGINE_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), PANGO_TYPE_ENGINE, PangoEngineClass))>
   endm
 
-_PangoEngine            struct
-parent_instance         GObject <>
-_PangoEngine            ends
-PangoEngine             typedef _PangoEngine
+PangoEngine		struct
+parent_instance		GObject <>
+PangoEngine		ends
 
-_PangoEngineClass       struct
-parent_class            GObjectClass <>
-_PangoEngineClass       ends
-PangoEngineClass        typedef _PangoEngineClass
+PangoEngineClass	struct
+parent_class		GObjectClass <>
+PangoEngineClass	ends
 
 pango_engine_get_type proto
 
@@ -60,15 +58,14 @@ PANGO_ENGINE_LANG_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), PANGO_TYPE_ENGINE_LANG, PangoEngineLangClass))>
   endm
 
-_PangoEngineLang        struct
-parent_instance         PangoEngine <>
-_PangoEngineLang        ends
+PangoEngineLang		struct
+parent_instance		PangoEngine <>
+PangoEngineLang		ends
 
-_PangoEngineLangClass   struct
-parent_class            PangoEngineClass <>
-script_break            proc :ptr, :ptr, :sdword, :ptr, :ptr, :sdword
-_PangoEngineLangClass   ends
-PangoEngineLangClass    typedef _PangoEngineLangClass
+PangoEngineLangClass	struct
+parent_class		PangoEngineClass <>
+script_break		proc :ptr, :ptr, :sdword, :ptr, :ptr, :sdword
+PangoEngineLangClass	ends
 
 pango_engine_lang_get_type proto
 
@@ -92,53 +89,35 @@ PANGO_ENGINE_SHAPE_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), PANGO_TYPE_ENGINE_SHAPE, PangoEngineShapeClass))>
   endm
 
-_PangoEngineShape       struct
-parent_instance         PangoEngine <>
-_PangoEngineShape       ends
+PangoEngineShape	struct
+parent_instance		PangoEngine <>
+PangoEngineShape	ends
 
-_PangoEngineShapeClass  struct
-parent_class            PangoEngineClass <>
-script_shape            proc :ptr, :ptr, :ptr, :dword, :ptr, :ptr, :ptr, :dword
-covers                  proc :ptr, :ptr, :ptr, :gunichar
-_PangoEngineShapeClass  ends
-PangoEngineShapeClass   typedef _PangoEngineShapeClass
+PangoEngineShapeClass	struct
+parent_class		PangoEngineClass <>
+script_shape		proc :ptr, :ptr, :ptr, :dword, :ptr, :ptr, :ptr, :dword
+covers			proc :ptr, :ptr, :ptr, :gunichar
+PangoEngineShapeClass	ends
 
 pango_engine_shape_get_type proto
 
-_PangoEngineScriptInfo  struct
-script                  PangoScript ?
-langs                   ptr gchar ?
-_PangoEngineScriptInfo  ends
-PangoEngineScriptInfo   typedef _PangoEngineScriptInfo
+PangoEngineScriptInfo	struct
+script			PangoScript ?
+langs			ptr gchar ?
+PangoEngineScriptInfo	ends
 
-_PangoEngineInfo        struct
-id                      ptr gchar ?
-engine_type             ptr gchar ?
-render_type             ptr gchar ?
-scripts                 ptr PangoEngineScriptInfo ?
-n_scripts               gint ?
-_PangoEngineInfo        ends
-PangoEngineInfo         typedef _PangoEngineInfo
-
+PangoEngineInfo		struct
+id			ptr gchar ?
+engine_type		ptr gchar ?
+render_type		ptr gchar ?
+scripts			ptr PangoEngineScriptInfo ?
+n_scripts		gint ?
+PangoEngineInfo		ends
 
 script_engine_list proto :ptr, :ptr
 script_engine_init proto :ptr
 script_engine_exit proto
 script_engine_create proto :ptr
-
-PANGO_ENGINE_DEFINE_TYPE macro name, prefix, class_init, instance_init, parent_type
-  exitm<.err>
-  endm
-
-
-PANGO_ENGINE_LANG_DEFINE_TYPE macro name, prefix, class_init, instance_init
-  exitm<.err>
-  endm
-
-
-PANGO_ENGINE_SHAPE_DEFINE_TYPE macro name, prefix, class_init, instance_init
-  exitm<.err>
-  endm
 
 ifdef PANGO_MODULE_PREFIX
 PANGO_MODULE_ENTRY macro func

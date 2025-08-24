@@ -24,9 +24,6 @@ GTK_GESTURE_STYLUS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_STYLUS, GtkGestureStylusClass))>
   endm
 
-;GtkGestureStylus        typedef _GtkGestureStylus
-;GtkGestureStylusClass   typedef _GtkGestureStylusClass
-
 gtk_gesture_stylus_get_type proto
 gtk_gesture_stylus_new proto
 gtk_gesture_stylus_get_axis proto :ptr, :GdkAxisUse, :ptr

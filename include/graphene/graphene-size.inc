@@ -13,11 +13,10 @@ GRAPHENE_SIZE_INIT macro _w,_h
 
 define GRAPHENE_SIZE_INIT_ZERO  <GRAPHENE_SIZE_INIT (0.0, 0.0)>
 
-_graphene_size_t        STRUC
+graphene_size_t         STRUC
 width                   real4 ?
 height                  real4 ?
-_graphene_size_t        ENDS
-graphene_size_t         typedef _graphene_size_t
+graphene_size_t         ENDS
 
 graphene_size_alloc proto
 graphene_size_free proto :ptr

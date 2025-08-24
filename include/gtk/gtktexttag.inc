@@ -8,9 +8,6 @@ endif
 include gdk/gdk.inc
 include gtk/gtkenums.inc
 
-;GtkTextIter             typedef _GtkTextIter
-;GtkTextTagTable         typedef _GtkTextTagTable
-
 define GTK_TYPE_TEXT_TAG <gtk_text_tag_get_type ()>
 GTK_TEXT_TAG macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TEXT_TAG, GtkTextTag))>
@@ -28,19 +25,15 @@ GTK_TEXT_TAG_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TEXT_TAG, GtkTextTagClass))>
   endm
 
-;GtkTextTagPrivate       typedef _GtkTextTagPrivate
-
-_GtkTextTag             struct
+GtkTextTag              struct
 parent_instance         GObject <>
 priv                    ptr GtkTextTagPrivate ?
-_GtkTextTag             ends
-GtkTextTag              typedef _GtkTextTag
+GtkTextTag              ends
 
-_GtkTextTagClass        struct
+GtkTextTagClass         struct
 parent_class            GObjectClass <>
 padding                 gpointer 8 dup(?)
-_GtkTextTagClass        ends
-GtkTextTagClass         typedef _GtkTextTagClass
+GtkTextTagClass         ends
 
 gtk_text_tag_get_type proto
 gtk_text_tag_new proto :ptr

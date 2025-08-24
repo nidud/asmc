@@ -15,8 +15,6 @@ GTK_IS_LIST_BOX macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_LIST_BOX))>
   endm
 
-;GtkListBox              typedef _GtkListBox
-
 define GTK_TYPE_LIST_BOX_ROW <gtk_list_box_row_get_type ()>
 GTK_LIST_BOX_ROW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_LIST_BOX_ROW, GtkListBoxRow))>
@@ -34,17 +32,15 @@ GTK_LIST_BOX_ROW_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_LIST_BOX_ROW, GtkListBoxRowClass))>
   endm
 
-_GtkListBoxRow          struct
+GtkListBoxRow           struct
 parent_instance         GtkWidget <>
-_GtkListBoxRow          ends
-GtkListBoxRow           typedef _GtkListBoxRow
+GtkListBoxRow           ends
 
-_GtkListBoxRowClass     struct
+GtkListBoxRowClass      struct
 parent_class            GtkWidgetClass <>
 activate                proc :ptr
 padding                 gpointer 8 dup(?)
-_GtkListBoxRowClass     ends
-GtkListBoxRowClass      typedef _GtkListBoxRowClass
+GtkListBoxRowClass      ends
 
 CALLBACK(GtkListBoxFilterFunc, :ptr, :gpointer)
 CALLBACK(GtkListBoxSortFunc, :ptr, :ptr, :gpointer)

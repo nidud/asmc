@@ -16,9 +16,6 @@ GDK_IS_DEVICE_PAD macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GDK_TYPE_DEVICE_PAD))>
   endm
 
-;GdkDevicePad            typedef _GdkDevicePad
-;GdkDevicePadInterface   typedef _GdkDevicePadInterface
-
 .enum GdkDevicePadFeature {
   GDK_DEVICE_PAD_FEATURE_BUTTON,
   GDK_DEVICE_PAD_FEATURE_RING,

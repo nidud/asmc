@@ -21,9 +21,6 @@ GSK_GL_RENDERER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GSK_TYPE_GL_RENDERER, GskGLRendererClass))>
   endm
 
-GskGLRenderer           typedef _GskGLRenderer
-GskGLRendererClass      typedef _GskGLRendererClass
-
 gsk_gl_renderer_get_type proto
 gsk_gl_renderer_new proto
 

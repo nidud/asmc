@@ -26,20 +26,17 @@ GTK_COMBO_BOX_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), GTK_TYPE_COMBO_BOX, GtkComboBoxClass))>
   endm
 
-_GtkComboBox            struct
+GtkComboBox             struct
 parent_instance         GtkWidget <>
-_GtkComboBox            ends
-GtkComboBox             typedef _GtkComboBox
+GtkComboBox             ends
 
-
-_GtkComboBoxClass       struct
+GtkComboBoxClass        struct
 parent_class            GtkWidgetClass <>
 changed                 proc :ptr
 format_entry_text       proc :ptr, :ptr
 activate                proc :ptr
 padding                 gpointer 7 dup(?)
-_GtkComboBoxClass       ends
-GtkComboBoxClass        typedef _GtkComboBoxClass
+GtkComboBoxClass        ends
 
 gtk_combo_box_get_type proto
 gtk_combo_box_new proto

@@ -8,13 +8,12 @@ endif
 include gdk/gdktypes.inc
 include gdk/gdkversionmacros.inc
 
-_GdkRGBA                struct
+GdkRGBA                 struct
 red                     real4 ?
 green                   real4 ?
 blue                    real4 ?
 alpha                   real4 ?
-_GdkRGBA                ends
-GdkRGBA                 typedef _GdkRGBA
+GdkRGBA                 ends
 
 define GDK_TYPE_RGBA <gdk_rgba_get_type ()>
 

@@ -15,8 +15,6 @@ GTK_IS_PROGRESS_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_PROGRESS_BAR))>
   endm
 
-;GtkProgressBar          typedef _GtkProgressBar
-
 gtk_progress_bar_get_type proto
 gtk_progress_bar_new proto
 

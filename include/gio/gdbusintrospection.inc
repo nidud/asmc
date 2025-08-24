@@ -7,66 +7,59 @@ endif
 
 include gio/giotypes.inc
 
-_GDBusAnnotationInfo    struct
+GDBusAnnotationInfo     struct
 ref_count               gint ?
 key                     ptr gchar ?
 value                   ptr gchar ?
 annotations             ptr GDBusAnnotationInfo ?
-_GDBusAnnotationInfo    ends
-GDBusAnnotationInfo     typedef _GDBusAnnotationInfo
+GDBusAnnotationInfo     ends
 
-_GDBusArgInfo           struct
+GDBusArgInfo            struct
 ref_count               gint ?
 name                    ptr gchar ?
 signature               ptr gchar ?
 annotations             ptr GDBusAnnotationInfo ?
-_GDBusArgInfo           ends
-GDBusArgInfo            typedef _GDBusArgInfo
+GDBusArgInfo            ends
 
-_GDBusMethodInfo        struct
+GDBusMethodInfo         struct
 ref_count               gint ?
 name                    ptr gchar ?
 in_args                 ptr GDBusArgInfo ?
 out_args                ptr GDBusArgInfo ?
 annotations             ptr GDBusAnnotationInfo ?
-_GDBusMethodInfo        ends
-GDBusMethodInfo         typedef _GDBusMethodInfo
+GDBusMethodInfo         ends
 
-_GDBusSignalInfo        struct
+GDBusSignalInfo         struct
 ref_count               gint ?
 name                    ptr gchar ?
 args                    ptr GDBusArgInfo ?
 annotations             ptr GDBusAnnotationInfo ?
-_GDBusSignalInfo        ends
-GDBusSignalInfo         typedef _GDBusSignalInfo
+GDBusSignalInfo         ends
 
-_GDBusPropertyInfo      struct
+GDBusPropertyInfo       struct
 ref_count               gint ?
 name                    ptr gchar ?
 signature               ptr gchar ?
 flags                   GDBusPropertyInfoFlags ?
 annotations             ptr GDBusAnnotationInfo ?
-_GDBusPropertyInfo      ends
-GDBusPropertyInfo       typedef _GDBusPropertyInfo
+GDBusPropertyInfo       ends
 
-_GDBusInterfaceInfo     struct
+GDBusInterfaceInfo      struct
 ref_count               gint ?
 name                    ptr gchar ?
 methods                 ptr GDBusMethodInfo ?
 signals                 ptr GDBusSignalInfo ?
 properties              ptr GDBusPropertyInfo ?
 annotations             ptr GDBusAnnotationInfo ?
-_GDBusInterfaceInfo     ends
-GDBusInterfaceInfo      typedef _GDBusInterfaceInfo
+GDBusInterfaceInfo      ends
 
-_GDBusNodeInfo          struct
+GDBusNodeInfo           struct
 ref_count               gint ?
 path                    ptr gchar ?
 interfaces              ptr GDBusInterfaceInfo ?
 nodes                   ptr GDBusNodeInfo ?
 annotations             ptr GDBusAnnotationInfo ?
-_GDBusNodeInfo          ends
-GDBusNodeInfo           typedef _GDBusNodeInfo
+GDBusNodeInfo           ends
 
 g_dbus_annotation_info_lookup proto :ptr, :ptr
 g_dbus_interface_info_lookup_method proto :ptr, :ptr

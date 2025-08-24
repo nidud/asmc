@@ -18,7 +18,7 @@ G_ACTION_GET_IFACE macro inst
   exitm<G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_ACTION, GActionInterface)>
   endm
 
-_GActionInterface       struct
+GActionInterface        struct
 g_iface                 GTypeInterface <>
 get_name                proc :ptr
 get_parameter_type      proc :ptr
@@ -28,8 +28,7 @@ get_enabled             proc :ptr
 get_state               proc :ptr
 change_state            proc :ptr, :ptr
 activate                proc :ptr, :ptr
-_GActionInterface       ends
-GActionInterface        typedef _GActionInterface
+GActionInterface        ends
 
 g_action_get_type proto
 

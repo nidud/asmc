@@ -28,9 +28,7 @@ G_SETTINGS_BACKEND_GET_CLASS macro inst
 
 define G_SETTINGS_BACKEND_EXTENSION_POINT_NAME <"gsettings-backend">
 
-;GSettingsBackendPrivate typedef _GSettingsBackendPrivate
-
-_GSettingsBackendClass  struct
+GSettingsBackendClass   struct
 parent_class            GObjectClass <>
 read                    proc :ptr, :ptr, :ptr, :gboolean
 get_writable            proc :ptr, :ptr
@@ -43,14 +41,12 @@ sync                    proc :ptr
 get_permission          proc :ptr, :ptr
 read_user_value         proc :ptr, :ptr, :ptr
 padding                 gpointer 23 dup(?)
-_GSettingsBackendClass  ends
-GSettingsBackendClass   typedef _GSettingsBackendClass
+GSettingsBackendClass   ends
 
-_GSettingsBackend       struct
+GSettingsBackend        struct
 parent_instance         GObject <>
 priv                    ptr GSettingsBackendPrivate ?
-_GSettingsBackend       ends
-GSettingsBackend        typedef _GSettingsBackend
+GSettingsBackend        ends
 
 g_settings_backend_get_type proto
 

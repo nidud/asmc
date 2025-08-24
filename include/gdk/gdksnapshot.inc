@@ -8,8 +8,6 @@ endif
 include gdk/gdktypes.inc
 include gdk/gdkversionmacros.inc
 
-;GdkSnapshotClass        typedef _GdkSnapshotClass
-
 define GDK_TYPE_SNAPSHOT <gdk_snapshot_get_type ()>
 
 GDK_SNAPSHOT macro obj

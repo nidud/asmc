@@ -24,19 +24,17 @@ GTK_GL_AREA_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_GL_AREA, GtkGLAreaClass))>
   endm
 
-_GtkGLArea              struct
+GtkGLArea               struct
 parent_instance         GtkWidget <>
-_GtkGLArea              ends
-GtkGLArea               typedef _GtkGLArea
+GtkGLArea               ends
 
-_GtkGLAreaClass         struct
+GtkGLAreaClass          struct
 parent_class            GtkWidgetClass <>
 render                  proc :ptr, :ptr
 resize                  proc :ptr, :sdword, :sdword
 create_context          proc :ptr
 _padding                gpointer 8 dup(?)
-_GtkGLAreaClass         ends
-GtkGLAreaClass          typedef _GtkGLAreaClass
+GtkGLAreaClass          ends
 
 gtk_gl_area_get_type proto
 gtk_gl_area_new proto

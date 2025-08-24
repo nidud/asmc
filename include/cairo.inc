@@ -39,26 +39,22 @@ cairo_t			typedef byte ; _cairo
 cairo_surface_t		typedef byte ; _cairo_surface
 cairo_device_t		typedef byte ; _cairo_device
 
-_cairo_matrix		STRUC
+cairo_matrix_t		STRUC
 xx			double ?
 yx			double ?
 xy			double ?
 yy			double ?
 x0			double ?
 y0			double ?
-_cairo_matrix		ENDS
-cairo_matrix_t		typedef _cairo_matrix
-
-;cairo_pattern_t		typedef _cairo_pattern
+cairo_matrix_t		ENDS
 
 CALLBACKC(cairo_destroy_func_t, :ptr)
 
-_cairo_user_data_key	STRUC
+cairo_user_data_key_t	STRUC
 unused			SINT ?
-_cairo_user_data_key	ENDS
-cairo_user_data_key_t	typedef _cairo_user_data_key
+cairo_user_data_key_t	ENDS
 
-.enum _cairo_status {
+.enum cairo_status_t {
     CAIRO_STATUS_SUCCESS = 0,
     CAIRO_STATUS_NO_MEMORY,
     CAIRO_STATUS_INVALID_RESTORE,
@@ -104,16 +100,14 @@ cairo_user_data_key_t	typedef _cairo_user_data_key
     CAIRO_STATUS_TAG_ERROR,
     CAIRO_STATUS_LAST_STATUS
     }
-cairo_status_t		typedef _cairo_status
 
-.enum _cairo_content {
+.enum cairo_content_t {
     CAIRO_CONTENT_COLOR		= 0x1000,
     CAIRO_CONTENT_ALPHA		= 0x2000,
     CAIRO_CONTENT_COLOR_ALPHA	= 0x3000
     }
-cairo_content_t		typedef _cairo_content
 
-.enum _cairo_format {
+.enum cairo_format_t {
     CAIRO_FORMAT_INVALID   = -1,
     CAIRO_FORMAT_ARGB32	   = 0,
     CAIRO_FORMAT_RGB24	   = 1,
@@ -122,19 +116,16 @@ cairo_content_t		typedef _cairo_content
     CAIRO_FORMAT_RGB16_565 = 4,
     CAIRO_FORMAT_RGB30	   = 5
     }
-cairo_format_t		typedef _cairo_format
-
 
 CALLBACKC(cairo_write_func_t, :ptr, :ptr, :int_t)
 CALLBACKC(cairo_read_func_t, :ptr, :ptr, :int_t)
 
-_cairo_rectangle_int	STRUC
+cairo_rectangle_int_t	STRUC
 x			SINT ?
 y			SINT ?
 width			SINT ?
 height			SINT ?
-_cairo_rectangle_int	ENDS
-cairo_rectangle_int_t	typedef _cairo_rectangle_int
+cairo_rectangle_int_t	ENDS
 
 cairo_create		proto :ptr cairo_surface_t
 cairo_reference		proto :ptr cairo_t
@@ -150,7 +141,7 @@ cairo_pop_group		proto :ptr cairo_t
 cairo_pop_group_to_source proto :ptr cairo_t
 
 
-.enum _cairo_operator {
+.enum cairo_operator_t {
     CAIRO_OPERATOR_CLEAR,
     CAIRO_OPERATOR_SOURCE,
     CAIRO_OPERATOR_OVER,
@@ -182,8 +173,6 @@ cairo_pop_group_to_source proto :ptr cairo_t
     CAIRO_OPERATOR_HSL_LUMINOSITY
     }
 
-cairo_operator_t	typedef _cairo_operator
-
 cairo_set_operator	proto :ptr cairo_t, :cairo_operator_t
 cairo_set_source	proto :ptr cairo_t, :ptr cairo_pattern_t
 cairo_set_source_rgb	proto :ptr cairo_t, :double, :double, :double
@@ -191,7 +180,7 @@ cairo_set_source_rgba	proto :ptr cairo_t, :double, :double, :double
 cairo_set_source_surface proto :ptr cairo_t, :ptr cairo_surface_t, :double, :double
 cairo_set_tolerance	proto :ptr cairo_t, :double
 
-.enum _cairo_antialias {
+.enum cairo_antialias_t {
     CAIRO_ANTIALIAS_DEFAULT,
     CAIRO_ANTIALIAS_NONE,
     CAIRO_ANTIALIAS_GRAY,
@@ -201,32 +190,29 @@ cairo_set_tolerance	proto :ptr cairo_t, :double
     CAIRO_ANTIALIAS_BEST
     }
 
-cairo_antialias_t	typedef _cairo_antialias
 cairo_set_antialias	proto :ptr cairo_t, :cairo_antialias_t
 
-.enum _cairo_fill_rule {
+.enum cairo_fill_rule_t {
     CAIRO_FILL_RULE_WINDING,
     CAIRO_FILL_RULE_EVEN_ODD
     }
 
-cairo_fill_rule_t	typedef _cairo_fill_rule
 cairo_set_fill_rule	proto :ptr cairo_t, :cairo_fill_rule_t
 cairo_set_line_width	proto :ptr cairo_t, :double
 
-.enum _cairo_line_cap {
+.enum cairo_line_cap_t {
     CAIRO_LINE_CAP_BUTT,
     CAIRO_LINE_CAP_ROUND,
     CAIRO_LINE_CAP_SQUARE
     }
-cairo_line_cap_t	typedef _cairo_line_cap
 cairo_set_line_cap	proto :ptr cairo_t, :cairo_line_cap_t
 
-.enum _cairo_line_join {
+.enum cairo_line_join_t {
     CAIRO_LINE_JOIN_MITER,
     CAIRO_LINE_JOIN_ROUND,
     CAIRO_LINE_JOIN_BEVEL
     }
-cairo_line_join_t	typedef _cairo_line_join
+
 cairo_set_line_join	proto :ptr cairo_t, :cairo_line_join_t
 cairo_set_dash		proto :ptr cairo_t, :ptr double, :SINT, :double
 cairo_set_miter_limit	proto :ptr cairo_t, :double
@@ -287,20 +273,18 @@ cairo_clip_preserve	proto :ptr cairo_t
 
 cairo_clip_extents	proto :ptr cairo_t, :ptr double, :ptr double, :ptr double, :ptr double
 
-_cairo_rectangle	STRUC
+cairo_rectangle_t	STRUC
 x			double ?
 y			double ?
 width			double ?
 height			double ?
-_cairo_rectangle	ENDS
-cairo_rectangle_t	typedef _cairo_rectangle
+cairo_rectangle_t	ENDS
 
-_cairo_rectangle_list	STRUC
+cairo_rectangle_list_t	STRUC
 status			cairo_status_t ?
 rectangles		ptr cairo_rectangle_t ?
 num_rectangles		SINT ?
-_cairo_rectangle_list	ENDS
-cairo_rectangle_list_t	typedef _cairo_rectangle_list
+cairo_rectangle_list_t	ENDS
 
 cairo_copy_clip_rectangle_list proto :ptr cairo_t
 cairo_rectangle_list_destroy proto :ptr cairo_rectangle_list_t
@@ -331,10 +315,9 @@ cairo_text_cluster_t	ENDS
 cairo_text_cluster_allocate proto :int_t
 cairo_text_cluster_free proto :ptr cairo_text_cluster_t
 
-.enum _cairo_text_cluster_flags {
+.enum cairo_text_cluster_flags_t {
     CAIRO_TEXT_CLUSTER_FLAG_BACKWARD = 0x00000001
     }
-cairo_text_cluster_flags_t typedef _cairo_text_cluster_flags
 
 cairo_text_extents_t	STRUC
 x_bearing		double ?
@@ -353,43 +336,38 @@ max_x_advance		double ?
 max_y_advance		double ?
 cairo_font_extents_t	ENDS
 
-.enum _cairo_font_slant {
+.enum cairo_font_slant_t {
     CAIRO_FONT_SLANT_NORMAL,
     CAIRO_FONT_SLANT_ITALIC,
     CAIRO_FONT_SLANT_OBLIQUE
     }
-cairo_font_slant_t	typedef _cairo_font_slant
 
-.enum _cairo_font_weight {
+.enum cairo_font_weight_t {
     CAIRO_FONT_WEIGHT_NORMAL,
     CAIRO_FONT_WEIGHT_BOLD
     }
-cairo_font_weight_t	typedef _cairo_font_weight
 
-.enum _cairo_subpixel_order {
+.enum cairo_subpixel_order_t {
     CAIRO_SUBPIXEL_ORDER_DEFAULT,
     CAIRO_SUBPIXEL_ORDER_RGB,
     CAIRO_SUBPIXEL_ORDER_BGR,
     CAIRO_SUBPIXEL_ORDER_VRGB,
     CAIRO_SUBPIXEL_ORDER_VBGR
     }
-cairo_subpixel_order_t	typedef _cairo_subpixel_order
 
-.enum _cairo_hint_style {
+.enum cairo_hint_style_t {
     CAIRO_HINT_STYLE_DEFAULT,
     CAIRO_HINT_STYLE_NONE,
     CAIRO_HINT_STYLE_SLIGHT,
     CAIRO_HINT_STYLE_MEDIUM,
     CAIRO_HINT_STYLE_FULL
     }
-cairo_hint_style_t	typedef _cairo_hint_style
 
-.enum _cairo_hint_metrics {
+.enum cairo_hint_metrics_t {
     CAIRO_HINT_METRICS_DEFAULT,
     CAIRO_HINT_METRICS_OFF,
     CAIRO_HINT_METRICS_ON
     }
-cairo_hint_metrics_t	typedef _cairo_hint_metrics
 cairo_font_options_t	typedef byte ; _cairo_font_options
 
 cairo_font_options_create proto
@@ -440,14 +418,13 @@ cairo_font_face_get_reference_count proto :ptr cairo_font_face_t
 cairo_font_face_status	proto :ptr cairo_font_face_t
 
 
-.enum _cairo_font_type {
+.enum cairo_font_type_t {
     CAIRO_FONT_TYPE_TOY,
     CAIRO_FONT_TYPE_FT,
     CAIRO_FONT_TYPE_WIN32,
     CAIRO_FONT_TYPE_QUARTZ,
     CAIRO_FONT_TYPE_USER
     }
-cairo_font_type_t typedef _cairo_font_type
 
 cairo_font_face_get_type proto :ptr cairo_font_face_t
 cairo_font_face_get_user_data proto :ptr cairo_font_face_t, :ptr cairo_user_data_key_t
@@ -512,15 +489,14 @@ cairo_get_matrix	proto :ptr cairo_t, :ptr cairo_matrix_t
 cairo_get_target	proto :ptr cairo_t
 cairo_get_group_target	proto :ptr cairo_t
 
-.enum _cairo_path_data_type {
+.enum cairo_path_data_type_t {
     CAIRO_PATH_MOVE_TO,
     CAIRO_PATH_LINE_TO,
     CAIRO_PATH_CURVE_TO,
     CAIRO_PATH_CLOSE_PATH
     }
-cairo_path_data_type_t	typedef _cairo_path_data_type
 
-_cairo_path_data_t	UNION
+cairo_path_data_t	UNION
 STRUC header
  type			cairo_path_data_type_t ?
  length			SINT ?
@@ -529,15 +505,13 @@ STRUC point
  x			double ?
  y			double ?
 ENDS
-_cairo_path_data_t	ENDS
-cairo_path_data_t	typedef _cairo_path_data_t
+cairo_path_data_t	ENDS
 
-cairo_path		STRUC
+cairo_path_t		STRUC
 status			cairo_status_t ?
 data			ptr cairo_path_data_t ?
 num_data		SINT ?
-cairo_path		ENDS
-cairo_path_t		typedef cairo_path
+cairo_path_t		ENDS
 
 cairo_copy_path		proto :ptr cairo_t
 cairo_copy_path_flat	proto :ptr cairo_t
@@ -741,7 +715,7 @@ cairo_pattern_status	proto :ptr cairo_pattern_t
 cairo_pattern_get_user_data proto :ptr cairo_pattern_t, :ptr cairo_user_data_key_t
 cairo_pattern_set_user_data proto :ptr cairo_pattern_t, :ptr cairo_user_data_key_t, :ptr, :cairo_destroy_func_t
 
-.enum _cairo_pattern_type {
+.enum cairo_pattern_type_t {
     CAIRO_PATTERN_TYPE_SOLID,
     CAIRO_PATTERN_TYPE_SURFACE,
     CAIRO_PATTERN_TYPE_LINEAR,
@@ -749,7 +723,6 @@ cairo_pattern_set_user_data proto :ptr cairo_pattern_t, :ptr cairo_user_data_key
     CAIRO_PATTERN_TYPE_MESH,
     CAIRO_PATTERN_TYPE_RASTER_SOURCE
     }
-cairo_pattern_type_t	typedef _cairo_pattern_type
 
 cairo_pattern_get_type	proto :ptr cairo_pattern_t
 cairo_pattern_add_color_stop_rgb proto :ptr cairo_pattern_t, :double, :double, :double, :double
@@ -766,18 +739,17 @@ cairo_mesh_pattern_set_corner_color_rgba proto :ptr cairo_pattern_t, :uint_t, :d
 cairo_pattern_set_matrix proto :ptr cairo_pattern_t, :ptr cairo_matrix_t
 cairo_pattern_get_matrix proto :ptr cairo_pattern_t, :ptr cairo_matrix_t
 
-.enum _cairo_extend {
+.enum cairo_extend_t {
     CAIRO_EXTEND_NONE,
     CAIRO_EXTEND_REPEAT,
     CAIRO_EXTEND_REFLECT,
     CAIRO_EXTEND_PAD
     }
-cairo_extend_t		typedef _cairo_extend
 
 cairo_pattern_set_extend proto :ptr cairo_pattern_t, :cairo_extend_t
 cairo_pattern_get_extend proto :ptr cairo_pattern_t
 
-.enum _cairo_filter {
+.enum cairo_filter_t {
     CAIRO_FILTER_FAST,
     CAIRO_FILTER_GOOD,
     CAIRO_FILTER_BEST,
@@ -785,7 +757,6 @@ cairo_pattern_get_extend proto :ptr cairo_pattern_t
     CAIRO_FILTER_BILINEAR,
     CAIRO_FILTER_GAUSSIAN
     }
-cairo_filter_t		typedef _cairo_filter
 
 cairo_pattern_set_filter proto :ptr cairo_pattern_t, :cairo_filter_t
 cairo_pattern_get_filter proto :ptr cairo_pattern_t
@@ -817,12 +788,11 @@ cairo_matrix_transform_point proto :ptr cairo_matrix_t, :ptr double, :ptr double
 
 cairo_region_t		typedef byte ; _cairo_region
 
-.enum _cairo_region_overlap {
+.enum cairo_region_overlap_t {
     CAIRO_REGION_OVERLAP_IN,
     CAIRO_REGION_OVERLAP_OUT,
     CAIRO_REGION_OVERLAP_PART
     }
-cairo_region_overlap_t	typedef _cairo_region_overlap
 
 cairo_region_create	proto
 cairo_region_create_rectangle proto :ptr cairo_rectangle_int_t

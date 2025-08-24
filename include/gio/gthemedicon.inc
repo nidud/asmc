@@ -25,8 +25,6 @@ G_THEMED_ICON_GET_CLASS macro o
   endm
 
 
-;GThemedIconClass        typedef _GThemedIconClass
-
 g_themed_icon_get_type proto
 g_themed_icon_new proto :ptr
 g_themed_icon_new_with_default_fallbacks proto :ptr

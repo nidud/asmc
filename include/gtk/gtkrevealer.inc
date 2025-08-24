@@ -11,8 +11,6 @@ GTK_IS_REVEALER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_REVEALER))>
   endm
 
-;GtkRevealer             typedef _GtkRevealer
-
 .enum GtkRevealerTransitionType {
   GTK_REVEALER_TRANSITION_TYPE_NONE,
   GTK_REVEALER_TRANSITION_TYPE_CROSSFADE,

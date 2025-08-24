@@ -24,9 +24,6 @@ GTK_SIGNAL_LIST_ITEM_FACTORY_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_SIGNAL_LIST_ITEM_FACTORY, GtkSignalListItemFactoryClass))>
   endm
 
-;GtkSignalListItemFactory typedef _GtkSignalListItemFactory
-;GtkSignalListItemFactoryClass typedef _GtkSignalListItemFactoryClass
-
 gtk_signal_list_item_factory_get_type proto
 gtk_signal_list_item_factory_new proto
 

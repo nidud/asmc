@@ -24,9 +24,7 @@ G_SOCKET_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_SOCKET, GSocketClass))>
   endm
 
-;GSocketPrivate          typedef _GSocketPrivate
-
-_GSocketClass           struct
+GSocketClass            struct
 parent_class            GObjectClass <>
 _g_reserved1            proc
 _g_reserved2            proc
@@ -38,14 +36,12 @@ _g_reserved7            proc
 _g_reserved8            proc
 _g_reserved9            proc
 _g_reserved10           proc
-_GSocketClass           ends
-GSocketClass            typedef _GSocketClass
+GSocketClass            ends
 
-_GSocket                struct
+GSocket                 struct
 parent_instance         GObject <>
 priv                    ptr GSocketPrivate ?
-_GSocket                ends
-GSocket                 typedef _GSocket
+GSocket                 ends
 
 g_socket_get_type proto
 g_socket_new proto :GSocketFamily, :GSocketType, :GSocketProtocol, :ptr

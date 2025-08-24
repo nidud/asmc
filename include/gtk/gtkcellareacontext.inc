@@ -24,21 +24,18 @@ GTK_CELL_AREA_CONTEXT_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CELL_AREA_CONTEXT, GtkCellAreaContextClass))>
   endm
 
-;GtkCellAreaContextPrivate typedef _GtkCellAreaContextPrivate
-
-_GtkCellAreaContext     struct
+GtkCellAreaContext      struct
 parent_instance         GObject <>
-_GtkCellAreaContext     ends
+GtkCellAreaContext      ends
 
-_GtkCellAreaContextClass struct
+GtkCellAreaContextClass struct
 parent_class            GObjectClass <>
 allocate                proc :ptr, :sdword, :sdword
 reset                   proc :ptr
 get_preferred_height_for_width proc :ptr, :sdword, :ptr, :ptr
 get_preferred_width_for_height proc :ptr, :sdword, :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GtkCellAreaContextClass ends
-GtkCellAreaContextClass typedef _GtkCellAreaContextClass
+GtkCellAreaContextClass ends
 
 gtk_cell_area_context_get_type proto
 

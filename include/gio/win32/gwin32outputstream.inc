@@ -21,23 +21,19 @@ G_WIN32_OUTPUT_STREAM_GET_CLASS macro o
   endm
 
 
-;GWin32OutputStreamPrivate typedef _GWin32OutputStreamPrivate
-
-_GWin32OutputStream     struct
+GWin32OutputStream      struct
 parent_instance         GOutputStream <>
 priv                    ptr GWin32OutputStreamPrivate ?
-_GWin32OutputStream     ends
-GWin32OutputStream      typedef _GWin32OutputStream
+GWin32OutputStream      ends
 
-_GWin32OutputStreamClass struct
+GWin32OutputStreamClass struct
 parent_class            GOutputStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GWin32OutputStreamClass ends
-GWin32OutputStreamClass typedef _GWin32OutputStreamClass
+GWin32OutputStreamClass ends
 
 g_win32_output_stream_get_type proto
 

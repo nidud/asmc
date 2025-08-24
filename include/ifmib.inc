@@ -11,51 +11,48 @@ ifndef ANY_SIZE
 define ANY_SIZE 1
 endif
 
-_MIB_IFNUMBER           struct
-dwValue                 DWORD ?
-_MIB_IFNUMBER           ends
-MIB_IFNUMBER            typedef _MIB_IFNUMBER
-PMIB_IFNUMBER           typedef ptr _MIB_IFNUMBER
+MIB_IFNUMBER		struct
+dwValue			DWORD ?
+MIB_IFNUMBER		ends
+PMIB_IFNUMBER		typedef ptr MIB_IFNUMBER
 
 define MAXLEN_PHYSADDR 8
 define MAXLEN_IFDESCR 256
 define MAX_INTERFACE_NAME_LEN 256
 
-_MIB_IFROW              struct
-wszName                 WCHAR MAX_INTERFACE_NAME_LEN dup(?)
-dwIndex                 IF_INDEX ?
-dwType                  IFTYPE ?
-dwMtu                   DWORD ?
-dwSpeed                 DWORD ?
-dwPhysAddrLen           DWORD ?
-bPhysAddr               UCHAR MAXLEN_PHYSADDR dup(?)
-dwAdminStatus           DWORD ?
-dwOperStatus            INTERNAL_IF_OPER_STATUS ?
-dwLastChange            DWORD ?
-dwInOctets              DWORD ?
-dwInUcastPkts           DWORD ?
-dwInNUcastPkts          DWORD ?
-dwInDiscards            DWORD ?
-dwInErrors              DWORD ?
-dwInUnknownProtos       DWORD ?
-dwOutOctets             DWORD ?
-dwOutUcastPkts          DWORD ?
-dwOutNUcastPkts         DWORD ?
-dwOutDiscards           DWORD ?
-dwOutErrors             DWORD ?
-dwOutQLen               DWORD ?
-dwDescrLen              DWORD ?
-bDescr                  UCHAR MAXLEN_IFDESCR dup(?)
-_MIB_IFROW              ends
-MIB_IFROW               typedef _MIB_IFROW
-PMIB_IFROW              typedef ptr _MIB_IFROW
+MIB_IFROW		struct
+wszName			dw MAX_INTERFACE_NAME_LEN dup(?)
+dwIndex			IF_INDEX ?
+dwType			IFTYPE ?
+dwMtu			dd ?
+dwSpeed			dd ?
+dwPhysAddrLen		dd ?
+bPhysAddr		db MAXLEN_PHYSADDR dup(?)
+dwAdminStatus		dd ?
+dwOperStatus		INTERNAL_IF_OPER_STATUS ?
+dwLastChange		dd ?
+dwInOctets		dd ?
+dwInUcastPkts		dd ?
+dwInNUcastPkts		dd ?
+dwInDiscards		dd ?
+dwInErrors		dd ?
+dwInUnknownProtos	dd ?
+dwOutOctets		dd ?
+dwOutUcastPkts		dd ?
+dwOutNUcastPkts		dd ?
+dwOutDiscards		dd ?
+dwOutErrors		dd ?
+dwOutQLen		dd ?
+dwDescrLen		dd ?
+bDescr			db MAXLEN_IFDESCR dup(?)
+MIB_IFROW		ends
+PMIB_IFROW		typedef ptr MIB_IFROW
 
-_MIB_IFTABLE            struct
-dwNumEntries            DWORD ?
-table                   MIB_IFROW ANY_SIZE dup(<>)
-_MIB_IFTABLE            ends
-MIB_IFTABLE             typedef _MIB_IFTABLE
-PMIB_IFTABLE            typedef ptr _MIB_IFTABLE
+MIB_IFTABLE		struct
+dwNumEntries		dd ?
+table			MIB_IFROW ANY_SIZE dup(<>)
+MIB_IFTABLE		ends
+PMIB_IFTABLE		typedef ptr MIB_IFTABLE
 
 SIZEOF_IFTABLE macro X
   exitm<(FIELD_OFFSET(MIB_IFTABLE,table) + ((X) * sizeof(MIB_IFROW)) + ALIGN_SIZE)>

@@ -13,9 +13,6 @@ GTK_EXPRESSION macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_EXPRESSION, GtkExpression))>
   endm
 
-;GtkExpression           typedef _GtkExpression
-;GtkExpressionWatch      typedef _GtkExpressionWatch
-
 CALLBACK(GtkExpressionNotify, :gpointer)
 
 gtk_expression_get_type proto
@@ -33,7 +30,6 @@ gtk_expression_watch_evaluate proto :ptr, :ptr
 gtk_expression_watch_unwatch proto :ptr
 
 define GTK_TYPE_PROPERTY_EXPRESSION <gtk_property_expression_get_type ()>
-;GtkPropertyExpression   typedef _GtkPropertyExpression
 
 gtk_property_expression_get_type proto
 gtk_property_expression_new proto :GType, :ptr, :ptr
@@ -42,7 +38,6 @@ gtk_property_expression_get_expression proto :ptr
 gtk_property_expression_get_pspec proto :ptr
 
 define GTK_TYPE_CONSTANT_EXPRESSION <gtk_constant_expression_get_type ()>
-;GtkConstantExpression   typedef _GtkConstantExpression
 
 gtk_constant_expression_get_type proto
 gtk_constant_expression_new proto :GType, :vararg
@@ -50,20 +45,17 @@ gtk_constant_expression_new_for_value proto :ptr
 gtk_constant_expression_get_value proto :ptr
 
 define GTK_TYPE_OBJECT_EXPRESSION <gtk_object_expression_get_type ()>
-;GtkObjectExpression     typedef _GtkObjectExpression
 
 gtk_object_expression_get_type proto
 gtk_object_expression_new proto :ptr
 gtk_object_expression_get_object proto :ptr
 
 define GTK_TYPE_CLOSURE_EXPRESSION <gtk_closure_expression_get_type ()>
-;GtkClosureExpression    typedef _GtkClosureExpression
 
 gtk_closure_expression_get_type proto
 gtk_closure_expression_new proto :GType, :ptr, :guint, :ptr
 
 define GTK_TYPE_CCLOSURE_EXPRESSION <gtk_cclosure_expression_get_type ()>
-;GtkCClosureExpression   typedef _GtkCClosureExpression
 
 gtk_cclosure_expression_get_type proto
 gtk_cclosure_expression_new proto :GType, :GClosureMarshal, :guint, :ptr, :GCallback, :gpointer, :GClosureNotify

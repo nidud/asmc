@@ -15,10 +15,9 @@ GTK_IS_SIZE_GROUP macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SIZE_GROUP))>
   endm
 
-_GtkSizeGroup           struct
+GtkSizeGroup            struct
 parent_instance         GObject <>
-_GtkSizeGroup           ends
-GtkSizeGroup            typedef _GtkSizeGroup
+GtkSizeGroup            ends
 
 gtk_size_group_get_type proto
 gtk_size_group_new proto :GtkSizeGroupMode

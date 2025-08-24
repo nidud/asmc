@@ -26,9 +26,6 @@ GTK_EVENT_CONTROLLER_FOCUS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_EVENT_CONTROLLER_FOCUS, GtkEventControllerFocusClass))>
   endm
 
-;GtkEventControllerFocus typedef _GtkEventControllerFocus
-;GtkEventControllerFocusClass typedef _GtkEventControllerFocusClass
-
 gtk_event_controller_focus_get_type proto
 gtk_event_controller_focus_new proto
 gtk_event_controller_focus_contains_focus proto :ptr

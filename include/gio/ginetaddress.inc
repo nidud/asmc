@@ -24,20 +24,16 @@ G_INET_ADDRESS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_INET_ADDRESS, GInetAddressClass))>
   endm
 
-;GInetAddressPrivate     typedef _GInetAddressPrivate
-
-_GInetAddress           struct
+GInetAddress            struct
 parent_instance         GObject <>
 priv                    ptr GInetAddressPrivate ?
-_GInetAddress           ends
-GInetAddress            typedef _GInetAddress
+GInetAddress            ends
 
-_GInetAddressClass      struct
+GInetAddressClass       struct
 parent_class            GObjectClass <>
 to_string               proc :ptr
 to_bytes                proc :ptr
-_GInetAddressClass      ends
-GInetAddressClass       typedef _GInetAddressClass
+GInetAddressClass       ends
 
 g_inet_address_get_type proto
 g_inet_address_new_from_string proto :ptr

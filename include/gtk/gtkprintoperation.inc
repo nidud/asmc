@@ -30,8 +30,6 @@ GTK_PRINT_OPERATION_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_PRINT_OPERATION, GtkPrintOperationClass))>
   endm
 
-;GtkPrintOperationPrivate typedef _GtkPrintOperationPrivate
-
 .enum GtkPrintStatus {
   GTK_PRINT_STATUS_INITIAL,
   GTK_PRINT_STATUS_PREPARING,
@@ -60,13 +58,12 @@ GTK_PRINT_OPERATION_GET_CLASS macro obj
 }
 
 
-_GtkPrintOperation      struct
+GtkPrintOperation       struct
 parent_instance         GObject <>
 priv                    ptr GtkPrintOperationPrivate ?
-_GtkPrintOperation      ends
-GtkPrintOperation       typedef _GtkPrintOperation
+GtkPrintOperation       ends
 
-_GtkPrintOperationClass struct
+GtkPrintOperationClass  struct
 parent_class            GObjectClass <>
 done                    proc :ptr, :GtkPrintOperationResult
 begin_print             proc :ptr, :ptr
@@ -80,8 +77,7 @@ custom_widget_apply     proc :ptr, :ptr
 preview                 proc :ptr, :ptr, :ptr, :ptr
 update_custom_widget    proc :ptr, :ptr, :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GtkPrintOperationClass ends
-GtkPrintOperationClass  typedef _GtkPrintOperationClass
+GtkPrintOperationClass  ends
 
 define GTK_PRINT_ERROR <gtk_print_error_quark ()>
 

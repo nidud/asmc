@@ -11,11 +11,10 @@ GSK_ROUNDED_RECT_INIT macro _x,_y,_w,_h
   exitm<.err>
   endm
 if 0
-_GskRoundedRect         STRUC
+GskRoundedRect          STRUC
 bounds                  graphene_rect_t <>
 corner                  graphene_size_t 4 dup(?)
-_GskRoundedRect         ENDS
-GskRoundedRect          typedef _GskRoundedRect
+GskRoundedRect          ENDS
 endif
 
 gsk_rounded_rect_init proto :ptr, :ptr, :ptr, :ptr, :ptr, :ptr

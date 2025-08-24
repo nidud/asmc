@@ -18,15 +18,14 @@ G_SEEKABLE_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_SEEKABLE, GSeekableIface))>
   endm
 
-_GSeekableIface         struct
+GSeekableIface          struct
 g_iface                 GTypeInterface <>
 tell                    proc :ptr
 can_seek                proc :ptr
 seek                    proc :ptr, :goffset, :GSeekType, :ptr, :ptr
 can_truncate            proc :ptr
 truncate_fn             proc :ptr, :goffset, :ptr, :ptr
-_GSeekableIface         ends
-GSeekableIface          typedef _GSeekableIface
+GSeekableIface          ends
 
 g_seekable_get_type proto
 

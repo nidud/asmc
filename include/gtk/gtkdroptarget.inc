@@ -7,8 +7,6 @@ endif
 
 include gtk/gtktypes.inc
 
-;GtkDropTarget           typedef _GtkDropTarget
-
 define GTK_TYPE_DROP_TARGET <gtk_drop_target_get_type ()>
 GTK_DROP_TARGET macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_DROP_TARGET, GtkDropTarget))>
@@ -25,8 +23,6 @@ GTK_IS_DROP_TARGET_CLASS macro k
 GTK_DROP_TARGET_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_DROP_TARGET, GtkDropTargetClass))>
   endm
-
-;GtkDropTargetClass      typedef _GtkDropTargetClass
 
 gtk_drop_target_get_type proto
 gtk_drop_target_new proto :GType, :GdkDragAction

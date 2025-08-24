@@ -19,14 +19,13 @@ G_POLLABLE_INPUT_STREAM_GET_INTERFACE macro obj
   endm
 
 
-_GPollableInputStreamInterface struct
+GPollableInputStreamInterface struct
 g_iface                 GTypeInterface <>
 can_poll                proc :ptr
 is_readable             proc :ptr
 create_source           proc :ptr, :ptr
 read_nonblocking        proc :ptr, :ptr, :gsize, :ptr
-_GPollableInputStreamInterface ends
-GPollableInputStreamInterface typedef _GPollableInputStreamInterface
+GPollableInputStreamInterface ends
 
 g_pollable_input_stream_get_type proto
 g_pollable_input_stream_can_poll proto :ptr

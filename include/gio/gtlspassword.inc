@@ -24,21 +24,18 @@ G_TLS_PASSWORD_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_TLS_PASSWORD, GTlsPasswordClass))>
   endm
 
-;GTlsPasswordPrivate     typedef _GTlsPasswordPrivate
-
-_GTlsPassword           struct
+GTlsPassword            struct
 parent_instance         GObject <>
 priv                    ptr GTlsPasswordPrivate ?
-_GTlsPassword           ends
+GTlsPassword            ends
 
-_GTlsPasswordClass      struct
+GTlsPasswordClass       struct
 parent_class            GObjectClass <>
 get_value               proc :ptr, :ptr
 set_value               proc :ptr, :ptr, :gssize, :GDestroyNotify
 get_default_warning     proc :ptr
 padding                 gpointer 4 dup(?)
-_GTlsPasswordClass      ends
-GTlsPasswordClass       typedef _GTlsPasswordClass
+GTlsPasswordClass       ends
 
 g_tls_password_get_type proto
 g_tls_password_new proto :GTlsPasswordFlags, :ptr

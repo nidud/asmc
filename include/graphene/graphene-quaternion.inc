@@ -8,13 +8,12 @@ endif
 include graphene/graphene-types.inc
 include graphene/graphene-vec4.inc
 
-_graphene_quaternion_t  STRUC
+graphene_quaternion_t   STRUC
 x                       real4 ?
 y                       real4 ?
 z                       real4 ?
 w                       real4 ?
-_graphene_quaternion_t  ENDS
-graphene_quaternion_t   typedef _graphene_quaternion_t
+graphene_quaternion_t   ENDS
 
 graphene_quaternion_alloc proto
 graphene_quaternion_free proto :ptr

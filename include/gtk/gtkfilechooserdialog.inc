@@ -16,8 +16,6 @@ GTK_IS_FILE_CHOOSER_DIALOG macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FILE_CHOOSER_DIALOG))>
   endm
 
-;GtkFileChooserDialog    typedef _GtkFileChooserDialog
-
 gtk_file_chooser_dialog_get_type proto
 gtk_file_chooser_dialog_new proto :ptr, :ptr, :GtkFileChooserAction, :ptr, :vararg
 

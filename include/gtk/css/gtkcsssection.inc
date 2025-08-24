@@ -11,8 +11,6 @@ include gtk/css/gtkcsslocation.inc
 
 define GTK_TYPE_CSS_SECTION <gtk_css_section_get_type ()>
 
-;GtkCssSection typedef _GtkCssSection
-
 gtk_css_section_get_type proto
 
 gtk_css_section_new proto :ptr, :ptr, :ptr

@@ -7,7 +7,6 @@ include pango/pango-fontmap.inc
 include pango/pango-attributes.inc
 include pango/pango-direction.inc
 
-;PangoContextClass       typedef _PangoContextClass
 
 define PANGO_TYPE_CONTEXT <pango_context_get_type ()>
 PANGO_CONTEXT macro object

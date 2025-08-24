@@ -15,8 +15,6 @@ GTK_IS_CELL_RENDERER_PROGRESS macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CELL_RENDERER_PROGRESS))>
   endm
 
-;GtkCellRendererProgress typedef _GtkCellRendererProgress
-
 gtk_cell_renderer_progress_get_type proto
 gtk_cell_renderer_progress_new proto
 

@@ -35,12 +35,9 @@ G_APP_LAUNCH_CONTEXT_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_APP_LAUNCH_CONTEXT, GAppLaunchContextClass))>
   endm
 
-;GAppLaunchContextClass  typedef _GAppLaunchContextClass
-;GAppLaunchContextPrivate typedef _GAppLaunchContextPrivate
-
-_GAppInfoIface          struct
+GAppInfoIface           struct
 g_iface                 GTypeInterface <>
-_dup                     proc :ptr
+_dup                    proc :ptr
 equal                   proc :ptr, :ptr
 get_id                  proc :ptr
 get_name                proc :ptr
@@ -65,8 +62,7 @@ set_as_last_used_for_type proc :ptr, :ptr, :ptr
 get_supported_types     proc :ptr
 launch_uris_async       proc :ptr, :ptr, :ptr, :ptr, :GAsyncReadyCallback, :gpointer
 launch_uris_finish      proc :ptr, :ptr, :ptr
-_GAppInfoIface          ends
-GAppInfoIface           typedef _GAppInfoIface
+GAppInfoIface           ends
 
 g_app_info_get_type proto
 g_app_info_create_from_commandline proto :ptr, :ptr, :GAppInfoCreateFlags, :ptr
@@ -114,15 +110,12 @@ g_app_info_launch_default_for_uri proto :ptr, :ptr, :ptr
 g_app_info_launch_default_for_uri_async proto :ptr, :ptr, :ptr, :GAsyncReadyCallback, :gpointer
 g_app_info_launch_default_for_uri_finish proto :ptr, :ptr
 
-
-
-_GAppLaunchContext      struct
+GAppLaunchContext       struct
 parent_instance         GObject <>
 priv                    ptr GAppLaunchContextPrivate ?
-_GAppLaunchContext      ends
-GAppLaunchContext       typedef _GAppLaunchContext
+GAppLaunchContext       ends
 
-_GAppLaunchContextClass struct
+GAppLaunchContextClass  struct
 parent_class            GObjectClass <>
 get_display             proc :ptr, :ptr, :ptr
 get_startup_notify_id   proc :ptr, :ptr, :ptr
@@ -132,8 +125,7 @@ launch_started          proc :ptr, :ptr, :ptr
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
-_GAppLaunchContextClass ends
-GAppLaunchContextClass  typedef _GAppLaunchContextClass
+GAppLaunchContextClass  ends
 
 g_app_launch_context_get_type proto
 g_app_launch_context_new proto
@@ -153,8 +145,6 @@ G_APP_INFO_MONITOR macro inst
 G_IS_APP_INFO_MONITOR macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_APP_INFO_MONITOR))>
   endm
-
-;GAppInfoMonitor         typedef _GAppInfoMonitor
 
 g_app_info_monitor_get_type proto
 g_app_info_monitor_get proto

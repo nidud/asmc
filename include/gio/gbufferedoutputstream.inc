@@ -25,20 +25,16 @@ G_BUFFERED_OUTPUT_STREAM_GET_CLASS macro o
   endm
 
 
-;GBufferedOutputStreamPrivate typedef _GBufferedOutputStreamPrivate
-
-_GBufferedOutputStream  struct
+GBufferedOutputStream   struct
 parent_instance         GFilterOutputStream <>
 priv                    ptr GBufferedOutputStreamPrivate ?
-_GBufferedOutputStream  ends
-GBufferedOutputStream   typedef _GBufferedOutputStream
+GBufferedOutputStream   ends
 
-_GBufferedOutputStreamClass struct
+GBufferedOutputStreamClass struct
 parent_class            GFilterOutputStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
-_GBufferedOutputStreamClass ends
-GBufferedOutputStreamClass typedef _GBufferedOutputStreamClass
+GBufferedOutputStreamClass ends
 
 g_buffered_output_stream_get_type proto
 g_buffered_output_stream_new proto :ptr

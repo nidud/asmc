@@ -18,15 +18,14 @@ G_POLLABLE_OUTPUT_STREAM_GET_INTERFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_POLLABLE_OUTPUT_STREAM, GPollableOutputStreamInterface))>
   endm
 
-_GPollableOutputStreamInterface struct
+GPollableOutputStreamInterface struct
 g_iface                 GTypeInterface <>
 can_poll                proc :ptr
 is_writable             proc :ptr
 create_source           proc :ptr, :ptr
 write_nonblocking       proc :ptr, :ptr, :gsize, :ptr
 writev_nonblocking      proc :ptr, :ptr, :gsize, :ptr, :ptr
-_GPollableOutputStreamInterface ends
-GPollableOutputStreamInterface typedef _GPollableOutputStreamInterface
+GPollableOutputStreamInterface ends
 
 g_pollable_output_stream_get_type proto
 g_pollable_output_stream_can_poll proto :ptr

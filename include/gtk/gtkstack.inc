@@ -16,8 +16,6 @@ GTK_IS_STACK macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_STACK))>
   endm
 
-;GtkStack                typedef _GtkStack
-
 define GTK_TYPE_STACK_PAGE <gtk_stack_page_get_type ()>
 GTK_STACK_PAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_STACK_PAGE, GtkStackPage))>
@@ -25,8 +23,6 @@ GTK_STACK_PAGE macro obj
 GTK_IS_STACK_PAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_STACK_PAGE))>
   endm
-
-;GtkStackPage            typedef _GtkStackPage
 
 .enum GtkStackTransitionType {
   GTK_STACK_TRANSITION_TYPE_NONE,

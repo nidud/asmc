@@ -15,13 +15,6 @@ GDK_IS_WIN32_MONITOR macro object
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_WIN32_MONITOR))>
   endm
 
-ifdef GTK_COMPILATION
-;GdkWin32Monitor         typedef _GdkWin32Monitor
-else
-;GdkWin32Monitor         typedef GdkMonitor
-endif
-;GdkWin32MonitorClass    typedef _GdkWin32MonitorClass
-
 gdk_win32_monitor_get_type proto
 gdk_win32_monitor_get_workarea proto :ptr, :ptr
 

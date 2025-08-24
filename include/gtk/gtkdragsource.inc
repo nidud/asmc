@@ -24,9 +24,6 @@ GTK_DRAG_SOURCE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_DRAG_SOURCE, GtkDragSourceClass))>
   endm
 
-;GtkDragSource           typedef _GtkDragSource
-;GtkDragSourceClass      typedef _GtkDragSourceClass
-
 gtk_drag_source_get_type proto
 gtk_drag_source_new proto
 gtk_drag_source_set_content proto :ptr, :ptr

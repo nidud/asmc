@@ -24,17 +24,15 @@ GTK_CELL_RENDERER_TEXT_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CELL_RENDERER_TEXT, GtkCellRendererTextClass))>
   endm
 
-_GtkCellRendererText	struct
+GtkCellRendererText	struct
 parent			GtkCellRenderer <>
-_GtkCellRendererText	ends
-GtkCellRendererText	typedef _GtkCellRendererText
+GtkCellRendererText	ends
 
-_GtkCellRendererTextClass struct
+GtkCellRendererTextClass struct
 parent_class		GtkCellRendererClass <>
 edited			proc :ptr, :ptr, :ptr
 padding			gpointer 8 dup(?)
-_GtkCellRendererTextClass ends
-GtkCellRendererTextClass typedef _GtkCellRendererTextClass
+GtkCellRendererTextClass ends
 
 gtk_cell_renderer_text_get_type proto
 gtk_cell_renderer_text_new proto

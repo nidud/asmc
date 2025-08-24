@@ -18,7 +18,7 @@ G_ACTION_GROUP_GET_IFACE macro inst
   exitm<G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_ACTION_GROUP, GActionGroupInterface)>
   endm
 
-_GActionGroupInterface  struct
+GActionGroupInterface   struct
 g_iface                 GTypeInterface <>
 has_action              proc :ptr, :ptr
 list_actions            proc :ptr
@@ -34,8 +34,7 @@ action_removed          proc :ptr, :ptr
 action_enabled_changed  proc :ptr, :ptr, :gboolean
 action_state_changed    proc :ptr, :ptr, :ptr
 query_action            proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-_GActionGroupInterface  ends
-GActionGroupInterface   typedef _GActionGroupInterface
+GActionGroupInterface   ends
 
 g_action_group_get_type proto
 

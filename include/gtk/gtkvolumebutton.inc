@@ -15,10 +15,9 @@ GTK_IS_VOLUME_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_VOLUME_BUTTON))>
   endm
 
-_GtkVolumeButton        struct
+GtkVolumeButton         struct
 parent                  GtkScaleButton <>
-_GtkVolumeButton        ends
-GtkVolumeButton         typedef _GtkVolumeButton
+GtkVolumeButton         ends
 
 gtk_volume_button_get_type proto
 gtk_volume_button_new proto

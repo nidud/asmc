@@ -26,9 +26,7 @@ G_SOCKET_CONNECTION_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_SOCKET_CONNECTION, GSocketConnectionClass))>
   endm
 
-;GSocketConnectionPrivate typedef _GSocketConnectionPrivate
-
-_GSocketConnectionClass struct
+GSocketConnectionClass  struct
 parent_class            GIOStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
@@ -36,14 +34,12 @@ _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
 _g_reserved6            proc
-_GSocketConnectionClass ends
-GSocketConnectionClass  typedef _GSocketConnectionClass
+GSocketConnectionClass  ends
 
-_GSocketConnection      struct
+GSocketConnection       struct
 parent_instance         GIOStream <>
 priv                    ptr GSocketConnectionPrivate ?
-_GSocketConnection      ends
-GSocketConnection       typedef _GSocketConnection
+GSocketConnection       ends
 
 g_socket_connection_get_type proto
 

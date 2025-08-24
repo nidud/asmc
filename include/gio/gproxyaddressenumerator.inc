@@ -24,16 +24,12 @@ G_PROXY_ADDRESS_ENUMERATOR_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_PROXY_ADDRESS_ENUMERATOR, GProxyAddressEnumeratorClass))>
   endm
 
-;GProxyAddressEnumeratorPrivate typedef _GProxyAddressEnumeratorPrivate
-
-_GProxyAddressEnumerator struct
+GProxyAddressEnumerator struct
 parent_instance         GSocketAddressEnumerator <>
 priv                    ptr GProxyAddressEnumeratorPrivate ?
-_GProxyAddressEnumerator ends
-GProxyAddressEnumerator typedef _GProxyAddressEnumerator
+GProxyAddressEnumerator ends
 
-
-_GProxyAddressEnumeratorClass struct
+GProxyAddressEnumeratorClass struct
 parent_class            GSocketAddressEnumeratorClass <>
 _g_reserved1            proc
 _g_reserved2            proc
@@ -42,8 +38,7 @@ _g_reserved4            proc
 _g_reserved5            proc
 _g_reserved6            proc
 _g_reserved7            proc
-_GProxyAddressEnumeratorClass ends
-GProxyAddressEnumeratorClass typedef _GProxyAddressEnumeratorClass
+GProxyAddressEnumeratorClass ends
 
 g_proxy_address_enumerator_get_type proto
 

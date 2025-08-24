@@ -9,10 +9,9 @@ include gtk/gtktypes.inc
 
 define GTK_TYPE_LAYOUT_CHILD <gtk_layout_child_get_type ()>
 
-_GtkLayoutChildClass    struct
+GtkLayoutChildClass     struct
 parent_class            GObjectClass <>
-_GtkLayoutChildClass    ends
-GtkLayoutChildClass     typedef _GtkLayoutChildClass
+GtkLayoutChildClass     ends
 
 gtk_layout_child_get_layout_manager proto :ptr
 gtk_layout_child_get_child_widget proto :ptr

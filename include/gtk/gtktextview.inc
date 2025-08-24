@@ -51,15 +51,12 @@ GTK_TEXT_VIEW_GET_CLASS macro obj
 
 define GTK_TEXT_VIEW_PRIORITY_VALIDATE (GDK_PRIORITY_REDRAW + 5)
 
-;GtkTextViewPrivate      typedef _GtkTextViewPrivate
-
-_GtkTextView            struct
+GtkTextView             struct
 parent_instance         GtkWidget <>
 priv                    ptr GtkTextViewPrivate ?
-_GtkTextView            ends
-GtkTextView             typedef _GtkTextView
+GtkTextView             ends
 
-_GtkTextViewClass       struct
+GtkTextViewClass        struct
 parent_class            GtkWidgetClass <>
 move_cursor             proc :ptr, :GtkMovementStep, :sdword, :gboolean
 set_anchor              proc :ptr
@@ -75,8 +72,7 @@ snapshot_layer          proc :ptr, :GtkTextViewLayer, :ptr
 extend_selection        proc :ptr, :GtkTextExtendSelection, :ptr, :ptr, :ptr
 insert_emoji            proc :ptr
 padding                 gpointer 8 dup(?)
-_GtkTextViewClass       ends
-GtkTextViewClass        typedef _GtkTextViewClass
+GtkTextViewClass        ends
 
 gtk_text_view_get_type proto
 gtk_text_view_new proto

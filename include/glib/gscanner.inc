@@ -64,7 +64,7 @@ define G_CSET_LATINS	<"\337\340\341\342\343\344\345\346"			"\347\350\351\352\353
   G_TOKEN_LAST
 }
 
-_GTokenValue		union
+GTokenValue		union
 v_symbol		gpointer ?
 v_identifier		ptr gchar ?
 v_binary		gulong ?
@@ -77,10 +77,9 @@ v_string		ptr gchar ?
 v_comment		ptr gchar ?
 v_char			guchar ?
 v_error			guint ?
-_GTokenValue		ends
-GTokenValue		typedef _GTokenValue
+GTokenValue		ends
 
-_GScannerConfig		struct
+GScannerConfig		struct
 cset_skip_characters	ptr gchar ?
 cset_identifier_first	ptr gchar ?
 cset_identifier_nth	ptr gchar ?
@@ -110,10 +109,9 @@ scope_0_fallback	guint :	 1 ?
 store_int64		guint :	 1 ?
 ENDS
 padding_dummy		guint ?
-_GScannerConfig		ends
-GScannerConfig		typedef _GScannerConfig
+GScannerConfig		ends
 
-_GScanner		struct
+GScanner		struct
 user_data		gpointer ?
 max_parse_errors	guint ?
 parse_errors		guint ?
@@ -135,8 +133,7 @@ text_end		ptr gchar ?
 buffer			ptr gchar ?
 scope_id		guint ?
 msg_handler		GScannerMsgFunc ?
-_GScanner		ends
-GScanner		typedef _GScanner
+GScanner		ends
 
 g_scanner_new proto :ptr
 g_scanner_destroy proto :ptr

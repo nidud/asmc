@@ -24,24 +24,19 @@ G_DATA_INPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_DATA_INPUT_STREAM, GDataInputStreamClass))>
   endm
 
-
-;GDataInputStreamPrivate typedef _GDataInputStreamPrivate
-
-_GDataInputStream       struct
+GDataInputStream        struct
 parent_instance         GBufferedInputStream <>
 priv                    ptr GDataInputStreamPrivate ?
-_GDataInputStream       ends
-GDataInputStream        typedef _GDataInputStream
+GDataInputStream        ends
 
-_GDataInputStreamClass  struct
+GDataInputStreamClass   struct
 parent_class            GBufferedInputStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GDataInputStreamClass  ends
-GDataInputStreamClass   typedef _GDataInputStreamClass
+GDataInputStreamClass   ends
 
 g_data_input_stream_get_type proto
 g_data_input_stream_new proto :ptr

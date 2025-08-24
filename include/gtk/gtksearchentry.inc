@@ -15,8 +15,6 @@ GTK_IS_SEARCH_ENTRY macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SEARCH_ENTRY))>
   endm
 
-;GtkSearchEntry          typedef _GtkSearchEntry
-
 gtk_search_entry_get_type proto
 gtk_search_entry_new proto
 gtk_search_entry_set_key_capture_widget proto :ptr, :ptr

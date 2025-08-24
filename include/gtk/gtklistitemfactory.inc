@@ -5,8 +5,6 @@ if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-;GtkListItemFactoryClass typedef _GtkListItemFactoryClass
-
 include gdk/gdk.inc
 include gtk/gtktypes.inc
 

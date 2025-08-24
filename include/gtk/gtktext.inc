@@ -16,10 +16,9 @@ GTK_IS_TEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TEXT))>
   endm
 
-_GtkText                struct
+GtkText                 struct
 parent_instance         GtkWidget <>
-_GtkText                ends
-GtkText                 typedef _GtkText
+GtkText                 ends
 
 gtk_text_get_type proto
 gtk_text_new proto

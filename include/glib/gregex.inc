@@ -119,9 +119,6 @@ g_regex_error_quark proto
 }
 
 
-;GRegex                  typedef _GRegex
-;GMatchInfo              typedef _GMatchInfo
-
 CALLBACK(GRegexEvalCallback, :ptr, :ptr, :gpointer)
 
 g_regex_new proto :ptr, :GRegexCompileFlags, :GRegexMatchFlags, :ptr
@@ -139,24 +136,20 @@ g_regex_escape_nul proto :ptr, :gint
 g_regex_get_compile_flags proto :ptr
 g_regex_get_match_flags proto :ptr
 
-
 g_regex_match_simple proto :ptr, :ptr, :GRegexCompileFlags, :GRegexMatchFlags
 g_regex_match proto :ptr, :ptr, :GRegexMatchFlags, :ptr
 g_regex_match_full proto :ptr, :ptr, :gssize, :gint, :GRegexMatchFlags, :ptr, :ptr
 g_regex_match_all proto :ptr, :ptr, :GRegexMatchFlags, :ptr
 g_regex_match_all_full proto :ptr, :ptr, :gssize, :gint, :GRegexMatchFlags, :ptr, :ptr
 
-
 g_regex_split_simple proto :ptr, :ptr, :GRegexCompileFlags, :GRegexMatchFlags
 g_regex_split proto :ptr, :ptr, :GRegexMatchFlags
 g_regex_split_full proto :ptr, :ptr, :gssize, :gint, :GRegexMatchFlags, :gint, :ptr
-
 
 g_regex_replace proto :ptr, :ptr, :gssize, :gint, :ptr, :GRegexMatchFlags, :ptr
 g_regex_replace_literal proto :ptr, :ptr, :gssize, :gint, :ptr, :GRegexMatchFlags, :ptr
 g_regex_replace_eval proto :ptr, :ptr, :gssize, :gint, :GRegexMatchFlags, :GRegexEvalCallback, :gpointer, :ptr
 g_regex_check_replacement proto :ptr, :ptr, :ptr
-
 
 g_match_info_get_regex proto :ptr
 g_match_info_get_string proto :ptr

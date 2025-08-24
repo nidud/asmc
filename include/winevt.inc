@@ -6,89 +6,86 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PKG_EVEN
 
 if (WINVER ge _WIN32_WINNT_LONGHORN)
 
-EVT_HANDLE              typedef HANDLE
-PEVT_HANDLE             typedef ptr HANDLE
+EVT_HANDLE		typedef HANDLE
+PEVT_HANDLE		typedef ptr HANDLE
 
-.enum _EVT_VARIANT_TYPE {
-    EvtVarTypeNull        = 0,
-    EvtVarTypeString      = 1,
+.enum EVT_VARIANT_TYPE {
+    EvtVarTypeNull	  = 0,
+    EvtVarTypeString	  = 1,
     EvtVarTypeAnsiString  = 2,
-    EvtVarTypeSByte       = 3,
-    EvtVarTypeByte        = 4,
-    EvtVarTypeInt16       = 5,
-    EvtVarTypeUInt16      = 6,
-    EvtVarTypeInt32       = 7,
-    EvtVarTypeUInt32      = 8,
-    EvtVarTypeInt64       = 9,
-    EvtVarTypeUInt64      = 10,
-    EvtVarTypeSingle      = 11,
-    EvtVarTypeDouble      = 12,
-    EvtVarTypeBoolean     = 13,
-    EvtVarTypeBinary      = 14,
-    EvtVarTypeGuid        = 15,
-    EvtVarTypeSizeT       = 16,
-    EvtVarTypeFileTime    = 17,
-    EvtVarTypeSysTime     = 18,
-    EvtVarTypeSid         = 19,
-    EvtVarTypeHexInt32    = 20,
-    EvtVarTypeHexInt64    = 21,
-
-    EvtVarTypeEvtHandle   = 32,
-    EvtVarTypeEvtXml      = 35
+    EvtVarTypeSByte	  = 3,
+    EvtVarTypeByte	  = 4,
+    EvtVarTypeInt16	  = 5,
+    EvtVarTypeUInt16	  = 6,
+    EvtVarTypeInt32	  = 7,
+    EvtVarTypeUInt32	  = 8,
+    EvtVarTypeInt64	  = 9,
+    EvtVarTypeUInt64	  = 10,
+    EvtVarTypeSingle	  = 11,
+    EvtVarTypeDouble	  = 12,
+    EvtVarTypeBoolean	  = 13,
+    EvtVarTypeBinary	  = 14,
+    EvtVarTypeGuid	  = 15,
+    EvtVarTypeSizeT	  = 16,
+    EvtVarTypeFileTime	  = 17,
+    EvtVarTypeSysTime	  = 18,
+    EvtVarTypeSid	  = 19,
+    EvtVarTypeHexInt32	  = 20,
+    EvtVarTypeHexInt64	  = 21,
+    EvtVarTypeEvtHandle	  = 32,
+    EvtVarTypeEvtXml	  = 35
     }
-EVT_VARIANT_TYPE        typedef _EVT_VARIANT_TYPE
 
 define EVT_VARIANT_TYPE_MASK 0x7f
 define EVT_VARIANT_TYPE_ARRAY 128
 
-_EVT_VARIANT            struct
+EVT_VARIANT		struct
 union
- BooleanVal             BOOL ?
- SByteVal               INT8 ?
- Int16Val               INT16 ?
- Int32Val               INT32 ?
- Int64Val               INT64 ?
- ByteVal                UINT8 ?
- UInt16Val              UINT16 ?
- UInt32Val              UINT32 ?
- UInt64Val              UINT64 ?
- SingleVal              real4 ?
- DoubleVal              real8 ?
- FileTimeVal            ULONGLONG ?
- SysTimeVal             ptr SYSTEMTIME ?
- GuidVal                ptr GUID ?
- StringVal              LPCWSTR ?
- AnsiStringVal          LPCSTR ?
- BinaryVal              PBYTE ?
- SidVal                 PSID ?
- SizeTVal               size_t ?
- BooleanArr             ptr BOOL ?
- SByteArr               ptr INT8 ?
- Int16Arr               ptr INT16 ?
- Int32Arr               ptr INT32 ?
- Int64Arr               ptr INT64 ?
- ByteArr                ptr UINT8 ?
- UInt16Arr              ptr UINT16 ?
- UInt32Arr              ptr UINT32 ?
- UInt64Arr              ptr UINT64 ?
- SingleArr              ptr real4 ?
- DoubleArr              ptr real8 ?
- FileTimeArr            ptr FILETIME ?
- SysTimeArr             ptr SYSTEMTIME ?
- GuidArr                ptr GUID ?
- StringArr              ptr LPWSTR ?
- AnsiStringArr          ptr LPSTR ?
- SidArr                 ptr PSID ?
- SizeTArr               ptr size_t ?
- EvtHandleVal           EVT_HANDLE ?
- XmlVal                 LPCWSTR ?
- XmlValArr              ptr LPCWSTR ?
+ BooleanVal		BOOL ?
+ SByteVal		INT8 ?
+ Int16Val		INT16 ?
+ Int32Val		INT32 ?
+ Int64Val		INT64 ?
+ ByteVal		UINT8 ?
+ UInt16Val		UINT16 ?
+ UInt32Val		UINT32 ?
+ UInt64Val		UINT64 ?
+ SingleVal		real4 ?
+ DoubleVal		real8 ?
+ FileTimeVal		ULONGLONG ?
+ SysTimeVal		ptr SYSTEMTIME ?
+ GuidVal		ptr GUID ?
+ StringVal		LPCWSTR ?
+ AnsiStringVal		LPCSTR ?
+ BinaryVal		PBYTE ?
+ SidVal			PSID ?
+ SizeTVal		size_t ?
+ BooleanArr		ptr BOOL ?
+ SByteArr		ptr INT8 ?
+ Int16Arr		ptr INT16 ?
+ Int32Arr		ptr INT32 ?
+ Int64Arr		ptr INT64 ?
+ ByteArr		ptr UINT8 ?
+ UInt16Arr		ptr UINT16 ?
+ UInt32Arr		ptr UINT32 ?
+ UInt64Arr		ptr UINT64 ?
+ SingleArr		ptr real4 ?
+ DoubleArr		ptr real8 ?
+ FileTimeArr		ptr FILETIME ?
+ SysTimeArr		ptr SYSTEMTIME ?
+ GuidArr		ptr GUID ?
+ StringArr		ptr LPWSTR ?
+ AnsiStringArr		ptr LPSTR ?
+ SidArr			ptr PSID ?
+ SizeTArr		ptr size_t ?
+ EvtHandleVal		EVT_HANDLE ?
+ XmlVal			LPCWSTR ?
+ XmlValArr		ptr LPCWSTR ?
 ends
-Count                   DWORD ?
-Type                    DWORD ?
-_EVT_VARIANT            ends
-EVT_VARIANT             typedef _EVT_VARIANT
-PEVT_VARIANT            typedef ptr _EVT_VARIANT
+Count			DWORD ?
+Type			DWORD ?
+EVT_VARIANT		ends
+PEVT_VARIANT		typedef ptr EVT_VARIANT
 
 .enum EVT_LOGIN_CLASS {
     EvtRpcLogin = 1
@@ -101,14 +98,13 @@ PEVT_VARIANT            typedef ptr _EVT_VARIANT
     EvtRpcLoginAuthNTLM
     }
 
-_EVT_RPC_LOGIN          struct
-Server                  LPWSTR ?
-User                    LPWSTR ?
-Domain                  LPWSTR ?
-Password                LPWSTR ?
-Flags                   DWORD ?
-_EVT_RPC_LOGIN          ends
-EVT_RPC_LOGIN           typedef _EVT_RPC_LOGIN
+EVT_RPC_LOGIN		struct
+Server			LPWSTR ?
+User			LPWSTR ?
+Domain			LPWSTR ?
+Password		LPWSTR ?
+Flags			DWORD ?
+EVT_RPC_LOGIN		ends
 
 EvtOpenSession proto WINAPI :EVT_LOGIN_CLASS, :PVOID, :DWORD, :DWORD
 EvtClose proto WINAPI :EVT_HANDLE
@@ -116,11 +112,11 @@ EvtCancel proto WINAPI :EVT_HANDLE
 EvtGetExtendedStatus proto WINAPI :DWORD, :LPWSTR, :PDWORD
 
 .enum EVT_QUERY_FLAGS {
-    EvtQueryChannelPath                 = 0x1,
-    EvtQueryFilePath                    = 0x2,
-    EvtQueryForwardDirection            = 0x100,
-    EvtQueryReverseDirection            = 0x200,
-    EvtQueryTolerateQueryErrors         = 0x1000
+    EvtQueryChannelPath			= 0x1,
+    EvtQueryFilePath			= 0x2,
+    EvtQueryForwardDirection		= 0x100,
+    EvtQueryReverseDirection		= 0x200,
+    EvtQueryTolerateQueryErrors		= 0x1000
     }
 
 .enum EVT_SEEK_FLAGS {
@@ -128,8 +124,8 @@ EvtGetExtendedStatus proto WINAPI :DWORD, :LPWSTR, :PDWORD
     EvtSeekRelativeToLast     = 2,
     EvtSeekRelativeToCurrent  = 3,
     EvtSeekRelativeToBookmark = 4,
-    EvtSeekOriginMask         = 7,
-    EvtSeekStrict             = 0x10000,
+    EvtSeekOriginMask	      = 7,
+    EvtSeekStrict	      = 0x10000,
     }
 
 EvtQuery proto WINAPI :EVT_HANDLE, :LPCWSTR, :LPCWSTR, :DWORD
@@ -137,12 +133,12 @@ EvtNext proto WINAPI :EVT_HANDLE, :DWORD, :PEVT_HANDLE, :DWORD, :DWORD, :PDWORD
 EvtSeek proto WINAPI :EVT_HANDLE, :LONGLONG, :EVT_HANDLE, :DWORD, :DWORD
 
 .enum EVT_SUBSCRIBE_FLAGS {
-    EvtSubscribeToFutureEvents      = 1,
+    EvtSubscribeToFutureEvents	    = 1,
     EvtSubscribeStartAtOldestRecord = 2,
     EvtSubscribeStartAfterBookmark  = 3,
-    EvtSubscribeOriginMask          = 3,
+    EvtSubscribeOriginMask	    = 3,
     EvtSubscribeTolerateQueryErrors = 0x1000,
-    EvtSubscribeStrict              = 0x10000,
+    EvtSubscribeStrict		    = 0x10000,
     }
 
 .enum EVT_SUBSCRIBE_NOTIFY_ACTION {
@@ -206,8 +202,8 @@ EvtRender proto WINAPI :EVT_HANDLE, :EVT_HANDLE, :DWORD, :DWORD, :PVOID, :PDWORD
 EvtFormatMessage proto WINAPI :EVT_HANDLE, :EVT_HANDLE, :DWORD, :DWORD, :PEVT_VARIANT, :DWORD, :DWORD, :LPWSTR, :PDWORD
 
 .enum EVT_OPEN_LOG_FLAGS {
-    EvtOpenChannelPath          = 0x1,
-    EvtOpenFilePath             = 0x2
+    EvtOpenChannelPath		= 0x1,
+    EvtOpenFilePath		= 0x2
     }
 
 .enum EVT_LOG_PROPERTY_ID {
@@ -226,8 +222,8 @@ EvtGetLogInfo proto WINAPI :EVT_HANDLE, :EVT_LOG_PROPERTY_ID, :DWORD, :PEVT_VARI
 EvtClearLog proto WINAPI :EVT_HANDLE, :LPCWSTR, :LPCWSTR, :DWORD
 
 .enum EVT_EXPORTLOG_FLAGS {
-    EvtExportLogChannelPath     = 0x1,
-    EvtExportLogFilePath        = 0x2,
+    EvtExportLogChannelPath	= 0x1,
+    EvtExportLogFilePath	= 0x2,
     EvtExportLogTolerateQueryErrors = 0x1000,
     EvtExportLogOverwrite = 0x2000
     }
@@ -371,10 +367,10 @@ EvtCreateBookmark proto WINAPI :LPCWSTR
 EvtUpdateBookmark proto WINAPI :EVT_HANDLE, :EVT_HANDLE
 EvtGetEventInfo proto WINAPI :EVT_HANDLE, :EVT_EVENT_PROPERTY_ID, :DWORD, :PEVT_VARIANT, :PDWORD
 
-define EVT_READ_ACCESS    0x1
-define EVT_WRITE_ACCESS   0x2
-define EVT_CLEAR_ACCESS   0x4
-define EVT_ALL_ACCESS     0x7
+define EVT_READ_ACCESS	  0x1
+define EVT_WRITE_ACCESS	  0x2
+define EVT_CLEAR_ACCESS	  0x4
+define EVT_ALL_ACCESS	  0x7
 
 endif
 

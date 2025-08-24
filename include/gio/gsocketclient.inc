@@ -25,23 +25,19 @@ G_SOCKET_CLIENT_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_SOCKET_CLIENT, GSocketClientClass))>
   endm
 
-;GSocketClientPrivate    typedef _GSocketClientPrivate
-
-_GSocketClientClass     struct
+GSocketClientClass      struct
 parent_class            GObjectClass <>
 event                   proc :ptr, :GSocketClientEvent, :ptr, :ptr
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
-_GSocketClientClass     ends
-GSocketClientClass      typedef _GSocketClientClass
+GSocketClientClass      ends
 
-_GSocketClient          struct
+GSocketClient           struct
 parent_instance         GObject <>
 priv                    ptr GSocketClientPrivate ?
-_GSocketClient          ends
-GSocketClient           typedef _GSocketClient
+GSocketClient           ends
 
 g_socket_client_get_type proto
 g_socket_client_new proto

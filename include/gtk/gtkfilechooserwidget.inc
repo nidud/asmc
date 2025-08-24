@@ -16,8 +16,6 @@ GTK_IS_FILE_CHOOSER_WIDGET macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FILE_CHOOSER_WIDGET))>
   endm
 
-;GtkFileChooserWidget    typedef _GtkFileChooserWidget
-
 gtk_file_chooser_widget_get_type proto
 gtk_file_chooser_widget_new proto :GtkFileChooserAction
 

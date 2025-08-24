@@ -26,11 +26,11 @@ GTK_ENTRY_BUFFER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_ENTRY_BUFFER, GtkEntryBufferClass))>
   endm
 
-_GtkEntryBuffer         struct
+GtkEntryBuffer          struct
 parent_instance         GObject <>
-_GtkEntryBuffer         ends
-GtkEntryBuffer          typedef _GtkEntryBuffer
-_GtkEntryBufferClass    struct
+GtkEntryBuffer          ends
+
+GtkEntryBufferClass     struct
 parent_class            GObjectClass <>
 inserted_text           proc :ptr, :guint, :ptr, :guint
 deleted_text            proc :ptr, :guint, :guint
@@ -46,8 +46,7 @@ _gtk_reserved5          proc
 _gtk_reserved6          proc
 _gtk_reserved7          proc
 _gtk_reserved8          proc
-_GtkEntryBufferClass    ends
-GtkEntryBufferClass     typedef _GtkEntryBufferClass
+GtkEntryBufferClass     ends
 
 gtk_entry_buffer_get_type proto
 gtk_entry_buffer_new proto :ptr, :sdword

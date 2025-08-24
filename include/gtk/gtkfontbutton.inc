@@ -15,8 +15,6 @@ GTK_IS_FONT_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FONT_BUTTON))>
   endm
 
-;GtkFontButton           typedef _GtkFontButton
-
 gtk_font_button_get_type proto
 gtk_font_button_new proto
 gtk_font_button_new_with_font proto :ptr

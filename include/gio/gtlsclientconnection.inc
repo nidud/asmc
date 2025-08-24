@@ -18,11 +18,10 @@ G_TLS_CLIENT_CONNECTION_GET_INTERFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_TLS_CLIENT_CONNECTION, GTlsClientConnectionInterface))>
   endm
 
-_GTlsClientConnectionInterface struct
+GTlsClientConnectionInterface struct
 g_iface                 GTypeInterface <>
 copy_session_state      proc :ptr, :ptr
-_GTlsClientConnectionInterface ends
-GTlsClientConnectionInterface typedef _GTlsClientConnectionInterface
+GTlsClientConnectionInterface ends
 
 g_tls_client_connection_get_type proto
 g_tls_client_connection_new proto :ptr, :ptr, :ptr

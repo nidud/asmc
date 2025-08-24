@@ -24,9 +24,6 @@ GTK_LIST_ITEM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_LIST_ITEM, GtkListItemClass))>
   endm
 
-;GtkListItem             typedef _GtkListItem
-;GtkListItemClass        typedef _GtkListItemClass
-
 gtk_list_item_get_type proto
 
 gtk_list_item_get_item proto :ptr

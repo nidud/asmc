@@ -25,22 +25,18 @@ G_APPLICATION_COMMAND_LINE_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_APPLICATION_COMMAND_LINE, GApplicationCommandLineClass))>
   endm
 
-;GApplicationCommandLinePrivate typedef _GApplicationCommandLinePrivate
-
-_GApplicationCommandLine struct
+GApplicationCommandLine struct
 parent_instance         GObject <>
 priv                    ptr GApplicationCommandLinePrivate ?
-_GApplicationCommandLine ends
-GApplicationCommandLine typedef _GApplicationCommandLine
+GApplicationCommandLine ends
 
-_GApplicationCommandLineClass struct
+GApplicationCommandLineClass struct
 parent_class            GObjectClass <>
 print_literal           proc :ptr, :ptr
 printerr_literal        proc :ptr, :ptr
 get_stdin               proc :ptr
 padding                 gpointer 11 dup(?)
-_GApplicationCommandLineClass ends
-GApplicationCommandLineClass typedef _GApplicationCommandLineClass
+GApplicationCommandLineClass ends
 
 g_application_command_line_get_type proto
 g_application_command_line_get_arguments proto :ptr, :ptr

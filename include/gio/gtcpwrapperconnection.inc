@@ -25,18 +25,14 @@ G_TCP_WRAPPER_CONNECTION_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_TCP_WRAPPER_CONNECTION, GTcpWrapperConnectionClass))>
   endm
 
-;GTcpWrapperConnectionPrivate typedef _GTcpWrapperConnectionPrivate
-
-_GTcpWrapperConnectionClass struct
+GTcpWrapperConnectionClass struct
 parent_class            GTcpConnectionClass <>
-_GTcpWrapperConnectionClass ends
-GTcpWrapperConnectionClass typedef _GTcpWrapperConnectionClass
+GTcpWrapperConnectionClass ends
 
-_GTcpWrapperConnection  struct
+GTcpWrapperConnection   struct
 parent_instance         GTcpConnection <>
 priv                    ptr GTcpWrapperConnectionPrivate ?
-_GTcpWrapperConnection  ends
-GTcpWrapperConnection typedef _GTcpWrapperConnection
+GTcpWrapperConnection   ends
 
 g_tcp_wrapper_connection_get_type proto
 g_tcp_wrapper_connection_new proto :ptr, :ptr

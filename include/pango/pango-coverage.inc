@@ -6,8 +6,6 @@ include glib-object.inc
 include pango/pango-version-macros.inc
 ;include hb.inc
 
-;PangoCoverage           typedef _PangoCoverage
-
 .enum PangoCoverageLevel {
   PANGO_COVERAGE_NONE,
   PANGO_COVERAGE_FALLBACK,

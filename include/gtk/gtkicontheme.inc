@@ -24,9 +24,6 @@ GTK_IS_ICON_THEME macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_ICON_THEME))>
   endm
 
-;GtkIconPaintable        typedef _GtkIconPaintable
-;GtkIconTheme            typedef _GtkIconTheme
-
 .enum GtkIconLookupFlags {
   GTK_ICON_LOOKUP_FORCE_REGULAR  = 1 shl 0,
   GTK_ICON_LOOKUP_FORCE_SYMBOLIC = 1 shl 1,

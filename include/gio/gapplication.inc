@@ -24,15 +24,12 @@ G_APPLICATION_GET_CLASS macro inst
   exitm<G_TYPE_INSTANCE_GET_CLASS ((inst),  G_TYPE_APPLICATION, GApplicationClass)>
   endm
 
-;GApplicationPrivate     typedef _GApplicationPrivate
-
-_GApplication           struct
+GApplication            struct
 parent_instance         GObject <>
 priv                    ptr GApplicationPrivate ?
-_GApplication           ends
-GApplication            typedef _GApplication
+GApplication            ends
 
-_GApplicationClass      struct
+GApplicationClass       struct
 parent_class            GObjectClass <>
 startup                 proc :ptr
 activate                proc :ptr
@@ -50,8 +47,7 @@ dbus_unregister         proc :ptr, :ptr, :ptr
 handle_local_options    proc :ptr, :ptr
 name_lost               proc :ptr
 padding                 gpointer 7 dup(?)
-_GApplicationClass      ends
-GApplicationClass       typedef _GApplicationClass
+GApplicationClass       ends
 
 g_application_get_type proto
 g_application_id_is_valid proto :ptr

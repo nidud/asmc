@@ -24,9 +24,6 @@ GTK_GESTURE_LONG_PRESS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_LONG_PRESS, GtkGestureLongPressClass))>
   endm
 
-;GtkGestureLongPress     typedef _GtkGestureLongPress
-;GtkGestureLongPressClass typedef _GtkGestureLongPressClass
-
 gtk_gesture_long_press_get_type proto
 gtk_gesture_long_press_new proto
 gtk_gesture_long_press_set_delay_factor proto :ptr, :real8

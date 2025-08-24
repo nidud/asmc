@@ -20,10 +20,9 @@ G_POWER_PROFILE_MONITOR_GET_INTERFACE macro o
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((o), G_TYPE_POWER_PROFILE_MONITOR, GPowerProfileMonitorInterface))>
   endm
 
-_GPowerProfileMonitorInterface struct
+GPowerProfileMonitorInterface struct
 g_iface                 GTypeInterface <>
-_GPowerProfileMonitorInterface ends
-GPowerProfileMonitorInterface typedef _GPowerProfileMonitorInterface
+GPowerProfileMonitorInterface ends
 
 g_power_profile_monitor_dup_default proto
 g_power_profile_monitor_get_power_saver_enabled proto :ptr

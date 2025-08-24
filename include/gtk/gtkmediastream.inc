@@ -9,7 +9,7 @@ include gdk/gdk.inc
 
 define GTK_TYPE_MEDIA_STREAM <gtk_media_stream_get_type ()>
 
-_GtkMediaStreamClass    struct
+GtkMediaStreamClass     struct
 parent_class            GObjectClass <>
 play                    proc :ptr
 _pause                  proc :ptr
@@ -25,8 +25,7 @@ _gtk_reserved5          proc
 _gtk_reserved6          proc
 _gtk_reserved7          proc
 _gtk_reserved8          proc
-_GtkMediaStreamClass    ends
-GtkMediaStreamClass     typedef _GtkMediaStreamClass
+GtkMediaStreamClass     ends
 
 gtk_media_stream_is_prepared proto :ptr
 gtk_media_stream_get_error proto :ptr

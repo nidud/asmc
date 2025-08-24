@@ -262,101 +262,101 @@ G_PARAM_SPEC_VARIANT macro pspec
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((pspec), G_TYPE_PARAM_VARIANT, GParamSpecVariant))>
   endm
 
-_GParamSpecChar		struct
+GParamSpecChar		struct
 parent_instance		GParamSpec <>
 minimum			gint8 ?
 maximum			gint8 ?
 default_value		gint8 ?
-_GParamSpecChar		ends
+GParamSpecChar		ends
 
-_GParamSpecUChar	struct
+GParamSpecUChar		struct
 parent_instance		GParamSpec <>
 minimum			guint8 ?
 maximum			guint8 ?
 default_value		guint8 ?
-_GParamSpecUChar	ends
+GParamSpecUChar		ends
 
-_GParamSpecBoolean	struct
+GParamSpecBoolean	struct
 parent_instance		GParamSpec <>
 default_value		gboolean ?
-_GParamSpecBoolean	ends
+GParamSpecBoolean	ends
 
-_GParamSpecInt		struct
+GParamSpecInt		struct
 parent_instance		GParamSpec <>
 minimum			gint ?
 maximum			gint ?
 default_value		gint ?
-_GParamSpecInt		ends
+GParamSpecInt		ends
 
-_GParamSpecUInt		struct
+GParamSpecUInt		struct
 parent_instance		GParamSpec <>
 minimum			guint ?
 maximum			guint ?
 default_value		guint ?
-_GParamSpecUInt		ends
+GParamSpecUInt		ends
 
-_GParamSpecLong		struct
+GParamSpecLong		struct
 parent_instance		GParamSpec <>
 minimum			glong ?
 maximum			glong ?
 default_value		glong ?
-_GParamSpecLong		ends
+GParamSpecLong		ends
 
-_GParamSpecULong	struct
+GParamSpecULong		struct
 parent_instance		GParamSpec <>
 minimum			gulong ?
 maximum			gulong ?
 default_value		gulong ?
-_GParamSpecULong	ends
+GParamSpecULong		ends
 
-_GParamSpecInt64	struct
+GParamSpecInt64		struct
 parent_instance		GParamSpec <>
 minimum			gint64 ?
 maximum			gint64 ?
 default_value		gint64 ?
-_GParamSpecInt64	ends
+GParamSpecInt64		ends
 
-_GParamSpecUInt64	struct
+GParamSpecUInt64	struct
 parent_instance		GParamSpec <>
 minimum			guint64 ?
 maximum			guint64 ?
 default_value		guint64 ?
-_GParamSpecUInt64	ends
+GParamSpecUInt64	ends
 
-_GParamSpecUnichar	struct
+GParamSpecUnichar	struct
 parent_instance		GParamSpec <>
 default_value		gunichar ?
-_GParamSpecUnichar	ends
+GParamSpecUnichar	ends
 
-_GParamSpecEnum		struct
+GParamSpecEnum		struct
 parent_instance		GParamSpec <>
 enum_class		ptr GEnumClass ?
 default_value		gint ?
-_GParamSpecEnum		ends
+GParamSpecEnum		ends
 
-_GParamSpecFlags	struct
+GParamSpecFlags		struct
 parent_instance		GParamSpec <>
 flags_class		ptr GFlagsClass ?
 default_value		guint ?
-_GParamSpecFlags	ends
+GParamSpecFlags		ends
 
-_GParamSpecFloat	struct
+GParamSpecFloat		struct
 parent_instance		GParamSpec <>
 minimum			gfloat ?
 maximum			gfloat ?
 default_value		gfloat ?
 epsilon			gfloat ?
-_GParamSpecFloat	ends
+GParamSpecFloat		ends
 
-_GParamSpecDouble	struct
+GParamSpecDouble	struct
 parent_instance		GParamSpec <>
 minimum			gdouble ?
 maximum			gdouble ?
 default_value		gdouble ?
 epsilon			gdouble ?
-_GParamSpecDouble	ends
+GParamSpecDouble	ends
 
-_GParamSpecString	struct
+GParamSpecString	struct
 parent_instance		GParamSpec <>
 default_value		ptr gchar ?
 cset_first		ptr gchar ?
@@ -366,70 +366,46 @@ RECORD
 null_fold_if_empty	guint :	 1 ?
 ensure_non_null		guint :	 1 ?
 ENDS
-_GParamSpecString	ends
+GParamSpecString	ends
 
-_GParamSpecParam	struct
+GParamSpecParam		struct
 parent_instance		GParamSpec <>
-_GParamSpecParam	ends
+GParamSpecParam		ends
 
-_GParamSpecBoxed	struct
+GParamSpecBoxed		struct
 parent_instance		GParamSpec <>
-_GParamSpecBoxed	ends
+GParamSpecBoxed		ends
 
-_GParamSpecPointer	struct
+GParamSpecPointer	struct
 parent_instance		GParamSpec <>
-_GParamSpecPointer	ends
+GParamSpecPointer	ends
 
-_GParamSpecValueArray	struct
+GParamSpecValueArray	struct
 parent_instance		GParamSpec <>
 element_spec		ptr GParamSpec ?
 fixed_n_elements	guint ?
-_GParamSpecValueArray	ends
+GParamSpecValueArray	ends
 
-_GParamSpecObject	struct
+GParamSpecObject	struct
 parent_instance		GParamSpec <>
-_GParamSpecObject	ends
+GParamSpecObject	ends
 
-_GParamSpecOverride	struct
+GParamSpecOverride	struct
 parent_instance		GParamSpec <>
 overridden		ptr GParamSpec ?
-_GParamSpecOverride	ends
+GParamSpecOverride	ends
 
-_GParamSpecGType	struct
+GParamSpecGType		struct
 parent_instance		GParamSpec <>
 is_a_type		GType ?
-_GParamSpecGType	ends
+GParamSpecGType		ends
 
-_GParamSpecVariant	struct
+GParamSpecVariant	struct
 parent_instance		GParamSpec <>
 type			ptr GVariantType ?
 default_value		ptr GVariant ?
 padding			gpointer 4 dup(?)
-_GParamSpecVariant	ends
-
-GParamSpecChar		typedef _GParamSpecChar
-GParamSpecUChar		typedef _GParamSpecUChar
-GParamSpecBoolean	typedef _GParamSpecBoolean
-GParamSpecInt		typedef _GParamSpecInt
-GParamSpecUInt		typedef _GParamSpecUInt
-GParamSpecLong		typedef _GParamSpecLong
-GParamSpecULong		typedef _GParamSpecULong
-GParamSpecInt64		typedef _GParamSpecInt64
-GParamSpecUInt64	typedef _GParamSpecUInt64
-GParamSpecUnichar	typedef _GParamSpecUnichar
-GParamSpecEnum		typedef _GParamSpecEnum
-GParamSpecFlags		typedef _GParamSpecFlags
-GParamSpecFloat		typedef _GParamSpecFloat
-GParamSpecDouble	typedef _GParamSpecDouble
-GParamSpecString	typedef _GParamSpecString
-GParamSpecParam		typedef _GParamSpecParam
-GParamSpecBoxed		typedef _GParamSpecBoxed
-GParamSpecPointer	typedef _GParamSpecPointer
-GParamSpecValueArray	typedef _GParamSpecValueArray
-GParamSpecObject	typedef _GParamSpecObject
-GParamSpecOverride	typedef _GParamSpecOverride
-GParamSpecGType		typedef _GParamSpecGType
-GParamSpecVariant	typedef _GParamSpecVariant
+GParamSpecVariant	ends
 
 g_param_spec_char proto :ptr, :ptr, :ptr, :gint8, :gint8, :gint8, :GParamFlags
 g_param_spec_uchar proto :ptr, :ptr, :ptr, :guint8, :guint8, :guint8, :GParamFlags

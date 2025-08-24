@@ -25,25 +25,19 @@ GTK_PAD_CONTROLLER_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_PAD_CONTROLLER, GtkPadControllerClass))>
   endm
 
-;GtkPadController        typedef _GtkPadController
-;GtkPadControllerClass   typedef _GtkPadControllerClass
-
-
 .enum GtkPadActionType {
   GTK_PAD_ACTION_BUTTON,
   GTK_PAD_ACTION_RING,
   GTK_PAD_ACTION_STRIP
 }
 
-
-_GtkPadActionEntry      struct
+GtkPadActionEntry       struct
 type                    GtkPadActionType ?
 index                   sdword ?
 mode                    sdword ?
 _label                  ptr sbyte ?
 action_name             ptr sbyte ?
-_GtkPadActionEntry      ends
-GtkPadActionEntry       typedef _GtkPadActionEntry
+GtkPadActionEntry       ends
 
 gtk_pad_controller_get_type proto
 gtk_pad_controller_new proto :ptr, :ptr

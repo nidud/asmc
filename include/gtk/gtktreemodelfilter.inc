@@ -28,21 +28,17 @@ GTK_TREE_MODEL_FILTER_GET_CLASS macro obj
 CALLBACK(GtkTreeModelFilterVisibleFunc, :ptr, :ptr, :gpointer)
 CALLBACK(GtkTreeModelFilterModifyFunc, :ptr, :ptr, :ptr, :sdword, :gpointer)
 
-;GtkTreeModelFilterPrivate typedef _GtkTreeModelFilterPrivate
-
-_GtkTreeModelFilter     struct
+GtkTreeModelFilter      struct
 parent                  GObject <>
 priv                    ptr GtkTreeModelFilterPrivate ?
-_GtkTreeModelFilter     ends
-GtkTreeModelFilter      typedef _GtkTreeModelFilter
+GtkTreeModelFilter      ends
 
-_GtkTreeModelFilterClass struct
+GtkTreeModelFilterClass struct
 parent_class            GObjectClass <>
 visible                 proc :ptr, :ptr, :ptr
 modify                  proc :ptr, :ptr, :ptr, :ptr, :sdword
 padding                 gpointer 8 dup(?)
-_GtkTreeModelFilterClass ends
-GtkTreeModelFilterClass typedef _GtkTreeModelFilterClass
+GtkTreeModelFilterClass ends
 
 
 gtk_tree_model_filter_get_type proto

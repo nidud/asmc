@@ -18,31 +18,25 @@ GSK_IS_RENDER_NODE macro obj
 
 define GSK_SERIALIZATION_ERROR <gsk_serialization_error_quark ()>
 
-;GskRenderNode           typedef _GskRenderNode
-
-_GskColorStop           STRUC
+GskColorStop            STRUC
 offs                    real4 ?
 color                   GdkRGBA <>
-_GskColorStop           ENDS
-GskColorStop            typedef _GskColorStop
+GskColorStop            ENDS
 
-_GskShadow              STRUC
+GskShadow               STRUC
 color                   GdkRGBA <>
 _dx                     real4 ?
 dy                      real4 ?
 radius                  real4 ?
-_GskShadow              ENDS
-GskShadow               typedef _GskShadow
+GskShadow               ENDS
 
-_GskParseLocation       STRUC
+GskParseLocation        STRUC
 bytes                   gsize ?
 chars                   gsize ?
 lines                   gsize ?
 line_bytes              gsize ?
 line_chars              gsize ?
-_GskParseLocation       ENDS
-GskParseLocation        typedef _GskParseLocation
-
+GskParseLocation        ENDS
 
 CALLBACK(GskParseErrorFunc, :ptr, :ptr, :ptr, :gpointer)
 
@@ -82,32 +76,6 @@ define GSK_TYPE_CROSS_FADE_NODE                <gsk_cross_fade_node_get_type ()>
 define GSK_TYPE_TEXT_NODE                      <gsk_text_node_get_type ()>
 define GSK_TYPE_BLUR_NODE                      <gsk_blur_node_get_type ()>
 define GSK_TYPE_GL_SHADER_NODE                 <gsk_gl_shader_node_get_type ()>
-
-;GskDebugNode            typedef _GskDebugNode
-;GskColorNode            typedef _GskColorNode
-;GskTextureNode          typedef _GskTextureNode
-;GskLinearGradientNode   typedef _GskLinearGradientNode
-;GskRepeatingLinearGradientNode typedef _GskRepeatingLinearGradientNode
-;GskRadialGradientNode   typedef _GskRadialGradientNode
-;GskRepeatingRadialGradientNode typedef _GskRepeatingRadialGradientNode
-;GskConicGradientNode    typedef _GskConicGradientNode
-;GskBorderNode           typedef _GskBorderNode
-;GskInsetShadowNode      typedef _GskInsetShadowNode
-;GskOutsetShadowNode     typedef _GskOutsetShadowNode
-;GskCairoNode            typedef _GskCairoNode
-;GskContainerNode        typedef _GskContainerNode
-;GskTransformNode        typedef _GskTransformNode
-;GskOpacityNode          typedef _GskOpacityNode
-;GskColorMatrixNode      typedef _GskColorMatrixNode
-;GskRepeatNode           typedef _GskRepeatNode
-;GskClipNode             typedef _GskClipNode
-;GskRoundedClipNode      typedef _GskRoundedClipNode
-;GskShadowNode           typedef _GskShadowNode
-;GskBlendNode            typedef _GskBlendNode
-;GskCrossFadeNode        typedef _GskCrossFadeNode
-;GskTextNode             typedef _GskTextNode
-;GskBlurNode             typedef _GskBlurNode
-;GskGLShaderNode         typedef _GskGLShaderNode
 
 gsk_debug_node_get_type proto
 gsk_debug_node_new proto :ptr, :ptr

@@ -24,16 +24,14 @@ GTK_GRID_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_GRID, GtkGridClass))>
   endm
 
-_GtkGrid                struct
+GtkGrid                 struct
 parent_instance         GtkWidget <>
-_GtkGrid                ends
-GtkGrid                 typedef _GtkGrid
+GtkGrid                 ends
 
-_GtkGridClass           struct
+GtkGridClass            struct
 parent_class            GtkWidgetClass <>
 padding                 gpointer 8 dup(?)
-_GtkGridClass           ends
-GtkGridClass            typedef _GtkGridClass
+GtkGridClass            ends
 
 gtk_grid_get_type proto
 gtk_grid_new proto

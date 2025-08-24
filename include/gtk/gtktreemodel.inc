@@ -23,10 +23,6 @@ define GTK_TYPE_TREE_ITER <gtk_tree_iter_get_type ()>
 define GTK_TYPE_TREE_PATH <gtk_tree_path_get_type ()>
 define GTK_TYPE_TREE_ROW_REFERENCE <gtk_tree_row_reference_get_type ()>
 
-;GtkTreePath             typedef _GtkTreePath
-;GtkTreeRowReference     typedef _GtkTreeRowReference
-;GtkTreeModel            typedef _GtkTreeModel
-
 CALLBACK(GtkTreeModelForeachFunc, :ptr, :ptr, :ptr, :gpointer)
 
 .enum GtkTreeModelFlags {
@@ -34,15 +30,14 @@ CALLBACK(GtkTreeModelForeachFunc, :ptr, :ptr, :ptr, :gpointer)
   GTK_TREE_MODEL_LIST_ONLY = 1 shl 1
 }
 
-_GtkTreeIter            struct
+GtkTreeIter             struct
 stamp                   sdword ?
 user_data               gpointer ?
 user_data2              gpointer ?
 user_data3              gpointer ?
-_GtkTreeIter            ends
-GtkTreeIter             typedef _GtkTreeIter
+GtkTreeIter             ends
 
-_GtkTreeModelIface      struct
+GtkTreeModelIface       struct
 g_iface                 GTypeInterface <>
 row_changed             proc :ptr, :ptr, :ptr
 row_inserted            proc :ptr, :ptr, :ptr
@@ -64,8 +59,7 @@ iter_nth_child          proc :ptr, :ptr, :ptr, :sdword
 iter_parent             proc :ptr, :ptr, :ptr
 ref_node                proc :ptr, :ptr
 unref_node              proc :ptr, :ptr
-_GtkTreeModelIface      ends
-GtkTreeModelIface       typedef _GtkTreeModelIface
+GtkTreeModelIface       ends
 
 gtk_tree_path_new proto
 gtk_tree_path_new_from_string proto :ptr

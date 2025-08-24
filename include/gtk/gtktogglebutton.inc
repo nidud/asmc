@@ -24,17 +24,15 @@ GTK_TOGGLE_BUTTON_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TOGGLE_BUTTON, GtkToggleButtonClass))>
   endm
 
-_GtkToggleButton        struct
+GtkToggleButton         struct
 button                  GtkButton <>
-_GtkToggleButton        ends
-GtkToggleButton         typedef _GtkToggleButton
+GtkToggleButton         ends
 
-_GtkToggleButtonClass   struct
+GtkToggleButtonClass    struct
 parent_class            GtkButtonClass <>
 toggled                 proc :ptr
 padding                 gpointer 8 dup(?)
-_GtkToggleButtonClass   ends
-GtkToggleButtonClass    typedef _GtkToggleButtonClass
+GtkToggleButtonClass    ends
 
 
 gtk_toggle_button_get_type proto

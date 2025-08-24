@@ -25,8 +25,6 @@ G_FILE_ICON_GET_CLASS macro o
   endm
 
 
-;GFileIconClass          typedef _GFileIconClass
-
 g_file_icon_get_type proto
 g_file_icon_new proto :ptr
 g_file_icon_get_file proto :ptr

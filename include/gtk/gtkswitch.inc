@@ -15,8 +15,6 @@ GTK_IS_SWITCH macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SWITCH))>
   endm
 
-;GtkSwitch               typedef _GtkSwitch
-
 gtk_switch_get_type proto
 gtk_switch_new proto
 gtk_switch_set_active proto :ptr, :gboolean

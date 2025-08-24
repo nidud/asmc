@@ -298,11 +298,11 @@ define CTFMODEBIAS_HALFWIDTHALPHANUMERIC	0x000C
 define IMF_SMODE_PLAURALCLAUSE	0x0001
 define IMF_SMODE_NONE		0x0002
 
-_imecomptext		struct
+IMECOMPTEXT		struct
 cb			LONG ?
 flags			DWORD ?
-_imecomptext		ends
-IMECOMPTEXT		typedef _imecomptext
+IMECOMPTEXT		ends
+
 define ICT_RESULTREADSTR	1
 
 define EMO_EXIT			0
@@ -323,7 +323,7 @@ if (_RICHEDIT_VER ge 0x0800)
 
 define EM_INSERTTABLE		(WM_USER + 232)
 
-_tableRowParms		struct
+TABLEROWPARMS		struct
 cbRow			BYTE ?
 cbCell			BYTE ?
 cCell			BYTE ?
@@ -342,10 +342,9 @@ ends
 cpStartRow		LONG ?
 bTableLevel		BYTE ?
 iCell			BYTE ?
-_tableRowParms		ends
-TABLEROWPARMS		typedef _tableRowParms
+TABLEROWPARMS		ends
 
-_tableCellParms		struct
+TABLECELLPARMS		struct
 dxWidth			LONG ?
 record flags
  nVertAlign		WORD : 2 ?
@@ -366,9 +365,7 @@ crBrdrRight		COLORREF ?
 crBrdrBottom		COLORREF ?
 crBackPat		COLORREF ?
 crForePat		COLORREF ?
-_tableCellParms		ends
-TABLECELLPARMS		typedef _tableCellParms
-
+TABLECELLPARMS		ends
 
 define EM_GETAUTOCORRECTPROC	(WM_USER + 233)
 define EM_SETAUTOCORRECTPROC	(WM_USER + 234)
@@ -453,11 +450,10 @@ define EN_CLIPFORMAT		0x0712
 define EN_STARTCOMPOSITION	0x0713
 define EN_ENDCOMPOSITION	0x0714
 
-_endcomposition		struct
+ENDCOMPOSITIONNOTIFY	struct
 nmhdr			NMHDR <>
 dwCode			DWORD ?
-_endcomposition		ends
-ENDCOMPOSITIONNOTIFY	typedef _endcomposition
+ENDCOMPOSITIONNOTIFY	ends
 
 define ECN_ENDCOMPOSITION	0x0001
 define ECN_NEWTEXT		0x0002
@@ -561,7 +557,7 @@ ifdef _WIN32
 CALLBACK(EDITWORDBREAKPROCEX, :ptr, :LONG, :BYTE, :sdword)
 endif
 
-_charformat		struct
+CHARFORMATA		struct
 cbSize			UINT ?
 dwMask			DWORD ?
 dwEffects		DWORD ?
@@ -571,10 +567,9 @@ crTextColor		COLORREF ?
 bCharSet		BYTE ?
 bPitchAndFamily		BYTE ?
 szFaceName		sbyte LF_FACESIZE dup(?)
-_charformat		ends
-CHARFORMATA		typedef _charformat
+CHARFORMATA		ends
 
-_charformatw		struct
+CHARFORMATW		struct
 cbSize			UINT ?
 dwMask			DWORD ?
 dwEffects		DWORD ?
@@ -584,8 +579,7 @@ crTextColor		COLORREF ?
 bCharSet		BYTE ?
 bPitchAndFamily		BYTE ?
 szFaceName		WCHAR LF_FACESIZE dup(?)
-_charformatw		ends
-CHARFORMATW		typedef _charformatw
+CHARFORMATW		ends
 
 if (_RICHEDIT_VER ge 0x0200)
 ifdef _UNICODE
@@ -594,60 +588,10 @@ else
 define CHARFORMAT <CHARFORMATA>
 endif
 else
-define CHARFORMAT CHARFORMATA
+define CHARFORMAT <CHARFORMATA>
 endif
 
-if defined(__cplusplus)
-
-_charformatw		struct
-wWeight			WORD ?
-sSpacing		sword ?
-crBackColor		COLORREF ?
-lcid			LCID ?
-if (_RICHEDIT_VER ge 0x0500)
-union
- dwReserved		DWORD ?
- dwCookie		DWORD ?
-ends
-else
-dwReserved		DWORD ?
-endif
-sStyle			sword ?
-wKerning		WORD ?
-bUnderlineType		BYTE ?
-bAnimation		BYTE ?
-bRevAuthor		BYTE ?
-if (_RICHEDIT_VER ge 0x0800)
-bUnderlineColor		BYTE ?
-endif
-_charformatw		ends
-
-_charformat		struct
-wWeight			WORD ?
-sSpacing		sword ?
-crBackColor		COLORREF ?
-lcid			LCID ?
-if (_RICHEDIT_VER ge 0x0500)
-union
- dwReserved		DWORD ?
- dwCookie		DWORD ?
-ends
-else
-dwReserved		DWORD ?
-endif
-sStyle			sword ?
-wKerning		WORD ?
-bUnderlineType		BYTE ?
-bAnimation		BYTE ?
-bRevAuthor		BYTE ?
-if (_RICHEDIT_VER ge 0x0800)
-bUnderlineColor		BYTE ?
-endif
-_charformat		ends
-
-else
-
-_charformat2w		struct
+CHARFORMAT2W		struct
 cbSize			UINT ?
 dwMask			DWORD ?
 dwEffects		DWORD ?
@@ -677,10 +621,10 @@ bRevAuthor		BYTE ?
 if (_RICHEDIT_VER ge 0x0800)
 bUnderlineColor		BYTE ?
 endif
-_charformat2w		ends
-CHARFORMAT2W		typedef _charformat2w
+CHARFORMAT2W		ends
 
-_charformat2a		struct
+
+CHARFORMAT2A		struct
 cbSize			UINT ?
 dwMask			DWORD ?
 dwEffects		DWORD ?
@@ -710,10 +654,7 @@ bRevAuthor		BYTE ?
 if (_RICHEDIT_VER ge 0x0800)
 bUnderlineColor		BYTE ?
 endif
-_charformat2a		ends
-CHARFORMAT2A		typedef _charformat2a
-
-endif
+CHARFORMAT2A		ends
 
 ifdef _UNICODE
 define CHARFORMAT2 <CHARFORMAT2W>
@@ -849,23 +790,20 @@ define SPF_DONTSETDEFAULT	0x0002
 define SPF_SETDEFAULT		0x0004
 endif
 
-_charrange		struct
+CHARRANGE		struct
 cpMin			LONG ?
 cpMax			LONG ?
-_charrange		ends
-CHARRANGE		typedef _charrange
+CHARRANGE		ends
 
-_textrange		struct
+TEXTRANGEA		struct
 chrg			CHARRANGE <>
 lpstrText		LPSTR ?
-_textrange		ends
-TEXTRANGEA		typedef _textrange
+TEXTRANGEA		ends
 
-_textrangew		struct
+TEXTRANGEW		struct
 chrg			CHARRANGE <>
 lpstrText		LPWSTR ?
-_textrangew		ends
-TEXTRANGEW		typedef _textrangew
+TEXTRANGEW		ends
 
 if (_RICHEDIT_VER ge 0x0200)
 ifdef _UNICODE
@@ -874,17 +812,16 @@ else
 define TEXTRANGE	<TEXTRANGEA>
 endif
 else
-define TEXTRANGE	TEXTRANGEA
+define TEXTRANGE	<TEXTRANGEA>
 endif
 
 CALLBACK(EDITSTREAMCALLBACK, :DWORD_PTR, :LPBYTE, :LONG, :ptr)
 
-_editstream		struct
+EDITSTREAM		struct
 dwCookie		DWORD_PTR ?
 dwError			DWORD ?
 pfnCallback		EDITSTREAMCALLBACK ?
-_editstream		ends
-EDITSTREAM		typedef _editstream
+EDITSTREAM		ends
 
 define SF_TEXT		0x0001
 define SF_RTF		0x0002
@@ -908,17 +845,15 @@ define SFF_PWD		0x0800
 
 define SF_RTFVAL	0x0700
 
-_findtext		struct
+FINDTEXTA		struct
 chrg			CHARRANGE <>
 lpstrText		LPCSTR ?
-_findtext		ends
-FINDTEXTA		typedef _findtext
+FINDTEXTA		ends
 
-_findtextw		struct
+FINDTEXTW		struct
 chrg			CHARRANGE <>
 lpstrText		LPCWSTR ?
-_findtextw		ends
-FINDTEXTW		typedef _findtextw
+FINDTEXTW		ends
 
 if (_RICHEDIT_VER ge 0x0200)
 ifdef _UNICODE
@@ -927,22 +862,20 @@ else
 define FINDTEXT <FINDTEXTA>
 endif
 else
-define FINDTEXT FINDTEXTA
+define FINDTEXT <FINDTEXTA>
 endif
 
-_findtextexa		struct
+FINDTEXTEXA		struct
 chrg			CHARRANGE <>
 lpstrText		LPCSTR ?
 chrgText		CHARRANGE <>
-_findtextexa		ends
-FINDTEXTEXA		typedef _findtextexa
+FINDTEXTEXA		ends
 
-_findtextexw		struct
+FINDTEXTEXW		struct
 chrg			CHARRANGE <>
 lpstrText		LPCWSTR ?
 chrgText		CHARRANGE <>
-_findtextexw		ends
-FINDTEXTEXW		typedef _findtextexw
+FINDTEXTEXW		ends
 
 if (_RICHEDIT_VER ge 0x0200)
 ifdef _UNICODE
@@ -951,23 +884,22 @@ else
 define FINDTEXTEX	<FINDTEXTEXA>
 endif
 else
-define FINDTEXTEX	FINDTEXTEXA
+define FINDTEXTEX	<FINDTEXTEXA>
 endif
 
-_formatrange		struct
+FORMATRANGE		struct
 hdc			HDC ?
 hdcTarget		HDC ?
 _rc			RECT <>
 rcPage			RECT <>
 chrg			CHARRANGE <>
-_formatrange		ends
-FORMATRANGE		typedef _formatrange
+FORMATRANGE		ends
 
 define MAX_TAB_STOPS 32
 define lDefaultTab 720
 define MAX_TABLE_CELLS 63
 
-_paraformat		struct
+PARAFORMAT		struct
 cbSize			UINT ?
 dwMask			DWORD ?
 wNumbering		WORD ?
@@ -981,30 +913,9 @@ dxOffset		LONG ?
 wAlignment		WORD ?
 cTabCount		sword ?
 rgxTabs			LONG MAX_TAB_STOPS dup(?)
-_paraformat		ends
-PARAFORMAT		typedef _paraformat
+PARAFORMAT		ends
 
-ifdef __cplusplus
-_paraformat		struct
-dySpaceBefore		LONG ?
-dySpaceAfter		LONG ?
-dyLineSpacing		LONG ?
-sStyle			sword ?
-bLineSpacingRule	BYTE ?
-bOutlineLevel		BYTE ?
-wShadingWeight		WORD ?
-wShadingStyle		WORD ?
-wNumberingStart		WORD ?
-wNumberingStyle		WORD ?
-wNumberingTab		WORD ?
-wBorderSpace		WORD ?
-wBorderWidth		WORD ?
-wBorders		WORD ?
-_paraformat		ends
-
-else
-
-_paraformat2		struct
+PARAFORMAT2		struct
 cbSize			UINT ?
 dwMask			DWORD ?
 wNumbering		WORD ?
@@ -1032,10 +943,7 @@ wNumberingTab		WORD ?
 wBorderSpace		WORD ?
 wBorderWidth		WORD ?
 wBorders		WORD ?
-_paraformat2		ends
-PARAFORMAT2		typedef _paraformat2
-
-endif
+PARAFORMAT2		ends
 
 define PFM_STARTINDENT		0x00000001
 define PFM_RIGHTINDENT		0x00000002
@@ -1118,48 +1026,42 @@ define PFA_FULL_INTERWORD	4
 ifndef WM_NOTIFY
 define WM_NOTIFY		0x004E
 
-_nmhdr			struct
+NMHDR			struct
 hwndFrom		HWND ?
 idFrom			UINT ?
 code			UINT ?
-_nmhdr			ends
-NMHDR			typedef _nmhdr
+NMHDR			ends
 endif
 
-_msgfilter		struct
+MSGFILTER		struct
 nmhdr			NMHDR <>
 msg			UINT ?
 wParam			WPARAM ?
 lParam			LPARAM ?
-_msgfilter		ends
-MSGFILTER		typedef _msgfilter
+MSGFILTER		ends
 
-_reqresize		struct
+REQRESIZE		struct
 nmhdr			NMHDR <>
 _rc			RECT <>
-_reqresize		ends
-REQRESIZE		typedef _reqresize
+REQRESIZE		ends
 
-_selchange		struct
+SELCHANGE		struct
 nmhdr			NMHDR <>
 chrg			CHARRANGE <>
 seltyp			WORD ?
-_selchange		ends
-SELCHANGE		typedef _selchange
+SELCHANGE		ends
 
 if (_RICHEDIT_VER ge 0x0800)
-_grouptypingchange	struct
+GROUPTYPINGCHANGE	struct
 nmhdr			NMHDR <>
 fGroupTyping		BOOL ?
-_grouptypingchange	ends
-GROUPTYPINGCHANGE	typedef _grouptypingchange
+GROUPTYPINGCHANGE	ends
 endif
 
-_clipboardformat	struct
+CLIPBOARDFORMAT		struct
 nmhdr			NMHDR <>
 cf			CLIPFORMAT ?
-_clipboardformat	ends
-CLIPBOARDFORMAT		typedef _clipboardformat
+CLIPBOARDFORMAT		ends
 
 define SEL_EMPTY	0x0000
 define SEL_TEXT		0x0001
@@ -1170,13 +1072,12 @@ define SEL_MULTIOBJECT	0x0008
 define GCM_RIGHTMOUSEDROP	0x8000
 
 if (_RICHEDIT_VER ge 0x0800)
-_getcontextmenuex	struct
+GETCONTEXTMENUEX	struct
 chrg			CHARRANGE <>
 dwFlags			DWORD ?
 pt			POINT <>
 pvReserved		ptr ?
-_getcontextmenuex	ends
-GETCONTEXTMENUEX	typedef _getcontextmenuex
+GETCONTEXTMENUEX	ends
 
 define GCMF_GRIPPER	0x00000001
 define GCMF_SPELLING	0x00000002
@@ -1184,93 +1085,82 @@ define GCMF_TOUCHMENU	0x00004000
 define GCMF_MOUSEMENU	0x00002000
 endif
 
-_endropfiles		struct
+ENDROPFILES		struct
 nmhdr			NMHDR <>
 hDrop			HANDLE ?
 cp			LONG ?
 fProtected		BOOL ?
-_endropfiles		ends
-ENDROPFILES		typedef _endropfiles
+ENDROPFILES		ends
 
-_enprotected		struct
+ENPROTECTED		struct
 nmhdr			NMHDR <>
 msg			UINT ?
 wParam			WPARAM ?
 lParam			LPARAM ?
 chrg			CHARRANGE <>
-_enprotected		ends
-ENPROTECTED		typedef _enprotected
+ENPROTECTED		ends
 
-_ensaveclipboard	struct
+ENSAVECLIPBOARD		struct
 nmhdr			NMHDR <>
 cObjectCount		LONG ?
 cch			LONG ?
-_ensaveclipboard	ends
-ENSAVECLIPBOARD		typedef _ensaveclipboard
+ENSAVECLIPBOARD		ends
 
 ifndef MACPORT
-_enoleopfailed		struct
+ENOLEOPFAILED		struct
 nmhdr			NMHDR <>
 iob			LONG ?
 lOper			LONG ?
 hr			HRESULT ?
-_enoleopfailed		ends
-ENOLEOPFAILED		typedef _enoleopfailed
+ENOLEOPFAILED		ends
 endif
 
 define OLEOP_DOVERB	1
 
-_objectpositions	struct
+OBJECTPOSITIONS		struct
 nmhdr			NMHDR <>
 cObjectCount		LONG ?
 pcpPositions		ptr LONG ?
-_objectpositions	ends
-OBJECTPOSITIONS		typedef _objectpositions
+OBJECTPOSITIONS		ends
 
-_enlink			struct
+ENLINK			struct
 nmhdr			NMHDR <>
 msg			UINT ?
 wParam			WPARAM ?
 lParam			LPARAM ?
 chrg			CHARRANGE <>
-_enlink			ends
-ENLINK			typedef _enlink
+ENLINK			ends
 
-_enlowfirtf		struct
+ENLOWFIRTF		struct
 nmhdr			NMHDR <>
 szControl		ptr sbyte ?
-_enlowfirtf		ends
-ENLOWFIRTF		typedef _enlowfirtf
+ENLOWFIRTF		ends
 
-_encorrecttext		struct
+ENCORRECTTEXT		struct
 nmhdr			NMHDR <>
 chrg			CHARRANGE <>
 seltyp			WORD ?
-_encorrecttext		ends
-ENCORRECTTEXT		typedef _encorrecttext
+ENCORRECTTEXT		ends
 
-_punctuation		struct
+PUNCTUATION		struct
 iSize			UINT ?
 szPunctuation		LPSTR ?
-_punctuation		ends
-PUNCTUATION		typedef _punctuation
+PUNCTUATION		ends
 
-_compcolor		struct
+COMPCOLOR		struct
 crText			COLORREF ?
 crBackground		COLORREF ?
 dwEffects		DWORD ?
-_compcolor		ends
-COMPCOLOR		typedef _compcolor
+COMPCOLOR		ends
 
 define CF_RTF		<"Rich Text Format">
 define CF_RTFNOOBJS	<"Rich Text Format Without Objects">
 define CF_RETEXTOBJ	<"RichEdit Text and Objects">
 
-_repastespecial		struct
+REPASTESPECIAL		struct
 dwAspect		DWORD ?
 dwParam			DWORD_PTR ?
-_repastespecial		ends
-REPASTESPECIAL		typedef _repastespecial
+REPASTESPECIAL		ends
 
 .enum UNDONAMEID {
     UID_UNKNOWN		= 0,
@@ -1290,11 +1180,10 @@ if (_RICHEDIT_VER ge 0x0500)
 define ST_UNICODE	8
 endif
 
-_settextex		struct
+SETTEXTEX		struct
 flags			DWORD ?
 codepage		UINT ?
-_settextex		ends
-SETTEXTEX		typedef _settextex
+SETTEXTEX		ends
 
 define GT_DEFAULT	0
 define GT_USECRLF	1
@@ -1302,14 +1191,13 @@ define GT_SELECTION	2
 define GT_RAWTEXT	4
 define GT_NOHIDDENTEXT	8
 
-_gettextex		struct
+GETTEXTEX		struct
 cb			DWORD ?
 flags			DWORD ?
 codepage		UINT ?
 lpDefaultChar		LPCSTR ?
 lpUsedDefChar		LPBOOL ?
-_gettextex		ends
-GETTEXTEX		typedef _gettextex
+GETTEXTEX		ends
 
 define GTL_DEFAULT	0
 define GTL_USECRLF	1
@@ -1318,18 +1206,16 @@ define GTL_CLOSE	4
 define GTL_NUMCHARS	8
 define GTL_NUMBYTES	16
 
-_gettextlengthex	struct
+GETTEXTLENGTHEX		struct
 flags			DWORD ?
 codepage		UINT ?
-_gettextlengthex	ends
-GETTEXTLENGTHEX		typedef _gettextlengthex
+GETTEXTLENGTHEX		ends
 
-_bidioptions		struct
+BIDIOPTIONS		struct
 cbSize			UINT ?
 wMask			WORD ?
 wEffects		WORD ?
-_bidioptions		ends
-BIDIOPTIONS		typedef _bidioptions
+BIDIOPTIONS		ends
 
 if (_RICHEDIT_VER eq 0x0100)
 define BOM_DEFPARADIR		0x0001
@@ -1376,21 +1262,19 @@ endif
     khyphDelAndChange
     }
 
-hyphresult		struct
+HYPHRESULT		struct
 khyph			KHYPH ?
 ichHyph			sdword ?
 chHyph			WCHAR ?
-hyphresult		ends
-HYPHRESULT		typedef hyphresult
+HYPHRESULT		ends
 
 CALLBACK(HyphenateProc, :ptr, :LANGID, :sdword, :ptr)
 
-tagHyphenateInfo	struct
+HYPHENATEINFO		struct
 cbSize			sword ?
 dxHyphenateZone		sword ?
 pfnHyphenate		HyphenateProc ?
-tagHyphenateInfo	ends
-HYPHENATEINFO		typedef tagHyphenateInfo
+HYPHENATEINFO		ends
 
 .pragma pack(pop)
 

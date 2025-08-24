@@ -25,12 +25,11 @@ GDK_CONTENT_PROVIDER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_CONTENT_PROVIDER, GdkContentProviderClass))>
   endm
 
-_GdkContentProvider     struct
+GdkContentProvider      struct
 parent                  GObject <>
-_GdkContentProvider     ends
-GdkContentProvider      typedef _GdkContentProvider
+GdkContentProvider      ends
 
-_GdkContentProviderClass struct
+GdkContentProviderClass struct
 parent_class            GObjectClass <>
 content_changed         proc :ptr
 attach_clipboard        proc :ptr, :ptr
@@ -41,9 +40,7 @@ write_mime_type_async   proc :ptr, :ptr, :ptr, :sdword, :ptr, :GAsyncReadyCallba
 write_mime_type_finish  proc :ptr, :ptr, :ptr
 get_value               proc :ptr, :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GdkContentProviderClass ends
-GdkContentProviderClass typedef _GdkContentProviderClass
-
+GdkContentProviderClass ends
 
 gdk_content_provider_get_type proto
 gdk_content_provider_ref_formats proto :ptr

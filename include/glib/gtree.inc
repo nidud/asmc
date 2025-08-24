@@ -9,9 +9,6 @@ include glib/gnode.inc
 
 undef G_TREE_DEBUG
 
-;GTree                   typedef _GTree
-;GTreeNode               typedef _GTreeNode
-
 CALLBACK(GTraverseFunc, :gpointer, :gpointer, :gpointer)
 CALLBACK(GTraverseNodeFunc, :ptr, :gpointer)
 

@@ -12,13 +12,9 @@ GTK_IS_CSS_PROVIDER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GTK_TYPE_CSS_PROVIDER))>
   endm
 
-;GtkCssProviderClass     typedef _GtkCssProviderClass
-;GtkCssProviderPrivate   typedef _GtkCssProviderPrivate
-
-_GtkCssProvider         struct
+GtkCssProvider          struct
 parent_instance         GObject <>
-_GtkCssProvider         ends
-GtkCssProvider          typedef _GtkCssProvider
+GtkCssProvider          ends
 
 gtk_css_provider_get_type proto
 gtk_css_provider_new proto

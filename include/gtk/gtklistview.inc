@@ -24,9 +24,6 @@ GTK_LIST_VIEW_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_LIST_VIEW, GtkListViewClass))>
   endm
 
-;GtkListView             typedef _GtkListView
-;GtkListViewClass        typedef _GtkListViewClass
-
 gtk_list_view_get_type proto
 gtk_list_view_new proto :ptr, :ptr
 gtk_list_view_get_model proto :ptr

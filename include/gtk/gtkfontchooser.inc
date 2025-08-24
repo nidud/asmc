@@ -28,9 +28,7 @@ GTK_FONT_CHOOSER_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), GTK_TYPE_FONT_CHOOSER, GtkFontChooserIface))>
   endm
 
-;GtkFontChooser		 typedef _GtkFontChooser
-
-_GtkFontChooserIface	struct
+GtkFontChooserIface	struct
 base_iface		GTypeInterface <>
 get_font_family		proc :ptr
 get_font_face		proc :ptr
@@ -40,8 +38,7 @@ font_activated		proc :ptr, :ptr
 set_font_map		proc :ptr, :ptr
 get_font_map		proc :ptr
 padding			gpointer 10 dup(?)
-_GtkFontChooserIface	ends
-GtkFontChooserIface	typedef _GtkFontChooserIface
+GtkFontChooserIface	ends
 
 gtk_font_chooser_get_type proto
 gtk_font_chooser_get_font_family proto :ptr

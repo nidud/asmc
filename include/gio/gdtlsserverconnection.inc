@@ -18,11 +18,9 @@ G_DTLS_SERVER_CONNECTION_GET_INTERFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_DTLS_SERVER_CONNECTION, GDtlsServerConnectionInterface))>
   endm
 
-
-_GDtlsServerConnectionInterface struct
+GDtlsServerConnectionInterface struct
 g_iface                 GTypeInterface <>
-_GDtlsServerConnectionInterface ends
-GDtlsServerConnectionInterface typedef _GDtlsServerConnectionInterface
+GDtlsServerConnectionInterface ends
 
 g_dtls_server_connection_get_type proto
 g_dtls_server_connection_new proto :ptr, :ptr, :ptr

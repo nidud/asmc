@@ -21,21 +21,17 @@ G_IS_DBUS_OBJECT_MANAGER_CLIENT_CLASS macro k
   exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_DBUS_OBJECT_MANAGER_CLIENT))>
   endm
 
-;GDBusObjectManagerClientPrivate typedef _GDBusObjectManagerClientPrivate
-
-_GDBusObjectManagerClient struct
+GDBusObjectManagerClient struct
 parent_instance         GObject <>
 priv                    ptr GDBusObjectManagerClientPrivate ?
-_GDBusObjectManagerClient ends
-GDBusObjectManagerClient typedef _GDBusObjectManagerClient
+GDBusObjectManagerClient ends
 
-_GDBusObjectManagerClientClass struct
+GDBusObjectManagerClientClass struct
 parent_class            GObjectClass <>
 interface_proxy_signal  proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 interface_proxy_properties_changed proc :ptr, :ptr, :ptr, :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GDBusObjectManagerClientClass ends
-GDBusObjectManagerClientClass typedef _GDBusObjectManagerClientClass
+GDBusObjectManagerClientClass ends
 
 g_dbus_object_manager_client_get_type proto
 g_dbus_object_manager_client_new proto :ptr, :GDBusObjectManagerClientFlags, :ptr, :ptr, :GDBusProxyTypeFunc, :gpointer, :GDestroyNotify, :ptr, :GAsyncReadyCallback, :gpointer

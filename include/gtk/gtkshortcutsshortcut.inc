@@ -15,11 +15,6 @@ GTK_IS_SHORTCUTS_SHORTCUT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SHORTCUTS_SHORTCUT))>
   endm
 
-
-;GtkShortcutsShortcut    typedef _GtkShortcutsShortcut
-;GtkShortcutsShortcutClass typedef _GtkShortcutsShortcutClass
-
-
 .enum GtkShortcutType {
   GTK_SHORTCUT_ACCELERATOR,
   GTK_SHORTCUT_GESTURE_PINCH,

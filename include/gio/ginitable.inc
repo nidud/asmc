@@ -21,13 +21,10 @@ G_TYPE_IS_INITABLE macro type
   exitm<<g_type_is_a>ype), G_TYPE_INITABLE))>
   endm
 
-
-_GInitableIface         struct
+GInitableIface          struct
 g_iface                 GTypeInterface <>
 init                    proc :ptr, :ptr, :ptr
-_GInitableIface         ends
-GInitableIface          typedef _GInitableIface
-
+GInitableIface          ends
 
 g_initable_get_type proto
 g_initable_init proto :ptr, :ptr, :ptr

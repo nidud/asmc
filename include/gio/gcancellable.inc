@@ -24,16 +24,12 @@ G_CANCELLABLE_GET_CLASS macro o
   exitm<G_TYPE_INSTANCE_GET_CLASS (o, G_TYPE_CANCELLABLE, GCancellableClass)>
   endm
 
-
-;GCancellablePrivate     typedef _GCancellablePrivate
-
-_GCancellable           struct
+GCancellable            struct
 parent_instance         GObject <>
 priv                    ptr GCancellablePrivate ?
-_GCancellable           ends
-GCancellable            typedef _GCancellable
+GCancellable            ends
 
-_GCancellableClass      struct
+GCancellableClass       struct
 parent_class            GObjectClass <>
 cancelled               proc :ptr
 _g_reserved1            proc
@@ -41,8 +37,7 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GCancellableClass      ends
-GCancellableClass       typedef _GCancellableClass
+GCancellableClass       ends
 
 g_cancellable_get_type proto
 g_cancellable_new proto

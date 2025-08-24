@@ -5,8 +5,6 @@ if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-;GtkEventControllerClass typedef _GtkEventControllerClass
-
 include gdk/gdk.inc
 include gtk/gtktypes.inc
 include gtk/gtkenums.inc

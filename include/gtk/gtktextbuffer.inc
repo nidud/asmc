@@ -28,15 +28,12 @@ GTK_TEXT_BUFFER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TEXT_BUFFER, GtkTextBufferClass))>
   endm
 
-;GtkTextBufferPrivate    typedef _GtkTextBufferPrivate
-
-_GtkTextBuffer          struct
+GtkTextBuffer           struct
 parent_instance         GObject <>
 priv                    ptr GtkTextBufferPrivate ?
-_GtkTextBuffer          ends
-GtkTextBuffer           typedef _GtkTextBuffer
+GtkTextBuffer           ends
 
-_GtkTextBufferClass     struct
+GtkTextBufferClass      struct
 parent_class            GObjectClass <>
 insert_text             proc :ptr, :ptr, :ptr, :sdword
 insert_paintable        proc :ptr, :ptr, :ptr
@@ -57,8 +54,7 @@ _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkTextBufferClass     ends
-GtkTextBufferClass      typedef _GtkTextBufferClass
+GtkTextBufferClass      ends
 
 gtk_text_buffer_get_type proto
 gtk_text_buffer_new proto :ptr

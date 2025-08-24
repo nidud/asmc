@@ -18,15 +18,12 @@ GTK_CELL_EDITABLE_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_CELL_EDITABLE, GtkCellEditableIface))>
   endm
 
-;GtkCellEditable         typedef _GtkCellEditable
-
-_GtkCellEditableIface   struct
+GtkCellEditableIface    struct
 g_iface                 GTypeInterface <>
 editing_done            proc :ptr
 remove_widget           proc :ptr
 start_editing           proc :ptr, :ptr
-_GtkCellEditableIface   ends
-GtkCellEditableIface    typedef _GtkCellEditableIface
+GtkCellEditableIface    ends
 
 gtk_cell_editable_get_type proto
 gtk_cell_editable_start_editing proto :ptr, :ptr

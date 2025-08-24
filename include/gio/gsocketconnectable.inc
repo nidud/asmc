@@ -19,13 +19,12 @@ G_SOCKET_CONNECTABLE_GET_IFACE macro obj
   endm
 
 
-_GSocketConnectableIface struct
+GSocketConnectableIface struct
 g_iface                 GTypeInterface <>
 enumerate               proc :ptr
 proxy_enumerate         proc :ptr
 to_string               proc :ptr
-_GSocketConnectableIface ends
-GSocketConnectableIface typedef _GSocketConnectableIface
+GSocketConnectableIface ends
 
 g_socket_connectable_get_type proto
 g_socket_connectable_enumerate proto :ptr

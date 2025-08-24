@@ -16,8 +16,6 @@ GTK_IS_APP_CHOOSER_DIALOG macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_APP_CHOOSER_DIALOG))>
   endm
 
-;GtkAppChooserDialog     typedef _GtkAppChooserDialog
-
 gtk_app_chooser_dialog_get_type proto
 
 gtk_app_chooser_dialog_new proto :ptr, :GtkDialogFlags, :ptr

@@ -24,9 +24,6 @@ GTK_GESTURE_SINGLE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_SINGLE, GtkGestureSingleClass))>
   endm
 
-;GtkGestureSingle        typedef _GtkGestureSingle
-;GtkGestureSingleClass   typedef _GtkGestureSingleClass
-
 gtk_gesture_single_get_type proto
 gtk_gesture_single_get_touch_only proto :ptr
 gtk_gesture_single_set_touch_only proto :ptr, :gboolean

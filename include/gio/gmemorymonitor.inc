@@ -21,11 +21,10 @@ G_MEMORY_MONITOR_GET_INTERFACE macro o
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((o), G_TYPE_MEMORY_MONITOR, GMemoryMonitorInterface))>
   endm
 
-_GMemoryMonitorInterface struct
+GMemoryMonitorInterface struct
 g_iface                 GTypeInterface <>
 low_memory_warning      proc :ptr, :GMemoryMonitorWarningLevel
-_GMemoryMonitorInterface ends
-GMemoryMonitorInterface typedef _GMemoryMonitorInterface
+GMemoryMonitorInterface ends
 
 g_memory_monitor_dup_default proto
 

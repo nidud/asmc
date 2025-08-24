@@ -24,18 +24,14 @@ G_INET_SOCKET_ADDRESS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_INET_SOCKET_ADDRESS, GInetSocketAddressClass))>
   endm
 
-;GInetSocketAddressPrivate typedef _GInetSocketAddressPrivate
-
-_GInetSocketAddress     struct
+GInetSocketAddress      struct
 parent_instance         GSocketAddress <>
 priv                    ptr GInetSocketAddressPrivate ?
-_GInetSocketAddress     ends
-GInetSocketAddress      typedef _GInetSocketAddress
+GInetSocketAddress      ends
 
-_GInetSocketAddressClass struct
+GInetSocketAddressClass struct
 parent_class            GSocketAddressClass <>
-_GInetSocketAddressClass ends
-GInetSocketAddressClass typedef _GInetSocketAddressClass
+GInetSocketAddressClass ends
 
 g_inet_socket_address_get_type proto
 g_inet_socket_address_new proto :ptr, :guint16

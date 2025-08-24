@@ -18,8 +18,6 @@ GDK_IS_DEVICE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GDK_TYPE_DEVICE))>
   endm
 
-;GdkTimeCoord            typedef _GdkTimeCoord
-
 .enum GdkInputSource {
   GDK_SOURCE_MOUSE,
   GDK_SOURCE_PEN,
@@ -30,12 +28,11 @@ GDK_IS_DEVICE macro o
   GDK_SOURCE_TABLET_PAD
 }
 
-_GdkTimeCoord           struct
+GdkTimeCoord            struct
 time                    guint32 ?
 flags                   GdkAxisFlags ?
 axes                    real8 GDK_AXIS_LAST dup(?)
-_GdkTimeCoord           ends
-GdkTimeCoord            typedef _GdkTimeCoord
+GdkTimeCoord            ends
 
 gdk_device_get_type proto
 

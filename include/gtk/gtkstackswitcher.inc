@@ -15,8 +15,6 @@ GTK_IS_STACK_SWITCHER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_STACK_SWITCHER))>
   endm
 
-;GtkStackSwitcher        typedef _GtkStackSwitcher
-
 gtk_stack_switcher_get_type proto
 gtk_stack_switcher_new proto
 gtk_stack_switcher_set_stack proto :ptr, :ptr

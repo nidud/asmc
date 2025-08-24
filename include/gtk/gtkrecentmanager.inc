@@ -27,10 +27,7 @@ GTK_RECENT_MANAGER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_RECENT_MANAGER, GtkRecentManagerClass))>
   endm
 
-;GtkRecentInfo		 typedef _GtkRecentInfo
-;GtkRecentManagerPrivate typedef _GtkRecentManagerPrivate
-
-_GtkRecentData		struct
+GtkRecentData		struct
 display_name		ptr sbyte ?
 description		ptr sbyte ?
 mime_type		ptr sbyte ?
@@ -38,26 +35,21 @@ app_name		ptr sbyte ?
 app_exec		ptr sbyte ?
 groups			ptr sbyte ?
 is_private		gboolean ?
-_GtkRecentData		ends
-GtkRecentData		typedef _GtkRecentData
+GtkRecentData		ends
 
-_GtkRecentManager	struct
+GtkRecentManager	struct
 parent_instance		GObject <>
 priv			ptr GtkRecentManagerPrivate ?
-_GtkRecentManager	ends
-GtkRecentManager	typedef _GtkRecentManager
+GtkRecentManager	ends
 
-
-_GtkRecentManagerClass	struct
+GtkRecentManagerClass	struct
 parent_class		GObjectClass <>
 changed			proc :ptr
 _gtk_recent1		proc
 _gtk_recent2		proc
 _gtk_recent3		proc
 _gtk_recent4		proc
-_GtkRecentManagerClass	ends
-GtkRecentManagerClass	typedef _GtkRecentManagerClass
-
+GtkRecentManagerClass	ends
 
 .enum GtkRecentManagerError {
   GTK_RECENT_MANAGER_ERROR_NOT_FOUND,
@@ -68,7 +60,6 @@ GtkRecentManagerClass	typedef _GtkRecentManagerClass
   GTK_RECENT_MANAGER_ERROR_WRITE,
   GTK_RECENT_MANAGER_ERROR_UNKNOWN
 }
-
 
 define GTK_RECENT_MANAGER_ERROR <gtk_recent_manager_error_quark ()>
 gtk_recent_manager_error_quark proto

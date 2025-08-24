@@ -8,8 +8,6 @@ endif
 include gsk/gsk.inc
 include gtk/gtktypes.inc
 
-;GtkSnapshotClass        typedef _GtkSnapshotClass
-
 define GTK_TYPE_SNAPSHOT <gtk_snapshot_get_type ()>
 GTK_SNAPSHOT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_SNAPSHOT, GtkSnapshot))>

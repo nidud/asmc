@@ -18,7 +18,7 @@ G_MOUNT_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_MOUNT, GMountIface))>
   endm
 
-_GMountIface            struct
+GMountIface             struct
 g_iface                 GTypeInterface <>
 changed                 proc :ptr
 unmounted               proc :ptr
@@ -47,8 +47,7 @@ eject_with_operation_finish proc :ptr, :ptr, :ptr
 get_default_location    proc :ptr
 get_sort_key            proc :ptr
 get_symbolic_icon       proc :ptr
-_GMountIface            ends
-GMountIface             typedef _GMountIface
+GMountIface             ends
 
 g_mount_get_type proto
 

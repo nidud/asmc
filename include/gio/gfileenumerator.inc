@@ -25,15 +25,12 @@ G_FILE_ENUMERATOR_GET_CLASS macro o
   endm
 
 
-;GFileEnumeratorPrivate  typedef _GFileEnumeratorPrivate
-
-_GFileEnumerator        struct
+GFileEnumerator         struct
 parent_instance         GObject <>
 priv                    ptr GFileEnumeratorPrivate ?
-_GFileEnumerator        ends
-GFileEnumerator         typedef _GFileEnumerator
+GFileEnumerator         ends
 
-_GFileEnumeratorClass   struct
+GFileEnumeratorClass    struct
 parent_class            GObjectClass <>
 next_file               proc :ptr, :ptr, :ptr
 close_fn                proc :ptr, :ptr, :ptr
@@ -48,8 +45,7 @@ _g_reserved4            proc
 _g_reserved5            proc
 _g_reserved6            proc
 _g_reserved7            proc
-_GFileEnumeratorClass   ends
-GFileEnumeratorClass    typedef _GFileEnumeratorClass
+GFileEnumeratorClass    ends
 
 g_file_enumerator_get_type proto
 

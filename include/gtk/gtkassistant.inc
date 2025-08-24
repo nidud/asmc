@@ -24,8 +24,6 @@ GTK_IS_ASSISTANT macro o
   GTK_ASSISTANT_PAGE_CUSTOM
 }
 
-;GtkAssistant            typedef _GtkAssistant
-
 define GTK_TYPE_ASSISTANT_PAGE <gtk_assistant_page_get_type ()>
 GTK_ASSISTANT_PAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ASSISTANT_PAGE, GtkAssistantPage))>
@@ -33,8 +31,6 @@ GTK_ASSISTANT_PAGE macro obj
 GTK_IS_ASSISTANT_PAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_ASSISTANT_PAGE))>
   endm
-
-;GtkAssistantPage        typedef _GtkAssistantPage
 
 CALLBACK(GtkAssistantPageFunc, :sdword, :gpointer)
 

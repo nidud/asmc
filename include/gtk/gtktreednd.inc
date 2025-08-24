@@ -21,15 +21,12 @@ GTK_TREE_DRAG_SOURCE_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_TREE_DRAG_SOURCE, GtkTreeDragSourceIface))>
   endm
 
-;GtkTreeDragSource       typedef _GtkTreeDragSource
-
-_GtkTreeDragSourceIface struct
+GtkTreeDragSourceIface  struct
 g_iface                 GTypeInterface <>
 row_draggable           proc :ptr, :ptr
 drag_data_get           proc :ptr, :ptr
 drag_data_delete        proc :ptr, :ptr
-_GtkTreeDragSourceIface ends
-GtkTreeDragSourceIface  typedef _GtkTreeDragSourceIface
+GtkTreeDragSourceIface  ends
 
 gtk_tree_drag_source_get_type proto
 gtk_tree_drag_source_row_draggable proto :ptr, :ptr
@@ -46,14 +43,11 @@ GTK_TREE_DRAG_DEST_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_TREE_DRAG_DEST, GtkTreeDragDestIface))>
   endm
 
-;GtkTreeDragDest         typedef _GtkTreeDragDest
-
-_GtkTreeDragDestIface   struct
+GtkTreeDragDestIface    struct
 g_iface                 GTypeInterface <>
 drag_data_received      proc :ptr, :ptr, :ptr
 row_drop_possible       proc :ptr, :ptr, :ptr
-_GtkTreeDragDestIface   ends
-GtkTreeDragDestIface    typedef _GtkTreeDragDestIface
+GtkTreeDragDestIface    ends
 
 gtk_tree_drag_dest_get_type proto
 gtk_tree_drag_dest_drag_data_received proto :ptr, :ptr, :ptr

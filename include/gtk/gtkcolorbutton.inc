@@ -15,8 +15,6 @@ GTK_IS_COLOR_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_COLOR_BUTTON))>
   endm
 
-;GtkColorButton          typedef _GtkColorButton
-
 gtk_color_button_get_type proto
 gtk_color_button_new proto
 gtk_color_button_new_with_rgba proto :ptr

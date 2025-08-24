@@ -19,8 +19,6 @@ GTK_IS_CELL_VIEW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CELL_VIEW))>
   endm
 
-;GtkCellView             typedef _GtkCellView
-
 gtk_cell_view_get_type proto
 gtk_cell_view_new proto
 gtk_cell_view_new_with_context proto :ptr, :ptr

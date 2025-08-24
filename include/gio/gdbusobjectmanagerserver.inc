@@ -20,19 +20,15 @@ G_IS_DBUS_OBJECT_MANAGER_SERVER_CLASS macro k
   exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_DBUS_OBJECT_MANAGER_SERVER))>
   endm
 
-;GDBusObjectManagerServerPrivate typedef _GDBusObjectManagerServerPrivate
-
-_GDBusObjectManagerServer struct
+GDBusObjectManagerServer struct
 parent_instance         GObject <>
 priv                    ptr GDBusObjectManagerServerPrivate ?
-_GDBusObjectManagerServer ends
-GDBusObjectManagerServer typedef _GDBusObjectManagerServer
+GDBusObjectManagerServer ends
 
-_GDBusObjectManagerServerClass struct
+GDBusObjectManagerServerClass struct
 parent_class            GObjectClass <>
 padding                 gpointer 8 dup(?)
-_GDBusObjectManagerServerClass ends
-GDBusObjectManagerServerClass typedef _GDBusObjectManagerServerClass
+GDBusObjectManagerServerClass ends
 
 g_dbus_object_manager_server_get_type proto
 g_dbus_object_manager_server_new proto :ptr

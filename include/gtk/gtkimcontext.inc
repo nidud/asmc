@@ -25,12 +25,11 @@ GTK_IM_CONTEXT_GET_CLASS macro obj
   endm
 
 
-_GtkIMContext           struct
+GtkIMContext            struct
 parent_instance         GObject <>
-_GtkIMContext           ends
-GtkIMContext            typedef _GtkIMContext
+GtkIMContext            ends
 
-_GtkIMContextClass      struct
+GtkIMContextClass       struct
 parent_class            GObjectClass <>
 preedit_start           proc :ptr
 preedit_end             proc :ptr
@@ -55,8 +54,7 @@ _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
 _gtk_reserved5          proc
-_GtkIMContextClass      ends
-GtkIMContextClass       typedef _GtkIMContextClass
+GtkIMContextClass       ends
 
 gtk_im_context_get_type proto
 gtk_im_context_set_client_widget proto :ptr, :ptr

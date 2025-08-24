@@ -14,15 +14,14 @@ G_DBUS_OBJECT_GET_IFACE macro o
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE((o), G_TYPE_DBUS_OBJECT, GDBusObjectIface))>
   endm
 
-_GDBusObjectIface       struct
+GDBusObjectIface        struct
 parent_iface            GTypeInterface <>
 get_object_path         proc :ptr
 get_interfaces          proc :ptr
 get_interface           proc :ptr, :ptr
 interface_added         proc :ptr, :ptr
 interface_removed       proc :ptr, :ptr
-_GDBusObjectIface       ends
-GDBusObjectIface        typedef _GDBusObjectIface
+GDBusObjectIface        ends
 
 g_dbus_object_get_type proto
 g_dbus_object_get_object_path proto :ptr

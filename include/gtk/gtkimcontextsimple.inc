@@ -26,18 +26,14 @@ GTK_IM_CONTEXT_SIMPLE_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_IM_CONTEXT_SIMPLE, GtkIMContextSimpleClass))>
   endm
 
-;GtkIMContextSimplePrivate typedef _GtkIMContextSimplePrivate
-
-_GtkIMContextSimple     struct
+GtkIMContextSimple      struct
 object                  GtkIMContext <>
 priv                    ptr GtkIMContextSimplePrivate ?
-_GtkIMContextSimple     ends
-GtkIMContextSimple      typedef _GtkIMContextSimple
+GtkIMContextSimple      ends
 
-_GtkIMContextSimpleClass struct
+GtkIMContextSimpleClass struct
 parent_class            GtkIMContextClass <>
-_GtkIMContextSimpleClass ends
-GtkIMContextSimpleClass typedef _GtkIMContextSimpleClass
+GtkIMContextSimpleClass ends
 
 gtk_im_context_simple_get_type proto
 gtk_im_context_simple_new proto

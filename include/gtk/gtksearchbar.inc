@@ -16,8 +16,6 @@ GTK_IS_SEARCH_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SEARCH_BAR))>
   endm
 
-;GtkSearchBar            typedef _GtkSearchBar
-
 gtk_search_bar_get_type proto
 gtk_search_bar_new proto
 gtk_search_bar_connect_entry proto :ptr, :ptr

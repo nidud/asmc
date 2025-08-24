@@ -17,8 +17,6 @@ GDK_IS_CONTENT_SERIALIZER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GDK_TYPE_CONTENT_SERIALIZER))>
   endm
 
-;GdkContentSerializer    typedef _GdkContentSerializer
-
 CALLBACK(GdkContentSerializeFunc, :ptr)
 
 gdk_content_serializer_get_type proto

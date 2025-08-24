@@ -17,9 +17,6 @@ G_IS_SIGNAL_GROUP macro obj
   endm
 define G_TYPE_SIGNAL_GROUP    (g_signal_group_get_type())
 
-
-;GSignalGroup            typedef _GSignalGroup
-
 g_signal_group_get_type proto
 g_signal_group_new proto :GType
 g_signal_group_set_target proto :ptr, :gpointer

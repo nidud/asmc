@@ -23,14 +23,10 @@ GTK_IS_NOTEBOOK_PAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_NOTEBOOK_PAGE))>
   endm
 
-;GtkNotebookPage         typedef _GtkNotebookPage
-
 .enum GtkNotebookTab {
   GTK_NOTEBOOK_TAB_FIRST,
   GTK_NOTEBOOK_TAB_LAST
 }
-
-;GtkNotebook             typedef _GtkNotebook
 
 gtk_notebook_get_type proto
 gtk_notebook_new proto

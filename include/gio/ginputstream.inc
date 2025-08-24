@@ -24,16 +24,12 @@ G_INPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_INPUT_STREAM, GInputStreamClass))>
   endm
 
-
-;GInputStreamPrivate     typedef _GInputStreamPrivate
-
-_GInputStream           struct
+GInputStream            struct
 parent_instance         GObject <>
 priv                    ptr GInputStreamPrivate ?
-_GInputStream           ends
-GInputStream            typedef _GInputStream
+GInputStream            ends
 
-_GInputStreamClass      struct
+GInputStreamClass       struct
 parent_class            GObjectClass <>
 read_fn                 proc :ptr, :ptr, :gsize, :ptr, :ptr
 skip                    proc :ptr, :gsize, :ptr, :ptr
@@ -49,8 +45,7 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GInputStreamClass      ends
-GInputStreamClass       typedef _GInputStreamClass
+GInputStreamClass       ends
 
 g_input_stream_get_type proto
 

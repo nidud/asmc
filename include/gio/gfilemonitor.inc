@@ -24,15 +24,12 @@ G_FILE_MONITOR_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_FILE_MONITOR, GFileMonitorClass))>
   endm
 
-;GFileMonitorPrivate     typedef _GFileMonitorPrivate
-
-_GFileMonitor           struct
+GFileMonitor            struct
 parent_instance         GObject <>
 priv                    ptr GFileMonitorPrivate ?
-_GFileMonitor           ends
-GFileMonitor            typedef _GFileMonitor
+GFileMonitor            ends
 
-_GFileMonitorClass      struct
+GFileMonitorClass       struct
 parent_class            GObjectClass <>
 changed                 proc :ptr, :ptr, :ptr, :GFileMonitorEvent
 cancel                  proc :ptr
@@ -41,8 +38,7 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GFileMonitorClass      ends
-GFileMonitorClass       typedef _GFileMonitorClass
+GFileMonitorClass       ends
 
 g_file_monitor_get_type proto
 g_file_monitor_cancel proto :ptr

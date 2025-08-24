@@ -25,10 +25,9 @@ G_ZLIB_COMPRESSOR_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_ZLIB_COMPRESSOR, GZlibCompressorClass))>
   endm
 
-_GZlibCompressorClass   struct
+GZlibCompressorClass    struct
 parent_class            GObjectClass <>
-_GZlibCompressorClass   ends
-GZlibCompressorClass    typedef _GZlibCompressorClass
+GZlibCompressorClass    ends
 
 g_zlib_compressor_get_type proto
 g_zlib_compressor_new proto :GZlibCompressorFormat, :sdword

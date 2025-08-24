@@ -26,20 +26,15 @@ GTK_TREE_MODEL_SORT_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TREE_MODEL_SORT, GtkTreeModelSortClass))>
   endm
 
-;GtkTreeModelSortPrivate typedef _GtkTreeModelSortPrivate
-
-_GtkTreeModelSort	struct
+GtkTreeModelSort	struct
 parent			GObject <>
 priv			ptr GtkTreeModelSortPrivate ?
-_GtkTreeModelSort	ends
-GtkTreeModelSort	typedef _GtkTreeModelSort
+GtkTreeModelSort	ends
 
-_GtkTreeModelSortClass	struct
+GtkTreeModelSortClass	struct
 parent_class		GObjectClass <>
 padding			gpointer 8 dup(?)
-_GtkTreeModelSortClass	ends
-GtkTreeModelSortClass	typedef _GtkTreeModelSortClass
-
+GtkTreeModelSortClass	ends
 
 gtk_tree_model_sort_get_type proto
 gtk_tree_model_sort_new_with_model proto :ptr

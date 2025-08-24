@@ -24,17 +24,15 @@ GTK_SCALE_BUTTON_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_SCALE_BUTTON, GtkScaleButtonClass))>
   endm
 
-_GtkScaleButton         struct
+GtkScaleButton          struct
 parent_instance         GtkWidget <>
-_GtkScaleButton         ends
-GtkScaleButton          typedef _GtkScaleButton
+GtkScaleButton          ends
 
-_GtkScaleButtonClass    struct
+GtkScaleButtonClass     struct
 parent_class            GtkWidgetClass <>
 value_changed           proc :ptr, :real8
 padding                 gpointer 8 dup(?)
-_GtkScaleButtonClass    ends
-GtkScaleButtonClass     typedef _GtkScaleButtonClass
+GtkScaleButtonClass     ends
 
 gtk_scale_button_get_type proto
 gtk_scale_button_new proto :real8, :real8, :real8, :ptr

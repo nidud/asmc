@@ -24,16 +24,14 @@ GTK_FIXED_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_FIXED, GtkFixedClass))>
   endm
 
-_GtkFixed               struct
+GtkFixed                struct
 parent_instance         GtkWidget <>
-_GtkFixed               ends
-GtkFixed                typedef _GtkFixed
+GtkFixed                ends
 
-_GtkFixedClass          struct
+GtkFixedClass           struct
 parent_class            GtkWidgetClass <>
 padding                 gpointer 8 dup(?)
-_GtkFixedClass          ends
-GtkFixedClass           typedef _GtkFixedClass
+GtkFixedClass           ends
 
 gtk_fixed_get_type proto
 

@@ -8,8 +8,6 @@ endif
 include pango/pango.inc
 include gtk/gtkpagesetup.inc
 
-;GtkPrintContext         typedef _GtkPrintContext
-
 define GTK_TYPE_PRINT_CONTEXT <gtk_print_context_get_type ()>
 GTK_PRINT_CONTEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PRINT_CONTEXT, GtkPrintContext))>

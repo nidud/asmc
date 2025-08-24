@@ -15,8 +15,6 @@ GTK_IS_SPINNER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SPINNER))>
   endm
 
-;GtkSpinner              typedef _GtkSpinner
-
 gtk_spinner_get_type proto
 gtk_spinner_new proto
 gtk_spinner_start proto :ptr

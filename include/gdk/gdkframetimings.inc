@@ -8,8 +8,6 @@ endif
 include glib-object.inc
 include gdk/gdkversionmacros.inc
 
-;GdkFrameTimings         typedef _GdkFrameTimings
-
 gdk_frame_timings_get_type proto
 gdk_frame_timings_ref proto :ptr
 gdk_frame_timings_unref proto :ptr

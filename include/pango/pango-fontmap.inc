@@ -22,22 +22,21 @@ PANGO_FONT_MAP_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), PANGO_TYPE_FONT_MAP, PangoFontMapClass))>
   endm
 
-_PangoFontMap           struct
-parent_instance         GObject <>
-_PangoFontMap           ends
+PangoFontMap		struct
+parent_instance		GObject <>
+PangoFontMap		ends
 
-_PangoFontMapClass      struct
-parent_class            GObjectClass <>
-load_font               proc :ptr, :ptr, :ptr
-list_families           proc :ptr, :ptr, :ptr
-load_fontset            proc :ptr, :ptr, :ptr, :ptr
-shape_engine_type       ptr sbyte ?
-get_serial              proc :ptr
-changed                 proc :ptr
-get_family              proc :ptr, :ptr
-get_face                proc :ptr, :ptr
-_PangoFontMapClass      ends
-PangoFontMapClass       typedef _PangoFontMapClass
+PangoFontMapClass	struct
+parent_class		GObjectClass <>
+load_font		proc :ptr, :ptr, :ptr
+list_families		proc :ptr, :ptr, :ptr
+load_fontset		proc :ptr, :ptr, :ptr, :ptr
+shape_engine_type	ptr sbyte ?
+get_serial		proc :ptr
+changed			proc :ptr
+get_family		proc :ptr, :ptr
+get_face		proc :ptr, :ptr
+PangoFontMapClass	ends
 
 pango_font_map_get_type proto
 pango_font_map_create_context proto :ptr

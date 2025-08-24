@@ -15,9 +15,6 @@ GTK_IS_SHORTCUTS_GROUP macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SHORTCUTS_GROUP))>
   endm
 
-;GtkShortcutsGroup       typedef _GtkShortcutsGroup
-;GtkShortcutsGroupClass  typedef _GtkShortcutsGroupClass
-
 gtk_shortcuts_group_get_type proto
 
 endif

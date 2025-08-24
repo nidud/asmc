@@ -16,8 +16,6 @@ GDK_IS_CONTENT_DESERIALIZER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GDK_TYPE_CONTENT_DESERIALIZER))>
   endm
 
-;GdkContentDeserializer  typedef _GdkContentDeserializer
-
 CALLBACK(GdkContentDeserializeFunc, :ptr)
 
 gdk_content_deserializer_get_type proto

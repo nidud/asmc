@@ -34,9 +34,6 @@ define GDK_BUTTON_PRIMARY      (1)
 define GDK_BUTTON_MIDDLE       (2)
 define GDK_BUTTON_SECONDARY    (3)
 
-;GdkEventSequence	typedef _GdkEventSequence
-;GdkEvent		typedef _GdkEvent
-
 define GDK_TYPE_BUTTON_EVENT <gdk_button_event_get_type ()>
 define GDK_TYPE_CROSSING_EVENT <gdk_crossing_event_get_type ()>
 define GDK_TYPE_DELETE_EVENT <gdk_delete_event_get_type ()>
@@ -50,21 +47,6 @@ define GDK_TYPE_PROXIMITY_EVENT <gdk_proximity_event_get_type ()>
 define GDK_TYPE_SCROLL_EVENT <gdk_scroll_event_get_type ()>
 define GDK_TYPE_TOUCH_EVENT <gdk_touch_event_get_type ()>
 define GDK_TYPE_TOUCHPAD_EVENT <gdk_touchpad_event_get_type ()>
-
-;GdkButtonEvent		typedef _GdkButtonEvent
-;GdkCrossingEvent	typedef _GdkCrossingEvent
-;GdkDeleteEvent		typedef _GdkDeleteEvent
-;GdkDNDEvent		typedef _GdkDNDEvent
-;GdkFocusEvent		typedef _GdkFocusEvent
-;GdkGrabBrokenEvent	typedef _GdkGrabBrokenEvent
-;GdkKeyEvent		typedef _GdkKeyEvent
-;GdkMotionEvent		typedef _GdkMotionEvent
-;GdkPadEvent		typedef _GdkPadEvent
-;GdkProximityEvent	typedef _GdkProximityEvent
-;GdkScrollEvent		typedef _GdkScrollEvent
-;GdkTouchEvent		typedef _GdkTouchEvent
-;GdkTouchpadEvent	typedef _GdkTouchpadEvent
-
 
 .enum GdkEventType {
   GDK_DELETE,

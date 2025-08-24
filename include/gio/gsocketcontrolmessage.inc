@@ -24,9 +24,7 @@ G_SOCKET_CONTROL_MESSAGE_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_SOCKET_CONTROL_MESSAGE, GSocketControlMessageClass))>
   endm
 
-;GSocketControlMessagePrivate typedef _GSocketControlMessagePrivate
-
-_GSocketControlMessageClass struct
+GSocketControlMessageClass struct
 parent_class            GObjectClass <>
 get_size                proc :ptr
 get_level               proc :ptr
@@ -38,14 +36,12 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GSocketControlMessageClass ends
-GSocketControlMessageClass typedef _GSocketControlMessageClass
+GSocketControlMessageClass ends
 
-_GSocketControlMessage  struct
+GSocketControlMessage   struct
 parent_instance         GObject <>
 priv                    ptr GSocketControlMessagePrivate ?
-_GSocketControlMessage  ends
-GSocketControlMessage   typedef _GSocketControlMessage
+GSocketControlMessage   ends
 
 g_socket_control_message_get_type proto
 g_socket_control_message_get_size proto :ptr

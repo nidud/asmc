@@ -24,20 +24,16 @@ G_TLS_CERTIFICATE_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_TLS_CERTIFICATE, GTlsCertificateClass))>
   endm
 
-;GTlsCertificatePrivate  typedef _GTlsCertificatePrivate
-
-_GTlsCertificate        struct
+GTlsCertificate         struct
 parent_instance         GObject <>
 priv                    ptr GTlsCertificatePrivate ?
-_GTlsCertificate        ends
-GTlsCertificate         typedef _GTlsCertificate
+GTlsCertificate         ends
 
-_GTlsCertificateClass   struct
+GTlsCertificateClass    struct
 parent_class            GObjectClass <>
 verify                  proc :ptr, :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GTlsCertificateClass   ends
-GTlsCertificateClass    typedef _GTlsCertificateClass
+GTlsCertificateClass    ends
 
 g_tls_certificate_get_type proto
 g_tls_certificate_new_from_pem proto :ptr, :gssize, :ptr

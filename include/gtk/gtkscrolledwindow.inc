@@ -15,10 +15,6 @@ GTK_IS_SCROLLED_WINDOW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SCROLLED_WINDOW))>
   endm
 
-
-;GtkScrolledWindow       typedef _GtkScrolledWindow
-
-
 .enum GtkCornerType {
   GTK_CORNER_TOP_LEFT,
   GTK_CORNER_BOTTOM_LEFT,
@@ -26,15 +22,12 @@ GTK_IS_SCROLLED_WINDOW macro obj
   GTK_CORNER_BOTTOM_RIGHT
 }
 
-
-
 .enum GtkPolicyType {
   GTK_POLICY_ALWAYS,
   GTK_POLICY_AUTOMATIC,
   GTK_POLICY_NEVER,
   GTK_POLICY_EXTERNAL
 }
-
 
 gtk_scrolled_window_get_type proto
 gtk_scrolled_window_new proto

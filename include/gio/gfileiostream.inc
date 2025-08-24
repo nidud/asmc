@@ -24,16 +24,12 @@ G_FILE_IO_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_FILE_IO_STREAM, GFileIOStreamClass))>
   endm
 
-
-;GFileIOStreamPrivate    typedef _GFileIOStreamPrivate
-
-_GFileIOStream          struct
+GFileIOStream           struct
 parent_instance         GIOStream <>
 priv                    ptr GFileIOStreamPrivate ?
-_GFileIOStream          ends
-GFileIOStream           typedef _GFileIOStream
+GFileIOStream           ends
 
-_GFileIOStreamClass     struct
+GFileIOStreamClass      struct
 parent_class            GIOStreamClass <>
 tell                    proc :ptr
 can_seek                proc :ptr
@@ -49,8 +45,7 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GFileIOStreamClass     ends
-GFileIOStreamClass      typedef _GFileIOStreamClass
+GFileIOStreamClass      ends
 
 g_file_io_stream_get_type proto
 g_file_io_stream_query_info proto :ptr, :ptr, :ptr, :ptr

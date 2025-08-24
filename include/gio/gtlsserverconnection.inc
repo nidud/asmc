@@ -18,10 +18,9 @@ G_TLS_SERVER_CONNECTION_GET_INTERFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_TLS_SERVER_CONNECTION, GTlsServerConnectionInterface))>
   endm
 
-_GTlsServerConnectionInterface struct
+GTlsServerConnectionInterface struct
 g_iface                 GTypeInterface <>
-_GTlsServerConnectionInterface ends
-GTlsServerConnectionInterface typedef _GTlsServerConnectionInterface
+GTlsServerConnectionInterface ends
 
 g_tls_server_connection_get_type proto
 g_tls_server_connection_new proto :ptr, :ptr, :ptr

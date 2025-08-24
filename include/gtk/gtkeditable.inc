@@ -18,9 +18,7 @@ GTK_EDITABLE_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), GTK_TYPE_EDITABLE, GtkEditableInterface))>
   endm
 
-;GtkEditable             typedef _GtkEditable
-
-_GtkEditableInterface   struct
+GtkEditableInterface    struct
 base_iface              GTypeInterface <>
 insert_text             proc :ptr, :ptr, :sdword, :ptr
 delete_text             proc :ptr, :sdword, :sdword
@@ -31,8 +29,7 @@ do_delete_text          proc :ptr, :sdword, :sdword
 get_selection_bounds    proc :ptr, :ptr, :ptr
 set_selection_bounds    proc :ptr, :sdword, :sdword
 get_delegate            proc :ptr
-_GtkEditableInterface   ends
-GtkEditableInterface    typedef _GtkEditableInterface
+GtkEditableInterface    ends
 
 gtk_editable_get_type proto
 gtk_editable_get_text proto :ptr

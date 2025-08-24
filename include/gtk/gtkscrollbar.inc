@@ -15,8 +15,6 @@ GTK_IS_SCROLLBAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SCROLLBAR))>
   endm
 
-;GtkScrollbar            typedef _GtkScrollbar
-
 gtk_scrollbar_get_type proto
 gtk_scrollbar_new proto :GtkOrientation, :ptr
 gtk_scrollbar_set_adjustment proto :ptr, :ptr

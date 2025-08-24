@@ -29,13 +29,12 @@ CALLBACK(GClosureNotify, :gpointer, :ptr)
 CALLBACK(GClosureMarshal, :ptr, :ptr, :guint, :ptr, :gpointer, :gpointer)
 CALLBACK(GVaClosureMarshal, :ptr, :ptr, :gpointer, :va_list, :gpointer, :sdword, :ptr)
 
-_GClosureNotifyData     struct
+GClosureNotifyData      struct
 data                    gpointer ?
 notify                  GClosureNotify ?
-_GClosureNotifyData     ends
-GClosureNotifyData      typedef _GClosureNotifyData
+GClosureNotifyData      ends
 
-_GClosure               struct
+GClosure                struct
 RECORD
 ref_count               guint : 15 ?
 meta_marshal_nouse      guint :  1 ?
@@ -51,14 +50,12 @@ ENDS
 marshal                 proc :ptr, :ptr, :guint, :ptr, :gpointer, :gpointer
 data                    gpointer ?
 notifiers               ptr GClosureNotifyData ?
-_GClosure               ends
-GClosure                typedef _GClosure
+GClosure                ends
 
-_GCClosure              struct
+GCClosure               struct
 closure                 GClosure <>
 callback                gpointer ?
-_GCClosure              ends
-GCClosure               typedef _GCClosure
+GCClosure               ends
 
 g_cclosure_new proto :GCallback, :gpointer, :GClosureNotify
 g_cclosure_new_swap proto :GCallback, :gpointer, :GClosureNotify

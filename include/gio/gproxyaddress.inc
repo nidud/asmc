@@ -24,19 +24,14 @@ G_PROXY_ADDRESS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_PROXY_ADDRESS, GProxyAddressClass))>
   endm
 
-;GProxyAddressPrivate    typedef _GProxyAddressPrivate
-
-_GProxyAddress          struct
+GProxyAddress           struct
 parent_instance         GInetSocketAddress <>
 priv                    ptr GProxyAddressPrivate ?
-_GProxyAddress          ends
-GProxyAddress           typedef _GProxyAddress
+GProxyAddress           ends
 
-_GProxyAddressClass     struct
+GProxyAddressClass      struct
 parent_class            GInetSocketAddressClass <>
-_GProxyAddressClass     ends
-GProxyAddressClass      typedef _GProxyAddressClass
-
+GProxyAddressClass      ends
 
 g_proxy_address_get_type proto
 g_proxy_address_new proto :ptr, :guint16, :ptr, :ptr, :guint16, :ptr, :ptr

@@ -125,8 +125,8 @@ DDCREATE_EMULATIONONLY	equ 0x00000002
 
 if defined(WINNT) OR NOT defined(WIN32)
 ifndef _HRESULT_DEFINED
-_HRESULT_DEFINED equ 1
-;HRESULT		 typedef __success(return >= 0) long
+define _HRESULT_DEFINED
+HRESULT typedef sdword
 endif
 endif
 

@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_TLS_FILE_DATABASE                <g_tls_file_database_get_type ()>
+define G_TYPE_TLS_FILE_DATABASE <g_tls_file_database_get_type ()>
 G_TLS_FILE_DATABASE macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_TLS_FILE_DATABASE, GTlsFileDatabase))>
   endm
@@ -18,11 +18,10 @@ G_TLS_FILE_DATABASE_GET_INTERFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_TLS_FILE_DATABASE, GTlsFileDatabaseInterface))>
   endm
 
-_GTlsFileDatabaseInterface struct
+GTlsFileDatabaseInterface struct
 g_iface                 GTypeInterface <>
 padding                 gpointer 8 dup(?)
-_GTlsFileDatabaseInterface ends
-GTlsFileDatabaseInterface typedef _GTlsFileDatabaseInterface
+GTlsFileDatabaseInterface ends
 
 g_tls_file_database_get_type proto
 g_tls_file_database_new proto :ptr, :ptr

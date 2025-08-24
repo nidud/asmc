@@ -25,24 +25,19 @@ G_CONVERTER_OUTPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_CONVERTER_OUTPUT_STREAM, GConverterOutputStreamClass))>
   endm
 
-
-;GConverterOutputStreamPrivate typedef _GConverterOutputStreamPrivate
-
-_GConverterOutputStream struct
+GConverterOutputStream  struct
 parent_instance         GFilterOutputStream <>
 priv                    ptr GConverterOutputStreamPrivate ?
-_GConverterOutputStream ends
-GConverterOutputStream  typedef _GConverterOutputStream
+GConverterOutputStream  ends
 
-_GConverterOutputStreamClass struct
+GConverterOutputStreamClass struct
 parent_class            GFilterOutputStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GConverterOutputStreamClass ends
-GConverterOutputStreamClass typedef _GConverterOutputStreamClass
+GConverterOutputStreamClass ends
 
 g_converter_output_stream_get_type proto
 g_converter_output_stream_new proto :ptr, :ptr

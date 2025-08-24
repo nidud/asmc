@@ -16,12 +16,9 @@ GTK_IS_MESSAGE_DIALOG macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_MESSAGE_DIALOG))>
   endm
 
-;GtkMessageDialogClass   typedef _GtkMessageDialogClass
-
-_GtkMessageDialog       struct
+GtkMessageDialog        struct
 parent_instance         GtkDialog <>
-_GtkMessageDialog       ends
-GtkMessageDialog        typedef _GtkMessageDialog
+GtkMessageDialog        ends
 
 .enum GtkButtonsType {
   GTK_BUTTONS_NONE,

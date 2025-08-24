@@ -30,7 +30,7 @@ G_VALUE_HOLDS macro value,type
 
 CALLBACK(GValueTransform, :ptr, :ptr)
 
-_GValue                 struct
+GValue                  struct
 g_type                  GType ?
 union data;[2]
  v_int                  gint ?
@@ -43,8 +43,7 @@ union data;[2]
  v_double               gdouble ?
  v_pointer              gpointer ?
 ends
-_GValue                 ends
-GValue                  typedef _GValue
+GValue                  ends
 
 g_value_init proto :ptr, :GType
 g_value_copy proto :ptr, :ptr

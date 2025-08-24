@@ -19,8 +19,6 @@ GTK_IS_ICON_VIEW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_ICON_VIEW))>
   endm
 
-;GtkIconView             typedef _GtkIconView
-
 CALLBACK(GtkIconViewForeachFunc, :ptr, :ptr, :gpointer)
 
 .enum GtkIconViewDropPosition {

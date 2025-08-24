@@ -16,8 +16,6 @@ GTK_IS_FILE_CHOOSER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FILE_CHOOSER))>
   endm
 
-;GtkFileChooser          typedef _GtkFileChooser
-
 .enum GtkFileChooserAction {
   GTK_FILE_CHOOSER_ACTION_OPEN,
   GTK_FILE_CHOOSER_ACTION_SAVE,

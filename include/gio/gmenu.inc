@@ -19,9 +19,6 @@ G_IS_MENU_ITEM macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_MENU_ITEM))>
   endm
 
-;GMenuItem               typedef _GMenuItem
-;GMenu                   typedef _GMenu
-
 g_menu_get_type proto
 g_menu_new proto
 g_menu_freeze proto :ptr

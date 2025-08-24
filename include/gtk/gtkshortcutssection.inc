@@ -15,9 +15,6 @@ GTK_IS_SHORTCUTS_SECTION macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SHORTCUTS_SECTION))>
   endm
 
-;GtkShortcutsSection     typedef _GtkShortcutsSection
-;GtkShortcutsSectionClass typedef _GtkShortcutsSectionClass
-
 gtk_shortcuts_section_get_type proto
 
 endif

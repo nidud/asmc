@@ -7,9 +7,6 @@ endif
 
 include glib/gtypes.inc
 
-;GSequence               typedef _GSequence
-;GSequenceIter           typedef _GSequenceNode
-
 CALLBACK(GSequenceIterCompareFunc, :ptr, :ptr, :gpointer)
 
 g_sequence_new proto :GDestroyNotify

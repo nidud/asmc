@@ -24,18 +24,14 @@ G_INET_ADDRESS_MASK_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_INET_ADDRESS_MASK, GInetAddressMaskClass))>
   endm
 
-;GInetAddressMaskPrivate typedef _GInetAddressMaskPrivate
-
-_GInetAddressMask       struct
+GInetAddressMask        struct
 parent_instance         GObject <>
 priv                    ptr GInetAddressMaskPrivate ?
-_GInetAddressMask       ends
-GInetAddressMask        typedef _GInetAddressMask
+GInetAddressMask        ends
 
-_GInetAddressMaskClass  struct
+GInetAddressMaskClass   struct
 parent_class            GObjectClass <>
-_GInetAddressMaskClass  ends
-GInetAddressMaskClass   typedef _GInetAddressMaskClass
+GInetAddressMaskClass   ends
 
 g_inet_address_mask_get_type proto
 g_inet_address_mask_new proto :ptr, :guint, :ptr

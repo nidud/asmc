@@ -24,9 +24,6 @@ GTK_SHORTCUT_CONTROLLER_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_SHORTCUT_CONTROLLER, GtkShortcutControllerClass))>
   endm
 
-;GtkShortcutController   typedef _GtkShortcutController
-;GtkShortcutControllerClass typedef _GtkShortcutControllerClass
-
 gtk_shortcut_controller_get_type proto
 gtk_shortcut_controller_new proto
 gtk_shortcut_controller_new_for_model proto :ptr

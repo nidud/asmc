@@ -16,8 +16,6 @@ GTK_IS_INFO_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_INFO_BAR))>
   endm
 
-;GtkInfoBar              typedef _GtkInfoBar
-
 gtk_info_bar_get_type proto
 gtk_info_bar_new proto
 gtk_info_bar_new_with_buttons proto :ptr, :vararg

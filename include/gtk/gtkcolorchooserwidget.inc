@@ -15,8 +15,6 @@ GTK_IS_COLOR_CHOOSER_WIDGET macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_COLOR_CHOOSER_WIDGET))>
   endm
 
-;GtkColorChooserWidget   typedef _GtkColorChooserWidget
-
 gtk_color_chooser_widget_get_type proto
 gtk_color_chooser_widget_new proto
 

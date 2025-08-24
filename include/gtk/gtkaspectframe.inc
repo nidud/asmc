@@ -16,8 +16,6 @@ GTK_IS_ASPECT_FRAME macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_ASPECT_FRAME))>
   endm
 
-;GtkAspectFrame          typedef _GtkAspectFrame
-
 gtk_aspect_frame_get_type proto
 gtk_aspect_frame_new proto :real4, :real4, :real4, :gboolean
 

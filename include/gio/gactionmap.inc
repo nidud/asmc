@@ -18,23 +18,21 @@ G_ACTION_MAP_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_ACTION_MAP, GActionMapInterface))>
   endm
 
-_GActionMapInterface    struct
+GActionMapInterface     struct
 g_iface                 GTypeInterface <>
 lookup_action           proc :ptr, :ptr
 add_action              proc :ptr, :ptr
 remove_action           proc :ptr, :ptr
-_GActionMapInterface    ends
-GActionMapInterface     typedef _GActionMapInterface
+GActionMapInterface     ends
 
-_GActionEntry           struct
+GActionEntry            struct
 name                    ptr gchar ?
 activate                proc :ptr, :ptr, :gpointer
 parameter_type          ptr gchar ?
 state                   ptr gchar ?
 change_state            proc :ptr, :ptr, :gpointer
 padding                 gsize 3 dup(?)
-_GActionEntry           ends
-GActionEntry            typedef _GActionEntry
+GActionEntry            ends
 
 g_action_map_get_type proto
 

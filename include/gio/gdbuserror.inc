@@ -15,11 +15,10 @@ g_dbus_error_is_remote_error proto :ptr
 g_dbus_error_get_remote_error proto :ptr
 g_dbus_error_strip_remote_error proto :ptr
 
-_GDBusErrorEntry        struct
+GDBusErrorEntry         struct
 error_code              gint ?
 dbus_error_name         ptr gchar ?
-_GDBusErrorEntry        ends
-GDBusErrorEntry         typedef _GDBusErrorEntry
+GDBusErrorEntry         ends
 
 g_dbus_error_register_error proto :GQuark, :gint, :ptr
 g_dbus_error_unregister_error proto :GQuark, :gint, :ptr

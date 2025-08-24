@@ -6,45 +6,43 @@ include apisetcconv.inc
 include minwindef.inc
 include minwinbase.inc
 
-_SYSTEM_INFO            struct
+SYSTEM_INFO		struct
 union
- dwOemId                DWORD ?
+ dwOemId		DWORD ?
  struct
   wProcessorArchitecture WORD ?
-  wReserved             WORD ?
+  wReserved		WORD ?
  ends
 ends
-dwPageSize              DWORD ?
+dwPageSize		DWORD ?
 lpMinimumApplicationAddress LPVOID ?
 lpMaximumApplicationAddress LPVOID ?
-dwActiveProcessorMask   DWORD_PTR ?
-dwNumberOfProcessors    DWORD ?
-dwProcessorType         DWORD ?
+dwActiveProcessorMask	DWORD_PTR ?
+dwNumberOfProcessors	DWORD ?
+dwProcessorType		DWORD ?
 dwAllocationGranularity DWORD ?
-wProcessorLevel         WORD ?
-wProcessorRevision      WORD ?
-_SYSTEM_INFO            ends
-SYSTEM_INFO             typedef _SYSTEM_INFO
-LPSYSTEM_INFO           typedef ptr _SYSTEM_INFO
+wProcessorLevel		WORD ?
+wProcessorRevision	WORD ?
+SYSTEM_INFO		ends
+LPSYSTEM_INFO		typedef ptr SYSTEM_INFO
 
-_MEMORYSTATUSEX         struct
-dwLength                DWORD ?
-dwMemoryLoad            DWORD ?
-ullTotalPhys            DWORDLONG ?
-ullAvailPhys            DWORDLONG ?
-ullTotalPageFile        DWORDLONG ?
-ullAvailPageFile        DWORDLONG ?
-ullTotalVirtual         DWORDLONG ?
-ullAvailVirtual         DWORDLONG ?
+MEMORYSTATUSEX		struct
+dwLength		DWORD ?
+dwMemoryLoad		DWORD ?
+ullTotalPhys		DWORDLONG ?
+ullAvailPhys		DWORDLONG ?
+ullTotalPageFile	DWORDLONG ?
+ullAvailPageFile	DWORDLONG ?
+ullTotalVirtual		DWORDLONG ?
+ullAvailVirtual		DWORDLONG ?
 ullAvailExtendedVirtual DWORDLONG ?
-_MEMORYSTATUSEX         ends
-MEMORYSTATUSEX          typedef _MEMORYSTATUSEX
-LPMEMORYSTATUSEX        typedef ptr _MEMORYSTATUSEX
+MEMORYSTATUSEX		ends
+LPMEMORYSTATUSEX	typedef ptr MEMORYSTATUSEX
 
-define USER_CET_ENVIRONMENT_WIN32_PROCESS        0x00000000
-define USER_CET_ENVIRONMENT_SGX2_ENCLAVE         0x00000002
-define USER_CET_ENVIRONMENT_VBS_ENCLAVE          0x00000010
-define USER_CET_ENVIRONMENT_VBS_BASIC_ENCLAVE    0x00000011
+define USER_CET_ENVIRONMENT_WIN32_PROCESS	 0x00000000
+define USER_CET_ENVIRONMENT_SGX2_ENCLAVE	 0x00000002
+define USER_CET_ENVIRONMENT_VBS_ENCLAVE		 0x00000010
+define USER_CET_ENVIRONMENT_VBS_BASIC_ENCLAVE	 0x00000011
 
 GlobalMemoryStatusEx proto WINAPI :LPMEMORYSTATUSEX
 GetSystemInfo proto WINAPI :LPSYSTEM_INFO
@@ -187,9 +185,9 @@ endif
 SetComputerNameA proto WINAPI :LPCSTR
 SetComputerNameW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-define SetComputerName  <SetComputerNameW>
+define SetComputerName	<SetComputerNameW>
 else
-define SetComputerName  <SetComputerNameA>
+define SetComputerName	<SetComputerNameA>
 endif
 SetComputerNameExA proto WINAPI :COMPUTER_NAME_FORMAT, :LPCSTR
 ifndef _UNICODE

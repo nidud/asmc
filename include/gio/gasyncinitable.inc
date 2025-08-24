@@ -22,12 +22,11 @@ G_TYPE_IS_ASYNC_INITABLE macro type
   exitm<g_type_is_aype), G_TYPE_ASYNC_INITABLE))>
   endm
 
-_GAsyncInitableIface    struct
+GAsyncInitableIface     struct
 g_iface                 GTypeInterface <>
 init_async              proc :ptr, :sdword, :ptr, :GAsyncReadyCallback, :gpointer
 init_finish             proc :ptr, :ptr, :ptr
-_GAsyncInitableIface    ends
-GAsyncInitableIface     typedef _GAsyncInitableIface
+GAsyncInitableIface     ends
 
 g_async_initable_get_type proto
 g_async_initable_init_async proto :ptr, :sdword, :ptr, :GAsyncReadyCallback, :gpointer

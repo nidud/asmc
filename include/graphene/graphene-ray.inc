@@ -8,11 +8,10 @@ endif
 include graphene/graphene-types.inc
 include graphene/graphene-vec3.inc
 
-_graphene_ray_t         STRUC
+graphene_ray_t          STRUC
 origin                  graphene_vec3_t <>
 direction               graphene_vec3_t <>
-_graphene_ray_t         ENDS
-graphene_ray_t          typedef _graphene_ray_t
+graphene_ray_t          ENDS
 
 .enum graphene_ray_intersection_kind_t {
   GRAPHENE_RAY_INTERSECTION_KIND_NONE,

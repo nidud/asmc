@@ -24,18 +24,14 @@ G_NETWORK_ADDRESS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_NETWORK_ADDRESS, GNetworkAddressClass))>
   endm
 
-;GNetworkAddressPrivate  typedef _GNetworkAddressPrivate
-
-_GNetworkAddress        struct
+GNetworkAddress         struct
 parent_instance         GObject <>
 priv                    ptr GNetworkAddressPrivate ?
-_GNetworkAddress        ends
-GNetworkAddress         typedef _GNetworkAddress
+GNetworkAddress         ends
 
-_GNetworkAddressClass   struct
+GNetworkAddressClass    struct
 parent_class            GObjectClass <>
-_GNetworkAddressClass   ends
-GNetworkAddressClass    typedef _GNetworkAddressClass
+GNetworkAddressClass    ends
 
 g_network_address_get_type proto
 

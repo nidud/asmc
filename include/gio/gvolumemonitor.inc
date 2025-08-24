@@ -28,13 +28,12 @@ G_IS_VOLUME_MONITOR_CLASS macro k
 define G_VOLUME_MONITOR_EXTENSION_POINT_NAME <"gio-volume-monitor">
 
 
-_GVolumeMonitor         struct
+GVolumeMonitor          struct
 parent_instance         GObject <>
 priv                    gpointer ?
-_GVolumeMonitor         ends
-GVolumeMonitor          typedef _GVolumeMonitor
+GVolumeMonitor          ends
 
-_GVolumeMonitorClass    struct
+GVolumeMonitorClass     struct
 parent_class            GObjectClass <>
 volume_added            proc :ptr, :ptr
 volume_removed          proc :ptr, :ptr
@@ -61,8 +60,7 @@ _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
 _g_reserved6            proc
-_GVolumeMonitorClass    ends
-GVolumeMonitorClass     typedef _GVolumeMonitorClass
+GVolumeMonitorClass     ends
 
 g_volume_monitor_get_type proto
 g_volume_monitor_get proto

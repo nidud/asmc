@@ -24,9 +24,7 @@ G_THREADED_SOCKET_SERVICE_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_THREADED_SOCKET_SERVICE, GThreadedSocketServiceClass))>
   endm
 
-;GThreadedSocketServicePrivate typedef _GThreadedSocketServicePrivate
-
-_GThreadedSocketServiceClass struct
+GThreadedSocketServiceClass struct
 parent_class            GSocketServiceClass <>
 run                     proc :ptr, :ptr, :ptr
 _g_reserved1            proc
@@ -34,14 +32,12 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GThreadedSocketServiceClass ends
-GThreadedSocketServiceClass typedef _GThreadedSocketServiceClass
+GThreadedSocketServiceClass ends
 
-_GThreadedSocketService struct
+GThreadedSocketService  struct
 parent_instance         GSocketService <>
 priv                    ptr GThreadedSocketServicePrivate ?
-_GThreadedSocketService ends
-GThreadedSocketService  typedef _GThreadedSocketService
+GThreadedSocketService  ends
 
 g_threaded_socket_service_get_type proto
 g_threaded_socket_service_new proto :sdword

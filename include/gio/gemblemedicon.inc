@@ -25,18 +25,14 @@ G_EMBLEMED_ICON_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_EMBLEMED_ICON, GEmblemedIconClass))>
   endm
 
-;GEmblemedIconPrivate    typedef _GEmblemedIconPrivate
-
-_GEmblemedIcon          struct
+GEmblemedIcon           struct
 parent_instance         GObject <>
 priv                    ptr GEmblemedIconPrivate ?
-_GEmblemedIcon          ends
-GEmblemedIcon           typedef _GEmblemedIcon
+GEmblemedIcon           ends
 
-_GEmblemedIconClass     struct
+GEmblemedIconClass      struct
 parent_class            GObjectClass <>
-_GEmblemedIconClass     ends
-GEmblemedIconClass      typedef _GEmblemedIconClass
+GEmblemedIconClass      ends
 
 g_emblemed_icon_get_type proto
 

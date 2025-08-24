@@ -32,26 +32,21 @@ GTK_WIDGET_GET_CLASS macro obj
 
 define GTK_TYPE_REQUISITION <gtk_requisition_get_type ()>
 
-;GtkWidgetPrivate	 typedef _GtkWidgetPrivate
-;GtkWidgetClassPrivate	 typedef _GtkWidgetClassPrivate
-
 GtkAllocation		typedef GdkRectangle
 
 CALLBACK(GtkTickCallback, :ptr, :ptr, :gpointer)
 
-_GtkRequisition		STRUC
+GtkRequisition		STRUC
 width			sdword ?
 height			sdword ?
-_GtkRequisition		ENDS
+GtkRequisition		ENDS
 
-
-_GtkWidget		STRUC
+GtkWidget		STRUC
 parent_instance		GInitiallyUnowned <>
 priv			ptr GtkWidgetPrivate ?
-_GtkWidget		ENDS
-GtkWidget		typedef _GtkWidget
+GtkWidget		ENDS
 
-_GtkWidgetClass		struct
+GtkWidgetClass		struct
 parent_class		GInitiallyUnownedClass <>
 show			proc :ptr
 hide			proc :ptr
@@ -80,8 +75,7 @@ snapshot		proc :ptr, :ptr
 contains		proc :ptr, :real8, :real8
 priv			ptr GtkWidgetClassPrivate ?
 padding			gpointer 8 dup(?)
-_GtkWidgetClass		ends
-GtkWidgetClass		typedef _GtkWidgetClass
+GtkWidgetClass		ends
 
 
 gtk_widget_get_type proto
@@ -283,32 +277,8 @@ gtk_widget_add_tick_callback proto :ptr, :GtkTickCallback, :gpointer, :GDestroyN
 
 gtk_widget_remove_tick_callback proto :ptr, :guint
 
-gtk_widget_class_bind_template_callback macro widget_class, callback
-  exitm<.err>
-  endm
-
-
 gtk_widget_class_bind_template_child macro widget_class, TypeName, member_name
   exitm<gtk_widget_class_bind_template_child_full(widget_class, @CatStr(<!">, member_name, <!">), FALSE, TypeName.member_name)>
-  endm
-
-gtk_widget_class_bind_template_child macro widget_class, TypeName, member_name
-  exitm<.err>
-  endm
-
-
-gtk_widget_class_bind_template_child_internal macro widget_class, TypeName, member_name
-  exitm<.err>
-  endm
-
-
-gtk_widget_class_bind_template_child_private macro widget_class, TypeName, member_name
-  exitm<.err>
-  endm
-
-
-gtk_widget_class_bind_template_child_internal_private macro widget_class, TypeName, member_name
-  exitm<.err>
   endm
 
 gtk_widget_init_template proto :ptr

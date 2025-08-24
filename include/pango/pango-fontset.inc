@@ -28,13 +28,11 @@ pango_fontset_get_type proto
 
 CALLBACK(PangoFontsetForeachFunc, :ptr, :ptr, :gpointer)
 
-_PangoFontset           struct
+PangoFontset            struct
 parent_instance         GObject <>
-_PangoFontset           ends
-PangoFontset            typedef _PangoFontset
+PangoFontset            ends
 
-
-_PangoFontsetClass      struct
+PangoFontsetClass       struct
 parent_class            GObjectClass <>
 get_font                proc :ptr, :guint
 get_metrics             proc :ptr
@@ -44,8 +42,7 @@ _pango_reserved1        proc
 _pango_reserved2        proc
 _pango_reserved3        proc
 _pango_reserved4        proc
-_PangoFontsetClass      ends
-PangoFontsetClass       typedef _PangoFontsetClass
+PangoFontsetClass       ends
 
 pango_fontset_get_font proto :ptr, :guint
 pango_fontset_get_metrics proto :ptr

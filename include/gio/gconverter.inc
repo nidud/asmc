@@ -18,12 +18,11 @@ G_CONVERTER_GET_IFACE macro obj
   exitm<G_TYPE_INSTANCE_GET_INTERFACE (obj, G_TYPE_CONVERTER, GConverterIface)>
   endm
 
-_GConverterIface        struct
+GConverterIface         struct
 g_iface                 GTypeInterface <>
 convert                 proc :ptr, :ptr, :gsize, :ptr, :gsize, :GConverterFlags, :ptr, :ptr, :ptr
 reset                   proc :ptr
-_GConverterIface        ends
-GConverterIface         typedef _GConverterIface
+GConverterIface         ends
 
 g_converter_get_type proto
 g_converter_convert proto :ptr, :ptr, :gsize, :ptr, :gsize, :GConverterFlags, :ptr, :ptr, :ptr

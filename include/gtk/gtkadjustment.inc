@@ -26,11 +26,11 @@ GTK_ADJUSTMENT_GET_CLASS macro obj
   endm
 
 
-_GtkAdjustment          struct
+GtkAdjustment           struct
 parent_instance         GInitiallyUnowned <>
-_GtkAdjustment          ends
+GtkAdjustment           ends
 
-_GtkAdjustmentClass     struct
+GtkAdjustmentClass      struct
 parent_class            GInitiallyUnownedClass <>
 changed                 proc :ptr
 value_changed           proc :ptr
@@ -38,8 +38,7 @@ _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkAdjustmentClass     ends
-GtkAdjustmentClass      typedef _GtkAdjustmentClass
+GtkAdjustmentClass      ends
 
 
 gtk_adjustment_get_type proto

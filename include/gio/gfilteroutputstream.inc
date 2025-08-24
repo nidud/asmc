@@ -25,19 +25,17 @@ G_FILTER_OUTPUT_STREAM_GET_CLASS macro o
   endm
 
 
-_GFilterOutputStream    struct
+GFilterOutputStream     struct
 parent_instance         GOutputStream <>
 base_stream             ptr GOutputStream ?
-_GFilterOutputStream    ends
-GFilterOutputStream     typedef _GFilterOutputStream
+GFilterOutputStream     ends
 
-_GFilterOutputStreamClass struct
+GFilterOutputStreamClass struct
 parent_class            GOutputStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
-_GFilterOutputStreamClass ends
-GFilterOutputStreamClass typedef _GFilterOutputStreamClass
+GFilterOutputStreamClass ends
 
 g_filter_output_stream_get_type proto
 g_filter_output_stream_get_base_stream proto :ptr

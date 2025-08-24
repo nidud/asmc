@@ -18,8 +18,6 @@ G_IS_BINDING macro obj
   endm
 
 
-;GBinding                typedef _GBinding
-
 CALLBACK(GBindingTransformFunc, :ptr, :ptr, :ptr, :gpointer)
 
 .enum GBindingFlags {

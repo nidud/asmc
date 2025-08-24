@@ -25,16 +25,15 @@ G_TYPE_MODULE_GET_CLASS macro module
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((module), G_TYPE_TYPE_MODULE, GTypeModuleClass))>
   endm
 
-_GTypeModule            struct
+GTypeModule             struct
 parent_instance         GObject <>
 use_count               guint ?
 type_infos              ptr GSList ?
 interface_infos         ptr GSList ?
 name                    ptr gchar ?
-_GTypeModule            ends
-GTypeModule             typedef _GTypeModule
+GTypeModule             ends
 
-_GTypeModuleClass       struct
+GTypeModuleClass        struct
 parent_class            GObjectClass <>
 load                    proc :ptr
 unload                  proc :ptr
@@ -42,9 +41,7 @@ reserved1               proc
 reserved2               proc
 reserved3               proc
 reserved4               proc
-_GTypeModuleClass       ends
-GTypeModuleClass        typedef _GTypeModuleClass
-
+GTypeModuleClass        ends
 
 G_DEFINE_DYNAMIC_TYPE macro TN, t_n, T_P
   exitm<G_DEFINE_DYNAMIC_TYPE_EXTENDED (TN, t_n, T_P, 0, {})>

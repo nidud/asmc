@@ -25,9 +25,6 @@ GTK_GESTURE_PAN_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_PAN, GtkGesturePanClass))>
   endm
 
-;GtkGesturePan           typedef _GtkGesturePan
-;GtkGesturePanClass      typedef _GtkGesturePanClass
-
 gtk_gesture_pan_get_type proto
 gtk_gesture_pan_new proto :GtkOrientation
 gtk_gesture_pan_get_orientation proto :ptr

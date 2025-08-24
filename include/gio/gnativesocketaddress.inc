@@ -24,18 +24,14 @@ G_NATIVE_SOCKET_ADDRESS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_NATIVE_SOCKET_ADDRESS, GNativeSocketAddressClass))>
   endm
 
-;GNativeSocketAddressPrivate typedef _GNativeSocketAddressPrivate
-
-_GNativeSocketAddress   struct
+GNativeSocketAddress    struct
 parent_instance         GSocketAddress <>
 priv                    ptr GNativeSocketAddressPrivate ?
-_GNativeSocketAddress   ends
-GNativeSocketAddress    typedef _GNativeSocketAddress
+GNativeSocketAddress    ends
 
-_GNativeSocketAddressClass struct
+GNativeSocketAddressClass struct
 parent_class            GSocketAddressClass <>
-_GNativeSocketAddressClass ends
-GNativeSocketAddressClass typedef _GNativeSocketAddressClass
+GNativeSocketAddressClass ends
 
 g_native_socket_address_get_type proto
 g_native_socket_address_new proto :gpointer, :gsize

@@ -24,8 +24,6 @@ define GTK_STYLE_PROVIDER_PRIORITY_SETTINGS    400
 define GTK_STYLE_PROVIDER_PRIORITY_APPLICATION 600
 define GTK_STYLE_PROVIDER_PRIORITY_USER        800
 
-;GtkStyleProvider        typedef _GtkStyleProvider
-
 gtk_style_provider_get_type proto
 
 endif

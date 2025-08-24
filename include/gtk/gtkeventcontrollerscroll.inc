@@ -25,9 +25,6 @@ GTK_EVENT_CONTROLLER_SCROLL_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_EVENT_CONTROLLER_SCROLL, GtkEventControllerScrollClass))>
   endm
 
-;GtkEventControllerScroll typedef _GtkEventControllerScroll
-;GtkEventControllerScrollClass typedef _GtkEventControllerScrollClass
-
 .enum GtkEventControllerScrollFlags {
   GTK_EVENT_CONTROLLER_SCROLL_NONE       = 0,
   GTK_EVENT_CONTROLLER_SCROLL_VERTICAL   = 1 shl 0,

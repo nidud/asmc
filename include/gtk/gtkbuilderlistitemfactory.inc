@@ -24,9 +24,6 @@ GTK_BUILDER_LIST_ITEM_FACTORY_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_BUILDER_LIST_ITEM_FACTORY, GtkBuilderListItemFactoryClass))>
   endm
 
-;GtkBuilderListItemFactory typedef _GtkBuilderListItemFactory
-;GtkBuilderListItemFactoryClass typedef _GtkBuilderListItemFactoryClass
-
 gtk_builder_list_item_factory_get_type proto
 
 gtk_builder_list_item_factory_new_from_bytes proto :ptr, :ptr

@@ -15,8 +15,6 @@ GTK_IS_OVERLAY macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_OVERLAY))>
   endm
 
-;GtkOverlay              typedef _GtkOverlay
-
 gtk_overlay_get_type proto
 gtk_overlay_new proto
 gtk_overlay_add_overlay proto :ptr, :ptr

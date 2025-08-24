@@ -14,11 +14,9 @@ include gtk/gtktexttag.inc
   GTK_TEXT_SEARCH_CASE_INSENSITIVE = 1 shl 2
   }
 
-;GtkTextBuffer           typedef _GtkTextBuffer
-
 define GTK_TYPE_TEXT_ITER <gtk_text_iter_get_type ()>
 
-_GtkTextIter            struct
+GtkTextIter             struct
 dummy1                  gpointer ?
 dummy2                  gpointer ?
 dummy3                  sdword ?
@@ -33,7 +31,7 @@ dummy11                 sdword ?
 dummy12                 sdword ?
 dummy13                 sdword ?
 dummy14                 gpointer ?
-_GtkTextIter            ends
+GtkTextIter             ends
 
 gtk_text_iter_get_buffer proto :ptr
 gtk_text_iter_copy proto :ptr

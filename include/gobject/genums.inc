@@ -57,37 +57,32 @@ G_VALUE_HOLDS_FLAGS macro value
   endm
 
 
-_GEnumClass             struct
+GEnumClass              struct
 g_type_class            GTypeClass <>
 minimum                 gint ?
 maximum                 gint ?
 n_values                guint ?
 values                  ptr GEnumValue ?
-_GEnumClass             ends
+GEnumClass              ends
 
-_GFlagsClass            struct
+GFlagsClass             struct
 g_type_class            GTypeClass <>
 mask                    guint ?
 n_values                guint ?
 values                  ptr GFlagsValue ?
-_GFlagsClass            ends
+GFlagsClass             ends
 
-_GEnumValue             struct
+GEnumValue              struct
 value                   gint ?
 value_name              ptr gchar ?
 value_nick              ptr gchar ?
-_GEnumValue             ends
+GEnumValue              ends
 
-_GFlagsValue            struct
+GFlagsValue             struct
 value                   guint ?
 value_name              ptr gchar ?
 value_nick              ptr gchar ?
-_GFlagsValue            ends
-
-GEnumClass              typedef _GEnumClass
-GFlagsClass             typedef _GFlagsClass
-GEnumValue              typedef _GEnumValue
-GFlagsValue             typedef _GFlagsValue
+GFlagsValue             ends
 
 g_enum_get_value proto :ptr, :gint
 g_enum_get_value_by_name proto :ptr, :ptr

@@ -12,14 +12,13 @@ define G_TYPE_RESOURCE <g_resource_get_type ()>
 define G_RESOURCE_ERROR <g_resource_error_quark ()>
 g_resource_error_quark proto
 
-_GStaticResource        struct
+GStaticResource         struct
 data                    ptr guint8 ?
 data_len                gsize ?
 resource                ptr GResource ?
 next                    ptr GStaticResource ?
 padding                 gpointer ?
-_GStaticResource        ends
-GStaticResource         typedef _GStaticResource
+GStaticResource         ends
 
 g_resource_get_type proto
 g_resource_new_from_data proto :ptr, :ptr

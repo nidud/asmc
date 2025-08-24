@@ -15,30 +15,21 @@ GTK_IS_EXPANDER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_EXPANDER))>
   endm
 
-;GtkExpander             typedef _GtkExpander
-
 gtk_expander_get_type proto
-
 gtk_expander_new proto :ptr
 gtk_expander_new_with_mnemonic proto :ptr
-
 gtk_expander_set_expanded proto :ptr, :gboolean
 gtk_expander_get_expanded proto :ptr
-
 gtk_expander_set_label proto :ptr, :ptr
 gtk_expander_get_label proto :ptr
-
 gtk_expander_set_use_underline proto :ptr, :gboolean
 gtk_expander_get_use_underline proto :ptr
-
 gtk_expander_set_use_markup proto :ptr, :gboolean
 gtk_expander_get_use_markup proto :ptr
-
 gtk_expander_set_label_widget proto :ptr, :ptr
 gtk_expander_get_label_widget proto :ptr
 gtk_expander_set_resize_toplevel proto :ptr, :gboolean
 gtk_expander_get_resize_toplevel proto :ptr
-
 gtk_expander_set_child proto :ptr, :ptr
 gtk_expander_get_child proto :ptr
 

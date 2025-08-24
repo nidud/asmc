@@ -25,22 +25,18 @@ GTK_IM_MULTICONTEXT_GET_CLASS macro obj
   endm
 
 
-;GtkIMMulticontextPrivate typedef _GtkIMMulticontextPrivate
-
-_GtkIMMulticontext      struct
+GtkIMMulticontext       struct
 object                  GtkIMContext <>
 priv                    ptr GtkIMMulticontextPrivate ?
-_GtkIMMulticontext      ends
-GtkIMMulticontext       typedef _GtkIMMulticontext
+GtkIMMulticontext       ends
 
-_GtkIMMulticontextClass struct
+GtkIMMulticontextClass  struct
 parent_class            GtkIMContextClass <>
 _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkIMMulticontextClass ends
-GtkIMMulticontextClass  typedef _GtkIMMulticontextClass
+GtkIMMulticontextClass  ends
 
 gtk_im_multicontext_get_type proto
 gtk_im_multicontext_new proto

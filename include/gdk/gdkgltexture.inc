@@ -17,9 +17,6 @@ GDK_IS_GL_TEXTURE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GDK_TYPE_GL_TEXTURE))>
   endm
 
-;GdkGLTexture            typedef _GdkGLTexture
-;GdkGLTextureClass       typedef _GdkGLTextureClass
-
 gdk_gl_texture_get_type proto
 gdk_gl_texture_new proto :ptr, :guint, :sdword, :sdword, :GDestroyNotify, :gpointer
 gdk_gl_texture_release proto :ptr

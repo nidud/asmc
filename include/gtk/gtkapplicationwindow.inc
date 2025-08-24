@@ -25,16 +25,14 @@ GTK_APPLICATION_WINDOW_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), GTK_TYPE_APPLICATION_WINDOW, GtkApplicationWindowClass))>
   endm
 
-_GtkApplicationWindow   struct
+GtkApplicationWindow    struct
 parent_instance         GtkWindow <>
-_GtkApplicationWindow   ends
-GtkApplicationWindow    typedef _GtkApplicationWindow
+GtkApplicationWindow    ends
 
-_GtkApplicationWindowClass struct
+GtkApplicationWindowClass struct
 parent_class            GtkWindowClass <>
 padding                 gpointer 8 dup(?)
-_GtkApplicationWindowClass ends
-GtkApplicationWindowClass typedef _GtkApplicationWindowClass
+GtkApplicationWindowClass ends
 
 gtk_application_window_get_type proto
 gtk_application_window_new proto :ptr

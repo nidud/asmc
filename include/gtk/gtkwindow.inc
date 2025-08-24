@@ -26,17 +26,11 @@ GTK_WINDOW_GET_CLASS macro obj
   exitm<G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_WINDOW, GtkWindowClass)>
   endm
 
-;GtkWindowGroup		 typedef _GtkWindowGroup
-;GtkWindowGroupClass	 typedef _GtkWindowGroupClass
-;GtkWindowGroupPrivate	 typedef _GtkWindowGroupPrivate
-
-_GtkWindow		struct
+GtkWindow		struct
 parent_instance		GtkWidget <>
-_GtkWindow		ends
-GtkWindow		typedef _GtkWindow
+GtkWindow		ends
 
-
-_GtkWindowClass		struct
+GtkWindowClass		struct
 parent_class		GtkWidgetClass <>
 activate_focus		proc :ptr
 activate_default	proc :ptr
@@ -44,8 +38,7 @@ keys_changed		proc :ptr
 enable_debugging	proc :ptr, :gboolean
 close_request		proc :ptr
 padding			gpointer 8 dup(?)
-_GtkWindowClass		ends
-GtkWindowClass		typedef _GtkWindowClass
+GtkWindowClass		ends
 
 gtk_window_get_type proto
 gtk_window_new proto

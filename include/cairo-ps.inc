@@ -7,11 +7,10 @@ if CAIRO_HAS_PS_SURFACE
 
 include stdio.inc
 
-.enum _cairo_ps_level {
+.enum cairo_ps_level_t {
     CAIRO_PS_LEVEL_2,
     CAIRO_PS_LEVEL_3
     }
-cairo_ps_level_t typedef _cairo_ps_level
 
 cairo_ps_surface_create proto :ptr, :double, :double
 cairo_ps_surface_create_for_stream proto :cairo_write_func_t, :ptr, :double, :double

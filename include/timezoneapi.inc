@@ -10,32 +10,30 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WI
 
 define TIME_ZONE_ID_INVALID (0xFFFFFFFF)
 
-_TIME_ZONE_INFORMATION  struct
-Bias                    LONG ?
-StandardName            WCHAR 32 dup(?)
-StandardDate            SYSTEMTIME <>
-StandardBias            LONG ?
-DaylightName            WCHAR 32 dup(?)
-DaylightDate            SYSTEMTIME <>
-DaylightBias            LONG ?
-_TIME_ZONE_INFORMATION  ends
-TIME_ZONE_INFORMATION   typedef _TIME_ZONE_INFORMATION
-PTIME_ZONE_INFORMATION  typedef ptr _TIME_ZONE_INFORMATION
-LPTIME_ZONE_INFORMATION typedef ptr _TIME_ZONE_INFORMATION
+TIME_ZONE_INFORMATION	struct
+Bias			LONG ?
+StandardName		WCHAR 32 dup(?)
+StandardDate		SYSTEMTIME <>
+StandardBias		LONG ?
+DaylightName		WCHAR 32 dup(?)
+DaylightDate		SYSTEMTIME <>
+DaylightBias		LONG ?
+TIME_ZONE_INFORMATION	ends
+PTIME_ZONE_INFORMATION	typedef ptr TIME_ZONE_INFORMATION
+LPTIME_ZONE_INFORMATION typedef ptr TIME_ZONE_INFORMATION
 
-_TIME_DYNAMIC_ZONE_INFORMATION struct
-Bias                    LONG ?
-StandardName            WCHAR 32 dup(?)
-StandardDate            SYSTEMTIME <>
-StandardBias            LONG ?
-DaylightName            WCHAR 32 dup(?)
-DaylightDate            SYSTEMTIME <>
-DaylightBias            LONG ?
-TimeZoneKeyName         WCHAR 128 dup(?)
+TIME_DYNAMIC_ZONE_INFORMATION struct
+Bias			LONG ?
+StandardName		WCHAR 32 dup(?)
+StandardDate		SYSTEMTIME <>
+StandardBias		LONG ?
+DaylightName		WCHAR 32 dup(?)
+DaylightDate		SYSTEMTIME <>
+DaylightBias		LONG ?
+TimeZoneKeyName		WCHAR 128 dup(?)
 DynamicDaylightTimeDisabled BOOLEAN ?
-_TIME_DYNAMIC_ZONE_INFORMATION ends
-DYNAMIC_TIME_ZONE_INFORMATION typedef _TIME_DYNAMIC_ZONE_INFORMATION
-PDYNAMIC_TIME_ZONE_INFORMATION typedef ptr _TIME_DYNAMIC_ZONE_INFORMATION
+TIME_DYNAMIC_ZONE_INFORMATION ends
+PDYNAMIC_TIME_ZONE_INFORMATION typedef ptr TIME_DYNAMIC_ZONE_INFORMATION
 
 SystemTimeToTzSpecificLocalTime proto WINAPI :ptr, :ptr, :LPSYSTEMTIME
 TzSpecificLocalTimeToSystemTime proto WINAPI :ptr, :ptr, :LPSYSTEMTIME

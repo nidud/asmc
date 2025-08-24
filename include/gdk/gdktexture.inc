@@ -18,8 +18,6 @@ GDK_IS_TEXTURE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GDK_TYPE_TEXTURE))>
   endm
 
-;GdkTextureClass         typedef _GdkTextureClass
-
 define GDK_TEXTURE_ERROR <gdk_texture_error_quark ()>
 
 gdk_texture_error_quark proto

@@ -10,11 +10,9 @@ include gdk/gdk.inc
 include windows.inc
 
 ifdef GTK_COMPILATION
-GdkWin32Display         typedef _GdkWin32Display
 else
 GdkWin32Display         typedef GdkDisplay
 endif
-;GdkWin32DisplayClass    typedef _GdkWin32DisplayClass
 
 define GDK_TYPE_WIN32_DISPLAY <gdk_win32_display_get_type ()>
 GDK_WIN32_DISPLAY macro object

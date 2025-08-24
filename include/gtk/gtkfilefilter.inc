@@ -16,8 +16,6 @@ GTK_IS_FILE_FILTER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FILE_FILTER))>
   endm
 
-;GtkFileFilter           typedef _GtkFileFilter
-
 gtk_file_filter_get_type proto
 gtk_file_filter_new proto
 gtk_file_filter_set_name proto :ptr, :ptr

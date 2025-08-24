@@ -21,13 +21,10 @@ GTK_SCROLLABLE_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), GTK_TYPE_SCROLLABLE, GtkScrollableInterface))>
   endm
 
-;GtkScrollable           typedef _GtkScrollable
-
-_GtkScrollableInterface struct
+GtkScrollableInterface  struct
 base_iface              GTypeInterface <>
 get_border              proc :ptr, :ptr
-_GtkScrollableInterface ends
-GtkScrollableInterface  typedef _GtkScrollableInterface
+GtkScrollableInterface  ends
 
 gtk_scrollable_get_type proto
 gtk_scrollable_get_hadjustment proto :ptr

@@ -43,11 +43,10 @@ include graphene/graphene-vec3.inc
 }
 
 
-_graphene_euler_t       STRUC
+graphene_euler_t        STRUC
 angles                  graphene_vec3_t <>
 order                   graphene_euler_order_t ?
-_graphene_euler_t       ENDS
-graphene_euler_t        typedef _graphene_euler_t
+graphene_euler_t        ENDS
 
 graphene_euler_alloc proto
 graphene_euler_free proto :ptr

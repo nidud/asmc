@@ -5,11 +5,10 @@ include cairo.inc
 
 if CAIRO_HAS_SCRIPT_SURFACE
 
-.enum _cairo_script_mode {
+.enum cairo_script_mode_t {
     CAIRO_SCRIPT_MODE_ASCII,
     CAIRO_SCRIPT_MODE_BINARY
     }
-cairo_script_mode_t typedef _cairo_script_mode
 
 cairo_script_create proto :ptr
 cairo_script_create_for_stream proto :cairo_write_func_t, :ptr

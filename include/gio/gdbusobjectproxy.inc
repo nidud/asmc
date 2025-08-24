@@ -20,19 +20,15 @@ G_IS_DBUS_OBJECT_PROXY_CLASS macro k
   exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_DBUS_OBJECT_PROXY))>
   endm
 
-;GDBusObjectProxyPrivate typedef _GDBusObjectProxyPrivate
-
-_GDBusObjectProxy       struct
+GDBusObjectProxy        struct
 parent_instance         GObject <>
 priv                    ptr GDBusObjectProxyPrivate ?
-_GDBusObjectProxy       ends
-GDBusObjectProxy        typedef _GDBusObjectProxy
+GDBusObjectProxy        ends
 
-_GDBusObjectProxyClass  struct
+GDBusObjectProxyClass   struct
 parent_class            GObjectClass <>
 padding                 gpointer 8 dup(?)
-_GDBusObjectProxyClass  ends
-GDBusObjectProxyClass   typedef _GDBusObjectProxyClass
+GDBusObjectProxyClass   ends
 
 g_dbus_object_proxy_get_type proto
 g_dbus_object_proxy_new proto :ptr, :ptr

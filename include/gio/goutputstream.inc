@@ -24,17 +24,12 @@ G_OUTPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_OUTPUT_STREAM, GOutputStreamClass))>
   endm
 
-
-;GOutputStreamPrivate    typedef _GOutputStreamPrivate
-
-_GOutputStream          struct
+GOutputStream           struct
 parent_instance         GObject <>
 priv                    ptr GOutputStreamPrivate ?
-_GOutputStream          ends
-GOutputStream           typedef _GOutputStream
+GOutputStream           ends
 
-
-_GOutputStreamClass     struct
+GOutputStreamClass      struct
 parent_class            GObjectClass <>
 write_fn                proc :ptr, :ptr, :gsize, :ptr, :ptr
 splice                  proc :ptr, :ptr, :GOutputStreamSpliceFlags, :ptr, :ptr
@@ -56,8 +51,7 @@ _g_reserved5            proc
 _g_reserved6            proc
 _g_reserved7            proc
 _g_reserved8            proc
-_GOutputStreamClass     ends
-GOutputStreamClass      typedef _GOutputStreamClass
+GOutputStreamClass      ends
 
 g_output_stream_get_type proto
 g_output_stream_write proto :ptr, :ptr, :gsize, :ptr, :ptr

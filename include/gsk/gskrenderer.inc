@@ -17,8 +17,6 @@ GSK_IS_RENDERER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSK_TYPE_RENDERER))>
   endm
 
-;GskRendererClass        typedef _GskRendererClass
-
 gsk_renderer_get_type proto
 gsk_renderer_new_for_surface proto :ptr
 gsk_renderer_get_surface proto :ptr

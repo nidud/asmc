@@ -15,8 +15,6 @@ GTK_IS_VIEWPORT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_VIEWPORT))>
   endm
 
-;GtkViewport             typedef _GtkViewport
-
 gtk_viewport_get_type proto
 gtk_viewport_new proto :ptr, :ptr
 gtk_viewport_get_scroll_to_focus proto :ptr

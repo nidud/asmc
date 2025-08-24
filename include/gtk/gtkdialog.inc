@@ -45,19 +45,16 @@ GTK_DIALOG_GET_CLASS macro obj
   endm
 
 
-_GtkDialog              struct
+GtkDialog               struct
 parent_instance         GtkWindow <>
-_GtkDialog              ends
-GtkDialog               typedef _GtkDialog
+GtkDialog               ends
 
-_GtkDialogClass         struct
+GtkDialogClass          struct
 parent_class            GtkWindowClass <>
 response                proc :ptr, :sdword
 close                   proc :ptr
 padding                 gpointer 8 dup(?)
-_GtkDialogClass         ends
-GtkDialogClass          typedef _GtkDialogClass
-
+GtkDialogClass          ends
 
 gtk_dialog_get_type proto
 gtk_dialog_new proto

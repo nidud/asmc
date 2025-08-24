@@ -25,11 +25,9 @@ GDK_WIN32_DRAG_GET_CLASS macro obj
   endm
 
 ifdef GTK_COMPILATION
-GdkWin32Drag            typedef _GdkWin32Drag
 else
 GdkWin32Drag            typedef GdkDrag
 endif
-;GdkWin32DragClass       typedef _GdkWin32DragClass
 
 gdk_win32_drag_get_type proto
 

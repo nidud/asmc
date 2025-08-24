@@ -46,10 +46,9 @@ gtk_bitset_shift_right proto :ptr, :guint
 gtk_bitset_splice proto :ptr, :guint, :guint, :guint
 
 
-_GtkBitsetIter          struct
+GtkBitsetIter           struct
 private_data            gpointer 10 dup(?)
-_GtkBitsetIter          ends
-GtkBitsetIter           typedef _GtkBitsetIter
+GtkBitsetIter           ends
 
 gtk_bitset_iter_get_type proto
 

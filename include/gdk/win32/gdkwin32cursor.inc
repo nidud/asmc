@@ -9,9 +9,6 @@ include gdk/gdk.inc
 include gdk/win32/gdkwin32display.inc
 include windows.inc
 
-;GdkWin32HCursor         typedef _GdkWin32HCursor
-;GdkWin32HCursorClass    typedef _GdkWin32HCursorClass
-
 define GDK_TYPE_WIN32_HCURSOR <gdk_win32_hcursor_get_type ()>
 GDK_WIN32_HCURSOR macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_WIN32_HCURSOR, GdkWin32HCursor))>
@@ -31,10 +28,10 @@ GDK_WIN32_HCURSOR_GET_CLASS macro obj
 
 gdk_win32_hcursor_get_type proto
 
-_GdkWin32HCursorFake    struct
+GdkWin32HCursorFake     struct
 parent_instance         GObject <>
 readonly_handle         HCURSOR ?
-_GdkWin32HCursorFake    ends
+GdkWin32HCursorFake     ends
 
 gdk_win32_hcursor_get_handle_fast macro x
   exitm<(((struct _GdkWin32HCursorFake *) x)->readonly_handle)>
@@ -47,11 +44,8 @@ gdk_win32_hcursor_get_handle proto :ptr
 endif
 
 gdk_win32_hcursor_new proto :ptr, :HCURSOR, :gboolean
-
 gdk_win32_display_get_win32hcursor proto :ptr, :ptr
-
 _gdk_win32_display_hcursor_ref proto :ptr, :HCURSOR, :gboolean
-
 _gdk_win32_display_hcursor_unref proto :ptr, :HCURSOR
 
 endif

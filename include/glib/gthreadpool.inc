@@ -7,12 +7,11 @@ endif
 
 include glib/gthread.inc
 
-_GThreadPool            struct
+GThreadPool             struct
 func                    GFunc ?
 user_data               gpointer ?
 exclusive               gboolean ?
-_GThreadPool            ends
-GThreadPool             typedef _GThreadPool
+GThreadPool             ends
 
 g_thread_pool_new proto :GFunc, :gpointer, :gint, :gboolean, :ptr
 g_thread_pool_new_full proto :GFunc, :gpointer, :GDestroyNotify, :gint, :gboolean, :ptr

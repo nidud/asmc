@@ -24,24 +24,19 @@ G_SIMPLE_PROXY_RESOLVER_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_SIMPLE_PROXY_RESOLVER, GSimpleProxyResolverClass))>
   endm
 
-
-;GSimpleProxyResolverPrivate typedef _GSimpleProxyResolverPrivate
-
-_GSimpleProxyResolver   struct
+GSimpleProxyResolver    struct
 parent_instance         GObject <>
 priv                    ptr GSimpleProxyResolverPrivate ?
-_GSimpleProxyResolver   ends
-GSimpleProxyResolver    typedef _GSimpleProxyResolver
+GSimpleProxyResolver    ends
 
-_GSimpleProxyResolverClass struct
+GSimpleProxyResolverClass struct
 parent_class            GObjectClass <>
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GSimpleProxyResolverClass ends
-GSimpleProxyResolverClass typedef _GSimpleProxyResolverClass
+GSimpleProxyResolverClass ends
 
 g_simple_proxy_resolver_get_type proto
 g_simple_proxy_resolver_new proto :ptr, :ptr

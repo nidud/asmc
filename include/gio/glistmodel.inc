@@ -9,13 +9,12 @@ include gio/giotypes.inc
 
 define G_TYPE_LIST_MODEL <g_list_model_get_type ()>
 
-_GListModelInterface    struct
+GListModelInterface     struct
 g_iface                 GTypeInterface <>
 get_item_type           proc :ptr
 get_n_items             proc :ptr
 get_item                proc :ptr, :guint
-_GListModelInterface    ends
-GListModelInterface     typedef _GListModelInterface
+GListModelInterface     ends
 
 g_list_model_get_item_type proto :ptr
 g_list_model_get_n_items proto :ptr

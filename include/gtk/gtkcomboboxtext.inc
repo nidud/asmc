@@ -15,8 +15,6 @@ GTK_IS_COMBO_BOX_TEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_COMBO_BOX_TEXT))>
   endm
 
-;GtkComboBoxText         typedef _GtkComboBoxText
-
 gtk_combo_box_text_get_type proto
 gtk_combo_box_text_new proto
 gtk_combo_box_text_new_with_entry proto

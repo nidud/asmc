@@ -21,11 +21,9 @@ GTK_CELL_LAYOUT_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_CELL_LAYOUT, GtkCellLayoutIface))>
   endm
 
-;GtkCellLayout           typedef _GtkCellLayout
-
 CALLBACK(GtkCellLayoutDataFunc, :ptr, :ptr, :ptr, :ptr, :gpointer)
 
-_GtkCellLayoutIface     struct
+GtkCellLayoutIface      struct
 g_iface                 GTypeInterface <>
 pack_start              proc :ptr, :ptr, :gboolean
 pack_end                proc :ptr, :ptr, :gboolean
@@ -36,8 +34,7 @@ clear_attributes        proc :ptr, :ptr
 reorder                 proc :ptr, :ptr, :sdword
 get_cells               proc :ptr
 get_area                proc :ptr
-_GtkCellLayoutIface     ends
-GtkCellLayoutIface      typedef _GtkCellLayoutIface
+GtkCellLayoutIface      ends
 
 gtk_cell_layout_get_type proto
 gtk_cell_layout_pack_start proto :ptr, :ptr, :gboolean

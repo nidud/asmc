@@ -15,8 +15,6 @@ GTK_IS_POPOVER_MENU_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_POPOVER_MENU_BAR))>
   endm
 
-;GtkPopoverMenuBar	 typedef _GtkPopoverMenuBar
-
 gtk_popover_menu_bar_get_type proto
 gtk_popover_menu_bar_new_from_model proto :ptr
 gtk_popover_menu_bar_set_menu_model proto :ptr, :ptr

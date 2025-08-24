@@ -24,9 +24,7 @@ G_SOCKET_SERVICE_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_SOCKET_SERVICE, GSocketServiceClass))>
   endm
 
-;GSocketServicePrivate   typedef _GSocketServicePrivate
-
-_GSocketServiceClass    struct
+GSocketServiceClass     struct
 parent_class            GSocketListenerClass <>
 incoming                proc :ptr, :ptr, :ptr
 _g_reserved1            proc
@@ -35,14 +33,12 @@ _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
 _g_reserved6            proc
-_GSocketServiceClass    ends
-GSocketServiceClass     typedef _GSocketServiceClass
+GSocketServiceClass     ends
 
-_GSocketService         struct
+GSocketService          struct
 parent_instance         GSocketListener <>
 priv                    ptr GSocketServicePrivate ?
-_GSocketService         ends
-GSocketService          typedef _GSocketService
+GSocketService          ends
 
 g_socket_service_get_type proto
 g_socket_service_new proto

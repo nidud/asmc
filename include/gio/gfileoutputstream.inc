@@ -24,16 +24,12 @@ G_FILE_OUTPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_FILE_OUTPUT_STREAM, GFileOutputStreamClass))>
   endm
 
-
-;GFileOutputStreamPrivate typedef _GFileOutputStreamPrivate
-
-_GFileOutputStream      struct
+GFileOutputStream       struct
 parent_instance         GOutputStream <>
 priv                    ptr GFileOutputStreamPrivate ?
-_GFileOutputStream      ends
-GFileOutputStream       typedef _GFileOutputStream
+GFileOutputStream       ends
 
-_GFileOutputStreamClass struct
+GFileOutputStreamClass  struct
 parent_class            GOutputStreamClass <>
 tell                    proc :ptr
 can_seek                proc :ptr
@@ -49,8 +45,7 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GFileOutputStreamClass ends
-GFileOutputStreamClass  typedef _GFileOutputStreamClass
+GFileOutputStreamClass  ends
 
 g_file_output_stream_get_type proto
 g_file_output_stream_query_info proto :ptr, :ptr, :ptr, :ptr

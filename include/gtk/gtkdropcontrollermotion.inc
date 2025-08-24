@@ -25,9 +25,6 @@ GTK_DROP_CONTROLLER_MOTION_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_DROP_CONTROLLER_MOTION, GtkDropControllerMotionClass))>
   endm
 
-;GtkDropControllerMotion typedef _GtkDropControllerMotion
-;GtkDropControllerMotionClass typedef _GtkDropControllerMotionClass
-
 gtk_drop_controller_motion_get_type proto
 gtk_drop_controller_motion_new proto
 gtk_drop_controller_motion_contains_pointer proto :ptr

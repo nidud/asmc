@@ -20,8 +20,6 @@ PANGO_RENDERER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), PANGO_TYPE_RENDERER, PangoRendererClass))>
   endm
 
-;PangoRendererPrivate    typedef _PangoRendererPrivate
-
 .enum PangoRenderPart {
   PANGO_RENDER_PART_FOREGROUND,
   PANGO_RENDER_PART_BACKGROUND,
@@ -30,17 +28,16 @@ PANGO_RENDERER_GET_CLASS macro obj
   PANGO_RENDER_PART_OVERLINE
   }
 
-_PangoRenderer          struct
+PangoRenderer           struct
 parent_instance         GObject <>
 underline               PangoUnderline ?
 strikethrough           gboolean ?
 active_count            sdword ?
 matrix                  ptr PangoMatrix ?
 priv                    ptr PangoRendererPrivate ?
-_PangoRenderer          ends
-PangoRenderer           typedef _PangoRenderer
+PangoRenderer           ends
 
-_PangoRendererClass     struct
+PangoRendererClass      struct
 parent_class            GObjectClass <>
 draw_glyphs             proc :ptr, :ptr, :ptr, :sdword, :sdword
 draw_rectangle          proc :ptr, :PangoRenderPart, :sdword, :sdword, :sdword, :sdword
@@ -56,8 +53,7 @@ draw_glyph_item         proc :ptr, :ptr, :ptr, :sdword, :sdword
 _pango_reserved2        proc
 _pango_reserved3        proc
 _pango_reserved4        proc
-_PangoRendererClass     ends
-PangoRendererClass      typedef _PangoRendererClass
+PangoRendererClass      ends
 
 pango_renderer_get_type proto
 

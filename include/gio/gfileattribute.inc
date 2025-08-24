@@ -7,18 +7,16 @@ endif
 
 include gio/giotypes.inc
 
-_GFileAttributeInfo     struct
+GFileAttributeInfo      struct
 name                    ptr sbyte ?
 type                    GFileAttributeType ?
 flags                   GFileAttributeInfoFlags ?
-_GFileAttributeInfo     ends
-GFileAttributeInfo      typedef _GFileAttributeInfo
+GFileAttributeInfo      ends
 
-_GFileAttributeInfoList struct
+GFileAttributeInfoList  struct
 infos                   ptr GFileAttributeInfo ?
 n_infos                 sdword ?
-_GFileAttributeInfoList ends
-GFileAttributeInfoList  typedef _GFileAttributeInfoList
+GFileAttributeInfoList  ends
 
 define G_TYPE_FILE_ATTRIBUTE_INFO_LIST <g_file_attribute_info_list_get_type ()>
 g_file_attribute_info_list_get_type proto

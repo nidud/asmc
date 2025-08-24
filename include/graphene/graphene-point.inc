@@ -13,11 +13,10 @@ GRAPHENE_POINT_INIT macro _x,_y
 
 define GRAPHENE_POINT_INIT_ZERO        <GRAPHENE_POINT_INIT (0.0, 0.0)>
 
-_graphene_point_t       STRUC
+graphene_point_t        STRUC
 x                       real4 ?
 y                       real4 ?
-_graphene_point_t       ENDS
-graphene_point_t        typedef _graphene_point_t
+graphene_point_t        ENDS
 
 graphene_point_alloc proto
 graphene_point_free proto :ptr

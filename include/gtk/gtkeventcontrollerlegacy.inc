@@ -24,9 +24,6 @@ GTK_EVENT_CONTROLLER_LEGACY_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_EVENT_CONTROLLER_LEGACY, GtkEventControllerLegacyClass))>
   endm
 
-;GtkEventControllerLegacy typedef _GtkEventControllerLegacy
-;GtkEventControllerLegacyClass typedef _GtkEventControllerLegacyClass
-
 gtk_event_controller_legacy_get_type proto
 gtk_event_controller_legacy_new proto
 

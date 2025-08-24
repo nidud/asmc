@@ -42,16 +42,12 @@ GTK_CELL_RENDERER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CELL_RENDERER, GtkCellRendererClass))>
   endm
 
-;GtkCellRendererPrivate	 typedef _GtkCellRendererPrivate
-;GtkCellRendererClassPrivate typedef _GtkCellRendererClassPrivate
-
-_GtkCellRenderer	struct
+GtkCellRenderer		struct
 parent_instance		GInitiallyUnowned <>
 priv			ptr GtkCellRendererPrivate ?
-_GtkCellRenderer	ends
-GtkCellRenderer		typedef _GtkCellRenderer
+GtkCellRenderer		ends
 
-_GtkCellRendererClass	struct
+GtkCellRendererClass	struct
 parent_class		GInitiallyUnownedClass <>
 get_request_mode	proc :ptr
 get_preferred_width	proc :ptr, :ptr, :ptr, :ptr
@@ -65,8 +61,7 @@ start_editing		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :GtkCellRendererState
 editing_canceled	proc :ptr
 editing_started		proc :ptr, :ptr, :ptr
 padding			gpointer 8 dup(?)
-_GtkCellRendererClass	ends
-GtkCellRendererClass	typedef _GtkCellRendererClass
+GtkCellRendererClass	ends
 
 gtk_cell_renderer_get_type proto
 

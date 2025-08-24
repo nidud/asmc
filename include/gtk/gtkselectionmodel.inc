@@ -9,7 +9,7 @@ include gtk/gtktypes.inc
 
 define GTK_TYPE_SELECTION_MODEL <gtk_selection_model_get_type ()>
 
-_GtkSelectionModelInterface struct
+GtkSelectionModelInterface struct
 g_iface                 GTypeInterface <>
 is_selected             proc :ptr, :guint
 get_selection_in_range  proc :ptr, :guint, :guint
@@ -20,8 +20,7 @@ unselect_range          proc :ptr, :guint, :guint
 select_all              proc :ptr
 unselect_all            proc :ptr
 set_selection           proc :ptr, :ptr, :ptr
-_GtkSelectionModelInterface ends
-GtkSelectionModelInterface typedef _GtkSelectionModelInterface
+GtkSelectionModelInterface ends
 
 gtk_selection_model_is_selected proto :ptr, :guint
 gtk_selection_model_get_selection proto :ptr

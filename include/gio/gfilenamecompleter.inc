@@ -25,14 +25,13 @@ G_IS_FILENAME_COMPLETER_CLASS macro k
   endm
 
 
-_GFilenameCompleterClass struct
+GFilenameCompleterClass struct
 parent_class            GObjectClass <>
 got_completion_data     proc :ptr
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
-_GFilenameCompleterClass ends
-GFilenameCompleterClass typedef _GFilenameCompleterClass
+GFilenameCompleterClass ends
 
 g_filename_completer_get_type proto
 g_filename_completer_new proto

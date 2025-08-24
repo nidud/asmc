@@ -7,8 +7,6 @@ endif
 
 include glib/gtypes.inc
 
-;GStringChunk            typedef _GStringChunk
-
 g_string_chunk_new proto :gsize
 g_string_chunk_free proto :ptr
 g_string_chunk_clear proto :ptr

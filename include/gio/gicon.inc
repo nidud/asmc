@@ -18,15 +18,14 @@ G_ICON_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_ICON, GIconIface))>
   endm
 
-_GIconIface             struct
+GIconIface              struct
 g_iface                 GTypeInterface <>
 hash                    proc :ptr
 equal                   proc :ptr, :ptr
 to_tokens               proc :ptr, :ptr, :ptr
 from_tokens             proc :ptr, :gint, :gint, :ptr
 serialize               proc :ptr
-_GIconIface             ends
-GIconIface              typedef _GIconIface
+GIconIface              ends
 
 g_icon_get_type proto
 

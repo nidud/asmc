@@ -24,24 +24,19 @@ G_MEMORY_INPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_MEMORY_INPUT_STREAM, GMemoryInputStreamClass))>
   endm
 
-
-;GMemoryInputStreamPrivate typedef _GMemoryInputStreamPrivate
-
-_GMemoryInputStream     struct
+GMemoryInputStream      struct
 parent_instance         GInputStream <>
 priv                    ptr GMemoryInputStreamPrivate ?
-_GMemoryInputStream     ends
-GMemoryInputStream      typedef _GMemoryInputStream
+GMemoryInputStream      ends
 
-_GMemoryInputStreamClass struct
+GMemoryInputStreamClass struct
 parent_class            GInputStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GMemoryInputStreamClass ends
-GMemoryInputStreamClass typedef _GMemoryInputStreamClass
+GMemoryInputStreamClass ends
 
 
 g_memory_input_stream_get_type proto

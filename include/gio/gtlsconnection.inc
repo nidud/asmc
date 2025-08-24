@@ -24,15 +24,12 @@ G_TLS_CONNECTION_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_TLS_CONNECTION, GTlsConnectionClass))>
   endm
 
-;GTlsConnectionPrivate   typedef _GTlsConnectionPrivate
-
-_GTlsConnection         struct
+GTlsConnection          struct
 parent_instance         GIOStream <>
 priv                    ptr GTlsConnectionPrivate ?
-_GTlsConnection         ends
-GTlsConnection          typedef _GTlsConnection
+GTlsConnection          ends
 
-_GTlsConnectionClass    struct
+GTlsConnectionClass     struct
 parent_class            GIOStreamClass <>
 accept_certificate      proc :ptr, :ptr, :GTlsCertificateFlags
 handshake               proc :ptr, :ptr, :ptr
@@ -41,8 +38,7 @@ handshake_finish        proc :ptr, :ptr, :ptr
 get_binding_data        proc :ptr, :GTlsChannelBindingType, :ptr, :ptr
 get_negotiated_protocol proc :ptr
 padding                 gpointer 6 dup(?)
-_GTlsConnectionClass    ends
-GTlsConnectionClass     typedef _GTlsConnectionClass
+GTlsConnectionClass     ends
 
 g_tls_connection_get_type proto
 g_tls_connection_set_use_system_certdb proto :ptr, :gboolean

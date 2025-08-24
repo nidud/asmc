@@ -7,16 +7,11 @@ include pango/pango-types.inc
 include glib-object.inc
 ;include hb.inc
 
-;PangoFontDescription    typedef _PangoFontDescription
-;PangoFontMetrics        typedef _PangoFontMetrics
-
-
 .enum PangoStyle {
   PANGO_STYLE_NORMAL,
   PANGO_STYLE_OBLIQUE,
   PANGO_STYLE_ITALIC
 }
-
 
 .enum PangoVariant {
   PANGO_VARIANT_NORMAL,
@@ -27,7 +22,6 @@ include glib-object.inc
   PANGO_VARIANT_UNICASE,
   PANGO_VARIANT_TITLE_CAPS
 }
-
 
 .enum PangoWeight {
   PANGO_WEIGHT_THIN = 100,
@@ -60,11 +54,11 @@ include glib-object.inc
 
 .enum PangoFontMask {
   PANGO_FONT_MASK_FAMILY  = 1 shl 0,
-  PANGO_FONT_MASK_STYLE   = 1 shl 1,
+  PANGO_FONT_MASK_STYLE	  = 1 shl 1,
   PANGO_FONT_MASK_VARIANT = 1 shl 2,
   PANGO_FONT_MASK_WEIGHT  = 1 shl 3,
   PANGO_FONT_MASK_STRETCH = 1 shl 4,
-  PANGO_FONT_MASK_SIZE    = 1 shl 5,
+  PANGO_FONT_MASK_SIZE	  = 1 shl 5,
   PANGO_FONT_MASK_GRAVITY = 1 shl 6,
   PANGO_FONT_MASK_VARIATIONS = 1 shl 7,
 }
@@ -124,20 +118,20 @@ pango_font_description_to_string proto :ptr
 pango_font_description_to_filename proto :ptr
 
 
-define PANGO_TYPE_FONT_METRICS  <pango_font_metrics_get_type ()>
+define PANGO_TYPE_FONT_METRICS	<pango_font_metrics_get_type ()>
 
-_PangoFontMetrics       struct
-ref_count               guint ?
-ascent                  sdword ?
-descent                 sdword ?
-height                  sdword ?
-approximate_char_width  sdword ?
+PangoFontMetrics	struct
+ref_count		guint ?
+ascent			sdword ?
+descent			sdword ?
+height			sdword ?
+approximate_char_width	sdword ?
 approximate_digit_width sdword ?
-underline_position      sdword ?
-underline_thickness     sdword ?
-strikethrough_position  sdword ?
+underline_position	sdword ?
+underline_thickness	sdword ?
+strikethrough_position	sdword ?
 strikethrough_thickness sdword ?
-_PangoFontMetrics       ends
+PangoFontMetrics	ends
 
 pango_font_metrics_get_type proto
 pango_font_metrics_ref proto :ptr
@@ -152,7 +146,7 @@ pango_font_metrics_get_underline_thickness proto :ptr
 pango_font_metrics_get_strikethrough_position proto :ptr
 pango_font_metrics_get_strikethrough_thickness proto :ptr
 
-define PANGO_TYPE_FONT_FAMILY              <pango_font_family_get_type ()>
+define PANGO_TYPE_FONT_FAMILY		   <pango_font_family_get_type ()>
 PANGO_FONT_FAMILY macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_FONT_FAMILY, PangoFontFamily))>
   endm
@@ -169,25 +163,21 @@ PANGO_FONT_FAMILY_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), PANGO_TYPE_FONT_FAMILY, PangoFontFamilyClass))>
   endm
 
-;PangoFontFace           typedef _PangoFontFace
-
 ifndef PANGO_DISABLE_DEPRECATED
 
-_PangoFontFamily        struct
-parent_instance         GObject <>
-_PangoFontFamily        ends
-PangoFontFamily         typedef _PangoFontFamily
+PangoFontFamily		struct
+parent_instance		GObject <>
+PangoFontFamily		ends
 
-_PangoFontFamilyClass   struct
-parent_class            GObjectClass <>
-list_faces              proc :ptr, :ptr, :ptr
-get_name                proc :ptr
-is_monospace            proc :ptr
-is_variable             proc :ptr
-get_face                proc :ptr, :ptr
-_pango_reserved2        proc
-_PangoFontFamilyClass   ends
-PangoFontFamilyClass    typedef _PangoFontFamilyClass
+PangoFontFamilyClass	struct
+parent_class		GObjectClass <>
+list_faces		proc :ptr, :ptr, :ptr
+get_name		proc :ptr
+is_monospace		proc :ptr
+is_variable		proc :ptr
+get_face		proc :ptr, :ptr
+_pango_reserved2	proc
+PangoFontFamilyClass	ends
 
 endif
 
@@ -217,21 +207,20 @@ PANGO_FONT_FACE_GET_CLASS macro obj
 
 ifndef PANGO_DISABLE_DEPRECATED
 
-_PangoFontFace          struct
-parent_instance         GObject <>
-_PangoFontFace          ends
+PangoFontFace		struct
+parent_instance		GObject <>
+PangoFontFace		ends
 
-_PangoFontFaceClass     struct
-parent_class            GObjectClass <>
-get_face_name           proc :ptr
-describe                proc :ptr
-list_sizes              proc :ptr, :ptr, :ptr
-is_synthesized          proc :ptr
-get_family              proc :ptr
-_pango_reserved3        proc
-_pango_reserved4        proc
-_PangoFontFaceClass     ends
-PangoFontFaceClass      typedef _PangoFontFaceClass
+PangoFontFaceClass	struct
+parent_class		GObjectClass <>
+get_face_name		proc :ptr
+describe		proc :ptr
+list_sizes		proc :ptr, :ptr, :ptr
+is_synthesized		proc :ptr
+get_family		proc :ptr
+_pango_reserved3	proc
+_pango_reserved4	proc
+PangoFontFaceClass	ends
 
 endif
 
@@ -244,7 +233,7 @@ pango_font_face_is_synthesized proto :ptr
 
 pango_font_face_get_family proto :ptr
 
-define PANGO_TYPE_FONT  <pango_font_get_type ()>
+define PANGO_TYPE_FONT	<pango_font_get_type ()>
 PANGO_FONT macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_FONT, PangoFont))>
   endm
@@ -264,23 +253,21 @@ PANGO_FONT_GET_CLASS macro obj
 
 ifndef PANGO_DISABLE_DEPRECATED
 
+PangoFont		struct
+parent_instance		GObject <>
+PangoFont		ends
 
-_PangoFont              struct
-parent_instance         GObject <>
-_PangoFont              ends
-
-_PangoFontClass         struct
-parent_class            GObjectClass <>
-describe                proc :ptr
-get_coverage            proc :ptr, :ptr
-get_glyph_extents       proc :ptr, :PangoGlyph, :ptr, :ptr
-get_metrics             proc :ptr, :ptr
-get_font_map            proc :ptr
-describe_absolute       proc :ptr
-get_features            proc :ptr, :ptr, :guint, :ptr
-create_hb_font          proc :ptr
-_PangoFontClass         ends
-PangoFontClass          typedef _PangoFontClass
+PangoFontClass		struct
+parent_class		GObjectClass <>
+describe		proc :ptr
+get_coverage		proc :ptr, :ptr
+get_glyph_extents	proc :ptr, :PangoGlyph, :ptr, :ptr
+get_metrics		proc :ptr, :ptr
+get_font_map		proc :ptr
+describe_absolute	proc :ptr
+get_features		proc :ptr, :ptr, :guint, :ptr
+create_hb_font		proc :ptr
+PangoFontClass		ends
 
 endif
 
@@ -308,9 +295,9 @@ pango_font_serialize proto :ptr
 
 pango_font_deserialize proto :ptr, :ptr, :ptr
 
-define PANGO_GLYPH_EMPTY           (0x0FFFFFFF)
+define PANGO_GLYPH_EMPTY	   (0x0FFFFFFF)
 define PANGO_GLYPH_INVALID_INPUT   (0xFFFFFFFF)
-define PANGO_GLYPH_UNKNOWN_FLAG    (0x10000000)
+define PANGO_GLYPH_UNKNOWN_FLAG	   (0x10000000)
 PANGO_GET_UNKNOWN_GLYPH macro wc
   exitm<((wc) or PANGO_GLYPH_UNKNOWN_FLAG)>
   endm

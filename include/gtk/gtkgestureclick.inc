@@ -25,9 +25,6 @@ GTK_GESTURE_CLICK_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_CLICK, GtkGestureClickClass))>
   endm
 
-;GtkGestureClick         typedef _GtkGestureClick
-;GtkGestureClickClass    typedef _GtkGestureClickClass
-
 gtk_gesture_click_get_type proto
 gtk_gesture_click_new proto
 

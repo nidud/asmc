@@ -8,10 +8,9 @@ endif
 include graphene/graphene-types.inc
 include graphene/graphene-plane.inc
 
-_graphene_frustum_t     STRUC
+graphene_frustum_t      STRUC
 planes                  graphene_plane_t 6 dup(<>)
-_graphene_frustum_t     ENDS
-graphene_frustum_t      typedef _graphene_frustum_t
+graphene_frustum_t      ENDS
 
 graphene_frustum_alloc proto
 graphene_frustum_free proto :ptr

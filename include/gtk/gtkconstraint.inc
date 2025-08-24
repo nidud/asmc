@@ -4,8 +4,6 @@ define __GTK_CONSTRAINT_H__
 include gtk/gtktypes.inc
 include gtk/gtkenums.inc
 
-;GtkConstraintTarget     typedef _GtkConstraintTarget
-
 define GTK_TYPE_CONSTRAINT_TARGET <gtk_constraint_target_get_type ()>
 define GTK_TYPE_CONSTRAINT <gtk_constraint_get_type ()>
 

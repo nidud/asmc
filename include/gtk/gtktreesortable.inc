@@ -22,11 +22,9 @@ GTK_TREE_SORTABLE_GET_IFACE macro obj
 define GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID (-1)
 define GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID (-2)
 
-;GtkTreeSortable         typedef _GtkTreeSortable
-
 CALLBACK(GtkTreeIterCompareFunc, :ptr, :ptr, :ptr, :gpointer)
 
-_GtkTreeSortableIface   struct
+GtkTreeSortableIface    struct
 g_iface                 GTypeInterface <>
 sort_column_changed     proc :ptr
 get_sort_column_id      proc :ptr, :ptr, :ptr
@@ -34,8 +32,7 @@ set_sort_column_id      proc :ptr, :sdword, :GtkSortType
 set_sort_func           proc :ptr, :sdword, :GtkTreeIterCompareFunc, :gpointer, :GDestroyNotify
 set_default_sort_func   proc :ptr, :GtkTreeIterCompareFunc, :gpointer, :GDestroyNotify
 has_default_sort_func   proc :ptr
-_GtkTreeSortableIface   ends
-GtkTreeSortableIface    typedef _GtkTreeSortableIface
+GtkTreeSortableIface    ends
 
 gtk_tree_sortable_get_type proto
 gtk_tree_sortable_sort_column_changed proto :ptr

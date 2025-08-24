@@ -99,29 +99,25 @@ endif
   G_TYPE_DEBUG_MASK	= 0x07
 }
 
-_GTypeClass		struct
+GTypeClass		struct
 g_type			GType ?
-_GTypeClass		ends
-GTypeClass		typedef _GTypeClass
+GTypeClass		ends
 
-_GTypeInstance		struct
+GTypeInstance		struct
 g_class			ptr GTypeClass ?
-_GTypeInstance		ends
-GTypeInstance		typedef _GTypeInstance
+GTypeInstance		ends
 
-_GTypeInterface		struct
+GTypeInterface		struct
 g_type			GType ?
 g_instance_type		GType ?
-_GTypeInterface		ends
-GTypeInterface		typedef _GTypeInterface
+GTypeInterface		ends
 
-_GTypeQuery		struct
+GTypeQuery		struct
 type			GType ?
 type_name		ptr gchar ?
 class_size		guint ?
 instance_size		guint ?
-_GTypeQuery		ends
-GTypeQuery		typedef _GTypeQuery
+GTypeQuery		ends
 
 
 G_TYPE_CHECK_INSTANCE macro instance
@@ -237,7 +233,7 @@ CALLBACK(GTypeInterfaceCheckFunc, :gpointer, :gpointer)
   G_TYPE_FLAG_FINAL = (1 shl 6)
 }
 
-_GTypeValueTable	struct
+GTypeValueTable		struct
 value_init		proc :ptr
 value_free		proc :ptr
 value_copy		proc :ptr, :ptr
@@ -246,10 +242,9 @@ collect_format		ptr gchar ?
 collect_value		proc :ptr, :guint, :ptr, :guint
 lcopy_format		ptr gchar ?
 lcopy_value		proc :ptr, :guint, :ptr, :guint
-_GTypeValueTable	ends
-GTypeValueTable		typedef GTypeValueTable
+GTypeValueTable		ends
 
-_GTypeInfo		struct
+GTypeInfo		struct
 class_size		guint16 ?
 base_init		GBaseInitFunc ?
 base_finalize		GBaseFinalizeFunc ?
@@ -260,24 +255,17 @@ instance_size		guint16 ?
 n_preallocs		guint16 ?
 instance_init		GInstanceInitFunc ?
 value_table		ptr GTypeValueTable ?
-_GTypeInfo		ends
-GTypeInfo		typedef GTypeInfo
+GTypeInfo		ends
 
-;GValue			typedef GValue
-;GTypeCValue		typedef union  _GTypeCValue
-;GTypePlugin		typedef GTypePlugin
-
-_GTypeFundamentalInfo	struct
+GTypeFundamentalInfo	struct
 type_flags		GTypeFundamentalFlags ?
-_GTypeFundamentalInfo	ends
-GTypeFundamentalInfo	typedef GTypeFundamentalInfo
+GTypeFundamentalInfo	ends
 
-_GInterfaceInfo		struct
+GInterfaceInfo		struct
 interface_init		GInterfaceInitFunc ?
 interface_finalize	GInterfaceFinalizeFunc ?
 interface_data		gpointer ?
-_GInterfaceInfo		ends
-GInterfaceInfo		typedef GInterfaceInfo
+GInterfaceInfo		ends
 
 g_type_register_static proto :GType, :ptr, :ptr, :GTypeFlags
 g_type_register_static_simple proto :GType, :ptr, :guint, :GClassInitFunc, :guint, :GInstanceInitFunc, :GTypeFlags
@@ -430,40 +418,6 @@ _G_DEFINE_TYPE_EXTENDED_BEGIN macro TypeName, type_name, TYPE_PARENT, flags
 
     exitm<>
     endm
-
-_G_DEFINE_TYPE_EXTENDED_END macro
-	exitm<.err>
-	endm
-
-_G_DEFINE_INTERFACE_EXTENDED_BEGIN macro TypeName, type_name, TYPE_PREREQ
-	exitm<.err>
-	endm
-
-_G_DEFINE_INTERFACE_EXTENDED_END macro
-	exitm<.err>
-	endm
-
-G_DEFINE_BOXED_TYPE macro TypeName, type_name, copy_func, free_func
-	exitm<.err>
-	endm
-G_DEFINE_BOXED_TYPE_WITH_CODE macro TypeName, type_name, copy_func, free_func, _C_
-	exitm<.err>
-	endm
-
-_G_DEFINE_BOXED_TYPE_BEGIN macro TypeName, type_name, copy_func, free_func
-	exitm<.err>
-	endm
-
-G_DEFINE_POINTER_TYPE macro TypeName, type_name
-	exitm<G_DEFINE_POINTER_TYPE_WITH_CODE (TypeName, type_name, {})>
-	endm
-G_DEFINE_POINTER_TYPE_WITH_CODE macro TypeName, type_name, _C_
-	exitm<.err>
-	endm
-
-_G_DEFINE_POINTER_TYPE_BEGIN macro TypeName, type_name
-	exitm<.err>
-	endm
 
 g_type_get_plugin proto :GType
 g_type_interface_get_plugin proto :GType, :GType

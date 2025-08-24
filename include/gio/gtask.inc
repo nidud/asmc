@@ -24,8 +24,6 @@ G_TASK_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_TASK, GTaskClass))>
   endm
 
-;GTaskClass              typedef _GTaskClass
-
 g_task_get_type proto
 g_task_new proto :gpointer, :ptr, :GAsyncReadyCallback, :gpointer
 g_task_report_error proto :gpointer, :GAsyncReadyCallback, :gpointer, :gpointer, :ptr
@@ -35,12 +33,6 @@ g_task_set_priority proto :ptr, :gint
 g_task_set_check_cancellable proto :ptr, :gboolean
 g_task_set_source_tag proto :ptr, :gpointer
 g_task_set_name proto :ptr, :ptr
-
-if GLIB_VERSION_MIN_REQUIRED ge GLIB_VERSION_2_60
-g_task_set_source_tag macro task, tag
-  exitm<.err>
-  endm
-endif
 
 g_task_get_source_object proto :ptr
 g_task_get_task_data proto :ptr

@@ -16,14 +16,12 @@ include gdk/gdkconfig.inc
 define GDK_CURRENT_TIME     0
 
 ifdef __GI_SCANNER__
-
-_GdkRectangle           struct
+GdkRectangle            struct
 x                       sdword ?
 y                       sdword ?
 width                   sdword ?
 height                  sdword ?
-_GdkRectangle           ends
-GdkRectangle            typedef _GdkRectangle
+GdkRectangle            ends
 else
 GdkRectangle            typedef cairo_rectangle_int_t
 endif
@@ -52,11 +50,10 @@ GDK_DECLARE_INTERNAL_TYPE macro ModuleObjName, module_obj_name, MODULE, OBJ_NAME
   exitm<>
   endm
 
-_GdkKeymapKey           struct
+GdkKeymapKey            struct
 keycode                 guint ?
 _group                  sdword ?
 level                   sdword ?
-_GdkKeymapKey           ends
-GdkKeymapKey            typedef _GdkKeymapKey
+GdkKeymapKey            ends
 
 endif

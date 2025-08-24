@@ -15,8 +15,6 @@ GTK_IS_CELL_RENDERER_TOGGLE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CELL_RENDERER_TOGGLE))>
   endm
 
-;GtkCellRendererToggle	 typedef _GtkCellRendererToggle
-
 gtk_cell_renderer_toggle_get_type proto
 gtk_cell_renderer_toggle_new proto
 gtk_cell_renderer_toggle_get_radio proto :ptr

@@ -28,19 +28,18 @@ GTK_STYLE_CONTEXT_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS  ((o), GTK_TYPE_STYLE_CONTEXT, GtkStyleContextClass))>
   endm
 
-_GtkStyleContext        struct
+GtkStyleContext         struct
 parent_object           GObject <>
-_GtkStyleContext        ends
+GtkStyleContext         ends
 
-_GtkStyleContextClass   struct
+GtkStyleContextClass    struct
 parent_class            GObjectClass <>
 changed                 proc :ptr
 _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkStyleContextClass   ends
-GtkStyleContextClass    typedef _GtkStyleContextClass
+GtkStyleContextClass    ends
 
 
 gtk_style_context_get_type proto

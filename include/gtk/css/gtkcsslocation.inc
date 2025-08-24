@@ -7,13 +7,12 @@ endif
 
 include glib.inc
 
-_GtkCssLocation         STRUC
+GtkCssLocation          STRUC
 bytes                   gsize ?
 chars                   gsize ?
 lines                   gsize ?
 line_bytes              gsize ?
 line_chars              gsize ?
-_GtkCssLocation         ENDS
-GtkCssLocation          typedef _GtkCssLocation
+GtkCssLocation          ENDS
 
 endif

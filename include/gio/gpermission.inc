@@ -24,15 +24,12 @@ G_PERMISSION_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_PERMISSION, GPermissionClass))>
   endm
 
-;GPermissionPrivate      typedef _GPermissionPrivate
-
-_GPermission            struct
+GPermission             struct
 parent_instance         GObject <>
 priv                    ptr GPermissionPrivate ?
-_GPermission            ends
-GPermission             typedef _GPermission
+GPermission             ends
 
-_GPermissionClass       struct
+GPermissionClass        struct
 parent_class            GObjectClass <>
 acquire                 proc :ptr, :ptr, :ptr
 acquire_async           proc :ptr, :ptr, :GAsyncReadyCallback, :gpointer
@@ -41,8 +38,7 @@ release                 proc :ptr, :ptr, :ptr
 release_async           proc :ptr, :ptr, :GAsyncReadyCallback, :gpointer
 release_finish          proc :ptr, :ptr, :ptr
 reserved                gpointer 16 dup(?)
-_GPermissionClass       ends
-GPermissionClass        typedef _GPermissionClass
+GPermissionClass        ends
 
 g_permission_get_type proto
 g_permission_acquire proto :ptr, :ptr, :ptr

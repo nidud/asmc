@@ -24,9 +24,7 @@ G_SOCKET_LISTENER_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_SOCKET_LISTENER, GSocketListenerClass))>
   endm
 
-;GSocketListenerPrivate  typedef _GSocketListenerPrivate
-
-_GSocketListenerClass   struct
+GSocketListenerClass    struct
 parent_class            GObjectClass <>
 changed                 proc :ptr
 event                   proc :ptr, :GSocketListenerEvent, :ptr
@@ -35,14 +33,12 @@ _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
 _g_reserved6            proc
-_GSocketListenerClass   ends
-GSocketListenerClass    typedef _GSocketListenerClass
+GSocketListenerClass    ends
 
-_GSocketListener        struct
+GSocketListener         struct
 parent_instance         GObject <>
 priv                    ptr GSocketListenerPrivate ?
-_GSocketListener        ends
-GSocketListener         typedef _GSocketListener
+GSocketListener         ends
 
 g_socket_listener_get_type proto
 g_socket_listener_new proto

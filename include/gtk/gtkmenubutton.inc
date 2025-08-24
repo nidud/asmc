@@ -16,8 +16,6 @@ GTK_IS_MENU_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_MENU_BUTTON))>
   endm
 
-;GtkMenuButton           typedef _GtkMenuButton
-
 CALLBACK(GtkMenuButtonCreatePopupFunc, :ptr, :gpointer)
 
 gtk_menu_button_get_type proto

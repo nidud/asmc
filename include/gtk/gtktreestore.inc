@@ -27,19 +27,15 @@ GTK_TREE_STORE_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TREE_STORE, GtkTreeStoreClass))>
   endm
 
-;GtkTreeStorePrivate	 typedef _GtkTreeStorePrivate
-
-_GtkTreeStore		struct
+GtkTreeStore		struct
 parent			GObject <>
 priv			ptr GtkTreeStorePrivate ?
-_GtkTreeStore		ends
-GtkTreeStore		typedef _GtkTreeStore
+GtkTreeStore		ends
 
-_GtkTreeStoreClass	struct
+GtkTreeStoreClass	struct
 parent_class		GObjectClass <>
 padding			gpointer 8 dup(?)
-_GtkTreeStoreClass	ends
-GtkTreeStoreClass	typedef _GtkTreeStoreClass
+GtkTreeStoreClass	ends
 
 gtk_tree_store_get_type proto
 gtk_tree_store_new proto :sdword, :vararg

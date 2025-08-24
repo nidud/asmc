@@ -15,8 +15,6 @@ GTK_IS_ACTION_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_ACTION_BAR))>
   endm
 
-;GtkActionBar		 typedef _GtkActionBar
-
 gtk_action_bar_get_type proto
 gtk_action_bar_new proto
 gtk_action_bar_get_center_widget proto :ptr

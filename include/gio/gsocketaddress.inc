@@ -24,18 +24,16 @@ G_SOCKET_ADDRESS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_SOCKET_ADDRESS, GSocketAddressClass))>
   endm
 
-_GSocketAddress         struct
+GSocketAddress          struct
 parent_instance         GObject <>
-_GSocketAddress         ends
-GSocketAddress          typedef _GSocketAddress
+GSocketAddress          ends
 
-_GSocketAddressClass    struct
+GSocketAddressClass     struct
 parent_class            GObjectClass <>
 get_family              proc :ptr
 get_native_size         proc :ptr
 to_native               proc :ptr, :gpointer, :gsize, :ptr
-_GSocketAddressClass    ends
-GSocketAddressClass     typedef _GSocketAddressClass
+GSocketAddressClass     ends
 
 g_socket_address_get_type proto
 g_socket_address_get_family proto :ptr

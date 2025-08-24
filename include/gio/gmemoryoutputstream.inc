@@ -24,24 +24,19 @@ G_MEMORY_OUTPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_MEMORY_OUTPUT_STREAM, GMemoryOutputStreamClass))>
   endm
 
-
-;GMemoryOutputStreamPrivate typedef _GMemoryOutputStreamPrivate
-
-_GMemoryOutputStream    struct
+GMemoryOutputStream     struct
 parent_instance         GOutputStream <>
 priv                    ptr GMemoryOutputStreamPrivate ?
-_GMemoryOutputStream    ends
-GMemoryOutputStream     typedef _GMemoryOutputStream
+GMemoryOutputStream     ends
 
-_GMemoryOutputStreamClass struct
+GMemoryOutputStreamClass struct
 parent_class            GOutputStreamClass <>
 _g_reserved1            proc
 _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GMemoryOutputStreamClass ends
-GMemoryOutputStreamClass typedef _GMemoryOutputStreamClass
+GMemoryOutputStreamClass ends
 
 CALLBACK(GReallocFunc, :gpointer, :gsize)
 

@@ -7,13 +7,12 @@ endif
 
 include graphene/graphene-types.inc
 
-_graphene_vec4_t        STRUC
+graphene_vec4_t         STRUC
 x                       real4 ?
 y                       real4 ?
 z                       real4 ?
 w                       real4 ?
-_graphene_vec4_t        ENDS
-graphene_vec4_t         typedef _graphene_vec4_t
+graphene_vec4_t         ENDS
 
 graphene_vec4_alloc proto
 graphene_vec4_free proto :ptr

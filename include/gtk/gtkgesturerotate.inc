@@ -25,9 +25,6 @@ GTK_GESTURE_ROTATE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_ROTATE, GtkGestureRotateClass))>
   endm
 
-;GtkGestureRotate        typedef _GtkGestureRotate
-;GtkGestureRotateClass   typedef _GtkGestureRotateClass
-
 gtk_gesture_rotate_get_type proto
 gtk_gesture_rotate_new proto
 gtk_gesture_rotate_get_angle_delta proto :ptr

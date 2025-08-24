@@ -30,11 +30,11 @@ CALLBACK(GVfsFileLookupFunc, :ptr, :ptr, :gpointer)
 define G_VFS_EXTENSION_POINT_NAME <"gio-vfs">
 
 
-_GVfs                   struct
+GVfs                    struct
 parent_instance         GObject <>
-_GVfs                   ends
+GVfs                    ends
 
-_GVfsClass              struct
+GVfsClass               struct
 parent_class            GObjectClass <>
 is_active               proc :ptr
 get_file_for_path       proc :ptr, :ptr
@@ -53,8 +53,7 @@ _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
 _g_reserved6            proc
-_GVfsClass              ends
-GVfsClass               typedef _GVfsClass
+GVfsClass               ends
 
 g_vfs_get_type proto
 g_vfs_is_active proto :ptr

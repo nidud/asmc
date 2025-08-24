@@ -25,9 +25,6 @@ GDK_IS_MEMORY_TEXTURE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GDK_TYPE_MEMORY_TEXTURE))>
   endm
 
-;GdkMemoryTexture        typedef _GdkMemoryTexture
-;GdkMemoryTextureClass   typedef _GdkMemoryTextureClass
-
 gdk_memory_texture_get_type proto
 gdk_memory_texture_new proto :sdword, :sdword, :GdkMemoryFormat, :ptr, :gsize
 

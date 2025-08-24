@@ -23,16 +23,14 @@ G_IS_NATIVE_VOLUME_MONITOR_CLASS macro k
 
 define G_NATIVE_VOLUME_MONITOR_EXTENSION_POINT_NAME <"gio-native-volume-monitor">
 
-_GNativeVolumeMonitor   struct
+GNativeVolumeMonitor    struct
 parent_instance         GVolumeMonitor <>
-_GNativeVolumeMonitor   ends
-GNativeVolumeMonitor    typedef _GNativeVolumeMonitor
+GNativeVolumeMonitor    ends
 
-_GNativeVolumeMonitorClass struct
+GNativeVolumeMonitorClass struct
 parent_class            GVolumeMonitorClass <>
 get_mount_for_mount_path proc :ptr, :ptr
-_GNativeVolumeMonitorClass ends
-GNativeVolumeMonitorClass typedef _GNativeVolumeMonitorClass
+GNativeVolumeMonitorClass ends
 
 g_native_volume_monitor_get_type proto
 

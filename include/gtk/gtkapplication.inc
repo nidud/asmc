@@ -8,7 +8,7 @@ endif
 include gtk/gtkwidget.inc
 include gio/gio.inc
 
-define GTK_TYPE_APPLICATION            <gtk_application_get_type ()>
+define GTK_TYPE_APPLICATION <gtk_application_get_type ()>
 GTK_APPLICATION macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_APPLICATION, GtkApplication))>
   endm
@@ -25,28 +25,22 @@ GTK_APPLICATION_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_APPLICATION, GtkApplicationClass))>
   endm
 
-_GtkApplication         struct
+GtkApplication          struct
 parent_instance         GApplication <>
-_GtkApplication         ends
-GtkApplication          typedef _GtkApplication
+GtkApplication          ends
 
-_GtkApplicationClass    struct
+GtkApplicationClass     struct
 parent_class            GApplicationClass <>
 window_added            proc :ptr, :ptr
 window_removed          proc :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GtkApplicationClass    ends
-GtkApplicationClass     typedef _GtkApplicationClass
+GtkApplicationClass     ends
 
 gtk_application_get_type proto
-
 gtk_application_new proto :ptr, :GApplicationFlags
-
 gtk_application_add_window proto :ptr, :ptr
-
 gtk_application_remove_window proto :ptr, :ptr
 gtk_application_get_windows proto :ptr
-
 gtk_application_get_menubar proto :ptr
 gtk_application_set_menubar proto :ptr, :ptr
 
@@ -61,16 +55,12 @@ gtk_application_inhibit proto :ptr, :ptr, :GtkApplicationInhibitFlags, :ptr
 gtk_application_uninhibit proto :ptr, :guint
 
 gtk_application_get_window_by_id proto :ptr, :guint
-
 gtk_application_get_active_window proto :ptr
-
 gtk_application_list_action_descriptions proto :ptr
 
 gtk_application_get_accels_for_action proto :ptr, :ptr
 gtk_application_get_actions_for_accel proto :ptr, :ptr
-
 gtk_application_set_accels_for_action proto :ptr, :ptr, :ptr
-
 gtk_application_get_menu_by_id proto :ptr, :ptr
 
 endif

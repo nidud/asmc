@@ -7,10 +7,9 @@ endif
 
 include glib/gutils.inc
 
-_GTrashStack            struct
+GTrashStack             struct
 next                    ptr GTrashStack ?
-_GTrashStack            ends
-GTrashStack             typedef _GTrashStack
+GTrashStack             ends
 
 g_trash_stack_push proto :ptr, :gpointer
 g_trash_stack_pop proto :ptr

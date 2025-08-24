@@ -5,14 +5,12 @@ include cairo.inc
 
 if CAIRO_HAS_SVG_SURFACE
 
-.enum _cairo_svg_version {
+.enum cairo_svg_version_t {
     CAIRO_SVG_VERSION_1_1,
     CAIRO_SVG_VERSION_1_2
     }
 
-cairo_svg_version_t typedef _cairo_svg_version
-
-.enum _cairo_svg_unit {
+.enum cairo_svg_unit_t {
     CAIRO_SVG_UNIT_USER = 0,
     CAIRO_SVG_UNIT_EM,
     CAIRO_SVG_UNIT_EX,
@@ -24,8 +22,6 @@ cairo_svg_version_t typedef _cairo_svg_version
     CAIRO_SVG_UNIT_PC,
     CAIRO_SVG_UNIT_PERCENT
     }
-
-cairo_svg_unit_t typedef _cairo_svg_unit
 
 cairo_svg_surface_create proto :ptr, :double, :double
 cairo_svg_surface_create_for_stream proto :cairo_write_func_t, :ptr, :double, :double

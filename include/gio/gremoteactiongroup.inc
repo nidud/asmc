@@ -18,12 +18,11 @@ G_REMOTE_ACTION_GROUP_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_REMOTE_ACTION_GROUP,GRemoteActionGroupInterface))>
   endm
 
-_GRemoteActionGroupInterface struct
+GRemoteActionGroupInterface struct
 g_iface                 GTypeInterface <>
 activate_action_full    proc :ptr, :ptr, :ptr, :ptr
 change_action_state_full proc :ptr, :ptr, :ptr, :ptr
-_GRemoteActionGroupInterface ends
-GRemoteActionGroupInterface typedef _GRemoteActionGroupInterface
+GRemoteActionGroupInterface ends
 
 g_remote_action_group_get_type proto
 g_remote_action_group_activate_action_full proto :ptr, :ptr, :ptr, :ptr

@@ -27,15 +27,12 @@ G_IO_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_IO_STREAM, GIOStreamClass))>
   endm
 
-;GIOStreamPrivate        typedef _GIOStreamPrivate
-
-_GIOStream              struct
+GIOStream               struct
 parent_instance         GObject <>
 priv                    ptr GIOStreamPrivate ?
-_GIOStream              ends
-GIOStream               typedef _GIOStream
+GIOStream               ends
 
-_GIOStreamClass         struct
+GIOStreamClass          struct
 parent_class            GObjectClass <>
 get_input_stream        proc :ptr
 get_output_stream       proc :ptr
@@ -52,8 +49,7 @@ _g_reserved7            proc
 _g_reserved8            proc
 _g_reserved9            proc
 _g_reserved10           proc
-_GIOStreamClass         ends
-GIOStreamClass          typedef _GIOStreamClass
+GIOStreamClass          ends
 
 g_io_stream_get_type proto
 g_io_stream_get_input_stream proto :ptr

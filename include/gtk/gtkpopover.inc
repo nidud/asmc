@@ -24,18 +24,16 @@ GTK_POPOVER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_POPOVER, GtkPopoverClass))>
   endm
 
-_GtkPopover             struct
+GtkPopover              struct
 parent                  GtkWidget <>
-_GtkPopover             ends
-GtkPopover              typedef _GtkPopover
+GtkPopover              ends
 
-_GtkPopoverClass        struct
+GtkPopoverClass         struct
 parent_class            GtkWidgetClass <>
 closed                  proc :ptr
 activate_default        proc :ptr
 reserved                gpointer 8 dup(?)
-_GtkPopoverClass        ends
-GtkPopoverClass         typedef _GtkPopoverClass
+GtkPopoverClass         ends
 
 gtk_popover_get_type proto
 gtk_popover_new proto

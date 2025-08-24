@@ -15,8 +15,6 @@ GTK_IS_CALENDAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CALENDAR))>
   endm
 
-;GtkCalendar             typedef _GtkCalendar
-
 gtk_calendar_get_type proto
 gtk_calendar_new proto
 gtk_calendar_select_day proto :ptr, :ptr

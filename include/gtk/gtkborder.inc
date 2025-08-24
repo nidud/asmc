@@ -10,13 +10,12 @@ include gdk/gdk.inc
 
 define GTK_TYPE_BORDER <gtk_border_get_type ()>
 
-_GtkBorder              struct
+GtkBorder               struct
 left                    gint16 ?
 right                   gint16 ?
 top                     gint16 ?
 bottom                  gint16 ?
-_GtkBorder              ends
-GtkBorder               typedef _GtkBorder
+GtkBorder               ends
 
 gtk_border_get_type proto
 gtk_border_new proto

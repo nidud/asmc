@@ -34,19 +34,16 @@ GTK_TREE_VIEW_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TREE_VIEW, GtkTreeViewClass))>
   endm
 
-;GtkTreeSelection        typedef _GtkTreeSelection
-
 CALLBACK(GtkTreeViewColumnDropFunc, :ptr, :ptr, :ptr, :ptr, :gpointer)
 CALLBACK(GtkTreeViewMappingFunc, :ptr, :ptr, :gpointer)
 CALLBACK(GtkTreeViewSearchEqualFunc, :ptr, :sdword, :ptr, :ptr, :gpointer)
 CALLBACK(GtkTreeViewRowSeparatorFunc, :ptr, :ptr, :gpointer)
 
-_GtkTreeView            struct
+GtkTreeView             struct
 parent_instance         GtkWidget <>
-_GtkTreeView            ends
-GtkTreeView             typedef _GtkTreeView
+GtkTreeView             ends
 
-_GtkTreeViewClass       struct
+GtkTreeViewClass        struct
 parent_class            GtkWidgetClass <>
 row_activated           proc :ptr, :ptr, :ptr
 test_expand_row         proc :ptr, :ptr, :ptr
@@ -64,8 +61,7 @@ expand_collapse_cursor_row proc :ptr, :gboolean, :gboolean, :gboolean
 select_cursor_parent    proc :ptr
 start_interactive_search proc :ptr
 _reserved               gpointer 16 dup(?)
-_GtkTreeViewClass       ends
-GtkTreeViewClass        typedef _GtkTreeViewClass
+GtkTreeViewClass        ends
 
 gtk_tree_view_get_type proto
 

@@ -24,20 +24,16 @@ GTK_BUTTON_GET_CLASS macro obj
   exitm<G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_BUTTON, GtkButtonClass)>
   endm
 
-;GtkButtonPrivate        typedef _GtkButtonPrivate
-
-_GtkButton              struct
+GtkButton               struct
 parent_instance         GtkWidget <>
-_GtkButton              ends
-GtkButton               typedef _GtkButton
+GtkButton               ends
 
-_GtkButtonClass         struct
+GtkButtonClass          struct
 parent_class            GtkWidgetClass <>
 clicked                 proc :ptr
 activate                proc :ptr
 padding                 gpointer 8 dup(?)
-_GtkButtonClass         ends
-GtkButtonClass          typedef _GtkButtonClass
+GtkButtonClass          ends
 
 gtk_button_get_type proto
 gtk_button_new proto

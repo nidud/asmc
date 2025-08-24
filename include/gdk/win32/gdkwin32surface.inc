@@ -24,13 +24,6 @@ GDK_WIN32_SURFACE_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_WIN32_SURFACE, GdkWin32SurfaceClass))>
   endm
 
-ifdef GTK_COMPILATION
-;GdkWin32Surface         typedef _GdkWin32Surface
-else
-;GdkWin32Surface         typedef GdkSurface
-endif
-;GdkWin32SurfaceClass    typedef _GdkWin32SurfaceClass
-
 gdk_win32_surface_get_type proto
 
 gdk_win32_surface_set_urgency_hint proto :ptr, :gboolean

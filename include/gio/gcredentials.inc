@@ -30,8 +30,6 @@ G_IS_CREDENTIALS_CLASS macro k
   exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_CREDENTIALS))>
   endm
 
-;GCredentialsClass       typedef _GCredentialsClass
-
 g_credentials_get_type proto
 g_credentials_new proto
 g_credentials_to_string proto :ptr

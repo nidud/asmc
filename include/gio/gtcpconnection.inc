@@ -24,18 +24,14 @@ G_TCP_CONNECTION_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_TCP_CONNECTION, GTcpConnectionClass))>
   endm
 
-;GTcpConnectionPrivate   typedef _GTcpConnectionPrivate
-
-_GTcpConnectionClass    struct
+GTcpConnectionClass     struct
 parent_class            GSocketConnectionClass <>
-_GTcpConnectionClass    ends
-GTcpConnectionClass     typedef _GTcpConnectionClass
+GTcpConnectionClass     ends
 
-_GTcpConnection         struct
+GTcpConnection          struct
 parent_instance         GSocketConnection <>
 priv                    ptr GTcpConnectionPrivate ?
-_GTcpConnection         ends
-GTcpConnection          typedef _GTcpConnection
+GTcpConnection          ends
 
 g_tcp_connection_get_type proto
 g_tcp_connection_set_graceful_disconnect proto :ptr, :gboolean

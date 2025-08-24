@@ -15,7 +15,7 @@ define GDK_TYPE_PAINTABLE <gdk_paintable_get_type ()>
   GDK_PAINTABLE_STATIC_CONTENTS = 1 shl 1
 }
 
-_GdkPaintableInterface  struct
+GdkPaintableInterface   struct
 g_iface                 GTypeInterface <>
 snapshot                proc :ptr, :ptr, :real8, :real8
 get_current_image       proc :ptr
@@ -23,8 +23,7 @@ get_flags               proc :ptr
 get_intrinsic_width     proc :ptr
 get_intrinsic_height    proc :ptr
 get_intrinsic_aspect_ratio proc :ptr
-_GdkPaintableInterface  ends
-GdkPaintableInterface   typedef _GdkPaintableInterface
+GdkPaintableInterface   ends
 
 gdk_paintable_snapshot proto :ptr, :ptr, :real8, :real8
 gdk_paintable_get_current_image proto :ptr

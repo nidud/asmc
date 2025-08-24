@@ -24,12 +24,11 @@ GTK_RANGE_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_RANGE, GtkRangeClass))>
   endm
 
-_GtkRange               struct
+GtkRange                struct
 parent_instance         GtkWidget <>
-_GtkRange               ends
-GtkRange                typedef _GtkRange
+GtkRange                ends
 
-_GtkRangeClass          struct
+GtkRangeClass           struct
 parent_class            GtkWidgetClass <>
 value_changed           proc :ptr
 adjust_bounds           proc :ptr, :real8
@@ -37,9 +36,7 @@ move_slider             proc :ptr, :GtkScrollType
 get_range_border        proc :ptr, :ptr
 change_value            proc :ptr, :GtkScrollType, :real8
 padding                 gpointer 8 dup(?)
-_GtkRangeClass          ends
-GtkRangeClass           typedef _GtkRangeClass
-
+GtkRangeClass           ends
 
 gtk_range_get_type proto
 gtk_range_set_adjustment proto :ptr, :ptr

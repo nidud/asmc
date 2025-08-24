@@ -8,7 +8,7 @@ include gtk/gtklayoutchild.inc
 
 define GTK_TYPE_LAYOUT_MANAGER <gtk_layout_manager_get_type ()>
 
-_GtkLayoutManagerClass  struct
+GtkLayoutManagerClass   struct
 parent_class            GObjectClass <>
 get_request_mode        proc :ptr, :ptr
 measure                 proc :ptr, :ptr, :GtkOrientation, :sdword, :ptr, :ptr, :ptr, :ptr
@@ -18,8 +18,7 @@ create_layout_child     proc :ptr, :ptr, :ptr
 root                    proc :ptr
 unroot                  proc :ptr
 _padding                gpointer 16 dup(?)
-_GtkLayoutManagerClass  ends
-GtkLayoutManagerClass   typedef _GtkLayoutManagerClass
+GtkLayoutManagerClass   ends
 
 gtk_layout_manager_measure proto :ptr, :ptr, :GtkOrientation, :sdword, :ptr, :ptr, :ptr, :ptr
 gtk_layout_manager_allocate proto :ptr, :ptr, :sdword, :sdword, :sdword

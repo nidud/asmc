@@ -24,16 +24,12 @@ G_BUFFERED_INPUT_STREAM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_BUFFERED_INPUT_STREAM, GBufferedInputStreamClass))>
   endm
 
-
-;GBufferedInputStreamPrivate typedef _GBufferedInputStreamPrivate
-
-_GBufferedInputStream   struct
+GBufferedInputStream    struct
 parent_instance         GFilterInputStream <>
 priv                    ptr GBufferedInputStreamPrivate ?
-_GBufferedInputStream   ends
-GBufferedInputStream    typedef _GBufferedInputStream
+GBufferedInputStream    ends
 
-_GBufferedInputStreamClass struct
+GBufferedInputStreamClass struct
 parent_class            GFilterInputStreamClass <>
 fill                    proc :ptr, :gssize, :ptr, :ptr
 fill_async              proc :ptr, :gssize, :sdword, :ptr, :GAsyncReadyCallback, :gpointer
@@ -43,9 +39,7 @@ _g_reserved2            proc
 _g_reserved3            proc
 _g_reserved4            proc
 _g_reserved5            proc
-_GBufferedInputStreamClass ends
-GBufferedInputStreamClass typedef _GBufferedInputStreamClass
-
+GBufferedInputStreamClass ends
 
 g_buffered_input_stream_get_type proto
 g_buffered_input_stream_new proto :ptr

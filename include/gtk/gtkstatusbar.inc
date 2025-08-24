@@ -15,8 +15,6 @@ GTK_IS_STATUSBAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_STATUSBAR))>
   endm
 
-;GtkStatusbar            typedef _GtkStatusbar
-
 gtk_statusbar_get_type proto
 gtk_statusbar_new proto
 gtk_statusbar_get_context_id proto :ptr, :ptr

@@ -24,31 +24,25 @@ GTK_FRAME_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_FRAME, GtkFrameClass))>
   endm
 
-_GtkFrame               struct
+GtkFrame                struct
 parent_instance         GtkWidget <>
-_GtkFrame               ends
-GtkFrame                typedef _GtkFrame
+GtkFrame                ends
 
 
-_GtkFrameClass          struct
+GtkFrameClass           struct
 parent_class            GtkWidgetClass <>
 compute_child_allocation proc :ptr, :ptr
 padding                 gpointer 8 dup(?)
-_GtkFrameClass          ends
-GtkFrameClass           typedef _GtkFrameClass
-
+GtkFrameClass           ends
 
 gtk_frame_get_type proto
 gtk_frame_new proto :ptr
-
 gtk_frame_set_label proto :ptr, :ptr
 gtk_frame_get_label proto :ptr
-
 gtk_frame_set_label_widget proto :ptr, :ptr
 gtk_frame_get_label_widget proto :ptr
 gtk_frame_set_label_align proto :ptr, :real4
 gtk_frame_get_label_align proto :ptr
-
 gtk_frame_set_child proto :ptr, :ptr
 gtk_frame_get_child proto :ptr
 

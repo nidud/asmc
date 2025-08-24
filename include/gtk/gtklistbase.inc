@@ -25,9 +25,6 @@ GTK_LIST_BASE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_LIST_BASE, GtkListBaseClass))>
   endm
 
-;GtkListBase             typedef _GtkListBase
-;GtkListBaseClass        typedef _GtkListBaseClass
-
 gtk_list_base_get_type proto
 
 endif

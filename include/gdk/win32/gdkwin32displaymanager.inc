@@ -8,11 +8,9 @@ endif
 include gdk/gdk.inc
 
 ifdef GTK_COMPILATION
-GdkWin32DisplayManager  typedef _GdkWin32DisplayManager
 else
 GdkWin32DisplayManager  typedef GdkDisplayManager
 endif
-;GdkWin32DisplayManagerClass typedef _GdkWin32DisplayManagerClass
 
 define GDK_TYPE_WIN32_DISPLAY_MANAGER <gdk_win32_display_manager_get_type ()>
 GDK_WIN32_DISPLAY_MANAGER macro object

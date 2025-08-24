@@ -18,17 +18,14 @@ GTK_COLOR_CHOOSER_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), GTK_TYPE_COLOR_CHOOSER, GtkColorChooserInterface))>
   endm
 
-;GtkColorChooser         typedef _GtkColorChooser
-
-_GtkColorChooserInterface struct
+GtkColorChooserInterface struct
 base_interface          GTypeInterface <>
 get_rgba                proc :ptr, :ptr
 set_rgba                proc :ptr, :ptr
 add_palette             proc :ptr, :GtkOrientation, :sdword, :sdword, :ptr
 color_activated         proc :ptr, :ptr
 padding                 gpointer 12 dup(?)
-_GtkColorChooserInterface ends
-GtkColorChooserInterface typedef _GtkColorChooserInterface
+GtkColorChooserInterface ends
 
 gtk_color_chooser_get_type proto
 gtk_color_chooser_get_rgba proto :ptr, :ptr

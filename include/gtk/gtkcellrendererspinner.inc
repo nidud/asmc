@@ -15,8 +15,6 @@ GTK_IS_CELL_RENDERER_SPINNER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CELL_RENDERER_SPINNER))>
   endm
 
-;GtkCellRendererSpinner  typedef _GtkCellRendererSpinner
-
 gtk_cell_renderer_spinner_get_type proto
 gtk_cell_renderer_spinner_new proto
 

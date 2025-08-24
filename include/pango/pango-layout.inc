@@ -6,10 +6,6 @@ include pango/pango-context.inc
 include pango/pango-glyph-item.inc
 include pango/pango-tabs.inc
 
-;PangoLayout             typedef _PangoLayout
-;PangoLayoutClass        typedef _PangoLayoutClass
-;PangoLayoutLine         typedef _PangoLayoutLine
-
 PangoLayoutRun          typedef PangoGlyphItem
 
 .enum PangoAlignment {
@@ -32,7 +28,7 @@ PangoLayoutRun          typedef PangoGlyphItem
 }
 
 
-_PangoLayoutLine        struct
+PangoLayoutLine         struct
 layout                  ptr PangoLayout ?
 start_index             gint ?
 length                  gint ?
@@ -41,7 +37,7 @@ RECORD
  is_paragraph_start     guint :  1 ?
  resolved_dir           guint :  3 ?
 ENDS
-_PangoLayoutLine        ends
+PangoLayoutLine         ends
 
 define PANGO_TYPE_LAYOUT <pango_layout_get_type ()>
 PANGO_LAYOUT macro object
@@ -193,8 +189,6 @@ pango_layout_line_get_extents proto :ptr, :ptr, :ptr
 pango_layout_line_get_height proto :ptr, :ptr
 
 pango_layout_line_get_pixel_extents proto :ptr, :ptr, :ptr
-
-;PangoLayoutIter         typedef _PangoLayoutIter
 
 define PANGO_TYPE_LAYOUT_ITER         <pango_layout_iter_get_type ()>
 

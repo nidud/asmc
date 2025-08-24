@@ -20,14 +20,12 @@ G_IS_DBUS_INTERFACE_SKELETON_CLASS macro k
   exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_DBUS_INTERFACE_SKELETON))>
   endm
 
-;GDBusInterfaceSkeletonPrivate typedef _GDBusInterfaceSkeletonPrivate
-
-_GDBusInterfaceSkeleton struct
+GDBusInterfaceSkeleton  struct
 parent_instance         GObject <>
 priv                    ptr GDBusInterfaceSkeletonPrivate ?
-_GDBusInterfaceSkeleton ends
+GDBusInterfaceSkeleton  ends
 
-_GDBusInterfaceSkeletonClass struct
+GDBusInterfaceSkeletonClass struct
 parent_class            GObjectClass <>
 get_info                proc :ptr
 get_vtable              proc :ptr
@@ -36,8 +34,7 @@ flush                   proc :ptr
 vfunc_padding           gpointer 8 dup(?)
 g_authorize_method      proc :ptr, :ptr
 signal_padding          gpointer 8 dup(?)
-_GDBusInterfaceSkeletonClass ends
-GDBusInterfaceSkeletonClass typedef _GDBusInterfaceSkeletonClass
+GDBusInterfaceSkeletonClass ends
 
 g_dbus_interface_skeleton_get_type proto
 g_dbus_interface_skeleton_get_flags proto :ptr

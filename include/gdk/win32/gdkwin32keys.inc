@@ -16,11 +16,9 @@ include gdkkeysprivate.inc
 }
 
 ifdef GTK_COMPILATION
-GdkWin32Keymap          typedef _GdkWin32Keymap
 else
 GdkWin32Keymap          typedef GdkKeymap
 endif
-GdkWin32KeymapClass     typedef _GdkWin32KeymapClass
 
 define GDK_TYPE_WIN32_KEYMAP <gdk_win32_keymap_get_type ()>
 GDK_WIN32_KEYMAP macro object

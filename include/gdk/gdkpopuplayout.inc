@@ -21,8 +21,6 @@ include gdk/gdkversionmacros.inc
   GDK_ANCHOR_RESIZE   = GDK_ANCHOR_RESIZE_X or GDK_ANCHOR_RESIZE_Y,
 }
 
-;GdkPopupLayout          typedef _GdkPopupLayout
-
 define GDK_TYPE_POPUP_LAYOUT <gdk_popup_layout_get_type ()>
 
 gdk_popup_layout_get_type proto

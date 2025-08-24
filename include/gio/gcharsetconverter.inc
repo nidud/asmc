@@ -24,10 +24,9 @@ G_CHARSET_CONVERTER_GET_CLASS macro o
   exitm<G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_CHARSET_CONVERTER, GCharsetConverterClass)>
   endm
 
-_GCharsetConverterClass struct
+GCharsetConverterClass  struct
 parent_class            GObjectClass <>
-_GCharsetConverterClass ends
-GCharsetConverterClass  typedef _GCharsetConverterClass
+GCharsetConverterClass  ends
 
 g_charset_converter_get_type proto
 

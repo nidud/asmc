@@ -8,11 +8,10 @@ endif
 include graphene/graphene-types.inc
 include graphene/graphene-vec3.inc
 
-_graphene_plane_t       STRUC
+graphene_plane_t        STRUC
 normal                  graphene_vec3_t <>
 constant                real4 ?
-_graphene_plane_t       ENDS
-graphene_plane_t        typedef _graphene_plane_t
+graphene_plane_t        ENDS
 
 graphene_plane_alloc proto
 graphene_plane_free proto :ptr

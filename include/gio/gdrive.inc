@@ -21,7 +21,7 @@ G_DRIVE_GET_IFACE macro obj
   endm
 
 
-_GDriveIface            struct
+GDriveIface             struct
 g_iface                 GTypeInterface <>
 changed                 proc :ptr
 disconnected            proc :ptr
@@ -55,8 +55,7 @@ eject_with_operation_finish proc :ptr, :ptr, :ptr
 get_sort_key            proc :ptr
 get_symbolic_icon       proc :ptr
 is_removable            proc :ptr
-_GDriveIface            ends
-GDriveIface             typedef _GDriveIface
+GDriveIface             ends
 
 g_drive_get_type proto
 

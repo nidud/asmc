@@ -15,8 +15,6 @@ GTK_IS_FONT_CHOOSER_WIDGET macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FONT_CHOOSER_WIDGET))>
   endm
 
-;GtkFontChooserWidget    typedef _GtkFontChooserWidget
-
 gtk_font_chooser_widget_get_type proto
 gtk_font_chooser_widget_new proto
 

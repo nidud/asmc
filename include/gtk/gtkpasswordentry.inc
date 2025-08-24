@@ -15,9 +15,6 @@ GTK_IS_PASSWORD_ENTRY macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_PASSWORD_ENTRY))>
   endm
 
-;GtkPasswordEntry        typedef _GtkPasswordEntry
-;GtkPasswordEntryClass   typedef _GtkPasswordEntryClass
-
 gtk_password_entry_get_type proto
 gtk_password_entry_new proto
 gtk_password_entry_set_show_peek_icon proto :ptr, :gboolean

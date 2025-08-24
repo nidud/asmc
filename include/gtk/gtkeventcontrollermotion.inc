@@ -25,9 +25,6 @@ GTK_EVENT_CONTROLLER_MOTION_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_EVENT_CONTROLLER_MOTION, GtkEventControllerMotionClass))>
   endm
 
-;GtkEventControllerMotion typedef _GtkEventControllerMotion
-;GtkEventControllerMotionClass typedef _GtkEventControllerMotionClass
-
 gtk_event_controller_motion_get_type proto
 gtk_event_controller_motion_new proto
 gtk_event_controller_motion_contains_pointer proto :ptr

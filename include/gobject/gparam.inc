@@ -75,9 +75,7 @@ define	G_PARAM_STATIC_STRINGS (G_PARAM_STATIC_NAME or G_PARAM_STATIC_NICK or G_P
 define	G_PARAM_MASK		(0x000000ff)
 define	G_PARAM_USER_SHIFT	(8)
 
-;GParamSpecPool		 typedef _GParamSpecPool
-
-_GParamSpec		struct
+GParamSpec		struct
 g_type_instance		GTypeInstance <>
 name			ptr gchar ?
 flags			GParamFlags ?
@@ -88,10 +86,9 @@ _blurb			ptr gchar ?
 qdata			ptr GData ?
 ref_count		guint ?
 param_id		guint ?
-_GParamSpec		ends
-GParamSpec		typedef _GParamSpec
+GParamSpec		ends
 
-_GParamSpecClass	struct
+GParamSpecClass		struct
 g_type_class		GTypeClass <>
 value_type		GType ?
 finalize		proc :ptr
@@ -99,14 +96,12 @@ value_set_default	proc :ptr, :ptr
 value_validate		proc :ptr, :ptr
 values_cmp		proc :ptr, :ptr, :ptr
 dummy			gpointer 4 dup(?)
-_GParamSpecClass	ends
-GParamSpecClass		typedef _GParamSpecClass
+GParamSpecClass		ends
 
-_GParameter		struct
+GParameter		struct
 name			ptr gchar ?
 value			GValue <>
-_GParameter		ends
-GParameter		typedef _GParameter
+GParameter		ends
 
 g_param_spec_ref proto :ptr
 g_param_spec_unref proto :ptr
@@ -136,7 +131,7 @@ g_param_spec_get_default_value proto :ptr
 
 g_param_spec_get_name_quark proto :ptr
 
-_GParamSpecTypeInfo	struct
+GParamSpecTypeInfo	struct
 instance_size		guint16 ?
 n_preallocs		guint16 ?
 instance_init		proc :ptr
@@ -145,8 +140,7 @@ finalize		proc :ptr
 value_set_default	proc :ptr, :ptr
 value_validate		proc :ptr, :ptr
 values_cmp		proc :ptr, :ptr, :ptr
-_GParamSpecTypeInfo	ends
-GParamSpecTypeInfo	typedef _GParamSpecTypeInfo
+GParamSpecTypeInfo	ends
 
 g_param_type_register_static proto :ptr, :ptr
 g_param_spec_is_valid_name proto :ptr

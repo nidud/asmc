@@ -25,9 +25,6 @@ GTK_GESTURE_ZOOM_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_ZOOM, GtkGestureZoomClass))>
   endm
 
-;GtkGestureZoom          typedef _GtkGestureZoom
-;GtkGestureZoomClass     typedef _GtkGestureZoomClass
-
 gtk_gesture_zoom_get_type proto
 gtk_gesture_zoom_new proto
 gtk_gesture_zoom_get_scale_delta proto :ptr

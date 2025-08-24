@@ -8,11 +8,10 @@ endif
 include graphene/graphene-types.inc
 include graphene/graphene-vec3.inc
 
-_graphene_box_t         STRUC
+graphene_box_t          STRUC
 min                     graphene_vec3_t <>
 max                     graphene_vec3_t <>
-_graphene_box_t         ENDS
-graphene_box_t          typedef _graphene_box_t
+graphene_box_t          ENDS
 
 graphene_box_alloc proto
 graphene_box_free proto :ptr

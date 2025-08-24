@@ -24,9 +24,6 @@ GTK_CENTER_BOX_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CENTER_BOX, GtkCenterBoxClass))>
   endm
 
-;GtkCenterBox            typedef _GtkCenterBox
-;GtkCenterBoxClass       typedef _GtkCenterBoxClass
-
 gtk_center_box_get_type proto
 
 gtk_center_box_new proto

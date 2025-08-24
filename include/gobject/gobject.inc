@@ -91,13 +91,13 @@ CALLBACK(GObjectSetPropertyFunc, :ptr, :guint, :ptr, :ptr)
 CALLBACK(GObjectFinalizeFunc, :ptr)
 CALLBACK(GWeakNotify, :gpointer, :ptr)
 
-_GObject		struct
+GObject			struct
 g_type_instance		GTypeInstance <>
 ref_count		guint ?
 qdata			ptr GData ?
-_GObject		ends
+GObject			ends
 
-_GObjectClass		struct
+GObjectClass		struct
 g_type_class		GTypeClass <>
 construct_properties	ptr GSList ?
 constructor		proc :GType, :guint, :ptr
@@ -110,19 +110,15 @@ notify			proc :ptr, :ptr
 constructed		proc :ptr
 flags			gsize ?
 pdummy			gpointer 6 dup(?)
-_GObjectClass		ends
+GObjectClass		ends
 
-_GObjectConstructParam	struct
+GObjectConstructParam	struct
 pspec			ptr GParamSpec ?
 value			ptr GValue ?
-_GObjectConstructParam	ends
+GObjectConstructParam	ends
 
-GObject			typedef _GObject
-GObjectClass		typedef _GObjectClass
-GInitiallyUnowned	typedef _GObject
-GInitiallyUnownedClass	typedef _GObjectClass
-GObjectConstructParam	typedef _GObjectConstructParam
-
+GInitiallyUnowned	typedef GObject
+GInitiallyUnownedClass	typedef GObjectClass
 
 g_initially_unowned_get_type proto
 g_object_class_install_property proto :ptr, :guint, :ptr
@@ -215,10 +211,6 @@ g_value_set_object_take_ownership proto :ptr, :gpointer
 
 g_object_compat_control proto :gsize, :gpointer
 
-G_OBJECT_WARN_INVALID_PSPEC macro object, pname, property_id, pspec
-  exitm<.err>
-  endm
-
 G_OBJECT_WARN_INVALID_PROPERTY_ID macro object, property_id, pspec
   exitm<G_OBJECT_WARN_INVALID_PSPEC ((object), "property", (property_id), (pspec))>
   endm
@@ -227,20 +219,6 @@ g_clear_object proto :ptr ptr
 g_clear_object macro object_ptr
   exitm<g_clear_pointer ((object_ptr), g_object_unref)>
   endm
-
-if defined(__GNUC__)
-
-g_set_object macro object_ptr, new_object
-  exitm<.err>
-  endm
-
-else
-
-g_set_object macro object_ptr, new_object
-  exitm<.err>
-  endm
-
-endif
 
 ifdef G_DISABLE_ASSERT
 g_assert_finalize_object macro object
@@ -251,14 +229,6 @@ g_assert_finalize_object macro object
   exitm<(g_assert_finalize_object ((GObject *) object))>
   endm
 endif
-
-g_clear_weak_pointer macro weak_pointer_location
-  exitm<.err>
-  endm
-
-g_set_weak_pointer macro weak_pointer_location, new_object
-  exitm<.err>
-  endm
 
 GWeakRef		struct
 union priv

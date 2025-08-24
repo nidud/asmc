@@ -18,12 +18,9 @@ GTK_ORIENTABLE_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), GTK_TYPE_ORIENTABLE, GtkOrientableIface))>
   endm
 
-;GtkOrientable           typedef _GtkOrientable
-
-_GtkOrientableIface     struct
+GtkOrientableIface      struct
 base_iface              GTypeInterface <>
-_GtkOrientableIface     ends
-GtkOrientableIface      typedef _GtkOrientableIface
+GtkOrientableIface      ends
 
 gtk_orientable_get_type proto
 gtk_orientable_set_orientation proto :ptr, :GtkOrientation

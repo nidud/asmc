@@ -28,39 +28,24 @@ GTK_COLUMN_VIEW_GET_CLASS macro o
   endm
 
 
-;GtkColumnView           typedef _GtkColumnView
-;GtkColumnViewClass      typedef _GtkColumnViewClass
-
-;GtkColumnViewColumn     typedef _GtkColumnViewColumn
-
 gtk_column_view_get_type proto
-
 gtk_column_view_new proto :ptr
-
 gtk_column_view_get_columns proto :ptr
 gtk_column_view_append_column proto :ptr, :ptr
 gtk_column_view_remove_column proto :ptr, :ptr
 gtk_column_view_insert_column proto :ptr, :guint, :ptr
-
 gtk_column_view_get_model proto :ptr
 gtk_column_view_set_model proto :ptr, :ptr
-
 gtk_column_view_get_show_row_separators proto :ptr
 gtk_column_view_set_show_row_separators proto :ptr, :gboolean
-
 gtk_column_view_get_show_column_separators proto :ptr
 gtk_column_view_set_show_column_separators proto :ptr, :gboolean
-
 gtk_column_view_get_sorter proto :ptr
-
 gtk_column_view_sort_by_column proto :ptr, :ptr, :GtkSortType
-
 gtk_column_view_set_single_click_activate proto :ptr, :gboolean
 gtk_column_view_get_single_click_activate proto :ptr
-
 gtk_column_view_set_reorderable proto :ptr, :gboolean
 gtk_column_view_get_reorderable proto :ptr
-
 gtk_column_view_set_enable_rubberband proto :ptr, :gboolean
 gtk_column_view_get_enable_rubberband proto :ptr
 

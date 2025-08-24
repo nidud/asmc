@@ -15,8 +15,6 @@ GTK_IS_ABOUT_DIALOG macro object
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((object), GTK_TYPE_ABOUT_DIALOG))>
   endm
 
-;GtkAboutDialog          typedef _GtkAboutDialog
-
 .enum GtkLicense {
   GTK_LICENSE_UNKNOWN,
   GTK_LICENSE_CUSTOM,

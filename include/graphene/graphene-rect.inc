@@ -16,11 +16,10 @@ GRAPHENE_RECT_INIT macro _x,_y,_w,_h
 
 define GRAPHENE_RECT_INIT_ZERO <GRAPHENE_RECT_INIT (0.0, 0.0, 0.0, 0.0)>
 
-_graphene_rect_t        STRUC
+graphene_rect_t         STRUC
 origin                  graphene_point_t <>
 size                    graphene_size_t <>
-_graphene_rect_t        ENDS
-graphene_rect_t         typedef _graphene_rect_t
+graphene_rect_t         ENDS
 
 graphene_rect_alloc proto
 graphene_rect_free proto :ptr

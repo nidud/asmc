@@ -7,8 +7,6 @@ endif
 
 include gtk/gtkpapersize.inc
 
-;GtkPrintSettings        typedef _GtkPrintSettings
-
 define GTK_TYPE_PRINT_SETTINGS <gtk_print_settings_get_type ()>
 GTK_PRINT_SETTINGS macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PRINT_SETTINGS, GtkPrintSettings))>
@@ -19,11 +17,10 @@ GTK_IS_PRINT_SETTINGS macro obj
 
 CALLBACK(GtkPrintSettingsFunc, :ptr, :ptr, :gpointer)
 
-_GtkPageRange           struct
+GtkPageRange            struct
 start                   sdword ?
 _end                    sdword ?
-_GtkPageRange           ends
-GtkPageRange            typedef _GtkPageRange
+GtkPageRange            ends
 
 gtk_print_settings_get_type proto
 gtk_print_settings_new proto

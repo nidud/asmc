@@ -24,9 +24,6 @@ GTK_GRID_VIEW_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GRID_VIEW, GtkGridViewClass))>
   endm
 
-;GtkGridView             typedef _GtkGridView
-;GtkGridViewClass        typedef _GtkGridViewClass
-
 gtk_grid_view_get_type proto
 gtk_grid_view_new proto :ptr, :ptr
 

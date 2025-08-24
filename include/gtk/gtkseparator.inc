@@ -15,8 +15,6 @@ GTK_IS_SEPARATOR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SEPARATOR))>
   endm
 
-;GtkSeparator            typedef _GtkSeparator
-
 gtk_separator_get_type proto
 gtk_separator_new proto :GtkOrientation
 

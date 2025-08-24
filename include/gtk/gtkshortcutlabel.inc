@@ -11,9 +11,6 @@ GTK_IS_SHORTCUT_LABEL macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_SHORTCUT_LABEL))>
   endm
 
-;GtkShortcutLabel        typedef _GtkShortcutLabel
-;GtkShortcutLabelClass   typedef _GtkShortcutLabelClass
-
 gtk_shortcut_label_get_type proto
 gtk_shortcut_label_new proto :ptr
 gtk_shortcut_label_get_accelerator proto :ptr

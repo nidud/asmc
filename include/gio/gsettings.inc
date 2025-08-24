@@ -25,23 +25,19 @@ G_SETTINGS_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_SETTINGS, GSettingsClass))>
   endm
 
-;GSettingsPrivate        typedef _GSettingsPrivate
-
-_GSettingsClass         struct
+GSettingsClass          struct
 parent_class            GObjectClass <>
 writable_changed        proc :ptr, :ptr
 changed                 proc :ptr, :ptr
 writable_change_event   proc :ptr, :GQuark
 change_event            proc :ptr, :ptr, :gint
 padding                 gpointer 20 dup(?)
-_GSettingsClass         ends
-GSettingsClass          typedef _GSettingsClass
+GSettingsClass          ends
 
-_GSettings              struct
+GSettings               struct
 parent_instance         GObject <>
 priv                    ptr GSettingsPrivate ?
-_GSettings              ends
-GSettings               typedef _GSettings
+GSettings               ends
 
 g_settings_get_type proto
 g_settings_list_schemas proto

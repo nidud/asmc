@@ -24,15 +24,12 @@ G_MOUNT_OPERATION_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_MOUNT_OPERATION, GMountOperationClass))>
   endm
 
-;GMountOperationPrivate  typedef _GMountOperationPrivate
-
-_GMountOperation        struct
+GMountOperation         struct
 parent_instance         GObject <>
 priv                    ptr GMountOperationPrivate ?
-_GMountOperation        ends
-GMountOperation         typedef _GMountOperation
+GMountOperation         ends
 
-_GMountOperationClass   struct
+GMountOperationClass    struct
 parent_class            GObjectClass <>
 ask_password            proc :ptr, :ptr, :ptr, :ptr, :GAskPasswordFlags
 ask_question            proc :ptr, :ptr, :ptr
@@ -49,8 +46,7 @@ _g_reserved6            proc
 _g_reserved7            proc
 _g_reserved8            proc
 _g_reserved9            proc
-_GMountOperationClass   ends
-GMountOperationClass    typedef _GMountOperationClass
+GMountOperationClass    ends
 
 g_mount_operation_get_type proto
 g_mount_operation_new proto

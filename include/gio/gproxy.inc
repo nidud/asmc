@@ -20,14 +20,13 @@ G_PROXY_GET_IFACE macro obj
 
 define G_PROXY_EXTENSION_POINT_NAME <"gio-proxy">
 
-_GProxyInterface	struct
+GProxyInterface		struct
 g_iface			GTypeInterface <>
 connect			proc :ptr, :ptr, :ptr, :ptr, :ptr
 connect_async		proc :ptr, :ptr, :ptr, :ptr, :GAsyncReadyCallback, :gpointer
 connect_finish		proc :ptr, :ptr, :ptr
 supports_hostname	proc :ptr
-_GProxyInterface	ends
-GProxyInterface		typedef _GProxyInterface
+GProxyInterface		ends
 
 g_proxy_get_type proto
 g_proxy_get_default_for_protocol proto :ptr

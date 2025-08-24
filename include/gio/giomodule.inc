@@ -8,8 +8,6 @@ endif
 include gio/giotypes.inc
 include gmodule.inc
 
-;GIOModuleScope          typedef _GIOModuleScope
-
 g_io_module_scope_new proto :GIOModuleScopeFlags
 g_io_module_scope_free proto :ptr
 g_io_module_scope_block proto :ptr, :ptr
@@ -30,8 +28,6 @@ G_IO_IS_MODULE_CLASS macro k
 G_IO_MODULE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_IO_TYPE_MODULE, GIOModuleClass))>
   endm
-
-;GIOModuleClass          typedef _GIOModuleClass
 
 g_io_module_get_type proto
 g_io_module_new proto :ptr

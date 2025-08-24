@@ -15,8 +15,6 @@ GTK_IS_STACK_SIDEBAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_STACK_SIDEBAR))>
   endm
 
-;GtkStackSidebar         typedef _GtkStackSidebar
-
 gtk_stack_sidebar_get_type proto
 gtk_stack_sidebar_new proto
 gtk_stack_sidebar_set_stack proto :ptr, :ptr

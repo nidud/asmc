@@ -27,15 +27,12 @@ G_TLS_DATABASE_GET_CLASS macro inst
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_TLS_DATABASE, GTlsDatabaseClass))>
   endm
 
-;GTlsDatabasePrivate     typedef _GTlsDatabasePrivate
-
-_GTlsDatabase           struct
+GTlsDatabase            struct
 parent_instance         GObject <>
 priv                    ptr GTlsDatabasePrivate ?
-_GTlsDatabase           ends
-GTlsDatabase            typedef _GTlsDatabase
+GTlsDatabase            ends
 
-_GTlsDatabaseClass      struct
+GTlsDatabaseClass       struct
 parent_class            GObjectClass <>
 verify_chain            proc :ptr, :ptr, :ptr, :ptr, :ptr, :GTlsDatabaseVerifyFlags, :ptr, :ptr
 verify_chain_async      proc :ptr, :ptr, :ptr, :ptr, :ptr, :GTlsDatabaseVerifyFlags, :ptr, :GAsyncReadyCallback, :gpointer
@@ -51,8 +48,7 @@ lookup_certificates_issued_by proc :ptr, :ptr, :ptr, :GTlsDatabaseLookupFlags, :
 lookup_certificates_issued_by_async proc :ptr, :ptr, :ptr, :GTlsDatabaseLookupFlags, :ptr, :GAsyncReadyCallback, :gpointer
 lookup_certificates_issued_by_finish proc :ptr, :ptr, :ptr
 padding                 gpointer 16 dup(?)
-_GTlsDatabaseClass      ends
-GTlsDatabaseClass       typedef _GTlsDatabaseClass
+GTlsDatabaseClass       ends
 
 g_tls_database_get_type proto
 g_tls_database_verify_chain proto :ptr, :ptr, :ptr, :ptr, :ptr, :GTlsDatabaseVerifyFlags, :ptr, :ptr

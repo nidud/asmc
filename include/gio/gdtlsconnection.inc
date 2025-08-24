@@ -18,7 +18,7 @@ G_DTLS_CONNECTION_GET_INTERFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_DTLS_CONNECTION, GDtlsConnectionInterface))>
   endm
 
-_GDtlsConnectionInterface struct
+GDtlsConnectionInterface struct
 g_iface                 GTypeInterface <>
 accept_certificate      proc :ptr, :ptr, :GTlsCertificateFlags
 handshake               proc :ptr, :ptr, :ptr
@@ -30,8 +30,7 @@ shutdown_finish         proc :ptr, :ptr, :ptr
 set_advertised_protocols proc :ptr, :ptr
 get_negotiated_protocol proc :ptr
 get_binding_data        proc :ptr, :GTlsChannelBindingType, :ptr, :ptr
-_GDtlsConnectionInterface ends
-GDtlsConnectionInterface typedef _GDtlsConnectionInterface
+GDtlsConnectionInterface ends
 
 g_dtls_connection_get_type proto
 g_dtls_connection_set_database proto :ptr, :ptr

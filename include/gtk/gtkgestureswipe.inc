@@ -25,9 +25,6 @@ GTK_GESTURE_SWIPE_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_GESTURE_SWIPE, GtkGestureSwipeClass))>
   endm
 
-;GtkGestureSwipe         typedef _GtkGestureSwipe
-;GtkGestureSwipeClass    typedef _GtkGestureSwipeClass
-
 gtk_gesture_swipe_get_type proto
 gtk_gesture_swipe_new proto
 gtk_gesture_swipe_get_velocity proto :ptr, :ptr, :ptr

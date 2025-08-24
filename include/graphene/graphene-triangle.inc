@@ -8,12 +8,11 @@ endif
 include graphene/graphene-types.inc
 include graphene/graphene-vec3.inc
 
-_graphene_triangle_t    STRUC
+graphene_triangle_t     STRUC
 a                       graphene_vec3_t <>
 b                       graphene_vec3_t <>
 c                       graphene_vec3_t <>
-_graphene_triangle_t    ENDS
-graphene_triangle_t     typedef _graphene_triangle_t
+graphene_triangle_t     ENDS
 
 graphene_triangle_alloc proto
 graphene_triangle_free proto :ptr

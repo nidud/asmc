@@ -37,68 +37,25 @@ GMenuModel		ENDS
 
 GMenuModelClass		STRUC
 parent_class		GObjectClass <>
-is_mutable		proc :ptr GMenuModel
-get_n_items		proc :ptr GMenuModel
-get_item_attributes	proc :ptr GMenuModel, :gint, :ptr GHashTable
-iterate_item_attributes proc :ptr GMenuModel, :gint
-get_item_attribute_value proc :ptr GMenuModel, :gint, :ptr gchar, :ptr GVariantType
-get_item_links		proc :ptr GMenuModel, :gint, :ptr GHashTable
-iterate_item_links	proc :ptr GMenuModel, :gint
-get_item_link		proc :ptr GMenuModel, :gint, :ptr gchar
+is_mutable		proc :ptr
+get_n_items		proc :ptr
+get_item_attributes	proc :ptr, :gint, :ptr
+iterate_item_attributes proc :ptr, :gint
+get_item_attribute_value proc :ptr, :gint, :ptr, :ptr
+get_item_links		proc :ptr, :gint, :ptr
+iterate_item_links	proc :ptr, :gint
+get_item_link		proc :ptr, :gint, :ptr
 GMenuModelClass		ENDS
 
-;GType
 g_menu_model_get_type proto __cdecl
-
-;gboolean
-g_menu_model_is_mutable proto __cdecl \
-		 model: ptr GMenuModel
-
-;gint
-g_menu_model_get_n_items proto __cdecl \
-		 model: ptr GMenuModel
-
-
-;GMenuAttributeIter
-g_menu_model_iterate_item_attributes proto __cdecl \
-		 model: ptr GMenuModel,
-	    item_index: gint
-
-;GVariant
-g_menu_model_get_item_attribute_value proto __cdecl \
-		 model: ptr GMenuModel,
-	    item_index: gint,
-	     attribute: ptr gchar,
-	 expected_type: ptr GVariantType
-
-;gboolean
-g_menu_model_get_item_attribute proto __Cdecl \
-		 model: ptr GMenuModel,
-	    item_index: gint,
-	     attribute: ptr gchar,
-	 format_string: ptr gchar,
-		      : vararg
-
-;GMenuLinkIter
-g_menu_model_iterate_item_links proto __cdecl \
-		 model: ptr GMenuModel,
-	    item_index: gint
-
-;GMenuModel
-g_menu_model_get_item_link proto __cdecl \
-		 model: ptr GMenuModel,
-	    item_index: gint,
-		  link: ptr gchar
-
-
-;void
-g_menu_model_items_changed proto __cdecl \
-		 model: ptr GMenuModel,
-	      position: gint,
-	       removed: gint,
-		 added: gint
-
-
+g_menu_model_is_mutable proto __cdecl :ptr
+g_menu_model_get_n_items proto __cdecl :ptr
+g_menu_model_iterate_item_attributes proto __cdecl :ptr, :gint
+g_menu_model_get_item_attribute_value proto __cdecl :ptr, :gint, :ptr, :ptr
+g_menu_model_get_item_attribute proto __Cdecl :ptr, :gint, :ptr, :ptr, :vararg
+g_menu_model_iterate_item_links proto __cdecl :ptr, :gint
+g_menu_model_get_item_link proto __cdecl :ptr, :gint, :ptr
+g_menu_model_items_changed proto __cdecl :ptr, :gint, :gint, :gint
 
 define G_TYPE_MENU_ATTRIBUTE_ITER <g_menu_attribute_iter_get_type ()>
 G_MENU_ATTRIBUTE_ITER macro inst
@@ -125,31 +82,14 @@ GMenuAttributeIter	ENDS
 
 GMenuAttributeIterClass STRUC
 parent_class		GObjectClass <>
-get_next		proc :ptr GMenuAttributeIter, :ptr gchar, :ptr GVariant
+get_next		proc :ptr, :ptr, :ptr
 GMenuAttributeIterClass ENDS
 
-;GType
 g_menu_attribute_iter_get_type proto __cdecl
-
-;gboolean
-g_menu_attribute_iter_get_next proto __cdecl \
-		  iter: ptr GMenuAttributeIter,
-	      out_name: ptr gchar,
-		 value: ptr GVariant
-
-;gboolean
-g_menu_attribute_iter_next proto __cdecl \
-		  iter: ptr GMenuAttributeIter
-
-;const
-g_menu_attribute_iter_get_name proto __cdecl \
-		  iter: ptr GMenuAttributeIter
-
-;GVariant
-g_menu_attribute_iter_get_value proto __cdecl \
-		  iter: ptr GMenuAttributeIter
-
-
+g_menu_attribute_iter_get_next proto __cdecl :ptr, :ptr, :ptr
+g_menu_attribute_iter_next proto __cdecl :ptr
+g_menu_attribute_iter_get_name proto __cdecl :ptr
+g_menu_attribute_iter_get_value proto __cdecl :ptr
 
 define G_TYPE_MENU_LINK_ITER <g_menu_link_iter_get_type ()>
 G_MENU_LINK_ITER macro inst
@@ -171,33 +111,18 @@ G_MENU_LINK_ITER_GET_CLASS macro inst
 
 GMenuLinkIter		STRUC
 parent_instance		GObject <>
-priv			ptr GMenuLinkIterPrivate ?
+priv			ptr_t ?
 GMenuLinkIter		ENDS
 
 GMenuLinkIterClass	STRUC
 parent_class		GObjectClass <>
-get_next		proc :ptr GMenuLinkIter, :ptr gchar, :ptr GMenuModel
+get_next		proc :ptr, :ptr, :ptr
 GMenuLinkIterClass	ENDS
 
-;GType
 g_menu_link_iter_get_type proto __cdecl
-
-;gboolean
-g_menu_link_iter_get_next proto __cdecl \
-		  iter: ptr GMenuLinkIter,
-	      out_link: ptr gchar,
-		 value: ptr GMenuModel
-
-;gboolean
-g_menu_link_iter_next proto __cdecl \
-		  iter: ptr GMenuLinkIter
-
-;const
-g_menu_link_iter_get_name proto __cdecl \
-		  iter: ptr GMenuLinkIter
-
-;GMenuModel
-g_menu_link_iter_get_value proto __cdecl \
-		  iter: ptr GMenuLinkIter
+g_menu_link_iter_get_next proto __cdecl :ptr, :ptr, :ptr
+g_menu_link_iter_next proto __cdecl :ptr
+g_menu_link_iter_get_name proto __cdecl :ptr
+g_menu_link_iter_get_value proto __cdecl :ptr
 
 endif

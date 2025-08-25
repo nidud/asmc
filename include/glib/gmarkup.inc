@@ -22,7 +22,6 @@ include glib/gslist.inc
 
 G_MARKUP_ERROR equ <g_markup_error_quark>
 
-;GQuark
 g_markup_error_quark proto __cdecl
 
 .enum GMarkupParseFlags {
@@ -33,91 +32,28 @@ g_markup_error_quark proto __cdecl
     }
 
 GMarkupParser		STRUC
-start_element		proc :ptr GMarkupParseContext, :ptr gchar, :ptr ptr gchar, :ptr ptr gchar, :gpointer, :ptr GError
-end_element		proc :ptr GMarkupParseContext, :ptr gchar, :gpointer, :ptr GError
-text			proc :ptr GMarkupParseContext, :ptr gchar, :gsize, :gpointer, :ptr GError
-passthrough		proc :ptr GMarkupParseContext, :ptr gchar, :gsize, :gpointer, :ptr GError
-error			proc :ptr GMarkupParseContext, :ptr GError, :gpointer
+start_element		proc :ptr, :ptr, :ptr, :ptr, :gpointer, :ptr
+end_element		proc :ptr, :ptr, :gpointer, :ptr
+text			proc :ptr, :ptr, :gsize, :gpointer, :ptr
+passthrough		proc :ptr, :ptr, :gsize, :gpointer, :ptr
+error			proc :ptr, :ptr, :gpointer
 GMarkupParser		ENDS
 
-;GMarkupParseContext
-g_markup_parse_context_new proto __cdecl \
-		parser: ptr GMarkupParser,
-		 flags: GMarkupParseFlags,
-	     user_data: gpointer,
-     user_data_dnotify: GDestroyNotify
-
-;GMarkupParseContext
-g_markup_parse_context_ref proto __cdecl \
-	       context: ptr GMarkupParseContext
-
-;void
-g_markup_parse_context_unref proto __cdecl \
-	       context: ptr GMarkupParseContext
-
-;void
-g_markup_parse_context_free proto __cdecl \
-	       context: ptr GMarkupParseContext
-
-;gboolean
-g_markup_parse_context_parse proto __cdecl \
-	       context: ptr GMarkupParseContext,
-		  text: ptr gchar,
-	      text_len: gssize,
-		 error: ptr GError
-
-;void
-g_markup_parse_context_push proto __cdecl \
-	       context: ptr GMarkupParseContext,
-		parser: ptr GMarkupParser,
-	     user_data: gpointer
-
-;gpointer
-g_markup_parse_context_pop proto __cdecl \
-	       context: ptr GMarkupParseContext
-
-
-;gboolean
-g_markup_parse_context_end_parse proto __cdecl \
-	       context: ptr GMarkupParseContext,
-		 error: ptr GError
-
-;const
-g_markup_parse_context_get_element proto __cdecl \
-	       context: ptr GMarkupParseContext
-
-;const
-g_markup_parse_context_get_element_stack proto __cdecl \
-	       context: ptr GMarkupParseContext
-
-
-
-;void
-g_markup_parse_context_get_position proto __cdecl \
-	       context: ptr GMarkupParseContext,
-	   line_number: ptr gint,
-	   char_number: ptr gint
-
-;gpointer
-g_markup_parse_context_get_user_data proto __cdecl \
-	       context: ptr GMarkupParseContext
-
-
-
-;gchar*
-g_markup_escape_text proto __cdecl \
-		  text: ptr gchar,
-		length: gssize
-
-
-;gchar
-g_markup_printf_escaped proto __Cdecl \
-		format: ptr char_t,
-		      : vararg
-
-;gchar
-g_markup_vprintf_escaped proto __cdecl \
-		format: ptr char_t,
+g_markup_parse_context_new proto __cdecl :ptr, :GMarkupParseFlags, :gpointer, :GDestroyNotify
+g_markup_parse_context_ref proto __cdecl :ptr
+g_markup_parse_context_unref proto __cdecl :ptr
+g_markup_parse_context_free proto __cdecl :ptr
+g_markup_parse_context_parse proto __cdecl :ptr, :ptr, :gssize, :ptr
+g_markup_parse_context_push proto __cdecl :ptr, :ptr, :ptr
+g_markup_parse_context_pop proto __cdecl :ptr
+g_markup_parse_context_end_parse proto __cdecl :ptr, :ptr
+g_markup_parse_context_get_element proto __cdecl :ptr
+g_markup_parse_context_get_element_stack proto __cdecl :ptr
+g_markup_parse_context_get_position proto __cdecl :ptr, :ptr, :ptr
+g_markup_parse_context_get_user_data proto __cdecl :ptr
+g_markup_escape_text proto __cdecl :ptr, :gssize
+g_markup_printf_escaped proto __Cdecl :ptr, :vararg
+g_markup_vprintf_escaped proto __cdecl :ptr, :ptr
 
 
 .enum GMarkupCollectType {
@@ -129,16 +65,6 @@ g_markup_vprintf_escaped proto __cdecl \
     G_MARKUP_COLLECT_OPTIONAL = (1 shl 16)
     }
 
-
-
-;gboolean
-g_markup_collect_attributes proto __Cdecl \
-	  element_name: ptr gchar,
-       attribute_names: ptr gchar,
-      attribute_values: ptr gchar,
-		 error: ptr GError,
-	    first_type: GMarkupCollectType,
-	    first_attr: ptr gchar,
-		      : vararg
+g_markup_collect_attributes proto __Cdecl :ptr, :ptr, :ptr, :ptr, :GMarkupCollectType, :ptr, :vararg
 
 endif

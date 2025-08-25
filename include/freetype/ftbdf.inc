@@ -19,21 +19,14 @@ endif
 BDF_PropertyRec		STRUC
 type			BDF_PropertyType ?
 UNION u
-atom			ptr char_t ?
+atom			string_t ?
 integer			FT_Int32 ?
 cardinal		FT_UInt32 ?
 ENDS
 BDF_PropertyRec		ENDS
 BDF_Property		typedef ptr BDF_PropertyRec
 
-FT_Get_BDF_Charset_ID proto \
-		  face: FT_Face,
-     acharset_encoding: ptr char_t,
-     acharset_registry: ptr char_t
-
-FT_Get_BDF_Property proto \
-		  face: FT_Face,
-	     prop_name: ptr char_t,
-	     aproperty: ptr BDF_PropertyRec
+FT_Get_BDF_Charset_ID proto :FT_Face, :ptr, :ptr
+FT_Get_BDF_Property proto :FT_Face, :ptr, :ptr
 
 endif

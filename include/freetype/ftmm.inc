@@ -38,72 +38,22 @@ axis			ptr FT_Var_Axis ?
 namedstyle		ptr FT_Var_Named_Style ?
 FT_MM_Var		ENDS
 
-FT_Get_Multi_Master proto \
-		  face: FT_Face,
-	       amaster: ptr FT_Multi_Master
-
-FT_Get_MM_Var proto \
-		  face: FT_Face,
-	       amaster: ptr FT_MM_Var
-
-FT_Done_MM_Var proto \
-	       library: FT_Library,
-	       amaster: ptr FT_MM_Var
-
-FT_Set_MM_Design_Coordinates proto \
-		  face: FT_Face,
-	    num_coords: FT_UInt,
-		coords: ptr FT_Long
-
-FT_Set_Var_Design_Coordinates proto \
-		  face: FT_Face,
-	    num_coords: FT_UInt,
-		coords: ptr FT_Fixed
-
-FT_Get_Var_Design_Coordinates proto \
-		  face: FT_Face,
-	    num_coords: FT_UInt,
-		coords: ptr FT_Fixed
-
-FT_Set_MM_Blend_Coordinates proto \
-		  face: FT_Face,
-	    num_coords: FT_UInt,
-		coords: ptr FT_Fixed
-
-FT_Get_MM_Blend_Coordinates proto \
-		  face: FT_Face,
-	    num_coords: FT_UInt,
-		coords: ptr FT_Fixed
-
-FT_Set_Var_Blend_Coordinates proto \
-		  face: FT_Face,
-	    num_coords: FT_UInt,
-		coords: ptr FT_Fixed
-
-FT_Get_Var_Blend_Coordinates proto \
-		  face: FT_Face,
-	    num_coords: FT_UInt,
-		coords: ptr FT_Fixed
-
-FT_Set_MM_WeightVector proto \
-		  face: FT_Face,
-		   len: FT_UInt,
-	  weightvector: ptr FT_Fixed
-
-FT_Get_MM_WeightVector proto \
-		  face: FT_Face,
-		   len: ptr FT_UInt,
-	  weightvector: ptr FT_Fixed
+FT_Get_Multi_Master proto :FT_Face, :ptr
+FT_Get_MM_Var proto :FT_Face, :ptr
+FT_Done_MM_Var proto :FT_Library, :ptr
+FT_Set_MM_Design_Coordinates proto :FT_Face, :FT_UInt, :ptr
+FT_Set_Var_Design_Coordinates proto :FT_Face, :FT_UInt, :ptr
+FT_Get_Var_Design_Coordinates proto :FT_Face, :FT_UInt, :ptr
+FT_Set_MM_Blend_Coordinates proto :FT_Face, :FT_UInt, :ptr
+FT_Get_MM_Blend_Coordinates proto :FT_Face, :FT_UInt, :ptr
+FT_Set_Var_Blend_Coordinates proto :FT_Face, :FT_UInt, :ptr
+FT_Get_Var_Blend_Coordinates proto :FT_Face, :FT_UInt, :ptr
+FT_Set_MM_WeightVector proto :FT_Face, :FT_UInt, :ptr
+FT_Get_MM_WeightVector proto :FT_Face, :ptr, :ptr
 
 define FT_VAR_AXIS_FLAG_HIDDEN	1
 
-FT_Get_Var_Axis_Flags proto \
-		master: ptr FT_MM_Var,
-	    axis_index: FT_UInt,
-		 flags: ptr FT_UInt
-
-FT_Set_Named_Instance proto \
-		  face: FT_Face,
-	instance_index: FT_UInt
+FT_Get_Var_Axis_Flags proto :ptr, :FT_UInt, :ptr
+FT_Set_Named_Instance proto :FT_Face, :FT_UInt
 
 endif

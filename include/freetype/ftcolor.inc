@@ -28,19 +28,9 @@ palette_entry_name_ids	ptr FT_UShort ?
 FT_Palette_Data		ENDS
 
 
-FT_Palette_Data_Get proto \
-		  face: FT_Face,
-	      apalette: ptr FT_Palette_Data
-
-FT_Palette_Select proto \
-		  face: FT_Face,
-	 palette_index: FT_UShort,
-	      apalette: ptr FT_Color
-
-FT_Palette_Set_Foreground_Color proto \
-		  face: FT_Face,
-      foreground_color: FT_Color
-
+FT_Palette_Data_Get proto :FT_Face, :ptr
+FT_Palette_Select proto :FT_Face, :FT_UShort, :ptr
+FT_Palette_Set_Foreground_Color proto :FT_Face, :FT_Color
 
 FT_LayerIterator	STRUC
 num_layers		FT_UInt ?
@@ -48,13 +38,7 @@ layer			FT_UInt ?
 p			ptr FT_Byte ?
 FT_LayerIterator	ENDS
 
-FT_Get_Color_Glyph_Layer proto \
-		  face: FT_Face,
-	    base_glyph: FT_UInt,
-	  aglyph_index: ptr FT_UInt,
-	  acolor_index: ptr FT_UInt,
-	      iterator: ptr FT_LayerIterator
-
+FT_Get_Color_Glyph_Layer proto :FT_Face, :FT_UInt, :ptr, :ptr, :ptr
 
 .enum FT_PaintFormat {
     FT_COLR_PAINTFORMAT_COLR_LAYERS	= 1,
@@ -265,30 +249,10 @@ bottom_right		FT_Vector <>
 FT_ClipBox		ENDS
 
 
-FT_Get_Color_Glyph_Paint proto \
-		  face: FT_Face,
-	    base_glyph: FT_UInt,
-	root_transform: FT_Color_Root_Transform,
-		 paint: ptr FT_OpaquePaint
-
-FT_Get_Color_Glyph_ClipBox proto \
-		  face: FT_Face,
-	    base_glyph: FT_UInt,
-	      clip_box: ptr FT_ClipBox
-
-FT_Get_Paint_Layers proto \
-		  face: FT_Face,
-	      iterator: ptr FT_LayerIterator,
-		 paint: ptr FT_OpaquePaint
-
-FT_Get_Colorline_Stops proto \
-		  face: FT_Face,
-	    color_stop: ptr FT_ColorStop,
-	      iterator: ptr FT_ColorStopIterator
-
-FT_Get_Paint proto \
-		  face: FT_Face,
-	  opaque_paint: FT_OpaquePaint,
-		 paint: ptr FT_COLR_Paint
+FT_Get_Color_Glyph_Paint proto :FT_Face, :FT_UInt, :FT_Color_Root_Transform, :ptr
+FT_Get_Color_Glyph_ClipBox proto :FT_Face, :FT_UInt, :ptr
+FT_Get_Paint_Layers proto :FT_Face, :ptr, :ptr
+FT_Get_Colorline_Stops proto :FT_Face, :ptr, :ptr
+FT_Get_Paint proto :FT_Face, :FT_OpaquePaint, :ptr
 
 endif

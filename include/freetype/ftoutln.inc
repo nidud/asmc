@@ -9,62 +9,19 @@ ifdef FREETYPE_H
 .err <"so that freetype.h of FreeType 2 is found first.">
 endif
 
-FT_Outline_Decompose proto \
-               outline: ptr FT_Outline,
-        func_interface: ptr FT_Outline_Funcs,
-                  user: ptr
-
-FT_Outline_New proto \
-               library: FT_Library,
-             numPoints: FT_UInt,
-           numContours: FT_Int,
-             anoutline: ptr FT_Outline
-
-FT_Outline_Done proto \
-               library: FT_Library,
-               outline: ptr FT_Outline
-
-FT_Outline_Check proto \
-               outline: ptr FT_Outline
-
-FT_Outline_Get_CBox proto \
-               outline: ptr FT_Outline,
-                 acbox: ptr FT_BBox
-
-FT_Outline_Translate proto \
-               outline: ptr FT_Outline,
-               xOffset: FT_Pos,
-               yOffset: FT_Pos
-
-FT_Outline_Copy proto \
-                source: ptr FT_Outline,
-                target: ptr FT_Outline
-
-FT_Outline_Transform proto \
-               outline: ptr FT_Outline,
-                matrix: ptr FT_Matrix
-
-FT_Outline_Embolden proto \
-               outline: ptr FT_Outline,
-              strength: FT_Pos
-
-FT_Outline_EmboldenXY proto \
-               outline: ptr FT_Outline,
-             xstrength: FT_Pos,
-             ystrength: FT_Pos
-
-FT_Outline_Reverse proto \
-               outline: ptr FT_Outline
-
-FT_Outline_Get_Bitmap proto \
-               library: FT_Library,
-               outline: ptr FT_Outline,
-               abitmap: ptr FT_Bitmap
-
-FT_Outline_Render proto \
-               library: FT_Library,
-               outline: ptr FT_Outline,
-                params: ptr FT_Raster_Params
+FT_Outline_Decompose proto :ptr, :ptr, :ptr
+FT_Outline_New proto :FT_Library, :FT_UInt, :FT_Int, :ptr
+FT_Outline_Done proto :FT_Library, :ptr
+FT_Outline_Check proto :ptr
+FT_Outline_Get_CBox proto :ptr, :ptr
+FT_Outline_Translate proto  :ptr, :FT_Pos, :FT_Pos
+FT_Outline_Copy proto :ptr, :ptr
+FT_Outline_Transform proto :ptr, :ptr
+FT_Outline_Embolden proto :ptr, :FT_Pos
+FT_Outline_EmboldenXY proto :ptr, :FT_Pos, :FT_Pos
+FT_Outline_Reverse proto :ptr
+FT_Outline_Get_Bitmap proto :FT_Library, :ptr, :ptr
+FT_Outline_Render proto :FT_Library, :ptr, :ptr
 
 .enum FT_Orientation {
     FT_ORIENTATION_TRUETYPE   = 0,
@@ -74,7 +31,6 @@ FT_Outline_Render proto \
     FT_ORIENTATION_NONE
     }
 
-FT_Outline_Get_Orientation proto \
-               outline: ptr FT_Outline
+FT_Outline_Get_Orientation proto :ptr
 
 endif

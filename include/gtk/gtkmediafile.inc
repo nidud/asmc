@@ -11,7 +11,7 @@ define GTK_MEDIA_FILE_EXTENSION_POINT_NAME <"gtk-media-file">
 define GTK_TYPE_MEDIA_FILE <gtk_media_file_get_type ()>
 
 
-_GtkMediaFileClass      struct
+GtkMediaFileClass       struct
 parent_class            GtkMediaStreamClass <>
 open                    proc :ptr
 close                   proc :ptr
@@ -19,7 +19,7 @@ _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkMediaFileClass      ends
+GtkMediaFileClass       ends
 
 gtk_media_file_new proto
 gtk_media_file_new_for_filename proto :ptr

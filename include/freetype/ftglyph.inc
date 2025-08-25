@@ -50,23 +50,10 @@ delta			FT_Vector <>
 FT_SvgGlyphRec		ENDS
 
 
-FT_New_Glyph proto \
-	       library: FT_Library,
-		format: FT_Glyph_Format,
-		aglyph: ptr FT_Glyph
-
-FT_Get_Glyph proto \
-		  slot: FT_GlyphSlot,
-		aglyph: ptr FT_Glyph
-
-FT_Glyph_Copy proto \
-		source: FT_Glyph,
-		target: ptr FT_Glyph
-
-FT_Glyph_Transform proto \
-		 glyph: FT_Glyph,
-		matrix: ptr FT_Matrix,
-		 delta: ptr FT_Vector
+FT_New_Glyph proto :FT_Library, :FT_Glyph_Format, :ptr
+FT_Get_Glyph proto :FT_GlyphSlot, :ptr
+FT_Glyph_Copy proto :FT_Glyph, :ptr
+FT_Glyph_Transform proto :FT_Glyph, :ptr, :ptr
 
 .enum FT_Glyph_BBox_Mode {
     FT_GLYPH_BBOX_UNSCALED  = 0,
@@ -83,26 +70,10 @@ define ft_glyph_bbox_gridfit	FT_GLYPH_BBOX_GRIDFIT
 define ft_glyph_bbox_truncate	FT_GLYPH_BBOX_TRUNCATE
 define ft_glyph_bbox_pixels	FT_GLYPH_BBOX_PIXELS
 
-
-FT_Glyph_Get_CBox proto \
-		 glyph: FT_Glyph,
-	     bbox_mode: FT_UInt,
-		 acbox: ptr FT_BBox
-
-FT_Glyph_To_Bitmap proto \
-	     the_glyph: ptr FT_Glyph,
-	   render_mode: FT_Render_Mode,
-		origin: ptr FT_Vector,
-	       destroy: FT_Bool
-
-FT_Done_Glyph proto \
-		 glyph: FT_Glyph
-
-FT_Matrix_Multiply proto \
-		     a: ptr FT_Matrix,
-		     b: ptr FT_Matrix
-
-FT_Matrix_Invert proto \
-		matrix: ptr FT_Matrix
+FT_Glyph_Get_CBox proto :FT_Glyph, :FT_UInt, :ptr
+FT_Glyph_To_Bitmap proto :ptr, :FT_Render_Mode, :ptr, :FT_Bool
+FT_Done_Glyph proto :FT_Glyph
+FT_Matrix_Multiply proto :ptr, :ptr
+FT_Matrix_Invert proto :ptr
 
 endif

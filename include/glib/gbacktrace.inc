@@ -11,10 +11,7 @@ include sys/select.inc
 endif
 include signal.inc
 
-g_on_error_query proto __cdecl \
-              prg_name: ptr gchar
-
-g_on_error_stack_trace proto __cdecl \
-              prg_name: ptr gchar
+g_on_error_query proto __cdecl :ptr
+g_on_error_stack_trace proto __cdecl :ptr
 
 endif

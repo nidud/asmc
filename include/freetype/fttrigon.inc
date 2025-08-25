@@ -16,42 +16,15 @@ FT_ANGLE_2PI            equ ( FT_ANGLE_PI * 2 )
 FT_ANGLE_PI2            equ ( FT_ANGLE_PI / 2 )
 FT_ANGLE_PI4            equ ( FT_ANGLE_PI / 4 )
 
-FT_Sin proto \
-                 angle: FT_Angle
-
-FT_Cos proto \
-                 angle: FT_Angle
-
-FT_Tan proto \
-                 angle: FT_Angle
-
-FT_Atan2 proto \
-                     x: FT_Fixed,
-                     y: FT_Fixed
-
-FT_Angle_Diff proto \
-                angle1: FT_Angle,
-                angle2: FT_Angle
-
-FT_Vector_Unit proto \
-                   vec: ptr FT_Vector,
-                 angle: FT_Angle
-
-FT_Vector_Rotate proto \
-                   vec: ptr FT_Vector,
-                 angle: FT_Angle
-
-FT_Vector_Length proto \
-                   vec: ptr FT_Vector
-
-FT_Vector_Polarize proto \
-                   vec: ptr FT_Vector,
-                length: ptr FT_Fixed,
-                 angle: ptr FT_Angle
-
-FT_Vector_From_Polar proto \
-                   vec: ptr FT_Vector,
-                length: FT_Fixed,
-                 angle: FT_Angle
+FT_Sin proto :FT_Angle
+FT_Cos proto :FT_Angle
+FT_Tan proto :FT_Angle
+FT_Atan2 proto :FT_Fixed, :FT_Fixed
+FT_Angle_Diff proto :FT_Angle, :FT_Angle
+FT_Vector_Unit proto :ptr, :FT_Angle
+FT_Vector_Rotate proto :ptr, :FT_Angle
+FT_Vector_Length proto :ptr
+FT_Vector_Polarize proto :ptr, :ptr, :ptr
+FT_Vector_From_Polar proto :ptr, :FT_Fixed, :FT_Angle
 
 endif

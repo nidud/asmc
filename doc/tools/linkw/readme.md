@@ -83,6 +83,7 @@ Options may be preceded by both a forward slash (/) and a dash (-). The options 
 <tr><td><a href="norelocs.md">/NORelocs</a></td><td>ELF option.</td></tr>
 <tr><td><a href="nxcompat.md">/NXCOMPAT</a></td><td>Marks an executable as verified to be compatible with the Windows Data Execution Prevention feature.</td></tr>
 <tr><td><a href="out.md">/Out</a></td><td>Specifies the output file name.</td></tr>
+<tr><td><a href="resource.md">/RESource</a></td><td>Attaches a .RES file to a Win32 program.</td></tr>
 <tr><td><a href="section.md">/SECTION</a></td><td>Overrides the attributes of a section.</td></tr>
 <tr><td><a href="stack.md">/STack</a></td><td>Sets the size of the stack in bytes.</td></tr>
 <tr><td><a href="stub.md">/STUB</a></td><td>Attaches an MS-DOS stub program to a Win32 program.</td></tr>

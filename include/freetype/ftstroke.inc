@@ -25,87 +25,23 @@ FT_Stroker              typedef ptr FT_StrokerRec
     FT_STROKER_BORDER_RIGHT
     }
 
-FT_Outline_GetInsideBorder proto \
-               outline: ptr FT_Outline
-
-
-FT_Outline_GetOutsideBorder proto \
-               outline: ptr FT_Outline
-
-FT_Stroker_New proto \
-               library: FT_Library,
-              astroker: ptr FT_Stroker
-
-FT_Stroker_Set proto \
-               stroker: FT_Stroker,
-                radius: FT_Fixed,
-              line_cap: FT_Stroker_LineCap,
-             line_join: FT_Stroker_LineJoin,
-           miter_limit: FT_Fixed
-
-FT_Stroker_Rewind proto \
-               stroker: FT_Stroker
-
-FT_Stroker_ParseOutline proto \
-               stroker: FT_Stroker,
-               outline: ptr FT_Outline,
-                opened: FT_Bool
-
-FT_Stroker_BeginSubPath proto \
-               stroker: FT_Stroker,
-                    to: ptr FT_Vector,
-                  open: FT_Bool
-
-FT_Stroker_EndSubPath proto \
-               stroker: FT_Stroker
-
-FT_Stroker_LineTo proto \
-               stroker: FT_Stroker,
-                    to: ptr FT_Vector
-
-FT_Stroker_ConicTo proto \
-               stroker: FT_Stroker,
-               control: ptr FT_Vector,
-                    to: ptr FT_Vector
-
-FT_Stroker_CubicTo proto \
-               stroker: FT_Stroker,
-              control1: ptr FT_Vector,
-              control2: ptr FT_Vector,
-                    to: ptr FT_Vector
-
-FT_Stroker_GetBorderCounts proto \
-               stroker: FT_Stroker,
-                border: FT_StrokerBorder,
-           anum_points: ptr FT_UInt,
-         anum_contours: ptr FT_UInt
-
-FT_Stroker_ExportBorder proto \
-               stroker: FT_Stroker,
-                border: FT_StrokerBorder,
-               outline: ptr FT_Outline
-
-FT_Stroker_GetCounts proto \
-               stroker: FT_Stroker,
-           anum_points: ptr FT_UInt,
-         anum_contours: ptr FT_UInt
-
-FT_Stroker_Export proto \
-               stroker: FT_Stroker,
-               outline: ptr FT_Outline
-
-FT_Stroker_Done proto \
-               stroker: FT_Stroker
-
-FT_Glyph_Stroke proto \
-                pglyph: ptr FT_Glyph,
-               stroker: FT_Stroker,
-               destroy: FT_Bool
-
-FT_Glyph_StrokeBorder proto \
-                pglyph: ptr FT_Glyph,
-               stroker: FT_Stroker,
-                inside: FT_Bool,
-               destroy: FT_Bool
+FT_Outline_GetInsideBorder proto :ptr
+FT_Outline_GetOutsideBorder proto :ptr
+FT_Stroker_New proto :FT_Library, :ptr
+FT_Stroker_Set proto :FT_Stroker, :FT_Fixed, :FT_Stroker_LineCap, :FT_Stroker_LineJoin, :FT_Fixed
+FT_Stroker_Rewind proto :FT_Stroker
+FT_Stroker_ParseOutline proto :FT_Stroker, :ptr, :FT_Bool
+FT_Stroker_BeginSubPath proto :FT_Stroker, :ptr, :FT_Bool
+FT_Stroker_EndSubPath proto :FT_Stroker
+FT_Stroker_LineTo proto :FT_Stroker, :ptr
+FT_Stroker_ConicTo proto :FT_Stroker, :ptr, :ptr
+FT_Stroker_CubicTo proto :FT_Stroker, :ptr, :ptr, :ptr
+FT_Stroker_GetBorderCounts proto :FT_Stroker, :FT_StrokerBorder, :ptr, :ptr
+FT_Stroker_ExportBorder proto :FT_Stroker, :FT_StrokerBorder, :ptr
+FT_Stroker_GetCounts proto :FT_Stroker, :ptr, :ptr
+FT_Stroker_Export proto :FT_Stroker, :ptr
+FT_Stroker_Done proto :FT_Stroker
+FT_Glyph_Stroke proto :ptr, :FT_Stroker, :FT_Bool
+FT_Glyph_StrokeBorder proto :ptr, :FT_Stroker, :FT_Bool, :FT_Bool
 
 endif

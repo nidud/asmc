@@ -1,5 +1,5 @@
 ifndef __G_UNICODE_H__
-__G_UNICODE_H__ equ <>
+define __G_UNICODE_H__
 if NOT defined (__GLIB_H_INSIDE__) AND NOT defined (GLIB_COMPILATION)
 .err <"Only glib.h can be included directly.">
 endif
@@ -235,317 +235,69 @@ endif
   G_UNICODE_SCRIPT_SIGNWRITING
 }
 
-;guint32
-g_unicode_script_to_iso15924 proto __cdecl \
-		script: GUnicodeScript
-
-;GUnicodeScript
-g_unicode_script_from_iso15924 proto __cdecl \
-	      iso15924: guint32
-
-
-;gboolean
-g_unichar_isalnum proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_isalpha proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_iscntrl proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_isdigit proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_isgraph proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_islower proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_isprint proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_ispunct proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_isspace proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_isupper proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_isxdigit proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_istitle proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_isdefined proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_iswide proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_iswide_cjk proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_iszerowidth proto __cdecl \
-		     c: gunichar
-
-;gboolean
-g_unichar_ismark proto __cdecl \
-		     c: gunichar
-
-
-;gunichar
-g_unichar_toupper proto __cdecl \
-		     c: gunichar
-
-;gunichar
-g_unichar_tolower proto __cdecl \
-		     c: gunichar
-
-;gunichar
-g_unichar_totitle proto __cdecl \
-		     c: gunichar
-
-
-;gint
-g_unichar_digit_value proto __cdecl \
-		     c: gunichar
-
-
-;gint
-g_unichar_xdigit_value proto __cdecl \
-		     c: gunichar
-
-
-;GUnicodeType
-g_unichar_type proto __cdecl \
-		     c: gunichar
-
-
-;GUnicodeBreakType
-g_unichar_break_type proto __cdecl \
-		     c: gunichar
-
-
-;gint
-g_unichar_combining_class proto __cdecl \
-		    uc: gunichar
-
-
-;gboolean
-g_unichar_get_mirror_char proto __cdecl \
-		   _ch: gunichar,
-	   mirrored_ch: ptr gunichar
-
-
-;GUnicodeScript
-g_unichar_get_script proto __cdecl \
-		   _ch: gunichar
-
-;gboolean
-g_unichar_validate proto __cdecl \
-		   _ch: gunichar
-
-;gboolean
-g_unichar_compose proto __cdecl \
-		     a: gunichar,
-		     b: gunichar,
-		   _ch: ptr gunichar
-
-;gboolean
-g_unichar_decompose proto __cdecl \
-		   _ch: gunichar,
-		     a: ptr gunichar,
-		     b: ptr gunichar
-
-;gsize
-g_unichar_fully_decompose proto __cdecl \
-		   _ch: gunichar,
-		compat: gboolean,
-		result: ptr gunichar,
-	    result_len: gsize
-
+g_unicode_script_to_iso15924 proto __cdecl :GUnicodeScript
+g_unicode_script_from_iso15924 proto __cdecl :guint32
+g_unichar_isalnum proto __cdecl :gunichar
+g_unichar_isalpha proto __cdecl :gunichar
+g_unichar_iscntrl proto __cdecl :gunichar
+g_unichar_isdigit proto __cdecl :gunichar
+g_unichar_isgraph proto __cdecl :gunichar
+g_unichar_islower proto __cdecl :gunichar
+g_unichar_isprint proto __cdecl :gunichar
+g_unichar_ispunct proto __cdecl :gunichar
+g_unichar_isspace proto __cdecl :gunichar
+g_unichar_isupper proto __cdecl :gunichar
+g_unichar_isxdigit proto __cdecl :gunichar
+g_unichar_istitle proto __cdecl :gunichar
+g_unichar_isdefined proto __cdecl :gunichar
+g_unichar_iswide proto __cdecl :gunichar
+g_unichar_iswide_cjk proto __cdecl :gunichar
+g_unichar_iszerowidth proto __cdecl :gunichar
+g_unichar_ismark proto __cdecl :gunichar
+g_unichar_toupper proto __cdecl :gunichar
+g_unichar_tolower proto __cdecl :gunichar
+g_unichar_totitle proto __cdecl :gunichar
+g_unichar_digit_value proto __cdecl :gunichar
+g_unichar_xdigit_value proto __cdecl :gunichar
+g_unichar_type proto __cdecl :gunichar
+g_unichar_break_type proto __cdecl :gunichar
+g_unichar_combining_class proto __cdecl :gunichar
+g_unichar_get_mirror_char proto __cdecl :gunichar, :ptr
+g_unichar_get_script proto __cdecl :gunichar
+g_unichar_validate proto __cdecl  :gunichar
+g_unichar_compose proto __cdecl :gunichar, :gunichar, :ptr
+g_unichar_decompose proto __cdecl :gunichar, :ptr, :ptr
+g_unichar_fully_decompose proto __cdecl :gunichar, :gboolean, :ptr, :gsize
 
 G_UNICHAR_MAX_DECOMPOSITION_LENGTH equ 18
 
-;void
-g_unicode_canonical_ordering proto __cdecl \
-		string: ptr gunichar,
-		   len: gsize
+g_unicode_canonical_ordering proto __cdecl :ptr, :gsize
 
-
-
-;GLIB_VAR gchar * g_utf8_skip;
-
-g_utf8_next_char macro p
-	exitm<.err>
-	endm
-
-;gunichar
-g_utf8_get_char proto __cdecl \
-		     p: ptr gchar
-
-;gunichar
-g_utf8_get_char_validated proto __cdecl \
-		     p: ptr gchar,
-	       max_len: gssize
-
-;gchar*
-g_utf8_offset_to_pointer proto __cdecl \
-		  _str: ptr gchar,
-	       _offset: glong
-
-;glong
-g_utf8_pointer_to_offset proto __cdecl \
-		  _str: ptr gchar,
-		   pos: ptr gchar
-
-;gchar*
-g_utf8_prev_char proto __cdecl \
-		     p: ptr gchar
-
-;gchar*
-g_utf8_find_next_char proto __cdecl \
-		     p: ptr gchar,
-		  _end: ptr gchar
-
-;gchar*
-g_utf8_find_prev_char proto __cdecl \
-		  _str: ptr gchar,
-		     p: ptr gchar
-
-;glong
-g_utf8_strlen proto __cdecl \
-		     p: ptr gchar,
-		   max: gssize
-
-;gchar
-g_utf8_substring proto __cdecl \
-		  _str: ptr gchar,
-	     start_pos: glong,
-	       end_pos: glong
-
-;gchar
-g_utf8_strncpy proto __cdecl \
-		  dest: ptr gchar,
-		   src: ptr gchar,
-		     n: gsize
-
-
-;gchar*
-g_utf8_strchr proto __cdecl \
-		     p: ptr gchar,
-		   len: gssize,
-		     c: gunichar
-
-;gchar*
-g_utf8_strrchr proto __cdecl \
-		     p: ptr gchar,
-		   len: gssize,
-		     c: gunichar
-
-;gchar*
-g_utf8_strreverse proto __cdecl \
-		  _str: ptr gchar,
-		   len: gssize
-
-
-;gunichar2
-g_utf8_to_utf16 proto __cdecl \
-		  _str: ptr gchar,
-		   len: glong,
-	    items_read: ptr glong,
-	 items_written: ptr glong,
-		 error: ptr GError
-
-;gunichar
-g_utf8_to_ucs4 proto __cdecl \
-		  _str: ptr gchar,
-		   len: glong,
-	    items_read: ptr glong,
-	 items_written: ptr glong,
-		 error: ptr GError
-
-;gunichar
-g_utf8_to_ucs4_fast proto __cdecl \
-		  _str: ptr gchar,
-		   len: glong,
-	 items_written: ptr glong
-
-;gunichar
-g_utf16_to_ucs4 proto __cdecl \
-		  _str: ptr gunichar2,
-		   len: glong,
-	    items_read: ptr glong,
-	 items_written: ptr glong,
-		 error: ptr GError
-
-;gchar*
-g_utf16_to_utf8 proto __cdecl \
-		  _str: ptr gunichar2,
-		   len: glong,
-	    items_read: ptr glong,
-	 items_written: ptr glong,
-		 error: ptr GError
-
-;gunichar2
-g_ucs4_to_utf16 proto __cdecl \
-		  _str: ptr gunichar,
-		   len: glong,
-	    items_read: ptr glong,
-	 items_written: ptr glong,
-		 error: ptr GError
-
-;gchar*
-g_ucs4_to_utf8 proto __cdecl \
-		  _str: ptr gunichar,
-		   len: glong,
-	    items_read: ptr glong,
-	 items_written: ptr glong,
-		 error: ptr GError
-
-;gint
-g_unichar_to_utf8 proto __cdecl \
-		     c: gunichar,
-		outbuf: ptr gchar
-
-;gboolean
-g_utf8_validate proto __cdecl \
-		  _str: ptr gchar,
-	       max_len: gssize,
-		  _end: ptr gchar
-;gchar
-g_utf8_strup proto __cdecl \
-		  _str: ptr gchar,
-		   len: gssize
-
-;gchar
-g_utf8_strdown proto __cdecl \
-		  _str: ptr gchar,
-		   len: gssize
-;gchar
-g_utf8_casefold proto __cdecl \
-		  _str: ptr gchar,
-		   len: gssize
+g_utf8_get_char proto __cdecl :ptr
+g_utf8_get_char_validated proto __cdecl :ptr, :gssize
+g_utf8_offset_to_pointer proto __cdecl :ptr, :glong
+g_utf8_pointer_to_offset proto __cdecl :ptr, :ptr
+g_utf8_prev_char proto __cdecl :ptr
+g_utf8_find_next_char proto __cdecl :ptr, :ptr
+g_utf8_find_prev_char proto __cdecl :ptr, :ptr
+g_utf8_strlen proto __cdecl :ptr, :gssize
+g_utf8_substring proto __cdecl :ptr, :glong, :glong
+g_utf8_strncpy proto __cdecl :ptr, :ptr, :gsize
+g_utf8_strchr proto __cdecl :ptr, :gssize, :gunichar
+g_utf8_strrchr proto __cdecl :ptr, :gssize, :gunichar
+g_utf8_strreverse proto __cdecl :ptr, :gssize
+g_utf8_to_utf16 proto __cdecl :ptr, :glong, :ptr, :ptr, :ptr
+g_utf8_to_ucs4 proto __cdecl :ptr, :glong, :ptr, :ptr, :ptr
+g_utf8_to_ucs4_fast proto __cdecl :ptr, :glong, :ptr
+g_utf16_to_ucs4 proto __cdecl :ptr, :glong, :ptr, :ptr, :ptr
+g_utf16_to_utf8 proto __cdecl :ptr, :glong, :ptr, :ptr, :ptr
+g_ucs4_to_utf16 proto __cdecl :ptr, :glong, :ptr, :ptr, :ptr
+g_ucs4_to_utf8 proto __cdecl :ptr, :glong, :ptr, :ptr, :ptr
+g_unichar_to_utf8 proto __cdecl :gunichar, :ptr
+g_utf8_validate proto __cdecl :ptr, :gssize, :ptr
+g_utf8_strup proto __cdecl :ptr, :gssize
+g_utf8_strdown proto __cdecl :ptr, :gssize
+g_utf8_casefold proto __cdecl :ptr, :gssize
 
 .enum GNormalizeMode {
   G_NORMALIZE_DEFAULT,
@@ -558,26 +310,11 @@ g_utf8_casefold proto __cdecl \
   G_NORMALIZE_NFKC = G_NORMALIZE_ALL_COMPOSE
 }
 
-;gchar
-g_utf8_normalize proto __cdecl \
-		  _str: ptr gchar,
-		   len: gssize,
-		  mode: GNormalizeMode
+g_utf8_normalize proto __cdecl :ptr, :gssize, :GNormalizeMode
+g_utf8_collate proto __cdecl :ptr, :ptr
+g_utf8_collate_key proto __cdecl :ptr, :gssize
+g_utf8_collate_key_for_filename proto __cdecl :ptr, :gssize
 
-;gint
-g_utf8_collate proto __cdecl \
-		  str1: ptr gchar,
-		  str2: ptr gchar
-;gchar
-g_utf8_collate_key proto __cdecl \
-		  _str: ptr gchar,
-		   len: gssize
-;gchar
-g_utf8_collate_key_for_filename proto __cdecl \
-		  _str: ptr gchar,
-		   len: gssize
-
-
-_g_utf8_make_valid proto __cdecl :ptr gchar
+_g_utf8_make_valid proto __cdecl :ptr
 
 endif

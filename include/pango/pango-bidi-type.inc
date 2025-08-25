@@ -34,19 +34,10 @@ ifndef PANGO_DISABLE_DEPRECATED
     PANGO_BIDI_TYPE_PDI
     }
 
-pango_bidi_type_for_unichar proto __cdecl \
-		   _ch: gunichar
-
-pango_unichar_direction proto __cdecl \
-		   _ch: gunichar
-
-pango_find_base_dir proto __cdecl \
-		      : ptr,
-		length: gint
-
-pango_get_mirror_char proto __cdecl \
-		   _ch: gunichar,
-	   mirrored_ch: ptr gunichar
+pango_bidi_type_for_unichar proto __cdecl :gunichar
+pango_unichar_direction proto __cdecl :gunichar
+pango_find_base_dir proto __cdecl :ptr, :gint
+pango_get_mirror_char proto __cdecl :gunichar, :ptr
 
 endif
 

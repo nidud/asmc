@@ -25,25 +25,11 @@ GDK_PIXBUF_SIMPLE_ANIM_GET_CLASS macro obj
 	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_PIXBUF_SIMPLE_ANIM, GdkPixbufSimpleAnimClass))>
 	endm
 
-
 gdk_pixbuf_simple_anim_get_type proto __cdecl
-
 gdk_pixbuf_simple_anim_iter_get_type proto __cdecl
-
-gdk_pixbuf_simple_anim_new proto __cdecl \
-		 width: gint,
-		height: gint,
-		  rate: gfloat
-
-gdk_pixbuf_simple_anim_add_frame proto __cdecl \
-	     animation: ptr GdkPixbufSimpleAnim,
-		pixbuf: ptr GdkPixbuf
-
-gdk_pixbuf_simple_anim_set_loop proto __cdecl \
-	     animation: ptr GdkPixbufSimpleAnim,
-		 _loop: gboolean
-
-gdk_pixbuf_simple_anim_get_loop proto __cdecl \
-	     animation: ptr GdkPixbufSimpleAnim
+gdk_pixbuf_simple_anim_new proto __cdecl :gint, :gint, :gfloat
+gdk_pixbuf_simple_anim_add_frame proto __cdecl :ptr, :ptr
+gdk_pixbuf_simple_anim_set_loop proto __cdecl :ptr, :gboolean
+gdk_pixbuf_simple_anim_get_loop proto __cdecl :ptr
 
 endif

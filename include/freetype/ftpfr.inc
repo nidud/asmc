@@ -9,22 +9,8 @@ ifdef FREETYPE_H
 .err <"so that freetype.h of FreeType 2 is found first.">
 endif
 
-FT_Get_PFR_Metrics proto \
-                  face: FT_Face,
-   aoutline_resolution: ptr FT_UInt,
-   ametrics_resolution: ptr FT_UInt,
-      ametrics_x_scale: ptr FT_Fixed,
-      ametrics_y_scale: ptr FT_Fixed
-
-FT_Get_PFR_Kerning proto \
-                  face: FT_Face,
-                  left: FT_UInt,
-                 right: FT_UInt,
-               avector: ptr FT_Vector
-
-FT_Get_PFR_Advance proto \
-                  face: FT_Face,
-                gindex: FT_UInt,
-              aadvance: ptr FT_Pos
+FT_Get_PFR_Metrics proto :FT_Face, :ptr, :ptr, :ptr, :ptr
+FT_Get_PFR_Kerning proto :FT_Face, :FT_UInt, :FT_UInt, :ptr
+FT_Get_PFR_Advance proto :FT_Face, :FT_UInt, :ptr
 
 endif

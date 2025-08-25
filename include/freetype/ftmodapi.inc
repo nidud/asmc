@@ -47,57 +47,23 @@ module_done		FT_Module_Destructor ?
 get_interface		FT_Module_Requester ?
 FT_Module_Class		ENDS
 
-FT_Add_Module proto \
-	       library: FT_Library,
-		 clazz: ptr FT_Module_Class
+FT_Add_Module proto :FT_Library, :ptr
+FT_Get_Module proto :FT_Library, :ptr
+FT_Remove_Module proto :FT_Library, :FT_Module
 
-FT_Get_Module proto \
-	       library: FT_Library,
-	   module_name: ptr
-
-FT_Remove_Module proto \
-	       library: FT_Library,
-		module: FT_Module
-
-FT_FACE_DRIVER_NAME macro face
-	exitm<.err>
-	endm
-
-FT_Property_Set proto \
-	       library: FT_Library,
-	   module_name: ptr FT_String,
-	 property_name: ptr FT_String,
-
-FT_Property_Get proto \
-	       library: FT_Library,
-	   module_name: ptr FT_String,
-	 property_name: ptr FT_String,
-
-
-FT_Set_Default_Properties proto \
-	       library: FT_Library
-
-FT_Reference_Library proto \
-	       library: FT_Library
-
-FT_New_Library proto \
-		memory: FT_Memory,
-	      alibrary: ptr FT_Library
-
-FT_Done_Library proto \
-	       library: FT_Library
+FT_Property_Set proto :FT_Library, :ptr, :ptr
+FT_Property_Get proto :FT_Library, :ptr, :ptr
+FT_Set_Default_Properties proto :FT_Library
+FT_Reference_Library proto :FT_Library
+FT_New_Library proto :FT_Memory, :ptr
+FT_Done_Library proto :FT_Library
 
 CALLBACKC(FT_DebugHook_Func, :ptr)
 
 define FT_DEBUG_HOOK_TRUETYPE  0
 
-FT_Set_Debug_Hook proto \
-	       library: FT_Library,
-	    hook_index: FT_UInt,
-	    debug_hook: FT_DebugHook_Func
-
-FT_Add_Default_Modules proto \
-	       library: FT_Library
+FT_Set_Debug_Hook proto :FT_Library, :FT_UInt, :FT_DebugHook_Func
+FT_Add_Default_Modules proto :FT_Library
 
 .enum FT_TrueTypeEngineType {
     FT_TRUETYPE_ENGINE_TYPE_NONE = 0,
@@ -105,7 +71,6 @@ FT_Add_Default_Modules proto \
     FT_TRUETYPE_ENGINE_TYPE_PATENTED
     }
 
-FT_Get_TrueType_Engine_Type proto \
-	       library: FT_Library
+FT_Get_TrueType_Engine_Type proto :FT_Library
 
 endif

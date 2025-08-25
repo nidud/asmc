@@ -178,27 +178,10 @@ define ft_sfnt_vhea  FT_SFNT_VHEA
 define ft_sfnt_post  FT_SFNT_POST
 define ft_sfnt_pclt  FT_SFNT_PCLT
 
-FT_Get_Sfnt_Table proto \
-		  face: FT_Face,
-		   tag: FT_Sfnt_Tag
-
-FT_Load_Sfnt_Table proto \
-		  face: FT_Face,
-		   tag: FT_ULong,
-		  offs: FT_Long,
-		buffer: ptr FT_Byte,
-		length: ptr FT_ULong
-
-FT_Sfnt_Table_Info proto \
-		  face: FT_Face,
-	   table_index: FT_UInt,
-		   tag: ptr FT_ULong,
-		length: ptr FT_ULong
-
-FT_Get_CMap_Language_ID proto \
-	       charmap: FT_CharMap
-
-FT_Get_CMap_Format proto \
-	       charmap: FT_CharMap
+FT_Get_Sfnt_Table proto :FT_Face, :FT_Sfnt_Tag
+FT_Load_Sfnt_Table proto :FT_Face, :FT_ULong, :FT_Long, :ptr, :ptr
+FT_Sfnt_Table_Info proto :FT_Face, :FT_UInt, :ptr, :ptr
+FT_Get_CMap_Language_ID proto :FT_CharMap
+FT_Get_CMap_Format proto :FT_CharMap
 
 endif

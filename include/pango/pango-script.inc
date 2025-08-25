@@ -126,31 +126,15 @@ include glib-object.inc
 
 include pango/pango-version-macros.inc
 
-pango_script_for_unichar proto __cdecl \
-		      : gunichar
-
+pango_script_for_unichar proto __cdecl :gunichar
 pango_script_iter_get_type proto __cdecl
-
-pango_script_iter_new proto __cdecl \
-		      : ptr,
-		length: SINT
-;void
-pango_script_iter_get_range proto __cdecl \
-		  iter: ptr PangoScriptIter,
-		 start: ptr char_t,
-		  _end: ptr char_t,
-		script: ptr PangoScript
-
-pango_script_iter_next proto __cdecl \
-		  iter: ptr PangoScriptIter
-
-;void
-pango_script_iter_free proto __cdecl \
-		  iter: ptr PangoScriptIter
+pango_script_iter_new proto __cdecl :ptr, :SINT
+pango_script_iter_get_range proto __cdecl :ptr, :ptr, :ptr, :ptr
+pango_script_iter_next proto __cdecl :ptr
+pango_script_iter_free proto __cdecl :ptr
 
 include pango/pango-language.inc
 
-pango_script_get_sample_language proto __cdecl \
-		script: PangoScript
+pango_script_get_sample_language proto __cdecl :PangoScript
 
 endif

@@ -9,10 +9,10 @@ include gtk/gtktypes.inc
 
 define GTK_TYPE_SYMBOLIC_PAINTABLE <gtk_symbolic_paintable_get_type ()>
 
-_GtkSymbolicPaintableInterface struct
+GtkSymbolicPaintableInterface struct
 g_iface                 GTypeInterface <>
 snapshot_symbolic       proc :ptr, :ptr, :real8, :real8, :ptr, :gsize
-_GtkSymbolicPaintableInterface ends
+GtkSymbolicPaintableInterface ends
 
 gtk_symbolic_paintable_snapshot_symbolic proto :ptr, :ptr, :real8, :real8, :ptr, :gsize
 

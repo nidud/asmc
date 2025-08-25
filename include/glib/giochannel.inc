@@ -57,16 +57,16 @@ G_IO_CHANNEL_ERROR equ (g_io_channel_error_quark ())
 
 GIOChannel		STRUC
 ref_count		gint ?
-funcs			ptr GIOFuncs ?
-encoding		ptr gchar ?
-read_cd			ptr GIConv ?
-write_cd		ptr GIConv ?
-line_term		ptr gchar ?
+funcs			ptr_t ?
+encoding		ptr_t ?
+read_cd			ptr_t ?
+write_cd		ptr_t ?
+line_term		ptr_t ?
 line_term_len		guint ?
 buf_size		gsize ?
-read_buf		ptr GString ?
-encoded_read_buf	ptr GString ?
-write_buf		ptr GString ?
+read_buf		ptr_t ?
+encoded_read_buf	ptr_t ?
+write_buf		ptr_t ?
 partial_write_buf	gchar 6 dup(?)
 RECORD
 use_buffer		guint : 1 ?
@@ -80,290 +80,76 @@ reserved1		gpointer ?
 reserved2		gpointer ?
 GIOChannel		ENDS
 
-CALLBACKC(GIOFunc, :ptr GIOChannel, :GIOCondition, :gpointer)
+CALLBACKC(GIOFunc, :ptr, :GIOCondition, :gpointer)
 
 GIOFuncs		STRUC
-io_read			proc :ptr GIOChannel, :ptr gchar, :gsize, :ptr gsize, :ptr GError
-io_write		proc :ptr GIOChannel, :ptr gchar, :gsize, :ptr gsize, :ptr GError
-io_seek			proc :ptr GIOChannel, :gint64, :GSeekType, :ptr GError
-io_close		proc :ptr GIOChannel, :ptr GError
-io_create_watch		proc :ptr GIOChannel, :GIOCondition
-io_free			proc :ptr GIOChannel
-io_set_flags		proc :ptr GIOChannel, :GIOFlags, :ptr GError
-io_get_flags		proc :ptr GIOChannel
+io_read			proc :ptr, :ptr, :gsize, :ptr, :ptr
+io_write		proc :ptr, :ptr, :gsize, :ptr, :ptr
+io_seek			proc :ptr, :gint64, :GSeekType, :ptr
+io_close		proc :ptr, :ptr
+io_create_watch		proc :ptr, :GIOCondition
+io_free			proc :ptr
+io_set_flags		proc :ptr, :GIOFlags, :ptr
+io_get_flags		proc :ptr
 GIOFuncs		ENDS
 
-;void
-g_io_channel_init proto __cdecl \
-	       channel: ptr GIOChannel
+g_io_channel_init proto __cdecl :ptr
+g_io_channel_ref proto __cdecl :ptr
+g_io_channel_unref proto __cdecl :ptr
+g_io_channel_read proto __cdecl :ptr, :ptr, :gsize, :ptr
+g_io_channel_write proto __cdecl :ptr, :ptr, :gsize, :ptr
+g_io_channel_seek proto __cdecl :ptr, :gint64, :GSeekType
+g_io_channel_close proto __cdecl :ptr
+g_io_channel_shutdown proto __cdecl :ptr, :gboolean, :ptr
+g_io_add_watch_full proto __cdecl :ptr, :gint, :GIOCondition, :GIOFunc, :gpointer, :GDestroyNotify
+g_io_create_watch proto __cdecl :ptr, :GIOCondition
+g_io_add_watch proto __cdecl :ptr, :GIOCondition, :GIOFunc, :gpointer
+g_io_channel_set_buffer_size proto __cdecl :ptr, :gsize
+g_io_channel_get_buffer_size proto __cdecl :ptr
+g_io_channel_get_buffer_condition proto __cdecl :ptr
+g_io_channel_set_flags proto __cdecl :ptr, :GIOFlags, :ptr
+g_io_channel_get_flags proto __cdecl :ptr
+g_io_channel_set_line_term proto __cdecl :ptr, :ptr, :gint
+g_io_channel_get_line_term proto __cdecl :ptr, :ptr
+g_io_channel_set_buffered proto __cdecl :ptr, :gboolean
+g_io_channel_get_buffered proto __cdecl :ptr
+g_io_channel_set_encoding proto __cdecl :ptr, :ptr, :ptr
+g_io_channel_get_encoding proto __cdecl :ptr
+g_io_channel_set_close_on_unref proto __cdecl :ptr, :gboolean
+g_io_channel_get_close_on_unref proto __cdecl :ptr
 
-;GIOChannel
-g_io_channel_ref proto __cdecl \
-	       channel: ptr GIOChannel
-
-;void
-g_io_channel_unref proto __cdecl \
-	       channel: ptr GIOChannel
-
-
-g_io_channel_read proto __cdecl \
-	       channel: ptr GIOChannel,
-		   buf: ptr gchar,
-		 count: gsize,
-	    bytes_read: ptr gsize
-
-g_io_channel_write proto __cdecl \
-	       channel: ptr GIOChannel,
-		   buf: ptr gchar,
-		 count: gsize,
-	 bytes_written: ptr gsize
-
-g_io_channel_seek proto __cdecl \
-	       channel: ptr GIOChannel,
-		  offs: gint64,
-		  type: GSeekType
-
-;void
-g_io_channel_close proto __cdecl \
-	       channel: ptr GIOChannel
-
-
-;GIOStatus
-g_io_channel_shutdown proto __cdecl \
-	       channel: ptr GIOChannel,
-		 flush: gboolean,
-		   err: ptr GError
-
-;guint
-g_io_add_watch_full proto __cdecl \
-	       channel: ptr GIOChannel,
-	      priority: gint,
-	     condition: GIOCondition,
-		  func: GIOFunc,
-	     user_data: gpointer,
-		notify: GDestroyNotify
-
-;GSource
-g_io_create_watch proto __cdecl \
-	       channel: ptr GIOChannel,
-	     condition: GIOCondition
-
-;guint
-g_io_add_watch proto __cdecl \
-	       channel: ptr GIOChannel,
-	     condition: GIOCondition,
-		  func: GIOFunc,
-	     user_data: gpointer
-
-
-;void
-g_io_channel_set_buffer_size proto __cdecl \
-	       channel: ptr GIOChannel,
-		  size: gsize
-
-;gsize
-g_io_channel_get_buffer_size proto __cdecl \
-	       channel: ptr GIOChannel
-
-;GIOCondition
-g_io_channel_get_buffer_condition proto __cdecl \
-	       channel: ptr GIOChannel
-
-;GIOStatus
-g_io_channel_set_flags proto __cdecl \
-	       channel: ptr GIOChannel,
-		 flags: GIOFlags,
-		 error: ptr GError
-
-;GIOFlags
-g_io_channel_get_flags proto __cdecl \
-	       channel: ptr GIOChannel
-
-;void
-g_io_channel_set_line_term proto __cdecl \
-	       channel: ptr GIOChannel,
-	     line_term: ptr gchar,
-		length: gint
-
-;const
-g_io_channel_get_line_term proto __cdecl \
-	       channel: ptr GIOChannel,
-		length: ptr gint
-
-;void
-g_io_channel_set_buffered proto __cdecl \
-	       channel: ptr GIOChannel,
-	      buffered: gboolean
-
-;gboolean
-g_io_channel_get_buffered proto __cdecl \
-	       channel: ptr GIOChannel
-
-;GIOStatus
-g_io_channel_set_encoding proto __cdecl \
-	       channel: ptr GIOChannel,
-	      encoding: ptr gchar,
-		 error: ptr GError
-
-;const
-g_io_channel_get_encoding proto __cdecl \
-	       channel: ptr GIOChannel
-
-;void
-g_io_channel_set_close_on_unref proto __cdecl \
-	       channel: ptr GIOChannel,
-	      do_close: gboolean
-
-;gboolean
-g_io_channel_get_close_on_unref proto __cdecl \
-	       channel: ptr GIOChannel
-
-
-
-;GIOStatus
-g_io_channel_flush proto __cdecl \
-	       channel: ptr GIOChannel,
-		 error: ptr GError
-
-;GIOStatus
-g_io_channel_read_line proto __cdecl \
-	       channel: ptr GIOChannel,
-	    str_return: ptr gchar,
-		length: ptr gsize,
-	terminator_pos: ptr gsize,
-		 error: ptr GError
-
-;GIOStatus
-g_io_channel_read_line_string proto __cdecl \
-	       channel: ptr GIOChannel,
-		buffer: ptr GString,
-	terminator_pos: ptr gsize,
-		 error: ptr GError
-
-;GIOStatus
-g_io_channel_read_to_end proto __cdecl \
-	       channel: ptr GIOChannel,
-	    str_return: ptr gchar,
-		length: ptr gsize,
-		 error: ptr GError
-
-;GIOStatus
-g_io_channel_read_chars proto __cdecl \
-	       channel: ptr GIOChannel,
-		   buf: ptr gchar,
-		 count: gsize,
-	    bytes_read: ptr gsize,
-		 error: ptr GError
-
-;GIOStatus
-g_io_channel_read_unichar proto __cdecl \
-	       channel: ptr GIOChannel,
-	       thechar: ptr gunichar,
-		 error: ptr GError
-
-;GIOStatus
-g_io_channel_write_chars proto __cdecl \
-	       channel: ptr GIOChannel,
-		   buf: ptr gchar,
-		 count: gssize,
-	 bytes_written: ptr gsize,
-		 error: ptr GError
-
-;GIOStatus
-g_io_channel_write_unichar proto __cdecl \
-	       channel: ptr GIOChannel,
-	       thechar: gunichar,
-		 error: ptr GError
-
-;GIOStatus
-g_io_channel_seek_position proto __cdecl \
-	       channel: ptr GIOChannel,
-		  offs: gint64,
-		  type: GSeekType,
-		 error: ptr GError
-
-;GIOChannel*
-g_io_channel_new_file proto __cdecl \
-	      filename: ptr gchar,
-		  mode: ptr gchar,
-		 error: ptr GError
-
-
-;GQuark
+g_io_channel_flush proto __cdecl :ptr, :ptr
+g_io_channel_read_line proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+g_io_channel_read_line_string proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_io_channel_read_to_end proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_io_channel_read_chars proto __cdecl :ptr, :ptr, :gsize, :ptr, :ptr
+g_io_channel_read_unichar proto __cdecl :ptr, :ptr, :ptr
+g_io_channel_write_chars proto __cdecl :ptr, :ptr, :gssize, :ptr, :ptr
+g_io_channel_write_unichar proto __cdecl :ptr, :gunichar, :ptr
+g_io_channel_seek_position proto __cdecl :ptr, :gint64, :GSeekType, :ptr
+g_io_channel_new_file proto __cdecl :ptr, :ptr, :ptr
 g_io_channel_error_quark proto __cdecl
-;GIOChannelError
-g_io_channel_error_from_errno proto __cdecl \
-		    en: gint
-
-
-;GIOChannel*
-g_io_channel_unix_new proto __cdecl \
-		    fd: SINT
-
-;gint
-g_io_channel_unix_get_fd proto __cdecl \
-	       channel: ptr GIOChannel
-
-
-
-
-;GLIB_VAR GSourceFuncs g_io_watch_funcs;
+g_io_channel_error_from_errno proto __cdecl :gint
+g_io_channel_unix_new proto __cdecl :SINT
+g_io_channel_unix_get_fd proto __cdecl :ptr
 
 ifdef G_OS_WIN32
 
 define G_WIN32_MSG_HANDLE 19981206
 
-;void
-g_io_channel_win32_make_pollfd proto __cdecl \
-	       channel: ptr GIOChannel,
-	     condition: GIOCondition,
-		    fd: ptr GPollFD
-
-
-;gint
-g_io_channel_win32_poll proto __cdecl \
-		   fds: ptr GPollFD,
-		 n_fds: gint,
-	      timeout_: gint
-
-
+g_io_channel_win32_make_pollfd proto __cdecl :ptr, :GIOCondition, :ptr
+g_io_channel_win32_poll proto __cdecl :ptr, :gint, :gint
 
 if GLIB_SIZEOF_VOID_P EQ 8
-;GIOChannel
-g_io_channel_win32_new_messages proto __cdecl \
-		  hwnd: gsize
-
+g_io_channel_win32_new_messages proto __cdecl :gsize
 else
-;GIOChannel
-g_io_channel_win32_new_messages proto __cdecl \
-		  hwnd: guint
-
+g_io_channel_win32_new_messages proto __cdecl :guint
 endif
-
-;GIOChannel*
-g_io_channel_win32_new_fd proto __cdecl \
-		    fd: gint
-
-
-
-;gint
-g_io_channel_win32_get_fd proto __cdecl \
-	       channel: ptr GIOChannel
-
-
-;GIOChannel
-g_io_channel_win32_new_socket proto __cdecl \
-		socket: gint
-
-
-g_io_channel_win32_new_stream_socket proto __cdecl \
-		socket: gint
-
-;void
-g_io_channel_win32_set_debug proto __cdecl \
-	       channel: ptr GIOChannel,
-		  flag: gboolean
-
+g_io_channel_win32_new_fd proto __cdecl :gint
+g_io_channel_win32_get_fd proto __cdecl :ptr
+g_io_channel_win32_new_socket proto __cdecl :gint
+g_io_channel_win32_new_stream_socket proto __cdecl :gint
+g_io_channel_win32_set_debug proto __cdecl :ptr, :gboolean
 endif
 
 endif

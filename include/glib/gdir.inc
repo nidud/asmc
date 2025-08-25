@@ -11,9 +11,9 @@ ifdef G_OS_UNIX
 include direct.inc
 endif
 
-g_dir_open      proto __cdecl :ptr gchar, :guint, :ptr GError
-g_dir_read_name proto __cdecl :ptr GDir
-g_dir_rewind    proto __cdecl :ptr GDir
-g_dir_close     proto __cdecl :ptr GDir
+g_dir_open      proto __cdecl :ptr, :guint, :ptr
+g_dir_read_name proto __cdecl :ptr
+g_dir_rewind    proto __cdecl :ptr
+g_dir_close     proto __cdecl :ptr
 
 endif

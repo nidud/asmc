@@ -9,8 +9,6 @@ ifdef FREETYPE_H
 .err <"so that freetype.h of FreeType 2 is found first.">
 endif
 
-FT_Outline_Get_BBox proto \
-               outline: ptr FT_Outline,
-                 abbox: ptr FT_BBox
+FT_Outline_Get_BBox proto :ptr, :ptr
 
 endif

@@ -53,7 +53,7 @@ CALLBACKC(GFunc, :gpointer, :gpointer)
 CALLBACKC(GHashFunc, :gconstpointer)
 CALLBACKC(GHFunc, :gpointer, :gpointer, :gpointer)
 CALLBACKC(GFreeFunc, :gpointer)
-CALLBACKC(GTranslateFunc, :ptr gchar, :gpointer)
+CALLBACKC(GTranslateFunc, :ptr, :gpointer)
 
 define G_E     2.7182818284590452353602874713526624977572470937000
 define G_LN2   0.69314718055994530941723212145817656807550013436026

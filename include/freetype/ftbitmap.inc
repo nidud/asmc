@@ -10,42 +10,13 @@ ifdef FREETYPE_H
 .err <"so that freetype.h of FreeType 2 is found first.">
 endif
 
-FT_Bitmap_Init proto \
-               abitmap: ptr FT_Bitmap
-
-FT_Bitmap_New proto \
-               abitmap: ptr FT_Bitmap
-
-FT_Bitmap_Copy proto \
-               library: FT_Library,
-                source: ptr FT_Bitmap,
-                target: ptr FT_Bitmap
-
-FT_Bitmap_Embolden proto \
-               library: FT_Library,
-                bitmap: ptr FT_Bitmap,
-             xStrength: FT_Pos,
-             yStrength: FT_Pos
-
-FT_Bitmap_Convert proto \
-               library: FT_Library,
-                source: ptr FT_Bitmap,
-                target: ptr FT_Bitmap,
-             alignment: FT_Int
-
-FT_Bitmap_Blend proto \
-               library: FT_Library,
-                source: ptr FT_Bitmap,
-         source_offset: FT_Vector,
-                target: ptr FT_Bitmap,
-        atarget_offset: ptr FT_Vector,
-                 color: FT_Color
-
-FT_GlyphSlot_Own_Bitmap proto \
-                  slot: FT_GlyphSlot
-
-FT_Bitmap_Done proto \
-               library: FT_Library,
-                bitmap: ptr FT_Bitmap
+FT_Bitmap_Init proto :ptr
+FT_Bitmap_New proto :ptr
+FT_Bitmap_Copy proto :FT_Library, :ptr, :ptr
+FT_Bitmap_Embolden proto :FT_Library, :ptr, :FT_Pos, :FT_Pos
+FT_Bitmap_Convert proto :FT_Library, :ptr, :ptr, :FT_Int
+FT_Bitmap_Blend proto :FT_Library, :ptr, :FT_Vector, :ptr, :ptr, :FT_Color
+FT_GlyphSlot_Own_Bitmap proto :FT_GlyphSlot
+FT_Bitmap_Done proto :FT_Library, :ptr
 
 endif

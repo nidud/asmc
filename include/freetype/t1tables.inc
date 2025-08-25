@@ -10,11 +10,11 @@ ifdef FREETYPE_H
 endif
 
 PS_FontInfoRec		STRUC
-version			ptr FT_String ?
-notice			ptr FT_String ?
-full_name		ptr FT_String ?
-family_name		ptr FT_String ?
-weight			ptr FT_String ?
+version			ptr_t ?
+notice			ptr_t ?
+full_name		ptr_t ?
+family_name		ptr_t ?
+weight			ptr_t ?
 italic_angle		FT_Long ?
 is_fixed_pitch		FT_Bool ?
 underline_position	FT_Short ?
@@ -159,16 +159,9 @@ CID_FaceInfoRec		ENDS
 CID_FaceInfo		typedef ptr CID_FaceInfoRec
 CID_Info		typedef CID_FaceInfoRec
 
-FT_Has_PS_Glyph_Names proto \
-		  face: FT_Face
-
-FT_Get_PS_Font_Info proto \
-		  face: FT_Face,
-	    afont_info: PS_FontInfo
-
-FT_Get_PS_Font_Private proto \
-		  face: FT_Face,
-	 afont_private: PS_Private
+FT_Has_PS_Glyph_Names proto :FT_Face
+FT_Get_PS_Font_Info proto :FT_Face, :PS_FontInfo
+FT_Get_PS_Font_Private proto :FT_Face, :PS_Private
 
 .enum T1_EncodingType {
     T1_ENCODING_TYPE_NONE = 0,
@@ -228,12 +221,6 @@ FT_Get_PS_Font_Private proto \
     PS_DICT_MAX = PS_DICT_ITALIC_ANGLE
     }
 
-
-FT_Get_PS_Font_Value proto \
-		  face: FT_Face,
-		   key: PS_Dict_Keys,
-		   idx: FT_UInt,
-		 value: ptr void,
-	     value_len: FT_Long
+FT_Get_PS_Font_Value proto :FT_Face, :PS_Dict_Keys, :FT_UInt, :ptr, :FT_Long
 
 endif

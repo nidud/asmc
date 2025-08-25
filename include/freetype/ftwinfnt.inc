@@ -70,8 +70,6 @@ FT_WinFNT_HeaderRec	ENDS
 
 FT_WinFNT_Header	typedef ptr FT_WinFNT_HeaderRec
 
-FT_Get_WinFNT_Header proto \
-		  face: FT_Face,
-	       aheader: ptr FT_WinFNT_HeaderRec
+FT_Get_WinFNT_Header proto :FT_Face, :ptr
 
 endif

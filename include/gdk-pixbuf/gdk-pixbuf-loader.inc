@@ -36,53 +36,22 @@ GdkPixbufLoader		ENDS
 
 GdkPixbufLoaderClass	STRUC
 parent_class		GObjectClass <>
-size_prepared		proc :ptr GdkPixbufLoader, :SINT, :SINT
-area_prepared		proc :ptr GdkPixbufLoader
-area_updated		proc :ptr GdkPixbufLoader, :SINT, :SINT, :SINT, :SINT
-closed			proc :ptr GdkPixbufLoader
+size_prepared		proc :ptr, :SINT, :SINT
+area_prepared		proc :ptr
+area_updated		proc :ptr, :SINT, :SINT, :SINT, :SINT
+closed			proc :ptr
 GdkPixbufLoaderClass	ENDS
 
 gdk_pixbuf_loader_get_type proto __cdecl
 gdk_pixbuf_loader_new proto __cdecl
-
-gdk_pixbuf_loader_new_with_type proto __cdecl \
-	    image_type: ptr char_t,
-		 error: ptr GError
-
-gdk_pixbuf_loader_new_with_mime_type proto __cdecl \
-	     mime_type: ptr char_t,
-		 error: ptr GError
-
-gdk_pixbuf_loader_set_size proto __cdecl \
-		loader: ptr GdkPixbufLoader,
-		 width: SINT,
-		height: SINT
-
-gdk_pixbuf_loader_write proto __cdecl \
-		loader: ptr GdkPixbufLoader,
-		   buf: ptr guchar,
-		 count: gsize,
-		 error: ptr GError
-
-gdk_pixbuf_loader_write_bytes proto __cdecl \
-		loader: ptr GdkPixbufLoader,
-		buffer: ptr GBytes,
-		 error: ptr GError
-
-gdk_pixbuf_loader_get_pixbuf proto __cdecl \
-		loader: ptr GdkPixbufLoader
-
-gdk_pixbuf_loader_get_animation proto __cdecl \
-		loader: ptr GdkPixbufLoader
-
-gdk_pixbuf_loader_close proto __cdecl \
-		loader: ptr GdkPixbufLoader,
-		 error: ptr GError
-
-gdk_pixbuf_loader_get_format proto __cdecl \
-		loader: ptr GdkPixbufLoader
-
+gdk_pixbuf_loader_new_with_type proto __cdecl :ptr, :ptr
+gdk_pixbuf_loader_new_with_mime_type proto __cdecl :ptr, :ptr
+gdk_pixbuf_loader_set_size proto __cdecl :ptr, :SINT, :SINT
+gdk_pixbuf_loader_write proto __cdecl :ptr, :ptr, :gsize, :ptr
+gdk_pixbuf_loader_write_bytes proto __cdecl :ptr, :ptr, :ptr
+gdk_pixbuf_loader_get_pixbuf proto __cdecl :ptr
+gdk_pixbuf_loader_get_animation proto __cdecl :ptr
+gdk_pixbuf_loader_close proto __cdecl :ptr, :ptr
+gdk_pixbuf_loader_get_format proto __cdecl :ptr
 
 endif
-
-

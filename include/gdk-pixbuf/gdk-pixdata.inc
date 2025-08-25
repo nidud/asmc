@@ -29,26 +29,10 @@ GdkPixdata		ENDS
 
 GDK_PIXDATA_HEADER_LENGTH equ (4 + 4 + 4 + 4 + 4 + 4)
 
-
-gdk_pixdata_serialize proto __cdecl \
-	       pixdata: ptr GdkPixdata,
-       stream_length_p: ptr guint
-
-gdk_pixdata_deserialize proto __cdecl \
-	       pixdata: ptr GdkPixdata,
-	 stream_length: guint,
-		stream: ptr guint8,
-		 error: ptr GError
-
-gdk_pixdata_from_pixbuf proto __cdecl \
-	       pixdata: ptr GdkPixdata,
-		pixbuf: ptr GdkPixbuf,
-	       use_rle: gboolean
-
-gdk_pixbuf_from_pixdata proto __cdecl \
-	       pixdata: ptr GdkPixdata,
-	   copy_pixels: gboolean,
-		 error: ptr GError
+gdk_pixdata_serialize proto __cdecl :ptr, :ptr
+gdk_pixdata_deserialize proto __cdecl :ptr, :guint, :ptr, :ptr
+gdk_pixdata_from_pixbuf proto __cdecl :ptr, :ptr, :gboolean
+gdk_pixbuf_from_pixdata proto __cdecl :ptr, :gboolean, :ptr
 
 .enum GdkPixdataDumpType {
     GDK_PIXDATA_DUMP_PIXDATA_STREAM	= 0,
@@ -61,12 +45,7 @@ gdk_pixbuf_from_pixdata proto __cdecl \
     GDK_PIXDATA_DUMP_RLE_DECODER	= 1 shl 16
     }
 
-
-gdk_pixdata_to_csource proto __cdecl \
-	       pixdata: ptr GdkPixdata,
-		  name: ptr gchar,
-	     dump_type: GdkPixdataDumpType
-
+gdk_pixdata_to_csource proto __cdecl :ptr, :ptr, :GdkPixdataDumpType
 
 endif
 

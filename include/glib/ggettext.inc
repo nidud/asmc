@@ -7,39 +7,11 @@ endif
 
 include glib/gtypes.inc
 
-;const
-g_strip_context proto __cdecl \
-                 msgid: ptr gchar,
-                msgval: ptr gchar
-
-;const
-g_dgettext proto __cdecl \
-                domain: ptr gchar,
-                 msgid: ptr gchar
-
-;const
-g_dcgettext proto __cdecl \
-                domain: ptr gchar,
-                 msgid: ptr gchar,
-              category: gint
-
-;const
-g_dngettext proto __cdecl \
-                domain: ptr gchar,
-                 msgid: ptr gchar,
-          msgid_plural: ptr gchar,
-                     n: gulong
-
-;const
-g_dpgettext proto __cdecl \
-                domain: ptr gchar,
-             msgctxtid: ptr gchar,
-           msgidoffset: gsize
-
-;const
-g_dpgettext2 proto __cdecl \
-                domain: ptr gchar,
-               context: ptr gchar,
-                 msgid: ptr gchar
+g_strip_context proto __cdecl :ptr, :ptr
+g_dgettext proto __cdecl :ptr, :ptr
+g_dcgettext proto __cdecl :ptr, :ptr, :gint
+g_dngettext proto __cdecl :ptr, :ptr, :ptr, :gulong
+g_dpgettext proto __cdecl :ptr, :ptr, :gsize
+g_dpgettext2 proto __cdecl :ptr, :ptr, :ptr
 
 endif

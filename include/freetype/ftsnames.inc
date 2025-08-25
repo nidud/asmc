@@ -19,22 +19,14 @@ string			ptr FT_Byte ?
 string_len		FT_UInt ?
 FT_SfntName		ENDS
 
-FT_Get_Sfnt_Name_Count proto \
-		  face: FT_Face
-
-FT_Get_Sfnt_Name proto \
-		  face: FT_Face,
-		   idx: FT_UInt,
-		 aname: ptr FT_SfntName
+FT_Get_Sfnt_Name_Count proto :FT_Face
+FT_Get_Sfnt_Name proto :FT_Face, :FT_UInt, :ptr
 
 FT_SfntLangTag		STRUC
 string			ptr FT_Byte ?
 string_len		FT_UInt ?
 FT_SfntLangTag		ENDS
 
-FT_Get_Sfnt_LangTag proto \
-		  face: FT_Face,
-		langID: FT_UInt,
-	      alangTag: ptr FT_SfntLangTag
+FT_Get_Sfnt_LangTag proto :FT_Face, :FT_UInt, :ptr
 
 endif

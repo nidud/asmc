@@ -24,25 +24,13 @@ guint8  typedef byte
 gint16  typedef sword
 guint16 typedef word
 
-define G_GINT16_MODIFIER    <"h">
-define G_GINT16_FORMAT      <"hi">
-define G_GUINT16_FORMAT     <"hu">
-
 gint32  typedef sdword
 guint32 typedef dword
-
-define G_GINT32_MODIFIER    <"">
-define G_GINT32_FORMAT      <"i">
-define G_GUINT32_FORMAT     <"u">
 
 define G_HAVE_GINT64 1
 
 gint64  typedef sqword
 guint64 typedef qword
-
-define G_GINT64_MODIFIER    <"ll">
-define G_GINT64_FORMAT      <"lli">
-define G_GUINT64_FORMAT     <"llu">
 
 define GLIB_SIZEOF_VOID_P   8
 define GLIB_SIZEOF_LONG     4
@@ -51,10 +39,6 @@ define GLIB_SIZEOF_SSIZE_T  8
 
 gssize  typedef sqword
 gsize   typedef qword
-
-define G_GSIZE_MODIFIER <"ll">
-define G_GSSIZE_FORMAT  <"lli">
-define G_GSIZE_FORMAT   <"llu">
 
 define G_MAXSIZE        G_MAXUINT64
 define G_MINSSIZE       G_MININT64
@@ -67,8 +51,6 @@ define G_MAXOFFSET      G_MAXINT64
 
 define G_GOFFSET_MODIFIER G_GINT64_MODIFIER
 define G_GOFFSET_FORMAT G_GINT64_FORMAT
-
-define G_POLLFD_FORMAT  <"%#llx">
 
 gintptr typedef sqword
 guintptr typedef qword

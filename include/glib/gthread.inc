@@ -1,5 +1,5 @@
 ifndef __G_THREAD_H__
-__G_THREAD_H__ equ <>
+define __G_THREAD_H__
 if NOT defined (__GLIB_H_INSIDE__) AND NOT defined (GLIB_COMPILATION)
 .err <"Only glib.h can be included directly.">
 endif
@@ -76,158 +76,47 @@ G_LOCK_EXTERN macro name
 	exitm<extern GMutex G_LOCK_NAME (name)>
 	endm
 
-ifdef G_DEBUG_LOCKS
-else
-endif
-
-;GThread
-g_thread_ref proto __cdecl \
-		thread: ptr GThread
-
-g_thread_unref proto __cdecl \
-		thread: ptr GThread
-
-g_thread_new proto __cdecl \
-		  name: ptr gchar,
-		  func: GThreadFunc,
-		  data: gpointer
-
-g_thread_try_new proto __cdecl \
-		  name: ptr gchar,
-		  func: GThreadFunc,
-		  data: gpointer,
-		 error: ptr GError
-
+g_thread_ref proto __cdecl :ptr
+g_thread_unref proto __cdecl :ptr
+g_thread_new proto __cdecl :ptr, :GThreadFunc, :ptr
+g_thread_try_new proto __cdecl :ptr, :GThreadFunc, :ptr, :ptr
 g_thread_self proto __cdecl
-
-g_thread_exit proto __cdecl \
-		retval: gpointer
-
-;gpointer
-g_thread_join proto __cdecl \
-		thread: ptr GThread
-
+g_thread_exit proto __cdecl :ptr
+g_thread_join proto __cdecl :ptr
 g_thread_yield proto __cdecl
+g_mutex_init proto __cdecl :ptr
+g_mutex_clear proto __cdecl :ptr
+g_mutex_lock proto __cdecl :ptr
+g_mutex_trylock proto __cdecl :ptr
+g_mutex_unlock proto __cdecl :ptr
+g_rw_lock_init proto __cdecl :ptr
+g_rw_lock_clear proto __cdecl :ptr
+g_rw_lock_writer_lock proto __cdecl :ptr
+g_rw_lock_writer_trylock proto __cdecl :ptr
+g_rw_lock_writer_unlock proto __cdecl :ptr
+g_rw_lock_reader_lock proto __cdecl :ptr
+g_rw_lock_reader_trylock proto __cdecl :ptr
+g_rw_lock_reader_unlock proto __cdecl :ptr
+g_rec_mutex_init proto __cdecl :ptr
+g_rec_mutex_clear proto __cdecl :ptr
+g_rec_mutex_lock proto __cdecl :ptr
+g_rec_mutex_trylock proto __cdecl :ptr
+g_rec_mutex_unlock proto __cdecl :ptr
+g_cond_init proto __cdecl :ptr
+g_cond_clear proto __cdecl :ptr
+g_cond_wait proto __cdecl :ptr, :ptr
+g_cond_signal proto __cdecl :ptr
+g_cond_broadcast proto __cdecl :ptr
+g_cond_wait_until proto __cdecl :ptr, :ptr, :gint64
+g_private_get proto __cdecl :ptr
+g_private_set proto __cdecl :ptr, :ptr
+g_private_replace proto __cdecl :ptr, :ptr
 
-g_mutex_init proto __cdecl \
-		 mutex: ptr GMutex
-
-g_mutex_clear proto __cdecl \
-		 mutex: ptr GMutex
-
-g_mutex_lock proto __cdecl \
-		 mutex: ptr GMutex
-
-;gboolean
-g_mutex_trylock proto __cdecl \
-		 mutex: ptr GMutex
-
-g_mutex_unlock proto __cdecl \
-		 mutex: ptr GMutex
-
-g_rw_lock_init proto __cdecl \
-	       rw_lock: ptr GRWLock
-
-g_rw_lock_clear proto __cdecl \
-	       rw_lock: ptr GRWLock
-
-g_rw_lock_writer_lock proto __cdecl \
-	       rw_lock: ptr GRWLock
-
-;gboolean
-g_rw_lock_writer_trylock proto __cdecl \
-	       rw_lock: ptr GRWLock
-
-g_rw_lock_writer_unlock proto __cdecl \
-	       rw_lock: ptr GRWLock
-
-g_rw_lock_reader_lock proto __cdecl \
-	       rw_lock: ptr GRWLock
-
-;gboolean
-g_rw_lock_reader_trylock proto __cdecl \
-	       rw_lock: ptr GRWLock
-
-g_rw_lock_reader_unlock proto __cdecl \
-	       rw_lock: ptr GRWLock
-
-g_rec_mutex_init proto __cdecl \
-	     rec_mutex: ptr GRecMutex
-
-g_rec_mutex_clear proto __cdecl \
-	     rec_mutex: ptr GRecMutex
-
-g_rec_mutex_lock proto __cdecl \
-	     rec_mutex: ptr GRecMutex
-
-;gboolean
-g_rec_mutex_trylock proto __cdecl \
-	     rec_mutex: ptr GRecMutex
-
-g_rec_mutex_unlock proto __cdecl \
-	     rec_mutex: ptr GRecMutex
-
-g_cond_init proto __cdecl \
-		  cond: ptr GCond
-
-g_cond_clear proto __cdecl \
-		  cond: ptr GCond
-
-g_cond_wait proto __cdecl \
-		  cond: ptr GCond,
-		 mutex: ptr GMutex
-
-g_cond_signal proto __cdecl \
-		  cond: ptr GCond
-
-g_cond_broadcast proto __cdecl \
-		  cond: ptr GCond
-
-;gboolean
-g_cond_wait_until proto __cdecl \
-		  cond: ptr GCond,
-		 mutex: ptr GMutex,
-	      end_time: gint64
-
-;gpointer
-g_private_get proto __cdecl \
-		   key: ptr GPrivate
-
-g_private_set proto __cdecl \
-		   key: ptr GPrivate,
-		 value: gpointer
-
-g_private_replace proto __cdecl \
-		   key: ptr GPrivate,
-		 value: gpointer
-
-
-;gpointer
-g_once_impl proto __cdecl \
-		  once: ptr GOnce,
-		  func: GThreadFunc,
-		   arg: gpointer
-
-;gboolean
-g_once_init_enter proto __cdecl \
-	      location: ptr
-
-g_once_init_leave proto __cdecl \
-	      location: ptr,
-		result: gsize
-
-
-ifdef G_ATOMIC_OP_MEMORY_BARRIER_NEEDED
-else
-endif
-
-ifdef __GNUC__
-else
-endif
-
-;guint
+g_once_impl proto __cdecl :ptr, :GThreadFunc, :ptr
+g_once_init_enter proto __cdecl :ptr
+g_once_init_leave proto __cdecl :ptr, :gsize
 g_get_num_processors proto __cdecl
 
-GMutexLocker		equ <>
+GMutexLocker equ <>
 
 endif

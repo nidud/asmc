@@ -24,7 +24,7 @@ include gtk/gtkenums.inc
 
 define GTK_TYPE_SORTER <gtk_sorter_get_type ()>
 
-_GtkSorterClass         struct
+GtkSorterClass          struct
 parent_class            GObjectClass <>
 compare                 proc :ptr, :gpointer, :gpointer
 get_order               proc :ptr
@@ -36,11 +36,10 @@ _gtk_reserved5          proc
 _gtk_reserved6          proc
 _gtk_reserved7          proc
 _gtk_reserved8          proc
-_GtkSorterClass         ends
+GtkSorterClass          ends
 
 gtk_sorter_compare proto :ptr, :gpointer, :gpointer
 gtk_sorter_get_order proto :ptr
-
 gtk_sorter_changed proto :ptr, :GtkSorterChange
 
 endif

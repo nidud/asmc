@@ -20,22 +20,9 @@ include glib.inc
 include pango/pango-matrix.inc
 include pango/pango-script.inc
 
-pango_gravity_to_rotation proto __cdecl \
-	       gravity: PangoGravity
-
-pango_gravity_get_for_matrix proto __cdecl \
-		matrix: ptr PangoMatrix
-
-pango_gravity_get_for_script proto __cdecl \
-		script: PangoScript,
-	  base_gravity: PangoGravity,
-		  hint: PangoGravityHint
-
-pango_gravity_get_for_script_and_width proto __cdecl \
-		script: PangoScript,
-		  wide: gboolean,
-	  base_gravity: PangoGravity,
-		  hint: PangoGravityHint
-
+pango_gravity_to_rotation proto __cdecl :PangoGravity
+pango_gravity_get_for_matrix proto __cdecl :ptr
+pango_gravity_get_for_script proto __cdecl :PangoScript, :PangoGravity, :PangoGravityHint
+pango_gravity_get_for_script_and_width proto __cdecl :PangoScript, :gboolean, :PangoGravity, :PangoGravityHint
 
 endif

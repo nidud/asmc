@@ -9,7 +9,7 @@ include gtk/gtkwindow.inc
 
 define GTK_TYPE_NATIVE_DIALOG <gtk_native_dialog_get_type ()>
 
-_GtkNativeDialogClass   struct
+GtkNativeDialogClass    struct
 parent_class            GObjectClass <>
 response                proc :ptr, :sdword
 show                    proc :ptr
@@ -18,7 +18,7 @@ _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkNativeDialogClass   ends
+GtkNativeDialogClass    ends
 
 gtk_native_dialog_show proto :ptr
 gtk_native_dialog_hide proto :ptr

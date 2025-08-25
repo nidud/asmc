@@ -11,17 +11,7 @@ endif
 
 define FT_ADVANCE_FLAG_FAST_ONLY  0x20000000
 
-FT_Get_Advance proto \
-                  face: FT_Face,
-                gindex: FT_UInt,
-            load_flags: FT_Int32,
-              padvance: ptr FT_Fixed
-
-FT_Get_Advances proto \
-                  face: FT_Face,
-                 start: FT_UInt,
-                 count: FT_UInt,
-            load_flags: FT_Int32,
-             padvances: ptr FT_Fixed
+FT_Get_Advance proto :FT_Face, :FT_UInt, :FT_Int32, :ptr
+FT_Get_Advances proto :FT_Face, :FT_UInt, :FT_UInt, :FT_Int32, :ptr
 
 endif

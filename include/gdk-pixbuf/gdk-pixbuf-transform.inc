@@ -23,78 +23,12 @@ include gdk-pixbuf/gdk-pixbuf-core.inc
     GDK_PIXBUF_ROTATE_CLOCKWISE		= 270
     }
 
-
-gdk_pixbuf_scale proto __cdecl \
-		   src: ptr GdkPixbuf,
-		  dest: ptr GdkPixbuf,
-		dest_x: SINT,
-		dest_y: SINT,
-	    dest_width: SINT,
-	   dest_height: SINT,
-	      offset_x: double,
-	      offset_y: double,
-	       scale_x: double,
-	       scale_y: double,
-	   interp_type: GdkInterpType
-
-gdk_pixbuf_composite proto __cdecl \
-		   src: ptr GdkPixbuf,
-		  dest: ptr GdkPixbuf,
-		dest_x: SINT,
-		dest_y: SINT,
-	    dest_width: SINT,
-	   dest_height: SINT,
-	      offset_x: double,
-	      offset_y: double,
-	       scale_x: double,
-	       scale_y: double,
-	   interp_type: GdkInterpType,
-	 overall_alpha: SINT
-
-gdk_pixbuf_composite_color proto __cdecl \
-		   src: ptr GdkPixbuf,
-		  dest: ptr GdkPixbuf,
-		dest_x: SINT,
-		dest_y: SINT,
-	    dest_width: SINT,
-	   dest_height: SINT,
-	      offset_x: double,
-	      offset_y: double,
-	       scale_x: double,
-	       scale_y: double,
-	   interp_type: GdkInterpType,
-	 overall_alpha: SINT,
-	       check_x: SINT,
-	       check_y: SINT,
-	    check_size: SINT,
-		color1: guint32,
-		color2: guint32
-
-
-gdk_pixbuf_scale_simple proto __cdecl \
-		   src: ptr GdkPixbuf,
-	    dest_width: SINT,
-	   dest_height: SINT,
-	   interp_type: GdkInterpType
-
-
-gdk_pixbuf_composite_color_simple proto __cdecl \
-		   src: ptr GdkPixbuf,
-	    dest_width: SINT,
-	   dest_height: SINT,
-	   interp_type: GdkInterpType,
-	 overall_alpha: SINT,
-	    check_size: SINT,
-		color1: guint32,
-		color2: guint32
-
-
-gdk_pixbuf_rotate_simple proto __cdecl \
-		   src: ptr GdkPixbuf,
-		 angle: GdkPixbufRotation
-
-gdk_pixbuf_flip proto __cdecl \
-		   src: ptr GdkPixbuf,
-	    horizontal: gboolean
+gdk_pixbuf_scale proto __cdecl :ptr, :ptr, :SINT, :SINT, :SINT, :SINT, :double, :double, :double, :double, :GdkInterpType
+gdk_pixbuf_composite proto __cdecl :ptr, :ptr, :SINT, :SINT, :SINT, :SINT, :double, :double, :double, :double, :GdkInterpType, :SINT
+gdk_pixbuf_composite_color proto __cdecl :ptr, :ptr, :SINT, :SINT, :SINT, :SINT, :double, :double, :double, :double, :GdkInterpType, :SINT, :SINT, :SINT, :SINT, :guint32, :guint32
+gdk_pixbuf_scale_simple proto __cdecl :ptr, :SINT, :SINT, :GdkInterpType
+gdk_pixbuf_composite_color_simple proto __cdecl :ptr, :SINT, :SINT, :GdkInterpType, :SINT, :SINT, :guint32, :guint32
+gdk_pixbuf_rotate_simple proto __cdecl :ptr, :GdkPixbufRotation
+gdk_pixbuf_flip proto __cdecl :ptr, :gboolean
 
 endif

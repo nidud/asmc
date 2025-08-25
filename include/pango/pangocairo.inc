@@ -40,138 +40,41 @@ PANGO_IS_CAIRO_FONT_MAP macro object
 	endm
 endif
 
-CALLBACKC(PangoCairoShapeRendererFunc, :ptr cairo_t, :ptr PangoAttrShape, :gboolean, :gpointer)
+CALLBACKC(PangoCairoShapeRendererFunc, :ptr, :ptr, :gboolean, :gpointer)
 
 pango_cairo_font_map_get_type proto __cdecl
 pango_cairo_font_map_new proto __cdecl
-pango_cairo_font_map_new_for_font_type proto __cdecl \
-	      fonttype: cairo_font_type_t
-
+pango_cairo_font_map_new_for_font_type proto __cdecl :cairo_font_type_t
 pango_cairo_font_map_get_default proto __cdecl
-
-;void
-pango_cairo_font_map_set_default proto __cdecl \
-	       fontmap: ptr PangoCairoFontMap
-
-
-pango_cairo_font_map_get_font_type proto __cdecl \
-	       fontmap: ptr PangoCairoFontMap
-
-;void
-pango_cairo_font_map_set_resolution proto __cdecl \
-	       fontmap: ptr PangoCairoFontMap,
-		   dpi: double
-
-
-pango_cairo_font_map_get_resolution proto __cdecl \
-	       fontmap: ptr PangoCairoFontMap
+pango_cairo_font_map_set_default proto __cdecl :ptr
+pango_cairo_font_map_get_font_type proto __cdecl :ptr
+pango_cairo_font_map_set_resolution proto __cdecl :ptr, :double
+pango_cairo_font_map_get_resolution proto __cdecl :ptr
 
 ifndef PANGO_DISABLE_DEPRECATED
-pango_cairo_font_map_create_context proto __cdecl \
-	       fontmap: ptr PangoCairoFontMap
+pango_cairo_font_map_create_context proto __cdecl :ptr
 endif
 
 pango_cairo_font_get_type proto __cdecl
-
-pango_cairo_font_get_scaled_font proto __cdecl \
-		  font: ptr PangoCairoFont
-
-;void
-pango_cairo_update_context proto __cdecl \
-		    cr: ptr cairo_t,
-	       context: ptr PangoContext
-
-;void
-pango_cairo_context_set_font_options proto __cdecl \
-	       context: ptr PangoContext,
-	       options: ptr cairo_font_options_t
-
-
-pango_cairo_context_get_font_options proto __cdecl \
-	       context: ptr PangoContext
-
-;void
-pango_cairo_context_set_resolution proto __cdecl \
-	       context: ptr PangoContext,
-		   dpi: double
-
-pango_cairo_context_get_resolution proto __cdecl \
-	       context: ptr PangoContext
-
-;void
-pango_cairo_context_set_shape_renderer proto __cdecl \
-	       context: ptr PangoContext,
-		  func: PangoCairoShapeRendererFunc,
-		  data: gpointer,
-	       dnotify: GDestroyNotify
-
-pango_cairo_context_get_shape_renderer proto __cdecl \
-	       context: ptr PangoContext,
-		  data: ptr gpointer
-
-pango_cairo_create_context proto __cdecl \
-		    cr: ptr cairo_t
-
-pango_cairo_create_layout proto __cdecl \
-		    cr: ptr cairo_t
-
-;void
-pango_cairo_update_layout proto __cdecl \
-		    cr: ptr cairo_t,
-		layout: ptr PangoLayout
-
-;void
-pango_cairo_show_glyph_string proto __cdecl \
-		    cr: ptr cairo_t,
-		  font: ptr PangoFont,
-		glyphs: ptr PangoGlyphString
-
-;void
-pango_cairo_show_glyph_item proto __cdecl \
-		    cr: ptr cairo_t,
-		  text: ptr char_t,
-	    glyph_item: ptr PangoGlyphItem
-
-;void
-pango_cairo_show_layout_line proto __cdecl \
-		    cr: ptr cairo_t,
-		  line: ptr PangoLayoutLine
-
-;void
-pango_cairo_show_layout proto __cdecl \
-		    cr: ptr cairo_t,
-		layout: ptr PangoLayout
-
-;void
-pango_cairo_show_error_underline proto __cdecl \
-		    cr: ptr cairo_t,
-		     x: double,
-		     y: double,
-		 width: double,
-		height: double
-
-;void
-pango_cairo_glyph_string_path proto __cdecl \
-		    cr: ptr cairo_t,
-		  font: ptr PangoFont,
-		glyphs: ptr PangoGlyphString
-
-;void
-pango_cairo_layout_line_path proto __cdecl \
-		    cr: ptr cairo_t,
-		  line: ptr PangoLayoutLine
-
-;void
-pango_cairo_layout_path proto __cdecl \
-		    cr: ptr cairo_t,
-		layout: ptr PangoLayout
-
-;void
-pango_cairo_error_underline_path proto __cdecl \
-		    cr: ptr cairo_t,
-		     x: double,
-		     y: double,
-		 width: double,
-		height: double
+pango_cairo_font_get_scaled_font proto __cdecl :ptr
+pango_cairo_update_context proto __cdecl :ptr, :ptr
+pango_cairo_context_set_font_options proto __cdecl :ptr, :ptr
+pango_cairo_context_get_font_options proto __cdecl :ptr
+pango_cairo_context_set_resolution proto __cdecl :ptr, :double
+pango_cairo_context_get_resolution proto __cdecl :ptr
+pango_cairo_context_set_shape_renderer proto __cdecl :ptr, :PangoCairoShapeRendererFunc, :gpointer, :GDestroyNotify
+pango_cairo_context_get_shape_renderer proto __cdecl :ptr, :ptr
+pango_cairo_create_context proto __cdecl :ptr
+pango_cairo_create_layout proto __cdecl :ptr
+pango_cairo_update_layout proto __cdecl :ptr, :ptr
+pango_cairo_show_glyph_string proto __cdecl :ptr, :ptr, :ptr
+pango_cairo_show_glyph_item proto __cdecl :ptr, :ptr, :ptr
+pango_cairo_show_layout_line proto __cdecl :ptr, :ptr
+pango_cairo_show_layout proto __cdecl :ptr, :ptr
+pango_cairo_show_error_underline proto __cdecl :ptr, :double, :double, :double, :double
+pango_cairo_glyph_string_path proto __cdecl :ptr, :ptr, :ptr
+pango_cairo_layout_line_path proto __cdecl :ptr, :ptr
+pango_cairo_layout_path proto __cdecl :ptr, :ptr
+pango_cairo_error_underline_path proto __cdecl :ptr, :double, :double, :double, :double
 
 endif

@@ -53,114 +53,25 @@ G_FILE_ERROR equ <g_file_error_quark>
     G_FILE_SET_CONTENTS_ONLY_EXISTING = 1 shl 2
     }
 
-;GQuark
 g_file_error_quark proto __cdecl
-
-;GFileError
-g_file_error_from_errno proto __cdecl \
-		err_no: gint
-
-
-;gboolean
-g_file_test proto __cdecl \
-	      filename: ptr gchar,
-		 _test: GFileTest
-
-;gboolean
-g_file_get_contents proto __cdecl \
-	      filename: ptr gchar,
-	      contents: ptr gchar,
-		length: ptr gsize,
-		 error: ptr GError
-
-;gboolean
-g_file_set_contents proto __cdecl \
-	      filename: ptr gchar,
-	      contents: ptr gchar,
-		length: gssize,
-		 error: ptr GError
-
-
-;gboolean
-g_file_set_contents_full proto __cdecl \
-	      filename: ptr gchar,
-	      contents: ptr gchar,
-		length: gssize,
-		 flags: GFileSetContentsFlags,
-		  mode: SINT,
-		 error: ptr GError
-
-
-;gchar
-g_file_read_link proto __cdecl \
-	      filename: ptr gchar,
-		 error: ptr GError
-
-;gchar
-g_mkdtemp proto __cdecl \
-		  tmpl: ptr gchar
-
-;gchar
-g_mkdtemp_full proto __cdecl \
-		  tmpl: ptr gchar,
-		  mode: gint
-
-;gint
-g_mkstemp proto __cdecl \
-		  tmpl: ptr gchar
-
-;gint
-g_mkstemp_full proto __cdecl \
-		  tmpl: ptr gchar,
-		 flags: gint,
-		  mode: gint
-
-
-
-;gint
-g_file_open_tmp proto __cdecl \
-		  tmpl: ptr gchar,
-	     name_used: ptr gchar,
-		 error: ptr GError
-
-;gchar
-g_dir_make_tmp proto __cdecl \
-		  tmpl: ptr gchar,
-		 error: ptr GError
-
-
-;gchar
-g_build_path proto __Cdecl \
-	     separator: ptr gchar,
-	 first_element: ptr gchar,
-		      : vararg
-
-;gchar
-g_build_pathv proto __cdecl \
-	     separator: ptr gchar,
-		  args: ptr gchar
-
-
-;gchar
-g_build_filename proto __Cdecl \
-	 first_element: ptr gchar,
-		      : vararg
-
-;gchar
-g_build_filenamev proto __cdecl \
-		  args: ptr gchar
-
-;gchar
-g_build_filename_valist proto __cdecl \
-	 first_element: ptr gchar,
-		  args: ptr va_list
-
-
-;gint
-g_mkdir_with_parents proto __cdecl \
-	      pathname: ptr gchar,
-		  mode: gint
-
+g_file_error_from_errno proto __cdecl :gint
+g_file_test proto __cdecl :ptr, :GFileTest
+g_file_get_contents proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_file_set_contents proto __cdecl :ptr, :ptr, :gssize, :ptr
+g_file_set_contents_full proto __cdecl :ptr, :ptr, :gssize, :GFileSetContentsFlags, :SINT, :ptr
+g_file_read_link proto __cdecl :ptr, :ptr
+g_mkdtemp proto __cdecl :ptr
+g_mkdtemp_full proto __cdecl :ptr, :gint
+g_mkstemp proto __cdecl :ptr
+g_mkstemp_full proto __cdecl :ptr, :gint, :gint
+g_file_open_tmp proto __cdecl :ptr, :ptr, :ptr
+g_dir_make_tmp proto __cdecl :ptr, :ptr
+g_build_path proto __Cdecl :ptr, :ptr, :vararg
+g_build_pathv proto __cdecl :ptr, :ptr
+g_build_filename proto __Cdecl :ptr, :vararg
+g_build_filenamev proto __cdecl :ptr
+g_build_filename_valist proto __cdecl :ptr, :ptr
+g_mkdir_with_parents proto __cdecl :ptr, :gint
 
 ifdef G_OS_WIN32
 
@@ -176,34 +87,15 @@ G_IS_DIR_SEPARATOR macro c
 
 endif
 
-;gboolean
-g_path_is_absolute proto __cdecl \
-	     file_name: ptr gchar
-
-;const
-g_path_skip_root proto __cdecl \
-	     file_name: ptr gchar
-
-
-g_basename proto __cdecl \
-	     file_name: ptr gchar
+g_path_is_absolute proto __cdecl :ptr
+g_path_skip_root proto __cdecl :ptr
+g_basename proto __cdecl :ptr
 
 g_dirname equ <g_path_get_dirname>
 
-;gchar
 g_get_current_dir proto __cdecl
-;gchar
-g_path_get_basename proto __cdecl \
-	     file_name: ptr gchar
-
-;gchar
-g_path_get_dirname proto __cdecl \
-	     file_name: ptr gchar
-
-
-;gchar
-g_canonicalize_filename proto __cdecl \
-	      filename: ptr gchar,
-	   relative_to: ptr gchar
+g_path_get_basename proto __cdecl :ptr
+g_path_get_dirname proto __cdecl :ptr
+g_canonicalize_filename proto __cdecl :ptr, :ptr
 
 endif

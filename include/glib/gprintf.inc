@@ -5,46 +5,12 @@ include glib.inc
 include stdio.inc
 include stdarg.inc
 
-;gint
-g_printf proto __Cdecl \
-                format: ptr gchar,
-                  args: vararg
-
-;gint
-g_fprintf proto __Cdecl \
-                  file: ptr FILE,
-                format: ptr gchar,
-                  args: vararg
-
-;gint
-g_sprintf proto __Cdecl \
-                string: ptr gchar,
-                format: ptr gchar,
-                  args: vararg
-
-
-;gint
-g_vprintf proto __cdecl \
-                format: ptr gchar,
-                argptr: ptr
-
-;gint
-g_vfprintf proto __cdecl \
-                  file: ptr FILE,
-                format: ptr gchar,
-                argptr: ptr
-
-;gint
-g_vsprintf proto __cdecl \
-                string: ptr gchar,
-                format: ptr gchar,
-                argptr: ptr
-
-;gint
-g_vasprintf proto __cdecl \
-                string: ptr gchar,
-                format: ptr gchar,
-                argptr: ptr
-
+g_printf proto __Cdecl :ptr, :vararg
+g_fprintf proto __Cdecl :ptr, :ptr, :vararg
+g_sprintf proto __Cdecl :ptr, :ptr, :vararg
+g_vprintf proto __cdecl :ptr, :ptr
+g_vfprintf proto __cdecl :ptr, :ptr, :ptr
+g_vsprintf proto __cdecl :ptr, :ptr, :ptr
+g_vasprintf proto __cdecl :ptr, :ptr, :ptr
 
 endif

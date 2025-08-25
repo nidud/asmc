@@ -19,7 +19,6 @@ include glib/gerror.inc
 
 G_KEY_FILE_ERROR equ (g_key_file_error_quark ())
 
-;GQuark
 g_key_file_error_quark proto __cdecl
 
 .enum GKeyFileFlags {
@@ -28,344 +27,56 @@ g_key_file_error_quark proto __cdecl
     G_KEY_FILE_KEEP_TRANSLATIONS = 1 shl 1
     }
 
-;GKeyFile
 g_key_file_new proto __cdecl
-;GKeyFile
-g_key_file_ref proto __cdecl \
-              key_file: ptr GKeyFile
+g_key_file_ref proto __cdecl :ptr
+g_key_file_unref proto __cdecl :ptr
+g_key_file_free proto __cdecl :ptr
+g_key_file_set_list_separator proto __cdecl :ptr, :gchar
+g_key_file_load_from_file proto __cdecl :ptr, :ptr, :GKeyFileFlags, :ptr
+g_key_file_load_from_data proto __cdecl :ptr, :ptr, :gsize, :GKeyFileFlags, :ptr
+g_key_file_load_from_bytes proto __cdecl :ptr, :ptr, :GKeyFileFlags, :ptr
+g_key_file_load_from_dirs proto __cdecl :ptr, :ptr, :ptr, :ptr, :GKeyFileFlags, :ptr
+g_key_file_load_from_data_dirs proto __cdecl :ptr, :ptr, :ptr, :GKeyFileFlags, :ptr
+g_key_file_to_data proto __cdecl :ptr, :ptr, :ptr
+g_key_file_save_to_file proto __cdecl :ptr, :ptr, :ptr
+g_key_file_get_start_group proto __cdecl :ptr
+g_key_file_get_groups proto __cdecl :ptr, :ptr
+g_key_file_get_keys proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_has_group proto __cdecl :ptr, :ptr
+g_key_file_has_key proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_get_value proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_set_value proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_get_string proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_set_string proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_get_locale_string proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+g_key_file_get_locale_for_key proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_set_locale_string proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+g_key_file_get_boolean proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_set_boolean proto __cdecl :ptr, :ptr, :ptr, :gboolean
+g_key_file_get_integer proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_set_integer proto __cdecl :ptr, :ptr, :ptr, :gint
+g_key_file_get_int64 proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_set_int64 proto __cdecl :ptr, :ptr, :ptr, :gint64
+g_key_file_get_uint64 proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_set_uint64 proto __cdecl :ptr, :ptr, :ptr, :guint64
+g_key_file_get_double proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_set_double proto __cdecl :ptr, :ptr, :ptr, :gdouble
+g_key_file_get_string_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+g_key_file_set_string_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :gsize
+g_key_file_get_locale_string_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+g_key_file_set_locale_string_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr, :gsize
+g_key_file_get_boolean_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+g_key_file_set_boolean_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :gsize
+g_key_file_get_integer_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+g_key_file_set_double_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :gsize
+g_key_file_get_double_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+g_key_file_set_integer_list proto __cdecl :ptr, :ptr, :ptr, :ptr, :gsize
+g_key_file_set_comment proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+g_key_file_get_comment proto __cdecl :ptr, :ptr, :ptr, :ptr
 
-;void
-g_key_file_unref proto __cdecl \
-              key_file: ptr GKeyFile
-
-;void
-g_key_file_free proto __cdecl \
-              key_file: ptr GKeyFile
-
-;void
-g_key_file_set_list_separator proto __cdecl \
-              key_file: ptr GKeyFile,
-             separator: gchar
-
-;gboolean
-g_key_file_load_from_file proto __cdecl \
-              key_file: ptr GKeyFile,
-                  file: ptr gchar,
-                 flags: GKeyFileFlags,
-                 error: ptr GError
-
-;gboolean
-g_key_file_load_from_data proto __cdecl \
-              key_file: ptr GKeyFile,
-                  data: ptr gchar,
-                length: gsize,
-                 flags: GKeyFileFlags,
-                 error: ptr GError
-
-;gboolean
-g_key_file_load_from_bytes proto __cdecl \
-              key_file: ptr GKeyFile,
-                 bytes: ptr GBytes,
-                 flags: GKeyFileFlags,
-                 error: ptr GError
-
-;gboolean
-g_key_file_load_from_dirs proto __cdecl \
-              key_file: ptr GKeyFile,
-                  file: ptr gchar,
-           search_dirs: ptr gchar,
-             full_path: ptr gchar,
-                 flags: GKeyFileFlags,
-                 error: ptr GError
-
-;gboolean
-g_key_file_load_from_data_dirs proto __cdecl \
-              key_file: ptr GKeyFile,
-                  file: ptr gchar,
-             full_path: ptr gchar,
-                 flags: GKeyFileFlags,
-                 error: ptr GError
-
-;gchar
-g_key_file_to_data proto __cdecl \
-              key_file: ptr GKeyFile,
-                length: ptr gsize,
-                 error: ptr GError
-
-;gboolean
-g_key_file_save_to_file proto __cdecl \
-              key_file: ptr GKeyFile,
-              filename: ptr gchar,
-                 error: ptr GError
-
-;gchar
-g_key_file_get_start_group proto __cdecl \
-              key_file: ptr GKeyFile
-
-;gchar
-g_key_file_get_groups proto __cdecl \
-              key_file: ptr GKeyFile,
-                length: ptr gsize
-
-;gchar
-g_key_file_get_keys proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                length: ptr gsize,
-                 error: ptr GError
-
-;gboolean
-g_key_file_has_group proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar
-
-;gboolean
-g_key_file_has_key proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;gchar
-g_key_file_get_value proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;void
-g_key_file_set_value proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 value: ptr gchar
-
-;gchar
-g_key_file_get_string proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;void
-g_key_file_set_string proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                string: ptr gchar
-
-;gchar
-g_key_file_get_locale_string proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                locale: ptr gchar,
-                 error: ptr GError
-
-;gchar
-g_key_file_get_locale_for_key proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                locale: ptr gchar
-
-;void
-g_key_file_set_locale_string proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                locale: ptr gchar,
-                string: ptr gchar
-
-;gboolean
-g_key_file_get_boolean proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;void
-g_key_file_set_boolean proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 value: gboolean
-
-;gint
-g_key_file_get_integer proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;void
-g_key_file_set_integer proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 value: gint
-
-;gint64
-g_key_file_get_int64 proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;void
-g_key_file_set_int64 proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 value: gint64
-
-;guint64
-g_key_file_get_uint64 proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;void
-g_key_file_set_uint64 proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 value: guint64
-
-;gdouble
-g_key_file_get_double proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;void
-g_key_file_set_double proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 value: gdouble
-
-;gchar
-g_key_file_get_string_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                length: ptr gsize,
-                 error: ptr GError
-
-;void
-g_key_file_set_string_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                  list: ptr gchar,
-                length: gsize
-
-;gchar
-g_key_file_get_locale_string_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                locale: ptr gchar,
-                length: ptr gsize,
-                 error: ptr GError
-
-;void
-g_key_file_set_locale_string_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                locale: ptr gchar,
-                  list: ptr gchar,
-                length: gsize
-
-;gboolean
-g_key_file_get_boolean_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                length: ptr gsize,
-                 error: ptr GError
-
-;void
-g_key_file_set_boolean_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                  list: ptr gboolean,
-                length: gsize
-
-;gint
-g_key_file_get_integer_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                length: ptr gsize,
-                 error: ptr GError
-
-;void
-g_key_file_set_double_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                  list: ptr gdouble,
-                length: gsize
-
-;gdouble
-g_key_file_get_double_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                length: ptr gsize,
-                 error: ptr GError
-
-;void
-g_key_file_set_integer_list proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                  list: ptr gint,
-                length: gsize
-
-;gboolean
-g_key_file_set_comment proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-              comment_: ptr gchar,
-                 error: ptr GError
-
-;gchar
-g_key_file_get_comment proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-
-;gboolean
-g_key_file_remove_comment proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;gboolean
-g_key_file_remove_key proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                   key: ptr gchar,
-                 error: ptr GError
-
-;gboolean
-g_key_file_remove_group proto __cdecl \
-              key_file: ptr GKeyFile,
-            group_name: ptr gchar,
-                 error: ptr GError
-
-
+g_key_file_remove_comment proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_remove_key proto __cdecl :ptr, :ptr, :ptr, :ptr
+g_key_file_remove_group proto __cdecl :ptr, :ptr, :ptr
 
 define G_KEY_FILE_DESKTOP_GROUP                <"Desktop Entry">
 

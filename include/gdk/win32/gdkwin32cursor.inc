@@ -34,7 +34,7 @@ readonly_handle         HCURSOR ?
 GdkWin32HCursorFake     ends
 
 gdk_win32_hcursor_get_handle_fast macro x
-  exitm<(((struct _GdkWin32HCursorFake *) x)->readonly_handle)>
+  exitm<x.readonly_handle>
   endm
 
 if defined (GTK_COMPILATION)

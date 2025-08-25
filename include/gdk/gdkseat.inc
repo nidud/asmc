@@ -29,9 +29,9 @@ GDK_IS_SEAT macro o
   GDK_SEAT_CAPABILITY_ALL           = (GDK_SEAT_CAPABILITY_ALL_POINTING or GDK_SEAT_CAPABILITY_KEYBOARD)
 }
 
-_GdkSeat                struct
+GdkSeat                 struct
 parent_instance         GObject <>
-_GdkSeat                ends
+GdkSeat                 ends
 
 gdk_seat_get_type proto
 gdk_seat_get_display proto :ptr

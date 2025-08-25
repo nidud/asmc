@@ -13,16 +13,16 @@ define GTK_TYPE_BUILDER_SCOPE <gtk_builder_scope_get_type ()>
   GTK_BUILDER_CLOSURE_SWAPPED = (1 shl 0)
   }
 
-_GtkBuilderScopeInterface struct
+GtkBuilderScopeInterface struct
 g_iface                 GTypeInterface <>
 get_type_from_name      proc :ptr, :ptr, :ptr
 get_type_from_function  proc :ptr, :ptr, :ptr
 create_closure          proc :ptr, :ptr, :ptr, :GtkBuilderClosureFlags, :ptr, :ptr
-_GtkBuilderScopeInterface ends
+GtkBuilderScopeInterface ends
 
-_GtkBuilderCScopeClass  struct
+GtkBuilderCScopeClass   struct
 parent_class            GObjectClass <>
-_GtkBuilderCScopeClass  ends
+GtkBuilderCScopeClass   ends
 
 define GTK_TYPE_BUILDER_CSCOPE <gtk_builder_cscope_get_type ()>
 

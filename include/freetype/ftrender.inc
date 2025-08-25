@@ -29,9 +29,9 @@ glyph_bbox		FT_Glyph_GetBBoxFunc ?
 glyph_prepare		FT_Glyph_PrepareFunc ?
 FT_Glyph_Class		ENDS
 
-CALLBACKC(FT_Renderer_RenderFunc, :FT_Renderer, :FT_GlyphSlot, :FT_Render_Mode, :ptr FT_Vector)
-CALLBACKC(FT_Renderer_TransformFunc, :FT_Renderer, :FT_GlyphSlot, :ptr FT_Matrix, :ptr FT_Vector)
-CALLBACKC(FT_Renderer_GetCBoxFunc, :FT_Renderer, :FT_GlyphSlot, :ptr FT_BBox)
+CALLBACKC(FT_Renderer_RenderFunc, :FT_Renderer, :FT_GlyphSlot, :FT_Render_Mode, :ptr)
+CALLBACKC(FT_Renderer_TransformFunc, :FT_Renderer, :FT_GlyphSlot, :ptr, :ptr)
+CALLBACKC(FT_Renderer_GetCBoxFunc, :FT_Renderer, :FT_GlyphSlot, :ptr)
 CALLBACKC(FT_Renderer_SetModeFunc, :FT_Renderer, :FT_ULong, :FT_Pointer)
 
 define FTRenderer_render	<FT_Renderer_RenderFunc>
@@ -50,14 +50,7 @@ set_mode		FT_Renderer_SetModeFunc ?
 raster_class		ptr FT_Raster_Funcs ?
 FT_Renderer_Class	ENDS
 
-FT_Get_Renderer proto \
-	       library: FT_Library,
-		format: FT_Glyph_Format
-
-FT_Set_Renderer proto \
-	       library: FT_Library,
-	      renderer: FT_Renderer,
-	    num_params: FT_UInt,
-	    parameters: ptr FT_Parameter
+FT_Get_Renderer proto :FT_Library, :FT_Glyph_Format
+FT_Set_Renderer proto :FT_Library, :FT_Renderer, :FT_UInt, :ptr
 
 endif

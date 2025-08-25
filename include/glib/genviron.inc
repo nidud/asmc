@@ -7,41 +7,13 @@ endif
 
 include glib/gtypes.inc
 
-;const
-g_getenv proto __cdecl \
-              variable: ptr gchar
-
-;gboolean
-g_setenv proto __cdecl \
-              variable: ptr gchar,
-                 value: ptr gchar,
-             overwrite: gboolean
-
-;void
-g_unsetenv proto __cdecl \
-              variable: ptr gchar
-
-;gchar
+g_getenv proto __cdecl :ptr
+g_setenv proto __cdecl :ptr, :ptr, :gboolean
+g_unsetenv proto __cdecl :ptr
 g_listenv proto __cdecl
-
-;gchar
 g_get_environ proto __cdecl
-;const
-g_environ_getenv proto __cdecl \
-                  envp: ptr gchar,
-              variable: ptr gchar
-
-;gchar
-g_environ_setenv proto __cdecl \
-                  envp: ptr gchar,
-              variable: ptr gchar,
-                 value: ptr gchar,
-             overwrite: gboolean
-
-;gchar
-g_environ_unsetenv proto __cdecl \
-                  envp: ptr gchar,
-              variable: ptr gchar
-
+g_environ_getenv proto __cdecl :ptr, :ptr
+g_environ_setenv proto __cdecl :ptr, :ptr, :ptr, :gboolean
+g_environ_unsetenv proto __cdecl :ptr, :ptr
 
 endif

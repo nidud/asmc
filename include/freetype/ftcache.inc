@@ -10,25 +10,10 @@ CALLBACKC(FTC_Face_Requester, :FTC_FaceID, :FT_Library, :FT_Pointer, :ptr FT_Fac
 FTC_Manager		typedef ptr FTC_ManagerRec
 FTC_Node		typedef ptr FTC_NodeRec
 
-FTC_Manager_New proto \
-	       library: FT_Library,
-	     max_faces: FT_UInt,
-	     max_sizes: FT_UInt,
-	     max_bytes: FT_ULong,
-	     requester: FTC_Face_Requester,
-	      req_data: FT_Pointer,
-	      amanager: ptr FTC_Manager
-
-FTC_Manager_Reset proto \
-	       manager: FTC_Manager
-
-FTC_Manager_Done proto \
-	       manager: FTC_Manager
-
-FTC_Manager_LookupFace proto \
-	       manager: FTC_Manager,
-	       face_id: FTC_FaceID,
-		 aface: ptr FT_Face
+FTC_Manager_New proto :FT_Library, :FT_UInt, :FT_UInt, :FT_ULong, :FTC_Face_Requester, :FT_Pointer, :ptr
+FTC_Manager_Reset proto :FTC_Manager
+FTC_Manager_Done proto :FTC_Manager
+FTC_Manager_LookupFace proto :FTC_Manager, :FTC_FaceID, :ptr
 
 FTC_ScalerRec		STRUC
 face_id			FTC_FaceID ?
@@ -40,32 +25,14 @@ y_res			FT_UInt ?
 FTC_ScalerRec		ENDS
 FTC_Scaler		typedef ptr FTC_ScalerRec
 
-
-FTC_Manager_LookupSize proto \
-	       manager: FTC_Manager,
-		scaler: FTC_Scaler,
-		 asize: ptr FT_Size
-
-FTC_Node_Unref proto \
-		  node: FTC_Node,
-	       manager: FTC_Manager
-
-FTC_Manager_RemoveFaceID proto \
-	       manager: FTC_Manager,
-	       face_id: FTC_FaceID
+FTC_Manager_LookupSize proto :FTC_Manager, :FTC_Scaler, :ptr
+FTC_Node_Unref proto :FTC_Node, :FTC_Manager
+FTC_Manager_RemoveFaceID proto :FTC_Manager, :FTC_FaceID
 
 FTC_CMapCache		typedef ptr FTC_CMapCacheRec
 
-FTC_CMapCache_New proto \
-	       manager: FTC_Manager,
-		acache: ptr FTC_CMapCache
-
-FTC_CMapCache_Lookup proto \
-		 cache: FTC_CMapCache,
-	       face_id: FTC_FaceID,
-	    cmap_index: FT_Int,
-	     char_code: FT_UInt32
-
+FTC_CMapCache_New proto :FTC_Manager, :ptr
+FTC_CMapCache_Lookup proto :FTC_CMapCache, :FTC_FaceID, :FT_Int, :FT_UInt32
 
 FTC_ImageTypeRec	STRUC
 face_id			FTC_FaceID ?
@@ -81,24 +48,9 @@ FTC_IMAGE_TYPE_COMPARE macro d1, d2
 
 FTC_ImageCache		typedef ptr FTC_ImageCacheRec
 
-FTC_ImageCache_New proto \
-	       manager: FTC_Manager,
-		acache: ptr FTC_ImageCache
-
-FTC_ImageCache_Lookup proto \
-		 cache: FTC_ImageCache,
-		  type: FTC_ImageType,
-		gindex: FT_UInt,
-		aglyph: ptr FT_Glyph,
-		 anode: ptr FTC_Node
-
-FTC_ImageCache_LookupScaler proto \
-		 cache: FTC_ImageCache,
-		scaler: FTC_Scaler,
-	    load_flags: FT_ULong,
-		gindex: FT_UInt,
-		aglyph: ptr FT_Glyph,
-		 anode: ptr FTC_Node
+FTC_ImageCache_New proto :FTC_Manager, :ptr
+FTC_ImageCache_Lookup proto :FTC_ImageCache, :FTC_ImageType, :FT_UInt, :ptr, :ptr
+FTC_ImageCache_LookupScaler proto :FTC_ImageCache, :FTC_Scaler, :FT_ULong, :FT_UInt, :ptr, :ptr
 
 FTC_SBitRec		STRUC
 width			FT_Byte ?
@@ -116,23 +68,8 @@ FTC_SBit		typedef ptr FTC_SBitRec
 
 FTC_SBitCache		typedef ptr FTC_SBitCacheRec
 
-FTC_SBitCache_New proto \
-	       manager: FTC_Manager,
-		acache: ptr FTC_SBitCache
-
-FTC_SBitCache_Lookup proto \
-		 cache: FTC_SBitCache,
-		  type: FTC_ImageType,
-		gindex: FT_UInt,
-		  sbit: ptr FTC_SBit,
-		 anode: ptr FTC_Node
-
-FTC_SBitCache_LookupScaler proto \
-		 cache: FTC_SBitCache,
-		scaler: FTC_Scaler,
-	    load_flags: FT_ULong,
-		gindex: FT_UInt,
-		  sbit: ptr FTC_SBit,
-		 anode: ptr FTC_Node
+FTC_SBitCache_New proto :FTC_Manager, :ptr
+FTC_SBitCache_Lookup proto :FTC_SBitCache, :FTC_ImageType, :FT_UInt, :ptr, :ptr
+FTC_SBitCache_LookupScaler proto :FTC_SBitCache, :FTC_Scaler, :FT_ULong, :FT_UInt, :ptr, :ptr
 
 endif

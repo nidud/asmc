@@ -24,18 +24,18 @@ GTK_WINDOW_GROUP_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_WINDOW_GROUP, GtkWindowGroupClass))>
   endm
 
-_GtkWindowGroup         struct
+GtkWindowGroup          struct
 parent_instance         GObject <>
 priv                    ptr GtkWindowGroupPrivate ?
-_GtkWindowGroup         ends
+GtkWindowGroup          ends
 
-_GtkWindowGroupClass    struct
+GtkWindowGroupClass     struct
 parent_class            GObjectClass <>
 _gtk_reserved1          proc
 _gtk_reserved2          proc
 _gtk_reserved3          proc
 _gtk_reserved4          proc
-_GtkWindowGroupClass    ends
+GtkWindowGroupClass     ends
 
 gtk_window_group_get_type proto
 gtk_window_group_new proto

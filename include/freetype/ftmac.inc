@@ -9,38 +9,11 @@ define FT_DEPRECATED_ATTRIBUTE
 endif
 endif
 
-FT_New_Face_From_FOND proto \
-               library: FT_Library,
-                  fond: Handle,
-            face_index: FT_Long,
-                 aface: ptr FT_Face
-
-FT_GetFile_From_Mac_Name proto \
-              fontName: ptr,
-              pathSpec: ptr FSSpec,
-            face_index: ptr FT_Long
-
-FT_GetFile_From_Mac_ATS_Name proto \
-              fontName: ptr,
-              pathSpec: ptr FSSpec,
-            face_index: ptr FT_Long
-
-FT_GetFilePath_From_Mac_ATS_Name proto \
-              fontName: ptr,
-                  path: ptr UInt8,
-           maxPathSize: UInt32,
-            face_index: ptr FT_Long
-
-FT_New_Face_From_FSSpec proto \
-               library: FT_Library,
-                  spec: ptr FSSpec,
-            face_index: FT_Long,
-                 aface: ptr FT_Face
-
-FT_New_Face_From_FSRef proto \
-               library: FT_Library,
-                   ref: ptr FSRef,
-            face_index: FT_Long,
-                 aface: ptr FT_Face
+FT_New_Face_From_FOND proto :FT_Library, :Handle, :FT_Long, :ptr
+FT_GetFile_From_Mac_Name proto  :ptr, :ptr, :ptr
+FT_GetFile_From_Mac_ATS_Name proto :ptr, :ptr, :ptr
+FT_GetFilePath_From_Mac_ATS_Name proto :ptr, :ptr, :UInt32, :ptr
+FT_New_Face_From_FSSpec proto :FT_Library, :ptr, :FT_Long, :ptr
+FT_New_Face_From_FSRef proto :FT_Library, :ptr, :FT_Long, :ptr
 
 endif

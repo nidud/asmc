@@ -9,15 +9,7 @@ ifdef FREETYPE_H
 .err <"so that freetype.h of FreeType 2 is found first.">
 endif
 
-FT_Stream_OpenGzip proto \
-                stream: FT_Stream,
-                source: FT_Stream
-
-FT_Gzip_Uncompress proto \
-                memory: FT_Memory,
-                output: ptr FT_Byte,
-            output_len: ptr FT_ULong,
-                 input: ptr FT_Byte,
-             input_len: FT_ULong
+FT_Stream_OpenGzip proto :FT_Stream, :FT_Stream
+FT_Gzip_Uncompress proto :FT_Memory, :ptr, :ptr, :ptr, :FT_ULong
 
 endif

@@ -44,29 +44,14 @@ FT_VALIDATE_lcar	equ FT_VALIDATE_GX_BITFIELD( lcar )
 
 FT_VALIDATE_GX		equ ( FT_VALIDATE_feat OR FT_VALIDATE_mort OR FT_VALIDATE_morx OR FT_VALIDATE_bsln OR FT_VALIDATE_just OR FT_VALIDATE_kern OR FT_VALIDATE_opbd OR FT_VALIDATE_trak OR FT_VALIDATE_prop OR FT_VALIDATE_lcar )
 
-FT_TrueTypeGX_Validate proto \
-		  face: FT_Face,
-      validation_flags: FT_UInt,
-		tables: ptr FT_Bytes,
-	  table_length: FT_UInt
-
-FT_TrueTypeGX_Free proto \
-		  face: FT_Face,
-		 table: FT_Bytes
-
+FT_TrueTypeGX_Validate proto :FT_Face, :FT_UInt, :ptr, :FT_UInt
+FT_TrueTypeGX_Free proto :FT_Face, :FT_Bytes
 
 FT_VALIDATE_MS		equ ( FT_VALIDATE_GX_START SHL 0 )
 FT_VALIDATE_APPLE	equ ( FT_VALIDATE_GX_START SHL 1 )
 FT_VALIDATE_CKERN	equ ( FT_VALIDATE_MS OR FT_VALIDATE_APPLE )
 
-
-FT_ClassicKern_Validate proto \
-		  face: FT_Face,
-      validation_flags: FT_UInt,
-	   ckern_table: ptr FT_Bytes
-
-FT_ClassicKern_Free proto \
-		  face: FT_Face,
-		 table: FT_Bytes
+FT_ClassicKern_Validate proto :FT_Face, :FT_UInt, :ptr
+FT_ClassicKern_Free proto :FT_Face, :FT_Bytes
 
 endif

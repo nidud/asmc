@@ -384,13 +384,13 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov rax,CurrStruct
     .if rax
         mov rdi,[rax].asym.name
-        .if tstrlen(rdi) > 4
+        mov eax,[rax].asym.name_size
+        .if ( eax > 4 )
             mov eax,[rdi+rax-4]
         .endif
     .endif
 
     mov rdi,buffer
-
     .if ( eax == "lbtV" )
 
         inc IsCom
@@ -406,6 +406,22 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             AddLineQueueX( "%s ends", [rsi].com_item.class )
             mov retval,OpenVtbl(rsi)
             inc IsCom
+            .if ( Parse_Pass > PASS_1 )
+                RunLineQueue()
+            .endif
+        .endif
+    .endif
+
+    .if ( Parse_Pass > PASS_1 )
+
+        .if ( SearchNameInStruct( CurrStruct, &name, 0, 0 ) )
+
+            mov rcx,[rax].asym.type
+            .if ( rcx && [rax].asym.mem_type == MT_TYPE )
+
+                AddLineQueueX( "%s %s ?", &name, [rcx].asym.name )
+                jmp done
+            .endif
         .endif
     .endif
 
@@ -467,7 +483,6 @@ ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             tstrcat(rdi, &language)
         .endif
     .endif
-
 
     mov rax,MODULE.ComStack
     .if ( rax )

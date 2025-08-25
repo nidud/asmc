@@ -23,7 +23,7 @@ include gdk/gdk.inc
 define GTK_TYPE_FILTER <gtk_filter_get_type ()>
 
 
-_GtkFilterClass         struct
+GtkFilterClass          struct
 parent_class            GObjectClass <>
 match                   proc :ptr, :gpointer
 get_strictness          proc :ptr
@@ -35,7 +35,7 @@ _gtk_reserved5          proc
 _gtk_reserved6          proc
 _gtk_reserved7          proc
 _gtk_reserved8          proc
-_GtkFilterClass         ends
+GtkFilterClass          ends
 
 gtk_filter_match proto :ptr, :gpointer
 gtk_filter_get_strictness proto :ptr

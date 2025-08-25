@@ -7,26 +7,11 @@ endif
 
 include glib/gtypes.inc
 
-;gboolean
-g_get_charset proto __cdecl \
-               charset: ptr char_t
-
-;gchar
+g_get_charset proto __cdecl :ptr
 g_get_codeset proto __cdecl
-;gboolean
-g_get_console_charset proto __cdecl \
-               charset: ptr char_t
-
-
-;const
+g_get_console_charset proto __cdecl :ptr
 g_get_language_names proto __cdecl
-;const
-g_get_language_names_with_category proto __cdecl \
-         category_name: ptr gchar
-
-;gchar
-g_get_locale_variants proto __cdecl \
-                locale: ptr gchar
-
+g_get_language_names_with_category proto __cdecl :ptr
+g_get_locale_variants proto __cdecl :ptr
 
 endif

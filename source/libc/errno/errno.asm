@@ -14,10 +14,17 @@ endif
 
     .code
 
-__errno_location::
-ifndef _WIN64
+ifdef __UNIX__
+ifdef _WIN64
 __get_errno_ptr::
+else
+__errno_location::
 endif
+else
+__get_errno_ptr::
+__errno_location::
+endif
+
 _errno proc
 
     lea rax,ErrorNoMem

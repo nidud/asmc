@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.38 - xx xxx 2025
+- added binary operators BSF and BSR
 - fixed bug in handling of un/signed const values
 - changed -Zi to CV8 as default
 - added 16-bit extension to LDR

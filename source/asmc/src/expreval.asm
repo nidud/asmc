@@ -3107,7 +3107,6 @@ endif
         .case T_SAR
             mov edx,[rdi].value
             .ifs ( edx < 0 )
-
                 fnasmerr( 2092 )
                .endc
             .endif
@@ -3197,22 +3196,88 @@ endif
         .endc
 
     .case T_UNARY_OPERATOR
-        .if ( [rbx].tokval == T_NOT )
+        mov eax,[rbx].tokval
+        .if ( eax == T_NOT || eax == T_BSR || eax == T_BSF )
+
             MakeConst( rdi )
             .if ( [rdi].kind != EXPR_CONST && [rdi].kind != EXPR_FLOAT )
                 .return fnasmerr( 2026 )
             .endif
             TokenAssign( rsi, rdi )
+            .if ( [rbx].tokval == T_NOT )
 ifdef _WIN64
-            not [rsi].llvalue
-            .if ( [rsi].kind == EXPR_FLOAT )
-                not [rsi].hlvalue
+                not [rsi].llvalue
+                .if ( [rsi].kind == EXPR_FLOAT )
+                    not [rsi].hlvalue
 else
-            not [esi].l64_l
-            not [esi].l64_h
-            .if ( [esi].kind == EXPR_FLOAT )
-                not [esi].h64_l
-                not [esi].h64_h
+                not [esi].l64_l
+                not [esi].l64_h
+                .if ( [esi].kind == EXPR_FLOAT )
+                    not [esi].h64_l
+                    not [esi].h64_h
+endif
+                .endif
+            .else
+                xor eax,eax
+                xor edx,edx
+                mov ecx,64
+                .if ( [rsi].kind == EXPR_FLOAT )
+                    mov ecx,128
+                .elseif ( MODULE.Ofssize == USE32 )
+                    mov ecx,32
+                .endif
+                mov [rsi].kind,EXPR_CONST
+                .if ( [rbx].tokval == T_BSF )
+                    bsf rax,size_t ptr [rsi].llvalue
+                    .if ( ecx == 128 && rdx == size_t ptr [rsi].llvalue )
+ifdef _WIN64
+                        bsf rax,[rsi].hlvalue
+                        .if ( rdx != [rsi].hlvalue )
+                            add eax,64
+                        .endif
+else
+                        .if ( edx != [esi].l64_h )
+                            bsf eax,[esi].l64_h
+                            add eax,32
+                        .elseif ( edx != [esi].h64_l )
+                            bsf eax,[esi].h64_l
+                            add eax,64
+                        .elseif ( edx != [esi].h64_h )
+                            bsf eax,[esi].h64_h
+                            add eax,96
+                        .endif
+endif
+                    .endif
+                .elseif ( ecx != 128 )
+                    bsr rax,size_t ptr [rsi].llvalue
+                .else
+ifdef _WIN64
+                    bsr rax,[rsi].hlvalue
+                    .if ( rdx != [rsi].hlvalue )
+                        add eax,64
+                    .else
+                        bsr rax,[rsi].llvalue
+                    .endif
+else
+                    bsr eax,[esi].h64_h
+                    .if ( edx != [esi].h64_h )
+                        add eax,96
+                    .elseif ( edx != [esi].h64_l )
+                        bsr eax,[esi].h64_l
+                        add eax,64
+                    .elseif ( edx != [esi].l64_h )
+                        bsr eax,[esi].l64_h
+                        add eax,32
+                    .elseif ( edx != [esi].l64_l )
+                        bsr eax,[esi].l64_l
+                    .endif
+endif
+                .endif
+                mov size_t ptr [rsi].llvalue,rax
+                mov size_t ptr [rsi].hlvalue,rdx
+ifndef _WIN64
+                mov [esi].h64_h,edx
+                mov [esi].l64_h,edx
 endif
             .endif
             .endc
@@ -3654,6 +3719,8 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
                 mov [rbx].token,T_BINARY_OPERATOR
                 mov [rbx].precedence,8
                 .continue
+            .case T_BSF
+            .case T_BSR
             .case T_NOT
                 mov [rbx].token,T_UNARY_OPERATOR
                 mov [rbx].precedence,11

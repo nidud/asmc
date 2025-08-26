@@ -13,8 +13,11 @@ _environcrt string_t NULL
 .code
 
 _initargv proc private
-    mov ax,_argvused
+    mov _argvcrt,__argv
+    mov _environcrt,_environ
     ret
 _initargv endp
+
+.pragma init(_initargv, 10)
 
     end

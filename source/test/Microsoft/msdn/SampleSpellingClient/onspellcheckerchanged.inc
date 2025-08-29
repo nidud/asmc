@@ -95,12 +95,12 @@ OnSpellCheckerChanged::QueryInterface proc riid:REFIID, ppv:ptr ptr
 
 OnSpellCheckerChanged::QueryInterface endp
 
-OnSpellCheckerChanged::_Invoke proc sender:ptr ISpellChecker
+OnSpellCheckerChanged::IInvoke proc sender:ptr ISpellChecker
 
     wprintf("Spell checker changed.\n")
    .return S_OK
 
-OnSpellCheckerChanged::_Invoke endp
+OnSpellCheckerChanged::IInvoke endp
 
 OnSpellCheckerChanged::OnSpellCheckerChanged proc
 

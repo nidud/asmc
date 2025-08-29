@@ -5,6 +5,7 @@
 
 include stdio.inc
 include string.inc
+include tchar.inc
 
 .code
 
@@ -14,29 +15,29 @@ main proc
 
     .return 1 .if !fopen("list.txt", "rt")
 
-    mov fp,eax
-    lea esi,line
+    mov fp,rax
+    lea rsi,line
 
-    .while fgets(esi, 512, fp)
+    .while fgets(rsi, 512, fp)
 
-        .if !strstr(esi, " GUID")
-            strstr(esi, " PROPERTYKEY")
+        .if !strstr(rsi, " GUID")
+            strstr(rsi, " PROPERTYKEY")
         .endif
-        .continue .if !eax
+        .continue .if !rax
 
         ; name GUID {0x0000010b,0,0,{0xC0,0,0,0,0,0,0,0x46}}
         ; name PROPERTYKEY {{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}
 
-        mov ebx,eax
-        mov byte ptr [ebx],0
-        lea edi,file
-        sprintf(edi, "%s.u", esi)
+        mov rbx,rax
+        mov byte ptr [rbx],0
+        lea rdi,file
+        sprintf(rdi, "%s.u", rsi)
 
-        .if fopen(edi, "wt")
+        .if fopen(rdi, "wt")
 
-            mov edi,eax
+            mov rdi,rax
 
-            fprintf(edi,
+            fprintf(rdi,
                 "include libc.inc\n"
                 "include guiddef.inc\n"
                 "PROPERTYKEY STRUC\n"
@@ -45,24 +46,22 @@ main proc
                 "PROPERTYKEY ENDS\n"
                 "\n"
                 "public %s\n"
-                "\n", esi)
+                "\n", rsi)
 
-            mov byte ptr [ebx],' '
+            mov byte ptr [rbx],' '
 
-            fprintf(edi,
+            fprintf(rdi,
                 "    .data\n"
                 "    %s\n"
-                "    end\n", esi)
+                "    end\n", rsi)
 
-            fclose(edi)
-
+            fclose(rdi)
         .endif
     .endw
-
     fclose(fp)
     xor eax,eax
     ret
 
 main endp
 
-    end main
+    end _tstart

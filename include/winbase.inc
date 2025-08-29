@@ -3645,7 +3645,7 @@ LocateXStateFeature proto WINAPI :PCONTEXT, :DWORD, :PDWORD
 SetXStateFeaturesMask proto WINAPI :PCONTEXT, :DWORD64
 endif
 
-endif ; (NTDDI_VERSION ge NTDDI_WIN7SP1)
+endif
 
 if (_WIN32_WINNT ge 0x0601)
 EnableThreadProfiling proto WINAPI :HANDLE, :DWORD, :DWORD64, :ptr

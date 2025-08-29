@@ -13,8 +13,10 @@ include stdlib.inc
 include stdio.inc
 include tchar.inc
 
+ifndef ESC
 define ESC <"\x1b">
 define CSI <"\x1b[">
+endif
 
 .code
 

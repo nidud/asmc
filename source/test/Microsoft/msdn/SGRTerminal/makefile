@@ -2,9 +2,9 @@ PE = -pe
 
 all: EnablingVTerminal SGRTerminal AnniversaryUpdate
 
-EnablingVTerminal.exe:
+EnablingVTerminal:
 	asmc64 $(PE) $@.asm
-SGRTerminal.exe:
+SGRTerminal:
 	asmc64 $(PE) $@.asm
-AnniversaryUpdate.exe:
+AnniversaryUpdate:
 	asmc64 $(PE) $@.asm

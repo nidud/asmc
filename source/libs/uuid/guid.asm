@@ -4,11 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-define INITGUID         1
-
-define WINVER           0x0A00
-define _WIN32_WINNT     0x0A00
-define NTDDI_VERSION    0x0A000003
+define INITGUID
 
 include aclui.inc
 include activaut.inc
@@ -66,38 +62,38 @@ include dxdiag.inc
 include WbemIdl.inc
 include dcomp.inc
 include windows.ui.notifications.inc
+include Windows.ApplicationModel.DataTransfer.inc
 include Mshtmlc.inc
 include xmllite.inc
 
-include inc/ahadmin_i.inc
-include inc/CDOSys_I.inc
-include inc/FaxComEx_i.inc
-include inc/FaxCom_i.inc
-include inc/iisext_i.inc
-include inc/inked_i.inc
-include inc/inputpanelconfiguration_i.inc
-include inc/journal_i.inc
-include inc/manipulations_i.inc
-include inc/micaut_i.inc
-include inc/msinkaut15_i.inc
-include inc/msinkaut_i.inc
-include inc/mswmdm_i.inc
-include inc/MtsAdmin_i.inc
-include inc/MtxAdmin_i.inc
-include inc/peninputpanel_i.inc
-include inc/rdpencomapi_i.inc
-include inc/rendezvoussession_i.inc
-include inc/RTSCOM_i.inc
-include inc/spellcheckprovider_i.inc
-include inc/spellcheck_i.inc
-include inc/TipAutoComplete_i.inc
-include inc/TSGAuthenticationEngine_i.inc
-include inc/TSGPolicyEngine_i.inc
-include inc/tssbx_i.inc
-include inc/tsuserex_i.inc
-include inc/WdsTptMgmt_i.inc
-include inc/wkspbkax_i.inc
-include inc/wmdmlog_i.inc
-include inc/wsmandisp_i.inc
+include ahadmin.inc
+include cdosys.inc
+include faxcomex.inc
+include faxcom.inc
+include iiisext.inc
+include inked.inc
+include inputpanelconfiguration.inc
+include manipulations.inc
+include micaut.inc
+include msinkaut15.inc
+include msinkaut.inc
+include mswmdm.inc
+include MtsAdmin.inc
+include MtxAdmin.inc
+include peninputpanel.inc
+include rdpencomapi.inc
+include rendezvoussession.inc
+include RTSCOM.inc
+include spellcheckprovider.inc
+include spellcheck.inc
+include TipAutoComplete.inc
+include TSGAuthenticationEngine.inc
+include TSGPolicyEngine.inc
+include tssbx.inc
+include tsuserex.inc
+include WdsTptMgmt.inc
+include wkspbkax.inc
+include wmdmlog.inc
+include wsmandisp.inc
 
 end

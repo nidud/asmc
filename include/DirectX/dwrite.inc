@@ -1,13 +1,11 @@
 ifndef DWRITE_H_INCLUDED
-DWRITE_H_INCLUDED equ 1
+define DWRITE_H_INCLUDED
+.pragma list(push, 0)
 
 ifndef DWRITE_NO_WINDOWS_H
-
 include specstrings.inc
 include unknwn.inc
-
 endif
-
 include dcommon.inc
 
 .pragma comment(lib, dwrite)
@@ -153,7 +151,7 @@ DEFINE_IIDX(IDWriteFontFileLoader, "727cad4e-d6af-4c9e-8a08-d695b11caa49")
 .comdef IDWriteFontFileLoader : public IUnknown
 
     CreateStreamFromKey proc :ptr, :UINT32, :ptr
-    .ends
+   .ends
 
 
 DEFINE_IIDX(IDWriteLocalFontFileLoader, "b2d9f3ec-c9fe-4a11-a2ec-d86208f7c0a2")
@@ -163,7 +161,7 @@ DEFINE_IIDX(IDWriteLocalFontFileLoader, "b2d9f3ec-c9fe-4a11-a2ec-d86208f7c0a2")
     GetFilePathLengthFromKey	proc :ptr, :UINT32, :ptr
     GetFilePathFromKey		proc :ptr, :UINT32, :ptr, :UINT32
     GetLastWriteTimeFromKey	proc :ptr, :UINT32, :ptr
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteFontFileStream, "6d4865fe-0ab8-4d91-8f62-5dd6be34a3e0")
 
@@ -173,7 +171,7 @@ DEFINE_IIDX(IDWriteFontFileStream, "6d4865fe-0ab8-4d91-8f62-5dd6be34a3e0")
     ReleaseFileFragment		proc :ptr
     GetFileSize			proc :ptr
     GetLastWriteTime		proc :ptr
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteFontFile, "739d886a-cef5-47dc-8769-1a8b41bebbb0")
 
@@ -182,7 +180,7 @@ DEFINE_IIDX(IDWriteFontFile, "739d886a-cef5-47dc-8769-1a8b41bebbb0")
     GetReferenceKey	proc :ptr, :ptr
     GetLoader		proc :ptr
     Analyze		proc :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 
 ifndef DWRITE_PIXEL_GEOMETRY_DEFINED
@@ -221,33 +219,33 @@ DEFINE_IIDX(IDWriteRenderingParams, "2f0da53a-2add-47cd-82ee-d9ec34688e75")
 
 .comdef IDWriteRenderingParams : public IUnknown
 
-     GetGamma		proc
-     GetEnhancedContrast proc
-     GetClearTypeLevel	proc
-     GetPixelGeometry	proc
-     GetRenderingMode	proc
-     .ends
+     GetGamma			proc
+     GetEnhancedContrast	proc
+     GetClearTypeLevel		proc
+     GetPixelGeometry		proc
+     GetRenderingMode		proc
+    .ends
 
 DEFINE_IIDX(IDWriteFontFace, "5f49804d-7024-4d43-bfa9-d25984f53849")
 
 .comdef IDWriteFontFace : public IUnknown
 
-    GetType		proc
-    GetFiles		proc :ptr, :ptr
-    GetIndex		proc
-    GetSimulations	proc
-    IsSymbolFont	proc
-    GetMetrics		proc :ptr
-    GetGlyphCount	proc
-    GetDesignGlyphMetrics proc :ptr, :UINT32, :ptr, :BOOL
-    GetGlyphIndices	proc :ptr, :UINT32, :ptr
-    TryGetFontTable	proc :UINT32, :ptr, :ptr, :ptr, :ptr
-    ReleaseFontTable	proc :ptr
-    GetGlyphRunOutline	proc :FLOAT, :ptr, :ptr, :ptr, :UINT32, :BOOL, :BOOL, :ptr
-    GetRecommendedRenderingMode proc :FLOAT, :FLOAT, :DWRITE_MEASURING_MODE, :ptr, :ptr
-    GetGdiCompatibleMetrics proc :FLOAT, :FLOAT, :ptr, :ptr
-    GetGdiCompatibleGlyphMetrics proc :FLOAT, :FLOAT, :ptr, :BOOL, :UINT32, :ptr, :BOOL
-    .ends
+    GetType				proc
+    GetFiles				proc :ptr, :ptr
+    GetIndex				proc
+    GetSimulations			proc
+    IsSymbolFont			proc
+    GetMetrics				proc :ptr
+    GetGlyphCount			proc
+    GetDesignGlyphMetrics		proc :ptr, :UINT32, :ptr, :BOOL
+    GetGlyphIndices			proc :ptr, :UINT32, :ptr
+    TryGetFontTable			proc :UINT32, :ptr, :ptr, :ptr, :ptr
+    ReleaseFontTable			proc :ptr
+    GetGlyphRunOutline			proc :FLOAT, :ptr, :ptr, :ptr, :UINT32, :BOOL, :BOOL, :ptr
+    GetRecommendedRenderingMode		proc :FLOAT, :FLOAT, :DWRITE_MEASURING_MODE, :ptr, :ptr
+    GetGdiCompatibleMetrics		proc :FLOAT, :FLOAT, :ptr, :ptr
+    GetGdiCompatibleGlyphMetrics	proc :FLOAT, :FLOAT, :ptr, :BOOL, :UINT32, :ptr, :BOOL
+   .ends
     LPIDWriteFontFace	typedef ptr IDWriteFontFace
 
 
@@ -256,7 +254,7 @@ DEFINE_IIDX(IDWriteFontCollectionLoader, "cca920e4-52f0-492b-bfa8-29c72ee0a468")
 .comdef IDWriteFontCollectionLoader : public IUnknown
 
     CreateEnumeratorFromKey proc :ptr, :ptr, :UINT32, :ptr
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteFontFileEnumerator, "72755049-5ff7-435d-8348-4be97cfa6c7c")
 
@@ -264,7 +262,7 @@ DEFINE_IIDX(IDWriteFontFileEnumerator, "72755049-5ff7-435d-8348-4be97cfa6c7c")
 
     MoveNext		proc :ptr
     GetCurrentFontFile	proc :ptr
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteLocalizedStrings, "08256209-099a-4b34-b86d-c22b110e7771")
 
@@ -276,7 +274,7 @@ DEFINE_IIDX(IDWriteLocalizedStrings, "08256209-099a-4b34-b86d-c22b110e7771")
     GetLocaleName	proc :UINT32, :ptr, :UINT32
     GetStringLength	proc :UINT32, :ptr
     GetString		proc :UINT32, :ptr, :UINT32
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteFontCollection, "a84cee02-3eea-4eee-a827-87c1a02a0fcc")
 
@@ -286,7 +284,7 @@ DEFINE_IIDX(IDWriteFontCollection, "a84cee02-3eea-4eee-a827-87c1a02a0fcc")
     GetFontFamily	proc :UINT32, :ptr
     FindFamilyName	proc :ptr, :ptr, :ptr
     GetFontFromFontFace proc :ptr, :ptr
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteFontList, "1a0d8438-1d97-4ec1-aef9-a2fb86ed6acb")
 
@@ -295,7 +293,7 @@ DEFINE_IIDX(IDWriteFontList, "1a0d8438-1d97-4ec1-aef9-a2fb86ed6acb")
     GetFontCollection	proc :ptr
     GetFontCount	proc
     GetFont		proc :UINT32, :ptr
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteFontFamily, "da20d8ef-812a-4c43-9802-62ec4abd7add")
 
@@ -304,7 +302,7 @@ DEFINE_IIDX(IDWriteFontFamily, "da20d8ef-812a-4c43-9802-62ec4abd7add")
     GetFamilyNames	proc :ptr
     GetFirstMatchingFont proc :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STRETCH, :DWRITE_FONT_STYLE, :ptr
     GetMatchingFonts	proc :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STRETCH, :DWRITE_FONT_STYLE, :ptr
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteFont, "acd16696-8c14-4f5d-877e-fe3fc1d32737")
 
@@ -321,7 +319,7 @@ DEFINE_IIDX(IDWriteFont, "acd16696-8c14-4f5d-877e-fe3fc1d32737")
     GetMetrics		proc :ptr
     HasCharacter	proc :UINT32, :ptr
     CreateFontFace	proc :ptr
-    .ends
+   .ends
 
 
 .enum DWRITE_READING_DIRECTION {
@@ -480,41 +478,42 @@ DEFINE_IIDX(IDWriteTextFormat, "9c906818-31d7-4fd3-a151-7c5e225db55a")
 
 .comdef IDWriteTextFormat : public IUnknown
 
-    SetTextAlignment	proc :DWRITE_TEXT_ALIGNMENT
-    SetParagraphAlignment proc :DWRITE_PARAGRAPH_ALIGNMENT
-    SetWordWrapping	proc :DWRITE_WORD_WRAPPING
-    SetReadingDirection proc :DWRITE_READING_DIRECTION
-    SetFlowDirection	proc :DWRITE_FLOW_DIRECTION
-    SetIncrementalTabStop proc :FLOAT
-    SetTrimming		proc :ptr, :ptr
-    SetLineSpacing	proc :DWRITE_LINE_SPACING_METHOD, :FLOAT, :FLOAT
-    GetTextAlignment	proc
-    GetParagraphAlignment proc
-    GetWordWrapping	proc
-    GetReadingDirection proc
-    GetFlowDirection	proc
-    GetIncrementalTabStop proc
-    GetTrimming		proc :ptr, :ptr
-    GetLineSpacing	proc :ptr, :ptr, :ptr
-    GetFontCollection	proc :ptr
-    GetFontFamilyNameLength proc
-    GetFontFamilyName	proc :UINT32
-    GetFontWeight	proc
-    GetFontStyle	proc
-    GetFontStretch	proc
-    GetFontSize		proc
-    GetLocaleNameLength proc
-    GetLocaleName	proc :UINT32
-    .ends
+    SetTextAlignment		proc :DWRITE_TEXT_ALIGNMENT
+    SetParagraphAlignment	proc :DWRITE_PARAGRAPH_ALIGNMENT
+    SetWordWrapping		proc :DWRITE_WORD_WRAPPING
+    SetReadingDirection		proc :DWRITE_READING_DIRECTION
+    SetFlowDirection		proc :DWRITE_FLOW_DIRECTION
+    SetIncrementalTabStop	proc :FLOAT
+    SetTrimming			proc :ptr, :ptr
+    SetLineSpacing		proc :DWRITE_LINE_SPACING_METHOD, :FLOAT, :FLOAT
+    GetTextAlignment		proc
+    GetParagraphAlignment	proc
+    GetWordWrapping		proc
+    GetReadingDirection		proc
+    GetFlowDirection		proc
+    GetIncrementalTabStop	proc
+    GetTrimming			proc :ptr, :ptr
+    GetLineSpacing		proc :ptr, :ptr, :ptr
+    GetFontCollection		proc :ptr
+    GetFontFamilyNameLength	proc
+    GetFontFamilyName		proc :UINT32
+    GetFontWeight		proc
+    GetFontStyle		proc
+    GetFontStretch		proc
+    GetFontSize			proc
+    GetLocaleNameLength		proc
+    GetLocaleName		proc :UINT32
+   .ends
 
 
 DEFINE_IIDX(IDWriteTypography, "55f1112b-1dc2-4b3c-9541-f46894ed85b6")
 
 .comdef IDWriteTypography : public IUnknown
-    AddFontFeature	proc :DWRITE_FONT_FEATURE
-    GetFontFeatureCount proc
-    GetFontFeature	proc :UINT32, :ptr
-    .ends
+
+    AddFontFeature		proc :DWRITE_FONT_FEATURE
+    GetFontFeatureCount		proc
+    GetFontFeature		proc :UINT32, :ptr
+   .ends
 
 .enum DWRITE_SCRIPT_SHAPES {
     DWRITE_SCRIPT_SHAPES_DEFAULT = 0,
@@ -534,12 +533,13 @@ DWRITE_SCRIPT_ANALYSIS	ENDS
     }
 
 DWRITE_LINE_BREAKPOINT STRUC
-;breakConditionBefore : 2 UINT8 ?
-;breakConditionAfter  : 2 UINT8 ?
-;isWhitespace	      : 1 UINT8 ?
-;isSoftHyphen	      : 1 UINT8 ?
-;padding	      : 2 UINT8 ?
-flags		      UINT8 ?
+record
+ breakConditionBefore	db : 2 ?
+ breakConditionAfter	db : 2 ?
+ isWhitespace		db : 1 ?
+ isSoftHyphen		db : 1 ?
+ padding		db : 2 ?
+ends
 DWRITE_LINE_BREAKPOINT ENDS
 
 .enum DWRITE_NUMBER_SUBSTITUTION_METHOD {
@@ -557,121 +557,55 @@ DEFINE_IIDX(IDWriteNumberSubstitution, "14885CC9-BAB0-4f90-B6ED-5C366A2CD03D")
     .ends
 
 DWRITE_SHAPING_TEXT_PROPERTIES STRUC
-;isShapedAlone	    : 1 UINT16 ?
-;reserved	    : 15 UINT16 ?
-flags		      UINT16 ?
+record
+ isShapedAlone		dw :  1 ?
+ reserved		dw : 15 ?
+ends
 DWRITE_SHAPING_TEXT_PROPERTIES ENDS
 
 DWRITE_SHAPING_GLYPH_PROPERTIES STRUC
-;justification	    : 4 UINT16 ?
-;isClusterStart	    : 1 UINT16 ?
-;isDiacritic	    : 1 UINT16 ?
-;isZeroWidthSpace    : 1 UINT16 ?
-;reserved	    : 9 UINT16 ?
-flags		      UINT16 ?
+record
+ justification		dw : 4 ?
+ isClusterStart		dw : 1 ?
+ isDiacritic		dw : 1 ?
+ isZeroWidthSpace	dw : 1 ?
+ reserved		dw : 9 ?
+ends
 DWRITE_SHAPING_GLYPH_PROPERTIES ENDS
 
 DEFINE_IIDX(IDWriteTextAnalysisSource, "688e1a58-5094-47c8-adc8-fbcea60ae92b")
 
 .comdef IDWriteTextAnalysisSource : public IUnknown
 
-    GetTextAtPosition	proc :UINT32, :ptr
-    GetTextBeforePosition proc :UINT32, :ptr
-    GetParagraphReadingDirection proc
-    GetLocaleName	proc :UINT32, :ptr, :ptr
-    GetNumberSubstitution proc :UINT32, :ptr, :ptr
-    .ends
+    GetTextAtPosition			proc :UINT32, :ptr
+    GetTextBeforePosition		proc :UINT32, :ptr
+    GetParagraphReadingDirection	proc
+    GetLocaleName			proc :UINT32, :ptr, :ptr
+    GetNumberSubstitution		proc :UINT32, :ptr, :ptr
+   .ends
 
 DEFINE_IIDX(IDWriteTextAnalysisSink, "5810cd44-0ca0-4701-b3fa-bec5182ae4f6")
 
 .comdef IDWriteTextAnalysisSink : public IUnknown
 
-    SetScriptAnalysis	proc :UINT32, :UINT32, :ptr
-    SetLineBreakpoints	proc :UINT32, :UINT32
-    SetBidiLevel	proc :UINT32, :UINT32, :UINT8, :UINT8
-    SetNumberSubstitution proc :UINT32, :UINT32, :ptr
-    .ends
+    SetScriptAnalysis		proc :UINT32, :UINT32, :ptr
+    SetLineBreakpoints		proc :UINT32, :UINT32
+    SetBidiLevel		proc :UINT32, :UINT32, :UINT8, :UINT8
+    SetNumberSubstitution	proc :UINT32, :UINT32, :ptr
+   .ends
 
 DEFINE_IIDX(IDWriteTextAnalyzer, "b7e6163e-7f46-43b4-84b3-e4e6249c365d")
 
 .comdef IDWriteTextAnalyzer : public IUnknown
 
-    AnalyzeScript proc \
-	:ptr,
-	:UINT32,
-	:UINT32,
-	:ptr
-    AnalyzeBidi proc \
-	:ptr,
-	:UINT32,
-	:UINT32,
-	:ptr
-    AnalyzeNumberSubstitution proc \
-	:ptr,
-	:UINT32,
-	:UINT32,
-	:ptr
-    AnalyzeLineBreakpoints proc \
-	:ptr,
-	:UINT32,
-	:UINT32,
-	:ptr
-    GetGlyphs proc \
-	:UINT32,
-	:ptr,
-	:BOOL,
-	:BOOL,
-	:ptr, :ptr,
-	:ptr,
-	:ptr,
-	:ptr,
-	:UINT32,
-	:UINT32,
-	:ptr,
-	:ptr,
-	:ptr,
-	:ptr,
-	:ptr
-    GetGlyphPlacements proc \
-	:ptr,
-	:ptr,
-	:UINT32,
-	:ptr,
-	:ptr,
-	:UINT32,
-	:ptr,
-	:FLOAT,
-	:BOOL,
-	:BOOL,
-	:ptr,
-	:ptr,
-	:ptr,
-	:ptr,
-	:UINT32,
-	:ptr,
-	:ptr
-    GetGdiCompatibleGlyphPlacements proc \
-	:ptr,
-	:ptr,
-	:UINT32,
-	:ptr,
-	:ptr,
-	:UINT32,
-	:ptr,
-	:FLOAT,
-	:FLOAT,
-	:ptr,
-	:BOOL,
-	:BOOL,
-	:BOOL,
-	:ptr,
-	:ptr,
-	:ptr,
-	:ptr,
-	:UINT32,
-	:ptr,
-	:ptr
-    .ends
+    AnalyzeScript			proc :ptr, :UINT32, :UINT32, :ptr
+    AnalyzeBidi				proc :ptr, :UINT32, :UINT32, :ptr
+    AnalyzeNumberSubstitution		proc :ptr, :UINT32, :UINT32, :ptr
+    AnalyzeLineBreakpoints		proc :ptr, :UINT32, :UINT32, :ptr
+    GetGlyphs				proc :UINT32, :ptr, :BOOL, :BOOL, :ptr, :ptr, :ptr, :ptr, :ptr, :UINT32, :UINT32, :ptr, :ptr, :ptr, :ptr, :ptr
+    GetGlyphPlacements			proc :ptr, :ptr, :UINT32, :ptr, :ptr, :UINT32, :ptr, :FLOAT, :BOOL, :BOOL, :ptr, :ptr, :ptr, :ptr, :UINT32, :ptr, :ptr
+    GetGdiCompatibleGlyphPlacements	proc :ptr, :ptr, :UINT32, :ptr, :ptr, :UINT32, :ptr, :FLOAT, :FLOAT, :ptr, :BOOL, :BOOL, :BOOL, :ptr, :ptr, :ptr, :ptr, :UINT32, :ptr, :ptr
+   .ends
 
 
 DWRITE_GLYPH_RUN	STRUC
@@ -727,13 +661,14 @@ DWRITE_LINE_METRICS	ENDS
 DWRITE_CLUSTER_METRICS	STRUC
 width			FLOAT ?
 length			UINT16 ?
-;canWrapLineAfter : 1	UINT16 ?
-;isWhitespace : 1	UINT16 ?
-;isNewline : 1		UINT16 ?
-;isSoftHyphen : 1	UINT16 ?
-;isRightToLeft : 1	UINT16 ?
-;padding : 11		UINT16 ?
-flags			UINT16 ?
+record
+ canWrapLineAfter	dw :  1 ?
+ isWhitespace		dw :  1 ?
+ isNewline		dw :  1 ?
+ isSoftHyphen		dw :  1 ?
+ isRightToLeft		dw :  1 ?
+ padding		dw : 11 ?
+ends
 DWRITE_CLUSTER_METRICS	ENDS
 
 
@@ -786,17 +721,17 @@ DEFINE_IIDX(IDWriteInlineObject, "8339FDE3-106F-47ab-8373-1C6295EB10B3")
     GetMetrics		proc :ptr
     GetOverhangMetrics	proc :ptr
     GetBreakConditions	proc :ptr, :ptr
-    .ends
+   .ends
 
 
 DEFINE_IIDX(IDWritePixelSnapping, "eaf3a2da-ecf4-4d24-b644-b34f6842024b")
 
 .comdef IDWritePixelSnapping : public IUnknown
 
-    IsPixelSnappingDisabled proc :ptr, :ptr
-    GetCurrentTransform proc :ptr, :ptr
-    GetPixelsPerDip	proc :ptr, :ptr
-    .ends
+    IsPixelSnappingDisabled	proc :ptr, :ptr
+    GetCurrentTransform		proc :ptr, :ptr
+    GetPixelsPerDip		proc :ptr, :ptr
+   .ends
 
 
 DEFINE_IIDX(IDWriteTextRenderer, "ef8a8135-5cc6-45fe-8825-c5a0724eb819")
@@ -807,97 +742,97 @@ DEFINE_IIDX(IDWriteTextRenderer, "ef8a8135-5cc6-45fe-8825-c5a0724eb819")
     DrawUnderline	proc :ptr, :FLOAT, :FLOAT, :ptr, :ptr
     DrawStrikethrough	proc :ptr, :FLOAT, :FLOAT, :ptr, :ptr
     DrawInlineObject	proc :ptr, :FLOAT, :FLOAT, :ptr, :BOOL, :BOOL, :ptr
-    .ends
+   .ends
 
 
 DEFINE_IIDX(IDWriteTextLayout, "53737037-6d14-410b-9bfe-0b182bb70961")
 
 .comdef IDWriteTextLayout : public IUnknown
 
-    SetTextAlignment	proc :DWRITE_TEXT_ALIGNMENT
-    SetParagraphAlignment proc :DWRITE_PARAGRAPH_ALIGNMENT
-    SetWordWrapping	proc :DWRITE_WORD_WRAPPING
-    SetReadingDirection proc :DWRITE_READING_DIRECTION
-    SetFlowDirection	proc :DWRITE_FLOW_DIRECTION
-    SetIncrementalTabStop proc :FLOAT
-    SetTrimming		proc :ptr, :ptr
-    SetLineSpacing	proc :DWRITE_LINE_SPACING_METHOD, :FLOAT, :FLOAT
-    GetTextAlignment	proc
-    GetParagraphAlignment proc
-    GetWordWrapping	proc
-    GetReadingDirection proc
-    GetFlowDirection	proc
-    GetIncrementalTabStop proc
-    GetTrimming		proc :ptr, :ptr
-    GetLineSpacing	proc :ptr, :ptr, :ptr
-    GetFontCollection?	proc :ptr
-    GetFontFamilyNameLength? proc
-    GetFontFamilyName?	proc :UINT32
-    GetFontWeight?	proc
-    GetFontStyle?	proc
-    GetFontStretch?	proc
-    GetFontSize?	proc
-    GetLocaleNameLength? proc
-    GetLocaleName	proc :UINT32
+    SetTextAlignment		proc :DWRITE_TEXT_ALIGNMENT
+    SetParagraphAlignment	proc :DWRITE_PARAGRAPH_ALIGNMENT
+    SetWordWrapping		proc :DWRITE_WORD_WRAPPING
+    SetReadingDirection		proc :DWRITE_READING_DIRECTION
+    SetFlowDirection		proc :DWRITE_FLOW_DIRECTION
+    SetIncrementalTabStop	proc :FLOAT
+    SetTrimming			proc :ptr, :ptr
+    SetLineSpacing		proc :DWRITE_LINE_SPACING_METHOD, :FLOAT, :FLOAT
+    GetTextAlignment		proc
+    GetParagraphAlignment	proc
+    GetWordWrapping		proc
+    GetReadingDirection		proc
+    GetFlowDirection		proc
+    GetIncrementalTabStop	proc
+    GetTrimming			proc :ptr, :ptr
+    GetLineSpacing		proc :ptr, :ptr, :ptr
+    GetFontCollection?		proc :ptr
+    GetFontFamilyNameLength?	proc
+    GetFontFamilyName?		proc :UINT32
+    GetFontWeight?		proc
+    GetFontStyle?		proc
+    GetFontStretch?		proc
+    GetFontSize?		proc
+    GetLocaleNameLength?	proc
+    GetLocaleName		proc :UINT32
 
-    SetMaxWidth		proc :FLOAT
-    SetMaxHeight	proc :FLOAT
-    SetFontCollection	proc :ptr, :DWRITE_TEXT_RANGE
-    SetFontFamilyName	proc :ptr, :DWRITE_TEXT_RANGE
-    SetFontWeight	proc :DWRITE_FONT_WEIGHT, :DWRITE_TEXT_RANGE
-    SetFontStyle	proc :DWRITE_FONT_STYLE, :DWRITE_TEXT_RANGE
-    SetFontStretch	proc :DWRITE_FONT_STRETCH, :DWRITE_TEXT_RANGE
-    SetFontSize		proc :FLOAT, :DWRITE_TEXT_RANGE
-    SetUnderline	proc :BOOL, :DWRITE_TEXT_RANGE
-    SetStrikethrough	proc :BOOL, :DWRITE_TEXT_RANGE
-    SetDrawingEffect	proc :ptr, :DWRITE_TEXT_RANGE
-    SetInlineObject	proc :ptr, :DWRITE_TEXT_RANGE
-    SetTypography	proc :ptr, :DWRITE_TEXT_RANGE
-    SetLocaleName	proc :ptr, :DWRITE_TEXT_RANGE
-    GetMaxWidth		proc
-    GetMaxHeight	proc
+    SetMaxWidth			proc :FLOAT
+    SetMaxHeight		proc :FLOAT
+    SetFontCollection		proc :ptr, :DWRITE_TEXT_RANGE
+    SetFontFamilyName		proc :ptr, :DWRITE_TEXT_RANGE
+    SetFontWeight		proc :DWRITE_FONT_WEIGHT, :DWRITE_TEXT_RANGE
+    SetFontStyle		proc :DWRITE_FONT_STYLE, :DWRITE_TEXT_RANGE
+    SetFontStretch		proc :DWRITE_FONT_STRETCH, :DWRITE_TEXT_RANGE
+    SetFontSize			proc :FLOAT, :DWRITE_TEXT_RANGE
+    SetUnderline		proc :BOOL, :DWRITE_TEXT_RANGE
+    SetStrikethrough		proc :BOOL, :DWRITE_TEXT_RANGE
+    SetDrawingEffect		proc :ptr, :DWRITE_TEXT_RANGE
+    SetInlineObject		proc :ptr, :DWRITE_TEXT_RANGE
+    SetTypography		proc :ptr, :DWRITE_TEXT_RANGE
+    SetLocaleName		proc :ptr, :DWRITE_TEXT_RANGE
+    GetMaxWidth			proc
+    GetMaxHeight		proc
 
-    GetFontCollection	proc :UINT32, :ptr, :ptr
-    GetFontFamilyNameLength proc :UINT32, :ptr, :ptr
-    GetFontFamilyName	proc :UINT32, :UINT32, :ptr
-    GetFontWeight	proc :UINT32, :ptr, :ptr
-    GetFontStyle	proc :UINT32, :ptr, :ptr
-    GetFontStretch	proc :UINT32, :ptr, :ptr
-    GetFontSize		proc :UINT32, :ptr, :ptr
+    GetFontCollection		proc :UINT32, :ptr, :ptr
+    GetFontFamilyNameLength	proc :UINT32, :ptr, :ptr
+    GetFontFamilyName		proc :UINT32, :UINT32, :ptr
+    GetFontWeight		proc :UINT32, :ptr, :ptr
+    GetFontStyle		proc :UINT32, :ptr, :ptr
+    GetFontStretch		proc :UINT32, :ptr, :ptr
+    GetFontSize			proc :UINT32, :ptr, :ptr
 
-    GetUnderline	proc :UINT32, :ptr, :ptr
-    GetStrikethrough	proc :UINT32, :ptr, :ptr
-    GetDrawingEffect	proc :UINT32, :ptr, :ptr
-    GetInlineObject	proc :UINT32, :ptr, :ptr
-    GetTypography	proc :UINT32, :ptr, :ptr
+    GetUnderline		proc :UINT32, :ptr, :ptr
+    GetStrikethrough		proc :UINT32, :ptr, :ptr
+    GetDrawingEffect		proc :UINT32, :ptr, :ptr
+    GetInlineObject		proc :UINT32, :ptr, :ptr
+    GetTypography		proc :UINT32, :ptr, :ptr
 
-    GetLocaleNameLength proc :UINT32, :ptr, :ptr
-    GetLocaleName2	proc :UINT32, :UINT32, :ptr
-    Draw		proc :ptr, :ptr, :FLOAT, :FLOAT
-    GetLineMetrics	proc :UINT32, :ptr
-    GetMetrics		proc :ptr
-    GetOverhangMetrics	proc :ptr
-    GetClusterMetrics	proc :UINT32, :ptr
-    DetermineMinWidth	proc :ptr
-    HitTestPoint	proc :FLOAT, :FLOAT, :ptr, :ptr, :ptr
-    HitTestTextPosition proc :UINT32, :BOOL, :ptr, :ptr, :ptr
-    HitTestTextRange	proc :UINT32, :UINT32, :FLOAT, :FLOAT, :UINT32, :ptr
-    .ends
+    GetLocaleNameLength		proc :UINT32, :ptr, :ptr
+    GetLocaleName2		proc :UINT32, :UINT32, :ptr
+    Draw			proc :ptr, :ptr, :FLOAT, :FLOAT
+    GetLineMetrics		proc :UINT32, :ptr
+    GetMetrics			proc :ptr
+    GetOverhangMetrics		proc :ptr
+    GetClusterMetrics		proc :UINT32, :ptr
+    DetermineMinWidth		proc :ptr
+    HitTestPoint		proc :FLOAT, :FLOAT, :ptr, :ptr, :ptr
+    HitTestTextPosition		proc :UINT32, :BOOL, :ptr, :ptr, :ptr
+    HitTestTextRange		proc :UINT32, :UINT32, :FLOAT, :FLOAT, :UINT32, :ptr
+   .ends
 
 
 DEFINE_IIDX(IDWriteBitmapRenderTarget, "5e5a32a3-8dff-4773-9ff6-0696eab77267")
 
 .comdef IDWriteBitmapRenderTarget : public IUnknown
 
-    DrawGlyphRun	proc :FLOAT, :FLOAT, :DWRITE_MEASURING_MODE, :ptr, :ptr, :COLORREF, :ptr
-    GetMemoryDC		proc
-    GetPixelsPerDip	proc
-    SetPixelsPerDip	proc :FLOAT
-    GetCurrentTransform proc :ptr
-    SetCurrentTransform proc :ptr
-    GetSize		proc :ptr
-    Resize		proc :UINT32, :UINT32
-    .ends
+    DrawGlyphRun		proc :FLOAT, :FLOAT, :DWRITE_MEASURING_MODE, :ptr, :ptr, :COLORREF, :ptr
+    GetMemoryDC			proc
+    GetPixelsPerDip		proc
+    SetPixelsPerDip		proc :FLOAT
+    GetCurrentTransform		proc :ptr
+    SetCurrentTransform		proc :ptr
+    GetSize			proc :ptr
+    Resize			proc :UINT32, :UINT32
+   .ends
 
 
 DEFINE_IIDX(IDWriteGdiInterop, "1edd9491-9853-4299-898f-6432983b6f3a")
@@ -909,7 +844,7 @@ DEFINE_IIDX(IDWriteGdiInterop, "1edd9491-9853-4299-898f-6432983b6f3a")
     ConvertFontFaceToLOGFONT	proc :ptr, :ptr
     CreateFontFaceFromHdc	proc :HDC, :ptr
     CreateBitmapRenderTarget	proc :HDC, :UINT32, :UINT32, :ptr
-    .ends
+   .ends
 
 .enum DWRITE_TEXTURE_TYPE {
     DWRITE_TEXTURE_ALIASED_1x1,
@@ -925,40 +860,40 @@ DEFINE_IIDX(IDWriteGlyphRunAnalysis, "7d97dbf7-e085-42d4-81e3-6a883bded118")
     GetAlphaTextureBounds	proc :DWRITE_TEXTURE_TYPE, :ptr
     CreateAlphaTexture		proc :DWRITE_TEXTURE_TYPE, :ptr, :UINT32
     GetAlphaBlendParams		proc :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 DEFINE_IIDX(IDWriteFactory, "b859ee5a-d838-4b5b-a2e8-1adc7d93db48")
 
 .comdef IDWriteFactory : public IUnknown
 
-    GetSystemFontCollection	proc :ptr, :BOOL
-    CreateCustomFontCollection	proc :ptr, :UINT32, :ptr
-    RegisterFontCollectionLoader proc :ptr
-    UnregisterFontCollectionLoader proc :ptr
-    CreateFontFileReference	proc :ptr, :ptr, :ptr
-    CreateCustomFontFileReference proc :UINT32, :ptr, :ptr
-    CreateFontFace		proc :DWRITE_FONT_FACE_TYPE, :UINT32, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr
-    CreateRenderingParams	proc :ptr
-    CreateMonitorRenderingParams proc :HMONITOR, :ptr
-    CreateCustomRenderingParams proc :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr
-    RegisterFontFileLoader	proc :ptr
-    UnregisterFontFileLoader	proc :ptr
-    CreateTextFormat		proc :ptr, :ptr, :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STYLE, :DWRITE_FONT_STRETCH, :FLOAT, :ptr, :ptr
-    CreateTypography		proc :ptr
-    GetGdiInterop		proc :ptr
-    CreateTextLayout		proc :ptr, :UINT32, :ptr,  :FLOAT, :FLOAT, :ptr
-    CreateGdiCompatibleTextLayout proc :UINT32, :ptr, :FLOAT, :FLOAT, :FLOAT, :ptr, :BOOL, :ptr
-    CreateEllipsisTrimmingSign	proc :ptr, :ptr
-    CreateTextAnalyzer		proc :ptr
-    CreateNumberSubstitution	proc :DWRITE_NUMBER_SUBSTITUTION_METHOD, :ptr, :BOOL, :ptr
-    CreateGlyphRunAnalysis	proc :ptr, :FLOAT, :ptr, :DWRITE_RENDERING_MODE, :DWRITE_MEASURING_MODE, :FLOAT, :FLOAT, :ptr
-    .ends
+    GetSystemFontCollection		proc :ptr, :BOOL
+    CreateCustomFontCollection		proc :ptr, :UINT32, :ptr
+    RegisterFontCollectionLoader	proc :ptr
+    UnregisterFontCollectionLoader	proc :ptr
+    CreateFontFileReference		proc :ptr, :ptr, :ptr
+    CreateCustomFontFileReference	proc :UINT32, :ptr, :ptr
+    CreateFontFace			proc :DWRITE_FONT_FACE_TYPE, :UINT32, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr
+    CreateRenderingParams		proc :ptr
+    CreateMonitorRenderingParams	proc :HMONITOR, :ptr
+    CreateCustomRenderingParams		proc :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr
+    RegisterFontFileLoader		proc :ptr
+    UnregisterFontFileLoader		proc :ptr
+    CreateTextFormat			proc :ptr, :ptr, :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STYLE, :DWRITE_FONT_STRETCH, :FLOAT, :ptr, :ptr
+    CreateTypography			proc :ptr
+    GetGdiInterop			proc :ptr
+    CreateTextLayout			proc :ptr, :UINT32, :ptr,  :FLOAT, :FLOAT, :ptr
+    CreateGdiCompatibleTextLayout	proc :UINT32, :ptr, :FLOAT, :FLOAT, :FLOAT, :ptr, :BOOL, :ptr
+    CreateEllipsisTrimmingSign		proc :ptr, :ptr
+    CreateTextAnalyzer			proc :ptr
+    CreateNumberSubstitution		proc :DWRITE_NUMBER_SUBSTITUTION_METHOD, :ptr, :BOOL, :ptr
+    CreateGlyphRunAnalysis		proc :ptr, :FLOAT, :ptr, :DWRITE_RENDERING_MODE, :DWRITE_MEASURING_MODE, :FLOAT, :FLOAT, :ptr
+   .ends
 
 
 DWriteCreateFactory proto :DWRITE_FACTORY_TYPE, :REFIID, :ptr ptr IUnknown
 
-FACILITY_DWRITE		equ 0x898
-DWRITE_ERR_BASE		equ 0x5000
+FACILITY_DWRITE equ 0x898
+DWRITE_ERR_BASE equ 0x5000
 MAKE_DWRITE_HR macro severity, code
 	exitm<MAKE_HRESULT(severity, FACILITY_DWRITE, (DWRITE_ERR_BASE + code))>
 	endm
@@ -967,5 +902,5 @@ MAKE_DWRITE_HR_ERR macro code
 	endm
 
 .pragma pack(pop)
-
+.pragma list(pop)
 endif

@@ -457,14 +457,12 @@ ifdef _UNICODE
                             add rcx,rbx
                             MultiByteToWideChar( CP_ACP, 0, rcx, 1, &buffer[rbx*2], 1 )
                         .endf
-                        mov textlen,ebx
+                        mov eax,ebx
                         lea rdx,buffer
 endif
                     .endif
                     mov text,rdx
-ifndef _UNICODE
                     mov textlen,eax
-endif
                    .endc
 
                 .case 'n'

@@ -1,15 +1,10 @@
-.pragma list(push, 0)
-
-ifndef __LIBC_INC
-include libc.inc
-endif
-
-if not defined(NTDDI_VERSION) or (NTDDI_VERSION lt NTDDI_WIN8)
-include adoint_backcompat.inc
-else
-
 ifndef _ADOINT_H_
 define _ADOINT_H_
+.pragma list(push, 0)
+
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef _INC_TCHAR
 include tchar.inc
@@ -25,7 +20,7 @@ endif
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr>
+.err <this stub requires an updated version of rpcndr.h>
 endif
 
 ifndef __ado10_h__
@@ -540,10 +535,10 @@ ifndef _COMMON_ADC_AND_ADO_PROPS_
 define _COMMON_ADC_AND_ADO_PROPS_
 
 .enum ADCPROP_UPDATECRITERIA_ENUM {
-	adCriteriaKey,
-	adCriteriaAllCols,
-	adCriteriaUpdCols,
-	adCriteriaTimeStamp
+	adCriteriaKey		= 0,
+	adCriteriaAllCols	= 1,
+	adCriteriaUpdCols	= 2,
+	adCriteriaTimeStamp	= 3
 	}
 
 .enum ADCPROP_ASYNCTHREADPRIORITY_ENUM {
@@ -555,8 +550,8 @@ define _COMMON_ADC_AND_ADO_PROPS_
 	}
 
 .enum ADCPROP_AUTORECALC_ENUM {
-	adRecalcUpFront,
-	adRecalcAlways
+	adRecalcUpFront		= 0,
+	adRecalcAlways		= 1
 	}
 
 .enum ADCPROP_UPDATERESYNC_ENUM {
@@ -624,9 +619,9 @@ CEResyncEnum typedef ADCPROP_UPDATERESYNC_ENUM
 	}
 
 .enum RecordTypeEnum {
-	adSimpleRecord,
-	adCollectionRecord,
-	adStructDoc
+	adSimpleRecord		= 0,
+	adCollectionRecord	= 1,
+	adStructDoc		= 2
 	}
 
 externdef LIBID_ADODB:IID
@@ -688,7 +683,7 @@ endif
 
 ifndef __Command15_INTERFACE_DEFINED__
 define __Command15_INTERFACE_DEFINED__
-DEFINE_IIDX(Command15, "00001508-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Command15, "00000508-0000-0010-8000-00AA006D2EA4")
 
 .comdef Command15 : public _ADO
     get_ActiveConnection proc :ptr ptr
@@ -712,7 +707,7 @@ endif
 
 ifndef __Command25_INTERFACE_DEFINED__
 define __Command25_INTERFACE_DEFINED__
-DEFINE_IIDX(Command25, "0000154E-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Command25, "0000054E-0000-0010-8000-00AA006D2EA4")
 
 .comdef Command25 : public Command15
     get_State		proc :ptr
@@ -722,7 +717,7 @@ endif
 
 ifndef ___Command_INTERFACE_DEFINED__
 define ___Command_INTERFACE_DEFINED__
-DEFINE_IIDX(_ADOCommand, "986761E8-7269-4890-AA65-AD7C03697A6D")
+DEFINE_IIDX(_ADOCommand, "B08400BD-F9D1-4D02-B856-71D5DBA123E9")
 
 .comdef _ADOCommand : public Command25
     putref_CommandStream proc :ptr
@@ -736,7 +731,7 @@ endif
 
 ifndef __ConnectionEventsVt_INTERFACE_DEFINED__
 define __ConnectionEventsVt_INTERFACE_DEFINED__
-DEFINE_IIDX(ConnectionEventsVt, "00001402-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(ConnectionEventsVt, "00000402-0000-0010-8000-00AA006D2EA4")
 
 .comdef ConnectionEventsVt : public IUnknown
     InfoMessage		proc :ptr, :ptr, :ptr
@@ -753,7 +748,7 @@ endif
 
 ifndef __RecordsetEventsVt_INTERFACE_DEFINED__
 define __RecordsetEventsVt_INTERFACE_DEFINED__
-DEFINE_IIDX(RecordsetEventsVt, "00001403-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(RecordsetEventsVt, "00000403-0000-0010-8000-00AA006D2EA4")
 
 .comdef RecordsetEventsVt : public IUnknown
     WillChangeField	proc :LONG, :VARIANT, :ptr, :ptr
@@ -772,7 +767,7 @@ endif
 
 ifndef __ConnectionEvents_DISPINTERFACE_DEFINED__
 define __ConnectionEvents_DISPINTERFACE_DEFINED__
-DEFINE_IIDX(ConnectionEvents, "00001400-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(ConnectionEvents, "00000400-0000-0010-8000-00AA006D2EA4")
 
 .comdef ConnectionEvents : public IDispatch
    .ends
@@ -780,7 +775,7 @@ endif
 
 ifndef __RecordsetEvents_DISPINTERFACE_DEFINED__
 define __RecordsetEvents_DISPINTERFACE_DEFINED__
-DEFINE_IIDX(RecordsetEvents, "00001266-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(RecordsetEvents, "00000266-0000-0010-8000-00AA006D2EA4")
 
 .comdef RecordsetEvents : public IDispatch
    .ends
@@ -788,7 +783,7 @@ endif
 
 ifndef __Connection15_INTERFACE_DEFINED__
 define __Connection15_INTERFACE_DEFINED__
-DEFINE_IIDX(Connection15, "00001515-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Connection15, "00000515-0000-0010-8000-00AA006D2EA4")
 
 .comdef Connection15 : public _ADO
     get_ConnectionString proc :ptr
@@ -824,7 +819,7 @@ endif
 
 ifndef ___Connection_INTERFACE_DEFINED__
 define ___Connection_INTERFACE_DEFINED__
-DEFINE_IIDX(_ADOConnection, "00001550-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(_ADOConnection, "00000550-0000-0010-8000-00AA006D2EA4")
 
 .comdef _ADOConnection : public Connection15
     Cancel		proc
@@ -852,7 +847,7 @@ endif
 
 ifndef ___Record_INTERFACE_DEFINED__
 define ___Record_INTERFACE_DEFINED__
-DEFINE_IIDX(_ADORecord, "00001562-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(_ADORecord, "00000562-0000-0010-8000-00AA006D2EA4")
 
 .comdef _ADORecord : public _ADO
     get_ActiveConnection proc :ptr
@@ -879,7 +874,7 @@ endif
 
 ifndef ___Stream_INTERFACE_DEFINED__
 define ___Stream_INTERFACE_DEFINED__
-DEFINE_IIDX(_ADOStream, "00001565-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(_ADOStream, "00000565-0000-0010-8000-00AA006D2EA4")
 
 .comdef _ADOStream : public IDispatch
     get_Size		proc :ptr
@@ -944,7 +939,7 @@ endif
 
 ifndef __Recordset15_INTERFACE_DEFINED__
 define __Recordset15_INTERFACE_DEFINED__
-DEFINE_IIDX(Recordset15, "0000150E-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Recordset15, "0000050E-0000-0010-8000-00AA006D2EA4")
 
 .comdef Recordset15 : public _ADO
     get_AbsolutePosition proc :ptr
@@ -1012,7 +1007,7 @@ endif
 
 ifndef __Recordset20_INTERFACE_DEFINED__
 define __Recordset20_INTERFACE_DEFINED__
-DEFINE_IIDX(Recordset20, "0000154F-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Recordset20, "0000054F-0000-0010-8000-00AA006D2EA4")
 
 .comdef Recordset20 : public Recordset15
     Cancel		proc
@@ -1033,7 +1028,7 @@ endif
 
 ifndef __Recordset21_INTERFACE_DEFINED__
 define __Recordset21_INTERFACE_DEFINED__
-DEFINE_IIDX(Recordset21, "00001555-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Recordset21, "00000555-0000-0010-8000-00AA006D2EA4")
 
 .comdef Recordset21 : public Recordset20
     Seek		proc :VARIANT, :SeekEnum
@@ -1044,7 +1039,7 @@ endif
 
 ifndef ___Recordset_INTERFACE_DEFINED__
 define ___Recordset_INTERFACE_DEFINED__
-DEFINE_IIDX(_ADORecordset, "00001556-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(_ADORecordset, "00000556-0000-0010-8000-00AA006D2EA4")
 
 .comdef _ADORecordset : public Recordset21
     Save		proc :VARIANT, :PersistFormatEnum
@@ -1067,7 +1062,7 @@ endif
 
 ifndef __Field15_INTERFACE_DEFINED__
 define __Field15_INTERFACE_DEFINED__
-DEFINE_IIDX(Field15, "00001505-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Field15, "00000505-0000-0010-8000-00AA006D2EA4")
 
 .comdef Field15 : public _ADO
     get_ActualSize	proc :ptr
@@ -1088,7 +1083,7 @@ endif
 
 ifndef __Field20_INTERFACE_DEFINED__
 define __Field20_INTERFACE_DEFINED__
-DEFINE_IIDX(Field20, "0000154C-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Field20, "0000054C-0000-0010-8000-00AA006D2EA4")
 
 .comdef Field20 : public _ADO
     get_ActualSize	proc :ptr
@@ -1116,7 +1111,7 @@ endif
 
 ifndef __Field_INTERFACE_DEFINED__
 define __Field_INTERFACE_DEFINED__
-DEFINE_IIDX(ADOField, "00001569-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(ADOField, "00000569-0000-0010-8000-00AA006D2EA4")
 
 .comdef ADOField : public Field20
     get_Status		proc :ptr
@@ -1125,7 +1120,7 @@ endif
 
 ifndef __Fields15_INTERFACE_DEFINED__
 define __Fields15_INTERFACE_DEFINED__
-DEFINE_IIDX(Fields15, "00001506-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Fields15, "00000506-0000-0010-8000-00AA006D2EA4")
 
 .comdef Fields15 : public _ADOCollection
     get_Item		proc :VARIANT, :ptr ptr
@@ -1134,7 +1129,7 @@ endif
 
 ifndef __Fields20_INTERFACE_DEFINED__
 define __Fields20_INTERFACE_DEFINED__
-DEFINE_IIDX(Fields20, "0000154D-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(Fields20, "0000054D-0000-0010-8000-00AA006D2EA4")
 
 .comdef Fields20 : public Fields15
     _Append		proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum
@@ -1144,7 +1139,7 @@ endif
 
 ifndef __Fields_INTERFACE_DEFINED__
 define __Fields_INTERFACE_DEFINED__
-DEFINE_IIDX(ADOFields, "00001564-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(ADOFields, "00000564-0000-0010-8000-00AA006D2EA4")
 
 .comdef ADOFields : public Fields20
     Append		proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum, :VARIANT
@@ -1156,7 +1151,7 @@ endif
 
 ifndef ___Parameter_INTERFACE_DEFINED__
 define ___Parameter_INTERFACE_DEFINED__
-DEFINE_IIDX(_ADOParameter, "0000150C-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(_ADOParameter, "0000050C-0000-0010-8000-00AA006D2EA4")
 
 .comdef _ADOParameter : public _ADO
     get_Name		proc :ptr
@@ -1181,7 +1176,7 @@ endif
 
 ifndef __Parameters_INTERFACE_DEFINED__
 define __Parameters_INTERFACE_DEFINED__
-DEFINE_IIDX(ADOParameters, "0000150D-0000-0010-8000-00AA006D2EA4")
+DEFINE_IIDX(ADOParameters, "0000050D-0000-0010-8000-00AA006D2EA4")
 
 .comdef ADOParameters : public _ADODynaCollection
     get_Item		proc :VARIANT, :ptr ptr
@@ -1224,8 +1219,7 @@ ADODynaCollection	typedef _ADODynaCollection
 ADORecord		typedef _ADORecord
 ADOStream		typedef _ADOStream
 
-endif ; _ADOINT_H_
-
-endif ; NTDDI_VERSION
+endif ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .pragma list(pop)
+endif ; _ADOINT_H_

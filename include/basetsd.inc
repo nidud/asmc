@@ -1,7 +1,7 @@
 ifndef _BASETSD_
 define _BASETSD_
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 INT8		typedef sbyte

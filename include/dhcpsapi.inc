@@ -1,10 +1,11 @@
-.pragma list(push, 0)
 ifndef _DHCPSAPI_
 define _DHCPSAPI_
 
 .pragma comment(lib, dhcpsapi)
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -1880,4 +1881,3 @@ DhcpV4EnumPoliciesEx proto WINAPI :LPWSTR, :LPDWORD, :DWORD, :BOOL, :DHCP_IP_ADD
 endif
 
 endif
-.pragma list(pop)

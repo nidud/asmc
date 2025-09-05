@@ -1,10 +1,11 @@
 ifndef _WOW64APISET_H_
 define _WOW64APISET_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 if not defined(RC_INVOKED)
 if _WIN32_WINNT ge 0x0501 or defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)

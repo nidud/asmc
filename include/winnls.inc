@@ -1,7 +1,9 @@
 ifndef _WINNLS_
 define _WINNLS_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .pragma comment(lib, kernel32)
 

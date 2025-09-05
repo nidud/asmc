@@ -1,7 +1,7 @@
-ifndef _INC_TCHAR
-define _INC_TCHAR
+ifndef _TCHAR_
+define _TCHAR_
 .pragma list(push, 0)
-ifndef __LIBC_INC
+ifndef _LIBC_
 include libc.inc
 endif
 
@@ -1735,7 +1735,7 @@ mainCRTStartup proc
 
 else
 
-ifndef __STDLIB_INC
+ifndef _STDLIB_
 include stdlib.inc
 endif
 

@@ -17,8 +17,8 @@ $(UUID64):
         del *.obj
 
 list.exe:
-        asmc $(AFLAGS) -q guid.asm > list.txt
-        asmc $(AFLAGS) -pe $*.asm
+        asmc $(AFLAGS) -q $(src_dir)\libs\uuid\guid.asm > list.txt
+        asmc $(AFLAGS) -pe $(src_dir)\libs\uuid\list.asm
         $@
 
 clean:

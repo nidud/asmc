@@ -56,12 +56,11 @@ main proc
     .assert !strcmp(&ff.name, "makefile")
     .assert _findfirst("?akefile", &ff) != -1
     .assert !_findclose(rax)
-    .assert _findfirst("*.mak", &ff) != -1
+    .assert _findfirst("*.obj", &ff) != -1
     .assert !_findclose(rax)
 
     .assert _wfindfirst(L"makefile", &wf) != -1
     .assert !_findclose(rax)
-
     .return( 0 )
 
 main endp

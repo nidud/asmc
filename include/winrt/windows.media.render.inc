@@ -1,37 +1,23 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPC500_
+include rpc500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
-ifndef __windows2Emedia2Erender_h__
-define __windows2Emedia2Erender_h__
-
-include inspectable.inc
-include AsyncInfo.inc
-include EventToken.inc
+ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
+endif
 
 .namespace Windows
 .namespace Media
 .namespace Render
 
 .enum AudioRenderCategory {
-    AudioRenderCategory_Other   = 0,
-    AudioRenderCategory_ForegroundOnlyMedia = 1,
-    AudioRenderCategory_BackgroundCapableMedia  = 2,
-    AudioRenderCategory_Communications  = 3,
-    AudioRenderCategory_Alerts  = 4,
-    AudioRenderCategory_SoundEffects    = 5,
-    AudioRenderCategory_GameEffects = 6,
-    AudioRenderCategory_GameMedia   = 7
+    AudioRenderCategory_Other,
+    AudioRenderCategory_ForegroundOnlyMedia,
+    AudioRenderCategory_BackgroundCapableMedia,
+    AudioRenderCategory_Communications,
+    AudioRenderCategory_Alerts,
+    AudioRenderCategory_SoundEffects,
+    AudioRenderCategory_GameEffects,
+    AudioRenderCategory_GameMedia
     }
 
 .endn

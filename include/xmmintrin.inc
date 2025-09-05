@@ -1,21 +1,10 @@
 ifndef _INCLUDED_MM2
 define _INCLUDED_MM2
 .pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
-;;
-;; Principal header file for Streaming SIMD Extensions intrinsics
-;;
-;; The intrinsics package can be used in 2 ways, based whether or not
-;; _MM_FUNCTIONALITY is defined; if it is, the C/x87 implementation
-;; will be used (the "faux intrinsics").
-;;
-;; Note that the m128 datatype provided using _MM2_FUNCTIONALITY mode is
-;;   implemented as struct, will not be 128b aligned, will be passed
-;;   via the stack, etc.  MM_FUNCTIONALITY mode is not intended for
-;;   performance, just semantics.
-;;
+
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
@@ -25,9 +14,7 @@ endif
 ifdef _M_CEE_PURE
 .err <ERROR: EMM intrinsics not supported in the pure mode>
 endif
-;;
-;; the m64 type is required for the integer Streaming SIMD Extensions intrinsics
-;;
+
 ifndef _MMINTRIN_H_INCLUDED
 include mmintrin.inc
 endif
@@ -42,10 +29,9 @@ ifdef __ICL
 ifdef _MM_FUNCTIONALITY
 include xmm_func.inc
 else
-;; using real intrinsics
 __m128		typedef sqword
 endif
-else ;; __ICL
+else
 __m128		union
 m128_f32	real4 4 dup(?)
 m128_u64	dq 2 dup(?)
@@ -62,36 +48,15 @@ ifndef _INC_MALLOC
 include malloc.inc
 endif
 endif
-endif;; __ICL
+endif
 
 ifndef XMVECTOR
 XMVECTOR typedef REAL16
 endif
 
-;;
-;; MACRO for shuffle parameter for _mm_shuffle_ps().
-;; Argument fp3 is a digit[0123] that represents the fp
-;; from argument "b" of mm_shuffle_ps that will be
-;; placed in fp3 of result. fp2 is the same for fp2 in
-;; result. fp1 is a digit[0123] that represents the fp
-;; from argument "a" of mm_shuffle_ps that will be
-;; places in fp1 of result. fp0 is the same for fp0 of
-;; result
-;;
 _MM_SHUFFLE macro fp3, fp2, fp1, fp0
     exitm<(((fp3) SHL 6) OR ((fp2) SHL 4) OR ((fp1) SHL 2) OR ((fp0)))>
     endm
-
-;;
-;; MACRO for performing the transpose of a 4x4 matrix
-;; of single precision floating point values.
-;; Arguments row0, row1, row2, and row3 are __m128
-;; values whose elements form the corresponding rows
-;; of a 4x4 matrix.  The matrix transpose is returned
-;; in arguments row0, row1, row2, and row3 where row0
-;; now holds column 0 of the original matrix, row1 now
-;; holds column 1 of the original matrix, etc.
-;;
 
 _MM_TRANSPOSE4_PS proto :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
 _MM_TRANSPOSE4_PS macro row0, row1, row2, row3
@@ -310,8 +275,6 @@ _mm_cmple_ps macro a:=<xmm0>, b:=<xmm1>
     exitm<_mmopab(cmpleps, a, b)>
     endm
 
-; --- reverse order: result returned in x
-
 _mm_cmpgt_ss macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movss x,b
@@ -337,8 +300,6 @@ _mm_cmpge_ps macro x:req, a:req, b:req
     exitm<_mmopab(cmpleps, x, a)>
     endm
 
-; ---
-
 _mm_cmpneq_ss macro a:=<xmm0>, b:=<xmm1>
     exitm<_mmopab(cmpneqss, a, b)>
     endm
@@ -357,8 +318,6 @@ _mm_cmpnle_ss macro a:=<xmm0>, b:=<xmm1>
 _mm_cmpnle_ps macro a:=<xmm0>, b:=<xmm1>
     exitm<_mmopab(cmpnleps, a, b)>
     endm
-
-; --- reverse order: result returned in B
 
 _mm_cmpngt_ss macro x:req, a:req, b:req
     ifdif <x>,<b>
@@ -384,7 +343,6 @@ _mm_cmpnge_ps macro x:req, a:req, b:req
     endif
     exitm<_mmopab(cmpnleps, x, a)>
     endm
-; ---
 
 _mm_cmpord_ss macro a:=<xmm0>, b:=<xmm1>
     exitm<_mmopab(cmpordss, a, b)>

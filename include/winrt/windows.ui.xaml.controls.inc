@@ -1,20 +1,6 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __windows2Eui2Examl2Econtrols_h__
 define __windows2Eui2Examl2Econtrols_h__
 
@@ -306,10 +292,9 @@ define __windows2Eui2Examl2Econtrols_h__
 .endn
 .endn
 
-include inspectable.inc
-include AsyncInfo.inc
-include EventToken.inc
+ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
+endif
 include Windows.ApplicationModel.DataTransfer.inc
 include Windows.ApplicationModel.Search.inc
 include Windows.Media.Capture.inc
@@ -322,7 +307,6 @@ include Windows.UI.Xaml.Documents.inc
 include Windows.UI.Xaml.Navigation.inc
 include Windows.Web.inc
 include Windows.Web.Http.inc
-include windows.foundation.collections.inc
 ifndef __windows2Eui2Examl2Einput_h__
  include windows.ui.xaml.input.inc
 endif

@@ -1,5 +1,5 @@
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 ifndef NCB_INCLUDED
 define NCB_INCLUDED
@@ -207,7 +207,6 @@ NRC_SYSTEM		equ 0x40
 
 NRC_PENDING		equ 0xff
 
-;UCHAR
 Netbios proto WINAPI pncb:PNCB
 
 NCB_POST		equ <>

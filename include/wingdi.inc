@@ -3,7 +3,9 @@ define _WINGDI_
 .pragma list(push, 0)
 .pragma pack(push, size_t)
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 ifdef _MAC
 include macwin32.inc

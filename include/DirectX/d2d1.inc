@@ -1,12 +1,12 @@
-.pragma list(push, 0)
-
 ifndef _D2D1_H_
 define _D2D1_H_
 
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 endif
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 include dcommon.inc
 include D2DErr.inc
 include D2DBaseTypes.inc
@@ -813,4 +813,3 @@ D2D1InvertMatrix	proto WINAPI :ptr D2D1_MATRIX_3X2_F
 include d2d1helper.inc
 
 endif
-.pragma list(pop)

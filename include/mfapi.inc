@@ -1,7 +1,8 @@
 ifndef __MFAPI_H__
 define __MFAPI_H__
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .pragma pack(push, size_t)
 include mfobjects.inc
@@ -26,7 +27,6 @@ endif
 MF_API_VERSION		equ 0x0070
 MF_VERSION		equ (MF_SDK_VERSION SHL 16 OR MF_API_VERSION)
 endif
-
 
 MFSTARTUP_NOSOCKET	equ 0x1
 MFSTARTUP_LITE		equ (MFSTARTUP_NOSOCKET)

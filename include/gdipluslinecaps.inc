@@ -1,4 +1,6 @@
 ifndef _GDIPLUSLINECAPS_H
 define _GDIPLUSLINECAPS_H
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 endif

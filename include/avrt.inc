@@ -1,6 +1,8 @@
-include winapifamily.inc
 ifndef _AVRT_
 define _AVRT_
+ifndef _WINAPIFAMILY_
+include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -54,4 +56,4 @@ AvQuerySystemResponsiveness proto WINAPI :HANDLE, :PULONG
 
 endif
 
-endif ;; _AVRT_
+endif

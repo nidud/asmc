@@ -1,64 +1,19 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __mfobjects_h__
 define __mfobjects_h__
 
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 include propsys.inc
 include mediaobj.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 include mmreg.inc
-
-if 0
-
-.pragma pack(push, 1)
-WAVEFORMATEX		STRUC
-wFormatTag		dw ?
-nChannels		dw ?
-nSamplesPerSec		dd ?
-nAvgBytesPerSec		dd ?
-nBlockAlign		dw ?
-wBitsPerSample		dw ?
-cbSize			dw ?
-pExtraBytes		db 1 dup(?)
-WAVEFORMATEX		ENDS
-PWAVEFORMATEX		typedef ptr tWAVEFORMATEX
-NPWAVEFORMATEX		typedef ptr tWAVEFORMATEX
-LPWAVEFORMATEX		typedef ptr tWAVEFORMATEX
-
-WAVEFORMATEXTENSIBLE	STRUC
-nChannels		dw ?
-nSamplesPerSec		dd ?
-nAvgBytesPerSec		dd ?
-nBlockAlign		dw ?
-wBitsPerSample		dw ?
-cbSize			dw ?
-wValidBitsPerSample	dw ?
-dwChannelMask		dd ?
-SubFormat		GUID <>
-WAVEFORMATEXTENSIBLE	ENDS
-PWAVEFORMATEXTENSIBLE	typedef ptr WAVEFORMATEXTENSIBLE
-
-.pragma pack(pop)
-endif ;; 0
-
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 .enum MF_ATTRIBUTE_TYPE {
@@ -72,11 +27,11 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     }
 
 .enum MF_ATTRIBUTES_MATCH_TYPE {
-    MF_ATTRIBUTES_MATCH_OUR_ITEMS	= 0,
-    MF_ATTRIBUTES_MATCH_THEIR_ITEMS = 1,
-    MF_ATTRIBUTES_MATCH_ALL_ITEMS	= 2,
-    MF_ATTRIBUTES_MATCH_INTERSECTION	= 3,
-    MF_ATTRIBUTES_MATCH_SMALLER = 4
+    MF_ATTRIBUTES_MATCH_OUR_ITEMS,
+    MF_ATTRIBUTES_MATCH_THEIR_ITEMS,
+    MF_ATTRIBUTES_MATCH_ALL_ITEMS,
+    MF_ATTRIBUTES_MATCH_INTERSECTION,
+    MF_ATTRIBUTES_MATCH_SMALLER
     }
 
 ifndef __IMFAttributes_INTERFACE_DEFINED__
@@ -297,14 +252,14 @@ _MFVIDEOFORMAT_ equ 1
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 .enum MFVideoInterlaceMode {
-    MFVideoInterlace_Unknown	= 0,
-    MFVideoInterlace_Progressive	= 2,
-    MFVideoInterlace_FieldInterleavedUpperFirst = 3,
-    MFVideoInterlace_FieldInterleavedLowerFirst = 4,
-    MFVideoInterlace_FieldSingleUpper	= 5,
-    MFVideoInterlace_FieldSingleLower	= 6,
-    MFVideoInterlace_MixedInterlaceOrProgressive	= 7,
-    MFVideoInterlace_Last	= ( MFVideoInterlace_MixedInterlaceOrProgressive + 1 ) ,
+    MFVideoInterlace_Unknown,
+    MFVideoInterlace_Progressive,
+    MFVideoInterlace_FieldInterleavedUpperFirst,
+    MFVideoInterlace_FieldInterleavedLowerFirst,
+    MFVideoInterlace_FieldSingleUpper,
+    MFVideoInterlace_FieldSingleLower,
+    MFVideoInterlace_MixedInterlaceOrProgressive,
+    MFVideoInterlace_Last,
     MFVideoInterlace_ForceDWORD = 0x7fffffff
     }
 
@@ -312,57 +267,57 @@ MFVideoInterlace_FieldSingleUpperFirst equ MFVideoInterlace_FieldSingleUpper
 MFVideoInterlace_FieldSingleLowerFirst equ MFVideoInterlace_FieldSingleLower
 
 .enum MFVideoTransferFunction {
-    MFVideoTransFunc_Unknown	= 0,
-    MFVideoTransFunc_10 = 1,
-    MFVideoTransFunc_18 = 2,
-    MFVideoTransFunc_20 = 3,
-    MFVideoTransFunc_22 = 4,
-    MFVideoTransFunc_709	= 5,
-    MFVideoTransFunc_240M	= 6,
-    MFVideoTransFunc_sRGB	= 7,
-    MFVideoTransFunc_28 = 8,
-    MFVideoTransFunc_Log_100	= 9,
-    MFVideoTransFunc_Log_316	= 10,
-    MFVideoTransFunc_709_sym	= 11,
-    MFVideoTransFunc_Last	= ( MFVideoTransFunc_709_sym + 1 ) ,
+    MFVideoTransFunc_Unknown,
+    MFVideoTransFunc_10,
+    MFVideoTransFunc_18,
+    MFVideoTransFunc_20,
+    MFVideoTransFunc_22,
+    MFVideoTransFunc_709,
+    MFVideoTransFunc_240M,
+    MFVideoTransFunc_sRGB,
+    MFVideoTransFunc_28,
+    MFVideoTransFunc_Log_100,
+    MFVideoTransFunc_Log_316,
+    MFVideoTransFunc_709_sym,
+    MFVideoTransFunc_Last,
     MFVideoTransFunc_ForceDWORD = 0x7fffffff
     }
 
 .enum MFVideoPrimaries {
-    MFVideoPrimaries_Unknown	= 0,
-    MFVideoPrimaries_reserved	= 1,
-    MFVideoPrimaries_BT709	= 2,
-    MFVideoPrimaries_BT470_2_SysM	= 3,
-    MFVideoPrimaries_BT470_2_SysBG	= 4,
-    MFVideoPrimaries_SMPTE170M	= 5,
-    MFVideoPrimaries_SMPTE240M	= 6,
-    MFVideoPrimaries_EBU3213	= 7,
-    MFVideoPrimaries_SMPTE_C	= 8,
-    MFVideoPrimaries_Last	= ( MFVideoPrimaries_SMPTE_C + 1 ) ,
+    MFVideoPrimaries_Unknown,
+    MFVideoPrimaries_reserved,
+    MFVideoPrimaries_BT709,
+    MFVideoPrimaries_BT470_2_SysM,
+    MFVideoPrimaries_BT470_2_SysBG,
+    MFVideoPrimaries_SMPTE170M,
+    MFVideoPrimaries_SMPTE240M,
+    MFVideoPrimaries_EBU3213,
+    MFVideoPrimaries_SMPTE_C,
+    MFVideoPrimaries_Last,
     MFVideoPrimaries_ForceDWORD = 0x7fffffff
     }
 
 .enum MFVideoLighting {
-    MFVideoLighting_Unknown = 0,
-    MFVideoLighting_bright	= 1,
-    MFVideoLighting_office	= 2,
-    MFVideoLighting_dim = 3,
-    MFVideoLighting_dark	= 4,
-    MFVideoLighting_Last	= ( MFVideoLighting_dark + 1 ) ,
+    MFVideoLighting_Unknown,
+    MFVideoLighting_bright,
+    MFVideoLighting_office,
+    MFVideoLighting_dim,
+    MFVideoLighting_dark,
+    MFVideoLighting_Last,
     MFVideoLighting_ForceDWORD	= 0x7fffffff
     }
 
 .enum MFVideoTransferMatrix {
-    MFVideoTransferMatrix_Unknown	= 0,
-    MFVideoTransferMatrix_BT709		= 1,
-    MFVideoTransferMatrix_BT601		= 2,
-    MFVideoTransferMatrix_SMPTE240M	= 3,
-    MFVideoTransferMatrix_Last		= ( MFVideoTransferMatrix_SMPTE240M + 1 ) ,
-    MFVideoTransferMatrix_ForceDWORD	= 0x7fffffff
+    MFVideoTransferMatrix_Unknown,
+    MFVideoTransferMatrix_BT709,
+    MFVideoTransferMatrix_BT601,
+    MFVideoTransferMatrix_SMPTE240M,
+    MFVideoTransferMatrix_Last,
+    MFVideoTransferMatrix_ForceDWORD = 0x7fffffff
     }
 
 .enum MFVideoChromaSubsampling {
-    MFVideoChromaSubsampling_Unknown	= 0,
+    MFVideoChromaSubsampling_Unknown,
     MFVideoChromaSubsampling_ProgressiveChroma	= 0x8,
     MFVideoChromaSubsampling_Horizontally_Cosited = 0x4,
     MFVideoChromaSubsampling_Vertically_Cosited = 0x2,
@@ -376,14 +331,14 @@ MFVideoInterlace_FieldSingleLowerFirst equ MFVideoInterlace_FieldSingleLower
     }
 
 .enum MFNominalRange {
-    MFNominalRange_Unknown	= 0,
-    MFNominalRange_Normal	= 1,
-    MFNominalRange_Wide		= 2,
-    MFNominalRange_0_255	= 1,
-    MFNominalRange_16_235	= 2,
-    MFNominalRange_48_208	= 3,
-    MFNominalRange_64_127	= 4,
-    MFNominalRange_Last		= ( MFNominalRange_64_127 + 1 ) ,
+    MFNominalRange_Unknown,
+    MFNominalRange_Normal,
+    MFNominalRange_Wide,
+    MFNominalRange_0_255,
+    MFNominalRange_16_235,
+    MFNominalRange_48_208,
+    MFNominalRange_64_127,
+    MFNominalRange_Last,
     MFNominalRange_ForceDWORD	= 0x7fffffff
     }
 
@@ -506,19 +461,19 @@ surfaceInfo		MFVideoSurfaceInfo <>
 MFVIDEOFORMAT		ENDS
 
 .enum MFStandardVideoFormat {
-    MFStdVideoFormat_reserved	= 0,
-    MFStdVideoFormat_NTSC	= ( MFStdVideoFormat_reserved + 1 ) ,
-    MFStdVideoFormat_PAL	= ( MFStdVideoFormat_NTSC + 1 ) ,
-    MFStdVideoFormat_DVD_NTSC	= ( MFStdVideoFormat_PAL + 1 ) ,
-    MFStdVideoFormat_DVD_PAL	= ( MFStdVideoFormat_DVD_NTSC + 1 ) ,
-    MFStdVideoFormat_DV_PAL = ( MFStdVideoFormat_DVD_PAL + 1 ) ,
-    MFStdVideoFormat_DV_NTSC	= ( MFStdVideoFormat_DV_PAL + 1 ) ,
-    MFStdVideoFormat_ATSC_SD480i	= ( MFStdVideoFormat_DV_NTSC + 1 ) ,
-    MFStdVideoFormat_ATSC_HD1080i	= ( MFStdVideoFormat_ATSC_SD480i + 1 ) ,
-    MFStdVideoFormat_ATSC_HD720p	= ( MFStdVideoFormat_ATSC_HD1080i + 1 )
+    MFStdVideoFormat_reserved,
+    MFStdVideoFormat_NTSC,
+    MFStdVideoFormat_PAL,
+    MFStdVideoFormat_DVD_NTSC,
+    MFStdVideoFormat_DVD_PAL,
+    MFStdVideoFormat_DV_PAL,
+    MFStdVideoFormat_DV_NTSC,
+    MFStdVideoFormat_ATSC_SD480i,
+    MFStdVideoFormat_ATSC_HD1080i,
+    MFStdVideoFormat_ATSC_HD720p
     }
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif
 
 endif
 
@@ -714,10 +669,10 @@ MFASYNC_CALLBACK_QUEUE_ALL equ 0xFFFFFFFF
     MEWMDRMRevocationDownloadCompleted	= 516,
     MEWMDRMV1Anchor = MEWMDRMRevocationDownloadCompleted,
     METransformUnknown	= 600,
-    METransformNeedInput	= ( METransformUnknown + 1 ) ,
-    METransformHaveOutput	= ( METransformNeedInput + 1 ) ,
-    METransformDrainComplete	= ( METransformHaveOutput + 1 ) ,
-    METransformMarker	= ( METransformDrainComplete + 1 ) ,
+    METransformNeedInput,
+    METransformHaveOutput,
+    METransformDrainComplete,
+    METransformMarker,
     MEByteStreamCharacteristicsChanged	= 700,
     MEVideoCaptureDeviceRemoved = 800,
     MEVideoCaptureDevicePreempted	= 801,
@@ -759,11 +714,6 @@ DEFINE_IIDX(IMFMediaEventGenerator, "2CD0BD52-BCD5-4B89-B62C-EADC0C031E7D")
     QueueEvent		proc :MediaEventType, :REFGUID, :HRESULT, :ptr
    .ends
 
-IMFMediaEventGenerator_RemoteBeginGetEvent_Proxy proto __cdecl :ptr, :ptr
-IMFMediaEventGenerator_RemoteBeginGetEvent_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFMediaEventGenerator_RemoteEndGetEvent_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFMediaEventGenerator_RemoteEndGetEvent_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-
 endif
 endif
 
@@ -786,8 +736,8 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 .enum MFBYTESTREAM_SEEK_ORIGIN {
-    msoBegin	= 0,
-    msoCurrent	= ( msoBegin + 1 )
+    msoBegin,
+    msoCurrent
     }
 
 ifndef __IMFByteStream_INTERFACE_DEFINED__
@@ -813,15 +763,6 @@ DEFINE_IIDX(IMFByteStream, "ad4c1b00-4bf7-422f-9175-756693d9130d")
     Flush		proc
     Close		proc
    .ends
-
-IMFByteStream_RemoteBeginRead_Proxy proto __cdecl :ptr, :ULONG, :ptr
-IMFByteStream_RemoteBeginRead_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFByteStream_RemoteEndRead_Proxy proto __cdecl :ptr, :ptr, :ptr, :ULONG, :ptr
-IMFByteStream_RemoteEndRead_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFByteStream_RemoteBeginWrite_Proxy proto __cdecl :ptr, :ptr, :ULONG, :ptr
-IMFByteStream_RemoteBeginWrite_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFByteStream_RemoteEndWrite_Proxy proto __cdecl :ptr, :ptr, :ptr
-IMFByteStream_RemoteEndWrite_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -1023,41 +964,6 @@ DEFINE_IIDX(IMFDXGIDeviceManager, "eb533d5d-2db6-40f8-97a9-494692014f07")
 
 endif
 endif
-endif ;; (WINVER GE _WIN32_WINNT_WIN7)
-
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
-
-IMFMediaEventGenerator_BeginGetEvent_Proxy	proto __cdecl :ptr, :ptr, :ptr
-IMFMediaEventGenerator_BeginGetEvent_Stub	proto __cdecl :ptr, :ptr
-IMFMediaEventGenerator_EndGetEvent_Proxy	proto __cdecl :ptr, :ptr, :ptr
-IMFMediaEventGenerator_EndGetEvent_Stub		proto __cdecl :ptr, :ptr, :ptr, :ptr
-
-IMFByteStream_BeginRead_Proxy			proto __cdecl :ptr, :ptr, :ULONG, :ptr, :ptr
-IMFByteStream_BeginRead_Stub			proto __cdecl :ptr, :ULONG, :ptr
-IMFByteStream_EndRead_Proxy			proto __cdecl :ptr, :ptr, :ptr
-IMFByteStream_EndRead_Stub			proto __cdecl :ptr, :ptr, :ptr, :ULONG, :ptr
-IMFByteStream_BeginWrite_Proxy			proto __cdecl :ptr, :ptr, :ULONG, :ptr, :ptr
-IMFByteStream_BeginWrite_Stub			proto __cdecl :ptr, :ptr, :ULONG, :ptr
-IMFByteStream_EndWrite_Proxy			proto __cdecl :ptr, :ptr, :ptr
-IMFByteStream_EndWrite_Stub			proto __cdecl :ptr, :ptr, :ptr
+endif
 
 endif

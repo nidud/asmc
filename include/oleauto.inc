@@ -14,10 +14,12 @@ STDOLE2_LCID		equ 0x0000
 
 ifndef _LCID_DEFINED
 LCID			typedef DWORD
-_LCID_DEFINED		equ 1
+define _LCID_DEFINED
 endif
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
 
 SysAllocString proto WINAPI :ptr
 SysReAllocString proto WINAPI :ptr, :ptr

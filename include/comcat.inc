@@ -1,25 +1,11 @@
-.pragma list(push, 0)
-
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
-endif
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __comcat_h__
 define __comcat_h__
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 ifndef __PE__
 .pragma comment(lib, uuid)
 endif
@@ -76,8 +62,7 @@ DEFINE_IIDX(IEnumGUID, "0002E000-0000-0000-C000-000000000046")
     Skip		proc
     Reset		proc
     Clone		proc
-
-    .ends
+   .ends
 
 endif
 endif
@@ -105,8 +90,7 @@ DEFINE_IIDX(IEnumCATEGORYINFO, "0002E011-0000-0000-C000-000000000046")
     Skip		proc
     Reset		proc
     Clone		proc
-
-    .ends
+   .ends
 endif
 endif
 
@@ -126,8 +110,7 @@ DEFINE_IIDX(ICatRegister, "0002E012-0000-0000-C000-000000000046")
     UnRegisterClassImplCategories proc
     RegisterClassReqCategories proc
     UnRegisterClassReqCategories proc
-
-    .ends
+   .ends
 
 LPCATREGISTER typedef ptr ICatRegister
 
@@ -150,8 +133,7 @@ DEFINE_IIDX(ICatInformation, "0002E013-0000-0000-C000-000000000046")
     IsClassOfCategories proc
     EnumImplCategoriesOfClass proc
     EnumReqCategoriesOfClass proc
-
-    .ends
+   .ends
 
 LPCATINFORMATION typedef ptr ICatInformation
 
@@ -159,4 +141,3 @@ endif
 endif
 
 endif
-.pragma list(pop)

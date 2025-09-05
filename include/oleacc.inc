@@ -1,27 +1,16 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 475
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __oleacc_h__
 define __oleacc_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -402,30 +391,5 @@ DEFINE_GUIDS(CLSID_CAccPropServices, "b5f8350b-0548-48b1-a6ee-88bd00b4a5e7")
 endif
 
 endif
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-HMENU_UserSize proto WINAPI :ptr, :dword, :ptr
-HMENU_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
 
 endif

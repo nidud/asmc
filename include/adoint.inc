@@ -1,33 +1,17 @@
-.pragma list(push, 0)
-
-ifndef __LIBC_INC
+ifndef _LIBC_
 include libc.inc
 endif
-
 if not defined(NTDDI_VERSION) or (NTDDI_VERSION lt NTDDI_WIN8)
 include adoint_backcompat.inc
 else
-
 ifndef _ADOINT_H_
 define _ADOINT_H_
-
-ifndef _INC_TCHAR
+ifndef _TCHAR_
 include tchar.inc
 endif
-
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPC500_
+include rpc500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr>
-endif
-
 ifndef __ado10_h__
 define __ado10_h__
 
@@ -1211,9 +1195,9 @@ DEFINE_IIDX(ADOProperties, "00000504-0000-0010-8000-00AA006D2EA4")
    .ends
 endif
 
-endif ; __ADODB_LIBRARY_DEFINED__
+endif
 
-endif ; __ado10_h__
+endif
 
 ADOCommand		typedef _ADOCommand
 ADORecordset		typedef _ADORecordset
@@ -1224,8 +1208,7 @@ ADODynaCollection	typedef _ADODynaCollection
 ADORecord		typedef _ADORecord
 ADOStream		typedef _ADOStream
 
-endif ; _ADOINT_H_
+endif
 
-endif ; NTDDI_VERSION
+endif
 
-.pragma list(pop)

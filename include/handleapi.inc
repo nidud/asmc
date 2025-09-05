@@ -1,9 +1,8 @@
 ifndef _APISETHANDLE_
 define _APISETHANDLE_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
 
 define INVALID_HANDLE_VALUE (-1)
 

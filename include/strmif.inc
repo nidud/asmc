@@ -1,26 +1,18 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
- .err <this stub requires an updated version of rpcndr.h>
-endif
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __strmif_h__
 define __strmif_h__
-
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 include objidl.inc
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 
 define CDEF_CLASS_DEFAULT		0x0001
 define CDEF_BYPASS_CLASS_MANAGER	0x0002
@@ -59,8 +51,8 @@ AM_MEDIA_TYPE		ENDS
 PAM_MEDIA_TYPE		typedef ptr AM_MEDIA_TYPE
 
 .enum PIN_DIRECTION {
-    PINDIR_INPUT	= 0,
-    PINDIR_OUTPUT	= ( PINDIR_INPUT + 1 )
+    PINDIR_INPUT,
+    PINDIR_OUTPUT
     }
 
 define MAX_PIN_NAME	128
@@ -635,8 +627,8 @@ DEFINE_IIDX(IFilterMapper3, "b79bb0b0-33c1-11d1-abe1-00a0c905f375")
 endif
 
 .enum QualityMessageType {
-	Famine	= 0,
-	Flood	= ( Famine + 1 )
+	Famine,
+	Flood
 	}
 
 Quality			STRUC
@@ -1101,10 +1093,10 @@ ifndef __IConfigInterleaving_INTERFACE_DEFINED__
 define __IConfigInterleaving_INTERFACE_DEFINED__
 
 .enum InterleavingMode {
-	INTERLEAVE_NONE		= 0,
-	INTERLEAVE_CAPTURE	= ( INTERLEAVE_NONE + 1 ),
-	INTERLEAVE_FULL		= ( INTERLEAVE_CAPTURE + 1 ),
-	INTERLEAVE_NONE_BUFFERED = ( INTERLEAVE_FULL + 1 )
+	INTERLEAVE_NONE,
+	INTERLEAVE_CAPTURE,
+	INTERLEAVE_FULL,
+	INTERLEAVE_NONE_BUFFERED
 	}
 
 DEFINE_IIDX(IConfigInterleaving, "BEE3D220-157B-11d0-BD23-00A0C911CE86")
@@ -1291,8 +1283,8 @@ endif
 	}
 
 .enum TunerInputType {
-	TunerInputCable = 0,
-	TunerInputAntenna = ( TunerInputCable + 1 )
+	TunerInputCable,
+	TunerInputAntenna
 	}
 
 AnalogVideo_NTSC_Mask	equ 0x00000007
@@ -1300,36 +1292,36 @@ AnalogVideo_PAL_Mask	equ 0x00100FF0
 AnalogVideo_SECAM_Mask	equ 0x000FF000
 
 .enum VideoCopyProtectionType {
-	VideoCopyProtectionMacrovisionBasic	= 0,
-	VideoCopyProtectionMacrovisionCBI	= ( VideoCopyProtectionMacrovisionBasic + 1 )
+	VideoCopyProtectionMacrovisionBasic,
+	VideoCopyProtectionMacrovisionCBI
 	}
 
 .enum PhysicalConnectorType {
-	PhysConn_Video_Tuner	= 1,
-	PhysConn_Video_Composite = ( PhysConn_Video_Tuner + 1 ) ,
-	PhysConn_Video_SVideo	= ( PhysConn_Video_Composite + 1 ) ,
-	PhysConn_Video_RGB	= ( PhysConn_Video_SVideo + 1 ) ,
-	PhysConn_Video_YRYBY	= ( PhysConn_Video_RGB + 1 ) ,
-	PhysConn_Video_SerialDigital	= ( PhysConn_Video_YRYBY + 1 ) ,
-	PhysConn_Video_ParallelDigital	= ( PhysConn_Video_SerialDigital + 1 ) ,
-	PhysConn_Video_SCSI	= ( PhysConn_Video_ParallelDigital + 1 ) ,
-	PhysConn_Video_AUX	= ( PhysConn_Video_SCSI + 1 ) ,
-	PhysConn_Video_1394	= ( PhysConn_Video_AUX + 1 ) ,
-	PhysConn_Video_USB	= ( PhysConn_Video_1394 + 1 ) ,
-	PhysConn_Video_VideoDecoder	= ( PhysConn_Video_USB + 1 ) ,
-	PhysConn_Video_VideoEncoder	= ( PhysConn_Video_VideoDecoder + 1 ) ,
-	PhysConn_Video_SCART	= ( PhysConn_Video_VideoEncoder + 1 ) ,
-	PhysConn_Video_Black	= ( PhysConn_Video_SCART + 1 ) ,
-	PhysConn_Audio_Tuner	= 0x1000,
-	PhysConn_Audio_Line	= ( PhysConn_Audio_Tuner + 1 ) ,
-	PhysConn_Audio_Mic	= ( PhysConn_Audio_Line + 1 ) ,
-	PhysConn_Audio_AESDigital	= ( PhysConn_Audio_Mic + 1 ) ,
-	PhysConn_Audio_SPDIFDigital	= ( PhysConn_Audio_AESDigital + 1 ) ,
-	PhysConn_Audio_SCSI	= ( PhysConn_Audio_SPDIFDigital + 1 ) ,
-	PhysConn_Audio_AUX	= ( PhysConn_Audio_SCSI + 1 ) ,
-	PhysConn_Audio_1394	= ( PhysConn_Audio_AUX + 1 ) ,
-	PhysConn_Audio_USB	= ( PhysConn_Audio_1394 + 1 ) ,
-	PhysConn_Audio_AudioDecoder	= ( PhysConn_Audio_USB + 1 )
+	PhysConn_Video_Tuner = 1,
+	PhysConn_Video_Composite,
+	PhysConn_Video_SVideo,
+	PhysConn_Video_RGB,
+	PhysConn_Video_YRYBY,
+	PhysConn_Video_SerialDigital,
+	PhysConn_Video_ParallelDigital,
+	PhysConn_Video_SCSI,
+	PhysConn_Video_AUX,
+	PhysConn_Video_1394,
+	PhysConn_Video_USB,
+	PhysConn_Video_VideoDecoder,
+	PhysConn_Video_VideoEncoder,
+	PhysConn_Video_SCART,
+	PhysConn_Video_Black,
+	PhysConn_Audio_Tuner,
+	PhysConn_Audio_Line,
+	PhysConn_Audio_Mic,
+	PhysConn_Audio_AESDigital,
+	PhysConn_Audio_SPDIFDigital,
+	PhysConn_Audio_SCSI,
+	PhysConn_Audio_AUX,
+	PhysConn_Audio_1394,
+	PhysConn_Audio_USB,
+	PhysConn_Audio_AudioDecoder
 	}
 
 
@@ -1354,16 +1346,16 @@ DEFINE_IIDX(IAMAnalogVideoDecoder, "C6E13350-30AC-11d0-A18C-00A0C9118956")
 endif
 
 .enum VideoProcAmpProperty {
-	VideoProcAmp_Brightness = 0,
-	VideoProcAmp_Contrast	= ( VideoProcAmp_Brightness + 1 ) ,
-	VideoProcAmp_Hue	= ( VideoProcAmp_Contrast + 1 ) ,
-	VideoProcAmp_Saturation = ( VideoProcAmp_Hue + 1 ) ,
-	VideoProcAmp_Sharpness	= ( VideoProcAmp_Saturation + 1 ) ,
-	VideoProcAmp_Gamma	= ( VideoProcAmp_Sharpness + 1 ) ,
-	VideoProcAmp_ColorEnable = ( VideoProcAmp_Gamma + 1 ) ,
-	VideoProcAmp_WhiteBalance = ( VideoProcAmp_ColorEnable + 1 ) ,
-	VideoProcAmp_BacklightCompensation = ( VideoProcAmp_WhiteBalance + 1 ) ,
-	VideoProcAmp_Gain	= ( VideoProcAmp_BacklightCompensation + 1 )
+	VideoProcAmp_Brightness,
+	VideoProcAmp_Contrast,
+	VideoProcAmp_Hue,
+	VideoProcAmp_Saturation,
+	VideoProcAmp_Sharpness,
+	VideoProcAmp_Gamma,
+	VideoProcAmp_ColorEnable,
+	VideoProcAmp_WhiteBalance,
+	VideoProcAmp_BacklightCompensation,
+	VideoProcAmp_Gain
 	}
 
 .enum VideoProcAmpFlags	 {
@@ -1386,13 +1378,13 @@ DEFINE_IIDX(IAMVideoProcAmp, "C6E13360-30AC-11d0-A18C-00A0C9118956")
 endif
 
 .enum CameraControlProperty {
-	CameraControl_Pan	= 0,
-	CameraControl_Tilt	= ( CameraControl_Pan + 1 ) ,
-	CameraControl_Roll	= ( CameraControl_Tilt + 1 ) ,
-	CameraControl_Zoom	= ( CameraControl_Roll + 1 ) ,
-	CameraControl_Exposure	= ( CameraControl_Zoom + 1 ) ,
-	CameraControl_Iris	= ( CameraControl_Exposure + 1 ) ,
-	CameraControl_Focus	= ( CameraControl_Iris + 1 )
+	CameraControl_Pan,
+	CameraControl_Tilt,
+	CameraControl_Roll,
+	CameraControl_Zoom,
+	CameraControl_Exposure,
+	CameraControl_Iris,
+	CameraControl_Focus
 	}
 
 .enum CameraControlFlags {
@@ -1614,8 +1606,8 @@ DEFINE_IIDX(IAMAnalogVideoEncoder, "C6E133B0-30AC-11d0-A18C-00A0C9118956")
 endif
 
 .enum AMPROPERTY_PIN {
-	AMPROPERTY_PIN_CATEGORY = 0,
-	AMPROPERTY_PIN_MEDIUM	= ( AMPROPERTY_PIN_CATEGORY + 1 )
+	AMPROPERTY_PIN_CATEGORY,
+	AMPROPERTY_PIN_MEDIUM
 	}
 
 ifndef _IKsPropertySet_
@@ -1948,11 +1940,11 @@ DEFINE_IIDX(IDecimateVideoImage, "2e5ea3e0-e924-11d2-b6da-00a0c995e8df")
 endif
 
 .enum DECIMATION_USAGE {
-	DECIMATION_LEGACY	= 0,
-	DECIMATION_USE_DECODER_ONLY	= ( DECIMATION_LEGACY + 1 ) ,
-	DECIMATION_USE_VIDEOPORT_ONLY	= ( DECIMATION_USE_DECODER_ONLY + 1 ) ,
-	DECIMATION_USE_OVERLAY_ONLY	= ( DECIMATION_USE_VIDEOPORT_ONLY + 1 ) ,
-	DECIMATION_DEFAULT	= ( DECIMATION_USE_OVERLAY_ONLY + 1 )
+	DECIMATION_LEGACY,
+	DECIMATION_USE_DECODER_ONLY,
+	DECIMATION_USE_VIDEOPORT_ONLY,
+	DECIMATION_USE_OVERLAY_ONLY,
+	DECIMATION_DEFAULT
 	}
 
 ifndef __IAMVideoDecimationProperties_INTERFACE_DEFINED__
@@ -2129,18 +2121,18 @@ DEFINE_IIDX(IDVSplitter, "92a3a302-da7c-4a1f-ba7e-1802bb5d2d02")
 endif
 
 .enum AM_AUDIO_RENDERER_STAT_PARAM {
-	AM_AUDREND_STAT_PARAM_BREAK_COUNT	= 1,
-	AM_AUDREND_STAT_PARAM_SLAVE_MODE	= ( AM_AUDREND_STAT_PARAM_BREAK_COUNT + 1 ) ,
-	AM_AUDREND_STAT_PARAM_SILENCE_DUR	= ( AM_AUDREND_STAT_PARAM_SLAVE_MODE + 1 ) ,
-	AM_AUDREND_STAT_PARAM_LAST_BUFFER_DUR	= ( AM_AUDREND_STAT_PARAM_SILENCE_DUR + 1 ) ,
-	AM_AUDREND_STAT_PARAM_DISCONTINUITIES	= ( AM_AUDREND_STAT_PARAM_LAST_BUFFER_DUR + 1 ) ,
-	AM_AUDREND_STAT_PARAM_SLAVE_RATE	= ( AM_AUDREND_STAT_PARAM_DISCONTINUITIES + 1 ) ,
-	AM_AUDREND_STAT_PARAM_SLAVE_DROPWRITE_DUR	= ( AM_AUDREND_STAT_PARAM_SLAVE_RATE + 1 ) ,
-	AM_AUDREND_STAT_PARAM_SLAVE_HIGHLOWERROR	= ( AM_AUDREND_STAT_PARAM_SLAVE_DROPWRITE_DUR + 1 ) ,
-	AM_AUDREND_STAT_PARAM_SLAVE_LASTHIGHLOWERROR	= ( AM_AUDREND_STAT_PARAM_SLAVE_HIGHLOWERROR + 1 ) ,
-	AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR	= ( AM_AUDREND_STAT_PARAM_SLAVE_LASTHIGHLOWERROR + 1 ) ,
-	AM_AUDREND_STAT_PARAM_BUFFERFULLNESS	= ( AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR + 1 ) ,
-	AM_AUDREND_STAT_PARAM_JITTER	= ( AM_AUDREND_STAT_PARAM_BUFFERFULLNESS + 1 )
+	AM_AUDREND_STAT_PARAM_BREAK_COUNT = 1,
+	AM_AUDREND_STAT_PARAM_SLAVE_MODE,
+	AM_AUDREND_STAT_PARAM_SILENCE_DUR,
+	AM_AUDREND_STAT_PARAM_LAST_BUFFER_DUR,
+	AM_AUDREND_STAT_PARAM_DISCONTINUITIES,
+	AM_AUDREND_STAT_PARAM_SLAVE_RATE,
+	AM_AUDREND_STAT_PARAM_SLAVE_DROPWRITE_DUR,
+	AM_AUDREND_STAT_PARAM_SLAVE_HIGHLOWERROR,
+	AM_AUDREND_STAT_PARAM_SLAVE_LASTHIGHLOWERROR,
+	AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR,
+	AM_AUDREND_STAT_PARAM_BUFFERFULLNESS,
+	AM_AUDREND_STAT_PARAM_JITTER
 	}
 
 ifndef __IAMAudioRendererStats_INTERFACE_DEFINED__
@@ -2387,10 +2379,10 @@ include ddraw.inc
 
 .enum DVD_DOMAIN {
 	DVD_DOMAIN_FirstPlay	= 1,
-	DVD_DOMAIN_VideoManagerMenu	= ( DVD_DOMAIN_FirstPlay + 1 ) ,
-	DVD_DOMAIN_VideoTitleSetMenu	= ( DVD_DOMAIN_VideoManagerMenu + 1 ) ,
-	DVD_DOMAIN_Title	= ( DVD_DOMAIN_VideoTitleSetMenu + 1 ) ,
-	DVD_DOMAIN_Stop = ( DVD_DOMAIN_Title + 1 )
+	DVD_DOMAIN_VideoManagerMenu,
+	DVD_DOMAIN_VideoTitleSetMenu,
+	DVD_DOMAIN_Title,
+	DVD_DOMAIN_Stop
 	}
 
 .enum DVD_MENU_ID {
@@ -2427,19 +2419,17 @@ DVD_ATR			ENDS
 	}
 
 DVD_TIMECODE		STRUC
-if 1
-flags			ULONG ?
-else
-Hours1	  :4		ULONG ?
-Hours10	  :4		ULONG ?
-Minutes1  :4		ULONG ?
-Minutes10 :4		ULONG ?
-Seconds1  :4		ULONG ?
-Seconds10 :4		ULONG ?
-Frames1	  :4		ULONG ?
-Frames10  :2		ULONG ?
-FrameRateCode: 2	ULONG ?
-endif
+record
+ Hours1			dd : 4 ?
+ Hours10		dd : 4 ?
+ Minutes1		dd : 4 ?
+ Minutes10		dd : 4 ?
+ Seconds1		dd : 4 ?
+ Seconds10		dd : 4 ?
+ Frames1		dd : 4 ?
+ Frames10		dd : 2 ?
+ FrameRateCode		dd : 2 ?
+ends
 DVD_TIMECODE		ENDS
 
 .enum DVD_NavCmdType {

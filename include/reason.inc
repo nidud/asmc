@@ -1,4 +1,6 @@
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 ifndef SENTINEL_Reason
 define SENTINEL_Reason

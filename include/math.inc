@@ -1,8 +1,8 @@
 .pragma list(push, 0)
 ifndef _INC_MATH
 define _INC_MATH
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 .pragma comment(lib, libc, msvcrt)
@@ -11,12 +11,11 @@ ifndef float
 float  typedef real4
 endif
 ifndef double
-double typedef REAL8
+double typedef real8
 endif
 
-ifndef __assembler ; Protect from assembler
-
 ifndef _EXCEPTION_DEFINED
+define _EXCEPTION_DEFINED
 _exception      struc
 type            SINT ?      ; exception type - see below
 name            LPSTR ?     ; name of function where error occured
@@ -24,10 +23,10 @@ arg1            double ?    ; first argument to function
 arg2            double ?    ; second argument (if any) to function
 retval          double ?    ; value to be returned by function
 _exception      ends
-define _EXCEPTION_DEFINED
 endif
 
 ifndef _COMPLEX_DEFINED
+define _COMPLEX_DEFINED
 _complex        struc
 x               double ? ; real and imaginary parts
 y               double ?
@@ -35,19 +34,17 @@ _complex        ends
 ifndef __STDC__
 complex         equ <_complex>
 endif
-define _COMPLEX_DEFINED
 endif
-endif  ; __assembler
 
-_DOMAIN         equ 1 ; argument domain error
-_SING           equ 2 ; argument singularity
-_OVERFLOW       equ 3 ; overflow range error
-_UNDERFLOW      equ 4 ; underflow range error
-_TLOSS          equ 5 ; total loss of precision
-_PLOSS          equ 6 ; partial loss of precision
+define _DOMAIN         1 ; argument domain error
+define _SING           2 ; argument singularity
+define _OVERFLOW       3 ; overflow range error
+define _UNDERFLOW      4 ; underflow range error
+define _TLOSS          5 ; total loss of precision
+define _PLOSS          6 ; partial loss of precision
 
-EDOM            equ 33
-ERANGE          equ 34
+define EDOM            33
+define ERANGE          34
 
 ifndef __assembler ; Protect from assembler
 ifndef _M_CEE_PURE
@@ -57,9 +54,8 @@ else
 endif ; !defined(_M_CEE_PURE)
 endif ; __assembler
 
-HUGE_VAL        equ <_HUGE>
+define HUGE_VAL        <_HUGE>
 
-ifndef __assembler  ; Protect from assembler
 ifndef _CRT_ABS_DEFINED
 define _CRT_ABS_DEFINED
 abs     proto __cdecl _X:int_t
@@ -199,26 +195,25 @@ _fpclassf   proto __cdecl _X:float
 
 endif
 endif
-endif
 
 ifdef _USE_MATH_DEFINES
 ifndef _MATH_DEFINES_DEFINED
 define _MATH_DEFINES_DEFINED
-M_E             equ 2.71828182845904523536
-M_LOG2E         equ 1.44269504088896340736
-M_LOG10E        equ 0.434294481903251827651
-M_LN2           equ 0.693147180559945309417
-M_LN10          equ 2.30258509299404568402
-M_PI            equ 3.14159265358979323846
-M_PI_2          equ 1.57079632679489661923
-M_PI_4          equ 0.785398163397448309616
-M_1_PI          equ 0.318309886183790671538
-M_2_PI          equ 0.636619772367581343076
-M_2_SQRTPI      equ 1.12837916709551257390
-M_SQRT2         equ 1.41421356237309504880
-M_SQRT1_2       equ 0.707106781186547524401
-INFINITY        equ 1.0e999999999
-NAN             equ 0.0/0.0
+define M_E             2.71828182845904523536
+define M_LOG2E         1.44269504088896340736
+define M_LOG10E        0.434294481903251827651
+define M_LN2           0.693147180559945309417
+define M_LN10          2.30258509299404568402
+define M_PI            3.14159265358979323846
+define M_PI_2          1.57079632679489661923
+define M_PI_4          0.785398163397448309616
+define M_1_PI          0.318309886183790671538
+define M_2_PI          0.636619772367581343076
+define M_2_SQRTPI      1.12837916709551257390
+define M_SQRT2         1.41421356237309504880
+define M_SQRT1_2       0.707106781186547524401
+define INFINITY        1.0e999999999
+define NAN             (0.0 / 0.0)
 endif
 endif
 

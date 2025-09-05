@@ -1,24 +1,27 @@
-ifndef __COMBASEAPI_INC
-define __COMBASEAPI_INC
-
+ifndef _COMBASEAPI_
+define _COMBASEAPI_
+ifndef _API_SET_H_
 include apiset.inc
+endif
+ifndef _APISETCCONV_
 include apisetcconv.inc
-
+endif
+ifndef __RPC_H__
 include rpc.inc
+endif
+ifndef __RPCNDR_H__
 include rpcndr.inc
+endif
 
 if (NTDDI_VERSION ge NTDDI_VISTA and not defined(_WIN32_WINNT))
 define _WIN32_WINNT 0x0600
 endif
-
 if (NTDDI_VERSION ge NTDDI_WS03 and not defined(_WIN32_WINNT))
 define _WIN32_WINNT 0x0502
 endif
-
 if (NTDDI_VERSION ge NTDDI_WINXP and not defined(_WIN32_WINNT))
 define _WIN32_WINNT 0x0501
 endif
-
 if (NTDDI_VERSION ge NTDDI_WIN2K and not defined(_WIN32_WINNT))
 define _WIN32_WINNT 0x0500
 endif
@@ -30,8 +33,9 @@ define _COMBASEAPI_H_
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
+ifndef _STDLIB_
 include stdlib.inc
-
+endif
 define CLSCTX_INPROC	       (CLSCTX_INPROC_SERVER or CLSCTX_INPROC_HANDLER)
 if (_WIN32_WINNT ge 0x0400) or defined(_WIN32_DCOM)
 define CLSCTX_ALL	       (CLSCTX_INPROC_SERVER or CLSCTX_INPROC_HANDLER or CLSCTX_LOCAL_SERVER or CLSCTX_REMOTE_SERVER)
@@ -58,7 +62,9 @@ if (_WIN32_WINNT ge 0x0400) or defined(_WIN32_DCOM)
 endif
 }
 
+ifndef __wtypesbase_h__
 include wtypesbase.inc
+endif
 include unknwnbase.inc
 include objidlbase.inc
 include guiddef.inc

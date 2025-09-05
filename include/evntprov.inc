@@ -1,7 +1,9 @@
 ifndef _EVNTPROV_H_
 define _EVNTPROV_H_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 EVENT_MIN_LEVEL equ (0)
 EVENT_MAX_LEVEL equ (0xff)

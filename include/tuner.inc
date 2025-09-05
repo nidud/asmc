@@ -1,29 +1,22 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __tuner_h__
 define __tuner_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
-include comcat.inc
+endif
+ifndef __ocidl_h__
+include ocidl.inc
+endif
 include strmif.inc
 include bdaiface.inc
 include regbag.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -1331,38 +1324,8 @@ DEFINE_GUIDS(CLSID_PersistTuneXmlUtility, "E77026B0-B97F-4cbb-B7FB-F4F03AD69F11"
 DEFINE_GUIDS(CLSID_ESEventService, "C20447FC-EC60-475e-813F-D2B0A6DECEFE")
 DEFINE_GUIDS(CLSID_ESEventFactory, "8E8A07DA-71F8-40c1-A929-5E3A868AC2C6")
 
-endif ;; __TunerLib_LIBRARY_DEFINED__
+endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
+endif
 
 endif

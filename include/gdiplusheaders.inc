@@ -1,7 +1,9 @@
 ifndef _GDIPLUSHEADERS_H
 define _GDIPLUSHEADERS_H
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 

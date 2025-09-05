@@ -1,6 +1,8 @@
 ifndef __WINEVT_H__
 define __WINEVT_H__
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PKG_EVENTLOGSERVICE)
 

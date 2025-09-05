@@ -1,29 +1,20 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __msopc_h__
 define __msopc_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 include wincrypt.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
 
@@ -768,7 +759,7 @@ endif
 
 DEFINE_GUIDS(CLSID_OpcFactory, "6B2D6BA0-9F3E-4f27-920B-313CC426A39E")
 
-endif ;; __MSOPC_LIBRARY_DEFINED__
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif ;; (NTDDI GE NTDDI_WIN7)
+endif
+endif
+endif
 endif

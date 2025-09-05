@@ -63,40 +63,36 @@ CCALLBACK(cv_enum_func, :ptr dbgcv, :asym_t, :asym_t, :ptr counters)
 
 .class dbgcv
 
-    ps ptr byte ?
-    pt ptr byte ?
+    ps          ptr byte ?
+    pt          ptr byte ?
+    section     ptr cvsection ?
+    symbols     asym_t ?
+    types       asym_t ?
+    param       ptr ?
+    level       dd ?            ; nesting level
+    currtype    dd ?            ; current type ( starts with 0x1000 )
+    files       ptr cvfile ?
+    currdir     string_t ?
+    cv_type     db ?
 
-    section ptr cvsection ?
-    symbols asym_t ?
-    types asym_t ?
-    param ptr ?
-    level dd ?          ; nesting level
-    currtype dd ?       ; current type ( starts with 0x1000 )
-    files ptr cvfile ?
-    currdir string_t ?
-
-    flushpt proc fastcall :dword
-    flushps proc fastcall :dword
-    padbytes proc fastcall :ptr byte
-    alignps proc fastcall
-    flush_section proc __ccall :dword, :dword
-
-    write_bitfield proc __ccall :asym_t, :asym_t
-    write_array_type proc __ccall :asym_t, :dword, :byte
-    write_ptr_type proc __ccall :asym_t
-    write_type proc __ccall :asym_t
-    write_type_procedure proc __ccall :asym_t, :int_t
-    write_symbol proc __ccall :asym_t
-
-    cntproc proc __ccall :asym_t, :asym_t, :ptr counters
-    memberproc proc __ccall :asym_t, :asym_t, :ptr counters
-    enum_fields proc __ccall :asym_t, :cv_enum_func, :ptr counters
+    flushpt                 proc fastcall :dword
+    flushps                 proc fastcall :dword
+    padbytes                proc fastcall :ptr byte
+    alignps                 proc fastcall
+    flush_section           proc __ccall :dword, :dword
+    write_bitfield          proc __ccall :asym_t, :asym_t
+    write_array_type        proc __ccall :asym_t, :dword, :byte
+    write_ptr_type          proc __ccall :asym_t
+    write_type              proc __ccall :asym_t
+    write_type_procedure    proc __ccall :asym_t, :int_t
+    write_symbol            proc __ccall :asym_t
+    cntproc                 proc __ccall :asym_t, :asym_t, :ptr counters
+    memberproc              proc __ccall :asym_t, :asym_t, :ptr counters
+    enum_fields             proc __ccall :asym_t, :cv_enum_func, :ptr counters
    .ends
 
    .data
-
-padtab db LF_PAD1, LF_PAD2, LF_PAD3
-reg64  db 0, 2, 3, 1, 7, 6, 4, 5
+    reg64 db 0, 2, 3, 1, 7, 6, 4, 5
 
    .code
 
@@ -365,7 +361,7 @@ dbgcv::flushps proc fastcall uses rbx size:dword
 dbgcv::flushps endp
 
 
-dbgcv::padbytes proc fastcall uses rbx curr:ptr byte
+dbgcv::padbytes proc fastcall curr:ptr byte
 
     mov rcx,[rcx].dbgcv.types
     mov rcx,[rcx].asym.seginfo
@@ -378,8 +374,7 @@ dbgcv::padbytes proc fastcall uses rbx curr:ptr byte
         .break .if ( !( eax & 3 ) )
         not eax
         and eax,3
-        lea rbx,padtab
-        mov al,[rbx+rax]
+        add eax,0xF1
         mov [rdx],al
     .endf
     ret
@@ -417,26 +412,30 @@ dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:asym_t, sym:asym_t
     ldr rbx,this
 
     mov esi,CV_BITFIELD
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov esi,CV_BITFIELD_16t
     .endif
     mov rdi,[rbx].flushpt( esi )
+    mov edx,GetTyperef( types, USE16 )
     mov rcx,sym
     mov [rcx].asym.cvtyperef,[rbx].currtype
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-        mov [rdi].CV_BITFIELD_16t.size,( CV_BITFIELD_16t - sizeof(uint_16) )
-        mov [rdi].CV_BITFIELD_16t.leaf,LF_BITFIELD_16t
-        mov [rdi].CV_BITFIELD_16t.length,[rcx].asym.bitf_bits
-        mov [rdi].CV_BITFIELD_16t.position,[rcx].asym.bitf_offs
-        mov [rdi].CV_BITFIELD_16t.type,GetTyperef( types, USE16 )
+    mov al,[rcx].asym.bitf_bits
+    mov cl,[rcx].asym.bitf_offs
+
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
+        mov [rdi].CV_BITFIELD_16t.length,al
+        mov [rdi].CV_BITFIELD_16t.position,cl
+        mov [rdi].CV_BITFIELD_16t.type,dx
+        mov eax,( ( LF_BITFIELD_16t shl 16 ) or ( CV_BITFIELD_16t - sizeof(uint_16) ) )
     .else
-        mov [rdi].CV_BITFIELD.size,( CV_BITFIELD - sizeof(uint_16) )
-        mov [rdi].CV_BITFIELD.leaf,LF_BITFIELD
-        mov [rdi].CV_BITFIELD.length,[rcx].asym.bitf_bits
-        mov [rdi].CV_BITFIELD.position,[rcx].asym.bitf_offs
-        mov [rdi].CV_BITFIELD.type,GetTyperef( types, USE16 )
-        mov [rdi].CV_BITFIELD.reserved,0xF1F2 ; added for alignment
+        mov [rdi].CV_BITFIELD.type,edx
+        mov [rdi].CV_BITFIELD.length,al
+        mov [rdi].CV_BITFIELD.position,cl
+        mov eax,0xF1F2 ; added for alignment
+        mov [rdi].CV_BITFIELD.reserved,ax
+        mov eax,( ( LF_BITFIELD shl 16 ) or ( CV_BITFIELD - sizeof(uint_16) ) )
     .endif
+    mov [rdi],eax
     inc [rbx].currtype
     add [rbx].pt,rsi
     ret
@@ -458,7 +457,7 @@ dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:asym_t, elemtype:dword
         add esi,sizeof( uint_32 )
     .endif
     mov eax,sizeof( CV_ARRAY )
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov eax,sizeof( CV_ARRAY_16t )
     .endif
 
@@ -472,17 +471,20 @@ dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:asym_t, elemtype:dword
 
     sub ecx,sizeof(uint_16)
     mov [rdi].CV_ARRAY_16t.size,cx
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-        mov [rdi].CV_ARRAY_16t.leaf,LF_ARRAY_16t
-        mov [rdi].CV_ARRAY_16t.elemtype,elemtype
+
+    mov eax,elemtype
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
+        mov [rdi].CV_ARRAY_16t.elemtype,ax
         mov [rdi].CV_ARRAY_16t.idxtype,ST_LONG ;; ok?
         lea rdx,[rdi].CV_ARRAY_16t.data
+        mov eax,LF_ARRAY_16t
     .else
-        mov [rdi].CV_ARRAY.leaf,LF_ARRAY
-        mov [rdi].CV_ARRAY.elemtype,elemtype
+        mov [rdi].CV_ARRAY.elemtype,eax
         mov [rdi].CV_ARRAY.idxtype,GetTyperef( sym, Ofssize )
         lea rdx,[rdi].CV_ARRAY.data
+        mov eax,LF_ARRAY
     .endif
+    mov [rdi].CV_ARRAY.leaf,ax
 
     mov rcx,sym
     mov eax,[rcx].asym.total_size
@@ -515,7 +517,7 @@ dbgcv::write_ptr_type proc __ccall uses rsi rdi rbx sym:asym_t
         .return( GetTyperef( rsi, [rsi].asym.Ofssize ) )
     .endif
     mov edi,sizeof( CV_POINTER )
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov edi,sizeof( CV_POINTER_16t )
     .endif
     [rbx].flushpt(edi)
@@ -537,21 +539,23 @@ dbgcv::write_ptr_type proc __ccall uses rsi rdi rbx sym:asym_t
         .endif
     .else
         mov eax,CV_PTR_NEAR32
-        .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
             mov eax,CV_PTR_64
         .endif
     .endif
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-        mov [rdi].CV_POINTER_16t.leaf,LF_POINTER_16t
+    xor ecx,ecx
+    mov edx,LF_POINTER
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
+        mov edx,LF_POINTER_16t
         mov [rdi].CV_POINTER_16t.attr,ax
-        mov [rdi].CV_POINTER_16t.pmclass,0
-        mov [rdi].CV_POINTER_16t.pmenum,0
+        mov [rdi].CV_POINTER_16t.pmclass,cx
+        mov [rdi].CV_POINTER_16t.pmenum,cx
     .else
-        mov [rdi].CV_POINTER.leaf,LF_POINTER
         mov [rdi].CV_POINTER.attr,eax
-        mov [rdi].CV_POINTER.pmclass,0
-        mov [rdi].CV_POINTER.pmenum,0
+        mov [rdi].CV_POINTER.pmclass,ecx
+        mov [rdi].CV_POINTER.pmenum,ecx
     .endif
+    mov [rdi].CV_POINTER.leaf,dx
 
     ; if indirection is > 1, define an untyped pointer - to be improved
 
@@ -574,7 +578,7 @@ dbgcv::write_ptr_type proc __ccall uses rsi rdi rbx sym:asym_t
         mov cl,memtype
         mov [rsi].asym.mem_type,cl
     .endif
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov [rdi].CV_POINTER_16t.utype,ax
     .else
         mov [rdi].CV_POINTER.utype,eax
@@ -599,7 +603,7 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr cou
 
     inc [rsi].counters.cnt
     mov eax,sizeof( CV_MEMBER )
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov eax,sizeof( CV_MEMBER_16t )
     .endif
 
@@ -668,7 +672,7 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr 
     mov typelen,eax
 
     mov edx,sizeof( CV_MEMBER )
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov edx,sizeof( CV_MEMBER_16t )
     .endif
     add eax,edx
@@ -680,7 +684,7 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr 
     mov rdi,[rbx].flushpt(esi)
     add [rbx].pt,rsi
     mov eax,LF_MEMBER
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov eax,LF_MEMBER_16t
     .endif
     mov [rdi].CV_MEMBER_16t.leaf,ax
@@ -695,7 +699,7 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr 
         GetTyperef( rsi, USE16 )
     .endif
 
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
 
         mov [rdi].CV_MEMBER_16t.index,ax
         mov [rdi].CV_MEMBER_16t.attr,CV_public or ( CV_MTvanilla shl 2 )
@@ -806,8 +810,9 @@ dbgcv::enum_fields endp
 dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
 
     ldr rbx,this
+
     mov esi,sizeof( CV_PROCEDURE )
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov esi,sizeof( CV_PROCEDURE_16t )
     .endif
     mov rdi,[rbx].flushpt(esi)
@@ -816,7 +821,7 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
     mov [rdi].CV_PROCEDURE_16t.size,si
     inc [rbx].currtype
 
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov [rdi].CV_PROCEDURE_16t.leaf,LF_PROCEDURE_16t
         mov [rdi].CV_PROCEDURE_16t.rvtype,ST_VOID
         mov [rdi].CV_PROCEDURE_16t.calltype,0
@@ -843,7 +848,7 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
     sub esi,sizeof( uint_16 )
     mov [rdi].CV_ARGLIST_16t.size,si
 
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov [rdi].CV_ARGLIST_16t.leaf,LF_ARGLIST_16t
         mov [rdi].CV_ARGLIST_16t.count,cnt
         add rdi,sizeof( CV_ARGLIST_16t )
@@ -861,7 +866,7 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
     .for ( rsi = [rsi].proc_info.paralist: rsi: rsi = [rsi].asym.nextparam )
 
         movzx eax,[rsi].asym.ext_idx1
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             stosw
         .elseif ( MODULE.defOfssize == USE64 ) ;; ...
             dec cnt
@@ -949,7 +954,7 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
         lea rax,@CStr("__unnamed")
         mov ecx,9 ; 9 is sizeof("__unnamed")
 
-        .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
 
             ; v2.36.38 - add a type name
 
@@ -1004,10 +1009,10 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
     .case TYPE_UNION
         mov eax,sizeof( CV_UNION )
         mov leaf,LF_UNION
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             mov eax,sizeof( CV_UNION_16t )
             mov leaf,LF_UNION_16t
-        .elseif ( Options.debug_symbols == CV_SIGNATURE_C11 )
+        .elseif ( [rbx].cv_type == CV_SIGNATURE_C11 )
             mov eax,sizeof( CV_UNION_16t )
             mov leaf,LF_UNION_ST
         .endif
@@ -1023,10 +1028,10 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
     .case TYPE_STRUCT
         mov eax,sizeof( CV_STRUCT )
         mov leaf,LF_STRUCTURE
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             mov eax,sizeof( CV_STRUCT_16t )
             mov leaf,LF_STRUCTURE_16t
-        .elseif ( Options.debug_symbols == CV_SIGNATURE_C11 )
+        .elseif ( [rbx].cv_type == CV_SIGNATURE_C11 )
             mov eax,sizeof( CV_STRUCT_16t )
             mov leaf,LF_STRUCTURE_ST
         .endif
@@ -1058,7 +1063,7 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
     add eax,count.size
     mov [rdi].CV_FIELDLIST.size,ax
     mov eax,LF_FIELDLIST
-    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov eax,LF_FIELDLIST_16t
     .endif
     mov [rdi].CV_FIELDLIST.leaf,ax
@@ -1081,7 +1086,7 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
     movzx eax,[rsi].asym.typekind
     .switch eax
     .case TYPE_UNION
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             mov [rdi].CV_UNION_16t.field,[rbx].currtype
             mov [rdi].CV_UNION_16t.property,property
             lea rcx,[rdi].CV_UNION_16t.data
@@ -1094,7 +1099,7 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
        .endc
     .case TYPE_RECORD
     .case TYPE_STRUCT
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             mov [rdi].CV_STRUCT_16t.field,[rbx].currtype
             mov [rdi].CV_STRUCT_16t.property,property
             mov [rdi].CV_STRUCT_16t.derived,0
@@ -1254,7 +1259,7 @@ if EQUATESYMS
         mov rcx,[rbx].flushps(edx)
         xchg rdi,rcx
 
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
 
             mov [rdi].CONSTSYM_16t.rectyp,S_CONSTANT_16t
             mov [rdi].CONSTSYM_16t.typind,ST_SHORT
@@ -1296,7 +1301,7 @@ if EQUATESYMS
         mov [rdi].CONSTSYM.reclen,dx
         add [rbx].ps,rax
 
-        .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
 
             add edx,2
             mov rcx,[rbx].section
@@ -1322,7 +1327,7 @@ endif
 
         mov eax,sizeof( UDTSYM )
         mov edx,S_UDT
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             mov eax,sizeof( UDTSYM_16t )
             mov edx,S_UDT_16t
         .endif
@@ -1339,7 +1344,7 @@ endif
         .else
             GetTyperef( rsi, Ofssize )
         .endif
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             mov [rdi].UDTSYM_16t.typind,ax
         .else
             mov [rdi].UDTSYM.typind,eax
@@ -1354,7 +1359,7 @@ endif
             add [rbx].ps,rax
             mov [rbx].ps,SetPrefixName( [rbx].ps, [rsi].asym.name, [rsi].asym.name_size )
 
-            .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+            .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
 
                 mov eax,[rsi].asym.name_size
                 add eax,len
@@ -1471,7 +1476,7 @@ endif
                 mov eax,S_GPROC32
             .endif
             mov leaf,ax
-            .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
                 mov size,sizeof( PROCSYM32_16t )
                 mov eax,S_LPROC32_16t
                 .if ( [rsi].asym.ispublic )
@@ -1493,7 +1498,7 @@ endif
             movzx eax,[rcx].proc_info.size_prolog
             mov [rdi].PROCSYM32_16t.DbgStart,eax
             mov [rdi].PROCSYM32_16t.DbgEnd,[rsi].asym.total_size
-            .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
                 mov [rdi].PROCSYM32_16t.off,0
                 mov [rdi].PROCSYM32_16t._seg,0
                 mov [rdi].PROCSYM32_16t.typind,[rbx].currtype ; typeref LF_PROCEDURE
@@ -1545,7 +1550,7 @@ endif
 
             add eax,sizeof( LABELSYM32 ) - sizeof(uint_16)
             mov [rdi].LABELSYM32.reclen,ax
-            .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
                 mov [rdi].LABELSYM32.rectyp,S_LABEL32_ST
             .else
                 mov [rdi].LABELSYM32.rectyp,S_LABEL32
@@ -1574,7 +1579,7 @@ endif
         .endif
         mov typeref,ax
 
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             mov size,sizeof( DATASYM32_16t )
             mov [rdi].DATASYM32_16t.off,0
             mov [rdi].DATASYM32_16t._seg,0
@@ -1611,7 +1616,7 @@ endif
                 .endif
             .endif
             .if ( eax )
-                .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+                .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
                     mov ecx,S_LDATA32_16t
                     .if ( [rsi].asym.ispublic )
                         mov ecx,S_GDATA32_16t
@@ -1630,7 +1635,7 @@ endif
     .endif
     mov eax,ofs
     add [rbx].ps,rax
-    .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
         mov rcx,[rbx].section
         add [rcx].cvsection.length,eax
     .endif
@@ -1672,7 +1677,7 @@ endif
     add [rbx].ps,rax
     mov [rbx].ps,SetPrefixName( [rbx].ps, [rsi].asym.name, [rsi].asym.name_size )
 
-    .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+    .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
 
         mov eax,[rsi].asym.name_size
         add eax,len
@@ -1710,7 +1715,7 @@ endif
 
                     mov len,sizeof( REGSYM ) - 1
                     mov leaf,S_REGISTER
-                    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+                    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
                         mov len,sizeof( REGSYM_16t ) - 1
                         mov leaf,S_REGISTER_16t
                     .endif
@@ -1726,7 +1731,7 @@ endif
                     mov [rdx].REGSYM_16t.reclen,ax
                     mov [rdx].REGSYM_16t.rectyp,leaf
 
-                    .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+                    .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
 
                         mov [rdx].REGSYM_16t.typind,[rsi].asym.ext_idx1
                         getregister( rsi )
@@ -1766,7 +1771,7 @@ endif
                         mov len,sizeof( REGREL32 ) - 1
                         mov leaf,S_REGREL32
 
-                        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+                        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
 
                             mov len,sizeof( REGREL32_16t ) - 1
                             mov leaf,S_REGREL32_16t
@@ -1797,7 +1802,7 @@ endif
                         .endif
 
                         mov rdx,[rbx].ps
-                        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+                        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
 
                             mov [rdx].REGREL32_16t.off,[rsi].asym.offs
                             mov [rdx].REGREL32_16t.typind,[rsi].asym.ext_idx1
@@ -1812,7 +1817,7 @@ endif
 
                         mov len,sizeof( BPRELSYM32 ) - 1
                         mov leaf,S_BPREL32
-                        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+                        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
                             mov len,sizeof( BPRELSYM32_16t ) - 1
                             mov leaf,S_BPREL32_16t
                         .endif
@@ -1828,7 +1833,7 @@ endif
                         mov [rdx].BPRELSYM32_16t.reclen,ax
                         mov [rdx].BPRELSYM32_16t.rectyp,leaf
 
-                        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+                        .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
 
                             mov [rdx].BPRELSYM32_16t.off,[rsi].asym.offs
                             mov [rdx].BPRELSYM32_16t.typind,[rsi].asym.ext_idx1
@@ -1844,7 +1849,7 @@ endif
                 add [rbx].ps,rax
                 mov [rbx].ps,SetPrefixName( [rbx].ps, [rsi].asym.name, [rsi].asym.name_size )
 
-                .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+                .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
 
                     mov eax,[rsi].asym.name_size
                     add eax,len
@@ -1865,7 +1870,7 @@ endif
         mov [rax].ENDARGSYM.reclen,sizeof( ENDARGSYM ) - sizeof(uint_16)
         mov [rax].ENDARGSYM.rectyp,S_END
         add [rbx].ps,sizeof( ENDARGSYM )
-        .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+        .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
             mov rcx,[rbx].section
             add [rcx].cvsection.length,sizeof( ENDARGSYM )
         .endif
@@ -2327,13 +2332,14 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:asym_t, types:asym_t
     mov cv.level,0
     mov cv.param,pv
     movzx eax,Options.debug_symbols ; "signature"
+    mov cv.cv_type,al
     stosd                           ; init types
     mov cv.pt,rdi
     mov [rsi],eax                   ; init symbols
     add rsi,sizeof(uint_32)
     mov cv.ps,rsi
 
-    .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+    .if ( eax == CV_SIGNATURE_C13 )
 
         imul ecx,MODULE.cnt_fnames,sizeof( cvfile )
         mov cv.files,LclAlloc( ecx )
@@ -2805,7 +2811,7 @@ endif
         .endif
     .endw
 
-    .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+    .if ( cv.cv_type == CV_SIGNATURE_C13 )
         xor esi,esi
         .while ( SymEnum( rsi, &i ) )
             mov rsi,rax
@@ -2838,7 +2844,7 @@ if EQUATESYMS
 else
             mov eax,[rsi].asym.isequate
 endif
-            .if ( ( Options.debug_symbols == CV_SIGNATURE_C13 && rsi == CV8Label ) || eax || edx ) ;; EQUates?
+            .if ( ( cv.cv_type == CV_SIGNATURE_C13 && rsi == CV8Label ) || eax || edx ) ;; EQUates?
                 .endc
             .endif
             cv.write_symbol( rsi )
@@ -2848,8 +2854,9 @@ endif
 
     ;; final flush for both types and symbols.
     ;; use 'fictional' size of SIZE_CV_SEGBUF!
+
     cv.flushpt( SIZE_CV_SEGBUF )
-    .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+    .if ( cv.cv_type == CV_SIGNATURE_C13 )
         cv.alignps()
     .endif
     cv.flushps( SIZE_CV_SEGBUF )

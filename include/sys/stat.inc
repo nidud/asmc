@@ -1,8 +1,8 @@
 ifndef __STAT_INC
 define __STAT_INC
 .pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 define _S_IFMT   0xF000

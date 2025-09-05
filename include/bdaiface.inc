@@ -1,47 +1,35 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __bdaiface_h__
 define __bdaiface_h__
-
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 include strmif.inc
 include bdatypes.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .enum SmartCardStatusType {
-    CardInserted	= 0,
-    CardRemoved = ( CardInserted + 1 ) ,
-    CardError	= ( CardRemoved + 1 ) ,
-    CardDataChanged	= ( CardError + 1 ) ,
-    CardFirmwareUpgrade = ( CardDataChanged + 1 )
+    CardInserted,
+    CardRemoved,
+    CardError,
+    CardDataChanged,
+    CardFirmwareUpgrade
     }
 
 .enum SmartCardAssociationType {
-    NotAssociated	= 0,
-    Associated	= ( NotAssociated + 1 ) ,
-    AssociationUnknown	= ( Associated + 1 )
+    NotAssociated,
+    Associated,
+    AssociationUnknown
     }
 
 .enum LocationCodeSchemeType {
-    SCTE_18	= 0
+    SCTE_18
     }
 
 EALocationCodeType	STRUC
@@ -52,17 +40,17 @@ county_code		dw ?
 EALocationCodeType	ENDS
 
 .enum EntitlementType {
-    Entitled	= 0,
-    NotEntitled = ( Entitled + 1 ) ,
-    TechnicalFailure	= ( NotEntitled + 1 )
+    Entitled,
+    NotEntitled,
+    TechnicalFailure
     }
 
 .enum UICloseReasonType {
-    NotReady	= 0,
-    UserClosed	= ( NotReady + 1 ) ,
-    SystemClosed	= ( UserClosed + 1 ) ,
-    DeviceClosed	= ( SystemClosed + 1 ) ,
-    ErrorClosed = ( DeviceClosed + 1 )
+    NotReady,
+    UserClosed,
+    SystemClosed,
+    DeviceClosed,
+    ErrorClosed
     }
 
 SmartCardApplication	STRUC
@@ -73,16 +61,16 @@ pbstrApplicationURL	BSTR ?
 SmartCardApplication	ENDS
 
 .enum BDA_DrmPairingError {
-    BDA_DrmPairing_Succeeded	= 0,
-    BDA_DrmPairing_HardwareFailure	= ( BDA_DrmPairing_Succeeded + 1 ) ,
-    BDA_DrmPairing_NeedRevocationData	= ( BDA_DrmPairing_HardwareFailure + 1 ) ,
-    BDA_DrmPairing_NeedIndiv	= ( BDA_DrmPairing_NeedRevocationData + 1 ) ,
-    BDA_DrmPairing_Other	= ( BDA_DrmPairing_NeedIndiv + 1 ) ,
-    BDA_DrmPairing_DrmInitFailed	= ( BDA_DrmPairing_Other + 1 ) ,
-    BDA_DrmPairing_DrmNotPaired = ( BDA_DrmPairing_DrmInitFailed + 1 ) ,
-    BDA_DrmPairing_DrmRePairSoon	= ( BDA_DrmPairing_DrmNotPaired + 1 ) ,
-    BDA_DrmPairing_Aborted	= ( BDA_DrmPairing_DrmRePairSoon + 1 ) ,
-    BDA_DrmPairing_NeedSDKUpdate	= ( BDA_DrmPairing_Aborted + 1 )
+    BDA_DrmPairing_Succeeded,
+    BDA_DrmPairing_HardwareFailure,
+    BDA_DrmPairing_NeedRevocationData,
+    BDA_DrmPairing_NeedIndiv,
+    BDA_DrmPairing_Othe,
+    BDA_DrmPairing_DrmInitFailed,
+    BDA_DrmPairing_DrmNotPaired,
+    BDA_DrmPairing_DrmRePairSoon,
+    BDA_DrmPairing_Aborted,
+    BDA_DrmPairing_NeedSDKUpdate
     }
 
 
@@ -417,10 +405,10 @@ DEFINE_IIDX(IBDA_DigitalDemodulator3, "13F19604-7D32-4359-93A2-A05205D90AC9")
 endif
 
 .enum _MIDL___MIDL_itf_bdaiface_0000_0019_0001 {
-    KSPROPERTY_IPSINK_MULTICASTLIST	= 0,
-    KSPROPERTY_IPSINK_ADAPTER_DESCRIPTION	= ( KSPROPERTY_IPSINK_MULTICASTLIST + 1 ) ,
-    KSPROPERTY_IPSINK_ADAPTER_ADDRESS	= ( KSPROPERTY_IPSINK_ADAPTER_DESCRIPTION + 1 )
-    }
+	KSPROPERTY_IPSINK_MULTICASTLIST,
+	KSPROPERTY_IPSINK_ADAPTER_DESCRIPTION,
+	KSPROPERTY_IPSINK_ADAPTER_ADDRESS
+	}
 
 
 ifndef __ICCSubStreamFiltering_INTERFACE_DEFINED__
@@ -836,16 +824,6 @@ DEFINE_IIDX(IBDA_UserActivityService, "53B14189-E478-4b7a-A1FF-506DB4B99DFE")
 
 endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
+endif
 
 endif

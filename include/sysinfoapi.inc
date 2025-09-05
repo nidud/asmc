@@ -1,10 +1,11 @@
 ifndef _SYSINFOAPI_H_
 define _SYSINFOAPI_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 SYSTEM_INFO		struct
 union

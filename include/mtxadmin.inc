@@ -7,9 +7,12 @@ endif
 
 ifndef __mtxadmin_h__
 define __mtxadmin_h__
-
+ifndef __unknwn_h__
 include unknwn.inc
+endif
+ifndef __oaidl_h__
 include oaidl.inc
+endif
 include objbase.inc
 
 ifndef __ICatalog_INTERFACE_DEFINED__

@@ -1,7 +1,9 @@
 ifndef _WS2IPDEF_
 define _WS2IPDEF_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 include in6addr.inc
 
 sockaddr_in6_old	STRUC

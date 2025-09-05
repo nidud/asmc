@@ -1,21 +1,8 @@
-ifndef __WTYPES_INC
-define __WTYPES_INC
-
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _WTYPES_
+define _WTYPES_
+ifndef _RPC500_
+include rpc500.inc
 endif
-
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
 ifndef __wtypes_h__
 define __wtypes_h__
 
@@ -94,10 +81,6 @@ LPRECT			typedef ptr RECT
 LPCRECT			typedef ptr RECT
 endif
 
-if 0
-REFFMTID		typedef ptr FMTID
-endif
-
 ifndef _ROTFLAGS_DEFINED
 define _ROTFLAGS_DEFINED
 define ROTFLAGS_REGISTRATIONKEEPSALIVE 0x1
@@ -117,23 +100,23 @@ endif
     }
 
 .enum STGC {
-    STGC_DEFAULT	= 0,
-    STGC_OVERWRITE	= 1,
-    STGC_ONLYIFCURRENT	= 2,
+    STGC_DEFAULT,
+    STGC_OVERWRITE,
+    STGC_ONLYIFCURRENT,
     STGC_DANGEROUSLYCOMMITMERELYTODISKCACHE = 4,
     STGC_CONSOLIDATE	= 8
     }
 
 .enum STGMOVE {
-    STGMOVE_MOVE	= 0,
-    STGMOVE_COPY	= 1,
-    STGMOVE_SHALLOWCOPY = 2
+    STGMOVE_MOVE,
+    STGMOVE_COPY,
+    STGMOVE_SHALLOWCOPY
     }
 
 .enum STATFLAG {
-    STATFLAG_DEFAULT	= 0,
-    STATFLAG_NONAME	= 1,
-    STATFLAG_NOOPEN	= 2
+    STATFLAG_DEFAULT,
+    STATFLAG_NONAME,
+    STATFLAG_NOOPEN
     }
 
 HCONTEXT	typedef ptr
@@ -148,9 +131,9 @@ define _LANGID_DEFINED
 LANGID		typedef WORD
 endif
 
-define	WDT_INPROC_CALL ( 0x48746457 )
-define	WDT_REMOTE_CALL ( 0x52746457 )
-define	WDT_INPROC64_CALL ( 0x50746457 )
+define WDT_INPROC_CALL	0x48746457
+define WDT_REMOTE_CALL	0x52746457
+define WDT_INPROC64_CALL 0x50746457
 
 userCLIPFORMAT		struct
 fContext		LONG ?
@@ -222,9 +205,9 @@ bmType			LONG ?
 bmWidth			LONG ?
 bmHeight		LONG ?
 bmWidthBytes		LONG ?
-bmPlanes		WORD ?
-bmBitsPixel		WORD ?
-cbSize			ULONG ?
+bmPlanes		dw ?
+bmBitsPixel		dw ?
+cbSize			dd ?
 pBuffer			byte 1 dup(?)
 userBITMAP		ends
 
@@ -264,22 +247,6 @@ wireHICON		typedef ptr RemotableHandle
 wireHRGN		typedef ptr RemotableHandle
 wireHMONITOR		typedef ptr RemotableHandle
 
-if 0
-HWND			typedef ptr
-HMENU			typedef ptr
-HACCEL			typedef ptr
-HBRUSH			typedef ptr
-HFONT			typedef ptr
-HDC			typedef ptr
-HICON			typedef ptr
-HRGN			typedef ptr
-HMONITOR		typedef ptr
-ifndef _HCURSOR_DEFINED
-define _HCURSOR_DEFINED
-HCURSOR			typedef HICON
-endif
-endif
-
 ifndef _TEXTMETRIC_DEFINED
 define _TEXTMETRIC_DEFINED
 TEXTMETRICW		struct
@@ -294,15 +261,15 @@ tmWeight		LONG ?
 tmOverhang		LONG ?
 tmDigitizedAspectX	LONG ?
 tmDigitizedAspectY	LONG ?
-tmFirstChar		WCHAR ?
-tmLastChar		WCHAR ?
-tmDefaultChar		WCHAR ?
-tmBreakChar		WCHAR ?
-tmItalic		BYTE ?
-tmUnderlined		BYTE ?
-tmStruckOut		BYTE ?
-tmPitchAndFamily	BYTE ?
-tmCharSet		BYTE ?
+tmFirstChar		dw ?
+tmLastChar		dw ?
+tmDefaultChar		dw ?
+tmBreakChar		dw ?
+tmItalic		db ?
+tmUnderlined		db ?
+tmStruckOut		db ?
+tmPitchAndFamily	db ?
+tmCharSet		db ?
 TEXTMETRICW		ends
 PTEXTMETRICW		typedef ptr TEXTMETRICW
 LPTEXTMETRICW		typedef ptr TEXTMETRICW
@@ -330,75 +297,44 @@ wireHENHMETAFILE	typedef ptr userHENHMETAFILE
 wireHMETAFILE		typedef ptr userHMETAFILE
 wireHMETAFILEPICT	typedef ptr userHMETAFILEPICT
 
-if 0
-HGLOBAL			typedef ptr
-HLOCAL			typedef HGLOBAL
-HBITMAP			typedef ptr
-HPALETTE		typedef ptr
-HENHMETAFILE		typedef ptr
-HMETAFILE		typedef ptr
-endif
-
 HMETAFILEPICT		typedef ptr
 
-endif ; __IWinTypes_INTERFACE_DEFINED__
+endif
 
 DATE			typedef real8
 LPDATE			typedef ptr real8
 
-ifndef _tagCY_DEFINED
-define _tagCY_DEFINED
+ifndef _CY_DEFINED
 define _CY_DEFINED
-
-if 0
-tagCY			struct
-int64			SQWORD ?
-tagCY			ends
-CY			typedef tagCY
-else
-tagCY			union
+CY			union
 struct
  Lo			DWORD ?
  Hi			SDWORD ?
 ends
 int64			SQWORD ?
-tagCY			ends
-CY			typedef tagCY
-endif
+CY			ends
 endif
 LPCY			typedef ptr CY
 
-if 0
-tagDEC			struct
-wReserved		WORD ?
-scale			BYTE ?
-sign			BYTE ?
-Hi32			DWORD ?
-Lo64			QWORD ?
-tagDEC			ends
-DECIMAL			typedef tagDEC
-else
-tagDEC			struct
-wReserved		WORD ?
+DECIMAL			struct
+wReserved		dw ?
 union
  struct
-  scale			BYTE ?
-  sign			BYTE ?
+  scale			db ?
+  sign			db ?
  ends
- signscale		WORD ?
+ signscale		dw ?
 ends
-Hi32			DWORD ?
+Hi32			dd ?
 union
  struct
-  Lo32			DWORD ?
-  Mid32			DWORD ?
+  Lo32			dd ?
+  Mid32			dd ?
  ends
- Lo64			QWORD ?
+ Lo64			dq ?
 ends
-tagDEC			ends
-DECIMAL			typedef tagDEC
+DECIMAL			ends
 define DECIMAL_NEG (0x80)
-endif
 
 LPDECIMAL		typedef ptr DECIMAL
 wireBSTR		typedef ptr FLAGGED_WORD_BLOB
@@ -406,8 +342,8 @@ BSTR			typedef ptr OLECHAR
 LPBSTR			typedef ptr BSTR
 VARIANT_BOOL		typedef sword
 
-ifndef _tagBSTRBLOB_DEFINED
-define _tagBSTRBLOB_DEFINED
+ifndef _BSTRBLOB_DEFINED
+define _BSTRBLOB_DEFINED
 BSTRBLOB		struct
 cbSize			ULONG ?
 pData			LPBYTE ?
@@ -418,28 +354,27 @@ endif
 define VARIANT_TRUE	(-1)
 define VARIANT_FALSE	(0)
 
-tagCLIPDATA		struct
+CLIPDATA		struct
 cbSize			ULONG ?
 ulClipFmt		LONG ?
 pClipData		LPBYTE ?
-tagCLIPDATA		ends
-CLIPDATA		typedef tagCLIPDATA
+CLIPDATA		ends
 LPCLIPDATA		typedef ptr CLIPDATA
 
 VARTYPE			typedef word
 
 .enum VARENUM {
-    VT_EMPTY		= 0,
-    VT_NULL		= 1,
-    VT_I2		= 2,
-    VT_I4		= 3,
-    VT_R4		= 4,
-    VT_R8		= 5,
-    VT_CY		= 6,
-    VT_DATE		= 7,
-    VT_BSTR		= 8,
-    VT_DISPATCH		= 9,
-    VT_ERROR		= 10,
+    VT_EMPTY,
+    VT_NULL,
+    VT_I2,
+    VT_I4,
+    VT_R4,
+    VT_R8,
+    VT_CY,
+    VT_DATE,
+    VT_BSTR,
+    VT_DISPATCH,
+    VT_ERROR,
     VT_BOOL		= 11,
     VT_VARIANT		= 12,
     VT_UNKNOWN		= 13,
@@ -508,13 +443,13 @@ dwVersionLo		DWORD ?
 QUERYCONTEXT		ends
 
 .enum TYSPEC {
-    TYSPEC_CLSID	= 0,
-    TYSPEC_FILEEXT	= ( TYSPEC_CLSID + 1 ) ,
-    TYSPEC_MIMETYPE	= ( TYSPEC_FILEEXT + 1 ) ,
-    TYSPEC_FILENAME	= ( TYSPEC_MIMETYPE + 1 ) ,
-    TYSPEC_PROGID	= ( TYSPEC_FILENAME + 1 ) ,
-    TYSPEC_PACKAGENAME	= ( TYSPEC_PROGID + 1 ) ,
-    TYSPEC_OBJECTID	= ( TYSPEC_PACKAGENAME + 1 )
+    TYSPEC_CLSID,
+    TYSPEC_FILEEXT,
+    TYSPEC_MIMETYPE,
+    TYSPEC_FILENAME,
+    TYSPEC_PROGID,
+    TYSPEC_PACKAGENAME,
+    TYSPEC_OBJECTID
     }
 
 uCLSSPEC		struct

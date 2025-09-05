@@ -1,8 +1,8 @@
 ifndef _INCLUDED_WMM
 define _INCLUDED_WMM
 .pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 ifndef _M_IX86
@@ -15,10 +15,6 @@ ifdef _M_CEE_PURE
 endif
 
 include nmmintrin.inc
-
-;;
-;; Principal header file for Intel(R) AES and PCLMULQDQ intrinsics.
-;;
 
 _mm_aesdec_si128 macro a, r
 	aesdec a,b

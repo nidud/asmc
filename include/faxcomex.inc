@@ -1,29 +1,19 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __faxcomex_h__
 define __faxcomex_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
-
+endif
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -47,44 +37,44 @@ define __IFaxJobStatus_INTERFACE_DEFINED__
     }
 
 .enum FAX_JOB_EXTENDED_STATUS_ENUM {
-	fjesNONE	= 0,
-	fjesDISCONNECTED	= ( fjesNONE + 1 ) ,
-	fjesINITIALIZING	= ( fjesDISCONNECTED + 1 ) ,
-	fjesDIALING	= ( fjesINITIALIZING + 1 ) ,
-	fjesTRANSMITTING	= ( fjesDIALING + 1 ) ,
-	fjesANSWERED	= ( fjesTRANSMITTING + 1 ) ,
-	fjesRECEIVING	= ( fjesANSWERED + 1 ) ,
-	fjesLINE_UNAVAILABLE	= ( fjesRECEIVING + 1 ) ,
-	fjesBUSY	= ( fjesLINE_UNAVAILABLE + 1 ) ,
-	fjesNO_ANSWER	= ( fjesBUSY + 1 ) ,
-	fjesBAD_ADDRESS = ( fjesNO_ANSWER + 1 ) ,
-	fjesNO_DIAL_TONE	= ( fjesBAD_ADDRESS + 1 ) ,
-	fjesFATAL_ERROR = ( fjesNO_DIAL_TONE + 1 ) ,
-	fjesCALL_DELAYED	= ( fjesFATAL_ERROR + 1 ) ,
-	fjesCALL_BLACKLISTED	= ( fjesCALL_DELAYED + 1 ) ,
-	fjesNOT_FAX_CALL	= ( fjesCALL_BLACKLISTED + 1 ) ,
-	fjesPARTIALLY_RECEIVED	= ( fjesNOT_FAX_CALL + 1 ) ,
-	fjesHANDLED	= ( fjesPARTIALLY_RECEIVED + 1 ) ,
-	fjesCALL_COMPLETED	= ( fjesHANDLED + 1 ) ,
-	fjesCALL_ABORTED	= ( fjesCALL_COMPLETED + 1 ) ,
+	fjesNONE,
+	fjesDISCONNECTED,
+	fjesINITIALIZING,
+	fjesDIALING,
+	fjesTRANSMITTING,
+	fjesANSWERED,
+	fjesRECEIVING,
+	fjesLINE_UNAVAILABLE,
+	fjesBUSY,
+	fjesNO_ANSWER,
+	fjesBAD_ADDRESS,
+	fjesNO_DIAL_TONE,
+	fjesFATAL_ERROR,
+	fjesCALL_DELAYED,
+	fjesCALL_BLACKLISTED,
+	fjesNOT_FAX_CALL,
+	fjesPARTIALLY_RECEIVED,
+	fjesHANDLED,
+	fjesCALL_COMPLETED,
+	fjesCALL_ABORTED,
 	fjesPROPRIETARY = 0x1000000
-    }
+	}
 
 .enum FAX_JOB_OPERATIONS_ENUM {
-	fjoVIEW = 0x1,
+	fjoVIEW		= 0x1,
 	fjoPAUSE	= 0x2,
 	fjoRESUME	= 0x4,
 	fjoRESTART	= 0x8,
 	fjoDELETE	= 0x10,
 	fjoRECIPIENT_INFO	= 0x20,
 	fjoSENDER_INFO	= 0x40
-    }
+	}
 
 .enum FAX_JOB_TYPE_ENUM {
-	fjtSEND = 0,
-	fjtRECEIVE	= ( fjtSEND + 1 ) ,
-	fjtROUTING	= ( fjtRECEIVE + 1 )
-    }
+	fjtSEND,
+	fjtRECEIVE,
+	fjtROUTING
+	}
 
 DEFINE_IIDX(IFaxJobStatus, "8B86F485-FD7F-4824-886B-40C5CAA617CC")
 
@@ -263,16 +253,16 @@ ifndef __IFaxReceiptOptions_INTERFACE_DEFINED__
 define __IFaxReceiptOptions_INTERFACE_DEFINED__
 
 .enum FAX_SMTP_AUTHENTICATION_TYPE_ENUM {
-	fsatANONYMOUS	= 0,
-	fsatBASIC	= ( fsatANONYMOUS + 1 ) ,
-	fsatNTLM	= ( fsatBASIC + 1 )
-    }
+	fsatANONYMOUS,
+	fsatBASIC,
+	fsatNTLM
+	}
 
 .enum FAX_RECEIPT_TYPE_ENUM {
-	frtNONE = 0,
-	frtMAIL = 0x1,
+	frtNONE		= 0,
+	frtMAIL		= 0x1,
 	frtMSGBOX	= 0x4
-    }
+	}
 
 DEFINE_IIDX(IFaxReceiptOptions, "378EFAEB-5FCB-4AFB-B2EE-E16E80614487")
 
@@ -334,22 +324,22 @@ ifndef __IFaxDocument_INTERFACE_DEFINED__
 define __IFaxDocument_INTERFACE_DEFINED__
 
 .enum FAX_PRIORITY_TYPE_ENUM {
-	fptLOW	= 0,
-	fptNORMAL	= ( fptLOW + 1 ) ,
-	fptHIGH = ( fptNORMAL + 1 )
-    }
+	fptLOW,
+	fptNORMAL,
+	fptHIGH
+	}
 
 .enum FAX_COVERPAGE_TYPE_ENUM {
-	fcptNONE	= 0,
-	fcptLOCAL	= ( fcptNONE + 1 ) ,
-	fcptSERVER	= ( fcptLOCAL + 1 )
-    }
+	fcptNONE,
+	fcptLOCAL,
+	fcptSERVER
+	}
 
 .enum FAX_SCHEDULE_TYPE_ENUM {
-	fstNOW	= 0,
-	fstSPECIFIC_TIME	= ( fstNOW + 1 ) ,
-	fstDISCOUNT_PERIOD	= ( fstSPECIFIC_TIME + 1 )
-    }
+	fstNOW,
+	fstSPECIFIC_TIME,
+	fstDISCOUNT_PERIOD
+	}
 
 DEFINE_IIDX(IFaxDocument, "B207A246-09E3-4A4E-A7DC-FEA31D29458F")
 
@@ -755,14 +745,14 @@ ifndef __IFaxDeviceProvider_INTERFACE_DEFINED__
 define __IFaxDeviceProvider_INTERFACE_DEFINED__
 
 .enum FAX_PROVIDER_STATUS_ENUM {
-	fpsSUCCESS	= 0,
-	fpsSERVER_ERROR = ( fpsSUCCESS + 1 ) ,
-	fpsBAD_GUID	= ( fpsSERVER_ERROR + 1 ) ,
-	fpsBAD_VERSION	= ( fpsBAD_GUID + 1 ) ,
-	fpsCANT_LOAD	= ( fpsBAD_VERSION + 1 ) ,
-	fpsCANT_LINK	= ( fpsCANT_LOAD + 1 ) ,
-	fpsCANT_INIT	= ( fpsCANT_LINK + 1 )
-    }
+	fpsSUCCESS,
+	fpsSERVER_ERROR,
+	fpsBAD_GUID,
+	fpsBAD_VERSION,
+	fpsCANT_LOAD,
+	fpsCANT_LINK,
+	fpsCANT_INIT
+	}
 
 DEFINE_IIDX(IFaxDeviceProvider, "290EAC63-83EC-449C-8417-F148DF8C682A")
 
@@ -787,10 +777,10 @@ ifndef __IFaxDevice_INTERFACE_DEFINED__
 define __IFaxDevice_INTERFACE_DEFINED__
 
 .enum FAX_DEVICE_RECEIVE_MODE_ENUM {
-	fdrmNO_ANSWER	= 0,
-	fdrmAUTO_ANSWER = ( fdrmNO_ANSWER + 1 ) ,
-	fdrmMANUAL_ANSWER	= ( fdrmAUTO_ANSWER + 1 )
-    }
+	fdrmNO_ANSWER,
+	fdrmAUTO_ANSWER,
+	fdrmMANUAL_ANSWER
+	}
 
 DEFINE_IIDX(IFaxDevice, "49306C59-B52E-4867-9DF4-CA5841C956D0")
 
@@ -847,11 +837,11 @@ ifndef __IFaxEventLogging_INTERFACE_DEFINED__
 define __IFaxEventLogging_INTERFACE_DEFINED__
 
 .enum FAX_LOG_LEVEL_ENUM {
-	fllNONE = 0,
-	fllMIN	= ( fllNONE + 1 ) ,
-	fllMED	= ( fllMIN + 1 ) ,
-	fllMAX	= ( fllMED + 1 )
-    }
+	fllNONE,
+	fllMIN,
+	fllMED,
+	fllMAX
+	}
 
 DEFINE_IIDX(IFaxEventLogging, "0880D965-20E8-42E4-8E17-944F192CAAD4")
 
@@ -889,11 +879,11 @@ ifndef __IFaxOutboundRoutingGroup_INTERFACE_DEFINED__
 define __IFaxOutboundRoutingGroup_INTERFACE_DEFINED__
 
 .enum FAX_GROUP_STATUS_ENUM {
-	fgsALL_DEV_VALID	= 0,
-	fgsEMPTY	= ( fgsALL_DEV_VALID + 1 ) ,
-	fgsALL_DEV_NOT_VALID	= ( fgsEMPTY + 1 ) ,
-	fgsSOME_DEV_NOT_VALID	= ( fgsALL_DEV_NOT_VALID + 1 )
-    }
+	fgsALL_DEV_VALID,
+	fgsEMPTY,
+	fgsALL_DEV_NOT_VALID,
+	fgsSOME_DEV_NOT_VALID
+	}
 
 DEFINE_IIDX(IFaxOutboundRoutingGroup, "CA6289A1-7E25-4F87-9A0B-93365734962C")
 
@@ -942,12 +932,12 @@ ifndef __IFaxOutboundRoutingRule_INTERFACE_DEFINED__
 define __IFaxOutboundRoutingRule_INTERFACE_DEFINED__
 
 .enum FAX_RULE_STATUS_ENUM {
-	frsVALID	= 0,
-	frsEMPTY_GROUP	= ( frsVALID + 1 ) ,
-	frsALL_GROUP_DEV_NOT_VALID	= ( frsEMPTY_GROUP + 1 ) ,
-	frsSOME_GROUP_DEV_NOT_VALID	= ( frsALL_GROUP_DEV_NOT_VALID + 1 ) ,
-	frsBAD_DEVICE	= ( frsSOME_GROUP_DEV_NOT_VALID + 1 )
-    }
+	frsVALID,
+	frsEMPTY_GROUP,
+	frsALL_GROUP_DEV_NOT_VALID,
+	frsSOME_GROUP_DEV_NOT_VALID,
+	frsBAD_DEVICE
+	}
 
 DEFINE_IIDX(IFaxOutboundRoutingRule, "E1F795D5-07C2-469F-B027-ACACC23219DA")
 

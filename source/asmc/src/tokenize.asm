@@ -1313,6 +1313,9 @@ continue_scan:
             mov eax,T_SYSCALL_
         .endif
         .endc
+      .case T_DOT_NEW
+        inc [rdx].cstring
+       .endc
       .case T_DOT_ELSEIF
       .case T_DOT_WHILE
       .case T_DOT_CASE

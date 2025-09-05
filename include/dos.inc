@@ -1,4 +1,4 @@
-ifndef __LIBC_INC
+ifndef _LIBC_
 include libc.inc
 endif
 

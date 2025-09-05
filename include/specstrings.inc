@@ -1,6 +1,5 @@
 ifndef SPECSTRINGS_H
 define SPECSTRINGS_H
-.pragma list(push, 0)
 
 include sal_supp.inc
 include specstrings_supp.inc
@@ -14,5 +13,4 @@ include specstrings_strict.inc
 endif
 include driverspecs.inc
 
-.pragma list(pop)
 endif

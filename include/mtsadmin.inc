@@ -1,23 +1,11 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 440
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __mtsadmin_h__
 define __mtsadmin_h__
-
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 include comadmin.inc
 include objbase.inc
 

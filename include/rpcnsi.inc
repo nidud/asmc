@@ -1,7 +1,7 @@
 ifndef __RPCNSI_H__
 define __RPCNSI_H__
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 RPC_NS_HANDLE	typedef ptr
@@ -141,4 +141,3 @@ RpcNsProfileEltInqNext	equ <RpcNsProfileEltInqNextA>
 endif
 
 endif
-

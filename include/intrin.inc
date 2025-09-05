@@ -2,8 +2,8 @@
 .pragma cref(push, 0)
 ifndef __INTRIN_H_
 define __INTRIN_H_
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 include intrin0.inc

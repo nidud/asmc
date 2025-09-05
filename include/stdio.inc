@@ -1,9 +1,9 @@
-ifndef __STDIO_INC
-define __STDIO_INC
-.pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
+ifndef _STDIO_
+define _STDIO_
+ifndef _LIBC_
+include libc.inc
 endif
+
 .pragma comment(lib, libc, msvcrt)
 
 define FILENAME_MAX	260
@@ -82,7 +82,7 @@ endif
 if not defined(_MSVCRT) or defined(_CRTBLD)
 externdef	_commode:int_t
 externdef	_nstream:int_t
-externdef	_bufin:BYTE
+externdef	_bufin:char_t
 externdef	stdin:LPFILE
 externdef	stdout:LPFILE
 externdef	stderr:LPFILE
@@ -236,5 +236,4 @@ _fsetmode proto watcall :LPFILE, :int_t {
     or	[rax]._iobuf._flag,edx
     }
 
-.pragma list(pop)
 endif

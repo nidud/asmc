@@ -1,20 +1,8 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPC500_
+include rpc500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
 ifndef __asptlb_h__
 define __asptlb_h__
-
-.pragma list(push, 0)
 
 ifndef __ASPTypeLibrary_LIBRARY_DEFINED__
 define __ASPTypeLibrary_LIBRARY_DEFINED__
@@ -278,5 +266,4 @@ DEFINE_GUID(CLSID_ScriptingContext,0xD97A6DA0,0xA868,0x11cf,0x83,0xAE,0x11,0xB0,
 
 endif
 
-.pragma list(pop)
 endif

@@ -1,24 +1,18 @@
-.pragma list(push, 0)
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPC500_
+include rpc500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err<this stub requires an updated version of rpcndr.inc>
-endif
-
 ifndef __appxpackaging_h__
 define __appxpackaging_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 if (NTDDI_VERSION GE NTDDI_WIN7)
@@ -513,8 +507,7 @@ endif
 
 DEFINE_GUID(CLSID_AppxBundleFactory, 0x378E0446, 0x5384, 0x43B7, 0x88, 0x77, 0xE7, 0xDB, 0xDD, 0x88, 0x34, 0x46)
 
-endif ;; __APPXPACKAGING_LIBRARY_DEFINED__
-endif ;; (NTDDI GE NTDDI_WIN7)
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 endif
-.pragma list(pop)
+endif
+endif
+endif

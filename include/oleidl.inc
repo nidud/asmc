@@ -1,22 +1,11 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 440
-endif
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 ifndef __oleidl_h__
 define __oleidl_h__
-
+ifndef __objidl_h__
 include objidl.inc
-
-;void
-MIDL_user_free proto WINAPI :PVOID
+endif
 
 ifndef __IOleAdviseHolder_INTERFACE_DEFINED__
 define __IOleAdviseHolder_INTERFACE_DEFINED__
@@ -572,35 +561,5 @@ DEFINE_IIDX(IEnumOLEVERB, "0000012B-0000-0000-C000-000000000046")
 LPENUMOLEVERB		typedef ptr IEnumOLEVERB
 
 endif
-
-CLIPFORMAT_UserSize proto WINAPI :ptr, :dword, :ptr
-CLIPFORMAT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserFree proto WINAPI :ptr, :ptr
-
-HACCEL_UserSize proto WINAPI :ptr, :dword, :ptr
-HACCEL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserFree proto WINAPI :ptr, :ptr
-
-HGLOBAL_UserSize proto WINAPI :ptr, :dword, :ptr
-HGLOBAL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HGLOBAL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HGLOBAL_UserFree proto WINAPI :ptr, :ptr
-
-HMENU_UserSize proto WINAPI :ptr, :dword, :ptr
-HMENU_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
-STGMEDIUM_UserSize proto WINAPI :ptr, :dword, :ptr
-STGMEDIUM_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-STGMEDIUM_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-STGMEDIUM_UserFree proto WINAPI :ptr, :ptr
 
 endif

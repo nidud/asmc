@@ -1,8 +1,8 @@
 ifndef _WS2DEF_
 define _WS2DEF_
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-
+endif
 if NOT defined(_WINSOCK_DEPRECATED_BY)
 if ((defined(_WINSOCK_DEPRECATED_NO_WARNINGS) OR defined(BUILD_WINDOWS)) AND NOT defined(_WINSOCK_DEPRECATE_WARNINGS)) OR defined(MIDL_PASS)
 _WINSOCK_DEPRECATED_BY macro replacement

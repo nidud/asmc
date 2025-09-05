@@ -1,11 +1,14 @@
 ifndef _FILEAPIFROMAPP_H_
 define _FILEAPIFROMAPP_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
+ifndef _APISETFILE_
 include fileapi.inc
+endif
 
 if ((_WIN32_WINNT ge _WIN32_WINNT_WIN10) and (NTDDI_VERSION ge NTDDI_WIN10_RS3))
 CopyFileFromAppW proto WINAPI :LPCWSTR, :LPCWSTR, :BOOL

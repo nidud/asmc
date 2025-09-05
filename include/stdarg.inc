@@ -1,21 +1,8 @@
-ifndef __STDARG_INC
-define __STDARG_INC
+ifndef _STDARG_
+define _STDARG_
 .pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
-endif
-
-;ifdef	_MSC_VER
-if 0;def _WINDOWS_
-;
-; Currently, all MS C compilers for Win32 platforms default to 8 byte
-; alignment.
-;
-ifdef _WIN64
-option fieldalign:8
-else
-option fieldalign:4
-endif
+ifndef _LIBC_
+include libc.inc
 endif
 
 va_list typedef ptr sbyte

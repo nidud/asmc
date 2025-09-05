@@ -1,342 +1,333 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __segment_h__
 define __segment_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 include strmif.inc
 include tuner.inc
 include tvratings.inc
 include evr.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 include olectl.inc
 
 .enum SegDispidList {
-    dispidName	= 0,
-    dispidStatus	= ( dispidName + 1 ) ,
-    dispidDevImageSourceWidth	= ( dispidStatus + 1 ) ,
-    dispidDevImageSourceHeight	= ( dispidDevImageSourceWidth + 1 ) ,
-    dispidDevCountryCode	= ( dispidDevImageSourceHeight + 1 ) ,
-    dispidDevOverScan	= ( dispidDevCountryCode + 1 ) ,
-    dispidSegment	= ( dispidDevOverScan + 1 ) ,
-    dispidDevVolume	= ( dispidSegment + 1 ) ,
-    dispidDevBalance	= ( dispidDevVolume + 1 ) ,
-    dispidDevPower	= ( dispidDevBalance + 1 ) ,
-    dispidTuneChan	= ( dispidDevPower + 1 ) ,
-    dispidDevVideoSubchannel	= ( dispidTuneChan + 1 ) ,
-    dispidDevAudioSubchannel	= ( dispidDevVideoSubchannel + 1 ) ,
-    dispidChannelAvailable	= ( dispidDevAudioSubchannel + 1 ) ,
-    dispidDevVideoFrequency	= ( dispidChannelAvailable + 1 ) ,
-    dispidDevAudioFrequency	= ( dispidDevVideoFrequency + 1 ) ,
-    dispidCount = ( dispidDevAudioFrequency + 1 ) ,
-    dispidDevFileName	= ( dispidCount + 1 ) ,
-    dispidVisible	= ( dispidDevFileName + 1 ) ,
-    dispidOwner = ( dispidVisible + 1 ) ,
-    dispidMessageDrain	= ( dispidOwner + 1 ) ,
-    dispidViewable	= ( dispidMessageDrain + 1 ) ,
-    dispidDevView	= ( dispidViewable + 1 ) ,
-    dispidKSCat = ( dispidDevView + 1 ) ,
-    dispidCLSID = ( dispidKSCat + 1 ) ,
-    dispid_KSCat	= ( dispidCLSID + 1 ) ,
-    dispid_CLSID	= ( dispid_KSCat + 1 ) ,
-    dispidTune	= ( dispid_CLSID + 1 ) ,
-    dispidTS	= ( dispidTune + 1 ) ,
-    dispidDevSAP	= ( dispidTS + 1 ) ,
-    dispidClip	= ( dispidDevSAP + 1 ) ,
-    dispidRequestedClipRect	= ( dispidClip + 1 ) ,
-    dispidClippedSourceRect	= ( dispidRequestedClipRect + 1 ) ,
-    dispidAvailableSourceRect	= ( dispidClippedSourceRect + 1 ) ,
-    dispidMediaPosition = ( dispidAvailableSourceRect + 1 ) ,
-    dispidDevRun	= ( dispidMediaPosition + 1 ) ,
-    dispidDevPause	= ( dispidDevRun + 1 ) ,
-    dispidDevStop	= ( dispidDevPause + 1 ) ,
-    dispidCCEnable	= ( dispidDevStop + 1 ) ,
-    dispidDevStep	= ( dispidCCEnable + 1 ) ,
-    dispidDevCanStep	= ( dispidDevStep + 1 ) ,
-    dispidSourceSize	= ( dispidDevCanStep + 1 ) ,
-    dispid_playtitle	= ( dispidSourceSize + 1 ) ,
-    dispid_playchapterintitle	= ( dispid_playtitle + 1 ) ,
-    dispid_playchapter	= ( dispid_playchapterintitle + 1 ) ,
-    dispid_playchaptersautostop = ( dispid_playchapter + 1 ) ,
-    dispid_playattime	= ( dispid_playchaptersautostop + 1 ) ,
-    dispid_playattimeintitle	= ( dispid_playattime + 1 ) ,
-    dispid_playperiodintitleautostop	= ( dispid_playattimeintitle + 1 ) ,
-    dispid_replaychapter	= ( dispid_playperiodintitleautostop + 1 ) ,
-    dispid_playprevchapter	= ( dispid_replaychapter + 1 ) ,
-    dispid_playnextchapter	= ( dispid_playprevchapter + 1 ) ,
-    dispid_playforwards = ( dispid_playnextchapter + 1 ) ,
-    dispid_playbackwards	= ( dispid_playforwards + 1 ) ,
-    dispid_stilloff	= ( dispid_playbackwards + 1 ) ,
-    dispid_audiolanguage	= ( dispid_stilloff + 1 ) ,
-    dispid_showmenu	= ( dispid_audiolanguage + 1 ) ,
-    dispid_resume	= ( dispid_showmenu + 1 ) ,
-    dispid_returnfromsubmenu	= ( dispid_resume + 1 ) ,
-    dispid_buttonsavailable	= ( dispid_returnfromsubmenu + 1 ) ,
-    dispid_currentbutton	= ( dispid_buttonsavailable + 1 ) ,
-    dispid_SelectAndActivateButton	= ( dispid_currentbutton + 1 ) ,
-    dispid_ActivateButton	= ( dispid_SelectAndActivateButton + 1 ) ,
-    dispid_SelectRightButton	= ( dispid_ActivateButton + 1 ) ,
-    dispid_SelectLeftButton	= ( dispid_SelectRightButton + 1 ) ,
-    dispid_SelectLowerButton	= ( dispid_SelectLeftButton + 1 ) ,
-    dispid_SelectUpperButton	= ( dispid_SelectLowerButton + 1 ) ,
-    dispid_ActivateAtPosition	= ( dispid_SelectUpperButton + 1 ) ,
-    dispid_SelectAtPosition	= ( dispid_ActivateAtPosition + 1 ) ,
-    dispid_ButtonAtPosition	= ( dispid_SelectAtPosition + 1 ) ,
-    dispid_NumberOfChapters	= ( dispid_ButtonAtPosition + 1 ) ,
-    dispid_TotalTitleTime	= ( dispid_NumberOfChapters + 1 ) ,
-    dispid_TitlesAvailable	= ( dispid_TotalTitleTime + 1 ) ,
-    dispid_VolumesAvailable	= ( dispid_TitlesAvailable + 1 ) ,
-    dispid_CurrentVolume	= ( dispid_VolumesAvailable + 1 ) ,
-    dispid_CurrentDiscSide	= ( dispid_CurrentVolume + 1 ) ,
-    dispid_CurrentDomain	= ( dispid_CurrentDiscSide + 1 ) ,
-    dispid_CurrentChapter	= ( dispid_CurrentDomain + 1 ) ,
-    dispid_CurrentTitle = ( dispid_CurrentChapter + 1 ) ,
-    dispid_CurrentTime	= ( dispid_CurrentTitle + 1 ) ,
-    dispid_FramesPerSecond	= ( dispid_CurrentTime + 1 ) ,
-    dispid_DVDTimeCode2bstr	= ( dispid_FramesPerSecond + 1 ) ,
-    dispid_DVDDirectory = ( dispid_DVDTimeCode2bstr + 1 ) ,
-    dispid_IsSubpictureStreamEnabled	= ( dispid_DVDDirectory + 1 ) ,
-    dispid_IsAudioStreamEnabled = ( dispid_IsSubpictureStreamEnabled + 1 ) ,
-    dispid_CurrentSubpictureStream	= ( dispid_IsAudioStreamEnabled + 1 ) ,
-    dispid_SubpictureLanguage	= ( dispid_CurrentSubpictureStream + 1 ) ,
-    dispid_CurrentAudioStream	= ( dispid_SubpictureLanguage + 1 ) ,
-    dispid_AudioStreamsAvailable	= ( dispid_CurrentAudioStream + 1 ) ,
-    dispid_AnglesAvailable	= ( dispid_AudioStreamsAvailable + 1 ) ,
-    dispid_CurrentAngle = ( dispid_AnglesAvailable + 1 ) ,
-    dispid_CCActive	= ( dispid_CurrentAngle + 1 ) ,
-    dispid_CurrentCCService	= ( dispid_CCActive + 1 ) ,
-    dispid_SubpictureStreamsAvailable	= ( dispid_CurrentCCService + 1 ) ,
-    dispid_SubpictureOn = ( dispid_SubpictureStreamsAvailable + 1 ) ,
-    dispid_DVDUniqueID	= ( dispid_SubpictureOn + 1 ) ,
-    dispid_EnableResetOnStop	= ( dispid_DVDUniqueID + 1 ) ,
-    dispid_AcceptParentalLevelChange	= ( dispid_EnableResetOnStop + 1 ) ,
-    dispid_NotifyParentalLevelChange	= ( dispid_AcceptParentalLevelChange + 1 ) ,
-    dispid_SelectParentalCountry	= ( dispid_NotifyParentalLevelChange + 1 ) ,
-    dispid_SelectParentalLevel	= ( dispid_SelectParentalCountry + 1 ) ,
-    dispid_TitleParentalLevels	= ( dispid_SelectParentalLevel + 1 ) ,
-    dispid_PlayerParentalCountry	= ( dispid_TitleParentalLevels + 1 ) ,
-    dispid_PlayerParentalLevel	= ( dispid_PlayerParentalCountry + 1 ) ,
-    dispid_Eject	= ( dispid_PlayerParentalLevel + 1 ) ,
-    dispid_UOPValid	= ( dispid_Eject + 1 ) ,
-    dispid_SPRM = ( dispid_UOPValid + 1 ) ,
-    dispid_GPRM = ( dispid_SPRM + 1 ) ,
-    dispid_DVDTextStringType	= ( dispid_GPRM + 1 ) ,
-    dispid_DVDTextString	= ( dispid_DVDTextStringType + 1 ) ,
-    dispid_DVDTextNumberOfStrings	= ( dispid_DVDTextString + 1 ) ,
-    dispid_DVDTextNumberOfLanguages	= ( dispid_DVDTextNumberOfStrings + 1 ) ,
-    dispid_DVDTextLanguageLCID	= ( dispid_DVDTextNumberOfLanguages + 1 ) ,
-    dispid_RegionChange = ( dispid_DVDTextLanguageLCID + 1 ) ,
-    dispid_DVDAdm	= ( dispid_RegionChange + 1 ) ,
-    dispid_DeleteBookmark	= ( dispid_DVDAdm + 1 ) ,
-    dispid_RestoreBookmark	= ( dispid_DeleteBookmark + 1 ) ,
-    dispid_SaveBookmark = ( dispid_RestoreBookmark + 1 ) ,
-    dispid_SelectDefaultAudioLanguage	= ( dispid_SaveBookmark + 1 ) ,
-    dispid_SelectDefaultSubpictureLanguage	= ( dispid_SelectDefaultAudioLanguage + 1 ) ,
-    dispid_PreferredSubpictureStream	= ( dispid_SelectDefaultSubpictureLanguage + 1 ) ,
-    dispid_DefaultMenuLanguage	= ( dispid_PreferredSubpictureStream + 1 ) ,
-    dispid_DefaultSubpictureLanguage	= ( dispid_DefaultMenuLanguage + 1 ) ,
-    dispid_DefaultAudioLanguage = ( dispid_DefaultSubpictureLanguage + 1 ) ,
-    dispid_DefaultSubpictureLanguageExt = ( dispid_DefaultAudioLanguage + 1 ) ,
-    dispid_DefaultAudioLanguageExt	= ( dispid_DefaultSubpictureLanguageExt + 1 ) ,
-    dispid_LanguageFromLCID	= ( dispid_DefaultAudioLanguageExt + 1 ) ,
-    dispid_KaraokeAudioPresentationMode = ( dispid_LanguageFromLCID + 1 ) ,
-    dispid_KaraokeChannelContent	= ( dispid_KaraokeAudioPresentationMode + 1 ) ,
-    dispid_KaraokeChannelAssignment	= ( dispid_KaraokeChannelContent + 1 ) ,
-    dispid_RestorePreferredSettings	= ( dispid_KaraokeChannelAssignment + 1 ) ,
-    dispid_ButtonRect	= ( dispid_RestorePreferredSettings + 1 ) ,
-    dispid_DVDScreenInMouseCoordinates	= ( dispid_ButtonRect + 1 ) ,
-    dispid_CustomCompositorClass	= ( dispid_DVDScreenInMouseCoordinates + 1 ) ,
-    dispidCustomCompositorClass = ( dispid_CustomCompositorClass + 1 ) ,
-    dispid_CustomCompositor	= ( dispidCustomCompositorClass + 1 ) ,
-    dispidMixerBitmap	= ( dispid_CustomCompositor + 1 ) ,
-    dispid_MixerBitmap	= ( dispidMixerBitmap + 1 ) ,
-    dispidMixerBitmapOpacity	= ( dispid_MixerBitmap + 1 ) ,
-    dispidMixerBitmapRect	= ( dispidMixerBitmapOpacity + 1 ) ,
-    dispidSetupMixerBitmap	= ( dispidMixerBitmapRect + 1 ) ,
-    dispidUsingOverlay	= ( dispidSetupMixerBitmap + 1 ) ,
-    dispidDisplayChange = ( dispidUsingOverlay + 1 ) ,
-    dispidRePaint	= ( dispidDisplayChange + 1 ) ,
-    dispid_IsEqualDevice	= ( dispidRePaint + 1 ) ,
-    dispidrate	= ( dispid_IsEqualDevice + 1 ) ,
-    dispidposition	= ( dispidrate + 1 ) ,
-    dispidpositionmode	= ( dispidposition + 1 ) ,
-    dispidlength	= ( dispidpositionmode + 1 ) ,
-    dispidChangePassword	= ( dispidlength + 1 ) ,
-    dispidSaveParentalLevel	= ( dispidChangePassword + 1 ) ,
-    dispidSaveParentalCountry	= ( dispidSaveParentalLevel + 1 ) ,
-    dispidConfirmPassword	= ( dispidSaveParentalCountry + 1 ) ,
-    dispidGetParentalLevel	= ( dispidConfirmPassword + 1 ) ,
-    dispidGetParentalCountry	= ( dispidGetParentalLevel + 1 ) ,
-    dispidDefaultAudioLCID	= ( dispidGetParentalCountry + 1 ) ,
-    dispidDefaultSubpictureLCID = ( dispidDefaultAudioLCID + 1 ) ,
-    dispidDefaultMenuLCID	= ( dispidDefaultSubpictureLCID + 1 ) ,
-    dispidBookmarkOnStop	= ( dispidDefaultMenuLCID + 1 ) ,
-    dispidMaxVidRect	= ( dispidBookmarkOnStop + 1 ) ,
-    dispidMinVidRect	= ( dispidMaxVidRect + 1 ) ,
-    dispidCapture	= ( dispidMinVidRect + 1 ) ,
-    dispid_DecimateInput	= ( dispidCapture + 1 ) ,
-    dispidAlloctor	= ( dispid_DecimateInput + 1 ) ,
-    dispid_Allocator	= ( dispidAlloctor + 1 ) ,
-    dispidAllocPresentID	= ( dispid_Allocator + 1 ) ,
-    dispidSetAllocator	= ( dispidAllocPresentID + 1 ) ,
-    dispid_SetAllocator = ( dispidSetAllocator + 1 ) ,
-    dispidStreamBufferSinkName	= ( dispid_SetAllocator + 1 ) ,
-    dispidStreamBufferSourceName	= ( dispidStreamBufferSinkName + 1 ) ,
-    dispidStreamBufferContentRecording	= ( dispidStreamBufferSourceName + 1 ) ,
-    dispidStreamBufferReferenceRecording	= ( dispidStreamBufferContentRecording + 1 ) ,
-    dispidstarttime	= ( dispidStreamBufferReferenceRecording + 1 ) ,
-    dispidstoptime	= ( dispidstarttime + 1 ) ,
-    dispidrecordingstopped	= ( dispidstoptime + 1 ) ,
-    dispidrecordingstarted	= ( dispidrecordingstopped + 1 ) ,
-    dispidNameSetLock	= ( dispidrecordingstarted + 1 ) ,
-    dispidrecordingtype = ( dispidNameSetLock + 1 ) ,
-    dispidstart = ( dispidrecordingtype + 1 ) ,
-    dispidRecordingAttribute	= ( dispidstart + 1 ) ,
-    dispid_RecordingAttribute	= ( dispidRecordingAttribute + 1 ) ,
-    dispidSBEConfigure	= ( dispid_RecordingAttribute + 1 ) ,
-    dispid_CurrentRatings	= ( dispidSBEConfigure + 1 ) ,
-    dispid_MaxRatingsLevel	= ( dispid_CurrentRatings + 1 ) ,
-    dispid_audioencoderint	= ( dispid_MaxRatingsLevel + 1 ) ,
-    dispid_videoencoderint	= ( dispid_audioencoderint + 1 ) ,
-    dispidService	= ( dispid_videoencoderint + 1 ) ,
-    dispid_BlockUnrated = ( dispidService + 1 ) ,
-    dispid_UnratedDelay = ( dispid_BlockUnrated + 1 ) ,
-    dispid_SuppressEffects	= ( dispid_UnratedDelay + 1 ) ,
-    dispidsbesource	= ( dispid_SuppressEffects + 1 ) ,
-    dispidSetSinkFilter = ( dispidsbesource + 1 ) ,
-    dispid_SinkStreams	= ( dispidSetSinkFilter + 1 ) ,
-    dispidTVFormats	= ( dispid_SinkStreams + 1 ) ,
-    dispidModes = ( dispidTVFormats + 1 ) ,
-    dispidAuxInputs	= ( dispidModes + 1 ) ,
-    dispidTeleTextFilter	= ( dispidAuxInputs + 1 ) ,
-    dispid_channelchangeint	= ( dispidTeleTextFilter + 1 ) ,
-    dispidUnlockProfile = ( dispid_channelchangeint + 1 ) ,
-    dispid_AddFilter	= ( dispidUnlockProfile + 1 ) ,
-    dispidSetMinSeek	= ( dispid_AddFilter + 1 ) ,
-    dispidRateEx	= ( dispidSetMinSeek + 1 ) ,
-    dispidaudiocounter	= ( dispidRateEx + 1 ) ,
-    dispidvideocounter	= ( dispidaudiocounter + 1 ) ,
-    dispidcccounter	= ( dispidvideocounter + 1 ) ,
-    dispidwstcounter	= ( dispidcccounter + 1 ) ,
-    dispid_audiocounter = ( dispidwstcounter + 1 ) ,
-    dispid_videocounter = ( dispid_audiocounter + 1 ) ,
-    dispid_cccounter	= ( dispid_videocounter + 1 ) ,
-    dispid_wstcounter	= ( dispid_cccounter + 1 ) ,
-    dispidaudioanalysis = ( dispid_wstcounter + 1 ) ,
-    dispidvideoanalysis = ( dispidaudioanalysis + 1 ) ,
-    dispiddataanalysis	= ( dispidvideoanalysis + 1 ) ,
-    dispidaudio_analysis	= ( dispiddataanalysis + 1 ) ,
-    dispidvideo_analysis	= ( dispidaudio_analysis + 1 ) ,
-    dispiddata_analysis = ( dispidvideo_analysis + 1 ) ,
-    dispid_resetFilterList	= ( dispiddata_analysis + 1 ) ,
-    dispidDevicePath	= ( dispid_resetFilterList + 1 ) ,
-    dispid_SourceFilter = ( dispidDevicePath + 1 ) ,
-    dispid__SourceFilter	= ( dispid_SourceFilter + 1 ) ,
-    dispidUserEvent	= ( dispid__SourceFilter + 1 ) ,
-    dispid_Bookmark	= ( dispidUserEvent + 1 ) ,
+    dispidName,
+    dispidStatus,
+    dispidDevImageSourceWidth,
+    dispidDevImageSourceHeight,
+    dispidDevCountryCode,
+    dispidDevOverScan,
+    dispidSegment,
+    dispidDevVolume,
+    dispidDevBalance,
+    dispidDevPower,
+    dispidTuneChan,
+    dispidDevVideoSubchannel,
+    dispidDevAudioSubchannel,
+    dispidChannelAvailable,
+    dispidDevVideoFrequency,
+    dispidDevAudioFrequency,
+    dispidCount,
+    dispidDevFileName,
+    dispidVisible,
+    dispidOwner,
+    dispidMessageDrain,
+    dispidViewable,
+    dispidDevView,
+    dispidKSCat,
+    dispidCLSID,
+    dispid_KSCat,
+    dispid_CLSID,
+    dispidTune,
+    dispidTS,
+    dispidDevSAP,
+    dispidClip,
+    dispidRequestedClipRect,
+    dispidClippedSourceRect,
+    dispidAvailableSourceRect,
+    dispidMediaPosition,
+    dispidDevRun,
+    dispidDevPause,
+    dispidDevStop,
+    dispidCCEnable,
+    dispidDevStep,
+    dispidDevCanStep,
+    dispidSourceSize,
+    dispid_playtitle,
+    dispid_playchapterintitle,
+    dispid_playchapter,
+    dispid_playchaptersautostop,
+    dispid_playattime,
+    dispid_playattimeintitle,
+    dispid_playperiodintitleautostop,
+    dispid_replaychapter,
+    dispid_playprevchapter,
+    dispid_playnextchapter,
+    dispid_playforwards,
+    dispid_playbackwards,
+    dispid_stilloff,
+    dispid_audiolanguage,
+    dispid_showmenu,
+    dispid_resume,
+    dispid_returnfromsubmenu,
+    dispid_buttonsavailable,
+    dispid_currentbutton,
+    dispid_SelectAndActivateButton,
+    dispid_ActivateButton,
+    dispid_SelectRightButton,
+    dispid_SelectLeftButton,
+    dispid_SelectLowerButton,
+    dispid_SelectUpperButton,
+    dispid_ActivateAtPosition,
+    dispid_SelectAtPosition,
+    dispid_ButtonAtPosition,
+    dispid_NumberOfChapters,
+    dispid_TotalTitleTime,
+    dispid_TitlesAvailable,
+    dispid_VolumesAvailable,
+    dispid_CurrentVolume,
+    dispid_CurrentDiscSide,
+    dispid_CurrentDomain,
+    dispid_CurrentChapter,
+    dispid_CurrentTitle,
+    dispid_CurrentTime,
+    dispid_FramesPerSecond,
+    dispid_DVDTimeCode2bstr,
+    dispid_DVDDirectory,
+    dispid_IsSubpictureStreamEnabled,
+    dispid_IsAudioStreamEnabled,
+    dispid_CurrentSubpictureStream,
+    dispid_SubpictureLanguage,
+    dispid_CurrentAudioStream,
+    dispid_AudioStreamsAvailable,
+    dispid_AnglesAvailable,
+    dispid_CurrentAngle,
+    dispid_CCActive,
+    dispid_CurrentCCService,
+    dispid_SubpictureStreamsAvailable,
+    dispid_SubpictureOn,
+    dispid_DVDUniqueID,
+    dispid_EnableResetOnStop,
+    dispid_AcceptParentalLevelChange,
+    dispid_NotifyParentalLevelChange,
+    dispid_SelectParentalCountry,
+    dispid_SelectParentalLevel,
+    dispid_TitleParentalLevels,
+    dispid_PlayerParentalCountry,
+    dispid_PlayerParentalLevel,
+    dispid_Eject,
+    dispid_UOPValid,
+    dispid_SPRM,
+    dispid_GPRM,
+    dispid_DVDTextStringType,
+    dispid_DVDTextString,
+    dispid_DVDTextNumberOfStrings,
+    dispid_DVDTextNumberOfLanguages,
+    dispid_DVDTextLanguageLCID,
+    dispid_RegionChange,
+    dispid_DVDAdm,
+    dispid_DeleteBookmark,
+    dispid_RestoreBookmark,
+    dispid_SaveBookmark,
+    dispid_SelectDefaultAudioLanguage,
+    dispid_SelectDefaultSubpictureLanguage,
+    dispid_PreferredSubpictureStream,
+    dispid_DefaultMenuLanguage,
+    dispid_DefaultSubpictureLanguage,
+    dispid_DefaultAudioLanguage,
+    dispid_DefaultSubpictureLanguageExt,
+    dispid_DefaultAudioLanguageExt,
+    dispid_LanguageFromLCID,
+    dispid_KaraokeAudioPresentationMode,
+    dispid_KaraokeChannelContent,
+    dispid_KaraokeChannelAssignment,
+    dispid_RestorePreferredSettings,
+    dispid_ButtonRect,
+    dispid_DVDScreenInMouseCoordinates,
+    dispid_CustomCompositorClass,
+    dispidCustomCompositorClass,
+    dispid_CustomCompositor,
+    dispidMixerBitmap,
+    dispid_MixerBitmap,
+    dispidMixerBitmapOpacity,
+    dispidMixerBitmapRect,
+    dispidSetupMixerBitmap,
+    dispidUsingOverlay,
+    dispidDisplayChange,
+    dispidRePaint,
+    dispid_IsEqualDevice,
+    dispidrate,
+    dispidposition,
+    dispidpositionmode,
+    dispidlength,
+    dispidChangePassword,
+    dispidSaveParentalLevel,
+    dispidSaveParentalCountry,
+    dispidConfirmPassword,
+    dispidGetParentalLevel,
+    dispidGetParentalCountry,
+    dispidDefaultAudioLCID,
+    dispidDefaultSubpictureLCID,
+    dispidDefaultMenuLCID,
+    dispidBookmarkOnStop,
+    dispidMaxVidRect,
+    dispidMinVidRect,
+    dispidCapture,
+    dispid_DecimateInput,
+    dispidAlloctor,
+    dispid_Allocator,
+    dispidAllocPresentID,
+    dispidSetAllocator,
+    dispid_SetAllocator,
+    dispidStreamBufferSinkName,
+    dispidStreamBufferSourceName,
+    dispidStreamBufferContentRecording,
+    dispidStreamBufferReferenceRecording,
+    dispidstarttime,
+    dispidstoptime,
+    dispidrecordingstopped,
+    dispidrecordingstarted,
+    dispidNameSetLock,
+    dispidrecordingtype,
+    dispidstart,
+    dispidRecordingAttribute,
+    dispid_RecordingAttribute,
+    dispidSBEConfigure,
+    dispid_CurrentRatings,
+    dispid_MaxRatingsLevel,
+    dispid_audioencoderint,
+    dispid_videoencoderint,
+    dispidService,
+    dispid_BlockUnrated,
+    dispid_UnratedDelay,
+    dispid_SuppressEffects,
+    dispidsbesource,
+    dispidSetSinkFilter,
+    dispid_SinkStreams,
+    dispidTVFormats,
+    dispidModes,
+    dispidAuxInputs,
+    dispidTeleTextFilter,
+    dispid_channelchangeint,
+    dispidUnlockProfile,
+    dispid_AddFilter,
+    dispidSetMinSeek,
+    dispidRateEx,
+    dispidaudiocounter,
+    dispidvideocounter,
+    dispidcccounter,
+    dispidwstcounter,
+    dispid_audiocounter,
+    dispid_videocounter,
+    dispid_cccounter,
+    dispid_wstcounter,
+    dispidaudioanalysis,
+    dispidvideoanalysis,
+    dispiddataanalysis,
+    dispidaudio_analysis,
+    dispidvideo_analysis,
+    dispiddata_analysis,
+    dispid_resetFilterList,
+    dispidDevicePath,
+    dispid_SourceFilter,
+    dispid__SourceFilter,
+    dispidUserEvent,
+    dispid_Bookmark,
     LastReservedDeviceDispid	= 0x3fff
     }
 
 .enum SegEventidList {
-    eventidStateChange	= 0,
-    eventidOnTuneChanged	= ( eventidStateChange + 1 ) ,
-    eventidEndOfMedia	= ( eventidOnTuneChanged + 1 ) ,
-    eventidDVDNotify	= ( eventidEndOfMedia + 1 ) ,
-    eventidPlayForwards = ( eventidDVDNotify + 1 ) ,
-    eventidPlayBackwards	= ( eventidPlayForwards + 1 ) ,
-    eventidShowMenu	= ( eventidPlayBackwards + 1 ) ,
-    eventidResume	= ( eventidShowMenu + 1 ) ,
-    eventidSelectOrActivateButton	= ( eventidResume + 1 ) ,
-    eventidStillOff	= ( eventidSelectOrActivateButton + 1 ) ,
-    eventidPauseOn	= ( eventidStillOff + 1 ) ,
-    eventidChangeCurrentAudioStream	= ( eventidPauseOn + 1 ) ,
-    eventidChangeCurrentSubpictureStream	= ( eventidChangeCurrentAudioStream + 1 ) ,
-    eventidChangeCurrentAngle	= ( eventidChangeCurrentSubpictureStream + 1 ) ,
-    eventidPlayAtTimeInTitle	= ( eventidChangeCurrentAngle + 1 ) ,
-    eventidPlayAtTime	= ( eventidPlayAtTimeInTitle + 1 ) ,
-    eventidPlayChapterInTitle	= ( eventidPlayAtTime + 1 ) ,
-    eventidPlayChapter	= ( eventidPlayChapterInTitle + 1 ) ,
-    eventidReplayChapter	= ( eventidPlayChapter + 1 ) ,
-    eventidPlayNextChapter	= ( eventidReplayChapter + 1 ) ,
-    eventidStop = ( eventidPlayNextChapter + 1 ) ,
-    eventidReturnFromSubmenu	= ( eventidStop + 1 ) ,
-    eventidPlayTitle	= ( eventidReturnFromSubmenu + 1 ) ,
-    eventidPlayPrevChapter	= ( eventidPlayTitle + 1 ) ,
-    eventidChangeKaraokePresMode	= ( eventidPlayPrevChapter + 1 ) ,
-    eventidChangeVideoPresMode	= ( eventidChangeKaraokePresMode + 1 ) ,
-    eventidOverlayUnavailable	= ( eventidChangeVideoPresMode + 1 ) ,
-    eventidSinkCertificateFailure	= ( eventidOverlayUnavailable + 1 ) ,
-    eventidSinkCertificateSuccess	= ( eventidSinkCertificateFailure + 1 ) ,
-    eventidSourceCertificateFailure	= ( eventidSinkCertificateSuccess + 1 ) ,
-    eventidSourceCertificateSuccess	= ( eventidSourceCertificateFailure + 1 ) ,
-    eventidRatingsBlocked	= ( eventidSourceCertificateSuccess + 1 ) ,
-    eventidRatingsUnlocked	= ( eventidRatingsBlocked + 1 ) ,
-    eventidRatingsChanged	= ( eventidRatingsUnlocked + 1 ) ,
-    eventidWriteFailure = ( eventidRatingsChanged + 1 ) ,
-    eventidTimeHole	= ( eventidWriteFailure + 1 ) ,
-    eventidStaleDataRead	= ( eventidTimeHole + 1 ) ,
-    eventidContentBecomingStale = ( eventidStaleDataRead + 1 ) ,
-    eventidStaleFileDeleted	= ( eventidContentBecomingStale + 1 ) ,
-    eventidEncryptionOn = ( eventidStaleFileDeleted + 1 ) ,
-    eventidEncryptionOff	= ( eventidEncryptionOn + 1 ) ,
-    eventidRateChange	= ( eventidEncryptionOff + 1 ) ,
-    eventidLicenseChange	= ( eventidRateChange + 1 ) ,
-    eventidCOPPBlocked	= ( eventidLicenseChange + 1 ) ,
-    eventidCOPPUnblocked	= ( eventidCOPPBlocked + 1 ) ,
-    dispidlicenseerrorcode	= ( eventidCOPPUnblocked + 1 ) ,
-    eventidBroadcastEvent	= ( dispidlicenseerrorcode + 1 ) ,
-    eventidBroadcastEventEx	= ( eventidBroadcastEvent + 1 ) ,
-    eventidContentPrimarilyAudio	= ( eventidBroadcastEventEx + 1 ) ,
-    dispidAVDecAudioDualMonoEvent	= ( eventidContentPrimarilyAudio + 1 ) ,
-    dispidAVAudioSampleRateEvent	= ( dispidAVDecAudioDualMonoEvent + 1 ) ,
-    dispidAVAudioChannelConfigEvent	= ( dispidAVAudioSampleRateEvent + 1 ) ,
-    dispidAVAudioChannelCountEvent	= ( dispidAVAudioChannelConfigEvent + 1 ) ,
-    dispidAVDecCommonMeanBitRateEvent	= ( dispidAVAudioChannelCountEvent + 1 ) ,
-    dispidAVDDSurroundModeEvent = ( dispidAVDecCommonMeanBitRateEvent + 1 ) ,
-    dispidAVDecCommonInputFormatEvent	= ( dispidAVDDSurroundModeEvent + 1 ) ,
-    dispidAVDecCommonOutputFormatEvent	= ( dispidAVDecCommonInputFormatEvent + 1 ) ,
-    eventidWriteFailureClear	= ( dispidAVDecCommonOutputFormatEvent + 1 ) ,
+    eventidStateChange,
+    eventidOnTuneChanged,
+    eventidEndOfMedia,
+    eventidDVDNotify,
+    eventidPlayForwards,
+    eventidPlayBackwards,
+    eventidShowMenu,
+    eventidResume,
+    eventidSelectOrActivateButton,
+    eventidStillOff,
+    eventidPauseOn,
+    eventidChangeCurrentAudioStream,
+    eventidChangeCurrentSubpictureStream,
+    eventidChangeCurrentAngle,
+    eventidPlayAtTimeInTitle,
+    eventidPlayAtTime,
+    eventidPlayChapterInTitle,
+    eventidPlayChapter,
+    eventidReplayChapter,
+    eventidPlayNextChapter,
+    eventidStop,
+    eventidReturnFromSubmenu,
+    eventidPlayTitle,
+    eventidPlayPrevChapter,
+    eventidChangeKaraokePresMode,
+    eventidChangeVideoPresMode,
+    eventidOverlayUnavailable,
+    eventidSinkCertificateFailure,
+    eventidSinkCertificateSuccess,
+    eventidSourceCertificateFailure,
+    eventidSourceCertificateSuccess,
+    eventidRatingsBlocked,
+    eventidRatingsUnlocked,
+    eventidRatingsChanged,
+    eventidWriteFailure,
+    eventidTimeHole,
+    eventidStaleDataRead,
+    eventidContentBecomingStale,
+    eventidStaleFileDeleted,
+    eventidEncryptionOn,
+    eventidEncryptionOff,
+    eventidRateChange,
+    eventidLicenseChange,
+    eventidCOPPBlocked,
+    eventidCOPPUnblocked,
+    dispidlicenseerrorcode,
+    eventidBroadcastEvent,
+    eventidBroadcastEventEx,
+    eventidContentPrimarilyAudio,
+    dispidAVDecAudioDualMonoEvent,
+    dispidAVAudioSampleRateEvent,
+    dispidAVAudioChannelConfigEvent,
+    dispidAVAudioChannelCountEvent,
+    dispidAVDecCommonMeanBitRateEvent,
+    dispidAVDDSurroundModeEvent,
+    dispidAVDecCommonInputFormatEvent,
+    dispidAVDecCommonOutputFormatEvent,
+    eventidWriteFailureClear,
     LastReservedDeviceEvent	= 0x3fff
     }
 
 .enum PositionModeList {
-    FrameMode	= 0,
-    TenthsSecondsMode	= ( FrameMode + 1 )
+    FrameMode,
+    TenthsSecondsMode
     }
 
 .enum RecordingType {
-    CONTENT	= 0,
-    REFERENCE	= ( CONTENT + 1 )
+    CONTENT,
+    REFERENCE
     }
 
 .enum MSVidCCService {
-    None	= 0,
-    Caption1	= ( None + 1 ) ,
-    Caption2	= ( Caption1 + 1 ) ,
-    Text1	= ( Caption2 + 1 ) ,
-    Text2	= ( Text1 + 1 ) ,
-    XDS = ( Text2 + 1 )
+    None,
+    Caption1,
+    Caption2,
+    Text1,
+    Text2,
+    XDS
     }
 
 .enum MSVidSinkStreams {
@@ -390,9 +381,9 @@ DEFINE_IIDX(IMSVidGraphSegmentContainer, "3DD2903D-E0AA-11d2-B63A-00C04F79498E")
 endif
 
 .enum MSVidSegmentType {
-    MSVidSEG_SOURCE	= 0,
-    MSVidSEG_XFORM	= ( MSVidSEG_SOURCE + 1 ) ,
-    MSVidSEG_DEST	= ( MSVidSEG_XFORM + 1 )
+    MSVidSEG_SOURCE,
+    MSVidSEG_XFORM,
+    MSVidSEG_DEST
     }
 
 ifndef __IMSVidGraphSegment_INTERFACE_DEFINED__
@@ -425,11 +416,11 @@ endif
     MSVIDCTL_LEFT_BUTTON	= 0x1,
     MSVIDCTL_RIGHT_BUTTON	= 0x2,
     MSVIDCTL_MIDDLE_BUTTON	= 0x4,
-    MSVIDCTL_X_BUTTON1	= 0x8,
-    MSVIDCTL_X_BUTTON2	= 0x10,
-    MSVIDCTL_SHIFT	= 0x1,
-    MSVIDCTL_CTRL	= 0x2,
-    MSVIDCTL_ALT	= 0x4
+    MSVIDCTL_X_BUTTON1		= 0x8,
+    MSVIDCTL_X_BUTTON2		= 0x10,
+    MSVIDCTL_SHIFT		= 0x1,
+    MSVIDCTL_CTRL		= 0x2,
+    MSVIDCTL_ALT		= 0x4
     }
 
 
@@ -740,19 +731,19 @@ endif
 
 .enum DVDMenuIDConstants {
     dvdMenu_Title	= 2,
-    dvdMenu_Root	= ( dvdMenu_Title + 1 ) ,
-    dvdMenu_Subpicture	= ( dvdMenu_Root + 1 ) ,
-    dvdMenu_Audio	= ( dvdMenu_Subpicture + 1 ) ,
-    dvdMenu_Angle	= ( dvdMenu_Audio + 1 ) ,
-    dvdMenu_Chapter	= ( dvdMenu_Angle + 1 )
+    dvdMenu_Root,
+    dvdMenu_Subpicture,
+    dvdMenu_Audio,
+    dvdMenu_Angle,
+    dvdMenu_Chapter
     }
 
 .enum DVDFilterState {
     dvdState_Undefined	= -2,
     dvdState_Unitialized = -1,
     dvdState_Stopped	= 0,
-    dvdState_Paused	= ( dvdState_Stopped + 1 ),
-    dvdState_Running	= ( dvdState_Paused + 1 )
+    dvdState_Paused,
+    dvdState_Running
     }
 
 .enum DVDTextStringType {
@@ -921,8 +912,6 @@ DEFINE_IIDX(IMSVidWebDVD2, "7027212F-EE9A-4a7c-8B67-F023714CDAFF")
     put_Bookmark	proc :ptr, :DWORD
    .ends
 
-
-IMSVidWebDVD2_put_Bookmark_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 endif
 
 ifndef __IMSVidWebDVDEvent_INTERFACE_DEFINED__
@@ -1127,9 +1116,9 @@ DEFINE_IIDX(IMSVidDataServicesEvent, "334125C2-77E5-11d3-B653-00C04F79498E")
 endif
 
 .enum SourceSizeList {
-    sslFullSize = 0,
-    sslClipByOverScan	= ( sslFullSize + 1 ) ,
-    sslClipByClipRect	= ( sslClipByOverScan + 1 )
+    sslFullSize,
+    sslClipByOverScan,
+    sslClipByClipRect
     }
 
 ifndef __IMSVidVideoRenderer_INTERFACE_DEFINED__
@@ -1640,46 +1629,5 @@ DEFINE_IIDX(IMSVidFeatures, "C5702CD5-9B79-11d3-B654-00C04F79498E")
 
 endif
 endif
-
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-HDC_UserSize proto WINAPI :ptr, :dword, :ptr
-HDC_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HDC_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HDC_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-HDC_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HDC_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HDC_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HDC_UserFree64 proto WINAPI :ptr, :ptr
-
-HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

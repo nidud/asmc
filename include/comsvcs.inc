@@ -1,32 +1,23 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __autosvcs_h__
 define __autosvcs_h__
-
+ifndef __unknwn_h__
 include unknwn.inc
+endif
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 include comadmin.inc
 include transact.inc
 include txdtc.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -563,9 +554,9 @@ DEFINE_IIDX(IComTrackingInfoEvents, "4e6cdcc9-fb25-4fd5-9cc5-c9f4b6559cec")
 endif
 
 .enum TRACKING_COLL_TYPE {
-    TRKCOLL_PROCESSES	= 0,
-    TRKCOLL_APPLICATIONS = ( TRKCOLL_PROCESSES + 1 ),
-    TRKCOLL_COMPONENTS	= ( TRKCOLL_APPLICATIONS + 1 )
+    TRKCOLL_PROCESSES,
+    TRKCOLL_APPLICATIONS,
+    TRKCOLL_COMPONENTS
     }
 
 ifndef __IComTrackingInfoCollection_INTERFACE_DEFINED__
@@ -790,9 +781,9 @@ dwRecycleExpirationTimeout dd ?
 RECYCLE_INFO		ENDS
 
 .enum DUMPTYPE {
-    DUMPTYPE_FULL	= 0,
-    DUMPTYPE_MINI	= ( DUMPTYPE_FULL + 1 ) ,
-    DUMPTYPE_NONE	= ( DUMPTYPE_MINI + 1 )
+    DUMPTYPE_FULL,
+    DUMPTYPE_MINI,
+    DUMPTYPE_NONE
     }
 
 HANG_INFO		STRUC
@@ -808,7 +799,7 @@ HANG_INFO		ENDS
     APPTYPE_UNKNOWN	= 0xffffffff,
     APPTYPE_SERVER	= 1,
     APPTYPE_LIBRARY	= 0,
-    APPTYPE_SWC = 2
+    APPTYPE_SWC		= 2
     }
 
 
@@ -861,13 +852,13 @@ CLSIDDATA2		ENDS
 ifndef __IGetAppTrackerData_INTERFACE_DEFINED__
 define __IGetAppTrackerData_INTERFACE_DEFINED__
 
-DATA_NOT_AVAILABLE	equ ( 0xffffffff )
+DATA_NOT_AVAILABLE	equ 0xffffffff
 
 .enum GetAppTrackerDataFlags {
     GATD_INCLUDE_PROCESS_EXE_NAME	= 0x1,
-    GATD_INCLUDE_LIBRARY_APPS	= 0x2,
-    GATD_INCLUDE_SWC	= 0x4,
-    GATD_INCLUDE_CLASS_NAME	= 0x8,
+    GATD_INCLUDE_LIBRARY_APPS		= 0x2,
+    GATD_INCLUDE_SWC			= 0x4,
+    GATD_INCLUDE_CLASS_NAME		= 0x8,
     GATD_INCLUDE_APPLICATION_NAME	= 0x10
     }
 
@@ -961,9 +952,6 @@ DEFINE_IIDX(IGetAppTrackerData, "507C3AC8-3E12-4cb0-9366-653D3E050638")
     GetTrackerDataAsCollectionObject proc :ptr
     GetSuggestedPollingInterval proc :ptr
    .ends
-
-IGetAppTrackerData_RemoteGetApplicationProcessDetails_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IGetAppTrackerData_RemoteGetComponentDetails_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -1472,11 +1460,11 @@ endif
 ifndef _tagCrmTransactionState_
 define _tagCrmTransactionState_
 .enum CrmTransactionState {
-    TxState_Active	= 0,
-    TxState_Committed	= ( TxState_Active + 1 ) ,
-    TxState_Aborted	= ( TxState_Committed + 1 ) ,
-    TxState_Indoubt	= ( TxState_Aborted + 1 )
-    }
+	TxState_Active,
+	TxState_Committed,
+	TxState_Aborted,
+	TxState_Indoubt
+	}
 
 endif
 
@@ -1543,61 +1531,61 @@ DEFINE_IIDX(ICrmFormatLogRecords, "9C51D821-C98B-11d1-82FB-00A0C91EEDE9")
 endif
 
 .enum CSC_InheritanceConfig {
-    CSC_Inherit = 0,
-    CSC_Ignore	= ( CSC_Inherit + 1 )
+    CSC_Inherit,
+    CSC_Ignore
     }
 
 .enum CSC_ThreadPool {
-    CSC_ThreadPoolNone	= 0,
-    CSC_ThreadPoolInherit = ( CSC_ThreadPoolNone + 1 ) ,
-    CSC_STAThreadPool	= ( CSC_ThreadPoolInherit + 1 ) ,
-    CSC_MTAThreadPool	= ( CSC_STAThreadPool + 1 )
+    CSC_ThreadPoolNone,
+    CSC_ThreadPoolInherit,
+    CSC_STAThreadPool,
+    CSC_MTAThreadPool
     }
 
 .enum CSC_Binding {
-    CSC_NoBinding	= 0,
-    CSC_BindToPoolThread = ( CSC_NoBinding + 1 )
+    CSC_NoBinding,
+    CSC_BindToPoolThread
     }
 
 .enum CSC_TransactionConfig {
-    CSC_NoTransaction	= 0,
-    CSC_IfContainerIsTransactional	= ( CSC_NoTransaction + 1 ) ,
-    CSC_CreateTransactionIfNecessary	= ( CSC_IfContainerIsTransactional + 1 ) ,
-    CSC_NewTransaction	= ( CSC_CreateTransactionIfNecessary + 1 )
+    CSC_NoTransaction,
+    CSC_IfContainerIsTransactional,
+    CSC_CreateTransactionIfNecessary,
+    CSC_NewTransaction
     }
 
 .enum CSC_SynchronizationConfig {
-    CSC_NoSynchronization	= 0,
-    CSC_IfContainerIsSynchronized	= ( CSC_NoSynchronization + 1 ) ,
-    CSC_NewSynchronizationIfNecessary	= ( CSC_IfContainerIsSynchronized + 1 ) ,
-    CSC_NewSynchronization	= ( CSC_NewSynchronizationIfNecessary + 1 )
+    CSC_NoSynchronization,
+    CSC_IfContainerIsSynchronized,
+    CSC_NewSynchronizationIfNecessary,
+    CSC_NewSynchronization
     }
 
 .enum CSC_TrackerConfig {
-    CSC_DontUseTracker	= 0,
-    CSC_UseTracker	= ( CSC_DontUseTracker + 1 )
+    CSC_DontUseTracker,
+    CSC_UseTracker
     }
 
 .enum CSC_PartitionConfig {
-    CSC_NoPartition	= 0,
-    CSC_InheritPartition	= ( CSC_NoPartition + 1 ) ,
-    CSC_NewPartition	= ( CSC_InheritPartition + 1 )
+    CSC_NoPartition,
+    CSC_InheritPartition,
+    CSC_NewPartition
     }
 
 .enum CSC_IISIntrinsicsConfig {
-    CSC_NoIISIntrinsics = 0,
-    CSC_InheritIISIntrinsics	= ( CSC_NoIISIntrinsics + 1 )
+    CSC_NoIISIntrinsics,
+    CSC_InheritIISIntrinsics
     }
 
 .enum CSC_COMTIIntrinsicsConfig {
-    CSC_NoCOMTIIntrinsics	= 0,
-    CSC_InheritCOMTIIntrinsics	= ( CSC_NoCOMTIIntrinsics + 1 )
+    CSC_NoCOMTIIntrinsics,
+    CSC_InheritCOMTIIntrinsics
     }
 
 .enum CSC_SxsConfig {
-    CSC_NoSxs	= 0,
-    CSC_InheritSxs	= ( CSC_NoSxs + 1 ) ,
-    CSC_NewSxs	= ( CSC_InheritSxs + 1 )
+    CSC_NoSxs,
+    CSC_InheritSxs,
+    CSC_NewSxs
     }
 
 ifndef __IServiceIISIntrinsicsConfig_INTERFACE_DEFINED__
@@ -2147,13 +2135,13 @@ define __COMSVCSLib_LIBRARY_DEFINED__
     }
 
 .enum LockModes {
-    LockSetGet	= 0,
-    LockMethod	= ( LockSetGet + 1 )
+    LockSetGet,
+    LockMethod
     }
 
 .enum ReleaseModes {
-    Standard	= 0,
-    Process	= ( Standard + 1 )
+    Standard,
+    Process
     }
 
 ifndef _tagCrmFlags_
@@ -2215,35 +2203,5 @@ DEFINE_GUIDS(CLSID_ClrAssemblyLocator, "458aa3b5-265a-4b75-bc05-9bea4630cf18")
 
 endif
 endif
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

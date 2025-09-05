@@ -1,11 +1,7 @@
-.pragma list(push, 0)
-
-ifndef __INC_CONIO
-define __INC_CONIO
-
+ifndef _CONIO_
+define _CONIO_
 define NOGDI
 include wincon.inc
-
 ifdef __UNIX__
 ifndef __TTY__
 define __TTY__
@@ -1128,4 +1124,3 @@ define U_BULLET_OPERATOR		0x2219	; (*) Radio
 endif
 
 endif
-.pragma list(pop)

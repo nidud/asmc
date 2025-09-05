@@ -1,5 +1,6 @@
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-
+endif
 ifndef _PROPAPI_H_
 define _PROPAPI_H_
 

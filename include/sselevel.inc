@@ -1,12 +1,7 @@
-; SSELEVEL.INC--
-;
-; Copyright (c) The Asmc Contributors. All rights reserved.
-; Consult your license regarding permissions and restrictions.
-;
 ifndef __SSELEVEL_INC
 define __SSELEVEL_INC
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 SSE_MMX                 equ 0x00000001

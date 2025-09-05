@@ -1,11 +1,11 @@
-ifndef __LIBC_INC
+ifndef __RPCNDR_H__
+define __RPCNDR_H__
+ifndef _LIBC_
 include libc.inc
 endif
 ifndef __RPCNDR_H_VERSION__
 define __RPCNDR_H_VERSION__ 500
 endif
-ifndef __RPCNDR_H__
-define __RPCNDR_H__
 
 ifdef __REQUIRED_RPCNDR_H_VERSION__
  if ( __RPCNDR_H_VERSION__ LT __REQUIRED_RPCNDR_H_VERSION__ )

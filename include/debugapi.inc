@@ -1,10 +1,11 @@
 ifndef _APISETDEBUG_
 define _APISETDEBUG_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 if (_WIN32_WINNT ge 0x0400) or (_WIN32_WINDOWS gt 0x0400)
 IsDebuggerPresent proto WINAPI

@@ -1,7 +1,11 @@
-ifndef _INC_STDDEF
-define _INC_STDDEF
+ifndef _STDDEF_
+define _STDDEF_
+ifndef _LIBC_
 include libc.inc
+endif
+ifndef _ERRNO_
 include errno.inc
+endif
 
 offsetof macro s, m
     exitm<s.&m&>

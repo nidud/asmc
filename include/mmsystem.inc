@@ -1,5 +1,5 @@
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 ifndef _INC_MMSYSTEM
 define _INC_MMSYSTEM

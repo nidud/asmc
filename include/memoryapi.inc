@@ -1,10 +1,11 @@
 ifndef _MEMORYAPI_H_
 define _MEMORYAPI_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 define FILE_MAP_WRITE            SECTION_MAP_WRITE
 define FILE_MAP_READ             SECTION_MAP_READ

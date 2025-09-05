@@ -1,13 +1,11 @@
-.pragma list(push, 0)
 ifndef _WINDOWS_
 define _WINDOWS_
-
-define _MSC_EXTENSIONS
-
+.pragma list(push, 0)
 .pragma cref(push, 0)
 
-ifndef __LIBC_INC
- include libc.inc
+define _MSC_EXTENSIONS
+ifndef _LIBC_
+include libc.inc
 endif
 
 if not defined(_68K_)	and \
@@ -443,8 +441,9 @@ define _INC_WINDOWS
 
 include excpt.inc
 include stdarg.inc
-
+ifndef _WINDEF_
 include windef.inc
+endif
 include winbase.inc
 include wingdi.inc
 include winuser.inc
@@ -517,9 +516,9 @@ include imm.inc
 endif
 endif ; WINVER >= 0x0400
 
-endif ; _INC_WINDOWS
+endif ; _WINDOWS_
 
 .pragma cref(pop)
-endif
 .pragma list(pop)
+endif
 

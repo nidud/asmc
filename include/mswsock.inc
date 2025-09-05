@@ -1,10 +1,11 @@
 ifndef _MSWSOCK_
 define _MSWSOCK_
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 include mswsockdef.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

@@ -1,7 +1,9 @@
 ifndef __IPHLPAPI_H__
 define __IPHLPAPI_H__
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .pragma comment(lib, iphlpapi)
 

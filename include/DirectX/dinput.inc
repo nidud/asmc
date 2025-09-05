@@ -2,7 +2,7 @@
 
 ifndef __DINPUT_INCLUDED__
 define __DINPUT_INCLUDED__
-ifndef __LIBC_INC
+ifndef _LIBC_
 include libc.inc
 endif
 ifndef DIJ_RINGZERO

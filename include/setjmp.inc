@@ -1,14 +1,8 @@
 .pragma list(push, 0)
-;
-; SETJMP.INC--
-;
-; Copyright (c) The Asmc Contributors. All rights reserved.
-; Consult your license regarding permissions and restrictions.
-;
 ifndef __SETJMP_INC
 define __SETJMP_INC
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 if not defined(_CRT_SETJMP) and defined(_CRTBLD)

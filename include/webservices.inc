@@ -4,7 +4,9 @@ define __WEBSERVICES_H__
 include windows.inc
 include wtypes.inc
 include wincrypt.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .enum WS_XML_READER_PROPERTY_ID {
     WS_XML_READER_PROPERTY_MAX_DEPTH				  = 0,

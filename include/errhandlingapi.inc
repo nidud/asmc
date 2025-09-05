@@ -1,9 +1,8 @@
 ifndef _ERRHANDLING_H_
 define _ERRHANDLING_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
 
 .pragma comment(lib, kernel32)
 

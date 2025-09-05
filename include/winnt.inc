@@ -1,5 +1,3 @@
-.pragma list(push, 0)
-
 ifndef _WINNT_
 define _WINNT_
 
@@ -551,8 +549,8 @@ CONTAINING_RECORD proto watcall :ptr, type:abs, field:abs {
 	lea rax,[rax-type.field]
 	}
 
-ifndef __EXCPT_INC
- include excpt.inc
+ifndef _EXCPT_
+include excpt.inc
 endif
 
 define EXCEPTION_MAXIMUM_PARAMETERS 15 ; maximum number of exception parameters
@@ -7320,14 +7318,8 @@ PIMAGE_COR20_HEADER	typedef ptr IMAGE_COR20_HEADER
 
 endif
 
-ifdef _MAC
-ifndef __STRING_INC
+ifndef _STRING_
 include string.inc
-endif
-else
-ifndef __STRING_INC
-include string.inc
-endif
 endif
 
 ifndef _SLIST_HEADER_
@@ -8838,4 +8830,3 @@ endif
 
 .pragma pack(pop)
 endif
-.pragma list(pop)

@@ -1,16 +1,17 @@
 .pragma list(push, 0)
-ifndef __STDLIB_INC
-define __STDLIB_INC
+ifndef _STDLIB_
+define _STDLIB_
+ifndef _LIBC_
 include libc.inc
-
+endif
 include threadlocinfo.inc
 
 ifndef __STDC_WANT_SECURE_LIB__
 define __STDC_WANT_SECURE_LIB__ 1
 endif
-
+ifndef _LIMITS_
 include limits.inc
-
+endif
 ifdef _CRTBLD
 if not defined(__UNIX__) or defined(__MSCRT__)
 define _CRTINIT_S <__xi_a>

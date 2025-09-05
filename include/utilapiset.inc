@@ -1,9 +1,8 @@
 ifndef _APISETUTIL_
 define _APISETUTIL_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
 
 EncodePointer proto WINAPI :ptr
 DecodePointer proto WINAPI :ptr

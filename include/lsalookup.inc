@@ -1,7 +1,9 @@
 ifndef _LSALOOKUP_
 define _LSALOOKUP_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
 
@@ -109,4 +111,3 @@ LsaLookupFreeMemory proto WINAPI :PVOID
 endif
 
 endif
-

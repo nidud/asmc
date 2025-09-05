@@ -1,7 +1,7 @@
 ifndef __RPCNTERR_H__
 define __RPCNTERR_H__
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 RPC_S_OK			equ ERROR_SUCCESS

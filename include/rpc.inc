@@ -1,9 +1,8 @@
-if not defined( RPC_NO_WINDOWS_H ) and not defined(_KRPCENV_)
-ifndef _INC_WINDOWS
+if not defined(RPC_NO_WINDOWS_H) and not defined(_KRPCENV_)
+ifndef _WINDOWS_
 include windows.inc
 endif
 endif
-
 ifndef __RPC_H__
 define __RPC_H__
 
@@ -13,8 +12,9 @@ else
 define __RPC_WIN32__
 endif
 
+ifndef _BASETSD_
 include basetsd.inc
-
+endif
 ifdef __RPC_WIN64__
 .pragma pack(push, 8)
 endif
@@ -31,9 +31,13 @@ ifndef _KRPCENV_
 include rpcnsi.inc
 endif
 include rpcnterr.inc
+ifndef _EXCPT_
 include excpt.inc
+endif
 ifndef _KRPCENV_
+ifndef _WINERROR_
 include winerror.inc
+endif
 endif
 
 define RpcExceptionCode <GetExceptionCode>

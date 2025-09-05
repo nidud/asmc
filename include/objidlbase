@@ -1003,7 +1003,7 @@ DEFINE_IIDX(IContext, "000001c0-0000-0000-C000-000000000046")
 
 endif
 
-if not defined BUILDTYPE_COMSVCS and not (defined _COMBASEAPI_ or defined _OLE32_)
+if not defined(BUILDTYPE_COMSVCS) and not (defined(_COMBASEAPI_) or defined(_OLE32_))
 
 ifndef __IObjContext_INTERFACE_DEFINED__
 define __IObjContext_INTERFACE_DEFINED__

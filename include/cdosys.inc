@@ -1,20 +1,5 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __cdo_h__
@@ -24,12 +9,18 @@ include cdosysstr.inc
 
 undef IDataSource
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 
 include adoint_backcompat.inc
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -37,7 +28,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 	cdoDefaults	= -1,
 	cdoIIS	= 1,
 	cdoOutlookExpress	= 2
-    }
+	}
 
 .enum CdoDSNOptions {
 	cdoDSNDefault	= 0,
@@ -46,31 +37,31 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 	cdoDSNSuccess	= 4,
 	cdoDSNDelay	= 8,
 	cdoDSNSuccessFailOrDelay	= 14
-    }
+	}
 
 .enum CdoEventStatus {
 	cdoRunNextSink	= 0,
 	cdoSkipRemainingSinks	= 1
-    }
+	}
 
 .enum CdoEventType {
 	cdoSMTPOnArrival	= 1,
 	cdoNNTPOnPostEarly	= 2,
 	cdoNNTPOnPost	= 3,
 	cdoNNTPOnPostFinal	= 4
-    }
+	}
 
 .enum cdoImportanceValues {
 	cdoLow	= 0,
 	cdoNormal	= 1,
 	cdoHigh = 2
-    }
+	}
 
 .enum CdoMessageStat {
 	cdoStatSuccess	= 0,
 	cdoStatAbortDelivery	= 2,
 	cdoStatBadMail	= 3
-    }
+	}
 
 .enum CdoMHTMLFlags {
 	cdoSuppressNone = 0,
@@ -80,47 +71,47 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 	cdoSuppressObjects	= 8,
 	cdoSuppressStyleSheets	= 16,
 	cdoSuppressAll	= 31
-    }
+	}
 
 .enum CdoNNTPProcessingField {
 	cdoPostMessage	= 1,
 	cdoProcessControl	= 2,
 	cdoProcessModerator	= 4
-    }
+	}
 
 .enum CdoPostUsing {
 	cdoPostUsingPickup	= 1,
 	cdoPostUsingPort	= 2
-    }
+	}
 
 .enum cdoPriorityValues {
 	cdoPriorityNonUrgent	= -1,
 	cdoPriorityNormal	= 0,
 	cdoPriorityUrgent	= 1
-    }
+	}
 
 .enum CdoProtocolsAuthentication {
 	cdoAnonymous	= 0,
 	cdoBasic	= 1,
 	cdoNTLM = 2
-    }
+	}
 
 .enum CdoReferenceType {
 	cdoRefTypeId	= 0,
 	cdoRefTypeLocation	= 1
-    }
+	}
 
 .enum CdoSendUsing {
 	cdoSendUsingPickup	= 1,
 	cdoSendUsingPort	= 2
-    }
+	}
 
 .enum cdoSensitivityValues {
 	cdoSensitivityNone	= 0,
 	cdoPersonal	= 1,
 	cdoPrivate	= 2,
 	cdoCompanyConfidential	= 3
-    }
+	}
 
 .enum CdoTimeZoneId {
 	cdoUTC	= 0,
@@ -206,7 +197,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 	cdoHobartCommonwealthGames2006	= 80,
 	cdoTijuana	= 81,
 	cdoInvalidTimeZone	= 82
-    }
+	}
 
 ifndef __IDataSource_INTERFACE_DEFINED__
 define __IDataSource_INTERFACE_DEFINED__

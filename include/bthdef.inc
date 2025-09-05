@@ -1,6 +1,8 @@
-ifndef	 __BTHDEF_H__
-__BTHDEF_H__ equ 1
+ifndef __BTHDEF_H__
+define __BTHDEF_H__
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -993,8 +995,7 @@ LMP_EXTENDED_FEATURES macro x
 	exitm<(GET_BIT(x,63))>
 	endm
 
-endif ;; GUID_DEFS_ONLY
-endif ;; (NTDDI_VERSION GE NTDDI_WINXPSP2)
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif ;; __BTHDEF_H__
-
+endif
+endif
+endif
+endif

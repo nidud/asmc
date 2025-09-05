@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 ifndef __CTYPE_INC
 define __CTYPE_INC
-ifndef __LIBC_INC
+ifndef _LIBC_
 include libc.inc
 endif
 .pragma comment(lib, libc, msvcrt)

@@ -1,7 +1,8 @@
 ifndef __DIRECTX_VA__
 define __DIRECTX_VA__
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 

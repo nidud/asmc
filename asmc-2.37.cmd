@@ -44,13 +44,6 @@ cd %AsmcDir%
 echo.
 goto end
 
-:BuildUUID
-cd %AsmcDir%\source\libs\uuid
-make
-cd %AsmcDir%
-echo.
-goto end
-
 :ImportLibraries32
 cd %AsmcDir%\lib\x86
 make

@@ -1,4 +1,6 @@
 ifndef _GDIPLUS_FONT_FAMILY_H
 define _GDIPLUS_FONT_FAMILY_H
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 endif

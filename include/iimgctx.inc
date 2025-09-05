@@ -1,7 +1,9 @@
 ifndef _IImgCtxObjects_H_
 define _IImgCtxObjects_H_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 

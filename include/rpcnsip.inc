@@ -1,6 +1,6 @@
 ifndef __RPCNSIP_H__
 define __RPCNSIP_H__
-ifndef __LIBC_INC
+ifndef _LIBC_
 include libc.inc
 endif
 

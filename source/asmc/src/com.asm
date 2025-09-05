@@ -152,13 +152,15 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:string_t
             " mov ecx, %d-%d\n"
             " xor eax, eax\n"
             " rep stosb\n"
-            " lea %r, [%r-%d]\n"
-            " xchg %r, %r",
-            edx, r_di,
-            r_di, edi, ecx,
-            size, ecx,
-            edi, r_di, size,
-            r_di, edx )
+            " lea %r, [%r-%d]", edx, r_di, r_di, edi, ecx, size, ecx, edi, r_di, size )
+            lea edx,[rdi+T_EDX-T_EAX]
+            .if ( rbx )
+                AddLineQueueX(
+                    " mov %r, %r\n"
+                    " lea %r, %s", r_di, edx, edx, rbx )
+            .else
+                AddLineQueueX( " xchg %r, %r", r_di, edx )
+            .endif
     .elseif ( rbx )
         AddLineQueueX( " lea %r, %s", &[rdi+T_EDX-T_EAX], rbx )
     .else

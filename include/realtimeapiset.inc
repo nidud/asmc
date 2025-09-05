@@ -1,9 +1,8 @@
 ifndef _APISETREALTIME_
 define _APISETREALTIME_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
 
 if (_WIN32_WINNT ge 0x0600)
 QueryThreadCycleTime proto WINAPI :HANDLE, :PULONG64

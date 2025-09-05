@@ -1,10 +1,10 @@
 ifndef DWRITE_H_INCLUDED
 define DWRITE_H_INCLUDED
-.pragma list(push, 0)
-
 ifndef DWRITE_NO_WINDOWS_H
 include specstrings.inc
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 endif
 include dcommon.inc
 
@@ -902,5 +902,4 @@ MAKE_DWRITE_HR_ERR macro code
 	endm
 
 .pragma pack(pop)
-.pragma list(pop)
 endif

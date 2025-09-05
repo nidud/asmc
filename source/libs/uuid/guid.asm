@@ -54,16 +54,17 @@ include mfreadwrite.inc
 include SearchAPI.inc
 include msdasc.inc
 include oledb.inc
-include propidl.inc
+
 include propkey.inc
 include UIAutomationCore.inc
 include UIAutomationCoreAPI.inc
 include dxdiag.inc
 include WbemIdl.inc
 include dcomp.inc
+include Windows.Graphics.Capture.Interop.inc
 include windows.ui.notifications.inc
 include Windows.ApplicationModel.DataTransfer.inc
-include Mshtmlc.inc
+include Mshtml.inc
 include xmllite.inc
 
 include ahadmin.inc

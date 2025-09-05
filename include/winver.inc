@@ -1,7 +1,7 @@
 ifndef _WINVER_
 define _WINVER_
 .pragma list(push, 0)
-ifndef __LIBC_INC
+ifndef _LIBC_
 include libc.inc
 endif
 

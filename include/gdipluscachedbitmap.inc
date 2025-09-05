@@ -1,5 +1,7 @@
 ifndef _GDIPLUSCACHEDBITMAP_H
 define _GDIPLUSCACHEDBITMAP_H
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 endif
 

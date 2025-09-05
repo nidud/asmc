@@ -2,13 +2,19 @@ ifndef _WINCON_
 define _WINCON_
 .pragma list(push, 0)
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
+ifndef _WINCONTYPES_
 include wincontypes.inc
+endif
 
 .pragma pack(push, size_t)
 
 ifndef NOGDI
+ifndef _WINGDI_
 include wingdi.inc
+endif
 endif
 
 ifndef NOAPISET

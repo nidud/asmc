@@ -5,7 +5,9 @@ include stdio.inc
 include string.inc
 include stdarg.inc
 include specstrings.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .pragma comment(lib, strsafe)
 

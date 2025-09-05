@@ -1,9 +1,8 @@
 ifndef _PROCESSENV_
 define _PROCESSENV_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
 
 SetEnvironmentStringsW proto WINAPI :LPWCH
 ifdef _UNICODE

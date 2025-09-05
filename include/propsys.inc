@@ -1,21 +1,5 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __propsys_h__
@@ -27,7 +11,9 @@ include ocidl.inc
 include shtypes.inc
 include StructuredQueryCondition.inc
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 ifndef REFPROPERTYKEY
 REFPROPERTYKEY typedef ptr PROPERTYKEY
@@ -56,9 +42,6 @@ DEFINE_IIDX(IInitializeWithStream, "b824b49d-22ac-4161-ac8a-9916e8fa3f7f")
 .comdef IInitializeWithStream : public IUnknown
     Initialize		proc :ptr, :DWORD
    .ends
-
-IInitializeWithStream_RemoteInitialize_Proxy proto WINAPI :ptr, :ptr, :DWORD
-IInitializeWithStream_RemoteInitialize_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -137,10 +120,10 @@ DEFINE_IIDX(IObjectWithPropertyKey, "fc0ca0a7-c316-4fd2-9031-3e628e6d4f23")
 endif
 
 .enum PKA_FLAGS {
-	PKA_SET = 0,
-	PKA_APPEND	= ( PKA_SET + 1 ) ,
-	PKA_DELETE	= ( PKA_APPEND + 1 )
-    }
+	PKA_SET,
+	PKA_APPEND,
+	PKA_DELETE
+	}
 
 ifndef __IPropertyChange_INTERFACE_DEFINED__
 define __IPropertyChange_INTERFACE_DEFINED__
@@ -392,10 +375,6 @@ DEFINE_IIDX(IPropertyDescription, "6f79d558-3e96-4549-a1d1-7d75d2288814")
     FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
     IsValueCanonical	proc :REFPROPVARIANT
    .ends
-
-IPropertyDescription_RemoteCoerceToCanonicalValue_Proxy proto WINAPI :ptr, :REFPROPVARIANT, :ptr
-
-IPropertyDescription_RemoteCoerceToCanonicalValue_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -684,31 +663,6 @@ DEFINE_GUIDS(CLSID_PropertySystem, "b8967f85-58ae-4f46-9fb2-5d7904798f4b")
 endif
 
 endif
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
-
-IInitializeWithStream_Initialize_Proxy proto WINAPI :ptr, :ptr, :DWORD
-IInitializeWithStream_Initialize_Stub proto WINAPI :ptr, :ptr, :DWORD
-IPropertyDescription_CoerceToCanonicalValue_Proxy proto WINAPI :ptr, :ptr
-IPropertyDescription_CoerceToCanonicalValue_Stub proto WINAPI :ptr, :REFPROPVARIANT, :ptr
 
 endif
 

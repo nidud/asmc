@@ -1,7 +1,7 @@
 ifndef __QOS_H_
 define __QOS_H_
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 SERVICETYPE		typedef ULONG
@@ -240,4 +240,3 @@ RSVP_ADSPEC		ENDS
 LPRSVP_ADSPEC		typedef ptr RSVP_ADSPEC
 
 endif
-

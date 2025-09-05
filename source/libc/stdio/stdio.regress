@@ -179,9 +179,6 @@ endif
     .assert !fclose(rsi)
     .assert !strncmp(rdi,"003",3)
 
-    .assert fopen("..\\libc\\test.fil","rt") == rsi
-    .assert !fclose(rsi)
-
     .assert fopen("test.fil","w")
     mov rsi,rax
 

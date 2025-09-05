@@ -8,7 +8,9 @@ endif
 include activation.inc
 include WinString.inc
 include intrin.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 include wrl\def.inc
 include wrl\internal.inc

@@ -1,13 +1,11 @@
-.pragma list(push, 0)
 ifndef _OLECTL_H_
 define _OLECTL_H_
 
-if NOT defined(__MKTYPLIB__) AND NOT defined(__midl)
+ifndef __MKTYPLIB__
 
-ifdef _MAC
-include macocidl.inc
-else
 .pragma pack(push, 8)
+
+ifndef __ocidl_h__
 include ocidl.inc
 endif
 
@@ -308,8 +306,7 @@ LP_COLOR		equ 0x04
 
 .pragma pack(pop)
 
-endif ;; NOT (defined(__MKTYPLIB__) AND NOT defined(__midl))
-
+endif
 
 DISPID_AUTOSIZE		equ (-500)
 DISPID_BACKCOLOR	equ (-501)
@@ -428,11 +425,9 @@ DISPID_PICT_WIDTH	equ 4
 DISPID_PICT_HEIGHT	equ 5
 DISPID_PICT_RENDER	equ 6
 
-
-if defined(__MKTYPLIB__) OR defined(__midl)
+ifdef __MKTYPLIB__
 STDOLE_TLB		equ <"stdole2.tlb">
 STDTYPE_TLB		equ <"olepro32.dll">
 endif
 
 endif
-.pragma list(pop)

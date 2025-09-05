@@ -402,7 +402,7 @@ endif
 
                 .case 'S' ; ISO wide character string
                     .if ( !( flags & ( FL_SHORT or FL_LONG or FL_WIDECHAR ) ) )
-ifdef _UNICODE
+ifndef _UNICODE
                         or flags,FL_WIDECHAR
 else
                         or flags,FL_SHORT

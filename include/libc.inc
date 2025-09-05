@@ -7,10 +7,10 @@
 ;
 .pragma list(push, 0)
 
-ifndef __LIBC_INC
-define __LIBC_INC
+ifndef _LIBC_
+define _LIBC_
 define __STDC__
-define __LIBC__ 236
+define __LIBC__ 237
 
 option casemap:none
 

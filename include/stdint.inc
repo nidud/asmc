@@ -1,6 +1,6 @@
-ifndef _STDINT
-define _STDINT
-.pragma list(push, 0)
+ifndef _STDINT_
+define _STDINT_
+
 include vcruntime.inc
 
 int8_t			typedef sbyte
@@ -137,5 +137,4 @@ UINTMAX_C macro x
 	exitm<UINT64_C(x)>
 	endm
 
-.pragma list(pop)
 endif

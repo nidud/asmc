@@ -1,8 +1,7 @@
-.pragma list(push, 0)
-ifndef __STRING_INC
-define __STRING_INC
-ifndef __LIBC_INC
- include libc.inc
+ifndef _STRING_
+define _STRING_
+ifndef _LIBC_
+include libc.inc
 endif
 .pragma comment(lib, libc, msvcrt)
 
@@ -181,4 +180,3 @@ _wstrunix	proto __cdecl :LPWSTR
 endif
 
 endif
-.pragma list(pop)

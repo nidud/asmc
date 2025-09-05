@@ -1,8 +1,8 @@
 ifndef _INCLUDED_NMM
 define _INCLUDED_NMM
 .pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 ifndef _M_IX86
 ifndef _M_X64
@@ -13,9 +13,6 @@ ifdef _M_CEE_PURE
 .err <ERROR: This file is not supported in the pure mode!>
 endif
 include smmintrin.inc
-
-;; Principal header file for Intel(R) Core(TM) 2 Duo processor
-;; SSE4.2 intrinsics.
 
 _SIDD_UBYTE_OPS		equ 0x00
 _SIDD_UWORD_OPS		equ 0x01
@@ -59,8 +56,6 @@ _mm_cmpestri macro a, la, b, lb, i
 	pcmpestri a,b,i
 	retm<ecx>
 	endm
-
-;; Intrinsics for text/string processing and reading values of EFlags.
 
 _mm_cmpistrz macro a, b, i
 	pcmpistrm a,b,i
@@ -114,18 +109,11 @@ _mm_cmpestra macro a, la, b, lb, i
 	retm<!CARRY? && !ZERO?>
 	endm
 
-;;
-;; Packed integer 64-bit comparison, zeroing or filling with ones
-;; corresponding parts of result
-;;
 _mm_cmpgt_epi64 macro a, b
 	pcmpgtq a,b
 	retm<a>
 	endm
 
-;;
-;; Calculate a number of bits set to 1
-;;
 _mm_popcnt_u32 macro a, b
     ifnb <b>
 	popcnt a,b
@@ -135,22 +123,11 @@ _mm_popcnt_u32 macro a, b
 	retm<a>
 	endm
 ifdef _M_X64
-;;
-;; __int64 _mm_popcnt_u64 (unsigned __int64 a)
-;;
 _mm_popcnt_u64 macro a, b
 	exitm<_mm_popcnt_u32(a,b)>
 	endm
 endif
 
-;;
-;; Accumulate CRC32 (polynomial 0x11EDC6F41) value
-;;
-;; unsigned int _mm_crc32_u8 (unsigned int crc, unsigned char v)
-;; unsigned int _mm_crc32_u16 (unsigned int crc, unsigned short v)
-;; unsigned int _mm_crc32_u32 (unsigned int crc, unsigned int v)
-;; unsigned __int64 _mm_crc32_u64 (unsigned __int64 crc, unsigned __int64 v)
-;;
 _mm_crc32_u8 macro crc, v
 	crc32 crc,v
 	retm<crc>

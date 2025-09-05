@@ -1,4 +1,6 @@
+ifndef _STDARG_
 include stdarg.inc
+endif
 ifndef _WINBASE_
 include winbase.inc
 endif
@@ -17,8 +19,6 @@ endif
 ifndef _WIN32_WINNT
 define _WIN32_WINNT _WIN32_WINDOWS
 endif
-
-include stdarg.inc
 
 .pragma comment(lib, user32)
 

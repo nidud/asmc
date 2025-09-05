@@ -1,3 +1,5 @@
+include srcpath
+
 ifndef CC
 CC = LIBW
 endif
@@ -200,14 +202,14 @@ targets = \
 	xolehlp.lib	\
 	xpsprint.lib
 
-{def}.def.lib:
-	$(CC) /NOLOGO /MACHINE:X64 /OUT:$*.lib /DEF:$<
+{$(lib_dir)\x64\def}.def.lib:
+	$(CC) /NOLOGO /MACHINE:X64 /OUT:$(lib_dir)\x64\$*.lib /DEF:$<
 
 build: $(targets)
 
 import:
-	if not exist def\kernel32.def (
-	   md def
-	   asmc -nologo -win64 -pe -Fo..\..\bin\impdef64.exe ..\..\source\tools\impdef\impdef.asm
-	   impdef64 -pdef $(targets)
+	if not exist %AsmcDir%\bin\impdef64.exe (
+	   asmc64 -pe -Fo%AsmcDir%\bin\impdef64.exe $(src_dir)\tools\impdef\impdef.asm
 	)
+	md $(lib_dir)\x64\def
+	impdef64 -p$(lib_dir)\x64\def $(targets)

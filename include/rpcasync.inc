@@ -1,8 +1,8 @@
 ifndef __RPCASYNC_H__
 define __RPCASYNC_H__
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-
+endif
 ifdef __RPC_WIN64__
 .pragma pack(push, 8)
 endif

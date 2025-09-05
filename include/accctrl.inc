@@ -1,12 +1,9 @@
 ifndef __ACCESS_CONTROL__
 define __ACCESS_CONTROL__
-.pragma list(push, 0)
-
-ifndef __midl
 include wtypes.inc
-endif
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
 
@@ -514,5 +511,4 @@ endif
 
 endif
 
-.pragma list(pop)
 endif

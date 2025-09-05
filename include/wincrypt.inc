@@ -1,11 +1,14 @@
 ifndef __WINCRYPT_H__
 define __WINCRYPT_H__
 ifndef _WINDEF_
- include windef.inc
+include windef.inc
 endif
-
+ifndef SPECSTRINGS_H
 include specstrings.inc
+endif
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .pragma comment(lib, advapi32)
 

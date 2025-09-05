@@ -1,28 +1,23 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPC500_
+include rpc500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr>
-endif
-
 ifndef __msinkaut_h__
 define __msinkaut_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 include tpcshrd.inc
 
 ifndef _MSINKAUT_IDL_H_
 define _MSINKAUT_IDL_H_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -30,14 +25,14 @@ include tpcerror.inc
 
 .enum INK_METRIC_FLAGS {
 	IMF_FONT_SELECTED_IN_HDC	= 0x1,
-	IMF_ITALIC	= 0x2,
-	IMF_BOLD	= 0x4
-    }
+	IMF_ITALIC			= 0x2,
+	IMF_BOLD			= 0x4
+	}
 
 .enum GET_DANDIDATE_FLAGS {
 	TCF_ALLOW_RECOGNITION	= 0x1,
 	TCF_FORCE_RECOGNITION	= 0x2
-    }
+	}
 
 INKMETRIC		struct
 iHeight			sdword ?
@@ -54,9 +49,9 @@ define __MSINKAUTLib_LIBRARY_DEFINED__
 define INK_SERIALIZED_FORMAT	<L"Ink Serialized Format">
 
 .enum InkSelectionConstants {
-	ISC_FirstElement	= 0,
+	ISC_FirstElement,
 	ISC_AllElements = -1
-    }
+	}
 
 define STR_GUID_X				<L"{598A6A8F-52C0-4BA0-93AF-AF357411A561}">
 define STR_GUID_Y				<L"{B53F9F75-04E0-4498-A7EE-C30DBB5A9011}">
@@ -121,42 +116,42 @@ define FACTOID_HANGULCOMMON			<L"HANGUL_COMMON">
 define FACTOID_HANGULRARE			<L"HANGUL_RARE">
 
 .enum InkBoundingBoxMode {
-	IBBM_Default	= 0,
-	IBBM_NoCurveFit = 1,
-	IBBM_CurveFit	= 2,
-	IBBM_PointsOnly = 3,
-	IBBM_Union	= 4
-    }
+	IBBM_Default,
+	IBBM_NoCurveFit,
+	IBBM_CurveFit,
+	IBBM_PointsOnly,
+	IBBM_Union
+	}
 
 define IBBM_Last IBBM_Union + 1
 
 .enum InkExtractFlags {
-	IEF_CopyFromOriginal	= 0,
-	IEF_RemoveFromOriginal	= 0x1,
-	IEF_Default	= IEF_RemoveFromOriginal
-    }
+	IEF_CopyFromOriginal,
+	IEF_RemoveFromOriginal,
+	IEF_Default
+	}
 
 define IEF_All	(IEF_RemoveFromOriginal or IEF_CopyFromOriginal)
 
 .enum InkPersistenceFormat {
-	IPF_InkSerializedFormat = 0,
-	IPF_Base64InkSerializedFormat	= 1,
-	IPF_GIF = 2,
-	IPF_Base64GIF	= 3
-    }
+	IPF_InkSerializedFormat,
+	IPF_Base64InkSerializedFormat,
+	IPF_GIF,
+	IPF_Base64GIF
+	}
 
 define IPF_Last	    IPF_Base64GIF + 1
 
 .enum InkPersistenceCompressionMode {
-	IPCM_Default	= 0,
-	IPCM_MaximumCompression = 1,
-	IPCM_NoCompression	= 2
-    }
+	IPCM_Default,
+	IPCM_MaximumCompression,
+	IPCM_NoCompression
+	}
 
 .enum InkPenTip {
-	IPT_Ball	= 0,
-	IPT_Rectangle	= 1
-    }
+	IPT_Ball,
+	IPT_Rectangle
+	}
 
 define IPT_Last	    IPT_Rectangle + 1
 
@@ -166,7 +161,7 @@ define IPT_Last	    IPT_Rectangle + 1
 	IRO_MaskNotPen	= 3,
 	IRO_NotCopyPen	= 4,
 	IRO_MaskPenNot	= 5,
-	IRO_Not = 6,
+	IRO_Not		= 6,
 	IRO_XOrPen	= 7,
 	IRO_NotMaskPen	= 8,
 	IRO_MaskPen	= 9,
@@ -177,7 +172,7 @@ define IPT_Last	    IPT_Rectangle + 1
 	IRO_MergePenNot = 14,
 	IRO_MergePen	= 15,
 	IRO_White	= 16
-    }
+	}
 
 define IRO_Last IRO_White+1
 
@@ -198,7 +193,7 @@ define IRO_Last IRO_White+1
 	IMP_SizeAll	= 13,
 	IMP_Hand	= 14,
 	IMP_Custom	= 99
-    }
+	}
 
 .enum InkClipboardModes {
 	ICB_Copy	= 0,
@@ -206,7 +201,7 @@ define IRO_Last IRO_White+1
 	ICB_ExtractOnly = 0x30,
 	ICB_DelayedCopy = 0x20,
 	ICB_Default	= ICB_Copy
-    }
+	}
 
 define ICB_Last ICB_DelayedCopy+1
 
@@ -221,26 +216,26 @@ define ICB_Last ICB_DelayedCopy+1
 	ICF_PasteMask	= 0x7,
 	ICF_CopyMask	= 0x7f,
 	ICF_Default	= ICF_CopyMask
-    }
+	}
 
 define ICF_Last ICF_CopyMask+1
 
 .enum SelectionHitResult {
-	SHR_None	= 0,
-	SHR_NW	= ( SHR_None + 1 ) ,
-	SHR_SE	= ( SHR_NW + 1 ) ,
-	SHR_NE	= ( SHR_SE + 1 ) ,
-	SHR_SW	= ( SHR_NE + 1 ) ,
-	SHR_E	= ( SHR_SW + 1 ) ,
-	SHR_W	= ( SHR_E + 1 ) ,
-	SHR_N	= ( SHR_W + 1 ) ,
-	SHR_S	= ( SHR_N + 1 ) ,
-	SHR_Selection	= ( SHR_S + 1 )
-    }
+	SHR_None,
+	SHR_NW,
+	SHR_SE,
+	SHR_NE,
+	SHR_SW,
+	SHR_E,
+	SHR_W,
+	SHR_N,
+	SHR_S,
+	SHR_Selection
+	}
 
 .enum InkRecognitionStatus {
-	IRS_NoError	= 0,
-	IRS_Interrupted = 0x1,
+	IRS_NoError		= 0,
+	IRS_Interrupted		= 0x1,
 	IRS_ProcessFailed	= 0x2,
 	IRS_InkAddedFailed	= 0x4,
 	IRS_SetAutoCompletionModeFailed = 0x8,
@@ -250,64 +245,64 @@ define ICF_Last ICF_CopyMask+1
 	IRS_SetFactoidFailed	= 0x80,
 	IRS_SetPrefixSuffixFailed	= 0x100,
 	IRS_SetWordListFailed	= 0x200
-    }
+	}
 
 .enum DISPID_InkRectangle {
-	DISPID_IRTop	= 1,
-	DISPID_IRLeft	= ( DISPID_IRTop + 1 ) ,
-	DISPID_IRBottom = ( DISPID_IRLeft + 1 ) ,
-	DISPID_IRRight	= ( DISPID_IRBottom + 1 ) ,
-	DISPID_IRGetRectangle	= ( DISPID_IRRight + 1 ) ,
-	DISPID_IRSetRectangle	= ( DISPID_IRGetRectangle + 1 ) ,
-	DISPID_IRData	= ( DISPID_IRSetRectangle + 1 )
-    }
+	DISPID_IRTop = 1,
+	DISPID_IRLeft,
+	DISPID_IRBottom,
+	DISPID_IRRight,
+	DISPID_IRGetRectangle,
+	DISPID_IRSetRectangle,
+	DISPID_IRData
+	}
 
 .enum DISPID_InkExtendedProperty {
 	DISPID_IEPGuid	= 1,
-	DISPID_IEPData	= ( DISPID_IEPGuid + 1 )
-    }
+	DISPID_IEPData
+	}
 
 .enum DISPID_InkExtendedProperties {
 	DISPID_IEPs_NewEnum	= DISPID_NEWENUM,
-	DISPID_IEPsItem = DISPID_VALUE,
+	DISPID_IEPsItem		= DISPID_VALUE,
 	DISPID_IEPsCount	= 1,
-	DISPID_IEPsAdd	= ( DISPID_IEPsCount + 1 ) ,
-	DISPID_IEPsRemove	= ( DISPID_IEPsAdd + 1 ) ,
-	DISPID_IEPsClear	= ( DISPID_IEPsRemove + 1 ) ,
-	DISPID_IEPsDoesPropertyExist	= ( DISPID_IEPsClear + 1 )
-    }
+	DISPID_IEPsAdd,
+	DISPID_IEPsRemove,
+	DISPID_IEPsClear,
+	DISPID_IEPsDoesPropertyExist
+	}
 
 .enum DISPID_InkDrawingAttributes {
 	DISPID_DAHeight = 1,
-	DISPID_DAColor	= ( DISPID_DAHeight + 1 ) ,
-	DISPID_DAWidth	= ( DISPID_DAColor + 1 ) ,
-	DISPID_DAFitToCurve	= ( DISPID_DAWidth + 1 ) ,
-	DISPID_DAIgnorePressure = ( DISPID_DAFitToCurve + 1 ) ,
-	DISPID_DAAntiAliased	= ( DISPID_DAIgnorePressure + 1 ) ,
-	DISPID_DATransparency	= ( DISPID_DAAntiAliased + 1 ) ,
-	DISPID_DARasterOperation	= ( DISPID_DATransparency + 1 ) ,
-	DISPID_DAPenTip = ( DISPID_DARasterOperation + 1 ) ,
-	DISPID_DAClone	= ( DISPID_DAPenTip + 1 ) ,
-	DISPID_DAExtendedProperties	= ( DISPID_DAClone + 1 )
-    }
+	DISPID_DAColor,
+	DISPID_DAWidth,
+	DISPID_DAFitToCurve,
+	DISPID_DAIgnorePressure,
+	DISPID_DAAntiAliased,
+	DISPID_DATransparency,
+	DISPID_DARasterOperation,
+	DISPID_DAPenTip,
+	DISPID_DAClone,
+	DISPID_DAExtendedProperties
+	}
 
 .enum DISPID_InkTransform {
 	DISPID_ITReset	= 1,
-	DISPID_ITTranslate	= ( DISPID_ITReset + 1 ) ,
-	DISPID_ITRotate = ( DISPID_ITTranslate + 1 ) ,
-	DISPID_ITReflect	= ( DISPID_ITRotate + 1 ) ,
-	DISPID_ITShear	= ( DISPID_ITReflect + 1 ) ,
-	DISPID_ITScale	= ( DISPID_ITShear + 1 ) ,
-	DISPID_ITeM11	= ( DISPID_ITScale + 1 ) ,
-	DISPID_ITeM12	= ( DISPID_ITeM11 + 1 ) ,
-	DISPID_ITeM21	= ( DISPID_ITeM12 + 1 ) ,
-	DISPID_ITeM22	= ( DISPID_ITeM21 + 1 ) ,
-	DISPID_ITeDx	= ( DISPID_ITeM22 + 1 ) ,
-	DISPID_ITeDy	= ( DISPID_ITeDx + 1 ) ,
-	DISPID_ITGetTransform	= ( DISPID_ITeDy + 1 ) ,
-	DISPID_ITSetTransform	= ( DISPID_ITGetTransform + 1 ) ,
-	DISPID_ITData	= ( DISPID_ITSetTransform + 1 )
-    }
+	DISPID_ITTranslate,
+	DISPID_ITRotate,
+	DISPID_ITReflect,
+	DISPID_ITShear,
+	DISPID_ITScale,
+	DISPID_ITeM11,
+	DISPID_ITeM12,
+	DISPID_ITeM21,
+	DISPID_ITeM22,
+	DISPID_ITeDx,
+	DISPID_ITeDy,
+	DISPID_ITGetTransform,
+	DISPID_ITSetTransform,
+	DISPID_ITData
+	}
 
 .enum InkApplicationGesture {
 	IAG_AllGestures = 0,
@@ -331,7 +326,7 @@ define ICF_Last ICF_CopyMask+1
 	IAG_ArrowDown	= 0xf039,
 	IAG_ArrowLeft	= 0xf03a,
 	IAG_ArrowRight	= 0xf03b,
-	IAG_Up	= 0xf058,
+	IAG_Up		= 0xf058,
 	IAG_Down	= 0xf059,
 	IAG_Left	= 0xf05a,
 	IAG_Right	= 0xf05b,
@@ -352,9 +347,9 @@ define ICF_Last ICF_CopyMask+1
 	IAG_RightUp	= 0xf06e,
 	IAG_RightDown	= 0xf06f,
 	IAG_Exclamation = 0xf0a4,
-	IAG_Tap = 0xf0f0,
+	IAG_Tap		= 0xf0f0,
 	IAG_DoubleTap	= 0xf0f1
-    }
+	}
 
 .enum InkSystemGesture {
 	ISG_Tap = 0x10,
@@ -367,520 +362,520 @@ define ICF_Last ICF_CopyMask+1
 	ISG_HoverEnter	= 0x17,
 	ISG_HoverLeave	= 0x18,
 	ISG_Flick	= 0x1f
-    }
+	}
 
 define ISG_First ISG_Tap
 define ISG_Last ISG_Flick
 
 .enum InkRecognitionConfidence {
-	IRC_Strong	= 0,
-	IRC_Intermediate	= 1,
-	IRC_Poor	= 2
-    }
+	IRC_Strong,
+	IRC_Intermediate,
+	IRC_Poor
+	}
 
 .enum DISPID_InkGesture {
 	DISPID_IGId	= DISPID_VALUE,
-	DISPID_IGGetHotPoint	= ( DISPID_IGId + 1 ) ,
-	DISPID_IGConfidence	= ( DISPID_IGGetHotPoint + 1 )
-    }
+	DISPID_IGGetHotPoint,
+	DISPID_IGConfidence
+	}
 
 .enum DISPID_InkCursor {
 	DISPID_ICsrName = DISPID_VALUE,
 	DISPID_ICsrId	= 1,
-	DISPID_ICsrDrawingAttributes	= ( DISPID_ICsrId + 1 ) ,
-	DISPID_ICsrButtons	= ( DISPID_ICsrDrawingAttributes + 1 ) ,
-	DISPID_ICsrInverted	= ( DISPID_ICsrButtons + 1 ) ,
-	DISPID_ICsrTablet	= ( DISPID_ICsrInverted + 1 )
-    }
+	DISPID_ICsrDrawingAttributes,
+	DISPID_ICsrButtons,
+	DISPID_ICsrInverted,
+	DISPID_ICsrTablet
+	}
 
 .enum DISPID_InkCursors {
 	DISPID_ICs_NewEnum	= DISPID_NEWENUM,
 	DISPID_ICsItem	= DISPID_VALUE,
 	DISPID_ICsCount = 1
-    }
+	}
 
 .enum InkCursorButtonState {
-	ICBS_Unavailable	= 0,
-	ICBS_Up = ( ICBS_Unavailable + 1 ) ,
-	ICBS_Down	= ( ICBS_Up + 1 )
-    }
+	ICBS_Unavailable,
+	ICBS_Up,
+	ICBS_Down
+	}
 
 define ICBS_Last ICBS_Down
 .enum DISPID_InkCursorButton {
 	DISPID_ICBName	= DISPID_VALUE,
 	DISPID_ICBId	= 1,
-	DISPID_ICBState = ( DISPID_ICBId + 1 )
-    }
+	DISPID_ICBState
+	}
 
 .enum DISPID_InkCursorButtons {
 	DISPID_ICBs_NewEnum	= DISPID_NEWENUM,
-	DISPID_ICBsItem = DISPID_VALUE,
+	DISPID_ICBsItem		= DISPID_VALUE,
 	DISPID_ICBsCount	= 1
-    }
+	}
 
 .enum TabletHardwareCapabilities {
-	THWC_Integrated = 0x1,
+	THWC_Integrated		= 0x1,
 	THWC_CursorMustTouch	= 0x2,
 	THWC_HardProximity	= 0x4,
 	THWC_CursorsHavePhysicalIds	= 0x8
-    }
+	}
 
 .enum TabletPropertyMetricUnit {
-	TPMU_Default	= 0,
-	TPMU_Inches	= ( TPMU_Default + 1 ) ,
-	TPMU_Centimeters	= ( TPMU_Inches + 1 ) ,
-	TPMU_Degrees	= ( TPMU_Centimeters + 1 ) ,
-	TPMU_Radians	= ( TPMU_Degrees + 1 ) ,
-	TPMU_Seconds	= ( TPMU_Radians + 1 ) ,
-	TPMU_Pounds	= ( TPMU_Seconds + 1 ) ,
-	TPMU_Grams	= ( TPMU_Pounds + 1 )
-    }
+	TPMU_Default,
+	TPMU_Inches,
+	TPMU_Centimeters,
+	TPMU_Degrees,
+	TPMU_Radians,
+	TPMU_Seconds,
+	TPMU_Pounds,
+	TPMU_Grams
+	}
 
 .enum DISPID_InkTablet {
-	DISPID_ITName	= DISPID_VALUE,
-	DISPID_ITPlugAndPlayId	= 1,
-	DISPID_ITPropertyMetrics	= ( DISPID_ITPlugAndPlayId + 1 ) ,
-	DISPID_ITIsPacketPropertySupported	= ( DISPID_ITPropertyMetrics + 1 ) ,
-	DISPID_ITMaximumInputRectangle	= ( DISPID_ITIsPacketPropertySupported + 1 ) ,
-	DISPID_ITHardwareCapabilities	= ( DISPID_ITMaximumInputRectangle + 1 )
-    }
+	DISPID_ITName			= DISPID_VALUE,
+	DISPID_ITPlugAndPlayId		= 1,
+	DISPID_ITPropertyMetrics,
+	DISPID_ITIsPacketPropertySupported,
+	DISPID_ITMaximumInputRectangle,
+	DISPID_ITHardwareCapabilities
+	}
 
 .enum TabletDeviceKind {
-	TDK_Mouse	= 0,
-	TDK_Pen = ( TDK_Mouse + 1 ) ,
-	TDK_Touch	= ( TDK_Pen + 1 )
-    }
+	TDK_Mouse,
+	TDK_Pen,
+	TDK_Touch
+	}
 
 .enum DISPID_InkTablet2 {
 	DISPID_IT2DeviceKind	= DISPID_VALUE
-    }
+	}
 
 .enum DISPID_InkTablet3 {
 	DISPID_IT3IsMultiTouch	= DISPID_VALUE,
-	DISPID_IT3MaximumCursors	= ( DISPID_IT3IsMultiTouch + 1 )
-    }
+	DISPID_IT3MaximumCursors
+	}
 
 .enum DISPID_InkTablets {
 	DISPID_ITs_NewEnum	= DISPID_NEWENUM,
-	DISPID_ITsItem	= DISPID_VALUE,
+	DISPID_ITsItem		= DISPID_VALUE,
 	DISPID_ITsDefaultTablet = 1,
-	DISPID_ITsCount = ( DISPID_ITsDefaultTablet + 1 ) ,
-	DISPID_ITsIsPacketPropertySupported	= ( DISPID_ITsCount + 1 )
-    }
+	DISPID_ITsCount,
+	DISPID_ITsIsPacketPropertySupported
+	}
 
 .enum DISPID_InkStrokeDisp {
-	DISPID_ISDInkIndex	= 1,
-	DISPID_ISDID	= ( DISPID_ISDInkIndex + 1 ) ,
-	DISPID_ISDGetBoundingBox	= ( DISPID_ISDID + 1 ) ,
-	DISPID_ISDDrawingAttributes	= ( DISPID_ISDGetBoundingBox + 1 ) ,
-	DISPID_ISDFindIntersections	= ( DISPID_ISDDrawingAttributes + 1 ) ,
-	DISPID_ISDGetRectangleIntersections	= ( DISPID_ISDFindIntersections + 1 ) ,
-	DISPID_ISDClip	= ( DISPID_ISDGetRectangleIntersections + 1 ) ,
-	DISPID_ISDHitTestCircle = ( DISPID_ISDClip + 1 ) ,
-	DISPID_ISDNearestPoint	= ( DISPID_ISDHitTestCircle + 1 ) ,
-	DISPID_ISDSplit = ( DISPID_ISDNearestPoint + 1 ) ,
-	DISPID_ISDExtendedProperties	= ( DISPID_ISDSplit + 1 ) ,
-	DISPID_ISDInk	= ( DISPID_ISDExtendedProperties + 1 ) ,
-	DISPID_ISDBezierPoints	= ( DISPID_ISDInk + 1 ) ,
-	DISPID_ISDPolylineCusps = ( DISPID_ISDBezierPoints + 1 ) ,
-	DISPID_ISDBezierCusps	= ( DISPID_ISDPolylineCusps + 1 ) ,
-	DISPID_ISDSelfIntersections	= ( DISPID_ISDBezierCusps + 1 ) ,
-	DISPID_ISDPacketCount	= ( DISPID_ISDSelfIntersections + 1 ) ,
-	DISPID_ISDPacketSize	= ( DISPID_ISDPacketCount + 1 ) ,
-	DISPID_ISDPacketDescription	= ( DISPID_ISDPacketSize + 1 ) ,
-	DISPID_ISDDeleted	= ( DISPID_ISDPacketDescription + 1 ) ,
-	DISPID_ISDGetPacketDescriptionPropertyMetrics	= ( DISPID_ISDDeleted + 1 ) ,
-	DISPID_ISDGetPoints	= ( DISPID_ISDGetPacketDescriptionPropertyMetrics + 1 ) ,
-	DISPID_ISDSetPoints	= ( DISPID_ISDGetPoints + 1 ) ,
-	DISPID_ISDGetPacketData = ( DISPID_ISDSetPoints + 1 ) ,
-	DISPID_ISDGetPacketValuesByProperty	= ( DISPID_ISDGetPacketData + 1 ) ,
-	DISPID_ISDSetPacketValuesByProperty	= ( DISPID_ISDGetPacketValuesByProperty + 1 ) ,
-	DISPID_ISDGetFlattenedBezierPoints	= ( DISPID_ISDSetPacketValuesByProperty + 1 ) ,
-	DISPID_ISDScaleToRectangle	= ( DISPID_ISDGetFlattenedBezierPoints + 1 ) ,
-	DISPID_ISDTransform	= ( DISPID_ISDScaleToRectangle + 1 ) ,
-	DISPID_ISDMove	= ( DISPID_ISDTransform + 1 ) ,
-	DISPID_ISDRotate	= ( DISPID_ISDMove + 1 ) ,
-	DISPID_ISDShear = ( DISPID_ISDRotate + 1 ) ,
-	DISPID_ISDScale = ( DISPID_ISDShear + 1 )
-    }
+	DISPID_ISDInkIndex = 1,
+	DISPID_ISDID,
+	DISPID_ISDGetBoundingBox,
+	DISPID_ISDDrawingAttributes,
+	DISPID_ISDFindIntersections,
+	DISPID_ISDGetRectangleIntersections,
+	DISPID_ISDClip,
+	DISPID_ISDHitTestCircle,
+	DISPID_ISDNearestPoint,
+	DISPID_ISDSplit,
+	DISPID_ISDExtendedProperties,
+	DISPID_ISDInk,
+	DISPID_ISDBezierPoints,
+	DISPID_ISDPolylineCusps,
+	DISPID_ISDBezierCusps,
+	DISPID_ISDSelfIntersections,
+	DISPID_ISDPacketCount,
+	DISPID_ISDPacketSize,
+	DISPID_ISDPacketDescription,
+	DISPID_ISDDeleted,
+	DISPID_ISDGetPacketDescriptionPropertyMetrics,
+	DISPID_ISDGetPoints,
+	DISPID_ISDSetPoints,
+	DISPID_ISDGetPacketData,
+	DISPID_ISDGetPacketValuesByProperty,
+	DISPID_ISDSetPacketValuesByProperty,
+	DISPID_ISDGetFlattenedBezierPoints,
+	DISPID_ISDScaleToRectangle,
+	DISPID_ISDTransform,
+	DISPID_ISDMove,
+	DISPID_ISDRotate,
+	DISPID_ISDShear,
+	DISPID_ISDScale
+	}
 
 .enum DISPID_InkStrokes {
 	DISPID_ISs_NewEnum	= DISPID_NEWENUM,
-	DISPID_ISsItem	= DISPID_VALUE,
-	DISPID_ISsCount = 1,
-	DISPID_ISsValid = ( DISPID_ISsCount + 1 ) ,
-	DISPID_ISsInk	= ( DISPID_ISsValid + 1 ) ,
-	DISPID_ISsAdd	= ( DISPID_ISsInk + 1 ) ,
-	DISPID_ISsAddStrokes	= ( DISPID_ISsAdd + 1 ) ,
-	DISPID_ISsRemove	= ( DISPID_ISsAddStrokes + 1 ) ,
-	DISPID_ISsRemoveStrokes = ( DISPID_ISsRemove + 1 ) ,
-	DISPID_ISsToString	= ( DISPID_ISsRemoveStrokes + 1 ) ,
-	DISPID_ISsModifyDrawingAttributes	= ( DISPID_ISsToString + 1 ) ,
-	DISPID_ISsGetBoundingBox	= ( DISPID_ISsModifyDrawingAttributes + 1 ) ,
-	DISPID_ISsScaleToRectangle	= ( DISPID_ISsGetBoundingBox + 1 ) ,
-	DISPID_ISsTransform	= ( DISPID_ISsScaleToRectangle + 1 ) ,
-	DISPID_ISsMove	= ( DISPID_ISsTransform + 1 ) ,
-	DISPID_ISsRotate	= ( DISPID_ISsMove + 1 ) ,
-	DISPID_ISsShear = ( DISPID_ISsRotate + 1 ) ,
-	DISPID_ISsScale = ( DISPID_ISsShear + 1 ) ,
-	DISPID_ISsClip	= ( DISPID_ISsScale + 1 ) ,
-	DISPID_ISsRecognitionResult	= ( DISPID_ISsClip + 1 ) ,
-	DISPID_ISsRemoveRecognitionResult	= ( DISPID_ISsRecognitionResult + 1 )
-    }
+	DISPID_ISsItem		= DISPID_VALUE,
+	DISPID_ISsCount		= 1,
+	DISPID_ISsValid,
+	DISPID_ISsInk,
+	DISPID_ISsAdd,
+	DISPID_ISsAddStrokes,
+	DISPID_ISsRemove,
+	DISPID_ISsRemoveStrokes,
+	DISPID_ISsToString,
+	DISPID_ISsModifyDrawingAttributes,
+	DISPID_ISsGetBoundingBox,
+	DISPID_ISsScaleToRectangle,
+	DISPID_ISsTransform,
+	DISPID_ISsMove,
+	DISPID_ISsRotate,
+	DISPID_ISsShear,
+	DISPID_ISsScale,
+	DISPID_ISsClip,
+	DISPID_ISsRecognitionResult,
+	DISPID_ISsRemoveRecognitionResult
+	}
 
 .enum DISPID_InkCustomStrokes {
 	DISPID_ICSs_NewEnum	= DISPID_NEWENUM,
-	DISPID_ICSsItem = DISPID_VALUE,
+	DISPID_ICSsItem		= DISPID_VALUE,
 	DISPID_ICSsCount	= 1,
-	DISPID_ICSsAdd	= ( DISPID_ICSsCount + 1 ) ,
-	DISPID_ICSsRemove	= ( DISPID_ICSsAdd + 1 ) ,
-	DISPID_ICSsClear	= ( DISPID_ICSsRemove + 1 )
-    }
+	DISPID_ICSsAdd,
+	DISPID_ICSsRemove,
+	DISPID_ICSsClear
+	}
 
 .enum DISPID_StrokeEvent {
-	DISPID_SEStrokesAdded	= 1,
-	DISPID_SEStrokesRemoved = ( DISPID_SEStrokesAdded + 1 )
-    }
+	DISPID_SEStrokesAdded = 1,
+	DISPID_SEStrokesRemoved
+	}
 
 .enum DISPID_Ink {
 	DISPID_IStrokes = 1,
-	DISPID_IExtendedProperties	= ( DISPID_IStrokes + 1 ) ,
-	DISPID_IGetBoundingBox	= ( DISPID_IExtendedProperties + 1 ) ,
-	DISPID_IDeleteStrokes	= ( DISPID_IGetBoundingBox + 1 ) ,
-	DISPID_IDeleteStroke	= ( DISPID_IDeleteStrokes + 1 ) ,
-	DISPID_IExtractStrokes	= ( DISPID_IDeleteStroke + 1 ) ,
-	DISPID_IExtractWithRectangle	= ( DISPID_IExtractStrokes + 1 ) ,
-	DISPID_IDirty	= ( DISPID_IExtractWithRectangle + 1 ) ,
-	DISPID_ICustomStrokes	= ( DISPID_IDirty + 1 ) ,
-	DISPID_IClone	= ( DISPID_ICustomStrokes + 1 ) ,
-	DISPID_IHitTestCircle	= ( DISPID_IClone + 1 ) ,
-	DISPID_IHitTestWithRectangle	= ( DISPID_IHitTestCircle + 1 ) ,
-	DISPID_IHitTestWithLasso	= ( DISPID_IHitTestWithRectangle + 1 ) ,
-	DISPID_INearestPoint	= ( DISPID_IHitTestWithLasso + 1 ) ,
-	DISPID_ICreateStrokes	= ( DISPID_INearestPoint + 1 ) ,
-	DISPID_ICreateStroke	= ( DISPID_ICreateStrokes + 1 ) ,
-	DISPID_IAddStrokesAtRectangle	= ( DISPID_ICreateStroke + 1 ) ,
-	DISPID_IClip	= ( DISPID_IAddStrokesAtRectangle + 1 ) ,
-	DISPID_ISave	= ( DISPID_IClip + 1 ) ,
-	DISPID_ILoad	= ( DISPID_ISave + 1 ) ,
-	DISPID_ICreateStrokeFromPoints	= ( DISPID_ILoad + 1 ) ,
-	DISPID_IClipboardCopyWithRectangle	= ( DISPID_ICreateStrokeFromPoints + 1 ) ,
-	DISPID_IClipboardCopy	= ( DISPID_IClipboardCopyWithRectangle + 1 ) ,
-	DISPID_ICanPaste	= ( DISPID_IClipboardCopy + 1 ) ,
-	DISPID_IClipboardPaste	= ( DISPID_ICanPaste + 1 )
-    }
+	DISPID_IExtendedProperties,
+	DISPID_IGetBoundingBox,
+	DISPID_IDeleteStrokes,
+	DISPID_IDeleteStroke,
+	DISPID_IExtractStrokes,
+	DISPID_IExtractWithRectangle,
+	DISPID_IDirty,
+	DISPID_ICustomStrokes,
+	DISPID_IClone,
+	DISPID_IHitTestCircle,
+	DISPID_IHitTestWithRectangle,
+	DISPID_IHitTestWithLasso,
+	DISPID_INearestPoint,
+	DISPID_ICreateStrokes,
+	DISPID_ICreateStroke,
+	DISPID_IAddStrokesAtRectangle,
+	DISPID_IClip,
+	DISPID_ISave,
+	DISPID_ILoad,
+	DISPID_ICreateStrokeFromPoints,
+	DISPID_IClipboardCopyWithRectangle,
+	DISPID_IClipboardCopy,
+	DISPID_ICanPaste,
+	DISPID_IClipboardPaste
+	}
 
 .enum DISPID_InkEvent {
-	DISPID_IEInkAdded	= 1,
-	DISPID_IEInkDeleted	= ( DISPID_IEInkAdded + 1 )
-    }
+	DISPID_IEInkAdded = 1,
+	DISPID_IEInkDeleted
+	}
 
 .enum DISPID_InkRenderer {
-	DISPID_IRGetViewTransform	= 1,
-	DISPID_IRSetViewTransform	= ( DISPID_IRGetViewTransform + 1 ) ,
-	DISPID_IRGetObjectTransform	= ( DISPID_IRSetViewTransform + 1 ) ,
-	DISPID_IRSetObjectTransform	= ( DISPID_IRGetObjectTransform + 1 ) ,
-	DISPID_IRDraw	= ( DISPID_IRSetObjectTransform + 1 ) ,
-	DISPID_IRDrawStroke	= ( DISPID_IRDraw + 1 ) ,
-	DISPID_IRPixelToInkSpace	= ( DISPID_IRDrawStroke + 1 ) ,
-	DISPID_IRInkSpaceToPixel	= ( DISPID_IRPixelToInkSpace + 1 ) ,
-	DISPID_IRPixelToInkSpaceFromPoints	= ( DISPID_IRInkSpaceToPixel + 1 ) ,
-	DISPID_IRInkSpaceToPixelFromPoints	= ( DISPID_IRPixelToInkSpaceFromPoints + 1 ) ,
-	DISPID_IRMeasure	= ( DISPID_IRInkSpaceToPixelFromPoints + 1 ) ,
-	DISPID_IRMeasureStroke	= ( DISPID_IRMeasure + 1 ) ,
-	DISPID_IRMove	= ( DISPID_IRMeasureStroke + 1 ) ,
-	DISPID_IRRotate = ( DISPID_IRMove + 1 ) ,
-	DISPID_IRScale	= ( DISPID_IRRotate + 1 )
-    }
+	DISPID_IRGetViewTransform = 1,
+	DISPID_IRSetViewTransform,
+	DISPID_IRGetObjectTransform,
+	DISPID_IRSetObjectTransform,
+	DISPID_IRDraw,
+	DISPID_IRDrawStroke,
+	DISPID_IRPixelToInkSpace,
+	DISPID_IRInkSpaceToPixel,
+	DISPID_IRPixelToInkSpaceFromPoints,
+	DISPID_IRInkSpaceToPixelFromPoints,
+	DISPID_IRMeasure,
+	DISPID_IRMeasureStroke,
+	DISPID_IRMove,
+	DISPID_IRRotate,
+	DISPID_IRScale
+	}
 
 .enum InkCollectorEventInterest {
 	ICEI_DefaultEvents	= -1,
-	ICEI_CursorDown = ( ICEI_DefaultEvents + 1 ) ,
-	ICEI_Stroke	= ( ICEI_CursorDown + 1 ) ,
-	ICEI_NewPackets = ( ICEI_Stroke + 1 ) ,
-	ICEI_NewInAirPackets	= ( ICEI_NewPackets + 1 ) ,
-	ICEI_CursorButtonDown	= ( ICEI_NewInAirPackets + 1 ) ,
-	ICEI_CursorButtonUp	= ( ICEI_CursorButtonDown + 1 ) ,
-	ICEI_CursorInRange	= ( ICEI_CursorButtonUp + 1 ) ,
-	ICEI_CursorOutOfRange	= ( ICEI_CursorInRange + 1 ) ,
-	ICEI_SystemGesture	= ( ICEI_CursorOutOfRange + 1 ) ,
-	ICEI_TabletAdded	= ( ICEI_SystemGesture + 1 ) ,
-	ICEI_TabletRemoved	= ( ICEI_TabletAdded + 1 ) ,
-	ICEI_MouseDown	= ( ICEI_TabletRemoved + 1 ) ,
-	ICEI_MouseMove	= ( ICEI_MouseDown + 1 ) ,
-	ICEI_MouseUp	= ( ICEI_MouseMove + 1 ) ,
-	ICEI_MouseWheel = ( ICEI_MouseUp + 1 ) ,
-	ICEI_DblClick	= ( ICEI_MouseWheel + 1 ) ,
-	ICEI_AllEvents	= ( ICEI_DblClick + 1 )
-    }
+	ICEI_CursorDown,
+	ICEI_Stroke,
+	ICEI_NewPackets,
+	ICEI_NewInAirPackets,
+	ICEI_CursorButtonDown,
+	ICEI_CursorButtonUp,
+	ICEI_CursorInRange,
+	ICEI_CursorOutOfRange,
+	ICEI_SystemGesture,
+	ICEI_TabletAdded,
+	ICEI_TabletRemoved,
+	ICEI_MouseDown,
+	ICEI_MouseMove,
+	ICEI_MouseUp,
+	ICEI_MouseWheel,
+	ICEI_DblClick,
+	ICEI_AllEvents
+	}
 
 .enum InkMouseButton {
 	IMF_Left	= 1,
 	IMF_Right	= 2,
 	IMF_Middle	= 4
-    }
+	}
 
 .enum InkShiftKeyModifierFlags {
 	IKM_Shift	= 0x1,
 	IKM_Control	= 0x2,
-	IKM_Alt = 0x4
-    }
+	IKM_Alt		= 0x4
+	}
 
 .enum DISPID_InkCollectorEvent {
-	DISPID_ICEStroke	= 1,
-	DISPID_ICECursorDown	= ( DISPID_ICEStroke + 1 ) ,
-	DISPID_ICENewPackets	= ( DISPID_ICECursorDown + 1 ) ,
-	DISPID_ICENewInAirPackets	= ( DISPID_ICENewPackets + 1 ) ,
-	DISPID_ICECursorButtonDown	= ( DISPID_ICENewInAirPackets + 1 ) ,
-	DISPID_ICECursorButtonUp	= ( DISPID_ICECursorButtonDown + 1 ) ,
-	DISPID_ICECursorInRange = ( DISPID_ICECursorButtonUp + 1 ) ,
-	DISPID_ICECursorOutOfRange	= ( DISPID_ICECursorInRange + 1 ) ,
-	DISPID_ICESystemGesture = ( DISPID_ICECursorOutOfRange + 1 ) ,
-	DISPID_ICEGesture	= ( DISPID_ICESystemGesture + 1 ) ,
-	DISPID_ICETabletAdded	= ( DISPID_ICEGesture + 1 ) ,
-	DISPID_ICETabletRemoved = ( DISPID_ICETabletAdded + 1 ) ,
-	DISPID_IOEPainting	= ( DISPID_ICETabletRemoved + 1 ) ,
-	DISPID_IOEPainted	= ( DISPID_IOEPainting + 1 ) ,
-	DISPID_IOESelectionChanging	= ( DISPID_IOEPainted + 1 ) ,
-	DISPID_IOESelectionChanged	= ( DISPID_IOESelectionChanging + 1 ) ,
-	DISPID_IOESelectionMoving	= ( DISPID_IOESelectionChanged + 1 ) ,
-	DISPID_IOESelectionMoved	= ( DISPID_IOESelectionMoving + 1 ) ,
-	DISPID_IOESelectionResizing	= ( DISPID_IOESelectionMoved + 1 ) ,
-	DISPID_IOESelectionResized	= ( DISPID_IOESelectionResizing + 1 ) ,
-	DISPID_IOEStrokesDeleting	= ( DISPID_IOESelectionResized + 1 ) ,
-	DISPID_IOEStrokesDeleted	= ( DISPID_IOEStrokesDeleting + 1 ) ,
-	DISPID_IPEChangeUICues	= ( DISPID_IOEStrokesDeleted + 1 ) ,
-	DISPID_IPEClick = ( DISPID_IPEChangeUICues + 1 ) ,
-	DISPID_IPEDblClick	= ( DISPID_IPEClick + 1 ) ,
-	DISPID_IPEInvalidated	= ( DISPID_IPEDblClick + 1 ) ,
-	DISPID_IPEMouseDown	= ( DISPID_IPEInvalidated + 1 ) ,
-	DISPID_IPEMouseEnter	= ( DISPID_IPEMouseDown + 1 ) ,
-	DISPID_IPEMouseHover	= ( DISPID_IPEMouseEnter + 1 ) ,
-	DISPID_IPEMouseLeave	= ( DISPID_IPEMouseHover + 1 ) ,
-	DISPID_IPEMouseMove	= ( DISPID_IPEMouseLeave + 1 ) ,
-	DISPID_IPEMouseUp	= ( DISPID_IPEMouseMove + 1 ) ,
-	DISPID_IPEMouseWheel	= ( DISPID_IPEMouseUp + 1 ) ,
-	DISPID_IPESizeModeChanged	= ( DISPID_IPEMouseWheel + 1 ) ,
-	DISPID_IPEStyleChanged	= ( DISPID_IPESizeModeChanged + 1 ) ,
-	DISPID_IPESystemColorsChanged	= ( DISPID_IPEStyleChanged + 1 ) ,
-	DISPID_IPEKeyDown	= ( DISPID_IPESystemColorsChanged + 1 ) ,
-	DISPID_IPEKeyPress	= ( DISPID_IPEKeyDown + 1 ) ,
-	DISPID_IPEKeyUp = ( DISPID_IPEKeyPress + 1 ) ,
-	DISPID_IPEResize	= ( DISPID_IPEKeyUp + 1 ) ,
-	DISPID_IPESizeChanged	= ( DISPID_IPEResize + 1 )
-    }
+	DISPID_ICEStroke = 1,
+	DISPID_ICECursorDown,
+	DISPID_ICENewPackets,
+	DISPID_ICENewInAirPackets,
+	DISPID_ICECursorButtonDown,
+	DISPID_ICECursorButtonUp,
+	DISPID_ICECursorInRange,
+	DISPID_ICECursorOutOfRange,
+	DISPID_ICESystemGesture,
+	DISPID_ICEGesture,
+	DISPID_ICETabletAdded,
+	DISPID_ICETabletRemoved,
+	DISPID_IOEPainting,
+	DISPID_IOEPainted,
+	DISPID_IOESelectionChanging,
+	DISPID_IOESelectionChanged,
+	DISPID_IOESelectionMoving,
+	DISPID_IOESelectionMoved,
+	DISPID_IOESelectionResizing,
+	DISPID_IOESelectionResized,
+	DISPID_IOEStrokesDeleting,
+	DISPID_IOEStrokesDeleted,
+	DISPID_IPEChangeUICues,
+	DISPID_IPEClick,
+	DISPID_IPEDblClick,
+	DISPID_IPEInvalidated,
+	DISPID_IPEMouseDown,
+	DISPID_IPEMouseEnter,
+	DISPID_IPEMouseHover,
+	DISPID_IPEMouseLeave,
+	DISPID_IPEMouseMove,
+	DISPID_IPEMouseUp,
+	DISPID_IPEMouseWheel,
+	DISPID_IPESizeModeChanged,
+	DISPID_IPEStyleChanged,
+	DISPID_IPESystemColorsChanged,
+	DISPID_IPEKeyDown,
+	DISPID_IPEKeyPress,
+	DISPID_IPEKeyUp,
+	DISPID_IPEResize,
+	DISPID_IPESizeChanged
+	}
 
 .enum InkOverlayEditingMode {
-	IOEM_Ink	= 0,
-	IOEM_Delete	= 1,
-	IOEM_Select	= 2
-    }
+	IOEM_Ink,
+	IOEM_Delete,
+	IOEM_Select
+	}
 
 define IOEM_Last IOEM_Select + 1
 .enum InkOverlayAttachMode {
-	IOAM_Behind	= 0,
-	IOAM_InFront	= 1
-    }
+	IOAM_Behind,
+	IOAM_InFront
+	}
 
 define IOAM_Last IOAM_InFront+1
 .enum InkPictureSizeMode {
-	IPSM_AutoSize	= 0,
-	IPSM_CenterImage	= 1,
-	IPSM_Normal	= 2,
-	IPSM_StretchImage	= 3
-    }
+	IPSM_AutoSize,
+	IPSM_CenterImage,
+	IPSM_Normal,
+	IPSM_StretchImage
+	}
 
 define IPSM_Last IPSM_StretchImage + 1
 .enum InkOverlayEraserMode {
-	IOERM_StrokeErase	= 0,
-	IOERM_PointErase	= 1
-    }
+	IOERM_StrokeErase,
+	IOERM_PointErase
+	}
 
 define IOERM_Last IOERM_PointErase + 1
 .enum InkCollectionMode {
-	ICM_InkOnly	= 0,
-	ICM_GestureOnly = ( ICM_InkOnly + 1 ) ,
-	ICM_InkAndGesture	= ( ICM_GestureOnly + 1 )
-    }
+	ICM_InkOnly,
+	ICM_GestureOnly,
+	ICM_InkAndGesture
+	}
 
 define ICM_Last ICM_InkAndGesture
 .enum DISPID_InkCollector {
-	DISPID_ICEnabled	= 1,
-	DISPID_ICHwnd	= ( DISPID_ICEnabled + 1 ) ,
-	DISPID_ICPaint	= ( DISPID_ICHwnd + 1 ) ,
-	DISPID_ICText	= ( DISPID_ICPaint + 1 ) ,
-	DISPID_ICDefaultDrawingAttributes	= ( DISPID_ICText + 1 ) ,
-	DISPID_ICRenderer	= ( DISPID_ICDefaultDrawingAttributes + 1 ) ,
-	DISPID_ICInk	= ( DISPID_ICRenderer + 1 ) ,
-	DISPID_ICAutoRedraw	= ( DISPID_ICInk + 1 ) ,
-	DISPID_ICCollectingInk	= ( DISPID_ICAutoRedraw + 1 ) ,
-	DISPID_ICSetEventInterest	= ( DISPID_ICCollectingInk + 1 ) ,
-	DISPID_ICGetEventInterest	= ( DISPID_ICSetEventInterest + 1 ) ,
-	DISPID_IOEditingMode	= ( DISPID_ICGetEventInterest + 1 ) ,
-	DISPID_IOSelection	= ( DISPID_IOEditingMode + 1 ) ,
-	DISPID_IOAttachMode	= ( DISPID_IOSelection + 1 ) ,
-	DISPID_IOHitTestSelection	= ( DISPID_IOAttachMode + 1 ) ,
-	DISPID_IODraw	= ( DISPID_IOHitTestSelection + 1 ) ,
-	DISPID_IPPicture	= ( DISPID_IODraw + 1 ) ,
-	DISPID_IPSizeMode	= ( DISPID_IPPicture + 1 ) ,
-	DISPID_IPBackColor	= ( DISPID_IPSizeMode + 1 ) ,
-	DISPID_ICCursors	= ( DISPID_IPBackColor + 1 ) ,
-	DISPID_ICMarginX	= ( DISPID_ICCursors + 1 ) ,
-	DISPID_ICMarginY	= ( DISPID_ICMarginX + 1 ) ,
-	DISPID_ICSetWindowInputRectangle	= ( DISPID_ICMarginY + 1 ) ,
-	DISPID_ICGetWindowInputRectangle	= ( DISPID_ICSetWindowInputRectangle + 1 ) ,
-	DISPID_ICTablet = ( DISPID_ICGetWindowInputRectangle + 1 ) ,
-	DISPID_ICSetAllTabletsMode	= ( DISPID_ICTablet + 1 ) ,
-	DISPID_ICSetSingleTabletIntegratedMode	= ( DISPID_ICSetAllTabletsMode + 1 ) ,
-	DISPID_ICCollectionMode = ( DISPID_ICSetSingleTabletIntegratedMode + 1 ) ,
-	DISPID_ICSetGestureStatus	= ( DISPID_ICCollectionMode + 1 ) ,
-	DISPID_ICGetGestureStatus	= ( DISPID_ICSetGestureStatus + 1 ) ,
-	DISPID_ICDynamicRendering	= ( DISPID_ICGetGestureStatus + 1 ) ,
-	DISPID_ICDesiredPacketDescription	= ( DISPID_ICDynamicRendering + 1 ) ,
-	DISPID_IOEraserMode	= ( DISPID_ICDesiredPacketDescription + 1 ) ,
-	DISPID_IOEraserWidth	= ( DISPID_IOEraserMode + 1 ) ,
-	DISPID_ICMouseIcon	= ( DISPID_IOEraserWidth + 1 ) ,
-	DISPID_ICMousePointer	= ( DISPID_ICMouseIcon + 1 ) ,
-	DISPID_IPInkEnabled	= ( DISPID_ICMousePointer + 1 ) ,
-	DISPID_ICSupportHighContrastInk = ( DISPID_IPInkEnabled + 1 ) ,
-	DISPID_IOSupportHighContrastSelectionUI = ( DISPID_ICSupportHighContrastInk + 1 )
-    }
+	DISPID_ICEnabled = 1,
+	DISPID_ICHwnd,
+	DISPID_ICPaint,
+	DISPID_ICText,
+	DISPID_ICDefaultDrawingAttributes,
+	DISPID_ICRenderer,
+	DISPID_ICInk,
+	DISPID_ICAutoRedraw,
+	DISPID_ICCollectingInk,
+	DISPID_ICSetEventInterest,
+	DISPID_ICGetEventInterest,
+	DISPID_IOEditingMode,
+	DISPID_IOSelection,
+	DISPID_IOAttachMode,
+	DISPID_IOHitTestSelection,
+	DISPID_IODraw,
+	DISPID_IPPicture,
+	DISPID_IPSizeMode,
+	DISPID_IPBackColor,
+	DISPID_ICCursors,
+	DISPID_ICMarginX,
+	DISPID_ICMarginY,
+	DISPID_ICSetWindowInputRectangle,
+	DISPID_ICGetWindowInputRectangle,
+	DISPID_ICTablet,
+	DISPID_ICSetAllTabletsMode,
+	DISPID_ICSetSingleTabletIntegratedMode,
+	DISPID_ICCollectionMode,
+	DISPID_ICSetGestureStatus,
+	DISPID_ICGetGestureStatus,
+	DISPID_ICDynamicRendering,
+	DISPID_ICDesiredPacketDescription,
+	DISPID_IOEraserMode,
+	DISPID_IOEraserWidth,
+	DISPID_ICMouseIcon,
+	DISPID_ICMousePointer,
+	DISPID_IPInkEnabled,
+	DISPID_ICSupportHighContrastInk,
+	DISPID_IOSupportHighContrastSelectionUI
+	}
 
 .enum DISPID_InkRecognizer {
-	DISPID_RecoClsid	= 1,
-	DISPID_RecoName = ( DISPID_RecoClsid + 1 ) ,
-	DISPID_RecoVendor	= ( DISPID_RecoName + 1 ) ,
-	DISPID_RecoCapabilities = ( DISPID_RecoVendor + 1 ) ,
-	DISPID_RecoLanguageID	= ( DISPID_RecoCapabilities + 1 ) ,
-	DISPID_RecoPreferredPacketDescription	= ( DISPID_RecoLanguageID + 1 ) ,
-	DISPID_RecoCreateRecognizerContext	= ( DISPID_RecoPreferredPacketDescription + 1 ) ,
-	DISPID_RecoSupportedProperties	= ( DISPID_RecoCreateRecognizerContext + 1 )
-    }
+	DISPID_RecoClsid = 1,
+	DISPID_RecoName,
+	DISPID_RecoVendor,
+	DISPID_RecoCapabilities,
+	DISPID_RecoLanguageID,
+	DISPID_RecoPreferredPacketDescription,
+	DISPID_RecoCreateRecognizerContext,
+	DISPID_RecoSupportedProperties
+	}
 
 .enum InkRecognizerCapabilities {
-	IRC_DontCare	= 1,
-	IRC_Object	= 2,
-	IRC_FreeInput	= 4,
-	IRC_LinedInput	= 8,
-	IRC_BoxedInput	= 16,
+	IRC_DontCare		= 1,
+	IRC_Object		= 2,
+	IRC_FreeInput		= 4,
+	IRC_LinedInput		= 8,
+	IRC_BoxedInput		= 16,
 	IRC_CharacterAutoCompletionInput	= 32,
 	IRC_RightAndDown	= 64,
-	IRC_LeftAndDown = 128,
-	IRC_DownAndLeft = 256,
+	IRC_LeftAndDown		= 128,
+	IRC_DownAndLeft		= 256,
 	IRC_DownAndRight	= 512,
 	IRC_ArbitraryAngle	= 1024,
-	IRC_Lattice	= 2048,
+	IRC_Lattice		= 2048,
 	IRC_AdviseInkChange	= 4096,
 	IRC_StrokeReorder	= 8192,
 	IRC_Personalizable	= 16384,
 	IRC_PrefersArbitraryAngle	= 32768,
 	IRC_PrefersParagraphBreaking	= 65536,
 	IRC_PrefersSegmentation = 131072,
-	IRC_Cursive	= 262144,
+	IRC_Cursive		= 262144,
 	IRC_TextPrediction	= 524288,
-	IRC_Alpha	= 1048576,
-	IRC_Beta	= 2097152
-    }
+	IRC_Alpha		= 1048576,
+	IRC_Beta		= 2097152
+	}
 
 .enum DISPID_InkRecognizer2 {
 	DISPID_RecoId	= DISPID_VALUE,
 	DISPID_RecoUnicodeRanges	= 1
-    }
+	}
 
 .enum DISPID_InkRecognizers {
 	DISPID_IRecos_NewEnum	= DISPID_NEWENUM,
 	DISPID_IRecosItem	= DISPID_VALUE,
 	DISPID_IRecosCount	= 1,
-	DISPID_IRecosGetDefaultRecognizer	= ( DISPID_IRecosCount + 1 )
-    }
+	DISPID_IRecosGetDefaultRecognizer
+	}
 
 .enum InkRecognizerCharacterAutoCompletionMode {
-	IRCACM_Full	= 0,
-	IRCACM_Prefix	= ( IRCACM_Full + 1 ) ,
-	IRCACM_Random	= ( IRCACM_Prefix + 1 )
-    }
+	IRCACM_Full,
+	IRCACM_Prefix,
+	IRCACM_Random
+	}
 
 .enum InkRecognitionModes {
-	IRM_None	= 0,
-	IRM_WordModeOnly	= 0x1,
-	IRM_Coerce	= 0x2,
-	IRM_TopInkBreaksOnly	= 0x4,
-	IRM_PrefixOk	= 0x8,
-	IRM_LineMode	= 0x10,
+	IRM_None			= 0,
+	IRM_WordModeOnly		= 0x1,
+	IRM_Coerce			= 0x2,
+	IRM_TopInkBreaksOnly		= 0x4,
+	IRM_PrefixOk			= 0x8,
+	IRM_LineMode			= 0x10,
 	IRM_DisablePersonalization	= 0x20,
-	IRM_AutoSpace	= 0x40,
-	IRM_Max = 0x80
-    }
+	IRM_AutoSpace			= 0x40,
+	IRM_Max				= 0x80
+	}
 
 .enum DISPID_InkRecognitionEvent {
 	DISPID_IRERecognitionWithAlternates	= 1,
-	DISPID_IRERecognition	= ( DISPID_IRERecognitionWithAlternates + 1 )
-    }
+	DISPID_IRERecognition
+	}
 
 .enum DISPID_InkRecoContext {
 	DISPID_IRecoCtx_Strokes = 1,
-	DISPID_IRecoCtx_CharacterAutoCompletionMode	= ( DISPID_IRecoCtx_Strokes + 1 ) ,
-	DISPID_IRecoCtx_Factoid = ( DISPID_IRecoCtx_CharacterAutoCompletionMode + 1 ) ,
-	DISPID_IRecoCtx_WordList	= ( DISPID_IRecoCtx_Factoid + 1 ) ,
-	DISPID_IRecoCtx_Recognizer	= ( DISPID_IRecoCtx_WordList + 1 ) ,
-	DISPID_IRecoCtx_Guide	= ( DISPID_IRecoCtx_Recognizer + 1 ) ,
-	DISPID_IRecoCtx_Flags	= ( DISPID_IRecoCtx_Guide + 1 ) ,
-	DISPID_IRecoCtx_PrefixText	= ( DISPID_IRecoCtx_Flags + 1 ) ,
-	DISPID_IRecoCtx_SuffixText	= ( DISPID_IRecoCtx_PrefixText + 1 ) ,
-	DISPID_IRecoCtx_StopRecognition = ( DISPID_IRecoCtx_SuffixText + 1 ) ,
-	DISPID_IRecoCtx_Clone	= ( DISPID_IRecoCtx_StopRecognition + 1 ) ,
-	DISPID_IRecoCtx_Recognize	= ( DISPID_IRecoCtx_Clone + 1 ) ,
-	DISPID_IRecoCtx_StopBackgroundRecognition	= ( DISPID_IRecoCtx_Recognize + 1 ) ,
-	DISPID_IRecoCtx_EndInkInput	= ( DISPID_IRecoCtx_StopBackgroundRecognition + 1 ) ,
-	DISPID_IRecoCtx_BackgroundRecognize	= ( DISPID_IRecoCtx_EndInkInput + 1 ) ,
-	DISPID_IRecoCtx_BackgroundRecognizeWithAlternates	= ( DISPID_IRecoCtx_BackgroundRecognize + 1 ) ,
-	DISPID_IRecoCtx_IsStringSupported	= ( DISPID_IRecoCtx_BackgroundRecognizeWithAlternates + 1 )
-    }
+	DISPID_IRecoCtx_CharacterAutoCompletionMode,
+	DISPID_IRecoCtx_Factoid,
+	DISPID_IRecoCtx_WordList,
+	DISPID_IRecoCtx_Recognizer,
+	DISPID_IRecoCtx_Guide,
+	DISPID_IRecoCtx_Flags,
+	DISPID_IRecoCtx_PrefixText,
+	DISPID_IRecoCtx_SuffixText,
+	DISPID_IRecoCtx_StopRecognition,
+	DISPID_IRecoCtx_Clone,
+	DISPID_IRecoCtx_Recognize,
+	DISPID_IRecoCtx_StopBackgroundRecognition,
+	DISPID_IRecoCtx_EndInkInput,
+	DISPID_IRecoCtx_BackgroundRecognize,
+	DISPID_IRecoCtx_BackgroundRecognizeWithAlternates,
+	DISPID_IRecoCtx_IsStringSupported
+	}
 
 .enum DISPID_InkRecoContext2 {
 	DISPID_IRecoCtx2_EnabledUnicodeRanges	= DISPID_VALUE
-    }
+	}
 
 .enum InkRecognitionAlternatesSelection {
 	IRAS_Start	= 0,
 	IRAS_DefaultCount	= 10,
 	IRAS_All	= -1
-    }
+	}
 
 .enum DISPID_InkRecognitionResult {
 	DISPID_InkRecognitionResult_TopString	= 1,
-	DISPID_InkRecognitionResult_TopAlternate	= ( DISPID_InkRecognitionResult_TopString + 1 ) ,
-	DISPID_InkRecognitionResult_Strokes	= ( DISPID_InkRecognitionResult_TopAlternate + 1 ) ,
-	DISPID_InkRecognitionResult_TopConfidence	= ( DISPID_InkRecognitionResult_Strokes + 1 ) ,
-	DISPID_InkRecognitionResult_AlternatesFromSelection	= ( DISPID_InkRecognitionResult_TopConfidence + 1 ) ,
-	DISPID_InkRecognitionResult_ModifyTopAlternate	= ( DISPID_InkRecognitionResult_AlternatesFromSelection + 1 ) ,
-	DISPID_InkRecognitionResult_SetResultOnStrokes	= ( DISPID_InkRecognitionResult_ModifyTopAlternate + 1 )
-    }
+	DISPID_InkRecognitionResult_TopAlternate,
+	DISPID_InkRecognitionResult_Strokes,
+	DISPID_InkRecognitionResult_TopConfidence,
+	DISPID_InkRecognitionResult_AlternatesFromSelection,
+	DISPID_InkRecognitionResult_ModifyTopAlternate,
+	DISPID_InkRecognitionResult_SetResultOnStrokes
+	}
 
 .enum DISPID_InkRecoAlternate {
 	DISPID_InkRecoAlternate_String	= 1,
-	DISPID_InkRecoAlternate_LineNumber	= ( DISPID_InkRecoAlternate_String + 1 ) ,
-	DISPID_InkRecoAlternate_Baseline	= ( DISPID_InkRecoAlternate_LineNumber + 1 ) ,
-	DISPID_InkRecoAlternate_Midline = ( DISPID_InkRecoAlternate_Baseline + 1 ) ,
-	DISPID_InkRecoAlternate_Ascender	= ( DISPID_InkRecoAlternate_Midline + 1 ) ,
-	DISPID_InkRecoAlternate_Descender	= ( DISPID_InkRecoAlternate_Ascender + 1 ) ,
-	DISPID_InkRecoAlternate_Confidence	= ( DISPID_InkRecoAlternate_Descender + 1 ) ,
-	DISPID_InkRecoAlternate_Strokes = ( DISPID_InkRecoAlternate_Confidence + 1 ) ,
-	DISPID_InkRecoAlternate_GetStrokesFromStrokeRanges	= ( DISPID_InkRecoAlternate_Strokes + 1 ) ,
-	DISPID_InkRecoAlternate_GetStrokesFromTextRange = ( DISPID_InkRecoAlternate_GetStrokesFromStrokeRanges + 1 ) ,
-	DISPID_InkRecoAlternate_GetTextRangeFromStrokes = ( DISPID_InkRecoAlternate_GetStrokesFromTextRange + 1 ) ,
-	DISPID_InkRecoAlternate_GetPropertyValue	= ( DISPID_InkRecoAlternate_GetTextRangeFromStrokes + 1 ) ,
-	DISPID_InkRecoAlternate_LineAlternates	= ( DISPID_InkRecoAlternate_GetPropertyValue + 1 ) ,
-	DISPID_InkRecoAlternate_ConfidenceAlternates	= ( DISPID_InkRecoAlternate_LineAlternates + 1 ) ,
-	DISPID_InkRecoAlternate_AlternatesWithConstantPropertyValues	= ( DISPID_InkRecoAlternate_ConfidenceAlternates + 1 )
-    }
+	DISPID_InkRecoAlternate_LineNumber,
+	DISPID_InkRecoAlternate_Baseline,
+	DISPID_InkRecoAlternate_Midline,
+	DISPID_InkRecoAlternate_Ascender,
+	DISPID_InkRecoAlternate_Descender,
+	DISPID_InkRecoAlternate_Confidence,
+	DISPID_InkRecoAlternate_Strokes,
+	DISPID_InkRecoAlternate_GetStrokesFromStrokeRanges,
+	DISPID_InkRecoAlternate_GetStrokesFromTextRange,
+	DISPID_InkRecoAlternate_GetTextRangeFromStrokes,
+	DISPID_InkRecoAlternate_GetPropertyValue,
+	DISPID_InkRecoAlternate_LineAlternates,
+	DISPID_InkRecoAlternate_ConfidenceAlternates,
+	DISPID_InkRecoAlternate_AlternatesWithConstantPropertyValues
+	}
 
 .enum DISPID_InkRecognitionAlternates {
 	DISPID_InkRecognitionAlternates_NewEnum = DISPID_NEWENUM,
 	DISPID_InkRecognitionAlternates_Item	= DISPID_VALUE,
 	DISPID_InkRecognitionAlternates_Count	= 1,
-	DISPID_InkRecognitionAlternates_Strokes = ( DISPID_InkRecognitionAlternates_Count + 1 )
-    }
+	DISPID_InkRecognitionAlternates_Strokes
+	}
 
 InkRecoGuide		struct
 rectWritingBox		RECT <>
@@ -891,23 +886,23 @@ midline			sdword ?
 InkRecoGuide		ends
 
 .enum DISPID_InkRecognizerGuide {
-	DISPID_IRGWritingBox	= 1,
-	DISPID_IRGDrawnBox	= ( DISPID_IRGWritingBox + 1 ) ,
-	DISPID_IRGRows	= ( DISPID_IRGDrawnBox + 1 ) ,
-	DISPID_IRGColumns	= ( DISPID_IRGRows + 1 ) ,
-	DISPID_IRGMidline	= ( DISPID_IRGColumns + 1 ) ,
-	DISPID_IRGGuideData	= ( DISPID_IRGMidline + 1 )
-    }
+	DISPID_IRGWritingBox = 1,
+	DISPID_IRGDrawnBox,
+	DISPID_IRGRows,
+	DISPID_IRGColumns,
+	DISPID_IRGMidline,
+	DISPID_IRGGuideData
+	}
 
 .enum DISPID_InkWordList {
-	DISPID_InkWordList_AddWord	= 0,
-	DISPID_InkWordList_RemoveWord	= ( DISPID_InkWordList_AddWord + 1 ) ,
-	DISPID_InkWordList_Merge	= ( DISPID_InkWordList_RemoveWord + 1 )
-    }
+	DISPID_InkWordList_AddWord,
+	DISPID_InkWordList_RemoveWord,
+	DISPID_InkWordList_Merge
+	}
 
 .enum DISPID_InkWordList2 {
 	DISPID_InkWordList2_AddWords	= ( DISPID_InkWordList_Merge + 1 )
-    }
+	}
 
 externdef LIBID_MSINKAUTLib:IID
 

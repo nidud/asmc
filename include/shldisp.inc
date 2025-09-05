@@ -1,27 +1,14 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __shldisp_h__
 define __shldisp_h__
 
 include ocidl.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -30,11 +17,11 @@ define __Shell32_LIBRARY_DEFINED__
 
 
 .enum OfflineFolderStatus {
-    OFS_INACTIVE	= -1,
-    OFS_ONLINE		= ( OFS_INACTIVE + 1 ) ,
-    OFS_OFFLINE		= ( OFS_ONLINE + 1 ) ,
-    OFS_SERVERBACK	= ( OFS_OFFLINE + 1 ) ,
-    OFS_DIRTYCACHE	= ( OFS_SERVERBACK + 1 )
+    OFS_INACTIVE = -1,
+    OFS_ONLINE,
+    OFS_OFFLINE,
+    OFS_SERVERBACK,
+    OFS_DIRTYCACHE
     }
 
 .enum ShellFolderViewOptions {

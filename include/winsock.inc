@@ -1,10 +1,9 @@
-ifndef __LIBC_INC
- include libc.inc
-endif
 ifndef _WINSOCKAPI_
 define _WINSOCKAPI_
-
-ifndef _INC_WINDOWS
+ifndef _LIBC_
+include libc.inc
+endif
+ifndef _WINDOWS_
 include windows.inc
 endif
 

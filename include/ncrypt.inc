@@ -1,19 +1,21 @@
-include winapifamily.inc
 ifndef __NCRYPT_H__
 define __NCRYPT_H__
-
-ifndef __SECSTATUS_DEFINED__
-SECURITY_STATUS		typedef LONG
-define __SECSTATUS_DEFINED__
+ifndef _WINAPIFAMILY_
+include winapifamily.inc
 endif
 
+ifndef __SECSTATUS_DEFINED__
+SECURITY_STATUS typedef LONG
+define __SECSTATUS_DEFINED__
+endif
+ifndef __BCRYPT_H__
 include bcrypt.inc
-
+endif
 ifndef HCRYPTPROV_DEFINED
 define HCRYPTPROV_DEFINED
-HCRYPTPROV		typedef ULONG_PTR
-HCRYPTKEY		typedef ULONG_PTR
-HCRYPTHASH		typedef ULONG_PTR
+HCRYPTPROV	typedef ULONG_PTR
+HCRYPTKEY	typedef ULONG_PTR
+HCRYPTHASH	typedef ULONG_PTR
 endif
 
 NCRYPT_MAX_KEY_NAME_LENGTH equ 512

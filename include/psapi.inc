@@ -1,7 +1,9 @@
 ifndef _PSAPI_H_
 define _PSAPI_H_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .pragma comment(lib, psapi)
 

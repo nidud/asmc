@@ -10,7 +10,9 @@ endif
 
 ifndef GUID_DEFS_ONLY
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 include nldef.inc
 
 ifndef _TRANSPORT_SETTING_COMMON_
@@ -258,7 +260,7 @@ endif
 
 SIO_QUERY_WFP_ALE_ENDPOINT_HANDLE equ _WSAIOR(IOC_VENDOR, 205)
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif
 
 SIO_QUERY_RSS_SCALABILITY_INFO equ _WSAIOR(IOC_VENDOR, 210)
 
@@ -307,12 +309,12 @@ INET_IS_ALIGNED macro Pointer, T
 	exitm<((Pointer & (sizeof(T)-1)) EQ 0)>
 	endm
 
-endif ;; _WS2DEF_
+endif
 
 
 ifdef _WS2IPDEF_
 
-endif ;; _WS2IPDEF_
+endif
 
 ;endif ;; (NTDDI_VERSION GE NTDDI_WIN2KSP1)
 
@@ -343,9 +345,9 @@ RtlIpv4AddressToString	equ <RtlIpv4AddressToStringA>
 RtlIpv4StringToAddress	equ <RtlIpv4StringToAddressA>
 RtlIpv4AddressToStringEx equ <RtlIpv4AddressToStringExA>
 RtlIpv4StringToAddressEx equ <RtlIpv4StringToAddressExA>
-endif ;; UNICODE
+endif
 
-endif ;;_WS2DEF_
+endif
 
 ifdef _WS2IPDEF_
 
@@ -368,9 +370,9 @@ RtlIpv6AddressToString	equ <RtlIpv6AddressToStringA>
 RtlIpv6StringToAddress	equ <RtlIpv6StringToAddressA>
 RtlIpv6StringToAddressEx equ <RtlIpv6StringToAddressExA>
 RtlIpv6AddressToStringEx equ <RtlIpv6AddressToStringExA>
-endif ;; UNICODE
+endif
 
-endif ;; __WS2IPDEF__
+endif
 
 ifdef _WS2DEF_
 
@@ -385,12 +387,12 @@ RtlEthernetStringToAddress equ <RtlEthernetStringToAddressW>
 else
 RtlEthernetAddressToString equ <RtlEthernetAddressToStringA>
 RtlEthernetStringToAddress equ <RtlEthernetStringToAddressA>
-endif ;; UNICODE
+endif
 
-endif ;;_WS2DEF_
+endif
 
-endif ;; (NTDDI GE NTDDI_VISTA)
-endif ;; __IP2STRING__
+endif
+endif
 
-endif ;; GUID_DEFS_ONLY
-endif ;; NOT _MSTCPIP_
+endif
+endif

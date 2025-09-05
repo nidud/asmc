@@ -1,16 +1,8 @@
 .pragma list(push, 0)
 
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 475
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __dxgi1_2_h__
 define __dxgi1_2_h__
 

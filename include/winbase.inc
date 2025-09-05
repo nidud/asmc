@@ -1,16 +1,16 @@
 .pragma list(push, 0)
 ifndef _WINBASE_
 define _WINBASE_
-ifndef __LIBC_INC
+ifndef _LIBC_
 include libc.inc
 endif
 
 ifdef _WIN64
 .pragma pack(push, 8)
 endif
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-
+endif
 .pragma comment(lib, kernel32)
 
 include apisetcconv.inc

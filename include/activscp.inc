@@ -1,23 +1,6 @@
-.pragma list(push, 0)
-
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 475
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __activscp_h__
 define __activscp_h__
 
@@ -60,7 +43,7 @@ DEFINE_GUID(OID_JSSIP,	0x6c9e010, 0x38ce, 0x11d4, 0xa2, 0xa3, 0x00, 0x10, 0x4b, 
 DEFINE_GUID(OID_WSFSIP, 0x1a610570, 0x38ce, 0x11d4, 0xa2, 0xa3, 0x00, 0x10, 0x4b, 0xd3, 0x50, 0x90)
 DEFINE_GUID(IID_IActiveScriptStringCompare, 0x58562769, 0xED52, 0x42f7, 0x84, 0x03, 0x49, 0x63, 0x51, 0x4E, 0x1F, 0x11)
 
-endif ;; _NO_SCRIPT_GUIDS
+endif
 
 SCRIPTITEM_ISVISIBLE	equ 0x00000002
 SCRIPTITEM_ISSOURCE	equ 0x00000004
@@ -514,35 +497,4 @@ endif
 
 endif
 
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
-
 endif
-.pragma list(pop)

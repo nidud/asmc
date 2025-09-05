@@ -1,3 +1,5 @@
+include srcpath
+
 ifndef CC
 CC = LIBW
 endif
@@ -120,15 +122,15 @@ targets = \
 	wsock32.lib	\
 	wtsapi32.lib
 
-{def}.def.lib:
-	$(CC) /NOLOGO /MACHINE:X86 /OUT:$*.lib /DEF:$<
+{$(lib_dir)\x86\def}.def.lib:
+	$(CC) /NOLOGO /MACHINE:X86 /OUT:$(lib_dir)\x86\$*.lib /DEF:$<
 
 build: $(targets)
 
 import:
-	if not exist ..\..\bin\impdef32.exe (
-	   asmc -pe -Fo..\..\bin\impdef32.exe ..\..\source\tools\impdef\impdef.asm
+	if not exist %AsmcDir%\bin\impdef32.exe (
+	   asmc -pe -Fo%AsmcDir%\bin\impdef32.exe $(src_dir)\tools\impdef\impdef.asm
 	)
-	md def
-	impdef32 -pdef -c msvcrt sensorsapi wldap32
-	impdef32 -pdef $(targets)
+	md $(lib_dir)\x86\def
+	impdef32 -p$(lib_dir)\x86\def -c msvcrt sensorsapi wldap32
+	impdef32 -p$(lib_dir)\x86\def $(targets)

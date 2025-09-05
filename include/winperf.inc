@@ -1,8 +1,8 @@
 ifndef _WINPERF_
 define _WINPERF_
 .pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 PERF_DATA_VERSION	equ 1

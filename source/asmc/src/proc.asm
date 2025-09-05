@@ -2818,9 +2818,20 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:proc_t
         ;
         ; Reverse order from 0 to n
         ;
-        .for ( rdi = [rsi].paralist, ecx = params, ecx -= ebx, ecx-- : ecx : ecx-- )
-
-            .break .if ( ecx <= varargs )
+        mov eax,varargs
+        mov ecx,params
+        .if ( eax )
+            lea ecx,[rax-1]
+            .if ( ebx >= ecx )
+                xor ecx,ecx
+            .else
+                sub ecx,ebx
+            .endif
+        .else
+            sub ecx,ebx
+            dec ecx
+        .endif
+        .for ( rdi = [rsi].paralist : ecx : ecx-- )
             mov rdi,[rdi].asym.nextparam
         .endf
         ;
@@ -2840,7 +2851,7 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:proc_t
                     mov [rdi].asym.offs,eax
                 .endif
 
-                .if ( [rdi].asym.used || varargs || Parse_Pass == PASS_1 )
+                .if ( [rdi].asym.used || Parse_Pass == PASS_1 )
 
                     mov index,win64_MoveRegParam( index, size, rdi )
                 .endif

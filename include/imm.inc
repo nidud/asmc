@@ -1,14 +1,11 @@
-.pragma list(push, 0)
-
-ifndef __LIBC_INC
+ifndef _IMM_
+define _IMM_
+ifndef _LIBC_
 include libc.inc
 endif
 ifndef _WINDEF_
 include windef.inc
 endif
-
-ifndef _IMM_
-define _IMM_
 
 if (WINVER GE 0x40A)
 HIMC		typedef HANDLE
@@ -20,7 +17,6 @@ endif
 
 LPHKL		typedef ptr HKL
 LPUINT		typedef ptr UINT
-
 
 COMPOSITIONFORM		STRUC
 dwStyle			dd ?
@@ -82,7 +78,6 @@ NPREGISTERWORD		typedef NPREGISTERWORDA
 LPREGISTERWORD		typedef LPREGISTERWORDA
 endif
 
-
 if(WINVER GE 0x040A)
 RECONVERTSTRING		STRUC
 dwSize			dd ?
@@ -126,7 +121,6 @@ PSTYLEBUF		typedef PSTYLEBUFA
 NPSTYLEBUF		typedef NPSTYLEBUFA
 LPSTYLEBUF		typedef LPSTYLEBUFA
 endif
-
 
 if(WINVER GE 0x040A)
 
@@ -172,7 +166,6 @@ NPIMEMENUITEMINFO	typedef NPIMEMENUITEMINFOA
 LPIMEMENUITEMINFO	typedef LPIMEMENUITEMINFOA
 endif
 endif
-
 
 ImmInstallIMEA proto WINAPI :LPCSTR, :LPCSTR
 ImmInstallIMEW proto WINAPI :LPCWSTR, :LPCWSTR
@@ -661,5 +654,3 @@ define SOFTKEYBOARD_TYPE_T1 0x0001
 define SOFTKEYBOARD_TYPE_C1 0x0002
 
 endif
-.pragma list(pop)
-

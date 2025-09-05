@@ -1,8 +1,8 @@
 ifndef _INC_MALLOC
 define _INC_MALLOC
 .pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 .pragma comment(lib, libc, msvcrt)
 

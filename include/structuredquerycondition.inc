@@ -1,48 +1,40 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 475
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
- .err <this stub requires an updated version of rpcndr>
-endif
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 ifndef __structuredquerycondition_h__
 define __structuredquerycondition_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 include propidl.inc
 
 .enum CONDITION_TYPE {
-    CT_AND_CONDITION	= 0,
-    CT_OR_CONDITION	= ( CT_AND_CONDITION + 1 ),
-    CT_NOT_CONDITION	= ( CT_OR_CONDITION + 1 ),
-    CT_LEAF_CONDITION	= ( CT_NOT_CONDITION + 1 )
+    CT_AND_CONDITION,
+    CT_OR_CONDITION,
+    CT_NOT_CONDITION,
+    CT_LEAF_CONDITION
 }
 
 .enum CONDITION_OPERATION {
-    COP_IMPLICIT	= 0,
-    COP_EQUAL		= ( COP_IMPLICIT + 1 ),
-    COP_NOTEQUAL	= ( COP_EQUAL + 1 ),
-    COP_LESSTHAN	= ( COP_NOTEQUAL + 1 ),
-    COP_GREATERTHAN	= ( COP_LESSTHAN + 1 ),
-    COP_LESSTHANOREQUAL = ( COP_GREATERTHAN + 1 ),
-    COP_GREATERTHANOREQUAL = ( COP_LESSTHANOREQUAL + 1 ),
-    COP_VALUE_STARTSWITH = ( COP_GREATERTHANOREQUAL + 1 ),
-    COP_VALUE_ENDSWITH	= ( COP_VALUE_STARTSWITH + 1 ),
-    COP_VALUE_CONTAINS	= ( COP_VALUE_ENDSWITH + 1 ),
-    COP_VALUE_NOTCONTAINS = ( COP_VALUE_CONTAINS + 1 ),
-    COP_DOSWILDCARDS	= ( COP_VALUE_NOTCONTAINS + 1 ),
-    COP_WORD_EQUAL	= ( COP_DOSWILDCARDS + 1 ),
-    COP_WORD_STARTSWITH = ( COP_WORD_EQUAL + 1 ),
-    COP_APPLICATION_SPECIFIC = ( COP_WORD_STARTSWITH + 1 )
+    COP_IMPLICIT,
+    COP_EQUAL,
+    COP_NOTEQUAL,
+    COP_LESSTHAN,
+    COP_GREATERTHAN,
+    COP_LESSTHANOREQUAL,
+    COP_GREATERTHANOREQUAL,
+    COP_VALUE_STARTSWITH,
+    COP_VALUE_ENDSWITH,
+    COP_VALUE_CONTAINS,
+    COP_VALUE_NOTCONTAINS,
+    COP_DOSWILDCARDS,
+    COP_WORD_EQUAL,
+    COP_WORD_STARTSWITH,
+    COP_APPLICATION_SPECIFIC
 }
 
 ifndef __IRichChunk_INTERFACE_DEFINED__
@@ -84,15 +76,5 @@ externdef IID_ICondition2:IID
     GetLeafConditionInfo proc :ptr, :ptr, :ptr
    .ends
 endif
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
 
 endif

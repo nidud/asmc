@@ -1,11 +1,13 @@
 ifndef __RPCDCE_H__
 define __RPCDCE_H__
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-
+endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
+ifndef SPECSTRINGS_H
 include specstrings.inc
-
+endif
 RPC_CSTR                typedef ptr __RPC_FAR
 
 if defined(RPC_USE_NATIVE_WCHAR) and defined(_NATIVE_WCHAR_T_DEFINED)

@@ -1,9 +1,8 @@
 ifndef _INTERLOCKAPI_H_
 define _INTERLOCKAPI_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
 
 ifndef NOWINBASEINTERLOCK
 ifndef _NTOS_

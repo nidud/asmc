@@ -1,19 +1,5 @@
-.pragma list(push, 0)
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr>
-endif
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __shobjidl_h__
@@ -21,7 +7,9 @@ define __shobjidl_h__
 
 include objidl.inc
 include oleidl.inc
+ifndef __oaidl_h__
 include oaidl.inc
+endif
 include docobj.inc
 include shtypes.inc
 include comcat.inc
@@ -5659,10 +5647,10 @@ if (NTDDI_VERSION GE NTDDI_WINBLUE)
 
 .enum FLYOUT_PLACEMENT {
     FP_DEFAULT,
-    FP_ABOVE = ( FP_DEFAULT + 1 ),
-    FP_BELOW = ( FP_ABOVE + 1 ),
-    FP_LEFT = ( FP_BELOW + 1 ),
-    FP_RIGHT = ( FP_LEFT + 1 )
+    FP_ABOVE,
+    FP_BELOW,
+    FP_LEFT,
+    FP_RIGHT
     }
 
 ifndef __IContactManagerInterop_INTERFACE_DEFINED__
@@ -5677,157 +5665,6 @@ DEFINE_IIDX(IContactManagerInterop, "99eacba7-e073-43b6-a896-55afe48a0833")
 
 endif
 
-endif ;; NTDDI_WINBLUE
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-HACCEL_UserSize proto WINAPI :ptr, :dword, :ptr
-HACCEL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserFree proto WINAPI :ptr, :ptr
-
-HBITMAP_UserSize proto WINAPI :ptr, :dword, :ptr
-HBITMAP_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserFree proto WINAPI :ptr, :ptr
-
-HGLOBAL_UserSize proto WINAPI :ptr, :dword, :ptr
-HGLOBAL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HGLOBAL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HGLOBAL_UserFree proto WINAPI :ptr, :ptr
-
-HICON_UserSize proto WINAPI :ptr, :dword, :ptr
-HICON_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HICON_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HICON_UserFree proto WINAPI :ptr, :ptr
-
-HMENU_UserSize proto WINAPI :ptr, :dword, :ptr
-HMENU_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
-
-PCIDLIST_ABSOLUTE_UserSize proto WINAPI :ptr, :dword, :ptr
-PCIDLIST_ABSOLUTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-PCIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-PCIDLIST_ABSOLUTE_UserFree proto WINAPI :ptr, :ptr
-
-PCUIDLIST_RELATIVE_UserSize proto WINAPI :ptr, :dword, :ptr
-PCUIDLIST_RELATIVE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-PCUIDLIST_RELATIVE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-PCUIDLIST_RELATIVE_UserFree proto WINAPI :ptr, :ptr
-
-PCUITEMID_CHILD_UserSize proto WINAPI :ptr, :dword, :ptr
-PCUITEMID_CHILD_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-PCUITEMID_CHILD_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-PCUITEMID_CHILD_UserFree proto WINAPI :ptr, :ptr
-
-PIDLIST_ABSOLUTE_UserSize proto WINAPI :ptr, :dword, :ptr
-PIDLIST_ABSOLUTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-PIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-PIDLIST_ABSOLUTE_UserFree proto WINAPI :ptr, :ptr, :ptr
-
-PIDLIST_RELATIVE_UserSize proto WINAPI :ptr, :dword, :ptr
-PIDLIST_RELATIVE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-PIDLIST_RELATIVE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-PIDLIST_RELATIVE_UserFree proto WINAPI :ptr, :ptr
-
-PITEMID_CHILD_UserSize	proto WINAPI :ptr, :dword, :ptr
-PITEMID_CHILD_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-PITEMID_CHILD_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-PITEMID_CHILD_UserFree	proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-HACCEL_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HACCEL_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserFree64 proto WINAPI :ptr, :ptr
-
-HBITMAP_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HBITMAP_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserFree64 proto WINAPI :ptr, :ptr
-
-HGLOBAL_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HGLOBAL_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HGLOBAL_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HGLOBAL_UserFree64 proto WINAPI :ptr, :ptr
-
-HICON_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HICON_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HICON_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HICON_UserFree64 proto WINAPI :ptr, :ptr
-
-HMENU_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HMENU_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserFree64 proto WINAPI :ptr, :ptr
-
-HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree64 proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
-
-PCIDLIST_ABSOLUTE_UserSize64 proto WINAPI :ptr, :dword, :ptr
-PCIDLIST_ABSOLUTE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-PCIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-PCIDLIST_ABSOLUTE_UserFree64 proto WINAPI :ptr, :ptr
-
-PCUIDLIST_RELATIVE_UserSize64 proto WINAPI :ptr, :dword, :ptr
-PCUIDLIST_RELATIVE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-PCUIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-PCUIDLIST_RELATIVE_UserFree64 proto WINAPI :ptr, :ptr
-
-PCUITEMID_CHILD_UserSize64 proto WINAPI :ptr, :dword, :ptr
-PCUITEMID_CHILD_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-PCUITEMID_CHILD_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-PCUITEMID_CHILD_UserFree64 proto WINAPI :ptr, :ptr
-
-PIDLIST_ABSOLUTE_UserSize64 proto WINAPI :ptr, :dword, :ptr
-PIDLIST_ABSOLUTE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-PIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-PIDLIST_ABSOLUTE_UserFree64 proto WINAPI :ptr, :ptr
-
-PIDLIST_RELATIVE_UserSize64 proto WINAPI :ptr, :dword, :ptr
-PIDLIST_RELATIVE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-PIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-PIDLIST_RELATIVE_UserFree64 proto WINAPI :ptr, :ptr
-
-PITEMID_CHILD_UserSize64 proto WINAPI :ptr, :dword, :ptr
-PITEMID_CHILD_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-PITEMID_CHILD_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-PITEMID_CHILD_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
+endif
 
 endif
-.pragma list(pop)

@@ -1,11 +1,10 @@
 ifndef __SHELLAPI_INC
 define __SHELLAPI_INC
-
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 ifndef _WINDEF_
- include windef.inc
+include windef.inc
 endif
 
 .pragma comment(lib, shell32)

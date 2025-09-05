@@ -1,74 +1,21 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __evr_h__
 define __evr_h__
 
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 include propidl.inc
 include mfidl.inc
 include strmif.inc
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-if defined(__midl)
-.enum D3DFORMAT {
-    D3DFMT_UNKNOWN	= 0,
-    D3DFMT_R8G8B8	= 20,
-    D3DFMT_A8R8G8B8	= 21,
-    D3DFMT_X8R8G8B8	= 22,
-    D3DFMT_R5G6B5	= 23,
-    D3DFMT_X1R5G5B5	= 24,
-    D3DFMT_A1R5G5B5	= 25,
-    D3DFMT_A4R4G4B4	= 26,
-    D3DFMT_R3G3B2	= 27,
-    D3DFMT_A8	= 28,
-    D3DFMT_A8R3G3B2	= 29,
-    D3DFMT_X4R4G4B4	= 30,
-    D3DFMT_A2B10G10R10	= 31,
-    D3DFMT_G16R16	= 34,
-    D3DFMT_A8P8 = 40,
-    D3DFMT_P8	= 41,
-    D3DFMT_L8	= 50,
-    D3DFMT_A8L8 = 51,
-    D3DFMT_A4L4 = 52,
-    D3DFMT_V8U8 = 60,
-    D3DFMT_L6V5U5	= 61,
-    D3DFMT_X8L8V8U8	= 62,
-    D3DFMT_Q8W8V8U8	= 63,
-    D3DFMT_V16U16	= 64,
-    D3DFMT_W11V11U10	= 65,
-    D3DFMT_A2W10V10U10	= 67,
-    D3DFMT_D16_LOCKABLE = 70,
-    D3DFMT_D32	= 71,
-    D3DFMT_D15S1	= 73,
-    D3DFMT_D24S8	= 75,
-    D3DFMT_D16	= 80,
-    D3DFMT_D24X8	= 77,
-    D3DFMT_D24X4S4	= 79,
-    D3DFMT_VERTEXDATA	= 100,
-    D3DFMT_INDEX16	= 101,
-    D3DFMT_INDEX32	= 102,
-    D3DFMT_FORCE_DWORD	= 0x7fffffff
-    }
+endif
 
-endif ;; __midl
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 DEFINE_GUID(MR_VIDEO_RENDER_SERVICE, 0x1092a86c, 0xab1a, 0x459a, 0xa3, 0x36, 0x83, 0x1f, 0xbc, 0x4d, 0x11, 0xff)
 DEFINE_GUID(MR_VIDEO_MIXER_SERVICE, 0x73cd2fc, 0x6cf4, 0x40b7, 0x88, 0x59, 0xe8, 0x95, 0x52, 0xc8, 0x41, 0xf8);
@@ -159,14 +106,14 @@ DEFINE_IIDX(IMFVideoDisplayControl, "a490b1e4-ab84-4d31-a1b2-181e03b1077a")
 endif
 
 .enum MFVP_MESSAGE_TYPE {
-    MFVP_MESSAGE_FLUSH	= 0,
-    MFVP_MESSAGE_INVALIDATEMEDIATYPE	= 0x1,
-    MFVP_MESSAGE_PROCESSINPUTNOTIFY	= 0x2,
-    MFVP_MESSAGE_BEGINSTREAMING = 0x3,
-    MFVP_MESSAGE_ENDSTREAMING	= 0x4,
-    MFVP_MESSAGE_ENDOFSTREAM	= 0x5,
-    MFVP_MESSAGE_STEP	= 0x6,
-    MFVP_MESSAGE_CANCELSTEP	= 0x7
+    MFVP_MESSAGE_FLUSH,
+    MFVP_MESSAGE_INVALIDATEMEDIATYPE,
+    MFVP_MESSAGE_PROCESSINPUTNOTIFY,
+    MFVP_MESSAGE_BEGINSTREAMING,
+    MFVP_MESSAGE_ENDSTREAMING,
+    MFVP_MESSAGE_ENDOFSTREAM,
+    MFVP_MESSAGE_STEP,
+    MFVP_MESSAGE_CANCELSTEP
     }
 
 ifndef __IMFVideoPresenter_INTERFACE_DEFINED__
@@ -277,12 +224,12 @@ DEFINE_IIDX(IEVRFilterConfigEx, "aea36028-796d-454f-beee-b48071e24304")
 endif
 
 .enum MF_SERVICE_LOOKUP_TYPE {
-    MF_SERVICE_LOOKUP_UPSTREAM	= 0,
-    MF_SERVICE_LOOKUP_UPSTREAM_DIRECT	= ( MF_SERVICE_LOOKUP_UPSTREAM + 1 ) ,
-    MF_SERVICE_LOOKUP_DOWNSTREAM	= ( MF_SERVICE_LOOKUP_UPSTREAM_DIRECT + 1 ) ,
-    MF_SERVICE_LOOKUP_DOWNSTREAM_DIRECT = ( MF_SERVICE_LOOKUP_DOWNSTREAM + 1 ) ,
-    MF_SERVICE_LOOKUP_ALL	= ( MF_SERVICE_LOOKUP_DOWNSTREAM_DIRECT + 1 ) ,
-    MF_SERVICE_LOOKUP_GLOBAL	= ( MF_SERVICE_LOOKUP_ALL + 1 )
+    MF_SERVICE_LOOKUP_UPSTREAM,
+    MF_SERVICE_LOOKUP_UPSTREAM_DIRECT,
+    MF_SERVICE_LOOKUP_DOWNSTREAM,
+    MF_SERVICE_LOOKUP_DOWNSTREAM_DIRECT,
+    MF_SERVICE_LOOKUP_ALL,
+    MF_SERVICE_LOOKUP_GLOBAL
     }
 
 ifndef __IMFTopologyServiceLookup_INTERFACE_DEFINED__
@@ -328,15 +275,5 @@ ifndef MFEVRDLL
 MFEVRDLL		equ 0
 endif
 endif
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

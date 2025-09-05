@@ -1,10 +1,13 @@
-.pragma list(push, 0)
 ifndef _WINDEF_
 define _WINDEF_
-ifndef __LIBC_INC
- include libc.inc
+.pragma list(push, 0)
+
+ifndef _LIBC_
+include libc.inc
 endif
+ifndef _MINWINDEF_
 include minwindef.inc
+endif
 ifndef WINVER
 define WINVER 0x0500
 endif
@@ -241,6 +244,5 @@ define DC_PAPERNAMES	   16
 define DC_ORIENTATION	   17
 define DC_COPIES	   18
 
-endif
 .pragma list(pop)
-
+endif

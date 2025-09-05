@@ -100,7 +100,7 @@ IncludeLibrary proc __ccall uses rsi rbx name:string_t
 
     .for ( rbx = MODULE.LibQueue.head : rbx : rbx = [rbx].qitem.next )
 
-        .if ( tstrcmp( &[rbx].qitem.value, rsi ) == 0 )
+        .ifd ( tstricmp( &[rbx].qitem.value, rsi ) == 0 )
 
             .return( &[rbx].qitem.value )
         .endif
@@ -165,7 +165,13 @@ IncludeDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
             mov [rdx],ah
         .endf
     .endif
+ifdef ASMCINC
+    .new name:string_t = rcx
+endif
     .if SearchFile( rcx, TRUE )
+ifdef ASMCINC
+        tprintf("%s\n", name)
+endif
         ProcessFile( rbx ) ; v2.11: process the file synchronously
     .endif
     .return( NOT_ERROR )

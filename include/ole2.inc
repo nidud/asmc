@@ -1,13 +1,11 @@
 ifndef _OLE2_H_
 define _OLE2_H_
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-
-;ifndef WIN32
-;define WIN32	 100
-;endif
-
+endif
+ifndef _WINERROR_
 include winerror.inc
+endif
 include objbase.inc
 include oleauto.inc
 include coml2api.inc

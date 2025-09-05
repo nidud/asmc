@@ -1,3 +1,5 @@
+ifndef _LIMITS_
+define _LIMITS_
 .pragma list(push, 0)
 
 CHAR_BIT	equ 8		; number of bits in a char
@@ -44,3 +46,4 @@ SIZE_MAX	equ UINT_MAX
 endif
 
 .pragma list(pop)
+endif

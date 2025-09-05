@@ -1,20 +1,5 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __mfidl_h__
@@ -23,7 +8,9 @@ define __mfidl_h__
 include mfobjects.inc
 include mftransform.inc
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 include windef.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -88,8 +75,8 @@ DEFINE_GUID( MF_SESSION_REMOTE_SOURCE_MODE, 0xf4033ef4, 0x9bb3, 0x4378, 0x94, 0x
 DEFINE_GUID( MF_SESSION_APPROX_EVENT_OCCURRENCE_TIME, 0x190e852f, 0x6238, 0x42d1, 0xb5, 0xaf, 0x69, 0xea, 0x33, 0x8e, 0xf8, 0x50);
 DEFINE_GUID( MF_PMP_SERVER_CONTEXT, 0x2f00c910, 0xd2cf, 0x4278, 0x8b, 0x6a, 0xd0, 0x77, 0xfa, 0xc3, 0xa2, 0x5f);
 
-MFCreateMediaSession proto __cdecl :ptr, :ptr
-MFCreatePMPMediaSession proto __cdecl :DWORD, :ptr, :ptr, :ptr
+MFCreateMediaSession proto :ptr, :ptr
+MFCreatePMPMediaSession proto :DWORD, :ptr, :ptr, :ptr
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -97,9 +84,9 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 .enum MF_OBJECT_TYPE {
-    MF_OBJECT_MEDIASOURCE	= 0,
-    MF_OBJECT_BYTESTREAM	= ( MF_OBJECT_MEDIASOURCE + 1 ) ,
-    MF_OBJECT_INVALID	= ( MF_OBJECT_BYTESTREAM + 1 )
+    MF_OBJECT_MEDIASOURCE,
+    MF_OBJECT_BYTESTREAM,
+    MF_OBJECT_INVALID
     }
 
 
@@ -119,8 +106,8 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .enum MF_CONNECT_METHOD {
-    MF_CONNECT_DIRECT	= 0,
-    MF_CONNECT_ALLOW_CONVERTER	= 0x1,
+    MF_CONNECT_DIRECT,
+    MF_CONNECT_ALLOW_CONVERTER,
     MF_CONNECT_ALLOW_DECODER	= 0x3,
     MF_CONNECT_RESOLVE_INDEPENDENT_OUTPUTTYPES	= 0x4,
     MF_CONNECT_AS_OPTIONAL	= 0x10000,
@@ -128,9 +115,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     }
 
 .enum MF_TOPOLOGY_RESOLUTION_STATUS_FLAGS {
-    MF_TOPOLOGY_RESOLUTION_SUCCEEDED	= 0,
-    MF_OPTIONAL_NODE_REJECTED_MEDIA_TYPE	= 0x1,
-    MF_OPTIONAL_NODE_REJECTED_PROTECTED_PROCESS = 0x2
+    MF_TOPOLOGY_RESOLUTION_SUCCEEDED,
+    MF_OPTIONAL_NODE_REJECTED_MEDIA_TYPE,
+    MF_OPTIONAL_NODE_REJECTED_PROTECTED_PROCESS
     }
 
 endif
@@ -151,16 +138,6 @@ DEFINE_IIDX(IMFSourceResolver, "FBE5A32D-A497-4b61-BB85-97B1A848A6E3")
     EndCreateObjectFromByteStream proc :ptr, :ptr, :ptr
     CancelObjectCreation proc :ptr
    .ends
-
-
-IMFSourceResolver_RemoteBeginCreateObjectFromURL_Proxy proto __cdecl :ptr, :DWORD, :ptr, :ptr
-IMFSourceResolver_RemoteBeginCreateObjectFromURL_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_RemoteEndCreateObjectFromURL_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_RemoteEndCreateObjectFromURL_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_RemoteBeginCreateObjectFromByteStream_Proxy proto __cdecl :ptr, :ptr, :ptr, :DWORD, :ptr, :ptr
-IMFSourceResolver_RemoteBeginCreateObjectFromByteStream_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_RemoteEndCreateObjectFromByteStream_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_RemoteEndCreateObjectFromByteStream_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -240,9 +217,6 @@ DEFINE_IIDX(IMFMediaSource, "279a808d-aec7-40c8-9c6b-a6b492c78a66")
     Shutdown		proc
    .ends
 
-IMFMediaSource_RemoteCreatePresentationDescriptor_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFMediaSource_RemoteCreatePresentationDescriptor_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-
 endif
 endif
 
@@ -282,9 +256,6 @@ DEFINE_IIDX(IMFMediaStream, "D182108F-4EC6-443f-AA42-A71106EC825F")
     RequestSample	proc :ptr
    .ends
 
-IMFMediaStream_RemoteRequestSample_Proxy proto __cdecl :ptr
-IMFMediaStream_RemoteRequestSample_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-
 endif
 
 if (WINVER GE _WIN32_WINNT_WIN8)
@@ -319,10 +290,10 @@ DEFINE_IIDX(IMFMediaSink, "6ef2a660-47c0-4666-b13d-cbb717f2fa2c")
 endif
 
 .enum MFSTREAMSINK_MARKER_TYPE {
-    MFSTREAMSINK_MARKER_DEFAULT = 0,
-    MFSTREAMSINK_MARKER_ENDOFSEGMENT	= ( MFSTREAMSINK_MARKER_DEFAULT + 1 ) ,
-    MFSTREAMSINK_MARKER_TICK	= ( MFSTREAMSINK_MARKER_ENDOFSEGMENT + 1 ) ,
-    MFSTREAMSINK_MARKER_EVENT	= ( MFSTREAMSINK_MARKER_TICK + 1 )
+    MFSTREAMSINK_MARKER_DEFAULT,
+    MFSTREAMSINK_MARKER_ENDOFSEGMENT,
+    MFSTREAMSINK_MARKER_TICK,
+    MFSTREAMSINK_MARKER_EVENT
     }
 
 ifndef __IMFStreamSink_INTERFACE_DEFINED__
@@ -517,10 +488,10 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 MFCreateTopology proto __cdecl :ptr
 
 .enum MF_TOPOLOGY_TYPE {
-    MF_TOPOLOGY_OUTPUT_NODE = 0,
-    MF_TOPOLOGY_SOURCESTREAM_NODE	= ( MF_TOPOLOGY_OUTPUT_NODE + 1 ) ,
-    MF_TOPOLOGY_TRANSFORM_NODE	= ( MF_TOPOLOGY_SOURCESTREAM_NODE + 1 ) ,
-    MF_TOPOLOGY_TEE_NODE	= ( MF_TOPOLOGY_TRANSFORM_NODE + 1 ) ,
+    MF_TOPOLOGY_OUTPUT_NODE,
+    MF_TOPOLOGY_SOURCESTREAM_NODE,
+    MF_TOPOLOGY_TRANSFORM_NODE,
+    MF_TOPOLOGY_TEE_NODE,
     MF_TOPOLOGY_MAX = 0xffffffff
     }
 
@@ -549,25 +520,20 @@ DEFINE_IIDX(IMFTopologyNode, "83CF873A-F6DA-4bc8-823F-BACFD55DC430")
     CloneFrom		proc :ptr
    .ends
 
-IMFTopologyNode_RemoteGetOutputPrefType_Proxy proto __cdecl :ptr, :dword, :ptr, :ptr
-IMFTopologyNode_RemoteGetOutputPrefType_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFTopologyNode_RemoteGetInputPrefType_Proxy proto __cdecl :ptr, :dword, :ptr, :ptr
-IMFTopologyNode_RemoteGetInputPrefType_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-
 endif
 
 .enum MF_TOPONODE_FLUSH_MODE {
-    MF_TOPONODE_FLUSH_ALWAYS	= 0,
-    MF_TOPONODE_FLUSH_SEEK	= ( MF_TOPONODE_FLUSH_ALWAYS + 1 ) ,
-    MF_TOPONODE_FLUSH_NEVER = ( MF_TOPONODE_FLUSH_SEEK + 1 )
+    MF_TOPONODE_FLUSH_ALWAYS,
+    MF_TOPONODE_FLUSH_SEEK,
+    MF_TOPONODE_FLUSH_NEVER
     }
 
 DEFINE_GUID( MF_TOPONODE_FLUSH, 0x494bbce8, 0xb031, 0x4e38, 0x97, 0xc4, 0xd5, 0x42, 0x2d, 0xd6, 0x18, 0xdc);
 
 .enum MF_TOPONODE_DRAIN_MODE {
-    MF_TOPONODE_DRAIN_DEFAULT	= 0,
-    MF_TOPONODE_DRAIN_ALWAYS	= ( MF_TOPONODE_DRAIN_DEFAULT + 1 ) ,
-    MF_TOPONODE_DRAIN_NEVER = ( MF_TOPONODE_DRAIN_ALWAYS + 1 )
+    MF_TOPONODE_DRAIN_DEFAULT,
+    MF_TOPONODE_DRAIN_ALWAYS,
+    MF_TOPONODE_DRAIN_NEVER
     }
 
 DEFINE_GUID( MF_TOPONODE_DRAIN, 0x494bbce9, 0xb031, 0x4e38, 0x97, 0xc4, 0xd5, 0x42, 0x2d, 0xd6, 0x18, 0xdc);
@@ -634,10 +600,10 @@ MFTIME	typedef LONGLONG
     }
 
 .enum MFCLOCK_STATE {
-    MFCLOCK_STATE_INVALID	= 0,
-    MFCLOCK_STATE_RUNNING	= ( MFCLOCK_STATE_INVALID + 1 ) ,
-    MFCLOCK_STATE_STOPPED	= ( MFCLOCK_STATE_RUNNING + 1 ) ,
-    MFCLOCK_STATE_PAUSED	= ( MFCLOCK_STATE_STOPPED + 1 )
+    MFCLOCK_STATE_INVALID,
+    MFCLOCK_STATE_RUNNING,
+    MFCLOCK_STATE_STOPPED,
+    MFCLOCK_STATE_PAUSED
     }
 
 .enum MFCLOCK_RELATIONAL_FLAGS {
@@ -821,15 +787,6 @@ DEFINE_IIDX(IMFMediaTypeHandler, "e93dcf6c-4b07-4e1e-8123-aa16ed6eadf5")
     GetMajorType	proc :ptr
    .ends
 
-IMFMediaTypeHandler_RemoteIsMediaTypeSupported_Proxy proto __cdecl :ptr, :ptr, :dword, :ptr, :ptr
-IMFMediaTypeHandler_RemoteIsMediaTypeSupported_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFMediaTypeHandler_RemoteGetMediaTypeByIndex_Proxy proto __cdecl :ptr, :dword, :ptr, :ptr
-IMFMediaTypeHandler_RemoteGetMediaTypeByIndex_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFMediaTypeHandler_RemoteSetCurrentMediaType_Proxy proto __cdecl :ptr, :ptr, :dword
-IMFMediaTypeHandler_RemoteSetCurrentMediaType_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFMediaTypeHandler_RemoteGetCurrentMediaType_Proxy proto __cdecl :ptr, :ptr, :ptr
-IMFMediaTypeHandler_RemoteGetCurrentMediaType_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-
 endif
 endif
 
@@ -877,8 +834,8 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 .enum MFSHUTDOWN_STATUS {
-    MFSHUTDOWN_INITIATED	= 0,
-    MFSHUTDOWN_COMPLETED	= ( MFSHUTDOWN_INITIATED + 1 )
+    MFSHUTDOWN_INITIATED,
+    MFSHUTDOWN_COMPLETED
     }
 
 ifndef __IMFShutdown_INTERFACE_DEFINED__
@@ -960,17 +917,12 @@ DEFINE_IIDX(IMFContentProtectionManager, "ACF92459-6A61-42bd-B57C-B43E51203CB0")
     EndEnableContent	proc :ptr
    .ends
 
-IMFContentProtectionManager_RemoteBeginEnableContent_Proxy proto __cdecl :ptr, :REFCLSID, :ptr, :dword, :ptr
-IMFContentProtectionManager_RemoteBeginEnableContent_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFContentProtectionManager_RemoteEndEnableContent_Proxy proto __cdecl :ptr, :ptr
-IMFContentProtectionManager_RemoteEndEnableContent_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-
 endif
 
 .enum _MIDL___MIDL_itf_mfidl_0000_0027_0001 {
-    MF_LICENSE_URL_UNTRUSTED	= 0,
-    MF_LICENSE_URL_TRUSTED	= ( MF_LICENSE_URL_UNTRUSTED + 1 ) ,
-    MF_LICENSE_URL_TAMPERED = ( MF_LICENSE_URL_TRUSTED + 1 )
+    MF_LICENSE_URL_UNTRUSTED,
+    MF_LICENSE_URL_TRUSTED,
+    MF_LICENSE_URL_TAMPERED
     }
 
 ifndef __IMFContentEnabler_INTERFACE_DEFINED__
@@ -1288,23 +1240,6 @@ DEFINE_IIDX(IMFWorkQueueServices, "35FE1BB8-A3A9-40fe-BBEC-EB569C9CCCA3")
    .ends
 
 
-IMFWorkQueueServices_RemoteBeginRegisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_RemoteBeginRegisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFWorkQueueServices_RemoteEndRegisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_RemoteEndRegisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFWorkQueueServices_RemoteBeginUnregisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_RemoteBeginUnregisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFWorkQueueServices_RemoteEndUnregisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_RemoteEndUnregisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFWorkQueueServices_RemoteBeginRegisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :dword, :ptr, :dword, :ptr
-IMFWorkQueueServices_RemoteBeginRegisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFWorkQueueServices_RemoteEndRegisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :ptr, :ptr
-IMFWorkQueueServices_RemoteEndRegisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFWorkQueueServices_RemoteBeginUnregisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :dword, :ptr
-IMFWorkQueueServices_RemoteBeginUnregisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFWorkQueueServices_RemoteEndUnregisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_RemoteEndUnregisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-
 endif
 
 DEFINE_GUID( MF_WORKQUEUE_SERVICES, 0x8e37d489, 0x41e0, 0x413a, 0x90, 0x68, 0x28, 0x7c, 0x88, 0x6d, 0x8d, 0xda);
@@ -1321,32 +1256,29 @@ DEFINE_IIDX(IMFWorkQueueServicesEx, "96bf961b-40fe-42f1-ba9d-320238b49700")
     GetPlatformWorkQueueMMCSSPriority proc :DWORD, :ptr
    .ends
 
-IMFWorkQueueServicesEx_RemoteBeginRegisterPlatformWorkQueueWithMMCSSEx_Proxy proto __cdecl :ptr, :dword, :ptr, :dword, :ptr, :ptr
-IMFWorkQueueServicesEx_RemoteBeginRegisterPlatformWorkQueueWithMMCSSEx_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-
 endif
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 .enum MF_QUALITY_DROP_MODE {
-    MF_DROP_MODE_NONE	= 0,
-    MF_DROP_MODE_1	= 0x1,
-    MF_DROP_MODE_2	= 0x2,
-    MF_DROP_MODE_3	= 0x3,
-    MF_DROP_MODE_4	= 0x4,
-    MF_DROP_MODE_5	= 0x5,
-    MF_NUM_DROP_MODES	= 0x6
+    MF_DROP_MODE_NONE,
+    MF_DROP_MODE_1,
+    MF_DROP_MODE_2,
+    MF_DROP_MODE_3,
+    MF_DROP_MODE_4,
+    MF_DROP_MODE_5,
+    MF_NUM_DROP_MODES
     }
 
 .enum MF_QUALITY_LEVEL {
-    MF_QUALITY_NORMAL	= 0,
-    MF_QUALITY_NORMAL_MINUS_1	= 0x1,
-    MF_QUALITY_NORMAL_MINUS_2	= 0x2,
-    MF_QUALITY_NORMAL_MINUS_3	= 0x3,
-    MF_QUALITY_NORMAL_MINUS_4	= 0x4,
-    MF_QUALITY_NORMAL_MINUS_5	= 0x5,
-    MF_NUM_QUALITY_LEVELS	= 0x6
+    MF_QUALITY_NORMAL,
+    MF_QUALITY_NORMAL_MINUS_1,
+    MF_QUALITY_NORMAL_MINUS_2,
+    MF_QUALITY_NORMAL_MINUS_3,
+    MF_QUALITY_NORMAL_MINUS_4,
+    MF_QUALITY_NORMAL_MINUS_5,
+    MF_NUM_QUALITY_LEVELS
     }
 
 endif
@@ -1828,11 +1760,11 @@ endif
 DEFINE_GUID( MFNET_SAVEJOB_SERVICE, 0xb85a587f, 0x3d02, 0x4e52, 0x95, 0x65, 0x55, 0xd3, 0xec, 0x1e, 0x7f, 0xf7 );
 
 .enum MFNETSOURCE_PROTOCOL_TYPE {
-    MFNETSOURCE_UNDEFINED	= 0,
-    MFNETSOURCE_HTTP	= 0x1,
-    MFNETSOURCE_RTSP	= 0x2,
-    MFNETSOURCE_FILE	= 0x3,
-    MFNETSOURCE_MULTICAST	= 0x4
+    MFNETSOURCE_UNDEFINED,
+    MFNETSOURCE_HTTP,
+    MFNETSOURCE_RTSP,
+    MFNETSOURCE_FILE,
+    MFNETSOURCE_MULTICAST
     }
 
 ifndef __IMFNetSchemeHandlerConfig_INTERFACE_DEFINED__
@@ -1852,8 +1784,8 @@ endif
 MFCreateNetSchemePlugin proto __cdecl :REFIID, :ptr
 
 .enum MFNETSOURCE_TRANSPORT_TYPE {
-    MFNETSOURCE_UDP = 0,
-    MFNETSOURCE_TCP = ( MFNETSOURCE_UDP + 1 )
+    MFNETSOURCE_UDP,
+    MFNETSOURCE_TCP
     }
 
 endif
@@ -1861,42 +1793,42 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 .enum MFNETSOURCE_CACHE_STATE {
-    MFNETSOURCE_CACHE_UNAVAILABLE	= 0,
-    MFNETSOURCE_CACHE_ACTIVE_WRITING	= ( MFNETSOURCE_CACHE_UNAVAILABLE + 1 ) ,
-    MFNETSOURCE_CACHE_ACTIVE_COMPLETE	= ( MFNETSOURCE_CACHE_ACTIVE_WRITING + 1 )
+    MFNETSOURCE_CACHE_UNAVAILABLE,
+    MFNETSOURCE_CACHE_ACTIVE_WRITING,
+    MFNETSOURCE_CACHE_ACTIVE_COMPLETE
     }
 
 .enum MFNETSOURCE_STATISTICS_IDS {
-    MFNETSOURCE_RECVPACKETS_ID	= 0,
-    MFNETSOURCE_LOSTPACKETS_ID	= ( MFNETSOURCE_RECVPACKETS_ID + 1 ) ,
-    MFNETSOURCE_RESENDSREQUESTED_ID = ( MFNETSOURCE_LOSTPACKETS_ID + 1 ) ,
-    MFNETSOURCE_RESENDSRECEIVED_ID	= ( MFNETSOURCE_RESENDSREQUESTED_ID + 1 ) ,
-    MFNETSOURCE_RECOVEREDBYECCPACKETS_ID	= ( MFNETSOURCE_RESENDSRECEIVED_ID + 1 ) ,
-    MFNETSOURCE_RECOVEREDBYRTXPACKETS_ID	= ( MFNETSOURCE_RECOVEREDBYECCPACKETS_ID + 1 ) ,
-    MFNETSOURCE_OUTPACKETS_ID	= ( MFNETSOURCE_RECOVEREDBYRTXPACKETS_ID + 1 ) ,
-    MFNETSOURCE_RECVRATE_ID = ( MFNETSOURCE_OUTPACKETS_ID + 1 ) ,
-    MFNETSOURCE_AVGBANDWIDTHBPS_ID	= ( MFNETSOURCE_RECVRATE_ID + 1 ) ,
-    MFNETSOURCE_BYTESRECEIVED_ID	= ( MFNETSOURCE_AVGBANDWIDTHBPS_ID + 1 ) ,
-    MFNETSOURCE_PROTOCOL_ID = ( MFNETSOURCE_BYTESRECEIVED_ID + 1 ) ,
-    MFNETSOURCE_TRANSPORT_ID	= ( MFNETSOURCE_PROTOCOL_ID + 1 ) ,
-    MFNETSOURCE_CACHE_STATE_ID	= ( MFNETSOURCE_TRANSPORT_ID + 1 ) ,
-    MFNETSOURCE_LINKBANDWIDTH_ID	= ( MFNETSOURCE_CACHE_STATE_ID + 1 ) ,
-    MFNETSOURCE_CONTENTBITRATE_ID	= ( MFNETSOURCE_LINKBANDWIDTH_ID + 1 ) ,
-    MFNETSOURCE_SPEEDFACTOR_ID	= ( MFNETSOURCE_CONTENTBITRATE_ID + 1 ) ,
-    MFNETSOURCE_BUFFERSIZE_ID	= ( MFNETSOURCE_SPEEDFACTOR_ID + 1 ) ,
-    MFNETSOURCE_BUFFERPROGRESS_ID	= ( MFNETSOURCE_BUFFERSIZE_ID + 1 ) ,
-    MFNETSOURCE_LASTBWSWITCHTS_ID	= ( MFNETSOURCE_BUFFERPROGRESS_ID + 1 ) ,
-    MFNETSOURCE_SEEKRANGESTART_ID	= ( MFNETSOURCE_LASTBWSWITCHTS_ID + 1 ) ,
-    MFNETSOURCE_SEEKRANGEEND_ID = ( MFNETSOURCE_SEEKRANGESTART_ID + 1 ) ,
-    MFNETSOURCE_BUFFERINGCOUNT_ID	= ( MFNETSOURCE_SEEKRANGEEND_ID + 1 ) ,
-    MFNETSOURCE_INCORRECTLYSIGNEDPACKETS_ID = ( MFNETSOURCE_BUFFERINGCOUNT_ID + 1 ) ,
-    MFNETSOURCE_SIGNEDSESSION_ID	= ( MFNETSOURCE_INCORRECTLYSIGNEDPACKETS_ID + 1 ) ,
-    MFNETSOURCE_MAXBITRATE_ID	= ( MFNETSOURCE_SIGNEDSESSION_ID + 1 ) ,
-    MFNETSOURCE_RECEPTION_QUALITY_ID	= ( MFNETSOURCE_MAXBITRATE_ID + 1 ) ,
-    MFNETSOURCE_RECOVEREDPACKETS_ID = ( MFNETSOURCE_RECEPTION_QUALITY_ID + 1 ) ,
-    MFNETSOURCE_VBR_ID	= ( MFNETSOURCE_RECOVEREDPACKETS_ID + 1 ) ,
-    MFNETSOURCE_DOWNLOADPROGRESS_ID = ( MFNETSOURCE_VBR_ID + 1 ) ,
-    MFNETSOURCE_UNPREDEFINEDPROTOCOLNAME_ID = ( MFNETSOURCE_DOWNLOADPROGRESS_ID + 1 )
+    MFNETSOURCE_RECVPACKETS_ID,
+    MFNETSOURCE_LOSTPACKETS_ID,
+    MFNETSOURCE_RESENDSREQUESTED_ID,
+    MFNETSOURCE_RESENDSRECEIVED_ID,
+    MFNETSOURCE_RECOVEREDBYECCPACKETS_ID,
+    MFNETSOURCE_RECOVEREDBYRTXPACKETS_ID,
+    MFNETSOURCE_OUTPACKETS_ID,
+    MFNETSOURCE_RECVRATE_ID,
+    MFNETSOURCE_AVGBANDWIDTHBPS_ID,
+    MFNETSOURCE_BYTESRECEIVED_ID,
+    MFNETSOURCE_PROTOCOL_ID,
+    MFNETSOURCE_TRANSPORT_ID,
+    MFNETSOURCE_CACHE_STATE_ID,
+    MFNETSOURCE_LINKBANDWIDTH_ID,
+    MFNETSOURCE_CONTENTBITRATE_ID,
+    MFNETSOURCE_SPEEDFACTOR_ID,
+    MFNETSOURCE_BUFFERSIZE_ID,
+    MFNETSOURCE_BUFFERPROGRESS_ID,
+    MFNETSOURCE_LASTBWSWITCHTS_ID,
+    MFNETSOURCE_SEEKRANGESTART_ID,
+    MFNETSOURCE_SEEKRANGEEND_ID,
+    MFNETSOURCE_BUFFERINGCOUNT_ID,
+    MFNETSOURCE_INCORRECTLYSIGNEDPACKETS_ID,
+    MFNETSOURCE_SIGNEDSESSION_ID,
+    MFNETSOURCE_MAXBITRATE_ID,
+    MFNETSOURCE_RECEPTION_QUALITY_ID,
+    MFNETSOURCE_RECOVEREDPACKETS_ID,
+    MFNETSOURCE_VBR_ID,
+    MFNETSOURCE_DOWNLOADPROGRESS_ID,
+    MFNETSOURCE_UNPREDEFINEDPROTOCOLNAME_ID
     }
 
 DEFINE_GUID( MFNETSOURCE_STATISTICS_SERVICE, 0x3cb1f275, 0x0505, 0x4c5d, 0xae, 0x71, 0x0a, 0x55, 0x63, 0x44, 0xef, 0xa1 );
@@ -1960,10 +1892,10 @@ DEFINE_GUID( MFNETSOURCE_FRIENDLYNAME, 0x5b2a7757, 0xbc6b, 0x447e, 0xaa, 0x06, 0
 endif
 
 .enum MFNET_PROXYSETTINGS {
-    MFNET_PROXYSETTING_NONE = 0,
-    MFNET_PROXYSETTING_MANUAL	= 1,
-    MFNET_PROXYSETTING_AUTO = 2,
-    MFNET_PROXYSETTING_BROWSER	= 3
+    MFNET_PROXYSETTING_NONE,
+    MFNET_PROXYSETTING_MANUAL,
+    MFNET_PROXYSETTING_AUTO,
+    MFNET_PROXYSETTING_BROWSER
     }
 
 endif
@@ -2018,15 +1950,15 @@ DEFINE_IIDX(IMFTrustedInput, "542612C4-A1B8-4632-B521-DE11EA64A0B0")
 endif
 
 .enum MFPOLICYMANAGER_ACTION {
-    PEACTION_NO = 0,
-    PEACTION_PLAY	= 1,
-    PEACTION_COPY	= 2,
-    PEACTION_EXPORT = 3,
-    PEACTION_EXTRACT	= 4,
-    PEACTION_RESERVED1	= 5,
-    PEACTION_RESERVED2	= 6,
-    PEACTION_RESERVED3	= 7,
-    PEACTION_LAST	= 7
+    PEACTION_NO,
+    PEACTION_PLAY,
+    PEACTION_COPY,
+    PEACTION_EXPORT,
+    PEACTION_EXTRACT,
+    PEACTION_RESERVED1,
+    PEACTION_RESERVED2,
+    PEACTION_RESERVED3,
+    PEACTION_LAST = 7
     }
 
 MFINPUTTRUSTAUTHORITY_ACCESS_ACTION STRUC
@@ -2198,11 +2130,11 @@ DEFINE_GUID( MFPROTECTIONATTRIBUTE_CONSTRICTVIDEO_IMAGESIZE, 0x8476fc, 0x4b58, 0
 DEFINE_GUID( MFPROTECTIONATTRIBUTE_HDCP_SRM, 0x6f302107, 0x3477, 0x4468, 0x8a, 0x8, 0xee, 0xf9, 0xdb, 0x10, 0xe2, 0xf);
 
 .enum MFAudioConstriction {
-    MFaudioConstrictionOff   = 0,
-    MFaudioConstriction48_16 = ( MFaudioConstrictionOff + 1 ) ,
-    MFaudioConstriction44_16 = ( MFaudioConstriction48_16 + 1 ) ,
-    MFaudioConstriction14_14 = ( MFaudioConstriction44_16 + 1 ) ,
-    MFaudioConstrictionMute  = ( MFaudioConstriction14_14 + 1 )
+    MFaudioConstrictionOff,
+    MFaudioConstriction48_16,
+    MFaudioConstriction44_16,
+    MFaudioConstriction14_14,
+    MFaudioConstrictionMute
     }
 
 if (WINVER GE _WIN32_WINNT_WIN7)
@@ -2346,10 +2278,6 @@ DEFINE_IIDX(IMFPMPHost, "F70CA1A9-FDC7-4782-B994-ADFFB1C98606")
     UnlockProcess	proc
     CreateObjectByCLSID proc :REFCLSID, :ptr, :REFIID, :ptr
    .ends
-
-
-IMFPMPHost_RemoteCreateObjectByCLSID_Proxy proto __cdecl :ptr, :REFCLSID, :ptr, :dword, :REFIID, :ptr
-IMFPMPHost_RemoteCreateObjectByCLSID_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
 
 endif
 
@@ -2721,79 +2649,8 @@ MFLoadSignedLibrary proto __cdecl :LPCWSTR, :ptr
 MFGetSystemId proto __cdecl :ptr
 MFGetLocalId proto __cdecl :ptr, :UINT32, :ptr
 
-;; {40871C59-AB40-471F-8DC3-1F259D862479}
-DEFINE_GUID(CLSID_MPEG2ByteStreamPlugin,0x40871c59, 0xab40, 0x471f, 0x8d, 0xc3, 0x1f, 0x25, 0x9d, 0x86, 0x24, 0x79);
-;; {f09992f7-9fba-4c4a-a37f-8c47b4e1dfe7}
-DEFINE_GUID( MF_MEDIASOURCE_SERVICE, 0xf09992f7, 0x9fba, 0x4c4a, 0xa3, 0x7f, 0x8c, 0x47, 0xb4, 0xe1, 0xdf, 0xe7 );
+DEFINE_GUID(CLSID_MPEG2ByteStreamPlugin,0x40871c59, 0xab40, 0x471f, 0x8d, 0xc3, 0x1f, 0x25, 0x9d, 0x86, 0x24, 0x79)
+DEFINE_GUID( MF_MEDIASOURCE_SERVICE, 0xf09992f7, 0x9fba, 0x4c4a, 0xa3, 0x7f, 0x8c, 0x47, 0xb4, 0xe1, 0xdf, 0xe7 )
 endif
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize64 proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree64 proto WINAPI :ptr, :ptr
-
-IMFSourceResolver_BeginCreateObjectFromURL_Proxy proto __cdecl :ptr, :ptr, :dword, :ptr
-IMFSourceResolver_BeginCreateObjectFromURL_Stub proto __cdecl :ptr, :ptr, :dword, :ptr, :ptr
-IMFSourceResolver_EndCreateObjectFromURL_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_EndCreateObjectFromURL_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_BeginCreateObjectFromByteStream_Proxy proto __cdecl :ptr, :ptr, :ptr, :dword, :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_BeginCreateObjectFromByteStream_Stub proto __cdecl :ptr, :ptr, :ptr, :dword, :ptr, :ptr
-IMFSourceResolver_EndCreateObjectFromByteStream_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFSourceResolver_EndCreateObjectFromByteStream_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFMediaSource_CreatePresentationDescriptor_Proxy proto __cdecl :ptr, :ptr
-IMFMediaSource_CreatePresentationDescriptor_Stub proto __cdecl :ptr, :ptr, :ptr, :ptr
-IMFMediaStream_RequestSample_Proxy proto __cdecl :ptr, :ptr
-IMFMediaStream_RequestSample_Stub proto __cdecl :ptr
-IMFTopologyNode_GetOutputPrefType_Proxy proto __cdecl :ptr, :dword, :ptr
-IMFTopologyNode_GetOutputPrefType_Stub proto __cdecl :ptr, :dword, :ptr, :ptr
-IMFTopologyNode_GetInputPrefType_Proxy proto __cdecl :ptr, :dword, :ptr
-IMFTopologyNode_GetInputPrefType_Stub proto __cdecl :ptr, :dword, :ptr, :ptr
-IMFMediaTypeHandler_IsMediaTypeSupported_Proxy proto __cdecl :ptr, :ptr, :ptr
-IMFMediaTypeHandler_IsMediaTypeSupported_Stub proto __cdecl :ptr, :ptr, :dword, :ptr, :ptr
-IMFMediaTypeHandler_GetMediaTypeByIndex_Proxy proto __cdecl :ptr, :dword, :ptr
-IMFMediaTypeHandler_GetMediaTypeByIndex_Stub proto __cdecl :ptr, :dword, :ptr, :ptr
-IMFMediaTypeHandler_SetCurrentMediaType_Proxy proto __cdecl :ptr, :ptr
-IMFMediaTypeHandler_SetCurrentMediaType_Stub proto __cdecl :ptr, :ptr, :dword
-IMFMediaTypeHandler_GetCurrentMediaType_Proxy proto __cdecl :ptr, :ptr
-IMFMediaTypeHandler_GetCurrentMediaType_Stub proto __cdecl :ptr, :ptr, :ptr
-IMFContentProtectionManager_BeginEnableContent_Proxy proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
-IMFContentProtectionManager_BeginEnableContent_Stub proto __cdecl :ptr, :REFCLSID, :ptr, :dword, :ptr
-IMFContentProtectionManager_EndEnableContent_Proxy proto __cdecl :ptr, :ptr
-IMFContentProtectionManager_EndEnableContent_Stub proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_BeginRegisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr, :ptr
-IMFWorkQueueServices_BeginRegisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_EndRegisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_EndRegisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_BeginUnregisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr, :ptr
-IMFWorkQueueServices_BeginUnregisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_EndUnregisterTopologyWorkQueuesWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_EndUnregisterTopologyWorkQueuesWithMMCSS_Stub proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_BeginRegisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :dword, :ptr, :dword, :ptr, :ptr
-IMFWorkQueueServices_BeginRegisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :dword, :ptr, :dword, :ptr
-IMFWorkQueueServices_EndRegisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :ptr, :ptr
-IMFWorkQueueServices_EndRegisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr, :ptr
-IMFWorkQueueServices_BeginUnregisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :dword, :ptr, :ptr
-IMFWorkQueueServices_BeginUnregisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :dword, :ptr
-IMFWorkQueueServices_EndUnregisterPlatformWorkQueueWithMMCSS_Proxy proto __cdecl :ptr, :ptr
-IMFWorkQueueServices_EndUnregisterPlatformWorkQueueWithMMCSS_Stub proto __cdecl :ptr, :ptr
-IMFWorkQueueServicesEx_BeginRegisterPlatformWorkQueueWithMMCSSEx_Proxy proto __cdecl :ptr, :dword, :ptr, :dword, :ptr, :ptr, :ptr
-IMFWorkQueueServicesEx_BeginRegisterPlatformWorkQueueWithMMCSSEx_Stub proto __cdecl :ptr, :dword, :ptr, :dword, :LONG, :ptr
-IMFPMPHost_CreateObjectByCLSID_Proxy proto __cdecl :ptr, :REFCLSID, :ptr, :REFCLSID, :ptr
-IMFPMPHost_CreateObjectByCLSID_Stub proto __cdecl :ptr, :REFCLSID, :ptr, :dword, :REFIID, :ptr
 
 endif

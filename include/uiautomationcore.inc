@@ -1,252 +1,245 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 475
+ifndef _RPC500_
+include rpc500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
 ifndef __uiautomationcore_h__
 define __uiautomationcore_h__
 
 .pragma comment(lib, UIAutomationCore)
 
+ifndef __oaidl_h__
 include oaidl.inc
-include oleacc.inc
+endif
+ifndef __ocidl_h__
+include ocidl.inc
+endif
 
 .enum NavigateDirection {
-    NavigateDirection_Parent	= 0,
-    NavigateDirection_NextSibling	= 1,
-    NavigateDirection_PreviousSibling	= 2,
-    NavigateDirection_FirstChild	= 3,
-    NavigateDirection_LastChild = 4
+    NavigateDirection_Parent,
+    NavigateDirection_NextSibling,
+    NavigateDirection_PreviousSibling,
+    NavigateDirection_FirstChild,
+    NavigateDirection_LastChild
     }
 
 .enum ProviderOptions {
-    ProviderOptions_ClientSideProvider	= 0x1,
-    ProviderOptions_ServerSideProvider	= 0x2,
+    ProviderOptions_ClientSideProvider		= 0x1,
+    ProviderOptions_ServerSideProvider		= 0x2,
     ProviderOptions_NonClientAreaProvider	= 0x4,
-    ProviderOptions_OverrideProvider	= 0x8,
+    ProviderOptions_OverrideProvider		= 0x8,
     ProviderOptions_ProviderOwnsSetFocus	= 0x10,
-    ProviderOptions_UseComThreading	= 0x20,
+    ProviderOptions_UseComThreading		= 0x20,
     ProviderOptions_RefuseNonClientSupport	= 0x40,
     ProviderOptions_HasNativeIAccessible	= 0x80,
     ProviderOptions_UseClientCoordinates	= 0x100
     }
 
 .enum StructureChangeType {
-    StructureChangeType_ChildAdded	= 0,
-    StructureChangeType_ChildRemoved	= ( StructureChangeType_ChildAdded + 1 ) ,
-    StructureChangeType_ChildrenInvalidated	= ( StructureChangeType_ChildRemoved + 1 ) ,
-    StructureChangeType_ChildrenBulkAdded	= ( StructureChangeType_ChildrenInvalidated + 1 ) ,
-    StructureChangeType_ChildrenBulkRemoved	= ( StructureChangeType_ChildrenBulkAdded + 1 ) ,
-    StructureChangeType_ChildrenReordered	= ( StructureChangeType_ChildrenBulkRemoved + 1 )
+    StructureChangeType_ChildAdded,
+    StructureChangeType_ChildRemoved,
+    StructureChangeType_ChildrenInvalidated,
+    StructureChangeType_ChildrenBulkAdded,
+    StructureChangeType_ChildrenBulkRemoved,
+    StructureChangeType_ChildrenReordered
     }
 
 .enum TextEditChangeType {
-    TextEditChangeType_None	= 0,
-    TextEditChangeType_AutoCorrect	= 1,
-    TextEditChangeType_Composition	= 2,
-    TextEditChangeType_CompositionFinalized	= 3
+    TextEditChangeType_None,
+    TextEditChangeType_AutoCorrect,
+    TextEditChangeType_Composition,
+    TextEditChangeType_CompositionFinalized
     }
 
 .enum OrientationType {
-    OrientationType_None	= 0,
-    OrientationType_Horizontal	= 1,
-    OrientationType_Vertical	= 2
+    OrientationType_None,
+    OrientationType_Horizontal,
+    OrientationType_Vertical
     }
 
 .enum DockPosition {
-    DockPosition_Top	= 0,
-    DockPosition_Left	= 1,
-    DockPosition_Bottom = 2,
-    DockPosition_Right	= 3,
-    DockPosition_Fill	= 4,
-    DockPosition_None	= 5
+    DockPosition_Top,
+    DockPosition_Left,
+    DockPosition_Bottom,
+    DockPosition_Right,
+    DockPosition_Fill,
+    DockPosition_None
     }
 
 .enum ExpandCollapseState {
-    ExpandCollapseState_Collapsed	= 0,
-    ExpandCollapseState_Expanded	= 1,
-    ExpandCollapseState_PartiallyExpanded	= 2,
-    ExpandCollapseState_LeafNode	= 3
+    ExpandCollapseState_Collapsed,
+    ExpandCollapseState_Expanded,
+    ExpandCollapseState_PartiallyExpanded,
+    ExpandCollapseState_LeafNode
     }
 
 .enum ScrollAmount {
-    ScrollAmount_LargeDecrement = 0,
-    ScrollAmount_SmallDecrement = 1,
-    ScrollAmount_NoAmount	= 2,
-    ScrollAmount_LargeIncrement = 3,
-    ScrollAmount_SmallIncrement = 4
+    ScrollAmount_LargeDecrement,
+    ScrollAmount_SmallDecrement,
+    ScrollAmount_NoAmount,
+    ScrollAmount_LargeIncrement,
+    ScrollAmount_SmallIncrement
     }
 
 .enum RowOrColumnMajor {
-    RowOrColumnMajor_RowMajor	= 0,
-    RowOrColumnMajor_ColumnMajor	= 1,
-    RowOrColumnMajor_Indeterminate	= 2
+    RowOrColumnMajor_RowMajor,
+    RowOrColumnMajor_ColumnMajor,
+    RowOrColumnMajor_Indeterminate
     }
 
 .enum ToggleState {
-    ToggleState_Off	= 0,
-    ToggleState_On	= 1,
-    ToggleState_Indeterminate	= 2
+    ToggleState_Off,
+    ToggleState_On,
+    ToggleState_Indeterminate
     }
 
 .enum WindowVisualState {
-    WindowVisualState_Normal	= 0,
-    WindowVisualState_Maximized = 1,
-    WindowVisualState_Minimized = 2
+    WindowVisualState_Normal,
+    WindowVisualState_Maximized,
+    WindowVisualState_Minimized
     }
 
 .enum SynchronizedInputType {
-    SynchronizedInputType_KeyUp = 0x1,
-    SynchronizedInputType_KeyDown	= 0x2,
-    SynchronizedInputType_LeftMouseUp	= 0x4,
-    SynchronizedInputType_LeftMouseDown = 0x8,
-    SynchronizedInputType_RightMouseUp	= 0x10,
+    SynchronizedInputType_KeyUp			= 0x1,
+    SynchronizedInputType_KeyDown		= 0x2,
+    SynchronizedInputType_LeftMouseUp		= 0x4,
+    SynchronizedInputType_LeftMouseDown		= 0x8,
+    SynchronizedInputType_RightMouseUp		= 0x10,
     SynchronizedInputType_RightMouseDown	= 0x20
     }
 
 .enum WindowInteractionState {
-    WindowInteractionState_Running	= 0,
-    WindowInteractionState_Closing	= 1,
-    WindowInteractionState_ReadyForUserInteraction	= 2,
-    WindowInteractionState_BlockedByModalWindow = 3,
-    WindowInteractionState_NotResponding	= 4
+    WindowInteractionState_Running,
+    WindowInteractionState_Closing,
+    WindowInteractionState_ReadyForUserInteraction,
+    WindowInteractionState_BlockedByModalWindow,
+    WindowInteractionState_NotResponding
     }
 
 .enum TextUnit {
-    TextUnit_Character	= 0,
-    TextUnit_Format	= 1,
-    TextUnit_Word	= 2,
-    TextUnit_Line	= 3,
-    TextUnit_Paragraph	= 4,
-    TextUnit_Page	= 5,
-    TextUnit_Document	= 6
+    TextUnit_Character,
+    TextUnit_Format,
+    TextUnit_Word,
+    TextUnit_Line,
+    TextUnit_Paragraph,
+    TextUnit_Page,
+    TextUnit_Document
     }
 
 .enum TextPatternRangeEndpoint {
-    TextPatternRangeEndpoint_Start	= 0,
-    TextPatternRangeEndpoint_End	= 1
+    TextPatternRangeEndpoint_Start,
+    TextPatternRangeEndpoint_End
     }
 
 .enum SupportedTextSelection {
-    SupportedTextSelection_None = 0,
-    SupportedTextSelection_Single	= 1,
-    SupportedTextSelection_Multiple	= 2
+    SupportedTextSelection_None,
+    SupportedTextSelection_Single,
+    SupportedTextSelection_Multiple
     }
 
 .enum LiveSetting {
-    Off = 0,
-    Polite	= 1,
-    Assertive	= 2
+    Off,
+    Polite,
+    Assertive
     }
 
 .enum ActiveEnd {
-    ActiveEnd_None	= 0,
-    ActiveEnd_Start	= 1,
-    ActiveEnd_End	= 2
+    ActiveEnd_None,
+    ActiveEnd_Start,
+    ActiveEnd_End
     }
 
 .enum CaretPosition {
-    CaretPosition_Unknown	= 0,
-    CaretPosition_EndOfLine	= 1,
-    CaretPosition_BeginningOfLine	= 2
+    CaretPosition_Unknown,
+    CaretPosition_EndOfLine,
+    CaretPosition_BeginningOfLine
     }
 
 .enum CaretBidiMode {
-    CaretBidiMode_LTR	= 0,
-    CaretBidiMode_RTL	= 1
+    CaretBidiMode_LTR,
+    CaretBidiMode_RTL
     }
 
 .enum ZoomUnit {
-    ZoomUnit_NoAmount	= 0,
-    ZoomUnit_LargeDecrement	= 1,
-    ZoomUnit_SmallDecrement	= 2,
-    ZoomUnit_LargeIncrement	= 3,
-    ZoomUnit_SmallIncrement	= 4
+    ZoomUnit_NoAmount,
+    ZoomUnit_LargeDecrement,
+    ZoomUnit_SmallDecrement,
+    ZoomUnit_LargeIncrement,
+    ZoomUnit_SmallIncrement
     }
 
 .enum AnimationStyle {
-    AnimationStyle_None = 0,
-    AnimationStyle_LasVegasLights	= 1,
-    AnimationStyle_BlinkingBackground	= 2,
-    AnimationStyle_SparkleText	= 3,
-    AnimationStyle_MarchingBlackAnts	= 4,
-    AnimationStyle_MarchingRedAnts	= 5,
-    AnimationStyle_Shimmer	= 6,
-    AnimationStyle_Other	= -1
+    AnimationStyle_None,
+    AnimationStyle_LasVegasLights,
+    AnimationStyle_BlinkingBackground,
+    AnimationStyle_SparkleText,
+    AnimationStyle_MarchingBlackAnts,
+    AnimationStyle_MarchingRedAnts,
+    AnimationStyle_Shimmer,
+    AnimationStyle_Other = -1
     }
 
 .enum BulletStyle {
-    BulletStyle_None	= 0,
-    BulletStyle_HollowRoundBullet	= 1,
-    BulletStyle_FilledRoundBullet	= 2,
-    BulletStyle_HollowSquareBullet	= 3,
-    BulletStyle_FilledSquareBullet	= 4,
-    BulletStyle_DashBullet	= 5,
-    BulletStyle_Other	= -1
+    BulletStyle_None,
+    BulletStyle_HollowRoundBullet,
+    BulletStyle_FilledRoundBullet,
+    BulletStyle_HollowSquareBullet,
+    BulletStyle_FilledSquareBullet,
+    BulletStyle_DashBullet,
+    BulletStyle_Other = -1
     }
 
 .enum CapStyle {
-    CapStyle_None	= 0,
-    CapStyle_SmallCap	= 1,
-    CapStyle_AllCap	= 2,
-    CapStyle_AllPetiteCaps	= 3,
-    CapStyle_PetiteCaps = 4,
-    CapStyle_Unicase	= 5,
-    CapStyle_Titling	= 6,
-    CapStyle_Other	= -1
+    CapStyle_None,
+    CapStyle_SmallCap,
+    CapStyle_AllCap,
+    CapStyle_AllPetiteCaps,
+    CapStyle_PetiteCaps,
+    CapStyle_Unicase,
+    CapStyle_Titling,
+    CapStyle_Other = -1
     }
 
 .enum FlowDirections {
-    FlowDirections_Default	= 0,
-    FlowDirections_RightToLeft	= 1,
-    FlowDirections_BottomToTop	= 2,
-    FlowDirections_Vertical	= 4
+    FlowDirections_Default,
+    FlowDirections_RightToLeft,
+    FlowDirections_BottomToTop,
+    FlowDirections_Vertical = 4
     }
 
 .enum HorizontalTextAlignment {
-    HorizontalTextAlignment_Left	= 0,
-    HorizontalTextAlignment_Centered	= 1,
-    HorizontalTextAlignment_Right	= 2,
-    HorizontalTextAlignment_Justified	= 3
+    HorizontalTextAlignment_Left,
+    HorizontalTextAlignment_Centered,
+    HorizontalTextAlignment_Right,
+    HorizontalTextAlignment_Justified
     }
 
 .enum OutlineStyles {
-    OutlineStyles_None	= 0,
-    OutlineStyles_Outline	= 1,
-    OutlineStyles_Shadow	= 2,
-    OutlineStyles_Engraved	= 4,
-    OutlineStyles_Embossed	= 8
+    OutlineStyles_None,
+    OutlineStyles_Outline,
+    OutlineStyles_Shadow,
+    OutlineStyles_Engraved = 4,
+    OutlineStyles_Embossed = 8
     }
 
 .enum TextDecorationLineStyle {
-    TextDecorationLineStyle_None	= 0,
-    TextDecorationLineStyle_Single	= 1,
-    TextDecorationLineStyle_WordsOnly	= 2,
-    TextDecorationLineStyle_Double	= 3,
-    TextDecorationLineStyle_Dot = 4,
-    TextDecorationLineStyle_Dash	= 5,
-    TextDecorationLineStyle_DashDot	= 6,
-    TextDecorationLineStyle_DashDotDot	= 7,
-    TextDecorationLineStyle_Wavy	= 8,
-    TextDecorationLineStyle_ThickSingle = 9,
+    TextDecorationLineStyle_None,
+    TextDecorationLineStyle_Single,
+    TextDecorationLineStyle_WordsOnly,
+    TextDecorationLineStyle_Double,
+    TextDecorationLineStyle_Dot,
+    TextDecorationLineStyle_Dash,
+    TextDecorationLineStyle_DashDot,
+    TextDecorationLineStyle_DashDotDot,
+    TextDecorationLineStyle_Wavy,
+    TextDecorationLineStyle_ThickSingle,
     TextDecorationLineStyle_DoubleWavy	= 11,
-    TextDecorationLineStyle_ThickWavy	= 12,
-    TextDecorationLineStyle_LongDash	= 13,
-    TextDecorationLineStyle_ThickDash	= 14,
-    TextDecorationLineStyle_ThickDashDot	= 15,
-    TextDecorationLineStyle_ThickDashDotDot	= 16,
-    TextDecorationLineStyle_ThickDot	= 17,
-    TextDecorationLineStyle_ThickLongDash	= 18,
-    TextDecorationLineStyle_Other	= -1
+    TextDecorationLineStyle_ThickWavy,
+    TextDecorationLineStyle_LongDash,
+    TextDecorationLineStyle_ThickDash,
+    TextDecorationLineStyle_ThickDashDot,
+    TextDecorationLineStyle_ThickDashDotDot,
+    TextDecorationLineStyle_ThickDot,
+    TextDecorationLineStyle_ThickLongDash,
+    TextDecorationLineStyle_Other = -1
     }
 
 PROPERTYID		typedef sdword
@@ -280,20 +273,20 @@ define __UIA_LIBRARY_DEFINED__
     UIAutomationType_Element	= 0x7,
     UIAutomationType_Array	= 0x10000,
     UIAutomationType_Out	= 0x20000,
-    UIAutomationType_IntArray	= ( UIAutomationType_Int or UIAutomationType_Array ) ,
-    UIAutomationType_BoolArray	= ( UIAutomationType_Bool or UIAutomationType_Array ) ,
+    UIAutomationType_IntArray		= ( UIAutomationType_Int or UIAutomationType_Array ) ,
+    UIAutomationType_BoolArray		= ( UIAutomationType_Bool or UIAutomationType_Array ) ,
     UIAutomationType_StringArray	= ( UIAutomationType_String or UIAutomationType_Array ) ,
     UIAutomationType_DoubleArray	= ( UIAutomationType_Double or UIAutomationType_Array ) ,
-    UIAutomationType_PointArray = ( UIAutomationType_Point  or	UIAutomationType_Array ) ,
-    UIAutomationType_RectArray	= ( UIAutomationType_Rect  or  UIAutomationType_Array ) ,
+    UIAutomationType_PointArray		= ( UIAutomationType_Point  or	UIAutomationType_Array ) ,
+    UIAutomationType_RectArray		= ( UIAutomationType_Rect  or  UIAutomationType_Array ) ,
     UIAutomationType_ElementArray	= ( UIAutomationType_Element or UIAutomationType_Array ) ,
-    UIAutomationType_OutInt	= ( UIAutomationType_Int or UIAutomationType_Out ) ,
-    UIAutomationType_OutBool	= ( UIAutomationType_Bool or UIAutomationType_Out ) ,
-    UIAutomationType_OutString	= ( UIAutomationType_String or UIAutomationType_Out ) ,
-    UIAutomationType_OutDouble	= ( UIAutomationType_Double or UIAutomationType_Out ) ,
-    UIAutomationType_OutPoint	= ( UIAutomationType_Point or UIAutomationType_Out ) ,
-    UIAutomationType_OutRect	= ( UIAutomationType_Rect or UIAutomationType_Out ) ,
-    UIAutomationType_OutElement = ( UIAutomationType_Element or UIAutomationType_Out ) ,
+    UIAutomationType_OutInt		= ( UIAutomationType_Int or UIAutomationType_Out ) ,
+    UIAutomationType_OutBool		= ( UIAutomationType_Bool or UIAutomationType_Out ) ,
+    UIAutomationType_OutString		= ( UIAutomationType_String or UIAutomationType_Out ) ,
+    UIAutomationType_OutDouble		= ( UIAutomationType_Double or UIAutomationType_Out ) ,
+    UIAutomationType_OutPoint		= ( UIAutomationType_Point or UIAutomationType_Out ) ,
+    UIAutomationType_OutRect		= ( UIAutomationType_Rect or UIAutomationType_Out ) ,
+    UIAutomationType_OutElement		= ( UIAutomationType_Element or UIAutomationType_Out ) ,
     UIAutomationType_OutIntArray	= ( ( UIAutomationType_Int or UIAutomationType_Array ) or UIAutomationType_Out ) ,
     UIAutomationType_OutBoolArray	= ( ( UIAutomationType_Bool or UIAutomationType_Array ) or UIAutomationType_Out ) ,
     UIAutomationType_OutStringArray	= ( ( UIAutomationType_String or UIAutomationType_Array ) or UIAutomationType_Out ) ,

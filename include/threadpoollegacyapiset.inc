@@ -1,10 +1,11 @@
 ifndef _THREADPOOLLEGACYAPISET_H_
 define _THREADPOOLLEGACYAPISET_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 QueueUserWorkItem proto WINAPI :LPTHREAD_START_ROUTINE, :PVOID, :ULONG
 UnregisterWaitEx proto WINAPI :HANDLE, :HANDLE

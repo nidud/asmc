@@ -1,7 +1,8 @@
 ifndef __INC_PROCESSSNAPSHOT
 define __INC_PROCESSSNAPSHOT
-
+ifndef _LIBC_
 include libc.inc
+endif
 
 .enum PSS_HANDLE_FLAGS {
     PSS_HANDLE_NONE                           = 0x00,
@@ -269,7 +270,9 @@ AllocRoutine            proc :ptr, :DWORD
 FreeRoutine             proc :ptr, :ptr
 PSS_ALLOCATOR           ends
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
 if (NTDDI_VERSION ge NTDDI_WIN8)

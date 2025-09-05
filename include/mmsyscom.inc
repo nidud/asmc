@@ -1,4 +1,6 @@
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 ifndef _INC_MMSYSCOM
 define _INC_MMSYSCOM
@@ -198,4 +200,3 @@ endif
 .pragma pack(pop)
 
 endif
-

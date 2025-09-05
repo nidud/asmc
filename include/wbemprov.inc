@@ -1,20 +1,5 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __wbemprov_h__
@@ -22,9 +7,13 @@ define __wbemprov_h__
 
 include objidl.inc
 include oleidl.inc
+ifndef __oaidl_h__
 include oaidl.inc
+endif
 include wbemcli.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -192,12 +181,12 @@ DEFINE_IIDX(IWbemProviderIdentity, "631f7d97-d993-11d2-b339-00105a1f4aaf")
 endif
 
 .enum WBEM_EXTRA_RETURN_CODES {
-    WBEM_S_INITIALIZED	= 0,
+    WBEM_S_INITIALIZED,
     WBEM_S_LIMITED_SERVICE	= 0x43001,
-    WBEM_S_INDIRECTLY_UPDATED	= ( WBEM_S_LIMITED_SERVICE + 1 ) ,
-    WBEM_S_SUBJECT_TO_SDS	= ( WBEM_S_INDIRECTLY_UPDATED + 1 ) ,
+    WBEM_S_INDIRECTLY_UPDATED,
+    WBEM_S_SUBJECT_TO_SDS,
     WBEM_E_RETRY_LATER	= 0x80043001,
-    WBEM_E_RESOURCE_CONTENTION	= ( WBEM_E_RETRY_LATER + 1 )
+    WBEM_E_RESOURCE_CONTENTION
     }
 
 .enum WBEM_PROVIDER_FLAGS {

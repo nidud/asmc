@@ -1,8 +1,8 @@
 ifndef _INCLUDED_EMM
 define _INCLUDED_EMM
 .pragma list(push, 0)
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 ifndef _M_IX86

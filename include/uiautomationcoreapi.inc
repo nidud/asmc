@@ -1,7 +1,9 @@
 ifndef _INC_UIAUTOMATIONCOREAPI
 define _INC_UIAUTOMATIONCOREAPI
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .pragma comment(lib, UIAutomationCore)
 

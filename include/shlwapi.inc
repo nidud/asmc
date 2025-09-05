@@ -2,8 +2,8 @@
 ifndef _INC_SHLWAPI
 define _INC_SHLWAPI
 
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 ifndef NOSHLWAPI
 include specstrings.inc

@@ -1,4 +1,6 @@
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 ifndef _EVNTRACE_
 define _EVNTRACE_

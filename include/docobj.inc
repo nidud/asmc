@@ -1,20 +1,5 @@
-.pragma list(push, 0)
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 475
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
- .err <this stub requires an updated version of rpcndr>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __docobj_h__
@@ -31,12 +16,11 @@ ifndef __IOleDocument_INTERFACE_DEFINED__
 define __IOleDocument_INTERFACE_DEFINED__
 
 .enum DOCMISC {
-
 	DOCMISC_CANCREATEMULTIPLEVIEWS = 1,
 	DOCMISC_SUPPORTCOMPLEXRECTANGLES = 2,
 	DOCMISC_CANTOPENEDIT  = 4,
 	DOCMISC_NOFILESUPPORT = 8
-    }
+	}
 
 DEFINE_GUID(IID_IOleDocument, 0xb722bcc5, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
@@ -132,8 +116,8 @@ DEFINE_IIDX(IContinueCallback, "b722bcca-4e68-101b-a2bc-00aa00404770")
    .ends
     LPCONTINUECALLBACK	typedef ptr IContinueCallback
 
-endif ; __IContinueCallback_INTERFACE_DEFINED__
-endif ; _LPCONTINUECALLBACK_DEFINED
+endif
+endif
 
 ifndef _LPPRINT_DEFINED
 define _LPPRINT_DEFINED
@@ -177,8 +161,8 @@ DEFINE_IIDX(IPrint, "b722bcc9-4e68-101b-a2bc-00aa00404770")
     .ends
     LPPRINT		typedef ptr IPrint
 
-endif  ; __IPrint_INTERFACE_DEFINED__
-endif  ; _LPPRINT_DEFINED
+endif
+endif
 
 ifndef _LPOLECOMMANDTARGET_DEFINED
 define _LPOLECOMMANDTARGET_DEFINED
@@ -326,8 +310,8 @@ DEFINE_GUID(IID_IOleCommandTarget, 0xb722bccb, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0
    .ends
     LPOLECOMMANDTARGET	typedef ptr IOleCommandTarget
 
-endif ; __IOleCommandTarget_INTERFACE_DEFINED__
-endif ; _LPOLECOMMANDTARGET_DEFINED
+endif
+endif
 
 OLECMDIDF_REFRESH_NORMAL equ 0
 OLECMDIDF_REFRESH_IFEXPIRED equ 1
@@ -503,25 +487,4 @@ DEFINE_IIDX(IProtectedModeMenuServices, "73c105ee-9dff-4a07-b83c-7eff290c266e")
 endif
 endif
 
-HMENU_UserSize proto WINAPI :ptr, :dword, :ptr
-HMENU_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-HMENU_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HMENU_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HMENU_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
-
 endif
-.pragma list(pop)

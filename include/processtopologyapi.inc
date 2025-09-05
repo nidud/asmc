@@ -1,10 +1,11 @@
 ifndef _PROCESSTOPOLOGYAPI_H_
 define _PROCESSTOPOLOGYAPI_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 if (_WIN32_WINNT ge 0x0601)
 GetProcessGroupAffinity proto WINAPI :HANDLE, :PUSHORT, :PUSHORT

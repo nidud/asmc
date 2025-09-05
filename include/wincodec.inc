@@ -1,23 +1,7 @@
 .pragma list(push, 0)
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 475
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __wincodec_h__
 define __wincodec_h__
 
@@ -1381,36 +1365,6 @@ DEFINE_IIDX(IWICDdsFrameDecode, "3d4c0c61-18a4-41e4-bd80-481a4fc9f464")
    .ends
 
 endif
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-HBITMAP_UserSize proto WINAPI :ptr, :dword, :ptr
-HBITMAP_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserFree proto WINAPI :ptr, :ptr
-
-HICON_UserSize proto WINAPI :ptr, :dword, :ptr
-HICON_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HICON_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HICON_UserFree proto WINAPI :ptr, :ptr
-
-HPALETTE_UserSize proto WINAPI :ptr, :DWORD, :ptr
-HPALETTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HPALETTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HPALETTE_UserFree proto WINAPI :ptr, :ptr
-
-LPSAFEARRAY_UserSize proto WINAPI :ptr, :dword, :ptr
-LPSAFEARRAY_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-LPSAFEARRAY_UserFree proto WINAPI :ptr, :ptr
-
-WICInProcPointer_UserSize proto WINAPI :ptr, :DWORD, :ptr
-WICInProcPointer_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-WICInProcPointer_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-WICInProcPointer_UserFree proto WINAPI :ptr, :ptr
 
 endif
 .pragma list(pop)

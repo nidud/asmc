@@ -1,57 +1,25 @@
-.pragma list(push, 0)
-
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __audioclient_h__
 define __audioclient_h__
 
 include wtypes.inc
+ifndef __unknwn_h__
 include unknwn.inc
+endif
 include audiosessiontypes.inc
 
-if 0
-WAVEFORMATEX		STRUC
-wFormatTag		dw ?
-nChannels		dw ?
-nSamplesPerSec		dd ?
-nAvgBytesPerSec		dd ?
-nBlockAlign		dw ?
-wBitsPerSample		dw ?
-cbSize			dw ?
-WAVEFORMATEX		ENDS
-else
 include mmreg.inc
-endif
-
-if 0
-REFERENCE_TIME typedef LONGLONG
-else
 define _IKsControl_
 include ks.inc
 include ksmedia.inc
-endif
 
 AUDCLNT_BUFFERFLAGS typedef SDWORD
 AUDCLNT_BUFFERFLAGS_DATA_DISCONTINUITY equ 0x1
 AUDCLNT_BUFFERFLAGS_SILENT equ 0x2
 AUDCLNT_BUFFERFLAGS_TIMESTAMP_ERROR equ 0x4
-
 
 ifndef __IAudioClient_INTERFACE_DEFINED__
 define __IAudioClient_INTERFACE_DEFINED__
@@ -228,4 +196,3 @@ AUDCLNT_S_THREAD_ALREADY_REGISTERED equ AUDCLNT_SUCCESS(0x002)
 AUDCLNT_S_POSITION_STALLED equ AUDCLNT_SUCCESS(0x003)
 
 endif
-.pragma list(pop)

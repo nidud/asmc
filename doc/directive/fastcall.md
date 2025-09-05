@@ -27,6 +27,7 @@ push    0
 push    0       ; - the standard C convention:
 push    rcx     ; * push 1
 call    foo     ; * call foo
+add     rsp,4*8 ; * standard C clean-up
 leave           ; * add  rsp,8
 
 ```
@@ -93,7 +94,6 @@ For **Varargs** (_and Unprototyped functions according to the ABI_) floating-poi
     * movq    rdx, xmm1
     * mov     rcx, rax
     * call    printf
-
 ```
 #### See Also
 

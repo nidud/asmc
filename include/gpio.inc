@@ -1,7 +1,9 @@
 ifndef __GPIO_W__
 define __GPIO_W__
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 if (NTDDI_VERSION ge NTDDI_WIN8)

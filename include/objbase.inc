@@ -1,8 +1,12 @@
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-
+endif
+ifndef __RPC_H__
 include rpc.inc
+endif
+ifndef __RPCNDR_H__
 include rpcndr.inc
-
+endif
 ifndef _OBJBASE_H_
 define _OBJBASE_H_
 

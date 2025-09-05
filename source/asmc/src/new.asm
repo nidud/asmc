@@ -685,6 +685,7 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
   local l2[256]:char_t
   local opndx:expr
   local brackets:char_t
+  local unicode:char_t
 
     inc  i
     imul ebx,i,asm_tok
@@ -703,6 +704,7 @@ if 0
 endif
 
     mov l2,0
+    mov unicode,0
 
     .if ( [rbx].token == T_STRING && [rbx].bytval == '{' )
 
@@ -756,10 +758,15 @@ endif
     tsprintf( rdi, " %r ", eax )
 
     mov eax,[rsi].size
+    mov rdx,[rbx].string_ptr
 
-    .if ( eax >= 8 )
+    .if ( [rsi].is_ptr && [rbx].token == T_ID && word ptr [rdx] == 'L' &&
+          [rbx+asm_tok].token == T_STRING && [rbx+asm_tok].bytval == '"' )
 
-        mov rdx,[rbx].string_ptr
+        add rbx,asm_tok
+        inc unicode
+
+    .elseif ( eax >= 8 )
 
         .if ( eax == 8 && [rsi].Ofssize == USE32 && [rbx].IsProc &&
               ( [rsi].mem_type == MT_QWORD || [rsi].mem_type == MT_SQWORD ) )
@@ -853,7 +860,19 @@ endif
 
                 .if ( [rax].asym.mem_type & MT_PTR )
 
-                    tsprintf(rdi, "&@CStr(%s)", [rbx].string_ptr)
+                    lea rsi,@CStr("&@CStr(")
+                    mov ecx,7
+                    rep movsb
+                    .if ( unicode )
+                        mov al,'L'
+                        stosb
+                    .endif
+                    mov rsi,[rbx].string_ptr
+                    mov ecx,[rbx].stringlen                    
+                    add ecx,2
+                    rep movsb
+                    mov eax,')'
+                    stosw                    
                     add rbx,asm_tok
                    .break
                 .endif

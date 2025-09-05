@@ -1,22 +1,13 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 475
+ifndef _RPC500_
+include rpc500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
 ifndef __uiautomationclient_h__
 define __uiautomationclient_h__
 
 include uiautomationcore.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -32,13 +23,13 @@ ifndef _INC_UIAUTOMATIONCOREAPI
     }
 
 .enum PropertyConditionFlags {
-    PropertyConditionFlags_None = 0,
-    PropertyConditionFlags_IgnoreCase	= 0x1
+    PropertyConditionFlags_None,
+    PropertyConditionFlags_IgnoreCase
     }
 
 .enum AutomationElementMode {
-    AutomationElementMode_None	= 0,
-    AutomationElementMode_Full	= ( AutomationElementMode_None + 1 )
+    AutomationElementMode_None,
+    AutomationElementMode_Full
     }
 endif
 
@@ -1558,6 +1549,6 @@ endif
 DEFINE_GUIDS(CLSID_CUIAutomation, "ff48dba4-60ef-4201-aa87-54103eef594e")
 DEFINE_GUIDS(CLSID_CUIAutomation8, "e22ad333-b25f-460c-83d0-0581107395c9")
 
-endif ;; __UIAutomationClient_LIBRARY_DEFINED__
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif
+endif
 endif

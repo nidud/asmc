@@ -1,17 +1,19 @@
 ifndef _WINSOCK2API_
 define _WINSOCK2API_
 define _WINSOCKAPI_
-
+ifndef _LIBC_
 include libc.inc
+endif
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
-
+endif
 ifndef INCL_WINSOCK_API_PROTOTYPES
 define INCL_WINSOCK_API_PROTOTYPES 1
 endif
 ifndef INCL_WINSOCK_API_TYPEDEFS
 define INCL_WINSOCK_API_TYPEDEFS 0
 endif
-ifndef _INC_WINDOWS
+ifndef _WINDOWS_
 include windows.inc
 endif
 

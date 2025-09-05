@@ -1,10 +1,11 @@
 ifndef _THREADPOOLAPISET_H_
 define _THREADPOOLAPISET_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 CALLBACK(PTP_WIN32_IO_CALLBACK, :PTP_CALLBACK_INSTANCE, :PVOID, :PVOID, :ULONG, :ULONG_PTR, :PTP_IO)
 

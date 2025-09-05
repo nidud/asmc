@@ -2,7 +2,9 @@ ifndef _NTDEF_
 define _NTDEF_
 
 include ctype.inc
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 ifndef ANYSIZE_ARRAY
 define ANYSIZE_ARRAY 1

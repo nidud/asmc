@@ -1,10 +1,10 @@
 #
-# Makefile for [A]PCG32
+# Makefile for PCG32
 #
 ifdef YACC
 
 apcg32.a:
-	asmc64 -c -fpic -Cs src/*.asm
+	asmc -c -elf64 -fpic -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)
@@ -18,8 +18,8 @@ else
 include srcpath
 
 pcg32.lib:
-	asmc -BlLIBW -coff -Cs -r src\*.asm -link -q -b -n -c -fac $(lib_dir)\x86\$@
-	asmc -BlLIBW -win6 -Cs -r src\*.asm -link -q -b -n -c -fac $(lib_dir)\x64\$@
+	asmc -BlLIBW -coff -Cs -r $(src_dir)\libs\pcg32\src\*.asm -link -q -b -n -c -fac $(lib_dir)\x86\$@
+	asmc -BlLIBW -win6 -Cs -r $(src_dir)\libs\pcg32\src\*.asm -link -q -b -n -c -fac $(lib_dir)\x64\$@
 	del *.obj
 
 endif

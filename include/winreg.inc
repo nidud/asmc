@@ -1,7 +1,9 @@
 ifndef _WINREG_
 define _WINREG_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 include apiset.inc
 include apisetcconv.inc

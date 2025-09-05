@@ -1,29 +1,17 @@
-.pragma list(push, 0)
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __d3d11_h__
 define __d3d11_h__
 
 .pragma comment(lib, d3d11)
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 include dxgi.inc
 include d3dcommon.inc
 
@@ -2300,4 +2288,3 @@ DEFINE_GUID(IID_ID3D11DeviceContext,0xc0bfa96c,0xe089,0x44fb,0x8e,0xaf,0x26,0xf8
 DEFINE_GUID(IID_ID3D11Device,0xdb6f6ddb,0xac77,0x4e88,0x82,0x53,0x81,0x9d,0xf9,0xbb,0xf1,0x40)
 
 endif
-.pragma list(pop)

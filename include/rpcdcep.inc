@@ -1,8 +1,8 @@
-ifndef __LIBC_INC
- include libc.inc
-endif
 ifndef __RPCDCEP_H__
 define __RPCDCEP_H__
+ifndef _LIBC_
+include libc.inc
+endif
 
 RPC_VERSION		STRUC
 MajorVersion		dw ?

@@ -1,8 +1,8 @@
-.pragma list(push, 0)
 ifndef _WINERROR_
 define _WINERROR_
-
+ifndef SPECSTRINGS_H
 include specstrings.inc
+endif
 
 define FACILITY_XPS			82
 define FACILITY_XAML			43
@@ -6445,5 +6445,3 @@ define WININET_E_COOKIE_NEEDS_CONFIRMATION 0x80072F81
 define WININET_E_COOKIE_DECLINED	0x80072F82
 define WININET_E_REDIRECT_NEEDS_CONFIRMATION 0x80072F88
 endif
-
-.pragma list(pop)

@@ -1,10 +1,11 @@
 ifndef _IO_APISET_H_
 define _IO_APISET_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 CreateIoCompletionPort proto WINAPI :HANDLE, :HANDLE, :ULONG_PTR, :DWORD
 GetQueuedCompletionStatus proto WINAPI :HANDLE, :LPDWORD, :PULONG_PTR, :ptr, :DWORD

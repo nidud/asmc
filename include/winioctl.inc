@@ -1284,9 +1284,11 @@ ReadCopyNumberFromKey macro _k
 endif
 
 ifndef _NTDDDISK_H_
-_NTDDDISK_H_ equ 1
+define _NTDDDISK_H_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -4505,4 +4507,3 @@ PVOLUME_GET_GPT_ATTRIBUTES_INFORMATION typedef ptr VOLUME_GET_GPT_ATTRIBUTES_INF
 endif
 
 endif
-

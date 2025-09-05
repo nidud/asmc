@@ -1,4 +1,6 @@
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 NTSTATUS typedef LONG
 

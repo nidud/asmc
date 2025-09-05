@@ -1,7 +1,8 @@
-include libc.inc
-
 ifndef _INC_CRTDEFS
 define _INC_CRTDEFS
+ifndef _LIBC_
+include libc.inc
+endif
 
 ifdef _CRTBLD
 define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES

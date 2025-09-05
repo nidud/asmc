@@ -1,24 +1,15 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 440
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __atliface_h__
 define __atliface_h__
-
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 include oleacc.inc
 
 MIDL_user_allocate proto WINAPI :size_t
@@ -238,7 +229,6 @@ AtlAxWinInit proto WINAPI
 AtlAxGetHost proto WINAPI :HWND, :ptr
 AtlAxGetControl proto WINAPI :HWND, :ptr
 
-
 .pragma pack(pop)
 
 ifndef __IAccessibleProxy_INTERFACE_DEFINED__
@@ -252,7 +242,6 @@ DEFINE_IIDX(IAccessibleProxy, "7A7D9DCF-B7A1-4019-9031-258268846980")
    .ENDS
 
 endif
-
 
 ifndef __IAccessibleServer_INTERFACE_DEFINED__
 define __IAccessibleServer_INTERFACE_DEFINED__
@@ -268,16 +257,4 @@ DEFINE_IIDX(IAccessibleServer, "52C8FB5E-D779-4e77-AE9F-F611FA7E9D7A")
 
 endif
 
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
 endif
-

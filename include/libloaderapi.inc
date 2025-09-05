@@ -1,11 +1,12 @@
 .pragma list(push, 0)
 ifndef _APISETLIBLOADER_
 define _APISETLIBLOADER_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 define	FIND_RESOURCE_DIRECTORY_TYPES	    (0x0100)
 define	FIND_RESOURCE_DIRECTORY_NAMES	    (0x0200)

@@ -1,8 +1,9 @@
-.pragma list(push, 0)
 ifndef _RICHEDIT_
 define _RICHEDIT_
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 include windows.inc
 include wtypes.inc
 include objbase.inc
@@ -1297,4 +1298,3 @@ define GCM_MOUSEMENU		0x2000
 endif
 
 endif
-.pragma list(pop)

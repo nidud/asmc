@@ -1,27 +1,14 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __objidl_h__
 define __objidl_h__
-
+ifndef __unknwn_h__
 include unknwn.inc
+endif
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if(NTDDI_VERSION ge NTDDI_VISTA and not defined(_WIN32_WINNT))
 define _WIN32_WINNT 0x0600
@@ -36,8 +23,9 @@ if(NTDDI_VERSION ge NTDDI_WIN2K and not defined(_WIN32_WINNT))
 define _WIN32_WINNT 0x0500
 endif
 
+ifndef _LIMITS_
 include limits.inc
-
+endif
 ifndef _OBJIDLBASE_
 include objidlbase
 endif
@@ -79,16 +67,15 @@ define __IBindCtx_INTERFACE_DEFINED__
 LPBC			typedef ptr IBindCtx
 LPBINDCTX		typedef ptr IBindCtx
 
-tagBIND_OPTS		struct
+BIND_OPTS		struct
 cbStruct		DWORD ?
 grfFlags		DWORD ?
 grfMode			DWORD ?
 dwTickCountDeadline	DWORD ?
-tagBIND_OPTS		ends
-BIND_OPTS		typedef tagBIND_OPTS
-LPBIND_OPTS		typedef ptr tagBIND_OPTS
+BIND_OPTS		ends
+LPBIND_OPTS		typedef ptr BIND_OPTS
 
-tagBIND_OPTS2		struct
+BIND_OPTS2		struct
 cbStruct		DWORD ?
 grfFlags		DWORD ?
 grfMode			DWORD ?
@@ -97,12 +84,10 @@ dwTrackFlags		DWORD ?
 dwClassContext		DWORD ?
 locale			LCID ?
 pServerInfo		ptr COSERVERINFO ?
-tagBIND_OPTS2		ends
-BIND_OPTS2		typedef tagBIND_OPTS2
+BIND_OPTS2		ends
+LPBIND_OPTS2		typedef ptr BIND_OPTS2
 
-LPBIND_OPTS2		typedef ptr tagBIND_OPTS2
-
-tagBIND_OPTS3		struct
+BIND_OPTS3		struct
 cbStruct		DWORD ?
 grfFlags		DWORD ?
 grfMode			DWORD ?
@@ -112,14 +97,13 @@ dwClassContext		DWORD ?
 locale			LCID ?
 pServerInfo		ptr COSERVERINFO ?
 hwnd			HWND ?
-tagBIND_OPTS3		ends
-BIND_OPTS3		typedef tagBIND_OPTS3
-LPBIND_OPTS3		typedef ptr tagBIND_OPTS3
+BIND_OPTS3		ends
+LPBIND_OPTS3		typedef ptr BIND_OPTS3
 
 .enum BIND_FLAGS {
 	BIND_MAYBOTHERUSER	= 1,
 	BIND_JUSTTESTEXISTENCE	= 2
-    }
+	}
 
 DEFINE_IIDX(IBindCtx, "0000000e-0000-0000-C000-000000000046")
 
@@ -135,11 +119,6 @@ DEFINE_IIDX(IBindCtx, "0000000e-0000-0000-C000-000000000046")
     EnumObjectParam	proc :ptr
     RevokeObjectParam	proc :LPOLESTR
    .ends
-
-IBindCtx_RemoteSetBindOptions_Proxy proto WINAPI :ptr, :ptr
-IBindCtx_RemoteSetBindOptions_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IBindCtx_RemoteGetBindOptions_Proxy proto WINAPI :ptr, :ptr
-IBindCtx_RemoteGetBindOptions_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -157,9 +136,6 @@ DEFINE_IIDX(IEnumMoniker, "00000102-0000-0000-C000-000000000046")
     Reset		proc
     Clone		proc :ptr
    .ends
-
-IEnumMoniker_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr ptr, :ptr
-IEnumMoniker_RemoteNext_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -182,9 +158,6 @@ DEFINE_IIDX(IRunnableObject, "00000126-0000-0000-C000-000000000046")
     LockRunning		proc :BOOL, :BOOL
     SetContainedObject	proc :BOOL
    .ends
-
-IRunnableObject_RemoteIsRunning_Proxy proto WINAPI :ptr
-IRunnableObject_RemoteIsRunning_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -259,14 +232,14 @@ LPMONIKER		typedef ptr IMoniker
 	MKSYS_OBJREFMONIKER	= 8,
 	MKSYS_SESSIONMONIKER	= 9,
 	MKSYS_LUAMONIKER	= 10
-    }
+	}
 
 .enum MKRREDUCE {
 	MKRREDUCE_ONE	= ( 3 shl 16 ) ,
 	MKRREDUCE_TOUSER	= ( 2 shl 16 ) ,
 	MKRREDUCE_THROUGHUSER	= ( 1 shl 16 ) ,
 	MKRREDUCE_ALL	= 0
-    }
+	}
 
 DEFINE_IIDX(IMoniker, "0000000f-0000-0000-C000-000000000046")
 
@@ -288,11 +261,6 @@ DEFINE_IIDX(IMoniker, "0000000f-0000-0000-C000-000000000046")
     ParseDisplayName	proc :ptr, :ptr, :LPOLESTR, :ptr, :ptr
     IsSystemMoniker	proc :ptr
    .ends
-
-IMoniker_RemoteBindToObject_Proxy proto WINAPI :ptr, :ptr, :ptr, :REFIID, :ptr ptr
-IMoniker_RemoteBindToObject_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IMoniker_RemoteBindToStorage_Proxy proto WINAPI :ptr, :ptr, :ptr, :REFIID, :ptr ptr
-IMoniker_RemoteBindToStorage_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -330,9 +298,6 @@ DEFINE_IIDX(IEnumSTATSTG, "0000000d-0000-0000-C000-000000000046")
     Reset		proc
     Clone		proc :ptr
    .ends
-
-IEnumSTATSTG_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
-IEnumSTATSTG_RemoteNext_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -372,13 +337,6 @@ DEFINE_IIDX(IStorage, "0000000b-0000-0000-C000-000000000046")
     SetStateBits	proc :DWORD, :DWORD
     Stat		proc :ptr, :DWORD
    .ends
-
-IStorage_RemoteOpenStream_Proxy proto WINAPI :ptr, :ptr, :ULONG, :ptr, :DWORD, :DWORD, :ptr ptr
-IStorage_RemoteOpenStream_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IStorage_RemoteCopyTo_Proxy proto WINAPI :ptr, :DWORD, :ptr, :SNB, :ptr
-IStorage_RemoteCopyTo_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IStorage_RemoteEnumElements_Proxy proto WINAPI :ptr, :DWORD, :ULONG, :ptr, :DWORD, :ptr ptr
-IStorage_RemoteEnumElements_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -445,11 +403,6 @@ DEFINE_IIDX(ILockBytes, "0000000a-0000-0000-C000-000000000046")
     Stat		proc :ptr, :DWORD
    .ends
 
-ILockBytes_RemoteReadAt_Proxy proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
-ILockBytes_RemoteReadAt_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-ILockBytes_RemoteWriteAt_Proxy proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
-ILockBytes_RemoteWriteAt_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-
 endif
 
 ifndef __IEnumFORMATETC_INTERFACE_DEFINED__
@@ -488,9 +441,6 @@ DEFINE_IIDX(IEnumFORMATETC, "00000103-0000-0000-C000-000000000046")
     Clone		proc :ptr
    .ends
 
-IEnumFORMATETC_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
-IEnumFORMATETC_RemoteNext_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-
 endif
 
 ifndef __IEnumSTATDATA_INTERFACE_DEFINED__
@@ -506,15 +456,14 @@ LPENUMSTATDATA		typedef ptr IEnumSTATDATA
 	ADVFCACHE_NOHANDLER	= 8,
 	ADVFCACHE_FORCEBUILTIN	= 16,
 	ADVFCACHE_ONSAVE	= 32
-    }
+	}
 
-tagSTATDATA		struct
+STATDATA		struct
 formatetc		FORMATETC <>
 advf			DWORD ?
 pAdvSink		ptr IAdviseSink ?
 dwConnection		DWORD ?
-tagSTATDATA		ends
-STATDATA		typedef tagSTATDATA
+STATDATA		ends
 LPSTATDATA		typedef ptr STATDATA
 
 DEFINE_IIDX(IEnumSTATDATA, "00000105-0000-0000-C000-000000000046")
@@ -525,9 +474,6 @@ DEFINE_IIDX(IEnumSTATDATA, "00000105-0000-0000-C000-000000000046")
     Reset		proc
     Clone		proc :ptr
    .ends
-
-IEnumSTATDATA_RemoteNext_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
-IEnumSTATDATA_RemoteNext_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -559,18 +505,16 @@ LPADVISESINK		typedef ptr IAdviseSink
 	TYMED_MFPICT	= 32,
 	TYMED_ENHMF	= 64,
 	TYMED_NULL	= 0
-    }
+	}
 
-tagRemSTGMEDIUM		struct
+RemSTGMEDIUM		struct
 tymed			DWORD ?
 dwHandleType		DWORD ?
 pData			ULONG ?
 pUnkForRelease		ULONG ?
 cbData			ULONG ?
 data			byte 1 dup(?)
-tagRemSTGMEDIUM		ends
-RemSTGMEDIUM		typedef tagRemSTGMEDIUM
-
+RemSTGMEDIUM		ends
 
 tagSTGMEDIUM		struct
 tymed			DWORD ?
@@ -642,17 +586,6 @@ DEFINE_IIDX(IAdviseSink, "0000010f-0000-0000-C000-000000000046")
     OnClose		proc
    .ends
 
-IAdviseSink_RemoteOnDataChange_Proxy proto WINAPI :ptr, :ptr, :ptr
-IAdviseSink_RemoteOnDataChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IAdviseSink_RemoteOnViewChange_Proxy proto WINAPI :ptr, :DWORD, :LONG
-IAdviseSink_RemoteOnViewChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IAdviseSink_RemoteOnRename_Proxy proto WINAPI :ptr, :ptr
-IAdviseSink_RemoteOnRename_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IAdviseSink_RemoteOnSave_Proxy proto WINAPI :ptr
-IAdviseSink_RemoteOnSave_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IAdviseSink_RemoteOnClose_Proxy proto WINAPI :ptr
-IAdviseSink_RemoteOnClose_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-
 endif
 
 ifndef __AsyncIAdviseSink_INTERFACE_DEFINED__
@@ -674,27 +607,6 @@ DEFINE_IIDX(AsyncIAdviseSink, "00000150-0000-0000-C000-000000000046")
     Finish_OnClose	proc
    .ends
 
-AsyncIAdviseSink_Begin_RemoteOnDataChange_Proxy proto WINAPI :ptr, :ptr, :ptr
-AsyncIAdviseSink_Begin_RemoteOnDataChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Finish_RemoteOnDataChange_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_RemoteOnDataChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Begin_RemoteOnViewChange_Proxy proto WINAPI :ptr, :DWORD, :LONG
-AsyncIAdviseSink_Begin_RemoteOnViewChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Finish_RemoteOnViewChange_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_RemoteOnViewChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Begin_RemoteOnRename_Proxy proto WINAPI :ptr, :ptr
-AsyncIAdviseSink_Begin_RemoteOnRename_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Finish_RemoteOnRename_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_RemoteOnRename_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Begin_RemoteOnSave_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Begin_RemoteOnSave_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Finish_RemoteOnSave_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_RemoteOnSave_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Begin_RemoteOnClose_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Begin_RemoteOnClose_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink_Finish_RemoteOnClose_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_RemoteOnClose_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-
 endif
 
 endif
@@ -713,9 +625,6 @@ DEFINE_IIDX(IAdviseSink2, "00000125-0000-0000-C000-000000000046")
 
 LPADVISESINK2		typedef ptr IAdviseSink2
 
-IAdviseSink2_RemoteOnLinkSrcChange_Proxy proto WINAPI :ptr, :ptr
-IAdviseSink2_RemoteOnLinkSrcChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-
 endif
 
 ifndef __AsyncIAdviseSink2_INTERFACE_DEFINED__
@@ -729,11 +638,6 @@ DEFINE_IIDX(AsyncIAdviseSink2, "00000151-0000-0000-C000-000000000046")
     Finish_OnLinkSrcChange proc
    .ends
 
-AsyncIAdviseSink2_Begin_RemoteOnLinkSrcChange_Proxy proto WINAPI :ptr, :ptr
-AsyncIAdviseSink2_Begin_RemoteOnLinkSrcChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-AsyncIAdviseSink2_Finish_RemoteOnLinkSrcChange_Proxy proto WINAPI :ptr
-AsyncIAdviseSink2_Finish_RemoteOnLinkSrcChange_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-
 endif
 
 endif
@@ -746,7 +650,7 @@ define __IDataObject_INTERFACE_DEFINED__
 .enum DATADIR {
 	DATADIR_GET	= 1,
 	DATADIR_SET	= 2
-    }
+	}
 
 DEFINE_IIDX(IDataObject, "0000010e-0000-0000-C000-000000000046")
 
@@ -764,13 +668,6 @@ DEFINE_IIDX(IDataObject, "0000010e-0000-0000-C000-000000000046")
    .ends
 
 LPDATAOBJECT		typedef ptr IDataObject
-
-IDataObject_RemoteGetData_Proxy proto WINAPI :ptr, :ptr, :ptr
-IDataObject_RemoteGetData_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IDataObject_RemoteGetDataHere_Proxy proto WINAPI :ptr, :ptr, :ptr
-IDataObject_RemoteGetDataHere_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IDataObject_RemoteSetData_Proxy proto WINAPI :ptr, :ptr, :ptr, :BOOL
-IDataObject_RemoteSetData_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -804,32 +701,31 @@ define __IMessageFilter_INTERFACE_DEFINED__
 	CALLTYPE_ASYNC	= 3,
 	CALLTYPE_TOPLEVEL_CALLPENDING	= 4,
 	CALLTYPE_ASYNC_CALLPENDING	= 5
-    }
+	}
 
 .enum SERVERCALL {
-	SERVERCALL_ISHANDLED	= 0,
-	SERVERCALL_REJECTED	= 1,
-	SERVERCALL_RETRYLATER	= 2
-    }
+	SERVERCALL_ISHANDLED,
+	SERVERCALL_REJECTED,
+	SERVERCALL_RETRYLATER
+	}
 
 .enum PENDINGTYPE {
 	PENDINGTYPE_TOPLEVEL	= 1,
 	PENDINGTYPE_NESTED	= 2
-    }
+	}
 
 .enum PENDINGMSG {
-	PENDINGMSG_CANCELCALL	= 0,
-	PENDINGMSG_WAITNOPROCESS	= 1,
-	PENDINGMSG_WAITDEFPROCESS	= 2
-    }
+	PENDINGMSG_CANCELCALL,
+	PENDINGMSG_WAITNOPROCESS,
+	PENDINGMSG_WAITDEFPROCESS
+	}
 
-tagINTERFACEINFO	struct
+INTERFACEINFO		struct
 pUnk			LPUNKNOWN ?
 iid			IID <>
 wMethod			WORD ?
-tagINTERFACEINFO	ends
-INTERFACEINFO		typedef tagINTERFACEINFO
-LPINTERFACEINFO		typedef ptr tagINTERFACEINFO
+INTERFACEINFO		ends
+LPINTERFACEINFO		typedef ptr INTERFACEINFO
 
 DEFINE_IIDX(IMessageFilter, "00000016-0000-0000-C000-000000000046")
 
@@ -881,11 +777,6 @@ DEFINE_IIDX(IFillLockBytes, "99caf010-415e-11cf-8814-00aa00b569f5")
     SetFillSize		proc :ULARGE_INTEGER
     Terminate		proc :BOOL
    .ends
-
-IFillLockBytes_RemoteFillAppend_Proxy proto WINAPI :ptr, :ptr, :ULONG, :ptr
-IFillLockBytes_RemoteFillAppend_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
-IFillLockBytes_RemoteFillAt_Proxy proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
-IFillLockBytes_RemoteFillAt_Stub proto WINAPI :ptr, :ptr, :PRPC_MESSAGE, :ptr
 
 endif
 
@@ -1047,14 +938,14 @@ DEFINE_IIDX(IDummyHICONIncluder, "947990de-cc28-11d2-a0f7-00805f858fb1")
 endif
 
 .enum ApplicationType {
-	ServerApplication	= 0,
-	LibraryApplication	= ( ServerApplication + 1 )
-    }
+	ServerApplication,
+	LibraryApplication
+	}
 
 .enum ShutdownType {
-	IdleShutdown	= 0,
-	ForcedShutdown	= ( IdleShutdown + 1 )
-    }
+	IdleShutdown,
+	ForcedShutdown
+	}
 
 ifndef __IProcessLock_INTERFACE_DEFINED__
 define __IProcessLock_INTERFACE_DEFINED__
@@ -1122,186 +1013,5 @@ DEFINE_IIDX(IApartmentShutdown, "A2F05A09-27A2-42B5-BC0E-AC163EF49D9B")
 endif
 
 endif
-
-ASYNC_STGMEDIUM_UserSize proto WINAPI :ptr, :dword, :ptr
-ASYNC_STGMEDIUM_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-ASYNC_STGMEDIUM_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-ASYNC_STGMEDIUM_UserFree proto WINAPI :ptr, :ptr
-
-CLIPFORMAT_UserSize proto WINAPI :ptr, :dword, :ptr
-CLIPFORMAT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserFree proto WINAPI :ptr, :ptr
-
-FLAG_STGMEDIUM_UserSize proto WINAPI :ptr, :dword, :ptr
-FLAG_STGMEDIUM_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-FLAG_STGMEDIUM_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-FLAG_STGMEDIUM_UserFree proto WINAPI :ptr, :ptr
-
-HBITMAP_UserSize proto WINAPI :ptr, :dword, :ptr
-HBITMAP_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserFree proto WINAPI :ptr, :ptr
-
-HDC_UserSize proto WINAPI :ptr, :dword, :ptr
-HDC_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HDC_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HDC_UserFree proto WINAPI :ptr, :ptr
-
-HICON_UserSize proto WINAPI :ptr, :dword, :ptr
-HICON_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HICON_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HICON_UserFree proto WINAPI :ptr, :ptr
-
-SNB_UserSize proto WINAPI :ptr, :dword, :ptr
-SNB_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-SNB_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-SNB_UserFree proto WINAPI :ptr, :ptr
-
-STGMEDIUM_UserSize proto WINAPI :ptr, :dword, :ptr
-STGMEDIUM_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-STGMEDIUM_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-STGMEDIUM_UserFree proto WINAPI :ptr, :ptr
-
-ASYNC_STGMEDIUM_UserSize64 proto WINAPI :ptr, :dword, :ptr
-ASYNC_STGMEDIUM_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-ASYNC_STGMEDIUM_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-ASYNC_STGMEDIUM_UserFree64 proto WINAPI :ptr, :ptr
-
-CLIPFORMAT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-CLIPFORMAT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserFree64 proto WINAPI :ptr, :ptr
-
-FLAG_STGMEDIUM_UserSize64 proto WINAPI :ptr, :dword, :ptr
-FLAG_STGMEDIUM_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-FLAG_STGMEDIUM_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-FLAG_STGMEDIUM_UserFree64 proto WINAPI :ptr, :ptr
-
-HBITMAP_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HBITMAP_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HBITMAP_UserFree64 proto WINAPI :ptr, :ptr
-
-HDC_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HDC_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HDC_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HDC_UserFree64 proto WINAPI :ptr, :ptr
-
-HICON_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HICON_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HICON_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HICON_UserFree64 proto WINAPI :ptr, :ptr
-
-SNB_UserSize64 proto WINAPI :ptr, :dword, :ptr
-SNB_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-SNB_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-SNB_UserFree64 proto WINAPI :ptr, :ptr
-
-STGMEDIUM_UserSize64 proto WINAPI :ptr, :dword, :ptr
-STGMEDIUM_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-STGMEDIUM_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-STGMEDIUM_UserFree64 proto WINAPI :ptr, :ptr
-
-IEnumUnknown_Next_Proxy proto WINAPI :ptr, :ULONG, :ptr ptr, :ptr
-IEnumUnknown_Next_Stub proto WINAPI :ptr, :ULONG, :ptr ptr, :ptr
-IEnumString_Next_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
-IEnumString_Next_Stub proto WINAPI :ptr, :ULONG, :ptr, :ptr
-ISequentialStream_Read_Proxy proto WINAPI :ptr, :ptr, :ULONG, :ptr
-ISequentialStream_Read_Stub proto WINAPI :ptr, :ptr, :ULONG, :ptr
-ISequentialStream_Write_Proxy proto WINAPI :ptr, :ptr, :ULONG, :ptr
-ISequentialStream_Write_Stub proto WINAPI :ptr, :ptr, :ULONG, :ptr
-IStream_Seek_Proxy proto WINAPI :ptr, :LARGE_INTEGER, :DWORD, :ptr
-IStream_Seek_Stub proto WINAPI :ptr, :LARGE_INTEGER, :DWORD, :ptr
-IStream_CopyTo_Proxy proto WINAPI :ptr, :ptr, :ULARGE_INTEGER, :ptr, :ptr
-IStream_CopyTo_Stub proto WINAPI :ptr, :ptr, :ULARGE_INTEGER, :ptr, :ptr
-
-IBindCtx_SetBindOptions_Proxy proto WINAPI :ptr, :ptr
-IBindCtx_SetBindOptions_Stub proto WINAPI :ptr, :ptr
-IBindCtx_GetBindOptions_Proxy proto WINAPI :ptr, :ptr
-IBindCtx_GetBindOptions_Stub proto WINAPI :ptr, :ptr
-
-IEnumMoniker_Next_Proxy proto WINAPI :ptr, :ULONG, :ptr ptr, :ptr
-IEnumMoniker_Next_Stub proto WINAPI :ptr, :ULONG, :ptr ptr, :ptr
-
-IRunnableObject_IsRunning_Proxy proto WINAPI :ptr
-IRunnableObject_IsRunning_Stub proto WINAPI :ptr
-
-IMoniker_BindToObject_Proxy proto WINAPI :ptr, :ptr, :ptr, :REFIID, :ptr ptr
-IMoniker_BindToObject_Stub proto WINAPI :ptr, :ptr, :ptr, :REFIID, :ptr ptr
-IMoniker_BindToStorage_Proxy proto WINAPI :ptr, :ptr, :ptr, :REFIID, :ptr ptr
-IMoniker_BindToStorage_Stub proto WINAPI :ptr, :ptr, :ptr, :REFIID, :ptr ptr
-
-IEnumSTATSTG_Next_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
-IEnumSTATSTG_Next_Stub proto WINAPI :ptr, :ULONG, :ptr, :ptr
-
-IStorage_OpenStream_Proxy proto WINAPI :ptr, :ptr, :ptr, :DWORD, :DWORD, :ptr ptr
-IStorage_OpenStream_Stub proto WINAPI :ptr, :ptr, :ULONG, :ptr, :DWORD, :DWORD, :ptr ptr
-IStorage_CopyTo_Proxy proto WINAPI :ptr, :DWORD, :ptr, :SNB, :ptr
-IStorage_CopyTo_Stub proto WINAPI :ptr, :DWORD, :ptr, :SNB, :ptr
-IStorage_EnumElements_Proxy proto WINAPI :ptr, :DWORD, :ptr, :DWORD, :ptr ptr
-IStorage_EnumElements_Stub proto WINAPI :ptr, :DWORD, :ULONG, :ptr, :DWORD, :ptr ptr
-
-ILockBytes_ReadAt_Proxy proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
-ILockBytes_ReadAt_Stub proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
-ILockBytes_WriteAt_Proxy proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
-ILockBytes_WriteAt_Stub proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
-
-IEnumFORMATETC_Next_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
-IEnumFORMATETC_Next_Stub proto WINAPI :ptr, :ULONG, :ptr, :ptr
-IEnumSTATDATA_Next_Proxy proto WINAPI :ptr, :ULONG, :ptr, :ptr
-IEnumSTATDATA_Next_Stub proto WINAPI :ptr, :ULONG, :ptr, :ptr
-
-IAdviseSink_OnDataChange_Proxy proto WINAPI :ptr, :ptr, :ptr
-IAdviseSink_OnDataChange_Stub proto WINAPI :ptr, :ptr, :ptr
-IAdviseSink_OnViewChange_Proxy proto WINAPI :ptr, :DWORD, :LONG
-IAdviseSink_OnViewChange_Stub proto WINAPI :ptr, :DWORD, :LONG
-IAdviseSink_OnRename_Proxy proto WINAPI :ptr, :ptr
-IAdviseSink_OnRename_Stub proto WINAPI :ptr, :ptr
-IAdviseSink_OnSave_Proxy proto WINAPI :ptr
-IAdviseSink_OnSave_Stub proto WINAPI :ptr
-IAdviseSink_OnClose_Proxy proto WINAPI :ptr
-IAdviseSink_OnClose_Stub proto WINAPI :ptr
-
-AsyncIAdviseSink_Begin_OnDataChange_Proxy proto WINAPI :ptr, :ptr, :ptr
-AsyncIAdviseSink_Begin_OnDataChange_Stub proto WINAPI :ptr, :ptr, :ptr
-AsyncIAdviseSink_Finish_OnDataChange_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_OnDataChange_Stub proto WINAPI :ptr
-AsyncIAdviseSink_Begin_OnViewChange_Proxy proto WINAPI :ptr, :DWORD, :LONG
-AsyncIAdviseSink_Begin_OnViewChange_Stub proto WINAPI :ptr, :DWORD, :LONG
-AsyncIAdviseSink_Finish_OnViewChange_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_OnViewChange_Stub proto WINAPI :ptr
-AsyncIAdviseSink_Begin_OnRename_Proxy proto WINAPI :ptr, :ptr
-AsyncIAdviseSink_Begin_OnRename_Stub proto WINAPI :ptr, :ptr
-AsyncIAdviseSink_Finish_OnRename_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_OnRename_Stub proto WINAPI :ptr
-AsyncIAdviseSink_Begin_OnSave_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Begin_OnSave_Stub proto WINAPI :ptr
-AsyncIAdviseSink_Finish_OnSave_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_OnSave_Stub proto WINAPI :ptr
-AsyncIAdviseSink_Begin_OnClose_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Begin_OnClose_Stub proto WINAPI :ptr
-AsyncIAdviseSink_Finish_OnClose_Proxy proto WINAPI :ptr
-AsyncIAdviseSink_Finish_OnClose_Stub proto WINAPI :ptr
-
-IAdviseSink2_OnLinkSrcChange_Proxy proto WINAPI :ptr, :ptr
-IAdviseSink2_OnLinkSrcChange_Stub proto WINAPI :ptr, :ptr
-
-AsyncIAdviseSink2_Begin_OnLinkSrcChange_Proxy proto WINAPI :ptr, :ptr
-AsyncIAdviseSink2_Begin_OnLinkSrcChange_Stub proto WINAPI :ptr, :ptr
-AsyncIAdviseSink2_Finish_OnLinkSrcChange_Proxy proto WINAPI :ptr
-AsyncIAdviseSink2_Finish_OnLinkSrcChange_Stub proto WINAPI :ptr
-
-IDataObject_GetData_Proxy proto WINAPI :ptr, :ptr, :ptr
-IDataObject_GetData_Stub proto WINAPI :ptr, :ptr, :ptr
-IDataObject_GetDataHere_Proxy proto WINAPI :ptr, :ptr, :ptr
-IDataObject_GetDataHere_Stub proto WINAPI :ptr, :ptr, :ptr
-IDataObject_SetData_Proxy proto WINAPI :ptr, :ptr, :ptr, :BOOL
-IDataObject_SetData_Stub proto WINAPI :ptr, :ptr, :ptr, :BOOL
-
-IFillLockBytes_FillAppend_Proxy proto WINAPI :ptr, :ptr, :ULONG, :ptr
-IFillLockBytes_FillAppend_Stub proto WINAPI :ptr, :ptr, :ULONG, :ptr
-IFillLockBytes_FillAt_Proxy proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
-IFillLockBytes_FillAt_Stub proto WINAPI :ptr, :ULARGE_INTEGER, :ptr, :ULONG, :ptr
 
 endif

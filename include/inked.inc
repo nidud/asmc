@@ -1,25 +1,19 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPC500_
+include rpc500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr>
-endif
-
 ifndef __inked_h__
 define __inked_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
+ifndef __ocidl_h__
 include ocidl.inc
+endif
 include msinkaut.inc
-
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -89,52 +83,52 @@ define __INKEDLib_LIBRARY_DEFINED__
 	LEFT_BUTTON	= 0x1,
 	RIGHT_BUTTON	= 0x2,
 	MIDDLE_BUTTON	= 0x4
-    }
+	}
 
 .enum SelAlignmentConstants {
-	rtfLeft = 0,
-	rtfRight	= 1,
-	rtfCenter	= 2
-    }
+	rtfLeft,
+	rtfRight,
+	rtfCenter
+	}
 
 .enum DISPID_InkEdit {
 	DISPID_Text		= DISPID_VALUE,
-	DISPID_TextRTF		= ( DISPID_Text + 1 ) ,
-	DISPID_Hwnd		= ( DISPID_TextRTF + 1 ) ,
-	DISPID_DisableNoScroll	= ( DISPID_Hwnd + 1 ) ,
-	DISPID_Locked		= ( DISPID_DisableNoScroll + 1 ) ,
-	DISPID_Enabled		= ( DISPID_Locked + 1 ) ,
-	DISPID_MaxLength	= ( DISPID_Enabled + 1 ) ,
-	DISPID_MultiLine	= ( DISPID_MaxLength + 1 ) ,
-	DISPID_ScrollBars	= ( DISPID_MultiLine + 1 ) ,
-	DISPID_RTSelStart	= ( DISPID_ScrollBars + 1 ) ,
-	DISPID_RTSelLength	= ( DISPID_RTSelStart + 1 ) ,
-	DISPID_RTSelText	= ( DISPID_RTSelLength + 1 ) ,
-	DISPID_SelAlignment	= ( DISPID_RTSelText + 1 ) ,
-	DISPID_SelBold		= ( DISPID_SelAlignment + 1 ) ,
-	DISPID_SelCharOffset	= ( DISPID_SelBold + 1 ) ,
-	DISPID_SelColor		= ( DISPID_SelCharOffset + 1 ) ,
-	DISPID_SelFontName	= ( DISPID_SelColor + 1 ) ,
-	DISPID_SelFontSize	= ( DISPID_SelFontName + 1 ) ,
-	DISPID_SelItalic	= ( DISPID_SelFontSize + 1 ) ,
-	DISPID_SelRTF		= ( DISPID_SelItalic + 1 ) ,
-	DISPID_SelUnderline	= ( DISPID_SelRTF + 1 ) ,
-	DISPID_DragIcon		= ( DISPID_SelUnderline + 1 ) ,
-	DISPID_Status		= ( DISPID_DragIcon + 1 ) ,
-	DISPID_UseMouseForInput = ( DISPID_Status + 1 ) ,
-	DISPID_InkMode		= ( DISPID_UseMouseForInput + 1 ) ,
-	DISPID_InkInsertMode	= ( DISPID_InkMode + 1 ) ,
-	DISPID_RecoTimeout	= ( DISPID_InkInsertMode + 1 ) ,
-	DISPID_DrawAttr		= ( DISPID_RecoTimeout + 1 ) ,
-	DISPID_Recognizer	= ( DISPID_DrawAttr + 1 ) ,
-	DISPID_Factoid		= ( DISPID_Recognizer + 1 ) ,
-	DISPID_SelInk		= ( DISPID_Factoid + 1 ) ,
-	DISPID_SelInksDisplayMode	= ( DISPID_SelInk + 1 ) ,
-	DISPID_Recognize	= ( DISPID_SelInksDisplayMode + 1 ) ,
-	DISPID_GetGestStatus	= ( DISPID_Recognize + 1 ) ,
-	DISPID_SetGestStatus	= ( DISPID_GetGestStatus + 1 ) ,
-	DISPID_Refresh		= ( DISPID_SetGestStatus + 1 )
-    }
+	DISPID_TextRTF,
+	DISPID_Hwnd,
+	DISPID_DisableNoScroll,
+	DISPID_Locked,
+	DISPID_Enabled,
+	DISPID_MaxLength,
+	DISPID_MultiLine,
+	DISPID_ScrollBars,
+	DISPID_RTSelStart,
+	DISPID_RTSelLength,
+	DISPID_RTSelText,
+	DISPID_SelAlignment,
+	DISPID_SelBold,
+	DISPID_SelCharOffset,
+	DISPID_SelColor,
+	DISPID_SelFontName,
+	DISPID_SelFontSize,
+	DISPID_SelItalic,
+	DISPID_SelRTF,
+	DISPID_SelUnderline,
+	DISPID_DragIcon,
+	DISPID_Status,
+	DISPID_UseMouseForInput,
+	DISPID_InkMode,
+	DISPID_InkInsertMode,
+	DISPID_RecoTimeout,
+	DISPID_DrawAttr,
+	DISPID_Recognizer,
+	DISPID_Factoid,
+	DISPID_SelInk,
+	DISPID_SelInksDisplayMode,
+	DISPID_Recognize,
+	DISPID_GetGestStatus,
+	DISPID_SetGestStatus,
+	DISPID_Refresh
+	}
 
 .enum DISPID_InkEditEvents {
 	DISPID_IeeChange	= 1,
@@ -151,7 +145,7 @@ define __INKEDLib_LIBRARY_DEFINED__
 	DISPID_IeeStroke	= 22,
 	DISPID_IeeGesture	= 23,
 	DISPID_IeeRecognitionResult	= 24
-    }
+	}
 
 externdef LIBID_INKEDLib:IID
 
@@ -162,40 +156,40 @@ define __IInkEdit_INTERFACE_DEFINED__
 	IEM_Disabled		= 0,
 	IEM_Ink			= 1,
 	IEM_InkAndGesture	= 2
-    }
+	}
 
 .enum InkInsertMode {
-	IEM_InsertText	= 0,
-	IEM_InsertInk	= 1
-    }
+	IEM_InsertText,
+	IEM_InsertInk
+	}
 
 .enum InkEditStatus {
-	IES_Idle	= 0,
-	IES_Collecting	= 1,
-	IES_Recognizing = 2
-    }
+	IES_Idle,
+	IES_Collecting,
+	IES_Recognizing
+	}
 
 .enum InkDisplayMode {
-	IDM_Ink = 0,
-	IDM_Text	= 1
-    }
+	IDM_Ink,
+	IDM_Text
+	}
 
 .enum AppearanceConstants {
-	rtfFlat = 0,
-	rtfThreeD	= 1
-    }
+	rtfFlat,
+	rtfThreeD
+	}
 
 .enum BorderStyleConstants {
-	rtfNoBorder	= 0,
-	rtfFixedSingle	= 1
-    }
+	rtfNoBorder,
+	rtfFixedSingle
+	}
 
 .enum ScrollBarsConstants {
-	rtfNone = 0,
-	rtfHorizontal	= 1,
-	rtfVertical	= 2,
-	rtfBoth = 3
-    }
+	rtfNone,
+	rtfHorizontal,
+	rtfVertical,
+	rtfBoth
+	}
 
 DEFINE_IIDX(IInkEdit, "F2127A19-FBFB-4AED-8464-3F36D78CFEFB")
 

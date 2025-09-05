@@ -1,26 +1,13 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 
 ifndef __printdriver_h__
 define __printdriver_h__
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
 
 define PRINTSCHEMA_KEYWORDS_NAMESPACE_URI  <"http:>
 define PRINTSCHEMA_KEYWORDSV11_NAMESPACE_URI  <L"http:>
@@ -54,11 +41,11 @@ DEFINE_IIDX(IPrintSchemaDisplayableElement, "af45af49-d6aa-407d-bf87-3912236e9d9
 endif
 
 .enum PrintSchemaConstrainedSetting {
-	PrintSchemaConstrainedSetting_None	= 0,
-	PrintSchemaConstrainedSetting_PrintTicket	= ( PrintSchemaConstrainedSetting_None + 1 ) ,
-	PrintSchemaConstrainedSetting_Admin	= ( PrintSchemaConstrainedSetting_PrintTicket + 1 ) ,
-	PrintSchemaConstrainedSetting_Device	= ( PrintSchemaConstrainedSetting_Admin + 1 )
-    }
+	PrintSchemaConstrainedSetting_None,
+	PrintSchemaConstrainedSetting_PrintTicket,
+	PrintSchemaConstrainedSetting_Admin,
+	PrintSchemaConstrainedSetting_Device
+	}
 
 ifndef __IPrintSchemaOption_INTERFACE_DEFINED__
 define __IPrintSchemaOption_INTERFACE_DEFINED__
@@ -147,10 +134,10 @@ endif
 
 if (NTDDI_VERSION ge NTDDI_WINBLUE)
 .enum PrintSchemaParameterDataType {
-	PrintSchemaParameterDataType_Integer	= 0,
-	PrintSchemaParameterDataType_NumericString	= ( PrintSchemaParameterDataType_Integer + 1 ) ,
-	PrintSchemaParameterDataType_String	= ( PrintSchemaParameterDataType_NumericString + 1 )
-    }
+	PrintSchemaParameterDataType_Integer,
+	PrintSchemaParameterDataType_NumericString,
+	PrintSchemaParameterDataType_String
+	}
 
 ifndef __IPrintSchemaParameterDefinition_INTERFACE_DEFINED__
 define __IPrintSchemaParameterDefinition_INTERFACE_DEFINED__
@@ -623,26 +610,6 @@ DEFINE_GUID(PRINTER_EXTENSION_REASON_PRINT_PREFERENCES,		0xec8f261f,0x267c,0x469
 DEFINE_GUID(PRINTER_EXTENSION_REASON_DRIVER_EVENT,		0x23bb1328,0x63de,0x4293,0x91,0x5b,0xa6,0xa2,0x3d,0x92,0x9a,0xcb)
 DEFINE_GUID(FMTID_PrinterPropertyBag,				0x75f9adca,0x097d,0x45c3,0xa6,0xe4,0xba,0xb2,0x9e,0x27,0x6f,0x3e)
 endif
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif
 

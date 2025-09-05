@@ -1,21 +1,18 @@
-include rpc.inc
-include rpcndr.inc
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 ifndef __urlmon_h__
 define __urlmon_h__
-
+ifndef __objidl_h__
 include objidl.inc
+endif
+ifndef __oleidl_h__
 include oleidl.inc
+endif
 include servprov.inc
 include msxml.inc
 
 .pragma comment(lib, urlmon)
-
-MIDL_user_allocate	proto WINAPI :size_t
-MIDL_user_free		proto WINAPI :PVOID
 
 BINDF_DONTUSECACHE	equ <BINDF_GETNEWESTVERSION>
 BINDF_DONTPUTINCACHE	equ <BINDF_NOWRITECACHE>

@@ -1,7 +1,8 @@
 ifndef _WINCONTYPES_
 define _WINCONTYPES_
-
+ifndef _MINWINDEF_
 include minwindef.inc
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
@@ -21,11 +22,11 @@ PSMALL_RECT             typedef ptr SMALL_RECT
 
 KEY_EVENT_RECORD        struct
 bKeyDown                BOOL ?
-wRepeatCount            WORD ?
-wVirtualKeyCode         WORD ?
-wVirtualScanCode        WORD ?
+wRepeatCount            dw ?
+wVirtualKeyCode         dw ?
+wVirtualScanCode        dw ?
 union uChar
- UnicodeChar            WCHAR ?
+ UnicodeChar            dw ?
  AsciiChar              CHAR ?
 ends
 dwControlKeyState       DWORD ?
@@ -52,9 +53,9 @@ define NLS_IME_DISABLE       0x20000000
 
 MOUSE_EVENT_RECORD      struct
 dwMousePosition         COORD <>
-dwButtonState           DWORD ?
-dwControlKeyState       DWORD ?
-dwEventFlags            DWORD ?
+dwButtonState           dd ?
+dwControlKeyState       dd ?
+dwEventFlags            dd ?
 MOUSE_EVENT_RECORD      ends
 PMOUSE_EVENT_RECORD     typedef ptr MOUSE_EVENT_RECORD
 
@@ -77,7 +78,7 @@ WINDOW_BUFFER_SIZE_RECORD ends
 PWINDOW_BUFFER_SIZE_RECORD typedef ptr WINDOW_BUFFER_SIZE_RECORD
 
 MENU_EVENT_RECORD       struct
-dwCommandId             UINT ?
+dwCommandId             dd ?
 MENU_EVENT_RECORD       ends
 PMENU_EVENT_RECORD      typedef ptr MENU_EVENT_RECORD
 
@@ -106,15 +107,15 @@ define FOCUS_EVENT 0x0010
 
 CHAR_INFO               struct
 union Char
- UnicodeChar            WCHAR ?
+ UnicodeChar            dw ?
  AsciiChar              CHAR ?
 ends
-Attributes              WORD ?
+Attributes              dw ?
 CHAR_INFO               ends
 PCHAR_INFO              typedef ptr CHAR_INFO
 
 CONSOLE_FONT_INFO       struct
-nFont                   DWORD ?
+nFont                   dd ?
 dwFontSize              COORD <>
 CONSOLE_FONT_INFO       ends
 PCONSOLE_FONT_INFO      typedef ptr CONSOLE_FONT_INFO

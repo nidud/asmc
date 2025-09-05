@@ -1,10 +1,8 @@
-ifndef __EXCPT_INC
-define __EXCPT_INC
+ifndef _EXCPT_
+define _EXCPT_
 ifndef _WINDEF_
- include windef.inc
+include windef.inc
 endif
-
-;; Exception disposition return values.
 
 .enum EXCEPTION_DISPOSITION {
     ExceptionContinueExecution,
@@ -20,8 +18,6 @@ ifndef _M_CEE_PURE
 __C_specific_handler proto __cdecl :ptr, :ptr, :ptr, :ptr
 endif
 endif
-
-;; Keywords and intrinsics for SEH
 
 define GetExceptionCode		<_exception_code>
 define exception_code		<_exception_code>
@@ -56,7 +52,7 @@ externdef _XcptActTabSize:int_t
 externdef _First_FPE_Indx:int_t
 externdef _Num_FPE:SINT
 
-_XcptFilter proto WINAPI :ULONG, :ptr ; PEXCEPTION_POINTERS
+_XcptFilter proto WINAPI :DWORD, :ptr
 
 endif
 

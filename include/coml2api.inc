@@ -1,13 +1,20 @@
 ifndef _COML2API_H_
 define _COML2API_H_
-
+ifndef _API_SET_H_
 include apiset.inc
+endif
+ifndef _APISETCCONV_
 include apisetcconv.inc
-
+endif
+ifndef _COMBASEAPI_
 include combaseapi.inc
+endif
+ifndef __objidl_h__
 include objidl.inc
+endif
+ifndef __propidlbase_h__
 include propidlbase.inc
-
+endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
 
 define CWCSTORAGENAME 32

@@ -6,7 +6,7 @@
 
 include stdio.inc
 
-.data
-_bufin db _INTIOBUF dup(0)
+.data?
+_bufin char_t _INTIOBUF dup(?)
 
     end

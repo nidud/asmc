@@ -1,16 +1,22 @@
 ifndef _APISETCONSOLEL3_
 define _APISETCONSOLEL3_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
-
+endif
+ifndef _WINCONTYPES_
 include wincontypes.inc
+endif
+ifndef _WINDEF_
 include windef.inc
+endif
 
 ifndef NOGDI
+ifndef _WINGDI_
 include wingdi.inc
+endif
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)

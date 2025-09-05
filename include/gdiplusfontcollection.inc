@@ -1,4 +1,6 @@
 ifndef _GDIPLUSFONTCOLL_H
 define _GDIPLUSFONTCOLL_H
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 endif

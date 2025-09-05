@@ -1,7 +1,9 @@
 
 include shtypes.inc
 
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 
 .pragma comment(lib, shcore)
 

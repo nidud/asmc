@@ -1,10 +1,11 @@
 ifndef _SYSTEMTOPOLOGY_H_
 define _SYSTEMTOPOLOGY_H_
-
-include apiset.inc
-include apisetcconv.inc
-include minwindef.inc
+ifndef _APIQUERY2_H_
+include apiquery2.inc
+endif
+ifndef _MINWINBASE_
 include minwinbase.inc
+endif
 
 GetNumaHighestNodeNumber proto WINAPI :PULONG
 

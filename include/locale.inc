@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
-ifndef __LIBC_INC
- include libc.inc
+ifndef _LIBC_
+include libc.inc
 endif
 
 LC_ALL		equ 0

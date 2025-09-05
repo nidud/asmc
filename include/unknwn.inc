@@ -1,16 +1,9 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 440
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc>
-endif
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
+ifndef __wtypes_h__
 include wtypes.inc
+endif
 
 ifndef __unknwn_h__
 define __unknwn_h__

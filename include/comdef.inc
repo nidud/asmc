@@ -2,7 +2,9 @@ ifndef _INC_COMDEF
 define _INC_COMDEF
 
 ifdef WINAPI_FAMILY
+ifndef _WINAPIFAMILY_
 include winapifamily.inc
+endif
 if not WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 define _COMDEF_NOT_WINAPI_FAMILY_DESKTOP_APP
 endif

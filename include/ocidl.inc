@@ -1,23 +1,13 @@
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
-endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-include rpc.inc
-include rpcndr.inc
-ifndef __RPCNDR_H_VERSION__
- .err <this stub requires an updated version of rpcndr>
-endif
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
 ifndef __ocidl_h__
 define __ocidl_h__
 
 include oleidl.inc
+ifndef __oaidl_h__
 include oaidl.inc
+endif
 include servprov.inc
 include urlmon.inc
 
@@ -985,92 +975,5 @@ DEFINE_IIDX(IQuickActivate, "CF51ED10-62FE-11CF-BF86-00A0C9034836")
 LPQUICKACTIVATE		typedef ptr IQuickActivate
 
 endif
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-CLIPFORMAT_UserSize proto WINAPI :ptr, :dword, :ptr
-CLIPFORMAT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserFree proto WINAPI :ptr, :ptr
-
-HACCEL_UserSize proto WINAPI :ptr, :dword, :ptr
-HACCEL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserFree proto WINAPI :ptr, :ptr
-
-HDC_UserSize proto WINAPI :ptr, :dword, :ptr
-HDC_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HDC_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HDC_UserFree proto WINAPI :ptr, :ptr
-
-
-HFONT_UserSize proto WINAPI :ptr, :DWORD, :ptr
-HFONT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HFONT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HFONT_UserFree proto WINAPI :ptr, :ptr
-HPALETTE_UserSize proto WINAPI :ptr, :DWORD, :ptr
-HPALETTE_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HPALETTE_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HPALETTE_UserFree proto WINAPI :ptr, :ptr
-HRGN_UserSize proto WINAPI :ptr, :DWORD, :ptr
-HRGN_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HRGN_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HRGN_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-CLIPFORMAT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-CLIPFORMAT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-CLIPFORMAT_UserFree64 proto WINAPI :ptr, :ptr
-
-HACCEL_UserSize proto WINAPI :ptr, :dword, :ptr
-HACCEL_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HACCEL_UserFree proto WINAPI :ptr, :ptr
-
-HDC_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HDC_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HDC_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HDC_UserFree64 proto WINAPI :ptr, :ptr
-
-HFONT_UserSize64 proto WINAPI :ptr, :DWORD, :ptr
-HFONT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HFONT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HFONT_UserFree64 proto WINAPI :ptr, :ptr
-HPALETTE_UserSize64 proto WINAPI :ptr, :DWORD, :ptr
-HPALETTE_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HPALETTE_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HPALETTE_UserFree64 proto WINAPI :ptr, :ptr
-HRGN_UserSize64 proto WINAPI :ptr, :DWORD, :ptr
-HRGN_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HRGN_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HRGN_UserFree64 proto WINAPI :ptr, :ptr
-
-HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
 
 endif

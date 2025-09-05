@@ -1,28 +1,12 @@
-.pragma list(push, 0)
-
-ifndef __REQUIRED_RPCNDR_H_VERSION__
-define __REQUIRED_RPCNDR_H_VERSION__ 500
+ifndef _RPCNDR500_
+include rpcndr500.inc
 endif
-ifndef __REQUIRED_RPCSAL_H_VERSION__
-define __REQUIRED_RPCSAL_H_VERSION__ 100
-endif
-
-include rpc.inc
-include rpcndr.inc
-
-ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr>
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
 ifndef __NETCON_INC
 define __NETCON_INC
 
+ifndef __oaidl_h__
 include oaidl.inc
+endif
 include prsht.inc
 
 externdef CLSID_ConnectionManager:CLSID
@@ -71,43 +55,43 @@ define __INetConnection_INTERFACE_DEFINED__
     }
 
 .enum NETCON_STATUS {
-	NCS_DISCONNECTED	= 0,
-	NCS_CONNECTING		= ( NCS_DISCONNECTED + 1 ) ,
-	NCS_CONNECTED		= ( NCS_CONNECTING + 1 ) ,
-	NCS_DISCONNECTING	= ( NCS_CONNECTED + 1 ) ,
-	NCS_HARDWARE_NOT_PRESENT = ( NCS_DISCONNECTING + 1 ) ,
-	NCS_HARDWARE_DISABLED	= ( NCS_HARDWARE_NOT_PRESENT + 1 ) ,
-	NCS_HARDWARE_MALFUNCTION = ( NCS_HARDWARE_DISABLED + 1 ) ,
-	NCS_MEDIA_DISCONNECTED	= ( NCS_HARDWARE_MALFUNCTION + 1 ) ,
-	NCS_AUTHENTICATING	= ( NCS_MEDIA_DISCONNECTED + 1 ) ,
-	NCS_AUTHENTICATION_SUCCEEDED = ( NCS_AUTHENTICATING + 1 ) ,
-	NCS_AUTHENTICATION_FAILED = ( NCS_AUTHENTICATION_SUCCEEDED + 1 ) ,
-	NCS_INVALID_ADDRESS	= ( NCS_AUTHENTICATION_FAILED + 1 ) ,
-	NCS_CREDENTIALS_REQUIRED = ( NCS_INVALID_ADDRESS + 1 )
-    }
+	NCS_DISCONNECTED,
+	NCS_CONNECTING,
+	NCS_CONNECTED,
+	NCS_DISCONNECTING,
+	NCS_HARDWARE_NOT_PRESENT,
+	NCS_HARDWARE_DISABLED,
+	NCS_HARDWARE_MALFUNCTION,
+	NCS_MEDIA_DISCONNECTED,
+	NCS_AUTHENTICATING,
+	NCS_AUTHENTICATION_SUCCEEDED,
+	NCS_AUTHENTICATION_FAILED,
+	NCS_INVALID_ADDRESS,
+	NCS_CREDENTIALS_REQUIRED
+	}
 
 .enum NETCON_TYPE {
-	NCT_DIRECT_CONNECT = 0,
-	NCT_INBOUND	= 1,
-	NCT_INTERNET	= ( NCT_INBOUND + 1 ) ,
-	NCT_LAN		= ( NCT_INTERNET + 1 ) ,
-	NCT_PHONE	= ( NCT_LAN + 1 ) ,
-	NCT_TUNNEL	= ( NCT_PHONE + 1 ) ,
-	NCT_BRIDGE	= ( NCT_TUNNEL + 1 )
-    }
+	NCT_DIRECT_CONNECT,
+	NCT_INBOUND,
+	NCT_INTERNET,
+	NCT_LAN,
+	NCT_PHONE,
+	NCT_TUNNEL,
+	NCT_BRIDGE
+	}
 
 .enum NETCON_MEDIATYPE {
-	NCM_NONE	= 0,
-	NCM_DIRECT	= ( NCM_NONE + 1 ) ,
-	NCM_ISDN	= 2,
-	NCM_LAN		= ( NCM_ISDN + 1 ) ,
-	NCM_PHONE	= ( NCM_LAN + 1 ) ,
-	NCM_TUNNEL	= ( NCM_PHONE + 1 ) ,
-	NCM_PPPOE	= ( NCM_TUNNEL + 1 ) ,
-	NCM_BRIDGE	= ( NCM_PPPOE + 1 ) ,
-	NCM_SHAREDACCESSHOST_LAN = ( NCM_BRIDGE + 1 ) ,
-	NCM_SHAREDACCESSHOST_RAS = ( NCM_SHAREDACCESSHOST_LAN + 1 )
-    }
+	NCM_NONE,
+	NCM_DIRECT,
+	NCM_ISDN,
+	NCM_LAN,
+	NCM_PHONE,
+	NCM_TUNNEL,
+	NCM_PPPOE,
+	NCM_BRIDGE,
+	NCM_SHAREDACCESSHOST_LAN,
+	NCM_SHAREDACCESSHOST_RAS
+	}
 
 
 NETCON_PROPERTIES	STRUC
@@ -399,36 +383,4 @@ DEFINE_GUIDS(CLSID_NetSharingManager, "5C63C1AD-3956-4FF8-8486-40034758315B")
 
 endif
 
-
-BSTR_UserSize proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree proto WINAPI :ptr, :ptr
-
-HWND_UserSize proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree proto WINAPI :ptr, :ptr
-
-BSTR_UserSize64 proto WINAPI :ptr, :dword, :ptr
-BSTR_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-BSTR_UserFree64 proto WINAPI :ptr, :ptr
-
-HWND_UserSize64 proto WINAPI :ptr, :dword, :ptr
-HWND_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-HWND_UserFree64 proto WINAPI :ptr, :ptr
-
-VARIANT_UserSize64 proto WINAPI :ptr, :dword, :ptr
-VARIANT_UserMarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserUnmarshal64 proto WINAPI :ptr, :ptr, :ptr
-VARIANT_UserFree64 proto WINAPI :ptr, :ptr
-
 endif
-.pragma list(pop)

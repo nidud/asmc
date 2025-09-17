@@ -6,6 +6,8 @@ define NTDDI_VERSION    0x0A000003
 define _USE_MATH_DEFINES
 define WIN32_LEAN_AND_MEAN
 
+.pragma list(push, 0)
+
 include windows.inc
 include DirectX/d2d1.inc
 include DirectX/dwrite.inc
@@ -13,6 +15,8 @@ include stdio.inc
 include string.inc
 include math.inc
 include pcg_basic.inc
+
+.pragma list(pop)
 
 define CLASS_NAME <"MainWindowClass">
 define WINDOW_NAME <"Windows samples">
@@ -23,12 +27,22 @@ define WINDOWSTYLES WS_OVERLAPPEDWINDOW
 define MAXOBJ       300
 define ID_TIMER     1
 
-.template object
+pball_t typedef ptr Bounce
+
+.class Bounce
+
+    m_next          pball_t ?
     m_pos           POINT <>
     m_mov           POINT <>
     m_radius        uint_t ?
-    m_color         D3DCOLORVALUE <>
     m_brush         ptr ID2D1RadialGradientBrush ?
+    m_color         D3DCOLORVALUE <>
+
+    Bounce          proc
+    Release         proc
+    New             proc
+    Up              proc
+    Down            proc
    .ends
 
 
@@ -39,7 +53,7 @@ define ID_TIMER     1
     m_rect              RECT <>
     m_size              D2D1_SIZE_U <>
     m_rc                RECT <>
-    m_obj               object MAXOBJ dup(<>)
+    m_obj               pball_t ?
     m_count             uint_t ?
     m_texty             int_t ?
     m_timer             int_t ?

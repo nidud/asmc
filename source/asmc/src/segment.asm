@@ -278,7 +278,7 @@ GetCurrSegAlign endp
 CreateGroup proc fastcall private uses rsi rdi name:string_t
 
     mov rsi,rcx
-    mov rdi,SymSearch( rcx )
+    mov rdi,SymFind( rcx )
 
     .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
 
@@ -405,7 +405,7 @@ GrpDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         inc i
         add rbx,asm_tok
 
-        mov rsi,SymSearch( name )
+        mov rsi,SymFind( name )
 
         .if ( Parse_Pass == PASS_1 )
 
@@ -810,7 +810,7 @@ CreateIntSegment proc __ccall uses rdi name:string_t, classname:string_t, alignm
 
     .if ( add_global )
 
-        SymSearch( name )
+        SymFind( name )
         .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED )
             CreateSegment( rax, name, add_global )
         .elseif ( [rax].asym.state != SYM_SEG )
@@ -880,7 +880,7 @@ EndsDir endp
 SetCurrSeg proc fastcall private uses rdi rbx i:int_t, tokenarray:token_t
 
     mov rbx,rdx
-    mov rdi,SymSearch( [rbx].string_ptr )
+    mov rdi,SymFind( [rbx].string_ptr )
     .if ( rdi == NULL || [rdi].asym.state != SYM_SEG )
         .return( asmerr( 2006, [rbx].string_ptr ) )
     .endif
@@ -971,7 +971,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov name,[rbx].string_ptr
 
     ; See if the segment is already defined
-    mov sym,SymSearch( name )
+    mov sym,SymFind( name )
 
     .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED )
 
@@ -1232,7 +1232,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                     ; associated segment must be COMDAT, but not associative
 
-                    .if SymSearch( [rbx].string_ptr )
+                    .if SymFind( [rbx].string_ptr )
                         mov rcx,[rax].asym.seginfo
                     .endif
                     .if ( rax == NULL || [rax].asym.state != SYM_SEG ||

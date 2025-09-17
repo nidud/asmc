@@ -14,6 +14,8 @@ Asmc allows in addition to **CV8** (default), **CV5** and **CV4** debug format.
 <tr><td>-Zi3</td><td>-Zi35</td><td>-Zi34</td><td>Globals, Locals, Types and Constants</td></tr>
 </table>
 
+The -Z7 option adds, in addition to the CodeView information, register parameters to the stack (64-bit).
+
 #### See Also
 
 [Asmc Command-Line Reference](readme.md)

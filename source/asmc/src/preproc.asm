@@ -134,7 +134,6 @@ DelayExpand endp
 
     assume rcx:nothing
 
-
 ; PreprocessLine() is the "preprocessor".
 ; 1. the line is tokenized with Tokenize(), TokenCount set
 ; 2. (text) macros are expanded by ExpandLine()
@@ -173,23 +172,14 @@ endif
     ;
     .if ( CurrIfState == BLOCK_ACTIVE )
 
+        xor esi,esi
         imul eax,eax,asm_tok
         .if ( [rbx+rax].bytval & TF3_EXPANSION )
-
             mov esi,ExpandText(CurrSource, rbx, 1)
-
-        .else
-
-            xor esi,esi
-
-            .ifd ( DelayExpand( rbx ) == 0 )
-
-                mov esi,ExpandLine( CurrSource, rbx )
-
-            .elseif ( Parse_Pass == PASS_1 )
-
-                ExpandLineItems( CurrSource, 0, rbx, 0, 1 )
-            .endif
+        .elseifd ( DelayExpand( rbx ) == 0 )
+            mov esi,ExpandLine( CurrSource, rbx )
+        .elseif ( Parse_Pass == PASS_1 )
+            ExpandLineItems( CurrSource, 0, rbx, 0, 1 )
         .endif
         .return 0 .ifs ( esi < NOT_ERROR )
     .endif

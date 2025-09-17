@@ -309,7 +309,7 @@ endif
 
             ; the "top-level" struct is part of the global namespace
 
-            mov rdi,SymSearch( rsi )
+            mov rdi,SymFind( rsi )
         .else
             mov rdi,SearchNameInStruct( CurrStruct, rsi, &offs, 0 )
         .endif
@@ -718,7 +718,7 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:token_t,
 
             .if ( [rbx].token == T_ID )
 
-                mov rsi,SymSearch( [rbx].string_ptr )
+                mov rsi,SymFind( [rbx].string_ptr )
                 .if ( eax && [rax].asym.isvariable )
 
                     .if ( [rax].asym.predefined && [rax].asym.sfunc_ptr )
@@ -728,7 +728,7 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:token_t,
                     .endif
 
                     xor ecx,ecx
-                    .ifs ( [rax].asym.value3264 < 0 )
+                    .ifs ( [rax].asym.hvalue < 0 )
                         inc ecx
                     .endif
 
@@ -1078,7 +1078,7 @@ GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:token_t,
 
         .if ( [rbx].token == T_ID && [rbx-asm_tok].tokval == T_PTR )
 
-            mov [rsi].symtype,SymSearch( [rbx].string_ptr )
+            mov [rsi].symtype,SymFind( [rbx].string_ptr )
             mov rdi,[rsi].symtype
 
             .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
@@ -1152,7 +1152,7 @@ GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:token_t,
             .return( ERROR )
         .endif
 
-        mov [rsi].symtype,SymSearch( [rbx].string_ptr )
+        mov [rsi].symtype,SymFind( [rbx].string_ptr )
         mov rdi,rax
 
         .if ( rdi == NULL || [rdi].asym.state != SYM_TYPE )
@@ -1237,7 +1237,7 @@ CreateType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, name:strin
 
   local ti:qualified_type
 
-    mov rdi,SymSearch( name )
+    mov rdi,SymFind( name )
     .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
 
         mov rdi,CreateTypeSymbol( rdi, name, TRUE )
@@ -1446,7 +1446,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
 
-    mov rsi,SymSearch( name )
+    mov rsi,SymFind( name )
 
     .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED )
 
@@ -1566,7 +1566,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         ; record field names are global! (Masm design flaw)
 
-        mov rsi,SymSearch( [rdi].asm_tok.string_ptr )
+        mov rsi,SymFind( [rdi].asm_tok.string_ptr )
         mov def,TRUE
 
         .if ( oldr )

@@ -551,7 +551,7 @@ UpdateStackBase proc fastcall sym:asym_t, opnd:ptr expr
         mov StackAdjHigh,[rdx].expr.hvalue
     .endif
     mov [rcx].asym.value,StackAdj
-    mov [rcx].asym.value3264,StackAdjHigh
+    mov [rcx].asym.hvalue,StackAdjHigh
     ret
 
 UpdateStackBase endp
@@ -764,7 +764,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
         ; check if parameter name is defined already
 
         .if ( IsPROC )
-            .if SymSearch( name )
+            .if SymFind( name )
                 .if ( [rax].asym.state != SYM_UNDEFINED )
                     .return( asmerr( 2005, name ) )
                 .endif
@@ -1360,7 +1360,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
                     .return( asmerr(2008, [rbx].string_ptr ) )
                 .endif
 
-                mov rdi,SymSearch( [rbx].string_ptr )
+                mov rdi,SymFind( [rbx].string_ptr )
 
                 .if ( rax == NULL )
 
@@ -1388,6 +1388,8 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
 
     ; check for USES
 
+    .new uses_cnt:int_t = 0
+
     .if ( [rbx].token == T_ID )
 
         mov rcx,[rbx].string_ptr
@@ -1396,7 +1398,6 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
 
         .if ( eax == 'sesu' && byte ptr [rcx+4] == 0 )
 
-            .new cnt:int_t
             .new j:int_t
             .new index:int_t
             .new sym:asym_t
@@ -1409,7 +1410,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
 
             ; count register names which follow
 
-            .for ( cnt = 0 : : cnt++, rbx += asm_tok )
+            .for ( :: uses_cnt++, rbx += asm_tok )
 
 
                 .if ( [rbx].token != T_REG )
@@ -1417,7 +1418,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
                     ; the register may be a text macro here
 
                     .break .if ( [rbx].token != T_ID )
-                    .break .if ( ( SymSearch( [rbx].string_ptr ) ) == NULL )
+                    .break .if ( ( SymFind( [rbx].string_ptr ) ) == NULL )
 
                     .break .if ( [rax].asym.state != SYM_TMACRO )
                      mov rdi,rax
@@ -1433,31 +1434,72 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
             .endf
             tokptr(i)
 
-            .if ( cnt == 0 )
+            .if ( uses_cnt == 0 )
 
                 asmerr( 2008, [rbx-asm_tok].tokpos )
-            .else
-
-                mov ecx,cnt
-                inc ecx
-                imul ecx,ecx,sizeof( uint_16 )
-                mov rdi,LclAlloc( ecx )
-                mov [rsi].regslist,rdi
-                mov eax,cnt
-                stosw
-
-                ; read in registers
-
-                .for ( : [rbx].token == T_REG: i++, rbx += asm_tok )
-
-                    .if ( SizeFromRegister( [rbx].tokval ) == 1 )
-
-                        asmerr( 2032 )
-                    .endif
-                    mov eax,[rbx].tokval
-                    stosw
-                .endf
             .endif
+        .endif
+    .endif
+
+    add uses_cnt,MODULE.proc_usescnt
+
+    .new classreg:int_t = 0
+    .if ( [rdi].asym.ClassProc )
+
+        mov ecx,MODULE.class_reg
+        movzx eax,GetRegNo(ecx)
+        .switch eax
+        .case 6
+        .case 7
+            .endc .if ( Options.output_format == OFORMAT_ELF && MODULE.Ofssize == USE64 )
+        .case 3
+        .case 12
+        .case 13
+        .case 14
+        .case 15
+            mov classreg,ecx
+            inc uses_cnt
+        .endsw
+    .endif
+
+    .if ( uses_cnt )
+
+        mov     ecx,uses_cnt
+        inc     ecx
+        imul    ecx,ecx,sizeof( uint_16 )
+        mov     rdi,LclAlloc( ecx )
+        mov     [rsi].regslist,rdi
+        mov     eax,uses_cnt
+        stosw
+
+        ; read in registers
+
+        .for ( : [rbx].token == T_REG: i++, rbx += asm_tok )
+
+            .if ( SizeFromRegister( [rbx].tokval ) == 1 )
+
+                asmerr( 2032 )
+            .endif
+            mov eax,[rbx].tokval
+            stosw
+        .endf
+
+        .for ( ecx = 0 : ecx < MODULE.proc_usescnt : ecx++ )
+
+            lea rdx,MODULE.proc_usesregs
+            mov eax,[rdx+rcx*4]
+            stosw
+        .endf
+
+        mov eax,classreg
+        .if ( eax )
+            .for ( rdx = [rsi].regslist, ecx = 1 : ecx < uses_cnt : ecx++ )
+                .if ( ax == [rdx+rcx*2] )
+                    dec byte ptr [rdx]
+                   .break
+                .endif
+            .endf
+            stosw
         .endif
     .endif
 
@@ -1684,7 +1726,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     inc i ; go past PROC
     add rbx,asm_tok
-    mov sym,SymSearch( name )
+    mov sym,SymFind( name )
 
     .if ( Parse_Pass == PASS_1 )
 
@@ -1744,6 +1786,22 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov CurrProc,rdi
         tsprintf(&strFUNC, "\"%s\"", [rdi].asym.name)
+
+        .if ( MODULE.class_reg )
+
+            .if tstrchr(name, '_' )
+
+                mov byte ptr [rax],0
+                mov rsi,rax
+                SymFind( name )
+                mov byte ptr [rsi],'_'
+            .endif
+            .if ( rax && [rax].asym.hasvtable )
+                mov [rdi].asym.class,rax
+                mov [rdi].asym.ClassProc,1
+            .endif
+        .endif
+
         .ifd ( ParseProc( rdi, i, tokenarray, TRUE, MODULE.langtype ) == ERROR )
 
             mov CurrProc,NULL
@@ -1961,7 +2019,7 @@ WriteSEHData proc __ccall private uses rsi rdi rbx p:asym_t
             "$xdatasym %r %r", segname, T_SEGMENT, T_ALIGN, T_FLAT, T_LABEL, T_NEAR )
     .endif
     mov xdataofs,0
-    mov xdata,SymSearch( segname )
+    mov xdata,SymFind( segname )
     .if ( rax )
         ;
         ; v2.11: changed offset to max_offset.
@@ -2588,7 +2646,7 @@ write_userdef_prologue proc __ccall private uses rsi rdi rbx tokenarray:token_t
     .endif
     mov flags,ebx
 
-    mov dir,SymSearch( MODULE.proc_prologue )
+    mov dir,SymFind( MODULE.proc_prologue )
     .if ( eax == NULL || [rax].asym.state != SYM_MACRO || !( [rax].asym.isfunc ) )
         .return( asmerr( 2120 ) )
     .endif
@@ -2851,7 +2909,7 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:proc_t
                     mov [rdi].asym.offs,eax
                 .endif
 
-                .if ( [rdi].asym.used || Parse_Pass == PASS_1 )
+                .if ( [rdi].asym.used || Parse_Pass == PASS_1 || Options.degbug_frame )
 
                     mov index,win64_MoveRegParam( index, size, rdi )
                 .endif
@@ -3679,6 +3737,12 @@ runqueue:
         .endif
     .endif
 
+    mov rdi,CurrProc
+    .if ( [rdi].asym.ClassProc )
+
+        AddLineQueueX( "%r %r,this", T_LDR, MODULE.class_reg )
+    .endif
+
     ; line number debug info also needs special treatment
     ; because current line number is the first true src line
     ; IN the proc.
@@ -4443,7 +4507,7 @@ write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, to
     mov rsi,[rdi].asym.procinfo
     mov info,rsi
 
-    mov dir,SymSearch( MODULE.proc_epilogue )
+    mov dir,SymFind( MODULE.proc_epilogue )
     .if ( eax == NULL || [rax].asym.state != SYM_MACRO || [rax].asym.isfunc )
         .return( asmerr( 2121, MODULE.proc_epilogue ) )
     .endif

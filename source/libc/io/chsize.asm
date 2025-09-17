@@ -8,6 +8,8 @@ include io.inc
 include errno.inc
 ifdef __UNIX__
 include sys/syscall.inc
+else
+include winerror.inc
 endif
 
     .code

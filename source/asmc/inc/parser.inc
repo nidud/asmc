@@ -242,7 +242,7 @@ endif
     DF_PROC	= 0x40, ; directive triggers prologue generation
     DF_STORE	= 0x80, ; directive triggers line store
     DF_CGEN	= 0x100 ; directive generates lines
-}
+    }
 
 ; values for <bytval> if type == RWT_DIRECTIVE
 

@@ -811,10 +811,16 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         xor eax,eax
         .if ( [rdi].kind == EXPR_FLOAT )
             .return ecx .if tofloat( rsi, rdi, 16 )
-        .elseif ( [rdi].negative && [rdi].h64_l == eax && [rdi].h64_h == eax  )
+ifdef _WIN64
+        .elseif ( [rdi].negative && rax == [rdi].hlvalue )
+            dec rax
+            mov [rdi].hlvalue,rax
+else
+        .elseif ( [rdi].negative && eax == [rdi].h64_l && eax == [rdi].h64_h )
             dec eax
             mov [rdi].h64_l,eax
             mov [rdi].h64_h,eax
+endif
         .endif
         TokenAssign( rsi, rdi )
         mov [rsi].mem_type,MT_QWORD
@@ -823,8 +829,12 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             mov [rsi].mem_type,MT_EMPTY
         .endif
         mov [rsi].llvalue,[rsi].hlvalue
+ifdef _WIN64
+        mov [rsi].hlvalue,0
+else
         mov [rsi].h64_l,0
         mov [rsi].h64_h,0
+endif
        .return( NOT_ERROR )
     .case UOT_SQRT
         .if ( [rdi].kind != EXPR_FLOAT )
@@ -1352,6 +1362,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                 .endif
 
             .else
+
                 .if ( byte ptr [rsi+1] == '&' )
                     lea rsi,@CStr("@@")
                 .endif
@@ -1444,16 +1455,14 @@ endif
             .if ( [rsi].state == SYM_INTERNAL && [rsi].segm == NULL )
 
                 mov [rdi].kind,EXPR_CONST
-                mov [rdi].uvalue,[rsi].uvalue
-                mov [rdi].hvalue,[rsi].value3264
+                mov [rdi].llvalue,[rsi].llvalue
                 mov [rdi].mem_type,[rsi].mem_type
 
                 .if ( al == MT_REAL16 && !Options.strict_masm_compat )
 
                     mov [rdi].kind,EXPR_FLOAT
                     mov [rdi].float_tok,NULL
-                    mov dword ptr [rdi].hlvalue,[rsi].total_length
-                    mov dword ptr [rdi].hlvalue[4],[rsi].ext_idx
+                    mov [rdi].hlvalue,[rsi].hlvalue
                 .endif
 
                 .if ( [rsi].negative )

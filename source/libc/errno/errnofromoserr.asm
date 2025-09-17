@@ -5,6 +5,7 @@
 ;
 
 include errno.inc
+include winerror.inc
 
 errentry    struct
 oscode      uint_t ?    ; OS return value

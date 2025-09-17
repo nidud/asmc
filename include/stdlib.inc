@@ -660,6 +660,7 @@ _wtoutf		proto __cdecl :wchar_t
 _utftow		proto __cdecl :string_t
 _utftows	proto __cdecl :string_t
 _utfslen	proto __cdecl :string_t
+_wtoutfs	proto __cdecl :string_t, :wstring_t
 
 _pathtow	proto __cdecl :string_t, :ptr wstring_t
 _aisexec	proto __cdecl :string_t

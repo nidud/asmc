@@ -156,7 +156,7 @@ check_defd proc fastcall private name:string_t
     xor eax,eax
     .if ( byte ptr [rcx] )
 
-        .if SymSearch( rcx )
+        .if SymFind( rcx )
             mov eax,[rax].asym.isdefined
         .endif
     .endif
@@ -268,7 +268,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .case CC_LITARG ;  [ELSE]IFDIF[I], [ELSE]IFIDN[I]
         mov rsi,[rbx].string_ptr
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
-            SymSearch( rsi )
+            SymFind( rsi )
             .if ( !eax && [rbx].token == T_ID )
                 asmerr( 2006, rsi )
             .else
@@ -283,7 +283,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         add rbx,asm_tok
         mov rdi,[rbx].string_ptr
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
-            SymSearch( rdi )
+            SymFind( rdi )
             .if ( [rbx].token == T_ID && eax == NULL )
                 asmerr( 2006, rdi )
             .else
@@ -330,7 +330,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .case CC_BLKARG ; [ELSE]IF[N]B
         mov rsi,[rbx].string_ptr
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
-            SymSearch( rsi )
+            SymFind( rsi )
             .if ( [rbx].token == T_ID && rax == NULL )
                 asmerr( 2006, rsi )
             .else
@@ -385,7 +385,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             ; v2.07: handle structs + members (if -Zne is NOT set)
 
-            SymSearch( [rbx].string_ptr )
+            SymFind( [rbx].string_ptr )
 
             .if ( Options.strict_masm_compat == FALSE &&
                   [rbx+asm_tok].token == T_DOT && rax &&
@@ -570,7 +570,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov direct,edi
         imul edi,i,asm_tok
         add rdi,tokenarray
-        mov sym,SymSearch( [rdi].asm_tok.string_ptr )
+        mov sym,SymFind( [rdi].asm_tok.string_ptr )
 
         .if ( Options.strict_masm_compat == FALSE &&
               [rdi+asm_tok].asm_tok.token == T_DOT &&

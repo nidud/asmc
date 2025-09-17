@@ -3432,7 +3432,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         imul ebx,i,asm_tok
         add rbx,tokenarray
 
-        mov sym,SymSearch( [rbx].string_ptr )
+        mov sym,SymFind( [rbx].string_ptr )
         inc i
     .endif
 
@@ -3497,7 +3497,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov rdi,opnd.mbr
             .if ( [rdi].asym.method )
 
-                mov pclass,SymSearch( [rbx+4*asm_tok].string_ptr )
+                mov pclass,SymFind( [rbx+4*asm_tok].string_ptr )
 
                 .if ( rax && [rax].asym.isvtable )
 
@@ -3508,12 +3508,12 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     .else
                         mov rcx,[rax].asym.class
                         tstrcat( tstrcat( tstrcpy( &buffer, [rcx].asym.name ), "_" ), [rdi].asym.name )
-                        mov pmacro,SymSearch(rax)
+                        mov pmacro,SymFind(rax)
                     .endif
 
                     mov rax,pmacro
                     .if ( rax && [rax].asym.state == SYM_TMACRO )
-                        mov pmacro,SymSearch( [rax].asym.string_ptr )
+                        mov pmacro,SymFind( [rax].asym.string_ptr )
                     .endif
                     .if ( rax && [rax].asym.state != SYM_MACRO )
                         mov pmacro,NULL
@@ -3716,7 +3716,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     mov rcx,pproc
     mov rdx,opnd.base_reg
-    .if ( opnd.base_reg != NULL && Parse_Pass == PASS_1 && \
+    .if ( rdx && Parse_Pass == PASS_1 && \
         (r0flags & R0_USED ) && [rdx].asm_tok.bytval == 0 && !( [rcx].asym.method ) )
         asmerr( 7002 )
     .endif
@@ -3862,8 +3862,11 @@ ifndef ASMC64
             .endif
 endif
             mov rbx,struct_ptr
-            mov rcx,SymSearch( [rbx].string_ptr )
-            AssignPointer( rcx, edi, struct_ptr, pclass, [rsi].langtype, pmacro)
+            .if ( [rbx].token == T_OP_SQ_BRACKET )
+                add rbx,asm_tok*4
+            .endif
+            mov rcx,SymFind( [rbx].string_ptr )
+            AssignPointer( rcx, edi, rbx, pclass, [rsi].langtype, pmacro)
 ifndef ASMC64
 
             ; v2.34.64 - indirection for 32-bit C/STDCALL -- indirect32_3.asm

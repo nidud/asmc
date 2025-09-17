@@ -74,7 +74,7 @@ AddFloatingPointEmulationFixup proc __ccall uses rsi rdi rbx CodeInfo:ptr code_i
             lea rcx,patchchr2
             mov al,[rcx+rdi]
             mov byte ptr name[2],al
-            mov sym[rbx*asym_t],SymSearch( &name )
+            mov sym[rbx*asym_t],SymFind( &name )
 
             .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED )
                 mov sym[rbx*asym_t],MakeExtern( &name, MT_FAR, NULL, rax, USE16 )

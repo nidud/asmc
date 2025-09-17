@@ -66,6 +66,6 @@ ExpandHllProc		proto __ccall :string_t, :int_t, :token_t
 ExpandHllExpression	proto __ccall :hllitem_t, :ptr int_t, :token_t, :int_t, :int_t, :string_t
 HllContinueIf		proto __ccall :hllitem_t, :ptr int_t, :token_t, :int_t, :hllitem_t, :int_t
 GenerateCString		proto __ccall :int_t, :token_t
-DefaultConstructor	proto __ccall :asym_t, :string_t
+DefaultConstructor	proto __ccall :asym_t, :token_t
 
 endif

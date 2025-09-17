@@ -8,7 +8,7 @@ ifdef avx
 flag += -arch:AVX
 endif
 
-ifndef nozip
+ifdef zip
 flag += -DSTDZIP
 endif
 ifdef noutf

@@ -19,7 +19,7 @@ ifndef __UNIX__
 
 __initargv proc private
 
-  local pgname[260]:tchar_t
+  local pgname[512]:tchar_t
 
     mov __targv,_tsetargv(&__argc, GetCommandLine())
 
@@ -31,7 +31,7 @@ __initargv proc private
 
 	; Get the program name pointer from Win32 Base
 
-	mov rcx,malloc(&[GetModuleFileName(0, &pgname, 260)*tchar_t+tchar_t])
+	mov rcx,malloc(&[GetModuleFileName(0, &pgname, 512)*tchar_t+tchar_t])
 	_tcscpy(rcx, &pgname)
 
 	mov rcx,__targv

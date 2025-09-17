@@ -650,6 +650,8 @@ endif
     mov MODULE.flt_size,[rdi].flt_size
     mov MODULE.avxencoding,0
     mov MODULE.frame_auto,[rdi].frame_auto
+    mov MODULE.proc_usescnt,0
+    mov MODULE.class_reg,0
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags

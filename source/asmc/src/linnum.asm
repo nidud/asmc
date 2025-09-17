@@ -91,7 +91,7 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
 
         tsprintf( &procname, "$$$%05u", procidx )
 
-        mov dmyproc,SymSearch( &procname )
+        mov dmyproc,SymFind( &procname )
         mov rsi,rax
 
         ; in pass 1, create the proc

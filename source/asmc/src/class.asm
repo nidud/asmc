@@ -16,6 +16,7 @@ include tokenize.inc
 include expreval.inc
 include operator.inc
 include lqueue.inc
+include proc.inc
 
     .code
 

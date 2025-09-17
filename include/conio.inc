@@ -334,14 +334,34 @@ CALLBACKC(DPROC)
     PTOBJ	typedef ptr TOBJ
 
 .template DOBJ
-    flags	dw ?
-    count	db ?
-    index	db ?
-    rc		TRECT <>
-    window	PCHAR_INFO ?
-    object	PTOBJ ?
+    union
+     flags		dw ?
+     record
+      IsOpen		dw : 1 ?
+      Visible		dw : 1 ?
+      Moveable		dw : 1 ?
+      Shade		dw : 1 ?
+      MyBuffer		dw : 1 ?
+      Resource		dw : 1 ?
+      Color		dw : 1 ?
+      Help		dw : 1 ?
+      Transparent	dw : 1 ?
+      Console		dw : 1 ?
+      List		dw : 1 ?
+      Child		dw : 1 ?
+      Cursor		dw : 1 ?
+      WinProc		dw : 1 ?
+      Parent		dw : 1 ?
+      Unicode		dw : 1 ?
+     ends
+    ends
+    count		db ?
+    index		db ?
+    rc			TRECT <>
+    window		PCHAR_INFO ?
+    object		PTOBJ ?
    .ends
-    PDOBJ	typedef ptr DOBJ
+    PDOBJ		typedef ptr DOBJ
 
 .template GLCMD
     key		dd ?

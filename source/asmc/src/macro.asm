@@ -807,7 +807,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     ldr rbx,tokenarray
     mov rdi,[rbx].string_ptr
-    mov rsi,SymSearch(rdi)
+    mov rsi,SymFind(rdi)
 
     .if ( rax == NULL )
 
@@ -819,7 +819,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .if ( [rsi].state == SYM_EXTERNAL && !MODULE.masm_compat_gencode )
 
-                mov rbx,rdx ; address of symbol from SymSearch()
+                mov rbx,rdx ; address of symbol from SymFind()
                 mov [rsi].target_type,SymAlloc(rdi)
                 mov [rsi].isinline,1
                 mov rsi,rax
@@ -993,7 +993,7 @@ PurgeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if [rbx].token != T_ID
             .return asmerr( 2008, [rbx].string_ptr )
         .endif
-        mov rsi,SymSearch( [rbx].string_ptr )
+        mov rsi,SymFind( [rbx].string_ptr )
         .if rax == NULL
             .return asmerr( 2006, [rbx].string_ptr )
         .endif

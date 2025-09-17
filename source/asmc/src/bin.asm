@@ -899,7 +899,7 @@ pe_create_MZ_header proc
 
     .if ( Parse_Pass == PASS_1 )
 
-        .if ( SymSearch( hdrname "1" ) == NULL )
+        .if ( SymFind( hdrname "1" ) == NULL )
             or MODULE.pe_flags,PEF_MZHDR
         .endif
     .endif
@@ -944,7 +944,7 @@ pe_create_MZ_header proc
 
         RunLineQueue()
 
-        .if SymSearch( hdrname "1" )
+        .if SymFind( hdrname "1" )
 
             .if ( [rax].asym.state == SYM_SEG )
 
@@ -965,7 +965,7 @@ set_file_flags proc fastcall uses rsi rdi sym:asym_t, opnd:ptr expr
     mov rsi,rcx
     mov rdi,rdx
 
-    .if SymSearch( hdrname "2" )
+    .if SymFind( hdrname "2" )
 
         mov rcx,[rax].asym.seginfo
         mov rdx,[rcx].seg_info.CodeBuffer
@@ -1011,7 +1011,7 @@ endif
             or [rdi].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_DLL
         .endif
 
-        .if !SymSearch( hdrname "2" )
+        .if !SymFind( hdrname "2" )
 
             CreateIntSegment( hdrname "2", "HDR", 2, MODULE.defOfssize, TRUE )
 
@@ -1084,7 +1084,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
 
     .if ( Parse_Pass == PASS_1 )
 
-        .if SymSearch( hdrname "3" )
+        .if SymFind( hdrname "3" )
 
             mov rdi,rax
             mov rsi,[rdi].asym.seginfo
@@ -1883,10 +1883,10 @@ pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
     .new secname:string_t
     .new buffer[MAX_ID_LEN+1]:char_t
 
-    mov mzhdr,  SymSearch( hdrname "1" )
+    mov mzhdr,  SymFind( hdrname "1" )
     mov rsi,    [rax].asym.seginfo
-    mov pehdr,  SymSearch( hdrname "2" )
-    mov objtab, SymSearch( hdrname "3" )
+    mov pehdr,  SymFind( hdrname "2" )
+    mov objtab, SymFind( hdrname "3" )
 
     ;; make sure all header objects are in FLAT group
     mov [rsi].sgroup,MODULE.flat_grp
@@ -2245,7 +2245,7 @@ endif
 
     ; set export directory data dir value
 
-    .if ( SymSearch( edataname ) )
+    .if ( SymFind( edataname ) )
 
         mov rsi,[rax].asym.seginfo
         mov rcx,datadir
@@ -2255,15 +2255,15 @@ endif
 
     ; set import directory and IAT data dir value
 
-    .if ( SymSearch( ".idata$" IMPDIRSUF ) )
+    .if ( SymFind( ".idata$" IMPDIRSUF ) )
 
        .new idata_null:asym_t
        .new idata_iat:asym_t
        .new size:uint_32
 
         mov rdi,rax
-        mov idata_null,SymSearch( ".idata$" IMPNDIRSUF ) ; final NULL import directory entry
-        mov idata_iat, SymSearch( ".idata$" IMPIATSUF )  ; IAT entries
+        mov idata_null,SymFind( ".idata$" IMPNDIRSUF ) ; final NULL import directory entry
+        mov idata_iat, SymFind( ".idata$" IMPIATSUF )  ; IAT entries
 
         mov rcx,idata_null
         mov rsi,[rcx].asym.seginfo
@@ -2283,7 +2283,7 @@ endif
 
     ; set resource directory data dir value
 
-    .if ( SymSearch( ".rsrc" ) )
+    .if ( SymFind( ".rsrc" ) )
 
         mov rsi,[rax].asym.seginfo
         mov rdx,datadir
@@ -2293,7 +2293,7 @@ endif
 
     ; set relocation data dir value
 
-    .if ( SymSearch( ".reloc" ) )
+    .if ( SymFind( ".reloc" ) )
 
         mov rsi,[rax].asym.seginfo
         mov rdx,datadir
@@ -2304,7 +2304,7 @@ endif
     ; fixme: TLS entry is not written because there exists a segment .tls, but
     ; because a _tls_used symbol is found ( type: IMAGE_THREAD_DIRECTORY )
 
-    .if ( SymSearch(".tls") )
+    .if ( SymFind(".tls") )
 
         mov rsi,[rax].asym.seginfo
         mov rdx,datadir
@@ -2315,7 +2315,7 @@ endif
 ifndef ASMC64
     .if ( MODULE.defOfssize == USE64 )
 endif
-        .if ( SymSearch( ".pdata" ) )
+        .if ( SymFind( ".pdata" ) )
 
             mov rsi,[rax].asym.seginfo
             mov rdx,datadir

@@ -238,6 +238,12 @@ uint32_t	typedef dword
 uint64_t	typedef qword
 uint128_t	typedef oword
 
+pbyte_t		typedef ptr byte
+pint_t		typedef ptr sdword
+pint64_t	typedef ptr sqword
+puint_t		typedef ptr dword
+puint64_t	typedef ptr qword
+
 half_t		typedef real2
 float_t		typedef real4
 double_t	typedef real8
@@ -247,6 +253,7 @@ qfloat_t	typedef real16
 string_t	typedef ptr sbyte
 ustring_t	typedef ptr byte
 wstring_t	typedef ptr word
+
 
 PVOID		typedef ptr
 HANDLE		typedef ptr

@@ -1386,7 +1386,7 @@ endif
             .if SymFind(&minsym)
                 mov rcx,rax
                 xor eax,eax
-                .if ( [rcx].asym.value3264 < 0 )
+                .if ( [rcx].asym.hvalue < 0 )
                     inc eax
                 .endif
             .endif

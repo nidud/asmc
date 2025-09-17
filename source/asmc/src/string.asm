@@ -1016,7 +1016,7 @@ TextItemError proc __ccall uses rbx item:token_t
 
     .if ( [rbx].token == T_ID )
 
-        SymSearch( [rbx].string_ptr )
+        SymFind( [rbx].string_ptr )
 
         .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED )
 
@@ -1073,7 +1073,7 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endf
 
     mov rbx,tokenarray
-    mov rdi,SymSearch( [rbx].string_ptr )
+    mov rdi,SymFind( [rbx].string_ptr )
     .if ( rdi == NULL )
         mov rdi,SymCreate( [rbx].string_ptr )
     .elseif( [rdi].asym.state == SYM_UNDEFINED )
@@ -1211,7 +1211,7 @@ AddPredefinedText proc __ccall name:string_t, value:string_t
 
     ; v2.08: ignore previous setting
 
-    .if !SymSearch( name )
+    .if !SymFind( name )
         SymCreate( name )
     .endif
 
@@ -1332,7 +1332,7 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         lea edi,[rax+1]
     .endif
 
-    mov rsi,SymSearch( name )
+    mov rsi,SymFind( name )
 
     ; if we've never seen it before, put it in
 

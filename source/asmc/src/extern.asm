@@ -105,7 +105,7 @@ CreateComm endp
 
 CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, name:string_t, langtype:byte
 
-    mov rsi,SymSearch(name)
+    mov rsi,SymFind(name)
 
     ; the symbol must be either NULL or state
     ; - SYM_UNDEFINED
@@ -147,7 +147,7 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, n
 
     .if ( [rbx].token == T_ID )
 
-        mov rdi,SymSearch( [rbx].string_ptr )
+        mov rdi,SymFind( [rbx].string_ptr )
         .if ( rax && [rax].asym.state == SYM_TYPE && [rax].asym.mem_type == MT_PROC )
             inc i
             add rbx,asm_tok
@@ -212,7 +212,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         inc i
         add rbx,asm_tok
-        mov rsi,SymSearch( token )
+        mov rsi,SymFind( token )
 
         mov ti.mem_type,MT_EMPTY
         mov ti.size,0
@@ -437,7 +437,7 @@ ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
         ; v2.04: set the "defined" flag
 
-        .if ( SymSearch( [rbx].string_ptr ) )
+        .if ( SymFind( [rbx].string_ptr ) )
             .if ( [rax].asym.isproc )
                 mov [rax].asym.isdefined,1
             .endif
@@ -492,7 +492,7 @@ HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:asym_t
 
     .if ( altname && [rsi].asym.state == SYM_EXTERNAL )
 
-        mov rdi,SymSearch( altname )
+        mov rdi,SymFind( altname )
 
         ; altname symbol changed?
 
@@ -609,7 +609,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         inc i
         add rbx,asm_tok
-        mov rdi,SymSearch( token )
+        mov rdi,SymFind( token )
 
         mov ti.mem_type,MT_EMPTY
         mov ti.size,0
@@ -949,7 +949,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov count,opndx.uvalue
         .endif
 
-        mov rdi,SymSearch( token )
+        mov rdi,SymFind( token )
         .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
             mov rdi,MakeComm( token, rdi, size, count, isfar )
             .if ( rdi == NULL )
@@ -1026,7 +1026,7 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         ; Add the public name
 
-        mov rdi,SymSearch( token )
+        mov rdi,SymFind( token )
         .if ( Parse_Pass == PASS_1 )
             .if ( rdi == NULL )
                 .if ( SymCreate( token ) )

@@ -322,12 +322,85 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .for ( : i < TokenCount : i++, rbx += asm_tok )
 
         .if ( [rbx].token == T_ID )
+
             .ifd !tstricmp( [rbx].string_ptr, &szNothing )
 
                 AssumeInit(-1)
                 inc i
                .break
             .endif
+
+            .ifd !tstricmp( [rbx].string_ptr, "CLASS" )
+
+                .if ( [rbx+asm_tok].token == T_COLON )
+
+                    .if ( [rbx+asm_tok*2].token == T_REG )
+                        add i,3
+                        mov MODULE.class_reg,[rbx+asm_tok*2].tokval
+                    .elseif ( [rbx+asm_tok*2].token == T_ID )
+                        .ifd !tstricmp( [rbx+asm_tok*2].string_ptr, &szNothing )
+                            add i,3
+                            mov MODULE.class_reg,0
+                        .endif
+                    .endif
+                .endif
+                jmp comma_expected
+            .endif
+
+            .ifd !tstricmp( [rbx].string_ptr, "USES" )
+
+                .if ( [rbx+asm_tok].token == T_COLON )
+
+                    inc i
+                    add rbx,asm_tok
+                .endif
+
+                .while ( [rbx+asm_tok].token == T_REG || [rbx+asm_tok].token == T_ID )
+
+                    inc i
+                    add rbx,asm_tok
+
+                    .if ( [rbx].token == T_REG )
+
+                        imul eax,MODULE.proc_usescnt,4
+                        lea rcx,MODULE.proc_usesregs
+                        add rcx,rax
+                        mov eax,[rbx].tokval
+                        mov [rcx],eax
+                        inc MODULE.proc_usescnt
+
+                    .elseifd !tstricmp( [rbx].string_ptr, &szNothing )
+                        mov MODULE.proc_usescnt,0
+                    .else
+                        .break( 1 )
+                    .endif
+                .endw
+                inc i
+                jmp comma_expected
+            .endif
+        .endif
+
+        .if ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_PROC && [rbx+asm_tok].token == T_COLON )
+
+            add i,2
+            add rbx,asm_tok*2
+
+            .if ( [rbx].token == T_ID )
+
+                .ifd !tstricmp( [rbx].string_ptr, "PRIVATE" )
+
+                    mov MODULE.procs_private,TRUE
+                    mov MODULE.procs_export,FALSE
+                    inc i
+                .endif
+
+            .elseif ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_PUBLIC )
+
+                mov MODULE.procs_private,FALSE
+                mov MODULE.procs_export,FALSE
+                inc i
+            .endif
+            jmp comma_expected
         .endif
 
         ; ---- get the info ptr for the register ----
@@ -515,7 +588,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov [rdi].error,FALSE
         .endif
 
-        ;; comma expected
+comma_expected:
 
         imul ebx,i,asm_tok
         add rbx,tokenarray

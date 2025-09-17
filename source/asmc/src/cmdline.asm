@@ -816,6 +816,7 @@ endif
         mov Options.debug_symbols,4
         mov Options.no_file_entry,1
         mov Options.debug_ext,CVEX_NORMAL
+        mov Options.degbug_frame,1
        .return
     .case 'X'               ; -X
         mov Options.ignore_include,1

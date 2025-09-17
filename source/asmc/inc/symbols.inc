@@ -114,74 +114,93 @@ IS_SIGNED proto watcall :byte {
     name            string_t ?      ; symbol name
     name_size       int_t ?
     record
-     used           uint_t : 1 ?    ; symbol has been referenced
-     isdefined      uint_t : 1 ?    ; symbol is "defined" in this pass
-     scoped         uint_t : 1 ?    ; symbol is local label or SYM_STACK
-     iat_used       uint_t : 1 ?    ; v2.07: IAT entry of symbol used (SYM_EXTERNAL + isproc==1 only)
-     isequate       uint_t : 1 ?    ; symbol has been defined with EQU
-     predefined     uint_t : 1 ?    ; symbol is predefined
-     isvariable     uint_t : 1 ?    ; symbol is variable (defined by '=' directive)
-     ispublic       uint_t : 1 ?    ; symbol has been added to the publics queue
-     list           uint_t : 1 ?    ; symbol is to be listed
-     isarray        uint_t : 1 ?    ; symbol is an array (total_length is valid)
-     isdata         uint_t : 1 ?    ; field first_size is valid
-     isproc         uint_t : 1 ?    ; symbol is PROC or PROTO; has proc_info extension
-     issaved        uint_t : 1 ?    ; assembly-time variables only: symbol has been saved
-     fwdref         uint_t : 1 ?    ; symbol was forward referenced
-     included       uint_t : 1 ?    ; COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL)
-     method         uint_t : 1 ?    ;
-     isclass        uint_t : 1 ?    ;
-     hasvtable      uint_t : 1 ?    ; base class - first member = lpVtbl
-     isvtable       uint_t : 1 ?    ; vtable struct - classVtbl
-     isvmacro       uint_t : 1 ?    ; vtable method is inline - sym->vmacro set
-     isinline       uint_t : 1 ?    ; SYM_EXTERNAL.target_type == SYM_MACRO
-     isstatic       uint_t : 1 ?    ; SYM_EXTERNAL.target_type == SYM_MACRO
-     vparray        uint_t : 1 ?    ; p.p.proc() - nested function call
-     operator       uint_t : 1 ?    ;
-     regparam       uint_t : 1 ?    ; register param
-     regpair        uint_t : 1 ?    ; reg::reg param
-     isexport       uint_t : 1 ?    ; v2.19: symbol exported ( SYM_INTERNAL )
-     crecord        uint_t : 1 ?    ; v2.36.37: use bitf_* in records
-     bitexpr        uint_t : 1 ?    ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
-     EndpOccured    uint_t : 1 ?    ; v2.37.15: set by EndpDir() - .return without RET
-     negative       uint_t : 1 ?    ; v2.37.19: set by SetValue() - EXPR_CONST
+     used           dd : 1 ?        ; symbol has been referenced
+     isdefined      dd : 1 ?        ; symbol is "defined" in this pass
+     scoped         dd : 1 ?        ; symbol is local label or SYM_STACK
+     iat_used       dd : 1 ?        ; v2.07: IAT entry of symbol used (SYM_EXTERNAL + isproc==1 only)
+     isequate       dd : 1 ?        ; symbol has been defined with EQU
+     predefined     dd : 1 ?        ; symbol is predefined
+     isvariable     dd : 1 ?        ; symbol is variable (defined by '=' directive)
+     ispublic       dd : 1 ?        ; symbol has been added to the publics queue
+     list           dd : 1 ?        ; symbol is to be listed
+     isarray        dd : 1 ?        ; symbol is an array (total_length is valid)
+     isdata         dd : 1 ?        ; field first_size is valid
+     isproc         dd : 1 ?        ; symbol is PROC or PROTO; has proc_info extension
+     issaved        dd : 1 ?        ; assembly-time variables only: symbol has been saved
+     fwdref         dd : 1 ?        ; symbol was forward referenced
+     included       dd : 1 ?        ; COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL)
+     method         dd : 1 ?        ;
+     isclass        dd : 1 ?        ;
+     hasvtable      dd : 1 ?        ; base class - first member = lpVtbl
+     isvtable       dd : 1 ?        ; vtable struct - classVtbl
+     isvmacro       dd : 1 ?        ; vtable method is inline - sym->vmacro set
+     isinline       dd : 1 ?        ; SYM_EXTERNAL.target_type == SYM_MACRO
+     isstatic       dd : 1 ?        ; SYM_EXTERNAL.target_type == SYM_MACRO
+     vparray        dd : 1 ?        ; p.p.proc() - nested function call
+     operator       dd : 1 ?        ;
+     regparam       dd : 1 ?        ; register param
+     regpair        dd : 1 ?        ; reg::reg param
+     isexport       dd : 1 ?        ; v2.19: symbol exported ( SYM_INTERNAL )
+     crecord        dd : 1 ?        ; v2.36.37: use bitf_* in records
+     bitexpr        dd : 1 ?        ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
+     EndpOccured    dd : 1 ?        ; v2.37.15: set by EndpDir() - .return without RET
+     negative       dd : 1 ?        ; v2.37.19: set by SetValue() - EXPR_CONST
     ends
-    state           uchar_t ?
-    mem_type        uchar_t ?
-    langtype        uchar_t ?
-    segoffsize      uchar_t ?
-    is_far          uchar_t ?
-    sys_rcnt        uchar_t ?       ; syscall: register count
-    sys_xcnt        uchar_t ?       ; syscall: SIMD registers
-    sys_size        uchar_t ?       ; syscall: max size 8/16/32/64
+    state           db ?
+    mem_type        db ?
+    langtype        db ?
+    segoffsize      db ?
+    is_far          db ?
+    sys_rcnt        db ?            ; syscall: register count
+    sys_xcnt        db ?            ; syscall: SIMD registers
+    sys_size        db ?            ; syscall: max size 8/16/32/64
     type            asym_t ?        ; set if memtype is MT_TYPE
 
     union
-     offs           int_t ?         ; used by SYM_INTERNAL (labels), SYM_TYPE, SYM_STACK, SYM_SEG
-     value          int_t ?         ; used by SYM_INTERNAL (equates)
-     uvalue         uint_t ?        ; v2.01: equates (they are 33-bit!)
+     struct
+      union
+       offs         int_t ?         ; used by SYM_INTERNAL (labels), SYM_TYPE, SYM_STACK, SYM_SEG
+       value        int_t ?         ; used by SYM_INTERNAL (equates)
+       uvalue       dd ?            ; v2.01: equates (they are 33-bit!)
+       l64_l        dd ?
+      ends
+      union
+       hvalue       int_t ?
+       l64_h        dd ?
+      ends
+     ends
+     llvalue        dq ?
      string_ptr     string_t ?      ; used by SYM_TMACRO
      substitute     asym_t ?        ; v2.04b: used by SYM_ALIAS
-     ;
-     ; used by SYM_MACRO if predefined==1
-     ;
+                                    ; used by SYM_MACRO if predefined==1
      func_ptr       proc local __ccall :ptr macro_instance, :string_t, :token_t
      classlnameidx  int_t ?         ; used by SYM_CLASS_LNAME
     ends
 
     union
+     union
+      struct
+       h64_l        dd ?
+       h64_h        dd ?
+      ends
+      hlvalue       dq ?
+     ends
+     class          asym_t ?        ; used by SYM_TYPE, SYM_INTERNAL, SYM_EXTERNAL
+    ends
+
+    union
      segm           asym_t ?        ; used by SYM_INTERNAL, SYM_EXTERNAL
-     class          asym_t ?        ; used by SYM_TYPE
      vtable         asym_t ?        ; used by SYM_TYPE
      vmacro         asym_t ?        ; used by SYM_TYPE
     ends
+
 
     union
      ;
      ; for SYM_INTERNAL (data labels, memtype != NEAR|FAR), SYM_STRUCT_FIELD
      ; size of 1st initializer's dimension in bytes
      ;
-     first_size     uint_t ?
+     first_size     dd ?
      ;
      ; for SYM_INTERNAL (memtype == NEAR|FAR),
      ; SYM_GRP (Ofssize),
@@ -190,28 +209,29 @@ IS_SIGNED proto watcall :byte {
      ; SYM_TYPE, TYPE_TYPEDEF (Ofssize, isfar, is_ptr, ptr_memtype )
      ;
      struct
-      Ofssize       uchar_t ?       ; offset size (USE16, USE32)
-      is_ptr        uchar_t ?       ; PTR indirection
+      Ofssize       db ?            ; offset size (USE16, USE32)
+      is_ptr        db ?            ; PTR indirection
       union
-       ptr_memtype  uchar_t ?       ; pointer target type
-       asmpass      uchar_t ?       ; SYM_INTERNAL (mem_type NEAR|FAR)
+       ptr_memtype  db ?            ; pointer target type
+       asmpass      db ?            ; SYM_INTERNAL (mem_type NEAR|FAR)
       ends
       record
-       iscomm       uchar_t : 1 ?   ; is communal
-       weak         uchar_t : 1 ?   ; 1 if an unused "externdef"
-       is_vararg    uchar_t : 1 ?   ; SYM_STACK, VARARG param
-       is_vector    uchar_t : 1 ?   ; template is vector
-       stkused      uchar_t : 1 ?   ; proc: call stack used
-       argused      uchar_t : 1 ?   ; proc: stack arg used
-       localgpr     uchar_t : 1 ?   ; proc: xmm reg saved to local stack
+       iscomm       db : 1 ?        ; is communal
+       weak         db : 1 ?        ; 1 if an unused "externdef"
+       is_vararg    db : 1 ?        ; SYM_STACK, VARARG param
+       is_vector    db : 1 ?        ; template is vector
+       stkused      db : 1 ?        ; proc: call stack used
+       argused      db : 1 ?        ; proc: stack arg used
+       localgpr     db : 1 ?        ; proc: xmm reg saved to local stack
+       ClassProc    db : 1 ?        ; proc: next is class sym
       ends
      ends
      record
-      mac_vararg    uchar_t : 1 ?   ; accept additional params
-      isfunc        uchar_t : 1 ?   ; it's a macro function
-      IsLabel       uchar_t : 1 ?   ; macro is "label-aware"
-      multiline     uchar_t : 1 ?   ; v2.11: vararg arguments may be on multiple lines
-      purged        uchar_t : 1 ?   ; macro has been PURGEd
+      mac_vararg    db : 1 ?        ; accept additional params
+      isfunc        db : 1 ?        ; it's a macro function
+      IsLabel       db : 1 ?        ; macro is "label-aware"
+      multiline     db : 1 ?        ; v2.11: vararg arguments may be on multiple lines
+      purged        db : 1 ?        ; macro has been PURGEd
      ends
     ends
 
@@ -220,12 +240,12 @@ IS_SIGNED proto watcall :byte {
      ; for SYM_INTERNAL (data labels only), SYM_STRUCT_FIELD
      ; size of 1st initializer's dimension in item units
      ;
-     first_length   uint_t ?
+     first_length   dd ?
      ;
      ; SYM_TYPE (TYPEKIND_STRUCT or TYPEKIND_UNION)
      ; max size members
      ;
-     max_mbr_size   uint_t ?
+     max_mbr_size   dd ?
      ;
      ; SYM_STACK, SYM_TYPE (TYPEKIND_TYPEDEF), SYM_EXTERNAL,
      ; SYM_INTERNAL (code labels)
@@ -237,17 +257,17 @@ IS_SIGNED proto watcall :byte {
     ; SYM_TMACRO (if it's a register variable for FASTCALL)
     ;
     union
-     regist         ushort_t 2 dup(?)
+     regist         dw 2 dup(?)
      struct
-      param_reg     uchar_t ?   ; param register token
-      param_id      uchar_t ?   ; param index
-      param_regs    uchar_t ?   ; number or registers assign to this param
-      param_offs    uchar_t ?   ; stack offset used by inline functions
+      param_reg     db ?            ; param register token
+      param_id      db ?            ; param index
+      param_regs    db ?            ; number or registers assign to this param
+      param_offs    db ?            ; stack offset used by inline functions
      ends
      struct
-      bitf_token    ushort_t ?  ; bit field info for fixed sized records
-      bitf_offs     uchar_t ?
-      bitf_bits     uchar_t ?
+      bitf_token    dw ?            ; bit field info for fixed sized records
+      bitf_offs     db ?
+      bitf_bits     db ?
      ends
     ends
 
@@ -257,12 +277,7 @@ IS_SIGNED proto watcall :byte {
      ; SYM_TMACRO: size of buffer allocated for the text in string_ptr
      ; total number of bytes (sizeof)
      ;
-     total_size     uint_t ?
-     ;
-     ; for SYM_INTERNAL, isequate=1 (numeric equates)
-     ; high bits for equates
-     ;
-     value3264      int_t ?
+     total_size     dd ?
      dll            ptr dll_desc ?  ; SYM_EXTERNAL (isproc=1)
      ;
      ; for SYM_SEG offset field contain "local start offset" (=0)
@@ -273,9 +288,9 @@ IS_SIGNED proto watcall :byte {
 
     union
      struct                         ; SYM_TYPE
-      total_length  uint_t ?        ; total number of elements (LENGTHOF)
-      cvtyperef     ushort_t ?      ; codeview type index (used after assembly steps)
-      typekind      ushort_t ?      ; v2.04: moved from first_length, were it didn't work anymore
+      total_length  dd ?            ; total number of elements (LENGTHOF)
+      cvtyperef     dw ?            ; codeview type index (used after assembly steps)
+      typekind      dw ?            ; v2.04: moved from first_length, were it didn't work anymore
      ends                           ; since the addition of field max_mbr_size.
      altname        asym_t ?        ; SYM_EXTERNAL (comm==0): alternative name
      debuginfo      debug_t ?       ; SYM_INTERNAL (isproc==1): debug info (COFF)
@@ -285,10 +300,10 @@ IS_SIGNED proto watcall :byte {
 
     union                           ; SYM_INTERNAL, SYM_UNDEFINED, SYM_EXTERNAL: backpatching fixup
      bp_fixup       ptr fixup ?
-     ext_idx        uint_t ?        ; for SYM_EXTERNAL: table index ( for coff and elf )
+     ext_idx        dd ?            ; for SYM_EXTERNAL: table index ( for coff and elf )
      struct                         ; omf indices are 16-bit only!
-      ext_idx1      ushort_t ?      ; omf: (external definition) index
-      ext_idx2      ushort_t ?      ; omf: (external definition) index for weak external
+      ext_idx1      dw ?            ; omf: (external definition) index
+      ext_idx2      dw ?            ; omf: (external definition) index for weak external
      ends
     ends
 
@@ -493,11 +508,6 @@ SymAddLocal     proto __ccall :asym_t, :string_t
 SymLookup       proto __ccall :string_t
 SymLookupLocal  proto __ccall :string_t
 SymFind         proto fastcall :string_t
-
-SymSearch macro x
-    exitm<SymFind(x)>
-    endm
-
 SymInit         proto __ccall
 SymPassInit     proto __ccall :int_t
 SymMakeAllSymbolsPublic proto __ccall

@@ -53,6 +53,7 @@ ROUND_UP proto watcall i:uint_t, r:uint_t {
     and eax,edx
     }
 
+externdef	ProcStatus:proc_status
 externdef	CurrProc:asym_t		 ; current procedure
 externdef	sym_ReservedStack:asym_t ; max stack space required by INVOKE
 

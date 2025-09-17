@@ -665,35 +665,23 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
         .elseif ( [rsi].index && ( [rbx-asm_tok].token == T_ID || [rbx-asm_tok].token == T_REG ) )
 
             xor eax,eax
-            .if ( [rsi].index >= 3 && [rbx-2*asm_tok].token == T_DOT )
-                ;
-                ; p.x(...)
-                ; [...][.type].x(...)
-                ;
-                lea rdi,[rbx-asm_tok*3]
-                .if ( [rdi].asm_tok.token == T_CL_SQ_BRACKET )
+            lea rdi,[rbx-asm_tok]
+            .if ( [rdi].asm_tok.token == T_ID )
+                SymFind( [rdi].asm_tok.string_ptr )
+            .endif
+            .if ( rax && [rax].asym.state == SYM_TMACRO )
+                SymFind( [rax].asym.string_ptr )
+            .endif
+            xor edx,edx
+            xor ecx,ecx
+            .if ( [rsi].index > 2 && [rbx-2*asm_tok].token == T_DOT )
 
-                    add rdi,2*asm_tok
-                    inc eax
+                .if !( rax && [rax].asym.state == SYM_MACRO )
+                    mov eax,1
                     mov edx,SYM_TYPE
-                .else
-                    .while ( [rdi-asm_tok].asm_tok.token == T_DOT && [rdi-2*asm_tok].asm_tok.token == T_ID )
-                        lea rdi,[rdi-2*asm_tok]
-                    .endw
-                    SymFind( [rdi].asm_tok.string_ptr )
-                    xor edx,edx
                 .endif
-            .else
-
-                lea rdi,[rbx-asm_tok]
-                SymFind( [rbx-asm_tok].string_ptr )
-                .if ( rax && [rax].asym.state == SYM_TMACRO )
-                    SymFind( [rax].asym.string_ptr )
-                .endif
-                xor edx,edx
             .endif
 
-            xor ecx,ecx
             .if ( rax )
 
                 .if !edx
@@ -729,40 +717,36 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                     .endif
                     .endc
                 .case ( edx == SYM_TYPE ) ;  structure, union, typedef, record
-                    ;
+
                     ; [...].type.x(...)
-                    ;
+
                     mov eax,[rsi].index
                     .if ( eax == 1 || [rdi-asm_tok].asm_tok.token != T_DOT )
-                        ;
+
                         ; type(...)
-                        ;
+
                         .endc .if ( [rdi-asm_tok].asm_tok.token == T_ID )
                         .endc .if ( CurrSeg == NULL )
                          mov rdx,CurrSeg
                          mov rdx,[rdx].asym.seginfo
                         .endc .if ( [rdx].seg_info.segtype != SEGTYPE_CODE )
+
                     .else
-                        .endc .if ( eax < 5 )
-                        .endc .if ( [rdi-asm_tok].asm_tok.token != T_DOT )
-                        .endc .if ( [rdi-2*asm_tok].asm_tok.token != T_CL_SQ_BRACKET )
-                         sub rdi,3*asm_tok
-                         sub eax,3
-                         mov edx,1 ; v2.27 - added: [foo(&[..])+rcx].class.method()
-                        .repeat
-                            .if ( [rdi].asm_tok.token == T_OP_SQ_BRACKET )
-                                dec edx
-                               .break .ifz
-                            .elseif ( [rdi].asm_tok.token == T_CL_SQ_BRACKET )
+
+                        .fors ( rdi-=asm_tok, edx = 0 : eax > 0 : eax--, rdi-=asm_tok )
+
+                            mov cl,[rdi].asm_tok.token
+                            mov ch,[rdi-asm_tok].asm_tok.token
+                            .switch pascal cl
+                            .case T_ID
+                               .break .if ( ch != T_DOT && !edx )
+                            .case T_CL_SQ_BRACKET
                                 inc edx
-                            .endif
-                            sub rdi,asm_tok
-                            dec eax
-                        .untilz
-                        .endc .if ( [rdi].asm_tok.token != T_OP_SQ_BRACKET )
-                        .if ( eax > 1 && [rdi-asm_tok].asm_tok.token == T_ID )
-                            sub rdi,asm_tok
-                        .endif
+                            .case T_OP_SQ_BRACKET
+                                dec edx
+                               .break .if ( ch != T_DOT && ch != T_ID && !edx )
+                            .endsw
+                        .endf
                     .endif
                 .case ( edx == SYM_STACK )
                 .case ( edx == SYM_INTERNAL )
@@ -801,6 +785,24 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
             mov rcx,[rsi].tokenarray
             mov [rcx].asm_tok.Expand,1
+
+            ; [reg][...].proc()
+
+            .if ( ( [rcx].asm_tok.token == T_OP_SQ_BRACKET || [rcx+asm_tok].asm_tok.token == T_OP_SQ_BRACKET ) &&
+                    [rbx-asm_tok].IsProc )
+
+                .for ( rdx = rbx : [rdx-asm_tok*2].asm_tok.token == T_DOT : rdx -= asm_tok*2 )
+                .endf
+                .if ( [rdx].asm_tok.token == T_DOT && [rdx-asm_tok].asm_tok.token == T_CL_SQ_BRACKET )
+
+                    .for ( rdx -= asm_tok*2 : rdx > rcx : rdx -= asm_tok )
+                        .break .if ( [rdx].asm_tok.token == T_OP_SQ_BRACKET )
+                    .endf
+                    .if ( [rdx].asm_tok.token == T_OP_SQ_BRACKET )
+                        mov [rdx].asm_tok.IsProc,1
+                    .endif
+                .endif
+            .endif
         .endif
         ;
         ; no break
@@ -1223,6 +1225,10 @@ get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
         inc [rdx].input
         inc [rdx].output
        .return get_string( rbx, rdx )
+    .endif
+
+    .if ( al == '@' ) ; v3.37: skip local labels in option class:reg
+        mov [rbx].AtLabel,1
     .endif
 
 continue_scan:

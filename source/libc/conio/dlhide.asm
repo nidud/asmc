@@ -13,7 +13,8 @@ include conio.inc
 dlhide proc uses rbx dobj:PDOBJ
 
     ldr rbx,dobj
-    .if rchide([rbx].rc, [rbx].flags, [rbx].window)
+
+    .ifd rchide([rbx].rc, [rbx].flags, [rbx].window)
 
         and [rbx].flags,not W_VISIBLE
     .endif

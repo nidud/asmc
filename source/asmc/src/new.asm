@@ -420,7 +420,7 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
 
                 mov rdi,rcx
 
-                .if SymSearch( rdi )
+                .if SymFind( rdi )
 
                     .if ( [rax].asym.state == SYM_TMACRO )
 
@@ -503,7 +503,7 @@ endif
                         .if ( byte ptr [rdi] == '(' )
 
                             mov byte ptr [rdi],0
-                            SymSearch( &val )
+                            SymFind( &val )
                             mov byte ptr [rdi],'('
                             .if ( rax && [rax].asym.isproc )
                                 mov fltproc,1
@@ -708,7 +708,7 @@ endif
 
     .if ( [rbx].token == T_STRING && [rbx].bytval == '{' )
 
-        .if ( SymSearch( name ) == NULL )
+        .if ( SymFind( name ) == NULL )
 
             .return asmerr( 2008, [rbx].tokpos )
         .endif
@@ -774,7 +774,7 @@ endif
               ( [rsi].mem_type == MT_OWORD || [rsi].mem_type == MT_SOWORD ) )
         .elseif ( eax == 8 && [rsi].Ofssize == USE64 &&
                   ( [rbx].IsProc || word ptr [rdx] == '&' ) )
-
+        .elseif ( MODULE.class_reg )
         .elseifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) != ERROR )
 
             mov eax,[rsi].size
@@ -856,7 +856,7 @@ endif
 
         .if ( !brackets && [rbx].token == T_STRING && [rbx].bytval == '"' )
 
-            .if SymSearch( name )
+            .if SymFind( name )
 
                 .if ( [rax].asym.mem_type & MT_PTR )
 
@@ -868,11 +868,11 @@ endif
                         stosb
                     .endif
                     mov rsi,[rbx].string_ptr
-                    mov ecx,[rbx].stringlen                    
+                    mov ecx,[rbx].stringlen
                     add ecx,2
                     rep movsb
                     mov eax,')'
-                    stosw                    
+                    stosw
                     add rbx,asm_tok
                    .break
                 .endif
@@ -1111,7 +1111,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
                 add rbx,asm_tok ; go past ')'
                 mov endtok,rbx
 
-                .if ( SymSearch( rsi ) )
+                .if ( SymFind( rsi ) )
                     mov rcx,rax
                     .if ( [rcx].asym.state == SYM_TYPE )
                         .while ( [rcx].asym.type )

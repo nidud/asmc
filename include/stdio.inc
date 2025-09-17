@@ -189,7 +189,7 @@ _putws		proto __cdecl :wstring_t
 fwprintf	proto __Cdecl :LPFILE, :wstring_t, :vararg
 wprintf		proto __Cdecl :wstring_t, :vararg
 _snwprintf	proto __Cdecl :wstring_t, :size_t, :wstring_t, :vararg
-swprintf	proto __Cdecl :wstring_t, :wstring_t, :vararg
+_swprintf	proto __Cdecl :wstring_t, :wstring_t, :vararg
 _scwprintf	proto __Cdecl :wstring_t, :vararg
 swprintf_s	proto __Cdecl :wstring_t, :size_t, :wstring_t, :vararg
 vfwprintf	proto __cdecl :LPFILE, :wstring_t, :ptr

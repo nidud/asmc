@@ -164,7 +164,7 @@ SaveVariableState proc fastcall uses rsi rdi _sym:asym_t
         inc [rdi].equ_item.isdefined
     .endif
     mov [rdi].equ_item.lvalue,[rsi].asym.value
-    mov [rdi].equ_item.hvalue,[rsi].asym.value3264
+    mov [rdi].equ_item.hvalue,[rsi].asym.hvalue
     mov [rdi].equ_item.mem_type,[rsi].asym.mem_type
     .if ( modstate.tail )
         mov rax,modstate.tail
@@ -189,7 +189,7 @@ RestoreState proc
         .while rdx
             mov rcx,[rdx].equ_item.sym
             mov [rcx].asym.value,[rdx].equ_item.lvalue
-            mov [rcx].asym.value3264,[rdx].equ_item.hvalue
+            mov [rcx].asym.hvalue,[rdx].equ_item.hvalue
             mov [rcx].asym.isdefined,0
             .if [rdx].equ_item.isdefined
                 mov [rcx].asym.isdefined,1

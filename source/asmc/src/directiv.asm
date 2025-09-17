@@ -399,11 +399,11 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
 
     ; make sure <alias_name> isn't defined elsewhere
-    mov rsi,SymSearch([rbx].string_ptr)
+    mov rsi,SymFind([rbx].string_ptr)
     .if ( rsi == NULL || [rsi].state == SYM_UNDEFINED )
 
         ; v2.04b: adjusted to new field <substitute>
-        mov rdi,SymSearch(subst)
+        mov rdi,SymFind(subst)
         .if ( rdi == NULL )
             mov rdi,SymCreate(subst)
             mov [rdi].state,SYM_UNDEFINED

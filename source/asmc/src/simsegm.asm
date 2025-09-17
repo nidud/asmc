@@ -190,7 +190,7 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
 
             .if ( Parse_Pass == PASS_1 )
 
-                SymSearch( rdi )
+                SymFind( rdi )
 
                 ; v2.12: check 'isdefined' member instead of 'lname_idx'
 
@@ -204,7 +204,7 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
         .endif
     .else
 
-        SymSearch( rdi )
+        SymFind( rdi )
 
         ; v2.04: testing for state SYM_SEG isn't enough. The segment
         ; might have been "defined" by a GROUP directive. Additional
@@ -329,7 +329,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 ; v2.17: don't add to DGROUP if code segment's wordsize isn't the default wordsize;
                 ;        todo: check why this "auto adding" has been implemented.
 
-                .if ( SymSearch( rdi ) && [rax].asym.state == SYM_SEG )
+                .if ( SymFind( rdi ) && [rax].asym.state == SYM_SEG )
 
                     mov rax,[rax].asym.seginfo
                     mov al,[rax].seg_info.Ofssize
@@ -355,7 +355,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             ; v2.34.61 - v2.13: added
 
-            .if ( SymSearch( rdi ) && [rax].asym.state == SYM_SEG )
+            .if ( SymFind( rdi ) && [rax].asym.state == SYM_SEG )
 
                 mov rax,[rax].asym.seginfo
                 mov rax,[rax].seg_info.sgroup

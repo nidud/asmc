@@ -240,9 +240,8 @@ endif
             mov edi,10
         .endif
         mov ll.buffer[rdi],'='
-        .if ( [rsi].asym.value3264 != 0 && ( [rsi].asym.value3264 != -1 || [rsi].asym.value >= 0 ) )
-
-            tsprintf( &ll.buffer[rdi+2], "%-" PREFFMTSTR "lX", [rsi].asym.value, [rsi].asym.value3264 )
+        .if ( [rsi].asym.hvalue != 0 && ( [rsi].asym.hvalue != -1 || [rsi].asym.value >= 0 ) )
+            tsprintf( &ll.buffer[rdi+2], "%-" PREFFMTSTR "lX", [rsi].asym.llvalue )
         .else
             tsprintf( &ll.buffer[rdi+2], "%-" PREFFMTSTR "X", [rsi].asym.value )
         .endif
@@ -1061,10 +1060,10 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
 
             ; also check segment? might be != NULL for equates (var = offset x)
 
-            .if ( [rdi].asym.value3264 != 0 && [rdi].asym.value3264 != -1 )
+            .if ( [rdi].asym.hvalue != 0 && [rdi].asym.hvalue != -1 )
 
-                LstPrintf( "%08X%08X ", [rdi].asym.value3264, [rdi].asym.uvalue )
-            .elseif ( [rdi].asym.value3264 < 0 )
+                LstPrintf( "%08X%08X ", [rdi].asym.hvalue, [rdi].asym.uvalue )
+            .elseif ( [rdi].asym.hvalue < 0 )
                 LstPrintf( "%08X ", [rdi].asym.uvalue )
             .else
                 LstPrintf( "%08X ", [rdi].asym.offs )

@@ -123,10 +123,9 @@ FarCallToNear endp
 ; - ERROR,
 ;
 
-    assume rbx:ptr expr
-    assume rdi:asym_t
+    assume rbx:expr_t, rdi:asym_t
 
-process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dword, opndx:ptr expr
+process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dword, opndx:expr_t
 
   local adr:int_32
   local fixup_type:int_32
@@ -304,12 +303,8 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 dec edx ; 1 extra byte for ADRSIZ (0x67)
             .endif
 
-            .ifs ( [rsi].mem_type != MT_NEAR && [rsi].token != T_CALL &&
-                  ( edx >= SCHAR_MIN && edx <= SCHAR_MAX ) )
-
-                mov [rsi].opnd[OPND1].type,OP_I8
-
-            .else
+            mov ecx,OP_I8
+            .ifs ( edx < SCHAR_MIN || edx > SCHAR_MAX || [rsi].mem_type == MT_NEAR || [rsi].token == T_CALL )
 
                 .if ( [rbx].inst == T_SHORT || ( IS_XCX_BRANCH( [rsi].token ) ) )
 
@@ -336,35 +331,45 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 ; near destination
                 ; is there a type coercion?
 
-                .if ( [rbx].Ofssize != USE_EMPTY )
-                    .if ( [rbx].Ofssize == USE16 )
-                        mov [rsi].opnd[OPND1].type,OP_I16
-                        dec edx ; 16 bit displacement
-                    .else
-                        mov [rsi].opnd[OPND1].type,OP_I32
-                        sub edx,3 ; 32 bit displacement
-                    .endif
-                    mov [rsi].opsiz,OPSIZE( [rbx].Ofssize, [rsi].Ofssize )
-                    .if ( [rsi].opsiz )
-                        dec edx
-                    .endif
-                .elseif( [rsi].Ofssize > USE16 )
-                    mov [rsi].opnd[OPND1].type,OP_I32
-                    sub edx,3 ; 32 bit displacement
-                .else
-                    mov [rsi].opnd[OPND1].type,OP_I16
-                    dec edx ; 16 bit displacement
-                .endif
-                .if ( IS_CONDJMP( [rsi].token ) )
-                    ; 1 extra byte for opcode ( 0F )
-                    dec edx
-                .endif
+                mov ecx,OP_I32
+                mov ah,[rbx].Ofssize
+                mov al,[rsi].Ofssize
 
+                .if ( ah != USE_EMPTY )
+
+                    cmp     al,ah
+                    movzx   eax,al
+                    setne   al
+                    mov     [rsi].opsiz,al
+                    sub     edx,eax
+                    mov     al,[rbx].Ofssize
+                .endif
+                .if( al > USE16 )
+                    sub edx,3   ; 32 bit displacement
+                .else
+                    mov ecx,OP_I16
+                    dec edx     ; 16 bit displacement
+                .endif
+                movzx eax,[rsi].token
+                .if ( IS_CONDJMP( eax ) )
+                    dec edx     ; 1 extra byte for opcode ( 0F )
+                .endif
+if 0
+                ; displacement now in range?
+
+                .ifs ( ecx == OP_I32 && edx >= SCHAR_MIN && edx <= SCHAR_MAX &&
+                       eax != T_CALL && [rsi].mem_type != MT_NEAR )
+                    mov ecx,OP_I8
+                .endif
+endif
             .endif
-            mov adr,edx
 
             ; store the displacement
-            mov [rsi].opnd[OPND1].data32l,adr
+
+            mov adr,edx
+            mov [rsi].opnd[OPND1].type,ecx
+            mov [rsi].opnd[OPND1].data32l,edx
+
 
             ; automatic (conditional) jump expansion.
             ; for 386 and above this is not needed, since there exists

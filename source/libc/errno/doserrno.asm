@@ -5,6 +5,7 @@
 ;
 
 include errno.inc
+include winerror.inc
 
     .data
 ifndef _WIN64

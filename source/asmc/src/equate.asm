@@ -40,13 +40,12 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
         .if ( [rdx].negative )
             mov [rcx].negative,1 ; v2.37.19: added for const input
         .endif
-        mov [rcx].uvalue,[rdx].uvalue
-        mov [rcx].value3264,[rdx].hvalue
+        mov [rcx].llvalue,[rdx].llvalue
         mov [rcx].mem_type,[rdx].mem_type
         .if ( al == MT_REAL16 && !Options.strict_masm_compat )
-            mov [rcx].total_length,dword ptr [rdx].hlvalue
-            mov [rcx].ext_idx,dword ptr [rdx].hlvalue[4]
+            mov [rcx].hlvalue,[rdx].hlvalue
         .endif
+        mov [rcx].total_size,0
         mov [rcx].segm,NULL
        .return
     .endif
@@ -79,7 +78,7 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
         mov [rcx].mem_type,[rdi].mem_type
         mov [rcx].type,[rdi].type
     .endif
-    mov [rcx].value3264,0 ;; v2.09: added
+    mov [rcx].total_size,0
     mov [rcx].segm,[rdi].segm
 
     ; labels are supposed to be added to the current segment's label_list chain.
@@ -131,11 +130,9 @@ check_number:
 
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
-ifdef _WIN64
-        mov rax,opnd.hlvalue
-else
-        mov eax,opnd.h64_h
-        or  eax,opnd.h64_l
+        mov rax,size_t ptr opnd.hlvalue
+ifndef _WIN64
+        or  eax,opnd.h64_h
 endif
         ; v2.08: check added. the number must be 32-bit
 
@@ -222,7 +219,7 @@ endif
         .endif
 
         ; v2.08: accept any result that fits in 64-bits from expression evaluator
-        .if ( dword ptr opnd.hlvalue || dword ptr opnd.hlvalue[4] )
+        .if ( opnd.h64_l || opnd.h64_h )
             EmitConstError()
            .return NULL
         .endif
@@ -234,7 +231,7 @@ endif
 
 check_float:
 
-    mov rdi,SymSearch(name)
+    mov rdi,SymFind(name)
 
     .if ( rdi == NULL || [rdi].state == SYM_UNDEFINED )
         .if rdi == NULL
@@ -255,7 +252,7 @@ check_float:
         .endif
     .else
         .if ( [rdi].state != SYM_INTERNAL || ( !( [rdi].isvariable ) &&
-             ( opnd.uvalue != [rdi].uvalue || opnd.hvalue != [rdi].value3264 ) ) )
+             ( opnd.uvalue != [rdi].uvalue || opnd.hvalue != [rdi].hvalue ) ) )
             asmerr( 2005, [rdi].name )
            .return NULL
         .endif
@@ -315,7 +312,7 @@ EqualSgnDirective endp
 
 CreateVariable proc __ccall uses rdi name:string_t, value:int_t
 
-    mov rdi,SymSearch(name)
+    mov rdi,SymFind(name)
     .if rdi == NULL
         mov rdi,SymCreate(name)
         mov [rdi].issaved,0
@@ -334,7 +331,7 @@ CreateVariable proc __ccall uses rdi name:string_t, value:int_t
             asmerr(2005, name)
             .return NULL
         .endif
-        mov [rdi].value3264,0
+        mov [rdi].hvalue,0
 
         ; v2.09: don't save variable when it is defined the first time
         ; v2.10: store state only when variable is changed and has been
@@ -386,7 +383,7 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
     mov name,rax
     mov i,2
     mov cmpvalue,FALSE
-    mov rdi,SymSearch(name)
+    mov rdi,SymFind(name)
     lea rsi,[rbx+asm_tok*2]
 
     .switch
@@ -398,8 +395,8 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
         mov size_t ptr opnd.llvalue,rax
         mov size_t ptr opnd.hlvalue,rax
 ifndef _WIN64
-        mov dword ptr opnd.llvalue[4],eax
-        mov dword ptr opnd.hlvalue[4],eax
+        mov opnd.l64_h,eax
+        mov opnd.h64_h,eax
 endif
         mov opnd.sym,rax
         dec i
@@ -451,11 +448,9 @@ endif
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
         mov opnd.flags,0
-ifdef _WIN64
-        mov rax,opnd.hlvalue
-else
-        mov eax,opnd.h64_h
-        or  eax,opnd.h64_l
+        mov rax,size_t ptr opnd.hlvalue
+ifndef _WIN64
+        or  eax,opnd.h64_h
 endif
         mov rc,NOT_ERROR
         inc i
@@ -563,11 +558,9 @@ endif
 
     imul eax,i,asm_tok
     mov rcx,opnd.sym
-ifdef _WIN64
-    mov rdx,opnd.hlvalue ; magnitude <= 64 bits?
-else
-    mov edx,dword ptr opnd.hlvalue
-    or  edx,dword ptr opnd.hlvalue[4]
+    mov rdx,size_t ptr opnd.hlvalue ; magnitude <= 64 bits?
+ifndef _WIN64
+    or  edx,opnd.h64_h
 endif
 
     .if ( rc != ERROR && [rbx+rax].token == T_FINAL && opnd.inst == EMPTY &&
@@ -592,7 +585,7 @@ endif
             .if opnd.kind == EXPR_CONST
                 ; for 64bit, it may be necessary to check 64bit value!
                 ; v2.08: always compare 64-bit values
-                .if [rdi].value != opnd.value || [rdi].value3264 != opnd.hvalue
+                .if [rdi].value != opnd.value || [rdi].hvalue != opnd.hvalue
                     asmerr(2005, name)
                     .return(NULL)
                 .endif

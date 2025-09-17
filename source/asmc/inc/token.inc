@@ -58,6 +58,7 @@ define __TOKEN_INC
       Modifier      db : 1 ?    ; {k1}{z}..
       Operator      db : 1 ?    ; Operator expression
       Expand        db : 1 ?    ; class::proc()
+      AtLabel       db : 1 ?    ; @label
      ends
     ends
     union

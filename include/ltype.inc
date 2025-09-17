@@ -64,7 +64,15 @@ ifdef _WIN64
 ;
 ; Use (global) r15 in 64-bit
 ;
+_ltypeinit proto
+_ltypeexit proto
+
 ifndef _UNICODE
+
+getltype proto watcall :byte {
+    movzx ecx,byte ptr [r15+rax]
+    }
+
 islalnum    proto watcall :byte { retm<(byte ptr [r15+rax] & (_DIGIT or _UPPER or _LOWER))> }
 islalpha    proto watcall :byte { retm<(byte ptr [r15+rax] & (_UPPER or _LOWER))> }
 islcntrl    proto watcall :byte { retm<(byte ptr [r15+rax] & _CONTROL)> }
@@ -103,6 +111,10 @@ isclabel    proto watcall :word { retm<(eax == '_' || (!ah && byte ptr [r15+rax]
 endif
 
 else
+
+getltype proto watcall :byte {
+    movzx ecx,_ltype[eax]
+    }
 
 islalnum    proto watcall :byte { retm<(_ltype[eax] & (_DIGIT or _UPPER or _LOWER))> }
 islalpha    proto watcall :byte { retm<(_ltype[eax] & (_UPPER or _LOWER))> }

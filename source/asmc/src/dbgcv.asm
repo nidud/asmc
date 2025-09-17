@@ -255,7 +255,7 @@ GetStructLen proc fastcall sym:asym_t, Ofssize:byte
 if EQUATESYMS
         .if ( [rcx].asym.isequate )
             mov eax,sizeof( CONSTSYM_16t )
-            .if ( [rcx].asym.value3264 || [rcx].asym.uvalue >= LF_NUMERIC )
+            .if ( [rcx].asym.hvalue || [rcx].asym.uvalue >= LF_NUMERIC )
                 add eax,2
             .endif
             .return
@@ -275,7 +275,7 @@ endif
 if EQUATESYMS
     .if ( [rcx].asym.isequate )
         mov eax,sizeof( CONSTSYM )
-        .if ( [rcx].asym.value3264 || [rcx].asym.uvalue >= LF_NUMERIC )
+        .if ( [rcx].asym.hvalue || [rcx].asym.uvalue >= LF_NUMERIC )
             add eax,2
         .endif
         .return
@@ -1229,7 +1229,7 @@ if EQUATESYMS
 
         mov edi,LF_SHORT
         mov eax,[rsi].asym.value
-        mov edx,[rsi].asym.value3264
+        mov edx,[rsi].asym.hvalue
 
         .if ( edx || eax >= LF_NUMERIC )
 
@@ -1271,7 +1271,7 @@ if EQUATESYMS
         .endif
 
         mov eax,[rsi].asym.value
-        .if ( [rsi].asym.value3264 || eax >= LF_NUMERIC )
+        .if ( [rsi].asym.hvalue || eax >= LF_NUMERIC )
             .if ( ecx == LF_CHAR )
                 mov [rdx],al
                 mov eax,ecx
@@ -1286,7 +1286,7 @@ if EQUATESYMS
                 mov ecx,ST_LONG
             .elseif ( ecx == LF_QUADWORD )
                 mov [rdx],eax
-                mov eax,[rsi].asym.value3264
+                mov eax,[rsi].asym.hvalue
                 mov [rdx+4],eax
                 mov eax,ecx
                 mov ecx,ST_QUAD

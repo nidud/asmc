@@ -69,7 +69,7 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
         jmp move_param
     .endif
 
-    .if ( SymSearch( [rbx].string_ptr ) == NULL )
+    .if ( SymFind( [rbx].string_ptr ) == NULL )
 
         .return asmerr( 2008, [rbx].string_ptr )
 

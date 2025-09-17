@@ -1021,7 +1021,7 @@ segm_override proc __ccall public uses rsi rdi rbx opndx:expr_t, CodeInfo:ptr co
                 mov [rsi].RegOverride,ebx
             .endif
         .else
-            SymSearch( [rdi].string_ptr )
+            SymFind( [rdi].string_ptr )
         .endif
         .if ( rax && ( [rax].asym.state == SYM_GRP || [rax].asym.state == SYM_SEG ) )
             mov SegOverride,rax
@@ -2098,6 +2098,10 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
               ( ( eax & OP_R64 ) && cl == USE64 ) ||
               ( ( eax & OP_R16 ) && cl == USE16 ) )
             mov [rsi].adrsiz,FALSE
+ifndef MASMCOMPAT
+        .elseif ( eax & OP_R32 && cl == USE64 && [rsi].token == T_LEA && [rsi].opnd.type & OP_R32 )
+            mov [rsi].adrsiz,FALSE
+endif
         .else
             mov [rsi].adrsiz,TRUE
 
@@ -2120,6 +2124,10 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
               ( ( eax & OP_R64 ) && cl == USE64 ) ||
               ( ( eax & OP_R16 ) && cl == USE16 ) )
             mov [rsi].adrsiz,FALSE
+ifndef MASMCOMPAT
+        .elseif ( eax & OP_R32 && cl == USE64 && [rsi].token == T_LEA && [rsi].opnd.type & OP_R32 )
+            mov [rsi].adrsiz,FALSE
+endif
         .else
             mov [rsi].adrsiz,TRUE
 
@@ -3695,7 +3703,7 @@ IsType proc fastcall name:string_t
 
     UNREFERENCED_PARAMETER(name)
 
-    SymSearch( rcx )
+    SymFind( rcx )
 
     .if ( rax && [rax].asym.state == SYM_TYPE )
         .return
@@ -4048,16 +4056,14 @@ endif
                 FStoreLine(0)
             .endif
 
-            .if ( [rsi].dirtype > DRT_DATADIR )
+            movzx eax,[rsi].dirtype
+            .if ( eax > DRT_DATADIR )
 
-                movzx eax,[rsi].dirtype
                 lea rcx,directive_tab
                 mov rax,[rcx+rax*size_t]
                 assume rax:fpDirective
-                rax( i, rbx )
+                mov edi,rax( i, rbx )
                 assume rax:nothing
-                mov edi,eax
-
             .else
 
                 mov edi,ERROR
@@ -4892,6 +4898,8 @@ endif
             .case T_COMISD
             .case T_UCOMISD
                 add ecx,4
+            .case T_MAXSS
+            .case T_MINSS
             .case T_ADDSS
             .case T_SUBSS
             .case T_MULSS

@@ -206,26 +206,30 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             inc i
             SymSetCmpFunc()
         .case OP_PROC ; PRIVATE | PUBLIC | EXPORT
-            .switch ( [rbx].token )
-            .case T_ID
-                .ifd ( !tstricmp( rsi, "PRIVATE" ) )
-                    mov MODULE.procs_private,TRUE
-                    mov MODULE.procs_export,FALSE
-                    inc i
-                .elseifd ( !tstricmp( rsi, "EXPORT" ) )
-                    mov MODULE.procs_private,FALSE
-                    mov MODULE.procs_export,TRUE
-                    inc i
-                .endif
-                .endc
-            .case T_DIRECTIVE ; word PUBLIC is a directive
-                .if ( [rbx].tokval == T_PUBLIC )
-                    mov MODULE.procs_private,FALSE
-                    mov MODULE.procs_export,FALSE
-                    inc i
-                .endif
-                .endc
-            .endsw
+            .while ( [rbx].token != T_FINAL )
+
+                .switch ( [rbx].token )
+                .case T_ID
+                    .ifd ( !tstricmp( [rbx].string_ptr, "PRIVATE" ) )
+                        mov MODULE.procs_private,TRUE
+                        mov MODULE.procs_export,FALSE
+                        inc i
+                    .elseifd ( !tstricmp( [rbx].string_ptr, "EXPORT" ) )
+                        mov MODULE.procs_private,FALSE
+                        mov MODULE.procs_export,TRUE
+                        inc i
+                    .endif
+                    .endc
+                .case T_DIRECTIVE ; word PUBLIC is a directive
+                    .if ( [rbx].tokval == T_PUBLIC )
+                        mov MODULE.procs_private,FALSE
+                        mov MODULE.procs_export,FALSE
+                        inc i
+                    .endif
+                    .endc
+                .endsw
+                add rbx,asm_tok
+            .endw
         .case OP_PROLOGUE
             ;
             ; OPTION PROLOGUE:macroname

@@ -25,6 +25,7 @@ _wtoutfs proc uses rsi rdi rbx buffer:string_t, wstring:wstring_t
     stosb
     test    eax,eax
     jnz     .0
+    dec     rdi
 .2:
     mov     rax,rdi
     sub     rax,buffer

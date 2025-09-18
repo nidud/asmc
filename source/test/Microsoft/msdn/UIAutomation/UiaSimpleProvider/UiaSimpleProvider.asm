@@ -36,7 +36,7 @@ DlgProc proto :HWND, :UINT, :WPARAM, :LPARAM
 
 ; Entry point.
 
-wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:PWSTR, nCmdShow:int_t
+wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:PWSTR, nCmdShow:int_t
 
     CoInitialize(NULL)
 
@@ -55,13 +55,13 @@ wWinMain endp
 
 DlgProc proc hDlg:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .switch (message)
-
+    .switch ldr(message)
     .case WM_COMMAND
-        .if ( r8w == IDOK || r8w == IDCANCEL)
+        ldr rdx,wParam
+        .if ( dx == IDOK || dx == IDCANCEL)
 
-            EndDialog(hDlg, r8w)
-            .return TRUE
+            EndDialog(hDlg, edx)
+           .return( TRUE )
         .endif
         .endc
     .endsw

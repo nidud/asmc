@@ -57,8 +57,7 @@ func_index db \
 
     .code
 
-    assume rsi:ptr omf_rec
-    assume rbx:ptr outbuff
+    assume rsi:ptr omf_rec, rbx:ptr outbuff
 
 PutByte proto watcall :byte { ; write a byte to the current record
     mov ecx,[rbx].in_buf

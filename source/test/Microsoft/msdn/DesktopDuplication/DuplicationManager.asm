@@ -12,20 +12,19 @@ DUPLICATIONMANAGER::DUPLICATIONMANAGER proc
 
 DUPLICATIONMANAGER::DUPLICATIONMANAGER endp
 
-    assume rsi:ptr DUPLICATIONMANAGER
+    assume class:rsi
 ;
 ; Destructor simply calls CleanRefs to destroy everything
 ;
-DUPLICATIONMANAGER::Release proc uses rsi
+DUPLICATIONMANAGER::Release proc
 
-    ldr rsi,this
-    SafeRelease([rsi].m_DeskDupl)
-    SafeRelease([rsi].m_AcquiredDesktopImage)
-    .if ( [rsi].m_MetaDataBuffer )
-        free([rsi].m_MetaDataBuffer)
-        mov [rsi].m_MetaDataBuffer,nullptr
+    SafeRelease(m_DeskDupl)
+    SafeRelease(m_AcquiredDesktopImage)
+    .if ( m_MetaDataBuffer )
+        free(m_MetaDataBuffer)
+        mov m_MetaDataBuffer,nullptr
     .endif
-    SafeRelease([rsi].m_Device)
+    SafeRelease(m_Device)
     free(rsi)
     ret
 
@@ -34,17 +33,16 @@ DUPLICATIONMANAGER::Release endp
 ;
 ; Initialize duplication interfaces
 ;
-DUPLICATIONMANAGER::InitDupl proc uses rsi Device:ptr ID3D11Device, Output:UINT
+DUPLICATIONMANAGER::InitDupl proc Device:ptr ID3D11Device, Output:UINT
 
-    ldr rsi,this
     ldr rdx,Device
     ldr eax,Output
 
-    mov [rsi].m_OutputNumber,eax
+    mov m_OutputNumber,eax
 
     ; Take a reference on the device
 
-    mov [rsi].m_Device,rdx
+    mov m_Device,rdx
     Device.AddRef()
 
     ; Get DXGI device
@@ -84,7 +82,7 @@ DUPLICATIONMANAGER::InitDupl proc uses rsi Device:ptr ID3D11Device, Output:UINT
                 L"Error", hr, &EnumOutputsExpectedErrors)
     .endif
 
-    DxgiOutput.GetDesc(&[rsi].m_OutputDesc)
+    DxgiOutput.GetDesc(&m_OutputDesc)
 
     ; QI for Output 1
 
@@ -101,7 +99,7 @@ DUPLICATIONMANAGER::InitDupl proc uses rsi Device:ptr ID3D11Device, Output:UINT
 
     ; Create desktop duplication
 
-    mov hr,DxgiOutput1.DuplicateOutput(Device, &[rsi].m_DeskDupl)
+    mov hr,DxgiOutput1.DuplicateOutput(Device, &m_DeskDupl)
     DxgiOutput1.Release()
     mov DxgiOutput1,nullptr
     .if (FAILED(hr))
@@ -126,13 +124,12 @@ DUPLICATIONMANAGER::InitDupl endp
 ;
 ; Retrieves mouse info and write it into PtrInfo
 ;
-DUPLICATIONMANAGER::GetMouse proc uses rsi rdi rbx \
+DUPLICATIONMANAGER::GetMouse proc uses rdi rbx \
         PtrInfo     : ptr PTR_INFO,
         FrameInfo   : ptr DXGI_OUTDUPL_FRAME_INFO,
         OffsetX     : SINT,
         OffsetY     : SINT
 
-    ldr rsi,this
     ldr rdi,PtrInfo
     ldr rbx,FrameInfo
 
@@ -158,7 +155,7 @@ endif
     ; it to invisible or update.
 
     .if ( ![rbx].PointerPosition.Visible &&
-         ( [rdi].WhoUpdatedPositionLast != [rsi].m_OutputNumber ) )
+         ( [rdi].WhoUpdatedPositionLast != m_OutputNumber ) )
 
         mov UpdatePosition,false
     .endif
@@ -167,7 +164,7 @@ endif
     ; only update if new update has newer timestamp
 
     .if ( [rbx].PointerPosition.Visible && [rdi].Visible &&
-          ( [rdi].WhoUpdatedPositionLast != [rsi].m_OutputNumber ) &&
+          ( [rdi].WhoUpdatedPositionLast != m_OutputNumber ) &&
           ( [rdi].LastTimeStamp.QuadPart > [rbx].LastMouseUpdateTime.QuadPart ) )
 
         mov UpdatePosition,false
@@ -178,14 +175,14 @@ endif
     .if ( UpdatePosition )
 
         mov eax,[rbx].PointerPosition.Position.x
-        add eax,[rsi].m_OutputDesc.DesktopCoordinates.left
+        add eax,m_OutputDesc.DesktopCoordinates.left
         sub eax,OffsetX
         mov [rdi].Position.x,eax
         mov eax,[rbx].PointerPosition.Position.y
-        add eax,[rsi].m_OutputDesc.DesktopCoordinates.top
+        add eax,m_OutputDesc.DesktopCoordinates.top
         sub eax,OffsetY
         mov [rdi].Position.y,eax
-        mov [rdi].WhoUpdatedPositionLast,[rsi].m_OutputNumber
+        mov [rdi].WhoUpdatedPositionLast,m_OutputNumber
         mov [rdi].LastTimeStamp,[rbx].LastMouseUpdateTime
         xor eax,eax
         .if ( [rbx].PointerPosition.Visible != 0 )
@@ -228,7 +225,7 @@ endif
     ; Get shape
 
     .new BufferSizeRequired:UINT
-    .new hr:HRESULT = this.m_DeskDupl.GetFramePointerShape(
+    .new hr:HRESULT = m_DeskDupl.GetFramePointerShape(
             [rbx].PointerShapeBufferSize, [rdi].PtrShapeBuffer,
             &BufferSizeRequired, &[rdi].ShapeInfo)
 
@@ -239,7 +236,7 @@ endif
         mov [rdi].PtrShapeBuffer,nullptr
         mov [rdi].BufferSize,0
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
             L"Failed to get frame pointer shape in DUPLICATIONMANAGER",
             L"Error", hr, &FrameInfoExpectedErrors)
     .endif
@@ -252,9 +249,8 @@ DUPLICATIONMANAGER::GetMouse endp
 ; Get next frame and write it into Data
 ;
 
-DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr bool
+DUPLICATIONMANAGER::GetFrame proc uses rdi Data:ptr FRAME_DATA, Timeout:ptr bool
 
-    ldr rsi,this
     ldr rdi,Data
 
     assume rdi:ptr FRAME_DATA
@@ -264,7 +260,7 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
 
     ; Get new frame
 
-    .new hr:HRESULT = this.m_DeskDupl.AcquireNextFrame(
+    .new hr:HRESULT = m_DeskDupl.AcquireNextFrame(
             500, &FrameInfo, &DesktopResource)
 
     mov rcx,Timeout
@@ -277,18 +273,18 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
 
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to acquire next frame in DUPLICATIONMANAGER",
                 L"Error", hr, &FrameInfoExpectedErrors)
     .endif
 
     ; If still holding old frame, destroy it
 
-    SafeRelease([rsi].m_AcquiredDesktopImage)
+    SafeRelease(m_AcquiredDesktopImage)
 
     ; QI for IDXGIResource
 
-    mov hr,DesktopResource.QueryInterface(&IID_ID3D11Texture2D, &[rsi].m_AcquiredDesktopImage)
+    mov hr,DesktopResource.QueryInterface(&IID_ID3D11Texture2D, &m_AcquiredDesktopImage)
     SafeRelease(DesktopResource)
     .if (FAILED(hr))
 
@@ -303,19 +299,19 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
 
         ; Old buffer too small
 
-        .if ( FrameInfo.TotalMetadataBufferSize > [rsi].m_MetaDataSize )
+        .if ( FrameInfo.TotalMetadataBufferSize > m_MetaDataSize )
 
-            .if ( [rsi].m_MetaDataBuffer )
+            .if ( m_MetaDataBuffer )
 
-                free([rsi].m_MetaDataBuffer)
-                mov [rsi].m_MetaDataBuffer,nullptr
+                free(m_MetaDataBuffer)
+                mov m_MetaDataBuffer,nullptr
             .endif
 
-            mov [rsi].m_MetaDataBuffer,malloc(FrameInfo.TotalMetadataBufferSize)
+            mov m_MetaDataBuffer,malloc(FrameInfo.TotalMetadataBufferSize)
 
             .if ( !rax )
 
-                mov [rsi].m_MetaDataSize,eax
+                mov m_MetaDataSize,eax
                 mov [rdi].MoveCount,eax
                 mov [rdi].DirtyCount,eax
 
@@ -323,14 +319,14 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
                         L"Failed to allocate memory for metadata in DUPLICATIONMANAGER",
                         L"Error", E_OUTOFMEMORY, nullptr)
             .endif
-            mov [rsi].m_MetaDataSize,FrameInfo.TotalMetadataBufferSize
+            mov m_MetaDataSize,FrameInfo.TotalMetadataBufferSize
         .endif
 
         .new BufSize:UINT = FrameInfo.TotalMetadataBufferSize
 
         ; Get move rectangles
 
-        mov hr,this.m_DeskDupl.GetFrameMoveRects(BufSize, [rsi].m_MetaDataBuffer, &BufSize)
+        mov hr,m_DeskDupl.GetFrameMoveRects(BufSize, m_MetaDataBuffer, &BufSize)
         .if (FAILED(hr))
 
             mov [rdi].MoveCount,0
@@ -348,7 +344,7 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
         mov [rdi].MoveCount,eax
 
         mov eax,BufSize
-        add rax,[rsi].m_MetaDataBuffer
+        add rax,m_MetaDataBuffer
        .new DirtyRects:ptr BYTE = rax
 
         mov eax,FrameInfo.TotalMetadataBufferSize
@@ -357,7 +353,7 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
 
         ; Get dirty rectangles
 
-        mov hr,this.m_DeskDupl.GetFrameDirtyRects(BufSize, DirtyRects, &BufSize)
+        mov hr,m_DeskDupl.GetFrameDirtyRects(BufSize, DirtyRects, &BufSize)
         .if (FAILED(hr))
 
             mov [rdi].MoveCount,0
@@ -370,10 +366,10 @@ DUPLICATIONMANAGER::GetFrame proc uses rsi rdi Data:ptr FRAME_DATA, Timeout:ptr 
         mov eax,BufSize
         shr eax,4
         mov [rdi].DirtyCount,eax
-        mov [rdi].MetaData,[rsi].m_MetaDataBuffer
+        mov [rdi].MetaData,m_MetaDataBuffer
     .endif
 
-    mov [rdi].tFrame,[rsi].m_AcquiredDesktopImage
+    mov [rdi].tFrame,m_AcquiredDesktopImage
     mov [rdi].FrameInfo,FrameInfo
 
    .return DUPL_RETURN_SUCCESS
@@ -383,19 +379,17 @@ DUPLICATIONMANAGER::GetFrame endp
 ;
 ; Release frame
 ;
-DUPLICATIONMANAGER::DoneWithFrame proc uses rsi
+DUPLICATIONMANAGER::DoneWithFrame proc
 
-    ldr rsi,this
-
-    .new hr:HRESULT = this.m_DeskDupl.ReleaseFrame()
+    .new hr:HRESULT = m_DeskDupl.ReleaseFrame()
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to release frame in DUPLICATIONMANAGER",
                 L"Error", hr, &FrameInfoExpectedErrors)
     .endif
 
-    SafeRelease([rsi].m_AcquiredDesktopImage)
+    SafeRelease(m_AcquiredDesktopImage)
    .return DUPL_RETURN_SUCCESS
 
 DUPLICATIONMANAGER::DoneWithFrame endp
@@ -403,12 +397,11 @@ DUPLICATIONMANAGER::DoneWithFrame endp
 ;
 ; Gets output desc into DescPtr
 ;
-DUPLICATIONMANAGER::GetOutputDesc proc uses rsi rdi DescPtr:ptr DXGI_OUTPUT_DESC
+DUPLICATIONMANAGER::GetOutputDesc proc uses rdi DescPtr:ptr DXGI_OUTPUT_DESC
 
-    ldr rcx,this
     ldr rdi,DescPtr
 
-    lea rsi,[rcx].DUPLICATIONMANAGER.m_OutputDesc
+    lea rsi,m_OutputDesc
     mov ecx,DXGI_OUTPUT_DESC
     rep movsb
     ret

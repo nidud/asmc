@@ -607,7 +607,7 @@ define PE_DLL               0x04
       assert_pushf          dd: 1 ? ; Push/Pop flags
       ; ----
       mscrt                 dd: 1 ? ; pragma init/exit option
-      degbug_frame          dd: 1 ? ; -Z7
+      debug_frame           dd: 1 ? ; -Z7
      ends
     ends
     record
@@ -769,11 +769,12 @@ define PE_DLL               0x04
     flat_grp                asym_t ?        ; magic FLAT group - asym *
     pCodeBuff               ptr byte ?
     currcomment             string_t ?      ; current comment
+    class_sym               asym_t ?        ; current class from class::member proc
+    class_reg               dd ?            ; current assume class:register
     accumulator             int_t ?         ; AX/EAX/RAX
     GeneratedCode           dd ?            ; nesting level generated code
     token_count             int_t ?         ; number of tokens in curr line
     basereg                 dd 3 dup(?)     ; stack base register (16-, 32-, 64-bit
-    class_reg               dd ?
     name                    db 260 dup(?)   ; name of module
     assert_proc             string_t ?      ; .assert:<proc/macro name>
     proc_prologue           string_t ?      ; prologue macro if PEM_MACRO

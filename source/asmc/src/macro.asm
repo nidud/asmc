@@ -312,9 +312,7 @@ store_placeholders endp
 ; store a macro's parameter, local and content list.
 ; i = start index of macro params in token buffer.
 
-    assume rsi:asym_t
-    assume rdi:macro_t
-    assume rbx:token_t
+    assume rsi:asym_t, rdi:macro_t, rbx:token_t
 
 StoreMacro proc __ccall uses rsi rdi rbx mac:asym_t, i:int_t, tokenarray:token_t, store_data:int_t
 

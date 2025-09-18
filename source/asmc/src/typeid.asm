@@ -16,11 +16,6 @@ include reswords.inc
 GetType proc __ccall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         string:string_t, is_addr:int_t
 
-    UNREFERENCED_PARAMETER(buffer)
-    UNREFERENCED_PARAMETER(opnd)
-    UNREFERENCED_PARAMETER(string)
-    UNREFERENCED_PARAMETER(is_addr)
-
     ldr rdi,buffer
     ldr rbx,opnd
     ldr rdx,string

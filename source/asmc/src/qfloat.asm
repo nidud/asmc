@@ -227,8 +227,7 @@ _mulqw proc watcall private a64_l:uint_t, a64_h:uint_t, b64_l:uint_t, b64_h:uint
 
 _mulqw endp
 
-    assume esi:ptr U128
-    assume edi:ptr U128
+    assume esi:ptr U128, edi:ptr U128
 
 __mulo proc __ccall uses esi edi ebx multiplier:ptr uint128_t, multiplicand:ptr uint128_t, highproduct:ptr uint128_t
 
@@ -285,8 +284,7 @@ __mulo proc __ccall uses esi edi ebx multiplier:ptr uint128_t, multiplicand:ptr 
 
 __mulo endp
 
-    assume esi:nothing
-    assume edi:nothing
+    assume esi:nothing, edi:nothing
 
 endif
 
@@ -2215,8 +2213,7 @@ _fltsub endp
 
 ifdef _WIN64
 
-    assume rdx:ptr STRFLT
-    assume rcx:ptr STRFLT
+    assume rdx:ptr STRFLT, rcx:ptr STRFLT
 
 _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
 
@@ -2473,8 +2470,7 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
 
 _fltdiv endp
 
-    assume rdx:nothing
-    assume rcx:nothing
+    assume rdx:nothing, rcx:nothing
 
 else
 

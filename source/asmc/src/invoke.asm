@@ -113,9 +113,6 @@ fast_fcstart proc __ccall private uses rsi rdi rbx pp:asym_t, numparams:int_t, s
    .new Ofssize:int_t
    .new hasvararg:byte = 0
 
-    UNREFERENCED_PARAMETER(pp)
-    UNREFERENCED_PARAMETER(numparams)
-
     ldr rbx,pp
     ldr esi,numparams
 
@@ -317,9 +314,6 @@ fast_fcend proc __ccall private pp:asym_t, numparams:int_t, value:int_t
     ldr rcx,pp
     ldr edx,value
 
-    UNREFERENCED_PARAMETER(pp)
-    UNREFERENCED_PARAMETER(numparams)
-
     .if ( edx )
 
         GetSymOfssize( rcx )
@@ -462,10 +456,6 @@ fast_param proc __ccall private uses rsi rdi rbx \
    .new buffer[16]:char_t       ; created float label
    .new destroyed:byte = FALSE  ; register overwritten
    .new isvararg:byte
-
-    UNREFERENCED_PARAMETER(pp)
-    UNREFERENCED_PARAMETER(param)
-    UNREFERENCED_PARAMETER(opnd)
 
     ldr     rbx,pp
     ldr     rsi,param
@@ -1888,8 +1878,7 @@ arg_error:
 
 fast_param endp
 
-    assume rdi:nothing
-    assume rbx:token_t
+    assume rdi:nothing, rbx:token_t
 
 SkipTypecast proc fastcall private uses rsi rdi rbx fullparam:string_t, i:int_t, tokenarray:token_t
 
@@ -3846,7 +3835,6 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .endif
             tstrcat( p, ")" )
-
         .endif
 
         .if struct_ptr

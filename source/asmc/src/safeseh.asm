@@ -14,8 +14,7 @@ include asmc.inc
 
     .code
 
-    assume rbx:token_t
-    assume rdi:ptr qnode
+    assume rbx:token_t, rdi:ptr qnode
 
 SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 

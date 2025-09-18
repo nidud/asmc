@@ -108,8 +108,7 @@ endif
 
 ; v2.10: major rewrite of this function
 
-    assume rbx:token_t
-    assume rdi:ptr context
+    assume rbx:token_t, rdi:ptr context
 
 ContextDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 

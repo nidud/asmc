@@ -190,17 +190,12 @@ get_fasttype endp
 ;   .sys_xcnt       = SIMD register count
 ;   .sys_size       = max param size
 ;
-    assume rsi:asym_t
-    assume rbx:ptr fc_info
+    assume rsi:asym_t, rbx:ptr fc_info
 
 fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t, used:ptr int_t
 
    .new regname[32]:sbyte
    .new wordsize:int_t
-
-    UNREFERENCED_PARAMETER(pProc)
-    UNREFERENCED_PARAMETER(paranode)
-    UNREFERENCED_PARAMETER(used)
 
     ldr rdi,used
     ldr rsi,paranode
@@ -358,8 +353,7 @@ fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t,
 
 fast_pcheck endp
 
-    assume rbx:nothing
-    assume rsi:nothing
+    assume rbx:nothing, rsi:nothing
 
 ;
 ; LOCAL directive. Syntax:
@@ -1789,13 +1783,12 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .if ( MODULE.class_reg )
 
-            .if tstrchr(name, '_' )
+            ; As there are no reliable way if testing if the proc is member of a
+            ; class after the :: is stripped, the "preprocessor" sets the symbol
+            ; for the class in MODULE.class_sym.
 
-                mov byte ptr [rax],0
-                mov rsi,rax
-                SymFind( name )
-                mov byte ptr [rsi],'_'
-            .endif
+            mov rax,MODULE.class_sym
+            mov MODULE.class_sym,NULL
             .if ( rax && [rax].asym.hasvtable )
                 mov [rdi].asym.class,rax
                 mov [rdi].asym.ClassProc,1
@@ -2909,7 +2902,7 @@ win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:proc_t
                     mov [rdi].asym.offs,eax
                 .endif
 
-                .if ( [rdi].asym.used || Parse_Pass == PASS_1 || Options.degbug_frame )
+                .if ( [rdi].asym.used || Parse_Pass == PASS_1 )
 
                     mov index,win64_MoveRegParam( index, size, rdi )
                 .endif
@@ -3737,9 +3730,18 @@ runqueue:
         .endif
     .endif
 
+    .if ( Options.debug_frame && [rsi].isframe && MODULE.win64_flags & W64F_AUTOSTACKSP &&
+            MODULE.win64_flags & W64F_SAVEREGPARAMS && Parse_Pass == PASS_1 )
+
+        ; force register params to shadow space
+        ; global UNREFERENCED_PARAMETER(param)
+
+        .for ( rdi = [rsi].paralist : rdi : rdi = [rdi].asym.nextparam )
+            mov [rdi].asym.used,1
+        .endf
+    .endif
     mov rdi,CurrProc
     .if ( [rdi].asym.ClassProc )
-
         AddLineQueueX( "%r %r,this", T_LDR, MODULE.class_reg )
     .endif
 

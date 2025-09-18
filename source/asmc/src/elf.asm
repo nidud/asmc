@@ -193,8 +193,7 @@ get_num_reloc_sections endp
 
 ; fill entries in ELF32 symbol table
 
-    assume rbx:ptr elfmod
-    assume rdi:ptr Elf32_Sym
+    assume rbx:ptr elfmod, rdi:ptr Elf32_Sym
 
 ifndef ASMC64
 
@@ -374,8 +373,7 @@ set_symtab32 endp
 endif
 
 
-    assume rbx:ptr elfmod
-    assume rdi:ptr Elf64_Sym
+    assume rbx:ptr elfmod, rdi:ptr Elf64_Sym
 
 set_symtab64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, entries:uint_t, localshead:ptr localname
 
@@ -717,8 +715,7 @@ set_symtab_values endp
 ; - relocation sections
 ; alloc .shstrtab
 
-    assume rbx:nothing
-    assume rdi:nothing
+    assume rbx:nothing, rdi:nothing
 
 set_shstrtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
 
@@ -1428,8 +1425,7 @@ write_relocs64 endp
 
 ; write section contents and fixups
 
-    assume rdi:nothing
-    assume rsi:nothing
+    assume rdi:nothing, rsi:nothing
 
 elf_write_data proc __ccall private uses rsi rdi rbx em:ptr elfmod
 ifdef _LIN64

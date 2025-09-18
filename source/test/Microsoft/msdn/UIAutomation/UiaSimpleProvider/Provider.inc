@@ -15,7 +15,4 @@
     ; IInvokeProvider methods
 
     _Invoke proc
-
-    delete proc
-
    .ends

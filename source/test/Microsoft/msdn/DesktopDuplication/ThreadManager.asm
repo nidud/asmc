@@ -5,7 +5,7 @@ DDProc proto :ptr
 
     .code
 
-    assume rsi:ptr THREADMANAGER
+    assume class:rbx
 
 THREADMANAGER::THREADMANAGER proc
 
@@ -17,8 +17,8 @@ THREADMANAGER::THREADMANAGER endp
 
 THREADMANAGER::Release proc
 
-    this.Clean()
-    free(this)
+    Clean()
+    free(rbx)
     ret
 
 THREADMANAGER::Release endp
@@ -26,22 +26,21 @@ THREADMANAGER::Release endp
 ;
 ; Clean up resources
 ;
-THREADMANAGER::Clean proc uses rsi rdi rbx
+THREADMANAGER::Clean proc uses rsi rdi
 
-    ldr rsi,this
-    .if ( [rsi].m_PtrInfo.PtrShapeBuffer )
+    .if ( m_PtrInfo.PtrShapeBuffer )
 
-        free([rsi].m_PtrInfo.PtrShapeBuffer)
-        mov [rsi].m_PtrInfo.PtrShapeBuffer,nullptr
+        free(m_PtrInfo.PtrShapeBuffer)
+        mov m_PtrInfo.PtrShapeBuffer,nullptr
     .endif
 
-    RtlZeroMemory(&[rsi].m_PtrInfo, sizeof(PTR_INFO))
+    RtlZeroMemory(&m_PtrInfo, sizeof(PTR_INFO))
 
-    mov rdi,[rsi].m_ThreadHandles
+    mov rdi,m_ThreadHandles
 
     .if ( rdi )
 
-        .for ( ebx = 0: ebx < [rsi].m_ThreadCount: ++ebx, rdi += HANDLE )
+        .for ( esi = 0: esi < m_ThreadCount: ++esi, rdi += HANDLE )
 
             mov rcx,[rdi]
             .if ( rcx )
@@ -50,23 +49,23 @@ THREADMANAGER::Clean proc uses rsi rdi rbx
             .endif
         .endf
 
-        free([rsi].m_ThreadHandles)
-        mov [rsi].m_ThreadHandles,nullptr
+        free(m_ThreadHandles)
+        mov m_ThreadHandles,nullptr
     .endif
 
     assume rdi:ptr THREAD_DATA
-    .if ( [rsi].m_ThreadData )
+    .if ( m_ThreadData )
 
-        mov rdi,[rsi].m_ThreadData
-        .for ( ebx = 0: ebx < [rsi].m_ThreadCount: ++ebx, rdi += THREAD_DATA )
+        mov rdi,m_ThreadData
+        .for ( esi = 0: esi < m_ThreadCount: ++esi, rdi += THREAD_DATA )
 
-            this.CleanDx(&[rdi].DxRes)
+            CleanDx(&[rdi].DxRes)
         .endf
 
-        free([rsi].m_ThreadData)
-        mov [rsi].m_ThreadData,nullptr
+        free(m_ThreadData)
+        mov m_ThreadData,nullptr
     .endif
-    mov [rsi].m_ThreadCount,0
+    mov m_ThreadCount,0
     ret
 
 THREADMANAGER::Clean endp
@@ -94,22 +93,21 @@ THREADMANAGER::CleanDx endp
 ;
 ; Start up threads for DDA
 ;
-THREADMANAGER::Initialize proc uses rsi rdi rbx SingleOutput:SINT, OutputCount:UINT,
+THREADMANAGER::Initialize proc uses rsi rdi SingleOutput:SINT, OutputCount:UINT,
         UnexpectedErrorEvent:HANDLE, ExpectedErrorEvent:HANDLE,
         TerminateThreadsEvent:HANDLE, SharedHandle:HANDLE, DesktopDim:ptr RECT
 
-    ldr rsi,this
     ldr ecx,OutputCount
 
-    mov [rsi].m_ThreadCount,ecx ; OutputCount
+    mov m_ThreadCount,ecx ; OutputCount
 
     imul ecx,ecx,HANDLE
-    mov [rsi].m_ThreadHandles,malloc(rcx)
+    mov m_ThreadHandles,malloc(rcx)
 
-    imul ecx,[rsi].m_ThreadCount,THREAD_DATA
-    mov [rsi].m_ThreadData,malloc(rcx)
+    imul ecx,m_ThreadCount,THREAD_DATA
+    mov m_ThreadData,malloc(rcx)
 
-    .if ( ![rsi].m_ThreadHandles || ![rsi].m_ThreadData )
+    .if ( !m_ThreadHandles || !m_ThreadData )
 
         .return ProcessFailure(nullptr, L"Failed to allocate array for threads",
                 L"Error", E_OUTOFMEMORY, nullptr)
@@ -121,9 +119,9 @@ THREADMANAGER::Initialize proc uses rsi rdi rbx SingleOutput:SINT, OutputCount:U
 
     assume rdi:ptr THREAD_DATA
 
-    mov rdi,[rsi].m_ThreadData
+    mov rdi,m_ThreadData
 
-    .for ( ebx = 0: ebx < [rsi].m_ThreadCount: ++ebx, rdi += THREAD_DATA )
+    .for ( esi = 0: esi < m_ThreadCount: ++esi, rdi += THREAD_DATA )
 
         mov [rdi].UnexpectedErrorEvent,UnexpectedErrorEvent
         mov [rdi].ExpectedErrorEvent,ExpectedErrorEvent
@@ -131,17 +129,17 @@ THREADMANAGER::Initialize proc uses rsi rdi rbx SingleOutput:SINT, OutputCount:U
 
         mov eax,SingleOutput
         .ifs ( eax < 0 )
-            mov eax,ebx
+            mov eax,esi
         .endif
         mov [rdi].Output,eax
         mov [rdi].TexSharedHandle,SharedHandle
         mov rcx,DesktopDim
         mov [rdi].OffsetX,[rcx].RECT.left
         mov [rdi].OffsetY,[rcx].RECT.top
-        mov [rdi].PtrInfo,&[rsi].m_PtrInfo
+        mov [rdi].PtrInfo,&m_PtrInfo
 
         RtlZeroMemory(&[rdi].DxRes, sizeof(DX_RESOURCES))
-        mov retval,this.InitializeDx(&[rdi].DxRes)
+        mov retval,InitializeDx(&[rdi].DxRes)
 
         .if ( retval != DUPL_RETURN_SUCCESS )
 
@@ -152,8 +150,8 @@ THREADMANAGER::Initialize proc uses rsi rdi rbx SingleOutput:SINT, OutputCount:U
 
         CreateThread(nullptr, 0, &DDProc, rdi, 0, &ThreadId)
 
-        mov rcx,[rsi].m_ThreadHandles
-        mov [rcx+rbx*HANDLE],rax
+        mov rcx,m_ThreadHandles
+        mov [rcx+rsi*HANDLE],rax
 
         .if ( rax == nullptr )
 
@@ -168,9 +166,8 @@ THREADMANAGER::Initialize endp
 ;
 ; Get DX_RESOURCES
 ;
-THREADMANAGER::InitializeDx proc uses rsi rdi rbx Data:ptr DX_RESOURCES
+THREADMANAGER::InitializeDx proc uses rsi rdi Data:ptr DX_RESOURCES
 
-    ldr rsi,this
     ldr rdx,Data
 
     .new hr:HRESULT = S_OK
@@ -200,11 +197,11 @@ THREADMANAGER::InitializeDx proc uses rsi rdi rbx Data:ptr DX_RESOURCES
 
     assume rdi:ptr DX_RESOURCES
 
-    .for ( rdi = rdx, ebx = 0: ebx < NumDriverTypes: ++ebx )
+    .for ( rdi = rdx, esi = 0: esi < NumDriverTypes: ++esi )
 
         mov hr,D3D11CreateDevice(
                 nullptr,
-                DriverTypes[rbx*4],
+                DriverTypes[rsi*4],
                 nullptr,
                 0,
                 &FeatureLevels,
@@ -291,14 +288,14 @@ THREADMANAGER::InitializeDx proc uses rsi rdi rbx Data:ptr DX_RESOURCES
 
 THREADMANAGER::InitializeDx endp
 
+    assume class:rcx
+
 ;
 ; Getter for the PTR_INFO structure
 ;
 THREADMANAGER::GetPointerInfo proc
 
-    ldr rcx,this
-
-    .return &[rcx].THREADMANAGER.m_PtrInfo
+    .return &m_PtrInfo
 
 THREADMANAGER::GetPointerInfo endp
 
@@ -307,16 +304,9 @@ THREADMANAGER::GetPointerInfo endp
 ;
 THREADMANAGER::WaitForThreadTermination proc
 
-    ldr rcx,this
+    .if ( m_ThreadCount != 0 )
 
-    .if ( [rcx].THREADMANAGER.m_ThreadCount != 0 )
-
-        WaitForMultipleObjectsEx(
-                [rcx].THREADMANAGER.m_ThreadCount,
-                [rcx].THREADMANAGER.m_ThreadHandles,
-                TRUE,
-                INFINITE,
-                FALSE)
+        WaitForMultipleObjectsEx(m_ThreadCount, m_ThreadHandles, TRUE, INFINITE, FALSE)
     .endif
     ret
 

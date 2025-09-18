@@ -101,8 +101,6 @@ Coff_AllocString endp
 
 GetLinnumItems proc fastcall q:ptr qdesc
 
-    UNREFERENCED_PARAMETER(q)
-
     .for ( eax = 0, rdx = [rcx].qdesc.head: rdx: eax++ )
         mov rdx,[rdx].line_num_info.next
     .endf
@@ -330,12 +328,9 @@ coff_write_section_table endp
 ; get value for field 'type' ( IMAGE_SYM_TYPE_x ) in symbol table.
 ; MS tools use only 0x0 or 0x20.
 ;
-    assume rdx:nothing
-    assume rcx:asym_t
+    assume rdx:nothing, rcx:asym_t
 
 CoffGetType proc fastcall sym:asym_t
-
-    UNREFERENCED_PARAMETER(sym)
 
     .return( 0x20 ) .if ( [rcx].isproc )
     .return( IMAGE_SYM_TYPE_NULL )
@@ -346,8 +341,6 @@ CoffGetType endp
 ; get value for field 'class' ( IMAGE_SYM_CLASS_x ) in symbol table.
 
 CoffGetClass proc fastcall sym:asym_t
-
-    UNREFERENCED_PARAMETER(sym)
 
     .if ( [rcx].state == SYM_EXTERNAL )
         .if ( !( [rcx].iscomm ) && [rcx].altname )
@@ -366,8 +359,7 @@ CoffGetClass proc fastcall sym:asym_t
 
 CoffGetClass endp
 
-    assume rcx:nothing
-    assume rdi:nothing
+    assume rcx:nothing, rdi:nothing
 
 
 ;

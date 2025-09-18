@@ -26,7 +26,7 @@ StringGetsWorker proc _CRTIMP uses rbx pszDest:LPTSTR, cchDest:size_t, pcchNewDe
 
         .while ( rbx > 1 )
 
-            .ifd ( _gettc(stdin) == EOF )
+            .ifd ( _fgettc(stdin) == EOF )
 
                 .if ( cchNewDestLength == 0 )
                     mov hr,STRSAFE_E_END_OF_FILE

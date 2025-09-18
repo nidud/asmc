@@ -99,6 +99,7 @@ targets = \
 	sti.lib		\
 	tapi32.lib	\
 	traffic.lib	\
+	UIAutomationCore.lib \
 	urlmon.lib	\
 	user32.lib	\
 	userenv.lib	\

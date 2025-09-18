@@ -2219,10 +2219,6 @@ EvaluateHllExpression proc __ccall uses rsi rdi rbx hll:hllitem_t,
     ldr rbx,tokenarray
     ldr rsi,hll
 
-    UNREFERENCED_PARAMETER(i)
-    UNREFERENCED_PARAMETER(hll)
-    UNREFERENCED_PARAMETER(tokenarray)
-
     mov hllop.lastjmp,NULL
     mov hllop.lasttruelabel,0
 
@@ -2388,9 +2384,6 @@ ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:hllitem_t, p:pint_t
 
     ldr rsi,hll
     ldr rbx,tokenarray
-
-    UNREFERENCED_PARAMETER(hll)
-    UNREFERENCED_PARAMETER(tokenarray)
 
     .if ( [rsi].ExpDelayed || ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_DOT_ELSEIF ) )
         inc delayed

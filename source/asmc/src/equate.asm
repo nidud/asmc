@@ -22,10 +22,7 @@ include operator.inc
 
 ; set the value of a constant (EQU) or an assembly time variable (=)
 
-    assume rdx:expr_t
-    assume rcx:asym_t
-    assume rdi:asym_t
-    assume rbx:token_t
+    assume rdx:expr_t, rcx:asym_t, rdi:asym_t, rbx:token_t
 
 SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
 
@@ -58,11 +55,7 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
         mov [rcx].isproc,1
         ; v2.12: must be copied as well, or INVOKE won't work correctly
         mov [rcx].langtype,[rdi].langtype
-        assume rcx:asym_t
-        assume rdi:asym_t
         mov [rcx].procinfo,[rdi].procinfo
-        assume rcx:asym_t
-        assume rdi:asym_t
     .endif
 
     mov [rcx].mem_type,[rdx].mem_type

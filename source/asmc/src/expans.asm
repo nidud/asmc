@@ -26,6 +26,7 @@ include listing.inc
 include qfloat.inc
 include proc.inc
 include types.inc
+include fastpass.inc
 include reswords.inc
 
 public MacroLocals
@@ -183,9 +184,7 @@ ExpandTMacro proto __ccall :string_t, :token_t, :int_t, :int_t
 ; - is_exitm: returns TRUE if EXITM has been hit
 ; returns index of token not processed or -1 on errors
 
-    assume rsi:asym_t
-    assume rdi:macro_t
-    assume rbx:token_t
+    assume rsi:asym_t, rdi:macro_t, rbx:token_t
 
 RunMacro proc __ccall uses rsi rdi rbx mac:asym_t, idx:int_t, tokenarray:token_t,
         _out:string_t, mflags:int_t, is_exitm:ptr int_t
@@ -1143,8 +1142,7 @@ toend:
 
 RunMacro endp
 
-    assume rsi:nothing
-    assume rdi:nothing
+    assume rsi:nothing, rdi:nothing
 
 
 ; make room (or delete items) in the token buffer at position <start>
@@ -1192,9 +1190,7 @@ AddTokens endp
 ; if substitute is TRUE, scanning for the substitution character '&' is active!
 ; Both text macros and macro functions are expanded!
 
-    assume rsi:string_t
-    assume rdi:string_t
-    assume rdx:string_t
+    assume rsi:string_t, rdi:string_t, rdx:string_t
 
 ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, substitute:uint_t
 
@@ -1412,9 +1408,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
 
 ExpandText endp
 
-    assume rsi:nothing
-    assume rdi:nothing
-    assume rdx:nothing
+    assume rsi:nothing, rdi:nothing, rdx:nothing
 
 ; replace text macros and macro functions by their values, recursively
 ; outbuf in: text macro or macro function value
@@ -2308,7 +2302,9 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                 .if ( [rbx+asm_tok].token == T_DBL_COLON )
 
                     mov class,[rbx].string_ptr
-                    .if ( SymFind( rax ) )
+                    mov sym,SymFind( rax )
+
+                    .if ( rax )
                         .if ( [rax].asym.state == SYM_TYPE )
                             .while ( [rax].asym.type )
                                 mov rax,[rax].asym.type
@@ -2316,6 +2312,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                         .endif
                         mov rcx,[rax].asym.name
                         mov class,rcx
+                        mov sym,rax
                     .endif
 
                     xor edi,edi
@@ -2351,8 +2348,8 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
                             inc edi
                         .endif
-
                     .endif
+
                     mov tmp,edi
 
                     .if ( edi )
@@ -2384,7 +2381,6 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                             mov rsi,[rbx+asm_tok*2].tokpos
                             mov edx,3*asm_tok
                         .endif
-
                     .endif
 
                     .if ( tmp == 1 )
@@ -2440,11 +2436,13 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                         rep movsb
                     .endif
 
-                    .if ( edi )
+                    .if ( tmp )
 
                         mov TokenCount,Tokenize( tstrcpy(string, buffer), 0, tokenarray, TOK_DEFAULT )
-                        .if ( eax > 2 && rbx == tokenarray && [rbx].IsProc && [rbx+asm_tok].token == T_OP_BRACKET )
-
+                        .if ( MODULE.class_reg && tmp == 2 && [rbx+asm_tok].token == T_DIRECTIVE && [rbx+asm_tok].tokval == T_PROC )
+                            mov MODULE.class_sym,sym
+                        .endif
+                        .if ( TokenCount > 2 && rbx == tokenarray && [rbx].IsProc && [rbx+asm_tok].token == T_OP_BRACKET )
                             tsprintf( buffer, "%r %s", T_INVOKE, [rbx].tokpos )
                             mov TokenCount,Tokenize( tstrcpy( string, buffer ), 0, rbx, TOK_DEFAULT )
                         .endif
@@ -2454,39 +2452,40 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
             .endf
         .endif
 
-        mov rbx,tokenarray
-        mov rcx,CurrProc
+        .if ( MODULE.class_reg )
 
-        .if ( rcx && [rcx].asym.ClassProc && MODULE.class_reg && TokenCount > 1 && ;!MODULE.GeneratedCode &&
-                !( ProcStatus & ( PRST_INSIDE_PROLOGUE or PRST_INSIDE_EPILOGUE ) ) )
+            mov rcx,CurrProc
+            .if ( rcx && [rcx].asym.ClassProc && TokenCount > 1 &&
+                    !( ProcStatus & ( PRST_INSIDE_PROLOGUE or PRST_INSIDE_EPILOGUE ) ) )
 
-            .for ( sym = [rcx].asym.class : [rbx].token != T_FINAL : rbx += asm_tok )
+                .for ( sym = [rcx].asym.class, rbx = tokenarray : [rbx].token != T_FINAL : rbx+=asm_tok )
 
-                .if ( [rbx].token == T_ID && ![rbx].AtLabel && !( rbx > tokenarray && [rbx-asm_tok].token == T_DOT ) )
+                    .if ( [rbx].token == T_ID && ![rbx].AtLabel && !( rbx > tokenarray && [rbx-asm_tok].token == T_DOT ) )
 
-                    .if !SymFind( [rbx].string_ptr )
+                        .if !SymFind( [rbx].string_ptr )
 
-                        .if !SearchNameInStruct( sym, [rbx].string_ptr, 0, 0 )
-                            mov rcx,sym
-                            SearchNameInStruct([rcx].asym.vtable, [rbx].string_ptr, 0, 0)
-                        .endif
-                        .if ( rax )
-                            mov rcx,sym
-                            tsprintf( buffer, "[%r].%s.%s", MODULE.class_reg, [rcx].asym.name, [rbx].tokpos )
-                            tstrcpy( [rbx].tokpos, buffer )
-                            mov TokenCount,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-                            mov esi,asm_tok*7
-                            .if ( [rbx].IsProc && rbx == tokenarray )
-                                tsprintf( buffer, "%r %s", T_INVOKE, [rbx].tokpos )
+                            .if !SearchNameInStruct( sym, [rbx].string_ptr, 0, 0 )
+                                mov rcx,sym
+                                SearchNameInStruct([rcx].asym.vtable, [rbx].string_ptr, 0, 0)
+                            .endif
+                            .if ( rax )
+                                mov rcx,sym
+                                tsprintf( buffer, "[%r].%s.%s", MODULE.class_reg, [rcx].asym.name, [rbx].tokpos )
                                 tstrcpy( [rbx].tokpos, buffer )
                                 mov TokenCount,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-                                add esi,asm_tok
+                                mov esi,asm_tok*7
+                                .if ( [rbx].IsProc && rbx == tokenarray )
+                                    tsprintf( buffer, "%r %s", T_INVOKE, [rbx].tokpos )
+                                    tstrcpy( [rbx].tokpos, buffer )
+                                    mov TokenCount,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
+                                    add esi,asm_tok
+                                .endif
+                                add rbx,rsi
                             .endif
-                            add rbx,rsi
                         .endif
                     .endif
-                .endif
-            .endf
+                .endf
+            .endif
         .endif
         .break .if ( rc != STRING_EXPANDED )
     .endf

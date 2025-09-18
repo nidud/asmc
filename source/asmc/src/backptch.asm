@@ -19,8 +19,7 @@ LABELOPT equ 1
 
     .code
 
-    assume rsi:asym_t
-    assume rbx:fixup_t
+    assume rsi:asym_t, rbx:fixup_t
 
 ;
 ; patching for forward reference labels in Jmp/Call instructions;

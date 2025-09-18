@@ -863,8 +863,6 @@ SetInputState endp
 
 PushInputStatus proc __ccall uses rbx oldstat:ptr input_status
 
-    UNREFERENCED_PARAMETER(oldstat)
-
     ldr rbx,oldstat
 
     mov [rbx].flags,MODULE.line_flags

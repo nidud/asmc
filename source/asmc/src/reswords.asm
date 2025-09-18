@@ -633,9 +633,7 @@ AddResWord proc fastcall private uses rsi rdi rbx token:int_t
     mov     esi,ecx
     lea     rbx,ResWordTable
     shl     ecx,RWSHIFT
-    movzx   edx,[rbx+rcx].ReservedWord.len
-    mov     rcx,[rbx+rcx].ReservedWord.name
-    call    get_hash
+    invoke  get_hash, [rbx+rcx].ReservedWord.name, [rbx+rcx].ReservedWord.len
 
     lea     rcx,resw_table
     lea     rdi,[rcx+rax*2]
@@ -679,9 +677,7 @@ RemoveResWord proc fastcall uses rsi rdi rbx token:int_t
     mov     esi,ecx
     lea     rbx,ResWordTable
     shl     ecx,RWSHIFT
-    movzx   edx,[rbx+rcx].len
-    mov     rcx,[rbx+rcx].name
-    call    get_hash
+    invoke  get_hash, [rbx+rcx].name, [rbx+rcx].len
 
     lea     rcx,resw_table
     lea     rdi,[rcx+rax*2]

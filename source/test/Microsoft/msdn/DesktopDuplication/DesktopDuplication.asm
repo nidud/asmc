@@ -6,6 +6,7 @@ include DuplicationManager.inc
 include OutputManager.inc
 include ThreadManager.inc
 
+
 ;
 ; Forward Declarations
 ;
@@ -93,36 +94,36 @@ define WaitSequenceTimeInSeconds 2
 
    .code
 
-    assume rdi:ptr DYNAMIC_WAIT
+    assume class:rbx
 
-DYNAMIC_WAIT::DYNAMIC_WAIT proc uses rdi
+DYNAMIC_WAIT::DYNAMIC_WAIT proc
 
-    mov rdi,@ComAlloc(DYNAMIC_WAIT)
-    mov [rdi].m_QPCValid,QueryPerformanceFrequency(&[rdi].m_QPCFrequency)
+    .if @ComAlloc(DYNAMIC_WAIT)
 
-   .return rdi
+        mov rbx,rax
+        mov m_QPCValid,QueryPerformanceFrequency(&m_QPCFrequency)
+        mov rax,rbx
+    .endif
+    .return
 
 DYNAMIC_WAIT::DYNAMIC_WAIT endp
 
 
 DYNAMIC_WAIT::Release proc
 
-    ldr rcx,this
-
-    free(rcx)
+    free(rbx)
     ret
 
 DYNAMIC_WAIT::Release endp
 
 
-DYNAMIC_WAIT::DoWait proc uses rdi
-
-    ldr rdi,this
+DYNAMIC_WAIT::DoWait proc
 
     ; Is this wait being called with the period that we consider it to be part
     ; of the same wait sequence
 
    .new CurrentQPC:LARGE_INTEGER = {0}
+
     QueryPerformanceCounter(&CurrentQPC)
 
    .new WB[WAIT_BAND_COUNT]:WAIT_BAND = {
@@ -131,28 +132,20 @@ DYNAMIC_WAIT::DoWait proc uses rdi
         { 5000, WAIT_BAND_STOP } ; Never move past this band
         }
 
-    mov  ecx,[rdi].m_CurrentWaitBandIdx
-ifdef _WIN64
-    imul rax,[rdi].m_QPCFrequency.QuadPart,WaitSequenceTimeInSeconds
-    add  rax,[rdi].m_LastWakeUpTime.QuadPart
+    mov  ecx,m_CurrentWaitBandIdx
+    imul rax,size_t ptr m_QPCFrequency.QuadPart,WaitSequenceTimeInSeconds
+    add  rax,size_t ptr m_LastWakeUpTime.QuadPart
 
-    .if ( [rdi].m_QPCValid && ( CurrentQPC.QuadPart <= rax ) )
-else
-    imul eax,sdword ptr [rdi].m_QPCFrequency.QuadPart,WaitSequenceTimeInSeconds
-    add  eax,sdword ptr [rdi].m_LastWakeUpTime.QuadPart
-
-    .if ( [rdi].m_QPCValid && ( sdword ptr CurrentQPC.QuadPart <= eax ) )
-endif
+    .if ( m_QPCValid && ( size_t ptr CurrentQPC.QuadPart <= rax ) )
 
         ; We are still in the same wait sequence, lets check if we should move
         ; to the next band
 
-        .if ( ( WB[rcx*8].WaitCount != WAIT_BAND_STOP ) &&
-              ( [rdi].m_WaitCountInCurrentBand > WB[rcx*8].WaitCount ) )
+        .if ( WB[rcx*8].WaitCount != WAIT_BAND_STOP && m_WaitCountInCurrentBand > WB[rcx*8].WaitCount )
 
             inc ecx
-            mov [rdi].m_CurrentWaitBandIdx,ecx
-            mov [rdi].m_WaitCountInCurrentBand,0
+            mov m_CurrentWaitBandIdx,ecx
+            mov m_WaitCountInCurrentBand,0
         .endif
 
     .else
@@ -161,8 +154,8 @@ endif
         ; wait sequence
 
         xor ecx,ecx
-        mov [rdi].m_CurrentWaitBandIdx,ecx
-        mov [rdi].m_WaitCountInCurrentBand,ecx
+        mov m_CurrentWaitBandIdx,ecx
+        mov m_WaitCountInCurrentBand,ecx
     .endif
 
     ; Sleep for the required period of time
@@ -171,8 +164,8 @@ endif
 
     ; Record the time we woke up so we can detect wait sequences
 
-    QueryPerformanceCounter(&[rdi].m_LastWakeUpTime)
-    inc [rdi].m_WaitCountInCurrentBand
+    QueryPerformanceCounter(&m_LastWakeUpTime)
+    inc m_WaitCountInCurrentBand
     ret
 
 DYNAMIC_WAIT::DoWait endp

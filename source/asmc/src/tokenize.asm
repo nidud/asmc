@@ -104,8 +104,7 @@ IsMultiLine proc fastcall tokenarray:token_t
 IsMultiLine endp
 
 
-    assume rcx:nothing
-    assume rbx:ptr line_status
+    assume rcx:nothing, rbx:ptr line_status
 
 ConcatLine proc __ccall uses rsi rdi rbx src:string_t, cnt:int_t, o:string_t, ls:ptr line_status
 
@@ -156,8 +155,7 @@ ConcatLine proc __ccall uses rsi rdi rbx src:string_t, cnt:int_t, o:string_t, ls
 ConcatLine endp
 
 
-    assume rbx:token_t
-    assume rdx:ptr line_status
+    assume rbx:token_t, rdx:ptr line_status
 
 get_string proc fastcall uses rsi rdi rbx buf:token_t, _p:ptr line_status
 
@@ -558,8 +556,7 @@ continue:
 get_string endp
 
 
-    assume rdx:nothing
-    assume rsi:ptr line_status
+    assume rdx:nothing, rsi:ptr line_status
 
 get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
@@ -1437,11 +1434,7 @@ StartComment proc fastcall p:string_t
 StartComment endp
 
 
-    option proc:public
-
-
-    assume rsi:nothing
-    assume rdx:ptr line_status
+    assume proc:public, rsi:nothing, rdx:ptr line_status
 
 GetToken proc fastcall uses rsi rdi rbx tokenarray:token_t, p:ptr line_status
 

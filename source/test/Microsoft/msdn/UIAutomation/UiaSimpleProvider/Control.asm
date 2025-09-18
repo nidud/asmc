@@ -18,29 +18,27 @@ CustomButton::CustomButton proc
 
 CustomButton::CustomButton endp
 
+    assume class:rbx
+
 CustomButton::Release proc
 
-    .if ( [rcx].CustomButton.m_provider != NULL )
+    mov rax,m_provider
+    .if ( rax && [rax].Provider.m_refCount )
 
-        this.m_provider.Release()
-        mov rcx,this
-        mov [rcx].CustomButton.m_provider,NULL
+        m_provider.Release()
+        mov m_provider,NULL
     .endif
-    free(rcx)
+    free(rbx)
+    xor eax,eax
     ret
 
 CustomButton::Release endp
 
 CustomButton::GetUIAutomationProvider proc hwnd:HWND
 
-    mov rax,[rcx].CustomButton.m_provider
-
+    mov rax,m_provider
     .if ( rax == NULL )
-
-        .new Provider(rdx)
-
-        mov rcx,this
-        mov [rcx].CustomButton.m_provider,rax
+        mov m_provider,Provider(ldr(hwnd))
     .endif
     ret
 
@@ -51,13 +49,13 @@ CustomButton::GetUIAutomationProvider endp
 
 CustomButton::InvokeButton proc hwnd:HWND
 
-    xor [rcx].CustomButton.m_buttonOn,1
+    xor m_buttonOn,1
     SetFocus(hwnd)
 
     .if ( UiaClientsAreListening() )
 
         ; Raise an event.
-        UiaRaiseAutomationEvent(this.GetUIAutomationProvider(hwnd), UIA_Invoke_InvokedEventId)
+        UiaRaiseAutomationEvent(GetUIAutomationProvider(hwnd), UIA_Invoke_InvokedEventId)
     .endif
     InvalidateRect(hwnd, NULL, true)
     ret
@@ -67,7 +65,7 @@ CustomButton::InvokeButton endp
 
 CustomButton::IsButtonOn proc
 
-    .return [rcx].CustomButton.m_buttonOn
+    .return m_buttonOn
 
 CustomButton::IsButtonOn endp
 
@@ -101,10 +99,8 @@ ControlWndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .switch ( message )
 
     .case WM_CREATE
-
         .new pControl:ptr CustomButton()
         .if (pControl == NULL)
-
             PostQuitMessage(-1)
         .endif
         ;
@@ -112,10 +108,9 @@ ControlWndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         ;  from within this function.
         ;
         SetWindowLongPtr(hwnd, GWLP_USERDATA, pControl)
-        .endc
+       .endc
 
     .case WM_DESTROY
-
         .new pControl:ptr CustomButton = GetWindowLongPtr(hwnd, GWLP_USERDATA)
          pControl.Release()
         .endc
@@ -128,26 +123,20 @@ ControlWndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         ; If the lParam matches the RootObjectId, send back the RawElementProvider
         ;
         .if ( dword ptr lParam == UiaRootObjectId )
-
             .new pControl:ptr CustomButton = GetWindowLongPtr(hwnd, GWLP_USERDATA)
             .new pRootProvider:ptr IRawElementProviderSimple = pControl.GetUIAutomationProvider(hwnd)
             .return UiaReturnRawElementProvider(hwnd, wParam, lParam, pRootProvider)
         .endif
         .return 0
 
-
     .case WM_PAINT
-
         .new pControl:ptr CustomButton = GetWindowLongPtr(hwnd, GWLP_USERDATA)
         .new color:COLORREF
         .if ( pControl.IsButtonOn() )
-
             mov color,RGB(128, 0, 0)
         .else
-
             mov color,RGB(0, 128, 0)
         .endif
-
         .new paintStruct:PAINTSTRUCT
         .new hdc:HDC = BeginPaint(hwnd, &paintStruct)
         .new clientRect:RECT
@@ -167,7 +156,6 @@ ControlWndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .endc
 
     .case WM_SETFOCUS
-
         .new hdc:HDC = GetDC(hwnd)
         .new clientRect:RECT
          GetClientRect(hwnd, &clientRect)
@@ -176,7 +164,6 @@ ControlWndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .endc
 
     .case WM_KILLFOCUS
-
         .new hdc:HDC = GetDC(hwnd)
         .new clientRect:RECT
          GetClientRect(hwnd, &clientRect)
@@ -184,27 +171,23 @@ ControlWndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
          ReleaseDC(hwnd, hdc)
         .endc
 
-
     .case WM_LBUTTONDOWN
-
         .new pControl:ptr CustomButton = GetWindowLongPtr(hwnd, GWLP_USERDATA)
          pControl.InvokeButton(hwnd)
         .endc
 
-
     .case WM_KEYDOWN
-
         .switch (wParam)
-
         .case VK_SPACE
             .new pControl:ptr CustomButton = GetWindowLongPtr(hwnd, GWLP_USERDATA)
              pControl.InvokeButton(hwnd)
             .endc
         .endsw
         .endc
+    .default
+        .return DefWindowProc(hwnd, message, wParam, lParam)
     .endsw
-
-    .return DefWindowProc(hwnd, message, wParam, lParam)
+    ret
 
 ControlWndProc endp
 

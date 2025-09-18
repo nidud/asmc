@@ -1135,9 +1135,8 @@ CatStrDir endp
 
 SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:token_t, sym:asym_t, name:string_t, value:string_t
 
-    UNREFERENCED_PARAMETER(sym)
-
     ldr rdi,sym
+
     .if ( rdi == NULL )
         mov rdi,SymCreate( name )
     .elseif ( [rdi].asym.state == SYM_UNDEFINED )

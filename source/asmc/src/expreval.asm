@@ -53,12 +53,7 @@ FindDotSymbol proto fastcall :token_t
 
     .code
 
-    option proc:private
-
-    assume rcx:expr_t
-    assume rdx:expr_t
-    assume rsi:expr_t
-    assume rdi:expr_t
+    assume proc:private, rcx:expr_t, rdx:expr_t, rsi:expr_t, rdi:expr_t
 
 
 noasmerr proc __ccall msg:int_t, args:vararg
@@ -85,9 +80,6 @@ ConstError endp
 
 TokenAssign proc fastcall uses rsi rdi opnd1:expr_t, opnd2:expr_t
 
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-
     ; note that offsetof() is used. This means, don't change position
     ; of field <type> in expr!
 
@@ -104,8 +96,6 @@ TokenAssign endp
 
 invalid_operand proc fastcall uses rbx opnd:expr_t, oprtr:string_t, operand:string_t
 
-    UNREFERENCED_PARAMETER(opnd)
-
     mov rbx,operand
 
     .if ( !( [rcx].is_opattr ) )
@@ -118,8 +108,6 @@ invalid_operand endp
     assume rcx:asym_t
 
 GetSizeValue proc fastcall sym:asym_t
-
-    UNREFERENCED_PARAMETER(sym)
 
     movzx eax,[rcx].mem_type
     .if ( eax == MT_PTR )
@@ -135,8 +123,7 @@ GetSizeValue proc fastcall sym:asym_t
 GetSizeValue endp
 
 
-    assume rcx:nothing
-    assume rdx:nothing
+    assume rcx:nothing, rdx:nothing
 
 SetRecordMask proc fastcall rec:asym_t, opnd:expr_t
 
@@ -213,8 +200,6 @@ SetBitMask endp
 
 IsOffset proc fastcall opnd:expr_t
 
-    UNREFERENCED_PARAMETER(opnd)
-
     .if ( [rcx].mem_type == MT_EMPTY )
         mov eax,[rcx].inst
         .if ( eax == T_OFFSET ||
@@ -237,9 +222,6 @@ IsOffset endp
 
 tofloat proc fastcall opnd1:expr_t, opnd2:expr_t, size:int_t
 
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-
     .if ( Options.strict_masm_compat )
 
         ConstError( rcx, rdx )
@@ -257,16 +239,10 @@ tofloat proc fastcall opnd1:expr_t, opnd2:expr_t, size:int_t
 tofloat endp
 
 
-    assume rdx:nothing
-    assume rcx:nothing
-    assume rbx:asym_t
+    assume rdx:nothing, rcx:nothing, rbx:asym_t
 
 unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         opnd1:expr_t, opnd2:expr_t, sym:asym_t, oper:int_t, name:string_t
-
-    UNREFERENCED_PARAMETER(uot)
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
 
     ldr rsi,opnd1
     ldr rdi,opnd2
@@ -857,8 +833,6 @@ unaryop endp
 
 init_expr proc fastcall opnd:expr_t
 
-    UNREFERENCED_PARAMETER(opnd)
-
     mov rcx,tmemset( rcx, 0, sizeof(expr) )
     mov [rcx].inst,EMPTY
     mov [rcx].kind,EXPR_EMPTY
@@ -872,8 +846,6 @@ init_expr endp
     assume rcx:token_t
 
 get_precedence proc fastcall item:token_t
-
-    UNREFERENCED_PARAMETER(item)
 
     ;
     ; The following table is taken verbatim from MASM 6.1 Programmer's Guide,
@@ -975,9 +947,6 @@ get_precedence endp
 
 GetTypeSize proc fastcall mem_type:byte, ofssize:int_t
 
-    UNREFERENCED_PARAMETER(mem_type)
-    UNREFERENCED_PARAMETER(ofssize)
-
     .if ( cl == MT_ZWORD )
         .return 64
     .endif
@@ -1017,8 +986,6 @@ GetTypeSize endp
 
 SetEvexOpt proc fastcall tok:token_t
 
-    UNREFERENCED_PARAMETER(tok)
-
     .if ( [rcx-1*asm_tok].token == T_COMMA &&
           [rcx-2*asm_tok].token == T_REG &&
           [rcx-3*asm_tok].token == T_INSTRUCTION )
@@ -1037,8 +1004,7 @@ SetEvexOpt proc fastcall tok:token_t
 SetEvexOpt endp
 
 
-    assume rcx:nothing
-    assume rbx:token_t
+    assume rcx:nothing, rbx:token_t
 
 get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray:token_t, flags:byte
 
@@ -1047,8 +1013,6 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
     local j:int_t
     local i:int_t
     local labelbuff[16]:char_t
-
-    UNREFERENCED_PARAMETER(opnd)
 
     ldr  rdx,idx
     mov  eax,[rdx]
@@ -1598,8 +1562,7 @@ endif
 get_operand endp
 
 
-    assume rcx:expr_t
-    assume rdx:expr_t
+    assume rcx:expr_t, rdx:expr_t
 
 check_both proc fastcall opnd1:expr_t, opnd2:expr_t, type1:int_t, type2:int_t
 
@@ -1615,9 +1578,6 @@ check_both endp
 
 
 index_connect proc fastcall opnd1:expr_t, opnd2:expr_t
-
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
 
     mov rax,[rdx].base_reg
     .if ( rax != NULL )
@@ -1673,8 +1633,6 @@ index_connect endp
 
 MakeConst proc fastcall opnd:expr_t
 
-    UNREFERENCED_PARAMETER(opnd)
-
     .if ( ( [rcx].kind != EXPR_ADDR ) || [rcx].indirect )
         .return
     .endif
@@ -1711,13 +1669,9 @@ MakeConst proc fastcall opnd:expr_t
 MakeConst endp
 
 
-    assume rax:asym_t
-    assume rbx:asym_t
+    assume rax:asym_t, rbx:asym_t
 
 MakeConst2 proc fastcall uses rbx opnd1:expr_t, opnd2:expr_t
-
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
 
     mov rax,[rcx].sym
     .if ( [rax].state == SYM_EXTERNAL )
@@ -1741,8 +1695,6 @@ MakeConst2 endp
 
 fix_struct_value proc fastcall opnd:expr_t
 
-    UNREFERENCED_PARAMETER(opnd)
-
     mov rax,[rcx].mbr
     .if ( rax && [rax].state == SYM_TYPE )
         add [rcx].value,[rax].total_size
@@ -1757,9 +1709,6 @@ fix_struct_value endp
 
 check_direct_reg proc fastcall opnd1:expr_t, opnd2:expr_t
 
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-
     .if ( [rcx].kind == EXPR_REG && !( [rcx].indirect ) ||
           [rdx].kind == EXPR_REG && !( [rdx].indirect ) )
         .return ERROR
@@ -1769,14 +1718,9 @@ check_direct_reg proc fastcall opnd1:expr_t, opnd2:expr_t
 check_direct_reg endp
 
 
-    assume rsi:expr_t
-    assume rdi:expr_t
-    assume rbx:nothing
+    assume rsi:expr_t, rdi:expr_t, rbx:nothing
 
 plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
-
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
 
     mov rsi,rcx
     mov rdi,rdx
@@ -1896,9 +1840,6 @@ plus_op endp
 
 minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
 
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-
     mov rsi,rcx
     mov rdi,rdx
 
@@ -2005,8 +1946,7 @@ endif
 minus_op endp
 
 
-    assume rcx:expr_t
-    assume rdx:expr_t
+    assume rcx:expr_t, rdx:expr_t
 
 struct_field_error proc fastcall opnd:expr_t
 
@@ -2021,9 +1961,6 @@ struct_field_error endp
 
 
 dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
-
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
 
     mov rsi,rcx
     mov rdi,rdx
@@ -2213,9 +2150,6 @@ dot_op endp
 
 colon_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
 
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-
     mov rsi,rcx
     mov rdi,rdx
 
@@ -2307,9 +2241,6 @@ colon_op endp
 
 positive_op proc fastcall uses rsi rdi opnd1:expr_t, opnd2:expr_t
 
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-
     mov rsi,rcx
     mov rdi,rdx
 
@@ -2338,9 +2269,6 @@ positive_op endp
 
 
 negative_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
-
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
 
     mov rsi,rcx
     mov rdi,rdx
@@ -2404,13 +2332,9 @@ endif
 negative_op endp
 
 
-    assume rdi:nothing
-    assume rbx:asym_t
-    assume rsi:expr_t
+    assume rdi:nothing, rbx:asym_t, rsi:expr_t
 
 CheckAssume proc fastcall uses rsi rbx opnd:expr_t
-
-    UNREFERENCED_PARAMETER(opnd)
 
     mov rsi,rcx
     .if ( [rsi].explicit )
@@ -2457,9 +2381,6 @@ CheckAssume endp
 
 check_streg proc fastcall opnd1:expr_t, opnd2:expr_t
 
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-
     .if ( [rcx].scale > 0 )
         .return( fnasmerr( 2032 ) )
     .endif
@@ -2473,14 +2394,9 @@ check_streg proc fastcall opnd1:expr_t, opnd2:expr_t
 check_streg endp
 
 
-    assume rsi:asym_t
-    assume rdi:asym_t
+    assume rsi:asym_t, rdi:asym_t
 
 cmp_types proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, trueval:int_t
-
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-    UNREFERENCED_PARAMETER(trueval)
 
     mov rsi,[rcx].type
     mov rdi,[rdx].type
@@ -2533,21 +2449,12 @@ cmp_types proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, trueval:int
 cmp_types endp
 
 
-    assume rcx:nothing
-    assume rdx:nothing
-
-    assume rsi:expr_t
-    assume rdi:expr_t
-    assume rbx:token_t
+    assume rcx:nothing, rdx:nothing, rsi:expr_t, rdi:expr_t, rbx:token_t
 
 calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
 
   local sym:asym_t
   local opnd:expr
-
-    UNREFERENCED_PARAMETER(opnd1)
-    UNREFERENCED_PARAMETER(opnd2)
-    UNREFERENCED_PARAMETER(oper)
 
     ldr rsi,opnd1
     ldr rdi,opnd2
@@ -3415,13 +3322,9 @@ endif
 
 calculate endp
 
-    assume rcx:expr_t
-    assume rdx:expr_t
+    assume rcx:expr_t, rdx:expr_t
 
 PrepareOp proc fastcall opnd:expr_t, old:expr_t, oper:token_t
-
-    UNREFERENCED_PARAMETER(opnd)
-    UNREFERENCED_PARAMETER(old)
 
     mov [rcx].is_opattr,0
     .if [rdx].is_opattr
@@ -3455,13 +3358,9 @@ endif
 PrepareOp endp
 
 
-    assume rcx:nothing
-    assume rdx:nothing
+    assume rcx:nothing, rdx:nothing
 
 OperErr proc fastcall i:int_t, tokenarray:token_t
-
-    UNREFERENCED_PARAMETER(i)
-    UNREFERENCED_PARAMETER(tokenarray)
 
     imul eax,ecx,asm_tok
     .if ( [rdx+rax].asm_tok.token <= T_BAD_NUM )

@@ -367,8 +367,7 @@ IncBinDirective endp
 ; For COFF and ELF, this name MUST be defined somewhere as
 ; external or public!
 
-    assume rsi:asym_t
-    assume rdi:asym_t
+    assume rsi:asym_t, rdi:asym_t
 
 AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 

@@ -13,7 +13,7 @@ Enables error checking for register values. After an ASSUME is put into effect, 
 
 - **ASSUME** CLASS:[[register]] NOTHING
 
-Enables local access to Class members and methods.
+Enables local access to Class members and methods. If _register_ is a nonvolatile-register it's added to USES.
 
 - **ASSUME** USES [[:]] [[register]] NOTHING [[register]]...
 

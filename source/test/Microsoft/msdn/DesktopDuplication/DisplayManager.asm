@@ -3,7 +3,7 @@ include DisplayManager.inc
 
     .code
 
-    assume rsi:ptr DISPLAYMANAGER
+    assume class:rbx
 ;
 ; Constructor NULLs out vars
 ;
@@ -17,18 +17,16 @@ DISPLAYMANAGER::DISPLAYMANAGER endp
 ;
 ; Destructor calls CleanRefs to destroy everything
 ;
-DISPLAYMANAGER::Release proc uses rsi
+DISPLAYMANAGER::Release proc
 
-    ldr rsi,this
+    CleanRefs()
 
-    [rsi].CleanRefs()
+    .if ( m_DirtyVertexBufferAlloc )
 
-    .if ( [rsi].m_DirtyVertexBufferAlloc )
-
-        free([rsi].m_DirtyVertexBufferAlloc)
-        mov [rsi].m_DirtyVertexBufferAlloc,nullptr
+        free(m_DirtyVertexBufferAlloc)
+        mov m_DirtyVertexBufferAlloc,nullptr
     .endif
-    free(rsi)
+    free(rbx)
     ret
 
 DISPLAYMANAGER::Release endp
@@ -38,22 +36,21 @@ DISPLAYMANAGER::Release endp
 ;
 DISPLAYMANAGER::InitD3D proc Data:ptr DX_RESOURCES
 
-    ldr rcx,this
     ldr rdx,Data
 
-    mov [rcx].DISPLAYMANAGER.m_Device,         [rdx].DX_RESOURCES.Device
-    mov [rcx].DISPLAYMANAGER.m_DeviceContext,  [rdx].DX_RESOURCES.Context
-    mov [rcx].DISPLAYMANAGER.m_VertexShader,   [rdx].DX_RESOURCES.VertexShader
-    mov [rcx].DISPLAYMANAGER.m_PixelShader,    [rdx].DX_RESOURCES.PixelShader
-    mov [rcx].DISPLAYMANAGER.m_InputLayout,    [rdx].DX_RESOURCES.InputLayout
-    mov [rcx].DISPLAYMANAGER.m_SamplerLinear,  [rdx].DX_RESOURCES.SamplerLinear
+    mov m_Device,         [rdx].DX_RESOURCES.Device
+    mov m_DeviceContext,  [rdx].DX_RESOURCES.Context
+    mov m_VertexShader,   [rdx].DX_RESOURCES.VertexShader
+    mov m_PixelShader,    [rdx].DX_RESOURCES.PixelShader
+    mov m_InputLayout,    [rdx].DX_RESOURCES.InputLayout
+    mov m_SamplerLinear,  [rdx].DX_RESOURCES.SamplerLinear
 
-    this.m_Device.AddRef()
-    this.m_DeviceContext.AddRef()
-    this.m_VertexShader.AddRef()
-    this.m_PixelShader.AddRef()
-    this.m_InputLayout.AddRef()
-    this.m_SamplerLinear.AddRef()
+    m_Device.AddRef()
+    m_DeviceContext.AddRef()
+    m_VertexShader.AddRef()
+    m_PixelShader.AddRef()
+    m_InputLayout.AddRef()
+    m_SamplerLinear.AddRef()
     ret
 
 DISPLAYMANAGER::InitD3D endp
@@ -61,7 +58,7 @@ DISPLAYMANAGER::InitD3D endp
 ;
 ; Process a given frame and its metadata
 ;
-DISPLAYMANAGER::ProcessFrame proc uses rsi rdi rbx Data:ptr FRAME_DATA,
+DISPLAYMANAGER::ProcessFrame proc uses rsi rdi Data:ptr FRAME_DATA,
         SharedSurf:ptr ID3D11Texture2D, OffsetX:SINT, OffsetY:SINT,
         DeskDesc:ptr DXGI_OUTPUT_DESC
 
@@ -69,7 +66,6 @@ DISPLAYMANAGER::ProcessFrame proc uses rsi rdi rbx Data:ptr FRAME_DATA,
 
     ; Process dirties and moves
 
-    ldr rsi,this
     ldr rdi,Data
 
     assume rdi:ptr FRAME_DATA
@@ -81,7 +77,7 @@ DISPLAYMANAGER::ProcessFrame proc uses rsi rdi rbx Data:ptr FRAME_DATA,
 
         .if ( [rdi].MoveCount )
 
-            mov retval,[rsi].CopyMove(SharedSurf, [rdi].MetaData, [rdi].MoveCount,
+            mov retval,CopyMove(SharedSurf, [rdi].MetaData, [rdi].MoveCount,
                     OffsetX, OffsetY, DeskDesc, Desc.Width, Desc.Height)
 
             .if ( retval != DUPL_RETURN_SUCCESS )
@@ -94,7 +90,7 @@ DISPLAYMANAGER::ProcessFrame proc uses rsi rdi rbx Data:ptr FRAME_DATA,
 
             imul ecx,[rdi].MoveCount,sizeof(DXGI_OUTDUPL_MOVE_RECT)
             add rcx,[rdi].MetaData
-            mov retval,[rsi].CopyDirty([rdi].tFrame, SharedSurf, rcx,
+            mov retval,CopyDirty([rdi].tFrame, SharedSurf, rcx,
                     [rdi].DirtyCount, OffsetX, OffsetY, DeskDesc)
         .endif
     .endif
@@ -107,16 +103,14 @@ DISPLAYMANAGER::ProcessFrame endp
 ;
 DISPLAYMANAGER::GetDevice proc
 
-    ldr rcx,this
-
-    .return [rcx].DISPLAYMANAGER.m_Device
+    .return( m_Device )
 
 DISPLAYMANAGER::GetDevice endp
 
 ;
 ; Set appropriate source and destination rects for move rects
 ;
-DISPLAYMANAGER::SetMoveRect proc uses rbx \
+DISPLAYMANAGER::SetMoveRect proc uses rsi \
         SrcRect   : ptr RECT,
         DestRect  : ptr RECT,
         DeskDesc  : ptr DXGI_OUTPUT_DESC,
@@ -127,105 +121,107 @@ DISPLAYMANAGER::SetMoveRect proc uses rbx \
     ldr rdx,SrcRect
     ldr rcx,DestRect
     ldr rax,DeskDesc
-    mov rbx,MoveRect
-    assume rbx:ptr DXGI_OUTDUPL_MOVE_RECT
+
+    mov rsi,MoveRect
+
+    assume rsi:ptr DXGI_OUTDUPL_MOVE_RECT
 
     .switch ( [rax].DXGI_OUTPUT_DESC.Rotation )
 
     .case DXGI_MODE_ROTATION_UNSPECIFIED
     .case DXGI_MODE_ROTATION_IDENTITY
 
-        mov [rdx].RECT.left,[rbx].SourcePoint.x
-        add eax,[rbx].DestinationRect.right
-        sub eax,[rbx].DestinationRect.left
+        mov [rdx].RECT.left,[rsi].SourcePoint.x
+        add eax,[rsi].DestinationRect.right
+        sub eax,[rsi].DestinationRect.left
         mov [rdx].RECT.right,eax
-        mov [rdx].RECT.top,[rbx].SourcePoint.y
-        add eax,[rbx].DestinationRect.bottom
-        sub eax,[rbx].DestinationRect.top
+        mov [rdx].RECT.top,[rsi].SourcePoint.y
+        add eax,[rsi].DestinationRect.bottom
+        sub eax,[rsi].DestinationRect.top
         mov [rdx].RECT.bottom,eax
-        mov [rcx],[rbx].DestinationRect
+        mov [rcx],[rsi].DestinationRect
        .endc
 
     .case DXGI_MODE_ROTATION_ROTATE90
 
         mov eax,TexHeight
-        sub eax,[rbx].SourcePoint.y
-        sub eax,[rbx].DestinationRect.bottom
-        add eax,[rbx].DestinationRect.top
+        sub eax,[rsi].SourcePoint.y
+        sub eax,[rsi].DestinationRect.bottom
+        add eax,[rsi].DestinationRect.top
         mov [rdx].RECT.left,eax
         mov eax,TexHeight
-        sub eax,[rbx].SourcePoint.y
+        sub eax,[rsi].SourcePoint.y
         mov [rdx].RECT.right,eax
-        mov [rdx].RECT.top,[rbx].SourcePoint.x
-        add eax,[rbx].DestinationRect.right
-        sub eax,[rbx].DestinationRect.left
+        mov [rdx].RECT.top,[rsi].SourcePoint.x
+        add eax,[rsi].DestinationRect.right
+        sub eax,[rsi].DestinationRect.left
         mov [rdx].RECT.bottom,eax
 
         mov eax,TexHeight
-        sub eax,[rbx].DestinationRect.bottom
+        sub eax,[rsi].DestinationRect.bottom
         mov [rcx].RECT.left,eax
-        mov [rcx].RECT.top,[rbx].DestinationRect.left
+        mov [rcx].RECT.top,[rsi].DestinationRect.left
         mov eax,TexHeight
-        sub eax,[rbx].DestinationRect.top
+        sub eax,[rsi].DestinationRect.top
         mov [rcx].RECT.right,eax
-        mov [rcx].RECT.bottom,[rbx].DestinationRect.right
+        mov [rcx].RECT.bottom,[rsi].DestinationRect.right
        .endc
 
     .case DXGI_MODE_ROTATION_ROTATE180
 
         mov eax,TexWidth
-        sub eax,[rbx].SourcePoint.x
-        sub eax,[rbx].DestinationRect.right
-        add eax,[rbx].DestinationRect.left
+        sub eax,[rsi].SourcePoint.x
+        sub eax,[rsi].DestinationRect.right
+        add eax,[rsi].DestinationRect.left
         mov [rdx].RECT.left,eax
         mov eax,TexHeight
-        sub eax,[rbx].SourcePoint.y
-        sub eax,[rbx].DestinationRect.bottom
-        add eax,[rbx].DestinationRect.top
+        sub eax,[rsi].SourcePoint.y
+        sub eax,[rsi].DestinationRect.bottom
+        add eax,[rsi].DestinationRect.top
         mov [rdx].RECT.top,eax
         mov eax,TexWidth
-        sub eax,[rbx].SourcePoint.x
+        sub eax,[rsi].SourcePoint.x
         mov [rdx].RECT.right,eax
         mov eax,TexHeight
-        sub eax,[rbx].SourcePoint.y
+        sub eax,[rsi].SourcePoint.y
         mov [rdx].RECT.bottom,eax
 
         mov eax,TexWidth
-        sub eax,[rbx].DestinationRect.right
+        sub eax,[rsi].DestinationRect.right
         mov [rcx].RECT.left,eax
         mov eax,TexHeight
-        sub eax,[rbx].DestinationRect.bottom
+        sub eax,[rsi].DestinationRect.bottom
         mov [rcx].RECT.top,eax
         mov eax,TexWidth
-        sub eax,[rbx].DestinationRect.left
+        sub eax,[rsi].DestinationRect.left
         mov [rcx].RECT.right,eax
         mov eax,TexHeight
-        sub eax,[rbx].DestinationRect.top
+        sub eax,[rsi].DestinationRect.top
         mov [rcx].RECT.bottom,eax
        .endc
 
     .case DXGI_MODE_ROTATION_ROTATE270
 
-        mov [rdx].RECT.left,[rbx].SourcePoint.x
+        mov [rdx].RECT.left,[rsi].SourcePoint.x
         mov eax,TexWidth
-        sub eax,[rbx].DestinationRect.right
-        add eax,[rbx].DestinationRect.left
+        sub eax,[rsi].DestinationRect.right
+        add eax,[rsi].DestinationRect.left
         mov [rdx].RECT.top,eax
-        mov eax,[rbx].SourcePoint.y
-        add eax,[rbx].DestinationRect.bottom
-        sub eax,[rbx].DestinationRect.top
+        mov eax,[rsi].SourcePoint.y
+        add eax,[rsi].DestinationRect.bottom
+        sub eax,[rsi].DestinationRect.top
         mov [rdx].RECT.right,eax
         mov eax,TexWidth
-        sub eax,[rbx].SourcePoint.x
+        sub eax,[rsi].SourcePoint.x
         mov [rdx].RECT.bottom,eax
 
-        mov [rcx].RECT.left,[rbx].DestinationRect.top
+        mov [rcx].RECT.left,[rsi].DestinationRect.top
         mov eax,TexWidth
-        sub eax,[rbx].DestinationRect.right
+        sub eax,[rsi].DestinationRect.right
         mov [rcx].RECT.top,eax
-        mov [rcx].RECT.right,[rbx].DestinationRect.bottom
+        mov [rcx].RECT.right,[rsi].DestinationRect.bottom
         mov eax,TexWidth
-        sub eax,[rbx].DestinationRect.left
+        sub eax,[rsi].DestinationRect.left
         mov [rcx].RECT.bottom,eax
        .endc
 
@@ -247,12 +243,10 @@ endif
 
 DISPLAYMANAGER::SetMoveRect endp
 
-    assume rbx:nothing
-
 ;
 ; Copy move rectangles
 ;
-DISPLAYMANAGER::CopyMove proc uses rsi rdi rbx \
+DISPLAYMANAGER::CopyMove proc uses rsi rdi \
         SharedSurf  : ptr ID3D11Texture2D,
         MoveBuffer  : ptr DXGI_OUTDUPL_MOVE_RECT,
         MoveCount   : UINT,
@@ -262,7 +256,6 @@ DISPLAYMANAGER::CopyMove proc uses rsi rdi rbx \
         TexWidth    : SINT,
         TexHeight   : SINT
 
-    ldr rsi,this
     mov rdi,DeskDesc
     assume rdi:ptr DXGI_OUTPUT_DESC
 
@@ -271,7 +264,7 @@ DISPLAYMANAGER::CopyMove proc uses rsi rdi rbx \
 
     ; Make new intermediate surface to copy into for moving
 
-    .if ( ![rsi].m_MoveSurf )
+    .if ( !m_MoveSurf )
 
        .new MoveDesc:D3D11_TEXTURE2D_DESC = FullDesc
 
@@ -284,23 +277,23 @@ DISPLAYMANAGER::CopyMove proc uses rsi rdi rbx \
         mov MoveDesc.BindFlags,D3D11_BIND_RENDER_TARGET
         mov MoveDesc.MiscFlags,0
 
-        .new hr:HRESULT = this.m_Device.CreateTexture2D(&MoveDesc, nullptr, &[rsi].m_MoveSurf)
+        .new hr:HRESULT = m_Device.CreateTexture2D(&MoveDesc, nullptr, &m_MoveSurf)
         .if (FAILED(hr))
 
-            .return ProcessFailure([rsi].m_Device,
+            .return ProcessFailure(m_Device,
                     L"Failed to create staging texture for move rects",
                     L"Error", hr, &SystemTransitionsExpectedErrors)
         .endif
     .endif
 
-    .for ( ebx = 0: ebx < MoveCount: ++ebx )
+    .for ( esi = 0: esi < MoveCount: ++esi )
 
        .new SrcRect:RECT
        .new DestRect:RECT
 
-        imul ecx,ebx,DXGI_OUTDUPL_MOVE_RECT
+        imul ecx,esi,DXGI_OUTDUPL_MOVE_RECT
         add rcx,MoveBuffer
-        this.SetMoveRect(&SrcRect, &DestRect, DeskDesc, rcx, TexWidth, TexHeight)
+        SetMoveRect(&SrcRect, &DestRect, DeskDesc, rcx, TexWidth, TexHeight)
 
         ; Copy rect out of shared surface
 
@@ -325,7 +318,7 @@ DISPLAYMANAGER::CopyMove proc uses rsi rdi rbx \
         mov Box.bottom,eax
         mov Box.back,1
 
-        this.m_DeviceContext.CopySubresourceRegion([rsi].m_MoveSurf, 0,
+        m_DeviceContext.CopySubresourceRegion(m_MoveSurf, 0,
                 SrcRect.left, SrcRect.top, 0, SharedSurf, 0, &Box)
 
         ; Copy back to shared surface
@@ -343,8 +336,8 @@ DISPLAYMANAGER::CopyMove proc uses rsi rdi rbx \
         mov ecx,DestRect.top
         add ecx,[rdi].DesktopCoordinates.top
         sub ecx,OffsetY
-        this.m_DeviceContext.CopySubresourceRegion(
-                SharedSurf, 0, edx, ecx, 0, [rsi].m_MoveSurf, 0, &Box)
+        m_DeviceContext.CopySubresourceRegion(
+                SharedSurf, 0, edx, ecx, 0, m_MoveSurf, 0, &Box)
     .endf
     .return DUPL_RETURN_SUCCESS
 
@@ -353,7 +346,7 @@ DISPLAYMANAGER::CopyMove endp
 ;
 ; Sets up vertices for dirty rects for rotated desktops
 ;
-DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi rbx \
+DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi \
         Vertices    : ptr VERTEX,
         Dirty       : ptr RECT,
         OffsetX     : SINT,
@@ -362,14 +355,13 @@ DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi rbx \
         FullDesc    : ptr D3D11_TEXTURE2D_DESC,
         ThisDesc    : ptr D3D11_TEXTURE2D_DESC
 
-    ldr rsi,this
     ldr rdx,Vertices
-    mov rbx,FullDesc
+    mov rsi,FullDesc
     mov rdi,DeskDesc
-    assume rbx:ptr D3D11_TEXTURE2D_DESC
+    assume rsi:ptr D3D11_TEXTURE2D_DESC
 
-    mov eax,[rbx].Width
-    mov ecx,[rbx].Height
+    mov eax,[rsi].Width
+    mov ecx,[rsi].Height
     shr eax,1
     shr ecx,1
    .new CenterX:SINT = eax
@@ -389,9 +381,9 @@ DISPLAYMANAGER::SetDirtyVert proc uses rsi rdi rbx \
 
     ; Set appropriate coordinates compensated for rotation
 
-    mov rbx,ThisDesc
-    cvtsi2ss xmm4,[rbx].D3D11_TEXTURE2D_DESC.Width
-    cvtsi2ss xmm5,[rbx].D3D11_TEXTURE2D_DESC.Height
+    mov rsi,ThisDesc
+    cvtsi2ss xmm4,[rsi].D3D11_TEXTURE2D_DESC.Width
+    cvtsi2ss xmm5,[rsi].D3D11_TEXTURE2D_DESC.Height
     cvtsi2ss xmm0,[rcx].RECT.left
     cvtsi2ss xmm1,[rcx].RECT.right
     cvtsi2ss xmm2,[rcx].RECT.top
@@ -541,7 +533,7 @@ DISPLAYMANAGER::SetDirtyVert endp
 ;
 ; Copies dirty rectangles
 ;
-DISPLAYMANAGER::CopyDirty proc uses rsi rdi rbx \
+DISPLAYMANAGER::CopyDirty proc uses rsi rdi \
         SrcSurface  : ptr ID3D11Texture2D,
         SharedSurf  : ptr ID3D11Texture2D,
         DirtyBuffer : ptr RECT,
@@ -553,20 +545,18 @@ DISPLAYMANAGER::CopyDirty proc uses rsi rdi rbx \
    .new hr:HRESULT
    .new FullDesc:D3D11_TEXTURE2D_DESC
 
-    ldr rsi,this
-
     SharedSurf.GetDesc(&FullDesc)
 
    .new ThisDesc:D3D11_TEXTURE2D_DESC
     SrcSurface.GetDesc(&ThisDesc)
 
-    .if ( ![rsi].m_RTV )
+    .if ( !m_RTV )
 
-        mov hr,this.m_Device.CreateRenderTargetView(
-                SharedSurf, nullptr, &[rsi].m_RTV)
+        mov hr,m_Device.CreateRenderTargetView(
+                SharedSurf, nullptr, &m_RTV)
         .if (FAILED(hr))
 
-            .return ProcessFailure([rsi].m_Device,
+            .return ProcessFailure(m_Device,
                     L"Failed to create render target view for dirty rects",
                     L"Error", hr, &SystemTransitionsExpectedErrors)
         .endif
@@ -582,63 +572,63 @@ DISPLAYMANAGER::CopyDirty proc uses rsi rdi rbx \
     ; Create new shader resource view
 
    .new ShaderResource:ptr ID3D11ShaderResourceView = nullptr
-    mov hr,this.m_Device.CreateShaderResourceView(
+    mov hr,m_Device.CreateShaderResourceView(
             SrcSurface, &ShaderDesc, &ShaderResource)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create shader resource view for dirty rects",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
    .new BlendFactor[4]:FLOAT = { 0.0, 0.0, 0.0, 0.0 }
 
-    assume rbx:ptr ID3D11DeviceContext
+    assume rsi:ptr ID3D11DeviceContext
 
-    mov rbx,[rsi].m_DeviceContext
+    mov rsi,m_DeviceContext
 
-    [rbx].OMSetBlendState(nullptr, &BlendFactor, 0xFFFFFFFF)
-    [rbx].OMSetRenderTargets(1, &[rsi].m_RTV, nullptr)
-    [rbx].VSSetShader([rsi].m_VertexShader, nullptr, 0)
-    [rbx].PSSetShader([rsi].m_PixelShader, nullptr, 0)
-    [rbx].PSSetShaderResources(0, 1, &ShaderResource)
-    [rbx].PSSetSamplers(0, 1, &[rsi].m_SamplerLinear)
-    [rbx].IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+    [rsi].OMSetBlendState(nullptr, &BlendFactor, 0xFFFFFFFF)
+    [rsi].OMSetRenderTargets(1, &m_RTV, nullptr)
+    [rsi].VSSetShader(m_VertexShader, nullptr, 0)
+    [rsi].PSSetShader(m_PixelShader, nullptr, 0)
+    [rsi].PSSetShaderResources(0, 1, &ShaderResource)
+    [rsi].PSSetSamplers(0, 1, &m_SamplerLinear)
+    [rsi].IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 
-    assume rbx:nothing
+    assume rsi:nothing
 
     ; Create space for vertices for the dirty rects if the current space isn't large enough
 
     imul eax,DirtyCount,VERTEX * NUMVERTICES
    .new BytesNeeded:UINT = eax
 
-    .if ( eax > [rsi].m_DirtyVertexBufferAllocSize )
+    .if ( eax > m_DirtyVertexBufferAllocSize )
 
-        .if ( [rsi].m_DirtyVertexBufferAlloc )
+        .if ( m_DirtyVertexBufferAlloc )
 
-            free([rsi].m_DirtyVertexBufferAlloc)
+            free(m_DirtyVertexBufferAlloc)
         .endif
 
-        mov [rsi].m_DirtyVertexBufferAlloc,malloc(BytesNeeded)
+        mov m_DirtyVertexBufferAlloc,malloc(BytesNeeded)
         .if ( !rax )
 
-            mov [rsi].m_DirtyVertexBufferAllocSize,eax
+            mov m_DirtyVertexBufferAllocSize,eax
             .return ProcessFailure(nullptr,
                     L"Failed to allocate memory for dirty vertex buffer.",
                     L"Error", E_OUTOFMEMORY, nullptr)
         .endif
 
-        mov [rsi].m_DirtyVertexBufferAllocSize,BytesNeeded
+        mov m_DirtyVertexBufferAllocSize,BytesNeeded
     .endif
 
     ; Fill them in
 
-    mov rdi,[rsi].m_DirtyVertexBufferAlloc
-    .for ( ebx = 0: ebx < DirtyCount: ++ebx, rdi += (NUMVERTICES*VERTEX) )
+    mov rdi,m_DirtyVertexBufferAlloc
+    .for ( esi = 0: esi < DirtyCount: ++esi, rdi += (NUMVERTICES*VERTEX) )
 
-        imul edx,ebx,RECT
+        imul edx,esi,RECT
         add rdx,DirtyBuffer
-        this.SetDirtyVert(rdi, rdx, OffsetX, OffsetY, DeskDesc, &FullDesc, &ThisDesc)
+        SetDirtyVert(rdi, rdx, OffsetX, OffsetY, DeskDesc, &FullDesc, &ThisDesc)
     .endf
 
     ; Create vertex buffer
@@ -650,20 +640,20 @@ DISPLAYMANAGER::CopyDirty proc uses rsi rdi rbx \
     mov BufferDesc.CPUAccessFlags,0
 
    .new InitData:D3D11_SUBRESOURCE_DATA = {0}
-    mov InitData.pSysMem,[rsi].m_DirtyVertexBufferAlloc
+    mov InitData.pSysMem,m_DirtyVertexBufferAlloc
 
    .new VertBuf:ptr ID3D11Buffer = nullptr
-    mov hr,this.m_Device.CreateBuffer(&BufferDesc, &InitData, &VertBuf)
+    mov hr,m_Device.CreateBuffer(&BufferDesc, &InitData, &VertBuf)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create vertex buffer in dirty rect processing",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
    .new Stride:UINT = sizeof(VERTEX)
    .new bOffset:UINT = 0
-    this.m_DeviceContext.IASetVertexBuffers(0, 1, &VertBuf, &Stride, &bOffset)
+    m_DeviceContext.IASetVertexBuffers(0, 1, &VertBuf, &Stride, &bOffset)
 
    .new VP:D3D11_VIEWPORT
     cvtsi2ss xmm0,FullDesc.Width
@@ -674,10 +664,10 @@ DISPLAYMANAGER::CopyDirty proc uses rsi rdi rbx \
     mov VP.MaxDepth,1.0
     mov VP.TopLeftX,0.0
     mov VP.TopLeftY,0.0
-    this.m_DeviceContext.RSSetViewports(1, &VP)
+    m_DeviceContext.RSSetViewports(1, &VP)
 
     imul edx,DirtyCount,NUMVERTICES
-    this.m_DeviceContext.Draw(edx, 0)
+    m_DeviceContext.Draw(edx, 0)
 
     SafeRelease(VertBuf)
     SafeRelease(ShaderResource)
@@ -688,18 +678,16 @@ DISPLAYMANAGER::CopyDirty endp
 ;
 ; Clean all references
 ;
-DISPLAYMANAGER::CleanRefs proc uses rsi
+DISPLAYMANAGER::CleanRefs proc
 
-    ldr rsi,this
-
-    SafeRelease([rsi].m_DeviceContext)
-    SafeRelease([rsi].m_Device)
-    SafeRelease([rsi].m_MoveSurf)
-    SafeRelease([rsi].m_VertexShader)
-    SafeRelease([rsi].m_PixelShader)
-    SafeRelease([rsi].m_InputLayout)
-    SafeRelease([rsi].m_SamplerLinear)
-    SafeRelease([rsi].m_RTV)
+    SafeRelease(m_DeviceContext)
+    SafeRelease(m_Device)
+    SafeRelease(m_MoveSurf)
+    SafeRelease(m_VertexShader)
+    SafeRelease(m_PixelShader)
+    SafeRelease(m_InputLayout)
+    SafeRelease(m_SamplerLinear)
+    SafeRelease(m_RTV)
     ret
 
 DISPLAYMANAGER::CleanRefs endp

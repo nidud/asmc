@@ -64,8 +64,7 @@ AsmerrSymName proc fastcall error:int_t, sym:asym_t
 AsmerrSymName endp
 
 
-    assume rbx:token_t
-    assume rdi:asym_t
+    assume rbx:token_t, rdi:asym_t
 
 InitializeArray proc __ccall uses rsi rdi rbx f:asym_t, pi:ptr int_t, tokenarray:token_t
 
@@ -530,8 +529,7 @@ output_float proc __ccall uses rsi opnd:ptr expr, size:dword
 
 output_float endp
 
-    assume rsi:nothing
-    assume rdi:nothing
+    assume rsi:nothing, rdi:nothing
 
 ;
 ; initialize a data item or struct member;

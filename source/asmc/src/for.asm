@@ -125,8 +125,7 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
     ldr rdi,buffer
     ldr rbx,tokenarray
 
-    assume rbx:token_t
-    assume rsi:token_t
+    assume rbx:token_t, rsi:token_t
 
     mov rdx,[rbx].string_ptr
     mov cl,[rbx].token
@@ -302,8 +301,7 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
     .until 1
     ret
 
-    assume rbx:nothing
-    assume rsi:nothing
+    assume rbx:nothing, rsi:nothing
 
 ParseAssignment endp
 
@@ -344,8 +342,7 @@ RenderAssignment proc __ccall private uses rsi rdi rbx dest:string_t, source:str
 RenderAssignment endp
 
 
-    assume  rbx:token_t
-    assume  rsi:ptr hll_item
+    assume  rbx:token_t, rsi:ptr hll_item
 
 ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 

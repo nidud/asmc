@@ -22,8 +22,7 @@ public CurrEnum
     CurrEnum asym_t 0
     .code
 
-    assume rbx:token_t
-    assume rsi:asym_t
+    assume rbx:token_t, rsi:asym_t
 
 EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 

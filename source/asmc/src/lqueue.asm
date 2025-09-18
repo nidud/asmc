@@ -55,9 +55,6 @@ tvsprintf proc __ccall uses rsi rdi rbx buffer:string_t, format:string_t, argptr
     .new hexoff:char_t
     .new tmpbuf[64]:char_t
 
-    UNREFERENCED_PARAMETER(format)
-    UNREFERENCED_PARAMETER(argptr)
-
     .for ( rdi = ldr(buffer), rsi = ldr(format), rbx = ldr(argptr) : byte ptr [rsi] : )
 
         lodsb
@@ -396,7 +393,7 @@ AddLineQueue proc fastcall uses rsi rdi rbx lineptr:string_t
     jz      .2
 
     add     ecx,sizeof(lq_line)
-    call    MemAlloc
+    invoke  MemAlloc,ecx
     xor     ecx,ecx
     mov     [rax].lq_line.next,rcx
     cmp     rcx,LineQueue.head

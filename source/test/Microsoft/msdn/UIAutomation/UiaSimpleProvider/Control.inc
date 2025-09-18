@@ -14,7 +14,7 @@ include Provider.inc
 .class CustomButton
 
     m_buttonOn bool ?
-    m_provider ptr IRawElementProviderSimple ?
+    m_provider ptr Provider ? ; IRawElementProviderSimple
 
     CustomButton proc
     Release proc

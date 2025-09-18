@@ -10,8 +10,7 @@ include asmc.inc
 
     .code
 
-    option proc:private
-    assume rcx:asym_t
+    assume proc:private, rcx:asym_t
 
 ; VoidMangler: no change to symbol name
 
@@ -72,7 +71,7 @@ StdcallMangler proc fastcall sym:asym_t, buffer:string_t
 
         tsprintf( rax, "_%s@%d", [rcx].name, edx )
     .else
-        call UScoreMangler
+        UScoreMangler(rcx, rdx)
     .endif
     ret
 
@@ -188,48 +187,39 @@ vect_decorate endp
 Mangle proc __ccall uses rsi rdi sym:asym_t, buffer:string_t
 
     ldr rcx,sym
+    ldr rdx,buffer
+
     mov al,[rcx].langtype
     and eax,0x0F
-    lea rsi,VoidMangler
     .switch eax
     .case LANG_C
         ; leading underscore for C ?
         .if !Options.no_cdecl_decoration
-            lea rsi,UScoreMangler
+            .return( UScoreMangler( rcx, rdx ) )
         .endif
         .endc
     .case LANG_STDCALL
         .if Options.stdcall_decoration != STDCALL_NONE
-            lea rsi,StdcallMangler
+            .return( StdcallMangler( rcx, rdx ) )
         .endif
         .endc
     .case LANG_PASCAL
     .case LANG_FORTRAN
     .case LANG_BASIC
-        lea rsi,UCaseMangler
-        .endc
+        .return( UCaseMangler( rcx, rdx ) )
     .case LANG_WATCALL
-        lea rsi,ow_decorate
-        .endc
+        .return( ow_decorate( rcx, rdx ) )
     .case LANG_FASTCALL ; registers passing parameters
         .if ( MODULE.Ofssize == USE64 )
-            lea rsi,ms64_decorate
+            .return( ms64_decorate( rcx, rdx ) )
         .elseif ( MODULE.fctype == FCT_WATCOMC )
-            lea rsi,ow_decorate
-        .else
-            lea rsi,ms32_decorate
+            .gotosw(LANG_WATCALL)
         .endif
-        .endc
+        .return( ms32_decorate( rcx, rdx ) )
     .case LANG_VECTORCALL
-        lea rsi,vect_decorate
-    .case LANG_NONE
-    .case LANG_SYSCALL
-    .case LANG_ASMCALL
-        .endc
+        .return( vect_decorate( rcx, rdx ) )
     .endsw
-    mov  rdx,buffer
-    call rsi
-    ret
+    .return( VoidMangler( rcx, rdx ) )
 
 Mangle endp
 

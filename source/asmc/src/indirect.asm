@@ -125,17 +125,15 @@ AddIndirection proc __ccall private uses rsi rdi sym:asym_t, reg:int_t
     .endif
 
     add rbx,asm_tok
-    mov rax,rsi
     .if ( [rsi].asym.mem_type == MT_TYPE )
-        mov rax,[rsi].asym.type
+        mov rsi,[rsi].asym.type
     .endif
-    .if ( [rax].asym.mem_type == MT_PTR )
-        mov rax,[rax].asym.target_type
+    .if ( [rsi].asym.mem_type == MT_PTR )
+        mov rsi,[rsi].asym.target_type
     .endif
-    .if ( !rax || [rax].asym.state != SYM_TYPE )
+    .if ( !rsi || [rsi].asym.state != SYM_TYPE )
         .return( 0 )
     .endif
-    mov rsi,rax
     mov rdx,SearchNameInStruct( rsi, [rbx].string_ptr, 0, 0 )
     mov ecx,T_MOV
     .if ( rax )
@@ -178,9 +176,15 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:asym_t, reg:int_t, tok:token_t,
     .if ( rdi && [rdi].asym.isvtable )
 
         xor eax,eax
-        .switch ( langtype )
+        .switch langtype
         .case LANG_SYSCALL
             mov eax,T_RDI
+           .endc
+        .case LANG_C
+        .case LANG_STDCALL
+            AddLineQueueX( " mov %r, [%r]", reg, T_ESP )
+            mov eax,reg
+            mov pmacro,rsi
            .endc
         .case LANG_FASTCALL
             mov eax,T_CX - T_AX
@@ -202,15 +206,13 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:asym_t, reg:int_t, tok:token_t,
                 .return( rsi )
             .endif
             mov rsi,rax
-            mov vtable,1
+            inc vtable
         .endif
     .endif
     .if ( !vtable )
         AddLineQueueX( " mov %r, %s", reg, [rsi].asym.name )
     .endif
-
     .for ( rbx+=asm_tok : [rbx].token != T_COMMA && [rbx].token != T_FINAL : rbx+=asm_tok )
-
        .break .if !AddIndirection(rsi, reg)
         mov rsi,rax
     .endf

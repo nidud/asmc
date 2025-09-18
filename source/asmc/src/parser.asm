@@ -115,13 +115,9 @@ HandleIndirection   proto __ccall :asym_t, :token_t, :int_t
 
     ; add item to linked list of symbols
 
-    assume rdx:asym_t
-    assume rcx:ptr symbol_queue
+    assume rdx:asym_t, rcx:ptr symbol_queue
 
 sym_add_table proc fastcall queue:ptr symbol_queue, item:asym_t
-
-    UNREFERENCED_PARAMETER(queue)
-    UNREFERENCED_PARAMETER(item)
 
     xor eax,eax
     .if ( [rcx].head == rax )
@@ -147,9 +143,6 @@ sym_add_table endp
 ; segments, groups, procs or aliases never change their state.
 
 sym_remove_table proc fastcall uses rbx queue:ptr symbol_queue, item:asym_t
-
-    UNREFERENCED_PARAMETER(queue)
-    UNREFERENCED_PARAMETER(item)
 
     ; unlink the node
 
@@ -257,8 +250,6 @@ GetLangType endp
 ; does now contain size for GPR, STx, MMX, XMM regs.
 
 SizeFromRegister proc fastcall registertoken:int_t
-
-    UNREFERENCED_PARAMETER(registertoken)
 
     lea  rdx,SpecialTable
     imul eax,ecx,special_item
@@ -370,9 +361,6 @@ SizeFromMemtype endp
 
 MemtypeFromSize proc fastcall uses rbx size:int_t, ptype:ptr byte
 
-    UNREFERENCED_PARAMETER(size)
-    UNREFERENCED_PARAMETER(ptype)
-
     lea rbx,SpecialTable
     add rbx,T_BYTE * special_item
     .for ( : [rbx].special_item.type == RWT_STYPE : rbx += special_item )
@@ -402,9 +390,6 @@ MemtypeFromSize endp
     assume rdx:ptr code_info
 
 OperandSize proc fastcall opnd:int_t, CodeInfo:ptr code_info
-
-    UNREFERENCED_PARAMETER(opnd)
-    UNREFERENCED_PARAMETER(CodeInfo)
 
     ; v2.0: OP_M8_R8 and OP_M16_R16 have the DFT bit set!
 
@@ -447,9 +432,6 @@ OperandSize endp
     option proc:private
 
 comp_mem16 proc fastcall reg1:int_t, reg2:int_t
-
-    UNREFERENCED_PARAMETER(reg1)
-    UNREFERENCED_PARAMETER(reg2)
 
     ; compare and return the r/m field encoding of 16-bit address mode;
     ; call by set_rm_sib() only;
@@ -646,8 +628,6 @@ seg_override endp
 
 set_frame proc fastcall public sym:asym_t
 
-    UNREFERENCED_PARAMETER(sym)
-
     mov rax,SegOverride
     .if rax
         mov rcx,rax
@@ -666,8 +646,6 @@ set_frame endp
 
 set_frame2 proc fastcall public sym:asym_t
 
-    UNREFERENCED_PARAMETER(sym)
-
     mov rax,SegOverride
     .if rax
         mov rcx,rax
@@ -678,9 +656,7 @@ set_frame2 proc fastcall public sym:asym_t
 set_frame2 endp
 
 
-    assume rdx:nothing
-    assume rcx:nothing
-    assume rsi:ptr code_info
+    assume rdx:nothing, rcx:nothing, rsi:ptr code_info
 
 set_rm_sib proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:uint_t,
         s:char_t, index:int_t, base:int_t, sym:asym_t
@@ -985,9 +961,6 @@ set_rm_sib endp
 
 segm_override proc __ccall public uses rsi rdi rbx opndx:expr_t, CodeInfo:ptr code_info
 
-    UNREFERENCED_PARAMETER(opndx)
-    UNREFERENCED_PARAMETER(CodeInfo)
-
     ldr rcx,opndx
     mov rsi,CodeInfo
     mov rdi,[rcx].expr.override
@@ -1050,9 +1023,6 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
    .new op_type:int_t
    .new value:int_t
    .new size:int_t = 0
-
-    UNREFERENCED_PARAMETER(opndx)
-    UNREFERENCED_PARAMETER(CodeInfo)
 
     ldr rsi,CodeInfo
     ldr rdi,opndx
@@ -1899,9 +1869,6 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
    .new mem_type:byte
    .new scale_factor:uchar_t = SCALE_FACTOR_1
 
-    UNREFERENCED_PARAMETER(opndx)
-    UNREFERENCED_PARAMETER(CodeInfo)
-
     ldr rsi,CodeInfo
     ldr rdi,opndx
     imul ebx,CurrOpnd,opnd_item
@@ -2373,10 +2340,6 @@ memory_operand endp
 process_address proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         CurrOpnd:uint_t, opndx:expr_t
 
-    UNREFERENCED_PARAMETER(CodeInfo)
-    UNREFERENCED_PARAMETER(CurrOpnd)
-    UNREFERENCED_PARAMETER(opndx)
-
     ; parse the memory reference operand
     ; CurrOpnd is 0 for first operand, 1 for second, ...
     ; valid return values: NOT_ERROR, ERROR
@@ -2554,9 +2517,6 @@ process_address endp
 ; are always labeled as EXPR_ADDR by the expression evaluator.
 
 process_const proc fastcall uses rbx CodeInfo:ptr code_info, CurrOpnd:uint_t, opndx:expr_t
-
-    UNREFERENCED_PARAMETER(CodeInfo)
-    UNREFERENCED_PARAMETER(CurrOpnd)
 
     ; v2.11: don't accept an empty string
 
@@ -3166,9 +3126,6 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
   local op1_size:int_t
   local op2_size:int_t
 
-    UNREFERENCED_PARAMETER(CodeInfo)
-    UNREFERENCED_PARAMETER(opndx)
-
     ldr rsi,CodeInfo
     ldr rdi,opndx
 
@@ -3701,8 +3658,6 @@ check_size endp
 
 IsType proc fastcall name:string_t
 
-    UNREFERENCED_PARAMETER(name)
-
     SymFind( rcx )
 
     .if ( rax && [rax].asym.state == SYM_TYPE )
@@ -3727,9 +3682,6 @@ IsType endp
 ;
 
 parsevex proc fastcall string:string_t, result:ptr uchar_t
-
-    UNREFERENCED_PARAMETER(string)
-    UNREFERENCED_PARAMETER(result)
 
     mov eax,[rcx]
 
@@ -3822,9 +3774,7 @@ externdef       CurrEnum:asym_t
 EnumDirective   proto __ccall :int_t, :token_t
 SizeFromExpression proto __ccall :ptr expr
 
-    assume rdi:nothing
-    assume rsi:token_t
-    assume rbx:token_t
+    assume rdi:nothing, rsi:token_t, rbx:token_t
 
 ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
@@ -4921,8 +4871,7 @@ endif
             .endsw
         .endif
 
-        assume rbx:nothing
-        assume rsi:nothing
+        assume rbx:nothing, rsi:nothing
 
         movzx eax,CodeInfo.token
         mov ecx,CodeInfo.opnd[OPND1].type
@@ -5044,8 +4993,6 @@ ParseLine endp
 ;; process a file. introduced in v2.11
 
 ProcessFile proc __ccall tokenarray:token_t
-
-    UNREFERENCED_PARAMETER(tokenarray)
 
     .if ( MODULE.EndDirFound == FALSE && GetTextLine( CurrSource ) )
 

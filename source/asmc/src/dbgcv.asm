@@ -232,9 +232,6 @@ SetPrefixName endp
 
 GetStructLen proc fastcall sym:asym_t, Ofssize:byte
 
-    UNREFERENCED_PARAMETER(sym)
-    UNREFERENCED_PARAMETER(Ofssize)
-
     .if Options.debug_symbols == CV_SIGNATURE_C7
 
         .if ( [rcx].asym.state == SYM_TYPE )
@@ -1175,8 +1172,6 @@ getregister endp
 ;
 
 get_x64_regno proc fastcall regno:dword
-
-    UNREFERENCED_PARAMETER(regno)
 
     .if ( ecx >= T_RAX && ecx <= T_RDI )
         lea rax,reg64

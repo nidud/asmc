@@ -184,8 +184,7 @@ AreStructsEqual endp
 ; handle STRUCT, STRUC, UNION directives
 ; i = index of directive token
 
-    assume rbx:token_t
-    assume rdi:nothing
+    assume rbx:token_t, rdi:nothing
 
 StructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
@@ -973,8 +972,7 @@ SetStructCurrentOffset endp
 ; - LABEL
 ; - ASSUME for GPRs
 
-    assume rsi:ptr qualified_type
-    assume rdi:nothing
+    assume rsi:ptr qualified_type, rdi:nothing
 
 GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:token_t,
         pti:ptr qualified_type

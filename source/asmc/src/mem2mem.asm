@@ -548,10 +548,6 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
    .new aligned:char_t = 0
    .new bitexpr:char_t = 0
 
-    UNREFERENCED_PARAMETER(token)
-    UNREFERENCED_PARAMETER(opnd)
-    UNREFERENCED_PARAMETER(opn2)
-
     ldr esi,token
     ldr rbx,opnd
     ldr rdi,opn2

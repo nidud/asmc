@@ -1,9 +1,9 @@
-
+.nolist
 include OutputManager.inc
-
+.list
     .code
 
-    assume rsi:ptr OUTPUTMANAGER
+    assume class:rbx
 
 ;
 ; Constructor NULLs out all pointers & sets appropriate var vals
@@ -20,8 +20,8 @@ OUTPUTMANAGER::OUTPUTMANAGER endp
 ;
 OUTPUTMANAGER::Release proc
 
-    this.CleanRefs()
-    free(this)
+    CleanRefs()
+    free(rbx)
     ret
 
 OUTPUTMANAGER::Release endp
@@ -35,9 +35,7 @@ OUTPUTMANAGER::InitGeometry endp
 ;
 OUTPUTMANAGER::WindowResize proc
 
-    ldr rcx,this
-
-    mov [rcx].OUTPUTMANAGER.m_NeedsResize,true
+    mov m_NeedsResize,true
     ret
 
 OUTPUTMANAGER::WindowResize endp
@@ -45,17 +43,16 @@ OUTPUTMANAGER::WindowResize endp
 ;
 ; Initialize all state
 ;
-OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
+OUTPUTMANAGER::InitOutput proc uses rsi Window:HWND, SingleOutput:SINT,
         OutCount:ptr UINT, DeskBounds:ptr RECT
 
    .new hr:HRESULT
 
-    ldr rsi,this
     ldr rdx,Window
 
     ; Store window handle
 
-    mov [rsi].m_WindowHandle,rdx ; Window
+    mov m_WindowHandle,rdx ; Window
 
     ; Driver types supported
 
@@ -79,11 +76,10 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
 
     ; Create device
 
-    .for ( ebx = 0: ebx < NumDriverTypes: ++ebx )
+    .for ( esi = 0: esi < NumDriverTypes: ++esi )
 
-        mov hr,D3D11CreateDevice(nullptr, DriverTypes[rbx*4], nullptr, 0, &FeatureLevels,
-                NumFeatureLevels, D3D11_SDK_VERSION, &[rsi].m_Device, &FeatureLevel,
-                &[rsi].m_DeviceContext)
+        mov hr,D3D11CreateDevice(nullptr, DriverTypes[rsi*4], nullptr, 0, &FeatureLevels,
+                NumFeatureLevels, D3D11_SDK_VERSION, &m_Device, &FeatureLevel, &m_DeviceContext)
 
         .if (SUCCEEDED(hr))
 
@@ -95,7 +91,7 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
 
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Device creation in OUTPUTMANAGER failed",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -103,7 +99,7 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
     ; Get DXGI factory
 
    .new DxgiDevice:ptr IDXGIDevice = nullptr
-    mov hr,this.m_Device.QueryInterface(&IID_IDXGIDevice, &DxgiDevice)
+    mov hr,m_Device.QueryInterface(&IID_IDXGIDevice, &DxgiDevice)
     .if (FAILED(hr))
 
         .return ProcessFailure(nullptr,
@@ -116,28 +112,28 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
     mov DxgiDevice,nullptr
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to get parent DXGI Adapter",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
-    mov hr,DxgiAdapter.GetParent(&IID_IDXGIFactory2, &[rsi].m_Factory)
+    mov hr,DxgiAdapter.GetParent(&IID_IDXGIFactory2, &m_Factory)
     DxgiAdapter.Release()
     mov DxgiAdapter,nullptr
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to get parent DXGI Factory",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Register for occlusion status windows message
 
-    mov hr,this.m_Factory.RegisterOcclusionStatusWindow(
-            Window, OCCLUSION_STATUS_MSG, &[rsi].m_OcclusionCookie)
+    mov hr,m_Factory.RegisterOcclusionStatusWindow(
+            Window, OCCLUSION_STATUS_MSG, &m_OcclusionCookie)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to register for occlusion message",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -145,7 +141,7 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
     ; Get window size
 
    .new WindowRect:RECT
-    GetClientRect([rsi].m_WindowHandle, &WindowRect)
+    GetClientRect(m_WindowHandle, &WindowRect)
     mov eax,WindowRect.right
     sub eax,WindowRect.left
     mov ecx,WindowRect.bottom
@@ -164,28 +160,28 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
     mov SwapChainDesc.BufferUsage,DXGI_USAGE_RENDER_TARGET_OUTPUT
     mov SwapChainDesc.SampleDesc.Count,1
     mov SwapChainDesc.SampleDesc.Quality,0
-    mov hr,this.m_Factory.CreateSwapChainForHwnd([rsi].m_Device, Window,
-            &SwapChainDesc, nullptr, nullptr, &[rsi].m_SwapChain)
+    mov hr,m_Factory.CreateSwapChainForHwnd(m_Device, Window,
+            &SwapChainDesc, nullptr, nullptr, &m_SwapChain)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create window swapchain",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Disable the ALT-ENTER shortcut for entering full-screen mode
 
-    mov hr,this.m_Factory.MakeWindowAssociation(Window, DXGI_MWA_NO_ALT_ENTER)
+    mov hr,m_Factory.MakeWindowAssociation(Window, DXGI_MWA_NO_ALT_ENTER)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to make window association",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Create shared texture
 
-    .new Return:DUPL_RETURN = this.CreateSharedSurf(SingleOutput, OutCount, DeskBounds)
+    .new Return:DUPL_RETURN = CreateSharedSurf(SingleOutput, OutCount, DeskBounds)
     .if (Return != DUPL_RETURN_SUCCESS)
 
         .return Return
@@ -193,7 +189,7 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
 
     ; Make new render target view
 
-    mov Return,this.MakeRTV()
+    mov Return,MakeRTV()
     .if ( Return != DUPL_RETURN_SUCCESS )
 
         .return Return
@@ -201,7 +197,7 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
 
     ; Set view port
 
-    this.SetViewPort(Width, Height)
+    SetViewPort(Width, Height)
 
     ; Create the sample state
 
@@ -213,10 +209,10 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
     mov SampDesc.ComparisonFunc,D3D11_COMPARISON_NEVER
     mov SampDesc.MaxLOD,D3D11_FLOAT32_MAX
 
-    mov hr,this.m_Device.CreateSamplerState(&SampDesc, &[rsi].m_SamplerLinear)
+    mov hr,m_Device.CreateSamplerState(&SampDesc, &m_SamplerLinear)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create sampler state in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -235,23 +231,23 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
     mov BlendStateDesc.RenderTarget[0].BlendOpAlpha,D3D11_BLEND_OP_ADD
     mov BlendStateDesc.RenderTarget[0].RenderTargetWriteMask,D3D11_COLOR_WRITE_ENABLE_ALL
 
-    mov hr,this.m_Device.CreateBlendState(&BlendStateDesc, &[rsi].m_BlendState)
+    mov hr,m_Device.CreateBlendState(&BlendStateDesc, &m_BlendState)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create blend state in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Initialize shaders
 
-    mov Return,this.InitShaders()
+    mov Return,InitShaders()
     .if (Return != DUPL_RETURN_SUCCESS)
 
         .return Return
     .endif
 
-    GetWindowRect([rsi].m_WindowHandle, &WindowRect)
+    GetWindowRect(m_WindowHandle, &WindowRect)
 
     mov rax,DeskBounds
     mov ecx,[rax].RECT.right
@@ -260,7 +256,7 @@ OUTPUTMANAGER::InitOutput proc uses rsi rdi rbx Window:HWND, SingleOutput:SINT,
     mov edx,[rax].RECT.bottom
     sub edx,[rax].RECT.top
     shr edx,1
-    MoveWindow([rsi].m_WindowHandle, WindowRect.left, WindowRect.top, ecx, edx, TRUE)
+    MoveWindow(m_WindowHandle, WindowRect.left, WindowRect.top, ecx, edx, TRUE)
 
    .return Return
 
@@ -269,17 +265,16 @@ OUTPUTMANAGER::InitOutput endp
 ;
 ; Recreate shared texture
 ;
-OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
+OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi SingleOutput:SINT,
         OutCount:ptr UINT, DeskBounds:ptr RECT
 
-    ldr rsi,this
     ldr rdi,DeskBounds
 
     ; Get DXGI resources
 
    .new hr:HRESULT
    .new DxgiDevice:ptr IDXGIDevice = nullptr
-    mov hr,this.m_Device.QueryInterface(&IID_IDXGIDevice, &DxgiDevice)
+    mov hr,m_Device.QueryInterface(&IID_IDXGIDevice, &DxgiDevice)
     .if (FAILED(hr))
 
         .return ProcessFailure(nullptr,
@@ -292,7 +287,7 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
     mov DxgiDevice,nullptr
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to get parent DXGI Adapter",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -314,10 +309,10 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
     .if ( SingleOutput < 0 )
 
         mov hr,S_OK
-        .for ( ebx = 0: SUCCEEDED(hr): ++ebx )
+        .for ( esi = 0: SUCCEEDED(hr): ++esi )
 
             SafeRelease(DxgiOutput)
-            mov hr,DxgiAdapter.EnumOutputs(ebx, &DxgiOutput)
+            mov hr,DxgiAdapter.EnumOutputs(esi, &DxgiOutput)
             .if ( DxgiOutput && ( hr != DXGI_ERROR_NOT_FOUND ) )
 
                .new DesktopDesc:DXGI_OUTPUT_DESC
@@ -337,8 +332,7 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
                 .endif
             .endif
         .endf
-
-        dec ebx
+        dec esi
 
     .else
 
@@ -346,7 +340,7 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
         .if (FAILED(hr))
 
             SafeRelease(DxgiAdapter)
-           .return ProcessFailure([rsi].m_Device,
+           .return ProcessFailure(m_Device,
                     L"Output specified to be duplicated does not exist",
                     L"Error", hr, nullptr)
         .endif
@@ -356,7 +350,7 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
         mov [rdi],DesktopDesc.DesktopCoordinates
 
         SafeRelease(DxgiOutput)
-        mov ebx,1
+        mov esi,1
     .endif
 
     SafeRelease(DxgiAdapter)
@@ -364,9 +358,9 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
     ; Set passed in output count variable
 
     mov rcx,OutCount
-    mov [rcx],ebx
+    mov [rcx],esi
 
-    .if ( ebx == 0 )
+    .if ( esi == 0 )
 
         ; We could not find any outputs, the system must be in a transition so
         ; return expected error so we will attempt to recreate
@@ -392,10 +386,10 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
     mov DeskTexD.CPUAccessFlags,0
     mov DeskTexD.MiscFlags,D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX
 
-    mov hr,this.m_Device.CreateTexture2D(&DeskTexD, nullptr, &[rsi].m_SharedSurf)
+    mov hr,m_Device.CreateTexture2D(&DeskTexD, nullptr, &m_SharedSurf)
     .if (FAILED(hr))
 
-        .if ( ebx != 1 )
+        .if ( esi != 1 )
 
             ; If we are duplicating the complete desktop we try to create a single texture to hold the
             ; complete desktop image and blit updates from the per output DDA interface.  The GPU can
@@ -404,7 +398,7 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
             ; The sample only use this large texture to display the desktop image in a single window using DX
             ; we could revert back to using GDI to update the window in this failure case.
 
-            .return ProcessFailure([rsi].m_Device,
+            .return ProcessFailure(m_Device,
                     L"Failed to create DirectX shared texture -" \
                     " we are attempting to create a texture the size of the" \
                     " complete desktop and this may be larger than the maximum" \
@@ -415,7 +409,7 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
 
         .else
 
-            .return ProcessFailure([rsi].m_Device,
+            .return ProcessFailure(m_Device,
                     L"Failed to create shared texture",
                     L"Error", hr, &SystemTransitionsExpectedErrors)
         .endif
@@ -423,10 +417,10 @@ OUTPUTMANAGER::CreateSharedSurf proc uses rsi rdi rbx SingleOutput:SINT,
 
     ; Get keyed mutex
 
-    mov hr,this.m_SharedSurf.QueryInterface(&IID_IDXGIKeyedMutex, &[rsi].m_KeyMutex)
+    mov hr,m_SharedSurf.QueryInterface(&IID_IDXGIKeyedMutex, &m_KeyMutex)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to query for keyed mutex in OUTPUTMANAGER",
                 L"Error", hr, nullptr)
     .endif
@@ -437,9 +431,7 @@ OUTPUTMANAGER::CreateSharedSurf endp
 ;
 ; Present to the application window
 ;
-OUTPUTMANAGER::UpdateApplicationWindow proc uses rsi PointerInfo:ptr PTR_INFO, Occluded:ptr bool
-
-    ldr rsi,this
+OUTPUTMANAGER::UpdateApplicationWindow proc PointerInfo:ptr PTR_INFO, Occluded:ptr bool
 
     ; In a typical desktop duplication application there would be an application
     ; running on one system collecting the desktop images and another
@@ -450,7 +442,7 @@ OUTPUTMANAGER::UpdateApplicationWindow proc uses rsi PointerInfo:ptr PTR_INFO, O
 
     ; Try and acquire sync on common display buffer
 
-    .new hr:HRESULT = this.m_KeyMutex.AcquireSync(1, 100)
+    .new hr:HRESULT = m_KeyMutex.AcquireSync(1, 100)
 
     .if ( hr == WAIT_TIMEOUT )
 
@@ -460,14 +452,14 @@ OUTPUTMANAGER::UpdateApplicationWindow proc uses rsi PointerInfo:ptr PTR_INFO, O
 
     .elseif (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to acquire Keyed mutex in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Got mutex, so draw
 
-    .new retval:DUPL_RETURN = this.DrawFrame()
+    .new retval:DUPL_RETURN = DrawFrame()
     .if ( retval == DUPL_RETURN_SUCCESS )
 
         ; We have keyed mutex so we can access the mouse info
@@ -477,16 +469,16 @@ OUTPUTMANAGER::UpdateApplicationWindow proc uses rsi PointerInfo:ptr PTR_INFO, O
 
             ; Draw mouse into texture
 
-            mov retval,this.DrawMouse(rdx)
+            mov retval,DrawMouse(rdx)
         .endif
     .endif
 
     ; Release keyed mutex
 
-    mov hr,this.m_KeyMutex.ReleaseSync(0)
+    mov hr,m_KeyMutex.ReleaseSync(0)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to Release Keyed mutex in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -497,10 +489,10 @@ OUTPUTMANAGER::UpdateApplicationWindow proc uses rsi PointerInfo:ptr PTR_INFO, O
 
         ; Present to window
 
-        mov hr,this.m_SwapChain.Present(1, 0)
+        mov hr,m_SwapChain.Present(1, 0)
         .if (FAILED(hr))
 
-            .return ProcessFailure([rsi].m_Device,
+            .return ProcessFailure(m_Device,
                     L"Failed to present",
                     L"Error", hr, &SystemTransitionsExpectedErrors)
 
@@ -524,7 +516,7 @@ OUTPUTMANAGER::GetSharedHandle proc
 
     .new Hnd:HANDLE = nullptr
     .new DXGIResource:ptr IDXGIResource = nullptr
-    .new hr:HRESULT = this.m_SharedSurf.QueryInterface(&IID_IDXGIResource, &DXGIResource)
+    .new hr:HRESULT = m_SharedSurf.QueryInterface(&IID_IDXGIResource, &DXGIResource)
     .if (SUCCEEDED(hr))
 
         ; Obtain handle to IDXGIResource object.
@@ -539,21 +531,20 @@ OUTPUTMANAGER::GetSharedHandle endp
 ;
 ; Draw frame into backbuffer
 ;
-OUTPUTMANAGER::DrawFrame proc uses rsi rbx
+OUTPUTMANAGER::DrawFrame proc
 
    .new hr:HRESULT
-    ldr rsi,this
 
     ; If window was resized, resize swapchain
 
-    .if ( [rsi].m_NeedsResize )
+    .if ( m_NeedsResize )
 
-        .new retval:DUPL_RETURN = this.ResizeSwapChain()
+        .new retval:DUPL_RETURN = ResizeSwapChain()
         .if ( retval != DUPL_RETURN_SUCCESS )
 
             .return retval
         .endif
-        mov [rsi].m_NeedsResize,false
+        mov m_NeedsResize,false
     .endif
 
     ; Vertices for drawing whole texture
@@ -568,7 +559,7 @@ OUTPUTMANAGER::DrawFrame proc uses rsi rbx
         }
 
    .new FrameDesc:D3D11_TEXTURE2D_DESC
-    this.m_SharedSurf.GetDesc(&FrameDesc)
+    m_SharedSurf.GetDesc(&FrameDesc)
 
    .new ShaderDesc:D3D11_SHADER_RESOURCE_VIEW_DESC
     mov ShaderDesc.Format,FrameDesc.Format
@@ -580,11 +571,10 @@ OUTPUTMANAGER::DrawFrame proc uses rsi rbx
     ; Create new shader resource view
 
    .new ShaderResource:ptr ID3D11ShaderResourceView = nullptr
-    mov hr,this.m_Device.CreateShaderResourceView(
-            [rsi].m_SharedSurf, &ShaderDesc, &ShaderResource)
+    mov hr,m_Device.CreateShaderResourceView(m_SharedSurf, &ShaderDesc, &ShaderResource)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create shader resource when drawing a frame",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -595,17 +585,13 @@ OUTPUTMANAGER::DrawFrame proc uses rsi rbx
    .new Offs:UINT = 0
    .new blendFactor[4]:FLOAT = { 0.0, 0.0, 0.0, 0.0 }
 
-    assume rbx:ptr ID3D11DeviceContext
-
-    mov rbx,[rsi].m_DeviceContext
-
-    [rbx].OMSetBlendState(nullptr, &blendFactor, 0xffffffff)
-    [rbx].OMSetRenderTargets(1, &[rsi].m_RTV, nullptr)
-    [rbx].VSSetShader([rsi].m_VertexShader, nullptr, 0)
-    [rbx].PSSetShader([rsi].m_PixelShader, nullptr, 0)
-    [rbx].PSSetShaderResources(0, 1, &ShaderResource)
-    [rbx].PSSetSamplers(0, 1, &[rsi].m_SamplerLinear)
-    [rbx].IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+    m_DeviceContext.OMSetBlendState(nullptr, &blendFactor, 0xffffffff)
+    m_DeviceContext.OMSetRenderTargets(1, &m_RTV, nullptr)
+    m_DeviceContext.VSSetShader(m_VertexShader, nullptr, 0)
+    m_DeviceContext.PSSetShader(m_PixelShader, nullptr, 0)
+    m_DeviceContext.PSSetShaderResources(0, 1, &ShaderResource)
+    m_DeviceContext.PSSetSamplers(0, 1, &m_SamplerLinear)
+    m_DeviceContext.IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 
    .new BufferDesc:D3D11_BUFFER_DESC = {0}
     mov BufferDesc.Usage,D3D11_USAGE_DEFAULT
@@ -620,21 +606,19 @@ OUTPUTMANAGER::DrawFrame proc uses rsi rbx
 
     ; Create vertex buffer
 
-    mov hr,this.m_Device.CreateBuffer(&BufferDesc, &InitData, &VertexBuffer)
+    mov hr,m_Device.CreateBuffer(&BufferDesc, &InitData, &VertexBuffer)
     .if (FAILED(hr))
 
         SafeRelease(ShaderResource)
-       .return ProcessFailure([rsi].m_Device,
+       .return ProcessFailure(m_Device,
                 L"Failed to create vertex buffer when drawing a frame",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
-    [rbx].IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offs)
+    m_DeviceContext.IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offs)
 
     ; Draw textured quad onto render target
 
-    [rbx].Draw(NUMVERTICES, 0)
-
-    assume rbx:nothing
+    m_DeviceContext.Draw(NUMVERTICES, 0)
 
     SafeRelease(VertexBuffer)
     SafeRelease(ShaderResource)
@@ -646,7 +630,7 @@ OUTPUTMANAGER::DrawFrame endp
 ;
 ; Process both masked and monochrome pointers
 ;
-OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
+OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi \
         IsMono      : bool,
         PtrInfo     : ptr PTR_INFO,
         PtrWidth    : ptr SINT,
@@ -656,7 +640,6 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
         InitBuffer  : ptr ptr BYTE,
         Box         : ptr D3D11_BOX
 
-    ldr rsi,this
     ldr rdi,PtrInfo
 
     assume rdi:ptr PTR_INFO
@@ -664,7 +647,7 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
     ; Desktop dimensions
 
    .new FullDesc:D3D11_TEXTURE2D_DESC
-    this.m_SharedSurf.GetDesc(&FullDesc)
+    m_SharedSurf.GetDesc(&FullDesc)
 
    .new DesktopWidth:SINT = FullDesc.Width
    .new DesktopHeight:SINT = FullDesc.Height
@@ -742,32 +725,31 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
     mov CopyBufferDesc.MiscFlags,0
 
     .new CopyBuffer:ptr ID3D11Texture2D = nullptr
-    .new hr:HRESULT = this.m_Device.CreateTexture2D(&CopyBufferDesc, nullptr, &CopyBuffer)
+    .new hr:HRESULT = m_Device.CreateTexture2D(&CopyBufferDesc, nullptr, &CopyBuffer)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed creating staging texture for pointer",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Copy needed part of desktop image
 
-    mov rbx,Box
+    mov rsi,Box
     mov rcx,PtrLeft
     mov rdx,PtrTop
     mov ecx,[rcx]
     mov edx,[rdx]
-    mov [rbx].D3D11_BOX.left,ecx
-    mov [rbx].D3D11_BOX.top,edx
+    mov [rsi].D3D11_BOX.left,ecx
+    mov [rsi].D3D11_BOX.top,edx
     mov rax,PtrWidth
     add ecx,[rax]
-    mov [rbx].D3D11_BOX.right,ecx
+    mov [rsi].D3D11_BOX.right,ecx
     mov rax,PtrHeight
     add edx,[rax]
-    mov [rbx].D3D11_BOX.bottom,edx
+    mov [rsi].D3D11_BOX.bottom,edx
 
-    this.m_DeviceContext.CopySubresourceRegion(
-            CopyBuffer, 0, 0, 0, 0, [rsi].m_SharedSurf, 0, rbx)
+    m_DeviceContext.CopySubresourceRegion(CopyBuffer, 0, 0, 0, 0, m_SharedSurf, 0, rsi)
 
     ; QI for IDXGISurface
 
@@ -790,7 +772,7 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
     .if (FAILED(hr))
 
         SafeRelease(CopySurface)
-       .return ProcessFailure([rsi].m_Device,
+       .return ProcessFailure(m_Device,
                 L"Failed to map surface for pointer",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -822,7 +804,7 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
     .endif
 
 
-    mov rbx,MappedSurface.pBits
+    mov rsi,MappedSurface.pBits
     mov eax,MappedSurface.Pitch
     shr eax,2
    .new DesktopPitchInPixels:UINT = eax
@@ -947,7 +929,7 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
                     mov eax,Row
                     mul DesktopPitchInPixels
                     add eax,Col
-                    xor ecx,[rbx+rax*4]
+                    xor ecx,[rsi+rax*4]
                 .endif
                 or  ecx,0xFF000000
                 mov eax,Width
@@ -966,7 +948,7 @@ OUTPUTMANAGER::ProcessMonoMask proc uses rsi rdi rbx \
 
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to unmap surface for pointer",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -977,9 +959,8 @@ OUTPUTMANAGER::ProcessMonoMask endp
 ;
 ; Draw mouse provided in buffer to backbuffer
 ;
-OUTPUTMANAGER::DrawMouse proc uses rsi rdi rbx PtrInfo:ptr PTR_INFO
+OUTPUTMANAGER::DrawMouse proc uses rdi PtrInfo:ptr PTR_INFO
 
-    ldr rsi,this
     ldr rdi,PtrInfo
 
     ; Vars to be used
@@ -1003,7 +984,7 @@ OUTPUTMANAGER::DrawMouse proc uses rsi rdi rbx PtrInfo:ptr PTR_INFO
         }
 
    .new FullDesc:D3D11_TEXTURE2D_DESC
-    this.m_SharedSurf.GetDesc(&FullDesc)
+    m_SharedSurf.GetDesc(&FullDesc)
 
    .new DesktopWidth:SINT = FullDesc.Width
    .new DesktopHeight:SINT = FullDesc.Height
@@ -1064,13 +1045,13 @@ OUTPUTMANAGER::DrawMouse proc uses rsi rdi rbx PtrInfo:ptr PTR_INFO
 
     .case DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MONOCHROME
 
-        this.ProcessMonoMask(true, PtrInfo, &PtrWidth,
+        ProcessMonoMask(true, PtrInfo, &PtrWidth,
                 &PtrHeight, &PtrLeft, &PtrTop, &InitBuffer, &Box)
        .endc
 
     .case DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MASKED_COLOR
 
-        this.ProcessMonoMask(false, PtrInfo, &PtrWidth,
+        ProcessMonoMask(false, PtrInfo, &PtrWidth,
                 &PtrHeight, &PtrLeft, &PtrTop, &InitBuffer, &Box)
        .endc
     .endsw
@@ -1132,22 +1113,22 @@ OUTPUTMANAGER::DrawMouse proc uses rsi rdi rbx PtrInfo:ptr PTR_INFO
 
     ; Create mouseshape as texture
 
-    .new hr:HRESULT = this.m_Device.CreateTexture2D(&Desc, &InitData, &MouseTex)
+    .new hr:HRESULT = m_Device.CreateTexture2D(&Desc, &InitData, &MouseTex)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create mouse pointer texture",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Create shader resource from texture
 
-    mov hr,this.m_Device.CreateShaderResourceView(MouseTex, &SDesc, &ShaderRes)
+    mov hr,m_Device.CreateShaderResourceView(MouseTex, &SDesc, &ShaderRes)
     .if (FAILED(hr))
 
         SafeRelease(MouseTex)
 
-       .return ProcessFailure([rsi].m_Device,
+       .return ProcessFailure(m_Device,
                 L"Failed to create shader resource from mouse pointer texture",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -1163,13 +1144,13 @@ OUTPUTMANAGER::DrawMouse proc uses rsi rdi rbx PtrInfo:ptr PTR_INFO
 
     ; Create vertex buffer
 
-    mov hr,this.m_Device.CreateBuffer(&BDesc, &InitData, &VertexBufferMouse)
+    mov hr,m_Device.CreateBuffer(&BDesc, &InitData, &VertexBufferMouse)
     .if (FAILED(hr))
 
         SafeRelease(ShaderRes)
         SafeRelease(MouseTex)
 
-       .return ProcessFailure([rsi].m_Device,
+       .return ProcessFailure(m_Device,
                 L"Failed to create mouse pointer vertex buffer in OutputManager",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -1180,17 +1161,17 @@ OUTPUTMANAGER::DrawMouse proc uses rsi rdi rbx PtrInfo:ptr PTR_INFO
    .new Stride:UINT = sizeof(VERTEX)
    .new Offs:UINT = 0
 
-    this.m_DeviceContext.IASetVertexBuffers(0, 1, &VertexBufferMouse, &Stride, &Offs)
-    this.m_DeviceContext.OMSetBlendState([rsi].m_BlendState, &BlendFactor, 0xFFFFFFFF)
-    this.m_DeviceContext.OMSetRenderTargets(1, &[rsi].m_RTV, nullptr)
-    this.m_DeviceContext.VSSetShader([rsi].m_VertexShader, nullptr, 0)
-    this.m_DeviceContext.PSSetShader([rsi].m_PixelShader, nullptr, 0)
-    this.m_DeviceContext.PSSetShaderResources(0, 1, &ShaderRes)
-    this.m_DeviceContext.PSSetSamplers(0, 1, &[rsi].m_SamplerLinear)
+    m_DeviceContext.IASetVertexBuffers(0, 1, &VertexBufferMouse, &Stride, &Offs)
+    m_DeviceContext.OMSetBlendState(m_BlendState, &BlendFactor, 0xFFFFFFFF)
+    m_DeviceContext.OMSetRenderTargets(1, &m_RTV, nullptr)
+    m_DeviceContext.VSSetShader(m_VertexShader, nullptr, 0)
+    m_DeviceContext.PSSetShader(m_PixelShader, nullptr, 0)
+    m_DeviceContext.PSSetShaderResources(0, 1, &ShaderRes)
+    m_DeviceContext.PSSetSamplers(0, 1, &m_SamplerLinear)
 
     ; Draw
 
-    this.m_DeviceContext.Draw(NUMVERTICES, 0)
+    m_DeviceContext.Draw(NUMVERTICES, 0)
 
     ; Clean
 
@@ -1208,17 +1189,15 @@ OUTPUTMANAGER::DrawMouse endp
 ;
 ; Initialize shaders for drawing to screen
 ;
-OUTPUTMANAGER::InitShaders proc uses rsi
+OUTPUTMANAGER::InitShaders proc
 
    .new hr:HRESULT
    .new Size:size_t = g_VS_size
 
-    ldr rsi,this
-
-    mov hr,this.m_Device.CreateVertexShader(&g_VS, Size, nullptr, &[rsi].m_VertexShader)
+    mov hr,m_Device.CreateVertexShader(&g_VS, Size, nullptr, &m_VertexShader)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create vertex shader in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -1228,20 +1207,20 @@ OUTPUTMANAGER::InitShaders proc uses rsi
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
         }
    .new NumElements:UINT = ARRAYSIZE(Layout)
-    mov hr,this.m_Device.CreateInputLayout(&Layout, NumElements, &g_VS, Size, &[rsi].m_InputLayout)
+    mov hr,m_Device.CreateInputLayout(&Layout, NumElements, &g_VS, Size, &m_InputLayout)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create input layout in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
-    this.m_DeviceContext.IASetInputLayout([rsi].m_InputLayout)
+    m_DeviceContext.IASetInputLayout(m_InputLayout)
 
     mov Size,g_PS_size
-    mov hr,this.m_Device.CreatePixelShader(&g_PS, Size, nullptr, &[rsi].m_PixelShader)
+    mov hr,m_Device.CreatePixelShader(&g_PS, Size, nullptr, &m_PixelShader)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create pixel shader in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
@@ -1253,35 +1232,33 @@ OUTPUTMANAGER::InitShaders endp
 ;
 ; Reset render target view
 ;
-OUTPUTMANAGER::MakeRTV proc uses rsi
-
-    ldr rsi,this
+OUTPUTMANAGER::MakeRTV proc
 
     ; Get backbuffer
 
     .new BackBuffer:ptr ID3D11Texture2D = nullptr
-    .new hr:HRESULT = this.m_SwapChain.GetBuffer(0, &IID_ID3D11Texture2D, &BackBuffer)
+    .new hr:HRESULT = m_SwapChain.GetBuffer(0, &IID_ID3D11Texture2D, &BackBuffer)
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to get backbuffer for making render target view in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Create a render target view
 
-    mov hr,this.m_Device.CreateRenderTargetView(BackBuffer, nullptr, &[rsi].m_RTV)
+    mov hr,m_Device.CreateRenderTargetView(BackBuffer, nullptr, &m_RTV)
     BackBuffer.Release()
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to create render target view in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Set new render target
 
-    this.m_DeviceContext.OMSetRenderTargets(1, &[rsi].m_RTV, nullptr)
+    m_DeviceContext.OMSetRenderTargets(1, &m_RTV, nullptr)
 
     .return DUPL_RETURN_SUCCESS
 
@@ -1306,7 +1283,7 @@ OUTPUTMANAGER::SetViewPort proc Width:UINT, Height:UINT
     mov VP.TopLeftX,0
     mov VP.TopLeftY,0
 
-    this.m_DeviceContext.RSSetViewports(1, &VP)
+    m_DeviceContext.RSSetViewports(1, &VP)
     ret
 
 OUTPUTMANAGER::SetViewPort endp
@@ -1314,14 +1291,12 @@ OUTPUTMANAGER::SetViewPort endp
 ;
 ; Resize swapchain
 ;
-OUTPUTMANAGER::ResizeSwapChain proc uses rsi
+OUTPUTMANAGER::ResizeSwapChain proc
 
-    ldr rsi,this
-
-    SafeRelease([rsi].m_RTV)
+    SafeRelease(m_RTV)
 
    .new WindowRect:RECT
-    GetClientRect([rsi].m_WindowHandle, &WindowRect)
+    GetClientRect(m_WindowHandle, &WindowRect)
 
     mov eax,WindowRect.right
     sub eax,WindowRect.left
@@ -1333,9 +1308,9 @@ OUTPUTMANAGER::ResizeSwapChain proc uses rsi
     ; Resize swapchain
 
    .new SwapChainDesc:DXGI_SWAP_CHAIN_DESC
-    this.m_SwapChain.GetDesc(&SwapChainDesc)
+    m_SwapChain.GetDesc(&SwapChainDesc)
 
-   .new hr:HRESULT = this.m_SwapChain.ResizeBuffers(
+   .new hr:HRESULT = m_SwapChain.ResizeBuffers(
             SwapChainDesc.BufferCount,
             Width,
             Height,
@@ -1344,14 +1319,14 @@ OUTPUTMANAGER::ResizeSwapChain proc uses rsi
 
     .if (FAILED(hr))
 
-        .return ProcessFailure([rsi].m_Device,
+        .return ProcessFailure(m_Device,
                 L"Failed to resize swapchain buffers in OUTPUTMANAGER",
                 L"Error", hr, &SystemTransitionsExpectedErrors)
     .endif
 
     ; Make new render target view
 
-    .new retval:DUPL_RETURN = this.MakeRTV()
+    .new retval:DUPL_RETURN = MakeRTV()
     .if ( retval != DUPL_RETURN_SUCCESS )
 
         .return retval
@@ -1359,7 +1334,7 @@ OUTPUTMANAGER::ResizeSwapChain proc uses rsi
 
     ; Set new viewport
 
-    this.SetViewPort(Width, Height)
+    SetViewPort(Width, Height)
    .return retval
 
 OUTPUTMANAGER::ResizeSwapChain endp
@@ -1367,28 +1342,26 @@ OUTPUTMANAGER::ResizeSwapChain endp
 ;
 ; Releases all references
 ;
-OUTPUTMANAGER::CleanRefs proc uses rsi
+OUTPUTMANAGER::CleanRefs proc
 
-    ldr rsi,this
-
-    SafeRelease([rsi].m_VertexShader)
-    SafeRelease([rsi].m_PixelShader)
-    SafeRelease([rsi].m_InputLayout)
-    SafeRelease([rsi].m_RTV)
-    SafeRelease([rsi].m_SamplerLinear)
-    SafeRelease([rsi].m_BlendState)
-    SafeRelease([rsi].m_DeviceContext)
-    SafeRelease([rsi].m_Device)
-    SafeRelease([rsi].m_SwapChain)
-    SafeRelease([rsi].m_SharedSurf)
-    SafeRelease([rsi].m_KeyMutex)
-    .if ([rsi].m_Factory)
-        .if ([rsi].m_OcclusionCookie)
-            this.m_Factory.UnregisterOcclusionStatus([rsi].m_OcclusionCookie)
-            mov [rsi].m_OcclusionCookie,0
+    SafeRelease(m_VertexShader)
+    SafeRelease(m_PixelShader)
+    SafeRelease(m_InputLayout)
+    SafeRelease(m_RTV)
+    SafeRelease(m_SamplerLinear)
+    SafeRelease(m_BlendState)
+    SafeRelease(m_DeviceContext)
+    SafeRelease(m_Device)
+    SafeRelease(m_SwapChain)
+    SafeRelease(m_SharedSurf)
+    SafeRelease(m_KeyMutex)
+    .if (m_Factory)
+        .if (m_OcclusionCookie)
+            m_Factory.UnregisterOcclusionStatus(m_OcclusionCookie)
+            mov m_OcclusionCookie,0
         .endif
-        this.m_Factory.Release()
-        mov [rsi].m_Factory,nullptr
+        m_Factory.Release()
+        mov m_Factory,nullptr
     .endif
     ret
 

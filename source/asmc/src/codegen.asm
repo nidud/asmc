@@ -40,9 +40,7 @@ PREFIX_GS       equ 0x65
 
     .code
 
-    option proc:private
-    assume rsi:ptr code_info
-    assume rdi:instr_t
+    assume proc:private, rsi:ptr code_info, rdi:instr_t
 
 ; - determine what code should be output and their order.
 ; - output prefix bytes:

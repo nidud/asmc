@@ -10,71 +10,62 @@ include assert.inc
 
 include ole2.inc
 include UIAutomation.inc
-
 include Provider.inc
 
     .code
 
-    assume rcx:ptr Provider
+    assume class:rbx
 
 Provider::Provider proc hwnd:HWND
 
-    mov rcx,@ComAlloc(Provider)
-    mov rdx,hwnd
-    mov [rcx].m_refCount,1
-    mov [rcx].m_controlHWnd,rdx
+    .if @ComAlloc(Provider)
+
+        mov rbx,rax
+        mov rdx,hwnd
+        mov m_controlHWnd,rdx
+    .endif
     ret
 
 Provider::Provider endp
-
-
-Provider::delete proc
-
-    free(rcx)
-    ret
-
-Provider::delete endp
 
 
 ; IUnknown implementation.
 
 Provider::AddRef proc
 
-    .return InterlockedIncrement(&[rcx].m_refCount)
+    .return InterlockedIncrement(&m_refCount)
 
 Provider::AddRef endp
 
 
 Provider::Release proc
 
-    .if ( InterlockedDecrement(&[rcx].m_refCount) == 0 )
+    .ifd ( InterlockedDecrement(&m_refCount) == 0 )
 
-        this.delete()
+        free(rbx)
         xor eax,eax
     .endif
     ret
 
 Provider::Release endp
 
-Provider::QueryInterface proc riid:REFIID, ppInterface:ptr ptr
 
-    mov rax,[rdx]    ; IRawElementProviderFragment ?
-    .if ( rax == qword ptr IID_IUnknown ||
-          rax == qword ptr IID_IRawElementProviderSimple ||
-          rax == qword ptr IID_IInvokeProvider )
+Provider::QueryInterface proc uses rsi rdi riid:REFIID, ppInterface:ptr ptr
 
-        mov [r8],rcx
+    ldr rsi,riid
+    ldr rdi,ppInterface
 
-    .else
-
-        xor eax,eax
-        mov [r8],rax
-
-        .return E_NOINTERFACE
-    .endif
-
-    inc [rcx].m_refCount
-    .return S_OK
+    .switch
+    .case IsEqualIID(rsi, &IID_IUnknown)
+    .case IsEqualIID(rsi, &IID_IRawElementProviderSimple)
+    .case IsEqualIID(rsi, &IID_IInvokeProvider)
+        mov [rdi],rbx
+        AddRef()
+       .return( S_OK )
+    .endsw
+    mov [rdi],rax
+    mov eax,E_NOINTERFACE
+    ret
 
 Provider::QueryInterface endp
 
@@ -85,8 +76,11 @@ Provider::QueryInterface endp
 
 Provider::get_ProviderOptions proc pRetVal:ptr ProviderOptions
 
+    ldr rdx,pRetVal
+
     mov dword ptr [rdx],ProviderOptions_ServerSideProvider
-   .return S_OK
+    xor eax,eax
+    ret
 
 Provider::get_ProviderOptions endp
 
@@ -94,13 +88,15 @@ Provider::get_ProviderOptions endp
 
 Provider::GetPatternProvider proc patternId:PATTERNID, pRetVal:ptr ptr IUnknown
 
-    xor eax,eax
-    .if ( edx == UIA_InvokePatternId )
+    ldr rcx,pRetVal
 
-        inc [rcx].m_refCount
-        mov [r8],rcx
+    xor eax,eax
+    .if ( ldr(patternId) == UIA_InvokePatternId )
+
+        inc m_refCount
+        mov [rcx],rbx
     .else
-        mov [r8],rax
+        mov [rcx],rax
     .endif
     ret
 
@@ -108,30 +104,26 @@ Provider::GetPatternProvider endp
 
 ; Gets custom properties.
 
-Provider::GetPropertyValue proc propertyId:PROPERTYID, pRetVal:ptr VARIANT
+Provider::GetPropertyValue proc uses rdi propertyId:PROPERTYID, pRetVal:ptr VARIANT
+
+    ldr edx,propertyId
+    ldr rdi,pRetVal
 
     .if ( edx == UIA_ControlTypePropertyId )
 
-        mov [r8].VARIANT.vt,VT_I4
-        mov [r8].VARIANT.lVal,UIA_ButtonControlTypeId
-
+        mov [rdi].VARIANT.vt,VT_I4
+        mov [rdi].VARIANT.lVal,UIA_ButtonControlTypeId
 
     ; The Name property comes from the Caption property of the control window, if it has one.
     ; The Name is overridden here for the sake of illustration.
 
     .elseif ( edx == UIA_NamePropertyId )
 
-        SysAllocString(L"ColorButton")
-        mov r8,pRetVal
-        mov [r8].VARIANT.vt,VT_BSTR
-        mov [r8].VARIANT.bstrVal,rax
-
+        mov [rdi].VARIANT.vt,VT_BSTR
+        mov [rdi].VARIANT.bstrVal,SysAllocString(L"ColorButton")
     .else
-
-        mov [r8].VARIANT.vt,VT_EMPTY
-
+        mov [rdi].VARIANT.vt,VT_EMPTY
         ; UI Automation will attempt to get the property from the host window provider.
-
     .endif
     .return S_OK
 
@@ -141,7 +133,7 @@ Provider::GetPropertyValue endp
 
 Provider::get_HostRawElementProvider proc pRetVal:ptr ptr IRawElementProviderSimple
 
-   .return UiaHostProviderFromHwnd([rcx].m_controlHWnd, rdx)
+   .return UiaHostProviderFromHwnd(m_controlHWnd, ldr(pRetVal))
 
 Provider::get_HostRawElementProvider endp
 
@@ -150,7 +142,7 @@ Provider::get_HostRawElementProvider endp
 
 Provider::_Invoke proc
 
-    PostMessage([rcx].m_controlHWnd,  WM_LBUTTONDOWN, NULL, NULL)
+    PostMessage(m_controlHWnd,  WM_LBUTTONDOWN, NULL, NULL)
    .return S_OK
 
 Provider::_Invoke endp

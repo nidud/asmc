@@ -133,12 +133,6 @@
       Description="Makes all symbols public."
       Switch="/Zf" />
     <BoolProperty
-      Name="GenerateDebugInformation"
-      HelpUrl="https://github.com/nidud/asmc/"
-      DisplayName="Generate Debug Information"
-      Description="Generates Debug Information"
-      Switch="/Z7" />
-    <BoolProperty
       Name="EnableMASM51Compatibility"
       HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Enable MASM 5.1 Compatibility"
@@ -208,6 +202,35 @@
       DisplayName="Generate Browse Information File"
       Description="Specifies whether to generate browse information file and its optional name or location of the browse information file.     (/FR[name])"
       Switch="/FR&quot;[value]&quot;" />
+    <EnumProperty
+      Name="GenerateDebugInformation"
+      HelpUrl="https://github.com/nidud/asmc/"
+      DisplayName="Debug Information Level"
+      Description="Sets the Debug level, where level is 0 to 5.">
+      <EnumValue
+        Name="0"
+        DisplayName="No Debugging" />
+      <EnumValue
+        Name="1"
+        DisplayName="Globals Only"
+        Switch="/Zi0" />
+      <EnumValue
+        Name="2"
+        DisplayName="Globals and Locals"
+        Switch="/Zi1" />
+      <EnumValue
+        Name="3"
+        DisplayName="Globals, Locals and Types"
+        Switch="/Zi" />
+      <EnumValue
+        Name="4"
+        DisplayName="Globals, Locals, Types and Constants"
+        Switch="/Zi3" />
+      <EnumValue
+        Name="5"
+        DisplayName="Globals, Locals, Types and Register Parameters"
+        Switch="/Z7" />
+    </EnumProperty>
     <EnumProperty
       Name="PreserveIdentifierCase"
       HelpUrl="https://github.com/nidud/asmc/"

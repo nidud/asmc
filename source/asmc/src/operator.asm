@@ -340,8 +340,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:token_t
 ProcessOperator endp
 
 
-    assume rsi:expr_t
-    assume rbx:ptr opinfo
+    assume rsi:expr_t, rbx:ptr opinfo
 
 EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
 

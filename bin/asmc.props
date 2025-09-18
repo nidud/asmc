@@ -11,7 +11,7 @@
       <NoLogo>true</NoLogo>
       <ObjectFileName>$(IntDir)%(FileName).obj</ObjectFileName>
       <WarningLevel>2</WarningLevel>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>5</GenerateDebugInformation>
       <CommandLineTemplate Condition="'$(Platform)' == 'win32'">asmc.exe -c [AllOptions] [AdditionalOptions] [Inputs]</CommandLineTemplate>
       <CommandLineTemplate Condition="'$(Platform)' == 'X64'">asmc64.exe -c [AllOptions] [AdditionalOptions] [Inputs]</CommandLineTemplate>
       <CommandLineTemplate Condition="'$(Platform)' != 'win32' and '$(Platform)' != 'X64'">echo ASMC not supported on this platform

@@ -176,8 +176,7 @@ pe64def IMAGE_PE_HEADER64 {
 
     ; calculate starting offset of segments and groups
 
-    assume rbx:ptr calc_param
-    assume rdi:segment_t
+    assume rbx:ptr calc_param, rdi:segment_t
 
 CalcOffset proc fastcall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
 
@@ -1502,8 +1501,7 @@ pe_get_characteristics endp
 
 ; set base relocations
 
-    assume rbx:ptr fixup
-    assume rsi:segment_t
+    assume rbx:ptr fixup, rsi:segment_t
 
 pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:asym_t
 
@@ -1661,8 +1659,7 @@ endif
 ; .reloc - IMAGE_DIRECTORY_ENTRY_BASERELOC
 ; .tls   - IMAGE_DIRECTORY_ENTRY_TLS
 
-    assume rbx:nothing
-    assume rsi:nothing
+    assume rbx:nothing, rsi:nothing
 
 ifdef ADD_MANIFESTFILE ; v2.36.26 - add manifest file
 

@@ -321,9 +321,6 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
    .new fltproc:byte
    .new brackets:byte
 
-    UNREFERENCED_PARAMETER(sym)
-    UNREFERENCED_PARAMETER(string)
-
     ldr rdx,sym
     ldr rax,string
     lea rsi,[rax+1]

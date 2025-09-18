@@ -165,10 +165,7 @@ OpenVtbl proc __ccall uses rsi rbx this:ptr com_item
 
 OpenVtbl endp
 
-    assume rsi:nothing
-    assume rdi:nothing
-
-    assume rbx:token_t
+    assume rsi:nothing, rdi:nothing, rbx:token_t
 
 get_param_name proc __ccall uses rsi rdi rbx tokenarray:token_t, token:string_t,
         count:ptr int_t, isid:ptr int_t, context:ptr string_t, langtype:ptr int_t

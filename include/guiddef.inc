@@ -124,22 +124,22 @@ endif
 
 ifndef _SYS_GUID_OPERATORS_
 define _SYS_GUID_OPERATORS_
-InlineIsEqualGUID proto fastcall :ptr, :ptr {
-    mov rax,[rcx]
-    sub rax,[rdx]
-    add rax,[rcx+8]
-    sub rax,[rdx+8]
+IsEqualGUID proto fastcall :ptr, :ptr {
+	mov rax,[rcx]
+	sub rax,[rdx]
 ifndef _WIN64
-    add eax,[rcx+4]
-    sub eax,[rdx+4]
-    add eax,[rcx+12]
-    sub eax,[rdx+12]
+	add eax,[rcx+4]
+	sub eax,[rdx+4]
+	add eax,[rcx+12]
+	sub eax,[rdx+12]
 endif
-    retm<zero?>
-    }
-IsEqualGUID macro rguid1, rguid2
-	exitm<InlineIsEqualGUID(rguid1, rguid2)>
-	endm
+	add rax,[rcx+8]
+	sub rax,[rdx+8]
+	mov eax,0
+	setz al
+	retm<eax>
+	}
+
 IsEqualIID macro riid1, riid2
 	exitm<IsEqualGUID(riid1, riid2)>
 	endm

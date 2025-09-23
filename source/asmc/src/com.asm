@@ -123,6 +123,9 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
    .new size:int_t
    .new wsize:int_t
    .new alloc:string_t = "malloc"
+   .new i:int_t
+   .new opnd:expr
+   .new vinst:uint_t = T_MOV
 
     ldr rsi,sym
     ldr rbx,table
@@ -139,32 +142,44 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
 
     .switch
     .case rbx
-        .if ( [rbx].token == T_ID && [rbx+asm_tok].token == T_CL_BRACKET )
-            .if ( SymFind( [rbx].string_ptr ) && [rax].asym.mem_type == MT_TYPE )
-                mov rcx,[rax].asym.type
-                .if ( rcx && [rcx].asym.isvtable )
-                    AddLineQueueX( "%s(%d)", alloc, [rsi].asym.total_size )
-                    mov rbx,[rbx].string_ptr
+
+        mov rax,rbx
+        sub rax,TokenArray
+        mov ecx,asm_tok
+        xor edx,edx
+        div ecx
+        mov i,eax
+
+        .return .ifd ( EvalOperand( &i, TokenArray, TokenCount, &opnd, 0 ) == ERROR )
+        .if ( opnd.kind != EXPR_CONST )
+
+            .if ( opnd.kind == EXPR_ADDR && opnd.mem_type == MT_TYPE )
+                mov vinst,T_LEA
+            .endif
+            imul ecx,i,asm_tok
+            add rcx,TokenArray
+            .if ( [rcx].asm_tok.token == T_COMMA )
+
+                .if ( [rcx+asm_tok].asm_tok.token == T_REG )
+
+                    AddLineQueueX( "%s(addr [%r+%d])", alloc, [rcx+asm_tok].asm_tok.tokval,  [rsi].asym.total_size )
                    .endc
                 .endif
+
+                inc i
+                .return .ifd ( EvalOperand( &i, TokenArray, TokenCount, &opnd, 0 ) == ERROR )
+                .if ( opnd.kind != EXPR_CONST )
+                    .return( asmerr( 2026 ) )
+                .endif
+                mov ecx,opnd.value
+                add ecx,[rsi].asym.total_size
+            .else
+                mov ecx,[rsi].asym.total_size
             .endif
+            AddLineQueueX( "%s(%d)", alloc, ecx )
+           .endc
         .endif
-        .for ( rdx = rbx, rbx+=asm_tok, eax = 0 : [rbx].token != T_FINAL : rbx+=asm_tok )
-            .if ( [rbx].token == T_OP_BRACKET )
-                inc eax
-            .elseif ( [rbx].token == T_CL_BRACKET )
-                .break .if ( eax == 0 )
-                dec eax
-            .endif
-        .endf
-        mov rbx,[rbx].tokpos
-        mov byte ptr [rbx],0
-        lea rcx,@CStr("%s(%s+%d+%sVtbl)")
-        .if ( [rdx].asm_tok.token == T_REG || ( [rdx].asm_tok.token == T_ID && [rdx].asm_tok.IsProc ) )
-            lea rcx,@CStr("%s(&[%s+%d+%sVtbl])")
-        .endif
-        AddLineQueueX( rcx, alloc, [rdx].asm_tok.tokpos, size, [rsi].asym.name )
-        mov byte ptr [rbx],')'
+        AddLineQueueX( "%s(%d+%d+%sVtbl)", alloc, opnd.value, size, [rsi].asym.name )
         xor ebx,ebx
        .endc
     .default
@@ -188,12 +203,12 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
             .if ( rbx )
                 AddLineQueueX(
                     " mov %r, %r\n"
-                    " lea %r, %s", r_di, edx, edx, rbx )
+                    " %r %r, %s", r_di, edx, vinst, edx, [rbx].string_ptr )
             .else
                 AddLineQueueX( " xchg %r, %r", r_di, edx )
             .endif
     .elseif ( rbx )
-        AddLineQueueX( " lea %r, %s", &[rdi+T_EDX-T_EAX], rbx )
+        AddLineQueueX( " %r %r, %s", vinst, &[rdi+T_EDX-T_EAX], [rbx].string_ptr )
     .else
         AddLineQueueX( " lea %r, [%r+%d]", &[rdi+T_EDX-T_EAX], edi, size )
     .endif

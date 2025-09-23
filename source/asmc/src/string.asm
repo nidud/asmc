@@ -1833,8 +1833,8 @@ ifdef USE_COMALLOC
     mov [rdi].func_ptr,&ComAllocFunc
     mov [rdi].isfunc,1
     mov rsi,[rdi].macroinfo
-    mov [rsi].parmcnt,2
-    mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
+    mov [rsi].parmcnt,3
+    mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 3 )
     mov [rax].mparm_list.required,TRUE
 
 endif

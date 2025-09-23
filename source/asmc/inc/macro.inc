@@ -23,6 +23,7 @@ ExpandText		proto __ccall :string_t, :token_t, :uint_t
 ExpandLineItems		proto __ccall :string_t, :int_t, :token_t, :int_t, :int_t
 ExpandLine		proto __ccall :string_t, :token_t
 ExpandLiterals		proto __ccall :int_t, :token_t
+ExpandClass		proto __ccall :string_t, :string_t, :token_t
 
 ; functions in macro.asm
 

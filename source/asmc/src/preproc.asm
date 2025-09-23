@@ -180,6 +180,11 @@ endif
             mov esi,ExpandLine( CurrSource, rbx )
         .elseif ( Parse_Pass == PASS_1 )
             ExpandLineItems( CurrSource, 0, rbx, 0, 1 )
+            .if ( MODULE.class_reg )
+                mov rcx,CurrSource
+                add rcx,MAX_LINE_LEN/2
+                ExpandClass( rcx, CurrSource, rbx )
+            .endif
         .endif
         .return 0 .ifs ( esi < NOT_ERROR )
     .endif

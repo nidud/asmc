@@ -691,8 +691,8 @@ next_item:
                     .return
                 .endif
                 mov  rdx,sym
-                mov  [rdx].asym.value,opndx.value
-                mov  [rdx].asym.hvalue,opndx.hvalue
+                mov  [rdx].asym.h64_l,opndx.value
+                mov  [rdx].asym.h64_h,opndx.hvalue
                 mov  rax,[rbx+asm_tok].tokpos
                 imul ebx,i,asm_tok
                 add  rbx,tokenarray

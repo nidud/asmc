@@ -3795,8 +3795,8 @@ ParseRecord proc fastcall uses rsi rdi opnd:expr_t
                     movzx ecx,[rdi].asym.bitf_offs
                     .if ( ecx < 64 )
 
-                        mov eax,[rdi].asym.value
-                        mov edx,[rdi].asym.hvalue
+                        mov eax,[rdi].asym.h64_l
+                        mov edx,[rdi].asym.h64_h
                         .if ( cl < 32 )
                             shld edx,eax,cl
                             shl eax,cl

@@ -15,32 +15,39 @@ Asmc also allows embedded C-style records in structures in the same way as STRUC
 ```
 name STRUC
 RECORD [[ name ]]
- fieldname type:width ?
+ fieldname type:width [[= expression]] ?
  ...
 ENDS
 name ENDS
 ```
-Note that the record field names here are not global (Masm design flaw) and there are no packing as the size is predefined similar to C bit-fields, and the first field in the declaration always goes into the least significant bits of the record. Asmc support accessing record fields as follows:
+
+The embedded record name is optional. If specified, it is used as a prefix to the field names in the record. If not specified, the field names are used directly.
+
+### Examples
 
 ```
 .template T
     x   dd ?
     record q
-     a  dd :  1 ?
-     b  dd :  7 ?
-     c  dd :  8 ?
-     d  dd : 16 ?
+     a  dd :  1 = 1 ?
+     b  dd :  7 = 0 ?
+     c  dd :  8 = 2 ?
+     d  dd : 16 = 1 ?
     ends
    .ends
-
 ```
+### Description
+
+The total width of the record must be 8, 16, 32, or 64 bits and the field names are not global (Masm design flaw). As the size is predefined there are no packing (similar to C bit-fields) and the first field goes into the least significant bits. Asmc support accessing record fields as follows.
+
 Record fields are bit offsets from RECORD and Record names byte offsets from Type.
 
 <table>
 <tr><td><b>Const</b></td><td><b>Value</b></td><td></td></tr>
 <tr><td>T.q</td><td>4</td><td>Byte offset from T</td></tr>
 <tr><td>T.q.b</td><td>1</td><td>Bit offset from q</td></tr>
-<tr><td>maskof T.q.c</td><td>0000FF00</td><td></td></tr>
+<tr><td>T.q {}</td><td>00010201</td><td>Default value of q</td></tr>
+<tr><td>maskof T.q.c</td><td>0000FF00</td><td>Bit mask of q.c</td></tr>
 </table>
 
 Memory operands are optimized for expression evaluation.

@@ -2079,7 +2079,7 @@ ExpandClass proc __ccall uses rsi rdi rbx buffer:string_t, string:string_t, toke
                 mov rsi,SymFind( [rbx].string_ptr )
                 .if !SearchNameInStruct( rdi, [rbx].string_ptr, 0, 0 )
                     .if SearchNameInStruct( [rdi].asym.vtable, [rbx].string_ptr, 0, 0 )
-                        xor esi,esi
+                        xor esi,esi ; allow name conflict --> use class::method()
                     .endif
                 .endif
                 .continue .if !rax

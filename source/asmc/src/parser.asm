@@ -3681,7 +3681,7 @@ IsType endp
 ; Zero Mask                  {k1}{z}
 ;
 
-parsevex proc fastcall string:string_t, result:ptr uchar_t
+ParsEvexModifier proc fastcall string:string_t, result:ptr uchar_t
 
     mov eax,[rcx]
 
@@ -3749,8 +3749,74 @@ parsevex proc fastcall string:string_t, result:ptr uchar_t
     .endsw
     .return( 0 )
 
-parsevex endp
+ParsEvexModifier endp
 
+;
+; Handles RECORD {} - Sets the default value
+;
+; Valid input:
+;
+; struct.id {} or struct {} if first field is a RECORD
+;
+
+    assume rdi:nothing, rsi:nothing
+
+ParseRecord proc fastcall uses rsi rdi opnd:expr_t
+
+    mov rsi,rcx
+    xor eax,eax
+
+    .if ( [rcx].expr.is_type )
+        mov rcx,[rcx].expr.type
+        .if ( rcx )
+            mov rcx,[rcx].asym.structinfo
+            .if ( rcx )
+                mov rcx,[rcx].struct_info.head
+            .endif
+        .endif
+    .else
+        mov rcx,[rcx].expr.mbr
+    .endif
+
+    .if ( rcx )
+
+        mov rdx,[rcx].asym.type
+        .if ( rdx && [rdx].asym.state == SYM_TYPE )
+
+            mov rdx,[rdx].asym.structinfo
+            mov rdx,[rdx].struct_info.head
+            .if ( [rdx].asym.crecord )
+
+                mov [rsi].expr.value,0
+                mov [rsi].expr.hvalue,0
+
+                .for ( rdi = rdx : rdi : rdi = [rdi].asym.next )
+
+                    movzx ecx,[rdi].asym.bitf_offs
+                    .if ( ecx < 64 )
+
+                        mov eax,[rdi].asym.value
+                        mov edx,[rdi].asym.hvalue
+                        .if ( cl < 32 )
+                            shld edx,eax,cl
+                            shl eax,cl
+                        .else
+                            and ecx,31
+                            mov edx,eax
+                            xor eax,eax
+                            shl edx,cl
+                        .endif
+                        or [rsi].expr.value,eax
+                        or [rsi].expr.hvalue,edx
+                    .endif
+                .endf
+                .return( 1 )
+            .endif
+        .endif
+    .endif
+    ret
+
+ParseRecord endp
 
     option proc:public
 
@@ -4316,23 +4382,32 @@ init_prefix:
 
         .if ( [rsi-asm_tok].Modifier )
 
-            or CodeInfo.prefix,PREFIX_EVEX
             lea rbx,[rsi-asm_tok] ; get transform modifiers
-
             .if ( [rbx].token == T_STRING )
-                .repeat
-                    .if ( !parsevex( [rbx].string_ptr, &CodeInfo.evexP3 ) )
-                        .return asmerr( 2008, [rbx].string_ptr )
+
+                mov rax,[rbx].string_ptr
+                .if ( byte ptr [rax] == 0 && [rbx+asm_tok].token == T_FINAL && opndx[rdi].kind == EXPR_CONST )
+
+                    ; ..., [type.] record {}
+
+                    .ifd !ParseRecord( &opndx[rdi] )
+                        .return asmerr( 2008, [rbx-asm_tok].tokpos )
                     .endif
-                    sub rbx,asm_tok
-                .until !( [rbx].Modifier )
-
+                .else
+                    or CodeInfo.prefix,PREFIX_EVEX
+                    .repeat
+                        .ifd !ParsEvexModifier( [rbx].string_ptr, &CodeInfo.evexP3 )
+                            .return asmerr( 2008, [rbx].string_ptr )
+                        .endif
+                        sub rbx,asm_tok
+                    .until !( [rbx].Modifier )
+                .endif
                 .if ( opndx[rdi].kind == EXPR_EMPTY )
-
                     dec j
                    .continue
                 .endif
             .else
+                or CodeInfo.prefix,PREFIX_EVEX
                 or CodeInfo.evexP3,0x10
             .endif
         .endif

@@ -679,6 +679,31 @@ next_item:
             mov [rsi].asym.total_size,no_of_bytes
             imul ebx,i,asm_tok
             add rbx,tokenarray
+
+            ; is there an initializer? ('=')
+
+            .if ( [rbx].token == T_DIRECTIVE && [rbx].dirtype == DRT_EQUALSGN )
+
+                inc i
+                mov ecx,_end
+                dec ecx
+                .ifd ( EvalOperand( &i, tokenarray, ecx, &opndx, 0 ) == ERROR )
+                    .return
+                .endif
+                mov  rdx,sym
+                mov  [rdx].asym.value,opndx.value
+                mov  [rdx].asym.hvalue,opndx.hvalue
+                mov  rax,[rbx+asm_tok].tokpos
+                imul ebx,i,asm_tok
+                add  rbx,tokenarray
+                lea  rdi,[rdx].asym.ivalue
+                mov  rcx,[rbx].tokpos
+                sub  rcx,rax
+                xchg rsi,rax
+                rep  movsb
+                mov  [rdi],cl
+                mov  rsi,rax
+            .endif
         .endif
 
         .if ( [rbx].token == T_QUESTION_MARK )

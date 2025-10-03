@@ -729,7 +729,6 @@ define PE_DLL               0x04
     cpu                     dd ?    ; cpu setting (value @cpu symbol);
     curr_cpu                dd ?    ; cpu setting (OW stylex);
     srcfile                 dd ?    ; main source file - is an index for FNames[]
-    hll_label               dd ?    ; hll directive label counter
     _model                  db ?    ; memory model
     line_flags              db ?    ; current line has been printed
     offsettype              db ?    ; OFFSET:GROUP|FLAT|SEGMENT
@@ -740,7 +739,6 @@ define PE_DLL               0x04
     ostype                  db ?    ; operating system
     simseg_init             db ?    ; simplified segm dir flags
     simseg_defd             db ?    ; v2.09: flag if seg was defined before simseg dir
-    PhaseError              db ?    ; phase error flag
     CommentDataInCode       db ?    ; OMF: emit coment records about data in code segs
     prologuemode            db ?    ; current PEM_ enum value for OPTION PROLOGUE
     epiloguemode            db ?    ; current PEM_ enum value for OPTION EPILOGUE
@@ -832,6 +830,9 @@ define PE_DLL               0x04
     warning_count           uint_t ?        ; total of warnings so far
     num_segs                uint_t ?        ; number of segments in module
     start_displ             uint_t ?        ; OMF only, optional displ for start label
+    ; moved...
+    hll_label               dd ?    ; hll directive label counter
+    PhaseError              db ?    ; phase error flag
    .ends
 
 TokenCount              equ <MODULE.token_count>

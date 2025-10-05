@@ -898,15 +898,18 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local name  : string_t,
         type  : string_t,
+        ctype : int_t,
         sym   : asym_t,
         creat : int_t,
         ti    : qualified_type,
+        cti   : qualified_type,
         opndx : expr,
         endtok: token_t
 
     inc  i  ; go past directive
     imul ebx,i,asm_tok
     add  rbx,tokenarray
+    mov  ctype,0
 
     .while 1
 
@@ -1031,8 +1034,21 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
             imul ebx,i,asm_tok
             add rbx,tokenarray
 
+            .if ( creat )
+                mov cti,ti
+                mov ctype,1
+            .endif
             mov [rsi].mem_type,ti.mem_type
+            .if ( ti.mem_type == MT_TYPE )
+                mov [rsi].type,ti.symtype
+            .else
+                mov [rsi].target_type,ti.symtype
+            .endif
 
+        .elseif ( ctype && creat )
+
+            mov ti,cti
+            mov [rsi].mem_type,ti.mem_type
             .if ( ti.mem_type == MT_TYPE )
                 mov [rsi].type,ti.symtype
             .else

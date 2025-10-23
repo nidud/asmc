@@ -2090,8 +2090,7 @@ ExpandClass proc __ccall uses rsi rdi rbx buffer:string_t, string:string_t, toke
                 tsprintf( buffer, "[%r].%s.%s", MODULE.class_reg, [rdi].asym.name, [rbx].tokpos )
                 tstrcpy( [rbx].tokpos, buffer )
                 mov TokenCount,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-
-                mov esi,asm_tok*7
+                mov esi,asm_tok*6
                 .if ( [rbx].IsProc && rbx == tokenarray )
 
                     tsprintf( buffer, "%r %s", T_INVOKE, [rbx].tokpos )

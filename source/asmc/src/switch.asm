@@ -804,6 +804,7 @@ endif
 
         .if ( [rsi].SwitchJump && [rsi].SwitchTable )
 
+            mov use_index,0
             tstrcpy( table_addr, start_addr )
             AddLineQueueX( "MIN%s equ %d", rax, min )
         .else

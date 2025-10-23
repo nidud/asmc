@@ -90,34 +90,6 @@ GetCondition proc fastcall private uses rbx string:ptr sbyte
 GetCondition ENDP
 
 
-Assignopc proc __ccall private uses rdi buffer:string_t, opc1:string_t, opc2:string_t, string:string_t
-
-    ldr rdi,buffer
-    .if ( opc1 )
-        tstrcat( rdi, opc1 )
-        tstrtrim( rdi )
-        tstrcat( rdi, " " )
-    .endif
-    .if ( opc2 )
-        tstrcat( rdi, opc2 )
-        tstrtrim( rdi );
-        .if ( opc1 && string )
-            tstrcat( rdi, "," )
-        .endif
-        .if ( string )
-            tstrcat( rdi, " " )
-        .endif
-    .endif
-    .if ( string )
-        tstrcat( rdi, string )
-        tstrtrim( rdi )
-    .endif
-    tstrcat( rdi, "\n" )
-   .return( 1 )
-
-Assignopc endp
-
-
 ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarray:token_t
 
   local bracket:byte ; assign value: [rdx+8]=rax - @v2.28.15
@@ -139,37 +111,44 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
 
     .repeat
 
+        xor esi,esi
         .switch
         .case ( al == '~' )
-            Assignopc( rdi, "not", &[rdx+1], NULL )
-           .break
+            inc rdx
+            mov esi,T_NOT
+           .endc
         .case ( cl == '-' && ch == '-' )
-            Assignopc( rdi, "dec", [rbx+asm_tok*2].tokpos, NULL )
-           .break
+            mov rdx,[rbx+asm_tok*2].tokpos
+            mov esi,T_DEC
+           .endc
         .case ( cl == '+' && ch == '+' )
-            Assignopc( rdi, "inc", [rbx+asm_tok*2].tokpos, NULL )
-           .break
+            mov rdx,[rbx+asm_tok*2].tokpos
+            mov esi,T_INC
+           .endc
         .endsw
+        .if ( esi )
+            tsprintf( rdi, "%r %s", esi, rdx )
+           .break
+        .endif
 
         .for ( eax = 0, ecx = 1: ecx < TokenCount: ecx++ )
 
             imul esi,ecx,asm_tok
             add rsi,rbx
-            mov rdx,[rsi].string_ptr
-            mov edx,[rdx]
+            mov dl,[rsi].token
 
             .switch
-            .case [rsi].token == T_OP_SQ_BRACKET
+            .case dl == T_OP_SQ_BRACKET
                 inc bracket
                .endc
-            .case [rsi].token == T_CL_SQ_BRACKET
+            .case dl == T_CL_SQ_BRACKET
                 dec bracket
             .case bracket
                .endc
 
-            .case [rsi].token == '+'
-            .case [rsi].token == '-'
-            .case [rsi].token == '&'
+            .case dl == '+'
+            .case dl == '-'
+            .case dl == '&'
             .case [rsi].tokval == T_EQU && [rsi].dirtype == DRT_EQUALSGN
 
                 mov rax,[rsi].tokpos
@@ -178,24 +157,27 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
                 mov rcx,[rsi+asm_tok].tokpos
                .break
 
-            .case [rsi].token == T_STRING
+            .case dl == T_STRING
+
+                mov rdx,[rsi].string_ptr
+                mov edx,[rdx]
 
                 .switch dl
-
+                .case 0 ; <>
+                    mov rax,[rsi].tokpos
+                    mov rcx,[rsi+asm_tok].tokpos
+                   .break
                 .case '>'
                 .case '<'
-
                     mov rax,[rsi].tokpos
                     lea rcx,[rax+3]
                     .if byte ptr [rcx] == 0
                         mov rcx,[rsi+asm_tok].tokpos
                     .endif
                     .break
-
                 .case '|'
                 .case '~'
                 .case '^'
-
                     mov rax,[rsi].tokpos
                     lea rcx,[rax+2]
                     .if byte ptr [rcx] == 0
@@ -206,8 +188,7 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
             .endsw
         .endf
 
-        .if !eax
-
+        .if ( !eax )
             asmerr( 2008, [rbx].tokpos )
             xor eax,eax
            .break
@@ -215,25 +196,36 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
 
         .switch dl
 
+        .case 0 ; reg <> val
+            mov eax,MODULE.curr_cpu
+            and eax,P_CPU_MASK
+            mov edx,[rbx].tokval
+            .if ( eax >= P_686 )
+                tsprintf( rdi, "%r %r, %r\n%r %r, %s", T_TEST, edx, edx, T_CMOVNZ, edx, rcx )
+            .else
+                tsprintf( rdi, "%r %r\n%r %r, %s\n%r", T_DOT_IF, edx, T_MOV, edx, rcx, T_DOT_ENDIF )
+            .endif
+           .break
+
         .case '='
             mov byte ptr [rax],0
             .if dh == '&'
-                Assignopc( rdi, "lea", [rbx].tokpos, [rsi+asm_tok*2].tokpos )
+                tsprintf( rdi, "%r %r, %s", T_LEA, [rbx].tokval, [rsi+asm_tok*2].tokpos )
             .elseif byte ptr [rcx] == '~'
-                Assignopc( rdi, "mov", [rbx].tokpos, &[rcx+1] )
-                Assignopc( rdi, "not", [rbx].tokpos, NULL )
+                inc rcx
+                tsprintf( rdi, "%r %s, %s\n%r %s", T_MOV, [rbx].tokpos, rcx, T_NOT, [rbx].tokpos )
             .else
                 ;
                 ; mov reg,0 --> xor reg,reg
                 ;
-                mov rax,[rsi+asm_tok].string_ptr
-                mov ax,[rax]
-                .if ( dh == T_NUM && ax == '0' &&
-                      ( ( [rbx].tokval >= T_AL && [rbx].tokval <= T_EDI ) ||
-                      ( MODULE.Ofssize == USE64 && [rbx].tokval >= T_R8B && [rbx].tokval <= T_R15 ) ) )
-                    Assignopc( rdi, "xor", [rbx].string_ptr, [rbx].string_ptr )
+                mov rsi,[rsi+asm_tok].string_ptr
+                movzx esi,word ptr [rsi]
+                mov eax,[rbx].tokval
+                .if ( dh == T_NUM && esi == '0' && ( ( eax >= T_AL && eax <= T_EDI ) ||
+                      ( MODULE.Ofssize == USE64 && eax >= T_R8B && eax <= T_R15 ) ) )
+                    tsprintf( rdi, "%r %r, %r", T_XOR, eax, eax )
                 .else
-                    Assignopc( rdi, "mov", [rbx].tokpos, rcx )
+                    tsprintf( rdi, "%r %s, %s", T_MOV, [rbx].tokpos, rcx )
                 .endif
             .endif
             .break
@@ -241,61 +233,59 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
         .case '|'
             .endc .if dh != '='
             mov byte ptr [rax],0
-            Assignopc( rdi, "or ", [rbx].tokpos, rcx )
+            tsprintf( rdi, "%r %s, %s", T_OR, [rbx].tokpos, rcx )
            .break
         .case '~'
             .endc .if dh != '='
             mov byte ptr [rax],0
-            Assignopc( rdi, "mov", [rbx].tokpos, rcx )
-            Assignopc( rdi, "not", [rbx].tokpos, NULL )
+            tsprintf( rdi, "%r %s, %s\n%r %s", T_MOV, [rbx].tokpos, rcx, T_NOT, [rbx].tokpos )
            .break
         .case '^'
             .endc .if dh != '='
             mov byte ptr [rax],0
-            Assignopc( rdi, "xor", [rbx].tokpos, rcx )
+            tsprintf( rdi, "%r %s, %s", T_XOR, [rbx].tokpos, rcx )
            .break
         .case '&'
             .endc .if [rsi+asm_tok].dirtype != DRT_EQUALSGN
             mov byte ptr [rax],0
-            Assignopc( rdi, "and", [rbx].tokpos, [rsi+asm_tok*2].tokpos )
+            tsprintf( rdi, "%r %s, %s", T_AND, [rbx].tokpos, [rsi+asm_tok*2].tokpos )
            .break
         .case '>'
             shr edx,8
             .endc .if !( dl == '>' && dh == '=' )
             mov byte ptr [rax],0
-            Assignopc( rdi, "shr", [rbx].tokpos, rcx )
+            tsprintf( rdi, "%r %s, %s", T_SHR, [rbx].tokpos, rcx )
            .break
         .case '<'
             shr edx,8
             .endc .if !( dl == '<' && dh == '=' )
             mov byte ptr [rax],0
-            Assignopc( rdi, "shl", [rbx].tokpos, rcx )
+            tsprintf( rdi, "%r %s, %s", T_SHL, [rbx].tokpos, rcx )
            .break
 
         .case '+'
             .if dh == '+'
                 mov byte ptr [rax],0
-                Assignopc( rdi, "inc", [rbx].tokpos, NULL )
-                .break
+                tsprintf( rdi, "%r %s", T_INC, [rbx].tokpos )
+               .break
             .elseif [rsi+asm_tok].dirtype == DRT_EQUALSGN
                 mov byte ptr [rax],0
-                Assignopc( rdi, "add", [rbx].tokpos, [rsi+asm_tok*2].tokpos )
-                .break
+                tsprintf( rdi, "%r %s, %s", T_ADD, [rbx].tokpos, [rsi+asm_tok*2].tokpos )
+               .break
             .endif
             .endc
         .case '-'
             .if dh == '-'
                 mov byte ptr [rax],0
-                Assignopc( rdi, "dec", [rbx].tokpos, NULL )
-                .break
+                tsprintf( rdi, "%r %s", T_DEC, [rbx].tokpos )
+               .break
             .elseif [rsi+asm_tok].dirtype == DRT_EQUALSGN
                 mov byte ptr [rax],0
-                Assignopc( rdi, "sub", [rbx].tokpos, [rsi+asm_tok*2].tokpos )
-                .break
+                tsprintf( rdi, "%r %s, %s", T_SUB, [rbx].tokpos, [rsi+asm_tok*2].tokpos )
+               .break
             .endif
             .endc
         .endsw
-
         asmerr( 2008, [rsi].tokpos )
         xor eax,eax
     .until 1

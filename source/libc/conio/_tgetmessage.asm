@@ -96,8 +96,8 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
             movzx   ecx,word ptr Input.Event.KeyEvent.dwControlKeyState
             cmp     Input.Event.KeyEvent.bKeyDown,0
             mov     eax,WM_KEYUP
-            mov     esi,WM_KEYDOWN
-            cmovz   esi,eax
+            mov     edx,WM_KEYDOWN
+            cmovz   edx,eax
             ;
             ; wParam
             ;
@@ -106,15 +106,15 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
             movzx   edi,Input.Event.KeyEvent.wVirtualKeyCode
             mov     eax,ecx
             or      ecx,KEY_WMCHAR
-            movzx   edx,tchar_t ptr Input.Event.KeyEvent.uChar.UnicodeChar
+            movzx   esi,tchar_t ptr Input.Event.KeyEvent.uChar.UnicodeChar
             test    ecx,ENHANCED_KEY or RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED
-            cmovnz  edx,edi
+            cmovnz  esi,edi
             cmovnz  ecx,eax
-            test    edx,edx
-            cmovz   edx,edi
+            test    esi,esi
+            cmovz   esi,edi
             cmovz   ecx,eax
 
-            _postmessage(rbx, esi, rdx, rcx)
+            _postmessage(rbx, edx, rsi, rcx)
 
             movzx   edx,tchar_t ptr Input.Event.KeyEvent.uChar.UnicodeChar
             mov     ecx,Input.Event.KeyEvent.dwControlKeyState
@@ -123,11 +123,12 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
             .endc .if ( edx == 0 )
             .endc .if ( ecx & ENHANCED_KEY )
 
-            or      ecx,KEY_WMCHAR
+            test    ecx,RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED
+            cmovnz  edx,edi
             mov     eax,WM_CHAR
             mov     esi,WM_SYSCHAR
-            test    ecx,RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED
             cmovz   esi,eax
+            or      ecx,KEY_WMCHAR
 
             _postmessage(rbx, esi, rdx, rcx)
 

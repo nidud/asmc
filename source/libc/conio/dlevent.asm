@@ -15,7 +15,7 @@ define KEY_ALTUP        (KEY_ALT or KEY_UP)
 define KEY_ALTDN        (KEY_ALT or KEY_DOWN)
 define KEY_ALTLEFT      (KEY_ALT or KEY_LEFT)
 define KEY_ALTRIGHT     (KEY_ALT or KEY_RIGHT)
-define KEY_ALTX         (KEY_ALT or 'x')
+define KEY_ALTX         (KEY_ALT or 'X')
 
 .data
  tdialog    PDOBJ NULL

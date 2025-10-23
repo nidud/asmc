@@ -30,7 +30,7 @@ CApplication::QueryInterface proc riid:LPIID, ppv:ptr ptr
     mov [r8],rax
    .return E_INVALIDARG
 
-CApplication::QueryInterface endp
+    endp
 
 
 CApplication::AddRef proc
@@ -38,7 +38,7 @@ CApplication::AddRef proc
     lock inc [rcx].m_refcnt
    .return [rcx].m_refcnt
 
-CApplication::AddRef endp
+    endp
 
 
 CApplication::Release proc
@@ -46,14 +46,14 @@ CApplication::Release proc
     lock dec [rcx].m_refcnt
    .return [rcx].m_refcnt
 
-CApplication::Release endp
+    endp
 
 CApplication::AppVisibilityOnMonitorChanged proc hMonitor:HMONITOR,
         previousAppVisibility:MONITOR_APP_VISIBILITY, currentAppVisibility:MONITOR_APP_VISIBILITY
 
     .return S_OK
 
-CApplication::AppVisibilityOnMonitorChanged endp
+    endp
 
 
 CApplication::LauncherVisibilityChange proc currentVisibleState:BOOL
@@ -68,7 +68,7 @@ CApplication::LauncherVisibilityChange proc currentVisibleState:BOOL
     .endif
    .return S_OK
 
-CApplication::LauncherVisibilityChange endp
+    endp
 
 ; --- End IAppVisibilityEvents ---
 
@@ -94,7 +94,7 @@ CApplication::Run proc
 
     .return result
 
-CApplication::Run endp
+    endp
 
 
 ; Creates the application window, the d3d device and DirectComposition device and visual tree
@@ -123,7 +123,7 @@ CApplication::BeforeEnteringMessageLoop proc uses rdi
     .endif
     .return hr
 
-CApplication::BeforeEnteringMessageLoop endp
+    endp
 
 
 ; Message loop
@@ -147,7 +147,7 @@ CApplication::EnterMessageLoop proc
 
     .return result
 
-CApplication::EnterMessageLoop endp
+    endp
 
 
 ; Destroys the application window, DirectComposition device and visual tree.
@@ -161,7 +161,7 @@ CApplication::AfterLeavingMessageLoop proc
     this.DestroyApplicationWindow()
     ret
 
-CApplication::AfterLeavingMessageLoop endp
+    endp
 
 
 ; Shows the application window
@@ -184,7 +184,7 @@ CApplication::ShowApplicationWindow proc uses rdi
 
     .return bSucceeded
 
-CApplication::ShowApplicationWindow endp
+    endp
 
 
 ; Destroys the applicaiton window
@@ -199,7 +199,7 @@ CApplication::DestroyApplicationWindow proc uses rdi
     .endif
     ret
 
-CApplication::DestroyApplicationWindow endp
+    endp
 
 
     assume rcx:nothing
@@ -261,13 +261,13 @@ CApplication::Update proc uses rsi rdi rbx Visible:BOOL
     ReleaseDC([rdi].m_hwnd, hdc)
    .return 1
 
-CApplication::Update endp
+    endp
 
 CApplication::OnSize proc lParam:LPARAM
 
     .return 1
 
-CApplication::OnSize endp
+    endp
 
 
 ; Handles the WM_KEYDOWN message
@@ -276,7 +276,7 @@ CApplication::OnKeyDown proc wParam:WPARAM
 
     .return 0
 
-CApplication::OnKeyDown endp
+    endp
 
 
 ; Handles the WM_CLOSE message
@@ -294,7 +294,7 @@ CApplication::OnClose proc
     .endif
     .return 0
 
-CApplication::OnClose endp
+    endp
 
 
 ; Handles the WM_DESTROY message
@@ -305,7 +305,7 @@ CApplication::OnDestroy proc
 
     .return 0
 
-CApplication::OnDestroy endp
+    endp
 
 
 ; Handles the WM_PAINT message
@@ -413,7 +413,7 @@ CApplication::OnPaint proc uses rdi
     this.Update(0)
    .return 1
 
-CApplication::OnPaint endp
+    endp
 
 
 ; Main Window procedure
@@ -451,7 +451,7 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .endsw
     ret
 
-WindowProc endp
+    endp
 
 
 ; Creates the application window
@@ -502,7 +502,7 @@ CApplication::CreateApplicationWindow proc uses rdi
     mov [rdi].m_hwnd,rax
    .return S_OK
 
-CApplication::CreateApplicationWindow endp
+    endp
 
 
 ; Provides the entry point to the application
@@ -517,13 +517,13 @@ CApplication::CApplication proc instance:HINSTANCE
     mov [rax].CApplication.m_height,600
     ret
 
-CApplication::CApplication endp
+    endp
 
 _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 
     .new app:ptr CApplication(hInstance)
     .return app.Run()
 
-_tWinMain endp
+    endp
 
     end _tstart

@@ -159,6 +159,7 @@ define MAXSCRLINE	MAXCOLS
     FG_TITLEKEY,
     FG_DIALOGKEY,
     FG_MENUKEY,
+    FG_TEDIT,
     }
 
 externdef at_background:byte
@@ -184,8 +185,8 @@ _at macro B, F, C, reg:=<eax>
 
 .enum _DLMOVE_DIRECTION {
     TW_MOVELEFT,
-    TW_MOVERIGHT,
     TW_MOVEUP,
+    TW_MOVERIGHT,
     TW_MOVEDOWN
     }
 
@@ -306,6 +307,7 @@ CALLBACKC(DPROC)
     col		db ?
     row		db ?
    .ends
+    PTRECT	typedef ptr TRECT
 
 .template RIDD
     flags	dw ?
@@ -605,7 +607,6 @@ rcclose		proto __cdecl :TRECT, :uint_t, :PCHAR_INFO
 
 rcshow		proto __cdecl :TRECT, :uint_t, :PCHAR_INFO
 rchide		proto __cdecl :TRECT, :uint_t, :PCHAR_INFO
-rcmove		proto __cdecl :ptr TRECT, :PCHAR_INFO, :int_t, :int_t, :int_t
 rcxyrow		proto __cdecl :TRECT, :int_t, :int_t
 rcmsmove	proto __cdecl :ptr TRECT, :PCHAR_INFO, :uint_t
 
@@ -1013,6 +1014,10 @@ define WM_MOUSEHWHEEL	0x020E
 define WM_MOUSEWHEEL	0x020A
 define WM_XBUTTONDBLCLK 0x020D
 
+define SW_HIDE		0
+define SW_SHOW		5
+define SW_RESTORE	9
+
 endif
 
 define _C_NORMAL	1
@@ -1140,6 +1145,7 @@ define U_DARK_SHADE			0x2593
 
 define U_MIDDLE_DOT			0x00B7	; Text input
 define U_BULLET_OPERATOR		0x2219	; (*) Radio
+define U_RIGHT_DOUBLE_QUOTE		0x00BB
 
 endif
 

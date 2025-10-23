@@ -12,27 +12,22 @@ include ltype.inc
 
 ifdef _WIN64
 
-    _r15 dq ?
+    _r15 dq 0
 
     .code
 
 _ltypeinit proc
-
     mov _r15,r15
     lea r15,_ltype
     ret
-
-_ltypeinit endp
+    endp
 
 _ltypeexit proc
-
     mov r15,_r15
     ret
-
-_ltypeexit endp
+    endp
 
 .pragma init(_ltypeinit, 100)
-.pragma exit(_ltypeexit, 100)
 endif
 
     end

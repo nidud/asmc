@@ -22,7 +22,7 @@ BoundRand proc b:uint_t
     mov eax,edx
     ret
 
-BoundRand endp
+    endp
 
 RangeRand proc b:uint_t, m:uint_t
 
@@ -30,7 +30,7 @@ RangeRand proc b:uint_t, m:uint_t
     .endw
     ret
 
-RangeRand endp
+    endp
 
 RandRGB proc
 
@@ -44,7 +44,7 @@ RandRGB proc
     or  eax,0xFF000000
     ret
 
-RandRGB endp
+    endp
 
 
 ; Runs the application
@@ -68,7 +68,7 @@ CApplication::Run proc
 
     .return result
 
-CApplication::Run endp
+    endp
 
 
 ; Creates the application window, the d3d device and DirectComposition device and visual tree
@@ -80,7 +80,7 @@ CApplication::BeforeEnteringMessageLoop proc
 
     .return hr
 
-CApplication::BeforeEnteringMessageLoop endp
+    endp
 
 
 ; Message loop
@@ -104,7 +104,7 @@ CApplication::EnterMessageLoop proc
 
     .return result
 
-CApplication::EnterMessageLoop endp
+    endp
 
 
 ; Destroys the application window, DirectComposition device and visual tree.
@@ -114,7 +114,7 @@ CApplication::AfterLeavingMessageLoop proc
     this.DestroyApplicationWindow()
     ret
 
-CApplication::AfterLeavingMessageLoop endp
+    endp
 
 
 ; Shows the application window
@@ -145,7 +145,7 @@ CApplication::ShowApplicationWindow proc uses rdi
 
     .return bSucceeded
 
-CApplication::ShowApplicationWindow endp
+    endp
 
 
 ; Destroys the applicaiton window
@@ -185,7 +185,7 @@ CApplication::DestroyApplicationWindow proc uses rdi
     .endif
     ret
 
-CApplication::DestroyApplicationWindow endp
+    endp
 
 
 ; Makes the host window full-screen by placing non-client elements outside the display.
@@ -230,7 +230,7 @@ CApplication::GoFullScreen proc uses rdi
         SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
 
-CApplication::GoFullScreen endp
+    endp
 
 
 ; Makes the host window resizable and focusable.
@@ -247,7 +247,7 @@ CApplication::GoPartialScreen proc uses rdi
         SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
 
-CApplication::GoPartialScreen endp
+    endp
 
 
 CApplication::OnSize proc uses rdi lParam:LPARAM
@@ -300,7 +300,7 @@ CApplication::OnSize proc uses rdi lParam:LPARAM
     .endif
     .return 1
 
-CApplication::OnSize endp
+    endp
 
 
     assume rsi:ptr object
@@ -383,7 +383,7 @@ CApplication::OnTimer proc uses rsi rdi rbx
     .endf
     .return 1
 
-CApplication::OnTimer endp
+    endp
 
 
 ; Handles the WM_KEYDOWN message
@@ -449,7 +449,7 @@ CApplication::OnKeyDown proc wParam:WPARAM
     .endsw
     .return 0
 
-CApplication::OnKeyDown endp
+    endp
 
 
 ; Handles the WM_CLOSE message
@@ -465,7 +465,7 @@ CApplication::OnClose proc
     .endif
     .return 0
 
-CApplication::OnClose endp
+    endp
 
 
 ; Handles the WM_DESTROY message
@@ -476,7 +476,7 @@ CApplication::OnDestroy proc
 
     .return 0
 
-CApplication::OnDestroy endp
+    endp
 
 
 ; Handles the WM_PAINT message
@@ -511,7 +511,7 @@ CApplication::OnPaint proc uses rdi
     EndPaint([rdi].m_hwnd, &ps)
    .return 1
 
-CApplication::OnPaint endp
+    endp
 
 
 CApplication::InitObjects proc uses rsi rdi rbx
@@ -541,7 +541,7 @@ CApplication::InitObjects proc uses rsi rdi rbx
     .endf
     ret
 
-CApplication::InitObjects endp
+    endp
 
 ; Main Window procedure
 
@@ -581,7 +581,7 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .endsw
     ret
 
-WindowProc endp
+    endp
 
 
 ; Creates the application window
@@ -618,7 +618,7 @@ CApplication::CreateApplicationWindow proc uses rdi
     mov [rdi].m_hwnd,rax
    .return S_OK
 
-CApplication::CreateApplicationWindow endp
+    endp
 
 
 ; Provides the entry point to the application
@@ -643,7 +643,7 @@ CApplication::SetFont proc uses rdi name:ptr wchar_t, size:real4, color:ARGB
     GdipCreateFont([rdi].m_fontfamily, size, [rdi].m_fontstyle, [rdi].m_fontunit, &[rdi].m_font)
     ret
 
-CApplication::SetFont endp
+    endp
 
 CApplication::DrawString proc uses rsi rdi rbx gdi:ptr, x:int_t, y:int_t, format:ptr wchar_t, argptr:vararg
 
@@ -667,7 +667,7 @@ CApplication::DrawString proc uses rsi rdi rbx gdi:ptr, x:int_t, y:int_t, format
     GdipDeleteBrush(brush)
     ret
 
-CApplication::DrawString endp
+    endp
 
 CApplication::CApplication proc instance:HINSTANCE
 
@@ -682,13 +682,13 @@ CApplication::CApplication proc instance:HINSTANCE
     mov rax,rcx
     ret
 
-CApplication::CApplication endp
+    endp
 
 _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 
     .new app:ptr CApplication(hInstance)
     .return app.Run()
 
-_tWinMain endp
+    endp
 
     end _tstart

@@ -1,7 +1,7 @@
 ifndef _INC_WINDOWS
 include windows.inc
 endif
-;.pragma list(push, 0)
+.pragma list(push, 0)
 
 IDC_STATIC  equ -1
 
@@ -198,4 +198,4 @@ ifdef __PE__
 endif
     endm
 
-;.pragma list(pop)
+.pragma list(pop)

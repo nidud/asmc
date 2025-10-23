@@ -207,7 +207,7 @@ _vstscanf_s		equ <vswscanf_s>
 
 _tprintf		equ <wprintf>
 _ftprintf		equ <fwprintf>
-_stprintf		equ <swprintf>
+;_stprintf		equ <swprintf>
 _sntprintf		equ <_snwprintf>
 _vtprintf		equ <vwprintf>
 _vftprintf		equ <vfwprintf>

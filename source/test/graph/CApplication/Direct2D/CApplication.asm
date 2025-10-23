@@ -12,7 +12,7 @@ Bounce::Bounce proc
     @ComAlloc(Bounce)
     ret
 
-Bounce::Bounce endp
+    endp
 
 
 Bounce::Release proc
@@ -26,7 +26,7 @@ Bounce::Release proc
     .endw
     ret
 
-Bounce::Release endp
+    endp
 
 
 Bounce::New proc
@@ -37,7 +37,7 @@ Bounce::New proc
     mov m_next,Bounce()
     ret
 
-Bounce::New endp
+    endp
 
 
 Bounce::Up proc
@@ -59,7 +59,7 @@ Bounce::Up proc
     .endw
     ret
 
-Bounce::Up endp
+    endp
 
 
 Bounce::Down proc
@@ -81,7 +81,7 @@ Bounce::Down proc
     .endw
     ret
 
-Bounce::Down endp
+    endp
 
 
 ; -- CApplication --
@@ -99,11 +99,11 @@ CApplication::Run proc
     .else
         ErrorMessage(hr, "An error occuring when running the sample" )
     .endif
-
     AfterLeavingMessageLoop()
+
     .return result
 
-CApplication::Run endp
+    endp
 
 
 ; Creates the application window, the d3d device and DirectComposition device and visual tree
@@ -113,7 +113,7 @@ CApplication::BeforeEnteringMessageLoop proc
 
     .return CreateApplicationWindow()
 
-CApplication::BeforeEnteringMessageLoop endp
+    endp
 
 
 ; Message loop
@@ -125,18 +125,15 @@ CApplication::EnterMessageLoop proc
     .if ( ShowApplicationWindow() )
 
         .new msg:MSG
-
         .while ( GetMessage( &msg, NULL, 0, 0 ) )
-
             TranslateMessage( &msg )
             DispatchMessage( &msg )
         .endw
-
         mov result, msg.wParam
     .endif
     .return result
 
-CApplication::EnterMessageLoop endp
+    endp
 
 
 ; Destroys the application window, DirectComposition device and visual tree.
@@ -146,7 +143,7 @@ CApplication::AfterLeavingMessageLoop proc
     DestroyApplicationWindow()
     ret
 
-CApplication::AfterLeavingMessageLoop endp
+    endp
 
 
 ; Shows the application window
@@ -169,7 +166,7 @@ CApplication::ShowApplicationWindow proc
     .endif
     .return bSucceeded
 
-CApplication::ShowApplicationWindow endp
+    endp
 
 
 ; Destroys the applicaiton window
@@ -184,7 +181,7 @@ CApplication::DestroyApplicationWindow proc
     .endif
     ret
 
-CApplication::DestroyApplicationWindow endp
+    endp
 
 
 CApplication::OnSize proc width:UINT, height:UINT
@@ -225,7 +222,7 @@ CApplication::OnSize proc width:UINT, height:UINT
     .endif
     .return 0
 
-CApplication::OnSize endp
+    endp
 
 
 CApplication::OnRender proc
@@ -265,7 +262,7 @@ CApplication::OnRender proc
     .endif
     .return hr
 
-CApplication::OnRender endp
+    endp
 
 
 CApplication::OnKeyDown proc wParam:WPARAM
@@ -325,7 +322,7 @@ CApplication::OnKeyDown proc wParam:WPARAM
     .endsw
     .return 0
 
-CApplication::OnKeyDown endp
+    endp
 
 
 CApplication::OnClose proc
@@ -337,7 +334,7 @@ CApplication::OnClose proc
     .endif
     .return 0
 
-CApplication::OnClose endp
+    endp
 
 
 CApplication::OnDestroy proc
@@ -345,7 +342,7 @@ CApplication::OnDestroy proc
     PostQuitMessage(0)
    .return 0
 
-CApplication::OnDestroy endp
+    endp
 
 
 ; Handles the WM_PAINT message
@@ -392,7 +389,7 @@ CApplication::InitObjects proc uses rsi rdi
     .endf
     .return 0
 
-CApplication::InitObjects endp
+    endp
 
     assume rsi:nothing
 
@@ -441,7 +438,7 @@ CApplication::GoFullScreen proc uses rdi
     SetWindowPos(m_hwnd, HWND_TOPMOST, xOrigin, yOrigin, xSpan, ySpan, SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
 
-CApplication::GoFullScreen endp
+    endp
 
 
 ; Makes the host window resizable and focusable.
@@ -455,7 +452,7 @@ CApplication::GoPartialScreen proc
             m_rect.right, m_rect.bottom, SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
 
-CApplication::GoPartialScreen endp
+    endp
 
 
 ;
@@ -510,7 +507,7 @@ CApplication::CreateDeviceIndependentResources proc
     .endif
     .return hr
 
-CApplication::CreateDeviceIndependentResources endp
+    endp
 
 
 ;
@@ -560,7 +557,7 @@ CApplication::CreateDeviceResources proc
     .endif
     .return hr
 
-CApplication::CreateDeviceResources endp
+    endp
 
 
     assume rsi:pball_t
@@ -672,7 +669,7 @@ CApplication::RenderMainContent proc uses rsi
     .endf
     .return hr
 
-CApplication::RenderMainContent endp
+    endp
 
     assume rsi:nothing
 
@@ -769,7 +766,7 @@ CApplication::RenderTextInfo proc
     .endif
     .return hr
 
-CApplication::RenderTextInfo endp
+    endp
 
 ;
 ;  DiscardDeviceResources()
@@ -784,7 +781,7 @@ CApplication::DiscardDeviceResources proc
     SafeRelease(m_pSolidColorBrush)
     ret
 
-CApplication::DiscardDeviceResources endp
+    endp
 
 
 ; Main Window procedure
@@ -831,7 +828,8 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .endsw
     ret
 
-WindowProc endp
+    endp
+
 
 ; Creates the application window
 
@@ -903,7 +901,7 @@ CApplication::CreateApplicationWindow proc
     .endif
     .return hr
 
-CApplication::CreateApplicationWindow endp
+    endp
 
 
 CApplication::BoundRand proc uses rsi rdi b:uint_t
@@ -933,7 +931,7 @@ CApplication::BoundRand proc uses rsi rdi b:uint_t
     mov eax,edx
     ret
 
-CApplication::BoundRand endp
+    endp
 
 
 CApplication::RangeRand proc b:uint_t, m:uint_t
@@ -942,7 +940,7 @@ CApplication::RangeRand proc b:uint_t, m:uint_t
     .endw
     .return
 
-CApplication::RangeRand endp
+    endp
 
 
 CApplication::RandRGB proc uses rsi cv:ptr D3DCOLORVALUE, i:int_t
@@ -969,7 +967,7 @@ CApplication::RandRGB proc uses rsi cv:ptr D3DCOLORVALUE, i:int_t
     mov rax,rsi
     ret
 
-CApplication::RandRGB endp
+    endp
 
 
 CApplication::ErrorMessage proc hr:HRESULT, format:LPTSTR
@@ -990,7 +988,7 @@ CApplication::ErrorMessage proc hr:HRESULT, format:LPTSTR
     LocalFree(szMessage)
    .return hr
 
-CApplication::ErrorMessage endp
+    endp
 
 
 CApplication::Release proc
@@ -1006,7 +1004,7 @@ CApplication::Release proc
     free(rbx)
     ret
 
-CApplication::Release endp
+    endp
 
     assume class:nothing, uses:nothing
 
@@ -1024,7 +1022,7 @@ CApplication::CApplication proc hInstance:HINSTANCE
     .endif
     ret
 
-CApplication::CApplication endp
+    endp
 
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, iCmdShow:int_t
@@ -1042,8 +1040,8 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, i
         app.Release()
         CoUninitialize()
     .endif
-   .return hr
+    .return hr
 
-wWinMain endp
+    endp
 
     end

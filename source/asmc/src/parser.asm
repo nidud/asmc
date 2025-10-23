@@ -5043,6 +5043,8 @@ endif
                     add ecx,4
                 .case T_ADDSS
                 .case T_SUBSS
+                .case T_MAXSS
+                .case T_MINSS
                 .case T_MULSS
                 .case T_DIVSS
                 .case T_COMISS

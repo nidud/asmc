@@ -71,7 +71,7 @@ CApplication::Run proc
     this.AfterLeavingMessageLoop()
    .return result
 
-CApplication::Run endp
+    endp
 
 
 ; Creates the application window, the d3d device and DirectComposition device and visual tree
@@ -81,7 +81,7 @@ CApplication::BeforeEnteringMessageLoop proc
 
     .return this.CreateApplicationWindow()
 
-CApplication::BeforeEnteringMessageLoop endp
+    endp
 
 
 ; Message loop
@@ -102,7 +102,7 @@ CApplication::EnterMessageLoop proc
     .endif
     .return result
 
-CApplication::EnterMessageLoop endp
+    endp
 
 
 ; Destroys the application window, DirectComposition device and visual tree.
@@ -111,7 +111,7 @@ CApplication::AfterLeavingMessageLoop proc
 
    .return this.DestroyApplicationWindow()
 
-CApplication::AfterLeavingMessageLoop endp
+    endp
 
 
 ; Shows the application window
@@ -136,7 +136,7 @@ CApplication::ShowApplicationWindow proc uses rdi
     .endif
     .return bSucceeded
 
-CApplication::ShowApplicationWindow endp
+    endp
 
 
 ; Destroys the applicaiton window
@@ -155,7 +155,7 @@ CApplication::DestroyApplicationWindow proc uses rdi
     .endif
     ret
 
-CApplication::DestroyApplicationWindow endp
+    endp
 
 
 CApplication::OnSize proc uses rsi rdi rbx lParam:LPARAM
@@ -193,7 +193,7 @@ CApplication::OnSize proc uses rsi rdi rbx lParam:LPARAM
     .endif
     .return 1
 
-CApplication::OnSize endp
+    endp
 
 
     assume rsi:ptr object
@@ -274,7 +274,7 @@ CApplication::OnTimer proc uses rsi rdi rbx
     .endf
     .return 1
 
-CApplication::OnTimer endp
+    endp
 
 
 ; Handles the WM_KEYDOWN message
@@ -322,7 +322,7 @@ CApplication::OnKeyDown proc wParam:WPARAM
     .endsw
     .return 0
 
-CApplication::OnKeyDown endp
+    endp
 
 
 ; Handles the WM_CLOSE message
@@ -339,7 +339,7 @@ CApplication::OnClose proc
     .endif
     .return 0
 
-CApplication::OnClose endp
+    endp
 
 
 ; Handles the WM_DESTROY message
@@ -350,7 +350,7 @@ CApplication::OnDestroy proc
 
     .return 0
 
-CApplication::OnDestroy endp
+    endp
 
 
 ; Handles the WM_PAINT message
@@ -487,7 +487,7 @@ CApplication::OnPaint proc uses rdi
     .endif
    .return 1
 
-CApplication::OnPaint endp
+    endp
 
 
 ; Main Window procedure
@@ -529,7 +529,7 @@ WindowProc proc WINAPI hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .endsw
     ret
 
-WindowProc endp
+    endp
 
 
 ; Creates the application window
@@ -580,7 +580,7 @@ CApplication::CreateApplicationWindow proc uses rdi
     mov [rdi].m_hwnd,rax
    .return S_OK
 
-CApplication::CreateApplicationWindow endp
+    endp
 
 
 ; Provides the entry point to the application
@@ -595,13 +595,14 @@ CApplication::CApplication proc instance:HINSTANCE
     mov [rax].CApplication.m_height,600
     ret
 
-CApplication::CApplication endp
+    endp
+
 
 _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 
     .new app:ptr CApplication(hInstance)
     .return app.Run()
 
-_tWinMain endp
+    endp
 
     end _tstart

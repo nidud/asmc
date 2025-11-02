@@ -725,13 +725,18 @@ endif
         mov cl,MODULE.casealign
         mov eax,1
         shl eax,cl
-        AddLineQueueX( " ALIGN %d", eax )
+        AddLineQueueX( " %r %d", T_ALIGN, eax )
 
     .elseif ( [rsi].SwitchJump && [rsi].SwitchTable )
 
-        .if ( MODULE.Ofssize == USE64 && !( [rsi].SwitchTData ) )
+        .if ( MODULE.Ofssize >= USE32 && !( [rsi].SwitchTData ) )
 
-            AddLineQueue( " ALIGN 8" )
+            mov ecx,T_DWORD
+            mov edx,T_ALIGN
+            .if ( MODULE.Ofssize == USE64 )
+                mov ecx,T_QWORD
+            .endif
+            AddLineQueueX(" %r %r", edx, ecx )
         .endif
     .endif
     AddLineQueueX( "%s%s", start_addr, LABELQUAL )

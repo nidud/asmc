@@ -1168,15 +1168,49 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
 AddLocalDir endp
 
 
-NewDirective proc __ccall i:int_t, tokenarray:token_t
+NewDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-  local rc:int_t
+    .new rc:int_t = ERROR
 
-    .if ( CurrProc == NULL )
-        .return asmerr( 2012 )
+    .if ( CurrProc )
+
+        ldr ecx,i
+        ldr rbx,tokenarray
+
+        imul eax,ecx,asm_tok
+        .if ( [rbx+rax+asm_tok].token == T_OP_BRACKET )
+
+            lea rbx,[rbx+rax+asm_tok*2]
+            SymFind( [rbx].string_ptr )
+            .if ( rax && [rax].asym.state == SYM_TMACRO )
+                SymFind( [rax].asym.string_ptr )
+            .endif
+            .if ( rax )
+                .if ( [rax].asym.state == SYM_TYPE )
+                    .while ( [rax].asym.type )
+                        mov rax,[rax].asym.type
+                    .endw
+                .endif
+                .if ( [rax].asym.hasvtable )
+
+                    mov rsi,rax
+                    xor edi,edi
+                    .if ( [rbx+asm_tok].token == T_COMMA && [rbx+asm_tok*2].token != T_CL_BRACKET )
+                        lea rdi,[rbx+asm_tok*2]
+                    .endif
+                    DefaultConstructor(rsi, rdi)
+                    mov rc,NOT_ERROR
+                .endif
+            .endif
+            .if ( rc == ERROR )
+                asmerr( 2008, [rbx].string_ptr )
+            .endif
+        .else
+            mov rc,AddLocalDir( ecx, rbx )
+        .endif
+    .else
+        asmerr( 2012 )
     .endif
-
-    mov rc,AddLocalDir( i, tokenarray )
     .if ( MODULE.line_queue.head )
         RunLineQueue()
     .endif

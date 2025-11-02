@@ -17,12 +17,12 @@ at_background byte \
     0x30,   ; BG_TITLE
     0x30,   ; BG_INVERSE
     0x70,   ; BG_GRAY
-    0x30,   ; BG_PBUTTON
+    0x80,   ; BG_DARKGRAY
+    0x20,   ; BG_PBUTTON
     0x30,   ; BG_INVPANEL
     0x30,   ; BG_INVMENU
-    0x00,   ; BG_TVIEW
+    0x10,   ; BG_TVIEW
     0x10,   ; BG_TEDIT
-    0x10,
     0x00,
     0x00
 
@@ -42,7 +42,6 @@ at_foreground byte \
     0x00,   ; FG_MENU
     0x0F,   ; FG_TITLEKEY
     0x0F,   ; FG_DIALOGKEY
-    0x0F,   ; FG_MENUKEY
-    16 dup(0)
+    0x0F    ; FG_MENUKEY
 
     end

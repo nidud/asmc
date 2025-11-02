@@ -269,7 +269,7 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     mov edi,DefaultConstructor(rsi, rdi)
     InsertLineQueue()
     sub rbx,asm_tok*2
-    .if ( rbx != tokenarray )
+    .if ( edi != ERROR && rbx != tokenarray )
         tsprintf(buffer, "%r", edi)
     .endif
    .return 1

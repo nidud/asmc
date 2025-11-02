@@ -2146,7 +2146,7 @@ int rc_event(int event)
         return cmuserscreen();
     case KEY_ESC:
         return cmdexit();
-    case ( KEY_ALT | 'x' ):
+    case ( KEY_ALT | 'X' ):
         endmain = 1;
         return event;
     }
@@ -2216,7 +2216,9 @@ int modal(void)
         result = tgetevent();
         if (result == MOUSECMD)
             result = mousevent();
-        if (rc_event(result) == ( KEY_ALT | 'x' ) )
+        else if (result == ( KEY_ALT | 'X' ) )
+            break;
+        if (rc_event(result) == ( KEY_ALT | 'X' ) )
             break;
     }
     closedlg();

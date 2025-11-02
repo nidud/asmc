@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>dz</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{06308DAA-FBB3-2EBE-8A3E-E640AF5C3014}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <GenerateManifest>false</GenerateManifest>
+    <PublicIncludeDirectories>
+    </PublicIncludeDirectories>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
+      <Profile>false</Profile>
+      <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID>1</TypeLibraryResourceID>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
+      <StackReserveSize>0x300000</StackReserveSize>
+      <StackCommitSize>0x200000</StackCommitSize>
+      <ShowProgress>NotSet</ShowProgress>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <ASMC>
+      <WarningLevel>2</WarningLevel>
+      <IncludePaths>inc</IncludePaths>
+      <GenerateUnwindInformation>true</GenerateUnwindInformation>
+      <PackAlignmentBoundary>4</PackAlignmentBoundary>
+      <GenerateCStackFrame>true</GenerateCStackFrame>
+      <GenerateDebugInformation>5</GenerateDebugInformation>
+    </ASMC>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
+      <Profile>false</Profile>
+      <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID>1</TypeLibraryResourceID>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
+    </Link>
+    <ASMC>
+      <WarningLevel>2</WarningLevel>
+      <IncludePaths>inc</IncludePaths>
+      <PackAlignmentBoundary>3</PackAlignmentBoundary>
+      <GenerateCStackFrame>true</GenerateCStackFrame>
+      <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
+      <CallingConvention>2</CallingConvention>
+      <IgnoreINCLUDELIB>false</IgnoreINCLUDELIB>
+      <AdditionalOptions>-DVERSION=383 -DMINVERS=349 -DDEBUGX -D__BMP__ %(AdditionalOptions)</AdditionalOptions>
+    </ASMC>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ASMC Include="src\Doszip.asm" />
+    <ASMC Include="src\Resource.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\dz.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
+  </ImportGroup>
+</Project>

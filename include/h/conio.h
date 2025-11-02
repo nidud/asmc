@@ -90,6 +90,7 @@ enum ColorBackground {
     BG_TITLE,
     BG_INVERSE,
     BG_GRAY,
+    BG_DARKGRAY,
     BG_PBUTTON,
     BG_INVPANEL,
     BG_INVMENU,

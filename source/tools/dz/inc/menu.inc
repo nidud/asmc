@@ -18,9 +18,7 @@ define MAXTOOLS 20
     ID_COMMAND,
      DI_COMMAND,
 
-    MENU_FIRST,
-
-    ID_MENUBAR = MENU_FIRST,
+    ID_MENUBAR,
      DI_MPANELA,
      DI_MFILE,
      DI_MEDIT,
@@ -152,9 +150,6 @@ define MAXTOOLS 20
     ID_HELP,
      CM_HELP,
      CM_ABOUT,
-
-    MENU_LAST,
-    DIALOG_FIRST = MENU_LAST,
 
     ID_MSGBOX,
     ID_DLGBOX,

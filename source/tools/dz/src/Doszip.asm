@@ -11,47 +11,12 @@ define MOUSE_BUTTON_DOWN    0x0020
 define MOUSE_WHEEL_UP       0x0040
 define MOUSE_WHEEL_DOWN     0x0080
 
-define STARTYEAR   0
-define MAXYEAR     3000
 
-MKID macro T, I
-    exitm<(I shl 16 or T)>
-    endm
+.pragma aux(eax, edi, esi)
 
-MKAT macro B, F, wC
-ifnb <wC>
-    exitm<(((B shl 4 or F) shl 16) or wC)>
-else
-    exitm<(B shl 4 or F)>
-endif
-    endm
-
-SetClass proto watcall :PDWND {
-    mov     rbx,rax
-ifdef __DEBUG__
-    mov     this,rax
-endif
+gotosw proto asmcall :abs, :WPARAM, :LPARAM, :abs=<1> {
+    .gotosw(_4:_1)
     }
-
-GetWindowSize proto watcall :TRECT {
-    mov     edx,eax
-    shr     edx,24
-    shr     eax,16
-    movzx   eax,al
-    mov     ecx,eax
-    imul    eax,edx
-    shl     eax,2
-    }
-
-KeyCtrl macro reg
-    exitm<(reg & (RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED))>
-    endm
-KeyAlt macro reg
-    exitm<(reg & (RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED))>
-    endm
-KeyShift macro reg
-    exitm<reg & SHIFT_PRESSED>
-    endm
 
 .data?
  m_dz           PDWND ?
@@ -104,6 +69,17 @@ KeyShift macro reg
                    @CStr(CP_DEC)
  cl_Keypos      db 1,5,9,13,17,21,25
 
+
+WPARGS  union
+rect    SMALL_RECT <>
+Input   INPUT_RECORD <>
+msg     Message <>
+cu      CONSOLE_CURSOR_INFO <>
+ci      CONSOLE_SCREEN_BUFFER_INFO <>
+ft      FILETIME <>
+ts      SYSTEMTIME <>
+WPARGS  ends
+
 .code
 
  assume class:rbx
@@ -112,18 +88,12 @@ KeyShift macro reg
 
    .new u1:uint_t, u2, u3, u4
    .new rc:TRECT, r2, rl, rr
-   .new Coord:COORD
-   .new rect:SMALL_RECT
    .new p:LPSTR, q
    .new hwnd:PDWND
-   .new Input:INPUT_RECORD
-   .new msg:Message
    .new pMsg:PDMSG
-   .new cu:CONSOLE_CURSOR_INFO
-   .new ci:CONSOLE_SCREEN_BUFFER_INFO
    .new fp:LPFILE
-   .new ft:FILETIME
-   .new ts:SYSTEMTIME
+   .new u:WPARGS
+   .new Coord:COORD
 
     ldr edx,uMsg
     ldr rdi,wParam
@@ -309,9 +279,9 @@ KeyShift macro reg
 
         ; wParam: BOOL
 
-        mov cu.bVisible,edi
-        mov cu.dwSize,CURSOR_NORMAL
-        SetConsoleCursorInfo(_confh, &cu)
+        mov u.cu.bVisible,edi
+        mov u.cu.dwSize,CURSOR_NORMAL
+        SetConsoleCursorInfo(_confh, &u.cu)
 
 
     .case WP_CURSORGET
@@ -319,13 +289,13 @@ KeyShift macro reg
         ; wParam: BOOL
         ; lParam: PCURSOR
 
-        .ifd GetConsoleScreenBufferInfo(_confh, &ci)
-            mov [rsi].CURSOR.x,ci.dwCursorPosition.X
-            mov [rsi].CURSOR.y,ci.dwCursorPosition.Y
+        .ifd GetConsoleScreenBufferInfo(_confh, &u.ci)
+            mov [rsi].CURSOR.x,u.ci.dwCursorPosition.X
+            mov [rsi].CURSOR.y,u.ci.dwCursorPosition.Y
         .endif
-        .ifd GetConsoleCursorInfo(_confh, &cu)
-            mov [rsi].CURSOR.type,cu.dwSize
-            mov [rsi].CURSOR.visible,cu.bVisible
+        .ifd GetConsoleCursorInfo(_confh, &u.cu)
+            mov [rsi].CURSOR.type,u.cu.dwSize
+            mov [rsi].CURSOR.visible,u.cu.bVisible
         .endif
         .gotosw(WP_CURSOR)
 
@@ -340,9 +310,9 @@ KeyShift macro reg
         SetConsoleCursorPosition(_confh, edx)
         movzx   eax,[rsi].CURSOR.type
         movzx   ecx,[rsi].CURSOR.visible
-        mov     cu.dwSize,eax
-        mov     cu.bVisible,ecx
-        SetConsoleCursorInfo(_confh, &cu)
+        mov     u.cu.dwSize,eax
+        mov     u.cu.bVisible,ecx
+        SetConsoleCursorInfo(_confh, &u.cu)
 
 
     .case WP_CURSORPOS
@@ -354,9 +324,9 @@ KeyShift macro reg
         .if ( edi )
             SetConsoleCursorPosition(_confh, esi)
         .else
-            mov ci.dwCursorPosition,0
-            GetConsoleScreenBufferInfo(_confh, &ci)
-           mov esi,ci.dwCursorPosition
+            mov u.ci.dwCursorPosition,0
+            GetConsoleScreenBufferInfo(_confh, &u.ci)
+           mov esi,u.ci.dwCursorPosition
         .endif
         .return( esi )
 
@@ -981,25 +951,25 @@ KeyShift macro reg
         movzx   ecx,rc.y
         mov     Coord.X,ax
         mov     Coord.Y,dx
-        mov     rect.Top,cx
+        mov     u.rect.Top,cx
         lea     ecx,[rcx+rdx-1]
-        mov     rect.Bottom,cx
+        mov     u.rect.Bottom,cx
         movzx   ecx,rc.x
-        mov     rect.Left,cx
+        mov     u.rect.Left,cx
         lea     eax,[rcx+rax-1]
-        mov     rect.Right,ax
+        mov     u.rect.Right,ax
 
-        .ifd !ReadConsoleOutputW(_confh, rdi, Coord, 0, &rect)
+        .ifd !ReadConsoleOutputW(_confh, rdi, Coord, 0, &u.rect)
 
-            mov     rect.Bottom,rect.Top
+            mov     u.rect.Bottom,u.rect.Top
             movzx   ebx,Coord.Y
             mov     Coord.Y,1
             movzx   esi,Coord.X
             shl     esi,2
             .repeat
-                .break .ifd !ReadConsoleOutputW(_confh, rdi, Coord, 0, &rect)
-                inc rect.Bottom
-                inc rect.Top
+                .break .ifd !ReadConsoleOutputW(_confh, rdi, Coord, 0, &u.rect)
+                inc u.rect.Bottom
+                inc u.rect.Top
                 add rdi,rsi
                 dec ebx
             .until !ebx
@@ -1024,25 +994,25 @@ KeyShift macro reg
         movzx   ecx,rc.y
         mov     Coord.X,ax
         mov     Coord.Y,dx
-        mov     rect.Top,cx
+        mov     u.rect.Top,cx
         lea     ecx,[rcx+rdx-1]
-        mov     rect.Bottom,cx
+        mov     u.rect.Bottom,cx
         movzx   ecx,rc.x
-        mov     rect.Left,cx
+        mov     u.rect.Left,cx
         lea     eax,[rcx+rax-1]
-        mov     rect.Right,ax
+        mov     u.rect.Right,ax
 
-        .ifd !WriteConsoleOutputW(_confh, rdi, Coord, 0, &rect)
+        .ifd !WriteConsoleOutputW(_confh, rdi, Coord, 0, &u.rect)
 
-            mov     rect.Bottom,rect.Top
+            mov     u.rect.Bottom,u.rect.Top
             movzx   ebx,Coord.Y
             mov     Coord.Y,1
             movzx   esi,Coord.X
             shl     esi,2
             .repeat
-                .break .ifd !WriteConsoleOutputW(_confh, rdi, Coord, 0, &rect)
-                inc rect.Bottom
-                inc rect.Top
+                .break .ifd !WriteConsoleOutputW(_confh, rdi, Coord, 0, &u.rect)
+                inc u.rect.Bottom
+                inc u.rect.Top
                 add rdi,rsi
                 dec ebx
             .until !ebx
@@ -1513,7 +1483,7 @@ KeyShift macro reg
             mov u1,0
             .ifd GetNumberOfConsoleInputEvents(_coninpfh, &u1)
                 .if ( u1 )
-                    ReadConsoleInputW(_coninpfh, &Input, 1, &u1)
+                    ReadConsoleInputW(_coninpfh, &u.Input, 1, &u1)
                 .endif
             .endif
 
@@ -1529,7 +1499,7 @@ KeyShift macro reg
                .return
             .endif
 
-            .switch pascal Input.EventType
+            .switch pascal u.Input.EventType
 
             .case KEY_EVENT
 
@@ -1541,12 +1511,12 @@ KeyShift macro reg
                 ;  0-15 Control Key State
                 ;  16   Key Char
                 ;
-                movzx   ecx,Input.Event.KeyEvent.wVirtualKeyCode
-                movzx   edi,word ptr Input.Event.KeyEvent.dwControlKeyState
+                movzx   ecx,u.Input.Event.KeyEvent.wVirtualKeyCode
+                movzx   edi,word ptr u.Input.Event.KeyEvent.dwControlKeyState
                 mov     eax,ecx
                 shl     eax,16
                 or      edi,eax
-                cmp     Input.Event.KeyEvent.bKeyDown,0
+                cmp     u.Input.Event.KeyEvent.bKeyDown,0
                 mov     eax,WP_KEYUP
                 mov     esi,WP_KEYDOWN
                 cmovz   esi,eax
@@ -1555,7 +1525,7 @@ KeyShift macro reg
                 ;
                 ; The Char or Virtual Key Code of the key
                 ;
-                movzx   edx,Input.Event.KeyEvent.uChar.UnicodeChar
+                movzx   edx,u.Input.Event.KeyEvent.uChar.UnicodeChar
                 test    edi,ENHANCED_KEY or RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED
                 cmovnz  edx,ecx
                 test    edx,edx
@@ -1563,7 +1533,7 @@ KeyShift macro reg
 
                 PostMessage(esi, rdx, rdi)
 
-                movzx   edx,Input.Event.KeyEvent.uChar.UnicodeChar
+                movzx   edx,u.Input.Event.KeyEvent.uChar.UnicodeChar
                 .endc .if ( edx == 0 )
                 .endc .if ( esi != WP_KEYDOWN )
                 .endc .if ( edi & ENHANCED_KEY or RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED or RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED )
@@ -1591,7 +1561,7 @@ KeyShift macro reg
                 ; 0x0040 MK_XBUTTON2    The second X button is down
                 ;
                 xor     ecx,ecx
-                mov     edx,Input.Event.MouseEvent.dwControlKeyState
+                mov     edx,u.Input.Event.MouseEvent.dwControlKeyState
                 test    edx,SHIFT_PRESSED
                 mov     eax,MK_SHIFT
                 cmovz   eax,ecx
@@ -1601,7 +1571,7 @@ KeyShift macro reg
                 or      ecx,eax
                 xor     edx,edx
                 mov     eax,MK_LBUTTON
-                mov     edi,Input.Event.MouseEvent.dwButtonState
+                mov     edi,u.Input.Event.MouseEvent.dwButtonState
                 test    edi,FROM_LEFT_1ST_BUTTON_PRESSED
                 cmovz   eax,edx
                 or      ecx,eax
@@ -1617,7 +1587,7 @@ KeyShift macro reg
                 and     eax,0xFFFFFF00
                 or      ecx,eax
                 xor     esi,esi
-                mov     eax,Input.Event.MouseEvent.dwEventFlags
+                mov     eax,u.Input.Event.MouseEvent.dwEventFlags
 
                 .switch pascal eax
                 .case MOUSE_MOVED
@@ -1661,14 +1631,14 @@ KeyShift macro reg
                 .endsw
                 .if ( esi )
                     mov edi,ecx
-                    PostMessage(esi, rdi, Input.Event.MouseEvent.dwMousePosition)
+                    PostMessage(esi, rdi, u.Input.Event.MouseEvent.dwMousePosition)
                 .endif
             .case WINDOW_BUFFER_SIZE_EVENT
-                PostMessage(WP_SIZE, 0, Input.Event.WindowBufferSizeEvent.dwSize)
+                PostMessage(WP_SIZE, 0, u.Input.Event.WindowBufferSizeEvent.dwSize)
             .case FOCUS_EVENT
-                mov m_dlgFocus,Input.Event.FocusEvent.bSetFocus
+                mov m_dlgFocus,u.Input.Event.FocusEvent.bSetFocus
             .case MENU_EVENT
-                PostMessage(Input.Event.MenuEvent.dwCommandId, 0, 0)
+                PostMessage(u.Input.Event.MenuEvent.dwCommandId, 0, 0)
             .endsw
         .endw
 
@@ -2132,11 +2102,11 @@ KeyShift macro reg
 
         .endc .ifd ( CreateFileW(rsi, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL) == -1 )
         mov rsi,rax
-        mov edi,GetFileTime(rsi, 0, 0, &ft)
+        mov edi,GetFileTime(rsi, 0, 0, &u.ft)
         CloseHandle(rsi)
         .if ( edi )
-            mov eax,ft.dwLowDateTime
-            mov edx,ft.dwHighDateTime
+            mov eax,u.ft.dwLowDateTime
+            mov edx,u.ft.dwHighDateTime
            .return
         .endif
 
@@ -2456,9 +2426,7 @@ KeyShift macro reg
             .endif
         .endif
         .if ( ecx )
-            mov esi,ecx
-            mov edi,0x00010001
-           .gotosw(WP_FILLCHARACTER)
+            gotosw(WP_FILLCHARACTER, 0x00010001, ecx, 0)
         .endif
 
 
@@ -2468,9 +2436,7 @@ KeyShift macro reg
         ; lParam: Window that has new focus
 
         mov rbx,rsi
-        .if ( rbx == NULL || Flags.Disabled || Flags.NoFocus )
-            .endc
-        .endif
+        .endc .if ( rbx == NULL || Flags.Disabled || Flags.NoFocus )
         .if WinProc(WP_GETFOCUS, rax, rbx)
             WinProc(WP_KILLFOCUS, rsi, rax)
         .endif
@@ -2489,26 +2455,20 @@ KeyShift macro reg
             WinProc(WP_FILLCHARACTER, 0x00010000, eax)
             mov ecx,0x000100FF
             add cl,m_rc.col
-            mov edi,ecx
-           .gotosw(1:WP_FILLCHARACTER)
+            gotosw(WP_FILLCHARACTER, ecx)
         .case CT_CHECKBOX
         .case CT_RADIOBUTTON
-            mov edi,TRUE
-            mov esi,0x01010001
-           .gotosw(1:WP_SETCURSOR)
+            gotosw(WP_SETCURSOR, TRUE, 0x01010001)
         .case CT_XCELL
         .case CT_MENUITEM
             WinProc(WP_SETCURSOR, FALSE, 0x01010002)
             movzx edi,m_rc.col
             shl edi,16
-            mov esi,BG_INVERSE
-           .gotosw(1:WP_FILLBACKGROUND)
+            gotosw(WP_FILLBACKGROUND, edi, BG_INVERSE)
         .case CT_TEXTINPUT
-            mov edi,TRUE
-            mov esi,0x01010000
             movzx eax,Edit.m_XOffs
-            or  esi,eax
-           .gotosw(1:WP_SETCURSOR)
+            or  eax,0x01010000
+            gotosw(WP_SETCURSOR, TRUE, eax)
         .endsw
 
 
@@ -2525,15 +2485,12 @@ KeyShift macro reg
             WinProc(WP_FILLCHARACTER, 0x00010000, ' ')
             mov ecx,0x000100FF
             add cl,m_rc.col
-            mov edi,ecx
-            mov esi,' '
-           .gotosw(1:WP_FILLCHARACTER)
+            gotosw(WP_FILLCHARACTER, ecx, ' ')
         .case CT_XCELL
         .case CT_MENUITEM
             movzx edi,m_rc.col
             shl edi,16
-            mov esi,BG_MENU
-           .gotosw(1:WP_FILLBACKGROUND)
+            gotosw(WP_FILLBACKGROUND, edi, BG_MENU)
         .endsw
 
 
@@ -2541,23 +2498,16 @@ KeyShift macro reg
 
         ; wParam: BOOL
         ; lParam: PDWND
-        ; return: 0
 
         .for ( rbx = rsi, rbx = m_Next : rbx : rbx = m_Next )
-
             .if ( !Flags.Disabled && !Flags.NoFocus )
-
-                mov rdi,rsi
-                mov rsi,rbx
-               .gotosw(WP_SETFOCUS)
+                gotosw(WP_SETFOCUS, 0, rbx, 0)
             .endif
         .endf
         .if ( edi )
             .for ( rbx = [rsi].Doszip.m_Base, rbx = m_This : rbx : rbx = m_Next )
                 .if ( !Flags.Disabled && !Flags.NoFocus )
-                    mov rdi,rsi
-                    mov rsi,rbx
-                   .gotosw(WP_SETFOCUS)
+                    gotosw(WP_SETFOCUS, 0, rbx, 0)
                 .endif
             .endf
         .endif
@@ -2569,12 +2519,8 @@ KeyShift macro reg
         ; lParam: PDWND
 
         .for ( rbx = rsi, rbx = m_Prev : rbx : rbx = m_Prev )
-
             .if ( !Flags.Disabled && !Flags.NoFocus )
-
-                mov rdi,rsi
-                mov rsi,rbx
-               .gotosw(WP_SETFOCUS)
+                gotosw(WP_SETFOCUS, 0, rbx, 0)
             .endif
         .endf
         .if ( edi )
@@ -2582,10 +2528,7 @@ KeyShift macro reg
             .endf
             .for ( : rbx : rbx = m_Prev )
                 .if ( !Flags.Disabled && !Flags.NoFocus )
-
-                    mov rdi,rsi
-                    mov rsi,rbx
-                   .gotosw(WP_SETFOCUS)
+                    gotosw(WP_SETFOCUS, 0, rbx, 0)
                 .endif
             .endf
         .endif
@@ -2595,15 +2538,9 @@ KeyShift macro reg
 
         ; lParam: PDWND
 
-        mov rbx,rsi
-        mov al,m_rc.y
-
-        .for ( rbx = m_Prev : rbx : rbx = m_Prev )
-
+        .for ( rbx = rsi, al = m_rc.y, rbx = m_Prev : rbx : rbx = m_Prev )
             .if ( al == m_rc.y && !Flags.Disabled && !Flags.NoFocus )
-
-                mov rsi,rbx
-               .gotosw(WP_SETFOCUS)
+                gotosw(WP_SETFOCUS, 0, rbx, 0)
             .endif
         .endf
         .gotosw(WP_SETPREVITEM)
@@ -2613,15 +2550,9 @@ KeyShift macro reg
 
         ; lParam: PDWND
 
-        mov rbx,rsi
-        mov al,m_rc.y
-
-        .for ( rbx = m_Next : rbx : rbx = m_Next )
-
+        .for ( rbx = rsi, al = m_rc.y, rbx = m_Next : rbx : rbx = m_Next )
             .if ( al == m_rc.y && !Flags.Disabled && !Flags.NoFocus )
-
-                mov rsi,rbx
-               .gotosw(WP_SETFOCUS)
+                gotosw(WP_SETFOCUS, 0, rbx, 0)
             .endif
         .endf
         .gotosw(WP_SETNEXTITEM)
@@ -2648,38 +2579,33 @@ KeyShift macro reg
             WinProc(WP_FILLCHARACTER, 0x01010000, ecx)
             mov     ecx,0x000100FF
             add     cl,rc.col
-            mov     edi,ecx
-           .gotosw(1:WP_FILLCHARACTER)
+            gotosw(WP_FILLCHARACTER, ecx)
         .case CT_RADIOBUTTON
             mov     eax,' '
             mov     esi,U_BULLET_OPERATOR
             cmp     Flags.Checked,0
             cmovz   esi,eax
-            mov     edi,0x01010001
-           .gotosw(1:WP_FILLCHARACTER)
+            gotosw(WP_FILLCHARACTER, 0x01010001)
         .case CT_CHECKBOX
             mov     eax,' '
             mov     esi,'x'
             cmp     Flags.Checked,0
             cmovz   esi,eax
-            mov     edi,0x01010001
-           .gotosw(1:WP_FILLCHARACTER)
+            gotosw(WP_FILLCHARACTER, 0x01010001)
         .case CT_XCELL
         .case CT_MENUITEM
         .case CT_TEXTITEM
             .if ( Flags.HasFocus )
                 movzx edi,m_rc.col
                 shl edi,16
-                mov esi,BG_INVERSE
-               .gotosw(1:WP_FILLBACKGROUND)
+                gotosw(WP_FILLBACKGROUND, edi, BG_INVERSE)
             .endif
            .endc
         .case CT_TEXTINPUT
             WinProc(WP_FILLCHARINFO, rc, Edit.m_Attribute)
             .if ( rdi )
-                WinProc(WP_WRITESTRING, rc, rdi)
+                gotosw(WP_WRITESTRING, rc, rdi)
             .endif
-           .endc
         .endsw
 
     .case WP_SETDLGFLAGS
@@ -2727,7 +2653,7 @@ KeyShift macro reg
             free(m_Window)
         .endif
 
-        .if GetConsoleScreenBufferInfo(_confh, &ci)
+        .if GetConsoleScreenBufferInfo(_confh, &u.ci)
 
             SetConsoleCursorPosition(_confh, 0)
 
@@ -2750,12 +2676,12 @@ KeyShift macro reg
             movzx edx,m_rc.row
             dec eax
             dec edx
-            .if ( ax != ci.srWindow.Right || dx != ci.srWindow.Bottom )
-                mov ci.srWindow.Top,0
-                mov ci.srWindow.Left,0
-                mov ci.srWindow.Right,ax
-                mov ci.srWindow.Bottom,dx
-                SetConsoleWindowInfo(_confh, 1, &ci.srWindow)
+            .if ( ax != u.ci.srWindow.Right || dx != u.ci.srWindow.Bottom )
+                mov u.ci.srWindow.Top,0
+                mov u.ci.srWindow.Left,0
+                mov u.ci.srWindow.Right,ax
+                mov u.ci.srWindow.Bottom,dx
+                SetConsoleWindowInfo(_confh, 1, &u.ci.srWindow)
             .endif
             movzx edx,m_rc.row
             shl edx,16
@@ -2764,9 +2690,7 @@ KeyShift macro reg
             .if malloc(GetWindowSize(m_rc))
                 mov Flags.Open,1
                 mov m_Window,rax
-                mov edi,m_rc
-                mov rsi,rax
-               .gotosw(WP_READWINDOW)
+                gotosw(WP_READWINDOW, m_rc, rax, 0)
             .endif
         .endif
 
@@ -2904,8 +2828,8 @@ KeyShift macro reg
         mov rbx,rsi
         mov rsi,m_Home
         mov eax,m_Id
-        .switch pascal eax
 
+        .switch pascal eax
         .case ID_PANELA
             .if ( eax == ID_PANELA )
                 mov m_rc.x,0
@@ -2931,7 +2855,7 @@ KeyShift macro reg
                     mov rbx,m_Next
                     dec ecx
                 .endw
-                WinProc(WP_FILLCHARACTER, 0x010100FF, U_BULLET_OPERATOR)
+                gotosw(WP_FILLCHARACTER, 0x010100FF, U_BULLET_OPERATOR)
             .endif
         .case ID_PANELB
             mov m_rc.x,40
@@ -2947,26 +2871,23 @@ KeyShift macro reg
                 .if ( [rcx].Doszip.Setup.AutoSaveSetup )
                     mov Flags.Checked,1
                 .endif
-                WinProc(WP_INITITEM, 0, rbx)
+                gotosw(WP_INITITEM, 0, rbx)
             .endif
 
         .case ID_SYSTEMOPTIONS
             mov edi,[rsi].Doszip.Setup
             shr edi,Doszip.Setup.UseBeep
-            mov esi,DI_SO_OK
-           .gotosw(1:WP_SETDLGFLAGS)
+            gotosw(WP_SETDLGFLAGS, edi, DI_SO_OK)
 
         .case ID_SCREENOPTIONS
             mov edi,[rsi].Doszip.Setup
             shr edi,Doszip.Setup.MenuBar
-            mov esi,DI_SC_ATTRIB
-           .gotosw(1:WP_SETDLGFLAGS)
+            gotosw(WP_SETDLGFLAGS, edi, DI_SC_ATTRIB)
 
         .case ID_PANELOPTIONS
             mov edi,[rsi].Doszip.Panels
             shr edi,Doszip.Panels.InsertMoves
-            mov esi,DI_PO_OK
-           .gotosw(1:WP_SETDLGFLAGS)
+            gotosw(WP_SETDLGFLAGS, edi, DI_PO_OK)
 
         .case ID_TEOPTIONS
             WinProc(WP_SETDLGFLAGS, [rsi].Doszip.Editor, DI_TEO_TABSIZE)
@@ -2978,15 +2899,12 @@ KeyShift macro reg
                 mov rbx,m_This
                 mov ecx,_swprintf(Line.m_TBuf, L"%u", edi)
                 WinProc(WP_SETTEXT, ecx, Line.m_TBuf)
-                mov rcx,m_Text
-                mov rbx,m_Base
-                WinProc(WP_INITITEM, rcx, rbx)
+                gotosw(WP_INITITEM, m_Text, m_Base)
             .endif
 
         .case ID_CONFIRMATIONS
             movzx edi,[rsi].Doszip.Confirm
-            mov esi,DI_CN_OK
-           .gotosw(1:WP_SETDLGFLAGS)
+            gotosw(WP_SETDLGFLAGS, edi, DI_CN_OK)
 
         .case ID_COMPRESSION
 
@@ -3021,24 +2939,24 @@ KeyShift macro reg
                     WinProc(WP_FILLBACKGROUND, rc, rcx)
                 .endif
             .endf
-            WinProc(WP_ENDPAINT, hwnd, m_Base)
+            gotosw(WP_ENDPAINT, hwnd, m_Base)
 
         .case ID_CALENDAR
             mov hwnd,WinProc(WP_BEGINPAINT, 0, rbx)
             WinProc(WP_UNPACKWINDOW, m_Resource, rbx)
-            GetLocalTime(&ts)
+            GetLocalTime(&u.ts)
             .if ( Calendar.m_CurYear == 0 )
-                movzx eax,ts.wDay
+                movzx eax,u.ts.wDay
                 mov Calendar.m_Day,eax
                 mov Calendar.m_CurDay,eax
-                mov ax,ts.wMonth
+                mov ax,u.ts.wMonth
                 mov Calendar.m_Month,eax
                 mov Calendar.m_CurMonth,eax
-                mov ax,ts.wYear
+                mov ax,u.ts.wYear
                 mov Calendar.m_Year,eax
                 mov Calendar.m_CurYear,eax
             .endif
-            WinProc(WP_WRITEFORMAT, 0x000A0102, L"%02u:%02u:%02u", ts.wHour, ts.wMinute, ts.wSecond)
+            WinProc(WP_WRITEFORMAT, 0x000A0102, L"%02u:%02u:%02u", u.ts.wHour, u.ts.wMinute, u.ts.wSecond)
             lea rsi,cp_Month
             mov ecx,Calendar.m_CurMonth
             mov rcx,[rsi+rcx*size_t-size_t]
@@ -3083,7 +3001,7 @@ KeyShift macro reg
                     .endif
                 .endf
             .endf
-            WinProc(WP_ENDPAINT, hwnd, rbx)
+            gotosw(WP_ENDPAINT, hwnd, rbx)
         .endsw
 
 
@@ -3235,11 +3153,11 @@ KeyShift macro reg
                 .endif
                 WinProc(WP_SHOWWINDOW, TRUE, rbx)
                 .repeat
-                    .whiled WinProc(WP_GETMESSAGE, &msg, rbx)
-                        WinProc(msg.uMsg, msg.wParam, msg.lParam)
+                    .whiled WinProc(WP_GETMESSAGE, &u.msg, rbx)
+                        WinProc(u.msg.uMsg, u.msg.wParam, u.msg.lParam)
                     .endw
-                .untild !WinProc(WP_ENDDIALOG, msg.wParam, rbx)
-                mov rax,msg.wParam
+                .untild !WinProc(WP_ENDDIALOG, u.msg.wParam, rbx)
+                mov rax,u.msg.wParam
             .endif
         .endif
         .return
@@ -3279,7 +3197,7 @@ KeyShift macro reg
                 mov rc.col,1
                 shl ecx,16
                 WinProc(WP_WRITEPATH, ecx, rdi)
-                WinProc(WP_FILLCHARACTER, rc, '>')
+                gotosw(WP_FILLCHARACTER, rc, '>', 0)
             .endif
         .endif
 
@@ -3451,7 +3369,7 @@ KeyShift macro reg
             lea     rdi,[rdi+rdx*4+4]
             rep     stosd
             .if ( esi )
-                WinProc(WP_SHOWWINDOW, TRUE, rbx)
+                gotosw(WP_SHOWWINDOW, TRUE, rbx, 0)
             .endif
         .endif
 
@@ -3781,7 +3699,7 @@ KeyShift macro reg
         .else
             mov Panel.Flags.Hidden,1
         .endif
-        WinProc(WP_SHOWCOMMANDLINE, TRUE, 0)
+        gotosw(WP_SHOWCOMMANDLINE, TRUE, rsi, 0)
 
 
     .case WP_SHOWPANELCELL
@@ -3798,6 +3716,56 @@ KeyShift macro reg
     .case WP_PANELMSG
 
     .case WP_PANELINFO
+
+        ; lParam: PDWND
+
+        .ifd WinProc(WP_PANELSTATE, 0, rsi)
+
+            mov rbx,rsi
+            .if ( Flags.Visible )
+
+                mov rdi,wcscpy(m_B1, Panel.m_srcPath)
+                .if ( Panel.Flags.Archive || Panel.Flags.RootDir )
+                    _wstrfcat(rax, Panel.m_arcFile, Panel.m_arcPath)
+                .endif
+                mov u1,wcslen(rax)
+                movzx eax,m_rc.col
+                sub al,2
+                shl eax,16
+                inc al
+                mov rc,eax
+
+                mov rdx,Panel.m_srcPath
+                movzx eax,word ptr [rdx]
+                WinProc(WP_FILLCHARACTER, 0x00010101, rax)
+
+                mov rc.row,MKAT(BG_PANEL, FG_FRAME)
+                WinProc(WP_FILLCHARACTER, rc, U_DOUBLE_HORIZONTAL)
+
+                xor eax,eax
+                mov rdx,m_Home
+                .if ( rbx == [rdx].Doszip.m_CPanel )
+                    mov al,MKAT(BG_INVPANEL, FG_FRAME)
+                .endif
+                mov rc.row,al
+                mov al,rc.col
+
+                .if ( u1 > eax )
+
+                    WinProc(WP_FILLCHARACTER, rc, ' ')
+                    inc rc.x
+                    sub rc.col,2
+                    WinProc(WP_WRITEPATH, rc, rdi)
+                .else
+                    sub eax,u1
+                    shr eax,1
+                    dec eax
+                    add rc.x,al
+                    WinProc(WP_WRITEFORMAT, rc, L" %s ", rdi)
+                .endif
+            .endif
+        .endif
+
 
     .case WP_READPANEL
 
@@ -3990,8 +3958,7 @@ KeyShift macro reg
         .else
             WinProc(WP_SHOWPANEL, TRUE, rbx)
             .if ( [rsi].Doszip.Flags.Visible == 0 )
-                mov rsi,rbx
-               .gotosw(WP_ACTIVATEPANEL)
+                gotosw(WP_ACTIVATEPANEL, edi, rbx, 0)
             .endif
         .endif
 
@@ -4080,14 +4047,11 @@ KeyShift macro reg
                 mov Panel.Flags.NoSort,1
                .endc
             .case CM_ATOGGLE
-                mov rsi,m_PanelA
-               .gotosw(1:WP_TOGGLEPANEL)
+                gotosw(WP_TOGGLEPANEL, edi, m_PanelA)
             .case CM_BTOGGLE
-                mov rsi,m_PanelB
-               .gotosw(1:WP_TOGGLEPANEL)
+                gotosw(WP_TOGGLEPANEL, edi, m_PanelB)
             .case CM_CTOGGLE
-                mov rsi,m_CPanel
-               .gotosw(1:WP_TOGGLEPANEL)
+                gotosw(WP_TOGGLEPANEL, edi, m_CPanel)
             .case CM_AFILTER
             .case CM_BFILTER
             .case CM_CFILTER
@@ -4123,7 +4087,7 @@ KeyShift macro reg
                 mov eax,Panels.PanelSize
                 inc eax
                 mov Panels.PanelSize,eax
-               .gotosw(1:WP_REDRAWPANELS)
+                gotosw(WP_REDRAWPANELS, edi, esi)
             .endif
             .endc
         .case CM_PANELSIZEDN
@@ -4131,7 +4095,7 @@ KeyShift macro reg
                 mov eax,Panels.PanelSize
                 dec eax
                 mov Panels.PanelSize,eax
-               .gotosw(1:WP_REDRAWPANELS)
+                gotosw(WP_REDRAWPANELS, edi, esi)
             .endif
             .endc
 
@@ -4157,9 +4121,7 @@ KeyShift macro reg
             .if ( Confirm.Exit )
                 .endc .ifd ( MessageBox( CP_EXIT, CP_EXITPROGRAM, MB_OKCANCEL ) != IDOK )
             .endif
-            xor edi,edi
-            mov rsi,rbx
-           .gotosw(1:WP_QUIT)
+            gotosw(WP_QUIT, 0, rbx)
 
         .case CM_SELECT
         .case CM_DESELECT
@@ -4175,16 +4137,14 @@ KeyShift macro reg
 
         .case CM_TOGGLEMENUBAR
             xor Setup.MenuBar,1
-           .gotosw(1:WP_UPDATE)
+            gotosw(WP_UPDATE)
         .case CM_TOGGLEPANELS
             mov esi,WinProc(WP_PANELSTATE, 0, m_PanelA)
             mov edi,WinProc(WP_PANELSTATE, 0, m_PanelB)
             .if ( !edi && esi )
-                mov edi,CM_ATOGGLE
-               .gotosw(1:WP_COMMAND)
+                gotosw(WP_COMMAND, CM_ATOGGLE)
             .elseif ( edi && !esi )
-                mov edi,CM_BTOGGLE
-               .gotosw(1:WP_COMMAND)
+                gotosw(WP_COMMAND, CM_BTOGGLE)
             .elseif ( edi )
                 mov rsi,m_CPanel
                 mov rdi,m_PanelA
@@ -4215,7 +4175,7 @@ KeyShift macro reg
                 dec eax
             .endif
             mov Panels.PanelSize,eax
-           .gotosw(1:WP_REDRAWPANELS)
+            gotosw(WP_REDRAWPANELS)
 
         .case CM_TOGGLEHORIZONTAL
             mov eax,Panels.PanelSize
@@ -4230,15 +4190,15 @@ KeyShift macro reg
                 mov Panels.Horizontal,1
             .endif
             mov Panels.PanelSize,eax
-           .gotosw(1:WP_REDRAWPANELS)
+            gotosw(WP_REDRAWPANELS)
 
         .case CM_TOGGLECMD
             xor Setup.CommandLine,1
-           .gotosw(1:WP_UPDATE)
+            gotosw(WP_UPDATE)
 
         .case CM_TOGGLEKEYBAR
             xor Setup.KeyBar,1
-           .gotosw(1:WP_UPDATE)
+            gotosw(WP_UPDATE)
 
         .case CM_TOGGLEDESKTOPSIZE
         .case CM_DESKTOPSIZE
@@ -4246,45 +4206,37 @@ KeyShift macro reg
             MessageBox( L"Setup", L"CM:%3d, State %04X", MB_OK, edi, esi )
            .endc
         .case CM_CONFIRMATION
-            mov edi,ID_CONFIRMATIONS
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_CONFIRMATIONS)
         .case CM_PANELOPTIONS
-            mov edi,ID_PANELOPTIONS
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_PANELOPTIONS)
         .case CM_COMPRESSOPTIONS
-            mov edi,ID_COMPRESSION
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_COMPRESSION)
         .case CM_EDITOPTIONS
-            mov edi,ID_TEOPTIONS
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_TEOPTIONS)
         .case CM_SCREENOPTIONS
-            mov edi,ID_SCREENOPTIONS
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_SCREENOPTIONS)
         .case CM_SYSTEMOPTIONS
-            mov edi,ID_SYSTEMOPTIONS
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_SYSTEMOPTIONS)
         .case CM_CONFIGURATION
-            mov edi,ID_CONFIGURATION
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_CONFIGURATION)
 
         .case CM_HELP
             MessageBox( L"Help", L"CM:%3d, State %04X", MB_OK or MB_USERICON, edi, esi )
            .endc
         .case CM_ABOUT
-            mov edi,ID_ABOUT
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_ABOUT)
 
         .case CM_USERSCREEN
             mov rbx,m_Home
             WinProc(WP_SHOWWINDOW, FALSE, rbx)
-            .whiled WinProc(WP_GETMESSAGE, &msg, rbx)
-                .break .if ( msg.uMsg == WP_CHAR )
+            .whiled WinProc(WP_GETMESSAGE, &u.msg, rbx)
+                .break .if ( u.msg.uMsg == WP_CHAR )
             .endw
-            WinProc(WP_SHOWWINDOW, TRUE, rbx)
-           .endc
+            gotosw(WP_SHOWWINDOW, TRUE, rbx)
+
         .case CM_CALENDAR
-            mov edi,ID_CALENDAR
-           .gotosw(1:WP_RUNDIALOG)
+            gotosw(WP_RUNDIALOG, ID_CALENDAR)
+
         .case CM_DIRECTORYINFO
             MessageBox( L"CM_DIRECTORYINFO", L"CM:%3d, State %04X", MB_OK, edi, esi )
            .endc
@@ -4312,13 +4264,13 @@ KeyShift macro reg
         .endsw
         .endc .if ( !edi )
 
-        WinProc(WP_READWINDOW, m_rc, &ts)
+        WinProc(WP_READWINDOW, m_rc, &u.ts)
         mov rc,m_rc
         mov rc.x,0
         mov rc.y,0
         WinProc(WP_FILLATTRIBUTE, rc, MKAT(0, 15))
         mov edi,WinProc(WP_RUNDIALOG, edi, 0)
-        WinProc(WP_WRITEWINDOW, m_rc, &ts)
+        WinProc(WP_WRITEWINDOW, m_rc, &u.ts)
         .if ( edi == PREV_MENU )
             mov rsi,m_Prev
             .if ( rsi == NULL )
@@ -4350,14 +4302,10 @@ KeyShift macro reg
         shr edx,16
 
         .if ( edx == 'X' && KeyAlt(esi) )
-
             .if ( ecx == CT_DESKTOP )
-                mov edi,CM_EXIT
-               .gotosw(WP_COMMAND)
+                gotosw(WP_COMMAND, CM_EXIT, esi, 0)
             .elseif ( ecx == CT_DIALOG || ecx == CT_MENUDLG )
-                xor edi,edi
-                mov rsi,rbx
-               .gotosw(WP_QUIT)
+                gotosw(WP_QUIT, 0, rbx, 0)
             .endif
             .endc
         .endif
@@ -4374,8 +4322,7 @@ KeyShift macro reg
                     .if ( Flags.Open && Flags.Visible )
                         .for ( rbx = m_This : rbx : rbx = m_Next )
                             .if ( esi == m_SysKey )
-                                mov rsi,rbx
-                               .gotosw(2:WP_MENUCOMMAND)
+                                gotosw(WP_MENUCOMMAND, edi, rbx, 2)
                             .endif
                         .endf
                     .endif
@@ -4419,14 +4366,12 @@ KeyShift macro reg
             .switch pascal edx
             .case VK_UP
                 .if KeyAlt(esi)
-                    mov edi,CM_PANELSIZEUP
-                   .gotosw(2:WP_COMMAND)
+                    gotosw(WP_COMMAND, CM_PANELSIZEUP, esi, 2)
                 .endif
                 .return
             .case VK_DOWN
                 .if KeyAlt(esi)
-                    mov edi,CM_PANELSIZEDN
-                   .gotosw(2:WP_COMMAND)
+                    gotosw(WP_COMMAND, CM_PANELSIZEDN, esi, 2)
                 .endif
                 .return
             .case VK_F1
@@ -4542,8 +4487,7 @@ KeyShift macro reg
                 .default
                     .return
                 .endsw
-                 mov rsi,rbx
-                .gotosw(1:WP_SETDIALOG)
+                gotosw(WP_SETDIALOG, edi, rbx)
             .endif
 
         .case CT_MENUDLG
@@ -4591,8 +4535,7 @@ KeyShift macro reg
                     .endif
                     mov [rdx+rax],cl
                     WinProc(WP_SETDIALOG, 0, m_Base)
-                    mov rsi,rbx
-                   .gotosw(2:WP_SETFOCUS)
+                    gotosw(WP_SETFOCUS, edi, rbx, 2)
                 .endif
                 .endc
             .case VK_NEXT
@@ -4610,37 +4553,27 @@ KeyShift macro reg
                     .endif
                     mov [rdx+rax],cl
                     WinProc(WP_SETDIALOG, 0, m_Base)
-                    mov rsi,rbx
-                   .gotosw(2:WP_SETFOCUS)
+                    gotosw(WP_SETFOCUS, edi, rbx, 2)
                 .endif
                 .endc
             .case VK_LEFT
                 .if ( ecx == CT_MENUDLG )
-                    mov edi,PREV_MENU
-                    mov rsi,rbx
-                   .gotosw(2:WP_QUIT)
+                    gotosw(WP_QUIT, PREV_MENU, rbx, 2)
                 .endif
                 .if ( m_Type == CT_TEXTINPUT )
                     .if ( Edit.m_XOffs )
                         dec Edit.m_XOffs
                     .endif
-                    mov edi,TRUE
-                    mov eax,0x01010000
-                    mov al,Edit.m_XOffs
-                    mov esi,eax
-                   .gotosw(2:WP_SETCURSOR)
+                    movzx esi,Edit.m_XOffs
+                    or esi,0x01010000
+                    gotosw(WP_SETCURSOR, TRUE, esi, 2)
                 .endif
-                 mov rsi,rbx
-                .gotosw(2:WP_SETLEFTITEM)
+                gotosw(WP_SETLEFTITEM, edi, rbx, 2)
             .case VK_UP
-                mov edi,TRUE
-                mov rsi,rbx
-               .gotosw(2:WP_SETPREVITEM)
+                gotosw(WP_SETPREVITEM, TRUE, rbx, 2)
             .case VK_RIGHT
                 .if ( ecx == CT_MENUDLG )
-                    mov edi,NEXT_MENU
-                    mov rsi,rbx
-                   .gotosw(2:WP_QUIT)
+                    gotosw(WP_QUIT, NEXT_MENU, rbx, 2)
                 .endif
                 .if ( m_Type == CT_TEXTINPUT )
                     mov al,m_rc.col
@@ -4648,18 +4581,13 @@ KeyShift macro reg
                     .if ( Edit.m_XOffs < al )
                         inc Edit.m_XOffs
                     .endif
-                    mov edi,TRUE
-                    mov eax,0x01010000
-                    mov al,Edit.m_XOffs
-                    mov esi,eax
-                   .gotosw(2:WP_SETCURSOR)
+                    movzx esi,Edit.m_XOffs
+                    or esi,0x01010000
+                    gotosw(WP_SETCURSOR, TRUE, esi, 2)
                 .endif
-                 mov rsi,rbx
-                .gotosw(2:WP_SETRIGHTITEM)
+                gotosw(WP_SETRIGHTITEM, edi, rbx, 2)
             .case VK_DOWN
-                mov edi,TRUE
-                mov rsi,rbx
-               .gotosw(2:WP_SETNEXTITEM)
+                gotosw(WP_SETNEXTITEM, TRUE, rbx, 2)
             .endsw
             .endc
         .case CT_VIEW
@@ -4684,8 +4612,7 @@ KeyShift macro reg
         .case CT_DIALOG
         .case CT_MENUDLG
             .if ( edi == VK_ESCAPE )
-                xor edi,edi
-               .gotosw(1:WP_QUIT)
+                gotosw(WP_QUIT, 0)
             .endif
             .for ( rbx = m_This : rbx : rbx = m_Next )
                 .break .if ( Flags.HasFocus )
@@ -4695,9 +4622,7 @@ KeyShift macro reg
             .switch edi
             .case VK_TAB
                 .if ( !Flags.TabStop )
-                    mov edi,TRUE
-                    mov rsi,rbx
-                   .gotosw(2:WP_SETNEXTITEM)
+                    gotosw(WP_SETNEXTITEM, TRUE, rbx, 2)
                 .endif
                 .endc
             .case VK_SPACE
@@ -4708,14 +4633,13 @@ KeyShift macro reg
                 .endc
             .case VK_RETURN
                 mov edi,m_Id
-                mov rsi,m_Base
                 .if ( Flags.AutoExit )
                     xor edi,edi
                 .endif
-                .gotosw(2:WP_QUIT)
+                gotosw(WP_QUIT, edi, m_Base, 2)
             .endsw
             .if ( ecx == CT_TEXTINPUT )
-                WinProc(WP_PUTC, edi, rbx)
+                gotosw(WP_PUTC, edi, rbx)
             .endif
             .endc
         .case CT_VIEW
@@ -4740,7 +4664,7 @@ KeyShift macro reg
             .if ( m_idleId > ecx && eax != CT_VIEW && eax != CT_EDIT && eax != CT_HEXEDIT )
 
                 mov m_idleId,0
-                GetLocalTime(&ts)
+                GetLocalTime(&u.ts)
 
                 .if ( Setup.MenuBar && ( Setup.UseDate || Setup.UseTime ) )
 
@@ -4756,7 +4680,7 @@ KeyShift macro reg
                             add rc.x,3
                             add rcx,5*2
                         .endif
-                        WinProc(WP_WRITEFORMAT, rc, rcx, ts.wHour, ts.wMinute, ts.wSecond)
+                        WinProc(WP_WRITEFORMAT, rc, rcx, u.ts.wHour, u.ts.wMinute, u.ts.wSecond)
                     .endif
 
                     .if ( Setup.UseDate )
@@ -4767,9 +4691,9 @@ KeyShift macro reg
                         .endif
                         .if ( Setup.UseLongDate == 0 )
                             add rc.x,2
-                            sub ts.wYear,2000
+                            sub u.ts.wYear,2000
                         .endif
-                        WinProc(WP_WRITEFORMAT, rc, L"%2u.%02u.%u", ts.wDay, ts.wMonth, ts.wYear)
+                        WinProc(WP_WRITEFORMAT, rc, L"%2u.%02u.%u", u.ts.wDay, u.ts.wMonth, u.ts.wYear)
                     .endif
                 .endif
 
@@ -4778,7 +4702,7 @@ KeyShift macro reg
                     mov rbx,rsi
                     mov eax,0x000A0102
                     mov rc,eax
-                    WinProc(WP_WRITEFORMAT, rc, L"%02u:%02u:%02u", ts.wHour, ts.wMinute, ts.wSecond)
+                    WinProc(WP_WRITEFORMAT, rc, L"%02u:%02u:%02u", u.ts.wHour, u.ts.wMinute, u.ts.wSecond)
                 .endif
             .endif
         .endif
@@ -4811,7 +4735,7 @@ KeyShift macro reg
                 add esi,WinProc(WP_MOVEWINDOW, TW_MOVEUP, rbx)
             .endif
         .endf
-        WinProc(WP_CURSORSET, 0, &u1)
+        gotosw(WP_CURSORSET, edi, &u1, 0)
 
     .case WP_LBUTTONDOWN
 
@@ -4829,15 +4753,13 @@ KeyShift macro reg
                 .ifsd ( WinProc(WP_NCHITTEST, m_MenuBar, rsi) > 0 )
                     mov rbx,m_MenuBar
                     .if ( eax == HTSYSMENU )
-                        mov rsi,rdx
-                       .gotosw(2:WP_MENUCOMMAND)
+                        gotosw(WP_MENUCOMMAND, edi, rdx, 2)
                     .endif
                     .if ( eax == HTTOP )
                         mov al,m_rc.col
                         sub al,18
                         .if ( si > ax )
-                            mov edi,CM_CALENDAR
-                           .gotosw(2:WP_COMMAND)
+                            gotosw(WP_COMMAND, CM_CALENDAR, rsi, 2)
                         .endif
                     .endif
                     .endc
@@ -4890,8 +4812,7 @@ KeyShift macro reg
                         .gotosw(2:WP_COMMAND)
                     .endif
                     .if ( eax == 0x0103 )
-                        mov edi,CM_HISTORY
-                       .gotosw(2:WP_COMMAND)
+                        gotosw(WP_COMMAND, CM_HISTORY, rbx, 2)
                     .endif
                     xor ecx,ecx
                     mov ch,m_rc.row
@@ -4955,9 +4876,7 @@ KeyShift macro reg
                     .if ( ecx == CT_MENUDLG )
                         PostMessage(WP_LBUTTONDOWN, rdi, rsi)
                     .endif
-                    xor edi,edi
-                    mov rsi,rbx
-                   .gotosw(2:WP_QUIT)
+                    gotosw(WP_QUIT, 0, rbx, 2)
                 .endif
                 .endc
             .case HTCAPTION
@@ -4986,16 +4905,15 @@ KeyShift macro reg
                         mov ecx,0x000200FF
                         add cl,m_rc.col
                         WinProc(WP_FILLCHARACTER, ecx, ' ')
-                        movzx ecx,m_rc.col
-                        shl ecx,16
-                        mov cx,0x0101
-                        WinProc(WP_FILLCHARACTER, ecx, ' ')
+                        movzx edi,m_rc.col
+                        shl edi,16
+                        or  edi,0x0101
+                        gotosw(WP_FILLCHARACTER, edi, ' ', 3)
                     .endif
                     .endc
                 .case CT_CHECKBOX
                 .case CT_RADIOBUTTON
-                    mov rsi,rbx
-                   .gotosw(3:WP_TOGGLEITEM)
+                    gotosw(WP_TOGGLEITEM, edi, rbx, 3)
                 .case CT_MENUITEM
                 .case CT_TEXTITEM
                     PostMessage(WP_COMMAND, m_Id, m_Home)
@@ -5083,13 +5001,13 @@ KeyShift macro reg
 
             GetConsoleMode(_coninpfh, &m_modeIn)
 
-            .if GetConsoleScreenBufferInfo(_confh, &ci)
+            .if GetConsoleScreenBufferInfo(_confh, &u.ci)
 
-                movzx   edx,ci.srWindow.Right
-                sub     dx,ci.srWindow.Left
+                movzx   edx,u.ci.srWindow.Right
+                sub     dx,u.ci.srWindow.Left
                 inc     edx
-                movzx   eax,ci.srWindow.Bottom
-                sub     ax,ci.srWindow.Top
+                movzx   eax,u.ci.srWindow.Bottom
+                sub     ax,u.ci.srWindow.Top
                 inc     eax
                 mov     m_rc.col,dl
                 mov     m_rc.row,al
@@ -5171,9 +5089,7 @@ KeyShift macro reg
         ; return: PDWND
 
         .if !WinProc(WP_GETSECTION, 0, rsi)
-
-            mov edi,MKID(CT_SECTION, ID_CONFIG)
-           .gotosw(WP_NEW)
+            gotosw(WP_NEW, MKID(CT_SECTION, ID_CONFIG), rsi, 0)
         .endif
         .return
 
@@ -5182,10 +5098,7 @@ KeyShift macro reg
         ; wParam: LPSTR
 
         .if WinProc(WP_GETSECTION, 0, rdi)
-
-            xor edi,edi
-            mov rsi,rax
-           .gotosw(WP_DESTROY)
+            gotosw(WP_DESTROY, 0, rax, 0)
         .endif
 
 
@@ -5195,10 +5108,7 @@ KeyShift macro reg
         ; lParam: PDWND
 
         .if WinProc(WP_GETENTRY, rdi, rsi)
-
-            xor edi,edi
-            mov rsi,rax
-           .gotosw(WP_DESTROY)
+            gotosw(WP_DESTROY, 0, rax, 0)
         .endif
 
 
@@ -5480,18 +5390,13 @@ KeyShift macro reg
                 WinProc(WP_WRITEFORMAT, rc, L"%s\n  to", rsi)
             .endif
             WinProc(WP_FILLCHARACTER, 0x01400404, U_LIGHT_SHADE)
-            mov edi,TRUE
-            mov rsi,rbx
-           .gotosw(WP_SHOWWINDOW)
+            gotosw(WP_SHOWWINDOW, TRUE, rbx, 0)
         .endif
 
     .case WP_PROGRESSCLOSE
 
         .if WinProc(WP_GETOBJECT, ID_PROGRESS, m_Home)
-
-            xor edi,edi
-            mov rsi,rax
-           .gotosw(WP_DESTROY)
+            gotosw(WP_DESTROY, 0, rax, 0)
         .endif
 
     .case WP_PROGRESSSET
@@ -6040,10 +5945,8 @@ KeyShift macro reg
     WinProc(WP_OPENCONSOLE, TRUE, 0)
     WinProc(WP_READCONFIG, 0, rbx)
 
-    mov m_MenuBar, WinProc(WP_NEW, MKID(CT_MENUBAR, ID_MENUBAR), IDD_Menusline)
-    mov m_KeyBar,  WinProc(WP_NEW, MKID(CT_KEYBAR,  ID_KEYBAR),  IDD_Statusline)
-    mov m_PanelA,  WinProc(WP_NEW, MKID(CT_PANEL,   CI_PANELA), 0)
-    mov m_PanelB,  WinProc(WP_NEW, MKID(CT_PANEL,   CI_PANELB), 0)
+    mov m_PanelA,WinProc(WP_NEW, MKID(CT_PANEL, CI_PANELA), 0)
+    mov m_PanelB,WinProc(WP_NEW, MKID(CT_PANEL, CI_PANELB), 0)
     .if WinProc(WP_NEW, MKID(CT_COMMAND, ID_COMMAND), 0)
         mov m_Command,rax
         .if WinProc(WP_CREATE, MKID(CT_TEXTINPUT, DI_COMMAND), rax)
@@ -6054,73 +5957,11 @@ KeyShift macro reg
         .endif
     .endif
 
-    WinProc(WP_NEW, MKID(CT_MENUDLG, ID_PANELA),  IDD_DZMenuPanel)
-    WinProc(WP_NEW, MKID(CT_MENUDLG, ID_FILE),    IDD_DZMenuFile)
-    WinProc(WP_NEW, MKID(CT_MENUDLG, ID_EDIT),    IDD_DZMenuEdit)
-    WinProc(WP_NEW, MKID(CT_MENUDLG, ID_SETUP),   IDD_DZMenuSetup)
-    WinProc(WP_NEW, MKID(CT_MENUDLG, ID_TOOLS),   IDD_DZMenuTools)
-    WinProc(WP_NEW, MKID(CT_MENUDLG, ID_HELP),    IDD_DZMenuHelp)
-    WinProc(WP_NEW, MKID(CT_MENUDLG, ID_PANELB),  IDD_DZMenuPanel)
-
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_CALENDAR), IDD_Calendar)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_CALENDARHELP), IDD_CalHelp)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_COMPAREOPTIONS), IDD_CompareOptions)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_CONFIRMADDFILES), IDD_ConfirmAddFiles)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_CONFIRMCONTINUE), IDD_ConfirmContinue)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_CONFIRMDELETE), IDD_ConfirmDelete)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_CONSOLESIZE), IDD_ConsoleSize)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_DEFLATE64), IDD_Deflate64)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_DRIVENOTREADY), IDD_DriveNotReady)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_COMPAREDIRECTORIES), IDD_DZCompareDirectories)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_COMPRESSION), IDD_DZCompression)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_CONFIGURATION), IDD_DZConfiguration)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_CONFIRMATIONS), IDD_DZConfirmations)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_DZCOPY), IDD_DZCopy)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_DECOMPRESS), IDD_DZDecompress)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_DEFAULTCOLOR), IDD_DZDefaultColor)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_ENVIRON), IDD_DZEnviron)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_FINDFILE), IDD_DZFindFile)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_FINDFILEHELP), IDD_DZFFHelp)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_FILEATTRIBUTES), IDD_DZFileAttributes)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_DZHELP), IDD_DZHelp)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_ABOUT), IDD_About)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_HISTORY), IDD_DZHistory)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_MAKELIST), IDD_DZMKList)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_DZMOVE), IDD_DZMove)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_PANELFILTER), IDD_DZPanelFilter)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_PANELOPTIONS), IDD_DZPanelOptions)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_RECURSIVECOMPARE), IDD_DZRecursiveCompare)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_SAVESETUP), IDD_DZSaveSetup)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_SCREENOPTIONS), IDD_DZScreenOptions)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_SUBINFO), IDD_DZSubInfo)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_SYSTEMINFO), IDD_DZSystemInfo)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_SYSTEMOPTIONS), IDD_DZSystemOptions)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TRANSFER), IDD_DZTransfer)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_ZIPATTRIBUTES), IDD_DZZipAttributes)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_EDITCOLOR), IDD_EditColor)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_FFREPLACE), IDD_FFReplace)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_HEFORMAT), IDD_HEFormat)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_HELINE), IDD_HELine)
-    WinProc(WP_NEW, MKID(CT_KEYBAR, ID_HEKEYBAR), IDD_HEStatusline)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_OPERATIONFILTER), IDD_OperationFilters)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_REPLACE), IDD_Replace)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_REPLACEPROMPT), IDD_ReplacePrompt)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_SAVESCREEN), IDD_SaveScreen)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_SEARCH), IDD_Search)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TEOPTIONS), IDD_TEOptions)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TEQUICKMENU), IDD_TEQuickMenu)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TERELOAD), IDD_TEReload)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TERELOAD2), IDD_TEReload2)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TESAVE), IDD_TESave)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TESEEK), IDD_TESeek)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TEWINDOWS), IDD_TEWindows)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TVCOPY), IDD_TVCopy)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TVHELP), IDD_TVHelp)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TVQUICKMENU), IDD_TVQuickMenu)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_TVSEEK), IDD_TVSeek)
-    WinProc(WP_NEW, MKID(CT_KEYBAR, ID_TVKEYBAR), IDD_TVStatusline)
-    WinProc(WP_NEW, MKID(CT_DIALOG, ID_UNZIPCRCERROR), IDD_UnzipCRCError)
-
+    .for ( rsi = &Resource : [rsi].IDD.ip : rsi+=IDD )
+        WinProc(WP_NEW, [rsi].IDD.id, [rsi].IDD.ip)
+    .endf
+    mov m_MenuBar,WinProc(WP_GETOBJECT, ID_MENUBAR, rbx)
+    mov m_KeyBar,WinProc(WP_GETOBJECT, ID_KEYBAR, rbx)
 
     assume rsi:PDWND
 
@@ -6173,7 +6014,6 @@ KeyShift macro reg
         WinProc(WP_GETKEY, "arch=%S", rsi, Panel.m_arcPath)
         WinProc(WP_GETKEY, "path=%S", rsi, Panel.m_srcPath)
     .endif
-    mov Panel.Flags.RootDir,1
 
     mov rbx,rdi
     mov rbx,m_PanelB
@@ -6240,7 +6080,7 @@ KeyShift macro reg
 
     .for ( esi = 0 : esi < MAXDRIVES : esi++ )
 
-        bt  edi,esi
+        bt edi,esi
         .ifc
 
             lea eax,[rsi+'A']

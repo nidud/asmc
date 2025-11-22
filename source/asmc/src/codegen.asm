@@ -288,6 +288,7 @@ output_opc proc __ccall uses rdi rbx
             .endc
         .case F_F3      ;; PAUSE instruction
         .case F_F30F
+        .case F_F30F38
         .case F_F30F3A
             OutputByte(0xF3)
         .endsw
@@ -1030,6 +1031,7 @@ output_opc proc __ccall uses rdi rbx
             .case F_0F0F: OutputByte(EXTENDED_OPCODE) : .endc
             .case F_0F38
             .case F_F20F38
+            .case F_F30F38
             .case F_660F38: OutputByte(0x38) : .endc
             .case F_0F3A
             .case F_F30F3A

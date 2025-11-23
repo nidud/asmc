@@ -64,4 +64,18 @@ endif
 
     vaeskeygenassist xmm1,xmm2,1
 
+    encodekey128    eax,ecx
+    encodekey128    edi,esi
+
+    encodekey256    eax,ecx
+    encodekey256    edi,esi
+
+    sttilecfg       [rax]
+    ldtilecfg       [rax]
+    loadiwkey       xmm1,xmm3
+
+    enqcmd          rsi,[rax]
+    enqcmds         rsi,[rax]
+    movdir64b       rsi,[rax]
+
     end

@@ -113,8 +113,9 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
             test    esi,esi
             cmovz   esi,edi
             cmovz   ecx,eax
+            mov     eax,edx
 
-            _postmessage(rbx, edx, rsi, rcx)
+            _postmessage(rbx, eax, rsi, rcx)
 
             movzx   edx,tchar_t ptr Input.Event.KeyEvent.uChar.UnicodeChar
             mov     ecx,Input.Event.KeyEvent.dwControlKeyState

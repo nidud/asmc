@@ -2619,6 +2619,7 @@ endif
         .endif
         ;
         ; v2.37.18/19/20 - [un]signed divide: see const.asm
+        ; v2.37.40: signed / signed failed..
         ;
 ifdef _WIN64
         mov rax,[rsi].llvalue
@@ -2631,7 +2632,9 @@ ifdef _WIN64
         xor edx,edx
         div rcx
         .if ( [rsi].negative || [rdi].negative )
-            neg rax
+            .if ( [rsi].negative == 0 || [rdi].negative == 0 )
+                neg rax
+            .endif
         .endif
         mov [rsi].llvalue,rax
 else
@@ -2649,9 +2652,11 @@ else
         .endif
         __udiv64( edx::eax, ecx::ebx )
         .if ( [esi].negative || [edi].negative )
-            neg edx
-            neg eax
-            sbb edx,0
+            .if ( [esi].negative == 0 || [edi].negative == 0 )
+                neg edx
+                neg eax
+                sbb edx,0
+            .endif
         .endif
         mov [esi].l64_l,eax
         mov [esi].l64_h,edx

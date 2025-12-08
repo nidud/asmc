@@ -9,6 +9,8 @@
 
     .code
 
+    mov eax,S / S               ; 00000001 - v2.37.40
+
     mov eax,S / 16              ; 00000000
     mov eax,U / 16              ; 0FFFFFFF
     mov eax,U / -16             ; F0000001

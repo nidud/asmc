@@ -2991,7 +2991,9 @@ ifdef _WIN64
             xor edx,edx
             div rcx
             .if ( [rsi].negative || [rdi].negative )
-                neg rdx
+                .if ( [rdi].negative == 0 )
+                    neg rdx
+                .endif
             .endif
             mov [rsi].llvalue,rdx
 else
@@ -3011,9 +3013,11 @@ else
             .endif
             __udiv64( edx::eax, ecx::ebx )
             .if ( [esi].negative || [edi].negative )
-                neg ecx
-                neg ebx
-                sbb ecx,0
+                .if ( [edi].negative == 0 )
+                    neg ecx
+                    neg ebx
+                    sbb ecx,0
+                .endif
             .endif
             mov [esi].l64_l,ebx
             mov [esi].l64_h,ecx

@@ -2990,10 +2990,8 @@ ifdef _WIN64
             .endif
             xor edx,edx
             div rcx
-            .if ( [rsi].negative || [rdi].negative )
-                .if ( [rdi].negative == 0 )
-                    neg rdx
-                .endif
+            .if ( [rsi].negative )
+                neg rdx
             .endif
             mov [rsi].llvalue,rdx
 else
@@ -3012,12 +3010,10 @@ else
                 sbb ecx,0
             .endif
             __udiv64( edx::eax, ecx::ebx )
-            .if ( [esi].negative || [edi].negative )
-                .if ( [edi].negative == 0 )
-                    neg ecx
-                    neg ebx
-                    sbb ecx,0
-                .endif
+            .if ( [esi].negative )
+                neg ecx
+                neg ebx
+                sbb ecx,0
             .endif
             mov [esi].l64_l,ebx
             mov [esi].l64_h,ecx

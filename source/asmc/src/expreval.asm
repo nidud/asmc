@@ -45,6 +45,7 @@ FindDotSymbol proto fastcall :token_t
 
     .data
 
+     qf_one     real16 1.0
      thissym    asym_t 0
      nullstruct asym_t 0
      nullmbr    asym_t 0
@@ -2969,15 +2970,12 @@ endif
             .endc
 
         .case T_MOD
+            .if ( [rsi].kind == EXPR_FLOAT )
+                __modq( rsi, rdi )
+                .endc
+            .endif
             .if ( [rdi].l64_l == 0 && [rdi].l64_h == 0 )
                 .return( fnasmerr( 2169 ) )
-            .endif
-            .if ( [rsi].kind == EXPR_FLOAT )
-
-                __divo( rsi, rdi, &opnd )
-                mov [rsi].llvalue,opnd.llvalue
-                mov [rsi].hlvalue,opnd.hlvalue
-               .endc
             .endif
 ifdef _WIN64
             mov rcx,[rdi].llvalue

@@ -4641,6 +4641,46 @@ endif
 _i64toflt endp
 
 
+__modq proc __ccall uses rsi rdi dest:ptr qfloat_t, src:ptr qfloat_t
+
+  local a:STRFLT
+  local b:STRFLT
+
+    ldr rsi,dest
+    ldr rdi,src
+
+    xor eax,eax
+    mov rcx,[rdi].expr.float_tok
+    .if ( rcx && [rcx].asm_tok.floattype == 'r' )
+        inc eax
+    .elseif ( [rdi].expr.kind != EXPR_FLOAT )
+        inc eax
+    .endif
+
+    .if ( eax )
+
+        __divo( rsi, rdi, &a )
+        mov [rsi].expr.llvalue,a.mantissa.l
+        mov [rsi].expr.hlvalue,a.mantissa.h
+
+    .else
+
+        ; R = A - N * Int64(A / N)
+
+        _fltunpack(&a, rsi)
+        _fltunpack(&b, rdi)
+        _fltdiv(&a, &b)
+        _i64toflt(&a, _flttoi64(&a))
+        _fltmul(&b, &a)
+        _fltunpack(&a, rsi)
+        _fltsub(&a, &b)
+        _fltpackfp(rsi, &a)
+    .endif
+    ret
+
+__modq endp
+
+
     assume rbx:ptr FLTINFO
 
 _flttostr proc __ccall uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint_t

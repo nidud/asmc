@@ -68,6 +68,7 @@ __cvtq_ld   proto __ccall :ptr ldouble_t, :ptr qfloat_t
 
 __mulq      proto __ccall A:ptr qfloat_t, B:ptr qfloat_t
 __divq      proto __ccall A:ptr qfloat_t, B:ptr qfloat_t
+__modq      proto __ccall A:ptr qfloat_t, B:ptr qfloat_t
 __addq      proto __ccall A:ptr qfloat_t, B:ptr qfloat_t
 __subq      proto __ccall A:ptr qfloat_t, B:ptr qfloat_t
 __cmpq      proto __ccall A:ptr qfloat_t, B:ptr qfloat_t

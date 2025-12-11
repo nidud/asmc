@@ -6,8 +6,22 @@
 
     S equ (-1)
     U equ 0FFFFFFFFh
+    F equ 18446744073709551615.0
+
+    .data
+
+     oword 0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFr mod 16
+     oword 0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFr mod 0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0r
 
     .code
+
+    mov eax, F mod  16.0
+    mov eax, F mod -16.0
+    mov eax,-F mod  16.0
+    mov eax,-F mod -16.0
+
+    mov eax,( 100-200) mod 16
+    mov eax,(-100+200) mod 16
 
     mov eax,S / S               ; 00000001 - v2.37.40
 

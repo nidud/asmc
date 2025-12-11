@@ -1753,6 +1753,9 @@ plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
     .if ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST )
 
         add [rsi].llvalue,[rdi].llvalue
+        .if ( [rsi].hvalue >= 0 )
+            mov [rsi].negative,0
+        .endif
 
     .elseif ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT )
 
@@ -1856,6 +1859,9 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
 
     .switch pascal
     .case ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST )
+        .if ( [rsi].llvalue < [rdi].llvalue )
+            mov [rsi].negative,1
+        .endif
         sub [rsi].llvalue,[rdi].llvalue
     .case ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT )
         __subq( rsi, rdi )

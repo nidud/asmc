@@ -515,10 +515,10 @@ output_float proc __ccall uses rsi opnd:ptr expr, size:dword
         SizeFromMemtype( [rsi].mem_type, USE_EMPTY, NULL )
         .if ( eax > size )
             asmerr( 2156 )
-        .else
+        .elseif ( eax != size )
             quad_resize( rsi, eax )
         .endif
-        OutputDataBytes( &[rsi].chararray, size )
+        OutputDataBytes( rsi, size )
     .else
          .if ( size != 16 )
             quad_resize( rsi, size )

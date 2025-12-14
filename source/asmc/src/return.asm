@@ -251,21 +251,7 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:token_
 
                 ; .return [(] 3F800000r [)] [[ .if ]]
 
-                .if ( [rbx].token == T_OP_BRACKET )
-                    mov rbx,[rbx+asm_tok].string_ptr
-                .else
-                    mov rbx,[rbx].string_ptr
-                .endif
-
-                dec tstrlen( rbx )
-                shr eax,1
-
-                .switch eax
-                .case 3,5,9,11,17
-                    .if byte ptr [rbx] == '0'
-                        dec eax
-                    .endif
-                .endsw
+                SizeFromMemtype(opnd.mem_type, USE_EMPTY, 0 )
             .else
 
                 mov rdx,type

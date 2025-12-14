@@ -909,7 +909,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
                     .if rdx
                         mov rcx,[rdx].asm_tok.string_ptr
                     .endif
-                    atofloat( rdi, rcx, 8, eax, 0 )
+                    atofloat( rdi, rcx, 8, eax )
                    .return( LQPush2U( rdi, 4 ) )
                 .endif
                 .return( LQPush2M( rcx, 4 ) )
@@ -1417,7 +1417,7 @@ handle_address:
             .if ( wordsize == 8 && isvararg && arg_size == 4 )
                 mov arg_size,8
             .endif
-            atofloat( rdi, rdx, arg_size, eax, 0 )
+            atofloat( rdi, rdx, arg_size, eax )
             AddLineQueueX( " mov dword ptr [%r+%u], %u", stkreg, arg_offset, [rdi].l64_l )
             .if ( arg_size == 8 )
                 AddLineQueueX( " mov dword ptr [%r+%u][4], %u", stkreg, arg_offset, [rdi].l64_h )
@@ -1458,7 +1458,7 @@ handle_address:
                         .if rcx
                             mov rdx,[rcx].asm_tok.string_ptr
                         .endif
-                        atofloat( rdi, rdx, 4, eax, 0 )
+                        atofloat( rdi, rdx, 4, eax )
                         AddLineQueueX( " push %d", [rdi].value )
                     .else
                         AddLineQueueX( " push %s", paramvalue )
@@ -2190,7 +2190,7 @@ ifndef ASMC64
                         ; v2.04: a 32bit offset pushed in 16-bit code
 
                         .if ( [rdi].asym.is_vararg && CurrWordSize == 2 && opnd.Ofssize > USE16 )
-                            add size_vararg,CurrWordSize
+                            add size_vararg,2
                         .endif
                     .endif
                 .endif
@@ -2203,9 +2203,11 @@ endif
 
         .if ( [rdi].asym.is_vararg )
             movzx eax,CurrWordSize
+            if 0
             .if ( [rdi].asym.is_far )
                 add eax,eax
             .endif
+            endif
             add size_vararg,eax
         .endif
 

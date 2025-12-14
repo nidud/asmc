@@ -45,7 +45,6 @@ FindDotSymbol proto fastcall :token_t
 
     .data
 
-     qf_one     real16 1.0
      thissym    asym_t 0
      nullstruct asym_t 0
      nullmbr    asym_t 0
@@ -1529,10 +1528,76 @@ endif
 
     .case T_FLOAT
         mov [rdi].kind,EXPR_FLOAT
-        mov [rdi].mem_type,MT_REAL16
         mov [rdi].float_tok,rbx
-        atofloat( rdi, [rbx].string_ptr, 16, 0, [rbx].floattype )
-       .endc
+
+        ; v2.04: accept and handle 'real number designator'
+
+        .if ( [rbx].floattype )
+
+            ; convert hex string with float "designator" to float.
+            ; this is supposed to work with real4, real8 and real10.
+            ; v2.11: use _atoow() for conversion ( this function
+            ;    always initializes and reads a 16-byte number ).
+            ;    then check that the number fits in the variable.
+
+            dec tstrlen([rbx].string_ptr)
+            mov esi,eax
+            _atoow( rdi, [rbx].string_ptr, 16, eax )
+
+            ; v2.31.24: the size is 2,4,8,10,16
+            ; real4 3ff0000000000000r is allowed: real8 -> real16 -> real4
+
+            mov eax,esi
+            xor ecx,ecx
+            .switch eax
+            .case 5
+                dec esi
+            .case 4
+                mov ecx,MT_REAL2
+               .endc
+            .case 9
+                dec esi
+            .case 8
+                mov ecx,MT_REAL4
+               .endc
+            .case 17
+                dec esi
+            .case 16
+                mov ecx,MT_REAL8
+               .endc
+            .case 21
+                dec esi
+            .case 20
+                mov ecx,MT_REAL10
+               .endc
+            .case 33
+                dec esi
+            .case 32
+                mov ecx,MT_REAL16
+            .endsw
+            mov rdx,[rbx].string_ptr
+            .if ( eax != esi && byte ptr [rdx] != '0' )
+                xor ecx,ecx
+            .endif
+            mov [rdi].mem_type,cl
+            .if ( ecx == 0 )
+                asmerr( 2104, rdx )
+            .else
+                .for ( esi >>= 1 : esi < 16 : esi++ )
+
+                    .if ( byte ptr [rdi+rsi] != 0 )
+
+                        asmerr( 2104, rdx )
+                       .break
+                    .endif
+                .endf
+            .endif
+
+        .else
+            mov [rdi].mem_type,MT_REAL16
+            atofloat( rdi, [rbx].string_ptr, 16, 0 )
+        .endif
+        .endc
 
     .default
         .if ( [rdi].is_opattr )
@@ -2605,8 +2670,12 @@ endif
 
     .case '/'
         .if ( ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT ) )
+
+            ftoquad( rsi )
+            ftoquad( rdi )
             __divq( rsi, rdi )
-            .endc
+            quadtof( rsi )
+           .endc
         .endif
         .endc .ifd ( EvalOperator( rsi, rdi, rbx ) != ERROR )
         MakeConst(rsi)
@@ -2749,19 +2818,22 @@ endif
         MakeConst(rsi)
         MakeConst(rdi)
 
-        .if ( ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST ) ||
-              ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT ) ||
-              ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_CONST ) )
+        mov eax,[rsi].kind
+        mov edx,[rdi].kind
+
+        .if ( ( eax == EXPR_CONST || eax == EXPR_FLOAT ) &&
+              ( edx == EXPR_CONST || edx == EXPR_FLOAT ) )
 
             ; const XX const
             ; float XX const -- shr/shl/...
             ; float XX float
+            ; const XX float
 
-        .elseif ( [rbx].precedence == 10 && [rsi].kind != EXPR_CONST )
+        .elseif ( [rbx].precedence == 10 && eax != EXPR_CONST )
 
-            .if ( [rsi].kind == EXPR_ADDR && !( [rsi].indirect ) && [rsi].sym )
+            .if ( eax == EXPR_ADDR && !( [rsi].indirect ) && [rsi].sym )
 
-                .if ( [rdi].kind == EXPR_ADDR && !( [rdi].indirect ) && [rdi].sym )
+                .if ( edx == EXPR_ADDR && !( [rdi].indirect ) && [rdi].sym )
                     .return .ifd MakeConst2(rsi, rdi) == ERROR
                 .else
                     .return( fnasmerr( 2094 ) )
@@ -3076,11 +3148,11 @@ endif
            .endc
 
         .case T_SUB
-            .if ( [rsi].kind != EXPR_FLOAT )
+            .if ( [rsi].kind != EXPR_FLOAT && [rdi].kind != EXPR_FLOAT )
                 fnasmerr( 2187 )
             .endif
-            sub [rsi].hlvalue,[rdi].hlvalue
-            sbb [rsi].llvalue,[rdi].llvalue
+            sub [rsi].llvalue,[rdi].llvalue
+            sbb [rsi].hlvalue,[rdi].hlvalue
            .endc
 
         .case T_MUL

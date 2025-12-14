@@ -910,7 +910,7 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
             mov opc.negative,1
             and opc.chararray[15],0x7F
         .endif
-        __cvtq_ss(&opc, rbx)
+        __cvtq_ss(&opc, &opc)
         .if ( opc.negative )
             or opc.chararray[3],0x80
         .endif
@@ -921,15 +921,14 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
             mov opc.negative,1
             and opc.chararray[15],0x7F
         .endif
-        __cvtq_sd(&opc, rbx)
+        __cvtq_sd(&opc, &opc)
         .if ( opc.negative )
             or opc.chararray[7],0x80
         .endif
         .endc
     .case 10
-        __cvtq_ld(&opc, rbx)
-        mov dword ptr opc.hlvalue[4],0
-        mov word ptr opc.hlvalue[2],0
+        .endc .if [rbx].mem_type == MT_REAL10
+        __cvtq_ld(&opc, &opc)
     .case 16
         .endc
     .endsw

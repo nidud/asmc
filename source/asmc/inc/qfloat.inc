@@ -88,9 +88,11 @@ __udiv64    proto watcall :uint64_t, :uint64_t
 
 quad_resize proto __ccall :ptr expr, :int_t
 _atoqw      proto fastcall :string_t
+ftoquad     proto fastcall :ptr expr
+quadtof     proto fastcall :ptr expr
 _atoow      proto __ccall :string_t, :string_t, :int_t, :int_t
 _flttostr   proto __ccall :ptr, :ptr FLTINFO, :string_t, :uint_t
-atofloat    proto __ccall :ptr, :string_t, :uint_t, :int_t, :uchar_t
+atofloat    proto __ccall :ptr, :string_t, :uint_t, :int_t
 CreateFloat proto __ccall :int_t, :expr_t, :string_t
 
 endif

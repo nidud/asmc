@@ -1034,8 +1034,11 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
         .return( process_branch( CodeInfo, CurrOpnd, opndx ) )
     .endif
 
-    .if ( [rdi].mem_type == MT_REAL16 )
+    movzx edx,[rdi].mem_type
+    .if ( edx & MT_FLOAT )
 
+        and edx,MT_SIZE_MASK
+        inc edx
         mov eax,4
         movzx ecx,[rsi].token
 
@@ -1060,7 +1063,9 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
                 .endif
             .endif
         .endsw
-        quad_resize(rdi, eax)
+        .if ( eax != edx && edx == 16 )
+            quad_resize(rdi, eax)
+        .endif
     .endif
 
     mov value,[rdi].value
@@ -4454,11 +4459,14 @@ init_prefix:
 
                             lea rdx,opndx[rdi]
                             mov opndx[rdi].kind,EXPR_CONST
-                            mov opndx[rdi].expr.mem_type,cl
+                            .if ( cl != opndx[rdi].expr.mem_type )
 
-                            .if ( eax != 16 )
-                                mov rcx,rdx
-                                quad_resize(rcx, eax)
+                                .if ( eax != 16 )
+
+                                    mov opndx[rdi].expr.mem_type,cl
+                                    mov rcx,rdx
+                                    quad_resize(rcx, eax)
+                                .endif
                             .endif
                             .endc
                         .endif

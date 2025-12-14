@@ -4259,120 +4259,92 @@ _atoqw proc fastcall uses rbx string:string_t
 _atoqw endp
 
 
-atofloat proc __ccall _out:ptr, inp:string_t, size:uint_t, negative:int_t, ftype:uchar_t
+atofloat proc __ccall _out:ptr, inp:string_t, size:uint_t, negative:int_t
 
     mov qerrno,0
 
-    ; v2.04: accept and handle 'real number designator'
+    mov rdx,_strtoflt( inp )
+    mov rcx,_out
+    mov [rcx],[rdx].U128.u128
 
-    .if ( ftype )
-
-        ; convert hex string with float "designator" to float.
-        ; this is supposed to work with real4, real8 and real10.
-        ; v2.11: use _atoow() for conversion ( this function
-        ;    always initializes and reads a 16-byte number ).
-        ;    then check that the number fits in the variable.
-
-        lea eax,[tstrlen(inp)-1]
-        mov negative,eax
-
-        ; v2.31.24: the size is 2,4,8,10,16
-        ; real4 3ff0000000000000r is allowed: real8 -> real16 -> real4
-
-        .switch eax
-        .case 4,8,16,20,32
-            .endc
-        .case 5,9,17,21,33
-            mov rcx,inp
-            .if byte ptr [rcx] == '0'
-                inc inp
-                dec negative
-                .endc
-            .endif
-        .default
-            asmerr( 2104, inp )
-        .endsw
-
-        _atoow( _out, inp, 16, negative )
-        mov eax,size
-        .for ( rcx = _out, rdx = rcx, rcx += rax, rdx += 16: rcx < rdx: rcx++ )
-            .if ( byte ptr [rcx] != 0 )
-                asmerr( 2104, inp )
-                .break
-            .endif
-        .endf
-
-        mov eax,negative
-        shr eax,1
-        .if eax != size
-            .switch eax
-            .case 2  : __cvth_q(_out, _out)  : .endc
-            .case 4  : __cvtss_q(_out, _out) : .endc
-            .case 8  : __cvtsd_q(_out, _out) : .endc
-            .case 10 : __cvtld_q(_out, _out) : .endc
-            .case 16 : .endc
-            .default
-                .if ( Parse_Pass == PASS_1 )
-                    asmerr( 7004 )
-                .endif
-                tmemset( _out, 0, size )
-            .endsw
-            .if qerrno
-                asmerr( 2071 )
-            .endif
-        .endif
-
-    .else
-
-        mov rdx,_strtoflt( inp )
-        mov rcx,_out
-        mov [rcx],[rdx].U128.u128
-
-        .if ( qerrno )
-            asmerr( 2104, inp )
-        .endif
-        .if ( negative )
-            mov rcx,_out
-            or  byte ptr [rcx+15],0x80
-        .endif
-        mov eax,size
-        .switch al
-        .case 2
-            __cvtq_h(_out, _out)
-            .if ( qerrno )
-                asmerr( 2071 )
-            .endif
-            .endc
-        .case 4
-            __cvtq_ss(_out, _out)
-            .if ( qerrno )
-                asmerr( 2071 )
-            .endif
-            .endc
-        .case 8
-            __cvtq_sd(_out, _out)
-            .if ( qerrno )
-                asmerr( 2071 )
-            .endif
-            .endc
-        .case 10
-            __cvtq_ld(_out, _out)
-        .case 16
-            .endc
-        .default
-            ;
-            ; sizes != 4,8,10 or 16 aren't accepted.
-            ; Masm ignores silently, JWasm also unless -W4 is set.
-            ;
-            .if ( Parse_Pass == PASS_1 )
-                asmerr( 7004 )
-            .endif
-            tmemset( _out, 0, size )
-        .endsw
+    .if ( qerrno )
+        asmerr( 2104, inp )
     .endif
+    .if ( negative )
+        mov rcx,_out
+        or  byte ptr [rcx+15],0x80
+    .endif
+    mov eax,size
+    .switch al
+    .case 2
+        __cvtq_h(_out, _out)
+        .if ( qerrno )
+            asmerr( 2071 )
+        .endif
+        .endc
+    .case 4
+        __cvtq_ss(_out, _out)
+        .if ( qerrno )
+            asmerr( 2071 )
+        .endif
+        .endc
+    .case 8
+        __cvtq_sd(_out, _out)
+        .if ( qerrno )
+            asmerr( 2071 )
+        .endif
+        .endc
+    .case 10
+        __cvtq_ld(_out, _out)
+    .case 16
+        .endc
+    .default
+        ;
+        ; sizes != 2,4,8,10 or 16 aren't accepted.
+        ; Masm ignores silently, JWasm also unless -W4 is set.
+        ;
+        .if ( Parse_Pass == PASS_1 )
+            asmerr( 7004 )
+        .endif
+        tmemset( _out, 0, size )
+    .endsw
     ret
 
 atofloat endp
+
+
+ftoquad proc fastcall opnd:expr_t
+
+    xor eax,eax
+    mov qerrno,eax
+    mov al,[rcx].expr.mem_type
+
+    .switch pascal eax
+    .case MT_REAL2  : __cvth_q ( rcx, rcx )
+    .case MT_REAL4  : __cvtss_q( rcx, rcx )
+    .case MT_REAL8  : __cvtsd_q( rcx, rcx )
+    .case MT_REAL10 : __cvtld_q( rcx, rcx )
+    .endsw
+    .if qerrno
+        asmerr( 2071 )
+    .endif
+    ret
+
+ftoquad endp
+
+
+quadtof proc fastcall opnd:expr_t
+
+    mov al,[rcx].expr.mem_type
+    .switch pascal al
+    .case MT_REAL2  : __cvtq_h ( rcx, rcx )
+    .case MT_REAL4  : __cvtq_ss( rcx, rcx )
+    .case MT_REAL8  : __cvtq_sd( rcx, rcx )
+    .case MT_REAL10 : __cvtq_ld( rcx, rcx )
+    .endsw
+    ret
+
+quadtof endp
 
 
     assume rbx:ptr expr

@@ -49,8 +49,10 @@ define Q_EXPBITS   15
 define Q_EXPMASK   ((1 shl Q_EXPBITS) - 1)
 define Q_EXPBIAS   (Q_EXPMASK shr 1)
 define Q_EXPMAX    (Q_EXPMASK - Q_EXPBIAS)
-define Q_DIGITS    38
+define Q_DIGITS    38 ; 32 for hex
 define Q_SIGDIG    49
+
+_i64toflt proto __ccall private p:ptr STRFLT, ll:int64_t
 
 .template U128
     union
@@ -82,6 +84,52 @@ define Q_SIGDIG    49
    .ends
 
    .data
+    ;
+    ; v2.37.45: added Hexadecimal floating literals (C++17)
+    ;
+    ; The general form is: 0x or 0X followed by a hexadecimal number,
+    ; a 'p' or 'P', and a decimal exponent.
+    ;
+    ; The exponent following 'p' is always a power of 2, not 10 or 16.
+    ;
+    ; An optional type suffix 'f' or 'F' specifies float, 'l' or 'L'
+    ; specifies long double. If no suffix is specified, the literal
+    ; has the default internal type of quadruple precision.
+    ;
+    ; Syntax:
+    ; 0xA.2p2  = (10 + 2/16) x (2^2)  = 40.5
+    ; 0x1.Fp-1 = (1 + 15/16) x (2^-1) = 0.96875
+    ;
+
+    _base2table EXTFLOAT \
+        { 0x0000000000000000, 0x8000000000000000, 0x4000 }, ; 2.000000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4001 }, ; 4.000000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4002 }, ; 8.000000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4003 }, ; 16.00000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4004 }, ; 32.00000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4005 }, ; 64.00000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4006 }, ; 128.0000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4007 }, ; 256.0000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4008 }, ; 512.0000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x4009 }, ; 1024.000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x400A }, ; 2048.000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x400B }, ; 4096.000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x400C }, ; 8192.000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x400D }, ; 16384.00000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FFE }, ; 0.500000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FFD }, ; 0.250000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FFC }, ; 0.125000000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FFB }, ; 0.062500000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FFA }, ; 0.031250000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF9 }, ; 0.015625000000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF8 }, ; 0.007812500000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF7 }, ; 0.003906250000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF6 }, ; 0.001953125000000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF5 }, ; 0.000976562500000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF4 }, ; 0.000488281250000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF3 }, ; 0.000244140625000
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF2 }, ; 0.000122070312500
+        { 0x0000000000000000, 0x8000000000000000, 0x3FF1 }  ; 0.000061035156250
 
     _fltpowtable EXTFLOAT \
         { 0x0000000000000000, 0xA000000000000000, 0x4002 },
@@ -3488,7 +3536,6 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
                 or  ecx,_ST_DIGITS
                 inc rsi
             .endw
-
             .if ( ecx & _ST_NEGEXP )
                 neg edi
             .endif
@@ -3496,35 +3543,23 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
                 mov rsi,rdx
             .endif
         .else
-
             dec rsi ; digits found, but no e or E
         .endif
 
         mov edx,edi
         mov eax,sigdig
         mov edi,Q_DIGITS
-
         .if ( ecx & _ST_ISHEX )
-
             mov edi,32
-            shl eax,2
+            mov [rbx].mantissa.e,dx
+            xor edx,edx
         .endif
         sub edx,eax
-
-        mov eax,1
-        .if ( ecx & _ST_ISHEX )
-
-            mov eax,4
-        .endif
 
         .if ( digits > edi )
 
             add edx,digits
             mov digits,edi
-            .if ( ecx & _ST_ISHEX )
-
-                shl edi,2
-            .endif
             sub edx,edi
         .endif
 
@@ -3535,7 +3570,7 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
              add rdi,buffer
             .break .if ( byte ptr [rdi-1] != '0' )
 
-            add edx,eax
+            inc edx
             dec digits
         .endw
     .else
@@ -3555,22 +3590,27 @@ _destoflt endp
 
 define MAX_EXP_INDEX 13
 
-_fltscale proc __ccall uses rsi rdi rbx fp:ptr STRFLT
+_lk_fltscale proc __ccall uses rsi rdi rbx fp:ptr STRFLT, exponent:int_t, table:ptr
 
-    ldr rbx,fp
+    ldr rcx,fp
+    ldr rsi,table
+    ldr edi,exponent
 
-    mov edi,[rbx].STRFLT.exponent
-    lea rsi,_fltpowtable
+    mov ebx,MAX_EXP_INDEX
+    .if ( [rcx].STRFLT.flags & _ST_ISHEX )
+        inc ebx
+    .endif
 
     .ifs ( edi < 0 )
 
-        neg edi
-        add rsi,( EXTFLOAT * MAX_EXP_INDEX )
+        imul eax,ebx,EXTFLOAT
+        add  rsi,rax
+        neg  edi
     .endif
 
     .if ( edi )
 
-        .for ( ebx = 0 : edi && ebx < MAX_EXP_INDEX : ebx++, edi >>= 1, rsi += EXTFLOAT )
+        .for ( : edi && ebx : ebx--, edi >>= 1, rsi += EXTFLOAT )
 
             .if ( edi & 1 )
 
@@ -3597,6 +3637,16 @@ endif
         .endif
     .endif
     .return( fp )
+
+_lk_fltscale endp
+
+
+_fltscale proc __ccall fp:ptr STRFLT
+
+    ldr rcx,fp
+
+    _lk_fltscale(rcx, [rcx].STRFLT.exponent, &_fltpowtable)
+    ret
 
 _fltscale endp
 
@@ -3629,13 +3679,11 @@ _strtoflt proc __ccall private uses rsi rdi rbx string:string_t
         mov sign,eax
 
         .if ( al == '+' || al == '-' )
-
             inc rdx
         .endif
 
         mov ebx,16
         .if !( flt.flags & _ST_ISHEX )
-
             mov ebx,10
         .endif
         lea rsi,flt.mantissa
@@ -3744,7 +3792,8 @@ endif
             shr ecx,8           ; get shift count
             add ecx,Q_EXPBIAS   ; calculate exponent
             .if ( flt.flags & _ST_ISHEX )
-                add ecx,flt.exponent
+                imul eax,flt.exponent,4
+                add ecx,eax
             .endif
         .else
             or flt.flags,_ST_ISZERO
@@ -3777,6 +3826,7 @@ endif
                 or byte ptr flt.mantissa.h[7],0x80
             .endif
         .endsw
+        movsx edi,flt.mantissa.e
         mov flt.mantissa.e,cx
 
         and ecx,Q_EXPMASK
@@ -3784,7 +3834,12 @@ endif
 
             mov qerrno,ERANGE
 
-        .elseif ( flt.exponent && !( flt.flags & _ST_ISHEX ) )
+        .elseif ( flt.flags & _ST_ISHEX )
+
+            .if ( edi )
+                _lk_fltscale(&flt, edi, &_base2table)
+            .endif
+        .elseif ( flt.exponent )
 
             _fltscale( &flt )
         .endif

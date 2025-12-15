@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.38 - xx xxx 2025
+- added Hexadecimal floating literals (C++17)
 - added type inheritance to .NEW rc:RECT, r2, r3
 - added param to @ComAlloc(Class[,vtable|CONST[,CONST]])
 - allow ENDP without proc-name

@@ -1531,8 +1531,9 @@ endif
         mov [rdi].float_tok,rbx
 
         ; v2.04: accept and handle 'real number designator'
+        ; v2.37.45: accept hexadecimal floating literals
 
-        .if ( [rbx].floattype )
+        .if ( [rbx].floattype == 'r' )
 
             ; convert hex string with float "designator" to float.
             ; this is supposed to work with real4, real8 and real10.
@@ -1594,8 +1595,19 @@ endif
             .endif
 
         .else
-            mov [rdi].mem_type,MT_REAL16
-            atofloat( rdi, [rbx].string_ptr, 16, 0 )
+
+            mov eax,MT_REAL16
+            mov ecx,16
+            .if ( [rbx].floattype == 'f' )
+                mov eax,MT_REAL4
+                mov ecx,4
+            .elseif ( [rbx].floattype == 'l' )
+                mov eax,MT_REAL10
+                mov ecx,10
+            .endif
+
+            mov [rdi].mem_type,al
+            atofloat( rdi, [rbx].string_ptr, ecx, 0 )
         .endif
         .endc
 
@@ -2660,7 +2672,10 @@ endif
 
         .elseif ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT )
 
+            ftoquad( rsi )
+            ftoquad( rdi )
             __mulq( rsi, rdi )
+            quadtof( rsi )
 
         .elseifd ( EvalOperator( rsi, rdi, rbx ) == ERROR )
 

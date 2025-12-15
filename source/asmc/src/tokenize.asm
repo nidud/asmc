@@ -992,7 +992,7 @@ endif
 
 ifdef CHEXPREFIX
 
-    .if ( prefix )
+    .if ( prefix && al != '.' )
 
         mov eax,16
         .if !edi
@@ -1025,28 +1025,32 @@ endif
 
                 or al,0x20
 
-                .if ( al != 'e' || edi )
-                    .break
-                .endif
-                inc edi
-                ;
-                ; accept e+2 / e-4 /etc.
-                ;
-                mov al,[rdx+1]
-                .if ( al == '+' || al == '-' )
-                    inc rdx
+                .if !( prefix && al >= 'a' && al <= 'f' )
+
+                    .if ( ( al != 'e' && al != 'p' ) || edi )
+                        .break
+                    .endif
+                    inc edi
+                    ;
+                    ; accept e+2 / e-4 / p-3 /etc.
+                    ;
+                    mov al,[rdx+1]
+                    .if ( al == '+' || al == '-' )
+                        inc rdx
+                    .endif
                 .endif
             .endif
             inc rdx
         .endw
 
-        mov [rbx].token,T_FLOAT
-        mov [rbx].floattype,0
-        jmp number_done
+        .if ( !prefix || ( al != 'f' && al != 'l' ) )
+            xor eax,eax
+            dec rdx
+        .endif
 
     .case 'r'
         mov [rbx].token,T_FLOAT
-        mov [rbx].floattype,'r'
+        mov [rbx].floattype,al
         inc rdx
         jmp number_done
 

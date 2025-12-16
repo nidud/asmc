@@ -16,11 +16,11 @@ endif
 LF          equ 10
 CR          equ 13
 CTRLZ       equ 26
-BUF_SIZE    equ 1025 ; size of LF translation buffer
+BUF_SIZE    equ 1024 ; size of LF translation buffer
 
 .code
 
-_write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
+_write proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:uint_t
 
   local lfcount:int_t           ; count of line feeds
   local charcount:int_t         ; count of chars written so far
@@ -29,8 +29,8 @@ _write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
   local bytes_written:int_t
   local bytes_converted:int_t
   local lfbuf[BUF_SIZE]:char_t  ; lf translation buffer
-  local utf8_buf[(BUF_SIZE*2)/3]:char_t
-  local utf16_buf[BUF_SIZE/6]:wchar_t
+  local utf8_buf[(BUF_SIZE*2)/3+6]:char_t
+  local utf16_buf[BUF_SIZE/6+6]:wchar_t
 
     ldr ecx,fh
     ldr eax,cnt
@@ -142,7 +142,7 @@ endif
                 mov rcx,rdi
                 sub rcx,rdx
 
-                .if WriteFile( [rbx].osfhnd, rdx, ecx, &written, NULL )
+                .ifd WriteFile( [rbx].osfhnd, rdx, ecx, &written, NULL )
 
                     add charcount,written
 

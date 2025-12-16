@@ -7,12 +7,11 @@ include stdio.inc
 include io.inc
 include malloc.inc
 
-    .data
-    _stdbuf string_t 2 dup(0) ; buffer for stdout and stderr
+externdef _stdbuf:string_t
 
     .code
 
-    assume rbx:ptr _iobuf
+    assume rbx:LPFILE
 
 _stbuf proc uses rbx fp:LPFILE
 
@@ -20,37 +19,22 @@ _stbuf proc uses rbx fp:LPFILE
 
     ldr rbx,fp
 
-    .if _isatty([rbx]._file)
-
-        xor eax,eax
-        lea rdx,_stdbuf
-        .if ( rbx != stdout )
-            .if ( rbx != stderr )
-                .return
-            .endif
-            add rdx,string_t
-        .endif
-
-        mov ecx,[rbx]._flag
-        and ecx,_IOMYBUF or _IONBF or _IOYOURBUF
-        .ifnz
+    xor eax,eax
+    lea rdx,_stdbuf
+    .if ( [rbx]._file != 1 )
+        .if ( [rbx]._file != 2 )
             .return
         .endif
+        add rdx,string_t
+    .endif
+    mov ecx,[rbx]._flag
+    and ecx,_IOMYBUF or _IONBF or _IOYOURBUF
+    .ifz
         or  ecx,_IOWRT or _IOYOURBUF or _IOFLRTN
         mov [rbx]._flag,ecx
-
         mov rax,[rdx]
-        .if ( rax == NULL )
-
-            mov p,rdx
-            malloc( _INTIOBUF )
-            mov rcx,p
-            mov [rcx],rax
-        .endif
-
         mov ecx,_INTIOBUF
         .if ( rax == NULL )
-
             lea rax,[rbx]._charbuf
             mov ecx,4
         .endif

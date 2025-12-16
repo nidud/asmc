@@ -15,8 +15,7 @@ _ftbuf proc uses rbx flag:int_t, fp:LPFILE
     ldr ecx,flag
     ldr rbx,fp
 
-    mov edx,[rbx]._flag
-    .if ( ecx && edx & _IOFLRTN )
+    .if ( ecx && [rbx]._flag & _IOFLRTN )
 
         fflush( rbx )
 

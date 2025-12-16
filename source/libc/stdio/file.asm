@@ -8,11 +8,13 @@ include stdio.inc
 include malloc.inc
 include rterr.inc
 
+public _stdbuf
+
 .data
-__piob  label LPFILE
-stdin   LPFILE NULL
-stdout  LPFILE NULL
-stderr  LPFILE NULL
+ stdin      LPFILE NULL
+ stdout     LPFILE NULL
+ stderr     LPFILE NULL
+ _stdbuf    string_t 2 dup(0) ; buffer for stdout and stderr
 
 .code
 
@@ -25,7 +27,7 @@ __initstdio proc uses rbx
     .endif
 
     imul ebx,_nstream,_iobuf
-    .if ( malloc( &[rbx+_INTIOBUF] ) == NULL )
+    .if ( malloc( &[rbx+_INTIOBUF*3] ) == NULL )
 
         .return( _RT_STDIOINIT )
     .endif
@@ -42,6 +44,8 @@ __initstdio proc uses rbx
 
     imul eax,_nstream,_iobuf
     add rax,rbx
+    lea rdx,_stdbuf
+
     mov [rbx]._ptr,rax
     mov [rbx]._base,rax
     mov [rbx]._flag,_IOREAD or _IOYOURBUF
@@ -52,11 +56,15 @@ __initstdio proc uses rbx
     mov [rbx]._flag,_IOWRT
     mov [rbx]._file,1
     mov stdout,rbx
+    add rax,_INTIOBUF
+    mov [rdx],rax
 
     add rbx,_iobuf
     mov [rbx]._flag,_IOWRT
     mov [rbx]._file,2
     mov stderr,rbx
+    add rax,_INTIOBUF
+    mov [rdx+string_t],rax
 
     add rbx,_iobuf
     .for ( ecx = 3 : ecx < _nstream : ecx++, rbx+=_iobuf )

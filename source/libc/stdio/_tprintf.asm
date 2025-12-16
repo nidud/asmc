@@ -12,8 +12,10 @@ include tchar.inc
 _tprintf proc uses rbx format:tstring_t, argptr:VARARG
 
     mov ebx,_stbuf( stdout )
-    xchg ebx,_toutput( stdout, format, &argptr )
-    _ftbuf( eax, stdout )
+    _toutput( stdout, format, &argptr )
+    mov ecx,ebx
+    mov ebx,eax
+    _ftbuf( ecx, stdout )
     mov eax,ebx
     ret
 

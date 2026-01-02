@@ -3793,11 +3793,20 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 .if ( [rbx].token != T_FINAL )
 
-                    mov rdx,[rbx+asm_tok].tokpos
+                    lea rdx,[rbx+asm_tok]
                     .if ( [rdi].isstatic )
-                        mov rdx,[rbx+asm_tok*2].tokpos
+                        mov rax,struct_ptr
+                        .if ( rax )
+                            mov rdx,rax
+                        .else
+                            add rdx,asm_tok
+                            mov rax,[rdx].asm_tok.string_ptr
+                            .if ( word ptr [rax] == ',' )
+                                add rdx,asm_tok
+                            .endif
+                        .endif
                     .endif
-                    tstrcat( p, rdx )
+                    tstrcat( p, [rdx].asm_tok.tokpos )
                 .endif
 
             .elseif ( [rdx].proc_info.has_vararg )
@@ -3817,11 +3826,17 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .if ( [rdi].isstatic )
 
                     ; v2.36.22 -- a .static func {} may be base.a.b.class.func(...)
+                    ; v2.37.46 -- struct_ptr points to *this as the last arguments
 
-                    .for ( esi = asm_tok*2 : [rbx+rsi+asm_tok].token == T_DOT : esi += asm_tok*2 )
-                        tstrcat( tstrcat( p, [rbx+rsi].string_ptr ), "." )
-                    .endf
-                    mov rdx,[rbx+rsi].string_ptr
+                    mov rax,struct_ptr
+                    .if ( rax )
+                        mov rdx,[rax].asm_tok.tokpos
+                    .else
+                        .for ( esi = asm_tok*2 : [rbx+rsi+asm_tok].token == T_DOT : esi += asm_tok*2 )
+                            tstrcat( tstrcat( p, [rbx+rsi].string_ptr ), "." )
+                        .endf
+                        mov rdx,[rbx+rsi].string_ptr
+                    .endif
                     xor esi,esi
                 .endif
                 tstrcat( p, rdx )

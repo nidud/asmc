@@ -30,7 +30,7 @@ option dllimport:none
     m_pBlackBrush       ptr ID2D1SolidColorBrush ?
 
 
-    DemoApp proc :ptr
+    DemoApp proc
     Release proc
 
     Initialize proc

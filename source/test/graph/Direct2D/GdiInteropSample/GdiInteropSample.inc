@@ -26,7 +26,7 @@ option dllimport:none
     m_pDCRT ptr ID2D1DCRenderTarget ?
     m_pBlackBrush ptr ID2D1SolidColorBrush ?
 
-    DemoApp proc :ptr
+    DemoApp proc
     Release proc
 
     Initialize proc
@@ -35,9 +35,8 @@ option dllimport:none
     CreateDeviceResources proc
     DiscardDeviceResources proc
     OnRender proc :ptr PAINTSTRUCT
-
     WndProc proto :HWND, :UINT, :WPARAM, :LPARAM
-    .ends
+   .ends
 
 ifdef _MSVCRT
 .data

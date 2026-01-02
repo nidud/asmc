@@ -33,7 +33,7 @@ option dllimport:none
     m_DwmTimingInfo     DWM_TIMING_INFO <>
     m_Time              float ?
 
-    DemoApp             proc :ptr
+    DemoApp             proc
     Release             proc
 
     Initialize          proc

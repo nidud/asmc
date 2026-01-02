@@ -5,9 +5,7 @@ ifndef _D2D1_H_
 include d2d1.inc
 endif
 
-ifdef _WIN64
-
-.template Matrix3x2F
+.template Matrix3x2F fastcall
 
     _11 real4 ?
     _12 real4 ?
@@ -16,131 +14,117 @@ ifdef _WIN64
     _31 real4 ?
     _32 real4 ?
 
-    .inline Identity {
-        xor eax,eax
-        mov [this+0x04],rax
-        mov [this+0x10],rax
-        mov eax,1.0
-        mov [this+0x00],eax
-        mov [this+0x0C],eax
-        mov rax,this
-        }
-
-    .inline Rotation :abs, :abs=<0> {
-        D2D1MakeRotateMatrix(_1, _2, this)
-        }
-
-    .inline Translation :real4, :real4 {
+    .static Identity {
         xor     eax,eax
-        mov     [this+0x04],rax
+        mov     this._12,eax
+        mov     this._21,eax
+        mov     this._31,eax
+        mov     this._32,eax
         mov     eax,1.0
-        mov     [this+0x00],eax
-        mov     [this+0x0C],eax
-        movss   [this+0x10],xmm1
-        movss   [this+0x14],xmm2
-        mov     rax,this
+        mov     this._11,eax
+        mov     this._22,eax
+        lea     rax,this
         }
 
-    .inline Scale :real4, :real4, :abs, :abs {
+
+    .static Rotation :abs, :abs=<0> {
+        D2D1MakeRotateMatrix(_1, _2, addr this)
+        }
+
+    .static Translation :real4, :real4 {
         xor     eax,eax
-        mov     [this+0x04],rax
-        movss   [this+0x00],xmm1
-        movss   [this+0x0C],xmm2
+        mov     this._12,eax
+        mov     this._21,eax
+        mov     eax,1.0
+        mov     this._11,eax
+        mov     this._22,eax
+        movss   this._31,xmm0
+        movss   this._32,xmm1
+        lea     rax,this
+        }
+
+    .static Scale :real4, :real4, :abs, :abs {
+        xor     eax,eax
+        mov     this._12,eax
+        mov     this._21,eax
+        movss   this._11,xmm0
+        movss   this._22,xmm1
         ifb <_3>
-           mov  [this+0x10],rax
+           mov  this._31,eax
+           mov  this._32,eax
         else
-           movss xmm0,_3
+           movss xmm2,_3
+           mulss xmm0,xmm2
+           subss xmm2,xmm0
+           movss this._31,xmm2
+           movss xmm0,_4
            mulss xmm1,xmm0
            subss xmm0,xmm1
-           movss [this+0x10],xmm0
-           movss xmm0,_4
-           mulss xmm2,xmm0
-           subss xmm0,xmm2
-           movss [this+0x14],xmm0
+           movss this._32,xmm0
         endif
-        mov rax,rcx
+        lea     rax,this
         }
 
-    .inline Invert {
-        xor D2D1InvertMatrix(this),1
+    .static Invert {
+        xor D2D1InvertMatrix(addr this),1
         }
 
-    .inline IsIdentity {
+    .static IsIdentity {
         xor eax,eax
         mov edx,1.0
-        .if [this+0x00] == edx && \
-            [this+0x04] == rax && \
-            [this+0x0C] == edx && \
-            [this+0x10] == rax
+        .if ( edx == this._11 &&
+              eax == this._12 &&
+              eax == this._21 &&
+              edx == this._22 &&
+              eax == this._31 &&
+              eax == this._32 )
             inc eax
         .endif
         }
 
-    .inline SetProduct :ptr, :ptr {
+    .static SetProduct :ptr, :ptr {
 
-        movss xmm2,[_1+0x00] ; a._11 * b._11 + a._12 * b._21
-        mulss xmm2,[_2+0x00]
-        movss xmm1,[_1+0x04]
-        mulss xmm1,[_2+0x08]
-        addss xmm2,xmm1
-
-        movss xmm3,[_1+0x00] ; a._11 * b._12 + a._12 * b._22
-        mulss xmm3,[_2+0x04]
-        movss xmm1,[_1+0x04]
-        mulss xmm1,[_2+0x0C]
-        addss xmm3,xmm1
-
-        movss xmm4,[_1+0x08] ; a._21 * b._11 + a._22 * b._21
-        mulss xmm4,[_2+0x00]
-        movss xmm1,[_1+0x0C]
-        mulss xmm1,[_2+0x08]
-        addss xmm4,xmm1
-
-        movss xmm5,[_1+0x08] ; a._21 * b._12 + a._22 * b._22
-        mulss xmm5,[_2+0x04]
-        movss xmm1,[_1+0x0C]
-        mulss xmm1,[_2+0x0C]
-        addss xmm5,xmm1
-
-        movss xmm6,[_1+0x10] ; a._31 * b._11 + a._32 * b._21 + b._31
-        mulss xmm6,[_2+0x00]
-        movss xmm1,[_1+0x14]
-        mulss xmm1,[_2+0x08]
-        addss xmm6,xmm1
-        addss xmm6,[_2+0x10]
-
-        movss xmm0,[_1+0x10] ; a._31 * b._12 + a._32 * b._22 + b._32
-        mulss xmm0,[_2+0x04]
-        movss xmm1,[_1+0x14]
-        mulss xmm1,[_2+0x0C]
-        addss xmm0,xmm1
-        addss xmm0,[_2+0x14]
-
-        movss [this+0x00],xmm2
-        movss [this+0x04],xmm3
-        movss [this+0x08],xmm4
-        movss [this+0x0C],xmm5
-        movss [this+0x10],xmm6
-        movss [this+0x14],xmm0
+        movups  xmm2,[_1]
+        movups  xmm3,[_2]
+        movaps  xmm0,xmm2
+        shufps  xmm0,xmm0,01010000b     ;   [ a0, a0, a1, a1 ]
+        mulps   xmm0,xmm3               ; * [ b0, b1, b2, b3 ]
+        movhlps xmm1,xmm0
+        addps   xmm0,xmm1               ; + [  2,  3, --, -- ]
+        movsd   real8 ptr this,xmm0     ; _11 = a0*b0+a1*b2, _12 = a0*b1+a1*b3
+        shufps  xmm2,xmm2,11111010b     ;   [ a2, a2, a3, a3 ]
+        mulps   xmm2,xmm3
+        movhlps xmm0,xmm2
+        addps   xmm0,xmm2
+        movsd   real8 ptr this[8],xmm0  ; _21 = a2*b0+a3*b2, _22 = a2*b1+a3*b3
+        movsd   xmm0,[_1+16]
+        shufps  xmm0,xmm0,01010000b     ;   [ a4, a4, a5, a5 ]
+        mulps   xmm0,xmm3
+        movhlps xmm1,xmm0
+        addps   xmm0,xmm1
+        movsd   xmm1,[_2+16]
+        addps   xmm0,xmm1
+        movsd   real8 ptr this[16],xmm0 ; _31 = a4*b0+a5*b2+b4, _32 = a4*b1+a5*b3+b5
         }
 
-    .inline Skew :abs, :abs, :abs=<0> {
-        D2D1MakeSkewMatrix(_1, _2, _3, this)
+    .static Skew :abs, :abs, :abs=<0> {
+        D2D1MakeSkewMatrix(_1, _2, _3, addr this)
         }
 
-    .inline ReinterpretBaseType {
-        mov rax,this
+    .static ReinterpretBaseType {
+        lea     rax,this
         }
 
-    .inline Determinant {
-        movss xmm0,[this+0x00]
-        mulss xmm0,[this+0x0C]
-        movss xmm1,[this+0x04]
-        mulss xmm1,[this+0x08]
-        subss xmm0,xmm1
+    .static Determinant {
+        movss   xmm0,this._11
+        mulss   xmm0,this._22
+        movss   xmm1,this._12
+        mulss   xmm1,this._21
+        subss   xmm0,xmm1
         }
     .ends
 
+ifdef _WIN64
 
 D2D1_FloatMax proto {
     ifdef FLT_MAX

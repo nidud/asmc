@@ -6,109 +6,948 @@
 ; From: https://github.com/microsoft/Windows-classic-samples/
 ;
 
-include GeometryRealization.asm
-
-sc_fontName             equ <"Calibri">
-sc_fontSize             equ 20.0
-sc_textInfoBox          equ <10.0, 10.0, 350.0, 200.0>
-sc_textInfoBoxInset     equ 10.0
-sc_defaultNumSquares    equ 16
-sc_minNumSquares        equ 1
-sc_maxNumSquares        equ 1024
-sc_boardWidth           equ 900.0
-sc_rotationSpeed        equ 3.0
-sc_loupeInset           equ 20.0
-sc_maxZoom              equ 15.0
-sc_minZoom              equ 1.0
-sc_zoomStep             equ 1.5
-sc_zoomSubStep          equ 1.1
-sc_strokeWidth          equ 1.0
-
-; This determines that maximum texture size we will
-; generate for our realizations.
-
-sc_maxRealizationDimension equ 2000
+include stdafx.inc
 
 .code
 
-wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
+CreateGeometryRealizationFactory proc pRT:ptr ID2D1RenderTarget, maxRealizationDimension:UINT, ppFactory:ptr ptr IGeometryRealizationFactory
 
-  local tmring:RingBuffer
+   .new hr:HRESULT = E_OUTOFMEMORY
+   .new pFactory:ptr GeometryRealizationFactory()
 
-    ; Ignore the return value because we want to continue running even in the
-    ; unlikely event that HeapSetInformation fails.
-
-    HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
-
-    .if (SUCCEEDED(CoInitialize(NULL)))
-
-        .new app:ptr DemoApp(&tmring)
-
-        .if (SUCCEEDED(app.Initialize()))
-
-            app.RunMessageLoop()
-        .endif
-        app.Release()
-        CoUninitialize()
+    .if rax
+        mov hr,S_OK
     .endif
-    .return 0
 
-wWinMain endp
+    .if (SUCCEEDED(hr))
+
+        mov hr,pFactory.Initialize(pRT, maxRealizationDimension)
+
+        .if (SUCCEEDED(eax))
+
+            mov rax,ppFactory
+            mov rcx,pFactory
+            mov [rax],rcx
+            [rcx].IGeometryRealizationFactory.AddRef()
+        .endif
+        pFactory.Release()
+    .endif
+    .return hr
+    endp
 
 
-    assume rsi:ptr DemoApp
+GeometryRealizationFactory::GeometryRealizationFactory proc
 
-DemoApp::DemoApp proc uses rdi rsi tmring:ptr
+    .if @ComAlloc(GeometryRealizationFactory)
+        inc [rax].GeometryRealizationFactory.m_cRef
+    .endif
+    ret
+    endp
+
+
+GeometryRealization::GeometryRealization proc
+
+    .if @ComAlloc(GeometryRealization)
+        inc [rax].GeometryRealization.m_cRef
+    .endif
+    ret
+    endp
+
+
+    assume class:rbx
+
+GeometryRealizationFactory::Initialize proc pRT:ptr ID2D1RenderTarget, maxRealizationDimension:UINT
+
+    .new hr:HRESULT = S_OK
+
+    .if ( ldr(maxRealizationDimension) == 0 )
+        ;
+        ; 0-sized bitmaps aren't very useful for realizations, and
+        ; DXGI surface render targets don't support them, anyway.
+        ;
+        mov hr,E_INVALIDARG
+    .endif
+
+    .if (SUCCEEDED(hr))
+
+        mov m_pRT,ldr(pRT)
+
+        m_pRT.AddRef()
+        .ifd ( m_pRT.GetMaximumBitmapSize() > maxRealizationDimension )
+            mov eax,maxRealizationDimension
+        .endif
+        mov m_maxRealizationDimension,eax
+    .endif
+    .return hr
+    endp
+
+
+GeometryRealizationFactory::CreateGeometryRealization proc ppRealization:ptr ptr IGeometryRealization
+
+   .new hr:HRESULT = E_OUTOFMEMORY
+   .new pRealization:ptr GeometryRealization()
+
+    .if rax
+        mov hr,S_OK
+    .endif
+
+    .if (SUCCEEDED(hr))
+
+        mov hr,pRealization.Initialize(m_pRT, m_maxRealizationDimension,
+                NULL, REALIZATION_CREATION_OPTIONS_ALIASED, NULL, 0.0, NULL)
+
+        .if (SUCCEEDED(hr))
+
+            mov rcx,ppRealization
+            mov [rcx],pRealization
+            pRealization.AddRef()
+        .endif
+        pRealization.Release()
+    .endif
+    .return hr
+    endp
+
+
+
+GeometryRealization::Fill proc pRT:ptr ID2D1RenderTarget, pBrush:ptr ID2D1Brush, mode:REALIZATION_RENDER_MODE
+
+    RenderToTarget(TRUE, ldr(pRT), ldr(pBrush), ldr(mode))
+    ret
+    endp
+
+
+GeometryRealization::Draw proc pRT:ptr ID2D1RenderTarget, pBrush:ptr ID2D1Brush, mode:REALIZATION_RENDER_MODE
+
+    RenderToTarget(FALSE, ldr(pRT), ldr(pBrush), ldr(mode))
+    ret
+    endp
+
+
+;
+;  Description:
+;      Discard the current realization's contents and replace with new
+;      contents.
+;
+;      Note: This method attempts to reuse the existing bitmaps (but will
+;      replace the bitmaps if they aren't large enough). Since the cost of
+;      destroying a texture can be surprisingly astronomical, using this
+;      method can be substantially more performant than recreating a new
+;      realization every time.
+;
+;      Note: Here, pWorldTransform is the transform that the realization will
+;      be optimized for. If, at the time of rendering, the render target's
+;      transform is the same as the pWorldTransform passed in here then the
+;      realization will look identical to the unrealized version. Otherwise,
+;      quality will be degraded.
+;
+
+GeometryRealization::Update proc \
+    pGeometry       : ptr ID2D1Geometry,
+    options         : REALIZATION_CREATION_OPTIONS,
+    pWorldTransform : ptr D2D1_MATRIX_3X2_F,
+    strokeWidth     : real4,
+    pIStrokeStyle   : ptr ID2D1StrokeStyle
+
+
+   .new hr:HRESULT = S_OK
+
+    ldr rcx,pWorldTransform
+    .if rcx
+        mov m_realizationTransform,[rcx]
+        mov m_realizationTransformIsIdentity,m_realizationTransform.IsIdentity()
+    .else
+        m_realizationTransform.Identity()
+        mov m_realizationTransformIsIdentity,TRUE
+    .endif
+    mov m_realizationTransformInv,m_realizationTransform
+    m_realizationTransformInv.Invert()
+
+    ;
+    ; We're about to create our realizations with the world transform applied
+    ; to them.  When we go to actually render the realization, though, we'll
+    ; want to "undo" this realization and instead apply the render target's
+    ; current transform.
+    ;
+    ; Note: we keep track to see if the passed in realization transform is the
+    ; identity.  This is a small optimization that saves us from having to
+    ; multiply matrices when we go to draw the realization.
+    ;
+
+    .if ( ( options & REALIZATION_CREATION_OPTIONS_UNREALIZED ) || m_swRT )
+
+        SafeReplace(&m_pGeometry, pGeometry)
+        SafeReplace(&m_pStrokeStyle, pIStrokeStyle)
+        mov m_strokeWidth,strokeWidth
+    .endif
+
+    .if ( options & REALIZATION_CREATION_OPTIONS_ANTI_ALIASED )
+
+        ; Antialiased realizations are implemented using opacity masks.
+
+        .if ( options & REALIZATION_CREATION_OPTIONS_FILLED )
+
+            ; => filled
+
+            mov hr,GenerateOpacityMask(TRUE, m_pRT, m_maxRealizationDimension, &m_pFillRT, pGeometry,
+                    pWorldTransform, strokeWidth, pIStrokeStyle, &m_fillMaskDestBounds, &m_fillMaskSourceBounds)
+        .endif
+
+        .if (SUCCEEDED(hr) && options & REALIZATION_CREATION_OPTIONS_STROKED)
+
+            ; => stroked
+
+            mov hr,GenerateOpacityMask(FALSE, m_pRT, m_maxRealizationDimension, &m_pStrokeRT, pGeometry,
+                    pWorldTransform, strokeWidth, pIStrokeStyle, &m_strokeMaskDestBounds, &m_strokeMaskSourceBounds)
+        .endif
+    .endif
+
+    .if ( SUCCEEDED(hr) && options & REALIZATION_CREATION_OPTIONS_ALIASED )
+
+        ; Aliased realizations are implemented using meshes.
+
+        .if ( options & REALIZATION_CREATION_OPTIONS_FILLED )
+
+           .new pMesh:ptr ID2D1Mesh = NULL
+            mov hr,m_pRT.CreateMesh(&pMesh)
+            .if (SUCCEEDED(hr))
+
+               .new pSink:ptr ID2D1TessellationSink = NULL
+                mov hr,pMesh.Open(&pSink)
+                .if (SUCCEEDED(hr))
+                    mov hr,pGeometry.Tessellate(pWorldTransform, 0.25, pSink)
+                    .if (SUCCEEDED(hr))
+                        mov hr,pSink.Close()
+                        .if (SUCCEEDED(hr))
+                            SafeReplace(&m_pFillMesh, pMesh)
+                        .endif
+                    .endif
+                    pSink.Release()
+                .endif
+                pMesh.Release()
+            .endif
+        .endif
+
+        .if ( SUCCEEDED(hr) && options & REALIZATION_CREATION_OPTIONS_STROKED )
+
+            ;
+            ; In order generate the mesh corresponding to the stroke of a
+            ; geometry, we first "widen" the geometry and then tessellate the
+            ; result.
+            ;
+           .new pFactory:ptr ID2D1Factory = NULL
+           .new pPathGeometry:ptr ID2D1PathGeometry = NULL
+
+            m_pRT.GetFactory(&pFactory)
+
+            mov hr,pFactory.CreatePathGeometry(&pPathGeometry)
+
+            .if (SUCCEEDED(hr))
+
+               .new pGeometrySink:ptr ID2D1GeometrySink = NULL
+                mov hr,pPathGeometry.Open(&pGeometrySink)
+                .if (SUCCEEDED(hr))
+
+                    mov hr,pGeometry.Widen(strokeWidth, pIStrokeStyle, pWorldTransform, 0.25, pGeometrySink)
+
+                    .if (SUCCEEDED(hr))
+
+                        mov hr,pGeometrySink.Close()
+                        .if (SUCCEEDED(hr))
+
+                           .new pMesh:ptr ID2D1Mesh = NULL
+                            mov hr,m_pRT.CreateMesh(&pMesh)
+                            .if (SUCCEEDED(hr))
+                               .new pSink:ptr ID2D1TessellationSink = NULL
+                                mov hr,pMesh.Open(&pSink)
+                                .if (SUCCEEDED(hr))
+
+                                    ; world transform (already handled in Widen)
+
+                                    mov hr,pPathGeometry.Tessellate(NULL, 0.25, pSink)
+                                    .if (SUCCEEDED(hr))
+                                        mov hr,pSink.Close()
+                                        .if (SUCCEEDED(hr))
+                                            SafeReplace(&m_pStrokeMesh, pMesh)
+                                        .endif
+                                    .endif
+                                    pSink.Release()
+                                .endif
+                                pMesh.Release()
+                            .endif
+                        .endif
+                    .endif
+                    pGeometrySink.Release()
+                .endif
+                pPathGeometry.Release()
+            .endif
+            pFactory.Release()
+        .endif
+    .endif
+    .return hr
+    endp
+
+
+GeometryRealization::RenderToTarget proc fill:BOOL, pRT:ptr ID2D1RenderTarget, pBrush:ptr ID2D1Brush, mode:REALIZATION_RENDER_MODE
+
+    .new hr:HRESULT = S_OK
+    .new originalTransform:D2D1_MATRIX_3X2_F
+    .new originalAAMode:D2D1_ANTIALIAS_MODE = pRT.GetAntialiasMode()
+
+
+    .if ( ( ( mode == REALIZATION_RENDER_MODE_DEFAULT ) && m_swRT ) ||
+            ( mode == REALIZATION_RENDER_MODE_FORCE_UNREALIZED ) )
+
+        .if !m_pGeometry
+
+            ; We're being asked to render the geometry unrealized, but we
+            ; weren't created with REALIZATION_CREATION_OPTIONS_UNREALIZED.
+
+            mov hr,E_FAIL
+        .endif
+
+        .if (SUCCEEDED(hr))
+
+            .if ( fill )
+                pRT.FillGeometry(m_pGeometry, pBrush, NULL)
+            .else
+                pRT.DrawGeometry(m_pGeometry, pBrush, m_strokeWidth, m_pStrokeStyle)
+            .endif
+        .endif
+
+    .else
+
+        .if ( originalAAMode != D2D1_ANTIALIAS_MODE_ALIASED )
+            pRT.SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED)
+        .endif
+
+        .if ( !m_realizationTransformIsIdentity )
+
+            pRT.GetTransform(&originalTransform)
+            m_realizationTransformInv.SetProduct(&m_realizationTransformInv, &originalTransform)
+            pRT.SetTransform(&m_realizationTransformInv)
+        .endif
+
+        .if ( originalAAMode == D2D1_ANTIALIAS_MODE_PER_PRIMITIVE )
+
+            .if ( fill )
+
+                .if ( !m_pFillRT )
+
+                    mov hr,E_FAIL
+                .endif
+
+                .if ( SUCCEEDED(hr) )
+
+                   .new pBitmap:ptr ID2D1Bitmap = NULL
+
+                    m_pFillRT.GetBitmap(&pBitmap)
+
+                    ;
+                    ; Note: The antialias mode must be set to aliased prior to calling
+                    ; FillOpacityMask.
+                    ;
+
+                    pRT.FillOpacityMask(pBitmap, pBrush, D2D1_OPACITY_MASK_CONTENT_GRAPHICS,
+                        &m_fillMaskDestBounds, &m_fillMaskSourceBounds)
+
+                    pBitmap.Release()
+                .endif
+
+            .else
+
+                .if ( !m_pStrokeRT )
+
+                    mov hr,E_FAIL
+                .endif
+
+                .if (SUCCEEDED(hr))
+
+                   .new pBitmap:ptr ID2D1Bitmap = NULL
+
+                    m_pStrokeRT.GetBitmap(&pBitmap)
+
+                    ;
+                    ; Note: The antialias mode must be set to aliased prior to calling
+                    ; FillOpacityMask.
+                    ;
+                    pRT.FillOpacityMask(pBitmap, pBrush, D2D1_OPACITY_MASK_CONTENT_GRAPHICS,
+                        &m_strokeMaskDestBounds, &m_strokeMaskSourceBounds)
+
+                    pBitmap.Release()
+                .endif
+            .endif
+
+        .else
+
+            .if ( fill )
+
+                .if ( !m_pFillMesh )
+
+                    mov hr,E_FAIL
+                .endif
+                .if (SUCCEEDED(hr))
+
+                    pRT.FillMesh(m_pFillMesh, pBrush)
+                .endif
+
+            .else
+
+                .if ( !m_pStrokeMesh )
+
+                    mov hr,E_FAIL
+                .endif
+                .if (SUCCEEDED(hr))
+
+                    pRT.FillMesh(m_pStrokeMesh, pBrush)
+                .endif
+            .endif
+        .endif
+
+        .if (SUCCEEDED(hr))
+
+            pRT.SetAntialiasMode(originalAAMode)
+
+            .if ( !m_realizationTransformIsIdentity )
+
+                pRT.SetTransform(&originalTransform)
+            .endif
+        .endif
+    .endif
+    .return hr
+
+GeometryRealization::RenderToTarget endp
+
+
+GeometryRealization::Initialize proc \
+    pRT                     : ptr ID2D1RenderTarget,
+    maxRealizationDimension : UINT,
+    pGeometry               : ptr ID2D1Geometry,
+    options                 : REALIZATION_CREATION_OPTIONS,
+    pWorldTransform         : ptr D2D1_MATRIX_3X2_F,
+    strokeWidth             : float,
+    pIStrokeStyle           : ptr ID2D1StrokeStyle
+
+   .new hr:HRESULT = S_OK
+
+    mov m_pRT,ldr(pRT)
+    pRT.AddRef()
+
+   .new rtp:D2D1_RENDER_TARGET_PROPERTIES(D2D1_RENDER_TARGET_TYPE_SOFTWARE)
+    mov m_swRT,pRT.IsSupported(&rtp)
+    mov m_maxRealizationDimension,maxRealizationDimension
+    .if ( pGeometry )
+        mov hr,Update(pGeometry, options, pWorldTransform, strokeWidth, pIStrokeStyle)
+    .endif
+    .return hr
+    endp
+
+;
+;  Notes:
+;      This method is the trickiest part of doing realizations. Conceptually,
+;      we're creating a grayscale bitmap that represents the geometry. We'll
+;      reuse an existing bitmap if we can, but if not, we'll create the
+;      smallest possible bitmap that contains the geometry. In either, case,
+;      though, we'll keep track of the portion of the bitmap we actually used
+;      (the source bounds), so when we go to draw the realization, we don't
+;      end up drawing a bunch of superfluous transparent pixels.
+;
+;      We also have to keep track of the "dest" bounds, as more than likely
+;      the bitmap has to be translated by some amount before being drawn.
+;
+
+GenerateOpacityMask proc \
+    fill                    : BOOL,
+    pBaseRT                 : ptr ID2D1RenderTarget,
+    maxRealizationDimension : UINT,
+    ppBitmapRT              : ptr ptr ID2D1BitmapRenderTarget,
+    pIGeometry              : ptr ID2D1Geometry,
+    pWorldTransform         : ptr D2D1_MATRIX_3X2_F,
+    strokeWidth             : float,
+    pStrokeStyle            : ptr ID2D1StrokeStyle,
+    pMaskDestBounds         : ptr D2D1_RECT_F,
+    pMaskSourceBounds       : ptr D2D1_RECT_F
+
+   .new hr:HRESULT = S_OK
+   .new bounds:D2D1_RECT_F
+   .new inflatedPixelBounds:D2D1_RECT_F
+   .new inflatedIntegerPixelSize:D2D1_SIZE_U
+   .new currentRTSize:D2D1_SIZE_U
+   .new dpiX:float, dpiY:float
+   .new scaleX:float = 1.0
+   .new scaleY:float = 1.0
+   .new pCompatRT:ptr ID2D1BitmapRenderTarget = NULL
+   .new pBrush:ptr ID2D1SolidColorBrush = NULL
+   .new color:D3DCOLORVALUE = { 1.0, 1.0, 1.0, 1.0 }
+
+    mov rax,ppBitmapRT
+    mov rdx,[rax]
+    SafeReplace(&pCompatRT, rdx)
+
+    mov hr,pBaseRT.CreateSolidColorBrush(&color, NULL, &pBrush)
+
+    .if (SUCCEEDED(hr))
+
+        pBaseRT.GetDpi(&dpiX, &dpiY)
+
+        .if fill
+            mov hr,pIGeometry.GetBounds(pWorldTransform, &bounds)
+        .else
+            mov hr,pIGeometry.GetWidenedBounds(strokeWidth, pStrokeStyle, pWorldTransform, 0.25, &bounds)
+        .endif
+
+        .if (SUCCEEDED(hr))
+
+            ;
+            ; A rect where left > right is defined to be empty.
+            ;
+            ; The slightly baroque expression used below is an idiom that also
+            ; correctly handles NaNs (i.e., if any of the coordinates of the bounds is
+            ; a NaN, we want to treat the bounds as empty)
+            ;
+
+            xor     eax,eax
+            movss   xmm0,bounds.left
+            comiss  xmm0,bounds.right
+            setbe   al
+            xor     ecx,ecx
+            movss   xmm0,bounds.top
+            comiss  xmm0,bounds.bottom
+            setbe   cl
+
+            .if ( !( eax ) || !( ecx ) )
+
+                ; Bounds are empty or ill-defined.
+
+                ; Make up a fake bounds
+
+                mov inflatedPixelBounds.top,0.0
+                mov inflatedPixelBounds.left,0.0
+                mov inflatedPixelBounds.bottom,1.0
+                mov inflatedPixelBounds.right,1.0
+
+            .else
+
+                ;
+                ; We inflate the pixel bounds by 1 in each direction to ensure we have
+                ; a border of completely transparent pixels around the geometry.  This
+                ; ensures that when the realization is stretched the alpha ramp still
+                ; smoothly falls off to 0 rather than being clipped by the rect.
+                ;
+
+                movss       xmm1,1.0
+                movss       xmm3,96.0
+
+                movss       xmm0,bounds.top
+                mulss       xmm0,dpiY
+                divss       xmm0,xmm3
+                movss       xmm2,xmm0
+                cvttps2dq   xmm0,xmm0
+                cvtdq2ps    xmm0,xmm0
+                cmpltps     xmm2,xmm0
+                andps       xmm2,xmm1
+                subss       xmm0,xmm2
+                subss       xmm0,xmm1
+                movss       inflatedPixelBounds.top,xmm0
+
+                movss       xmm0,bounds.left
+                mulss       xmm0,dpiX
+                divss       xmm0,xmm3
+                movss       xmm2,xmm0
+                cvttps2dq   xmm0,xmm0
+                cvtdq2ps    xmm0,xmm0
+                cmpltps     xmm2,xmm0
+                andps       xmm2,xmm1
+                subss       xmm0,xmm2
+                subss       xmm0,xmm1
+                movss       inflatedPixelBounds.left,xmm0
+
+                movss       xmm0,bounds.bottom
+                mulss       xmm0,dpiY
+                divss       xmm0,xmm3
+                movd        edx,xmm0
+                xor         edx,-0.0
+                movd        xmm0,edx
+                shr         edx,31
+                cvttss2si   eax,xmm0
+                sub         eax,edx
+                neg         eax
+                cvtsi2ss    xmm0,eax
+                addss       xmm0,xmm1
+                movss       inflatedPixelBounds.bottom,xmm0
+
+                movss       xmm0,bounds.right
+                mulss       xmm0,dpiX
+                divss       xmm0,xmm3
+                movd        edx,xmm0
+                xor         edx,-0.0
+                movd        xmm0,edx
+                shr         edx,31
+                cvttss2si   eax,xmm0
+                sub         eax,edx
+                neg         eax
+                cvtsi2ss    xmm0,eax
+                addss       xmm0,xmm1
+                movss       inflatedPixelBounds.right,xmm0
+
+            .endif
+
+
+            ;
+            ; Compute the width and height of the underlying bitmap we will need.
+            ; Note: We round up the width and height to be a multiple of
+            ; sc_bitmapChunkSize. We do this primarily to ensure that we aren't
+            ; constantly reallocating bitmaps in the case where a realization is being
+            ; zoomed in on slowly and updated frequently.
+            ;
+
+            ; Round up
+
+            movss       xmm0,inflatedPixelBounds.right
+            subss       xmm0,inflatedPixelBounds.left
+            addss       xmm0,sc_bitmapChunkSize
+            subss       xmm0,1.0
+            divss       xmm0,sc_bitmapChunkSize
+            mulss       xmm0,sc_bitmapChunkSize
+            cvtss2si    eax,xmm0
+            mov         inflatedIntegerPixelSize.width,eax
+
+            movss       xmm0,inflatedPixelBounds.bottom
+            subss       xmm0,inflatedPixelBounds.top
+            addss       xmm0,sc_bitmapChunkSize
+            subss       xmm0,1.0
+            divss       xmm0,sc_bitmapChunkSize
+            mulss       xmm0,sc_bitmapChunkSize
+            cvtss2si    eax,xmm0
+            mov         inflatedIntegerPixelSize.height,eax
+
+            ;
+            ; Compute the bounds we will pass to FillOpacityMask (which are in Device
+            ; Independent Pixels).
+            ;
+            ; Note: The DIP bounds do *not* use the rounded coordinates, since this
+            ; would cause us to render superfluous, fully-transparent pixels, which
+            ; would hurt fill rate.
+            ;
+           .new inflatedDipBounds:D2D1_RECT_F
+
+            movss xmm0,inflatedPixelBounds.left
+            mulss xmm0,96.0
+            divss xmm0,dpiX
+            movss inflatedDipBounds.left,xmm0
+
+            movss xmm0,inflatedPixelBounds.top
+            mulss xmm0,96.0
+            divss xmm0,dpiY
+            movss inflatedDipBounds.top,xmm0
+
+            movss xmm0,inflatedPixelBounds.right
+            mulss xmm0,96.0
+            divss xmm0,dpiX
+            movss inflatedDipBounds.right,xmm0
+
+            movss xmm0,inflatedPixelBounds.bottom
+            mulss xmm0,96.0
+            divss xmm0,dpiY
+            movss inflatedDipBounds.bottom,xmm0
+
+            .if pCompatRT
+
+                pCompatRT.GetPixelSize(&currentRTSize)
+
+            .else
+
+                ;; This will force the creation of a new target
+                mov currentRTSize.width,0
+                mov currentRTSize.height,0
+            .endif
+
+            ;
+            ; We need to ensure that our desired render target size isn't larger than
+            ; the max allowable bitmap size. If it is, we need to scale the bitmap
+            ; down by the appropriate amount.
+            ;
+
+            .if ( inflatedIntegerPixelSize.width > maxRealizationDimension )
+
+                cvtsi2ss    xmm0,eax
+                cvtsi2ss    xmm1,inflatedIntegerPixelSize.width
+                divss       xmm0,xmm1
+                movss       scaleX,xmm0
+                mov         inflatedIntegerPixelSize.width,eax
+            .endif
+
+            .if ( inflatedIntegerPixelSize.height > eax )
+
+                cvtsi2ss    xmm0,eax
+                cvtsi2ss    xmm1,inflatedIntegerPixelSize.height
+                divss       xmm0,xmm1
+                movss       scaleY,xmm0
+                mov         inflatedIntegerPixelSize.height,eax
+            .endif
+
+
+            ;
+            ; If the necessary pixel dimensions are less than half the existing
+            ; bitmap's dimensions (in either direction), force the bitmap to be
+            ; reallocated to save memory.
+            ;
+            ; Note: The fact that we use > rather than >= is important for a subtle
+            ; reason: We'd like to have the property that repeated small changes in
+            ; geometry size do not cause repeated reallocations of memory. >= does not
+            ; ensure this property in the case where the geometry size is close to
+            ; sc_bitmapChunkSize, but > does.
+            ;
+            ; Example:
+            ;
+            ; Assume sc_bitmapChunkSize is 64 and the initial geometry width is 63
+            ; pixels. This will get rounded up to 64, and we will allocate a bitmap
+            ; with width 64. Now, say, we zoom in slightly, so the new geometry width
+            ; becomes 65 pixels. This will get rounded up to 128 pixels, and a new
+            ; bitmap will be allocated. Now, say the geometry drops back down to 63
+            ; pixels. This will get rounded up to 64. If we used >=, this would cause
+            ; another reallocation.  Since we use >, on the other hand, the 128 pixel
+            ; bitmap will be reused.
+            ;
+
+            mov eax,inflatedIntegerPixelSize.width
+            mov edx,inflatedIntegerPixelSize.height
+            shl eax,1
+            shl edx,1
+
+            .if ( currentRTSize.width > eax || currentRTSize.height > edx )
+
+                SafeRelease(pCompatRT)
+                mov currentRTSize.width,0
+                mov currentRTSize.height,0
+            .endif
+
+            .if ( inflatedIntegerPixelSize.width > currentRTSize.width || \
+                    inflatedIntegerPixelSize.height > currentRTSize.height )
+
+                SafeRelease(pCompatRT)
+            .endif
+
+            .if ( !pCompatRT )
+
+                ;
+                ; Make sure our new rendertarget is strictly larger than before.
+                ;
+
+                .if ( currentRTSize.width < inflatedIntegerPixelSize.width )
+                    mov currentRTSize.width,eax
+                .endif
+
+                .if ( currentRTSize.height < inflatedIntegerPixelSize.height )
+                    mov currentRTSize.height,eax
+                .endif
+
+               .new alphaOnlyFormat:D2D1_PIXEL_FORMAT = {
+                    DXGI_FORMAT_A8_UNORM,
+                    D2D1_ALPHA_MODE_PREMULTIPLIED
+                    }
+
+                mov hr,pBaseRT.CreateCompatibleRenderTarget(
+                    NULL, ; desiredSize
+                    &currentRTSize,
+                    &alphaOnlyFormat,
+                    D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_NONE,
+                    &pCompatRT
+                    )
+            .endif
+
+            .if (SUCCEEDED(hr))
+
+                ;
+                ; Translate the geometry so it is flush against the left and top
+                ; sides of the render target.
+                ;
+                movss xmm2,-0.0
+                movss xmm0,inflatedDipBounds.left
+                xorps xmm0,xmm2
+                movss xmm1,inflatedDipBounds.top
+                xorps xmm1,xmm2
+
+               .new scale:Matrix3x2F
+               .new translateMatrix:Matrix3x2F
+
+                translateMatrix.Translation(xmm0, xmm1)
+                scale.Scale(scaleX, scaleY)
+                translateMatrix.SetProduct(&translateMatrix, &scale)
+
+                .if pWorldTransform
+
+                    translateMatrix.SetProduct(pWorldTransform, &translateMatrix)
+                .endif
+                pCompatRT.SetTransform(&translateMatrix)
+
+                ;
+                ; Render the geometry.
+                ;
+
+                pCompatRT.BeginDraw()
+
+                mov color.r,0.0
+                mov color.g,0.0
+                mov color.b,0.0
+                mov color.a,0.0
+
+                pCompatRT.Clear(&color)
+
+                .if fill
+
+                    pCompatRT.FillGeometry(pIGeometry, pBrush, NULL)
+
+                .else
+
+                    pCompatRT.DrawGeometry(pIGeometry, pBrush, strokeWidth, pStrokeStyle)
+                .endif
+
+                mov hr,pCompatRT.EndDraw(NULL, NULL)
+                .if (SUCCEEDED(hr))
+
+                    ;
+                    ; Report back the source and dest bounds (to be used as input parameters
+                    ; to FillOpacityMask.
+                    ;
+
+                    mov rdx,pMaskDestBounds
+                    lea rcx,inflatedDipBounds
+
+                    mov rax,[rcx]
+                    mov [rdx],rax
+                    mov rax,[rcx+8]
+                    mov [rdx+8],rax
+
+                    mov rdx,pMaskSourceBounds
+                    xor eax,eax
+                    mov [rdx],rax
+
+                    movss xmm0,inflatedDipBounds.right
+                    subss xmm0,inflatedDipBounds.left
+                    mulss xmm0,scaleX
+                    movss [rdx+8],xmm0
+                    movss xmm0,inflatedDipBounds.bottom
+                    subss xmm0,inflatedDipBounds.top
+                    mulss xmm0,scaleY
+                    movss [rdx+12],xmm0
+
+                    mov rcx,ppBitmapRT
+                    mov rax,[rcx]
+                    .if rax != pCompatRT
+
+                        SafeReplace(ppBitmapRT, pCompatRT)
+                    .endif
+                .endif
+            .endif
+        .endif
+        pBrush.Release()
+    .endif
+
+    SafeRelease(pCompatRT)
+   .return hr
+
+GenerateOpacityMask endp
+
+
+GeometryRealizationFactory::AddRef proc
+
+    InterlockedIncrement(&m_cRef)
+    ret
+    endp
+
+
+GeometryRealizationFactory::Release proc
+
+    .ifd ( !InterlockedDecrement(&m_cRef) )
+
+        SafeRelease(m_pRT)
+        free(rbx)
+    .endif
+    ret
+    endp
+
+
+GeometryRealizationFactory::QueryInterface proc iid:REFIID, ppvObject:ptr ptr
+    ret
+    endp
+
+
+GeometryRealization::AddRef proc
+
+    InterlockedIncrement(&m_cRef)
+    ret
+    endp
+
+
+GeometryRealization::Release proc
+
+    .if ( !InterlockedDecrement(&m_cRef) )
+
+        SafeRelease(m_pFillMesh)
+        SafeRelease(m_pStrokeMesh)
+        SafeRelease(m_pFillRT)
+        SafeRelease(m_pStrokeRT)
+        SafeRelease(m_pGeometry)
+        SafeRelease(m_pStrokeStyle)
+        SafeRelease(m_pRT)
+        free(rbx)
+    .endif
+    ret
+    endp
+
+
+GeometryRealization::QueryInterface proc iid:REFIID, ppvObject:ptr ptr
+    ret
+    endp
+
+
+
+DemoApp::DemoApp proc tmring:ptr
 
   local time:LARGE_INTEGER
 
-    mov rdi,rdx
-    mov rsi,@ComAlloc(DemoApp)
-    mov [rsi].m_times,rdi
-    mov [rsi].m_updateRealization,TRUE
-    ;mov [rsi].m_drawStroke,TRUE
-    mov [rsi].m_autoGeometryRegen,TRUE
-    mov [rsi].m_numSquares,sc_defaultNumSquares
-    mov [rsi].m_targetZoomFactor,1.0
-    mov [rsi].m_currentZoomFactor,1.0
+    ldr rbx,tmring
+    @ComAlloc(DemoApp)
+    xchg rax,rbx
+    mov m_times,rax
+    mov m_updateRealization,TRUE
+    mov m_autoGeometryRegen,TRUE
+    mov m_numSquares,sc_defaultNumSquares
+    mov m_targetZoomFactor,1.0
+    mov m_currentZoomFactor,1.0
 
     QueryPerformanceCounter(&time)
     mov rax,time.QuadPart
     neg rax
-    mov [rsi].m_timeDelta,rax
-    mov rax,rsi
+    mov m_timeDelta,rax
+    mov rax,rbx
     ret
+    endp
 
-DemoApp::DemoApp endp
 
+DemoApp::Release proc
 
-DemoApp::Release proc uses rsi
-
-    mov rsi,rcx
-    SafeRelease([rsi].m_pD2DFactory)
-    SafeRelease([rsi].m_pWICFactory)
-    SafeRelease([rsi].m_pDWriteFactory)
-    SafeRelease([rsi].m_pRT)
-    SafeRelease([rsi].m_pTextFormat)
-    SafeRelease([rsi].m_pSolidColorBrush)
-    SafeRelease([rsi].m_pRealization)
-    SafeRelease([rsi].m_pGeometry)
+    SafeRelease(m_pD2DFactory)
+    SafeRelease(m_pWICFactory)
+    SafeRelease(m_pDWriteFactory)
+    SafeRelease(m_pRT)
+    SafeRelease(m_pTextFormat)
+    SafeRelease(m_pSolidColorBrush)
+    SafeRelease(m_pRealization)
+    SafeRelease(m_pGeometry)
     ret
+    endp
 
-DemoApp::Release endp
 
-
-DemoApp::Initialize proc uses rsi
+DemoApp::Initialize proc
 
   local wcex:WNDCLASSEX
   local dpiX:float, dpiY:float
 
-    mov rsi,rcx
-
     ; Initialize device-indpendent resources, such
     ; as the Direct2D factory.
 
-    .ifd ( !this.CreateDeviceIndependentResources() )
+    .ifd ( !CreateDeviceIndependentResources() )
 
         ; Register the window class.
 
@@ -132,7 +971,7 @@ DemoApp::Initialize proc uses rsi
         ; Because the CreateWindow function takes its size in pixels, we
         ; obtain the system DPI and use it to scale the window size.
 
-        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
+        m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
         movss       xmm0,dpiX
         mulss       xmm0,640.0
@@ -156,22 +995,19 @@ DemoApp::Initialize proc uses rsi
         sub         edx,eax
         neg         edx
 
-        .if CreateWindowEx(0, "D2DDemoApp", "D2D Demo App",
-                WS_OVERLAPPEDWINDOW,
-                CW_USEDEFAULT, CW_USEDEFAULT, ecx, edx,
-                NULL, NULL, HINST_THISCOMPONENT, this)
+        .if CreateWindowEx(0, "D2DDemoApp", "D2D Demo App", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+                CW_USEDEFAULT, ecx, edx, NULL, NULL, HINST_THISCOMPONENT, rbx)
 
-            mov [rsi].m_hwnd,rax
-            ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
-            UpdateWindow([rsi].m_hwnd)
+            mov m_hwnd,rax
+            ShowWindow(m_hwnd, SW_SHOWNORMAL)
+            UpdateWindow(m_hwnd)
             mov eax,S_OK
         .else
             mov eax,E_FAIL
         .endif
     .endif
     ret
-
-DemoApp::Initialize endp
+    endp
 
 ;
 ;  This method is used to create resources which are not bound
@@ -182,39 +1018,26 @@ DemoApp::Initialize endp
 ;  a D2D geometry.
 ;
 
-DemoApp::CreateDeviceIndependentResources proc uses rsi
+DemoApp::CreateDeviceIndependentResources proc
 
   local hr:HRESULT
 
-    mov rsi,rcx
-
     ; Create the Direct2D factory.
 
-    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-        &IID_ID2D1Factory, NULL, &[rsi].m_pD2DFactory)
+    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory, NULL, &m_pD2DFactory)
 
     .if (SUCCEEDED(hr))
 
         ; Create WIC factory.
 
-        mov hr,CoCreateInstance(
-            &CLSID_WICImagingFactory,
-            NULL,
-            CLSCTX_INPROC_SERVER,
-            &IID_IWICImagingFactory,
-            &[rsi].m_pWICFactory
-            )
+        mov hr,CoCreateInstance(&CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, &IID_IWICImagingFactory, &m_pWICFactory)
     .endif
 
     .if (SUCCEEDED(hr))
 
         ; Create a DirectWrite factory.
 
-        mov hr,DWriteCreateFactory(
-            DWRITE_FACTORY_TYPE_SHARED,
-            &IID_IDWriteFactory,
-            &[rsi].m_pDWriteFactory
-            )
+        mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory, &m_pDWriteFactory)
     .endif
 
 
@@ -222,20 +1045,11 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
         ; Create a DirectWrite text format object.
 
-        mov hr,this.m_pDWriteFactory.CreateTextFormat(
-            sc_fontName,
-            NULL,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            sc_fontSize,
-            L"",
-            &[rsi].m_pTextFormat
-            )
+        mov hr,m_pDWriteFactory.CreateTextFormat(sc_fontName, NULL, DWRITE_FONT_WEIGHT_NORMAL,
+                DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, sc_fontSize, L"", &m_pTextFormat)
     .endif
     .return hr
-
-DemoApp::CreateDeviceIndependentResources endp
+    endp
 
 ;
 ;  This method creates resources which are bound to a particular
@@ -244,17 +1058,15 @@ DemoApp::CreateDeviceIndependentResources endp
 ;  change, remoting, removal of video card, etc).
 ;
 
-DemoApp::CreateDeviceResources proc uses rsi
+DemoApp::CreateDeviceResources proc
 
-  .new hr:HRESULT = S_OK
-  .new rc:RECT
-  .new pRealizationFactory:ptr IGeometryRealizationFactory = NULL
+    .new hr:HRESULT = S_OK
+    .new rc:RECT
+    .new pRealizationFactory:ptr IGeometryRealizationFactory = NULL
 
-    mov rsi,rcx
+    .if ( !m_pRT )
 
-    .if ( ![rsi].m_pRT )
-
-        GetClientRect([rsi].m_hwnd, &rc)
+        GetClientRect(m_hwnd, &rc)
 
         ; Create a Direct2D render target.
 
@@ -268,7 +1080,7 @@ DemoApp::CreateDeviceResources proc uses rsi
         mov p.pixelFormat.alphaMode,D2D1_ALPHA_MODE_UNKNOWN
 
        .new h:D2D1_HWND_RENDER_TARGET_PROPERTIES
-        mov h.hwnd,[rsi].m_hwnd
+        mov h.hwnd,m_hwnd
         mov eax,rc.bottom
         sub eax,rc.top
         mov h.pixelSize.height,eax
@@ -277,68 +1089,50 @@ DemoApp::CreateDeviceResources proc uses rsi
         mov h.pixelSize.width,eax
         mov h.presentOptions,D2D1_PRESENT_OPTIONS_NONE
 
-        mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(&p, &h, &[rsi].m_pRT)
+        mov hr,m_pD2DFactory.CreateHwndRenderTarget(&p, &h, &m_pRT)
 
         .if (SUCCEEDED(hr))
 
             ; Create brushes.
 
            .new color:D3DCOLORVALUE(White, 1.0)
-
-            mov hr,this.m_pRT.CreateSolidColorBrush(
-                &color,
-                NULL,
-                &[rsi].m_pSolidColorBrush
-                )
+            mov hr,m_pRT.CreateSolidColorBrush(&color, NULL, &m_pSolidColorBrush)
         .endif
 
         .if (SUCCEEDED(hr))
-
-            mov hr,CreateGeometryRealizationFactory(
-                [rsi].m_pRT,
-                sc_maxRealizationDimension,
-                &pRealizationFactory
-                )
+            mov hr,CreateGeometryRealizationFactory(m_pRT, sc_maxRealizationDimension, &pRealizationFactory)
         .endif
         .if (SUCCEEDED(hr))
-
-            mov hr,pRealizationFactory.CreateGeometryRealization(
-                &[rsi].m_pRealization
-                )
+            mov hr,pRealizationFactory.CreateGeometryRealization(&m_pRealization)
         .endif
         .if (SUCCEEDED(hr))
-
-            mov [rsi].m_updateRealization,TRUE
+            mov m_updateRealization,TRUE
         .endif
         SafeRelease(pRealizationFactory)
     .endif
     .return hr
-
-DemoApp::CreateDeviceResources endp
+    endp
 
 ;
 ; Discard device-specific resources which need to be recreated
 ; when a Direct3D device is lost.
 ;
 
-DemoApp::DiscardDeviceResources proc uses rsi
+DemoApp::DiscardDeviceResources proc
 
-    mov rsi,rcx
-    SafeRelease([rsi].m_pRT)
-    SafeRelease([rsi].m_pSolidColorBrush)
-    SafeRelease([rsi].m_pRealization)
+    SafeRelease(m_pRT)
+    SafeRelease(m_pSolidColorBrush)
+    SafeRelease(m_pRealization)
     ret
-
-DemoApp::DiscardDeviceResources endp
+    endp
 
 
 DemoApp::DiscardGeometryData proc
 
-    mov [rcx].DemoApp.m_updateRealization,TRUE
-    SafeRelease([rcx].DemoApp.m_pGeometry)
+    mov m_updateRealization,TRUE
+    SafeRelease(m_pGeometry)
     ret
-
-DemoApp::DiscardGeometryData endp
+    endp
 
 
 DemoApp::RunMessageLoop proc
@@ -351,17 +1145,14 @@ DemoApp::RunMessageLoop proc
         DispatchMessage(&msg)
     .endw
     ret
+    endp
 
-DemoApp::RunMessageLoop endp
 
+DemoApp::CreateGeometries proc
 
-DemoApp::CreateGeometries proc uses rsi
+    .new hr:HRESULT = S_OK
 
-  .new hr:HRESULT = S_OK
-
-    mov rsi,rcx
-
-    .if ( [rsi].m_pGeometry == NULL )
+    .if ( m_pGeometry == NULL )
 
        .new squareWidth:float
        .new pFactory:ptr ID2D1Factory
@@ -371,10 +1162,10 @@ DemoApp::CreateGeometries proc uses rsi
        .new pSink:ptr ID2D1GeometrySink = NULL
 
         movss       xmm0,0.9 * sc_boardWidth
-        cvtsi2ss    xmm1,[rsi].m_numSquares
+        cvtsi2ss    xmm1,m_numSquares
         divss       xmm0,xmm1
         movss       squareWidth,xmm0
-        mov         pFactory,[rsi].m_pD2DFactory
+        mov         pFactory,m_pD2DFactory
 
         ; Create the path geometry.
 
@@ -434,17 +1225,13 @@ DemoApp::CreateGeometries proc uses rsi
 
             translation.Translation(xmm0, xmm0)
             translation.SetProduct(&scale, &translation)
-            mov hr,pFactory.CreateTransformedGeometry(
-                    pPathGeometry,
-                    &translation,
-                    &pGeometry
-                    )
+            mov hr,pFactory.CreateTransformedGeometry(pPathGeometry, &translation, &pGeometry)
         .endif
 
         .if (SUCCEEDED(hr))
 
             ; Transfer the reference.
-            mov [rsi].m_pGeometry,pGeometry
+            mov m_pGeometry,pGeometry
             mov pGeometry,NULL
         .endif
 
@@ -454,11 +1241,10 @@ DemoApp::CreateGeometries proc uses rsi
         SafeRelease(pSink)
     .endif
     .return hr
+    endp
 
-DemoApp::CreateGeometries endp
 
-
-DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
+DemoApp::RenderMainContent proc uses rsi rdi time:float
 
   local hr                  : HRESULT
   local rtSize              : D2D1_SIZE_F
@@ -478,43 +1264,42 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
     .code
 
     mov         hr,S_OK
-    mov         rsi,rcx
-    mov         pRT,[rsi].m_pRT
+    mov         pRT,m_pRT
     movss       xmm0,sc_boardWidth
-    cvtsi2ss    xmm1,[rsi].m_numSquares
+    cvtsi2ss    xmm1,m_numSquares
     divss       xmm0,xmm1
     movss       squareWidth,xmm0
 
     color.Init(Black, 1.0)
     pRT.GetSize(&rtSize)
-    pRT.SetAntialiasMode([rsi].m_antialiasMode)
+    pRT.SetAntialiasMode(m_antialiasMode)
     pRT.Clear(&color)
     pRT.GetTransform(&currentTransform)
 
-    cvtsi2ss    xmm0,[rsi].m_numSquares
-    mulss       xmm0,squareWidth
-    movss       xmm1,rtSize.width
-    subss       xmm1,xmm0
+    cvtsi2ss    xmm2,m_numSquares
+    mulss       xmm2,squareWidth
+    movss       xmm0,rtSize.width
+    subss       xmm0,xmm2
+    mulss       xmm0,0.5
+    movss       xmm1,rtSize.height
+    subss       xmm1,xmm2
     mulss       xmm1,0.5
-    movss       xmm2,rtSize.height
-    subss       xmm2,xmm0
-    mulss       xmm2,0.5
 
-    m.Translation(xmm1, xmm2)
+    m.Translation(xmm0, xmm1)
     worldTransform.SetProduct(&m, &currentTransform)
 
-    .for (ebx = 0 : hr == S_OK && ebx < [rsi].m_numSquares : ++ebx)
+    .for ( esi = 0 : hr == S_OK && esi < m_numSquares : ++esi )
 
-        .for (edi = 0 : hr == S_OK && edi < [rsi].m_numSquares : ++edi)
+        .for ( edi = 0 : hr == S_OK && edi < m_numSquares : ++edi )
 
            .new x           : float
            .new y           : float
            .new length      : float
            .new intensity   : float
 
-            cvtsi2ss    xmm1,[rsi].m_numSquares
+            cvtsi2ss    xmm1,m_numSquares
             mulss       xmm1,0.5
-            cvtsi2ss    xmm0,ebx
+            cvtsi2ss    xmm0,esi
             addss       xmm0,0.5
             subss       xmm0,xmm1
             movss       x,xmm0
@@ -523,7 +1308,7 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
             subss       xmm0,xmm1
             movss       y,xmm0
 
-            cvtsi2ss    xmm0,[rsi].m_numSquares
+            cvtsi2ss    xmm0,m_numSquares
             mulss       xmm0,1.4142135623730950488016887242097
             movss       length,xmm0
 
@@ -561,20 +1346,20 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
 
            .new newWorldTransform:Matrix3x2F
 
-            cvtsi2ss    xmm1,ebx
+            cvtsi2ss    xmm0,esi
+            addss       xmm0,0.5
+            mulss       xmm0,squareWidth
+            cvtsi2ss    xmm1,edi
             addss       xmm1,0.5
             mulss       xmm1,squareWidth
-            cvtsi2ss    xmm2,edi
-            addss       xmm2,0.5
-            mulss       xmm2,squareWidth
 
-            m.Translation(xmm1, xmm2)
+            m.Translation(xmm0, xmm1)
             m.SetProduct(&rotateTransform, &m)
             newWorldTransform.SetProduct(&m, &worldTransform)
 
-            mov pRZ,[rsi].m_pRealization
+            mov pRZ,m_pRealization
 
-            .if [rsi].m_updateRealization
+            .if m_updateRealization
 
                 ;
                 ; Note: It would actually be a little simpler to generate our
@@ -593,7 +1378,7 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
                 ;
 
                 mov hr,pRZ.Update(
-                    [rsi].m_pGeometry,
+                    m_pGeometry,
                     REALIZATION_CREATION_OPTIONS_ANTI_ALIASED or \
                     REALIZATION_CREATION_OPTIONS_ALIASED or \
                     REALIZATION_CREATION_OPTIONS_FILLED or \
@@ -606,7 +1391,7 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
 
                 .if (SUCCEEDED(hr))
 
-                    mov [rsi].m_updateRealization,FALSE
+                    mov m_updateRealization,FALSE
                 .endif
             .endif
 
@@ -620,25 +1405,25 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
                 movss   xmm0,1.0
                 subss   xmm0,intensity
                 movss   color.b,xmm0
-                mov     pSB,[rsi].m_pSolidColorBrush
+                mov     pSB,m_pSolidColorBrush
 
                 pSB.SetColor(&color)
 
                 mov     r9d,REALIZATION_RENDER_MODE_DEFAULT
                 mov     eax,REALIZATION_RENDER_MODE_FORCE_UNREALIZED
-                cmp     [rsi].m_useRealizations,0
+                cmp     m_useRealizations,0
                 cmove   r9d,eax
 
                 mov hr,pRZ.Fill(pRT, pSB, r9d)
 
-                .if SUCCEEDED(hr) && [rsi].m_drawStroke
+                .if SUCCEEDED(hr) && m_drawStroke
 
                     color.Init(White, 1.0)
                     pSB.SetColor(&color)
 
                     mov     r9d,REALIZATION_RENDER_MODE_DEFAULT
                     mov     eax,REALIZATION_RENDER_MODE_FORCE_UNREALIZED
-                    cmp     [rsi].m_useRealizations,NULL
+                    cmp     m_useRealizations,NULL
                     cmove   r9d,eax
 
                     mov hr,pRZ.Draw(pRT, pSB, r9d)
@@ -647,8 +1432,7 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
         .endf
     .endf
     .return hr
-
-DemoApp::RenderMainContent endp
+    endp
 
 ;
 ;  Called whenever the application needs to display the client
@@ -663,98 +1447,82 @@ DemoApp::RenderMainContent endp
 ;  invoked.
 ;
 
-DemoApp::OnRender proc uses rsi rdi
+DemoApp::OnRender proc
 
-  .new hr:HRESULT = S_OK
-  .new time:LARGE_INTEGER
-  .new frequency:LARGE_INTEGER
-  .new floatTime:float
-
-    mov rsi,rcx
+   .new hr:HRESULT = S_OK
+   .new time:LARGE_INTEGER
+   .new frequency:LARGE_INTEGER
+   .new floatTime:float
 
     QueryPerformanceCounter(&time)
     QueryPerformanceFrequency(&frequency)
 
-    mov hr,[rsi].CreateDeviceResources()
+    mov hr,CreateDeviceResources()
 
     .if (SUCCEEDED(hr))
 
-        cmp         [rsi].m_paused,0
-        mov         rax,[rsi].m_pausedTime
+        cmp         m_paused,0
+        mov         rax,m_pausedTime
         cmove       rax,time.QuadPart
-        add         rax,[rsi].m_timeDelta
+        add         rax,m_timeDelta
         cvtsi2sd    xmm0,rax
         cvtsi2sd    xmm1,frequency.QuadPart
         divsd       xmm0,xmm1
         cvtsd2ss    xmm0,xmm0
         movss       floatTime,xmm0
 
-        this.m_times.AddT(time.QuadPart)
+        m_times.AddT(time.QuadPart)
 
-        movss   xmm0,[rsi].m_currentZoomFactor
-        comiss  xmm0,[rsi].m_targetZoomFactor
+        movss   xmm0,m_currentZoomFactor
+        comiss  xmm0,m_targetZoomFactor
 
         .ifb
 
             mulss   xmm0,sc_zoomSubStep
-            movss   [rsi].m_currentZoomFactor,xmm0
-            comiss  xmm0,[rsi].m_targetZoomFactor
+            movss   m_currentZoomFactor,xmm0
+            comiss  xmm0,m_targetZoomFactor
 
             .ifa
-                mov [rsi].m_currentZoomFactor,[rsi].m_targetZoomFactor
-                .if ([rsi].m_autoGeometryRegen)
-                    mov [rsi].m_updateRealization,TRUE
+                mov m_currentZoomFactor,m_targetZoomFactor
+                .if ( m_autoGeometryRegen )
+                    mov m_updateRealization,TRUE
                 .endif
             .endif
 
         .elseif !ZERO?
 
             divss   xmm0,sc_zoomSubStep
-            movss   [rsi].m_currentZoomFactor,xmm0
-            comiss  xmm0,[rsi].m_targetZoomFactor
+            movss   m_currentZoomFactor,xmm0
+            comiss  xmm0,m_targetZoomFactor
 
             .ifb
-                mov [rsi].m_currentZoomFactor,[rsi].m_targetZoomFactor
-                .if ([rsi].m_autoGeometryRegen)
-                    mov [rsi].m_updateRealization,TRUE
+                mov m_currentZoomFactor,m_targetZoomFactor
+                .if ( m_autoGeometryRegen )
+                    mov m_updateRealization,TRUE
                 .endif
             .endif
         .endif
 
        .new m:Matrix3x2F
-
-        assume rdi:ptr ID2D1HwndRenderTarget
-
-        mov rdi,[rsi].m_pRT
-        [rdi].SetTransform(
-            m.Scale(
-                [rsi].m_currentZoomFactor,
-                [rsi].m_currentZoomFactor,
-                [rsi].m_mousePos.x,
-                [rsi].m_mousePos.y
-                )
+        m_pRT.SetTransform(
+            m.Scale(m_currentZoomFactor, m_currentZoomFactor, m_mousePos.x, m_mousePos.y)
             )
 
-        mov hr,[rsi].CreateGeometries()
+        mov hr,CreateGeometries()
 
         .if SUCCEEDED(hr)
 
-            .if !( [rdi].CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED )
+            .if !( m_pRT.CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED )
 
-                [rdi].BeginDraw()
-
-                mov hr,[rsi].RenderMainContent(floatTime)
+                m_pRT.BeginDraw()
+                mov hr,RenderMainContent(floatTime)
                 .if (SUCCEEDED(hr))
-
-                    mov hr,[rsi].RenderTextInfo()
+                    mov hr,RenderTextInfo()
                     .if (SUCCEEDED(hr))
-
-                        mov hr,[rdi].EndDraw(NULL, NULL)
+                        mov hr,m_pRT.EndDraw(NULL, NULL)
                         .if (SUCCEEDED(hr))
-
                             .if (hr == D2DERR_RECREATE_TARGET)
-
-                                [rsi].DiscardDeviceResources()
+                                DiscardDeviceResources()
                             .endif
                         .endif
                     .endif
@@ -770,29 +1538,27 @@ DemoApp::OnRender endp
 ;  Draw the stats text (AA type, fps, etc...).
 ;
 
-DemoApp::RenderTextInfo proc uses rsi rdi rbx
+DemoApp::RenderTextInfo proc uses rdi
 
-  .new hr:HRESULT = S_OK
-  .new textBuffer[400]:WCHAR
-  .new frequency:LARGE_INTEGER
-  .new fps:float = 0.0
-  .new primsPerSecond:float = 0.0
-  .new numPrimitives:UINT
-  .new pRB:ptr RingBuffer
-
-    mov rsi,rcx
+   .new hr:HRESULT = S_OK
+   .new textBuffer[400]:WCHAR
+   .new frequency:LARGE_INTEGER
+   .new fps:float = 0.0
+   .new primsPerSecond:float = 0.0
+   .new numPrimitives:UINT
+   .new pRB:ptr RingBuffer
 
     QueryPerformanceFrequency(&frequency)
 
-    mov eax,[rsi].m_numSquares
-    mul [rsi].m_numSquares
-    .if [rsi].m_drawStroke
+    mov eax,m_numSquares
+    mul m_numSquares
+    .if m_drawStroke
         shl eax,1
     .endif
     mov numPrimitives,eax
-    mov pRB,[rsi].m_times
+    mov pRB,m_times
 
-    .if (pRB.GetCount() > 0)
+    .if ( pRB.GetCount() > 0 )
 
         dec         eax
         mul         frequency.QuadPart
@@ -807,19 +1573,19 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
         movss       primsPerSecond,xmm0
     .endif
 
-    cmp         [rsi].m_antialiasMode,D2D1_ANTIALIAS_MODE_ALIASED
+    cmp         m_antialiasMode,D2D1_ANTIALIAS_MODE_ALIASED
     lea         rax,@CStr("Aliased")
     lea         rcx,@CStr("PerPrimitive")
     cmove       rcx,rax
-    cmp         [rsi].m_useRealizations,0
+    cmp         m_useRealizations,0
     lea         rdx,@CStr("Realized")
     lea         rax,@CStr("Unrealized")
     cmove       rdx,rax
-    cmp         [rsi].m_autoGeometryRegen,0
+    cmp         m_autoGeometryRegen,0
     lea         r8,@CStr("Auto Realization Regeneration")
     lea         rax,@CStr("No Auto Realization Regeneration")
     cmove       r8,rax
-    cmp         [rsi].m_drawStroke,0
+    cmp         m_drawStroke,0
     lea         rax,@CStr("")
     lea         r9,@CStr(" x 2")
     cmove       r9,rax
@@ -844,8 +1610,8 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
             rcx,
             rdx,
             r8,
-            [rsi].m_numSquares,
-            [rsi].m_numSquares,
+            m_numSquares,
+            m_numSquares,
             r9,
             numPrimitives,
             r10,
@@ -854,16 +1620,11 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
 
     .if (SUCCEEDED(hr))
 
-        mov rdi,[rsi].m_pRT
-
        .new m:Matrix3x2F
-        [rdi].SetTransform(
-            m.Identity()
-            )
+        m_pRT.SetTransform(m.Identity())
 
        .new c:D3DCOLORVALUE(Black, 0.5)
-        mov rbx,[rsi].m_pSolidColorBrush
-        [rbx].ID2D1SolidColorBrush.SetColor(&c)
+        m_pSolidColorBrush.SetColor(&c)
 
        .new rr:D2D1_ROUNDED_RECT = {
             { 10.0, 10.0, 350.0, 210.0 },
@@ -871,10 +1632,7 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
             sc_textInfoBoxInset
             }
 
-        [rdi].FillRoundedRectangle(
-            &rr,
-            [rsi].m_pSolidColorBrush
-            )
+        m_pRT.FillRoundedRectangle(&rr, m_pSolidColorBrush)
 
         movss xmm0,rr.rect.left
         addss xmm0,sc_textInfoBoxInset
@@ -889,22 +1647,12 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
         subss xmm0,sc_textInfoBoxInset
         movss rr.rect.bottom,xmm0
 
-        [rbx].ID2D1SolidColorBrush.SetColor(c.Init(White, 1.0))
-        mov r8,wcsnlen(&textBuffer, ARRAYSIZE(textBuffer))
-        [rdi].DrawText(
-            &textBuffer,
-            r8d,
-            [rsi].m_pTextFormat,
-            &rr,
-            [rsi].m_pSolidColorBrush,
-            D2D1_DRAW_TEXT_OPTIONS_NONE,
-            DWRITE_MEASURING_MODE_NATURAL
-            )
-
+        m_pSolidColorBrush.SetColor(c.Init(White, 1.0))
+        mov ecx,wcsnlen(&textBuffer, ARRAYSIZE(textBuffer))
+        m_pRT.DrawText(&textBuffer, ecx, m_pTextFormat, &rr, m_pSolidColorBrush, D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL)
     .endif
     .return hr
-
-DemoApp::RenderTextInfo endp
+    endp
 
 ;
 ;  If the application receives a WM_SIZE message, this method
@@ -913,95 +1661,82 @@ DemoApp::RenderTextInfo endp
 
 DemoApp::OnResize proc width:UINT, height:UINT
 
-    mov rcx,[rcx].DemoApp.m_pRT
-    .if rcx
+    .if m_pRT
 
        .new size:D2D1_SIZE_U
 
-        mov size.width,edx
-        mov size.height,r8d
+        mov size.width,ldr(width)
+        mov size.height,ldr(height)
 
         ; Note: This method can fail, but it's okay to ignore the
         ; error here -- it will be repeated on the next call to
         ; EndDraw.
 
-        [rcx].ID2D1HwndRenderTarget.Resize(&size)
+        m_pRT.Resize(&size)
     .endif
     ret
+    endp
 
-DemoApp::OnResize endp
-
-
-    assume rcx:ptr DemoApp
 
 DemoApp::OnKeyDown proc vkey:SWORD
 
     .switch dx
-
     .case 'A'
-        mov     edx,D2D1_ANTIALIAS_MODE_PER_PRIMITIVE
-        mov     eax,D2D1_ANTIALIAS_MODE_ALIASED
-        cmp     [rcx].m_antialiasMode,D2D1_ANTIALIAS_MODE_ALIASED
-        cmove   eax,edx
-        mov     [rcx].m_antialiasMode,eax
-        .endc
-
+        mov eax,D2D1_ANTIALIAS_MODE_ALIASED
+        .if ( m_antialiasMode == D2D1_ANTIALIAS_MODE_ALIASED )
+            mov eax,D2D1_ANTIALIAS_MODE_PER_PRIMITIVE
+        .endif
+        mov m_antialiasMode,eax
+       .endc
     .case 'R'
-        xor [rcx].m_useRealizations,1
-        .endc
-
+        xor m_useRealizations,1
+       .endc
     .case 'G'
-        xor [rcx].m_autoGeometryRegen,1
-        .endc
-
+        xor m_autoGeometryRegen,1
+       .endc
     .case 'S'
-        xor [rcx].m_drawStroke,1
-        .endc
-
+        xor m_drawStroke,1
+       .endc
     .case VK_SPACE
-
        .new time:LARGE_INTEGER
         QueryPerformanceCounter(&time)
-
-        mov rcx,this
-        .if ![rcx].m_paused
-            mov [rcx].m_pausedTime,time.QuadPart
+        .if !m_paused
+            mov m_pausedTime,time.QuadPart
         .else
-            mov rax,[rcx].m_pausedTime
+            mov rax,m_pausedTime
             sub rax,time.QuadPart
-            add [rcx].m_timeDelta,rax
+            add m_timeDelta,rax
         .endif
-        xor [rcx].m_paused,1
-        mov [rcx].m_updateRealization,TRUE
-        .endc
-
+        xor m_paused,1
+        mov m_updateRealization,TRUE
+       .endc
     .case VK_UP
-        mov eax,[rcx].m_numSquares
+        mov eax,m_numSquares
         shl eax,1
         .if eax > sc_maxNumSquares
             mov eax,sc_maxNumSquares
         .endif
-        mov [rcx].m_numSquares,eax
+        mov m_numSquares,eax
 
         ; Regenerate the geometries.
-        [rcx].DiscardGeometryData()
-        .endc
 
+        DiscardGeometryData()
+       .endc
     .case VK_DOWN
-        mov eax,[rcx].m_numSquares
+        mov eax,m_numSquares
         shr eax,1
         .if eax < sc_minNumSquares
             mov eax,sc_minNumSquares
         .endif
-        mov [rcx].m_numSquares,eax
+        mov m_numSquares,eax
 
         ; Regenerate the geometries.
-        [rcx].DiscardGeometryData()
-        .endc
+
+        DiscardGeometryData()
+       .endc
     .endsw
     ret
-
-DemoApp::OnKeyDown endp
+    endp
 
 
 DemoApp::OnMouseMove proc lParam:LPARAM
@@ -1012,26 +1747,23 @@ DemoApp::OnMouseMove proc lParam:LPARAM
     mov dpiX,96.0
     mov dpiY,96.0
 
-    .if [rcx].m_pRT
-
-        this.m_pRT.GetDpi(&dpiX, &dpiY)
-        mov rcx,this
+    .if m_pRT
+        m_pRT.GetDpi(&dpiX, &dpiY)
     .endif
 
     movsx       eax,word ptr lParam
     cvtsi2ss    xmm0,eax
     mulss       xmm0,96.0
     divss       xmm0,dpiX
-    movss       [rcx].m_mousePos.x,xmm0
+    movss       m_mousePos.x,xmm0
 
     movsx       eax,word ptr lParam[2]
     cvtsi2ss    xmm0,eax
     mulss       xmm0,96.0
     divss       xmm0,dpiY
-    movss       [rcx].m_mousePos.y,xmm0
+    movss       m_mousePos.y,xmm0
     ret
-
-DemoApp::OnMouseMove endp
+    endp
 
 
 DemoApp::OnWheel proc wParam:WPARAM
@@ -1043,16 +1775,14 @@ DemoApp::OnWheel proc wParam:WPARAM
     pow(sc_zoomStep, xmm1)
     cvtsd2ss    xmm0,xmm0
 
-    mov         rcx,this
-    mulss       xmm0,[rcx].m_targetZoomFactor
+    mulss       xmm0,m_targetZoomFactor
     movss       xmm1,sc_minZoom
     maxss       xmm0,xmm1
     movss       xmm1,sc_maxZoom
     minss       xmm0,xmm1
-    movss       [rcx].m_targetZoomFactor,xmm0
+    movss       m_targetZoomFactor,xmm0
     ret
-
-DemoApp::OnWheel endp
+    endp
 
 
 WndProc proc WINAPI hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
@@ -1143,5 +1873,29 @@ WndProc proc WINAPI hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .return result
 
 WndProc endp
+
+
+wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
+
+  local tmring:RingBuffer
+
+    ; Ignore the return value because we want to continue running even in the
+    ; unlikely event that HeapSetInformation fails.
+
+    HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
+
+    .if (SUCCEEDED(CoInitialize(NULL)))
+
+        .new app:ptr DemoApp(&tmring)
+
+        .if (SUCCEEDED(app.Initialize()))
+
+            app.RunMessageLoop()
+        .endif
+        app.Release()
+        CoUninitialize()
+    .endif
+    .return 0
+    endp
 
     end _tstart

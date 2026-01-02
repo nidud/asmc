@@ -890,7 +890,7 @@ DEFINE_IIDX(IDWriteFactory, "b859ee5a-d838-4b5b-a2e8-1adc7d93db48")
    .ends
 
 
-DWriteCreateFactory proto :DWRITE_FACTORY_TYPE, :REFIID, :ptr ptr IUnknown
+DWriteCreateFactory proto WINAPI :DWRITE_FACTORY_TYPE, :REFIID, :ptr ptr IUnknown
 
 FACILITY_DWRITE equ 0x898
 DWRITE_ERR_BASE equ 0x5000

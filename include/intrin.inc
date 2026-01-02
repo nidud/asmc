@@ -16,6 +16,10 @@ if defined (_M_IX86) AND NOT defined(_CHPE_ONLY_)
 include mm3dnow.inc
 endif
 
+_serialize proto { ; SERIALIZE - serialize Instruction Execution
+    db 0x0F, 0x01, 0xE8
+    }
+
 ;
 ; Note: This assumes a standard stack frame.
 ;

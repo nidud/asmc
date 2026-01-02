@@ -4,3 +4,4 @@
 # Declare files that will always have CRLF line endings on checkout.
 *.cmd text eol=crlf
 *.bat text eol=crlf
+dz.txt text eol=crlf

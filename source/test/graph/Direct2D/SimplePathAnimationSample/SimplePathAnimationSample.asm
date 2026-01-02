@@ -5,8 +5,6 @@ include SimplePathAnimationSample.inc
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
 
-  local vtable:DemoAppVtbl
-
     ; Ignore the return value because we want to run the program even in the
     ; unlikely event that HeapSetInformation fails.
 
@@ -14,7 +12,7 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nC
 
     .ifd CoInitialize(NULL) == S_OK
 
-       .new app:DemoApp(&vtable)
+       .new app:ptr DemoApp()
 
         .ifd app.Initialize() == S_OK
             app.RunMessageLoop()
@@ -26,50 +24,29 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nC
 wWinMain endp
 
 
-DemoApp::DemoApp proc uses rdi vtable:ptr
+DemoApp::DemoApp proc
 
-    mov [rcx].DemoApp.lpVtbl,rdx
-    lea rdi,[rcx+8]
-    xor eax,eax
-    mov ecx,(DemoApp - 8) / 8
-    rep stosq
-    mov rdi,rdx
-    for q,<Release,
-           Initialize,
-           RunMessageLoop,
-           CreateDeviceIndependentResources,
-           CreateDeviceResources,
-           DiscardDeviceResources,
-           OnRender,
-           OnResize>
-        lea rax,DemoApp_&q
-        stosq
-        endm
+    @ComAlloc(DemoApp)
     ret
+    endp
 
-DemoApp::DemoApp endp
+    assume class:rbx
 
-    assume rsi:ptr DemoApp
+DemoApp::Release proc
 
-DemoApp::Release proc uses rsi
-
-    mov rsi,rcx
-    SafeRelease([rsi].m_pD2DFactory)
-    SafeRelease([rsi].m_pRT)
-    SafeRelease([rsi].m_pPathGeometry)
-    SafeRelease([rsi].m_pObjectGeometry)
-    SafeRelease([rsi].m_pRedBrush)
-    SafeRelease([rsi].m_pYellowBrush)
+    SafeRelease(m_pD2DFactory)
+    SafeRelease(m_pRT)
+    SafeRelease(m_pPathGeometry)
+    SafeRelease(m_pObjectGeometry)
+    SafeRelease(m_pRedBrush)
+    SafeRelease(m_pYellowBrush)
     ret
+    endp
 
-DemoApp::Release endp
-
-DemoApp::Initialize proc uses rsi
+DemoApp::Initialize proc
 
   local wcex:WNDCLASSEX
   local dpiX:FLOAT, dpiY:FLOAT
-
-    mov rsi,rcx
 
     ; register window class
 
@@ -88,14 +65,14 @@ DemoApp::Initialize proc uses rsi
 
     RegisterClassEx(&wcex)
 
-    .ifd !this.CreateDeviceIndependentResources()
+    .ifd !CreateDeviceIndependentResources()
 
         ; Create the application window.
         ;
         ; Because the CreateWindow function takes its size in pixels, we
         ; obtain the system DPI and use it to scale the window size.
 
-        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
+        m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
         movss       xmm0,dpiX
         mulss       xmm0,512.0
@@ -119,51 +96,40 @@ DemoApp::Initialize proc uses rsi
         sub         edx,eax
         neg         edx
 
-        .if CreateWindowEx(
-            0,
-            L"D2DDemoApp",
-            L"D2D Simple Path Animation Sample",
-            WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            ecx,
-            edx,
-            NULL,
-            NULL,
-            HINST_THISCOMPONENT,
-            this
-            )
-            mov [rsi].m_hwnd,rax
+        .if CreateWindowEx(0, L"D2DDemoApp", L"D2D Simple Path Animation Sample", WS_OVERLAPPEDWINDOW,
+                CW_USEDEFAULT, CW_USEDEFAULT, ecx, edx, NULL, NULL, HINST_THISCOMPONENT, rbx)
+
+            mov m_hwnd,rax
 
            .new length:float
 
-            .ifd !this.m_pPathGeometry.ComputeLength(NULL, 0.25, &length)
+            .ifd !m_pPathGeometry.ComputeLength(NULL, 0.25, &length)
 
-                mov [rsi].m_Animation.m_Start,0.0       ;;start at beginning of path
-                mov [rsi].m_Animation.m_End,length      ;;length at end of path
-                mov [rsi].m_Animation.m_Duration,15.0   ;;seconds
+                mov m_Animation.m_Start,0.0       ;;start at beginning of path
+                mov m_Animation.m_End,length      ;;length at end of path
+                mov m_Animation.m_Duration,15.0   ;;seconds
 
-                ZeroMemory(&[rsi].m_DwmTimingInfo, DWM_TIMING_INFO)
-                mov [rsi].m_DwmTimingInfo.cbSize,DWM_TIMING_INFO
+                ZeroMemory(&m_DwmTimingInfo, DWM_TIMING_INFO)
+                mov m_DwmTimingInfo.cbSize,DWM_TIMING_INFO
 
                 ; Get the composition refresh rate. If the DWM isn't running,
                 ; get the refresh rate from GDI -- probably going to be 60Hz
 
-                DwmGetCompositionTimingInfo(NULL, &[rsi].m_DwmTimingInfo)
+                DwmGetCompositionTimingInfo(NULL, &m_DwmTimingInfo)
 
                 .if (FAILED(eax))
 
                    .new hdc:HDC
 
-                    mov hdc,GetDC([rsi].m_hwnd)
-                    mov [rsi].m_DwmTimingInfo.rateCompose.uiDenominator,1
+                    mov hdc,GetDC(m_hwnd)
+                    mov m_DwmTimingInfo.rateCompose.uiDenominator,1
                     GetDeviceCaps(hdc, VREFRESH)
-                    mov [rsi].m_DwmTimingInfo.rateCompose.uiNumerator,eax
-                    ReleaseDC([rsi].m_hwnd, hdc)
+                    mov m_DwmTimingInfo.rateCompose.uiNumerator,eax
+                    ReleaseDC(m_hwnd, hdc)
                 .endif
 
-                ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
-                UpdateWindow([rsi].m_hwnd)
+                ShowWindow(m_hwnd, SW_SHOWNORMAL)
+                UpdateWindow(m_hwnd)
                 mov eax,S_OK
             .endif
         .else
@@ -171,8 +137,7 @@ DemoApp::Initialize proc uses rsi
         .endif
     .endif
     ret
-
-DemoApp::Initialize endp
+    endp
 
 ;
 ;  This method is used to create resources which are not bound
@@ -180,27 +145,21 @@ DemoApp::Initialize endp
 ;  duration of the app.
 ;
 
-DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
+DemoApp::CreateDeviceIndependentResources proc uses rsi
 
   local hr:HRESULT
   local pSink:ptr ID2D1GeometrySink
 
-    mov rsi,rcx
     mov pSink,NULL
 
     ; Create a Direct2D factory.
-    mov hr,D2D1CreateFactory(
-            D2D1_FACTORY_TYPE_SINGLE_THREADED,
-            &IID_ID2D1Factory,
-            NULL,
-            &[rsi].m_pD2DFactory
-            )
+    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory, NULL, &m_pD2DFactory)
 
     .if (SUCCEEDED(hr))
 
         ; Create the path geometry.
 
-        mov hr,this.m_pD2DFactory.CreatePathGeometry(&[rsi].m_pPathGeometry)
+        mov hr,m_pD2DFactory.CreatePathGeometry(&m_pPathGeometry)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -208,7 +167,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
         ; Write to the path geometry using the geometry sink. We are going to create a
         ; spiral
 
-        mov hr,this.m_pPathGeometry.Open(&pSink)
+        mov hr,m_pPathGeometry.Open(&pSink)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -220,7 +179,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
         .new radius:float = 3.0
         .new locDelta:D2D1_POINT_2F = { 2.0, 2.0 }
 
-        .for (ebx = 0: ebx < 30: ++ebx)
+        .for ( esi = 0: esi < 30: ++esi )
 
             movss xmm0,radius
             mulss xmm0,locDelta.x
@@ -263,7 +222,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
 
         ; Create the path geometry.
 
-        mov hr,this.m_pD2DFactory.CreatePathGeometry(&[rsi].m_pObjectGeometry)
+        mov hr,m_pD2DFactory.CreatePathGeometry(&m_pObjectGeometry)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -271,7 +230,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
         ; Write to the object geometry using the geometry sink.
         ; We are going to create a simple triangle
 
-        mov hr,this.m_pObjectGeometry.Open(&pSink)
+        mov hr,m_pObjectGeometry.Open(&pSink)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -293,10 +252,8 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
     .endif
 
     pSink.Release()
-
     .return hr
-
-DemoApp::CreateDeviceIndependentResources endp
+    endp
 
 ;
 ;  This method creates resources which are bound to a particular
@@ -305,16 +262,14 @@ DemoApp::CreateDeviceIndependentResources endp
 ;  change, remoting, removal of video card, etc).
 ;
 
-DemoApp::CreateDeviceResources proc uses rsi
+DemoApp::CreateDeviceResources proc
 
-    mov rsi,rcx
     xor eax,eax
-
-    .if rax == [rsi].m_pRT
+    .if ( rax == m_pRT )
 
        .new rc:RECT
 
-        GetClientRect([rsi].m_hwnd, &rc)
+        GetClientRect(m_hwnd, &rc)
 
        .new size:D2D1_SIZE_U
 
@@ -327,41 +282,38 @@ DemoApp::CreateDeviceResources proc uses rsi
 
         ; Create a Direct2D render target
 
-        mov r8, D2D1_HwndRenderTargetProperties([rsi].m_hwnd, size)
+        mov r8, D2D1_HwndRenderTargetProperties(m_hwnd, size)
         mov rdx,D2D1_RenderTargetProperties()
 
-        .ifd !this.m_pD2DFactory.CreateHwndRenderTarget(rdx, r8, &[rsi].m_pRT)
+        .ifd !m_pD2DFactory.CreateHwndRenderTarget(rdx, r8, &m_pRT)
 
             ; Create a red brush.
 
             mov rdx,D3DCOLORVALUE(Red, 1.0)
-            .ifd !this.m_pRT.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pRedBrush)
+            .ifd !m_pRT.CreateSolidColorBrush(rdx, NULL, &m_pRedBrush)
 
                 ; Create a yellow brush.
 
                 mov rdx,D3DCOLORVALUE(Yellow, 1.0)
-                this.m_pRT.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pYellowBrush)
+                m_pRT.CreateSolidColorBrush(rdx, NULL, &m_pYellowBrush)
             .endif
         .endif
     .endif
     ret
-
-DemoApp::CreateDeviceResources endp
+    endp
 
 ;
 ;  Discard device-specific resources which need to be recreated
 ;  when a D3D device is lost
 ;
 
-DemoApp::DiscardDeviceResources proc uses rsi
+DemoApp::DiscardDeviceResources proc
 
-    mov rsi,rcx
-    SafeRelease([rsi].m_pRT)
-    SafeRelease([rsi].m_pRedBrush)
-    SafeRelease([rsi].m_pYellowBrush)
+    SafeRelease(m_pRT)
+    SafeRelease(m_pRedBrush)
+    SafeRelease(m_pYellowBrush)
     ret
-
-DemoApp::DiscardDeviceResources endp
+    endp
 
 
 DemoApp::RunMessageLoop proc
@@ -374,8 +326,7 @@ DemoApp::RunMessageLoop proc
         DispatchMessage(&msg)
     .endw
     ret
-
-DemoApp::RunMessageLoop endp
+    endp
 
 ;
 ;  Called whenever the application needs to display the client
@@ -389,17 +340,15 @@ DemoApp::RunMessageLoop endp
 ;  invoked.
 ;
 
-DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
+DemoApp::OnRender proc ps:PAINTSTRUCT
 
   local hr:HRESULT
   local hdc:HDC
   local pRT:ptr ID2D1HwndRenderTarget
 
-    mov rsi,rcx
-
     mov hdc,[rdx].PAINTSTRUCT.hdc
-    mov hr, this.CreateDeviceResources()
-    mov pRT,[rsi].m_pRT
+    mov hr, CreateDeviceResources()
+    mov pRT,m_pRT
 
     .if ( SUCCEEDED(hr) && !( pRT.CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED ) )
 
@@ -442,15 +391,15 @@ DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
         pRT.SetTransform(&m)
 
         ; draw the path in red
-        pRT.DrawGeometry([rsi].m_pPathGeometry, [rsi].m_pRedBrush, 0.6, NULL)
+        pRT.DrawGeometry(m_pPathGeometry, m_pRedBrush, 0.6, NULL)
 
-        lea rcx,[rsi].m_Animation
-        [rcx].Animation.GetValue([rsi].m_Time, EaseInOutExponentialAnimation)
+        lea rcx,m_Animation
+        [rcx].Animation.GetValue(m_Time, EaseInOutExponentialAnimation)
 
         ; Ask the geometry to give us the point that corresponds with the
         ; length at the current time.
 
-        mov hr,this.m_pPathGeometry.ComputePointAtLength(xmm0, NULL, 1.0, &point, &tangent)
+        mov hr,m_pPathGeometry.ComputePointAtLength(xmm0, NULL, 1.0, &point, &tangent)
 
         .assert(SUCCEEDED(hr))
 
@@ -469,7 +418,7 @@ DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
         pRT.SetTransform(&m)
 
         ; Draw the yellow triangle.
-        pRT.FillGeometry([rsi].m_pObjectGeometry, [rsi].m_pYellowBrush, NULL)
+        pRT.FillGeometry(m_pObjectGeometry, m_pYellowBrush, NULL)
 
         ; Commit the drawing operations.
         mov hr,pRT.EndDraw(NULL, NULL)
@@ -477,34 +426,34 @@ DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
         .if (hr == D2DERR_RECREATE_TARGET)
 
             mov hr,S_OK
-            this.DiscardDeviceResources()
+            DiscardDeviceResources()
         .endif
 
         ; When we reach the end of the animation, loop back to the beginning.
 
-        movss  xmm0,[rsi].m_Time
-        comiss xmm0,[rsi].m_Animation.m_Duration
+        movss  xmm0,m_Time
+        comiss xmm0,m_Animation.m_Duration
 
         .ifnb ;(float_time >= [rsi].m_Animation.GetDuration())
 
-            mov [rsi].m_Time,0.0
+            mov m_Time,0.0
 
         .else
 
-            cvtsi2ss xmm1,[rsi].m_DwmTimingInfo.rateCompose.uiDenominator
-            cvtsi2ss xmm2,[rsi].m_DwmTimingInfo.rateCompose.uiNumerator
+            cvtsi2ss xmm1,m_DwmTimingInfo.rateCompose.uiDenominator
+            cvtsi2ss xmm2,m_DwmTimingInfo.rateCompose.uiNumerator
             divss xmm1,xmm2
             addss xmm0,xmm1
-            movss [rsi].m_Time,xmm0
+            movss m_Time,xmm0
 
         .endif
     .endif
 
-    InvalidateRect([rsi].m_hwnd, NULL, FALSE)
+    InvalidateRect(m_hwnd, NULL, FALSE)
 
     .return hr
 
-DemoApp::OnRender endp
+    endp
 
 
 ;
@@ -514,8 +463,7 @@ DemoApp::OnRender endp
 
 DemoApp::OnResize proc width:UINT, height:UINT
 
-    mov rcx,[rcx].DemoApp.m_pRT
-    .if rcx
+    .if m_pRT
 
        .new size:D2D1_SIZE_U
 
@@ -526,11 +474,10 @@ DemoApp::OnResize proc width:UINT, height:UINT
         ; error here -- it will be repeated on the next call to
         ; EndDraw.
 
-        [rcx].ID2D1HwndRenderTarget.Resize(&size)
+        m_pRT.Resize(&size)
     .endif
     ret
-
-DemoApp::OnResize endp
+    endp
 
 
 WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
@@ -598,7 +545,6 @@ WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
             mov result,DefWindowProc(hwnd, message, wParam, lParam)
         .endif
     .endif
-
     .return result
 
 WndProc endp

@@ -8,13 +8,10 @@ include Direct2DHelloWorld.inc
 
 .code
 
-;
+
 ; Provides the entry point to the application.
-;
 
 wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, inCmdShow:int_t
-
-  local vtable:DemoAppVtbl
 
     ; Ignore the return value because we want to run the program even in the
     ; unlikely event that HeapSetInformation fails.
@@ -24,7 +21,7 @@ wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPW
 
     .if (SUCCEEDED(CoInitialize(NULL)))
 
-        .new app:DemoApp(&vtable)
+        .new app:ptr DemoApp()
 
         .if (SUCCEEDED(app.Initialize()))
 
@@ -34,91 +31,71 @@ wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPW
         CoUninitialize()
     .endif
     .return 0
+    endp
 
-wWinMain endp
 
-;
 ; Initialize members.
-;
 
-DemoApp::DemoApp proc uses rdi vtable:ptr
+DemoApp::DemoApp proc
 
-    mov [rcx].DemoApp.lpVtbl,rdx
-    lea rdi,[rcx+8]
-    xor eax,eax
-    mov ecx,(DemoApp - 8) / 8
-    rep stosq
-    mov rdi,rdx
-    for q,<Release,
-           Initialize,
-           RunMessageLoop,
-           CreateDeviceIndependentResources,
-           CreateDeviceResources,
-           DiscardDeviceResources,
-           OnRender,
-           OnResize>
-        mov [rdx].DemoAppVtbl.&q,&DemoApp_&q
-        endm
+    @ComAlloc(DemoApp)
     ret
+    endp
 
-DemoApp::DemoApp endp
 
-;
 ; Release resources.
-;
-    assume rsi:ptr DemoApp
 
-DemoApp::Release proc uses rsi
+    assume class:rbx
 
-    mov rsi,rcx
-    SafeRelease([rsi].m_pD2DFactory)
-    SafeRelease([rsi].m_pDWriteFactory)
-    SafeRelease([rsi].m_pRenderTarget)
-    SafeRelease([rsi].m_pTextFormat)
-    SafeRelease([rsi].m_pBlackBrush)
+DemoApp::Release proc
+
+    SafeRelease(m_pD2DFactory)
+    SafeRelease(m_pDWriteFactory)
+    SafeRelease(m_pRenderTarget)
+    SafeRelease(m_pTextFormat)
+    SafeRelease(m_pBlackBrush)
     ret
+    endp
 
-DemoApp::Release endp
 
-
-;
 ; Creates the application window and initializes
 ; device-independent resources.
-;
 
-DemoApp::Initialize proc uses rsi
+DemoApp::Initialize proc
 
-  local wcex:WNDCLASSEX
   local dpiX:FLOAT, dpiY:FLOAT
 
     ; Initialize device-indpendent resources, such
     ; as the Direct2D factory.
 
-    .ifd ( !this.CreateDeviceIndependentResources() )
+    .if SUCCEEDED(CreateDeviceIndependentResources())
 
         ; Register the window class.
 
-        mov wcex.cbSize,        WNDCLASSEX
-        mov wcex.style,         CS_HREDRAW or CS_VREDRAW
-        mov wcex.lpfnWndProc,   &WndProc
-        mov wcex.cbClsExtra,    0
-        mov wcex.cbWndExtra,    sizeof(LONG_PTR)
-        mov wcex.hInstance,     HINST_THISCOMPONENT
-        mov wcex.hIcon,         NULL
-        mov wcex.hIconSm,       NULL
-        mov wcex.hbrBackground, NULL
-        mov wcex.lpszMenuName,  NULL
-        mov wcex.hCursor,       LoadCursor(NULL, IDC_ARROW)
-        mov wcex.lpszClassName, &@CStr(L"D2DDemoApp")
+        .new wc:WNDCLASSEX = {
+            WNDCLASSEX,                     ; .cbSize
+            CS_HREDRAW or CS_VREDRAW,       ; .style
+            &WndProc,                       ; .lpfnWndProc
+            0,                              ; .cbClsExtra
+            sizeof(LONG_PTR),               ; .cbWndExtra
+            HINST_THISCOMPONENT,            ; .hInstance
+            NULL,                           ; .hIcon
+            LoadCursor(NULL, IDC_ARROW),    ; .hCursor
+            NULL,                           ; .hbrBackground
+            NULL,                           ; .lpszMenuName
+            "D2DDemoApp",                   ; .lpszClassName
+            NULL                            ; .hIconSm
+            }
 
-        RegisterClassEx(&wcex)
+        RegisterClassEx(&wc)
+
 
         ; Create the application window.
         ;
         ; Because the CreateWindow function takes its size in pixels, we
         ; obtain the system DPI and use it to scale the window size.
 
-        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
+        m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
         movss       xmm0,dpiX
         mulss       xmm0,640.0
@@ -142,58 +119,41 @@ DemoApp::Initialize proc uses rsi
         sub         edx,eax
         neg         edx
 
-        .if CreateWindowEx(0, "D2DDemoApp", "Direct2D Demo Application",
-                WS_OVERLAPPEDWINDOW,
-                CW_USEDEFAULT, CW_USEDEFAULT, ecx, edx,
-                NULL, NULL, HINST_THISCOMPONENT, this)
+        .if CreateWindowEx(0, "D2DDemoApp", "Direct2D Demo Application", WS_OVERLAPPEDWINDOW,
+                CW_USEDEFAULT, CW_USEDEFAULT, ecx, edx, NULL, NULL, HINST_THISCOMPONENT, rbx)
 
-            mov rsi,this
-            mov [rsi].m_hwnd,rax
+            mov m_hwnd,rax
             ShowWindow(rax, SW_SHOWNORMAL)
-            UpdateWindow([rsi].m_hwnd)
+            UpdateWindow(m_hwnd)
             mov eax,S_OK
         .else
             mov eax,E_FAIL
         .endif
     .endif
     ret
+    endp
 
-DemoApp::Initialize endp
 
-
-;
 ; Create resources which are not bound
 ; to any device. Their lifetime effectively extends for the
 ; duration of the app. These resources include the Direct2D and
 ; DirectWrite factories,  and a DirectWrite Text Format object
 ; (used for identifying particular font characteristics).
-;
 
-DemoApp::CreateDeviceIndependentResources proc uses rsi
+DemoApp::CreateDeviceIndependentResources proc
 
   .new hr:HRESULT
   .new pSink:ptr ID2D1GeometrySink = NULL
 
-    mov rsi,rcx
-
     ; Create a Direct2D factory.
 
-    mov hr,D2D1CreateFactory(
-            D2D1_FACTORY_TYPE_SINGLE_THREADED,
-            &IID_ID2D1Factory,
-            NULL,
-            &[rsi].m_pD2DFactory
-            )
+    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory, NULL, &m_pD2DFactory)
 
     .if (SUCCEEDED(eax))
 
-        ;; Create a DirectWrite factory.
+        ; Create a DirectWrite factory.
 
-        mov hr,DWriteCreateFactory(
-                DWRITE_FACTORY_TYPE_SHARED,
-                &IID_IDWriteFactory,
-                &[rsi].m_pDWriteFactory
-                )
+        mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory, &m_pDWriteFactory)
 
     .endif
 
@@ -201,95 +161,81 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
         ; Create a DirectWrite text format object.
 
-        mov hr,this.m_pDWriteFactory.CreateTextFormat(
-            L"Verdana",
-            NULL,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            50.0,
-            L"",
-            &[rsi].m_pTextFormat
-            )
+        mov hr,m_pDWriteFactory.CreateTextFormat(L"Verdana", NULL, DWRITE_FONT_WEIGHT_NORMAL,
+                DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 50.0, L"", &m_pTextFormat)
     .endif
 
     .if (SUCCEEDED(eax))
 
         ; Center the text horizontally and vertically.
 
-        this.m_pTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER)
-        this.m_pTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
+        m_pTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER)
+        m_pTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
     .endif
 
     SafeRelease(pSink)
-   .return hr
+    mov eax,hr
+    ret
+    endp
 
-DemoApp::CreateDeviceIndependentResources endp
 
-;
 ;  This method creates resources which are bound to a particular
 ;  Direct3D device. It's all centralized here, in case the resources
 ;  need to be recreated in case of Direct3D device loss (eg. display
 ;  change, remoting, removal of video card, etc).
-;
-DemoApp::CreateDeviceResources proc uses rsi
 
-  .new hr:HRESULT = S_OK
-  .new rc:RECT
-  .new size:D2D1_SIZE_U
+DemoApp::CreateDeviceResources proc
 
-    mov rsi,rcx
+    .new hr:HRESULT = S_OK
+    .new rc:RECT
+    .new HwndRenderTargetProperties:D2D1_HWND_RENDER_TARGET_PROPERTIES
 
-    .if ( ![rsi].m_pRenderTarget )
+    .if ( !m_pRenderTarget )
 
-        GetClientRect([rsi].m_hwnd, &rc)
-
+        mov rcx,m_hwnd
+        mov HwndRenderTargetProperties.hwnd,rcx
+        GetClientRect(rcx, &rc)
         mov eax,rc.right
         sub eax,rc.left
-        mov size.width,eax
+        mov HwndRenderTargetProperties.pixelSize.width,eax
         mov eax,rc.bottom
         sub eax,rc.top
-        mov size.height,eax
+        mov HwndRenderTargetProperties.pixelSize.height,eax
+        mov HwndRenderTargetProperties.presentOptions,D2D1_PRESENT_OPTIONS_NONE
 
         ; Create a Direct2D render target.
 
-        mov r8, D2D1_HwndRenderTargetProperties([rsi].m_hwnd, size)
-        mov rdx,D2D1_RenderTargetProperties()
-        mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(rdx, r8, &[rsi].m_pRenderTarget)
+       .new RenderTargetProperties:D2D1_RENDER_TARGET_PROPERTIES()
+        mov hr,m_pD2DFactory.CreateHwndRenderTarget(&RenderTargetProperties, &HwndRenderTargetProperties, &m_pRenderTarget)
 
         .if (SUCCEEDED(eax))
 
             ; Create a black brush.
 
             mov rdx,D3DCOLORVALUE(Black, 1.0)
-            mov hr,this.m_pRenderTarget.CreateSolidColorBrush(
-                rdx, NULL, &[rsi].m_pBlackBrush)
+            mov hr,m_pRenderTarget.CreateSolidColorBrush(rdx, NULL, &m_pBlackBrush)
         .endif
     .endif
+    .return( hr )
+    endp
 
-    .return hr
 
-DemoApp::CreateDeviceResources endp
-
-;
 ;  Discard device-specific resources which need to be recreated
 ;  when a Direct3D device is lost
-;
-DemoApp::DiscardDeviceResources proc uses rsi
 
-    mov rsi,rcx
-    SafeRelease([rsi].m_pRenderTarget)
-    SafeRelease([rsi].m_pBlackBrush)
+DemoApp::DiscardDeviceResources proc
+
+    SafeRelease(m_pRenderTarget)
+    SafeRelease(m_pBlackBrush)
     ret
+    endp
 
-DemoApp::DiscardDeviceResources endp
 
-;
 ; The main window message loop.
-;
+
 DemoApp::RunMessageLoop proc
 
-  local msg:MSG
+    .new msg:MSG
 
     .while GetMessage(&msg, NULL, 0, 0)
 
@@ -297,11 +243,9 @@ DemoApp::RunMessageLoop proc
         DispatchMessage(&msg)
     .endw
     ret
+    endp
 
-DemoApp::RunMessageLoop endp
 
-
-;
 ;  Called whenever the application needs to display the client
 ;  window. This method writes "Hello, World"
 ;
@@ -311,148 +255,115 @@ DemoApp::RunMessageLoop endp
 ;  resources if the Direct3D device disappears during function
 ;  invocation, and will recreate the resources the next time it's
 ;  invoked.
-;
 
-DemoApp::OnRender proc uses rsi
 
-  local hr  : HRESULT,
-        m   : Matrix3x2F,
-        pRT : ptr ID2D1HwndRenderTarget,
-        c   : D3DCOLORVALUE
+DemoApp::OnRender proc
 
-    mov rsi,rcx
-    mov hr,this.CreateDeviceResources()
-    mov pRT,[rsi].m_pRenderTarget
+  local hr:HRESULT, m:Matrix3x2F, c:D3DCOLORVALUE
 
-    pRT.CheckWindowState()
+    mov hr,CreateDeviceResources()
+    m_pRenderTarget.CheckWindowState()
 
     .if (SUCCEEDED(hr) && !(eax & D2D1_WINDOW_STATE_OCCLUDED))
 
         ; Retrieve the size of the render target.
 
-       .new rc:RECT(0.0, 0.0)
+       .new rc:RECT = { 0, 0 }
 
-        pRT.GetSize(&rc[8])
-        pRT.BeginDraw()
-        pRT.SetTransform(m.Identity())
-        pRT.Clear(c.Init(White, 1.0))
-        pRT.DrawText(
-            "Hello, World!",
-            13,
-            [rsi].m_pTextFormat,
-            &rc,
-            [rsi].m_pBlackBrush,
-            D2D1_DRAW_TEXT_OPTIONS_NONE,
-            DWRITE_MEASURING_MODE_NATURAL
-            )
+        m_pRenderTarget.GetSize(&rc[8])
+        m_pRenderTarget.BeginDraw()
+        m_pRenderTarget.SetTransform(m.Identity())
+        m_pRenderTarget.Clear(c.Init(White, 1.0))
+        m_pRenderTarget.DrawText("Hello, World!", 13, m_pTextFormat, &rc, m_pBlackBrush,
+                D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL)
 
-        mov hr,pRT.EndDraw(NULL, NULL)
-
-        .if (hr == D2DERR_RECREATE_TARGET)
+        mov hr,m_pRenderTarget.EndDraw(NULL, NULL)
+        .if ( hr == D2DERR_RECREATE_TARGET )
 
             mov hr,S_OK
-            this.DiscardDeviceResources()
+            DiscardDeviceResources()
         .endif
     .endif
     .return hr
+    endp
 
-DemoApp::OnRender endp
 
-;
 ;  If the application receives a WM_SIZE message, this method
 ;  resizes the render target appropriately.
-;
+
 DemoApp::OnResize proc width:UINT, height:UINT
 
   local size:D2D1_SIZE_U
 
-    mov rcx,[rcx].DemoApp.m_pRenderTarget
-    .if rcx
+    .if ( m_pRenderTarget )
 
-        mov size.width,edx
-        mov size.height,r8d
+        mov size.width,ldr(width)
+        mov size.height,ldr(height)
 
         ; Note: This method can fail, but it's okay to ignore the
         ; error here -- it will be repeated on the next call to
         ; EndDraw.
 
-        [rcx].ID2D1HwndRenderTarget.Resize(&size)
+        m_pRenderTarget.Resize(&size)
     .endif
     ret
+    endp
 
-DemoApp::OnResize endp
 
 
-;
 ; The window message handler.
-;
+
 WndProc proc WINAPI hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
-  local result:LRESULT
-  local pDemoApp:ptr DemoApp
-  local wasHandled:BOOL
+    .new result:LRESULT = 0
+    .new wasHandled:BOOL = FALSE
+    .new pDemoApp:ptr DemoApp
 
-    mov wasHandled,FALSE
-    mov result,0
+    .if ( ldr(message) == WM_CREATE )
 
-    .if edx == WM_CREATE
-
-        mov r8,[r9].CREATESTRUCT.lpCreateParams
-        SetWindowLongPtrW(rcx, GWLP_USERDATA, PtrToUlong(r8))
+        ldr rdx,lParam
+        SetWindowLongPtrW(ldr(hwnd), GWLP_USERDATA, [rdx].CREATESTRUCT.lpCreateParams)
         mov result,1
 
     .else
 
-        mov pDemoApp,GetWindowLongPtrW(rcx, GWLP_USERDATA)
+        mov pDemoApp,GetWindowLongPtrW(ldr(hwnd), GWLP_USERDATA)
 
         .if pDemoApp
 
             .switch message
-
             .case WM_SIZE
-
                 movzx edx,word ptr lParam
-                movzx r8d,word ptr lParam[2]
-                pDemoApp.OnResize(edx, r8d)
-
+                movzx ecx,word ptr lParam[2]
+                pDemoApp.OnResize(edx, ecx)
                 mov wasHandled,TRUE
                 mov result,0
-                .endc
-
+               .endc
             .case WM_PAINT
             .case WM_DISPLAYCHANGE
-
-                .new ps:PAINTSTRUCT
-
+               .new ps:PAINTSTRUCT
                 BeginPaint(hwnd, &ps)
                 pDemoApp.OnRender()
                 EndPaint(hwnd, &ps)
-
                 mov wasHandled,TRUE
                 mov result,0
-                .endc
-
+               .endc
             .case WM_DESTROY
                 PostQuitMessage(0)
                 mov wasHandled,TRUE
                 mov result,1
-                .endc
-
+               .endc
             .case WM_CHAR
                 .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
                 .endc
-
             .endsw
         .endif
-
         .if !wasHandled
-
             mov result,DefWindowProc(hwnd, message, wParam, lParam)
         .endif
     .endif
-
     .return result
 
-WndProc endp
+    endp
 
     end _tstart

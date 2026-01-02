@@ -8,74 +8,32 @@ include GdiInteropSample.inc
 
 .code
 
-wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
+DemoApp::DemoApp proc
 
-  local vtable:DemoAppVtbl
-
-    ; Ignore the return value because we want to run the program even in the
-    ; unlikely event that HeapSetInformation fails.
-
-    HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
-
-    .if (SUCCEEDED(CoInitialize(NULL)))
-
-        .new app:DemoApp(&vtable)
-        .if (SUCCEEDED(app.Initialize()))
-
-            app.RunMessageLoop()
-        .endif
-        CoUninitialize()
-    .endif
-    .return 0
-
-wWinMain endp
-
-
-DemoApp::DemoApp proc uses rdi vtable:ptr
-
-    mov [rcx].DemoApp.lpVtbl,rdx
-    lea rdi,[rcx+8]
-    xor eax,eax
-    mov ecx,(DemoApp - 8) / 8
-    rep stosq
-    mov rdi,rdx
-    for q,<Release,
-           Initialize,
-           RunMessageLoop,
-           CreateDeviceIndependentResources,
-           CreateDeviceResources,
-           DiscardDeviceResources,
-           OnRender>
-        lea rax,DemoApp_&q
-        stosq
-        endm
+    @ComAlloc(DemoApp)
     ret
+    endp
 
-DemoApp::DemoApp endp
+    assume class:rbx
 
-    assume rsi:ptr DemoApp
+DemoApp::Release proc
 
-DemoApp::Release proc uses rsi
-
-    mov rsi,rcx
-    SafeRelease([rsi].m_pD2DFactory)
-    SafeRelease([rsi].m_pDCRT)
-    SafeRelease([rsi].m_pBlackBrush)
+    SafeRelease(m_pD2DFactory)
+    SafeRelease(m_pDCRT)
+    SafeRelease(m_pBlackBrush)
     ret
+    endp
 
-DemoApp::Release endp
 
-DemoApp::Initialize proc uses rsi
+DemoApp::Initialize proc
 
   local wcex:WNDCLASSEX
   local dpiX:FLOAT, dpiY:FLOAT
 
-    mov rsi,rcx
-
     ; Initialize device-indpendent resources, such
     ; as the Direct2D factory.
 
-    .ifd ( !this.CreateDeviceIndependentResources() )
+    .ifd ( !CreateDeviceIndependentResources() )
 
         ; Register the window class.
 
@@ -99,7 +57,7 @@ DemoApp::Initialize proc uses rsi
         ; Because the CreateWindow function takes its size in pixels, we
         ; obtain the system DPI and use it to scale the window size.
 
-        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
+        m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
         movss       xmm0,dpiX
         mulss       xmm0,640.0
@@ -123,43 +81,35 @@ DemoApp::Initialize proc uses rsi
         sub         edx,eax
         neg         edx
 
-        .if CreateWindowEx(0, "D2DDemoApp", "Direct2D Demo App",
-                WS_OVERLAPPEDWINDOW,
-                CW_USEDEFAULT, CW_USEDEFAULT, ecx, edx,
-                NULL, NULL, HINST_THISCOMPONENT, this)
+        .if CreateWindowEx(0, "D2DDemoApp", "Direct2D Demo App", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+                CW_USEDEFAULT, ecx, edx, NULL, NULL, HINST_THISCOMPONENT, rbx)
 
-            mov [rsi].m_hwnd,rax
-            ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
-            UpdateWindow([rsi].m_hwnd)
+            mov m_hwnd,rax
+            ShowWindow(m_hwnd, SW_SHOWNORMAL)
+            UpdateWindow(m_hwnd)
             mov eax,S_OK
         .else
             mov eax,E_FAIL
         .endif
     .endif
     ret
+    endp
 
-DemoApp::Initialize endp
 
 DemoApp::CreateDeviceIndependentResources proc
 
     ; Create D2D factory
-    D2D1CreateFactory(
-        D2D1_FACTORY_TYPE_SINGLE_THREADED,
-        &IID_ID2D1Factory,
-        NULL,
-        &[rcx].DemoApp.m_pD2DFactory
-        )
+
+    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory, NULL, &m_pD2DFactory)
     ret
+    endp
 
-DemoApp::CreateDeviceIndependentResources endp
 
-DemoApp::CreateDeviceResources proc uses rsi
+DemoApp::CreateDeviceResources proc
 
-  .new hr:HRESULT = S_OK
+    .new hr:HRESULT = S_OK
 
-    mov rsi,rcx
-
-    .if ( ![rsi].m_pDCRT )
+    .if ( !m_pDCRT )
 
         ; Create a DC render target.
 
@@ -167,27 +117,26 @@ DemoApp::CreateDeviceResources proc uses rsi
         mov rdx,D2D1_RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT, rdx, 0, 0,
                 D2D1_RENDER_TARGET_USAGE_NONE, D2D1_FEATURE_LEVEL_DEFAULT)
 
-        mov hr,this.m_pD2DFactory.CreateDCRenderTarget(rdx, &[rsi].m_pDCRT)
+        mov hr,m_pD2DFactory.CreateDCRenderTarget(rdx, &m_pDCRT)
         .if (SUCCEEDED(eax))
 
             ; Create a black brush.
 
             mov rdx,D3DCOLORVALUE(Black, 1.0)
-            mov hr,this.m_pDCRT.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pBlackBrush)
+            mov hr,m_pDCRT.CreateSolidColorBrush(rdx, NULL, &m_pBlackBrush)
         .endif
     .endif
     .return hr
+    endp
 
-DemoApp::CreateDeviceResources endp
 
-DemoApp::DiscardDeviceResources proc uses rsi
+DemoApp::DiscardDeviceResources proc
 
-    mov rsi,rcx
-    SafeRelease([rsi].m_pDCRT)
-    SafeRelease([rsi].m_pBlackBrush)
+    SafeRelease(m_pDCRT)
+    SafeRelease(m_pBlackBrush)
     ret
+    endp
 
-DemoApp::DiscardDeviceResources endp
 
 DemoApp::RunMessageLoop proc
 
@@ -199,10 +148,10 @@ DemoApp::RunMessageLoop proc
         DispatchMessage(&msg)
     .endw
     ret
+    endp
 
-DemoApp::RunMessageLoop endp
 
-DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
+DemoApp::OnRender proc uses rsi rdi ps:PAINTSTRUCT
 
 
   local hr:HRESULT
@@ -217,12 +166,11 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
   local p:ptr ID2D1DCRenderTarget
   local c:D3DCOLORVALUE
 
-    mov rsi,rcx
     mov hdc,[rdx].PAINTSTRUCT.hdc
 
     ; Get the dimensions of the client drawing area.
 
-    GetClientRect([rsi].m_hwnd, &rc)
+    GetClientRect(m_hwnd, &rc)
 
     ;
     ; Draw the pie chart with Direct2D.
@@ -230,8 +178,8 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
 
     ; Create the DC render target.
 
-    mov hr,[rsi].CreateDeviceResources()
-    mov p,[rsi].m_pDCRT
+    mov hr,CreateDeviceResources()
+    mov p,m_pDCRT
 
     .if (SUCCEEDED(hr))
 
@@ -247,22 +195,22 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
 
        .new e:D2D1_ELLIPSE = { { 150.0, 150.0 }, 100.0, 100.0 }
 
-        mov rdi,[rsi].m_pBlackBrush
+        mov rdi,m_pBlackBrush
 
         p.DrawEllipse(&e, rdi, 3.0, NULL)
 
-        mov rbx,e.point
+        mov rsi,e.point
         mov e.point.x,150.0 + 100.0 * 0.15425
         mov e.point.y,150.0 - 100.0 * 0.988
-        p.DrawLine(rbx, e.point, rdi, 3.0, NULL)
+        p.DrawLine(rsi, e.point, rdi, 3.0, NULL)
 
         mov e.point.x,150.0 + 100.0 * 0.525
         mov e.point.y,150.0 + 100.0 * 0.8509
-        p.DrawLine(rbx, e.point, rdi, 3.0, NULL)
+        p.DrawLine(rsi, e.point, rdi, 3.0, NULL)
 
         mov e.point.x,150.0 - 100.0 * 0.988
         mov e.point.y,150.0 - 100.0 * 0.15425
-        p.DrawLine(rbx, e.point, rdi, 3.0, NULL)
+        p.DrawLine(rsi, e.point, rdi, 3.0, NULL)
 
         mov hr,p.EndDraw(NULL, NULL)
 
@@ -318,16 +266,13 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
             SelectObject(hdc, original)
         .endif
     .endif
-
-    .if (hr == D2DERR_RECREATE_TARGET)
-
+    .if ( hr == D2DERR_RECREATE_TARGET )
         mov hr,S_OK
-        this.DiscardDeviceResources()
+        DiscardDeviceResources()
     .endif
-
     .return hr
+    endp
 
-DemoApp::OnRender endp
 
 WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
@@ -353,40 +298,51 @@ WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .if rax
 
             .switch message
-
             .case WM_PAINT
             .case WM_DISPLAYCHANGE
-
                 BeginPaint(hwnd, &ps)
                 pDemoApp.OnRender(&ps)
                 EndPaint(hwnd, &ps)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_DESTROY
-
                 PostQuitMessage(0)
                 mov result,1
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_CHAR
                 .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
                 .endc
-
             .endsw
         .endif
-
         .if (!wasHandled)
-
             mov result,DefWindowProc(hwnd, message, wParam, lParam)
         .endif
     .endif
-
     .return result
 
 WndProc endp
+
+
+wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
+
+    ; Ignore the return value because we want to run the program even in the
+    ; unlikely event that HeapSetInformation fails.
+
+    HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
+
+    .if (SUCCEEDED(CoInitialize(NULL)))
+
+        .new app:ptr DemoApp()
+        .if (SUCCEEDED(app.Initialize()))
+
+            app.RunMessageLoop()
+        .endif
+        CoUninitialize()
+    .endif
+    .return 0
+
+wWinMain endp
 
     end _tstart

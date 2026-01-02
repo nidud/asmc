@@ -1,4 +1,25 @@
 
+define sc_fontName             <"Calibri">
+define sc_fontSize             20.0
+define sc_textInfoBox          <10.0, 10.0, 350.0, 200.0>
+define sc_textInfoBoxInset     10.0
+define sc_defaultNumSquares    16
+define sc_minNumSquares        1
+define sc_maxNumSquares        1024
+define sc_boardWidth           900.0
+define sc_rotationSpeed        3.0
+define sc_loupeInset           20.0
+define sc_maxZoom              15.0
+define sc_minZoom              1.0
+define sc_zoomStep             1.5
+define sc_zoomSubStep          1.1
+define sc_strokeWidth          1.0
+
+; This determines that maximum texture size we will
+; generate for our realizations.
+
+define sc_maxRealizationDimension 2000
+
 .class DemoApp
 
     m_hwnd              HWND ?

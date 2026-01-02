@@ -28,46 +28,42 @@ wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPW
 
 wWinMain endp
 
+
 ListViewApp::ListViewApp proc
 
     @ComAlloc(ListViewApp)
     ret
+    endp
 
-ListViewApp::ListViewApp endp
 
-
-    assume rsi:ptr ListViewApp
+    assume class:rbx
 
 ;
 ;  Tear down resources
 ;
 
-ListViewApp::Release proc uses rsi
+ListViewApp::Release proc
 
-    mov rsi,rcx
-    SafeRelease([rsi].m_pD2DFactory)
-    SafeRelease([rsi].m_pWICFactory)
-    SafeRelease([rsi].m_pDWriteFactory)
-    SafeRelease([rsi].m_pRT)
-    SafeRelease([rsi].m_pTextFormat)
-    SafeRelease([rsi].m_pBlackBrush)
-    SafeRelease([rsi].m_pBindContext)
-    SafeRelease([rsi].m_pBitmapAtlas)
-    HeapFree(GetProcessHeap(), 0, rsi)
+    SafeRelease(m_pD2DFactory)
+    SafeRelease(m_pWICFactory)
+    SafeRelease(m_pDWriteFactory)
+    SafeRelease(m_pRT)
+    SafeRelease(m_pTextFormat)
+    SafeRelease(m_pBlackBrush)
+    SafeRelease(m_pBindContext)
+    SafeRelease(m_pBitmapAtlas)
+    free(rbx)
     ret
-
-ListViewApp::Release endp
+    endp
 
 
 ;
 ;  Create application window and device-independent resources.
 ;
 
-ListViewApp::Initialize proc uses rsi
+ListViewApp::Initialize proc
 
-    mov rsi,rcx
-
-    .if ( !this.CreateDeviceIndependentResources() )
+    .if ( !CreateDeviceIndependentResources() )
 
         ; Create parent window
 
@@ -98,7 +94,7 @@ ListViewApp::Initialize proc uses rsi
        .new dpiX:FLOAT
        .new dpiY:FLOAT
 
-        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
+        m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
         movss       xmm0,dpiX
         mulss       xmm0,512.0
@@ -122,14 +118,12 @@ ListViewApp::Initialize proc uses rsi
         sub         edx,eax
         neg         edx
 
-        .if CreateWindowEx(0, "DemoAppWindow", "D2D ListView",
-                WS_OVERLAPPEDWINDOW or WS_VSCROLL,
-                CW_USEDEFAULT, CW_USEDEFAULT, ecx, edx,
-                NULL, NULL, HINST_THISCOMPONENT, this)
+        .if CreateWindowEx(0, "DemoAppWindow", "D2D ListView", WS_OVERLAPPEDWINDOW or WS_VSCROLL, CW_USEDEFAULT,
+                CW_USEDEFAULT, ecx, edx, NULL, NULL, HINST_THISCOMPONENT, rbx)
 
-            mov [rsi].m_parentHwnd,rax
-            ShowWindow([rsi].m_parentHwnd, SW_SHOWNORMAL)
-            UpdateWindow([rsi].m_parentHwnd)
+            mov m_parentHwnd,rax
+            ShowWindow(m_parentHwnd, SW_SHOWNORMAL)
+            UpdateWindow(m_parentHwnd)
         .endif
 
 
@@ -156,24 +150,21 @@ ListViewApp::Initialize proc uses rsi
 
        .new d2dWindowSize:D2D1_SIZE_U
 
-        this.CalculateD2DWindowSize(&d2dWindowSize)
+        CalculateD2DWindowSize(&d2dWindowSize)
 
         ; create window
 
-        .if CreateWindowEx(0, "D2DListViewApp", "",
-                WS_CHILDWINDOW or WS_VISIBLE,
-                0, 0, d2dWindowSize.width, d2dWindowSize.height,
-                [rsi].m_parentHwnd, NULL, HINST_THISCOMPONENT, this)
+        .if CreateWindowEx(0, "D2DListViewApp", "", WS_CHILDWINDOW or WS_VISIBLE, 0, 0, d2dWindowSize.width,
+                d2dWindowSize.height, m_parentHwnd, NULL, HINST_THISCOMPONENT, rbx)
 
-            mov [rsi].m_d2dHwnd,rax
+            mov m_d2dHwnd,rax
             mov eax,S_OK
         .else
             mov eax,E_FAIL
         .endif
     .endif
     ret
-
-ListViewApp::Initialize endp
+    endp
 
 
 ;
@@ -184,14 +175,14 @@ ListViewApp::CalculateD2DWindowSize proc size:ptr D2D1_SIZE_U
 
   local rc:RECT
 
-    GetClientRect([rcx].ListViewApp.m_parentHwnd, &rc)
+    GetClientRect(m_parentHwnd, &rc)
 
     mov rdx,size
     mov [rdx].D2D1_SIZE_U.width,rc.right
     mov [rdx].D2D1_SIZE_U.height,rc.bottom
-   .return rdx
-
-ListViewApp::CalculateD2DWindowSize endp
+    mov rax,rdx
+    ret
+    endp
 
 
 ;
@@ -203,66 +194,42 @@ ListViewApp::CalculateD2DWindowSize endp
 ;  a D2D geometry.
 ;
 
-ListViewApp::CreateDeviceIndependentResources proc uses rsi
-
-    msc_fontName equ <"Calibri">
-    msc_fontSize equ 20.0
+ListViewApp::CreateDeviceIndependentResources proc
 
   local hr:HRESULT
 
-    mov rsi,rcx
-
     ; create D2D factory
-    mov hr,D2D1CreateFactory(
-        D2D1_FACTORY_TYPE_SINGLE_THREADED,
-        &IID_ID2D1Factory,
-        NULL,
-        &[rsi].m_pD2DFactory
-        )
+
+    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory, NULL, &m_pD2DFactory)
     .if (SUCCEEDED(hr))
 
         ; create WIC factory
-        mov hr,CoCreateInstance(
-            &CLSID_WICImagingFactory,
-            NULL,
-            CLSCTX_INPROC_SERVER,
-            &IID_IWICImagingFactory,
-            &[rsi].m_pWICFactory
-            )
+
+        mov hr,CoCreateInstance(&CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, &IID_IWICImagingFactory, &m_pWICFactory)
     .endif
     .if (SUCCEEDED(hr))
 
         ; create DWrite factory
-        mov hr,DWriteCreateFactory(
-            DWRITE_FACTORY_TYPE_SHARED,
-            &IID_IDWriteFactory,
-            &[rsi].m_pDWriteFactory
-            )
+
+        mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory, &m_pDWriteFactory)
     .endif
     .if (SUCCEEDED(hr))
 
         ; create DWrite text format object
-        mov hr,this.m_pDWriteFactory.CreateTextFormat(
-            msc_fontName,
-            NULL,
-            DWRITE_FONT_WEIGHT_THIN,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            msc_fontSize,
-            L"", ;;locale
-            &[rsi].m_pTextFormat
-            )
+        mov hr,m_pDWriteFactory.CreateTextFormat(msc_fontName, NULL, DWRITE_FONT_WEIGHT_THIN,
+                DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, msc_fontSize, L"", &m_pTextFormat)
     .endif
 
     .if (SUCCEEDED(hr))
 
         ; center the text both horizontally and vertically.
-        this.m_pTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
-        this.m_pTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
+
+        m_pTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
+        m_pTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
 
        .new pEllipsis:ptr IDWriteInlineObject
 
-        mov hr,this.m_pDWriteFactory.CreateEllipsisTrimmingSign([rsi].m_pTextFormat, &pEllipsis)
+        mov hr,m_pDWriteFactory.CreateEllipsisTrimmingSign(m_pTextFormat, &pEllipsis)
 
         .if (SUCCEEDED(hr))
 
@@ -271,8 +238,8 @@ ListViewApp::CreateDeviceIndependentResources proc uses rsi
             .code
 
             ; Set the trimming back on the trimming format object.
-            mov hr,this.m_pTextFormat.SetTrimming(&sc_trimming, pEllipsis)
 
+            mov hr,m_pTextFormat.SetTrimming(&sc_trimming, pEllipsis)
             pEllipsis.Release()
         .endif
     .endif
@@ -280,12 +247,11 @@ ListViewApp::CreateDeviceIndependentResources proc uses rsi
     .if (SUCCEEDED(hr))
 
         ; Set the text format not to allow word wrapping.
-        mov hr,this.m_pTextFormat.SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP)
+        mov hr,m_pTextFormat.SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP)
     .endif
-
     .return hr
 
-ListViewApp::CreateDeviceIndependentResources endp
+    endp
 
 
 ;
@@ -295,18 +261,15 @@ ListViewApp::CreateDeviceIndependentResources endp
 ;  change, remoting, removal of video card, etc).
 ;
 
-ListViewApp::CreateDeviceResources proc uses rsi
+ListViewApp::CreateDeviceResources proc
 
-  local hr:HRESULT
+    .new hr:HRESULT = S_OK
 
-    mov rsi,rcx
-    mov hr,S_OK
-
-    .if [rsi].m_pRT == NULL
+    .if ( m_pRT == NULL )
 
        .new rc:RECT
 
-        GetClientRect([rsi].m_d2dHwnd, &rc)
+        GetClientRect(m_d2dHwnd, &rc)
 
        .new renderTargetProperties:D2D1_RENDER_TARGET_PROPERTIES
         mov renderTargetProperties.type,D2D1_RENDER_TARGET_TYPE_DEFAULT
@@ -318,7 +281,7 @@ ListViewApp::CreateDeviceResources proc uses rsi
         mov renderTargetProperties.pixelFormat.alphaMode,D2D1_ALPHA_MODE_UNKNOWN
 
        .new hwndRenderTargetProperties:D2D1_HWND_RENDER_TARGET_PROPERTIES
-        mov hwndRenderTargetProperties.hwnd,[rsi].m_d2dHwnd
+        mov hwndRenderTargetProperties.hwnd,m_d2dHwnd
         mov eax,rc.bottom
         sub eax,rc.top
         mov hwndRenderTargetProperties.pixelSize.height,eax
@@ -329,23 +292,14 @@ ListViewApp::CreateDeviceResources proc uses rsi
 
         ; create a D2D render target
 
-        mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(
-            &renderTargetProperties,
-            &hwndRenderTargetProperties,
-            &[rsi].m_pRT
-            )
+        mov hr,m_pD2DFactory.CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTargetProperties, &m_pRT)
 
         .if (SUCCEEDED(hr))
 
             ; create a black brush
 
            .new color:D3DCOLORVALUE(Black, 1.0)
-
-            mov hr,this.m_pRT.CreateSolidColorBrush(
-                &color,
-                NULL,
-                &[rsi].m_pBlackBrush
-                )
+            mov hr,m_pRT.CreateSolidColorBrush(&color, NULL, &m_pBlackBrush)
         .endif
 
         .if (SUCCEEDED(hr))
@@ -358,27 +312,18 @@ ListViewApp::CreateDeviceResources proc uses rsi
                 96.0
                 }
 
-            mov hr,this.m_pRT.CreateBitmap(
-                size,
-                NULL,
-                0,
-                &bitmapProperties,
-                &[rsi].m_pBitmapAtlas
-                )
+            mov hr,m_pRT.CreateBitmap(size, NULL, 0, &bitmapProperties, &m_pBitmapAtlas)
         .endif
         .if (SUCCEEDED(hr))
-
-            mov hr,CreateBindCtx(0, &[rsi].m_pBindContext)
+            mov hr,CreateBindCtx(0, &m_pBindContext)
         .endif
         .if (SUCCEEDED(hr))
-
-            mov hr,this.LoadDirectory()
+            mov hr,LoadDirectory()
         .endif
     .endif
-
     .return hr
 
-ListViewApp::CreateDeviceResources endp
+    endp
 
 
 ;
@@ -386,15 +331,13 @@ ListViewApp::CreateDeviceResources endp
 ;  when a D3D device is lost
 ;
 
-ListViewApp::DiscardDeviceResources proc uses rsi
+ListViewApp::DiscardDeviceResources proc
 
-    mov rsi,rcx
-    SafeRelease([rsi].m_pRT)
-    SafeRelease([rsi].m_pBitmapAtlas)
-    SafeRelease([rsi].m_pBlackBrush)
+    SafeRelease(m_pRT)
+    SafeRelease(m_pBitmapAtlas)
+    SafeRelease(m_pBlackBrush)
     ret
-
-ListViewApp::DiscardDeviceResources endp
+    endp
 
 
 ListViewApp::RunMessageLoop proc
@@ -407,8 +350,7 @@ ListViewApp::RunMessageLoop proc
         DispatchMessage(&msg)
     .endw
     ret
-
-ListViewApp::RunMessageLoop endp
+    endp
 
 
 ;
@@ -417,51 +359,34 @@ ListViewApp::RunMessageLoop endp
 ;  location is stored within each ItemInfo object.
 ;
 
-ListViewApp::LoadDirectory proc uses rsi rdi rbx
+; 4 bytes per pixel in BGRA format.
 
-  local hr:HRESULT
+define sc_bitsArraySize ( msc_iconSize * msc_iconSize * 4 )
 
-  ; Locals that need to be cleaned up before we exit
+ListViewApp::LoadDirectory proc uses rsi rdi
 
-  local memoryDC:HDC
-  local iconImage:HBITMAP
-  local wszAbsolutePath:ptr WCHAR
-  local pBits:ptr BYTE
-  local directoryTraversalHandle:HANDLE
-  local pShellItemImageFactory:ptr IShellItemImageFactory
+   .new hr:HRESULT = S_OK
 
-  ; Other locals
+    ; Locals that need to be cleaned up before we exit
 
-  local absolutePathArraySize:UINT
-  local currentX:UINT
-  local currentY:UINT
-  local i:UINT
+   .new memoryDC:HDC
+   .new iconImage:HBITMAP = NULL
+   .new wszAbsolutePath:ptr WCHAR = NULL
+   .new pBits:ptr BYTE = NULL
+   .new directoryTraversalHandle:HANDLE = INVALID_HANDLE_VALUE
+   .new pShellItemImageFactory:ptr IShellItemImageFactory = NULL
 
-    ; 4 bytes per pixel in BGRA format.
+    ; Other locals
 
-    sc_bitsArraySize equ msc_iconSize * msc_iconSize * 4
+   .new absolutePathArraySize:UINT = 0
+   .new currentX:UINT = 0
+   .new currentY:UINT = 0
+   .new i:UINT = 0
 
-    mov rsi,rcx
-    xor ebx,ebx
-    mov hr,ebx
     mov memoryDC,CreateCompatibleDC(NULL)
-    mov iconImage,rbx
-    mov wszAbsolutePath,rbx
-    mov pBits,rbx
-    mov directoryTraversalHandle,INVALID_HANDLE_VALUE
-    mov pShellItemImageFactory,rbx
-    mov absolutePathArraySize,ebx
-    mov currentX,ebx
-    mov currentY,ebx
-    mov i,ebx
-
-    .if (SUCCEEDED(hr))
-
-        mov pBits,malloc(sc_bitsArraySize)
-        mov hr,S_OK
-        .if rax == NULL
-            mov hr,E_OUTOFMEMORY
-        .endif
+    mov pBits,malloc(sc_bitsArraySize)
+    .if rax == NULL
+        mov hr,E_OUTOFMEMORY
     .endif
 
     .if (SUCCEEDED(hr))
@@ -469,7 +394,7 @@ ListViewApp::LoadDirectory proc uses rsi rdi rbx
         ; We have a static array of ItemInfo objects, so we can only load
         ; msc_maxItemInfos ItemInfos.
 
-        .while (i < msc_maxItemInfos)
+        .for ( esi = 0 : i < msc_maxItemInfos : i++, esi += ItemInfo )
 
 
             ; We always load files from the current directory. We do navigation
@@ -480,35 +405,23 @@ ListViewApp::LoadDirectory proc uses rsi rdi rbx
             ; items in the current directory.
 
             .new findFileData:WIN32_FIND_DATA
-            .if (directoryTraversalHandle == INVALID_HANDLE_VALUE)
-
+            .if ( directoryTraversalHandle == INVALID_HANDLE_VALUE )
                 mov directoryTraversalHandle,FindFirstFile(L".\\*", &findFileData)
-
-                .if (directoryTraversalHandle == INVALID_HANDLE_VALUE)
-
-                    .if (GetLastError() != ERROR_FILE_NOT_FOUND)
-
+                .if ( directoryTraversalHandle == INVALID_HANDLE_VALUE )
+                    .if ( GetLastError() != ERROR_FILE_NOT_FOUND )
                         mov hr,E_FAIL
                     .endif
-
                     .break
                 .endif
-
-            .else
-
-                .if (!FindNextFile(directoryTraversalHandle, &findFileData))
-
-                    .if (GetLastError() != ERROR_NO_MORE_FILES)
-
-                        mov hr,E_FAIL
-                    .endif
-
-                    .break
+            .elseif !FindNextFile(directoryTraversalHandle, &findFileData)
+                .if ( GetLastError() != ERROR_NO_MORE_FILES )
+                    mov hr,E_FAIL
                 .endif
+                .break
             .endif
 
-            mov [rsi].m_pFiles[rbx].placement.left,currentX
-            mov [rsi].m_pFiles[rbx].placement.top,currentY
+            mov m_pFiles[rsi].placement.left,currentX
+            mov m_pFiles[rsi].placement.top,currentY
 
             ;
             ; Increment bitmap atlas position here so that we notice if we
@@ -541,8 +454,7 @@ ListViewApp::LoadDirectory proc uses rsi rdi rbx
            .new requiredLength:UINT
 
             mov requiredLength,GetFullPathName(&findFileData.cFileName, 0, NULL, NULL)
-            .if (requiredLength == 0)
-
+            .if ( requiredLength == 0 )
                 mov hr,E_FAIL
                 .break
             .endif
@@ -550,36 +462,29 @@ ListViewApp::LoadDirectory proc uses rsi rdi rbx
             ;
             ; Allocate a bigger buffer if necessary.
             ;
-            .if (requiredLength > absolutePathArraySize)
+            .if ( requiredLength > absolutePathArraySize )
 
                 free(wszAbsolutePath)
                 mov ecx,requiredLength
                 shl ecx,1
                 mov wszAbsolutePath,malloc(rcx)
                 .if rax == NULL
-
                     mov hr,E_FAIL
-                    .break
+                   .break
                 .endif
                 mov absolutePathArraySize,requiredLength
             .endif
 
-            .if (!GetFullPathName(&findFileData.cFileName, requiredLength, wszAbsolutePath, NULL))
-
+            .if !GetFullPathName(&findFileData.cFileName, requiredLength, wszAbsolutePath, NULL)
                 mov hr,E_FAIL
-                .break
+               .break
             .endif
 
             ; Create an IShellItemImageFactory for the current directory item
             ; so that we can get a icon/thumbnail for it.
             SafeRelease(pShellItemImageFactory)
-
-            mov hr,SHCreateItemFromParsingName(
-                    wszAbsolutePath,
-                    [rsi].m_pBindContext,
-                    &IID_IShellItemImageFactory,
-                    &pShellItemImageFactory
-                    )
+            mov hr,SHCreateItemFromParsingName(wszAbsolutePath, m_pBindContext, &IID_IShellItemImageFactory,
+                    &pShellItemImageFactory)
 
             .break .if (FAILED(hr))
 
@@ -615,24 +520,15 @@ ListViewApp::LoadDirectory proc uses rsi rdi rbx
 
             ; Get the bitmap info header.
 
-            .if !GetDIBits(
-                    memoryDC,   ; hdc
-                    iconImage,  ; hbmp
-                    0,          ; uStartScan
-                    0,          ; cScanLines
-                    NULL,       ; lpvBits
-                    &bi,
-                    DIB_RGB_COLORS
-                    )
+            .if !GetDIBits(memoryDC, iconImage, 0, 0, NULL, &bi, DIB_RGB_COLORS)
                 mov hr,E_FAIL
-                .break
+               .break
             .endif
 
             ; Positive bitmap info header height means bottom-up bitmaps. We
             ; always use top-down bitmaps, so we set the height negative.
 
-            .if (bi.bmiHeader.biHeight > 0)
-
+            .if ( bi.bmiHeader.biHeight > 0 )
                 neg bi.bmiHeader.biHeight
             .endif
 
@@ -641,43 +537,35 @@ ListViewApp::LoadDirectory proc uses rsi rdi rbx
 
             ; If we happen to find an icon that's too big, skip over this item.
 
-            .ifs ((eax > msc_iconSize) \
-                || (bi.bmiHeader.biWidth > msc_iconSize) \
-                || (bi.bmiHeader.biSizeImage > sc_bitsArraySize))
-
+            .ifs ( ( eax > msc_iconSize ) || (bi.bmiHeader.biWidth > msc_iconSize) ||
+                   ( bi.bmiHeader.biSizeImage > sc_bitsArraySize ) )
                 .continue
             .endif
 
             xor eax,eax
             test findFileData.dwFileAttributes,FILE_ATTRIBUTE_DIRECTORY
             setnz al
-            mov [rsi].m_pFiles[rbx].isDirectory,eax
+            mov m_pFiles[rsi].isDirectory,eax
 
             ; Now that we know the size of the icon/thumbnail we can initialize
             ; the rest of placement rectangle. We avoid using currentX/currentY
             ; since we've already incremented those values in anticipation of
             ; the next iteration of the loop.
 
-            mov eax,[rsi].m_pFiles[rbx].placement.left
+            mov eax,m_pFiles[rsi].placement.left
             add eax,bi.bmiHeader.biWidth
-            mov [rsi].m_pFiles[rbx].placement.right,eax
-            mov eax,[rsi].m_pFiles[rbx].placement.top
+            mov m_pFiles[rsi].placement.right,eax
+            mov eax,m_pFiles[rsi].placement.top
             mov ecx,bi.bmiHeader.biHeight
             neg ecx
             add eax,ecx
-            mov [rsi].m_pFiles[rbx].placement.bottom,eax
+            mov m_pFiles[rsi].placement.bottom,eax
 
             ; Now we copy the bitmap bits into a buffer.
-            .if !GetDIBits(
-                    memoryDC,
-                    iconImage,
-                    0,
-                    ecx,
-                    pBits,
-                    &bi,
-                    DIB_RGB_COLORS)
+
+            .if !GetDIBits(memoryDC, iconImage, 0, ecx, pBits, &bi, DIB_RGB_COLORS)
                 mov hr,E_FAIL
-                .break
+               .break
             .endif
 
             ; Now we copy the buffer into video memory.
@@ -688,36 +576,29 @@ ListViewApp::LoadDirectory proc uses rsi rdi rbx
             xor  edx,edx
             idiv ecx
 
-            mov hr,this.m_pBitmapAtlas.CopyFromMemory(
-                    &[rsi].m_pFiles[rbx].placement,
-                    pBits,
-                    eax
-                    )
+            mov hr,m_pBitmapAtlas.CopyFromMemory(&m_pFiles[rsi].placement, pBits, eax)
 
             .break .if (FAILED(hr))
 
 ifdef _MSVCRT
-            wcsncpy(&[rsi].m_pFiles[rbx].szFilename, &findFileData.cFileName, MAX_PATH)
+            wcsncpy(&m_pFiles[rsi].szFilename, &findFileData.cFileName, MAX_PATH)
 else
-            StringCchCopy(&[rsi].m_pFiles[rbx].szFilename, MAX_PATH, &findFileData.cFileName)
+            StringCchCopy(&m_pFiles[rsi].szFilename, MAX_PATH, &findFileData.cFileName)
 endif
 
             ; Set the previous position to 0 so that the items animate
             ; downwards when they are first shown.
 
-            mov [rsi].m_pFiles[rbx].previousPosition,0.0
+            mov m_pFiles[rsi].previousPosition,0.0
             imul eax,i,msc_iconSize + msc_lineSpacing
             cvtsi2ss xmm0,eax
-            movss [rsi].m_pFiles[rbx].currentPosition,xmm0
-
-            inc i
-            add ebx,ItemInfo
-        .endw
+            movss m_pFiles[rsi].currentPosition,xmm0
+        .endf
     .endif
 
     .if (SUCCEEDED(hr))
 
-        mov [rsi].m_numItemInfos,i
+        mov m_numItemInfos,i
 
         ;
         ; The total size of our document.
@@ -726,33 +607,33 @@ endif
         imul eax,eax,msc_iconSize
         imul ecx,edx,msc_lineSpacing
         add eax,ecx
-        mov [rsi].m_scrollRange,eax
+        mov m_scrollRange,eax
 
        .new size:D2D1_SIZE_F
        .new s:SCROLLINFO
         mov s.cbSize,SCROLLINFO
         mov s.fMask,SIF_DISABLENOSCROLL or SIF_PAGE or SIF_POS or SIF_RANGE
         mov s.nMin,0
-        mov s.nMax,[rsi].m_scrollRange
+        mov s.nMax,m_scrollRange
 
-        this.m_pRT.GetSize(&size)
+        m_pRT.GetSize(&size)
         cvtss2si eax,size.height
         mov s.nPage,eax
         mov s.nPos,0
 
-        SetScrollInfo([rsi].m_parentHwnd, SB_VERT, &s, TRUE)
+        SetScrollInfo(m_parentHwnd, SB_VERT, &s, TRUE)
 
         ;
         ; Animate the item positions into place.
         ;
-        mov [rsi].m_animatingItems,msc_totalAnimatingItemFrames
+        mov m_animatingItems,msc_totalAnimatingItemFrames
 
         ;
         ; Set the scroll to zero, don't animate.
         ;
-        mov [rsi].m_animatingScroll,0
-        mov [rsi].m_currentScrollPos,0
-        mov [rsi].m_previousScrollPos,0
+        mov m_animatingScroll,0
+        mov m_currentScrollPos,0
+        mov m_previousScrollPos,0
     .endif
 
 
@@ -761,28 +642,19 @@ endif
     ;
 
     SafeRelease(pShellItemImageFactory)
-
     free(pBits)
     free(wszAbsolutePath)
-
     .if (directoryTraversalHandle != INVALID_HANDLE_VALUE)
-
         FindClose(directoryTraversalHandle)
     .endif
-
     .if (memoryDC != NULL)
-
         DeleteDC(memoryDC)
     .endif
-
     .if (iconImage != NULL)
-
         DeleteObject(iconImage)
     .endif
-
     .return hr
-
-ListViewApp::LoadDirectory endp
+    endp
 
 ;
 ;  Called whenever the application needs to display the client
@@ -796,14 +668,13 @@ ListViewApp::LoadDirectory endp
 ;  invoked.
 ;
 
-ListViewApp::OnRender proc uses rsi rdi rbx
+ListViewApp::OnRender proc uses rsi rdi
 
     local hr:HRESULT
     local pRT:ptr ID2D1HwndRenderTarget
 
-    mov rsi,rcx
-    mov hr,this.CreateDeviceResources()
-    mov pRT,[rsi].m_pRT
+    mov hr,CreateDeviceResources()
+    mov pRT,m_pRT
 
     .if SUCCEEDED(hr)
     .if !pRT.CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED
@@ -813,7 +684,7 @@ ListViewApp::OnRender proc uses rsi rdi rbx
         ; for the current frame.
 
        .new interpolatedScroll:FLOAT
-        movss interpolatedScroll,this.GetInterpolatedScrollPosition()
+        movss interpolatedScroll,GetInterpolatedScrollPosition()
 
         pRT.BeginDraw()
 
@@ -834,11 +705,11 @@ ListViewApp::OnRender proc uses rsi rdi rbx
         pRT.GetSize(&rtSize)
 
        .new interpolationFactor:FLOAT
-        movss interpolationFactor,this.GetAnimatingItemInterpolationFactor()
+        movss interpolationFactor,GetAnimatingItemInterpolationFactor()
 
        .new i:UINT
 
-        .for (ebx = 0, i = 0: i < [rsi].m_numItemInfos: i++, ebx += ItemInfo)
+        .for ( esi = 0, i = 0 : i < m_numItemInfos: i++, esi += ItemInfo)
 
             .Assert(m_pFiles[i].szFilename[0] != L'\0');
 
@@ -848,11 +719,8 @@ ListViewApp::OnRender proc uses rsi rdi rbx
             ; this frame is somewhere between the two.
            .new interpolatedPosition:FLOAT
 
-            movss interpolatedPosition,GetFancyAccelerationInterpolatedValue(
-                interpolationFactor,
-                [rsi].m_pFiles[rbx].previousPosition,
-                [rsi].m_pFiles[rbx].currentPosition
-                )
+            movss interpolatedPosition,GetFancyAccelerationInterpolatedValue(interpolationFactor,
+                m_pFiles[rsi].previousPosition, m_pFiles[rsi].currentPosition)
 
 
             ; We do a quick check to see if the items we are drawing will be in
@@ -902,10 +770,10 @@ ListViewApp::OnRender proc uses rsi rdi rbx
             movss    xmm0,interpolatedPosition
             addss    xmm0,r1.right
             movss    r1.bottom,xmm0
-            cvtsi2ss xmm0,[rsi].m_pFiles[rbx].placement.left
-            cvtsi2ss xmm1,[rsi].m_pFiles[rbx].placement.top
-            cvtsi2ss xmm2,[rsi].m_pFiles[rbx].placement.right
-            cvtsi2ss xmm3,[rsi].m_pFiles[rbx].placement.bottom
+            cvtsi2ss xmm0,m_pFiles[rsi].placement.left
+            cvtsi2ss xmm1,m_pFiles[rsi].placement.top
+            cvtsi2ss xmm2,m_pFiles[rsi].placement.right
+            cvtsi2ss xmm3,m_pFiles[rsi].placement.bottom
             movss    r2.left,  xmm0
             movss    r2.top,   xmm1
             movss    r2.right, xmm2
@@ -914,42 +782,28 @@ ListViewApp::OnRender proc uses rsi rdi rbx
             ; The icon is stored in the image atlas. We reference it's position
             ; in the atlas and it's destination on the screen.
 
-            pRT.DrawBitmap(
-                [rsi].m_pBitmapAtlas,
-                &r1,
-                opacity,
-                D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-                &r2
-                )
+            pRT.DrawBitmap(m_pBitmapAtlas, &r1, opacity, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &r2)
 
             ; Draw the filename. For brevity we just use DrawText. A real
             ; application should consider caching the TextLayout object during
             ; animations to reduce CPU cost.
 
-            this.m_pBlackBrush.SetOpacity(opacity)
+            m_pBlackBrush.SetOpacity(opacity)
 
-            mov r8,wcsnlen(&[rsi].m_pFiles[rbx].szFilename, ARRAYSIZE(ItemInfo.szFilename))
+            mov r8,wcsnlen(&m_pFiles[rsi].szFilename, ARRAYSIZE(ItemInfo.szFilename))
             mov r1.left,@CatStr(%msc_iconSize + msc_lineSpacing, <.0>)
             mov r1.top,interpolatedPosition
             mov r1.right,rtSize.width
             movss xmm0,interpolatedPosition
             addss xmm0,@CatStr(%msc_iconSize, <.0>)
             movss r1.bottom,xmm0
-            pRT.DrawText(
-                &[rsi].m_pFiles[rbx].szFilename,
-                r8d,
-                [rsi].m_pTextFormat,
-                &r1,
-                [rsi].m_pBlackBrush,
-                D2D1_DRAW_TEXT_OPTIONS_NONE,
-                DWRITE_MEASURING_MODE_NATURAL
-                )
+            pRT.DrawText(&m_pFiles[rsi].szFilename, r8d, m_pTextFormat, &r1, m_pBlackBrush,
+                D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL)
         .endf
 
         mov hr,pRT.EndDraw(NULL, NULL)
-        .if (hr == D2DERR_RECREATE_TARGET)
-
-            this.DiscardDeviceResources()
+        .if ( hr == D2DERR_RECREATE_TARGET )
+            DiscardDeviceResources()
             mov hr,S_OK
         .endif
     .endif
@@ -957,37 +811,36 @@ ListViewApp::OnRender proc uses rsi rdi rbx
 
     ; Advance the position of the current item animation.
 
-    .if ([rsi].m_animatingItems > 0)
+    .if ( m_animatingItems > 0 )
 
-        dec [rsi].m_animatingItems
-        .ifz ;[rsi].m_animatingItems == 0
+        dec m_animatingItems
+        .ifz ; m_animatingItems == 0
 
-            .for (ecx = 0: ecx < [rsi].m_numItemInfos: ecx++)
+            .for ( ecx = 0: ecx < m_numItemInfos: ecx++ )
 
                 imul edx,ecx,ItemInfo
-                mov [rsi].m_pFiles[rdx].previousPosition,[rsi].m_pFiles[rdx].currentPosition
+                mov m_pFiles[rdx].previousPosition,m_pFiles[rdx].currentPosition
             .endf
         .endif
 
-        InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)
+        InvalidateRect(m_d2dHwnd, NULL, FALSE)
     .endif
 
     ; Advance the position of the current scroll animation
 
-    .if ([rsi].m_animatingScroll > 0)
+    .if ( m_animatingScroll > 0 )
 
-        dec [rsi].m_animatingScroll
-        .ifz ;([rsi].m_animatingScroll == 0)
+        dec m_animatingScroll
+        .ifz ;(m_animatingScroll == 0)
 
-            mov [rsi].m_previousScrollPos,[rsi].m_currentScrollPos
+            mov m_previousScrollPos,m_currentScrollPos
         .endif
 
-        InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)
+        InvalidateRect(m_d2dHwnd, NULL, FALSE)
     .endif
-
     .return hr
 
-ListViewApp::OnRender endp
+    endp
 
 
 ;
@@ -1150,8 +1003,7 @@ GetFancyAccelerationInterpolatedValue proc linearFactor:FLOAT, p1:FLOAT, p2:FLOA
     mulss xmm1,p1
     addss xmm0,xmm1
     ret
-
-GetFancyAccelerationInterpolatedValue endp
+    endp
 
 
 ;
@@ -1161,13 +1013,12 @@ GetFancyAccelerationInterpolatedValue endp
 
 ListViewApp::GetAnimatingItemInterpolationFactor proc
 
-    cvtsi2ss xmm1,[rcx].ListViewApp.m_animatingItems
+    cvtsi2ss xmm1,m_animatingItems
     movss xmm0,@CatStr(%msc_totalAnimatingItemFrames, <.0>)
     subss xmm0,xmm1
     divss xmm0,@CatStr(%msc_totalAnimatingItemFrames, <.0>)
     ret
-
-ListViewApp::GetAnimatingItemInterpolationFactor endp
+    endp
 
 
 ;
@@ -1179,13 +1030,12 @@ ListViewApp::GetAnimatingItemInterpolationFactor endp
 
 ListViewApp::GetAnimatingScrollInterpolationFactor proc
 
-    cvtsi2ss xmm1,[rcx].ListViewApp.m_animatingScroll
+    cvtsi2ss xmm1,m_animatingScroll
     movss xmm0,@CatStr(%msc_totalAnimatingScrollFrames, <.0>)
     subss xmm0,xmm1
     divss xmm0,@CatStr(%msc_totalAnimatingScrollFrames, <.0>)
     ret
-
-ListViewApp::GetAnimatingScrollInterpolationFactor endp
+    endp
 
 ;
 ;  Return the scroll position for the current frame
@@ -1193,18 +1043,17 @@ ListViewApp::GetAnimatingScrollInterpolationFactor endp
 
 ListViewApp::GetInterpolatedScrollPosition proc
 
-    this.GetAnimatingScrollInterpolationFactor()
+    GetAnimatingScrollInterpolationFactor()
 
     movss xmm2,1.0
     subss xmm2,xmm0
-    cvtsi2ss xmm1,[rcx].ListViewApp.m_currentScrollPos
+    cvtsi2ss xmm1,m_currentScrollPos
     mulss xmm0,xmm1
-    cvtsi2ss xmm1,[rcx].ListViewApp.m_previousScrollPos
+    cvtsi2ss xmm1,m_previousScrollPos
     mulss xmm1,xmm2
     addss xmm0,xmm1
     ret
-
-ListViewApp::GetInterpolatedScrollPosition endp
+    endp
 
 
 ;
@@ -1212,40 +1061,38 @@ ListViewApp::GetInterpolatedScrollPosition endp
 ;  resizes the render target appropriately.
 ;
 
-ListViewApp::OnResize proc uses rsi
+ListViewApp::OnResize proc
 
-    mov rsi,rcx
-    .if [rsi].m_pRT
+    .if m_pRT
 
        .new size:D2D1_SIZE_U
 
-        this.CalculateD2DWindowSize(&size)
-        MoveWindow([rsi].m_d2dHwnd, 0, 0, size.width, size.height, FALSE)
+        CalculateD2DWindowSize(&size)
+        MoveWindow(m_d2dHwnd, 0, 0, size.width, size.height, FALSE)
 
         ; Note: This method can fail, but it's okay to ignore the
         ; error here -- it will be repeated on the next call to
         ; EndDraw.
 
-        this.m_pRT.Resize(&size)
+        m_pRT.Resize(&size)
 
-        imul eax,[rsi].m_numItemInfos,msc_lineSpacing + msc_iconSize
+        imul eax,m_numItemInfos,msc_lineSpacing + msc_iconSize
         sub  eax,msc_lineSpacing
-        mov  [rsi].m_scrollRange,eax
+        mov  m_scrollRange,eax
 
        .new s:SCROLLINFO = {
             SCROLLINFO,
             SIF_DISABLENOSCROLL or SIF_PAGE or SIF_RANGE,
             0,
-            [rsi].m_scrollRange,
+            m_scrollRange,
             size.height
             }
 
-        SetScrollInfo([rsi].m_parentHwnd, SB_VERT, &s, TRUE)
-        InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)
+        SetScrollInfo(m_parentHwnd, SB_VERT, &s, TRUE)
+        InvalidateRect(m_d2dHwnd, NULL, FALSE)
     .endif
     ret
-
-ListViewApp::OnResize endp
+    endp
 
 
 ;
@@ -1256,8 +1103,7 @@ CompareAToZ proc a:ptr, b:ptr
 
     wcscmp(&[rcx].ItemInfo.szFilename, &[rdx].ItemInfo.szFilename)
     ret
-
-CompareAToZ endp
+    endp
 
 
 ;
@@ -1270,8 +1116,7 @@ CompareZToA proc a:ptr, b:ptr
     mov r8,rdx
     wcscmp(&[r8].ItemInfo.szFilename, &[rcx].ItemInfo.szFilename)
     ret
-
-CompareZToA endp
+    endp
 
 
 ;
@@ -1289,8 +1134,7 @@ CompareDirFirstAToZ proc a:ptr, b:ptr
         wcscmp(&[rcx].ItemInfo.szFilename, &[rdx].ItemInfo.szFilename)
     .endif
     ret
-
-CompareDirFirstAToZ endp
+    endp
 
 
 ;
@@ -1298,17 +1142,17 @@ CompareDirFirstAToZ endp
 ;  when a key is pressed).
 ;
 
-ListViewApp::OnChar proc uses rsi rdi rbx aChar:SWORD
+ListViewApp::OnChar proc uses rsi rdi aChar:SWORD
 
     ; We only do stuff for 'a', 'z', or 'd'
 
-    .if (dl == 'a' || dl == 'z' || dl == 'd')
+    .if ( dl == 'a' || dl == 'z' || dl == 'd' )
 
         Comparator typedef proto :ptr, :ptr
        .new comparator:ptr Comparator
 
         ; 'a' means alphabetical sort
-        .if (dl == 'a')
+        .if ( dl == 'a' )
 
             mov comparator,&CompareAToZ
 
@@ -1319,7 +1163,6 @@ ListViewApp::OnChar proc uses rsi rdi rbx aChar:SWORD
 
         ; 'd' means alphabetical sort, directories first
         .else
-
             mov comparator,&CompareDirFirstAToZ
         .endif
 
@@ -1327,42 +1170,35 @@ ListViewApp::OnChar proc uses rsi rdi rbx aChar:SWORD
         ; when we animate to the new positions, the items don't jump back to
         ; their previous position momentarily.
 
-        mov rsi,rcx
-
-        .for (edi = 0, ebx = 0: edi < [rsi].m_numItemInfos: edi++, ebx += ItemInfo)
+        .for ( edi = 0, esi = 0: edi < m_numItemInfos: edi++, esi += ItemInfo)
 
            .new interpolationFactor:FLOAT
-            movss interpolationFactor,this.GetAnimatingItemInterpolationFactor()
-            GetFancyAccelerationInterpolatedValue(
-                interpolationFactor,
-                [rsi].m_pFiles[rbx].previousPosition,
-                [rsi].m_pFiles[rbx].currentPosition
-                )
-            movss [rsi].m_pFiles[rbx].previousPosition,xmm0
+            movss interpolationFactor,GetAnimatingItemInterpolationFactor()
+            GetFancyAccelerationInterpolatedValue(interpolationFactor, m_pFiles[rsi].previousPosition,
+                    m_pFiles[rsi].currentPosition)
+            movss m_pFiles[rsi].previousPosition,xmm0
         .endf
 
         ; Apply the new sort.
-        qsort(&[rsi].m_pFiles, [rsi].m_numItemInfos, sizeof(ItemInfo), comparator)
+        qsort(&m_pFiles, m_numItemInfos, sizeof(ItemInfo), comparator)
 
         ; Set the new positions based up on the position of each item within
         ; the sorted array.
 
-        .for (edi = 0, ebx = 0: edi < [rsi].m_numItemInfos: edi++, ebx += ItemInfo)
+        .for ( edi = 0, esi = 0: edi < m_numItemInfos: edi++, esi += ItemInfo )
 
             imul eax,edi,msc_iconSize + msc_lineSpacing
             cvtsi2ss xmm0,eax
-            movss [rsi].m_pFiles[rbx].currentPosition,xmm0
+            movss m_pFiles[rsi].currentPosition,xmm0
         .endf
 
         ; Animate the items to their new positions.
 
-        mov [rsi].m_animatingItems,msc_totalAnimatingItemFrames
-        InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)
-
+        mov m_animatingItems,msc_totalAnimatingItemFrames
+        InvalidateRect(m_d2dHwnd, NULL, FALSE)
     .endif
     ret
-
-ListViewApp::OnChar endp
+    endp
 
 
 ;
@@ -1374,8 +1210,8 @@ ListViewApp::GetScrolledDIPositionFromPixelPosition proc pixelPosition:D2D1_POIN
 
   local dpi:D2D1_POINT_2F
 
-    this.m_pRT.GetDpi(&dpi.x, &dpi.y)
-    this.GetInterpolatedScrollPosition()
+    m_pRT.GetDpi(&dpi.x, &dpi.y)
+    GetInterpolatedScrollPosition()
 
     cvtsi2ss xmm1,pixelPosition.x
     mulss xmm1,96.0
@@ -1388,8 +1224,7 @@ ListViewApp::GetScrolledDIPositionFromPixelPosition proc pixelPosition:D2D1_POIN
     movss dpi.y,xmm0
     mov rax,dpi
     ret
-
-ListViewApp::GetScrolledDIPositionFromPixelPosition endp
+    endp
 
 
 ;
@@ -1417,61 +1252,43 @@ ParentWndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .if rax
 
             .switch(message)
-
             .case WM_SIZE
-
                 pListViewApp.OnResize()
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_VSCROLL
-
                 pListViewApp.OnVScroll(wParam, lParam)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_MOUSEWHEEL
-
                 pListViewApp.OnMouseWheel(wParam, lParam)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_CHAR
-
                 mov rdx,wParam
                 .if edx != VK_ESCAPE
-
                     pListViewApp.OnChar(dx)
-
                     mov result,0
                     mov wasHandled,TRUE
-                    .endc
+                   .endc
                 .endif
-
             .case WM_DESTROY
-
                 PostQuitMessage(0)
                 mov result,1
                 mov wasHandled,TRUE
-                .endc
+               .endc
             .endsw
         .endif
-
         .if (!wasHandled)
-
             mov result,DefWindowProc(hwnd, message, wParam, lParam)
         .endif
     .endif
-
     .return result
 
-ParentWndProc endp
+    endp
 
 
 ;
@@ -1483,46 +1300,33 @@ ChildWndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
   local pListViewApp:ptr ListViewApp
 
     .if edx == WM_CREATE
-
         SetWindowLongPtrW(rcx, GWLP_USERDATA, [r9].CREATESTRUCT.lpCreateParams)
-        .return 1
+       .return 1
     .endif
 
     mov pListViewApp,GetWindowLongPtrW(rcx, GWLP_USERDATA)
-
     .if rax
 
         .switch (message)
-
         .case WM_PAINT
         .case WM_DISPLAYCHANGE
-
            .new ps:PAINTSTRUCT
             BeginPaint(hwnd, &ps)
             pListViewApp.OnRender()
             EndPaint(hwnd, &ps)
-
-            .return 0
-
+           .return 0
         .case WM_LBUTTONDOWN
-
            .new diPosition:D2D1_POINT_2U
-
             movzx eax,word ptr lParam
             movzx edx,word ptr lParam[2]
             mov diPosition.x,eax
             mov diPosition.y,edx
-
             pListViewApp.GetScrolledDIPositionFromPixelPosition(diPosition)
             pListViewApp.OnLeftButtonDown(rax)
-
-            .return 0
-
+           .return 0
         .case WM_DESTROY
-
             PostQuitMessage(0)
-
-            .return 1
+           .return 1
         .endsw
     .endif
     .return DefWindowProc(hwnd, message, wParam, lParam)
@@ -1534,64 +1338,54 @@ ChildWndProc endp
 ;  D2D window
 ;
 
-ListViewApp::OnLeftButtonDown proc uses rsi diPosition:D2D1_POINT_2F
+ListViewApp::OnLeftButtonDown proc diPosition:D2D1_POINT_2F
 
-    mov rsi,rcx
     cvtss2si eax,diPosition.y
     mov ecx,(msc_iconSize + msc_lineSpacing)
     xor edx,edx
     div ecx
 
-    .ifs eax >= 0 && eax < [rsi].m_numItemInfos
+    .ifs eax >= 0 && eax < m_numItemInfos
 
         ; Only process the click if the item isn't animating
 
         imul ecx,eax,ItemInfo
-
-        .if ([rsi].m_pFiles[rcx].currentPosition == [rsi].m_pFiles[rcx].previousPosition)
-
+        .if ( m_pFiles[rcx].currentPosition == m_pFiles[rcx].previousPosition )
             movss xmm0,diPosition.y
-            movss xmm1,[rsi].m_pFiles[rcx].currentPosition
+            movss xmm1,m_pFiles[rcx].currentPosition
             addss xmm1,@CatStr(%msc_iconSize, <.0>)
             comiss xmm0,xmm1
-
             .ifb
-
-                .if SetCurrentDirectory(&[rsi].m_pFiles[rcx].szFilename)
-
-                    this.LoadDirectory()
+                .if SetCurrentDirectory(&m_pFiles[rcx].szFilename)
+                    LoadDirectory()
                     .if (SUCCEEDED(eax))
-
-                        InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)
+                        InvalidateRect(m_d2dHwnd, NULL, FALSE)
                     .endif
                 .endif
             .endif
         .endif
     .endif
     ret
-
-ListViewApp::OnLeftButtonDown endp
+    endp
 
 ;
 ;  Called when the mouse wheel is moved.
 ;
 
-ListViewApp::OnMouseWheel proc uses rsi rdi wParam:WPARAM, lParam:LPARAM
+ListViewApp::OnMouseWheel proc uses rdi wParam:WPARAM, lParam:LPARAM
 
   local size:D2D1_SIZE_F
   local s:SCROLLINFO
 
-    mov rsi,rcx
-
-    this.m_pRT.GetSize(&size)
-    this.GetInterpolatedScrollPosition()
+    m_pRT.GetSize(&size)
+    GetInterpolatedScrollPosition()
 
     cvtss2si    eax,xmm0
-    mov         [rsi].m_previousScrollPos,eax
+    mov         m_previousScrollPos,eax
     movzx       edx,word ptr wParam[2]
-    mov         eax,[rsi].m_currentScrollPos
+    mov         eax,m_currentScrollPos
     sub         eax,edx
-    mov         ecx,[rsi].m_scrollRange
+    mov         ecx,m_scrollRange
     cvtss2si    edx,size.height
     sub         ecx,edx
     cmp         eax,ecx
@@ -1599,7 +1393,7 @@ ListViewApp::OnMouseWheel proc uses rsi rdi wParam:WPARAM, lParam:LPARAM
     xor         ecx,ecx
     cmp         eax,ecx
     cmovl       eax,ecx
-    mov         [rsi].m_currentScrollPos,eax
+    mov         m_currentScrollPos,eax
     lea         rdi,s
     xor         eax,eax
     mov         ecx,SCROLLINFO
@@ -1607,96 +1401,88 @@ ListViewApp::OnMouseWheel proc uses rsi rdi wParam:WPARAM, lParam:LPARAM
     mov         s.cbSize,SCROLLINFO
     mov         s.fMask,SIF_PAGE or SIF_POS or SIF_RANGE or SIF_TRACKPOS
 
-    .return .if !GetScrollInfo([rsi].m_parentHwnd, SB_VERT, &s)
+    .return .if !GetScrollInfo(m_parentHwnd, SB_VERT, &s)
 
-    .if [rsi].m_currentScrollPos != s.nPos
+    .if m_currentScrollPos != s.nPos
 
-        mov s.nPos,[rsi].m_currentScrollPos
-        SetScrollInfo([rsi].m_parentHwnd, SB_VERT, &s, TRUE)
+        mov s.nPos,m_currentScrollPos
+        SetScrollInfo(m_parentHwnd, SB_VERT, &s, TRUE)
 
-        mov [rsi].m_animatingScroll,msc_totalAnimatingScrollFrames
-        InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)
+        mov m_animatingScroll,msc_totalAnimatingScrollFrames
+        InvalidateRect(m_d2dHwnd, NULL, FALSE)
     .endif
     ret
-
-ListViewApp::OnMouseWheel endp
+    endp
 
 
 ;
 ;  Called when a WM_VSCROLL message is sent.
 ;
 
-ListViewApp::OnVScroll proc uses rsi rdi rbx wParam:WPARAM, lParam:LPARAM
+ListViewApp::OnVScroll proc uses rsi rdi wParam:WPARAM, lParam:LPARAM
 
   local size:D2D1_SIZE_F
 
-    mov rsi,rcx
-    mov ebx,[rsi].m_currentScrollPos
+    mov esi,m_currentScrollPos
 
     .switch dx
-
     .case SB_LINEUP
-        dec ebx
-        .endc
-
+        dec esi
+       .endc
     .case SB_LINEDOWN
-        inc ebx
-        .endc
-
+        inc esi
+       .endc
     .case SB_PAGEUP
-        this.m_pRT.GetSize(&size)
+        m_pRT.GetSize(&size)
         cvtss2si eax,size.height
-        sub ebx,eax
-        .endc
-
+        sub esi,eax
+       .endc
     .case SB_PAGEDOWN
-        this.m_pRT.GetSize(&size)
+        m_pRT.GetSize(&size)
         cvtss2si eax,size.height
-        add ebx,eax
-        .endc
-
+        add esi,eax
+       .endc
     .case SB_THUMBTRACK
        .new s:SCROLLINFO
         mov s.fMask,SIF_PAGE or SIF_POS or SIF_RANGE or SIF_TRACKPOS
-        .if !GetScrollInfo([rsi].m_parentHwnd, SB_VERT, &s)
+        .if !GetScrollInfo(m_parentHwnd, SB_VERT, &s)
             .Assert(eax)
             .return
         .endif
-        mov ebx,s.nTrackPos
-        .endc
+        mov esi,s.nTrackPos
+       .endc
     .endsw
-    mov eax,[rsi].m_scrollRange
-    .ifs ebx > eax
-        mov ebx,eax
+    mov eax,m_scrollRange
+    .ifs esi > eax
+        mov esi,eax
     .endif
-    .ifs ebx < 0
-        xor ebx,ebx
+    .ifs esi < 0
+        xor esi,esi
     .endif
 
-    this.GetInterpolatedScrollPosition()
+    GetInterpolatedScrollPosition()
     cvtss2si eax,xmm0
-    mov [rsi].m_previousScrollPos,eax
-    mov [rsi].m_currentScrollPos,ebx
+    mov m_previousScrollPos,eax
+    mov m_currentScrollPos,esi
 
    .new ScrollInfo:SCROLLINFO
     mov ScrollInfo.fMask,SIF_PAGE or SIF_POS or SIF_RANGE or SIF_TRACKPOS
 
-    .if !GetScrollInfo([rsi].m_parentHwnd, SB_VERT, &ScrollInfo)
+    .if !GetScrollInfo(m_parentHwnd, SB_VERT, &ScrollInfo)
 
         .Assert(eax)
         .return
     .endif
 
-    .if ([rsi].m_currentScrollPos != ScrollInfo.nPos)
+    .if ( m_currentScrollPos != ScrollInfo.nPos )
 
-        mov ScrollInfo.nPos,[rsi].m_currentScrollPos
-        SetScrollInfo([rsi].m_parentHwnd, SB_VERT, &ScrollInfo, TRUE)
+        mov ScrollInfo.nPos,m_currentScrollPos
+        SetScrollInfo(m_parentHwnd, SB_VERT, &ScrollInfo, TRUE)
 
-        mov [rsi].m_animatingScroll,msc_totalAnimatingScrollFrames
-        InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)
+        mov m_animatingScroll,msc_totalAnimatingScrollFrames
+        InvalidateRect(m_d2dHwnd, NULL, FALSE)
     .endif
     ret
-
-ListViewApp::OnVScroll endp
+    endp
 
     end _tstart

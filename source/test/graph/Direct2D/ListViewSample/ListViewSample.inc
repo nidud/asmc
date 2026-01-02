@@ -29,25 +29,25 @@ include tchar.inc
 
 option dllimport:none
 
+define msc_fontName     <"Calibri">
+define msc_fontSize     20.0
 
-; Size of bitmap atlas (in pixels)
-msc_atlasWidth equ 2048
-msc_atlasHeight equ 2048
-
-; Width/Height of each icon
-msc_iconSize equ 48
-
-; Space between each item
-msc_lineSpacing equ 10
+define msc_atlasWidth   2048    ; Size of bitmap atlas (in pixels)
+define msc_atlasHeight  2048
+define msc_iconSize     48      ; Width/Height of each icon
+define msc_lineSpacing  10      ; Space between each item
 
 ; Number of frames to show while animating item repositioning
-msc_totalAnimatingItemFrames equ 60
+
+define msc_totalAnimatingItemFrames 60
 
 ; Number of frames to show while animating scrolls
-msc_totalAnimatingScrollFrames equ 10
+
+define msc_totalAnimatingScrollFrames 10
 
 ; Static size of item info array
-msc_maxItemInfos equ msc_atlasHeight * msc_atlasWidth / (msc_iconSize * msc_iconSize)
+
+define msc_maxItemInfos ( msc_atlasHeight * msc_atlasWidth / (msc_iconSize * msc_iconSize) )
 
 
 .class ItemInfo

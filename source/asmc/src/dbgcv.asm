@@ -2594,7 +2594,7 @@ endif
 
         ;; Name of object file
 
-        mov rdi,CurrFName[OBJ*string_t]
+        mov rdi,CurrFName[TOBJ]
         mov eax,[rdi]
         .if ( al != '\' && al != '.' && ah != ':' )
 
@@ -2728,7 +2728,7 @@ endif
 
         ;; 1. symbol record: object name
 
-        mov rsi,CurrFName[OBJ*string_t]
+        mov rsi,CurrFName[TOBJ]
         .for ( rbx = tstrlen( rsi ) : ebx : ebx-- )
             mov al,[rsi+rbx-1]
             .if ( al == '/' || al == '\' )

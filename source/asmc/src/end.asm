@@ -289,7 +289,7 @@ endif
 
 ifdef _EXEC_LINK
     .elseif ( Parse_Pass == PASS_1 )
-        mov rcx,MODULE.curr_fname[OBJ*string_t]
+        mov rcx,MODULE.curr_fname[TOBJ]
         .if ( rcx )
             CollectLinkObject(rcx)
         .endif

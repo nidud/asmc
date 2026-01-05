@@ -48,7 +48,6 @@ extern  MacroLocals:dword
 
 .data?
 ModuleInfo      module_info <>
-LinnumQueue     qdesc <>
 jmpenv          _JUMP_BUFFER <>
 iddcfile        db 256 dup(?)
 
@@ -949,7 +948,7 @@ get_module_name proc __ccall private uses rsi rdi
 
     .else
 
-        GetFNamePart( MODULE.curr_fname[ASM*string_t] )
+        GetFNamePart( MODULE.curr_fname[TASM] )
         mov rsi,rax
         .if ( GetExtPart( rax ) == rsi )
             tstrlen(rsi)
@@ -1047,27 +1046,27 @@ ReswTableInit endp
 
 open_files proc private uses rsi rdi
 
-    .if !fopen( MODULE.curr_fname[ASM*string_t], "rb" )
+    .if !fopen( MODULE.curr_fname[TASM], "rb" )
         ;
         ; will not return..
         ;
-        asmerr( 1000, MODULE.curr_fname[ASM*string_t] )
+        asmerr( 1000, MODULE.curr_fname[TASM] )
     .endif
-    mov MODULE.curr_file[ASM*string_t],rax
+    mov MODULE.curr_file[TASM],rax
 
     .if ( !Options.syntax_check_only )
 
-        .if !fopen( MODULE.curr_fname[OBJ*string_t], "wb" )
+        .if !fopen( MODULE.curr_fname[TOBJ], "wb" )
 
-            asmerr( 1000, MODULE.curr_fname[OBJ*string_t] )
+            asmerr( 1000, MODULE.curr_fname[TOBJ] )
         .endif
-        mov MODULE.curr_file[OBJ*string_t],rax
+        mov MODULE.curr_file[TOBJ],rax
     .endif
     .if ( Options.write_listing )
-        .if !fopen( MODULE.curr_fname[LST*string_t],"wb" )
-            asmerr( 1000, MODULE.curr_fname[LST*string_t] )
+        .if !fopen( MODULE.curr_fname[TLST],"wb" )
+            asmerr( 1000, MODULE.curr_fname[TLST] )
         .endif
-        mov MODULE.curr_file[LST*string_t],rax
+        mov MODULE.curr_file[TLST],rax
     .endif
     ret
 
@@ -1118,44 +1117,44 @@ close_files proc __ccall uses rsi rdi
     ; That's because Fatal() may cause close_files() to be
     ; reentered and thus cause an endless loop.
 
-    mov rax,MODULE.curr_file[ASM*string_t]
+    mov rax,MODULE.curr_file[TASM]
     .if rax
 
         .if fclose( rax )
 
-            asmerr( 3021, MODULE.curr_fname[ASM*string_t] )
+            asmerr( 3021, MODULE.curr_fname[TASM] )
         .endif
     .endif
 
-    mov rax,MODULE.curr_file[OBJ*string_t]
+    mov rax,MODULE.curr_file[TOBJ]
     .if rax
         .if fclose( rax )
 
-            asmerr( 3021, MODULE.curr_fname[OBJ*string_t] )
+            asmerr( 3021, MODULE.curr_fname[TOBJ] )
         .endif
     .endif
 
     .if ( ( !Options.syntax_check_only && MODULE.error_count ) || remove_obj )
 
         mov remove_obj,0
-        remove( MODULE.curr_fname[OBJ*string_t] )
+        remove( MODULE.curr_fname[TOBJ] )
     .endif
 
-    mov rax,MODULE.curr_file[LST*string_t]
+    mov rax,MODULE.curr_file[TLST]
     .if rax
 
         fclose( rax )
-        mov MODULE.curr_file[LST*string_t],0
+        mov MODULE.curr_file[TLST],0
     .endif
 
-    mov rax,MODULE.curr_file[ERR*string_t]
+    mov rax,MODULE.curr_file[TERR]
     .if rax
 
         fclose( rax )
-        mov MODULE.curr_file[ERR*string_t],0
-    .elseif ( MODULE.curr_fname[ERR*string_t] )
+        mov MODULE.curr_file[TERR],0
+    .elseif ( MODULE.curr_fname[TERR] )
 
-        remove( MODULE.curr_fname[ERR*string_t] )
+        remove( MODULE.curr_fname[TERR] )
     .endif
     ret
 
@@ -1210,7 +1209,7 @@ SetFilenames proc __ccall private uses rsi rdi rbx fn:string_t
 
    .new path[260]:byte
 
-    mov MODULE.curr_fname[ASM*string_t],LclDup( ldr(fn) )
+    mov MODULE.curr_fname[TASM],LclDup( ldr(fn) )
 
     mov rsi,GetFNamePart( rax )
     mov edi,ASM+1
@@ -1268,7 +1267,7 @@ AssembleInit proc __ccall private source:string_t
 
     MemInit()
     mov write_to_file,0
-    mov LinnumQueue.head,0
+    mov MODULE.LinnumQueue.head,0
     SetFilenames(source)
     FastpassInit()
     open_files()
@@ -1403,22 +1402,22 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
                     mov rsi,[rsi].asym.next
                 .endw
             .else
-                QueueDeleteLinnum( &LinnumQueue )
-                mov LinnumQueue.head,0
+                QueueDeleteLinnum( &MODULE.LinnumQueue )
+                mov MODULE.LinnumQueue.head,0
             .endif
         .endif
 
-        rewind( MODULE.curr_file[ASM*string_t] )
+        rewind( MODULE.curr_file[TASM] )
         .if ( write_to_file && Options.output_format == OFORMAT_OMF )
             omf_set_filepos()
         .endif
 
         inc Parse_Pass
-        .if ( MODULE.curr_file[LST*string_t] )
+        .if ( MODULE.curr_file[TLST] )
 
             .if ( !UseSavedState )
 
-                rewind( MODULE.curr_file[LST*string_t] )
+                rewind( MODULE.curr_file[TLST] )
                 LstInit()
 
             .elseif ( Parse_Pass == PASS_2 && Options.first_pass_listing )

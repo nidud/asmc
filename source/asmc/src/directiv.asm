@@ -127,7 +127,7 @@ IncludeDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ldr rbx,tokenarray
 
-    .if ( CurrFile[LST*string_t] )
+    .if ( CurrFile[TLST] )
         LstWriteSrcLine()
     .endif
 

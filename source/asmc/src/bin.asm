@@ -1294,7 +1294,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
 
     ; v2.10: name+ext of dll
 
-    .for ( rbx = CurrFName[OBJ*string_t], rbx += tstrlen( rbx ): rbx > CurrFName[OBJ*string_t]: rbx-- )
+    .for ( rbx = CurrFName[TOBJ], rbx += tstrlen( rbx ): rbx > CurrFName[TOBJ]: rbx-- )
         .break .if ( B[rbx] == '/' || B[rbx] == '\' || B[rbx] == ':' )
     .endf
     AddLineQueueX( "@%s_name db '%s',0", name, rbx )
@@ -1672,7 +1672,7 @@ AddManifestdependency proc __ccall uses rsi rdi rbx dependency:string_t
     ldr rbx,dependency
     add rbx,16
 
-    .if tstrrchr( tstrcpy( &file, GetFNamePart( MODULE.curr_fname[ASM*string_t] ) ), '.' )
+    .if tstrrchr( tstrcpy( &file, GetFNamePart( MODULE.curr_fname[TASM] ) ), '.' )
         mov byte ptr [rax],0
     .endif
 
@@ -2639,11 +2639,11 @@ endif
 
     assume rdi:nothing
 
-    .if ( CurrFile[LST*string_t] )
+    .if ( CurrFile[TLST] )
 
         ; go to EOF
 
-        fseek( CurrFile[LST*string_t], 0, SEEK_END )
+        fseek( CurrFile[TLST], 0, SEEK_END )
         LstNL()
         LstNL()
         LstPrintf( szCaption )
@@ -2657,7 +2657,7 @@ endif
 
     .if ( cp.sizehdr )
 
-        fwrite( hdrbuf, 1, cp.sizehdr, CurrFile[OBJ*string_t] )
+        fwrite( hdrbuf, 1, cp.sizehdr, CurrFile[TOBJ] )
         .if ( eax  != cp.sizehdr )
             WriteError()
         .endif
@@ -2717,7 +2717,7 @@ ifdef _LIN64
             mov _rdi,rdi
             mov _rsi,rsi
 endif
-            fseek( CurrFile[OBJ*string_t], [rsi].fileoffset, SEEK_SET )
+            fseek( CurrFile[TOBJ], [rsi].fileoffset, SEEK_SET )
 ifdef _LIN64
             mov rsi,_rsi
 endif
@@ -2730,7 +2730,7 @@ endif
                 .elseif ( [rsi].start_loc )
 
                     .for ( ebx = [rsi].start_loc : ebx : ebx-- )
-                        fwrite( &nullbyt, 1, 1, CurrFile[OBJ*string_t] )
+                        fwrite( &nullbyt, 1, 1, CurrFile[TOBJ] )
                     .endf
 ifdef _LIN64
                     mov rsi,_rsi
@@ -2739,16 +2739,16 @@ endif
                 .endif
 ifdef _LIN64
                 mov rdi,rsi
-                fwrite( [rdi].seg_info.CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
+                fwrite( [rdi].seg_info.CodeBuffer, 1, size, CurrFile[TOBJ] )
 else
-                fwrite( [rsi].CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
+                fwrite( [rsi].CodeBuffer, 1, size, CurrFile[TOBJ] )
 endif
                 .if ( eax != size )
                     WriteError()
                 .endif
             .else
                 .for ( : size : size-- )
-                    fwrite( &nullbyt, 1, 1, CurrFile[OBJ*string_t] )
+                    fwrite( &nullbyt, 1, 1, CurrFile[TOBJ] )
                 .endf
             .endif
 ifdef _LIN64
@@ -2761,7 +2761,7 @@ endif
 
     .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
 
-        mov ecx,ftell( CurrFile[OBJ*string_t] )
+        mov ecx,ftell( CurrFile[TOBJ] )
         mov eax,cp.rawpagesize
         dec eax
         .if ( ecx & eax )
@@ -2770,11 +2770,11 @@ endif
             sub ebx,eax
 if 1
             .for ( : ebx : ebx-- )
-                fwrite( &nullbyt, 1, 1, CurrFile[OBJ*string_t] )
+                fwrite( &nullbyt, 1, 1, CurrFile[TOBJ] )
             .endf
 else
             tmemset( alloca(ebx), 0, size )
-            fwrite( rax, 1, ebx, CurrFile[OBJ*string_t] )
+            fwrite( rax, 1, ebx, CurrFile[TOBJ] )
 endif
         .endif
     .endif

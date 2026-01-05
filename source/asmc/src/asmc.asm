@@ -53,7 +53,7 @@ setoname proc __ccall private uses rsi rdi rbx file:string_t, newo:string_t
    .new optr:string_t = NULL
    .new name[_MAX_PATH]:char_t
 
-    mov rbx,Options.global_options.names[OBJ*string_t]
+    mov rbx,Options.global_options.names[TOBJ]
     .if ( rbx )
 
         .if ( tstrchr( rbx, '*' ) )
@@ -64,7 +64,7 @@ setoname proc __ccall private uses rsi rdi rbx file:string_t, newo:string_t
 
             mov optr,rbx
             mov rdx,newo
-            mov Options.global_options.names[OBJ*string_t],rdx
+            mov Options.global_options.names[TOBJ],rdx
 
             .while 1
 
@@ -258,7 +258,7 @@ AssembleSubdir proc uses rbx directory:string_t, wild:string_t
         .endif
         mov rax,optr
         .if ( rax )
-            mov Options.global_options.names[OBJ*string_t],rax
+            mov Options.global_options.names[TOBJ],rax
         .endif
         mov rcx,rbx
         mov rbx,[rbx].SourceFile.next
@@ -337,7 +337,7 @@ AssembleSubdir proc private uses rsi rdi rbx directory:string_t, wild:string_t
                 mov rc,AssembleModule( strfcat( rsi, directory, rbx ) )
                 mov rax,optr
                 .if ( rax )
-                    mov Options.global_options.names[OBJ*string_t],rax
+                    mov Options.global_options.names[TOBJ],rax
                 .endif
             .endif
         .until !FindNextFile( h, rdi )
@@ -541,7 +541,7 @@ endif
         write_logo()
 
         inc numFiles
-        mov rbx,Options.names[ASM*string_t]
+        mov rbx,Options.names[TASM]
 ifndef __UNIX__
 
         .if ( !Options.process_subdir )
@@ -694,11 +694,11 @@ ifdef __UNIX__
                         CollectLinkObject("-l:x86/libasmc.a")
                     .endif
                 .endif
-            .elseif ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
+            .elseif ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) && !Options.line_numbers )
                 CollectLinkOption("-Wl,-z,noexecstack")
             .endif
 
-            .if ( !( flags & O_STRIP ) )
+            .if ( !( flags & O_STRIP ) && !Options.line_numbers )
                 CollectLinkOption("-s")
             .endif
             .if ( !( flags & O_EXENAME ) )

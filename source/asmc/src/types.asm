@@ -466,7 +466,7 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( CurrStruct )
             UpdateStructSize( rdi )
         .endif
-        .if ( CurrFile[LST*size_t] )
+        .if ( CurrFile[TLST] )
             LstWrite( LSTTYPE_STRUCT, ebx, rdi )
         .endif
         .return( NOT_ERROR )
@@ -565,7 +565,7 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov [rdi].asym.name_size,0
     .endif
 
-    .if ( CurrFile[LST*size_t] )
+    .if ( CurrFile[TLST] )
         LstWrite( LSTTYPE_STRUCT, si, rdi )
     .endif
 

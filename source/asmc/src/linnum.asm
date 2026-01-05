@@ -15,7 +15,6 @@ include extern.inc
 include linnum.inc
 include omf.inc
 
-externdef LinnumQueue:qdesc ; queue of line_num_info items ( OMF only )
 externdef procidx:int_t
 
 .data
@@ -29,7 +28,7 @@ AddLinnumData proc __ccall private uses rsi rdi rbx data:ptr line_num_info
     mov rbx,CurrSeg
     mov rdi,[rbx].asym.seginfo
 
-    .if ( Options.output_format == OFORMAT_COFF )
+    .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
         mov rsi,[rdi].seg_info.LinnumQueue
         .if ( rsi == NULL )
             mov rsi,LclAlloc( sizeof( qdesc ) )
@@ -37,7 +36,7 @@ AddLinnumData proc __ccall private uses rsi rdi rbx data:ptr line_num_info
             mov [rsi].qdesc.head,NULL
         .endif
     .else
-        lea rsi,LinnumQueue
+        lea rsi,MODULE.LinnumQueue
     .endif
     mov rdi,data
     mov [rdi].line_num_info.next,NULL

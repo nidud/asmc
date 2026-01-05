@@ -91,6 +91,16 @@ CCALLBACK macro id, arguments:VARARG
     exitm <id typedef ptr ?&id&>
     endm
 
+    qnode_t         typedef ptr qnode
+    qdesc_t         typedef ptr qdesc
+    qitem_t         typedef ptr qitem
+    qditem_t        typedef ptr qditem
+    dlldesc_t       typedef ptr dll_desc
+    srcitem_t       typedef ptr src_item
+    hllitem_t       typedef ptr hll_item
+    stritem_t       typedef ptr str_item
+    nspace_t        typedef ptr nsp_item
+
 include ltype.inc
 include token.inc
 include symbols.inc
@@ -325,6 +335,13 @@ define FCT_VEC64    5
 
 ; file extensions. Order must match first entries in enum opt_names!
 
+.enumt tfile_extensions : size_t {
+    TASM,
+    TOBJ,
+    TLST,
+    TERR
+    }
+
 .enum file_extensions {
     ASM, ; must be first; see SetFilenames() in assembly.asm
     OBJ,
@@ -449,17 +466,6 @@ define SIT_MACRO        1
     PREFER_EVEX     = 0x04,    ; Use EVEX encoding in preference to VEX encoding.
     NO_EVEX         = 0x08,    ; Don't encode using EVEX.
     }
-
-    qnode_t         typedef ptr qnode
-    qdesc_t         typedef ptr qdesc
-    qitem_t         typedef ptr qitem
-    qditem_t        typedef ptr qditem
-    dlldesc_t       typedef ptr dll_desc
-    srcitem_t       typedef ptr src_item
-    hllitem_t       typedef ptr hll_item
-    stritem_t       typedef ptr str_item
-    nspace_t        typedef ptr nsp_item
-
 
 .template hll_item
     next            hllitem_t ?
@@ -796,6 +802,7 @@ define PE_DLL               0x04
     maxlinelen              dd ?
     PubQueue                qdesc <>        ; PUBLIC items
     LnameQueue              qdesc <>        ; LNAME items (segments, groups and classes)
+    LinnumQueue             qdesc <>
     SafeSEHQueue            qdesc <>        ; list of safeseh handlers
     LibQueue                qdesc <>        ; includelibs
     LinkQueue               qdesc <>        ; .pragma comment(linker,"/..")
@@ -854,7 +861,6 @@ externdef               Options         : global_options
 externdef               write_to_file   : uint_t
 externdef               DefaultDir      : string_t      ; * NUM_FILE_TYPES
 externdef               MacroLevel      : uint_t
-externdef               LinnumQueue     : qdesc
 externdef               ModelToken      : string_t
 externdef               LastCodeBufSize : int_t
 externdef               stackreg        : uint_t

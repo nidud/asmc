@@ -40,7 +40,7 @@ WriteCodeLabel proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t
     ;
     ; ensure the listing is written with the FULL source line
     ;
-    .if ( MODULE.curr_file[LST*size_t] )
+    .if ( MODULE.curr_file[TLST] )
 
         LstWrite(LSTTYPE_LABEL, 0, 0)
     .endif

@@ -3778,11 +3778,11 @@ else
 endif
             .endif
             .while ( ebx >= 8 )
-                fwrite( "        ", 1, 8, CurrFile[LST*size_t] )
+                fwrite( "        ", 1, 8, CurrFile[TLST] )
                 sub ebx,8
             .endw
             .if ( ebx )
-                fwrite( "        ", 1, ebx, CurrFile[LST*size_t] )
+                fwrite( "        ", 1, ebx, CurrFile[TLST] )
             .endif
         .endif
     .endif

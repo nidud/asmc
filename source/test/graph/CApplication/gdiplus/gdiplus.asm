@@ -51,26 +51,24 @@ define CLASS_NAME   <"MainWindowClass">
 define WINDOW_NAME  <"Windows samples">
 define ID_TIMER     1
 
-    .code
+   .code
+
+    assume class:rbx
 
 ; Runs the application
 
 CApplication::Run proc
 
-   .new result:int_t = 0
-   .new gdiplus:GdiPlus()
-
-    this.BeforeEnteringMessageLoop()
-    .if (SUCCEEDED(eax))
-
-        mov result,this.EnterMessageLoop()
+    .new result:int_t = 0
+    .new gdiplus:GdiPlus()
+    .if SUCCEEDED(BeforeEnteringMessageLoop())
+        mov result,EnterMessageLoop()
     .else
         MessageBox(NULL, "An error occuring when running the sample", NULL, MB_OK)
     .endif
-
-    this.AfterLeavingMessageLoop()
-   .return result
-
+    AfterLeavingMessageLoop()
+    mov eax,result
+    ret
     endp
 
 
@@ -78,9 +76,8 @@ CApplication::Run proc
 ; before entering the message loop.
 
 CApplication::BeforeEnteringMessageLoop proc
-
-    .return this.CreateApplicationWindow()
-
+    CreateApplicationWindow()
+    ret
     endp
 
 
@@ -90,7 +87,7 @@ CApplication::EnterMessageLoop proc
 
     .new result:int_t = 0
 
-    .if ( this.ShowApplicationWindow() )
+    .if ShowApplicationWindow()
 
         .new msg:MSG
         .while ( GetMessage( &msg, NULL, 0, 0 ) )
@@ -98,41 +95,33 @@ CApplication::EnterMessageLoop proc
             TranslateMessage( &msg )
             DispatchMessage( &msg )
         .endw
-        mov result, msg.wParam
+        mov result,msg.wParam
     .endif
-    .return result
-
+    .return( result )
     endp
 
 
 ; Destroys the application window, DirectComposition device and visual tree.
 
 CApplication::AfterLeavingMessageLoop proc
-
-   .return this.DestroyApplicationWindow()
-
+    DestroyApplicationWindow()
+    ret
     endp
 
 
 ; Shows the application window
 
-    assume rdi:ptr CApplication
+CApplication::ShowApplicationWindow proc
 
-CApplication::ShowApplicationWindow proc uses rdi
+    .new bSucceeded:BOOL = TRUE
 
-   .new bSucceeded:BOOL = TRUE
-
-    mov rdi,this
-    .if ( [rdi].m_hwnd == NULL )
-
+    .if ( m_hwnd == NULL )
         mov bSucceeded,FALSE
     .endif
-
     .if ( bSucceeded )
-
-        ShowWindow([rdi].m_hwnd, SW_SHOW)
-        UpdateWindow([rdi].m_hwnd)
-        SetTimer([rdi].m_hwnd, ID_TIMER, 20, NULL)
+        ShowWindow(m_hwnd, SW_SHOW)
+        UpdateWindow(m_hwnd)
+        SetTimer(m_hwnd, ID_TIMER, 20, NULL)
     .endif
     .return bSucceeded
 
@@ -141,32 +130,30 @@ CApplication::ShowApplicationWindow proc uses rdi
 
 ; Destroys the applicaiton window
 
-CApplication::DestroyApplicationWindow proc uses rdi
+CApplication::DestroyApplicationWindow proc
 
-    mov rdi,this
-    .if ( [rdi].m_hwnd != NULL )
+    .if ( m_hwnd != NULL )
 
-        .if ( [rdi].m_bitmap )
-            DeleteObject( [rdi].m_bitmap )
+        .if ( m_bitmap )
+            DeleteObject( m_bitmap )
         .endif
-        KillTimer( [rdi].m_hwnd, ID_TIMER )
-        DestroyWindow( [rdi].m_hwnd )
-        mov [rdi].m_hwnd,NULL
+        KillTimer( m_hwnd, ID_TIMER )
+        DestroyWindow( m_hwnd )
+        mov m_hwnd,NULL
     .endif
     ret
-
     endp
 
 
-CApplication::OnSize proc uses rsi rdi rbx lParam:LPARAM
+    assume rsi:ptr object
 
-    mov     rdi,this
+CApplication::OnSize proc uses rsi rdi lParam:LPARAM
+
     mov     rdx,lParam
     movzx   eax,dx
     shr     edx,16
-    mov     [rdi].m_width,eax
-    mov     [rdi].m_height,edx
-
+    mov     m_width,eax
+    mov     m_height,edx
     mov     ecx,eax
     cmp     eax,edx
     cmova   ecx,edx
@@ -174,39 +161,36 @@ CApplication::OnSize proc uses rsi rdi rbx lParam:LPARAM
     mov     edx,ColorAlpha(Green, 180)
     mov     eax,ColorAlpha(Blue, 180)
 
-    .for ( rsi = &[rdi].m_obj, ebx = 1: ebx < MAXOBJ+1: ebx++, rsi += sizeof(object) )
+    .for ( rsi = &m_obj, edi = 1 : edi < MAXOBJ+1 : edi++, rsi += sizeof(object) )
 
-        mov [rsi].object.m_mov.x,ebx
-        mov [rsi].object.m_mov.y,ebx
-        mov [rsi].object.m_pos.x,ecx
-        mov [rsi].object.m_pos.y,ecx
-        mov [rsi].object.m_radius,ecx
-        mov [rsi].object.m_color,eax
+        mov [rsi].m_mov.x,edi
+        mov [rsi].m_mov.y,edi
+        mov [rsi].m_pos.x,ecx
+        mov [rsi].m_pos.y,ecx
+        mov [rsi].m_radius,ecx
+        mov [rsi].m_color,eax
         mov eax,edx
         mov edx,ColorAlpha(Red, 180)
     .endf
 
-    .if ( [rdi].m_bitmap )
+    .if ( m_bitmap )
 
-        DeleteObject([rdi].m_bitmap)
-        mov [rdi].m_bitmap,NULL
+        DeleteObject(m_bitmap)
+        mov m_bitmap,NULL
     .endif
     .return 1
 
     endp
 
 
-    assume rsi:ptr object
+CApplication::OnTimer proc uses rsi rdi
 
-CApplication::OnTimer proc uses rsi rdi rbx
+   .return 0 .if ( m_bitmap == NULL )
 
-    mov rdi,this
-   .return 0 .if ( [rdi].m_bitmap == NULL )
-
-   .new hdc:HDC = GetDC([rdi].m_hwnd)
+   .new hdc:HDC = GetDC(m_hwnd)
    .new mem:HDC = CreateCompatibleDC(hdc)
 
-    SelectObject(mem, [rdi].m_bitmap)
+    SelectObject(mem, m_bitmap)
 
    .new g:Graphics(mem)
     g.SetSmoothingMode(SmoothingModeHighQuality)
@@ -216,56 +200,56 @@ CApplication::OnTimer proc uses rsi rdi rbx
    .new count:SINT = 1
    .new FullTranslucent:ARGB = ColorAlpha(Black, 230)
 
-    .for ( rsi = &[rdi].m_obj, i = 0: i < MAXOBJ: i++, rsi += sizeof(object) )
+    .for ( rsi = &m_obj, i = 0: i < MAXOBJ: i++, rsi += sizeof(object) )
 
        .new p:GraphicsPath()
-        mov ebx,[rsi].m_radius
+        mov edi,[rsi].m_radius
         mov edx,[rsi].m_pos.x
-        sub edx,ebx
+        sub edx,edi
         mov eax,[rsi].m_pos.y
-        sub eax,ebx
-        add ebx,ebx
-        p.AddEllipse(edx, eax, ebx, ebx)
+        sub eax,edi
+        add edi,edi
+        p.AddEllipse(edx, eax, edi, edi)
 
        .new b:PathGradientBrush(&p)
         b.SetCenterColor([rsi].m_color)
         b.SetSurroundColors(&FullTranslucent, &count)
 
-        mov ebx,[rsi].m_radius
+        mov edi,[rsi].m_radius
         mov edx,[rsi].m_pos.x
-        sub edx,ebx
+        sub edx,edi
         mov eax,[rsi].m_pos.y
-        sub eax,ebx
-        add ebx,ebx
-        g.FillEllipse(&b, edx, eax, ebx, ebx)
+        sub eax,edi
+        add edi,edi
+        g.FillEllipse(&b, edx, eax, edi, edi)
         b.Release()
         p.Release()
     .endf
 
     g.Release()
 
-    mov ecx,[rdi].m_rc.right
-    sub ecx,[rdi].m_rc.left
-    mov edx,[rdi].m_rc.bottom
-    sub edx,[rdi].m_rc.top
-    BitBlt(hdc, [rdi].m_rc.left, [rdi].m_rc.top, ecx, edx, mem, 0, 0, SRCCOPY)
-    ReleaseDC([rdi].m_hwnd, hdc)
+    mov ecx,m_rc.right
+    sub ecx,m_rc.left
+    mov edx,m_rc.bottom
+    sub edx,m_rc.top
+    BitBlt(hdc, m_rc.left, m_rc.top, ecx, edx, mem, 0, 0, SRCCOPY)
+    ReleaseDC(m_hwnd, hdc)
     DeleteDC(mem)
 
-   .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < MAXOBJ: ebx++, rsi += sizeof(object) )
+   .for ( rsi = &m_obj, edi = 0: edi < MAXOBJ: edi++, rsi += sizeof(object) )
 
         add [rsi].m_pos.x,[rsi].m_mov.x
         add [rsi].m_pos.y,[rsi].m_mov.y
 
-        mov eax,[rdi].m_rc.right
-        sub eax,[rdi].m_rc.left
+        mov eax,m_rc.right
+        sub eax,m_rc.left
         mov ecx,[rsi].m_pos.x
         add ecx,[rsi].m_radius
         .if ( ecx >= eax || [rsi].m_pos.x <= [rsi].m_radius )
             neg [rsi].m_mov.x
         .endif
-        mov eax,[rdi].m_rc.bottom
-        sub eax,[rdi].m_rc.top
+        mov eax,m_rc.bottom
+        sub eax,m_rc.top
         mov ecx,[rsi].m_pos.y
         add ecx,[rsi].m_radius
         .if ( ecx >= eax || [rsi].m_pos.y <= [rsi].m_radius )
@@ -279,16 +263,13 @@ CApplication::OnTimer proc uses rsi rdi rbx
 
 ; Handles the WM_KEYDOWN message
 
-    assume rcx:ptr CApplication
-
 CApplication::OnKeyDown proc wParam:WPARAM
 
-    mov rcx,this
-    mov rdx,wParam
+    ldr rdx,wParam
     .switch edx
     .case VK_DOWN
-        .endc .if ( [rcx].m_obj.m_mov.x == 1 || [rcx].m_obj.m_mov.x == -1 )
-        .for ( rdx = &[rcx].m_obj, ecx = 0: ecx < MAXOBJ: ecx++, rdx += sizeof(object) )
+        .endc .if ( m_obj.m_mov.x == 1 || m_obj.m_mov.x == -1 )
+        .for ( rdx = &m_obj, ecx = 0: ecx < MAXOBJ: ecx++, rdx += sizeof(object) )
             mov eax,[rdx].object.m_mov.x
             .ifs ( eax > 1 || eax < -1 )
                 .if ( [rdx].object.m_mov.x < 0 )
@@ -305,8 +286,8 @@ CApplication::OnKeyDown proc wParam:WPARAM
         .endf
         .endc
     .case VK_UP
-        .endc .if ( [rcx].m_obj.m_mov.x == 30 || [rcx].m_obj.m_mov.x == -30 )
-        .for ( rdx = &[rcx].m_obj, ecx = 0: ecx < MAXOBJ: ecx++, rdx += sizeof(object) )
+        .endc .if ( m_obj.m_mov.x == 30 || m_obj.m_mov.x == -30 )
+        .for ( rdx = &m_obj, ecx = 0: ecx < MAXOBJ: ecx++, rdx += sizeof(object) )
             .if ( [rdx].object.m_mov.x < 0 )
                 dec [rdx].object.m_mov.x
             .else
@@ -329,13 +310,10 @@ CApplication::OnKeyDown proc wParam:WPARAM
 
 CApplication::OnClose proc
 
-    mov rcx,this
-    .if ( [rcx].m_hwnd != NULL )
+    .if ( m_hwnd != NULL )
 
-        DestroyWindow( [rcx].m_hwnd )
-
-        mov rcx,this
-        mov [rcx].m_hwnd,NULL
+        DestroyWindow( m_hwnd )
+        mov m_hwnd,NULL
     .endif
     .return 0
 
@@ -355,24 +333,22 @@ CApplication::OnDestroy proc
 
 ; Handles the WM_PAINT message
 
-CApplication::OnPaint proc uses rdi
+CApplication::OnPaint proc
 
    .new rcClient:RECT
    .new ps:PAINTSTRUCT
    .new height:int_t = 0
 
-    mov rdi,this
-
-   .new hdc:HDC = BeginPaint([rdi].m_hwnd, &ps)
+   .new hdc:HDC = BeginPaint(m_hwnd, &ps)
 
     ; get the dimensions of the main window.
 
-    GetClientRect([rdi].m_hwnd, &rcClient)
+    GetClientRect(m_hwnd, &rcClient)
 
-    mov [rdi].m_rc.left,50
-    mov eax,[rdi].m_width
+    mov m_rc.left,50
+    mov eax,m_width
     sub eax,50
-    mov [rdi].m_rc.right,eax
+    mov m_rc.right,eax
 
     ; Logo
 
@@ -400,7 +376,7 @@ CApplication::OnPaint proc uses rdi
    .new htitle:HFONT = CreateFont(IDS_FONT_HEIGHT_TITLE, ecx, ecx, ecx, ecx, ecx,
             ecx, ecx, ecx, ecx, ecx, ecx, ecx, IDS_FONT_TYPEFACE) ; Title Font and Size
 
-    .if (htitle != NULL)
+    .if ( htitle != NULL )
 
        .new hOldFont:HFONT = SelectObject(hdc, htitle)
 
@@ -423,7 +399,7 @@ CApplication::OnPaint proc uses rdi
             ecx, ecx, ecx, ecx, ecx, ecx, ecx, ecx, ecx,
             IDS_FONT_TYPEFACE) ; Description Font and Size
 
-    .if (hdescription != NULL)
+    .if ( hdescription != NULL )
 
        .new hOldFont:HFONT = SelectObject(hdc, hdescription)
 
@@ -432,54 +408,51 @@ CApplication::OnPaint proc uses rdi
         mov rcClient.top,eax
         mov rcClient.left,50
 
-        DrawText(hdc,
-            "This sample use the CApplication class and GDI+",
-            -1, &rcClient, DT_WORDBREAK)
+        DrawText(hdc, "This sample use the CApplication class and GDI+", -1, &rcClient, DT_WORDBREAK)
 
         add eax,rcClient.top
         add eax,6
-        mov [rdi].m_rc.top,eax
-        mov eax,[rdi].m_height
+        mov m_rc.top,eax
+        mov eax,m_height
         sub eax,100
         mov rcClient.top,eax
         sub eax,16
-        mov [rdi].m_rc.bottom,eax
-        mov eax,[rdi].m_width
+        mov m_rc.bottom,eax
+        mov eax,m_width
         shr eax,1
         mov rcClient.left,eax
 
         DrawText(hdc,
             "A) Use keys UP or DOWN to adjust the speed.\n"
-            "B) Escape to exit the application.", -1, &rcClient,
-            DT_WORDBREAK)
+            "B) Escape to exit the application.", -1, &rcClient, DT_WORDBREAK)
         SelectObject(hdc, hOldFont)
         DeleteObject(hdescription)
     .endif
-    EndPaint([rdi].m_hwnd, &ps)
+    EndPaint(m_hwnd, &ps)
 
-    mov edx,[rdi].m_rc.bottom
-    sub edx,[rdi].m_rc.top
+    mov edx,m_rc.bottom
+    sub edx,m_rc.top
     .ifs ( edx > 100 )
-        mov ecx,[rdi].m_rc.right
-        sub ecx,[rdi].m_rc.left
+        mov ecx,m_rc.right
+        sub ecx,m_rc.left
         .ifs ( ecx > 100 )
 
-            mov hdc,GetDC([rdi].m_hwnd)
-            mov ecx,[rdi].m_rc.right
-            sub ecx,[rdi].m_rc.left
-            mov edx,[rdi].m_rc.bottom
-            sub edx,[rdi].m_rc.top
-            mov [rdi].m_bitmap,CreateCompatibleBitmap(hdc, ecx, edx)
-            ReleaseDC([rdi].m_hwnd, hdc)
+            mov hdc,GetDC(m_hwnd)
+            mov ecx,m_rc.right
+            sub ecx,m_rc.left
+            mov edx,m_rc.bottom
+            sub edx,m_rc.top
+            mov m_bitmap,CreateCompatibleBitmap(hdc, ecx, edx)
+            ReleaseDC(m_hwnd, hdc)
 
-            mov eax,[rdi].m_rc.right
-            sub eax,[rdi].m_rc.left
+            mov eax,m_rc.right
+            sub eax,m_rc.left
             shr eax,1
-            mov ecx,[rdi].m_rc.bottom
-            sub ecx,[rdi].m_rc.top
+            mov ecx,m_rc.bottom
+            sub ecx,m_rc.top
             shr ecx,1
             .new i:int_t
-            .for ( rdx = &[rdi].m_obj, i = 0: i < MAXOBJ: i++, rdx += sizeof(object) )
+            .for ( rdx = &m_obj, i = 0: i < MAXOBJ: i++, rdx += sizeof(object) )
                 mov [rdx].object.m_pos.x,eax
                 mov [rdx].object.m_pos.y,ecx
             .endf
@@ -534,9 +507,7 @@ WindowProc proc WINAPI hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
 ; Creates the application window
 
-CApplication::CreateApplicationWindow proc uses rdi
-
-    mov rdi,this
+CApplication::CreateApplicationWindow proc
 
     .new wc:WNDCLASSEX = {
         WNDCLASSEX,                     ; .cbSize
@@ -544,7 +515,7 @@ CApplication::CreateApplicationWindow proc uses rdi
         &WindowProc,                    ; .lpfnWndProc
         0,                              ; .cbClsExtra
         sizeof(LONG_PTR),               ; .cbWndExtra
-        [rdi].m_hInstance,              ; .hInstance
+        m_hInstance,                    ; .hInstance
         NULL,                           ; .hIcon
         LoadCursor(NULL, IDC_ARROW),    ; .hCursor
         GetStockObject(BLACK_BRUSH),    ; .hbrBackground
@@ -557,29 +528,25 @@ CApplication::CreateApplicationWindow proc uses rdi
         .return E_FAIL
     .endif
 
-    .new rect:RECT = { 0, 0, [rdi].m_width, [rdi].m_height }
+    .new rect:RECT = { 0, 0, m_width, m_height }
 
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
 
     mov eax,rect.right
     sub eax,rect.left
-    mov [rdi].m_width,eax
+    mov m_width,eax
 
     mov eax,rect.bottom
     sub eax,rect.top
-    mov [rdi].m_height,eax
-
-    .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME,
-           WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
-           CW_USEDEFAULT, CW_USEDEFAULT,
-           [rdi].m_width, [rdi].m_height,
-           NULL, NULL, [rdi].m_hInstance, rdi) == NULL
-
-        .return E_UNEXPECTED
+    mov m_height,eax
+    mov m_hwnd,CreateWindowEx(0, CLASS_NAME, WINDOW_NAME, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
+           CW_USEDEFAULT, CW_USEDEFAULT, m_width, m_height, NULL, NULL, m_hInstance, rbx)
+    test rax,rax
+    mov eax,S_OK
+    .ifz
+        mov eax,E_UNEXPECTED
     .endif
-    mov [rdi].m_hwnd,rax
-   .return S_OK
-
+    ret
     endp
 
 

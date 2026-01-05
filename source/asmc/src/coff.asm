@@ -311,7 +311,7 @@ ifdef _LIN64
         push rsi
         push rdi
 endif
-        .ifd ( fwrite( &ish, 1, sizeof( ish ), CurrFile[OBJ*string_t] ) != sizeof( ish ) )
+        .ifd ( fwrite( &ish, 1, sizeof( ish ), CurrFile[TOBJ] ) != sizeof( ish ) )
             WriteError()
         .endif
 ifdef _LIN64
@@ -452,7 +452,7 @@ coff_write_symbol proc __ccall uses rsi rdi name:string_t, strpos:dword, value:d
     mov sym.Type,type
     mov sym.StorageClass,storageclass
     mov sym.NumberOfAuxSymbols,aux
-    .ifd ( fwrite( &sym, 1, sizeof( IMAGE_SYMBOL ), CurrFile[OBJ*string_t] ) != sizeof( IMAGE_SYMBOL ) )
+    .ifd ( fwrite( &sym, 1, sizeof( IMAGE_SYMBOL ), CurrFile[TOBJ] ) != sizeof( IMAGE_SYMBOL ) )
         WriteError()
     .endif
     ret
@@ -465,7 +465,7 @@ coff_write_aux proc __ccall uses rsi rdi sym:ptr, name:string_t
     .if ( name )
         tstrncpy( sym, name, IMAGE_AUX_SYMBOL )
     .endif
-    .ifd ( fwrite( sym, 1, IMAGE_AUX_SYMBOL, CurrFile[OBJ*string_t] ) != IMAGE_AUX_SYMBOL )
+    .ifd ( fwrite( sym, 1, IMAGE_AUX_SYMBOL, CurrFile[TOBJ] ) != IMAGE_AUX_SYMBOL )
         WriteError()
     .endif
     ret
@@ -1008,7 +1008,7 @@ coff_write_fixup proc __ccall uses rsi rdi adr:uint_32, index:uint_32, type:uint
     mov ir.SymbolTableIndex,index
     mov ir.Type,type
 
-    .ifd ( fwrite( &ir, 1, sizeof(ir), CurrFile[OBJ*string_t] ) != sizeof(ir) )
+    .ifd ( fwrite( &ir, 1, sizeof(ir), CurrFile[TOBJ] ) != sizeof(ir) )
         WriteError()
     .endif
     ret
@@ -1224,7 +1224,7 @@ endif
             .endif
 
             .if ( [rsi].CodeBuffer == NULL )
-                fseek( CurrFile[OBJ*string_t], ebx, SEEK_CUR )
+                fseek( CurrFile[TOBJ], ebx, SEEK_CUR )
             .else
 
                 ; if there was an ORG, the buffer content will
@@ -1236,11 +1236,11 @@ endif
 
                     ; v2.19: write null bytes instead of fseek()
 
-                    ;fseek( CurrFile[OBJ*string_t], [rsi].start_loc, SEEK_CUR )
+                    ;fseek( CurrFile[TOBJ], [rsi].start_loc, SEEK_CUR )
 
                     .new nullbyt:char_t = NULLC
                     .for ( i = eax : i : i-- )
-                        fwrite( &nullbyt, 1, 1, CurrFile[OBJ*string_t] )
+                        fwrite( &nullbyt, 1, 1, CurrFile[TOBJ] )
                     .endf
 ifdef _LIN64
                     mov rsi,_rsi
@@ -1248,7 +1248,7 @@ endif
                     sub ebx,[rsi].start_loc
                 .endif
                 mov rax,[rsi].CodeBuffer
-                .if ( fwrite( rax, 1, ebx, CurrFile[OBJ*string_t] ) != rbx )
+                .if ( fwrite( rax, 1, ebx, CurrFile[TOBJ] ) != rbx )
                     WriteError()
                 .endif
             .endif
@@ -1336,7 +1336,7 @@ ifdef _LIN64
                 mov _rsi,rsi
                 mov _rdi,rdi
 endif
-                .ifd ( fwrite( &il, 1, sizeof(il), CurrFile[OBJ*string_t] ) != sizeof(il) )
+                .ifd ( fwrite( &il, 1, sizeof(il), CurrFile[TOBJ] ) != sizeof(il) )
                     WriteError()
                 .endif
 ifdef _LIN64
@@ -1595,7 +1595,7 @@ coff_write_module proc uses rsi rdi rbx
     mov cm.size,sizeof( uint_32 )
 
     ; get value for .file symbol
-    mov cm.dot_file_value,CurrFName[ASM*string_t]
+    mov cm.dot_file_value,CurrFName[TASM]
 
     ; it might be necessary to add "internal" sections:
     ; - .debug$S and .debug$T sections if -Zi was set
@@ -1699,7 +1699,7 @@ coff_write_module proc uses rsi rdi rbx
 
     ; position behind coff file header
 
-    fseek( CurrFile[OBJ*string_t], sizeof( ifh ), SEEK_SET )
+    fseek( CurrFile[TOBJ], sizeof( ifh ), SEEK_SET )
     coff_write_section_table( &cm )
     coff_write_data( &cm )
     mov ifh.NumberOfSymbols,coff_write_symbols( &cm )
@@ -1711,7 +1711,7 @@ coff_write_module proc uses rsi rdi rbx
     mov ifh.PointerToSymbolTable,eax
 
     .ifd ( fwrite( &cm.size, 1, sizeof( cm.size ),
-            CurrFile[OBJ*size_t] ) != sizeof( cm.size ) )
+            CurrFile[TOBJ] ) != sizeof( cm.size ) )
         WriteError()
     .endif
 
@@ -1720,11 +1720,11 @@ coff_write_module proc uses rsi rdi rbx
         inc tstrlen( &[rbx].string )
 ifdef _LIN64
         .new len:int_t = eax
-        fwrite( &[rbx].string, 1, len, CurrFile[OBJ*string_t] )
+        fwrite( &[rbx].string, 1, len, CurrFile[TOBJ] )
         .if ( eax != len )
 else
         mov edi,eax
-        .if ( fwrite( &[rbx].string, 1, edi, CurrFile[OBJ*string_t] ) != rdi )
+        .if ( fwrite( &[rbx].string, 1, edi, CurrFile[TOBJ] ) != rdi )
 endif
             WriteError()
         .endif
@@ -1732,8 +1732,8 @@ endif
 
     ; finally write the COFF file header
 
-    fseek( CurrFile[OBJ*string_t], 0, SEEK_SET )
-    .ifd ( fwrite( &ifh, 1, sizeof( ifh ), CurrFile[OBJ*string_t] ) != sizeof( ifh ) )
+    fseek( CurrFile[TOBJ], 0, SEEK_SET )
+    .ifd ( fwrite( &ifh, 1, sizeof( ifh ), CurrFile[TOBJ] ) != sizeof( ifh ) )
         WriteError()
     .endif
     .return( NOT_ERROR )

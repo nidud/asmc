@@ -13,7 +13,11 @@ define __LINNUM_INC
     number          dd ? ; source line number, v2.06: changed to 32-bit
     union
      offs           dd ?
-     line_number    dd ? ; is set if sym is != NULL ( COFF only ) :20, file:12;
+     line_number    dd ? ; is set if sym is != NULL ( COFF only )
+     record
+      line          dd : 20 ?
+      file          dd : 12 ?
+     ends
     ends
     union
      srcfile        dd ?

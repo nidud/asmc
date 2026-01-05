@@ -437,20 +437,20 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
     ;
     ; open .err file if not already open and a name is given
     ;
-    mov rbx,MODULE.curr_fname[ERR*string_t]
-    mov rcx,MODULE.curr_file[ERR*string_t]
+    mov rbx,MODULE.curr_fname[TERR]
+    mov rcx,MODULE.curr_file[TERR]
 
     .if ( !rcx && rbx )
 
         .if fopen( rbx, "w" )
 
-            mov MODULE.curr_file[ERR*string_t],rax
+            mov MODULE.curr_file[TERR],rax
         .else
             ;
             ; v2.06: no fatal error anymore if error file cannot be written
             ; set to NULL before asmerr()!
             ;
-            mov MODULE.curr_fname[ERR*string_t],rax
+            mov MODULE.curr_fname[TERR],rax
             ;
             ; disable -eq!
             ;
@@ -459,13 +459,13 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
         .endif
     .endif
 
-    mov rbx,MODULE.curr_file[ERR*string_t]
+    mov rbx,MODULE.curr_file[TERR]
     .if rbx
 
         fwrite( erbuf, 1, tstrlen(erbuf), rbx )
         fwrite( "\n", 1, 1, rbx )
 
-        .if ( Parse_Pass == PASS_1 && MODULE.curr_file[LST*string_t] )
+        .if ( Parse_Pass == PASS_1 && MODULE.curr_file[TLST] )
 
             GetCurrOffset()
             LstWrite( LSTTYPE_DIRECTIVE, eax, 0 )
@@ -480,16 +480,16 @@ print_err endp
 
 errexit proc __ccall private
 
-    .if MODULE.curr_fname[ASM*string_t]
+    .if MODULE.curr_fname[TASM]
 
         longjmp( &jmpenv, 3 )
     .endif
 
-    mov rcx,MODULE.curr_file[OBJ*string_t]
+    mov rcx,MODULE.curr_file[TOBJ]
     .if rcx
 
         fclose( rcx )
-        remove( MODULE.curr_fname[OBJ*string_t] )
+        remove( MODULE.curr_fname[TOBJ] )
     .endif
     exit(1)
 
@@ -644,7 +644,7 @@ asmerr endp
 
 WriteError proc __ccall
 
-    .return( asmerr( 1002, MODULE.curr_fname[OBJ*string_t] ) )
+    .return( asmerr( 1002, MODULE.curr_fname[TOBJ] ) )
 
 WriteError endp
 

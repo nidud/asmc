@@ -1630,12 +1630,15 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
                 ; for a quick solution just add 25% to the size if segment
                 ; is a code segment. (v2.02: previously if was added only if
                 ; code segment contained labels, but this isn't sufficient.)
+                ;
+                ; v2.37.47: added 16 byte..
+                ;
 
                 .if ( [rcx].seg_info.segtype == SEGTYPE_CODE )
 
                     mov edx,eax
                     shr eax,2
-                    add eax,edx
+                    lea eax,[rax+rdx+16]
                 .endif
                 add buffer_size,eax
             .endif

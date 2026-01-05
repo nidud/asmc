@@ -63,7 +63,6 @@ DOS_DATETIME ends
 cv_write_debug_tables proto __ccall :asym_t, :asym_t, :ptr
 SortSegments proto __ccall :int_t
 
-externdef LinnumQueue:qdesc ; queue of line_num_info items
 externdef szNull:char_t
 
 .data
@@ -379,7 +378,7 @@ omf_write_linnum proc fastcall private uses rsi rdi rbx is32:byte
 
   local obj:omf_rec
 
-    .for ( rsi = LinnumQueue.head, rdi = StringBufferEnd: rsi: rsi = rbx )
+    .for ( rsi = MODULE.LinnumQueue.head, rdi = StringBufferEnd: rsi: rsi = rbx )
 
         mov rbx,[rsi].line_num_info.next
         mov eax,[rsi].line_num_info.number
@@ -392,7 +391,7 @@ omf_write_linnum proc fastcall private uses rsi rdi rbx is32:byte
         .endif
     .endf
 
-    mov LinnumQueue.head,NULL
+    mov MODULE.LinnumQueue.head,NULL
     sub rdi,StringBufferEnd
 
     .if ( rdi )
@@ -643,7 +642,7 @@ if MULTIHDR
 
     .if ( [rsi].line_num_info.srcfile != ln_srcfile )
 
-        .if ( LinnumQueue.head )
+        .if ( MODULE.LinnumQueue.head )
             omf_FlushCurrSeg()
         .endif
 
@@ -666,7 +665,7 @@ endif
     .endif
     mov is_32,al
     .if ( ln_is32 != al )
-        .if ( LinnumQueue.head )
+        .if ( MODULE.LinnumQueue.head )
             omf_FlushCurrSeg()
         .endif
         mov ln_is32,is_32
@@ -688,7 +687,7 @@ endif
 
     add ax,ln_size
     .if ( ax > 1024 - 8 )
-        .if ( LinnumQueue.head )
+        .if ( MODULE.LinnumQueue.head )
             omf_FlushCurrSeg()
         .endif
     .endif
@@ -726,7 +725,7 @@ endif
 omf_set_filepos proc uses rsi rdi
 
 ifndef ASMC64
-    fseek( CurrFile[OBJ*size_t], end_of_header, SEEK_SET )
+    fseek( CurrFile[TOBJ], end_of_header, SEEK_SET )
 endif
     ret
 
@@ -1869,21 +1868,21 @@ if TRUNCATE
     ; v2.03: most likely no longer necessary, since the file
     ; won't become shorter anymore.
 
-    mov size,ftell( CurrFile[OBJ*size_t] )
-    mov fh,_fileno( CurrFile[OBJ*size_t] )
+    mov size,ftell( CurrFile[TOBJ] )
+    mov fh,_fileno( CurrFile[TOBJ] )
     _chsize( fh, size )
 endif
 
     ; write SEGDEF records. Since these reco rds contain the segment's length,
     ; the records have to be written again after the final assembly pass.
 
-    fseek( CurrFile[OBJ*size_t] , seg_pos, SEEK_SET )
+    fseek( CurrFile[TOBJ], seg_pos, SEEK_SET )
     omf_write_segdef()
 
     ; write PUBDEF records. Since the final value of offsets isn't known after
     ; the first pass, this has to be called again after the final pass.
 
-    fseek( CurrFile[OBJ*size_t], public_pos, SEEK_SET)
+    fseek( CurrFile[TOBJ], public_pos, SEEK_SET)
     omf_write_pubdef()
    .return( NOT_ERROR )
 
@@ -1900,7 +1899,7 @@ omf_write_header_initial proc private uses rsi rdi rbx
         .return( NOT_ERROR )
     .endif
 
-    omf_write_theadr( CurrFName[ASM*string_t] ) ; write THEADR record, main src filename
+    omf_write_theadr( CurrFName[TASM] ) ; write THEADR record, main src filename
 
     ; v2.11: coment record "ms extensions present" now written here
 
@@ -1925,7 +1924,7 @@ omf_write_header_initial proc private uses rsi rdi rbx
     ; the records have to be written again after the final assembly pass.
     ; hence the start position of those records has to be saved.
 
-    mov seg_pos,ftell( CurrFile[OBJ*size_t] )
+    mov seg_pos,ftell( CurrFile[TOBJ] )
     omf_write_segdef()
     omf_write_grpdef() ; write GRPDEF records
     mov ext_idx,omf_write_extdef() ; write EXTDEF records
@@ -1935,7 +1934,7 @@ omf_write_header_initial proc private uses rsi rdi rbx
     ; write PUBDEF records. Since the final value of offsets isn't known after
     ; the first pass, this has to be called again after the final pass.
 
-    mov public_pos,ftell( CurrFile[OBJ*size_t] )
+    mov public_pos,ftell( CurrFile[TOBJ] )
     omf_write_pubdef()
     omf_write_export() ; write export COMENT records
 
@@ -1948,7 +1947,7 @@ omf_write_header_initial proc private uses rsi rdi rbx
     .if ( !MODULE.start_fixup )
         omf_end_of_pass1()
     .endif
-    mov end_of_header,ftell( CurrFile[OBJ*size_t] )
+    mov end_of_header,ftell( CurrFile[TOBJ] )
    .return( NOT_ERROR )
 
 omf_write_header_initial endp

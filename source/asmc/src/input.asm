@@ -988,8 +988,8 @@ endif
 
     AllocInput()
 
-    mov rsi,PushSrcItem( SIT_FILE, CurrFile[ASM*size_t] )
-    AddFile( CurrFName[ASM*size_t] )
+    mov rsi,PushSrcItem( SIT_FILE, CurrFile[TASM] )
+    AddFile( CurrFName[TASM] )
     mov [rsi].srcfile,ax
     mov MODULE.srcfile,eax
 

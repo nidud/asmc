@@ -242,6 +242,10 @@ IS_SIGNED proto watcall :byte {
      ;
      first_length   dd ?
      ;
+     ; v2.20: SYM_SEG: file offset for ELF (since the field in seginfo is used by line number queue now)
+     ;
+     fileoffset_elf dd ?
+     ;
      ; SYM_TYPE (TYPEKIND_STRUCT or TYPEKIND_UNION)
      ; max size members
      ;
@@ -312,7 +316,7 @@ IS_SIGNED proto watcall :byte {
 ; the additional 3 fields are used differently depending on symbol's type.
 
     union
-     seginfo        segitem_t ?     ; SYM_SEG (segments)
+     seginfo        segment_t ?     ; SYM_SEG (segments)
      grpinfo        group_t ?       ; SYM_GRP (groups)
      procinfo       proc_t ?        ; SYM_INTERNAL|SYM_EXTERNAL (procs, isproc=1)
      structinfo     struct_t ?      ; SYM_TYPE (structs, unions, records [, typedefs])
@@ -396,7 +400,7 @@ IS_SIGNED proto watcall :byte {
     head            ptr fixup ?     ; fixup queue head
     tail            ptr fixup ?     ; fixup queue tail
     union
-     LinnumQueue    ptr_t ?         ; for COFF line numbers
+     LinnumQueue    qdesc_t ?       ; for COFF/ELF line numbers
      fileoffset     uint_t ?        ; used by BIN + ELF
      num_linnums    uint_t ?        ; used by COFF (after LinnumQueue has been read)
     ends

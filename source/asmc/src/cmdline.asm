@@ -1099,7 +1099,7 @@ ifdef _EXEC_LINK
                 CollectLinkOption( &paramfile )
             .else
 endif
-                mov Options.names[ASM*string_t],MemDup(&paramfile)
+                mov Options.names[TASM],MemDup(&paramfile)
                 inc dword ptr [rdi]
                .return
 ifdef _EXEC_LINK

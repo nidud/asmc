@@ -1,45 +1,47 @@
 
 include thread.inc
 
-    .code
+   .code
 
-BoundRand proc b:uint_t
+    assume class:rbx
 
+
+CApplication::BoundRand proc b:uint_t
+
+    ldr ecx,b
     mov eax,ecx
     neg eax
     xor edx,edx
     div ecx
-    .repeat
+    .while 1
         rdrand eax
-        .continue(0) .if (eax < edx)
-    .until 1
+        .break .if ( eax >= edx )
+    .endw
     xor edx,edx
     div ecx
     mov eax,edx
     ret
-
     endp
 
-RangeRand proc b:uint_t, m:uint_t
 
-    .whiled ( BoundRand(ecx) <= m )
+CApplication::RangeRand proc b:uint_t, m:uint_t
+    .whiled ( BoundRand(b) <= m )
     .endw
     ret
-
     endp
 
-RandRGB proc
 
-    mov r8d,BoundRand(0xFF)
-    shl r8d,8
+CApplication::RandRGB proc uses rsi
+
+    mov esi,BoundRand(0xFF)
+    shl esi,8
     BoundRand(0xFF)
-    mov r8b,al
-    shl r8d,8
+    or  esi,eax
+    shl esi,8
     BoundRand(0xFF)
-    or  eax,r8d
+    or  eax,esi
     or  eax,0xFF000000
     ret
-
     endp
 
 
@@ -47,23 +49,16 @@ RandRGB proc
 
 CApplication::Run proc
 
-    .new result:int_t = 0
+    .new hr:HRESULT = S_OK
     .new gdiplus:GdiPlus()
-
-    this.BeforeEnteringMessageLoop()
-
-    .if (SUCCEEDED(eax))
-
-        mov result,this.EnterMessageLoop()
+    .if SUCCEEDED(BeforeEnteringMessageLoop())
+        mov hr,EnterMessageLoop()
     .else
-
         MessageBox(NULL, "An error occuring when running the sample", NULL, MB_OK)
     .endif
-
-    this.AfterLeavingMessageLoop()
-
-    .return result
-
+    AfterLeavingMessageLoop()
+    mov eax,hr
+    ret
     endp
 
 
@@ -71,11 +66,8 @@ CApplication::Run proc
 ; before entering the message loop.
 
 CApplication::BeforeEnteringMessageLoop proc
-
-    .new hr:HRESULT = this.CreateApplicationWindow()
-
-    .return hr
-
+    CreateApplicationWindow()
+    ret
     endp
 
 
@@ -83,152 +75,128 @@ CApplication::BeforeEnteringMessageLoop proc
 
 CApplication::EnterMessageLoop proc
 
-    .new result:int_t = 0
+    .new msg:MSG
 
-    .if ( this.ShowApplicationWindow() )
-
-        .new msg:MSG
+    .if ( ShowApplicationWindow() )
 
         .while ( GetMessage( &msg, NULL, 0, 0 ) )
 
             TranslateMessage( &msg )
             DispatchMessage( &msg )
         .endw
-
-        mov result, msg.wParam
+        mov rax,msg.wParam
     .endif
-
-    .return result
-
+    ret
     endp
 
 
 ; Destroys the application window, DirectComposition device and visual tree.
 
 CApplication::AfterLeavingMessageLoop proc
-
-    this.DestroyApplicationWindow()
+    DestroyApplicationWindow()
     ret
-
     endp
-
-
-    assume rdi:ptr CApplication
 
 
 ; Thread timer
 
-CApplication::Thread proc uses rdi
+CApplication::Thread proc
 
-    mov rdi,rcx
+    .while ( m_stop == FALSE )
 
-    .while ( [rdi].m_stop == FALSE )
-
-        .while ( [rdi].m_suspend )
-
+        .while ( m_suspend )
             Sleep(2)
         .endw
-
-        this.OnTimer()
-        .if ( [rdi].m_delay )
-            Sleep([rdi].m_delay)
+        OnTimer()
+        .if ( m_delay )
+            Sleep(m_delay)
         .endif
     .endw
     ret
-
     endp
 
 
 ; Shows the application window
 
-CApplication::ShowApplicationWindow proc uses rdi
+CApplication::ShowApplicationWindow proc
 
-   .new bSucceeded:BOOL = TRUE
-
-    mov rdi,rcx
-    .if ( [rdi].m_hwnd == NULL )
-
-        mov bSucceeded,FALSE
+    mov rax,m_hwnd
+    .if ( rax )
+        ShowWindow(m_hwnd, SW_SHOW)
+        UpdateWindow(m_hwnd)
+        CloseHandle(CreateThread(NULL, NULL, &CApplication_Thread, rbx, NORMAL_PRIORITY_CLASS, NULL))
     .endif
-
-    .if ( bSucceeded )
-
-        ShowWindow([rdi].m_hwnd, SW_SHOW)
-        UpdateWindow([rdi].m_hwnd)
-
-        CreateThread(NULL, NULL, &CApplication_Thread, rdi, NORMAL_PRIORITY_CLASS, NULL)
-        CloseHandle(rax)
-    .endif
-
-    .return bSucceeded
-
+    ret
     endp
 
 
 ; Destroys the applicaiton window
 
-CApplication::DestroyApplicationWindow proc uses rdi
+CApplication::DestroyApplicationWindow proc
 
-    mov rdi,rcx
-    .if ( [rdi].m_hwnd != NULL )
+    .if ( m_hwnd != NULL )
 
-        lock or [rdi].m_stop,1
+        lock or m_stop,1
         Sleep(2)
-        .if ( [rdi].m_bitmap )
-            DeleteObject( [rdi].m_bitmap )
+        .if ( m_bitmap )
+            DeleteObject( m_bitmap )
         .endif
-        DestroyWindow( [rdi].m_hwnd )
-        mov [rdi].m_hwnd,NULL
+        DestroyWindow( m_hwnd )
+        mov m_hwnd,NULL
     .endif
     ret
-
     endp
 
 
 ; Makes the host window full-screen by placing non-client elements outside the display.
 
-CApplication::GoFullScreen proc uses rdi
+CApplication::GoFullScreen proc
 
-    mov rdi,rcx
-
-    mov [rdi].m_isFullScreen,TRUE
+    mov m_isFullScreen,TRUE
 
     ; The window must be styled as layered for proper rendering.
     ; It is styled as transparent so that it does not capture mouse clicks.
-    SetWindowLong([rdi].m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED or WS_EX_TRANSPARENT)
+
+    SetWindowLong(m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED or WS_EX_TRANSPARENT)
 
     ; Give the window a system menu so it can be closed on the taskbar.
-    SetWindowLong([rdi].m_hwnd, GWL_STYLE,  WS_CAPTION or WS_SYSMENU)
+
+    SetWindowLong(m_hwnd, GWL_STYLE,  WS_CAPTION or WS_SYSMENU)
 
     ; Calculate the span of the display area.
-   .new hDC:HDC = GetDC(NULL)
-   .new xSpan:int_t = GetSystemMetrics(SM_CXSCREEN)
-   .new ySpan:int_t = GetSystemMetrics(SM_CYSCREEN)
+
+    .new hDC:HDC = GetDC(NULL)
+    .new xSpan:int_t = GetSystemMetrics(SM_CXSCREEN)
+    .new ySpan:int_t = GetSystemMetrics(SM_CYSCREEN)
+
     ReleaseDC(NULL, hDC)
 
     ; Calculate the size of system elements.
-   .new xBorder:int_t = GetSystemMetrics(SM_CXFRAME)
-   .new yCaption:int_t = GetSystemMetrics(SM_CYCAPTION)
-   .new yBorder:int_t = GetSystemMetrics(SM_CYFRAME)
+
+    .new xBorder:int_t = GetSystemMetrics(SM_CXFRAME)
+    .new yCaption:int_t = GetSystemMetrics(SM_CYCAPTION)
+    .new yBorder:int_t = GetSystemMetrics(SM_CYFRAME)
 
     ; Calculate the window origin and span for full-screen mode.
+
     mov eax,xBorder
     neg eax
-   .new xOrigin:int_t = eax
+
+    .new xOrigin:int_t = eax
+
     mov eax,yBorder
     neg eax
     sub eax,yCaption
-   .new yOrigin:int_t = eax
+
+    .new yOrigin:int_t = eax
+
     imul eax,xBorder,2
     add xSpan,eax
     imul eax,yBorder,2
     add eax,yCaption
     add ySpan,eax
-
-    SetWindowPos([rdi].m_hwnd, HWND_TOPMOST, xOrigin, yOrigin, xSpan, ySpan,
-        SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
+    SetWindowPos(m_hwnd, HWND_TOPMOST, xOrigin, yOrigin, xSpan, ySpan, SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
-
     endp
 
 
@@ -236,50 +204,41 @@ CApplication::GoFullScreen proc uses rdi
 
 define RESTOREDWINDOWSTYLES WS_SIZEBOX or WS_SYSMENU or WS_CLIPCHILDREN or WS_CAPTION or WS_MAXIMIZEBOX
 
-CApplication::GoPartialScreen proc uses rdi
+CApplication::GoPartialScreen proc
 
-    mov rdi,rcx
-    mov [rdi].m_isFullScreen,FALSE
-
-    SetWindowLong([rdi].m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED)
-    SetWindowLong([rdi].m_hwnd, GWL_STYLE, RESTOREDWINDOWSTYLES)
-    SetWindowPos([rdi].m_hwnd, HWND_TOPMOST,
-        [rdi].m_rect.left, [rdi].m_rect.top, [rdi].m_rect.right, [rdi].m_rect.bottom,
+    mov m_isFullScreen,FALSE
+    SetWindowLong(m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED)
+    SetWindowLong(m_hwnd, GWL_STYLE, RESTOREDWINDOWSTYLES)
+    SetWindowPos(m_hwnd, HWND_TOPMOST, m_rect.left, m_rect.top, m_rect.right, m_rect.bottom,
         SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
-
     endp
 
+
+CApplication::OnSize proc lParam:LPARAM
+
+    movzx eax,dx
+    shr edx,16
+    mov m_width,eax
+    mov m_height,edx
+    .if ( m_bitmap )
+
+        DeleteObject(m_bitmap)
+        mov m_bitmap,NULL
+    .endif
+    .return 1
+    endp
 
     assume rsi:ptr object
 
-CApplication::OnSize proc uses rdi lParam:LPARAM
+CApplication::OnTimer proc uses rsi rdi
 
-    mov rdi,rcx
-    movzx eax,dx
-    shr edx,16
-    mov [rdi].m_width,eax
-    mov [rdi].m_height,edx
+   .return 0 .if ( m_bitmap == NULL )
 
-    .if ( [rdi].m_bitmap )
-
-        DeleteObject([rdi].m_bitmap)
-        mov [rdi].m_bitmap,NULL
-    .endif
-    .return 1
-
-    endp
-
-
-CApplication::OnTimer proc uses rsi rdi rbx
-
-    mov rdi,rcx
-   .return 0 .if ( [rdi].m_bitmap == NULL )
-
-   .new hdc:HDC = GetDC([rdi].m_hwnd)
+   .new hdc:HDC = GetDC(m_hwnd)
    .new mem:HDC = CreateCompatibleDC(hdc)
 
-    SelectObject(mem, [rdi].m_bitmap)
+    SelectObject(mem, m_bitmap)
 
    .new g:Graphics(mem)
     g.SetSmoothingMode(SmoothingModeHighQuality)
@@ -288,7 +247,7 @@ CApplication::OnTimer proc uses rsi rdi rbx
    .new count:SINT = 1
    .new FullTranslucent:ARGB = ColorAlpha(Black, 230)
 
-    .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < [rdi].m_count: ebx++, rsi += sizeof(object) )
+    .for ( rsi = &m_obj, edi = 0: edi < m_count: edi++, rsi += sizeof(object) )
 
        .new p:GraphicsPath()
         mov ecx,[rsi].m_radius
@@ -319,28 +278,27 @@ CApplication::OnTimer proc uses rsi rdi rbx
 
     g.Release()
 
-    mov ecx,[rdi].m_rc.right
-    sub ecx,[rdi].m_rc.left
-    mov edx,[rdi].m_rc.bottom
-    sub edx,[rdi].m_rc.top
-    BitBlt(hdc, [rdi].m_rc.left, [rdi].m_rc.top, ecx, edx, mem, 0, 0, SRCCOPY)
-    ReleaseDC([rdi].m_hwnd, hdc)
+    mov ecx,m_rc.right
+    sub ecx,m_rc.left
+    mov edx,m_rc.bottom
+    sub edx,m_rc.top
+    BitBlt(hdc, m_rc.left, m_rc.top, ecx, edx, mem, 0, 0, SRCCOPY)
+    ReleaseDC(m_hwnd, hdc)
     DeleteDC(mem)
 
-   .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < [rdi].m_count: ebx++, rsi += sizeof(object) )
+   .for ( rsi = &m_obj, edi = 0: edi < m_count: edi++, rsi += sizeof(object) )
 
         add [rsi].m_pos.x,[rsi].m_mov.x
         add [rsi].m_pos.y,[rsi].m_mov.y
-
-        mov eax,[rdi].m_rc.right
-        sub eax,[rdi].m_rc.left
+        mov eax,m_rc.right
+        sub eax,m_rc.left
         mov ecx,[rsi].m_pos.x
         add ecx,[rsi].m_radius
         .if ( ecx >= eax || [rsi].m_pos.x <= [rsi].m_radius )
             neg [rsi].m_mov.x
         .endif
-        mov eax,[rdi].m_rc.bottom
-        sub eax,[rdi].m_rc.top
+        mov eax,m_rc.bottom
+        sub eax,m_rc.top
         mov ecx,[rsi].m_pos.y
         add ecx,[rsi].m_radius
         .if ( ecx >= eax || [rsi].m_pos.y <= [rsi].m_radius )
@@ -354,32 +312,29 @@ CApplication::OnTimer proc uses rsi rdi rbx
 
 ; Handles the WM_KEYDOWN message
 
-    assume rcx:ptr CApplication
-
 CApplication::OnKeyDown proc wParam:WPARAM
 
     .switch edx
     .case VK_DOWN
-        inc [rcx].m_delay
+        inc m_delay
         .endc
     .case VK_UP
-        .if ( [rcx].m_delay )
-            dec [rcx].m_delay
+        .if ( m_delay )
+            dec m_delay
         .endif
         .endc
     .case VK_RETURN
-        this.InitObjects()
-        .endc
+        InitObjects()
+       .endc
     .case VK_F11
-        .if ( [rcx].m_isFullScreen )
-            this.GoPartialScreen()
+        .if ( m_isFullScreen )
+            GoPartialScreen()
         .else
-            this.GoFullScreen()
+            GoFullScreen()
         .endif
         .endc
     .endsw
     .return 0
-
     endp
 
 
@@ -387,63 +342,54 @@ CApplication::OnKeyDown proc wParam:WPARAM
 
 CApplication::OnClose proc
 
-    .if ( [rcx].m_hwnd != NULL )
+    .if ( m_hwnd != NULL )
 
-        DestroyWindow( [rcx].m_hwnd )
-
-        mov rcx,this
-        mov [rcx].m_hwnd,NULL
+        DestroyWindow( m_hwnd )
+        mov m_hwnd,NULL
     .endif
     .return 0
-
     endp
 
 
 ; Handles the WM_DESTROY message
 
 CApplication::OnDestroy proc
-
     PostQuitMessage(0)
-
     .return 0
-
     endp
 
 
 ; Handles the WM_PAINT message
 
-CApplication::OnPaint proc uses rsi rdi rbx
+CApplication::OnPaint proc
 
    .new rcClient:RECT
    .new ps:PAINTSTRUCT
    .new height:int_t = 0
 
-    mov rdi,rcx
-
-   .new hdc:HDC = BeginPaint([rdi].m_hwnd, &ps)
+   .new hdc:HDC = BeginPaint(m_hwnd, &ps)
 
     ; get the dimensions of the main window.
 
-    GetClientRect([rdi].m_hwnd, &rcClient)
+    GetClientRect(m_hwnd, &rcClient)
 
-    .if ( [rdi].m_isFullScreen == TRUE )
+    .if ( m_isFullScreen == TRUE )
 
-        mov [rdi].m_rc.left,0
-        mov [rdi].m_rc.top,0
+        mov m_rc.left,0
+        mov m_rc.top,0
         mov eax,rcClient.right
         sub eax,rcClient.left
-        mov [rdi].m_rc.right,eax
+        mov m_rc.right,eax
         mov eax,rcClient.bottom
         sub eax,rcClient.top
-        mov [rdi].m_rc.bottom,eax
-
+        mov m_rc.bottom,eax
         jmp full_screen
     .endif
 
-    mov [rdi].m_rc.left,50
-    mov eax,[rdi].m_width
+    mov m_rc.left,50
+    mov eax,m_width
     sub eax,50
-    mov [rdi].m_rc.right,eax
+    mov m_rc.right,eax
 
     ; Logo
 
@@ -510,45 +456,44 @@ CApplication::OnPaint proc uses rsi rdi rbx
 
         add eax,rcClient.top
         add eax,6
-        mov [rdi].m_rc.top,eax
-        mov eax,[rdi].m_height
+        mov m_rc.top,eax
+        mov eax,m_height
         sub eax,100
         mov rcClient.top,eax
         sub eax,16
-        mov [rdi].m_rc.bottom,eax
-        mov eax,[rdi].m_width
+        mov m_rc.bottom,eax
+        mov eax,m_width
         shr eax,1
         mov rcClient.left,eax
 
         DrawText(hdc,
             "A) Use keys UP or DOWN for delay.\n"
-            "C) Use Enter to reset.", -1, &rcClient,
-            DT_WORDBREAK)
+            "C) Use Enter to reset.", -1, &rcClient, DT_WORDBREAK)
         SelectObject(hdc, hOldFont)
         DeleteObject(hdescription)
     .endif
 
 full_screen:
 
-    EndPaint([rdi].m_hwnd, &ps)
+    EndPaint(m_hwnd, &ps)
 
-    .return 1 .if ( [rdi].m_bitmap )
+    .return 1 .if ( m_bitmap )
 
-    mov edx,[rdi].m_rc.bottom
-    sub edx,[rdi].m_rc.top
+    mov edx,m_rc.bottom
+    sub edx,m_rc.top
     .ifs ( edx > 100 )
-        mov ecx,[rdi].m_rc.right
-        sub ecx,[rdi].m_rc.left
+        mov ecx,m_rc.right
+        sub ecx,m_rc.left
         .ifs ( ecx > 100 )
 
-            mov hdc,GetDC([rdi].m_hwnd)
-            mov ecx,[rdi].m_rc.right
-            sub ecx,[rdi].m_rc.left
-            mov edx,[rdi].m_rc.bottom
-            sub edx,[rdi].m_rc.top
-            mov [rdi].m_bitmap,CreateCompatibleBitmap(hdc, ecx, edx)
-            ReleaseDC([rdi].m_hwnd, hdc)
-            [rdi].InitObjects()
+            mov hdc,GetDC(m_hwnd)
+            mov ecx,m_rc.right
+            sub ecx,m_rc.left
+            mov edx,m_rc.bottom
+            sub edx,m_rc.top
+            mov m_bitmap,CreateCompatibleBitmap(hdc, ecx, edx)
+            ReleaseDC(m_hwnd, hdc)
+            InitObjects()
         .endif
     .endif
    .return 1
@@ -556,19 +501,17 @@ full_screen:
     endp
 
 
-CApplication::InitObjects proc uses rsi rdi rbx
+CApplication::InitObjects proc uses rsi rdi
 
-    mov rdi,rcx
-
-    lock or [rdi].m_suspend,1
+    lock or m_suspend,1
     Sleep(2)
 
-    mov [rdi].m_count,RangeRand(MAXOBJ, 1)
+    mov m_count,RangeRand(MAXOBJ, 1)
 
-    .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < [rdi].m_count: ebx++, rsi += sizeof(object) )
+    .for ( rsi = &m_obj, edi = 0: edi < m_count: edi++, rsi += sizeof(object) )
 
-        mov ecx,[rdi].m_rc.right
-        mov edx,[rdi].m_rc.bottom
+        mov ecx,m_rc.right
+        mov edx,m_rc.bottom
         cmp ecx,edx
         cmova ecx,edx
         shr ecx,3
@@ -576,19 +519,19 @@ CApplication::InitObjects proc uses rsi rdi rbx
         mov [rsi].m_mov.x,RangeRand(10, 1)
         mov [rsi].m_mov.y,RangeRand(10, 1)
         mov [rsi].m_color,RandRGB()
-        mov ecx,[rdi].m_rc.right
-        sub ecx,[rdi].m_rc.left
+        mov ecx,m_rc.right
+        sub ecx,m_rc.left
         sub ecx,[rsi].m_radius
         mov [rsi].m_pos.x,RangeRand(ecx, [rsi].object.m_radius)
-        mov ecx,[rdi].m_rc.bottom
-        sub ecx,[rdi].m_rc.top
+        mov ecx,m_rc.bottom
+        sub ecx,m_rc.top
         sub ecx,[rsi].m_radius
         mov [rsi].m_pos.y,RangeRand(ecx, [rsi].object.m_radius)
     .endf
-    lock and [rdi].m_suspend,0
+    lock and m_suspend,0
     ret
-
     endp
+
 
 ; Main Window procedure
 
@@ -630,9 +573,7 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
 ; Creates the application window
 
-CApplication::CreateApplicationWindow proc uses rdi
-
-    mov rdi,rcx
+CApplication::CreateApplicationWindow proc
 
     .new wc:WNDCLASSEX = {
         WNDCLASSEX,                     ; .cbSize
@@ -640,7 +581,7 @@ CApplication::CreateApplicationWindow proc uses rdi
         &WindowProc,                    ; .lpfnWndProc
         0,                              ; .cbClsExtra
         sizeof(LONG_PTR),               ; .cbWndExtra
-        [rdi].m_hInstance,              ; .hInstance
+        m_hInstance,                    ; .hInstance
         NULL,                           ; .hIcon
         LoadCursor(NULL, IDC_ARROW),    ; .hCursor
         GetStockObject(BLACK_BRUSH),    ; .hbrBackground
@@ -653,32 +594,27 @@ CApplication::CreateApplicationWindow proc uses rdi
         .return E_FAIL
     .endif
 
-    mov [rdi].m_rect.left,0
-    mov [rdi].m_rect.top,0
-    mov [rdi].m_rect.right,[rdi].m_width
-    mov [rdi].m_rect.bottom,[rdi].m_height
+    mov m_rect.left,0
+    mov m_rect.top,0
+    mov m_rect.right,m_width
+    mov m_rect.bottom,m_height
 
-    AdjustWindowRect(&[rdi].m_rect, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
+    AdjustWindowRect(&m_rect, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
 
-    mov eax,[rdi].m_rect.right
-    sub eax,[rdi].m_rect.left
-    mov [rdi].m_width,eax
+    mov eax,m_rect.right
+    sub eax,m_rect.left
+    mov m_width,eax
 
-    mov eax,[rdi].m_rect.bottom
-    sub eax,[rdi].m_rect.top
-    mov [rdi].m_height,eax
+    mov eax,m_rect.bottom
+    sub eax,m_rect.top
+    mov m_height,eax
 
-    .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME,
-           WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
-           CW_USEDEFAULT, CW_USEDEFAULT,
-           [rdi].m_width, [rdi].m_height,
-           NULL, NULL, [rdi].m_hInstance, rdi) == NULL
-
+    .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
+           CW_USEDEFAULT, CW_USEDEFAULT, m_width, m_height, NULL, NULL, m_hInstance, rbx) == NULL
         .return E_UNEXPECTED
     .endif
-    mov [rdi].m_hwnd,rax
-   .return S_OK
-
+    mov m_hwnd,rax
+    .return S_OK
     endp
 
 

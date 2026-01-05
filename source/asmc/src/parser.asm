@@ -3950,7 +3950,7 @@ endif
             ; been moved to module_vars (see global.h).
             ;
             FStoreLine(0)
-            .if CurrFile[LST*size_t]
+            .if CurrFile[TLST]
                 LstWrite( LSTTYPE_LABEL, 0, NULL )
             .endif
             .return NOT_ERROR
@@ -4216,7 +4216,7 @@ init_prefix:
     .if ( ProcStatus & PRST_PROLOGUE_NOT_DONE )
         write_prologue( rbx )
     .endif
-    .if ( CurrFile[LST*size_t] )
+    .if ( CurrFile[TLST] )
         mov oldofs,GetCurrOffset()
     .endif
 

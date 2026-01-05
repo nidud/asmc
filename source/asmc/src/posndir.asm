@@ -257,7 +257,7 @@ AlignDirective proc __ccall i:int_t, tokenarray:token_t
         sub align_value,edx
         fill_in_objfile_space( align_value )
     .endif
-    .if ( CurrFile[LST*size_t] )
+    .if ( CurrFile[TLST] )
         LstWrite( LSTTYPE_DATA, CurrAddr, NULL )
     .endif
     .return( NOT_ERROR )

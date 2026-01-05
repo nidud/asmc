@@ -1874,7 +1874,7 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
         .if ( ecx == OP_NONE && ebx == OP_NONE )
 
             output_opc()
-            .if ( MODULE.curr_file[LST*string_t] )
+            .if ( MODULE.curr_file[TLST] )
                 LstWrite(LSTTYPE_CODE, oldofs, NULL)
             .endif
             .return NOT_ERROR
@@ -1909,7 +1909,7 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
                 check_operand_2( [rsi].opnd[OPND1].type )
             .endsw
             .if ( eax == NOT_ERROR )
-                .if ( MODULE.curr_file[LST*string_t] )
+                .if ( MODULE.curr_file[TLST] )
                     LstWrite( LSTTYPE_CODE, oldofs, NULL )
                 .endif
                 .return NOT_ERROR

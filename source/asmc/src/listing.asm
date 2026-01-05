@@ -91,7 +91,7 @@ LstWrite proc __ccall uses rsi rdi rbx type:lsttype, oldofs:uint_t, value:ptr
    .new pll:ptr lstleft
    .new ll:lstleft
 
-    .if ( MODULE.list == FALSE || CurrFile[LST*size_t] == NULL ||
+    .if ( MODULE.list == FALSE || CurrFile[TLST] == NULL ||
           ( MODULE.line_flags & LOF_LISTED ) )
         .return
     .endif
@@ -138,7 +138,7 @@ if USELSLINE
             .endif
 endif
         .endif
-        fseek( CurrFile[LST*size_t], list_pos, SEEK_SET )
+        fseek( CurrFile[TLST], list_pos, SEEK_SET )
     .endif
 
     mov ll.next,NULL
@@ -290,7 +290,7 @@ endif
         mov rcx,pSrcline
         mov dl,[rcx]
         .if ( dl == 0 && CurrComment == NULL && srcfile == MODULE.srcfile )
-            fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
+            fwrite( NLSTR, 1, NLSIZ, CurrFile[TLST] )
             add list_pos,NLSIZ
             .return
         .endif
@@ -308,7 +308,7 @@ endif
     .if ( srcfile != MODULE.srcfile )
         mov ll.buffer[30],'C'
     .endif
-    fwrite( &ll.buffer, 1, idx, CurrFile[LST*size_t] )
+    fwrite( &ll.buffer, 1, idx, CurrFile[TLST] )
 
     mov len,tstrlen( pSrcline )
     mov len2,0
@@ -322,12 +322,12 @@ endif
 
     ; write source and comment part
     .if ( len )
-        fwrite( pSrcline, 1, len, CurrFile[LST*size_t] )
+        fwrite( pSrcline, 1, len, CurrFile[TLST] )
     .endif
     .if ( len2 )
-        fwrite( CurrComment, 1, len2, CurrFile[LST*size_t] )
+        fwrite( CurrComment, 1, len2, CurrFile[TLST] )
     .endif
-    fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
+    fwrite( NLSTR, 1, NLSIZ, CurrFile[TLST] )
 
 
     ; write optional additional lines.
@@ -335,8 +335,8 @@ endif
 
     .for ( rbx = ll.next: rbx: rbx = [rbx].lstleft.next )
 
-        fwrite( &[rbx].lstleft.buffer, 1, 32, CurrFile[LST*size_t] )
-        fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
+        fwrite( &[rbx].lstleft.buffer, 1, 32, CurrFile[TLST] )
+        fwrite( NLSTR, 1, NLSIZ, CurrFile[TLST] )
 
         add list_pos,32 + NLSIZ
     .endf
@@ -355,9 +355,9 @@ LstWriteSrcLine endp
 
 LstPrintf proc __ccall format:string_t, args:vararg
 
-    .if ( CurrFile[LST*size_t] )
+    .if ( CurrFile[TLST] )
 
-        add list_pos,tvfprintf( CurrFile[LST*size_t], format, &args )
+        add list_pos,tvfprintf( CurrFile[TLST], format, &args )
     .endif
     ret
 
@@ -366,9 +366,9 @@ LstPrintf endp
 
 LstNL proc __ccall uses rsi rdi
 
-    .if ( CurrFile[LST*size_t] )
+    .if ( CurrFile[TLST] )
 
-        fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
+        fwrite( NLSTR, 1, NLSIZ, CurrFile[TLST] )
         add list_pos,NLSIZ
     .endif
     ret
@@ -382,11 +382,11 @@ LstNL endp
 
 LstSetPosition proc __ccall uses rsi rdi
 
-    .if ( CurrFile[LST*size_t] && Parse_Pass > PASS_1 &&  UseSavedState && MODULE.GeneratedCode == 0 )
+    .if ( CurrFile[TLST] && Parse_Pass > PASS_1 &&  UseSavedState && MODULE.GeneratedCode == 0 )
 
         mov rcx,LineStoreCurr
         mov list_pos,[rcx].line_item.list_pos
-        fseek( CurrFile[LST*size_t], list_pos, SEEK_SET )
+        fseek( CurrFile[TLST], list_pos, SEEK_SET )
         or MODULE.line_flags,LOF_SKIPPOS
     .endif
     ret
@@ -1154,13 +1154,13 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
 
     ; no point going through the motions if lst file isn't open
 
-    .if ( CurrFile[LST*size_t] == NULL || Options.no_symbol_listing == TRUE )
+    .if ( CurrFile[TLST] == NULL || Options.no_symbol_listing == TRUE )
         .return
     .endif
 
     ; go to EOF
 
-    fseek( CurrFile[LST*size_t], 0, SEEK_END )
+    fseek( CurrFile[TLST], 0, SEEK_END )
 
     mov SymCount,SymGetCount()
     mov syms,MemAlloc( &[rax * sizeof( asym_t )] )
@@ -1324,7 +1324,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
     .switch eax
     .case T_DOT_LIST
-        .if ( CurrFile[LST*size_t] )
+        .if ( CurrFile[TLST] )
             mov MODULE.list,TRUE
         .endif
         .endc
@@ -1380,7 +1380,7 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
         .endc
 
     .case T_DOT_LISTALL ; list false conditionals and generated code
-        .if ( CurrFile[LST*size_t] )
+        .if ( CurrFile[TLST] )
             mov MODULE.list,TRUE
         .endif
         mov MODULE.list_generated_code,TRUE

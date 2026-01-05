@@ -358,7 +358,7 @@ write_end:
     ;
     mov ebx,o.in_buf
     add ebx,4
-    .if ( fwrite( &o.cmd, 1, ebx, CurrFile[OBJ*size_t] ) != rbx )
+    .if ( fwrite( &o.cmd, 1, ebx, CurrFile[TOBJ] ) != rbx )
         WriteError()
     .endif
     ret

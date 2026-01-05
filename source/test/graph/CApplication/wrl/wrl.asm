@@ -11,63 +11,61 @@ define WINDOW_NAME  <"Windows samples">
 
     .code
 
-    assume rcx:ptr CApplication
-    assume rdi:ptr CApplication
+    assume class:rbx
 
 
 ; --- Implementation of IAppVisibilityEvents ---
 
 CApplication::QueryInterface proc riid:LPIID, ppv:ptr ptr
 
-    mov rax,[rdx]
-    .if ( rax == qword ptr IID_IAppVisibilityEvents || rax == 0 )
-
-        mov [r8],rcx
-        inc [rcx].m_refcnt
-        .return NOERROR
-    .endif
     xor eax,eax
-    mov [r8],rax
-   .return E_INVALIDARG
-
+    mov rcx,[rdx]
+    .if ( rcx == qword ptr IID_IAppVisibilityEvents || rcx == 0 )
+        mov [r8],rbx
+        inc m_refcnt
+    .else
+        mov [r8],rax
+        mov eax,E_INVALIDARG
+    .endif
+    ret
     endp
 
 
 CApplication::AddRef proc
 
-    lock inc [rcx].m_refcnt
-   .return [rcx].m_refcnt
-
+    lock inc m_refcnt
+    mov eax,m_refcnt
+    ret
     endp
 
 
 CApplication::Release proc
 
-    lock dec [rcx].m_refcnt
-   .return [rcx].m_refcnt
-
+    lock dec m_refcnt
+    mov eax,m_refcnt
+    ret
     endp
+
 
 CApplication::AppVisibilityOnMonitorChanged proc hMonitor:HMONITOR,
         previousAppVisibility:MONITOR_APP_VISIBILITY, currentAppVisibility:MONITOR_APP_VISIBILITY
-
-    .return S_OK
-
+    xor eax,eax
+    ret
     endp
 
 
 CApplication::LauncherVisibilityChange proc currentVisibleState:BOOL
 
     .if ( edx )
-        inc [rcx].m_launchcnt
+        inc m_launchcnt
     .endif
-    .if ( [rcx].m_launchcnt == 5 )
+    .if ( m_launchcnt == 5 )
         PostQuitMessage(0)
     .else
-        this.Update(edx)
+        Update(edx)
     .endif
-   .return S_OK
-
+    xor eax,eax
+    ret
     endp
 
 ; --- End IAppVisibilityEvents ---
@@ -77,52 +75,43 @@ CApplication::LauncherVisibilityChange proc currentVisibleState:BOOL
 
 CApplication::Run proc
 
-   .new result:int_t = 0
-   .new gdiplus:GdiPlus()
+    .new result:int_t = 0
+    .new gdiplus:GdiPlus()
 
-    this.BeforeEnteringMessageLoop()
-
-    .if (SUCCEEDED(eax))
-
-        mov result,this.EnterMessageLoop()
+    .if SUCCEEDED(BeforeEnteringMessageLoop())
+        mov result,EnterMessageLoop()
     .else
-
         MessageBox(NULL, "An error occuring when running the sample", NULL, MB_OK)
     .endif
-
-    this.AfterLeavingMessageLoop()
-
-    .return result
-
+    AfterLeavingMessageLoop()
+    mov eax,result
+    ret
     endp
 
 
 ; Creates the application window, the d3d device and DirectComposition device and visual tree
 ; before entering the message loop.
 
-CApplication::BeforeEnteringMessageLoop proc uses rdi
+CApplication::BeforeEnteringMessageLoop proc
 
-    mov rdi,rcx
-
-    .new hr:HRESULT = this.CreateApplicationWindow()
+    .new hr:HRESULT = CreateApplicationWindow()
 
     .if (SUCCEEDED(hr))
 
-        .new hr:HRESULT = CoInitializeEx( NULL, COINIT_APARTMENTTHREADED )
+        mov hr,CoInitializeEx( NULL, COINIT_APARTMENTTHREADED )
 
         .if (SUCCEEDED(hr))
 
             mov hr,CoCreateInstance(&CLSID_AppVisibility, NULL, CLSCTX_INPROC_SERVER,
-                    &IID_IAppVisibility, &[rdi].m_AppVisibility)
+                    &IID_IAppVisibility, &m_AppVisibility)
 
             .if (SUCCEEDED(hr))
 
-                mov hr,this.m_AppVisibility.Advise( rdi, &[rdi].m_cookie )
+                mov hr,m_AppVisibility.Advise( rbx, &m_cookie )
             .endif
         .endif
     .endif
     .return hr
-
     endp
 
 
@@ -130,9 +119,7 @@ CApplication::BeforeEnteringMessageLoop proc uses rdi
 
 CApplication::EnterMessageLoop proc
 
-    .new result:int_t = 0
-
-    .if ( this.ShowApplicationWindow() )
+    .if ShowApplicationWindow()
 
         .new msg:MSG
 
@@ -141,12 +128,9 @@ CApplication::EnterMessageLoop proc
             TranslateMessage( &msg )
             DispatchMessage( &msg )
         .endw
-
-        mov result, msg.wParam
+        mov rax,msg.wParam
     .endif
-
-    .return result
-
+    ret
     endp
 
 
@@ -154,61 +138,45 @@ CApplication::EnterMessageLoop proc
 
 CApplication::AfterLeavingMessageLoop proc
 
-    .if ( [rcx].m_AppVisibility )
-        this.m_AppVisibility.Unadvise([rcx].m_cookie)
+    .if ( m_AppVisibility )
+        m_AppVisibility.Unadvise(m_cookie)
     .endif
     CoUninitialize()
-    this.DestroyApplicationWindow()
+    DestroyApplicationWindow()
     ret
-
     endp
 
 
 ; Shows the application window
 
-CApplication::ShowApplicationWindow proc uses rdi
+CApplication::ShowApplicationWindow proc
 
-   .new bSucceeded:BOOL = TRUE
-
-    mov rdi,rcx
-    .if ( [rdi].m_hwnd == NULL )
-
-        mov bSucceeded,FALSE
+    mov rax,m_hwnd
+    .if ( rax )
+        ShowWindow(m_hwnd, SW_SHOW)
+        UpdateWindow(m_hwnd)
+        mov eax,TRUE
     .endif
-
-    .if ( bSucceeded )
-
-        ShowWindow([rdi].m_hwnd, SW_SHOW)
-        UpdateWindow([rdi].m_hwnd)
-    .endif
-
-    .return bSucceeded
-
+    ret
     endp
 
 
 ; Destroys the applicaiton window
 
-CApplication::DestroyApplicationWindow proc uses rdi
+CApplication::DestroyApplicationWindow proc
 
-    mov rdi,rcx
-    .if ( [rdi].m_hwnd != NULL )
+    .if ( m_hwnd != NULL )
 
-        DestroyWindow( [rdi].m_hwnd )
-        mov [rdi].m_hwnd,NULL
+        DestroyWindow( m_hwnd )
+        mov m_hwnd,NULL
     .endif
     ret
-
     endp
 
 
-    assume rcx:nothing
+CApplication::Update proc uses rsi Visible:BOOL
 
-CApplication::Update proc uses rsi rdi rbx Visible:BOOL
-
-    mov rdi,rcx
-
-   .new hdc:HDC = GetDC([rdi].m_hwnd)
+   .new hdc:HDC = GetDC(m_hwnd)
    .new g:Graphics(hdc)
     g.SetSmoothingMode(SmoothingModeHighQuality)
 
@@ -217,22 +185,22 @@ CApplication::Update proc uses rsi rdi rbx Visible:BOOL
 
    .new p:GraphicsPath()
 
-    mov ebx,[rdi].m_yoffs
-    add ebx,8
-    p.AddEllipse(50, ebx, 50, 50)
+    mov esi,m_yoffs
+    add esi,8
+    p.AddEllipse(50, esi, 50, 50)
 
    .new b:PathGradientBrush(&p)
     b.SetCenterColor(ColorAlpha(Blue, 180))
     b.SetSurroundColors(&FullTranslucent, &count)
-    g.FillEllipse(&b, 50, ebx, 50, 50)
+    g.FillEllipse(&b, 50, esi, 50, 50)
 
     b.Release()
     p.Release()
 
    .new p:GraphicsPath()
 
-    add ebx,60
-    p.AddEllipse(50, ebx, 50, 50)
+    add esi,60
+    p.AddEllipse(50, esi, 50, 50)
 
    .new b:PathGradientBrush(&p)
     mov edx,ColorAlpha(Red, 180)
@@ -241,7 +209,7 @@ CApplication::Update proc uses rsi rdi rbx Visible:BOOL
     .endif
     b.SetCenterColor(edx)
     b.SetSurroundColors(&FullTranslucent, &count)
-    g.FillEllipse(&b, 50, ebx, 50, 50)
+    g.FillEllipse(&b, 50, esi, 50, 50)
     b.Release()
     p.Release()
 
@@ -249,80 +217,67 @@ CApplication::Update proc uses rsi rdi rbx Visible:BOOL
    .new b:SolidBrush(LightGray)
    .new f:Font(IDS_FONT_TYPEFACE, 16.0)
    .new t[4]:wchar_t
-
-    mov eax,[rdi].m_launchcnt
+    mov eax,m_launchcnt
     add al,'0'
     mov dword ptr t,eax
     g.DrawString( &t, 1, &f, pt, NULL, &b)
-
     b.Release()
     f.Release()
     g.Release()
-    ReleaseDC([rdi].m_hwnd, hdc)
-   .return 1
-
+    ReleaseDC(m_hwnd, hdc)
+    mov eax,TRUE
+    ret
     endp
 
+
 CApplication::OnSize proc lParam:LPARAM
-
-    .return 1
-
+    mov eax,TRUE
+    ret
     endp
 
 
 ; Handles the WM_KEYDOWN message
 
 CApplication::OnKeyDown proc wParam:WPARAM
-
-    .return 0
-
+    xor eax,eax
+    ret
     endp
 
 
 ; Handles the WM_CLOSE message
 
-    assume rcx:ptr CApplication
-
 CApplication::OnClose proc
 
-    .if ( [rcx].m_hwnd != NULL )
+    .if ( m_hwnd != NULL )
 
-        DestroyWindow( [rcx].m_hwnd )
-
-        mov rcx,this
-        mov [rcx].m_hwnd,NULL
+        DestroyWindow( m_hwnd )
+        mov m_hwnd,NULL
     .endif
     .return 0
-
     endp
 
 
 ; Handles the WM_DESTROY message
 
 CApplication::OnDestroy proc
-
     PostQuitMessage(0)
-
     .return 0
-
     endp
 
 
 ; Handles the WM_PAINT message
 
-CApplication::OnPaint proc uses rdi
+CApplication::OnPaint proc
 
    .new rcClient:RECT
    .new ps:PAINTSTRUCT
    .new height:int_t = 0
 
-    mov rdi,rcx
-
-   .new hdc:HDC = BeginPaint([rdi].m_hwnd, &ps)
+   .new hdc:HDC = BeginPaint(m_hwnd, &ps)
 
     ; get the dimensions of the main window.
 
-    GetClientRect([rdi].m_hwnd, &rcClient)
+    GetClientRect(m_hwnd, &rcClient)
 
     ; Logo
 
@@ -388,17 +343,17 @@ CApplication::OnPaint proc uses rdi
 
         add eax,rcClient.top
         add eax,10
-        mov [rdi].m_yoffs,eax
+        mov m_yoffs,eax
         mov rcClient.top,eax
-        mov eax,[rdi].m_width
+        mov eax,m_width
         shr eax,3
         mov rcClient.left,eax
         DrawText(hdc, "\nLaunch count\n\n\nStart menu visible", -1, &rcClient, DT_WORDBREAK)
 
-        mov eax,[rdi].m_height
+        mov eax,m_height
         sub eax,100
         mov rcClient.top,eax
-        mov eax,[rdi].m_width
+        mov eax,m_width
         shr eax,1
         mov rcClient.left,eax
 
@@ -408,11 +363,10 @@ CApplication::OnPaint proc uses rdi
         SelectObject(hdc, hOldFont)
         DeleteObject(hdescription)
     .endif
-    EndPaint([rdi].m_hwnd, &ps)
-
-    this.Update(0)
-   .return 1
-
+    EndPaint(m_hwnd, &ps)
+    Update(0)
+    mov eax,1
+    ret
     endp
 
 
@@ -456,9 +410,7 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
 ; Creates the application window
 
-CApplication::CreateApplicationWindow proc uses rdi
-
-    mov rdi,rcx
+CApplication::CreateApplicationWindow proc
 
     .new wc:WNDCLASSEX = {
         WNDCLASSEX,                     ; .cbSize
@@ -466,7 +418,7 @@ CApplication::CreateApplicationWindow proc uses rdi
         &WindowProc,                    ; .lpfnWndProc
         0,                              ; .cbClsExtra
         sizeof(LONG_PTR),               ; .cbWndExtra
-        [rdi].m_hInstance,              ; .hInstance
+        m_hInstance,                    ; .hInstance
         NULL,                           ; .hIcon
         LoadCursor(NULL, IDC_ARROW),    ; .hCursor
         GetStockObject(BLACK_BRUSH),    ; .hbrBackground
@@ -479,29 +431,25 @@ CApplication::CreateApplicationWindow proc uses rdi
         .return E_FAIL
     .endif
 
-    .new rect:RECT( 0, 0, [rdi].m_width, [rdi].m_height )
+    .new rect:RECT( 0, 0, m_width, m_height )
 
     AdjustWindowRect(&rect, WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
 
     mov eax,rect.right
     sub eax,rect.left
-    mov [rdi].m_width,eax
+    mov m_width,eax
 
     mov eax,rect.bottom
     sub eax,rect.top
-    mov [rdi].m_height,eax
+    mov m_height,eax
 
-    .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME,
-           WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
-           CW_USEDEFAULT, CW_USEDEFAULT,
-           [rdi].m_width, [rdi].m_height,
-           NULL, NULL, [rdi].m_hInstance, rdi) == NULL
-
+    .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME, WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
+           CW_USEDEFAULT, CW_USEDEFAULT, m_width, m_height, NULL, NULL, m_hInstance, rbx) == NULL
         .return E_UNEXPECTED
     .endif
-    mov [rdi].m_hwnd,rax
-   .return S_OK
-
+    mov m_hwnd,rax
+    xor eax,eax
+    ret
     endp
 
 
@@ -509,15 +457,14 @@ CApplication::CreateApplicationWindow proc uses rdi
 
 CApplication::CApplication proc instance:HINSTANCE
 
-    @ComAlloc(CApplication)
-
+    mov rbx,@ComAlloc(CApplication)
     mov rcx,instance
-    mov [rax].CApplication.m_hInstance,rcx
-    mov [rax].CApplication.m_width,900
-    mov [rax].CApplication.m_height,600
+    mov m_hInstance,rcx
+    mov m_width,900
+    mov m_height,600
     ret
-
     endp
+
 
 _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 

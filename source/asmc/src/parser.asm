@@ -192,7 +192,7 @@ sym_ext2int proc __ccall sym:asym_t
         mov [rcx].ispublic,1
         AddPublicData( rcx )
     .endif
-    sym_remove_table( &SymTables[TAB_EXT*symbol_queue], sym )
+    sym_remove_table( &SymTables[TAB_EXT], sym )
     mov rcx,sym
     .if !( [rcx].isproc ) ;; v2.01: don't clear flags for PROTO
         mov [rcx].first_size,0

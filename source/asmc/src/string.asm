@@ -1081,7 +1081,7 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; a textmacro before it has been defined is
         ; somewhat problematic.
 
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rdi )
+        sym_remove_table( &SymTables[TAB_UNDEF], rdi )
         SkipSavedState() ;; further passes must be FULL!
 
         ; v2.21: changed from 8016 to 6005
@@ -1139,7 +1139,7 @@ SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:token_t, sym:asym_t, name:
     .if ( rdi == NULL )
         mov rdi,SymCreate( name )
     .elseif ( [rdi].asym.state == SYM_UNDEFINED )
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rdi )
+        sym_remove_table( &SymTables[TAB_UNDEF], rdi )
 
         ; the text macro was referenced before being defined.
         ; this is valid usage, but it requires a full second pass.
@@ -1344,7 +1344,7 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; a bad idea for preprocessor text items, because it
         ; will require a full second pass!
 
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
+        sym_remove_table( &SymTables[TAB_UNDEF], rsi )
         SkipSavedState()
 
         ; v2.21: changed from 8016 to 6005

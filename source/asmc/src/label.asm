@@ -118,7 +118,7 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
 
         .elseif ( [rdi].asym.state == SYM_UNDEFINED )
 
-            sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rdi )
+            sym_remove_table( &SymTables[TAB_UNDEF], rdi )
             mov [rdi].asym.state,SYM_INTERNAL
 
         .else

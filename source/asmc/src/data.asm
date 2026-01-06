@@ -1606,7 +1606,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, type_sym:asy
 
                 .elseif ( [rsi].asym.state == SYM_UNDEFINED )
 
-                    sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
+                    sym_remove_table( &SymTables[TAB_UNDEF], rsi )
                     mov [rsi].asym.state,SYM_INTERNAL
 
                     ; v2.11: Set the symbol's langtype. It may have been set

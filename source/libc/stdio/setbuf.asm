@@ -10,7 +10,7 @@ include stdio.inc
 
 setbuf proc fp:LPFILE, buf:string_t
 
-    setvbuf( buf, fp, _IOFBF, _MINIOBUF )
+    setvbuf( buf, ldr(fp), _IOFBF, _MINIOBUF )
     ret
 
 setbuf endp

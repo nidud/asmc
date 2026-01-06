@@ -71,35 +71,35 @@ VEX_START equ T_VBROADCASTSS ; first VEX encoded item
    .ends
 
 
-.enum queue_type {
+.enumt queue_type : symbol_queue {
    TAB_UNDEF,
    TAB_EXT,	; externals (EXTERNDEF, EXTERN, COMM, PROTO )
    TAB_SEG,	; SEGMENT items
    TAB_GRP,	; GROUP items
    TAB_PROC,	; PROC items
    TAB_ALIAS,	; ALIAS items
-   TAB_LAST	;
+   TAB_LAST	= 6
    }
 
 ; several lists, see enum queue_type above
 externdef SymTables:symbol_queue
 
-SegTable    equ <SymTables[TAB_SEG*symbol_queue].head>
-ExtTable    equ <SymTables[TAB_EXT*symbol_queue].head>
-AliasTable  equ <SymTables[TAB_ALIAS*symbol_queue].head>
-ProcTable   equ <SymTables[TAB_PROC*symbol_queue].head>
+SegTable    equ <SymTables[TAB_SEG].head>
+ExtTable    equ <SymTables[TAB_EXT].head>
+AliasTable  equ <SymTables[TAB_ALIAS].head>
+ProcTable   equ <SymTables[TAB_PROC].head>
 
 ; values for <rm_info> (3 bits)
 ; 000		  -> has rm_byte with w-, d- and/or s-bit in opcode
 ; 001( no_RM	) -> no rm_byte - may have w-bit
 ; 010( no_WDS	) -> has rm_byte, but w-bit, d-bit, s-bit of opcode are absent
-; 011( R_in_OP ) -> no rm_byte, reg field (if any) is included in opcode
+; 011( R_in_OP	) -> no rm_byte, reg field (if any) is included in opcode
 
 .enum rm_info {
     no_RM   = 0x1,
     no_WDS  = 0x2,
     R_in_OP = 0x3,
-}
+    }
 
 ; values for <allowed_prefix> (3 bits)
 
@@ -110,7 +110,7 @@ ProcTable   equ <SymTables[TAB_PROC*symbol_queue].head>
     AP_REPxx	= 0x03,
     AP_FWAIT	= 0x04,
     AP_NO_FWAIT = 0x05
-}
+    }
 
 ; values for field type in special_item.
 ; it should match order of T_REGISTER - T_RES_ID in token.h

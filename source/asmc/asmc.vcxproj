@@ -103,6 +103,7 @@
     <ASMC Include="src\cpumodel.asm" />
     <ASMC Include="src\data.asm" />
     <ASMC Include="src\dbgcv.asm" />
+    <ASMC Include="src\dbgdw.asm" />
     <ASMC Include="src\directiv.asm" />
     <ASMC Include="src\elf.asm" />
     <ASMC Include="src\end.asm" />

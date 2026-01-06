@@ -837,7 +837,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ; be displayed in second pass when the (unexpanded)
             ; macro name is found by the expression evaluator.
 
-            sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
+            sym_remove_table( &SymTables[TAB_UNDEF], rsi )
 
             alloc_macroinfo:
 

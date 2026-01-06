@@ -3707,7 +3707,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     mov rcx,pproc
     mov rdx,opnd.base_reg
-    .if ( rdx && Parse_Pass == PASS_1 && \
+    .if ( rdx && Parse_Pass == PASS_1 &&
         (r0flags & R0_USED ) && [rdx].asm_tok.bytval == 0 && !( [rcx].asym.method ) )
         asmerr( 7002 )
     .endif

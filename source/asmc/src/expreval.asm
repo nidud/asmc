@@ -1296,7 +1296,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
 
                                 ; don't add undefined symbols multiple times!
 
-                                sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], rax )
+                                sym_add_table( &SymTables[TAB_UNDEF], rax )
                                 mov rax,sym
                             .endif
 

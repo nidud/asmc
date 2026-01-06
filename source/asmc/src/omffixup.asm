@@ -250,7 +250,7 @@ if 1
 
         .if ( [rbx].frame_type == FRAME_SEG )
 
-            .for ( rcx = SymTables[TAB_SEG*symbol_queue].head : rcx : rcx = [rcx].asym.next )
+            .for ( rcx = SymTables[TAB_SEG].head : rcx : rcx = [rcx].asym.next )
                 mov rdx,[rcx].asym.seginfo
                 .if ( [rdx].seg_info.seg_idx == [rbx].frame_datum )
                     .if ( [rdx].seg_info.sgroup )

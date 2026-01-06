@@ -54,7 +54,7 @@ CreateExternal proc fastcall private uses rsi sym:asym_t, name:string_t, weak:ch
     .if ( rsi == NULL )
         mov rsi,SymCreate( rdx )
     .else
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
+        sym_remove_table( &SymTables[TAB_UNDEF], rsi )
     .endif
 
     .if ( rsi )
@@ -65,7 +65,7 @@ CreateExternal proc fastcall private uses rsi sym:asym_t, name:string_t, weak:ch
         .if ( weak )
             mov [rsi].asym.weak,1
         .endif
-        sym_add_table( &SymTables[TAB_EXT*symbol_queue], rsi ) ; add EXTERNAL
+        sym_add_table( &SymTables[TAB_EXT], rsi ) ; add EXTERNAL
     .endif
     .return( rsi )
 
@@ -81,7 +81,7 @@ CreateComm proc fastcall private uses rsi sym:asym_t, name:string_t
     .if ( rsi == NULL )
         mov rsi,SymCreate( rdx )
     .else
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
+        sym_remove_table( &SymTables[TAB_UNDEF], rsi )
     .endif
 
     .if ( rsi )
@@ -91,7 +91,7 @@ CreateComm proc fastcall private uses rsi sym:asym_t, name:string_t
         mov [rsi].asym.is_far,0
         mov [rsi].asym.weak,0
         mov [rsi].asym.iscomm,1
-        sym_add_table( &SymTables[TAB_EXT*symbol_queue], rsi ) ; add EXTERNAL
+        sym_add_table( &SymTables[TAB_EXT], rsi ) ; add EXTERNAL
     .endif
     .return( rsi )
 
@@ -526,7 +526,7 @@ HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:asym_t
                 .endif
             .else
                 mov rdi,SymCreate( altname )
-                sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], rdi )
+                sym_add_table( &SymTables[TAB_UNDEF], rdi )
             .endif
 
             ; make sure the alt symbol becomes strong if it is an external
@@ -1031,7 +1031,7 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( rdi == NULL )
                 .if ( SymCreate( token ) )
                     mov rdi,rax
-                    sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], rdi )
+                    sym_add_table( &SymTables[TAB_UNDEF], rdi )
                 .else
                     .return( ERROR ) ; name was too long
                 .endif

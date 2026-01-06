@@ -845,7 +845,7 @@ omf_write_grpdef proc private uses rsi rdi rbx
 
     ; size of group records may exceed 1024!
 
-    .for ( rsi = SymTables[TAB_GRP*symbol_queue].head: rsi: rsi = [rsi].asym.next )
+    .for ( rsi = SymTables[TAB_GRP].head: rsi: rsi = [rsi].asym.next )
 
         omf_InitRec( &grp, CMD_GRPDEF )
 
@@ -915,7 +915,7 @@ omf_write_segdef proc private uses rsi rdi rbx
   local curr:asym_t
   local obj:omf_rec
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head: rsi: rsi = [rsi].asym.next )
+    .for ( rsi = SymTables[TAB_SEG].head: rsi: rsi = [rsi].asym.next )
 
         mov rdi,[rsi].asym.seginfo
         .continue .if ( [rdi].seg_info.comdatselection )
@@ -1105,7 +1105,7 @@ GetExt proc fastcall private r:ptr readext
             .endif
         .endf
         inc [rcx].readext.method
-        mov [rcx].readext.p,SymTables[TAB_EXT*symbol_queue].head
+        mov [rcx].readext.p,SymTables[TAB_EXT].head
     .endif
 
     .for ( : [rcx].readext.p : )
@@ -1140,7 +1140,7 @@ omf_write_extdef proc private uses rsi rdi rbx
   local data[MAX_EXT_LENGTH]:char_t
   local buffer[MAX_ID_LEN + MANGLE_BYTES + 1]:byte
 
-    mov r.p,SymTables[TAB_EXT*symbol_queue].head
+    mov r.p,SymTables[TAB_EXT].head
     mov r.index,1
     mov r.method,0
     mov obj.d.extdef.first_idx,0
@@ -1199,7 +1199,7 @@ endif
     ; After the records have been written, the indices in
     ; altname are no longer needed.
 
-    .for ( rsi = SymTables[TAB_EXT*symbol_queue].head: rsi: rsi = [rsi].asym.next )
+    .for ( rsi = SymTables[TAB_EXT].head: rsi: rsi = [rsi].asym.next )
 
         .if ( !( [rsi].asym.iscomm ) && [rsi].asym.altname )
 
@@ -1218,7 +1218,7 @@ endif
     ; v2.05: reset the indices - this must be done only after ALL WKEXT
     ; records have been written!
 
-    .for ( rsi = SymTables[TAB_EXT*symbol_queue].head: rsi: rsi = [rsi].asym.next )
+    .for ( rsi = SymTables[TAB_EXT].head: rsi: rsi = [rsi].asym.next )
 
         ; v2.09: don't touch the index if the alternate name is an external
         ; - else an invalid object file will be created!
@@ -1322,7 +1322,7 @@ omf_write_comdef proc __ccall private uses rsi rdi rbx index:word
   local number[16]:char_t
 
     mov start,0
-    mov rsi,SymTables[TAB_EXT*symbol_queue].head
+    mov rsi,SymTables[TAB_EXT].head
     .while ( rsi )
         .for( num = 0, recsize = 0: rsi : rsi = [rsi].asym.next )
             .continue .if ( !( [rsi].asym.iscomm ) )
@@ -1513,7 +1513,7 @@ omf_write_alias proc private uses rsi rdi rbx
   local tmp[MAX_ID_LEN+MANGLE_BYTES+1]:char_t
   local buff[2*MAX_ID_LEN_OMF+2]:byte
 
-    .for ( rbx = SymTables[TAB_ALIAS*symbol_queue].head: rbx: rbx = [rbx].asym.next )
+    .for ( rbx = SymTables[TAB_ALIAS].head: rbx: rbx = [rbx].asym.next )
 
         ; output an alias record for this alias
 

@@ -323,7 +323,7 @@ GetSegRelocs proc __ccall uses rsi rdi rbx pDst:ptr uint_16
 
     .new count:int_t = 0
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head : rsi : rsi = [rsi].asym.next )
+    .for ( rsi = SymTables[TAB_SEG].head : rsi : rsi = [rsi].asym.next )
 
         mov rdi,[rsi].asym.seginfo
         .if ( [rdi].segtype == SEGTYPE_ABS )
@@ -408,7 +408,7 @@ GetImageSize proc __ccall uses rsi rdi memimage:int_t
 
     .new first:uint_32 = TRUE
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head, eax = 0 : rsi : rsi = [rsi].asym.next )
+    .for ( rsi = SymTables[TAB_SEG].head, eax = 0 : rsi : rsi = [rsi].asym.next )
 
         mov rdi,[rsi].asym.seginfo
         .if ( [rdi].segtype == SEGTYPE_ABS || [rdi].information )
@@ -522,7 +522,7 @@ DoFixup proc __ccall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
                     mov rcx,segm
                     sub rax,[rcx].asym.name
 
-                    .for ( rdx = SymTables[TAB_SEG*symbol_queue].head : rdx : rdx = [rdx].asym.next )
+                    .for ( rdx = SymTables[TAB_SEG].head : rdx : rdx = [rdx].asym.next )
 
                         .if ( eax == [rdx].asym.name_size )
 
@@ -648,7 +648,7 @@ endif
 
             .if ( [rbx].frame_type == FRAME_SEG )
 
-                .for ( rcx = SymTables[TAB_SEG*symbol_queue].head : rcx : rcx = [rcx].asym.next )
+                .for ( rcx = SymTables[TAB_SEG].head : rcx : rcx = [rcx].asym.next )
 
                     mov rdx,[rcx].asym.seginfo
 
@@ -1108,7 +1108,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
         ; SEGTYPE_RELOC ( for relocations )
         ; must be set  - also, init lname_idx field
 
-        .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+        .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
             mov rsi,[rdi].asym.seginfo
             mov [rsi].lname_idx,SEGTYPE_ERROR ; use the highest index possible
@@ -1147,7 +1147,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
 
         .for ( ebx = 1, esi = 0 : ebx < SIZE_PEFLAT : ebx++ )
 
-            .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+            .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
                 mov rdx,[rdi].asym.seginfo
 
@@ -1383,7 +1383,7 @@ endif
                 rcx, T_SEGMENT, T_DWORD, rdx, edi, rsi, edi, rsi, edi, rsi, rcx, T_ENDS,
                 rcx, T_SEGMENT, cpalign, rdx, rsi, T_LABEL, ptrtype )
 
-            .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+            .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
                 .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
                     AddLineQueueX( "@LPPROC %r @%s_name", T_IMAGEREL, [rdi].asym.name )
                 .endif
@@ -1397,7 +1397,7 @@ endif
                 "%s" IMPIATSUF " %r %s %s\n"
                 "@%s_iat %r %r", idataname, T_ENDS, idataname, T_SEGMENT, cpalign, idataattr, rsi, T_LABEL, ptrtype )
 
-            .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+            .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
                 .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
                     Mangle( rdi, StringBufferEnd )
                     AddLineQueueX( "%s%s @LPPROC %r @%s_name",
@@ -1412,7 +1412,7 @@ endif
                 "%s" IMPIATSUF " %r\n"
                 "%s" IMPSTRSUF " %r %r %s", idataname, T_ENDS, idataname, T_SEGMENT, T_WORD, idataattr )
 
-            .for ( rdi = SymTables[TAB_EXT*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+            .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
                 .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
                     AddLineQueueX(
                         "@%s_name dw 0\n"
@@ -1515,7 +1515,7 @@ pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:asym_t
   .new baserel:ptr IMAGE_BASE_RELOCATION
   .new prel:ptr uint_16
 
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
         mov rsi,[rdi].asym.seginfo
         .continue .if ( [rsi].segtype == SEGTYPE_HDR )
@@ -1553,7 +1553,7 @@ pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:asym_t
     add rax,IMAGE_BASE_RELOCATION
     mov prel,rax
 
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
         mov rsi,[rdi].asym.seginfo
         .continue .if ( [rsi].segtype == SEGTYPE_HDR )
@@ -1912,7 +1912,7 @@ endif
 
     ; v2.19: first, handle ".drectve" info sections
 
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
         mov rsi,[rdi].asym.seginfo
         .if ( [rsi].information )
@@ -1955,7 +1955,7 @@ endif
     ; sort: header, executable, readable, read-write segments, resources, relocs
 
     .for ( rdx = &flat_order, ebx = 0 : ebx < SIZE_PEFLAT : ebx++ )
-        .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+        .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
             mov rsi,[rdi].asym.seginfo
             .if ( [rsi].segtype == [rdx+rbx*4] )
 if 1
@@ -1988,7 +1988,7 @@ endif
 
     ; assign RVAs to sections
 
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head, ebx = -1 : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head, ebx = -1 : rdi : rdi = [rdi].asym.next )
 
         mov rsi,[rdi].asym.seginfo
         mov rdx,cp
@@ -2080,7 +2080,7 @@ endif
     mov rsi,[rdi].asym.seginfo
     mov section,[rsi].CodeBuffer
 
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head, ebx = -1 : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head, ebx = -1 : rdi : rdi = [rdi].asym.next )
 
         mov rsi,[rdi].asym.seginfo
 
@@ -2412,7 +2412,7 @@ endif
     .new nullbyt:char_t = 0
 
     mov cp.first,TRUE
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
         mov rsi,[rdi].asym.seginfo
 
@@ -2468,7 +2468,7 @@ endif
 
         .for ( ebx = 0 : ebx < SIZE_DOSSEG : ebx++ )
 
-            .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+            .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
                 mov rsi,[rdi].asym.seginfo
                 lea rcx,dosseg_order
@@ -2484,7 +2484,7 @@ endif
             SortSegments( 1 )
         .endif
 
-        .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+        .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
             ; ignore absolute segments
             CalcOffset( rdi, &cp )
@@ -2493,7 +2493,7 @@ endif
 
     ; handle relocs
 
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
 
         DoFixup( rdi, &cp )
         mov rsi,[rdi].asym.seginfo
@@ -2667,7 +2667,7 @@ endif
 
     ; write sections
 
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head, first = TRUE : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head, first = TRUE : rdi : rdi = [rdi].asym.next )
 
         mov rsi,[rdi].asym.seginfo
         .continue .if ( [rsi].segtype == SEGTYPE_ABS )
@@ -2801,7 +2801,7 @@ bin_write_module endp
 
 bin_check_external proc
 
-    .for ( rdx = SymTables[TAB_EXT*symbol_queue].head : rdx : rdx = [rdx].asym.next )
+    .for ( rdx = SymTables[TAB_EXT].head : rdx : rdx = [rdx].asym.next )
         .if ( !( [rdx].asym.weak ) || [rdx].asym.used )
             .if ( !( [rdx].asym.isinline ) )
                 .return( asmerr( 2014, [rdx].asym.name ) )

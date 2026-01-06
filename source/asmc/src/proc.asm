@@ -1361,7 +1361,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
                     mov rdi,SymCreate( [rbx].string_ptr )
                     mov [rax].asym.state,SYM_UNDEFINED
                     mov [rax].asym.used,1
-                    sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], rax ) ; add UNDEFINED
+                    sym_add_table( &SymTables[TAB_UNDEF], rax ) ; add UNDEFINED
 
                 .elseif ( [rax].asym.state != SYM_UNDEFINED &&
                        [rax].asym.state != SYM_INTERNAL && [rax].asym.state != SYM_EXTERNAL )
@@ -1584,9 +1584,9 @@ CreateProc proc __ccall uses rdi sym:asym_t, name:string_t, state:sym_state
         .endif
     .else
         .if ( [rdi].asym.state == SYM_UNDEFINED )
-            lea rcx,SymTables[TAB_UNDEF*symbol_queue]
+            lea rcx,SymTables[TAB_UNDEF]
         .else
-            lea rcx,SymTables[TAB_EXT*symbol_queue]
+            lea rcx,SymTables[TAB_EXT]
         .endif
         sym_remove_table( rcx, rdi )
     .endif
@@ -1600,14 +1600,14 @@ CreateProc proc __ccall uses rdi sym:asym_t, name:string_t, state:sym_state
             ; v2.04: don't use sym_add_table() and thus
             ; free the <next> member field!
 
-            .if ( SymTables[TAB_PROC*symbol_queue].head == NULL )
-                mov SymTables[TAB_PROC*symbol_queue].head,rdi
+            .if ( SymTables[TAB_PROC].head == NULL )
+                mov SymTables[TAB_PROC].head,rdi
             .else
-                mov rcx,SymTables[TAB_PROC*symbol_queue].tail
+                mov rcx,SymTables[TAB_PROC].tail
                 mov [rcx].asym.nextproc,rdi
             .endif
 
-            mov SymTables[TAB_PROC*symbol_queue].tail,rdi
+            mov SymTables[TAB_PROC].tail,rdi
             inc procidx
 
             .if ( Options.line_numbers )
@@ -1621,7 +1621,7 @@ CreateProc proc __ccall uses rdi sym:asym_t, name:string_t, state:sym_state
         .elseif ( [rdi].asym.state == SYM_EXTERNAL )
 
             mov [rdi].asym.weak,1
-            sym_add_table( &SymTables[TAB_EXT*symbol_queue], rdi )
+            sym_add_table( &SymTables[TAB_EXT], rdi )
         .endif
     .endif
     .return( rdi )
@@ -1817,13 +1817,13 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             ; v2.11: added ( may be better to call CreateProc() - currently not possible )
 
-            .if ( SymTables[TAB_PROC*symbol_queue].head == NULL )
-                mov SymTables[TAB_PROC*symbol_queue].head,rdi
+            .if ( SymTables[TAB_PROC].head == NULL )
+                mov SymTables[TAB_PROC].head,rdi
             .else
-                mov rcx,SymTables[TAB_PROC*symbol_queue].tail
+                mov rcx,SymTables[TAB_PROC].tail
                 mov [rcx].asym.nextproc,rdi
             .endif
-            mov SymTables[TAB_PROC*symbol_queue].tail,rdi
+            mov SymTables[TAB_PROC].tail,rdi
         .endif
 
         ; v2.11: sym->isproc is set inside ParseProc()
@@ -3241,48 +3241,54 @@ endif
 
         mov rdi,CurrProc ; added v2.33.26
         mov rcx,sym_ReservedStack
+        mov resstack,[rcx].asym.value
 
-        .if ( [rdi].asym.langtype == LANG_SYSCALL && Parse_Pass > PASS_1 )
+        .if ( [rdi].asym.langtype == LANG_SYSCALL )
 
             .if ( [rsi].has_vararg )
                 ;
                 ; tally up ReservedStack in case fastcall is
                 ; invoked inside a syscall
                 ;
-                add [rcx].asym.value,208
+                add eax,208
+                mov resstack,eax
+                .if ( Parse_Pass > PASS_1 )
+                    mov [rcx].asym.value,eax
+                .endif
             .endif
-            .if ( MODULE.win64_flags & W64F_AUTOSTACKSP )
-                ;
-                ; reserve space for stack params used..
-                ;
-                mov al,[rdi].asym.sys_rcnt
-                add al,[rdi].asym.sys_xcnt
+            ;
+            ; reserve space for stack params used..
+            ;
+            movzx eax,[rdi].asym.sys_rcnt
+            add al,[rdi].asym.sys_xcnt
+
+            .if ( eax )
+
+                .for ( ebx = 8, eax = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].asym.nextparam )
+
+                    .if ( ( Parse_Pass == PASS_1 || [rdx].asym.used ) && [rdx].asym.regparam )
+
+                        inc eax
+                        .if ( ebx < [rdx].asym.total_size )
+                            mov ebx,[rdx].asym.total_size
+                        .endif
+                    .endif
+                .endf
+
                 .if ( eax )
 
-                    .for ( ebx = 8, eax = 0, rdx = [rsi].paralist : rdx : rdx = [rdx].asym.nextparam )
-
-                        .if ( [rdx].asym.used && [rdx].asym.regparam )
-
-                            inc eax
-                            .if ( ebx < [rdx].asym.total_size )
-                                mov ebx,[rdx].asym.total_size
-                            .endif
-                        .endif
-                    .endf
-
-                    .if ( eax )
-
-                        add ebx,7
-                        and ebx,-8
-                        mov [rdi].asym.sys_size,bl
-                        mul bl
-                        add [rcx].asym.value,ROUND_UP( eax, 16 )
-                        mov argstack,eax
+                    add ebx,7
+                    and ebx,-8
+                    mov [rdi].asym.sys_size,bl
+                    mul bl
+                    mov argstack,ROUND_UP( eax, 16 )
+                    add resstack,eax
+                    .if ( Parse_Pass > PASS_1 )
+                        add [rcx].asym.value,eax
                     .endif
                 .endif
             .endif
         .endif
-        mov resstack,[rcx].asym.value
     .endif
 
     ; default processing. if no params/locals are defined, continue
@@ -3579,7 +3585,7 @@ runqueue:
 
             .for ( : rdi : rdi = [rdi].asym.nextparam )
 
-                .if ( [rdi].asym.regparam && [rdi].asym.used )
+                .if ( [rdi].asym.regparam && ( Parse_Pass == PASS_1 || [rdi].asym.used ) )
 
                     mov edx,T_MOV
                     mov al,[rdi].asym.mem_type
@@ -3597,8 +3603,10 @@ runqueue:
                             mov edx,T_MOVSD
                         .endif
                     .endif
-                    mov [rdi].asym.state,SYM_STACK
-                    mov [rdi].asym.offs,ebx
+                    .if ( [rdi].asym.used )
+                        mov [rdi].asym.state,SYM_STACK
+                        mov [rdi].asym.offs,ebx
+                    .endif
                     movzx eax,[rsi].basereg
                     movzx ecx,[rdi].asym.param_reg
                     AddLineQueueX( "%r [%r][%d],%r", edx, eax, ebx, ecx )

@@ -68,6 +68,7 @@ endif
 
 define USE_COMALLOC
 define USE_INDIRECTION
+define DWARF_SUPP 1         ; v2.21: dwarf debug info added - just line numbers (-Zd) for now
 
 define OLDKEYWORDS          ; NAME, SIZE, ..
 define CHEXPREFIX           ; 0x prefix

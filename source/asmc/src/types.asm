@@ -48,7 +48,7 @@ CreateTypeSymbol proc __ccall uses rsi rdi sym:asym_t, name:string_t, global:int
 
     ldr rsi,sym
     .if ( rsi )
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
+        sym_remove_table( &SymTables[TAB_UNDEF], rsi )
     .else
         .if ( global )
             SymCreate( name )

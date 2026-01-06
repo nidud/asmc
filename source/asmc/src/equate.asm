@@ -230,7 +230,7 @@ check_float:
         .if rdi == NULL
             mov rdi,SymCreate(name)
         .else
-            sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], rdi)
+            sym_remove_table(&SymTables[TAB_UNDEF], rdi)
             mov [rdi].fwdref,1
         .endif
         mov [rdi].issaved,0
@@ -313,7 +313,7 @@ CreateVariable proc __ccall uses rdi name:string_t, value:int_t
             mov [rdi].issaved,1
         .endif
     .elseif [rdi].state == SYM_UNDEFINED
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rdi)
+        sym_remove_table( &SymTables[TAB_UNDEF], rdi)
         mov [rdi].fwdref,1
         mov [rdi].issaved,0
         .if StoreState
@@ -568,7 +568,7 @@ endif
             mov [rdi].asmpass,al
             .endc
         .case [rdi].state == SYM_UNDEFINED
-            sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], rdi)
+            sym_remove_table(&SymTables[TAB_UNDEF], rdi)
             mov [rdi].fwdref,1
             .endc
         .case [rdi].state == SYM_EXTERNAL

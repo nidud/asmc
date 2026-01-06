@@ -406,7 +406,7 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( rdi == NULL )
             mov rdi,SymCreate(subst)
             mov [rdi].state,SYM_UNDEFINED
-            sym_add_table(&SymTables[TAB_UNDEF*symbol_queue], rdi)
+            sym_add_table(&SymTables[TAB_UNDEF], rdi)
         .elseif ( [rdi].state != SYM_UNDEFINED && [rdi].state != SYM_INTERNAL &&
                   [rdi].state != SYM_EXTERNAL )
             .return( asmerr( 2217, subst ) )
@@ -414,14 +414,14 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( rsi == NULL )
             mov rsi,SymCreate([rbx].string_ptr)
         .else
-            sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], rsi)
+            sym_remove_table(&SymTables[TAB_UNDEF], rsi)
         .endif
 
         mov [rsi].state,SYM_ALIAS
         mov [rsi].substitute,rdi
         ; v2.10: copy language type of alias
         mov [rsi].langtype,[rdi].langtype
-        sym_add_table(&SymTables[TAB_ALIAS*symbol_queue], rsi) ; add ALIAS
+        sym_add_table(&SymTables[TAB_ALIAS], rsi) ; add ALIAS
        .return( NOT_ERROR )
     .endif
     xor eax,eax

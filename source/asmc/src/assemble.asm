@@ -306,7 +306,7 @@ SetCurrOffset endp
 ;
 WriteModule proc private uses rsi rdi rbx
 
-    mov rbx,SymTables[TAB_SEG*symbol_queue].head
+    mov rbx,SymTables[TAB_SEG].head
 
     .while rbx
 
@@ -335,7 +335,7 @@ WriteModule proc private uses rsi rdi rbx
 
            .new fp:ptr FILE = rax
 
-            mov rbx,SymTables[TAB_EXT*symbol_queue].head
+            mov rbx,SymTables[TAB_EXT].head
 
             .while rbx
 
@@ -657,7 +657,7 @@ endif
     ;
     .if ( MODULE.DllQueue )
 
-        mov rax,SymTables[TAB_EXT*symbol_queue].head
+        mov rax,SymTables[TAB_EXT].head
         .while rax
 
             mov [rax].asym.iat_used,0
@@ -724,7 +724,7 @@ PassOneChecks proc __ccall private uses rsi rdi
     ; Just do a full second pass, the GROUP directive will report
     ; the error.
 
-    mov rax,SymTables[TAB_SEG*symbol_queue].head
+    mov rax,SymTables[TAB_SEG].head
     .while rax
         .if ![rax].asym.segm
 
@@ -754,7 +754,7 @@ aliases:
 
     .if Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF
 
-        mov rcx,SymTables[TAB_ALIAS*symbol_queue].head
+        mov rcx,SymTables[TAB_ALIAS].head
         .while rcx
             mov rax,[rcx].asym.substitute
 
@@ -779,7 +779,7 @@ aliases:
 
     ; scan the EXTERN/EXTERNDEF items
 
-    mov rdi,SymTables[TAB_EXT*symbol_queue].head
+    mov rdi,SymTables[TAB_EXT].head
 
     .while rdi
 
@@ -794,7 +794,7 @@ aliases:
 
             ; remove unused EXTERNDEF/PROTO items from queue.
 
-            sym_remove_table( &SymTables[TAB_EXT*symbol_queue], rsi )
+            sym_remove_table( &SymTables[TAB_EXT], rsi )
            .continue
         .endif
         .continue .if ( [rsi].asym.iscomm )
@@ -1365,7 +1365,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
         ; calculate total size of segments
         ;
         mov curr_written,eax
-        mov rsi,SymTables[TAB_SEG*symbol_queue].head
+        mov rsi,SymTables[TAB_SEG].head
         .while rsi
 
             mov eax,[rsi].asym.max_offset
@@ -1388,7 +1388,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
             .if ( Options.output_format == OFORMAT_COFF )
 
-                mov rsi,SymTables[TAB_SEG*symbol_queue].head
+                mov rsi,SymTables[TAB_SEG].head
 
                 .while rsi
 

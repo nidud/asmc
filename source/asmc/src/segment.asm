@@ -285,12 +285,12 @@ CreateGroup proc fastcall private uses rsi rdi name:string_t
         .if ( rdi == NULL )
             mov rdi,SymCreate( rsi )
         .else
-            sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rdi )
+            sym_remove_table( &SymTables[TAB_UNDEF], rdi )
         .endif
 
         mov [rdi].asym.state,SYM_GRP
         mov [rdi].asym.grpinfo,LclAlloc( sizeof( grp_info ) )
-        sym_add_table( &SymTables[TAB_GRP*symbol_queue], rdi )
+        sym_add_table( &SymTables[TAB_GRP], rdi )
 
         mov [rdi].asym.list,1
         mov [rdi].asym.Ofssize, USE_EMPTY ; v2.14: added
@@ -325,7 +325,7 @@ CreateSegment proc fastcall private uses rdi s:asym_t, name:string_t, add_global
 
     .elseif ( [rdi].asym.state == SYM_UNDEFINED )
 
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rdi )
+        sym_remove_table( &SymTables[TAB_UNDEF], rdi )
     .endif
 
     .if ( rdi )
@@ -344,15 +344,15 @@ CreateSegment proc fastcall private uses rdi s:asym_t, name:string_t, add_global
         ; don't use sym_add_table(). Thus the "prev" member
         ; becomes free for another use.
 
-        .if ( SymTables[TAB_SEG*symbol_queue].head == NULL )
+        .if ( SymTables[TAB_SEG].head == NULL )
 
-            mov SymTables[TAB_SEG*symbol_queue].head,rdi
-            mov SymTables[TAB_SEG*symbol_queue].tail,rdi
+            mov SymTables[TAB_SEG].head,rdi
+            mov SymTables[TAB_SEG].tail,rdi
         .else
 
-            mov rcx,SymTables[TAB_SEG*symbol_queue].tail
+            mov rcx,SymTables[TAB_SEG].tail
             mov [rcx].asym.next,rdi
-            mov SymTables[TAB_SEG*symbol_queue].tail,rdi
+            mov SymTables[TAB_SEG].tail,rdi
         .endif
     .endif
     .return( rdi )
@@ -912,14 +912,14 @@ SetCurrSeg endp
 
 UnlinkSeg proc fastcall private uses rdi dir:asym_t
 
-    .for ( rdx = SymTables[TAB_SEG*symbol_queue].head, rdi = NULL : rdx : rdi = rdx, rdx = [rdx].asym.next )
+    .for ( rdx = SymTables[TAB_SEG].head, rdi = NULL : rdx : rdi = rdx, rdx = [rdx].asym.next )
 
         .if ( rdx == rcx )
 
             ; if segment is first, set a new head
 
             .if ( rdi == NULL )
-                mov SymTables[TAB_SEG*symbol_queue].head,[rdx].asym.next
+                mov SymTables[TAB_SEG].head,[rdx].asym.next
             .else
                 mov [rdi].asym.next,[rdx].asym.next
             .endif
@@ -927,7 +927,7 @@ UnlinkSeg proc fastcall private uses rdi dir:asym_t
             ; if segment is last, set a new tail
 
             .if ( [rdx].asym.next == NULL )
-                mov SymTables[TAB_SEG*symbol_queue].tail,rdi
+                mov SymTables[TAB_SEG].tail,rdi
             .endif
         .endif
     .endf
@@ -997,14 +997,14 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             UnlinkSeg( rdi )
             mov [rdi].asym.next,NULL
-            .if ( SymTables[TAB_SEG*symbol_queue].head == NULL )
+            .if ( SymTables[TAB_SEG].head == NULL )
 
-                mov SymTables[TAB_SEG*symbol_queue].head,rdi
-                mov SymTables[TAB_SEG*symbol_queue].tail,rdi
+                mov SymTables[TAB_SEG].head,rdi
+                mov SymTables[TAB_SEG].tail,rdi
             .else
-                mov rcx,SymTables[TAB_SEG*symbol_queue].tail
+                mov rcx,SymTables[TAB_SEG].tail
                 mov [rcx].asym.next,rdi
-                mov SymTables[TAB_SEG*symbol_queue].tail,rdi
+                mov SymTables[TAB_SEG].tail,rdi
             .endif
             mov rcx,[rdi].asym.seginfo
             mov oldOfssize,[rcx].seg_info.Ofssize ; v2.13: check segment's word size
@@ -1506,7 +1506,7 @@ SortSegments proc __ccall uses rsi rdi rbx type:int_t
         xor esi,esi
         mov changed,FALSE
 
-        .for ( rdi = SymTables[TAB_SEG*symbol_queue].head: rdi && [rdi].asym.next : rsi = rdi, rdi = [rdi].asym.next )
+        .for ( rdi = SymTables[TAB_SEG].head: rdi && [rdi].asym.next : rsi = rdi, rdi = [rdi].asym.next )
 
             mov swap,FALSE
             mov rbx,[rdi].asym.seginfo
@@ -1541,7 +1541,7 @@ SortSegments proc __ccall uses rsi rdi rbx type:int_t
                 mov rdx,[rdi].asym.next
                 mov changed,TRUE
                 .if ( rsi == NULL )
-                    mov SymTables[TAB_SEG*symbol_queue].head,rdx
+                    mov SymTables[TAB_SEG].head,rdx
                 .else
                     mov [rsi].asym.next,rdx
                 .endif
@@ -1583,11 +1583,9 @@ SegmentModuleExit endp
 ; this is called once per module after the last pass is finished
 
 SegmentFini proc
-
     FreeLnameQueue()
     ret
-
-SegmentFini endp
+    endp
 
 
 ; init. called for each pass
@@ -1598,22 +1596,22 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
    .new i:uint_32
    .new p:string_t
 
-    mov CurrSeg,NULL
-    mov stkindex,0
+    xor eax,eax
+    mov CurrSeg,rax
+    mov stkindex,eax
 
     .if ( ecx == PASS_1 )
 
-        mov grpdefidx,0
-        mov buffer_size,0
-        mov CV8Label,NULL
+        mov grpdefidx,eax
+        mov buffer_size,eax
+        mov CV8Label,rax
     .endif
 
     ; alloc a buffer for the contents
 
-    .if ( MODULE.pCodeBuff == NULL && Options.output_format != OFORMAT_OMF )
+    .if ( rax == MODULE.pCodeBuff && Options.output_format != OFORMAT_OMF )
 
-        .for ( rdi = SymTables[TAB_SEG*symbol_queue].head,
-                buffer_size = 0: rdi: rdi = [rdi].asym.next )
+        .for ( rdi = SymTables[TAB_SEG].head, buffer_size = eax : rdi : rdi = [rdi].asym.next )
 
             mov rcx,[rdi].asym.seginfo
 
@@ -1630,15 +1628,12 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
                 ; for a quick solution just add 25% to the size if segment
                 ; is a code segment. (v2.02: previously if was added only if
                 ; code segment contained labels, but this isn't sufficient.)
-                ;
-                ; v2.37.47: added 16 byte..
-                ;
 
                 .if ( [rcx].seg_info.segtype == SEGTYPE_CODE )
 
                     mov edx,eax
                     shr eax,2
-                    lea eax,[rax+rdx+16]
+                    add eax,edx
                 .endif
                 add buffer_size,eax
             .endif
@@ -1652,8 +1647,7 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
     ; Reset length of all segments to zero.
     ; set start of segment buffers.
 
-    .for ( rdi = SymTables[TAB_SEG*symbol_queue].head,
-           rsi = MODULE.pCodeBuff: rdi: rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head, rsi = MODULE.pCodeBuff : rdi : rdi = [rdi].asym.next )
 
         mov rcx,[rdi].asym.seginfo
         mov [rcx].seg_info.current_loc,0
@@ -1700,8 +1694,7 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
         UpdateCurrSegVars()
     .endif
     ret
-
-SegmentInit endp
+    endp
 
 
 SegmentSaveState proc
@@ -1717,7 +1710,6 @@ SegmentSaveState proc
         tmemcpy( saved_SegStack, &SegStack, ecx )
     .endif
     ret
-
-SegmentSaveState endp
+    endp
 
     end

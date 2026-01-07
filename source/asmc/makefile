@@ -34,7 +34,12 @@ acc = asmc64
 flags += -Zp8
 ifdef YACC
 ifdef LIBC
+ifdef GDB
+link = -o $@ -static -nostdlib -l:libasmc.a
+flags += -Zd
+else
 link += -static -nostdlib -l:libasmc.a -Wl,-no-pie,-z,now,-z,noexecstack
+endif
 else
 link += -Wl,-pie,-z,now,-z,noexecstack
 flags += -fpic

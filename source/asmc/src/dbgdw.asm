@@ -238,43 +238,46 @@ LEB128 proc fastcall buf:ptr byte, value:int_t
     endp
 
 
-dwarf_line_gen proc __ccall uses rsi rdi line_incr:int_t, addr_incr:int_t, buf:ptr byte
+dwarf_line_gen proc __ccall uses rsi rdi rbx line_incr:int_t, addr_incr:int_t, buf:ptr byte
 
    .new opcode:dword
    .new pend:ptr byte
    .new address:int_t
 
+    ldr ecx,line_incr
+    ldr ebx,addr_incr
     ldr rdi,buf
     xor esi,esi
 
-    .if ( line_incr < DWLINE_BASE || line_incr > DWLINE_BASE + DWLINE_RANGE - 1 )
+    .ifs ( ecx < DWLINE_BASE || ecx > DWLINE_BASE + DWLINE_RANGE - 1 )
 
         ; line_incr is out of bounds... emit standard opcode
 
         mov byte ptr [rdi],DW_LNS_advance_line
-        LEB128( &[rdi+1], line_incr )
+        LEB128( &[rdi+1], ecx )
         sub rax,rdi
         mov esi,eax
-        mov line_incr,0
+        xor ecx,ecx
     .endif
+    mov line_incr,ecx
 
-    .if ( addr_incr < 0 )
+    .ifs ( ebx < 0 )
 
         lea rcx,[rdi+rsi+1]
         mov eax,DW_LNS_advance_pc
         mov [rcx-1],al
-        LEB128( rcx, addr_incr )
+        LEB128( rcx, ebx )
         sub rax,rdi
         mov esi,eax
-        mov addr_incr,0
+        xor ebx,ebx
     .else
-        mov eax,addr_incr
+        mov eax,ebx
         xor edx,edx
         mov ecx,DW_MIN_INSTR_LENGTH
         div ecx
-        mov addr_incr,eax
+        mov ebx,eax
     .endif
-    .if ( addr_incr == 0 && line_incr == 0 )
+    .if ( ebx == 0 && line_incr == 0 )
 
         mov eax,esi
         mov ecx,DW_LNS_copy
@@ -286,9 +289,9 @@ dwarf_line_gen proc __ccall uses rsi rdi line_incr:int_t, addr_incr:int_t, buf:p
     ; calculate the opcode with overflow checks
 
     sub line_incr,DWLINE_BASE
-    imul eax,addr_incr,DWLINE_RANGE
+    imul eax,ebx,DWLINE_RANGE
     mov opcode,eax
-    .if ( eax < addr_incr )
+    .ifs ( eax < ebx )
         jmp overflow
     .endif
     add eax,line_incr
@@ -313,9 +316,9 @@ dwarf_line_gen proc __ccall uses rsi rdi line_incr:int_t, addr_incr:int_t, buf:p
     ; if addr_incr lies in this range.  MAX_ADDR_INCR is the addr
     ; increment for special opcode 255.
 
-define MAX_ADDR_INCR   ( ( 255 - DWLINE_OPCODE_BASE ) / DWLINE_RANGE )
+define MAX_ADDR_INCR ( ( 255 - DWLINE_OPCODE_BASE ) / DWLINE_RANGE )
 
-    .if ( addr_incr < 2*MAX_ADDR_INCR )
+    .ifs ( ebx < 2*MAX_ADDR_INCR )
 
         mov eax,DW_LNS_const_add_pc
         mov [rdi+rsi],al
@@ -341,17 +344,17 @@ overflow:
     .if ( line_incr == 0 - DWLINE_BASE )
         mov opcode,DW_LNS_copy
     .else
-        mov eax,addr_incr
+        mov eax,ebx
         xor edx,edx
         mov ecx,MAX_ADDR_INCR - 1
         div ecx
-        sub addr_incr,edx
+        sub ebx,edx
         imul eax,edx,DWLINE_RANGE
         add eax,line_incr
         add eax,DWLINE_OPCODE_BASE
         mov opcode,eax
     .endif
-    LEB128( &[rdi+rsi+1], addr_incr )
+    LEB128( &[rdi+rsi+1], ebx )
     mov ecx,opcode
     mov [rax],cl
     sub rax,rdi

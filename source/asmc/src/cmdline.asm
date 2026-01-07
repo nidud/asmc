@@ -622,7 +622,7 @@ endif
         mov Options.pic,1
         .return
     .case '-onf'            ; -fno-pic
-        mov Options.pic,0
+        mov Options.nopic,1
         .return
 
     .case 'marf'            ; -frame

@@ -1025,8 +1025,8 @@ endif
         and eax,not 0xF
         mov fileoffset,eax
     .endf
-    .return( NOT_ERROR )
-
+    xor eax,eax
+    ret
     endp
 
 
@@ -1034,39 +1034,34 @@ endif
 
     assume rsi:ptr fixup
 
-write_relocs32 proc __ccall uses rsi rdi rbx em:ptr elfmod, curr:asym_t
+write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
 
-   .new elftype:byte
    .new reloc32:Elf32_Rel
 
     ldr rbx,em
     ldr rdx,curr
     mov rcx,[rdx].asym.seginfo
 
-    .for ( rsi = [rcx].seg_info.head: rsi: rsi = [rsi].nextrlc )
+    .for ( rsi = [rcx].seg_info.head : rsi : rsi = [rsi].nextrlc )
 
         mov reloc32.r_offset,[rsi].locofs
-
-        .switch ( [rsi].type )
+        movzx eax,[rsi].type
+        .switch pascal eax
         .case FIX_RELOFF32
-            mov elftype,R_386_PC32
+            mov edx,R_386_PC32
             mov rcx,[rsi].sym
-            .if ( MODULE.pic && [rcx].asym.state == SYM_EXTERNAL )
-                .if ( [rcx].asym.isproc ) ; added v2.34.25
-                    mov elftype,R_386_PLT32
-                .endif
+            .if ( MODULE.pic && [rcx].asym.isproc ) ; added v2.34.25
+                mov edx,R_386_PLT32
             .endif
-            .endc
-        .case FIX_OFF32        : mov elftype,R_386_32       : .endc
-        .case FIX_OFF32_IMGREL : mov elftype,R_386_RELATIVE : .endc
+        .case FIX_OFF32        : mov edx,R_386_32
+        .case FIX_OFF32_IMGREL : mov edx,R_386_RELATIVE
 if GNURELOCS
-        .case FIX_OFF16    : mov [rbx].extused,TRUE : mov elftype,R_386_16   : .endc
-        .case FIX_RELOFF16 : mov [rbx].extused,TRUE : mov elftype,R_386_PC16 : .endc
-        .case FIX_OFF8     : mov [rbx].extused,TRUE : mov elftype,R_386_8    : .endc
-        .case FIX_RELOFF8  : mov [rbx].extused,TRUE : mov elftype,R_386_PC8  : .endc
+        .case FIX_OFF16    : mov [rbx].extused,TRUE : mov edx,R_386_16
+        .case FIX_RELOFF16 : mov [rbx].extused,TRUE : mov edx,R_386_PC16
+        .case FIX_OFF8     : mov [rbx].extused,TRUE : mov edx,R_386_8
+        .case FIX_RELOFF8  : mov [rbx].extused,TRUE : mov edx,R_386_PC8
 endif
         .default
-            mov elftype,R_386_NONE
             mov rcx,curr
             .if ( [rsi].type < FIX_LAST )
                 mov rdx,MODULE.fmtopt
@@ -1074,13 +1069,14 @@ endif
             .else
                 asmerr( 3014, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .endif
+            mov edx,R_386_NONE
         .endsw
 
         ; the low 8 bits of info are type
         ; the high 24 bits are symbol table index
 
         mov rcx,[rsi].sym
-        mov reloc32.r_info,ELF32_R_INFO( [rcx].asym.ext_idx, elftype )
+        mov reloc32.r_info,ELF32_R_INFO( [rcx].asym.ext_idx, edx )
         movl rbx,rsi
         .ifd ( fwrite( &reloc32, 1, sizeof(reloc32), CurrFile[TOBJ] ) != sizeof(reloc32) )
             WriteError()
@@ -1089,8 +1085,7 @@ endif
         movl rbx,em
     .endf
     ret
-
-write_relocs32 endp
+    endp
 
 
 ; write 1 section's relocations (64-bit)
@@ -1121,22 +1116,23 @@ ifndef _WIN64
         mov dword ptr reloc64.r_addend[4],edx
 endif
         movzx eax,[rsi].type
-        .switch eax
+        .switch pascal eax
         .case FIX_RELOFF32
             mov ebx,R_X86_64_PC32
-            .if ( MODULE.pic && [rcx].asym.state == SYM_EXTERNAL )
-                .if ( [rcx].asym.isproc ) ; added v2.34.25
-                    mov ebx,R_X86_64_PLT32
-                .endif
+            ;
+            ; v2.34.25: added isproc
+            ; v2.37.49: PLT32 used as default unless -fno-pic (dynamic link if -fpic)
+            ;
+            .if ( !MODULE.nopic && [rcx].asym.isproc )
+                mov ebx,R_X86_64_PLT32
             .endif
-           .endc
-        .case FIX_OFF64        : mov ebx,R_X86_64_64        : .endc
-        .case FIX_OFF32_IMGREL : mov ebx,R_X86_64_RELATIVE  : .endc
-        .case FIX_OFF32        : mov ebx,R_X86_64_32        : .endc
-        .case FIX_OFF16        : mov ebx,R_X86_64_16        : .endc
-        .case FIX_RELOFF16     : mov ebx,R_X86_64_PC16      : .endc
-        .case FIX_OFF8         : mov ebx,R_X86_64_8         : .endc
-        .case FIX_RELOFF8      : mov ebx,R_X86_64_PC8       : .endc
+        .case FIX_OFF64        : mov ebx,R_X86_64_64
+        .case FIX_OFF32_IMGREL : mov ebx,R_X86_64_RELATIVE
+        .case FIX_OFF32        : mov ebx,R_X86_64_32
+        .case FIX_OFF16        : mov ebx,R_X86_64_16
+        .case FIX_RELOFF16     : mov ebx,R_X86_64_PC16
+        .case FIX_OFF8         : mov ebx,R_X86_64_8
+        .case FIX_RELOFF8      : mov ebx,R_X86_64_PC8
         .default
             mov rcx,curr
             mov ebx,R_X86_64_NONE
@@ -1160,8 +1156,7 @@ endif
         movl rdi,_rdi
     .endf
     ret
-
-write_relocs64 endp
+    endp
 
     assume rdi:nothing, rsi:nothing
 
@@ -1246,9 +1241,9 @@ if GNURELOCS
         asmerr( 8013 )
     .endif
 endif
-    .return( NOT_ERROR )
-
-elf_write_data endp
+    xor eax,eax
+    ret
+    endp
 
 
 ; write ELF module
@@ -1360,9 +1355,9 @@ ifndef ASMC64
 endif
     elf_write_section_table( &em, eax )
     elf_write_data( &em )
-   .return( NOT_ERROR )
-
-elf_write_module endp
+    xor eax,eax
+    ret
+    endp
 
 
 ; format-specific init.
@@ -1373,7 +1368,6 @@ elf_init proc public
     mov MODULE.elf_osabi,ELFOSABI_SYSV
     mov MODULE.WriteModule,&elf_write_module
     ret
-
-elf_init endp
+    endp
 
     end

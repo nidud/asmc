@@ -601,7 +601,8 @@ define PE_DLL               0x04
       write_listing         dd: 1 ? ; .list/.nolist
       listif                dd: 1 ? ; .listif/.nolistif
       list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
-      pic                   dd: 1 ? ; -fpic | -fno-pic
+      pic                   dd: 1 ? ; -fpic
+      nopic                 dd: 1 ? ; -fno-pic
       endbr                 dd: 1 ? ; -endbr
       masm_compat_gencode   dd: 1 ? ; -Zg option
       cstack                dd: 1 ? ; -Cs
@@ -698,7 +699,8 @@ define PE_DLL               0x04
       list                  dd: 1 ? ; .list/.nolist
       listif                dd: 1 ? ; .listif/.nolistif
       list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
-      pic                   dd: 1 ? ; -fpic | -fno-pic
+      pic                   dd: 1 ? ; -fpic
+      nopic                 dd: 1 ? ; -fno-pic
       endbr                 dd: 1 ? ; -endbr
       masm_compat_gencode   dd: 1 ? ; -Zg option
       cstack                dd: 1 ? ; -Cs

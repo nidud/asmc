@@ -16,7 +16,7 @@ The link options. For more information, see [Linker options](../tools/linkw/read
 
 If link options are omitted the default options added depends on the situation. In Windows the /LIBPATH:_directory_ is set, and if the -q option is used /NOLOGO is added. The linux version adds output name from the first object file. Omitting the -fpic option adds static libraries.
 ```
-gcc [-m32 -static] [-nostdlib] -o name object_files [-l:[x86/]libasmc.a]
+gcc [-m32 -static] [-nostdlib] [-s] -o name object_files [-l:[x86/]libasmc.a]
 ```
 
 You can use the [comment](../directive/dot-pragma.md) pragma to specify some linker options.

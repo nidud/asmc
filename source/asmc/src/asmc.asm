@@ -677,7 +677,7 @@ ifdef __UNIX__
 
         .if ( Options.link_linker == NULL )
 
-            ; gcc [-m32 -static] [-nostdlib] -s -o <name> *.o [-l:[x86/]libasmc.a]
+            ; gcc [-m32 -static] [-nostdlib] [-s] -o <name> *.o [-l:[x86/]libasmc.a]
 
             .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
 

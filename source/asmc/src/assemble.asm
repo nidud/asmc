@@ -1386,21 +1386,18 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
         .if ( Options.line_numbers )
 
-            .if ( Options.output_format == OFORMAT_COFF )
+            .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
 
-                mov rsi,SymTables[TAB_SEG].head
-
-                .while rsi
+                .for ( rsi = SymTables[TAB_SEG].head : rsi : rsi,[rsi].asym.next )
 
                     mov rbx,[rsi].asym.seginfo
                     .if rbx
-                        .if [rbx].seg_info.LinnumQueue
+                        .if ( Options.output_format == OFORMAT_COFF && [rbx].seg_info.LinnumQueue )
                             QueueDeleteLinnum( [rbx].seg_info.LinnumQueue )
                         .endif
                         mov [rbx].seg_info.LinnumQueue,0
                     .endif
-                    mov rsi,[rsi].asym.next
-                .endw
+                .endf
             .else
                 QueueDeleteLinnum( &MODULE.LinnumQueue )
                 mov MODULE.LinnumQueue.head,0

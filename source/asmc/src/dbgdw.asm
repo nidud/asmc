@@ -344,6 +344,7 @@ overflow:
     mov ecx,opcode
     mov [rax],cl
     sub rax,rdi
+    inc eax
     ret
     endp
 

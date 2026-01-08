@@ -1388,7 +1388,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
             .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
 
-                .for ( rsi = SymTables[TAB_SEG].head : rsi : rsi,[rsi].asym.next )
+                .for ( rsi = SymTables[TAB_SEG].head : rsi : rsi = [rsi].asym.next )
 
                     mov rbx,[rsi].asym.seginfo
                     .if rbx

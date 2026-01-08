@@ -207,31 +207,17 @@ dwarf_set_abbrev proc __ccall uses rsi rdi em:ptr elfmod, curr:asym_t
 
 LEB128 proc fastcall buf:ptr byte, value:int_t
 
-    ; we can only handle an arithmetic right shift
+    .while 1
 
-    test edx,edx
-    .ifns
-        .while 1
-
-            mov eax,edx
-            shr edx,7
-            and eax,0x7F
-            .break .if ( edx == 0 && !( eax & 0x40 ) )
-            or  al,0x80
-            mov [rcx],al
-            inc rcx
-        .endw
-    .else
-        .while 1
-            mov eax,edx
-            sar edx,7
-            and eax,0x7F
-            .break .if ( edx == -1 && ( eax & 0x40 ) )
-            or  al,0x80
-            mov [rcx],al
-            inc rcx
-        .endw
-    .endif
+        mov eax,edx
+        and eax,0x7F
+        sar edx,7
+        .break .if ( ZERO? && !( eax & 0x40 ) )
+        .break .if ( edx == -1 && ( eax & 0x40 ) )
+        or  al,0x80
+        mov [rcx],al
+        inc rcx
+    .endw
     mov [rcx],al
     lea rax,[rcx+1]
     ret

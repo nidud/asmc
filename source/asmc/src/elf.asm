@@ -15,7 +15,7 @@ include extern.inc
 include elfspec.inc
 
 if DWARF_SUPP
-dwarf_create_sections proto __ccall :ptr elfmod
+dwarf_create_sections proto __ccall
 endif
 
 ; v2.03: create weak externals for ALIAS symbols.
@@ -1126,7 +1126,20 @@ endif
             .if ( !MODULE.nopic && [rcx].asym.isproc )
                 mov ebx,R_X86_64_PLT32
             .endif
-        .case FIX_OFF64        : mov ebx,R_X86_64_64
+        .case FIX_OFF64
+if 0        ;
+            ; v2.21: in case the 64-bit reloc refer to a segment only, the addend has to be set.
+            ; it's needed for dwarf internal fixups at least. Further tests needed!
+            ;
+            .if ( [rcx].asym.state == SYM_SEG )
+                mov eax,[rsi].offs
+                mov size_t ptr reloc64.r_addend,rax
+              ifndef _WIN64
+                mov dword ptr reloc64.r_addend[4],0
+              endif
+            .endif
+endif
+            mov ebx,R_X86_64_64
         .case FIX_OFF32_IMGREL : mov ebx,R_X86_64_RELATIVE
         .case FIX_OFF32        : mov ebx,R_X86_64_32
         .case FIX_OFF16        : mov ebx,R_X86_64_16
@@ -1268,7 +1281,7 @@ elf_write_module proc uses rsi rdi rbx
     mov em.srcname,rdx
 if DWARF_SUPP
     .if ( Options.line_numbers )
-        dwarf_create_sections( &em )
+        dwarf_create_sections()
     .endif
 endif
 

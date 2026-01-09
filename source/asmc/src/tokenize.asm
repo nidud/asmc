@@ -1188,16 +1188,15 @@ get_id_in_backquotes proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_statu
     mov [rbx].token,T_ID
     mov [rbx].idarg,0
 
-    mov al,[rsi]
+    .while 1 ; v2.37.51
 
-    .while ( al != '`' )
-
+        lodsb
+        .break .if ( al == '`' )
         .if ( !al || al == ';' )
 
             mov B[rdi],0
            .return asmerr( 2046 )
         .endif
-        lodsb
         stosb
         inc [rdx].input
     .endw

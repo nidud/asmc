@@ -443,7 +443,7 @@ define __DBGDW_INC
     DW_LANG_C               = 0x0002,
     DW_LANG_Ada83           = 0x0003,
     DW_LANG_C_plus_plus     = 0x0004,
-    DW_LANG_Cobol74         = 0x0005,
+    DW_LANG_Cobol74         = 0x0005, ; GNU AS 2.42
     DW_LANG_Cobol85         = 0x0006,
     DW_LANG_Fortran77       = 0x0007,
     DW_LANG_Fortran90       = 0x0008,
@@ -459,6 +459,10 @@ define __DBGDW_INC
     DW_LANG_UPC             = 0x0012,
     DW_LANG_D               = 0x0013,
     DW_LANG_Phyton          = 0x0014,
+
+    DW_LANG_C11             = 0x001d, ; version 5 -- GCC
+    DW_LANG_C17             = 0x002c,
+    DW_LANG_Assembly        = 0x0031, ; version 6
 
     DW_LANG_lo_user         = 0x8000,
     DW_LANG_hi_user         = 0xffff,

@@ -68,7 +68,6 @@ dwarf_segnames string_t \
     @CStr(".debug_abbrev"),
     @CStr(".debug_line")
 
-
 FlatStandardAbbrevs char_t \
     COMPUNIT_ABBREV_CODE,
     DW_TAG_compile_unit,
@@ -89,35 +88,25 @@ stdopsparms db 0,1,1,1,1,0,0,0,1,0,0,1
 
     option proc:private
 
-    assume rbx:ptr elfmod
+dwarf_set_info proc __ccall uses rsi rdi rbx seginfo:asym_t
 
-dwarf_set_info proc __ccall uses rsi rdi rbx em:ptr elfmod, seginfo:asym_t
-
-   .new size:int_t
-   .new curr:asym_t
-
-    ldr rbx,em
     ldr rsi,seginfo
 
     mov rcx,MODULE.FNames
     tstrlen([rcx])
-    mov ecx,dwarf_info32
+    mov ebx,dwarf_info32
     .if ( MODULE.defOfssize == USE64 )
-        mov ecx,dwarf_info64
+        mov ebx,dwarf_info64
     .endif
-    add eax,ecx
-    mov size,eax
-    mov [rsi].asym.max_offset,eax
-    mov rdi,LclAlloc(eax)
+    add ebx,eax
+    mov [rsi].asym.max_offset,ebx
+    mov rdi,LclAlloc(ebx)
 
     mov rcx,[rsi].asym.seginfo
     mov [rcx].seg_info.CodeBuffer,rdi
-
-    mov eax,size
-    sub eax,4
-    mov [rdi].dwarf_info32.hdr.unit_length,eax
+    sub ebx,4
+    mov [rdi].dwarf_info32.hdr.unit_length,ebx
     mov [rdi].dwarf_info32.hdr.version,2
-    ;mov [rdi].dwarf_info32.hdr.debug_abbrev_offset,0 ; needs a fixup
 
     lea rcx,dwarf_seg
     CreateFixup( [rcx+DWABBREV_IDX], FIX_OFF32, OPTJ_NONE )
@@ -134,30 +123,26 @@ dwarf_set_info proc __ccall uses rsi rdi rbx em:ptr elfmod, seginfo:asym_t
 
     ; search for the first segment with line numbers
 
-    .for ( rcx = SymTables[TAB_SEG].head : rcx : rcx = [rcx].asym.next )
+    .for ( rbx = SymTables[TAB_SEG].head : rbx : rbx = [rbx].asym.next )
 
-        mov rax,[rcx].asym.seginfo
+        mov rax,[rbx].asym.seginfo
         .break .if ( [rax].seg_info.LinnumQueue )
     .endf
 
-    .if ( rcx )
+    .if ( rbx )
 
-        mov curr,rcx
         .if ( MODULE.defOfssize == USE64 )
 
-            ;mov [rdi].dwarf_info64.low_pc,0
-            CreateFixup( rcx, FIX_OFF64, OPTJ_NONE )
+            CreateFixup( rbx, FIX_OFF64, OPTJ_NONE )
             mov [rax].fixup.locofs,dwarf_info64.low_pc
             lea rcx,[rdi].dwarf_info64.low_pc
             store_fixup( rax, rsi, rcx )
-            mov rcx,curr
-            mov eax,[rcx].asym.max_offset
+            mov eax,[rbx].asym.max_offset
             mov dword ptr [rdi].dwarf_info64.high_pc,eax
-            CreateFixup( rcx, FIX_OFF64, OPTJ_NONE )
+            CreateFixup( rbx, FIX_OFF64, OPTJ_NONE )
             mov [rax].fixup.locofs,dwarf_info64.high_pc
             lea rcx,[rdi].dwarf_info64.high_pc
             store_fixup( rax, rsi, rcx )
-            ;mov [rdi].dwarf_info64.stmt_list,0
             lea rcx,dwarf_seg
             CreateFixup( [rcx+DWLINE_IDX], FIX_OFF32, OPTJ_NONE )
             mov [rax].fixup.locofs,dwarf_info64.stmt_list
@@ -166,18 +151,15 @@ dwarf_set_info proc __ccall uses rsi rdi rbx em:ptr elfmod, seginfo:asym_t
             mov rdx,MODULE.FNames
             tstrcpy( &[rdi].dwarf_info64.name, [rdx] )
         .else
-            ;mov [rdi].dwarf_info32.low_pc,0
-            CreateFixup( rcx, FIX_OFF32, OPTJ_NONE )
+            CreateFixup( rbx, FIX_OFF32, OPTJ_NONE )
             mov [rax].fixup.locofs,dwarf_info32.low_pc
             lea rcx,[rdi].dwarf_info32.low_pc
             store_fixup( rax, rsi, rcx )
-            mov rcx,curr
-            mov [rdi].dwarf_info32.high_pc,[rcx].asym.max_offset
-            CreateFixup( rcx, FIX_OFF32, OPTJ_NONE )
+            mov [rdi].dwarf_info32.high_pc,[rbx].asym.max_offset
+            CreateFixup( rbx, FIX_OFF32, OPTJ_NONE )
             mov [rax].fixup.locofs,dwarf_info32.high_pc
             lea rcx,[rdi].dwarf_info32.high_pc
             store_fixup( rax, rsi, rcx )
-            ;mov [rdi].dwarf_info32.stmt_list,0
             lea rcx,dwarf_seg
             CreateFixup( [rcx+DWLINE_IDX], FIX_OFF32, OPTJ_NONE )
             mov [rax].fixup.locofs,dwarf_info32.stmt_list
@@ -191,7 +173,7 @@ dwarf_set_info proc __ccall uses rsi rdi rbx em:ptr elfmod, seginfo:asym_t
     endp
 
 
-dwarf_set_abbrev proc __ccall uses rsi rdi em:ptr elfmod, curr:asym_t
+dwarf_set_abbrev proc fastcall uses rsi rdi curr:asym_t
 
     ldr rsi,curr
     mov [rsi].asym.max_offset,sizeof(FlatStandardAbbrevs)
@@ -250,24 +232,16 @@ dwarf_line_gen proc __ccall uses rsi rdi rbx line_incr:int_t, addr_incr:int_t, b
     .ifs ( ebx < 0 )
 
         lea rcx,[rdi+rsi+1]
-        mov eax,DW_LNS_advance_pc
-        mov [rcx-1],al
+        mov byte ptr [rcx-1],DW_LNS_advance_pc
         LEB128( rcx, ebx )
         sub rax,rdi
         mov esi,eax
         xor ebx,ebx
-    .else
-        mov eax,ebx
-        xor edx,edx
-        mov ecx,DW_MIN_INSTR_LENGTH
-        div ecx
-        mov ebx,eax
     .endif
     .if ( ebx == 0 && line_incr == 0 )
 
         mov eax,esi
-        mov ecx,DW_LNS_copy
-        mov [rdi+rax],cl
+        mov byte ptr [rdi+rax],DW_LNS_copy
         inc eax
        .return
     .endif
@@ -306,8 +280,7 @@ define MAX_ADDR_INCR ( ( 255 - DWLINE_OPCODE_BASE ) / DWLINE_RANGE )
 
     .ifs ( ebx < 2*MAX_ADDR_INCR )
 
-        mov eax,DW_LNS_const_add_pc
-        mov [rdi+rsi],al
+        mov byte ptr [rdi+rsi],DW_LNS_const_add_pc
         inc esi
         mov eax,opcode
         sub eax,MAX_ADDR_INCR*DWLINE_RANGE
@@ -324,9 +297,7 @@ define MAX_ADDR_INCR ( ( 255 - DWLINE_OPCODE_BASE ) / DWLINE_RANGE )
     ; of DWLINE_RANGE.
 
 overflow:
-    mov eax,DW_LNS_advance_pc
-    mov [rdi+rsi],al
-
+    mov byte ptr [rdi+rsi],DW_LNS_advance_pc
     .if ( line_incr == 0 - DWLINE_BASE )
         mov opcode,DW_LNS_copy
     .else
@@ -349,12 +320,11 @@ overflow:
     endp
 
 
-dwarf_set_line proc __ccall uses rsi rdi rbx em:ptr elfmod, seg_linenum:asym_t
+dwarf_set_line proc __ccall uses rsi rdi rbx seg_linenum:asym_t
 
    .new curr:asym_t
    .new lni:ptr line_num_info
 
-    ldr rbx,em
     ldr rsi,seg_linenum
 
     ; get linnum program size; currently we count the items and assume avg size is 2
@@ -397,8 +367,6 @@ dwarf_set_line proc __ccall uses rsi rdi rbx em:ptr elfmod, seg_linenum:asym_t
 
     ; now generate the line number "program"
 
-    assume rbx:ptr byte
-
     .for ( rcx = SymTables[TAB_SEG].head : rcx : rcx = [rcx].asym.next )
 
         mov rax,[rcx].asym.seginfo
@@ -412,15 +380,12 @@ dwarf_set_line proc __ccall uses rsi rdi rbx em:ptr elfmod, seg_linenum:asym_t
 
             ; create "set address" extended opcode with fixup
 
-            mov [rbx],0
-            inc rbx
-
+            mov eax,DW_LNE_set_address shl 16
             .if ( MODULE.defOfssize == USE64 )
 
-                mov [rbx],1+8
-                inc rbx
-                mov [rbx],DW_LNE_set_address
-                inc rbx
+                mov ah,1+8
+                mov [rbx],eax
+                add rbx,3
                 mov eax,[rdx].line_num_info.offs
                 mov size_t ptr [rbx],rax
                 CreateFixup( rcx, FIX_OFF64, OPTJ_NONE )
@@ -430,10 +395,9 @@ dwarf_set_line proc __ccall uses rsi rdi rbx em:ptr elfmod, seg_linenum:asym_t
                 store_fixup( rax, rsi, rbx )
                 add rbx,8
             .else
-                mov [rbx],1+4
-                inc rbx
-                mov [rbx],DW_LNE_set_address
-                inc rbx
+                mov ah,1+4
+                mov [rbx],eax
+                add rbx,3
                 mov eax,[rdx].line_num_info.offs
                 mov dword ptr [rbx],eax
                 CreateFixup( rcx, FIX_OFF32, OPTJ_NONE )
@@ -477,12 +441,10 @@ dwarf_set_line proc __ccall uses rsi rdi rbx em:ptr elfmod, seg_linenum:asym_t
         .endif
     .endf
 
-    mov [rbx],0
-    inc rbx
-    mov [rbx],1
-    inc rbx
-    mov [rbx],DW_LNE_end_sequence ; 1. 00=extended opcode, 2. size=1, 3. opcode
-    inc rbx
+    mov byte ptr [rbx],0
+    mov byte ptr [rbx+1],1
+    mov byte ptr [rbx+2],DW_LNE_end_sequence ; 1. 00=extended opcode, 2. size=1, 3. opcode
+    add rbx,3
     lea rax,[rdi].dwarf_stmt_header32.unit_length
     sub rbx,rax
     sub ebx,4
@@ -493,20 +455,17 @@ dwarf_set_line proc __ccall uses rsi rdi rbx em:ptr elfmod, seg_linenum:asym_t
     endp
 
 
-    assume rbx:ptr elfmod
+dwarf_create_sections proc __ccall public uses rsi rdi
 
-dwarf_create_sections proc __ccall public uses rsi rdi rbx em:ptr elfmod
-
-    ldr rbx,em
     .for ( rsi = &dwarf_segnames, edi = 0 : edi < NUM_DWSEGS : edi++ )
         CreateIntSegment( [rsi+rdi*string_t], "DWARF", 0, MODULE.Ofssize, FALSE )
         lea rcx,dwarf_seg
         mov [rcx+rdi*asym_t],rax
     .endf
     lea rsi,dwarf_seg
-    dwarf_set_info( rbx, [rsi+DWINFO_IDX] )
-    dwarf_set_abbrev( rbx, [rsi+DWABBREV_IDX] )
-    dwarf_set_line( rbx, [rsi+DWLINE_IDX] )
+    dwarf_set_info( [rsi+DWINFO_IDX] )
+    dwarf_set_abbrev( [rsi+DWABBREV_IDX] )
+    dwarf_set_line( [rsi+DWLINE_IDX] )
     ret
     endp
 

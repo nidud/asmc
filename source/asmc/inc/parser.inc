@@ -77,9 +77,10 @@ VEX_START equ T_VBROADCASTSS ; first VEX encoded item
    TAB_SEG,	; SEGMENT items
    TAB_GRP,	; GROUP items
    TAB_PROC,	; PROC items
-   TAB_ALIAS,	; ALIAS items
-   TAB_LAST	= 6
+   TAB_ALIAS	; ALIAS items
    }
+
+define TAB_LAST 6
 
 ; several lists, see enum queue_type above
 externdef SymTables:symbol_queue

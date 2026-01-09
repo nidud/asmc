@@ -112,30 +112,24 @@ endif
 .code
 
 write_logo proc __ccall
-
     .if ( !banner_printed )
         mov banner_printed,1
         tprintf( &cp_logo, ASMC_MAJOR, ASMC_MINOR, ASMC_SUBVER )
         tprintf( "\n%s\n", &cp_copyright )
     .endif
     ret
-
-write_logo endp
+    endp
 
 write_usage proc __ccall
-
     write_logo()
     tprintf( &cp_usage )
     ret
-
-write_usage endp
+    endp
 
 write_options proc __ccall
-
     write_logo()
     tprintf( &cp_options )
     ret
-
-write_options endp
+    endp
 
     end

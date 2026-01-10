@@ -26,8 +26,9 @@ ClassProto proc __ccall uses rsi rdi class:string_t, langtype:int_t, args:string
 
   local pargs[1024]:char_t
 
-    lea rdi,pargs ; default args :abs=<val>
     ldr rsi,args
+
+    lea rdi,pargs ; default args :abs=<val>
     lea rcx,[rdi+1023]
     mov al,1
 
@@ -44,15 +45,13 @@ ClassProto proc __ccall uses rsi rdi class:string_t, langtype:int_t, args:string
         .endif
         stosb
     .endw
-
     .if langtype
         AddLineQueueX( "%s %r %r %s", class, type, langtype, &pargs )
     .else
         AddLineQueueX( "%s %r %s", class, type, &pargs )
     .endif
     ret
-
-ClassProto endp
+    endp
 
 
     assume rsi:ptr com_item
@@ -84,8 +83,7 @@ ClassProto2 proc __ccall uses rsi rdi rbx class:string_t, method:string_t,
     .endif
     ClassProto( &name, [rsi].langtype, rdi, T_PROTO )
     ret
-
-ClassProto2 endp
+    endp
 
 
     assume rdi:asym_t
@@ -136,8 +134,7 @@ AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:asym_t
         .endf
     .endif
     ret
-
-AddPublic endp
+    endp
 
 
 OpenVtbl proc __ccall uses rsi rbx this:ptr com_item
@@ -162,8 +159,7 @@ OpenVtbl proc __ccall uses rsi rbx this:ptr com_item
         mov eax,1
     .endif
     ret
-
-OpenVtbl endp
+    endp
 
     assume rsi:nothing, rdi:nothing, rbx:token_t
 
@@ -223,8 +219,7 @@ get_param_name proc __ccall uses rsi rdi rbx tokenarray:token_t, token:string_t,
     mov rcx,count
     mov [rcx],esi
    .return rdi
-
-get_param_name endp
+    endp
 
 ; Create a type name to reduce number of types
 ;  DesktopToastsSample.asm: 4298 -->  519
@@ -334,8 +329,7 @@ GetTypeName proc __ccall uses rsi rdi rbx type:string_t, string:string_t, tokena
     and ebx,0x7FFF
     tsprintf( rsi, "T$%u%c%X", lang, edx, ebx )
     ret
-
-GetTypeName endp
+    endp
 
     assume rbx:token_t, rdi:nothing
 
@@ -541,8 +535,7 @@ done:
     MemFree(buffer)
     mov eax,retval
     ret
-
-ProcType endp
+    endp
 
 
 ParseMacroArgs proc __ccall private uses rsi rdi rbx buffer:string_t, count:int_t, args:string_t
@@ -596,8 +589,7 @@ ParseMacroArgs proc __ccall private uses rsi rdi rbx buffer:string_t, count:int_
     .endf
     mov rax,rdi
     ret
-
-ParseMacroArgs endp
+    endp
 
 
 MacroInline proc __ccall uses rsi rdi rbx name:string_t, count:int_t, args:string_t, inline:string_t, vargs:int_t
@@ -682,8 +674,7 @@ MacroInline proc __ccall uses rsi rdi rbx name:string_t, count:int_t, args:strin
     AddLineQueue( "endm" )
     MacroLineQueue()
     ret
-
-MacroInline endp
+    endp
 
 
 ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
@@ -1005,24 +996,20 @@ ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
     mov eax,rc
     ret
+    endp
 
-ClassDirective endp
 
 ClassInit proc __ccall
-
     mov MODULE.class_label,0 ; init class label counter
     ret
+    endp
 
-ClassInit endp
 
 ClassCheckOpen proc __ccall
-
     .if MODULE.ComStack
-
         asmerr( 1010, ".comdef-.classdef-.ends" )
     .endif
     ret
-
-ClassCheckOpen endp
+    endp
 
     END

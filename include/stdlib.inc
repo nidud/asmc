@@ -502,6 +502,10 @@ endif ; _WSTDLIB_DEFINED
 
 _CVTBUFSIZE	equ (309+40) ;; # of digits in max. dp value + slop
 
+ifdef __UNIX__
+realpath	proto __cdecl :string_t, :string_t
+endif
+
 _fullpath	proto __cdecl :string_t, :string_t, :size_t
 
 _ecvt_s		proto __cdecl :string_t, :size_t, :real8, :int_t, :ptr int_t, :ptr int_t

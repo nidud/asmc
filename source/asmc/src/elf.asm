@@ -267,6 +267,12 @@ set_symtab proc __ccall uses rsi rdi rbx em:ptr elfmod, entries:uint_t, localshe
         mov rcx,[rsi].localname.sym
         mov rdx,[rcx].asym.segm
         .if ( rdx )
+            mov eax,[rdx].asym.total_size ; v2.37.52: set st_size to segment size
+            .if ( MODULE.defOfssize == USE64 )
+                mov size_t ptr [rdi].Elf64_Sym.st_size,rax
+            .else
+                mov [rdi].Elf32_Sym.st_size,eax
+            .endif
             mov rax,[rdx].asym.seginfo
         .endif
         .if ( rdx && [rax].seg_info.segtype != SEGTYPE_CODE )
@@ -387,6 +393,12 @@ endif
         mov rax,[rsi].qnode.sym
         mov rdx,[rax].asym.segm
         .if ( rdx )
+            mov eax,[rdx].asym.total_size ; v2.37.52: set st_size to segment size
+            .if ( MODULE.defOfssize == USE64 )
+                mov size_t ptr [rdi].Elf64_Sym.st_size,rax
+            .else
+                mov [rdi].Elf32_Sym.st_size,eax
+            .endif
             mov rcx,[rdx].asym.seginfo
         .endif
         mov eax,ELF32_ST_INFO( STB_GLOBAL, STT_FUNC )

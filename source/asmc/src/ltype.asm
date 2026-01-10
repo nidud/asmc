@@ -15,19 +15,14 @@ exchange proc fastcall private a:ptr, b:ptr, size:int_t
     mov     rax,[rcx]
     xchg    rax,[rdx]
     mov     [rcx],rax
-ifdef _WIN64
-    cmp     r8d,8
-else
-    cmp     size,4
-endif
+    cmp     ldr(size),size_t
     je      .0
     mov     rax,[rcx+size_t]
     xchg    rax,[rdx+size_t]
     mov     [rcx+size_t],rax
 .0:
     ret
-
-exchange endp
+    endp
 
 
 define STKSIZ   (8*size_t - 2)
@@ -202,12 +197,10 @@ endif
         .endw
     .endif
     ret
-
-tqsort endp
+    endp
 
 
 tstrupr proc fastcall string:string_t
-
     mov rdx,rcx
     .repeat
 
@@ -217,20 +210,16 @@ tstrupr proc fastcall string:string_t
         inc rcx
     .until !eax
     .return( rdx )
-
-tstrupr endp
+    endp
 
 
 tstrstart proc fastcall string:string_t
-
     ltokstart( rcx )
     ret
-
-tstrstart endp
+    endp
 
 
 tmemcpy proc fastcall uses rdi dst:ptr, src:ptr, count:uint_t
-
     mov     rax,rcx ; -- return value
     xchg    rsi,rdx
 ifdef _WIN64
@@ -242,12 +231,10 @@ endif
     rep     movsb
     mov     rsi,rdx
     ret
-
-tmemcpy endp
+    endp
 
 
 tmemmove proc fastcall uses rsi rdi dst:ptr, src:ptr, count:uint_t
-
     mov     rax,rcx ; -- return value
     mov     rsi,rdx
 ifdef _WIN64
@@ -268,12 +255,10 @@ endif
     cld
 .1:
     ret
-
-tmemmove endp
+    endp
 
 
 tmemset proc fastcall uses rdi dst:ptr, char:int_t, count:uint_t
-
     mov     rdi,rcx
     mov     al,dl
     mov     rdx,rcx
@@ -285,11 +270,10 @@ endif
     rep     stosb
     mov     rax,rdx
     ret
+    endp
 
-tmemset endp
 
 tstrlen proc fastcall uses rdi string:string_t
-
     mov     rdi,rcx
     mov     rax,rcx
     and     ecx,3
@@ -320,12 +304,10 @@ tstrlen proc fastcall uses rdi string:string_t
     add     rax,rcx
     sub     rax,rdi
     ret
-
-tstrlen endp
+    endp
 
 
 tstrchr proc fastcall string:string_t, char:int_t
-
     xor     eax,eax
 .0:
     cmp     al,[rcx]
@@ -338,12 +320,10 @@ tstrchr proc fastcall string:string_t, char:int_t
     mov     rax,rcx
 .2:
     ret
-
-tstrchr endp
+    endp
 
 
 tstrrchr proc fastcall string:string_t, char:int_t
-
     xor     eax,eax
 .0:
     cmp     byte ptr [rcx],0
@@ -358,12 +338,10 @@ tstrrchr proc fastcall string:string_t, char:int_t
     jmp     .0
 .2:
     ret
-
-tstrrchr endp
+    endp
 
 
 tstrcpy proc fastcall uses rsi rdi dst:string_t, src:string_t
-
     mov     rdi,rcx
     mov     rsi,rdx
     jmp     .1
@@ -393,12 +371,10 @@ tstrcpy proc fastcall uses rsi rdi dst:string_t, src:string_t
 .2:
     mov     rax,rcx
     ret
-
-tstrcpy endp
+    endp
 
 
 tstrncpy proc fastcall uses rsi rdi dst:string_t, src:string_t, count:int_t
-
     mov     rdi,rcx
     mov     rsi,rcx
 ifdef _WIN64
@@ -420,12 +396,10 @@ endif
 .1:
     mov     rax,rsi
     ret
-
-tstrncpy endp
+    endp
 
 
 tstrcat proc fastcall uses rdi rbx dst:string_t, src:string_t
-
     mov     rdi,rcx
     mov     rbx,rcx
 .0:
@@ -467,12 +441,10 @@ tstrcat proc fastcall uses rdi rbx dst:string_t, src:string_t
 .3:
     mov     rax,rbx
     ret
-
-tstrcat endp
+    endp
 
 
 tstrcmp proc fastcall a:string_t, b:string_t
-
     dec     rcx
     dec     rdx
     mov     eax,1
@@ -488,12 +460,10 @@ tstrcmp proc fastcall a:string_t, b:string_t
     sbb     eax,-1
 .1:
     ret
-
-tstrcmp endp
+    endp
 
 
 tmemcmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:uint_t
-
     mov     rdi,rcx
     mov     rsi,rdx
     mov     ecx,size
@@ -504,18 +474,15 @@ tmemcmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:uint_t
     sbb     eax,-1
 .0:
     ret
-
-tmemcmp endp
+    endp
 
 
 tmemicmp proc fastcall uses rbx dst:ptr, src:ptr, count:uint_t
-
 ifdef _WIN64
     mov     ebx,r8d
 else
     mov     ebx,count
 endif
-
 .0:
     test    ebx,ebx
     jz      .1
@@ -531,12 +498,10 @@ endif
 .1:
     mov     eax,ebx
     ret
-
-tmemicmp endp
+    endp
 
 
 tstricmp proc fastcall a:string_t, b:string_t
-
     dec     rcx
     dec     rdx
     mov     eax,1
@@ -557,12 +522,10 @@ tstricmp proc fastcall a:string_t, b:string_t
     sbb     eax,-1
 .1:
     ret
-
-tstricmp endp
+    endp
 
 
 tstrstr proc fastcall uses rsi rdi rbx dst:string_t, src:string_t
-
     mov     rdi,rcx
     mov     rbx,rdx
     mov     esi,tstrlen(rbx)
@@ -593,9 +556,6 @@ tstrstr proc fastcall uses rsi rdi rbx dst:string_t, src:string_t
     lea     rax,[rdi-1]
 .3:
     ret
-
-tstrstr endp
-
+    endp
 
     end
-

@@ -19,6 +19,7 @@ if DWARF_SUPP
 
 include linnum.inc
 include dbgdw.inc
+include direct.inc
 
 define DWLINE_OPCODE_BASE 13 ; max is 13
 define DW_MIN_INSTR_LENGTH 1
@@ -68,16 +69,23 @@ dwarf_segnames string_t \
     @CStr(".debug_abbrev"),
     @CStr(".debug_line")
 
-FlatStandardAbbrevs char_t \
+FlatStandardAbbrevs db \
     COMPUNIT_ABBREV_CODE,
     DW_TAG_compile_unit,
     DW_CHILDREN_no,
     DW_AT_low_pc,       DW_FORM_addr,
     DW_AT_high_pc,      DW_FORM_addr,
     DW_AT_stmt_list,    DW_FORM_data4,
-    DW_AT_name,         DW_FORM_string,
-    0,                  0,
-    0,                  0
+    DW_AT_name,         DW_FORM_string
+ifdef __UNIX__
+    db DW_AT_comp_dir,  DW_FORM_string ; v2.37.53: added
+    db DW_AT_producer,  DW_FORM_string
+endif
+    db DW_AT_language,  DW_LANG_Cobol74
+    db 0,               0
+    db 0,               0
+
+define SIZEABBREVS ($ - FlatStandardAbbrevs)
 
 stdopsparms db 0,1,1,1,1,0,0,0,1,0,0,1
 
@@ -88,12 +96,102 @@ stdopsparms db 0,1,1,1,1,0,0,0,1,0,0,1
 
     option proc:private
 
+ifdef __UNIX__
+
+    assume rsi:string_t, rdi:string_t
+
+tunixpath proc __ccall uses rsi rdi rbx path:string_t
+
+    ldr rsi,path
+
+    mov rbx,StringBufferEnd
+    .if ( !rsi || [rsi] == 0 )
+        .return( rsi )
+    .endif
+    mov rdi,rbx
+    .if ( [rsi] == '/' )
+        inc rsi
+    .else
+        .return .if ( !getcwd( rbx, MAX_LINE_LEN ) )
+        mov rbx,rax
+        lea rdi,[rbx+tstrlen(rbx)]
+        .if ( [rdi-1] == '/' )
+            dec rdi
+        .endif
+ifdef _LIN64
+        mov rsi,path
+endif
+    .endif
+    lea rcx,[rbx+MAX_LINE_LEN-1]
+    mov [rdi],'/'
+
+    .while ( [rsi] )
+
+        mov ax,word ptr [rsi+1]
+        .if ( [rsi] == '.' && al == '.' && ( !ah || ah == '/' ) )
+            .repeat
+                dec rdi
+                mov al,[rdi]
+            .until ( al == '/' || rdi < rbx )
+            .if ( rdi < rbx )
+                .return( 0 )
+            .endif
+            add rsi,2
+            .if ( [rsi] )
+                inc rsi
+            .endif
+        .elseif ( [rsi] == '.' && ( al == '/' || !al ) )
+            inc rsi
+            .if ( [rsi] )
+                inc rsi
+            .endif
+        .else
+            mov rdx,rdi
+            mov al,[rsi]
+            .while ( al && al != '/' && rdi < rcx )
+                inc rsi
+                inc rdi
+                mov [rdi],al
+                mov al,[rsi]
+            .endw
+            .if ( rdi >= rcx )
+               .return( 0 )
+            .endif
+            .if ( rdi == rdx )
+               .return( 0 )
+            .endif
+            inc rdi
+            mov [rdi],'/'
+            .if ( [rsi] == '/' )
+                inc rsi
+            .endif
+        .endif
+    .endw
+    mov [rdi],0
+    mov rax,rbx
+    ret
+    endp
+    assume rsi:nothing, rdi:nothing
+
+endif
+
 dwarf_set_info proc __ccall uses rsi rdi rbx seginfo:asym_t
+
+   .new logo[64]:char_t
 
     ldr rsi,seginfo
 
     mov rcx,MODULE.FNames
+ifdef __UNIX__
+    mov rdi,tunixpath([rcx])
+    .if ( rax == NULL )
+        asmerr( 1017 )
+    .endif
+    mov ebx,get_logo(&logo)
+    lea eax,[rbx+tstrlen(rdi)+1]
+else
     tstrlen([rcx])
+endif
     mov ebx,dwarf_info32
     .if ( MODULE.defOfssize == USE64 )
         mov ebx,dwarf_info64
@@ -148,8 +246,7 @@ dwarf_set_info proc __ccall uses rsi rdi rbx seginfo:asym_t
             mov [rax].fixup.locofs,dwarf_info64.stmt_list
             lea rcx,[rdi].dwarf_info64.stmt_list
             store_fixup( rax, rsi, rcx )
-            mov rdx,MODULE.FNames
-            tstrcpy( &[rdi].dwarf_info64.name, [rdx] )
+            lea rdi,[rdi].dwarf_info64.name
         .else
             CreateFixup( rbx, FIX_OFF32, OPTJ_NONE )
             mov [rax].fixup.locofs,dwarf_info32.low_pc
@@ -165,9 +262,23 @@ dwarf_set_info proc __ccall uses rsi rdi rbx seginfo:asym_t
             mov [rax].fixup.locofs,dwarf_info32.stmt_list
             lea rcx,[rdi].dwarf_info32.stmt_list
             store_fixup( rax, rsi, rcx )
-            mov rdx,MODULE.FNames
-            tstrcpy( &[rdi].dwarf_info32.name, [rdx] )
+            lea rdi,[rdi].dwarf_info32.name
         .endif
+ifdef __UNIX__
+        lea rsi,[tstrrchr(StringBufferEnd, '/')+1]
+        mov byte ptr [rax],0
+        lea ecx,[tstrlen(rsi)+1]
+        rep movsb
+        mov rsi,StringBufferEnd
+        lea ecx,[tstrlen(rsi)+1]
+        rep movsb
+        lea rsi,logo
+        lea ecx,[tstrlen(rsi)+1]
+        rep movsb
+else
+        mov rcx,MODULE.FNames
+        tstrcpy(rdi, [rcx])
+endif
     .endif
     ret
     endp
@@ -176,11 +287,11 @@ dwarf_set_info proc __ccall uses rsi rdi rbx seginfo:asym_t
 dwarf_set_abbrev proc fastcall uses rsi rdi curr:asym_t
 
     ldr rsi,curr
-    mov [rsi].asym.max_offset,sizeof(FlatStandardAbbrevs)
-    mov rdi,LclAlloc(sizeof(FlatStandardAbbrevs))
+    mov [rsi].asym.max_offset,SIZEABBREVS
+    mov rdi,LclAlloc(SIZEABBREVS)
     mov rcx,[rsi].asym.seginfo
     mov [rcx].seg_info.CodeBuffer,rdi
-    mov ecx,sizeof(FlatStandardAbbrevs)
+    mov ecx,SIZEABBREVS
     lea rsi,FlatStandardAbbrevs
     rep movsb
     ret

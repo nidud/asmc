@@ -26,7 +26,7 @@ name = libasmc
 endif
 
 $(name).a:
-	asmc64 $(flag) -Zd -Zp8 -r $(PWD)/*.asm $(PWD)/*.s
+	asmc64 $(flag) -Zd -Zp8 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc

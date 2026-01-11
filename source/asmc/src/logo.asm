@@ -110,7 +110,12 @@ endif
  char_t 0
 
 .code
-
+ifdef __UNIX__
+get_logo proc __ccall buffer:string_t
+    tsprintf( ldr(buffer), &cp_logo, ASMC_MAJOR, ASMC_MINOR, ASMC_SUBVER )
+    ret
+    endp
+endif
 write_logo proc __ccall
     .if ( !banner_printed )
         mov banner_printed,1

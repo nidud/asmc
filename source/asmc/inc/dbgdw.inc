@@ -578,6 +578,7 @@ define __DBGDW_INC
 dwarf_compilation_unit_header32 struct
 unit_length             dd ?
 version                 dw ?
+;unit_type               db ? ; v5
 debug_abbrev_offset     dd ?
 address_size            db ?
 dwarf_compilation_unit_header32 ends

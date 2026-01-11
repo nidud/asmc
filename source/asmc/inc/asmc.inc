@@ -881,6 +881,7 @@ undef_name              proto __ccall :string_t
 asmerr                  proto __ccall :int_t, :vararg
 DelayExpand             proto fastcall :token_t
 
+get_logo                proto __ccall :string_t
 write_logo              proto __ccall
 SetCPU                  proto __ccall :int_t
 OutputByte              proto __ccall :int_t

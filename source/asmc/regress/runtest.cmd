@@ -34,6 +34,7 @@ for %%f in (src\win64\*.asm) do call :cv8 %%f
 for %%f in (src\zf0\*.asm) do call :zf0 %%f
 for %%f in (src\zf1\*.asm) do call :zf1 %%f
 for %%f in (src\peerr\*.asm) do call :peerr %%f
+for %%f in (src\dwarf\*.asm) do call :dwarf %%f
 
 call :safeseh
 call :dllimp
@@ -246,6 +247,13 @@ goto end
 fcmp -coff %~n1.obj exp64\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.obj
+goto end
+
+:dwarf
+%ASMX% -q -c -elf64 -Zd %1
+fcmp %~n1.o exp\%~n1.o
+if errorlevel 1 goto end
+del %~n1.o
 goto end
 
 :zf0

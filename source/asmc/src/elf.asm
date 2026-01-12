@@ -1135,8 +1135,12 @@ endif
             ; v2.34.25: added isproc
             ; v2.37.49: PLT32 used as default unless -fno-pic (dynamic link if -fpic)
             ;
-            .if ( !MODULE.nopic && [rcx].asym.isproc )
-                mov ebx,R_X86_64_PLT32
+            .if ( !MODULE.nopic )
+                .if ( [rcx].asym.isproc )
+                    mov ebx,R_X86_64_PLT32
+                .elseif ( MODULE.fPIC && [rcx].asym.ispublic )
+                    mov ebx,R_X86_64_REX_GOTPCRELX
+                .endif
             .endif
         .case FIX_OFF64
 if 0        ;

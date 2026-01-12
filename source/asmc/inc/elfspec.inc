@@ -391,7 +391,16 @@ ELF64_R_INFO macro s, t
  R_X86_64_GOTOFF64    =  25,    ; S + A - GOT
  R_X86_64_GOTPC32     =  26,    ; GOT + A - P
  R_X86_64_SIZE32      =  32,
- R_X86_64_SIZE64      =  33
+ R_X86_64_SIZE64      =  33,
+
+ R_X86_64_GOTPC32_TLSDESC = 34, ; GOT offset for TLS descriptor
+ R_X86_64_TLSDESC_CALL    = 35, ; Marker for call through TLS descriptor
+ R_X86_64_TLSDESC         = 36, ; TLS descriptor
+ R_X86_64_IRELATIVE       = 37, ; Adjust indirectly by program base
+ R_X86_64_RELATIVE64      = 38, ; 64-bit adjust by program base
+ R_X86_64_GOTPCRELX       = 41, ; Load from 32 bit signed pc relative offset to GOT entry without REX prefix
+ R_X86_64_REX_GOTPCRELX   = 42, ; Load from 32 bit signed pc relative offset to GOT entry with REX prefix
+ R_X86_64_NUM             = 43,
 }
 
 ; program header

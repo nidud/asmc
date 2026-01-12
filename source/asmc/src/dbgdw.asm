@@ -204,8 +204,10 @@ endif
     mov [rcx].seg_info.CodeBuffer,rdi
     sub ebx,4
     mov [rdi].dwarf_info32.hdr.unit_length,ebx
-    mov [rdi].dwarf_info32.hdr.version,2
-
+    mov [rdi].dwarf_info32.hdr.version,DW_VERSION
+if DW_VERSION ge 5
+    mov [rdi].dwarf_info32.hdr.unit_type,1
+endif
     lea rcx,dwarf_seg
     CreateFixup( [rcx+DWABBREV_IDX], FIX_OFF32, OPTJ_NONE )
     mov [rax].fixup.locofs,dwarf_info32.hdr.debug_abbrev_offset
@@ -452,7 +454,7 @@ dwarf_set_line proc __ccall uses rsi rdi rbx seg_linenum:asym_t
     mov rdi,LclAlloc(&[rdx+rdx+0x200])
     mov rcx,[rsi].asym.seginfo
     mov [rcx].seg_info.CodeBuffer,rdi
-    mov [rdi].dwarf_stmt_header32.version,2
+    mov [rdi].dwarf_stmt_header32.version,DW_VERSION
     mov [rdi].dwarf_stmt_header32.minimum_instruction_length,1
     mov [rdi].dwarf_stmt_header32.default_is_stmt,1
     mov [rdi].dwarf_stmt_header32.line_base,DWLINE_BASE

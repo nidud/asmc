@@ -10,6 +10,8 @@
 ifndef __DBGDW_INC
 define __DBGDW_INC
 
+define DW_VERSION 2
+
 ; tags - values according to dwarf documentation v4, section 7
 
 .enum dwarf_tag {
@@ -578,7 +580,9 @@ define __DBGDW_INC
 dwarf_compilation_unit_header32 struct
 unit_length             dd ?
 version                 dw ?
-;unit_type               db ? ; v5
+if DW_VERSION ge 5
+unit_type               db ?
+endif
 debug_abbrev_offset     dd ?
 address_size            db ?
 dwarf_compilation_unit_header32 ends
@@ -586,6 +590,9 @@ dwarf_compilation_unit_header32 ends
 dwarf_type_unit_header32 struct
 unit_length             dd ?
 version                 dw ?
+if DW_VERSION ge 5
+unit_type               db ?
+endif
 debug_abbrev_offset     dd ?
 address_size            db ?
 type_signature          dq ?

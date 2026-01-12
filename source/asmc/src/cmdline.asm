@@ -618,6 +618,9 @@ ifndef ASMC64
         mov Options.cpu,P_NO87
         .return
 endif
+    .case 'CIPf'            ; -fPIC
+        mov Options.fPIC,1
+        .return
     .case 'cipf'            ; -fpic
         mov Options.pic,1
         .return

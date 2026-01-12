@@ -50,7 +50,7 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-fpc</b></td><td>Disallow floating-point instructions. Not available in ASMC64.</td></tr>
 <tr><td><b>-FPi</b></td><td>Generates emulator fix-ups for floating-point arithmetic (mixed language only). Not available in ASMC64.</td></tr>
 <tr><td><b>-FPi87</b></td><td>80x87 instructions (default). Not available in ASMC64.</td></tr>
-<tr><td><b>-fPIC</b></td><td>Relocates public data to GOT for ELF64.</td></tr>
+<tr><td><b>-fPIC</b></td><td>Relocates public and external data to GOT (ELF64).</td></tr>
 <tr><td><b>-fpic</b></td><td>Link option for ELF64 (dynamic linking).</td></tr>
 <tr><td><b>-fno-pic</b></td><td>Disables the generation of Position Independent Code for ELF64.</td></tr>
 <tr><td><b>-frame</b></td><td>Auto generate unwind information.</td></tr>

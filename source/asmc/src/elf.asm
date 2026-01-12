@@ -1061,11 +1061,36 @@ write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
         .switch pascal eax
         .case FIX_RELOFF32
             mov edx,R_386_PC32
+if 0
             mov rcx,[rsi].sym
-            .if ( MODULE.pic && [rcx].asym.isproc ) ; added v2.34.25
-                mov edx,R_386_PLT32
+            .if ( !MODULE.nopic )
+                .if ( [rcx].asym.isproc )
+                    mov edx,R_386_PLT32
+                .elseif ( MODULE.fPIC )
+                    .if ( [rcx].asym.ispublic )
+                        mov edx,R_386_GOT32X
+                    .elseif ( [rcx].asym.state == SYM_EXTERNAL )
+                        mov edx,R_386_PLT32 ; ??
+                    .endif
+                .endif
             .endif
-        .case FIX_OFF32        : mov edx,R_386_32
+endif
+        .case FIX_OFF32
+            mov edx,R_386_32
+if 0
+            mov rcx,[rsi].sym
+            .if ( !MODULE.nopic )
+                .if ( [rcx].asym.isproc )
+                    mov edx,R_386_PLT32
+                .elseif ( MODULE.fPIC )
+                    .if ( [rcx].asym.ispublic )
+                        mov edx,R_386_GOT32X
+                    .elseif ( [rcx].asym.state == SYM_EXTERNAL )
+                        mov edx,R_386_PLT32 ; ??
+                    .endif
+                .endif
+            .endif
+endif
         .case FIX_OFF32_IMGREL : mov edx,R_386_RELATIVE
 if GNURELOCS
         .case FIX_OFF16    : mov [rbx].extused,TRUE : mov edx,R_386_16
@@ -1134,11 +1159,13 @@ endif
             ;
             ; v2.34.25: added isproc
             ; v2.37.49: PLT32 used as default unless -fno-pic (dynamic link if -fpic)
+            ; v2.37.54: added -fPIC
+            ; v2.37.55: added SYM_EXTERNAL
             ;
             .if ( !MODULE.nopic )
                 .if ( [rcx].asym.isproc )
                     mov ebx,R_X86_64_PLT32
-                .elseif ( MODULE.fPIC && [rcx].asym.ispublic )
+                .elseif ( MODULE.fPIC && ( [rcx].asym.ispublic || [rcx].asym.state == SYM_EXTERNAL ) )
                     mov ebx,R_X86_64_REX_GOTPCRELX
                 .endif
             .endif

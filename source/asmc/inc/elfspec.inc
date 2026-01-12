@@ -358,7 +358,9 @@ ELF64_R_INFO macro s, t
  R_386_16        = 20, ; 16-bit direct,      S + A
  R_386_PC16      = 21, ; 16-bit PC-relative, S + A - P
  R_386_8         = 22, ; 8-bit direct,       S + A
- R_386_PC8       = 23  ; 8-bit PC-relative,  S + A - P
+ R_386_PC8       = 23, ; 8-bit PC-relative,  S + A - P
+
+ R_386_GOT32X    = 43, ; Load from 32 bit GOT entry
 }
 
 ;X86_64

@@ -85,13 +85,13 @@ externdef	_CRTIMP stdin:LPFILE
 externdef	_CRTIMP stdout:LPFILE
 externdef	_CRTIMP stderr:LPFILE
 else
-externdef	_commode:int_t
-externdef	_nstream:int_t
-externdef	_bufin:char_t
 externdef	stdin:LPFILE
 externdef	stdout:LPFILE
 externdef	stderr:LPFILE
 endif
+externdef	_commode:int_t
+externdef	_nstream:int_t
+externdef	_bufin:char_t
 elseifdef _LIBCMT
 stdin		equ <__acrt_iob_func(0)>
 stdout		equ <__acrt_iob_func(1)>

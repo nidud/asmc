@@ -1,5 +1,5 @@
 
-public my_data1 export
+public export my_data1
 public my_data2
 .data
  my_data1 dd 1234

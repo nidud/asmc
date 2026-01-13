@@ -173,7 +173,7 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, n
 CreateProto endp
 
 
-; externdef [ attr ] symbol [EXPORT] :type [, symbol:type,...]
+; externdef [ attr ] [EXPORT] symbol :type [, symbol:type,...]
 
 ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
@@ -198,15 +198,6 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         imul ebx,i,asm_tok
         add rbx,tokenarray
 
-        ; get the symbol name
-
-        .if ( [rbx].token != T_ID )
-            .return( asmerr( 2008, [rbx].string_ptr ) )
-        .endif
-        mov token,[rbx].string_ptr
-        inc i
-        add rbx,asm_tok
-
         ; v2.37.56: allow EXPORT
 
         .if ( [rbx].token == T_ID )
@@ -218,6 +209,15 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 add rbx,asm_tok
             .endif
         .endif
+
+        ; get the symbol name
+
+        .if ( [rbx].token != T_ID )
+            .return( asmerr( 2008, [rbx].string_ptr ) )
+        .endif
+        mov token,[rbx].string_ptr
+        inc i
+        add rbx,asm_tok
 
         ; go past the colon
 
@@ -1000,7 +1000,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 CommDirective endp
 
 
-; syntax: PUBLIC [lang_type] name [, ...]
+; syntax: PUBLIC [lang_type] [EXPORT] name [, ...]
 
 PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
@@ -1026,21 +1026,20 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .return( asmerr( 2008, [rbx].string_ptr ) )
         .endif
 
-        ; get the symbol name
-
-        mov token,[rbx].string_ptr
-
         ; v2.19: syntax extension: scan for optional EXPORT attribute
 
         mov isexport,FALSE
-        .if ( Options.strict_masm_compat == FALSE && [rbx+asm_tok].token == T_ID )
-            .ifd ( tstricmp( [rbx+asm_tok].string_ptr, "EXPORT" ) == 0 )
+        .if ( Options.strict_masm_compat == FALSE )
+            .ifd ( tstricmp( [rbx].string_ptr, "EXPORT" ) == 0 )
                 mov isexport,TRUE
                 inc i
                 add rbx,asm_tok
             .endif
         .endif
 
+        ; get the symbol name
+
+        mov token,[rbx].string_ptr
         inc i
         add rbx,asm_tok
 

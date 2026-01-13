@@ -618,12 +618,15 @@ ifndef ASMC64
         mov Options.cpu,P_NO87
         .return
 endif
+    .case '2cip'            ; -pic2 (JWasm)
     .case 'CIPf'            ; -fPIC
         mov Options.fPIC,1
         .return
+    .case '1cip'            ; -pic1 (JWasm)
     .case 'cipf'            ; -fpic
         mov Options.pic,1
         .return
+    .case '0cip'            ; -pic0 (JWasm)
     .case '-onf'            ; -fno-pic
         mov Options.nopic,1
         .return

@@ -404,7 +404,7 @@ endif
         .endif
         mov [rsi].asym.isdefined,1
 
-        .if ( isexport )
+        .if ( isexport && Options.output_format == OFORMAT_ELF )
             mov [rsi].asym.isexport,1
         .endif
 

@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringLengthWorker proc _CRTIMP psz:LPTSTR, cchMax:size_t, pcchLength:ptr size_t
+StringLengthWorker proc psz:LPTSTR, cchMax:size_t, pcchLength:ptr size_t
 
     ldr rcx,psz
     ldr rdx,cchMax
@@ -39,7 +39,6 @@ StringLengthWorker proc _CRTIMP psz:LPTSTR, cchMax:size_t, pcchLength:ptr size_t
         mov [rcx],rdx
     .endif
     ret
-
-StringLengthWorker endp
+    endp
 
     end

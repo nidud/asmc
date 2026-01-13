@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringValidateDest proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, cchMax:size_t
+StringValidateDest proc pszDest:LPTSTR, cchDest:size_t, cchMax:size_t
 
     ldr rcx,cchMax
     ldr rdx,cchDest
@@ -18,7 +18,6 @@ StringValidateDest proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, cchMax:size_t
         mov eax,STRSAFE_E_INVALID_PARAMETER
     .endif
     ret
-
-StringValidateDest endp
+    endp
 
     end

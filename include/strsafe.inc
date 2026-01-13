@@ -80,70 +80,70 @@ define STRSAFE_E_INSUFFICIENT_BUFFER    0x8007007A
 define STRSAFE_E_INVALID_PARAMETER      0x80070057
 define STRSAFE_E_END_OF_FILE            0x80070026
 
-StringLengthWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t
-StringLengthWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t
+StringLengthWorkerA proto __cdecl _CRTIMP :LPSTR, :size_t, :ptr size_t
+StringLengthWorkerW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t
 ifdef ALIGNMENT_MACHINE
-UnalignedStringLengthWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t
-UnalignedStringLengthWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t
+UnalignedStringLengthWorkerA proto __cdecl _CRTIMP :LPSTR, :size_t, :ptr size_t
+UnalignedStringLengthWorkerW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t
 endif
-StringExValidateSrcA proto __cdecl :ptr LPSTR, :ptr size_t, :size_t, :DWORD
-StringExValidateSrcW proto __cdecl :ptr LPWSTR, :ptr size_t, :size_t, :DWORD
-StringValidateDestA proto __cdecl :LPSTR, :size_t, :size_t
-StringValidateDestAndLengthA proto __cdecl :LPSTR, :size_t, :ptr size_t, :size_t
-StringValidateDestW proto __cdecl :LPWSTR, :size_t, :size_t
-StringValidateDestAndLengthW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :size_t
-StringExValidateDestA proto __cdecl :LPSTR, :size_t, :size_t, :DWORD
-StringExValidateDestAndLengthA proto __cdecl :LPSTR, :size_t, :ptr size_t, :size_t, :DWORD
-StringExValidateDestW proto __cdecl :LPWSTR, :size_t, :size_t, :DWORD
-StringExValidateDestAndLengthW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :size_t, :DWORD
-StringCopyWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t, :LPSTR, :size_t
-StringCopyWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :size_t
-StringVPrintfWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t, :LPSTR, :va_list
+StringExValidateSrcA proto __cdecl _CRTIMP :ptr LPSTR, :ptr size_t, :size_t, :DWORD
+StringExValidateSrcW proto __cdecl _CRTIMP :ptr LPWSTR, :ptr size_t, :size_t, :DWORD
+StringValidateDestA proto __cdecl _CRTIMP :LPSTR, :size_t, :size_t
+StringValidateDestAndLengthA proto __cdecl _CRTIMP :LPSTR, :size_t, :ptr size_t, :size_t
+StringValidateDestW proto __cdecl _CRTIMP :LPWSTR, :size_t, :size_t
+StringValidateDestAndLengthW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t, :size_t
+StringExValidateDestA proto __cdecl _CRTIMP :LPSTR, :size_t, :size_t, :DWORD
+StringExValidateDestAndLengthA proto __cdecl _CRTIMP :LPSTR, :size_t, :ptr size_t, :size_t, :DWORD
+StringExValidateDestW proto __cdecl _CRTIMP :LPWSTR, :size_t, :size_t, :DWORD
+StringExValidateDestAndLengthW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t, :size_t, :DWORD
+StringCopyWorkerA proto __cdecl _CRTIMP :LPSTR, :size_t, :ptr size_t, :LPSTR, :size_t
+StringCopyWorkerW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :size_t
+StringVPrintfWorkerA proto __cdecl _CRTIMP :LPSTR, :size_t, :ptr size_t, :LPSTR, :va_list
 ifdef STRSAFE_LOCALE_FUNCTIONS
-StringVPrintf_lWorkerA proto __cdecl :LPSTR, :size_t, :size_t, :LPSTR, :_locale_t, :va_list
+StringVPrintf_lWorkerA proto __cdecl _CRTIMP :LPSTR, :size_t, :size_t, :LPSTR, :_locale_t, :va_list
 endif
-StringVPrintfWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :va_list
+StringVPrintfWorkerW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :va_list
 ifdef STRSAFE_LOCALE_FUNCTIONS
-StringVPrintf_lWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :_locale_t, :va_list
+StringVPrintf_lWorkerW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t, :LPWSTR, :_locale_t, :va_list
 endif
 ifndef STRSAFE_LIB_IMPL
-StringGetsWorkerA proto __cdecl :LPSTR, :size_t, :ptr size_t
-StringGetsWorkerW proto __cdecl :LPWSTR, :size_t, :ptr size_t
+StringGetsWorkerA proto __cdecl _CRTIMP :LPSTR, :size_t, :ptr size_t
+StringGetsWorkerW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t
 endif
-StringExHandleFillBehindNullA proto __cdecl :LPSTR, :size_t, :DWORD
-StringExHandleFillBehindNullW proto __cdecl :LPWSTR, :size_t, :DWORD
-StringExHandleOtherFlagsA proto __cdecl :LPSTR, :size_t, :size_t, :ptr LPSTR, :ptr size_t, :DWORD
-StringExHandleOtherFlagsW proto __cdecl :LPWSTR, :size_t, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD
-StringCchPrintfA proto __Cdecl :LPSTR, :size_t, :LPSTR, :vararg
-StringCchPrintfW proto __Cdecl :LPWSTR, :size_t, :LPWSTR, :vararg
+StringExHandleFillBehindNullA proto __cdecl _CRTIMP :LPSTR, :size_t, :DWORD
+StringExHandleFillBehindNullW proto __cdecl _CRTIMP :LPWSTR, :size_t, :DWORD
+StringExHandleOtherFlagsA proto __cdecl _CRTIMP :LPSTR, :size_t, :size_t, :ptr LPSTR, :ptr size_t, :DWORD
+StringExHandleOtherFlagsW proto __cdecl _CRTIMP :LPWSTR, :size_t, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD
+StringCchPrintfA proto __Cdecl _CRTIMP :LPSTR, :size_t, :LPSTR, :vararg
+StringCchPrintfW proto __Cdecl _CRTIMP :LPWSTR, :size_t, :LPWSTR, :vararg
 ifndef _M_CEE_PURE
-StringCchPrintfExA proto __Cdecl :LPSTR, :size_t, :ptr LPSTR, :ptr size_t, :DWORD, :LPSTR, :vararg
-StringCchPrintfExW proto __Cdecl :LPWSTR, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD, :LPWSTR, :vararg
+StringCchPrintfExA proto __Cdecl _CRTIMP :LPSTR, :size_t, :ptr LPSTR, :ptr size_t, :DWORD, :LPSTR, :vararg
+StringCchPrintfExW proto __Cdecl _CRTIMP :LPWSTR, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD, :LPWSTR, :vararg
 endif
-StringCchVPrintfA proto __cdecl :LPSTR, :size_t, :LPSTR, :ptr
-StringCchVPrintfW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :ptr
-StringCchLengthA proto __cdecl :LPSTR, :size_t, :ptr size_t
-StringCchLengthW proto __cdecl :LPWSTR, :size_t, :ptr size_t
-StringCchGetsA proto __cdecl :LPSTR, :size_t
-StringCchGetsW proto __cdecl :LPWSTR, :size_t
+StringCchVPrintfA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPSTR, :ptr
+StringCchVPrintfW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPWSTR, :ptr
+StringCchLengthA proto __cdecl _CRTIMP :LPSTR, :size_t, :ptr size_t
+StringCchLengthW proto __cdecl _CRTIMP :LPWSTR, :size_t, :ptr size_t
+StringCchGetsA proto __cdecl _CRTIMP :LPSTR, :size_t
+StringCchGetsW proto __cdecl _CRTIMP :LPWSTR, :size_t
 
-StringCchCatA proto __cdecl :LPSTR, :size_t, :LPCSTR
-StringCchCatW proto __cdecl :LPWSTR, :size_t, :LPCWSTR
-StringCchCatExA proto __cdecl :LPSTR, :size_t, :LPCSTR, :LPSTR, :ptr size_t, :DWORD
-StringCchCatExW proto __cdecl :LPWSTR, :size_t, :LPCWSTR, :LPWSTR, :ptr size_t, :DWORD
-StringCchCatNA proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t
-StringCchCatNW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :size_t
-StringCchCatNExA proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t, :LPSTR, :ptr size_t, :DWORD
-StringCchCatNExW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :size_t, :LPWSTR, :ptr size_t, :DWORD
+StringCchCatA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPCSTR
+StringCchCatW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPCWSTR
+StringCchCatExA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPCSTR, :LPSTR, :ptr size_t, :DWORD
+StringCchCatExW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPCWSTR, :LPWSTR, :ptr size_t, :DWORD
+StringCchCatNA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPSTR, :size_t
+StringCchCatNW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPWSTR, :size_t
+StringCchCatNExA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPSTR, :size_t, :LPSTR, :ptr size_t, :DWORD
+StringCchCatNExW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPWSTR, :size_t, :LPWSTR, :ptr size_t, :DWORD
 
-StringCchCopyA proto __cdecl :LPSTR, :size_t, :LPCSTR
-StringCchCopyW proto __cdecl :LPWSTR, :size_t, :LPCWSTR
-StringCchCopyExA proto __cdecl :LPSTR, :size_t, :LPCSTR, :ptr LPSTR, :ptr size_t, :DWORD
-StringCchCopyExW proto __cdecl :LPWSTR, :size_t, :LPCWSTR, :ptr LPWSTR, :ptr size_t, :DWORD
-StringCchCopyNA proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t
-StringCchCopyNW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :size_t
-StringCchCopyNExA proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t, :ptr LPSTR, :ptr size_t, :DWORD
-StringCchCopyNExW proto __cdecl :LPWSTR, :size_t, :LPWSTR, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD
+StringCchCopyA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPCSTR
+StringCchCopyW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPCWSTR
+StringCchCopyExA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPCSTR, :ptr LPSTR, :ptr size_t, :DWORD
+StringCchCopyExW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPCWSTR, :ptr LPWSTR, :ptr size_t, :DWORD
+StringCchCopyNA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPSTR, :size_t
+StringCchCopyNW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPWSTR, :size_t
+StringCchCopyNExA proto __cdecl _CRTIMP :LPSTR, :size_t, :LPSTR, :size_t, :ptr LPSTR, :ptr size_t, :DWORD
+StringCchCopyNExW proto __cdecl _CRTIMP :LPWSTR, :size_t, :LPWSTR, :size_t, :ptr LPWSTR, :ptr size_t, :DWORD
 
 
 ifndef ALIGNMENT_MACHINE

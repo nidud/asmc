@@ -8,7 +8,7 @@ include strsafe.inc
 
 .code
 
-StringCchGets proc _CRTIMP pszDest:LPTSTR, cchDest:size_t
+StringCchGets proc pszDest:LPTSTR, cchDest:size_t
 
     .if ( SUCCEEDED( StringValidateDest(pszDest, cchDest, STRSAFE_MAX_CCH) ) )
 
@@ -20,7 +20,6 @@ StringCchGets proc _CRTIMP pszDest:LPTSTR, cchDest:size_t
         mov TCHAR ptr [rcx],0
     .endif
     ret
-
-StringCchGets endp
+    endp
 
     end

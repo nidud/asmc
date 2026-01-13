@@ -267,15 +267,23 @@ set_symtab proc __ccall uses rsi rdi rbx em:ptr elfmod, entries:uint_t, localshe
         mov rcx,[rsi].localname.sym
         mov rdx,[rcx].asym.segm
         .if ( rdx )
-            mov eax,[rdx].asym.total_size ; v2.37.52: set st_size to segment size
+            mov rax,[rdx].asym.seginfo
+        .endif
+        .if ( rdx && [rax].seg_info.segtype != SEGTYPE_CODE )
+
+            ; v2.21: set size for data publics
+
+            SizeFromMemtype( [rcx].asym.mem_type, USE_EMPTY, NULL )
+            mov rcx,[rsi].localname.sym
+            mov rdx,[rcx].asym.segm
+            .if ( eax == 0 )
+                mov eax,[rcx].asym.total_size
+            .endif
             .if ( MODULE.defOfssize == USE64 )
                 mov size_t ptr [rdi].Elf64_Sym.st_size,rax
             .else
                 mov [rdi].Elf32_Sym.st_size,eax
             .endif
-            mov rax,[rdx].asym.seginfo
-        .endif
-        .if ( rdx && [rax].seg_info.segtype != SEGTYPE_CODE )
             mov eax,ELF32_ST_INFO( STB_LOCAL, STT_OBJECT )
         .else
             mov eax,ELF32_ST_INFO( STB_LOCAL, STT_FUNC )
@@ -290,6 +298,16 @@ set_symtab proc __ccall uses rsi rdi rbx em:ptr elfmod, entries:uint_t, localshe
             mov size_t ptr [rdi].Elf64_Sym.st_value,rax
         .else
             mov [rdi].Elf32_Sym.st_value,eax
+        .endif
+        .if ( MODULE.fPIC && ![rcx].asym.isexport )
+
+            ; v2.21: set visibility
+
+            .if ( MODULE.defOfssize == USE64 )
+                mov [rdi].Elf64_Sym.st_other,STV_INTERNAL
+            .else
+                mov [rdi].Elf32_Sym.st_other,STV_INTERNAL
+            .endif
         .endif
         mov eax,SHN_ABS
         .if ( rdx )
@@ -1165,7 +1183,7 @@ endif
             .if ( !MODULE.nopic )
                 .if ( [rcx].asym.isproc )
                     mov ebx,R_X86_64_PLT32
-                .elseif ( MODULE.fPIC && ( [rcx].asym.ispublic || [rcx].asym.state == SYM_EXTERNAL ) )
+                .elseif ( MODULE.fPIC && [rcx].asym.isexport )
                     mov ebx,R_X86_64_REX_GOTPCRELX
                 .endif
             .endif

@@ -8,7 +8,7 @@ include strsafe.inc
 
 .code
 
-StringCchLength proc _CRTIMP uses rbx psz:LPTSTR, cchMax:size_t, pcchLength:ptr size_t
+StringCchLength proc uses rbx psz:LPTSTR, cchMax:size_t, pcchLength:ptr size_t
 
     ldr rbx,pcchLength
     ldr rax,cchMax
@@ -26,7 +26,6 @@ StringCchLength proc _CRTIMP uses rbx psz:LPTSTR, cchMax:size_t, pcchLength:ptr 
         mov [rbx],rdx
     .endif
     ret
-
-StringCchLength endp
+    endp
 
     end

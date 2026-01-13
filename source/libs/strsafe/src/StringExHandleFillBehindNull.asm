@@ -8,7 +8,7 @@ include strsafe.inc
 
 .code
 
-StringExHandleFillBehindNull proc _CRTIMP pszDestEnd:LPTSTR, cbRemaining:size_t, dwFlags:DWORD
+StringExHandleFillBehindNull proc pszDestEnd:LPTSTR, cbRemaining:size_t, dwFlags:DWORD
 
     ldr eax,dwFlags
     ldr rcx,pszDestEnd
@@ -25,7 +25,6 @@ StringExHandleFillBehindNull proc _CRTIMP pszDestEnd:LPTSTR, cbRemaining:size_t,
     .endif
     xor eax,eax
     ret
-
-StringExHandleFillBehindNull endp
+    endp
 
     end

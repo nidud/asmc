@@ -1774,8 +1774,9 @@ _tstart equ <mainCRTStartup>
 _tend equ <>
 
 elseifdef __DLL__
-
+ifndef __UNIX__
 .pragma comment(linker, "/ENTRY:DllMain")
+endif
 _tstart equ <>
 
 else

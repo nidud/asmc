@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringCchCopyEx proc _CRTIMP uses rbx pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR, ppszDestEnd:ptr LPTSTR,
+StringCchCopyEx proc uses rbx pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR, ppszDestEnd:ptr LPTSTR,
         pcchRemaining:ptr size_t, dwFlags:DWORD
 
    .new hr:HRESULT
@@ -117,7 +117,6 @@ endif
         mov TCHAR ptr [rbx],0
     .endif
     .return( hr )
-
-StringCchCopyEx endp
+    endp
 
     end

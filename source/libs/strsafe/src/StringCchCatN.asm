@@ -8,7 +8,7 @@ include strsafe.inc
 
     .code
 
-StringCchCatN proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszSrc:LPTSTR, cchToAppend:size_t
+StringCchCatN proc pszDest:LPTSTR, cchDest:size_t, pszSrc:LPTSTR, cchToAppend:size_t
 
     .new cchDestLength:size_t
 
@@ -28,7 +28,6 @@ endif
         .endif
     .endif
     ret
-
-StringCchCatN endp
+    endp
 
     end

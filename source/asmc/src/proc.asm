@@ -1070,8 +1070,9 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
     ; set some default values
 
     .if ( IsPROC )
-
+if 0 ; allow PROTO export
         mov [rdi].asym.isexport,0
+endif
         .if ( MODULE.procs_export )
             mov [rdi].asym.isexport,1
         .endif
@@ -1225,16 +1226,19 @@ ParseProc proc __ccall uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, I
 
             .if ( IsPROC )
                 mov [rdi].asym.ispublic,1
+if 0 ; allow PROTO export
                 mov [rdi].asym.isexport,0
+endif
             .endif
             inc i
 
         .elseifd ( tstricmp(token, "EXPORT") == 0 )
 
+            mov [rdi].asym.isexport,1 ; v2.37.56: allow PROTO export
+
             .if ( IsPROC )  ; v2.11: ignore EXPORT for PROTO
 
                 mov [rdi].asym.ispublic,1
-                mov [rdi].asym.isexport,1
 
                 ; v2.11: no export for 16-bit near
 

@@ -8,7 +8,7 @@ include strsafe.inc
 
 .code
 
-StringExValidateDest proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, cchMax:size_t, dwFlags:DWORD
+StringExValidateDest proc pszDest:LPTSTR, cchDest:size_t, cchMax:size_t, dwFlags:DWORD
 
     .new hr:HRESULT = S_OK
 
@@ -22,7 +22,6 @@ StringExValidateDest proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, cchMax:size_t,
         mov hr,StringValidateDest(pszDest, cchDest, cchMax)
     .endif
     .return( hr )
-
-StringExValidateDest endp
+    endp
 
     end

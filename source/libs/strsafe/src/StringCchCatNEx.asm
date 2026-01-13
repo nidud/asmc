@@ -8,7 +8,7 @@ include strsafe.inc
 
     .code
 
-StringCchCatNEx proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszSrc:LPTSTR, cchToAppend:size_t,
+StringCchCatNEx proc pszDest:LPTSTR, cchDest:size_t, pszSrc:LPTSTR, cchToAppend:size_t,
         ppszDestEnd:LPTSTR, pcchRemaining:ptr size_t, dwFlags:DWORD
 
    .new hr:HRESULT
@@ -113,7 +113,6 @@ endif
         .endif
     .endif
     .return( hr )
-
-StringCchCatNEx endp
+    endp
 
     end

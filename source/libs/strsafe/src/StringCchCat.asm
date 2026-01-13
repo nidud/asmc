@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringCchCat proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR
+StringCchCat proc pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR
 
     .new cchDestLength:size_t
 

@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringCchCopy proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR
+StringCchCopy proc pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR
 
     .if ( SUCCEEDED( StringValidateDest( pszDest, cchDest, STRSAFE_MAX_CCH ) ) )
 
@@ -19,7 +19,6 @@ StringCchCopy proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pszSrc:LPCTSTR
         mov TCHAR ptr [rcx],0
     .endif
     ret
-
-StringCchCopy endp
+    endp
 
     end

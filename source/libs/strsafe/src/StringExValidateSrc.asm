@@ -8,7 +8,7 @@ include strsafe.inc
 
 .code
 
-StringExValidateSrc proc _CRTIMP uses rbx ppszSrc:ptr LPTSTR, pcchToRead:ptr size_t, cchMax:size_t, dwFlags:DWORD
+StringExValidateSrc proc uses rbx ppszSrc:ptr LPTSTR, pcchToRead:ptr size_t, cchMax:size_t, dwFlags:DWORD
 
     ldr rcx,ppszSrc
     ldr rbx,cchMax
@@ -27,7 +27,6 @@ StringExValidateSrc proc _CRTIMP uses rbx ppszSrc:ptr LPTSTR, pcchToRead:ptr siz
         .endif
     .endif
     ret
-
-StringExValidateSrc endp
+    endp
 
     end

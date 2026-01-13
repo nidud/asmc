@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringValidateDestAndLength proc _CRTIMP uses rbx pszDest:LPCTSTR, cchDest:size_t, pcchDestLength:ptr size_t, cchMax:size_t
+StringValidateDestAndLength proc uses rbx pszDest:LPCTSTR, cchDest:size_t, pcchDestLength:ptr size_t, cchMax:size_t
 
     ldr rax,pszDest
     ldr rbx,pcchDestLength
@@ -43,7 +43,6 @@ endif
         mov [rbx],rcx
     .endif
     ret
-
-StringValidateDestAndLength endp
+    endp
 
     end

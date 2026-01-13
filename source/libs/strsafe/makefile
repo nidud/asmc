@@ -4,20 +4,25 @@
 ifdef YACC
 
 strsafe.a:
-	asmc -c -elf64 -fpic -Cs src/*.asm
+	asmc -c -elf64 -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)
-	asmc -c -elf -fpic -Cs src/*.asm
+	asmc -c -elf -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)/x86
+
+strsafe.so:
+	asmc -c -elf64 -Cs -D__DLL__ src/*.asm
+	gcc -shared *.o -o $@
+	rm *.o
 
 else
 
 include srcpath
 
-flags  = -BlLIBW -Cs -Zi
+flags  = -BlLIBW -Cs -Z7
 source = $(src_dir)\libs\strsafe\src
 link   = -link -q -b -n -c -fac
 

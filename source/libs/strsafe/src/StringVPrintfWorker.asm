@@ -10,7 +10,7 @@ include tchar.inc
 
 .code
 
-StringVPrintfWorker proc _CRTIMP pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
+StringVPrintfWorker proc pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
          pszFormat:LPTSTR, argList:va_list
 
   local hr:HRESULT
@@ -70,7 +70,6 @@ endif
     .endif
     mov eax,hr
     ret
-
-StringVPrintfWorker endp
+    endp
 
     end

@@ -8,7 +8,7 @@ include tchar.inc
 
     .code
 
-StringCopyWorker proc _CRTIMP uses rsi rdi rbx pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
+StringCopyWorker proc uses rsi rdi rbx pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
         pszSrc:LPTSTR, cchToCopy:size_t
 
     ldr rcx,pszDest
@@ -37,7 +37,6 @@ StringCopyWorker proc _CRTIMP uses rsi rdi rbx pszDest:LPTSTR, cchDest:size_t, p
         mov [rdi],rbx
     .endif
     ret
-
-StringCopyWorker endp
+    endp
 
     end

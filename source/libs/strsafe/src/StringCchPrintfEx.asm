@@ -8,7 +8,7 @@ include strsafe.inc
 
 .code
 
-StringCchPrintfEx proc _CRTIMP uses rbx pszDest:LPTSTR, cchDest:size_t, ppszDestEnd:ptr LPTSTR,
+StringCchPrintfEx proc uses rbx pszDest:LPTSTR, cchDest:size_t, ppszDestEnd:ptr LPTSTR,
         pcchRemaining:ptr size_t, dwFlags:DWORD, pszFormat:LPTSTR, argptr:vararg
 
     local hr:HRESULT
@@ -115,7 +115,6 @@ endif
         .endif
     .endif
     .return( hr )
-
-StringCchPrintfEx endp
+    endp
 
     end

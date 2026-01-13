@@ -8,7 +8,7 @@ include strsafe.inc
 
 .code
 
-StringExHandleOtherFlags proc _CRTIMP uses rbx pszDest:LPTSTR, cbDest:size_t, cchOriginalDestLength:size_t, ppszDestEnd:ptr LPTSTR, pcchRemaining:ptr size_t, dwFlags:DWORD
+StringExHandleOtherFlags proc uses rbx pszDest:LPTSTR, cbDest:size_t, cchOriginalDestLength:size_t, ppszDestEnd:ptr LPTSTR, pcchRemaining:ptr size_t, dwFlags:DWORD
 
    .new cchDest:size_t
 
@@ -86,7 +86,6 @@ endif
         mov TCHAR ptr [rbx],0
     .endif
     .return( S_OK )
-
-StringExHandleOtherFlags endp
+    endp
 
     end

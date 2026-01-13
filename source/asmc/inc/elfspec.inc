@@ -230,14 +230,14 @@ define SHF_ALPHA_GPREL 0x10000000
     st_value    uint_32 ?       ; symbol "value"
     st_size     uint_32 ?       ; symbol size
     st_info     uint_8 ?        ; symbol's type and binding attribs.
-    st_other    uint_8 ?        ; no meaning yet.
+    st_other    uint_8 ?        ; visibility (bits 0-1)
     st_shndx    uint_16 ?       ; section index
    .ends
 
 .template Elf64_Sym
     st_name     uint_32 ?       ; symbol name index into string table
     st_info     uint_8 ?        ; symbol's type and binding attribs.
-    st_other    uint_8 ?        ; no meaning yet.
+    st_other    uint_8 ?        ; visibility (bits 0-1)
     st_shndx    uint_16 ?       ; section index
     st_value    uint_64 ?       ; symbol "value"
     st_size     uint_64 ?       ; symbol size
@@ -287,6 +287,13 @@ define STT_COMMON      5       ; symbol is common
 define STT_IMPORT      11      ; reference to a symbol in another module
 define STT_LOPROC      13      ; processor specific semantics
 define STT_HIPROC      15
+
+; visibility
+
+define STV_DEFAULT      0       ; globals & weaks are visible, locals are hidden
+define STV_INTERNAL     1       ; symbol will become local or removed in an executable or so
+define STV_HIDDEN       2       ; symbol name not visible to other components
+define STV_PROTECTED    3       ; for globals only
 
 ; relocation entries
 
@@ -487,40 +494,10 @@ define DT_RELENT       19              ; size of a DT_REL entry
 define DT_PLTREL       20              ; type of reloc entry for PLT
 define DT_DEBUG        21              ; for debugging information
 define DT_JMPREL       23              ; reloc entries only with PLT
-define DT_EXPORT       0x60000001      ; address of export table
-define DT_EXPORTSZ     0x60000002      ; size of export table
-define DT_EXPENT       0x60000003      ; size of export table entry
-define DT_IMPORT       0x60000004      ; address of import table
-define DT_IMPORTSZ     0x60000005      ; size of import table
-define DT_IMPENT       0x60000006      ; size of import table entry
-define DT_IT           0x60000007      ; init and term types for a DLL.
-define DT_ITPRTY       0x60000008      ; relative priority of init and term to other functions
-define DT_INITTERM     0x60000009      ; address of init and term function
-define DT_PPC_GOT      0x70000001      ; address of Global Offset Table
-define DT_PPC_GOTSZ    0x70000002      ; size of Global Offset Table
-define DT_PPC_PLTSZ    0x70000003      ; size of Procedure Linkage Table
+
 define DT_LOPROC       0x70000000      ; range of processor-defined tags
 define DT_HIPROC       0x7FFFFFFF
 
-; Old dynamic tags.  Readers should handle these, writers must use the above
-
-define DT_INIT_O       12      ; address of initialization function
-define DT_FINI_O       13      ; address of finialization function
-define DT_RPATH_O      15      ; library search path
-define DT_SYMBOLIC_O   16      ; affects dyn. linker's sym. resolution
-define DT_TEXTREL_O    22      ; signal we might mod. a non-writable segment
-define DT_IT_O         24      ; init and term types for a DLL.
-define DT_EXPORT_O     25      ; address of export table
-define DT_EXPORTSZ_O   26      ; size of export table
-define DT_IMPORT_O     27      ; address of import table
-define DT_IMPORTSZ_O   28      ; size of import table
-define DT_GOT_O        29      ; address of Global Offset Table
-define DT_GOTSZ_O      30      ; size of Global Offset Table
-define DT_PLTSZ_O      32      ; size of Procedure Linkage Table
-define DT_ITPRTY_O     33      ; relative priority of init and term to other functions
-define DT_LOUSER_O     0x60000000      ; range of user-definable tags. will not
-define DT_HIUSER_O     0x6FFFFFFF      ; conflict with system-defined tags
-                                        ; Ha Ha Ha!
 
 ; description of DT_IT tag:
 ; Describe type for initalization and termination of DLL
@@ -567,56 +544,6 @@ define EOS_VMS         6       ; DEC VMS/VAX
 define EOS_OS400       7       ; IBM OS/400
 define EOS_NEXT        8       ; NEXT
 define EOS_SYSTEM7     9       ; Apple System 7
-
-; OS/2-specific information
-
-.template Elf32_OS2Info
-    os2_sessiontype     db ?
-    os2_sessionflags    db ?
-    os2_reserved        db 14 dup(?)
-   .ends
-
-
-; os2_sessiontype values
-
-define OS2_SES_NONE    0       ; no session type.  Only valid for DLL's
-define OS2_SES_FS      1       ; Full Screen session.
-define OS2_SES_PM      2       ; Presentation Manager session.
-define OS2_SES_VIO     3       ; Windowed (character-mode) session
-
-; import table entry
-
-.template Elf32_Import
-    imp_ordinal     uint_32 ?
-    imp_name        uint_32 ?
-    imp_info        uint_32 ?
-    imp_reserved    uint_32 ?
-   .ends
-
-
-ELF32_IMP_TYPE macro i
-    exitm<((i) shr 24)>
-    endm
-ELF32_IMP_DLL macro i
-    exitm<((i) and 0x00FFFFFF)>
-    endm
-ELF32_IMP_INFO macro t, d
-    exitm<(((t) shl 24) or ((d) and 0x00FFFFFF)))>
-    endm
-
-define IMP_IGNORED     0       ; This import entry to be ignored
-define IMP_STR_IDX     1       ; Value is string table index to load module
-define IMP_DT_IDX      2       ; Value is ref to DT_NEEDED in Dynamic Segment
-
-; export table entry
-
-.template Elf32_Export
-    exp_ordinal     uint_32 ?
-    exp_symbol      uint_32 ?
-    exp_name        uint_32 ?
-    exp_reserved    uint_32 ?
-   .ends
-
 
 ; Resource header
 

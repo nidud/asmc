@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringExValidateDestAndLength proc _CRTIMP pszDest:LPCTSTR, cchDest:size_t,
+StringExValidateDestAndLength proc pszDest:LPCTSTR, cchDest:size_t,
         pcchDestLength:ptr size_t, cchMax:size_t, dwFlags:DWORD
 
     .new hr:HRESULT
@@ -27,7 +27,6 @@ StringExValidateDestAndLength proc _CRTIMP pszDest:LPCTSTR, cchDest:size_t,
         mov hr,StringValidateDestAndLength(pszDest, cchDest, pcchDestLength, cchMax)
     .endif
     .return( hr )
-
-StringExValidateDestAndLength endp
+    endp
 
     end

@@ -30,7 +30,7 @@ $(name).a:
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
-	asmc $(flag) -6 -elf -Zp4 -r *.asm *.s
+	asmc $(flag) -6 -elf -Zd -Zp4 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc/x86

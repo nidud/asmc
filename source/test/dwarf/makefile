@@ -5,7 +5,7 @@ static:
 	@rm -f $@
 
 static32:
-	asmc -elf -Zd $@.asm
+	asmc -elf -Zd -Fo $@ static.asm
 	gdb -x layout.gdb $@
 	@rm -f $@.o
 	@rm -f $@

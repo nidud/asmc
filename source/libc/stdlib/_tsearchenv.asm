@@ -141,8 +141,8 @@ ifdef __UNIX__
         .if ( _tdl != '/' )
             mov _tdl,'/'
 else
-        .if ( _tdl != '/' && _tdl != '\' && _tdl != ':' )
-            mov _tdl,'\'
+        .if ( _tdl != '/' && _tdl != BSLASH && _tdl != ':' )
+            mov _tdl,BSLASH
 endif
             mov [rax],_tdl
             add rax,tchar_t

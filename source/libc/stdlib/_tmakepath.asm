@@ -42,11 +42,11 @@ _tmakepath proc uses rsi rdi rbx path:tstring_t, drive:tstring_t, dir:tstring_t,
     .if ( rsi )
 
         movzx eax,tchar_t ptr [rsi]
-        .if ( eax != '\' && eax != '/' && ebx )
+        .if ( eax != BSLASH && eax != '/' && ebx )
 ifdef __UNIX__
             mov eax,'/'
 else
-            mov eax,'\'
+            mov eax,BSLASH
 endif
            .stosb
         .endif
@@ -65,11 +65,11 @@ endif
         .if ( ebx )
 
             movzx eax,tchar_t ptr [rdi-tchar_t]
-            .if ( eax != '\' && eax != '/' )
+            .if ( eax != BSLASH && eax != '/' )
 ifdef __UNIX__
                 mov eax,'/'
 else
-                mov eax,'\'
+                mov eax,BSLASH
 endif
                .stosb
             .endif

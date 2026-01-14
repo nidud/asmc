@@ -26,7 +26,7 @@ define STDIN        0
 define STDOUT       1
 
 define SLASH        <"\\">
-define SLASHCHAR    '\'
+define SLASHCHAR    BSLASH
 define XSLASHCHAR   '/'
 define DELIMITER    <";">
 

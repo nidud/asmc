@@ -206,7 +206,7 @@ get_string proc fastcall uses rsi rdi rbx buf:token_t, _p:ptr line_status
 
               .case ( ax == '""' && [rdx].cstring ) ; case \" ?
 
-                .if ( B[rsi-1] == '\' && ( word ptr [rsi-3] == '\\' || B[rsi-2] != '\' ) )
+                .if ( B[rsi-1] == BSLASH && ( word ptr [rsi-3] == '\\' || B[rsi-2] != BSLASH ) )
 
                     ; case \\"
                     ; case \\\"
@@ -346,7 +346,7 @@ continue:
                 inc rsi
                .endc
 
-            .case ( al == '\' )
+            .case ( al == BSLASH )
 
                 mov tcount,ecx
                 ConcatLine( rsi, ecx, rdi, rdx )
@@ -509,7 +509,7 @@ continue:
             .break .if ( eax == '%' )
             .break .if ( eax == ';' && [rdx].flags == TOK_DEFAULT )
 
-            .if ( eax == '\' )
+            .if ( eax == BSLASH )
 
                 .if ( [rdx].flags == TOK_DEFAULT || [rdx].flags & TOK_LINE )
 

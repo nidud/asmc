@@ -121,7 +121,7 @@ _readansi proc uses rbx csi:PCINPUT
         .case eax == -1
            .break
         .case al == '/'
-            .if ( cl != '\' )
+            .if ( cl != BSLASH )
                 mov [rbx].inter,al
                .endc
             .endif
@@ -147,14 +147,14 @@ _readansi proc uses rbx csi:PCINPUT
             mov     value,1
            .endc
         .case al == 0x1B
-            .if ( cl != '\' )
+            .if ( cl != BSLASH )
                 _ungetch( eax )
                 dec count
                .break
             .endif
             .endc
         .case al == ':' ; \e]d;d;rgb:xxxx/xxxx/xxxx\e\\
-            .if ( cl == '\' )
+            .if ( cl == BSLASH )
                 mov radix,16
                .endc
             .endif

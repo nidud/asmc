@@ -105,7 +105,7 @@ _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
         .ifd ( FindFirstFile( rsi, &ff ) == -1 )
 
             .if !_tcschr( rsi, '.' )
-                .if !_tcschr( rsi, '\' )
+                .if !_tcschr( rsi, BSLASH )
                     .break .if !_tcschr( rsi, '/' )
                 .endif
             .endif
@@ -153,7 +153,7 @@ _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
         .endif
 
         .if ( eax && !( dl & A_D ) )
-            .if ( tchar_t ptr [rsi+tchar_t] || eax != '\' && eax != '/' )
+            .if ( tchar_t ptr [rsi+tchar_t] || eax != BSLASH && eax != '/' )
                 mov ecx,_S_IFREG
             .endif
         .endif

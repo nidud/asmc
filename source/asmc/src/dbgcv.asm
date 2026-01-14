@@ -2379,7 +2379,7 @@ endif
             mov rsi,[rdi].cvfile.name
 
             mov eax,[rsi]
-            .if ( al != '\' && al != '.' && ah != ':' )
+            .if ( al != BSLASH && al != '.' && ah != ':' )
 
                 tstrcpy( objname, "\\" )
                 tstrcat( objname, rsi )
@@ -2596,7 +2596,7 @@ endif
 
         mov rdi,CurrFName[TOBJ]
         mov eax,[rdi]
-        .if ( al != '\' && al != '.' && ah != ':' )
+        .if ( al != BSLASH && al != '.' && ah != ':' )
 
             tstrcpy( objname, "\\" )
             tstrcat( objname, rdi )
@@ -2731,7 +2731,7 @@ endif
         mov rsi,CurrFName[TOBJ]
         .for ( rbx = tstrlen( rsi ) : ebx : ebx-- )
             mov al,[rsi+rbx-1]
-            .if ( al == '/' || al == '\' )
+            .if ( al == '/' || al == BSLASH )
                 .break
             .endif
         .endf

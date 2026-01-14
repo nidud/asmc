@@ -54,9 +54,9 @@ else
         lea rcx,[alloca(ecx)+8]
         lea rbx,[wcscpy(rcx,rbx)-8]
 endif
-        mov eax,(('\' shl 16) or '\')
+        mov eax,((BSLASH shl 16) or BSLASH)
         mov [rbx],eax
-        mov eax,(('?' shl 16) or '\')
+        mov eax,(('?' shl 16) or BSLASH)
         mov [rbx+4],eax
 
         .ifd ( CreateFileW(rbx, mode, share, 0, action, attrib, 0) == -1 )

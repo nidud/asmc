@@ -34,7 +34,7 @@ _tsplitpath proc uses rsi rdi rbx path:tstring_t, drive:tstring_t, dir:tstring_t
         movzx eax,tchar_t ptr [rcx]
 
         .break .if eax == 0
-        .if ( eax == '\' || eax == '/' )
+        .if ( eax == BSLASH || eax == '/' )
 
             .if ( rdi == 0 )
 

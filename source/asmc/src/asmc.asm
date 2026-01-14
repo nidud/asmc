@@ -297,9 +297,9 @@ strfcat proc __ccall private uses rsi rdi buffer:string_t, path:string_t, file:s
 
         mov al,[rdi-1]
 
-        .if ( !( al == '\' || al == '/' ) )
+        .if ( !( al == BSLASH || al == '/' ) )
 
-            mov al,'\'
+            mov al,BSLASH
             stosb
         .endif
     .endif

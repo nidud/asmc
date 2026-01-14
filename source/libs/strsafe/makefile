@@ -14,7 +14,7 @@ strsafe.a:
 	sudo cp $@ $(ASMCDIR)/x86
 
 strsafe.so:
-	asmc -c -elf64 -fPIC -Cs -D__DLL__ src/*.asm
+	asmc -c -Zd -elf64 -fPIC -Cs -D__DLL__ src/*.asm
 	gcc -shared *.o -o $@
 	rm *.o
 

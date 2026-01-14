@@ -24,7 +24,7 @@ wcenter proc uses rbx p:PCHAR_INFO, maxlen:int_t, string:tstring_t
 ifdef _UNICODE
         sub rbx,rcx
 endif
-        mov eax,'\'
+        mov eax,BSLASH
         mov [rdx],ax
         mov [rdx+12],ax
         mov al,'.'

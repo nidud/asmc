@@ -156,6 +156,8 @@ option frame:auto
 endif
 endif
 
+define BSLASH 0x5C
+
 ifndef _SIZE_T_DEFINED
 define _SIZE_T_DEFINED
 ifdef _M_X64

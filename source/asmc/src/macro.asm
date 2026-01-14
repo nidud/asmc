@@ -549,7 +549,7 @@ endif
         ; So if a backslash is found in the current source line,
         ; tokenize it to get possible concatenated lines.
 
-        .if tstrchr( ls.input, '\' )
+        .if tstrchr( ls.input, BSLASH )
 
             mov rdi,ls.input
             mov rax,rdi

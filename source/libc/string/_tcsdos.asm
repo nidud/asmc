@@ -6,7 +6,7 @@
 ; char *strdos(char *);
 ; wchar_t *_wstrdos(wchar_t *);
 ;
-; Converts a UNIX path to DOS ('/' --> '\')
+; Converts a UNIX path to DOS ('/' --> BSLASH)
 ;
 include string.inc
 include tchar.inc
@@ -21,7 +21,7 @@ _tcsdos proc string:tstring_t
 
         .if ( tchar_t ptr [rax] == '/' )
 
-            mov tchar_t ptr [rax],'\'
+            mov tchar_t ptr [rax],BSLASH
         .endif
     .endf
     ldr rax,string

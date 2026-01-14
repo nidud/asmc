@@ -1081,10 +1081,10 @@ if 0
                 .if ( [rcx].asym.isproc )
                     mov edx,R_386_PLT32
                 .elseif ( MODULE.fPIC )
-                    .if ( [rcx].asym.ispublic )
+                    .if ( [rcx].asym.isexport )
                         mov edx,R_386_GOT32X
-                    .elseif ( [rcx].asym.state == SYM_EXTERNAL )
-                        mov edx,R_386_PLT32 ; ??
+                    .else
+                        mov edx,R_386_GOTOFF
                     .endif
                 .endif
             .endif
@@ -1097,10 +1097,10 @@ if 0
                 .if ( [rcx].asym.isproc )
                     mov edx,R_386_PLT32
                 .elseif ( MODULE.fPIC )
-                    .if ( [rcx].asym.ispublic )
+                    .if ( [rcx].asym.isexport )
                         mov edx,R_386_GOT32X
-                    .elseif ( [rcx].asym.state == SYM_EXTERNAL )
-                        mov edx,R_386_PLT32 ; ??
+                    .else
+                        mov edx,R_386_GOTOFF
                     .endif
                 .endif
             .endif
@@ -1330,7 +1330,7 @@ elf_write_module proc uses rsi rdi rbx
 
     .while ( rdx > rdi )
 
-        .break .if ( byte ptr [rdx-1] == '\' )
+        .break .if ( byte ptr [rdx-1] == BSLASH )
         .break .if ( byte ptr [rdx-1] == '/' )
         dec rdx
     .endw

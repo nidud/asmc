@@ -22,7 +22,7 @@ _tcsesc proc uses rsi rdi buffer:tstring_t, string:tstring_t
     .while ( tchar_t ptr [rsi] )
 
         _tlodsb
-        .if ( eax == '\' )   ; escape char ?
+        .if ( eax == BSLASH )   ; escape char ?
 
             xor ecx,ecx
             _tlodsb
@@ -104,7 +104,7 @@ endif
 if 0
             .case 0x27       ; apostrophe or single quotation mark
             .case '"'        ; double quotation mark
-            .case '\'        ; another slash..
+            .case BSLASH     ; another slash..
             .case '?'        ; question mark (used to avoid trigraphs)
                .endc
 endif

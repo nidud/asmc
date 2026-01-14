@@ -23,7 +23,7 @@ _tcsfn proc path:tstring_t
 ifdef __UNIX__
         .if ( edx == '/' )
 else
-        .if ( edx == '\' || edx == '/' )
+        .if ( edx == BSLASH || edx == '/' )
 endif
 
             .if ( tchar_t ptr [rcx+tchar_t] )

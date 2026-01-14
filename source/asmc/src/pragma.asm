@@ -499,7 +499,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                         add rbx,asm_tok
                         .continue(0)
                     .endif
-                    .if al == '\' && byte ptr [rsi] == '"'
+                    .if al == BSLASH && byte ptr [rsi] == '"'
                         movsb
                         .continue(0)
                     .endif

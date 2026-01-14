@@ -91,17 +91,17 @@ else
 
 INC_PATH_DELIM      equ <';'>
 INC_PATH_DELIM_STR  equ <";">
-DIR_SEPARATOR       equ <'\'>
+DIR_SEPARATOR       equ BSLASH
 filecmp             equ <tstricmp>
 
 ISPC macro x
-    exitm<(x == '/' || x == '\' || x == ':')>
+    exitm<(x == '/' || x == BSLASH || x == ':')>
     endm
 
 ISABS proto watcall x:ptr {
     mov cl,[rax+2]
     mov eax,[rax]
-    .if ( al == '/' || al == '\' || ( al &&  ah == ':' && ( cl == '/' || cl == '\' ) ) )
+    .if ( al == '/' || al == BSLASH || ( al &&  ah == ':' && ( cl == '/' || cl == BSLASH ) ) )
         mov eax,1
     .else
         xor eax,eax
@@ -260,7 +260,7 @@ UpdateFileCur proc fastcall private path:string_t
         mov [rdx],al
         inc rcx
         inc rdx
-        .if ( al == '\' )
+        .if ( al == BSLASH )
             mov [rdx],al
             inc rdx
         .endif
@@ -583,7 +583,7 @@ open_file_in_include_path proc __ccall private uses rsi rdi rbx name:string_t, f
 
         mov cl,[rax+rdi-1]
 ifndef __UNIX__
-        .if ( cl != '/' && cl != '\' && cl != ':' )
+        .if ( cl != '/' && cl != BSLASH && cl != ':' )
 else
         .if ( cl != '/' )
 endif

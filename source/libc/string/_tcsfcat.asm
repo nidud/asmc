@@ -41,9 +41,9 @@ ifdef __UNIX__
 
             mov eax,'/'
 else
-        .if ( !( eax == '\' || eax == '/' ) )
+        .if ( !( eax == BSLASH || eax == '/' ) )
 
-            mov eax,'\'
+            mov eax,BSLASH
 endif
            _tstosb
         .endif

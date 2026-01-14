@@ -1295,7 +1295,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     ; v2.10: name+ext of dll
 
     .for ( rbx = CurrFName[TOBJ], rbx += tstrlen( rbx ): rbx > CurrFName[TOBJ]: rbx-- )
-        .break .if ( B[rbx] == '/' || B[rbx] == '\' || B[rbx] == ':' )
+        .break .if ( B[rbx] == '/' || B[rbx] == BSLASH || B[rbx] == ':' )
     .endf
     AddLineQueueX( "@%s_name db '%s',0", name, rbx )
 

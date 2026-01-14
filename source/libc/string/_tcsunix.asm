@@ -6,7 +6,7 @@
 ; char *strunix(char *);
 ; wchar_t *_wstrunix(wchar_t *);
 ;
-; Converts a DOS path to UNIX ('\' --> '/')
+; Converts a DOS path to UNIX (BSLASH --> '/')
 ;
 include string.inc
 include tchar.inc
@@ -19,7 +19,7 @@ _tcsunix proc string:tstring_t
 
     .for ( : tchar_t ptr [rax] : rax+=tchar_t )
 
-        .if ( tchar_t ptr [rax] == '\' )
+        .if ( tchar_t ptr [rax] == BSLASH )
 
             mov tchar_t ptr [rax],'/'
         .endif

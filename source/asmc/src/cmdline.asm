@@ -222,7 +222,7 @@ get_fname proc __ccall uses rsi rdi rbx type:int_t, token:string_t
     .endif
     mov rdi,GetFNamePart(rsi)
     ;
-    ; If name's ending with a '\' (or '/' in Unix), it's supposed
+    ; If name's ending with a BSLASH (or '/' in Unix), it's supposed
     ; to be a directory name only.
     ;
     lea rdx,DefaultDir
@@ -341,7 +341,7 @@ is_quote:
 
             ; handle the \"" case
 
-            .if al == '\' && ah == '"'
+            .if al == BSLASH && ah == '"'
 
                 inc rsi
             .endif

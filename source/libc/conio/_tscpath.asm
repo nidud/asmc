@@ -25,7 +25,7 @@ ifdef _UNICODE
         sub rbx,rdx
         lea rdx,b
 
-        mov eax,('.' shl 16) or '\'
+        mov eax,('.' shl 16) or BSLASH
         rol ecx,16
         .if ( cx == ':' )
 

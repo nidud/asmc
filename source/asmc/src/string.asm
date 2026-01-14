@@ -63,7 +63,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
 
         mov al,[rsi]
 
-        .if ( al == '\' )
+        .if ( al == BSLASH )
 
             ; escape char \\
 
@@ -540,7 +540,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                             .if ( al == '"' )
 
-                                .if ( byte ptr [rdi-1] == '\' )
+                                .if ( byte ptr [rdi-1] == BSLASH )
                                 .elseif ( esi == 0 )
                                     inc esi
                                 .elseif ( byte ptr [rdi-1] == '"' )

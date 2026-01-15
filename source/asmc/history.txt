@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.38 - xx xxx 2026
+- fixed bug in -Zf (Make all symbols public) - string and float labels became public
+  - strings: DS%04X to D$, floats: F%04X to F$
 - added option -fPIC
 - added -Zd support for elf[64] (JWasm 2.21)
 - added Hexadecimal floating literals (C++17)

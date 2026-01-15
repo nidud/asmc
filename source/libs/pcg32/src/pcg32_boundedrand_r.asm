@@ -26,7 +26,6 @@ pcg32_boundedrand_r proc uses rbx rng:ptr pcg32_random_t, _bound:uint32_t
        .break
     .endf
     ret
-
-pcg32_boundedrand_r endp
+    endp
 
     end

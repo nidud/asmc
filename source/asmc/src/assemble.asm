@@ -1163,7 +1163,7 @@ close_files endp
 ;
 ; get default file extension for error, object and listing files
 ;
-GetExt proc fastcall private ftype:int_t
+GetDefaultFileExtension proc fastcall private ftype:int_t
 
     lea rax,currentftype
     mov edx,'msa.'
@@ -1193,8 +1193,7 @@ GetExt proc fastcall private ftype:int_t
     .endsw
     mov [rax],edx
     ret
-
-GetExt endp
+    endp
 
 
 ; set filenames for .obj, .lst and .err
@@ -1232,7 +1231,7 @@ SetFilenames proc __ccall private uses rsi rdi rbx fn:string_t
             GetExtPart( tstrcat( rbx, rsi ) )
 
             mov rbx,rax
-            tstrcpy(rbx, GetExt( edi ) )
+            tstrcpy(rbx, GetDefaultFileExtension( edi ) )
             lea rbx,path
 
         .else
@@ -1248,7 +1247,7 @@ SetFilenames proc __ccall private uses rsi rdi rbx fn:string_t
             .if ( byte ptr [rax] == 0 )
 
                 mov rbx,rax
-                tstrcpy( rbx, GetExt( edi ) )
+                tstrcpy( rbx, GetDefaultFileExtension( edi ) )
                 lea rbx,path
             .endif
         .endif

@@ -104,7 +104,7 @@ GetValue proc __ccall private uses rsi rdi rbx \
 
 GetValue endp
 
-AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:token_t, type:token_t, count:int_t
+AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:token_t, type:token_t, count:int_t
 
   local opnd        : expr
   local reg         : int_t
@@ -348,8 +348,7 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:token_
         .endif
     .endif
     ret
-
-AssignValue endp
+    endp
 
 
     assume rsi:ptr hll_item
@@ -393,7 +392,7 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov [rsi].labels[LSTART*4],GetHllLabel()
             HllContinueIf(rsi, &i, tokenarray, LSTART, rsi, 0)
             mov i,ebx
-            AssignValue( &i, tokenarray, type, count )
+            AssignReturnValue( &i, tokenarray, type, count )
             AddLineQueueX( " %r %s", T_JMP, rdi )
             AddLineQueueX( "%s:", GetLabelStr( [rsi].labels[LSTART*4], rdi ) )
         .else
@@ -403,7 +402,7 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .else
         .if ( retval )
 
-            AssignValue( &i, tokenarray, type, count )
+            AssignReturnValue( &i, tokenarray, type, count )
             RunLineQueue()
         .endif
         .if ( SymFind( rdi ) ) ; v2.37.3: added - removed ORG 2 + RET

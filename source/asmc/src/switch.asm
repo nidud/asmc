@@ -833,7 +833,7 @@ endif
                 AddLineQueueX(
                     ".data\n"
                     "ALIGN 4\n"
-                    "DT%s label dword", table_addr )
+                    "T$%s label dword", table_addr )
 
             .elseif cl == USE64
 
@@ -899,9 +899,9 @@ ifndef ASMC64
                     GetSwitchArg(T_EAX, rsi, rbx)
                     .if ( use_index )
                         .if ( dist < 256 )
-                            AddLineQueueX( " movzx eax, byte ptr [eax+IT%s-(%d)]", table_addr, min )
+                            AddLineQueueX( " movzx eax, byte ptr [eax+I$%s-(%d)]", table_addr, min )
                         .else
-                            AddLineQueueX( " movzx eax, word ptr [eax*2+IT%s-(%d*2)]", table_addr, min )
+                            AddLineQueueX( " movzx eax, word ptr [eax*2+I$%s-(%d*2)]", table_addr, min )
                         .endif
                         .if ( MODULE.switch_regax )
                             AddLineQueueX( " jmp [eax*4+%s]", table_addr )
@@ -925,10 +925,10 @@ ifndef ASMC64
                         AddLineQueueX( " push %s", rbx )
                     .endif
                     .if ( dist < 256 )
-                        AddLineQueueX( " movzx %s, byte ptr [%s+IT%s-(%d)]",
+                        AddLineQueueX( " movzx %s, byte ptr [%s+I$%s-(%d)]",
                             rbx, rbx, table_addr, min )
                     .else
-                        AddLineQueueX( " movzx %s, word ptr [%s*2+IT%s-(%d*2)]",
+                        AddLineQueueX( " movzx %s, word ptr [%s*2+I$%s-(%d*2)]",
                             rbx, rbx, table_addr, min )
                     .endif
                     .if ( MODULE.switch_regax )
@@ -1049,10 +1049,10 @@ endif
                     mov rcx,min
                     .if ( use_index )
                         .if ( dist < 256 )
-                            AddLineQueueX( " movzx r10, byte ptr [r11+%r-(%d)+(IT%s-%s)]",
+                            AddLineQueueX( " movzx r10, byte ptr [r11+%r-(%d)+(I$%s-%s)]",
                                 ebx, rcx, table_addr, base_addr )
                         .else
-                            AddLineQueueX( " movzx r10, word ptr [r11+%r*2-(%d*2)+(IT%s-%s)]",
+                            AddLineQueueX( " movzx r10, word ptr [r11+%r*2-(%d*2)+(I$%s-%s)]",
                                 ebx, rcx, table_addr, base_addr )
                         .endif
                         xor ecx,ecx
@@ -1101,10 +1101,10 @@ endif
                     mov rcx,min
                     .if ( use_index )
                         .if ( dist < 256 )
-                            AddLineQueueX( " movzx eax, byte ptr [r11+%r-(%d)+(IT%s-%s)]",
+                            AddLineQueueX( " movzx eax, byte ptr [r11+%r-(%d)+(I$%s-%s)]",
                                 ebx, rcx, table_addr, base_addr )
                         .else
-                            AddLineQueueX( " movzx eax, word ptr [r11+%r*2-(%d*2)+(IT%s-%s)]",
+                            AddLineQueueX( " movzx eax, word ptr [r11+%r*2-(%d*2)+(I$%s-%s)]",
                                 ebx, rcx, table_addr, base_addr )
                         .endif
                         xor ecx,ecx
@@ -1208,7 +1208,7 @@ endif
 
             .new index_type:int_t = ecx
 
-            AddLineQueueX( "IT%s label %r", table_addr, ecx )
+            AddLineQueueX( "I$%s label %r", table_addr, ecx )
 
             .for ( ebx = 0: ebx < icount: ebx++ )
                 ;
@@ -1376,7 +1376,7 @@ ifndef ASMC64
     .elseif cl == USE32
 
         .if ( [rsi].SwitchTData )
-            AddLineQueueX( " jmp [%r*4+DT%s-(MIN%s*4)]", ebx, rdi, rdi )
+            AddLineQueueX( " jmp [%r*4+T$%s-(MIN%s*4)]", ebx, rdi, rdi )
         .else
             AddLineQueueX( " jmp [%r*4+%s-(MIN%s*4)]", ebx, rdi, rdi )
         .endif

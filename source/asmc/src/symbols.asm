@@ -879,15 +879,26 @@ SymMakeAllSymbolsPublic proc __ccall uses rsi rdi
                 ; no predefined symbols ($)
                 ; v2.09: symbol already added to public queue?
                 ; v2.10: no @@ code labels
+                ; v2.37.58: no string/float/switch labels
 
-                mov al,[rcx+1]
+                movzx eax,word ptr [rcx]
                 .if ( ![rdi].asym.isequate &&
                       ![rdi].asym.predefined &&
                       ![rdi].asym.ispublic &&
-                      ![rdi].asym.included && al != '&' )
+                      ![rdi].asym.included && ah != '&' )
 
-                    mov [rdi].asym.ispublic,1
-                    AddPublicData( rdi )
+                    xor ecx,ecx
+                    .if ( ah == '$' )
+                        .if ( ( al == 'D' || al == 'F' ) && [rdi].asym.name_size == 6 )
+                            inc ecx
+                        .elseif ( ( al == 'T' || al == 'I' ) && [rdi].asym.name_size == 8 )
+                            inc ecx
+                        .endif
+                    .endif
+                    .if ( ecx == 0 )
+                        mov [rdi].asym.ispublic,1
+                        AddPublicData( rdi )
+                    .endif
                 .endif
 
             .endif

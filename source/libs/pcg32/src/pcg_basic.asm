@@ -12,24 +12,18 @@ include pcg_basic.inc
 .code
 
 pcg32_srandom proc initstate:uint64_t, initseq:uint64_t
-
-    pcg32_srandom_r(&pcg32_global, initstate, initseq)
+    pcg32_srandom_r(&pcg32_global, ldr(initstate), ldr(initseq))
     ret
-
-pcg32_srandom endp
+    endp
 
 pcg32_random proc
-
     pcg32_random_r(&pcg32_global)
     ret
-
-pcg32_random endp
+    endp
 
 pcg32_boundedrand proc _bound:uint32_t
-
-    pcg32_boundedrand_r(&pcg32_global, _bound)
+    pcg32_boundedrand_r(&pcg32_global, ldr(_bound))
     ret
-
-pcg32_boundedrand endp
+    endp
 
     end

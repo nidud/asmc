@@ -33,7 +33,6 @@ endif
     add [rbx].pcg32_random_t.state,initstate
     pcg32_random_r(rbx)
     ret
-
-pcg32_srandom_r endp
+    endp
 
     end

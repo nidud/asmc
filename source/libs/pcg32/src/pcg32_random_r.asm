@@ -68,7 +68,6 @@ endif
     shl     eax,cl
     or      eax,edx
     ret
-
-pcg32_random_r endp
+    endp
 
     end

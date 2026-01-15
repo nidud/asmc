@@ -27,6 +27,8 @@ define DOT_XMMARG 0 ;; 1=optional argument for .XMM directive
 public sym_Cpu
 public sym_Interface
 
+FindToken proto __ccall :string_t, :ptr string_t, :int_t
+
 .data
 
 sym_Interface   asym_t 0 ; numeric. requires model
@@ -82,20 +84,6 @@ sym_DataSize  asym_t 0 ; numeric. requires model
 sym_Model     asym_t 0 ; numeric. requires model
 
 .code
-
-;; find token in a string table
-
-FindToken proc __ccall private uses rsi rdi token:string_t, table:ptr string_t, size:int_t
-
-    .for ( rsi = table, edi = 0 : edi < size : edi++, rsi+=string_t )
-        .ifd ( tstricmp( [rsi], token ) == 0 )
-            .return( edi )
-        .endif
-    .endf
-    .return( -1 ) ; Not found
-
-FindToken endp
-
 
 AddPredefinedConstant proc fastcall private name:string_t, value:int_t
 

@@ -91,7 +91,7 @@ ImageBase       db 0
 
 ; find token in a string table
 
-FindToken proc __ccall private uses rsi rdi token:string_t, table:ptr, size:int_t
+FindToken proc __ccall uses rsi rdi token:string_t, table:ptr, size:int_t
 
     ldr rsi,table
 

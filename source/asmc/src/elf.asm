@@ -140,7 +140,7 @@ endif
     CSF_GRPCHK = 1
     }
 
-cst conv_section \
+convsection conv_section \
     { 5, CSF_GRPCHK, @CStr("_TEXT"), @CStr(".text")   },
     { 5, CSF_GRPCHK, @CStr("_DATA"), @CStr(".data")   },
     { 5, CSF_GRPCHK, @CStr("CONST"), @CStr(".rodata") }, ; v2.05: .rdata -> .rodata
@@ -162,7 +162,7 @@ ElfConvertSectionName proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
 
     mov rsi,[rcx].asym.name
 
-    .for ( rdi = &cst, ebx = 0 : ebx < lengthof(cst) : ebx++, rdi += conv_section )
+    .for ( rdi = &convsection, ebx = 0 : ebx < lengthof(convsection) : ebx++, rdi += conv_section )
 
         .ifd ( tmemcmp( rsi, [rdi].src, [rdi].len ) == 0 )
 

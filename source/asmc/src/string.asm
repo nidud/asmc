@@ -321,9 +321,9 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                     .if Unicode
                         add edx,edx
                     .endif
-                    tsprintf( lbuf, "DS%04X[%d]", eax, edx )
+                    tsprintf( lbuf, "D$%04X[%d]", eax, edx )
                 .else
-                    tsprintf( lbuf, "DS%04X", eax )
+                    tsprintf( lbuf, "D$%04X", eax )
                 .endif
                  free_line(sbuf)
                 .return 0
@@ -331,7 +331,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
         .endif
     .endf
 
-    tsprintf(lbuf, "DS%04X", edi)
+    tsprintf(lbuf, "D$%04X", edi)
     LclAlloc(&[rbx+str_item+1])
     mov [rax].str_item.count,ebx
     mov [rax].str_item.index,edi
@@ -778,7 +778,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
             mov eax,[rdx].str_item.index
         .endif
 
-        tsprintf( buffer, "DS%04X", eax )
+        tsprintf( buffer, "D$%04X", eax )
        .return 1
     .endif
 
@@ -949,14 +949,14 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
                 .if ( edx == [rax] && ecx == [rax+0x04] )
 
                     mov eax,[rsi].index
-                    tsprintf( buffer, "F%04X", eax )
+                    tsprintf( buffer, "F$%04X", eax )
                    .return 1
                 .endif
             .endif
         .endif
     .endf
 
-    tsprintf( buffer, "F%04X", edi )
+    tsprintf( buffer, "F$%04X", edi )
     .if ( Parse_Pass == PASS_1 )
 
         LclAlloc( str_item+16 )
@@ -1647,7 +1647,7 @@ RegFunc endp
 ; used by @SubStr() for arguments 2 and 3 (start and size),
 ; and by @InStr() for argument 1 ( start )
 
-GetNumber proc __ccall private string:string_t, pi:ptr int_t, tokenarray:token_t
+GetNumber2 proc __ccall private string:string_t, pi:ptr int_t, tokenarray:token_t
 
   local opndx:expr
   local i:int_t
@@ -1669,8 +1669,7 @@ GetNumber proc __ccall private string:string_t, pi:ptr int_t, tokenarray:token_t
     mov eax,opndx.value
     mov [rcx],eax
    .return( NOT_ERROR )
-
-GetNumber endp
+    endp
 
 
 ; internal @InStr macro function
@@ -1692,7 +1691,7 @@ InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
     mov rbx,[rsi]
 
     .if ( rbx )
-        .ifd ( GetNumber( rbx, &pos, tokenarray ) == ERROR )
+        .ifd ( GetNumber2( rbx, &pos, tokenarray ) == ERROR )
             .return( ERROR )
         .endif
         .if ( pos == 0 )
@@ -1774,7 +1773,7 @@ SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
     mov rsi,[rcx].macro_instance.parm_array
     mov rdi,[rsi]
 
-    .return .ifd ( GetNumber( [rsi+size_t], &pos, tokenarray ) == ERROR )
+    .return .ifd ( GetNumber2( [rsi+size_t], &pos, tokenarray ) == ERROR )
 
     .if ( pos <= 0 )
 
@@ -1796,7 +1795,7 @@ SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
     .if ( rdi )
 
         .new sizereq:int_t
-        .return .ifd ( GetNumber( rdi, &sizereq, tokenarray ) == ERROR )
+        .return .ifd ( GetNumber2( rdi, &sizereq, tokenarray ) == ERROR )
         .return( asmerr( 2092 ) ) .if ( sizereq < 0 )
         .return( asmerr( 2093 ) ) .if ( sizereq > ebx )
         mov ebx,sizereq

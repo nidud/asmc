@@ -62,7 +62,6 @@ ifdef YACC
 	chmod a+x $(CC)
 endif
 	$(CC) $(flags) src/*.asm -link $(link)
-	del *.obj
 
 asmc64:
 	$(CC) -DASMC64 $(flags) src/*.asm -link $(link)
@@ -102,9 +101,7 @@ uninstall:
 	sudo rm -f /etc/profile.d/asmc-profile.sh
 
 build_libc:
-	cd ../libc
-	make
-	cd ../asmc
+	make -C ../libc
 
 # Note: build LIBC before using these
 
@@ -150,7 +147,7 @@ linux32:
 linux64:
 	md $@
 	asmc -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
-	asmc -DSUBVERSION=54 -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
+	asmc -DSUBVERSION=58 -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
 	del *.o
 
 owlinux:

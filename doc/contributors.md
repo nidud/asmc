@@ -22,6 +22,7 @@ These people contributed to Asmc (additions, bugfixes, bug reports):
 - jloqfjgk
 - John Hankinson
 - Michele Pes
+- mineiro
 - nidud
 - Petr Laštovicka
 - qykth-git

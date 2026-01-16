@@ -1075,36 +1075,25 @@ write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
         .switch pascal eax
         .case FIX_RELOFF32
             mov edx,R_386_PC32
-if 0
-            mov rcx,[rsi].sym
-            .if ( !MODULE.nopic )
+            .if ( !MODULE.nopic && ( MODULE.pic || MODULE.fPIC ) )
+                mov rcx,[rsi].sym
                 .if ( [rcx].asym.isproc )
                     mov edx,R_386_PLT32
-                .elseif ( MODULE.fPIC )
-                    .if ( [rcx].asym.isexport )
-                        mov edx,R_386_GOT32X
-                    .else
-                        mov edx,R_386_GOTOFF
-                    .endif
                 .endif
             .endif
-endif
         .case FIX_OFF32
             mov edx,R_386_32
-if 0
-            mov rcx,[rsi].sym
-            .if ( !MODULE.nopic )
-                .if ( [rcx].asym.isproc )
-                    mov edx,R_386_PLT32
-                .elseif ( MODULE.fPIC )
-                    .if ( [rcx].asym.isexport )
-                        mov edx,R_386_GOT32X
-                    .else
-                        mov edx,R_386_GOTOFF
+            .if ( !MODULE.nopic && ( MODULE.pic || MODULE.fPIC ) )
+                mov rcx,[rsi].sym
+                .if ( [rcx].asym.name_size == 21 )
+                    tstrcmp([rcx].asym.name, "_GLOBAL_OFFSET_TABLE_")
+                    mov edx,R_386_32
+                    .if ( eax == 0 )
+                        mov edx,R_386_GOTPC
                     .endif
                 .endif
             .endif
-endif
+        .case FIX_OFF32_SECREL : mov edx,R_386_GOTOFF
         .case FIX_OFF32_IMGREL : mov edx,R_386_RELATIVE
 if GNURELOCS
         .case FIX_OFF16    : mov [rbx].extused,TRUE : mov edx,R_386_16

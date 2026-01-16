@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.38 - xx xxx 2026
+- added support for linux-32 shared libraries (JWasm 2.21)
 - fixed bug in -Zf (Make all symbols public) - string and float labels became public
   - strings: DS%04X to D$, floats: F%04X to F$
 - added option -fPIC

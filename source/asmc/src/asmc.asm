@@ -679,7 +679,10 @@ ifdef __UNIX__
 
             ; gcc [-m32 -static] [-nostdlib] [-s] -o <name> *.o [-l:[x86/]libasmc.a]
 
-            .if ( Options.link_mt || Options.pic == 0 || Options.fctype != FCT_ELF64 )
+            .if ( Options.fctype != FCT_ELF64 )
+                CollectLinkOption("-m32")
+            .endif
+            .if ( Options.link_mt || Options.nopic || ( Options.pic == 0 && Options.fPIC == 0 ) )
 
                 .if ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
 
@@ -690,7 +693,6 @@ ifdef __UNIX__
                     .if ( Options.fctype == FCT_ELF64 )
                         CollectLinkObject("-l:libasmc.a")
                     .else
-                        CollectLinkOption("-m32")
                         CollectLinkObject("-l:x86/libasmc.a")
                     .endif
                 .endif

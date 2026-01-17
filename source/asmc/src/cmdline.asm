@@ -626,8 +626,10 @@ endif
     .case 'cipf'            ; -fpic
         mov Options.pic,1
         .return
+    .case 'onf'             ; -fno-pic
+        mov eax,4
+        add [rsi],rax
     .case '0cip'            ; -pic0 (JWasm)
-    .case '-onf'            ; -fno-pic
         mov Options.nopic,1
         .return
 

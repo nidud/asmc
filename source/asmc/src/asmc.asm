@@ -681,6 +681,7 @@ ifdef __UNIX__
 
             .if ( Options.fctype != FCT_ELF64 )
                 CollectLinkOption("-m32")
+                mov ecx,flags
             .endif
             .if ( Options.link_mt || Options.nopic || ( Options.pic == 0 && Options.fPIC == 0 ) )
 

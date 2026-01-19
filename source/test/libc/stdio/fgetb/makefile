@@ -5,7 +5,7 @@ fgetb:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	asmc -q -elf $@.asm
+	asmc -q -elf -fno-pic $@.asm
 	./$@
 else
 	$@

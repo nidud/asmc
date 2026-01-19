@@ -7,7 +7,7 @@ searchenv:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	asmc -elf $@.asm
+	asmc -elf -fno-pic $@.asm
 	./$@
 else
 	$@

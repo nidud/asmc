@@ -541,9 +541,9 @@ ModulePassInit proc __ccall private uses rsi rdi rbx
 
     lea rdi,Options
 
-    mov ecx,MODULE.lstring
+    mov ecx,MODULE.flags
     mov MODULE.flags,[rdi].flags
-    .if ( ecx )
+    .if ( ecx & MASKOF(module_info.lstring) )
         mov MODULE.lstring,1
     .endif
 

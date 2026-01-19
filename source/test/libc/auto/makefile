@@ -2,7 +2,7 @@
 
 flags = -MT
 ifdef YACC
-fl32 = -elf
+fl32 = -elf -fno-pic
 else
 fl32 = -coff
 endif

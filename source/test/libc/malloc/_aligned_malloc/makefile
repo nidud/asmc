@@ -3,7 +3,7 @@ _aligned_malloc:
 ifdef YACC
 	./$@
 	@pause
-	asmc -q -elf $@.asm
+	asmc -q -elf -fno-pic $@.asm
 	./$@
 else
 	$@

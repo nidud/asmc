@@ -21,6 +21,7 @@ include label.inc
 include qfloat.inc
 include operator.inc
 include unaryop.inc
+include extern.inc
 
 define LS_SHORT 0xFF01
 define LS_FAR16 0xFF05
@@ -1327,8 +1328,19 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
 
             .else
 
-                .if ( byte ptr [rsi+1] == '&' )
+                mov ecx,[rsi]
+                .if ( ch == '&' )
                     lea rsi,@CStr("@@")
+ifndef ASMC64 ; 2.37.61: added
+                .elseif ( ecx == 'OLG_' && rax && [rax].asym.name_size == 21 &&
+                    Options.output_format == OFORMAT_ELF && MODULE.Ofssize == USE32 )
+                    mov sym,rax
+                    .ifd ( tstrcmp(rsi, "_GLOBAL_OFFSET_TABLE_") == 0 )
+                        .if MakeExtern(rsi, MT_NEAR, NULL, sym, USE32)
+                            jmp method_ptr
+                        .endif
+                    .endif
+endif
                 .endif
                 .return fnasmerr( 2006, rsi )
             .endif

@@ -1075,21 +1075,41 @@ write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
         .switch pascal eax
         .case FIX_RELOFF32
             mov edx,R_386_PC32
-            .if ( !MODULE.nopic && ( MODULE.pic || MODULE.fPIC ) )
+            .if ( !MODULE.nopic )
                 mov rcx,[rsi].sym
                 .if ( [rcx].asym.isproc )
                     mov edx,R_386_PLT32
                 .endif
             .endif
         .case FIX_OFF32
+            ;
+            ; Defaults GCC: -fno-pic: R_386_32
+            ;  extern data: GOT32X | internal: GOTOFF
+            ;  public data: GOTOFF | -fPIC: GOT32X
+            ;
             mov edx,R_386_32
-            .if ( !MODULE.nopic && ( MODULE.pic || MODULE.fPIC ) )
+
+            .if ( !MODULE.nopic )
+
                 mov rcx,[rsi].sym
                 .if ( [rcx].asym.name_size == 21 )
-                    tstrcmp([rcx].asym.name, "_GLOBAL_OFFSET_TABLE_")
-                    mov edx,R_386_32
-                    .if ( eax == 0 )
+                    .ifd ( tstrcmp([rcx].asym.name, "_GLOBAL_OFFSET_TABLE_") == 0 )
                         mov edx,R_386_GOTPC
+                       .endc
+                    .endif
+                    mov rcx,[rsi].sym
+                .endif
+                mov edx,R_386_32
+                .if ( [rcx].asym.state != SYM_SEG )
+                    mov edx,R_386_GOTOFF
+                    .if ( [rcx].asym.isdata )
+                        .if ( [rcx].asym.ispublic )
+                            .if ( MODULE.fPIC )
+                                mov edx,R_386_GOT32X
+                            .endif
+                        .elseif ( [rcx].asym.isexport )
+                            mov edx,R_386_GOT32X
+                        .endif
                     .endif
                 .endif
             .endif

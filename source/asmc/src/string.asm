@@ -406,7 +406,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov  brackets,al
     mov  edx,eax
     ;
-    ; proc( "", ( ... ), "" )
+    ; proc( "", ( ... ), "", [..+""] )
     ;
     .while ( [rbx].asm_tok.token != T_FINAL )
 

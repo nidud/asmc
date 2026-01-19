@@ -1,6 +1,6 @@
 
 gotoff:
-	asmc -elf -Zd $@.asm
+	asmc -elf -fpic -Zd $@.asm
 	readelf -r $@.o > reloc.txt
 	gdb -x ../layout.gdb ./$@
 	@rm -f $@.o

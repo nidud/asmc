@@ -1100,15 +1100,26 @@ write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
                     mov rcx,[rsi].sym
                 .endif
                 mov edx,R_386_32
+
                 .if ( [rcx].asym.state != SYM_SEG )
+
                     mov edx,R_386_GOTOFF
-                    .if ( [rcx].asym.isdata )
-                        .if ( [rcx].asym.ispublic )
-                            .if ( MODULE.fPIC )
-                                mov edx,R_386_GOT32X
-                            .endif
-                        .elseif ( [rcx].asym.isexport )
+                    .if ( [rcx].asym.state == SYM_EXTERNAL )
+                        .if ( [rcx].asym.isexport )
                             mov edx,R_386_GOT32X
+                        .endif
+                    .elseif ( [rcx].asym.ispublic && MODULE.fPIC )
+                        mov edx,R_386_GOT32X
+                    .endif
+                    .if ( edx == R_386_GOT32X ) ; If register used or LEA
+                        mov rcx,[rsi].def_seg
+                        mov eax,[rsi].locofs
+                        mov rcx,[rcx].asym.seginfo
+                        add rax,[rcx].seg_info.CodeBuffer
+                        mov eax,[rax-2]
+                        and ah,0xC7     ; ModRM byte
+                        .if ( ah == 0x05 || al == 0x8D )
+                            mov edx,R_386_GOT32
                         .endif
                     .endif
                 .endif

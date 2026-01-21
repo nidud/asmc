@@ -1164,16 +1164,17 @@ endif
             .default
                 ; size < 2 can work with T_LOW|T_HIGH operator only
                 .if ( no_of_bytes < 2 )
-                    ; forward reference?
                     .if ( Parse_Pass == PASS_1 && rsi && [rsi].asym.state == SYM_UNDEFINED )
-                        ;
+                        ; forward reference?
                     .else
                         .if ( rsi && [rsi].asym.state == SYM_EXTERNAL && opndx.is_abs )
+                        .elseif ( MODULE.fctype == FCT_ELF64 )
+                            ; v2.37.63: db label - $
                         .else
                             asmerr( 2071 )
                         .endif
                         mov edi,FIX_OFF8
-                        .endc
+                       .endc
                     .endif
                 .endif
 
@@ -1182,7 +1183,7 @@ endif
 
                 .if ( rsi && ( [rsi].asym.state == SYM_SEG || [rsi].asym.state == SYM_GRP ) )
                     mov edi,FIX_SEG
-                    .endc
+                   .endc
                 .endif
                 .switch ( no_of_bytes )
                 .case 2
@@ -1197,8 +1198,10 @@ endif
                         .endif
                     .elseif ( rsi && [rsi].asym.state == SYM_EXTERNAL && opndx.is_abs )
                     .elseif ( rsi && [rsi].asym.state != SYM_UNDEFINED )
-                        .if ( GetSymOfssize( rsi ) > USE16 )
-                            asmerr( 2071 )
+                        .if ( MODULE.fctype != FCT_ELF64 ) ; v2.37.63: dw label - $
+                            .if ( GetSymOfssize( rsi ) > USE16 )
+                                asmerr( 2071 )
+                            .endif
                         .endif
                     .endif
                     mov edi,FIX_OFF16

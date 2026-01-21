@@ -1331,16 +1331,17 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                 mov ecx,[rsi]
                 .if ( ch == '&' )
                     lea rsi,@CStr("@@")
-ifndef ASMC64 ; 2.37.61: added
+
+                ; 2.37.61: added
+
                 .elseif ( ecx == 'OLG_' && rax && [rax].asym.name_size == 21 &&
-                    Options.output_format == OFORMAT_ELF && MODULE.Ofssize == USE32 )
+                    Options.output_format == OFORMAT_ELF )
                     mov sym,rax
                     .ifd ( tstrcmp(rsi, "_GLOBAL_OFFSET_TABLE_") == 0 )
                         .if MakeExtern(rsi, MT_NEAR, NULL, sym, USE32)
                             jmp method_ptr
                         .endif
                     .endif
-endif
                 .endif
                 .return fnasmerr( 2006, rsi )
             .endif
@@ -1727,13 +1728,13 @@ MakeConst proc fastcall opnd:expr_t
         .return
     .endif
 
-    .if ( [rcx].sym )
+    mov rax,[rcx].sym
+    .if ( rax )
 
         .if ( Parse_Pass > PASS_1 )
             .return
         .endif
 
-        mov rax,[rcx].sym
         .if ( !( ( [rax].asym.state == SYM_UNDEFINED && [rcx].inst == EMPTY ) ||
                  ( [rax].asym.state == SYM_EXTERNAL && [rax].asym.weak && [rcx].is_abs ) ) )
             .return
@@ -1976,6 +1977,13 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             add [rsi].value,[rbx].asym.offs
             adc [rsi].hvalue,0
             mov rax,[rdi].sym
+
+            .if ( MODULE.fctype == FCT_ELF64 && [rax].asym.predefined && [rax].asym.isvariable )
+                ; v2.37.63: label - $
+                ;
+               .endc
+            .endif
+
             mov rcx,[rbx].asym.segm
             .if ( Parse_Pass > PASS_1 )
                 .if ( ( [rax].asym.state == SYM_EXTERNAL || [rbx].asym.state == SYM_EXTERNAL ) && rax != [rsi].sym )

@@ -145,6 +145,7 @@ IS_SIGNED proto watcall :byte {
      bitexpr        dd : 1 ?        ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
      EndpOccured    dd : 1 ?        ; v2.37.15: set by EndpDir() - .return without RET
      negative       dd : 1 ?        ; v2.37.19: set by SetValue() - EXPR_CONST
+     extern_abs     dd : 1 ?        ; v2.37.63: set by EXTERN{DEF} - EXPR_CONST
     ends
     state           db ?
     mem_type        db ?

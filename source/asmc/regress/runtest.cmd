@@ -35,6 +35,7 @@ for %%f in (src\zf0\*.asm) do call :zf0 %%f
 for %%f in (src\zf1\*.asm) do call :zf1 %%f
 for %%f in (src\peerr\*.asm) do call :peerr %%f
 for %%f in (src\dwarf\*.asm) do call :dwarf %%f
+for %%f in (src\got64\*.asm) do call :got64 %%f
 
 call :safeseh
 call :dllimp
@@ -254,6 +255,21 @@ goto end
 fcmp %~n1.o exp\%~n1.o
 if errorlevel 1 goto end
 del %~n1.o
+goto end
+
+:got64
+%ASMX% -q -c -elf64 %1
+fcmp %~n1.o exp\%~n1.o
+if errorlevel 1 goto end
+del %~n1.o
+%ASMX% -q -c -elf64 -fpic -Fo %~n1pie %1
+fcmp %~n1pie.o exp\%~n1pie.o
+if errorlevel 1 goto end
+del %~n1pie.o
+%ASMX% -q -c -elf64 -fPIC -Fo %~n1pic %1
+fcmp %~n1pic.o exp\%~n1pic.o
+if errorlevel 1 goto end
+del %~n1pic.o
 goto end
 
 :zf0

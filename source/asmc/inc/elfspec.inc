@@ -399,7 +399,7 @@ ELF64_R_INFO macro s, t
  R_X86_64_PC64        =  24,    ; S + A - P
  R_X86_64_GOTOFF64    =  25,    ; S + A - GOT
  R_X86_64_GOTPC32     =  26,    ; GOT + A - P
- R_X86_64_SIZE32      =  32,
+ R_X86_64_SIZE32      =  32,    ; Z + A
  R_X86_64_SIZE64      =  33,
 
  R_X86_64_GOTPC32_TLSDESC = 34, ; GOT offset for TLS descriptor

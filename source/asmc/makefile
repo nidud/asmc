@@ -40,6 +40,7 @@ flags += -Zp8
 ifdef YACC
 ifdef LIBC
 link += -static -nostdlib -l:libasmc.a -Wl,-no-pie,-z,now,-z,noexecstack
+flags += -fno-pic
 else
 link += -Wl,-pie,-z,now,-z,noexecstack
 flags += -fpic
@@ -121,8 +122,8 @@ else
 
 release:
 	del *.obj
-	make SUBVERSION=58 x86=1 asmc
-	make SUBVERSION=58 asmc64
+	make SUBVERSION=64 x86=1 asmc
+	make SUBVERSION=64 asmc64
 	del *.obj
 	copy asmc.exe ..\..\bin
 	copy asmc64.exe ..\..\bin
@@ -146,8 +147,8 @@ linux32:
 
 linux64:
 	md $@
-	asmc -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
-	asmc -DSUBVERSION=58 -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
+	asmc -Iinc -elf64 -fno-pic -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
+	asmc -DSUBVERSION=58 -DASMC64 -Iinc -elf64 -fno-pic -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
 	del *.o
 
 owlinux:

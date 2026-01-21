@@ -182,6 +182,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
   local isnew:char_t
   local ti:qualified_type
   local isexport:byte
+  local isabs:byte
 
     inc i ; skip EXTERNDEF token
 
@@ -189,6 +190,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov ti.Ofssize,MODULE.Ofssize
         mov isexport,0
+        mov isabs,0
 
         ; get the symbol language type if present
 
@@ -244,6 +246,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             inc i
             add rbx,asm_tok
+            mov isabs,1
 
         .elseif ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_PROTO )
 
@@ -284,6 +287,10 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov rdi,ti.symtype
 
         .if ( isnew )
+
+            .if ( isabs )
+                mov [rsi].asym.extern_abs,1
+            .endif
 
             ; v2.05: added to accept type prototypes
 
@@ -575,12 +582,14 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
   local ti:qualified_type
   local altname:string_t
   local token:string_t
+  local isabs:byte
 
     inc i ; skip EXT[E]RN token
 
     .repeat
 
         mov altname,NULL
+        mov isabs,0
 
         ; get the symbol language type if present
 
@@ -647,6 +656,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( eax == 'sba' )
 
             inc i
+            mov isabs,1
 
         .elseif ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_PROTO )
 
@@ -690,6 +700,9 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .return( ERROR )
             .endif
             mov rdi,rax
+            .if ( isabs )
+                mov [rdi].asym.extern_abs,1
+            .endif
 
             ; v2.05: added to accept type prototypes
 

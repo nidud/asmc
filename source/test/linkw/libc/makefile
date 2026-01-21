@@ -5,7 +5,7 @@
 libc:
 ifdef YACC
 	asmc -Flelf_32 -Sf -Sg -Feelf_32 -elf -fno-pic $@.asm
-	asmc -Flelf_64 -Sf -Sg -Feelf_64 -elf64 $@.asm
+	asmc -Flelf_64 -Sf -Sg -Feelf_64 -elf64 -fno-pic $@.asm
 	rm $@.o
 else
 	asmc -Fldos_t -Sf -Sg -Fedos_t -mt -1 $@.asm
@@ -18,7 +18,7 @@ else
 	asmc -Flwin_32W -Sf -Sg -Fewin_32W -MT -ws -coff $@.asm
 	asmc -Flwin_64W -Sf -Sg -Fewin_64W -MT -ws -win64 -frame $@.asm
 	asmc -Flelf_32 -Sf -Sg -Feelf_32. -elf -fno-pic $@.asm -link -nor -d:libc.a
-	asmc -Flelf_64 -Sf -Sg -Feelf_64. -elf64 $@.asm -link -nor -d:libc.a
+	asmc -Flelf_64 -Sf -Sg -Feelf_64. -elf64 -fno-pic $@.asm -link -nor -d:libc.a
 	del $@.o
 	del $@.obj
 endif

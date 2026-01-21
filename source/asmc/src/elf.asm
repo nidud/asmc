@@ -116,6 +116,7 @@ if GNURELOCS
     extused         int_t ?     ; gnu extensions used
 endif
     internal_segs   intseg NUM_INTSEGS dup(<>)
+    symGOT          asym_t ?
     union
         ehdr32 Elf32_Ehdr <>
         ehdr64 Elf64_Ehdr <>
@@ -1092,15 +1093,12 @@ write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
             .if ( !MODULE.nopic )
 
                 mov rcx,[rsi].sym
-                .if ( [rcx].asym.name_size == 21 )
-                    .ifd ( tstrcmp([rcx].asym.name, "_GLOBAL_OFFSET_TABLE_") == 0 )
-                        mov edx,R_386_GOTPC
-                       .endc
-                    .endif
-                    mov rcx,[rsi].sym
+                .if ( rcx == [rbx].symGOT )
+                    mov edx,R_386_GOTPC
+                   .endc
                 .endif
-                mov edx,R_386_32
 
+                mov edx,R_386_32
                 .if ( [rcx].asym.state != SYM_SEG )
 
                     mov edx,R_386_GOTOFF
@@ -1161,10 +1159,11 @@ endif
 
 ; write 1 section's relocations (64-bit)
 
-write_relocs64 proc __ccall uses rsi rdi rbx curr:asym_t
+write_relocs64 proc __ccall uses rsi rdi rbx em:ptr elfmod, curr:asym_t
 
    .new reloc64:Elf64_Rela ; v2.05: changed to Rela
 
+    ldr rbx,em
     ldr rdx,curr
     mov rcx,[rdx].asym.seginfo
 
@@ -1177,19 +1176,21 @@ write_relocs64 proc __ccall uses rsi rdi rbx curr:asym_t
 ifndef _WIN64
         mov dword ptr reloc64.r_offset[4],0
 endif
-        mov edx,[rsi].offs
-        movzx rax,[rsi].addbytes
-        sub rax,rdx
-        neg rax
-        mov size_t ptr reloc64.r_addend,rax
-ifndef _WIN64
+        mov eax,[rsi].offs
+        movzx edx,[rsi].addbytes
+        sub eax,edx
+ifdef _WIN64
+        movsxd rax,eax
+        mov reloc64.r_addend,rax
+else
         cdq
+        mov dword ptr reloc64.r_addend[0],eax
         mov dword ptr reloc64.r_addend[4],edx
 endif
         movzx eax,[rsi].type
         .switch pascal eax
         .case FIX_RELOFF32
-            mov ebx,R_X86_64_PC32
+            mov edx,R_X86_64_PC32
             ;
             ; v2.34.25: added isproc
             ; v2.37.49: PLT32 used as default unless -fno-pic (dynamic link if -fpic)
@@ -1197,42 +1198,70 @@ endif
             ;
             .if ( !MODULE.nopic )
                 .if ( [rcx].asym.isproc )
-                    mov ebx,R_X86_64_PLT32
-                .elseif ( MODULE.fPIC && [rcx].asym.isexport )
-                    mov ebx,R_X86_64_GOTPCREL
+                    mov edx,R_X86_64_PLT32
+                .elseif ( MODULE.fPIC )
+                    .if ( [rcx].asym.isexport )
+                        mov edx,R_X86_64_REX_GOTPCRELX
+                    .endif
+                .elseif ( MODULE.pic )
+                    .if ( [rcx].asym.ispublic || [rcx].asym.state == SYM_EXTERNAL )
+                        mov edx,R_X86_64_REX_GOTPCRELX
+                    .endif
+                .endif
+                .if ( edx == R_X86_64_REX_GOTPCRELX )
+
+                    mov rcx,[rsi].def_seg
+                    mov eax,[rsi].locofs
+                    mov rcx,[rcx].asym.seginfo
+                    add rax,[rcx].seg_info.CodeBuffer
+                    mov eax,[rax-2]
+                    and ah,0xC7     ; ModRM byte
+                    .if ( ah == 0x05 || al == 0x8D )
+                        mov edx,R_X86_64_GOTPCREL
+                    .endif
                 .endif
             .endif
         .case FIX_OFF64
-if 0        ;
-            ; v2.21: in case the 64-bit reloc refer to a segment only, the addend has to be set.
-            ; it's needed for dwarf internal fixups at least. Further tests needed!
-            ;
-            .if ( [rcx].asym.state == SYM_SEG )
-                mov eax,[rsi].offs
-                mov size_t ptr reloc64.r_addend,rax
-              ifndef _WIN64
-                mov dword ptr reloc64.r_addend[4],0
-              endif
+            mov edx,R_X86_64_64
+            .if ( [rsi].def_seg && !MODULE.nopic )
+                mov edx,R_X86_64_PC64
             .endif
-endif
-            mov ebx,R_X86_64_64
-        .case FIX_OFF32_IMGREL : mov ebx,R_X86_64_RELATIVE
-        .case FIX_OFF32        : mov ebx,R_X86_64_32
-        .case FIX_OFF16        : mov ebx,R_X86_64_16
-        .case FIX_RELOFF16     : mov ebx,R_X86_64_PC16
-        .case FIX_OFF8         : mov ebx,R_X86_64_8
-        .case FIX_RELOFF8      : mov ebx,R_X86_64_PC8
+        .case FIX_OFF32_IMGREL
+            mov edx,R_X86_64_RELATIVE
+        .case FIX_OFF32
+            mov edx,R_X86_64_32
+            .if ( rcx == [rbx].symGOT )
+                mov edx,R_X86_64_GOTPC32
+               .endc
+            .endif
+            .if ( [rsi].def_seg && !MODULE.nopic && [rcx].asym.extern_abs == 0 )
+                mov edx,R_X86_64_PC32
+            .endif
+        .case FIX_OFF16
+            mov edx,R_X86_64_16
+            .if ( [rsi].def_seg && !MODULE.nopic && [rcx].asym.extern_abs == 0 )
+                mov edx,R_X86_64_PC16
+            .endif
+        .case FIX_RELOFF16
+            mov edx,R_X86_64_PC16
+        .case FIX_OFF8
+            mov edx,R_X86_64_8
+            .if ( [rsi].def_seg && !MODULE.nopic && [rcx].asym.extern_abs == 0 )
+                mov edx,R_X86_64_PC8
+            .endif
+        .case FIX_RELOFF8
+            mov edx,R_X86_64_PC8
         .default
             mov rcx,curr
-            mov ebx,R_X86_64_NONE
             .if ( [rsi].type < FIX_LAST )
                 mov rdx,MODULE.fmtopt
                 asmerr( 3019, &[rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .else
                 asmerr( 3014, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .endif
+            mov edx,R_X86_64_NONE
         .endsw
-        mov dword ptr reloc64.r_info[0],ebx
+        mov dword ptr reloc64.r_info[0],edx
         mov dword ptr reloc64.r_info[4],edi
 ifdef _LIN64
        .new _rsi:ptr = rsi
@@ -1319,7 +1348,7 @@ endif
             movl rsi,_rsi
             movl rdi,_rdi
             .if ( MODULE.defOfssize == USE64 )
-                write_relocs64( rsi )
+                write_relocs64( rbx, rsi )
             .else
                 write_relocs32( rbx, rsi )
             .endif
@@ -1360,6 +1389,8 @@ if DWARF_SUPP
         dwarf_create_sections()
     .endif
 endif
+
+    mov em.symGOT,SymFind("_GLOBAL_OFFSET_TABLE_")
 
     ; position at 0 ( probably unnecessary, since there were no writes yet )
 

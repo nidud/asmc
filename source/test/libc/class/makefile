@@ -2,7 +2,7 @@ class:
 	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc -q -elf $@.asm
+	asmc -q -elf -MT $@.asm
 	./$@
 else
 	$@

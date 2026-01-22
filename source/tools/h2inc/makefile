@@ -1,5 +1,7 @@
 flags = -q -Cs
-ifndef YACC
+ifdef YACC
+flags += -MT
+else
 flags += -pe -frame
 endif
 

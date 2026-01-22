@@ -39,7 +39,7 @@ ifdef YACC
 ifdef LIBC
 flags += -MT
 else
-flags += -fpic
+flags += -fplt
 endif
 else
 flags += -win64 -frame

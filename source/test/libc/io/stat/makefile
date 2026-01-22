@@ -2,7 +2,7 @@ stat:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	asmc -elf -fno-pic $@.asm
+	asmc -elf $@.asm
 	./$@
 	@pause
 	@rm -f $@.o

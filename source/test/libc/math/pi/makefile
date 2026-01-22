@@ -1,6 +1,6 @@
 pi:
 ifdef YACC
-	asmc -c -q -elf -fno-pic pi.asm
+	asmc -c -q -elf pi.asm
 else
 	asmc -c -q pi.asm
 endif

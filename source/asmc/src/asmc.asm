@@ -677,19 +677,17 @@ ifdef __UNIX__
 
         .if ( Options.link_linker == NULL )
 
-            ; gcc [-m32 -static] [-nostdlib] [-s] -o <name> *.o [-l:[x86/]libasmc.a]
+            ; gcc [-m32] [-static] [-nostdlib] [-s] -o <name> *.o [-l:[x86/]libasmc.a]
 
             .if ( Options.fctype != FCT_ELF64 )
                 CollectLinkOption("-m32")
-                mov ecx,flags
             .endif
-            .if ( Options.link_mt || Options.nopic || ( Options.pic == 0 && Options.fPIC == 0 ) )
-
-                .if ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
-
-                    .if ( !( ecx & O_STATIC ) )
-                        CollectLinkOption("-static")
-                    .endif
+            .if ( Options.link_mt || ( !Options.plt && !Options.pic && !Options.fPIC ) )
+                .if ( !( flags & O_STATIC ) )
+                    CollectLinkOption("-static")
+                .endif
+                CollectLinkOption("-fno-pic")
+                .if ( Options.link_mt && !( flags & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
                     CollectLinkOption("-nostdlib")
                     .if ( Options.fctype == FCT_ELF64 )
                         CollectLinkObject("-l:libasmc.a")
@@ -697,10 +695,10 @@ ifdef __UNIX__
                         CollectLinkObject("-l:x86/libasmc.a")
                     .endif
                 .endif
-            .elseif ( !( ecx & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) && !Options.line_numbers )
+            .endif
+            .if ( !( flags & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) && !Options.line_numbers )
                 CollectLinkOption("-Wl,-z,noexecstack")
             .endif
-
             .if ( !( flags & O_STRIP ) && !Options.line_numbers )
                 CollectLinkOption("-s")
             .endif

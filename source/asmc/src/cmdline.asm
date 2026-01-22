@@ -618,19 +618,35 @@ ifndef ASMC64
         mov Options.cpu,P_NO87
         .return
 endif
-    .case '2cip'            ; -pic2 (JWasm)
     .case 'CIPf'            ; -fPIC
         mov Options.fPIC,1
-        .return
-    .case '1cip'            ; -pic1 (JWasm)
+        undef_name( "__PIC__" )
+        define_name( "__PIC__", "2" )
+       .return
     .case 'cipf'            ; -fpic
         mov Options.pic,1
+        .if ( !Options.fPIC )
+            undef_name( "__PIC__" )
+            define_name( "__PIC__", "1" )
+        .endif
         .return
-    .case 'onf'             ; -fno-pic
-        mov eax,4
-        add [rsi],rax
-    .case '0cip'            ; -pic0 (JWasm)
-        mov Options.nopic,1
+    .case 'tlpf'            ; -fplt
+        mov Options.plt,1
+       .return
+    .case 'onf'             ; -fno-pic, -fno-plt
+        mov rbx,[rsi]
+        mov eax,[rbx]
+        .while byte ptr [rbx]
+            inc rbx
+        .endw
+        mov [rsi],rbx
+        .if ( eax == 'cip-' )
+            mov Options.pic,0
+            mov Options.fPIC,0
+            undef_name( "__PIC__" )
+        .else
+            mov Options.noplt,0
+        .endif
         .return
 
     .case 'marf'            ; -frame

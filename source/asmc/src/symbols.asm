@@ -992,22 +992,15 @@ endif
     .while ( esi < dyneqcount )
 
         lea rax,dyneqtable
-        SymCreate( [rax+rsi*string_t] )
-if 0
-        mov [rax].asym.state,SYM_INTERNAL
-        mov [rax].isdefined,1
-        mov [rax].isvariable,1
-        mov [rax].isequate,1
-else
-        mov [rax].asym.state,SYM_TMACRO
-        mov [rax].asym.isdefined,1
-        mov [rax].asym.predefined,1
-endif
-        lea rdx,dyneqvalue
-        mov rcx,[rdx+rsi*string_t]
-        ;mov [rax].asym.offs,ecx
-        mov [rax].asym.string_ptr,rcx
-        mov [rax].asym.sfunc_ptr,0
+        .if SymCreate( [rax+rsi*string_t] )
+            mov [rax].asym.state,SYM_TMACRO
+            mov [rax].asym.isdefined,1
+            mov [rax].asym.predefined,1
+            lea rdx,dyneqvalue
+            mov rcx,[rdx+rsi*string_t]
+            mov [rax].asym.string_ptr,rcx
+            mov [rax].asym.sfunc_ptr,0
+        .endif
         inc esi
     .endw
 

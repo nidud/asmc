@@ -1076,10 +1076,15 @@ write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
         .switch pascal eax
         .case FIX_RELOFF32
             mov edx,R_386_PC32
-            .if ( !MODULE.nopic )
-                mov rcx,[rsi].sym
+            mov rcx,[rsi].sym
+            .if ( MODULE.plt && [rcx].asym.isproc )
+                mov edx,R_X86_64_PLT32
+            .elseif ( MODULE.pic || MODULE.fPIC )
                 .if ( [rcx].asym.isproc )
                     mov edx,R_386_PLT32
+                    .if ( MODULE.noplt )
+                        mov edx,R_X86_64_GOTPCREL
+                    .endif
                 .endif
             .endif
         .case FIX_OFF32
@@ -1090,7 +1095,7 @@ write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
             ;
             mov edx,R_386_32
 
-            .if ( !MODULE.nopic )
+            .if ( MODULE.pic || MODULE.fPIC )
 
                 mov rcx,[rsi].sym
                 .if ( rcx == [rbx].symGOT )
@@ -1176,6 +1181,7 @@ write_relocs64 proc __ccall uses rsi rdi rbx em:ptr elfmod, curr:asym_t
 ifndef _WIN64
         mov dword ptr reloc64.r_offset[4],0
 endif
+
         mov eax,[rsi].offs
         movzx edx,[rsi].addbytes
         sub eax,edx
@@ -1187,6 +1193,7 @@ else
         mov dword ptr reloc64.r_addend[0],eax
         mov dword ptr reloc64.r_addend[4],edx
 endif
+
         movzx eax,[rsi].type
         .switch pascal eax
         .case FIX_RELOFF32
@@ -1195,10 +1202,16 @@ endif
             ; v2.34.25: added isproc
             ; v2.37.49: PLT32 used as default unless -fno-pic (dynamic link if -fpic)
             ; v2.37.54: added -fPIC
+            ; v2.37.64: default to static, added -fno-plt
             ;
-            .if ( !MODULE.nopic )
+            .if ( MODULE.plt && [rcx].asym.isproc )
+                mov edx,R_X86_64_PLT32
+            .elseif ( MODULE.pic || MODULE.fPIC )
                 .if ( [rcx].asym.isproc )
                     mov edx,R_X86_64_PLT32
+                    .if ( MODULE.noplt )
+                        mov edx,R_X86_64_GOTPCREL
+                    .endif
                 .elseif ( MODULE.fPIC )
                     .if ( [rcx].asym.isexport )
                         mov edx,R_X86_64_REX_GOTPCRELX
@@ -1223,8 +1236,10 @@ endif
             .endif
         .case FIX_OFF64
             mov edx,R_X86_64_64
-            .if ( [rsi].def_seg && !MODULE.nopic )
-                mov edx,R_X86_64_PC64
+            .if ( MODULE.pic || MODULE.fPIC )
+                .if ( [rsi].def_seg )
+                    mov edx,R_X86_64_PC64
+                .endif
             .endif
         .case FIX_OFF32_IMGREL
             mov edx,R_X86_64_RELATIVE
@@ -1232,22 +1247,26 @@ endif
             mov edx,R_X86_64_32
             .if ( rcx == [rbx].symGOT )
                 mov edx,R_X86_64_GOTPC32
-               .endc
-            .endif
-            .if ( [rsi].def_seg && !MODULE.nopic && [rcx].asym.extern_abs == 0 )
-                mov edx,R_X86_64_PC32
+            .elseif ( MODULE.pic || MODULE.fPIC )
+                .if ( [rsi].def_seg && [rcx].asym.extern_abs == 0 )
+                    mov edx,R_X86_64_PC32
+                .endif
             .endif
         .case FIX_OFF16
             mov edx,R_X86_64_16
-            .if ( [rsi].def_seg && !MODULE.nopic && [rcx].asym.extern_abs == 0 )
-                mov edx,R_X86_64_PC16
+            .if ( MODULE.pic || MODULE.fPIC )
+                .if ( [rsi].def_seg && [rcx].asym.extern_abs == 0 )
+                    mov edx,R_X86_64_PC16
+                .endif
             .endif
         .case FIX_RELOFF16
             mov edx,R_X86_64_PC16
         .case FIX_OFF8
             mov edx,R_X86_64_8
-            .if ( [rsi].def_seg && !MODULE.nopic && [rcx].asym.extern_abs == 0 )
-                mov edx,R_X86_64_PC8
+            .if ( MODULE.pic || MODULE.fPIC )
+                .if ( [rsi].def_seg && [rcx].asym.extern_abs == 0 )
+                    mov edx,R_X86_64_PC8
+                .endif
             .endif
         .case FIX_RELOFF8
             mov edx,R_X86_64_PC8

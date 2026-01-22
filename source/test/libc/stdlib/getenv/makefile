@@ -5,7 +5,7 @@ getenv:
 	asmc64 -q $@.asm
 ifdef YACC
 	./$@
-	asmc -q -elf -fno-pic $@.asm
+	asmc -q -elf $@.asm
 	./$@
 else
 	$@

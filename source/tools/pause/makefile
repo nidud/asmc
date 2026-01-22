@@ -1,8 +1,8 @@
 pause:
 ifdef YACC
-	asmc64 -q -fno-pic -Bl /usr/bin/ld $@.asm -link -s -o $@
+	asmc64 -q -Bl /usr/bin/ld $@.asm -link -s -o $@
 else
-	asmc -Fe$@. -elf64 -fno-pic $@.asm
+	asmc -Fe$@. -elf64 $@.asm
 endif
 
 clean:

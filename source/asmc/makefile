@@ -25,12 +25,10 @@ ifdef x86
 acc = asmc
 flags += -Zp4
 ifdef YACC
-flags += -elf -fno-pic
-link += -m32 -static
+flags += -elf
 ifdef LIBC
-link += -nostdlib -l:x86/libasmc.a
+flags += -MT
 endif
-link += -Wl,-no-pie,-z,now,-z,noexecstack
 else
 flags += -coff
 endif
@@ -39,10 +37,8 @@ acc = asmc64
 flags += -Zp8
 ifdef YACC
 ifdef LIBC
-link += -static -nostdlib -l:libasmc.a -Wl,-no-pie,-z,now,-z,noexecstack
-flags += -fno-pic
+flags += -MT
 else
-link += -Wl,-pie,-z,now,-z,noexecstack
 flags += -fpic
 endif
 else
@@ -141,19 +137,19 @@ masm_compat:
 
 linux32:
 	md $@
-	asmc -Iinc -elf -fno-pic -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
-	asmc -DASMC64 -Iinc -elf -fno-pic -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
+	asmc -Iinc -elf -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
+	asmc -DASMC64 -Iinc -elf -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
 	del *.o
 
 linux64:
 	md $@
-	asmc -Iinc -elf64 -fno-pic -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
-	asmc -DSUBVERSION=58 -DASMC64 -Iinc -elf64 -fno-pic -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
+	asmc -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
+	asmc -DSUBVERSION=58 -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
 	del *.o
 
 owlinux:
 	md $@
-	asmc -Fe$@\asmc. -Iinc -elf -fno-pic -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:\watcom\lib386\linux\clib3s.lib
+	asmc -Fe$@\asmc. -Iinc -elf -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:\watcom\lib386\linux\clib3s.lib
 	asmc -DASMC64 -Fe$@\asmc64. -Iinc -elf -Zp4 -Cs src\*.asm -link -nor -st:0x300000 -d:\watcom\lib386\linux\clib3s.lib
 	del *.o
 

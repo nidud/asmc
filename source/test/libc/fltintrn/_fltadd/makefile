@@ -3,7 +3,7 @@
 
 _fltadd:
 ifdef YACC
-	asmc -c -q -elf -fno-pic $@.asm
+	asmc -c -q -elf $@.asm
 else
 	asmc -c -q $@.asm
 endif

@@ -1,5 +1,5 @@
 strsafe: strsafe.so
-	asmc64 -c -endbr -Zd main.asm
+	asmc64 -c -fpic -endbr -Zd main.asm
 	gcc main.o $@.so -o $@ -Wl,-rpath=.
 	gdb -x ../layout.gdb ./$@
 	@rm -f main.o

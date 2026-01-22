@@ -603,7 +603,8 @@ define PE_DLL               0x04
       list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
       pic                   dd: 1 ? ; -fpic
       fPIC                  dd: 1 ? ; -fPIC
-      nopic                 dd: 1 ? ; -fno-pic
+      plt                   dd: 1 ? ; -fplt
+      noplt                 dd: 1 ? ; -fno-plt
       endbr                 dd: 1 ? ; -endbr
       masm_compat_gencode   dd: 1 ? ; -Zg option
       cstack                dd: 1 ? ; -Cs
@@ -702,7 +703,8 @@ define PE_DLL               0x04
       list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
       pic                   dd: 1 ? ; -fpic
       fPIC                  dd: 1 ? ; -fPIC
-      nopic                 dd: 1 ? ; -fno-pic
+      plt                   dd: 1 ? ; -fplt
+      noplt                 dd: 1 ? ; -fno-plt
       endbr                 dd: 1 ? ; -endbr
       masm_compat_gencode   dd: 1 ? ; -Zg option
       cstack                dd: 1 ? ; -Cs

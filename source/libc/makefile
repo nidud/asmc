@@ -26,11 +26,11 @@ name = libasmc
 endif
 
 $(name).a:
-	asmc64 $(flag) -fno-pic -Zd -Zp8 -r *.asm *.s
+	asmc64 $(flag) -Zd -Zp8 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
-	asmc $(flag) -6 -elf -fno-pic -Zd -Zp4 -r *.asm *.s
+	asmc $(flag) -6 -elf -Zd -Zp4 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc/x86
@@ -82,10 +82,10 @@ terminal:
 	make tty=1
 
 linux:
-	asmc -c -q -mscrt -elf -fno-pic -Fo $(lib_dir)\x86\noflt $(lib_dir)\noflt.asm
-	asmc -c -q -mscrt -elf64 -fno-pic -Fo $(lib_dir)\x64\noflt $(lib_dir)\noflt.asm
-	asmc -BlLIBW -6 -mscrt -MT -elf -fno-pic -Zp4 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x86\libc.a
-	asmc -BlLIBW -mscrt -MT -elf64 -fno-pic -Zp8 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x64\libc.a
+	asmc -c -q -mscrt -elf -Fo $(lib_dir)\x86\noflt $(lib_dir)\noflt.asm
+	asmc -c -q -mscrt -elf64 -Fo $(lib_dir)\x64\noflt $(lib_dir)\noflt.asm
+	asmc -BlLIBW -6 -mscrt -MT -elf -Zp4 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x86\libc.a
+	asmc -BlLIBW -mscrt -MT -elf64 -Zp8 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x64\libc.a
 	del *.o
 
 regress:

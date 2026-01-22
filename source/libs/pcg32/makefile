@@ -4,11 +4,11 @@
 ifdef YACC
 
 apcg32.a:
-	asmc -c -elf64 -fno-pic -Cs src/*.asm
+	asmc -c -elf64 -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)
-	asmc -c -elf -fno-pic -Cs src/*.asm
+	asmc -c -elf -Cs src/*.asm
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ $(ASMCDIR)/x86

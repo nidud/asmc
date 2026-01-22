@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## option -m
 
-Option **-m** generates a line containing a .MODEL directive to select a memory model. Syntax is:
+Option `-m` generates a line containing a .MODEL directive to select a memory model. Syntax is:
 
 <table>
 <tr><td><b>Option</b></td><td><b>Model</b></td><td><b>Defines</b></td></tr>

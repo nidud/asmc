@@ -316,6 +316,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
    .new ul:int_t = 0
    .new li:int_t = 0
    .new pre:int_t = 0
+   .new samp:int_t = 0
    .new p:int_t = 0
    .new h:int_t = 0
    .new b:int_t = 0
@@ -438,7 +439,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
                 fprintf(fp, "</ul>\n" )
                 dec ul
             .endif
-            .if ( !pre )
+            .if ( !pre && !samp )
                 fprintf(fp, "<p>" )
                 inc p
             .endif
@@ -500,6 +501,15 @@ makehtm proc uses rsi rdi rbx pm:pmd
             xor ecx,ecx
 
             .switch eax
+            .case '`'
+                .if ( samp )
+                    fprintf(fp, "</b></samp>" )
+                    dec samp
+                .else
+                    fprintf(fp, "<samp><b>" )
+                    inc samp
+                .endif
+                .endc
             .case '\'
                .endc .if ( byte ptr [rbx-2] == '\' )
                 inc ecx

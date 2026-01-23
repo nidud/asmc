@@ -677,12 +677,14 @@ ifdef __UNIX__
 
         .if ( Options.link_linker == NULL )
 
-            ; gcc [-m32] [-static] [-nostdlib] [-s] -o <name> *.o [-l:[x86/]libasmc.a]
+            ; gcc [-m32 [-no-pie]] [-static] [-nostdlib] [-s] -o <name> *.o [-l:[x86/]libasmc.a]
 
             .if ( Options.fctype != FCT_ELF64 )
                 CollectLinkOption("-m32")
             .endif
-            .if ( Options.link_mt || ( !Options.plt && !Options.pic && !Options.fPIC ) )
+            .if ( Options.plt )
+                CollectLinkOption("-no-pie")
+            .elseif ( Options.link_mt || ( !Options.pic && !Options.fPIC ) )
                 .if ( !( flags & O_STATIC ) )
                     CollectLinkOption("-static")
                 .endif

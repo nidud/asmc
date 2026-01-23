@@ -70,12 +70,13 @@ endif
  char_t "-eq Don't display error messages          -Fe<file> Name executable",10
  char_t "-Fd[file] Write import definition file    -Fi<file> Force <file> to be included",10
  char_t "-Fl[file] Generate listing                -Fo<file> Name object file",10
- char_t "-Fw<file> Set errors file name            -f[no-]pic [No] Position Independent Code",10
- char_t "-frame Auto generate unwind information   -fPIC Relocate global data to GOT",10
 ifndef ASMC64
  char_t "-FPi Generate 80x87 emulator encoding     -FPi87 80x87 instructions (default)",10
  char_t "-fpc Disallow floating-point instructions -fp<n> FPU: 0=8087, 2=80287, 3=80387",10
 endif
+ char_t "-fno-pic No position-independent code     -fplt Relocate function calls to PLT",10
+ char_t "-fpic, -fPIC Relocate data to GOT         -fno-plt Function calls to GOT",10
+ char_t "-frame Auto generate unwind information   -Fw<file> Set errors file name",10
  char_t "-G<c|d|z> Use Pascal, C, or Stdcall calls -G<r|v> Use Fastcall or Vectorcall",10
  char_t "-G<s|w> Use Syscall or Watcom calls       -Ge Conditional stack checking",10
  char_t "-home Copy register parameters to Stack   -I<name> Add include path",10

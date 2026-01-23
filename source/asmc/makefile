@@ -14,8 +14,13 @@ ifdef YACC
 link = -o $@
 ifdef debug
 flags += -Zd -Zf
+endif
+ifdef LIBC
+flags += -MT
 else
-link += -s
+ifndef static
+flags += -fplt
+endif
 endif
 else
 link = -out:$@.exe -stack:0x300000,0x200000
@@ -26,22 +31,13 @@ acc = asmc
 flags += -Zp4
 ifdef YACC
 flags += -elf
-ifdef LIBC
-flags += -MT
-endif
 else
 flags += -coff
 endif
 else
 acc = asmc64
 flags += -Zp8
-ifdef YACC
-ifdef LIBC
-flags += -MT
-else
-flags += -fplt
-endif
-else
+ifndef YACC
 flags += -win64 -frame
 endif
 endif
@@ -144,7 +140,7 @@ linux32:
 linux64:
 	md $@
 	asmc -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc.
-	asmc -DSUBVERSION=58 -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
+	asmc -DSUBVERSION=68 -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libc.a -o:$@\asmc64.
 	del *.o
 
 owlinux:

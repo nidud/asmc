@@ -1184,6 +1184,9 @@ endif
 
         mov eax,[rsi].offs
         movzx edx,[rsi].addbytes
+        .if ( [rsi].rip_used )
+            add edx,4
+        .endif
         sub eax,edx
 ifdef _WIN64
         movsxd rax,eax
@@ -1236,7 +1239,7 @@ endif
             .endif
         .case FIX_OFF64
             mov edx,R_X86_64_64
-            .if ( [rsi].elf_pc )
+            .if ( [rsi].curpc_used )
                 mov edx,R_X86_64_PC64
             .endif
         .case FIX_OFF32_IMGREL
@@ -1245,21 +1248,21 @@ endif
             mov edx,R_X86_64_32
             .if ( rcx == [rbx].symGOT )
                 mov edx,R_X86_64_GOTPC32
-            .elseif ( [rsi].elf_pc )
+            .elseif ( [rsi].curpc_used )
                 mov edx,R_X86_64_PC32
-            .elseif ( [rsi].is_rip && ( MODULE.pic || MODULE.fPIC ) )
+            .elseif ( [rsi].rip_used )
                 mov edx,R_X86_64_PC32
             .endif
         .case FIX_OFF16
             mov edx,R_X86_64_16
-            .if ( [rsi].elf_pc )
+            .if ( [rsi].curpc_used )
                 mov edx,R_X86_64_PC16
             .endif
         .case FIX_RELOFF16
             mov edx,R_X86_64_PC16
         .case FIX_OFF8
             mov edx,R_X86_64_8
-            .if ( [rsi].elf_pc )
+            .if ( [rsi].curpc_used )
                 mov edx,R_X86_64_PC8
             .endif
         .case FIX_RELOFF8

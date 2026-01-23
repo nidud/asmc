@@ -1061,6 +1061,9 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
                 .endc
             .case FIX_OFF32     ; 32bit offset
                 mov ecx,IMAGE_REL_AMD64_ADDR32
+                .if ( [rbx].rip_used )
+                    mov ecx,IMAGE_REL_AMD64_REL32
+                .endif
                 .endc
             .case FIX_OFF32_IMGREL
                 mov ecx,IMAGE_REL_AMD64_ADDR32NB

@@ -2268,8 +2268,7 @@ endif
             CreateFixup( sym, fixup_type, OPTJ_NONE )
             mov [rsi].opnd[rbx].InsFixup,rax
             .if ( base == T_RIP && index == EMPTY )
-                mov [rax].fixup.is_rip,1
-                mov [rax].fixup.addbytes,4 ; end of instruction
+                mov [rax].fixup.rip_used,1
             .endif
         .endif
     .endif

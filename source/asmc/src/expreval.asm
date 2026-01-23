@@ -1978,14 +1978,14 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             adc [rsi].hvalue,0
             mov rax,[rdi].sym
 
-            .if ( Options.output_format == OFORMAT_ELF && [rax].asym.predefined && [rax].asym.isvariable )
+            .if ( MODULE.fctype == FCT_ELF64 && [rax].asym.predefined && [rax].asym.isvariable )
 
                 ; v2.37.63: label - $
 
                 mov rax,[rax].asym.name
-                mov eax,[rax]
-                .if ( ax == '$' )
-                    mov [rsi].elf_pc,1
+                movzx eax,word ptr [rax]
+                .if ( eax == '$' )
+                    mov [rsi].curpc_used,1
                    .endc
                 .endif
             .endif

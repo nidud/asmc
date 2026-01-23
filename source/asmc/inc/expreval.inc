@@ -106,7 +106,7 @@ union
   negative	dd : 1 ?	; for EXPR_FLOAT and EXPR_CONST
   assumecheck	dd : 1 ?	; v2.07: for ASSUMEd std registers
   is_dot	dd : 1 ?	; v2.10: see regression test dotop5.asm
-  elf_pc	dd : 1 ?	; v2.37.65: label - $
+  curpc_used	dd : 1 ?	; v2.37.65: label - $
  ends
 ends
 op		ptr opinfo ?

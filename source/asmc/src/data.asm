@@ -1330,8 +1330,9 @@ endif
                 .endif
                 ; uses Frame and Frame_Datum
                 CreateFixup( opndx.sym, fixup_type, OPTJ_NONE )
-                .if ( opndx.elf_pc && ( MODULE.pic || MODULE.fPIC ) && [rax].fixup.def_seg )
-                    mov [rax].fixup.elf_pc,1
+                .if ( opndx.curpc_used && [rax].fixup.def_seg &&
+                    ( MODULE.plt || MODULE.pic || MODULE.fPIC ) )
+                    mov [rax].fixup.curpc_used,1
                 .endif
             .endif
             OutputBytes( &opndx.value, no_of_bytes, rax )

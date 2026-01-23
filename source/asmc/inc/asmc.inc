@@ -727,7 +727,6 @@ define PE_DLL               0x04
       cref                  dd: 1 ? ; .cref/.nocref
       StartupDirectiveFound dd: 1 ? ;
       EndDirFound           dd: 1 ? ;
-      NoSignExtend          dd: 1 ? ; option nosignextend
      ends
     ends
 
@@ -759,6 +758,7 @@ define PE_DLL               0x04
     cv_opt                  db ?    ; option codeview
     emulator                db ?    ; option emulator
     frame_auto              db ?    ; win64 only
+    NoSignExtend            db ?    ; option nosignextend
     loopalign               db ?    ; OPTION:LOOPALIGN setting
     casealign               db ?    ; OPTION:CASEALIGN setting
     floatformat             db ?    ; option floatformat:<e|f|g>

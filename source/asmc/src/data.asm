@@ -634,22 +634,17 @@ next_item:
 
             xor eax,eax
             .if ( [rbx-asm_tok].token == T_DIRECTIVE )
-                mov eax,[rbx-asm_tok].tokval
+                mov eax,no_of_bytes
             .elseif ( first && i == 2 )
                 mov rdx,type_sym
                 .if ( rdx )
-                    .switch pascal [rdx].asym.total_size
-                    .case 1: mov eax,T_BYTE
-                    .case 2: mov eax,T_WORD
-                    .case 4: mov eax,T_DWORD
-                    .case 8: mov eax,T_QWORD
-                    .endsw
+                    mov eax,[rdx].asym.total_size
                 .endif
             .endif
             .if ( eax )
-
                 mov rdx,sym ; v2.36.37 - added
-                mov [rdx].asym.bitf_token,ax
+                shl eax,3
+                mov [rdx].asym.bitf_size,al
                 mov [rdx].asym.crecord,1
             .endif
 
@@ -662,9 +657,13 @@ next_item:
             .endif
             mov rdx,sym
             mov ecx,opndx.value
-            mov eax,64
-            .if ( MODULE.Ofssize <= USE64 && [rdx].asym.crecord == 0 )
-                mov eax,32
+            .if ( [rdx].asym.crecord )
+                movzx eax,[rdx].asym.bitf_size
+            .else
+                mov eax,64
+                .if ( MODULE.Ofssize <= USE64 )
+                    mov eax,32
+                .endif
             .endif
             .if ( ecx == 0 )
                 .return asmerr( 2172, [rbx-asm_tok*2].string_ptr )
@@ -676,6 +675,12 @@ next_item:
             add [rsi].asym.bitf_offs,cl
             mov [rdx].asym.bitf_offs,al
             mov [rdx].asym.bitf_bits,cl
+            .if ( [rdx].asym.crecord )
+                add al,cl
+                .if ( al > [rdx].asym.bitf_size )
+                    .return asmerr( 2089, [rbx-asm_tok*2].string_ptr )
+                .endif
+            .endif
             mov [rsi].asym.total_size,no_of_bytes
             imul ebx,i,asm_tok
             add rbx,tokenarray
@@ -1304,7 +1309,7 @@ endif
                  .endif
                 .return( asmerr( 3001, &[rcx].format_options.formatname, rdx ) )
             .endif
-            mov fixp,NULL
+            xor eax,eax
             .if ( write_to_file )
 
                 ; there might be a segment override:
@@ -1324,9 +1329,12 @@ endif
                     set_frame( opndx.sym )
                 .endif
                 ; uses Frame and Frame_Datum
-                mov fixp,CreateFixup( opndx.sym, fixup_type, OPTJ_NONE )
+                CreateFixup( opndx.sym, fixup_type, OPTJ_NONE )
+                .if ( opndx.elf_pc && ( MODULE.pic || MODULE.fPIC ) && [rax].fixup.def_seg )
+                    mov [rax].fixup.elf_pc,1
+                .endif
             .endif
-            OutputBytes( &opndx.value, no_of_bytes, fixp )
+            OutputBytes( &opndx.value, no_of_bytes, rax )
             .endc
         .case EXPR_REG
             asmerr( 2032 )

@@ -1236,10 +1236,8 @@ endif
             .endif
         .case FIX_OFF64
             mov edx,R_X86_64_64
-            .if ( MODULE.pic || MODULE.fPIC )
-                .if ( [rsi].def_seg )
-                    mov edx,R_X86_64_PC64
-                .endif
+            .if ( [rsi].elf_pc )
+                mov edx,R_X86_64_PC64
             .endif
         .case FIX_OFF32_IMGREL
             mov edx,R_X86_64_RELATIVE
@@ -1247,26 +1245,22 @@ endif
             mov edx,R_X86_64_32
             .if ( rcx == [rbx].symGOT )
                 mov edx,R_X86_64_GOTPC32
-            .elseif ( MODULE.pic || MODULE.fPIC )
-                .if ( [rsi].def_seg && [rcx].asym.extern_abs == 0 )
-                    mov edx,R_X86_64_PC32
-                .endif
+            .elseif ( [rsi].elf_pc )
+                mov edx,R_X86_64_PC32
+            .elseif ( [rsi].is_rip && ( MODULE.pic || MODULE.fPIC ) )
+                mov edx,R_X86_64_PC32
             .endif
         .case FIX_OFF16
             mov edx,R_X86_64_16
-            .if ( MODULE.pic || MODULE.fPIC )
-                .if ( [rsi].def_seg && [rcx].asym.extern_abs == 0 )
-                    mov edx,R_X86_64_PC16
-                .endif
+            .if ( [rsi].elf_pc )
+                mov edx,R_X86_64_PC16
             .endif
         .case FIX_RELOFF16
             mov edx,R_X86_64_PC16
         .case FIX_OFF8
             mov edx,R_X86_64_8
-            .if ( MODULE.pic || MODULE.fPIC )
-                .if ( [rsi].def_seg && [rcx].asym.extern_abs == 0 )
-                    mov edx,R_X86_64_PC8
-                .endif
+            .if ( [rsi].elf_pc )
+                mov edx,R_X86_64_PC8
             .endif
         .case FIX_RELOFF8
             mov edx,R_X86_64_PC8

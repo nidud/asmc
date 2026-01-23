@@ -9,7 +9,7 @@
 	option wstring:on
 	lea edx,@CStr( "wstring" )
 
-	mov eax,sizeof(DS0000)
-	mov edx,sizeof(DS0001)
+	mov eax,sizeof(D$0000)
+	mov edx,sizeof(D$0001)
 
 	end

@@ -96,16 +96,17 @@ mem_type	uchar_t ?
 scale		uchar_t ?	; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
 Ofssize		uchar_t ?	; 16,32,64 bit if MT_NEAR, MT_FAR
 union
- flags		uchar_t ?	; bit-flag
+ flags		dd ?		; bit-flag
  record
-  indirect	uchar_t : 1 ?	; indirect addressing used
-  explicit	uchar_t : 1 ?	; Whether expression type explicitly given (to be removed!)
-  is_abs	uchar_t : 1 ?	; external ABS
-  is_type	uchar_t : 1 ?	; constant is a type
-  is_opattr	uchar_t : 1 ?	; current operator is OPATTR
-  negative	uchar_t : 1 ?	; for EXPR_FLOAT and EXPR_CONST
-  assumecheck	uchar_t : 1 ?	; v2.07: for ASSUMEd std registers
-  is_dot	uchar_t : 1 ?	; v2.10: see regression test dotop5.asm
+  indirect	dd : 1 ?	; indirect addressing used
+  explicit	dd : 1 ?	; Whether expression type explicitly given (to be removed!)
+  is_abs	dd : 1 ?	; external ABS
+  is_type	dd : 1 ?	; constant is a type
+  is_opattr	dd : 1 ?	; current operator is OPATTR
+  negative	dd : 1 ?	; for EXPR_FLOAT and EXPR_CONST
+  assumecheck	dd : 1 ?	; v2.07: for ASSUMEd std registers
+  is_dot	dd : 1 ?	; v2.10: see regression test dotop5.asm
+  elf_pc	dd : 1 ?	; v2.37.65: label - $
  ends
 ends
 op		ptr opinfo ?

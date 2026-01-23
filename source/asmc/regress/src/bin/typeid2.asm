@@ -24,7 +24,7 @@ define T_ptrS 2
 .template R
     record
      x db : 4 ?
-     y db : 5 ?
+     y db : 4 ?
     ends
    .ends
    PS typedef ptr S

@@ -3211,7 +3211,6 @@ endif
     machine		db ?		; target processor
     language		db ?		; language index
     record flags
-     language		dw : 8 ?	; language index
      pcode		dw : 1 ?	; true if pcode present
      floatprec		dw : 2 ?	; floating precision
      floatpkg		dw : 2 ?	; float package

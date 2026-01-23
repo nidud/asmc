@@ -77,6 +77,8 @@ fixup		struct
    record
     lresolved	db: 1 ?		; operator LROFFSET
     orgoccured	db: 1 ?		; v2.04 ORG occured behind this fix
+    is_rip	db: 1 ?		; v2.37.65 label[rip]
+    elf_pc	db: 1 ?		; v2.37.65 label - $
    ends
   ends
  ends

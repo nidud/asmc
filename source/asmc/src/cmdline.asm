@@ -619,11 +619,13 @@ ifndef ASMC64
         .return
 endif
     .case 'CIPf'            ; -fPIC
+        mov Options.plt,0
         mov Options.fPIC,1
         undef_name( "__PIC__" )
         define_name( "__PIC__", "2" )
        .return
     .case 'cipf'            ; -fpic
+        mov Options.plt,0
         mov Options.pic,1
         .if ( !Options.fPIC )
             undef_name( "__PIC__" )
@@ -631,6 +633,9 @@ endif
         .endif
         .return
     .case 'tlpf'            ; -fplt
+        mov Options.pic,0
+        mov Options.fPIC,0
+        undef_name( "__PIC__" )
         mov Options.plt,1
        .return
     .case 'onf'             ; -fno-pic, -fno-plt

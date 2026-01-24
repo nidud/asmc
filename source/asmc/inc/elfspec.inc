@@ -399,6 +399,13 @@ ELF64_R_INFO macro s, t
  R_X86_64_PC64        =  24,    ; S + A - P
  R_X86_64_GOTOFF64    =  25,    ; S + A - GOT
  R_X86_64_GOTPC32     =  26,    ; GOT + A - P
+if 0
+ R_X86_64_GOT64       =  27,    ; ?
+ R_X86_64_GOTPCREL64  =  28,    ; ?
+ R_X86_64_GOTPC64     =  29,    ; ?
+ R_X86_64_GOTPLT64    =  30,    ; ?
+ R_X86_64_PLTOFF64    =  31,    ; ?
+endif
  R_X86_64_SIZE32      =  32,    ; Z + A
  R_X86_64_SIZE64      =  33,
 

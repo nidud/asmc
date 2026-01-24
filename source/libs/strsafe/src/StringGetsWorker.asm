@@ -25,7 +25,7 @@ StringGetsWorker proc uses rbx pszDest:LPTSTR, cchDest:size_t, pcchNewDestLength
     .else
 
         .while ( rbx > 1 )
-if defined(__UNIX__) and defined(_WIN64)
+ifdef __PIC__
             mov rax,stdin
             .ifd ( _fgettc([rax]) == EOF )
 else

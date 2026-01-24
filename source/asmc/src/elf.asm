@@ -1230,9 +1230,10 @@ endif
                     mov eax,[rsi].locofs
                     mov rcx,[rcx].asym.seginfo
                     add rax,[rcx].seg_info.CodeBuffer
-                    mov eax,[rax-2]
-                    and ah,0xC7     ; ModRM byte
-                    .if ( ah == 0x05 || al == 0x8D )
+                    mov al,[rax-2]
+                    ; ADC/ADD/AND/CMP/OR/SBB/SUB/XOR
+                    ; MOV/JMP/CALL
+                    .if ( al == 0x8D ) ; LEA
                         mov edx,R_X86_64_GOTPCREL
                     .endif
                 .endif

@@ -1083,7 +1083,7 @@ write_relocs32 proc __ccall uses rsi rbx em:ptr elfmod, curr:asym_t
                 .if ( [rcx].asym.isproc )
                     mov edx,R_386_PLT32
                     .if ( MODULE.noplt )
-                        mov edx,R_X86_64_GOTPCREL
+                        mov edx,R_386_GOT32
                     .endif
                 .endif
             .endif

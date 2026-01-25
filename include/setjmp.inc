@@ -6,7 +6,7 @@ include libc.inc
 endif
 
 if not defined(_CRT_SETJMP) and defined(_CRTBLD)
-define _CRT_SETJMP
+;define _CRT_SETJMP
 endif
 
 define setjump <_setjmp>

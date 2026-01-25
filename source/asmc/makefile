@@ -15,7 +15,7 @@ link = -o $@
 ifdef debug
 flags += -Zd -Zf
 endif
-ifdef LIBC
+ifdef MT
 flags += -MT
 else
 ifndef static
@@ -93,20 +93,32 @@ uninstall:
 	sudo rm -f -R /usr/lib/asmc
 	sudo rm -f /etc/profile.d/asmc-profile.sh
 
+debug32:
+	make x86=1 debug=1 asmc clean
+	gdb -x ../test/dwarf/layout.gdb --args asmc -I../../include -Fe pltgot -elf -Zd -fPIC ../test/dwarf/pltgot/got.asm -fplt ../test/dwarf/pltgot/plt.asm
+#	gdb -x ../test/dwarf/layout.gdb pltgot
+	rm ./asmc
+#	rm ./pltgot
+
+debug64:
+	make debug=1 asmc64 clean
+	gdb -x ../test/dwarf/layout.gdb --args asmc64 -c -I../../include -Zd -fPIC ../test/dwarf/pltgot/got.asm
+	rm ./asmc64
+
 build_libc:
 	make -C ../libc
 
-# Note: build LIBC before using these
+# Note: This assumes install and build_libc is done
 
-debug32:
-	make x86=1 LIBC=1 debug=1 asmc clean
-	gdb -x ../test/dwarf/layout.gdb --args asmc -c -elf64 -Zd -fPIC ../test/dwarf/dynamic2/func2.asm
+debugmt32:
+	make x86=1 MT=1 debug=1 asmc clean
+	gdb -x ../test/dwarf/layout.gdb --args asmc -c -elf -Zd -fPIC ../test/dwarf/pltgot/got.asm
 	rm ./asmc
 
-debug64:
-	make LIBC=1 debug=1 asmc64 clean
-	gdb -x ../test/dwarf/layout.gdb --args asmc64 -c -Zd -fPIC ../test/dwarf/dynamic2/func2.asm
-	rm ./asmc64
+debugmt64:
+	make MT=1 debug=1 asmc clean
+	gdb -x ../test/dwarf/layout.gdb --args asmc -c -elf64 -Zd -fPIC ../test/dwarf/pltgot/got.asm
+	rm ./asmc
 
 else
 

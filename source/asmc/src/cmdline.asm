@@ -650,7 +650,7 @@ endif
             mov Options.fPIC,0
             undef_name( "__PIC__" )
         .else
-            mov Options.noplt,0
+            mov Options.noplt,1
         .endif
         .return
 

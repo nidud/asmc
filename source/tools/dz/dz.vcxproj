@@ -49,7 +49,6 @@
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
       <Profile>false</Profile>
       <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
       <TypeLibraryResourceID>1</TypeLibraryResourceID>
@@ -79,7 +78,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
-      <AdditionalOptions>/merge:.CRT=.rdata %(AdditionalOptions)</AdditionalOptions>
       <Profile>false</Profile>
       <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
       <TypeLibraryResourceID>1</TypeLibraryResourceID>

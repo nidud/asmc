@@ -3,7 +3,7 @@ include srcpath
 ifndef CC
 CC = LIBW
 crtpath = ..\..\source\libc\crt
-crtflag = -c -q -coff -Cs -MT -MD
+crtflag = -c -q -nolib -coff -Cs -MT -MD
 endif
 
 all: import build

@@ -35,6 +35,8 @@ __xt_a dq 0
 __xt_z dq 0
 .CRT$XTZ ENDS
 
+.pragma comment(linker, "/merge:.CRT=.rdata")
+
 endif
 
     end

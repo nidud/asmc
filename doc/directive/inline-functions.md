@@ -9,17 +9,15 @@ Inline functions are supported by the register calling conventions [asmcall](asm
 ### Example
 
 ```
-define __inline <syscall>
-
 multi2 proto asmcall a:dword, b:dword, p:ptr {
     mul     edx
     mov     [rcx],eax
     }
-multi3 proto __inline a:dword, b:abs, p:ptr {
+multi3 proto syscall a:dword, b:abs, p:ptr {
     imul    eax,a,b
     mov     [p],eax
     }
-multi4 proto __inline :dword, :abs, :ptr {
+multi4 proto syscall :dword, :abs, :ptr {
     imul    eax,_1,_2
     mov     [_3],eax
     }

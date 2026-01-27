@@ -10,17 +10,13 @@ else
 CC = ASMC -coff
 endif
 
-FL = /NOLOGO /MAP /MACHINE:$(MC) /SUBSYSTEM:CONSOLE /LIBPATH:%ASMCDIR%\lib\$(MC)
-
 all: nolib nolib0 clean
 
 nolib:
-	$(CC) -c -q -nolib $@.asm
-	$(LC) $(FL) $@.obj msvcrt.lib msvcrt0.lib
+	$(CC) -q -nolib $@.asm -link -defaultlib:msvcrt.lib -map
 	$@
 nolib0:
-	$(CC) -c -q -nolib $@.asm
-	$(LC) $(FL) $@.obj msvcrt.lib msvcrt0.lib
+	$(CC) -q -nolib $@.asm -link -defaultlib:msvcrt.lib -map
 	$@
 clean:
 	pause

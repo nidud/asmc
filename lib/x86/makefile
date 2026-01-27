@@ -2,6 +2,8 @@ include srcpath
 
 ifndef CC
 CC = LIBW
+crtpath = ..\..\source\libc\crt
+crtflag = -c -q -coff -Cs -MT -MD
 endif
 
 all: import build
@@ -127,6 +129,14 @@ targets = \
 	$(CC) /NOLOGO /MACHINE:X86 /OUT:$(lib_dir)\x86\$*.lib /DEF:$<
 
 build: $(targets)
+ifeq LIBW $(CC)
+	asmc $(crtflag) -Fo crt0 $(crtpath)\_tcrt0.asm
+	asmc $(crtflag) -Fo WinStart $(crtpath)\_tWinStart.asm
+	asmc $(crtflag) -Fo wcrt0 -ws $(crtpath)\_tcrt0.asm
+	asmc $(crtflag) -Fo wWinStart -ws $(crtpath)\_tWinStart.asm
+	libw -q -b -c -fac msvcrt.lib crt0.obj wcrt0.obj WinStart.obj wWinStart.obj
+	del crt0.obj wcrt0.obj WinStart.obj wWinStart.obj
+endif
 
 import:
 	if not exist %AsmcDir%\bin\impdef32.exe (

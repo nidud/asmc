@@ -4,6 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 ; Change history:
+; 2026-01-26 - added `code` tag
 ; 2025-06-02 - added links in tables
 ; 2025-01-10 - added UTF-8 to Wide Char support
 ; 2024-12-04 - added Linux version using chmcmd
@@ -395,19 +396,6 @@ makehtm proc uses rsi rdi rbx pm:pmd
                 dec ul
             .endif
             .endc
-        .case '`'
-            .if ( pre )
-                fprintf(fp, "</pre>\n" )
-                dec pre
-            .else
-                fprintf(fp, "<pre>\n" )
-                inc pre
-                jmp continue
-            .endif
-            .while ( byte ptr [rbx] )
-                inc rbx
-            .endw
-            .endc
         .case '-'
             .if ( ul == 0 )
                 fprintf(fp, "<ul>\n" )
@@ -434,12 +422,27 @@ makehtm proc uses rsi rdi rbx pm:pmd
                 mov table,0
             .endif
             .endc
+        .case '`'
+            .if ( al == [rbx+1] )
+                .if ( pre )
+                    fprintf(fp, "</pre>\n" )
+                    dec pre
+                .else
+                    fprintf(fp, "<pre>\n" )
+                    inc pre
+                    jmp continue
+                .endif
+                .while ( byte ptr [rbx] )
+                    inc rbx
+                .endw
+                .endc
+            .endif
         .default
             .if ( ul )
                 fprintf(fp, "</ul>\n" )
                 dec ul
             .endif
-            .if ( !pre && !samp )
+            .if ( !pre )
                 fprintf(fp, "<p>" )
                 inc p
             .endif
@@ -503,12 +506,13 @@ makehtm proc uses rsi rdi rbx pm:pmd
             .switch eax
             .case '`'
                 .if ( samp )
-                    fprintf(fp, "</b></samp>" )
+                    fprintf(fp, "</samp>" )
                     dec samp
                 .else
-                    fprintf(fp, "<samp><b>" )
+                    fprintf(fp, "<samp>" )
                     inc samp
                 .endif
+                mov ecx,1
                 .endc
             .case '\'
                .endc .if ( byte ptr [rbx-2] == '\' )

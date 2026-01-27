@@ -67,13 +67,6 @@ ifndef tty
 endif
 	libw -q -b -n -c -fac $@ *.obj
 	del *.obj
-	asmc $(flag) -nologo -MD $(src_dir)\libc\crt\_tcrt0.asm $(src_dir)\libc\crt\_tWinStart.asm
-ifndef tty
-	asmc $(flag) -nologo -MD -Fo wcrt0 -ws $(src_dir)\libc\crt\_tcrt0.asm
-	asmc $(flag) -nologo -MD -Fo wWinStart -ws $(src_dir)\libc\crt\_tWinStart.asm
-endif
-	libw -q -b -n -c -fac $(path)\msvcrt0.lib *.obj
-	del *.obj
 
 # Test library for the Windows 10 Virtual Terminal
 

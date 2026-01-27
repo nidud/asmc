@@ -37,19 +37,19 @@ system begin con_64W
     end
 system begin dcon_32
     system  386
-    library msvcrt0,msvcrt
+    library msvcrt
     end
 system begin dcon_32W
     system  386
-    library msvcrt0,msvcrt
+    library msvcrt
     end
 system begin dcon_64
     system  x64
-    library msvcrt0,msvcrt
+    library msvcrt
     end
 system begin dcon_64W
     system  x64
-    library msvcrt0,msvcrt
+    library msvcrt
     end
 
 system begin con_32D
@@ -110,19 +110,19 @@ system begin gui_64W
 
 system begin dgui_32
     system  win_32
-    library msvcrt0
+    library msvcrt
     end
 system begin dgui_32W
     system  win_32
-    library msvcrt0
+    library msvcrt
     end
 system begin dgui_64
     system  win_64
-    library msvcrt0
+    library msvcrt
     end
 system begin dgui_64W
     system  win_64
-    library msvcrt0
+    library msvcrt
     end
 
 system begin dll_32
@@ -181,11 +181,12 @@ system begin gtk_libc
 
 system begin gtk_msvcrt
     system  gtk
-    library msvcrt0
+    library msvcrt
     end
 
 system begin dos
     system  286
+    option  quiet
     end
 
 system begin t

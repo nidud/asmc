@@ -77,6 +77,7 @@ targets = \
 	gpedit.lib	\
 	hid.lib		\
 	hlink.lib	\
+	htmlhelp.lib	\
 	httpapi.lib	\
 	icm32.lib	\
 	icmui.lib	\

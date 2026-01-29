@@ -21,7 +21,8 @@ _tmain proc argc:int_t, argv:tstring_t
         ldr rdx,argv
         _tcscpy(&buffer, [rdx+size_t])
         _tcscat(&buffer, "::/index.htm>Mainwin")
-        .if HtmlHelp(GetDesktopWindow(), &buffer, HH_DISPLAY_TOPIC, NULL)
+        mov rcx,GetDesktopWindow()
+        .if HtmlHelp(rcx, &buffer, HH_DISPLAY_TOPIC, NULL)
             _tprintf(
                 "The help window is active as long as the App is running\n"
                 "Hit any key to exit..\n"

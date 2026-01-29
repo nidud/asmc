@@ -8,16 +8,13 @@ include CApplication.inc
 ; -- Bounce Class --
 
 Bounce::Bounce proc
-
     @ComAlloc(Bounce)
     ret
     endp
 
 
 Bounce::Release proc
-
     .while ( rbx )
-
         SafeRelease(m_brush)
         mov rcx,rbx
         mov rbx,m_next
@@ -28,7 +25,6 @@ Bounce::Release proc
 
 
 Bounce::New proc
-
     .while ( m_next )
         mov rbx,m_next
     .endw
@@ -38,7 +34,6 @@ Bounce::New proc
 
 
 Bounce::Up proc
-
     .while ( rbx )
         .if ( m_mov.x < 30 && m_mov.x > -30 && m_mov.y < 30 && m_mov.y > -30 )
             .if ( m_mov.x < 0 )
@@ -59,7 +54,6 @@ Bounce::Up proc
 
 
 Bounce::Down proc
-
     .while ( rbx )
         .if ( ( m_mov.x > 1 || m_mov.x < -1 ) && ( m_mov.y > 1 || m_mov.y < -1 ) )
             .if ( m_mov.x < 0 )
@@ -84,12 +78,8 @@ Bounce::Down proc
 ; Runs the application
 
 CApplication::Run proc
-
     .new result:int_t = 0
-    .new hr:HRESULT = BeforeEnteringMessageLoop()
-
-    .if (SUCCEEDED(hr))
-
+    .if (SUCCEEDED(BeforeEnteringMessageLoop()))
         mov result,EnterMessageLoop()
     .else
         ErrorMessage(hr, "An error occuring when running the sample" )
@@ -103,7 +93,6 @@ CApplication::Run proc
 ; before entering the message loop.
 
 CApplication::BeforeEnteringMessageLoop proc
-
     CreateApplicationWindow()
     ret
     endp
@@ -112,17 +101,14 @@ CApplication::BeforeEnteringMessageLoop proc
 ; Message loop
 
 CApplication::EnterMessageLoop proc
-
     .new result:int_t = 0
-
     .if ( ShowApplicationWindow() )
-
         .new msg:MSG
         .while ( GetMessage( &msg, NULL, 0, 0 ) )
             TranslateMessage( &msg )
             DispatchMessage( &msg )
         .endw
-        mov result, msg.wParam
+        mov result,msg.wParam
     .endif
     .return result
     endp
@@ -131,7 +117,6 @@ CApplication::EnterMessageLoop proc
 ; Destroys the application window, DirectComposition device and visual tree.
 
 CApplication::AfterLeavingMessageLoop proc
-
     DestroyApplicationWindow()
     ret
     endp
@@ -140,31 +125,22 @@ CApplication::AfterLeavingMessageLoop proc
 ; Shows the application window
 
 CApplication::ShowApplicationWindow proc
-
-   .new bSucceeded:BOOL = TRUE
-
-    .if ( m_hwnd == NULL )
-
-        mov bSucceeded,FALSE
-    .endif
-
-    .if ( bSucceeded )
-
+    mov rax,m_hwnd
+    .if (  rax )
         ShowWindow(m_hwnd, SW_SHOWNORMAL)
         UpdateWindow(m_hwnd)
         GetWindowRect(m_hwnd, &m_rect)
         SetTimer(m_hwnd, ID_TIMER, m_timer, NULL)
+        mov eax,TRUE
     .endif
-    .return bSucceeded
+    ret
     endp
 
 
 ; Destroys the applicaiton window
 
 CApplication::DestroyApplicationWindow proc
-
     .if ( m_hwnd != NULL )
-
         KillTimer( m_hwnd, ID_TIMER )
         DestroyWindow( m_hwnd )
         mov m_hwnd,NULL
@@ -192,9 +168,7 @@ CApplication::OnSize proc width:UINT, height:UINT
         sub m_rc.right,50
         sub m_rc.bottom,100
     .endif
-
     .if ( CreateDeviceResources() )
-
         .return ErrorMessage(eax, "CreateDeviceResources()" )
     .endif
 
@@ -232,15 +206,11 @@ CApplication::OnRender proc
 
             mov hr,RenderMainContent()
             .if (SUCCEEDED(hr))
-
                 mov hr,RenderTextInfo()
                 .if (SUCCEEDED(hr))
-
                     mov hr,m_pRT.EndDraw(NULL, NULL)
                     .if (SUCCEEDED(hr))
-
                         .if (hr == D2DERR_RECREATE_TARGET)
-
                             DiscardDeviceResources()
                         .endif
                     .endif
@@ -312,20 +282,19 @@ CApplication::OnKeyDown proc wParam:WPARAM
 
 
 CApplication::OnClose proc
-
     .if ( m_hwnd != NULL )
-
         DestroyWindow( m_hwnd )
         mov m_hwnd,NULL
     .endif
-    .return 0
+    xor eax,eax
+    ret
     endp
 
 
 CApplication::OnDestroy proc
-
     PostQuitMessage(0)
-   .return 0
+    xor eax,eax
+    ret
     endp
 
 
@@ -469,20 +438,16 @@ CApplication::CreateDeviceIndependentResources proc
                 DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 14.0, "", &m_pTextFont)
 
         .if (SUCCEEDED(hr))
-
             mov hr,m_pDWriteFactory.CreateTextFormat(IDS_TEXTFONT, NULL, DWRITE_FONT_WEIGHT_NORMAL,
                     DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 30.0, "", &m_pTextFont2)
         .endif
-
         .if (SUCCEEDED(hr))
-
             mov hr,m_pTextFont.SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP)
             mov hr,m_pTextFont2.SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP)
         .endif
     .endif
 
     .if (SUCCEEDED(hr))
-
         mov hr,m_pDWriteFactory.CreateTextFormat(IDS_MONOFONT, NULL, DWRITE_FONT_WEIGHT_NORMAL,
                 DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 12.0, "", &m_pMonoFont)
     .endif
@@ -653,6 +618,7 @@ CApplication::RenderMainContent proc uses rsi
 
 sc_textInfoBoxInset equ 14.0
 
+
 CApplication::RenderTextInfo proc
 
    .new hr:HRESULT = S_OK
@@ -753,7 +719,6 @@ CApplication::RenderTextInfo proc
 ;
 
 CApplication::DiscardDeviceResources proc
-
     SafeRelease(m_pRT)
     SafeRelease(m_pSolidColorBrush)
     ret
@@ -864,9 +829,7 @@ CApplication::CreateApplicationWindow proc
         neg         edx
 
        .new rc:RECT = { 100, 100, ecx, edx }
-
         AdjustWindowRect(&rc, WINDOWSTYLES, FALSE)
-
         mov hr,E_UNEXPECTED
         .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME, WINDOWSTYLES,
                 rc.left, rc.top, rc.right, rc.bottom, NULL, NULL, m_hInstance, rbx)
@@ -887,9 +850,7 @@ CApplication::BoundRand proc uses rsi rdi b:uint_t
     xor edx,edx
     div esi
     mov edi,edx
-
     .while 1
-
         .if ( m_rand == 0 )
             rdrand eax
         .elseif ( m_rand == 1 )
@@ -899,7 +860,6 @@ CApplication::BoundRand proc uses rsi rdi b:uint_t
         .endif
         .break .ifd ( eax >= edi )
     .endw
-
     xor edx,edx
     div esi
     mov eax,edx
@@ -908,7 +868,6 @@ CApplication::BoundRand proc uses rsi rdi b:uint_t
 
 
 CApplication::RangeRand proc b:uint_t, m:uint_t
-
     .whiled ( BoundRand(b) <= m )
     .endw
     .return
@@ -981,9 +940,7 @@ CApplication::Release proc
 ; Provides the entry point to the application
 
 CApplication::CApplication proc hInstance:HINSTANCE
-
     .if @ComAlloc(CApplication)
-
         mov rcx,hInstance
         mov [rax].CApplication.m_hInstance,rcx
         mov [rax].CApplication.m_timer,30

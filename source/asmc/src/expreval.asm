@@ -941,7 +941,7 @@ get_precedence proc fastcall item:token_t
         .return
     .endsw
     fnasmerr( 2008, [rcx].string_ptr )
-   .return ERROR
+    ret
 
 get_precedence endp
 

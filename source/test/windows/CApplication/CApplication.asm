@@ -78,14 +78,14 @@ Bounce::Down proc
 ; Runs the application
 
 CApplication::Run proc
-    .new result:int_t = 0
+    .new hr:HRESULT = 0
     .if (SUCCEEDED(BeforeEnteringMessageLoop()))
-        mov result,EnterMessageLoop()
+        mov hr,EnterMessageLoop()
     .else
         ErrorMessage(hr, "An error occuring when running the sample" )
     .endif
     AfterLeavingMessageLoop()
-    .return result
+    .return( hr )
     endp
 
 
@@ -868,8 +868,9 @@ CApplication::BoundRand proc uses rsi rdi b:uint_t
 
 
 CApplication::RangeRand proc b:uint_t, m:uint_t
-    .whiled ( BoundRand(b) <= m )
-    .endw
+    .for ( :: )
+        .break .ifd ( BoundRand(b) > m )
+    .endf
     .return
     endp
 

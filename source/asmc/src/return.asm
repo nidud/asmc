@@ -405,17 +405,20 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             AssignReturnValue( &i, tokenarray, type, count )
             RunLineQueue()
         .endif
+
         .if ( SymFind( rdi ) ) ; v2.37.3: added - removed ORG 2 + RET
 
             ; this need a fix:
+            ; v2.37.70: do this once for pass > 1
 
             mov ebx,[rax].asym.offs
             GetCurrOffset()
             mov rcx,CurrProc
-            .if ( [rcx].asym.EndpOccured )
-                lea ecx,[rbx-2]
-                .if ( ecx == eax && Parse_Pass == 2 )
+            .if ( [rcx].asym.EndpOccured && !MODULE.HllStack )
+                lea edx,[rax+2]
+                .if ( edx == ebx && Parse_Pass > 1 )
                     mov ebx,eax
+                    mov [rcx].asym.EndpOccured,0
                 .endif
             .endif
             cmp ebx,eax

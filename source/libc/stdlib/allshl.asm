@@ -10,16 +10,15 @@ include stdlib.inc
     .code
 
 ifndef _WIN64
-_U8LS::
-_I8LS::
+_allshl::
+__llshl::
 endif
 
-allshl proc watcall q:int64_t, n:int_t
+allshl proc asmcall q:int64_t, n:int_t
 ifdef _WIN64
     mov ecx,edx
     shl rax,cl
 else
-    mov ecx,ebx
     .if ( cl < 64 )
 
         .if ( cl < 32 )
@@ -41,12 +40,10 @@ endif
 allshl endp
 
 ifndef _WIN64
-_allshl::
-__llshl::
-    push    ebx
-    mov     ebx,ecx
+_U8LS::
+_I8LS::
+    mov     ecx,ebx
     call    allshl
-    pop     ebx
     ret
 endif
 

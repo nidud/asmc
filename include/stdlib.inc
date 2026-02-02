@@ -698,9 +698,9 @@ endif
 alldiv		proto watcall :int64_t, :int64_t
 aulldiv		proto watcall :uint64_t, :uint64_t
 allmul		proto watcall :int64_t, :int64_t
-allshr		proto watcall :int64_t, :int_t
-aullshr		proto watcall :uint64_t, :int_t
-allshl		proto watcall :int64_t, :int_t
+allshr		proto asmcall :int64_t, :int_t
+aullshr		proto asmcall :uint64_t, :int_t
+allshl		proto asmcall :int64_t, :int_t
 allrem		proto watcall :int64_t, :int64_t
 aullrem		proto watcall :uint64_t, :uint64_t
 
@@ -731,15 +731,15 @@ aulldiv proto watcall :uint64_t, :uint64_t {
 allmul proto watcall :int64_t, :int64_t {
     imul    rdx
     }
-allshr proto watcall :int64_t, :int_t {
+allshr proto asmcall :int64_t, :int_t {
     mov	    ecx,edx
     sar	    rax,cl
     }
-aullshr proto watcall :uint64_t, :int_t {
+aullshr proto asmcall :uint64_t, :int_t {
     mov	    ecx,edx
     shr	    rax,cl
     }
-allshl proto watcall :int64_t, :int_t {
+allshl proto asmcall :int64_t, :int_t {
     mov	    ecx,edx
     shl	    rax,cl
     }

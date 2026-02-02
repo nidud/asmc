@@ -86,13 +86,12 @@
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
-      <IncludePaths>inc</IncludePaths>
+      <IncludePaths>$(AsmcDir)\include</IncludePaths>
       <PackAlignmentBoundary>3</PackAlignmentBoundary>
       <GenerateCStackFrame>true</GenerateCStackFrame>
       <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
-      <CallingConvention>2</CallingConvention>
-      <IgnoreINCLUDELIB>false</IgnoreINCLUDELIB>
-      <AdditionalOptions>-DVERSION=383 -DMINVERS=349 -DDEBUGX -D__BMP__ %(AdditionalOptions)</AdditionalOptions>
+      <Processor>8</Processor>
+      <AdditionalIncludeDirectories>inc</AdditionalIncludeDirectories>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>

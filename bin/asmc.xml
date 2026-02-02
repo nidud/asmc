@@ -305,6 +305,52 @@
         Switch="/Zp16" />
     </EnumProperty>
     <EnumProperty
+      Name="Processor"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/"
+      DisplayName="CPU and instruction set"
+      Description="Selects CPU and instruction set.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="1"
+        DisplayName=".186 instructions."
+        Switch="/1" />
+      <EnumValue
+        Name="2"
+        DisplayName=".286 instructions."
+        Switch="/2" />
+      <EnumValue
+        Name="3"
+        DisplayName=".386 instructions."
+        Switch="/3" />
+      <EnumValue
+        Name="4"
+        DisplayName=".486 instructions."
+        Switch="/4" />
+      <EnumValue
+        Name="5"
+        DisplayName="Pentium instructions."
+        Switch="/5" />
+      <EnumValue
+        Name="6"
+        DisplayName="Pentium Pro instructions."
+        Switch="/6" />
+      <EnumValue
+        Name="7"
+        DisplayName=".686 and .MMX (P2) instructions."
+        Switch="/7" />
+      <EnumValue
+        Name="8"
+        DisplayName=".686 and .MMX (P3) SSE instructions."
+        Switch="/8" />
+      <EnumValue
+        Name="9"
+        DisplayName=".686 and .MMX (P4) SSE2 instructions."
+        Switch="/9" />
+    </EnumProperty>
+    <EnumProperty
       Name="CallingConvention"
       Category="Advanced"
       HelpUrl="https://github.com/nidud/asmc/"

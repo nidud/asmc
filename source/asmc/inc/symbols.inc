@@ -266,7 +266,7 @@ IS_SIGNED proto watcall :byte {
       param_reg     db ?            ; param register token
       param_id      db ?            ; param index
       param_regs    db ?            ; number or registers assign to this param
-      param_offs    db ?            ; stack offset used by inline functions
+      param_offs    db ?            ; stack offset (inline functions) or next register
      ends
      struct
       bitf_size     db ?            ; bit field info for fixed sized records

@@ -99,6 +99,7 @@
       ObjectFileTypeCOFF="%(ASMC.ObjectFileTypeCOFF)"
       ObjectFileTypeOMF="%(ASMC.ObjectFileTypeOMF)"
       PackAlignmentBoundary="%(ASMC.PackAlignmentBoundary)"
+      Processor="%(ASMC.Processor)"
       CallingConvention="%(ASMC.CallingConvention)"
       ErrorReporting="%(ASMC.ErrorReporting)"
       AdditionalOptions="%(ASMC.AdditionalOptions)"

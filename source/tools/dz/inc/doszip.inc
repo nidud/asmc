@@ -148,6 +148,7 @@ PLINE typedef ptr LineClass
     m_arcFile           LPWSTR ?
     m_srcPath           LPWSTR ?
     m_arcPath           LPWSTR ?
+    m_Cell              PDWND ?
     m_ScrollBar         PDWND ?
     m_celType           dd ?
     m_XCells            db ?
@@ -316,7 +317,10 @@ PLINE typedef ptr LineClass
     m_This              PDWND ?
     m_Prev              PDWND ?
     m_Next              PDWND ?
-    m_Text              LPSTR ?
+    union
+     m_Text             LPSTR ?
+     m_UText            LPWSTR ?
+    ends
     m_Id                dd ?
 
     union
@@ -420,8 +424,10 @@ PLINE typedef ptr LineClass
     WinProc             proc :DWORD, :WPARAM, :LPARAM, :VARARG
     PostMessage         proc :DWORD, :WPARAM, :LPARAM
     MessageBox          proc :LPWSTR, :LPWSTR, :DWORD, :VARARG
-    ReadRootdir         proc :PDWND
     ReadSubdir          proc :PDWND
+    SortFiles           proc :PDWND
+    PutMini             proc :PDWND
+    PutItem             proc :PDWND, :PDWND, :TRECT
     Run                 proc
    .ends
 

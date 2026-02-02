@@ -1238,7 +1238,16 @@ push_const_128:
                 .else
                     AddLineQueueX( " mov %r, %r ptr %s[%u]", reg, ebx, paramvalue, eax )
                 .endif
-                mov reg,get_nextreg(reg, langid)
+                .if ( esi == 0 && size == 2 )
+                    ;
+                    ; v2.37.71: second register in .param_offs ( .pragma aux() )
+                    ;
+                    mov rdx,param
+                    movzx eax,[rdx].asym.param_offs
+                .else
+                    get_nextreg(reg, langid)
+                .endif
+                mov reg,eax
             .endf
             .return
         .endif

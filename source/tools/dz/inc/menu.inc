@@ -12,6 +12,8 @@ define MAXTOOLS 20
     ID_DESKTOP,
     CI_PANELA,
     CI_PANELB,
+    CI_PCELLA,
+    CI_PCELLB,
     CI_SCROLLD,
     CI_SCROLLE,
     CI_SCROLLP,

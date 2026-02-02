@@ -182,6 +182,7 @@ get_fasttype endp
 ;   .param_reg      = register
 ;   .param_id       = param index
 ;   .param_regs     = number or registers assign to this param
+;   .param_offs     = next register if param_regs > 1
 ;   .flags          = regparam
 ;   .state          = SYM_TMACRO
 ;   .string_ptr     = param register name
@@ -308,10 +309,10 @@ fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t,
             .endf
             add rdx,[rbx].regpack
             mov [rsi].param_reg,[rdx]
+            mov [rsi].param_offs,[rdx+1]
             mov [rsi].regpair,1
             add byte ptr [rdi],2
             add [rsi].param_regs,2
-
         .else
             .if ( ecx > wordsize )
 

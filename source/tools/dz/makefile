@@ -5,6 +5,6 @@ dz64:
 	asmc64 -frame -Cs -Zp8 -MT -Fe$@ -Iinc src\*.asm
 	del *.obj
 dz32:
-	asmc -8 -Cs -Zp4 -MT -Fe$@ -Iinc src\*.asm
+	asmc -coff -8 -Cs -Zp4 -MT -Fe$@ -Iinc src\*.asm
 	del *.obj
 

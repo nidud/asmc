@@ -101,19 +101,11 @@ WPARGS  ends
 
     .switch jmp pascal rdx
 
-    .case WP_CREATE
-
-        ; wParam: COORD { Type, Id }
-        ; lParam: PDWND { Base }
-        ; return: PDWND
-
+    .case WP_CREATE ; PDWND Create(COORD<Type, Id>, PDWND Base)
         mov Coord,edi
         mov rdi,[rbx]
-
         .new( Doszip, rdi )
-
         .if ( rax )
-
             mov     rdi,m_Base
             mov     rdx,m_Home
             mov     rbx,rax
@@ -122,9 +114,7 @@ WPARGS  ends
             movzx   ecx,Coord.Y
             mov     m_Id,ecx
             mov     m_Type,edx
-
             .if ( edx < CT_ITEMTYPE )
-
                 mov m_Base,rdi
                 mov Flags.Parent,1
                 mov rbx,rdi
@@ -148,13 +138,8 @@ WPARGS  ends
         .return
 
 
-    .case WP_DESTROY
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-
+    .case WP_DESTROY ; void Destroy(BOOL, PDWND)
         .if SetClass(rsi)
-
             mov rcx,m_Base
             mov rdx,m_Prev
             mov rsi,m_Next
@@ -188,23 +173,22 @@ WPARGS  ends
         .endif
 
 
-    .case WP_NEW
-
-        ; wParam: COORD { Type, Id }
-        ; lParam: LPSTR { Section | Entry | Resource:PIDD }
-        ; return: PDWND
-
+    .case WP_NEW ; PDWND New(COORD<Type, Id>, LPSTR|PIDD)
         .if WinProc(WP_CREATE, edi, rbx)
-
             mov rbx,rax
             mov edi,m_Type
-
             .switch edi
             .case CT_FILE
-                lea rax,Panel
-                mov m_Text,rax
-                mov ecx,[rsi]
-                mov [rax],ecx
+                lea eax,[wcslen(rsi)*2+2]
+                .if ( eax > Doszip - Doszip.Panel )
+                    mov Flags.Mybuf,1
+                    malloc(rax)
+                .else
+                    lea rax,Panel
+                .endif
+                .if ( rax )
+                    mov m_Text,wcscpy(rax, rsi)
+                .endif
                .endc
             .case CT_ENTRY
             .case CT_SECTION
@@ -275,20 +259,12 @@ WPARGS  ends
         .return
 
 
-    .case WP_CURSOR
-
-        ; wParam: BOOL
-
+    .case WP_CURSOR ; void Cursor(BOOL)
         mov u.cu.bVisible,edi
         mov u.cu.dwSize,CURSOR_NORMAL
         SetConsoleCursorInfo(_confh, &u.cu)
 
-
-    .case WP_CURSORGET
-
-        ; wParam: BOOL
-        ; lParam: PCURSOR
-
+    .case WP_CURSORGET ; void CursorGet(BOOL, PCURSOR)
         .ifd GetConsoleScreenBufferInfo(_confh, &u.ci)
             mov [rsi].CURSOR.x,u.ci.dwCursorPosition.X
             mov [rsi].CURSOR.y,u.ci.dwCursorPosition.Y
@@ -300,10 +276,7 @@ WPARGS  ends
         .gotosw(WP_CURSOR)
 
 
-    .case WP_CURSORSET
-
-        ; lParam: PCURSOR
-
+    .case WP_CURSORSET ; void CursorSet(PCURSOR)
         movzx   edx,[rsi].CURSOR.y
         shl     edx,16
         mov     dl,[rsi].CURSOR.x
@@ -315,27 +288,18 @@ WPARGS  ends
         SetConsoleCursorInfo(_confh, &u.cu)
 
 
-    .case WP_CURSORPOS
-
-        ; wParam: BOOL
-        ; lParam: COORD
-        ; return: COORD
-
+    .case WP_CURSORPOS ; COORD CursorPos(BOOL, COORD)
         .if ( edi )
             SetConsoleCursorPosition(_confh, esi)
         .else
             mov u.ci.dwCursorPosition,0
             GetConsoleScreenBufferInfo(_confh, &u.ci)
-           mov esi,u.ci.dwCursorPosition
+            mov esi,u.ci.dwCursorPosition
         .endif
         .return( esi )
 
 
-    .case WP_SETCURSOR
-
-        ; wParam: BOOL
-        ; lParam: TRECT
-
+    .case WP_SETCURSOR ; void SetCursor(BOOL, TRECT)
         mov     ecx,esi
         add     cl,m_rc.x
         add     ch,m_rc.y
@@ -350,24 +314,16 @@ WPARGS  ends
        .gotosw(WP_CURSOR)
 
 
-    .case WP_READCHARACTER
-
-        ; wParam: TRECT
-        ; return: WCHAR
-
+    .case WP_READCHARACTER ; WCHAR ReadCharacter(TRECT)
         mov ecx,edi
         movzx eax,cl
         movzx edx,ch
-
         .if ( Flags.Child )
-
             add dl,m_rc.y
             add al,m_rc.x
             mov rbx,m_Base
         .endif
-
         .if ( Flags.Visible )
-
             add al,m_rc.x
             add dl,m_rc.y
             shl edx,16
@@ -386,24 +342,17 @@ WPARGS  ends
         .endif
         .return
 
-    .case WP_READATTRIBUTE
 
-        ; wParam: TRECT
-        ; return: WORD  { Attribute }
-
+    .case WP_READATTRIBUTE ; WORD ReadAttribute(TRECT)
         mov ecx,edi
         movzx eax,cl
         movzx edx,ch
-
         .if ( Flags.Child )
-
             add dl,m_rc.y
             add al,m_rc.x
             mov rbx,m_Base
         .endif
-
         .if ( Flags.Visible )
-
             add al,m_rc.x
             add dl,m_rc.y
             shl edx,16
@@ -423,27 +372,18 @@ WPARGS  ends
         .return
 
 
-    .case WP_FILLCHARACTER
-
-        ; wParam: TRECT
-        ; lParam: WCHAR { Unicode Char }
-        ; return: DWORD { Number Written }
-
+    .case WP_FILLCHARACTER ; DWORD FillCharacter(TRECT, WCHAR)
         mov     ecx,edi
         movzx   eax,cl
         movzx   edx,ch
         shr     ecx,16
         and     ecx,0xFF
-
         .if ( Flags.Child )
-
             add dl,m_rc.y
             add al,m_rc.x
             mov rbx,m_Base
         .endif
-
         .if ( Flags.Visible )
-
             add al,m_rc.x
             add dl,m_rc.y
             shl edx,16
@@ -466,27 +406,18 @@ WPARGS  ends
         .return
 
 
-    .case WP_FILLATTRIBUTE
-
-        ; wParam: TRECT
-        ; lParam: WORD  { Attribute }
-        ; return: DWORD { Number Written }
-
+    .case WP_FILLATTRIBUTE ; DWORD FillAttribute(TRECT, WORD Attribute)
         mov     ecx,edi
         movzx   eax,cl
         movzx   edx,ch
         shr     ecx,16
         and     ecx,0xFF
-
         .if ( Flags.Child )
-
             add dl,m_rc.y
             add al,m_rc.x
             mov rbx,m_Base
         .endif
-
         .if ( Flags.Color )
-
             mov u1,eax
             mov eax,esi
             and eax,0x0F
@@ -497,9 +428,7 @@ WPARGS  ends
             mov esi,eax
             mov eax,u1
         .endif
-
         .if ( Flags.Visible )
-
             add al,m_rc.x
             add dl,m_rc.y
             shl edx,16
@@ -523,54 +452,37 @@ WPARGS  ends
         .return
 
 
-    .case WP_FILLFOREGROUND
-
-        ; wParam: TRECT
-        ; lParam: WORD  { Attribute }
-        ; return: DWORD { Number Written }
-
+    .case WP_FILLFOREGROUND ; DWORD FillForeground(TRECT, WORD)
         mov ecx,edi
-
         .if ( Flags.Child )
-
             add ch,m_rc.y
             add cl,m_rc.x
             mov rbx,m_Base
         .endif
-
         .if ( Flags.Color )
-
             lea rax,at_foreground
             movzx esi,byte ptr [rsi+rax]
         .endif
-
         .if ( Flags.Visible )
-
             add cl,m_rc.x
             add ch,m_rc.y
             mov rc,ecx
-
             .for ( edi = 0 : rc.col : rc.col--, rc.x++ )
-
                 movzx   edx,rc.y
                 shl     edx,16
                 mov     dl,rc.x
-
                 .break .ifd !ReadConsoleOutputAttribute(_confh, &u2, 1, edx, &u1)
-
                 mov     ecx,u2
                 and     ecx,0xF0
                 or      ecx,esi
                 movzx   edx,rc.y
                 shl     edx,16
                 mov     dl,rc.x
-
                 .break .ifd !FillConsoleOutputAttribute(_confh, cx, 1, edx, &u1)
                 inc     edi
             .endf
             .return( edi )
         .endif
-
         movzx   eax,cl
         movzx   edx,ch
         shr     ecx,16
@@ -582,44 +494,29 @@ WPARGS  ends
         shl     edi,2
         add     edi,2
         add     rdi,m_Window
-
         .for ( edx = 0xF0, eax = 0 : eax < ecx : eax++, rdi+=4 )
-
             and [rdi],dl
             or  [rdi],si
         .endf
         .return
 
 
-    .case WP_FILLBACKGROUND
-
-        ; wParam: TRECT
-        ; lParam: WORD  { Attribute }
-        ; return: DWORD { Number Written }
-
+    .case WP_FILLBACKGROUND ; DWORD FillBackground(TRECT, WORD)
         mov ecx,edi
-
         .if ( Flags.Child )
-
             add ch,m_rc.y
             add cl,m_rc.x
             mov rbx,m_Base
         .endif
-
         .if ( Flags.Color )
-
             lea rax,at_background
             movzx esi,byte ptr [rsi+rax]
         .endif
-
         .if ( Flags.Visible )
-
             add cl,m_rc.x
             add ch,m_rc.y
             mov rc,ecx
-
             .for ( edi = 0 : rc.col : rc.col--, rc.x++ )
-
                 movzx   edx,rc.y
                 shl     edx,16
                 mov     dl,rc.x
@@ -635,7 +532,6 @@ WPARGS  ends
             .endf
             .return( edi )
         .endif
-
         movzx   eax,cl
         movzx   edx,ch
         shr     ecx,16
@@ -647,21 +543,14 @@ WPARGS  ends
         shl     edi,2
         add     edi,2
         add     rdi,m_Window
-
         .for ( edx = 0x0F, eax = 0 : eax < ecx : eax++, rdi+=4 )
-
             and [rdi],dl
             or  [rdi],si
         .endf
         .return
 
 
-    .case WP_FILLCHARINFO
-
-        ; wParam: TRECT
-        ; lParam: CHAR_INFO
-        ; return: DWORD { Number Written }
-
+    .case WP_FILLCHARINFO ; DWORD FillCharInfo(TRECT, CHAR_INFO)
         mov rc,edi
         mov edi,WinProc(WP_FILLCHARACTER, edi, rsi)
         shr esi,16
@@ -671,25 +560,15 @@ WPARGS  ends
         .return( edi )
 
 
-
-    .case WP_WRITESTRING
-
-        ; wParam: TRECT { X, Y, Col, Attribute }
-        ; lParam: LPWSTR
-        ; return: DWORD { Number Written }
-
+    .case WP_WRITESTRING ; DWORD WriteString(TRECT<X, Y, Col, Attribute>, LPWSTR)
         mov rc,edi
         mov r2,edi
         shr edi,8
         mov u1,0
-
         .if ( rsi )
-
             .for ( rc.col = 1 : r2.col && word ptr [rsi] : r2.col--, rc.x++, u1++ )
-
                 mov di,[rsi]
                 add rsi,2
-
                 .if ( di == 10 )
                     inc rc.y
                     mov rc.x,r2.x
@@ -707,17 +586,11 @@ WPARGS  ends
         .return( u1 )
 
 
-    .case WP_WRITEPATH
-
-        ; wParam: TRECT { X, Y, Col, Attribute }
-        ; lParam: LPWSTR
-        ; return: DWORD { Chars Written }
-
+    .case WP_WRITEPATH ; DWORD WritePath(TRECT<X, Y, Col, Attribute>, LPWSTR)
         mov rc,edi
         wcslen( rsi )
         movzx ecx,rc.col
         .if ( eax > ecx )
-
             mov rdi,rsi
             add ecx,ecx
             add eax,eax
@@ -725,9 +598,7 @@ WPARGS  ends
             sub rsi,rcx
             mov r2,rc
             mov r2.col,1
-
             .if ( word ptr [rdi+2] == ':' )
-
                 WinProc(WP_FILLCHARACTER, r2, [rdi])
                 inc r2.x
                 WinProc(WP_FILLCHARACTER, r2, ':')
@@ -751,12 +622,7 @@ WPARGS  ends
         .gotosw(WP_WRITESTRING)
 
 
-    .case WP_WRITECENTER
-
-        ; wParam: TRECT { X, Y, Col, Attribute }
-        ; lParam: LPWSTR
-        ; return: DWORD { Chars Written }
-
+    .case WP_WRITECENTER ; DWORD WriteCenter(TRECT<X, Y, Col, Attribute>, LPWSTR)
         mov rc,edi
         wcslen( rsi )
         movzx ecx,rc.col
@@ -775,13 +641,7 @@ WPARGS  ends
         .gotosw(WP_WRITESTRING)
 
 
-    .case WP_WRITEFORMAT
-
-        ; wParam: TRECT { X, Y, Col, Attribute }
-        ; lParam: LPWSTR
-        ; vParam: VARARG
-        ; return: DWORD { Chars Written }
-
+    .case WP_WRITEFORMAT ; DWORD WriteFormat(TRECT<X, Y, Col, Attribute>, LPWSTR, ...)
         mov rdx,rsi
         mov rax,m_Home
         mov rsi,[rax].Doszip.m_LBuf
@@ -789,21 +649,14 @@ WPARGS  ends
        .gotosw(WP_WRITESTRING)
 
 
-    .case WP_WRITETITLE
-
-        ; lParam: LPWSTR
-
+    .case WP_WRITETITLE ; void WriteTitle(LPWSTR)
         movzx edi,m_rc.col
         shl edi,16
         WinProc(WP_FILLCHARINFO, edi, MKAT(BG_TITLE, FG_TITLE, ' '))
        .gotosw(WP_WRITECENTER)
 
 
-    .case WP_WRITEFRAME
-
-        ; wParam: TRECT
-        ; lParam: COORD { Type, Attribute }
-
+    .case WP_WRITEFRAME ; void WriteFrame(TRECT, COORD<Type, Attribute>)
         mov     eax,edi
         mov     rc,eax
         mov     rr,eax
@@ -827,7 +680,6 @@ WPARGS  ends
         mov     u2,ecx
         mov     edx,esi
         mov     ecx,esi
-
         .switch pascal eax
         .case BOX_CLEAR
             mov eax,esi
@@ -893,13 +745,8 @@ WPARGS  ends
         .endf
 
 
-    .case WP_FILLWINDOW
-
-        ; wParam: BOOL
-        ; lParam: CHAR_INFO
-
+    .case WP_FILLWINDOW ; void FillWindow(BOOL, CHAR_INFO)
         .if ( edi && esi & 0xFFFF0000 )
-
             mov     eax,esi
             shr     eax,16
             mov     ecx,eax
@@ -924,7 +771,6 @@ WPARGS  ends
         mov     ecx,eax
         mov     eax,esi
         mov     rdi,m_Window
-
         .if ( eax & 0xFFFF0000 && eax & 0x0000FFFF )
             rep  stosd
         .else
@@ -938,12 +784,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_READWINDOW
-
-        ; wParam: TRECT
-        ; lParam: PCHAR_INFO
-        ; return: BOOL
-
+    .case WP_READWINDOW ; BOOL ReadWindow(TRECT, PCHAR_INFO)
         mov     rc,edi
         mov     rdi,rsi
         movzx   eax,rc.col
@@ -958,9 +799,7 @@ WPARGS  ends
         mov     u.rect.Left,cx
         lea     eax,[rcx+rax-1]
         mov     u.rect.Right,ax
-
         .ifd !ReadConsoleOutputW(_confh, rdi, Coord, 0, &u.rect)
-
             mov     u.rect.Bottom,u.rect.Top
             movzx   ebx,Coord.Y
             mov     Coord.Y,1
@@ -981,12 +820,7 @@ WPARGS  ends
         .return
 
 
-    .case WP_WRITEWINDOW
-
-        ; wParam: TRECT
-        ; lParam: PCHAR_INFO
-        ; return: BOOL
-
+    .case WP_WRITEWINDOW ; BOOL WriteWindow(TRECT, PCHAR_INFO)
         mov     rc,edi
         mov     rdi,rsi
         movzx   eax,rc.col
@@ -1001,9 +835,7 @@ WPARGS  ends
         mov     u.rect.Left,cx
         lea     eax,[rcx+rax-1]
         mov     u.rect.Right,ax
-
         .ifd !WriteConsoleOutputW(_confh, rdi, Coord, 0, &u.rect)
-
             mov     u.rect.Bottom,u.rect.Top
             movzx   ebx,Coord.Y
             mov     Coord.Y,1
@@ -1024,19 +856,11 @@ WPARGS  ends
         .return
 
 
-
-    .case WP_FLIPWINDOW
-
-        ; wParam: TRECT
-        ; lParam: PCHAR_INFO
-        ; return: BOOL
-
+    .case WP_FLIPWINDOW ; BOOL FlipWindow(TRECT, PCHAR_INFO)
         mov rc,edi
         .if malloc(GetWindowSize(edi))
-
             mov rdi,rax
             .ifd WinProc(WP_READWINDOW, rc, rax)
-
                 WinProc(WP_WRITEWINDOW, rc, rsi)
                 movzx eax,rc.row
                 mul rc.col
@@ -1054,11 +878,7 @@ WPARGS  ends
         .return
 
 
-    .case WP_SHADEWINDOW
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-
+    .case WP_SHADEWINDOW ; void ShadeWindow(BOOL, PDWND)
         mov     rbx,rsi
         mov     esi,edi
         mov     edi,GetWindowSize(m_rc)
@@ -1076,9 +896,7 @@ WPARGS  ends
         dec     rr.row
         mov     eax,esi
         lea     rsi,[rdi+rcx*4]
-
         .if ( eax )
-
             WinProc(WP_READWINDOW, r2, rdi)
             WinProc(WP_READWINDOW, rr, rsi)
             movzx eax,r2.x
@@ -1117,12 +935,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SHOWWINDOW
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_SHOWWINDOW ; BOOL ShowWindow(BOOL, PDWND)
         mov rbx,rsi
         xor eax,eax
         .if ( rbx && Flags.Open )
@@ -1149,11 +962,7 @@ WPARGS  ends
         .return
 
 
-    .case WP_MOVEWINDOW
-
-        ; wParam: ENUM { _DLMOVE_DIRECTION }
-        ; return: BOOL
-
+    .case WP_MOVEWINDOW ; BOOL MoveWindow(ENUM _DLMOVE_DIRECTION)
         mov rcx,m_Home
         mov rax,[rcx].Doszip.m_LBuf
         sub rax,MAXLBUF
@@ -1166,7 +975,6 @@ WPARGS  ends
         mov u1,edi
         mov rsi,m_Window
         mov rdi,q
-
         .switch ecx
         .case TW_MOVELEFT
             .if ( al == 0 )
@@ -1182,7 +990,6 @@ WPARGS  ends
             dec     al
             movzx   edx,al
             .for ( ecx = 0 : cl < rr.row : ecx++ )
-
                 mov eax,[rsi+rdx*4]
                 stosd
                 movzx eax,rr.col
@@ -1204,7 +1011,6 @@ WPARGS  ends
             mov rr,eax
             mov rl.x,cl
             .for ( edx = 0, ecx = 0 : cl < m_rc.row : ecx++ )
-
                 mov eax,[rsi+rdx*4]
                 stosd
                 movzx eax,m_rc.col
@@ -1250,22 +1056,18 @@ WPARGS  ends
             rep     movsd           ; first line
             mov     rsi,rdx
         .endsw
-
         .if malloc(GetWindowSize(m_rc))
-
             mov rdi,rax
             WinProc(WP_READWINDOW, rl, p)
             WinProc(WP_READWINDOW, m_rc, rdi)
             WinProc(WP_WRITEWINDOW, rr, rdi)
             WinProc(WP_WRITEWINDOW, r2, q)
             free(rdi)
-
             mov eax,u1
             .switch eax
             .case TW_MOVELEFT
                  std
                 .for ( m_rc.x--, edx = 0 : dl < m_rc.row : edx++ )
-
                     movzx   eax,m_rc.col
                     mov     ecx,eax
                     imul    eax,edx
@@ -1284,7 +1086,6 @@ WPARGS  ends
                 .endc
             .case TW_MOVERIGHT
                 .for ( m_rc.x++, rdi = rsi, rsi+=4, edx = 0 : dl < m_rc.row : edx++ )
-
                     mov     rax,p
                     mov     eax,[rax+rdx*4]
                     movzx   ecx,m_rc.col
@@ -1331,14 +1132,9 @@ WPARGS  ends
         .endif
 
 
-    .case WP_OPENWINDOW
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_OPENWINDOW ; BOOL OpenWindow(BOOL, PDWND)
         .if SetClass(rsi)
-
+            xor eax,eax
             .if ( edi )
                 GetWindowSize(m_rc)
                 .if ( Flags.Shade )
@@ -1365,18 +1161,11 @@ WPARGS  ends
         .return
 
 
-    .case WP_BEGINPAINT
-
-        ; lParam: PDWND
-        ; return: PCHAR_INFO
-
+    .case WP_BEGINPAINT ; PCHAR_INFO BeginPaint(PDWND)
         xor eax,eax
         mov rbx,rsi
-
         .if ( Flags.Open && Flags.Visible )
-
             .if malloc( GetWindowSize(m_rc) )
-
                 mov rdi,rax
                 WinProc(WP_READWINDOW, m_rc, rdi)
                 mov rax,m_Window
@@ -1387,13 +1176,8 @@ WPARGS  ends
         .return
 
 
-    .case WP_ENDPAINT
-
-        ; wParam: PCHAR_INFO
-        ; lParam: PDWND
-
+    .case WP_ENDPAINT ; void EndPaint(PCHAR_INFO, PDWND)
         .if ( rdi )
-
             mov rbx,rsi
             WinProc(WP_WRITEWINDOW, m_rc, m_Window)
             free(m_Window)
@@ -1402,34 +1186,21 @@ WPARGS  ends
         .endif
 
 
-    .case WP_GETOBJECT
-
-        ; wParam: DWORD { Id }
-        ; lParam: PDWND
-        ; return: PDWND
-
+    .case WP_GETOBJECT ; PDWND GetObject(DWORD Id, PDWND)
         .for ( rbx = rsi : rbx : rbx = m_Next )
             .break .if ( edi == m_Id )
         .endf
         .return( rbx )
 
 
-    .case WP_GETINDEX
-
-        ; wParam: DWORD { Index }
-        ; lParam: PDWND
-        ; return: PDWND
-
+    .case WP_GETINDEX ; PDWND GetIndex(DWORD Index, PDWND)
         .for ( rbx = rsi, rbx <> m_This : rbx : rbx = m_Next, edi-- )
             .break .if ( !edi )
         .endf
         .return( rbx )
 
 
-    .case WP_GETFOCUS
-
-        ; return: PDWND
-
+    .case WP_GETFOCUS ; PDWND GetFocus(this)
         .if ( Flags.Child )
             mov rbx,m_Base
         .endif
@@ -1439,12 +1210,7 @@ WPARGS  ends
         .return( rbx )
 
 
-    .case WP_GETRECT
-
-        ; wParam: PTRECT
-        ; lParam: PDWND
-        ; return: TRECT
-
+    .case WP_GETRECT ; TRECT GetRect(PTRECT, PDWND)
         mov eax,[rsi].Doszip.m_rc
         .if ( rdi )
             mov [rdi],eax
@@ -1452,20 +1218,12 @@ WPARGS  ends
         .return
 
 
-    .case WP_GETMESSAGE
-
-        ; wParam: PDMSG
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_GETMESSAGE ; BOOL GetMessage(PDMSG, PDWND)
         mov rbx,m_Home
         mov pMsg,rdi
         mov hwnd,rsi
-
         .while 1
-
             .if ( m_msgCount )
-
                 dec     m_msgCount
                 imul    eax,m_msgCount,Message
                 lea     rdx,m_msgStack
@@ -1479,17 +1237,14 @@ WPARGS  ends
                 setne   al
                .return
             .endif
-
             mov u1,0
             .ifd GetNumberOfConsoleInputEvents(_coninpfh, &u1)
                 .if ( u1 )
                     ReadConsoleInputW(_coninpfh, &u.Input, 1, &u1)
                 .endif
             .endif
-
             mov eax,u1
             .if ( eax == 0 )
-
                 mov rdx,hwnd
                 mov rcx,pMsg
                 mov [rcx].Message.wParam,rax
@@ -1498,13 +1253,9 @@ WPARGS  ends
                 inc eax
                .return
             .endif
-
             .switch pascal u.Input.EventType
-
             .case KEY_EVENT
-
                 .endc .if ( m_dlgFocus == 0 )
-
                 ;
                 ; lParam
                 ;
@@ -1530,20 +1281,14 @@ WPARGS  ends
                 cmovnz  edx,ecx
                 test    edx,edx
                 cmovz   edx,ecx
-
                 PostMessage(esi, rdx, rdi)
-
                 movzx   edx,u.Input.Event.KeyEvent.uChar.UnicodeChar
                 .endc .if ( edx == 0 )
                 .endc .if ( esi != WP_KEYDOWN )
                 .endc .if ( edi & ENHANCED_KEY or RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED or RIGHT_ALT_PRESSED or LEFT_ALT_PRESSED )
-
                 PostMessage(WP_CHAR, rdx, rdi)
-
             .case MOUSE_EVENT
-
                 .endc .if ( m_dlgFocus == 0 )
-
                 ;
                 ; lParam
                 ;
@@ -1588,7 +1333,6 @@ WPARGS  ends
                 or      ecx,eax
                 xor     esi,esi
                 mov     eax,u.Input.Event.MouseEvent.dwEventFlags
-
                 .switch pascal eax
                 .case MOUSE_MOVED
                     mov esi,WP_MOUSEMOVE
@@ -1643,12 +1387,7 @@ WPARGS  ends
         .endw
 
 
-    .case WP_UNPACKWINDOW
-
-        ; wParam: PIDD
-        ; lParam: PDWND
-        ; return: void
-
+    .case WP_UNPACKWINDOW ; void UnpackWindow(PIDD, PDWND)
         mov     rbx,rsi
         mov     rsi,rdi
         movzx   eax,word ptr [rsi].RIDD.rc[2]
@@ -1656,9 +1395,7 @@ WPARGS  ends
         lea     rsi,[rsi+rcx*RIDD+RIDD]
         mul     ah
         mov     u1,eax
-
         .for ( u2 = 0 : u2 < 4 : u2++ )
-
             mov edi,u2
             add rdi,m_Window
             mov ecx,u1
@@ -1685,15 +1422,11 @@ WPARGS  ends
                 .endif
             .untilcxz
         .endf
-
         .if ( Flags.Color )
-
             mov rbx,m_Window
             lea rdi,at_foreground
             lea rsi,at_background
-
             .for ( ecx = 0 : ecx < u1 : ecx++ )
-
                 mov     al,[rbx+rcx*4+2]
                 mov     ah,al
                 and     eax,0x0FF0
@@ -1707,12 +1440,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_OPENRESOURCE
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_OPENRESOURCE ; BOOL OpenResource(BOOL, PDWND)
         mov rbx,rsi
         .if ( edi == FALSE )
             WinProc(WP_DESTROY, TRUE, m_This)
@@ -1725,12 +1453,9 @@ WPARGS  ends
         mov u1,ecx
         mov cl,[rsi].RIDD.index
         mov u2,ecx
-
         .ifd WinProc(WP_OPENWINDOW, TRUE, rbx)
-
             mov ecx,m_Type
             .if ( ecx == CT_MENUBAR || ecx == CT_KEYBAR )
-
                 mov rdx,m_Home
                 mov m_rc.col,[rdx].Doszip.m_rc.col
                 .if ( ecx == CT_KEYBAR )
@@ -1741,9 +1466,7 @@ WPARGS  ends
                 WinProc(WP_FILLWINDOW, TRUE, MKAT(BG_TITLE, FG_TITLE, ' '))
             .endif
             WinProc(WP_UNPACKWINDOW, rsi, rbx)
-
             .for ( edi = 0 : edi < u1 : edi++ )
-
                 add     rsi,ROBJ
                 movzx   eax,[rsi].RIDD.index
                 mov     u4,eax
@@ -1754,9 +1477,7 @@ WPARGS  ends
                 lea     eax,[rax+rdi+1]
                 shl     eax,16
                 or      edx,eax
-
                 .if WinProc(WP_CREATE, edx, rbx)
-
                     mov     rcx,rax
                     mov     edx,[rsi].RIDD.rc
                     mov     [rcx].Doszip.m_rc,edx
@@ -1768,7 +1489,6 @@ WPARGS  ends
                     shl     eax,2
                     add     rax,m_Window
                     mov     [rcx].Doszip.m_Window,rax
-
                     movzx edx,[rsi].RIDD.flags
                     mov eax,W_RESOURCE or W_CHILD
                     .if ( edx & O_LIST )
@@ -1785,7 +1505,6 @@ WPARGS  ends
                     mov [rcx].Doszip.Flags,eax
                     mov [rcx].Doszip.m_SysKey,u4
                     .if ( [rcx].Doszip.m_Type == CT_TEXTINPUT )
-
                         mov hwnd,rbx
                         mov rbx,rcx
                         mov Edit.m_Attribute,MKAT(BG_TEDIT, FG_TEDIT, U_MIDDLE_DOT)
@@ -1799,13 +1518,8 @@ WPARGS  ends
         .return
 
 
-    .case WP_OPENDIALOG
-
-        ; lParam: LPWSTR
-        ; return: BOOL
-
+    .case WP_OPENDIALOG ; BOOL OpenDialog(LPWSTR)
         .ifd WinProc(WP_OPENWINDOW, TRUE, rbx)
-
             .if ( Flags.Resource )
                 WinProc(WP_UNPACKWINDOW, m_Resource, rbx)
             .else
@@ -1832,14 +1546,8 @@ WPARGS  ends
     .case WP_CLEAR
 
 
-    .case WP_GETTEXT
-
-        ; wParam: DWORD { Line Index }
-        ; lParam: PDWND { EditClass }
-        ; return: PDWND { LineClass, rdx: m_LBuf, rcx: Count }
-
+    .case WP_GETTEXT ; PDWND GetText(DWORD LineIndex, PDWND)
         .if WinProc(WP_GETINDEX, edi, rsi)
-
             mov rbx,rax
             mov rsi,m_Text
             mov rdi,Line.m_LBuf
@@ -1875,13 +1583,7 @@ WPARGS  ends
         .return
 
 
-    .case WP_SETTEXT
-
-        ; CLType: Line
-        ; wParam: DWORD  { Char count }
-        ; lParam: LPWSTR { Unicode Text }
-        ; return: BOOL
-
+    .case WP_SETTEXT ; BOOL SetText(DWORD CharCount, LPWSTR)
         mov edx,edi
         xor eax,eax
         mov rdi,Line.m_LBuf
@@ -1984,19 +1686,13 @@ WPARGS  ends
         .return
 
 
-    .case WP_PUTTEXT
-
-        ; wParam: ?
-        ; lParam: PDWND { EditClass }
-        ; return: ?
-
+    .case WP_PUTTEXT ; void PutText(PDWND)
         mov     rbx,rsi
         movzx   eax,m_rc.col
         sub     al,Edit.m_Cols
         shl     eax,16
         mov     al,Edit.m_XPos
         mov     rc,eax
-
         WinProc(WP_FILLCHARINFO, rc, Edit.m_Attribute)
         movzx ecx,Edit.m_YOffs
         add ecx,Edit.m_LOffs
@@ -2009,12 +1705,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_PUTC
-
-        ; wParam: DWORD { Char }
-        ; lParam: PDWND { EditClass }
-        ; return: BOOL
-
+    .case WP_PUTC ; BOOL PutC(DWORD, PDWND)
         .if ( edi == 13 )
             .return( 1 )
         .elseif ( edi == 10 )
@@ -2022,12 +1713,10 @@ WPARGS  ends
                 .return( 0 )
             .endif
         .endif
-
         mov rbx,rsi
         movzx ecx,Edit.m_YOffs
         add ecx,Edit.m_LOffs
         .if WinProc(WP_GETTEXT, ecx, rsi)
-
             mov u1,edi
             mov u2,ecx
             movzx ecx,Edit.m_XOffs
@@ -2057,7 +1746,6 @@ WPARGS  ends
             sub rdi,Line.m_TBuf
             shr edi,1
             .ifd WinProc(WP_SETTEXT, rdi, Line.m_TBuf)
-
                 mov rbx,m_Base
                 WinProc(WP_PUTTEXT, 0, rbx)
                 movzx ecx,m_rc.col
@@ -2076,17 +1764,10 @@ WPARGS  ends
         .return
 
 
-    .case WP_ADDLINE
-
-        ; wParam: DWORD
-        ; lParam: LPWSTR
-        ; return: BOOL
-
+    .case WP_ADDLINE ; BOOL AddLine(DWORD, LPWSTR)
         .if WinProc(WP_NEW, MKID(CT_LINE, 0), rbx)
-
             mov rbx,rax
             .gotosw(WP_SETTEXT) .if ( rsi )
-
             mov Line.m_Size,Doszip - Doszip.Panel
             lea rax,Panel
             mov m_Text,rax
@@ -2095,11 +1776,7 @@ WPARGS  ends
         .return
 
 
-    .case WP_GETFTIME
-
-        ; lParam: LPWSTR
-        ; return: FILETIME
-
+    .case WP_GETFTIME ; FILETIME GetFileTime(LPWSTR)
         .endc .ifd ( CreateFileW(rsi, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL) == -1 )
         mov rsi,rax
         mov edi,GetFileTime(rsi, 0, 0, &u.ft)
@@ -2111,52 +1788,39 @@ WPARGS  ends
         .endif
 
 
-    .case WP_READFILE
-
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_READFILE ; BOOL ReadFile(PDWND)
         mov rbx,m_Home
         mov p,m_TBuf
         sub rax,MAXLBUF*2
         mov q,rax
         mov rbx,rsi
-
         WinProc( WP_DESTROY, TRUE, m_This )
-
         mov Edit.Flags.FileCR,0
         mov Edit.Flags.FileTab,0
         mov Edit.Flags.FileUTF8,0
         mov Edit.Flags.FileUTF16,0
         mov Edit.Flags.FileBOM,0
         mov Edit.Flags.FileBinary,0
-
         .ifd ( WinProc(WP_GETFTIME, 0, m_Text) == 0 )
             mov Edit.Flags.Modified,1
            .return
         .endif
         mov Edit.m_FTime,eax
-
         mov fp,CreateFileW(m_Text, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL)
         .ifd ( ReadFile( fp, q, MAXLBUF, &u1, 0 ) == 0 )
             CloseHandle(fp)
            .return( 0 )
         .endif
-
         mov eax,u1
         mov rsi,q
         mov ecx,[rsi]
         and ecx,0x00FFFFFF
-
         .if ( eax > 2 && ecx == 0xBFBBEF )
-
             mov Edit.Flags.FileUTF8,1
             mov Edit.Flags.FileBOM,1
             sub eax,3
             add rsi,3
-
         .elseif ( eax >= 2 && cx == 0xFEFF )
-
             mov Edit.Flags.FileUTF16,1
             mov Edit.Flags.FileBOM,1
             sub eax,2
@@ -2166,17 +1830,13 @@ WPARGS  ends
         mov u3,0
         mov u4,0
         mov rdi,p
-
         .while 1
-
             .if ( u2 == 0 )
-
                 .break .ifd ( ReadFile( fp, q, MAXLBUF, &u1, 0 ) == 0 )
                 mov u2,u1
                 .break .if ( eax == 0 )
                 mov rsi,q
             .endif
-
             movzx eax,byte ptr [rsi]
             .if ( Edit.Flags.FileUTF16 )
                 mov ah,[rsi+1]
@@ -2219,17 +1879,13 @@ WPARGS  ends
                     .break .ifz
                     dec u2
                     movsw
-
                 .elseif ( Edit.Flags.FileUTF8 )
-
                     mov ecx,u2
                     movzx eax,byte ptr [rsi]
-
                     .if !( ( eax <= 0xBF || eax >= 0xF8 ) ||
                            ( ecx > 1 && eax < 0xE0 ) ||
                            ( ecx > 2 && eax < 0xF0 ) ||
                            ( ecx > 3 ) )
-
                         mov eax,[rsi]
                         mov rsi,q
                         mov [rsi],eax
@@ -2267,18 +1923,11 @@ WPARGS  ends
         .return( 1 )
 
 
-    .case WP_WRITEFILE
-
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_WRITEFILE ; BOOL writeFile(PDWND)
         mov rbx,rsi
         mov rsi,m_Text
-
         .if ( Edit.Flags.CreateBackup )
-
             .ifd ( GetFileAttributesW( rsi ) != -1 )
-
                 mov rdi,m_B1
                 .if _wstrext(wcscpy(rdi, rsi))
                     wcscpy(rax, L".bak")
@@ -2291,14 +1940,11 @@ WPARGS  ends
                 MoveFile( rsi, rdi )
             .endif
         .endif
-
         mov fp,CreateFileW(rsi, GENERIC_WRITE, FILE_SHARE_READ or FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, 0, NULL)
         .if ( eax == -1 )
             .return( 0 )
         .endif
-
         .if ( Edit.Flags.FileBOM )
-
             mov eax,0xBFBBEF
             mov ecx,3
             .if ( Edit.Flags.FileUTF16 )
@@ -2311,7 +1957,6 @@ WPARGS  ends
                .return( 0 )
             .endif
         .endif
-
         mov eax,0x0A
         mov ecx,1
         .if ( !Edit.Flags.UnixMode )
@@ -2328,10 +1973,8 @@ WPARGS  ends
         assume rsi:PDWND
 
         .for ( rsi = m_This : rsi : rsi = [rsi].m_Next )
-
             mov rdi,m_B2
             mov ecx,[rsi].Line.m_Indent
-
             .if ( Edit.Flags.KeepTabs )
                 .for ( eax = 9 : ecx >= 8 : ecx -= 8 )
                     .if ( Edit.Flags.FileUTF16 )
@@ -2347,12 +1990,9 @@ WPARGS  ends
             .else
                 rep stosb
             .endif
-
             .for ( p = rsi, rsi = [rsi].m_Text : eax : )
-
                 lodsb
                 .if ( al == 9 && Edit.Flags.KeepTabs == 0 )
-
                     mov rdx,m_B2
                     mov rcx,rdi
                     sub rcx,rdx
@@ -2366,9 +2006,7 @@ WPARGS  ends
                     .else
                         rep stosb
                     .endif
-
                 .elseif ( Edit.Flags.FileUTF16 )
-
                     dec rsi
                     _utftow(rsi)
                     stosw
@@ -2393,13 +2031,11 @@ WPARGS  ends
         .endf
         assume rsi:nothing
         CloseHandle(fp)
-
        .return( 1 )
 
 
 
     .case WP_TOGGLEITEM
-
         mov rbx,rsi
         xor ecx,ecx
         .if ( m_Type == CT_RADIOBUTTON )
@@ -2430,11 +2066,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SETFOCUS
-
-        ; wParam: Window that has lost focus
-        ; lParam: Window that has new focus
-
+    .case WP_SETFOCUS ; void SetFocus(PDWND)
         mov rbx,rsi
         .endc .if ( rbx == NULL || Flags.Disabled || Flags.NoFocus )
         .if WinProc(WP_GETFOCUS, rax, rbx)
@@ -2472,11 +2104,7 @@ WPARGS  ends
         .endsw
 
 
-    .case WP_KILLFOCUS
-
-        ; wParam: Window that receives the keyboard focus
-        ; lParam: Window that has lost the keyboard focus
-
+    .case WP_KILLFOCUS ; void KillFocus(PDWND)
         mov rbx,rsi
         mov Flags.HasFocus,0
         mov eax,m_Type
@@ -2494,11 +2122,7 @@ WPARGS  ends
         .endsw
 
 
-    .case WP_SETNEXTITEM
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-
+    .case WP_SETNEXTITEM ; void SetNextItem(BOOL continue, PDWND)
         .for ( rbx = rsi, rbx = m_Next : rbx : rbx = m_Next )
             .if ( !Flags.Disabled && !Flags.NoFocus )
                 gotosw(WP_SETFOCUS, 0, rbx, 0)
@@ -2513,11 +2137,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SETPREVITEM
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-
+    .case WP_SETPREVITEM ; void SetPrevItem(BOOL continue, PDWND)
         .for ( rbx = rsi, rbx = m_Prev : rbx : rbx = m_Prev )
             .if ( !Flags.Disabled && !Flags.NoFocus )
                 gotosw(WP_SETFOCUS, 0, rbx, 0)
@@ -2534,10 +2154,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SETLEFTITEM
-
-        ; lParam: PDWND
-
+    .case WP_SETLEFTITEM ; void SetLeftItem(PDWND)
         .for ( rbx = rsi, al = m_rc.y, rbx = m_Prev : rbx : rbx = m_Prev )
             .if ( al == m_rc.y && !Flags.Disabled && !Flags.NoFocus )
                 gotosw(WP_SETFOCUS, 0, rbx, 0)
@@ -2546,10 +2163,7 @@ WPARGS  ends
         .gotosw(WP_SETPREVITEM)
 
 
-    .case WP_SETRIGHTITEM
-
-        ; lParam: PDWND
-
+    .case WP_SETRIGHTITEM ; void SetRightItem(PDWND)
         .for ( rbx = rsi, al = m_rc.y, rbx = m_Next : rbx : rbx = m_Next )
             .if ( al == m_rc.y && !Flags.Disabled && !Flags.NoFocus )
                 gotosw(WP_SETFOCUS, 0, rbx, 0)
@@ -2558,11 +2172,7 @@ WPARGS  ends
         .gotosw(WP_SETNEXTITEM)
 
 
-    .case WP_INITITEM
-
-        ; wParam: LPSTR
-        ; lParam: PDWND
-
+    .case WP_INITITEM ; void InitDialogItem(LPSTR, PDWND)
         mov rbx,rsi
         movzx eax,m_rc.col
         shl eax,16
@@ -2576,7 +2186,7 @@ WPARGS  ends
             cmp     Flags.HasFocus,0
             cmovz   ecx,eax
             cmovz   esi,eax
-            WinProc(WP_FILLCHARACTER, 0x01010000, ecx)
+            WinProc(WP_FILLCHARACTER, 0x00010000, ecx)
             mov     ecx,0x000100FF
             add     cl,rc.col
             gotosw(WP_FILLCHARACTER, ecx)
@@ -2585,13 +2195,13 @@ WPARGS  ends
             mov     esi,U_BULLET_OPERATOR
             cmp     Flags.Checked,0
             cmovz   esi,eax
-            gotosw(WP_FILLCHARACTER, 0x01010001)
+            gotosw(WP_FILLCHARACTER, 0x00010001)
         .case CT_CHECKBOX
             mov     eax,' '
             mov     esi,'x'
             cmp     Flags.Checked,0
             cmovz   esi,eax
-            gotosw(WP_FILLCHARACTER, 0x01010001)
+            gotosw(WP_FILLCHARACTER, 0x00010001)
         .case CT_XCELL
         .case CT_MENUITEM
         .case CT_TEXTITEM
@@ -2608,11 +2218,7 @@ WPARGS  ends
             .endif
         .endsw
 
-    .case WP_SETDLGFLAGS
-
-        ; wParam: DWORD { Flags }
-        ; lParam: PDWND { Dialog }
-
+    .case WP_SETDLGFLAGS ; void SetDialogFlags(DWORD Flags, PDWND Dialog)
         .for ( rbx = m_This : rbx && m_Id < esi : rbx = m_Next )
             shr edi,1
             .ifc
@@ -2621,12 +2227,7 @@ WPARGS  ends
             .endif
         .endf
 
-    .case WP_GETDLGFLAGS
-
-        ; wParam: DWORD { Result }
-        ; lParam: DWORD { Last Id }
-        ; return: DWORD { eax: mask, edx: bits set }
-
+    .case WP_GETDLGFLAGS ; DWORD[2] { eax: mask, edx: bits set } GetDialogFlags(DWORD RetVal, DWORD LastId)
         mov eax,edi
         .if ( eax )
             .if WinProc(WP_GETOBJECT, esi, m_This)
@@ -2643,20 +2244,14 @@ WPARGS  ends
         .return
 
 
-    .case WP_SIZE
-
-        ; lParam: COORD
-
+    .case WP_SIZE ; void SetConsoleSize(COORD)
         mov rbx,m_Home
         .if ( Flags.Open )
             mov Flags.Open,0
             free(m_Window)
         .endif
-
         .if GetConsoleScreenBufferInfo(_confh, &u.ci)
-
             SetConsoleCursorPosition(_confh, 0)
-
             mov eax,esi
             .if al > MAXCOLS
                 mov al,MAXCOLS
@@ -2694,11 +2289,8 @@ WPARGS  ends
             .endif
         .endif
 
-    .case WP_QUIT
 
-        ; wParam: RetVal
-        ; lParam: PDWND
-
+    .case WP_QUIT ; void Quit(WPARAM RetVal, PDWND)
         mov     ecx,1
         mov     eax,m_msgCount
         inc     eax
@@ -2715,43 +2307,30 @@ WPARGS  ends
         mov     [rcx].Message.lParam,rsi
 
 
-    .case WP_NCHITTEST
-
-        ; wParam: PDWND
-        ; lParam: COORD
-
+    .case WP_NCHITTEST ; DWORD NCHitTest(PDWND, COORD)
         mov rbx,rdi
         .if ( !rbx || ( !Flags.Child && ( !Flags.Open || !Flags.Visible ) ) )
             .return( HTERROR )
         .endif
-
         mov edx,esi ; Get the window-line of pos
         mov eax,m_rc
-
         .if ( Flags.Child )
-
             mov rcx,m_Base
             add al,[rcx].Doszip.m_rc.x
             add ah,[rcx].Doszip.m_rc.y
         .endif
-
         mov rc,eax
         mov ecx,eax
         xor eax,eax
         mov dh,cl
-
         .if ( dl >= dh )
-
             add dh,rc.col
             .if ( dl < dh )
-
                 shr edx,16
                 mov dh,ch
                 .if ( dl >= dh )
-
                     add dh,rc.row
                     .if ( dl < dh )
-
                         mov al,dl
                         sub al,ch
                         inc al
@@ -2762,7 +2341,6 @@ WPARGS  ends
         .if ( eax == 0 )
             .return( HTNOWHERE )
         .endif
-
         .if ( Flags.Child )
             mov rdx,rbx
             .if ( Flags.AutoExit )
@@ -2773,22 +2351,18 @@ WPARGS  ends
         .if ( eax == 1 && Flags.Moveable )
             .return( HTCAPTION )
         .endif
-
         mov edi,eax
         dec eax
         mov ch,al
         mov eax,esi
         sub al,rc.x
         mov cl,al
-
         .for ( rbx = m_This : rbx : rbx = m_Next )
-
             mov eax,m_rc
             mov edx,eax
             shr edx,16
             add dl,al
             .if ( cl >= al && cl < dl && ch == ah && !Flags.Disabled )
-
                 mov rdx,rbx
                 .if ( Flags.AutoExit )
                     .return ( HTCLOSE )
@@ -2840,7 +2414,7 @@ WPARGS  ends
                 .for ( edi = 0, rbx = m_This : edi < 6 : edi++, rbx = m_Next )
                     bt esi,edi
                     .ifc
-                        WinProc(WP_FILLCHARACTER, 0x010100FF, U_RIGHT_DOUBLE_QUOTE)
+                        WinProc(WP_FILLCHARACTER, 0x000100FF, U_RIGHT_DOUBLE_QUOTE)
                     .endif
                 .endf
                 xor ecx,ecx
@@ -2855,7 +2429,7 @@ WPARGS  ends
                     mov rbx,m_Next
                     dec ecx
                 .endw
-                gotosw(WP_FILLCHARACTER, 0x010100FF, U_BULLET_OPERATOR)
+                gotosw(WP_FILLCHARACTER, 0x000100FF, U_BULLET_OPERATOR)
             .endif
         .case ID_PANELB
             mov m_rc.x,40
@@ -3006,7 +2580,6 @@ WPARGS  ends
 
 
     .case WP_ENDDIALOG
-
         mov rsi,rbx
         mov eax,m_Id
         .switch eax
@@ -3163,18 +2736,15 @@ WPARGS  ends
         .return
 
 
-    .case WP_INITCOMMANDLINE
-
+    .case WP_INITCOMMANDLINE ; void InitCommandLine()
         mov rbx,m_Home
         mov rbx,m_Command
         .if ( Flags.Open )
-
             mov rsi,Command.m_Path
             mov rdi,[rsi].Doszip.Panel.m_srcPath
             .if ( word ptr [rdi] == 0 )
                 GetCurrentDirectoryW(WMAXPATH, rdi)
             .endif
-
             wcslen(rdi)
             inc eax
             .if eax > 51
@@ -3188,9 +2758,7 @@ WPARGS  ends
             mov     rdx,m_This
             mov     [rdx].Doszip.m_rc,eax
             mov     rc,eax
-
             .if ( Flags.Visible )
-
                 WinProc(WP_SETCURSOR, TRUE, eax)
                 movzx ecx,rc.x
                 dec rc.x
@@ -3202,25 +2770,19 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SETCOMMANDLINE
-
+    .case WP_SETCOMMANDLINE ; void SetCommandLine(LPWSTR)
         mov rbx,m_Home
         mov rbx,m_Command
         mov Command.m_Path,rsi
        .gotosw(WP_INITCOMMANDLINE)
 
 
-    .case WP_SHOWCOMMANDLINE
-
-        ; wParam: BOOL
-        ; return: BOOL
-
+    .case WP_SHOWCOMMANDLINE ; BOOL ShowCommandLine(BOOL)
         mov rbx,m_Home
         .if ( edi == FALSE )
             WinProc(WP_OPENWINDOW, FALSE, m_Command)
            .gotosw(WP_CURSOR)
         .endif
-
         mov rdi,m_PanelB
         .if ( ![rdi].Doszip.Flags.Visible )
             mov rdi,m_PanelA
@@ -3259,17 +2821,11 @@ WPARGS  ends
         .endif
 
 
-    .case WP_OPENSCROLLBAR
-
-        ; wParam: PDWND
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_OPENSCROLLBAR ; BOOL OpenScrollbar(PDWND, PDWND)
         mov rbx,rsi
         .if ( Flags.Open )
             WinProc(WP_OPENWINDOW, FALSE, rbx)
         .endif
-
         mov     rbx,rdi
         mov     eax,m_rc
         inc     ah
@@ -3284,7 +2840,6 @@ WPARGS  ends
         mov     cl,al
         movzx   eax,m_rc.row
         mov     edx,1
-
         .if ( m_Id == CI_SCROLLE )
             add al,2
             sub al,Edit.m_Rows
@@ -3294,11 +2849,8 @@ WPARGS  ends
         .endif
         mov Scroll.m_Count,edx
         mov Scroll.m_Lines,eax
-
         ReadConsoleOutputAttribute(_confh, &Scroll.m_Attribute, 1, ecx, &u1)
-
         .ifd WinProc(WP_OPENWINDOW, TRUE, rbx)
-
             mov     rdi,m_Window
             mov     eax,Scroll.m_Attribute
             shl     eax,16
@@ -3314,11 +2866,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SETSCROLLBAR
-
-        ; wParam: DWORD { Position }
-        ; lParam: DWORD { Count }
-
+    .case WP_SETSCROLLBAR ; void SetScrollbar(DWORD { Position }, DWORD { Count })
         cvtsi2ss    xmm1,esi
         cvtsi2ss    xmm2,Scroll.m_Count
         divss       xmm1,xmm2
@@ -3342,7 +2890,6 @@ WPARGS  ends
         movzx       edx,m_rc.row
         sub         edx,2
         add         ecx,eax
-
         .if ( ecx > edx )
             mov eax,edx
             sub eax,Scroll.m_Thumb
@@ -3374,17 +2921,11 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SCROLLACTION
-
-        ; wParam: COORD
-        ; lParam: PDWND
-        ; return: ScrollAction
-
+    .case WP_SCROLLACTION ; ScrollAction ScrollAction(COORD, PDWND)
         mov     rbx,rsi
         movzx   edx,di
         mov     eax,edi
         shr     eax,16
-
         .if ( dl != m_rc.x || al < m_rc.y )
             .return( ScrollNoAction )
         .endif
@@ -3410,11 +2951,7 @@ WPARGS  ends
         .return( ScrollMove )
 
 
-    .case WP_PANELSTATE
-
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_PANELSTATE ; BOOL PanelState(PDWND)
         mov rbx,rsi
         xor eax,eax
         .if ( Flags.Open )
@@ -3425,11 +2962,7 @@ WPARGS  ends
         .return
 
 
-    .case WP_HIDEPANEL
-
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_HIDEPANEL ; BOOL HidePanel(PDWND)
         mov rbx,rsi
         xor eax,eax
         .if ( Panel.Flags.Hidden )
@@ -3443,14 +2976,8 @@ WPARGS  ends
         .return
 
 
-    .case WP_CREATEPANEL
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_CREATEPANEL ; BOOL CreatePanel(BOOL, PDWND)
         .if ( edi == FALSE )
-
             mov rbx,rsi
             xor eax,eax
             .if ( Panel.Flags.Visible )
@@ -3460,9 +2987,7 @@ WPARGS  ends
             .endif
             .return
         .endif
-
         WinProc(WP_SHOWCOMMANDLINE, FALSE, 0)
-
         mov     rbx,m_Home
         xor     edx,edx
         movzx   eax,m_rc.col
@@ -3581,12 +3106,6 @@ WPARGS  ends
                 inc al
                 sub rc.row,al
                 sub Panel.m_YCells,al
-                mov rbx,m_Home
-                .if ( Panels.Horizontal )
-                    dec rc.row
-                    dec Panel.m_YCells
-                .endif
-                mov rbx,rsi
             .endif
             WinProc(WP_WRITEFRAME, rc, MKAT(BG_PANEL, FG_FRAME, BOX_SINGLE))
         .endif
@@ -3702,28 +3221,202 @@ WPARGS  ends
         gotosw(WP_SHOWCOMMANDLINE, TRUE, rsi, 0)
 
 
-    .case WP_SHOWPANELCELL
-
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_PANELCLEAR ; void PanelClear(PDWND)
         mov rbx,rsi
-        mov eax,1
+        movzx eax,m_rc.col
+        mul m_rc.row
+        mov ecx,eax
+        movzx eax,at_foreground[FG_FILES]
+        or  al,at_background[BG_PANEL]
+        shl eax,16
+        mov al,' '
+        .for ( rdi = m_Window : ecx : ecx--, rdi += 4 )
+            movzx edx,word ptr [rdi]
+            .if ( edx != U_LIGHT_VERTICAL )
+                mov [rdi],eax
+            .endif
+        .endf
 
+    .case WP_GETFILEAT ; BYTE GetFileAt(PDWND)
+        mov rbx,rsi
+        mov ecx,File.m_Attributes
+        xor eax,eax ; MKAT(BG_PANEL, FG_FILES)
+        .if ( File.Flags.UpDir )
+            mov al,MKAT(BG_PANEL, 7)
+        .elseif ( ecx & _A_HIDDEN )
+            mov al,MKAT(BG_PANEL, FG_HIDDEN)
+        .elseif ( ecx & _A_SYSTEM )
+            mov al,MKAT(BG_PANEL, FG_SYSTEM)
+        .elseif ( ecx & _A_SUBDIR )
+            mov al,MKAT(BG_PANEL, FG_SUBDIR)
+        .endif
+        .return
+
+
+    .case WP_PCURITEM ; PDWND PanelCurItem(PDWND)
+        mov rbx,rsi
+        xor eax,eax
+        .if ( Panel.m_fcbCount )
+            mov ecx,Panel.m_fcbIndex
+            add ecx,Panel.m_celIndex
+            .for ( rax = m_This : ecx && rax : ecx--,
+                rax = [rax].Doszip.m_Next )
+            .endf
+        .endif
+        .return
+
+
+    .case WP_PPUTITEMS ; void PanelPutItems(PDWND)
+        mov rbx,rsi
+        .if ( !Flags.Visible )
+            .return
+        .endif
+        .for ( ecx = Panel.m_fcbIndex,
+               rsi = m_This : ecx && rsi : ecx--,
+               rsi = [rsi].Doszip.m_Next )
+        .endf
+        .if ( rsi == NULL )
+            .return
+        .endif
+        mov rc,m_rc
+        add eax,0x0201
+        sub eax,0x03020000
+        .if ( Panel.Flags.MiniStatus )
+            sub eax,0x02000000
+            .if ( Panel.Flags.DriveInfo )
+                sub eax,0x03000000
+            .endif
+        .endif
+        mov edi,eax
+        .if ( Panel.m_fcbCount )
+            mov u1,WinProc(WP_PCELLOPEN, FALSE, rbx)
+            WinProc(WP_PCELLSET, 0, rbx)
+            mov m_rc,edi
+            mov hwnd,WinProc(WP_BEGINPAINT, 0, rbx)
+            WinProc(WP_PANELCLEAR, 0, rbx)
+            .for ( edi = 0 : rsi && edi < Panel.m_celCount : edi++, rsi = [rsi].Doszip.m_Next )
+                PutItem(rbx, rsi, WinProc(WP_PCELLGETRC, edi, rbx))
+            .endf
+            WinProc(WP_ENDPAINT, hwnd, rbx)
+            mov m_rc,rc
+            .if u1
+                WinProc(WP_PCELLSHOW, TRUE, rbx)
+            .endif
+            PutMini(rbx)
+        .else
+            WinProc(WP_PCELLOPEN, FALSE, rbx)
+            WinProc(WP_PCELLSET, 0, rbx)
+            mov m_rc,edi
+            mov rsi,WinProc(WP_BEGINPAINT, 0, rbx)
+            WinProc(WP_PANELCLEAR, 0, rbx)
+            WinProc(WP_ENDPAINT, rsi, rbx)
+            mov m_rc,rc
+            mov Panel.Flags.Archive,0
+            mov Panel.Flags.RootDir,0
+        .endif
+
+    .case WP_PCELLSET ; int PCellSet(PDWND)
+        mov rbx,rsi
+        movzx eax,Panel.m_XCells
+        movzx edx,Panel.m_YCells
+        mul edx
+        mov edx,Panel.m_fcbCount
+        sub edx,Panel.m_fcbIndex
+        .if eax >= edx
+            mov eax,edx
+        .endif
+        mov Panel.m_celCount,eax
+        mov edx,Panel.m_fcbIndex
+        .if edx < eax
+            mov eax,edx
+        .else
+            dec eax
+        .endif
+        mov     Panel.m_celIndex,eax
+        xor     edx,edx
+        movzx   edi,Panel.m_YCells
+        div     edi
+        mov     ecx,eax
+        mul     edi
+        mov     edi,Panel.m_celIndex
+        sub     edi,eax
+        movzx   eax,Panel.m_celFirst.col
+        inc     eax
+        mul     ecx
+        mov     ecx,eax
+        mov     eax,Panel.m_celFirst
+        mov     edx,edi
+        add     al,cl
+        add     ah,dl
+        mov     rdi,Panel.m_Cell
+        mov     [rdi].Doszip.m_rc,eax
+        mov     eax,Panel.m_celIndex
        .return
 
 
-    .case WP_PANELMSG
+    .case WP_PCELLGETRC ; TRECT PCellGetRC(DWORD, PDWND)
+        mov     rbx,rsi
+        mov     ecx,edi
+        movzx   edi,Panel.m_YCells
+        mov     eax,ecx
+        xor     edx,edx
+        div     edi
+        mov     esi,eax
+        mul     edi
+        sub     ecx,eax
+        movzx   eax,Panel.m_celFirst.col
+        inc     eax
+        mul     esi
+        add     eax,Panel.m_celFirst
+        add     ah,cl
+        sub     al,m_rc.x
+        sub     ah,m_rc.y
+       .return
 
-    .case WP_PANELINFO
+    .case WP_PCELLOPEN ; void PCellOpen(BOOL, PDWND)
+        mov rbx,rsi
+        .if ( edi == FALSE )
+            xor eax,eax
+            .if ( Panel.Flags.Visible )
+                WinProc(WP_OPENWINDOW, FALSE, Panel.m_Cell)
+            .endif
+            .return
+        .endif
+        mov rbx,Panel.m_Cell
+        .ifd WinProc(WP_OPENWINDOW, TRUE, rbx)
+            .ifd WinProc(WP_READWINDOW, m_rc, m_Window)
+                movzx edi,m_rc.col
+                shl edi,16
+                WinProc(WP_FILLBACKGROUND, edi, BG_INVPANEL)
+                mov eax,1
+            .endif
+        .endif
+        .return
 
-        ; lParam: PDWND
 
+    .case WP_PCELLSHOW ; BOOL PCellShow(PDWND)
+        mov rbx,rsi
+        mov rdi,Panel.m_Cell
+        xor eax,eax
+        .if !( [rdi].Doszip.Flags & 3 )
+            WinProc(WP_PCELLSET, 0, rbx)
+            xor eax,eax
+            .if ( eax != Panel.m_celCount )
+                WinProc(WP_PCELLOPEN, TRUE, rbx)
+                WinProc(WP_SHOWWINDOW, TRUE, rbx)
+                mov eax,1
+            .endif
+        .endif
+       .return
+
+
+    .case WP_PANELMSG  ; void PanelMsg(PDWND)
+
+
+    .case WP_PANELINFO ; void PanelInfo(PDWND)
         .ifd WinProc(WP_PANELSTATE, 0, rsi)
-
             mov rbx,rsi
             .if ( Flags.Visible )
-
                 mov rdi,wcscpy(m_B1, Panel.m_srcPath)
                 .if ( Panel.Flags.Archive || Panel.Flags.RootDir )
                     _wstrfcat(rax, Panel.m_arcFile, Panel.m_arcPath)
@@ -3734,14 +3427,11 @@ WPARGS  ends
                 shl eax,16
                 inc al
                 mov rc,eax
-
                 mov rdx,Panel.m_srcPath
                 movzx eax,word ptr [rdx]
                 WinProc(WP_FILLCHARACTER, 0x00010101, rax)
-
                 mov rc.row,MKAT(BG_PANEL, FG_FRAME)
                 WinProc(WP_FILLCHARACTER, rc, U_DOUBLE_HORIZONTAL)
-
                 xor eax,eax
                 mov rdx,m_Home
                 .if ( rbx == [rdx].Doszip.m_CPanel )
@@ -3749,9 +3439,7 @@ WPARGS  ends
                 .endif
                 mov rc.row,al
                 mov al,rc.col
-
                 .if ( u1 > eax )
-
                     WinProc(WP_FILLCHARACTER, rc, ' ')
                     inc rc.x
                     sub rc.col,2
@@ -3767,17 +3455,45 @@ WPARGS  ends
         .endif
 
 
-    .case WP_READPANEL
+    .case WP_READROOT ; int { Read count } ReadRoot(PDWND)
+        mov rbx,rsi
+        WinProc(WP_DESTROY, TRUE, m_This)
+        mov u1,0
+        mov Panel.Flags.Archive,0
+        mov Panel.Flags.DriveNetwork,0
+        mov Panel.Flags.RootDir,1
+        mov eax,':' shl 16
+        mov edx,'\'
+        mov dword ptr u,eax
+        mov dword ptr u[4],edx
+        mov edi,GetLogicalDrives()
+        .for ( esi = 0 : esi < MAXDRIVES : esi++ )
+            bt edi,esi
+            .ifc
+                lea eax,[rsi+'A']
+                mov word ptr u,ax
+                .ifd ( GetDriveTypeW(&u) > 1 )
+                    mov ecx,esi
+                    shl ecx,16
+                    mov cx,CT_FILE
+                    .if WinProc(WP_NEW, ecx, &u)
+                        inc u1
+                        mov [rax].Doszip.File.Flags.RootDir,1
+                        mov [rax].Doszip.File.m_Attributes,_A_VOLID
+                    .endif
+                .endif
+            .endif
+        .endf
+        .return( u1 )
 
-        ; lParam: PDWND
-        ; return: DWORD { Read count }
 
+    .case WP_READPANEL ; int { Read count } ReadPanel(PDWND)
         mov rbx,rsi
         WinProc(WP_PANELMSG, 0, rbx)
         mov rax,Panel.m_srcPath
         .if ( word ptr [rax] && Panel.Flags.RootDir )
-            ReadRootdir(rbx)
-            mov Panel.m_celIndex,edx
+            WinProc(WP_READROOT, 0, rbx)
+            ;mov Panel.m_celIndex,edx
         .else
             ReadSubdir(rbx)
         .endif
@@ -3794,58 +3510,41 @@ WPARGS  ends
         .return
 
 
-    .case WP_REREADPANEL
-
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_REREADPANEL ; BOOL RereadPanel(PDWND)
         mov rbx,rsi
         xor eax,eax
         .if ( Panel.Flags.Visible )
-
             WinProc(WP_READPANEL, 0, rbx)
             WinProc(WP_PANELINFO, 0, rbx)
+            WinProc(WP_PPUTITEMS, 0, rbx)
             mov eax,1
         .endif
         .return
 
 
-    .case WP_ACTIVATEPANEL
-
+    .case WP_ACTIVATEPANEL ; void ActivatePanel()
         .gotosw(WP_SETCOMMANDLINE)
 
-    .case WP_OPENPANEL
 
-        ; wParam: BOOL
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_OPENPANEL ; BOOL OpenPanel(BOOL, PDWND)
         mov rbx,rsi
-
         .if ( edi == FALSE )
-
             .ifd WinProc(WP_PANELSTATE, 0, rbx)
-
                 WinProc(WP_DESTROY, TRUE, m_This)
                 WinProc(WP_CREATEPANEL, FALSE, rbx)
             .endif
             .endc
         .endif
-
         mov Panel.m_celCount,0
         mov rcx,m_Home
         mov rdi,[rcx].Doszip.m_CPanel
-
         .if ( rbx == rdi )
-
             mov rax,Panel.m_srcPath
             mov word ptr [rax],0
             WinProc(WP_SETCOMMANDLINE, 0, rbx)
-
             .if ( Panel.Flags.Archive )
             .endif
         .endif
-
         xor eax,eax
         .if ( Panel.Flags.Visible )
             WinProc(WP_REREADPANEL, 0, rbx)
@@ -3857,30 +3556,25 @@ WPARGS  ends
         .return
 
 
-    .case WP_REDRAWPANEL
-
-        ; wParam: BOOL
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_REDRAWPANEL ; BOOL RedrawPanel(BOOL, PDWND)
         mov rbx,rsi
         .if ( edi )
             mov Panel.Flags.Visible,1
         .endif
         xor eax,eax
         .if ( Panel.Flags.Visible )
-
             WinProc(WP_CREATEPANEL, TRUE, rbx)
             WinProc(WP_PANELINFO, 0, rbx)
+            WinProc(WP_PPUTITEMS, 0, rbx)
             mov rbx,m_Home
             mov eax,1
             .if ( rsi == m_CPanel )
-                .gotosw(WP_SHOWPANELCELL)
+                .gotosw(WP_PCELLSHOW)
             .endif
         .endif
 
-    .case WP_REDRAWPANELS
 
+    .case WP_REDRAWPANELS ; void RedrawPanels()
         mov rbx,m_Home
         mov edi,WinProc(WP_HIDEPANEL, 0, m_PanelB)
         .ifd WinProc(WP_HIDEPANEL, 0, m_PanelA)
@@ -3892,38 +3586,26 @@ WPARGS  ends
         .endif
 
 
-    .case WP_UPDATEPANEL
-
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_UPDATEPANEL ; BOOL UpdatePanel(PDWND)
         mov rbx,rsi
         .if ( Panel.Flags.Visible )
-
             WinProc(WP_READPANEL, 0, rbx)
             xor edi,edi
            .gotosw(WP_REDRAWPANEL)
         .endif
 
-    .case WP_SHOWPANEL
 
-        ; wParam: BOOL
-        ; lParam: PDWND
-        ; return: BOOL
-
+    .case WP_SHOWPANEL ; BOOL ShowPanel(BOOL, PDWND)
         mov rbx,rsi
         .if ( edi )
             mov Panel.Flags.Visible,1
            .gotosw(WP_UPDATEPANEL)
         .endif
         WinProc(WP_DESTROY, TRUE, m_This)
-       .gotosw(WP_CREATEPANEL)
+        .gotosw(WP_CREATEPANEL)
 
 
-    .case WP_REREADPANELS
-
-        ; return: BOOL
-
+    .case WP_REREADPANELS ; BOOL RereadPanels()
         mov rbx,m_Home
         mov rsi,m_PanelB
         .ifd WinProc(WP_PANELSTATE, 0, m_PanelA)
@@ -3933,10 +3615,8 @@ WPARGS  ends
             .gotosw(WP_REREADPANEL)
         .endif
 
-    .case WP_TOGGLEPANEL
 
-        ; lParam: PDWND
-
+    .case WP_TOGGLEPANEL ; void TogglePanel(PDWND)
         mov rbx,m_Home
         mov rcx,m_CPanel
         mov rdi,m_PanelA
@@ -3964,7 +3644,6 @@ WPARGS  ends
 
 
     .case WP_UPDATE
-
         WinProc(WP_SHOW, FALSE, 0)
         mov edi,TRUE
        .gotosw(WP_SHOW)
@@ -4647,14 +4326,10 @@ WPARGS  ends
         .case CT_HEXEDIT
         .endsw
 
-    .case WP_ENTERIDLE
-
-        ; lParam: PDWND
-
+    .case WP_ENTERIDLE ; void EnterIdle(PDWND)
         mov rbx,m_Home
         mov edx,[rsi].Doszip.m_Id
         .if ( edx == ID_CALENDAR || ( Setup.MenuBar && ( Setup.UseDate || Setup.UseTime ) ) )
-
             mov eax,[rsi].Doszip.m_Type
             add m_idleId,IDLETIME
             mov ecx,300*60
@@ -4662,18 +4337,13 @@ WPARGS  ends
                 mov ecx,300
             .endif
             .if ( m_idleId > ecx && eax != CT_VIEW && eax != CT_EDIT && eax != CT_HEXEDIT )
-
                 mov m_idleId,0
                 GetLocalTime(&u.ts)
-
                 .if ( Setup.MenuBar && ( Setup.UseDate || Setup.UseTime ) )
-
                     movzx ecx,m_rc.col
                     mov rc,ecx
                     mov rc.col,10
-
                     .if ( Setup.UseTime )
-
                         sub rc.x,9
                         lea rcx,@CStr(L"%02u:%02u:%02u")
                         .if ( Setup.UseLongTime == 0 )
@@ -4682,9 +4352,7 @@ WPARGS  ends
                         .endif
                         WinProc(WP_WRITEFORMAT, rc, rcx, u.ts.wHour, u.ts.wMinute, u.ts.wSecond)
                     .endif
-
                     .if ( Setup.UseDate )
-
                         sub rc.x,10
                         .if ( Setup.UseTime )
                             dec rc.x
@@ -4696,9 +4364,7 @@ WPARGS  ends
                         WinProc(WP_WRITEFORMAT, rc, L"%2u.%02u.%u", u.ts.wDay, u.ts.wMonth, u.ts.wYear)
                     .endif
                 .endif
-
                 .if ( [rsi].Doszip.m_Id == ID_CALENDAR )
-
                     mov rbx,rsi
                     mov eax,0x000A0102
                     mov rc,eax
@@ -4708,16 +4374,11 @@ WPARGS  ends
         .endif
         Sleep(IDLETIME)
 
-    .case WP_MOUSEMOVE
 
-        ; wParam: Indicates whether various virtual keys are down.
-        ; lParam: COORD
-
+    .case WP_MOUSEMOVE ; void MouseMove(DWORD VirtualKeys, COORD)
         .endc .if ( !Flags.Moveable || m_State == 0 )
-
         WinProc(WP_CURSORGET, FALSE, &u1)
         .for ( Coord = esi, esi = 1 : esi : )
-
             xor esi,esi
             movzx eax,Coord.X
             movzx ecx,m_rc.x
@@ -4737,11 +4398,8 @@ WPARGS  ends
         .endf
         gotosw(WP_CURSORSET, edi, &u1, 0)
 
-    .case WP_LBUTTONDOWN
 
-        ; wParam: Indicates whether various virtual keys are down.
-        ; lParam: COORD
-
+    .case WP_LBUTTONDOWN ; void LeftButtonDown(DWORD VirtualKeys, COORD)
         WinProc(WP_NCHITTEST, rbx, rsi)
         mov ecx,m_Type
         .switch ecx
@@ -4796,7 +4454,6 @@ WPARGS  ends
                     mov rbx,m_PanelB
                 .endif
                 .ifs ( eax > 0 )
-
                     mov rdx,rdi
                     mov ecx,esi
                     movzx eax,si
@@ -4924,11 +4581,7 @@ WPARGS  ends
         .endsw
 
 
-    .case WP_LBUTTONUP
-
-        ; wParam: Indicates whether various virtual keys are down.
-        ; lParam: COORD
-
+    .case WP_LBUTTONUP ; void LeftButtonUp(DWORD VirtualKeys, COORD)
         mov ecx,m_Type
         .switch pascal ecx
         .case CT_DESKTOP
@@ -4940,13 +4593,10 @@ WPARGS  ends
                 .endif
             .endif
             .if WinProc(WP_GETFOCUS, 0, rbx)
-
                 mov rbx,rax
                 mov rsi,rax
                 xor edi,edi
-
                 .if ( m_Type == CT_PUSHBUTTON && m_State )
-
                     mov m_State,0
                     mov ecx,0x00010000
                     mov cl,m_rc.col
@@ -4991,18 +4641,12 @@ WPARGS  ends
         .endif
         PostMessage(WP_KEYDOWN, VK_UP, ecx)
 
-    .case WP_OPENCONSOLE
 
-        ; wParam: BOOL
-        ; return: 0
-
+    .case WP_OPENCONSOLE ; void OpenConsole(BOOL)
         mov rbx,m_Home
         .if ( edi )
-
             GetConsoleMode(_coninpfh, &m_modeIn)
-
             .if GetConsoleScreenBufferInfo(_confh, &u.ci)
-
                 movzx   edx,u.ci.srWindow.Right
                 sub     dx,u.ci.srWindow.Left
                 inc     edx
@@ -5011,9 +4655,7 @@ WPARGS  ends
                 inc     eax
                 mov     m_rc.col,dl
                 mov     m_rc.row,al
-
                 .if malloc(GetWindowSize(m_rc))
-
                     mov Flags.Open,1
                     mov Flags.Visible,1
                     mov m_Window,rax
@@ -5024,11 +4666,8 @@ WPARGS  ends
             SetConsoleMode(_coninpfh, m_modeIn)
         .endif
 
-    .case WP_SETCONSOLE
 
-        ; wParam: BOOL
-        ; return: 0
-
+    .case WP_SETCONSOLE ; void SetConsoleMode(BOOL EnableMouse)
         mov edx,ENABLE_WINDOW_INPUT
         .if ( edi )
             or edx,ENABLE_MOUSE_INPUT
@@ -5036,15 +4675,9 @@ WPARGS  ends
         SetConsoleMode(_coninpfh, edx)
 
 
-    .case WP_PEEKMESSAGE
-
-        ; wParam:
-        ; lParam: PDMSG
-        ; return: BOOL
-
+    .case WP_PEEKMESSAGE ; BOOL PeekMessage(PDMSG)
         mov eax,m_msgCount
         .if ( eax )
-
             dec     eax
             imul    eax,eax,Message
             lea     rcx,m_msgStack
@@ -5058,11 +4691,7 @@ WPARGS  ends
 
     ; -- Config --
 
-    .case WP_GETSECTION
-
-        ; lParam: LPSTR
-        ; return: PDWND
-
+    .case WP_GETSECTION ; PDWND GetSection(LPSTR)
         .for ( rbx = m_Home : rbx : rbx = m_Next )
             .if ( m_Type == CT_SECTION  )
                 .break .ifd !strcmp(rsi, m_Text)
@@ -5071,59 +4700,38 @@ WPARGS  ends
         .return( rbx )
 
 
-    .case WP_GETENTRY
-
-        ; wParam: LPSTR
-        ; lParam: PDWND
-        ; return: PDWND
-
+    .case WP_GETENTRY ; PDWND GetEntry(LPSTR, PDWND)
         .for ( rbx = rsi, rbx = m_This : rbx : rbx = m_Next )
             .break .ifd !strcmp(rdi, m_Text)
         .endf
         .return( rbx )
 
 
-    .case WP_ADDSECTION
-
-        ; lParam: LPSTR
-        ; return: PDWND
-
+    .case WP_ADDSECTION ; PDWND AddSection(LPSTR)
         .if !WinProc(WP_GETSECTION, 0, rsi)
             gotosw(WP_NEW, MKID(CT_SECTION, ID_CONFIG), rsi, 0)
         .endif
         .return
 
-    .case WP_DELSECTION
-
-        ; wParam: LPSTR
-
+    .case WP_DELSECTION ; void DeleteSection(LPSTR)
         .if WinProc(WP_GETSECTION, 0, rdi)
             gotosw(WP_DESTROY, 0, rax, 0)
         .endif
 
 
-    .case WP_DELKEY
-
-        ; wParam: LPSTR
-        ; lParam: PDWND
-
+    .case WP_DELKEY ; void DeleteKey(LPSTR, PDWND)
         .if WinProc(WP_GETENTRY, rdi, rsi)
             gotosw(WP_DESTROY, 0, rax, 0)
         .endif
 
 
-    .case WP_PARSEINILINE
-
-        ; wParam: LPSTR
-        ; return: rax length, rdx start
-
+    .case WP_PARSEINILINE ; rax length, rdx start ParseConfigLine(LPSTR)
         mov rsi,rdi
         .while islspace([rsi])
             inc rsi
         .endw
         movzx eax,byte ptr [rsi]
         .if ( eax )
-
             .if ( eax == ';' )
                 .endc
             .elseif ( eax == '[' )
@@ -5166,37 +4774,26 @@ WPARGS  ends
         .return
 
 
-    .case WP_GETKEY
-
-        ; wParam: LPSTR
-        ; lParam: PDWND
-        ; return: DWORD { count }
-
+    .case WP_GETKEY ; DWORD GetKey(LPSTR, PDWND)
         mov rbx,rsi
         mov rsi,Section.m_LBuf
-
         .for ( edx = 0 : edx < MAXLBUF : edx++, rdi++ )
             mov al,[rdi]
             .break .if ( al == 0 || al == '=' )
             mov [rsi+rdx],al
         .endf
         .return( 0 ) .if ( al != '=' )
-
         xor eax,eax
         mov u1,eax
         mov [rsi+rdx],al
         inc rdi
-
         .if WinProc(WP_GETENTRY, rsi, rbx)
-
             mov esi,[rax].Doszip.Entry.m_Offset
             add rsi,[rax].Doszip.m_Text
         .else
             .return
         .endif
-
         .while ( byte ptr [rsi] )
-
             movzx eax,byte ptr [rdi]
             .break .if ( !eax )
             .while ( eax == ' ' )
@@ -5204,11 +4801,9 @@ WPARGS  ends
                 mov al,[rdi]
             .endw
             .break .if ( al != '%' )
-
             inc rdi
             mov al,[rdi]
             mov u2,4
-
             .switch eax
             .case 'X'
             .case 'x'
@@ -5278,13 +4873,9 @@ WPARGS  ends
         .return( u1 )
 
 
-    .case WP_READCONFIG
-
-        ; return: BOOL
-
+    .case WP_READCONFIG ; BOOL ReadConfig()
         mov rbx,m_Home
         .if _wfopen(m_Text, L"rt")
-
             .for ( fp = rax, rsi = m_LBuf, edi = 0 : fgets(rsi, MAXLINE*2, fp) : )
                 .ifd ( WinProc(WP_PARSEINILINE, rsi, rbx) == 1 )
                     .break .if !WinProc(WP_ADDSECTION, 0, rsi)
@@ -5299,20 +4890,13 @@ WPARGS  ends
         .return
 
 
-    .case WP_WRITECONFIG
-
-        ; return: BOOL
-
+    .case WP_WRITECONFIG ; BOOL WriteConfig()
         mov rbx,m_Home
         .if _wfopen(m_Text, L"wt")
-
             .for ( rsi = rax : rbx : rbx = m_Next )
-
                 .if ( m_Type == CT_SECTION )
-
                     fprintf(rsi, "[%s]\n", m_Text)
                     .for ( rdi = rbx, rbx = m_This : rbx : rbx = m_Next )
-
                         mov rcx,m_Text
                         mov edx,Entry.m_Offset
                         add rdx,rcx
@@ -5327,28 +4911,18 @@ WPARGS  ends
         .return
 
 
-    .case WP_SETKEY
-
-        ; wParam: LPSTR
-        ; lParam: PDWND
-        ; return: PDWND
-
+    .case WP_SETKEY ; PDWND SetKey(LPSTR, PDWND)
         mov rbx,rsi
         mov rsi,Line.m_TBuf
-
         .ifd vsprintf(rsi, rdi, &vParam)
-
             .ifd ( WinProc(WP_PARSEINILINE, rsi, rbx) == 2 )
-
                 mov rdi,rdx
                 mov byte ptr [rdi],0
                 .if ( byte ptr [rsi+1] != 0 )
                     WinProc(WP_DELKEY, rsi, rbx)
                 .endif
                 mov byte ptr [rdi],'='
-
                 .if WinProc(WP_NEW, MKID(CT_ENTRY, ID_CONFIG), rsi)
-
                     mov rbx,rax
                     sub rdi,rsi
                     inc edi
@@ -5362,14 +4936,8 @@ WPARGS  ends
         .return
 
 
-    .case WP_PROGRESSOPEN
-
-        ; wParam: LPWSTR
-        ; lParam: LPWSTR
-        ; return: BOOL
-
+    .case WP_PROGRESSOPEN ; BOOL ProgressOpen(LPWSTR, LPWSTR)
         .if WinProc(WP_CREATE, MKID(CT_DIALOG, ID_PROGRESS), m_Home)
-
             mov rbx,rax
             mov Flags,W_MOVEABLE or W_SHADE or W_TRANSPARENT or W_CAPTION
             mov m_rc,0x06480904
@@ -5380,7 +4948,6 @@ WPARGS  ends
             .endif
             WinProc(WP_OPENDIALOG, 0, rdi)
             .if ( rsi )
-
                 ;mov dl,at_background[B_Dialog]
                 ;or  dl,at_foreground[F_DialogKey]
                 mov eax,m_rc
@@ -5389,47 +4956,32 @@ WPARGS  ends
                 mov rc,eax
                 WinProc(WP_WRITEFORMAT, rc, L"%s\n  to", rsi)
             .endif
-            WinProc(WP_FILLCHARACTER, 0x01400404, U_LIGHT_SHADE)
+            WinProc(WP_FILLCHARACTER, 0x00400404, U_LIGHT_SHADE)
             gotosw(WP_SHOWWINDOW, TRUE, rbx, 0)
         .endif
 
-    .case WP_PROGRESSCLOSE
 
+    .case WP_PROGRESSCLOSE ; void ProgressClose()
         .if WinProc(WP_GETOBJECT, ID_PROGRESS, m_Home)
             gotosw(WP_DESTROY, 0, rax, 0)
         .endif
 
-    .case WP_PROGRESSSET
 
-        ; wParam: LPWSTR
-        ; lParam: LPWSTR
-        ; vParam: QWORD
-        ; return: BOOL
-
+    .case WP_PROGRESSSET ; void ProgressSet(LPWSTR, LPWSTR, QWORD)
         .if WinProc(WP_GETOBJECT, ID_PROGRESS, m_Home)
-
             SetClass(rax)
         .endif
 
-    .case WP_PROGRESSUPDATE
-
-        ; lParam: QWORD
-        ; return: BOOL
-
+    .case WP_PROGRESSUPDATE ; BOOL ProgressClose(QWORD)
         .if WinProc(WP_GETOBJECT, ID_PROGRESS, m_Home)
-
             SetClass(rax)
         .endif
 
 
-    .case WP_SAVESETUP
-
+    .case WP_SAVESETUP ; void SaveSetup()
         mov rbx,m_Home
-
         .if ( Setup.AutoSaveSetup )
-
             .if WinProc(WP_ADDSECTION, 0, "Configuration")
-
                 mov rsi,rax
                 lea rdi,at_foreground
                 assume rdi:ptr qword
@@ -5470,10 +5022,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SHOW
-
-        ; wParam: BOOL
-
+    .case WP_SHOW ; void ShowConsole(BOOL)
         mov rbx,m_Home
         .if ( edi )
             .if ( Setup.MenuBar )
@@ -5505,10 +5054,8 @@ WPARGS  ends
         WinProc(WP_SHOWCOMMANDLINE, FALSE, 0)
         WinProc(WP_OPENWINDOW, FALSE, m_PanelA)
         WinProc(WP_OPENWINDOW, FALSE, m_PanelB)
-
     .endsw
     .return( 0 )
-
     endp
 
 
@@ -5782,7 +5329,7 @@ WPARGS  ends
             .endif
             .break .if ( eax == 0 )
             movzx ecx,word ptr r2
-            or ecx,0x01010000
+            or ecx,0x00010000
             WinProc(WP_FILLCHARACTER, ecx, rax)
         .endf
         mov rbx,hwnd
@@ -5999,8 +5546,9 @@ WPARGS  ends
     mov rbx,m_Command
     mov Command.m_Path,rax
     mov rbx,rdi
+    WinProc(WP_NEW, MKID(CT_WINDOW, CI_PCELLA), 0)
     mov rbx,m_PanelA
-
+    mov Panel.m_Cell,rax
     GetCurrentDirectoryW(WMAXPATH, Panel.m_srcPath)
     wcscpy(Panel.m_srcMask, L"*.*")
     mov Panel.Flags,PanelClass.Flags {}
@@ -6016,7 +5564,9 @@ WPARGS  ends
     .endif
 
     mov rbx,rdi
+    WinProc(WP_NEW, MKID(CT_WINDOW, CI_PCELLB), 0)
     mov rbx,m_PanelB
+    mov Panel.m_Cell,rax
     GetCurrentDirectoryW(WMAXPATH, Panel.m_srcPath)
     wcscpy(Panel.m_srcMask, L"*.*")
     mov Panel.Flags,PanelClass.Flags {}
@@ -6048,7 +5598,6 @@ WPARGS  ends
 
 
  Doszip::Release proc uses rsi rdi
-
     mov rbx,m_Home
     WinProc(WP_OPENCONSOLE, FALSE, 0)
     WinProc(WP_SAVESETUP, 0, 0)
@@ -6060,55 +5609,382 @@ WPARGS  ends
     ret
     endp
 
+.pragma aux(eax, edx, ecx)
 
- Doszip::ReadRootdir proc uses rsi rdi pPanel:PDWND
+ Doszip::PutMini proc uses rsi rdi panel:PDWND
 
+   .new dc:PDWND
+   .new rc:TRECT, ro
+   .new rc_size:TRECT
+   .new rc_time:TRECT
+   .new rc_date:TRECT
+   .new ft:FILETIME
+   .new ts:SYSTEMTIME
+   .new MaximumComponentLength:size_t, FileSystemFlags
+   .new FreeBytesAvailable:qword
+   .new TotalNumberOfBytes:qword
+   .new TotalNumberOfFreeBytes:qword
+   .new RootPathName[4]:wchar_t
+   .new FileSystemName[32]:wchar_t
+   .new VolumeName[64]:wchar_t
+
+    ldr rbx,panel
+    mov rsi,WinProc(WP_PCURITEM, 0, rbx)
+    .if ( !Flags.Visible || !Panel.Flags.MiniStatus || !rax )
+        .return
+    .endif
+    mov ro,m_rc
+    mov ecx,eax
+    shr ecx,16
+    movzx eax,ax
+    inc eax
+    sub ch,2
+    add ah,ch
+    sub cl,2
+    mov ch,1
+    .if ( Panel.Flags.DriveInfo )
+        sub ah,3
+        mov ch,4
+    .endif
+    shl ecx,16
+    or  eax,ecx
+    mov m_rc,eax
+    xor ax,ax
+    mov rc,eax
+    mov dc,WinProc(WP_BEGINPAINT, 0, rbx)
+    WinProc(WP_PANELCLEAR, 0, rbx)
+    mov al,rc.row
+    dec al
+    add rc.y,al
+    WinProc(WP_GETFILEAT, 0, rsi)
+    mov rc.row,al
+    mov rc_time,rc
+    mov rc_date,eax
+    mov rc_size,eax
+    mov rc_time.col,5
+    mov rc_date.col,8
+    mov rc_size.col,10
+    shr eax,16
+    sub eax,5
+    mov rc_time.x,al
+    sub eax,9
+    mov rc_date.x,al
+    sub eax,12
+    mov rc_size.x,al
+    sub eax,2
+    mov rc.col,al
+
+    .if ( [rsi].Doszip.File.m_Attributes & _A_SUBDIR )
+        lea rdx,@CStr(L"SUBDIR")
+        .if ( [rsi].Doszip.File.Flags.UpDir )
+            lea rdx,@CStr(L"UP-DIR")
+        .endif
+    .else
+        .ifd ( _swprintf(&VolumeName, L"%10lu", [rsi].Doszip.File.m_Size) > 10 )
+            _swprintf(&VolumeName, L"%9uM", aullshr([rsi].Doszip.File.m_Size, 20))
+        .endif
+        lea rdx,VolumeName
+    .endif
+    WinProc(WP_WRITESTRING, rc_size, rdx)
+    FileTimeToLocalFileTime( &[rsi].Doszip.File.m_Time, &ft )
+    FileTimeToSystemTime( &ft, &ts )
+    SystemDateToStringW(&VolumeName, &ts)
+    lea rcx,VolumeName
+    movzx eax,VolumeName[4]
+    .if ( eax >= '0' && eax <= '9' )
+        add rcx,4
+    .else
+        mov eax,[rcx+16]
+        mov [rcx+12],eax
+    .endif
+    WinProc(WP_WRITESTRING, rc_date, rcx)
+    SystemTimeToStringW(&VolumeName, &ts)
+    WinProc(WP_WRITESTRING, rc_time, &VolumeName)
+    mov rdi,[rsi].Doszip.m_UText
+    wcslen(rdi)
+    movzx ecx,rc.col
+    .if ( eax > ecx )
+        sub eax,ecx
+        add eax,eax
+        add rdi,rax
+    .endif
+    WinProc(WP_WRITESTRING, rc, rdi)
+    .if ( m_rc.row > 1 )
+
+        mov rcx,Panel.m_srcPath
+        mov eax,[rcx]
+        movzx edx,word ptr [rcx+4]
+        mov dword ptr RootPathName,eax
+        mov dword ptr RootPathName[4],edx
+
+        mov al,m_rc.col
+        sub al,3
+        mov rc.col,al
+        inc rc.x
+        sub rc.y,3
+        .ifd GetVolumeInformationW(
+                &RootPathName,
+                &VolumeName,
+                lengthof(VolumeName),
+                0,
+                &MaximumComponentLength,
+                &FileSystemFlags,
+                &FileSystemName,
+                lengthof(FileSystemName) )
+            WinProc(WP_WRITEFORMAT, rc, L"%-16s %18s", &VolumeName, &FileSystemName)
+        .endif
+        GetDiskFreeSpaceExW(&RootPathName, &FreeBytesAvailable, &TotalNumberOfBytes, &TotalNumberOfFreeBytes)
+        inc rc.y
+        mov rc.x,1
+        WinProc(WP_WRITEFORMAT, rc, L"Size: %24llu %uG", TotalNumberOfBytes, aullshr(TotalNumberOfBytes, 30))
+        inc rc.y
+        WinProc(WP_WRITEFORMAT, rc, L"Free: %24llu %uG", FreeBytesAvailable, aullshr(FreeBytesAvailable, 30))
+    .endif
+    WinProc(WP_ENDPAINT, dc, rbx)
+    mov m_rc,ro
+    ret
+    endp
+
+
+ Doszip::PutItem proc uses rsi rdi panel:PDWND, file:PDWND, rc:TRECT
+
+   .new rc_name:TRECT
+   .new rc_size:TRECT
+   .new rc_time:TRECT
+   .new rc_date:TRECT
+   .new rc_ext:TRECT
+   .new rc_sys:TRECT
+   .new rc_max:TRECT
+   .new len:DWORD
+   .new ext:LPWSTR
+   .new ft:FILETIME
+   .new ts:SYSTEMTIME
+   .new buffer[64]:wchar_t
+
+    ldr rbx,panel
+    ldr rsi,file
+
+    xor eax,eax
+    lea rdi,ext
+    mov ecx,9
+    rep stosd
+    mov edi,ldr(rc)
+    WinProc(WP_GETFILEAT, 0, rsi)
+    shl eax,24
+    and edi,0x00FFFFFF
+    or  edi,eax
+    mov edx,edi
+    and edx,0xFF00FFFF
+    or  edx,0x00010000
+    mov ecx,Panel.m_celType
+    .switch ecx
+    .case HorizontalShortDetail
+    .case HorizontalLongDetail
+    .case VerticalShortDetail
+        mov rc_max,edx
+        add edx,0x00020000 ; 3
+        mov rc_ext,edx
+        add edx,0x00020000 ; 5
+        mov rc_time,edx
+        add edx,0x00030000 ; 8
+        mov rc_date,edx
+        add edx,0x00020000 ; 10
+        mov rc_size,edx
+        mov eax,edi
+        shr eax,16
+        sub eax,5
+        mov rc_time.x,al
+        sub eax,9
+        mov rc_date.x,al
+        sub eax,11
+        mov rc_size.x,al
+        sub eax,4
+        mov rc_ext.x,al
+        sub eax,2
+        mov rc_max.x,al
+        mov rc_name,edi
+        inc eax
+        mov rc_name.col,al
+        .if ( ecx != VerticalShortDetail )
+            mov eax,5
+            sub rc_name.col,al
+            sub rc_ext.x,al
+            sub rc_max.x,al
+            add rc_ext.col,al
+        .endif
+        .endc
+    .case HorizontalShortList
+    .case VerticalShortList
+        add dl,7
+        mov rc_max,edx
+        add edx,0x00020002
+        mov rc_ext,edx
+        sub edi,0x00050000
+        mov rc_name,edi
+       .endc
+    .case VerticalLongDetail
+        mov rc_max,edx
+        add edx,0x00020000 ; 3
+        mov rc_ext,edx
+        add edx,0x00050000 ; 8
+        mov rc_date,edx
+        add edx,0x00020000 ; 10
+        mov rc_size,edx
+        mov eax,edi
+        shr eax,16
+        sub eax,8
+        mov rc_date.x,al
+        sub eax,11
+        mov rc_size.x,al
+        sub eax,4
+        mov rc_ext.x,al
+        sub eax,2
+        mov rc_max.x,al
+        mov rc_name,edi
+        inc eax
+        mov rc_name.col,al
+       .endc
+    .default
+        sub edi,0x00010000
+        mov rc_name,edi
+        mov rc_max,edx
+        mov al,rc_name.col
+        dec al
+        mov rc_max.x,al
+    .endsw
+    .if ( [rsi].Doszip.File.m_Attributes & _A_SYSTEM )
+        mov ecx,rc_max
+        inc ecx
+        WinProc(WP_FILLCHARINFO, ecx, MKAT(BG_PANEL, FG_SYSTEM, U_LIGHT_SHADE))
+    .endif
+    .if ( rc_size )
+        .if ( [rsi].Doszip.File.m_Attributes & _A_SUBDIR )
+            option codepage:65001
+            lea rdx,@CStr(L"\xE2\x96\xB6 SUBDIR \xE2\x97\x80")
+            .if ( [rsi].Doszip.File.Flags.UpDir )
+                lea rdx,@CStr(L"\xE2\x96\xB6 UP-DIR \xE2\x97\x80")
+            .endif
+            option codepage:0
+        .else
+            .ifd ( _swprintf(&buffer, L"%10lu", [rsi].Doszip.File.m_Size) > 10 )
+                _swprintf(&buffer, L"%9uM", aullshr([rsi].Doszip.File.m_Size, 20))
+            .endif
+            lea rdx,buffer
+        .endif
+        WinProc(WP_WRITESTRING, rc_size, rdx)
+    .endif
+    .if ( rc_date )
+        FileTimeToLocalFileTime( &[rsi].Doszip.File.m_Time, &ft )
+        FileTimeToSystemTime( &ft, &ts )
+        SystemDateToStringW(&buffer, &ts)
+        lea rcx,buffer
+        movzx eax,buffer[4]
+        .if ( eax >= '0' && eax <= '9' )
+            add rcx,4
+        .else
+            mov eax,[rcx+16]
+            mov [rcx+12],eax
+        .endif
+        WinProc(WP_WRITESTRING, rc_date, rcx)
+    .endif
+    .if ( rc_time )
+        SystemTimeToStringW(&buffer, &ts)
+        WinProc(WP_WRITESTRING, rc_time, &buffer)
+    .endif
+    mov edi,wcslen([rsi].Doszip.m_UText)
+    .if ( rc_ext && !( [rsi].Doszip.File.m_Attributes & _A_SUBDIR ) )
+        .if _wstrext([rsi].Doszip.m_UText)
+            mov rdi,rax
+            sub rdi,[rsi].Doszip.m_UText
+            shr edi,1
+            add rax,2
+            WinProc(WP_WRITESTRING, rc_ext, rax)
+        .endif
+    .endif
+    movzx eax,rc_name.col
+    .if ( edi < eax )
+        mov eax,edi
+        mov rc_name.col,al
+    .endif
+    WinProc(WP_WRITESTRING, rc_name, [rsi].Doszip.m_UText)
+    movzx eax,rc_name.col
+    .if ( edi > eax )
+        WinProc(WP_FILLCHARINFO, rc_max, MKAT(BG_PANEL, FG_PANEL, U_RIGHT_DOUBLE_QUOTE))
+    .endif
+    ret
+    endp
+
+
+ Doszip::SortFiles proc uses rsi rdi pPanel:PDWND
+    ldr rbx,pPanel
+    ret
+    endp
+
+
+ Doszip::ReadSubdir proc uses rsi rdi pPanel:PDWND
+
+   .new ff:WIN32_FIND_DATAW
    .new count:DWORD = 0
-   .new path[4]:WCHAR
+   .new updir:PDWND
 
     ldr rbx,pPanel
-
     WinProc(WP_DESTROY, TRUE, m_This)
-    mov Panel.Flags.Archive,0
-    mov Panel.Flags.DriveNetwork,0
-    mov Panel.Flags.RootDir,1
-    mov eax,':' shl 16
-    mov edx,'\'
-    mov dword ptr path,eax
-    mov dword ptr path[4],edx
-    mov edi,GetLogicalDrives()
-
-    .for ( esi = 0 : esi < MAXDRIVES : esi++ )
-
-        bt edi,esi
-        .ifc
-
-            lea eax,[rsi+'A']
-            mov path,ax
-            .ifd ( GetDriveTypeW(&path) > 1 )
-                mov ecx,esi
-                shl ecx,16
-                mov cx,CT_FILE
-                .if WinProc(WP_NEW, ecx, &path)
-                    inc count
-                    mov [rax].Doszip.File.Flags.RootDir,1
-                    mov [rax].Doszip.File.m_Attributes,_A_VOLID
+    mov Panel.Flags.RootDir,0
+    .if !WinProc(WP_NEW, CT_FILE, L"..")
+        .return
+    .endif
+    inc count
+    mov updir,rax
+    mov [rax].Doszip.File.Flags.UpDir,1
+    mov [rax].Doszip.File.m_Attributes,_A_SUBDIR
+    mov rdi,Panel.m_srcPath
+    mov rsi,rdi
+    .if ( Panel.m_srcPath )
+        lea rsi,[rdi+wcslen(rdi)*2]
+        wcscpy(rsi, L"\\")
+    .endif
+    wcscat(rsi, Panel.m_srcMask)
+    .ifd ( FindFirstFileW(rdi, &ff) != -1 )
+        mov rdi,rax
+        xor eax,eax
+        mov [rsi],eax
+        mov rsi,m_Home
+        .repeat
+            mov eax,dword ptr ff.cFileName
+            .if ( eax == '.' )
+            .elseif ( ( eax == ('.' or ('.' shl 16)) ) && ff.cFileName[4] == 0 )
+                mov rcx,updir
+                mov [rcx].Doszip.File.m_LSize,ff.nFileSizeLow
+                mov [rcx].Doszip.File.m_HSize,ff.nFileSizeHigh
+                mov [rcx].Doszip.File.m_Attributes,ff.dwFileAttributes
+                mov [rcx].Doszip.File.m_Time,ff.ftCreationTime
+            .else
+                lea rcx,ff.cFileName
+                .if ( !Panel.Flags.LongNames &&
+                      [rsi].Doszip.Setup.UseShortNames && ff.cAlternateFileName )
+                    lea rcx,ff.cAlternateFileName
                 .endif
+                .break .if !WinProc(WP_NEW, CT_FILE, rcx)
+                mov rcx,rax
+                mov [rcx].Doszip.File.m_LSize,ff.nFileSizeLow
+                mov [rcx].Doszip.File.m_HSize,ff.nFileSizeHigh
+                mov [rcx].Doszip.File.m_Attributes,ff.dwFileAttributes
+                .if ( eax & _A_SUBDIR )
+                    mov [rcx].Doszip.File.m_Time,ff.ftCreationTime
+                .else
+                    mov [rcx].Doszip.File.m_Time,ff.ftLastWriteTime
+                .endif
+                inc count
             .endif
-        .endif
-    .endf
+        .untild !FindNextFileW(rdi, &ff)
+        FindClose(rdi)
+    .endif
+    .if ( !Panel.Flags.NoSort && count > 2 )
+        SortFiles(rbx)
+    .endif
     .return( count )
     endp
 
-
- Doszip::ReadSubdir proc pPanel:PDWND
-
-    ldr rbx,pPanel
-
-    WinProc(WP_DESTROY, TRUE, m_This)
-    mov Panel.Flags.RootDir,0
-    ret
-    endp
 
  Doszip::Run proc
 

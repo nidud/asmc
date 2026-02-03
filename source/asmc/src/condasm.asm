@@ -426,6 +426,12 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             add rbx,asm_tok
 
+        .elseif ( al == T_REG && [rbx+asm_tok].token == T_FINAL )
+
+            ; v2.37.72: This works in Masm/JWasm, so..
+
+            mov esi,BLOCK_ACTIVE
+            add rbx,asm_tok
         .endif
 
         .if ( [rbx].token != T_FINAL )

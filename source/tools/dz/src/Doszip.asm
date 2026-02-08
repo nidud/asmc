@@ -18,6 +18,8 @@ gotosw proto asmcall :abs, :WPARAM, :LPARAM, :abs=<1> {
     .gotosw(_4:_1)
     }
 
+.pragma aux(eax, edx, ecx)
+
 .data?
  m_dz           PDWND ?
  m_B1           LPWSTR ?
@@ -76,8 +78,17 @@ Input   INPUT_RECORD <>
 msg     Message <>
 cu      CONSOLE_CURSOR_INFO <>
 ci      CONSOLE_SCREEN_BUFFER_INFO <>
-ft      FILETIME <>
-ts      SYSTEMTIME <>
+struct
+ ft     FILETIME <>
+ ts     SYSTEMTIME <>
+ends
+struct
+ MaximumComponentLength size_t ?
+ FileSystemFlags        size_t ?
+ FreeBytesAvailable     qword ?
+ TotalNumberOfBytes     qword ?
+ TotalNumberOfFreeBytes qword ?
+ends
 WPARGS  ends
 
 .code
@@ -2770,7 +2781,7 @@ WPARGS  ends
         .endif
 
 
-    .case WP_SETCOMMANDLINE ; void SetCommandLine(LPWSTR)
+    .case WP_SETCOMMANDLINE ; void SetCommandLine(Panel PDWND)
         mov rbx,m_Home
         mov rbx,m_Command
         mov Command.m_Path,rsi
@@ -3266,72 +3277,281 @@ WPARGS  ends
         .return
 
 
-    .case WP_PPUTITEMS ; void PanelPutItems(PDWND)
+    .case WP_PANELMINI ; void PanelPutMinistatus(Panel PDWND)
         mov rbx,rsi
-        .if ( !Flags.Visible )
+        mov rdx,m_Home
+        mov rdi,[rdx].Doszip.m_TBuf
+        mov rsi,WinProc(WP_PCURITEM, 0, rbx)
+        .if ( !Flags.Visible || !Panel.Flags.MiniStatus || !rax )
             .return
         .endif
-        .for ( ecx = Panel.m_fcbIndex,
-               rsi = m_This : ecx && rsi : ecx--,
-               rsi = [rsi].Doszip.m_Next )
-        .endf
-        .if ( rsi == NULL )
-            .return
+        mov r2,m_rc
+        mov ecx,eax
+        shr ecx,16
+        movzx eax,ax
+        inc eax
+        sub ch,2
+        add ah,ch
+        sub cl,2
+        mov ch,1
+        .if ( Panel.Flags.DriveInfo )
+            sub ah,3
+            mov ch,4
         .endif
-        mov rc,m_rc
-        add eax,0x0201
-        sub eax,0x03020000
-        .if ( Panel.Flags.MiniStatus )
-            sub eax,0x02000000
-            .if ( Panel.Flags.DriveInfo )
-                sub eax,0x03000000
+        shl ecx,16
+        or  eax,ecx
+        mov m_rc,eax
+        xor ax,ax
+        mov rc,eax
+        mov hwnd,WinProc(WP_BEGINPAINT, 0, rbx)
+        WinProc(WP_PANELCLEAR, 0, rbx)
+        mov al,rc.row
+        dec al
+        add rc.y,al
+        WinProc(WP_GETFILEAT, 0, rsi)
+        mov rc.row,al
+        mov rr,rc
+        mov rl,eax
+        mov rr.col,5
+        mov rl.col,10
+        shr eax,16
+        sub eax,5
+        mov rr.x,al
+        sub eax,12+9
+        mov rl.x,al
+        sub eax,2
+        mov rc.col,al
+        .if ( [rsi].Doszip.File.m_Attributes & _A_SUBDIR )
+            lea rdx,@CStr(L"SUBDIR")
+            .if ( [rsi].Doszip.File.Flags.UpDir )
+                lea rdx,@CStr(L"UP-DIR")
             .endif
-        .endif
-        mov edi,eax
-        .if ( Panel.m_fcbCount )
-            mov u1,WinProc(WP_PCELLOPEN, FALSE, rbx)
-            WinProc(WP_PCELLSET, 0, rbx)
-            mov m_rc,edi
-            mov hwnd,WinProc(WP_BEGINPAINT, 0, rbx)
-            WinProc(WP_PANELCLEAR, 0, rbx)
-            .for ( edi = 0 : rsi && edi < Panel.m_celCount : edi++, rsi = [rsi].Doszip.m_Next )
-                PutItem(rbx, rsi, WinProc(WP_PCELLGETRC, edi, rbx))
-            .endf
-            WinProc(WP_ENDPAINT, hwnd, rbx)
-            mov m_rc,rc
-            .if u1
-                WinProc(WP_PCELLSHOW, TRUE, rbx)
-            .endif
-            PutMini(rbx)
         .else
-            WinProc(WP_PCELLOPEN, FALSE, rbx)
-            WinProc(WP_PCELLSET, 0, rbx)
-            mov m_rc,edi
-            mov rsi,WinProc(WP_BEGINPAINT, 0, rbx)
-            WinProc(WP_PANELCLEAR, 0, rbx)
-            WinProc(WP_ENDPAINT, rsi, rbx)
-            mov m_rc,rc
-            mov Panel.Flags.Archive,0
-            mov Panel.Flags.RootDir,0
+            .ifd ( _swprintf(rdi, L"%10lu", [rsi].Doszip.File.m_Size) > 10 )
+                _swprintf(rdi, L"%9uM", aullshr([rsi].Doszip.File.m_Size, 20))
+            .endif
+            mov rdx,rdi
+        .endif
+        WinProc(WP_WRITESTRING, rl, rdx)
+        FileTimeToLocalFileTime(&[rsi].Doszip.File.m_Time, &u.ft)
+        FileTimeToSystemTime(&u.ft, &u.ts)
+        SystemDateToStringW(rdi, &u.ts)
+        mov rcx,rdi
+        movzx eax,word ptr [rdi+4]
+        .if ( eax >= '0' && eax <= '9' )
+            add rcx,4
+        .else
+            mov eax,[rcx+16]
+            mov [rcx+12],eax
+        .endif
+        mov rl.col,8
+        add rl.x,12
+        WinProc(WP_WRITESTRING, rl, rcx)
+        SystemTimeToStringW(rdi, &u.ts)
+        WinProc(WP_WRITESTRING, rr, rdi)
+        mov rsi,[rsi].Doszip.m_Text
+        wcslen(rsi)
+        movzx ecx,rc.col
+        .if ( eax > ecx )
+            sub eax,ecx
+            add eax,eax
+            add rsi,rax
+        .endif
+        WinProc(WP_WRITESTRING, rc, rsi)
+        .if ( m_rc.row > 1 )
+            mov rcx,Panel.m_srcPath
+            mov eax,[rcx]
+            movzx edx,word ptr [rcx+4]
+            mov [rdi],eax
+            mov [rdi+4],edx
+            lea rsi,[rdi+16]
+            mov al,m_rc.col
+            sub al,3
+            mov rc.col,al
+            inc rc.x
+            sub rc.y,3
+            .ifd GetVolumeInformationW(rdi, rsi, 64, 0, &u.MaximumComponentLength, &u.FileSystemFlags, &[rsi+128], 32)
+                WinProc(WP_WRITEFORMAT, rc, L"%-16s %18s", rsi, &[rsi+128])
+            .endif
+            GetDiskFreeSpaceExW(rdi, &u.FreeBytesAvailable, &u.TotalNumberOfBytes, &u.TotalNumberOfFreeBytes)
+            inc rc.y
+            mov rc.x,1
+            WinProc(WP_WRITEFORMAT, rc, L"Size: %24llu %uG", u.TotalNumberOfBytes, aullshr(u.TotalNumberOfBytes, 30))
+            inc rc.y
+            WinProc(WP_WRITEFORMAT, rc, L"Free: %24llu %uG", u.FreeBytesAvailable, aullshr(u.FreeBytesAvailable, 30))
+        .endif
+        WinProc(WP_ENDPAINT, hwnd, rbx)
+        mov m_rc,r2
+
+
+    .case WP_PPUTITEM ; void PanelPutItem(TRECT, File PDWND)
+        xor eax,eax
+        mov u1,eax ; Max
+        mov u2,eax ; Ext
+        mov r2,eax ; Date
+        mov rl,eax ; Size
+        mov rr,eax ; Time
+        WinProc(WP_GETFILEAT, 0, rsi)
+        shl eax,24
+        and edi,0x00FFFFFF
+        or  edi,eax
+        mov edx,edi
+        and edx,0xFF00FFFF
+        or  edx,0x00010000
+        mov ecx,Panel.m_celType
+        .switch ecx
+        .case HorizontalShortDetail
+        .case HorizontalLongDetail
+        .case VerticalShortDetail
+            mov u1,edx
+            add edx,0x00020000 ; 3
+            mov u2,edx
+            add edx,0x00020000 ; 5
+            mov rr,edx
+            add edx,0x00030000 ; 8
+            mov r2,edx
+            add edx,0x00020000 ; 10
+            mov rl,edx
+            mov eax,edi
+            shr eax,16
+            sub eax,5
+            mov rr.x,al
+            sub eax,9
+            mov r2.x,al
+            sub eax,11
+            mov rl.x,al
+            sub eax,4
+            mov byte ptr u2,al
+            sub eax,2
+            mov byte ptr u1,al
+            mov rc,edi
+            inc eax
+            mov rc.col,al
+            .if ( ecx != VerticalShortDetail )
+                mov eax,5
+                sub rc.col,al
+                sub byte ptr u2,al
+                sub byte ptr u1,al
+                shl eax,16
+                add u2,eax
+            .endif
+            .endc
+        .case HorizontalShortList
+        .case VerticalShortList
+            add dl,7
+            mov u1,edx
+            add edx,0x00020002
+            mov u2,edx
+            sub edi,0x00050000
+            mov rc,edi
+           .endc
+        .case VerticalLongDetail
+            mov u1,edx
+            add edx,0x00020000 ; 3
+            mov u2,edx
+            add edx,0x00050000 ; 8
+            mov r2,edx
+            add edx,0x00020000 ; 10
+            mov rl,edx
+            mov eax,edi
+            shr eax,16
+            sub eax,8
+            mov r2.x,al
+            sub eax,11
+            mov rl.x,al
+            sub eax,4
+            mov byte ptr u2,al
+            sub eax,2
+            mov byte ptr u1,al
+            mov rc,edi
+            inc eax
+            mov rc.col,al
+           .endc
+        .default
+            sub edi,0x00010000
+            mov rc,edi
+            mov u1,edx
+            mov al,rc.col
+            dec al
+            add byte ptr u1,al
+        .endsw
+        .if ( [rsi].Doszip.File.m_Attributes & _A_SYSTEM )
+            mov ecx,u1
+            inc ecx
+            WinProc(WP_FILLCHARINFO, ecx, MKAT(BG_PANEL, FG_SYSTEM, U_LIGHT_SHADE))
+        .endif
+        mov rdx,m_Home
+        mov rdi,[rdx].Doszip.m_TBuf
+        .if ( rl )
+            .if ( [rsi].Doszip.File.m_Attributes & _A_SUBDIR )
+                option codepage:65001
+                lea rdx,@CStr(L"\xE2\x96\xB6 SUBDIR \xE2\x97\x80")
+                .if ( [rsi].Doszip.File.Flags.UpDir )
+                    lea rdx,@CStr(L"\xE2\x96\xB6 UP-DIR \xE2\x97\x80")
+                .endif
+                option codepage:0
+            .else
+                .ifd ( _swprintf(rdi, L"%10lu", [rsi].Doszip.File.m_Size) > 10 )
+                    _swprintf(rdi, L"%9uM", aullshr([rsi].Doszip.File.m_Size, 20))
+                .endif
+                mov rdx,rdi
+            .endif
+            WinProc(WP_WRITESTRING, rl, rdx)
+        .endif
+        .if ( r2 )
+            FileTimeToLocalFileTime(&[rsi].Doszip.File.m_Time, &u.ft)
+            FileTimeToSystemTime(&u.ft, &u.ts)
+            SystemDateToStringW(rdi, &u.ts)
+            mov rcx,rdi
+            movzx eax,word ptr [rdi+4]
+            .if ( eax >= '0' && eax <= '9' )
+                add rcx,4
+            .else
+                mov eax,[rcx+16]
+                mov [rcx+12],eax
+            .endif
+            WinProc(WP_WRITESTRING, r2, rcx)
+        .endif
+        .if ( rr )
+            SystemTimeToStringW(rdi, &u.ts)
+            WinProc(WP_WRITESTRING, rr, rdi)
+        .endif
+        mov edi,wcslen([rsi].Doszip.m_Text)
+        .if ( u2 && !( [rsi].Doszip.File.m_Attributes & _A_SUBDIR ) )
+            .if _wstrext([rsi].Doszip.m_Text)
+                mov rdi,rax
+                sub rdi,[rsi].Doszip.m_Text
+                shr edi,1
+                add rax,2
+                WinProc(WP_WRITESTRING, u2, rax)
+            .endif
+        .endif
+        movzx eax,rc.col
+        .if ( edi < eax )
+            mov eax,edi
+            mov rc.col,al
+        .endif
+        WinProc(WP_WRITESTRING, rc, [rsi].Doszip.m_Text)
+        movzx eax,rc.col
+        .if ( edi > eax )
+            WinProc(WP_FILLCHARINFO, u1, MKAT(BG_PANEL, FG_PANEL, U_RIGHT_DOUBLE_QUOTE))
         .endif
 
-    .case WP_PCELLSET ; int PCellSet(PDWND)
-        mov rbx,rsi
-        movzx eax,Panel.m_XCells
-        movzx edx,Panel.m_YCells
-        mul edx
-        mov edx,Panel.m_fcbCount
-        sub edx,Panel.m_fcbIndex
-        .if eax >= edx
-            mov eax,edx
-        .endif
-        mov Panel.m_celCount,eax
-        mov edx,Panel.m_fcbIndex
-        .if edx < eax
-            mov eax,edx
-        .else
-            dec eax
-        .endif
+
+    .case WP_PCELLSET ; int PCellSet(Panel PDWND)
+        mov     rbx,rsi
+        movzx   eax,Panel.m_XCells
+        movzx   edx,Panel.m_YCells
+        mul     edx
+        mov     edx,Panel.m_fcbCount
+        sub     edx,Panel.m_fcbIndex
+        cmp     eax,edx
+        cmovae  eax,edx
+        mov     Panel.m_celCount,eax
+        mov     edx,Panel.m_celIndex
+        cmp     edx,eax
+        lea     eax,[rax-1]
+        cmovb   eax,edx
         mov     Panel.m_celIndex,eax
         xor     edx,edx
         movzx   edi,Panel.m_YCells
@@ -3354,7 +3574,7 @@ WPARGS  ends
        .return
 
 
-    .case WP_PCELLGETRC ; TRECT PCellGetRC(DWORD, PDWND)
+    .case WP_PCELLGETRC ; TRECT PCellGetRC(DWORD, Panel PDWND)
         mov     rbx,rsi
         mov     ecx,edi
         movzx   edi,Panel.m_YCells
@@ -3373,7 +3593,8 @@ WPARGS  ends
         sub     ah,m_rc.y
        .return
 
-    .case WP_PCELLOPEN ; void PCellOpen(BOOL, PDWND)
+
+    .case WP_PCELLOPEN ; void PCellOpen(BOOL, Panel PDWND)
         mov rbx,rsi
         .if ( edi == FALSE )
             xor eax,eax
@@ -3384,6 +3605,7 @@ WPARGS  ends
         .endif
         mov rbx,Panel.m_Cell
         .ifd WinProc(WP_OPENWINDOW, TRUE, rbx)
+            mov Flags.Color,1
             .ifd WinProc(WP_READWINDOW, m_rc, m_Window)
                 movzx edi,m_rc.col
                 shl edi,16
@@ -3403,15 +3625,21 @@ WPARGS  ends
             xor eax,eax
             .if ( eax != Panel.m_celCount )
                 WinProc(WP_PCELLOPEN, TRUE, rbx)
-                WinProc(WP_SHOWWINDOW, TRUE, rbx)
+                WinProc(WP_SHOWWINDOW, TRUE, rdi)
                 mov eax,1
             .endif
         .endif
        .return
 
 
-    .case WP_PANELMSG  ; void PanelMsg(PDWND)
+    .case WP_PCELLUPDATE
+        mov rbx,rsi
+        .ifd WinProc(WP_PCELLOPEN, FALSE, rbx)
+            WinProc(WP_PCELLSHOW, 0, rbx)
+            .gotosw(WP_PANELMINI)
+        .endif
 
+    .case WP_PANELMSG  ; void PanelMsg(PDWND)
 
     .case WP_PANELINFO ; void PanelInfo(PDWND)
         .ifd WinProc(WP_PANELSTATE, 0, rsi)
@@ -3455,6 +3683,79 @@ WPARGS  ends
         .endif
 
 
+    .case WP_PPUTITEMS ; void PanelPutItems(Panel PDWND)
+        mov rbx,rsi
+        .if ( !Flags.Visible )
+            .return
+        .endif
+        .for ( ecx = Panel.m_fcbIndex, rsi = m_This : ecx && rsi : ecx--, rsi = [rsi].Doszip.m_Next )
+        .endf
+        .return .if ( rsi == NULL )
+        mov rc,m_rc
+        add eax,0x0201
+        sub eax,0x03020000
+        .if ( Panel.Flags.MiniStatus )
+            sub eax,0x02000000
+            .if ( Panel.Flags.DriveInfo )
+                sub eax,0x03000000
+            .endif
+        .endif
+        mov edi,eax
+        .if ( Panel.m_fcbCount )
+            mov u1,WinProc(WP_PCELLOPEN, FALSE, rbx)
+            WinProc(WP_PCELLSET, 0, rbx)
+            mov m_rc,edi
+            mov hwnd,WinProc(WP_BEGINPAINT, 0, rbx)
+            WinProc(WP_PANELCLEAR, 0, rbx)
+            .for ( edi = 0 : rsi && edi < Panel.m_celCount : edi++, rsi = [rsi].Doszip.m_Next )
+                WinProc(WP_PPUTITEM, WinProc(WP_PCELLGETRC, edi, rbx), rsi)
+            .endf
+            WinProc(WP_ENDPAINT, hwnd, rbx)
+            mov m_rc,rc
+            .if u1
+                WinProc(WP_PCELLSHOW, TRUE, rbx)
+            .endif
+            WinProc(WP_PANELMINI, 0, rbx)
+        .else
+            WinProc(WP_PCELLOPEN, FALSE, rbx)
+            WinProc(WP_PCELLSET, 0, rbx)
+            mov m_rc,edi
+            mov rsi,WinProc(WP_BEGINPAINT, 0, rbx)
+            WinProc(WP_PANELCLEAR, 0, rbx)
+            WinProc(WP_ENDPAINT, rsi, rbx)
+            mov m_rc,rc
+            mov Panel.Flags.Archive,0
+            mov Panel.Flags.RootDir,0
+        .endif
+
+
+    .case WP_ACTIVATEPANEL ; void ActivatePanel(BOOL, Panel PDWND)
+        mov rbx,rsi
+        mov rdi,m_Home
+        mov rsi,[rdi].Doszip.m_CPanel
+        mov [rdi].Doszip.Panels.PanelID,0
+        .if ( Panel.Flags.PanelID )
+            mov [rdi].Doszip.Panels.PanelID,1
+        .endif
+        WinProc(WP_SETCOMMANDLINE, 0, rbx)
+        WinProc(WP_PCELLOPEN, FALSE, rsi)
+        mov [rdi].Doszip.m_CPanel,rbx
+        WinProc(WP_PANELINFO, 0, rsi)
+        .if ( [rdi].Doszip.Panels.WideView )
+            .if ( rsi != rbx )
+                .ifd WinProc(WP_PANELSTATE, 0, rbx)
+                    WinProc(WP_HIDEPANEL, 0, rsi)
+                    mov [rsi].Doszip.Panel.Flags.Hidden,1
+                    mov Panel.Flags.Hidden,0
+                    WinProc(WP_SHOWPANEL, TRUE, rbx)
+                .endif
+                .return
+            .endif
+        .endif
+        WinProc(WP_PCELLSHOW, 0, rbx)
+        WinProc(WP_PANELINFO, 0, rbx)
+
+
     .case WP_READROOT ; int { Read count } ReadRoot(PDWND)
         mov rbx,rsi
         WinProc(WP_DESTROY, TRUE, m_This)
@@ -3487,6 +3788,140 @@ WPARGS  ends
         .return( u1 )
 
 
+    .case WP_SORTPANEL ; void SortPanel(PDWND)
+        mov rbx,rsi
+        mov eax,Panel.Flags.Sorttype
+        mov rbx,m_This
+        .if ( rbx && m_Next )
+            .for ( u1 = eax, edi = 1, rbx = m_Next : edi : rbx = rsi )
+                .for ( edi = 0, rsi = rbx : m_Next : rbx = m_Next )
+                    mov u2,0
+                    mov rcx,m_Next
+                    .if ( [rcx].Doszip.File.m_Attributes & _A_SUBDIR )
+                        .if !( File.m_Attributes & _A_SUBDIR )
+                            inc u2
+                        .elseifsd ( wcscmp(m_Text, [rcx].Doszip.m_Text ) > 0 )
+                            inc u2
+                        .endif
+                    .elseif !( File.m_Attributes & _A_SUBDIR )
+                        mov eax,u1
+                        .switch pascal eax
+                        .case SortName
+                            .ifsd ( wcscmp(m_Text, [rcx].Doszip.m_Text ) > 0 )
+                                inc u2
+                            .endif
+                        .case SortType
+                            mov p,_wstrext([rcx].Doszip.m_Text)
+                            _wstrext(m_Text)
+                            mov rdx,p
+                            .if ( rax && rdx )
+                                .ifsd ( wcscmp(rax, rdx) > 0 )
+                                    inc u2
+                                .endif
+                            .elseif ( rax || rdx )
+                                .if ( rax )
+                                    inc u2
+                                .endif
+                            .else
+                                mov rcx,m_Next
+                               .gotosw(SortName)
+                            .endif
+                        .case SortDate
+                            mov eax,[rcx].Doszip.File.m_Time.dwHighDateTime
+                            mov edx,[rcx].Doszip.File.m_Time.dwLowDateTime
+                            mov ecx,File.m_Time.dwHighDateTime
+                            .if ( ( eax > ecx ) || ( eax == ecx && edx > File.m_Time.dwLowDateTime ) )
+                                inc u2
+                            .endif
+                        .case SortSize
+                            .if ( [rcx].Doszip.File.m_Size > File.m_Size )
+                                inc u2
+                            .endif
+                        .endsw
+                    .endif
+                    .if ( u2 )
+                        mov rcx,m_Next
+                        mov rdx,m_Prev
+                        mov rax,[rcx].Doszip.m_Next
+                        mov m_Next,rax
+                        mov m_Prev,rcx
+                        .if ( rax )
+                            mov [rax].Doszip.m_Prev,rbx
+                        .endif
+                        mov [rdx].Doszip.m_Next,rcx
+                        xchg rcx,rbx
+                        mov m_Next,rcx
+                        mov m_Prev,rdx
+                        inc edi
+                    .endif
+                .endf
+            .endf
+        .endif
+
+    .case WP_READLOCAL ; int ReadLocal(Panel PDWND)
+        mov rbx,rsi
+        WinProc(WP_DESTROY, TRUE, m_This)
+        mov Panel.Flags.RootDir,0
+        .if !WinProc(WP_NEW, CT_FILE, L"..")
+            .return
+        .endif
+        mov u1,1
+        mov hwnd,rax
+        mov [rax].Doszip.File.Flags.UpDir,1
+        mov [rax].Doszip.File.m_Attributes,_A_SUBDIR
+        mov rdi,Panel.m_srcPath
+        mov rsi,rdi
+        .if ( Panel.m_srcPath )
+            lea rsi,[rdi+wcslen(rdi)*2]
+            wcscpy(rsi, L"\\")
+        .endif
+        wcscat(rsi, Panel.m_srcMask)
+        mov rcx,rdi
+        mov rdx,m_Home
+        mov rdi,[rdx].Doszip.m_TBuf
+        assume rdi:ptr WIN32_FIND_DATAW
+        .ifd ( FindFirstFileW(rcx, rdi) != -1 )
+            mov q,rax
+            xor eax,eax
+            mov [rsi],eax
+            mov rsi,m_Home
+            .repeat
+                mov eax,dword ptr [rdi].cFileName
+                .if ( eax == '.' )
+                .elseif ( ( eax == ('.' or ('.' shl 16)) ) && [rdi].cFileName[4] == 0 )
+                    mov rcx,hwnd
+                    mov [rcx].Doszip.File.m_LSize,[rdi].nFileSizeLow
+                    mov [rcx].Doszip.File.m_HSize,[rdi].nFileSizeHigh
+                    mov [rcx].Doszip.File.m_Attributes,[rdi].dwFileAttributes
+                    mov [rcx].Doszip.File.m_Time,[rdi].ftCreationTime
+                .else
+                    lea rcx,[rdi].cFileName
+                    .if ( !Panel.Flags.LongNames &&
+                          [rsi].Doszip.Setup.UseShortNames && [rdi].cAlternateFileName )
+                        lea rcx,[rdi].cAlternateFileName
+                    .endif
+                    .break .if !WinProc(WP_NEW, CT_FILE, rcx)
+                    mov rcx,rax
+                    mov [rcx].Doszip.File.m_LSize,[rdi].nFileSizeLow
+                    mov [rcx].Doszip.File.m_HSize,[rdi].nFileSizeHigh
+                    mov [rcx].Doszip.File.m_Attributes,[rdi].dwFileAttributes
+                    .if ( eax & _A_SUBDIR )
+                        mov [rcx].Doszip.File.m_Time,[rdi].ftCreationTime
+                    .else
+                        mov [rcx].Doszip.File.m_Time,[rdi].ftLastWriteTime
+                    .endif
+                    inc u1
+                .endif
+            .untild !FindNextFileW(q, rdi)
+            FindClose(q)
+        .endif
+        assume rdi:nothing
+        .if ( !Panel.Flags.NoSort && u1 > 2 )
+            WinProc(WP_SORTPANEL, 0, rbx)
+        .endif
+        .return( u1 )
+
+
     .case WP_READPANEL ; int { Read count } ReadPanel(PDWND)
         mov rbx,rsi
         WinProc(WP_PANELMSG, 0, rbx)
@@ -3495,7 +3930,7 @@ WPARGS  ends
             WinProc(WP_READROOT, 0, rbx)
             ;mov Panel.m_celIndex,edx
         .else
-            ReadSubdir(rbx)
+            WinProc(WP_READLOCAL, 0, rbx)
         .endif
         mov Panel.m_fcbCount,eax
         .if ( eax <= Panel.m_fcbIndex )
@@ -3520,10 +3955,6 @@ WPARGS  ends
             mov eax,1
         .endif
         .return
-
-
-    .case WP_ACTIVATEPANEL ; void ActivatePanel()
-        .gotosw(WP_SETCOMMANDLINE)
 
 
     .case WP_OPENPANEL ; BOOL OpenPanel(BOOL, PDWND)
@@ -3654,16 +4085,17 @@ WPARGS  ends
         xor eax,eax
         mov rbx,m_Home
         .if ( edi >= CM_ALONG && edi <= CM_ACHDRV )
-            mov rbx,WinProc(WP_GETOBJECT, CI_PANELA, rbx)
+            mov rbx,m_PanelA
             mov eax,1
         .elseif ( edi >= CM_BLONG && edi <= CM_BCHDRV )
-            mov rbx,WinProc(WP_GETOBJECT, CI_PANELB, rbx)
+            mov rbx,m_PanelB
             mov eax,2
-        .elseif ( edi >= CM_CLONG && edi <= CM_CCHDRV )
+        .elseif ( edi >= CM_CLONG && edi <= CM_CPANELEVENT )
             mov rbx,m_CPanel
             mov eax,3
         .endif
         .if ( eax )
+            mov edx,esi
             mov rsi,rbx
             .switch edi
             .case CM_ALONG
@@ -3751,6 +4183,156 @@ WPARGS  ends
             .case CM_BCHDRV
             .case CM_CCHDRV
                .endc
+            .case CM_CPANELEVENT
+                mov edi,edx
+                .ifd WinProc(WP_PANELSTATE, 0, rbx)
+                    xor eax,eax
+                    .switch pascal edi
+                    .case VK_UP
+                        .if ( eax != Panel.m_celIndex )
+                            dec Panel.m_celIndex
+                           .gotosw(2:WP_PCELLUPDATE)
+                        .elseif ( eax != Panel.m_fcbIndex )
+                            dec Panel.m_fcbIndex
+                           .gotosw(2:WP_PPUTITEMS)
+                        .endif
+                    .case VK_DOWN
+                        mov ecx,Panel.m_celCount
+                        dec ecx
+                        .if ( ecx > Panel.m_celIndex )
+                            inc Panel.m_celIndex
+                           .gotosw(2:WP_PCELLUPDATE)
+                        .elseif ZERO?
+                            mov ecx,Panel.m_fcbCount
+                            sub ecx,Panel.m_fcbIndex
+                            sub ecx,Panel.m_celIndex
+                            .ifs ( ecx > 1 )
+                                inc Panel.m_fcbIndex
+                               .gotosw(2:WP_PPUTITEMS)
+                            .endif
+                        .endif
+                    .case VK_NEXT
+                        mov eax,Panel.m_celCount
+                        dec eax
+                        .if ( eax != Panel.m_celIndex )
+                            mov Panel.m_celIndex,eax
+                           .gotosw(2:WP_PCELLUPDATE)
+                        .else
+                            add eax,Panel.m_fcbIndex
+                            inc eax
+                            .if ( eax != Panel.m_fcbCount )
+                                mov eax,Panel.m_fcbIndex
+                                add eax,Panel.m_celCount
+                                .if ( eax < Panel.m_fcbCount )
+                                    mov eax,Panel.m_celCount
+                                    dec eax
+                                    add Panel.m_fcbIndex,eax
+                                    xor eax,eax
+                                    mov Panel.m_celIndex,eax
+                                   .gotosw(2:WP_PPUTITEMS)
+                                .endif
+                            .endif
+                        .endif
+                    .case VK_PRIOR
+                        mov edx,Panel.m_celIndex
+                        or  edx,Panel.m_fcbIndex
+                        .ifnz
+                            .if ( eax != Panel.m_celIndex )
+                                mov Panel.m_celIndex,eax
+                               .gotosw(2:WP_PCELLUPDATE)
+                            .else
+                                mov al,Panel.m_XCells
+                                mul Panel.m_YCells
+                                .if ( eax <= Panel.m_fcbIndex )
+                                    sub Panel.m_fcbIndex,eax
+                                .else
+                                    mov Panel.m_fcbIndex,0
+                                .endif
+                                .gotosw(2:WP_PPUTITEMS)
+                            .endif
+                        .endif
+                    .case VK_HOME
+                        mov ecx,Panel.m_celIndex
+                        or  ecx,Panel.m_fcbIndex
+                        .ifnz
+                            mov Panel.m_celIndex,eax
+                            mov Panel.m_fcbIndex,eax
+                           .gotosw(2:WP_PPUTITEMS)
+                        .endif
+                    .case VK_END
+                        mov edx,Panel.m_celCount
+                        mov eax,Panel.m_fcbCount
+                        .if ( edx < eax )
+                            sub eax,edx
+                            mov Panel.m_fcbIndex,eax
+                            dec edx
+                            mov Panel.m_celIndex,edx
+                           .gotosw(2:WP_PPUTITEMS)
+                        .else
+                            xor eax,eax
+                            dec edx
+                            .if ( edx > Panel.m_celIndex )
+                                mov Panel.m_celIndex,edx
+                                mov Panel.m_fcbIndex,eax
+                               .gotosw(2:WP_PPUTITEMS)
+                            .endif
+                        .endif
+                    .case VK_LEFT
+                        xor edx,edx
+                        mov al,Panel.m_YCells
+                        mov ecx,Panel.m_celIndex
+                        .switch
+                        .case eax <= ecx
+                            sub ecx,eax
+                            mov edx,ecx
+                        .case ecx
+                            mov Panel.m_celIndex,edx
+                           .gotosw(3:WP_PCELLUPDATE)
+                        .case edx == Panel.m_fcbIndex
+                            xor eax,eax
+                           .endc
+                        .case eax <= Panel.m_fcbIndex
+                            sub Panel.m_fcbIndex,eax
+                            mov edx,Panel.m_fcbIndex
+                        .default
+                            mov Panel.m_fcbIndex,edx
+                           .gotosw(3:WP_PPUTITEMS)
+                        .endsw
+                    .case VK_RIGHT
+                        movzx ecx,Panel.m_YCells
+                        mov eax,Panel.m_celIndex
+                        add eax,ecx
+                        mov edx,Panel.m_celCount
+                        dec edx
+                        .if eax <= edx
+                            add Panel.m_celIndex,ecx
+                           .gotosw(2:WP_PCELLUPDATE)
+                        .else
+                            mov eax,Panel.m_celIndex
+                            add eax,Panel.m_fcbIndex
+                            add eax,ecx
+                            .if eax < Panel.m_fcbCount
+                                add Panel.m_fcbIndex,ecx
+                               .gotosw(2:WP_PPUTITEMS)
+                            .elseif Panel.m_celIndex < edx
+                                mov Panel.m_celIndex,edx
+                               .gotosw(2:WP_PPUTITEMS)
+                            .endif
+                        .endif
+                    .case VK_TAB
+                        mov rdx,m_Home
+                        mov rsi,[rdx].Doszip.m_PanelB
+                        .if ( rsi == rbx )
+                            mov rsi,[rdx].Doszip.m_PanelA
+                        .endif
+                        .ifd WinProc(WP_PANELSTATE, 0, rsi)
+                            ;historysave()
+                            xor edi,edi
+                           .gotosw(2:WP_ACTIVATEPANEL)
+                        .endif
+                    .endsw
+                .endif
+                .return
             .endsw
             .gotosw(WP_UPDATEPANEL)
         .endif
@@ -3969,7 +4551,6 @@ WPARGS  ends
 
     .case WP_KEYUP
 
-
     .case WP_KEYDOWN
 
         ; wParam: The Char or Virtual Key Code of the key
@@ -4042,43 +4623,76 @@ WPARGS  ends
                 .gotosw(1:WP_COMMAND)
             .endif
 
-            .switch pascal edx
+            .switch edx
             .case VK_UP
                 .if KeyAlt(esi)
                     gotosw(WP_COMMAND, CM_PANELSIZEUP, esi, 2)
                 .endif
-                .return
+                .if KeyCtrl(esi)
+                    ; History Prior
+                .endif
+                gotosw(WP_COMMAND, CM_CPANELEVENT, edx, 2)
             .case VK_DOWN
                 .if KeyAlt(esi)
                     gotosw(WP_COMMAND, CM_PANELSIZEDN, esi, 2)
                 .endif
-                .return
+                .if KeyCtrl(esi)
+                    ; History Next
+                .endif
+            .case VK_LEFT
+            .case VK_RIGHT
+            .case VK_NEXT
+            .case VK_PRIOR
+            .case VK_END
+            .case VK_HOME
+                gotosw(WP_COMMAND, CM_CPANELEVENT, edx, 2)
             .case VK_F1
                 mov edi,CM_HELP
                 .if KeyCtrl(esi)
                     mov edi,CM_ATOGGLE
                 .endif
+                .endc
             .case VK_F2
                 mov edi,CM_RENAME
                 .if KeyCtrl(esi)
                     mov edi,CM_BTOGGLE
                 .endif
-            .case VK_F3 : mov edi,CM_VIEW
-            .case VK_F4 : mov edi,CM_EDIT
-            .case VK_F5 : mov edi,CM_COPY
-            .case VK_F6 : mov edi,CM_MOVE
-            .case VK_F7 : mov edi,CM_MKDIR
-            .case VK_F8 : mov edi,CM_DELETE
+                .endc
+            .case VK_F3
+                mov edi,CM_VIEW
+               .endc
+            .case VK_F4
+                mov edi,CM_EDIT
+               .endc
+            .case VK_F5
+                mov edi,CM_COPY
+               .endc
+            .case VK_F6
+                mov edi,CM_MOVE
+               .endc
+            .case VK_F7
+                mov edi,CM_MKDIR
+               .endc
+            .case VK_F8
+                mov edi,CM_DELETE
+               .endc
             .case VK_F9
                 mov edi,CM_ACTIVATEEDIT
                 .if KeyCtrl(esi)
                     mov edi,CM_CONFIGURATION
                 .endif
-            .case VK_F10 : mov edi,CM_EXIT
-            .case VK_F11 : mov edi,CM_TOGGLEPANELSIZE
-            .case VK_F12 : mov edi,CM_TOGGLEHORIZONTAL
+                .endc
+            .case VK_F10
+                mov edi,CM_EXIT
+               .endc
+            .case VK_F11
+                mov edi,CM_TOGGLEPANELSIZE
+               .endc
+            .case VK_F12
+                mov edi,CM_TOGGLEHORIZONTAL
+               .endc
             .default
-                .return
+               .return
             .endsw
             .gotosw(1:WP_COMMAND)
 
@@ -4286,6 +4900,7 @@ WPARGS  ends
         .case CT_DESKTOP
             .switch pascal edi
             .case VK_TAB
+                gotosw(WP_COMMAND, CM_CPANELEVENT, edi, 2)
             .endsw
             .endc
         .case CT_DIALOG
@@ -5609,387 +6224,9 @@ WPARGS  ends
     ret
     endp
 
-.pragma aux(eax, edx, ecx)
-
- Doszip::PutMini proc uses rsi rdi panel:PDWND
-
-   .new dc:PDWND
-   .new rc:TRECT, ro
-   .new rc_size:TRECT
-   .new rc_time:TRECT
-   .new rc_date:TRECT
-   .new ft:FILETIME
-   .new ts:SYSTEMTIME
-   .new MaximumComponentLength:size_t, FileSystemFlags
-   .new FreeBytesAvailable:qword
-   .new TotalNumberOfBytes:qword
-   .new TotalNumberOfFreeBytes:qword
-   .new RootPathName[4]:wchar_t
-   .new FileSystemName[32]:wchar_t
-   .new VolumeName[64]:wchar_t
-
-    ldr rbx,panel
-    mov rsi,WinProc(WP_PCURITEM, 0, rbx)
-    .if ( !Flags.Visible || !Panel.Flags.MiniStatus || !rax )
-        .return
-    .endif
-    mov ro,m_rc
-    mov ecx,eax
-    shr ecx,16
-    movzx eax,ax
-    inc eax
-    sub ch,2
-    add ah,ch
-    sub cl,2
-    mov ch,1
-    .if ( Panel.Flags.DriveInfo )
-        sub ah,3
-        mov ch,4
-    .endif
-    shl ecx,16
-    or  eax,ecx
-    mov m_rc,eax
-    xor ax,ax
-    mov rc,eax
-    mov dc,WinProc(WP_BEGINPAINT, 0, rbx)
-    WinProc(WP_PANELCLEAR, 0, rbx)
-    mov al,rc.row
-    dec al
-    add rc.y,al
-    WinProc(WP_GETFILEAT, 0, rsi)
-    mov rc.row,al
-    mov rc_time,rc
-    mov rc_date,eax
-    mov rc_size,eax
-    mov rc_time.col,5
-    mov rc_date.col,8
-    mov rc_size.col,10
-    shr eax,16
-    sub eax,5
-    mov rc_time.x,al
-    sub eax,9
-    mov rc_date.x,al
-    sub eax,12
-    mov rc_size.x,al
-    sub eax,2
-    mov rc.col,al
-
-    .if ( [rsi].Doszip.File.m_Attributes & _A_SUBDIR )
-        lea rdx,@CStr(L"SUBDIR")
-        .if ( [rsi].Doszip.File.Flags.UpDir )
-            lea rdx,@CStr(L"UP-DIR")
-        .endif
-    .else
-        .ifd ( _swprintf(&VolumeName, L"%10lu", [rsi].Doszip.File.m_Size) > 10 )
-            _swprintf(&VolumeName, L"%9uM", aullshr([rsi].Doszip.File.m_Size, 20))
-        .endif
-        lea rdx,VolumeName
-    .endif
-    WinProc(WP_WRITESTRING, rc_size, rdx)
-    FileTimeToLocalFileTime( &[rsi].Doszip.File.m_Time, &ft )
-    FileTimeToSystemTime( &ft, &ts )
-    SystemDateToStringW(&VolumeName, &ts)
-    lea rcx,VolumeName
-    movzx eax,VolumeName[4]
-    .if ( eax >= '0' && eax <= '9' )
-        add rcx,4
-    .else
-        mov eax,[rcx+16]
-        mov [rcx+12],eax
-    .endif
-    WinProc(WP_WRITESTRING, rc_date, rcx)
-    SystemTimeToStringW(&VolumeName, &ts)
-    WinProc(WP_WRITESTRING, rc_time, &VolumeName)
-    mov rdi,[rsi].Doszip.m_UText
-    wcslen(rdi)
-    movzx ecx,rc.col
-    .if ( eax > ecx )
-        sub eax,ecx
-        add eax,eax
-        add rdi,rax
-    .endif
-    WinProc(WP_WRITESTRING, rc, rdi)
-    .if ( m_rc.row > 1 )
-
-        mov rcx,Panel.m_srcPath
-        mov eax,[rcx]
-        movzx edx,word ptr [rcx+4]
-        mov dword ptr RootPathName,eax
-        mov dword ptr RootPathName[4],edx
-
-        mov al,m_rc.col
-        sub al,3
-        mov rc.col,al
-        inc rc.x
-        sub rc.y,3
-        .ifd GetVolumeInformationW(
-                &RootPathName,
-                &VolumeName,
-                lengthof(VolumeName),
-                0,
-                &MaximumComponentLength,
-                &FileSystemFlags,
-                &FileSystemName,
-                lengthof(FileSystemName) )
-            WinProc(WP_WRITEFORMAT, rc, L"%-16s %18s", &VolumeName, &FileSystemName)
-        .endif
-        GetDiskFreeSpaceExW(&RootPathName, &FreeBytesAvailable, &TotalNumberOfBytes, &TotalNumberOfFreeBytes)
-        inc rc.y
-        mov rc.x,1
-        WinProc(WP_WRITEFORMAT, rc, L"Size: %24llu %uG", TotalNumberOfBytes, aullshr(TotalNumberOfBytes, 30))
-        inc rc.y
-        WinProc(WP_WRITEFORMAT, rc, L"Free: %24llu %uG", FreeBytesAvailable, aullshr(FreeBytesAvailable, 30))
-    .endif
-    WinProc(WP_ENDPAINT, dc, rbx)
-    mov m_rc,ro
-    ret
-    endp
-
-
- Doszip::PutItem proc uses rsi rdi panel:PDWND, file:PDWND, rc:TRECT
-
-   .new rc_name:TRECT
-   .new rc_size:TRECT
-   .new rc_time:TRECT
-   .new rc_date:TRECT
-   .new rc_ext:TRECT
-   .new rc_sys:TRECT
-   .new rc_max:TRECT
-   .new len:DWORD
-   .new ext:LPWSTR
-   .new ft:FILETIME
-   .new ts:SYSTEMTIME
-   .new buffer[64]:wchar_t
-
-    ldr rbx,panel
-    ldr rsi,file
-
-    xor eax,eax
-    lea rdi,ext
-    mov ecx,9
-    rep stosd
-    mov edi,ldr(rc)
-    WinProc(WP_GETFILEAT, 0, rsi)
-    shl eax,24
-    and edi,0x00FFFFFF
-    or  edi,eax
-    mov edx,edi
-    and edx,0xFF00FFFF
-    or  edx,0x00010000
-    mov ecx,Panel.m_celType
-    .switch ecx
-    .case HorizontalShortDetail
-    .case HorizontalLongDetail
-    .case VerticalShortDetail
-        mov rc_max,edx
-        add edx,0x00020000 ; 3
-        mov rc_ext,edx
-        add edx,0x00020000 ; 5
-        mov rc_time,edx
-        add edx,0x00030000 ; 8
-        mov rc_date,edx
-        add edx,0x00020000 ; 10
-        mov rc_size,edx
-        mov eax,edi
-        shr eax,16
-        sub eax,5
-        mov rc_time.x,al
-        sub eax,9
-        mov rc_date.x,al
-        sub eax,11
-        mov rc_size.x,al
-        sub eax,4
-        mov rc_ext.x,al
-        sub eax,2
-        mov rc_max.x,al
-        mov rc_name,edi
-        inc eax
-        mov rc_name.col,al
-        .if ( ecx != VerticalShortDetail )
-            mov eax,5
-            sub rc_name.col,al
-            sub rc_ext.x,al
-            sub rc_max.x,al
-            add rc_ext.col,al
-        .endif
-        .endc
-    .case HorizontalShortList
-    .case VerticalShortList
-        add dl,7
-        mov rc_max,edx
-        add edx,0x00020002
-        mov rc_ext,edx
-        sub edi,0x00050000
-        mov rc_name,edi
-       .endc
-    .case VerticalLongDetail
-        mov rc_max,edx
-        add edx,0x00020000 ; 3
-        mov rc_ext,edx
-        add edx,0x00050000 ; 8
-        mov rc_date,edx
-        add edx,0x00020000 ; 10
-        mov rc_size,edx
-        mov eax,edi
-        shr eax,16
-        sub eax,8
-        mov rc_date.x,al
-        sub eax,11
-        mov rc_size.x,al
-        sub eax,4
-        mov rc_ext.x,al
-        sub eax,2
-        mov rc_max.x,al
-        mov rc_name,edi
-        inc eax
-        mov rc_name.col,al
-       .endc
-    .default
-        sub edi,0x00010000
-        mov rc_name,edi
-        mov rc_max,edx
-        mov al,rc_name.col
-        dec al
-        mov rc_max.x,al
-    .endsw
-    .if ( [rsi].Doszip.File.m_Attributes & _A_SYSTEM )
-        mov ecx,rc_max
-        inc ecx
-        WinProc(WP_FILLCHARINFO, ecx, MKAT(BG_PANEL, FG_SYSTEM, U_LIGHT_SHADE))
-    .endif
-    .if ( rc_size )
-        .if ( [rsi].Doszip.File.m_Attributes & _A_SUBDIR )
-            option codepage:65001
-            lea rdx,@CStr(L"\xE2\x96\xB6 SUBDIR \xE2\x97\x80")
-            .if ( [rsi].Doszip.File.Flags.UpDir )
-                lea rdx,@CStr(L"\xE2\x96\xB6 UP-DIR \xE2\x97\x80")
-            .endif
-            option codepage:0
-        .else
-            .ifd ( _swprintf(&buffer, L"%10lu", [rsi].Doszip.File.m_Size) > 10 )
-                _swprintf(&buffer, L"%9uM", aullshr([rsi].Doszip.File.m_Size, 20))
-            .endif
-            lea rdx,buffer
-        .endif
-        WinProc(WP_WRITESTRING, rc_size, rdx)
-    .endif
-    .if ( rc_date )
-        FileTimeToLocalFileTime( &[rsi].Doszip.File.m_Time, &ft )
-        FileTimeToSystemTime( &ft, &ts )
-        SystemDateToStringW(&buffer, &ts)
-        lea rcx,buffer
-        movzx eax,buffer[4]
-        .if ( eax >= '0' && eax <= '9' )
-            add rcx,4
-        .else
-            mov eax,[rcx+16]
-            mov [rcx+12],eax
-        .endif
-        WinProc(WP_WRITESTRING, rc_date, rcx)
-    .endif
-    .if ( rc_time )
-        SystemTimeToStringW(&buffer, &ts)
-        WinProc(WP_WRITESTRING, rc_time, &buffer)
-    .endif
-    mov edi,wcslen([rsi].Doszip.m_UText)
-    .if ( rc_ext && !( [rsi].Doszip.File.m_Attributes & _A_SUBDIR ) )
-        .if _wstrext([rsi].Doszip.m_UText)
-            mov rdi,rax
-            sub rdi,[rsi].Doszip.m_UText
-            shr edi,1
-            add rax,2
-            WinProc(WP_WRITESTRING, rc_ext, rax)
-        .endif
-    .endif
-    movzx eax,rc_name.col
-    .if ( edi < eax )
-        mov eax,edi
-        mov rc_name.col,al
-    .endif
-    WinProc(WP_WRITESTRING, rc_name, [rsi].Doszip.m_UText)
-    movzx eax,rc_name.col
-    .if ( edi > eax )
-        WinProc(WP_FILLCHARINFO, rc_max, MKAT(BG_PANEL, FG_PANEL, U_RIGHT_DOUBLE_QUOTE))
-    .endif
-    ret
-    endp
-
-
- Doszip::SortFiles proc uses rsi rdi pPanel:PDWND
-    ldr rbx,pPanel
-    ret
-    endp
-
-
- Doszip::ReadSubdir proc uses rsi rdi pPanel:PDWND
-
-   .new ff:WIN32_FIND_DATAW
-   .new count:DWORD = 0
-   .new updir:PDWND
-
-    ldr rbx,pPanel
-    WinProc(WP_DESTROY, TRUE, m_This)
-    mov Panel.Flags.RootDir,0
-    .if !WinProc(WP_NEW, CT_FILE, L"..")
-        .return
-    .endif
-    inc count
-    mov updir,rax
-    mov [rax].Doszip.File.Flags.UpDir,1
-    mov [rax].Doszip.File.m_Attributes,_A_SUBDIR
-    mov rdi,Panel.m_srcPath
-    mov rsi,rdi
-    .if ( Panel.m_srcPath )
-        lea rsi,[rdi+wcslen(rdi)*2]
-        wcscpy(rsi, L"\\")
-    .endif
-    wcscat(rsi, Panel.m_srcMask)
-    .ifd ( FindFirstFileW(rdi, &ff) != -1 )
-        mov rdi,rax
-        xor eax,eax
-        mov [rsi],eax
-        mov rsi,m_Home
-        .repeat
-            mov eax,dword ptr ff.cFileName
-            .if ( eax == '.' )
-            .elseif ( ( eax == ('.' or ('.' shl 16)) ) && ff.cFileName[4] == 0 )
-                mov rcx,updir
-                mov [rcx].Doszip.File.m_LSize,ff.nFileSizeLow
-                mov [rcx].Doszip.File.m_HSize,ff.nFileSizeHigh
-                mov [rcx].Doszip.File.m_Attributes,ff.dwFileAttributes
-                mov [rcx].Doszip.File.m_Time,ff.ftCreationTime
-            .else
-                lea rcx,ff.cFileName
-                .if ( !Panel.Flags.LongNames &&
-                      [rsi].Doszip.Setup.UseShortNames && ff.cAlternateFileName )
-                    lea rcx,ff.cAlternateFileName
-                .endif
-                .break .if !WinProc(WP_NEW, CT_FILE, rcx)
-                mov rcx,rax
-                mov [rcx].Doszip.File.m_LSize,ff.nFileSizeLow
-                mov [rcx].Doszip.File.m_HSize,ff.nFileSizeHigh
-                mov [rcx].Doszip.File.m_Attributes,ff.dwFileAttributes
-                .if ( eax & _A_SUBDIR )
-                    mov [rcx].Doszip.File.m_Time,ff.ftCreationTime
-                .else
-                    mov [rcx].Doszip.File.m_Time,ff.ftLastWriteTime
-                .endif
-                inc count
-            .endif
-        .untild !FindNextFileW(rdi, &ff)
-        FindClose(rdi)
-    .endif
-    .if ( !Panel.Flags.NoSort && count > 2 )
-        SortFiles(rbx)
-    .endif
-    .return( count )
-    endp
-
 
  Doszip::Run proc
-
     .new msg:Message
-
     .whiled WinProc(WP_GETMESSAGE, &msg, rbx)
         WinProc(msg.uMsg, msg.wParam, msg.lParam)
     .endw
@@ -5998,7 +6235,6 @@ WPARGS  ends
 
 
  wmain proc argc:int_t, argv:warray_t
-
     .new status:int_t
     .new app:ptr Doszip(ldr(argc), ldr(argv))
     .if ( rax )

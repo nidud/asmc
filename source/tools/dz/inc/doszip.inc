@@ -424,10 +424,6 @@ PLINE typedef ptr LineClass
     WinProc             proc :DWORD, :WPARAM, :LPARAM, :VARARG
     PostMessage         proc :DWORD, :WPARAM, :LPARAM
     MessageBox          proc :LPWSTR, :LPWSTR, :DWORD, :VARARG
-    ReadSubdir          proc :PDWND
-    SortFiles           proc :PDWND
-    PutMini             proc :PDWND
-    PutItem             proc :PDWND, :PDWND, :TRECT
     Run                 proc
    .ends
 

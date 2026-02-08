@@ -13,11 +13,11 @@ Registers are assigned to arguments in the order AX/DX/BX, ECX/EDX, or RCX/RDX/R
 <tr><td>64-bit</td><td>stack</td><td>16</td><td>4</td><td>caller</td><td>foo</td></tr>
 </table>
 
-Register param are sign-extended to **min** and register-pair are allowed up to **max**.
+Register parameters are sign-extended to the size indicated by the **min** column. If an argument requires more width than a single register, it may be passed using a register pair up to the limit specified by the **max** column.
 
 ### Microsoft x64 calling convention
 
-This is a _standard C calling convention_ with some additions, so a C-style call to a prototype with one integer argument could thus be rendered like this:
+This is the Microsoft x64 calling convention: a standard C calling convention with a few extensions. For example, a C-style call to a function taking a single 32-bit integer argument can be emitted like this:
 ```
 push    rbp     ; align 16
 mov     rbp,rsp
@@ -32,7 +32,7 @@ leave           ; * add  rsp,8
 
 ```
 
-As it's not mandated by the ABI to fill the first 4 stack positions with values, what's done by Asmc (and compilers in general) is something like this:
+Because the ABI does not require populating the first four stack slots, Asmc (and most compilers) reserve a fixed shadow space and allocate a frame large enough for the maximum parameters, locals, and saved registers. A typical sequence looks like this:
 ```
 push    rbp
 mov     rbp,rsp
@@ -49,9 +49,9 @@ call function-n
 leave
 
 ```
-The _magic-number_ is calculated from the maximum number of parameters used inside the frame + locals + saved nonvolatile-register + alignment. This means that RSP is always aligned 16 and points to the first argument, and the first assigned stack argument is RSP+32.
+The _magic-number_ is calculated from the maximum number of parameter stack slots used inside the frame plus space for locals, saved nonvolatile registers, and any alignment padding (including the 32-byte shadow space required by the Microsoft x64 ABI). The frame size is rounded up to a 16-byte boundary. This ensures that RSP is always 16-byte aligned and points to the first argument slot; the first assigned stack argument is at RSP+32.
 
-Parameter refer to the stack-position here rather than the register, so if the _callee_ uses (touch) any of these parameters a stack-frame is created and the register is saved to the stack:
+Parameters refer to the stack-position here rather than the register, so if the _callee_ uses (touches) any of these parameters a stack frame is created and the register is saved to the stack:
 ```
     option win64:auto save
 
@@ -73,7 +73,7 @@ foo endp
 0003 ret
 ```
 
-For **Varargs** (_and Unprototyped functions according to the ABI_) floating-point values are assign both to the integer register and the floating-point register as [double precision](real8.md). Unprototyped means _immediate values_ or _SIMD registers_ here, but it also means that fully prototyped float values are converted to double precision as shown in the following example:
+For **Varargs** (and unprototyped calls according to the ABI) each floating‑point argument is placed both in an XMM (floating‑point) register and in the corresponding integer register or stack slot as a 64‑bit double; `float` (32‑bit) values are promoted to double before placement. "Unprototyped" here means arguments without a prototype — for example immediates or SIMD register values. The following example shows the sequence used to prepare such arguments:
 
 ```
     .data

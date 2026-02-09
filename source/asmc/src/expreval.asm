@@ -1400,6 +1400,7 @@ method_ptr:
             mov [rdi].kind,EXPR_CONST
             mov ecx,[rax].asym.offs
             add [rdi].value,ecx
+            adc [rdi].hvalue,0
 
             .for ( : [rax].asym.type : rax = [rax].asym.type )
             .endf

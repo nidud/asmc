@@ -1447,8 +1447,8 @@ GetFileTimeStamp proc __ccall private filename:string_t
                 SystemTime.wDay,
                 SystemTime.wHour,
                 SystemTime.wMinute,
-                SystemTime.wSecond
-            )
+                SystemTime.wSecond,
+                -1)
         .endif
     .endif
     ret

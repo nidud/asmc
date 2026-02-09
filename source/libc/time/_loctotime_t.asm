@@ -47,7 +47,7 @@ _loctotime_t proc uses rsi rdi rbx yr:int_t, mo:int_t, dy:int_t, hr:int_t, mn:in
     .endsw
     mov tb.tm_year,ecx
     mov tb.tm_mon,edx
-    mov tb.tm_yday,eax
+    mov tb.tm_mday,eax
     mov tb.tm_hour,ebx
     mov tb.tm_min,edi
     mov tb.tm_sec,esi
@@ -56,14 +56,14 @@ _loctotime_t proc uses rsi rdi rbx yr:int_t, mo:int_t, dy:int_t, hr:int_t, mn:in
     mov edx,tb.tm_mon
     mov eax,[rcx+rdx*4]
     sub eax,[rcx+rdx*4-4]
-    .if ( eax >= tb.tm_yday || ( isleap && edx == 2 && tb.tm_yday <= 29 ) )
+    .if !( eax >= tb.tm_mday || ( isleap && edx == 2 && tb.tm_mday <= 29 ) )
         .return( _set_errno(EINVAL) )
     .endif
 
     ; Compute the number of elapsed days in the current year.
 
     mov eax,[rcx+rdx*4-4]
-    add eax,tb.tm_yday
+    add eax,tb.tm_mday
     .if ( isleap && edx > 2 )
         inc eax
     .endif

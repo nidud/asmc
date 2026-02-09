@@ -5,6 +5,15 @@
 ;
 
 include time.inc
+ifndef __UNIX__
+ifdef _WIN64
+undef _gmtime64
+ALIAS <_gmtime64>=<gmtime>
+else
+undef _gmtime32
+ALIAS <_gmtime32>=<gmtime>
+endif
+endif
 
     .data
      tb tm <>
@@ -12,10 +21,12 @@ include time.inc
     .code
 
 gmtime proc tp:ptr time_t
-
-    _gmtime(ldr(tp), &tb)
+    .ifd _gmtime_s(&tb, ldr(tp))
+        xor eax,eax
+    .else
+        lea rax,tb
+    .endif
     ret
-
-gmtime endp
+    endp
 
     end

@@ -44,7 +44,7 @@ ifdef __UNIX__
         div rcx
         mov [rbx].millitm,ax
     .endif
-    mov     eax,_daylight
+    mov eax,_daylight
 
 else
 
@@ -72,7 +72,6 @@ endif
     mov     [rbx].dstflag,ax
     xor     eax,eax
     ret
-
-_ftime endp
+    endp
 
     end

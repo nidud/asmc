@@ -12,16 +12,13 @@ include errno.inc
 
     .code
 
-localtime proc ptime:LPTIME
-
-    .ifd _localtime32_s( &tb, ldr(ptime) )
-
+localtime proc ptime:ptr time_t
+    .ifd _localtime_s( &tb, ldr(ptime) )
         _set_errno( eax )
         .return( 0 )
     .endif
     lea rax,tb
     ret
-
-localtime endp
+    endp
 
     end

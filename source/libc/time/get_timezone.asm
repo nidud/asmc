@@ -12,16 +12,13 @@ include errno.inc
 _get_timezone proc ptimezone:ptr int_t
 
     ldr rcx,ptimezone
-
     mov eax,EINVAL
     .if ( rcx )
-
         mov eax,_timezone
         mov [rcx],eax
         xor eax,eax
     .endif
     ret
-
-_get_timezone endp
+    endp
 
     end

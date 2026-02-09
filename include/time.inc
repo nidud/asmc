@@ -33,6 +33,11 @@ define _CLOCK_T_DEFINED
 clock_t typedef int_t
 endif
 
+define _MAX__TIME32_T	0x7FFFD27F
+define _MAX__TIME64_T	0x793406FFF
+define _MIN_LOCAL_TIME	(-12 * 60 * 60)
+define _MAX_LOCAL_TIME	(13 * 60 * 60)
+
 ;
 ; ISO 8601:	YYYY-MM-DD hh:mm:ss
 ; Short form:	YY-MM-DD hh:mm
@@ -48,7 +53,60 @@ define _DEC_SEC		315532800		; secs in 1970-1979
 define _BASE_YEAR	70			; 1970 is the base year
 define _BASE_DOW	4			; 01-01-70 was a Thursday
 define _LEAP_YEAR_ADJUST 17			; Leap years 1900 - 1970
+ifdef _WIN64
+define _MAX_YEAR	1100			; 3000 is the max year
+else
 define _MAX_YEAR	138			; 2038 is the max year
+endif
+
+;
+; Macro to determine if a given year, expressed as the number of years since
+; 1900, is a leap year.
+;
+_IS_LEAP_YEAR proto asmcall :uint_t {
+    xor edx,edx
+    .if ( eax & 3 )
+	add	eax,1900
+	mov	ecx,400
+	div	ecx
+	xor	eax,eax
+	test	edx,edx
+	setz	al
+    .else
+	mov	ecx,100
+	div	ecx
+	xor	eax,eax
+	test	edx,edx
+	setnz	al
+    .endif
+    }
+
+;
+; Number of leap years from 1970 up to, but not including, the specified year
+; (expressed as the number of years since 1900).
+;
+_ELAPSED_LEAP_YEARS proto fastcall :uint_t {
+	lea	eax,[rcx+299]
+	dec	ecx
+ifdef _WIN64
+	imul	rax,rax,1374389535
+	imul	rdx,rcx,1374389535
+	shr	rax,39
+	shr	rdx,37
+else
+	mov	edx,1374389535
+	mul	edx
+	shr	edx,7
+	push	edx
+	mov	eax,1374389535
+	mul	ecx
+	shr	edx,5
+	pop	eax
+endif
+	shr	ecx,2
+	lea	rax,[rax+rcx-_LEAP_YEAR_ADJUST]
+	sub	rax,rdx
+	}
 
 ifndef _TZ_STRINGS_SIZE
 define _TZ_STRINGS_SIZE 64
@@ -105,7 +163,6 @@ difftime	proto __cdecl :time_t, :time_t
 difftm64	proto __cdecl :__time64_t, :__time64_t
 
 gmtime		proto __cdecl :ptr time_t
-_gmtime		proto __cdecl :ptr time_t, :ptr tm
 _sleep		proto __cdecl :uint_t
 
 localtime	proto __cdecl :ptr time_t
@@ -116,15 +173,29 @@ strdate		proto __cdecl :ptr sbyte
 strtime		proto __cdecl :ptr sbyte
 _tzset		proto __cdecl
 time		proto __cdecl :ptr time_t
-_time64		proto __cdecl :ptr time_t
+_time32		proto __cdecl :ptr __time32_t
+_time64		proto __cdecl :ptr __time64_t
 _isindst	proto __cdecl :ptr tm
-_loctotime_t	proto __cdecl y:SINT, m:SINT, d:SINT, h:SINT, m:SINT, s:SINT
-_gmtime32_s	proto __cdecl :ptr tm, :ptr time_t
-_localtime32_s	proto __cdecl :ptr tm, :ptr time_t
+_loctotime_t	proto __cdecl :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+_loctotime32_t	proto __cdecl :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+_loctotime64_t	proto __cdecl :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+_gmtime32	proto __cdecl :ptr __time32_t
+_gmtime64	proto __cdecl :ptr __time64_t
+_gmtime32_s	proto __cdecl :ptr tm, :ptr __time32_t
+_gmtime64_s	proto __cdecl :ptr tm, :ptr __time64_t
+_localtime32_s	proto __cdecl :ptr tm, :ptr __time32_t
+_localtime64_s	proto __cdecl :ptr tm, :ptr __time64_t
 
-_time		equ <time>
-_strdate	equ <strdate>
-_strtime	equ <strtime>
+ifdef _WIN64
+define _gmtime_s	<_gmtime64_s>
+define _localtime_s	<_localtime64_s>
+else
+define _gmtime_s	<_gmtime32_s>
+define _localtime_s	<_localtime32_s>
+endif
+define _time		<time>
+define _strdate		<strdate>
+define _strtime		<strtime>
 
 ifndef _WTIME_DEFINED
 define _WTIME_DEFINED
@@ -209,10 +280,10 @@ externdef	_tzname:LPSTR
 externdef	__dnames:char_t
 externdef	__mnames:char_t
 
-DaysInFebruary		proto __cdecl :uint_t
-DaysInMonth		proto __cdecl :uint_t, :uint_t
-GetDayCount		proto __cdecl :uint_t, :uint_t, :uint_t
-GetWeekDay		proto __cdecl :uint_t, :uint_t, :uint_t
+DaysInFebruary	proto __cdecl :uint_t
+DaysInMonth	proto __cdecl :uint_t, :uint_t
+GetDayCount	proto __cdecl :uint_t, :uint_t, :uint_t
+GetWeekDay	proto __cdecl :uint_t, :uint_t, :uint_t
 
 FileTimeToTime		proto __cdecl :ptr FILETIME
 __timet_from_ft		proto __cdecl :ptr FILETIME

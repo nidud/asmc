@@ -353,16 +353,10 @@ ATOM_HTMLHELP_API_UNICODE equ 15
     }
 
 ifdef __oaidl_h__
-
-.pragma pack(push, 8)
-
-HH_GLOBAL_PROPERTY	STRUC
+HH_GLOBAL_PROPERTY	STRUC 8
 id			HH_GPROPID ?
 var			VARIANT <>
 HH_GLOBAL_PROPERTY	ENDS
-
-.pragma pack(pop)
-
 endif
 
 endif

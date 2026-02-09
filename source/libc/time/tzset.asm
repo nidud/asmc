@@ -98,7 +98,6 @@ ifdef __UNIX__
     xor eax,eax
     xor edx,edx
     mov dstzon,ecx
-
     .if ( ecx != stdzon )
 
         mov     eax,[rbx+rcx]
@@ -117,7 +116,6 @@ ifdef __UNIX__
     bswap   eax
     neg     eax
     mov     _timezone,eax
-
     movzx   ecx,byte ptr [rbx+rcx+5]
     add     ecx,timecnt
     imul    edx,typecnt,6
@@ -140,30 +138,24 @@ else
 
     .ifd ( GetTimeZoneInformation( &tz ) != -1 )
 
-        mov ecx,60
         mov eax,tz.Bias
-        mul ecx
-        mov ebx,eax
-
+        mov ebx,tz.StandardBias
+        mov ecx,tz.DaylightBias
+        imul eax,eax,60
         .if ( tz.StandardDate.wMonth )
-
-            mov eax,tz.StandardBias
-            mul ecx
-            add ebx,eax
+            imul edx,ebx,60
+            add eax,edx
         .endif
-        mov _timezone,ebx
-
+        mov _timezone,eax
         xor eax,eax
-        xor ecx,ecx
+        xor edx,edx
         .if ( ax != tz.DaylightDate.wMonth && eax != tz.DaylightBias )
-
             inc eax
-            mov ecx,tz.DaylightBias
-            sub ecx,tz.StandardBias
-            imul ecx,ecx,60
+            sub ecx,ebx
+            imul edx,ecx,60
         .endif
         mov _daylight,eax
-        mov _dstbias,ecx
+        mov _dstbias,edx
         xor eax,eax
         lea rdx,_tzname
         mov rcx,[rdx]
@@ -180,62 +172,51 @@ _tzset endp
 _isindst proc uses rsi rdi rbx tb:ptr tm
 
     ldr rsi,tb
+
     xor eax,eax
     mov ecx,[rsi].tm.tm_mon
     mov edx,[rsi].tm.tm_year
-
-    .repeat
-
-        .break .if ( edx < 67 )
-        .break .if ( ecx < 3 )
-        .break .if ( ecx > 9 )
-
-        inc eax
-        .break .if ( ecx > 3 && ecx < 9 )
-
-        lea rax,_days
-        mov edi,edx
-        mov ebx,[rax+rcx*4+4]
-
-        .if ( edx > 86 && ecx == 3 )
-            mov ebx,[rax+rcx*4]
-            add ebx,7
-        .endif
-        .if !(edx & 3)
-            inc ebx
-        .endif
-
-        lea  rax,[rbx+365]
-        lea  rcx,[rdx-70]
-        mul  ecx
-        lea  rax,[rax+rdi-1]
-        shr  eax,2
-        sub  eax,_LEAP_YEAR_ADJUST + _BASE_DOW
-        xor  edx,edx
-        mov  ecx,7
-        idiv ecx
-        mov  eax,1
-
-        .if ( [rsi].tm.tm_mon == 3 )
-
-            .break .if ( [rsi].tm.tm_yday > edx )
-            .ifnz
+    .if ( eax == _daylight || edx < 67 || ecx < 3 || ecx > 9 )
+        .return
+    .endif
+    inc eax
+    .if ( ecx > 3 && ecx < 9 )
+        .return
+    .endif
+    lea rax,_days
+    mov edi,edx
+    mov ebx,[rax+rcx*4+4]
+    .if ( edx > 86 && ecx == 3 )
+        mov ebx,[rax+rcx*4]
+        add ebx,7
+    .endif
+    .if !(edx & 3)
+        inc ebx
+    .endif
+    lea  rax,[rbx+365]
+    lea  rcx,[rdx-70]
+    mul  ecx
+    lea  rax,[rax+rdi-1]
+    shr  eax,2
+    sub  eax,_LEAP_YEAR_ADJUST + _BASE_DOW
+    xor  edx,edx
+    mov  ecx,7
+    idiv ecx
+    mov  eax,1
+    .if ( [rsi].tm.tm_mon == 3 )
+        .if ( edx != [rsi].tm.tm_yday )
+            .if ( edx > [rsi].tm.tm_yday )
                 dec eax
-                .break
             .endif
-            .break .if ( [rsi].tm.tm_hour >= 2 )
-            dec eax
-            .break
-        .endif
-        .break .if ( [rsi].tm.tm_yday < edx )
-        .ifnz
-            dec eax
-        .elseif ( [rsi].tm.tm_hour >= 1 )
+        .elseif ( [rsi].tm.tm_hour < 2 )
             dec eax
         .endif
-    .until 1
+    .elseif ( edx <= [rsi].tm.tm_yday )
+        .if ( edx < [rsi].tm.tm_yday || [rsi].tm.tm_hour >= 1 )
+            dec eax
+        .endif
+    .endif
     ret
-
-_isindst endp
+    endp
 
     end

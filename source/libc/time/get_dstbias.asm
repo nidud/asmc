@@ -12,16 +12,13 @@ include errno.inc
 _get_dstbias proc pdstbias:ptr int_t
 
     ldr rcx,pdstbias
-
     mov eax,EINVAL
     .if ( rcx )
-
         mov eax,_dstbias
         mov [rcx],eax
         xor eax,eax
     .endif
     ret
-
-_get_dstbias endp
+    endp
 
     end

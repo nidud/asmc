@@ -31,17 +31,15 @@ ChkMul macro d, a, i
 _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
 
    .new tb:tm
-   .new tmp:int_t
+   .new tmp:time_t
 
     ldr rbx,tp
 
     .if ( rbx == NULL )
         .return( _set_errno(EINVAL) )
     .endif
-
     mov eax,[rbx].tm.tm_year
     .ifs ( ( eax < _BASE_YEAR - 1 ) || ( eax > _MAX_YEAR + 1 ) )
-
        .return( -1 )
     .endif
     mov esi,eax
@@ -62,7 +60,6 @@ _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
             dec esi
         .endif
         .ifs ( ( esi < _BASE_YEAR - 1 ) || ( esi > _MAX_YEAR + 1 ) )
-
            .return( -1 )
         .endif
     .endif
@@ -144,7 +141,7 @@ _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
 
     ; ESI: number of elapsed seconds
 
-    mov tmp,esi
+    mov tmp,rsi
 
     .if ( ultflag )
 
@@ -152,14 +149,17 @@ _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
         ; localtime() will check its arg value
 
         _tzset()
-
-        add tmp,_timezone
+ifdef _WIN64
+        movsxd rax,_timezone
+else
+        mov eax,_timezone
+endif
+        add tmp,rax
 
         ; Convert this second count back into a time block structure.
         ; If localtime returns NULL, return an error.
 
-        .ifd ( _localtime32_s(&tb, &tmp) )
-
+        .ifd _localtime_s(&tb, &tmp)
             .return( -1 )
         .endif
 
@@ -169,16 +169,17 @@ _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
         ; DST compensation, but has set tm_isdst correctly.
 
         .if ( [rbx].tm.tm_isdst > 0 || ( [rbx].tm.tm_isdst < 0 && tb.tm_isdst > 0 ) )
-
-            add tmp,_dstbias
-            .ifd ( _localtime32_s(&tb, &tmp) )
-
+ifdef _WIN64
+            movsxd rax,_dstbias
+else
+            mov eax,_dstbias
+endif
+            add tmp,rax
+            .ifd ( _localtime_s(&tb, &tmp) )
                 .return( -1 )
             .endif
         .endif
-
-    .elseifd ( _gmtime32_s(&tb, &tmp) )
-
+    .elseifd ( _gmtime_s(&tb, &tmp) )
         .return( -1 )
     .endif
 
@@ -188,24 +189,19 @@ _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
     lea rsi,tb
     mov ecx,sizeof(tb)
     rep movsb
-    mov eax,tmp
+    mov rax,tmp
     ret
-
-_make_time_t endp
+    endp
 
 
 mktime proc tb:ptr tm
-
     _make_time_t( ldr(tb), 1 )
     ret
-
-mktime endp
+    endp
 
 _mkgmtime proc tb:ptr tm
-
     _make_time_t( ldr(tb), 0 )
     ret
-
-_mkgmtime endp
+    endp
 
     end

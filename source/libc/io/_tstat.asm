@@ -64,8 +64,8 @@ _lk_getltime proc private ft:PVOID
                 SystemTime.wDay,
                 SystemTime.wHour,
                 SystemTime.wMinute,
-                SystemTime.wSecond
-            )
+                SystemTime.wSecond,
+                -1 )
         .endif
     .endif
     ret
@@ -120,7 +120,7 @@ _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
             mov ff.nFileSizeLow,0
             mov ff.cFileName,0
 
-            _loctotime_t( 80, 1, 1, 0, 0, 0 )
+            _loctotime_t( 80, 1, 1, 0, 0, 0, -1 )
             mov m_time,eax
             mov a_time,eax
             mov c_time,eax

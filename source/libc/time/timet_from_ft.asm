@@ -17,10 +17,8 @@ else
     .new u:SYSTEMTIME
 
     .ifd FileTimeToSystemTime(ldr(ft), &u)
-
         .ifd SystemTimeToTzSpecificLocalTime(NULL, &u, &s)
-
-            .return _loctotime_t( s.wYear, s.wMonth, s.wDay, s.wHour, s.wMinute, s.wSecond )
+            .return _loctotime_t( s.wYear, s.wMonth, s.wDay, s.wHour, s.wMinute, s.wSecond, -1 )
         .endif
     .endif
 endif

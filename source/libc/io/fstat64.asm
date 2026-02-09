@@ -46,7 +46,8 @@ _lk_getltime proc private ft:LPFILETIME
                 SystemTime.wDay,
                 SystemTime.wHour,
                 SystemTime.wMinute,
-                SystemTime.wSecond )
+                SystemTime.wSecond,
+                -1 )
         .endif
     .endif
     ret

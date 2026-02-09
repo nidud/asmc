@@ -1,7 +1,10 @@
-; LOCALTIME32_S.ASM--
+; _LOCALTIME_S.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
+;
+; errno_t _localtime64_s( struct tm *ptm, const __time64_t *ptime );
+; errno_t _localtime32_s( struct tm *ptm, const __time32_t *ptime );
 ;
 
 include time.inc
@@ -10,60 +13,66 @@ include errno.inc
 
     .code
 
-_localtime32_s proc uses rbx rdi tp:ptr tm, ptime:LPTIME
+_localtime_s proc uses rbx rdi tp:ptr tm, ptime:ptr time_t
 
-   .new ltime[2]:int_t
+   .new ltime:time_t
 
-    ldr rcx,tp
+    ldr rbx,tp
     ldr rdx,ptime
 
-    .if ( !rdx || !rcx || int_t ptr [rdx] < 0 )
-
+    .if ( !rdx || !rbx )
         .return( EINVAL )
     .endif
 
-    mov rbx,rcx
-    mov eax,[rdx]
-    mov ltime,eax
-
     mov al,-1
-    mov rdi,rcx
+    mov rdi,rbx
     mov ecx,tm
     rep stosb
 
+    mov rcx,[rdx]
+ifdef _WIN64
+    mov rax,_MAX__TIME64_T
+    .ifs ( rcx < 0 || rcx > rax )
+else
+    .ifs ( rcx < 0 )
+endif
+        .return( EINVAL )
+    .endif
+    mov ltime,rcx
     _tzset()
-
-    .if ( ltime > 3 * _DAY_SEC && ltime < LONG_MAX - 3 * _DAY_SEC )
-
-        mov eax,ltime
-        sub eax,_timezone
-        mov ltime,eax
-
-        .ifd ( _gmtime32_s( rbx, &ltime ) != 0 )
-
+    mov rax,ltime
+ifdef _WIN64
+    .ifs ( rax > 3 * _DAY_SEC )
+        movsxd rcx,_timezone
+else
+    .ifs ( eax > 3 * _DAY_SEC && eax < LONG_MAX - 3 * _DAY_SEC )
+        mov ecx,_timezone
+endif
+        sub rax,rcx
+        mov ltime,rax
+        .ifd _gmtime_s(rbx, &ltime)
             .return
         .endif
-
-        .if ( _isindst( rbx ) && _daylight )
-
-            mov eax,_dstbias
-            sub ltime,eax
-            .ifd ( _gmtime32_s( rbx, &ltime ) != 0 )
-
-                .return
+        .if ( _daylight )
+            .ifd _isindst(rbx)
+ifdef _WIN64
+                movsxd rax,_dstbias
+else
+                mov eax,_dstbias
+endif
+                sub ltime,rax
+                .ifd _gmtime_s(rbx, &ltime)
+                    .return
+                .endif
+                mov [rbx].tm.tm_isdst,1
             .endif
-            mov [rbx].tm.tm_isdst,1
         .endif
         .return( 0 )
     .endif
-
-    .ifd ( _gmtime32_s( rbx, ptime ) != 0 )
-
+    .ifd _gmtime_s(rbx, ptime)
         .return
     .endif
-
-    .ifd ( _isindst( rbx ) && _daylight )
-
+    .ifd _isindst(rbx)
         mov eax,[rbx].tm.tm_sec
         sub eax,_timezone
         sub eax,_dstbias
@@ -113,7 +122,6 @@ _localtime32_s proc uses rbx rdi tp:ptr tm, ptime:LPTIME
     mov ecx,7
 
     .ifs ( edi > 0 )
-
         mov  eax,[rbx].tm.tm_wday
         add  eax,edi
         cdq
@@ -121,9 +129,7 @@ _localtime32_s proc uses rbx rdi tp:ptr tm, ptime:LPTIME
         mov  [rbx].tm.tm_wday,edx
         add  [rbx].tm.tm_mday,edi
         add  [rbx].tm.tm_yday,edi
-
     .elseifs ( edi < 0 )
-
         mov  eax,[rbx].tm.tm_wday
         add  eax,edi
         add  eax,ecx
@@ -132,9 +138,7 @@ _localtime32_s proc uses rbx rdi tp:ptr tm, ptime:LPTIME
         mov  [rbx].tm.tm_wday,edx
         mov  eax,[rbx].tm.tm_wday
         add  eax,edi
-
         .ifs ( eax <= 0 )
-
             add [rbx].tm.tm_mday,31
             add [rbx].tm.tm_yday,edi
             add [rbx].tm.tm_yday,365
@@ -144,8 +148,8 @@ _localtime32_s proc uses rbx rdi tp:ptr tm, ptime:LPTIME
             add [rbx].tm.tm_yday,edi
         .endif
     .endif
-    .return( 0 )
-
-_localtime32_s endp
+    xor eax,eax
+    ret
+    endp
 
     end

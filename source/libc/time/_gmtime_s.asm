@@ -15,8 +15,6 @@ include errno.inc
 
 _gmtime_s proc uses rsi rdi rbx ptm:ptr tm, timp:ptr time_t
 
-   .new islpyr:int_t = 0 ; is-current-year-a-leap-year flag
-
     ldr rbx,ptm
     ldr rdx,timp
 
@@ -33,19 +31,17 @@ ifdef _WIN64
     mov rcx,_MAX__TIME64_T + _MAX_LOCAL_TIME
     .ifs ( rax < _MIN_LOCAL_TIME || rax > rcx )
 else
-    .ifs ( rax < _MIN_LOCAL_TIME )
+    .ifs ( eax < _MIN_LOCAL_TIME )
 endif
         .return( EINVAL )
     .endif
     mov rsi,rax
     xor edx,edx
 
-ifdef _WIN64
-
     ; Determine the years since 1900. Start by ignoring leap years.
 
     mov ecx,_YEAR_SEC
-    div ecx
+    div rcx
     lea edi,[rax+70]
     mul rcx
     sub rsi,rax
@@ -55,43 +51,15 @@ ifdef _WIN64
     imul rax,_ELAPSED_LEAP_YEARS(edi),_DAY_SEC
     sub rsi,rax
     _IS_LEAP_YEAR(edi)
+    xchg eax,edi
     .ifs ( rsi < 0 )
         add rsi,_YEAR_SEC
-        dec edi
-        .if ( eax )
+        dec eax
+        .if ( edi )
             add rsi,_DAY_SEC
-            inc islpyr
-        .endif
-    .elseif ( eax )
-        inc islpyr
-    .endif
-
-else
-
-    mov ecx,_FOUR_YEAR_SEC
-    div ecx
-    lea edi,[rax*4+70]
-    mul ecx
-    sub esi,eax
-
-    .if ( esi >= _YEAR_SEC )
-        inc edi
-        sub esi,_YEAR_SEC
-        .if ( esi >= _YEAR_SEC )
-            inc edi
-            sub esi,_YEAR_SEC
-            .if ( esi >= _YEAR_SEC + _DAY_SEC )
-                inc edi
-                sub esi,_YEAR_SEC + _DAY_SEC
-            .else
-                inc islpyr
-            .endif
         .endif
     .endif
-
-endif
-
-    mov [rbx].tm_year,edi
+    mov [rbx].tm_year,eax
     mov rax,rsi
     xor edx,edx
     mov ecx,_DAY_SEC
@@ -99,28 +67,32 @@ endif
     mov [rbx].tm_yday,eax
     mul rcx
     sub rsi,rax
-    .if ( islpyr )
-        lea rcx,_lpdays
-    .else
+    lea rcx,_lpdays
+    .if ( !edi )
         lea rcx,_days
     .endif
-    .for ( edx = 1 : [rcx+rdx*4] < [rbx].tm_yday : edx++ )
+    .for ( eax = [rbx].tm_yday, edx = 0 : [rcx+rdx*4+4] < eax : edx++ )
     .endf
-    dec edx
     mov [rbx].tm_mon,edx
-    mov eax,[rbx].tm_yday
     sub eax,[rcx+rdx*4]
     mov [rbx].tm_mday,eax
-    mov rax,timp
-    mov eax,[rax]
+
+    ; Determine days since Sunday (0 - 6)
+
+    mov rcx,timp
+    mov rax,[rcx]
     mov ecx,_DAY_SEC
     xor edx,edx
-    div ecx
+    div rcx
     xor edx,edx
-    add eax,_BASE_DOW
+    add rax,_BASE_DOW
     mov ecx,7
-    div ecx
+    div rcx
     mov [rbx].tm_wday,edx
+
+    ; Determine hours since midnight (0 - 23), minutes after the hour
+    ; (0 - 59), and seconds after the minute (0 - 59).
+
     mov eax,esi
     xor edx,edx
     mov ecx,3600

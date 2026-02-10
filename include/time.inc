@@ -166,8 +166,14 @@ gmtime		proto __cdecl :ptr time_t
 _sleep		proto __cdecl :uint_t
 
 localtime	proto __cdecl :ptr time_t
+_localtime32	proto __cdecl :ptr __time32_t
+_localtime64	proto __cdecl :ptr __time64_t
 mktime		proto __cdecl :ptr tm
+_mktime32	proto __cdecl :ptr tm
+_mktime64	proto __cdecl :ptr tm
 _mkgmtime	proto __cdecl :ptr tm
+_mkgmtime32	proto __cdecl :ptr tm
+_mkgmtime64	proto __cdecl :ptr tm
 strftime	proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
 strdate		proto __cdecl :ptr sbyte
 strtime		proto __cdecl :ptr sbyte

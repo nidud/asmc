@@ -3,30 +3,31 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+; time_t mktime(struct tm *tb);
+; __time32_t _mktime32(struct tm *tb);
+; __time64_t _mktime64(struct tm *tb);
+; time_t _mkgmtime(struct tm *tb);
+; __time32_t _mkgmtime32(struct tm *tb);
+; __time64_t _mkgmtime64(struct tm *tb);
+;
 
 include time.inc
 include errno.inc
+ifndef __UNIX__
+ifdef _WIN64
+undef _mktime64
+undef _mkgmtime64
+ALIAS <_mktime64>=<mktime>
+ALIAS <_mkgmtime64>=<_mkgmtime>
+else
+undef _mktime32
+undef _mkgmtime32
+ALIAS <_mktime32>=<mktime>
+ALIAS <_mkgmtime32>=<_mkgmtime>
+endif
+endif
 
     .code
-
-ChkAdd macro d, a, b
-    .ifs ( (a >= 0 && b >= 0 && d < 0) || (a < 0 && b < 0 && d >= 0) )
-        .return( -1 )
-    .endif
-    exitm<>
-    endm
-
-ChkMul macro d, a, i
-    .if ( a )
-        mov eax,d
-        cdq
-        idiv a
-        .if ( eax != i )
-            .return( -1 )
-        .endif
-    .endif
-    exitm<>
-    endm
 
 _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
 
@@ -34,17 +35,24 @@ _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
    .new tmp:time_t
 
     ldr rbx,tp
+    test rbx,rbx
+    jnz test_range
+err_mktime:
+    .return( _set_errno(EINVAL) )
 
-    .if ( rbx == NULL )
-        .return( _set_errno(EINVAL) )
+test_range:
+
+    ; First, make sure tm_year is reasonably close to being in range.
+
+    mov esi,[rbx].tm.tm_year
+    .ifs ( ( esi < _BASE_YEAR - 1 ) || ( esi > _MAX_YEAR + 1 ) )
+       jmp err_mktime
     .endif
-    mov eax,[rbx].tm.tm_year
-    .ifs ( ( eax < _BASE_YEAR - 1 ) || ( eax > _MAX_YEAR + 1 ) )
-       .return( -1 )
-    .endif
-    mov esi,eax
+
+    ; Adjust month value so it is in the range 0 - 11.  This is because
+    ; we don't know how many days are in months 12, 13, 14, etc.
+
     mov edi,[rbx].tm.tm_mon
-
     .ifs ( edi < 0 || edi > 11 )
 
         mov eax,edi
@@ -53,28 +61,33 @@ _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
         idiv ecx
         add esi,eax
         mov edi,edx
-
         .ifs ( edi < 0 )
-
             add edi,12
             dec esi
         .endif
+
+        ; Make sure year count is still in range.
+
         .ifs ( ( esi < _BASE_YEAR - 1 ) || ( esi > _MAX_YEAR + 1 ) )
-           .return( -1 )
+           jmp err_mktime
         .endif
     .endif
     mov [rbx].tm.tm_mon,edi
 
-    ; ESI: number of elapsed years
-    ;
     ; Calculate days elapsed minus one, in the given year, to the given
     ; month. Check for leap year and adjust if necessary.
 
+    _IS_LEAP_YEAR(esi)
     lea rdx,_days
     mov ecx,[rdx+rdi*4]
-    .if ( !( esi & 3 ) && edi > 1 )
+    .if ( eax && edi > 1 )
         inc ecx
     .endif
+ifdef _WIN64
+    movsxd rdi,ecx
+else
+    mov edi,ecx
+endif
 
     ; Calculate elapsed days since base date (midnight, 1/1/70, UTC)
     ;
@@ -82,64 +95,65 @@ _make_time_t proc private uses rsi rdi rbx tp:ptr tm, ultflag:int_t
     ; each elapsed leap year. no danger of overflow because of the range
     ; check (above) on ESI.
 
+    add rdi,_ELAPSED_LEAP_YEARS(esi)
     lea eax,[rsi-_BASE_YEAR]
-    imul edi,eax,365
-    lea eax,[rsi-1]
-    shr eax,2
-    add edi,eax
-    sub edi,_LEAP_YEAR_ADJUST
+    imul eax,eax,365
 
     ; elapsed days to current month (still no possible overflow)
 
-    add edi,ecx
+    add rdi,rax
 
     ; elapsed days to current date. overflow is now possible.
 
-    mov ecx,[rbx].tm.tm_mday
-    lea rsi,[rdi+rcx]
+    ; elapsed days to current date.
 
-    ChkAdd(esi, edi, ecx)
+    mov eax,[rbx].tm.tm_mday
+    lea rsi,[rdi+rax]
 
-    ; ESI: number of elapsed days
-    ;
+    ; HERE: rsi holds number of elapsed days
+
     ; Calculate elapsed hours since base date
 
-    imul ecx,esi,24
+    imul rcx,rsi,24
+ifdef _WIN64
+    mov eax,[rbx].tm.tm_hour
+    lea rsi,[rax+rcx]
+else
+    jc err_mktime
+    add ecx,[rbx].tm.tm_hour
+    jc err_mktime
+    mov esi,ecx
+endif
 
-    ChkMul(ecx, esi, 24)
+    ; HERE: rsi holds number of elapsed hours
 
-    mov edi,[rbx].tm.tm_hour
-    lea rsi,[rdi+rcx]
+    imul rcx,rsi,60
+ifdef _WIN64
+    mov eax,[rbx].tm.tm_min
+    lea rsi,[rax+rcx]
+else
+    jc err_mktime
+    add ecx,[rbx].tm.tm_min
+    jc err_mktime
+    mov esi,ecx
+endif
 
-    ChkAdd(esi, ecx, edi)
+    ; HERE: rsi holds number of elapsed minutes
 
-    ; ESI: number of elapsed hours
-    ;
-    ; Calculate elapsed minutes since base date
-
-    imul ecx,esi,60
-
-    ChkMul(ecx, esi, 60)
-
-    mov edi,[rbx].tm.tm_min
-    lea rsi,[rdi+rcx]
-
-    ChkAdd(esi, ecx, edi)
-
-    ; ESI: number of elapsed minutes
-    ;
     ; Calculate elapsed seconds since base date
 
-    imul ecx,esi,60
+    imul rcx,rsi,60
+ifdef _WIN64
+    mov eax,[rbx].tm.tm_sec
+    lea rsi,[rax+rcx]
+else
+    jc err_mktime
+    add ecx,[rbx].tm.tm_sec
+    jc err_mktime
+    mov esi,ecx
+endif
 
-    ChkMul(ecx, esi, 60)
-
-    mov edi,[rbx].tm.tm_sec
-    lea rsi,[rdi+rcx]
-
-    ChkAdd(esi, ecx, edi)
-
-    ; ESI: number of elapsed seconds
+    ; HERE: rsi holds number of elapsed seconds
 
     mov tmp,rsi
 
@@ -160,7 +174,7 @@ endif
         ; If localtime returns NULL, return an error.
 
         .ifd _localtime_s(&tb, &tmp)
-            .return( -1 )
+            jmp err_mktime
         .endif
 
         ; Now must compensate for DST. The ANSI rules are to use the
@@ -176,11 +190,11 @@ else
 endif
             add tmp,rax
             .ifd ( _localtime_s(&tb, &tmp) )
-                .return( -1 )
+                jmp err_mktime
             .endif
         .endif
     .elseifd ( _gmtime_s(&tb, &tmp) )
-        .return( -1 )
+        jmp err_mktime
     .endif
 
     ; tmp holds number of elapsed seconds, adjusted for local time if requested

@@ -29,16 +29,16 @@ _localtime_s proc uses rbx rdi tp:ptr tm, ptime:ptr time_t
     mov ecx,tm
     rep stosb
 
-    mov rcx,[rdx]
+    mov rax,[rdx]
 ifdef _WIN64
-    mov rax,_MAX__TIME64_T
-    .ifs ( rcx < 0 || rcx > rax )
+    mov rcx,_MAX__TIME64_T
+    .ifs ( rax < 0 || rax > rcx )
 else
-    .ifs ( rcx < 0 )
+    .ifs ( eax < 0 )
 endif
         .return( EINVAL )
     .endif
-    mov ltime,rcx
+    mov ltime,rax
     _tzset()
     mov rax,ltime
 ifdef _WIN64

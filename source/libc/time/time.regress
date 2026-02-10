@@ -1,4 +1,5 @@
 include time.inc
+include sys/timeb.inc
 include assert.inc
 include signal.inc
 
@@ -8,34 +9,127 @@ main proc
 
   local ltime:time_t
 
-    signal(SIGSEGV, &__crtGeneralFailure)
+    mov ltime,0
+    gmtime(&ltime)
+    .assert rax
+    .assert [rax].tm.tm_sec     == 0
+    .assert [rax].tm.tm_min     == 0
+    .assert [rax].tm.tm_hour    == 0
+    .assert [rax].tm.tm_mday    == 1
+    .assert [rax].tm.tm_mon     == 0
+    .assert [rax].tm.tm_year    == 70
+    .assert [rax].tm.tm_wday    == 4
+    .assert [rax].tm.tm_yday    == 0
+    .assert [rax].tm.tm_isdst   == 0
 
-    mov ltime,0x55C9D859
-    localtime(&ltime)
-
-    .assert [rax].tm.tm_sec  == 21
-    .assert [rax].tm.tm_min  == 11
-    .assert [rax].tm.tm_hour == 13
-    .assert [rax].tm.tm_mday == 11
-    .assert [rax].tm.tm_mon  == 7
-    .assert [rax].tm.tm_year == 115
-    .assert [rax].tm.tm_wday == 2
-    .assert [rax].tm.tm_yday == 222
-    .assert [rax].tm.tm_isdst == 1
+    mov ltime,0x7fffffff
+    gmtime(&ltime)
+    .assert rax
+    .assert [rax].tm.tm_sec     == 7
+    .assert [rax].tm.tm_min     == 14
+    .assert [rax].tm.tm_hour    == 3
+    .assert [rax].tm.tm_mday    == 19
+    .assert [rax].tm.tm_mon     == 0
+    .assert [rax].tm.tm_year    == 138
+    .assert [rax].tm.tm_wday    == 2
+    .assert [rax].tm.tm_yday    == 18
+    .assert [rax].tm.tm_isdst   == 0
 
     mov ltime,0x55C9D859
     gmtime(&ltime)
+    .assert rax
+    .assert [rax].tm.tm_sec     == 21
+    .assert [rax].tm.tm_min     == 11
+    .assert [rax].tm.tm_hour    == 11
+    .assert [rax].tm.tm_mday    == 11
+    .assert [rax].tm.tm_mon     == 7
+    .assert [rax].tm.tm_year    == 115
+    .assert [rax].tm.tm_wday    == 2
+    .assert [rax].tm.tm_yday    == 222
+    .assert [rax].tm.tm_isdst   == 0
 
-    .assert [rax].tm.tm_sec  == 21
-    .assert [rax].tm.tm_min  == 11
-    .assert [rax].tm.tm_hour == 11
-    .assert [rax].tm.tm_mday == 11
-    .assert [rax].tm.tm_mon  == 7
-    .assert [rax].tm.tm_year == 115
-    .assert [rax].tm.tm_wday == 2
-    .assert [rax].tm.tm_yday == 222
-    .assert [rax].tm.tm_isdst == 0
+    mov ltime,_MAX__TIME32_T
+    gmtime(&ltime)
+    .assert rax
+    .assert [rax].tm.tm_sec     == 59
+    .assert [rax].tm.tm_min     == 59
+    .assert [rax].tm.tm_hour    == 23
+    .assert [rax].tm.tm_mday    == 18
+    .assert [rax].tm.tm_mon     == 0
+    .assert [rax].tm.tm_year    == 138
+    .assert [rax].tm.tm_wday    == 1
+    .assert [rax].tm.tm_yday    == 17
+    .assert [rax].tm.tm_isdst   == 0
 
+ifdef _WIN64
+   .new t:time_t = _MAX__TIME64_T
+    _gmtime64(&t)
+    .assert rax
+    .assert [rax].tm.tm_sec     == 59
+    .assert [rax].tm.tm_min     == 59
+    .assert [rax].tm.tm_hour    == 7
+    .assert [rax].tm.tm_mday    == 1
+    .assert [rax].tm.tm_mon     == 0
+    .assert [rax].tm.tm_year    == 1101
+    .assert [rax].tm.tm_wday    == 4
+    .assert [rax].tm.tm_yday    == 0
+    .assert [rax].tm.tm_isdst   == 0
+
+    localtime(&t)
+    .assert rax
+    .assert [rax].tm.tm_sec     == 59
+    .assert [rax].tm.tm_min     == 59
+    .assert [rax].tm.tm_hour    == 8 ; +1
+    .assert [rax].tm.tm_mday    == 1
+    .assert [rax].tm.tm_mon     == 0
+    .assert [rax].tm.tm_year    == 1101
+    .assert [rax].tm.tm_wday    == 4
+    .assert [rax].tm.tm_yday    == 0
+    .assert [rax].tm.tm_isdst   == 0
+endif
+
+    mov ltime,0x55C9D859
+    localtime(&ltime)
+    .assert rax
+    .assert [rax].tm.tm_sec     == 21
+    .assert [rax].tm.tm_min     == 11
+    .assert [rax].tm.tm_hour    == 13 ; +1
+    .assert [rax].tm.tm_mday    == 11
+    .assert [rax].tm.tm_mon     == 7
+    .assert [rax].tm.tm_year    == 115
+    .assert [rax].tm.tm_wday    == 2
+    .assert [rax].tm.tm_yday    == 222
+    .assert [rax].tm.tm_isdst   == 1
+
+   .new time_str:tm
+    mov time_str.tm_year,   2001 - 1900
+    mov time_str.tm_mon,    7 - 1
+    mov time_str.tm_mday,   4
+    mov time_str.tm_hour,   0
+    mov time_str.tm_min,    0
+    mov time_str.tm_sec,    1
+    mov time_str.tm_isdst,  -1
+   .assert mktime(&time_str) == 0x3B424061
+
+   .new t:time_t = (1 * 60 * 60 + 2 * 60 + 29)
+    mov rcx,localtime(&t)
+   .assert rax
+    mov time_str,[rcx]
+   .assert mktime(&time_str) == (1 * 60 * 60 + 2 * 60 + 29)
+
+   .new prev:_timeb, curr:_timeb = {0}
+   .new sec:int_t = 0
+    .while ( sec != 2 )
+        mov prev,curr
+        .assert ( _ftime(&curr) == 0 )
+        .assert ( curr.time >= prev.time )
+        .if ( curr.time == prev.time )
+            .assert ( curr.millitm >= prev.millitm )
+        .endif
+        .if ( curr.time > prev.time )
+            inc sec
+        .endif
+    .endw
     .return( 0 )
 
 main endp

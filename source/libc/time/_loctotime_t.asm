@@ -7,6 +7,7 @@
 ; __time32_t _loctotime32_t(int yr, int mo, int dy, int hr, int mn, int sc, int dstflag);
 ; __time64_t _loctotime64_t(int yr, int mo, int dy, int hr, int mn, int sc, int dstflag);
 ;
+
 include time.inc
 include errno.inc
 ifndef __UNIX__
@@ -45,6 +46,7 @@ _loctotime_t proc uses rsi rdi rbx yr:int_t, mo:int_t, dy:int_t, hr:int_t, mn:in
     .case esi > 59
     .return( _set_errno(EINVAL) )
     .endsw
+
     mov tb.tm_year,ecx
     mov tb.tm_mon,edx
     mov tb.tm_mday,eax
@@ -52,6 +54,7 @@ _loctotime_t proc uses rsi rdi rbx yr:int_t, mo:int_t, dy:int_t, hr:int_t, mn:in
     mov tb.tm_min,edi
     mov tb.tm_sec,esi
     mov isleap,_IS_LEAP_YEAR(ecx)
+
     lea rcx,_days
     mov edx,tb.tm_mon
     mov eax,[rcx+rdx*4]

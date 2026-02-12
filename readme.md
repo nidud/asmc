@@ -13,7 +13,7 @@ Download the zip-file or use Git:
 
     git clone https://github.com/nidud/asmc.git
 
-For Windows run the asmc-2.36.cmd file in the root directory.
+For Windows run the asmc-2.37.cmd file in the root directory.
 
 Linux:
 

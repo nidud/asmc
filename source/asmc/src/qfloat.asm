@@ -176,19 +176,13 @@ __mulo proc __ccall multiplier:ptr uint128_t, multiplicand:ptr uint128_t, highpr
     mov rax,[rcx]
     mov r10,[rcx+8]
     mov r9, [rdx+8]
-
     .if ( !r10 && !r9 )
-
         .if ( r8 )
-
             mov [r8],r9
             mov [r8+8],r9
         .endif
-
         mul qword ptr [rdx]
-
     .else
-
         push rcx
         mov  r11,[rdx]
         mul  r11         ; a * b
@@ -204,9 +198,7 @@ __mulo proc __ccall multiplier:ptr uint128_t, multiplicand:ptr uint128_t, highpr
         adc  rcx,rdx
         mov  edx,0
         adc  edx,0
-
         .if ( r8 )
-
             xchg rdx,r9
             mov  rax,r10
             mul  rdx     ; a[8] * b[8]
@@ -215,18 +207,15 @@ __mulo proc __ccall multiplier:ptr uint128_t, multiplicand:ptr uint128_t, highpr
             mov  [r8],rax
             mov  [r8+8],rdx
         .endif
-
         pop rax
         mov rdx,r11
         pop rcx
     .endif
-
     mov [rcx],rax
     mov [rcx+8],rdx
     mov rax,rcx
     ret
-
-__mulo endp
+    endp
 
 else
 
@@ -235,13 +224,10 @@ else
 _mulqw proc watcall private a64_l:uint_t, a64_h:uint_t, b64_l:uint_t, b64_h:uint_t
 
     .if !edx && !ecx
-
         mul ebx
         xor ebx,ebx
-
-        .return
+       .return
     .endif
-
     push    ebp
     push    esi
     push    edi
@@ -272,8 +258,7 @@ _mulqw proc watcall private a64_l:uint_t, a64_h:uint_t, b64_l:uint_t, b64_h:uint
     pop     esi
     pop     ebp
     ret
-
-_mulqw endp
+    endp
 
     assume esi:ptr U128, edi:ptr U128
 
@@ -329,8 +314,7 @@ __mulo proc __ccall uses esi edi ebx multiplier:ptr uint128_t, multiplicand:ptr 
     .endif
     mov eax,edi
     ret
-
-__mulo endp
+    endp
 
     assume esi:nothing, edi:nothing
 
@@ -377,7 +361,6 @@ __divo proc __ccall dividend:ptr uint128_t, divisor:ptr uint128_t, reminder:ptr 
 .divide:
 
     mov     r8d,-1
-
 .0:
     inc     r8d
     shl     r10,1
@@ -420,18 +403,15 @@ __divo proc __ccall dividend:ptr uint128_t, divisor:ptr uint128_t, reminder:ptr 
     mov     r10,reminder
     test    r10,r10
     jz      .5
-
     mov     [r10],r9
     mov     [r10+8],rcx
-
 .5:
     mov     r10,rax
     mov     rax,dividend
     mov     [rax],r10
     mov     [rax+8],rdx
     ret
-
-__divo endp
+    endp
 
 else
 
@@ -590,8 +570,7 @@ __divo proc __ccall uses esi edi ebx ebp dividend:ptr uint128_t, divisor:ptr uin
     mov     [eax+8],esi
     mov     [eax+12],ebx
     ret
-
-__divo endp
+    endp
 
     option stackbase:ebp
 
@@ -695,8 +674,7 @@ __shlo proc __ccall uses esi edi ebx val:ptr uint128_t, count:int_t, bits:int_t
 
 endif
     ret
-
-__shlo endp
+    endp
 
 ifdef _WIN64
 
@@ -736,8 +714,7 @@ __shro proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
     mov [r10+8],rdx
     mov rax,r10
     ret
-
-__shro endp
+    endp
 
 else
 
@@ -802,8 +779,7 @@ __shro proc uses esi edi ebx val:ptr uint128_t, count:int_t, bits:int_t
     mov [esi].u32[12],edi
     mov eax,esi
     ret
-
-__shro endp
+    endp
 
     assume esi:nothing
 
@@ -827,8 +803,7 @@ __rolo proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
     .endw
     mov rax,rsi
     ret
-
-__rolo endp
+    endp
 
 
 __roro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
@@ -849,8 +824,7 @@ __roro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
     .endw
     mov rax,rsi
     ret
-
-__roro endp
+    endp
 
 ifdef _WIN64
 
@@ -901,8 +875,7 @@ __saro proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
     mov [r10+8],rdx
     mov rax,r10
     ret
-
-__saro endp
+    endp
 
 else
 
@@ -979,8 +952,7 @@ __saro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
     mov [rsi].u32[12],edi
     mov rax,rsi
     ret
-
-__saro endp
+    endp
 
     assume rsi:nothing
 
@@ -1098,8 +1070,7 @@ __cvtq_h proc __ccall private uses rsi rdi rbx h:ptr half_t, q:ptr qfloat_t
         mov [rax+12],ecx
     .endif
     ret
-
-__cvtq_h endp
+    endp
 
 ; Quad to float
 ;
@@ -1203,8 +1174,7 @@ __cvtq_ss proc __ccall uses rbx s:ptr float_t, q:ptr qfloat_t
         mov [rax+12],ecx
     .endif
     ret
-
-__cvtq_ss endp
+    endp
 
 
 ; Quad to double
@@ -1328,8 +1298,7 @@ __cvtq_sd proc __ccall uses rsi rdi rbx d:ptr double_t, q:ptr qfloat_t
         mov [rdi+12],eax
     .endif
     .return( rdi )
-
-__cvtq_sd endp
+    endp
 
 
 __cvtq_ld proc __ccall uses rsi rdi rbx ld:ptr ldouble_t, q:ptr qfloat_t
@@ -1369,8 +1338,7 @@ __cvtq_ld proc __ccall uses rsi rdi rbx ld:ptr ldouble_t, q:ptr qfloat_t
         mov [rax+8],cx
     .endif
     ret
-
-__cvtq_ld endp
+    endp
 
 
 __cvth_q proc __ccall private q:ptr qfloat_t, h:ptr half_t
@@ -1427,8 +1395,7 @@ ifndef _WIN64
 endif
     mov [rax+8],edx
     ret
-
-__cvth_q endp
+    endp
 
 
 __cvtss_q proc __ccall private q:ptr qfloat_t, f:ptr float_t
@@ -1479,10 +1446,9 @@ __cvtss_q proc __ccall private q:ptr qfloat_t, f:ptr float_t
     xor edx,edx
     mov [rax],edx
     mov [rax+4],edx
-    mov [eax+8],dx
+    mov [rax+8],dx
     ret
-
-__cvtss_q endp
+    endp
 
 
 __cvtsd_q proc __ccall private uses rbx q:ptr qfloat_t, d:ptr double_t
@@ -1538,8 +1504,7 @@ __cvtsd_q proc __ccall private uses rbx q:ptr qfloat_t, d:ptr double_t
     mov     [rax],ebx
     mov     [rax+4],bx
     ret
-
-__cvtsd_q endp
+    endp
 
 
 __cvtld_q proc __ccall private x:ptr qfloat_t, ld:ptr ldouble_t
@@ -1571,8 +1536,7 @@ else
     mov     [eax+4],cx
 endif
     ret
-
-__cvtld_q endp
+    endp
 
 
 __cmpq proc __ccall A:ptr qfloat_t, B:ptr qfloat_t
@@ -1600,8 +1564,7 @@ __cmpq proc __ccall A:ptr qfloat_t, B:ptr qfloat_t
     sbb eax,eax
     sbb eax,-1
     ret
-
-__cmpq endp
+    endp
 
 
 _fltunpack proc __ccall private p:ptr STRFLT, q:ptr
@@ -1646,8 +1609,7 @@ else
     pop     esi
 endif
     ret
-
-_fltunpack endp
+    endp
 
 
     assume rcx:ptr STRFLT
@@ -1713,8 +1675,7 @@ else
 endif
     .endif
     .return rcx
-
-_fltround endp
+    endp
 
     assume rcx:nothing
 
@@ -1764,8 +1725,7 @@ _fltpackfp proc __ccall private uses esi edi ebx q:ptr, p:ptr STRFLT
     mov eax,edi
 endif
     ret
-
-_fltpackfp endp
+    endp
 
 
 _lc_fltadd proc __ccall private uses rsi rdi rbx A:ptr STRFLT, B:ptr STRFLT, negate:uint_t
@@ -2239,24 +2199,19 @@ endif
     xor     esi,ecx
     and     esi,0x80000000
     jmp     .b
-
-_lc_fltadd endp
+    endp
 
 
 _fltadd proc fastcall private a:ptr STRFLT, b:ptr STRFLT
-
     _lc_fltadd( rcx, rdx, 0 )
     ret
-
-_fltadd endp
+    endp
 
 
 _fltsub proc fastcall private a:ptr STRFLT, b:ptr STRFLT
-
     _lc_fltadd( rcx, rdx, 0x80000000 )
     ret
-
-_fltsub endp
+    endp
 
 
 ifdef _WIN64
@@ -2515,8 +2470,7 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     xor     esi,ecx
     and     esi,0x80000000
     jmp     .b
-
-_fltdiv endp
+    endp
 
     assume rdx:nothing, rcx:nothing
 
@@ -2871,8 +2825,7 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     xor     esi,ecx
     and     esi,0x80000000
     jmp     .b
-
-_fltdiv endp
+    endp
 
     option stackbase:ebp
 
@@ -3206,8 +3159,7 @@ endif
     xor     esi,ecx
     and     esi,0x80000000
     jmp     .b
-
-_fltmul endp
+    endp
 
 
 __addq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
@@ -3220,8 +3172,7 @@ __addq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
     _fltadd(&a, &b)
     _fltpackfp(dest, &a)
     ret
-
-__addq endp
+    endp
 
 
 __subq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
@@ -3234,8 +3185,7 @@ __subq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
     _fltsub(&a, &b)
     _fltpackfp(dest, &a)
     ret
-
-__subq endp
+    endp
 
 
 __mulq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
@@ -3248,8 +3198,7 @@ __mulq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
     _fltmul(&a, &b)
     _fltpackfp(dest, &a)
     ret
-
-__mulq endp
+    endp
 
 
 __divq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
@@ -3262,8 +3211,7 @@ __divq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
     _fltdiv(&a, &b)
     _fltpackfp(dest, &a)
     ret
-
-__divq endp
+    endp
 
 
 __sqrtq proc __ccall p:ptr qfloat_t
@@ -3322,8 +3270,7 @@ endif
     __mulq(&y, &x)
     __subq(p, &y)
     ret
-
-__sqrtq endp
+    endp
 
 
     assume rdi: ptr STRFLT
@@ -3436,13 +3383,11 @@ endif
         .endif
         dec rsi
     .until 1
-
     mov [rdi].flags,ecx
     mov [rdi].string,rsi
-
-   .return( ecx )
-
-_fltsetflags endp
+    mov eax,ecx
+    ret
+    endp
 
     assume rdi:nothing
 
@@ -3576,14 +3521,12 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
     .else
         mov rsi,[rbx].string
     .endif
-
     mov [rbx].flags,ecx
     mov [rbx].string,rsi
     mov [rbx].exponent,edx
     mov eax,digits
     ret
-
-_destoflt endp
+    endp
 
     assume rbx:nothing
 
@@ -3637,18 +3580,14 @@ endif
         .endif
     .endif
     .return( fp )
-
-_lk_fltscale endp
+    endp
 
 
 _fltscale proc __ccall fp:ptr STRFLT
-
     ldr rcx,fp
-
     _lk_fltscale(rcx, [rcx].STRFLT.exponent, &_fltpowtable)
     ret
-
-_fltscale endp
+    endp
 
 
 _strtoflt proc __ccall private uses rsi rdi rbx string:string_t
@@ -3856,8 +3795,7 @@ endif
     .until 1
     _fltpackfp( &flt, &flt )
     ret
-
-_strtoflt endp
+    endp
 
 
 ifdef _WIN64
@@ -3955,8 +3893,7 @@ endif
     mov     [rax],rcx
     mov     [rax+8],rdx
     ret
-
-_atoow endp
+    endp
 
 
 else ; _WIN64
@@ -4005,8 +3942,7 @@ __mul64 proc watcall a:int64_t, b:int64_t
     pop     esi
     pop     ebp
     ret
-
-__mul64 endp
+    endp
 
 ;-------------------------------------------------------------------------------
 ; 64-bit DIV
@@ -4114,7 +4050,7 @@ __udiv64 proc watcall dividend:qword, divisor:qword
     pop esi
     pop ebp
     ret
-__udiv64 endp
+    endp
 
 
 _atoow proc uses esi edi ebx dst:string_t, src:string_t, radix:int_t, bsize:int_t
@@ -4272,8 +4208,7 @@ endif
         mov eax,dst
     .endif
     ret
-
-_atoow endp
+    endp
 
 endif
 
@@ -4310,8 +4245,7 @@ _atoqw proc fastcall uses rbx string:string_t
     neg     eax
 .4:
     ret
-
-_atoqw endp
+    endp
 
 
 atofloat proc __ccall _out:ptr, inp:string_t, size:uint_t, negative:int_t
@@ -4364,8 +4298,7 @@ atofloat proc __ccall _out:ptr, inp:string_t, size:uint_t, negative:int_t
         tmemset( _out, 0, size )
     .endsw
     ret
-
-atofloat endp
+    endp
 
 
 ftoquad proc fastcall opnd:expr_t
@@ -4384,8 +4317,7 @@ ftoquad proc fastcall opnd:expr_t
         asmerr( 2071 )
     .endif
     ret
-
-ftoquad endp
+    endp
 
 
 quadtof proc fastcall opnd:expr_t
@@ -4398,8 +4330,7 @@ quadtof proc fastcall opnd:expr_t
     .case MT_REAL10 : __cvtq_ld( rcx, rcx )
     .endsw
     ret
-
-quadtof endp
+    endp
 
 
     assume rbx:ptr expr
@@ -4455,8 +4386,7 @@ quad_resize proc __ccall uses rsi rbx opnd:ptr expr, size:int_t
         asmerr( 2071 )
     .endif
     ret
-
-quad_resize endp
+    endp
 
 
 define STK_BUF_SIZE     512 ; ANSI-specified minimum is 509
@@ -4576,8 +4506,7 @@ else
 endif
     .endif
     ret
-
-_flttoi64 endp
+    endp
 
 
 _i64toflt proc __ccall private p:ptr STRFLT, ll:int64_t
@@ -4664,8 +4593,7 @@ else
     pop     ebx
 endif
     ret
-
-_i64toflt endp
+    endp
 
 
 __modq proc __ccall uses rsi rdi dest:ptr qfloat_t, src:ptr qfloat_t
@@ -4704,8 +4632,7 @@ __modq proc __ccall uses rsi rdi dest:ptr qfloat_t, src:ptr qfloat_t
         _fltpackfp(rsi, &a)
     .endif
     ret
-
-__modq endp
+    endp
 
 
     assume rbx:ptr FLTINFO

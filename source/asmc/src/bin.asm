@@ -152,16 +152,15 @@ endif
 pe64def IMAGE_PE_HEADER64 {
     'EP',
     { IMAGE_FILE_MACHINE_AMD64, 0, 0, 0, 0, sizeof( IMAGE_OPTIONAL_HEADER64 ),
-      IMAGE_FILE_RELOCS_STRIPPED or IMAGE_FILE_EXECUTABLE_IMAGE or \
-      IMAGE_FILE_LINE_NUMS_STRIPPED or IMAGE_FILE_LOCAL_SYMS_STRIPPED or \
-      IMAGE_FILE_LARGE_ADDRESS_AWARE or IMAGE_FILE_32BIT_MACHINE },
+      IMAGE_FILE_EXECUTABLE_IMAGE or IMAGE_FILE_LARGE_ADDRESS_AWARE or \
+      IMAGE_FILE_LINE_NUMS_STRIPPED },
     { IMAGE_NT_OPTIONAL_HDR64_MAGIC,
-      5,1,0,0,0,0,0,    ;; linkervers maj/min, sizeof code/init data/uninit data, entrypoint, base code RVA
+      14,0,0,0,0,0,0,   ;; linkervers maj/min, sizeof code/init data/uninit data, entrypoint, base code RVA
       PE_UNDEF_BASE,    ;; image base
       0x1000, 0x200,    ;; SectionAlignment, FileAlignment
-      4,0,0,0,4,0,      ;; OSversion maj/min, Imagevers maj/min, Subsystemvers maj/min
+      6,0,0,0,6,0,      ;; OSversion maj/min, Imagevers maj/min, Subsystemvers maj/min
       0,0,0,0,          ;; Win32vers, sizeofimage, sizeofheaders, checksum
-      IMAGE_SUBSYSTEM_WINDOWS_CUI,0,  ;; subsystem, dllcharacteristics
+      IMAGE_SUBSYSTEM_WINDOWS_CUI, 0x8160,  ;; subsystem, dllcharacteristics
       0x100000,0x1000,  ;; sizeofstack reserve/commit
       0x100000,0x1000,  ;; sizeofheap reserve/commit
       0, IMAGE_NUMBEROF_DIRECTORY_ENTRIES, ;; loaderflags, numberofRVAandSizes
@@ -1495,8 +1494,7 @@ pe_get_characteristics proc fastcall segp:asym_t
         or  eax,edx
     .endif
     ret
-
-pe_get_characteristics endp
+    endp
 
 
 ; set base relocations
@@ -1601,10 +1599,8 @@ pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:asym_t
                     mov [rdx].VirtualAddress,eax
                     mov [rdx].SizeOfBlock,sizeof( IMAGE_BASE_RELOCATION )
                 .endif
-
                 add [rdx].SizeOfBlock,sizeof( uint_16 )
                 mov baserel,rdx
-
                 mov eax,[rbx].locofs
                 and eax,0xfff
                 mov edx,ftype
@@ -1613,14 +1609,12 @@ pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:asym_t
                 mov [rcx],ax
                 add rcx,2
                 mov prel,rcx
-
                 assume rdx:nothing
             .endif
         .endf
     .endf
     ret
-
-pe_set_base_relocs endp
+    endp
 
 
 GHF proto watcall x:abs {
@@ -1733,7 +1727,7 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
             sub size,4
             or eax,0x20202020
             .switch eax
-            .case 'esab'
+            .case 'esab'    ; /BASE:
                 lodsb
                 dec size
                 .if ( al == ':' )
@@ -1761,7 +1755,7 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                     .endif
                 .endif
                 .endc
-            .case 'rtne'
+            .case 'rtne'    ; /ENTRY:
                 lodsw
                 dec size
                 or al,0x20
@@ -1778,7 +1772,7 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                     .endif
                 .endif
                 .endc
-            .case 'exif'
+            .case 'exif'    ; /FIXED[:NO]
                 lodsb
                 dec size
                 or al,0x20
@@ -1792,7 +1786,7 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                     .endif
                 .endif
                 .endc
-            .case 'gral'
+            .case 'gral'    ; /LARGEADDRESSAWARE:
                 .ifd !tmemicmp( rsi, "eaddressaware", 13 )
                     sub size,13
                     add rsi,13
@@ -1805,7 +1799,7 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                     .endif
                 .endif
                 .endc
-            .case 'sbus'
+            .case 'sbus'    ; /SUBSYSTEM:
                 .new subsystem:int_t = IMAGE_SUBSYSTEM_UNKNOWN
                 .ifd !tmemicmp( rsi, "ystem:", 6 )
                     sub size,6
@@ -1834,13 +1828,13 @@ pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, si
                 .endif
                 .endc
 ifdef ADD_MANIFESTFILE
-            .case 'inam'
+            .case 'inam'    ; /MANIFESTDEPENDENCY
                 sub AddManifestdependency(rsi),rsi
                 sub size,eax
                 add rsi,rax
                .endc
 endif
-            .default
+            .default        ; /DLL
                 and eax,0x00FFFFFF
                 .if eax == 'lld'
                     or [rbx].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_DLL
@@ -1851,8 +1845,7 @@ endif
         .endif
     .endw
     ret
-
-pe_scan_linker_directives endp
+    endp
 
 
     assume rsi:segment_t
@@ -1862,7 +1855,7 @@ pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
     .new i:int_t
     .new falign:int_t
     .new malign:int_t
-    .new ff:uint_16
+    .new characteristics:uint_t
     .new codebase:uint_32 = 0
     .new database:uint_32 = 0
     .new codesize:uint_32 = 0
@@ -1892,15 +1885,6 @@ pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
     mov rsi,[rax].asym.seginfo
     mov rcx,[rsi].CodeBuffer
     mov pe,rcx
-ifndef ASMC64
-    .if ( MODULE.defOfssize == USE64 )
-endif
-        mov ff,[rcx].IMAGE_PE_HEADER64.FileHeader.Characteristics
-ifndef ASMC64
-    .else
-        mov ff,[rcx].IMAGE_PE_HEADER32.FileHeader.Characteristics
-    .endif
-endif
 
     ; .pragma comment(linker, "/..")
 
@@ -1922,10 +1906,13 @@ endif
         .endif
     .endf
 
-    .if ( !( eax & IMAGE_FILE_RELOCS_STRIPPED ) )
+    mov rcx,pe
+    movzx eax,[rcx].IMAGE_PE_HEADER32.FileHeader.Characteristics
+    mov characteristics,eax
+
+    .if ( !( characteristics & IMAGE_FILE_RELOCS_STRIPPED ) )
 
         mov reloc,CreateIntSegment( ".reloc", "RELOC", 2, MODULE.defOfssize, TRUE )
-
         .if ( rax )
 
             mov rsi,[rax].asym.seginfo
@@ -2291,11 +2278,12 @@ endif
     ; set relocation data dir value
 
     .if ( SymFind( ".reloc" ) )
-
-        mov rsi,[rax].asym.seginfo
-        mov rdx,datadir
-        mov [rdx][IMAGE_DIRECTORY_ENTRY_BASERELOC*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.Size,[rax].asym.max_offset
-        mov [rdx][IMAGE_DIRECTORY_ENTRY_BASERELOC*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.VirtualAddress,[rsi].start_offset
+        .if ( [rax].asym.max_offset ) ; v2.37.73: added
+            mov rsi,[rax].asym.seginfo
+            mov rdx,datadir
+            mov [rdx][IMAGE_DIRECTORY_ENTRY_BASERELOC*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.Size,[rax].asym.max_offset
+            mov [rdx][IMAGE_DIRECTORY_ENTRY_BASERELOC*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.VirtualAddress,[rsi].start_offset
+        .endif
     .endif
 
     ; fixme: TLS entry is not written because there exists a segment .tls, but
@@ -2324,7 +2312,7 @@ ifdef _WIN64
         mov rax,[rcx].IMAGE_PE_HEADER64.OptionalHeader.ImageBase
         .if ( eax == PE_UNDEF_BASE )
             mov rax,PE64_DEF_BASE_EXE
-            .if ( ff & IMAGE_FILE_DLL )
+            .if ( characteristics & IMAGE_FILE_DLL )
                 mov rax,PE64_DEF_BASE_DLL
             .elseif !( [rcx].IMAGE_PE_HEADER32.FileHeader.Characteristics & IMAGE_FILE_LARGE_ADDRESS_AWARE )
                 mov eax,PE32_DEF_BASE_EXE
@@ -2339,7 +2327,7 @@ else
         .if ( eax == PE_UNDEF_BASE )
             mov eax,LOW32(PE64_DEF_BASE_EXE)
             mov edx,HIGH32(PE64_DEF_BASE_EXE)
-            .if ( ff & IMAGE_FILE_DLL )
+            .if ( characteristics & IMAGE_FILE_DLL )
                 mov eax,LOW32(PE64_DEF_BASE_DLL)
                 mov edx,HIGH32(PE64_DEF_BASE_DLL)
             .endif
@@ -2356,7 +2344,7 @@ ifndef ASMC64
         mov rcx,pe
         .if ( [rcx].IMAGE_PE_HEADER32.OptionalHeader.ImageBase == PE_UNDEF_BASE )
             mov eax,PE32_DEF_BASE_EXE
-            .if ( ff & IMAGE_FILE_DLL )
+            .if ( characteristics & IMAGE_FILE_DLL )
                 mov eax,PE32_DEF_BASE_DLL
             .endif
             mov [rcx].IMAGE_PE_HEADER32.OptionalHeader.ImageBase,eax
